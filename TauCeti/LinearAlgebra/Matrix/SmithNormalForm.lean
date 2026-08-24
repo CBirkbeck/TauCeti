@@ -831,9 +831,9 @@ theorem smith_normal_form_unique {c d : Fin n → ℤ} (hc_pos : ∀ i, 0 ≤ c 
 
 The first entry of a chained diagonal form is a common divisor of the entries of the original
 matrix, and every common divisor divides it — so it is an **associate** of the gcd of the
-entries (equal to it up to sign), and in particular depends only on the matrix and not on the
-chosen factorisation. Under the nonnegativity that
-`Matrix.exists_smith_normal_form_of_det_pos` supplies, the sign is pinned and the equality is
+entries (equal to it up to a unit), and in particular depends only on the matrix and not on the
+chosen factorisation. Over `ℤ`, where the units are `±1`, the nonnegativity that
+`Matrix.exists_smith_normal_form_of_det_pos` supplies pins the sign and the equality is
 exact.
 
 Adapted from [AINTLIB](https://github.com/CBirkbeck/AINTLIB) (Chris Birkbeck), Apache-2.0, at
@@ -866,14 +866,14 @@ theorem invariant_factor_zero_dvd_entries {S : Type*} [CommSemiring S] [NeZero n
   · simp [Matrix.diagonal_apply_ne _ hpq]
 
 /-- **The first entry is an associate of the content.** It equals the gcd of the entries up to
-a unit, so it is determined up to sign by the matrix alone — the factorisation may be chosen
-freely.
+a unit, so up to that unit it is determined by the matrix alone — the factorisation may be
+chosen freely.
 
 `Matrix.smith_normal_form_unique` says the whole chained diagonal is determined; this says the
 first entry is determined, up to a unit, by something directly readable off the matrix. The
 hypotheses are exactly what `Finset.gcd` needs; over `ℤ` they hold by instance, and
 `Matrix.invariant_factor_zero_eq_gcd` then pins the sign when `d 0` is known nonnegative. -/
-theorem associated_invariant_factor_zero_gcd {S : Type*} [CommSemiring S] [IsDomain S]
+theorem associated_invariant_factor_zero_gcd {S : Type*} [CommSemiring S]
     [NormalizedGCDMonoid S] [NeZero n] (A : Matrix (Fin n) (Fin n) S) (d : Fin n → S)
     (hd0 : ∀ k, d 0 ∣ d k) (L R : GeneralLinearGroup (Fin n) S)
     (h : (L : Matrix (Fin n) (Fin n) S) * A * (R : Matrix (Fin n) (Fin n) S) =
@@ -889,7 +889,7 @@ specialization of `Matrix.associated_invariant_factor_zero_gcd`: `Finset.gcd` ov
 normalized, so nonnegativity of `d 0` — which `Matrix.exists_smith_normal_form_of_det_pos`
 supplies — upgrades the associate relation to an equality, and consumers need not redo the
 sign argument. The sign is the only integer-specific part; the two results above hold over a
-commutative semiring and a normalized GCD domain respectively. -/
+commutative semiring and a normalized GCD monoid respectively. -/
 theorem invariant_factor_zero_eq_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
     (d : Fin n → ℤ) (hd0 : ∀ k, d 0 ∣ d k) (hnonneg : 0 ≤ d 0)
     (L R : GeneralLinearGroup (Fin n) ℤ)
