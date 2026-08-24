@@ -6,7 +6,7 @@ Authors: Chris Birkbeck, Claude
 module
 
 public import TauCeti.NumberTheory.HeckeRing.Associativity
-public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.DiagonalCoset
+public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.DiagonalElem
 
 /-!
 # The diagonal generators of the `Γ₀(N)` Hecke ring
@@ -82,69 +82,6 @@ namespace HeckeRing.GL2
 
 variable (N : ℕ)
 
-/-- The level-`N` diagonal element of the Hecke ring, `0` unless the head entry `a 0` is
-coprime to the level.
-
-Inside the coprime branch the value still depends on the tuple, and the three cases are worth
-keeping straight:
-
-* `¬ Nat.Coprime (a 0) N` — the element is `0` (`diagElemGamma0_of_not_coprime`);
-* coprime head, every entry positive — the class of `Γ₀(N)·diag(a)·Γ₀(N)`, the intended case;
-* coprime head, positivity failing — the element is `1` (`diagElemGamma0_of_not_pos`), because
-  the underlying `natDiagGL` degenerates to the identity matrix rather than being undefined.
-
-The coprimality guard is what `Δ₀(N)`-membership needs, and putting it here rather than at each
-generator means the vanishing case is stated once. This is the level-`N` analogue of
-`diagElem`. It sits in this file rather than beside `diagCosetGamma0` in `DiagonalCoset.lean`
-because its type mentions `𝕋`, which comes from `HeckeRing.Associativity` — an import
-`DiagonalCoset.lean` does not have, and which two of that file's three consumers do not need. -/
-noncomputable def diagElemGamma0 (a : Fin 2 → ℕ) : 𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ :=
-  if h : Nat.Coprime (a 0) N then
-    HeckeCosetModule.single ℤ (diagCosetGamma0 N a fun _ ↦ h) 1
-  else 0
-
-/-- Defining equation in the coprime branch: the element is the class of the double coset. -/
-lemma diagElemGamma0_of_coprime {a : Fin 2 → ℕ} (h : Nat.Coprime (a 0) N) :
-    diagElemGamma0 N a = HeckeCosetModule.single ℤ (diagCosetGamma0 N a fun _ ↦ h) 1 := by
-  rw [diagElemGamma0, dite_eq_left_of_eq_true (eq_true h)]
-
-/-- The diagonal element vanishes when the head entry shares a factor with the level. -/
-@[simp]
-theorem diagElemGamma0_of_not_coprime {a : Fin 2 → ℕ} (h : ¬ Nat.Coprime (a 0) N) :
-    diagElemGamma0 N a = 0 := by
-  rw [diagElemGamma0, dite_eq_right_of_eq_false (eq_false h)]
-
--- Deliberately not `@[simp]`, unlike the `diagCosetGamma0_of_not_pos` this is built on. That one
--- takes its coprimality *conditionally*, as `(∀ i, 0 < a i) → Nat.Coprime (a 0) N`, so the
--- hypothesis is vacuous in this branch and is carried inside the term. `diagElemGamma0` instead
--- guards with a `dite`, so this lemma needs `Nat.Coprime (a 0) N` outright — a side condition
--- `simp` cannot discharge for a variable `a`, and one on which the `@[simp]`
--- `diagElemGamma0_of_not_coprime` takes the *same* left-hand side to `0`. Tagging it makes
--- `simpNF` report that the left-hand side never simplifies and the rule would never fire;
--- restating the positivity hypothesis in its simp-normal form `0 < a 0 → a 1 = 0` does not change
--- that. Both were measured.
-/-- The identity normal form: a coprime-headed tuple that is not everywhere positive gives `1`,
-since the underlying `natDiagGL` degenerates to the identity matrix. -/
-lemma diagElemGamma0_of_not_pos {a : Fin 2 → ℕ} (hcop : Nat.Coprime (a 0) N)
-    (ha : ¬ ∀ i, 0 < a i) : diagElemGamma0 N a = 1 := by
-  rw [diagElemGamma0_of_coprime N hcop, diagCosetGamma0_of_not_pos N _ ha]
-  exact (HeckeCosetModule.one_def ℤ).symm
-
-/-- **The identity normal form at the all-ones tuple**, mirroring `diagCosetGamma0_one`:
-`diag(1, 1)` is the identity matrix, so its class is the ring identity. This is the case the
-two generators below reduce to at argument `1`. -/
-@[simp] lemma diagElemGamma0_one : diagElemGamma0 N (fun _ ↦ 1) = 1 := by
-  rw [diagElemGamma0_of_coprime N (Nat.coprime_one_left N), diagCosetGamma0_one]
-  exact (HeckeCosetModule.one_def ℤ).symm
-
-/-- The same identity at the vector literal `![1, 1]`, which is the form both generators reduce
-to at argument `1`. Stated once here so `heckeTScalarGamma0_one` and
-`heckeTGeneratorGamma0_one` — which have different head symbols but the same underlying goal —
-are each a single `exact` rather than two copies of the same script. -/
-@[simp] lemma diagElemGamma0_vecOne : diagElemGamma0 N ![1, 1] = 1 := by
-  rw [show (![1, 1] : Fin 2 → ℕ) = fun _ ↦ 1 by ext i; fin_cases i <;> rfl]
-  exact diagElemGamma0_one N
-
 /-- The diagonal generator of the `Γ₀(N)` Hecke ring: the class of `Γ₀(N)·diag(1, p)·Γ₀(N)`,
 for any natural `p`, including one sharing a factor with the level. At a prime `p` this is the
 classical `T_p`.
@@ -169,7 +106,7 @@ noncomputable def heckeTScalarGamma0 (p : ℕ) : 𝕋 (Delta0 N) ((Gamma0 N).map
 
 /-- The diagonal generator as a `single`: the guard is discharged by `Nat.coprime_one_left`, so
 it is always the class of the double coset. Named `_eq_single` rather than `_def` because it
-states the two-level unfolding, not the definition; `heckeTGeneratorGamma0_eq_diagElemGamma0`
+states the two-level unfolding, not the definition; `heckeTGeneratorGamma0_def`
 below is the actual defining equation. -/
 lemma heckeTGeneratorGamma0_eq_single (p : ℕ) :
     heckeTGeneratorGamma0 N p =
@@ -180,12 +117,12 @@ lemma heckeTGeneratorGamma0_eq_single (p : ℕ) :
 /-- **The defining equation of the diagonal generator**: it *is* `diagElemGamma0` at `![1, p]`.
 Both generator bodies are sealed, so without this the `diagElemGamma0_*` API is unreachable
 for them. -/
-lemma heckeTGeneratorGamma0_eq_diagElemGamma0 (p : ℕ) :
+lemma heckeTGeneratorGamma0_def (p : ℕ) :
     heckeTGeneratorGamma0 N p = diagElemGamma0 N ![1, p] := (rfl)
 
 /-- **The defining equation of the scalar generator**, the companion of
-`heckeTGeneratorGamma0_eq_diagElemGamma0`. -/
-lemma heckeTScalarGamma0_eq_diagElemGamma0 (p : ℕ) :
+`heckeTGeneratorGamma0_def`. -/
+lemma heckeTScalarGamma0_def (p : ℕ) :
     heckeTScalarGamma0 N p = diagElemGamma0 N ![p, p] := (rfl)
 
 /-- The scalar generator in the coprime branch, where it is nonzero. -/
@@ -204,7 +141,7 @@ theorem heckeTScalarGamma0_of_not_coprime {p : ℕ} (hpN : ¬ Nat.Coprime p N) :
 /-- At `p = 1` the scalar generator is the identity: `diag(1, 1)` is the identity matrix. -/
 @[simp]
 theorem heckeTScalarGamma0_one : heckeTScalarGamma0 N 1 = 1 :=
-  diagElemGamma0_vecOne N
+  diagElemGamma0_one_one N
 
 /-- At `p = 0` the generator is the identity: `![1, 0]` is not everywhere positive. -/
 @[simp]
@@ -215,7 +152,7 @@ theorem heckeTGeneratorGamma0_zero : heckeTGeneratorGamma0 N 0 = 1 :=
 identity matrix, so this is `diagElemGamma0_one` rather than the degeneracy case above. -/
 @[simp]
 theorem heckeTGeneratorGamma0_one : heckeTGeneratorGamma0 N 1 = 1 :=
-  diagElemGamma0_vecOne N
+  diagElemGamma0_one_one N
 
 -- `[NeZero N]` enters only here: the recurrence multiplies in the Hecke ring, and the
 -- `IsHeckeTriple` instance behind `*` needs it. Everything above builds `single`, `0` and `1`
