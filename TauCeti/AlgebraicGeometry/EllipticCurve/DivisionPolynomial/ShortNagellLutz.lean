@@ -9,6 +9,7 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion
 -- Proof-only, and not reachable transitively: `Torsion/Discriminant.lean` imports this
 -- module non-publicly, so `evalEval_ψ₂_of_isCharNeTwoNF` is not re-exported through it.
 import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
+public import TauCeti.AlgebraicGeometry.EllipticCurve.NormalForms
 public import TauCeti.AlgebraicGeometry.EllipticCurve.ShortWeierstrass
 
 /-!
@@ -34,12 +35,18 @@ is elliptic. See the Provenance note.
 
 ## Main results
 
-* `WeierstrassCurve.lutz_nagell`: the theorem — integral coordinates together with
-  `y₀ = 0 ∨ y₀² ∣ Δ`.
-* `WeierstrassCurve.isInteger_of_torsion_short`: the integrality half on its own, with no
-  order-two exception.
-* `WeierstrassCurve.y_eq_zero_or_sq_dvd_Δ_of_torsion_short`: the discriminant half on its own.
-* `WeierstrassCurve.y_eq_zero_of_order_two_short`: the collapse — order two forces `y = 0`.
+* `WeierstrassCurve.lutz_nagell`: the theorem at the roadmap's explicit short model
+  `y² = x³ + Ax + B` — integral coordinates together with `y₀ = 0 ∨ y₀² ∣ Δ`.
+* `WeierstrassCurve.isInteger_of_torsion`: the integrality half, with no order-two exception, for
+  any integral model in characteristic-≠-2 normal form.
+* `WeierstrassCurve.y_eq_zero_or_sq_dvd_Δ_of_torsion`: the discriminant half, likewise.
+* `WeierstrassCurve.y_eq_zero_of_order_two`: the collapse — order two forces `y = 0` — over any
+  field in which `2` is invertible.
+
+The three results above `lutz_nagell` are stated at `[W.IsCharNeTwoNF]`, i.e. `a₁ = a₃ = 0`, not
+at `shortCurve`: no step uses `a₂ = 0`, and the cubic `X³ + a₂X² + a₄X + a₆` is monic either way.
+`lutz_nagell` is their specialisation, and costs nothing to obtain — Mathlib's
+`isCharNeTwoNF_of_isShortNF` supplies the instance.
 
 ## Roadmap
 
@@ -83,18 +90,33 @@ namespace WeierstrassCurve
 
 open TauCeti.WeierstrassCurve
 
-variable (A B : ℤ)
+variable {W : WeierstrassCurve ℤ} [W.IsCharNeTwoNF]
 
-/-- **Nagell–Lutz, discriminant half, short model.** For a torsion point with integral coordinates
-on `y² = x³ + Ax + B`, either `y₀ = 0` or `y₀²` divides the discriminant.
+/-- **In characteristic-≠-2 normal form, a two-torsion point has `y = 0`.** Order two makes `ψ₂`
+vanish, and `a₁ = a₃ = 0` makes `ψ₂` equal `2y`; cancelling `2` finishes it.
+
+Nothing here sees `ℤ` or `ℚ`, and nothing needs `a₂ = 0`: the argument is the normal-form identity
+plus the ability to cancel `2` in the point's own field, so those are exactly the hypotheses. -/
+lemma y_eq_zero_of_order_two {F : Type*} [Field F] [DecidableEq F]
+    {E : WeierstrassCurve F} [E.IsCharNeTwoNF] (h2F : (2 : F) ≠ 0)
+    {x y : F} (hns : E.toAffine.Nonsingular x y)
+    (h2 : addOrderOf (Affine.Point.some _ _ hns) = 2) : y = 0 := by
+  have hψ : E.ψ₂.evalEval x y = 0 :=
+    (addOrderOf_eq_two_iff_evalEval_ψ₂_eq_zero _ hns).mp h2
+  rw [evalEval_ψ₂_of_isCharNeTwoNF] at hψ
+  exact (mul_eq_zero.mp hψ).resolve_left h2F
+
+/-- **Nagell–Lutz, discriminant half.** For a torsion point with integral coordinates on an
+integral model in characteristic-≠-2 normal form, either `y₀ = 0` or `y₀²` divides the
+discriminant.
 
 The general companion gives `ψ₂ = 0 ∨ ψ₂² ∣ 4Δ`; here `ψ₂ = 2y₀`, so the first disjunct is
 `2y₀ = 0` and the second is `4y₀² ∣ 4Δ`, and the `4` cancels on both sides. -/
-theorem y_eq_zero_or_sq_dvd_Δ_of_torsion_short {x y : ℚ}
-    (hns : ((shortCurve A B).baseChange ℚ).toAffine.Nonsingular x y)
+theorem y_eq_zero_or_sq_dvd_Δ_of_torsion {x y : ℚ}
+    (hns : (W.baseChange ℚ).toAffine.Nonsingular x y)
     (htor : IsOfFinAddOrder (Affine.Point.some _ _ hns))
     {x₀ y₀ : ℤ} (hx : algebraMap ℤ ℚ x₀ = x) (hy : algebraMap ℤ ℚ y₀ = y) :
-    y₀ = 0 ∨ y₀ ^ 2 ∣ (shortCurve A B).Δ := by
+    y₀ = 0 ∨ y₀ ^ 2 ∣ W.Δ := by
   rcases evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_rat hns htor hx hy with hκ | hdvd
   · rw [evalEval_ψ₂_of_isCharNeTwoNF] at hκ
     exact Or.inl (by omega)
@@ -103,66 +125,52 @@ theorem y_eq_zero_or_sq_dvd_Δ_of_torsion_short {x y : ℚ}
     ring_nf at hdvd
     exact (mul_dvd_mul_iff_right (by norm_num : (4 : ℤ) ≠ 0)).mp hdvd
 
-/-- **For a short model, a two-torsion point has `y = 0`.** Order two makes `ψ₂` vanish, and on a
-short model `ψ₂` is `2y`. This is exactly what collapses the long model's `4x, 8y` exception into
-the classical statement.
-
-Nothing here sees `ℤ` or `ℚ`: the argument needs the short-model identity and the ability to
-cancel `2` in the point's own field, so those are the hypotheses. The curve is taken up to
-equality with a short model rather than as one, which is what lets a caller holding a
-*base-changed* short curve apply it — `baseChange_shortCurve` is the equality, and `subst`
-transports the point and its order along with it. -/
-lemma y_eq_zero_of_order_two_short {F : Type*} [Field F] [DecidableEq F]
-    {W : WeierstrassCurve F} {a b : F} (hW : W = shortCurve a b) (h2F : (2 : F) ≠ 0)
-    {x y : F} (hns : W.toAffine.Nonsingular x y)
-    (h2 : addOrderOf (Affine.Point.some _ _ hns) = 2) : y = 0 := by
-  subst hW
-  have hψ : (shortCurve a b).ψ₂.evalEval x y = 0 :=
-    (addOrderOf_eq_two_iff_evalEval_ψ₂_eq_zero _ hns).mp h2
-  rw [evalEval_ψ₂_of_isCharNeTwoNF] at hψ
-  exact (mul_eq_zero.mp hψ).resolve_left h2F
-
-/-- **Nagell–Lutz, integrality half, short model.** On `y² = x³ + Ax + B` a nonzero torsion point
-has integral coordinates — with *no* order-two exception.
+/-- **Nagell–Lutz, integrality half.** On an integral model in characteristic-≠-2 normal form a
+nonzero torsion point has integral coordinates — with *no* order-two exception.
 
 The long-model theorem leaves order two aside with only `4x, 8y ∈ ℤ`. Here that case collapses:
-`ψ₂ = 2y`, so order two forces `y = 0`, and then `x` is a rational root of the monic
-`X³ + AX + B`, hence an integer. -/
-theorem isInteger_of_torsion_short {x y : ℚ}
-    (hns : ((shortCurve A B).baseChange ℚ).toAffine.Nonsingular x y)
+`ψ₂ = 2y`, so order two forces `y = 0`, and the curve equation then exhibits `x` as a rational root
+of the monic `X³ + a₂X² + a₄X + a₆`. The `a₂` term costs nothing — the cubic is monic either
+way. -/
+theorem isInteger_of_torsion {x y : ℚ}
+    (hns : (W.baseChange ℚ).toAffine.Nonsingular x y)
     (htor : IsOfFinAddOrder (Affine.Point.some _ _ hns)) :
     IsLocalization.IsInteger ℤ x ∧ IsLocalization.IsInteger ℤ y := by
   rcases isInteger_or_order_two_of_torsion_rat hns htor with h | ⟨h2, -, -⟩
   · exact h
-  · have hy : y = 0 := y_eq_zero_of_order_two_short (baseChange_shortCurve A B) two_ne_zero hns h2
+  · have hy : y = 0 := y_eq_zero_of_order_two two_ne_zero hns h2
     refine ⟨?_, hy ▸ ⟨0, by simp⟩⟩
-    -- With `y = 0` the curve equation exhibits `x` as a rational root of the monic `X³ + AX + B`,
-    -- and Mathlib's integral root theorem over the UFD `ℤ` finishes.
-    have hmonic : (X ^ 3 + C A * X + C B : ℤ[X]).Monic := by
+    have hmonic : (X ^ 3 + C W.a₂ * X ^ 2 + C W.a₄ * X + C W.a₆ : ℤ[X]).Monic := by
       simpa [add_assoc] using monic_X_pow_add (n := 3) (by compute_degree!)
     have heq := hns.left
-    -- `baseChange_shortCurve` leaves the coefficients as `algebraMap ℤ ℚ`, where `aeval` reads
-    -- them as `Int.cast`, so normalise before transferring.
-    rw [baseChange_shortCurve, shortCurve_equation_iff] at heq
+    rw [Affine.equation_iff] at heq
+    simp only [a₁_of_isCharNeTwoNF, a₃_of_isCharNeTwoNF, WeierstrassCurve.baseChange, map_a₂,
+      map_a₄, map_a₆, algebraMap_int_eq, eq_intCast, zero_mul, add_zero] at heq
     rw [hy] at heq
-    simp only [algebraMap_int_eq, eq_intCast] at heq
-    exact isInteger_of_is_root_of_monic hmonic
-      (by simpa using (by linarith : x ^ 3 + (A : ℚ) * x + (B : ℚ) = 0))
+    refine isInteger_of_is_root_of_monic hmonic ?_
+    -- `aeval_C` must fire before the casts are normalised: `eq_intCast` would otherwise rewrite
+    -- `C W.a₂` to an `ℤ[X]` cast, which `aeval_C` no longer matches.
+    simp only [map_add, map_mul, map_pow, aeval_X, aeval_C]
+    simp only [algebraMap_int_eq, eq_intCast]
+    linarith
+
+variable (A B : ℤ)
 
 /-- **The Nagell–Lutz theorem.** Let `A B : ℤ` and let `(x, y)` be a nonzero rational point of
 finite order on `y² = x³ + Ax + B`. Then `x` and `y` are integers, and either `y = 0` or
 `y² ∣ Δ`.
 
-This is the classical statement, and the form
-`TauCetiRoadmap/EllipticCurves/README.md:830` names `lutz_nagell`. No hypothesis `Δ ≠ 0` is
-needed — see the module docstring. -/
+This is the classical statement, and the form `TauCetiRoadmap/EllipticCurves/README.md:830` names
+`lutz_nagell`. It is the specialisation of the two theorems above at a short model: Mathlib's
+`isCharNeTwoNF_of_isShortNF` supplies the instance, so there is nothing to discharge. No hypothesis
+`Δ ≠ 0` is needed — see the module docstring. -/
 theorem lutz_nagell {x y : ℚ}
     (hns : ((shortCurve A B).baseChange ℚ).toAffine.Nonsingular x y)
     (htor : IsOfFinAddOrder (Affine.Point.some _ _ hns)) :
     ∃ x₀ y₀ : ℤ, (x₀ : ℚ) = x ∧ (y₀ : ℚ) = y ∧
       (y₀ = 0 ∨ y₀ ^ 2 ∣ (shortCurve A B).Δ) := by
-  obtain ⟨⟨x₀, hx₀⟩, ⟨y₀, hy₀⟩⟩ := isInteger_of_torsion_short A B hns htor
+  obtain ⟨⟨x₀, hx₀⟩, ⟨y₀, hy₀⟩⟩ := isInteger_of_torsion hns htor
   exact ⟨x₀, y₀, by simpa using hx₀, by simpa using hy₀,
-    y_eq_zero_or_sq_dvd_Δ_of_torsion_short A B hns htor hx₀ hy₀⟩
+    y_eq_zero_or_sq_dvd_Δ_of_torsion hns htor hx₀ hy₀⟩
 
 end WeierstrassCurve
