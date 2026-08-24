@@ -5,8 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Algebra.Squarefree
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Basic
+import TauCeti.Algebra.Squarefree
+import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Descent
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.Basic
 public import TauCeti.RingTheory.Localization.NumDen
