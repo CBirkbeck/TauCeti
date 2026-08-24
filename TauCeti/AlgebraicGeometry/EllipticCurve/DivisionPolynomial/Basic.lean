@@ -9,7 +9,10 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 public import Mathlib.AlgebraicGeometry.EllipticCurve.NormalForms
 
 /-!
-# Identities among the univariate division polynomials
+# Identities among the division polynomials
+
+Two identities the Nagell–Lutz route needs and Mathlib lacks — one univariate, one bivariate —
+and the consumer the univariate one exists for.
 
 Mathlib gives the univariate polynomials `Φₙ` in two registers. `Φ_three` and `Φ_four` are stated
 through the division polynomials `Ψ₃`, `preΨ₄` and `Ψ₂Sq`; `Φ_two` is stated through the
@@ -29,8 +32,13 @@ a curve in characteristic-≠-2 normal form.
   polynomials over any commutative ring — the same reason as the two above — and because a
   consumer-side home would tie its availability to torsion imports it does not need.
 
-Both hold over an arbitrary commutative ring, with no point of a curve, no ellipticity and no
-division; the first has no hypothesis at all and the second's is an equation between ring elements.
+All three hold over an arbitrary commutative ring, with no ellipticity and no division. The first
+has no hypothesis at all; the second's is an equation between ring elements; the third's is
+Mathlib's `IsCharNeTwoNF` instance, which is a condition on the curve's coefficients rather than on
+a point. The first two are statements about univariate polynomials and mention no point at all; the
+third evaluates the bivariate `ψ₂`, but at an arbitrary `(x, y)` — it does not ask that the pair lie
+on the curve.
+
 Declarations here are stated in the root
 `WeierstrassCurve` namespace, not under `TauCeti`, because they extend Mathlib's own
 division-polynomial API and mention nothing of this repository's — the same call
