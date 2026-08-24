@@ -138,6 +138,36 @@ end BaseChange
 
 /-! ## The generating-function form of normal ordering -/
 
+/-- Summing over the truncated triangle `{(m, n, k) | m, n < N, k ≤ min m n}` is the same as summing
+over the slice `{(p, k, q) | p + k < N, q + k < N}` of the cube, the summand transported along
+`(m, n, k) ↦ (n - k, k, m - k)`. For `N = 0` both sides are empty sums. -/
+private theorem sum_sigma_range_min_eq_sum_filter_cube {B : Type*} [AddCommMonoid B]
+    (F : ℕ × ℕ × ℕ → B) (N : ℕ) :
+    ∑ w ∈ (range N ×ˢ range N).sigma (fun mn => range (min mn.1 mn.2 + 1)),
+        F (w.1.2 - w.2, w.2, w.1.1 - w.2) =
+      ∑ w ∈ range N ×ˢ range N ×ˢ range N with w.1 + w.2.1 < N ∧ w.2.2 + w.2.1 < N, F w := by
+  refine Finset.sum_nbij' (fun w => (w.1.2 - w.2, w.2, w.1.1 - w.2))
+    (fun w => ⟨(w.2.2 + w.2.1, w.1 + w.2.1), w.2.1⟩) ?_ ?_ ?_ ?_ ?_
+  · rintro ⟨⟨m, n⟩, k⟩ hw
+    simp only [Finset.mem_sigma, Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff,
+      le_min_iff] at hw
+    simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_range]
+    omega
+  · rintro ⟨p, k, q⟩ hw
+    simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_range] at hw
+    simp only [Finset.mem_sigma, Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff,
+      le_min_iff]
+    omega
+  · rintro ⟨⟨m, n⟩, k⟩ hw
+    simp only [Finset.mem_sigma, Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff,
+      le_min_iff] at hw
+    dsimp only
+    rw [Nat.sub_add_cancel hw.2.1, Nat.sub_add_cancel hw.2.2]
+  · rintro ⟨p, k, q⟩ _
+    simp
+  · rintro ⟨⟨m, n⟩, k⟩ _
+    rfl
+
 -- The combinatorial core: a truncated left factor times a truncated right factor is the reordered
 -- triple product, once the truncation is wide enough that the reindexed square contains no extra
 -- nonzero terms. The reindexing is `(m, n, k) ↦ (n - k, k, m - k)`.
@@ -169,34 +199,19 @@ private theorem sum_smul_mul_sum_smul_of_normalOrder {R : Type*} [CommRing R]
   have hbij : ∑ w ∈ (range N ×ˢ range N).sigma (fun mn => range (min mn.1 mn.2 + 1)),
         (t ^ w.1.1 * u ^ w.1.2) • (Dy (w.1.2 - w.2) * Dz w.2 * Dx (w.1.1 - w.2)) =
       ∑ w ∈ range N ×ˢ range N ×ˢ range N with w.1 + w.2.1 < N ∧ w.2.2 + w.2.1 < N, G w := by
-    refine Finset.sum_nbij' (fun w => (w.1.2 - w.2, w.2, w.1.1 - w.2))
-      (fun w => ⟨(w.2.2 + w.2.1, w.1 + w.2.1), w.2.1⟩) ?_ ?_ ?_ ?_ ?_
-    · rintro ⟨⟨m, n⟩, k⟩ hw
-      simp only [Finset.mem_sigma, Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff,
-        le_min_iff] at hw
-      simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_range]
-      omega
-    · rintro ⟨p, k, q⟩ hw
-      simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_range] at hw
-      simp only [Finset.mem_sigma, Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff,
-        le_min_iff]
-      omega
-    · rintro ⟨⟨m, n⟩, k⟩ hw
-      simp only [Finset.mem_sigma, Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff,
-        le_min_iff] at hw
-      dsimp only
-      rw [Nat.sub_add_cancel hw.2.1, Nat.sub_add_cancel hw.2.2]
-    · rintro ⟨p, k, q⟩ _
-      simp
-    · rintro ⟨⟨m, n⟩, k⟩ hw
-      simp only [Finset.mem_sigma, Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff,
-        le_min_iff] at hw
-      obtain ⟨a, rfl⟩ : ∃ a, m = a + k := ⟨m - k, (Nat.sub_add_cancel hw.2.1).symm⟩
-      obtain ⟨b, rfl⟩ : ∃ b, n = b + k := ⟨n - k, (Nat.sub_add_cancel hw.2.2).symm⟩
-      simp only [hG, Nat.add_sub_cancel]
-      congr 1
-      rw [mul_pow]
-      ring
+    rw [← sum_sigma_range_min_eq_sum_filter_cube G N]
+    refine Finset.sum_congr rfl ?_
+    -- On the triangle `m = a + k`, `n = b + k`, so the scalar `t ^ m * u ^ n` is `G`'s
+    -- `u ^ b * (t * u) ^ k * t ^ a`.
+    rintro ⟨⟨m, n⟩, k⟩ hw
+    simp only [Finset.mem_sigma, Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff,
+      le_min_iff] at hw
+    obtain ⟨a, rfl⟩ : ∃ a, m = a + k := ⟨m - k, (Nat.sub_add_cancel hw.2.1).symm⟩
+    obtain ⟨b, rfl⟩ : ∃ b, n = b + k := ⟨n - k, (Nat.sub_add_cancel hw.2.2).symm⟩
+    simp only [hG, Nat.add_sub_cancel]
+    congr 1
+    rw [mul_pow]
+    ring
   -- Step 4: the terms of the cube outside that part vanish.
   have hsub : ∑ w ∈ range N ×ˢ range N ×ˢ range N with w.1 + w.2.1 < N ∧ w.2.2 + w.2.1 < N,
         G w = ∑ w ∈ range N ×ˢ range N ×ˢ range N, G w := by
