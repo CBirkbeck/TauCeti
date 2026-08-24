@@ -37,24 +37,6 @@ fixes the double coset of any `x ∈ Δ₀(N)` whose determinant divides a power
 *bad-prime* half of the hypothesis `HeckeCosetModule.mul_comm_of_antiInvolution` takes for
 commutativity of `R(Γ₀(N), Δ₀(N))` (Shimura, Proposition 3.8). The coprime half is separate.
 
-## Main results
-
-* `HeckeRing.GL2.atkinLehnerAntiInvolution`: the anti-involution of the Hecke pair.
-* `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_val`: its entrywise action on a `Δ₀(N)` witness.
-* `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_det`: it preserves the determinant.
-* `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_dvd_pow`: it fixes the double
-  coset when the determinant divides a power of the level.
-
-Ported from the AINTLIB `LeanModularForms` project (Chris Birkbeck),
-[`HeckeRIngs/GLn/CongruenceHecke/AtkinLehner.lean`](https://github.com/CBirkbeck/AINTLIB),
-declarations `wN`, `Gamma0_AL_hom`, `Gamma0_AL_involutive`, `Gamma0_AL_map_H`,
-`Gamma0_AL_map_Δ` and `Gamma0_antiInvolution`, and — for the results added here —
-`Gamma0_AL_bar_det` and `Gamma0_AL_in_DC_bad`, all Apache-2.0 at commit
-`2baa76f742bdb4fb8ee323fabba41203bd390e08`. The source states its own transpose equivalence
-and diagonal-matrix API; here those come from `GLn/TransposeAntiInvolution.lean` and
-`GLn/DiagonalCosets.lean` instead, and the four-field bundle is assembled by
-`HeckeAntiInvolution.ofAmbient`.
-
 ## Main definitions
 
 * `HeckeRing.GL2.atkinLehnerAntiInvolution`: the anti-involution of the `Γ₀(N)` Hecke pair.
@@ -63,11 +45,24 @@ and diagonal-matrix API; here those come from `GLn/TransposeAntiInvolution.lean`
 
 * `HeckeRing.GL2.atkinLehnerAntiInvolution_bar`: how it acts, `g ↦ w · gᵀ · w⁻¹`. The bundle
   itself is opaque, so this is the elimination rule a consumer works with.
+* `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_val`: its entrywise action on a `Δ₀(N)` witness.
+* `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_det`: it preserves the determinant.
+* `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_dvd_pow`: it fixes the double
+  coset when the determinant divides a power of the level.
 
 ## References
 
 * [G. Shimura, *Introduction to the arithmetic theory of automorphic functions*][shimura1971],
   Proposition 3.8.
+* Ported from the AINTLIB `LeanModularForms` project (Chris Birkbeck),
+  [`HeckeRIngs/GLn/CongruenceHecke/AtkinLehner.lean`](https://github.com/CBirkbeck/AINTLIB),
+  declarations `wN`, `Gamma0_AL_hom`, `Gamma0_AL_involutive`, `Gamma0_AL_map_H`,
+  `Gamma0_AL_map_Δ` and `Gamma0_antiInvolution`, and — for the results added here —
+  `Gamma0_AL_bar_det` and `Gamma0_AL_in_DC_bad`, all Apache-2.0 at commit
+  `2baa76f742bdb4fb8ee323fabba41203bd390e08`. The source states its own transpose equivalence
+  and diagonal-matrix API; here those come from `GLn/TransposeAntiInvolution.lean` and
+  `GLn/DiagonalCosets.lean` instead, and the four-field bundle is assembled by
+  `HeckeAntiInvolution.ofAmbient`.
 -/
 
 public section
