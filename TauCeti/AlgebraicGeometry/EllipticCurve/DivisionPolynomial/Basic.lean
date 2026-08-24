@@ -14,13 +14,20 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.NormalForms
 Mathlib gives the univariate polynomials `Φₙ` in two registers. `Φ_three` and `Φ_four` are stated
 through the division polynomials `Ψ₃`, `preΨ₄` and `Ψ₂Sq`; `Φ_two` is stated through the
 `b`-invariants, as `X ^ 4 - C b₄ * X ^ 2 - C (2 * b₆) * X - C b₈`. This file supplies the `n = 2`
-member of the first register, which Mathlib does not have.
+member of the first register, which Mathlib does not have, together with the one evaluation
+identity that the same Nagell–Lutz route needs and Mathlib likewise lacks: what `ψ₂` reduces to on
+a curve in characteristic-≠-2 normal form.
 
 ## Main results
 
 * `WeierstrassCurve.Φ_two_eq_X_mul_Ψ₂Sq_sub_Ψ₃`: `Φ₂ = X · Ψ₂Sq - Ψ₃`.
 * `WeierstrassCurve.eval_Ψ₃_eq_sub_mul_eval_Ψ₂Sq`: its consumer — from the cleared doubling
   relation `x' · ΨSq₂(x) = Φ₂(x)`, the factorisation `Ψ₃(x) = (x - x') · Ψ₂Sq(x)`.
+* `WeierstrassCurve.evalEval_ψ₂_of_isCharNeTwoNF`: `ψ₂(x, y) = 2y` whenever `a₁ = a₃ = 0`. The
+  two-division polynomial is `2y + a₁x + a₃`, so Mathlib's `IsCharNeTwoNF` collapses it. It sits
+  here rather than with its consumer because it is a plain identity among Mathlib's division
+  polynomials over any commutative ring — the same reason as the two above — and because a
+  consumer-side home would tie its availability to torsion imports it does not need.
 
 Both hold over an arbitrary commutative ring, with no point of a curve, no ellipticity and no
 division; the first has no hypothesis at all and the second's is an equation between ring elements.
@@ -37,8 +44,11 @@ names the discriminant half of the theorem twice: at `:827` as
 "`lutz_nagell_integrality_general`, with its discriminant companion", and in the Layer 6 note at
 `:1163`–`:1170` as "the `κ² ∣ 4Δ` discriminant form". The `Φ 2` identity is the step that turns the
 doubling formula for the `x`-coordinate into the factorisation `Ψ₃(x) = (x - x')·Ψ₂Sq(x)` that
-argument runs on. The rest of that route — the point-level doubling formula and
-`lutz_nagell_integrality_general` — is not in this repository yet, and nothing here assumes it.
+argument runs on, and `evalEval_ψ₂_of_isCharNeTwoNF` is what turns `ψ₂` into `2y` once the model
+is short. The rest of that route has since landed — the point-level doubling formula in
+`DivisionPolynomial/Descent.lean` and the integrality theorem as
+`isInteger_or_order_two_of_torsion` — so the consumers named above now exist. Nothing in this file
+assumes them: every declaration here is a statement about polynomials.
 
 ## Provenance
 
@@ -57,6 +67,11 @@ The factorisation is also unnamed there: it is the anonymous
 wrappers have fired. `PIDMain.lean:390` carries a variant of the same step with `κ₀ ^ 2` already
 substituted for `Ψ₂Sq(x)`. Here it is stated over any commutative ring, since nothing in it needs a
 field, and it takes the doubling relation as a hypothesis rather than reconstructing it.
+
+`evalEval_ψ₂_of_isCharNeTwoNF` is **not** from that source. It began as a `shortCurve`-specific
+identity in the short-model port and was generalised to `IsCharNeTwoNF` when review observed that
+its one-line proof never uses `a₂ = 0`; `shortCurve` picks it up through Mathlib's
+`isCharNeTwoNF_of_isShortNF`.
 
 The source's two `eval`-level wrappers themselves are deliberately not ported. `Phi2_eval_eq` is
 the `Φ 2` identity followed by `eval_sub, eval_mul, eval_X`, and `PsiSq_two_eval_eq` is Mathlib's
