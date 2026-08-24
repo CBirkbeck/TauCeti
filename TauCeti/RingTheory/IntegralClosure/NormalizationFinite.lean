@@ -5,7 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.LinearAlgebra.Dual.Lemmas
+-- Proof-only: the dual space appears in the private induction helpers, not in any statement.
+import Mathlib.LinearAlgebra.Dual.Lemmas
 public import Mathlib.RingTheory.Localization.Integral
 public import Mathlib.RingTheory.OrderOfVanishing.Basic
 public import TauCeti.RingTheory.Length
@@ -115,28 +116,16 @@ exactly one dimension. -/
 private theorem finrank_ker_inf_add_one [Module.Finite K V] (φ : Module.Dual K V) {x : V}
     (hφx : φ x = 1) {U : Submodule K V} (hxU : x ∈ U) :
     Module.finrank K ↥(LinearMap.ker φ ⊓ U) + 1 = Module.finrank K ↥U := by
-  have hx : x ≠ 0 := fun h => by rw [h, map_zero] at hφx; exact zero_ne_one hφx
-  set W : Submodule K V := K ∙ x with hWdef
-  have hWU : W ≤ U := by
-    rw [hWdef, Submodule.span_le]
-    exact Set.singleton_subset_iff.mpr hxU
-  have hsup : W ⊔ (LinearMap.ker φ ⊓ U) = U := by
-    refine le_antisymm (sup_le hWU inf_le_right) fun u hu => ?_
-    have h1 : φ u • x ∈ W := Submodule.mem_span_singleton.mpr ⟨φ u, rfl⟩
-    have h2 : u - φ u • x ∈ LinearMap.ker φ ⊓ U :=
-      ⟨by simp [hφx], U.sub_mem hu (U.smul_mem _ hxU)⟩
-    have hdec : u = φ u • x + (u - φ u • x) := by abel
-    rw [hdec]
-    exact Submodule.add_mem_sup h1 h2
-  have hinf : W ⊓ (LinearMap.ker φ ⊓ U) = ⊥ := by
-    refine eq_bot_iff.mpr fun y hy => ?_
-    obtain ⟨hyW, hyU'⟩ := hy
-    obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.mp hyW
-    have hc0 : c = 0 := by simpa [hφx] using hyU'.1
-    simp [hc0]
-  have hadd := Submodule.finrank_sup_add_finrank_inf_eq W (LinearMap.ker φ ⊓ U)
-  rw [hsup, hinf, finrank_span_singleton hx, finrank_bot] at hadd
-  omega
+  have hne : φ.domRestrict U ≠ 0 := fun h => by
+    have hx : (φ.domRestrict U) ⟨x, hxU⟩ = 0 := by rw [h]; rfl
+    rw [LinearMap.domRestrict_apply] at hx
+    simp [hφx] at hx
+  have hker : LinearMap.ker (φ.domRestrict U)
+      = Submodule.comap U.subtype (LinearMap.ker φ ⊓ U) := by
+    rw [LinearMap.ker_domRestrict, Submodule.comap_inf, Submodule.comap_subtype_self, inf_top_eq]
+  have hfin := Module.Dual.finrank_ker_add_one_of_ne_zero hne
+  rwa [hker, (Submodule.comapSubtypeEquivOfLe
+    (inf_le_right : LinearMap.ker φ ⊓ U ≤ U)).finrank_eq] at hfin
 
 end Projection
 
@@ -151,10 +140,8 @@ variable {A V : Type*} [CommRing A] [AddCommGroup V] [Module A V]
 private theorem ker_mkQ_comp_codRestrict {V : Type*} [AddCommGroup V] [Module A V]
     (e : V →ₗ[A] V) (M : Submodule A V) (a : A) :
     LinearMap.ker ((LinearMap.range (LinearMap.lsmul A ↥(M.map e) a)).mkQ ∘ₗ
-        LinearMap.codRestrict (M.map e) (e ∘ₗ M.subtype)
-          (fun y => Submodule.mem_map_of_mem y.2))
-      = LinearMap.range (LinearMap.lsmul A ↥M a) ⊔
-          Submodule.comap M.subtype (LinearMap.ker e) := by
+        LinearMap.codRestrict (M.map e) (e ∘ₗ M.subtype) (fun y => Submodule.mem_map_of_mem y.2))
+      = LinearMap.range (LinearMap.lsmul A ↥M a) ⊔ Submodule.comap M.subtype (LinearMap.ker e) := by
   set g : ↥M →ₗ[A] ↥(M.map e) :=
     LinearMap.codRestrict (M.map e) (e ∘ₗ M.subtype) (fun y => Submodule.mem_map_of_mem y.2)
   refine le_antisymm (fun y hy => ?_) (sup_le ?_ ?_)
@@ -313,8 +300,7 @@ variable {V : Type*} [AddCommGroup V] [Module K V] [Module A V] [IsScalarTower A
 `n` on the dimension of a `K`-subspace containing it. -/
 private theorem length_quotient_lsmul_le_of_finrank_le [IsNoetherianRing A] [Ring.KrullDimLE 1 A]
     [Module.Finite K V] (a : A) (ha : a ≠ 0) (n : ℕ) (U : Submodule K V)
-    (hU : Module.finrank K U ≤ n) (M : Submodule A V) (hM : M ≤ U.restrictScalars A)
-    (hfg : M.FG) :
+    (hU : Module.finrank K U ≤ n) (M : Submodule A V) (hM : M ≤ U.restrictScalars A) (hfg : M.FG) :
     Module.length A (↥M ⧸ LinearMap.range (LinearMap.lsmul A ↥M a))
       ≤ n * Module.length A (A ⧸ Ideal.span {a}) := by
   induction n generalizing U M with
@@ -421,8 +407,8 @@ variable {L : Type*} [Field L] [Algebra A L]
 
 omit [IsNoetherianRing A] [Ring.KrullDimLE 1 A] in
 /-- A nonzero ideal of the integral closure meets `A` in a nonzero element. -/
-theorem exists_ne_zero_algebraMap_mem (K : Type*) [Field K] [Algebra A K] [IsFractionRing A K]
-    [Algebra K L] [IsScalarTower A K L] [Algebra.IsAlgebraic K L]
+theorem integralClosure.exists_ne_zero_algebraMap_mem (K : Type*) [Field K] [Algebra A K]
+    [IsFractionRing A K] [Algebra K L] [IsScalarTower A K L] [Algebra.IsAlgebraic K L]
     {𝔟 : Ideal (integralClosure A L)} (h0 : 𝔟 ≠ ⊥) :
     ∃ a : A, a ≠ 0 ∧ algebraMap A (integralClosure A L) a ∈ 𝔟 := by
   obtain ⟨β, hβ𝔟, hβ0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot h0
@@ -453,7 +439,7 @@ theorem integralClosure.isNoetherianRing (K : Type*) [Field K] [Algebra A K] [Is
   rcases eq_or_ne 𝔟 ⊥ with rfl | h0
   · exact Submodule.fg_bot
   have halgK : Algebra.IsAlgebraic K L := Algebra.IsAlgebraic.of_finite K L
-  obtain ⟨a, ha0, hα𝔟⟩ := exists_ne_zero_algebraMap_mem (L := L) K h0
+  obtain ⟨a, ha0, hα𝔟⟩ := integralClosure.exists_ne_zero_algebraMap_mem (L := L) K h0
   set α : integralClosure A L := algebraMap A _ a with hαdef
   set P : Submodule A (integralClosure A L) :=
     LinearMap.range (LinearMap.lsmul A (integralClosure A L) a) with hPdef

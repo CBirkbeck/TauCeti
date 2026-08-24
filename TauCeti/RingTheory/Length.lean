@@ -52,8 +52,7 @@ theorem length_quotient_le_of_le {P Q : Submodule A M} (h : P ≤ Q) :
 /-- **Filtration additivity.** The image of `N` in `M ⧸ P` and the further quotient
 `M ⧸ (P ⊔ N)` account between them for the whole of `M ⧸ P`. -/
 theorem length_quotient_eq_length_map_add_length_quotient_sup (N P : Submodule A M) :
-    Module.length A (M ⧸ P) =
-      Module.length A (N.map P.mkQ) + Module.length A (M ⧸ (P ⊔ N)) := by
+    Module.length A (M ⧸ P) = Module.length A (N.map P.mkQ) + Module.length A (M ⧸ (P ⊔ N)) := by
   rw [← (Submodule.quotientQuotientEquivQuotientSup P N).length_eq]
   exact Module.length_eq_add_of_exact (N.map P.mkQ).subtype (N.map P.mkQ).mkQ
     (Submodule.subtype_injective _) (Submodule.mkQ_surjective _)
@@ -71,8 +70,7 @@ theorem length_map_mkQ (N P : Submodule A M) :
   exact ((LinearMap.quotKerEquivRange (P.mkQ ∘ₗ N.subtype)).length_eq).symm
 
 /-- **Length is detected by finitely generated submodules.** -/
-theorem length_le_of_forall_fg {c : ℕ∞}
-    (h : ∀ N : Submodule A M, N.FG → Module.length A N ≤ c) :
+theorem length_le_of_forall_fg {c : ℕ∞} (h : ∀ N : Submodule A M, N.FG → Module.length A N ≤ c) :
     Module.length A M ≤ c := by
   rcases eq_or_ne c ⊤ with rfl | hc
   · exact le_top
@@ -132,8 +130,7 @@ theorem comap_subtype_map_lsmul (N : Submodule A M) (a : A) :
 
 /-- A linear equivalence identifies `M ⧸ aM` with `M' ⧸ aM'`. -/
 theorem length_quotient_lsmul_congr {M' : Type*} [AddCommGroup M'] [Module A M']
-    (e : M ≃ₗ[A] M') (a : A) :
-    Module.length A (M ⧸ LinearMap.range (LinearMap.lsmul A M a))
+    (e : M ≃ₗ[A] M') (a : A) : Module.length A (M ⧸ LinearMap.range (LinearMap.lsmul A M a))
       = Module.length A (M' ⧸ LinearMap.range (LinearMap.lsmul A M' a)) := by
   refine (Submodule.Quotient.equiv _ _ e ?_).length_eq
   ext y
@@ -145,8 +142,7 @@ theorem length_quotient_lsmul_congr {M' : Type*} [AddCommGroup M'] [Module A M']
     exact ⟨a • e.symm w, ⟨e.symm w, rfl⟩, by simp⟩
 
 /-- **Reduction of the length of `M ⧸ aM` to finitely generated submodules.** -/
-theorem length_quotient_lsmul_le_of_forall_fg {a : A} {c : ℕ∞}
-    (h : ∀ N : Submodule A M, N.FG →
+theorem length_quotient_lsmul_le_of_forall_fg {a : A} {c : ℕ∞} (h : ∀ N : Submodule A M, N.FG →
       Module.length A (↥N ⧸ LinearMap.range (LinearMap.lsmul A ↥N a)) ≤ c) :
     Module.length A (M ⧸ LinearMap.range (LinearMap.lsmul A M a)) ≤ c := by
   set P : Submodule A M := LinearMap.range (LinearMap.lsmul A M a)
