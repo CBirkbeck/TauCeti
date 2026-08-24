@@ -658,7 +658,9 @@ private lemma typeCSimpleRoot_dotProduct_typeCDualVec (i j : Fin n) :
 private lemma linearIndependent_typeCSimpleRoot (n : ℕ) :
     LinearIndependent ℤ (typeCSimpleRoot (n := n)) :=
   linearIndependent_of_dotProduct_diagonal (c := fun i => if (i : ℕ) + 1 = n then 2 else 1)
-    (fun _ => by split_ifs <;> norm_num) typeCSimpleRoot_dotProduct_typeCDualVec
+    (w := fun j : Fin n => typeCDualVec n (j : ℕ)) (fun _ => by split_ifs <;> norm_num)
+    (fun i => by simp [typeCSimpleRoot_dotProduct_typeCDualVec])
+    (fun i j hij => by simp [typeCSimpleRoot_dotProduct_typeCDualVec, hij])
 
 private lemma linearIndependent_typeCSimpleCoroot (n : ℕ) :
     LinearIndependent ℤ (typeCSimpleCoroot (n := n)) := by

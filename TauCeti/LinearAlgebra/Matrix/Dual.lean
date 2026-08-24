@@ -46,21 +46,20 @@ instance dotProductBilin_isPerfPair (R ι : Type*) [CommRing R] [Fintype ι] :
 /-- **A family paired diagonally by a second family is linearly independent.** If `v i ⬝ᵥ w j`
 vanishes whenever `i ≠ j` and is a nonzero scalar when `i = j`, the `v i` are linearly independent.
 The diagonal entries need only be nonzero, not units, so this applies over `ℤ` with diagonal `2`.
-The family index `κ` and the coordinate index `ι` are unrelated, and the scalars need not
-commute. -/
-theorem linearIndependent_of_dotProduct_diagonal {κ ι R : Type*} [Finite κ] [DecidableEq κ]
+The family index `κ` is arbitrary — neither finite nor decidable — and unrelated to the coordinate
+index `ι`; the scalars need not commute. -/
+theorem linearIndependent_of_dotProduct_diagonal {κ ι R : Type*}
     [Fintype ι] [Ring R] [NoZeroDivisors R] {v w : κ → ι → R} {c : κ → R}
-    (hc : ∀ i, c i ≠ 0) (h : ∀ i j, v i ⬝ᵥ w j = if i = j then c i else 0) :
+    (hc : ∀ i, c i ≠ 0) (hdiag : ∀ i, v i ⬝ᵥ w i = c i)
+    (hoff : ∀ i j, i ≠ j → v i ⬝ᵥ w j = 0) :
     LinearIndependent R v := by
-  have : Fintype κ := Fintype.ofFinite κ
-  rw [Fintype.linearIndependent_iff]
-  intro g hg j
+  rw [linearIndependent_iff']
+  intro s g hg j hj
   -- pairing the relation with `w j` kills every term but the `j`-th, leaving `g j * c j = 0`
-  have hj := congrArg (· ⬝ᵥ w j) hg
-  simp only [sum_dotProduct, smul_dotProduct, smul_eq_mul, zero_dotProduct, h, mul_ite,
-    mul_zero] at hj
-  rw [Finset.sum_ite_eq' Finset.univ j fun i => g i * c i] at hj
-  simp only [Finset.mem_univ, ite_true] at hj
-  exact (mul_eq_zero.1 hj).resolve_right (hc j)
+  have hpair := congrArg (· ⬝ᵥ w j) hg
+  simp only [sum_dotProduct, smul_dotProduct, smul_eq_mul, zero_dotProduct] at hpair
+  rw [Finset.sum_eq_single j (fun i _ hij => by rw [hoff i j hij, mul_zero])
+      (fun hns => absurd hj hns), hdiag] at hpair
+  exact (mul_eq_zero.1 hpair).resolve_right (hc j)
 
 end TauCeti

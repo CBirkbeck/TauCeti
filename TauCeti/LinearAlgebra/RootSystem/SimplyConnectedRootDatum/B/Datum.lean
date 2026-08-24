@@ -514,8 +514,10 @@ private lemma typeBSimpleRoot_dotProduct_typeBDualVec (i j : Fin n) :
 
 private lemma linearIndependent_typeBSimpleRoot (n : ℕ) :
     LinearIndependent ℤ fun i : Fin n => weight n (i : ℕ) - weight n ((i : ℕ) + 1) :=
-  linearIndependent_of_dotProduct_diagonal (c := fun _ => 2) (fun _ => by norm_num)
-    typeBSimpleRoot_dotProduct_typeBDualVec
+  linearIndependent_of_dotProduct_diagonal (c := fun _ => 2)
+    (w := fun j : Fin n => typeBDualVec n (j : ℕ)) (fun _ => by norm_num)
+    (fun i => by rw [typeBSimpleRoot_dotProduct_typeBDualVec]; simp)
+    (fun i j hij => by rw [typeBSimpleRoot_dotProduct_typeBDualVec]; simp [hij])
 
 /-- The support of the pinned base of type `Bₙ`: the first `n` root indices. -/
 private abbrev typeBSimpleSupport (n : ℕ) : Finset (Fin (2 * n ^ 2)) :=
