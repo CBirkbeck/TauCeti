@@ -43,6 +43,9 @@ The route is doubling. `κ ≠ 0` forces `2 • P ≠ 0`, so `2 • P` has an af
 * `WeierstrassCurve.evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ`: the companion over a UFD `R`,
   taking the same sharp disjunction as `isInteger_or_order_two_of_torsion` but read at `2 • P`,
   guarded by `2 < addOrderOf (2 • P)`.
+* `WeierstrassCurve.evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_of_squarefree`: the same conclusion
+  from a *uniform* hypothesis — squarefreeness at every prime dividing `addOrderOf (2 • P)` —
+  which is strictly stronger but is the form a caller usually has.
 * `WeierstrassCurve.evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_rat`: the `ℤ`/`ℚ` specialisation,
   assuming only that the point is torsion with integral coordinates.
 
@@ -208,24 +211,41 @@ theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ {x y : K}
   refine Or.inr (dvd_four_mul_Δ_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃ W (evalEval_ψ₂_sq W hEq).dvd ?_)
   exact sq_evalEval_ψ₂_dvd_four_mul_eval_Ψ₃ W hns htor hsf hx hEq hκK
 
+/-- **The discriminant companion from a uniform hypothesis.** The same conclusion, asking
+squarefreeness at *every* prime dividing `addOrderOf (2 • P)` rather than at the one branch the
+proof lands in.
+
+That is strictly stronger, and it is the form a caller usually has, because it needs no knowledge
+of which branch the order falls into. The dichotomy — an order above `2` is divisible by `4` or by
+an odd prime — is `Nat.four_dvd_or_exists_odd_prime_and_dvd_of_two_lt`, and running it here rather
+than in each caller is the point of the wrapper. This mirrors
+`isInteger_or_order_two_of_torsion_of_squarefree` one file down. -/
+theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_of_squarefree {x y : K}
+    (hns : (W.baseChange K).toAffine.Nonsingular x y)
+    (htor : IsOfFinAddOrder (Affine.Point.some _ _ hns))
+    (hsf : ∀ p : ℕ, p.Prime → p ∣ addOrderOf ((2 : ℕ) • Affine.Point.some _ _ hns) →
+      Squarefree ((p : ℤ) : R))
+    {x₀ y₀ : R} (hx : algebraMap R K x₀ = x) (hy : algebraMap R K y₀ = y) :
+    W.ψ₂.evalEval x₀ y₀ = 0 ∨ W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * W.Δ := by
+  refine evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ W hns htor (fun h2 ↦ ?_) hx hy
+  rcases Nat.four_dvd_or_exists_odd_prime_and_dvd_of_two_lt h2 with h4 | ⟨p, hp, hpd, hodd⟩
+  · exact Or.inl ⟨h4, by simpa using hsf 2 Nat.prime_two ((by norm_num : (2 : ℕ) ∣ 4).trans h4)⟩
+  · refine Or.inr ⟨p, hp, ?_, hpd, hsf p hp hpd⟩
+    rintro rfl
+    simp [Nat.odd_iff] at hodd
+
 /-- **The discriminant companion over `ℚ`**, the form the roadmap asks for: for an integral long
 Weierstrass model, a torsion point with integral coordinates has `ψ₂ = 0` there, or `ψ₂²` divides
 `4Δ`. For a short model (`a₁ = a₃ = 0`) `ψ₂` is `2y`, so this reads `y = 0` or `4y² ∣ 4Δ`.
 
-As with `isInteger_or_order_two_of_torsion_rat`, no arithmetic hypothesis survives: over `ℤ` a
-rational prime is squarefree, so the general statement's hypothesis discharges outright. -/
+As with `isInteger_or_order_two_of_torsion_rat`, no arithmetic hypothesis survives: over `ℤ` every
+rational prime is squarefree, so the uniform hypothesis discharges outright. -/
 theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_rat {W : WeierstrassCurve ℤ} {x y : ℚ}
     (hns : (W.baseChange ℚ).toAffine.Nonsingular x y)
     (htor : IsOfFinAddOrder (Affine.Point.some _ _ hns))
     {x₀ y₀ : ℤ} (hx : algebraMap ℤ ℚ x₀ = x) (hy : algebraMap ℤ ℚ y₀ = y) :
-    W.ψ₂.evalEval x₀ y₀ = 0 ∨ W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * W.Δ := by
-  refine evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ W hns htor (fun h2 ↦ ?_) hx hy
-  -- Purely arithmetic: an order above `2` is divisible by `4` or by an odd prime, and over `ℤ`
-  -- both `2` and every odd prime are squarefree, so whichever branch it is discharges at once.
-  rcases Nat.four_dvd_or_exists_odd_prime_and_dvd_of_two_lt h2 with h4 | ⟨p, hp, hpd, hodd⟩
-  · exact Or.inl ⟨h4, Int.prime_two.squarefree⟩
-  · refine Or.inr ⟨p, hp, ?_, hpd, by simpa using (Nat.prime_iff_prime_int.mp hp).squarefree⟩
-    rintro rfl
-    simp [Nat.odd_iff] at hodd
+    W.ψ₂.evalEval x₀ y₀ = 0 ∨ W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * W.Δ :=
+  evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_of_squarefree W hns htor
+    (fun p hp _ ↦ by simpa using (Nat.prime_iff_prime_int.mp hp).squarefree) hx hy
 
 end WeierstrassCurve
