@@ -38,6 +38,15 @@ pseudouniformiser needs to be chosen.
 
 * [Bosch, Güntzer, Remmert, *Non-Archimedean Analysis*][bosch_guntzer_remmert], §3.7.2/1.
 * [Wedhorn, *Adic Spaces*][wedhorn_adic], Propositions 6.17–6.18.
+
+Adapted from the AINTLIB development (`github.com/smwyin/aintlib`, Apache-2.0), branch
+`dev/adic-spaces` at commit `37bbdaeb9ad9`, file
+`projects/AdicSpaces/Adic spaces/WedhornBanachTheorem.lean`, where the same statement is
+`eq_top_of_dense_of_finite`. The argument is AINTLIB's; three things differ. The target is
+separated by `T0Space` rather than `T2Space`. The neighbourhood of topologically nilpotent
+scalars is the image of the ideal of definition rather than `ϖ • A⁰` for a chosen
+pseudouniformiser, so no unit has to be produced. And the open presentation is the named
+`TauCeti.Huber.IsTateRing.isOpenMap_linearCombination` rather than a locally built linear map.
 -/
 
 open Filter Topology
