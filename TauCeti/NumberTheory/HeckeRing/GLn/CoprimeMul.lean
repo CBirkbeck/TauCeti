@@ -293,6 +293,37 @@ private lemma diagConj_scaling (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
     (Int.cast_ne_zero.mpr (ne_of_gt (Int.natCast_pos.mpr (ha i))))]
   ring
 
+/-- Companion of `diagConj_scaling` with the inverse on the other side: conjugating an
+integral matrix by the diagonal itself, rather than by its inverse, likewise scales entries by
+at worst the full diagonal product. -/
+private lemma diagConj_scaling_inv_right (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
+    (G : SpecialLinearGroup (Fin n) ℤ) (p q : Fin n) : ∃ z : ℤ, (∏ k, (b k : ℚ)) *
+      ((↑(natDiagGL n b * mapGL ℚ G * (natDiagGL n b)⁻¹) : Matrix (Fin n) (Fin n) ℚ) p q) = z := by
+  set D := natDiagGL n b * mapGL ℚ G * (natDiagGL n b)⁻¹ with hD_def
+  have h_D_entry : (↑D : Matrix (Fin n) (Fin n) ℚ) p q =
+      (b p : ℚ) * (G.val p q : ℚ) * ((b q : ℚ)⁻¹) := by
+    have h_Db : D * natDiagGL n b = natDiagGL n b * mapGL ℚ G := by
+      rw [hD_def]
+      group
+    have h_entry := congr_arg
+      (fun g : GL (Fin n) ℚ ↦ (↑g : Matrix (Fin n) (Fin n) ℚ) p q) h_Db
+    simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
+      RingHom.mapMatrix_apply, Int.coe_castRingHom, Units.val_mul, natDiagGL_coe n b hb,
+      Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply] at h_entry
+    have hbq_ne : (b q : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (hb q).ne'
+    field_simp at h_entry ⊢
+    linarith
+  rw [h_D_entry]
+  have h_dvd : (b q : ℤ) ∣ ∏ k, (b k : ℤ) := Finset.dvd_prod_of_mem _ (Finset.mem_univ q)
+  refine ⟨(∏ k, (b k : ℤ)) / (b q : ℤ) * (b p : ℤ) * G.val p q, ?_⟩
+  have h_div_eq : (∏ k, (b k : ℚ)) * ((b p : ℚ) * (G.val p q : ℚ) * ((b q : ℚ)⁻¹)) =
+      (∏ k, (b k : ℚ)) / (b q : ℚ) * ((b p : ℚ) * (G.val p q : ℚ)) := by
+    rw [div_eq_mul_inv]
+    ring
+  rw [h_div_eq]
+  push_cast [Int.cast_div h_dvd (Int.cast_ne_zero.mpr (Int.natCast_ne_zero.mpr (hb q).ne'))]
+  ring
+
 /-- Sandwiching by the diagonal and its inverse scales entries by at worst the full
 diagonal product, uniformly in the three integral factors. -/
 private lemma diagSandwich_scaling (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
@@ -315,31 +346,8 @@ private lemma diagSandwich_scaling (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
     simp only [Finset.sum_mul, mul_assoc]
     rw [Finset.sum_comm]
   have h_D_scale : ∀ p q, ∃ z : ℤ,
-      (∏ k, (b k : ℚ)) * (↑D : Matrix (Fin n) (Fin n) ℚ) p q = z := by
-    intro p q
-    have h_D_entry : (↑D : Matrix (Fin n) (Fin n) ℚ) p q =
-        (b p : ℚ) * (G.val p q : ℚ) * ((b q : ℚ)⁻¹) := by
-      have h_Db : D * natDiagGL n b = natDiagGL n b * mapGL ℚ G := by
-        rw [hD_def]
-        group
-      have h_entry := congr_arg
-        (fun g : GL (Fin n) ℚ ↦ (↑g : Matrix (Fin n) (Fin n) ℚ) p q) h_Db
-      simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
-      RingHom.mapMatrix_apply, Int.coe_castRingHom, Units.val_mul, natDiagGL_coe n b hb,
-        Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply] at h_entry
-      have hbq_ne : (b q : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (hb q).ne'
-      field_simp at h_entry ⊢
-      linarith
-    rw [h_D_entry]
-    have h_dvd : (b q : ℤ) ∣ ∏ k, (b k : ℤ) := Finset.dvd_prod_of_mem _ (Finset.mem_univ q)
-    refine ⟨(∏ k, (b k : ℤ)) / (b q : ℤ) * (b p : ℤ) * G.val p q, ?_⟩
-    have h_div_eq : (∏ k, (b k : ℚ)) * ((b p : ℚ) * (G.val p q : ℚ) * ((b q : ℚ)⁻¹)) =
-        (∏ k, (b k : ℚ)) / (b q : ℚ) * ((b p : ℚ) * (G.val p q : ℚ)) := by
-      rw [div_eq_mul_inv]
-      ring
-    rw [h_div_eq]
-    push_cast [Int.cast_div h_dvd (Int.cast_ne_zero.mpr (Int.natCast_ne_zero.mpr (hb q).ne'))]
-    ring
+      (∏ k, (b k : ℚ)) * (↑D : Matrix (Fin n) (Fin n) ℚ) p q = z :=
+    fun p q ↦ diagConj_scaling_inv_right n b hb G p q
   rw [h_C_entry, Finset.mul_sum]
   simp_rw [Finset.mul_sum, mul_assoc]
   refine ⟨∑ p, ∑ q, F.val i p * (h_D_scale p q).choose * E.val q j, ?_⟩
