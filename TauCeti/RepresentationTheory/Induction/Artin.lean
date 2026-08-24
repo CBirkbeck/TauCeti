@@ -131,11 +131,11 @@ variable [Finite G]
 /-! ### The sharp Artin identity -/
 
 open scoped Classical in
-/-- Weighting each cyclic subgroup containing `y` by its Artin coefficient gives `1`, in any field.
-The sum ranges over all cyclic subgroups, the ones missing `y` contributing zero. At `y = 1` every
-cyclic subgroup contributes, and the value is still `1`. -/
-private theorem sum_artinCoeff_cyclicSubgroups_containing_eq_one {k : Type u} [Ring k]
-    (y : G) :
+/-- Weighting each cyclic subgroup containing `y` by its Artin coefficient gives `1`. The sum ranges
+over all cyclic subgroups, the ones missing `y` contributing zero. At `y = 1` every cyclic subgroup
+contributes, and the value is still `1`. -/
+private theorem sum_artinCoeff_cyclicSubgroups_containing_eq_one {k : Type u}
+    [AddCommGroupWithOne k] (y : G) :
     (∑ C : CyclicSubgroup G,
       if _h : y ∈ (C : Subgroup G) then (artinCoeff C : k) else (0 : k)) = 1 := by
   -- Only the cyclic subgroups above `zpowers y` contribute, and over those the Artin coefficients
