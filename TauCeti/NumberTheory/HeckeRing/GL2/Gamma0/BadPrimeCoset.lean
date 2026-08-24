@@ -112,6 +112,24 @@ lemma exists_reduced_shear (A : Matrix (Fin 2) (Fin 2) ℤ) (m : ℕ) (hm_pos : 
   rwa [show t_inv * A 0 0 + -A 0 1 - (t_inv - t_inv % (m : ℤ)) * A 0 0
       = A 0 0 * (t_inv % (m : ℤ)) - A 0 1 by ring] at h
 
+/-- **The determinant of an integral witness.** If `A` represents `g ∈ GL₂(ℚ)` entrywise over
+`ℤ` and `g` has determinant `m`, then `A` has determinant `m` over `ℤ`.
+
+The `Δ₀(N)` membership predicate states positivity of the determinant on the `ℚ`-side while the
+column reduction works on the `ℤ`-side, so this cast bridge is needed to move between them.
+AINTLIB has it as `det_intMat_cast`; TauCeti has no equivalent, so it is stated here from
+Mathlib's `RingHom.map_det`. -/
+lemma intMat_det_of_coe (g : GL (Fin 2) ℚ) (A : Matrix (Fin 2) (Fin 2) ℤ)
+    (hA : (g : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ)) (m : ℕ)
+    (hdet : (g : Matrix (Fin 2) (Fin 2) ℚ).det = (m : ℚ)) :
+    A.det = (m : ℤ) := by
+  have h : ((A.det : ℤ) : ℚ) = (m : ℚ) := by
+    rw [← hdet, hA, Matrix.det_fin_two, Matrix.det_fin_two]
+    simp only [Matrix.map_apply]
+    push_cast
+    ring
+  exact_mod_cast h
+
 /-- **The cofactor pair is unimodular.** Given the two divisibility witnesses `q₁, q₂` produced
 by the column reduction, the matrix `!![A 0 0, -q₁; N * c₀, q₂]` has determinant one.
 
