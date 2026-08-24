@@ -49,7 +49,8 @@ surjection `unitsNDivisibleToSelmerGroup`.
 * `IsDedekindDomain.mem_selmerGroup_iff_mem_unitsNDivisible`: the Selmer condition on a
   representative is `n`-divisibility of its principal `𝒪_S`-ideal.
 * `IsDedekindDomain.ker_selmerGroupToClassGroup`: **exactness in the middle** — a Selmer class has
-  trivial `n`-th-root ideal class exactly when an `S`-unit represents it.
+  trivial `n`-th-root ideal class exactly when an `S`-unit represents it. This half needs no
+  `n ≠ 0`.
 * `IsDedekindDomain.range_selmerGroupToClassGroup`: **exactness on the right** — the image is the
   `n`-torsion of the `S`-class group. (Surjectivity onto the whole class group is false in
   general.)
@@ -240,8 +241,11 @@ lemma selmerGroupToClassGroup_unitsNDivisibleToSelmerGroup
     QuotientGroup.lift_mk']
 
 /-- **Exactness in the middle of the fundamental exact sequence.** A Selmer class has trivial
-`n`-th-root ideal class exactly when it is represented by an `S`-unit. -/
-theorem ker_selmerGroupToClassGroup [NeZero n] :
+`n`-th-root ideal class exactly when it is represented by an `S`-unit.
+
+No `[NeZero n]` is needed, unlike on the right-hand exactness below: `nthRootClass_eq_one_iff`
+is stated here for every `n`, degenerate `n = 0` included. -/
+theorem ker_selmerGroupToClassGroup :
     (selmerGroupToClassGroup K S n).ker = (unitToSelmerGroup K S n).range := by
   ext x
   obtain ⟨u, rfl⟩ := unitsNDivisibleToSelmerGroup_surjective K S n x
