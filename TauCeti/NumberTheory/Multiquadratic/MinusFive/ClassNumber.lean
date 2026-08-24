@@ -7,6 +7,7 @@ module
 
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import TauCeti.NumberTheory.Multiquadratic.MinusFive.Basic
+import TauCeti.NumberTheory.NumberField.PrimeIdeal
 import TauCeti.NumberTheory.NumberField.Quadratic.InfinitePlace
 import TauCeti.NumberTheory.NumberField.Quadratic.RingOfIntegers
 import TauCeti.NumberTheory.NumberField.Quadratic.TotalRamification
@@ -204,14 +205,14 @@ private theorem not_isPrincipal_primeAboveTwo
 
 /-- With Minkowski bound below `3` and `2` ramified in a quadratic field, every ideal class is
 trivial or the class of a prime `P` above `2`. -/
-private theorem classGroup_eq_one_or_mk0_of_minkowskiBound_lt_three
+private theorem class_eq_one_or_mk0_primeAboveTwo_of_minkowskiBound_lt_three
     (hfin : finrank ℚ K = 2) (hram : 2 ∈ ramifiedPrimes K)
     (hM : (4 / Real.pi) ^ InfinitePlace.nrComplexPlaces K *
         ((finrank ℚ K).factorial / (finrank ℚ K) ^ (finrank ℚ K) *
           Real.sqrt |(NumberField.discr K : ℝ)|) < 3)
-    (P : Ideal (𝓞 K)) [P.IsPrime] [P.LiesOver (span {(2 : ℤ)})] (hPne : P ≠ 0)
+    (P : Ideal (𝓞 K)) [P.IsPrime] [P.LiesOver (span {(2 : ℤ)})]
     (C : ClassGroup (𝓞 K)) :
-    C = 1 ∨ C = ClassGroup.mk0 ⟨P, mem_nonZeroDivisors_of_ne_zero hPne⟩ := by
+    C = 1 ∨ C = ClassGroup.mk0 ⟨P, mem_nonZeroDivisors_of_prime_of_liesOver Nat.prime_two P⟩ := by
   classical
   -- Minkowski gives a representative of norm at most `2`; norm `1` is principal and norm `2`
   -- must be the ramified prime.
@@ -263,7 +264,7 @@ theorem classNumber_eq_two_of_minpoly_eq_X_sq_add_five
       (by simpa [P0] using h)
   have hM := minkowski_bound_lt_three hmin hgen
   have hclasses : ∀ C : ClassGroup (𝓞 K), C = 1 ∨ C = ClassGroup.mk0 P0 :=
-    classGroup_eq_one_or_mk0_of_minkowskiBound_lt_three hfin hram hM P hPne
+    class_eq_one_or_mk0_primeAboveTwo_of_minkowskiBound_lt_three hfin hram hM P
   have hupper : NumberField.classNumber K ≤ 2 := by
     rw [NumberField.classNumber]
     calc
