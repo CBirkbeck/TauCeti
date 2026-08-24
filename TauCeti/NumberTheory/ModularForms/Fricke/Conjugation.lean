@@ -28,19 +28,19 @@ proving the product identities afterwards keeps the divisibility in one place,
 
 ## Level
 
-Everything about the conjugation requires `N ≠ 0`, carried as `[NeZero N]`. At `N = 0` the
-Fricke matrix is `!![0, -1; 0, 0]`, which is singular, so there is nothing to conjugate by. The
-entry formula below would still define *a* matrix there, but a degenerate one: `Γ₀(0)` is the
-upper-triangular subgroup, `lowerLeftDiv` is `0`, and the formula collapses to
-`!![a, b; 0, d] ↦ !![d, 0; 0, a]`, which forgets `b` and is conjugation by nothing. That map is
-not wanted, so `[NeZero N]` rules it out rather than the API quietly extending to it.
+`N ≠ 0` is what makes `W` invertible, and so what makes conjugation by `W` mean anything. It is
+needed for the *conjugation*, though, not for the entry formula, so it is stated where `W`
+itself appears: as `[NeZero (N : K)]` on the two normalization identities over `K`, which are
+the statements that actually call `frickeConjSL σ` a conjugate. The `ℤ`-valued declarations
+below carry no level hypothesis — the matrix `!![d, -c'; -N·b, a]` has determinant `1` and lies
+in both congruence subgroups for every `N`, `c = N · (c / N)` holding at `N = 0` as well, both
+sides being zero.
 
-`lowerLeftDiv` and `lowerLeftDiv_spec` are the exception and stay unrestricted, since
-`c = N · (c / N)` holds at `N = 0` as well, both sides being zero.
-
-The `K`-valued statements carry `[NeZero N]` next to `[NeZero (N : K)]`. The latter implies the
-former, by `NeZero.of_neZero_natCast`, but not as an instance — `K` cannot be recovered from
-`NeZero N` — so those signatures state both.
+Level zero is genuinely degenerate, and the declarations below are worded so that nothing
+claims otherwise: `Γ₀(0)` is the upper-triangular subgroup, `lowerLeftDiv` is `0`, and the
+formula collapses to `!![a, b; 0, d] ↦ !![d, 0; 0, a]`, which forgets `b`. That is a
+well-defined `SL(2, ℤ)`-valued map, just not a conjugation — and since `frickeGL K 0` does not
+exist, no identity here asserts that it is one.
 
 ## Base field
 
@@ -53,7 +53,8 @@ itself defined at an arbitrary algebra.
 ## Main definitions
 
 * `TauCeti.lowerLeftDiv`: for `σ ∈ Γ₀(N)`, the integer `c'` with `c = N · c'`.
-* `TauCeti.frickeConjSL`: for `N ≠ 0`, the conjugate `W · σ · W⁻¹` as an element of `SL(2, ℤ)`.
+* `TauCeti.frickeConjSL`: the matrix `!![d, -c'; -N·b, a]` as an element of `SL(2, ℤ)`;
+  for `N ≠ 0` it is the conjugate `W · σ · W⁻¹`.
 
 ## Main results
 
@@ -118,13 +119,14 @@ public theorem lowerLeftDiv_spec (σ : ↥(Gamma0 N)) :
   (Int.mul_ediv_cancel'
     ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp σ.property))).symm
 
-/-- The Fricke conjugate `W · σ · W⁻¹` of `σ = !![a, b; N·c', d] ∈ Γ₀(N)`, as an element of
-`SL(2, ℤ)`: the matrix `!![d, -c'; -N·b, a]`. Since `W² = (-N) • 1` is a scalar matrix, hence
-central, this equally describes `W⁻¹ · σ · W`.
+/-- The Fricke conjugate of `σ = !![a, b; N·c', d] ∈ Γ₀(N)`, as an element of `SL(2, ℤ)`: the
+matrix `!![d, -c'; -N·b, a]`.
 
-The hypothesis `N ≠ 0` is what makes `W` invertible, and so what makes this a conjugate at all;
+For `N ≠ 0` this is `W · σ · W⁻¹`, and equally `W⁻¹ · σ · W` since `W² = (-N) • 1` is central;
+that is the content of `frickeGL_mul_mapGL` and `mapGL_mul_frickeGL`, which carry the
+invertibility hypothesis. At `N = 0` the formula still defines a matrix, but a degenerate one;
 see the `Level` section of the module docstring. -/
-public def frickeConjSL [NeZero N] (σ : ↥(Gamma0 N)) : SL(2, ℤ) :=
+public def frickeConjSL (σ : ↥(Gamma0 N)) : SL(2, ℤ) :=
   ⟨!![(σ : Matrix (Fin 2) (Fin 2) ℤ) 1 1, -lowerLeftDiv σ;
       -(N : ℤ) * (σ : Matrix (Fin 2) (Fin 2) ℤ) 0 1, (σ : Matrix (Fin 2) (Fin 2) ℤ) 0 0], by
     have hc := lowerLeftDiv_spec σ
@@ -137,7 +139,7 @@ public def frickeConjSL [NeZero N] (σ : ↥(Gamma0 N)) : SL(2, ℤ) :=
 
 /-- The underlying matrix of `frickeConjSL σ`. -/
 @[simp]
-public theorem coe_frickeConjSL [NeZero N] (σ : ↥(Gamma0 N)) :
+public theorem coe_frickeConjSL (σ : ↥(Gamma0 N)) :
     (frickeConjSL σ : Matrix (Fin 2) (Fin 2) ℤ) =
       !![(σ : Matrix (Fin 2) (Fin 2) ℤ) 1 1, -lowerLeftDiv σ;
          -(N : ℤ) * (σ : Matrix (Fin 2) (Fin 2) ℤ) 0 1,
@@ -146,14 +148,14 @@ public theorem coe_frickeConjSL [NeZero N] (σ : ↥(Gamma0 N)) :
 
 /-- **`W` normalizes `Γ₀(N)`**: the conjugate of a `Γ₀(N)` element is again one, its lower-left
 entry `-N·b` being visibly divisible by `N`. -/
-public theorem frickeConjSL_mem_Gamma0 [NeZero N] (σ : ↥(Gamma0 N)) :
+public theorem frickeConjSL_mem_Gamma0 (σ : ↥(Gamma0 N)) :
     frickeConjSL σ ∈ Gamma0 N := by
   rw [Gamma0_mem, coe_frickeConjSL]
   simp
 
 /-- **`W` normalizes `Γ₁(N)`**: conjugation swaps the two diagonal entries, so both remain
 `≡ 1 (mod N)`. -/
-public theorem frickeConjSL_mem_Gamma1 [NeZero N] (σ : SL(2, ℤ)) (hσ : σ ∈ Gamma1 N) :
+public theorem frickeConjSL_mem_Gamma1 (σ : SL(2, ℤ)) (hσ : σ ∈ Gamma1 N) :
     frickeConjSL ⟨σ, Gamma1_in_Gamma0 N hσ⟩ ∈ Gamma1 N := by
   obtain ⟨ha, hd, -⟩ := (Gamma1_mem N σ).mp hσ
   rw [Gamma1_mem, coe_frickeConjSL]
@@ -170,7 +172,7 @@ private theorem lowerLeftDiv_spec_field (σ : ↥(Gamma0 N)) :
     ((σ : Matrix (Fin 2) (Fin 2) ℤ) 1 0 : K) = (N : K) * (lowerLeftDiv σ : K) := by
   exact_mod_cast congrArg (Int.cast : ℤ → K) (lowerLeftDiv_spec σ)
 
-variable [NeZero N] [NeZero (N : K)]
+variable [NeZero (N : K)]
 
 /-- **The normalization identity** `W · σ = (W σ W⁻¹) · W` in `GL (Fin 2) K`, for `σ ∈ Γ₀(N)`.
 This is the form that moves `W` from the left of `σ` to its right, which is what a slash-action
@@ -189,10 +191,7 @@ public theorem frickeGL_mul_mapGL (σ : ↥(Gamma0 N)) :
       hc] <;>
     ring
 
-omit [NeZero N] in
-/-- `W²` commutes with everything in `GL (Fin 2) K`: it is the scalar matrix `(-N) • 1`. This
-one needs `N` invertible in `K` but not `N ≠ 0` separately, as it never mentions the
-conjugate. -/
+/-- `W²` commutes with everything in `GL (Fin 2) K`: it is the scalar matrix `(-N) • 1`. -/
 private theorem frickeGL_sq_mul_comm (A : GL (Fin 2) K) :
     frickeGL K N ^ 2 * A = A * frickeGL K N ^ 2 := by
   apply Units.ext
