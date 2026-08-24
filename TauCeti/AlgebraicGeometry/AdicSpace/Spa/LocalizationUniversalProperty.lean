@@ -1,0 +1,180 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
+-/
+module
+
+public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization
+public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Points
+
+/-!
+# The geometric universal property of a rational localisation
+
+The coordinate ring `A⟨T/s⟩` of a rational subset has an *algebraic* universal property: a
+continuous `φ : A → B` into a complete `B` extends across `ρ : A → A⟨T/s⟩` as soon as `φ s` is a
+unit and every fraction `φ t / φ s` is power-bounded
+(`TauCeti.Huber.existsUnique_continuous_ringHom_completion_locTopology`). Wedhorn's Lemma 8.1
+replaces those two algebraic conditions by a single *geometric* one — that `Spa(φ)` factors
+through the rational subset `U = R(T/s)` — and this file carries out that replacement.
+
+Wedhorn's proof has three steps, and the first two are proved here unconditionally:
+
+> As `Spa(φ)` factors through `U`, we have `|φ(t)|_w ≤ |φ(s)|_w ≠ 0` for all `w ∈ Spa B` and for
+> all `t ∈ T`. This implies `φ(s) ∈ B^×` by Proposition 7.52. Moreover, for all `w ∈ Spa B` we
+> have `|φ(t)/φ(s)|_w ≤ 1`. This implies `φ(t)/φ(s) ∈ B⁺` by Proposition 7.52. Thus the claim
+> follows from the universal property of `A → A⟨T/s⟩`.
+
+The step `φ s ∈ B^×` is Wedhorn's Proposition 7.52(2), which is on hand as
+`TauCeti.ValuationSpectrum.isUnit_of_forall_not_vle_zero`; the step `|φ(t)/φ(s)|_w ≤ 1` is a
+division by that unit. The step from there to `φ(t)/φ(s) ∈ B⁺` is Proposition 7.52(1), which is
+*not* available — see below — so it enters the assembly as an explicit hypothesis on `(B, B⁺)`.
+
+The other half of Lemma 8.1, that `Spa ρ : Spa A⟨T/s⟩ → Spa A` factors through `U`, is already
+`TauCeti.ValuationSpectrum.spaComapLoc_mem_rationalSubset`; it is not repeated here.
+
+## Main results
+
+* `TauCeti.ValuationSpectrum.isUnit_of_forall_comap_mem_rationalSubset` : if every point of
+  `Spa (B, B⁺)` pulls back into `R(T/s)`, the denominator becomes a unit in `B`.
+* `TauCeti.ValuationSpectrum.vle_one_of_forall_comap_mem_rationalSubset` : under the same
+  hypothesis every fraction `φ t / φ s` is sub-unit at every point of `Spa (B, B⁺)`.
+* `TauCeti.ValuationSpectrum.existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset` :
+  **Wedhorn Lemma 8.1** — a continuous `φ : A → B` whose `Spa(φ)` factors through `R(T/s)`
+  extends across `A → A⟨T/s⟩` in exactly one continuous way.
+
+## What this file does not do
+
+It does not prove Wedhorn's Proposition 7.52(1) — that `f ∈ B⁺` as soon as `|f(x)| ≤ 1` for all
+`x ∈ Spa B` — which Lemma 8.1 consumes to turn the sub-unit bound on `φ t / φ s` into membership
+in `B⁺`. That implication is carried as the hypothesis `hmem` of the main result, and supplying
+it is a separate obligation. Two things are worth recording about it, because the shape of the
+gap is easy to mistake:
+
+* Wedhorn's own proof of 7.52(1) is "simply a reformulation of Proposition 7.18(1)", and 7.18(1)
+  is a bijection between the open integrally closed subrings of `A` and certain subsets of
+  `Cont A` — it quantifies over **continuous** valuations. His proof of it is the bare citation
+  [Hu2, Lemma 3.3].
+* The valuative criterion for integrality quantifying over **all** valuations of the ring is a
+  different statement: its hypothesis is strictly stronger, so it does not give 7.52(1). The
+  passage between the two is what AINTLIB calls an *adic Nullstellensatz* and records as an open
+  ticket; `TauCeti.RingTheory.Huber.LocalizationTopology.Restriction` describes the same gap from
+  the side of the restriction maps.
+
+The hypothesis is stated so that a proof of 7.52(1) discharges it verbatim, leaving the assembly
+below unchanged.
+
+## References
+
+* [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), Lemma 8.1, whose statement and
+  three-step proof are quoted above, together with Propositions 7.18 and 7.52.
+
+## Provenance
+
+Developed here; nothing is ported. AINTLIB reaches the corresponding statement by a different
+route — a height-one reduction pairing Wedhorn's Propositions 7.18 and 7.41 — which is not
+followed.
+-/
+
+public section
+
+open TauCeti.Localization
+
+namespace TauCeti.ValuationSpectrum
+
+variable {A : Type*} [CommRing A] [TopologicalSpace A]
+
+section Steps
+
+variable {B : Type*} [CommRing B] [TopologicalSpace B]
+
+/-- **The denominator becomes a unit.** If every point of `Spa (B, B⁺)` pulls back into the
+rational subset `R(T/s)`, then no point of `Spa (B, B⁺)` vanishes on `φ s`, so `φ s` is a unit
+by Wedhorn's Proposition 7.52(2).
+
+This is the first step of Wedhorn's Lemma 8.1. Openness of the maximal ideals of `B` is the
+hypothesis that 7.52(2) carries; for a complete linearly topologized ring it is supplied by
+`TauCeti.Ideal.isOpen_of_isMaximal_of_isOpen_isTopologicallyNilpotent`. -/
+theorem isUnit_of_forall_comap_mem_rationalSubset {φ : A →+* B} {Aplus : Subring A}
+    {Bplus : Subring B} (T : Finset A) {s : A}
+    (hmax : ∀ 𝔪 : Ideal B, 𝔪.IsMaximal → IsOpen (𝔪 : Set B))
+    (hfac : ∀ w ∈ spa Bplus, comap φ w ∈ rationalSubset Aplus T s) :
+    IsUnit (φ s) := by
+  refine isUnit_of_forall_not_vle_zero Bplus hmax fun w hw hw0 ↦ ?_
+  refine ((mem_rationalSubset_iff Aplus T s _).mp (hfac w hw)).2.2 ?_
+  rw [comap_vle, map_zero]
+  exact hw0
+
+/-- **The fractions are sub-unit.** If every point of `Spa (B, B⁺)` pulls back into `R(T/s)`,
+then at every such point the fraction `φ t / φ s` has value at most `1`.
+
+This is the second step of Wedhorn's Lemma 8.1: the pullback condition gives `|φ t|_w ≤ |φ s|_w`,
+and dividing by the unit `φ s` — which `isUnit_of_forall_comap_mem_rationalSubset` supplies —
+turns that into `|φ t / φ s|_w ≤ 1`. Nothing beyond the pullback condition is used, so the unit
+enters as an argument rather than being re-derived. -/
+theorem vle_one_of_forall_comap_mem_rationalSubset {φ : A →+* B} {Aplus : Subring A}
+    {Bplus : Subring B} {T : Finset A} {s : A} (hs : IsUnit (φ s))
+    (hfac : ∀ w ∈ spa Bplus, comap φ w ∈ rationalSubset Aplus T s) {t : A} (ht : t ∈ T)
+    {w : Spv B} (hw : w ∈ spa Bplus) :
+    w.toValuativeRel.vle (φ t * ↑hs.unit⁻¹) 1 := by
+  have hvle : w.toValuativeRel.vle (φ t) (φ s) := by
+    have h := ((mem_rationalSubset_iff Aplus T s _).mp (hfac w hw)).2.1 t ht
+    rwa [comap_vle] at h
+  have hinv : φ s * ↑hs.unit⁻¹ = 1 := by
+    have h := hs.unit.mul_inv
+    rwa [hs.unit_spec] at h
+  have h := w.toValuativeRel.mul_vle_mul_left hvle (↑hs.unit⁻¹ : B)
+  rwa [hinv] at h
+
+end Steps
+
+/-! ### Lemma 8.1
+
+The assembly. `S` is an algebraic localisation of `A` away from `s` carrying the localisation
+topology, so that `A⟨T/s⟩` is its separated completion, and the three `letI`s naming the
+uniformity and its two companions are the ones every statement about `A⟨T/s⟩` carries. -/
+
+open TauCeti.Huber TauCeti.Huber.PairOfDefinition
+
+/-- **Wedhorn Lemma 8.1**, the universal property of `A⟨T/s⟩` against complete affinoid targets:
+a continuous `φ : A → B` into a complete `(B, B⁺)` whose `Spa(φ)` factors through the rational
+subset `R(T/s)` extends across the structure map `ρ : A → A⟨T/s⟩` in exactly one continuous way.
+
+The two algebraic conditions of
+`TauCeti.Huber.existsUnique_continuous_ringHom_completion_locTopology` are discharged from the
+geometric one: `φ s` is a unit by `isUnit_of_forall_comap_mem_rationalSubset`, and each fraction
+`φ t / φ s` is sub-unit at every point of `Spa (B, B⁺)` by
+`vle_one_of_forall_comap_mem_rationalSubset`, hence lies in `B⁺` and so is power-bounded.
+
+The passage from "sub-unit at every point of `Spa (B, B⁺)`" to "in `B⁺`" is Wedhorn's
+Proposition 7.52(1), which is not available in this repository; it is the hypothesis `hmem`. The
+hypothesis `hplus` is the remaining half of `B⁺` being a ring of integral elements that the proof
+uses, namely `B⁺ ⊆ B°`.
+
+Both are properties of the pair `(B, B⁺)` alone: they mention neither `φ` nor `T` nor `s`. That
+is what makes the statement a reduction rather than a restatement — the per-morphism algebraic
+conditions of the universal property are replaced by the single geometric condition `hfac`, at
+the cost of hypotheses on the target that are checked once. -/
+theorem existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset [IsTopologicalRing A]
+    (P : PairOfDefinition A) (Aplus : Subring A) (T : Finset A) (s : A) (S : Type*) [CommRing S]
+    [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S)
+    {B : Type*} [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [NonarchimedeanRing B]
+    [CompleteSpace B] [T0Space B] (Bplus : Subring B)
+    (hmax : ∀ 𝔪 : Ideal B, 𝔪.IsMaximal → IsOpen (𝔪 : Set B))
+    (hmem : ∀ f : B, (∀ w ∈ spa Bplus, w.toValuativeRel.vle f 1) → f ∈ Bplus)
+    (hplus : Bplus ≤ powerBoundedSubring B) {φ : A →+* B} (hφ : ContinuousAt φ 0)
+    (hfac : ∀ w ∈ spa Bplus, comap φ w ∈ rationalSubset Aplus T s) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    ∃! g : UniformSpace.Completion S →+* B,
+      Continuous g ∧ g.comp (toCompletionLoc P T s S hden) = φ := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  have hs : IsUnit (φ s) := isUnit_of_forall_comap_mem_rationalSubset T hmax hfac
+  refine existsUnique_continuous_ringHom_completion_locTopology P T s S hden hφ hs fun t ht ↦ ?_
+  exact mem_powerBoundedSubring.mp
+    (hplus (hmem _ fun w hw ↦ vle_one_of_forall_comap_mem_rationalSubset hs hfac ht hw))
+
+end TauCeti.ValuationSpectrum
