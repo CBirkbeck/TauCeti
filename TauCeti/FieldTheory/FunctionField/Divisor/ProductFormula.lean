@@ -121,6 +121,59 @@ private theorem neg_degree_poles_le_ord (hF : IsFunctionField k F) {u : F} (hu :
   rw [Divisor.coeff_poles, Units.val_mk0] at hcoeff
   omega
 
+/-- A function integral over `k[x]` with no pole of order exceeding `C` still lies in the
+Riemann–Roch space of `(C + n) • (x)∞` after multiplication by `x ^ j`, for every `j ≤ n`.  At a
+pole of `x` the `j` extra poles contributed by `x ^ j` are absorbed by the `C + n` copies of that
+pole the divisor provides, and away from the poles of `x` both factors are integral. -/
+private theorem mul_pow_mem_riemannRochSpace_smul_poles (hF : IsFunctionField k F) {x u : F}
+    (hx0 : x ≠ 0) (hu0 : u ≠ 0) (hu : IsIntegral (Algebra.adjoin k ({x} : Set F)) u) {C : ℕ}
+    (hord : ∀ P : Place k F, -(C : ℤ) ≤ P.ord u) {n j : ℕ} (hj : j ≤ n) :
+    u * x ^ j ∈ riemannRochSpace (((C + n : ℕ) : ℤ) • Divisor.poles hF (Units.mk0 x hx0)) := by
+  set B : Divisor k F := Divisor.poles hF (Units.mk0 x hx0) with hB
+  set E : Divisor k F := (((C + n : ℕ) : ℤ) • B) with hE
+  have hxpow0 := pow_ne_zero j hx0
+  rw [mem_riemannRochSpace_iff_neg_le_ord (mul_ne_zero hu0 hxpow0)]
+  intro P
+  by_cases hPx : P.ord x < 0
+  · rw [P.ord_mul hu0 hxpow0, P.ord_pow]
+    have hpoleCoeff : B.coeff P = -P.ord x := calc
+      B.coeff P = -P.ord x ⊔ 0 := by
+        simpa only [hB, Units.val_mk0] using Divisor.coeff_poles hF (Units.mk0 x hx0) P
+      _ = -P.ord x := by omega
+    have hpole : B P = -P.ord x := hpoleCoeff
+    have hjZ : (j : ℤ) ≤ n := by exact_mod_cast hj
+    have hnonneg : 0 ≤ (C : ℤ) + n - j := by omega
+    have hd : P.ord x ≤ -1 := by omega
+    have hmul : ((C : ℤ) + n - j) * P.ord x ≤ -((C : ℤ) + n - j) :=
+      by simpa only [mul_neg, mul_one] using mul_le_mul_of_nonneg_left hd hnonneg
+    calc
+      -E.coeff P = ((C : ℤ) + n) * P.ord x := by
+        simp only [hE, WeilDivisor.coeff, Finsupp.smul_apply, smul_eq_mul, hpole]
+        push_cast
+        ring
+      _ = ((C : ℤ) + n - j) * P.ord x + j * P.ord x := by ring
+      _ ≤ -((C : ℤ) + n - j) + j * P.ord x :=
+        by simpa only [add_comm] using add_le_add_right hmul ((j : ℤ) * P.ord x)
+      _ ≤ P.ord u + j * P.ord x := by
+        have := hord P
+        omega
+  · have hPx' : 0 ≤ P.ord x := by omega
+    have hcP : u ∈ P.integers := P.mem_integers_of_isIntegral_adjoin
+      (P.mem_integers_iff_ord_nonneg.mpr hPx') hu
+    have hcP' := P.mem_integers_iff_ord_nonneg.mp hcP
+    rw [P.ord_mul hu0 hxpow0, P.ord_pow]
+    have hpoleCoeff : B.coeff P = 0 := calc
+      B.coeff P = -P.ord x ⊔ 0 := by
+        simpa only [hB, Units.val_mk0] using Divisor.coeff_poles hF (Units.mk0 x hx0) P
+      _ = 0 := by omega
+    have hpole : B P = 0 := hpoleCoeff
+    calc
+      -E.coeff P = 0 := by
+        simp only [hE, WeilDivisor.coeff, Finsupp.smul_apply, smul_eq_mul, hpole, mul_zero,
+          neg_zero]
+      _ ≤ P.ord u + (j : ℤ) * P.ord x :=
+        add_nonneg hcP' (mul_nonneg (by positivity) hPx')
+
 /-- **The growth estimate** behind Stichtenoth's proof of Theorem 1.4.11: if the finitely many
 functions `c i` are linearly independent over `k⟮x⟯`, integral over `k[x]`, and have no pole of
 order exceeding `C`, then the products `c i * x ^ j` with `j ≤ n` are `#ι * (n + 1)` functions
@@ -151,52 +204,9 @@ private theorem card_mul_succ_le_dim_smul_poles (hF : IsFunctionField k F) {x : 
         (g := fun p : ι × Fin (n + 1) ↦ a p.2 • c p.1) rfl).mpr
         (linearIndependent_smul ha hcLI)
   let E : Divisor k F := (((C + n : ℕ) : ℤ) • B)
-  have hmem (p : ι × Fin (n + 1)) : c p.1 * x ^ (p.2 : ℕ) ∈ riemannRochSpace E := by
-    have hc0 := hcLI.ne_zero p.1
-    have hxpow0 := pow_ne_zero (p.2 : ℕ) hx0
-    rw [mem_riemannRochSpace_iff_neg_le_ord (mul_ne_zero hc0 hxpow0)]
-    intro P
-    by_cases hPx : P.ord x < 0
-    · rw [P.ord_mul hc0 hxpow0, P.ord_pow]
-      have hpoleCoeff : B.coeff P = -P.ord x := calc
-        B.coeff P = -P.ord x ⊔ 0 := by
-          simpa only [B, Units.val_mk0] using Divisor.coeff_poles hF (Units.mk0 x hx0) P
-        _ = -P.ord x := by omega
-      have hpole : B P = -P.ord x := hpoleCoeff
-      have hj : p.2.val ≤ n := Nat.le_of_lt_succ p.2.isLt
-      have hjZ : (p.2.val : ℤ) ≤ n := by exact_mod_cast hj
-      have hnonneg : 0 ≤ (C : ℤ) + n - p.2.val := by omega
-      have hd : P.ord x ≤ -1 := by omega
-      have hmul : ((C : ℤ) + n - p.2.val) * P.ord x ≤
-          -((C : ℤ) + n - p.2.val) :=
-        by simpa only [mul_neg, mul_one] using mul_le_mul_of_nonneg_left hd hnonneg
-      calc
-        -E.coeff P = ((C : ℤ) + n) * P.ord x := by
-          simp only [E, WeilDivisor.coeff, Finsupp.smul_apply, smul_eq_mul, hpole]
-          push_cast
-          ring
-        _ = ((C : ℤ) + n - p.2.val) * P.ord x + p.2.val * P.ord x := by ring
-        _ ≤ -((C : ℤ) + n - p.2.val) + p.2.val * P.ord x :=
-          by simpa only [add_comm] using add_le_add_right hmul (p.2.val * P.ord x)
-        _ ≤ P.ord (c p.1) + p.2.val * P.ord x := by
-          have := hord p.1 P
-          omega
-    · have hPx' : 0 ≤ P.ord x := by omega
-      have hcP : c p.1 ∈ P.integers := P.mem_integers_of_isIntegral_adjoin
-        (P.mem_integers_iff_ord_nonneg.mpr hPx') (hcint p.1)
-      have hcP' := P.mem_integers_iff_ord_nonneg.mp hcP
-      rw [P.ord_mul hc0 hxpow0, P.ord_pow]
-      have hpoleCoeff : B.coeff P = 0 := calc
-        B.coeff P = -P.ord x ⊔ 0 := by
-          simpa only [B, Units.val_mk0] using Divisor.coeff_poles hF (Units.mk0 x hx0) P
-        _ = 0 := by omega
-      have hpole : B P = 0 := hpoleCoeff
-      calc
-        -E.coeff P = 0 := by
-          simp only [E, WeilDivisor.coeff, Finsupp.smul_apply, smul_eq_mul, hpole, mul_zero,
-            neg_zero]
-        _ ≤ P.ord (c p.1) + (p.2.val : ℤ) * P.ord x :=
-          add_nonneg hcP' (mul_nonneg (by positivity) hPx')
+  have hmem (p : ι × Fin (n + 1)) : c p.1 * x ^ (p.2 : ℕ) ∈ riemannRochSpace E :=
+    mul_pow_mem_riemannRochSpace_smul_poles hF hx0 (hcLI.ne_zero p.1) (hcint p.1) (hord p.1)
+      (Nat.le_of_lt_succ p.2.isLt)
   let v : ι × Fin (n + 1) → riemannRochSpace E :=
     fun p ↦ ⟨c p.1 * x ^ (p.2 : ℕ), hmem p⟩
   have hcomp : (riemannRochSpace E).subtype ∘ v =
