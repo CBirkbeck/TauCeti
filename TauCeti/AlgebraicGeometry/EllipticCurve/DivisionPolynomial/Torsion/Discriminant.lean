@@ -5,6 +5,10 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+-- Neither of the first two is reachable through `NagellLutz`: `Torsion/Basic.lean` imports
+-- `Discriminant` *non-publicly*, on purpose, so it is not re-exported. Dropping either line
+-- makes `eval_Ψ₃_eq_sub_mul_eval_Ψ₂Sq` and `dvd_four_mul_Δ_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃`
+-- unknown identifiers.
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Discriminant
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.NagellLutz
