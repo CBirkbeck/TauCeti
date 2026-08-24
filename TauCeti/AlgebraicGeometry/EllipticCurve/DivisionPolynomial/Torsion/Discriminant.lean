@@ -216,23 +216,21 @@ squarefreeness at *every* prime dividing `addOrderOf (2 • P)` rather than at t
 proof lands in.
 
 That is strictly stronger, and it is the form a caller usually has, because it needs no knowledge
-of which branch the order falls into. The dichotomy — an order above `2` is divisible by `4` or by
-an odd prime — is `Nat.four_dvd_or_exists_odd_prime_and_dvd_of_two_lt`, and running it here rather
-than in each caller is the point of the wrapper. This mirrors
-`isInteger_or_order_two_of_torsion_of_squarefree` one file down. -/
+of which branch the order falls into. The bridge between the two is
+`Algebra/Squarefree.lean`'s `four_dvd_or_exists_odd_prime_and_dvd_of_squarefree`, shared with
+`isInteger_or_order_two_of_torsion_of_squarefree` one file down, which this mirrors — including
+its guard: the branch that `2 < addOrderOf (2 • P)` excludes consumes no squarefreeness, so
+requiring it there would exclude order-four points over a base in which `2` ramifies. -/
 theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_of_squarefree {x y : K}
     (hns : (W.baseChange K).toAffine.Nonsingular x y)
     (htor : IsOfFinAddOrder (Affine.Point.some _ _ hns))
-    (hsf : ∀ p : ℕ, p.Prime → p ∣ addOrderOf ((2 : ℕ) • Affine.Point.some _ _ hns) →
-      Squarefree ((p : ℤ) : R))
+    (hsf : 2 < addOrderOf ((2 : ℕ) • Affine.Point.some _ _ hns) →
+      ∀ p : ℕ, p.Prime → p ∣ addOrderOf ((2 : ℕ) • Affine.Point.some _ _ hns) →
+        Squarefree ((p : ℤ) : R))
     {x₀ y₀ : R} (hx : algebraMap R K x₀ = x) (hy : algebraMap R K y₀ = y) :
-    W.ψ₂.evalEval x₀ y₀ = 0 ∨ W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * W.Δ := by
-  refine evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ W hns htor (fun h2 ↦ ?_) hx hy
-  rcases Nat.four_dvd_or_exists_odd_prime_and_dvd_of_two_lt h2 with h4 | ⟨p, hp, hpd, hodd⟩
-  · exact Or.inl ⟨h4, by simpa using hsf 2 Nat.prime_two ((by norm_num : (2 : ℕ) ∣ 4).trans h4)⟩
-  · refine Or.inr ⟨p, hp, ?_, hpd, hsf p hp hpd⟩
-    rintro rfl
-    simp [Nat.odd_iff] at hodd
+    W.ψ₂.evalEval x₀ y₀ = 0 ∨ W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * W.Δ :=
+  evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ W hns htor
+    (fun h2 ↦ four_dvd_or_exists_odd_prime_and_dvd_of_squarefree h2 (hsf h2)) hx hy
 
 /-- **The discriminant companion over `ℚ`**, the form the roadmap asks for: for an integral long
 Weierstrass model, a torsion point with integral coordinates has `ψ₂ = 0` there, or `ψ₂²` divides
@@ -246,6 +244,6 @@ theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_rat {W : WeierstrassCurve �
     {x₀ y₀ : ℤ} (hx : algebraMap ℤ ℚ x₀ = x) (hy : algebraMap ℤ ℚ y₀ = y) :
     W.ψ₂.evalEval x₀ y₀ = 0 ∨ W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * W.Δ :=
   evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_of_squarefree W hns htor
-    (fun p hp _ ↦ by simpa using (Nat.prime_iff_prime_int.mp hp).squarefree) hx hy
+    (fun _ p hp _ ↦ by simpa using (Nat.prime_iff_prime_int.mp hp).squarefree) hx hy
 
 end WeierstrassCurve

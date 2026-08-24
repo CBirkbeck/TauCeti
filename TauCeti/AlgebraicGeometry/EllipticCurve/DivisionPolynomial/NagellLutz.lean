@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.Algebra.Squarefree
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Descent
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.Basic
@@ -189,31 +190,19 @@ theorem isInteger_four_mul_x_and_eight_mul_y_of_order_two {x y : K}
   rwa [WeierstrassCurve.ψ_two, WeierstrassCurve.ψ₂] at hψ
 
 omit [IsDomain R] [UniqueFactorizationMonoid R] [IsFractionRing R K] in
-/-- **The uniform squarefreeness hypothesis implies the sharp one.** Asking for squarefreeness at
-*every* prime factor of the order is stronger than the theorem below needs — it consumes exactly
-one branch — but it is what a caller can usually establish without first deciding the branch.
-This is the bridge between the two forms, and where the case dichotomy actually happens, via
-Mathlib's `Nat.four_dvd_or_exists_odd_prime_and_dvd_of_two_lt`. -/
-private theorem four_dvd_or_exists_odd_prime_and_dvd_of_squarefree {x y : K}
+/-- **A `.some` point of order other than two has order above two.** The arithmetic bridge from
+uniform to sharp squarefreeness is `Algebra/Squarefree.lean`'s
+`four_dvd_or_exists_odd_prime_and_dvd_of_squarefree`, which asks for `2 < n`; this supplies that
+side condition, which is the only part of it specific to points. -/
+private theorem two_lt_addOrderOf {x y : K}
     (hns : (W.baseChange K).toAffine.Nonsingular x y)
     (htor : IsOfFinAddOrder (Affine.Point.some _ _ hns))
-    (hsf : ∀ p : ℕ, p.Prime → p ∣ addOrderOf (Affine.Point.some _ _ hns) →
-      Squarefree ((p : ℤ) : R))
     (hord2 : addOrderOf (Affine.Point.some _ _ hns) ≠ 2) :
-    (4 ∣ addOrderOf (Affine.Point.some _ _ hns) ∧ Squarefree (2 : R)) ∨
-      ∃ p : ℕ, p.Prime ∧ p ≠ 2 ∧ p ∣ addOrderOf (Affine.Point.some _ _ hns) ∧
-        Squarefree ((p : ℤ) : R) := by
-  set P := Affine.Point.some _ _ hns
-  have hm_ne_one : addOrderOf P ≠ 1 := fun h ↦
+    2 < addOrderOf (Affine.Point.some _ _ hns) := by
+  have hm_ne_one : addOrderOf (Affine.Point.some _ _ hns) ≠ 1 := fun h ↦
     Affine.Point.some_ne_zero hns (AddMonoid.addOrderOf_eq_one_iff.mp h)
-  have hm_pos : 0 < addOrderOf P := htor.addOrderOf_pos
-  have hm_gt_two : 2 < addOrderOf P := by omega
-  rcases Nat.four_dvd_or_exists_odd_prime_and_dvd_of_two_lt hm_gt_two with
-    h4_dvd | ⟨p, hp, hpm, hodd⟩
-  · exact Or.inl ⟨h4_dvd, by
-      simpa using hsf 2 Nat.prime_two (dvd_trans ⟨2, rfl⟩ h4_dvd)⟩
-  · have hp_ne_two : p ≠ 2 := by rintro rfl; rw [Nat.odd_iff] at hodd; omega
-    exact Or.inr ⟨p, hp, hp_ne_two, hpm, hsf p hp hpm⟩
+  have hm_pos : 0 < addOrderOf (Affine.Point.some _ _ hns) := htor.addOrderOf_pos
+  omega
 
 /-- **Nagell–Lutz integrality.** A nonzero torsion point either has integral coordinates, or has
 order exactly two, in which case `4x` and `8y` are integral.
@@ -253,7 +242,8 @@ order rather than at the one branch the proof consumes.
 That hypothesis is strictly stronger — only one branch is ever used — so it is not a weaker thing
 to prove. It is exported because it is usually the one a caller already has: establishing it needs
 no knowledge of which branch the order falls into, whereas the sharp form does. Both are exported
-for that reason, bridged by `four_dvd_or_exists_odd_prime_and_dvd_of_squarefree`. The guard
+for that reason, bridged by `Algebra/Squarefree.lean`'s
+`four_dvd_or_exists_odd_prime_and_dvd_of_squarefree`. The guard
 `addOrderOf P ≠ 2` is on both: the order-two disjunct is proved without squarefreeness, and
 requiring it there would make the statement vacuous over a base in which `2` ramifies. -/
 theorem isInteger_or_order_two_of_torsion_of_squarefree {x y : K}
@@ -266,7 +256,8 @@ theorem isInteger_or_order_two_of_torsion_of_squarefree {x y : K}
     ∨ (addOrderOf (Affine.Point.some _ _ hns) = 2 ∧
         IsLocalization.IsInteger R (4 * x) ∧ IsLocalization.IsInteger R (8 * y)) :=
   isInteger_or_order_two_of_torsion W hns htor fun hord2 ↦
-    four_dvd_or_exists_odd_prime_and_dvd_of_squarefree W hns htor (hsf hord2) hord2
+    four_dvd_or_exists_odd_prime_and_dvd_of_squarefree
+      (two_lt_addOrderOf W hns htor hord2) (hsf hord2)
 
 /-- **Nagell–Lutz over `ℚ`**, the form the roadmap asks for: for an integral long Weierstrass
 model, a nonzero torsion point has integral coordinates unless it has order exactly `2`, where the
