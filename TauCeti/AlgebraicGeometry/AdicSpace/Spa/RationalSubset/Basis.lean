@@ -58,7 +58,7 @@ the basis arguments uses it.
 * `TauCeti.ValuationSpectrum.isOpen_span_insert_mul_insert`: the insert-augmented product of two
   open-span numerator sets again spans an open ideal — what keeps the product presentation inside
   the rational basis.
-* `TauCeti.ValuationSpectrum.spaRationalOpen_mem_spaRationalOpens`: a named rational open with
+* `TauCeti.ValuationSpectrum.spaBasicOpen_mem_spaRationalOpens`: a named rational open with
   open numerator ideal is a member of the family.
 
 ## References
@@ -282,12 +282,12 @@ theorem mem_spaRationalOpens {Aplus : Subring A} {U : Opens (spa Aplus)} :
 
 omit [IsTopologicalRing A] in
 /-- A rational open with open numerator ideal belongs to the rational family of opens: the bridge
-between naming one open (`spaRationalOpen`) and quantifying over the family
+between naming one open (`spaBasicOpen`) and quantifying over the family
 (`spaRationalOpens`). -/
-theorem spaRationalOpen_mem_spaRationalOpens {Aplus : Subring A} {T : Finset A} {s : A}
+theorem spaBasicOpen_mem_spaRationalOpens {Aplus : Subring A} {T : Finset A} {s : A}
     (hT : IsOpen (Ideal.span (T : Set A) : Set A)) :
-    spaRationalOpen Aplus T s ∈ spaRationalOpens Aplus :=
-  mem_spaRationalOpens.mpr ⟨T, s, hT, coe_spaRationalOpen Aplus T s⟩
+    spaBasicOpen Aplus T s ∈ spaRationalOpens Aplus :=
+  mem_spaRationalOpens.mpr ⟨T, s, hT, coe_spaBasicOpen Aplus T s⟩
 
 
 /-- **The rational opens are a basis** in the `Opens.IsBasis` sense, which is the form the sheaf

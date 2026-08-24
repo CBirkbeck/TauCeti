@@ -153,9 +153,9 @@ definitionally — their two sides otherwise live in different hom-types. -/
 @[expose]
 def rationalInclusion (Aplus : Subring A) :
     (isRational P).FullSubcategory ⥤ (Opens ↥(spa Aplus))ᵒᵖ where
-  obj p := op (spaRationalOpen Aplus p.obj.num p.obj.den)
-  map {p q} h := (homOfLE (show spaRationalOpen Aplus q.obj.num q.obj.den ≤
-      spaRationalOpen Aplus p.obj.num p.obj.den by
+  obj p := op (spaBasicOpen Aplus p.obj.num p.obj.den)
+  map {p q} h := (homOfLE (show spaBasicOpen Aplus q.obj.num q.obj.den ≤
+      spaBasicOpen Aplus p.obj.num p.obj.den by
     obtain ⟨r, hr, hT⟩ :=
       PairOfDefinition.Presentation.le_def.mp (leOfHom ((isRational P).ι.map h))
     exact spaRationalOpen_le_of_cofactor Aplus hr hT)).op
@@ -211,7 +211,7 @@ instance : IsFilteredOrEmpty (RationalIndex P Aplus V) where
         ((i.right.obj.commonRefinement j.right.obj).num : Set A) : Set A)
       rw [PairOfDefinition.Presentation.commonRefinement_num]
       exact isOpen_span_insert_mul_insert P i.right.property j.right.property
-    have hle : spaRationalOpen Aplus (i.right.obj.commonRefinement j.right.obj).num
+    have hle : spaBasicOpen Aplus (i.right.obj.commonRefinement j.right.obj).num
         (i.right.obj.commonRefinement j.right.obj).den ≤ V := by
       rw [PairOfDefinition.Presentation.commonRefinement_num,
         PairOfDefinition.Presentation.commonRefinement_den, ← spaRationalOpen_inf]

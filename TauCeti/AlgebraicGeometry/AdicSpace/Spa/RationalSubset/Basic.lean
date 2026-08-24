@@ -53,7 +53,7 @@ layer deferred above.
 
 * `TauCeti.ValuationSpectrum.rationalSubset` : the rational subset `R(T/s)` of `spa A⁺`, as a
   `Set (Spv A)`.
-* `TauCeti.ValuationSpectrum.spaRationalOpen` : the same subset as an `Opens ↥(spa A⁺)` — the form
+* `TauCeti.ValuationSpectrum.spaBasicOpen` : the same subset as an `Opens ↥(spa A⁺)` — the form
   a presheaf indexes on.
 
 ## Main results
@@ -76,10 +76,10 @@ layer deferred above.
   set-level half of Remark 7.30(5), and
   `TauCeti.ValuationSpectrum.spaRationalOpen_inf` : its `Opens` companion, oriented the same way
   so the two layers share one `simp` normal form.
-* `TauCeti.ValuationSpectrum.coe_spaRationalOpen` and
-  `TauCeti.ValuationSpectrum.mem_spaRationalOpen_iff` : the set-level and membership-level
-  characterizations of `spaRationalOpen`. The body is sealed, so the membership one is the only
-  route to `x ∈ spaRationalOpen …`.
+* `TauCeti.ValuationSpectrum.coe_spaBasicOpen` and
+  `TauCeti.ValuationSpectrum.mem_spaBasicOpen` : the set-level and membership-level
+  characterizations of `spaBasicOpen`. The body is sealed, so the membership one is the only
+  route to `x ∈ spaBasicOpen …`.
 * `TauCeti.ValuationSpectrum.exists_refinement_of_subset` : the re-presentation step of Wedhorn
   §8.2 — from `R(T'/s') ⊆ R(T/s)`, a presentation `R(T''/(s · s'))` of the smaller subset whose
   denominator has each original denominator as a factor and whose numerators contain `t · s'` for
@@ -196,34 +196,33 @@ theorem isOpen_val_preimage_rationalSubset (Aplus : Subring A) (T : Finset A) (s
   rw [val_preimage_rationalSubset]
   exact (isOpen_basicOpenFinset T s).preimage continuous_subtype_val
 
-open _root_.TopologicalSpace in
-/-- **The rational subset `R(T/s)`, as an open of the adic spectrum.** The `Opens` packaging of
-`isOpen_val_preimage_rationalSubset`, for consumers indexed by the opens of `spa A⁺` — the
-structure presheaf and the sheaf criteria.
+/-- **The basic open `R(T/s)`, as an `Opens` of `spa A⁺`.** This packages
+`rationalSubset` with its openness; it is a *rational* subset in Wedhorn's sense exactly when
+`Ideal.span (T : Set A)` is open, which is not assumed here.
 
 This is the pointwise companion of `spaRationalOpens` (`RationalSubset/Basis.lean`), which is the
 *family* of such opens as a `Set (Opens _)` and cannot name the open a particular `(T, s)`
 presents; conversely membership there additionally demands an open numerator ideal, which naming
-the open does not need. `spaRationalOpen_mem_spaRationalOpens` there is the bridge. -/
-def spaRationalOpen (Aplus : Subring A) (T : Finset A) (s : A) : Opens ↥(spa Aplus) :=
+the open does not need. `spaBasicOpen_mem_spaRationalOpens` there is the bridge. -/
+def spaBasicOpen (Aplus : Subring A) (T : Finset A) (s : A) :
+    TopologicalSpace.Opens ↑(spa Aplus) :=
   ⟨Subtype.val ⁻¹' rationalSubset Aplus T s, isOpen_val_preimage_rationalSubset Aplus T s⟩
 
-open _root_.TopologicalSpace in
-/-- The underlying set of `spaRationalOpen`. -/
+/-- The underlying set of `spaBasicOpen`. -/
 @[simp]
-theorem coe_spaRationalOpen (Aplus : Subring A) (T : Finset A) (s : A) :
-    (spaRationalOpen Aplus T s : Set ↥(spa Aplus)) =
+theorem coe_spaBasicOpen (Aplus : Subring A) (T : Finset A) (s : A) :
+    (spaBasicOpen Aplus T s : Set ↑(spa Aplus)) =
       Subtype.val ⁻¹' rationalSubset Aplus T s := (rfl)
 
-open _root_.TopologicalSpace in
-/-- Membership in `spaRationalOpen` is membership in the rational subset.
+/-- **Membership in `spaBasicOpen`** is membership in the underlying `rationalSubset`.
 
 `@[simp]`, like its siblings `mem_rationalSubset_iff` and `mem_spaRationalOpens`, and it is the
-*only* route: `spaRationalOpen`'s body is sealed, so `Opens.mem_mk` cannot fire, and
-`simp only [coe_spaRationalOpen, Set.mem_preimage]` makes no progress on a membership goal. -/
+*only* route: `spaBasicOpen`'s body is sealed, so `Opens.mem_mk` cannot fire, and
+`simp only [coe_spaBasicOpen, Set.mem_preimage]` makes no progress on a membership goal. -/
 @[simp]
-theorem mem_spaRationalOpen_iff {Aplus : Subring A} {T : Finset A} {s : A} {x : ↥(spa Aplus)} :
-    x ∈ spaRationalOpen Aplus T s ↔ (x : Spv A) ∈ rationalSubset Aplus T s := Iff.rfl
+theorem mem_spaBasicOpen {Aplus : Subring A} {T : Finset A} {s : A} {v : ↑(spa Aplus)} :
+    v ∈ spaBasicOpen Aplus T s ↔ (v : Spv A) ∈ rationalSubset Aplus T s :=
+  Iff.rfl
 
 open scoped Classical Pointwise in
 /-- **The set-level half of Wedhorn Remark 7.30(5)**: writing `Uᵢ = insert sᵢ Tᵢ` for each
@@ -249,10 +248,10 @@ Oriented like `rationalSubset_inter`, and with `⊓` as the head of the left-han
 describes it: the two layers then share one normal form. -/
 @[simp]
 theorem spaRationalOpen_inf (Aplus : Subring A) (T₁ T₂ : Finset A) (s₁ s₂ : A) :
-    spaRationalOpen Aplus T₁ s₁ ⊓ spaRationalOpen Aplus T₂ s₂ =
-      spaRationalOpen Aplus (insert s₁ T₁ * insert s₂ T₂) (s₁ * s₂) := by
+    spaBasicOpen Aplus T₁ s₁ ⊓ spaBasicOpen Aplus T₂ s₂ =
+      spaBasicOpen Aplus (insert s₁ T₁ * insert s₂ T₂) (s₁ * s₂) := by
   apply _root_.TopologicalSpace.Opens.ext
-  simp only [coe_spaRationalOpen, _root_.TopologicalSpace.Opens.coe_inf]
+  simp only [coe_spaBasicOpen, _root_.TopologicalSpace.Opens.coe_inf]
   rw [← rationalSubset_inter, Set.preimage_inter]
 
 /-- **Refining a presentation shrinks its rational subset.** If the denominator gains a cofactor
@@ -277,7 +276,7 @@ theorem rationalSubset_subset_of_cofactor (Aplus : Subring A) {T T' : Finset A} 
 /-- The `Opens` form of `rationalSubset_subset_of_cofactor`. -/
 theorem spaRationalOpen_le_of_cofactor (Aplus : Subring A) {T T' : Finset A} {s s' r : A}
     (hr : s' = s * r) (hT : ∀ t ∈ T, t * r ∈ T') :
-    spaRationalOpen Aplus T' s' ≤ spaRationalOpen Aplus T s := fun _ hx ↦
+    spaBasicOpen Aplus T' s' ≤ spaBasicOpen Aplus T s := fun _ hx ↦
   rationalSubset_subset_of_cofactor Aplus hr hT hx
 
 /-! ### Re-presenting a contained rational subset -/
