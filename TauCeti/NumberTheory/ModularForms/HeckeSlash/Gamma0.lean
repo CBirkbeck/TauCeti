@@ -24,7 +24,8 @@ the finiteness of the right-coset index, and the positivity hypothesis is
 by definition, so no double coset of this triple ever fails it.
 
 The operators belong to the double coset itself, not to the representatives `heckeSlashSum` sums
-over: `coe_heckeSlashGamma0ModularFormEnd` rewrites either of them to `heckeSlashSum`, and
+over: `coe_heckeSlashGamma0ModularFormEnd` and `coe_heckeSlashGamma0CuspFormEnd` rewrite the
+modular-form and cusp-form operator respectively to `heckeSlashSum`, and
 `heckeSlashSum_coe_eq_sum_of_rightCosets` (`HeckeSlash/Independence.lean`) then evaluates that on
 *any* decomposition of `Γ₀(N) δ Γ₀(N)` into right cosets.
 
