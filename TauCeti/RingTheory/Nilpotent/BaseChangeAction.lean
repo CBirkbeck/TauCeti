@@ -330,7 +330,8 @@ theorem baseChangeExp_tmul_of_pow_eq_zero (x : A) (M : S)
 
 /-- Binomial convolution identity for truncated divided-power series. -/
 private theorem sum_pow_smul_mul_sum_pow_smul {R : Type*} [CommSemiring R]
-    {B : Type*} [Semiring B] [Algebra R B] (D : ℕ → B) (k : ℕ)
+    {B : Type*} [NonUnitalNonAssocSemiring B] [Module R B] [SMulCommClass R B B]
+    [IsScalarTower R B B] (D : ℕ → B) (k : ℕ)
     (hzero : ∀ n, k ≤ n → D n = 0)
     (hmul : ∀ m n, D m * D n = Nat.choose (m + n) m • D (m + n))
     (t u : R) :
