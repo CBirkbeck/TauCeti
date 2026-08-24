@@ -219,8 +219,8 @@ private lemma isTightMeasureSet_range_of_laplaceTransform_between_shift
 
 /-! ## The representation theorem -/
 
-/-- If `f u ≤ laplaceTransform μ₀ s` whenever `0 ≤ s < u`, and `f` is right-continuous at `0`, then
-`f t ≤ laplaceTransform μ₀ t` for every `0 ≤ t`. -/
+/-- For a finite measure `μ₀`: if `f u ≤ laplaceTransform μ₀ s` whenever `0 ≤ s < u`, and `f` is
+right-continuous at `0`, then `f t ≤ laplaceTransform μ₀ t` for every `0 ≤ t`. -/
 private theorem f_le_laplaceTransform_of_forall_lt {μ₀ : Measure ℝ≥0} [IsFiniteMeasure μ₀]
     (hcont : ContinuousWithinAt f (Ici 0) 0)
     (hlower : ∀ s : ℝ, 0 ≤ s → ∀ u : ℝ, s < u → f u ≤ laplaceTransform μ₀ s)
