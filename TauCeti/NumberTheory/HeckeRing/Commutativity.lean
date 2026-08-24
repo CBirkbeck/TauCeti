@@ -27,11 +27,22 @@ The symmetry of the multiplicity is proved through the one-sided count
 the two count sets by transporting the representative decomposition of `(σᵢ g₁)⁻¹ d` through
 `ι` (Shimura's change of variables), and the two opposite injections give equality.
 
+Checking the fixing hypothesis for a concrete datum is the work in any application, so the file
+also records two reductions that fixing a *single* double coset survives: it may be tested at
+any element of that coset, and a central factor the anti-involution fixes may be split off.
+Both trade a stubborn `g` for a better-behaved one without leaving the coset.
+
 Ported from the AINTLIB `LeanModularForms` project
 (`HeckeRIngs/AbstractHeckeRing/Commutativity.lean`,
 <https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>), per the
 ModularForms roadmap's dependency policy, rebuilt on the one-sided multiplicity count of the
-vendored Mathlib stack.
+vendored Mathlib stack. The two reductions are generalised from `Gamma0_AL_scalar_reduce` and
+`bar_mem_DC_of_bar_conj_mem` in that project's
+[`HeckeRIngs/GLn/CongruenceHecke/AtkinLehner.lean`](https://github.com/CBirkbeck/AINTLIB),
+Apache-2.0 at commit `2baa76f742bdb4fb8ee323fabba41203bd390e08`: there they are stated for the
+Atkin-Lehner anti-involution of `Γ₀(N)`, and the conjugation one is proved by hand for an
+`H`-conjugate `γ₁ g γ₂`, but neither argument needs more than `bar_mem_doubleCoset` and
+`bar_mul`.
 
 ## Main definitions
 
@@ -44,6 +55,10 @@ vendored Mathlib stack.
 
 * `HeckeAntiInvolution.multiplicity_comm`: Shimura's multiplicity is symmetric when the
   anti-involution fixes every double coset.
+* `HeckeAntiInvolution.bar_mem_doubleCoset_self_of_mem`: whether it fixes one double coset can
+  be tested at any element of that coset.
+* `HeckeAntiInvolution.bar_mem_doubleCoset_self_mul_of_central`: fixing survives multiplication
+  by a central element the anti-involution fixes.
 * `HeckeCosetModule.mul_comm_of_antiInvolution`: the convolution product is commutative.
 * `HeckeCosetModule.commSemiringOfAntiInvolution`: the resulting `CommSemiring (𝕋 Δ H R)`.
 -/
@@ -176,6 +191,37 @@ lemma bar_mem_doubleCoset_self [IsHeckeTriple Δ H H]
   have hg := congrArg HeckeCoset.toSet ((ι.onHeckeCoset_mk g).symm.trans (h_fix _))
   rw [HeckeCoset.toSet_mk, HeckeCoset.toSet_mk] at hg
   exact hg ▸ mem_doubleCoset_self H H _
+
+/-- **Whether `bar` fixes a double coset can be tested at any of its elements.** If some
+`x ∈ HgH` has `bar x` back in `HgH`, then `bar g ∈ HgH` as well.
+
+Both `HgH` and `H (bar g) H` contain `bar x`, so the two cosets coincide. Unlike
+`bar_mem_doubleCoset_self`, this asks nothing of the other double cosets: it is the pointwise
+statement, and it is what lets an argument replace `g` by a more convenient representative of
+its coset — an `H`-conjugate, say, or an integral witness with better entries — and still
+conclude for `g` itself. -/
+lemma bar_mem_doubleCoset_self_of_mem [IsHeckeTriple Δ H H] {g x : G} (hg : g ∈ Δ) (hx : x ∈ Δ)
+    (hmem : x ∈ doubleCoset g (H : Set G) H) (hbar : ι.bar x hx ∈ doubleCoset g (H : Set G) H) :
+    ι.bar g hg ∈ doubleCoset g (H : Set G) H := by
+  rw [← doubleCoset_eq_of_mem hbar, doubleCoset_eq_of_mem (ι.bar_mem_doubleCoset hg hx hmem)]
+  exact mem_doubleCoset_self H H _
+
+/-- **A central factor that `bar` fixes can be split off.** If `bar g ∈ HgH` and `s` is central
+with `bar s = s`, then `bar (s * g) ∈ H (s * g) H`.
+
+`bar` reverses multiplication, so `bar (s * g) = bar g * s`; writing `bar g = h₁ * g * h₂` and
+sliding the central `s` back across `h₂` puts it next to `g`. The scalars of a matrix Hecke
+datum are the standard source of such an `s`: it reduces a determinant to its primitive part
+without disturbing the double coset. -/
+lemma bar_mem_doubleCoset_self_mul_of_central {s g : G} (hs : s ∈ Δ) (hg : g ∈ Δ)
+    (hsg : s * g ∈ Δ) (hs_central : s ∈ Subgroup.center G) (hbar : ι.bar s hs = s)
+    (hfix : ι.bar g hg ∈ doubleCoset g (H : Set G) H) :
+    ι.bar (s * g) hsg ∈ doubleCoset (s * g) (H : Set G) H := by
+  have hcomm : ∀ y : G, s * y = y * s := fun y ↦ (Subgroup.mem_center_iff.mp hs_central y).symm
+  obtain ⟨h₁, hh₁, h₂, hh₂, heq⟩ := mem_doubleCoset.mp hfix
+  refine mem_doubleCoset.mpr ⟨h₁, hh₁, h₂, hh₂, ?_⟩
+  rw [ι.bar_mul hs hg hsg, hbar, heq]
+  simp only [mul_assoc, hcomm]
 
 /-- Decompose `bar x` through the double coset of `g` when `x ∈ HgH`. -/
 private lemma exists_bar_eq [IsHeckeTriple Δ H H]
