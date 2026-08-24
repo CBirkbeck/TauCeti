@@ -38,6 +38,11 @@ hypothesis survives pulling back along `Ideal.Quotient.mk J`. The valuative crit
 The first of these needs only a ring and a two-sided ideal; commutativity enters with the prime,
 so the other two ask for it.
 
+Mathlib's integrality-in-a-quotient lemmas, `RingHom.IsIntegral.quotient` and
+`isIntegral_quotientMap_iff`, say that a *ring hom* is integral, with source and target both
+quotiented. The criterion here is about a single element, keeps `A` unquotiented, and hands back
+the monic witness, which is what the argument below consumes.
+
 ## Method
 
 The values `f(x)` of monic polynomials `f` over `A` form a **submonoid** of `R`: monic
