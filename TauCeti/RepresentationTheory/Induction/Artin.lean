@@ -134,7 +134,7 @@ open scoped Classical in
 /-- Weighting each cyclic subgroup containing `y` by its Artin coefficient gives `1`, in any field.
 The sum ranges over all cyclic subgroups, the ones missing `y` contributing zero. At `y = 1` every
 cyclic subgroup contributes, and the value is still `1`. -/
-private theorem sum_artinCoeff_dite_mem_eq_one (y : G) :
+private theorem sum_artinCoeff_cyclicSubgroups_containing_eq_one (y : G) :
     (∑ C : CyclicSubgroup G,
       if _h : y ∈ (C : Subgroup G) then (artinCoeff C : k) else (0 : k)) = 1 := by
   -- Only the cyclic subgroups above `zpowers y` contribute, and over those the Artin coefficients
@@ -192,7 +192,7 @@ theorem natCard_nsmul_one_mem_indVirtualCharacters_isCyclic :
   simp_rw [Finset.mul_sum]
   rw [Finset.sum_comm]
   simp only [mul_dite, mul_one, mul_zero]
-  simp_rw [sum_artinCoeff_dite_mem_eq_one]
+  simp_rw [sum_artinCoeff_cyclicSubgroups_containing_eq_one]
   simp
 
 /-- **Artin's induction theorem, sharp form, through the canonical API.** For every virtual
