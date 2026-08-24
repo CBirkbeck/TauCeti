@@ -224,7 +224,8 @@ proof lands in.
 
 That is strictly stronger, and it is the form a caller usually has, because it needs no knowledge
 of which branch the order falls into. The bridge between the two is
-`Algebra/Squarefree.lean`'s `four_dvd_or_exists_odd_prime_and_dvd_of_squarefree`, shared with
+`Algebra/Squarefree.lean`'s `Nat.four_dvd_or_exists_odd_prime_and_dvd_of_squarefree`, shared
+with
 `isInteger_or_order_two_of_torsion_of_squarefree` one file down, which this mirrors — including
 its guard: the branch that `2 < addOrderOf (2 • P)` excludes consumes no squarefreeness, so
 requiring it there would exclude order-four points over a base in which `2` ramifies. -/
@@ -237,7 +238,7 @@ theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_of_squarefree {x y : K}
     {x₀ y₀ : R} (hx : algebraMap R K x₀ = x) (hy : algebraMap R K y₀ = y) :
     W.ψ₂.evalEval x₀ y₀ = 0 ∨ W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * W.Δ :=
   evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ W hns htor
-    (fun h2 ↦ four_dvd_or_exists_odd_prime_and_dvd_of_squarefree h2 (hsf h2)) hx hy
+    (fun h2 ↦ Nat.four_dvd_or_exists_odd_prime_and_dvd_of_squarefree h2 (hsf h2)) hx hy
 
 /-- **The discriminant companion over `ℚ`**, the form the roadmap asks for: for an integral long
 Weierstrass model, a torsion point with integral coordinates has `ψ₂ = 0` there, or `ψ₂²` divides

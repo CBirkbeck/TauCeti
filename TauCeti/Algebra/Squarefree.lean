@@ -32,8 +32,8 @@ that Mathlib does not provide directly, used across the multiquadratic developme
   Every nonzero integer, and every nonzero rational, is a squarefree *integer* times a nonzero
   square. Mathlib has this for the natural numbers only (`Nat.sq_mul_squarefree`); these are the
   integer and rational forms, which is what a square-class argument over `ℚ` needs.
-* `four_dvd_or_exists_odd_prime_and_dvd_of_squarefree`: squarefreeness of *every* prime divisor of
-  an `n > 2`, read in a commutative ring, yields the single branch that Mathlib's
+* `Nat.four_dvd_or_exists_odd_prime_and_dvd_of_squarefree`: squarefreeness of *every* prime
+  divisor of an `n > 2`, read in a commutative ring, yields the single branch that Mathlib's
   `Nat.four_dvd_or_exists_odd_prime_and_dvd_of_two_lt` splits into. This is the bridge from a
   uniform hypothesis, which a caller can usually establish without knowing `n`, to the sharp
   branch-dependent one that a proof consumes.
@@ -102,6 +102,8 @@ theorem Rat.exists_squarefree_int_mul_sq {q : ℚ} (hq : q ≠ 0) :
   field_simp
   linear_combination habQ
 
+namespace Nat
+
 /-- **From uniform squarefreeness to the sharp branch.** If every prime dividing `n > 2` is
 squarefree in `R`, then either `4 ∣ n` and `2` is squarefree there, or some *odd* prime divides
 `n` and is squarefree there.
@@ -120,3 +122,5 @@ theorem four_dvd_or_exists_odd_prime_and_dvd_of_squarefree {R : Type*} [CommRing
   · exact Or.inl ⟨h4, by simpa using hsf 2 Nat.prime_two (dvd_trans ⟨2, rfl⟩ h4)⟩
   · have hp_ne_two : p ≠ 2 := by rintro rfl; rw [Nat.odd_iff] at hodd; omega
     exact Or.inr ⟨p, hp, hp_ne_two, hpn, hsf p hp hpn⟩
+
+end Nat

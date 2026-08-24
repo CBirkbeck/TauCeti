@@ -192,7 +192,8 @@ theorem isInteger_four_mul_x_and_eight_mul_y_of_order_two {x y : K}
 omit [IsDomain R] [UniqueFactorizationMonoid R] [IsFractionRing R K] in
 /-- **A `.some` point of order other than two has order above two.** The arithmetic bridge from
 uniform to sharp squarefreeness is `Algebra/Squarefree.lean`'s
-`four_dvd_or_exists_odd_prime_and_dvd_of_squarefree`, which asks for `2 < n`; this supplies that
+`Nat.four_dvd_or_exists_odd_prime_and_dvd_of_squarefree`, which asks for `2 < n`; this supplies
+that
 side condition, which is the only part of it specific to points. -/
 private theorem two_lt_addOrderOf {x y : K}
     (hns : (W.baseChange K).toAffine.Nonsingular x y)
@@ -243,7 +244,7 @@ That hypothesis is strictly stronger — only one branch is ever used — so it 
 to prove. It is exported because it is usually the one a caller already has: establishing it needs
 no knowledge of which branch the order falls into, whereas the sharp form does. Both are exported
 for that reason, bridged by `Algebra/Squarefree.lean`'s
-`four_dvd_or_exists_odd_prime_and_dvd_of_squarefree`. The guard
+`Nat.four_dvd_or_exists_odd_prime_and_dvd_of_squarefree`. The guard
 `addOrderOf P ≠ 2` is on both: the order-two disjunct is proved without squarefreeness, and
 requiring it there would make the statement vacuous over a base in which `2` ramifies. -/
 theorem isInteger_or_order_two_of_torsion_of_squarefree {x y : K}
@@ -256,7 +257,7 @@ theorem isInteger_or_order_two_of_torsion_of_squarefree {x y : K}
     ∨ (addOrderOf (Affine.Point.some _ _ hns) = 2 ∧
         IsLocalization.IsInteger R (4 * x) ∧ IsLocalization.IsInteger R (8 * y)) :=
   isInteger_or_order_two_of_torsion W hns htor fun hord2 ↦
-    four_dvd_or_exists_odd_prime_and_dvd_of_squarefree
+    Nat.four_dvd_or_exists_odd_prime_and_dvd_of_squarefree
       (two_lt_addOrderOf W hns htor hord2) (hsf hord2)
 
 /-- **Nagell–Lutz over `ℚ`**, the form the roadmap asks for: for an integral long Weierstrass
@@ -274,7 +275,7 @@ theorem isInteger_or_order_two_of_torsion_rat {W : WeierstrassCurve ℤ} {x y : 
     ∨ (addOrderOf (Affine.Point.some _ _ hns) = 2 ∧
         IsLocalization.IsInteger ℤ (4 * x) ∧ IsLocalization.IsInteger ℤ (8 * y)) :=
   -- Over `ℤ` every rational prime is squarefree, so the convenient form is free; the sharp form
-  -- the theorem takes then follows by `four_dvd_or_exists_odd_prime_and_dvd_of_squarefree`.
+  -- the theorem takes then follows by `Nat.four_dvd_or_exists_odd_prime_and_dvd_of_squarefree`.
   isInteger_or_order_two_of_torsion_of_squarefree W hns htor fun _ p hp _ ↦ by
     simpa using (Nat.prime_iff_prime_int.mp hp).squarefree
 
