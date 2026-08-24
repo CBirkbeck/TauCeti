@@ -196,7 +196,12 @@ theorem heckeTGeneratorRecGamma0_succ_succ (p r : ℕ) :
   rw [heckeTGeneratorRecGamma0]
 
 /-- When `p` shares a factor with the level the scalar term vanishes and the recurrence
-degenerates to a power of the generator: `T_r = T_p^r`. -/
+degenerates to a power of the generator: `T_r = T_p^r`.
+
+`@[simp]` because this is the normal form once the coprimality hypothesis is in context: it
+is conditional, so it fires only where `¬ Nat.Coprime p N` can be discharged, and leaves the
+unconditional `heckeTGeneratorRecGamma0_zero`/`_one` normal forms alone elsewhere. -/
+@[simp]
 theorem heckeTGeneratorRecGamma0_eq_generator_pow_of_not_coprime {p : ℕ}
     (hpN : ¬ Nat.Coprime p N) (r : ℕ) :
     heckeTGeneratorRecGamma0 N p r = heckeTGeneratorGamma0 N p ^ r := by
