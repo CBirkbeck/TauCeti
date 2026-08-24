@@ -202,6 +202,37 @@ private theorem not_isPrincipal_primeAboveTwo
     have hb1 : (1 : ℤ) ≤ b ^ 2 := by omega
     nlinarith [sq_nonneg a]
 
+/-- With Minkowski bound below `3` and `2` ramified in a quadratic field, every ideal class is
+trivial or the class of a prime `P` above `2`. -/
+private theorem classGroup_eq_one_or_mk0_of_minkowskiBound_lt_three
+    (hfin : finrank ℚ K = 2) (hram : 2 ∈ ramifiedPrimes K)
+    (hM : (4 / Real.pi) ^ InfinitePlace.nrComplexPlaces K *
+        ((finrank ℚ K).factorial / (finrank ℚ K) ^ (finrank ℚ K) *
+          Real.sqrt |(NumberField.discr K : ℝ)|) < 3)
+    (P : Ideal (𝓞 K)) [P.IsPrime] [P.LiesOver (span {(2 : ℤ)})] (hPne : P ≠ 0)
+    (C : ClassGroup (𝓞 K)) :
+    C = 1 ∨ C = ClassGroup.mk0 ⟨P, mem_nonZeroDivisors_of_ne_zero hPne⟩ := by
+  classical
+  -- Minkowski gives a representative of norm at most `2`; norm `1` is principal and norm `2`
+  -- must be the ramified prime.
+  obtain ⟨I, hIC, hIle⟩ := NumberField.exists_ideal_in_class_of_norm_le C
+  have hIlt : (I.1.absNorm : ℝ) < 3 := hIle.trans_lt hM
+  have hIleTwo : I.1.absNorm ≤ 2 := by
+    exact_mod_cast (Nat.lt_succ_iff.mp (by exact_mod_cast hIlt))
+  have hIpos : 0 < I.1.absNorm := absNorm_pos_of_nonZeroDivisors I
+  rcases (by omega : I.1.absNorm = 1 ∨ I.1.absNorm = 2) with hnorm | hnorm
+  · left
+    rw [← hIC]
+    exact (ClassGroup.mk0_eq_one_iff I.2).mpr <| by
+      rw [Ideal.absNorm_eq_one_iff.mp hnorm]
+      exact top_isPrincipal
+  · right
+    rw [← hIC]
+    have hIP : I.1 = P :=
+      eq_of_absNorm_eq_of_mem_ramifiedPrimes hfin hram P I.1 hnorm
+    apply congrArg ClassGroup.mk0
+    exact Subtype.ext hIP
+
 /-- **The class number of `ℚ(√-5)` is two.** This presentation-independent statement assumes an
 integral generator with minimal polynomial `X² + 5` which generates the field over `ℚ`. -/
 theorem classNumber_eq_two_of_minpoly_eq_X_sq_add_five
@@ -231,25 +262,8 @@ theorem classNumber_eq_two_of_minpoly_eq_X_sq_add_five
     exact (ClassGroup.mk0_eq_one_iff (mem_nonZeroDivisors_of_ne_zero hPne)).mp
       (by simpa [P0] using h)
   have hM := minkowski_bound_lt_three hmin hgen
-  have hclasses : ∀ C : ClassGroup (𝓞 K), C = 1 ∨ C = ClassGroup.mk0 P0 := by
-    intro C
-    obtain ⟨I, hIC, hIle⟩ := NumberField.exists_ideal_in_class_of_norm_le C
-    have hIlt : (I.1.absNorm : ℝ) < 3 := hIle.trans_lt hM
-    have hIleTwo : I.1.absNorm ≤ 2 := by
-      exact_mod_cast (Nat.lt_succ_iff.mp (by exact_mod_cast hIlt))
-    have hIpos : 0 < I.1.absNorm := absNorm_pos_of_nonZeroDivisors I
-    rcases (by omega : I.1.absNorm = 1 ∨ I.1.absNorm = 2) with hnorm | hnorm
-    · left
-      rw [← hIC]
-      exact (ClassGroup.mk0_eq_one_iff I.2).mpr <| by
-        rw [Ideal.absNorm_eq_one_iff.mp hnorm]
-        exact top_isPrincipal
-    · right
-      rw [← hIC]
-      have hIP : I.1 = P :=
-        eq_of_absNorm_eq_of_mem_ramifiedPrimes hfin hram P I.1 hnorm
-      apply congrArg ClassGroup.mk0
-      exact Subtype.ext hIP
+  have hclasses : ∀ C : ClassGroup (𝓞 K), C = 1 ∨ C = ClassGroup.mk0 P0 :=
+    classGroup_eq_one_or_mk0_of_minkowskiBound_lt_three hfin hram hM P hPne
   have hupper : NumberField.classNumber K ≤ 2 := by
     rw [NumberField.classNumber]
     calc
