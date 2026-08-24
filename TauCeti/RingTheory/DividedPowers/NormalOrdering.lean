@@ -195,17 +195,17 @@ case: it is `y⁽ⁿ⁻ᵏ⁾ z⁽ᵏ⁾` while `k ≤ n`, and `0` beyond. -/
 private noncomputable def classTwoSeries (y z : A) (n k : ℕ) : A :=
   if k ≤ n then dividedPower (n - k) y * dividedPower k z else 0
 
-private theorem classTwoSeries_of_le {y z : A} {n k : ℕ} (hk : k ≤ n) :
+private theorem classTwoSeries_eq_of_le {y z : A} {n k : ℕ} (hk : k ≤ n) :
     classTwoSeries y z n k = dividedPower (n - k) y * dividedPower k z := by
   simp [classTwoSeries, hk]
 
-private theorem classTwoSeries_of_lt {y z : A} {n k : ℕ} (hk : n < k) :
+private theorem classTwoSeries_eq_zero_of_lt {y z : A} {n k : ℕ} (hk : n < k) :
     classTwoSeries y z n k = 0 := by
   simp [classTwoSeries, Nat.not_le.mpr hk]
 
 private theorem classTwoSeries_zero {y z : A} (n : ℕ) :
     classTwoSeries y z n 0 = dividedPower n y := by
-  rw [classTwoSeries_of_le (Nat.zero_le n), Nat.sub_zero, dividedPower_zero, mul_one]
+  rw [classTwoSeries_eq_of_le (Nat.zero_le n), Nat.sub_zero, dividedPower_zero, mul_one]
 
 -- The defining recurrence of the sequence: it is what `dividedPower_mul_of_ad_dividedPower_series`
 -- consumes. Below `k = n` both terms are present, since `x` either passes through the `y`-power or
@@ -223,7 +223,7 @@ private theorem mul_classTwoSeries {x y z : A} (hxy : x * y = y * x + z) (hxz : 
         dividedPower (n - k) y * x + dividedPower (n - (k + 1)) y * z := by
       rw [hnk]
       exact mul_dividedPower_of_commutator_eq hxy hyz _
-    rw [classTwoSeries_of_le hkn.le, classTwoSeries_of_le hkn]
+    rw [classTwoSeries_eq_of_le hkn.le, classTwoSeries_eq_of_le hkn]
     calc x * (dividedPower (n - k) y * dividedPower k z)
         = x * dividedPower (n - k) y * dividedPower k z := by rw [mul_assoc]
       _ = dividedPower (n - k) y * (x * dividedPower k z) +
@@ -232,11 +232,11 @@ private theorem mul_classTwoSeries {x y z : A} (hxy : x * y = y * x + z) (hxz : 
       _ = _ := by
           rw [(hxzk k).eq, ← mul_assoc, self_mul_dividedPower, mul_smul_comm]
   · have hnk : n - k = 0 := by omega
-    rw [classTwoSeries_of_le hkn.le, classTwoSeries_of_lt (by omega), hnk, dividedPower_zero,
-      one_mul, smul_zero, add_zero]
+    rw [classTwoSeries_eq_of_le hkn.le, classTwoSeries_eq_zero_of_lt (by omega), hnk,
+      dividedPower_zero, one_mul, smul_zero, add_zero]
     exact (hxzk k).eq
-  · rw [classTwoSeries_of_lt hkn, classTwoSeries_of_lt (by omega), mul_zero, zero_mul, smul_zero,
-      add_zero]
+  · rw [classTwoSeries_eq_zero_of_lt hkn, classTwoSeries_eq_zero_of_lt (by omega), mul_zero,
+      zero_mul, smul_zero, add_zero]
 
 /-- **Coefficient-one normal ordering for divided powers with central commutator.** Suppose
 `x * y = y * x + z`, and `z` commutes with both `x` and `y`. Then
@@ -255,7 +255,8 @@ theorem dividedPower_mul_dividedPower_of_commutator_eq {x y z : A}
     dividedPower m x * dividedPower n y =
       ∑ k ∈ range (min m n + 1),
         dividedPower (n - k) y * dividedPower k z * dividedPower (m - k) x := by
-  have hmain := dividedPower_mul_of_ad_dividedPower_series (mul_classTwoSeries hxy hxz hyz n) m
+  have hmain := dividedPower_mul_of_ad_dividedPower_series (x := x)
+    (d := classTwoSeries y z n) (mul_classTwoSeries hxy hxz hyz n) m
   rw [classTwoSeries_zero] at hmain
   -- The summands beyond `k = min m n` vanish, which truncates the sum of the general rule.
   have hzero : ∀ k ∈ range (m + 1), k ∉ range (min m n + 1) →
@@ -263,11 +264,11 @@ theorem dividedPower_mul_dividedPower_of_commutator_eq {x y z : A}
     intro k hk hk'
     rw [Finset.mem_range, Nat.lt_succ_iff] at hk
     rw [Finset.mem_range, Nat.lt_succ_iff] at hk'
-    rw [classTwoSeries_of_lt (by omega), zero_mul]
+    rw [classTwoSeries_eq_zero_of_lt (by omega), zero_mul]
   rw [hmain,
     ← Finset.sum_subset (Finset.range_subset_range.mpr (by omega : min m n + 1 ≤ m + 1)) hzero]
   refine Finset.sum_congr rfl fun k hk ↦ ?_
   rw [Finset.mem_range, Nat.lt_succ_iff] at hk
-  rw [classTwoSeries_of_le (le_trans hk (min_le_right m n))]
+  rw [classTwoSeries_eq_of_le (le_trans hk (min_le_right m n))]
 
 end TauCeti.Associative
