@@ -34,9 +34,10 @@ of the one attached to a group element acting on forms. It is inherited directly
 
 ## Main results
 
-* `HeckeRing.GL2.delta0NebentypusChar_apply`: the defining equation, and the only route to it
-  from outside this file — the definition's body is not exposed, so `simp`, `rfl` and
-  `MonoidHom.comp_apply` cannot recover it downstream.
+* `HeckeRing.GL2.delta0NebentypusChar_apply`: the defining equation, `@[simp]`. It is the only
+  route to that equation from outside this file: the definition's body is not exposed, so
+  downstream neither `rfl`, `unfold`, `simp [delta0NebentypusChar]` nor `MonoidHom.comp_apply`
+  can recover it — but plain `simp` does, *through this lemma*.
 * `HeckeRing.GL2.delta0NebentypusChar_mapGL`: on `Γ₀(N)` it is inverse to `χ ∘ Gamma0Map`.
 
 ## References
