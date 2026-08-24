@@ -5,10 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
--- `Matrix.mul_apply` expands a product entry as a sum.
+-- `Matrix.mul_apply` expands a product entry as a sum; it also re-exports
+-- `Mathlib.Data.Matrix.Diagonal`, which supplies `Matrix.diagonal_apply_eq`.
 public import Mathlib.Data.Matrix.Mul
--- `Matrix.diagonal_apply_eq` reads the diagonal of `Matrix.diagonal`.
-public import Mathlib.Data.Matrix.Diagonal
 
 /-!
 # Divisibility of matrix entries under multiplication

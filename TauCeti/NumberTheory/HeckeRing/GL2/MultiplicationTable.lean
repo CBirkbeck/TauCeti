@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.NumberTheory.HeckeRing.GL2.Degree
--- `Matrix.invariantFactor_zero_dvd_entries`, used only inside a proof below, so private.
+-- `Matrix.invariant_factor_zero_dvd_entries`, used only inside a proof below, so private.
 import TauCeti.LinearAlgebra.Matrix.SmithNormalForm
 
 /-!
@@ -137,10 +137,10 @@ private lemma first_invariant_dvd_p_of_product (p : ℕ) (S : SpecialLinearGroup
   set dpk := Matrix.diagonal (![1, p ^ k] : Fin 2 → ℤ)
   set S_ℤ := (S : Matrix (Fin 2) (Fin 2) ℤ)
   set M := dp * S_ℤ * dpk
-  -- `Matrix.invariantFactor_zero_dvd_entries` is exactly this step at general `n`: it inverts
+  -- `Matrix.invariant_factor_zero_dvd_entries` is exactly this step at general `n`: it inverts
   -- the unimodular factors itself, so no adjugate bookkeeping is needed here.
   have h_dvd_entry : ∀ i j : Fin 2, (a 0 : ℤ) ∣ M i j := fun i j ↦
-    Matrix.invariantFactor_zero_dvd_entries M (fun i ↦ (a i : ℤ))
+    Matrix.invariant_factor_zero_dvd_entries M (fun i ↦ (a i : ℤ))
       (fun k ↦ Int.natCast_dvd_natCast.mpr (isDvdChain_iff.mp hdiv (Fin.zero_le k)))
       L.toGL R.toGL
       (by simpa only [M, mul_assoc, Matrix.SpecialLinearGroup.coe_GL_coe_matrix] using heq) i j

@@ -31,12 +31,12 @@ operations of determinant one:
   monotone under divisibility, with `L * A * R = diagonal d`.
 * `Matrix.smith_normal_form_unique`: two nonnegative chained diagonals in the same
   `GL_n(ℤ)`-equivalence class are equal, so the invariant factors of `A` are well defined.
-* `Matrix.invariantFactor_zero_dvd_entries`: the first entry of a chained diagonal form
+* `Matrix.invariant_factor_zero_dvd_entries`: the first entry of a chained diagonal form
   divides every entry of `A`. The converse direction, and the general fact both rest on, are
   `Matrix.dvd_diag_of_dvd_entries` and `Matrix.dvd_mul_mul_apply` in
   `TauCeti/LinearAlgebra/Matrix/Divisibility.lean` — neither carries a Smith-normal-form
   hypothesis, so neither lives here.
-* `Matrix.associated_invariantFactor_zero_gcd` and `Matrix.invariantFactor_zero_eq_gcd`: hence
+* `Matrix.associated_invariant_factor_zero_gcd` and `Matrix.invariant_factor_zero_eq_gcd`: hence
   the first entry is an associate of the gcd of the entries of `A`, and equals it once its sign
   is known — so it is readable off the matrix without choosing a factorisation.
 
@@ -853,7 +853,7 @@ divides every entry of `A`.
 
 Inverting the unimodular factors writes `A = L⁻¹ * diagonal d * R⁻¹`, and `d 0` divides every
 entry of `diagonal d`, so `dvd_mul_mul_apply` carries it to every entry of `A`. -/
-theorem invariantFactor_zero_dvd_entries [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
+theorem invariant_factor_zero_dvd_entries [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
     (d : Fin n → ℤ) (hd0 : ∀ k, d 0 ∣ d k) (L R : GeneralLinearGroup (Fin n) ℤ)
     (h : (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
       Matrix.diagonal d) (i j : Fin n) : d 0 ∣ A i j := by
@@ -869,14 +869,14 @@ freely.
 
 `Matrix.smith_normal_form_unique` says the whole chained diagonal is determined; this says the
 first entry is determined, up to a unit, by something directly readable off the matrix.
-`Matrix.invariantFactor_zero_eq_gcd` pins the sign when `d 0` is known nonnegative. -/
-theorem associated_invariantFactor_zero_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
+`Matrix.invariant_factor_zero_eq_gcd` pins the sign when `d 0` is known nonnegative. -/
+theorem associated_invariant_factor_zero_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
     (d : Fin n → ℤ) (hd0 : ∀ k, d 0 ∣ d k) (L R : GeneralLinearGroup (Fin n) ℤ)
     (h : (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
       Matrix.diagonal d) :
     Associated (d 0) (Finset.univ.gcd fun p : Fin n × Fin n ↦ A p.1 p.2) :=
   associated_of_dvd_dvd
-    (Finset.dvd_gcd fun p _ ↦ invariantFactor_zero_dvd_entries A d hd0 L R h p.1 p.2)
+    (Finset.dvd_gcd fun p _ ↦ invariant_factor_zero_dvd_entries A d hd0 L R h p.1 p.2)
     (dvd_diag_of_dvd_entries A _ d _ _ h
       (fun i j ↦ Finset.gcd_dvd (Finset.mem_univ (i, j))) 0)
 
@@ -884,13 +884,13 @@ theorem associated_invariantFactor_zero_gcd [NeZero n] (A : Matrix (Fin n) (Fin 
 normalized, so nonnegativity of `d 0` — which `Matrix.exists_smith_normal_form_of_det_pos`
 supplies — upgrades the associate relation to an equality, and consumers need not redo the
 sign argument. -/
-theorem invariantFactor_zero_eq_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
+theorem invariant_factor_zero_eq_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
     (d : Fin n → ℤ) (hd0 : ∀ k, d 0 ∣ d k) (hnonneg : 0 ≤ d 0)
     (L R : GeneralLinearGroup (Fin n) ℤ)
     (h : (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
       Matrix.diagonal d) :
     d 0 = Finset.univ.gcd fun p : Fin n × Fin n ↦ A p.1 p.2 :=
-  Int.eq_of_associated_of_nonneg (associated_invariantFactor_zero_gcd A d hd0 L R h) hnonneg
+  Int.eq_of_associated_of_nonneg (associated_invariant_factor_zero_gcd A d hd0 L R h) hnonneg
     (Int.nonneg_of_normalize_eq_self Finset.normalize_gcd)
 
 end Matrix
