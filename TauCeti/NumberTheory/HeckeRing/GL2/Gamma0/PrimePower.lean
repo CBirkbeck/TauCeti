@@ -5,7 +5,6 @@ Authors: Chris Birkbeck, Claude
 -/
 module
 
-public import TauCeti.NumberTheory.HeckeRing.Associativity
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.DiagonalElem
 
 /-!
