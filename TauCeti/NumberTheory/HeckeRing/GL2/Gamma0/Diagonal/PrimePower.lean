@@ -5,22 +5,19 @@ Authors: Chris Birkbeck, Claude
 -/
 module
 
+public import TauCeti.NumberTheory.HeckeRing.Associativity
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.Elem
 
 /-!
 # The diagonal generators of the `Γ₀(N)` Hecke ring
 
-This file introduces the diagonal elements of the Hecke ring `R(Γ₀(N), Δ₀(N))`, the two
-generating classes built from them, and the family the Diamond–Shurman recurrence assembles.
+This file builds the two generating classes of the Hecke ring `R(Γ₀(N), Δ₀(N))` on top of the
+general diagonal element `diagElemGamma0` from `Diagonal/Elem.lean`, together with the family
+the Diamond–Shurman recurrence assembles.
 
-`diagElemGamma0 a` splits into three cases, according to the tuple. It is `0` unless the head
-entry `a 0` is coprime to the level — the guard `Δ₀(N)`-membership needs. Past that guard it is
-the class of `Γ₀(N)·diag(a)·Γ₀(N)` when every entry is positive, and `1` when positivity fails,
-since `natDiagGL` degenerates to the identity there. Only the outer two cases are single values;
-the middle one ranges over as many classes as there are such double cosets. It is the level-`N`
-analogue of `diagElem`. The two generators specialise it:
-`heckeTGeneratorGamma0 p` at `![1, p]` and `heckeTScalarGamma0 p` at `![p, p]`. The iterated
-family `heckeTGeneratorRecGamma0 p r` satisfies `T₀ = 1`, `T₁ = T_p` and
+The two generators specialise that element: `heckeTGeneratorGamma0 p` at `![1, p]` and
+`heckeTScalarGamma0 p` at `![p, p]`. The iterated family `heckeTGeneratorRecGamma0 p r`
+satisfies `T₀ = 1`, `T₁ = T_p` and
 
 `T_{r+2} = T_p · T_{r+1} − (p · S_p) · T_r`,
 
@@ -38,14 +35,12 @@ factorisation is proved here; this file supplies the generators those need.
 
 ## Main definitions
 
-* `HeckeRing.GL2.diagElemGamma0`: the level-`N` diagonal Hecke ring element, or `0`.
 * `HeckeRing.GL2.heckeTGeneratorGamma0`: the generator `Γ₀(N)·diag(1, p)·Γ₀(N)`.
 * `HeckeRing.GL2.heckeTScalarGamma0`: the scalar generator `Γ₀(N)·diag(p, p)·Γ₀(N)`, or `0`.
 * `HeckeRing.GL2.heckeTGeneratorRecGamma0`: the family the recurrence generates.
 
 ## Main results
 
-* `HeckeRing.GL2.diagElemGamma0_of_coprime`/`_of_not_coprime`: the two branches.
 * `HeckeRing.GL2.heckeTGeneratorRecGamma0_succ_succ`: the recurrence, as a rewriting rule.
 * `HeckeRing.GL2.heckeTGeneratorRecGamma0_eq_generator_pow_of_not_coprime`: when `p` shares a
   factor with the level, the recurrence degenerates to a power of the generator.
@@ -86,9 +81,9 @@ for any natural `p`, including one sharing a factor with the level. At a prime `
 classical `T_p`.
 
 No coprimality is asked of `p`: the head entry of `![1, p]` is `1`, which is coprime to every
-level, so `diagElemGamma0` always takes its nonzero branch here. Only `p > 0` makes the
-definition interesting — at `p = 0` the underlying `natDiagGL` degenerates to the identity and
-the element is `1` — but no consumer needs that as a hypothesis, so it is not imposed. -/
+level, so only positivity can send this to the junk branch, and it does exactly at `p = 0`
+(`heckeTGeneratorGamma0_zero`). No consumer needs `0 < p` as a hypothesis, so it is not
+imposed on the definition. -/
 noncomputable def heckeTGeneratorGamma0 (p : ℕ) : 𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ :=
   diagElemGamma0 N ![1, p]
 
@@ -98,8 +93,8 @@ noncomputable def heckeTGeneratorGamma0 (p : ℕ) : 𝕋 (Delta0 N) ((Gamma0 N).
 Unlike `heckeTGeneratorGamma0` the coprimality here has content, because the head entry of
 `![p, p]` is `p`. For `0 < p` sharing a factor with `N` the vanishing is a membership fact —
 `diag(p, p) ∉ Δ₀(N)` — and mirrors `⟨p⟩ = 0`. At `p = 0` it is instead a junk-value
-convention: `natDiagGL 2 ![0, 0]` is the identity and so *does* lie in `Δ₀(N)`, but `0` is not
-coprime to `N > 1`, so the guard still sends the element to `0`. -/
+convention: `natDiagGL 2 ![0, 0]` is the identity and so *does* lie in `Δ₀(N)`, but the
+positivity guard sends the element to `0` at every level, coprime or not. -/
 noncomputable def heckeTScalarGamma0 (p : ℕ) : 𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ :=
   diagElemGamma0 N ![p, p]
 
@@ -107,11 +102,12 @@ noncomputable def heckeTScalarGamma0 (p : ℕ) : 𝕋 (Delta0 N) ((Gamma0 N).map
 it is always the class of the double coset. Named `_eq_single` rather than `_def` because it
 states the two-level unfolding, not the definition; `heckeTGeneratorGamma0_def`
 below is the actual defining equation. -/
-lemma heckeTGeneratorGamma0_eq_single (p : ℕ) :
+lemma heckeTGeneratorGamma0_eq_single {p : ℕ} (hp : 0 < p) :
     heckeTGeneratorGamma0 N p =
       HeckeCosetModule.single ℤ
         (diagCosetGamma0 N ![1, p] fun _ ↦ Nat.coprime_one_left N) 1 :=
-  diagElemGamma0_of_coprime N (Nat.coprime_one_left N)
+  diagElemGamma0_of_pos_of_coprime N (by intro i; fin_cases i <;> simp [hp])
+    (Nat.coprime_one_left N)
 
 /-- **The defining equation of the diagonal generator**: it *is* `diagElemGamma0` at `![1, p]`.
 Both generator bodies are sealed, so without this the `diagElemGamma0_*` API is unreachable
@@ -125,10 +121,10 @@ lemma heckeTScalarGamma0_def (p : ℕ) :
     heckeTScalarGamma0 N p = diagElemGamma0 N ![p, p] := (rfl)
 
 /-- The scalar generator in the coprime branch, where it is nonzero. -/
-lemma heckeTScalarGamma0_of_coprime {p : ℕ} (hpN : Nat.Coprime p N) :
+lemma heckeTScalarGamma0_of_coprime {p : ℕ} (hp : 0 < p) (hpN : Nat.Coprime p N) :
     heckeTScalarGamma0 N p =
       HeckeCosetModule.single ℤ (diagCosetGamma0 N ![p, p] fun _ ↦ hpN) 1 :=
-  diagElemGamma0_of_coprime N hpN
+  diagElemGamma0_of_pos_of_coprime N (by intro i; fin_cases i <;> simpa using hp) hpN
 
 /-- The scalar generator vanishes when `p` shares a factor with the level. This is the case
 that lets the recurrence below be stated without splitting on whether `p` divides `N`. -/
@@ -142,10 +138,18 @@ theorem heckeTScalarGamma0_of_not_coprime {p : ℕ} (hpN : ¬ Nat.Coprime p N) :
 theorem heckeTScalarGamma0_one : heckeTScalarGamma0 N 1 = 1 :=
   diagElemGamma0_one_one N
 
-/-- At `p = 0` the generator is the identity: `![1, 0]` is not everywhere positive. -/
+/-- At `p = 0` the generator vanishes: `![1, 0]` is not everywhere positive. -/
 @[simp]
-theorem heckeTGeneratorGamma0_zero : heckeTGeneratorGamma0 N 0 = 1 :=
-  diagElemGamma0_of_not_pos N (Nat.coprime_one_left N) fun h ↦ absurd (h 1) (by simp)
+theorem heckeTGeneratorGamma0_zero : heckeTGeneratorGamma0 N 0 = 0 :=
+  diagElemGamma0_of_not_pos N fun h ↦ absurd (h 1) (by simp)
+
+/-- At `p = 0` the scalar generator vanishes too, for the same reason and at every level. The
+two generators agreeing here is what the shared positivity guard buys: before it, this one
+vanished only because `0` is not coprime to `N > 1`, and so had no unconditional normal
+form. -/
+@[simp]
+theorem heckeTScalarGamma0_zero : heckeTScalarGamma0 N 0 = 0 :=
+  diagElemGamma0_of_not_pos N fun h ↦ absurd (h 0) (by simp)
 
 /-- At `p = 1` the generator is the identity for the other reason: `diag(1, 1)` *is* the
 identity matrix, so this is `diagElemGamma0_one` rather than the degeneracy case above. -/
@@ -170,11 +174,10 @@ noncomputable def heckeTGeneratorRecGamma0 (p : ℕ) : ℕ → 𝕋 (Delta0 N) (
     heckeTGeneratorGamma0 N p * heckeTGeneratorRecGamma0 p (r + 1) -
       ((p : ℤ) • heckeTScalarGamma0 N p) * heckeTGeneratorRecGamma0 p r
 
--- The three equations below hold by `rfl`, but a bare `rfl` proof would export the definitional
--- equality of `heckeTGeneratorRecGamma0`, whose body is sealed (`public section`, no
--- `@[expose]`). Unfolding through the equation lemmas with `rw` states them without doing so.
--- Inside this module a public proof may still *use* a sealed body — see
--- `heckeTScalarGamma0_of_not_coprime` above — it is only the exported defeq that is refused.
+-- `heckeTGeneratorRecGamma0` is given by pattern matching, so its three defining equations are
+-- compiler-generated equation lemmas; `rw [heckeTGeneratorRecGamma0]` is what applies them.
+-- That is a different mechanism from the `_def` lemmas above, which are `(rfl)` against a
+-- non-recursive sealed body — sealing is not what rules `rfl` out here.
 /-- The empty product: `T₀ = 1`. -/
 @[simp]
 theorem heckeTGeneratorRecGamma0_zero (p : ℕ) : heckeTGeneratorRecGamma0 N p 0 = 1 := by
