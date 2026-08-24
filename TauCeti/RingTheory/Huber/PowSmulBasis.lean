@@ -27,8 +27,10 @@ so this is a construction of that topology's neighbourhood basis together with t
 properties, not an identification with the topology 6.18(1) characterises. What *is* proved is
 the weaker statement that the construction does not depend on the lattice it starts from
 (`submodulesBasis_pow_smul_topology_congr`): two finitely generated lattices spanning `M` give
-the same topology. That is well-definedness of Remark 6.19's recipe, not 6.18(1)'s uniqueness,
-which quantifies over topologies never presented by a lattice at all.
+the same topology. That is well-definedness of Remark 6.19's recipe *in the lattice*, for a fixed
+ring of definition `A₀` and pseudouniformiser `ϖ`: the remark chooses those two as well, and
+independence of them is not proved here. Nor is it 6.18(1)'s uniqueness, which quantifies over
+topologies never presented by a lattice at all.
 
 **The hypotheses are weaker than Wedhorn's, deliberately.** Remark 6.19 assumes `A` noetherian
 and `M₀` finitely generated. The basis and topology declarations use neither — only `A · M₀ = M`,
@@ -50,10 +52,12 @@ definition, so a caller holding `powerBoundedSubring A` can use them.
 * `TauCeti.Huber.PairOfDefinition.exists_pow_smul_le` and
   `TauCeti.Huber.PairOfDefinition.exists_pow_smul_le_pow_smul`: the family built from a finitely
   generated lattice is cofinal in the one built from `M₀`. This is one direction of the comparison
-  behind Remark 6.19's well-definedness.
+  behind Remark 6.19's well-definedness in the lattice.
 * `TauCeti.Huber.PairOfDefinition.submodulesBasis_pow_smul_topology_congr`: two finitely
   generated lattices spanning `M` over `A` induce the *same* topology — Remark 6.19's recipe is
-  well defined.
+  well defined in the lattice, for a fixed `A₀` and `ϖ`.
+* `TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero_pow_smul`: the family, ℕ-indexed, is a
+  neighbourhood basis at `0` for the induced topology.
 * `TauCeti.Huber.PairOfDefinition.isCountablyGenerated_nhds_zero`: the induced topology has a
   countable fundamental system of neighbourhoods of `0` — 6.18(1)'s first-countability clause.
 
@@ -231,25 +235,34 @@ theorem powSmulModuleFilterBasis_topology (P : PairOfDefinition A) {s : A}
       = (P.submodulesBasis_pow_smul hs hs0 M₀ hspan).topology :=
   rfl
 
+/-- **The `ϖⁿ • M₀` family is a neighbourhood basis at `0`, indexed by `ℕ`.**
+
+`SubmodulesBasis.topology` presents its neighbourhoods in the `Set`-indexed form of the underlying
+`AddGroupFilterBasis`. This restates them over the `ℕ` that actually indexes the family, which is
+the form the results below want; going through it is what keeps them from unfolding
+`TauCeti.Huber.PairOfDefinition.powSmulModuleFilterBasis` by hand. -/
+theorem hasBasis_nhds_zero_pow_smul (P : PairOfDefinition A) {s : A}
+    (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
+    (M₀ : Submodule P.ringOfDefinition M) (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
+    (@nhds M (P.submodulesBasis_pow_smul hs hs0 M₀ hspan).topology 0).HasBasis
+      (fun _ : ℕ ↦ True) fun n ↦ ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • M₀ : Set M) := by
+  set B := P.powSmulModuleFilterBasis hs hs0 M₀ hspan
+  refine B.toAddGroupFilterBasis.nhds_zero_hasBasis.to_hasBasis ?_ ?_
+  · intro U hU
+    obtain ⟨n, rfl⟩ := (P.mem_powSmulModuleFilterBasis hs hs0 M₀ hspan).mp hU
+    exact ⟨n, trivial, subset_rfl⟩
+  · rintro n -
+    exact ⟨_, (P.mem_powSmulModuleFilterBasis hs hs0 M₀ hspan).mpr ⟨n, rfl⟩, subset_rfl⟩
+
 /-- **The topology has a countable fundamental system of neighbourhoods of `0`.** The family is
-indexed by `ℕ`, so this is `Filter.HasBasis.isCountablyGenerated` once the basis is transported
-off `SubmodulesBasis`'s `Set`-indexed form. -/
+indexed by `ℕ`, so this is `Filter.HasBasis.isCountablyGenerated` applied to
+`TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero_pow_smul`. -/
 theorem isCountablyGenerated_nhds_zero (P : PairOfDefinition A) {s : A}
     (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
     (M₀ : Submodule P.ringOfDefinition M) (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
     (@nhds M (P.powSmulModuleFilterBasis hs hs0 M₀ hspan).topology
-      0).IsCountablyGenerated := by
-  set B := P.powSmulModuleFilterBasis hs hs0 M₀ hspan with hB
-  let _ := B.topology
-  have hbasis : (𝓝 (0 : M)).HasBasis (fun _ : ℕ ↦ True)
-      fun n ↦ ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • M₀ : Set M) := by
-    refine B.toAddGroupFilterBasis.nhds_zero_hasBasis.to_hasBasis ?_ ?_
-    · intro U hU
-      obtain ⟨n, rfl⟩ := (P.mem_powSmulModuleFilterBasis hs hs0 M₀ hspan).mp hU
-      exact ⟨n, trivial, subset_rfl⟩
-    · rintro n -
-      exact ⟨_, (P.mem_powSmulModuleFilterBasis hs hs0 M₀ hspan).mpr ⟨n, rfl⟩, subset_rfl⟩
-  exact hbasis.isCountablyGenerated
+      0).IsCountablyGenerated :=
+  (P.hasBasis_nhds_zero_pow_smul hs hs0 M₀ hspan).isCountablyGenerated
 
 /-- **A power of `ϖ` carries a finitely generated `A₀`-submodule into `M₀` wholesale.**
 
@@ -291,11 +304,11 @@ theorem exists_pow_smul_le (P : PairOfDefinition A) {s : A} (hs : IsTopologicall
 /-- **One-sided cofinality of the two `ϖ`-adic filtrations.** Every member of the family built
 from `M₀` contains a member of the family built from a finitely generated `M₁`.
 
-This is the comparison Remark 6.19's well-definedness rests on, in one direction only: it gives
-the inclusion of the induced neighbourhood filters, not their equality. The reverse inclusion is
-this same theorem with the roles of `M₀` and `M₁` exchanged, which asks instead that `M₀` lie in
-the `A`-span of `M₁` and that `M₀` be finitely generated. Note it is not that `M₁` spans `M`:
-the hypothesis is one containment, not a spanning condition.
+This is the comparison Remark 6.19's well-definedness in the lattice rests on, in one direction
+only: it gives the inclusion of the induced neighbourhood filters, not their equality. The reverse
+inclusion is this same theorem with the roles of `M₀` and `M₁` exchanged, which asks instead that
+`M₀` lie in the `A`-span of `M₁` and that `M₀` be finitely generated. Note it is not that `M₁`
+spans `M`: the hypothesis is one containment, not a spanning condition.
 `submodulesBasis_pow_smul_topology_congr` takes both instances and concludes the equality of the
 induced topologies.
 
@@ -326,20 +339,22 @@ private theorem submodulesBasis_pow_smul_nhds_zero_le (P : PairOfDefinition A) {
     (hspan₁ : Submodule.span A (M₁ : Set M) = ⊤) (hfg₀ : M₀.FG) :
     @nhds M (P.submodulesBasis_pow_smul hs hs0 M₀ hspan₀).topology 0
       ≤ @nhds M (P.submodulesBasis_pow_smul hs hs0 M₁ hspan₁).topology 0 := by
-  refine ((AddGroupFilterBasis.nhds_zero_hasBasis _).le_basis_iff
-    (AddGroupFilterBasis.nhds_zero_hasBasis _)).mpr ?_
-  rintro _ ⟨n, rfl⟩
+  refine ((P.hasBasis_nhds_zero_pow_smul hs hs0 M₀ hspan₀).le_basis_iff
+    (P.hasBasis_nhds_zero_pow_smul hs hs0 M₁ hspan₁)).mpr ?_
+  rintro n -
   -- `M₁` spans `M`, so `M₀` lies in its `A`-span for free; finite generation is the real input.
   obtain ⟨k, hk⟩ := P.exists_pow_smul_le_pow_smul hs.isTopologicallyNilpotent hs0 M₁ M₀
     (by rw [hspan₁]; exact fun _ _ ↦ Submodule.mem_top) hfg₀ n
-  exact ⟨_, ⟨k, rfl⟩, hk⟩
+  exact ⟨k, trivial, SetLike.coe_subset_coe.mpr hk⟩
 
 /-- **The induced topology does not depend on the lattice.** Two finitely generated
 `A₀`-submodules that each span `M` over `A` induce the same topology.
 
-This is what makes Remark 6.19 well posed. The remark says to *choose* a finitely generated `M₀`
-with `A · M₀ = M` and then describes the topology by the family `ϖⁿ • M₀`; for that description to
-name a topology at all, the choice must not matter.
+This is what makes Remark 6.19 well posed in its lattice. The remark says to *choose* a finitely
+generated `M₀` with `A · M₀ = M` and then describes the topology by the family `ϖⁿ • M₀`; for that
+description to name a topology at all, the choice must not matter. The ring of definition `P` and
+the pseudouniformiser `s` are fixed on both sides here, so independence of those two choices —
+which Remark 6.19 makes as well — is not proved.
 
 The two span containments `exists_pow_smul_le_pow_smul` asks for are free here, because each
 lattice spans all of `M`; what is genuinely spent is finite generation, once per direction. So
