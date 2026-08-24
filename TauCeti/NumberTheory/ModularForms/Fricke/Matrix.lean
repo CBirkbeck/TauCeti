@@ -24,8 +24,10 @@ the normalizing scalar that makes it an involution — is built on top of it.
 
 * `TauCeti.coe_frickeGL_inv`: `W⁻¹ = !![0, 1/N; -1, 0]`.
 * `TauCeti.coe_frickeGL_sq`: `W² = (-N) • 1` as matrices.
-* `TauCeti.frickeGL_det_pos`: the determinant is positive. This is about the single matrix `W`,
-  deliberately not a general statement about `SL`-type elements.
+* `TauCeti.det_coe_frickeGL`, `TauCeti.frickeGL_det`: the determinant is `N`, as the determinant
+  of the underlying matrix and as the `GL` determinant; `TauCeti.frickeGL_det_pos` derives its
+  positivity. These are about the single matrix `W`, deliberately not general statements about
+  `SL`-type elements.
 
 ## Relation to the Atkin–Lehner anti-involution
 
@@ -64,13 +66,29 @@ public theorem coe_frickeGL :
     (↑(frickeGL N) : Matrix (Fin 2) (Fin 2) ℚ) = !![0, -1; (N : ℚ), 0] := by
   simp [frickeGL, Matrix.GeneralLinearGroup.mkOfDetNeZero]
 
--- No separate determinant lemma is provided: `coe_frickeGL` already exposes the underlying
--- matrix, from which the value `N` and its matrix form both follow.
+/-- The determinant of the underlying matrix of `frickeGL N` is `N`.
+
+Deliberately not `@[simp]`: `coe_frickeGL` and `Matrix.det_fin_two_of` are `simp`, so simp
+already proves this outright and the `simpNF` linter rejects it as a simp lemma. It exists as
+the named `rw` target for the determinant value. -/
+public theorem det_coe_frickeGL : (↑(frickeGL N) : Matrix (Fin 2) (Fin 2) ℚ).det = N := by
+  rw [coe_frickeGL, det_fin_two_of]
+  ring
+
+/-- The determinant of `frickeGL N`, as an element of `GL (Fin 2) ℚ`, is `N`. This is the shape
+the slash action consumes (`|γ.det.val| ^ (k - 1)`), so the Fricke normalization rewrites by it
+directly.
+
+Deliberately not `@[simp]`: `Matrix.GeneralLinearGroup.val_det_apply` is `simp`, so simp
+already reduces this to `det_coe_frickeGL` and proves it outright; the `simpNF` linter rejects it
+as a simp lemma. -/
+public theorem frickeGL_det : ((frickeGL N).det : ℚ) = N := by
+  rw [Matrix.GeneralLinearGroup.val_det_apply, det_coe_frickeGL]
+
 /-- The determinant of `frickeGL N` is positive. This is about the single matrix `W`; it is
 deliberately not a general statement about determinants of `SL`-type elements. -/
-public theorem frickeGL_det_pos : 0 < (frickeGL N).det.val := by
-  have : (frickeGL N).det.val = (N : ℚ) := by simp
-  rw [this]
+public theorem frickeGL_det_pos : 0 < ((frickeGL N).det : ℚ) := by
+  rw [frickeGL_det]
   exact_mod_cast NeZero.pos N
 
 /-- `W⁻¹ = !![0, 1/N; -1, 0]`.
