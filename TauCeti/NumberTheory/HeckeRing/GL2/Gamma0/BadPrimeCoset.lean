@@ -5,6 +5,9 @@ Authors: Chris Birkbeck, Claude
 -/
 module
 
+-- `ZMod.coe_int_isUnit_iff_isCoprime`: the `Δ₀(N)` unit condition on the upper-left entry, read
+-- as coprimality of an integer with the level.
+public import Mathlib.Data.ZMod.Units
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.DoubleCoset
 public import TauCeti.NumberTheory.HeckeRing.GLn.DiagonalCosets
 
@@ -16,16 +19,21 @@ public import TauCeti.NumberTheory.HeckeRing.GLn.DiagonalCosets
 towards the complementary **bad-prime** case, Shimura Proposition 3.33: an element of `Δ₀(N)`
 whose determinant `m` divides a power of `N` lies in the `Γ₀(N)`-double coset of `diag(1, m)`.
 
-Only the arithmetic prelude is here so far. The clearing lemmas below are what turn a `Δ₀(N)`
-representative into one with the lower-left entry cleared, which is the step the coset
-identification runs on.
+The proof is a column reduction. Coprimality of the upper-left entry to the determinant lets
+one column operation clear the upper row modulo `m`; the determinant identity then forces the
+lower-right entry to clear as well, leaving `A` in the left `Γ₀(N)`-coset of `!![1, r; 0, m]`
+for a reduced `0 ≤ r < m`. Splitting that representative as `diag(1, m) · !![1, r; 0, 1]` moves
+the remaining parameter into a second `Γ₀(N)` factor, which is what makes the conclusion a
+*double* coset.
 
 ## Main results
 
-* `HeckeRing.GL2.exists_mod_clearing`: Bézout in the form the row operation needs — if
-  `gcd(a, p) = 1` then some `t` makes `p ∣ t * a + c`.
-* `HeckeRing.GL2.dvd_lowerRight_witness`: with the determinant fixed and the upper-left entry
-  coprime to it, clearing the upper row also clears the lower-right entry modulo `m`.
+* `HeckeRing.GL2.shimura_prop_3_33`: the proposition itself — an element of `Δ₀(N)` whose
+  determinant `m` divides a power of the level lies in the `Γ₀(N)`-double coset of
+  `diag(1, m)`.
+* `HeckeRing.GL2.shimura_prop_3_33_gen`: the same conclusion drawn from an integral witness
+  directly, with no `Δ₀(N)` hypothesis.
+* `HeckeRing.GL2.Gamma0_left_coset_of_Npow_det`: the column reduction, stated on its own.
 
 ## References
 
@@ -34,11 +42,20 @@ identification runs on.
 * Ported from [AINTLIB](https://github.com/CBirkbeck/AINTLIB) commit
   `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck,
   `LeanModularForms/HeckeRIngs/GLn/CongruenceHecke/Props.lean`, declarations
-  `exists_mod_clearing`, `dvd_lowerRight_witness`, `fin2_col_scale` and
-  `coprime_of_gcd_one_dvd_pow`. The source's `diagMat`/`Delta0_submonoid` vocabulary is
-  `natDiagGL`/`Delta0` here, and its `diagMat_one_mem_Delta0` and `diagMat_mem_Delta0_of_gcd`
-  are **not** re-ported: they are already on main as `natDiagGL_one_mem_Delta0` and
-  `natDiagGL_mem_Delta0_of_coprime`.
+  `exists_mod_clearing`, `dvd_lowerRight_witness`, `coprime_of_gcd_one_dvd_pow`,
+  `shimura_prop_3_33_gen` and `shimura_prop_3_33`.
+
+  Three source declarations are deliberately **not** ported. `diagMat_one_mem_Delta0` and
+  `diagMat_mem_Delta0_of_gcd` are already on main as `natDiagGL_one_mem_Delta0` and
+  `natDiagGL_mem_Delta0_of_coprime`. `fin2_col_scale` exists only to drive the source's
+  entrywise `fin_cases`/`linarith` verification of the final matrix identity; that identity is
+  established here by factoring `!![1, r; 0, m]` as `diag(1, m) · !![1, r; 0, 1]`
+  (`shearMat_eq_diagonal_mul`) and pushing the cast through the product
+  (`coe_mapGL_mul_natDiagGL_mul_mapGL`), so no per-entry lemma is needed.
+
+  The source's `diagMat`/`Delta0_submonoid`/`(Gamma0_pair N).H` vocabulary is
+  `natDiagGL`/`Delta0`/`(Gamma0 N).map (mapGL ℚ)` here, and the source's `[NeZero N]`
+  instance and `β ∈ Δ₀(N)` hypothesis on the general form are both dropped as unused.
 -/
 
 public section
@@ -81,11 +98,6 @@ lemma dvd_lowerRight_witness (A : Matrix (Fin 2) (Fin 2) ℤ) (N m : ℕ) (c₀ 
     exact ⟨-w, by linarith⟩
   exact ((Int.isCoprime_iff_gcd_eq_one.mpr ham).symm).dvd_of_dvd_mul_left
     (h_key ▸ dvd_add (dvd_refl _) (dvd_mul_of_dvd_left hm_ba _))
-
-/-- The second column of `diag(1, m)` is `m` times the second standard basis vector. -/
-lemma fin2_col_scale (m : ℕ) (j : Fin 2) :
-    (![0, (m : ℤ)] : Fin 2 → ℤ) j = (m : ℤ) * (![0, 1] : Fin 2 → ℤ) j := by
-  fin_cases j <;> simp
 
 /-- Coprimality passes to a divisor of a power: if `a` is coprime to `N` and `k ∣ N ^ e`, then
 `a` is coprime to `k`. This is what carries the `Δ₀(N)` coprimality hypothesis down to the
@@ -184,6 +196,97 @@ lemma Gamma0_left_coset_of_Npow_det (N : ℕ) (A : Matrix (Fin 2) (Fin 2) ℤ)
       simp only [Matrix.mul_apply, Fin.sum_univ_two, Matrix.of_apply, Fin.isValue,
         Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.empty_val'] <;>
       first | exact h00 | exact h01 | exact h10 | exact h11
+
+/-- **The reduced representative splits off its shear.** `!![1, r; 0, m]` is `diag(1, m)`
+followed by the unipotent `!![1, r; 0, 1]`.
+
+This one identity is what upgrades the column reduction from a *left*-coset statement to a
+double-coset one. `Gamma0_left_coset_of_Npow_det` puts `A` in the left `Γ₀(N)`-coset of
+`!![1, r; 0, m]`, which still mentions `r`; splitting the shear off on the right moves `r`
+into a second `Γ₀(N)` factor, where it is harmless, a unipotent upper-triangular matrix
+having lower-left entry `0` and so lying in `Γ₀(N)` for every level. -/
+lemma shearMat_eq_diagonal_mul (m : ℕ) (r : ℤ) :
+    (Matrix.of ![![(1 : ℤ), r], ![0, (m : ℤ)]]) =
+      Matrix.diagonal (fun i ↦ ((![1, m] : Fin 2 → ℕ) i : ℤ)) *
+        Matrix.of ![![(1 : ℤ), r], ![0, 1]] := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Matrix.diagonal_apply]
+
+/-- **The `diag(1, m)` sandwich is the cast of an integral product.** Multiplying `diag(1, m)`
+by the images of two integral special-linear matrices stays integral, and its matrix is the
+cast of the corresponding product over `ℤ`.
+
+Both `Γ₀(N)` factors of a double coset at `diag(1, m)` arrive as `mapGL ℚ` images, so this is
+the bridge that lets the whole double-coset identity be checked over `ℤ`, where the column
+reduction lives, instead of entrywise over `ℚ`. -/
+lemma coe_mapGL_mul_natDiagGL_mul_mapGL (m : ℕ) (hm_pos : 0 < m) (g h : SL(2, ℤ)) :
+    ((mapGL ℚ g * natDiagGL 2 ![1, m] * mapGL ℚ h : GL (Fin 2) ℚ) :
+        Matrix (Fin 2) (Fin 2) ℚ)
+      = ((g : Matrix (Fin 2) (Fin 2) ℤ) *
+          Matrix.diagonal (fun i ↦ ((![1, m] : Fin 2 → ℕ) i : ℤ)) *
+          (h : Matrix (Fin 2) (Fin 2) ℤ)).map (Int.cast : ℤ → ℚ) := by
+  have hpos : ∀ i : Fin 2, 0 < (![1, m] : Fin 2 → ℕ) i := fun i ↦ by
+    fin_cases i <;> simp [hm_pos]
+  -- `Matrix.map_mul` is stated for a bundled hom; `⇑(Int.castRingHom ℚ)` is definitionally the
+  -- raw `Int.cast` the goal carries, so naming the instance once lets it rewrite there.
+  have hmap (X Y : Matrix (Fin 2) (Fin 2) ℤ) :
+      (X * Y).map (Int.cast : ℤ → ℚ) = X.map (Int.cast : ℤ → ℚ) * Y.map (Int.cast : ℤ → ℚ) :=
+    Matrix.map_mul (f := Int.castRingHom ℚ)
+  rw [Units.val_mul, Units.val_mul, hmap, hmap, mapGL_coe_matrix, mapGL_coe_matrix,
+    natDiagGL_coe 2 _ hpos]
+  simp [map_apply_coe, Matrix.diagonal_map]
+
+/-- **Generalised Shimura 3.33.** An element of `GL₂(ℚ)` with an integral matrix `A` whose
+lower-left entry is divisible by `N`, whose determinant is `m`, and whose upper-left entry is
+coprime to `m`, lies in the `Γ₀(N)`-double coset of `diag(1, m)`.
+
+Membership of `Δ₀(N)` is deliberately **not** assumed. The proof uses exactly the three facts
+about `A` that `mem_Delta0_iff` would hand over, and the positivity of `det β` that comes with
+`Δ₀(N)` membership plays no part; `shimura_prop_3_33` supplies the hypotheses from a genuine
+`Δ₀(N)` element. -/
+theorem shimura_prop_3_33_gen (N m : ℕ) (hm_pos : 0 < m) (β : GL (Fin 2) ℚ)
+    (A : Matrix (Fin 2) (Fin 2) ℤ)
+    (hA : (β : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
+    (hAN : (N : ℤ) ∣ A 1 0) (hdet : (β : Matrix (Fin 2) (Fin 2) ℚ).det = (m : ℚ))
+    (ham : Int.gcd (A 0 0) m = 1) :
+    β ∈ DoubleCoset.doubleCoset (natDiagGL 2 ![1, m])
+      ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) := by
+  obtain ⟨L, r, hL_det, hL_N, -, -, hA_eq⟩ :=
+    Gamma0_left_coset_of_Npow_det N A hAN m hm_pos (intMat_det_of_coe β A hA m hdet) ham
+  have hR_det : (Matrix.of ![![(1 : ℤ), r], ![0, 1]]).det = 1 := by
+    simp [Matrix.det_fin_two]
+  -- The two factors are named as `SL(2, ℤ)` *variables* rather than written as anonymous
+  -- constructors. `SL(2, ℤ)` is reducibly the subtype `{A // A.det = 1}`, so an ascribed
+  -- `(⟨L, hL_det⟩ : SL(2, ℤ))` elaborates to the subtype's constructor; the resulting goal is
+  -- then ill-typed at `implicit` transparency and `mapGL_coe_matrix` cannot fire on it.
+  obtain ⟨L_sl, hL_sl⟩ : ∃ g : SL(2, ℤ), (g : Matrix (Fin 2) (Fin 2) ℤ) = L := ⟨⟨L, hL_det⟩, rfl⟩
+  obtain ⟨R_sl, hR_sl⟩ : ∃ g : SL(2, ℤ),
+      (g : Matrix (Fin 2) (Fin 2) ℤ) = Matrix.of ![![(1 : ℤ), r], ![0, 1]] := ⟨⟨_, hR_det⟩, rfl⟩
+  rw [DoubleCoset.mem_doubleCoset]
+  refine ⟨mapGL ℚ L_sl, Subgroup.mem_map_of_mem _ (Gamma0_mem.mpr ?_),
+    mapGL ℚ R_sl, Subgroup.mem_map_of_mem _ (Gamma0_mem.mpr ?_), Units.ext ?_⟩
+  · exact hL_sl ▸ (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mpr hL_N
+  · simp [hR_sl]
+  · rw [coe_mapGL_mul_natDiagGL_mul_mapGL m hm_pos, hL_sl, hR_sl, hA, hA_eq,
+      shearMat_eq_diagonal_mul, ← mul_assoc]
+
+/-- **Shimura, Proposition 3.33.** An element of `Δ₀(N)` whose determinant `m` divides a power
+of the level lies in the `Γ₀(N)`-double coset of `diag(1, m)`.
+
+This is the bad-prime companion of `doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0_map`,
+which settles the case `gcd(m, N) = 1`. Here the determinant is as far from coprime to the
+level as it can be: every prime dividing `m` divides `N`. Together the two cover the
+determinants a `Δ₀(N)` element can have at a prime power level. -/
+theorem shimura_prop_3_33 (N m : ℕ) (hm_pos : 0 < m) (k : ℕ) (hm_dvd : m ∣ N ^ k)
+    (β : GL (Fin 2) ℚ) (hβ : β ∈ Delta0 N)
+    (hdet : (β : Matrix (Fin 2) (Fin 2) ℚ).det = (m : ℚ)) :
+    β ∈ DoubleCoset.doubleCoset (natDiagGL 2 ![1, m])
+      ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) := by
+  obtain ⟨A, hA, -, hAN, hAunit⟩ := (mem_Delta0_iff N).mp hβ
+  exact shimura_prop_3_33_gen N m hm_pos β A hA hAN hdet
+    (coprime_of_gcd_one_dvd_pow (A 0 0) N m k
+      (Int.isCoprime_iff_gcd_eq_one.mp
+        (isCoprime_comm.mp ((ZMod.coe_int_isUnit_iff_isCoprime _ _).mp hAunit))) hm_dvd)
 
 end HeckeRing.GL2
 
