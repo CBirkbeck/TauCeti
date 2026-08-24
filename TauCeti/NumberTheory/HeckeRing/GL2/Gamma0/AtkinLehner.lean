@@ -291,7 +291,7 @@ private lemma dvd_atkinLehnerEntries (A : Matrix (Fin 2) (Fin 2) ℤ) (e c : ℤ
 /-- The integral matrices of `x` and its Atkin–Lehner bar are equivalent under determinant-one
 row and column operations. Smith normal form reduces this to preservation of the determinant
 and of the content; the latter is where the `Δ₀(N)` upper-left coprimality is used. -/
-private lemma exists_sl2_mul_mul_eq_atkinLehnerEntries [NeZero N]
+private lemma exists_sl2_mul_mul_eq_atkinLehnerEntries
     (A : Matrix (Fin 2) (Fin 2) ℤ) (hA_det_pos : 0 < A.det) (c : ℤ)
     (hc : A 1 0 = (N : ℤ) * c) (hAco : Int.gcd (A 0 0) N = 1) :
     ∃ P Q : SpecialLinearGroup (Fin 2) ℤ,
