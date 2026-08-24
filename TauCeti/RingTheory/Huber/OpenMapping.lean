@@ -81,6 +81,14 @@ the open-map form delegates to `TauCeti.HasZeroSequenceOfUnits.isOpenMap`. It is
 that the strict-morphism material will consume, since what matters there is not that images are
 open but that the target's topology is determined by the source's.
 
+That quotient form is also what makes continuity free for a *finitely generated* source. A finite
+generating family presents such a module as a topological quotient of `ι → A`, and a linear map out
+of it is then continuous for the cheap reason that its composite with the presentation is a finite
+sum of scalar multiples. This is `TauCeti.Huber.IsTateRing.continuous_of_module_finite`, the
+continuity conjunct of Wedhorn 6.18(2), and it is where the asymmetry of this file reverses: it is
+the *source* that must be complete, metrisable and finitely generated, while the target is asked for
+nothing beyond a topological module structure.
+
 ## Main results
 
 * `TauCeti.Huber.IsTateRing.isOpenMap`: a surjective linear map, continuous at zero, from a
@@ -95,14 +103,43 @@ open but that the target's topology is determined by the source's.
   Banach-theorem arguments consume.
 * `TauCeti.Huber.IsTateRing.isQuotientMap_linearCombination`: the same presentation induces the
   quotient topology, pairing with the above as `isQuotientMap` pairs with `isOpenMap`.
+* `TauCeti.Huber.IsTateRing.continuous_of_module_finite`: a linear map out of a module-finite
+  complete metrisable module is continuous, with no continuity hypothesis on the map and nothing
+  asked of the target beyond a topological module structure. This is the continuity conjunct of
+  Wedhorn 6.18(2); see its docstring for what separates the two.
 
 ## References
 
-* [Wedhorn, *Adic Spaces*][wedhorn_adic], Theorem 6.16. Proposition 6.18(2) is *not* proved
-  here: it assumes `A` noetherian and the modules finitely generated with the topology of
-  6.18(1), and concludes continuity as well as openness onto the image.
+* [Wedhorn, *Adic Spaces*][wedhorn_adic], Theorem 6.16 and Proposition 6.18(2). The proposition
+  is not proved here in full. It assumes `A` noetherian and both modules finitely generated with
+  the topology of 6.18(1), and concludes continuity as well as openness onto the image; what is
+  here is its two conjuncts separately, each under hypotheses of its own.
+  `TauCeti.Huber.IsTateRing.continuous_of_module_finite` is the continuity conjunct, and needs
+  neither the noetherian hypothesis nor a topology of 6.18(1) on the target.
+  `TauCeti.Huber.IsTateRing.isStrictMap_of_isClosed_range` is the openness conjunct, and takes a
+  closed range as a hypothesis in place of what the noetherian finitely generated setting supplies.
+  Assembling the two into 6.18(2) itself needs that missing input — closedness of a finitely
+  generated submodule — which is not in this file.
 * L. Henkel, *An Open Mapping Theorem for rings which have a zero sequence of units*,
   [arXiv:1407.5647](https://arxiv.org/abs/1407.5647).
+
+## Provenance
+
+`TauCeti.Huber.IsTateRing.continuous_of_module_finite` is adapted from the AINTLIB project
+(Chris Birkbeck, Apache-2.0), `projects/AdicSpaces/Adic spaces/WedhornBanachTheorem.lean` at commit
+`37bbdaeb9ad9e3bc9f0d660feadc2779e455a91c`, whose private
+`continuous_of_moduleFinite_of_topNilpUnit` (lines 1113-1149) proves the same statement by the same
+route: present the source as a topological quotient along a finite generating family, then transfer
+continuity across the quotient.
+
+The proof is not transcribed. There the presentation map is built by hand and its openness is
+discharged by a `wedhorn_6_16_of_topNilpUnit` that this repository does not have; here both come
+from `TauCeti.Huber.IsTateRing.isQuotientMap_linearCombination` above, so the argument is a few
+lines rather than twenty-five. The hypotheses differ too: the topologically nilpotent unit is
+supplied by `[IsTateRing A]` rather than taken as an explicit argument, and the target is asked only
+to be a topological `A`-module, where the source lemma asks it to be complete, separated and
+countably uniform.
+
 -/
 
 public section
@@ -176,6 +213,22 @@ theorem IsTateRing.isQuotientMap (f : M →ₗ[A] N) (hf : Function.Surjective f
   HasZeroSequenceOfUnits.isQuotientMap f hf hfc
     fun _ ↦ (continuous_id.smul continuous_const).continuousAt
 
+section LinearCombinationContinuity
+
+variable {A : Type*} [CommRing A] [TopologicalSpace A] {P : Type*} [AddCommGroup P]
+  [TopologicalSpace P] [ContinuousAdd P] [Module A P] [ContinuousSMul A P] {ι : Type*} [Fintype ι]
+
+-- `Continuous ⇑(Fintype.linearCombination A g)` does not expose an application of the map, so
+-- `simp only [Fintype.linearCombination_apply]` has nothing to rewrite; the coercion has to be
+-- turned into the pointwise sum by `funext` before `continuous_finsetSum` applies.
+private theorem continuous_linearCombination (g : ι → P) :
+    Continuous (Fintype.linearCombination A g : (ι → A) → P) := by
+  rw [show (Fintype.linearCombination A g : (ι → A) → P) = fun a ↦ ∑ i, a i • g i from
+    funext (Fintype.linearCombination_apply A g)]
+  exact continuous_finsetSum _ fun i _ ↦ (continuous_apply i).smul continuous_const
+
+end LinearCombinationContinuity
+
 section LinearCombination
 
 variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [CompleteSpace A]
@@ -183,17 +236,6 @@ variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [Comple
   {N : Type*} [AddCommGroup N] [UniformSpace N] [IsUniformAddGroup N] [CompleteSpace N]
   [(𝓤 N).IsCountablyGenerated] [T0Space N] [Module A N] [ContinuousSMul A N]
   {ι : Type*} [Fintype ι]
-
--- `Continuous ⇑(Fintype.linearCombination A g)` does not expose an application of the map, so
--- `simp only [Fintype.linearCombination_apply]` has nothing to rewrite; the coercion has to be
--- turned into the pointwise sum by `funext` before `continuous_finsetSum` applies.
-omit [IsUniformAddGroup A] [CompleteSpace A] [(𝓤 A).IsCountablyGenerated] [NonarchimedeanRing A]
-  [IsTateRing A] [CompleteSpace N] [(𝓤 N).IsCountablyGenerated] [T0Space N] in
-private theorem continuous_linearCombination (g : ι → N) :
-    Continuous (Fintype.linearCombination A g : (ι → A) → N) := by
-  rw [show (Fintype.linearCombination A g : (ι → A) → N) = fun a ↦ ∑ i, a i • g i from
-    funext (Fintype.linearCombination_apply A g)]
-  exact continuous_finsetSum _ fun i _ ↦ (continuous_apply i).smul continuous_const
 
 /-- **A finite spanning family presents `N` as an open quotient of `Aᶥ`.** The
 linear-combination map `a ↦ ∑ aᵢ • gᵢ` is surjective because `g` spans and continuous because
@@ -228,6 +270,55 @@ theorem IsTateRing.isQuotientMap_linearCombination (g : ι → N)
     (continuous_linearCombination g).continuousAt
 
 end LinearCombination
+
+section ModuleFinite
+
+variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [CompleteSpace A]
+  [(𝓤 A).IsCountablyGenerated] [NonarchimedeanRing A] [IsTateRing A]
+  {M : Type*} [AddCommGroup M] [UniformSpace M] [IsUniformAddGroup M] [CompleteSpace M]
+  [(𝓤 M).IsCountablyGenerated] [T0Space M] [Module A M] [ContinuousSMul A M] [Module.Finite A M]
+  {N : Type*} [AddCommGroup N] [TopologicalSpace N] [ContinuousAdd N] [Module A N]
+  [ContinuousSMul A N]
+
+/-- **A linear map out of a module-finite complete metrisable module over a Tate ring is
+continuous.** No continuity hypothesis is placed on `f`: finiteness of the source is what supplies
+it.
+
+The argument is the one reason `TauCeti.Huber.IsTateRing.isQuotientMap_linearCombination` is stated
+as a quotient map rather than merely an open one. A finite generating family presents `M` as a
+topological quotient of `ι → A`; the composite `f ∘ ν` is again a linear-combination map, this time
+of the images `f (gᵢ)`, so it is continuous for the cheap reason that a finite sum of scalar
+multiples is; and a map out of a quotient is continuous as soon as its composite with the quotient
+map is. Nothing about `f` is used beyond linearity.
+
+This is the **continuity conjunct** of Wedhorn Proposition 6.18(2), and not that proposition.
+6.18(2) asks `A` noetherian and both modules finitely generated with the canonical topology of
+6.18(1), and concludes continuity *together with* openness onto the image. The openness conjunct is
+`TauCeti.Huber.IsTateRing.isStrictMap_of_isClosed_range`, which still takes as a hypothesis the
+closed range that the noetherian finitely generated setting would supply.
+
+Two hypotheses of 6.18(2) are absent here, and their absence is the content. `A` is **not** asked to
+be noetherian — that hypothesis is spent entirely on closedness of the range, which continuity does
+not need. And the target is asked only to be a topological `A`-module: no completeness, no
+separation, no countably generated uniformity, not even a uniform structure. Both are genuine
+weakenings, not oversights; the source carries the whole burden, as it must, since it is the source
+being finitely generated that makes the quotient presentation available.
+
+Mathlib's `LinearMap.continuous_of_finiteDimensional` is the same phenomenon over a complete
+nontrivially normed field, where finite-dimensionality plays the role finite generation plays here;
+neither statement subsumes the other, since a Tate ring need not be a field. -/
+theorem IsTateRing.continuous_of_module_finite (f : M →ₗ[A] N) : Continuous (f : M → N) := by
+  obtain ⟨t, ht⟩ := Module.Finite.fg_top (R := A) (M := M)
+  have hspan : Submodule.span A (Set.range ((↑) : {x // x ∈ t} → M)) = ⊤ := by
+    rwa [Subtype.range_coe_subtype, Finset.setOfPred_mem]
+  refine (IsTateRing.isQuotientMap_linearCombination _ hspan).continuous_iff.mpr ?_
+  rw [show (f : M → N) ∘ (Fintype.linearCombination A ((↑) : {x // x ∈ t} → M) :
+        ({x // x ∈ t} → A) → M)
+      = (Fintype.linearCombination A (fun i : {x // x ∈ t} ↦ f i) : ({x // x ∈ t} → A) → N) from
+    funext fun a ↦ by simp [Fintype.linearCombination_apply, map_sum, map_smul]]
+  exact continuous_linearCombination _
+
+end ModuleFinite
 
 end TauCeti.Huber
 
