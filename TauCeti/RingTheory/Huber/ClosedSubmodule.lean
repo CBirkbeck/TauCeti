@@ -27,6 +27,10 @@ the closure, that is `N.topologicalClosure = N`, and `N` is closed because its c
 
 * `TauCeti.Huber.isClosed_of_module_finite_topologicalClosure`: a submodule whose topological
   closure is module-finite is closed.
+* `TauCeti.Huber.isClosed_of_isNoetherianRing_of_module_finite`: over a noetherian base, *every*
+  submodule of a module-finite module is closed.
+* `TauCeti.Huber.IsTateRing.isStrictMap_of_isNoetherianRing_of_module_finite`: a linear map into a
+  module-finite module over a noetherian base is strict, its closed-range hypothesis discharged.
 
 ## References
 
@@ -84,5 +88,46 @@ theorem isClosed_of_module_finite_topologicalClosure (N : Submodule A V)
   have hle : N.topologicalClosure ≤ N :=
     Submodule.comap_subtype_eq_top.mp (eq_top_of_dense_of_module_finite N' hdense)
   exact le_antisymm hle N.le_topologicalClosure ▸ hclosed
+
+section Noetherian
+
+/-- **Over a noetherian base, every submodule of a module-finite module is closed.**
+
+`V` is module-finite over the noetherian ring `A`, so `V` is a noetherian module and every
+submodule of it is finitely generated — the topological closure of `N` included. That closure is
+therefore module-finite, which is exactly what
+`TauCeti.Huber.isClosed_of_module_finite_topologicalClosure` asks of it.
+
+This is the closedness statement of [Wedhorn, *Adic Spaces*][wedhorn_adic], Proposition 6.17, for a
+module whose complete metrisable topology is *given*. It is not that proposition: 6.17 is about the
+canonical topology of 6.18(1), and the construction of that topology, together with its uniqueness,
+is not available here. -/
+theorem isClosed_of_isNoetherianRing_of_module_finite [IsNoetherianRing A] [Module.Finite A V]
+    (N : Submodule A V) : IsClosed (N : Set V) :=
+  isClosed_of_module_finite_topologicalClosure N <|
+    Module.Finite.iff_fg.mpr (IsNoetherian.noetherian _)
+
+variable {M : Type*} [AddCommGroup M] [UniformSpace M] [IsUniformAddGroup M] [CompleteSpace M]
+  [(𝓤 M).IsCountablyGenerated] [NonarchimedeanAddGroup M] [Module A M] [ContinuousSMul A M]
+
+/-- **A linear map into a module-finite module over a noetherian base is strict.**
+
+`TauCeti.Huber.IsTateRing.isStrictMap_of_isClosed_range` asks for the range to be closed. Over a
+noetherian base with a module-finite target that hypothesis is automatic, by
+`TauCeti.Huber.isClosed_of_isNoetherianRing_of_module_finite`, so only continuity at zero is left to
+supply.
+
+This is the openness conjunct of [Wedhorn, *Adic Spaces*][wedhorn_adic], Proposition 6.18(2), with
+its closed-range hypothesis discharged in the noetherian finitely generated setting 6.18(2) is
+stated in. It is still not that proposition, for the same reason as its sibling: continuity is a
+hypothesis here where 6.18(2) derives it, and the topologies are given rather than the canonical
+ones of 6.18(1). -/
+theorem IsTateRing.isStrictMap_of_isNoetherianRing_of_module_finite [IsNoetherianRing A]
+    [Module.Finite A V] (f : M →ₗ[A] V) (hfc : ContinuousAt (f : M → V) 0) :
+    Topology.IsStrictMap (f : M → V) :=
+  IsTateRing.isStrictMap_of_isClosed_range f hfc
+    (isClosed_of_isNoetherianRing_of_module_finite _)
+
+end Noetherian
 
 end TauCeti.Huber
