@@ -6,18 +6,18 @@ Authors: Chris Birkbeck, Claude
 module
 
 public import TauCeti.NumberTheory.HeckeRing.Associativity
-public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.DiagonalCoset
+public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.Coset
 
 /-!
 # The diagonal elements of the `Γ₀(N)` Hecke ring
 
-`Gamma0/DiagonalCoset.lean` builds the double coset `Γ₀(N)·diag(a)·Γ₀(N)` as a `HeckeCoset`.
+`Gamma0/Diagonal/Coset.lean` builds the double coset `Γ₀(N)·diag(a)·Γ₀(N)` as a `HeckeCoset`.
 This file turns it into an element of the Hecke ring `𝕋 (Δ₀(N)) (Γ₀(N))` — the level-`N`
 analogue of `diagElem` — with the coprimality guard applied once so that the vanishing case is
 stated in a single place rather than at each generator.
 
 The module exists because the element's *type* mentions `𝕋`, which comes from
-`HeckeRing.Associativity`. Keeping the definition here rather than in `DiagonalCoset.lean`
+`HeckeRing.Associativity`. Keeping the definition here rather than in `Coset.lean`
 leaves that file at the coset layer, where two of its three consumers
 (`Gamma1/UpperTriCosets.lean` and `UpperTriangularDelta0.lean`) need nothing from the ring
 theory; and keeping it here rather than in `Gamma0/PrimePower.lean` means a consumer wanting
@@ -64,9 +64,9 @@ keeping straight:
 
 The coprimality guard is what `Δ₀(N)`-membership needs, and putting it here rather than at each
 generator means the vanishing case is stated once. This is the level-`N` analogue of
-`diagElem`. It sits in this file rather than beside `diagCosetGamma0` in `DiagonalCoset.lean`
+`diagElem`. It sits in this file rather than beside `diagCosetGamma0` in `Coset.lean`
 because its type mentions `𝕋`, which comes from `HeckeRing.Associativity` — an import
-`DiagonalCoset.lean` does not have, and which two of that file's three consumers do not need. -/
+`Coset.lean` does not have, and which two of that file's three consumers do not need. -/
 noncomputable def diagElemGamma0 (a : Fin 2 → ℕ) : 𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ :=
   if h : Nat.Coprime (a 0) N then
     HeckeCosetModule.single ℤ (diagCosetGamma0 N a fun _ ↦ h) 1

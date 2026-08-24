@@ -5,7 +5,7 @@ Authors: Chris Birkbeck, Claude
 -/
 module
 
-public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.DiagonalElem
+public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.Elem
 
 /-!
 # The diagonal generators of the `Γ₀(N)` Hecke ring
