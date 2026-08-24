@@ -111,7 +111,10 @@ to at argument `1`. Stated once here so `heckeTScalarGamma0_one` and
 `heckeTGeneratorGamma0_one` — which have different head symbols but the same underlying goal —
 are each a single `exact` rather than two copies of the same script. -/
 @[simp] lemma diagElemGamma0_one_one : diagElemGamma0 N ![1, 1] = 1 := by
-  rw [show (![1, 1] : Fin 2 → ℕ) = fun _ ↦ 1 by ext i; fin_cases i <;> rfl]
+  have hconst : (![1, 1] : Fin 2 → ℕ) = fun _ ↦ 1 := by
+    ext i
+    fin_cases i <;> rfl
+  rw [hconst]
   exact diagElemGamma0_one N
 
 end HeckeRing.GL2
