@@ -69,12 +69,7 @@ theorem exists_isTotallyPositive_notMem_square (hmin : minpoly ℤ θ = X ^ 2 - 
     (hnorm : ∀ u : (𝓞 K)ˣ,
       (u : 𝓞 K) * ringOfIntegersQuadraticConj hmin hgen (u : 𝓞 K) = 1) :
     ∃ ε : (𝓞 K)ˣ, IsTotallyPositive ((ε : 𝓞 K) : K) ∧ ε ∉ Subgroup.square (𝓞 K)ˣ := by
-  by_contra hcon
-  have hsquare : ∀ ε : (𝓞 K)ˣ, IsTotallyPositive ((ε : 𝓞 K) : K) →
-      ε ∈ Subgroup.square (𝓞 K)ˣ := by
-    intro ε hε
-    by_contra hmem
-    exact hcon ⟨ε, hε, hmem⟩
+  by_contra! hsquare
   set H := Subgroup.square (𝓞 K)ˣ
   -- Every unit is a square or `-1` times a square, so those two cosets cover the group.
   have hcovers : ⋃ i ∈ (Finset.univ : Finset (Fin 2)),
@@ -90,16 +85,14 @@ theorem exists_isTotallyPositive_notMem_square (hmin : minpoly ℤ θ = X ^ 2 - 
       simpa using hsquare (-u) (by simpa using h)
   have hindex : H.index ≤ 2 := by
     simpa only [Finset.card_fin] using Subgroup.index_le_of_leftCoset_cover_const hcovers
-  -- A field with a real place and degree two has two real places, hence unit rank one.
-  have hfin : Module.finrank ℚ K = 2 := NumberField.finrank_rat_eq_two hmin hgen
-  have hnr : InfinitePlace.nrRealPlaces K ≠ 0 := fun h =>
-    hreal (nrRealPlaces_eq_zero_iff.mp h)
-  have hsum := InfinitePlace.card_add_two_mul_card_eq_rank K
-  have hcard : Fintype.card (InfinitePlace K) = 2 := by
-    rw [InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces]
-    omega
   have hrank : NumberField.Units.rank K = 1 := by
-    rw [NumberField.Units.rank, hcard]
+    -- A field with a real place and degree two has two real places, hence unit rank one.
+    rw [NumberField.Units.rank, InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces]
+    have hplaces := InfinitePlace.card_add_two_mul_card_eq_rank K
+    rw [NumberField.finrank_rat_eq_two hmin hgen] at hplaces
+    have hnr : InfinitePlace.nrRealPlaces K ≠ 0 := fun h =>
+      hreal (nrRealPlaces_eq_zero_iff.mp h)
+    omega
   rw [NumberField.units_sq_index_eq, hrank] at hindex
   norm_num at hindex
 
