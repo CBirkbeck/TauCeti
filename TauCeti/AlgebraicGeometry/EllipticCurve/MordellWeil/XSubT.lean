@@ -50,7 +50,12 @@ what makes the corrected element a unit. Both branches are packaged in `μX`, an
   the ways the three points can meet the `2`-torsion.
 * `WeierstrassCurve.Affine.exists_eq_two_smul_iff`: a point is divisible by `2` exactly when an
   explicit polynomial identity has a solution. This is the bridge from the `x - T` map to the
-  kernel computation.
+  kernel computation below.
+* `WeierstrassCurve.Affine.ker_μ_eq`: **the kernel of `μ` is exactly `2 • W(K)`**. This is the
+  injectivity half of the descent, and the reason `W(K)/2W(K)` embeds into `W.M`. A point in the
+  kernel is exhibited as `2 • P` by solving the identity of `exists_eq_two_smul_iff` from a square
+  root of `x - T`, in two cases according to whether the `x`-coordinate is a root of `f`; the
+  point-wise statement is `WeierstrassCurve.Affine.eq_two_smul_of_μ_eq_one`.
 
 `WeierstrassCurve.Affine.A` is the étale algebra and `WeierstrassCurve.Affine.M` its group of
 square classes of units; `M` is spelled as a quotient of `W.Aˣ` by the range of Mathlib's
@@ -71,12 +76,15 @@ whole content extends a Mathlib namespace.
 Adapted, with the author's proofs, from Michael Stoll's `EllipticCurves` project
 (`github.com/MichaelStollBayreuth/EllipticCurves`, Apache-2.0, pinned by
 `TauCetiRoadmap/EllipticCurves/README.md` at `66889eada51a`), `EllipticCurves/WeakMordellWeil.lean`
-lines 60-717, which are that file's Steps 2 and 3 together with the divisibility criterion opening
-its Step 4. The source is written against Lean `v4.32.0`; this is a forward port.
+lines 60-798, which are that file's Steps 2 and 3, the divisibility criterion opening its Step 4,
+and Step 4 itself — the kernel computation. The source is written against Lean `v4.32.0`; this is
+a forward port.
 
 Two changes were made against the source. Stoll defines the square classes through a local
 abbreviation `Units.modPow`; here they are the quotient by `(powMonoidHom 2).range` directly, so
-that TauCeti carries a single spelling of square classes. And the two lemmas computing the norm of
+that TauCeti carries a single spelling of square classes. In the kernel proofs this replaces the
+source's `Units.modPow.unit_eq_one_iff` step by `WeierstrassCurve.Affine.M.mk_eq_one_iff`, which
+says the same thing about this spelling. And the two lemmas computing the norm of
 `x - T` are not part of this file: they belong to the source's Step 5, which the finiteness result
 does not use.
 
@@ -247,6 +255,32 @@ lemma fCofactor_mul_eq (x : K) : W.fCofactor x * (X - C x) = W.f - C (W.f.eval x
 lemma f_eq_mul_of_eval_eq_zero {x : K} (hx : W.f.eval x = 0) :
     W.f = W.fCofactor x * (X - C x) := by
   simp [fCofactor_mul_eq, hx]
+
+/- Dividing the relation `(r X + s)² ≡ x - X mod (fCofactor x)` by `r²` yields the polynomial
+identity certifying that a point whose `x`-coordinate is a root of `f` is divisible by `2`. This
+is the `2`-torsion half of `ker_μ_eq`, in the shape `exists_eq_two_smul_iff'` asks for. -/
+private lemma f_dvd_of_fCofactor_dvd {x r s : K} (hx : W.f.eval x = 0) (hr : r ≠ 0)
+    (hdvd : W.fCofactor x ∣ (C r * X + C s) ^ 2 - (C x - X)) :
+    W.f ∣ (X - C (-s / r)) ^ 2 * (X - C x) - -(C (1 / r) * X + C (-x / r)) ^ 2 := by
+  obtain ⟨q, hq⟩ := hdvd
+  apply_fun (· * (X - C x)) at hq
+  rw [mul_right_comm, ← f_eq_mul_of_eval_eq_zero _ hx] at hq
+  replace hq : q * W.f = ((C r * X + C s) ^ 2 - (C x - X)) * (X - C x) := by
+    rw [mul_comm]; exact hq.symm
+  refine ⟨C (1 / r ^ 2) * q, ?_⟩
+  rw [eq_comm, mul_comm W.f]
+  apply_fun (C (r ^ 2) * ·) using mul_right_injective₀ <| by simp [hr]
+  dsimp only
+  rw [← mul_assoc, ← mul_assoc, ← map_mul]
+  rw [mul_one_div_cancel <| pow_ne_zero 2 hr, map_one, one_mul, hq]
+  conv_rhs =>
+    rw [sub_neg_eq_add, mul_add, ← mul_assoc, map_pow, ← mul_pow, mul_sub (C r), ← map_mul,
+      mul_div_cancel₀ _ hr]
+    enter [2]
+    rw [← mul_pow, mul_add, ← mul_assoc, ← map_mul, mul_one_div_cancel hr, map_one, one_mul,
+      ← map_mul, mul_div_cancel₀ _ hr]
+  simp only [C_eq_algebraMap]
+  algebra
 
 lemma fCofactor_eq_of_f_eq {xP xQ xR : K} (hf : W.f = (X - C xP) * (X - C xQ) * (X - C xR)) :
     W.fCofactor xP = (X - C xQ) * (X - C xR) ∧ W.fCofactor xQ = (X - C xP) * (X - C xR) ∧
@@ -774,6 +808,90 @@ lemma exists_eq_two_smul_iff' {x y : K} (h : W.Nonsingular x y) :
     have hf := eq_of_dvd_of_natDegree_le_of_leadingCoeff H
       (by rw [natDegree_f]; compute_degree!) (by rw [W.monic_f.leadingCoeff, hmon.leadingCoeff])
     linear_combination -hf
+
+/-!
+### The kernel of the `x - T` map
+-/
+
+section kernel
+
+variable {x y : K} (h : W.Nonsingular x y)
+
+include h
+
+private lemma eq_two_smul_of_μ_eq_one_of_ne (hμ : (μ <| .ofAdd <| .some x y h) = 1)
+    (hx : W.f.eval x ≠ 0) : ∃ P : W.Point, .some x y h = 2 • P := by
+  rw [exists_eq_two_smul_iff']
+  rw [μ_apply, μ₀_some, μX_of_eval_f_ne_zero hx, M.mk_eq_one_iff] at hμ
+  obtain ⟨z, hz⟩ := hμ
+  obtain ⟨r, s, t, hrst⟩ := W.exists_mk_eq z
+  rw [hrst] at hz
+  have hr : r ≠ 0 := by
+    intro rfl
+    simp only [map_zero, zero_mul, zero_add, ← map_pow] at hz
+    rw [AdjoinRoot.mk_eq_mk_iff_of_degree_lt W.monic_f
+      (W.degree_lt_degree_f (by compute_degree!))
+      (W.degree_lt_degree_f (by compute_degree!))] at hz
+    apply_fun natDegree at hz
+    have hd : (C x - X).natDegree = 1 := by compute_degree!
+    rw [natDegree_pow, hd] at hz
+    lia
+  obtain ⟨ξ, l, m, H⟩ := W.exists_X_sub_C_mul_eq r s t hr
+  rw [← map_mul] at H
+  refine ⟨ξ, l, m, ?_⟩
+  apply_fun (fun p ↦ AdjoinRoot.mk W.f (X - C ξ) ^ 2 * p) at hz
+  rw [← neg_inj, eq_comm, ← map_pow, ← map_mul, ← map_neg] at hz
+  conv_rhs at hz => rw [← map_pow, ← map_mul, ← mul_pow, map_pow, H, ← map_pow, ← map_neg]
+  convert hz
+  ring
+
+private lemma eq_two_smul_of_μ_eq_one_of_eq (hμ : (μ <| .ofAdd <| .some x y h) = 1)
+    (hx : W.f.eval x = 0) : ∃ P : W.Point, .some x y h = 2 • P := by
+  rw [exists_eq_two_smul_iff']
+  rw [μ_apply, μ₀_some, μX_of_eval_f_eq_zero hx, M.mk_eq_one_iff] at hμ
+  obtain ⟨z, hz⟩ := hμ
+  obtain ⟨p, hp⟩ := AdjoinRoot.mk_surjective z
+  obtain ⟨r, s, hrs⟩ := W.exists_mk_eq' (AdjoinRoot.mk (W.fCofactor x) p)
+  rw [← hp, ← map_pow, AdjoinRoot.mk_eq_mk] at hz
+  have hz' : AdjoinRoot.mk (W.fCofactor x) (p ^ 2) =
+      AdjoinRoot.mk (W.fCofactor x) (C x - X + W.fCofactor x) :=
+    AdjoinRoot.mk_eq_mk.mpr <| dvd_trans ⟨X - C x, W.f_eq_mul_of_eval_eq_zero hx⟩ hz
+  rw [map_pow, hrs, map_add _ _ (W.fCofactor x), AdjoinRoot.mk_self, add_zero] at hz'
+  have hr₀ : r ≠ 0 := by
+    intro rfl
+    rw [map_zero, zero_mul, zero_add, ← map_pow,
+      AdjoinRoot.mk_eq_mk_iff_of_degree_lt (W.monic_fCofactor x)
+        (W.degree_lt_degree_fCofactor x (by compute_degree!))
+        (W.degree_lt_degree_fCofactor x (by compute_degree!))] at hz'
+    apply_fun natDegree at hz'
+    have hd : (C x - X).natDegree = 1 := by compute_degree!
+    rw [natDegree_pow, hd] at hz'
+    lia
+  rw [← map_pow, AdjoinRoot.mk_eq_mk] at hz'
+  exact ⟨-s / r, 1 / r, -x / r, AdjoinRoot.mk_eq_mk.mpr (W.f_dvd_of_fCofactor_dvd hx hr₀ hz')⟩
+
+/-- **A nonsingular affine point killed by the `x - T` map is divisible by `2`.** -/
+lemma eq_two_smul_of_μ_eq_one (hμ : (μ <| .ofAdd <| .some x y h) = 1) :
+    ∃ P : W.Point, .some x y h = 2 • P :=
+  (eq_or_ne (W.f.eval x) 0).elim (eq_two_smul_of_μ_eq_one_of_eq h hμ)
+    (eq_two_smul_of_μ_eq_one_of_ne h hμ)
+
+end kernel
+
+/-- **The kernel of the `x - T` map is exactly `2 • W(K)`.** This is the injectivity half of the
+descent: it is what makes `W(K)/2W(K)` embed into the group of square classes `W.M`. -/
+lemma ker_μ_eq : (μ (W := W)).ker = (nsmulAddMonoidHom 2).range.toSubgroup := by
+  ext P'
+  obtain ⟨P, rfl⟩ := Multiplicative.ofAdd.surjective P'
+  rw [MonoidHom.mem_ker, μ_apply, Multiplicative.mem_toSubgroup, toAdd_ofAdd,
+    AddMonoidHom.mem_range]
+  simp only [nsmulAddMonoidHom_apply]
+  constructor
+  · match P with
+    | 0 => exact fun _ ↦ ⟨0, by simp⟩
+    | .some x y h => exact fun hμ ↦ (eq_two_smul_of_μ_eq_one h hμ).imp fun Q hQ ↦ hQ.symm
+  · rintro ⟨Q, rfl⟩
+    exact μ₀_two_nsmul Q
 
 end Affine
 
