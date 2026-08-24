@@ -20,7 +20,7 @@ The module exists because the element's *type* mentions `𝕋`, which comes from
 `HeckeRing.Associativity`. Keeping the definition here rather than in `Coset.lean`
 leaves that file at the coset layer, where two of its three consumers
 (`Gamma1/UpperTriCosets.lean` and `UpperTriangularDelta0.lean`) need nothing from the ring
-theory; and keeping it here rather than in `Gamma0/PrimePower.lean` means a consumer wanting
+theory; and keeping it here rather than in `PrimePower.lean` means a consumer wanting
 only the general diagonal element does not import the prime-power recurrence.
 
 ## Main definitions
