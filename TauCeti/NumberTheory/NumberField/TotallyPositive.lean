@@ -47,8 +47,10 @@ the narrow class group finite (see `NarrowClassGroup.Finite`).
 * `NumberField.totallyPositiveIntegerUnits`: the corresponding subgroup of the arithmetic
   units `(𝓞 K)ˣ`, the preimage of `totallyPositiveUnits` under `(𝓞 K)ˣ → Kˣ`, with
   `mem_totallyPositiveIntegerUnits` and `sq_mem_totallyPositiveIntegerUnits`.
-* `NumberField.norm_pos_of_isTotallyPositive`: the field norm of a nonzero totally positive
-  element is strictly positive.
+* `NumberField.prod_eq_norm_of_isTotallyPositive`: for a totally positive element the
+  infinite-place product formula for the norm needs no absolute value, sharpening
+  `InfinitePlace.prod_eq_abs_norm`; hence `NumberField.norm_pos_of_isTotallyPositive`, the field
+  norm of a nonzero totally positive element is strictly positive.
 * `NumberField.finiteIndex_totallyPositiveUnits`: `totallyPositiveUnits` has finite index
   (via `Units.instFiniteIndexPosSubgroup` and the general `Subgroup.instFiniteIndexComap`).
 -/
@@ -175,19 +177,16 @@ omit [NumberField K] in
     totallyPositiveIntegerUnits (K := K) = ⊤ := by
   ext u; simp
 
-/-- **The norm of a totally positive element is positive.** Group the complex embeddings of `K` by
-the infinite place they define. A real place contributes the single factor
-`embedding_of_isReal hw x`, which total positivity makes equal to `w x`; a complex place contributes
-a conjugate pair `φ x · conj (φ x) = (w x) ^ 2`. So `Algebra.norm ℚ x` equals the product
-`∏ w, w x ^ mult w`, which is `|Algebra.norm ℚ x|` by `InfinitePlace.prod_eq_abs_norm`; being
-nonzero, it is positive.
+/-- For a **totally positive** element the infinite-place product formula for the norm holds without
+an absolute value: `∏ w, w x ^ mult w` is `Algebra.norm ℚ x` itself, where
+`InfinitePlace.prod_eq_abs_norm` gives only `|Algebra.norm ℚ x|` for a general `x`.
 
-Over a totally complex field the hypothesis `IsTotallyPositive x` is vacuous
-(`not_isReal_of_isTotallyComplex`), so this covers imaginary quadratic fields as a special case. -/
-theorem norm_pos_of_isTotallyPositive {x : K} (hx : x ≠ 0) (hpos : IsTotallyPositive x) :
-    0 < Algebra.norm ℚ x := by
+Over a totally complex field the hypothesis is vacuous (`not_isReal_of_isTotallyComplex`), and the
+identity then holds for every `x`. -/
+theorem prod_eq_norm_of_isTotallyPositive {x : K} (hpos : IsTotallyPositive x) :
+    ∏ w : InfinitePlace K, w x ^ mult w = ((Algebra.norm ℚ x : ℚ) : ℝ) := by
   classical
-  -- Each infinite place contributes `w x ^ mult w`, with no sign lost at the real places.
+  -- Compare in `ℂ`, where the norm is the product over all the embeddings, then descend to `ℝ`.
   have key : ((Algebra.norm ℚ x : ℚ) : ℂ) =
       ((∏ w : InfinitePlace K, w x ^ mult w : ℝ) : ℂ) := by
     rw [← eq_ratCast (algebraMap ℚ ℂ) (Algebra.norm ℚ x), Algebra.norm_eq_prod_embeddings ℚ ℂ x,
@@ -226,10 +225,17 @@ theorem norm_pos_of_isTotallyPositive {x : K} (hx : x ≠ 0) (hpos : IsTotallyPo
         Finset.prod_pair hne, ComplexEmbedding.conjugate_coe_eq, Complex.mul_conj,
         Complex.normSq_eq_norm_sq, norm_embedding_eq,
         (not_isReal_iff_isComplex.mp hw).mult_eq_two]
-  have hreal : ((Algebra.norm ℚ x : ℚ) : ℝ) = ∏ w : InfinitePlace K, w x ^ mult w := by
-    exact_mod_cast key
-  rw [InfinitePlace.prod_eq_abs_norm] at hreal
-  have habs : |Algebra.norm ℚ x| = Algebra.norm ℚ x := by exact_mod_cast hreal.symm
+  exact_mod_cast key.symm
+
+/-- **The norm of a totally positive element is positive.**
+
+Over a totally complex field the hypothesis `IsTotallyPositive x` is vacuous
+(`not_isReal_of_isTotallyComplex`), so this covers imaginary quadratic fields as a special case. -/
+theorem norm_pos_of_isTotallyPositive {x : K} (hx : x ≠ 0) (hpos : IsTotallyPositive x) :
+    0 < Algebra.norm ℚ x := by
+  have habs : |Algebra.norm ℚ x| = Algebra.norm ℚ x := by
+    exact_mod_cast (InfinitePlace.prod_eq_abs_norm x).symm.trans
+      (prod_eq_norm_of_isTotallyPositive hpos)
   have hne : Algebra.norm ℚ x ≠ 0 :=
     (Algebra.norm_ne_zero_iff_of_basis (Module.finBasis ℚ K)).mpr hx
   exact lt_of_le_of_ne (abs_eq_self.mp habs) (Ne.symm hne)
