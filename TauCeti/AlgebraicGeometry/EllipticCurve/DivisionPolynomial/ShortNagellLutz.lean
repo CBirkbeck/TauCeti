@@ -6,6 +6,9 @@ Authors: The Tau Ceti contributors, Chris Birkbeck
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.Discriminant
+-- Proof-only, and not reachable transitively: `Torsion/Discriminant.lean` imports this
+-- module non-publicly, so `evalEval_ψ₂_of_isCharNeTwoNF` is not re-exported through it.
+import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.ShortWeierstrass
 
 /-!
@@ -37,8 +40,6 @@ is elliptic. See the Provenance note.
   order-two exception.
 * `WeierstrassCurve.y_eq_zero_or_sq_dvd_Δ_of_torsion_short`: the discriminant half on its own.
 * `WeierstrassCurve.y_eq_zero_of_order_two_short`: the collapse — order two forces `y = 0`.
-* `WeierstrassCurve.evalEval_ψ₂_of_isCharNeTwoNF`: `ψ₂ = 2y` whenever `a₁ = a₃ = 0`, over any
-  commutative ring — the short model gets it through Mathlib's `isCharNeTwoNF_of_isShortNF`.
 
 ## Roadmap
 
@@ -81,19 +82,6 @@ open Polynomial
 namespace WeierstrassCurve
 
 open TauCeti.WeierstrassCurve
-
-/-- **In characteristic-≠-2 normal form, `ψ₂` is `2y`.** The two-division polynomial is
-`2y + a₁x + a₃`, so `a₁ = a₃ = 0` collapses it — and that collapse is what turns the long model's
-order-two exception into the classical `y = 0`.
-
-Stated at `IsCharNeTwoNF` rather than at `shortCurve`, which is the weakest hypothesis the one-line
-proof uses: `y² = x³ + a₂x² + a₄x + a₆` needs no `a₂ = 0`. Mathlib's
-`isCharNeTwoNF_of_isShortNF` hands the instance to `shortCurve` for free, so the short-model call
-sites are unchanged. Over any commutative ring, because both `ℤ` (for the integral conclusion) and
-`ℚ` (for the point) need it. -/
-@[simp] lemma evalEval_ψ₂_of_isCharNeTwoNF {R : Type*} [CommRing R] (W : WeierstrassCurve R)
-    [W.IsCharNeTwoNF] (x y : R) : W.ψ₂.evalEval x y = 2 * y := by
-  simp [WeierstrassCurve.ψ₂, Affine.polynomialY, evalEval]
 
 variable (A B : ℤ)
 

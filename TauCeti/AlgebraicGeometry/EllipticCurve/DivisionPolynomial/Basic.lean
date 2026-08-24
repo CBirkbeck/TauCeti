@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
+public import Mathlib.AlgebraicGeometry.EllipticCurve.NormalForms
 
 /-!
 # Identities among the univariate division polynomials
@@ -91,5 +92,18 @@ theorem eval_Ψ₃_eq_sub_mul_eval_Ψ₂Sq {x x' : R} (h : x' * (W.ΨSq 2).eval 
     (W.Ψ₃).eval x = (x - x') * (W.Ψ₂Sq).eval x := by
   rw [ΨSq_two, W.Φ_two_eq_X_mul_Ψ₂Sq_sub_Ψ₃, eval_sub, eval_mul, eval_X] at h
   linear_combination h
+
+/-- **In characteristic-≠-2 normal form, `ψ₂` is `2y`.** The two-division polynomial is
+`2y + a₁x + a₃`, so `a₁ = a₃ = 0` collapses it — and that collapse is what turns the long model's
+order-two exception into the classical `y = 0`.
+
+Stated at `IsCharNeTwoNF` rather than at `shortCurve`, which is the weakest hypothesis the one-line
+proof uses: `y² = x³ + a₂x² + a₄x + a₆` needs no `a₂ = 0`. Mathlib's
+`isCharNeTwoNF_of_isShortNF` hands the instance to `shortCurve` for free, so the short-model call
+sites are unchanged. Over any commutative ring, because both `ℤ` (for the integral conclusion) and
+`ℚ` (for the point) need it. -/
+@[simp] lemma evalEval_ψ₂_of_isCharNeTwoNF {R : Type*} [CommRing R] (W : WeierstrassCurve R)
+    [W.IsCharNeTwoNF] (x y : R) : W.ψ₂.evalEval x y = 2 * y := by
+  simp [WeierstrassCurve.ψ₂, Affine.polynomialY, evalEval]
 
 end WeierstrassCurve

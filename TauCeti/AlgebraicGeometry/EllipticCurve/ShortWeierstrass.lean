@@ -38,7 +38,7 @@ reduce a projection of the opaque constructor. Every other fact about `shortCurv
   curve over `ℤ` be base changed to `ℚ` and stay recognisably short.
 * `WeierstrassCurve.baseChange_shortCurve`: the same for a base change, which is the spelling
   consumers actually hold. It follows definitionally from `map_shortCurve`, but `simp` does not
-  unfold the plain `def` `baseChange`, so that lemma never fires on this spelling by itself.
+  automatically unfold `baseChange`, so that lemma never fires on this spelling by itself.
 * `WeierstrassCurve.shortCurve_equation_iff`: a point lies on it exactly when
   `y² = x³ + Ax + B`.
 
@@ -114,10 +114,10 @@ the classical Nagell–Lutz statement — recognisably in short form. -/
 `baseChange` *is* `map (algebraMap R S)` by definition, which is why the proof below is just
 `map_shortCurve` at that hom.
 
-It is nonetheless worth stating and tagging `@[simp]`. Definitional equality is not what `simp`
-works up to: `WeierstrassCurve.baseChange` is a plain `def`, neither reducible nor a simp lemma, so
-`simp` will not rewrite a `baseChange` spelling into a `map` one and `map_shortCurve` never fires
-on it. This lemma is that missing normalisation step, not a wrapper to name by hand. -/
+It is nonetheless worth stating and tagging `@[simp]`: `simp` does not automatically unfold
+`baseChange`, which carries no simp lemma of its own, so `map_shortCurve` never fires on a
+`baseChange` spelling. This lemma is that missing normalisation step, not a wrapper to name by
+hand. -/
 @[simp] lemma baseChange_shortCurve [Algebra R S] :
     (shortCurve A B).baseChange S = shortCurve (algebraMap R S A) (algebraMap R S B) :=
   map_shortCurve A B _
