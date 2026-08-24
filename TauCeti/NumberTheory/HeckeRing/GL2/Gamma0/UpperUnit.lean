@@ -120,7 +120,7 @@ character. -/
   -- equality, membership in a `Submonoid` being a proposition. A bare `rw [adjugateGL_mapGL]`
   -- fails here for the motive reason, which is why the equality is supplied wholesale.
   rw [show (⟨_, adjugateGL_mapGL_mem_Delta0 N γ⟩ : Delta0 N)
-      = ⟨_, mapGL_mem_Delta0 N γ⁻¹⟩ from Subtype.ext (adjugateGL_mapGL 2 _),
+      = ⟨_, mapGL_mem_Delta0 N γ⁻¹⟩ from Subtype.ext (adjugateGL_mapGL _),
     Delta0UpperUnit_mapGL, map_inv, inv_inv]
 
 end HeckeRing.GL2
