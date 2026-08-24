@@ -76,9 +76,9 @@ namespace HeckeRing.GL2
 
 variable (N : ℕ)
 
-/-- The diagonal generator of the `Γ₀(N)` Hecke ring: the class of `Γ₀(N)·diag(1, p)·Γ₀(N)`,
-for any natural `p`, including one sharing a factor with the level. At a prime `p` this is the
-classical `T_p`.
+/-- The diagonal generator of the `Γ₀(N)` Hecke ring: for `0 < p` the class of
+`Γ₀(N)·diag(1, p)·Γ₀(N)`, including when `p` shares a factor with the level, and `0` at
+`p = 0`. At a prime `p` this is the classical `T_p`.
 
 No coprimality is asked of `p`: the head entry of `![1, p]` is `1`, which is coprime to every
 level, so only positivity can send this to the junk branch, and it does exactly at `p = 0`
@@ -88,7 +88,8 @@ noncomputable def heckeTGeneratorGamma0 (p : ℕ) : 𝕋 (Delta0 N) ((Gamma0 N).
   diagElemGamma0 N ![1, p]
 
 /-- The scalar generator of the `Γ₀(N)` Hecke ring: the class of `Γ₀(N)·diag(p, p)·Γ₀(N)` when
-`p` is coprime to the level, and `0` otherwise.
+`0 < p` and `p` is coprime to the level, and `0` otherwise. Both halves of the guard bite:
+`heckeTScalarGamma0 1 0` is `0` even though `0` is coprime to the level `1`.
 
 Unlike `heckeTGeneratorGamma0` the coprimality here has content, because the head entry of
 `![p, p]` is `p`. For `0 < p` sharing a factor with `N` the vanishing is a membership fact —
@@ -98,10 +99,11 @@ positivity guard sends the element to `0` at every level, coprime or not. -/
 noncomputable def heckeTScalarGamma0 (p : ℕ) : 𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ :=
   diagElemGamma0 N ![p, p]
 
-/-- The diagonal generator as a `single`: the guard is discharged by `Nat.coprime_one_left`, so
-it is always the class of the double coset. Named `_eq_single` rather than `_def` because it
-states the two-level unfolding, not the definition; `heckeTGeneratorGamma0_def`
-below is the actual defining equation. -/
+/-- The diagonal generator as a `single`. The guard has two halves: coprimality is discharged
+outright by `Nat.coprime_one_left`, since the head entry of `![1, p]` is `1`, and the supplied
+`0 < p` discharges positivity — so past that hypothesis this is the class of the double coset.
+Named `_eq_single` rather than `_def` because it states the two-level unfolding, not the
+definition; `heckeTGeneratorGamma0_def` below is the actual defining equation. -/
 lemma heckeTGeneratorGamma0_eq_single {p : ℕ} (hp : 0 < p) :
     heckeTGeneratorGamma0 N p =
       HeckeCosetModule.single ℤ
