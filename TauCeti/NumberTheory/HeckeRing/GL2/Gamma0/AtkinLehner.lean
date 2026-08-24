@@ -257,18 +257,19 @@ private lemma atkinLehnerHom_unop_det (x : GL (Fin 2) ℚ) :
     Units.val_mul, Matrix.det_units_conj, transposeGLEquiv_coe, Matrix.det_transpose]
 
 /-- **The bar preserves the determinant**, so a determinant hypothesis on `x` transfers to
-`bar x` unchanged.
-
-Deliberately **not** `@[simp]`: `atkinLehnerAntiInvolution_bar` is already `@[simp]` and its
-left-hand side `bar x hx` is a strict subterm of this one's, so `simp` unfolds the bar first and
-this lemma's left-hand side is never in normal form. Tagging it makes `lint-env` fail with one
-new `simpNF` violation; measured, not assumed. -/
+`bar x` unchanged. -/
+-- Deliberately not `@[simp]`: `atkinLehnerAntiInvolution_bar` is already `@[simp]` and its
+-- left-hand side `bar x hx` is a strict subterm of this one's, so `simp` unfolds the bar first
+-- and this lemma's left-hand side is never in normal form. Tagging it makes `lint-env` fail with
+-- one new `simpNF` violation; measured, not assumed. Do not add the annotation.
 lemma atkinLehnerAntiInvolution_bar_det [NeZero N] {x : GL (Fin 2) ℚ}
     (hx : x ∈ Delta0 N) :
     (((atkinLehnerAntiInvolution N).bar x hx : GL (Fin 2) ℚ) :
         Matrix (Fin 2) (Fin 2) ℚ).det = (x : Matrix (Fin 2) (Fin 2) ℚ).det := by
-  rw [show ((atkinLehnerAntiInvolution N).bar x hx : GL (Fin 2) ℚ) = (atkinLehnerHom N x).unop from
-    HeckeAntiInvolution.ofAmbient_bar _ _ _ _ x hx]
+  have hbar : ((atkinLehnerAntiInvolution N).bar x hx : GL (Fin 2) ℚ) =
+      (atkinLehnerHom N x).unop :=
+    HeckeAntiInvolution.ofAmbient_bar _ _ _ _ x hx
+  rw [hbar]
   exact atkinLehnerHom_unop_det N x
 
 /-- **The Atkin–Lehner involution fixes a bad-prime double coset.** If `x ∈ Δ₀(N)` has
