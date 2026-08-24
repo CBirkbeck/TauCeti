@@ -34,8 +34,10 @@ namespace WeierstrassCurve
 variable {R S : Type*} [CommRing R] [CommRing S] (W : WeierstrassCurve R)
 
 /-- **Characteristic-≠-2 normal form is preserved by a ring hom.** `(W.map f).a₁` is `f W.a₁`, and
-a hom sends `0` to `0`. Both steps are already `simp` lemmas — `map_a₁` and
-`a₁_of_isCharNeTwoNF` — so naming them is redundant and the linter says so. -/
+a hom sends `0` to `0`, so the vanishing survives.
+
+As an `instance`, this is what lets typeclass search carry `IsCharNeTwoNF` across `W.map f`: a
+caller who has the hypothesis on `W` and a statement about `W.map f` needs no bridging term. -/
 instance isCharNeTwoNF_map (f : R →+* S) [W.IsCharNeTwoNF] : (W.map f).IsCharNeTwoNF :=
   ⟨by simp, by simp⟩
 
