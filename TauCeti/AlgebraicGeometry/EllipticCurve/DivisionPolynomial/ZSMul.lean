@@ -752,11 +752,11 @@ theorem zsmul_point_eq_smulField : (n • Jacobian.point).point = ⟦smulField n
 /-- `smulRing` at `0` is the triple `(1, 1, 0)`, the universal-ring representation of the point
 at infinity. -/
 @[simp] lemma smulRing_zero : smulRing 0 = ![1, 1, 0] := by
-  simp [comp_fin3]
+  simp [smulRing, comp_fin3]
 
 /-- `smulField` at `0` is the triple `(1 : 1 : 0)`, the point at infinity. -/
 @[simp] lemma smulField_zero : smulField 0 = ![1, 1, 0] := by
-  simp [comp_fin3]
+  simp [smulField, comp_fin3]
 
 /-- **The `Z`-coordinate of Mathlib's Jacobian doubling formula at `(φₙ, ωₙ, ψₙ)` is `ψ₂ₙ`** —
 already in the polynomial ring, with no reduction modulo the Weierstrass polynomial. -/
@@ -768,7 +768,7 @@ lemma dblZ_smulPoly : dblZ curvePoly (smulPoly n) = curve.ψ (2 * n) := by
   have key : 2 * curve.ω n + curvePoly.a₁ * curve.φ n * curve.ψ n
       + curvePoly.a₃ * curve.ψ n ^ 3 = curve.ψc n := curve.ω_spec n
   rw [← ψ_mul_ψc, ← key]
-  simp only [dblZ, negY_eq, fin3_def_ext]
+  simp only [dblZ, smulPoly, negY_eq, fin3_def_ext]
   ring
 
 /-- The triple `(φₙ : ωₙ : ψₙ)` is a nonsingular Jacobian point representative of the universal
@@ -820,7 +820,7 @@ lemma addZ_smulPoly : addZ (smulPoly m) (smulPoly n) = curve.ψ (n + m) * curve.
   simp only [IsEllipticNet.rel, add_zero, ψ_one] at key
   symm
   rw [← sub_eq_zero, ← key, addZ]
-  simp only [fin3_def_ext, WeierstrassCurve.φ]
+  simp only [smulPoly, fin3_def_ext, WeierstrassCurve.φ]
   ring
 
 /-- **Negating the index negates the point**: the triple at `-n` is Mathlib's Jacobian negation of
@@ -833,7 +833,7 @@ the triple at `n`, rescaled by `-1`. -/
   -- explicit `Matrix.cons_val_*` lemmas cannot match; the default `simp` set can, via the
   -- `Fin.reduceFinMk` simproc, after which the tuple projections and `ring` finish all three.
   funext i
-  fin_cases i <;> simp [smul_fin3, neg, negY] <;> ring
+  fin_cases i <;> simp [smulPoly, smul_fin3, neg, negY] <;> ring
 
 /-- The negation rule over the universal ring. -/
 @[simp] lemma smulRing_neg :
@@ -878,8 +878,8 @@ lemma addXYZ_smulField :
   · rw [addXYZ_Z,
       (smul_fin3_ext (smulField (n + m)) (polyToField (curve.ψ (n - m)))).2.2, smulField_Z]
     have hF := congrArg polyToField (addZ_smulPoly (m := m) (n := n))
-    simp only [addZ, Function.comp_def, map_sub polyToField, map_mul polyToField,
-      map_pow polyToField] at hF ⊢
+    simp only [addZ, smulPoly, smulField, Function.comp_def, map_sub polyToField,
+      map_mul polyToField, map_pow polyToField] at hF ⊢
     linear_combination hF
   -- The nonvanishing side-goal is that same scaled projection, rewritten the same way.
   · rw [(smul_fin3_ext (smulField (n + m)) (polyToField (curve.ψ (n - m)))).2.2, smulField_Z]
@@ -927,11 +927,11 @@ abbrev smulEval (n : ℤ) : Fin 3 → R := evalEval x y ∘ ![W.φ n, W.ω n, W.
 
 /-- `smulEval` at `0` is `(1, 1, 0)`, the Jacobian triple of the point at infinity. -/
 @[simp] lemma smulEval_zero : smulEval W x y 0 = ![1, 1, 0] := by
-  simp [comp_fin3]
+  simp [smulEval, comp_fin3, evalEval]
 
 /-- `smulEval` at `1` is `(x, y, 1)`: the point `(x, y)` itself, in Jacobian coordinates. -/
 @[simp] lemma smulEval_one : smulEval W x y 1 = ![x, y, 1] := by
-  simp [comp_fin3, evalEval]
+  simp [smulEval, comp_fin3, evalEval]
 
 variable {W} (eqn : Affine.Equation W x y)
 
@@ -947,7 +947,7 @@ what turns each identity over `curveRing` into the same identity for `W` at `(x,
   -- `Matrix.cons_val_*` lemmas cannot match it; the default `simp` set reduces it through the
   -- `Fin.reduceFinMk` simproc, and the three coordinates then close uniformly.
   funext i
-  fin_cases i <;> simp [evalEval_φ, evalEval_ω, evalEval_ψ]
+  fin_cases i <;> simp [Jacobian.smulRing, smulEval, evalEval_φ, evalEval_ω, evalEval_ψ]
 
 end Universal
 
@@ -957,7 +957,7 @@ evaluations and needs no equation on `(x, y)`. -/
 @[simp] lemma smulEval_neg (n : ℤ) :
     smulEval W x y (-n) = (-1 : R) • Jacobian.neg W (smulEval W x y n) := by
   funext i
-  fin_cases i <;> (simp [smul_fin3, Jacobian.neg, Jacobian.negY]; try ring)
+  fin_cases i <;> (simp [smulEval, smul_fin3, Jacobian.neg, Jacobian.negY]; try ring)
 
 include eqn in
 /-- **The doubling formula for a concrete curve**: `dblXYZ_smulRing` specialized along the point
