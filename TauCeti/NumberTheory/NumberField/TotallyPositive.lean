@@ -47,10 +47,9 @@ the narrow class group finite (see `NarrowClassGroup.Finite`).
 * `NumberField.totallyPositiveIntegerUnits`: the corresponding subgroup of the arithmetic
   units `(𝓞 K)ˣ`, the preimage of `totallyPositiveUnits` under `(𝓞 K)ˣ → Kˣ`, with
   `mem_totallyPositiveIntegerUnits` and `sq_mem_totallyPositiveIntegerUnits`.
-* `NumberField.prod_eq_norm_of_isTotallyPositive`: for a totally positive element the
-  infinite-place product formula for the norm needs no absolute value, sharpening
-  `InfinitePlace.prod_eq_abs_norm`; hence `NumberField.norm_pos_of_isTotallyPositive`, the field
-  norm of a nonzero totally positive element is strictly positive.
+* `NumberField.norm_nonneg_of_isTotallyPositive`: the field norm of a totally positive element is
+  nonnegative, and `NumberField.norm_pos_of_isTotallyPositive`: for a nonzero such element it is
+  strictly positive.
 * `NumberField.finiteIndex_totallyPositiveUnits`: `totallyPositiveUnits` has finite index
   (via `Units.instFiniteIndexPosSubgroup` and the general `Subgroup.instFiniteIndexComap`).
 -/
@@ -177,16 +176,15 @@ omit [NumberField K] in
     totallyPositiveIntegerUnits (K := K) = ⊤ := by
   ext u; simp
 
-/-- For a **totally positive** element the infinite-place product formula for the norm holds without
-an absolute value: `∏ w, w x ^ mult w` is `Algebra.norm ℚ x` itself, where
-`InfinitePlace.prod_eq_abs_norm` gives only `|Algebra.norm ℚ x|` for a general `x`.
+/-- **The norm of a totally positive element is nonnegative.**
 
-Over a totally complex field the hypothesis is vacuous (`not_isReal_of_isTotallyComplex`), and the
-identity then holds for every `x`. -/
-theorem prod_eq_norm_of_isTotallyPositive {x : K} (hpos : IsTotallyPositive x) :
-    ∏ w : InfinitePlace K, w x ^ mult w = ((Algebra.norm ℚ x : ℚ) : ℝ) := by
+Over a totally complex field the hypothesis is vacuous (`not_isReal_of_isTotallyComplex`), so the
+conclusion holds for every `x` there, including `x = 0` whose norm is `0`. -/
+theorem norm_nonneg_of_isTotallyPositive {x : K} (hpos : IsTotallyPositive x) :
+    0 ≤ Algebra.norm ℚ x := by
   classical
-  -- Compare in `ℂ`, where the norm is the product over all the embeddings, then descend to `ℝ`.
+  -- Compare in `ℂ`, where the norm is the product over all the embeddings, then descend to `ℝ`;
+  -- against `prod_eq_abs_norm` this says the absolute value there costs nothing.
   have key : ((Algebra.norm ℚ x : ℚ) : ℂ) =
       ((∏ w : InfinitePlace K, w x ^ mult w : ℝ) : ℂ) := by
     rw [← eq_ratCast (algebraMap ℚ ℂ) (Algebra.norm ℚ x), Algebra.norm_eq_prod_embeddings ℚ ℂ x,
@@ -225,20 +223,20 @@ theorem prod_eq_norm_of_isTotallyPositive {x : K} (hpos : IsTotallyPositive x) :
         Finset.prod_pair hne, ComplexEmbedding.conjugate_coe_eq, Complex.mul_conj,
         Complex.normSq_eq_norm_sq, norm_embedding_eq,
         (not_isReal_iff_isComplex.mp hw).mult_eq_two]
-  exact_mod_cast key.symm
+  have hreal : ((Algebra.norm ℚ x : ℚ) : ℝ) = ∏ w : InfinitePlace K, w x ^ mult w := by
+    exact_mod_cast key
+  rw [InfinitePlace.prod_eq_abs_norm] at hreal
+  have habs : |Algebra.norm ℚ x| = Algebra.norm ℚ x := by exact_mod_cast hreal.symm
+  exact abs_eq_self.mp habs
 
-/-- **The norm of a totally positive element is positive.**
+/-- **The norm of a nonzero totally positive element is positive.**
 
 Over a totally complex field the hypothesis `IsTotallyPositive x` is vacuous
 (`not_isReal_of_isTotallyComplex`), so this covers imaginary quadratic fields as a special case. -/
 theorem norm_pos_of_isTotallyPositive {x : K} (hx : x ≠ 0) (hpos : IsTotallyPositive x) :
-    0 < Algebra.norm ℚ x := by
-  have habs : |Algebra.norm ℚ x| = Algebra.norm ℚ x := by
-    exact_mod_cast (InfinitePlace.prod_eq_abs_norm x).symm.trans
-      (prod_eq_norm_of_isTotallyPositive hpos)
-  have hne : Algebra.norm ℚ x ≠ 0 :=
-    (Algebra.norm_ne_zero_iff_of_basis (Module.finBasis ℚ K)).mpr hx
-  exact lt_of_le_of_ne (abs_eq_self.mp habs) (Ne.symm hne)
+    0 < Algebra.norm ℚ x :=
+  lt_of_le_of_ne (norm_nonneg_of_isTotallyPositive hpos)
+    (Ne.symm ((Algebra.norm_ne_zero_iff_of_basis (Module.finBasis ℚ K)).mpr hx))
 
 /-- `totallyPositiveUnits` has **finite index** in `Kˣ`: it is a finite intersection, over the real
 infinite places, of the finite-index preimages of the positive units of `ℝ` (via the general
