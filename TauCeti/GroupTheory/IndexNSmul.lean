@@ -52,11 +52,19 @@ for adapted material, the upstream authorship is credited here rather than in th
 and each declaration carries its source name.
 
 **Not ported from that file**, because Mathlib or this repository already has them: its
-`Module.finite_int_additive`, `Group.fg_of_module_finite_int`, `finite_of_fg_of_pow_eq_one`,
-`finite_modPow`, `card_ker_mul_card_range`, `index_range_eq_card_ker`, `ker_nsmulAddMonoidHom` and
-`rank_eq_zero_of_finite`, and its `Subgroup.fg_of_commGroup_fg` and `Group.fg_of_fg_ker_of_fg_range`
-(both in `TauCeti/GroupTheory/Finiteness.lean`). The source predates those additions, several of
-which its own author upstreamed, so check Mathlib again before porting anything further from it.
+`Module.finite_int_additive` and `Group.fg_of_module_finite_int` (Mathlib's
+`AddMonoid.FG.to_moduleFinite_int` and `Module.Finite.iff_addGroup_fg` composed with
+`AddGroup.fg_iff_mul_fg`), `finite_of_fg_of_pow_eq_one` (`CommGroup.finite_of_fg_isMulTorsion`),
+`finite_modPow` (`Subgroup.finiteIndex_range_powMonoidHom_of_fg`), `card_ker_mul_card_range` and
+`index_range_eq_card_ker` (`AddSubgroup.index_range`, which needs only `FiniteIndex` on the kernel
+rather than a finite ambient group, so the counting lemma that derived it is unnecessary),
+`ker_nsmulAddMonoidHom` (`AddSubgroup.nsmulAddMonoidHom_injective_of_isTorsionFree` through
+`AddMonoidHom.ker_eq_bot_iff`), and its `Subgroup.fg_of_commGroup_fg` and
+`Group.fg_of_fg_ker_of_fg_range` (both in `TauCeti/GroupTheory/Finiteness.lean`). Its
+`Module.rank_eq_zero_of_finite` has no Mathlib counterpart but is a three-line consequence of
+`rank_eq_zero_iff` used exactly once, so it is inlined at that use site rather than given a name.
+The source predates those additions, several of which its own author upstreamed, so check Mathlib
+again before porting anything further from it.
 -/
 
 public section
@@ -86,7 +94,6 @@ namespace AddSubgroup
 
 variable {G : Type*} [AddCommGroup G]
 
-open AddSubgroup in
 /-- The relative index of `nU` in `nG` equals the index of `G[n] ⊔ U`, via the surjection
 `G → nG ⧸ nU` induced by multiplication by `n`. A step of `index_range_nsmul_mul_card_ker`. -/
 -- Adapted from the private `relIndex_range_comp_subtype` in Michael Stoll's `EllipticCurves`
@@ -123,7 +130,6 @@ private lemma relIndex_range_comp_subtype (U : AddSubgroup G) (n : ℕ) :
           ρ hρ).symm.trans (QuotientAddGroup.quotientAddEquivOfEq hker)).toEquiv
     _ = C.index := rfl
 
-open AddSubgroup in
 /-- The second isomorphism theorem applied to `G[n]` and `U`: `(U : G[n] ⊔ U) * #U[n] = #G[n]`.
 A step of `index_range_nsmul_mul_card_ker`. -/
 -- Adapted from the private `relIndex_sup_ker_mul_card_ker` in Michael Stoll's `EllipticCurves`
@@ -144,7 +150,6 @@ private lemma relIndex_sup_ker_mul_card_ker (U : AddSubgroup G) (n : ℕ) :
   rw [← h2, ← h3]
   exact (AddSubgroup.card_eq_card_quotient_mul_card_addSubgroup _).symm
 
-open AddSubgroup in
 /-- **For a subgroup `U` of finite index in a commutative group `G` and any `n`,
 `(G : nG) * #U[n] = #G[n] * (U : nU)`**: the quantity `(G : nG) / #G[n]` is insensitive to passing
 to a subgroup of finite index. -/
