@@ -328,10 +328,9 @@ theorem baseChangeExp_tmul_of_pow_eq_zero (x : A) (M : S)
       ∑ n ∈ range k, (t ^ n * r) ⊗ₜ[ℤ] integralDividedPower x M n (hM n) v := by
   simp [baseChangeExp_of_pow_eq_zero x M hM hk, smul_tmul']
 
-omit [Algebra ℤ R] in
 /-- Binomial convolution identity for truncated divided-power series. -/
-private theorem sum_pow_smul_mul_sum_pow_smul
-    {B : Type*} [Ring B] [Algebra R B] (D : ℕ → B) (k : ℕ)
+private theorem sum_pow_smul_mul_sum_pow_smul {R : Type*} [CommSemiring R]
+    {B : Type*} [Semiring B] [Algebra R B] (D : ℕ → B) (k : ℕ)
     (hzero : ∀ n, k ≤ n → D n = 0)
     (hmul : ∀ m n, D m * D n = Nat.choose (m + n) m • D (m + n))
     (t u : R) :
