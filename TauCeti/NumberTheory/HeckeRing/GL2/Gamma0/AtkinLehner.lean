@@ -7,6 +7,9 @@ module
 
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Basic
 public import TauCeti.NumberTheory.HeckeRing.GLn.TransposeAntiInvolution
+-- `mem_doubleCoset_natDiagGL_of_dvd_pow` (Shimura 3.33), used only inside the proof of
+-- `atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_dvd_pow` below, so private.
+import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.BadPrimeCoset
 
 /-!
 # The Atkin-Lehner anti-involution of the `Γ₀(N)` Hecke pair
@@ -233,5 +236,39 @@ lemma atkinLehnerAntiInvolution_bar_val [NeZero N] {x : GL (Fin 2) ℚ} (hx : x 
     HeckeAntiInvolution.ofAmbient_bar _ _ _ _ x hx
   rw [hbar]
   exact atkinLehnerHom_unop_val N x A hA c hc
+
+/-- **The bar preserves the determinant.** Conjugation cannot change a determinant and the
+transpose does not either, so the two `w`-factors cancel. This is what lets a determinant
+hypothesis on `x` be reused verbatim for `bar x`. -/
+lemma atkinLehnerAntiInvolution_bar_det [NeZero N] {x : GL (Fin 2) ℚ} (hx : x ∈ Delta0 N) :
+    (((atkinLehnerAntiInvolution N).bar x hx : GL (Fin 2) ℚ) :
+        Matrix (Fin 2) (Fin 2) ℚ).det = (x : Matrix (Fin 2) (Fin 2) ℚ).det := by
+  have hw : ((natDiagGL 2 ![1, N] : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det ≠ 0 := by
+    rw [← Matrix.GeneralLinearGroup.val_det_apply]
+    exact Units.ne_zero _
+  rw [atkinLehnerAntiInvolution_bar N hx]
+  simp [Matrix.det_mul, Matrix.det_transpose, mul_comm, mul_inv_cancel_right₀ hw]
+
+/-- **The Atkin–Lehner involution fixes a bad-prime double coset.** If `x ∈ Δ₀(N)` has
+determinant `m` with `m ∣ N ^ k`, then `bar x` lies in the `Γ₀(N)`-double coset of `x` itself.
+
+This is the *bad* case, where `m` shares its primes with the level; the coprime case is
+separate. Both `x` and `bar x` have determinant `m`, so Shimura's Proposition 3.33 puts each of
+them in the double coset of the same diagonal representative `diag(1, m)`, and being in a common
+double coset is what identifies the two cosets.
+
+It is the fixing hypothesis the commutativity of the `Γ₀(N)` Hecke ring needs:
+`HeckeCosetModule.mul_comm_of_antiInvolution` asks for an anti-involution fixing every double
+coset, and this supplies the bad-prime half of that. -/
+theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_dvd_pow [NeZero N] (m k : ℕ)
+    (hm_dvd : m ∣ N ^ k) (x : GL (Fin 2) ℚ) (hx : x ∈ Delta0 N)
+    (hdet : (x : Matrix (Fin 2) (Fin 2) ℚ).det = (m : ℚ)) :
+    (atkinLehnerAntiInvolution N).bar x hx ∈
+      DoubleCoset.doubleCoset x ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) := by
+  rw [DoubleCoset.doubleCoset_eq_of_mem
+    (mem_doubleCoset_natDiagGL_of_dvd_pow N m k hm_dvd x hx hdet)]
+  exact mem_doubleCoset_natDiagGL_of_dvd_pow N m k hm_dvd _
+    ((atkinLehnerAntiInvolution N).bar_mem_Δ x hx)
+    ((atkinLehnerAntiInvolution_bar_det N hx).trans hdet)
 
 end HeckeRing.GL2
