@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.RingTheory.Length
+public import Mathlib.RingTheory.QuotSMulTop
 
 /-!
 # General facts about the length of a module
@@ -23,7 +24,10 @@ taken from each of its steps. So a uniform bound on finitely generated submodule
 the module.
 
 Multiplication by a ring element `a` on a module `M` is written throughout as
-`LinearMap.range (LinearMap.lsmul A M a)`, which is the submodule `aM`.
+`LinearMap.range (LinearMap.lsmul A M a)`, which is the submodule `aM`. Mathlib spells the same
+submodule pointwise, as `a • ⊤`, and quotients by it in `QuotSMulTop`;
+`TauCeti.range_lsmul_eq_smul_top` is the single bridge between the two readings, so that Mathlib's
+`QuotSMulTop` API applies to the quotients appearing here.
 
 ## Main results
 
@@ -32,6 +36,7 @@ Multiplication by a ring element `a` on a module `M` is written throughout as
 * `TauCeti.length_map_mkQ`: the length of the image of `N` in `M ⧸ P`.
 * `TauCeti.length_le_of_forall_fg`: a bound on all finitely generated submodules bounds the
   length.
+* `TauCeti.range_lsmul_eq_smul_top`: `aM` as Mathlib's pointwise `a • ⊤`.
 * `TauCeti.length_quotient_lsmul_le_of_forall_fg`: the same reduction for `M ⧸ aM`.
 -/
 
@@ -111,6 +116,8 @@ end Ring
 
 section CommRing
 
+open scoped Pointwise
+
 variable {A M : Type*} [CommRing A] [AddCommGroup M] [Module A M]
 
 /-- For a submodule `N`, the elements of `N` lying in `aN` computed in the ambient module are
@@ -128,18 +135,13 @@ theorem comap_subtype_map_lsmul (N : Submodule A M) (a : A) :
   · rintro ⟨z, rfl⟩
     exact ⟨(z : M), z.2, rfl⟩
 
-/-- A linear equivalence identifies `M ⧸ aM` with `M' ⧸ aM'`. -/
-theorem length_quotient_lsmul_congr {M' : Type*} [AddCommGroup M'] [Module A M']
-    (e : M ≃ₗ[A] M') (a : A) : Module.length A (M ⧸ LinearMap.range (LinearMap.lsmul A M a))
-      = Module.length A (M' ⧸ LinearMap.range (LinearMap.lsmul A M' a)) := by
-  refine (Submodule.Quotient.equiv _ _ e ?_).length_eq
-  ext y
-  simp only [Submodule.mem_map, LinearMap.mem_range, LinearMap.lsmul_apply, LinearEquiv.coe_coe]
-  constructor
-  · rintro ⟨z, ⟨w, rfl⟩, rfl⟩
-    exact ⟨e w, by simp⟩
-  · rintro ⟨w, rfl⟩
-    exact ⟨a • e.symm w, ⟨e.symm w, rfl⟩, by simp⟩
+/-- `aM`, written as the range of multiplication by `a`, is the pointwise scalar multiple
+`a • ⊤` that Mathlib's `QuotSMulTop` quotients by. This is the only bridge between the two
+readings; with it, `QuotSMulTop.congr` transports `M ⧸ aM` along a linear equivalence. -/
+theorem range_lsmul_eq_smul_top (a : A) :
+    LinearMap.range (LinearMap.lsmul A M a) = a • (⊤ : Submodule A M) := by
+  rw [Submodule.pointwise_smul_def, Submodule.map_top]
+  rfl
 
 /-- **Reduction of the length of `M ⧸ aM` to finitely generated submodules.** -/
 theorem length_quotient_lsmul_le_of_forall_fg {a : A} {c : ℕ∞} (h : ∀ N : Submodule A M, N.FG →
