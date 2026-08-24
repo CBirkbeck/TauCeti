@@ -813,4 +813,59 @@ theorem smith_normal_form_unique {c d : Fin n → ℤ} (hc_pos : ∀ i, 0 ≤ c 
   · rw [chain_zero hd hpre, chain_zero hc (by rw [key i.val (by omega)]; exact hpre)]
   · exact mul_left_cancel₀ hpre hprod₁
 
+/-! ## The first invariant factor is the content
+
+The first entry of a chained diagonal form is a common divisor of the entries of the original
+matrix, and the largest one — so it is the gcd of the entries, and in particular depends only
+on the matrix and not on the chosen factorisation. -/
+
+/-- **The first invariant factor divides every entry.** If `L * A * R = diagonal d` with `L`,
+`R` unimodular and `d` a divisibility chain, then `d 0` divides every entry of `A`.
+
+Inverting the unimodular factors writes `A = L⁻¹ * diagonal d * R⁻¹`, so every entry of `A` is
+a `ℤ`-combination of the `d k`; the chain makes each of those divisible by `d 0`. -/
+theorem invariantFactor_zero_dvd_entries [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
+    (d : Fin n → ℤ) (hchain : ∀ ⦃i j : Fin n⦄, i ≤ j → d i ∣ d j)
+    (L R : GeneralLinearGroup (Fin n) ℤ)
+    (h : (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
+      Matrix.diagonal d) (i j : Fin n) : d 0 ∣ A i j := by
+  have hA : A = (↑L⁻¹ : Matrix (Fin n) (Fin n) ℤ) * Matrix.diagonal d *
+      (↑R⁻¹ : Matrix (Fin n) (Fin n) ℤ) := by
+    rw [← h]
+    simp [Matrix.mul_assoc]
+  rw [hA, Matrix.mul_apply]
+  refine Finset.dvd_sum fun k _ ↦ ?_
+  rw [Matrix.mul_diagonal]
+  exact Dvd.dvd.mul_right ((hchain (Fin.zero_le k)).mul_left _) _
+
+/-- **Every common divisor of the entries divides the first invariant factor.** The converse of
+`Matrix.invariantFactor_zero_dvd_entries`: `d 0` is an entry of `L * A * R`, hence a
+`ℤ`-combination of the entries of `A`. -/
+theorem dvd_invariantFactor_zero_of_dvd_entries [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
+    (c : ℤ) (d : Fin n → ℤ) (L R : GeneralLinearGroup (Fin n) ℤ)
+    (h : (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
+      Matrix.diagonal d) (hc : ∀ i j, c ∣ A i j) : c ∣ d 0 := by
+  have h00 := congr_fun₂ h 0 0
+  rw [Matrix.diagonal_apply_eq] at h00
+  rw [← h00, Matrix.mul_apply]
+  refine Finset.dvd_sum fun k _ ↦ ?_
+  rw [Matrix.mul_apply]
+  exact Dvd.dvd.mul_right (Finset.dvd_sum fun l _ ↦ (hc l k).mul_left _) _
+
+/-- **The first invariant factor is the content.** It is an associate of the gcd of the entries,
+so it is determined by the matrix alone — the factorisation may be chosen freely.
+
+`Matrix.smith_normal_form_unique` says the whole chained diagonal is determined; this says the
+first entry is determined by something directly readable off the matrix. -/
+theorem invariantFactor_zero_associated_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
+    (d : Fin n → ℤ) (hchain : ∀ ⦃i j : Fin n⦄, i ≤ j → d i ∣ d j)
+    (L R : GeneralLinearGroup (Fin n) ℤ)
+    (h : (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
+      Matrix.diagonal d) :
+    Associated (d 0) (Finset.univ.gcd fun p : Fin n × Fin n ↦ A p.1 p.2) :=
+  associated_of_dvd_dvd
+    (Finset.dvd_gcd fun p _ ↦ invariantFactor_zero_dvd_entries A d hchain L R h p.1 p.2)
+    (dvd_invariantFactor_zero_of_dvd_entries A _ d L R h fun i j ↦
+      Finset.gcd_dvd (Finset.mem_univ (i, j)))
+
 end Matrix
