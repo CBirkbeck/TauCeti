@@ -630,7 +630,11 @@ private lemma typeCSimpleRoot_dotProduct_coweight (i : Fin n) {c : ℕ} (hc : c 
 
 /-- The cumulative classical coweight: the sum of `coweight n b` over `b ≤ j`. For `j < n` this is
 the simple-coroot coordinate vector of `e₀ + ⋯ + e_j`; out-of-range coweights vanish, so the value
-is constant once `j` reaches `n - 1`. -/
+is constant once `j` reaches `n - 1`.
+
+This mirrors `TauCeti.DynkinType.typeBDualVec` in `B/Datum.lean`, from which the construction and
+the independence argument below are adapted; the two are distinct because `TypeB.coweight` and
+`TypeC.coweight` are different functions. -/
 private def typeCDualVec (n j : ℕ) : Fin n → ℤ := ∑ b ∈ Finset.range (j + 1), coweight n b
 
 /-- Pairing a simple root of type `Cₙ` with the dual covectors is diagonal, with the value `2` on
@@ -638,13 +642,12 @@ the long root and `1` on the short ones. -/
 private lemma typeCSimpleRoot_dotProduct_typeCDualVec (i j : Fin n) :
     typeCSimpleRoot i ⬝ᵥ typeCDualVec n (j : ℕ)
       = if i = j then (if (i : ℕ) + 1 = n then 2 else 1) else 0 := by
-  have hi := i.isLt
   have hj := j.isLt
   -- summing the coweight pairings over `b ≤ j` telescopes: the `- 1` at `b = i + 1` cancels the
   -- diagonal contribution as soon as `i + 1 ≤ j`, leaving only the term at `i = j`
   rw [typeCDualVec, dotProduct_sum,
     Finset.sum_congr rfl fun b hb => typeCSimpleRoot_dotProduct_coweight i
-      (show b < n from lt_of_le_of_lt (Nat.lt_succ_iff.1 (Finset.mem_range.1 hb)) hj),
+      (by have := Finset.mem_range.1 hb; omega),
     Finset.sum_sub_distrib,
     Finset.sum_ite_eq (Finset.range (j + 1)) (i : ℕ)
       (fun _ => (if (i : ℕ) + 1 = n then (2 : ℤ) else 1)),
