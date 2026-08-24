@@ -40,10 +40,17 @@ as a `ℤ`-module: `AddSubgroup.index_range_nsmul` gives `n ^ finrank ℤ M`. Th
   the `ℤ`-only form of this, stated with `AddSubgroup.zmultiples`; the name here differs from
   Mathlib's because the two share a base name while living in different namespaces.
 
-`AddSubgroup.index_range_nsmul_of_fg` is the group-theoretic input to the finiteness of the Selmer
-group `K(S,n)`, which `TauCetiRoadmap/EllipticCurves/README.md` §Layer 6 names as a step towards the
-weak Mordell–Weil theorem: the descent needs `(G : nG)` to be finite and computable for the
-finitely generated — not free — group of `S`-units.
+What the descent needs here is the exact count, not merely finiteness of the index.
+`TauCetiRoadmap/EllipticCurves/README.md` §Layer 6 makes explicit `2`-descent a target in its own
+right, naming "the theorem converting its cardinality into a Mordell–Weil rank bound" and taking an
+explicit rank computation as its acceptance test. That conversion is this formula solved for the
+rank: from `(G : nG) = n ^ finrank ℤ G * Nat.card G[n]`, a bound on the Selmer cardinality gives a
+bound on `finrank ℤ G`. Finiteness of the index alone carries no rank information — Mathlib's
+`Subgroup.finiteIndex_range_powMonoidHom_of_fg`, recorded below as already available, supplies
+exactly that and no more — so the free-case theorem this file generalises cannot be substituted for
+it either. The same formula is in turn the group-theoretic input to the finiteness of the Selmer
+group `K(S,n)` that the layer's weak Mordell–Weil bullet names, for the finitely generated — not
+free — group of `S`-units.
 
 Everything here is adapted from Michael Stoll's elliptic-curves formalisation
 (`github.com/MichaelStollBayreuth/EllipticCurves`, `EllipticCurves/Mathlib/SelmerGroup.lean` at the
