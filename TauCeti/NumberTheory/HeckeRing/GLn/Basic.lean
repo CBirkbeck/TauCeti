@@ -8,6 +8,7 @@ module
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import Mathlib.NumberTheory.HeckeRing.Defs
+public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Adjugate
 public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.DoubleCoset
 
 /-!
@@ -89,6 +90,19 @@ lemma det_eq_one_of_mem_SLnZ {g : GL (Fin n) ℚ} (hg : g ∈ SLnZ n) :
     (↑g : Matrix (Fin n) (Fin n) ℚ).det = 1 := by
   obtain ⟨σ, rfl⟩ := (mem_SLnZ_iff n).mp hg
   exact congrArg Units.val (SpecialLinearGroup.det_mapGL (S := ℚ) σ)
+
+-- `adjugateGL` and `adjugateGL_eq_inv` live in the root `TauCeti` namespace; opened for this
+-- declaration alone rather than file-wide, since nothing else here needs it.
+open TauCeti in
+/-- **Adjugate is inversion on the integral special-linear image.** Every `SL_n(ℤ)` element has
+determinant one over `ℚ`, so `adjugateGL` is inversion there, and `mapGL ℚ` is a monoid map.
+
+Like `mapGL_mul_coe_eq_intMatrix` below, nothing here is specific to a level or a dimension:
+it relates two operations that both already live at `GL_n`, which is why it sits here rather
+than in a congruence-level file. -/
+lemma adjugateGL_mapGL (σ : SpecialLinearGroup (Fin n) ℤ) :
+    adjugateGL (mapGL ℚ σ) = mapGL ℚ σ⁻¹ := by
+  rw [adjugateGL_eq_inv (congrArg Units.val (SpecialLinearGroup.det_mapGL (S := ℚ) σ)), map_inv]
 
 /-- **Integral representatives survive two-sided integral translation.** If `A` represents
 `g ∈ GL_n(ℚ)` entrywise over `ℤ`, then `τ * A * δ` represents `mapGL τ * g * mapGL δ` for any

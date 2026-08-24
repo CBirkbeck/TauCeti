@@ -49,9 +49,7 @@ dropping the inverse would negate every twist downstream.
 * `HeckeRing.GL2.mapGL_mem_Delta0`: `Γ₀(N)` lands in `Δ₀(N)`, so the comparison below needs
   no membership hypothesis.
 * `HeckeRing.GL2.Delta0UpperUnit_mapGL`: on `Γ₀(N)` it is inverse to `Gamma0Map`.
-* `HeckeRing.GL2.adjugateGL_mapGL`: the adjugate of an integral special-linear matrix is the
-  image of its inverse — determinant one turns `adjugateGL` into inversion.
-* `HeckeRing.GL2.adjugateGL_mapGL_mem_Delta0`: consequently the adjugate of a `Γ₀(N)` matrix
+* `HeckeRing.GL2.adjugateGL_mapGL_mem_Delta0`: the adjugate of a `Γ₀(N)` matrix
   is again in `Δ₀(N)`, being the image of another `Γ₀(N)` element.
 * `HeckeRing.GL2.Delta0UpperUnit_adjugateGL_mapGL`: on the adjugate the upper-left unit is
   `Gamma0Map` itself rather than its inverse — the second, non-inverted face of the
@@ -102,18 +100,6 @@ double-coset operator divides by the character rather than multiplying by it. -/
   simpa only [MonoidHom.coe_mk, OneHom.coe_mk] using
     intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0 (M := N) γ.2
 
--- Deliberately not `@[simp]`, although in isolation it is a reasonable normal form. Its
--- left-hand side occurs inside the left-hand side of `Delta0UpperUnit_adjugateGL_mapGL` below,
--- and `simp` rewrites through that subtype pair, so tagging both makes the latter's statement
--- non-normal: `simpNF` reports *"Left-hand side simplifies ... simp only [adjugateGL_mapGL,
--- map_inv]"*. Measured — the linter fails with the annotation and passes without it. The
--- comparison lemma is the one consumers state goals in, so it keeps the annotation.
-/-- **Adjugate is inversion on the integral special-linear image.** The determinant is one, so
-`adjugateGL` is inversion, and `mapGL ℚ` is a monoid map; nothing about `Γ₀(N)` enters. -/
-lemma adjugateGL_mapGL (σ : SL(2, ℤ)) :
-    adjugateGL (mapGL ℚ σ) = mapGL ℚ σ⁻¹ := by
-  rw [adjugateGL_eq_inv (congrArg Units.val (SpecialLinearGroup.det_mapGL (S := ℚ) σ)), map_inv]
-
 /-- The adjugate of a `Γ₀(N)` matrix again lies in `Δ₀(N)`: it is the image of `γ⁻¹`, which is
 in `Γ₀(N)` because that is a subgroup. -/
 lemma adjugateGL_mapGL_mem_Delta0 (γ : Gamma0 N) :
@@ -127,8 +113,14 @@ is `Gamma0Map` itself, not its inverse: the adjugate is the image of `γ⁻¹`, 
 character. -/
 @[simp] lemma Delta0UpperUnit_adjugateGL_mapGL (γ : Gamma0 N) :
     Delta0UpperUnit N ⟨_, adjugateGL_mapGL_mem_Delta0 N γ⟩ = (Gamma0Map N).toHomUnits γ := by
+  -- The first step replaces one `Delta0 N` element by another. They have *equal values* —
+  -- that is `adjugateGL_mapGL` — but different membership proofs, and the proof component's
+  -- type mentions the value, so rewriting the value alone leaves an ill-typed motive.
+  -- `Subtype.ext` is the eliminator for exactly that: it discharges the pair from the value
+  -- equality, membership in a `Submonoid` being a proposition. A bare `rw [adjugateGL_mapGL]`
+  -- fails here for the motive reason, which is why the equality is supplied wholesale.
   rw [show (⟨_, adjugateGL_mapGL_mem_Delta0 N γ⟩ : Delta0 N)
-      = ⟨_, mapGL_mem_Delta0 N γ⁻¹⟩ from Subtype.ext (adjugateGL_mapGL _),
+      = ⟨_, mapGL_mem_Delta0 N γ⁻¹⟩ from Subtype.ext (adjugateGL_mapGL 2 _),
     Delta0UpperUnit_mapGL, map_inv, inv_inv]
 
 end HeckeRing.GL2
