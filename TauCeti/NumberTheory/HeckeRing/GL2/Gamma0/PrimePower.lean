@@ -14,11 +14,12 @@ public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.DiagonalCoset
 This file introduces the diagonal elements of the Hecke ring `R(Γ₀(N), Δ₀(N))`, the two
 generating classes built from them, and the family the Diamond–Shurman recurrence assembles.
 
-`diagElemGamma0 a` takes three values, according to the tuple. It is `0` unless the head entry
-`a 0` is coprime to the level — the guard `Δ₀(N)`-membership needs. Past that guard it is the
-class of `Γ₀(N)·diag(a)·Γ₀(N)` when every entry is positive, and `1` when positivity fails,
-since `natDiagGL` degenerates to the identity there. It is the level-`N` analogue of
-`diagElem`. The two generators specialise it:
+`diagElemGamma0 a` splits into three cases, according to the tuple. It is `0` unless the head
+entry `a 0` is coprime to the level — the guard `Δ₀(N)`-membership needs. Past that guard it is
+the class of `Γ₀(N)·diag(a)·Γ₀(N)` when every entry is positive, and `1` when positivity fails,
+since `natDiagGL` degenerates to the identity there. Only the outer two cases are single values;
+the middle one ranges over as many classes as there are such double cosets. It is the level-`N`
+analogue of `diagElem`. The two generators specialise it:
 `heckeTGeneratorGamma0 p` at `![1, p]` and `heckeTScalarGamma0 p` at `![p, p]`. The iterated
 family `heckeTGeneratorRecGamma0 p r` satisfies `T₀ = 1`, `T₁ = T_p` and
 
