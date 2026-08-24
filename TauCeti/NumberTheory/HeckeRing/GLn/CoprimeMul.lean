@@ -266,6 +266,22 @@ private lemma mem_SLnZ_of_coprime_scaling (C : GL (Fin n) ℚ)
   apply Units.ext
   exact hN_cast.symm
 
+/-- The full diagonal product absorbs one inverted diagonal entry: because `b q` divides
+`∏ k, b k`, scaling `c / b q` by the whole product leaves an integer.  This is the arithmetic
+endgame shared by `diagConj_scaling` and `diagConj_scaling_inv_right`, which differ only in
+which factor plays the role of `c`. -/
+private lemma prod_mul_inv_isInt (b : Fin n → ℕ) (hb : ∀ i, 0 < b i) (q : Fin n) (c : ℤ) :
+    ∃ z : ℤ, (∏ k, (b k : ℚ)) * ((c : ℚ) * (b q : ℚ)⁻¹) = z := by
+  have h_dvd : (b q : ℤ) ∣ ∏ k, (b k : ℤ) := Finset.dvd_prod_of_mem _ (Finset.mem_univ q)
+  refine ⟨(∏ k, (b k : ℤ)) / (b q : ℤ) * c, ?_⟩
+  have h_div_eq : (∏ k, (b k : ℚ)) * ((c : ℚ) * (b q : ℚ)⁻¹) =
+      (∏ k, (b k : ℚ)) / (b q : ℚ) * (c : ℚ) := by
+    rw [div_eq_mul_inv]
+    ring
+  rw [h_div_eq]
+  push_cast [Int.cast_div h_dvd (Int.cast_ne_zero.mpr (Int.natCast_ne_zero.mpr (hb q).ne'))]
+  ring
+
 /-- Conjugating an integral matrix by the inverse-side diagonal scales entries by at worst
 the full diagonal product. -/
 private lemma diagConj_scaling (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
@@ -281,48 +297,36 @@ private lemma diagConj_scaling (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
       RingHom.mapMatrix_apply, Int.coe_castRingHom, Units.val_mul, natDiagGL_coe n a ha,
     Matrix.diagonal_mul, Matrix.mul_diagonal, Matrix.map_apply] at h_entry
   have hai_ne : (a i : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (ha i).ne'
-  have h_dvd : (a i : ℤ) ∣ ∏ k, (a k : ℤ) := Finset.dvd_prod_of_mem _ (Finset.mem_univ i)
-  refine ⟨(∏ k, (a k : ℤ)) / (a i : ℤ) * σ.val i j * (a j : ℤ), ?_⟩
-  have hsplit : (∏ k, (a k : ℚ)) * (↑C : Matrix (Fin n) (Fin n) ℚ) i j =
-      (∏ k, (a k : ℚ)) / (a i : ℚ) * ((a i : ℚ) * (↑C : Matrix (Fin n) (Fin n) ℚ) i j) := by
+  have hC_entry : (↑C : Matrix (Fin n) (Fin n) ℚ) i j =
+      ((σ.val i j * (a j : ℤ) : ℤ) : ℚ) * (a i : ℚ)⁻¹ := by
     field_simp
-  have hregroup : ((∏ k, (a k : ℤ)) / (a i : ℤ) * σ.val i j * (a j : ℤ) : ℤ) =
-      (∏ k, (a k : ℤ)) / (a i : ℤ) * (σ.val i j * (a j : ℤ)) := by ring
-  rw [hsplit, h_entry, hregroup]
-  push_cast [Int.cast_div h_dvd
-    (Int.cast_ne_zero.mpr (ne_of_gt (Int.natCast_pos.mpr (ha i))))]
-  ring
+    push_cast
+    linarith [h_entry]
+  rw [hC_entry]
+  exact prod_mul_inv_isInt n a ha i (σ.val i j * (a j : ℤ))
 
 /-- Companion of `diagConj_scaling` with the inverse on the other side: conjugating an
 integral matrix by the diagonal itself, rather than by its inverse, likewise scales entries by
-at worst the full diagonal product. -/
+at worst the full diagonal product.  Only integrality of the conjugated matrix is used — neither
+invertibility nor determinant one — so this is stated for an arbitrary integral matrix. -/
 private lemma diagConj_scaling_inv_right (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
-    (G : SpecialLinearGroup (Fin n) ℤ) (p q : Fin n) : ∃ z : ℤ, (∏ k, (b k : ℚ)) *
-      ((↑(natDiagGL n b * mapGL ℚ G * (natDiagGL n b)⁻¹) : Matrix (Fin n) (Fin n) ℚ) p q) = z := by
-  set D := natDiagGL n b * mapGL ℚ G * (natDiagGL n b)⁻¹ with hD_def
-  have h_D_entry : (↑D : Matrix (Fin n) (Fin n) ℚ) p q =
-      (b p : ℚ) * (G.val p q : ℚ) * ((b q : ℚ)⁻¹) := by
-    have h_Db : D * natDiagGL n b = natDiagGL n b * mapGL ℚ G := by
-      rw [hD_def]
-      group
-    have h_entry := congr_arg
-      (fun g : GL (Fin n) ℚ ↦ (↑g : Matrix (Fin n) (Fin n) ℚ) p q) h_Db
-    simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
-      RingHom.mapMatrix_apply, Int.coe_castRingHom, Units.val_mul, natDiagGL_coe n b hb,
-      Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply] at h_entry
+    (G : Matrix (Fin n) (Fin n) ℤ) (p q : Fin n) : ∃ z : ℤ, (∏ k, (b k : ℚ)) *
+      (((↑(natDiagGL n b) : Matrix (Fin n) (Fin n) ℚ) * G.map (Int.cast : ℤ → ℚ) *
+        (↑(natDiagGL n b)⁻¹ : Matrix (Fin n) (Fin n) ℚ)) p q) = z := by
+  set M : Matrix (Fin n) (Fin n) ℚ := ↑(natDiagGL n b) with hM
+  set Minv : Matrix (Fin n) (Fin n) ℚ := ↑(natDiagGL n b)⁻¹ with hMinv
+  have h_D_entry : (M * G.map (Int.cast : ℤ → ℚ) * Minv) p q =
+      (((b p : ℤ) * G p q : ℤ) : ℚ) * (b q : ℚ)⁻¹ := by
+    have h_Db : M * G.map (Int.cast : ℤ → ℚ) * Minv * M = M * G.map (Int.cast : ℤ → ℚ) := by
+      rw [mul_assoc, hMinv, hM, ← Units.val_mul, inv_mul_cancel, Units.val_one, mul_one]
+    have h_entry := congr_arg (fun N : Matrix (Fin n) (Fin n) ℚ ↦ N p q) h_Db
+    simp only [hM, natDiagGL_coe n b hb, Matrix.mul_diagonal, Matrix.diagonal_mul,
+      Matrix.map_apply] at h_entry ⊢
     have hbq_ne : (b q : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (hb q).ne'
     field_simp at h_entry ⊢
-    linarith
+    exact_mod_cast h_entry
   rw [h_D_entry]
-  have h_dvd : (b q : ℤ) ∣ ∏ k, (b k : ℤ) := Finset.dvd_prod_of_mem _ (Finset.mem_univ q)
-  refine ⟨(∏ k, (b k : ℤ)) / (b q : ℤ) * (b p : ℤ) * G.val p q, ?_⟩
-  have h_div_eq : (∏ k, (b k : ℚ)) * ((b p : ℚ) * (G.val p q : ℚ) * ((b q : ℚ)⁻¹)) =
-      (∏ k, (b k : ℚ)) / (b q : ℚ) * ((b p : ℚ) * (G.val p q : ℚ)) := by
-    rw [div_eq_mul_inv]
-    ring
-  rw [h_div_eq]
-  push_cast [Int.cast_div h_dvd (Int.cast_ne_zero.mpr (Int.natCast_ne_zero.mpr (hb q).ne'))]
-  ring
+  exact prod_mul_inv_isInt n b hb q ((b p : ℤ) * G p q)
 
 /-- Sandwiching by the diagonal and its inverse scales entries by at worst the full
 diagonal product, uniformly in the three integral factors. -/
@@ -345,9 +349,17 @@ private lemma diagSandwich_scaling (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
     rw [h2]
     simp only [Finset.sum_mul, mul_assoc]
     rw [Finset.sum_comm]
+  have hD_mat : (↑D : Matrix (Fin n) (Fin n) ℚ) =
+      (↑(natDiagGL n b) : Matrix (Fin n) (Fin n) ℚ) * G.val.map (Int.cast : ℤ → ℚ) *
+        (↑(natDiagGL n b)⁻¹ : Matrix (Fin n) (Fin n) ℚ) := by
+    rw [hD_def]
+    simp only [Units.val_mul, mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
+      RingHom.mapMatrix_apply, Int.coe_castRingHom]
   have h_D_scale : ∀ p q, ∃ z : ℤ,
-      (∏ k, (b k : ℚ)) * (↑D : Matrix (Fin n) (Fin n) ℚ) p q = z :=
-    fun p q ↦ diagConj_scaling_inv_right n b hb G p q
+      (∏ k, (b k : ℚ)) * (↑D : Matrix (Fin n) (Fin n) ℚ) p q = z := by
+    intro p q
+    rw [hD_mat]
+    exact diagConj_scaling_inv_right n b hb G.val p q
   rw [h_C_entry, Finset.mul_sum]
   simp_rw [Finset.mul_sum, mul_assoc]
   refine ⟨∑ p, ∑ q, F.val i p * (h_D_scale p q).choose * E.val q j, ?_⟩
