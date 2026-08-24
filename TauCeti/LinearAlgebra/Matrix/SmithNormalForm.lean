@@ -779,7 +779,7 @@ private lemma prod_take_dvd_of_mul_diagonal_mul_eq {c d : Fin n → ℤ}
 
 /-- Inverting a two-sided unimodular transformation. Used both by the uniqueness proof and by
 the content characterisation below, which otherwise repeat the same three lines. -/
-private lemma inv_mul_mul_inv_of_mul_mul_eq {S : Type*} [CommRing S]
+private lemma inv_mul_mul_inv_of_mul_mul_eq {S : Type*} [Semiring S]
     {A B : Matrix (Fin n) (Fin n) S} (L R : GeneralLinearGroup (Fin n) S)
     (h : (L : Matrix (Fin n) (Fin n) S) * A * (R : Matrix (Fin n) (Fin n) S) = B) :
     (↑L⁻¹ : Matrix (Fin n) (Fin n) S) * B * (↑R⁻¹ : Matrix (Fin n) (Fin n) S) = A := by
@@ -853,8 +853,8 @@ divides every entry of `A`.
 
 Inverting the unimodular factors writes `A = L⁻¹ * diagonal d * R⁻¹`, and `d 0` divides every
 entry of `diagonal d`, so `dvd_mul_mul_apply` carries it to every entry of `A`. No step is
-integer-specific, so this holds over any commutative ring. -/
-theorem invariant_factor_zero_dvd_entries {S : Type*} [CommRing S] [NeZero n]
+integer-specific, so this holds over any commutative semiring. -/
+theorem invariant_factor_zero_dvd_entries {S : Type*} [CommSemiring S] [NeZero n]
     (A : Matrix (Fin n) (Fin n) S) (d : Fin n → S) (hd0 : ∀ k, d 0 ∣ d k)
     (L R : GeneralLinearGroup (Fin n) S)
     (h : (L : Matrix (Fin n) (Fin n) S) * A * (R : Matrix (Fin n) (Fin n) S) =
@@ -873,7 +873,7 @@ freely.
 first entry is determined, up to a unit, by something directly readable off the matrix. The
 hypotheses are exactly what `Finset.gcd` needs; over `ℤ` they hold by instance, and
 `Matrix.invariant_factor_zero_eq_gcd` then pins the sign when `d 0` is known nonnegative. -/
-theorem associated_invariant_factor_zero_gcd {S : Type*} [CommRing S] [IsDomain S]
+theorem associated_invariant_factor_zero_gcd {S : Type*} [CommSemiring S] [IsDomain S]
     [NormalizedGCDMonoid S] [NeZero n] (A : Matrix (Fin n) (Fin n) S) (d : Fin n → S)
     (hd0 : ∀ k, d 0 ∣ d k) (L R : GeneralLinearGroup (Fin n) S)
     (h : (L : Matrix (Fin n) (Fin n) S) * A * (R : Matrix (Fin n) (Fin n) S) =
@@ -889,7 +889,7 @@ specialization of `Matrix.associated_invariant_factor_zero_gcd`: `Finset.gcd` ov
 normalized, so nonnegativity of `d 0` — which `Matrix.exists_smith_normal_form_of_det_pos`
 supplies — upgrades the associate relation to an equality, and consumers need not redo the
 sign argument. The sign is the only integer-specific part; the two results above hold over a
-commutative ring and a normalized GCD domain respectively. -/
+commutative semiring and a normalized GCD domain respectively. -/
 theorem invariant_factor_zero_eq_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
     (d : Fin n → ℤ) (hd0 : ∀ k, d 0 ∣ d k) (hnonneg : 0 ≤ d 0)
     (L R : GeneralLinearGroup (Fin n) ℤ)
