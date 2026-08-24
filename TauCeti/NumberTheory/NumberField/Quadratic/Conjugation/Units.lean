@@ -58,43 +58,30 @@ theorem isTotallyPositive_or_neg_of_mul_ringOfIntegersQuadraticConj_eq_one
   exact isTotallyPositive_sq huK
 
 open scoped Pointwise in
-private theorem exists_isTotallyPositive_notMem_square_aux
+private theorem units_sq_index_le_two_of_isTotallyPositive_mem_square
     (hmin : minpoly ℤ θ = X ^ 2 - C d) (hgen : Algebra.adjoin ℚ {(θ : K)} = ⊤)
     (hnorm : ∀ u : (𝓞 K)ˣ,
       (u : 𝓞 K) * ringOfIntegersQuadraticConj hmin hgen (u : 𝓞 K) = 1)
     (hsquare : ∀ ε : (𝓞 K)ˣ, IsTotallyPositive ((ε : 𝓞 K) : K) →
       ε ∈ Subgroup.square (𝓞 K)ˣ) :
     (Subgroup.square (𝓞 K)ˣ).index ≤ 2 := by
-  set H := Subgroup.square (𝓞 K)ˣ with hH
-  have hcover : ∀ u : (𝓞 K)ˣ,
-      QuotientGroup.mk' H u = 1 ∨ QuotientGroup.mk' H u = QuotientGroup.mk' H (-1) := by
-    intro u
-    rcases isTotallyPositive_or_neg_of_mul_ringOfIntegersQuadraticConj_eq_one hmin hgen
-      u.ne_zero (hnorm u) with h | h
-    · exact Or.inl ((QuotientGroup.eq_one_iff _).mpr (hsquare u h))
-    · have hmem : (-1 : (𝓞 K)ˣ) * u ∈ H := by
-        rw [neg_one_mul]
-        exact hsquare (-u) (by simpa using h)
-      have h2 : QuotientGroup.mk' H ((-1 : (𝓞 K)ˣ) * u) = 1 :=
-        (QuotientGroup.eq_one_iff _).mpr hmem
-      rw [map_mul] at h2
-      refine Or.inr ?_
-      calc QuotientGroup.mk' H u = (QuotientGroup.mk' H (-1))⁻¹ := eq_inv_of_mul_eq_one_right h2
-        _ = QuotientGroup.mk' H ((-1 : (𝓞 K)ˣ)⁻¹) := (map_inv _ _).symm
-        _ = QuotientGroup.mk' H (-1) := by rw [inv_neg_one]
+  set H := Subgroup.square (𝓞 K)ˣ
   have hcovers : ⋃ i ∈ (Finset.univ : Finset (Fin 2)),
       (![1, -1] i : (𝓞 K)ˣ) • (H : Set (𝓞 K)ˣ) = Set.univ := by
     rw [Subgroup.leftCoset_cover_const_iff_surjOn]
     rintro x -
     obtain ⟨u, rfl⟩ := QuotientGroup.mk'_surjective H x
-    rcases hcover u with h | h
-    · exact ⟨0, by simp, by simpa using h.symm⟩
-    · exact ⟨1, by simp, by simpa using h.symm⟩
-  simpa using Subgroup.index_le_of_leftCoset_cover_const hcovers
+    rcases isTotallyPositive_or_neg_of_mul_ringOfIntegersQuadraticConj_eq_one hmin hgen
+      u.ne_zero (hnorm u) with h | h
+    · exact ⟨0, by simp, by simpa using ((QuotientGroup.eq_one_iff _).mpr (hsquare u h)).symm⟩
+    · refine ⟨1, by simp, ?_⟩
+      rw [QuotientGroup.mk'_apply, QuotientGroup.eq]
+      simpa using hsquare (-u) (by simpa using h)
+  simpa only [Finset.card_fin] using Subgroup.index_le_of_leftCoset_cover_const hcovers
 
 /-- **A real quadratic field with no unit of norm `-1` has a totally positive unit that is not a
 square.** Were every totally positive unit a square, the squares would have index at most `2`
-(`exists_isTotallyPositive_notMem_square_aux`). But a field with a real place has unit
+(`units_sq_index_le_two_of_isTotallyPositive_mem_square`). But a field with a real place has unit
 rank `1`, where the exact index is `2 ^ (rank + 1) = 4` (`NumberField.units_sq_index_eq`). -/
 theorem exists_isTotallyPositive_notMem_square (hmin : minpoly ℤ θ = X ^ 2 - C d)
     (hgen : Algebra.adjoin ℚ {(θ : K)} = ⊤) (hreal : ¬ IsTotallyComplex K)
@@ -107,7 +94,7 @@ theorem exists_isTotallyPositive_notMem_square (hmin : minpoly ℤ θ = X ^ 2 - 
     intro ε hε
     by_contra hmem
     exact hcon ⟨ε, hε, hmem⟩
-  have hindex := exists_isTotallyPositive_notMem_square_aux hmin hgen hnorm hsquare
+  have hindex := units_sq_index_le_two_of_isTotallyPositive_mem_square hmin hgen hnorm hsquare
   -- A field with a real place and degree two has two real places, hence unit rank one.
   have hfin : Module.finrank ℚ K = 2 := NumberField.finrank_rat_eq_two hmin hgen
   have hnr : InfinitePlace.nrRealPlaces K ≠ 0 := fun h =>
