@@ -41,6 +41,8 @@ modular forms); the AINTLIB `HeckePair` bundle is replaced by Mathlib's `IsHecke
 * `commensurable_map_SLnZ`: the image of a finite-index subgroup of `SL_n(ℤ)` is commensurable
   with `SL_n(ℤ)` — the step by which each congruence subgroup inherits Lemma 3.10 and so sits
   in a Hecke triple of its own.
+* `adjugateGL_mapGL`: adjugation is inversion on the image of `SL_n(ℤ)` — the determinant
+  being one there, the adjugate of `mapGL ℚ σ` is `mapGL ℚ σ⁻¹`.
 * the `IsHeckeTriple (posDetInt n) (SLnZ n) (SLnZ n)` instance, and the
   Hecke ring `IntegralHeckeRing n` it founds.
 
