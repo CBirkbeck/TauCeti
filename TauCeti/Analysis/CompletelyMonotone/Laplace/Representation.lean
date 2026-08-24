@@ -327,18 +327,17 @@ private lemma norm_slope_neg_pow_mul_exp_neg_mul_le (n : ℕ) {y : ℝ} (hy : 0 
           simpa [hpow_abs] using mul_le_mul_of_nonneg_left hquot hpow_nonneg
     _ = (x : ℝ) ^ (n + 1) := by rw [pow_succ]
 
-/-- Dominated convergence for the pointwise slopes at `0` of the signed moment kernel
-`y ↦ (-x) ^ n * exp (-(y * x))`: the integrals of those slopes converge to the `(n+1)`-st signed
-moment, dominated by the `(n+1)`-st absolute moment. -/
-private lemma tendsto_integral_slope_neg_pow_mul_exp (μ : Measure ℝ≥0)
-    (hmom : ∀ n : ℕ, Integrable (fun x : ℝ≥0 => (x : ℝ) ^ n) μ) (n : ℕ) :
+/-- As `y` tends to `0` from the right, the integrals of the slopes at `0` of
+`z ↦ (-x) ^ n * exp (-(z * x))` tend to the `(n+1)`-st signed moment. -/
+private lemma tendsto_integral_slope_neg_pow_mul_exp_neg_mul_at_zero (μ : Measure ℝ≥0) (n : ℕ)
+    (hbound : Integrable (fun x : ℝ≥0 => (x : ℝ) ^ (n + 1)) μ) :
     Tendsto (fun y : ℝ => ∫ x : ℝ≥0,
         slope (fun z : ℝ => (-(x : ℝ)) ^ n * Real.exp (-(z * (x : ℝ)))) 0 y ∂μ)
       (𝓝[Ici (0 : ℝ) \ {0}] 0) (𝓝 (∫ x : ℝ≥0, (-(x : ℝ)) ^ (n + 1) ∂μ)) := by
   let K : ℝ → ℝ≥0 → ℝ := fun y x => (-(x : ℝ)) ^ n * Real.exp (-(y * (x : ℝ)))
   refine tendsto_integral_filter_of_dominated_convergence
     (μ := μ) (bound := fun x : ℝ≥0 => (x : ℝ) ^ (n + 1))
-    ?_ ?_ (hmom (n + 1)) ?_
+    ?_ ?_ hbound ?_
   · refine Filter.Eventually.of_forall fun y => ?_
     simp only [slope_def_field]
     fun_prop
@@ -368,7 +367,7 @@ private lemma hasDerivWithinAt_laplaceMomentTransform_zero (μ : Measure ℝ≥0
   have hlim :
       Tendsto (fun y : ℝ => ∫ x : ℝ≥0, slope (fun z : ℝ => K z x) 0 y ∂μ) l
         (𝓝 (∫ x : ℝ≥0, (-(x : ℝ)) ^ (n + 1) ∂μ)) :=
-    tendsto_integral_slope_neg_pow_mul_exp μ hmom n
+    tendsto_integral_slope_neg_pow_mul_exp_neg_mul_at_zero μ n (hmom (n + 1))
   -- Stage 2: the slope of the integral is the integral of the pointwise slopes.
   have hslope :
       (fun y : ℝ => slope (laplaceMomentTransform μ n) 0 y)
