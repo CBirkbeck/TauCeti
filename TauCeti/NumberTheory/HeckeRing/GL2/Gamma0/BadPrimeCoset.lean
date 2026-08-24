@@ -94,6 +94,79 @@ lemma coprime_of_gcd_one_dvd_pow (a : ℤ) (N k e : ℕ) (haN : Int.gcd a N = 1)
     (hk_dvd : k ∣ N ^ e) : Int.gcd a k = 1 :=
   Nat.Coprime.coprime_dvd_right hk_dvd (Nat.Coprime.pow_right e haN)
 
+/-- **The reduced shear parameter.** With `A 0 0` coprime to `m` there is an `r` in `[0, m)`
+clearing the upper row modulo `m`: `m ∣ A 0 0 * r - A 0 1`.
+
+Split out of `Gamma0_left_coset_of_Npow_det` below: it is the arithmetic half, and isolating
+it keeps that lemma's matrix bookkeeping readable. -/
+lemma exists_reduced_shear (A : Matrix (Fin 2) (Fin 2) ℤ) (m : ℕ) (hm_pos : 0 < m)
+    (ham : Int.gcd (A 0 0) m = 1) :
+    ∃ r : ℤ, 0 ≤ r ∧ r < m ∧ (m : ℤ) ∣ (A 0 0 * r - A 0 1) := by
+  obtain ⟨t_inv, ht⟩ := exists_mod_clearing (A 0 0) (-A 0 1) m ham
+  refine ⟨t_inv % (m : ℤ), Int.emod_nonneg _ (by omega), Int.emod_lt_of_pos _ (by omega), ?_⟩
+  have hm_tr : (m : ℤ) ∣ (t_inv - t_inv % (m : ℤ)) := by
+    rw [show t_inv - t_inv % (m : ℤ) = (m : ℤ) * (t_inv / (m : ℤ)) by
+      linarith [Int.mul_ediv_add_emod t_inv ((m : ℤ))]]
+    exact dvd_mul_right _ _
+  have h := dvd_sub ht (dvd_mul_of_dvd_left hm_tr (A 0 0))
+  rwa [show t_inv * A 0 0 + -A 0 1 - (t_inv - t_inv % (m : ℤ)) * A 0 0
+      = A 0 0 * (t_inv % (m : ℤ)) - A 0 1 by ring] at h
+
+/-- **The cofactor pair is unimodular.** Given the two divisibility witnesses `q₁, q₂` produced
+by the column reduction, the matrix `!![A 0 0, -q₁; N * c₀, q₂]` has determinant one.
+
+The identity holds after multiplying by `m` — that is just `det A = m` rearranged — and `m ≠ 0`
+cancels it. Split out of `Gamma0_left_coset_of_Npow_det` to keep that proof under the
+decomposition threshold. -/
+lemma cofactor_pair_unimodular (A : Matrix (Fin 2) (Fin 2) ℤ) (N m : ℕ) (hm_pos : 0 < m)
+    (c₀ r q₁ q₂ : ℤ) (hc₀ : A 1 0 = (N : ℤ) * c₀) (hdet : A.det = m)
+    (hq₁ : A 0 0 * r - A 0 1 = (m : ℤ) * q₁)
+    (hq₂ : A 1 1 - (N : ℤ) * c₀ * r = (m : ℤ) * q₂) :
+    A 0 0 * q₂ + q₁ * ((N : ℤ) * c₀) = 1 := by
+  have hdet' : A 0 0 * A 1 1 - A 0 1 * ((N : ℤ) * c₀) = (m : ℤ) := by
+    rw [← hdet, Matrix.det_fin_two, hc₀]
+  have h1 : (A 0 0 * q₂ + q₁ * ((N : ℤ) * c₀)) * (m : ℤ) = 1 * (m : ℤ) := by
+    rw [one_mul]
+    calc (A 0 0 * q₂ + q₁ * ((N : ℤ) * c₀)) * (m : ℤ)
+        = A 0 0 * ((m : ℤ) * q₂) + ((m : ℤ) * q₁) * ((N : ℤ) * c₀) := by ring
+      _ = A 0 0 * (A 1 1 - (N : ℤ) * c₀ * r) + (A 0 0 * r - A 0 1) * ((N : ℤ) * c₀) := by
+            rw [← hq₂, ← hq₁]
+      _ = (m : ℤ) := by linarith [hdet']
+  exact mul_right_cancel₀ (show ((m : ℤ)) ≠ 0 by omega) h1
+
+/-- **The left-coset normal form at a bad determinant.** An integral matrix with lower-left
+entry divisible by `N`, determinant `m`, and upper-left entry coprime to `m`, factors as
+`L * !![1, r; 0, m]` with `L` again of that `Γ₀`-shape — determinant one and lower-left entry
+divisible by `N` — and `r` reduced into `[0, m)`.
+
+This is the column reduction behind Shimura 3.33: it exhibits `A` in the left `Γ₀(N)`-coset of
+the upper-triangular representative `!![1, r; 0, m]`. Positivity of `det A` is *not* needed —
+the source carries it and never uses it. -/
+lemma Gamma0_left_coset_of_Npow_det (N : ℕ) (A : Matrix (Fin 2) (Fin 2) ℤ)
+    (hAN : (N : ℤ) ∣ A 1 0) (m : ℕ) (hm_pos : 0 < m) (hdet : A.det = m)
+    (ham : Int.gcd (A 0 0) m = 1) :
+    ∃ (L : Matrix (Fin 2) (Fin 2) ℤ) (r : ℤ), L.det = 1 ∧ (N : ℤ) ∣ L 1 0 ∧ 0 ≤ r ∧ r < m ∧
+      A = L * (Matrix.of ![![(1 : ℤ), r], ![0, (m : ℤ)]]) := by
+  obtain ⟨c₀, hc₀⟩ := hAN
+  obtain ⟨r, hr_nonneg, hr_lt, hm_ar_b⟩ := exists_reduced_shear A m hm_pos ham
+  obtain ⟨q₂, hq₂⟩ := dvd_lowerRight_witness A N m c₀ r hc₀ hdet ham hm_ar_b
+  obtain ⟨q₁, hq₁⟩ := hm_ar_b
+  refine ⟨Matrix.of ![![A 0 0, -q₁], ![(N : ℤ) * c₀, q₂]], r, ?_, ?_, hr_nonneg, hr_lt, ?_⟩
+  · simp only [Matrix.det_fin_two, Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val']
+    linarith [cofactor_pair_unimodular A N m hm_pos c₀ r q₁ q₂ hc₀ hdet hq₁ hq₂]
+  · norm_num [Matrix.of_apply, Matrix.cons_val_one, Matrix.head_cons, Matrix.cons_val',
+      Matrix.cons_val_zero]
+  · have h00 : A 0 0 = A 0 0 * 1 + (-q₁) * 0 := by ring
+    have h01 : A 0 1 = A 0 0 * r + (-q₁) * (m : ℤ) := by linarith [hq₁]
+    have h10 : A 1 0 = (N : ℤ) * c₀ * 1 + q₂ * 0 := by linarith [hc₀]
+    have h11 : A 1 1 = (N : ℤ) * c₀ * r + q₂ * (m : ℤ) := by linarith [hq₂]
+    ext i j
+    fin_cases i <;> fin_cases j <;>
+      simp only [Matrix.mul_apply, Fin.sum_univ_two, Matrix.of_apply, Fin.isValue,
+        Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.empty_val'] <;>
+      first | exact h00 | exact h01 | exact h10 | exact h11
+
 end HeckeRing.GL2
 
 end
