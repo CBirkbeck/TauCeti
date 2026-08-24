@@ -22,8 +22,8 @@ the normalizing scalar that makes it an involution — is built on top of it.
 
 ## Main results
 
-* `TauCeti.frickeGL_inv_coe`: `W⁻¹ = !![0, 1/N; -1, 0]`.
-* `TauCeti.frickeGL_sq_coe`: `W² = (-N) • 1` as matrices.
+* `TauCeti.coe_frickeGL_inv`: `W⁻¹ = !![0, 1/N; -1, 0]`.
+* `TauCeti.coe_frickeGL_sq`: `W² = (-N) • 1` as matrices.
 * `TauCeti.frickeGL_det_pos`: the determinant is positive. This is about the single matrix `W`,
   deliberately not a general statement about `SL`-type elements.
 
@@ -60,33 +60,41 @@ public noncomputable def frickeGL (N : ℕ) [NeZero N] : GL (Fin 2) ℚ :=
 
 /-- The underlying matrix of `frickeGL N`. -/
 @[simp]
-public theorem frickeGL_coe :
+public theorem coe_frickeGL :
     (↑(frickeGL N) : Matrix (Fin 2) (Fin 2) ℚ) = !![0, -1; (N : ℚ), 0] := by
   simp [frickeGL, Matrix.GeneralLinearGroup.mkOfDetNeZero]
 
 /-- The determinant of `frickeGL N` is positive. This is about the single matrix `W`; it is
 deliberately not a general statement about determinants of `SL`-type elements.
 
-The determinant itself is `N`, but that needs no lemma of its own: `frickeGL_coe` is `simp`,
+The determinant itself is `N`, but that needs no lemma of its own: `coe_frickeGL` is `simp`,
 so `(frickeGL N).det.val = N` and its matrix form are both closed by `simp` alone. -/
 public theorem frickeGL_det_pos : 0 < (frickeGL N).det.val := by
   have : (frickeGL N).det.val = (N : ℚ) := by simp
   rw [this]
   exact_mod_cast NeZero.pos N
 
-/-- `W⁻¹ = !![0, 1/N; -1, 0]`. -/
-public theorem frickeGL_inv_coe :
+/-- `W⁻¹ = !![0, 1/N; -1, 0]`.
+
+Deliberately not `@[simp]`: `Matrix.coe_units_inv` is itself `simp`, so simp rewrites this
+left-hand side to `(!![0, -1; N, 0])⁻¹` and it is not in simp-normal form. -/
+public theorem coe_frickeGL_inv :
     (↑(frickeGL N)⁻¹ : Matrix (Fin 2) (Fin 2) ℚ) = !![0, 1 / (N : ℚ); -1, 0] := by
-  rw [Matrix.coe_units_inv, Matrix.inv_def, frickeGL_coe, Matrix.adjugate_fin_two_of,
+  rw [Matrix.coe_units_inv, Matrix.inv_def, coe_frickeGL, Matrix.adjugate_fin_two_of,
     Ring.inverse_eq_inv]
   simp [Matrix.det_fin_two_of, NeZero.ne (N : ℚ)]
 
 /-- `W² = (-N) • 1` as matrices. This is the entrywise identity the Fricke operator's
-involution property consumes; it is not itself a statement that `W²` is central in `GL`. -/
-public theorem frickeGL_sq_coe :
+involution property consumes; it is not itself a statement that `W²` is central in `GL`.
+
+Deliberately not `@[simp]`: `Units.val_mul` is `simp`, so simp already carries this left-hand
+side all the way to the entry-level normal form `!![-N, 0; 0, -N]`. The lemma exists for the
+`(-N) • 1` packaging, which is not that normal form, so tagging it would put a non-normal
+left-hand side in the simp set. -/
+public theorem coe_frickeGL_sq :
     (↑(frickeGL N * frickeGL N) : Matrix (Fin 2) (Fin 2) ℚ) =
       (-(N : ℚ)) • (1 : Matrix (Fin 2) (Fin 2) ℚ) := by
-  rw [Units.val_mul, frickeGL_coe, Matrix.mul_fin_two]
+  rw [Units.val_mul, coe_frickeGL, Matrix.mul_fin_two]
   simp [Matrix.one_fin_two]
 
 end TauCeti
