@@ -82,9 +82,13 @@ project (`README:1072`), verified by blob hash, so the citations hold at either.
 
 Two further declarations of that source file land elsewhere. `addOrderOf_ne_two_of_kappa_ne_zero`
 (`:279`) is ported **into `ZSMul.lean`**, beside the `evalEval_ψ_eq_zero_of_zsmul_eq_zero` its
-proof consumes, and **generalised** while there: the source states it over the fraction field of a
-PID at integral coordinates, but nothing in the argument sees the base ring, so it is stated over
-the point's own field and the transport across `algebraMap` happens here, at the call site.
+proof consumes, and strengthened twice on the way. It is **generalised**: the source states it
+over the fraction field of a PID at integral coordinates, but nothing in the argument sees the base
+ring, so it is stated over the point's own field and the transport across `algebraMap` happens
+here, at the call site. And it is **an equivalence**,
+`addOrderOf_eq_two_iff_evalEval_ψ₂_eq_zero`, since that file already had the converse
+(`two_zsmul_eq_zero_of_evalEval_ψ₂_eq_zero`) sitting unpaired; this file uses the `.mp` direction
+contrapositively.
 `curveR_equation_of_isInteger` (`:266`) is not ported at all: it is Mathlib's
 `Affine.map_equation` with the coordinates substituted, so this file applies that lemma directly.
 
@@ -134,8 +138,8 @@ private lemma sq_evalEval_ψ₂_dvd_four_mul_eval_Ψ₃ {x y : K}
     (hκK : (W.baseChange K).ψ₂.evalEval x y ≠ 0) :
     W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * (W.Ψ₃).eval x₀ := by
   set P := Affine.Point.some _ _ hns
-  have hord2 : addOrderOf P ≠ 2 :=
-    addOrderOf_ne_two_of_evalEval_ψ₂_ne_zero (W.baseChange K) hns hκK
+  have hord2 : addOrderOf P ≠ 2 := fun h ↦
+    hκK ((addOrderOf_eq_two_iff_evalEval_ψ₂_eq_zero (W.baseChange K) hns).mp h)
   have hord1 : addOrderOf P ≠ 1 := fun h ↦
     Affine.Point.some_ne_zero hns (AddMonoid.addOrderOf_eq_one_iff.mp h)
   have hpos : 0 < addOrderOf P := htor.addOrderOf_pos

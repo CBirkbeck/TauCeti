@@ -115,9 +115,8 @@ is the statement the Nagell–Lutz layer consumes.
 * `WeierstrassCurve.two_zsmul_eq_zero_of_evalEval_ψ₂_eq_zero`: the converse at `n = 2` — a
   vanishing `ψ₂` at a nonsingular point forces `2 • P = 0`.
 * `WeierstrassCurve.addOrderOf_eq_two_iff_evalEval_ψ₂_eq_zero`: those two directions packaged as
-  the characterisation of two-torsion, `addOrderOf P = 2 ↔ ψ₂(x, y) = 0`, with
-  `WeierstrassCurve.addOrderOf_ne_two_of_evalEval_ψ₂_ne_zero` its contrapositive — the form that
-  discharges the `addOrderOf ≠ 2` guard the Nagell–Lutz theorems carry.
+  the characterisation of two-torsion, `addOrderOf P = 2 ↔ ψ₂(x, y) = 0`. Its contrapositive is
+  what discharges the `addOrderOf ≠ 2` guard the Nagell–Lutz theorems carry.
 
 ## Provenance
 
@@ -1138,12 +1137,5 @@ theorem addOrderOf_eq_two_iff_evalEval_ψ₂_eq_zero [DecidableEq F] {x y : F}
     · exact absurd h hne_one
     · exact h
 
-/-- **A point where `ψ₂` does not vanish is not two-torsion.** The contrapositive of
-`addOrderOf_eq_two_iff_evalEval_ψ₂_eq_zero`, named because it is the form Nagell–Lutz's consumers
-need: their `addOrderOf ≠ 2` guard is discharged by exhibiting a nonvanishing `ψ₂`. -/
-theorem addOrderOf_ne_two_of_evalEval_ψ₂_ne_zero [DecidableEq F] {x y : F}
-    (hns : W.toAffine.Nonsingular x y) (hψ₂ : W.ψ₂.evalEval x y ≠ 0) :
-    addOrderOf (Affine.Point.some _ _ hns) ≠ 2 :=
-  fun h ↦ hψ₂ ((addOrderOf_eq_two_iff_evalEval_ψ₂_eq_zero W hns).mp h)
 
 end WeierstrassCurve
