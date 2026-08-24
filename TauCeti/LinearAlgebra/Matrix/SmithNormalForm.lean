@@ -8,6 +8,8 @@ module
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 
 import Mathlib.Algebra.EuclideanDomain.Int
+-- `dvd_mul_mul_apply` and `dvd_diag_of_dvd_entries`, used only inside proofs below.
+import TauCeti.LinearAlgebra.Matrix.Divisibility
 import Mathlib.Data.Int.GCD
 import Mathlib.Data.Sign.Basic
 import Mathlib.LinearAlgebra.Determinant
@@ -29,11 +31,11 @@ operations of determinant one:
   monotone under divisibility, with `L * A * R = diagonal d`.
 * `Matrix.smith_normal_form_unique`: two nonnegative chained diagonals in the same
   `GL_n(ℤ)`-equivalence class are equal, so the invariant factors of `A` are well defined.
-* `Matrix.dvd_mul_mul_apply`: a common divisor of the entries of `A` divides every entry of
-  `P * A * Q` — the core of both divisibility directions below.
-* `Matrix.invariantFactor_zero_dvd_entries` and `Matrix.dvd_diag_of_dvd_entries`: the first
-  entry of a chained diagonal form divides every entry of `A`, and conversely every common
-  divisor of the entries of `A` divides every diagonal entry.
+* `Matrix.invariantFactor_zero_dvd_entries`: the first entry of a chained diagonal form
+  divides every entry of `A`. The converse direction, and the general fact both rest on, are
+  `Matrix.dvd_diag_of_dvd_entries` and `Matrix.dvd_mul_mul_apply` in
+  `TauCeti/LinearAlgebra/Matrix/Divisibility.lean` — neither carries a Smith-normal-form
+  hypothesis, so neither lives here.
 * `Matrix.associated_invariantFactor_zero_gcd` and `Matrix.invariantFactor_zero_eq_gcd`: hence
   the first entry is an associate of the gcd of the entries of `A`, and equals it once its sign
   is known — so it is readable off the matrix without choosing a factorisation.
@@ -481,31 +483,6 @@ private lemma gcd_step_general (k : ℕ) (d : Fin (k + 2) → ℤ) (hd : ∀ i, 
       rw [ite_eq_right (fun h ↦ hj (by rw [h]; rfl)), ite_eq_left rfl]
     · intro i hi0 hij; simp only [d', ite_eq_right hi0, ite_eq_right hij]
 
-/-- **A common divisor of the entries survives two-sided multiplication.** If `c` divides every
-entry of `A`, then it divides every entry of `P * A * Q`, since each entry of the product is an
-`S`-combination of entries of `A`.
-
-Neither invertibility nor a diagonal target plays any part, and nothing here is specific to `ℤ`
-or to `Fin n`, so this is the level the two divisibility results below are derived from. -/
-theorem dvd_mul_mul_apply {ι S : Type*} [Fintype ι] [CommSemiring S] {A : Matrix ι ι S} {c : S}
-    (hc : ∀ i j, c ∣ A i j) (P Q : Matrix ι ι S) (i j : ι) : c ∣ (P * A * Q) i j := by
-  rw [Matrix.mul_apply]
-  refine Finset.dvd_sum fun l _ ↦ ?_
-  rw [Matrix.mul_apply]
-  exact Dvd.dvd.mul_right (Finset.dvd_sum fun m _ ↦ (hc m l).mul_left _) _
-
-/-- **Every common divisor of the entries divides every diagonal entry.** Each `d k` is the
-`(k, k)` entry of `L * A * R`, hence an `S`-combination of the entries of `A`.
-
-No invertibility is needed and no index is distinguished, so this is stated for plain matrices
-and for every `k`, matching the precedent of `prod_take_dvd_of_mul_diagonal_mul_eq` below. -/
-theorem dvd_diag_of_dvd_entries {ι S : Type*} [Fintype ι] [DecidableEq ι] [CommSemiring S]
-    (A : Matrix ι ι S) (c : S) (d : ι → S) (L R : Matrix ι ι S)
-    (h : L * A * R = Matrix.diagonal d) (hc : ∀ i j, c ∣ A i j) (k : ι) : c ∣ d k := by
-  have hkk := congr_fun₂ h k k
-  rw [Matrix.diagonal_apply_eq] at hkk
-  exact hkk ▸ dvd_mul_mul_apply hc L R k k
-
 private noncomputable def fin1Sum (k : ℕ) : Fin (k + 1) ≃ Fin 1 ⊕ Fin k :=
   (Fin.castOrderIso (show k + 1 = 1 + k by omega)).toEquiv.trans finSumFinEquiv.symm
 
@@ -865,8 +842,10 @@ commit `2baa76f742bdb4fb8ee323fabba41203bd390e08`,
 divisibility directions privately at `Fin 2` as `snf_first_dvd_entry₂` and
 `dvd_snf_first_of_dvd_entries`, proved by entrywise cofactor algebra; the proofs here are a
 re-derivation at general `n`, where inverting the unimodular factors removes the need for that
-algebra. The source's third lemma `snf_mutual_dvd_eq` is **not** ported: it is a `Fin 2` special
-case of `Matrix.smith_normal_form_unique` above. -/
+algebra. The source's third lemma `snf_mutual_dvd_eq` is **not** ported here: its conclusion follows
+from `Matrix.dvd_diag_of_dvd_entries` applied in both directions together with a determinant
+cancellation — it does *not* go through `Matrix.smith_normal_form_unique` — and it belongs
+with the Atkin–Lehner material that consumes it rather than here. -/
 
 /-- **The first entry of a chained diagonal form divides every entry.** If
 `L * A * R = diagonal d` with `L`, `R` unimodular and `d 0` dividing every `d k`, then `d 0`
