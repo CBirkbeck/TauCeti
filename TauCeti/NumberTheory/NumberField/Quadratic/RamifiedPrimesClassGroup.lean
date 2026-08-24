@@ -5,10 +5,10 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import TauCeti.NumberTheory.NumberField.PrimeIdeal
 public import TauCeti.NumberTheory.NumberField.NarrowClassGroup.Basic
 public import TauCeti.NumberTheory.NumberField.Quadratic.TotalRamification
+import Mathlib.NumberTheory.NumberField.ClassNumber
 
 /-!
 # The class of a ramified prime is 2-torsion
