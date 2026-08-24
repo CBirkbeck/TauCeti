@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Discriminant
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.NagellLutz
@@ -39,9 +38,8 @@ The route is doubling. `κ ≠ 0` forces `2 • P ≠ 0`, so `2 • P` has an af
 
 * `WeierstrassCurve.evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ`: the companion over a UFD `R`,
   asking squarefreeness at the primes dividing `addOrderOf (2 • P)` — the point where the proof
-  actually applies `isInteger_or_order_two_of_torsion_of_squarefree`.
-* `WeierstrassCurve.evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_of_squarefree`: the same conclusion
-  from the more familiar hypothesis at `P` itself, which is strictly stronger.
+  actually applies `isInteger_or_order_two_of_torsion_of_squarefree` — and guarded by
+  `addOrderOf (2 • P) ≠ 2`, since that branch needs no arithmetic.
 * `WeierstrassCurve.evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_rat`: the `ℤ`/`ℚ` specialisation,
   assuming only that the point is torsion with integral coordinates.
 
@@ -56,8 +54,10 @@ right disjunct, needing `Squarefree (3 : R)`, which nothing provided.
 
 What *does* transfer is the all-primes condition, since the divisors of `addOrderOf (2 • P)` are
 divisors of `addOrderOf P`. Stating it **at `2 • P`** rather than at `P` is therefore the weakest
-form this route supports, and it needs no guard: when `P` has order two, `2 • P` is zero, no prime
-divides `1`, and the hypothesis is vacuous of its own accord.
+form this route supports, and the guard `addOrderOf (2 • P) ≠ 2` costs nothing on top: the
+order-two branch of `isInteger_or_order_two_of_torsion` uses no arithmetic, so a point of order
+four — where `2 • P` is exactly two-torsion — needs no squarefreeness at all. Order two itself is
+already free, since then `2 • P = 0` and no prime divides `1`.
 
 ## Roadmap
 
@@ -93,7 +93,7 @@ into `Basic.lean`'s `eval_Ψ₃_eq_sub_mul_eval_Ψ₂Sq`, and `isInteger_mul_of_
 is likewise declined: it is the on-curve specialisation of the general divisibility, and stating
 it separately would add a name for what the headline below already does with the point in hand.
 
-Two adaptations. The base ring is a **UFD**, matching `Torsion.lean` and
+Two adaptations. The base ring is a **UFD**, matching `Torsion/Basic.lean` and
 `isInteger_or_order_two_of_torsion`, rather than the source's principal ideal domain of
 characteristic zero. And `κ` is written as `W.ψ₂.evalEval x₀ y₀` rather than the raw
 `2y₀ + a₁x₀ + a₃`, so that `evalEval_ψ₂_sq` applies without a normalisation step.
@@ -121,8 +121,9 @@ and the `4` is already on the left. -/
 private lemma sq_evalEval_ψ₂_dvd_four_mul_eval_Ψ₃ {x y : K}
     (hns : (W.baseChange K).toAffine.Nonsingular x y)
     (htor : IsOfFinAddOrder (Affine.Point.some _ _ hns))
-    (hsf : ∀ p : ℕ, p.Prime → p ∣ addOrderOf ((2 : ℕ) • Affine.Point.some _ _ hns) →
-      Squarefree ((p : ℤ) : R))
+    (hsf : addOrderOf ((2 : ℕ) • Affine.Point.some _ _ hns) ≠ 2 →
+      ∀ p : ℕ, p.Prime → p ∣ addOrderOf ((2 : ℕ) • Affine.Point.some _ _ hns) →
+        Squarefree ((p : ℤ) : R))
     {x₀ y₀ : R} (hx : algebraMap R K x₀ = x) (hEq : W.toAffine.Equation x₀ y₀)
     (hκK : (W.baseChange K).ψ₂.evalEval x y ≠ 0) :
     W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * (W.Ψ₃).eval x₀ := by
@@ -159,8 +160,10 @@ private lemma sq_evalEval_ψ₂_dvd_four_mul_eval_Ψ₃ {x y : K}
     ⟨4 * x₀ - c, hinj <| by
       simp only [map_mul, map_sub, map_pow, map_ofNat, hx, hc]
       linear_combination (norm := ring_nf) 4 * hΨ₃K⟩
+  -- The guard travels with the hypothesis: both are read at `2 • P`, which `h2P_eq` identifies
+  -- with the representative `(x', y')` that Nagell–Lutz is applied to.
   rcases isInteger_or_order_two_of_torsion_of_squarefree W hns' (h2P_eq ▸ htor.nsmul)
-      (fun _ p hp hpd ↦ hsf p hp (by rw [h2P_eq]; exact hpd)) with
+      (fun hg p hp hpd ↦ hsf (by rw [h2P_eq]; exact hg) p hp (by rw [h2P_eq]; exact hpd)) with
     ⟨⟨x'₀, hx'₀⟩, _⟩ | ⟨_, ⟨n₀, hn₀⟩, _⟩
   · exact key (4 * x'₀) (by rw [map_mul, map_ofNat, hx'₀])
   · exact key n₀ hn₀
@@ -169,14 +172,17 @@ private lemma sq_evalEval_ψ₂_dvd_four_mul_eval_Ψ₃ {x y : K}
 either `ψ₂` vanishes there — equivalently the point is two-torsion — or its square divides `4Δ`.
 
 This is the second disjunct of the classical statement. The squarefreeness hypothesis is asked at
-the primes dividing the order of `2 • P`, because that is the point at which the proof applies
-Nagell–Lutz integrality; `evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_of_squarefree` is the same
-conclusion from the more familiar hypothesis at `P` itself. -/
+the primes dividing the order of `2 • P` — that is the point at which the proof applies Nagell–Lutz
+integrality — and it is **guarded** by `addOrderOf (2 • P) ≠ 2` exactly as
+`isInteger_or_order_two_of_torsion` guards its own, because the order-two branch consumed there
+needs no arithmetic at all. A point of order four hits precisely that branch, and so costs
+nothing. -/
 theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ {x y : K}
     (hns : (W.baseChange K).toAffine.Nonsingular x y)
     (htor : IsOfFinAddOrder (Affine.Point.some _ _ hns))
-    (hsf : ∀ p : ℕ, p.Prime → p ∣ addOrderOf ((2 : ℕ) • Affine.Point.some _ _ hns) →
-      Squarefree ((p : ℤ) : R))
+    (hsf : addOrderOf ((2 : ℕ) • Affine.Point.some _ _ hns) ≠ 2 →
+      ∀ p : ℕ, p.Prime → p ∣ addOrderOf ((2 : ℕ) • Affine.Point.some _ _ hns) →
+        Squarefree ((p : ℤ) : R))
     {x₀ y₀ : R} (hx : algebraMap R K x₀ = x) (hy : algebraMap R K y₀ = y) :
     W.ψ₂.evalEval x₀ y₀ = 0 ∨ W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * W.Δ := by
   by_cases hκ : W.ψ₂.evalEval x₀ y₀ = 0
@@ -194,23 +200,6 @@ theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ {x y : K}
   refine Or.inr (dvd_four_mul_Δ_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃ W (evalEval_ψ₂_sq W hEq).dvd ?_)
   exact sq_evalEval_ψ₂_dvd_four_mul_eval_Ψ₃ W hns htor hsf hx hEq hκK
 
-/-- **The discriminant companion from a uniform hypothesis.** The same conclusion, asking
-squarefreeness at every prime dividing the order of `P` itself.
-
-That is strictly stronger than what the theorem above takes — the order of `2 • P` divides the
-order of `P` — but it is the form a caller usually already has, needing no knowledge of what
-doubling does to the order. The pair mirrors `isInteger_or_order_two_of_torsion` and its
-`_of_squarefree` companion. -/
-theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_of_squarefree {x y : K}
-    (hns : (W.baseChange K).toAffine.Nonsingular x y)
-    (htor : IsOfFinAddOrder (Affine.Point.some _ _ hns))
-    (hsf : ∀ p : ℕ, p.Prime → p ∣ addOrderOf (Affine.Point.some _ _ hns) →
-      Squarefree ((p : ℤ) : R))
-    {x₀ y₀ : R} (hx : algebraMap R K x₀ = x) (hy : algebraMap R K y₀ = y) :
-    W.ψ₂.evalEval x₀ y₀ = 0 ∨ W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * W.Δ := by
-  refine evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ W hns htor (fun p hp hpd ↦ hsf p hp ?_) hx hy
-  exact hpd.trans (addOrderOf_dvd_of_mem_zmultiples ⟨2, rfl⟩)
-
 /-- **The discriminant companion over `ℚ`**, the form the roadmap asks for: for an integral long
 Weierstrass model, a torsion point with integral coordinates has `ψ₂ = 0` there, or `ψ₂²` divides
 `4Δ`. For a short model (`a₁ = a₃ = 0`) `ψ₂` is `2y`, so this reads `y = 0` or `4y² ∣ 4Δ`.
@@ -223,6 +212,6 @@ theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_rat {W : WeierstrassCurve �
     {x₀ y₀ : ℤ} (hx : algebraMap ℤ ℚ x₀ = x) (hy : algebraMap ℤ ℚ y₀ = y) :
     W.ψ₂.evalEval x₀ y₀ = 0 ∨ W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * W.Δ :=
   evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ W hns htor
-    (fun p hp _ ↦ by simpa using (Nat.prime_iff_prime_int.mp hp).squarefree) hx hy
+    (fun _ p hp _ ↦ by simpa using (Nat.prime_iff_prime_int.mp hp).squarefree) hx hy
 
 end WeierstrassCurve

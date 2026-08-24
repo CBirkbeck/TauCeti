@@ -7,7 +7,7 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Descent
-public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion
+public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.Basic
 public import TauCeti.RingTheory.Localization.NumDen
 
 /-!
@@ -19,9 +19,9 @@ field `K` of a general unique factorisation domain `R` the same holds **given sq
 the right factor**: `Squarefree (2 : R)` when `4` divides the order, or squarefreeness of an odd
 prime divisor of it. An arbitrary squarefree factor will not do — at order `6`, `Squarefree 2`
 supplies neither branch. That hypothesis is what the `ℤ` statement discharges for free, and it is
-not removable in general. This file is the assembly: `Torsion.lean` proves the cases a squarefree
-hypothesis makes accessible, `Descent.lean` pulls a conclusion back from a multiple of a point to
-the point itself, and what remains is the case analysis that connects them.
+not removable in general. This file is the assembly: `Torsion/Basic.lean` proves the cases a
+squarefree hypothesis makes accessible, `Descent.lean` pulls a conclusion back from a multiple of a
+point to the point itself, and what remains is the case analysis that connects them.
 
 The split is on the order `m` of the point, and `m ≠ 1`, `m ≠ 2` put it in the range where
 Mathlib's `Nat.four_dvd_or_exists_odd_prime_and_dvd_of_two_lt` applies: either `4 ∣ m`, or `m` has
@@ -81,7 +81,7 @@ only, so `isInteger_or_order_two_of_torsion_rat` is *its* statement and
 `isInteger_or_order_two_of_torsion` generalises it.
 
 Three adaptations. The base ring is a **UFD** rather than the source's principal ideal domain of
-characteristic zero, matching `Torsion.lean` — no ideal is ever formed here, and `CharZero` is
+characteristic zero, matching `Torsion/Basic.lean` — no ideal is ever formed here, and `CharZero` is
 unused. The squarefreeness hypothesis is **guarded by `addOrderOf P ≠ 2`**, which the source
 leaves unguarded; see the note above on why an unguarded form is unsatisfiable over a ramifying
 base — for two-torsion points, that is; a point of odd order never invokes `Squarefree (2 : R)`.
@@ -173,8 +173,8 @@ estimate, not a factorisation argument. -/
 -- the numeral `4 * x`. The `y` half then needs `polynomialY` to vanish, which is `ψ₂` vanishing
 -- rephrased through `ψ_two`.
 -- The `omit` above: unlike the odd and order-four branches, this one never forms `n • P` in the
--- affine group, so it does not need the `DecidableEq K` they do — matching `Torsion.lean`, which
--- omits it on all four of its theorems.
+-- affine group, so it does not need the `DecidableEq K` they do — matching `Torsion/Basic.lean`,
+-- which omits it on all four of its theorems.
 theorem isInteger_four_mul_x_and_eight_mul_y_of_order_two {x y : K}
     (hns : (W.baseChange K).toAffine.Nonsingular x y)
     (h2 : (2 : ℤ) • Jacobian.Point.fromAffine (Affine.Point.some _ _ hns) = 0) :
