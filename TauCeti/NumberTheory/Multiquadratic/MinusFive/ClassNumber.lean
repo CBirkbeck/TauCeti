@@ -232,7 +232,7 @@ theorem classNumber_eq_two_of_minpoly_eq_X_sq_add_five
       (by simpa [P0] using h)
   have hM := minkowski_bound_lt_three hmin hgen
   have hclasses : ∀ C : ClassGroup (𝓞 K), C = 1 ∨ C = ClassGroup.mk0 P0 :=
-    class_eq_one_or_mk0_primeAboveTwo_of_minkowskiBound_lt_three hfin hram hM P
+    class_eq_one_or_eq_classGroupMk0_primeAboveTwo_of_minkowskiBound_lt_three hfin hram hM P
   have hupper : NumberField.classNumber K ≤ 2 := by
     rw [NumberField.classNumber]
     calc

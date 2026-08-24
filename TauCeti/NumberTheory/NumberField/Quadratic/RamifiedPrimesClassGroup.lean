@@ -38,8 +38,9 @@ classical genus theory this result underlies.
 * `NumberField.classGroupMk0_sq_eq_one_of_mem_ramifiedPrimes`: the class of a ramified prime
   is 2-torsion.
 * `NumberField.NarrowClassGroup.mk0_sq_eq_one_of_mem_ramifiedPrimes`: so is its narrow class.
-* `TauCeti.NumberField.class_eq_one_or_mk0_primeAboveTwo_of_minkowskiBound_lt_three`: with Minkowski
-  bound below `3` and `2` ramified, every ideal class is trivial or the class of a prime above `2`.
+* `TauCeti.NumberField.class_eq_one_or_eq_classGroupMk0_primeAboveTwo_of_minkowskiBound_lt_three`:
+  with Minkowski bound below `3` and `2` ramified, every ideal class is trivial or the class of a
+  prime above `2`.
 -/
 
 public section
@@ -100,7 +101,7 @@ variable {K : Type*} [Field K] [NumberField K]
 
 /-- With Minkowski bound below `3` and `2` ramified in a quadratic field, every ideal class is
 trivial or the class of a prime `P` above `2`. -/
-theorem class_eq_one_or_mk0_primeAboveTwo_of_minkowskiBound_lt_three
+theorem class_eq_one_or_eq_classGroupMk0_primeAboveTwo_of_minkowskiBound_lt_three
     (hfin : finrank ℚ K = 2) (hram : 2 ∈ ramifiedPrimes K)
     (hM : (4 / Real.pi) ^ InfinitePlace.nrComplexPlaces K *
         ((finrank ℚ K).factorial / (finrank ℚ K) ^ (finrank ℚ K) *
