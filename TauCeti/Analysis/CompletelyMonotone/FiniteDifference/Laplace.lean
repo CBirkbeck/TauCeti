@@ -221,7 +221,7 @@ private lemma isTightMeasureSet_range_of_laplaceTransform_between_shift
 
 /-- If `f u ≤ laplaceTransform μ₀ s` whenever `0 ≤ s < u`, and `f` is right-continuous at `0`, then
 `f t ≤ laplaceTransform μ₀ t` for every `0 ≤ t`. -/
-private theorem le_laplaceTransform_of_forall_lt {μ₀ : Measure ℝ≥0} [IsFiniteMeasure μ₀]
+private theorem f_le_laplaceTransform_of_forall_lt {μ₀ : Measure ℝ≥0} [IsFiniteMeasure μ₀]
     (hcont : ContinuousWithinAt f (Ici 0) 0)
     (hlower : ∀ s : ℝ, 0 ≤ s → ∀ u : ℝ, s < u → f u ≤ laplaceTransform μ₀ s)
     {t : ℝ} (ht : 0 ≤ t) :
@@ -292,7 +292,7 @@ theorem exists_representsLaplace_of_isDifferenceCompletelyMonotone_of_continuous
       (by linarith)) (hlow n s hs)
   let _ := hμ₀_fin
   have hft : f t ≤ laplaceTransform μ₀ t :=
-    le_laplaceTransform_of_forall_lt hcont hlower ht
+    f_le_laplaceTransform_of_forall_lt hcont hlower ht
   exact le_antisymm hft hupper
 
 /-- **The Hausdorff--Bernstein--Widder theorem in finite-difference form.** A function has
