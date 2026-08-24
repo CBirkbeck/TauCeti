@@ -46,9 +46,10 @@ instance dotProductBilin_isPerfPair (R ι : Type*) [CommRing R] [Fintype ι] :
 /-- **A family paired diagonally by a second family is linearly independent.** If `v i ⬝ᵥ w j`
 vanishes whenever `i ≠ j` and is a nonzero scalar when `i = j`, the `v i` are linearly independent.
 The diagonal entries need only be nonzero, not units, so this applies over `ℤ` with diagonal `2`.
-The family index `κ` and the coordinate index `ι` are unrelated. -/
+The family index `κ` and the coordinate index `ι` are unrelated, and the scalars need not
+commute. -/
 theorem linearIndependent_of_dotProduct_diagonal {κ ι R : Type*} [Finite κ] [DecidableEq κ]
-    [Fintype ι] [CommRing R] [NoZeroDivisors R] {v w : κ → ι → R} {c : κ → R}
+    [Fintype ι] [Ring R] [NoZeroDivisors R] {v w : κ → ι → R} {c : κ → R}
     (hc : ∀ i, c i ≠ 0) (h : ∀ i j, v i ⬝ᵥ w j = if i = j then c i else 0) :
     LinearIndependent R v := by
   have : Fintype κ := Fintype.ofFinite κ
