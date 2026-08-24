@@ -64,11 +64,10 @@ public theorem coe_frickeGL :
     (↑(frickeGL N) : Matrix (Fin 2) (Fin 2) ℚ) = !![0, -1; (N : ℚ), 0] := by
   simp [frickeGL, Matrix.GeneralLinearGroup.mkOfDetNeZero]
 
+-- No separate determinant lemma is provided: `coe_frickeGL` already exposes the underlying
+-- matrix, from which the value `N` and its matrix form both follow.
 /-- The determinant of `frickeGL N` is positive. This is about the single matrix `W`; it is
-deliberately not a general statement about determinants of `SL`-type elements.
-
-The determinant itself is `N`, but that needs no lemma of its own: `coe_frickeGL` is `simp`,
-so `(frickeGL N).det.val = N` and its matrix form are both closed by `simp` alone. -/
+deliberately not a general statement about determinants of `SL`-type elements. -/
 public theorem frickeGL_det_pos : 0 < (frickeGL N).det.val := by
   have : (frickeGL N).det.val = (N : ℚ) := by simp
   rw [this]
