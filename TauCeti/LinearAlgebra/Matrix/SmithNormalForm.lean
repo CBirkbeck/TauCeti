@@ -779,10 +779,10 @@ private lemma prod_take_dvd_of_mul_diagonal_mul_eq {c d : Fin n → ℤ}
 
 /-- Inverting a two-sided unimodular transformation. Used both by the uniqueness proof and by
 the content characterisation below, which otherwise repeat the same three lines. -/
-private lemma inv_mul_mul_inv_of_mul_mul_eq {A B : Matrix (Fin n) (Fin n) ℤ}
-    (L R : GeneralLinearGroup (Fin n) ℤ)
-    (h : (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) = B) :
-    (↑L⁻¹ : Matrix (Fin n) (Fin n) ℤ) * B * (↑R⁻¹ : Matrix (Fin n) (Fin n) ℤ) = A := by
+private lemma inv_mul_mul_inv_of_mul_mul_eq {S : Type*} [CommRing S]
+    {A B : Matrix (Fin n) (Fin n) S} (L R : GeneralLinearGroup (Fin n) S)
+    (h : (L : Matrix (Fin n) (Fin n) S) * A * (R : Matrix (Fin n) (Fin n) S) = B) :
+    (↑L⁻¹ : Matrix (Fin n) (Fin n) S) * B * (↑R⁻¹ : Matrix (Fin n) (Fin n) S) = A := by
   rw [← h]
   simp [Matrix.mul_assoc]
 
@@ -852,10 +852,12 @@ with the Atkin–Lehner material that consumes it rather than here. -/
 divides every entry of `A`.
 
 Inverting the unimodular factors writes `A = L⁻¹ * diagonal d * R⁻¹`, and `d 0` divides every
-entry of `diagonal d`, so `dvd_mul_mul_apply` carries it to every entry of `A`. -/
-theorem invariant_factor_zero_dvd_entries [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
-    (d : Fin n → ℤ) (hd0 : ∀ k, d 0 ∣ d k) (L R : GeneralLinearGroup (Fin n) ℤ)
-    (h : (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
+entry of `diagonal d`, so `dvd_mul_mul_apply` carries it to every entry of `A`. No step is
+integer-specific, so this holds over any commutative ring. -/
+theorem invariant_factor_zero_dvd_entries {S : Type*} [CommRing S] [NeZero n]
+    (A : Matrix (Fin n) (Fin n) S) (d : Fin n → S) (hd0 : ∀ k, d 0 ∣ d k)
+    (L R : GeneralLinearGroup (Fin n) S)
+    (h : (L : Matrix (Fin n) (Fin n) S) * A * (R : Matrix (Fin n) (Fin n) S) =
       Matrix.diagonal d) (i j : Fin n) : d 0 ∣ A i j := by
   rw [← inv_mul_mul_inv_of_mul_mul_eq L R h]
   refine dvd_mul_mul_apply (fun p q ↦ ?_) _ _ i j
@@ -868,11 +870,13 @@ a unit, so it is determined up to sign by the matrix alone — the factorisation
 freely.
 
 `Matrix.smith_normal_form_unique` says the whole chained diagonal is determined; this says the
-first entry is determined, up to a unit, by something directly readable off the matrix.
-`Matrix.invariant_factor_zero_eq_gcd` pins the sign when `d 0` is known nonnegative. -/
-theorem associated_invariant_factor_zero_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
-    (d : Fin n → ℤ) (hd0 : ∀ k, d 0 ∣ d k) (L R : GeneralLinearGroup (Fin n) ℤ)
-    (h : (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
+first entry is determined, up to a unit, by something directly readable off the matrix. The
+hypotheses are exactly what `Finset.gcd` needs; over `ℤ` they hold by instance, and
+`Matrix.invariant_factor_zero_eq_gcd` then pins the sign when `d 0` is known nonnegative. -/
+theorem associated_invariant_factor_zero_gcd {S : Type*} [CommRing S] [IsDomain S]
+    [NormalizedGCDMonoid S] [NeZero n] (A : Matrix (Fin n) (Fin n) S) (d : Fin n → S)
+    (hd0 : ∀ k, d 0 ∣ d k) (L R : GeneralLinearGroup (Fin n) S)
+    (h : (L : Matrix (Fin n) (Fin n) S) * A * (R : Matrix (Fin n) (Fin n) S) =
       Matrix.diagonal d) :
     Associated (d 0) (Finset.univ.gcd fun p : Fin n × Fin n ↦ A p.1 p.2) :=
   associated_of_dvd_dvd
@@ -880,10 +884,12 @@ theorem associated_invariant_factor_zero_gcd [NeZero n] (A : Matrix (Fin n) (Fin
     (dvd_diag_of_dvd_entries A _ d _ _ h
       (fun i j ↦ Finset.gcd_dvd (Finset.mem_univ (i, j))) 0)
 
-/-- **The first entry *is* the content**, once its sign is known. `Finset.gcd` over `ℤ` is
+/-- **The first entry *is* the content**, once its sign is known. This is the integer
+specialization of `Matrix.associated_invariant_factor_zero_gcd`: `Finset.gcd` over `ℤ` is
 normalized, so nonnegativity of `d 0` — which `Matrix.exists_smith_normal_form_of_det_pos`
 supplies — upgrades the associate relation to an equality, and consumers need not redo the
-sign argument. -/
+sign argument. The sign is the only integer-specific part; the two results above hold over a
+commutative ring and a normalized GCD domain respectively. -/
 theorem invariant_factor_zero_eq_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
     (d : Fin n → ℤ) (hd0 : ∀ k, d 0 ∣ d k) (hnonneg : 0 ≤ d 0)
     (L R : GeneralLinearGroup (Fin n) ℤ)
