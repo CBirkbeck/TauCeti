@@ -8,6 +8,8 @@ module
 import Mathlib.RingTheory.Valuation.LocalSubring
 public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Defs
 public import Mathlib.RingTheory.Valuation.ValuativeRel.Basic
+import TauCeti.RingTheory.IntegralClosure.Quotient
+import TauCeti.RingTheory.Valuation.ValuativeRel.Comap
 
 /-!
 # The valuative criterion for integrality
@@ -20,18 +22,24 @@ which he gives only the citation [Hu2, Lemma 3.3]. It is the substantial ingredi
 comparison between two presentations of a rational subset, which Layer 3.1 of the roadmap
 asks for and which `presentationRingEquiv` currently takes as a hypothesis.
 
-## Method, and what it costs
+## Method
 
-The proof is by contraposition through the fraction field. If `x` is not integral over `B`
-then its image is outside the integral closure of `B` in `Frac R`, so
+The proof has two steps, and `R` is an arbitrary commutative ring in the statement.
+
+For a **domain** the argument is by contraposition through the fraction field. If `x` is not
+integral over `B` then its image is outside the integral closure of `B` in `Frac R`, so
 `Subring.exists_le_valuationSubring_of_isIntegrallyClosedIn` — the Stacks project's 090P(1) —
 produces a valuation subring `V` containing that closure and missing the image of `x`.
 Pulling `V.valuation` back along the inclusion gives a valuation of `R` bounded by `1` on `B`
 but not at `x`, contradicting the hypothesis.
 
-Routing through `Frac R` is what forces `[IsDomain R]`, a hypothesis Wedhorn's statement does
-not carry. What is proved here is therefore **weaker than 7.18 in general**; it is 7.18 for a
-domain.
+Routing through `Frac R` needs `R` to be a domain, which is a hypothesis Wedhorn's statement
+does not carry. It is removed by **reducing modulo a prime**: by
+`TauCeti.exists_isPrime_not_isIntegral_map`, an element that is not integral over `B` already
+fails to be integral over the image of `B` in `R ⧸ J` for some prime `J`, and `R ⧸ J` is a
+domain. A valuation of `R ⧸ J` witnessing that failure pulls back along `Ideal.Quotient.mk J`,
+by `TauCeti.ValuativeRel.comap`, to one of `R` witnessing the original. So the criterion holds
+for `R` in general.
 
 ## Main results
 
@@ -43,16 +51,18 @@ domain.
   there with the proof given as the citation [Hu2, Lemma 3.3].
 * [C. Birkbeck, *AINTLIB*](https://github.com/CBirkbeck/AINTLIB), commit `37bbdaeb9`,
   `projects/AdicSpaces/Adic spaces/Presheaf.lean`, `isIntegral_of_forall_valuation_le_one` — the
-  proof route followed here. **Adapted, not copied**: that declaration carries an openness
-  hypothesis its own underscore marks as unused, so the topology is dropped and the statement
-  here is purely algebraic, which is why this file sits under `RingTheory/Valuation/`.
+  proof route followed in the domain step. **Adapted, not copied**: that declaration carries an
+  openness hypothesis its own underscore marks as unused, so the topology is dropped and the
+  statement here is purely algebraic, which is why this file sits under `RingTheory/Valuation/`.
+  It also assumes `[IsDomain R]`, as every version of this criterion in that development does;
+  the reduction to a prime quotient that removes the hypothesis has no counterpart there.
 -/
 
 public section
 
 namespace TauCeti
 
-open ValuativeRel
+open _root_.ValuativeRel
 
 /-- `ValuativeRel.ofValuation v` compares by `v`: this is how the relation is defined, and the
 only step of the proof below that is definitional rather than lemma-driven. Naming it confines
@@ -60,13 +70,11 @@ that unfolding to one place; the `comap` layer goes through `Valuation.comap_app
 private theorem vle_ofValuation {S Γ : Type*} [Ring S] [LinearOrderedCommGroupWithZero Γ]
     (v : Valuation S Γ) (x y : S) : (ofValuation v).vle x y ↔ v x ≤ v y := Iff.rfl
 
-/-- **The valuative criterion for integrality.** If `v x ≤ 1` for every valuation `v` of `R`
-satisfying `v b ≤ 1` for all `b ∈ B`, then `x` is integral over `B`.
-
-`[IsDomain R]` is not Wedhorn's hypothesis; it is what the proof's passage through `Frac R`
-costs, so this is Proposition 7.18 for a domain rather than in general. -/
-theorem isIntegral_of_forall_valuation_le_one {R : Type*} [CommRing R] [IsDomain R]
-    {B : Subring R} {x : R}
+/-- **The valuative criterion for integrality, for a domain.** This is the step of
+`isIntegral_of_forall_valuation_le_one` that passes through `Frac R`; the general statement is
+reduced to it modulo a prime ideal, so it is not part of the interface. -/
+private theorem isIntegral_of_forall_valuation_le_one_of_isDomain {R : Type*} [CommRing R]
+    [IsDomain R] {B : Subring R} {x : R}
     (hvle : ∀ v : ValuativeRel R, (∀ b ∈ B, v.vle b 1) → v.vle x 1) : IsIntegral B x := by
   by_contra hni
   -- pass to the fraction field; `x` stays non-integral because the map is injective, which
@@ -93,5 +101,25 @@ theorem isIntegral_of_forall_valuation_le_one {R : Type*} [CommRing R] [IsDomain
   refine hxV ?_
   rw [← V.valuation_le_one_iff]
   simpa only [map_one] using (hvle_iff x 1).mp (hvle _ hB)
+
+/-- **The valuative criterion for integrality.** If `v x ≤ 1` for every valuation `v` of `R`
+satisfying `v b ≤ 1` for all `b ∈ B`, then `x` is integral over `B`.
+
+This is the hard direction of Wedhorn's Proposition 7.18, for an arbitrary commutative ring —
+the generality he states it in. The proof of the domain case goes through `Frac R`, and the
+general case is reduced to it by working modulo the prime ideal that
+`exists_isPrime_not_isIntegral_map` extracts from a failure of integrality. -/
+theorem isIntegral_of_forall_valuation_le_one {R : Type*} [CommRing R] {B : Subring R} {x : R}
+    (hvle : ∀ v : ValuativeRel R, (∀ b ∈ B, v.vle b 1) → v.vle x 1) : IsIntegral B x := by
+  by_contra hni
+  -- a prime modulo which integrality already fails, and the domain it produces
+  obtain ⟨J, hJ, hnint⟩ := exists_isPrime_not_isIntegral_map hni
+  refine hnint (isIntegral_of_forall_valuation_le_one_of_isDomain fun w hw ↦ ?_)
+  -- a valuation of `R ⧸ J` bounded on the image of `B` pulls back to one bounded on `B`
+  have hB : ∀ b ∈ B, (ValuativeRel.comap (Ideal.Quotient.mk J) w).vle b 1 := by
+    intro b hb
+    rw [ValuativeRel.comap_vle, map_one]
+    exact hw _ (Subring.mem_map.2 ⟨b, hb, rfl⟩)
+  simpa only [ValuativeRel.comap_vle, map_one] using hvle _ hB
 
 end TauCeti
