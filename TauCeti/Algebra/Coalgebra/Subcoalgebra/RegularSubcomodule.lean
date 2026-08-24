@@ -56,9 +56,7 @@ The underlying submodule is unchanged; the map `D ⊗ D → C ⊗ C` factors thr
   carrier := D.toSubmodule
   coact_mem' := by
     intro c hc
-    exact TensorProduct.range_map_mono le_rfl
-      (by simp only [Submodule.range_subtype, LinearMap.range_id]; exact le_top)
-      (D.comul_mem hc)
+    exact TensorProduct.range_map_mono le_rfl (by simp) (D.comul_mem hc)
 
 /-- The underlying submodule is unchanged when a subcoalgebra is viewed as a subcomodule of
 the regular comodule. -/
