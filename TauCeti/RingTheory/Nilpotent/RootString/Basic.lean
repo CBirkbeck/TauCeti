@@ -143,21 +143,6 @@ private theorem sum_chainLeTwoIndex_diag_flip {B : Type*} [AddCommMonoid B] (F :
   · rintro ⟨⟨m, n⟩, b, c⟩ _
     rfl
 
-/-- Off the slice `{a + b + c < N} ∩ {q + b + 2c < N}` every term of the truncated hypercube
-vanishes, so restricting the sum to the slice changes nothing. Companion of
-`sum_chainLeTwoIndex_diag_flip`: that lemma reindexes onto the slice, this one extends the slice
-back to the whole hypercube. -/
-private theorem sum_filter_hypercube_eq_sum {B : Type*} [AddCommMonoid B] (F : ℕ × ℕ × ℕ × ℕ → B)
-    (N : ℕ) (hzero : ∀ a b c q : ℕ, N ≤ a + b + c ∨ N ≤ q + b + 2 * c → F (a, b, c, q) = 0) :
-    ∑ v ∈ range N ×ˢ range N ×ˢ range N ×ˢ range N with
-        v.1 + v.2.1 + v.2.2.1 < N ∧ v.2.2.2 + v.2.1 + 2 * v.2.2.1 < N, F v =
-      ∑ v ∈ range N ×ˢ range N ×ˢ range N ×ˢ range N, F v := by
-  refine Finset.sum_subset (Finset.filter_subset _ _) ?_
-  rintro ⟨a, b, c, q⟩ hmem hnot
-  simp only [Finset.mem_product, Finset.mem_range] at hmem
-  simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_range] at hnot
-  exact hzero a b c q (by omega)
-
 -- The combinatorial core: a truncated left factor times a truncated right factor is the reordered
 -- quadruple product, once the truncation is wide enough that the reindexed hypercube contains no
 -- extra nonzero terms. The reindexing is `(m, n, b, c) ↦ (n - b - c, b, c, m - b - 2c)`, and the
@@ -217,9 +202,11 @@ private theorem sum_smul_mul_sum_smul_of_chainLeTwoOrder {R : Type*} [CommRing R
     congr 1
     simp only [mul_pow, pow_add, pow_mul]
     ring
-  -- Step 4: the terms of the hypercube outside that part vanish.
-  have hsub := sum_filter_hypercube_eq_sum G N fun a b c q h ↦ by simp [hG, hzero a b c q h]
-  rw [← hsrc, hbij, hsub, hbox]
+  -- Step 4: off that part the summand vanishes, so the slice already carries the whole sum.
+  rw [← hsrc, hbij, ← hbox]
+  exact Finset.sum_filter_of_ne fun v _ hne => by
+    by_contra h
+    exact hne (by simp [hG, hzero v.1 v.2.1 v.2.2.1 v.2.2.2 (by omega)])
 
 /-! ## The Chevalley commutator relation -/
 
