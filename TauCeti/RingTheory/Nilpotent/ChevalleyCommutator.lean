@@ -141,7 +141,7 @@ end BaseChange
 /-- Summing over the truncated triangle `{(m, n, k) | m, n < N, k ≤ min m n}` is the same as summing
 over the slice `{(p, k, q) | p + k < N, q + k < N}` of the cube, the summand transported along
 `(m, n, k) ↦ (n - k, k, m - k)`. For `N = 0` both sides are empty sums. -/
-private theorem sum_sigma_range_min_eq_sum_filter_cube {B : Type*} [AddCommMonoid B]
+private theorem sum_range_min_diag_flip {B : Type*} [AddCommMonoid B]
     (F : ℕ × ℕ × ℕ → B) (N : ℕ) :
     ∑ w ∈ (range N ×ˢ range N).sigma (fun mn => range (min mn.1 mn.2 + 1)),
         F (w.1.2 - w.2, w.2, w.1.1 - w.2) =
@@ -199,7 +199,7 @@ private theorem sum_smul_mul_sum_smul_of_normalOrder {R : Type*} [CommRing R]
   have hbij : ∑ w ∈ (range N ×ˢ range N).sigma (fun mn => range (min mn.1 mn.2 + 1)),
         (t ^ w.1.1 * u ^ w.1.2) • (Dy (w.1.2 - w.2) * Dz w.2 * Dx (w.1.1 - w.2)) =
       ∑ w ∈ range N ×ˢ range N ×ˢ range N with w.1 + w.2.1 < N ∧ w.2.2 + w.2.1 < N, G w := by
-    rw [← sum_sigma_range_min_eq_sum_filter_cube G N]
+    rw [← sum_range_min_diag_flip G N]
     refine Finset.sum_congr rfl ?_
     -- On the triangle `m = a + k`, `n = b + k`, so the scalar `t ^ m * u ^ n` is `G`'s
     -- `u ^ b * (t * u) ^ k * t ^ a`.
