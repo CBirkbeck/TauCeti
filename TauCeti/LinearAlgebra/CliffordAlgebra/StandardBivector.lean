@@ -191,14 +191,14 @@ private theorem soCoordinates_injective : Function.Injective (soCoordinates n R)
     have hC := (LieAlgebra.Orthogonal.mem_so (Fin n) R
       (C : Matrix (Fin n) (Fin n) R)).1 C.property
     exact congr_fun (congr_fun hC a) b
-  have hupper (a b : Fin n) (hab : a < b) := matrix_apply_eq_of_soCoordinates_eq_of_lt n R h hab
   by_cases hij : i < j
-  · exact hupper i j hij
+  · exact matrix_apply_eq_of_soCoordinates_eq_of_lt n R h hij
   by_cases hji : j < i
   · calc
       (A : Matrix (Fin n) (Fin n) R) i j =
           -(A : Matrix (Fin n) (Fin n) R) j i := hskew A j i
-      _ = -(B : Matrix (Fin n) (Fin n) R) j i := congrArg Neg.neg (hupper j i hji)
+      _ = -(B : Matrix (Fin n) (Fin n) R) j i :=
+          congrArg Neg.neg (matrix_apply_eq_of_soCoordinates_eq_of_lt n R h hji)
       _ = (B : Matrix (Fin n) (Fin n) R) i j := (hskew B j i).symm
   · have hij' : i = j := le_antisymm (not_lt.mp hji) (not_lt.mp hij)
     subst j
