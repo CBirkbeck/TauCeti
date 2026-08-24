@@ -7,6 +7,7 @@ module
 
 public import TauCeti.RingTheory.Huber.Matrix
 public import TauCeti.RingTheory.Huber.OpenMapping
+public import TauCeti.RingTheory.Huber.RingOfDefinition
 
 /-!
 # Dense submodules of a module-finite complete Tate-module
@@ -24,10 +25,9 @@ nilpotent, and matrix Nakayama in the quotient
 (`TauCeti.Huber.eq_zero_of_isTopologicallyNilpotent_entries_of_forall_eq_sum_smul`) forces every
 generator into the submodule.
 
-The neighbourhood of topologically nilpotent scalars is the image of the ideal of definition: it
-is open (`TauCeti.Huber.PairOfDefinition.isOpen_idealImage`) and its elements are topologically
-nilpotent (`TauCeti.Huber.PairOfDefinition.isTopologicallyNilpotent_of_mem_idealImage`), so no
-pseudouniformiser needs to be chosen.
+The neighbourhood of topologically nilpotent scalars is `A°°` itself, which is open
+(`TauCeti.Huber.isOpen_setOf_isTopologicallyNilpotent`) and contains zero, so neither an ideal of
+definition nor a pseudouniformiser has to be chosen.
 
 ## Main results
 
@@ -44,8 +44,8 @@ Adapted from the AINTLIB development (`github.com/smwyin/aintlib`, Apache-2.0), 
 `projects/AdicSpaces/Adic spaces/WedhornBanachTheorem.lean`, where the same statement is
 `eq_top_of_dense_of_finite`. The argument is AINTLIB's; three things differ. The target is
 separated by `T0Space` rather than `T2Space`. The neighbourhood of topologically nilpotent
-scalars is the image of the ideal of definition rather than `ϖ • A⁰` for a chosen
-pseudouniformiser, so no unit has to be produced. And the open presentation is the named
+scalars is `A°°` itself rather than `ϖ • A⁰` for a chosen pseudouniformiser, so no unit has to
+be produced. And the open presentation is the named
 `TauCeti.Huber.IsTateRing.isOpenMap_linearCombination` rather than a locally built linear map.
 -/
 
@@ -57,31 +57,31 @@ public section
 namespace TauCeti.Huber
 
 variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [CompleteSpace A]
-  [(𝓤 A).IsCountablyGenerated] [T2Space A] [NonarchimedeanRing A] [IsTateRing A]
+  [T2Space A] [IsTopologicalRing A] [IsTateRing A]
   {V : Type*} [AddCommGroup V] [UniformSpace V] [IsUniformAddGroup V] [CompleteSpace V]
   [(𝓤 V).IsCountablyGenerated] [T0Space V] [Module A V] [ContinuousSMul A V]
-
-/-- A neighbourhood of zero consisting of topologically nilpotent elements: the image of the
-ideal of definition. Private because it is immediate from the pair-of-definition API and exists
-only to keep the density argument below readable. -/
-private theorem exists_nhds_zero_forall_isTopologicallyNilpotent (A : Type*) [CommRing A]
-    [TopologicalSpace A] [IsTopologicalRing A] [IsHuberRing A] :
-    ∃ W ∈ nhds (0 : A), ∀ a ∈ W, IsTopologicallyNilpotent a := by
-  obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := A)
-  exact ⟨P.idealImage 1, (P.isOpen_idealImage 1).mem_nhds (P.idealImage 1).zero_mem,
-    fun _ ha ↦ P.isTopologicallyNilpotent_of_mem_idealImage one_ne_zero ha⟩
 
 /-- **A dense submodule of a module-finite complete Tate-module is everything**
 (Bosch–Güntzer–Remmert §3.7.2/1).
 
-The open mapping theorem dilates a neighbourhood of zero in `Aⁿ` onto one in `V`, so density
-writes each generator as `gᵥ = mᵥ + ∑ⱼ aᵥⱼ • gⱼ` with `mᵥ ∈ N` and every `aᵥⱼ` topologically
-nilpotent; matrix Nakayama in `V ⧸ N` then forces every `gᵥ ∈ N`. -/
+`N` is a submodule of `V` whose closure is all of `V`; the conclusion is that `N` was already all
+of `V`. The hypotheses are carried by the ambient instances: `A` is a complete Hausdorff Tate
+ring, `V` is a complete `T0` topological `A`-module with countably generated uniformity and
+continuous scalar action, and `V` is *module-finite* over `A`. Module-finiteness is what makes
+the statement true — a dense submodule of an infinite-dimensional complete module need not be
+everything.
+
+The proof is the open mapping theorem followed by matrix Nakayama; see the module docstring. -/
 theorem eq_top_of_dense_of_module_finite [Module.Finite A V] (N : Submodule A V)
     (hN : Dense (N : Set V)) : N = ⊤ := by
   classical
+  -- Derivable, so it is not asked of the caller (it is not found by instance search).
+  let _ : (𝓤 A).IsCountablyGenerated := IsUniformAddGroup.uniformity_countably_generated
   obtain ⟨n, g, hspan⟩ := Module.Finite.exists_fin (R := A) (M := V)
-  obtain ⟨W, hW_nhds, hW_tn⟩ := exists_nhds_zero_forall_isTopologicallyNilpotent A
+  set W : Set A := {a : A | IsTopologicallyNilpotent a}
+  have hW_nhds : W ∈ nhds (0 : A) :=
+    isOpen_setOf_isTopologicallyNilpotent.mem_nhds IsTopologicallyNilpotent.zero
+  have hW_tn : ∀ a ∈ W, IsTopologicallyNilpotent a := fun _ ha ↦ ha
   have hopen : IsOpenMap (Fintype.linearCombination A g : (Fin n → A) → V) :=
     IsTateRing.isOpenMap_linearCombination g hspan
   have hWpi_nhds : Set.univ.pi (fun _ : Fin n ↦ W) ∈ nhds (0 : Fin n → A) :=
