@@ -29,6 +29,14 @@ operations of determinant one:
   monotone under divisibility, with `L * A * R = diagonal d`.
 * `Matrix.smith_normal_form_unique`: two nonnegative chained diagonals in the same
   `GL_n(ℤ)`-equivalence class are equal, so the invariant factors of `A` are well defined.
+* `Matrix.dvd_mul_mul_apply`: a common divisor of the entries of `A` divides every entry of
+  `P * A * Q` — the core of both divisibility directions below.
+* `Matrix.invariantFactor_zero_dvd_entries` and `Matrix.dvd_diag_of_dvd_entries`: the first
+  entry of a chained diagonal form divides every entry of `A`, and conversely every common
+  divisor of the entries of `A` divides every diagonal entry.
+* `Matrix.associated_invariantFactor_zero_gcd` and `Matrix.invariantFactor_zero_eq_gcd`: hence
+  the first entry is an associate of the gcd of the entries of `A`, and equals it once its sign
+  is known — so it is readable off the matrix without choosing a factorisation.
 
 Mathlib's `Submodule.smithNormalForm` provides basis-level diagonalization over a PID; this
 file supplies the matrix-level statement over `ℤ`, refined in three ways that the basis-level
@@ -41,15 +49,13 @@ on `2 × 2` blocks.
 This is the elementary divisor theorem in the form needed for the theory of Hecke rings of
 `GL_n`: it produces the diagonal double coset representatives of Shimura, chapter 3.
 
-Ported from the AINTLIB `LeanModularForms` project
-([`LeanModularForms/HeckeRIngs/GLn/DiagonalCosets.lean`](https://github.com/CBirkbeck/AINTLIB),
-Chris Birkbeck) — the pure-matrix half of that file; the Hecke-theoretic half is ported
-separately on top of the arithmetic Hecke triple.
+Ported from the AINTLIB `LeanModularForms` project (Chris Birkbeck), Apache-2.0, at commit
+`2baa76f742bdb4fb8ee323fabba41203bd390e08`: the diagonalisation and uniqueness half from
+[`LeanModularForms/HeckeRIngs/GLn/DiagonalCosets.lean`](https://github.com/CBirkbeck/AINTLIB)
+— the pure-matrix part of that file, its Hecke-theoretic part being ported separately on top of
+the arithmetic Hecke triple — and the content characterisation from
+[`HeckeRIngs/GLn/CongruenceHecke/AtkinLehner.lean`](https://github.com/CBirkbeck/AINTLIB).
 
-* `Matrix.diagonal_zero_associated_gcd` and `Matrix.diagonal_zero_eq_gcd`: the first entry of
-  a chained diagonal form is an associate of the gcd of the entries of the original matrix, and
-  equals it once its sign is known — so it is readable off the matrix without choosing a
-  factorisation.
 ## References
 
 * Shimura, *Introduction to the Arithmetic Theory of Automorphic Functions*, §3.2
@@ -475,15 +481,30 @@ private lemma gcd_step_general (k : ℕ) (d : Fin (k + 2) → ℤ) (hd : ∀ i, 
       rw [ite_eq_right (fun h ↦ hj (by rw [h]; rfl)), ite_eq_left rfl]
     · intro i hi0 hij; simp only [d', ite_eq_right hi0, ite_eq_right hij]
 
-private lemma dvd_diag_of_SL_transform (m : ℕ) (d d' : Fin m → ℤ) (c : ℤ) (hc : ∀ i, c ∣ d i)
-    (L R : Matrix (Fin m) (Fin m) ℤ) (heq : L * Matrix.diagonal d * R = Matrix.diagonal d') :
-    ∀ i, c ∣ d' i := by
-  -- read the value off the diagonal so the product identity `heq` applies entrywise
-  intro i; rw [show d' i = (Matrix.diagonal d') i i by simp, ← heq, mul_apply]
-  apply Finset.dvd_sum; intro k _; rw [mul_apply]; apply dvd_mul_of_dvd_left
-  apply Finset.dvd_sum; intro l _; simp only [diagonal_apply]; split_ifs with h
-  · subst h; exact dvd_mul_of_dvd_right (hc l) _
-  · simp
+/-- **A common divisor of the entries survives two-sided multiplication.** If `c` divides every
+entry of `A`, then it divides every entry of `P * A * Q`, since each entry of the product is an
+`S`-combination of entries of `A`.
+
+Neither invertibility nor a diagonal target plays any part, and nothing here is specific to `ℤ`
+or to `Fin n`, so this is the level the two divisibility results below are derived from. -/
+theorem dvd_mul_mul_apply {ι S : Type*} [Fintype ι] [CommSemiring S] {A : Matrix ι ι S} {c : S}
+    (hc : ∀ i j, c ∣ A i j) (P Q : Matrix ι ι S) (i j : ι) : c ∣ (P * A * Q) i j := by
+  rw [Matrix.mul_apply]
+  refine Finset.dvd_sum fun l _ ↦ ?_
+  rw [Matrix.mul_apply]
+  exact Dvd.dvd.mul_right (Finset.dvd_sum fun m _ ↦ (hc m l).mul_left _) _
+
+/-- **Every common divisor of the entries divides every diagonal entry.** Each `d k` is the
+`(k, k)` entry of `L * A * R`, hence an `S`-combination of the entries of `A`.
+
+No invertibility is needed and no index is distinguished, so this is stated for plain matrices
+and for every `k`, matching the precedent of `prod_take_dvd_of_mul_diagonal_mul_eq` below. -/
+theorem dvd_diag_of_dvd_entries {ι S : Type*} [Fintype ι] [DecidableEq ι] [CommSemiring S]
+    (A : Matrix ι ι S) (c : S) (d : ι → S) (L R : Matrix ι ι S)
+    (h : L * A * R = Matrix.diagonal d) (hc : ∀ i j, c ∣ A i j) (k : ι) : c ∣ d k := by
+  have hkk := congr_fun₂ h k k
+  rw [Matrix.diagonal_apply_eq] at hkk
+  exact hkk ▸ dvd_mul_mul_apply hc L R k k
 
 private noncomputable def fin1Sum (k : ℕ) : Fin (k + 1) ≃ Fin 1 ⊕ Fin k :=
   (Fin.castOrderIso (show k + 1 = 1 + k by omega)).toEquiv.trans finSumFinEquiv.symm
@@ -652,9 +673,13 @@ private lemma exists_divChain_of_pos_diagonal_succ {k : ℕ}
   have hd₂_chain : ∀ (i : ℕ) (hi : i + 1 < k + 2),
       d₂ ⟨i, by omega⟩ ∣ d₂ ⟨i + 1, hi⟩ :=
     divChain_prepend k (d₁ 0) d_tail'
-      (dvd_diag_of_SL_transform (k + 1) (fun i : Fin (k + 1) ↦ d₁ ⟨i.val + 1, by omega⟩)
-        d_tail' (d₁ 0) (fun i ↦ hd₁_div ⟨i.val + 1, by omega⟩)
-        (L_tail : Matrix _ _ ℤ) (R_tail : Matrix _ _ ℤ) hmul_tail) hd_tail'_chain
+      (fun i ↦ dvd_diag_of_dvd_entries
+        (Matrix.diagonal fun i : Fin (k + 1) ↦ d₁ ⟨i.val + 1, by omega⟩) (d₁ 0) d_tail'
+        (L_tail : Matrix _ _ ℤ) (R_tail : Matrix _ _ ℤ) hmul_tail
+        (fun p q ↦ by
+          rcases eq_or_ne p q with rfl | hpq
+          · simpa using hd₁_div ⟨p.val + 1, by omega⟩
+          · simp [Matrix.diagonal_apply_ne _ hpq]) i) hd_tail'_chain
   refine ⟨d₂, hd₂_pos, hd₂_chain, slSuccEmbed L_tail * L₁, R₁ * slSuccEmbed R_tail, ?_⟩
   simp only [SpecialLinearGroup.coe_mul]
   -- reassociate to expose `L₁ * diagonal d * R₁`, the shape `hmul₁` rewrites
@@ -834,48 +859,30 @@ chosen factorisation. Under the nonnegativity that
 `Matrix.exists_smith_normal_form_of_det_pos` supplies, the sign is pinned and the equality is
 exact.
 
-Adapted from [AINTLIB](https://github.com/CBirkbeck/AINTLIB) (Chris Birkbeck),
-`LeanModularForms/HeckeRIngs/GLn/CongruenceHecke/AtkinLehner.lean` — **not** the
-`GLn/DiagonalCosets.lean` file the header credits. The source states the two divisibility
-directions privately at `Fin 2` as `snf_first_dvd_entry₂` and `dvd_snf_first_of_dvd_entries`,
-proved by entrywise cofactor algebra; the proofs here are a re-derivation at general `n`, where
-inverting the unimodular factors removes the need for that algebra. The source's third lemma
-`snf_mutual_dvd_eq` is **not** ported: it is a `Fin 2` special case of
-`Matrix.smith_normal_form_unique` above. -/
+Adapted from [AINTLIB](https://github.com/CBirkbeck/AINTLIB) (Chris Birkbeck), Apache-2.0, at
+commit `2baa76f742bdb4fb8ee323fabba41203bd390e08`,
+`LeanModularForms/HeckeRIngs/GLn/CongruenceHecke/AtkinLehner.lean`. The source states the two
+divisibility directions privately at `Fin 2` as `snf_first_dvd_entry₂` and
+`dvd_snf_first_of_dvd_entries`, proved by entrywise cofactor algebra; the proofs here are a
+re-derivation at general `n`, where inverting the unimodular factors removes the need for that
+algebra. The source's third lemma `snf_mutual_dvd_eq` is **not** ported: it is a `Fin 2` special
+case of `Matrix.smith_normal_form_unique` above. -/
 
 /-- **The first entry of a chained diagonal form divides every entry.** If
-`L * A * R = diagonal d` with `L`, `R` unimodular and `d` a divisibility chain, then `d 0`
+`L * A * R = diagonal d` with `L`, `R` unimodular and `d 0` dividing every `d k`, then `d 0`
 divides every entry of `A`.
 
-Inverting the unimodular factors writes `A = L⁻¹ * diagonal d * R⁻¹`, so every entry of `A` is
-a `ℤ`-combination of the `d k`; the chain makes each of those divisible by `d 0`. -/
-theorem diagonal_zero_dvd_entries [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
-    (d : Fin n → ℤ) (hchain : ∀ ⦃i j : Fin n⦄, i ≤ j → d i ∣ d j)
-    (L R : GeneralLinearGroup (Fin n) ℤ)
+Inverting the unimodular factors writes `A = L⁻¹ * diagonal d * R⁻¹`, and `d 0` divides every
+entry of `diagonal d`, so `dvd_mul_mul_apply` carries it to every entry of `A`. -/
+theorem invariantFactor_zero_dvd_entries [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
+    (d : Fin n → ℤ) (hd0 : ∀ k, d 0 ∣ d k) (L R : GeneralLinearGroup (Fin n) ℤ)
     (h : (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
       Matrix.diagonal d) (i j : Fin n) : d 0 ∣ A i j := by
-  rw [← inv_mul_mul_inv_of_mul_mul_eq L R h, Matrix.mul_apply]
-  refine Finset.dvd_sum fun k _ ↦ ?_
-  rw [Matrix.mul_diagonal]
-  exact Dvd.dvd.mul_right ((hchain (Fin.zero_le k)).mul_left _) _
-
-/-- **Every common divisor of the entries divides every diagonal entry.** The converse of
-`Matrix.diagonal_zero_dvd_entries`: each `d k` is an entry of `L * A * R`, hence a
-`ℤ`-combination of the entries of `A`.
-
-No invertibility is needed and no index is distinguished — the proof only expands
-`(L * A * R) k k` — so this is stated for plain matrices and for every `k`, matching the
-precedent of `prod_take_dvd_of_mul_diagonal_mul_eq` above. `Matrix.dvd_diag_of_SL_transform`
-is the special case `A = diagonal d'`. -/
-theorem dvd_diagonal_of_dvd_entries (A : Matrix (Fin n) (Fin n) ℤ) (c : ℤ) (d : Fin n → ℤ)
-    (L R : Matrix (Fin n) (Fin n) ℤ) (h : L * A * R = Matrix.diagonal d)
-    (hc : ∀ i j, c ∣ A i j) (k : Fin n) : c ∣ d k := by
-  have hkk := congr_fun₂ h k k
-  rw [Matrix.diagonal_apply_eq] at hkk
-  rw [← hkk, Matrix.mul_apply]
-  refine Finset.dvd_sum fun l _ ↦ ?_
-  rw [Matrix.mul_apply]
-  exact Dvd.dvd.mul_right (Finset.dvd_sum fun m _ ↦ (hc m l).mul_left _) _
+  rw [← inv_mul_mul_inv_of_mul_mul_eq L R h]
+  refine dvd_mul_mul_apply (fun p q ↦ ?_) _ _ i j
+  rcases eq_or_ne p q with rfl | hpq
+  · simpa using hd0 p
+  · simp [Matrix.diagonal_apply_ne _ hpq]
 
 /-- **The first entry is an associate of the content.** It equals the gcd of the entries up to
 a unit, so it is determined up to sign by the matrix alone — the factorisation may be chosen
@@ -883,29 +890,28 @@ freely.
 
 `Matrix.smith_normal_form_unique` says the whole chained diagonal is determined; this says the
 first entry is determined, up to a unit, by something directly readable off the matrix.
-`Matrix.diagonal_zero_eq_gcd` pins the sign when `d 0` is known nonnegative. -/
-theorem diagonal_zero_associated_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
-    (d : Fin n → ℤ) (hchain : ∀ ⦃i j : Fin n⦄, i ≤ j → d i ∣ d j)
-    (L R : GeneralLinearGroup (Fin n) ℤ)
+`Matrix.invariantFactor_zero_eq_gcd` pins the sign when `d 0` is known nonnegative. -/
+theorem associated_invariantFactor_zero_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
+    (d : Fin n → ℤ) (hd0 : ∀ k, d 0 ∣ d k) (L R : GeneralLinearGroup (Fin n) ℤ)
     (h : (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
       Matrix.diagonal d) :
     Associated (d 0) (Finset.univ.gcd fun p : Fin n × Fin n ↦ A p.1 p.2) :=
   associated_of_dvd_dvd
-    (Finset.dvd_gcd fun p _ ↦ diagonal_zero_dvd_entries A d hchain L R h p.1 p.2)
-    (dvd_diagonal_of_dvd_entries A _ d _ _ h
+    (Finset.dvd_gcd fun p _ ↦ invariantFactor_zero_dvd_entries A d hd0 L R h p.1 p.2)
+    (dvd_diag_of_dvd_entries A _ d _ _ h
       (fun i j ↦ Finset.gcd_dvd (Finset.mem_univ (i, j))) 0)
 
 /-- **The first entry *is* the content**, once its sign is known. `Finset.gcd` over `ℤ` is
 normalized, so nonnegativity of `d 0` — which `Matrix.exists_smith_normal_form_of_det_pos`
 supplies — upgrades the associate relation to an equality, and consumers need not redo the
 sign argument. -/
-theorem diagonal_zero_eq_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
-    (d : Fin n → ℤ) (hchain : ∀ ⦃i j : Fin n⦄, i ≤ j → d i ∣ d j) (hd0 : 0 ≤ d 0)
+theorem invariantFactor_zero_eq_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
+    (d : Fin n → ℤ) (hd0 : ∀ k, d 0 ∣ d k) (hnonneg : 0 ≤ d 0)
     (L R : GeneralLinearGroup (Fin n) ℤ)
     (h : (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
       Matrix.diagonal d) :
     d 0 = Finset.univ.gcd fun p : Fin n × Fin n ↦ A p.1 p.2 :=
-  Int.eq_of_associated_of_nonneg (diagonal_zero_associated_gcd A d hchain L R h) hd0
+  Int.eq_of_associated_of_nonneg (associated_invariantFactor_zero_gcd A d hd0 L R h) hnonneg
     (Int.nonneg_of_normalize_eq_self Finset.normalize_gcd)
 
 end Matrix
