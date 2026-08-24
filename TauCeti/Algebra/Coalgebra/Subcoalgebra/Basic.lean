@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.LinearAlgebra.TensorProduct.RightExactness
 public import Mathlib.RingTheory.Coalgebra.Basic
 
 /-!
@@ -135,16 +136,10 @@ theorem mem_ofSubmodule {D : Submodule R C} {hD} {c : C} :
 instance instTop : Top (Subcoalgebra R C) where
   top :=
     { carrier := ⊤
-      comul_mem' := by
-        intro c hc
-        refine TensorProduct.induction_on (Coalgebra.comul (R := R) (A := C) c) ?_ ?_ ?_
-        · exact ⟨0, by simp⟩
-        · intro x y
-          exact ⟨⟨x, Submodule.mem_top⟩ ⊗ₜ[R] ⟨y, Submodule.mem_top⟩, by simp⟩
-        · intro x y hx hy
-          rcases hx with ⟨x', rfl⟩
-          rcases hy with ⟨y', rfl⟩
-          exact ⟨x' + y', by simp⟩ }
+      comul_mem' := fun _ _ ↦
+        LinearMap.mem_range.mpr
+          (TensorProduct.map_surjective (fun c ↦ ⟨⟨c, Submodule.mem_top⟩, rfl⟩)
+            (fun c ↦ ⟨⟨c, Submodule.mem_top⟩, rfl⟩) _) }
 
 @[simp]
 theorem top_toSubmodule : (⊤ : Subcoalgebra R C).toSubmodule = (⊤ : Submodule R C) :=
