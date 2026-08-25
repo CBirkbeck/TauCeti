@@ -10,6 +10,7 @@ public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import Mathlib.RingTheory.PowerSeries.Expand
 public import TauCeti.NumberTheory.ModularForms.Basic
 public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups
+public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Units
 public import TauCeti.NumberTheory.ModularForms.DiamondOperators
 public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Diagonal
 
