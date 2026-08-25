@@ -40,13 +40,11 @@ is only the definition and its linearity in `f`; every statement here holds for 
 * `HeckeRing.GL2.nebentypusWeight`: the weight `delta0NebentypusChar χ aᵥ` a summand carries.
 * `HeckeRing.GL2.twistedHeckeSlashSum`: the weighted sum
   `∑ᵥ delta0NebentypusChar χ aᵥ • (f ∣[k] aᵥ)`.
+* `HeckeRing.GL2.twistedHeckeSlashSumEnd`: that sum bundled as a `ℂ`-linear endomorphism of
+  `ℍ → ℂ`, the form downstream constructions consume.
 
 ## Main results
 
-* `HeckeRing.GL2.rightCosetRep_mem_Delta0`: the representatives lie in `Δ₀(N)`, which is what
-  lets the character be evaluated on them at all.
-* `HeckeRing.GL2.det_rightCosetRep_pos_of_delta0`: they therefore have positive determinant, with
-  no hypothesis on the coset or on the flanking group.
 * `HeckeRing.GL2.twistedHeckeSlashSum_add`, `HeckeRing.GL2.twistedHeckeSlashSum_zero`,
   `HeckeRing.GL2.twistedHeckeSlashSum_smul`: the twisted sum is `ℂ`-linear in `f`. Unlike the
   unweighted sum, homogeneity needs no positivity hypothesis from the caller: the
@@ -75,33 +73,14 @@ open scoped MatrixGroups ModularForm
 namespace HeckeRing.GL2
 
 -- `[NeZero N]` is introduced further down, immediately before the first declaration that needs
--- it. Everything until then is about `Δ₀(N)` and a single representative, and none of it asks
--- `N` to be nonzero; `Gamma0/Basic.lean` splits its own file at the same point and for the same
--- reason.
+-- it: the weight of a single representative does not ask `N` to be nonzero. `Gamma0/Basic.lean`
+-- splits its own file at the same point and for the same reason. The two facts about the
+-- representative itself that the weight rests on — `rightCosetRep_mem_Delta0` and
+-- `det_rightCosetRep_pos_of_delta0` — carry no character data and live in `HeckeSlash/Gamma0.lean`.
 variable {N : ℕ} (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
   (D : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)))
   (v : DecompQuotient ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))
     (D.out : GL (Fin 2) ℚ)⁻¹)
-
-/-- **The representatives lie in `Δ₀(N)`**, so the twisting character can be evaluated on them.
-`rightCosetRep D v` is `δ τᵥ⁻¹` with `δ ∈ Δ₀(N)` and `τᵥ` in the flanking copy of `Γ₀(N)`, which
-is a subgroup of `Δ₀(N)` — `Gamma0Image_le_Delta0` — so the inverse stays inside it.
-
-Both flanks being `Γ₀(N)` is what makes this hypothesis-free. The same statement holds for any
-flanking `Γ₂ ≤ Δ₀(N)`, but only at the cost of an explicit containment hypothesis every caller
-would have to discharge, and no such caller exists; contrast `out_mem_glpos_of_delta0`, which is
-generic in both flanks because there it costs nothing. -/
-lemma rightCosetRep_mem_Delta0 : rightCosetRep D v ∈ Delta0 N := by
-  rw [rightCosetRep_def]
-  refine mul_mem D.out.2 (Gamma0Image_le_Delta0 N ?_)
-  rw [Subgroup.mem_toSubmonoid, Gamma0Image_def]
-  exact inv_mem v.out.2
-
-/-- The representatives have positive determinant. They lie in `Δ₀(N)`, and every element of
-`Δ₀(N)` is an integral matrix of positive determinant, so — unlike for the unweighted
-`heckeSlashSum_smul` — no caller has to supply this. -/
-lemma det_rightCosetRep_pos_of_delta0 : 0 < (rightCosetRep D v : Matrix (Fin 2) (Fin 2) ℚ).det :=
-  posDetInt_le_glpos 2 (Delta0_le_posDetInt N (rightCosetRep_mem_Delta0 D v))
 
 /-- **The weight a summand carries**: the twisting character `delta0NebentypusChar χ` evaluated
 on the summand's own representative. Naming it keeps `rightCosetRep_mem_Delta0` out of every
@@ -185,6 +164,24 @@ lemma twistedHeckeSlashSum_smul (c : ℂ) (f : ℍ → ℂ) :
   rw [twistedHeckeSlashSum, twistedHeckeSlashSum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun v _ ↦ ?_
   rw [ModularForm.rat_smul_slash_of_det_pos k (det_rightCosetRep_pos_of_delta0 D v) f c, smul_comm]
+
+/-- **The twisted slash sum as a `ℂ`-linear endomorphism of `ℍ → ℂ`.** Bundling it as a
+`Module.End ℂ` is what lets a downstream construction consume the operator directly, instead of
+re-bundling this map and re-proving its linearity; the two fields are exactly
+`twistedHeckeSlashSum_add` and `twistedHeckeSlashSum_smul`.
+
+⚠ This is an endomorphism of *all* functions `ℍ → ℂ`, not of the character space
+`modFormCharSpace k χ`. That the twisted sum is well defined on, and preserves, that subspace is
+the pay-off of the weighting, and — as everywhere in this file — it is not proved here. -/
+noncomputable def twistedHeckeSlashSumEnd : Module.End ℂ (ℍ → ℂ) where
+  toFun := twistedHeckeSlashSum k χ D
+  map_add' := twistedHeckeSlashSum_add k χ D
+  map_smul' c f := twistedHeckeSlashSum_smul k χ D c f
+
+/-- The endomorphism is `twistedHeckeSlashSum` on underlying functions. This characterises it
+directly, without exposing the bundling. -/
+@[simp] lemma coe_twistedHeckeSlashSumEnd :
+    ⇑(twistedHeckeSlashSumEnd k χ D) = twistedHeckeSlashSum k χ D := (rfl)
 
 end HeckeRing.GL2
 
