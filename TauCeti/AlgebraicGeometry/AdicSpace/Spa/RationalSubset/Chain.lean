@@ -28,7 +28,7 @@ adjoined numerator; this is how Wedhorn's Proposition 8.30 reduces flatness to a
 
 Wedhorn obtains `u` from quasi-compactness of `U` via his Corollary 7.32, which produces a *unit*
 `u ∈ Aˣ` with `|u(x)| < |s(x)| on U`, and writes the first link as
-`X₀ = {x ∈ Spa A ; 1 ≤ x(s/u)}`. That description presupposes `u` invertible, in order to form the
+`X₀ = {x ∈ Spa A; 1 ≤ x(s/u)}`. That description presupposes `u` invertible, in order to form the
 fraction `s/u`. Here `u : A` is an arbitrary ring element and `X₀` is the rational subset
 `R({u}/s)`, which is the same set whenever `u` is a unit: `R({u}/s)` asks for `v(u) ≤ v(s)` together
 with `v(s) ≠ 0`, and for a unit the second condition follows from the first, since `v(u) ≠ 0`.
