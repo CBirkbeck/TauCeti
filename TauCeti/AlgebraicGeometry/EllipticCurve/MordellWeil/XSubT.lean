@@ -147,9 +147,6 @@ lemma monic_f : W.f.Monic := by
 
 lemma f_ne_zero : W.f ≠ 0 := W.monic_f.ne_zero
 
-lemma degree_lt_degree_f {p : K[X]} (hp : p.natDegree ≤ 2) : p.degree < W.f.degree :=
-  degree_lt_degree <| by rw [natDegree_f]; lia
-
 lemma separable_f [W.IsElliptic] [W.IsCharNeTwoNF] : W.f.Separable := by
   have hΔ : W.Δ ≠ 0 := W.isUnit_Δ.ne_zero
   rw [f, separable_def',
@@ -208,10 +205,6 @@ lemma natDegree_fCofactor (x : K) : (W.fCofactor x).natDegree = 2 := by
 lemma monic_fCofactor (x : K) : (W.fCofactor x).Monic := by
   simp only [fCofactor]
   monicity!
-
-lemma degree_lt_degree_fCofactor (x : K) {p : K[X]} (hp : p.natDegree ≤ 1) :
-    p.degree < (W.fCofactor x).degree :=
-  degree_lt_degree <| by rw [natDegree_fCofactor]; lia
 
 lemma eval_fCofactor_self (x : K) :
     (W.fCofactor x).eval x = 3 * x ^ 2 + 2 * W.a₂ * x + W.a₄ := by
