@@ -188,12 +188,8 @@ public theorem frickeGL_mul_mapGL (σ : ↥(Gamma0 N)) :
   have hc := lowerLeftDiv_spec_field K σ
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp only [Matrix.GeneralLinearGroup.coe_mul, Matrix.mul_apply, Fin.sum_univ_two,
-      coe_frickeGL, mapGL_coe_matrix, RingHom.mapMatrix_apply, Matrix.map_apply,
-      coe_frickeConjSL, SpecialLinearGroup.map_apply_coe, Matrix.cons_val_zero,
-      Matrix.cons_val_one, Matrix.of_apply, algebraMap_int_eq, Int.coe_castRingHom,
-      Fin.isValue, Fin.zero_eta, Fin.mk_one, Int.cast_mul, Int.cast_neg, Int.cast_natCast,
-      lowerLeftDiv, hc] <;>
+    simp [Matrix.mul_apply, Fin.sum_univ_two, coe_frickeGL, coe_frickeConjSL, lowerLeftDiv,
+      hc] <;>
     ring
 
 /-- `W²` commutes with everything in `GL (Fin 2) K`: it is the scalar matrix `(-N) • 1`. -/

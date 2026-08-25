@@ -7,6 +7,7 @@ module
 
 public import Mathlib.NumberTheory.ModularForms.Cusps
 public import TauCeti.NumberTheory.ModularForms.Basic
+public import TauCeti.NumberTheory.ModularForms.Cusps.Rat.Slash
 public import TauCeti.NumberTheory.ModularForms.Fricke.Conjugation
 
 /-!
@@ -29,11 +30,12 @@ operator** `W_N`, a `ℂ`-linear endomorphism of `M_k(Γ₁(N))` and of `S_k(Γ�
 
 ## The base field
 
-`frickeGL` is parameterized by the field it is read in, so the slash here is by `frickeGL ℝ N`
-directly, with no transport from `GL (Fin 2) ℚ`. The one place a rational model is still needed
-is `frickeGL_isCusp_smul`: mathlib detects a cusp of `SL₂(ℤ)` by rationality of the point
-(`isCusp_SL2Z_iff`), so the image point has to be exhibited as a rational one, and
-`map_ratCast_frickeGL` identifies `W` over `ℝ` as the base change of `W` over `ℚ` for that step.
+`frickeGL` is parameterized by the field it is read in, so slash-invariance is proved over `ℝ`
+directly, with no transport from `GL (Fin 2) ℚ`. The cusp conditions are the one place a rational
+model of `W` is still needed: `Cusps/Rat/Slash.lean` carries boundedness and vanishing along a
+slash by a **rational** matrix, on the strength of a rational matrix moving a cusp of an
+arithmetic subgroup to a cusp (`IsCusp.smul_map_ratCast`). `frickeSlash_eq_rat_slash` presents
+`f ∣[k] W` as such a slash, `W` over `ℝ` being the base change of `W` over `ℚ`.
 
 ## `ℂ`-linearity
 
@@ -54,6 +56,12 @@ work, so its `frickeSlash_invariant` consumes the hand-transported identity
 `glMap_frickeGL_mul_mapGL`; here the identity is available over `ℝ` as an instance of
 `frickeGL_mul_mapGL`, so no transport lemma appears. For the same reason AINTLIB's
 `frickeGL_det_pos` is `val_det_frickeGL_pos` read at `ℝ`.
+
+The cusp conditions are **not** ported. AINTLIB rebuilds the image cusp by hand out of
+`isCusp_SL2Z_iff` and then descends along the finite index of `Γ₁(N)` in `SL₂(ℤ)`. TauCeti already
+has that argument once and for all — for an arbitrary rational matrix and an arbitrary arithmetic
+subgroup — in `Cusps/Rat/Basic.lean` and `Cusps/Rat/Slash.lean`, so both operators here simply
+apply `OnePoint.isBoundedAt_rat_slash` and `OnePoint.isZeroAt_rat_slash`.
 
 AINTLIB proves `ℂ`-linearity with its own `smul_slash_pos_det`; the corresponding TauCeti lemma
 `ModularForm.smul_slash_of_det_pos` was already on hand, and is more general (any scalar `α`
@@ -81,10 +89,16 @@ variable {N : ℕ} [NeZero N] {k : ℤ}
 
 /-- `W` over `ℝ` is the base change of `W` over `ℚ`: both are `!![0, -1; N, 0]`. -/
 private theorem map_ratCast_frickeGL :
-    Matrix.GeneralLinearGroup.map (Rat.castHom ℝ) (frickeGL ℚ N) = frickeGL ℝ N := by
+    Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (frickeGL ℚ N) = frickeGL ℝ N := by
   apply Units.ext
   ext i j
   fin_cases i <;> fin_cases j <;> simp [coe_frickeGL]
+
+/-- **Slashing by `W` is a rational slash**, by `map_ratCast_frickeGL`. This is what lets the
+cusp lemmas of `Cusps/Rat/Slash.lean`, stated for a rational matrix, apply to `f ∣[k] W`. -/
+private theorem frickeSlash_eq_rat_slash (f : ℍ → ℂ) :
+    f ∣[k] frickeGL ℝ N = f ∣[k] (frickeGL ℚ N) := by
+  rw [ModularForm.rat_slash, map_ratCast_frickeGL]
 
 /-- The determinant of `W`, read as a matrix over `ℝ`, is positive. This is the form the
 positive-determinant slash lemmas consume. -/
@@ -103,37 +117,10 @@ public theorem frickeSlash_invariant {f : ℍ → ℂ} (hf : ∀ γ ∈ (Gamma1 
   rw [← SlashAction.slash_mul, frickeGL_mul_mapGL ℝ ⟨σ, Gamma1_in_Gamma0 N hσ⟩,
     SlashAction.slash_mul, hf _ (Subgroup.mem_map.mpr ⟨_, frickeConjSL_mem_Gamma1 σ hσ, rfl⟩)]
 
-/-- **Cusp transport for `W`**: a cusp of `Γ₁(N)` is carried by `W` to another cusp of `Γ₁(N)`.
-Cusps of `SL₂(ℤ)` are exactly the rational points of `OnePoint ℝ`, and `W` has rational entries,
-so it permutes them; the statement descends from `SL₂(ℤ)` to `Γ₁(N)` because the latter has
-finite index. -/
-private theorem frickeGL_isCusp_smul {c : OnePoint ℝ} (hc : IsCusp c ((Gamma1 N).map (mapGL ℝ))) :
-    IsCusp (frickeGL ℝ N • c) ((Gamma1 N).map (mapGL ℝ)) := by
-  have hc_SL : IsCusp c ((⊤ : Subgroup SL(2, ℤ)).map (mapGL ℝ)) :=
-    hc.mono (Subgroup.map_mono le_top)
-  rw [← MonoidHom.range_eq_map] at hc_SL
-  have hsmul_SL : IsCusp (frickeGL ℝ N • c) (mapGL ℝ : SL(2, ℤ) →* _).range := by
-    rw [isCusp_SL2Z_iff] at hc_SL ⊢
-    obtain ⟨q, rfl⟩ := hc_SL
-    refine ⟨frickeGL ℚ N • q, ?_⟩
-    rw [← Rat.coe_castHom, OnePoint.map_smul, map_ratCast_frickeGL]
-  rw [MonoidHom.range_eq_map] at hsmul_SL
-  have : ((Gamma1 N).map (mapGL ℝ)).IsFiniteRelIndex
-      ((⊤ : Subgroup SL(2, ℤ)).map (mapGL ℝ)) := ⟨by
-    rw [Subgroup.relIndex_map_map_of_injective _ _ mapGL_injective,
-      Subgroup.relIndex_top_right]
-    exact Subgroup.FiniteIndex.index_ne_zero⟩
-  exact hsmul_SL.of_isFiniteRelIndex
-
-/-- Boundedness at the cusps transports along `W`, by `frickeGL_isCusp_smul`. -/
-private theorem frickeGL_bdd_at_cusps (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)
-    {c : OnePoint ℝ} (hc : IsCusp c ((Gamma1 N).map (mapGL ℝ))) :
-    c.IsBoundedAt (⇑f ∣[k] frickeGL ℝ N) k :=
-  OnePoint.IsBoundedAt.smul_iff.mp (f.bdd_at_cusps' (frickeGL_isCusp_smul hc))
-
 /-- **The Fricke operator `W_N`** on `M_k(Γ₁(N))`: `f ↦ f ∣[k] W` for `W = !![0, -1; N, 0]`.
 Slash-invariance comes from `W` normalizing `Γ₁(N)` (`frickeSlash_invariant`) and boundedness at
-the cusps from `frickeGL_isCusp_smul`; it is `ℂ`-linear because `det W = N > 0`. -/
+the cusps from `OnePoint.isBoundedAt_rat_slash`, `W` being rational; it is `ℂ`-linear because
+`det W = N > 0`. -/
 public noncomputable def frickeOperator (k : ℤ) :
     ModularForm ((Gamma1 N).map (mapGL ℝ)) k →ₗ[ℂ] ModularForm ((Gamma1 N).map (mapGL ℝ)) k where
   toFun f :=
@@ -143,7 +130,9 @@ public noncomputable def frickeOperator (k : ℤ) :
             frickeSlash_invariant
               (fun _ hδ ↦ SlashInvariantFormClass.slash_action_eq f _ hδ) hγ }
       holo' := (ModularFormClass.holo f).slash k _
-      bdd_at_cusps' hc := frickeGL_bdd_at_cusps f hc }
+      bdd_at_cusps' hc := by
+        rw [frickeSlash_eq_rat_slash]
+        exact OnePoint.isBoundedAt_rat_slash k _ (fun _ h ↦ ModularFormClass.bdd_at_cusps f h) hc }
   map_add' f g := by
     ext z
     simp only [FunLike.coe_add, SlashAction.add_slash, _root_.add_apply]
@@ -155,11 +144,11 @@ public noncomputable def frickeOperator (k : ℤ) :
     rfl
 
 @[simp]
-public theorem frickeOperator_coe (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) :
+public theorem coe_frickeOperator (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) :
     (⇑(frickeOperator (N := N) k f) : ℍ → ℂ) = ⇑f ∣[k] frickeGL ℝ N := (rfl)
 
 /-- **The Fricke operator `W_N` on cusp forms** `S_k(Γ₁(N))`: the cusp-form counterpart of
-`frickeOperator`, vanishing at the cusps transporting through `frickeGL_isCusp_smul` exactly as
+`frickeOperator`, vanishing at the cusps coming from `OnePoint.isZeroAt_rat_slash` exactly as
 boundedness does. -/
 public noncomputable def frickeOperatorCusp (k : ℤ) :
     CuspForm ((Gamma1 N).map (mapGL ℝ)) k →ₗ[ℂ] CuspForm ((Gamma1 N).map (mapGL ℝ)) k where
@@ -170,8 +159,9 @@ public noncomputable def frickeOperatorCusp (k : ℤ) :
             frickeSlash_invariant
               (fun _ hδ ↦ SlashInvariantFormClass.slash_action_eq f _ hδ) hγ }
       holo' := (CuspFormClass.holo f).slash k _
-      zero_at_cusps' hc :=
-        OnePoint.IsZeroAt.smul_iff.mp (f.zero_at_cusps' (frickeGL_isCusp_smul hc)) }
+      zero_at_cusps' hc := by
+        rw [frickeSlash_eq_rat_slash]
+        exact OnePoint.isZeroAt_rat_slash k _ (fun _ h ↦ CuspFormClass.zero_at_cusps f h) hc }
   map_add' f g := by
     ext z
     simp only [FunLike.coe_add, SlashAction.add_slash, _root_.add_apply]
@@ -183,7 +173,7 @@ public noncomputable def frickeOperatorCusp (k : ℤ) :
     rfl
 
 @[simp]
-public theorem frickeOperatorCusp_coe (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
+public theorem coe_frickeOperatorCusp (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     (⇑(frickeOperatorCusp (N := N) k f) : ℍ → ℂ) = ⇑f ∣[k] frickeGL ℝ N := (rfl)
 
 end TauCeti
