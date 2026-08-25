@@ -13,10 +13,11 @@ public import Mathlib.Analysis.Complex.UnitDisc.Basic
 This file records the scalar pseudo-hyperbolic expression
 `‖(z - w) / (1 - conj w * z)‖` used in the Schwarz--Pick layer of the conformal-mapping
 roadmap.  The main API proves that the denominator is nonzero on the open unit disc — hence of
-positive norm (`TauCeti.norm_one_sub_conj_mul_pos_of_norm_lt_one`), the side condition of every
-division by it — that the hyperbolic defect `1 - ‖z‖ ^ 2` is positive there
-(`TauCeti.one_sub_sq_norm_pos_of_norm_lt_one`), that the expression is symmetric, that it is
-strictly less than one for two points of the unit disc — hence lies in `Ioo (-1) 1`
+positive norm (`TauCeti.norm_one_sub_conj_mul_pos_of_norm_lt_one`), a positivity side condition
+used when manipulating inequalities involving that denominator — that the hyperbolic defect
+`1 - ‖z‖ ^ 2` is positive there (`TauCeti.one_sub_sq_norm_pos_of_norm_lt_one`), that the
+expression is symmetric, that it is strictly less than one for two points of the unit disc —
+hence lies in `Ioo (-1) 1`
 (`TauCeti.pseudoHyperbolicExpr_mem_Ioo_of_norm_lt_one`), the interval on which `Real.artanh` is a
 bijection onto `ℝ` — and that it is jointly continuous there
 (`TauCeti.continuousOn_pseudoHyperbolicExpr`).
@@ -163,7 +164,8 @@ lemma one_sub_sq_norm_pos_of_norm_lt_one {z : ℂ} (hz : ‖z‖ < 1) : 0 < 1 - 
   nlinarith [norm_nonneg z]
 
 /-- On the open unit disc, the denominator in the pseudo-hyperbolic expression has positive norm.
-This is the side condition of every division by it. -/
+This is a positivity side condition used when manipulating inequalities involving this
+denominator. -/
 lemma norm_one_sub_conj_mul_pos_of_norm_lt_one {z w : ℂ} (hz : ‖z‖ < 1) (hw : ‖w‖ < 1) :
     0 < ‖1 - (starRingEnd ℂ) w * z‖ :=
   norm_pos_iff.mpr (one_sub_conj_mul_ne_zero_of_norm_lt_one hz hw)
