@@ -97,24 +97,6 @@ variable {R : Type*} [CommRing R] [IsDedekindDomain R] (K : Type*) [Field K] [Al
 
 /-! ### The Selmer condition as `n`-divisibility of an ideal -/
 
-/-- **The correspondence preserves the integer-valued valuation**: the `Multiplicative ℤ`-valued
-valuation of the `S`-integers at the prime above `v` is the one of `R` at `v`. This is the `Kˣ`
-companion of `valuation_integerPrimeOverOfNotMem`. -/
-@[simp]
-lemma valuationOfNeZero_integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉ S) (u : Kˣ) :
-    (integerPrimeOverOfNotMem K S hv).valuationOfNeZero u = v.valuationOfNeZero u := by
-  rw [← WithZero.coe_inj, valuationOfNeZero_eq, valuationOfNeZero_eq,
-    valuation_integerPrimeOverOfNotMem K S hv (u : K)]
-
-/-- Transport of the integer-valued valuation, phrased through the equivalence. Not a `simp`
-lemma: `integerHeightOneSpectrumEquiv_apply` rewrites the left-hand side to
-`integerPrimeOverOfNotMem` first, so this form is never in normal form — the `simp` lemma is
-`valuationOfNeZero_integerPrimeOverOfNotMem` above. -/
-lemma valuationOfNeZero_integerHeightOneSpectrumEquiv (v : {v : HeightOneSpectrum R // v ∉ S})
-    (u : Kˣ) : (integerHeightOneSpectrumEquiv K S v).valuationOfNeZero u
-      = (v : HeightOneSpectrum R).valuationOfNeZero u := by
-  rw [integerHeightOneSpectrumEquiv_apply, valuationOfNeZero_integerPrimeOverOfNotMem]
-
 /-- The class of `u` lies in the Selmer group `K⟮S, n⟯` exactly when the principal fractional
 ideal `(u)` of the `S`-integers has all of its multiplicities divisible by `n`. This is the
 dictionary that turns the Selmer condition into a statement about ideals of `𝒪_S`, and hence
@@ -252,7 +234,7 @@ lemma fromUnitsNDivisible_surjective : Function.Surjective (fromUnitsNDivisible 
 /-- The kernel of `fromUnitsNDivisible` is contained in that of the `n`-th root class map: a unit
 that is an `n`-th power in `Kˣ` has principal `n`-th root. This is what lets the `n`-th root class
 map descend to the Selmer group. -/
-lemma ker_fromUnitsNDivisible_le :
+private lemma ker_fromUnitsNDivisible_le :
     (fromUnitsNDivisible K S n).ker ≤ (nthRootClass (S.integer K) K n).ker := by
   intro u hu
   rw [MonoidHom.mem_ker] at hu ⊢
@@ -341,21 +323,19 @@ theorem range_toClassGroup [NeZero n] : (toClassGroup K S n).range =
 
 /-! ### Finiteness -/
 
-/-- **The Selmer group `K⟮S, n⟯` is finite**, provided that the `S`-class group is finite, that the
-`S`-units are finitely generated and that `n ≠ 0`. This discharges the `TODO`
-*"proofs of finiteness for global fields"* of `Mathlib/RingTheory/DedekindDomain/SelmerGroup.lean`.
+/-- **The Selmer group `K⟮S, n⟯` is finite** as soon as the `n`-torsion of the `S`-class group
+is, the `S`-units are finitely generated and `n ≠ 0`.
 
-The image of `fromSUnitLift` is finite, because its source is the quotient of the finitely
-generated commutative group of `S`-units by its `n`-th powers. By `ker_toClassGroup` that image is
-the kernel of `toClassGroup`, whose target `ClassGroup (S.integer K)` is finite; a group with
-finite kernel and finite quotient is finite.
+Both halves of `MonoidHom.finite_iff_finite_ker_range` for `toClassGroup` are in hand. The kernel
+is the image of `fromSUnitLift` by `ker_toClassGroup`, finite because its source is the quotient of
+the finitely generated group of `S`-units by its `n`-th powers. The range is the `n`-torsion of the
+class group by `range_toClassGroup`, which is exactly the hypothesis.
 
-The two hypotheses are exactly what the proof consumes. They are in turn supplied by the
-arithmetic over the base ring: `IsDedekindDomain.finite_integer_classGroup` and
-`Set.unit_fg_of_units` are `instance`s, so a caller holding `[Finite (ClassGroup R)]`,
-`[Monoid.FG Rˣ]` and `[Finite S]` — for `R` the ring of integers of a number field, the class
-number theorem and Dirichlet's unit theorem — still gets this by instance resolution. -/
-instance finite [Finite (ClassGroup (S.integer K))] [Group.FG (S.unit K)] [NeZero n] :
+Only that `n`-torsion is needed, never the whole class group: `range_toClassGroup` says the image
+of `toClassGroup` never exceeds it. `finite` below is this theorem for a finite class group. -/
+theorem finite_of_finite_ker_powMonoidHom
+    [Finite ((powMonoidHom n : ClassGroup (S.integer K) →* ClassGroup (S.integer K)).ker)]
+    [Group.FG (S.unit K)] [NeZero n] :
     Finite (selmerGroup (K := K) (S := S) (n := n)) := by
   have hker : Finite (toClassGroup K S n).ker := by
     rw [ker_toClassGroup, ← range_fromSUnitLift]
@@ -363,9 +343,25 @@ instance finite [Finite (ClassGroup (S.integer K))] [Group.FG (S.unit K)] [NeZer
       Subgroup.finiteIndex_iff_finite_quotient.mp <|
         Subgroup.finiteIndex_range_powMonoidHom_of_fg _ (NeZero.ne n)
     exact Finite.Set.finite_range _
-  have : Finite (selmerGroup (K := K) (S := S) (n := n) ⧸ (toClassGroup K S n).ker) :=
-    .of_injective _ (QuotientGroup.kerLift_injective (toClassGroup K S n))
-  exact Finite.of_subgroup_quotient (toClassGroup K S n).ker
+  have hrange : Finite (toClassGroup K S n).range := by
+    rw [range_toClassGroup]; infer_instance
+  exact (MonoidHom.finite_iff_finite_ker_range (toClassGroup K S n)).mpr ⟨hker, hrange⟩
+
+/-- **The Selmer group `K⟮S, n⟯` is finite**, provided that the `S`-class group is finite, that
+the `S`-units are finitely generated and that `n ≠ 0`. This discharges the `TODO`
+*"proofs of finiteness for global fields"* of `Mathlib/RingTheory/DedekindDomain/SelmerGroup.lean`.
+
+This is `finite_of_finite_ker_powMonoidHom` for a finite class group, in which every subgroup —
+the `n`-torsion included — is finite.
+
+The two hypotheses are exactly what the proof consumes. They are in turn supplied by the
+arithmetic over the base ring: `IsDedekindDomain.finite_integer_classGroup` and
+`Set.unit_fg_of_units` are `instance`s, so a caller holding `[Finite (ClassGroup R)]`,
+`[Monoid.FG Rˣ]` and `[Finite S]` — for `R` the ring of integers of a number field, the class
+number theorem and Dirichlet's unit theorem — still gets this by instance resolution. -/
+instance finite [Finite (ClassGroup (S.integer K))] [Group.FG (S.unit K)] [NeZero n] :
+    Finite (selmerGroup (K := K) (S := S) (n := n)) :=
+  finite_of_finite_ker_powMonoidHom K S n
 
 end selmerGroup
 

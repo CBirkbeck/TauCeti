@@ -54,6 +54,7 @@ theorem valuationOfNeZero_eq_one_iff (v : HeightOneSpectrum R) (x : Kˣ) :
 `n` divides the `v`-adic valuation of `u`. Membership in `IsDedekindDomain.selmerGroup` is the
 conjunction of these conditions over the primes away from `S`, so this is what expresses that
 membership as an arithmetic condition on a representative. -/
+@[simp]
 theorem valuationOfNeZeroMod_mk_eq_one_iff (v : HeightOneSpectrum R) (n : ℕ) (u : Kˣ) :
     v.valuationOfNeZeroMod n (QuotientGroup.mk u) = 1 ↔
       (n : ℤ) ∣ Multiplicative.toAdd (v.valuationOfNeZero u) := by
