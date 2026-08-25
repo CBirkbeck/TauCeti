@@ -109,10 +109,10 @@ theorem exists_subset_basicOpen_pow {X : Set (Spv A)} (hXcont : X ⊆ cont A) (h
     have hcont : v.valuation.IsContinuous := (isContinuous_def v).mp ((mem_cont_iff v).mp
       (hXcont hv))
     have hfne : v.valuation f ≠ 0 := fun h ↦ hf v hv ((valuation_le_iff v f 0).mp (by simp [h]))
+    have hlt : v.valuation 0 < v.valuation f := by rw [map_zero]; exact zero_lt_iff.mpr hfne
     obtain ⟨n, hn⟩ := Valuation.exists_pow_lt_of_isTopologicallyNilpotent (v := v.valuation)
       (γ := v.valuation f)
-      ((Valuation.isContinuous_def.mp hcont f).mem_nhds
-        (show v.valuation 0 < v.valuation f by rw [map_zero]; exact zero_lt_iff.mpr hfne)) ht
+      ((Valuation.isContinuous_def.mp hcont f).mem_nhds hlt) ht
     exact Set.mem_iUnion.mpr ⟨n, (mem_basicOpen_iff (t ^ n) f v).mpr
       ⟨(valuation_le_iff v (t ^ n) f).mp (by rw [map_pow]; exact hn.le), hf v hv⟩⟩
   obtain ⟨F, hF⟩ := hX.elim_finite_subcover (fun n : ℕ ↦ basicOpen (t ^ n) f)
