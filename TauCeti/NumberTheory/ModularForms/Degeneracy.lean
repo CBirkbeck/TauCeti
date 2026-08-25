@@ -38,6 +38,11 @@ the upper half-plane to `τ ↦ f (d τ)`. It is the slash action by `diag(d, 1)
 * `TauCeti.Gamma1_map_le_conjAct_scaleGL`, `TauCeti.Gamma0_map_le_conjAct_scaleGL`: the level
   transport, `Γ₁(dM) ≤ diag(d,1)⁻¹ Γ₁(M) diag(d,1)` and likewise for `Γ₀`, which is what makes
   `V_d` a map `M_k(Γ₁(M)) → M_k(Γ₁(dM))`.
+* `TauCeti.exists_eq_T_zpow_mul_conjScale_mul_T_zpow`: the `T`-factorisation, in the other
+  direction. For `l ∣ N`, every `γ' ∈ Γ₀(N / l)` is `T ^ i * conjScale l γ c * T ^ j` for some
+  `γ ∈ Γ₀(N)` — a level can be raised back from `N / l` to `N` at the cost of two translations —
+  together with the bookkeeping `γ 1 1 = γ' 1 1 - γ' 1 0 * j` that pins the lower-right entry a
+  nebentypus of level `N` reads off `γ`.
 * `TauCeti.ModularForm.slash_levelRaise_eq_smul`, `TauCeti.CuspForm.slash_levelRaise_eq_smul`:
   the eigenvalue transport. Slashing `V_d f` by `γ` produces the same scalar that slashing `f`
   by the conjugate matrix `conjScale d γ` does.
@@ -61,6 +66,17 @@ and the conductor statement of Layer 4 is phrased with this normalization of `V_
 
 * Diamond–Shurman, *A first course in modular forms*, §5.6
 * Miyake, *Modular forms*, §4.6
+* The `T`-factorisation section is ported from the AINTLIB `LeanModularForms` project
+  (Chris Birkbeck),
+  [`HeckeRIngs/GL2/LevelRaise.lean`](https://github.com/CBirkbeck/AINTLIB), declarations
+  `exists_T_levelRaiseConj_T_factor` (:491) and its supports
+  `eq_T_zpow_mul_levelRaiseConj_mul_T_zpow` (:471), `primeProductCoprime` (:410),
+  `exists_shift_isCoprime` (:430), `shiftJ` (:450), `shiftJ_spec` (:453) and
+  `natCast_dvd_levelRaiseConj_lower_left` (:465), all Apache-2.0 at commit
+  `2baa76f742bdb4fb8ee323fabba41203bd390e08`. The source's `levelRaiseConjOfDvd` (:98) is this
+  file's `conjScale`, so the statement is phrased with `conjScale` and TauCeti's `Gamma0` API
+  rather than porting a second conjugation; the source's `shiftJ`/`shiftJ_spec` pair is
+  repackaged here as the Bézout step `exists_dvd_sub_mul`.
 -/
 
 public noncomputable section
