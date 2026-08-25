@@ -20,7 +20,7 @@ as a `SubmodulesBasis`, which is Mathlib's machinery for turning such a family i
 Two of the results below say nothing about `ϖ`: that the family is a neighbourhood basis at `0`,
 and that mutually cofinal families induce the same topology. Both are proved for an arbitrary
 `SubmodulesBasis` in `TauCeti/Topology/Algebra/Nonarchimedean/SubmodulesBasis.lean`, and
-`hasBasis_nhds_zero_pow_smul` and `submodulesBasis_pow_smul_topology_congr` are those two lemmas
+`hasBasis_nhds_zero_pow_smul` and `submodulesBasis_pow_smul_topology_eq` are those two lemmas
 at this family.
 
 **Two of Proposition 6.18(1)'s clauses are established for the induced topology** — that it is an
@@ -33,7 +33,7 @@ first-countable `A`-module topology on a finitely generated module; neither half
 so this is a construction of that topology's neighbourhood basis together with three of its
 properties, not an identification with the topology 6.18(1) characterises. What *is* proved is
 the weaker statement that the construction does not depend on the lattice it starts from
-(`submodulesBasis_pow_smul_topology_congr`): two finitely generated lattices spanning `M` give
+(`submodulesBasis_pow_smul_topology_eq`): two finitely generated lattices spanning `M` give
 the same topology. That is well-definedness of Remark 6.19's recipe *in the lattice*, for a fixed
 ring of definition `A₀` and pseudouniformiser `ϖ`: the remark chooses those two as well, and
 independence of them is not proved here. Nor is it 6.18(1)'s uniqueness, which quantifies over
@@ -44,7 +44,7 @@ and `M₀` finitely generated. The basis and topology declarations use neither �
 — and `exists_pow_smul_le` and `exists_pow_smul_le_pow_smul` not even that, asking instead the
 weaker containment that one lattice lie in the `A`-span of the other. Finite generation enters in
 those two, as a hypothesis on the submodule being compared, where a single exponent has to serve a
-whole submodule at once. `submodulesBasis_pow_smul_topology_congr` asks *both* of *each* lattice:
+whole submodule at once. `submodulesBasis_pow_smul_topology_eq` asks *both* of *each* lattice:
 spanning, because each side has to present a topology at all, and finite generation, because it
 runs the comparison in both directions. `A` noetherian is used nowhere in this file.
 Several declarations are weaker still, taking an arbitrary `S : Subring A` rather than a ring of
@@ -61,7 +61,7 @@ definition, so a caller holding `powerBoundedSubring A` can use them.
   `TauCeti.Huber.PairOfDefinition.exists_pow_smul_le_pow_smul`: the family built from a finitely
   generated lattice is cofinal in the one built from `M₀`. This is one direction of the comparison
   behind Remark 6.19's well-definedness in the lattice.
-* `TauCeti.Huber.PairOfDefinition.submodulesBasis_pow_smul_topology_congr`: two finitely
+* `TauCeti.Huber.PairOfDefinition.submodulesBasis_pow_smul_topology_eq`: two finitely
   generated lattices spanning `M` over `A` induce the *same* topology — Remark 6.19's recipe is
   well defined in the lattice, for a fixed `A₀` and `ϖ`.
 * `TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero_pow_smul`: the family, ℕ-indexed, is a
@@ -315,7 +315,7 @@ only: it gives the inclusion of the induced neighbourhood filters, not their equ
 inclusion is this same theorem with the roles of `M₀` and `M₁` exchanged, which asks instead that
 `M₀` lie in the `A`-span of `M₁` and that `M₀` be finitely generated. Note it is not that `M₁`
 spans `M`: the hypothesis is one containment, not a spanning condition.
-`submodulesBasis_pow_smul_topology_congr` is the resulting equality of topologies.
+`submodulesBasis_pow_smul_topology_eq` is the resulting equality of topologies.
 
 `submodulesBasis_pow_smul` proves the basis half of Remark 6.19 without finite generation; this is
 where `M₁.FG` does its work. -/
@@ -347,7 +347,7 @@ containment hypothesis between them is needed.
 This is the lattice-versus-lattice comparison only. Proposition 6.18(1) asserts something
 strictly stronger — uniqueness among *all* complete first-countable `A`-module topologies,
 including those given by no lattice — which is not proved here. -/
-theorem submodulesBasis_pow_smul_topology_congr (P : PairOfDefinition A) {s : A}
+theorem submodulesBasis_pow_smul_topology_eq (P : PairOfDefinition A) {s : A}
     (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
     (M₀ M₁ : Submodule P.ringOfDefinition M) (hspan₀ : Submodule.span A (M₀ : Set M) = ⊤)
     (hspan₁ : Submodule.span A (M₁ : Set M) = ⊤) (hfg₀ : M₀.FG) (hfg₁ : M₁.FG) :
