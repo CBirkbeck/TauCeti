@@ -97,16 +97,8 @@ variable {R : Type*} [CommRing R] [TopologicalSpace R] [IsTopologicalRing R]
 
 /-! ### Cofinality of the generator of a convex subgroup
 
-Three plumbing steps, kept private because each is one rewrite away from an existing lemma and
-none is wanted outside the construction below. -/
-
-/-- **An element below `1` is cofinal for the convex subgroup it generates.** This is
-`isCofinalElement_iff_subset_closure` read at `closure {y}`, where the containment it asks for
-is the identity. -/
-private theorem isCofinalElement_closure_singleton {Γ : Type*} [CommGroup Γ] [LinearOrder Γ]
-    [IsOrderedMonoid Γ] {y : Γ} (hy : y < 1) :
-    IsCofinalElement (ConvexSubgroup.closure ({y} : Set Γ)).toSubgroup y :=
-  (isCofinalElement_iff_subset_closure hy).mpr (by simp)
+Two plumbing steps, kept private because each is one rewrite away from an existing lemma and
+neither is wanted outside the construction below. -/
 
 /-- **Cofinality transported into `WithZero`.** The powers of a cofinal element of `H`, read in
 `WithZero H`, fall below every nonzero element, since such an element is the image of a member
@@ -152,12 +144,12 @@ private theorem exists_continuous_valuation_of_not_isIntegral_of_isDomain [IsDom
     intro h
     exact hx (isIntegral_algebraMap_iff.mp
       ((mem_integralClosure_iff _ _).mp (Subalgebra.mem_toSubring.mp h)))
+  -- The ring of definition maps into `R₀` through `ι`; `hφ_apply` is the only fact about `φ`
+  -- used below.
   set φ : P.ringOfDefinition →+* R₀ :=
-    { toFun := fun a ↦ ⟨ι (a : R), hmemR₀ _ (hA₀B a.2)⟩
-      map_one' := Subtype.ext (map_one ι)
-      map_mul' := fun a b ↦ Subtype.ext (map_mul ι _ _)
-      map_zero' := Subtype.ext (map_zero ι)
-      map_add' := fun a b ↦ Subtype.ext (map_add ι _ _) } with hφ
+    (ι.comp P.ringOfDefinition.subtype).codRestrict R₀ fun a ↦ hmemR₀ _ (hA₀B a.2) with hφ
+  have hφ_apply : ∀ a : P.ringOfDefinition, (φ a : FractionRing R) = ι (a : R) := fun a ↦ by
+    rw [hφ, RingHom.codRestrict_apply, RingHom.comp_apply, Subring.coe_subtype]
   set J : Ideal R₀ := P.idealOfDefinition.map φ with hJ
   obtain ⟨m₀, hm₀⟩ := P.exists_pow_idealOfDefinition_mul_mem hB x
   have hJpow : ∀ a ∈ J ^ m₀, (a : FractionRing R) * ι x ∈ R₀ := by
@@ -166,9 +158,7 @@ private theorem exists_continuous_valuation_of_not_isIntegral_of_isDomain [IsDom
       refine Ideal.map_le_iff_le_comap.mpr fun a ha ↦ ?_
       rw [Ideal.mem_comap, Submodule.mem_colon_singleton, Algebra.smul_def, Submodule.mem_one]
       refine ⟨⟨ι ((a : R) * x), hmemR₀ _ (by rw [mul_comm]; exact hm₀ a ha)⟩, ?_⟩
-      change ι ((a : R) * x) = (φ a : FractionRing R) * ι x
-      rw [map_mul]
-      rfl
+      simp only [Algebra.algebraMap_ofSubsemiring_apply, hφ_apply, map_mul]
     intro a ha
     have hmem := Submodule.mem_colon_singleton.mp (hcolon ha)
     rw [Algebra.smul_def] at hmem
@@ -185,7 +175,12 @@ private theorem exists_continuous_valuation_of_not_isIntegral_of_isDomain [IsDom
   have hxgt : 1 < w₀ x :=
     not_le.mp fun h ↦ hxV ((ValuationSubring.valuation_le_one_iff V _).mp h)
   have hA₀le : ∀ a : P.ringOfDefinition, v₀ a ≤ 1 := fun a ↦ hBle _ (hA₀B a.2)
-  have hv₀app : ∀ a : P.ringOfDefinition, v₀ a = V.valuation (ι (a : R)) := fun _ ↦ rfl
+  -- The two pullbacks, applied: `v₀` is `w₀` on the underlying element, which is `V.valuation`
+  -- after `ι`.
+  have hw₀app : ∀ a : P.ringOfDefinition, w₀ (a : R) = v₀ a := fun a ↦ by
+    simp only [hv₀, Valuation.comap_apply, Subring.coe_subtype]
+  have hv₀app : ∀ a : P.ringOfDefinition, v₀ a = V.valuation (ι (a : R)) := fun a ↦ by
+    simp only [hv₀, hw₀, Valuation.comap_apply, Subring.coe_subtype]
   obtain ⟨S, hS⟩ := P.fg_idealOfDefinition
   have hgenmem : ∀ t ∈ S, (t : P.ringOfDefinition) ∈ P.idealOfDefinition := fun t ht ↦
     hS ▸ Ideal.subset_span (Finset.mem_coe.mpr ht)
@@ -198,7 +193,7 @@ private theorem exists_continuous_valuation_of_not_isIntegral_of_isDomain [IsDom
     · rw [isContinuous_ofValuation_iff]
       refine P.isContinuous_of_forall_cofinalValue w₀ hS (fun a _ ↦ hA₀le a) fun t ht ↦ ?_
       exact cofinalValue_of_forall_pow_lt w₀ fun γ hγ ↦
-        ⟨1, by rw [pow_one, show w₀ (t : R) = 0 from hzero t ht]; exact hγ⟩
+        ⟨1, by rw [pow_one, hw₀app, hzero t ht]; exact hγ⟩
     · exact (vle_ofValuation w₀ b 1).mpr (by simpa using hBle b hb)
     · exact fun h ↦ absurd ((vle_ofValuation w₀ x 1).mp h) (by simpa using not_le.mpr hxgt)
   · -- **Main branch.** Some generator has nonvanishing value, so the largest of them does.
@@ -288,9 +283,12 @@ private theorem exists_continuous_valuation_of_not_isIntegral_of_isDomain [IsDom
             restrictToConvex_apply_of_mem v₀ H habs hv₀t₀ne hmemt₀]
           exact congrArg _ (Subtype.ext (Units.ext hv₀t₀))
         rw [hval]
-        exact exists_pow_lt_of_isCofinalElement humem
-          (hH ▸ isCofinalElement_closure_singleton
-            (Units.val_lt_val.mp (by simpa [hu] using hglt))) hγ
+        -- `u < 1` is cofinal for the convex subgroup it generates: Wedhorn Remark 1.19 at
+        -- `H = closure {u}`, where the containment it asks for is the identity.
+        have hcof : IsCofinalElement H.toSubgroup u :=
+          (isCofinalElement_iff_subset_closure
+            (Units.val_lt_val.mp (by simpa [hu] using hglt))).mpr (by simp [hH])
+        exact exists_pow_lt_of_isCofinalElement humem hcof hγ
     refine ⟨ValuationSpectrum.ofValuation vext, (isContinuous_ofValuation_iff vext).mpr hextcont,
       fun b hb ↦ (vle_ofValuation vext b 1).mpr (by simpa using hextB b hb), fun h ↦ ?_⟩
     exact absurd ((vle_ofValuation vext x 1).mp h) (by simpa using not_le.mpr hextx)
