@@ -23,6 +23,8 @@ The constant is nonzero, so `W_N` is invertible with `W_N⁻¹ = c⁻¹ • W_N`
 ## Main definitions
 
 * `TauCeti.frickeScalar`: the constant `c` above.
+* `TauCeti.frickeOperatorEquiv`, `TauCeti.frickeOperatorCuspEquiv`: `W_N` bundled as a linear
+  automorphism of `M_k(Γ₁(N))` and of `S_k(Γ₁(N))`, with inverse `c⁻¹ • W_N`.
 
 ## Main results
 
@@ -34,6 +36,8 @@ The constant is nonzero, so `W_N` is invertible with `W_N⁻¹ = c⁻¹ • W_N`
   are the `simp`-normal ones.
 * `TauCeti.frickeScalar_ne_zero`: the constant is nonzero, which is what makes `W_N`
   invertible.
+* `TauCeti.frickeOperator_comp_smul_frickeOperator` and its three siblings: the two-sided
+  inverse laws `W_N ∘ (c⁻¹ • W_N) = id = (c⁻¹ • W_N) ∘ W_N`, on modular and on cusp forms.
 * `TauCeti.slash_mul_frickeGL`: slashing by `A * W` is `frickeScalar N k •` slashing by
   `A * W⁻¹`. This is the form the character-space transport consumes, where the two Fricke
   factors of a conjugated operator have to be collapsed onto one representative.
@@ -79,7 +83,7 @@ public noncomputable def frickeScalar (N : ℕ) (k : ℤ) : ℂ :=
   (N : ℂ) ^ (2 * (k - 1)) * (-(N : ℂ)) ^ (-k)
 
 /-- `frickeScalar N k` is nonzero. This is what makes the Fricke operator invertible, with
-inverse `(frickeScalar N k)⁻¹ • W_N`. -/
+inverse `(frickeScalar N k)⁻¹ • W_N`; see `frickeOperatorEquiv`. -/
 public theorem frickeScalar_ne_zero (k : ℤ) : frickeScalar N k ≠ 0 := by
   have hN : (N : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr (NeZero.ne N)
   exact mul_ne_zero (zpow_ne_zero _ hN) (zpow_ne_zero _ (neg_ne_zero.mpr hN))
@@ -149,6 +153,40 @@ public theorem frickeOperator_frickeOperator_apply (k : ℤ)
     frickeOperator k (frickeOperator k f) = frickeScalar N k • f :=
   LinearMap.congr_fun (frickeOperator_frickeOperator (N := N) k) f
 
+/-- **`c⁻¹ • W_N` inverts `W_N` on the right** on `M_k(Γ₁(N))`, for `c = frickeScalar N k`. -/
+public theorem frickeOperator_comp_smul_frickeOperator (k : ℤ) :
+    (frickeOperator (N := N) k).comp ((frickeScalar N k)⁻¹ • frickeOperator (N := N) k) =
+      LinearMap.id := by
+  rw [LinearMap.comp_smul, frickeOperator_frickeOperator, smul_smul,
+    inv_mul_cancel₀ (frickeScalar_ne_zero (N := N) k), one_smul]
+
+/-- **`c⁻¹ • W_N` inverts `W_N` on the left** on `M_k(Γ₁(N))`, for `c = frickeScalar N k`. -/
+public theorem smul_frickeOperator_comp_frickeOperator (k : ℤ) :
+    ((frickeScalar N k)⁻¹ • frickeOperator (N := N) k).comp (frickeOperator (N := N) k) =
+      LinearMap.id := by
+  rw [LinearMap.smul_comp, frickeOperator_frickeOperator, smul_smul,
+    inv_mul_cancel₀ (frickeScalar_ne_zero (N := N) k), one_smul]
+
+/-- **The Fricke operator as a linear automorphism of `M_k(Γ₁(N))`**, with inverse
+`(frickeScalar N k)⁻¹ • W_N`. -/
+public noncomputable def frickeOperatorEquiv (k : ℤ) :
+    ModularForm ((Gamma1 N).map (mapGL ℝ)) k ≃ₗ[ℂ] ModularForm ((Gamma1 N).map (mapGL ℝ)) k :=
+  LinearEquiv.ofLinearMap (frickeOperator k) ((frickeScalar N k)⁻¹ • frickeOperator k)
+    (frickeOperator_comp_smul_frickeOperator k) (smul_frickeOperator_comp_frickeOperator k)
+
+/-- The bundled Fricke operator acts as the Fricke operator. -/
+@[simp]
+public theorem frickeOperatorEquiv_apply (k : ℤ) (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) :
+    frickeOperatorEquiv (N := N) k f = frickeOperator k f := by
+  simp [frickeOperatorEquiv]
+
+/-- The inverse of the bundled Fricke operator is `(frickeScalar N k)⁻¹ • W_N`. -/
+@[simp]
+public theorem frickeOperatorEquiv_symm_apply (k : ℤ)
+    (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) :
+    (frickeOperatorEquiv (N := N) k).symm f = (frickeScalar N k)⁻¹ • frickeOperator k f := by
+  simp [frickeOperatorEquiv]
+
 /-- **`W_N ∘ W_N = frickeScalar N k • id` on `S_k(Γ₁(N))`**, the cusp-form form of
 `frickeOperator_frickeOperator`. With `frickeScalar_ne_zero` this makes `W_N` invertible on
 cusp forms. -/
@@ -168,5 +206,42 @@ public theorem frickeOperatorCusp_frickeOperatorCusp_apply (k : ℤ)
     (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     frickeOperatorCusp k (frickeOperatorCusp k f) = frickeScalar N k • f :=
   LinearMap.congr_fun (frickeOperatorCusp_frickeOperatorCusp (N := N) k) f
+
+/-- **`c⁻¹ • W_N` inverts `W_N` on the right** on `S_k(Γ₁(N))`, for `c = frickeScalar N k`. -/
+public theorem frickeOperatorCusp_comp_smul_frickeOperatorCusp (k : ℤ) :
+    (frickeOperatorCusp (N := N) k).comp
+        ((frickeScalar N k)⁻¹ • frickeOperatorCusp (N := N) k) = LinearMap.id := by
+  rw [LinearMap.comp_smul, frickeOperatorCusp_frickeOperatorCusp, smul_smul,
+    inv_mul_cancel₀ (frickeScalar_ne_zero (N := N) k), one_smul]
+
+/-- **`c⁻¹ • W_N` inverts `W_N` on the left** on `S_k(Γ₁(N))`, for `c = frickeScalar N k`. -/
+public theorem smul_frickeOperatorCusp_comp_frickeOperatorCusp (k : ℤ) :
+    ((frickeScalar N k)⁻¹ • frickeOperatorCusp (N := N) k).comp
+        (frickeOperatorCusp (N := N) k) = LinearMap.id := by
+  rw [LinearMap.smul_comp, frickeOperatorCusp_frickeOperatorCusp, smul_smul,
+    inv_mul_cancel₀ (frickeScalar_ne_zero (N := N) k), one_smul]
+
+/-- **The Fricke operator as a linear automorphism of `S_k(Γ₁(N))`**, with inverse
+`(frickeScalar N k)⁻¹ • W_N`. -/
+public noncomputable def frickeOperatorCuspEquiv (k : ℤ) :
+    CuspForm ((Gamma1 N).map (mapGL ℝ)) k ≃ₗ[ℂ] CuspForm ((Gamma1 N).map (mapGL ℝ)) k :=
+  LinearEquiv.ofLinearMap (frickeOperatorCusp k) ((frickeScalar N k)⁻¹ • frickeOperatorCusp k)
+    (frickeOperatorCusp_comp_smul_frickeOperatorCusp k)
+    (smul_frickeOperatorCusp_comp_frickeOperatorCusp k)
+
+/-- The bundled Fricke operator on cusp forms acts as `frickeOperatorCusp`. -/
+@[simp]
+public theorem frickeOperatorCuspEquiv_apply (k : ℤ) (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
+    frickeOperatorCuspEquiv (N := N) k f = frickeOperatorCusp k f := by
+  simp [frickeOperatorCuspEquiv]
+
+/-- The inverse of the bundled Fricke operator on cusp forms is
+`(frickeScalar N k)⁻¹ • W_N`. -/
+@[simp]
+public theorem frickeOperatorCuspEquiv_symm_apply (k : ℤ)
+    (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
+    (frickeOperatorCuspEquiv (N := N) k).symm f =
+      (frickeScalar N k)⁻¹ • frickeOperatorCusp k f := by
+  simp [frickeOperatorCuspEquiv]
 
 end TauCeti
