@@ -85,8 +85,8 @@ Proposition 3.8 applies: `R(Γ₀(N), Δ₀(N))` is commutative over any commuta
   scaling, the scalar's positivity and coprimality to the level being automatic.
 * `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_primitive`: it fixes the
   double coset of a witness no prime divides entrywise, with no hypothesis on the determinant.
-* `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_mem_doubleCoset`: it fixes the double coset of
-  every `x ∈ Δ₀(N)`, with no hypothesis at all.
+* `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_mem_doubleCoset`: for nonzero level `N`, it fixes
+  the double coset of every `x ∈ Δ₀(N)`, with no further hypothesis on `x`.
 * `HeckeRing.GL2.atkinLehnerAntiInvolution_onHeckeCoset_eq_self`: equivalently, it acts as the
   identity on `Γ₀(N) \ Δ₀(N) / Γ₀(N)`.
 
@@ -673,9 +673,9 @@ theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_primitive [NeZero N]
       hdc).trans hdet_m)
     (gcd_eq_one_of_eq_mul_of_dvd_pow hbc (Nat.gcd_dvd_right _ _) hA'Nco hA'c)
 
-/-- **The Atkin-Lehner bar fixes every `Γ₀(N)`-double coset in `Δ₀(N)`.** This is exactly the
-hypothesis Shimura's commutativity criterion takes, in the pointwise form
-`HeckeAntiInvolution.bar_mem_doubleCoset_self` reads it.
+/-- **The Atkin-Lehner bar fixes every `Γ₀(N)`-double coset in `Δ₀(N)`**, for nonzero level `N`
+and with no further hypothesis on `x`. This is exactly the hypothesis Shimura's commutativity
+criterion takes, in the pointwise form `HeckeAntiInvolution.bar_mem_doubleCoset_self` reads it.
 
 Dividing an integral witness by the gcd `d` of its four entries leaves a primitive one, which
 `atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_primitive` settles with no hypothesis on the
@@ -701,7 +701,7 @@ theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset [NeZero N] (x : GL (Fin 2)
     rw [← Int.cast_det]
     exact_mod_cast hA₀_det_pos.ne'
   set x₀ : GL (Fin 2) ℚ := Matrix.GeneralLinearGroup.mkOfDetNeZero _ hA₀_det_ne
-  have hx₀_val : (x₀ : Matrix (Fin 2) (Fin 2) ℚ) = A₀.map (Int.cast : ℤ → ℚ) := rfl
+  have hx₀_val : (x₀ : Matrix (Fin 2) (Fin 2) ℚ) = A₀.map (Int.cast : ℤ → ℚ) := by simp [x₀]
   have hx₀_det : 0 < (x₀ : Matrix (Fin 2) (Fin 2) ℚ).det := by
     rw [hx₀_val, ← Int.cast_det]
     exact_mod_cast hA₀_det_pos
