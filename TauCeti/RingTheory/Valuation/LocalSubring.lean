@@ -24,19 +24,24 @@ induced valuation continuous when `J` is an ideal of definition.
 
 Both conclusions can be read off one maximal ideal `𝔪` of `R`: the point is separated when `𝔪`
 contains every denominator of `z` — the `s ∈ R` with `s • z ∈ R`, which are Mathlib's colon
-ideal `(1 : Submodule R K).colon {z}` — and `J` lands below `1` when `𝔪` contains `J`. So it is
-enough that the denominators and `J` sit inside a common proper ideal, and the form this takes
-in practice is that a *power* of `J` consists of denominators: `𝔪` is chosen over the
-denominators, and primality pulls `J` itself into it.
+ideal `(1 : Submodule R K).colon {z}` — and `J` lands below `1` when `𝔪` contains `J`. So the
+hypothesis the construction actually needs is that the denominators and `J` sit inside a common
+proper ideal, i.e. that their supremum is not `⊤`; that is what the main theorem assumes.
 
-An ideal of definition supplies exactly that. Multiplication by `z` is continuous and the powers
-of an ideal of definition are a neighbourhood basis of `0`, so some power of it multiplies `z`
-back into any given open subring. That step is topological and is left to the caller, which is
-why this file states an algebraic hypothesis and sits beside the Mathlib lemma it refines.
+The form this takes in practice is that a *power* of `J` consists of denominators. That implies
+the supremum hypothesis — choose `𝔪` over the denominators, and primality pulls `J` itself into
+it — so the power-based statement is a corollary, recorded here because it is the shape a
+topological ring hands over: multiplication by `z` is continuous and the powers of an ideal of
+definition are a neighbourhood basis of `0`, so some power of it multiplies `z` back into any
+given open subring. That step is topological and is left to the caller, which is why this file
+states algebraic hypotheses and sits beside the Mathlib lemma it refines.
 
 ## Main results
 
-* `Subring.exists_le_valuationSubring_notMem_valuation_lt_one` : the combined statement.
+* `Subring.exists_le_valuationSubring_notMem_valuation_lt_one` : the combined statement, under
+  the supremum hypothesis.
+* `Subring.exists_le_valuationSubring_notMem_valuation_lt_one_of_pow_mul_mem` : the corollary
+  under the power hypothesis.
 * `LocalSubring.isIntegrallyClosedIn_ofPrime` : localising at a prime preserves integral
   closedness in `K`, which is what lets Stacks 090P part (2) apply to the local subring built
   in that proof.
@@ -59,8 +64,8 @@ this argument is carried out. **Adapted, not copied.** That development states t
 topological ring with a pair of definition, with `R` the integral closure of an open subring in
 a fraction field, and defines its own `conductorIdeal`; here the statement is purely algebraic —
 an arbitrary subring integrally closed in `K`, an arbitrary ideal, and the explicit hypothesis
-that a power of it multiplies `z` back in — and the denominators are Mathlib's `Submodule.colon`
-rather than a new definition.
+that it generates a proper ideal together with the denominators of `z` — and the denominators
+are Mathlib's `Submodule.colon` rather than a new definition.
 -/
 
 public section
@@ -83,7 +88,9 @@ theorem isIntegrallyClosedIn_ofPrime (R : Subring K) [IsIntegrallyClosedIn R K]
   have hmx_L : m • x ∈ L := LocalSubring.le_ofPrime R 𝔪 hmx_R
   -- `m` is a unit downstairs, so dividing by it stays inside `L`
   obtain ⟨u, hu⟩ := IsLocalization.map_units L (⟨m, hm⟩ : 𝔪.primeCompl)
-  have hval : ((u : L) : K) = algebraMap R K m := by rw [hu]; rfl
+  -- `R → L → K` is a tower and `L → K` is the subring coercion, so `u` reads as `m` in `K`
+  have hval : ((u : L) : K) = algebraMap R K m := by
+    rw [hu, IsScalarTower.algebraMap_apply R L K, Algebra.algebraMap_ofSubsemiring_apply]
   have hinv : ((↑u⁻¹ : L) : K) * ((u : L) : K) = 1 := by
     rw [← Subring.coe_mul, u.inv_mul, Subring.coe_one]
   have hx_eq : x = ((↑u⁻¹ : L) : K) * (m • x) := by
@@ -108,38 +115,40 @@ end LocalSubring
 
 namespace Subring
 
+/-- **The denominators of `z`, as an ideal of `R`.** `s` is a denominator of `z` exactly when
+`s * z` lands back in `R`; Mathlib's colon ideal `(1 : Submodule R K).colon {z}` says this with
+`smul` and with membership of the image of `R`. -/
+private theorem mem_colon_singleton_iff (R : Subring K) {z : K} (s : R) :
+    s ∈ (1 : Submodule R K).colon {z} ↔ (s : K) * z ∈ R := by
+  rw [Submodule.mem_colon_singleton, Algebra.smul_def, Submodule.mem_one]
+  exact ⟨fun ⟨y, hy⟩ ↦ hy ▸ y.2, fun h ↦ ⟨⟨_, h⟩, rfl⟩⟩
+
 /-- **A valuation subring separating `z` and strictly below `1` on `J`.** Let `R` be a subring
-of a field `K`, integrally closed in `K`, let `z : K` lie outside `R`, and let `J` be an ideal
-of `R` some power of which multiplies `z` back into `R`. Then a single valuation subring
+of a field `K`, integrally closed in `K`, let `z : K`, and let `J` be an ideal of `R` which
+together with the denominators of `z` generates a proper ideal. Then a single valuation subring
 `V ⊇ R` both misses `z` and has valuation `< 1` at every element of `J`.
+
+The hypothesis is what the construction needs and no more: one maximal ideal `𝔪` above the
+supremum serves both halves. It forces `z ∉ R`, since `z ∈ R` makes `1` a denominator and the
+colon ideal `⊤`.
 
 This refines Stacks 090P: the separation alone is
 `Subring.exists_le_valuationSubring_of_isIntegrallyClosedIn`, and the bound on `J` alone is
-`Ideal.image_subset_nonunits_valuationSubring`. Taking `J = ⊥` and `n = 1` recovers the former,
-so the strength here is that one `V` does both. -/
+`Ideal.image_subset_nonunits_valuationSubring`. Taking `J = ⊥` recovers the former, so the
+strength here is that one `V` does both. -/
 theorem exists_le_valuationSubring_notMem_valuation_lt_one (R : Subring K)
-    [IsIntegrallyClosedIn R K] {z : K} (hz : z ∉ R) {J : Ideal R} {n : ℕ}
-    (hJ : ∀ a ∈ J ^ n, (a : K) * z ∈ R) :
+    [IsIntegrallyClosedIn R K] {z : K} {J : Ideal R}
+    (hsup : (1 : Submodule R K).colon {z} ⊔ J ≠ ⊤) :
     ∃ V : ValuationSubring K, R ≤ V.toSubring ∧ z ∉ V ∧
       ∀ a ∈ J, V.valuation (a : K) < 1 := by
-  -- the denominators of `z`, as an ideal of `R`
-  set S : Ideal R := (1 : Submodule R K).colon {z} with hS
-  have hmem_S : ∀ s : R, s ∈ S ↔ (s : K) * z ∈ R := fun s ↦ by
-    rw [hS, Submodule.mem_colon_singleton, Algebra.smul_def, Submodule.mem_one]
-    exact ⟨fun ⟨y, hy⟩ ↦ hy ▸ y.2, fun h ↦ ⟨⟨_, h⟩, rfl⟩⟩
-  -- it is proper: `1` is a denominator only if `z` already lies in `R`
-  have hS_ne_top : S ≠ ⊤ := fun h ↦ hz (by
-    simpa using (hmem_S 1).mp (h ▸ Submodule.mem_top))
-  obtain ⟨𝔪, h𝔪, hS𝔪⟩ := S.exists_le_maximal hS_ne_top
+  obtain ⟨𝔪, h𝔪, hle⟩ := Ideal.exists_le_maximal _ hsup
   have : 𝔪.IsPrime := h𝔪.isPrime
-  -- a power of `J` consists of denominators, so primality puts `J` itself inside `𝔪`
-  have hJ𝔪 : J ≤ 𝔪 :=
-    Ideal.IsPrime.le_of_pow_le (le_trans (fun a ha ↦ (hmem_S a).mpr (hJ a ha)) hS𝔪)
+  have hJ𝔪 : J ≤ 𝔪 := le_sup_right.trans hle
   -- localise at `𝔪`; the point survives and integral closedness is preserved
   have : IsIntegrallyClosedIn (LocalSubring.ofPrime R 𝔪).toSubring K :=
     LocalSubring.isIntegrallyClosedIn_ofPrime R 𝔪
   obtain ⟨V, hVdom, hzV⟩ := LocalSubring.exists_le_valuationSubring_of_isIntegrallyClosedIn
-    (LocalSubring.notMem_ofPrime_of_colon_le R 𝔪 (hS ▸ hS𝔪))
+    (LocalSubring.notMem_ofPrime_of_colon_le R 𝔪 (le_sup_left.trans hle))
   refine ⟨V, (LocalSubring.le_ofPrime R 𝔪).trans hVdom.1, hzV, fun a ha ↦ ?_⟩
   -- domination carries the maximal ideal of the localisation into that of `V`
   have haL : (⟨(a : K), LocalSubring.le_ofPrime R 𝔪 a.2⟩ :
@@ -149,5 +158,27 @@ theorem exists_le_valuationSubring_notMem_valuation_lt_one (R : Subring K)
   have : IsLocalHom (Subring.inclusion hVdom.1) := hVdom.2
   exact (ValuationSubring.valuation_lt_one_iff V _).mp
     (map_nonunit (Subring.inclusion hVdom.1) _ haL)
+
+/-- **The power form of `Subring.exists_le_valuationSubring_notMem_valuation_lt_one`.** If a
+power of `J` consists of denominators of `z ∉ R`, then the denominators and `J` do lie in a
+common proper ideal: a maximal ideal above the denominators contains `J ^ n`, hence `J`.
+
+This is the shape a topological ring supplies, with `J` an ideal of definition and `n` given by
+continuity of multiplication by `z`. -/
+theorem exists_le_valuationSubring_notMem_valuation_lt_one_of_pow_mul_mem (R : Subring K)
+    [IsIntegrallyClosedIn R K] {z : K} (hz : z ∉ R) {J : Ideal R} {n : ℕ}
+    (hJ : ∀ a ∈ J ^ n, (a : K) * z ∈ R) :
+    ∃ V : ValuationSubring K, R ≤ V.toSubring ∧ z ∉ V ∧
+      ∀ a ∈ J, V.valuation (a : K) < 1 := by
+  -- the denominators are proper: `1` is a denominator only if `z` already lies in `R`
+  have hS_ne_top : (1 : Submodule R K).colon {z} ≠ ⊤ := fun h ↦ hz (by
+    simpa using (mem_colon_singleton_iff R 1).mp (h ▸ Submodule.mem_top))
+  obtain ⟨𝔪, h𝔪, hS𝔪⟩ := Ideal.exists_le_maximal _ hS_ne_top
+  have : 𝔪.IsPrime := h𝔪.isPrime
+  -- a power of `J` consists of denominators, so primality puts `J` itself inside `𝔪`
+  have hJ𝔪 : J ≤ 𝔪 := Ideal.IsPrime.le_of_pow_le
+    (le_trans (fun a ha ↦ (mem_colon_singleton_iff R a).mpr (hJ a ha)) hS𝔪)
+  exact exists_le_valuationSubring_notMem_valuation_lt_one R fun htop ↦
+    h𝔪.ne_top (eq_top_iff.mpr (htop ▸ sup_le hS𝔪 hJ𝔪))
 
 end Subring
