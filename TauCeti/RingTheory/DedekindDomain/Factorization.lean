@@ -31,7 +31,8 @@ Four facts about `Associates.count` and `FractionalIdeal.count` that Mathlib doe
   `TauCeti/RingTheory/DedekindDomain/SInteger/ClassGroup.lean` uses, at both `R` and `𝒪_S` — which
   is why the ring is a variable rather than fixed — advancing
   `TauCetiRoadmap/EllipticCurves/README.md` §Layer 6 (Mordell–Weil), whose weak-Mordell–Weil
-  argument needs the `S`-class group to be finite. `count_div` is its general form and has no
+  argument needs the `S`-class group to be finite. It is also the step that carries
+  `count_toPrincipalIdeal_eq_neg_log_valuation` below. `count_div` is its general form and has no
   consumer in this repository yet.
 * `FractionalIdeal.count_toPrincipalIdeal_eq_neg_log_valuation`: the multiplicity at `v` of the
   principal fractional ideal of a nonzero rational function `u : Kˣ` is
@@ -97,13 +98,6 @@ section PrincipalIdeal
 variable {A : Type*} [CommRing A] [IsDedekindDomain A] (K : Type*) [Field K] [Algebra A K]
   [IsFractionRing A K]
 
-private lemma toPrincipalIdeal_eq_spanSingleton_inv_mul_span_mk'_num (u : Kˣ) (n : A) (d : A⁰)
-    (hnd : IsLocalization.mk' K n d = (u : K)) :
-    (toPrincipalIdeal A K u : FractionalIdeal A⁰ K) =
-      spanSingleton A⁰ ((algebraMap A K) (d : A))⁻¹ * ↑(Ideal.span {n} : Ideal A) := by
-  rw [coe_toPrincipalIdeal, ← hnd, IsFractionRing.mk'_eq_div, ← spanSingleton_div_spanSingleton,
-    div_spanSingleton, coeIdeal_span_singleton]
-
 private lemma count_spanSingleton_eq_neg_log_intValuation (v : HeightOneSpectrum A) (r : A)
     (hr : r ≠ 0) :
     count K v (spanSingleton A⁰ (algebraMap A K r)) = -WithZero.log (v.intValuation r) := by
@@ -113,48 +107,27 @@ private lemma count_spanSingleton_eq_neg_log_intValuation (v : HeightOneSpectrum
     v.intValuation_if_neg hr, WithZero.log_exp]
   ring
 
-private lemma count_spanSingleton_inv_eq_log_intValuation (v : HeightOneSpectrum A) (r : A)
-    (hr : r ≠ 0) :
-    count K v (spanSingleton A⁰ (algebraMap A K r))⁻¹ = WithZero.log (v.intValuation r) := by
-  rw [count_inv, count_spanSingleton_eq_neg_log_intValuation K v r hr]
-  ring
-
-private lemma count_spanSingleton_inv_mul_spanSingleton_eq_neg_log_div (v : HeightOneSpectrum A)
-    (n d : A) (hn : n ≠ 0) (hd : d ≠ 0) :
-    count K v (spanSingleton A⁰ ((algebraMap A K d)⁻¹) * spanSingleton A⁰ (algebraMap A K n)) =
-      -WithZero.log (v.intValuation n / v.intValuation d) := by
-  have hnI : spanSingleton A⁰ (algebraMap A K n) ≠ 0 :=
-    spanSingleton_ne_zero_iff.mpr ((not_congr IsFractionRing.to_map_eq_zero_iff).mpr hn)
-  have hdI : spanSingleton A⁰ (algebraMap A K d) ≠ 0 :=
-    spanSingleton_ne_zero_iff.mpr ((not_congr IsFractionRing.to_map_eq_zero_iff).mpr hd)
-  rw [← spanSingleton_inv K (algebraMap A K d), count_mul K v (inv_ne_zero hdI) hnI,
-    count_spanSingleton_inv_eq_log_intValuation K v d hd,
-    count_spanSingleton_eq_neg_log_intValuation K v n hn,
-    WithZero.log_div (v.intValuation_ne_zero n hn) (v.intValuation_ne_zero d hd)]
-  ring
-
 /-- **The multiplicity of a principal fractional ideal is the sign-flipped logarithm of the
 valuation.** Stated at the multiplicative-units level `u : Kˣ`, matching Mathlib's
 `toPrincipalIdeal A K : Kˣ →* _`. -/
 theorem count_toPrincipalIdeal_eq_neg_log_valuation (v : HeightOneSpectrum A) (u : Kˣ) :
     count K v (toPrincipalIdeal A K u : FractionalIdeal A⁰ K) =
       -WithZero.log (v.valuation K (u : K)) := by
-  set k : K := (u : K) with hk
-  obtain ⟨n, d, hnd⟩ := IsLocalization.exists_mk'_eq A⁰ k
+  obtain ⟨n, d, hnd⟩ := IsLocalization.exists_mk'_eq A⁰ (u : K)
   have hn : n ≠ 0 := by
     intro hn
-    have hk0 : k ≠ 0 := Units.ne_zero _
-    apply hk0
+    apply u.ne_zero
     rw [← hnd, hn, IsFractionRing.mk'_eq_div, map_zero, zero_div]
   have hd : (d : A) ≠ 0 := nonZeroDivisors.ne_zero d.2
-  have hrepr : (toPrincipalIdeal A K u : FractionalIdeal A⁰ K) =
-      spanSingleton A⁰ ((algebraMap A K) (d : A))⁻¹ * ↑(Ideal.span {n} : Ideal A) :=
-    toPrincipalIdeal_eq_spanSingleton_inv_mul_span_mk'_num K u n d (by rw [hnd, hk])
-  have hval : v.valuation K k = v.intValuation n / v.intValuation (d : A) := by
-    rw [← hnd]
-    exact v.valuation_of_mk'
-  rw [hval, hrepr, coeIdeal_span_singleton]
-  exact count_spanSingleton_inv_mul_spanSingleton_eq_neg_log_div K v n d hn hd
+  have hval : v.valuation K (u : K) = v.intValuation n / v.intValuation (d : A) :=
+    hnd ▸ v.valuation_of_mk'
+  rw [hval, coe_toPrincipalIdeal, ← hnd, IsFractionRing.mk'_eq_div,
+    count_spanSingleton_div K v ((not_congr IsFractionRing.to_map_eq_zero_iff).mpr hn)
+      ((not_congr IsFractionRing.to_map_eq_zero_iff).mpr hd),
+    count_spanSingleton_eq_neg_log_intValuation K v n hn,
+    count_spanSingleton_eq_neg_log_intValuation K v (d : A) hd,
+    WithZero.log_div (v.intValuation_ne_zero n hn) (v.intValuation_ne_zero (d : A) hd)]
+  ring
 
 end PrincipalIdeal
 
