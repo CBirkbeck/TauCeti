@@ -7,20 +7,23 @@ module
 
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import TauCeti.NumberTheory.ModularForms.Fricke.Matrix
+import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 
 /-!
 # Conjugating `Γ₀(N)` and `Γ₁(N)` by the Fricke matrix
 
-For `N ≠ 0` and `σ = !![a, b; c, d] ∈ Γ₀(N)`, so `N ∣ c`, conjugating by the Fricke matrix
-`W = !![0, -1; N, 0]` of `TauCeti/NumberTheory/ModularForms/Fricke/Matrix.lean` gives
+Over a field in which `N` is invertible, and for `σ = !![a, b; c, d] ∈ Γ₀(N)`, so `N ∣ c`,
+conjugating by the Fricke matrix `W = !![0, -1; N, 0]` of
+`TauCeti/NumberTheory/ModularForms/Fricke/Matrix.lean` gives
 
 `W · σ · W⁻¹ = !![d, -c/N; -N·b, a]`,
 
 which is again integral, again of determinant one, and again in `Γ₀(N)`. This file builds the
 right-hand side as an honest `SL(2, ℤ)` matrix — `frickeConjSL` — reading it off the entries of
-`σ`, so that it is defined at every level; records that it stays inside `Γ₀(N)` and inside
-`Γ₁(N)`, again at every level; and proves, for `N ≠ 0`, the two matrix identities that move `W`
-past `σ` and are what make `frickeConjSL σ` the conjugate `W · σ · W⁻¹`.
+`σ`, so that it is defined at every level; records that a `Γ₀(N)` input stays inside `Γ₀(N)`
+and that a `Γ₁(N)` input stays inside `Γ₁(N)`, again at every level; and proves, over a field
+in which `N` is invertible, the two matrix identities that move `W` past `σ` and are what make
+`frickeConjSL σ` the conjugate `W · σ · W⁻¹`.
 
 `frickeConjSL` is defined directly by its entries rather than as a product `W * σ * W⁻¹`: the
 latter lives in `GL (Fin 2) K` and is only *incidentally* integral, so reading an `SL(2, ℤ)`
@@ -29,13 +32,15 @@ proving the product identities afterwards keeps the divisibility in one place.
 
 ## Level
 
-`N ≠ 0` is what makes `W` invertible, and so what makes conjugation by `W` mean anything. It is
+`(N : K) ≠ 0` is what makes `W` invertible, and so what makes conjugation by `W` mean
+anything. Over the arbitrary field `K` of the identities below that is strictly stronger than
+`N ≠ 0`: a nonzero level casts to zero whenever the characteristic of `K` divides it. It is
 needed for the *conjugation*, though, not for the entry formula, so it is stated where `W`
 itself appears: as `[NeZero (N : K)]` on the two normalization identities over `K`, which are
 the statements that actually call `frickeConjSL σ` a conjugate. The `ℤ`-valued declarations
-below carry no level hypothesis — the matrix `!![d, -c'; -N·b, a]` has determinant `1` and lies
-in both congruence subgroups for every `N`, `c = N · (c / N)` holding at `N = 0` as well, both
-sides being zero.
+below carry no level hypothesis — the matrix `!![d, -c'; -N·b, a]` has determinant `1`, lies in
+`Γ₀(N)` for every `N`, and lies in `Γ₁(N)` whenever `σ` does, `c = N · (c / N)` holding at
+`N = 0` as well, both sides being zero.
 
 Level zero is genuinely degenerate, and the declarations below are worded so that nothing
 claims otherwise: `Γ₀(0)` is the upper-triangular subgroup, the quotient `c / N` is `0`, and the
@@ -54,14 +59,16 @@ itself defined at an arbitrary algebra.
 ## Main definitions
 
 * `TauCeti.frickeConjSL`: the matrix `!![d, -c/N; -N·b, a]` as an element of `SL(2, ℤ)`;
-  for `N ≠ 0` it is the conjugate `W · σ · W⁻¹`.
+  over a field in which `N` is invertible it is the conjugate `W · σ · W⁻¹`.
 
 ## Main results
 
 * `TauCeti.coe_frickeConjSL`: the entries of `frickeConjSL σ`, namely `!![d, -c/N; -N·b, a]`.
-* `TauCeti.frickeConjSL_mem_Gamma0`, `TauCeti.frickeConjSL_mem_Gamma1`: that formula preserves
-  both congruence subgroups, at every level.
-* `TauCeti.frickeGL_mul_mapGL`, `TauCeti.mapGL_mul_frickeGL`: for `N ≠ 0`, the two
+* `TauCeti.frickeConjSL_mem_Gamma0`: a `Γ₀(N)` input has `frickeConjSL σ ∈ Γ₀(N)`, at every
+  level.
+* `TauCeti.frickeConjSL_mem_Gamma1`: a `Γ₁(N)` input has `frickeConjSL σ ∈ Γ₁(N)`, at every
+  level. This is a second hypothesis on `σ`, not a consequence of the previous line.
+* `TauCeti.frickeGL_mul_mapGL`, `TauCeti.mapGL_mul_frickeGL`: for `(N : K) ≠ 0`, the two
   normalization identities `W · σ = (W σ W⁻¹) · W` and `σ · W = W · (W σ W⁻¹)` in
   `GL (Fin 2) K`. These are the statements that exhibit `W` as normalizing `Γ₀(N)`.
 
@@ -125,18 +132,16 @@ private theorem lowerLeftDiv_spec (σ : ↥(Gamma0 N)) :
 /-- The Fricke conjugate of `σ = !![a, b; N·c', d] ∈ Γ₀(N)`, as an element of `SL(2, ℤ)`: the
 matrix `!![d, -c'; -N·b, a]`.
 
-For `N ≠ 0` this is `W · σ · W⁻¹`, and equally `W⁻¹ · σ · W` since `W² = (-N) • 1` is central;
-that is the content of `frickeGL_mul_mapGL` and `mapGL_mul_frickeGL`, which carry the
-invertibility hypothesis. At `N = 0` the formula still defines a matrix, but a degenerate one;
-see the `Level` section of the module docstring. -/
+Over a field `K` with `(N : K) ≠ 0` this is `W · σ · W⁻¹`, and equally `W⁻¹ · σ · W` since
+`W² = (-N) • 1` is central; that is the content of `frickeGL_mul_mapGL` and
+`mapGL_mul_frickeGL`, which carry the invertibility hypothesis. At `N = 0` the formula still
+defines a matrix, but a degenerate one; see the `Level` section of the module docstring. -/
 public def frickeConjSL (σ : ↥(Gamma0 N)) : SL(2, ℤ) :=
   ⟨!![(σ : Matrix (Fin 2) (Fin 2) ℤ) 1 1, -lowerLeftDiv σ;
       -(N : ℤ) * (σ : Matrix (Fin 2) (Fin 2) ℤ) 0 1, (σ : Matrix (Fin 2) (Fin 2) ℤ) 0 0], by
     have hc := lowerLeftDiv_spec σ
-    set M := (σ : Matrix (Fin 2) (Fin 2) ℤ) with hM
-    have hdet : M 0 0 * M 1 1 - M 0 1 * M 1 0 = 1 := by
-      have := σ.1.prop
-      rwa [det_fin_two] at this
+    set M := (σ : Matrix (Fin 2) (Fin 2) ℤ)
+    have hdet : M 0 0 * M 1 1 - M 0 1 * M 1 0 = 1 := fin_two_mul_sub_mul_eq_one (σ : SL(2, ℤ))
     rw [det_fin_two_of]
     linear_combination hdet + M 0 1 * hc⟩
 
@@ -150,16 +155,18 @@ public theorem coe_frickeConjSL (σ : ↥(Gamma0 N)) :
   simp [frickeConjSL, lowerLeftDiv]
 
 /-- **`frickeConjSL` preserves `Γ₀(N)`**: its lower-left entry `-N·b` is visibly divisible by
-`N`. This is a statement about the entry formula, so it holds at every level; for `N ≠ 0`, where
-`frickeConjSL σ` really is `W · σ · W⁻¹`, it says that `W` normalizes `Γ₀(N)`. -/
+`N`. This is a statement about the entry formula, so it holds at every level; over a field in
+which `N` is invertible, where `frickeConjSL σ` really is `W · σ · W⁻¹`, it says that `W`
+normalizes `Γ₀(N)`. -/
 public theorem frickeConjSL_mem_Gamma0 (σ : ↥(Gamma0 N)) :
     frickeConjSL σ ∈ Gamma0 N := by
   rw [Gamma0_mem, coe_frickeConjSL]
   simp
 
 /-- **`frickeConjSL` preserves `Γ₁(N)`**: the entry formula swaps the two diagonal entries, so
-both remain `≡ 1 (mod N)`. As for `Γ₀(N)` this holds at every level, and for `N ≠ 0` it says
-that `W` normalizes `Γ₁(N)`. -/
+both remain `≡ 1 (mod N)`. Note that this needs `σ ∈ Γ₁(N)`, not merely `σ ∈ Γ₀(N)`. As for
+`Γ₀(N)` it holds at every level, and over a field in which `N` is invertible it says that `W`
+normalizes `Γ₁(N)`. -/
 public theorem frickeConjSL_mem_Gamma1 (σ : SL(2, ℤ)) (hσ : σ ∈ Gamma1 N) :
     frickeConjSL ⟨σ, Gamma1_in_Gamma0 N hσ⟩ ∈ Gamma1 N := by
   obtain ⟨ha, hd, -⟩ := (Gamma1_mem N σ).mp hσ
@@ -186,14 +193,14 @@ public theorem frickeGL_mul_mapGL (σ : ↥(Gamma0 N)) :
     frickeGL K N * mapGL K (σ : SL(2, ℤ)) = mapGL K (frickeConjSL σ) * frickeGL K N := by
   apply Units.ext
   have hc := lowerLeftDiv_spec_field K σ
+  rw [Matrix.GeneralLinearGroup.coe_mul, Matrix.GeneralLinearGroup.coe_mul,
+    coe_mapGL_fin_two, coe_mapGL_fin_two, coe_frickeGL]
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp only [Matrix.GeneralLinearGroup.coe_mul, Matrix.mul_apply, Fin.sum_univ_two,
-      coe_frickeGL, mapGL_coe_matrix, RingHom.mapMatrix_apply, Matrix.map_apply,
-      coe_frickeConjSL, SpecialLinearGroup.map_apply_coe, Matrix.cons_val_zero,
-      Matrix.cons_val_one, Matrix.of_apply, algebraMap_int_eq, Int.coe_castRingHom,
-      Fin.isValue, Fin.zero_eta, Fin.mk_one, Int.cast_mul, Int.cast_neg, Int.cast_natCast,
-      lowerLeftDiv, hc] <;>
+    simp only [Matrix.mul_apply, Fin.sum_univ_two, coe_frickeConjSL, Matrix.cons_val_zero,
+      Matrix.cons_val_one, Matrix.of_apply, algebraMap_int_eq, Int.coe_castRingHom, Fin.isValue,
+      Fin.zero_eta, Fin.mk_one, Int.cast_mul, Int.cast_neg, Int.cast_natCast, lowerLeftDiv,
+      hc] <;>
     ring
 
 /-- `W²` commutes with everything in `GL (Fin 2) K`: it is the scalar matrix `(-N) • 1`. -/
