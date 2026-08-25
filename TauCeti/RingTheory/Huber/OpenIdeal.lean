@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.RingTheory.Huber.Basic
+import TauCeti.RingTheory.Huber.ZeroSequenceOfUnits
 
 /-!
 # Open ideals of a Huber ring
@@ -26,8 +27,6 @@ work is that an *ideal* of `A` containing the image of `Iⁿ` automatically cont
   it contains a power of `I · A`.
 * `TauCeti.Huber.PairOfDefinition.isOpen_iff_le_radical`: an ideal of `A` is open exactly when its
   radical contains `I · A`.
-* `TauCeti.Huber.IsTateRing.exists_unit_mem_of_mem_nhds_zero`: a neighbourhood of zero in a Tate
-  ring contains a unit.
 * `TauCeti.Huber.IsTateRing.isOpen_iff_eq_top`: an ideal of a Tate ring is open exactly when it is
   the whole ring.
 
@@ -94,23 +93,13 @@ section Tate
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
-/-- **Every neighbourhood of zero in a Tate ring contains a unit.** The powers of a
-pseudouniformiser are units converging to zero, so one of them lies in the neighbourhood.
-
-This is the form the Tate hypothesis is used in wherever a unit has to be produced small: it is
-what `TauCeti.Huber.IsTateRing.eq_top_of_isOpen` runs on below, and what turns Wedhorn Lemma 7.31
-into Corollary 7.32. -/
-theorem IsTateRing.exists_unit_mem_of_mem_nhds_zero [IsTateRing A] {U : Set A}
-    (hU : U ∈ nhds (0 : A)) : ∃ ϖ : Aˣ, (ϖ : A) ∈ U := by
-  obtain ⟨ϖ, hϖ⟩ := IsTateRing.exists_isPseudoUniformizer (A := A)
-  obtain ⟨n, hn⟩ := hϖ.isTopologicallyNilpotent.exists_pow_mem_of_mem_nhds hU
-  exact ⟨hϖ.isUnit.unit ^ n, by simpa using hn⟩
-
 /-- An open ideal in a Tate ring is the whole ring `⊤`. -/
 theorem IsTateRing.eq_top_of_isOpen [IsTateRing A] {J : Ideal A}
-    (hJ : IsOpen (J : Set A)) : J = ⊤ :=
-  let ⟨ϖ, hϖ⟩ := IsTateRing.exists_unit_mem_of_mem_nhds_zero (hJ.mem_nhds J.zero_mem)
-  Ideal.eq_top_of_isUnit_mem J hϖ ϖ.isUnit
+    (hJ : IsOpen (J : Set A)) : J = ⊤ := by
+  have hc : ContinuousAt (fun a : A ↦ a • (1 : A)) 0 := by fun_prop
+  obtain ⟨ϖ, hϖ⟩ := HasZeroSequenceOfUnits.exists_unit_smul_mem (M := A) 1 hc
+    (hJ.mem_nhds J.zero_mem)
+  exact Ideal.eq_top_of_isUnit_mem J (by simpa using hϖ) ϖ.isUnit
 
 /-- In a Tate ring, an ideal is open if and only if it is the whole ring `⊤`. -/
 @[simp]

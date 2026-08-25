@@ -7,6 +7,7 @@ module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Cont.Basic
 public import TauCeti.RingTheory.Huber.OpenIdeal
+import TauCeti.RingTheory.Huber.ZeroSequenceOfUnits
 import TauCeti.RingTheory.Valuation.Continuous.TopologicallyNilpotent
 
 /-!
@@ -48,7 +49,8 @@ over `TauCeti.ValuationSpectrum.cont A`. They apply verbatim in Wedhorn's settin
   dominated by `f` throughout `X`.
 
 The Tate-ring input, that a neighbourhood of zero contains a unit, is
-`TauCeti.Huber.IsTateRing.exists_unit_mem_of_mem_nhds_zero`.
+`TauCeti.HasZeroSequenceOfUnits.exists_unit_smul_mem` at `x = 1`, available for a Tate ring
+through the instance `TauCeti.Huber.IsTateRing.hasZeroSequenceOfUnits`.
 
 ## Provenance
 
@@ -159,13 +161,14 @@ theorem exists_mem_nhds_zero_forall_vlt {X : Set (Spv A)} (hXcont : X ⊆ cont A
 which `f` does not vanish, there is a unit of `A` strictly dominated by `f` throughout `X`.
 
 Lemma 7.31 supplies a neighbourhood of zero dominated by `f`, and the Tate hypothesis puts a unit
-inside it (`TauCeti.Huber.IsTateRing.exists_unit_mem_of_mem_nhds_zero`). -/
+inside it (`TauCeti.HasZeroSequenceOfUnits.exists_unit_smul_mem` at `x = 1`). -/
 theorem exists_unit_forall_vlt {X : Set (Spv A)} (hXcont : X ⊆ cont A) (hX : IsCompact X) {f : A}
     (hf : ∀ v ∈ X, ¬ v.toValuativeRel.vle f 0) :
     ∃ ϖ : Aˣ, ∀ v ∈ X, v.toValuativeRel.vlt (ϖ : A) f := by
   obtain ⟨I, hI, hIf⟩ := exists_mem_nhds_zero_forall_vlt hXcont hX hf
-  obtain ⟨ϖ, hϖ⟩ := IsTateRing.exists_unit_mem_of_mem_nhds_zero hI
-  exact ⟨ϖ, hIf _ hϖ⟩
+  have hc : ContinuousAt (fun a : A ↦ a • (1 : A)) 0 := by fun_prop
+  obtain ⟨ϖ, hϖ⟩ := HasZeroSequenceOfUnits.exists_unit_smul_mem (M := A) 1 hc hI
+  exact ⟨ϖ, hIf _ (by simpa using hϖ)⟩
 
 end
 
