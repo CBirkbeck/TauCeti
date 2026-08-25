@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.Data.ZMod.Units
 public import Mathlib.GroupTheory.Index
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
@@ -61,6 +62,8 @@ infrastructure independent of the diamond operators.
   under conjugation by `Γ₀(N)` elements in `GL₂(ℝ)`.
 * `CongruenceSubgroup.Gamma0Map_toHomUnits_surjective`: every unit of `ZMod N` is the
   lower-right entry of a matrix in `Γ₀(N)` (via strong approximation for `SL₂`).
+* `CongruenceSubgroup.Gamma0Map_toHomUnits_of_dvd`: for `M ∣ N`, reading a `Γ₀(N)` matrix in
+  `Γ₀(M)` reduces its lower-right entry along `(ZMod N)ˣ → (ZMod M)ˣ`.
 * `CongruenceSubgroup.gamma0Twist`: an explicit `Γ₀(N)` element whose lower-right entry is any
   natural number coprime to `N`.
 * `CongruenceSubgroup.neg_one_mem_Gamma0` and
@@ -237,6 +240,15 @@ theorem Gamma0Map_toHomUnits_surjective :
   have h10 : ((g 1 0 : ℤ) : ZMod N) = 0 := by rw [hentry]; simp
   have h11 : ((g 1 1 : ℤ) : ZMod N) = u := by rw [hentry]; simp
   exact ⟨⟨g, Gamma0_mem.mpr h10⟩, Units.ext (by simpa [Gamma0Map] using h11)⟩
+
+/-- **The diamond label is compatible with reduction.** For `M ∣ N`, a matrix of `Γ₀(N)` read as
+a matrix of `Γ₀(M)` has lower-right entry the reduction of its lower-right entry at level `N`,
+so a nebentypus character pulls back along `(ZMod N)ˣ → (ZMod M)ˣ`. -/
+lemma Gamma0Map_toHomUnits_of_dvd {M N : ℕ} (h : M ∣ N) (γ : ↥(Gamma0 N)) :
+    (Gamma0Map M).toHomUnits ⟨(γ : SL(2, ℤ)), Gamma0_le_Gamma0_of_dvd h γ.2⟩ =
+      ZMod.unitsMap h ((Gamma0Map N).toHomUnits γ) := by
+  ext
+  simp [Gamma0Map, ZMod.unitsMap_def]
 
 /-- A Bézout matrix with bottom row `(N, p)`, for `p` coprime to `N`. -/
 noncomputable def gamma0Twist (N p : ℕ) (h : Nat.Coprime p N) : SL(2, ℤ) :=

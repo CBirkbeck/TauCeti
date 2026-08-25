@@ -48,11 +48,12 @@ the upper half-plane to `τ ↦ f (d τ)`. It is the slash action by `diag(d, 1)
   conjugate of a `Γ₀(dM)` matrix lies in `Γ₀(M)` with the same lower-right entry, `V_d` carries
   `M_k(Γ₁(M), χ)` into `M_k(Γ₁(dM), χ ∘ ZMod.unitsMap)`, and likewise for `S_k`: the nebentypus
   of `V_d f` is that of `f` read along `(ZMod (dM))ˣ → (ZMod M)ˣ`.
-* `TauCeti.ofLe_mem_modFormCharSpace`, `TauCeti.ofLe_mem_cuspFormCharSpace`: the same transport
-  for the degeneracy map `V₁` at a divisor. Reading a form of level `M` as a form of level `N`
-  for any `M ∣ N` carries `M_k(Γ₁(M), χ)` into `M_k(Γ₁(N), χ ∘ ZMod.unitsMap)`, and likewise
-  for `S_k`. Unlike the `V_d` transport above, the target level is an arbitrary multiple of
-  `M` rather than exactly `d * M`.
+* `TauCeti.ModularForm.ofLe_mem_modFormCharSpace`,
+  `TauCeti.CuspForm.ofLe_mem_cuspFormCharSpace`: the same transport for the degeneracy map
+  `V₁` at a divisor. Reading a form of level `M` as a form of level `N` for any `M ∣ N` carries
+  `M_k(Γ₁(M), χ)` into `M_k(Γ₁(N), χ ∘ ZMod.unitsMap)`, and likewise for `S_k`. Unlike the
+  `V_d` transport above, the target level is an arbitrary multiple of `M` rather than exactly
+  `d * M`.
 * `TauCeti.ModularForm.qExpansion_levelRaise`, `TauCeti.CuspForm.qExpansion_levelRaise`: the
   `q`-expansion of `V_d f` is that of `f` with `q` replaced by `q ^ d`, that is, its
   `PowerSeries.expand d`; on coefficients (`TauCeti.ModularForm.qExpansion_levelRaise_coeff`
@@ -441,15 +442,6 @@ end Slash
 
 section Nebentypus
 
-/-- **The diamond label is compatible with reduction.** For `M ∣ N`, a matrix of `Γ₀(N)` read as
-a matrix of `Γ₀(M)` has lower-right entry the reduction of its lower-right entry at level `N`,
-so a nebentypus character pulls back along `(ZMod N)ˣ → (ZMod M)ˣ`. -/
-lemma Gamma0Map_toHomUnits_of_dvd {M N : ℕ} (h : M ∣ N) (γ : ↥(Gamma0 N)) :
-    (Gamma0Map M).toHomUnits ⟨(γ : SL(2, ℤ)), Gamma0_le_Gamma0_of_dvd h γ.2⟩ =
-      ZMod.unitsMap h ((Gamma0Map N).toHomUnits γ) := by
-  ext
-  simp [Gamma0Map, ZMod.unitsMap_def]
-
 /-- The lower-left entry of a matrix `γ ∈ Γ₀(dM)` is divisible by `d`, its `diag(d, 1)`-conjugate
 `conjScale d γ` again lies in `Γ₀(M)`, and the conjugation leaves the lower-right entry alone: the
 diamond label of `γ` is read along the reduction `(ZMod (dM))ˣ → (ZMod M)ˣ`. -/
@@ -542,7 +534,7 @@ to exactly `d * M`, the target level here is an arbitrary multiple of `M`.
 Follows `restrictSubgroup_mem_modFormCharSpace` of the AINTLIB `LeanModularForms` project
 (`Eigenforms/MainLemma.lean`, <https://github.com/CBirkbeck/AINTLIB>, commit
 `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0). -/
-theorem ofLe_mem_modFormCharSpace {M N : ℕ} (χ : (ZMod M)ˣ →* ℂˣ) (h : M ∣ N)
+theorem ModularForm.ofLe_mem_modFormCharSpace {M N : ℕ} (χ : (ZMod M)ˣ →* ℂˣ) (h : M ∣ N)
     {f : ModularForm ((Gamma1 M).map (mapGL ℝ)) k} (hf : f ∈ modFormCharSpace k χ) :
     _root_.ModularForm.ofLe (Gamma1_map_le_Gamma1_map_of_dvd h) f ∈
       modFormCharSpace k (χ.comp (ZMod.unitsMap h)) := by
@@ -556,7 +548,7 @@ level `M` as a cusp form of level `N` carries `S_k(Γ₁(M), χ)` into
 `S_k(Γ₁(N), χ ∘ (ZMod N)ˣ → (ZMod M)ˣ)`. Together with `TauCeti.ofLe_mem_cuspFormsOld` this
 places the restriction of a `χ`-form of proper divisor level inside the old subspace, with a
 known character. -/
-theorem ofLe_mem_cuspFormCharSpace {M N : ℕ} (χ : (ZMod M)ˣ →* ℂˣ) (h : M ∣ N)
+theorem CuspForm.ofLe_mem_cuspFormCharSpace {M N : ℕ} (χ : (ZMod M)ˣ →* ℂˣ) (h : M ∣ N)
     {f : CuspForm ((Gamma1 M).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) :
     _root_.CuspForm.ofLe (Gamma1_map_le_Gamma1_map_of_dvd h) f ∈
       cuspFormCharSpace k (χ.comp (ZMod.unitsMap h)) := by
