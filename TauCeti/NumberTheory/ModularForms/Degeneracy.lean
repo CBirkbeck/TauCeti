@@ -20,9 +20,12 @@ For a positive integer `d`, the *level-raising* (or *degeneracy*) map `V_d` send
 the upper half-plane to `τ ↦ f (d τ)`. It is the slash action by `diag(d, 1)`, renormalized by
 `d ^ (1 - k)` so that no power of `d` is introduced.
 
-Each property of `V_d f` is transported in both directions: up from `f`, which is what makes
-`V_d` a map of modular forms, and back down to `f`, which is what recognizes a form as a
-level-raise of something at lower level.
+Properties of `f` transport **up** to `V_d f` — the level of the congruence subgroup, the
+eigenvalue and nebentypus transport, the `q`-expansion — which is what makes `V_d` a map of
+modular forms. Two of them also read back **down**: the slash transformation law
+(`slash_conjScale_eq_smul_of_slash_scaleGL`) and holomorphy
+(`mdifferentiable_of_comp_scaleGL_smul`), which is what recognizes a bare function as a form at
+the lower level. The `q`-expansion results go up only.
 
 ## Main definitions
 
@@ -71,6 +74,15 @@ and the conductor statement of Layer 4 is phrased with this normalization of `V_
 
 * Diamond–Shurman, *A first course in modular forms*, §5.6
 * Miyake, *Modular forms*, §4.6
+* The descent section adapts [AINTLIB](https://github.com/CBirkbeck/AINTLIB) commit
+  `2baa76f74`, Apache-2.0, Chris Birkbeck,
+  `projects/LeanModularForms/LeanModularForms/Eigenforms/ConductorTheorem.lean` lines 84-137 —
+  the level-lowering block of `conductor_theorem_dichotomy_cuspForm_strong`. Half of that block
+  is deliberately not ported: `ModularGroup_T_mem_Gamma1`, `conductor_slash_levelRaise_eq` and
+  `smul_levelRaiseFun` already exist here in more general form (`T_zpow_mem_Gamma1`,
+  `ModularForm.slash_levelRaise_eq_smul` with `mem_modFormCharSpace_iff_nebentypus`, and the
+  `ℂ`-linearity of `levelRaiseₗ`), and AINTLIB's two `fun_eq_..._inv_smul` lemmas are not
+  needed, mathlib's `mdifferentiable_smul` reaching the holomorphy descent directly.
 -/
 
 public noncomputable section
@@ -109,10 +121,6 @@ lemma val_det_scaleGL [NeZero d] : ((scaleGL d).det : ℝ) = d := by
 lemma val_det_scaleGL_pos [NeZero d] : 0 < ((scaleGL d).det : ℝ) := by
   rw [val_det_scaleGL]
   exact mod_cast Nat.pos_of_ne_zero (NeZero.ne d)
-
-lemma val_det_inv_scaleGL_pos [NeZero d] : 0 < (((scaleGL d)⁻¹).det : ℝ) := by
-  rw [map_inv, Units.val_inv_eq_inv_val]
-  exact inv_pos.mpr val_det_scaleGL_pos
 
 @[simp]
 lemma denom_scaleGL [NeZero d] (τ : ℍ) : denom (scaleGL d) τ = 1 := by
@@ -489,17 +497,30 @@ lemma slash_conjScale_eq_smul_of_slash_scaleGL [NeZero d] (f : ℍ → ℂ) (γ 
   rw [hf, _root_.ModularForm.smul_slash, σ_eq_refl_of_det_pos val_det_scaleGL_pos,
     ContinuousAlgEquiv.refl_apply]
 
-/-- **Holomorphy descent.** If `τ ↦ f (d τ)` is holomorphic on `ℍ`, then so is `f`: the two
-differ by the biholomorphism `τ ↦ d⁻¹ τ` of `ℍ`. No weight and no normalizing scalar appear —
-with `smul_slash_scaleGL_eq` this descends holomorphy through `V_d` at every weight. -/
-lemma mdifferentiable_of_comp_scaleGL_smul [NeZero d] {f : ℍ → ℂ}
-    (hf : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) fun τ ↦ f (scaleGL d • τ)) :
-    MDifferentiable 𝓘(ℂ) 𝓘(ℂ) f := by
-  have hcomp : f = (fun τ ↦ f (scaleGL d • τ)) ∘ fun τ : ℍ ↦ (scaleGL d)⁻¹ • τ := by
+/-- **Holomorphy is invariant under a positive-determinant Möbius action.** For any
+`g : GL (Fin 2) ℝ` with `0 < det g`, the function `τ ↦ f (g • τ)` is holomorphic exactly when
+`f` is: `g` acts on `ℍ` by a biholomorphism, whose inverse is the action of `g⁻¹`, again of
+positive determinant. Nothing here is special to `diag(d, 1)`, and no weight and no normalizing
+scalar appear. -/
+lemma mdifferentiable_comp_smul_iff {g : GL (Fin 2) ℝ} (hg : 0 < (g.det : ℝ)) {f : ℍ → ℂ} :
+    MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (fun τ ↦ f (g • τ)) ↔ MDifferentiable 𝓘(ℂ) 𝓘(ℂ) f := by
+  have hg' : 0 < ((g⁻¹).det : ℝ) := by
+    rw [map_inv, Units.val_inv_eq_inv_val]
+    exact inv_pos.mpr hg
+  refine ⟨fun hf ↦ ?_, fun hf ↦ hf.comp (mdifferentiable_smul hg)⟩
+  have hcomp : f = (fun τ ↦ f (g • τ)) ∘ fun τ : ℍ ↦ g⁻¹ • τ := by
     funext τ
     simp [smul_smul]
   rw [hcomp]
-  exact hf.comp (mdifferentiable_smul val_det_inv_scaleGL_pos)
+  exact hf.comp (mdifferentiable_smul hg')
+
+/-- **Holomorphy descent.** If `τ ↦ f (d τ)` is holomorphic on `ℍ`, then so is `f`. This is
+`mdifferentiable_comp_smul_iff` read at `g = diag(d, 1)`; with `smul_slash_scaleGL_eq` it
+descends holomorphy through `V_d` at every weight. -/
+lemma mdifferentiable_of_comp_scaleGL_smul [NeZero d] {f : ℍ → ℂ}
+    (hf : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) fun τ ↦ f (scaleGL d • τ)) :
+    MDifferentiable 𝓘(ℂ) 𝓘(ℂ) f :=
+  (mdifferentiable_comp_smul_iff val_det_scaleGL_pos).mp hf
 
 end Descent
 
