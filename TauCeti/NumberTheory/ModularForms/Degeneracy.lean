@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups
 public import TauCeti.NumberTheory.ModularForms.DiamondOperators
 public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Diagonal
 
+import TauCeti.Analysis.Complex.UpperHalfPlane.Manifold
+
 /-!
 # The level-raising degeneracy maps `V_d`
 
@@ -497,30 +499,14 @@ lemma slash_conjScale_eq_smul_of_slash_scaleGL [NeZero d] (f : ℍ → ℂ) (γ 
   rw [hf, _root_.ModularForm.smul_slash, σ_eq_refl_of_det_pos val_det_scaleGL_pos,
     ContinuousAlgEquiv.refl_apply]
 
-/-- **Holomorphy is invariant under a positive-determinant Möbius action.** For any
-`g : GL (Fin 2) ℝ` with `0 < det g`, the function `τ ↦ f (g • τ)` is holomorphic exactly when
-`f` is: `g` acts on `ℍ` by a biholomorphism, whose inverse is the action of `g⁻¹`, again of
-positive determinant. Nothing here is special to `diag(d, 1)`, and no weight and no normalizing
-scalar appear. -/
-lemma mdifferentiable_comp_smul_iff {g : GL (Fin 2) ℝ} (hg : 0 < (g.det : ℝ)) {f : ℍ → ℂ} :
-    MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (fun τ ↦ f (g • τ)) ↔ MDifferentiable 𝓘(ℂ) 𝓘(ℂ) f := by
-  have hg' : 0 < ((g⁻¹).det : ℝ) := by
-    rw [map_inv, Units.val_inv_eq_inv_val]
-    exact inv_pos.mpr hg
-  refine ⟨fun hf ↦ ?_, fun hf ↦ hf.comp (mdifferentiable_smul hg)⟩
-  have hcomp : f = (fun τ ↦ f (g • τ)) ∘ fun τ : ℍ ↦ g⁻¹ • τ := by
-    funext τ
-    simp [smul_smul]
-  rw [hcomp]
-  exact hf.comp (mdifferentiable_smul hg')
-
 /-- **Holomorphy descent.** If `τ ↦ f (d τ)` is holomorphic on `ℍ`, then so is `f`. This is
-`mdifferentiable_comp_smul_iff` read at `g = diag(d, 1)`; with `smul_slash_scaleGL_eq` it
+`UpperHalfPlane.mdifferentiable_comp_smul_iff` — holomorphy is invariant under any
+positive-determinant Möbius action — read at `g = diag(d, 1)`; with `smul_slash_scaleGL_eq` it
 descends holomorphy through `V_d` at every weight. -/
 lemma mdifferentiable_of_comp_scaleGL_smul [NeZero d] {f : ℍ → ℂ}
     (hf : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) fun τ ↦ f (scaleGL d • τ)) :
     MDifferentiable 𝓘(ℂ) 𝓘(ℂ) f :=
-  (mdifferentiable_comp_smul_iff val_det_scaleGL_pos).mp hf
+  (UpperHalfPlane.mdifferentiable_comp_smul_iff val_det_scaleGL_pos).mp hf
 
 end Descent
 
