@@ -105,10 +105,9 @@ hypercube, the summand transported along `(m, n, b, c) ↦ (n - b - c, b, c, m -
 both sides are empty sums.
 
 This is the four-variable analogue of `sum_range_min_diag_flip` in
-`TauCeti.RingTheory.Nilpotent.ChevalleyCommutator`: the inner index set is
+`TauCeti.RingTheory.Nilpotent.ChevalleyCommutator`, whose name it follows: the inner index set is
 `Associative.chainLeTwoIndex m n` rather than `range (min m n + 1)`, and the image is a slice of the
-hypercube rather than of the cube. The name and the `Finset.sum_nbij'` proof pattern follow that
-lemma. -/
+hypercube rather than of the cube. -/
 private theorem sum_chainLeTwoIndex_diag_flip {B : Type*} [AddCommMonoid B] (F : ℕ × ℕ × ℕ × ℕ → B)
     (N : ℕ) : ∑ v ∈ (range N ×ˢ range N).sigma (fun mn => Associative.chainLeTwoIndex mn.1 mn.2),
         F (v.1.2 - v.2.1 - v.2.2, v.2.1, v.2.2, v.1.1 - v.2.1 - 2 * v.2.2) =
