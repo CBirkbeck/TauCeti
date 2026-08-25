@@ -16,7 +16,8 @@ continuous `φ : A → B` into a complete `B` extends across `ρ : A → A⟨T/s
 unit and every fraction `φ t / φ s` is power-bounded
 (`TauCeti.Huber.existsUnique_continuous_ringHom_completion_locTopology`). Wedhorn's Lemma 8.1
 replaces those two algebraic conditions by a single *geometric* one — that `Spa(φ)` factors
-through the rational subset `U = R(T/s)` — and this file carries out that replacement.
+through the rational subset `U = R(T/s)`. This file carries that replacement out only as far as
+the repository allows, which is not all the way: **Lemma 8.1 itself is not proved here.**
 
 Wedhorn's proof has three steps, and the first two are proved here unconditionally:
 
@@ -29,6 +30,9 @@ The step `φ s ∈ B^×` is Wedhorn's Proposition 7.52(2), which is on hand as
 `TauCeti.ValuationSpectrum.isUnit_of_forall_not_vle_zero`; the step `|φ(t)/φ(s)|_w ≤ 1` is a
 division by that unit. The step from there to `φ(t)/φ(s) ∈ B⁺` is Proposition 7.52(1), which is
 *not* available — see below — so it enters the assembly as an explicit hypothesis on `(B, B⁺)`.
+The assembly is therefore a **reduction of Lemma 8.1 to Proposition 7.52(1)**, not Lemma 8.1:
+it draws Lemma 8.1's conclusion for exactly those target pairs `(B, B⁺)` that satisfy 7.52(1).
+Nothing below may be cited as Lemma 8.1.
 
 The other half of Lemma 8.1, that `Spa ρ : Spa A⟨T/s⟩ → Spa A` factors through `U`, is already
 `TauCeti.ValuationSpectrum.spaComapLoc_mem_rationalSubset`; it is not repeated here.
@@ -40,8 +44,9 @@ The other half of Lemma 8.1, that `Spa ρ : Spa A⟨T/s⟩ → Spa A` factors th
 * `TauCeti.ValuationSpectrum.vle_one_of_forall_comap_mem_rationalSubset` : under the same
   hypothesis every fraction `φ t / φ s` is sub-unit at every point of `Spa (B, B⁺)`.
 * `TauCeti.ValuationSpectrum.existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset` :
-  **Wedhorn Lemma 8.1** — a continuous `φ : A → B` whose `Spa(φ)` factors through `R(T/s)`
-  extends across `A → A⟨T/s⟩` in exactly one continuous way.
+  **Lemma 8.1 reduced to Proposition 7.52(1)** — a continuous `φ : A → B` whose `Spa(φ)`
+  factors through `R(T/s)` extends across `A → A⟨T/s⟩` in exactly one continuous way, *given*
+  7.52(1) for the target pair `(B, B⁺)`.
 
 ## What this file does not do
 
@@ -128,7 +133,7 @@ theorem vle_one_of_forall_comap_mem_rationalSubset {φ : A →+* B} {Aplus : Sub
 
 end Steps
 
-/-! ### Lemma 8.1
+/-! ### Lemma 8.1, reduced to Proposition 7.52(1)
 
 The assembly. `S` is an algebraic localisation of `A` away from `s` carrying the localisation
 topology, so that `A⟨T/s⟩` is its separated completion, and the three `letI`s naming the
@@ -136,9 +141,10 @@ uniformity and its two companions are the ones every statement about `A⟨T/s⟩
 
 open TauCeti.Huber TauCeti.Huber.PairOfDefinition
 
-/-- **Wedhorn Lemma 8.1**, the universal property of `A⟨T/s⟩` against complete affinoid targets:
-a continuous `φ : A → B` into a complete `(B, B⁺)` whose `Spa(φ)` factors through the rational
-subset `R(T/s)` extends across the structure map `ρ : A → A⟨T/s⟩` in exactly one continuous way.
+/-- **Wedhorn's Lemma 8.1 reduced to his Proposition 7.52(1)**, and not Lemma 8.1 itself: a
+continuous `φ : A → B` into a complete `(B, B⁺)` whose `Spa(φ)` factors through the rational
+subset `R(T/s)` extends across the structure map `ρ : A → A⟨T/s⟩` in exactly one continuous
+way — *provided* the target pair satisfies 7.52(1), which is the hypothesis `hmem` below.
 
 The two algebraic conditions of
 `TauCeti.Huber.existsUnique_continuous_ringHom_completion_locTopology` are discharged from the
