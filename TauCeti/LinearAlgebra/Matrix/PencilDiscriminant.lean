@@ -52,7 +52,7 @@ exported as a corollary.
 ## Main results
 
 * `TauCeti.Matrix.sq_le_four_mul_of_exists_nonneg_pencil_det`: from per-prime determinant data.
-* `TauCeti.Matrix.sq_le_four_mul_of_exists_symplectic_multiplier`: from per-prime symplectic
+* `TauCeti.Matrix.sq_le_four_mul_of_exists_nonneg_symplectic_multiplier`: from per-prime symplectic
   multipliers.
 
 ## Provenance
@@ -122,7 +122,7 @@ multiplier that forces it: `Aᵀ * J * A = d • J` gives `A.det = d` in rank tw
 This is the shape a pairing supplies. On the `ℓ`-torsion of an elliptic curve the Weil pairing `e`
 satisfies `e (A S) (A T) = e S T ^ deg A` for every isogeny `A` separately — no additivity in `A`,
 which is what makes it available — and that scaling is exactly `Aᵀ J A = (deg A) • J`. -/
-theorem sq_le_four_mul_of_exists_symplectic_multiplier (hp : p ≠ 1)
+theorem sq_le_four_mul_of_exists_nonneg_symplectic_multiplier (hp : p ≠ 1)
     (h : ∀ r s : ℤ, ¬ (p : ℤ) ∣ r → ¬ (p : ℤ) ∣ s → ∃ D : ℤ, 0 ≤ D ∧
       ∀ ℓ : ℕ, ℓ.Prime → ℓ ≠ p → ∃ M : Matrix (l ⊕ l) (l ⊕ l) (ZMod ℓ),
         Mᵀ * J l (ZMod ℓ) * M = (q : ZMod ℓ) • J l (ZMod ℓ) ∧
@@ -138,10 +138,10 @@ theorem sq_le_four_mul_of_exists_symplectic_multiplier (hp : p ≠ 1)
   obtain ⟨M, hdet, hone, hpencil⟩ := hD ℓ hℓ hℓne
   -- `Matrix.submatrix` commutes with `1`, `-` and `•`, so all three determinants survive.
   have hone' : (1 : Matrix (Fin 2) (Fin 2) (ZMod ℓ)) - M.submatrix e e = (1 - M).submatrix e e := by
-    rw [← submatrix_one_equiv (α := ZMod ℓ) e]; rfl
+    simp [submatrix_sub, Pi.sub_apply]
   have hpencil' : (r : ZMod ℓ) • M.submatrix e e - (s : ZMod ℓ) • (1 : Matrix (Fin 2) (Fin 2) _)
       = ((r : ZMod ℓ) • M - (s : ZMod ℓ) • 1).submatrix e e := by
-    rw [← submatrix_one_equiv (α := ZMod ℓ) e]; rfl
+    simp [submatrix_sub, submatrix_smul, Pi.sub_apply, Pi.smul_apply]
   refine ⟨M.submatrix e e, ?_, ?_, ?_⟩
   · rw [det_submatrix_equiv_self]
     exact det_eq_of_transpose_mul_J_mul_eq_smul hdet
