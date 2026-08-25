@@ -57,7 +57,9 @@ private theorem image_tensorSquare_apply (f : C →ₗc[R] D) (A : Subcoalgebra 
         (TensorProduct.map A.carrier.subtype A.carrier.subtype t) := by
   induction t with
   | zero => simp only [map_zero]
-  | tmul a b => rfl
+  | tmul a b =>
+      simp only [TensorProduct.map_tmul, Submodule.subtype_apply,
+        LinearMap.submoduleMap_coe_apply]
   | add x y hx hy => simp only [map_add, hx, hy]
 
 /-- The image of a subcoalgebra under a coalgebra morphism. -/

@@ -252,7 +252,9 @@ private theorem image_tensor_apply (f : Comodule.Hom R C M N) (A : Subcomodule R
         (TensorProduct.map A.carrier.subtype (LinearMap.id : C →ₗ[R] C) t) := by
   induction t with
   | zero => simp only [map_zero]
-  | tmul a c => rfl
+  | tmul a c =>
+      simp only [TensorProduct.map_tmul, Submodule.subtype_apply, LinearMap.id_coe, id_eq,
+        LinearMap.submoduleMap_coe_apply]
   | add x y hx hy => simp only [map_add, hx, hy]
 
 /-- The image of a subcomodule under a comodule morphism. -/
