@@ -109,8 +109,8 @@ theorem isDedekindDomain_intermediateRing (φ : Isogeny W₁ W₂)
   -- the integral-closure property is not assumed: it is what `intermediateRing` is
   have := φ.isIntegralClosure_intermediateRing h
   have := φ.finiteDimensional_functionField (φ.algebraMap_functionField_eq_fieldPullback h)
-  exact _root_.TauCeti.IsIntegralClosure.isDedekindDomain (A := W₂.CoordinateRing)
-    (L := W₁.FunctionField) W₂.FunctionField φ.intermediateRing
+  exact TauCeti.IsIntegralClosure.isDedekindDomain W₂.CoordinateRing W₂.FunctionField
+    W₁.FunctionField φ.intermediateRing
 
 end Isogeny
 

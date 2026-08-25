@@ -70,18 +70,17 @@ public section
 
 namespace TauCeti
 
-variable {A : Type*} [CommRing A] [IsDedekindDomain A]
-variable {L : Type*} [Field L] [Algebra A L]
-
 /-- **The integral closure of a Dedekind domain is a Dedekind domain**, for a finite extension `L`
 of the fraction field `K` that is not assumed separable.
 
-This is Mathlib's `IsIntegralClosure.isDedekindDomain` with the separability hypothesis removed.
-Separability serves only to make the trace pairing nondegenerate and so deliver Noetherianity, and
-Krull–Akizuki (`TauCeti.IsIntegralClosure.isNoetherianRing`) delivers that without it. Finiteness
-of `C` as an `A`-module, which the separable route yields as a by-product, is *not* available
-here. -/
-theorem IsIntegralClosure.isDedekindDomain (K : Type*) [Field K] [Algebra A K] [IsFractionRing A K]
+This is Mathlib's `IsIntegralClosure.isDedekindDomain` with the separability hypothesis removed,
+and with the same explicit arguments `A K L C` in the same order, so a call site can switch to it
+by name alone. Separability serves only to make the trace pairing nondegenerate and so deliver
+Noetherianity, and Krull–Akizuki (`TauCeti.IsIntegralClosure.isNoetherianRing`) delivers that
+without it. Finiteness of `C` as an `A`-module, which the separable route yields as a by-product,
+is *not* available here. -/
+theorem IsIntegralClosure.isDedekindDomain (A : Type*) [CommRing A] [IsDedekindDomain A]
+    (K : Type*) [Field K] [Algebra A K] [IsFractionRing A K] (L : Type*) [Field L] [Algebra A L]
     [Algebra K L] [IsScalarTower A K L] [Module.Finite K L] (C : Type*) [CommRing C] [IsDomain C]
     [Algebra A C] [Algebra C L] [IsScalarTower A C L] [IsIntegralClosure C A L] :
     IsDedekindDomain C :=
