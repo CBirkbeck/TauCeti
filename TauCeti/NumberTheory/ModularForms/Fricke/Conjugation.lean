@@ -82,6 +82,10 @@ itself defined at an arbitrary algebra.
   unital, at every level. These are what the bundled homomorphisms above are built from.
 * `TauCeti.frickeConjGamma0_frickeConjGamma0`, `TauCeti.frickeConjGamma1_frickeConjGamma1`: for
   `[NeZero N]`, conjugating twice is the identity.
+* `TauCeti.frickeConjGamma0MulEquiv_apply`, `TauCeti.frickeConjGamma0MulEquiv_symm`, and their
+  `Γ₁` twins: the automorphisms act as the homomorphisms and are their own inverses. These, with
+  `coe_frickeConjGamma0` and `coe_frickeConjGamma1`, are the whole interface: none of the bundled
+  definitions exposes its body.
 * `TauCeti.frickeGL_mul_mapGL`, `TauCeti.mapGL_mul_frickeGL`: for `(N : K) ≠ 0`, the two
   normalization identities `W · σ = (W σ W⁻¹) · W` and `σ · W = W · (W σ W⁻¹)` in
   `GL (Fin 2) K`. These are the statements that exhibit `W` as normalizing `Γ₀(N)`.
@@ -213,6 +217,7 @@ private theorem lowerLeftDiv_mul (σ τ : ↥(Gamma0 N)) :
     ring
 
 /-- **`frickeConjSL` sends `1` to `1`**. -/
+@[simp]
 public theorem frickeConjSL_one : frickeConjSL (1 : ↥(Gamma0 N)) = 1 := by
   ext i j
   fin_cases i <;> fin_cases j <;> simp [frickeConjSL, lowerLeftDiv]
@@ -235,7 +240,6 @@ public theorem frickeConjSL_mul (σ τ : ↥(Gamma0 N)) :
 form of `frickeConjSL_mem_Gamma0`: it is what "`W` normalizes `Γ₀(N)`" means, and it is what a
 consumer needs in order to transport a subgroup along the conjugation. It exists at every level;
 at nonzero level it is an isomorphism, `frickeConjGamma0MulEquiv`. -/
-@[expose]
 public def frickeConjGamma0 : ↥(Gamma0 N) →* ↥(Gamma0 N) where
   toFun σ := ⟨frickeConjSL σ, frickeConjSL_mem_Gamma0 σ⟩
   map_one' := Subtype.ext frickeConjSL_one
@@ -244,12 +248,11 @@ public def frickeConjGamma0 : ↥(Gamma0 N) →* ↥(Gamma0 N) where
 @[simp]
 public theorem coe_frickeConjGamma0 (σ : ↥(Gamma0 N)) :
     (frickeConjGamma0 σ : SL(2, ℤ)) = frickeConjSL σ :=
-  rfl
+  (rfl)
 
 /-- **The Fricke conjugation restricted to `Γ₁(N)`**, as a group homomorphism
 `Γ₁(N) →* Γ₁(N)`; the `Γ₁` counterpart of `frickeConjGamma0`, bundling
 `frickeConjSL_mem_Gamma1`. -/
-@[expose]
 public def frickeConjGamma1 : ↥(Gamma1 N) →* ↥(Gamma1 N) where
   toFun σ := ⟨frickeConjSL ⟨σ, Gamma1_in_Gamma0 N σ.property⟩,
     frickeConjSL_mem_Gamma1 (σ : SL(2, ℤ)) σ.property⟩
@@ -260,7 +263,7 @@ public def frickeConjGamma1 : ↥(Gamma1 N) →* ↥(Gamma1 N) where
 @[simp]
 public theorem coe_frickeConjGamma1 (σ : ↥(Gamma1 N)) :
     (frickeConjGamma1 σ : SL(2, ℤ)) = frickeConjSL ⟨σ, Gamma1_in_Gamma0 N σ.property⟩ :=
-  rfl
+  (rfl)
 
 section NeZero
 
@@ -272,6 +275,7 @@ conjugating twice does nothing.
 This genuinely needs `N ≠ 0`. At level zero the lower-left entry `-N·b` of `frickeConjSL σ` is
 `0` whatever `b` is, so the formula forgets `b` and cannot be undone; see the `Level` section of
 the module docstring. -/
+@[simp]
 public theorem frickeConjGamma0_frickeConjGamma0 (σ : ↥(Gamma0 N)) :
     frickeConjGamma0 (frickeConjGamma0 σ) = σ := by
   have hN : (N : ℤ) ≠ 0 := Int.natCast_ne_zero.mpr (NeZero.ne N)
@@ -297,7 +301,6 @@ public theorem frickeConjGamma0_involutive :
 /-- **The Fricke conjugation as an automorphism of `Γ₀(N)`**, for nonzero level: the isomorphism
 `Γ₀(N) ≃* Γ₀(N)` that `frickeConjGamma0` becomes once it is known to be involutive. It is its
 own inverse. -/
-@[expose]
 public def frickeConjGamma0MulEquiv : ↥(Gamma0 N) ≃* ↥(Gamma0 N) where
   toFun := frickeConjGamma0
   invFun := frickeConjGamma0
@@ -305,12 +308,24 @@ public def frickeConjGamma0MulEquiv : ↥(Gamma0 N) ≃* ↥(Gamma0 N) where
   right_inv := frickeConjGamma0_involutive
   map_mul' := map_mul frickeConjGamma0
 
+/-- `frickeConjGamma0MulEquiv` acts as `frickeConjGamma0`. This is its defining lemma, and the
+one a consumer needs: the body of `frickeConjGamma0MulEquiv` is not exposed, so nothing downstream
+can see through it by unfolding. -/
 @[simp]
-public theorem coe_frickeConjGamma0MulEquiv (σ : ↥(Gamma0 N)) :
-    (frickeConjGamma0MulEquiv σ : SL(2, ℤ)) = frickeConjSL σ :=
-  rfl
+public theorem frickeConjGamma0MulEquiv_apply (σ : ↥(Gamma0 N)) :
+    frickeConjGamma0MulEquiv σ = frickeConjGamma0 σ :=
+  (rfl)
+
+/-- **`frickeConjGamma0MulEquiv` is its own inverse.** The underlying map is an involution,
+so `symm` returns the automorphism unchanged; this is what lets a consumer simplify
+`e.symm` without unfolding the bundled definition. -/
+@[simp]
+public theorem frickeConjGamma0MulEquiv_symm :
+    (frickeConjGamma0MulEquiv (N := N)).symm = frickeConjGamma0MulEquiv :=
+  (rfl)
 
 /-- The `Γ₁(N)` counterpart of `frickeConjGamma0_frickeConjGamma0`. -/
+@[simp]
 public theorem frickeConjGamma1_frickeConjGamma1 (σ : ↥(Gamma1 N)) :
     frickeConjGamma1 (frickeConjGamma1 σ) = σ :=
   Subtype.ext (congrArg (Subtype.val (p := fun g => g ∈ Gamma0 N))
@@ -323,7 +338,6 @@ public theorem frickeConjGamma1_involutive :
 
 /-- **The Fricke conjugation as an automorphism of `Γ₁(N)`**, for nonzero level; the `Γ₁`
 counterpart of `frickeConjGamma0MulEquiv`. -/
-@[expose]
 public def frickeConjGamma1MulEquiv : ↥(Gamma1 N) ≃* ↥(Gamma1 N) where
   toFun := frickeConjGamma1
   invFun := frickeConjGamma1
@@ -331,11 +345,18 @@ public def frickeConjGamma1MulEquiv : ↥(Gamma1 N) ≃* ↥(Gamma1 N) where
   right_inv := frickeConjGamma1_involutive
   map_mul' := map_mul frickeConjGamma1
 
+/-- `frickeConjGamma1MulEquiv` acts as `frickeConjGamma1`; the `Γ₁(N)` counterpart of
+`frickeConjGamma0MulEquiv_apply`. -/
 @[simp]
-public theorem coe_frickeConjGamma1MulEquiv (σ : ↥(Gamma1 N)) :
-    (frickeConjGamma1MulEquiv σ : SL(2, ℤ)) =
-      frickeConjSL ⟨σ, Gamma1_in_Gamma0 N σ.property⟩ :=
-  rfl
+public theorem frickeConjGamma1MulEquiv_apply (σ : ↥(Gamma1 N)) :
+    frickeConjGamma1MulEquiv σ = frickeConjGamma1 σ :=
+  (rfl)
+
+/-- The `Γ₁(N)` counterpart of `frickeConjGamma0MulEquiv_symm`. -/
+@[simp]
+public theorem frickeConjGamma1MulEquiv_symm :
+    (frickeConjGamma1MulEquiv (N := N)).symm = frickeConjGamma1MulEquiv :=
+  (rfl)
 
 end NeZero
 
