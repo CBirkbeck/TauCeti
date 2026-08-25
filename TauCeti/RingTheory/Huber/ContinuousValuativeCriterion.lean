@@ -113,17 +113,6 @@ private theorem cofinalValue_of_forall_pow_lt {A Γ₀ : Type*} [Ring A]
 
 /-! ### The construction -/
 
-/-- **A power of the ideal of definition multiplies `x` into any open subring.** Multiplication
-by `x` is continuous, so the preimage of `B` is a neighbourhood of `0`, and the images of the
-powers of the ideal of definition are a neighbourhood basis there. -/
-theorem exists_pow_idealOfDefinition_mul_mem (P : PairOfDefinition R) {B : Subring R}
-    (hB : IsOpen (B : Set R)) (x : R) :
-    ∃ n : ℕ, ∀ a ∈ P.idealOfDefinition ^ n, x * (a : R) ∈ B := by
-  have h0 : (0 : R) ∈ (x * ·) ⁻¹' (B : Set R) := by simp
-  obtain ⟨n, -, hn⟩ :=
-    P.hasBasis_nhds_zero.mem_iff.mp ((hB.preimage (continuous_const_mul x)).mem_nhds h0)
-  exact ⟨n, fun a ha ↦ hn ((P.mem_idealImage n).mpr ⟨a, ha, rfl⟩)⟩
-
 /-- **A continuous valuation refuting integrality.** If `x` is not integral over an open subring
 `B` containing the ring of definition, some *continuous* valuation of `R` is `≤ 1` on `B` and
 `> 1` at `x`. This is the substance of Wedhorn Proposition 7.18(1); see the module docstring for
@@ -152,7 +141,7 @@ theorem exists_continuous_valuation_of_not_isIntegral [IsDomain R] (P : PairOfDe
       map_zero' := Subtype.ext (map_zero ι)
       map_add' := fun a b ↦ Subtype.ext (map_add ι _ _) } with hφ
   set J : Ideal R₀ := P.idealOfDefinition.map φ with hJ
-  obtain ⟨m₀, hm₀⟩ := exists_pow_idealOfDefinition_mul_mem P hB x
+  obtain ⟨m₀, hm₀⟩ := P.exists_pow_idealOfDefinition_mul_mem hB x
   have hJpow : ∀ a ∈ J ^ m₀, (a : FractionRing R) * ι x ∈ R₀ := by
     have hcolon : J ^ m₀ ≤ (1 : Submodule R₀ (FractionRing R)).colon {ι x} := by
       rw [hJ, ← Ideal.map_pow]
