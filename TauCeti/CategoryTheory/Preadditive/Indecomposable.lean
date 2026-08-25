@@ -10,6 +10,7 @@ public import Mathlib.CategoryTheory.Limits.Shapes.BinaryBiproducts
 public import Mathlib.CategoryTheory.Linear.Basic
 public import Mathlib.CategoryTheory.Preadditive.Biproducts
 public import Mathlib.LinearAlgebra.FiniteDimensional.Basic
+public import TauCeti.RingTheory.LocalRing.Basic
 
 /-!
 # Recognizing indecomposable objects from their endomorphisms
@@ -20,7 +21,10 @@ for it: a simple object is indecomposable (`CategoryTheory.indecomposable_of_sim
 criterion is too strong for the objects that carry the theory of a finite-dimensional algebra: an
 indecomposable projective module is almost never simple. The criterion that does apply is the one
 this file supplies — an object all of whose idempotent endomorphisms are trivial is
-indecomposable — together with the form in which it is used in practice: over a field, an object
+indecomposable — together with the two forms in which it is used in practice. An object whose
+endomorphisms are recorded faithfully and multiplicatively in a *local* ring is indecomposable;
+this is the criterion behind the Krull–Schmidt theorem, and the one the quiver Jordan blocks need,
+their endomorphism algebra `k[X]/(Xⁿ⁺¹)` being local but not a field. And over a field, an object
 whose endomorphism space is one-dimensional (a *brick*) is indecomposable.
 
 The converse holds as soon as idempotents split, that is, over an idempotent-complete category
@@ -35,6 +39,8 @@ decomposition of the whole object.
 
 * `TauCeti.indecomposable_of_idempotent_eq_zero_or_id`: a nonzero object whose only idempotent
   endomorphisms are `0` and the identity is indecomposable.
+* `TauCeti.indecomposable_of_injective_of_isLocalRing`: **an object whose endomorphisms are
+  recorded faithfully and multiplicatively in a local ring is indecomposable.**
 * `TauCeti.indecomposable_of_finrank_end_eq_one`: in a `k`-linear category over a field,
   **a brick is indecomposable**.
 * `TauCeti.isoBiprodOfRetracts`: two retracts of `X` whose idempotents sum to the identity exhibit
@@ -48,6 +54,23 @@ decomposition of the whole object.
 The idempotent hypothesis is phrased with composition, `e ≫ e = e`, rather than through the ring
 `CategoryTheory.End X`, whose multiplication is composition in the opposite order; for an
 idempotent the two agree, but the hypothesis is easier to discharge as stated.
+
+`indecomposable_of_injective_of_isLocalRing` records the endomorphisms in an unbundled map `φ` for
+the same reason: it is asked to turn `≫` into multiplication in the order it is written,
+`φ (e ≫ f) = φ e * φ f`, which is the opposite of the multiplication of `End X`. Since the target
+ring may be noncommutative the order is a real choice, and this is the one every use site meets;
+bundling `φ` as a ring homomorphism would fix the other order and demand additivity besides, which
+no use site has reason to prove. The ring is not asked to be commutative because the endomorphism
+ring of an indecomposable object, the intended source of `φ`, is not.
+
+Two neighbours state the same idea in narrower settings and do not reach the objects that need it
+here. `TauCeti.indecomposable_iff_isLocalRing_end` asks `CategoryTheory.End` itself to be local but
+is confined to `ModuleCat A` and to modules of finite length;
+`TauCeti.isIndecomposableModule_of_isLocalRing_end` is the statement for bare modules. A quiver
+representation is a functor `Paths Q ⥤ ModuleCat k`, not an object of `ModuleCat A`, and asking for
+`IsLocalRing (X ⟶ X)` would make every use site exhibit its endomorphisms as a ring first —
+recording them instead in a ring already known to be local is what makes the criterion cheap to
+apply.
 
 `indecomposable_of_idempotent_eq_zero_or_id` extracts, from an isomorphism `X ≅ Y ⊞ Z`, the
 idempotent `biprod.fst ≫ biprod.inl` transported to `X`. It is `0` exactly when `Y` is zero and the
@@ -98,6 +121,21 @@ theorem indecomposable_of_idempotent_eq_zero_or_id [HasBinaryBiproducts C] {X : 
     have := congrArg (fun f : X ⟶ X ↦ biprod.inr ≫ i.inv ≫ f ≫ i.hom ≫ biprod.snd) h1
     simpa using this.symm
 
+/-- **An object whose endomorphisms are recorded faithfully in a local ring is indecomposable.**
+An idempotent endomorphism has an idempotent record, and a local ring carries no idempotent other
+than `0` and `1` (`TauCeti.IsLocalRing.eq_zero_or_eq_one_of_isIdempotentElem`), so the record — and
+with it the endomorphism, the record being faithful — is `0` or the identity. This is the criterion
+behind the Krull–Schmidt theorem: an object whose endomorphism ring is local is indecomposable. -/
+theorem indecomposable_of_injective_of_isLocalRing [HasBinaryBiproducts C] {X : C} (hX : ¬ IsZero X)
+    {R : Type*} [Ring R] [IsLocalRing R] (φ : (X ⟶ X) → R) (hφ : Function.Injective φ)
+    (hzero : φ 0 = 0) (hid : φ (𝟙 X) = 1) (hcomp : ∀ e f : X ⟶ X, φ (e ≫ f) = φ e * φ f)
+    : Indecomposable X := by
+  refine indecomposable_of_idempotent_eq_zero_or_id hX fun e he ↦ ?_
+  have hidem : IsIdempotentElem (φ e) := (hcomp e e).symm.trans (congrArg φ he)
+  rcases IsLocalRing.eq_zero_or_eq_one_of_isIdempotentElem hidem with h0 | h1
+  · exact Or.inl (hφ (h0.trans hzero.symm))
+  · exact Or.inr (hφ (h1.trans hid.symm))
+
 /-- **Two retracts whose idempotents sum to the identity split an object as a biproduct.** Its
 comparison map and inverse are read off by `TauCeti.isoBiprodOfRetracts_hom` and
 `TauCeti.isoBiprodOfRetracts_inv`. -/
@@ -106,8 +144,8 @@ noncomputable def isoBiprodOfRetracts [HasBinaryBiproducts C] {X Y Z : C} (i₁ 
     (h : r₁ ≫ i₁ + r₂ ≫ i₂ = 𝟙 X) : X ≅ Y ⊞ Z := by
   -- `i₁` and `i₂` are split monomorphisms, so orthogonality can be checked after composing with
   -- them, where the hypothesis `h` and the two retraction identities settle it.
-  haveI : IsSplitMono i₁ := ⟨⟨r₁, h₁⟩⟩
-  haveI : IsSplitMono i₂ := ⟨⟨r₂, h₂⟩⟩
+  have : IsSplitMono i₁ := ⟨⟨r₁, h₁⟩⟩
+  have : IsSplitMono i₂ := ⟨⟨r₂, h₂⟩⟩
   have horth₁ : i₁ ≫ r₂ = 0 := by
     have key : i₁ ≫ (r₁ ≫ i₁ + r₂ ≫ i₂) = i₁ := by rw [h, Category.comp_id]
     rw [Preadditive.comp_add, ← Category.assoc, h₁, Category.id_comp] at key
