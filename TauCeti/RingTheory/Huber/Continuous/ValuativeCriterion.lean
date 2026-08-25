@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Order.Group.Cofinal
 public import TauCeti.AlgebraicGeometry.AdicSpace.Cont.Basic
 public import TauCeti.RingTheory.Huber.Continuous.OfCofinal
 public import TauCeti.RingTheory.Huber.ExtendValuation
+import TauCeti.RingTheory.Huber.RingOfDefinition
+import TauCeti.RingTheory.IntegralClosure.Quotient
 public import TauCeti.RingTheory.Valuation.LocalSubring
 public import TauCeti.RingTheory.Valuation.RestrictToConvex
 
@@ -20,7 +22,7 @@ public import TauCeti.RingTheory.Valuation.RestrictToConvex
 Wedhorn's Proposition 7.18(1) tests it against the **continuous** ones only, and that
 strengthening is what a point of `Spa` can actually supply.
 
-## The construction
+## The construction, for a domain
 
 A valuation refuting integrality comes out of Stacks 090P and is not continuous. It is made
 continuous in three moves:
@@ -45,9 +47,24 @@ continuous in three moves:
 The degenerate branch — every generator having value `0` — needs none of this: the comap is
 then already continuous, because a vanishing value is cofinal for free.
 
+## From domains to arbitrary Huber rings
+
+The construction separates `x` from the integral closure of `B` inside `Frac R`, so it needs `R`
+to be a domain. The general case reduces to it modulo a prime. If `x` is not integral over `B`,
+then by `TauCeti.isIntegral_of_forall_isPrime_map` its image in `R ⧸ J` is not integral over the
+image of `B` for some prime `J`. The quotient is again a Huber ring
+(`TauCeti.Huber.IsHuberRing.quotient`), the image of `B` is open because the quotient map is, and
+every open subring of a Huber ring contains a ring of definition
+(`TauCeti.Huber.exists_pairOfDefinition_ringOfDefinition_le`). So the domain case applies in
+`R ⧸ J`, and the valuation it produces is pulled back along the quotient map, which preserves
+continuity (`TauCeti.ValuationSpectrum.IsContinuous.comap`). This is the reduction that takes
+`TauCeti.isIntegral_of_forall_valuation_le_one` from domains to arbitrary rings, carried along
+the quotient topology.
+
 ## Main results
 
-* `TauCeti.Huber.exists_continuous_valuation_of_not_isIntegral` : the refuting valuation.
+* `TauCeti.Huber.exists_continuous_valuation_of_not_isIntegral` : the refuting valuation, for
+  any open subring of any Huber ring.
 * `TauCeti.Huber.isIntegral_of_forall_continuous_valuation_le_one` : Wedhorn Proposition
   7.18(1).
 
@@ -61,7 +78,8 @@ then already continuous, because a vanishing value is cofinal for free.
 Adapted from [C. Birkbeck, *AINTLIB*](https://github.com/CBirkbeck/AINTLIB), branch
 `dev/adic-spaces`, `projects/AdicSpaces/Adic spaces/Presheaf.lean`, declaration
 `isIntegral_of_forall_continuous_valuation_le_one`, where this route is carried out in one
-proof. **Adapted, not copied**: its Phase A is
+proof. **Adapted, not copied**: that statement carries `[IsDomain]`, and the reduction modulo a
+prime has no counterpart there; its Phase A is
 `Subring.exists_le_valuationSubring_notMem_valuation_lt_one_of_pow_mul_mem` here; and its
 continuity step
 asked for domination over the whole ideal of definition and split off an empty generating set
@@ -111,14 +129,14 @@ private theorem cofinalValue_of_forall_pow_lt {A Γ₀ : Type*} [Ring A]
   obtain ⟨n, hn⟩ := h _ (by simpa using MonoidWithZeroHom.ValueGroup₀.embedding_strictMono hγ)
   exact ⟨n, by rw [← map_pow, Valuation.restrict_lt_iff_lt_embedding, map_pow]; exact hn⟩
 
-/-! ### The construction -/
+/-! ### The construction, for a domain -/
 
-/-- **A continuous valuation refuting integrality.** If `x` is not integral over an open subring
-`B` containing the ring of definition, some *continuous* valuation of `R` is `≤ 1` on `B` and
-`> 1` at `x`. This is the substance of Wedhorn Proposition 7.18(1); see the module docstring for
-the three moves. -/
-theorem exists_continuous_valuation_of_not_isIntegral [IsDomain R] (P : PairOfDefinition R)
-    {B : Subring R} (hB : IsOpen (B : Set R))
+/-- **A continuous valuation refuting integrality, for a domain.** If `x` is not integral over
+an open subring `B` containing the ring of definition, some *continuous* valuation of `R` is
+`≤ 1` on `B` and `> 1` at `x`. See the module docstring for the three moves; the domain
+hypothesis is removed in `exists_continuous_valuation_of_not_isIntegral` below. -/
+private theorem exists_continuous_valuation_of_not_isIntegral_of_isDomain [IsDomain R]
+    (P : PairOfDefinition R) {B : Subring R} (hB : IsOpen (B : Set R))
     (hA₀B : (P.ringOfDefinition : Set R) ⊆ B) {x : R} (hx : ¬ IsIntegral B x) :
     ∃ v : Spv R, v.IsContinuous ∧ (∀ b ∈ B, v.toValuativeRel.vle b 1) ∧
       ¬ v.toValuativeRel.vle x 1 := by
@@ -277,21 +295,52 @@ theorem exists_continuous_valuation_of_not_isIntegral [IsDomain R] (P : PairOfDe
       fun b hb ↦ (vle_ofValuation vext b 1).mpr (by simpa using hextB b hb), fun h ↦ ?_⟩
     exact absurd ((vle_ofValuation vext x 1).mp h) (by simpa using not_le.mpr hextx)
 
+/-! ### Arbitrary Huber rings -/
+
+/-- **A continuous valuation refuting integrality.** If `x` is not integral over an open subring
+`B` of a Huber ring `R`, some *continuous* valuation of `R` is `≤ 1` on `B` and `> 1` at `x`.
+This is the substance of Wedhorn Proposition 7.18(1).
+
+Modulo a prime `J` at which `x` stays non-integral over the image of `B`, the quotient is a Huber
+domain in which the image of `B` is open and so contains a ring of definition; the construction
+above applies there, and its valuation is pulled back along the quotient map. -/
+theorem exists_continuous_valuation_of_not_isIntegral [IsHuberRing R] {B : Subring R}
+    (hB : IsOpen (B : Set R)) {x : R} (hx : ¬ IsIntegral B x) :
+    ∃ v : Spv R, v.IsContinuous ∧ (∀ b ∈ B, v.toValuativeRel.vle b 1) ∧
+      ¬ v.toValuativeRel.vle x 1 := by
+  obtain ⟨J, hJ, hxJ⟩ : ∃ J : Ideal R, J.IsPrime ∧
+      ¬ IsIntegral (B.map (Ideal.Quotient.mk J)) (Ideal.Quotient.mk J x) := by
+    by_contra h
+    push Not at h
+    exact hx (isIntegral_of_forall_isPrime_map h)
+  have := hJ
+  have hBJ : IsOpen ((B.map (Ideal.Quotient.mk J) : Subring (R ⧸ J)) : Set (R ⧸ J)) := by
+    rw [Subring.coe_map]
+    exact QuotientRing.isOpenMap_coe J _ hB
+  obtain ⟨Q, hQ⟩ := exists_pairOfDefinition_ringOfDefinition_le hBJ
+  obtain ⟨w, hw, hwB, hwx⟩ := exists_continuous_valuation_of_not_isIntegral_of_isDomain Q hBJ
+    (SetLike.coe_subset_coe.mpr hQ) hxJ
+  refine ⟨ValuationSpectrum.comap (Ideal.Quotient.mk J) w, hw.comap continuous_quotient_mk',
+    fun b hb ↦ ?_, ?_⟩
+  · rw [ValuationSpectrum.comap_vle, map_one]
+    exact hwB _ (Subring.mem_map.mpr ⟨b, hb, rfl⟩)
+  · rw [ValuationSpectrum.comap_vle, map_one]
+    exact hwx
+
 /-- **The valuative criterion for integrality, by continuous valuations** (Wedhorn Proposition
-7.18(1)). If every *continuous* valuation of `R` that is bounded by `1` on an open subring `B`
-containing a ring of definition is bounded by `1` at `x`, then `x` is integral over `B`.
+7.18(1)). If every *continuous* valuation of a Huber ring `R` that is bounded by `1` on an open
+subring `B` is bounded by `1` at `x`, then `x` is integral over `B`.
 
 This strengthens `TauCeti.isIntegral_of_forall_valuation_le_one`, which quantifies over all
 valuations, by cutting the hypothesis down to the continuous ones — the only ones a point of
 `Spa` supplies. -/
-theorem isIntegral_of_forall_continuous_valuation_le_one [IsDomain R] (P : PairOfDefinition R)
-    {B : Subring R} (hB : IsOpen (B : Set R))
-    (hA₀B : (P.ringOfDefinition : Set R) ⊆ B) {x : R}
+theorem isIntegral_of_forall_continuous_valuation_le_one [IsHuberRing R] {B : Subring R}
+    (hB : IsOpen (B : Set R)) {x : R}
     (hvle : ∀ v : Spv R, v.IsContinuous → (∀ b ∈ B, v.toValuativeRel.vle b 1) →
       v.toValuativeRel.vle x 1) :
     IsIntegral B x := by
   by_contra hx
-  obtain ⟨v, hcont, hB', hxv⟩ := exists_continuous_valuation_of_not_isIntegral P hB hA₀B hx
+  obtain ⟨v, hcont, hB', hxv⟩ := exists_continuous_valuation_of_not_isIntegral hB hx
   exact hxv (hvle v hcont hB')
 
 end TauCeti.Huber
