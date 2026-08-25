@@ -26,9 +26,10 @@ as a `ℤ`-module: `AddSubgroup.index_range_nsmul` gives `n ^ finrank ℤ M`. Th
   `AddCommGroup.equiv_free_prod_directSum_zmod` and reduces to the free case on the free part and
   to a counting argument on the finite part.
 * `AddSubgroup.index_range_nsmul_mul_card_ker`: for a subgroup `U ≤ G` of finite index,
-  `(G : nG) * #U[n] = #G[n] * (U : nU)`. So the quantity `(G : nG) / #G[n]` is insensitive to
-  passing to a subgroup of finite index — the statement that makes the rank in
-  `index_range_nsmul_of_fg` well behaved under finite-index subgroups.
+  `(G : nG) * #U[n] = #G[n] * (U : nU)`. This is the cross-multiplied form of "`(G : nG) / #G[n]`
+  is unchanged on passing to a finite-index subgroup", and only the cross-multiplied form is
+  asserted: nothing here forces `G[n]` finite or the indices nonzero, and `Nat.card` and
+  `AddSubgroup.index` are both `0` on infinite arguments, so neither ratio need be defined.
 * `AddEquiv.map_ker_nsmulAddMonoidHom` and `AddEquiv.index_range_nsmulAddMonoidHom`: an additive
   equivalence carries `G[n]` to `H[n]` and preserves the index of `n • G`. These are the kernel
   counterparts of Mathlib's `AddEquiv.map_range_nsmulAddMonoidHom`.
@@ -83,41 +84,22 @@ namespace AddSubgroup
 
 variable {G : Type*} [AddCommGroup G]
 
-/-- The relative index of `nU` in `nG` equals the index of `G[n] ⊔ U`, via the surjection
-`G → nG ⧸ nU` induced by multiplication by `n`. A step of `index_range_nsmul_mul_card_ker`. -/
--- Adapted from the private `relIndex_range_comp_subtype` in Michael Stoll's `EllipticCurves`
--- (`EllipticCurves/Mathlib/SelmerGroup.lean`, pin `66889eada51a`).
+/-- The relative index of `nU` in `nG` equals the index of `G[n] ⊔ U`.
+A step of `index_range_nsmul_mul_card_ker`. -/
+-- Statement adapted from the private `relIndex_range_comp_subtype` in Michael Stoll's
+-- `EllipticCurves` (`EllipticCurves/Mathlib/SelmerGroup.lean`, pin `66889eada51a`); the proof
+-- here is Mathlib's `AddSubgroup.relIndex_map_map` rather than the source's own surjection
+-- `G → nG ⧸ nU` and quotient-isomorphism argument.
 private lemma relIndex_range_comp_subtype (U : AddSubgroup G) (n : ℕ) :
     (((nsmulAddMonoidHom (α := G) n).comp U.subtype).range).relIndex
         (nsmulAddMonoidHom (α := G) n).range =
       ((nsmulAddMonoidHom (α := G) n).ker ⊔ U).index := by
   set φG := nsmulAddMonoidHom (α := G) n
-  set B : AddSubgroup G := (φG.comp U.subtype).range
-  set C : AddSubgroup G := φG.ker ⊔ U
-  set ρ := (QuotientAddGroup.mk' (B.addSubgroupOf φG.range)).comp φG.rangeRestrict with hρdef
-  have hρ : Function.Surjective ρ :=
-    (QuotientAddGroup.mk'_surjective _).comp φG.rangeRestrict_surjective
-  have hker : ρ.ker = C := by
-    ext g
-    rw [AddMonoidHom.mem_ker, hρdef, AddMonoidHom.comp_apply, QuotientAddGroup.mk'_apply,
-      QuotientAddGroup.eq_zero_iff]
-    constructor
-    · intro ⟨u, hu⟩
-      refine AddSubgroup.mem_sup.mpr ⟨g - u, ?_, u, u.2, by abel⟩
-      rw [AddMonoidHom.mem_ker, map_sub]
-      have : φG (u : G) = φG g := hu
-      rw [this, sub_self]
-    · intro hg
-      obtain ⟨k, hk, u, hu, rfl⟩ := AddSubgroup.mem_sup.mp hg
-      refine ⟨⟨u, hu⟩, ?_⟩
-      have hk0 : φG k = 0 := hk
-      change φG (u : G) = φG (k + u)
-      rw [map_add, hk0, zero_add]
-  calc B.relIndex φG.range
-      = Nat.card (φG.range ⧸ B.addSubgroupOf φG.range) := rfl
-    _ = Nat.card (G ⧸ C) := Nat.card_congr <| ((QuotientAddGroup.quotientKerEquivOfSurjective
-          ρ hρ).symm.trans (QuotientAddGroup.quotientAddEquivOfEq hker)).toEquiv
-    _ = C.index := rfl
+  -- `nU` is `φG(U)` and `nG` is `φG(⊤)`, so `relIndex_map_map` applies; `⊤ ⊔ ker = ⊤`
+  -- turns the resulting relative index into a plain index.
+  have hU : (φG.comp U.subtype).range = U.map φG := by ext x; simp
+  rw [hU, AddMonoidHom.range_eq_map φG, AddSubgroup.relIndex_map_map, top_sup_eq,
+    AddSubgroup.relIndex_top_right, sup_comm]
 
 /-- The second isomorphism theorem applied to `G[n]` and `U`: `(U : G[n] ⊔ U) * #U[n] = #G[n]`.
 A step of `index_range_nsmul_mul_card_ker`. -/
@@ -140,8 +122,10 @@ private lemma relIndex_sup_ker_mul_card_ker (U : AddSubgroup G) (n : ℕ) :
   exact (AddSubgroup.card_eq_card_quotient_mul_card_addSubgroup _).symm
 
 /-- **For a subgroup `U` of finite index in a commutative group `G` and any `n`,
-`(G : nG) * #U[n] = #G[n] * (U : nU)`**: the quantity `(G : nG) / #G[n]` is insensitive to passing
-to a subgroup of finite index. -/
+`(G : nG) * #U[n] = #G[n] * (U : nU)`.** This is the cross-multiplied form of "`(G : nG) / #G[n]`
+is unchanged on passing to a finite-index subgroup"; it is the product, not the quotient
+statement, that holds at this generality, since with `G[n]` not assumed finite `Nat.card` and
+`AddSubgroup.index` may both be `0` and neither ratio need be defined. -/
 -- Adapted from `AddSubgroup.index_range_nsmul_mul_card_ker` in Michael Stoll's `EllipticCurves`
 -- (`EllipticCurves/Mathlib/SelmerGroup.lean`, pin `66889eada51a`).
 theorem index_range_nsmul_mul_card_ker (U : AddSubgroup G) [U.FiniteIndex] (n : ℕ) :
