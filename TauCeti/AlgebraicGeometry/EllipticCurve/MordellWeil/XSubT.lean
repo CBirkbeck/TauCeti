@@ -474,9 +474,14 @@ end
 /-- The group of square classes of units of `W.A`. -/
 abbrev M : Type _ := W.Aˣ ⧸ (powMonoidHom 2 : W.Aˣ →* W.Aˣ).range
 
-/- `inferInstance` succeeds here, but instance search does not find this instance at the use
-sites (e.g., for `mul_right_comm` below) unless it is declared. -/
-noncomputable instance : CommGroup W.M := inferInstance
+/-- **The square classes of `W.A` form a commutative group.** This is the target of the descent
+map: `μ` lands in `W.M`, and `M.sq_eq_one` says every element squares to `1` (equivalently
+`M.inv_eq_self`: every element is its own inverse), so `W.M` is an elementary abelian `2`-group.
+
+The instance is stated rather than left to `inferInstance`: the latter succeeds on the spot, but
+instance search does not find it at the use sites below (e.g. for `mul_right_comm` in
+`μX_mul_mul_eq_one`) unless it is declared here. -/
+noncomputable instance M.instCommGroup : CommGroup W.M := inferInstance
 
 /-- The class of a unit of `W.A` is trivial exactly when the unit is a square in `W.A`. -/
 lemma M.mk_eq_one_iff {a : W.A} (ha : IsUnit a) :
@@ -510,15 +515,19 @@ lemma M.mul_self (m : W.M) : m * m = 1 := by rw [← sq, sq_eq_one]
 
 @[simp] lemma M.inv_eq_self (m : W.M) : m⁻¹ = m := inv_eq_of_mul_eq_one_right (M.mul_self m)
 
-variable [DecidableEq K] [W.IsCharNeTwoNF]
+variable [W.IsCharNeTwoNF]
 
-section μ₀
+section μX
 
 variable [W.IsElliptic]
 
+open Classical in
 /-- The descent or `x - T` map on `x`-coordinates: it sends `x` to the square class of `x - T`
 if `f x ≠ 0`, and otherwise to the square class of the corrected representative
-`x - T + fCofactor x`, which is a unit even though `x - T` is not. -/
+`x - T + fCofactor x`, which is a unit even though `x - T` is not.
+
+`Classical` decidability is used for the branch: `μX` is noncomputable regardless, so requiring
+`DecidableEq K` here would buy nothing. -/
 noncomputable def μX (x : K) : W.M :=
   if hx : W.f.eval x = 0
     then (isUnit_mk_sub_X_add_fCofactor_of_eval_f_eq_zero hx).unit
@@ -541,14 +550,31 @@ lemma μX_of_eval_f_ne_zero {x : K} (hx : W.f.eval x ≠ 0) :
     W.μX x = (isUnit_mk_sub_X_of_eval_f_ne_zero hx).unit := by
   simp only [μX, dite_eq_right hx]
 
+end μX
+
+/- `DecidableEq K` enters here and not before: it is what Mathlib's `AddCommGroup W.Point`
+instance requires, so every declaration below that mentions `W.Point` needs it. The
+coordinate-level `μX` above does not mention `W.Point` and does not take it. Declared at the
+outer level so that it stays in scope past the section below. -/
+variable [DecidableEq K]
+
+section μ₀
+
+variable [W.IsElliptic]
+
 /-- The descent or `x - T` map `μ₀` on the group of points of an affine Weierstrass curve.
 This is a plain map; it is upgraded to a group homomorphism `μ` below. -/
 noncomputable def μ₀ : W.Point → W.M
   | 0 => 1
   | .some x _ _ => W.μX x
 
+omit [DecidableEq K] in
+/-- The descent map sends the point at infinity to the trivial square class. -/
 @[simp] lemma μ₀_zero : W.μ₀ 0 = 1 := (rfl)
 
+omit [DecidableEq K] in
+/-- On an affine point the descent map is the coordinate-level map `μX` applied to the
+`x`-coordinate: it does not see `y`. -/
 @[simp] lemma μ₀_some {x y : K} (h : W.Nonsingular x y) : W.μ₀ (.some x y h) = W.μX x := (rfl)
 
 end μ₀
@@ -639,6 +665,9 @@ section μ₀_helper_lemmas
 
 open Point
 
+omit [DecidableEq K] in
+/-- **The descent map takes negation to inversion.** Since `μ₀ P` and `μ₀ (-P)` are computed from
+the same `x`-coordinate, this is the statement that each square class is its own inverse. -/
 lemma μ₀_mul_eq_one (P : W.Point) : W.μ₀ P * W.μ₀ (-P) = 1 := by
   match P with
   | 0 => simp
@@ -697,6 +726,9 @@ private lemma μX_mul_mul_eq_one_of_eval_f_eq_zero (h : W.f.eval xP = 0) :
     exact μX_mul_mul_eq_one_of_eval_f_eq_zero_of_eval_f_eq_zero hP hR hQ hPQR h hR₀
   exact μX_mul_mul_eq_one_of_eval_f_eq_zero_of_ne_of_ne hP hQ hR hPQR h hQ₀ hR₀
 
+/-- **Multiplicativity at the level of `x`-coordinates.** If three affine points sum to `0`, the
+product of the three square classes is trivial. This is the coordinate-level heart of the proof
+that `μ` is a homomorphism; the case split is on how many of the three points are `2`-torsion. -/
 lemma μX_mul_mul_eq_one : W.μX xP * W.μX xQ * W.μX xR = 1 := by
   rcases eq_or_ne (W.f.eval xP) 0 with HP | HP
   · exact μX_mul_mul_eq_one_of_eval_f_eq_zero hP hQ hR hPQR HP
@@ -717,6 +749,9 @@ lemma μX_mul_mul_eq_one : W.μX xP * W.μX xQ * W.μX xR = 1 := by
 
 end μ₀_helper_lemmas
 
+/-- **Multiplicativity of the descent map on collinear triples.** `μX_mul_mul_eq_one` lifted from
+`x`-coordinates to points, including the degenerate cases where one of the three is `0`. This is
+exactly the hypothesis `MonoidHom.ofMapMulMulEqOne` needs to build `μ`. -/
 lemma μ₀_mul_mul_eq_one_of_add_add_eq_zero {P Q R : W.Point} (hPQR : P + Q + R = 0) :
     μ₀ P * μ₀ Q * μ₀ R = 1 := by
   match P, Q, R with
@@ -737,10 +772,16 @@ noncomputable def μ : Multiplicative W.Point →* W.M :=
     simp_rw [← toAdd_eq_zero, toAdd_mul, Function.comp_apply]
     exact μ₀_mul_mul_eq_one_of_add_add_eq_zero
 
+/-- The homomorphism `μ` agrees with the underlying map `μ₀`. This is the characteristic lemma
+for `μ`, and the `simp` normal form: use sites rewrite with it rather than unfolding the
+`MonoidHom.ofMapMulMulEqOne` that defines `μ`. -/
 @[simp]
 lemma μ_apply (P : W.Point) : μ (.ofAdd P) = μ₀ P := by
   simp [μ]
 
+/-- **The descent map kills doubled points.** Consequently `μ` factors through the quotient of
+`W.Point` by its doubled points, which is what makes it a descent map: the image of `μ` can only
+detect a point up to adding `2 • Q`. -/
 @[simp]
 lemma μ₀_two_nsmul (P : W.Point) : W.μ₀ (2 • P) = 1 := by
   rw [← μ_apply, ofAdd_nsmul, map_pow, M.sq_eq_one]
