@@ -30,41 +30,47 @@ The `S`-integers are a Dedekind domain with fraction field `K` whose height-one 
 the `v ∉ S` (`IsDedekindDomain.integerHeightOneSpectrumEquiv`), valuation-compatibly
 (`IsDedekindDomain.valuation_integerHeightOneSpectrumEquiv`). Under that dictionary the Selmer
 condition on a class `u(Kˣ)ⁿ` says exactly that the principal fractional ideal `(u)` of `𝒪_S` has
-all of its multiplicities divisible by `n` — this is `mem_selmerGroup_iff_mem_unitsNDivisible` —
+all of its multiplicities divisible by `n` — this is `mk_mem_selmerGroup_iff_mem_unitsNDivisible` —
 so the right-hand map is the `n`-th root class map
 `TauCeti.AlgebraicGeometry.WeilDivisor.nthRootClass` of the `S`-integers, descended along the
-surjection `unitsNDivisibleToSelmerGroup`.
+surjection `fromUnitsNDivisible`.
 
 ## Main definitions
 
-* `IsDedekindDomain.unitToSelmerGroup`: the left-hand map, from the `S`-units to `K⟮S, n⟯`.
-* `IsDedekindDomain.unitModPowToSelmerGroup`: the same map after dividing out `n`-th powers of
+Mathlib's `Mathlib/RingTheory/DedekindDomain/SelmerGroup.lean` already gives the `S = ∅` case of
+the left-hand map, as `IsDedekindDomain.selmerGroup.fromUnit` and `fromUnitLift`. The general-`S`
+maps below therefore live in the same `IsDedekindDomain.selmerGroup` namespace and follow the same
+`from…`/`to…` scheme.
+
+* `IsDedekindDomain.selmerGroup.fromSUnit`: the left-hand map, from the `S`-units to `K⟮S, n⟯`.
+* `IsDedekindDomain.selmerGroup.fromSUnitLift`: the same map after dividing out `n`-th powers of
   `S`-units, which is the left-hand map of the exact sequence proper.
-* `IsDedekindDomain.unitsNDivisibleToSelmerGroup`: the surjection onto `K⟮S, n⟯` from the units of
-  `K` whose principal `𝒪_S`-ideal is `n`-divisible.
-* `IsDedekindDomain.selmerGroupToClassGroup`: the right-hand map, to `ClassGroup (S.integer K)`.
+* `IsDedekindDomain.selmerGroup.fromUnitsNDivisible`: the surjection onto `K⟮S, n⟯` from the units
+  of `K` whose principal `𝒪_S`-ideal is `n`-divisible.
+* `IsDedekindDomain.selmerGroup.toClassGroup`: the right-hand map, to `ClassGroup (S.integer K)`.
 
 ## Main results
 
-* `IsDedekindDomain.mem_selmerGroup_iff_mem_unitsNDivisible`: the Selmer condition on a
+* `IsDedekindDomain.mk_mem_selmerGroup_iff_mem_unitsNDivisible`: the Selmer condition on a
   representative is `n`-divisibility of its principal `𝒪_S`-ideal.
-* `IsDedekindDomain.unitModPowToSelmerGroup_injective`: **exactness on the left** — the left-hand
+* `IsDedekindDomain.selmerGroup.fromSUnitLift_injective`: **exactness on the left** — the left-hand
   map is injective, because an `n`-th root in `K` of an `S`-unit is itself an `S`-unit.
-* `IsDedekindDomain.ker_selmerGroupToClassGroup`: **exactness in the middle** — a Selmer class has
+* `IsDedekindDomain.selmerGroup.ker_toClassGroup`: **exactness in the middle** — a Selmer class has
   trivial `n`-th-root ideal class exactly when an `S`-unit represents it.
-* `IsDedekindDomain.range_selmerGroupToClassGroup`: **exactness on the right** — the image is the
+* `IsDedekindDomain.selmerGroup.range_toClassGroup`: **exactness on the right** — the image is the
   `n`-torsion of the `S`-class group. (Surjectivity onto the whole class group is false in
   general.) Of the three, only this one needs `n ≠ 0`.
-* `IsDedekindDomain.finite_selmerGroup`: **the Selmer group `K⟮S, n⟯` is finite** when `Cl(R)` is
-  finite, `Rˣ` is finitely generated, `S` is finite and `n ≠ 0`.
+* `IsDedekindDomain.selmerGroup.finite`: **the Selmer group `K⟮S, n⟯` is finite** when the
+  `S`-class group is finite, the `S`-units are finitely generated and `n ≠ 0`.
 
 Finiteness is not automatic for a general Dedekind domain — it already fails for `R = K` a field
 whose unit group is not `n`-divisible of finite index — and the exact sequence isolates what is
-needed: finite generation of the `S`-units and finiteness of the `S`-class group. Both are on hand,
-as `Set.unit_fg_of_units` and `IsDedekindDomain.finite_integer_classGroup`, and both are
-`instance`s, so `finite_selmerGroup` takes the hypotheses in the form the arithmetic supplies them:
-`[Finite (ClassGroup R)]`, `[Monoid.FG Rˣ]`, `[Finite S]` and `[NeZero n]`. For `R` the ring of
-integers of a number field these are the class number theorem and Dirichlet's unit theorem.
+needed: `[Group.FG (S.unit K)]` and `[Finite (ClassGroup (S.integer K))]`, which are exactly the
+hypotheses `selmerGroup.finite` takes. Both are on hand over the base ring, as the `instance`s
+`Set.unit_fg_of_units` and `IsDedekindDomain.finite_integer_classGroup`, so a caller holding
+`[Finite (ClassGroup R)]`, `[Monoid.FG Rˣ]` and `[Finite S]` gets the finiteness by instance
+resolution. For `R` the ring of integers of a number field those are the class number theorem and
+Dirichlet's unit theorem.
 
 ## References
 
@@ -74,8 +80,9 @@ Adapted from Michael Stoll's elliptic-curves formalisation
 follows. The names differ: the substrate that source keeps in its own `FractionalIdeal` file is
 already here as `TauCeti.AlgebraicGeometry.WeilDivisor.nthRootClass` and its neighbours, and the
 `S`-integer dictionary is already here under `IsDedekindDomain.integer*`, so only the Selmer layer
-itself is adapted. Following this repository's convention for adapted material, the upstream
-authorship is credited here rather than in the copyright header.
+itself is adapted, and it is named after Mathlib's `selmerGroup` API rather than after the source.
+Following this repository's convention for adapted material, the upstream authorship is credited
+here rather than in the copyright header.
 -/
 
 public section
@@ -87,76 +94,6 @@ namespace IsDedekindDomain
 
 variable {R : Type*} [CommRing R] [IsDedekindDomain R] (K : Type*) [Field K] [Algebra R K]
   [IsFractionRing R K] (S : Set (HeightOneSpectrum R)) (n : ℕ)
-
-/-! ### The left-hand map: `S`-units into the Selmer group -/
-
-/-- The class of an `S`-unit lies in the Selmer group `K⟮S, n⟯`: away from `S` an `S`-unit has
-trivial valuation, so in particular a valuation divisible by `n`. -/
-noncomputable def unitToSelmerGroup : S.unit K →* selmerGroup (K := K) (S := S) (n := n) where
-  toFun x := ⟨QuotientGroup.mk (x : Kˣ), fun v hv ↦ by
-    rw [valuationOfNeZeroMod_mk_eq_one_iff]
-    simp [(valuationOfNeZero_eq_one_iff v (x : Kˣ)).mpr (x.property v hv)]⟩
-  map_one' := rfl
-  map_mul' _ _ := rfl
-
-/-- The Selmer class of an `S`-unit is, underneath the subtype, just its class in `Kˣ ⧸ (Kˣ)ⁿ`. -/
-@[simp]
-lemma coe_unitToSelmerGroup (x : S.unit K) :
-    (unitToSelmerGroup K S n x : Kˣ ⧸ (powMonoidHom n : Kˣ →* Kˣ).range) =
-      QuotientGroup.mk (x : Kˣ) :=
-  (rfl)
-
-/-- The left-hand map of the fundamental exact sequence: an `S`-unit modulo `n`-th powers of
-`S`-units maps to the Selmer group `K⟮S, n⟯`. -/
-noncomputable def unitModPowToSelmerGroup :
-    (S.unit K ⧸ (powMonoidHom n : S.unit K →* S.unit K).range) →*
-      selmerGroup (K := K) (S := S) (n := n) :=
-  QuotientGroup.lift _ (unitToSelmerGroup K S n) <| by
-    rintro _ ⟨x, rfl⟩
-    exact Subtype.ext <| (QuotientGroup.eq_one_iff _).mpr ⟨(x : Kˣ), rfl⟩
-
-/-- Dividing out the `n`-th powers of `S`-units does not change the image: the two left-hand maps
-have the same range. -/
-@[simp]
-lemma range_unitModPowToSelmerGroup :
-    (unitModPowToSelmerGroup K S n).range = (unitToSelmerGroup K S n).range := by
-  ext
-  refine ⟨?_, fun ⟨y, hy⟩ ↦ ⟨QuotientGroup.mk y, hy⟩⟩
-  rintro ⟨y, rfl⟩
-  induction y using QuotientGroup.induction_on with
-  | H y => exact ⟨y, rfl⟩
-
-/-- **Exactness on the left of the fundamental exact sequence.** The left-hand map is injective:
-an `S`-unit that becomes an `n`-th power in `K` is already the `n`-th power of an `S`-unit. What
-makes this work is that an `n`-th root `y` of an `S`-unit is again an `S`-unit: away from `S` the
-relation `n * ord_v(y) = ord_v(x) = 0` forces `ord_v(y) = 0`.
-
-Like `ker_selmerGroupToClassGroup`, and unlike the exactness on the right, this needs no `n ≠ 0`:
-for `n = 0` both sides divide out the trivial subgroup and the claim degenerates to the
-injectivity of `S.unit K ≤ Kˣ`. -/
-theorem unitModPowToSelmerGroup_injective :
-    Function.Injective (unitModPowToSelmerGroup K S n) := by
-  rw [injective_iff_map_eq_one]
-  intro c
-  induction c using QuotientGroup.induction_on with
-  | H x =>
-    intro hx
-    obtain ⟨y, hy⟩ := (QuotientGroup.eq_one_iff (x : Kˣ)).mp (congrArg Subtype.val hx)
-    rw [powMonoidHom_apply] at hy
-    rcases eq_or_ne n 0 with rfl | hn
-    · rw [pow_zero] at hy
-      rw [show x = 1 from Subtype.ext hy.symm]
-      rfl
-    · refine (QuotientGroup.eq_one_iff _).mpr ⟨⟨y, fun v hv ↦ ?_⟩, Subtype.ext ?_⟩
-      · refine (valuationOfNeZero_eq_one_iff v y).mp ?_
-        have h1 : v.valuationOfNeZero y ^ n = 1 := by
-          rw [← map_pow, hy]
-          exact (valuationOfNeZero_eq_one_iff v _).mpr (x.property v hv)
-        have h2 : Multiplicative.toAdd (v.valuationOfNeZero y) * (n : ℤ) = 0 := by
-          rw [← Int.toAdd_pow, h1, toAdd_one]
-        exact toAdd_eq_zero.mp <| (mul_eq_zero.mp h2).resolve_right (Nat.cast_ne_zero.mpr hn)
-      · rw [powMonoidHom_apply, SubmonoidClass.coe_pow]
-        exact hy
 
 /-! ### The Selmer condition as `n`-divisibility of an ideal -/
 
@@ -186,7 +123,7 @@ private lemma toAdd_valuationOfNeZero_eq_neg_count {T : Type*} [CommRing T] [IsD
 ideal `(u)` of the `S`-integers has all of its multiplicities divisible by `n`. This is the
 dictionary that turns the Selmer condition into a statement about ideals of `𝒪_S`, and hence
 lets the `n`-th root class map act as the right-hand map of the exact sequence. -/
-lemma mem_selmerGroup_iff_mem_unitsNDivisible (u : Kˣ) :
+lemma mk_mem_selmerGroup_iff_mem_unitsNDivisible (u : Kˣ) :
     (QuotientGroup.mk u : Kˣ ⧸ (powMonoidHom n : Kˣ →* Kˣ).range) ∈
         selmerGroup (R := R) (K := K) (S := S) (n := n) ↔
       u ∈ unitsNDivisible (S.integer K) K n := by
@@ -208,36 +145,113 @@ lemma mem_selmerGroup_iff_mem_unitsNDivisible (u : Kˣ) :
   · have hw := h (integerHeightOneSpectrumEquiv K S ⟨v, hv⟩)
     rwa [valuationOfNeZero_integerHeightOneSpectrumEquiv K S ⟨v, hv⟩ u] at hw
 
+namespace selmerGroup
+
+/-! ### The left-hand map: `S`-units into the Selmer group -/
+
+/-- The class of an `S`-unit lies in the Selmer group `K⟮S, n⟯`: away from `S` an `S`-unit has
+trivial valuation, so in particular a valuation divisible by `n`. -/
+noncomputable def fromSUnit : S.unit K →* selmerGroup (K := K) (S := S) (n := n) where
+  toFun x := ⟨QuotientGroup.mk (x : Kˣ), fun v hv ↦ by
+    rw [valuationOfNeZeroMod_mk_eq_one_iff]
+    simp [(valuationOfNeZero_eq_one_iff v (x : Kˣ)).mpr (x.property v hv)]⟩
+  map_one' := rfl
+  map_mul' _ _ := rfl
+
+/-- The Selmer class of an `S`-unit is, underneath the subtype, just its class in `Kˣ ⧸ (Kˣ)ⁿ`. -/
+@[simp]
+lemma coe_fromSUnit (x : S.unit K) :
+    (fromSUnit K S n x : Kˣ ⧸ (powMonoidHom n : Kˣ →* Kˣ).range) =
+      QuotientGroup.mk (x : Kˣ) :=
+  (rfl)
+
+/-- The left-hand map of the fundamental exact sequence: an `S`-unit modulo `n`-th powers of
+`S`-units maps to the Selmer group `K⟮S, n⟯`. -/
+noncomputable def fromSUnitLift :
+    (S.unit K ⧸ (powMonoidHom n : S.unit K →* S.unit K).range) →*
+      selmerGroup (K := K) (S := S) (n := n) :=
+  QuotientGroup.lift _ (fromSUnit K S n) <| by
+    rintro _ ⟨x, rfl⟩
+    exact Subtype.ext <| (QuotientGroup.eq_one_iff _).mpr ⟨(x : Kˣ), rfl⟩
+
+/-- The defining property of `fromSUnitLift`: on the class of an `S`-unit it agrees with the map
+`fromSUnit` it descends from. -/
+@[simp]
+lemma fromSUnitLift_mk (x : S.unit K) :
+    fromSUnitLift K S n (QuotientGroup.mk x) = fromSUnit K S n x :=
+  (rfl)
+
+/-- Dividing out the `n`-th powers of `S`-units does not change the image: the two left-hand maps
+have the same range. -/
+@[simp]
+lemma range_fromSUnitLift : (fromSUnitLift K S n).range = (fromSUnit K S n).range := by
+  ext
+  refine ⟨?_, fun ⟨y, hy⟩ ↦ ⟨QuotientGroup.mk y, (fromSUnitLift_mk K S n y).trans hy⟩⟩
+  rintro ⟨y, rfl⟩
+  induction y using QuotientGroup.induction_on with
+  | H y => exact ⟨y, (fromSUnitLift_mk K S n y).symm⟩
+
+/-- **Exactness on the left of the fundamental exact sequence.** The left-hand map is injective:
+an `S`-unit that becomes an `n`-th power in `K` is already the `n`-th power of an `S`-unit. What
+makes this work is that an `n`-th root `y` of an `S`-unit is again an `S`-unit: away from `S` the
+relation `n * ord_v(y) = ord_v(x) = 0` forces `ord_v(y) = 0`.
+
+Like `ker_toClassGroup`, and unlike the exactness on the right, this needs no `n ≠ 0`: for `n = 0`
+both sides divide out the trivial subgroup and the claim degenerates to the injectivity of
+`S.unit K ≤ Kˣ`. -/
+theorem fromSUnitLift_injective : Function.Injective (fromSUnitLift K S n) := by
+  rw [injective_iff_map_eq_one]
+  intro c
+  induction c using QuotientGroup.induction_on with
+  | H x =>
+    intro hx
+    obtain ⟨y, hy⟩ := (QuotientGroup.eq_one_iff (x : Kˣ)).mp (congrArg Subtype.val hx)
+    rw [powMonoidHom_apply] at hy
+    rcases eq_or_ne n 0 with rfl | hn
+    · -- For `n = 0` the subgroup divided out is trivial, and `hy` already pins `x` down to `1`.
+      rw [pow_zero] at hy
+      have hx1 : x = 1 := Subtype.ext hy.symm
+      rw [hx1, QuotientGroup.mk_one]
+    · refine (QuotientGroup.eq_one_iff _).mpr ⟨⟨y, fun v hv ↦ ?_⟩, Subtype.ext ?_⟩
+      · refine (valuationOfNeZero_eq_one_iff v y).mp ?_
+        have h1 : v.valuationOfNeZero y ^ n = 1 := by
+          rw [← map_pow, hy]
+          exact (valuationOfNeZero_eq_one_iff v _).mpr (x.property v hv)
+        have h2 : Multiplicative.toAdd (v.valuationOfNeZero y) * (n : ℤ) = 0 := by
+          rw [← Int.toAdd_pow, h1, toAdd_one]
+        exact toAdd_eq_zero.mp <| (mul_eq_zero.mp h2).resolve_right (Nat.cast_ne_zero.mpr hn)
+      · rw [powMonoidHom_apply, SubmonoidClass.coe_pow]
+        exact hy
+
 /-! ### The surjection from the `n`-divisible units -/
 
 /-- The surjection from the units of `K` whose principal `𝒪_S`-ideal is `n`-divisible onto the
 Selmer group `K⟮S, n⟯`, given by taking the class modulo `n`-th powers. -/
-noncomputable def unitsNDivisibleToSelmerGroup :
+noncomputable def fromUnitsNDivisible :
     unitsNDivisible (S.integer K) K n →* selmerGroup (R := R) (K := K) (S := S) (n := n) :=
   ((QuotientGroup.mk' (powMonoidHom n : Kˣ →* Kˣ).range).comp
     (unitsNDivisible (S.integer K) K n).subtype).codRestrict _
-      fun u ↦ (mem_selmerGroup_iff_mem_unitsNDivisible K S n (u : Kˣ)).mpr u.2
+      fun u ↦ (mk_mem_selmerGroup_iff_mem_unitsNDivisible K S n (u : Kˣ)).mpr u.2
 
-/-- Underneath the codomain restriction, `unitsNDivisibleToSelmerGroup` is the quotient map. -/
+/-- Underneath the codomain restriction, `fromUnitsNDivisible` is the quotient map. -/
 @[simp]
-lemma coe_unitsNDivisibleToSelmerGroup (u : unitsNDivisible (S.integer K) K n) :
-    (unitsNDivisibleToSelmerGroup K S n u : Kˣ ⧸ (powMonoidHom n : Kˣ →* Kˣ).range) =
+lemma coe_fromUnitsNDivisible (u : unitsNDivisible (S.integer K) K n) :
+    (fromUnitsNDivisible K S n u : Kˣ ⧸ (powMonoidHom n : Kˣ →* Kˣ).range) =
       QuotientGroup.mk (u : Kˣ) :=
   (rfl)
 
 /-- **Every Selmer class is represented by an `n`-divisible unit.** This is what lets the `n`-th
 root class map be transported from `unitsNDivisible` to the Selmer group. -/
-lemma unitsNDivisibleToSelmerGroup_surjective :
-    Function.Surjective (unitsNDivisibleToSelmerGroup K S n) := by
+lemma fromUnitsNDivisible_surjective : Function.Surjective (fromUnitsNDivisible K S n) := by
   rintro ⟨c, hc⟩
   induction c using QuotientGroup.induction_on with
-  | H u => exact ⟨⟨u, (mem_selmerGroup_iff_mem_unitsNDivisible K S n u).mp hc⟩, rfl⟩
+  | H u => exact ⟨⟨u, (mk_mem_selmerGroup_iff_mem_unitsNDivisible K S n u).mp hc⟩, rfl⟩
 
-/-- The kernel of `unitsNDivisibleToSelmerGroup` is contained in that of the `n`-th root class
-map: a unit that is an `n`-th power in `Kˣ` has principal `n`-th root. This is what lets the
-`n`-th root class map descend to the Selmer group. -/
-lemma ker_unitsNDivisibleToSelmerGroup_le :
-    (unitsNDivisibleToSelmerGroup K S n).ker ≤ (nthRootClass (S.integer K) K n).ker := by
+/-- The kernel of `fromUnitsNDivisible` is contained in that of the `n`-th root class map: a unit
+that is an `n`-th power in `Kˣ` has principal `n`-th root. This is what lets the `n`-th root class
+map descend to the Selmer group. -/
+lemma ker_fromUnitsNDivisible_le :
+    (fromUnitsNDivisible K S n).ker ≤ (nthRootClass (S.integer K) K n).ker := by
   intro u hu
   rw [MonoidHom.mem_ker] at hu ⊢
   obtain ⟨w, hw⟩ := (QuotientGroup.eq_one_iff _).mp (congrArg Subtype.val hu)
@@ -249,46 +263,33 @@ lemma ker_unitsNDivisibleToSelmerGroup_le :
 /-- The right-hand map of the fundamental exact sequence: a Selmer class is sent to the ideal
 class of the `n`-th root of the principal ideal `(u)` of any representative `u`, in the class
 group of the `S`-integers. Obtained by descending the `n`-th root class map along
-`unitsNDivisibleToSelmerGroup`. -/
-noncomputable def selmerGroupToClassGroup :
+`fromUnitsNDivisible`. -/
+noncomputable def toClassGroup :
     selmerGroup (R := R) (K := K) (S := S) (n := n) →* ClassGroup (S.integer K) :=
-  (QuotientGroup.lift _ (nthRootClass (S.integer K) K n)
-      (ker_unitsNDivisibleToSelmerGroup_le K S n)).comp
-    (QuotientGroup.quotientKerEquivOfSurjective _
-      (unitsNDivisibleToSelmerGroup_surjective K S n)).symm.toMonoidHom
+  (fromUnitsNDivisible K S n).liftOfSurjective (fromUnitsNDivisible_surjective K S n)
+    ⟨nthRootClass (S.integer K) K n, ker_fromUnitsNDivisible_le K S n⟩
 
-/-- The defining property of `selmerGroupToClassGroup`: on the class of an `n`-divisible unit it
-agrees with the `n`-th root class map it descends from. Every computation with the right-hand map
-goes through this lemma, after `unitsNDivisibleToSelmerGroup_surjective` supplies a
-representative. -/
-lemma selmerGroupToClassGroup_unitsNDivisibleToSelmerGroup
-    (u : unitsNDivisible (S.integer K) K n) :
-    selmerGroupToClassGroup K S n (unitsNDivisibleToSelmerGroup K S n u) =
-      nthRootClass (S.integer K) K n u := by
-  have h : (QuotientGroup.quotientKerEquivOfSurjective _
-      (unitsNDivisibleToSelmerGroup_surjective K S n)).symm
-        (unitsNDivisibleToSelmerGroup K S n u) = QuotientGroup.mk u := by
-    rw [MulEquiv.symm_apply_eq]
-    rfl
-  rw [selmerGroupToClassGroup, MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom, h,
-    QuotientGroup.lift_mk']
+/-- The defining property of `toClassGroup`: on the class of an `n`-divisible unit it agrees with
+the `n`-th root class map it descends from. Every computation with the right-hand map goes through
+this lemma, after `fromUnitsNDivisible_surjective` supplies a representative. -/
+lemma toClassGroup_fromUnitsNDivisible (u : unitsNDivisible (S.integer K) K n) :
+    toClassGroup K S n (fromUnitsNDivisible K S n u) = nthRootClass (S.integer K) K n u :=
+  MonoidHom.liftOfRightInverse_comp_apply _ _ _ _ u
 
 /-- **Exactness in the middle of the fundamental exact sequence.** A Selmer class has trivial
 `n`-th-root ideal class exactly when it is represented by an `S`-unit.
 
 No `[NeZero n]` is needed, unlike on the right-hand exactness below: `nthRootClass_eq_one_iff`
 is stated here for every `n`, degenerate `n = 0` included. -/
-theorem ker_selmerGroupToClassGroup :
-    (selmerGroupToClassGroup K S n).ker = (unitToSelmerGroup K S n).range := by
+theorem ker_toClassGroup : (toClassGroup K S n).ker = (fromSUnit K S n).range := by
   ext x
-  obtain ⟨u, rfl⟩ := unitsNDivisibleToSelmerGroup_surjective K S n x
-  rw [MonoidHom.mem_ker, selmerGroupToClassGroup_unitsNDivisibleToSelmerGroup,
+  obtain ⟨u, rfl⟩ := fromUnitsNDivisible_surjective K S n x
+  rw [MonoidHom.mem_ker, toClassGroup_fromUnitsNDivisible,
     nthRootClass_eq_one_iff (S.integer K) K]
   constructor
   · rintro ⟨a, w, hw⟩
     refine ⟨(S.unitEquivUnitsInteger K).symm a, Subtype.ext ?_⟩
-    change (QuotientGroup.mk _ : Kˣ ⧸ (powMonoidHom n : Kˣ →* Kˣ).range) =
-      QuotientGroup.mk (u : Kˣ)
+    rw [coe_fromSUnit, coe_fromUnitsNDivisible]
     have hcoe : ((S.unitEquivUnitsInteger K).symm a : Kˣ) =
         Units.map (algebraMap (S.integer K) K : S.integer K →* K) a := Units.ext rfl
     -- The two representatives differ by `w ^ n`, which is what the quotient divides out.
@@ -304,18 +305,17 @@ theorem ker_selmerGroupToClassGroup :
     rw [hmap, hw, mul_inv_cancel_left]
     rfl
 
-/-- **Exactness on the right of the fundamental exact sequence.** The image of
-`selmerGroupToClassGroup` is the `n`-torsion of the class group of the `S`-integers; surjectivity
-onto the full class group fails in general. -/
-theorem range_selmerGroupToClassGroup [NeZero n] :
-    (selmerGroupToClassGroup K S n).range =
-      (powMonoidHom n : ClassGroup (S.integer K) →* ClassGroup (S.integer K)).ker := by
+/-- **Exactness on the right of the fundamental exact sequence.** The image of `toClassGroup` is
+the `n`-torsion of the class group of the `S`-integers; surjectivity onto the full class group
+fails in general. -/
+theorem range_toClassGroup [NeZero n] : (toClassGroup K S n).range =
+    (powMonoidHom n : ClassGroup (S.integer K) →* ClassGroup (S.integer K)).ker := by
   ext c
   rw [MonoidHom.mem_ker, powMonoidHom_apply]
   constructor
   · rintro ⟨x, rfl⟩
-    obtain ⟨u, rfl⟩ := unitsNDivisibleToSelmerGroup_surjective K S n x
-    rw [selmerGroupToClassGroup_unitsNDivisibleToSelmerGroup]
+    obtain ⟨u, rfl⟩ := fromUnitsNDivisible_surjective K S n x
+    rw [toClassGroup_fromUnitsNDivisible]
     exact nthRootClass_pow _ _ _ _
   · intro hc
     obtain ⟨I, rfl⟩ : ∃ I, ClassGroup.mk K I = c :=
@@ -329,8 +329,8 @@ theorem range_selmerGroupToClassGroup [NeZero n] :
       rw [← coe_toPrincipalIdeal, hx, Units.val_pow_eq_pow_val, count_pow]
     have hmem : x ∈ unitsNDivisible (S.integer K) K n :=
       mem_unitsNDivisible.mpr fun v ↦ by rw [hcount v]; exact Dvd.intro _ rfl
-    refine ⟨unitsNDivisibleToSelmerGroup K S n ⟨x, hmem⟩, ?_⟩
-    rw [selmerGroupToClassGroup_unitsNDivisibleToSelmerGroup, nthRootClass_apply]
+    refine ⟨fromUnitsNDivisible K S n ⟨x, hmem⟩, ?_⟩
+    rw [toClassGroup_fromUnitsNDivisible, nthRootClass_apply]
     congr 1
     refine units_eq_of_forall_count_eq _ _ fun v ↦ ?_
     rw [count_nthRootHom, coe_unitsNDivisibleToNDivisible, coe_toPrincipalIdeal, hcount v,
@@ -338,26 +338,33 @@ theorem range_selmerGroupToClassGroup [NeZero n] :
 
 /-! ### Finiteness -/
 
-variable (R) in
-/-- **The Selmer group `K⟮S, n⟯` is finite**, provided that the class group of `R` is finite, that
-`Rˣ` is finitely generated, that `S` is finite and that `n ≠ 0`. This discharges the `TODO`
+/-- **The Selmer group `K⟮S, n⟯` is finite**, provided that the `S`-class group is finite, that the
+`S`-units are finitely generated and that `n ≠ 0`. This discharges the `TODO`
 *"proofs of finiteness for global fields"* of `Mathlib/RingTheory/DedekindDomain/SelmerGroup.lean`.
 
-The image of `unitModPowToSelmerGroup` is finite, because its source is the quotient of the
-finitely generated commutative group of `S`-units by its `n`-th powers. By
-`ker_selmerGroupToClassGroup` that image is the kernel of `selmerGroupToClassGroup`, whose target
-`ClassGroup (S.integer K)` is finite; a group with finite kernel and finite quotient is finite. -/
-theorem finite_selmerGroup [Finite (ClassGroup R)] [Monoid.FG Rˣ] [Finite S] [NeZero n] :
+The image of `fromSUnitLift` is finite, because its source is the quotient of the finitely
+generated commutative group of `S`-units by its `n`-th powers. By `ker_toClassGroup` that image is
+the kernel of `toClassGroup`, whose target `ClassGroup (S.integer K)` is finite; a group with
+finite kernel and finite quotient is finite.
+
+The two hypotheses are exactly what the proof consumes. They are in turn supplied by the
+arithmetic over the base ring: `IsDedekindDomain.finite_integer_classGroup` and
+`Set.unit_fg_of_units` are `instance`s, so a caller holding `[Finite (ClassGroup R)]`,
+`[Monoid.FG Rˣ]` and `[Finite S]` — for `R` the ring of integers of a number field, the class
+number theorem and Dirichlet's unit theorem — still gets this by instance resolution. -/
+instance finite [Finite (ClassGroup (S.integer K))] [Group.FG (S.unit K)] [NeZero n] :
     Finite (selmerGroup (K := K) (S := S) (n := n)) := by
-  have hker : Finite (selmerGroupToClassGroup K S n).ker := by
-    rw [ker_selmerGroupToClassGroup, ← range_unitModPowToSelmerGroup]
+  have hker : Finite (toClassGroup K S n).ker := by
+    rw [ker_toClassGroup, ← range_fromSUnitLift]
     have : Finite (S.unit K ⧸ (powMonoidHom n : S.unit K →* S.unit K).range) :=
       Subgroup.finiteIndex_iff_finite_quotient.mp <|
         Subgroup.finiteIndex_range_powMonoidHom_of_fg _ (NeZero.ne n)
     exact Finite.Set.finite_range _
-  have : Finite (selmerGroup (K := K) (S := S) (n := n) ⧸ (selmerGroupToClassGroup K S n).ker) :=
-    .of_injective _ (QuotientGroup.kerLift_injective (selmerGroupToClassGroup K S n))
-  exact Finite.of_subgroup_quotient (selmerGroupToClassGroup K S n).ker
+  have : Finite (selmerGroup (K := K) (S := S) (n := n) ⧸ (toClassGroup K S n).ker) :=
+    .of_injective _ (QuotientGroup.kerLift_injective (toClassGroup K S n))
+  exact Finite.of_subgroup_quotient (toClassGroup K S n).ker
+
+end selmerGroup
 
 end IsDedekindDomain
 
