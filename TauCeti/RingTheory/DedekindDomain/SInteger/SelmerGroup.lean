@@ -97,27 +97,23 @@ variable {R : Type*} [CommRing R] [IsDedekindDomain R] (K : Type*) [Field K] [Al
 
 /-! ### The Selmer condition as `n`-divisibility of an ideal -/
 
-/-- Transport of the integer-valued valuation along the correspondence between the height-one
-primes of `R` away from `S` and those of the `S`-integers. -/
+/-- **The correspondence preserves the integer-valued valuation**: the `Multiplicative ℤ`-valued
+valuation of the `S`-integers at the prime above `v` is the one of `R` at `v`. This is the `Kˣ`
+companion of `valuation_integerPrimeOverOfNotMem`. -/
+@[simp]
+lemma valuationOfNeZero_integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉ S) (u : Kˣ) :
+    (integerPrimeOverOfNotMem K S hv).valuationOfNeZero u = v.valuationOfNeZero u := by
+  rw [← WithZero.coe_inj, valuationOfNeZero_eq, valuationOfNeZero_eq,
+    valuation_integerPrimeOverOfNotMem K S hv (u : K)]
+
+/-- Transport of the integer-valued valuation, phrased through the equivalence. Not a `simp`
+lemma: `integerHeightOneSpectrumEquiv_apply` rewrites the left-hand side to
+`integerPrimeOverOfNotMem` first, so this form is never in normal form — the `simp` lemma is
+`valuationOfNeZero_integerPrimeOverOfNotMem` above. -/
 lemma valuationOfNeZero_integerHeightOneSpectrumEquiv (v : {v : HeightOneSpectrum R // v ∉ S})
     (u : Kˣ) : (integerHeightOneSpectrumEquiv K S v).valuationOfNeZero u
       = (v : HeightOneSpectrum R).valuationOfNeZero u := by
-  rw [← WithZero.coe_inj, valuationOfNeZero_eq, valuationOfNeZero_eq,
-    valuation_integerHeightOneSpectrumEquiv K S v (u : K)]
-
-/-- The `v`-adic order of a unit is minus the multiplicity of its principal fractional ideal.
-This is the `Multiplicative ℤ`-valued form of
-`fractionalIdeal_count_toPrincipalIdeal_eq_neg_log_valuation`, which states the same fact through
-`WithZero.log` of the `ℤₘ₀`-valued valuation. It is needed at two different base rings below — `R`
-itself and the `S`-integers — so it is stated for a general Dedekind domain with fraction field
-`K`. -/
-private lemma toAdd_valuationOfNeZero_eq_neg_count {T : Type*} [CommRing T] [IsDedekindDomain T]
-    [Algebra T K] [IsFractionRing T K] (w : HeightOneSpectrum T) (u : Kˣ) :
-    Multiplicative.toAdd (w.valuationOfNeZero u) = -count K w (spanSingleton T⁰ (u : K)) := by
-  have h := fractionalIdeal_count_toPrincipalIdeal_eq_neg_log_valuation (R := T) (K := K) w u
-  rw [coe_toPrincipalIdeal, ← valuationOfNeZero_eq] at h
-  rw [h, neg_neg]
-  rfl
+  rw [integerHeightOneSpectrumEquiv_apply, valuationOfNeZero_integerPrimeOverOfNotMem]
 
 /-- The class of `u` lies in the Selmer group `K⟮S, n⟯` exactly when the principal fractional
 ideal `(u)` of the `S`-integers has all of its multiplicities divisible by `n`. This is the
@@ -135,8 +131,14 @@ lemma mk_mem_selmerGroup_iff_mem_unitsNDivisible (u : Kˣ) :
       ∀ w : HeightOneSpectrum (S.integer K),
         (n : ℤ) ∣ Multiplicative.toAdd (w.valuationOfNeZero u) := by
     rw [mem_unitsNDivisible]
-    exact forall_congr' fun w ↦ by
-      rw [toAdd_valuationOfNeZero_eq_neg_count K w u, Int.dvd_neg]
+    refine forall_congr' fun w ↦ ?_
+    have hw : Multiplicative.toAdd (w.valuationOfNeZero u)
+        = -count K w (spanSingleton (S.integer K)⁰ (u : K)) := by
+      have h := adicOrd_eq_fractionalIdeal_count (R := S.integer K) (K := K) w (Additive.ofMul u)
+      rw [coe_toPrincipalIdeal, toMul_ofMul, adicOrd_ofMul, ← valuationOfNeZero_eq] at h
+      rw [← h, neg_neg]
+      rfl
+    rw [hw, Int.dvd_neg]
   rw [lhs, rhs]
   refine ⟨fun h w ↦ ?_, fun h v hv ↦ ?_⟩
   · rw [← (integerHeightOneSpectrumEquiv K S).apply_symm_apply w,
@@ -272,6 +274,7 @@ noncomputable def toClassGroup :
 /-- The defining property of `toClassGroup`: on the class of an `n`-divisible unit it agrees with
 the `n`-th root class map it descends from. Every computation with the right-hand map goes through
 this lemma, after `fromUnitsNDivisible_surjective` supplies a representative. -/
+@[simp]
 lemma toClassGroup_fromUnitsNDivisible (u : unitsNDivisible (S.integer K) K n) :
     toClassGroup K S n (fromUnitsNDivisible K S n u) = nthRootClass (S.integer K) K n u :=
   MonoidHom.liftOfRightInverse_comp_apply _ _ _ _ u
