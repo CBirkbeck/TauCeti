@@ -270,7 +270,7 @@ private lemma mem_SLnZ_of_coprime_scaling (C : GL (Fin n) ℚ)
 `∏ k, b k`, scaling `c / b q` by the whole product leaves an integer.  This is the arithmetic
 endgame shared by `diagConj_scaling` and `diagConj_scaling_inv_right`, which differ only in
 which factor plays the role of `c`. -/
-private lemma prod_mul_inv_isInt (b : Fin n → ℕ) (hb : ∀ i, 0 < b i) (q : Fin n) (c : ℤ) :
+private lemma prod_mul_inv_isInt (b : Fin n → ℕ) (q : Fin n) (hbq : 0 < b q) (c : ℤ) :
     ∃ z : ℤ, (∏ k, (b k : ℚ)) * ((c : ℚ) * (b q : ℚ)⁻¹) = z := by
   have h_dvd : (b q : ℤ) ∣ ∏ k, (b k : ℤ) := Finset.dvd_prod_of_mem _ (Finset.mem_univ q)
   refine ⟨(∏ k, (b k : ℤ)) / (b q : ℤ) * c, ?_⟩
@@ -279,7 +279,7 @@ private lemma prod_mul_inv_isInt (b : Fin n → ℕ) (hb : ∀ i, 0 < b i) (q : 
     rw [div_eq_mul_inv]
     ring
   rw [h_div_eq]
-  push_cast [Int.cast_div h_dvd (Int.cast_ne_zero.mpr (Int.natCast_ne_zero.mpr (hb q).ne'))]
+  push_cast [Int.cast_div h_dvd (Int.cast_ne_zero.mpr (Int.natCast_ne_zero.mpr hbq.ne'))]
   ring
 
 /-- Conjugating an integral matrix by the inverse-side diagonal scales entries by at worst
@@ -303,7 +303,7 @@ private lemma diagConj_scaling (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
     push_cast
     linarith [h_entry]
   rw [hC_entry]
-  exact prod_mul_inv_isInt n a ha i (σ.val i j * (a j : ℤ))
+  exact prod_mul_inv_isInt n a i (ha i) (σ.val i j * (a j : ℤ))
 
 /-- Companion of `diagConj_scaling` with the inverse on the other side: conjugating an
 integral matrix by the diagonal itself, rather than by its inverse, likewise scales entries by
@@ -326,7 +326,7 @@ private lemma diagConj_scaling_inv_right (b : Fin n → ℕ) (hb : ∀ i, 0 < b 
     field_simp at h_entry ⊢
     exact_mod_cast h_entry
   rw [h_D_entry]
-  exact prod_mul_inv_isInt n b hb q ((b p : ℤ) * G p q)
+  exact prod_mul_inv_isInt n b q (hb q) ((b p : ℤ) * G p q)
 
 /-- Sandwiching by the diagonal and its inverse scales entries by at worst the full
 diagonal product, uniformly in the three integral factors. -/
