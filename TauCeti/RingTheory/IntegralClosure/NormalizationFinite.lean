@@ -291,7 +291,7 @@ private theorem length_quotient_lsmul_le_mul_ord_of_finrank_le [IsNoetherianRing
       -- Phase 2: split `length (M ⧸ aM)` along `N = M ⊓ K ∙ x`.
       set P : Submodule A ↥M := LinearMap.range (LinearMap.lsmul A ↥M a)
       set N : Submodule A ↥M := Submodule.comap M.subtype ((K ∙ x).restrictScalars A) with hNdef
-      have hMfin : Module.Finite A ↥M := Module.Finite.iff_fg.mpr hfg
+      have : Module.Finite A ↥M := Module.Finite.iff_fg.mpr hfg
       have hNfg : N.FG := IsNoetherian.noetherian N
       -- Phase 3: `N` lives on the line `K ∙ x`, so the rank-one bound applies to it.
       have hterm1 : Module.length A (N.map P.mkQ) ≤ Ring.ord A a := by
@@ -343,7 +343,7 @@ theorem length_quotient_lsmul_le_finrank_mul_ord [IsNoetherianRing A] [Ring.Krul
     (Submodule.equivMapOfInjective M.subtype (Submodule.subtype_injective M) N) a]
   exact length_quotient_lsmul_le_mul_ord_of_finrank_le a ha (Module.finrank K V)
     (⊤ : Submodule K V) (le_of_eq (finrank_top K V)) (N.map M.subtype)
-    (fun x _ => Submodule.mem_top) (hN.map _)
+    (fun _ _ => Submodule.mem_top) (hN.map _)
 
 /-- **Krull–Akizuki's finiteness.** Under the hypotheses of the length bound, `M ⧸ aM` has finite
 length; equivalently it is both Noetherian and Artinian over `A`. -/
