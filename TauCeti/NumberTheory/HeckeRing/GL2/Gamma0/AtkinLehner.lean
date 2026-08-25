@@ -47,7 +47,8 @@ power of it. These are the good-prime and bad-prime extremes of the hypothesis
 A second criterion asks nothing of the determinant as a whole, only that the upper-left entry
 of an integral witness be coprime to it. That one is entrywise, and it is the one the reduction
 to primitive witnesses consumes: a primitive witness is exactly one the criterion applies to
-after a change of representative.
+after a change of representative. The bad-prime criterion is recovered from it, since inside
+`Δ₀(N)` the upper-left entry is already a unit mod `N`.
 
 An arbitrary determinant is then settled here, by a single argument that needs no case analysis.
 Splitting it as `b * c`, with `b` collecting the primes it shares with the level, leaves a
@@ -58,12 +59,6 @@ argument rather than under the two determinant criteria above.
 Passing from a primitive witness to a general one only costs a central scalar, which the bar
 fixes. What remains before `R(Γ₀(N), Δ₀(N))` is commutative is to run those two steps on an
 arbitrary `x ∈ Δ₀(N)`, which is not done here.
-
-A second criterion asks nothing of the determinant as a whole, only that the upper-left entry
-of an integral witness be coprime to it. That one is entrywise, and it is the one the reduction
-to primitive witnesses consumes: a primitive witness is exactly one the criterion applies to
-after a change of representative. The bad-prime criterion is recovered from it, since inside
-`Δ₀(N)` the upper-left entry is already a unit mod `N`.
 
 ## Main definitions
 
