@@ -7,6 +7,7 @@ module
 
 public import TauCeti.Algebra.Module.Submodule.Pointwise
 public import TauCeti.RingTheory.Huber.Basic
+import TauCeti.Topology.Algebra.Nonarchimedean.SubmodulesBasis
 
 /-!
 # The `ϖⁿ • M₀` submodules basis, and the `A`-module topology it induces
@@ -15,6 +16,12 @@ Let `A` be a Tate ring, `A₀` a ring of definition, `ϖ ∈ A₀` a pseudounifo
 `A₀`-submodule of an `A`-module `M` with `A · M₀ = M`. This file exhibits the family `ϖⁿ • M₀`
 as a `SubmodulesBasis`, which is Mathlib's machinery for turning such a family into a topology;
 `SubmodulesBasis.topology` and `.nonarchimedean` then apply.
+
+Two of the results below say nothing about `ϖ`: that the family is a neighbourhood basis at `0`,
+and that mutually cofinal families induce the same topology. Both are proved for an arbitrary
+`SubmodulesBasis` in `TauCeti/Topology/Algebra/Nonarchimedean/SubmodulesBasis.lean`, and
+`hasBasis_nhds_zero_pow_smul` and `submodulesBasis_pow_smul_topology_congr` are those two lemmas
+at this family.
 
 **Two of Proposition 6.18(1)'s clauses are established for the induced topology** — that it is an
 `A`-module topology (`powSmulModuleFilterBasis`, since `SubmodulesBasis.toModuleFilterBasis`
@@ -33,12 +40,13 @@ independence of them is not proved here. Nor is it 6.18(1)'s uniqueness, which q
 topologies never presented by a lattice at all.
 
 **The hypotheses are weaker than Wedhorn's, deliberately.** Remark 6.19 assumes `A` noetherian
-and `M₀` finitely generated. The basis and topology declarations use neither — only `A · M₀ = M`,
-and the comparison results below not even that. Finite generation enters in
-`exists_pow_smul_le` and `exists_pow_smul_le_pow_smul`, as a hypothesis on the submodule being
-compared, where a single exponent has to serve a whole submodule at once, and hence in
-`submodulesBasis_pow_smul_topology_congr`, which asks for it of both lattices. `A` noetherian is
-used nowhere in this file.
+and `M₀` finitely generated. The basis and topology declarations use neither — only `A · M₀ = M`
+— and `exists_pow_smul_le` and `exists_pow_smul_le_pow_smul` not even that, asking instead the
+weaker containment that one lattice lie in the `A`-span of the other. Finite generation enters in
+those two, as a hypothesis on the submodule being compared, where a single exponent has to serve a
+whole submodule at once. `submodulesBasis_pow_smul_topology_congr` asks *both* of *each* lattice:
+spanning, because each side has to present a topology at all, and finite generation, because it
+runs the comparison in both directions. `A` noetherian is used nowhere in this file.
 Several declarations are weaker still, taking an arbitrary `S : Subring A` rather than a ring of
 definition, so a caller holding `powerBoundedSubring A` can use them.
 
@@ -239,32 +247,30 @@ theorem powSmulModuleFilterBasis_topology (P : PairOfDefinition A) {s : A}
 neighbourhood of `0` for the topology `M₀` induces exactly when it contains `ϖⁿ • M₀` for some
 `n`.
 
-Stated for the `SubmodulesBasis` topology;
+This is `SubmodulesBasis.hasBasis_nhds_zero` at this family; nothing about `ϖ`, `M₀` or the Huber
+data enters. Stated for the `SubmodulesBasis` topology;
 `TauCeti.Huber.PairOfDefinition.powSmulModuleFilterBasis_topology` identifies that with the
 `A`-module one. -/
 theorem hasBasis_nhds_zero_pow_smul (P : PairOfDefinition A) {s : A}
     (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
     (M₀ : Submodule P.ringOfDefinition M) (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
     (@nhds M (P.submodulesBasis_pow_smul hs hs0 M₀ hspan).topology 0).HasBasis
-      (fun _ : ℕ ↦ True) fun n ↦ ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • M₀ : Set M) := by
-  rw [← P.powSmulModuleFilterBasis_topology hs hs0 M₀ hspan]
-  set B := P.powSmulModuleFilterBasis hs hs0 M₀ hspan
-  refine B.toAddGroupFilterBasis.nhds_zero_hasBasis.to_hasBasis ?_ ?_
-  · intro U hU
-    obtain ⟨n, rfl⟩ := (P.mem_powSmulModuleFilterBasis hs hs0 M₀ hspan).mp hU
-    exact ⟨n, trivial, subset_rfl⟩
-  · rintro n -
-    exact ⟨_, (P.mem_powSmulModuleFilterBasis hs hs0 M₀ hspan).mpr ⟨n, rfl⟩, subset_rfl⟩
+      (fun _ : ℕ ↦ True) fun n ↦ ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • M₀ : Set M) :=
+  (P.submodulesBasis_pow_smul hs hs0 M₀ hspan).hasBasis_nhds_zero
 
 /-- **The topology has a countable fundamental system of neighbourhoods of `0`**, namely the
-`ℕ`-indexed family `ϖⁿ • M₀`. This is the first-countability clause of Proposition 6.18(1). -/
+`ℕ`-indexed family `ϖⁿ • M₀`. This is the first-countability clause of Proposition 6.18(1).
+
+Stated over the `SubmodulesBasis` topology, as the two neighbourhood facts above are: that is the
+form `TauCeti.Huber.PairOfDefinition.powSmulModuleFilterBasis_topology` rewrites *into*, and the
+one instance search sees, `SubmodulesBasis.topology` being `@[instance_reducible]` where
+`powSmulModuleFilterBasis` is a plain `def`. The same theorem identifies it with the `A`-module
+topology 6.18(1) is about. -/
 theorem isCountablyGenerated_nhds_zero (P : PairOfDefinition A) {s : A}
     (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
     (M₀ : Submodule P.ringOfDefinition M) (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
-    (@nhds M (P.powSmulModuleFilterBasis hs hs0 M₀ hspan).topology
-      0).IsCountablyGenerated := by
-  rw [P.powSmulModuleFilterBasis_topology hs hs0 M₀ hspan]
-  exact (P.hasBasis_nhds_zero_pow_smul hs hs0 M₀ hspan).isCountablyGenerated
+    (@nhds M (P.submodulesBasis_pow_smul hs hs0 M₀ hspan).topology 0).IsCountablyGenerated :=
+  (P.hasBasis_nhds_zero_pow_smul hs hs0 M₀ hspan).isCountablyGenerated
 
 /-- **A power of `ϖ` carries a finitely generated `A₀`-submodule into `M₀` wholesale.**
 
@@ -328,23 +334,6 @@ theorem exists_pow_smul_le_pow_smul (P : PairOfDefinition A) {s : A}
   rw [hsplit]
   exact smul_mono_right ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n) hk
 
-/-- One direction of `submodulesBasis_pow_smul_topology_congr`: if `M₁` spans `M` over `A` and
-`M₀` is finitely generated, every `ϖⁿ • M₁` contains some `ϖᵏ • M₀`, so at `0` the topology built
-from `M₀` is the finer of the two. -/
-private theorem submodulesBasis_pow_smul_nhds_zero_le (P : PairOfDefinition A) {s : A}
-    (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
-    (M₀ M₁ : Submodule P.ringOfDefinition M) (hspan₀ : Submodule.span A (M₀ : Set M) = ⊤)
-    (hspan₁ : Submodule.span A (M₁ : Set M) = ⊤) (hfg₀ : M₀.FG) :
-    @nhds M (P.submodulesBasis_pow_smul hs hs0 M₀ hspan₀).topology 0
-      ≤ @nhds M (P.submodulesBasis_pow_smul hs hs0 M₁ hspan₁).topology 0 := by
-  refine ((P.hasBasis_nhds_zero_pow_smul hs hs0 M₀ hspan₀).le_basis_iff
-    (P.hasBasis_nhds_zero_pow_smul hs hs0 M₁ hspan₁)).mpr ?_
-  rintro n -
-  -- `M₁` spans `M`, so `M₀` lies in its `A`-span for free; finite generation is the real input.
-  obtain ⟨k, hk⟩ := P.exists_pow_smul_le_pow_smul hs.isTopologicallyNilpotent hs0 M₁ M₀
-    (by rw [hspan₁]; exact fun _ _ ↦ Submodule.mem_top) hfg₀ n
-  exact ⟨k, trivial, SetLike.coe_subset_coe.mpr hk⟩
-
 /-- **The induced topology does not depend on the lattice.** Two finitely generated
 `A₀`-submodules that each span `M` over `A` induce the same topology.
 
@@ -366,10 +355,14 @@ theorem submodulesBasis_pow_smul_topology_congr (P : PairOfDefinition A) {s : A}
     (hspan₁ : Submodule.span A (M₁ : Set M) = ⊤) (hfg₀ : M₀.FG) (hfg₁ : M₁.FG) :
     (P.submodulesBasis_pow_smul hs hs0 M₀ hspan₀).topology
       = (P.submodulesBasis_pow_smul hs hs0 M₁ hspan₁).topology :=
-  -- Mutual cofinality of the two families gives equality of the neighbourhood filters at `0`;
-  -- both topologies are group topologies, so that upgrades to equality of the topologies.
-  IsTopologicalAddGroup.ext inferInstance inferInstance
-    (le_antisymm (P.submodulesBasis_pow_smul_nhds_zero_le hs hs0 M₀ M₁ hspan₀ hspan₁ hfg₀)
-      (P.submodulesBasis_pow_smul_nhds_zero_le hs hs0 M₁ M₀ hspan₁ hspan₀ hfg₁))
+  -- `SubmodulesBasis.topology_eq` supplies everything that is not about `ϖ`; all this proof does
+  -- is feed it the two cofinality witnesses. Each lattice spans `M`, so the other lies in its
+  -- `A`-span for free, and finite generation is the real input on each side.
+  (P.submodulesBasis_pow_smul hs hs0 M₀ hspan₀).topology_eq
+    (P.submodulesBasis_pow_smul hs hs0 M₁ hspan₁)
+    (P.exists_pow_smul_le_pow_smul hs.isTopologicallyNilpotent hs0 M₀ M₁
+      (by rw [hspan₀]; exact fun _ _ ↦ Submodule.mem_top) hfg₁)
+    (P.exists_pow_smul_le_pow_smul hs.isTopologicallyNilpotent hs0 M₁ M₀
+      (by rw [hspan₁]; exact fun _ _ ↦ Submodule.mem_top) hfg₀)
 
 end TauCeti.Huber.PairOfDefinition
