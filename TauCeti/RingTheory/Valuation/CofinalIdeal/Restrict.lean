@@ -47,13 +47,14 @@ The *characterisation* lemmas — the vanishing branches, `restrictToIdeal_eq_ze
 restriction, so a consumer of them never names the transport. `one_le_restrictToIdeal` mentions
 neither, being an order fact about `v.restrict`.
 
-The transport is named by four declarations, each unavoidably. `RestrictedValues` *is* the
+The transport is named by six declarations, each unavoidably. `RestrictedValues` *is* the
 transported subgroup with a zero adjoined, and the private `restrictToIdeal_def` is the
-definitional unfolding and so carries the boundedness hypothesis over it. The two comparison
-lemmas against an abstract bound, `coe_le_restrictToIdeal_iff` and `restrictToIdeal_lt_coe_iff`,
-quantify over a member of that subgroup: their whole point is to compare a restricted value
-against a bound arriving from the value group rather than from a ring element, and such a bound
-*is* an element of the transported subgroup. A cofinality argument needs them in that form.
+definitional unfolding and so carries the boundedness hypothesis over it. The four comparison
+lemmas against an abstract bound — `coe_le_restrictToIdeal_iff`, `restrictToIdeal_lt_coe_iff`,
+`restrictToIdeal_le_coe_iff` and `coe_lt_restrictToIdeal_iff` — quantify over a member of that
+subgroup: their whole point is to compare a restricted value against a bound arriving from the
+value group rather than from a ring element, and such a bound *is* an element of the transported
+subgroup. A cofinality argument needs them in that form.
 
 ## References
 
@@ -277,6 +278,27 @@ theorem restrictToIdeal_lt_coe_iff (v : Valuation A Γ₀) (I : Ideal A)
     v.restrictToIdeal I hfg a < (u : RestrictedValues v I hfg) ↔
       v.restrict a < ((u : (ValueGroup₀ (.ofClass v))ˣ) : ValueGroup₀ (.ofClass v)) :=
   restrictToConvex_lt_coe_iff _ _ _ a u
+
+/-- The remaining direction: a restricted value bounded above by an abstract member of the
+transported `cΓ_v(I)`. Together with `coe_lt_restrictToIdeal_iff` below, this completes the
+four comparisons against such a bound, so a consumer never has to unfold `restrictToIdeal_def`
+to reach one of them. -/
+theorem restrictToIdeal_le_coe_iff (v : Valuation A Γ₀) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (a : A)
+    (u : (ConvexSubgroup.comapUnitsWithZero
+      (characteristicSubgroupOfIdeal v I hfg)).toSubgroup) :
+    v.restrictToIdeal I hfg a ≤ (u : RestrictedValues v I hfg) ↔
+      v.restrict a ≤ ((u : (ValueGroup₀ (.ofClass v))ˣ) : ValueGroup₀ (.ofClass v)) :=
+  restrictToConvex_le_coe_iff _ _ _ a u
+
+/-- The companion of `restrictToIdeal_le_coe_iff` with the member on the left. -/
+theorem coe_lt_restrictToIdeal_iff (v : Valuation A Γ₀) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (a : A)
+    (u : (ConvexSubgroup.comapUnitsWithZero
+      (characteristicSubgroupOfIdeal v I hfg)).toSubgroup) :
+    (u : RestrictedValues v I hfg) < v.restrictToIdeal I hfg a ↔
+      ((u : (ValueGroup₀ (.ofClass v))ˣ) : ValueGroup₀ (.ofClass v)) < v.restrict a :=
+  coe_lt_restrictToConvex_iff _ _ _ a u
 
 /-- A value at least `1` stays at least `1`: `cΓ_v(I)` keeps every attained value `≥ 1`. -/
 theorem one_le_restrictToIdeal (v : Valuation A Γ₀) (I : Ideal A)
