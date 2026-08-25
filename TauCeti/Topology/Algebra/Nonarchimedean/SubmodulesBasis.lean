@@ -62,10 +62,8 @@ in both directions is the whole hypothesis. -/
 theorem topology_eq [Nonempty ι] [Nonempty ι'] (hB : SubmodulesBasis B) (hB' : SubmodulesBasis B')
     (h : ∀ i, ∃ j, B' j ≤ B i) (h' : ∀ j, ∃ i, B i ≤ B' j) : hB.topology = hB'.topology :=
   IsTopologicalAddGroup.ext inferInstance inferInstance <|
-    le_antisymm
-      ((hB.hasBasis_nhds_zero.le_basis_iff hB'.hasBasis_nhds_zero).mpr fun j _ ↦
-        (h' j).imp fun _ hi ↦ ⟨trivial, SetLike.coe_subset_coe.mpr hi⟩)
-      ((hB'.hasBasis_nhds_zero.le_basis_iff hB.hasBasis_nhds_zero).mpr fun i _ ↦
-        (h i).imp fun _ hj ↦ ⟨trivial, SetLike.coe_subset_coe.mpr hj⟩)
+    hB.hasBasis_nhds_zero.ext hB'.hasBasis_nhds_zero
+      (fun i _ ↦ (h i).imp fun _ hj ↦ ⟨trivial, SetLike.coe_subset_coe.mpr hj⟩)
+      fun j _ ↦ (h' j).imp fun _ hi ↦ ⟨trivial, SetLike.coe_subset_coe.mpr hi⟩
 
 end SubmodulesBasis
