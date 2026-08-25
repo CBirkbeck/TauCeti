@@ -67,7 +67,7 @@ arbitrary `x ∈ Δ₀(N)`, which is not done here.
   itself is opaque, so this is the elimination rule a consumer works with.
 * `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_val`: its entrywise action on a `Δ₀(N)` witness.
 * `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_det`: it preserves the determinant.
-* `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_coprime_det`: it fixes the
+* `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_coprimeDet`: it fixes the
   double coset when the determinant is coprime to the level.
 * `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_dvd_pow`: it fixes the double
   coset when the determinant divides a power of the level.
@@ -420,14 +420,13 @@ private lemma exists_sl2_mul_mul_eq_atkinLehnerEntries
     rwa [hswap] at h
 
 /-- **The Atkin–Lehner involution fixes a coprime-determinant double coset.** If `x ∈ Δ₀(N)`
-has determinant coprime to `N`, then its bar lies in the `Γ₀(N)`-double coset of `x`.
-
-The Smith normal forms of an integral witness for `x` and its entry-swapped bar agree: their
-first invariant factors agree because the upper-left entry is coprime to `N`, and their second
-invariant factors then agree because the determinants do. Thus they define the same level-one
-double coset. Shimura's Proposition 3.31, `toLevelOneCoset_injOn`, recovers equality of the
-`Γ₀(N)`-double cosets from that equality. -/
-theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_coprime_det [NeZero N]
+has determinant coprime to `N`, then its bar lies in the `Γ₀(N)`-double coset of `x`. -/
+-- The Smith normal forms of an integral witness for `x` and its entry-swapped bar agree: their
+-- first invariant factors agree because the upper-left entry is coprime to `N`, and their second
+-- invariant factors then agree because the determinants do. Thus they define the same level-one
+-- double coset. Shimura's Proposition 3.31, `toLevelOneCoset_injOn`, recovers equality of the
+-- `Γ₀(N)`-double cosets from that equality.
+theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_coprimeDet [NeZero N]
     (x : GL (Fin 2) ℚ) (hx : x ∈ Delta0 N) (hcop : CoprimeDet N ⟨x, hx⟩) :
     (atkinLehnerAntiInvolution N).bar x hx ∈
       DoubleCoset.doubleCoset x ((Gamma0 N).map (mapGL ℚ))
@@ -461,18 +460,20 @@ theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_coprime_det [NeZero N]
     simp only [toLevelOneCoset_mk]
     symm
     apply HeckeCoset.mk_eq_mk_of_mem
-    rw [DoubleCoset.mem_doubleCoset]
-    exact ⟨mapGL ℚ P, coe_mem_SLnZ 2 P, mapGL ℚ Q, coe_mem_SLnZ 2 Q,
-      eq_mapGL_mul_mul_mapGL_of_intMatrix_eq 2 P Q x _ A B hA hbar hPQ⟩
-  have hmem_a : HeckeCoset.mk ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) a ∈
+    rw [Submonoid.coe_inclusion, Submonoid.coe_inclusion]
+    exact mem_doubleCoset_SLnZ_of_intMatrix_eq 2 P Q x (b : GL (Fin 2) ℚ) A B hA hbar
+      (hPQ.trans hB.symm)
+  have ha_cop : HeckeCoset.mk ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) a ∈
       {D | CoprimeDetCoset N D} := by simpa [a] using hcop
-  have hmem_b : HeckeCoset.mk ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) b ∈
-      {D | CoprimeDetCoset N D} := by simpa using hb_cop
-  have hcoset := toLevelOneCoset_injOn N hmem_a hmem_b hlevel
+  have hb_coset_cop :
+      HeckeCoset.mk ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) b ∈
+        {D | CoprimeDetCoset N D} := by simpa using hb_cop
+  have hcoset := toLevelOneCoset_injOn N ha_cop hb_coset_cop hlevel
   have hdc : DoubleCoset.doubleCoset x ((Gamma0 N).map (mapGL ℚ))
       ((Gamma0 N).map (mapGL ℚ)) =
-      DoubleCoset.doubleCoset ((b : Delta0 N) : GL (Fin 2) ℚ)
-        ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) := HeckeCoset.eq_iff.mp hcoset
+      DoubleCoset.doubleCoset (b : GL (Fin 2) ℚ) ((Gamma0 N).map (mapGL ℚ))
+        ((Gamma0 N).map (mapGL ℚ)) := by
+    simpa only [a] using HeckeCoset.eq_iff.mp hcoset
   rw [hdc]
   exact DoubleCoset.mem_doubleCoset_self _ _ _
 
@@ -638,7 +639,7 @@ theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_primitive [NeZero N]
   have hdet_m : (x : Matrix (Fin 2) (Fin 2) ℚ).det = (m : ℚ) := by
     rw [hA, ← Int.cast_det A, hm]; norm_cast
   by_cases hcop : Int.gcd A.det N = 1
-  · exact atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_coprime_det N x hx
+  · exact atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_coprimeDet N x hx
       ((coprimeDet_iff N (g := ⟨x, hx⟩) hA).mpr hcop)
   by_cases hbm : Nat.gcd m (N ^ m) = m
   · refine atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_dvd_pow N m m ?_ x hx hdet_m
