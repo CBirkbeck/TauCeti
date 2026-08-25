@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.RingTheory.Huber.Basic
-import TauCeti.RingTheory.Huber.ZeroSequenceOfUnits
 
 /-!
 # Open ideals of a Huber ring
@@ -96,10 +95,9 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 /-- An open ideal in a Tate ring is the whole ring `⊤`. -/
 theorem IsTateRing.eq_top_of_isOpen [IsTateRing A] {J : Ideal A}
     (hJ : IsOpen (J : Set A)) : J = ⊤ := by
-  have hc : ContinuousAt (fun a : A ↦ a • (1 : A)) 0 := by fun_prop
-  obtain ⟨ϖ, hϖ⟩ := HasZeroSequenceOfUnits.exists_unit_smul_mem (M := A) 1 hc
-    (hJ.mem_nhds J.zero_mem)
-  exact Ideal.eq_top_of_isUnit_mem J (by simpa using hϖ) ϖ.isUnit
+  obtain ⟨ϖ, hϖ⟩ := IsTateRing.exists_isPseudoUniformizer (A := A)
+  obtain ⟨n, hn⟩ := hϖ.isTopologicallyNilpotent.exists_pow_mem_of_mem_nhds (hJ.mem_nhds J.zero_mem)
+  exact Ideal.eq_top_of_isUnit_mem J hn (hϖ.isUnit.pow n)
 
 /-- In a Tate ring, an ideal is open if and only if it is the whole ring `⊤`. -/
 @[simp]
