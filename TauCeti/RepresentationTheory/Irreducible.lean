@@ -89,19 +89,18 @@ theorem IsIrreducible.nontrivial {ρ : Representation k G V} (h : ρ.IsIrreducib
   have _ := IsSimpleModule.nontrivial k[G] ρ.asModule
   ρ.asModuleEquiv.symm.toEquiv.nontrivial
 
-/-- **An irreducible representation has positive dimension.** This is `Module.finrank_pos` fed the
-nonzero carrier of `TauCeti.Representation.IsIrreducible.nontrivial`; it needs stating because
-that nontriviality is not an instance, so `Module.finrank_pos` does not fire on an
-irreducibility hypothesis by itself. -/
+/-- **A finite-dimensional irreducible representation has positive dimension.** This is what makes
+the degree of an irreducible character positive, and, cast into the base field by
+`Representation.IsIrreducible.natCast_finrank_ne_zero`, what lets the orthogonality relations and
+the integrated operator divide by that degree. -/
 theorem _root_.Representation.IsIrreducible.finrank_pos [FiniteDimensional k V]
     {ρ : Representation k G V} (h : ρ.IsIrreducible) : 0 < Module.finrank k V :=
   have := IsIrreducible.nontrivial h
   Module.finrank_pos
 
 /-- **The dimension of an irreducible representation is nonzero in the base field.** In
-characteristic zero the positive dimension of `Representation.IsIrreducible.finrank_pos`
-survives the cast into `k`, so it may be inverted: this is the scalar the orthogonality relations
-and the integrated operator of an irreducible representation are normalised by. -/
+characteristic zero it is therefore invertible there: this is the scalar the orthogonality
+relations and the integrated operator of an irreducible representation are normalised by. -/
 theorem _root_.Representation.IsIrreducible.natCast_finrank_ne_zero [CharZero k]
     [FiniteDimensional k V] {ρ : Representation k G V} (h : ρ.IsIrreducible) :
     (Module.finrank k V : k) ≠ 0 :=
