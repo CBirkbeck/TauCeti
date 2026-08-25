@@ -367,6 +367,95 @@ theorem Gamma0_map_le_conjAct_scaleGL (M d : ℕ) [NeZero d] :
 
 end Transport
 
+/-! ### The `T`-factorisation of `Γ₀(N / l)` -/
+
+section TFactor
+
+/-- The product of those primes of `l` that do not divide `a`. Subtracting that multiple of `c`
+from `a` clears every prime of `l` out of `a` in one step; see `exists_sub_mul_isCoprime`. -/
+private def primeProductCoprime (a : ℤ) (l : ℕ) : ℤ :=
+  ((l.primeFactors.filter fun p ↦ ¬ ((p : ℤ) ∣ a)).prod id : ℕ)
+
+/-- A prime of `l` that misses `a` divides `primeProductCoprime a l`. -/
+private lemma dvd_primeProductCoprime_of_not_dvd {a : ℤ} {l p : ℕ} (hp : p ∈ l.primeFactors)
+    (hpa : ¬ ((p : ℤ) ∣ a)) : (p : ℤ) ∣ primeProductCoprime a l := by
+  exact_mod_cast Finset.dvd_prod_of_mem id (Finset.mem_filter.mpr ⟨hp, hpa⟩)
+
+/-- A prime dividing `a` misses `primeProductCoprime a l`, whose factors were chosen to avoid
+`a`. -/
+private lemma not_dvd_primeProductCoprime_of_dvd {a : ℤ} {l p : ℕ} (hp : p.Prime)
+    (hpa : (p : ℤ) ∣ a) : ¬ ((p : ℤ) ∣ primeProductCoprime a l) := by
+  intro hdvd
+  obtain ⟨q, hq_mem, hq_dvd⟩ := (Prime.dvd_finsetProd_iff (Nat.prime_iff.mp hp) id).mp
+    (by exact_mod_cast hdvd)
+  obtain ⟨hq_pf, hqa⟩ := Finset.mem_filter.mp hq_mem
+  exact hqa ((Nat.prime_dvd_prime_iff_eq hp (Nat.prime_of_mem_primeFactors hq_pf)).mp hq_dvd ▸ hpa)
+
+/-- **A coprime shift.** If `a` and `c` are coprime then some translate `a - i * c` is coprime to
+a prescribed nonzero modulus `l`: clear the primes of `l` that divide `a` by hand, and the primes
+that do not are already cleared because they would otherwise have to divide `c`. -/
+private lemma exists_sub_mul_isCoprime (a c : ℤ) (l : ℕ) [NeZero l] (hac : IsCoprime a c) :
+    ∃ i : ℤ, IsCoprime (a - i * c) (l : ℤ) := by
+  refine ⟨primeProductCoprime a l, ?_⟩
+  rw [Int.isCoprime_iff_gcd_eq_one, Int.gcd, Int.natAbs_natCast]
+  by_contra hne
+  obtain ⟨p, hp, hp_dvd⟩ := Nat.exists_prime_and_dvd hne
+  rw [Nat.dvd_gcd_iff] at hp_dvd
+  obtain ⟨hp_dvd_x, hp_dvd_l⟩ := hp_dvd
+  have hp_dvd_x_int : (p : ℤ) ∣ (a - primeProductCoprime a l * c) := by
+    rwa [← Int.natAbs_dvd_natAbs, Int.natAbs_natCast]
+  have hp_int : Prime (p : ℤ) := Nat.prime_iff_prime_int.mp hp
+  by_cases hpa : (p : ℤ) ∣ a
+  · rcases hp_int.dvd_mul.mp (by simpa using dvd_sub hpa hp_dvd_x_int) with h | h
+    · exact not_dvd_primeProductCoprime_of_dvd hp hpa h
+    · exact hp_int.not_unit (hac.isUnit_of_dvd' hpa h)
+  · exact hpa (by
+      simpa using dvd_add hp_dvd_x_int
+        ((dvd_primeProductCoprime_of_not_dvd
+          (Nat.mem_primeFactors.mpr ⟨hp, hp_dvd_l, NeZero.ne l⟩) hpa).mul_right c))
+
+/-- **Division modulo a coprime factor.** If `α` is coprime to `l` then every `β` is `j * α`
+modulo `l`, by Bézout. -/
+private lemma exists_dvd_sub_mul {α : ℤ} {l : ℕ} (hα : IsCoprime α (l : ℤ)) (β : ℤ) :
+    ∃ j : ℤ, (l : ℤ) ∣ β - j * α := by
+  obtain ⟨u, v, huv⟩ := hα
+  exact ⟨β * u, β * v, by linear_combination (-β) * huv⟩
+
+/-- **The `T`-factorisation of `Γ₀(N / l)`.** For `l ∣ N`, every `γ' ∈ Γ₀(N / l)` is a product
+`T ^ i * conjScale l γ c * T ^ j` with `i, j : ℤ` and `γ ∈ Γ₀(N)`: the level of `γ'` can be raised
+back from `N / l` to `N` at the cost of two translations. Since `conjScale` and the translations
+all fix the lower-right entry up to the recorded shift, the last conjunct pins the lower-right
+entry of `γ`, which is what a nebentypus of level `N` reads off it. -/
+theorem exists_eq_T_zpow_mul_conjScale_mul_T_zpow (l N : ℕ) [NeZero l] (hlN : l ∣ N)
+    (γ' : SL(2, ℤ)) (hγ' : γ' ∈ Gamma0 (N / l)) :
+    ∃ (i j c : ℤ) (γ : SL(2, ℤ)) (hc : γ 1 0 = l * c),
+      γ ∈ Gamma0 N ∧ γ' = ModularGroup.T ^ i * conjScale l γ c hc * ModularGroup.T ^ j ∧
+        γ 1 1 = γ' 1 1 - γ' 1 0 * j := by
+  have hdet : γ' 0 0 * γ' 1 1 - γ' 0 1 * γ' 1 0 = 1 :=
+    Matrix.SpecialLinearGroup.fin_two_mul_sub_mul_eq_one γ'
+  -- move the upper-left entry, along its own column, until it is coprime to `l`
+  obtain ⟨i, hi⟩ := exists_sub_mul_isCoprime (γ' 0 0) (γ' 1 0) l
+    ⟨γ' 1 1, -γ' 0 1, by linear_combination hdet⟩
+  -- then clear the upper-right entry modulo `l`, which the previous step made possible
+  obtain ⟨j, k, hk⟩ := exists_dvd_sub_mul hi (γ' 0 1 - i * γ' 1 1)
+  refine ⟨i, j, γ' 1 0,
+    ⟨!![γ' 0 0 - i * γ' 1 0, k; (l : ℤ) * γ' 1 0, γ' 1 1 - γ' 1 0 * j], ?_⟩, ?_, ?_, ?_, ?_⟩
+  · rw [Matrix.det_fin_two_of]
+    linear_combination hdet + γ' 1 0 * hk
+  · simp
+  · rw [Gamma0_mem, ZMod.intCast_zmod_eq_zero_iff_dvd, show (N : ℤ) = (l : ℤ) * ((N / l : ℕ) : ℤ) by
+      rw [← Nat.cast_mul, Nat.mul_div_cancel' hlN]]
+    exact mul_dvd_mul_left _ ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hγ'))
+  · apply Subtype.ext
+    rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_mul,
+      ModularGroup.coe_T_zpow, ModularGroup.coe_T_zpow, coe_conjScale]
+    refine Matrix.etaExpand_eq _ ▸ Matrix.ext fun p q ↦ ?_
+    fin_cases p <;> fin_cases q <;>
+      simp [Matrix.mul_apply, Fin.sum_univ_two] <;> linear_combination hk
+  · simp
+
+end TFactor
+
 /-! ### Slashing a level-raise, and the transport of the nebentypus -/
 
 section Slash
