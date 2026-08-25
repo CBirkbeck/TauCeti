@@ -24,7 +24,7 @@ stated over commutative *semirings*, since the proofs use only that `Ideal.map e
 one primes is `Ideal.map e` on underlying ideals
 (`IsDedekindDomain.HeightOneSpectrum.asIdeal_equivOfRingEquiv`). Those four are the ideal-level
 input to the adic-valuation transport in
-`TauCeti/RingTheory/DedekindDomain/AdicValuationTransport.lean`; they are adapted from
+`TauCeti/RingTheory/DedekindDomain/AdicValuation/Transport.lean`; they are adapted from
 [AINTLIB](https://github.com/CBirkbeck/AINTLIB) (Apache-2.0), commit `513e83879e2f`,
 `projects/HasseWeil/HasseWeil/WeilPairing/DivisorGalois.lean`.
 
