@@ -5,7 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.Algebra.BigOperators.Finsupp.Basic
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Data.Nat.Factorization.Induction
 public import Mathlib.Data.Nat.Prime.Pow
@@ -142,6 +141,7 @@ variable [CommMonoid M]
 `Finsupp.prod` over the factorisation. Unconditional in `n`, so it rewrites without a side
 goal: at `n = 0` both sides are `1`, the left as the junk value and the right because
 `Nat.factorization 0 = 0` has empty support. -/
+@[simp]
 theorem primePowerProd_eq_factorization_prod (f : ℕ → ℕ → M) (n : ℕ) :
     primePowerProd f n = n.factorization.prod f := by
   induction n using Nat.strong_induction_on with
