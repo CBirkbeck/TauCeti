@@ -61,8 +61,9 @@ reading an endomorphism of a Jordan block as a linear map on `k[X]/(Xⁿ⁺¹)` 
 
 Indecomposability runs through `TauCeti.indecomposable_of_injective_of_isLocalRing` rather than the
 brick criterion: the endomorphism algebra of a Jordan block is `k[X]/(Xⁿ⁺¹)`, which is not a field.
-It is a *local* ring (`TauCeti.isLocalRing_adjoinRoot_X_pow`), and that is exactly enough: the value
-of an endomorphism at `1` records it faithfully and multiplicatively there.
+It is a *local* ring (`TauCeti.isLocalRing_adjoinRoot_X_pow`), and that is exactly enough: the
+value of an endomorphism at `1` records it faithfully there, sending `0` to `0`, the identity to
+`1` and squares to squares.
 
 The two components of an endomorphism are forced to agree by naturality along an arrow acting as
 the identity, which is why a second arrow is needed; the distinguished arrow then contributes the

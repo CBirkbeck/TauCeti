@@ -66,9 +66,10 @@ Indecomposability is proved throughout from
 Jordan blocks the endomorphism algebra is `k[X]/(Xⁿ⁺¹)`, which is not a field, so the brick
 criterion does not apply, and an endomorphism is pinned down instead by its value at `1`
 (`AdjoinRoot.eq_mulRight_of_root_mul`, from `TauCeti.RingTheory.AdjoinRoot`). That value records
-the endomorphism faithfully and multiplicatively in the truncated polynomial algebra, which is
-local by `TauCeti.isLocalRing_adjoinRoot_X_pow` from `TauCeti.RingTheory.Polynomial.Truncated`; a
-scalar representation is the same criterion read in the base field.
+the endomorphism faithfully in the truncated polynomial algebra, sending `0` to `0`, the identity
+to `1` and squares to squares, and that algebra is local by
+`TauCeti.isLocalRing_adjoinRoot_X_pow` from `TauCeti.RingTheory.Polynomial.Truncated`; a scalar
+representation is the same criterion read in the base field.
 
 The quiver `•↺` itself -- `TauCeti.Quiver.OneLoop`, with its `Quiver` instance and its loop
 `TauCeti.Quiver.OneLoop.loop` -- is defined in
@@ -248,7 +249,8 @@ theorem not_isZero_oneLoopRep (c : k) : ¬ IsZero (oneLoopRep.{u, w} k c) := by
   exact one_ne_zero (α := k) (Subsingleton.elim _ _)
 
 /-- **`TauCeti.oneLoopRep k c` is indecomposable.** Its only vertex carries a line, so its scalar
-records an endomorphism faithfully and multiplicatively in the field `k`, which is a local ring. -/
+records an endomorphism faithfully in the field `k`, a local ring, sending `0` to `0`, the
+identity to `1` and squares to squares. -/
 theorem indecomposable_oneLoopRep (c : k) : Indecomposable (oneLoopRep.{u, w} k c) :=
   indecomposable_of_injective_of_isLocalRing (not_isZero_oneLoopRep c) oneLoopRepScalar
     (fun _ _ h ↦ oneLoopRep_hom_ext h) (oneLoopRepScalar_zero c c) (oneLoopRepScalar_id c)
@@ -380,9 +382,9 @@ private theorem oneLoopNilpotentRepApp_root_mul {n : ℕ}
 
 /-- **`TauCeti.oneLoopNilpotentRep k n` is indecomposable.** An endomorphism commutes with
 multiplication by the root, hence is multiplication by its value at `1`
-(`TauCeti.AdjoinRoot.eq_mulRight_of_root_mul`), so that value records it faithfully and
-multiplicatively in `k[X]/(Xⁿ⁺¹)`, a local ring
-(`TauCeti.isLocalRing_adjoinRoot_X_pow`). -/
+(`TauCeti.AdjoinRoot.eq_mulRight_of_root_mul`), so that value records it faithfully in
+`k[X]/(Xⁿ⁺¹)`, a local ring (`TauCeti.isLocalRing_adjoinRoot_X_pow`), sending `0` to `0`, the
+identity to `1` and squares to squares. -/
 theorem indecomposable_oneLoopNilpotentRep (n : ℕ) :
     Indecomposable (oneLoopNilpotentRep.{u, w} k n) := by
   have hmul : ∀ e : oneLoopNilpotentRep.{u, w} k n ⟶ oneLoopNilpotentRep.{u, w} k n,
