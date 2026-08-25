@@ -38,6 +38,7 @@ namespace CongruenceSubgroup
 /-- **The diamond label is compatible with reduction.** For `M ∣ N`, a matrix of `Γ₀(N)` read as
 a matrix of `Γ₀(M)` has lower-right entry the reduction of its lower-right entry at level `N`,
 so a nebentypus character pulls back along `(ZMod N)ˣ → (ZMod M)ˣ`. -/
+@[simp]
 lemma Gamma0Map_toHomUnits_of_dvd {M N : ℕ} (h : M ∣ N) (γ : ↥(Gamma0 N)) :
     (Gamma0Map M).toHomUnits ⟨(γ : SL(2, ℤ)), Gamma0_le_Gamma0_of_dvd h γ.2⟩ =
       ZMod.unitsMap h ((Gamma0Map N).toHomUnits γ) := by
