@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.LinearAlgebra.TensorProduct.RightExactness
+import Mathlib.LinearAlgebra.TensorProduct.RightExactness
 public import Mathlib.RingTheory.Coalgebra.Basic
 
 /-!
@@ -132,14 +132,21 @@ theorem mem_ofSubmodule {D : Submodule R C} {hD} {c : C} :
     c ∈ ofSubmodule (R := R) (C := C) D hD ↔ c ∈ D :=
   Iff.rfl
 
+/-- The comultiplication of any element lies in the tensor square of the top submodule,
+because the inclusion of `⊤` is surjective. -/
+theorem comul_mem_tensorSquare_top (c : C) :
+    Coalgebra.comul (R := R) c ∈
+      LinearMap.range (TensorProduct.map (⊤ : Submodule R C).subtype
+        (⊤ : Submodule R C).subtype) :=
+  LinearMap.mem_range.mpr
+    (TensorProduct.map_surjective (fun c ↦ ⟨⟨c, Submodule.mem_top⟩, rfl⟩)
+      (fun c ↦ ⟨⟨c, Submodule.mem_top⟩, rfl⟩) _)
+
 /-- The full coalgebra as a subcoalgebra. -/
 instance instTop : Top (Subcoalgebra R C) where
   top :=
     { carrier := ⊤
-      comul_mem' := fun _ _ ↦
-        LinearMap.mem_range.mpr
-          (TensorProduct.map_surjective (fun c ↦ ⟨⟨c, Submodule.mem_top⟩, rfl⟩)
-            (fun c ↦ ⟨⟨c, Submodule.mem_top⟩, rfl⟩) _) }
+      comul_mem' := fun c _ ↦ comul_mem_tensorSquare_top c }
 
 @[simp]
 theorem top_toSubmodule : (⊤ : Subcoalgebra R C).toSubmodule = (⊤ : Submodule R C) :=

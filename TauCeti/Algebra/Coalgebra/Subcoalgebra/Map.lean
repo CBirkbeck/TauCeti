@@ -55,12 +55,9 @@ private theorem image_tensorSquare_apply (f : C →ₗc[R] D) (A : Subcoalgebra 
           (f.toLinearMap.submoduleMap A.carrier) t) =
       TensorProduct.map f.toLinearMap f.toLinearMap
         (TensorProduct.map A.carrier.subtype A.carrier.subtype t) := by
-  induction t with
-  | zero => simp only [map_zero]
-  | tmul a b =>
-      simp only [TensorProduct.map_tmul, Submodule.subtype_apply,
-        LinearMap.submoduleMap_coe_apply]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  have h : (A.carrier.map f.toLinearMap).subtype ∘ₗ f.toLinearMap.submoduleMap A.carrier =
+      f.toLinearMap ∘ₗ A.carrier.subtype := by ext a; simp
+  rw [TensorProduct.map_map, TensorProduct.map_map, h]
 
 /-- The image of a subcoalgebra under a coalgebra morphism. -/
 @[expose] def map (f : C →ₗc[R] D) (A : Subcoalgebra R C) : Subcoalgebra R D where
