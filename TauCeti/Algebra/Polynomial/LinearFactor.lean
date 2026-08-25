@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Algebra.Polynomial.Div
-public import Mathlib.Algebra.Polynomial.Monic
 
 /-!
 # Polynomials of degree at most one with a prescribed root
