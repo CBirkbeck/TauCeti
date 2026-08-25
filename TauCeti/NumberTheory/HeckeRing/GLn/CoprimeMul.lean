@@ -283,8 +283,8 @@ private lemma prod_mul_inv_isInt (b : Fin n → ℕ) (q : Fin n) (hbq : 0 < b q)
   ring
 
 /-- Conjugating an integral matrix by the inverse-side diagonal scales entries by at worst
-the full diagonal product.  Only integrality of the conjugated matrix is used — neither
-invertibility nor determinant one — so this is stated for an arbitrary integral matrix. -/
+the full diagonal product.  Only integrality of `σ`, the matrix being conjugated, is used —
+neither invertibility nor determinant one — so this is stated for an arbitrary integral matrix. -/
 private lemma diagConj_scaling (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
     (σ : Matrix (Fin n) (Fin n) ℤ) (i j : Fin n) : ∃ z : ℤ, (∏ k, (a k : ℚ)) *
       (((↑(natDiagGL n a)⁻¹ : Matrix (Fin n) (Fin n) ℚ) * σ.map (Int.cast : ℤ → ℚ) *
