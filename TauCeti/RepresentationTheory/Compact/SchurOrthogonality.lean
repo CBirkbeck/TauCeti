@@ -77,7 +77,10 @@ theorem averageOperator_eq_finrank_inv_mul_trace_smul_id
     averageOperator π hπ π hπ T =
       ((Module.finrank 𝕜 V : 𝕜)⁻¹ * LinearMap.trace 𝕜 V (T : V →ₗ[𝕜] V)) •
         ContinuousLinearMap.id 𝕜 V := by
-  have h := π.eq_smul_id_of_irreducible hirr (averageIntertwiner π hπ π hπ T)
+  have hdim : (Module.finrank 𝕜 V : 𝕜) ≠ 0 :=
+    have := Representation.IsIrreducible.nontrivial hirr
+    mod_cast (Module.finrank_pos (R := 𝕜) (M := V)).ne'
+  have h := π.eq_smul_id_of_irreducible hdim hirr (averageIntertwiner π hπ π hπ T)
   rwa [toContinuousLinearMap_averageIntertwiner, trace_averageOperator] at h
 
 end Average
