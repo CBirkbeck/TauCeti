@@ -104,10 +104,6 @@ private lemma toPrincipalIdeal_eq_spanSingleton_inv_mul_span_mk'_num (u : Kˣ) (
   rw [coe_toPrincipalIdeal, ← hnd, IsFractionRing.mk'_eq_div, ← spanSingleton_div_spanSingleton,
     div_spanSingleton, coeIdeal_span_singleton]
 
-private lemma valuation_mk'_eq_intValuation_div (v : HeightOneSpectrum A) (n : A) (d : A⁰) :
-    v.valuation K (IsLocalization.mk' K n d) = v.intValuation n / v.intValuation (d : A) :=
-  v.valuation_of_mk'
-
 private lemma count_spanSingleton_eq_neg_log_intValuation (v : HeightOneSpectrum A) (r : A)
     (hr : r ≠ 0) :
     count K v (spanSingleton A⁰ (algebraMap A K r)) = -WithZero.log (v.intValuation r) := by
@@ -116,12 +112,6 @@ private lemma count_spanSingleton_eq_neg_log_intValuation (v : HeightOneSpectrum
   rw [← coeIdeal_span_singleton (S := A⁰) (P := K) r, count_coe K v hspan,
     v.intValuation_if_neg hr, WithZero.log_exp]
   ring
-
-private lemma spanSingleton_ne_zero_of_ne_zero (r : A) (hr : r ≠ 0) :
-    spanSingleton A⁰ (algebraMap A K r) ≠ 0 := by
-  rw [spanSingleton_ne_zero_iff]
-  intro h
-  exact hr ((IsLocalization.injective K (le_refl A⁰)) (by simpa using h))
 
 private lemma count_spanSingleton_inv_eq_log_intValuation (v : HeightOneSpectrum A) (r : A)
     (hr : r ≠ 0) :
@@ -133,8 +123,10 @@ private lemma count_spanSingleton_inv_mul_spanSingleton_eq_neg_log_div (v : Heig
     (n d : A) (hn : n ≠ 0) (hd : d ≠ 0) :
     count K v (spanSingleton A⁰ ((algebraMap A K d)⁻¹) * spanSingleton A⁰ (algebraMap A K n)) =
       -WithZero.log (v.intValuation n / v.intValuation d) := by
-  have hnI := spanSingleton_ne_zero_of_ne_zero K n hn
-  have hdI := spanSingleton_ne_zero_of_ne_zero K d hd
+  have hnI : spanSingleton A⁰ (algebraMap A K n) ≠ 0 :=
+    spanSingleton_ne_zero_iff.mpr ((not_congr IsFractionRing.to_map_eq_zero_iff).mpr hn)
+  have hdI : spanSingleton A⁰ (algebraMap A K d) ≠ 0 :=
+    spanSingleton_ne_zero_iff.mpr ((not_congr IsFractionRing.to_map_eq_zero_iff).mpr hd)
   rw [← spanSingleton_inv K (algebraMap A K d), count_mul K v (inv_ne_zero hdI) hnI,
     count_spanSingleton_inv_eq_log_intValuation K v d hd,
     count_spanSingleton_eq_neg_log_intValuation K v n hn,
@@ -160,7 +152,7 @@ theorem count_toPrincipalIdeal_eq_neg_log_valuation (v : HeightOneSpectrum A) (u
     toPrincipalIdeal_eq_spanSingleton_inv_mul_span_mk'_num K u n d (by rw [hnd, hk])
   have hval : v.valuation K k = v.intValuation n / v.intValuation (d : A) := by
     rw [← hnd]
-    exact valuation_mk'_eq_intValuation_div K v n d
+    exact v.valuation_of_mk'
   rw [hval, hrepr, coeIdeal_span_singleton]
   exact count_spanSingleton_inv_mul_spanSingleton_eq_neg_log_div K v n d hn hd
 
