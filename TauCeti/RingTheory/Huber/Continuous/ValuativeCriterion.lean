@@ -6,14 +6,15 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.RingTheory.IntegralClosure.Algebra.Basic
-public import TauCeti.Algebra.Order.Group.Cofinal
+import TauCeti.Algebra.Order.Group.Cofinal
 public import TauCeti.AlgebraicGeometry.AdicSpace.Cont.Basic
-public import TauCeti.RingTheory.Huber.Continuous.OfCofinal
-public import TauCeti.RingTheory.Huber.ExtendValuation
+public import TauCeti.RingTheory.Huber.Basic
+import TauCeti.RingTheory.Huber.Continuous.OfCofinal
+import TauCeti.RingTheory.Huber.ExtendValuation
 import TauCeti.RingTheory.Huber.RingOfDefinition
 import TauCeti.RingTheory.IntegralClosure.Quotient
-public import TauCeti.RingTheory.Valuation.LocalSubring
-public import TauCeti.RingTheory.Valuation.RestrictToConvex
+import TauCeti.RingTheory.Valuation.LocalSubring
+import TauCeti.RingTheory.Valuation.RestrictToConvex
 
 /-!
 # The valuative criterion for integrality, by continuous valuations

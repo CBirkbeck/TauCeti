@@ -6,7 +6,8 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Basic
-public import TauCeti.RingTheory.Huber.Continuous.ValuativeCriterion
+public import TauCeti.RingTheory.Huber.Basic
+import TauCeti.RingTheory.Huber.Continuous.ValuativeCriterion
 
 /-!
 # The ring of integral elements is cut out by the points of the adic spectrum
