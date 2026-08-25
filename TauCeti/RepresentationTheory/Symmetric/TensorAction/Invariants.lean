@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.RepresentationTheory.Invariants
 public import TauCeti.LinearAlgebra.Multilinear.Polarization
 public import TauCeti.LinearAlgebra.SymmetricPower.Basic
 public import TauCeti.RepresentationTheory.Invariants

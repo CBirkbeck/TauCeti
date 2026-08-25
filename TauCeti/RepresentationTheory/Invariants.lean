@@ -47,15 +47,9 @@ theorem averageMap_eq_invOf_card_smul_sum :
 `∑ g, ρ g` maps onto the invariants of `ρ`: it agrees with the averaging projection up to the unit
 `#G`, so the two have the same image. -/
 theorem range_sum_eq_invariants : LinearMap.range (∑ g : G, ρ g) = ρ.invariants := by
-  refine le_antisymm ?_ fun v hv => ?_
-  · rintro _ ⟨w, rfl⟩
-    have hw : (∑ g : G, ρ g) w = (Fintype.card G : k) • ρ.averageMap w := by
-      rw [averageMap_eq_invOf_card_smul_sum, LinearMap.smul_apply, smul_smul, mul_invOf_self,
-        one_smul]
-    rw [hw]
-    exact Submodule.smul_mem _ _ (ρ.averageMap_invariant w)
-  · refine ⟨⅟(Fintype.card G : k) • v, ?_⟩
-    rw [map_smul, ← LinearMap.smul_apply, ← averageMap_eq_invOf_card_smul_sum]
-    exact ρ.averageMap_id v hv
+  rw [← ρ.isProj_averageMap.range, averageMap_eq_invOf_card_smul_sum]
+  refine le_antisymm ?_ (LinearMap.range_smul_le_range _ _)
+  convert LinearMap.range_smul_le_range (⅟(Fintype.card G : k) • ∑ g : G, ρ g) (Fintype.card G : k)
+  rw [smul_smul, mul_invOf_self, one_smul]
 
 end Representation
