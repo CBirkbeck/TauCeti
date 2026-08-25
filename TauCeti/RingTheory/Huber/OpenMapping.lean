@@ -86,11 +86,10 @@ That quotient form is also what pins down the topology of a *finitely generated*
 finite generating family presents it as a topological quotient of `Fin n → A`, and the module
 topology passes along that presentation, so the module carries the module topology —
 `TauCeti.Huber.IsTateRing.isModuleTopology`. Continuity of every linear map out of it is then
-Mathlib's `IsModuleTopology.continuous_of_linearMap`, packaged here as
-`TauCeti.Huber.IsTateRing.continuous_of_moduleFinite`, the continuity conjunct of Wedhorn 6.18(2).
-That is where the asymmetry of this file reverses: it is the *source* that must be complete,
-metrisable and finitely generated, while the target is asked for nothing beyond a topological
-module structure.
+Mathlib's `IsModuleTopology.continuous_of_linearMap` applied to that fact, and that consequence is
+the continuity conjunct of Wedhorn 6.18(2). That is where the asymmetry of this file reverses: it
+is the *source* that must be complete, metrisable and finitely generated, while the target is asked
+for nothing beyond a topological module structure.
 
 ## Main results
 
@@ -107,11 +106,11 @@ module structure.
 * `TauCeti.Huber.IsTateRing.isQuotientMap_linearCombination`: the same presentation induces the
   quotient topology, pairing with the above as `isQuotientMap` pairs with `isOpenMap`.
 * `TauCeti.Huber.IsTateRing.isModuleTopology`: a module-finite complete metrisable module carries
-  the module topology, so its topology is determined by that of `A`.
-* `TauCeti.Huber.IsTateRing.continuous_of_moduleFinite`: consequently a linear map out of such a
-  module is continuous, with no continuity hypothesis on the map and nothing asked of the target
-  beyond a topological module structure. This is the continuity conjunct of Wedhorn 6.18(2); see
-  its docstring for what separates the two.
+  the module topology, so its topology is determined by that of `A`. Feeding it to Mathlib's
+  `IsModuleTopology.continuous_of_linearMap` is the continuity conjunct of Wedhorn 6.18(2): a
+  linear map out of such a module is continuous, with no continuity hypothesis on the map and
+  nothing asked of the target beyond a topological module structure. See its docstring for what
+  separates that consequence from 6.18(2) itself.
 
 ## References
 
@@ -119,8 +118,8 @@ module structure.
   is not proved here in full. It assumes `A` noetherian and both modules finitely generated with
   the topology of 6.18(1), and concludes continuity as well as openness onto the image; what is
   here is its two conjuncts separately, each under hypotheses of its own.
-  `TauCeti.Huber.IsTateRing.continuous_of_moduleFinite` is the continuity conjunct, and needs
-  neither the noetherian hypothesis nor a topology of 6.18(1) on the target.
+  `TauCeti.Huber.IsTateRing.isModuleTopology` yields the continuity conjunct, which needs neither
+  the noetherian hypothesis nor a topology of 6.18(1) on the target.
   `TauCeti.Huber.IsTateRing.isStrictMap_of_isClosed_range` is the openness conjunct, and takes a
   closed range as a hypothesis in place of what the noetherian finitely generated setting supplies.
   Assembling the two into 6.18(2) itself needs that missing input — closedness of a finitely
@@ -130,12 +129,12 @@ module structure.
 
 ## Provenance
 
-`TauCeti.Huber.IsTateRing.continuous_of_moduleFinite` is adapted from the AINTLIB project
+`TauCeti.Huber.IsTateRing.isModuleTopology` is adapted from the AINTLIB project
 (Chris Birkbeck, Apache-2.0), `projects/AdicSpaces/Adic spaces/WedhornBanachTheorem.lean` at commit
 `37bbdaeb9ad9e3bc9f0d660feadc2779e455a91c`, whose private
-`continuous_of_moduleFinite_of_topNilpUnit` (lines 1113-1149) proves the same statement by the same
-route: present the source as a topological quotient along a finite generating family, then transfer
-continuity across the quotient.
+`continuous_of_moduleFinite_of_topNilpUnit` (lines 1113-1149) proves the continuity consequence by
+the same route: present the source as a topological quotient along a finite generating family, then
+transfer continuity across the quotient.
 
 The proof is not transcribed, and the route is only the same as far as the presentation. There the
 presentation map is built by hand, its openness is discharged by a `wedhorn_6_16_of_topNilpUnit`
@@ -145,8 +144,8 @@ twenty-five lines. Here the presentation is
 continuity of one map but the module topology itself, after which every linear map out of the source
 is continuous by Mathlib's `IsModuleTopology.continuous_of_linearMap`. The hypotheses differ too:
 the topologically nilpotent unit is supplied by `[IsTateRing A]` rather than taken as an explicit
-argument, and the target is asked only to be a topological `A`-module, where the source lemma asks
-it to be complete, separated and countably uniform.
+argument, and in the consequence the target is asked only to be a topological `A`-module, where the
+source lemma asks it to be complete, separated and countably uniform.
 
 -/
 
@@ -269,8 +268,6 @@ variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [Comple
   [(𝓤 A).IsCountablyGenerated] [NonarchimedeanRing A] [IsTateRing A]
   {M : Type*} [AddCommGroup M] [UniformSpace M] [IsUniformAddGroup M] [CompleteSpace M]
   [(𝓤 M).IsCountablyGenerated] [T0Space M] [Module A M] [ContinuousSMul A M] [Module.Finite A M]
-  {N : Type*} [AddCommMonoid N] [TopologicalSpace N] [ContinuousAdd N] [Module A N]
-  [ContinuousSMul A N]
 
 /-- **A module-finite complete metrisable module over a Tate ring carries the module topology.**
 That is: the topology `M` was given is already the finest one making it a topological `A`-module,
@@ -287,42 +284,30 @@ coinduced one gives the claim.
 It is stated as a theorem rather than an instance deliberately. Its conclusion
 `IsModuleTopology A M` has no discriminating head, so as an instance it would be tried on every
 module-topology goal in every file that transitively imports this one, each attempt dragging in a
-search for `IsTateRing`, `CompleteSpace` and `Module.Finite`. Call it explicitly, or use the
-packaged corollary below. -/
+search for `IsTateRing`, `CompleteSpace` and `Module.Finite`. Call it explicitly, as
+`have := IsTateRing.isModuleTopology (A := A) (M := M)`.
+
+The **continuity conjunct** of Wedhorn Proposition 6.18(2) is the immediate consequence: with that
+in scope, `IsModuleTopology.continuous_of_linearMap f` gives `Continuous f` for every linear
+`f : M →ₗ[A] N` into every topological `A`-module `N`, with no continuity hypothesis on `f` —
+finiteness of the source is what supplies it. Two hypotheses of 6.18(2) are absent from that
+consequence, and their absence is the content. `A` is **not** asked to be noetherian: that
+hypothesis is spent entirely on closedness of the range, which continuity does not need. And the
+target is asked only to be a topological `A`-module — no completeness, no separation, no countably
+generated uniformity, not even a uniform structure. Both are genuine weakenings, not oversights;
+the source carries the whole burden, as it must, since it is the source being finitely generated
+that makes the quotient presentation available. The openness conjunct of 6.18(2) is
+`TauCeti.Huber.IsTateRing.isStrictMap_of_isClosed_range`, which still takes as a hypothesis the
+closed range that the noetherian finitely generated setting would supply.
+
+Mathlib's `LinearMap.continuous_of_finiteDimensional` is the same phenomenon over a complete
+nontrivially normed field, where finite-dimensionality plays the role finite generation plays here;
+neither statement subsumes the other, since a Tate ring need not be a field. -/
 theorem IsTateRing.isModuleTopology : IsModuleTopology A M := by
   obtain ⟨n, g, hspan⟩ := Module.Finite.exists_fin (R := A) (M := M)
   exact ⟨(IsTateRing.isQuotientMap_linearCombination g hspan).eq_coinduced.trans
     (ModuleTopology.eq_coinduced_of_surjective
       (span_range_eq_top_iff_surjective_fintypeLinearCombination A g |>.mp hspan)).symm⟩
-
-/-- **A linear map out of a module-finite complete metrisable module over a Tate ring is
-continuous.** No continuity hypothesis is placed on `f`: finiteness of the source is what supplies
-it.
-
-This is the packaged form of `TauCeti.Huber.IsTateRing.isModuleTopology` above: once `M` is known
-to carry the module topology, continuity of *every* linear map out of it is Mathlib's
-`IsModuleTopology.continuous_of_linearMap`, and nothing about `f` is used beyond linearity. The
-named form is kept because it, not the module-topology fact, is the statement Wedhorn asks for.
-
-This is the **continuity conjunct** of Wedhorn Proposition 6.18(2), and not that proposition.
-6.18(2) asks `A` noetherian and both modules finitely generated with the canonical topology of
-6.18(1), and concludes continuity *together with* openness onto the image. The openness conjunct is
-`TauCeti.Huber.IsTateRing.isStrictMap_of_isClosed_range`, which still takes as a hypothesis the
-closed range that the noetherian finitely generated setting would supply.
-
-Two hypotheses of 6.18(2) are absent here, and their absence is the content. `A` is **not** asked to
-be noetherian — that hypothesis is spent entirely on closedness of the range, which continuity does
-not need. And the target is asked only to be a topological `A`-module: no completeness, no
-separation, no countably generated uniformity, not even a uniform structure. Both are genuine
-weakenings, not oversights; the source carries the whole burden, as it must, since it is the source
-being finitely generated that makes the quotient presentation available.
-
-Mathlib's `LinearMap.continuous_of_finiteDimensional` is the same phenomenon over a complete
-nontrivially normed field, where finite-dimensionality plays the role finite generation plays here;
-neither statement subsumes the other, since a Tate ring need not be a field. -/
-theorem IsTateRing.continuous_of_moduleFinite (f : M →ₗ[A] N) : Continuous (f : M → N) :=
-  have := IsTateRing.isModuleTopology (A := A) (M := M)
-  IsModuleTopology.continuous_of_linearMap f
 
 end ModuleFinite
 
