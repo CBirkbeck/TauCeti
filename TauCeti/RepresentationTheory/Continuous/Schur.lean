@@ -42,9 +42,9 @@ because every linear map out of a finite-dimensional normed space is continuous.
 * `TauCeti.ContRepresentation.exists_eq_smul_one_of_irreducible`: every continuous self-intertwiner
   of an irreducible finite-dimensional representation over an algebraically closed normed field is
   scalar.
-* `ContRepresentation.eq_smul_id_of_irreducible`: when the dimension is invertible in `𝕜` that
-  scalar is pinned by the trace — it is the normalized trace `(finrank 𝕜 V)⁻¹ * trace f` of the
-  intertwiner.
+* `ContRepresentation.eq_finrank_inv_mul_trace_smul_id_of_irreducible`: when the dimension is
+  invertible in `𝕜` that scalar is pinned by the trace — it is the normalized trace
+  `(finrank 𝕜 V)⁻¹ * trace f` of the intertwiner.
 
 The mathematical argument follows Daniel Bump, *Lie Groups*, second edition, Chapter 2.
 -/
@@ -142,7 +142,7 @@ characteristic of `𝕜` divides `dim V` the scalar `(finrank 𝕜 V)⁻¹ * tra
 and says nothing about `f`. It is stated as `(finrank 𝕜 V : 𝕜) ≠ 0` rather than `CharZero 𝕜`
 because that is all the proof needs; over an `RCLike` field it follows from `Module.finrank_pos`.
 The vanishing and scalar halves of Schur's lemma above need no such hypothesis. -/
-theorem _root_.ContRepresentation.eq_smul_id_of_irreducible
+theorem _root_.ContRepresentation.eq_finrank_inv_mul_trace_smul_id_of_irreducible
     (hdim : (Module.finrank 𝕜 V : 𝕜) ≠ 0)
     (hirr : Representation.IsIrreducible π.toRepresentation) (f : ContIntertwiningMap π π) :
     f.toContinuousLinearMap
@@ -153,8 +153,11 @@ theorem _root_.ContRepresentation.eq_smul_id_of_irreducible
   have hc := congrArg ContIntertwiningMap.toContinuousLinearMap hc
   simp only [ContIntertwiningMap.toContinuousLinearMap_smul,
     ContIntertwiningMap.toContinuousLinearMap_one, ContinuousLinearMap.one_def] at hc
-  rw [hc, ContinuousLinearMap.toLinearMap_smul, ContinuousLinearMap.coe_id, map_smul,
-    LinearMap.trace_id, smul_eq_mul, mul_comm c, inv_mul_cancel_left₀ hdim]
+  -- Tracing the scalar form multiplies the scalar by the dimension, which `hdim` cancels again.
+  have htrace : LinearMap.trace 𝕜 V (f.toContinuousLinearMap : V →ₗ[𝕜] V)
+      = c * Module.finrank 𝕜 V := by simp [hc]
+  rw [htrace, mul_comm c, inv_mul_cancel_left₀ hdim]
+  exact hc
 
 end Scalar
 

@@ -324,7 +324,8 @@ theorem integratedOperator_eq_smul_id
   have hdim : (Module.finrank 𝕜 V : 𝕜) ≠ 0 :=
     have := Representation.IsIrreducible.nontrivial hirr
     mod_cast (Module.finrank_pos (R := 𝕜) (M := V)).ne'
-  have h := π.eq_smul_id_of_irreducible hdim hirr (integratedIntertwiner π hπ hf)
+  have h := π.eq_finrank_inv_mul_trace_smul_id_of_irreducible hdim hirr
+    (integratedIntertwiner π hπ hf)
   rwa [toContinuousLinearMap_integratedIntertwiner, trace_integratedOperator] at h
 
 /-- A class function whose Haar integral against the character vanishes acts as zero on an
