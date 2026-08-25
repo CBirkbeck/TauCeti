@@ -89,10 +89,12 @@ public section
 open Polynomial
 
 /-!
-### Two commutative-ring identities
+### Commutative-ring and polynomial identities
 
 These encode the multiplicativity of the `x - T` map on the level of coordinates, and are used
-only in the proof that `μ` is a homomorphism.
+only in the proof that `μ` is a homomorphism. The polynomial ones are sign normalisations: the
+representatives are naturally written `C x - X`, while `f` factors into `X - C x`, and each
+rewriting step below turns one into the other.
 -/
 
 section CommRing
@@ -110,6 +112,26 @@ private lemma sq_add_add_eq_mul_mul_of_mul_mul_eq_zero {a b c : R} (h : a * b * 
 private lemma sq_add_mul_eq_mul_mul_of_mul_eq_zero {a b c d e : R} (had : a * d = 0)
     (h : b * c = d - e ^ 2 * a) : (d + e * a) ^ 2 = (d - a) * b * c := by
   grobner
+
+/-- `(a * b) ^ 2`, regrouped so that a single factor `b` is split off in front. -/
+private lemma sq_mul_eq_mul_sq_mul (a b : R) : (a * b) ^ 2 = b * (a ^ 2 * b) := by
+  ring
+
+/-- A corrected representative `C a - X + p`, with its linear part written as `X - C a`. -/
+private lemma C_sub_X_add_eq_sub_X_sub_C (a : R) (p : R[X]) :
+    C a - X + p = p - (X - C a) := by
+  ring
+
+/-- A product of three representatives `C x - X`, with every factor written as `X - C x`. -/
+private lemma C_sub_X_mul_mul_eq_neg (a b c : R) :
+    (C a - X) * (C b - X) * (C c - X) = -((X - C a) * (X - C b) * (X - C c)) := by
+  ring
+
+/-- A corrected representative times two plain ones, with every linear part written as
+`X - C x`. -/
+private lemma C_sub_X_add_mul_mul_eq_sub_mul_mul (a b c : R) (p : R[X]) :
+    (C a - X + p) * (C b - X) * (C c - X) = (p - (X - C a)) * (X - C b) * (X - C c) := by
+  ring
 
 end CommRing
 
@@ -147,12 +169,15 @@ lemma monic_f : W.f.Monic := by
 
 lemma f_ne_zero : W.f ≠ 0 := W.monic_f.ne_zero
 
+/-- The derivative of `f`. Its values at the roots of `f` are what makes the corrected
+representative a unit; see `deriv_f_ne_zero`. -/
+lemma derivative_f : derivative W.f = C 3 * X ^ 2 + C (2 * W.a₂) * X + C W.a₄ := by
+  simp [f, C_ofNat]
+  ring
+
 lemma separable_f [W.IsElliptic] [W.IsCharNeTwoNF] : W.f.Separable := by
   have hΔ : W.Δ ≠ 0 := W.isUnit_Δ.ne_zero
-  rw [f, separable_def',
-    show derivative (X ^ 3 + C W.a₂ * X ^ 2 + C W.a₄ * X + C W.a₆)
-        = C 3 * X ^ 2 + C (2 * W.a₂) * X + C W.a₄ by
-      simp [C_ofNat]; ring]
+  rw [separable_def', W.derivative_f, f]
   refine ⟨C (W.Δ)⁻¹ * (C (288 * W.a₄ - 96 * W.a₂ ^ 2) * X
       + C (240 * W.a₂ * W.a₄ - 64 * W.a₂ ^ 3 - 432 * W.a₆)),
     C (W.Δ)⁻¹ * (C (32 * W.a₂ ^ 2 - 96 * W.a₄) * X ^ 2
@@ -190,11 +215,14 @@ lemma negY_of_isCharNeTwoNF [W.IsCharNeTwoNF] (x y : K) : W.negY x y = -y := by
   ring
 
 /-- On a point of `W`, the value `f x` is a square, so it vanishes exactly when `y` does. -/
-lemma ne_zero_of_eval_f_ne_zero [W.IsCharNeTwoNF] {x y : K} (h : W.Equation x y)
+lemma y_ne_zero_of_eval_f_ne_zero [W.IsCharNeTwoNF] {x y : K} (h : W.Equation x y)
     (hx : W.f.eval x ≠ 0) : y ≠ 0 :=
   fun h0 ↦ hx <| by simp [(equation_iff_eval_f_eq_sq W x y).mp h, h0]
 
-/-- The quotient of `f` by `X - x`. -/
+/-- The synthetic cofactor of `f` at `x`, defined for every `x` by the coefficients of synthetic
+division: it satisfies `fCofactor x * (X - C x) = f - C (f.eval x)` (`fCofactor_mul_eq`). It is
+the quotient of `f` by `X - x` exactly when `x` is a root of `f`, which is the case
+`f_eq_mul_of_eval_eq_zero` records. -/
 noncomputable abbrev fCofactor (x : K) : K[X] :=
   X ^ 2 + C (x + W.a₂) * X + C (x ^ 2 + W.a₂ * x + W.a₄)
 
@@ -243,13 +271,20 @@ lemma deriv_f_ne_zero [W.IsElliptic] [W.IsCharNeTwoNF] {x : K} (hx : W.f.eval x 
 /-- The étale algebra associated to a Weierstrass curve with `a₁ = a₃ = 0`. -/
 abbrev A : Type _ := AdjoinRoot W.f
 
-lemma exists_mk_eq (a : W.A) :
+/-- **Every class in `W.A` is represented by a polynomial of degree at most `2`.** The bound is
+`natDegree f - 1 = 2`; this is the normal form the kernel computation reduces to before
+multiplying by a linear class. -/
+lemma exists_mk_quadratic_eq (a : W.A) :
     ∃ r s t, a = AdjoinRoot.mk W.f (C r * X ^ 2 + C s * X + C t) := by
   obtain ⟨p, hp, rfl⟩ := AdjoinRoot.exists_degree_lt_mk_eq W.monic_f a
   rw [degree_eq_natDegree W.monic_f.ne_zero, natDegree_f] at hp
   exact ⟨_, _, _, congrArg (AdjoinRoot.mk W.f) <|
     eq_quadratic_of_degree_le_two <| Order.lt_succ_iff.mp hp⟩
 
+/-- **Multiplying a quadratic representative with a nonzero leading coefficient by a suitable
+linear class lowers its degree to `1`.** This is the reduction step of the kernel computation: it
+trades the quadratic normal form of `exists_mk_quadratic_eq` for a linear one, at the cost of a
+factor `X - C ξ` whose `ξ` the statement produces. -/
 lemma exists_X_sub_C_mul_eq (r s t : K) (hr : r ≠ 0) :
     ∃ ξ l m, AdjoinRoot.mk W.f (X - C ξ) * AdjoinRoot.mk W.f (C r * X ^ 2 + C s * X + C t) =
        AdjoinRoot.mk W.f (C l * X + C m) := by
@@ -277,7 +312,9 @@ lemma exists_X_sub_C_mul_eq (r s t : K) (hr : r ≠ 0) :
 /-- The étale algebra associated to the cofactor of `f`. -/
 abbrev A' (x : K) : Type _ := AdjoinRoot (W.fCofactor x)
 
-lemma exists_mk_eq' {x : K} (a : W.A' x) :
+/-- **Every class in `W.A' x` is represented by a polynomial of degree at most `1`.** This is
+`exists_mk_quadratic_eq` for the cofactor, where the bound is `natDegree (fCofactor x) - 1 = 1`. -/
+lemma exists_mk_linear_eq {x : K} (a : W.A' x) :
     ∃ r s, a = AdjoinRoot.mk (W.fCofactor x) (C r * X + C s) := by
   obtain ⟨p, hp, rfl⟩ := AdjoinRoot.exists_degree_lt_mk_eq (W.monic_fCofactor x) a
   rw [degree_eq_natDegree (W.monic_fCofactor x).ne_zero, natDegree_fCofactor] at hp
@@ -286,7 +323,6 @@ lemma exists_mk_eq' {x : K} (a : W.A' x) :
 
 /-- The Chinese Remainder Theorem isomorphism `K[X]⧸f ≃ K × K[X]⧸cf`, where `cf` is the cofactor
 `f / (X - x)`. -/
-@[expose]
 noncomputable def equivProdA' [W.IsElliptic] [W.IsCharNeTwoNF] {x : K} (hx : W.f.eval x = 0) :
     W.A ≃+* K × W.A' x :=
   let eA : W.A ≃+* K[X] ⧸ (Ideal.span {X - C x} * Ideal.span {W.fCofactor x}) :=
@@ -302,7 +338,7 @@ noncomputable def equivProdA' [W.IsElliptic] [W.IsCharNeTwoNF] {x : K} (hx : W.f
 
 lemma equivProdA'_apply [W.IsElliptic] [W.IsCharNeTwoNF] {x : K} (hx : W.f.eval x = 0) (p : K[X]) :
     W.equivProdA' hx (AdjoinRoot.mk W.f p) = (p.eval x, AdjoinRoot.mk (W.fCofactor x) p) :=
-  rfl
+  (rfl)
 
 /-- Two classes in `W.A` agree exactly when they agree in both factors of the Chinese Remainder
 decomposition at a root of `f`. This is not a corollary of `AdjoinRoot.mk_eq_mk`, which reads the
@@ -331,12 +367,11 @@ variable {W}
 lemma isUnit_mk_sub_X_of_eval_f_ne_zero {x : K} (h : W.f.eval x ≠ 0) :
     IsUnit <| AdjoinRoot.mk W.f (C x - X) := by
   refine .of_mul_eq_one (AdjoinRoot.mk W.f (C (W.f.eval x)⁻¹ * W.fCofactor x)) ?_
-  rw [← map_mul, mul_left_comm,
-    show (1 : W.A) = AdjoinRoot.mk W.f (1 - C (eval x W.f)⁻¹ * W.f) by simp]
-  congr 1
-  have h1 : (C x - X) * W.fCofactor x = C (W.f.eval x) - W.f := by
+  have hcof : (C x - X) * W.fCofactor x = C (W.f.eval x) - W.f := by
     linear_combination -W.fCofactor_mul_eq x
-  rw [h1, mul_sub, ← C_mul, inv_mul_cancel₀ h, map_one]
+  have key : (C x - X) * (C (W.f.eval x)⁻¹ * W.fCofactor x) = 1 - C (W.f.eval x)⁻¹ * W.f := by
+    rw [mul_left_comm, hcof, mul_sub, ← C_mul, inv_mul_cancel₀ h, map_one]
+  rw [← map_mul, key, map_sub, map_one, map_mul, AdjoinRoot.mk_self, mul_zero, sub_zero]
 
 section
 
@@ -461,14 +496,13 @@ lemma μX_of_eval_f_ne_zero {x : K} (hx : W.f.eval x ≠ 0) :
 
 /-- The descent or `x - T` map `μ₀` on the group of points of an affine Weierstrass curve.
 This is a plain map; it is upgraded to a group homomorphism `μ` below. -/
-@[expose]
 noncomputable def μ₀ : W.Point → W.M
   | 0 => 1
   | .some x _ _ => W.μX x
 
-@[simp] lemma μ₀_zero : W.μ₀ 0 = 1 := rfl
+@[simp] lemma μ₀_zero : W.μ₀ 0 = 1 := (rfl)
 
-@[simp] lemma μ₀_some {x y : K} (h : W.Nonsingular x y) : W.μ₀ (.some x y h) = W.μX x := rfl
+@[simp] lemma μ₀_some {x y : K} (h : W.Nonsingular x y) : W.μ₀ (.some x y h) = W.μX x := (rfl)
 
 end μ₀
 
@@ -481,7 +515,11 @@ of the points are `2`-torsion, and in each case exhibits an explicit square root
 the three representatives.
 -/
 
-lemma Point.some_add_some_add_some_eq_zero {xP yP xQ yQ xR yR : K}
+/-- **Three collinear points cut `f` down to a square.** If three affine points sum to `0`, the
+product of the three linear factors `X - C x` is `f` minus the square of a polynomial of degree
+at most `1`, namely the line through them. -/
+lemma Point.exists_polynomial_factorization_of_some_add_some_add_some_eq_zero
+    {xP yP xQ yQ xR yR : K}
     (hP : W.Nonsingular xP yP) (hQ : W.Nonsingular xQ yQ) (hR : W.Nonsingular xR yR)
     (hPQR : some xP yP hP + some xQ yQ hQ + some xR yR hR = 0) :
     ∃ pol, (X - C xP) * (X - C xQ) * (X - C xR) = W.f - pol ^ 2 ∧ pol.natDegree ≤ 1 := by
@@ -519,7 +557,8 @@ private lemma f_eq_prod_of_eval_f_eq_zero {xP yP xQ yQ xR yR : K} (hP : W.Nonsin
     (h₂ : W.f.eval xQ = 0) :
     W.f = (X - C xP) * (X - C xQ) * (X - C xR) := by
   have hPQ : xQ ≠ xP := xQ_ne_xP_of_eval_f_eq_zero hP hQ hR hPQR h₁
-  obtain ⟨pol, hpol, hpol₁⟩ := Point.some_add_some_add_some_eq_zero hP hQ hR hPQR
+  obtain ⟨pol, hpol, hpol₁⟩ :=
+    Point.exists_polynomial_factorization_of_some_add_some_add_some_eq_zero hP hQ hR hPQR
   have hpol₀ : pol = 0 := by
     refine pol.eq_zero_of_natDegree_lt_card_of_eval_eq_zero' {xP, xQ} (fun x hx ↦ ?_) ?_
     · simp only [Finset.mem_insert, Finset.mem_singleton] at hx
@@ -541,7 +580,8 @@ private lemma exists_pol_of_eq_two_smul {x y : K} (h : W.Nonsingular x y) {P : W
     rw [← sub_eq_zero, sub_eq_add_neg, two_smul, neg_add, ← add_assoc, add_rotate,
       Point.neg_some] at hP
     have H : W.Nonsingular ξ (W.negY ξ η) := (nonsingular_neg ξ η).mpr h'
-    obtain ⟨pol, hpol, hpol₁⟩ := Point.some_add_some_add_some_eq_zero H H h hP
+    obtain ⟨pol, hpol, hpol₁⟩ :=
+      Point.exists_polynomial_factorization_of_some_add_some_add_some_eq_zero H H h hP
     rw [← sq] at hpol
     obtain ⟨l, m, rfl⟩ := exists_eq_X_add_C_of_natDegree_le_one hpol₁
     exact ⟨_, _, _, hpol⟩
@@ -570,9 +610,7 @@ private lemma μX_mul_mul_eq_one_of_eval_f_eq_zero_of_eval_f_eq_zero (h₁ : W.f
   obtain ⟨hfcP, hfcQ, hfcR⟩ := W.fCofactor_eq_of_f_eq hf
   rw [μX_of_eval_f_eq_zero h₁, μX_of_eval_f_eq_zero h₂, μX_of_eval_f_eq_zero h₃,
     M.mk_mul_mk_mul_mk_eq_one_iff]
-  simp only [hfcP, hfcQ, hfcR,
-    show ∀ (a b c : K), C a - X + (X - C b) * (X - C c) =
-      (X - C b) * (X - C c) - (X - C a) by intro a b c; ring]
+  simp only [hfcP, hfcQ, hfcR, C_sub_X_add_eq_sub_X_sub_C]
   rw [map_sub, map_sub _ _ (X - C xQ), map_sub _ _ (X - C xR)]
   simp only [map_mul]
   rw [← sq_add_add_eq_mul_mul_of_mul_mul_eq_zero <| by rw [← map_mul, ← map_mul, ← hf]; simp]
@@ -584,17 +622,17 @@ private lemma μX_mul_mul_eq_one_of_eval_f_eq_zero_of_ne_of_ne (h : W.f.eval xP 
     W.μX xP * W.μX xQ * W.μX xR = 1 := by
   rw [μX_of_eval_f_eq_zero h, μX_of_eval_f_ne_zero hQ₀, μX_of_eval_f_ne_zero hR₀,
     M.mk_mul_mk_mul_mk_eq_one_iff]
-  obtain ⟨pol, hpol, hpol₁⟩ := Point.some_add_some_add_some_eq_zero hP hQ hR hPQR
+  obtain ⟨pol, hpol, hpol₁⟩ :=
+    Point.exists_polynomial_factorization_of_some_add_some_add_some_eq_zero hP hQ hR hPQR
   obtain ⟨γ, rfl⟩ : ∃ γ, pol = C γ * (X - C xP) := by
     apply_fun (·.eval xP) at hpol
     rw [eval_sub, h] at hpol
     exact exists_eq_C_mul_X_sub_C_of_natDegree_le_one hpol₁ (by simpa using hpol)
   rw [W.f_eq_mul_of_eval_eq_zero h, mul_assoc, mul_comm (W.fCofactor _),
-    show (C γ * (X - C xP)) ^ 2 = (X - C xP) * (C γ ^ 2 * (X - C xP)) by ring, ← mul_sub] at hpol
+    sq_mul_eq_mul_sq_mul (C γ) (X - C xP), ← mul_sub] at hpol
   replace hpol := mul_left_cancel₀ (X_sub_C_ne_zero xP) hpol
   simp only [← map_mul]
-  rw [show (C xP - X + fCofactor W xP) * (C xQ - X) * (C xR - X) =
-    (fCofactor W xP - (X - C xP)) * (X - C xQ) * (X - C xR) by ring, map_mul, map_mul, map_sub]
+  rw [C_sub_X_add_mul_mul_eq_sub_mul_mul xP xQ xR (W.fCofactor xP), map_mul, map_mul, map_sub]
   rw [← sq_add_mul_eq_mul_mul_of_mul_eq_zero (e := AdjoinRoot.mk W.f (C γ)) ?H₁ ?H₂]
   case H₁ =>
     rw [← map_mul, mul_comm, ← f_eq_mul_of_eval_eq_zero W h]
@@ -625,10 +663,9 @@ lemma μX_mul_mul_eq_one : W.μX xP * W.μX xQ * W.μX xR = 1 := by
     exact μX_mul_mul_eq_one_of_eval_f_eq_zero hR hP hQ hPQR HR
   rw [μX_of_eval_f_ne_zero HP, μX_of_eval_f_ne_zero HQ, μX_of_eval_f_ne_zero HR,
     M.mk_mul_mk_mul_mk_eq_one_iff]
-  obtain ⟨pol, hpol, hpol₁⟩ := Point.some_add_some_add_some_eq_zero hP hQ hR hPQR
-  simp only [← map_mul, hpol, neg_sub,
-    show (C xP - X) * (C xQ - X) * (C xR - X) = -((X - C xP) * (X - C xQ) * (X - C xR))
-      by algebra]
+  obtain ⟨pol, hpol, hpol₁⟩ :=
+    Point.exists_polynomial_factorization_of_some_add_some_add_some_eq_zero hP hQ hR hPQR
+  simp only [← map_mul, hpol, neg_sub, C_sub_X_mul_mul_eq_neg]
   simp
 
 end μ₀_helper_lemmas
@@ -648,14 +685,14 @@ lemma μ₀_mul_mul_eq_one_of_add_add_eq_zero {P Q R : W.Point} (hPQR : P + Q + 
     exact μX_mul_mul_eq_one hP hQ hR hPQR
 
 /-- **The descent, or `x - T`, map as a group homomorphism.** -/
-@[expose]
 noncomputable def μ : Multiplicative W.Point →* W.M :=
   .ofMapMulMulEqOne (f := μ₀ ∘ Multiplicative.toAdd) (by simp) fun P' Q' R' ↦ by
     simp_rw [← toAdd_eq_zero, toAdd_mul, Function.comp_apply]
     exact μ₀_mul_mul_eq_one_of_add_add_eq_zero
 
 @[simp]
-lemma μ_apply (P : W.Point) : μ (.ofAdd P) = μ₀ P := rfl
+lemma μ_apply (P : W.Point) : μ (.ofAdd P) = μ₀ P := by
+  simp [μ]
 
 @[simp]
 lemma μ₀_two_nsmul (P : W.Point) : W.μ₀ (2 • P) = 1 := by

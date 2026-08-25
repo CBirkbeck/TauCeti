@@ -39,7 +39,7 @@ variable {G H : Type*} [Group G] [Group H]
 /-- A map `f` between groups with `f 1 = 1` that sends triples with product `1` to triples
 with product `1` is a homomorphism. Useful when a map is naturally defined via a symmetric
 ternary relation, like collinearity on a cubic curve. -/
-@[expose, to_additive /-- A map `f` between additive groups with `f 0 = 0` that sends triples with
+@[to_additive /-- A map `f` between additive groups with `f 0 = 0` that sends triples with
 sum `0` to triples with sum `0` is a homomorphism. Useful when a map is naturally defined via
 a symmetric ternary relation, like collinearity on a cubic curve. -/]
 def MonoidHom.ofMapMulMulEqOne {f : G → H} (hf₁ : f 1 = 1)
@@ -57,6 +57,6 @@ def MonoidHom.ofMapMulMulEqOne {f : G → H} (hf₁ : f 1 = 1)
 lemma MonoidHom.coe_ofMapMulMulEqOne {f : G → H} (hf₁ : f 1 = 1)
     (hf : ∀ a b c, a * b * c = 1 → f a * f b * f c = 1) :
     ⇑(ofMapMulMulEqOne hf₁ hf) = f :=
-  rfl
+  (rfl)
 
 end
