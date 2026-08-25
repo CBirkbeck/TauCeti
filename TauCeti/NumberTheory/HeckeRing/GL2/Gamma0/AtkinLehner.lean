@@ -10,7 +10,6 @@ public import TauCeti.NumberTheory.HeckeRing.GLn.TransposeAntiInvolution
 -- `mem_doubleCoset_natDiagGL_of_intWitness` (Shimura 3.33), used only inside the proof of
 -- `atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_coprime_upperLeft` below, so private.
 import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.BadPrimeCoset
-import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Basic
 import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.CoprimeRepresentative
 import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.CosetMap
 import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.Coset
@@ -327,45 +326,48 @@ private lemma dvd_atkinLehnerEntries (A : Matrix (Fin 2) (Fin 2) ℤ) (e c : ℤ
   · simpa [atkinLehnerEntries] using dvd_mul_of_dvd_right (he 0 1) (N : ℤ)
   · simpa [atkinLehnerEntries] using he 1 1
 
-/-- **Equal determinants and mutually dividing contents make two `2 × 2` integer matrices
-`SL₂ × SL₂`-equivalent.** If `A` and `B` have the same positive determinant and every common
-divisor of the entries of either divides the entries of the other, then `B = P * A * Q` for
-determinant-one `P` and `Q`.
-
-Smith normal form turns both hypotheses into equalities of invariant factors. Mutual
-divisibility pins the first: each matrix's first invariant factor divides all of the other's
-entries, hence that matrix's own first invariant factor, and both are positive. The
-determinant, being the product of the two, then pins the second. Equal invariant factors mean
-a common Smith form, and composing one reduction with the inverse of the other is the
-equivalence.
-
-The divisibility hypotheses are stated as transfers of an arbitrary common divisor rather than
-as an equality of contents: that is the form a caller can discharge one entry at a time, with
-no gcd computation. -/
-private lemma exists_sl2_mul_mul_eq_of_det_eq_of_dvd_entries {A B : Matrix (Fin 2) (Fin 2) ℤ}
-    (hA_det_pos : 0 < A.det) (hdet : B.det = A.det)
-    (hAB : ∀ e : ℤ, (∀ i j, e ∣ A i j) → ∀ i j, e ∣ B i j)
-    (hBA : ∀ e : ℤ, (∀ i j, e ∣ B i j) → ∀ i j, e ∣ A i j) :
+/-- The integral matrices of `x` and its Atkin–Lehner bar are equivalent under determinant-one
+row and column operations. Smith normal form reduces this to preservation of the determinant
+and of the content; the latter is where the `Δ₀(N)` upper-left coprimality is used. -/
+private lemma exists_sl2_mul_mul_eq_atkinLehnerEntries
+    (A : Matrix (Fin 2) (Fin 2) ℤ) (hA_det_pos : 0 < A.det) (c : ℤ)
+    (hc : A 1 0 = (N : ℤ) * c) (hAco : Int.gcd (A 0 0) N = 1) :
     ∃ P Q : SpecialLinearGroup (Fin 2) ℤ,
-      (P : Matrix (Fin 2) (Fin 2) ℤ) * A * (Q : Matrix (Fin 2) (Fin 2) ℤ) = B := by
+      (P : Matrix (Fin 2) (Fin 2) ℤ) * A * (Q : Matrix (Fin 2) (Fin 2) ℤ) =
+        atkinLehnerEntries N A c := by
+  set B := atkinLehnerEntries N A c with hB
+  have hB_det : B.det = A.det := by rw [hB, atkinLehnerEntries_det N A c hc]
   obtain ⟨LA, RA, dA, hdA_pos, hdA_div, hA_snf⟩ :=
     A.exists_smith_normal_form_of_det_pos hA_det_pos
   obtain ⟨LB, RB, dB, hdB_pos, hdB_div, hB_snf⟩ :=
-    B.exists_smith_normal_form_of_det_pos (hdet ▸ hA_det_pos)
+    B.exists_smith_normal_form_of_det_pos (hB_det ▸ hA_det_pos)
   have hdA_A : ∀ i j, dA 0 ∣ A i j := fun i j ↦
     Matrix.invariant_factor_zero_dvd_entries A dA (fun k ↦ hdA_div (Fin.zero_le k))
       LA.toGL RA.toGL hA_snf i j
   have hdB_B : ∀ i j, dB 0 ∣ B i j := fun i j ↦
     Matrix.invariant_factor_zero_dvd_entries B dB (fun k ↦ hdB_div (Fin.zero_le k))
       LB.toGL RB.toGL hB_snf i j
-  -- each first invariant factor divides every entry of the other matrix, hence divides that
-  -- matrix's own first invariant factor; both are positive, so they agree
+  have hAco' : IsCoprime (A 0 0) (N : ℤ) := Int.isCoprime_iff_gcd_eq_one.mpr hAco
+  have hdA_B : ∀ i j, dA 0 ∣ B i j := by
+    rw [hB]
+    exact dvd_atkinLehnerEntries N A (dA 0) c hc hdA_A
+      (hAco'.of_isCoprime_of_dvd_left (hdA_A 0 0))
+  have hB00 : B 0 0 = A 0 0 := by simp [hB, atkinLehnerEntries]
+  have hBc : B 1 0 = (N : ℤ) * A 0 1 := by simp [hB, atkinLehnerEntries]
+  have hswap : atkinLehnerEntries N B (A 0 1) = A := by
+    ext i j
+    fin_cases i <;> fin_cases j <;> simp [hB, atkinLehnerEntries, hc]
+  have hdB_A : ∀ i j, dB 0 ∣ A i j := fun i j ↦ by
+    have h := dvd_atkinLehnerEntries N B (dB 0) (A 0 1) hBc hdB_B
+      (hAco'.of_isCoprime_of_dvd_left (hB00 ▸ hdB_B 0 0)) i j
+    rwa [hswap] at h
+  have hdA0_dvd_dB0 : dA 0 ∣ dB 0 :=
+    Matrix.dvd_diag_of_dvd_entries B (dA 0) dB LB RB hB_snf hdA_B 0
+  have hdB0_dvd_dA0 : dB 0 ∣ dA 0 :=
+    Matrix.dvd_diag_of_dvd_entries A (dB 0) dA LA RA hA_snf hdB_A 0
   have hd0 : dA 0 = dB 0 := le_antisymm
-    (Int.le_of_dvd (hdB_pos 0)
-      (Matrix.dvd_diag_of_dvd_entries B (dA 0) dB LB RB hB_snf (hAB _ hdA_A) 0))
-    (Int.le_of_dvd (hdA_pos 0)
-      (Matrix.dvd_diag_of_dvd_entries A (dB 0) dA LA RA hA_snf (hBA _ hdB_B) 0))
-  -- the invariant factors multiply to the determinant, so the second one is now forced too
+    (Int.le_of_dvd (hdB_pos 0) hdA0_dvd_dB0)
+    (Int.le_of_dvd (hdA_pos 0) hdB0_dvd_dA0)
   have hprodA : dA 0 * dA 1 = A.det := by
     have h := congrArg Matrix.det hA_snf
     simp only [Matrix.det_mul, LA.2, RA.2, one_mul, mul_one, Matrix.det_diagonal,
@@ -377,7 +379,7 @@ private lemma exists_sl2_mul_mul_eq_of_det_eq_of_dvd_entries {A B : Matrix (Fin 
       Fin.prod_univ_two] at h
     exact h.symm
   have hd1 : dA 1 = dB 1 := mul_left_cancel₀ (ne_of_gt (hdA_pos 0)) (by
-    rw [hprodA, hd0, hprodB, hdet])
+    rw [hprodA, hd0, hprodB, hB_det])
   have hdiag : Matrix.diagonal dA = Matrix.diagonal dB := by
     congr 1
     funext i
@@ -396,37 +398,10 @@ private lemma exists_sl2_mul_mul_eq_of_det_eq_of_dvd_entries {A B : Matrix (Fin 
           simp only [SpecialLinearGroup.coe_mul, Matrix.mul_assoc]
     _ = (LB⁻¹).val * Matrix.diagonal dB * (RB⁻¹).val := by rw [hA_snf, hdiag]
     _ = (LB⁻¹).val * (LB.val * B * RB.val) * (RB⁻¹).val := by rw [hB_snf]
-    _ = ((LB⁻¹).val * LB.val) * B * (RB.val * (RB⁻¹).val) := by
-          simp only [Matrix.mul_assoc]
-    _ = B := by rw [hLB, hRB, Matrix.one_mul, Matrix.mul_one]
-
-/-- The integral matrices of `x` and its Atkin–Lehner bar are equivalent under determinant-one
-row and column operations.
-
-Both hypotheses of `exists_sl2_mul_mul_eq_of_det_eq_of_dvd_entries` are available: the entry
-swap preserves the determinant, and it preserves common divisors of the entries in both
-directions, because the `Δ₀(N)` upper-left coprimality makes any such divisor coprime to the
-level and the swap is its own inverse on a witness of this shape. -/
-private lemma exists_sl2_mul_mul_eq_atkinLehnerEntries
-    (A : Matrix (Fin 2) (Fin 2) ℤ) (hA_det_pos : 0 < A.det) (c : ℤ)
-    (hc : A 1 0 = (N : ℤ) * c) (hAco : Int.gcd (A 0 0) N = 1) :
-    ∃ P Q : SpecialLinearGroup (Fin 2) ℤ,
-      (P : Matrix (Fin 2) (Fin 2) ℤ) * A * (Q : Matrix (Fin 2) (Fin 2) ℤ) =
-        atkinLehnerEntries N A c := by
-  have hAco' : IsCoprime (A 0 0) (N : ℤ) := Int.isCoprime_iff_gcd_eq_one.mpr hAco
-  have hB00 : atkinLehnerEntries N A c 0 0 = A 0 0 := by simp [atkinLehnerEntries]
-  have hBc : atkinLehnerEntries N A c 1 0 = (N : ℤ) * A 0 1 := by simp [atkinLehnerEntries]
-  -- swapping back with the new lower-left cofactor returns `A`, which is what makes the
-  -- divisor transfer available in the second direction as well
-  have hswap : atkinLehnerEntries N (atkinLehnerEntries N A c) (A 0 1) = A := by
-    ext i j
-    fin_cases i <;> fin_cases j <;> simp [atkinLehnerEntries, hc]
-  refine exists_sl2_mul_mul_eq_of_det_eq_of_dvd_entries hA_det_pos
-    (atkinLehnerEntries_det N A c hc) (fun e he ↦ ?_) (fun e he i j ↦ ?_)
-  · exact dvd_atkinLehnerEntries N A e c hc he (hAco'.of_isCoprime_of_dvd_left (he 0 0))
-  · have h := dvd_atkinLehnerEntries N (atkinLehnerEntries N A c) e (A 0 1) hBc he
-      (hAco'.of_isCoprime_of_dvd_left (hB00 ▸ he 0 0)) i j
-    rwa [hswap] at h
+    _ = B := by
+      simp only [Matrix.mul_assoc]
+      rw [hRB, Matrix.mul_one, ← Matrix.mul_assoc (LB⁻¹).val, hLB, Matrix.one_mul]
+    _ = atkinLehnerEntries N A c := hB
 
 /-- An integer that is a unit mod `N` is coprime to `N`. -/
 private lemma int_gcd_natCast_eq_one_of_isUnit {a : ℤ} (h : IsUnit (a : ZMod N)) :
