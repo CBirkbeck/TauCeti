@@ -94,7 +94,7 @@ private theorem isCofinalElement_closure_singleton {Γ : Type*} [CommGroup Γ] [
 `WithZero H`, fall below every nonzero element, since such an element is the image of a member
 of `H`. -/
 private theorem exists_pow_lt_of_isCofinalElement {Γ : Type*} [CommGroup Γ] [LinearOrder Γ]
-    [IsOrderedMonoid Γ] {H : Subgroup Γ} {u : Γ} (hu : u ∈ H)
+    {H : Subgroup Γ} {u : Γ} (hu : u ∈ H)
     (hcof : IsCofinalElement H u) {γ : WithZero H} (hγ : 0 < γ) :
     ∃ n : ℕ, ((⟨u, hu⟩ : H) : WithZero H) ^ n < γ := by
   obtain ⟨h, rfl⟩ := WithZero.ne_zero_iff_exists.mp hγ.ne'
