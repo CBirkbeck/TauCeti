@@ -27,14 +27,15 @@ coordinate, and is proved from it one coordinate at a time.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.Point.map_frobeniusAlgHom_eq_self_iff`: the fixed points are the
-  base-changed ones.
+* `WeierstrassCurve.Affine.Point.map_frobeniusAlgHom_eq_self_iff_mem_range_baseChange`: the
+  fixed points are the base-changed ones.
 * `WeierstrassCurve.Affine.Point.ncard_setOf_map_frobeniusAlgHom_eq_self`: the fixed locus has
   `Nat.card (W⁄K).Point` elements.
 
-Neither statement assumes `L` algebraically closed, and neither assumes the point sets finite:
-`Nat.card` and `Set.ncard` are both `0` on an infinite type, and the bijection that carries one to
-the other holds regardless.
+Neither statement assumes `L` algebraically closed, and neither needs a `Fintype` instance on the
+point types: `Nat.card` and `Set.ncard` are defined without one. Finiteness nonetheless *holds*
+where it matters — `K` is finite, so the `K`-points are, and the fixed locus is in bijection with
+them — while the ambient `L`-point type may well be infinite.
 
 Layer 3 of `TauCetiRoadmap/EllipticCurves/README.md` fixes the fixed points of the `q`-power
 Frobenius as the model of record for the points over an extension in its zeta-function
@@ -64,7 +65,8 @@ that roadmap at `dev/hasse-weil @ 513e83879e2f`),
 `fixedLocus_geomFrobenius_eq_range_includePointBC` and
 `ncard_fixedLocus_geomFrobenius_eq_pointCount`.
 
-The source's other sixteen declarations are **not** ported, being Mathlib's already. Its
+The source's other sixteen declarations are **not** ported: some are already available, in
+Mathlib or on `main`, and the rest are omitted deliberately, for the reasons given below. Its
 `geomFrobeniusPointFun` and `geomFrobeniusPoint` are both
 `Affine.Point.map (frobeniusAlgHom K L)`. Its `includePointBC` is not quite that map: it is the
 source's own ring-homomorphism transport applied to `algebraMap K L`, which `main` already carries
@@ -102,7 +104,9 @@ comes from the base field**, where `q` is the cardinality of the base.
 
 This is `TauCeti.FiniteField.pow_card_eq_self_iff_mem_range_algebraMap` applied to each coordinate,
 the point at infinity being fixed and base changed from the point at infinity. -/
-theorem map_frobeniusAlgHom_eq_self_iff [DecidableEq K] (P : (W.baseChange L).toAffine.Point) :
+@[simp]
+theorem map_frobeniusAlgHom_eq_self_iff_mem_range_baseChange [DecidableEq K]
+    (P : (W.baseChange L).toAffine.Point) :
     Affine.Point.map (W' := W) (FiniteField.frobeniusAlgHom K L) P = P ↔
       P ∈ Set.range (Affine.Point.baseChange (W' := W) K L) := by
   rcases P with _ | ⟨x, y, h⟩
@@ -126,8 +130,9 @@ theorem map_frobeniusAlgHom_eq_self_iff [DecidableEq K] (P : (W.baseChange L).to
 
 /-- **The `q`-power map fixes exactly `Nat.card W.toAffine.Point` of the `L`-points.**
 
-Immediate from `map_frobeniusAlgHom_eq_self_iff` and injectivity of `Affine.Point.map`. No
-finiteness is assumed anywhere: on an infinite point set both sides are `0`. -/
+Immediate from `map_frobeniusAlgHom_eq_self_iff_mem_range_baseChange` and injectivity of
+`Affine.Point.map`. No `Fintype` instance on the point types is needed, and both sides are finite
+regardless, `K` being finite, even when the ambient `L`-point type is not. -/
 theorem ncard_setOf_map_frobeniusAlgHom_eq_self : {P : (W.baseChange L).toAffine.Point |
         Affine.Point.map (W' := W) (FiniteField.frobeniusAlgHom K L) P = P}.ncard =
       Nat.card W.toAffine.Point := by
@@ -135,7 +140,7 @@ theorem ncard_setOf_map_frobeniusAlgHom_eq_self : {P : (W.baseChange L).toAffine
   have hset : {P : (W.baseChange L).toAffine.Point |
       Affine.Point.map (W' := W) (FiniteField.frobeniusAlgHom K L) P = P} =
       Set.range (Affine.Point.baseChange (W' := W) K L) :=
-    Set.ext fun P => map_frobeniusAlgHom_eq_self_iff W P
+    Set.ext fun P => map_frobeniusAlgHom_eq_self_iff_mem_range_baseChange W P
   rw [hset]
   exact Set.ncard_range_of_injective (Affine.Point.map_injective _)
 
