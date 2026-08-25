@@ -128,8 +128,8 @@ right-hand side is `f p 0`, and nothing forces those to agree. -/
 @[simp]
 theorem primePowerProd_prime_pow (f : ℕ → ℕ → M) {p : ℕ} (hp : p.Prime) {v : ℕ} (hv : v ≠ 0) :
     primePowerProd f (p ^ v) = f p v := by
-  rw [primePowerProd_of_one_lt f (Nat.one_lt_pow hv hp.one_lt), hp.pow_minFac hv,
-    Nat.factorization_pow_self hp, Nat.div_self (pow_pos hp.pos v), primePowerProd_one, mul_one]
+  simpa [hp.pow_minFac hv, hp.factorization_self, Nat.div_self (pow_pos hp.pos v)]
+    using primePowerProd_of_one_lt f (Nat.one_lt_pow hv hp.one_lt)
 
 end MulOneClass
 
@@ -152,11 +152,16 @@ theorem primePowerProd_eq_factorization_prod (f : ℕ → ℕ → M) (n : ℕ) :
     · have hp : Nat.Prime n.minFac := Nat.minFac_prime (by omega)
       have hmem : n.minFac ∈ n.factorization.support := by
         simp [Nat.mem_primeFactors, hp, n.minFac_dvd, hn]
-      have hlt : n / n.minFac ^ n.factorization n.minFac < n :=
+      have hlt : ordCompl[n.minFac] n < n :=
         Nat.div_lt_self (by omega) (Nat.one_lt_pow
           (hp.factorization_pos_of_dvd hn n.minFac_dvd).ne' hp.one_lt)
-      rw [primePowerProd_of_one_lt f h1, ih _ hlt,
-        Nat.factorization_ordCompl, Finsupp.mul_prod_erase _ _ _ hmem]
+      calc primePowerProd f n
+          = f n.minFac (n.factorization n.minFac) *
+              primePowerProd f (ordCompl[n.minFac] n) := primePowerProd_of_one_lt f h1
+        _ = f n.minFac (n.factorization n.minFac) *
+              (n.factorization.erase n.minFac).prod f := by
+            rw [ih _ hlt, Nat.factorization_ordCompl]
+        _ = n.factorization.prod f := Finsupp.mul_prod_erase _ _ _ hmem
     · have : n = 1 := by omega
       simp [this]
 
@@ -165,9 +170,8 @@ theorem primePowerProd_eq_factorization_prod (f : ℕ → ℕ → M) (n : ℕ) :
 a permutation the commutativity absorbs. -/
 theorem primePowerProd_mul_of_coprime (f : ℕ → ℕ → M) {m n : ℕ} (hmn : Nat.Coprime m n) :
     primePowerProd f (m * n) = primePowerProd f m * primePowerProd f n := by
-  rw [primePowerProd_eq_factorization_prod, primePowerProd_eq_factorization_prod,
-    primePowerProd_eq_factorization_prod, Nat.factorization_mul_of_coprime hmn,
-    Finsupp.prod_add_index_of_disjoint hmn.disjoint_primeFactors]
+  simp only [primePowerProd_eq_factorization_prod, Nat.factorization_mul_of_coprime hmn]
+  exact Finsupp.prod_add_index_of_disjoint hmn.disjoint_primeFactors f
 
 end CommMonoid
 
