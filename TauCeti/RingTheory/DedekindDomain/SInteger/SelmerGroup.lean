@@ -48,12 +48,13 @@ surjection `unitsNDivisibleToSelmerGroup`.
 
 * `IsDedekindDomain.mem_selmerGroup_iff_mem_unitsNDivisible`: the Selmer condition on a
   representative is `n`-divisibility of its principal `𝒪_S`-ideal.
+* `IsDedekindDomain.unitModPowToSelmerGroup_injective`: **exactness on the left** — the left-hand
+  map is injective, because an `n`-th root in `K` of an `S`-unit is itself an `S`-unit.
 * `IsDedekindDomain.ker_selmerGroupToClassGroup`: **exactness in the middle** — a Selmer class has
-  trivial `n`-th-root ideal class exactly when an `S`-unit represents it. This half needs no
-  `n ≠ 0`.
+  trivial `n`-th-root ideal class exactly when an `S`-unit represents it.
 * `IsDedekindDomain.range_selmerGroupToClassGroup`: **exactness on the right** — the image is the
   `n`-torsion of the `S`-class group. (Surjectivity onto the whole class group is false in
-  general.)
+  general.) Of the three, only this one needs `n ≠ 0`.
 * `IsDedekindDomain.finite_selmerGroup`: **the Selmer group `K⟮S, n⟯` is finite** when `Cl(R)` is
   finite, `Rˣ` is finitely generated, `S` is finite and `n ≠ 0`.
 
@@ -124,6 +125,38 @@ lemma range_unitModPowToSelmerGroup :
   rintro ⟨y, rfl⟩
   induction y using QuotientGroup.induction_on with
   | H y => exact ⟨y, rfl⟩
+
+/-- **Exactness on the left of the fundamental exact sequence.** The left-hand map is injective:
+an `S`-unit that becomes an `n`-th power in `K` is already the `n`-th power of an `S`-unit. What
+makes this work is that an `n`-th root `y` of an `S`-unit is again an `S`-unit: away from `S` the
+relation `n * ord_v(y) = ord_v(x) = 0` forces `ord_v(y) = 0`.
+
+Like `ker_selmerGroupToClassGroup`, and unlike the exactness on the right, this needs no `n ≠ 0`:
+for `n = 0` both sides divide out the trivial subgroup and the claim degenerates to the
+injectivity of `S.unit K ≤ Kˣ`. -/
+theorem unitModPowToSelmerGroup_injective :
+    Function.Injective (unitModPowToSelmerGroup K S n) := by
+  rw [injective_iff_map_eq_one]
+  intro c
+  induction c using QuotientGroup.induction_on with
+  | H x =>
+    intro hx
+    obtain ⟨y, hy⟩ := (QuotientGroup.eq_one_iff (x : Kˣ)).mp (congrArg Subtype.val hx)
+    rw [powMonoidHom_apply] at hy
+    rcases eq_or_ne n 0 with rfl | hn
+    · rw [pow_zero] at hy
+      rw [show x = 1 from Subtype.ext hy.symm]
+      rfl
+    · refine (QuotientGroup.eq_one_iff _).mpr ⟨⟨y, fun v hv ↦ ?_⟩, Subtype.ext ?_⟩
+      · refine (valuationOfNeZero_eq_one_iff v y).mp ?_
+        have h1 : v.valuationOfNeZero y ^ n = 1 := by
+          rw [← map_pow, hy]
+          exact (valuationOfNeZero_eq_one_iff v _).mpr (x.property v hv)
+        have h2 : Multiplicative.toAdd (v.valuationOfNeZero y) * (n : ℤ) = 0 := by
+          rw [← Int.toAdd_pow, h1, toAdd_one]
+        exact toAdd_eq_zero.mp <| (mul_eq_zero.mp h2).resolve_right (Nat.cast_ne_zero.mpr hn)
+      · rw [powMonoidHom_apply, SubmonoidClass.coe_pow]
+        exact hy
 
 /-! ### The Selmer condition as `n`-divisibility of an ideal -/
 
