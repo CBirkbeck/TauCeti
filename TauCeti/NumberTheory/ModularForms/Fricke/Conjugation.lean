@@ -60,8 +60,10 @@ itself defined at an arbitrary algebra.
 
 * `TauCeti.lowerLeftDiv_spec`: the defining property `c = N · c'` of that quotient.
 * `TauCeti.coe_frickeConjSL`: the conjugate is `!![d, -c'; -N·b, a]`.
-* `TauCeti.frickeConjSL_mem_Gamma0`, `TauCeti.frickeConjSL_mem_Gamma1`: `W` normalizes both
-  congruence subgroups.
+* `TauCeti.frickeConjSL_mem_Gamma0`, `TauCeti.frickeConjSL_mem_Gamma1`: the entrywise formula
+  `frickeConjSL` maps each of the two congruence subgroups into itself, for every `N`. Together
+  with the identities below this says that `W` normalizes them, but only where `W` exists, i.e.
+  for `N ≠ 0`.
 * `TauCeti.frickeGL_mul_mapGL`, `TauCeti.mapGL_mul_frickeGL`: the two normalization identities
   `W · σ = (W σ W⁻¹) · W` and `σ · W = W · (W σ W⁻¹)` in `GL (Fin 2) K`.
 
@@ -146,15 +148,18 @@ public theorem coe_frickeConjSL (σ : ↥(Gamma0 N)) :
          (σ : Matrix (Fin 2) (Fin 2) ℤ) 0 0] := by
   simp [frickeConjSL]
 
-/-- **`W` normalizes `Γ₀(N)`**: the conjugate of a `Γ₀(N)` element is again one, its lower-left
-entry `-N·b` being visibly divisible by `N`. -/
+/-- **`frickeConjSL` preserves `Γ₀(N)`**: the image of a `Γ₀(N)` element is again one, its
+lower-left entry `-N·b` being visibly divisible by `N`. For `N ≠ 0`, where `frickeGL K N` exists
+and `frickeGL_mul_mapGL` identifies this image with `W · σ · W⁻¹`, that is the statement that
+`W` normalizes `Γ₀(N)`; the membership itself needs no hypothesis on `N`. -/
 public theorem frickeConjSL_mem_Gamma0 (σ : ↥(Gamma0 N)) :
     frickeConjSL σ ∈ Gamma0 N := by
   rw [Gamma0_mem, coe_frickeConjSL]
   simp
 
-/-- **`W` normalizes `Γ₁(N)`**: conjugation swaps the two diagonal entries, so both remain
-`≡ 1 (mod N)`. -/
+/-- **`frickeConjSL` preserves `Γ₁(N)`**: the formula swaps the two diagonal entries, so both
+remain `≡ 1 (mod N)`. As for `Γ₀(N)`, this reads as `W` normalizing `Γ₁(N)` exactly where `W`
+exists, i.e. for `N ≠ 0`. -/
 public theorem frickeConjSL_mem_Gamma1 (σ : SL(2, ℤ)) (hσ : σ ∈ Gamma1 N) :
     frickeConjSL ⟨σ, Gamma1_in_Gamma0 N hσ⟩ ∈ Gamma1 N := by
   obtain ⟨ha, hd, -⟩ := (Gamma1_mem N σ).mp hσ

@@ -29,6 +29,9 @@ The constant is nonzero, so `W_N` is invertible with `W_N⁻¹ = c⁻¹ • W_N`
 * `TauCeti.frickeGL_sq_slash`: slashing by `W²` is multiplication by `frickeScalar N k`.
 * `TauCeti.frickeOperator_frickeOperator`: `W_N ∘ W_N = frickeScalar N k • id` on `M_k(Γ₁(N))`.
 * `TauCeti.frickeOperatorCusp_frickeOperatorCusp`: the same on `S_k(Γ₁(N))`.
+* `TauCeti.frickeOperator_frickeOperator_apply`,
+  `TauCeti.frickeOperatorCusp_frickeOperatorCusp_apply`: the pointwise forms of those two, which
+  are the `simp`-normal ones.
 * `TauCeti.frickeScalar_ne_zero`: the constant is nonzero, which is what makes `W_N`
   invertible.
 * `TauCeti.slash_mul_frickeGL`: slashing by `A * W` is `frickeScalar N k •` slashing by
@@ -122,8 +125,9 @@ public theorem frickeGL_sq_slash (k : ℤ) (f : ℍ → ℂ) :
 of a `W`-conjugated operator be replaced by a single one. -/
 public theorem slash_mul_frickeGL (k : ℤ) (f : ℍ → ℂ) (A : GL (Fin 2) ℝ) :
     f ∣[k] (A * frickeGL ℝ N) = frickeScalar N k • (f ∣[k] (A * (frickeGL ℝ N)⁻¹)) := by
-  rw [show A * frickeGL ℝ N = A * (frickeGL ℝ N)⁻¹ * (frickeGL ℝ N * frickeGL ℝ N) by group,
-    SlashAction.slash_mul, frickeGL_sq_slash]
+  have hsplit : A * frickeGL ℝ N = A * (frickeGL ℝ N)⁻¹ * (frickeGL ℝ N * frickeGL ℝ N) := by
+    group
+  rw [hsplit, SlashAction.slash_mul, frickeGL_sq_slash]
 
 /-- **`W_N ∘ W_N = frickeScalar N k • id` on `M_k(Γ₁(N))`.** Composing the operator with itself
 slashes by `W²`, which `frickeGL_sq_slash` identifies with the scalar. -/
@@ -135,6 +139,15 @@ public theorem frickeOperator_frickeOperator (k : ℤ) :
     id_eq]
   rw [frickeOperator_coe, frickeOperator_coe, ← SlashAction.slash_mul, frickeGL_sq_slash]
   rfl
+
+/-- **`W_N (W_N f) = frickeScalar N k • f`** for a modular form `f`, the pointwise form of
+`frickeOperator_frickeOperator`. This, not the composition equality, is the simp-normal form: a
+goal mentioning `W_N` at all mentions it applied to a form. -/
+@[simp]
+public theorem frickeOperator_frickeOperator_apply (k : ℤ)
+    (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) :
+    frickeOperator k (frickeOperator k f) = frickeScalar N k • f :=
+  LinearMap.congr_fun (frickeOperator_frickeOperator (N := N) k) f
 
 /-- **`W_N ∘ W_N = frickeScalar N k • id` on `S_k(Γ₁(N))`**, the cusp-form form of
 `frickeOperator_frickeOperator`. With `frickeScalar_ne_zero` this makes `W_N` invertible on
@@ -148,7 +161,9 @@ public theorem frickeOperatorCusp_frickeOperatorCusp (k : ℤ) :
   rw [frickeOperatorCusp_coe, frickeOperatorCusp_coe, ← SlashAction.slash_mul, frickeGL_sq_slash]
   rfl
 
-/-- `frickeOperatorCusp_frickeOperatorCusp` applied to a single cusp form. -/
+/-- **`W_N (W_N f) = frickeScalar N k • f`** for a cusp form `f`, the pointwise and simp-normal
+form of `frickeOperatorCusp_frickeOperatorCusp`. -/
+@[simp]
 public theorem frickeOperatorCusp_frickeOperatorCusp_apply (k : ℤ)
     (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     frickeOperatorCusp k (frickeOperatorCusp k f) = frickeScalar N k • f :=
