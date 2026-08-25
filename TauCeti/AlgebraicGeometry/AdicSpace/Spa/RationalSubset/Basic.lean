@@ -61,6 +61,8 @@ layer deferred above.
   are the exported interface, as for `spa_def`/`mem_spa_iff`.
 * `TauCeti.ValuationSpectrum.rationalSubset_subset_spa` : every rational subset is contained
   in the adic spectrum.
+* `TauCeti.ValuationSpectrum.rationalSubset_subset_rationalSubset_of_subset` : the rational
+  subset is antitone in its numerator set.
 * `TauCeti.ValuationSpectrum.rationalSubset_insert_self` : the denominator may be inserted
   among the numerators.
 * `TauCeti.ValuationSpectrum.rationalSubset_singleton_one` : the whole spectrum is the
@@ -151,6 +153,15 @@ theorem rationalSubset_subset_rationalSubset_iff (Aplus : Subring A) (T T' : Fin
   · intro h v hv
     exact (mem_rationalSubset_iff Aplus T s v).mpr
       ⟨rationalSubset_subset_spa Aplus T' s' hv, (h v hv).1, (h v hv).2⟩
+
+/-- **Enlarging the numerator set shrinks the rational subset.** Each numerator carries one
+domination condition, so asking for more of them can only cut the subset down. This is the
+containment that makes Wedhorn's chain of Remark 7.55 descend. -/
+theorem rationalSubset_subset_rationalSubset_of_subset (Aplus : Subring A) {T T' : Finset A}
+    (h : T ⊆ T') (s : A) :
+    rationalSubset Aplus T' s ⊆ rationalSubset Aplus T s := fun v hv ↦ by
+  rw [mem_rationalSubset_iff] at hv ⊢
+  exact ⟨hv.1, fun t ht ↦ hv.2.1 t (h ht), hv.2.2⟩
 
 open scoped Classical in
 /-- Inserting the denominator among the numerators changes nothing — Wedhorn's "one may
