@@ -7,15 +7,14 @@ module
 
 -- Proof-only: the dual space appears in the private induction helpers, not in any statement.
 import Mathlib.LinearAlgebra.Dual.Lemmas
-public import Mathlib.RingTheory.Localization.Integral
-public import Mathlib.RingTheory.OrderOfVanishing.Basic
+public import Mathlib.RingTheory.FractionalIdeal.Operations
 public import TauCeti.RingTheory.Length
 
 /-!
 # Krull–Akizuki: an integral closure that is Noetherian without separability
 
 Let `A` be a Noetherian domain of Krull dimension at most one, let `K` be its fraction field and
-let `L` be a finite extension of `K`. This file proves that the integral closure of `A` in `L` is
+let `L` be a finite extension of `K`. This file proves that any integral closure of `A` in `L` is
 a Noetherian ring. No separability of `L / K` is assumed, and the integral closure is *not* claimed
 to be a finite `A`-module — it need not be.
 
@@ -24,37 +23,39 @@ which is `LinearMap.range (LinearMap.lsmul A M a)`. For a finite-dimensional `K`
 an arbitrary `A`-submodule `M ≤ V` and a nonzero `a : A`,
 
 ```text
-length_A (M ⧸ aM) ≤ dim_K V * length_A (A ⧸ aA),
+length_A (M ⧸ aM) ≤ dim_K V * ord_A a,
 ```
 
-and the right-hand side is finite because the quotient by a nonzero principal ideal of a
-one-dimensional Noetherian domain has finite length. Applied to `M` the integral closure sitting
-inside `V = L`, this makes `B ⧸ aB` a Noetherian `A`-module, which is enough to finitely generate
-every ideal of `B`.
+where `ord_A a = length_A (A ⧸ aA)` is Mathlib's `Ring.ord`. The right-hand side is finite because
+the quotient by a nonzero principal ideal of a one-dimensional Noetherian domain has finite length.
+Applied to `M` the integral closure sitting inside `V = L`, this makes `C ⧸ aC` a Noetherian
+`A`-module, which is enough to finitely generate every ideal of `C`.
 
 ## Main results
 
-* `TauCeti.length_quotient_lsmul_ideal`: the rank-one case,
-  `length (I ⧸ aI) = length (A ⧸ aA)` for a non-zero-divisor `a` and an ideal `I` with `A ⧸ I` of
-  finite length.
-* `TauCeti.length_quotient_lsmul_le_finrank`: the Krull–Akizuki length bound displayed above.
-* `TauCeti.integralClosure.isNoetherianRing`: **Krull–Akizuki**, the Noetherian conclusion.
+* `TauCeti.length_quotient_lsmul_le_finrank_mul_ord`: the Krull–Akizuki length bound displayed
+  above.
+* `TauCeti.isFiniteLength_quotient_lsmul`: the finiteness that bound delivers.
+* `TauCeti.IsIntegralClosure.isNoetherianRing`: **Krull–Akizuki**, for any integral closure `C` of
+  `A` in `L`.
+* `TauCeti.integralClosure.isNoetherianRing`: the same for Mathlib's `integralClosure A L`.
 
 The general facts about `Module.length` that the bound rests on — additivity along a filtration,
-and the reduction of a length bound to finitely generated submodules — are in
-`TauCeti/RingTheory/Length.lean`.
+the reduction of a length bound to finitely generated submodules, and the rank-one computation
+`length (I ⧸ aI) = ord_A a` for an ideal `I` — are in `TauCeti/RingTheory/Length.lean`.
 
 ## Proof outline
 
 The bound is proved by induction on `n ≥ dim_K U` for a `K`-subspace `U` containing `M`, with `M`
-finitely generated (`length_quotient_lsmul_le_of_finrank_le`);
+finitely generated (`length_quotient_lsmul_le_mul_ord_of_finrank_le`);
 `TauCeti.length_quotient_lsmul_le_of_forall_fg` then removes the finite generation. The inductive
 step runs on a projection built from a functional supplied by Mathlib's
 `Module.Projective.exists_dual_eq_one`; `ker_id_sub_smulRight` and `finrank_ker_inf_add_one` are
-the rest of that construction, isolated. Filtration
-additivity splits `length (M ⧸ aM)` into the part supported on `N = M ⊓ K ∙ x` and the part seen
-by the projection `e`. The first is bounded by the rank-one case, the second is
-`length (e M ⧸ a e M)`, and `e M` lies one dimension lower.
+the rest of that construction, isolated. Filtration additivity splits `length (M ⧸ aM)` into the
+part supported on `N = M ⊓ K ∙ x` and the part seen by the projection `e`. The first is bounded by
+`length_quotient_lsmul_le_ord_of_le_span_singleton`, which clears denominators to reach the
+rank-one case in `Length.lean`; the second is `length (e M ⧸ a e M)`, and `e M` lies one dimension
+lower.
 
 ## Design
 
@@ -64,12 +65,13 @@ latter's content over a domain, so a caller holding either one can supply the ot
 
 Multiplication by `a` is written as `LinearMap.range (LinearMap.lsmul A M a)` throughout rather
 than as a pointwise scalar action on submodules. That keeps every statement inside the plain
-`Submodule` API and confines the compatibility of the two readings of `aN` for a submodule `N` to
-three places: `TauCeti.comap_subtype_map_lsmul`; the `rfl` inside
-`TauCeti.length_quotient_lsmul_ideal` that meets Mathlib's `Ideal.mulQuot` exact sequence, which
-is stated for the pointwise `a • I`; and `TauCeti.range_lsmul_eq_smul_top`, which lets Mathlib's
-`QuotSMulTop.congr` transport `M ⧸ aM` along a linear equivalence at the three places this
-argument needs that.
+`Submodule` API, and the compatibility of the two readings is confined to `Length.lean`, where
+`TauCeti.map_lsmul_eq_smul` is the single bridge.
+
+Krull–Akizuki is stated for an abstract `C` with `[IsIntegralClosure C A L]`, following Mathlib's
+convention for `IsIntegralClosure.isNoetherianRing`, with the `integralClosure A L` form derived
+from it. The roadmap consumer needs the abstract form: its intermediate ring is a `Subring` of a
+function field known to be an integral closure, not Mathlib's literal `integralClosure` subalgebra.
 
 ## Provenance
 
@@ -95,12 +97,15 @@ The argument follows the classical one (Matsumura, *Commutative Ring Theory*, Th
 
 public section
 
+open scoped nonZeroDivisors
+
 namespace TauCeti
 
 /-! ### The dimension-dropping projection
 
-The three lemmas of this section are the inductive step's tool: a functional normalised at `x`,
-the projection it defines, and the dimension it removes.
+The two lemmas of this section are the inductive step's tool: the projection defined by a
+functional normalised at `x`, and the dimension that projection removes. The functional itself
+comes from Mathlib's `Module.Projective.exists_dual_eq_one`.
 -/
 
 section Projection
@@ -137,7 +142,7 @@ end Projection
 
 section Kernel
 
-variable {A V : Type*} [CommRing A] [AddCommGroup V] [Module A V]
+variable {A : Type*} [CommRing A]
 
 /-- The kernel of the map `M → eM ⧸ a·eM` induced by a linear endomorphism `e` is
 `aM ⊔ (M ⊓ ker e)`. -/
@@ -172,129 +177,92 @@ private theorem ker_mkQ_comp_codRestrict {V : Type*} [AddCommGroup V] [Module A 
       Submodule.Quotient.mk_eq_zero]
     exact ⟨g z, rfl⟩
   · intro z hz
-    have hgz : g z = 0 := Subtype.ext hz
+    have hez : e ((z : ↥M) : V) = 0 := LinearMap.mem_ker.mp (Submodule.mem_comap.mp hz)
+    have hgz : g z = 0 := Subtype.ext hez
     rw [LinearMap.mem_ker, LinearMap.comp_apply, hgz, map_zero]
 
 end Kernel
 
-/-! ### The rank-one case -/
+/-! ### The rank-one case over the fraction field -/
 
 section Domain
 
 variable {A : Type*} [CommRing A] [IsDomain A]
-
-omit [IsDomain A] in
-/-- In a Noetherian ring of Krull dimension at most one, the quotient by an ideal containing a
-non-zero-divisor has finite length. -/
-theorem isFiniteLength_quotient_of_mem_nonZeroDivisors [IsNoetherianRing A] [Ring.KrullDimLE 1 A]
-    (I : Submodule A A) {x : A} (hxI : x ∈ I) (hx : x ∈ nonZeroDivisors A) :
-    IsFiniteLength A (A ⧸ I) := by
-  have hle : Ideal.span {x} ≤ I := (Ideal.span_singleton_le_iff_mem I).mpr hxI
-  exact (isFiniteLength_quotient_span_singleton A hx).of_surjective
-    (f := Submodule.factor hle) (Submodule.factor_surjective hle)
-
-open Pointwise in
-omit [IsDomain A] in
-/-- **The rank-one case of the Krull–Akizuki bound.** For an ideal `I` with `A ⧸ I` of finite
-length and a non-zero-divisor `a`, `length (I ⧸ aI) = length (A ⧸ aA)`.
-
-Both sides are read off `length (A ⧸ aI)`, which splits in two ways. Mathlib's exact sequence
-`A ⧸ I ↪ A ⧸ aI ↠ A ⧸ aA` — multiplication by `a`, then quotienting further, from
-`Ideal.exact_mulQuot_quotOfMul` — splits it as `length (A ⧸ I) + length (A ⧸ aA)`, while the
-filtration `aI ≤ I ≤ A` splits it as `length (I ⧸ aI) + length (A ⧸ I)`. Cancelling the common
-term, finite by hypothesis, leaves the claim. -/
-theorem length_quotient_lsmul_ideal (I : Submodule A A) (hI : IsFiniteLength A (A ⧸ I))
-    (a : A) (ha : a ∈ nonZeroDivisors A) :
-    Module.length A (↥I ⧸ LinearMap.range (LinearMap.lsmul A ↥I a))
-      = Module.length A (A ⧸ Ideal.span {a}) := by
-  have hfin : Module.length A (A ⧸ I) ≠ ⊤ := Module.length_ne_top_iff.mpr hI
-  -- `aI` in the pointwise reading that Mathlib's exact sequence is stated in.
-  have hmap : I.map (LinearMap.lsmul A A a) = a • I := rfl
-  have hexact : Module.length A (A ⧸ I.map (LinearMap.lsmul A A a))
-      = Module.length A (A ⧸ I) + Module.length A (A ⧸ Ideal.span {a}) := by
-    rw [hmap]
-    exact Module.length_eq_add_of_exact (Ideal.mulQuot a I) (Ideal.quotOfMul a I)
-      (Ideal.mulQuot_injective I ha) (Ideal.quotOfMul_surjective I)
-      (Ideal.exact_mulQuot_quotOfMul I)
-  -- The filtration `aI ≤ I ≤ A` splits the same length the other way.
-  have hleI : I.map (LinearMap.lsmul A A a) ⊔ I = I := by
-    refine sup_eq_right.mpr ?_
-    rw [Submodule.map_le_iff_le_comap]
-    intro x hx
-    simpa [LinearMap.lsmul_apply] using I.smul_mem a hx
-  have hfilt := length_quotient_eq_length_map_add_length_quotient_sup I
-    (I.map (LinearMap.lsmul A A a))
-  rw [hleI, length_map_mkQ, comap_subtype_map_lsmul, hexact] at hfilt
-  exact (WithTop.add_left_cancel hfin (hfilt.trans (add_comm _ _))).symm
-
 variable {K : Type*} [Field K] [Algebra A K] [IsFractionRing A K]
 
-/-- **The rank-one case for a finitely generated `A`-submodule of the fraction ring.** -/
-theorem length_quotient_lsmul_fractionRing_le_of_fg [IsNoetherianRing A] [Ring.KrullDimLE 1 A]
-    (J : Submodule A K) (hJ : J.FG) (a : A) (ha : a ≠ 0) :
-    Module.length A (↥J ⧸ LinearMap.range (LinearMap.lsmul A ↥J a))
-      ≤ Module.length A (A ⧸ Ideal.span {a}) := by
+/-- **The rank-one case for a finitely generated `A`-submodule of the fraction field.** For
+`J ≤ K` finitely generated over `A` and `a ≠ 0`, `length (J ⧸ aJ) ≤ ord_A a`.
+
+Such a `J` is a fractional ideal, and multiplying by its denominator identifies it with the
+integral ideal `J.num`, where `length_quotient_lsmul_ideal_eq_ord` gives the corresponding
+*equality*. The conclusion here is an inequality only because `J = ⊥` is allowed, and there both
+sides need not agree. -/
+private theorem length_quotient_lsmul_fractionRing_le_ord [IsNoetherianRing A]
+    [Ring.KrullDimLE 1 A] (J : Submodule A K) (hJ : J.FG) (a : A) (ha : a ≠ 0) :
+    Module.length A (↥J ⧸ LinearMap.range (LinearMap.lsmul A ↥J a)) ≤ Ring.ord A a := by
   rcases eq_or_ne J ⊥ with rfl | hJ0
   · refine le_trans (le_of_eq ?_) zero_le
     refine Module.length_eq_zero_iff.mpr ⟨fun p q => ?_⟩
     obtain ⟨p', rfl⟩ := Submodule.mkQ_surjective _ p
     obtain ⟨q', rfl⟩ := Submodule.mkQ_surjective _ q
     rw [Subsingleton.elim p' q']
-  -- Clear denominators: some nonzero `d` carries `J` into the image of `A`.
-  obtain ⟨s, hs⟩ := hJ
-  obtain ⟨b, hb⟩ := IsLocalization.exist_integer_multiples_of_finset (nonZeroDivisors A) s
-  set d : A := (b : A)
-  have hd0 : d ≠ 0 := nonZeroDivisors.coe_ne_zero b
-  have hdK : algebraMap A K d ≠ 0 := by
-    simpa using (IsFractionRing.injective A K).ne hd0
-  have hinjd : Function.Injective (LinearMap.lsmul A K d) := by
-    intro u v huv
-    simp only [LinearMap.lsmul_apply, Algebra.smul_def] at huv
-    exact mul_left_cancel₀ hdK huv
-  have hinjK : Function.Injective (Algebra.linearMap A K) := IsFractionRing.injective A K
-  have hsub : J.map (LinearMap.lsmul A K d) ≤ LinearMap.range (Algebra.linearMap A K) := by
-    rw [Submodule.map_le_iff_le_comap, ← hs, Submodule.span_le]
-    intro y hy
-    obtain ⟨z, hz⟩ := hb y hy
-    exact ⟨z, by simpa using hz⟩
-  -- so `J` is isomorphic to an ideal, and the ideal case applies.
-  set I : Submodule A A :=
-    Submodule.comap (Algebra.linearMap A K) (J.map (LinearMap.lsmul A K d))
-  have hmapI : I.map (Algebra.linearMap A K) = J.map (LinearMap.lsmul A K d) :=
-    Submodule.map_comap_eq_self hsub
-  have hI0 : I ≠ ⊥ := by
-    intro h
-    rw [h, Submodule.map_bot] at hmapI
-    refine hJ0 (le_bot_iff.mp fun y hy => ?_)
-    have hmem : LinearMap.lsmul A K d y ∈ Submodule.map (LinearMap.lsmul A K d) J :=
-      Submodule.mem_map_of_mem hy
-    rw [← hmapI, Submodule.mem_bot] at hmem
-    rw [Submodule.mem_bot]
-    exact hinjd (by simpa using hmem)
-  have e : ↥J ≃ₗ[A] ↥I :=
-    (Submodule.equivMapOfInjective _ hinjd J).trans
-      ((Submodule.equivMapOfInjective _ hinjK I).trans (LinearEquiv.ofEq _ _ hmapI)).symm
-  obtain ⟨y, hyI, hy0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hI0
-  have htransport : Module.length A (↥J ⧸ LinearMap.range (LinearMap.lsmul A ↥J a))
-      = Module.length A (↥I ⧸ LinearMap.range (LinearMap.lsmul A ↥I a)) := by
-    rw [range_lsmul_eq_smul_top, range_lsmul_eq_smul_top]
-    exact (QuotSMulTop.congr a e).length_eq
-  rw [htransport]
-  exact le_of_eq (length_quotient_lsmul_ideal I
-    (isFiniteLength_quotient_of_mem_nonZeroDivisors I hyI (mem_nonZeroDivisors_of_ne_zero hy0))
+  -- A finitely generated submodule of `K` is a fractional ideal.
+  set I : FractionalIdeal A⁰ K := ⟨J, FractionalIdeal.isFractional_of_fg hJ⟩
+  have hIJ : (I : Submodule A K) = J := rfl
+  have hInum : I.num ≠ ⊥ := by
+    intro hnum
+    refine hJ0 ?_
+    rw [← hIJ, FractionalIdeal.num_eq_zero_iff.mp hnum]
+    simp
+  obtain ⟨y, hyI, hy0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hInum
+  -- Multiplication by the denominator carries it onto the integral ideal `I.num`.
+  rw [← hIJ, length_quotient_lsmul_congr (FractionalIdeal.equivNumOfIsLocalization I) a]
+  exact le_of_eq (length_quotient_lsmul_ideal_eq_ord I.num
+    (isFiniteLength_quotient_of_nonZeroDivisor_mem I.num hyI
+      (mem_nonZeroDivisors_of_ne_zero hy0))
     a (mem_nonZeroDivisors_of_ne_zero ha))
 
 /-! ### The rank induction -/
 
 variable {V : Type*} [AddCommGroup V] [Module K V] [Module A V] [IsScalarTower A K V]
 
+/-- A finitely generated `A`-submodule of a `K`-line obeys the rank-one bound: a functional
+normalised at a spanning vector embeds it in `K`. -/
+private theorem length_quotient_lsmul_le_ord_of_le_span_singleton [IsNoetherianRing A]
+    [Ring.KrullDimLE 1 A] (a : A) (ha : a ≠ 0) {x : V} (N : Submodule A V)
+    (hN : N ≤ (K ∙ x).restrictScalars A) (hfg : N.FG) :
+    Module.length A (↥N ⧸ LinearMap.range (LinearMap.lsmul A ↥N a)) ≤ Ring.ord A a := by
+  rcases eq_or_ne x 0 with rfl | hx0
+  · have hN0 : N = ⊥ := by
+      refine le_bot_iff.mp fun y hy => ?_
+      have hy' := hN hy
+      rw [Submodule.restrictScalars_mem, Submodule.span_zero_singleton, Submodule.mem_bot] at hy'
+      simpa using hy'
+    subst hN0
+    simp
+  obtain ⟨φ, hφx⟩ := Module.Projective.exists_dual_eq_one K hx0
+  set ι : ↥N →ₗ[A] K := (φ.restrictScalars A) ∘ₗ N.subtype with hιdef
+  have hιinj : Function.Injective ι := by
+    rw [injective_iff_map_eq_zero]
+    intro z hz
+    have hzx : (z : V) ∈ K ∙ x := by
+      rw [← Submodule.restrictScalars_mem (S := A)]; exact hN z.2
+    obtain ⟨c, hc⟩ := Submodule.mem_span_singleton.mp hzx
+    have hz' : φ (z : V) = 0 := by simpa [hιdef] using hz
+    rw [← hc, map_smul, hφx, smul_eq_mul, mul_one] at hz'
+    exact Subtype.ext (by rw [← hc, hz', zero_smul]; simp)
+  have hJfg : (LinearMap.range ι).FG := by
+    rw [LinearMap.range_eq_map]
+    exact (Module.finite_def.mp (Module.Finite.iff_fg.mpr hfg)).map ι
+  rw [length_quotient_lsmul_congr (LinearEquiv.ofInjective ι hιinj) a]
+  exact length_quotient_lsmul_fractionRing_le_ord _ hJfg a ha
+
 /-- **The Krull–Akizuki length bound for a finitely generated submodule**, relative to any bound
 `n` on the dimension of a `K`-subspace containing it. -/
-private theorem length_quotient_lsmul_le_of_finrank_le [IsNoetherianRing A] [Ring.KrullDimLE 1 A]
-    [Module.Finite K V] (a : A) (ha : a ≠ 0) (n : ℕ) (U : Submodule K V)
+private theorem length_quotient_lsmul_le_mul_ord_of_finrank_le [IsNoetherianRing A]
+    [Ring.KrullDimLE 1 A] [Module.Finite K V] (a : A) (ha : a ≠ 0) (n : ℕ) (U : Submodule K V)
     (hU : Module.finrank K U ≤ n) (M : Submodule A V) (hM : M ≤ U.restrictScalars A) (hfg : M.FG) :
-    Module.length A (↥M ⧸ LinearMap.range (LinearMap.lsmul A ↥M a))
-      ≤ n * Module.length A (A ⧸ Ideal.span {a}) := by
+    Module.length A (↥M ⧸ LinearMap.range (LinearMap.lsmul A ↥M a)) ≤ n * Ring.ord A a := by
   induction n generalizing U M with
   | zero =>
       have hU0 : U = ⊥ := Submodule.finrank_eq_zero.mp (Nat.le_zero.mp hU)
@@ -313,56 +281,39 @@ private theorem length_quotient_lsmul_le_of_finrank_le [IsNoetherianRing A] [Rin
       obtain ⟨φ, hφx⟩ := Module.Projective.exists_dual_eq_one K hx0
       set e : V →ₗ[K] V := LinearMap.id - LinearMap.smulRight φ x with hedef
       have hkere : LinearMap.ker e = K ∙ x := ker_id_sub_smulRight φ hφx
-      set eA : V →ₗ[A] V := e.restrictScalars A
+      set eA : V →ₗ[A] V := e.restrictScalars A with heAdef
       have hkereA : LinearMap.ker eA = (K ∙ x).restrictScalars A := by
-        ext y; exact (Submodule.ext_iff.mp hkere y)
+        rw [heAdef, LinearMap.ker_restrictScalars, hkere]
       have hxU : x ∈ U := hM hxM
       have hrkU' : Module.finrank K ↥(LinearMap.ker φ ⊓ U) ≤ n := by
         have := finrank_ker_inf_add_one φ hφx hxU
         omega
       -- Phase 2: split `length (M ⧸ aM)` along `N = M ⊓ K ∙ x`.
-      set P : Submodule A ↥M := LinearMap.range (LinearMap.lsmul A ↥M a) with hPdef
-      set N : Submodule A ↥M := Submodule.comap M.subtype ((K ∙ x).restrictScalars A)
+      set P : Submodule A ↥M := LinearMap.range (LinearMap.lsmul A ↥M a)
+      set N : Submodule A ↥M := Submodule.comap M.subtype ((K ∙ x).restrictScalars A) with hNdef
       have hMfin : Module.Finite A ↥M := Module.Finite.iff_fg.mpr hfg
       have hNfg : N.FG := IsNoetherian.noetherian N
-      -- Phase 3: `φ` embeds `N` in `K`, so the rank-one case bounds the `N` part.
-      set ι : ↥N →ₗ[A] K := (φ.restrictScalars A) ∘ₗ M.subtype ∘ₗ N.subtype
-      have hιinj : Function.Injective ι := by
-        rw [injective_iff_map_eq_zero]
-        intro z hz
-        have hzW : ((z : ↥M) : V) ∈ K ∙ x := z.2
-        obtain ⟨c, hc⟩ := Submodule.mem_span_singleton.mp hzW
-        have hc0 : c = 0 := by
-          have hz' : φ ((z : ↥M) : V) = 0 := hz
-          rw [← hc] at hz'
-          simpa [hφx] using hz'
-        exact Subtype.ext (Subtype.ext (by rw [← hc, hc0, zero_smul]; simp))
-      have hJfg : (LinearMap.range ι).FG := by
-        rw [LinearMap.range_eq_map]
-        exact (Module.finite_def.mp (Module.Finite.iff_fg.mpr hNfg)).map ι
-      have hterm1 : Module.length A (N.map P.mkQ) ≤ Module.length A (A ⧸ Ideal.span {a}) := by
+      -- Phase 3: `N` lives on the line `K ∙ x`, so the rank-one bound applies to it.
+      have hterm1 : Module.length A (N.map P.mkQ) ≤ Ring.ord A a := by
         rw [length_map_mkQ]
         calc Module.length A (↥N ⧸ Submodule.comap N.subtype P)
             ≤ Module.length A (↥N ⧸ LinearMap.range (LinearMap.lsmul A ↥N a)) := by
-              refine length_quotient_le_of_le ?_
+              refine length_quotient_anti ?_
               rintro y ⟨z, rfl⟩
               exact ⟨(z : ↥M), rfl⟩
-          _ ≤ Module.length A (A ⧸ Ideal.span {a}) := by
-              have htransport :
-                  Module.length A (↥N ⧸ LinearMap.range (LinearMap.lsmul A ↥N a))
-                    = Module.length A
-                      (↥(LinearMap.range ι) ⧸
-                        LinearMap.range (LinearMap.lsmul A ↥(LinearMap.range ι) a)) := by
-                rw [range_lsmul_eq_smul_top, range_lsmul_eq_smul_top]
-                exact (QuotSMulTop.congr a (LinearEquiv.ofInjective ι hιinj)).length_eq
-              rw [htransport]
-              exact length_quotient_lsmul_fractionRing_le_of_fg _ hJfg a ha
+          _ = Module.length A (↥(N.map M.subtype) ⧸
+                LinearMap.range (LinearMap.lsmul A ↥(N.map M.subtype) a)) :=
+              length_quotient_lsmul_congr
+                (Submodule.equivMapOfInjective M.subtype (Submodule.subtype_injective M) N) a
+          _ ≤ Ring.ord A a :=
+              length_quotient_lsmul_le_ord_of_le_span_singleton a ha _
+                (by rw [hNdef]; exact Submodule.map_comap_le _ _) (hNfg.map _)
       -- Phase 4: the rest is `e M ⧸ a·e M`, one dimension lower, so the hypothesis applies.
       set M' : Submodule A V := M.map eA
       have hM'U : M' ≤ (LinearMap.ker φ ⊓ U).restrictScalars A := by
         rintro _ ⟨y, hy, rfl⟩
-        exact ⟨by simp [eA, hedef, hφx], by
-          simpa [eA, hedef] using U.sub_mem (hM hy) (U.smul_mem _ hxU)⟩
+        exact ⟨by simp [heAdef, hedef, hφx], by
+          simpa [heAdef, hedef] using U.sub_mem (hM hy) (U.smul_mem _ hxU)⟩
       set Q : Submodule A ↥M' := LinearMap.range (LinearMap.lsmul A ↥M' a)
       set g : ↥M →ₗ[A] ↥M' :=
         LinearMap.codRestrict M' (eA ∘ₗ M.subtype) (fun y => Submodule.mem_map_of_mem y.2)
@@ -371,119 +322,108 @@ private theorem length_quotient_lsmul_le_of_finrank_le [IsNoetherianRing A] [Rin
         exact ⟨⟨y, hy⟩, rfl⟩
       have hker : LinearMap.ker (Q.mkQ ∘ₗ g) = P ⊔ N := by
         rw [ker_mkQ_comp_codRestrict eA M a, hkereA]
-      have hterm2 : Module.length A (↥M ⧸ (P ⊔ N)) ≤ n * Module.length A (A ⧸ Ideal.span {a}) := by
+      have hterm2 : Module.length A (↥M ⧸ (P ⊔ N)) ≤ n * Ring.ord A a := by
         rw [← hker, (LinearMap.quotKerEquivOfSurjective (Q.mkQ ∘ₗ g)
           ((Submodule.mkQ_surjective Q).comp hgsurj)).length_eq]
         exact ih (LinearMap.ker φ ⊓ U) hrkU' M' hM'U (hfg.map eA)
       rw [length_quotient_eq_length_map_add_length_quotient_sup N P]
       calc Module.length A (N.map P.mkQ) + Module.length A (↥M ⧸ (P ⊔ N))
-          ≤ Module.length A (A ⧸ Ideal.span {a}) + n * Module.length A (A ⧸ Ideal.span {a}) :=
-            add_le_add hterm1 hterm2
-        _ = (n + 1 : ℕ) * Module.length A (A ⧸ Ideal.span {a}) := by
-            push_cast; rw [add_mul, one_mul, add_comm]
+          ≤ Ring.ord A a + n * Ring.ord A a := add_le_add hterm1 hterm2
+        _ = (n + 1 : ℕ) * Ring.ord A a := by push_cast; rw [add_mul, one_mul, add_comm]
 
 /-- **Krull–Akizuki's length bound.** For any `A`-submodule `M` of a finite-dimensional
 `K`-vector space `V` — finitely generated or not — and any nonzero `a : A`,
-`length (M ⧸ aM) ≤ dim_K V * length (A ⧸ aA)`. -/
-theorem length_quotient_lsmul_le_finrank [IsNoetherianRing A] [Ring.KrullDimLE 1 A]
+`length (M ⧸ aM) ≤ dim_K V * ord_A a`. -/
+theorem length_quotient_lsmul_le_finrank_mul_ord [IsNoetherianRing A] [Ring.KrullDimLE 1 A]
     [Module.Finite K V] (M : Submodule A V) (a : A) (ha : a ≠ 0) :
     Module.length A (↥M ⧸ LinearMap.range (LinearMap.lsmul A ↥M a))
-      ≤ Module.finrank K V * Module.length A (A ⧸ Ideal.span {a}) := by
+      ≤ Module.finrank K V * Ring.ord A a := by
   refine length_quotient_lsmul_le_of_forall_fg fun N hN => ?_
-  have htransport : Module.length A (↥N ⧸ LinearMap.range (LinearMap.lsmul A ↥N a))
-      = Module.length A
-        (↥(N.map M.subtype) ⧸ LinearMap.range (LinearMap.lsmul A ↥(N.map M.subtype) a)) := by
-    rw [range_lsmul_eq_smul_top, range_lsmul_eq_smul_top]
-    exact (QuotSMulTop.congr a
-      (Submodule.equivMapOfInjective M.subtype (Submodule.subtype_injective M) N)).length_eq
-  rw [htransport]
-  exact length_quotient_lsmul_le_of_finrank_le a ha (Module.finrank K V) (⊤ : Submodule K V)
-    (le_of_eq (finrank_top K V)) (N.map M.subtype) (fun x _ => Submodule.mem_top) (hN.map _)
+  rw [length_quotient_lsmul_congr
+    (Submodule.equivMapOfInjective M.subtype (Submodule.subtype_injective M) N) a]
+  exact length_quotient_lsmul_le_mul_ord_of_finrank_le a ha (Module.finrank K V)
+    (⊤ : Submodule K V) (le_of_eq (finrank_top K V)) (N.map M.subtype)
+    (fun x _ => Submodule.mem_top) (hN.map _)
+
+/-- **Krull–Akizuki's finiteness.** Under the hypotheses of the length bound, `M ⧸ aM` has finite
+length; equivalently it is both Noetherian and Artinian over `A`. -/
+theorem isFiniteLength_quotient_lsmul [IsNoetherianRing A] [Ring.KrullDimLE 1 A]
+    [Module.Finite K V] (M : Submodule A V) (a : A) (ha : a ≠ 0) :
+    IsFiniteLength A (↥M ⧸ LinearMap.range (LinearMap.lsmul A ↥M a)) :=
+  Module.length_ne_top_iff.mp (ne_top_of_le_ne_top
+    (WithTop.mul_ne_top (ENat.natCast_ne_top _)
+      (Ring.ord_ne_top (mem_nonZeroDivisors_of_ne_zero ha)))
+    (length_quotient_lsmul_le_finrank_mul_ord (K := K) M a ha))
 
 end Domain
 
 /-! ### Krull–Akizuki -/
+
+section Lifting
+
+variable {A : Type*} [CommRing A]
+
+/-- If the image of `a` lies in the ideal `𝔟` of an `A`-algebra `B` and `B ⧸ aB` is Noetherian as
+an `A`-module, then `𝔟` is finitely generated as a `B`-ideal.
+
+The `A`-submodule `aB` is the `B`-ideal generated by the image of `a`, so `B ⧸ aB` is Noetherian
+over `B` as well; `𝔟` then sits in an extension of its finitely generated image in `B ⧸ aB` by the
+principal ideal `aB`. -/
+private theorem fg_of_isNoetherian_quotient_lsmul {B : Type*} [CommRing B] [Algebra A B] (a : A)
+    (𝔟 : Ideal B) (ha : algebraMap A B a ∈ 𝔟)
+    (h : IsNoetherian A (B ⧸ LinearMap.range (LinearMap.lsmul A B a))) : 𝔟.FG := by
+  set Q : Ideal B := Ideal.span {algebraMap A B a} with hQdef
+  have hPQ : LinearMap.range (LinearMap.lsmul A B a) = Q.restrictScalars A := by
+    ext y
+    simp [hQdef, Ideal.mem_span_singleton', Algebra.smul_def, eq_comm, mul_comm]
+  rw [hPQ] at h
+  have : IsNoetherian B (B ⧸ Q) :=
+    isNoetherian_of_tower A (isNoetherian_of_linearEquiv
+      (Submodule.Quotient.restrictScalarsEquiv A Q))
+  refine Submodule.fg_of_fg_map_of_fg_inf_ker Q.mkQ (IsNoetherian.noetherian _) ?_
+  rw [Submodule.ker_mkQ, inf_eq_right.2 ((Ideal.span_singleton_le_iff_mem _).2 ha)]
+  exact Submodule.fg_span_singleton _
+
+end Lifting
 
 section IntegralClosure
 
 variable {A : Type*} [CommRing A] [IsDomain A] [IsNoetherianRing A] [Ring.KrullDimLE 1 A]
 variable {L : Type*} [Field L] [Algebra A L]
 
-/-- **Krull–Akizuki.** The integral closure of a Noetherian domain of Krull dimension at most one
-in a finite extension `L` of its fraction field is a Noetherian ring. No separability of `L` over
-the fraction field is assumed, and the integral closure need not be a finite `A`-module. -/
-theorem integralClosure.isNoetherianRing (K : Type*) [Field K] [Algebra A K] [IsFractionRing A K]
-    [Algebra K L] [IsScalarTower A K L] [Module.Finite K L] :
-    IsNoetherianRing (integralClosure A L) := by
-  classical
+/-- **Krull–Akizuki.** An integral closure `C` of a Noetherian domain of Krull dimension at most
+one in a finite extension `L` of its fraction field is a Noetherian ring. No separability of `L`
+over the fraction field is assumed, and `C` need not be a finite `A`-module. -/
+theorem IsIntegralClosure.isNoetherianRing (K : Type*) [Field K] [Algebra A K] [IsFractionRing A K]
+    [Algebra K L] [IsScalarTower A K L] [Module.Finite K L] (C : Type*) [CommRing C] [Algebra A C]
+    [Algebra C L] [IsScalarTower A C L] [IsIntegralClosure C A L] :
+    IsNoetherianRing C := by
+  have : Algebra.IsIntegral A C := IsIntegralClosure.isIntegral_algebra A L
+  have : IsDomain C := Function.Injective.isDomain (algebraMap C L)
+    (IsIntegralClosure.algebraMap_injective C A L)
   rw [isNoetherianRing_iff_ideal_fg]
   intro 𝔟
   rcases eq_or_ne 𝔟 ⊥ with rfl | h0
   · exact Submodule.fg_bot
   -- A nonzero ideal of an integral extension meets the base ring in a nonzero element.
-  obtain ⟨a, hα𝔟, ha0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot
-    (Ideal.IsIntegral.comap_ne_bot (A := integralClosure A L) A h0)
-  set α : integralClosure A L := algebraMap A _ a with hαdef
-  set P : Submodule A (integralClosure A L) :=
-    LinearMap.range (LinearMap.lsmul A (integralClosure A L) a) with hPdef
-  -- The length bound makes `B ⧸ aB` a Noetherian `A`-module.
-  -- `Ring.ord A a` is by definition `length A (A ⧸ span {a})`.
-  have hlenA : Module.length A (A ⧸ Ideal.span {a}) ≠ ⊤ :=
-    Ring.ord_ne_top (mem_nonZeroDivisors_of_ne_zero ha0)
-  have hlen : Module.length A ((integralClosure A L) ⧸ P) ≠ ⊤ :=
-    ne_top_of_le_ne_top (WithTop.mul_ne_top (ENat.natCast_ne_top _) hlenA)
-      (length_quotient_lsmul_le_finrank (K := K)
-        (Subalgebra.toSubmodule (integralClosure A L)) a ha0)
-  have hnoeth : IsNoetherian A ((integralClosure A L) ⧸ P) :=
+  obtain ⟨a, ha𝔟, ha0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot
+    (Ideal.IsIntegral.comap_ne_bot (A := C) A h0)
+  -- `C` is an `A`-submodule of `L`, so the length bound makes `C ⧸ aC` a Noetherian `A`-module.
+  have hinj : Function.Injective ((Algebra.linearMap C L).restrictScalars A) :=
+    IsIntegralClosure.algebraMap_injective C A L
+  have hlen : Module.length A (C ⧸ LinearMap.range (LinearMap.lsmul A C a)) ≠ ⊤ := by
+    rw [length_quotient_lsmul_congr (LinearEquiv.ofInjective _ hinj) a]
+    exact Module.length_ne_top_iff.mpr (isFiniteLength_quotient_lsmul (K := K) _ a ha0)
+  exact fg_of_isNoetherian_quotient_lsmul a 𝔟 ha𝔟
     (isFiniteLength_iff_isNoetherian_isArtinian.mp (Module.length_ne_top_iff.mp hlen)).1
-  -- So the image of `𝔟` there is `A`-spanned by finitely many elements, which we lift into `𝔟`.
-  set T : Submodule A (integralClosure A L) := 𝔟.restrictScalars A
-  obtain ⟨s, hs⟩ := hnoeth.noetherian (T.map P.mkQ)
-  have hex : ∀ y : (integralClosure A L) ⧸ P,
-      ∃ z : integralClosure A L, y ∈ T.map P.mkQ → z ∈ 𝔟 ∧ P.mkQ z = y := by
-    intro y
-    by_cases hy : y ∈ T.map P.mkQ
-    · obtain ⟨z, hz, hzy⟩ := hy
-      exact ⟨z, fun _ => ⟨hz, hzy⟩⟩
-    · exact ⟨0, fun h => absurd h hy⟩
-  choose lft hlft using hex
-  have hsmem : ∀ y ∈ s, y ∈ T.map P.mkQ := fun y hy => by
-    rw [← hs]; exact Submodule.subset_span hy
-  have himg : (P.mkQ : _ → _) '' ((s.image lft : Finset _) : Set _) = (s : Set _) := by
-    ext y
-    simp only [Finset.coe_image, Set.image_image, Set.mem_image, Finset.mem_coe]
-    constructor
-    · rintro ⟨z, hz, rfl⟩
-      rw [(hlft z (hsmem z hz)).2]
-      exact hz
-    · intro hy
-      exact ⟨y, hy, (hlft y (hsmem y hy)).2⟩
-  -- Those lifts together with `a` generate `𝔟` over the integral closure.
-  refine ⟨insert α (s.image lft), le_antisymm ?_ ?_⟩
-  · rw [Ideal.span_le, Finset.coe_insert, Set.insert_subset_iff]
-    refine ⟨hα𝔟, ?_⟩
-    intro z hz
-    rw [Finset.coe_image, Set.mem_image] at hz
-    obtain ⟨y, hy, rfl⟩ := hz
-    exact (hlft y (hsmem y (Finset.mem_coe.mp hy))).1
-  · intro x hx
-    have hxq : P.mkQ x ∈
-        Submodule.map P.mkQ (Submodule.span A ((s.image lft : Finset _) : Set _)) := by
-      rw [Submodule.map_span, himg, hs]
-      exact Submodule.mem_map_of_mem hx
-    have hmem : x ∈ P ⊔ Submodule.span A ((s.image lft : Finset _) : Set _) := by
-      rw [← Submodule.comap_map_mkQ]
-      exact hxq
-    refine (sup_le ?_ ?_ : P ⊔ Submodule.span A ((s.image lft : Finset _) : Set _)
-      ≤ Submodule.restrictScalars A (Ideal.span ((insert α (s.image lft) : Finset _) : Set _)))
-      hmem
-    · rintro _ ⟨z, rfl⟩
-      rw [Submodule.restrictScalars_mem, LinearMap.lsmul_apply, hαdef, Algebra.smul_def]
-      exact Ideal.mul_mem_right _ _ (Submodule.subset_span (by simp))
-    · rw [Submodule.span_le]
-      intro y hy
-      exact Submodule.subset_span
-        (Finset.mem_coe.mpr (Finset.mem_insert_of_mem (Finset.mem_coe.mp hy)))
+
+/-- **Krull–Akizuki for Mathlib's `integralClosure`.** The specialisation of
+`TauCeti.IsIntegralClosure.isNoetherianRing` to the integral closure of `A` in `L` as a
+subalgebra. -/
+theorem integralClosure.isNoetherianRing (K : Type*) [Field K] [Algebra A K] [IsFractionRing A K]
+    [Algebra K L] [IsScalarTower A K L] [Module.Finite K L] :
+    IsNoetherianRing (integralClosure A L) :=
+  _root_.TauCeti.IsIntegralClosure.isNoetherianRing (A := A) (L := L) K (integralClosure A L)
 
 end IntegralClosure
 
