@@ -261,11 +261,9 @@ theorem hasBasis_nhds_zero_pow_smul (P : PairOfDefinition A) {s : A}
 /-- **The topology has a countable fundamental system of neighbourhoods of `0`**, namely the
 `ℕ`-indexed family `ϖⁿ • M₀`. This is the first-countability clause of Proposition 6.18(1).
 
-Stated over the `SubmodulesBasis` topology, as the two neighbourhood facts above are: that is the
-form `TauCeti.Huber.PairOfDefinition.powSmulModuleFilterBasis_topology` rewrites *into*, and the
-one instance search sees, `SubmodulesBasis.topology` being `@[instance_reducible]` where
-`powSmulModuleFilterBasis` is a plain `def`. The same theorem identifies it with the `A`-module
-topology 6.18(1) is about. -/
+Stated for the `SubmodulesBasis` topology, as the two neighbourhood facts above are;
+`TauCeti.Huber.PairOfDefinition.powSmulModuleFilterBasis_topology` identifies that with the
+`A`-module topology Proposition 6.18(1) is about. -/
 theorem isCountablyGenerated_nhds_zero (P : PairOfDefinition A) {s : A}
     (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
     (M₀ : Submodule P.ringOfDefinition M) (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
