@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Basic
-public import TauCeti.RingTheory.Huber.ContinuousValuativeCriterion
+public import TauCeti.RingTheory.Huber.Continuous.ValuativeCriterion
 public import TauCeti.RingTheory.Huber.Pair
 
 /-!
