@@ -33,15 +33,19 @@ class of `f'(T)`, which for the purposes of the square class is represented by
 `x - T + fCofactor x`. Both branches are packaged in `μX`, and `μ₀` extends `μX` by sending the
 point at infinity to `1`.
 
-## Main results
+## Main definitions
 
 * `WeierstrassCurve.Affine.μX`, `WeierstrassCurve.Affine.μ₀`: the `x - T` map, first on
   `x`-coordinates and then on points, as a plain function.
 * `WeierstrassCurve.Affine.μ`: the same map upgraded to a group homomorphism
-  `Multiplicative W.Point →* W.M`. This is the substance of the file: multiplicativity is the
-  statement that the square classes of three collinear points multiply to `1`, proved by
-  exhibiting an explicit square root in each of the ways the three points can meet the
-  `2`-torsion.
+  `Multiplicative W.Point →* W.M`.
+
+## Main results
+
+* `WeierstrassCurve.Affine.μ₀_mul_mul_eq_one_of_add_add_eq_zero`: the square classes of three
+  collinear points multiply to `1`. This is the substance of the file, and the multiplicativity
+  that makes `μ` a homomorphism; it is proved by exhibiting an explicit square root in each of
+  the ways the three points can meet the `2`-torsion.
 * `WeierstrassCurve.Affine.exists_eq_two_smul_iff`: a point is divisible by `2` exactly when an
   explicit polynomial identity has a solution. This is the bridge from the `x - T` map to the
   kernel computation.
@@ -97,7 +101,7 @@ variable {R : Type*} [CommRing R]
 and its two analogues. -/
 private lemma sq_add_add_eq_mul_mul_of_mul_mul_eq_zero {a b c : R} (h : a * b * c = 0) :
     (a * b + a * c + b * c) ^ 2 = (b * c - a) * (a * c - b) * (a * b - c) := by
-  linear_combination (a ^ 2 - a * b * c + 2 * a + b ^ 2 + 2 * b + c ^ 2 + 2 * c + 1) * h
+  grobner
 
 /-- If `a * d = 0` and `b * c = d - e ^ 2 * a`, then `d + e * a` is a square root of
 `(d - a) * b * c`. -/
@@ -177,7 +181,11 @@ lemma equation_iff_eval_f_eq_sq [W.IsCharNeTwoNF] (x y : K) :
   rw [equation_iff x y, eq_comm]
   simp [f]
 
-@[simp]
+/-- In a normal form for characteristic `≠ 2`, the negation involution on `y`-coordinates is
+`y ↦ -y`.
+
+Not a `simp` lemma: the default `simp` set already reduces `negY` through the normal-form
+values of `a₁` and `a₃`. -/
 lemma negY_of_isCharNeTwoNF [W.IsCharNeTwoNF] (x y : K) : W.negY x y = -y := by
   rw [negY, a₁_of_isCharNeTwoNF, a₃_of_isCharNeTwoNF]
   ring
@@ -382,7 +390,6 @@ lemma nonsingular_of_eval_f_eq_zero {x : K} (hx : W.f.eval x = 0) :
 
 end
 
-
 /-!
 ### The square classes `M`, and the map `μ₀`
 -/
@@ -393,7 +400,6 @@ abbrev M : Type _ := W.Aˣ ⧸ (powMonoidHom 2 : W.Aˣ →* W.Aˣ).range
 /- `inferInstance` succeeds here, but instance search does not find this instance at the use
 sites (e.g., for `mul_right_comm` below) unless it is declared. -/
 noncomputable instance : CommGroup W.M := inferInstance
-
 
 /-- The class of a unit of `W.A` is trivial exactly when the unit is a square in `W.A`. -/
 lemma M.mk_eq_one_iff {a : W.A} (ha : IsUnit a) :
@@ -440,11 +446,20 @@ noncomputable def μX (x : K) : W.M :=
     then (isUnit_mk_sub_X_add_fCofactor_of_eval_f_eq_zero hx).unit
     else (isUnit_mk_sub_X_of_eval_f_ne_zero hx).unit
 
-@[simp] lemma μX_of_eval_f_eq_zero {x : K} (hx : W.f.eval x = 0) :
+/-- The value of `μX` on the branch where `x` is a root of `f`, namely the square class of
+`f' T`.
+
+Not a `simp` lemma: the right-hand side mentions the hypothesis proof `hx`, so it cannot serve
+as a rewrite rule. Every use site names it explicitly. -/
+lemma μX_of_eval_f_eq_zero {x : K} (hx : W.f.eval x = 0) :
     W.μX x = (isUnit_mk_sub_X_add_fCofactor_of_eval_f_eq_zero hx).unit := by
   simp only [μX, dite_eq_left hx]
 
-@[simp] lemma μX_of_eval_f_ne_zero {x : K} (hx : W.f.eval x ≠ 0) :
+/-- The value of `μX` on the branch where `x` is not a root of `f`, namely the square class of
+`x - T`.
+
+Not a `simp` lemma, for the same reason as `μX_of_eval_f_eq_zero`. -/
+lemma μX_of_eval_f_ne_zero {x : K} (hx : W.f.eval x ≠ 0) :
     W.μX x = (isUnit_mk_sub_X_of_eval_f_ne_zero hx).unit := by
   simp only [μX, dite_eq_right hx]
 
