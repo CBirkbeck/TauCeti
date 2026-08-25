@@ -11,16 +11,17 @@ public import TauCeti.RingTheory.ClassGroup.Basic
 /-!
 # Principal powers of a height one prime, and the valuations of a generator
 
-Over a Dedekind domain with finite class group, no height one prime need be principal, but some
-positive power of it always is: the class `[v]` has finite order `m` in the class group, and
-`[v] ^ m = 1` says exactly that `v ^ m` is principal. This file records that fact together with
-its companion, which is what makes the generator useful: a generator of `v ^ m` is a unit at
-every height one prime other than `v`.
+Over a Dedekind domain no height one prime need be principal, but a positive power of one is as
+soon as its class `[v]` has finite order `m` in the class group: `[v] ^ m = 1` says exactly that
+`v ^ m` is principal. A finite class group is the usual source of that hypothesis, but only the
+single class `[v]` is at stake. This file records that fact together with its companion, which is
+what makes the generator useful: a generator of `v ^ m` is a unit at every height one prime other
+than `v`.
 
 ## Main results
 
-* `IsDedekindDomain.HeightOneSpectrum.exists_pow_eq_span`: if `ClassGroup R` is finite, some
-  positive power of `v` is `Ideal.span {π}` for a nonzero `π : R`.
+* `IsDedekindDomain.HeightOneSpectrum.exists_pow_eq_span`: if the class of `v` has finite order,
+  some positive power of `v` is `Ideal.span {π}` for a nonzero `π : R`.
 * `IsDedekindDomain.HeightOneSpectrum.valuation_algebraMap_eq_one_of_pow_le_span`: if `π`
   divides `v.asIdeal ^ n`, then `w.valuation K (algebraMap R K π) = 1` for every height one
   prime `w ≠ v`.
@@ -32,34 +33,42 @@ standard basis vector at `v`, and hence what makes the range of the `S`-unit log
 
 ## Implementation notes
 
-The class group hypothesis is confined to `exists_pow_eq_span`; the second result is
-unconditional, and is proved by reducing `w.valuation K (algebraMap R K π) = 1` to
-`π ∉ w.asIdeal` through Mathlib's
+`exists_pow_eq_span` asks only that the single class `[v]` have finite order, not that the whole
+class group be finite: all the proof takes from the hypothesis is one positive `m` with
+`[v] ^ m = 1`, which is `IsOfFinOrder.exists_pow_eq_one`. A caller carrying
+`[Finite (ClassGroup R)]` supplies the hypothesis as `isOfFinOrder_of_finite _`, so no separate
+finite-class-group form is stated here. Nothing weaker will do either: a nonzero `π` with
+`v.asIdeal ^ m = Ideal.span {π}` and `0 < m` forces `[v] ^ m = 1`, so finite order of `[v]` is
+necessary as well as sufficient.
+
+The second result needs no class hypothesis at all. It is proved by reducing
+`w.valuation K (algebraMap R K π) = 1` to `π ∉ w.asIdeal` through Mathlib's
 `IsDedekindDomain.HeightOneSpectrum.valuation_eq_one_iff_notMem`, then using that a prime
 containing `v ^ n` contains `v`, and `v` is maximal.
 
-That second result asks only for the containment `v.asIdeal ^ n ≤ Ideal.span {π}` — `π` divides
-`v ^ n` — rather than the equality a principal power gives. The proof uses the containment in one
-direction only, and the weaker hypothesis is the honest statement of what makes `π` a `w`-adic
-unit: its ideal support is contained in `{v}`.
+It also asks only for the containment `v.asIdeal ^ n ≤ Ideal.span {π}` — `π` divides `v ^ n` —
+rather than the equality a principal power gives. The proof uses the containment in one direction
+only, and the weaker hypothesis is the honest statement of what makes `π` a `w`-adic unit: its
+ideal support is contained in `{v}`.
 
 Passing from `[v] ^ m` to the class of `v.asIdeal ^ m` is Mathlib's `SubmonoidClass.mk_pow`,
 which is exactly the coercion `(⟨I, hI⟩ : (Ideal R)⁰) ^ m = ⟨I ^ m, _⟩`; Mathlib's own
 `Ideal.IsPrincipal.of_isPrincipal_pow_of_coprime` takes the same step the same way.
 
-`exists_pow_eq_span` is stated with the exponent existentially quantified rather than as
-`orderOf v.classGroupMk`, because no consumer so far needs the exponent to be the order: what is
-used is only that it is positive. Naming the order in the statement would force every consumer to
-carry `ClassGroup` vocabulary that the conclusion does not otherwise mention.
+The exponent is existentially quantified rather than named as `orderOf v.classGroupMk`, because no
+consumer so far needs the exponent to be the order: what is used is only that it is positive.
+Leaving it existential also keeps the conclusion free of the `ClassGroup` vocabulary that the
+hypothesis alone mentions, and lets the proof read the exponent straight off the hypothesis.
 
 Adapted from Michael Stoll's elliptic-curves formalisation
 (`github.com/MichaelStollBayreuth/EllipticCurves`, `EllipticCurves/Mathlib/FractionalIdeal.lean`
 and `EllipticCurves/Mathlib/Basic.lean` at the roadmap's pin `66889eada51a`, Apache 2.0, by
 Michael Stoll); following this repository's convention for adapted material, the upstream
-authorship is credited here rather than in the copyright header. Two deliberate departures from
-the source: `exists_pow_eq_span` reaches the class of `v.asIdeal ^ m` through this repository's
+authorship is credited here rather than in the copyright header. Three deliberate departures from
+the source: `exists_pow_eq_span` weakens the source's `[Finite (ClassGroup R)]` to finite order of
+the single class `[v]`, and reaches the class of `v.asIdeal ^ m` through this repository's
 `classGroupMk_eq_mk0` and Mathlib's `SubmonoidClass.mk_pow` instead of an inline `Subtype.ext`
-step, and the valuation lemma is stated over the containment rather than the equality.
+step; and the valuation lemma is stated over the containment rather than the equality.
 -/
 
 public section
@@ -68,15 +77,16 @@ namespace IsDedekindDomain.HeightOneSpectrum
 
 variable {R : Type*} [CommRing R] [IsDedekindDomain R]
 
-/-- If the class group is finite, then some positive power of every height one prime is
-principal, with a nonzero generator. -/
-lemma exists_pow_eq_span [Finite (ClassGroup R)] (v : HeightOneSpectrum R) :
+/-- If the class of the height one prime `v` has finite order, then some positive power of `v` is
+principal, with a nonzero generator. When `ClassGroup R` is finite, pass
+`isOfFinOrder_of_finite _` for the hypothesis. -/
+lemma exists_pow_eq_span (v : HeightOneSpectrum R) (hv : IsOfFinOrder v.classGroupMk) :
     ∃ (n : ℕ) (π : R), 0 < n ∧ π ≠ 0 ∧ v.asIdeal ^ n = Ideal.span {π} := by
-  have h1 : v.classGroupMk ^ orderOf v.classGroupMk = 1 := pow_orderOf_eq_one _
+  obtain ⟨m, hm, h1⟩ := hv.exists_pow_eq_one
   rw [classGroupMk_eq_mk0, ← map_pow, SubmonoidClass.mk_pow] at h1
   obtain ⟨π, hπ⟩ := (ClassGroup.mk0_eq_one_iff _).mp h1
   rw [Ideal.submodule_span_eq] at hπ
-  exact ⟨_, π, orderOf_pos _, fun h ↦ pow_ne_zero _ v.ne_bot (hπ.trans (by simp [h])), hπ⟩
+  exact ⟨m, π, hm, fun h ↦ pow_ne_zero _ v.ne_bot (hπ.trans (by simp [h])), hπ⟩
 
 /-- If `π` divides a power of the height one prime `v` — that is, `v.asIdeal ^ n` is contained
 in `Ideal.span {π}` — then `π` is a unit for the `w`-adic valuation at every height one prime
