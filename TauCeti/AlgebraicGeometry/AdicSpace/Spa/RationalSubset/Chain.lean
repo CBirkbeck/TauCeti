@@ -80,6 +80,29 @@ theorem rationalSubset_insert_of_forall_vlt (Aplus : Subring A) (T : Finset A) (
   · exact hv'.2.1 t ht
 
 open scoped Classical in
+/-- Adjoining a fixed element to ever longer prefixes of a list gives an increasing family of
+finite sets. This is what makes the chain below descend: a longer prefix is a larger numerator
+set, and the rational subset is antitone in that set. -/
+private theorem insert_take_toFinset_mono {α : Type*} (u : α) (l : List α) {i j : ℕ}
+    (hij : i ≤ j) : insert u (l.take i).toFinset ⊆ insert u (l.take j).toFinset := by
+  refine Finset.insert_subset_insert _ ?_
+  intro a ha
+  rw [List.mem_toFinset] at ha ⊢
+  exact (List.take_prefix_take_left hij).subset ha
+
+/-- Taking one more element of a list adds exactly that element to the prefix.
+
+Stated as an explicit membership characterisation because `simp` will not do this rewrite:
+having rewritten `l.take (i + 1)` to `l.take i ++ [l[i]]`, `simp` normalises the append
+straight back to `l.take (i + 1)`, silently undoing the step. -/
+private theorem mem_take_add_one_iff {α : Type*} {l : List α} {i : ℕ} (hlen : i < l.length)
+    (a : α) : a ∈ l.take (i + 1) ↔ a = l[i] ∨ a ∈ l.take i := by
+  rw [List.take_add_one, List.getElem?_eq_getElem hlen, List.mem_append]
+  have hopt : ∀ x : α, a ∈ (some x : Option α).toList ↔ a = x := fun x ↦ by simp
+  simp only [hopt]
+  tauto
+
+open scoped Classical in
 /-- **Wedhorn Remark 7.55: the chain of rational subsets.** Let `u` be strictly dominated by `s`
 throughout `U = R(T/s)`. Then there is a descending chain of rational subsets
 
@@ -94,39 +117,24 @@ member is a rational subset by construction rather than by a separate argument. 
 `T` is `Finset.toList`; any enumeration would do, and the statement fixes one only so that the
 `i`-th step has a name. -/
 theorem exists_rationalSubset_chain (Aplus : Subring A) (T : Finset A) (s u : A)
-    (hu : ∀ v ∈ rationalSubset Aplus T s, v.toValuativeRel.vlt u s) :
-    ∃ N : ℕ → Finset A,
+    (hu : ∀ v ∈ rationalSubset Aplus T s, v.toValuativeRel.vlt u s) : ∃ N : ℕ → Finset A,
       N 0 = {u} ∧
       (∀ i, rationalSubset Aplus (N i) s ⊆ spa Aplus) ∧
       Antitone (fun i ↦ rationalSubset Aplus (N i) s) ∧
       (∀ i < T.card, ∃ t ∈ T, N (i + 1) = insert t (N i)) ∧
       rationalSubset Aplus (N T.card) s = rationalSubset Aplus T s := by
   classical
-  have hmono : ∀ {i j : ℕ}, i ≤ j →
-      insert u (T.toList.take i).toFinset ⊆ insert u (T.toList.take j).toFinset := by
-    intro i j hij
-    refine Finset.insert_subset_insert _ ?_
-    intro a ha
-    rw [List.mem_toFinset] at ha ⊢
-    exact (List.take_prefix_take_left hij).subset ha
   refine ⟨fun i ↦ insert u ((T.toList.take i).toFinset), by simp,
     fun i ↦ rationalSubset_subset_spa _ _ _, ?_, ?_, ?_⟩
-  · exact fun i j hij ↦ rationalSubset_subset_rationalSubset_of_subset Aplus (hmono hij) s
+  · exact fun i j hij ↦ rationalSubset_subset_rationalSubset_of_subset Aplus
+      (insert_take_toFinset_mono u T.toList hij) s
   · intro i hi
     have hlen : i < T.toList.length := by simpa [Finset.length_toList] using hi
     refine ⟨T.toList[i], Finset.mem_toList.mp (List.getElem_mem hlen), ?_⟩
-    have hopt : ∀ a x : A, a ∈ (some x : Option A).toList ↔ a = x := by
-      intro a x; simp
-    have hstep : ∀ a : A,
-        a ∈ T.toList.take (i + 1) ↔ a = T.toList[i] ∨ a ∈ T.toList.take i := by
-      intro a
-      rw [List.take_add_one, List.getElem?_eq_getElem hlen, List.mem_append]
-      simp only [hopt]
-      tauto
     change insert u (T.toList.take (i + 1)).toFinset
         = insert T.toList[i] (insert u (T.toList.take i).toFinset)
     ext a
-    simp only [Finset.mem_insert, List.mem_toFinset, hstep a]
+    simp only [Finset.mem_insert, List.mem_toFinset, mem_take_add_one_iff hlen a]
     tauto
   · change rationalSubset Aplus (insert u (T.toList.take T.card).toFinset) s
         = rationalSubset Aplus T s
