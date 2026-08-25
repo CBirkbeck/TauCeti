@@ -177,6 +177,12 @@ lemma monic_f : W.f.Monic := by
 
 lemma f_ne_zero : W.f ≠ 0 := W.monic_f.ne_zero
 
+/-- A polynomial of degree at most `2` has degree less than that of `f`, which has degree `3`.
+Supplies the degree side conditions of `AdjoinRoot.mk_eq_mk_iff_of_degree_lt` for the relator
+`f`. -/
+lemma degree_lt_degree_f {p : K[X]} (hp : p.natDegree ≤ 2) : p.degree < W.f.degree :=
+  degree_lt_degree <| by rw [natDegree_f]; lia
+
 /-- The derivative of `f`. Its values at the roots of `f` are what makes the corrected
 representative a unit; see `deriv_f_ne_zero`. -/
 lemma derivative_f : derivative W.f = C 3 * X ^ 2 + C (2 * W.a₂) * X + C W.a₄ := by
@@ -241,6 +247,13 @@ lemma natDegree_fCofactor (x : K) : (W.fCofactor x).natDegree = 2 := by
 lemma monic_fCofactor (x : K) : (W.fCofactor x).Monic := by
   simp only [fCofactor]
   monicity!
+
+/-- A polynomial of degree at most `1` has degree less than that of `fCofactor x`, which has
+degree `2`. Supplies the degree side conditions of `AdjoinRoot.mk_eq_mk_iff_of_degree_lt` for the
+relator `fCofactor x`. -/
+lemma degree_lt_degree_fCofactor (x : K) {p : K[X]} (hp : p.natDegree ≤ 1) :
+    p.degree < (W.fCofactor x).degree :=
+  degree_lt_degree <| by rw [natDegree_fCofactor]; lia
 
 lemma eval_fCofactor_self (x : K) :
     (W.fCofactor x).eval x = 3 * x ^ 2 + 2 * W.a₂ * x + W.a₄ := by
@@ -735,10 +748,10 @@ lemma μ₀_two_nsmul (P : W.Point) : W.μ₀ (2 • P) = 1 := by
 /-!
 ### The divisibility criterion
 
-The kernel of `μ` is computed in a separate file; what belongs here is the criterion the
-computation runs on, namely that divisibility by `2` is equivalent to an explicit polynomial
-identity. `exists_eq_two_smul_iff'` restates it inside `W.A`, which is the form the square-class
-argument consumes.
+What belongs here is the criterion the kernel computation runs on, namely that divisibility by
+`2` is equivalent to an explicit polynomial identity. `exists_eq_two_smul_iff'` restates it inside
+`W.A`, which is the form the square-class argument consumes; the section below runs that argument
+and concludes in `ker_μ_eq`.
 -/
 
 /- Reverse direction of `exists_eq_two_smul_iff`, in terms of the coefficient identities of
@@ -811,6 +824,11 @@ lemma exists_eq_two_smul_iff' {x y : K} (h : W.Nonsingular x y) :
 
 /-!
 ### The kernel of the `x - T` map
+
+Both inclusions of `ker_μ_eq`. That `2 • P` is killed is `μ₀_two_nsmul`; the converse is trivial at
+the point at infinity and, at an affine point, splits on whether `f` vanishes at the `x`-coordinate.
+Each affine branch feeds the criterion of the previous section a square root extracted from
+`μ (some x y h) = 1`.
 -/
 
 section kernel
@@ -824,7 +842,7 @@ private lemma eq_two_smul_of_μ_eq_one_of_ne (hμ : (μ <| .ofAdd <| .some x y h
   rw [exists_eq_two_smul_iff']
   rw [μ_apply, μ₀_some, μX_of_eval_f_ne_zero hx, M.mk_eq_one_iff] at hμ
   obtain ⟨z, hz⟩ := hμ
-  obtain ⟨r, s, t, hrst⟩ := W.exists_mk_eq z
+  obtain ⟨r, s, t, hrst⟩ := W.exists_mk_quadratic_eq z
   rw [hrst] at hz
   have hr : r ≠ 0 := by
     intro rfl
@@ -851,7 +869,7 @@ private lemma eq_two_smul_of_μ_eq_one_of_eq (hμ : (μ <| .ofAdd <| .some x y h
   rw [μ_apply, μ₀_some, μX_of_eval_f_eq_zero hx, M.mk_eq_one_iff] at hμ
   obtain ⟨z, hz⟩ := hμ
   obtain ⟨p, hp⟩ := AdjoinRoot.mk_surjective z
-  obtain ⟨r, s, hrs⟩ := W.exists_mk_eq' (AdjoinRoot.mk (W.fCofactor x) p)
+  obtain ⟨r, s, hrs⟩ := W.exists_mk_linear_eq (AdjoinRoot.mk (W.fCofactor x) p)
   rw [← hp, ← map_pow, AdjoinRoot.mk_eq_mk] at hz
   have hz' : AdjoinRoot.mk (W.fCofactor x) (p ^ 2) =
       AdjoinRoot.mk (W.fCofactor x) (C x - X + W.fCofactor x) :=
@@ -889,7 +907,8 @@ lemma ker_μ_eq : (μ (W := W)).ker = (nsmulAddMonoidHom 2).range.toSubgroup := 
   constructor
   · match P with
     | 0 => exact fun _ ↦ ⟨0, by simp⟩
-    | .some x y h => exact fun hμ ↦ (eq_two_smul_of_μ_eq_one h hμ).imp fun Q hQ ↦ hQ.symm
+    | .some x y h =>
+      exact fun hμ ↦ (eq_two_smul_of_μ_eq_one h (by rwa [μ_apply])).imp fun Q hQ ↦ hQ.symm
   · rintro ⟨Q, rfl⟩
     exact μ₀_two_nsmul Q
 
