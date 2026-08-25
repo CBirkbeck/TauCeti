@@ -57,8 +57,8 @@ Atkin-Lehner anti-involution of `Γ₀(N)`, and the conjugation one is proved by
   anti-involution fixes every double coset.
 * `HeckeAntiInvolution.bar_mem_doubleCoset_self_of_mem`: whether it fixes one double coset can
   be tested at any element of that coset.
-* `HeckeAntiInvolution.bar_mem_doubleCoset_self_mul_of_central`: fixing survives multiplication
-  by a central element the anti-involution fixes.
+* `HeckeAntiInvolution.bar_mem_doubleCoset_self_mul_of_mem_centralizer`: fixing survives
+  multiplication by an element the anti-involution fixes which centralizes `g` and `H`.
 * `HeckeCosetModule.mul_comm_of_antiInvolution`: the convolution product is commutative.
 * `HeckeCosetModule.commSemiringOfAntiInvolution`: the resulting `CommSemiring (𝕋 Δ H R)`.
 -/
@@ -195,33 +195,38 @@ lemma bar_mem_doubleCoset_self [IsHeckeTriple Δ H H]
 /-- **Whether `bar` fixes a double coset can be tested at any of its elements.** If some
 `x ∈ HgH` has `bar x` back in `HgH`, then `bar g ∈ HgH` as well.
 
-Both `HgH` and `H (bar g) H` contain `bar x`, so the two cosets coincide. Unlike
-`bar_mem_doubleCoset_self`, this asks nothing of the other double cosets: it is the pointwise
-statement, and it is what lets an argument replace `g` by a more convenient representative of
-its coset — an `H`-conjugate, say, or an integral witness with better entries — and still
-conclude for `g` itself. -/
-lemma bar_mem_doubleCoset_self_of_mem [IsHeckeTriple Δ H H] {g x : G} (hg : g ∈ Δ) (hx : x ∈ Δ)
-    (hmem : x ∈ doubleCoset g (H : Set G) H) (hbar : ι.bar x hx ∈ doubleCoset g (H : Set G) H) :
+Unlike `bar_mem_doubleCoset_self`, this asks nothing of the other double cosets: it is the
+pointwise statement, and it is what lets an argument replace `g` by a more convenient
+representative of its coset — an `H`-conjugate, say, or an integral witness with better
+entries — and still conclude for `g` itself. -/
+lemma bar_mem_doubleCoset_self_of_mem [IsHeckeTriple Δ H H] {g x : G} (hg : g ∈ Δ)
+    (hmem : x ∈ doubleCoset g (H : Set G) H)
+    (hbar : ι.bar x (IsHeckeTriple.mem_of_mem_doubleCoset hg hmem) ∈
+      doubleCoset g (H : Set G) H) :
     ι.bar g hg ∈ doubleCoset g (H : Set G) H := by
-  rw [← doubleCoset_eq_of_mem hbar, doubleCoset_eq_of_mem (ι.bar_mem_doubleCoset hg hx hmem)]
+  rw [← doubleCoset_eq_of_mem hbar, doubleCoset_eq_of_mem (ι.bar_mem_doubleCoset hg
+    (IsHeckeTriple.mem_of_mem_doubleCoset hg hmem) hmem)]
   exact mem_doubleCoset_self H H _
 
-/-- **A central factor that `bar` fixes can be split off.** If `bar g ∈ HgH` and `s` is central
-with `bar s = s`, then `bar (s * g) ∈ H (s * g) H`.
+/-- **A factor that `bar` fixes and that centralizes `g` and `H` can be split off.** If
+`bar g ∈ HgH`, `bar s = s`, and `s` commutes with `g` and with every element of `H`, then
+`bar (s * g) ∈ H (s * g) H`.
 
-`bar` reverses multiplication, so `bar (s * g) = bar g * s`; writing `bar g = h₁ * g * h₂` and
-sliding the central `s` back across `h₂` puts it next to `g`. The scalars of a matrix Hecke
-datum are the standard source of such an `s`: it reduces a determinant to its primitive part
-without disturbing the double coset. -/
-lemma bar_mem_doubleCoset_self_mul_of_central {s g : G} (hs : s ∈ Δ) (hg : g ∈ Δ)
-    (hsg : s * g ∈ Δ) (hs_central : s ∈ Subgroup.center G) (hbar : ι.bar s hs = s)
+The scalars of a matrix Hecke datum are the standard source of such an `s`: being central they
+lie in every centralizer (`Subgroup.center_le_centralizer`), and splitting one off reduces a
+determinant to its primitive part without disturbing the double coset. -/
+lemma bar_mem_doubleCoset_self_mul_of_mem_centralizer {s g : G} (hs : s ∈ Δ) (hg : g ∈ Δ)
+    (hs_comm : s ∈ Subgroup.centralizer (insert g (H : Set G))) (hbar : ι.bar s hs = s)
     (hfix : ι.bar g hg ∈ doubleCoset g (H : Set G) H) :
-    ι.bar (s * g) hsg ∈ doubleCoset (s * g) (H : Set G) H := by
-  have hcomm : ∀ y : G, s * y = y * s := fun y ↦ (Subgroup.mem_center_iff.mp hs_central y).symm
+    ι.bar (s * g) (mul_mem hs hg) ∈ doubleCoset (s * g) (H : Set G) H := by
   obtain ⟨h₁, hh₁, h₂, hh₂, heq⟩ := mem_doubleCoset.mp hfix
+  have hsg : Commute s g :=
+    (Subgroup.mem_centralizer_iff.mp hs_comm g (Set.mem_insert _ _)).symm
+  have hsh : Commute s h₂ :=
+    (Subgroup.mem_centralizer_iff.mp hs_comm h₂ (Set.mem_insert_of_mem _ hh₂)).symm
   refine mem_doubleCoset.mpr ⟨h₁, hh₁, h₂, hh₂, ?_⟩
-  rw [ι.bar_mul hs hg hsg, hbar, heq]
-  simp only [mul_assoc, hcomm]
+  rw [ι.bar_mul hs hg (mul_mem hs hg), hbar, heq]
+  simp only [mul_assoc, (hsg.mul_right hsh).eq]
 
 /-- Decompose `bar x` through the double coset of `g` when `x ∈ HgH`. -/
 private lemma exists_bar_eq [IsHeckeTriple Δ H H]

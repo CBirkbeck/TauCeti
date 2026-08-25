@@ -301,10 +301,6 @@ coprime to `m`, then `bar x` lies in the `Γ₀(N)`-double coset of `x` itself.
 
 Where the bad-prime criterion above reads the determinant, this one reads a single *entry*.
 Membership of `Δ₀(N)` already forces `A 0 0` to be a unit mod `N`; this asks the same at `m`.
-Both `x` and `bar x` then satisfy `mem_doubleCoset_natDiagGL_of_intWitness` at that same `m`,
-so both lie in the double coset of `diag(1, m)` and hence in one another's. The witness for
-`bar x` is read off `atkinLehnerAntiInvolution_bar_val`: the entry swap leaves the upper-left
-entry untouched, which is precisely why the coprimality hypothesis transfers with no work.
 
 It subsumes `atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_dvd_pow`: inside `Δ₀(N)` the
 upper-left entry is a unit mod `N`, so a determinant dividing a power of `N` is automatically
@@ -312,11 +308,13 @@ coprime to it. That one is kept as the statement to quote when there is no witne
 and `BadPrimeCoset.lean` already makes the same step one level down. -/
 theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_coprime_upperLeft [NeZero N] (m : ℕ)
     (x : GL (Fin 2) ℚ) (hx : x ∈ Delta0 N) (A : Matrix (Fin 2) (Fin 2) ℤ)
-    (hA : (x : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ)) (hAN : (N : ℤ) ∣ A 1 0)
+    (hA : (x : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
     (hdet : (x : Matrix (Fin 2) (Fin 2) ℚ).det = (m : ℚ)) (ham : Int.gcd (A 0 0) m = 1) :
     (atkinLehnerAntiInvolution N).bar x hx ∈
       DoubleCoset.doubleCoset x ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) := by
-  obtain ⟨c, hc⟩ := hAN
+  obtain ⟨B, hB, -, hBN, -⟩ := (mem_Delta0_iff N).mp hx
+  obtain ⟨c, hc⟩ : (N : ℤ) ∣ A 1 0 := by
+    rwa [Matrix.map_injective (Int.cast_injective (α := ℚ)) (hB.symm.trans hA)] at hBN
   rw [DoubleCoset.doubleCoset_eq_of_mem
     (mem_doubleCoset_natDiagGL_of_intWitness N m x A hA ⟨c, hc⟩ hdet ham)]
   exact mem_doubleCoset_natDiagGL_of_intWitness N m _ !![A 0 0, c; (N : ℤ) * A 0 1, A 1 1]
