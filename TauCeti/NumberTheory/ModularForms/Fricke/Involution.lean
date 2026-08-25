@@ -1,0 +1,157 @@
+/-
+Copyright (c) 2026 Chris Birkbeck. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Chris Birkbeck
+-/
+module
+
+public import TauCeti.NumberTheory.ModularForms.Fricke.Operator
+
+/-!
+# The Fricke operator is an involution up to a scalar
+
+The Fricke matrix squares to the scalar matrix `(-N) • 1`
+(`coe_frickeGL_sq` of `TauCeti/NumberTheory/ModularForms/Fricke/Matrix.lean`), and a scalar
+matrix acts trivially on `ℍ`. Slashing by `W²` is therefore multiplication by a constant, and
+the Fricke operator `W_N` of `TauCeti/NumberTheory/ModularForms/Fricke/Operator.lean` satisfies
+`W_N ∘ W_N = c • id` for that constant
+
+`c = N ^ (2 * (k - 1)) * (-N) ^ (-k)`.
+
+The constant is nonzero, so `W_N` is invertible with `W_N⁻¹ = c⁻¹ • W_N`.
+
+## Main definitions
+
+* `TauCeti.frickeScalar`: the constant `c` above.
+
+## Main results
+
+* `TauCeti.frickeGL_sq_slash`: slashing by `W²` is multiplication by `frickeScalar N k`.
+* `TauCeti.frickeOperator_frickeOperator`: `W_N ∘ W_N = frickeScalar N k • id` on `M_k(Γ₁(N))`.
+* `TauCeti.frickeOperatorCusp_frickeOperatorCusp`: the same on `S_k(Γ₁(N))`.
+* `TauCeti.frickeScalar_ne_zero`: the constant is nonzero, which is what makes `W_N`
+  invertible.
+* `TauCeti.slash_mul_frickeGL`: slashing by `A * W` is `frickeScalar N k •` slashing by
+  `A * W⁻¹`. This is the form the character-space transport consumes, where the two Fricke
+  factors of a conjugated operator have to be collapsed onto one representative.
+
+## Where the scalar comes from
+
+Weight-`k` slashing by `g` carries the factor `|det g| ^ (k - 1) * denom g z ^ (-k)`. For
+`g = W²` the two factors are the two halves of `frickeScalar`: `det W = N` gives
+`|det W²| = N ^ 2`, and `W²` being the scalar matrix `(-N) • 1` gives `denom W² z = -N`,
+independently of `z`. The remaining ingredient is that `W²` acts trivially on `ℍ`, so the
+`f (W² • z)` in the slash is just `f z` — mathlib's `glScalar_smul`.
+
+## Provenance
+
+Ported from the AINTLIB `LeanModularForms` project
+([`LeanModularForms/HeckeRIngs/GL2/Fricke.lean`](https://github.com/CBirkbeck/AINTLIB),
+commit `340875adfb2`, Apache-2.0, Chris Birkbeck), realizing part of Layer 6 of the ModularForms
+roadmap.
+
+AINTLIB states these over `ℚ` and pushes to `ℝ` through a `glMap` transport at every step; here,
+as already in `Fricke/Operator.lean`, `frickeGL` is read at `ℝ` directly and no transport
+appears. That also replaces AINTLIB's hand computation of `W² • z` and `denom (W²) z` from the
+matrix entries: over `ℝ` the square is literally a `Matrix.GeneralLinearGroup.scalar`, so
+mathlib's `glScalar_smul` and `denom_scalar` apply, and `UpperHalfPlane.σ` is discharged from
+positivity of `det W²` rather than from a rational-determinant side condition.
+
+## References
+
+* [F. Diamond and J. Shurman, *A First Course in Modular Forms*][diamondshurman2005], §5.
+-/
+
+open Matrix Matrix.SpecialLinearGroup CongruenceSubgroup UpperHalfPlane
+
+open scoped MatrixGroups ModularForm
+
+namespace TauCeti
+
+variable {N : ℕ} [NeZero N]
+
+/-- The scalar `c` with `W_N ∘ W_N = c • id`, namely `c = N ^ (2 * (k - 1)) * (-N) ^ (-k)`: the
+`|det|` and `denom` factors of the weight-`k` slash by `W² = (-N) • 1`. -/
+public noncomputable def frickeScalar (N : ℕ) (k : ℤ) : ℂ :=
+  (N : ℂ) ^ (2 * (k - 1)) * (-(N : ℂ)) ^ (-k)
+
+/-- `frickeScalar N k` is nonzero. This is what makes the Fricke operator invertible, with
+inverse `(frickeScalar N k)⁻¹ • W_N`. -/
+public theorem frickeScalar_ne_zero (k : ℤ) : frickeScalar N k ≠ 0 := by
+  have hN : (N : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr (NeZero.ne N)
+  exact mul_ne_zero (zpow_ne_zero _ hN) (zpow_ne_zero _ (neg_ne_zero.mpr hN))
+
+/-- `W² = (-N) • 1` as an element of `GL (Fin 2) ℝ`, in the `Matrix.GeneralLinearGroup.scalar`
+form that mathlib's `glScalar_smul` and `denom_scalar` consume. -/
+private theorem frickeGL_sq_eq_scalar (hN : (N : ℝ) ≠ 0) : frickeGL ℝ N * frickeGL ℝ N =
+    Matrix.GeneralLinearGroup.scalar (Fin 2) (Units.mk0 (-(N : ℝ)) (neg_ne_zero.mpr hN)) := by
+  ext i j
+  rw [← sq, coe_frickeGL_sq]
+  simp [Matrix.GeneralLinearGroup.scalar, Matrix.scalar_apply, Matrix.smul_apply,
+    Matrix.one_apply, Matrix.diagonal_apply]
+
+/-- **Slashing by `W²` is multiplication by `frickeScalar N k`.** `W² = (-N) • 1` is a scalar
+matrix, so it acts trivially on `ℍ` and has constant `denom`; what is left of the weight-`k`
+slash is the constant `|det W²| ^ (k - 1) * (-N) ^ (-k)`. -/
+public theorem frickeGL_sq_slash (k : ℤ) (f : ℍ → ℂ) :
+    f ∣[k] (frickeGL ℝ N * frickeGL ℝ N) = frickeScalar N k • f := by
+  have hN : (N : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (NeZero.ne N)
+  set u : ℝˣ := Units.mk0 (-(N : ℝ)) (neg_ne_zero.mpr hN) with hu
+  have hdet : ((Matrix.GeneralLinearGroup.scalar (Fin 2) u).det : ℝ) = (N : ℝ) ^ 2 := by
+    rw [Matrix.GeneralLinearGroup.det_scalar]
+    simp [hu, sq]
+  have hpos : 0 < ((Matrix.GeneralLinearGroup.scalar (Fin 2) u).det : ℝ) := by
+    rw [hdet]
+    exact pow_pos ((Nat.cast_pos (α := ℝ)).mpr (NeZero.pos N)) 2
+  have hσ : σ (Matrix.GeneralLinearGroup.scalar (Fin 2) u) = ContinuousAlgEquiv.refl ℝ ℂ := by
+    rw [σ]
+    -- `hpos` decides the branch: `σ` is the identity exactly on positive determinant.
+    split_ifs
+    rfl
+  ext z
+  rw [ModularForm.slash_apply, frickeGL_sq_eq_scalar hN, ← hu, hσ, glScalar_smul, denom_scalar,
+    hdet, abs_of_nonneg (by positivity : (0 : ℝ) ≤ (N : ℝ) ^ 2)]
+  push_cast [hu, frickeScalar]
+  rw [← zpow_natCast (N : ℂ) 2, ← zpow_mul]
+  simp only [ContinuousAlgEquiv.refl_apply, Nat.cast_ofNat, Units.val_mk0, Complex.ofReal_neg,
+    Complex.ofReal_natCast, zpow_neg, Pi.smul_apply, smul_eq_mul]
+  ring
+
+/-- **Collapsing a Fricke factor**: slashing by `A * W` is `frickeScalar N k •` slashing by
+`A * W⁻¹`, because `A * W = (A * W⁻¹) * W²`. This is the step that lets the two Fricke factors
+of a `W`-conjugated operator be replaced by a single one. -/
+public theorem slash_mul_frickeGL (k : ℤ) (f : ℍ → ℂ) (A : GL (Fin 2) ℝ) :
+    f ∣[k] (A * frickeGL ℝ N) = frickeScalar N k • (f ∣[k] (A * (frickeGL ℝ N)⁻¹)) := by
+  rw [show A * frickeGL ℝ N = A * (frickeGL ℝ N)⁻¹ * (frickeGL ℝ N * frickeGL ℝ N) by group,
+    SlashAction.slash_mul, frickeGL_sq_slash]
+
+/-- **`W_N ∘ W_N = frickeScalar N k • id` on `M_k(Γ₁(N))`.** Composing the operator with itself
+slashes by `W²`, which `frickeGL_sq_slash` identifies with the scalar. -/
+public theorem frickeOperator_frickeOperator (k : ℤ) :
+    (frickeOperator (N := N) k).comp (frickeOperator (N := N) k) =
+      frickeScalar N k • LinearMap.id := by
+  ext f z
+  simp only [LinearMap.coe_comp, Function.comp_apply, LinearMap.smul_apply, LinearMap.id_coe,
+    id_eq]
+  rw [frickeOperator_coe, frickeOperator_coe, ← SlashAction.slash_mul, frickeGL_sq_slash]
+  rfl
+
+/-- **`W_N ∘ W_N = frickeScalar N k • id` on `S_k(Γ₁(N))`**, the cusp-form form of
+`frickeOperator_frickeOperator`. With `frickeScalar_ne_zero` this makes `W_N` invertible on
+cusp forms. -/
+public theorem frickeOperatorCusp_frickeOperatorCusp (k : ℤ) :
+    (frickeOperatorCusp (N := N) k).comp (frickeOperatorCusp (N := N) k) =
+      frickeScalar N k • LinearMap.id := by
+  ext f z
+  simp only [LinearMap.coe_comp, Function.comp_apply, LinearMap.smul_apply, LinearMap.id_coe,
+    id_eq]
+  rw [frickeOperatorCusp_coe, frickeOperatorCusp_coe, ← SlashAction.slash_mul, frickeGL_sq_slash]
+  rfl
+
+/-- `frickeOperatorCusp_frickeOperatorCusp` applied to a single cusp form. -/
+public theorem frickeOperatorCusp_frickeOperatorCusp_apply (k : ℤ)
+    (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
+    frickeOperatorCusp k (frickeOperatorCusp k f) = frickeScalar N k • f :=
+  LinearMap.congr_fun (frickeOperatorCusp_frickeOperatorCusp (N := N) k) f
+
+end TauCeti
