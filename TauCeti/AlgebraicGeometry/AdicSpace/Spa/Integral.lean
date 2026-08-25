@@ -7,7 +7,6 @@ module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Basic
 public import TauCeti.RingTheory.Huber.Continuous.ValuativeCriterion
-public import TauCeti.RingTheory.Huber.Pair
 
 /-!
 # The ring of integral elements is cut out by the points of the adic spectrum
