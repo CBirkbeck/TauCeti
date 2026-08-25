@@ -6,9 +6,11 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Analysis.Normed.Module.Basic
+public import Mathlib.LinearAlgebra.Trace
 public import Mathlib.RepresentationTheory.Continuous.Basic
 public import Mathlib.RepresentationTheory.Irreducible
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
+public import TauCeti.RepresentationTheory.Irreducible
 
 /-!
 # Schur's lemma for continuous intertwiners
@@ -40,6 +42,8 @@ because every linear map out of a finite-dimensional normed space is continuous.
 * `TauCeti.ContRepresentation.exists_eq_smul_one_of_irreducible`: every continuous self-intertwiner
   of an irreducible finite-dimensional representation over an algebraically closed normed field is
   scalar.
+* `ContRepresentation.eq_smul_id_of_irreducible`: in characteristic zero that scalar is pinned by
+  the trace — it is the normalized trace `(finrank 𝕜 V)⁻¹ * trace f` of the intertwiner.
 
 The mathematical argument follows Daniel Bump, *Lie Groups*, second edition, Chapter 2.
 -/
@@ -122,6 +126,35 @@ theorem exists_eq_smul_one_of_irreducible (hirr : Representation.IsIrreducible �
       = (1 : Representation.IntertwiningMap π.toRepresentation π.toRepresentation) := rfl
   simp only [hsmul, hone]
   rw [← Algebra.algebraMap_eq_smul_one, hc]
+
+/-- **The Schur scalar is the normalized trace.** A continuous self-intertwiner of an irreducible
+finite-dimensional representation over an algebraically closed normed field is not merely *some*
+scalar multiple of the identity: taking traces pins the scalar down to `(finrank 𝕜 V)⁻¹ * trace f`.
+
+This is the form the analytic theory uses, where the intertwiner is produced by averaging and its
+trace is computed independently — against a character, or as the trace of the averaged operator.
+The conclusion is stated about the underlying continuous linear map rather than about the
+intertwiner, because that is the form those consumers rewrite with.
+
+Characteristic zero is what makes the dimension invertible, and it is unavoidable: in
+characteristic `p` dividing `dim V` the scalar `(finrank 𝕜 V)⁻¹ * trace f` collapses to zero and
+says nothing about `f`. The vanishing and scalar halves of Schur's lemma above need no such
+hypothesis. -/
+theorem _root_.ContRepresentation.eq_smul_id_of_irreducible [CharZero 𝕜]
+    (hirr : Representation.IsIrreducible π.toRepresentation) (f : ContIntertwiningMap π π) :
+    f.toContinuousLinearMap
+      = ((Module.finrank 𝕜 V : 𝕜)⁻¹ *
+          LinearMap.trace 𝕜 V (f.toContinuousLinearMap : V →ₗ[𝕜] V)) •
+        ContinuousLinearMap.id 𝕜 V := by
+  have : Nontrivial V := Representation.IsIrreducible.nontrivial hirr
+  obtain ⟨c, hc⟩ := exists_eq_smul_one_of_irreducible π hirr f
+  have hc := congrArg ContIntertwiningMap.toContinuousLinearMap hc
+  simp only [ContIntertwiningMap.toContinuousLinearMap_smul,
+    ContIntertwiningMap.toContinuousLinearMap_one, ContinuousLinearMap.one_def] at hc
+  have hdim : (Module.finrank 𝕜 V : 𝕜) ≠ 0 := by
+    exact_mod_cast (Module.finrank_pos (R := 𝕜) (M := V)).ne'
+  rw [hc, ContinuousLinearMap.toLinearMap_smul, ContinuousLinearMap.coe_id, map_smul,
+    LinearMap.trace_id, smul_eq_mul, mul_comm c, inv_mul_cancel_left₀ hdim]
 
 end Scalar
 
