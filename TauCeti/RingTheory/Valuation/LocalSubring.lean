@@ -5,8 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.RingTheory.Ideal.Colon
 public import Mathlib.RingTheory.Valuation.LocalSubring
+public import TauCeti.RingTheory.Localization.DenIdeal
 
 /-!
 # A valuation subring that separates a point and is small on a prescribed ideal
@@ -23,8 +23,8 @@ induced valuation continuous when `J` is an ideal of definition.
 ## The hypothesis that combines them
 
 Both conclusions can be read off one maximal ideal `𝔪` of `R`: the point is separated when `𝔪`
-contains every denominator of `z` — the `s ∈ R` with `s • z ∈ R`, which are Mathlib's colon
-ideal `(1 : Submodule R K).colon {z}` — and `J` lands below `1` when `𝔪` contains `J`. So the
+contains every denominator of `z` — the `s ∈ R` with `s * z ∈ R`, which are the denominator
+ideal `Algebra.denIdeal K z` — and `J` lands below `1` when `𝔪` contains `J`. So the
 hypothesis the construction actually needs is that the denominators and `J` sit inside a common
 proper ideal, i.e. that their supremum is not `⊤`; that is what the main theorem assumes.
 
@@ -45,7 +45,7 @@ states algebraic hypotheses and sits beside the Mathlib lemma it refines.
 * `LocalSubring.isIntegrallyClosedIn_ofPrime` : localising at a prime preserves integral
   closedness in `K`, which is what lets Stacks 090P part (2) apply to the local subring built
   in that proof.
-* `LocalSubring.notMem_ofPrime_of_colon_le` : a point whose denominators all lie in `𝔪` is
+* `LocalSubring.notMem_ofPrime_of_denIdeal_le` : a point whose denominators all lie in `𝔪` is
   still missing from the localisation at `𝔪`.
 
 ## References
@@ -65,7 +65,7 @@ topological ring with a pair of definition, with `R` the integral closure of an 
 a fraction field, and defines its own `conductorIdeal`; here the statement is purely algebraic —
 an arbitrary subring integrally closed in `K`, an arbitrary ideal, and the explicit hypothesis
 that it generates a proper ideal together with the denominators of `z` — and the denominators
-are Mathlib's `Submodule.colon` rather than a new definition.
+are this repository's existing `Algebra.denIdeal` rather than a new definition.
 -/
 
 public section
@@ -99,29 +99,21 @@ theorem isIntegrallyClosedIn_ofPrime (R : Subring K) [IsIntegrallyClosedIn R K]
 
 /-- **A point survives the localisation as long as all its denominators lie in `𝔪`.** Writing
 `z = a / s` with `s ∉ 𝔪` exhibits `s` as a denominator of `z`, hence puts `s` in `𝔪`. -/
-theorem notMem_ofPrime_of_colon_le (R : Subring K) (𝔪 : Ideal R) [𝔪.IsPrime] {z : K}
-    (hcol : (1 : Submodule R K).colon {z} ≤ 𝔪) :
+theorem notMem_ofPrime_of_denIdeal_le (R : Subring K) (𝔪 : Ideal R) [𝔪.IsPrime] {z : K}
+    (hden : Algebra.denIdeal K z ≤ 𝔪) :
     z ∉ (LocalSubring.ofPrime R 𝔪).toSubring := by
   intro hmem
   obtain ⟨⟨a, ⟨s, hs⟩⟩, heq⟩ :=
     IsLocalization.surj 𝔪.primeCompl (⟨z, hmem⟩ : (LocalSubring.ofPrime R 𝔪).toSubring)
   have h1 : z * (s : K) = (a : K) := congrArg (Subring.subtype _) heq
-  have hs_col : s ∈ (1 : Submodule R K).colon {z} := by
-    rw [Submodule.mem_colon_singleton, Algebra.smul_def, Submodule.mem_one]
-    exact ⟨a, by rw [mul_comm]; exact h1.symm⟩
-  exact hs (hcol hs_col)
+  have hs_den : s ∈ Algebra.denIdeal K z :=
+    (Algebra.mem_denIdeal_iff K).mpr
+      ⟨a, by simpa [Algebra.algebraMap_ofSubsemiring_apply, mul_comm] using h1⟩
+  exact hs (hden hs_den)
 
 end LocalSubring
 
 namespace Subring
-
-/-- **The denominators of `z`, as an ideal of `R`.** `s` is a denominator of `z` exactly when
-`s * z` lands back in `R`; Mathlib's colon ideal `(1 : Submodule R K).colon {z}` says this with
-`smul` and with membership of the image of `R`. -/
-private theorem mem_colon_singleton_iff (R : Subring K) {z : K} (s : R) :
-    s ∈ (1 : Submodule R K).colon {z} ↔ (s : K) * z ∈ R := by
-  rw [Submodule.mem_colon_singleton, Algebra.smul_def, Submodule.mem_one]
-  exact ⟨fun ⟨y, hy⟩ ↦ hy ▸ y.2, fun h ↦ ⟨⟨_, h⟩, rfl⟩⟩
 
 /-- **A valuation subring separating `z` and strictly below `1` on `J`.** Let `R` be a subring
 of a field `K`, integrally closed in `K`, let `z : K`, and let `J` be an ideal of `R` which
@@ -130,7 +122,7 @@ together with the denominators of `z` generates a proper ideal. Then a single va
 
 The hypothesis is what the construction needs and no more: one maximal ideal `𝔪` above the
 supremum serves both halves. It forces `z ∉ R`, since `z ∈ R` makes `1` a denominator and the
-colon ideal `⊤`.
+denominator ideal `⊤`.
 
 This refines Stacks 090P: the separation alone is
 `Subring.exists_le_valuationSubring_of_isIntegrallyClosedIn`, and the bound on `J` alone is
@@ -138,7 +130,7 @@ This refines Stacks 090P: the separation alone is
 strength here is that one `V` does both. -/
 theorem exists_le_valuationSubring_notMem_valuation_lt_one (R : Subring K)
     [IsIntegrallyClosedIn R K] {z : K} {J : Ideal R}
-    (hsup : (1 : Submodule R K).colon {z} ⊔ J ≠ ⊤) :
+    (hsup : Algebra.denIdeal K z ⊔ J ≠ ⊤) :
     ∃ V : ValuationSubring K, R ≤ V.toSubring ∧ z ∉ V ∧
       ∀ a ∈ J, V.valuation (a : K) < 1 := by
   obtain ⟨𝔪, h𝔪, hle⟩ := Ideal.exists_le_maximal _ hsup
@@ -148,7 +140,7 @@ theorem exists_le_valuationSubring_notMem_valuation_lt_one (R : Subring K)
   have : IsIntegrallyClosedIn (LocalSubring.ofPrime R 𝔪).toSubring K :=
     LocalSubring.isIntegrallyClosedIn_ofPrime R 𝔪
   obtain ⟨V, hVdom, hzV⟩ := LocalSubring.exists_le_valuationSubring_of_isIntegrallyClosedIn
-    (LocalSubring.notMem_ofPrime_of_colon_le R 𝔪 (le_sup_left.trans hle))
+    (LocalSubring.notMem_ofPrime_of_denIdeal_le R 𝔪 (le_sup_left.trans hle))
   refine ⟨V, (LocalSubring.le_ofPrime R 𝔪).trans hVdom.1, hzV, fun a ha ↦ ?_⟩
   -- domination carries the maximal ideal of the localisation into that of `V`
   have haL : (⟨(a : K), LocalSubring.le_ofPrime R 𝔪 a.2⟩ :
@@ -171,13 +163,18 @@ theorem exists_le_valuationSubring_notMem_valuation_lt_one_of_pow_mul_mem (R : S
     ∃ V : ValuationSubring K, R ≤ V.toSubring ∧ z ∉ V ∧
       ∀ a ∈ J, V.valuation (a : K) < 1 := by
   -- the denominators are proper: `1` is a denominator only if `z` already lies in `R`
-  have hS_ne_top : (1 : Submodule R K).colon {z} ≠ ⊤ := fun h ↦ hz (by
-    simpa using (mem_colon_singleton_iff R 1).mp (h ▸ Submodule.mem_top))
+  have hS_ne_top : Algebra.denIdeal K z ≠ ⊤ := fun h ↦ hz (by
+    have h1 : (1 : R) ∈ Algebra.denIdeal K z := h ▸ Submodule.mem_top
+    obtain ⟨t, ht⟩ := (Algebra.mem_denIdeal_iff K).mp h1
+    have hzt : z = (t : K) := by
+      simpa [Algebra.algebraMap_ofSubsemiring_apply] using ht
+    rw [hzt]
+    exact t.2)
   obtain ⟨𝔪, h𝔪, hS𝔪⟩ := Ideal.exists_le_maximal _ hS_ne_top
   have : 𝔪.IsPrime := h𝔪.isPrime
   -- a power of `J` consists of denominators, so primality puts `J` itself inside `𝔪`
   have hJ𝔪 : J ≤ 𝔪 := Ideal.IsPrime.le_of_pow_le
-    (le_trans (fun a ha ↦ (mem_colon_singleton_iff R a).mpr (hJ a ha)) hS𝔪)
+    (le_trans (fun a ha ↦ (Algebra.mem_denIdeal_iff K).mpr ⟨⟨_, hJ a ha⟩, rfl⟩) hS𝔪)
   exact exists_le_valuationSubring_notMem_valuation_lt_one R fun htop ↦
     h𝔪.ne_top (eq_top_iff.mpr (htop ▸ sup_le hS𝔪 hJ𝔪))
 
