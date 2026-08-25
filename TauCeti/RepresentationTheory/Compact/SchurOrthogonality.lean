@@ -8,6 +8,7 @@ module
 public import TauCeti.RepresentationTheory.Compact.Intertwiner.Basic
 public import TauCeti.RepresentationTheory.Continuous.Schur
 public import Mathlib.Analysis.InnerProductSpace.Trace
+import TauCeti.RepresentationTheory.Irreducible
 
 /-!
 # Schur orthogonality for irreducible compact-group representations

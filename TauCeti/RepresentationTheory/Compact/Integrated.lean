@@ -8,6 +8,7 @@ module
 public import TauCeti.RepresentationTheory.Compact.Averaging
 public import TauCeti.RepresentationTheory.Continuous.Character
 public import TauCeti.RepresentationTheory.Continuous.Schur
+import TauCeti.RepresentationTheory.Irreducible
 
 /-!
 # A class function acts on an irreducible representation by a scalar

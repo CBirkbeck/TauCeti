@@ -10,7 +10,6 @@ public import Mathlib.LinearAlgebra.Trace
 public import Mathlib.RepresentationTheory.Continuous.Basic
 public import Mathlib.RepresentationTheory.Irreducible
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
-public import TauCeti.RepresentationTheory.Irreducible
 
 /-!
 # Schur's lemma for continuous intertwiners
