@@ -244,7 +244,7 @@ that ring is local, so that idempotent is `0` or `1`. -/
 theorem indecomposable_kroneckerJordanRep (h : a₀ ≠ a₁) :
     Indecomposable (kroneckerJordanRep k a₁ n) := by
   refine indecomposable_of_injective_of_isLocalRing not_isZero_kroneckerJordanRep
-    (fun e ↦ jordanApp e 1) (fun e e' heq ↦ ?_) ?_ ?_ fun e e' ↦ ?_
+    (fun e ↦ jordanApp e 1) (fun e e' heq ↦ ?_) ?_ ?_ fun e ↦ ?_
   · refine jordanApp_ext h ?_
     rw [jordanApp_eq_mulRight h e, jordanApp_eq_mulRight h e']
     exact congrArg (LinearMap.mulRight k) heq
@@ -252,7 +252,7 @@ theorem indecomposable_kroneckerJordanRep (h : a₀ ≠ a₁) :
     simp
   · rw [jordanApp_id]
     simp
-  · rw [jordanApp_comp, LinearMap.comp_apply, jordanApp_eq_mulRight h e']
+  · rw [jordanApp_comp, LinearMap.comp_apply, jordanApp_eq_mulRight h e]
     simp
 
 /-- **Jordan blocks of different sizes are non-isomorphic**: their dimension vectors differ. -/

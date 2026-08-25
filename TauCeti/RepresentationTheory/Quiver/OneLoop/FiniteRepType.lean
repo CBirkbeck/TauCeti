@@ -252,7 +252,7 @@ records an endomorphism faithfully and multiplicatively in the field `k`, which 
 theorem indecomposable_oneLoopRep (c : k) : Indecomposable (oneLoopRep.{u, w} k c) :=
   indecomposable_of_injective_of_isLocalRing (not_isZero_oneLoopRep c) oneLoopRepScalar
     (fun _ _ h ↦ oneLoopRep_hom_ext h) (oneLoopRepScalar_zero c c) (oneLoopRepScalar_id c)
-    fun f g ↦ (oneLoopRepScalar_comp f g).trans (mul_comm _ _)
+    fun f ↦ oneLoopRepScalar_comp f f
 
 /-- **Two scalar representations of `•↺` are isomorphic only if their scalars agree.** The scalar of
 an isomorphism is invertible, because the scalars of the two composites multiply to `1`, and
@@ -390,7 +390,7 @@ theorem indecomposable_oneLoopNilpotentRep (n : ℕ) :
     AdjoinRoot.eq_mulRight_of_root_mul (monic_X_pow (R := k) (n + 1))
       (oneLoopNilpotentRepApp_root_mul e)
   refine indecomposable_of_injective_of_isLocalRing (not_isZero_oneLoopNilpotentRep n)
-    (fun e ↦ oneLoopNilpotentRepApp e 1) (fun e e' h ↦ ?_) ?_ ?_ fun e e' ↦ ?_
+    (fun e ↦ oneLoopNilpotentRepApp e 1) (fun e e' h ↦ ?_) ?_ ?_ fun e ↦ ?_
   · refine oneLoopNilpotentRep_hom_ext ?_
     rw [hmul e, hmul e']
     exact congrArg (LinearMap.mulRight k) h
@@ -398,7 +398,7 @@ theorem indecomposable_oneLoopNilpotentRep (n : ℕ) :
     simp
   · rw [oneLoopNilpotentRepApp_id]
     simp
-  · rw [oneLoopNilpotentRepApp_comp, LinearMap.comp_apply, hmul e']
+  · rw [oneLoopNilpotentRepApp_comp, LinearMap.comp_apply, hmul e]
     simp
 
 /-- **Nilpotent Jordan blocks of different sizes are non-isomorphic**: their dimension vectors

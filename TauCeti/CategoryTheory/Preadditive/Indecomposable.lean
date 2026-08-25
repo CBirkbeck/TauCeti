@@ -10,7 +10,8 @@ public import Mathlib.CategoryTheory.Limits.Shapes.BinaryBiproducts
 public import Mathlib.CategoryTheory.Linear.Basic
 public import Mathlib.CategoryTheory.Preadditive.Biproducts
 public import Mathlib.LinearAlgebra.FiniteDimensional.Basic
-public import TauCeti.RingTheory.LocalRing.Basic
+public import Mathlib.RingTheory.LocalRing.Defs
+import TauCeti.RingTheory.LocalRing.Basic
 
 /-!
 # Recognizing indecomposable objects from their endomorphisms
@@ -22,10 +23,10 @@ criterion is too strong for the objects that carry the theory of a finite-dimens
 indecomposable projective module is almost never simple. The criterion that does apply is the one
 this file supplies — an object all of whose idempotent endomorphisms are trivial is
 indecomposable — together with the two forms in which it is used in practice. An object whose
-endomorphisms are recorded faithfully and multiplicatively in a *local* ring is indecomposable;
-this is the criterion behind the Krull–Schmidt theorem, and the one the quiver Jordan blocks need,
-their endomorphism algebra `k[X]/(Xⁿ⁺¹)` being local but not a field. And over a field, an object
-whose endomorphism space is one-dimensional (a *brick*) is indecomposable.
+endomorphisms are recorded faithfully in a *local* ring, squares going to squares, is
+indecomposable; this is the criterion behind the Krull–Schmidt theorem, and the one the quiver
+Jordan blocks need, their endomorphism algebra `k[X]/(Xⁿ⁺¹)` being local but not a field. And over a
+field, an object whose endomorphism space is one-dimensional (a *brick*) is indecomposable.
 
 The converse holds as soon as idempotents split, that is, over an idempotent-complete category
 (`CategoryTheory.IsIdempotentComplete`, which every abelian category is): splitting `e` and `𝟙 - e`
@@ -40,7 +41,7 @@ decomposition of the whole object.
 * `TauCeti.indecomposable_of_idempotent_eq_zero_or_id`: a nonzero object whose only idempotent
   endomorphisms are `0` and the identity is indecomposable.
 * `TauCeti.indecomposable_of_injective_of_isLocalRing`: **an object whose endomorphisms are
-  recorded faithfully and multiplicatively in a local ring is indecomposable.**
+  recorded faithfully in a local ring, squares going to squares, is indecomposable.**
 * `TauCeti.indecomposable_of_finrank_end_eq_one`: in a `k`-linear category over a field,
   **a brick is indecomposable**.
 * `TauCeti.isoBiprodOfRetracts`: two retracts of `X` whose idempotents sum to the identity exhibit
@@ -55,13 +56,15 @@ The idempotent hypothesis is phrased with composition, `e ≫ e = e`, rather tha
 `CategoryTheory.End X`, whose multiplication is composition in the opposite order; for an
 idempotent the two agree, but the hypothesis is easier to discharge as stated.
 
-`indecomposable_of_injective_of_isLocalRing` records the endomorphisms in an unbundled map `φ` for
-the same reason: it is asked to turn `≫` into multiplication in the order it is written,
-`φ (e ≫ f) = φ e * φ f`, which is the opposite of the multiplication of `End X`. Since the target
-ring may be noncommutative the order is a real choice, and this is the one every use site meets;
-bundling `φ` as a ring homomorphism would fix the other order and demand additivity besides, which
-no use site has reason to prove. The ring is not asked to be commutative because the endomorphism
-ring of an indecomposable object, the intended source of `φ`, is not.
+`indecomposable_of_injective_of_isLocalRing` records the endomorphisms in an unbundled map `φ`,
+and asks of it only that it carry squares to squares, `φ (e ≫ e) = φ e * φ e`. That is all the
+proof consumes, since it meets `φ` only at an idempotent, and it is the hypothesis that costs a
+use site least: asking instead that `φ` turn every `≫` into a product would raise a question this
+one does not, the multiplication of `End X` being composition in the opposite order. On a square
+the two orders agree, so no use site has to choose between them. Bundling `φ` as a ring
+homomorphism would settle the order the other way and demand additivity besides, which no use
+site has reason to prove. The ring is not asked to be commutative because the endomorphism ring
+of an indecomposable object, the intended source of `φ`, is not.
 
 Two neighbours state the same idea in narrower settings and do not reach the objects that need it
 here. `TauCeti.indecomposable_iff_isLocalRing_end` asks `CategoryTheory.End` itself to be local but
@@ -128,10 +131,10 @@ with it the endomorphism, the record being faithful — is `0` or the identity. 
 behind the Krull–Schmidt theorem: an object whose endomorphism ring is local is indecomposable. -/
 theorem indecomposable_of_injective_of_isLocalRing [HasBinaryBiproducts C] {X : C} (hX : ¬ IsZero X)
     {R : Type*} [Ring R] [IsLocalRing R] (φ : (X ⟶ X) → R) (hφ : Function.Injective φ)
-    (hzero : φ 0 = 0) (hid : φ (𝟙 X) = 1) (hcomp : ∀ e f : X ⟶ X, φ (e ≫ f) = φ e * φ f)
-    : Indecomposable X := by
+    (hzero : φ 0 = 0) (hid : φ (𝟙 X) = 1) (hsq : ∀ e : X ⟶ X, φ (e ≫ e) = φ e * φ e) :
+    Indecomposable X := by
   refine indecomposable_of_idempotent_eq_zero_or_id hX fun e he ↦ ?_
-  have hidem : IsIdempotentElem (φ e) := (hcomp e e).symm.trans (congrArg φ he)
+  have hidem : IsIdempotentElem (φ e) := (hsq e).symm.trans (congrArg φ he)
   rcases IsLocalRing.eq_zero_or_eq_one_of_isIdempotentElem hidem with h0 | h1
   · exact Or.inl (hφ (h0.trans hzero.symm))
   · exact Or.inr (hφ (h1.trans hid.symm))
