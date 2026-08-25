@@ -37,10 +37,15 @@ anything. Over the arbitrary field `K` of the identities below that is strictly 
 `N ≠ 0`: a nonzero level casts to zero whenever the characteristic of `K` divides it. It is
 needed for the *conjugation*, though, not for the entry formula, so it is stated where `W`
 itself appears: as `[NeZero (N : K)]` on the two normalization identities over `K`, which are
-the statements that actually call `frickeConjSL σ` a conjugate. The `ℤ`-valued declarations
-below carry no level hypothesis — the matrix `!![d, -c'; -N·b, a]` has determinant `1`, lies in
-`Γ₀(N)` for every `N`, and lies in `Γ₁(N)` whenever `σ` does, `c = N · (c / N)` holding at
-`N = 0` as well, both sides being zero.
+the statements that actually call `frickeConjSL σ` a conjugate. Most of the `ℤ`-valued
+declarations below carry no level hypothesis — the matrix `!![d, -c'; -N·b, a]` has determinant
+`1`, lies in `Γ₀(N)` for every `N`, lies in `Γ₁(N)` whenever `σ` does, and is multiplicative in
+`σ`, `c = N · (c / N)` holding at `N = 0` as well, both sides being zero.
+
+The exception is *invertibility*. The entry map is a homomorphism at every level but an
+isomorphism only at nonzero level, so `frickeConjGamma0MulEquiv`, `frickeConjGamma1MulEquiv` and
+the two involution lemmas take `[NeZero N]` — a hypothesis on the natural number `N`, not on its
+image in a field, since the obstruction is the integer division `c / N`.
 
 Level zero is genuinely degenerate, and the declarations below are worded so that nothing
 claims otherwise: `Γ₀(0)` is the upper-triangular subgroup, the quotient `c / N` is `0`, and the
@@ -60,6 +65,11 @@ itself defined at an arbitrary algebra.
 
 * `TauCeti.frickeConjSL`: the matrix `!![d, -c/N; -N·b, a]` as an element of `SL(2, ℤ)`;
   over a field in which `N` is invertible it is the conjugate `W · σ · W⁻¹`.
+* `TauCeti.frickeConjGamma0`, `TauCeti.frickeConjGamma1`: that map bundled as a group
+  homomorphism `Γ₀(N) →* Γ₀(N)`, and its restriction `Γ₁(N) →* Γ₁(N)`. These are the
+  declarations that say `W` *normalizes* the subgroup, rather than merely that it maps into it.
+* `TauCeti.frickeConjGamma0MulEquiv`, `TauCeti.frickeConjGamma1MulEquiv`: for `[NeZero N]`, the
+  same maps as automorphisms `Γ₀(N) ≃* Γ₀(N)` and `Γ₁(N) ≃* Γ₁(N)`, each its own inverse.
 
 ## Main results
 
@@ -68,6 +78,10 @@ itself defined at an arbitrary algebra.
   level.
 * `TauCeti.frickeConjSL_mem_Gamma1`: a `Γ₁(N)` input has `frickeConjSL σ ∈ Γ₁(N)`, at every
   level. This is a second hypothesis on `σ`, not a consequence of the previous line.
+* `TauCeti.frickeConjSL_mul`, `TauCeti.frickeConjSL_one`: the entry map is multiplicative and
+  unital, at every level. These are what the bundled homomorphisms above are built from.
+* `TauCeti.frickeConjGamma0_frickeConjGamma0`, `TauCeti.frickeConjGamma1_frickeConjGamma1`: for
+  `[NeZero N]`, conjugating twice is the identity.
 * `TauCeti.frickeGL_mul_mapGL`, `TauCeti.mapGL_mul_frickeGL`: for `(N : K) ≠ 0`, the two
   normalization identities `W · σ = (W σ W⁻¹) · W` and `σ · W = W · (W σ W⁻¹)` in
   `GL (Fin 2) K`. These are the statements that exhibit `W` as normalizing `Γ₀(N)`.
@@ -154,6 +168,15 @@ public theorem coe_frickeConjSL (σ : ↥(Gamma0 N)) :
          -(N : ℤ) * (σ : Matrix (Fin 2) (Fin 2) ℤ) 0 1, (σ : Matrix (Fin 2) (Fin 2) ℤ) 0 0] := by
   simp [frickeConjSL, lowerLeftDiv]
 
+/-- The underlying matrix of `frickeConjSL σ`, written with `lowerLeftDiv` rather than with the
+quotient `c / N` that the public `coe_frickeConjSL` displays. This is the form the entrywise
+computations below consume, so that they never unfold `frickeConjSL` itself. -/
+private theorem coe_frickeConjSL_lowerLeftDiv (σ : ↥(Gamma0 N)) :
+    (frickeConjSL σ : Matrix (Fin 2) (Fin 2) ℤ) =
+      !![(σ : Matrix (Fin 2) (Fin 2) ℤ) 1 1, -lowerLeftDiv σ;
+         -(N : ℤ) * (σ : Matrix (Fin 2) (Fin 2) ℤ) 0 1, (σ : Matrix (Fin 2) (Fin 2) ℤ) 0 0] :=
+  rfl
+
 /-- **`frickeConjSL` preserves `Γ₀(N)`**: its lower-left entry `-N·b` is visibly divisible by
 `N`. This is a statement about the entry formula, so it holds at every level; over a field in
 which `N` is invertible, where `frickeConjSL σ` really is `W · σ · W⁻¹`, it says that `W`
@@ -172,6 +195,149 @@ public theorem frickeConjSL_mem_Gamma1 (σ : SL(2, ℤ)) (hσ : σ ∈ Gamma1 N)
   obtain ⟨ha, hd, -⟩ := (Gamma1_mem N σ).mp hσ
   rw [Gamma1_mem, coe_frickeConjSL]
   exact ⟨by simpa using hd, by simpa using ha, by simp⟩
+
+/-- The lower-left quotient of a product, from the quotients of the two factors. At level zero
+both sides are `0`, `lowerLeftDiv` being division by `0` there. -/
+private theorem lowerLeftDiv_mul (σ τ : ↥(Gamma0 N)) :
+    lowerLeftDiv (σ * τ) =
+      lowerLeftDiv σ * (τ : Matrix (Fin 2) (Fin 2) ℤ) 0 0 +
+        (σ : Matrix (Fin 2) (Fin 2) ℤ) 1 1 * lowerLeftDiv τ := by
+  rcases eq_or_ne (N : ℤ) 0 with hN | hN
+  · simp [lowerLeftDiv, hN]
+  · refine mul_left_cancel₀ hN ?_
+    have hmul : ((σ * τ : ↥(Gamma0 N)) : Matrix (Fin 2) (Fin 2) ℤ) 1 0 =
+        (σ : Matrix (Fin 2) (Fin 2) ℤ) 1 0 * (τ : Matrix (Fin 2) (Fin 2) ℤ) 0 0 +
+          (σ : Matrix (Fin 2) (Fin 2) ℤ) 1 1 * (τ : Matrix (Fin 2) (Fin 2) ℤ) 1 0 := by
+      simp [Matrix.mul_apply, Fin.sum_univ_two]
+    rw [← lowerLeftDiv_spec, hmul, lowerLeftDiv_spec σ, lowerLeftDiv_spec τ]
+    ring
+
+/-- **`frickeConjSL` sends `1` to `1`**. -/
+public theorem frickeConjSL_one : frickeConjSL (1 : ↥(Gamma0 N)) = 1 := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp [frickeConjSL, lowerLeftDiv]
+
+/-- **`frickeConjSL` is multiplicative.** Conjugation by `W` is a group homomorphism, and the
+entry formula records that at every level — including `N = 0`, where it is not a conjugation. -/
+public theorem frickeConjSL_mul (σ τ : ↥(Gamma0 N)) :
+    frickeConjSL (σ * τ) = frickeConjSL σ * frickeConjSL τ := by
+  have hσ := lowerLeftDiv_spec σ
+  have hτ := lowerLeftDiv_spec τ
+  have hmul := lowerLeftDiv_mul σ τ
+  ext i j
+  rw [SpecialLinearGroup.coe_mul, coe_frickeConjSL_lowerLeftDiv, coe_frickeConjSL_lowerLeftDiv,
+    coe_frickeConjSL_lowerLeftDiv, Matrix.mul_fin_two]
+  fin_cases i <;> fin_cases j <;>
+    simp [Matrix.mul_apply, Fin.sum_univ_two, hmul, hσ, hτ] <;>
+    ring
+
+/-- **The Fricke conjugation as a group homomorphism `Γ₀(N) →* Γ₀(N)`.** This is the bundled
+form of `frickeConjSL_mem_Gamma0`: it is what "`W` normalizes `Γ₀(N)`" means, and it is what a
+consumer needs in order to transport a subgroup along the conjugation. It exists at every level;
+at nonzero level it is an isomorphism, `frickeConjGamma0MulEquiv`. -/
+@[expose]
+public def frickeConjGamma0 : ↥(Gamma0 N) →* ↥(Gamma0 N) where
+  toFun σ := ⟨frickeConjSL σ, frickeConjSL_mem_Gamma0 σ⟩
+  map_one' := Subtype.ext frickeConjSL_one
+  map_mul' σ τ := Subtype.ext (frickeConjSL_mul σ τ)
+
+@[simp]
+public theorem coe_frickeConjGamma0 (σ : ↥(Gamma0 N)) :
+    (frickeConjGamma0 σ : SL(2, ℤ)) = frickeConjSL σ :=
+  rfl
+
+/-- **The Fricke conjugation restricted to `Γ₁(N)`**, as a group homomorphism
+`Γ₁(N) →* Γ₁(N)`; the `Γ₁` counterpart of `frickeConjGamma0`, bundling
+`frickeConjSL_mem_Gamma1`. -/
+@[expose]
+public def frickeConjGamma1 : ↥(Gamma1 N) →* ↥(Gamma1 N) where
+  toFun σ := ⟨frickeConjSL ⟨σ, Gamma1_in_Gamma0 N σ.property⟩,
+    frickeConjSL_mem_Gamma1 (σ : SL(2, ℤ)) σ.property⟩
+  map_one' := Subtype.ext frickeConjSL_one
+  map_mul' σ τ := Subtype.ext (frickeConjSL_mul ⟨σ, Gamma1_in_Gamma0 N σ.property⟩
+    ⟨τ, Gamma1_in_Gamma0 N τ.property⟩)
+
+@[simp]
+public theorem coe_frickeConjGamma1 (σ : ↥(Gamma1 N)) :
+    (frickeConjGamma1 σ : SL(2, ℤ)) = frickeConjSL ⟨σ, Gamma1_in_Gamma0 N σ.property⟩ :=
+  rfl
+
+section NeZero
+
+variable [NeZero N]
+
+/-- **The Fricke conjugation is an involution at nonzero level**: `W² = (-N) • 1` is central, so
+conjugating twice does nothing.
+
+This genuinely needs `N ≠ 0`. At level zero the lower-left entry `-N·b` of `frickeConjSL σ` is
+`0` whatever `b` is, so the formula forgets `b` and cannot be undone; see the `Level` section of
+the module docstring. -/
+public theorem frickeConjGamma0_frickeConjGamma0 (σ : ↥(Gamma0 N)) :
+    frickeConjGamma0 (frickeConjGamma0 σ) = σ := by
+  have hN : (N : ℤ) ≠ 0 := Int.natCast_ne_zero.mpr (NeZero.ne N)
+  have hσ := lowerLeftDiv_spec σ
+  have hdiv : lowerLeftDiv (frickeConjGamma0 σ) = -(σ : Matrix (Fin 2) (Fin 2) ℤ) 0 1 := by
+    have hentry : ((frickeConjGamma0 σ : ↥(Gamma0 N)) : Matrix (Fin 2) (Fin 2) ℤ) 1 0 =
+        (N : ℤ) * -(σ : Matrix (Fin 2) (Fin 2) ℤ) 0 1 := by
+      rw [coe_frickeConjGamma0, coe_frickeConjSL_lowerLeftDiv]
+      simp
+    rw [lowerLeftDiv, hentry, Int.mul_ediv_cancel_left _ hN]
+  apply Subtype.ext
+  rw [coe_frickeConjGamma0]
+  ext i j
+  rw [coe_frickeConjSL_lowerLeftDiv, hdiv, coe_frickeConjGamma0,
+    coe_frickeConjSL_lowerLeftDiv]
+  fin_cases i <;> fin_cases j <;> simp [hσ]
+
+/-- `frickeConjGamma0` is involutive, in the form `Function.Involutive` consumes. -/
+public theorem frickeConjGamma0_involutive :
+    Function.Involutive (frickeConjGamma0 (N := N)) :=
+  frickeConjGamma0_frickeConjGamma0
+
+/-- **The Fricke conjugation as an automorphism of `Γ₀(N)`**, for nonzero level: the isomorphism
+`Γ₀(N) ≃* Γ₀(N)` that `frickeConjGamma0` becomes once it is known to be involutive. It is its
+own inverse. -/
+@[expose]
+public def frickeConjGamma0MulEquiv : ↥(Gamma0 N) ≃* ↥(Gamma0 N) where
+  toFun := frickeConjGamma0
+  invFun := frickeConjGamma0
+  left_inv := frickeConjGamma0_involutive
+  right_inv := frickeConjGamma0_involutive
+  map_mul' := map_mul frickeConjGamma0
+
+@[simp]
+public theorem coe_frickeConjGamma0MulEquiv (σ : ↥(Gamma0 N)) :
+    (frickeConjGamma0MulEquiv σ : SL(2, ℤ)) = frickeConjSL σ :=
+  rfl
+
+/-- The `Γ₁(N)` counterpart of `frickeConjGamma0_frickeConjGamma0`. -/
+public theorem frickeConjGamma1_frickeConjGamma1 (σ : ↥(Gamma1 N)) :
+    frickeConjGamma1 (frickeConjGamma1 σ) = σ :=
+  Subtype.ext (congrArg (Subtype.val (p := fun g => g ∈ Gamma0 N))
+    (frickeConjGamma0_frickeConjGamma0 ⟨σ, Gamma1_in_Gamma0 N σ.property⟩))
+
+/-- `frickeConjGamma1` is involutive, in the form `Function.Involutive` consumes. -/
+public theorem frickeConjGamma1_involutive :
+    Function.Involutive (frickeConjGamma1 (N := N)) :=
+  frickeConjGamma1_frickeConjGamma1
+
+/-- **The Fricke conjugation as an automorphism of `Γ₁(N)`**, for nonzero level; the `Γ₁`
+counterpart of `frickeConjGamma0MulEquiv`. -/
+@[expose]
+public def frickeConjGamma1MulEquiv : ↥(Gamma1 N) ≃* ↥(Gamma1 N) where
+  toFun := frickeConjGamma1
+  invFun := frickeConjGamma1
+  left_inv := frickeConjGamma1_involutive
+  right_inv := frickeConjGamma1_involutive
+  map_mul' := map_mul frickeConjGamma1
+
+@[simp]
+public theorem coe_frickeConjGamma1MulEquiv (σ : ↥(Gamma1 N)) :
+    (frickeConjGamma1MulEquiv σ : SL(2, ℤ)) =
+      frickeConjSL ⟨σ, Gamma1_in_Gamma0 N σ.property⟩ :=
+  rfl
+
+end NeZero
 
 section Field
 
