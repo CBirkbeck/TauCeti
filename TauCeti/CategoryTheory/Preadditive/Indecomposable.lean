@@ -144,8 +144,8 @@ noncomputable def isoBiprodOfRetracts [HasBinaryBiproducts C] {X Y Z : C} (i₁ 
     (h : r₁ ≫ i₁ + r₂ ≫ i₂ = 𝟙 X) : X ≅ Y ⊞ Z := by
   -- `i₁` and `i₂` are split monomorphisms, so orthogonality can be checked after composing with
   -- them, where the hypothesis `h` and the two retraction identities settle it.
-  have : IsSplitMono i₁ := ⟨⟨r₁, h₁⟩⟩
-  have : IsSplitMono i₂ := ⟨⟨r₂, h₂⟩⟩
+  haveI : IsSplitMono i₁ := ⟨⟨r₁, h₁⟩⟩
+  haveI : IsSplitMono i₂ := ⟨⟨r₂, h₂⟩⟩
   have horth₁ : i₁ ≫ r₂ = 0 := by
     have key : i₁ ≫ (r₁ ≫ i₁ + r₂ ≫ i₂) = i₁ := by rw [h, Category.comp_id]
     rw [Preadditive.comp_add, ← Category.assoc, h₁, Category.id_comp] at key
