@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization
+public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.Basic
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Points
 
 /-!
