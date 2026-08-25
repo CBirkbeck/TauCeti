@@ -7,7 +7,8 @@ module
 
 -- Proof-only: the dual space appears in the private induction helpers, not in any statement.
 import Mathlib.LinearAlgebra.Dual.Lemmas
-public import Mathlib.RingTheory.FractionalIdeal.Operations
+-- Proof-only: fractional ideals appear in the private rank-one helper, not in any statement.
+import Mathlib.RingTheory.FractionalIdeal.Operations
 public import TauCeti.RingTheory.Length
 
 /-!

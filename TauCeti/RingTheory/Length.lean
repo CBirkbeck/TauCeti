@@ -7,7 +7,9 @@ module
 
 public import Mathlib.RingTheory.Length
 public import Mathlib.RingTheory.OrderOfVanishing.Basic
-public import Mathlib.RingTheory.QuotSMulTop
+-- Proof-only: `QuotSMulTop` supplies the transport used to prove `length_quotient_lsmul_congr`;
+-- no statement in this file mentions it.
+import Mathlib.RingTheory.QuotSMulTop
 
 /-!
 # General facts about the length of a module
