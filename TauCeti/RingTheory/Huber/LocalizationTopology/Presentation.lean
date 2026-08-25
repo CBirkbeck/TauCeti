@@ -263,10 +263,10 @@ each composite fixes a structure map and is therefore the identity.
 
 This is the *canonical* half of presentation independence: it says the comparison is an
 isomorphism and is determined by compatibility, not that the compatibility hypotheses hold for
-two presentations of the same rational subset. Those are supplied by
-`TauCeti.ValuationSpectrum.presentationRingEquivOfEq`, which derives them from an equality of
-rational subsets through Wedhorn's Proposition 8.2(1) — at the cost of his Proposition 7.52(1)
-for each coordinate ring, which this repository does not yet have. -/
+two presentations of the same rational subset. Supplying those is a separate step, and it is not
+taken unconditionally anywhere: `TauCeti.ValuationSpectrum.presentationRingEquivOfEq` derives
+them from an equality of rational subsets through Wedhorn's Proposition 8.2(1), but only given
+his Proposition 7.52(1) for each coordinate ring, which this repository does not have. -/
 noncomputable def presentationRingEquiv [IsTopologicalRing A]
     (P : PairOfDefinition A) (T : Finset A) (s : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]

@@ -14,8 +14,14 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Presentation
 `TauCeti.Huber.existsUnique_continuous_ringHom_of_refines` compares two coordinate rings when the
 second presentation *refines* the first syntactically — `s'' = s * r` with every `t * r` a
 numerator. Wedhorn's Proposition 8.2(1) asks for the comparison under the weaker, geometric
-hypothesis that the rational subsets are *contained* in one another, and this file supplies it,
-by instantiating Lemma 8.1 at a coordinate ring.
+hypothesis that the rational subsets are *contained* in one another, and this file instantiates
+Lemma 8.1 at a coordinate ring to get it.
+
+**Neither Proposition 8.2(1) nor presentation independence is proved here.** Lemma 8.1 is
+available in this repository only as a reduction to Wedhorn's Proposition 7.52(1), which is
+absent, and instantiating it inherits that hypothesis. What is proved below is each of the two
+results *given* 7.52(1) for the coordinate rings involved; neither may be cited as the result
+Wedhorn states.
 
 > (1) If `U' ⊆ U`, then there exists a unique continuous homomorphism `σ : A⟨T/s⟩ → A⟨T'/s'⟩`
 > such that `σ ∘ ρ = ρ'`.
@@ -26,19 +32,22 @@ of `Spa` is that `Spa ρ'` already factors through `R(T'/s')`
 hypothesis of Lemma 8.1 over directly.
 
 Applying that in both directions to two presentations of the *same* rational subset gives
-**presentation independence**: each composite fixes the structure map from `A`, hence is the
-identity, so the two coordinate rings are canonically isomorphic. That is what
-`TauCeti.Huber.presentationRingEquiv` has been waiting for — it produces the isomorphism *given*
-comparison maps both ways, and until now nothing supplied them from an equality of rational
-subsets.
+presentation independence under the same hypothesis: each composite fixes the structure map
+from `A`, hence is the identity, so the two coordinate rings are canonically isomorphic. That
+is the shape `TauCeti.Huber.presentationRingEquiv` has been waiting for — it produces the
+isomorphism *given* comparison maps both ways, and nothing supplies them from an equality of
+rational subsets. This file supplies them from 7.52(1) for the two coordinate rings, which is
+short of supplying them outright.
 
 ## Main results
 
 * `TauCeti.ValuationSpectrum.existsUnique_continuous_ringHom_of_rationalSubset_subset` :
-  **Wedhorn Proposition 8.2(1)** — a containment of rational subsets induces a unique continuous
-  comparison map of coordinate rings.
-* `TauCeti.ValuationSpectrum.presentationRingEquivOfEq` : **presentation independence** — two
-  presentations of the same rational subset have canonically isomorphic coordinate rings.
+  **Proposition 8.2(1) reduced to Proposition 7.52(1)** — a containment of rational subsets
+  induces a unique continuous comparison map of coordinate rings, *given* 7.52(1) for the
+  target.
+* `TauCeti.ValuationSpectrum.presentationRingEquivOfEq` : **presentation independence reduced
+  to the same input** — two presentations of the same rational subset have canonically
+  isomorphic coordinate rings, *given* 7.52(1) for both coordinate rings.
 
 ## The hypothesis both results carry
 
@@ -76,9 +85,10 @@ open TauCeti.Huber TauCeti.Huber.PairOfDefinition
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
-/-- **Wedhorn Proposition 8.2(1)**: if the rational subset presented by `T'` over `s'` is
-contained in the one presented by `T` over `s`, then exactly one continuous ring homomorphism
-`A⟨T/s⟩ → A⟨T'/s'⟩` is compatible with the structure maps from `A`.
+/-- **Wedhorn's Proposition 8.2(1) reduced to his Proposition 7.52(1)**, and not 8.2(1) itself:
+if the rational subset presented by `T'` over `s'` is contained in the one presented by `T` over
+`s`, then exactly one continuous ring homomorphism `A⟨T/s⟩ → A⟨T'/s'⟩` is compatible with the
+structure maps from `A` — *provided* the target coordinate ring satisfies 7.52(1).
 
 This is the containment form of `TauCeti.Huber.existsUnique_continuous_ringHom_of_refines`, which
 asks instead that the second presentation refine the first syntactically. The proof is Wedhorn's:
@@ -123,14 +133,15 @@ theorem existsUnique_continuous_ringHom_of_rationalSubset_subset (P : PairOfDefi
   simpa only [spaComapLoc_val] using
     spaComapLoc_mem_rationalSubset P Aplus T' s' S' hden' ⟨w, hw⟩
 
-/-- **Presentation independence**: two presentations of the *same* rational subset have
-canonically isomorphic coordinate rings.
+/-- **Presentation independence reduced to Wedhorn's Proposition 7.52(1)**, and not presentation
+independence itself: two presentations of the *same* rational subset have canonically isomorphic
+coordinate rings, *provided* both coordinate rings satisfy 7.52(1).
 
 Wedhorn's Proposition 8.2(1) applies in both directions, and
 `TauCeti.Huber.presentationRingEquiv` turns the two comparison maps into an isomorphism — each
 composite is compatible with the structure map from `A`, hence is the identity. Supplying those
 two maps from an equality of rational subsets is the step that `presentationRingEquiv`'s own
-docstring calls "a separate step"; this is it.
+docstring calls "a separate step"; this takes that step as far as 7.52(1) allows.
 
 Each direction carries the target-side hypotheses of Lemma 8.1, so there are two of each: the
 primed pair for `A⟨T'/s'⟩` and the unprimed pair for `A⟨T/s⟩`. -/
