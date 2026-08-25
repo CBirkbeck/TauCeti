@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Algebra.Order.Monoid.Submonoid
 public import Mathlib.RingTheory.Valuation.Basic
+public import TauCeti.Algebra.Order.Group.Cofinal
 public import TauCeti.Algebra.Order.Group.ConvexSubgroup
 
 /-!
@@ -35,8 +36,13 @@ hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out:
   interface — the definition itself is a `dite` chain and is not meant to be unfolded.
 * `Valuation.restrictToConvex_eq_zero_iff` : where the restriction vanishes, totally.
 * `Valuation.restrictToConvex_le_iff` : how restricted values compare, totally.
-* `Valuation.restrictToConvex_lt_coe_iff` and `Valuation.coe_le_restrictToConvex_iff` : a
-  restricted value compared against an abstract member of `H`.
+* `Valuation.restrictToConvex_lt_coe_iff`, `Valuation.coe_le_restrictToConvex_iff`,
+  `Valuation.restrictToConvex_le_coe_iff` and `Valuation.coe_lt_restrictToConvex_iff` : a
+  restricted value compared against an abstract member of `H`, in all four directions. They are
+  two facts, each stated with its contrapositive.
+* `Valuation.isCofinalElement_iff_exists_pow_restrictToConvex_lt` : the unit of a nonzero value
+  is cofinal for `H` exactly when the powers of the restricted value get below every member of
+  `H` — the bridge carrying `TauCeti.IsCofinalElement` over to `WithZero H.toSubgroup`.
 * `Valuation.one_le_restrictToConvex` : a value at least `1` stays at least `1`. The converse
   bounds are the general `restrictToConvex_le_iff` and `restrictToConvex_lt_coe_iff` at `1`.
 * `Valuation.restrictToConvex_mul_inv_le_one` and `Valuation.one_lt_restrictToConvex_mul_inv` :
@@ -399,6 +405,42 @@ theorem coe_le_restrictToConvex_iff (v : Valuation R Γ₀) (H : ConvexSubgroup 
   rw [← not_lt, ← not_lt, not_iff_not]
   exact restrictToConvex_lt_coe_iff v H hH r u
 
+/-- The remaining direction: a restricted value bounded above by a member of `H`.
+
+`restrictToConvex_lt_coe_iff` and `coe_le_restrictToConvex_iff` are one fact stated twice,
+being contrapositives of each other; this is the other fact, and `coe_lt_restrictToConvex_iff`
+below is its contrapositive. Together the four exhaust the comparisons of a restricted value
+with an abstract member of `H`.
+
+The discarded branch is again where the content sits: a value the restriction throws away is
+strictly below every member of `H`, so both sides hold outright. -/
+theorem restrictToConvex_le_coe_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
+    (r : R) (u : H.toSubgroup) :
+    v.restrictToConvex H hH r ≤ (u : WithZero H.toSubgroup) ↔ v r ≤ ((u : Γ₀ˣ) : Γ₀) := by
+  by_cases hr : v r = 0
+  · rw [restrictToConvex_apply_of_eq_zero v H hH hr, hr]
+    simp
+  · by_cases hmem : Units.mk0 (v r) hr ∈ H
+    · rw [restrictToConvex_apply_of_mem v H hH hr hmem, WithZero.coe_le_coe,
+        ← Subtype.coe_le_coe, ← Units.val_le_val]
+      simp
+    · have hzero := restrictToConvex_apply_of_notMem v H hH hr hmem
+      have hlt : v r < ((u : Γ₀ˣ) : Γ₀) :=
+        (restrictToConvex_lt_coe_iff v H hH r u).mp
+          (by rw [hzero]; exact pos_iff_ne_zero.mpr WithZero.coe_ne_zero)
+      simp [hzero, hlt.le]
+
+/-- The companion of `restrictToConvex_le_coe_iff` with the member of `H` on the left, obtained
+from it by `not_le`, mirroring how `coe_le_restrictToConvex_iff` is obtained from
+`restrictToConvex_lt_coe_iff` by `not_lt`. -/
+theorem coe_lt_restrictToConvex_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
+    (r : R) (u : H.toSubgroup) :
+    (u : WithZero H.toSubgroup) < v.restrictToConvex H hH r ↔ ((u : Γ₀ˣ) : Γ₀) < v r := by
+  rw [← not_le, ← not_le, not_iff_not]
+  exact restrictToConvex_le_coe_iff v H hH r u
+
 /-- **Where the restriction vanishes, totally**: at the zeros of `v`, and where `v` is nonzero
 but its unit avoids `H`. `restrictToConvex_eq_zero_iff_of_ne` is the nonzero branch, in the form
 consumers holding a nonvanishing hypothesis want. -/
@@ -450,6 +492,32 @@ theorem supp_le_restrictToConvex_supp {S : Type*} [CommRing S] (v : Valuation S 
   intro x hx
   rw [Valuation.mem_supp_iff] at hx ⊢
   exact restrictToConvex_apply_of_eq_zero v H hH hx
+
+/-- **Cofinality survives the restriction, and is detected by it.** The unit of a nonzero value
+is cofinal for `H` exactly when the powers of the *restricted* value get below every member of
+`H`, now measured in `WithZero H.toSubgroup`.
+
+This is the bridge between the group-side predicate `TauCeti.IsCofinalElement`, which lives in
+`Γ₀ˣ` and knows nothing about `v`, and smallness in the value monoid of
+`v.restrictToConvex H hH`, which is the form a continuity criterion for the restricted valuation
+asks for. Both directions are `restrictToConvex_lt_coe_iff` at `r ^ n`: the restriction is a
+valuation, so it commutes with the powers on either side. -/
+theorem isCofinalElement_iff_exists_pow_restrictToConvex_lt (v : Valuation R Γ₀)
+    (H : ConvexSubgroup Γ₀ˣ) (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
+    {r : R} (hr : v r ≠ 0) :
+    IsCofinalElement H.toSubgroup (Units.mk0 (v r) hr) ↔
+      ∀ u : H.toSubgroup, ∃ n : ℕ, v.restrictToConvex H hH r ^ n < (u : WithZero H.toSubgroup) := by
+  have key : ∀ (u : H.toSubgroup) (n : ℕ),
+      v.restrictToConvex H hH r ^ n < (u : WithZero H.toSubgroup) ↔
+        (Units.mk0 (v r) hr) ^ n < (u : Γ₀ˣ) := by
+    intro u n
+    rw [← map_pow, restrictToConvex_lt_coe_iff v H hH (r ^ n) u, map_pow]
+    simp [← Units.val_lt_val]
+  rw [isCofinalElement_def]
+  constructor
+  · exact fun hcof u ↦ (hcof u u.2).imp fun n hn ↦ (key u n).mpr hn
+  · intro h g hg
+    exact (h ⟨g, hg⟩).imp fun n hn ↦ (key ⟨g, hg⟩ n).mp hn
 
 end Valuation
 
