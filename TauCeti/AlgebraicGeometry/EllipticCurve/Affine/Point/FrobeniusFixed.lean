@@ -92,14 +92,10 @@ this pin — the file contains no `sorry` token in any proof — and is not carr
 
 public section
 
-open WeierstrassCurve
-
-namespace TauCeti
-
 namespace WeierstrassCurve.Affine.Point
 
 variable {K L : Type*} [Field K] [Fintype K] [Field L] [DecidableEq L] [Algebra K L]
-  (W : _root_.WeierstrassCurve K)
+  (W : WeierstrassCurve K)
 
 /-- **A point over an extension of a finite field is fixed by the `q`-power map exactly when it
 comes from the base field**, where `q` is the cardinality of the base.
@@ -107,14 +103,14 @@ comes from the base field**, where `q` is the cardinality of the base.
 This is `TauCeti.FiniteField.pow_card_eq_self_iff_mem_range_algebraMap` applied to each coordinate,
 the point at infinity being fixed and base changed from the point at infinity. -/
 theorem map_frobeniusAlgHom_eq_self_iff [DecidableEq K] (P : (W.baseChange L).toAffine.Point) :
-    Affine.Point.map (W' := W) (_root_.FiniteField.frobeniusAlgHom K L) P = P ↔
+    Affine.Point.map (W' := W) (FiniteField.frobeniusAlgHom K L) P = P ↔
       P ∈ Set.range (Affine.Point.baseChange (W' := W) K L) := by
   rcases P with _ | ⟨x, y, h⟩
   · exact iff_of_true (Affine.Point.map_zero _) ⟨0, Affine.Point.map_zero _⟩
   · rw [Affine.Point.map_some, Affine.Point.some.injEq]
-    simp only [_root_.FiniteField.coe_frobeniusAlgHom]
-    rw [_root_.TauCeti.FiniteField.pow_card_eq_self_iff_mem_range_algebraMap,
-      _root_.TauCeti.FiniteField.pow_card_eq_self_iff_mem_range_algebraMap]
+    simp only [FiniteField.coe_frobeniusAlgHom]
+    rw [TauCeti.FiniteField.pow_card_eq_self_iff_mem_range_algebraMap,
+      TauCeti.FiniteField.pow_card_eq_self_iff_mem_range_algebraMap]
     constructor
     · rintro ⟨⟨x₀, rfl⟩, ⟨y₀, rfl⟩⟩
       exact ⟨Affine.Point.some x₀ y₀ ((W.toAffine.baseChange_nonsingular
@@ -133,16 +129,14 @@ theorem map_frobeniusAlgHom_eq_self_iff [DecidableEq K] (P : (W.baseChange L).to
 Immediate from `map_frobeniusAlgHom_eq_self_iff` and injectivity of `Affine.Point.map`. No
 finiteness is assumed anywhere: on an infinite point set both sides are `0`. -/
 theorem ncard_setOf_map_frobeniusAlgHom_eq_self : {P : (W.baseChange L).toAffine.Point |
-        Affine.Point.map (W' := W) (_root_.FiniteField.frobeniusAlgHom K L) P = P}.ncard =
+        Affine.Point.map (W' := W) (FiniteField.frobeniusAlgHom K L) P = P}.ncard =
       Nat.card W.toAffine.Point := by
   classical
   have hset : {P : (W.baseChange L).toAffine.Point |
-      Affine.Point.map (W' := W) (_root_.FiniteField.frobeniusAlgHom K L) P = P} =
+      Affine.Point.map (W' := W) (FiniteField.frobeniusAlgHom K L) P = P} =
       Set.range (Affine.Point.baseChange (W' := W) K L) :=
     Set.ext fun P => map_frobeniusAlgHom_eq_self_iff W P
   rw [hset]
   exact Set.ncard_range_of_injective (Affine.Point.map_injective _)
 
 end WeierstrassCurve.Affine.Point
-
-end TauCeti
