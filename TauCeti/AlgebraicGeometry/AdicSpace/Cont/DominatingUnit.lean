@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Cont.Basic
-public import TauCeti.RingTheory.Huber.OpenIdeal
+public import TauCeti.RingTheory.Huber.Basic
 import TauCeti.RingTheory.Huber.ZeroSequenceOfUnits
 import TauCeti.RingTheory.Valuation.Continuous.TopologicallyNilpotent
 
