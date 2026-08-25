@@ -28,10 +28,12 @@ class of `X`. It is the engine of the descent computing `E(K)/2E(K)`: its kernel
 finiteness hypotheses of the weak Mordell-Weil theorem.
 
 The subtlety is at the `2`-torsion. If `f x ≠ 0` then `x - T` is already a unit of `A`, but at a
-root `x` of `f` the element `x - T` is a zero divisor, and the map instead has to return the
-class of `f'(T)`, which for the purposes of the square class is represented by
-`x - T + fCofactor x`. Both branches are packaged in `μX`, and `μ₀` extends `μX` by sending the
-point at infinity to `1`.
+root `x` of `f` the element `x - T` is a zero divisor, and the map instead returns the class of
+the corrected representative `x - T + fCofactor x`. Adding `fCofactor x` changes nothing modulo
+`fCofactor x`, where the element still agrees with `x - T`; at the remaining factor, where
+`x - T` vanishes, it takes the value `f' x`, which is nonzero because `f` is separable. That is
+what makes the corrected element a unit. Both branches are packaged in `μX`, and `μ₀` extends
+`μX` by sending the point at infinity to `1`.
 
 ## Main definitions
 
@@ -440,14 +442,15 @@ section μ₀
 variable [W.IsElliptic]
 
 /-- The descent or `x - T` map on `x`-coordinates: it sends `x` to the square class of `x - T`
-if `f x ≠ 0`, and to the square class of `f' T` otherwise. -/
+if `f x ≠ 0`, and otherwise to the square class of the corrected representative
+`x - T + fCofactor x`, which is a unit even though `x - T` is not. -/
 noncomputable def μX (x : K) : W.M :=
   if hx : W.f.eval x = 0
     then (isUnit_mk_sub_X_add_fCofactor_of_eval_f_eq_zero hx).unit
     else (isUnit_mk_sub_X_of_eval_f_ne_zero hx).unit
 
-/-- The value of `μX` on the branch where `x` is a root of `f`, namely the square class of
-`f' T`.
+/-- The value of `μX` on the branch where `x` is a root of `f`, namely the square class of the
+corrected representative `x - T + fCofactor x`.
 
 Not a `simp` lemma: the right-hand side mentions the hypothesis proof `hx`, so it cannot serve
 as a rewrite rule. Every use site names it explicitly. -/
