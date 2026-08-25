@@ -13,6 +13,7 @@ import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.BadPrimeCoset
 import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Basic
 import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.CoprimeRepresentative
 import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.CosetMap
+import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.Coset
 import TauCeti.LinearAlgebra.Matrix.Divisibility
 import TauCeti.LinearAlgebra.Matrix.SmithNormalForm
 import Mathlib.Data.ZMod.Units
@@ -49,10 +50,12 @@ of an integral witness be coprime to it. That one is entrywise, and it is the on
 to primitive witnesses consumes: a primitive witness is exactly one the criterion applies to
 after a change of representative.
 
-The mixed determinant is then settled here. Splitting it as `b * c`, with `b` collecting the
-primes it shares with the level, leaves a cofactor `c` coprime to `N`; a primitive witness can
-be moved inside its own double coset until its upper-left entry is coprime to `c` as well as to
-`N`, hence to the whole determinant, and the entrywise criterion applies to the translate.
+An arbitrary determinant is then settled here, by a single argument that needs no case analysis.
+Splitting it as `b * c`, with `b` collecting the primes it shares with the level, leaves a
+cofactor `c` coprime to `N`; a primitive witness can be moved inside its own double coset until
+its upper-left entry is coprime to `c` as well as to `N`, hence to the whole determinant, and the
+entrywise criterion applies to the translate. The degenerate splits fall under that same
+argument rather than under the two determinant criteria above.
 Passing from a primitive witness to a general one only costs a central scalar, which the bar
 fixes. What remains before `R(Γ₀(N), Δ₀(N))` is commutative is to run those two steps on an
 arbitrary `x ∈ Δ₀(N)`, which is not done here.
@@ -75,7 +78,7 @@ arbitrary `x ∈ Δ₀(N)`, which is not done here.
   the double coset when the upper-left entry of an integral witness is coprime to the
   determinant.
 * `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_smul`: the criterion survives
-  scaling by a positive integer coprime to the level.
+  scaling, the scalar's positivity and coprimality to the level being automatic.
 * `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_primitive`: it fixes the
   double coset of a witness no prime divides entrywise, with no hypothesis on the determinant.
 
@@ -558,66 +561,81 @@ private lemma gcd_eq_one_of_eq_mul_of_dvd_pow {x : ℤ} {N m b c : ℕ} (hbc : m
     (((Int.isCoprime_iff_gcd_eq_one.mpr hxN).pow_right (n := m)).of_isCoprime_of_dvd_right
         (by exact_mod_cast hb) |>.mul_right (Int.isCoprime_iff_gcd_eq_one.mpr hxc))
 
-/-- **The criterion survives scaling by an integer coprime to the level.** If `x` is the
-multiple `d • x₀` of an element of `Δ₀(N)` whose double coset the bar fixes, and `d` is coprime
-to `N`, then the bar fixes the double coset of `x` as well.
-
-The scalar `d` is central in `GL₂(ℚ)`, and the bar fixes it: its integral witness is diagonal,
-and the entry swap of `atkinLehnerAntiInvolution_bar_val` moves nothing on a diagonal matrix.
-So this is `HeckeAntiInvolution.bar_mem_doubleCoset_self_mul_of_central` at that scalar, and
-coprimality is exactly what puts the scalar inside `Δ₀(N)` in the first place. It is free at the
-intended call site, where `d` is the content of an integral witness whose upper-left entry is
-already a unit mod `N`, so `d` divides a number coprime to `N`. -/
-theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_smul [NeZero N] (d : ℕ) (hd : 0 < d)
-    (hdN : Nat.Coprime d N) (x x₀ : GL (Fin 2) ℚ) (hx : x ∈ Delta0 N) (hx₀ : x₀ ∈ Delta0 N)
+/-- **The criterion survives scaling.** If `x` is the multiple `d • x₀` of an element of `Δ₀(N)`
+whose double coset the bar fixes, then the bar fixes the double coset of `x` as well. Neither
+positivity of `d` nor coprimality of `d` to `N` is assumed: both are consequences of `x` lying
+in `Δ₀(N)`. -/
+-- The scalar `d` is central in `GL₂(ℚ)`, and the bar fixes it: its integral witness is diagonal,
+-- and the entry swap of `atkinLehnerAntiInvolution_bar_val` moves nothing on a diagonal matrix.
+-- So this is `HeckeAntiInvolution.bar_mem_doubleCoset_self_mul_of_central` at that scalar.
+--
+-- The two dropped hypotheses come from `hx`: the witness of `x` is `d • A₀`, so its upper-left
+-- entry is `d * A₀ 0 0`, and that entry being a unit mod `N` forces `d` coprime to `N`; while
+-- `d = 0` would collapse `x` to the zero matrix, against `0 < det x`.
+theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_smul [NeZero N] (d : ℕ)
+    (x x₀ : GL (Fin 2) ℚ) (hx : x ∈ Delta0 N) (hx₀ : x₀ ∈ Delta0 N)
     (hsmul : (x : Matrix (Fin 2) (Fin 2) ℚ) = (d : ℚ) • (x₀ : Matrix (Fin 2) (Fin 2) ℚ))
     (hfix : (atkinLehnerAntiInvolution N).bar x₀ hx₀ ∈
       DoubleCoset.doubleCoset x₀ ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))) :
     (atkinLehnerAntiInvolution N).bar x hx ∈
       DoubleCoset.doubleCoset x ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) := by
-  set s : GL (Fin 2) ℚ := Matrix.GeneralLinearGroup.scalar (Fin 2)
-    (Units.mk0 (d : ℚ) (Nat.cast_ne_zero.mpr hd.ne')) with hs_def
-  have hs_val : (s : Matrix (Fin 2) (Fin 2) ℚ) = !![(d : ℚ), 0; 0, (d : ℚ)] := by
-    rw [hs_def, Matrix.GeneralLinearGroup.coe_scalar, Matrix.scalar_apply]
-    ext i j; fin_cases i <;> fin_cases j <;> simp
+  obtain ⟨A, hA, hxdet, -, hAunit⟩ := (mem_Delta0_iff N).mp hx
+  obtain ⟨A₀, hA₀, -, -, -⟩ := (mem_Delta0_iff N).mp hx₀
+  have hmat : A.map (Int.cast : ℤ → ℚ) = (d : ℚ) • A₀.map (Int.cast : ℤ → ℚ) := by
+    rw [← hA, hsmul, hA₀]
+  have hA00 : A 0 0 = (d : ℤ) * A₀ 0 0 := by
+    have h := congrFun (congrFun hmat 0) 0
+    simp only [Matrix.map_apply, Matrix.smul_apply, smul_eq_mul] at h
+    exact_mod_cast h
+  have hd : 0 < d := by
+    rcases Nat.eq_zero_or_pos d with rfl | h
+    · rw [hsmul] at hxdet
+      simp at hxdet
+    · exact h
+  have hdN : Nat.Coprime d N := by
+    rw [← ZMod.isUnit_iff_coprime]
+    have hsplit : ((A 0 0 : ℤ) : ZMod N) = (d : ZMod N) * ((A₀ 0 0 : ℤ) : ZMod N) := by
+      rw [hA00]
+      push_cast
+      ring
+    rw [hsplit] at hAunit
+    exact isUnit_of_mul_isUnit_left hAunit
+  set s : GL (Fin 2) ℚ := natDiagGL 2 (fun _ ↦ d) with hs_def
+  have hs : s ∈ Delta0 N := natDiagGL_mem_Delta0_of_coprime N _ fun _ ↦ hdN
   have hs_wit : (s : Matrix (Fin 2) (Fin 2) ℚ) =
-      (!![(d : ℤ), 0; 0, (d : ℤ)]).map (Int.cast : ℤ → ℚ) := by
-    rw [hs_val]; ext i j; fin_cases i <;> fin_cases j <;> simp
-  have hs : s ∈ Delta0 N := by
-    refine (mem_Delta0_iff N).mpr ⟨!![(d : ℤ), 0; 0, (d : ℤ)], hs_wit, ?_, by simp, ?_⟩
-    · rw [hs_val]
-      simp only [Matrix.det_fin_two_of, mul_zero, sub_zero, mul_self_pos, ne_eq,
-        Nat.cast_eq_zero]
-      exact hd.ne'
-    · simpa using (ZMod.isUnit_iff_coprime d N).mpr hdN
+      (Matrix.diagonal (fun _ ↦ (d : ℤ))).map (Int.cast : ℤ → ℚ) :=
+    natDiagGL_coe_eq_map_intCast 2 _ fun _ ↦ hd
   have hs_central : s ∈ Subgroup.center (GL (Fin 2) ℚ) :=
-    Matrix.GeneralLinearGroup.mem_center_iff_val_mem_range_scalar.mpr ⟨(d : ℚ), rfl⟩
+    Subgroup.mem_center_iff.mpr fun g ↦ (natDiagGL_const_comm 2 d g).symm
   have hbar : (atkinLehnerAntiInvolution N).bar s hs = s := by
     apply Units.ext
     rw [atkinLehnerAntiInvolution_bar_val N hs _ hs_wit 0 (by simp), hs_wit]
-    ext i j; fin_cases i <;> fin_cases j <;> simp
+    ext i j
+    fin_cases i <;> fin_cases j <;> simp [Matrix.diagonal]
   have hxeq : x = s * x₀ := by
     apply Units.ext
-    rw [Units.val_mul, hsmul, hs_val]
-    ext i j; fin_cases i <;> fin_cases j <;>
-      simp [Matrix.mul_apply, Fin.sum_univ_two, Matrix.smul_apply]
+    rw [Units.val_mul, hsmul, hs_wit]
+    ext i j
+    fin_cases i <;> fin_cases j <;>
+      simp [Matrix.mul_apply, Matrix.smul_apply, Matrix.diagonal]
   subst hxeq
   exact (atkinLehnerAntiInvolution N).bar_mem_doubleCoset_self_mul_of_central hs hx₀
     hs_central hbar hfix
 
 /-- **The Atkin-Lehner involution fixes the double coset of a primitive witness.** If `x ∈ Δ₀(N)`
 has an integral witness `A` no prime divides entrywise, then `bar x` lies in the `Γ₀(N)`-double
-coset of `x`. No hypothesis is placed on the determinant: this is the mixed case, where it is
-neither coprime to the level nor a divisor of a power of it.
-
-Splitting `m = |det A|` as `b * c` with `b = gcd (m, N ^ m)` isolates the primes `m` shares with
-the level in `b` and leaves `c` coprime to `N`. Primitivity is what lets `A` be replaced, inside
-its own double coset, by a two-sided `Γ₀(N)`-translate whose upper-left entry is coprime to `c`
-as well as to `N` — hence to `m` — and
-`atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_coprime_upperLeft` applies to the translate.
-`HeckeAntiInvolution.bar_mem_doubleCoset_self_of_mem` carries the conclusion back to `x`. The two
-degenerate splits are handled by the criteria already available: `b = m` says `m` divides a power
-of the level, and a witness already coprime to `m` needs no translation at all. -/
+coset of `x`. No hypothesis is placed on the determinant. -/
+-- Splitting `m = |det A|` as `b * c` with `b = gcd (m, N ^ m)` isolates the primes `m` shares
+-- with the level in `b` and leaves `c` coprime to `N`. Primitivity is what lets `A` be replaced,
+-- inside its own double coset, by a two-sided `Γ₀(N)`-translate whose upper-left entry is coprime
+-- to `c` as well as to `N` — hence to `m` — and
+-- `atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_coprime_upperLeft` applies to the translate.
+-- `HeckeAntiInvolution.bar_mem_doubleCoset_self_of_mem` carries the conclusion back to `x`.
+--
+-- The split is uniform in `m`, so no case analysis is needed: the degenerate values `b = 1` and
+-- `b = m` are closed by the same appeal to `gcd_eq_one_of_eq_mul_of_dvd_pow` through
+-- `Nat.gcd_dvd_right` as the mixed case, and neither `..._of_coprimeDet` nor `..._of_dvd_pow` is
+-- a dependency of this proof.
 theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_primitive [NeZero N]
     (x : GL (Fin 2) ℚ) (hx : x ∈ Delta0 N) (A : Matrix (Fin 2) (Fin 2) ℤ)
     (hA : (x : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
@@ -638,16 +656,6 @@ theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_primitive [NeZero N]
   have hm_pos : 0 < m := by rw [hm] at hA_det_pos; exact_mod_cast hA_det_pos
   have hdet_m : (x : Matrix (Fin 2) (Fin 2) ℚ).det = (m : ℚ) := by
     rw [hA, ← Int.cast_det A, hm]; norm_cast
-  by_cases hcop : Int.gcd A.det N = 1
-  · exact atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_coprimeDet N x hx
-      ((coprimeDet_iff N (g := ⟨x, hx⟩) hA).mpr hcop)
-  by_cases hbm : Nat.gcd m (N ^ m) = m
-  · refine atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_dvd_pow N m m ?_ x hx hdet_m
-    have hgd : Nat.gcd m (N ^ m) ∣ N ^ m := Nat.gcd_dvd_right _ _
-    rwa [hbm] at hgd
-  by_cases ham : Int.gcd (A 0 0) (m : ℤ) = 1
-  · exact atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_coprime_upperLeft N m x hx A hA hAN
-      hdet_m ham
   -- the mixed case: split off the part of the determinant that is coprime to the level
   have hbc : m = Nat.gcd m (N ^ m) * (m / Nat.gcd m (N ^ m)) :=
     (Nat.mul_div_cancel' (Nat.gcd_dvd_left _ _)).symm
