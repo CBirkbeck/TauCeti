@@ -214,13 +214,13 @@ sliding the central `s` back across `h₂` puts it next to `g`. The scalars of a
 datum are the standard source of such an `s`: it reduces a determinant to its primitive part
 without disturbing the double coset. -/
 lemma bar_mem_doubleCoset_self_mul_of_central {s g : G} (hs : s ∈ Δ) (hg : g ∈ Δ)
-    (hsg : s * g ∈ Δ) (hs_central : s ∈ Subgroup.center G) (hbar : ι.bar s hs = s)
+    (hs_central : s ∈ Subgroup.center G) (hbar : ι.bar s hs = s)
     (hfix : ι.bar g hg ∈ doubleCoset g (H : Set G) H) :
-    ι.bar (s * g) hsg ∈ doubleCoset (s * g) (H : Set G) H := by
+    ι.bar (s * g) (mul_mem hs hg) ∈ doubleCoset (s * g) (H : Set G) H := by
   have hcomm : ∀ y : G, s * y = y * s := fun y ↦ (Subgroup.mem_center_iff.mp hs_central y).symm
   obtain ⟨h₁, hh₁, h₂, hh₂, heq⟩ := mem_doubleCoset.mp hfix
   refine mem_doubleCoset.mpr ⟨h₁, hh₁, h₂, hh₂, ?_⟩
-  rw [ι.bar_mul hs hg hsg, hbar, heq]
+  rw [ι.bar_mul hs hg (mul_mem hs hg), hbar, heq]
   simp only [mul_assoc, hcomm]
 
 /-- Decompose `bar x` through the double coset of `g` when `x ∈ HgH`. -/
