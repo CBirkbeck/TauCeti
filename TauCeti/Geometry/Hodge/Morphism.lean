@@ -291,40 +291,34 @@ theorem zsmul_toIntLinearMap (k : ℤ) (f : Hom source target) :
 /-- The zero Hodge morphism acts as zero on complex vectors. -/
 @[simp]
 theorem zero_apply (x : W₁) : (0 : Hom source target) x = 0 := by
-  simp only [toLinearMap, zero_toIntLinearMap,
-    integralMapToComplex_zero, LinearMap.zero_apply]
+  simp [toLinearMap]
 
 /-- Addition of Hodge morphisms is pointwise addition on complex vectors. -/
 @[simp]
 theorem add_apply (f g : Hom source target) (x : W₁) : (f + g) x = f x + g x := by
-  simp only [toLinearMap, add_toIntLinearMap,
-    integralMapToComplex_add, LinearMap.add_apply]
+  simp [toLinearMap]
 
 /-- Negation of Hodge morphisms is pointwise negation on complex vectors. -/
 @[simp]
 theorem neg_apply (f : Hom source target) (x : W₁) : (-f) x = -f x := by
-  simp only [toLinearMap, neg_toIntLinearMap,
-    integralMapToComplex_neg, LinearMap.neg_apply]
+  simp [toLinearMap]
 
 /-- Subtraction of Hodge morphisms is pointwise subtraction on complex vectors. -/
 @[simp]
 theorem sub_apply (f g : Hom source target) (x : W₁) : (f - g) x = f x - g x := by
-  simp only [toLinearMap, sub_toIntLinearMap,
-    integralMapToComplex_sub, LinearMap.sub_apply]
+  simp [toLinearMap]
 
 /-- Natural-number multiples of Hodge morphisms are evaluated pointwise on complex vectors. -/
 @[simp]
 theorem nsmul_apply (k : ℕ) (f : Hom source target) (x : W₁) :
     (k • f) x = k • f x := by
-  simp only [toLinearMap, nsmul_toIntLinearMap,
-    integralMapToComplex_nsmul, LinearMap.smul_apply]
+  simp [toLinearMap]
 
 /-- Integer multiples of Hodge morphisms are evaluated pointwise on complex vectors. -/
 @[simp]
 theorem zsmul_apply (k : ℤ) (f : Hom source target) (x : W₁) :
     (k • f) x = k • f x := by
-  simp only [toLinearMap, zsmul_toIntLinearMap,
-    integralMapToComplex_zsmul, LinearMap.smul_apply]
+  simp [toLinearMap]
 
 /-- Composition is additive in the morphism applied second. -/
 @[simp]

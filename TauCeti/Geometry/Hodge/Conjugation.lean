@@ -483,11 +483,26 @@ theorem integralMapToComplex_id (h₁ : IsBaseChange ℂ ι₁) :
     integralMapToComplex h₁ ι₁ (LinearMap.id : V₁ →ₗ[ℤ] V₁) = LinearMap.id :=
   h₁.algHom_ext _ _ fun x ↦ by simp
 
+/-- Complexification of integral linear maps, bundled as an additive monoid homomorphism.
+
+Only additivity has to be checked; the zero, negation, subtraction and multiple laws below are
+then `map_zero`, `map_neg`, `map_sub`, `map_nsmul` and `map_zsmul` of this bundled map. -/
+noncomputable def integralMapToComplexAddMonoidHom (h₁ : IsBaseChange ℂ ι₁) (ι₂ : V₂ →ₗ[ℤ] W₂) :
+    (V₁ →ₗ[ℤ] V₂) →+ (W₁ →ₗ[ℂ] W₂) where
+  toFun := integralMapToComplex h₁ ι₂
+  map_zero' := h₁.algHom_ext _ _ fun x ↦ by simp
+  map_add' _ _ := h₁.algHom_ext _ _ fun x ↦ by simp
+
+@[simp]
+theorem integralMapToComplexAddMonoidHom_apply (h₁ : IsBaseChange ℂ ι₁) (ι₂ : V₂ →ₗ[ℤ] W₂)
+    (f : V₁ →ₗ[ℤ] V₂) :
+    integralMapToComplexAddMonoidHom h₁ ι₂ f = integralMapToComplex h₁ ι₂ f := (rfl)
+
 /-- Complexification sends the zero integral map to the zero complex map. -/
 @[simp]
 theorem integralMapToComplex_zero (h₁ : IsBaseChange ℂ ι₁) (ι₂ : V₂ →ₗ[ℤ] W₂) :
     integralMapToComplex h₁ ι₂ (0 : V₁ →ₗ[ℤ] V₂) = 0 :=
-  h₁.algHom_ext _ _ fun x ↦ by simp
+  map_zero (integralMapToComplexAddMonoidHom h₁ ι₂)
 
 /-- Complexification preserves addition of integral linear maps. -/
 @[simp]
@@ -495,14 +510,14 @@ theorem integralMapToComplex_add (h₁ : IsBaseChange ℂ ι₁) (ι₂ : V₂ �
     (f g : V₁ →ₗ[ℤ] V₂) :
     integralMapToComplex h₁ ι₂ (f + g) =
       integralMapToComplex h₁ ι₂ f + integralMapToComplex h₁ ι₂ g :=
-  h₁.algHom_ext _ _ fun x ↦ by simp
+  map_add (integralMapToComplexAddMonoidHom h₁ ι₂) f g
 
 /-- Complexification preserves negation of integral linear maps. -/
 @[simp]
 theorem integralMapToComplex_neg (h₁ : IsBaseChange ℂ ι₁) (ι₂ : V₂ →ₗ[ℤ] W₂)
     (f : V₁ →ₗ[ℤ] V₂) :
     integralMapToComplex h₁ ι₂ (-f) = -integralMapToComplex h₁ ι₂ f :=
-  h₁.algHom_ext _ _ fun x ↦ by simp
+  map_neg (integralMapToComplexAddMonoidHom h₁ ι₂) f
 
 /-- Complexification preserves subtraction of integral linear maps. -/
 @[simp]
@@ -510,21 +525,21 @@ theorem integralMapToComplex_sub (h₁ : IsBaseChange ℂ ι₁) (ι₂ : V₂ �
     (f g : V₁ →ₗ[ℤ] V₂) :
     integralMapToComplex h₁ ι₂ (f - g) =
       integralMapToComplex h₁ ι₂ f - integralMapToComplex h₁ ι₂ g :=
-  h₁.algHom_ext _ _ fun x ↦ by simp
+  map_sub (integralMapToComplexAddMonoidHom h₁ ι₂) f g
 
 /-- Complexification preserves natural-number multiples of integral linear maps. -/
 @[simp]
 theorem integralMapToComplex_nsmul (h₁ : IsBaseChange ℂ ι₁) (ι₂ : V₂ →ₗ[ℤ] W₂) (k : ℕ)
     (f : V₁ →ₗ[ℤ] V₂) :
     integralMapToComplex h₁ ι₂ (k • f) = k • integralMapToComplex h₁ ι₂ f :=
-  h₁.algHom_ext _ _ fun x ↦ by simp
+  map_nsmul (integralMapToComplexAddMonoidHom h₁ ι₂) k f
 
 /-- Complexification preserves integer multiples of integral linear maps. -/
 @[simp]
 theorem integralMapToComplex_zsmul (h₁ : IsBaseChange ℂ ι₁) (ι₂ : V₂ →ₗ[ℤ] W₂) (k : ℤ)
     (f : V₁ →ₗ[ℤ] V₂) :
     integralMapToComplex h₁ ι₂ (k • f) = k • integralMapToComplex h₁ ι₂ f :=
-  h₁.algHom_ext _ _ fun x ↦ by simp
+  map_zsmul (integralMapToComplexAddMonoidHom h₁ ι₂) k f
 
 /-- Complexification preserves composition of integral linear maps. -/
 theorem integralMapToComplex_comp (h₁ : IsBaseChange ℂ ι₁) (h₂ : IsBaseChange ℂ ι₂)
