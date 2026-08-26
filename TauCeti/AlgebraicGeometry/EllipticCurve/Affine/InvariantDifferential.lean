@@ -40,12 +40,17 @@ hence separable algebraic, which contradicts `x` being transcendental over `F`.
 
 * `WeierstrassCurve.Affine.denom_ne_zero`: the denominator `2y + a₁x + a₃` is nonzero.
 * `WeierstrassCurve.Affine.D_X_ne_zero`: `D x ≠ 0` in `Ω[K(E)/F]`.
-* `WeierstrassCurve.Affine.invariantDifferential_ne_zero`: `ω ≠ 0`, which is the
-  differential-form statement that `ω` has no zeros and no poles.
+* `WeierstrassCurve.Affine.invariantDifferential_ne_zero`: `ω ≠ 0` in `Ω[K(E)/F]`.
 
 ## References
 
-* [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], III.1.5 and III.5.
+* [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], III.1 and III.5.
+
+Silverman's III.1.5 says more than anything proved here: that `div ω = 0`, so that `ω` is
+regular and nonvanishing at every point. This file proves only that `ω` is a nonzero element of
+`Ω[K(E)/F]`, which does not imply that — a nonzero rational differential may have both zeros and
+poles. The divisor statement needs regularity and nonvanishing formalised pointwise, and is left
+to the later rungs of the roadmap's differential API.
 
 ## Provenance
 
@@ -378,8 +383,12 @@ noncomputable def invariantDifferential :
       (algebraMap E.CoordinateRing E.FunctionField
         (algebraMap (Polynomial F) E.CoordinateRing Polynomial.X))
 
-/-- **The invariant differential is nonzero**, which is the differential-form statement that `ω`
-has neither zeros nor poles. Silverman, Proposition III.1.5. -/
+/-- **The invariant differential is nonzero** as an element of `Ω[K(E)/F]`. It is the product of
+an inverse of the nonzero denominator with `D x`, both nonzero.
+
+This is strictly weaker than Silverman's III.1.5, `div ω = 0`: a nonzero rational differential
+may still have zeros and poles, and no pointwise regularity or nonvanishing statement is
+formalised here. -/
 theorem invariantDifferential_ne_zero [E.IsElliptic] : invariantDifferential E ≠ 0 :=
   smul_ne_zero (inv_ne_zero (denom_ne_zero E)) (D_X_ne_zero E)
 
