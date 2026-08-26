@@ -34,7 +34,7 @@ normalising scalars are absent:
 ## Main results
 
 * `HeckeRing.GL2.heckeSlashUpperTri_slash_natDiagGL`: the upper-triangular sum commutes with the
-  slash by `diag(d, 1)`, for any `Γ₁(M)`-invariant function and any `d` coprime to `p`.
+  slash by `diag(d, 1)`, for any function fixed by the powers of `T` and any `d` coprime to `p`.
 * `HeckeRing.GL2.heckeTCuspNat_levelRaise`: **`Tₚ (V_d f) = V_d (Tₚ f)`** for `p` prime and
   coprime to the raised level `N`.
 
@@ -133,10 +133,14 @@ private lemma mulModEquiv_apply (hp : 0 < p) (hdp : Nat.Coprime d p) (b : Fin p)
 /-! ### The upper-triangular sum against `diag(d, 1)` -/
 
 /-- **The upper-triangular slash sum commutes with the slash by `diag(d, 1)`**, for `d` coprime
-to `p` and any function invariant under `Γ₁(M)`. This is the level-raising half of
-`heckeTCuspNat_levelRaise`, stated before the normalising scalar of `V_d` is introduced. -/
+to `p` and any function fixed by the rational slash of every power of `T`. This is the
+level-raising half of `heckeTCuspNat_levelRaise`, stated before the normalising scalar of `V_d`
+is introduced.
+
+Invariance under the powers of `T` is all the reindexing consumes: no level enters the
+statement, and a `Γ₁(M)`-invariant function meets the hypothesis via `slash_mapGL_T_zpow`. -/
 theorem heckeSlashUpperTri_slash_natDiagGL (hd : 0 < d) (hp : 0 < p) (hdp : Nat.Coprime d p)
-    {f : ℍ → ℂ} (hf : ∀ γ ∈ (Gamma1 M).map (mapGL ℝ), f ∣[k] γ = f) :
+    {f : ℍ → ℂ} (hT : ∀ q : ℤ, f ∣[k] (mapGL ℚ (ModularGroup.T ^ q) : GL (Fin 2) ℚ) = f) :
     heckeSlashUpperTri k p (f ∣[k] (natDiagGL 2 ![d, 1] : GL (Fin 2) ℚ)) =
       heckeSlashUpperTri k p f ∣[k] (natDiagGL 2 ![d, 1] : GL (Fin 2) ℚ) := by
   rw [heckeSlashUpperTri_def, heckeSlashUpperTri_def, SlashAction.sum_slash]
@@ -148,7 +152,7 @@ theorem heckeSlashUpperTri_slash_natDiagGL (hd : 0 < d) (hp : 0 < p) (hdp : Nat.
     Fin.ext (mulModEquiv_apply hp hdp b)
   rw [← SlashAction.slash_mul,
     natDiagGL_mul_upperTriRep hd b (Nat.mod_lt _ hp) (Nat.div_add_mod' (d * (b : ℕ)) p).symm,
-    SlashAction.slash_mul, slash_mapGL_T_zpow k hf, SlashAction.slash_mul, hb]
+    SlashAction.slash_mul, hT, SlashAction.slash_mul, hb]
 
 /-! ### `Tₚ` and `V_d` -/
 
@@ -185,7 +189,7 @@ theorem heckeTCuspNat_levelRaise [NeZero N] (hdvd : d * M ∣ N) (hp : p.Prime)
     CuspForm.diamondOpCusp_levelRaise hdvd k (ZMod.unitOfCoprime p hpN) f, hunits,
     SlashAction.add_slash, smul_add, heckeSlashUpperTri_smul, hscale]
   refine congrArg₂ (· + ·) ?_ ?_
-  · rw [heckeSlashUpperTri_slash_natDiagGL k hdpos hp.pos hpd.symm hf]
+  · rw [heckeSlashUpperTri_slash_natDiagGL k hdpos hp.pos hpd.symm (slash_mapGL_T_zpow k hf)]
   · rw [ModularForm.rat_smul_slash_of_det_pos k (det_scaleRep_pos p), ← SlashAction.slash_mul,
       ← SlashAction.slash_mul, scaleRep_def, natDiagGL_comm hdpos hp.pos]
 
