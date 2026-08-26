@@ -212,15 +212,17 @@ lemma IsJHolomorphicWithinAt.isJHolomorphicAt_of_mem_nhds {J : U → AlmostCompl
 lemma IsJHolomorphicWithinAt.mono {J : U → AlmostComplexStructure U}
     {J' : V → AlmostComplexStructure V} {f : U → V} {s t : Set U} {x : U}
     (hf : IsJHolomorphicWithinAt J J' f t x) (hst : s ⊆ t) :
-    IsJHolomorphicWithinAt J J' f s x :=
-  IsConstStructureJHolomorphicWithinAt.mono hf hst
+    IsJHolomorphicWithinAt J J' f s x := by
+  simpa only [IsJHolomorphicWithinAt] using
+    IsConstStructureJHolomorphicWithinAt.mono hf hst
 
 /-- Within the whole space, J-holomorphicity is the same as pointwise J-holomorphicity. -/
 @[simp]
 lemma isJHolomorphicWithinAt_univ (J : U → AlmostComplexStructure U)
     (J' : V → AlmostComplexStructure V) (f : U → V) (x : U) :
-    IsJHolomorphicWithinAt J J' f Set.univ x ↔ IsJHolomorphicAt J J' f x :=
-  isConstStructureJHolomorphicWithinAt_univ (J x) (J' (f x)) f x
+    IsJHolomorphicWithinAt J J' f Set.univ x ↔ IsJHolomorphicAt J J' f x := by
+  simpa only [IsJHolomorphicWithinAt, IsJHolomorphicAt] using
+    isConstStructureJHolomorphicWithinAt_univ (J x) (J' (f x)) f x
 
 /-- A setwise J-holomorphic map is J-holomorphic within the set at each member. -/
 lemma IsJHolomorphicOn.isJHolomorphicWithinAt {J : U → AlmostComplexStructure U}
