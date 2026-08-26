@@ -20,12 +20,19 @@ which determines a unique power series `w(z) ∈ R⟦z⟧` with no terms below `
 constructs that series, proves it satisfies the equation, and proves it is the only series with
 vanishing constant coefficient that does.
 
+The equation is also recorded with its parameter left free, as `WeierstrassCurve.wEquationRhs`,
+and its solution shown unique at any parameter: the formal group obtains the inverse and the
+group law by substitution, and a substituted series solves the equation at the substituted
+parameter rather than at `z`.
+
 ## Main definitions
 
 * `WeierstrassCurve.formalWCoeff`: the coefficients of `w(z)`, by strong recursion.
 * `WeierstrassCurve.formalW`: the series `w(z)` itself.
 * `WeierstrassCurve.formalUCoeff`, `WeierstrassCurve.formalU`: the coefficients, and the series
   itself, of `u(z) = w(z) / z ^ 3`.
+* `WeierstrassCurve.wEquationRhs`: the right-hand side of the displayed equation, with both the
+  parameter and the unknown left free.
 
 ## Main results
 
@@ -34,6 +41,9 @@ vanishing constant coefficient that does.
 * `WeierstrassCurve.eq_formalW_of_wEquation`: **Silverman AEC IV.1.1(a), uniqueness** — any
   power series with vanishing constant coefficient satisfying that equation equals `w(z)`. The
   two together are the full statement, that `w(z)` is *the* such series.
+* `WeierstrassCurve.eq_of_wEquation`: uniqueness at an arbitrary parameter — two series with
+  vanishing constant coefficient solving the equation at the same parameter are equal. Proved
+  by contraction rather than by coefficients, so it needs a `CommRing`.
 * `WeierstrassCurve.formalWCoeff_recurrence`: the coefficientwise recurrence — each coefficient
   of `w(z)` above the leading one, from the strictly earlier ones. This is the form to compute
   with; the strong recursion behind `formalWCoeff` is an implementation detail.
@@ -41,7 +51,7 @@ vanishing constant coefficient that does.
   `WeierstrassCurve.formalWCoeff_eq_zero_of_lt`: the series begins `w(z) = z ^ 3 + ⋯`.
 * `WeierstrassCurve.formalW_eq_X_pow_mul_formalU`: `w(z) = z ^ 3 * u(z)`, where
   `WeierstrassCurve.constantCoeff_formalU` gives `u(0) = 1`. Over a `CommRing` that makes `u(z)`
-  a unit; at the `CommSemiring` generality of this file it does not.
+  a unit; at the `CommSemiring` generality of that section it does not.
 
 ## Scope
 
@@ -57,6 +67,13 @@ Adapted from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Ap
 by `TauCetiRoadmap/EllipticCurves/README.md` at `dev/hasse-weil @ 513e83879e2f`),
 `HasseWeil/FormalGroup.lean`, declarations `formalW_step`, `formalW_coeff`, `formalW`,
 `formalU_coeff`, the `formalW_coeff_*` lemmas and `formalW_recurrence`.
+
+The uniqueness statement at an arbitrary parameter, and its contraction proof, are adapted from
+Michael Stoll's `EllipticCurves` project (`github.com/MichaelStollBayreuth/EllipticCurves`,
+Apache-2.0, pinned by `TauCetiRoadmap/EllipticCurves/README.md` at `66889eada51a`),
+`EllipticCurves/WeierstrassFormalGroup/Chord.lean`, declarations `wStepAt`, `wStepAt_contract`
+and `eq_of_wStepAt_fixed`. There the equation is a `def` used only internally; here it is the
+public `wEquationRhs`, so the existing statements in this file are phrased through it too.
 
 Changes from the source. The source's convolution helpers `conv₂` and `conv₃`, and its
 coefficient and truncation lemmas for them, are stated only for `formalW`, although none of
@@ -200,17 +217,30 @@ theorem formalW_eq_X_pow_mul_formalU : formalW W = PowerSeries.X ^ 3 * formalU W
   · rw [coeff_formalU, formalUCoeff_apply, Nat.sub_add_cancel h]
   · exact formalWCoeff_eq_zero_of_lt W (by omega)
 
+/-! ### The `w`-equation -/
+
+/-- The right-hand side of the `w`-equation, with the parameter series `q` in place of `z` and
+the unknown `v` in place of `w`:
+
+`q ^ 3 + a₁ q v + a₂ q ^ 2 v + a₃ v ^ 2 + a₄ q v ^ 2 + a₆ v ^ 3`.
+
+The `w`-expansion is the solution at the parameter `q = z`, but the formal group needs solutions
+at other parameters — substituting a series into `w(z)` solves the equation at that series — so
+the parameter is left free. Every occurrence of the unknown is multiplied by `q` or sits in a
+square or a cube, which is what makes the solution unique (`eq_of_wEquation`).
+
+The definition is `@[expose]`d because it is a plain algebraic expression with nothing to keep
+back, and every use of it wants to see the shape. -/
+@[expose] noncomputable def wEquationRhs (W : WeierstrassCurve R) (q v : PowerSeries R) :
+    PowerSeries R :=
+  q ^ 3 + PowerSeries.C W.a₁ * q * v + PowerSeries.C W.a₂ * q ^ 2 * v +
+    PowerSeries.C W.a₃ * v ^ 2 + PowerSeries.C W.a₄ * q * v ^ 2 + PowerSeries.C W.a₆ * v ^ 3
+
 /-- The `n`-th coefficient of the right-hand side of the `w`-equation, for an arbitrary series
 `w`, expressed through the coefficients of `w` itself. Every occurrence of `w` on the right is
 multiplied by `X` or appears in a square or a cube. -/
 private theorem coeff_wEquationRhs (w : PowerSeries R) (n : ℕ) :
-    PowerSeries.coeff n
-      (PowerSeries.X ^ 3 +
-        PowerSeries.C W.a₁ * PowerSeries.X * w +
-        PowerSeries.C W.a₂ * PowerSeries.X ^ 2 * w +
-        PowerSeries.C W.a₃ * w ^ 2 +
-        PowerSeries.C W.a₄ * PowerSeries.X * w ^ 2 +
-        PowerSeries.C W.a₆ * w ^ 3) =
+    PowerSeries.coeff n (wEquationRhs W PowerSeries.X w) =
       (if n = 3 then 1 else 0) +
         W.a₁ * (if 1 ≤ n then PowerSeries.coeff (n - 1) w else 0) +
         W.a₂ * (if 2 ≤ n then PowerSeries.coeff (n - 2) w else 0) +
@@ -219,6 +249,7 @@ private theorem coeff_wEquationRhs (w : PowerSeries R) (n : ℕ) :
             PowerSeries.selfConvTwo (fun k => PowerSeries.coeff k w) (n - 1)
           else 0) +
         W.a₆ * PowerSeries.selfConvThree (fun k => PowerSeries.coeff k w) n := by
+  rw [wEquationRhs]
   -- `PowerSeries.coeff_C_mul` and `PowerSeries.coeff_X_pow_mul'` each need their argument in the
   -- shape `C a * (X ^ d * f)`, so first reassociate the three products and write the bare `X` as
   -- `X ^ 1`. Rewriting `← pow_one` directly is not an option: it would also fire inside `X ^ 3`.
@@ -242,12 +273,7 @@ private theorem coeff_wEquationRhs (w : PowerSeries R) (n : ℕ) :
 from the Weierstrass equation of `W` by the substitution `x = z / w`, `y = -1 / w`. -/
 theorem formalW_wEquation :
     formalW W =
-      PowerSeries.X ^ 3 +
-        PowerSeries.C W.a₁ * PowerSeries.X * formalW W +
-        PowerSeries.C W.a₂ * PowerSeries.X ^ 2 * formalW W +
-        PowerSeries.C W.a₃ * formalW W ^ 2 +
-        PowerSeries.C W.a₄ * PowerSeries.X * formalW W ^ 2 +
-        PowerSeries.C W.a₆ * formalW W ^ 3 := by
+      wEquationRhs W PowerSeries.X (formalW W) := by
   have hlow : ∀ k, k < 3 → formalWCoeff W k = 0 := fun _ hk => formalWCoeff_eq_zero_of_lt W hk
   have hc2 : ∀ m, m < 6 → PowerSeries.selfConvTwo (formalWCoeff W) m = 0 :=
     fun _ hm => PowerSeries.selfConvTwo_eq_zero hlow hm
@@ -276,13 +302,7 @@ coefficients to vanish as well, because every occurrence of `w` on its right-han
 multiplied by `X` or sits in a square or a cube. -/
 theorem eq_formalW_of_wEquation (w : PowerSeries R)
     (h0 : PowerSeries.constantCoeff w = 0)
-    (hw : w =
-      PowerSeries.X ^ 3 +
-        PowerSeries.C W.a₁ * PowerSeries.X * w +
-        PowerSeries.C W.a₂ * PowerSeries.X ^ 2 * w +
-        PowerSeries.C W.a₃ * w ^ 2 +
-        PowerSeries.C W.a₄ * PowerSeries.X * w ^ 2 +
-        PowerSeries.C W.a₆ * w ^ 3) :
+    (hw : w = wEquationRhs W PowerSeries.X w) :
     w = formalW W := by
   rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply] at h0
   -- Degrees `1` and `2` are forced, so the induction below can still start from degree `3`.
@@ -340,5 +360,78 @@ theorem eq_formalW_of_wEquation (w : PowerSeries R)
         hagree (n - 1) (by omega), hagree (n - 2) (by omega)]
       simp only [h2', h3, h4, ite_true, ite_false]
       ring
+
+/-! ### Uniqueness at an arbitrary parameter
+
+`eq_formalW_of_wEquation` above identifies the solution of the `w`-equation at the parameter
+`z`. The formal group needs the same statement at an arbitrary parameter series, because the
+inverse and the group law are obtained by substituting one series into another, and such a
+substitution solves the equation at the substituted parameter rather than at `z`.
+
+The argument is different from the one above: instead of computing coefficients, it shows the
+right-hand side is a contraction for the `z`-adic filtration, so two solutions agree to every
+order. That needs subtraction, hence a `CommRing` here rather than a `CommSemiring`.
+-/
+
+section CommRing
+
+variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
+
+/-- The right-hand side of the `w`-equation contracts: two candidates at the same parameter that
+agree to order `k` have images agreeing to order `k + 1`. Every occurrence of the unknown on the
+right is multiplied by the parameter or sits in a square or a cube, and each of those is
+divisible by one more power of `z` than the difference it is built from. -/
+private theorem X_pow_succ_dvd_wEquationRhs_sub {q u v : PowerSeries R}
+    (hq : (PowerSeries.X : PowerSeries R) ∣ q) (hu : (PowerSeries.X : PowerSeries R) ∣ u)
+    (hv : (PowerSeries.X : PowerSeries R) ∣ v) {k : ℕ}
+    (h : (PowerSeries.X : PowerSeries R) ^ k ∣ u - v) :
+    (PowerSeries.X : PowerSeries R) ^ (k + 1) ∣ wEquationRhs W q u - wEquationRhs W q v := by
+  have hsq : (PowerSeries.X : PowerSeries R) ^ (k + 1) ∣ u ^ 2 - v ^ 2 := by
+    have huv : u ^ 2 - v ^ 2 = (u + v) * (u - v) := by ring
+    rw [huv, pow_succ, mul_comm ((PowerSeries.X : PowerSeries R) ^ k)]
+    exact mul_dvd_mul (dvd_add hu hv) h
+  have hcb : (PowerSeries.X : PowerSeries R) ^ (k + 1) ∣ u ^ 3 - v ^ 3 := by
+    have huv : u ^ 3 - v ^ 3 = (u ^ 2 + u * v + v ^ 2) * (u - v) := by ring
+    rw [huv, pow_succ, mul_comm ((PowerSeries.X : PowerSeries R) ^ k)]
+    refine mul_dvd_mul (dvd_add (dvd_add ?_ (hu.mul_right v)) ?_) h
+    · rw [pow_two]; exact hu.mul_right u
+    · rw [pow_two]; exact hv.mul_right v
+  have hpar : (PowerSeries.X : PowerSeries R) ^ (k + 1) ∣ q * (u - v) := by
+    rw [pow_succ, mul_comm ((PowerSeries.X : PowerSeries R) ^ k)]
+    exact mul_dvd_mul hq h
+  have hsplit : wEquationRhs W q u - wEquationRhs W q v =
+      PowerSeries.C W.a₁ * (q * (u - v)) + PowerSeries.C W.a₂ * q * (q * (u - v)) +
+        PowerSeries.C W.a₃ * (u ^ 2 - v ^ 2) + PowerSeries.C W.a₄ * q * (u ^ 2 - v ^ 2) +
+        PowerSeries.C W.a₆ * (u ^ 3 - v ^ 3) := by
+    simp only [wEquationRhs]
+    ring
+  rw [hsplit]
+  exact dvd_add (dvd_add (dvd_add (dvd_add (hpar.mul_left _) (hpar.mul_left _))
+    (hsq.mul_left _)) (hsq.mul_left _)) (hcb.mul_left _)
+
+/-- **Uniqueness of the solution of the `w`-equation, at an arbitrary parameter.** Two power
+series with vanishing constant coefficient that satisfy the `w`-equation at the same parameter
+series are equal.
+
+`eq_formalW_of_wEquation` is the case `q = z`, where the solution is `formalW W`; it is proved
+separately because it holds already over a `CommSemiring`, which this does not. -/
+theorem eq_of_wEquation {q v v' : PowerSeries R} (hq : PowerSeries.constantCoeff q = 0)
+    (hv : PowerSeries.constantCoeff v = 0) (hv' : PowerSeries.constantCoeff v' = 0)
+    (h : v = wEquationRhs W q v) (h' : v' = wEquationRhs W q v') : v = v' := by
+  rw [← PowerSeries.X_dvd_iff] at hq hv hv'
+  -- The two solutions agree to every order, because each step of the equation gains a power
+  -- of `z` on the difference.
+  have key : ∀ k : ℕ, (PowerSeries.X : PowerSeries R) ^ k ∣ v - v' := by
+    intro k
+    induction k with
+    | zero => simp
+    | succ k ih =>
+      have hstep := X_pow_succ_dvd_wEquationRhs_sub W hq hv hv' ih
+      rwa [← h, ← h'] at hstep
+  ext n
+  have hn := PowerSeries.X_pow_dvd_iff.mp (key (n + 1)) n (by omega)
+  rwa [map_sub, sub_eq_zero] at hn
+
+end CommRing
 
 end WeierstrassCurve
