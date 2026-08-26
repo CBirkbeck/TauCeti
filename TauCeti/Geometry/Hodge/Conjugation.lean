@@ -480,8 +480,7 @@ theorem integralMapToComplex_apply_ι (h₁ : IsBaseChange ℂ ι₁) (ι₂ : V
 /-- Complexification of integral linear maps, bundled as an additive homomorphism. Additivity is
 the only structure the six pointwise complexification lemmas below need, so they are recovered
 from this bundle rather than each re-running the base-change extensionality argument. -/
-@[expose] noncomputable def integralMapToComplexHom (h₁ : IsBaseChange ℂ ι₁)
-    (ι₂ : V₂ →ₗ[ℤ] W₂) :
+noncomputable def integralMapToComplexHom (h₁ : IsBaseChange ℂ ι₁) (ι₂ : V₂ →ₗ[ℤ] W₂) :
     (V₁ →ₗ[ℤ] V₂) →+ (W₁ →ₗ[ℂ] W₂) where
   toFun := integralMapToComplex h₁ ι₂
   map_zero' := h₁.algHom_ext _ _ fun x ↦ by simp
@@ -491,7 +490,9 @@ from this bundle rather than each re-running the base-change extensionality argu
 @[simp]
 theorem coe_integralMapToComplexHom (h₁ : IsBaseChange ℂ ι₁) (ι₂ : V₂ →ₗ[ℤ] W₂) :
     ⇑(integralMapToComplexHom h₁ ι₂) = integralMapToComplex h₁ ι₂ :=
-  rfl
+  -- Parenthesised so the definitional-equality check is deferred: `integralMapToComplexHom` is
+  -- not exposed, and a bare `rfl` would make this exported theorem unfold its sealed body.
+  (rfl)
 
 /-- Complexification sends the identity integral map to the identity complex map. -/
 @[simp]

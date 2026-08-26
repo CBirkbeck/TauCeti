@@ -291,7 +291,7 @@ theorem zsmul_toIntLinearMap (k : ℤ) (f : Hom source target) :
 /-- `Hom.toLinearMap`, bundled as an additive homomorphism. The underlying integral map is
 additive by `rfl`, so this is `integralMapToComplexHom` read through it; the pointwise lemmas
 below are its `map_*` fields evaluated at a vector, rather than six separate `simp` chains. -/
-@[expose] noncomputable def toLinearMapHom : Hom source target →+ (W₁ →ₗ[ℂ] W₂) where
+noncomputable def toLinearMapHom : Hom source target →+ (W₁ →ₗ[ℂ] W₂) where
   toFun := toLinearMap
   map_zero' := by
     simp only [toLinearMap, zero_toIntLinearMap, integralMapToComplex_zero]
@@ -302,7 +302,9 @@ below are its `map_*` fields evaluated at a vector, rather than six separate `si
 @[simp]
 theorem coe_toLinearMapHom :
     ⇑(toLinearMapHom (source := source) (target := target)) = toLinearMap :=
-  rfl
+  -- Parenthesised so the definitional-equality check is deferred: `toLinearMapHom` is not
+  -- exposed, and a bare `rfl` would make this exported theorem unfold its sealed body.
+  (rfl)
 
 /-- The zero Hodge morphism acts as zero on complex vectors. -/
 @[simp]
