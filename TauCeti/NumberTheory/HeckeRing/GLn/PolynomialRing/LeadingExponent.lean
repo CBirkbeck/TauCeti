@@ -26,13 +26,19 @@ properties the leading-term argument consumes, above all that the exponents are 
 The vector is the suffix sums of `e` read from the last position backwards, and suffix sums are
 Mathlib's `Fin.accumulate`, the device of the fundamental theorem of symmetric polynomials (the same
 leading-term argument, for the elementary symmetric polynomials): `leadingExponent e` is
-`Fin.accumulate n n e` precomposed with `Fin.rev`, so its additivity is `map_add`, the recovery of
-the exponents is `Fin.accumulate_injective`, and the explicit inverse is `Fin.invAccumulate`.
+`Fin.accumulate n n e` precomposed with `Fin.rev`, the recovery of the exponents is
+`Fin.accumulate_injective`, and the explicit inverse is `Fin.invAccumulate`.
+
+Multiplying Hecke monomials adds their exponent vectors, so `leadingExponent` is bundled as an
+`AddMonoidHom`, as `Fin.accumulate` itself is. Its `map_zero`, `map_add`, `map_sum` and `map_nsmul`
+are then the generic ones: a product over a finite family of monomials, or a monomial raised to a
+power, needs no lemma of its own here.
 
 ## Main definitions
 
 * `HeckeRing.GLn.leadingExponent`: the exponent vector of the leading elementary-divisor diagonal
-  of the Hecke monomial with exponents `e`, the suffix sums `i ↦ ∑ k ≥ n - 1 - i, e k`.
+  of the Hecke monomial with exponents `e`, the suffix sums `i ↦ ∑ k ≥ n - 1 - i, e k`, as an
+  additive homomorphism `(Fin n → ℕ) →+ (Fin n → ℕ)`.
 
 ## Main results
 
@@ -43,8 +49,8 @@ the exponents is `Fin.accumulate_injective`, and the explicit inverse is `Fin.in
   (`HeckeRing.GLn.leadingExponent_monotone`), so the leading diagonal `T(p ^ leadingExponent e)`
   is a divisibility chain — for `0 < p` a canonical diagonal, by `primePowDiag_pos`.
 * `HeckeRing.GLn.primePowDiag_leadingExponent_single`: on the generator `X k` the leading
-  diagonal is `heckeGenDiag k` itself; `HeckeRing.GLn.leadingExponent_add` and `primePowDiag_add`
-  then give the leading diagonal of a product of monomials as the product of theirs.
+  diagonal is `heckeGenDiag k` itself; `map_add` and `primePowDiag_add` then give the leading
+  diagonal of a product of monomials as the product of theirs.
 * `HeckeRing.GLn.sum_leadingExponent`: the weight `∑ k, (k + 1) * e k` of the leading diagonal —
   the exponent of its determinant `p ^ ∑ i, leadingExponent e i`, which is that determinant's
   `p`-adic valuation once `p` is prime.
@@ -78,9 +84,14 @@ variable {n : ℕ}
 /-- The exponent vector of the leading elementary-divisor diagonal of the Hecke monomial
 `∏ k, heckeGen k ^ e k`: entry `i` counts, with multiplicity `e k`, the generators `heckeGen k`
 whose diagonal `heckeGenDiag k` carries `p` in position `i` — those with `n - 1 - i ≤ k`, i.e.
-`Fin.rev i ≤ k` — so it is the suffix sum `Fin.accumulate n n e` of `e` at `Fin.rev i`. -/
-def leadingExponent (e : Fin n → ℕ) : Fin n → ℕ :=
-  fun i ↦ Fin.accumulate n n e (Fin.rev i)
+`Fin.rev i ≤ k` — so it is the suffix sum `Fin.accumulate n n e` of `e` at `Fin.rev i`.
+
+Additive, because multiplying Hecke monomials adds their exponents; bundled, so that `map_zero`,
+`map_add`, `map_sum` and `map_nsmul` are available generically. -/
+def leadingExponent : (Fin n → ℕ) →+ (Fin n → ℕ) where
+  toFun e i := Fin.accumulate n n e (Fin.rev i)
+  map_zero' := by ext i; simp only [map_zero, Pi.zero_apply]
+  map_add' e f := by ext i; simp only [map_add, Pi.add_apply]
 
 /-- Defining equation for the sealed definition `leadingExponent`. -/
 lemma leadingExponent_apply (e : Fin n → ℕ) (i : Fin n) :
@@ -92,20 +103,6 @@ lemma leadingExponent_apply (e : Fin n → ℕ) (i : Fin n) :
 lemma leadingExponent_eq_sum_Ici (e : Fin n → ℕ) (i : Fin n) :
     leadingExponent e i = ∑ k ∈ Ici (Fin.rev i), e k := by
   simp only [leadingExponent_apply, Fin.accumulate_apply, Fin.val_fin_le, Finset.filter_le_eq_Ici]
-
-/-- The empty monomial has the trivial leading diagonal. -/
-@[simp]
-lemma leadingExponent_zero : leadingExponent (0 : Fin n → ℕ) = 0 := by
-  ext i
-  simp only [leadingExponent_apply, map_zero, Pi.zero_apply]
-
-/-- The leading exponent vector is additive; with `primePowDiag_add` this says the leading
-diagonal of a product of monomials is the entrywise product of their leading diagonals. -/
-@[simp]
-lemma leadingExponent_add (e f : Fin n → ℕ) :
-    leadingExponent (e + f) = leadingExponent e + leadingExponent f := by
-  ext i
-  simp only [leadingExponent_apply, map_add, Pi.add_apply]
 
 /-- Read from the last position backwards, the leading exponent vector is the suffix sums of the
 exponents: position `n - 1 - k` sees exactly the generators `k' ≥ k`. -/
