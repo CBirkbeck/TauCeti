@@ -185,7 +185,7 @@ lemma denom_ne_zero [E.IsElliptic] :
 
 /-- `F[X] → K(E)` is injective: a nonzero polynomial cannot be a multiple of `W`, whose degree
 in `Y` is two, and `F[E] → K(E)` is injective. -/
-private lemma algebraMap_polynomial_injective [E.IsElliptic] :
+private lemma algebraMap_polynomial_injective :
     Function.Injective (algebraMap (Polynomial F) E.FunctionField) := by
   rw [IsScalarTower.algebraMap_eq (Polynomial F) E.CoordinateRing E.FunctionField]
   refine (IsFractionRing.injective E.CoordinateRing E.FunctionField).comp ?_
@@ -214,7 +214,7 @@ private lemma aeval_algebraMap_X (p : Polynomial F) :
     rw [← map_pow, ← map_mul, Polynomial.C_mul_X_pow_eq_monomial]
 
 /-- `x` is transcendental over `F`. -/
-private lemma not_isAlgebraic_X [E.IsElliptic] :
+private lemma not_isAlgebraic_X :
     ¬ IsAlgebraic F (algebraMap (Polynomial F) E.FunctionField Polynomial.X) := by
   rintro ⟨p, hp_ne, hp_eval⟩
   exact hp_ne (algebraMap_polynomial_injective E
@@ -367,7 +367,7 @@ lemma D_X_ne_zero [E.IsElliptic] :
 /-! ### The invariant differential -/
 
 /-- The invariant differential `ω = dx / (2y + a₁x + a₃)`, as an element of `Ω[K(E)/F]`. -/
-noncomputable def invariantDifferential [E.IsElliptic] :
+noncomputable def invariantDifferential :
     KaehlerDifferential F E.FunctionField :=
   (2 * algebraMap E.CoordinateRing E.FunctionField (AdjoinRoot.root E.polynomial) +
       algebraMap F E.FunctionField E.a₁ *
