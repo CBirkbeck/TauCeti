@@ -98,8 +98,13 @@ def functionCharSpace : Submodule ℂ (ℍ → ℂ) where
       (det_pos_of_mem_slGL (MonoidHom.mem_range.mpr ⟨_, rfl⟩)), hf g]
     exact smul_comm c _ f
 
-/-- Membership in `functionCharSpace` is the nebentypus relation, by definition. -/
-lemma mem_functionCharSpace_iff (f : ℍ → ℂ) :
+/-- Membership in `functionCharSpace` is the nebentypus relation, by definition.
+
+The carrier is that relation verbatim -- main's own vocabulary for it -- and *not* a joint
+eigenspace: unlike `modFormCharSpace`, this is not `⨅ d, eigenspace ...`, because the diamond
+operators are built from the slash as a bundled endomorphism of `ModularForm` and have no
+counterpart on plain functions. `coe_mem_functionCharSpace_iff` is what ties the two together. -/
+@[simp] lemma mem_functionCharSpace_iff (f : ℍ → ℂ) :
     f ∈ functionCharSpace k χ ↔ ∀ g : ↥(Gamma0 N),
       f ∣[k] mapGL ℝ (g : SL(2, ℤ)) = (↑(χ ((Gamma0Map N).toHomUnits g)) : ℂ) • f := Iff.rfl
 
