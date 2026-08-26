@@ -181,7 +181,7 @@ variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F}
 
 /-- Once an `F`-algebra map into the function field of `W₁` sends some element to one with a pole
 at infinity, the affine coordinate of `W₁` is integral over the image of that map. -/
-private theorem isIntegral_X_over_range_of_one_lt_infinityPlace {A : Type*} [CommRing A]
+private theorem isIntegral_X_over_range_of_one_lt_infinityPlace {A : Type*} [CommSemiring A]
     [Algebra F A] (f : A →ₐ[F] W₁.FunctionField) (a : A) (h : 1 < infinityPlace W₁ (f a)) :
     IsIntegral f.range.toSubring (algebraMap F[X] W₁.FunctionField X) :=
   isIntegral_of_forall_valuation_le_one fun v hvle ↦ by
