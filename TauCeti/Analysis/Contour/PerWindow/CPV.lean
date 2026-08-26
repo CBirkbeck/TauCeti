@@ -41,16 +41,17 @@ externally by the window-boundary radii.
 * `Contour.perWindow_truncated_integral_tendsto` — the truncated window integral of the
   simple-pole integrand converges as `ε → 0⁺`, to the log-norm difference of the window
   boundary plus the boundary arguments.
-* `Contour.intervalIntegrable_inv_sub_truncated` — the truncated simple-pole integrand is
-  interval-integrable at every truncation level `ε > 0`.
 
 ## Provenance
 
 Migrated from `perCrossing_window_integral_tendsto_exact` and its supporting lemmas
-(`annular_log_diff_of_window`, `right/left_annular_log_diff_local`, `log_div_re_im_decomp`,
-`cpvIntegrand_inv_intervalIntegrable`) of `LocalCutoffs.lean` in the AINTLIB `LeanModularForms`
-development, restated for a raw curve on its crossing window. See N. Hungerbühler, M. Wasem,
-*Non-integer valued winding numbers and a generalized Residue Theorem*, arXiv:1808.00997, §3.
+(`annular_log_diff_of_window`, `right/left_annular_log_diff_local`, `log_div_re_im_decomp`) of
+`LocalCutoffs.lean` in the AINTLIB `LeanModularForms` development, restated for a raw curve on
+its crossing window. The truncated-integrability lemma migrated alongside them,
+`cpvIntegrand_inv_intervalIntegrable`, lives with the rest of the truncation API in
+`Contour.Cauchy.PrincipalValue.Basic` as `intervalIntegrable_inv_sub_truncated`.
+See N. Hungerbühler, M. Wasem, *Non-integer valued winding numbers and a generalized Residue
+Theorem*, arXiv:1808.00997, §3.
 -/
 
 public section
@@ -60,19 +61,6 @@ noncomputable section
 namespace TauCeti.Contour
 
 open Filter MeasureTheory Set Topology
-
-/-- The `ε`-truncated simple-pole integrand is interval-integrable: the simple pole is the
-order-`1` polar term with coefficient `1`, so this is
-`intervalIntegrable_pow_inv_mul_deriv_truncated` at `c = 1`, `k = 1`, where the domination bound
-reads `(1/ε) · ‖deriv γ‖`. -/
-theorem intervalIntegrable_inv_sub_truncated {γ : ℝ → ℂ} {s : ℂ} {a b : ℝ}
-    (hγ_cont : ContinuousOn γ (uIcc a b))
-    (hderiv_int : IntervalIntegrable (fun t => deriv γ t) MeasureTheory.volume a b)
-    {ε : ℝ} (hε : 0 < ε) :
-    IntervalIntegrable (fun t => if ‖γ t - s‖ > ε then (γ t - s)⁻¹ * deriv γ t else 0)
-      MeasureTheory.volume a b := by
-  simpa using
-    intervalIntegrable_pow_inv_mul_deriv_truncated (z₀ := s) 1 1 hγ_cont hderiv_int hε
 
 /-- The winding integral is the log of the chord quotient on an ordered pole-free interval
 with the chord quotients anchored at the left endpoint in the slit plane: the `Icc`-hypothesis
