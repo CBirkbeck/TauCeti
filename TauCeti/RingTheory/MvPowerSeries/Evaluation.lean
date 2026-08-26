@@ -116,24 +116,6 @@ theorem eval₂_mem_pow (hφ : Continuous φ) (ha : HasEval a) (hI : IsAdic I) {
   have hsum := tsum_mem (hI.isClosed_pow k) hval
   rwa [htot.tsum_eq] at hsum
 
-/-- **A series vanishing below total degree `c`, evaluated at arguments of `I ^ j`, takes values
-in `I ^ (c * j)`.** A surviving monomial has degree at least `c`, so it contributes at least `c`
-arguments and therefore a factor from `I ^ (c * j)`. -/
-theorem eval₂_mem_pow_mul (hφ : Continuous φ) (ha : HasEval a) (hI : IsAdic I) {j c : ℕ}
-    (hmem : ∀ i, a i ∈ I ^ j) (f : MvPowerSeries σ R)
-    (hcoeff : ∀ d : σ →₀ ℕ, d.degree < c → coeff d f = 0) :
-    eval₂ φ a f ∈ I ^ (c * j) := by
-  classical
-  have htot := hasSum_eval₂ hφ ha f
-  have hval : ∀ d : σ →₀ ℕ, φ (coeff d f) * d.prod (fun s e ↦ a s ^ e) ∈ I ^ (c * j) := by
-    intro d
-    rcases lt_or_ge d.degree c with hlt | hge
-    · rw [hcoeff d hlt, map_zero, zero_mul]
-      exact zero_mem _
-    · exact Ideal.mul_mem_left _ _ (prod_mem_pow_mul hmem hge)
-  have hsum := tsum_mem (hI.isClosed_pow (c * j)) hval
-  rwa [htot.tsum_eq] at hsum
-
 /-- **Small coefficients improve the bound.** If in addition every coefficient of `f` lies in
 `I ^ k`, the two contributions multiply and the value lies in `I ^ (k + c * j)`. -/
 theorem eval₂_mem_pow_add_mul (hφ : Continuous φ) (ha : HasEval a) (hI : IsAdic I) {j c k : ℕ}
@@ -152,6 +134,15 @@ theorem eval₂_mem_pow_add_mul (hφ : Continuous φ) (ha : HasEval a) (hI : IsA
       exact Ideal.mul_mem_mul (hcoeff d) (prod_mem_pow_mul hmem hge)
   have hsum := tsum_mem (hI.isClosed_pow (k + c * j)) hval
   rwa [htot.tsum_eq] at hsum
+
+/-- **A series vanishing below total degree `c`, evaluated at arguments of `I ^ j`, takes values
+in `I ^ (c * j)`.** This is the `k = 0` case of `eval₂_mem_pow_add_mul`: every coefficient lies in
+`I ^ 0 = ⊤`, so that hypothesis is vacuous and the exponent collapses. -/
+theorem eval₂_mem_pow_mul (hφ : Continuous φ) (ha : HasEval a) (hI : IsAdic I) {j c : ℕ}
+    (hmem : ∀ i, a i ∈ I ^ j) (f : MvPowerSeries σ R)
+    (hcoeff : ∀ d : σ →₀ ℕ, d.degree < c → coeff d f = 0) :
+    eval₂ φ a f ∈ I ^ (c * j) := by
+  simpa using eval₂_mem_pow_add_mul (k := 0) hφ ha hI hmem f (fun _ ↦ by simp) hcoeff
 
 end Eval
 
