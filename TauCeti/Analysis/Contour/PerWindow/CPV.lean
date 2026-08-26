@@ -9,7 +9,7 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import TauCeti.Analysis.Calculus.OneSidedDerivLimit
-import TauCeti.Analysis.Contour.Curve.Distance
+import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.Basic
 import TauCeti.Analysis.Contour.Chord.QuotientAsymptotics
 import TauCeti.Analysis.Contour.LogDerivFTC
 import TauCeti.Analysis.Contour.Winding.Number.Basic
@@ -61,50 +61,18 @@ namespace TauCeti.Contour
 
 open Filter MeasureTheory Set Topology
 
-/-- The `ε`-truncated simple-pole integrand is interval-integrable: off the `ε`-ball the
-integrand is dominated by `(1/ε) · ‖deriv γ‖`. -/
+/-- The `ε`-truncated simple-pole integrand is interval-integrable: the simple pole is the
+order-`1` polar term with coefficient `1`, so this is
+`intervalIntegrable_pow_inv_mul_deriv_truncated` at `c = 1`, `k = 1`, where the domination bound
+reads `(1/ε) · ‖deriv γ‖`. -/
 theorem intervalIntegrable_inv_sub_truncated {γ : ℝ → ℂ} {s : ℂ} {a b : ℝ}
     (hγ_cont : ContinuousOn γ (uIcc a b))
     (hderiv_int : IntervalIntegrable (fun t => deriv γ t) MeasureTheory.volume a b)
     {ε : ℝ} (hε : 0 < ε) :
     IntervalIntegrable (fun t => if ‖γ t - s‖ > ε then (γ t - s)⁻¹ * deriv γ t else 0)
       MeasureTheory.volume a b := by
-  have hK_closed : IsClosed {t ∈ uIcc a b | ‖γ t - s‖ ≤ ε} :=
-    isClosed_setOfPred_mem_uIcc_norm_sub_le hγ_cont s ε
-  have h_inv_aesm : AEStronglyMeasurable (fun t => (γ t - s)⁻¹ * deriv γ t)
-      (MeasureTheory.volume.restrict (Set.uIoc a b)) := by
-    have hγ_aem : AEMeasurable γ (MeasureTheory.volume.restrict (Set.uIoc a b)) :=
-      ((hγ_cont.aestronglyMeasurable (by rw [← Icc_min_max]; exact measurableSet_Icc)
-        ).mono_measure (Measure.restrict_mono Set.uIoc_subset_uIcc le_rfl)).aemeasurable
-    exact (((hγ_aem.sub_const s).inv).mul
-      (intervalIntegrable_iff.mp hderiv_int).aestronglyMeasurable.aemeasurable
-      ).aestronglyMeasurable
-  have h_aesm : AEStronglyMeasurable
-      (fun t => if ‖γ t - s‖ > ε then (γ t - s)⁻¹ * deriv γ t else 0)
-      (MeasureTheory.volume.restrict (Set.uIoc a b)) := by
-    refine (h_inv_aesm.indicator hK_closed.measurableSet.compl).congr ?_
-    filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_uIoc] with t ht
-    by_cases h_far : ‖γ t - s‖ > ε
-    · have h_mem : t ∈ {t ∈ uIcc a b | ‖γ t - s‖ ≤ ε}ᶜ :=
-        fun hK => absurd hK.2 (not_le.mpr h_far)
-      rw [Set.indicator_of_mem h_mem, ite_eq_left h_far]
-    · have h_notMem : t ∉ {t ∈ uIcc a b | ‖γ t - s‖ ≤ ε}ᶜ := fun hKc =>
-        hKc ⟨Set.uIoc_subset_uIcc ht, not_lt.mp h_far⟩
-      rw [Set.indicator_of_notMem h_notMem, ite_eq_right h_far]
-  refine ((hderiv_int.norm.const_mul (1 / ε)).mono_fun h_aesm ?_)
-  refine Eventually.of_forall fun t => ?_
-  -- β-reduce the two sides of the a.e. bound
-  change ‖if ‖γ t - s‖ > ε then (γ t - s)⁻¹ * deriv γ t else 0‖ ≤ ‖1 / ε * ‖deriv γ t‖‖
-  by_cases h_far : ‖γ t - s‖ > ε
-  · rw [ite_eq_left h_far, norm_mul, norm_inv]
-    calc ‖γ t - s‖⁻¹ * ‖deriv γ t‖
-        ≤ (1 / ε) * ‖deriv γ t‖ := by
-          rw [inv_eq_one_div]
-          exact mul_le_mul_of_nonneg_right
-            (one_div_le_one_div_of_le hε h_far.le) (norm_nonneg _)
-      _ ≤ ‖1 / ε * ‖deriv γ t‖‖ := le_abs_self _
-  · rw [ite_eq_right h_far, norm_zero]
-    positivity
+  simpa using
+    intervalIntegrable_pow_inv_mul_deriv_truncated (z₀ := s) 1 1 hγ_cont hderiv_int hε
 
 /-- The winding integral is the log of the chord quotient on an ordered pole-free interval
 with the chord quotients anchored at the left endpoint in the slit plane: the `Icc`-hypothesis
