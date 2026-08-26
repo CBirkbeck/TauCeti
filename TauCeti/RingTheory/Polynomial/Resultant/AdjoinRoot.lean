@@ -308,17 +308,38 @@ theorem norm_mk_C_sub_X (hg : g.Monic) (x : R) :
   rw [norm_mk_eq_resultant hg, natDegree_C_sub_X, resultant_C_sub_X_right _ _ _ le_rfl]
 
 /-- **At a root the corrected representative has square norm.** If `g = q * (X - C x)` with `q`
-monic of degree at least `2`, then `x - θ` is a zero divisor in `AdjoinRoot g`, and the corrected
-representative `x - θ + q θ` that replaces it has norm `(q.eval x) ^ 2`.
+monic, then `x - θ` is a zero divisor in `AdjoinRoot g`, and the corrected representative
+`x - θ + q θ` that replaces it has norm `(q.eval x) ^ 2`.
 
-The factorization splits the resultant into two factors, each equal to `q.eval x`: against
-`X - C x` the corrected representative is evaluated at `x`, and against `q` the added multiple of
-`q` drops out, leaving a resultant with `C x - X`. -/
-theorem norm_mk_C_sub_X_add {q : R[X]} {x : R} (hq : q.Monic) (hd : 2 ≤ q.natDegree)
-    (hgq : g = q * (X - C x)) :
+For `2 ≤ q.natDegree` the factorization splits the resultant into two factors, each equal to
+`q.eval x`: against `X - C x` the corrected representative is evaluated at `x`, and against `q`
+the added multiple of `q` drops out, leaving a resultant with `C x - X`. Below that degree the
+resultant bookkeeping does not apply and the representative is a scalar instead: at
+`q.natDegree = 1` the `X` terms cancel and it is `C (q.eval x)` in an algebra of rank `2`, and at
+`q.natDegree = 0` it is `1`, as is `q.eval x`. -/
+theorem norm_mk_C_sub_X_add {q : R[X]} {x : R} (hq : q.Monic) (hgq : g = q * (X - C x)) :
     Algebra.norm R (mk g (C x - X + q)) = q.eval x ^ 2 := by
   nontriviality R
   have hg : g.Monic := by rw [hgq]; exact hq.mul (monic_X_sub_C x)
+  have hgd : g.natDegree = q.natDegree + 1 := by
+    rw [hgq, hq.natDegree_mul (monic_X_sub_C x), natDegree_X_sub_C]
+  rcases lt_or_ge q.natDegree 2 with hsmall | hd
+  · -- below degree `2` the representative is a scalar, and the resultant argument does not run
+    have hqd : q.natDegree = 0 ∨ q.natDegree = 1 := by lia
+    rcases hqd with hqd | hqd
+    · -- `q = 1`, so `C x - X + q` is `1` modulo `g`
+      have hq1 : q = 1 := eq_one_of_monic_natDegree_zero hq hqd
+      have hrep : C x - X + q = -g + 1 := by rw [hgq, hq1]; ring
+      rw [hrep, hq1]
+      simp
+    · -- `q = X + C (q.coeff 0)`, so the `X` terms cancel and the representative is a constant
+      have hconst : C x - X + q = C (q.eval x) := by
+        rw [hq.eq_X_add_C hqd, eval_add, eval_X, eval_C, C_add]
+        ring
+      rw [hconst, mk_C, ← algebraMap_eq,
+        Algebra.norm_algebraMap_of_basis (powerBasis' hg).basis, Fintype.card_fin]
+      congr 1
+      simp [powerBasis', hgd, hqd]
   have hp : (C x - X + q).natDegree = q.natDegree :=
     natDegree_add_eq_right_of_natDegree_lt (by rw [natDegree_C_sub_X]; lia)
   have hpx : (C x - X + q).eval x = q.eval x := by simp

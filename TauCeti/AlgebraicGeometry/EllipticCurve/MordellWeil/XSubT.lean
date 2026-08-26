@@ -382,8 +382,8 @@ would say the element is a square in `W.Aˣ`, which is a different and stronger 
 theorem norm_mk_C_sub_X_add_fCofactor {x : K} (hx : W.f.eval x = 0) :
     Algebra.norm K (AdjoinRoot.mk W.f (C x - X + W.fCofactor x))
       = (3 * x ^ 2 + 2 * W.a₂ * x + W.a₄) ^ 2 := by
-  rw [AdjoinRoot.norm_mk_C_sub_X_add (W.monic_fCofactor x) (W.natDegree_fCofactor x).ge
-    (W.f_eq_mul_of_eval_eq_zero hx), W.eval_fCofactor_self]
+  rw [AdjoinRoot.norm_mk_C_sub_X_add (W.monic_fCofactor x) (W.f_eq_mul_of_eval_eq_zero hx),
+    W.eval_fCofactor_self]
 
 /-- The étale algebra associated to the cofactor of `f`. -/
 abbrev A' (x : K) : Type _ := AdjoinRoot (W.fCofactor x)
