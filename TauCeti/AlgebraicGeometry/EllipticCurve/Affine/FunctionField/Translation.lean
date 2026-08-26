@@ -46,7 +46,8 @@ injective (`CoordinateRing.algHom_injective`) and so extendable to the fraction 
   `WeierstrassCurve.Affine.translation_add`: the action laws, `τ_O^* = 1` and
   `τ_{P + Q}^* = τ_P^* ≫ τ_Q^*`.
 * `WeierstrassCurve.Affine.translation_eq_one_iff` and
-  `WeierstrassCurve.Affine.translation_injective`: the action is faithful.
+  `WeierstrassCurve.Affine.translation_injective` and
+  `WeierstrassCurve.Affine.translationHom_injective`: the action is faithful.
 * `WeierstrassCurve.Affine.translation_apply_genericX_some` and
   `WeierstrassCurve.Affine.translation_apply_genericY_some`: for an affine `P` the two
   coordinate functions are moved by the Weierstrass addition formulas, which is what identifies
@@ -343,6 +344,12 @@ theorem translation_injective : Function.Injective (translation W) := fun P Q h 
   have hPQ : translation W (P - Q) = 1 := by
     rw [sub_eq_add_neg, translation_add, h, ← translation_add, add_neg_cancel, translation_zero]
   rwa [translation_eq_one_iff, sub_eq_zero] at hPQ
+
+/-- **The translation action homomorphism is injective**: the packaged action is faithful. -/
+theorem translationHom_injective : Function.Injective (translationHom W) := fun P Q h ↦ by
+  apply Multiplicative.toAdd.injective
+  apply translation_injective W
+  simpa only [translationHom_apply] using h
 
 omit [DecidableEq F] [W.IsElliptic] in
 /-- The generic point and a base-changed affine point are never in the degenerate case of the

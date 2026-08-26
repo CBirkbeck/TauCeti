@@ -34,9 +34,6 @@ coordinates in the function field, and it is the object that turns statements ab
 * `WeierstrassCurve.Affine.transcendental_genericX` and
   `WeierstrassCurve.Affine.genericX_ne_algebraMap`: the coordinate `x` is transcendental
   over the base field, so it takes no constant value.
-* `WeierstrassCurve.Affine.instIsEllipticBaseChange`: an elliptic curve stays elliptic
-  under base change. Mathlib has this for `W.map f` but not for `W⁄A`, which is the form the point
-  group of a base change is stated over.
 
 ## Roadmap
 
@@ -112,15 +109,12 @@ theorem genericX_ne_algebraMap (x₁ : F) : genericX W ≠ algebraMap F W.Functi
 
 variable [W.IsElliptic]
 
-/-- Mathlib records that a map of an elliptic curve stays elliptic, but not the base-change form
-`W⁄A`, which is the one the point group is stated over. -/
-instance instIsEllipticBaseChange {A : Type*} [CommRing A] [Algebra F A] : (W⁄A).IsElliptic :=
-  inferInstanceAs ((W.map (algebraMap F A)).IsElliptic)
-
 /-- The generic point is nonsingular. -/
 theorem nonsingular_genericX_genericY :
-    (W⁄W.FunctionField).toAffine.Nonsingular (genericX W) (genericY W) :=
-  Affine.equation_iff_nonsingular.1 (equation_genericX_genericY W)
+    (W⁄W.FunctionField).toAffine.Nonsingular (genericX W) (genericY W) := by
+  let _ : (W⁄W.FunctionField).IsElliptic :=
+    inferInstanceAs ((W.map (algebraMap F W.FunctionField)).IsElliptic)
+  exact Affine.equation_iff_nonsingular.1 (equation_genericX_genericY W)
 
 /-- **The generic point of `W`**: the tautological point of `W` with coordinates in its own
 function field. -/
