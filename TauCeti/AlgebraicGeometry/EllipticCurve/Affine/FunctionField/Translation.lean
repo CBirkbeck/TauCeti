@@ -86,13 +86,14 @@ namespace WeierstrassCurve.Affine
 variable {F : Type*} [Field F] [DecidableEq F] (W : _root_.WeierstrassCurve.Affine F)
   [W.IsElliptic]
 
-/-- The points of `W`, base changed to the function field of `W`. -/
-noncomputable def baseChangePoint : W.Point →+ (W⁄W.FunctionField).toAffine.Point :=
+/-- The points of `W`, base changed to the function field of `W`. An abbreviation local to this
+file: the public API is Mathlib's `Point.baseChange`. -/
+private noncomputable def baseChangePoint : W.Point →+ (W⁄W.FunctionField).toAffine.Point :=
   Point.baseChange (W' := W) F W.FunctionField
 
 omit [W.IsElliptic] in
 /-- **Base change to the function field is injective on points.** -/
-theorem baseChangePoint_injective : Function.Injective (baseChangePoint W) :=
+private theorem baseChangePoint_injective : Function.Injective (baseChangePoint W) :=
   Point.map_injective (W' := W) _
 
 omit [W.IsElliptic] in
@@ -100,7 +101,8 @@ omit [W.IsElliptic] in
 private theorem baseChangePoint_some {x₁ y₁ : F} (h : W.Nonsingular x₁ y₁)
     (hh : (W⁄W.FunctionField).toAffine.Nonsingular (algebraMap F W.FunctionField x₁)
       (algebraMap F W.FunctionField y₁)) :
-    baseChangePoint W (.some x₁ y₁ h) = .some _ _ hh := (rfl)
+    baseChangePoint W (.some x₁ y₁ h) = .some _ _ hh :=
+  Point.map_some (W' := W) (Algebra.ofId F W.FunctionField) h
 
 /-- The translate of the generic point of `W` by a point `P`. -/
 noncomputable def translatedPoint (P : W.Point) : (W⁄W.FunctionField).toAffine.Point :=
@@ -335,6 +337,8 @@ theorem translation_eq_one_iff {P : W.Point} : translation W P = 1 ↔ P = 0 := 
   rw [translatedPoint, add_eq_left] at hpt
   exact baseChangePoint_injective W (hpt.trans (map_zero (baseChangePoint W)).symm)
 
+/-- **Distinct points induce distinct translations of the function field**: the action of the
+point group is faithful, `translation W P = translation W Q` forcing `P = Q`. -/
 theorem translation_injective : Function.Injective (translation W) := fun P Q h ↦ by
   have hPQ : translation W (P - Q) = 1 := by
     rw [sub_eq_add_neg, translation_add, h, ← translation_add, add_neg_cancel, translation_zero]

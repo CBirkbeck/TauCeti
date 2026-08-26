@@ -5,8 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Coords
+-- Proof-only: evaluation of the coordinate ring, which supplies the equation at the generic point.
+import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Eval
 
 /-!
 # The generic point of a Weierstrass curve
@@ -90,24 +91,10 @@ theorem genericX_eq_algebraMap : genericX W = algebraMap R[X] W.FunctionField X 
 function field**: they are the coordinates of the generic point. -/
 theorem equation_genericX_genericY :
     (W.map (algebraMap R W.FunctionField)).toAffine.Equation (genericX W) (genericY W) := by
-  have key : (evalEvalRingHom (genericX W) (genericY W)).comp
-      (mapRingHom (mapRingHom (algebraMap R W.FunctionField))) =
-      (algebraMap W.CoordinateRing W.FunctionField).comp (CoordinateRing.mk W) := by
-    apply Polynomial.ringHom_ext'
-    · apply Polynomial.ringHom_ext'
-      · ext r
-        have hmk : CoordinateRing.mk W (C (C r)) = algebraMap R W.CoordinateRing r := by
-          rw [IsScalarTower.algebraMap_apply R R[X] W.CoordinateRing, AdjoinRoot.algebraMap_eq]
-          (rfl)
-        simp only [RingHom.comp_apply, hmk,
-          ← IsScalarTower.algebraMap_apply R W.CoordinateRing W.FunctionField]
-        simp
-      · simp [genericX_def]
-    · simp [genericY_def]
-  have h := RingHom.congr_fun key W.polynomial
-  simp only [RingHom.comp_apply, AdjoinRoot.mk_self, map_zero] at h
-  rw [Affine.Equation, Affine.map_polynomial]
-  exact h
+  have h := CoordinateRing.equation_of_algHom
+    (IsScalarTower.toAlgHom R W.CoordinateRing W.FunctionField)
+  rwa [IsScalarTower.toAlgHom_apply, IsScalarTower.toAlgHom_apply, ← genericX_def,
+    ← genericY_def] at h
 
 section Field
 
