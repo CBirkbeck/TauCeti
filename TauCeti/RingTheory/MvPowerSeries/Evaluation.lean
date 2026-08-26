@@ -14,8 +14,9 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.AdicTopology
 Let `S` carry the `I`-adic topology for an ideal `I`, and let `f` be a multivariate power series
 evaluated at a family `a : σ → S` through a continuous coefficient map `φ`. This file bounds the
 value `eval₂ φ a f` by a power of `I`, in the three forms the estimate is used in: the value is
-confined to `I ^ k` as soon as the arguments and the constant term are, and the confinement
-improves when the series vanishes in low total degree or has small coefficients.
+confined to `I ^ k` as soon as the arguments are and `φ` sends the constant term there, and the
+confinement improves when the series vanishes in low total degree or when `φ` sends every
+coefficient into a power of `I`.
 
 All three have the same one-line mechanism. `MvPowerSeries.hasSum_eval₂` writes the value as the
 sum of its monomial values `φ (coeff d f) * ∏ s, a s ^ d s`; each such monomial is checked to lie
@@ -33,12 +34,12 @@ already carried by `HasEval`. Taking `I` to be `IsLocalRing.maximalIdeal S` and 
 
 ## Main results
 
-* `MvPowerSeries.eval₂_mem_pow` : arguments and constant term in `I ^ k` confine the value to
-  `I ^ k`.
+* `MvPowerSeries.eval₂_mem_pow` : arguments in `I ^ k`, and a constant term whose image under
+  `φ` lies in `I ^ k`, confine the value to `I ^ k`.
 * `MvPowerSeries.eval₂_mem_pow_mul` : a series vanishing below total degree `c`, evaluated at
   arguments of `I ^ j`, takes values in `I ^ (c * j)`.
-* `MvPowerSeries.eval₂_mem_pow_add_mul` : if moreover every coefficient lies in `I ^ k`, the
-  value lies in `I ^ (k + c * j)`.
+* `MvPowerSeries.eval₂_mem_pow_add_mul` : if moreover `φ` sends every coefficient into `I ^ k`,
+  the value lies in `I ^ (k + c * j)`.
 
 ## Provenance
 
@@ -95,9 +96,9 @@ variable {S : Type*} [CommRing S] [UniformSpace S] [IsUniformAddGroup S] [Comple
     [T2Space S] [IsTopologicalRing S] [IsLinearTopology S S]
 variable {φ : R →+* S} {a : σ → S} {I : Ideal S}
 
-/-- **The value lies in `I ^ k` when the arguments and the constant term do.** Every monomial of
-positive degree already carries an argument, hence a factor from `I ^ k`; the constant monomial is
-covered by the hypothesis on the constant term. -/
+/-- **The value lies in `I ^ k` when the arguments do and `φ` sends the constant term there.**
+Every monomial of positive degree already carries an argument, hence a factor from `I ^ k`; the
+constant monomial is covered by the hypothesis on the image of the constant term. -/
 theorem eval₂_mem_pow (hφ : Continuous φ) (ha : HasEval a) (hI : IsAdic I) {k : ℕ}
     (hmem : ∀ i, a i ∈ I ^ k) (f : MvPowerSeries σ R)
     (hcc : φ (constantCoeff f) ∈ I ^ k) :
@@ -116,8 +117,8 @@ theorem eval₂_mem_pow (hφ : Continuous φ) (ha : HasEval a) (hI : IsAdic I) {
   have hsum := tsum_mem (hI.isClosed_pow k) hval
   rwa [htot.tsum_eq] at hsum
 
-/-- **Small coefficients improve the bound.** If in addition every coefficient of `f` lies in
-`I ^ k`, the two contributions multiply and the value lies in `I ^ (k + c * j)`. -/
+/-- **Small coefficient images improve the bound.** If in addition `φ` sends every coefficient of
+`f` into `I ^ k`, the two contributions multiply and the value lies in `I ^ (k + c * j)`. -/
 theorem eval₂_mem_pow_add_mul (hφ : Continuous φ) (ha : HasEval a) (hI : IsAdic I) {j c k : ℕ}
     (hmem : ∀ i, a i ∈ I ^ j) (f : MvPowerSeries σ R)
     (hcoeff : ∀ d : σ →₀ ℕ, φ (coeff d f) ∈ I ^ k)
@@ -136,8 +137,8 @@ theorem eval₂_mem_pow_add_mul (hφ : Continuous φ) (ha : HasEval a) (hI : IsA
   rwa [htot.tsum_eq] at hsum
 
 /-- **A series vanishing below total degree `c`, evaluated at arguments of `I ^ j`, takes values
-in `I ^ (c * j)`.** This is the `k = 0` case of `eval₂_mem_pow_add_mul`: every coefficient lies in
-`I ^ 0 = ⊤`, so that hypothesis is vacuous and the exponent collapses. -/
+in `I ^ (c * j)`.** This is the `k = 0` case of `eval₂_mem_pow_add_mul`: every coefficient image
+lies in `I ^ 0 = ⊤`, so that hypothesis is vacuous and the exponent collapses. -/
 theorem eval₂_mem_pow_mul (hφ : Continuous φ) (ha : HasEval a) (hI : IsAdic I) {j c : ℕ}
     (hmem : ∀ i, a i ∈ I ^ j) (f : MvPowerSeries σ R)
     (hcoeff : ∀ d : σ →₀ ℕ, d.degree < c → coeff d f = 0) :
