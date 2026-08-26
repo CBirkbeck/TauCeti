@@ -87,9 +87,10 @@ Two changes were made against the source. Stoll defines the square classes throu
 abbreviation `Units.modPow`; here they are the quotient by `(powMonoidHom 2).range` directly, so
 that TauCeti carries a single spelling of square classes. In the kernel proofs this replaces the
 source's `Units.modPow.unit_eq_one_iff` step by `TauCeti.mk_eq_one_iff_exists_pow`, which says
-the same thing about this spelling, for any commutative monoid. And the two lemmas computing the
-norm of `x - T` are not part of this file: they belong to the source's Step 5, which the
-finiteness result does not use.
+the same thing about this spelling, for any commutative monoid. The two norm computations
+`norm_mk_C_sub_X` and `norm_mk_C_sub_X_add_fCofactor` are the source's Step 5 opening,
+`WeakMordellWeil.lean` lines 277-313, with the goal-reshaping `show` terms of the second replaced
+by named local facts; the rest of that step, the induced norm map on square classes, is not here.
 
 This advances `TauCetiRoadmap/EllipticCurves/README.md`, Layer 6 (README:790-838), whose
 description of this route is "the `x - θ` map into the étale algebra `A = K[X]/(f)`".
@@ -367,6 +368,13 @@ resultant algebra then evaluates it. The two values below are the ones the norm 
 image of the descent map is read off from: the norm of `x - T`, and — at a root of `f`, where
 `x - T` is not a unit and the corrected representative `x - T + fCofactor x` is used instead —
 the norm of that corrected representative, which is a square.
+
+Both are adapted from Michael Stoll's `EllipticCurves`
+(`github.com/MichaelStollBayreuth/EllipticCurves`, Apache-2.0, pinned by
+`TauCetiRoadmap/EllipticCurves/README.md` at `66889eada51a`),
+`EllipticCurves/WeakMordellWeil.lean` lines 277-313, which open that file's Step 5. The statements
+and the arguments are the author's; the second proof's goal-reshaping `show` terms are replaced
+here by named local facts.
 -/
 
 /-- **The norm of `x - T` is `f x`.** -/
@@ -376,9 +384,9 @@ theorem norm_mk_C_sub_X (x : K) :
   rw [AdjoinRoot.norm_mk_eq_resultant W.monic_f, hd, resultant_C_sub_X _ _ _ le_rfl]
 
 /-- **At a root of `f` the norm of the corrected representative is a square.** If `x` is a root
-of `f` then `x - T + fCofactor x` — the element `μX` uses on that branch, and the one representing
-`f' θ` there — has norm `(f' x) ²`. The factorization `f = fCofactor x * (X - C x)` splits the
-resultant into two factors, each equal to `(fCofactor x).eval x = f' x`. -/
+of `f` then `x - T + fCofactor x` — the element `μX` uses on that branch — has norm `(f' x) ^ 2`.
+The factorization `f = fCofactor x * (X - C x)` splits the resultant into two factors, each equal
+to `(fCofactor x).eval x = f' x`. -/
 theorem norm_mk_C_sub_X_add_fCofactor {x : K} (hx : W.f.eval x = 0) :
     Algebra.norm K (AdjoinRoot.mk W.f (C x - X + W.fCofactor x))
       = (3 * x ^ 2 + 2 * W.a₂ * x + W.a₄) ^ 2 := by
@@ -391,24 +399,28 @@ theorem norm_mk_C_sub_X_add_fCofactor {x : K} (hx : W.f.eval x = 0) :
   have hpx : (C x - X + W.fCofactor x).eval x = 3 * x ^ 2 + 2 * W.a₂ * x + W.a₄ := by
     rw [eval_add, ← hqx]
     simp
+  -- `natDegree f = 3` written as the sum of the degrees of the two factors, which is the shape
+  -- `resultant_mul_left` splits
+  have hdeg : (W.fCofactor x).natDegree + (X - C x : K[X]).natDegree = 3 := by
+    rw [hq, natDegree_X_sub_C]
+  -- `fCofactor x` is monic of degree `2`
+  have hlead : (W.fCofactor x).coeff 2 = 1 := by
+    rw [← hq]
+    exact (W.monic_fCofactor x).coeff_natDegree
+  -- the corrected representative is `C x - X` plus a multiple of `fCofactor x`
+  have hmul : C x - X + W.fCofactor x = (C x - X) + W.fCofactor x * 1 := by ring
   rw [AdjoinRoot.norm_mk_eq_resultant W.monic_f, hp, W.natDegree_f]
   conv_lhs => rw [W.f_eq_mul_of_eval_eq_zero hx]
-  rw [show (3 : ℕ) = (W.fCofactor x).natDegree + (X - C x).natDegree by
-        rw [hq, natDegree_X_sub_C],
-    resultant_mul_left _ _ _ 2 hp.le, hq, natDegree_X_sub_C]
+  rw [← hdeg, resultant_mul_left _ _ _ 2 hp.le, hq, natDegree_X_sub_C]
   -- the factor coming from `X - C x` is the value at `x`
-  rw [show (X - C x) = (X - C x) ^ 1 by rw [pow_one],
-    resultant_X_sub_C_pow_left _ _ _ _ hp.le, pow_one, hpx]
+  rw [← pow_one (X - C x : K[X]), resultant_X_sub_C_pow_left _ _ _ _ hp.le, pow_one, hpx]
   -- the factor coming from `fCofactor x` is a resultant against `C x - X`, since
   -- `fCofactor x` is monic of degree `2` and the added multiple of it drops out
   have hres : (W.fCofactor x).resultant (C x - X) 2 2 = 3 * x ^ 2 + 2 * W.a₂ * x + W.a₄ := by
     have h := resultant_add_right_deg (W.fCofactor x) (C x - X) 2 1 1 (by compute_degree!)
-    simp only [show (1 : ℕ) + 1 = 2 from rfl, pow_one] at h
-    rw [h, show (W.fCofactor x).coeff 2 = 1 by
-        rw [← hq]; exact (W.monic_fCofactor x).coeff_natDegree,
-      one_mul, resultant_C_sub_X _ _ _ hq.le, hqx]
-  rw [show C x - X + W.fCofactor x = (C x - X) + W.fCofactor x * 1 by ring,
-    resultant_add_mul_right (W.fCofactor x) (C x - X) 1 2 2 (by simp) hq.le, hres]
+    simp only [one_add_one_eq_two, pow_one] at h
+    rw [h, hlead, one_mul, resultant_C_sub_X _ _ _ hq.le, hqx]
+  rw [hmul, resultant_add_mul_right (W.fCofactor x) (C x - X) 1 2 2 (by simp) hq.le, hres]
   ring
 
 /-- The étale algebra associated to the cofactor of `f`. -/

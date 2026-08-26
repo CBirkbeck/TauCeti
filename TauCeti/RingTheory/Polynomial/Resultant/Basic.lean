@@ -42,7 +42,9 @@ theorem resultant_C_sub_X (f : R[X]) (x : R) (m : ℕ) (hm : f.natDegree ≤ m) 
   have h : f.resultant (X - C x) m 1 = (-1) ^ m * f.eval x := by
     have := resultant_X_sub_C_pow_right f x m 1 hm
     rwa [pow_one, mul_one, pow_one] at this
-  rw [show C x - X = C (-1 : R) * (X - C x) by simp, resultant_C_mul_right, h,
-    ← mul_assoc, ← pow_add, ← two_mul, pow_mul, neg_one_sq, one_pow, one_mul]
+  -- `C x - X` is `X - C x` scaled by the constant `-1`
+  have hneg : C x - X = C (-1 : R) * (X - C x) := by simp
+  rw [hneg, resultant_C_mul_right, h, ← mul_assoc, ← pow_add, ← two_mul, pow_mul, neg_one_sq,
+    one_pow, one_mul]
 
 end Polynomial
