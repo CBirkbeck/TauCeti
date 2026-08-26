@@ -17,10 +17,10 @@ continuous `φ : A → B` into a complete `B` extends across `ρ : A → A⟨T/s
 unit and every fraction `φ t / φ s` is power-bounded
 (`TauCeti.Huber.existsUnique_continuous_ringHom_completion_locTopology`). Wedhorn's Lemma 8.1
 replaces those two algebraic conditions by a single *geometric* one — that `Spa(φ)` factors
-through the rational subset `U = R(T/s)`. This file carries that replacement out only as far as
-the repository allows, which is not all the way: **Lemma 8.1 is proved here.**
+through the rational subset `U = R(T/s)`. **This file carries that replacement out: Lemma 8.1 is
+proved here.**
 
-Wedhorn's proof has three steps, and the first two are proved here unconditionally:
+Wedhorn's proof has three steps, and all three are discharged here:
 
 > As `Spa(φ)` factors through `U`, we have `|φ(t)|_w ≤ |φ(s)|_w ≠ 0` for all `w ∈ Spa B` and for
 > all `t ∈ T`. This implies `φ(s) ∈ B^×` by Proposition 7.52. Moreover, for all `w ∈ Spa B` we
@@ -50,9 +50,25 @@ The other half of Lemma 8.1, that `Spa ρ : Spa A⟨T/s⟩ → Spa A` factors th
 
 Wedhorn's Proposition 7.52(1) — that `f ∈ B⁺` as soon as `|f(x)| ≤ 1` for all `x ∈ Spa B` — is
 what turns the sub-unit bound on `φ t / φ s` into membership in `B⁺`. It is supplied by
-`TauCeti.ValuationSpectrum.mem_of_forall_vle_one`, landed in #4552. Its hypotheses on the target
-pair are that `B⁺` is open and integrally closed in `B`; those are `hopenB` and
-`[IsIntegrallyClosedIn Bplus B]` on the main result below.
+`TauCeti.ValuationSpectrum.mem_of_forall_vle_one`, landed in #4552. It asks three things of the
+target:
+
+* `hopenB : IsOpen (Bplus : Set B)`,
+* `[IsIntegrallyClosedIn Bplus B]`,
+* `[IsHuberRing B]`.
+
+The last is not a restriction added to make the proof go through: Wedhorn states Lemma 8.1 for a
+continuous homomorphism into a *complete affinoid ring*, and an affinoid ring is a Huber pair.
+
+Openness of the maximal ideals of `B` is carried separately, as `hmax`, and **is not** derivable
+from `[IsHuberRing B]`. The route through
+`TauCeti.Ideal.isOpen_of_isMaximal_of_isOpen_isTopologicallyNilpotent` needs
+`[IsLinearTopology B B]` — a basis of zero-neighbourhoods by *ideals* — which no Huber instance
+supplies and which would defeat the purpose: by `TauCeti.Huber.IsTateRing.isOpen_iff_eq_top` an
+ideal of a Tate ring is open exactly when it is `⊤`, so a nonzero Tate ring has neither a proper
+open ideal nor a linear topology, and Tate targets are the ones Wedhorn's §8 is about. `hmax`
+therefore stays a hypothesis on `(B, B⁺)`, exactly as it is on
+`TauCeti.ValuationSpectrum.isUnit_of_forall_not_vle_zero`, which is where it is spent.
 
 ## References
 
@@ -142,7 +158,9 @@ Proposition 7.52(1), applied through `mem_of_forall_vle_one`; its hypotheses on 
 remaining half of `B⁺` being a ring of integral elements that the proof uses, namely `B⁺ ⊆ B°`.
 
 Asking `B` to be Huber is not a restriction added here: Wedhorn states Lemma 8.1 for a continuous
-homomorphism into a *complete affinoid ring*, and an affinoid ring is a Huber pair.
+homomorphism into a *complete affinoid ring*, and an affinoid ring is a Huber pair. It does not,
+however, discharge `hmax`: see the module docstring for why openness of the maximal ideals cannot
+be derived from it.
 
 These are properties of the pair `(B, B⁺)` alone: they mention neither `φ` nor `T` nor `s`. The
 per-morphism algebraic conditions of the universal property are replaced by the single geometric
