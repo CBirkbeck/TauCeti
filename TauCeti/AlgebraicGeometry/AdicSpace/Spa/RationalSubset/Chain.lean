@@ -18,8 +18,8 @@ Wedhorn refines a rational subset `U = R(T/s)` into a descending chain of ration
 Spa (A, A⁺) ⊇ X₀ ⊇ X₁ ⊇ ⋯ ⊇ Xₙ = U
 ```
 
-in which every step adjoins a single numerator: `X₀ = R({u}/s)` for an element `u` strictly
-dominated by `s` throughout `U`, and `Xᵢ` adjoins the `i`-th element of `T`. The point of the
+in which every step adjoins a single numerator: `X₀ = R({u}/s)` for an element `u` dominated by
+`s` throughout `U`, and `Xᵢ` adjoins the `i`-th element of `T`. The point of the
 chain is that each of its steps is an elementary one, so a statement about restriction maps
 between rational localisations that is stable under composition need only be proved for a single
 adjoined numerator; this is how Wedhorn's Proposition 8.30 reduces flatness to an elementary case.
@@ -34,6 +34,10 @@ fraction `s/u`. Here `u : A` is an arbitrary ring element and `X₀` is the rati
 with `v(s) ≠ 0`, and for a unit the second condition follows from the first, since `v(u) ≠ 0`.
 Nothing in the chain needs invertibility, so it is not assumed; a caller holding Corollary 7.32's
 unit `ϖ` applies these results with `u := (ϖ : A)`.
+
+Strictness is likewise not needed. Wedhorn's `u` satisfies `v(u) < v(s)` on `U`, but the chain
+only ever consumes the non-strict `v(u) ≤ v(s)`, so that is what the results below assume; a
+caller holding the strict form passes `(hu v hv).vle`.
 
 Quasi-compactness of `U` is likewise not a hypothesis here. It is the input to Corollary 7.32, and
 enters only when a caller discharges the domination hypothesis by that route.
