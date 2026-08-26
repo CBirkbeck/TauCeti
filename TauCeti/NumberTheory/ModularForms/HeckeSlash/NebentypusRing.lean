@@ -108,8 +108,7 @@ noncomputable def twistedHeckeSlashRingLinearMap :
   -- non-exposed `def`, so that lemma's left-hand side does not match. The step to the
   -- `Finsupp.sum` shape is `Finsupp.linearCombination_apply`, and
   -- `HeckeCosetModule.sum_single_index` is the wrapper that exists for what follows.
-  (Finsupp.linearCombination_apply (R := ℤ) (v := fun D ↦ twistedHeckeSlashSumEnd k χ D) _).trans
-    (HeckeCosetModule.sum_single_index ℤ (zero_smul _ _))
+  (Finsupp.linearCombination_apply ℤ _).trans (HeckeCosetModule.sum_single_index ℤ (zero_smul _ _))
 
 end Ring
 
