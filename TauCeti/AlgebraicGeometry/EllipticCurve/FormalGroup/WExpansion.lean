@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Weierstrass
-public import Mathlib.RingTheory.PowerSeries.Basic
 public import TauCeti.RingTheory.PowerSeries.SelfConvolution
 
 /-!
@@ -33,9 +32,9 @@ vanishing below degree `3` that does.
 * `TauCeti.formalW_recurrence`: **Silverman IV.1.1(a), existence** — `w(z)` satisfies the
   displayed equation as an identity of power series.
 * `TauCeti.eq_formalW_of_recurrence`: **Silverman IV.1.1(a), uniqueness** — any power series
-  vanishing below degree `3` that satisfies the equation equals `w(z)`. The two together are
-  the full statement, that `w(z)` is *the* such series.
-* `TauCeti.formalWCoeff_of_three_lt`: the coefficientwise recurrence — each coefficient of
+  with vanishing constant coefficient that satisfies the equation equals `w(z)`. The two
+  together are the full statement, that `w(z)` is *the* such series.
+* `TauCeti.formalWCoeff_recurrence`: the coefficientwise recurrence — each coefficient of
   `w(z)` above the leading one, from the strictly earlier ones. This is the form to compute
   with; the strong recursion behind `formalWCoeff` is an implementation detail.
 * `TauCeti.coeff_formalW_recurrence_rhs`: the coefficientwise form of that equation's
@@ -97,7 +96,7 @@ variable {R : Type*} [CommRing R]
 coefficients `ih` of `w`.
 
 This is the implementation of the strong recursion and is deliberately not part of the API;
-`formalWCoeff_of_three_lt` is the recurrence to use downstream. -/
+`formalWCoeff_recurrence` is the recurrence to use downstream. -/
 private def formalWStep (W : WeierstrassCurve R) (n : ℕ) (ih : ∀ m, m < n → R) : R :=
   if n < 3 then 0 else if n = 3 then 1 else
   let w : ℕ → R := fun m => if h : m < n then ih m h else 0
@@ -148,7 +147,7 @@ theorem formalWCoeff_three : formalWCoeff W 3 = 1 := by
 /-- The recurrence characterising the coefficients of `w(z)` above the leading term: each is
 determined by the strictly earlier ones. This is the coefficientwise form of
 `formalW_recurrence`, and the intended way to compute with `formalWCoeff`. -/
-theorem formalWCoeff_of_three_lt {n : ℕ} (hn : 3 < n) :
+theorem formalWCoeff_recurrence {n : ℕ} (hn : 3 < n) :
     formalWCoeff W n =
       W.a₁ * formalWCoeff W (n - 1) + W.a₂ * formalWCoeff W (n - 2) +
         W.a₃ * PowerSeries.selfConvTwo (formalWCoeff W) n +
@@ -167,6 +166,7 @@ theorem formalWCoeff_of_three_lt {n : ℕ} (hn : 3 < n) :
     PowerSeries.selfConvThree_truncate _ (formalWCoeff_zero W) n]
 
 /-- The unit-part coefficients are the coefficients of `w(z)` shifted down by three. -/
+@[simp]
 theorem formalUCoeff_apply (n : ℕ) : formalUCoeff W n = formalWCoeff W (n + 3) := rfl
 
 @[simp]
@@ -185,7 +185,9 @@ theorem coeff_formalU (n : ℕ) : PowerSeries.coeff n (formalU W) = formalUCoeff
 theorem constantCoeff_formalU : PowerSeries.constantCoeff (formalU W) = 1 := by
   rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, coeff_formalU, formalUCoeff_zero]
 
-/-- The unit part is one: `w(z) = z ^ 3 * u(z)`, with `u(0) = 1` by `constantCoeff_formalU`. -/
+/-- The `w`-expansion factors through its unit part: `w(z) = z ^ 3 * u(z)`. The unit part is a
+unit in the sense that its *constant coefficient* is `1` (`constantCoeff_formalU`); the series
+`u(z)` itself is of course not `1`. -/
 theorem formalW_eq_X_pow_mul_formalU : formalW W = PowerSeries.X ^ 3 * formalU W := by
   ext n
   rw [coeff_formalW, PowerSeries.coeff_X_pow_mul']
@@ -226,11 +228,11 @@ theorem coeff_formalW_recurrence_rhs (w : PowerSeries R) (n : ℕ) :
       PowerSeries.C a * PowerSeries.X ^ 2 * f = PowerSeries.C a * (PowerSeries.X ^ 2 * f) :=
     fun a f => mul_assoc _ _ _
   rw [hX1 W.a₁ w, hX2 W.a₂ w, hX1 W.a₄ (w ^ 2)]
-  rw [map_add, map_add, map_add, map_add, map_add, PowerSeries.coeff_C_mul,
-    PowerSeries.coeff_C_mul, PowerSeries.coeff_C_mul, PowerSeries.coeff_C_mul,
-    PowerSeries.coeff_C_mul, PowerSeries.coeff_X_pow, PowerSeries.coeff_X_pow_mul',
-    PowerSeries.coeff_X_pow_mul', PowerSeries.coeff_X_pow_mul',
-    PowerSeries.coeff_pow_two, PowerSeries.coeff_pow_two, PowerSeries.coeff_pow_three]
+  -- Two passes, and the order is load-bearing: `coeff_pow_three` also matches the leading
+  -- `X ^ 3`, so that term must be resolved by `coeff_X_pow` before the convolution lemmas run.
+  simp only [map_add, PowerSeries.coeff_C_mul, PowerSeries.coeff_X_pow_mul',
+    PowerSeries.coeff_X_pow]
+  simp only [PowerSeries.coeff_pow_two, PowerSeries.coeff_pow_three]
 
 /-- **Silverman IV.1.1(a), existence.** The `w`-expansion satisfies the equation obtained from
 the Weierstrass equation of `W` by the substitution `x = z / w`, `y = -1 / w`. -/
@@ -251,9 +253,9 @@ theorem formalW_recurrence :
   simp only [dite_eq_ite]
   rcases lt_trichotomy n 3 with h | h | h
   · interval_cases n <;>
-      simp [PowerSeries.selfConvTwo, PowerSeries.selfConvThree, Finset.sum_range_succ]
+      simp [PowerSeries.selfConvTwo_def, PowerSeries.selfConvThree_def, Finset.sum_range_succ]
   · subst h
-    norm_num [PowerSeries.selfConvTwo, PowerSeries.selfConvThree, Finset.sum_range_succ]
+    norm_num [PowerSeries.selfConvTwo_def, PowerSeries.selfConvThree_def, Finset.sum_range_succ]
   · have h1 : ¬ n < 3 := by omega
     have h2 : ¬ n = 3 := by omega
     have h3 : 1 ≤ n := by omega
@@ -266,16 +268,20 @@ theorem formalW_recurrence :
       PowerSeries.selfConvThree_truncate _ (formalWCoeff_zero W) n]
     ring
 
-/-- **Silverman IV.1.1(a), uniqueness.** A power series vanishing below degree `3` and satisfying
-the `w`-equation is `formalW W`. Together with `formalW_recurrence` this is the full statement of
-Silverman IV.1.1(a): `formalW W` is *the* such series.
+/-- **Silverman IV.1.1(a), uniqueness.** A power series with vanishing constant coefficient that
+satisfies the `w`-equation is `formalW W`. Together with `formalW_recurrence` this is the full
+statement of Silverman IV.1.1(a): `formalW W` is *the* such series.
+
+Only `coeff 0 w = 0` is assumed: the equation at degrees `1` and `2` then forces those two
+coefficients to vanish as well, because every occurrence of `w` on its right-hand side is
+multiplied by `X` or sits in a square or a cube.
 
 The equation determines each coefficient from the strictly earlier ones, so the proof is a strong
 induction: at index `n` the right-hand side involves `w` only below `n`, by
 `coeff_formalW_recurrence_rhs` together with `PowerSeries.selfConvTwo_congr` and
 `PowerSeries.selfConvThree_congr`. -/
 theorem eq_formalW_of_recurrence (w : PowerSeries R)
-    (hlow : ∀ k, k < 3 → PowerSeries.coeff k w = 0)
+    (h0 : PowerSeries.coeff 0 w = 0)
     (hw : w =
       PowerSeries.X ^ 3 +
         PowerSeries.C W.a₁ * PowerSeries.X * w +
@@ -284,6 +290,23 @@ theorem eq_formalW_of_recurrence (w : PowerSeries R)
         PowerSeries.C W.a₄ * PowerSeries.X * w ^ 2 +
         PowerSeries.C W.a₆ * w ^ 3) :
     w = formalW W := by
+  -- Degrees `1` and `2` are forced, so the induction below can still start from degree `3`.
+  have h1 : PowerSeries.coeff 1 w = 0 := by
+    have hL := congrArg (PowerSeries.coeff 1) hw
+    rw [coeff_formalW_recurrence_rhs] at hL
+    norm_num [PowerSeries.selfConvTwo_def, PowerSeries.selfConvThree_def,
+      Finset.sum_range_succ, h0] at hL
+    exact hL
+  have h2 : PowerSeries.coeff 2 w = 0 := by
+    have hL := congrArg (PowerSeries.coeff 2) hw
+    rw [coeff_formalW_recurrence_rhs] at hL
+    norm_num [PowerSeries.selfConvTwo_def, PowerSeries.selfConvThree_def,
+      Finset.sum_range_succ, h0, h1] at hL
+    exact hL
+  have hlow : ∀ k, k < 3 → PowerSeries.coeff k w = 0 := by
+    intro k hk
+    interval_cases k
+    exacts [h0, h1, h2]
   ext n
   induction n using Nat.strong_induction_on with
   | _ n ih =>
@@ -296,7 +319,7 @@ theorem eq_formalW_of_recurrence (w : PowerSeries R)
       rw [coeff_formalW_recurrence_rhs] at hL
       rw [hL, coeff_formalW, formalWCoeff_eq_step]
       unfold formalWStep
-      norm_num [PowerSeries.selfConvTwo, PowerSeries.selfConvThree, Finset.sum_range_succ,
+      norm_num [PowerSeries.selfConvTwo_def, PowerSeries.selfConvThree_def, Finset.sum_range_succ,
         hlow 0 (by norm_num), hlow 1 (by norm_num), hlow 2 (by norm_num)]
     · have hL := congrArg (PowerSeries.coeff n) hw
       rw [coeff_formalW_recurrence_rhs] at hL

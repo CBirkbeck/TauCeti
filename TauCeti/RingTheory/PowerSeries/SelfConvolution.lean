@@ -31,6 +31,8 @@ defined through these convolutions well founded.
 
 ## Main results
 
+* `PowerSeries.selfConvTwo_def`, `PowerSeries.selfConvThree_def`: the defining formulas, as
+  named lemmas. Rewrite with these rather than unfolding the definitions.
 * `PowerSeries.coeff_pow_two`, `PowerSeries.coeff_pow_three`: those sums do compute the
   coefficients of `w ^ 2` and `w ^ 3`.
 * `PowerSeries.selfConvTwo_congr`, `PowerSeries.selfConvThree_congr`: for a function vanishing at
@@ -61,13 +63,25 @@ namespace PowerSeries
 
 variable {R : Type*} [Semiring R]
 
-/-- The `n`-th coefficient of the square of the series with coefficients `f`. -/
+/-- The `n`-th coefficient of the square of the series with coefficients `f`.
+
+The body is `@[expose]`d because `selfConvTwo_def` below — the named lemma consumers are meant
+to rewrite with — is itself only provable when the body is visible to an exported theorem. -/
 @[expose] def selfConvTwo (f : ℕ → R) (n : ℕ) : R :=
   ∑ i ∈ range (n + 1), f i * f (n - i)
+
+/-- The defining formula for `selfConvTwo`. -/
+theorem selfConvTwo_def (f : ℕ → R) (n : ℕ) :
+    selfConvTwo f n = ∑ i ∈ range (n + 1), f i * f (n - i) := rfl
 
 /-- The `n`-th coefficient of the cube of the series with coefficients `f`. -/
 @[expose] def selfConvThree (f : ℕ → R) (n : ℕ) : R :=
   ∑ i ∈ range (n + 1), ∑ j ∈ range (n - i + 1), f i * f j * f (n - i - j)
+
+/-- The defining formula for `selfConvThree`. -/
+theorem selfConvThree_def (f : ℕ → R) (n : ℕ) :
+    selfConvThree f n = ∑ i ∈ range (n + 1), ∑ j ∈ range (n - i + 1), f i * f j * f (n - i - j) :=
+  rfl
 
 /-- `selfConvTwo` computes the coefficients of a square. -/
 theorem coeff_pow_two (w : PowerSeries R) (n : ℕ) :
