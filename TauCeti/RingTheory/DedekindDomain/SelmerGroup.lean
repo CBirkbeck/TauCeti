@@ -7,6 +7,8 @@ module
 
 public import Mathlib.RingTheory.DedekindDomain.SelmerGroup
 
+import Mathlib.RingTheory.DedekindDomain.FiniteAdeleRing
+
 /-!
 # Complements on the `v`-adic valuation of a unit
 
@@ -25,13 +27,19 @@ a representative.
   `valuationOfNeZero` exactly when its `v`-adic `valuation` is `1`.
 * `IsDedekindDomain.HeightOneSpectrum.valuationOfNeZeroMod_mk_eq_one_iff`: the class of a unit
   has trivial `v`-adic `valuationOfNeZeroMod n` exactly when `n` divides its `v`-adic valuation.
+* `IsDedekindDomain.HeightOneSpectrum.dvd_toAdd_valuationOfNeZero`: if the `v`-adic valuation of
+  a unit is the `n`-th power of that of another unit, then `n` divides its `v`-adic order.
+* `IsDedekindDomain.HeightOneSpectrum.finite_setOf_valuation_ne_one`: a nonzero element has
+  trivial valuation at all but finitely many primes.
 
 Michael Stoll's elliptic-curves formalisation
 (`github.com/MichaelStollBayreuth/EllipticCurves`, at the `EllipticCurves` roadmap's pin
 `66889eada51a`, Apache 2.0, by Michael Stoll) reaches for a
 `HeightOneSpectrum.valuationOfNeZero_eq_iff` in this role; no such lemma exists at our Mathlib
-pin, so `valuationOfNeZero_eq_one_iff` supplies it. `valuationOfNeZeroMod_mk_eq_one_iff` is
-adapted from that source's `EllipticCurves/Mathlib/Basic.lean`. Following this repository's
+pin, so `valuationOfNeZero_eq_one_iff` supplies it, and `valuationOfNeZero_eq_iff` is the general
+form. `valuationOfNeZeroMod_mk_eq_one_iff`, `dvd_toAdd_valuationOfNeZero` and
+`finite_setOf_valuation_ne_one` are adapted from that source's
+`EllipticCurves/Mathlib/Basic.lean`. Following this repository's
 convention for adapted material, the upstream authorship is credited here rather than in the
 copyright header.
 -/
@@ -67,6 +75,34 @@ theorem valuationOfNeZeroMod_mk_eq_one_iff (v : HeightOneSpectrum R) (n : ℕ) (
   refine (QuotientGroup.eq_one_iff _).trans ?_
   rw [Multiplicative.mem_toSubgroup, AddSubgroup.mem_zmultiples_iff]
   exact ⟨fun ⟨k, hk⟩ ↦ ⟨k, by rw [← hk]; ring⟩, fun ⟨k, hk⟩ ↦ ⟨k, by rw [hk]; ring⟩⟩
+
+/-- The `Multiplicative ℤ`-valued valuation of a unit is determined by the `ℤᵐ⁰`-valued one. -/
+theorem valuationOfNeZero_eq_iff (v : HeightOneSpectrum R) (u : Kˣ) (m : Multiplicative ℤ) :
+    v.valuationOfNeZero u = m ↔ v.valuation K (u : K) = (m : WithZero (Multiplicative ℤ)) := by
+  rw [← WithZero.coe_inj, valuationOfNeZero_eq]
+
+/-- If the valuation of a unit `u` is the `n`-th power of the valuation of a unit `z`, then the
+`v`-adic order of `u` is divisible by `n`. -/
+theorem dvd_toAdd_valuationOfNeZero (v : HeightOneSpectrum R) {n : ℕ} {u z : Kˣ}
+    (h : v.valuation K (u : K) = v.valuation K (z : K) ^ n) :
+    (n : ℤ) ∣ Multiplicative.toAdd (v.valuationOfNeZero u) := by
+  have hu : v.valuationOfNeZero u = v.valuationOfNeZero z ^ n := by
+    rw [valuationOfNeZero_eq_iff]
+    push_cast
+    rw [valuationOfNeZero_eq, h]
+  exact ⟨Multiplicative.toAdd (v.valuationOfNeZero z), by rw [hu]; simp [toAdd_pow]⟩
+
+/-- A nonzero element of the fraction field of a Dedekind domain has trivial valuation at all
+but finitely many primes. -/
+theorem finite_setOf_valuation_ne_one {x : K} (hx : x ≠ 0) :
+    {v : HeightOneSpectrum R | v.valuation K x ≠ 1}.Finite := by
+  refine ((Support.finite R x).union (Support.finite R x⁻¹)).subset fun v hv ↦ ?_
+  rcases lt_or_gt_of_ne hv with h | h
+  · refine .inr ?_
+    rw [Support, Set.mem_ofPred_eq, map_inv₀,
+      one_lt_inv₀ (zero_lt_iff.mpr ((Valuation.ne_zero_iff _).mpr hx))]
+    exact h
+  · exact .inl h
 
 end IsDedekindDomain.HeightOneSpectrum
 
