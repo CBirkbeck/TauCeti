@@ -17,7 +17,8 @@ denominators turns it into
 `w = z ^ 3 + a₁ z w + a₂ z ^ 2 w + a₃ w ^ 2 + a₄ z w ^ 2 + a₆ w ^ 3`,
 
 which determines a unique power series `w(z) ∈ R⟦z⟧` with no terms below `z ^ 3`. This file
-constructs that series and proves it satisfies the equation.
+constructs that series, proves it satisfies the equation, and proves it is the only series
+vanishing below degree `3` that does.
 
 ## Main definitions
 
@@ -28,9 +29,13 @@ constructs that series and proves it satisfies the equation.
 
 ## Main results
 
-* `TauCeti.formalW_recurrence`: **Silverman IV.1.1(a)**, that `w(z)` satisfies
-  the displayed equation as an identity of power series.
-* `TauCeti.coeff_formalW_rhs`: the coefficientwise form of that equation's right-hand side.
+* `TauCeti.formalW_recurrence`: **Silverman IV.1.1(a), existence** — `w(z)` satisfies the
+  displayed equation as an identity of power series.
+* `TauCeti.eq_formalW_of_wEquation`: **Silverman IV.1.1(a), uniqueness** — any power series
+  vanishing below degree `3` that satisfies the equation equals `w(z)`. The two together are
+  the full statement, that `w(z)` is *the* such series.
+* `TauCeti.coeff_wEquation`: the coefficientwise form of that equation's right-hand side, for
+  an arbitrary series; this is what makes the uniqueness induction go through.
 * `TauCeti.formalWCoeff_zero`, `_one`, `_two`, `_three`: the series begins
   `w(z) = z ^ 3 + ⋯`.
 
@@ -57,9 +62,16 @@ by `TauCetiRoadmap/EllipticCurves/README.md` at `dev/hasse-weil @ 513e83879e2f`)
 
 Changes from the source. The source states its two convolution-coefficient lemmas
 (`coeff_formalW_sq`, `coeff_formalW_cube`) only for `formalW`, although neither proof uses
-anything about it; here they are `coeff_mk_pow_two` and `coeff_mk_pow_three`, for an arbitrary
-coefficient function. The truncation lemmas likewise assumed `formalW` and are stated here for
-any `f` vanishing at `0`. The source's own generic formal-group scaffolding (`FormalGroupLaw`,
+anything about it; here they are `coeff_pow_two` and `coeff_pow_three`, for an arbitrary series.
+The truncation lemmas likewise assumed `formalW` and are stated here for any `f` vanishing at
+`0`, as consequences of the sharper `selfConvTwo_congr` and `selfConvThree_congr`.
+
+The source does **not** prove uniqueness: its closing note records that the factoring step is
+blocked by a `PowerSeries` typeclass gap (`RightDistribClass` and `IsRightCancelAdd` failing to
+synthesize), and names coefficient induction as the untried alternative. That is the route
+`eq_formalW_of_wEquation` takes here, so this file proves a result the source leaves open.
+
+The source's own generic formal-group scaffolding (`FormalGroupLaw`,
 `bmul`, `binv`, `bpow`, `bcomp`) is deliberately not ported: it predates and duplicates Mathlib's
 `Mathlib/RingTheory/FormalGroup/Basic.lean`.
 -/
@@ -88,40 +100,64 @@ def selfConvTwo (f : ℕ → R) (n : ℕ) : R :=
 def selfConvThree (f : ℕ → R) (n : ℕ) : R :=
   ∑ i ∈ range (n + 1), ∑ j ∈ range (n - i + 1), f i * f j * f (n - i - j)
 
-theorem coeff_mk_pow_two (f : ℕ → R) (n : ℕ) :
-    PowerSeries.coeff n (PowerSeries.mk f ^ 2) = selfConvTwo f n := by
+theorem coeff_pow_two (w : PowerSeries R) (n : ℕ) :
+    PowerSeries.coeff n (w ^ 2) = selfConvTwo (fun k => PowerSeries.coeff k w) n := by
   rw [sq, PowerSeries.coeff_mul,
     Finset.Nat.sum_antidiagonal_eq_sum_range_succ
-      (M := R) (fun i j => PowerSeries.coeff i (PowerSeries.mk f) *
-        PowerSeries.coeff j (PowerSeries.mk f)) n]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [PowerSeries.coeff_mk, PowerSeries.coeff_mk]
+      (M := R) (fun i j => PowerSeries.coeff i w * PowerSeries.coeff j w) n]
+  rfl
 
-theorem coeff_mk_pow_three (f : ℕ → R) (n : ℕ) :
-    PowerSeries.coeff n (PowerSeries.mk f ^ 3) = selfConvThree f n := by
-  have h : (PowerSeries.mk f ^ 3 : PowerSeries R) = PowerSeries.mk f * PowerSeries.mk f ^ 2 := by
-    ring
+theorem coeff_pow_three (w : PowerSeries R) (n : ℕ) :
+    PowerSeries.coeff n (w ^ 3) = selfConvThree (fun k => PowerSeries.coeff k w) n := by
+  have h : (w ^ 3 : PowerSeries R) = w * w ^ 2 := by ring
   rw [h, PowerSeries.coeff_mul,
     Finset.Nat.sum_antidiagonal_eq_sum_range_succ
-      (M := R) (fun i j => PowerSeries.coeff i (PowerSeries.mk f) *
-        PowerSeries.coeff j (PowerSeries.mk f ^ 2)) n]
-  simp only [coeff_mk_pow_two, PowerSeries.coeff_mk, selfConvThree, selfConvTwo, Finset.mul_sum]
+      (M := R) (fun i j => PowerSeries.coeff i w * PowerSeries.coeff j (w ^ 2)) n]
+  simp only [coeff_pow_two, selfConvThree, selfConvTwo, Finset.mul_sum]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
-/-- Truncating `f` above `n` does not change `selfConvTwo f n`, when `f 0 = 0`. -/
-theorem selfConvTwo_truncate (f : ℕ → R) (hf : f 0 = 0) (n : ℕ) :
-    selfConvTwo (fun m => if m < n then f m else 0) n = selfConvTwo f n := by
+/-- `selfConvTwo f n` depends only on the values of `f` strictly below `n`, provided `f`
+vanishes at `0`: the two extreme terms of the convolution each carry a factor `f 0`. -/
+theorem selfConvTwo_congr {f g : ℕ → R} (hf : f 0 = 0) (hg : g 0 = 0) {n : ℕ}
+    (h : ∀ m, m < n → f m = g m) : selfConvTwo f n = selfConvTwo g n := by
   simp only [selfConvTwo]
   refine Finset.sum_congr rfl fun i hi => ?_
   simp only [Finset.mem_range, Nat.lt_succ_iff] at hi
-  rcases eq_or_lt_of_le hi with h | h
-  · subst h
-    simp [hf]
-  · rcases eq_or_lt_of_le (Nat.sub_le n i) with h' | h'
+  by_cases hi' : i < n
+  · by_cases hk : n - i < n
+    · rw [h i hi', h _ hk]
     · have : i = 0 := by omega
       subst this
-      simp [hf]
-    · simp [h, h']
+      simp [hf, hg]
+  · have : i = n := by omega
+    subst this
+    simp [hf, hg]
+
+/-- The cube analogue of `selfConvTwo_congr`. -/
+theorem selfConvThree_congr {f g : ℕ → R} (hf : f 0 = 0) (hg : g 0 = 0) {n : ℕ}
+    (h : ∀ m, m < n → f m = g m) : selfConvThree f n = selfConvThree g n := by
+  simp only [selfConvThree]
+  refine Finset.sum_congr rfl fun i hi => ?_
+  refine Finset.sum_congr rfl fun j hj => ?_
+  simp only [Finset.mem_range, Nat.lt_succ_iff] at hi hj
+  by_cases hi' : i < n
+  · by_cases hj' : j < n
+    · by_cases hk : n - i - j < n
+      · rw [h i hi', h j hj', h _ hk]
+      · have : i = 0 := by omega
+        subst this
+        simp [hf, hg]
+    · have : i = 0 := by omega
+      subst this
+      simp [hf, hg]
+  · have : i = n := by omega
+    subst this
+    simp [hf, hg]
+
+/-- Truncating `f` above `n` does not change `selfConvTwo f n`, when `f 0 = 0`. -/
+theorem selfConvTwo_truncate (f : ℕ → R) (hf : f 0 = 0) (n : ℕ) :
+    selfConvTwo (fun m => if m < n then f m else 0) n = selfConvTwo f n :=
+  selfConvTwo_congr (by by_cases h : 0 < n <;> simp [h, hf]) hf fun m hm => by simp [hm]
 
 /-- The shifted form of `selfConvTwo_truncate` needed at index `n - 1`. -/
 theorem selfConvTwo_truncate_sub_one (f : ℕ → R) (n : ℕ) (hn : 1 ≤ n) :
@@ -135,28 +171,8 @@ theorem selfConvTwo_truncate_sub_one (f : ℕ → R) (n : ℕ) (hn : 1 ≤ n) :
 
 /-- Truncating `f` above `n` does not change `selfConvThree f n`, when `f 0 = 0`. -/
 theorem selfConvThree_truncate (f : ℕ → R) (hf : f 0 = 0) (n : ℕ) :
-    selfConvThree (fun m => if m < n then f m else 0) n = selfConvThree f n := by
-  simp only [selfConvThree]
-  refine Finset.sum_congr rfl fun i hi => ?_
-  refine Finset.sum_congr rfl fun j hj => ?_
-  simp only [Finset.mem_range, Nat.lt_succ_iff] at hi hj
-  by_cases hi' : i < n
-  · by_cases hj' : j < n
-    · by_cases hk : n - i - j < n
-      · simp [hi', hj', hk]
-      · have h0 : i = 0 := by omega
-        have h1 : j = 0 := by omega
-        subst h0
-        subst h1
-        simp [hf]
-    · have h0 : i = 0 := by omega
-      subst h0
-      simp [hf]
-  · have h0 : i = n := by omega
-    subst h0
-    have h1 : j = 0 := by omega
-    subst h1
-    simp [hf]
+    selfConvThree (fun m => if m < n then f m else 0) n = selfConvThree f n :=
+  selfConvThree_congr (by by_cases h : 0 < n <;> simp [h, hf]) hf fun m hm => by simp [hm]
 
 /-! ### The series `w(z)` -/
 
@@ -214,45 +230,39 @@ theorem formalUCoeff_zero : formalUCoeff W 0 = 1 :=
 theorem coeff_formalW (n : ℕ) : PowerSeries.coeff n (formalW W) = formalWCoeff W n :=
   PowerSeries.coeff_mk n _
 
-/-- The `n`-th coefficient of the right-hand side of the `w`-expansion equation, expressed
-through the coefficients of `w` itself. Extracted from `formalW_recurrence`, whose proof
-compares it with the defining recursion. -/
-theorem coeff_formalW_rhs (n : ℕ) :
+/-- The `n`-th coefficient of the right-hand side of the `w`-equation, for an arbitrary series
+`w`, expressed through the coefficients of `w` itself. Every occurrence of `w` on the right is
+multiplied by `X` or appears in a square or cube, which is why the result involves only
+coefficients of `w` strictly below `n` once `w` vanishes below degree `3`; that is what makes
+both `formalW_recurrence` and `eq_formalW_of_wEquation` go through. -/
+theorem coeff_wEquation (w : PowerSeries R) (n : ℕ) :
     PowerSeries.coeff n
       (PowerSeries.X ^ 3 +
-        PowerSeries.C W.a₁ * PowerSeries.X * formalW W +
-        PowerSeries.C W.a₂ * PowerSeries.X ^ 2 * formalW W +
-        PowerSeries.C W.a₃ * formalW W ^ 2 +
-        PowerSeries.C W.a₄ * PowerSeries.X * formalW W ^ 2 +
-        PowerSeries.C W.a₆ * formalW W ^ 3) =
+        PowerSeries.C W.a₁ * PowerSeries.X * w +
+        PowerSeries.C W.a₂ * PowerSeries.X ^ 2 * w +
+        PowerSeries.C W.a₃ * w ^ 2 +
+        PowerSeries.C W.a₄ * PowerSeries.X * w ^ 2 +
+        PowerSeries.C W.a₆ * w ^ 3) =
       (if n = 3 then 1 else 0) +
-        W.a₁ * (if 1 ≤ n then formalWCoeff W (n - 1) else 0) +
-        W.a₂ * (if 2 ≤ n then formalWCoeff W (n - 2) else 0) +
-        W.a₃ * selfConvTwo (formalWCoeff W) n +
-        W.a₄ * (if 1 ≤ n then selfConvTwo (formalWCoeff W) (n - 1) else 0) +
-        W.a₆ * selfConvThree (formalWCoeff W) n := by
-  simp only [formalW]
-  rw [show (PowerSeries.C W.a₁ * PowerSeries.X * PowerSeries.mk (formalWCoeff W)
-          : PowerSeries R) =
-        PowerSeries.C W.a₁ * (PowerSeries.X ^ 1 * PowerSeries.mk (formalWCoeff W)) by
-      rw [pow_one, mul_assoc],
-    show (PowerSeries.C W.a₂ * PowerSeries.X ^ 2 * PowerSeries.mk (formalWCoeff W)
-          : PowerSeries R) =
-        PowerSeries.C W.a₂ * (PowerSeries.X ^ 2 * PowerSeries.mk (formalWCoeff W)) from
-      mul_assoc _ _ _,
-    show (PowerSeries.C W.a₄ * PowerSeries.X * PowerSeries.mk (formalWCoeff W) ^ 2
-          : PowerSeries R) =
-        PowerSeries.C W.a₄ * (PowerSeries.X ^ 1 * PowerSeries.mk (formalWCoeff W) ^ 2) by
-      rw [pow_one, mul_assoc]]
+        W.a₁ * (if 1 ≤ n then PowerSeries.coeff (n - 1) w else 0) +
+        W.a₂ * (if 2 ≤ n then PowerSeries.coeff (n - 2) w else 0) +
+        W.a₃ * selfConvTwo (fun k => PowerSeries.coeff k w) n +
+        W.a₄ * (if 1 ≤ n then selfConvTwo (fun k => PowerSeries.coeff k w) (n - 1) else 0) +
+        W.a₆ * selfConvThree (fun k => PowerSeries.coeff k w) n := by
+  rw [show (PowerSeries.C W.a₁ * PowerSeries.X * w : PowerSeries R) =
+        PowerSeries.C W.a₁ * (PowerSeries.X ^ 1 * w) by rw [pow_one, mul_assoc],
+    show (PowerSeries.C W.a₂ * PowerSeries.X ^ 2 * w : PowerSeries R) =
+        PowerSeries.C W.a₂ * (PowerSeries.X ^ 2 * w) from mul_assoc _ _ _,
+    show (PowerSeries.C W.a₄ * PowerSeries.X * w ^ 2 : PowerSeries R) =
+        PowerSeries.C W.a₄ * (PowerSeries.X ^ 1 * w ^ 2) by rw [pow_one, mul_assoc]]
   rw [map_add, map_add, map_add, map_add, map_add, PowerSeries.coeff_C_mul,
     PowerSeries.coeff_C_mul, PowerSeries.coeff_C_mul, PowerSeries.coeff_C_mul,
     PowerSeries.coeff_C_mul, PowerSeries.coeff_X_pow, PowerSeries.coeff_X_pow_mul',
     PowerSeries.coeff_X_pow_mul', PowerSeries.coeff_X_pow_mul',
-    PowerSeries.coeff_mk, PowerSeries.coeff_mk, coeff_mk_pow_two, coeff_mk_pow_two,
-    coeff_mk_pow_three]
+    coeff_pow_two, coeff_pow_two, coeff_pow_three]
 
-/-- **Silverman IV.1.1(a).** The `w`-expansion satisfies the equation obtained from the
-Weierstrass equation of `W` by the substitution `x = z / w`, `y = -1 / w`. -/
+/-- **Silverman IV.1.1(a), existence.** The `w`-expansion satisfies the equation obtained from
+the Weierstrass equation of `W` by the substitution `x = z / w`, `y = -1 / w`. -/
 theorem formalW_recurrence :
     formalW W =
       PowerSeries.X ^ 3 +
@@ -262,7 +272,9 @@ theorem formalW_recurrence :
         PowerSeries.C W.a₄ * PowerSeries.X * formalW W ^ 2 +
         PowerSeries.C W.a₆ * formalW W ^ 3 := by
   ext n
-  rw [coeff_formalW_rhs, coeff_formalW, formalWCoeff_eq_step]
+  rw [coeff_wEquation]
+  simp only [coeff_formalW]
+  rw [formalWCoeff_eq_step]
   unfold formalWStep
   dsimp only
   simp only [dite_eq_ite]
@@ -282,5 +294,61 @@ theorem formalW_recurrence :
       selfConvTwo_truncate_sub_one _ n h3,
       selfConvThree_truncate _ (formalWCoeff_zero W) n]
     ring
+
+/-- **Silverman IV.1.1(a), uniqueness.** A power series vanishing below degree `3` and satisfying
+the `w`-equation is `formalW W`. Together with `formalW_recurrence` this is the full statement of
+Silverman IV.1.1(a): `formalW W` is *the* such series.
+
+The equation determines each coefficient from the strictly earlier ones, so the proof is a strong
+induction: at index `n` the right-hand side involves `w` only below `n`, by `coeff_wEquation`
+together with `selfConvTwo_congr` and `selfConvThree_congr`. -/
+theorem eq_formalW_of_wEquation (w : PowerSeries R)
+    (hlow : ∀ k, k < 3 → PowerSeries.coeff k w = 0)
+    (hw : w =
+      PowerSeries.X ^ 3 +
+        PowerSeries.C W.a₁ * PowerSeries.X * w +
+        PowerSeries.C W.a₂ * PowerSeries.X ^ 2 * w +
+        PowerSeries.C W.a₃ * w ^ 2 +
+        PowerSeries.C W.a₄ * PowerSeries.X * w ^ 2 +
+        PowerSeries.C W.a₆ * w ^ 3) :
+    w = formalW W := by
+  ext n
+  induction n using Nat.strong_induction_on with
+  | _ n ih =>
+    rcases lt_trichotomy n 3 with h | h | h
+    · rw [hlow n h, coeff_formalW, formalWCoeff_eq_step]
+      unfold formalWStep
+      simp [h]
+    · subst h
+      have hL := congrArg (PowerSeries.coeff 3) hw
+      rw [coeff_wEquation] at hL
+      rw [hL, coeff_formalW, formalWCoeff_eq_step]
+      unfold formalWStep
+      norm_num [selfConvTwo, selfConvThree, Finset.sum_range_succ,
+        hlow 0 (by norm_num), hlow 1 (by norm_num), hlow 2 (by norm_num)]
+    · have hL := congrArg (PowerSeries.coeff n) hw
+      rw [coeff_wEquation] at hL
+      have hw0 : (fun k => PowerSeries.coeff k w) 0 = 0 := hlow 0 (by omega)
+      have hf0 : (fun k => formalWCoeff W k) 0 = 0 := formalWCoeff_zero W
+      have hagree : ∀ m, m < n → PowerSeries.coeff m w = formalWCoeff W m := fun m hm => by
+        rw [ih m hm, coeff_formalW]
+      have h1 : ¬ n < 3 := by omega
+      have h2 : ¬ n = 3 := by omega
+      have h3 : 1 ≤ n := by omega
+      have h4 : 2 ≤ n := by omega
+      have h5 : n - 1 < n := by omega
+      have h6 : n - 2 < n := by omega
+      rw [hL, coeff_formalW, formalWCoeff_eq_step]
+      unfold formalWStep
+      dsimp only
+      simp only [h1, h2, h3, h4, h5, h6, ite_true, ite_false, dite_eq_ite]
+      rw [selfConvTwo_congr hw0 hf0 hagree,
+        selfConvTwo_congr (n := n - 1) hw0 hf0 (fun m hm => hagree m (by omega)),
+        selfConvThree_congr hw0 hf0 hagree,
+        selfConvTwo_truncate _ (formalWCoeff_zero W) n,
+        selfConvTwo_truncate_sub_one _ n h3,
+        selfConvThree_truncate _ (formalWCoeff_zero W) n,
+        hagree (n - 1) h5, hagree (n - 2) h6]
+      ring
 
 end TauCeti
