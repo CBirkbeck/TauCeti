@@ -17,6 +17,8 @@ public import TauCeti.Algebra.Group.MapMulMulEqOne
 public import TauCeti.Algebra.Polynomial.LinearFactor
 public import TauCeti.RingTheory.AdjoinRoot
 import TauCeti.Algebra.Group.PowMonoidHom
+import TauCeti.RingTheory.Polynomial.Resultant.AdjoinRoot
+import TauCeti.RingTheory.Polynomial.Resultant.Basic
 
 /-!
 # The `x - T` map of an elliptic curve into its étale algebra
@@ -356,6 +358,58 @@ lemma exists_X_sub_C_mul_eq (r s t : K) (hr : r ≠ 0) :
     simp
   refine ⟨s / r - W.a₂, t - W.a₄ * r - s ^ 2 / r + W.a₂ * s,
     -W.a₆ * r - t * s / r + W.a₂ * t, ?_, ?_, ?_⟩ <;> field
+
+/-!
+### The two norms the descent needs
+
+`AdjoinRoot.norm_mk_eq_resultant` turns a norm on `W.A` into a resultant of `f`, and Mathlib's
+resultant algebra then evaluates it. The two values below are the ones the norm condition on the
+image of the descent map is read off from: the norm of `x - T`, and — at a root of `f`, where
+`x - T` is not a unit and the corrected representative `x - T + fCofactor x` is used instead —
+the norm of that corrected representative, which is a square.
+-/
+
+/-- **The norm of `x - T` is `f x`.** -/
+theorem norm_mk_C_sub_X (x : K) :
+    Algebra.norm K (AdjoinRoot.mk W.f (C x - X)) = W.f.eval x := by
+  have hd : (C x - X).natDegree = 1 := by compute_degree!
+  rw [AdjoinRoot.norm_mk_eq_resultant W.monic_f, hd, resultant_C_sub_X _ _ _ le_rfl]
+
+/-- **At a root of `f` the norm of the corrected representative is a square.** If `x` is a root
+of `f` then `x - T + fCofactor x` — the element `μX` uses on that branch, and the one representing
+`f' θ` there — has norm `(f' x) ²`. The factorization `f = fCofactor x * (X - C x)` splits the
+resultant into two factors, each equal to `(fCofactor x).eval x = f' x`. -/
+theorem norm_mk_C_sub_X_add_fCofactor {x : K} (hx : W.f.eval x = 0) :
+    Algebra.norm K (AdjoinRoot.mk W.f (C x - X + W.fCofactor x))
+      = (3 * x ^ 2 + 2 * W.a₂ * x + W.a₄) ^ 2 := by
+  have hq : (W.fCofactor x).natDegree = 2 := W.natDegree_fCofactor x
+  have hqx : (W.fCofactor x).eval x = 3 * x ^ 2 + 2 * W.a₂ * x + W.a₄ :=
+    W.eval_fCofactor_self x
+  have hp : (C x - X + W.fCofactor x).natDegree = 2 := by
+    simp only [fCofactor]
+    compute_degree!
+  have hpx : (C x - X + W.fCofactor x).eval x = 3 * x ^ 2 + 2 * W.a₂ * x + W.a₄ := by
+    rw [eval_add, ← hqx]
+    simp
+  rw [AdjoinRoot.norm_mk_eq_resultant W.monic_f, hp, W.natDegree_f]
+  conv_lhs => rw [W.f_eq_mul_of_eval_eq_zero hx]
+  rw [show (3 : ℕ) = (W.fCofactor x).natDegree + (X - C x).natDegree by
+        rw [hq, natDegree_X_sub_C],
+    resultant_mul_left _ _ _ 2 hp.le, hq, natDegree_X_sub_C]
+  -- the factor coming from `X - C x` is the value at `x`
+  rw [show (X - C x) = (X - C x) ^ 1 by rw [pow_one],
+    resultant_X_sub_C_pow_left _ _ _ _ hp.le, pow_one, hpx]
+  -- the factor coming from `fCofactor x` is a resultant against `C x - X`, since
+  -- `fCofactor x` is monic of degree `2` and the added multiple of it drops out
+  have hres : (W.fCofactor x).resultant (C x - X) 2 2 = 3 * x ^ 2 + 2 * W.a₂ * x + W.a₄ := by
+    have h := resultant_add_right_deg (W.fCofactor x) (C x - X) 2 1 1 (by compute_degree!)
+    simp only [show (1 : ℕ) + 1 = 2 from rfl, pow_one] at h
+    rw [h, show (W.fCofactor x).coeff 2 = 1 by
+        rw [← hq]; exact (W.monic_fCofactor x).coeff_natDegree,
+      one_mul, resultant_C_sub_X _ _ _ hq.le, hqx]
+  rw [show C x - X + W.fCofactor x = (C x - X) + W.fCofactor x * 1 by ring,
+    resultant_add_mul_right (W.fCofactor x) (C x - X) 1 2 2 (by simp) hq.le, hres]
+  ring
 
 /-- The étale algebra associated to the cofactor of `f`. -/
 abbrev A' (x : K) : Type _ := AdjoinRoot (W.fCofactor x)
