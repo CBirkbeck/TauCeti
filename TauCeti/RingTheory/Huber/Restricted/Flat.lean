@@ -19,7 +19,7 @@ series `A⟨T₁, …, Tₖ⟩` is faithfully flat over `A`.
 Flatness is Remark 8.29 applied to the ideals of `A`: for an ideal `I`, the comparison maps
 identify `I ⊗[A] A⟨T⟩ → A ⊗[A] A⟨T⟩` with the coefficientwise inclusion `I⟨T⟩ → A⟨T⟩`, which is
 injective, and Mathlib's `Module.Flat.iff_rTensor_injective` asks for nothing more. Faithfulness is
-the prime `{∑ aᵥ Tᵛ ; a₀ ∈ 𝔭}` Wedhorn writes down: the constant coefficient is a ring homomorphism
+the prime `{∑ aᵥ Tᵛ | a₀ ∈ 𝔭}` Wedhorn writes down: the constant coefficient is a ring homomorphism
 `A⟨T⟩ → A` retracting `A → A⟨T⟩`, so every prime of `A` is the contraction of a prime of `A⟨T⟩`,
 and `Module.FaithfullyFlat.of_comap_surjective` concludes.
 
