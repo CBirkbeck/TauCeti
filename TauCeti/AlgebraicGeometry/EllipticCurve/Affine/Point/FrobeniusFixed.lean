@@ -117,8 +117,11 @@ theorem map_frobeniusAlgHom_eq_self_iff_mem_range_baseChange [DecidableEq K]
       TauCeti.FiniteField.pow_card_eq_self_iff_mem_range_algebraMap]
     constructor
     · rintro ⟨⟨x₀, rfl⟩, ⟨y₀, rfl⟩⟩
-      exact ⟨Affine.Point.some x₀ y₀ ((W.toAffine.baseChange_nonsingular
-        (f := Algebra.ofId K L) (FaithfulSMul.algebraMap_injective K L) x₀ y₀).mp h), rfl⟩
+      refine ⟨Affine.Point.some x₀ y₀ ((W.toAffine.baseChange_nonsingular
+        (f := Algebra.ofId K L) (FaithfulSMul.algebraMap_injective K L) x₀ y₀).mp h), ?_⟩
+      -- `baseChange` is `map (Algebra.ofId K L)`, so this is its `some` computation rule.
+      rw [Affine.Point.map_some]
+      simp only [Algebra.ofId_apply]
     · rintro ⟨_ | ⟨x₀, y₀, h₀⟩, hQ⟩
       -- `baseChange` fixes the point at infinity definitionally, but `rcases` leaves the
       -- constructor `zero` rather than `0`, so name that reduction before discriminating.
