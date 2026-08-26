@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Algebra.Polynomial.Div
+public import Mathlib.Algebra.Polynomial.Monic
 
 /-!
 # Polynomials of degree at most one with a prescribed root
@@ -35,14 +36,13 @@ public section
 
 namespace Polynomial
 
-variable {R : Type*} [CommRing R]
+variable {R : Type*} [CommRing R] [IsDomain R]
 
 /-- A polynomial of degree at most one with prescribed root `x` is a scalar multiple of
 `X - C x`. -/
 lemma exists_eq_C_mul_X_sub_C_of_natDegree_le_one {p : R[X]} (hdeg : p.natDegree ≤ 1)
     {x : R} (hx : p.IsRoot x) :
     ∃ γ, p = C γ * (X - C x) := by
-  nontriviality R
   obtain ⟨q, rfl⟩ := dvd_iff_isRoot.mpr hx
   rcases eq_or_ne q 0 with rfl | hq
   · exact ⟨0, by simp⟩
