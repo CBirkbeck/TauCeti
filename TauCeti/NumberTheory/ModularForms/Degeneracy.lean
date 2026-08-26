@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 import Mathlib.Data.Nat.Prime.Int
+import TauCeti.Data.ZMod.Divisibility
 public import Mathlib.Data.ZMod.Units
 public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import Mathlib.RingTheory.PowerSeries.Expand
@@ -77,8 +78,8 @@ and the conductor statement of Layer 4 is phrased with this normalization of `V_
   `natCast_dvd_levelRaiseConj_lower_left` (:465), all Apache-2.0 at commit
   `2baa76f742bdb4fb8ee323fabba41203bd390e08`. The source's `levelRaiseConjOfDvd` (:98) is this
   file's `conjScale`, so the statement is phrased with `conjScale` and TauCeti's `Gamma0` API
-  rather than porting a second conjugation; the source's `shiftJ`/`shiftJ_spec` pair is
-  repackaged here as the Bézout step `exists_dvd_sub_mul`.
+  rather than porting a second conjugation; the source's `shiftJ`/`shiftJ_spec` pair is not
+  ported at all, its Bézout step being TauCeti's existing `ZMod.exists_dvd_sub_val_mul`.
 -/
 
 public noncomputable section
@@ -431,13 +432,6 @@ private lemma exists_sub_mul_isCoprime (a c : ℤ) (l : ℕ) [NeZero l] (hac : I
         ((dvd_primeProductCoprime_of_not_dvd
           (Nat.mem_primeFactors.mpr ⟨hp, hp_dvd_l, NeZero.ne l⟩) hpa).mul_right c))
 
-/-- **Division modulo a coprime factor.** If `α` is coprime to `l` then every `β` is `j * α`
-modulo `l`, by Bézout. -/
-private lemma exists_dvd_sub_mul {α : ℤ} {l : ℕ} (hα : IsCoprime α (l : ℤ)) (β : ℤ) :
-    ∃ j : ℤ, (l : ℤ) ∣ β - j * α := by
-  obtain ⟨u, v, huv⟩ := hα
-  exact ⟨β * u, β * v, by linear_combination (-β) * huv⟩
-
 /-- Membership in `Γ₀(N)` from a factored lower-left entry: if `l ∣ N` and `γ 1 0 = l * c` with
 `N / l ∣ c`, then `γ ∈ Γ₀(N)`. -/
 private lemma mem_Gamma0_of_eq_mul_of_dvd {l N : ℕ} (hlN : l ∣ N) {γ : SL(2, ℤ)} {c : ℤ}
@@ -462,7 +456,11 @@ theorem exists_eq_T_zpow_mul_conjScale_mul_T_zpow (l N : ℕ) [NeZero l] (hlN : 
   obtain ⟨i, hi⟩ := exists_sub_mul_isCoprime (γ' 0 0) (γ' 1 0) l
     ⟨γ' 1 1, -γ' 0 1, by linear_combination hdet⟩
   -- then clear the upper-right entry modulo `l`, which the previous step made possible
-  obtain ⟨j, k, hk⟩ := exists_dvd_sub_mul hi (γ' 0 1 - i * γ' 1 1)
+  have hunit : IsUnit ((γ' 0 0 - i * γ' 1 0 : ℤ) : ZMod l) :=
+    (ZMod.coe_int_isUnit_iff_isCoprime _ _).mpr (isCoprime_comm.mp hi)
+  obtain ⟨j₀, k, hk⟩ :=
+    ZMod.exists_dvd_sub_val_mul l (γ' 0 1 - i * γ' 1 1) (γ' 0 0 - i * γ' 1 0) hunit
+  set j : ℤ := (j₀.val : ℤ) with hj
   have hdetM : (!![γ' 0 0 - i * γ' 1 0, k; (l : ℤ) * γ' 1 0, γ' 1 1 - γ' 1 0 * j]).det = 1 := by
     rw [Matrix.det_fin_two_of]
     linear_combination hdet + γ' 1 0 * hk
