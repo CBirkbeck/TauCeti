@@ -86,7 +86,7 @@ lemma slash_T_zpow_eq_self_of_slash_T_eq (k : ℤ) (f : ℍ → ℂ)
 conjugate `conjScale l γ c` multiplies it by `z`, then slashing by `T ^ i * conjScale l γ c *
 T ^ j` does too. Together with the `T`-factorisation of `Γ₀(N / l)` this is what transports a
 transformation law down a level. -/
-lemma slash_T_zpow_mul_conjScale_mul_T_zpow_eq_smul (l : ℕ) [NeZero l] (f : ℍ → ℂ)
+lemma slash_T_zpow_mul_conjScale_mul_T_zpow_eq_smul (l : ℕ) (f : ℍ → ℂ)
     (hf : f ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) = f) (γ : SL(2, ℤ)) {c : ℤ}
     (hc : γ 1 0 = l * c) {z : ℂ}
     (hγ : f ∣[k] (mapGL ℝ (conjScale l γ c hc) : GL (Fin 2) ℝ) = z • f) (i j : ℤ) :
