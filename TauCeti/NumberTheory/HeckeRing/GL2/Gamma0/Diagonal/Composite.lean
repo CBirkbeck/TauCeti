@@ -164,19 +164,22 @@ theorem heckeTCompositeGamma0_prime_pow_of_not_coprime {p : ℕ} (hp : p.Prime)
 
 /-- **Coprime multiplicativity**: `T_{mn} = T_m · T_n` when `m` and `n` share no prime factor.
 
-One application of `TauCeti.Nat.primePowerProd_mul_of_coprime` through
-`heckeTCompositeGamma0_def`, not an induction: that lemma already sorts the interleaved blocks
-of `m * n` into the blocks of `m` followed by those of `n`, and all it asks back is that a
-block of `n` commute with the blocks of `m` at larger primes.
-
-Those commutations come from `HeckeCosetModule.mul_comm_of_antiInvolution` at the Atkin–Lehner
-anti-involution, which commutes *any* two elements of this Hecke ring, so the primes never
-enter and the hypothesis is discharged by a constant function. Reading the commutativity off
-that lemma rather than installing `commSemiringHeckeRingGamma0` as a local instance keeps the
-statement in the ambient `Semiring` structure its neighbours are written in — the same choice
-`GL2/Recurrence.lean` makes for the centrality of the scalar operator. -/
+The classical multiplicative relation among the `Γ₀(N)` Hecke operators, at the level of the
+Hecke ring. Together with `heckeTCompositeGamma0_prime_pow`, which identifies the composite on
+a prime power with the Diamond–Shurman recurrence family, it determines `T_n` for every `n`
+from the prime-power data: split `n` into its prime powers here, then evaluate each factor
+there. No hypothesis relates `m` or `n` to the level — the bad primes are already absorbed
+into the blocks. -/
 theorem heckeTCompositeGamma0_mul_of_coprime {m n : ℕ} (hmn : m.Coprime n) :
     heckeTCompositeGamma0 N (m * n) = heckeTCompositeGamma0 N m * heckeTCompositeGamma0 N n := by
+  -- One application of `primePowerProd_mul_of_coprime`, not an induction: it already sorts the
+  -- interleaved blocks of `m * n` into those of `m` followed by those of `n`, and asks back only
+  -- that a block of `n` commute with the blocks of `m` at larger primes. The Atkin–Lehner
+  -- anti-involution commutes *any* two elements of this ring, so the primes never enter and the
+  -- hypothesis is discharged by a constant function. Reading commutativity off that lemma rather
+  -- than installing `commSemiringHeckeRingGamma0` as a local instance keeps this statement in the
+  -- ambient `Semiring` its neighbours use — the choice `GL2/Recurrence.lean` already makes for
+  -- the centrality of the scalar operator.
   simpa only [heckeTCompositeGamma0_def] using
     TauCeti.Nat.primePowerProd_mul_of_coprime (heckeTGeneratorRecGamma0 N) hmn fun _ _ _ _ _ ↦
       HeckeCosetModule.mul_comm_of_antiInvolution ℤ (atkinLehnerAntiInvolution N)
