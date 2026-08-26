@@ -33,12 +33,13 @@ hence separable algebraic, which contradicts `x` being transcendental over `F`.
 
 ## Main definitions
 
+* `WeierstrassCurve.Affine.invariantDifferentialDenom`: the denominator `2y + a₁x + a₃`.
 * `WeierstrassCurve.Affine.invariantDifferential`: the invariant differential `ω`, as an
   element of `Ω[K(E)/F]`.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.denom_ne_zero`: the denominator `2y + a₁x + a₃` is nonzero.
+* `WeierstrassCurve.Affine.invariantDifferentialDenom_ne_zero`: the denominator is nonzero.
 * `WeierstrassCurve.Affine.D_X_ne_zero`: `D x ≠ 0` in `Ω[K(E)/F]`.
 * `WeierstrassCurve.Affine.invariantDifferential_ne_zero`: `ω ≠ 0` in `Ω[K(E)/F]`.
 
@@ -133,6 +134,9 @@ private lemma algebraMap_mk_polynomialY :
       algebraMap (Polynomial F) E.CoordinateRing (Polynomial.C 2) * AdjoinRoot.root E.polynomial +
         algebraMap (Polynomial F) E.CoordinateRing
           (Polynomial.C E.a₁ * Polynomial.X + Polynomial.C E.a₃) := by
+    -- `CoordinateRing.mk` is *definitionally* `AdjoinRoot.mk`, and Mathlib exposes no rewrite
+    -- lemma unfolding it, so `change` is the only way in. The equality is stable because
+    -- `CoordinateRing.mk` is introduced as that quotient map and has no other definition.
     change AdjoinRoot.mk E.polynomial E.polynomialY = _
     rw [WeierstrassCurve.Affine.polynomialY, map_add, map_mul, AdjoinRoot.mk_X]
     rfl
@@ -141,9 +145,8 @@ private lemma algebraMap_mk_polynomialY :
     ← IsScalarTower.algebraMap_apply (Polynomial F) E.CoordinateRing E.FunctionField]
   congr 1
   congr 1
-  rw [show (Polynomial.C (2 : F) : Polynomial F) = algebraMap F (Polynomial F) 2 from rfl,
-    ← IsScalarTower.algebraMap_apply F (Polynomial F) E.FunctionField,
-    show algebraMap F E.FunctionField (2 : F) = (2 : E.FunctionField) from by simp [map_ofNat]]
+  rw [Polynomial.C_eq_algebraMap,
+    ← IsScalarTower.algebraMap_apply F (Polynomial F) E.FunctionField, map_ofNat]
 
 /-- The denominator, in the `F[X]`-form the differentiation step produces. -/
 private lemma two_mul_root_add_ne_zero [E.IsElliptic] :
@@ -164,26 +167,28 @@ private lemma algebraMap_a₁_mul_X_add_a₃ :
       algebraMap F E.FunctionField E.a₃ =
       algebraMap (Polynomial F) E.FunctionField
         (Polynomial.C E.a₁ * Polynomial.X + Polynomial.C E.a₃) := by
-  rw [map_add, map_mul,
-    show algebraMap (Polynomial F) E.FunctionField (Polynomial.C E.a₁) =
-        algebraMap F E.FunctionField E.a₁ from
-      (IsScalarTower.algebraMap_apply F (Polynomial F) E.FunctionField E.a₁).symm,
-    show algebraMap (Polynomial F) E.FunctionField (Polynomial.C E.a₃) =
-        algebraMap F E.FunctionField E.a₃ from
-      (IsScalarTower.algebraMap_apply F (Polynomial F) E.FunctionField E.a₃).symm,
+  rw [map_add, map_mul, Polynomial.C_eq_algebraMap, Polynomial.C_eq_algebraMap,
+    ← IsScalarTower.algebraMap_apply F (Polynomial F) E.FunctionField,
+    ← IsScalarTower.algebraMap_apply F (Polynomial F) E.FunctionField,
     IsScalarTower.algebraMap_apply (Polynomial F) E.CoordinateRing E.FunctionField]
 
-/-- **The denominator of the invariant differential is nonzero.** `2y + a₁x + a₃` is the image
-of `W_Y` in `K(E)`, and `W_Y` is a nonzero polynomial of degree below `deg W`, so it survives
-both `F[X][Y] → F[E]` and `F[E] → K(E)`. -/
-lemma denom_ne_zero [E.IsElliptic] :
-    (2 : E.FunctionField) *
-        algebraMap E.CoordinateRing E.FunctionField (AdjoinRoot.root E.polynomial) +
-      algebraMap F E.FunctionField E.a₁ *
-        algebraMap E.CoordinateRing E.FunctionField
-          (algebraMap (Polynomial F) E.CoordinateRing Polynomial.X) +
-      algebraMap F E.FunctionField E.a₃ ≠ 0 := by
-  rw [add_assoc, algebraMap_a₁_mul_X_add_a₃]
+/-- The denominator `2y + a₁x + a₃` of the invariant differential, as an element of `K(E)`. It
+is the image of the partial derivative `W_Y = polynomialY`; `algebraMap_mk_polynomialY` is that
+identification, and it is nonzero exactly when `E` is elliptic. -/
+noncomputable def invariantDifferentialDenom : E.FunctionField :=
+  2 * algebraMap E.CoordinateRing E.FunctionField (AdjoinRoot.root E.polynomial) +
+    algebraMap F E.FunctionField E.a₁ *
+      algebraMap E.CoordinateRing E.FunctionField
+        (algebraMap (Polynomial F) E.CoordinateRing Polynomial.X) +
+    algebraMap F E.FunctionField E.a₃
+
+/-- **The denominator of the invariant differential is nonzero.** It is the image of `W_Y` in
+`K(E)`, and `W_Y` is a nonzero polynomial of degree below `deg W`, so it survives both
+`F[X][Y] → F[E]` and `F[E] → K(E)`. -/
+@[simp]
+theorem invariantDifferentialDenom_ne_zero [E.IsElliptic] :
+    invariantDifferentialDenom E ≠ 0 := by
+  rw [invariantDifferentialDenom, add_assoc, algebraMap_a₁_mul_X_add_a₃]
   exact two_mul_root_add_ne_zero E
 
 /-! ### The differential of `x` is nonzero -/
@@ -213,6 +218,9 @@ private lemma aeval_algebraMap_X (p : Polynomial F) :
   | add p q hp hq => rw [map_add, map_add, hp, hq]
   | monomial n a =>
     rw [Polynomial.aeval_monomial]
+    -- `aeval_monomial` leaves the coefficient as `algebraMap F _ a`; it is definitionally the
+    -- image of `Polynomial.C a` under the tower, which is the form `C_mul_X_pow_eq_monomial`
+    -- below needs. No rewrite lemma states that reassociation, so the step is a `change`.
     change algebraMap (Polynomial F) E.FunctionField (Polynomial.C a) *
         algebraMap (Polynomial F) E.FunctionField Polynomial.X ^ n =
       algebraMap (Polynomial F) E.FunctionField (Polynomial.monomial n a)
@@ -351,8 +359,13 @@ private lemma D_eq_zero [E.IsElliptic]
 
 /-- **The differential of `x` is nonzero.** If it vanished, `D` would vanish identically, so
 `Ω[K(E)/F] = 0` and `K(E)/F` would be formally unramified, hence separable algebraic —
-contradicting the transcendence of `x`. -/
-lemma D_X_ne_zero [E.IsElliptic] :
+contradicting the transcendence of `x`.
+
+Deliberately not `@[simp]`, unlike the other two nonvanishing results here: its left-hand side is
+not in simp-normal form, because `simp` rewrites `algebraMap (Polynomial F) E.CoordinateRing` to
+`AdjoinRoot.of E.polynomial` via `AdjoinRoot.algebraMap_eq`, so the lemma could never fire. The
+`algebraMap` spelling is kept because it is the form `invariantDifferential` is defined over. -/
+theorem D_X_ne_zero [E.IsElliptic] :
     KaehlerDifferential.D F E.FunctionField
       (algebraMap E.CoordinateRing E.FunctionField
         (algebraMap (Polynomial F) E.CoordinateRing Polynomial.X)) ≠ 0 := by
@@ -374,14 +387,21 @@ lemma D_X_ne_zero [E.IsElliptic] :
 /-- The invariant differential `ω = dx / (2y + a₁x + a₃)`, as an element of `Ω[K(E)/F]`. -/
 noncomputable def invariantDifferential :
     KaehlerDifferential F E.FunctionField :=
-  (2 * algebraMap E.CoordinateRing E.FunctionField (AdjoinRoot.root E.polynomial) +
-      algebraMap F E.FunctionField E.a₁ *
-        algebraMap E.CoordinateRing E.FunctionField
-          (algebraMap (Polynomial F) E.CoordinateRing Polynomial.X) +
-      algebraMap F E.FunctionField E.a₃)⁻¹ •
+  (invariantDifferentialDenom E)⁻¹ •
     KaehlerDifferential.D F E.FunctionField
       (algebraMap E.CoordinateRing E.FunctionField
         (algebraMap (Polynomial F) E.CoordinateRing Polynomial.X))
+
+/-- The defining formula for `invariantDifferential`. The definition body is not exposed, so this
+equation lemma is how a consumer in another module computes with it. Not `@[simp]`: the point of
+naming `invariantDifferentialDenom` is that the nonvanishing results can be stated over it, which
+unfolding everywhere would defeat. -/
+theorem invariantDifferential_def :
+    invariantDifferential E = (invariantDifferentialDenom E)⁻¹ •
+      KaehlerDifferential.D F E.FunctionField
+        (algebraMap E.CoordinateRing E.FunctionField
+          (algebraMap (Polynomial F) E.CoordinateRing Polynomial.X)) :=
+  (rfl)
 
 /-- **The invariant differential is nonzero** as an element of `Ω[K(E)/F]`. It is the product of
 an inverse of the nonzero denominator with `D x`, both nonzero.
@@ -389,7 +409,9 @@ an inverse of the nonzero denominator with `D x`, both nonzero.
 This is strictly weaker than Silverman's III.1.5, `div ω = 0`: a nonzero rational differential
 may still have zeros and poles, and no pointwise regularity or nonvanishing statement is
 formalised here. -/
-theorem invariantDifferential_ne_zero [E.IsElliptic] : invariantDifferential E ≠ 0 :=
-  smul_ne_zero (inv_ne_zero (denom_ne_zero E)) (D_X_ne_zero E)
+@[simp]
+theorem invariantDifferential_ne_zero [E.IsElliptic] : invariantDifferential E ≠ 0 := by
+  rw [invariantDifferential_def]
+  exact smul_ne_zero (inv_ne_zero (invariantDifferentialDenom_ne_zero E)) (D_X_ne_zero E)
 
 end WeierstrassCurve.Affine
