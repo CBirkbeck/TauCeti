@@ -16,7 +16,7 @@ public import Mathlib.RingTheory.UniqueFactorizationDomain.NormalizedFactors
 For a real polynomial `f`, the quotient `ℝ[X]/f` maps to a product of copies of `ℝ`, one for each
 real root of `f`, and copies of `ℂ`, one for each irreducible quadratic factor — the archimedean
 places of the algebra. This file builds that evaluation map and shows it is injective when `f` is
-nonzero and squarefree, which is the point: an element of `ℝ[X]/f` is determined by its values at
+squarefree, which is the point: an element of `ℝ[X]/f` is determined by its values at
 the real roots together with its values at the upper-half-plane roots of the quadratic factors.
 
 Over `ℝ` an irreducible polynomial has degree `1` or `2` (`Irreducible.natDegree_le_two`), so those
@@ -35,7 +35,7 @@ evaluation there identifies `ℝ[X]/p` with `ℂ` (`Polynomial.evalUpperEquiv`).
 ## Main results
 
 * `Polynomial.upperRoot_im_pos` : the chosen root really does lie in the upper half-plane.
-* `Polynomial.etaleEvalHom_injective` : for `f ≠ 0` squarefree, the evaluation map is injective.
+* `Polynomial.etaleEvalHom_injective` : for squarefree `f`, the evaluation map is injective.
 
 ## Provenance
 
@@ -64,34 +64,37 @@ open Complex UniqueFactorizationMonoid
 
 namespace Polynomial
 
-variable {p : ℝ[X]} (hp : Irreducible p) (hd : p.natDegree = 2)
+variable {p : ℝ[X]}
 
-/-- A complex root of an irreducible real quadratic in the open upper half-plane: of the two
-conjugate roots, the one with positive imaginary part. -/
-noncomputable def upperRoot : ℂ :=
+/-- **The root of an irreducible real quadratic in the open upper half-plane**: of the two
+conjugate roots, the one with positive imaginary part. The quadratic hypothesis is part of the
+interface — for a linear `p` the chosen root is real, and the name would be a lie. The
+construction itself does not consume the degree, hence the underscore; it is there to stop the
+declaration being applied where its name does not hold. -/
+noncomputable def upperRoot (hp : Irreducible p) (_hd : p.natDegree = 2) : ℂ :=
   let z := (IsAlgClosed.exists_aeval_eq_zero ℂ p (degree_pos_of_irreducible hp).ne').choose
   if 0 < z.im then z else starRingEnd ℂ z
 
-include hp in
 /-- The chosen root is a root: conjugation preserves vanishing of a real polynomial. -/
-theorem aeval_upperRoot : aeval (upperRoot hp) p = 0 := by
+theorem aeval_upperRoot (hp : Irreducible p) (hd : p.natDegree = 2) :
+    aeval (upperRoot hp hd) p = 0 := by
   have hz := (IsAlgClosed.exists_aeval_eq_zero ℂ p (degree_pos_of_irreducible hp).ne').choose_spec
   rw [upperRoot]
   split_ifs with h
   · exact hz
   · rw [aeval_conj, hz, map_zero]
 
-include hp hd in
 /-- An irreducible real quadratic has no real root, so each of its complex roots is non-real. -/
-theorem im_ne_zero_of_aeval_eq_zero {z : ℂ} (hz : aeval z p = 0) : z.im ≠ 0 := by
+theorem im_ne_zero_of_aeval_eq_zero (hp : Irreducible p) (hd : p.natDegree = 2) {z : ℂ}
+    (hz : aeval z p = 0) : z.im ≠ 0 := by
   intro him
   have hz' : z = algebraMap ℝ ℂ z.re := Complex.ext (by simp) (by simp [him])
   rw [hz', aeval_algebraMap_apply, map_eq_zero] at hz
   exact hp.not_isRoot_of_natDegree_ne_one (by omega) hz
 
-include hp hd in
 /-- The chosen root lies in the open upper half-plane. -/
-theorem upperRoot_im_pos : 0 < (upperRoot hp).im := by
+theorem upperRoot_im_pos (hp : Irreducible p) (hd : p.natDegree = 2) :
+    0 < (upperRoot hp hd).im := by
   have hz := (IsAlgClosed.exists_aeval_eq_zero ℂ p (degree_pos_of_irreducible hp).ne').choose_spec
   have hne := im_ne_zero_of_aeval_eq_zero hp hd hz
   rw [upperRoot]
@@ -101,30 +104,44 @@ theorem upperRoot_im_pos : 0 < (upperRoot hp).im := by
     exact neg_pos.mpr ((not_lt.mp h).lt_of_ne hne)
 
 /-- Evaluation at the upper-half-plane root, as an `ℝ`-algebra hom `ℝ[X]/p → ℂ`. -/
-noncomputable def evalUpperHom : AdjoinRoot p →ₐ[ℝ] ℂ :=
-  AdjoinRoot.liftAlgHom p (Algebra.ofId ℝ ℂ) (upperRoot hp)
-    (by have := aeval_upperRoot hp; simpa [aeval_def] using this)
+noncomputable def evalUpperHom (hp : Irreducible p) (hd : p.natDegree = 2) :
+    AdjoinRoot p →ₐ[ℝ] ℂ :=
+  AdjoinRoot.liftAlgHom p (Algebra.ofId ℝ ℂ) (upperRoot hp hd)
+    (by have := aeval_upperRoot hp hd; simpa [aeval_def] using this)
 
-include hp in
-theorem evalUpperHom_injective : Function.Injective (evalUpperHom hp) :=
+/-- Evaluating a representative: the hom is evaluation of the polynomial at the upper root, so
+consumers never unfold the definition. -/
+@[simp]
+theorem evalUpperHom_mk (hp : Irreducible p) (hd : p.natDegree = 2) (q : ℝ[X]) :
+    evalUpperHom hp hd (AdjoinRoot.mk p q) = aeval (upperRoot hp hd) q := (rfl)
+
+theorem evalUpperHom_injective (hp : Irreducible p) (hd : p.natDegree = 2) :
+    Function.Injective (evalUpperHom hp hd) :=
   have : Fact (Irreducible p) := ⟨hp⟩
-  (evalUpperHom hp).toRingHom.injective
+  (evalUpperHom hp hd).toRingHom.injective
 
 /-- **`ℝ[X]/p ≃ ℂ` for an irreducible real quadratic `p`.** The evaluation hom is injective, and
 a dimension count over `ℝ` makes it surjective. -/
-noncomputable def evalUpperEquiv : AdjoinRoot p ≃ₐ[ℝ] ℂ :=
+noncomputable def evalUpperEquiv (hp : Irreducible p) (hd : p.natDegree = 2) :
+    AdjoinRoot p ≃ₐ[ℝ] ℂ :=
   have : Fact (Irreducible p) := ⟨hp⟩
-  AlgEquiv.ofBijective (evalUpperHom hp) ⟨evalUpperHom_injective hp, by
-    have hsurj : Function.Surjective ⇑(evalUpperHom hp).toLinearMap := by
+  AlgEquiv.ofBijective (evalUpperHom hp hd) ⟨evalUpperHom_injective hp hd, by
+    have hsurj : Function.Surjective ⇑(evalUpperHom hp hd).toLinearMap := by
       -- `AdjoinRoot p` is by definition `ℝ[X] ⧸ span {p}`, but `rw` does not see through that,
       -- so Mathlib's dimension count is ascribed at the `AdjoinRoot` spelling first.
       have hfr : Module.finrank ℝ (AdjoinRoot p) = p.natDegree :=
         finrank_quotient_span_eq_natDegree
       rw [← LinearMap.range_eq_top]
       apply Submodule.eq_top_of_finrank_eq
-      rw [LinearMap.finrank_range_of_inj (evalUpperHom_injective hp), hfr, hd,
+      rw [LinearMap.finrank_range_of_inj (evalUpperHom_injective hp hd), hfr, hd,
         Complex.finrank_real_complex]
     exact hsurj⟩
+
+/-- Evaluating a representative through the isomorphism, for the same reason as
+`evalUpperHom_mk`. -/
+@[simp]
+theorem evalUpperEquiv_mk (hp : Irreducible p) (hd : p.natDegree = 2) (q : ℝ[X]) :
+    evalUpperEquiv hp hd (AdjoinRoot.mk p q) = aeval (upperRoot hp hd) q := (rfl)
 
 /-! ### The evaluation map at all archimedean places -/
 
@@ -135,7 +152,7 @@ degree-2 factor. -/
 noncomputable def etaleTuple (f : ℝ[X]) :
     ({x : ℝ // f.eval x = 0} → ℝ) ×
       ({p : ℝ[X] // p ∈ normalizedFactors f ∧ p.natDegree = 2} → ℂ) :=
-  (fun x ↦ (x : ℝ), fun p ↦ upperRoot (irreducible_of_normalized_factor _ p.2.1))
+  (fun x ↦ (x : ℝ), fun p ↦ upperRoot (irreducible_of_normalized_factor _ p.2.1) p.2.2)
 
 /-- The real-root component of `aeval (etaleTuple f) q` is `q.eval x`. -/
 theorem aeval_etaleTuple_fst (q : ℝ[X]) (x : {x : ℝ // f.eval x = 0}) :
@@ -153,7 +170,7 @@ theorem aeval_etaleTuple_fst (q : ℝ[X]) (x : {x : ℝ // f.eval x = 0}) :
 theorem aeval_etaleTuple_snd (q : ℝ[X])
     (p : {p : ℝ[X] // p ∈ normalizedFactors f ∧ p.natDegree = 2}) :
     (aeval (etaleTuple f) q).2 p
-      = aeval (upperRoot (irreducible_of_normalized_factor _ p.2.1)) q := by
+      = aeval (upperRoot (irreducible_of_normalized_factor _ p.2.1) p.2.2) q := by
   have h := aeval_algHom_apply
     ((Pi.evalAlgHom ℝ
       (fun _ : {p : ℝ[X] // p ∈ normalizedFactors f ∧ p.natDegree = 2} ↦ ℂ) p).comp
@@ -170,10 +187,10 @@ theorem aeval_etaleTuple : aeval (etaleTuple f) f = 0 := by
     funext p
     rw [Pi.zero_apply, aeval_etaleTuple_snd]
     have hirr := irreducible_of_normalized_factor _ p.2.1
-    have hd : aeval (upperRoot hirr) (p : ℝ[X]) ∣ aeval (upperRoot hirr) f :=
+    have hdvd : aeval (upperRoot hirr p.2.2) (p : ℝ[X]) ∣ aeval (upperRoot hirr p.2.2) f :=
       _root_.map_dvd _ (dvd_of_mem_normalizedFactors p.2.1)
-    rw [aeval_upperRoot] at hd
-    exact zero_dvd_iff.mp hd
+    rw [aeval_upperRoot] at hdvd
+    exact zero_dvd_iff.mp hdvd
   exact Prod.ext h1 h2
 
 /-- **Evaluation at the archimedean places of `ℝ[X]/f`**, as an `ℝ`-algebra hom into the product
@@ -200,15 +217,17 @@ theorem etaleEvalHom_mk_fst (q : ℝ[X]) (x : {x : ℝ // f.eval x = 0}) :
 theorem etaleEvalHom_mk_snd (q : ℝ[X])
     (p : {p : ℝ[X] // p ∈ normalizedFactors f ∧ p.natDegree = 2}) :
     (etaleEvalHom f (AdjoinRoot.mk f q)).2 p
-      = aeval (upperRoot (irreducible_of_normalized_factor _ p.2.1)) q := by
+      = aeval (upperRoot (irreducible_of_normalized_factor _ p.2.1) p.2.2) q := by
   rw [etaleEvalHom_mk, aeval_etaleTuple_snd]
 
-/-- **The evaluation map is injective for `f` nonzero and squarefree.** A class killed at every
+/-- **The evaluation map is injective for squarefree `f`.** A class killed at every
 place is divisible by every irreducible factor of `f`; the factors are pairwise coprime, so their
 product — which is `f` up to a unit — divides it. -/
-theorem etaleEvalHom_injective (hf : f ≠ 0) (hsq : Squarefree f) :
+theorem etaleEvalHom_injective (hsq : Squarefree f) :
     Function.Injective (etaleEvalHom f) := by
   classical
+  -- `Squarefree` already excludes `0` over a domain, so nonvanishing is not a separate hypothesis.
+  have hf : f ≠ 0 := hsq.ne_zero
   have : Finite {p : ℝ[X] // p ∈ normalizedFactors f} :=
     (normalizedFactors f).finite_toSet.to_subtype
   have : Fintype {p : ℝ[X] // p ∈ normalizedFactors f} := Fintype.ofFinite _
@@ -236,10 +255,10 @@ theorem etaleEvalHom_injective (hf : f ≠ 0) (hsq : Squarefree f) :
         have h0 := hirr.natDegree_pos
         have h2 := hirr.natDegree_le_two
         omega
-      have hq : aeval (upperRoot hirr) q = 0 := by
+      have hq : aeval (upperRoot hirr hd2) q = 0 := by
         have h := congrArg (·.2 ⟨(p : ℝ[X]), p.2, hd2⟩) ha
         simpa using h
-      rw [minpoly.eq_of_irreducible_of_monic hirr (aeval_upperRoot hirr) hmon]
+      rw [minpoly.eq_of_irreducible_of_monic hirr (aeval_upperRoot hirr hd2) hmon]
       exact minpoly.dvd ℝ _ hq
   -- The distinct factors are pairwise coprime, so their product divides `q`; and that product is
   -- `f` up to a unit, because squarefreeness makes `normalizedFactors f` duplicate-free.
