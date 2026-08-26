@@ -63,6 +63,7 @@ every power of `T = !![1, 1; 0, 1]` lies in `Γ₁(N)`.
 
 * `HeckeRing.GL2.natDiagGL_one_mem_Delta0`, `HeckeRing.GL2.coe_natDiagGL_one`: `diag(1, p)` lies
   in `Δ₀(N)` at every level, and its matrix.
+* `HeckeRing.GL2.coe_mapGL_T_zpow`: the rational matrix `!![1, n; 0, 1]` of `Tⁿ`.
 * `HeckeRing.GL2.natDiagGL_mul_mapGL_T_zpow`: `diag(1, p) · Tᵇ = !![1, b; 0, p]`, the
   reverse inclusion in one line.
 * `HeckeRing.GL2.exists_mem_Gamma1_natDiagGL_mul_of_dvd`: the factorisation
@@ -140,8 +141,10 @@ lemma diagCosetGamma1_def (N p : ℕ) :
       doubleCoset (natDiagGL 2 ![1, p]) ((Gamma1 N).map (mapGL ℚ)) ((Gamma1 N).map (mapGL ℚ)) :=
   HeckeCoset.toSet_mk _
 
-/-- The rational matrix of a power of the translation matrix `T`. -/
-private lemma coe_mapGL_T_zpow (n : ℤ) :
+/-- **The rational matrix of a power of the translation matrix `T`**: `Tⁿ` has diagonal `1` and
+lower-left entry `0`, and `mapGL` reads its integer entries into `ℚ`.  Shared with the
+level-raising commutation in `ModularForms/HeckeSlash/Degeneracy.lean`. -/
+lemma coe_mapGL_T_zpow (n : ℤ) :
     (↑(mapGL ℚ (ModularGroup.T ^ n)) : Matrix (Fin 2) (Fin 2) ℚ) = !![1, (n : ℚ); 0, 1] := by
   ext i j
   fin_cases i <;> fin_cases j <;>
