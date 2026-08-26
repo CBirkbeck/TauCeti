@@ -33,14 +33,14 @@ hence separable algebraic, which contradicts `x` being transcendental over `F`.
 
 ## Main definitions
 
-* `TauCeti.WeierstrassCurve.Affine.invariantDifferential`: the invariant differential `ω`, as an
+* `WeierstrassCurve.Affine.invariantDifferential`: the invariant differential `ω`, as an
   element of `Ω[K(E)/F]`.
 
 ## Main results
 
-* `TauCeti.WeierstrassCurve.Affine.denom_ne_zero`: the denominator `2y + a₁x + a₃` is nonzero.
-* `TauCeti.WeierstrassCurve.Affine.D_X_ne_zero`: `D x ≠ 0` in `Ω[K(E)/F]`.
-* `TauCeti.WeierstrassCurve.Affine.invariantDifferential_ne_zero`: `ω ≠ 0`, which is the
+* `WeierstrassCurve.Affine.denom_ne_zero`: the denominator `2y + a₁x + a₃` is nonzero.
+* `WeierstrassCurve.Affine.D_X_ne_zero`: `D x ≠ 0` in `Ω[K(E)/F]`.
+* `WeierstrassCurve.Affine.invariantDifferential_ne_zero`: `ω ≠ 0`, which is the
   differential-form statement that `ω` has no zeros and no poles.
 
 ## References
@@ -66,13 +66,9 @@ public section
 
 open Polynomial Polynomial.Bivariate
 
-namespace TauCeti
-
 namespace WeierstrassCurve.Affine
 
-open _root_.WeierstrassCurve _root_.WeierstrassCurve.Affine
-
-variable {F : Type*} [Field F] (E : _root_.WeierstrassCurve.Affine F)
+variable {F : Type*} [Field F] (E : WeierstrassCurve.Affine F)
 
 /-! ### The denominator `2y + a₁x + a₃` -/
 
@@ -81,7 +77,7 @@ polynomial when `E` is elliptic. In characteristic two the first term vanishes, 
 that rules out `a₁ = a₃ = 0`. -/
 private lemma polynomialY_ne_zero [E.IsElliptic] : E.polynomialY ≠ 0 := by
   intro h
-  rw [_root_.WeierstrassCurve.Affine.polynomialY] at h
+  rw [WeierstrassCurve.Affine.polynomialY] at h
   have h1 := congr_arg (fun p => p.coeff 1) h
   have h0 := congr_arg (fun p => p.coeff 0) h
   simp only [map_add, map_mul, coeff_add, coeff_mul_X, coeff_C, ↓reduceIte, coeff_mul_C,
@@ -96,22 +92,22 @@ private lemma polynomialY_ne_zero [E.IsElliptic] : E.polynomialY ≠ 0 := by
     simp only [coeff_add, mul_coeff_zero, coeff_C_zero, coeff_X_zero, mul_zero, zero_add,
       coeff_zero] at this
     exact this
-  refine absurd ((show _root_.WeierstrassCurve.Δ E = 0 by
-    simp only [_root_.WeierstrassCurve.Δ]
-    rw [show _root_.WeierstrassCurve.b₂ E = 0 by
-        simp only [_root_.WeierstrassCurve.b₂, ha1]; linear_combination 2 * E.a₂ * h1,
-      show _root_.WeierstrassCurve.b₄ E = 0 by
-        simp only [_root_.WeierstrassCurve.b₄, ha1, ha3]; linear_combination E.a₄ * h1,
-      show _root_.WeierstrassCurve.b₆ E = 0 by
-        simp only [_root_.WeierstrassCurve.b₆, ha3]; linear_combination 2 * E.a₆ * h1]
+  refine absurd ((show WeierstrassCurve.Δ E = 0 by
+    simp only [WeierstrassCurve.Δ]
+    rw [show WeierstrassCurve.b₂ E = 0 by
+        simp only [WeierstrassCurve.b₂, ha1]; linear_combination 2 * E.a₂ * h1,
+      show WeierstrassCurve.b₄ E = 0 by
+        simp only [WeierstrassCurve.b₄, ha1, ha3]; linear_combination E.a₄ * h1,
+      show WeierstrassCurve.b₆ E = 0 by
+        simp only [WeierstrassCurve.b₆, ha3]; linear_combination 2 * E.a₆ * h1]
     ring) ▸ E.isUnit_Δ) not_isUnit_zero
 
 /-- `W_Y` stays nonzero in the coordinate ring: its degree is below `deg W`, so it is not a
 multiple of `W`. -/
 private lemma mk_polynomialY_ne_zero [E.IsElliptic] :
-    _root_.WeierstrassCurve.Affine.CoordinateRing.mk E E.polynomialY ≠ 0 :=
+    WeierstrassCurve.Affine.CoordinateRing.mk E E.polynomialY ≠ 0 :=
   AdjoinRoot.mk_ne_zero_of_natDegree_lt monic_polynomial (polynomialY_ne_zero E) <| by
-    rw [natDegree_polynomial, _root_.WeierstrassCurve.Affine.polynomialY]
+    rw [natDegree_polynomial, WeierstrassCurve.Affine.polynomialY]
     have : (Polynomial.C (Polynomial.C (2 : F)) * (Y : F[X][Y])).natDegree ≤ 1 :=
       Polynomial.natDegree_mul_le.trans
         (by simp [Polynomial.natDegree_C, Polynomial.natDegree_X])
@@ -123,17 +119,17 @@ private lemma mk_polynomialY_ne_zero [E.IsElliptic] :
 source proved it twice. -/
 private lemma algebraMap_mk_polynomialY :
     algebraMap E.CoordinateRing E.FunctionField
-        (_root_.WeierstrassCurve.Affine.CoordinateRing.mk E E.polynomialY) =
+        (WeierstrassCurve.Affine.CoordinateRing.mk E E.polynomialY) =
       2 * algebraMap E.CoordinateRing E.FunctionField (AdjoinRoot.root E.polynomial) +
         algebraMap (Polynomial F) E.FunctionField
           (Polynomial.C E.a₁ * Polynomial.X + Polynomial.C E.a₃) := by
-  have hmk : (_root_.WeierstrassCurve.Affine.CoordinateRing.mk E E.polynomialY :
+  have hmk : (WeierstrassCurve.Affine.CoordinateRing.mk E E.polynomialY :
         E.CoordinateRing) =
       algebraMap (Polynomial F) E.CoordinateRing (Polynomial.C 2) * AdjoinRoot.root E.polynomial +
         algebraMap (Polynomial F) E.CoordinateRing
           (Polynomial.C E.a₁ * Polynomial.X + Polynomial.C E.a₃) := by
     change AdjoinRoot.mk E.polynomial E.polynomialY = _
-    rw [_root_.WeierstrassCurve.Affine.polynomialY, map_add, map_mul, AdjoinRoot.mk_X]
+    rw [WeierstrassCurve.Affine.polynomialY, map_add, map_mul, AdjoinRoot.mk_X]
     rfl
   rw [hmk, map_add, map_mul,
     ← IsScalarTower.algebraMap_apply (Polynomial F) E.CoordinateRing E.FunctionField,
@@ -258,7 +254,7 @@ private lemma weierstrass_relation_coordinateRing :
         Polynomial.C E.a₂ * Polynomial.X ^ 2 + Polynomial.C E.a₄ * Polynomial.X +
         Polynomial.C E.a₆) -
       Polynomial.C (Polynomial.C E.a₁ * Polynomial.X + Polynomial.C E.a₃) * Y) :=
-    AdjoinRoot.mk_eq_mk.mpr ⟨1, by rw [_root_.WeierstrassCurve.Affine.polynomial]; ring1⟩
+    AdjoinRoot.mk_eq_mk.mpr ⟨1, by rw [WeierstrassCurve.Affine.polynomial]; ring1⟩
   rw [AdjoinRoot.mk_X] at Y_sq
   simp only [map_sub, map_mul, AdjoinRoot.mk_X] at Y_sq
   have hcc : ∀ p : Polynomial F, AdjoinRoot.mk E.polynomial (Polynomial.C p) =
@@ -313,7 +309,7 @@ private lemma D_algebraMap_coordinateRing [E.IsElliptic]
       (algebraMap (Polynomial F) E.FunctionField Polynomial.X) = 0) (r : E.CoordinateRing) :
     KaehlerDifferential.D F E.FunctionField
       (algebraMap E.CoordinateRing E.FunctionField r) = 0 := by
-  obtain ⟨p, q, hpq⟩ := _root_.WeierstrassCurve.Affine.CoordinateRing.exists_smul_basis_eq r
+  obtain ⟨p, q, hpq⟩ := WeierstrassCurve.Affine.CoordinateRing.exists_smul_basis_eq r
   rw [← hpq, map_add]
   simp only [Algebra.smul_def, map_mul, mul_one]
   rw [AdjoinRoot.mk_X, map_add, Derivation.leibniz,
@@ -388,5 +384,3 @@ theorem invariantDifferential_ne_zero [E.IsElliptic] : invariantDifferential E �
   smul_ne_zero (inv_ne_zero (denom_ne_zero E)) (D_X_ne_zero E)
 
 end WeierstrassCurve.Affine
-
-end TauCeti
