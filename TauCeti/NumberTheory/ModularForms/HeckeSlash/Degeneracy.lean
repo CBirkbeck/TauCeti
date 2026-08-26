@@ -76,12 +76,6 @@ private lemma slash_mapGL_T_zpow {f : ℍ → ℂ}
 
 /-! ### The upper-triangular representatives under `diag(d, 1)` -/
 
-/-- The matrix of a power of `T` over `ℚ`. `map_zpow` is disabled: it moves the exponent outside
-`mapGL`, where the entrywise description of `T` no longer applies. -/
-private lemma coe_mapGL_T_zpow (q : ℤ) :
-    (↑(mapGL ℚ (ModularGroup.T ^ q)) : Matrix (Fin 2) (Fin 2) ℚ) = !![1, (q : ℚ); 0, 1] := by
-  simp [-map_zpow]
-
 /-- **The commutation of `diag(d, 1)` past an upper-triangular representative.** Both sides are
 `!![d, d b; 0, p]`: on the right, `d b = q p + r` is split so that the representative index `r`
 is again in range, at the cost of the shift `T ^ q`. -/
@@ -95,9 +89,12 @@ private lemma natDiagGL_mul_upperTriRep (hd : 0 < d) (b : Fin p) {q r : ℕ} (hr
     rw [natDiagGL_coe 2 _ hd1]
     ext i j
     fin_cases i <;> fin_cases j <;> simp
+  -- `map_zpow` is disabled: it moves the exponent outside `mapGL`, where the entrywise
+  -- description of `T` no longer applies.
+  have hT : ∀ n : ℤ, (↑(mapGL ℚ (ModularGroup.T ^ n)) : Matrix (Fin 2) (Fin 2) ℚ) =
+      !![1, (n : ℚ); 0, 1] := fun n ↦ by simp [-map_zpow]
   apply Units.ext
-  rw [Units.val_mul, Units.val_mul, Units.val_mul, hdiag, coe_upperTriRep, coe_upperTriRep,
-    coe_mapGL_T_zpow]
+  rw [Units.val_mul, Units.val_mul, Units.val_mul, hdiag, coe_upperTriRep, coe_upperTriRep, hT]
   ext i j
   fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two]
   linarith
@@ -162,13 +159,15 @@ level `M` and then raising the level.
 
 Coprimality is not decoration: at `p ∣ N` the diamond term of `Tₚ` vanishes at level `N` but need
 not vanish at level `M`, and `b ↦ d b mod p` stops being a permutation once `p ∣ d`. -/
-theorem heckeTCuspNat_levelRaise [NeZero N] (hdvd : d * M ∣ N) (hp : p.Prime)
+theorem heckeTCuspNat_levelRaise (hdvd : d * M ∣ N) (hp : p.Prime)
     (hpN : Nat.Coprime p N) (f : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) :
+    haveI : NeZero N := ⟨fun hN ↦ hp.ne_one (by simpa [hN] using hpN)⟩
     haveI : NeZero d := ⟨fun hd ↦ NeZero.ne N (by simpa [hd] using hdvd)⟩
     haveI : NeZero M := ⟨fun hM ↦ NeZero.ne N (by simpa [hM] using hdvd)⟩
     haveI : NeZero p := ⟨hp.ne_zero⟩
     heckeTCuspNat k p (CuspForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL_of_dvd hdvd) f) =
       CuspForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL_of_dvd hdvd) (heckeTCuspNat k p f) := by
+  have : NeZero N := ⟨fun hN ↦ hp.ne_one (by simpa [hN] using hpN)⟩
   have : NeZero d := ⟨fun hd ↦ NeZero.ne N (by simpa [hd] using hdvd)⟩
   have : NeZero M := ⟨fun hM ↦ NeZero.ne N (by simpa [hM] using hdvd)⟩
   have : NeZero p := ⟨hp.ne_zero⟩
