@@ -59,13 +59,14 @@ argument rather than under the two determinant criteria above.
 Passing from a primitive witness to a general one only costs a central scalar, which the bar
 fixes. Running those two steps on an arbitrary `x ∈ Δ₀(N)` — divide an integral witness by the
 gcd of its entries, then put the scalar back — leaves no double coset unfixed, so Shimura's
-Proposition 3.8 applies: `R(Γ₀(N), Δ₀(N))` is commutative over any commutative semiring.
+Proposition 3.8 applies: for nonzero level `N`, `R(Γ₀(N), Δ₀(N))` is commutative over any
+commutative semiring.
 
 ## Main definitions
 
 * `HeckeRing.GL2.atkinLehnerAntiInvolution`: the anti-involution of the `Γ₀(N)` Hecke pair.
-* `HeckeRing.GL2.commSemiringHeckeRingGamma0`: the resulting commutative-semiring structure on
-  the Hecke ring `R(Γ₀(N), Δ₀(N))`.
+* `HeckeRing.GL2.commSemiringHeckeRingGamma0`: for nonzero level `N`, the resulting
+  commutative-semiring structure on the Hecke ring `R(Γ₀(N), Δ₀(N))`.
 
 ## Main results
 
@@ -87,8 +88,8 @@ Proposition 3.8 applies: `R(Γ₀(N), Δ₀(N))` is commutative over any commuta
   double coset of a witness no prime divides entrywise, with no hypothesis on the determinant.
 * `HeckeRing.GL2.atkinLehnerAntiInvolution_bar_mem_doubleCoset`: for nonzero level `N`, it fixes
   the double coset of every `x ∈ Δ₀(N)`, with no further hypothesis on `x`.
-* `HeckeRing.GL2.atkinLehnerAntiInvolution_onHeckeCoset_eq_self`: equivalently, it acts as the
-  identity on `Γ₀(N) \ Δ₀(N) / Γ₀(N)`.
+* `HeckeRing.GL2.atkinLehnerAntiInvolution_onHeckeCoset_eq_self`: equivalently, for nonzero
+  level `N`, it acts as the identity on `Γ₀(N) \ Δ₀(N) / Γ₀(N)`.
 
 ## References
 
@@ -716,8 +717,9 @@ theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset [NeZero N] (x : GL (Fin 2)
   exact atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_smul N d x x₀ hx hx₀ hsmul
     (atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_primitive N x₀ hx₀ A₀ hx₀_val hA₀_prim)
 
-/-- **The Atkin-Lehner bar acts trivially on `Γ₀(N) \ Δ₀(N) / Γ₀(N)`.** Each double coset is
-fixed, by `atkinLehnerAntiInvolution_bar_mem_doubleCoset` at any representative. -/
+/-- **The Atkin-Lehner bar acts trivially on `Γ₀(N) \ Δ₀(N) / Γ₀(N)`**, for nonzero level `N`.
+Each double coset is fixed, by `atkinLehnerAntiInvolution_bar_mem_doubleCoset` at any
+representative. -/
 @[simp] lemma atkinLehnerAntiInvolution_onHeckeCoset_eq_self [NeZero N]
     (D : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))) :
     (atkinLehnerAntiInvolution N).onHeckeCoset D = D := by
@@ -727,9 +729,9 @@ fixed, by `atkinLehnerAntiInvolution_bar_mem_doubleCoset` at any representative.
     exact HeckeCoset.mk_eq_mk_of_mem
       (atkinLehnerAntiInvolution_bar_mem_doubleCoset N (g : GL (Fin 2) ℚ) g.2)
 
-/-- **Shimura's Proposition 3.8 for `Γ₀(N)`**: the Hecke ring `R(Γ₀(N), Δ₀(N))` over any
-commutative semiring is commutative, the Atkin-Lehner bar being an anti-involution that fixes
-every double coset.
+/-- **Shimura's Proposition 3.8 for `Γ₀(N)`**: for nonzero level `N`, the Hecke ring
+`R(Γ₀(N), Δ₀(N))` over any commutative semiring is commutative, the Atkin-Lehner bar being an
+anti-involution that fixes every double coset.
 
 This is the level-`N` counterpart of `HeckeRing.GLn.commSemiringHeckeRing`, where transposition
 alone does the same job. Not an instance, for the reason given there: the anti-involution is
