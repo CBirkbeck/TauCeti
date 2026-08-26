@@ -40,13 +40,14 @@ the exponents is `Fin.accumulate_injective`, and the explicit inverse is `Fin.in
   from its leading elementary-divisor vector** — `Fin.accumulate_injective` transported along
   `Fin.rev`.
 * `HeckeRing.GLn.isDvdChain_primePowDiag_leadingExponent`: the vector is monotone
-  (`HeckeRing.GLn.monotone_leadingExponent`), so the leading diagonal `T(p ^ leadingExponent e)`
+  (`HeckeRing.GLn.leadingExponent_monotone`), so the leading diagonal `T(p ^ leadingExponent e)`
   is a divisibility chain — for `0 < p` a canonical diagonal, by `primePowDiag_pos`.
 * `HeckeRing.GLn.primePowDiag_leadingExponent_single`: on the generator `X k` the leading
   diagonal is `heckeGenDiag k` itself; `HeckeRing.GLn.leadingExponent_add` and `primePowDiag_add`
   then give the leading diagonal of a product of monomials as the product of theirs.
-* `HeckeRing.GLn.sum_leadingExponent`: the weight `∑ k, (k + 1) * e k` of the leading diagonal,
-  the `p`-adic valuation of its determinant.
+* `HeckeRing.GLn.sum_leadingExponent`: the weight `∑ k, (k + 1) * e k` of the leading diagonal —
+  the exponent of its determinant `p ^ ∑ i, leadingExponent e i`, which is that determinant's
+  `p`-adic valuation once `p` is prime.
 
 ## Implementation notes
 
@@ -100,6 +101,7 @@ lemma leadingExponent_zero : leadingExponent (0 : Fin n → ℕ) = 0 := by
 
 /-- The leading exponent vector is additive; with `primePowDiag_add` this says the leading
 diagonal of a product of monomials is the entrywise product of their leading diagonals. -/
+@[simp]
 lemma leadingExponent_add (e f : Fin n → ℕ) :
     leadingExponent (e + f) = leadingExponent e + leadingExponent f := by
   ext i
@@ -111,12 +113,13 @@ lemma leadingExponent_rev (e : Fin n → ℕ) (k : Fin n) :
     leadingExponent e (Fin.rev k) = ∑ k' ∈ Ici k, e k' := by
   rw [leadingExponent_eq_sum_Ici, Fin.rev_rev]
 
-/-- On a single generator, the leading exponent vector is that generator's own `p`-exponent
-pattern: `0` on the first `n - 1 - k` positions and `1` on the last `k + 1`. -/
-lemma leadingExponent_single (k : Fin n) : leadingExponent (Pi.single k 1) =
-    fun i : Fin n ↦ if (i : ℕ) < n - 1 - (k : ℕ) then 0 else 1 := by
+/-- On a single generator, the leading exponent vector is that generator's own exponent vector
+`heckeGenExponent n k`. -/
+@[simp]
+lemma leadingExponent_single (k : Fin n) :
+    leadingExponent (Pi.single k 1) = heckeGenExponent n k := by
   ext i
-  rw [leadingExponent_eq_sum_Ici, Finset.sum_pi_single']
+  rw [leadingExponent_eq_sum_Ici, Finset.sum_pi_single', heckeGenExponent_apply]
   simp only [Finset.mem_Ici, Fin.le_iff_val_le_val, Fin.val_rev]
   split_ifs <;> omega
 
@@ -127,7 +130,7 @@ lemma primePowDiag_leadingExponent_single (p : ℕ) (k : Fin n) :
 
 /-- The leading exponent vector is monotone: a later position sees every generator an earlier one
 does. -/
-lemma monotone_leadingExponent (e : Fin n → ℕ) : Monotone (leadingExponent e) := by
+lemma leadingExponent_monotone (e : Fin n → ℕ) : Monotone (leadingExponent e) := by
   intro i j hij
   rw [leadingExponent_eq_sum_Ici, leadingExponent_eq_sum_Ici]
   exact Finset.sum_le_sum_of_subset (Finset.Ici_subset_Ici.2 (Fin.rev_le_rev.2 hij))
@@ -136,7 +139,7 @@ lemma monotone_leadingExponent (e : Fin n → ℕ) : Monotone (leadingExponent e
 `primePowDiag_pos`, for `0 < p` it is a canonical diagonal coset. -/
 lemma isDvdChain_primePowDiag_leadingExponent (p : ℕ) (e : Fin n → ℕ) :
     IsDvdChain (primePowDiag n p (leadingExponent e)) :=
-  isDvdChain_primePowDiag n p _ (monotone_leadingExponent e)
+  isDvdChain_primePowDiag n p _ (leadingExponent_monotone e)
 
 /-- **The exponents are recovered from the leading elementary-divisor vector.** Its entries are
 the suffix sums of the exponents, and suffix sums determine a vector
@@ -148,7 +151,9 @@ lemma leadingExponent_injective : Function.Injective (leadingExponent (n := n)) 
 
 /-- The weight of the leading diagonal: the total of the leading exponent vector is
 `∑ k, (k + 1) * e k`, the generator `heckeGen k` contributing `k + 1` for each of its `e k`
-factors. This is the `p`-adic valuation of the determinant of the leading diagonal. -/
+factors. It is the exponent of the determinant `∏ i, primePowDiag n p (leadingExponent e) i`,
+which is `p ^ ∑ i, leadingExponent e i`; once `p` is prime that exponent is the determinant's
+`p`-adic valuation. -/
 lemma sum_leadingExponent (e : Fin n → ℕ) :
     ∑ i, leadingExponent e i = ∑ k : Fin n, ((k : ℕ) + 1) * e k := by
   rw [← Equiv.sum_comp Fin.revPerm (leadingExponent e)]

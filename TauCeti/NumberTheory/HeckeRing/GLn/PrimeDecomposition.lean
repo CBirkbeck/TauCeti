@@ -77,6 +77,7 @@ lemma primePowDiag_pos (p : ℕ) (hp : 0 < p) (e : Fin n → ℕ) :
   fun _ ↦ pow_pos hp _
 
 /-- The `p`-power diagonal turns a sum of exponent vectors into the entrywise product. -/
+@[simp]
 lemma primePowDiag_add (p : ℕ) (e f : Fin n → ℕ) :
     primePowDiag n p (e + f) = primePowDiag n p e * primePowDiag n p f := by
   ext i
