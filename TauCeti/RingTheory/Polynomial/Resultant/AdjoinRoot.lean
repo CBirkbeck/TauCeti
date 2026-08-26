@@ -42,7 +42,7 @@ No signs appear anywhere: `B` is an endomorphism, so the two blocks are never re
 * `Polynomial.det_sylvesterBlock` — the block-triangular `B` has the determinant of its
   upper-left block.
 * `AdjoinRoot.degreeLTEquiv` — `mk g` restricted to `R[X]_(g.natDegree)` is a linear equivalence
-  onto `AdjoinRoot g`.
+  onto `AdjoinRoot g`, with `coe_degreeLTEquiv_symm_apply`/`_mk` characterising its inverse.
 * `AdjoinRoot.norm_mk_eq_det_mulModByMonic`, `AdjoinRoot.norm_mk_eq_resultant` — the norm as a
   determinant, and then as a resultant.
 
@@ -66,11 +66,11 @@ open Module LinearMap LinearEquiv
 
 namespace Polynomial
 
-variable {R : Type*} [CommRing R] [Nontrivial R] {g : R[X]} {n : ℕ}
+variable {R : Type*} [CommRing R] {g : R[X]} {n : ℕ}
 
 /-- Multiplication by `p` on `R[X]_(g.natDegree)`, that is, `q ↦ (p * q) %ₘ g`. This is the map
 that `AdjoinRoot.degreeLTEquiv hg` turns into multiplication by `AdjoinRoot.mk g p`. -/
-@[expose] def mulModByMonic (hg : g.Monic) (p : R[X]) :
+def mulModByMonic (hg : g.Monic) (p : R[X]) :
     degreeLT R g.natDegree →ₗ[R] degreeLT R g.natDegree where
   toFun q := ⟨p * (q : R[X]) %ₘ g, modByMonic_mem_degreeLT hg _⟩
   map_add' q₁ q₂ := by ext1; simp [mul_add, add_modByMonic]
@@ -79,15 +79,17 @@ that `AdjoinRoot.degreeLTEquiv hg` turns into multiplication by `AdjoinRoot.mk g
 @[simp]
 theorem mulModByMonic_apply_coe (hg : g.Monic) (p : R[X]) (q : degreeLT R g.natDegree) :
     (mulModByMonic hg p q : R[X]) = p * (q : R[X]) %ₘ g :=
-  rfl
+  (rfl)
 
 /-- For monic `g`, the Sylvester map of `g` and `1`, namely `(u, v) ↦ g * v + u`, is a linear
 equivalence `R[X]_(g.natDegree) × R[X]_n ≃ₗ R[X]_(g.natDegree + n)`. Its inverse is division with
 remainder, `q ↦ (q %ₘ g, q /ₘ g)`. This is the general-monic analogue of Mathlib's
 `Polynomial.degreeLT.addLinearEquiv`, which is the case `g = X ^ m`. -/
-@[expose] def sylvesterEquivOne (hg : g.Monic) (n : ℕ) :
+def sylvesterEquivOne (hg : g.Monic) (n : ℕ) :
     (degreeLT R g.natDegree × degreeLT R n) ≃ₗ[R] degreeLT R (g.natDegree + n) :=
   ofBijective (sylvesterMap g 1 le_rfl (by simp)) <| by
+    rcases subsingleton_or_nontrivial R with _ | _
+    · exact ⟨fun _ _ _ ↦ Subsingleton.elim _ _, fun y ↦ ⟨0, Subsingleton.elim _ _⟩⟩
     constructor
     · intro ⟨⟨u, hu⟩, ⟨v, hv⟩⟩ ⟨⟨u', hu'⟩, ⟨v', hv'⟩⟩ h
       replace h : g * v + u = g * v' + u' := by simpa using congrArg Subtype.val h
@@ -112,44 +114,63 @@ remainder, `q ↦ (q %ₘ g, q /ₘ g)`. This is the general-monic analogue of M
 @[simp]
 theorem coe_sylvesterEquivOne (hg : g.Monic) (n : ℕ) :
     (sylvesterEquivOne hg n).toLinearMap = sylvesterMap g 1 le_rfl (by simp) :=
-  rfl
+  (rfl)
 
-/-- The inverse of `sylvesterEquivOne` is division with remainder by `g`. -/
-theorem coe_sylvesterEquivOne_symm (hg : g.Monic) (n : ℕ) (q : degreeLT R (g.natDegree + n)) :
-    ((((sylvesterEquivOne hg n).symm q).1 : R[X]) = (q : R[X]) %ₘ g) ∧
-      ((((sylvesterEquivOne hg n).symm q).2 : R[X]) = (q : R[X]) /ₘ g) := by
+theorem coe_sylvesterEquivOne_apply (hg : g.Monic) (n : ℕ)
+    (w : degreeLT R g.natDegree × degreeLT R n) :
+    ((sylvesterEquivOne hg n w : degreeLT R (g.natDegree + n)) : R[X])
+      = g * (w.2 : R[X]) + (w.1 : R[X]) := by
+  rw [← LinearEquiv.coe_coe, coe_sylvesterEquivOne, sylvesterMap_apply_coe, one_mul]
+
+/-- The first coordinate of the inverse of `sylvesterEquivOne` is `· %ₘ g`. -/
+@[simp]
+theorem coe_sylvesterEquivOne_symm_fst (hg : g.Monic) (n : ℕ)
+    (q : degreeLT R (g.natDegree + n)) :
+    ((((sylvesterEquivOne hg n).symm q).1 : R[X])) = (q : R[X]) %ₘ g := by
+  nontriviality R
   obtain ⟨w, rfl⟩ : ∃ w, q = sylvesterEquivOne hg n w :=
     ⟨_, ((sylvesterEquivOne hg n).apply_symm_apply q).symm⟩
-  have hq : ((sylvesterEquivOne hg n w : degreeLT R (g.natDegree + n)) : R[X]) =
-      g * (w.2 : R[X]) + (w.1 : R[X]) := by
-    -- `sylvesterEquivOne` is `ofBijective` of the Sylvester map, so its application is that
-    -- map's by definition; `change` is the step that crosses the wrapper.
-    change ((sylvesterMap g 1 le_rfl (by simp) w : degreeLT R (g.natDegree + n)) : R[X]) = _
-    rw [sylvesterMap_apply_coe, one_mul]
   have h : (w.1 : R[X]).degree < g.degree := (mem_degreeLT_natDegree_iff hg.ne_zero).mp w.1.2
-  rw [symm_apply_apply, hq]
-  refine ⟨?_, ?_⟩
-  · rw [hg.modByMonic_mul_add, (modByMonic_eq_self_iff hg).mpr h]
-  · rw [hg.divByMonic_mul_add, (divByMonic_eq_zero_iff hg).mpr h, add_zero]
+  rw [symm_apply_apply, coe_sylvesterEquivOne_apply, hg.modByMonic_mul_add,
+    (modByMonic_eq_self_iff hg).mpr h]
+
+/-- The second coordinate of the inverse of `sylvesterEquivOne` is `· /ₘ g`. -/
+@[simp]
+theorem coe_sylvesterEquivOne_symm_snd (hg : g.Monic) (n : ℕ)
+    (q : degreeLT R (g.natDegree + n)) :
+    ((((sylvesterEquivOne hg n).symm q).2 : R[X])) = (q : R[X]) /ₘ g := by
+  nontriviality R
+  obtain ⟨w, rfl⟩ : ∃ w, q = sylvesterEquivOne hg n w :=
+    ⟨_, ((sylvesterEquivOne hg n).apply_symm_apply q).symm⟩
+  have h : (w.1 : R[X]).degree < g.degree := (mem_degreeLT_natDegree_iff hg.ne_zero).mp w.1.2
+  rw [symm_apply_apply, coe_sylvesterEquivOne_apply, hg.divByMonic_mul_add,
+    (divByMonic_eq_zero_iff hg).mpr h, add_zero]
 
 /-- The block-triangular endomorphism `B = Ψ⁻¹ ∘ₗ S` of `R[X]_(g.natDegree) × R[X]_n`. -/
-@[expose] def sylvesterBlock (hg : g.Monic) (p : R[X]) (hp : p.natDegree ≤ n) :
+def sylvesterBlock (hg : g.Monic) (p : R[X]) (hp : p.natDegree ≤ n) :
     degreeLT R g.natDegree × degreeLT R n →ₗ[R] degreeLT R g.natDegree × degreeLT R n :=
   (sylvesterEquivOne hg n).symm.toLinearMap ∘ₗ sylvesterMap g p le_rfl hp
 
+theorem sylvesterBlock_eq (hg : g.Monic) (p : R[X]) (hp : p.natDegree ≤ n) :
+    sylvesterBlock hg p hp
+      = (sylvesterEquivOne hg n).symm.toLinearMap ∘ₗ sylvesterMap g p le_rfl hp :=
+  (rfl)
+
 /-- The first coordinate of `B (u, v)` is `(p * u) %ₘ g`. -/
+@[simp]
 theorem coe_sylvesterBlock_apply_fst (hg : g.Monic) (p : R[X]) (hp : p.natDegree ≤ n)
     (u : degreeLT R g.natDegree) (v : degreeLT R n) :
     ((sylvesterBlock hg p hp (u, v)).1 : R[X]) = p * (u : R[X]) %ₘ g := by
-  rw [sylvesterBlock, comp_apply, LinearEquiv.coe_coe,
-    (coe_sylvesterEquivOne_symm hg n _).1, sylvesterMap_apply_coe, hg.modByMonic_mul_add]
+  rw [sylvesterBlock_eq, comp_apply, LinearEquiv.coe_coe, coe_sylvesterEquivOne_symm_fst,
+    sylvesterMap_apply_coe, hg.modByMonic_mul_add]
 
 /-- The second coordinate of `B (u, v)` is `v + (p * u) /ₘ g`. -/
+@[simp]
 theorem coe_sylvesterBlock_apply_snd (hg : g.Monic) (p : R[X]) (hp : p.natDegree ≤ n)
     (u : degreeLT R g.natDegree) (v : degreeLT R n) :
     ((sylvesterBlock hg p hp (u, v)).2 : R[X]) = (v : R[X]) + p * (u : R[X]) /ₘ g := by
-  rw [sylvesterBlock, comp_apply, LinearEquiv.coe_coe,
-    (coe_sylvesterEquivOne_symm hg n _).2, sylvesterMap_apply_coe, hg.divByMonic_mul_add]
+  rw [sylvesterBlock_eq, comp_apply, LinearEquiv.coe_coe, coe_sylvesterEquivOne_symm_snd,
+    sylvesterMap_apply_coe, hg.divByMonic_mul_add]
 
 open Matrix in
 /-- The determinant of the block-triangular map `B` is the determinant of its upper-left block. -/
@@ -166,8 +187,7 @@ theorem det_sylvesterBlock (hg : g.Monic) (p : R[X]) (hp : p.natDegree ≤ n) :
     Subtype.ext <| by rw [coe_sylvesterBlock_apply_fst, mulModByMonic_apply_coe]
   have hz (v : degreeLT R n) :
       sylvesterBlock hg p hp ((0 : degreeLT R g.natDegree), v) = (0, v) :=
-    Prod.ext (Subtype.ext <| by simp [coe_sylvesterBlock_apply_fst])
-      (Subtype.ext <| by simp [coe_sylvesterBlock_apply_snd])
+    Prod.ext (Subtype.ext <| by simp) (Subtype.ext <| by simp)
   rw [← det_toMatrix (bm.prod bn), ← det_toMatrix bm]
   have hmat : toMatrix (bm.prod bn) (bm.prod bn) (sylvesterBlock hg p hp) =
       fromBlocks (toMatrix bm bm (mulModByMonic hg p)) 0
@@ -189,7 +209,7 @@ open Polynomial
 
 namespace AdjoinRoot
 
-variable {R : Type*} [CommRing R] [Nontrivial R] {g : R[X]}
+variable {R : Type*} [CommRing R] {g : R[X]}
 
 /-- For monic `g`, `AdjoinRoot.mk g` restricted to the polynomials of degree `< g.natDegree` is a
 linear equivalence onto `AdjoinRoot g`. Its inverse is Mathlib's `AdjoinRoot.modByMonicHom`,
@@ -197,7 +217,7 @@ corestricted to `R[X]_(g.natDegree)`.
 
 Not to be confused with `Polynomial.degreeLTEquiv`, which reads the same submodule off as its
 coefficient vector `Fin n → R`; the namespace says which target is meant. -/
-@[expose] def degreeLTEquiv (hg : g.Monic) : degreeLT R g.natDegree ≃ₗ[R] AdjoinRoot g :=
+def degreeLTEquiv (hg : g.Monic) : degreeLT R g.natDegree ≃ₗ[R] AdjoinRoot g :=
   LinearEquiv.ofLinearMap ((mkₐ g).toLinearMap ∘ₗ (degreeLT R g.natDegree).subtype)
     ((modByMonicHom hg).codRestrict _ fun a ↦ by
       obtain ⟨q, rfl⟩ := mk_surjective a
@@ -205,6 +225,7 @@ coefficient vector `Fin n → R`; the namespace says which target is meant. -/
       exact modByMonic_mem_degreeLT hg q)
     (LinearMap.ext fun a ↦ mk_leftInverse hg a)
     (LinearMap.ext fun q ↦ Subtype.ext <| by
+      nontriviality R
       rw [LinearMap.comp_apply]
       -- unwrap the corestriction: the underlying polynomial is `modByMonicHom hg (mk g q)`
       change modByMonicHom hg (mk g (q : R[X])) = (q : R[X])
@@ -214,12 +235,28 @@ coefficient vector `Fin n → R`; the namespace says which target is meant. -/
 @[simp]
 theorem degreeLTEquiv_apply (hg : g.Monic) (q : degreeLT R g.natDegree) :
     degreeLTEquiv hg q = mk g (q : R[X]) :=
-  rfl
+  (rfl)
+
+/-- The inverse of `degreeLTEquiv` is Mathlib's `AdjoinRoot.modByMonicHom`: it picks the
+representative of degree `< g.natDegree`. -/
+@[simp]
+theorem coe_degreeLTEquiv_symm_apply (hg : g.Monic) (a : AdjoinRoot g) :
+    (((degreeLTEquiv hg).symm a : degreeLT R g.natDegree) : R[X]) = modByMonicHom hg a :=
+  (rfl)
+
+/-- The inverse of `degreeLTEquiv` sends the class of `q` to `q %ₘ g`. Deliberately not `@[simp]`:
+`coe_degreeLTEquiv_symm_apply` and Mathlib's `AdjoinRoot.modByMonicHom_mk` are both simp lemmas,
+so the simp set already normalises this left-hand side and tagging it too would put it out of
+simp-normal form. -/
+theorem coe_degreeLTEquiv_symm_mk (hg : g.Monic) (q : R[X]) :
+    (((degreeLTEquiv hg).symm (mk g q) : degreeLT R g.natDegree) : R[X]) = q %ₘ g := by
+  rw [coe_degreeLTEquiv_symm_apply, modByMonicHom_mk hg]
 
 /-- The norm of `mk g p` is the determinant of multiplication by `p` on `R[X]_(g.natDegree)`,
 because `degreeLTEquiv hg` conjugates the latter into multiplication by `mk g p`. -/
 theorem norm_mk_eq_det_mulModByMonic (hg : g.Monic) (p : R[X]) :
     Algebra.norm R (mk g p) = LinearMap.det (mulModByMonic hg p) := by
+  nontriviality R
   rw [Algebra.norm_apply, ← LinearMap.det_conj (mulModByMonic hg p) (degreeLTEquiv hg)]
   congr 1
   refine LinearMap.ext fun a ↦ ?_
@@ -234,13 +271,14 @@ over the base ring is the resultant of `g` and `p`. Equivalently, it is the prod
 of `p` at the roots of `g`. -/
 theorem norm_mk_eq_resultant (hg : g.Monic) (p : R[X]) :
     Algebra.norm R (mk g p) = g.resultant p g.natDegree p.natDegree := by
+  nontriviality R
   set m := g.natDegree
   set k := p.natDegree
   set b₁ := ((degreeLT.basis R m).prod (degreeLT.basis R k)).reindex finSumFinEquiv
   set b₂ := degreeLT.basis R (m + k)
   have hΨ : (sylvesterMap g 1 le_rfl (by simp)) ∘ₗ sylvesterBlock hg p le_rfl =
       sylvesterMap g p le_rfl le_rfl := by
-    rw [sylvesterBlock, ← LinearMap.comp_assoc, ← coe_sylvesterEquivOne hg k,
+    rw [sylvesterBlock_eq, ← LinearMap.comp_assoc, ← coe_sylvesterEquivOne hg k,
       LinearEquiv.comp_coe, LinearEquiv.symm_trans_self, LinearEquiv.refl_toLinearMap,
       LinearMap.id_comp]
   have key : (sylvesterMap g p le_rfl le_rfl).toMatrix b₁ b₂ =

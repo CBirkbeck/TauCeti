@@ -28,7 +28,8 @@ that into a linear equivalence and uses it to identify a norm with a resultant.
 * `Polynomial.Monic.modByMonic_mul_add`, `Polynomial.Monic.divByMonic_mul_add`: division with
   remainder reads off `g * v + u`.
 
-Stated over an arbitrary commutative ring.
+Stated over an arbitrary commutative ring, with the trivial ring dispatched by `nontriviality`
+rather than excluded by hypothesis; `mem_degreeLT_natDegree_iff` needs only a semiring.
 
 ## Provenance
 
@@ -46,28 +47,31 @@ public section
 
 namespace Polynomial
 
-variable {R : Type*} [CommRing R] {g q : R[X]} {n : ℕ}
+section Semiring
+
+variable {R : Type*} [Semiring R] {g q : R[X]}
 
 theorem mem_degreeLT_natDegree_iff (hg : g ≠ 0) :
     q ∈ degreeLT R g.natDegree ↔ q.degree < g.degree := by
   rw [mem_degreeLT, degree_eq_natDegree hg]
 
+end Semiring
+
+variable {R : Type*} [CommRing R] {g q : R[X]} {n : ℕ}
+
+@[simp]
 theorem Monic.modByMonic_mul_add (hg : g.Monic) (v u : R[X]) :
     (g * v + u) %ₘ g = u %ₘ g := by
   rw [add_modByMonic, self_mul_modByMonic hg, zero_add]
 
-/-! Over the trivial ring every polynomial has degree `⊥`, so the statements below — all of
-which bound a degree strictly by `g.degree` — need `R` nontrivial. -/
-section Nontrivial
-
-variable [Nontrivial R]
-
 theorem modByMonic_mem_degreeLT (hg : g.Monic) (q : R[X]) :
-    q %ₘ g ∈ degreeLT R g.natDegree :=
-  (mem_degreeLT_natDegree_iff hg.ne_zero).mpr <| degree_modByMonic_lt q hg
+    q %ₘ g ∈ degreeLT R g.natDegree := by
+  nontriviality R
+  exact (mem_degreeLT_natDegree_iff hg.ne_zero).mpr (degree_modByMonic_lt q hg)
 
 theorem divByMonic_mem_degreeLT (hg : g.Monic) (hq : q ∈ degreeLT R (g.natDegree + n)) :
     q /ₘ g ∈ degreeLT R n := by
+  nontriviality R
   rw [mem_degreeLT] at hq ⊢
   rcases eq_or_ne (q /ₘ g) 0 with h | h
   · simp [h]
@@ -79,10 +83,9 @@ theorem divByMonic_mem_degreeLT (hg : g.Monic) (hq : q ∈ degreeLT R (g.natDegr
 
 theorem Monic.divByMonic_mul_add (hg : g.Monic) (v u : R[X]) :
     (g * v + u) /ₘ g = v + u /ₘ g := by
+  nontriviality R
   refine (div_modByMonic_unique _ _ hg ⟨?_, degree_modByMonic_lt u hg⟩).1
   conv_rhs => rw [← modByMonic_add_div u g]
   ring
-
-end Nontrivial
 
 end Polynomial
