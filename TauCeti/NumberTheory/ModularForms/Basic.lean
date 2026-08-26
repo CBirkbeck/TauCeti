@@ -120,8 +120,10 @@ lemma slash_zpow_eq_self_of_slash_eq (k : ℤ) (f : ℍ → ℂ) (γ : SL(2, ℤ
     f ∣[k] (mapGL ℝ (γ ^ j) : GL (Fin 2) ℝ) = f :=
   mem_slashStabilizer.mp (zpow_mem (mem_slashStabilizer.mpr hf) j)
 
-/-- **An eigenvalue law survives conjugation by powers of an invariance.** If `f` is fixed by
-`δ` and slashing by `γ` multiplies it by `z`, then slashing by `δ ^ i * γ * δ ^ j` does too.
+/-- **An eigenvalue law survives multiplication on both sides by powers of an invariance.** If
+`f` is fixed by `δ` and slashing by `γ` multiplies it by `z`, then slashing by
+`δ ^ i * γ * δ ^ j` does too, for independent `i` and `j` — this is a conjugate only in the
+special case `j = -i`.
 Nothing is asked of `γ` beyond that law, and `σ` never appears in the conclusion because every
 `SL(2, ℤ)` matrix has positive determinant (`σ_mapGL_real_eq_refl`).
 
