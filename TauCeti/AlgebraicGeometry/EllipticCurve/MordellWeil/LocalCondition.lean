@@ -135,7 +135,11 @@ lemma localRes_mk (u : W.Aˣ) :
     W.localRes L (QuotientGroup.mk u) = QuotientGroup.mk (Units.map (W.mapA L).toMonoidHom u) :=
   QuotientGroup.map_mk _ _ _ _ u
 
-@[simp]
+/-- The base-change map on square classes, on the class of a unit given as `IsUnit a`.
+
+Deliberately **not** `@[simp]`: the left-hand side is not in simp-normal form, because
+`localRes_mk` rewrites `W.localRes L ↑ha.unit` first, so the attribute could never fire. This
+lemma is for explicit `rw` at the `localRes_μX` call sites below. -/
 lemma localRes_unit {a : W.A} (ha : IsUnit a) :
     W.localRes L (ha.unit : W.M) = ((ha.map (W.mapA L)).unit : (W⁄L).toAffine.M) := by
   rw [localRes_mk]
