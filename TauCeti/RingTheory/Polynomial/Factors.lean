@@ -13,6 +13,7 @@ public import Mathlib.RingTheory.UniqueFactorizationDomain.NormalizedFactors
 import Mathlib.RingTheory.Coprime.Lemmas
 import Mathlib.RingTheory.Ideal.Operations
 import Mathlib.RingTheory.PrincipalIdealDomain
+import Mathlib.RingTheory.Radical.Basic
 
 /-!
 # The monic irreducible factors of a polynomial over a field
@@ -65,15 +66,16 @@ variable {K : Type*} [Field K] {f : K[X]}
 
 /-- The distinct monic irreducible factors of `f`, as an index type.
 
-This is *not* defined via `normalizedFactors` (which would require `DecidableEq K`);
-membership in `normalizedFactors f` is characterized by `Factors.mem_normalizedFactors_iff`. -/
-abbrev Factors (f : K[X]) : Type _ := {p : K[X] // p.Monic ∧ Irreducible p ∧ p ∣ f}
+This is *not* defined via `normalizedFactors` (which would require `DecidableEq K`); the
+predicate is spelled in the order of `Polynomial.mem_normalizedFactors_iff`, which is therefore
+the characterization of membership in `normalizedFactors f`. -/
+abbrev Factors (f : K[X]) : Type _ := {p : K[X] // Irreducible p ∧ p.Monic ∧ p ∣ f}
 
 namespace Factors
 
-lemma monic (p : f.Factors) : (p : K[X]).Monic := p.2.1
+lemma irreducible (p : f.Factors) : Irreducible (p : K[X]) := p.2.1
 
-lemma irreducible (p : f.Factors) : Irreducible (p : K[X]) := p.2.2.1
+lemma monic (p : f.Factors) : (p : K[X]).Monic := p.2.2.1
 
 lemma dvd (p : f.Factors) : (p : K[X]) ∣ f := p.2.2.2
 
@@ -84,25 +86,17 @@ lemma prime (p : f.Factors) : Prime (p : K[X]) := p.irreducible.prime
 lemma separable (hf : f.Separable) (p : f.Factors) : (p : K[X]).Separable :=
   hf.of_dvd p.dvd
 
-/-- Membership in `normalizedFactors` (with its normalization from `DecidableEq K`) is
-equivalent to being a monic irreducible factor. -/
-lemma mem_normalizedFactors_iff [DecidableEq K] (hf : f ≠ 0) {p : K[X]} :
-    p ∈ normalizedFactors f ↔ p.Monic ∧ Irreducible p ∧ p ∣ f := by
-  rw [UniqueFactorizationMonoid.mem_normalizedFactors_iff' hf]
-  exact ⟨fun ⟨h₁, h₂, h₃⟩ ↦ ⟨h₂ ▸ monic_normalize h₁.ne_zero, h₁, h₃⟩,
-    fun ⟨h₁, h₂, h₃⟩ ↦ ⟨h₂, h₁.normalize_eq_self, h₃⟩⟩
-
 lemma finite (hf : f ≠ 0) : Finite f.Factors := by
   classical
   have h : Finite {p : K[X] // p ∈ normalizedFactors f} :=
     (normalizedFactors f).finite_toSet.to_subtype
   exact .of_injective _
     (Subtype.impEmbedding _ (· ∈ normalizedFactors f)
-      fun p hp ↦ (mem_normalizedFactors_iff hf).mpr hp).injective
+      fun p hp ↦ (Polynomial.mem_normalizedFactors_iff hf).mpr hp).injective
 
 lemma nonempty (hu : ¬ IsUnit f) : Nonempty f.Factors :=
-  let ⟨p, hp⟩ := f.exists_monic_irreducible_factor hu
-  ⟨⟨p, hp⟩⟩
+  let ⟨p, hmonic, hirr, hdvd⟩ := f.exists_monic_irreducible_factor hu
+  ⟨⟨p, hirr, hmonic, hdvd⟩⟩
 
 /-- The monic linear factors of `f` correspond to the roots of `f`. -/
 noncomputable def linearEquivRoots :
@@ -111,7 +105,7 @@ noncomputable def linearEquivRoots :
     eval_eq_zero_of_dvd_of_eval_eq_zero (p : f.Factors).dvd <| by
       conv_lhs => rw [(p : f.Factors).monic.eq_X_add_C p.2]
       simp⟩
-  invFun x := ⟨⟨X - C (x : K), monic_X_sub_C _, irreducible_X_sub_C _,
+  invFun x := ⟨⟨X - C (x : K), irreducible_X_sub_C _, monic_X_sub_C _,
     dvd_iff_isRoot.mpr x.2⟩, natDegree_X_sub_C _⟩
   left_inv p := by
     refine Subtype.ext (Subtype.ext ?_)
@@ -150,15 +144,13 @@ lemma associated_prod [Fintype f.Factors] (hf : f ≠ 0) (hsq : Squarefree f) :
   have hprod : ∏ p : f.Factors, (p : K[X]) =
       ∏ p : {p : K[X] // p ∈ (normalizedFactors f).toFinset}, (p : K[X]) :=
     Fintype.prod_equiv (Equiv.subtypeEquivRight fun p ↦ by
-        rw [Multiset.mem_toFinset, mem_normalizedFactors_iff hf]) _ _
+        rw [Multiset.mem_toFinset, Polynomial.mem_normalizedFactors_iff hf]) _ _
       fun x ↦ by rw [Equiv.subtypeEquivRight_apply]
   have hcoe : ∏ p : {p : K[X] // p ∈ (normalizedFactors f).toFinset}, (p : K[X]) =
       ∏ p ∈ (normalizedFactors f).toFinset, p :=
     Finset.prod_coe_sort _ fun x ↦ x
-  rw [hprod, hcoe, Finset.prod_eq_multiset_prod, Multiset.toFinset_val,
-    Multiset.dedup_eq_self.mpr ((squarefree_iff_nodup_normalizedFactors hf).mp hsq),
-    Multiset.map_id']
-  exact prod_normalizedFactors hf
+  rw [hprod, hcoe, toFinset_normalizedFactors]
+  exact radical_associated hsq.isRadical hf
 
 /-- The degrees of the distinct monic irreducible factors of `f ≠ 0` sum to at most the
 degree of `f`. -/

@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Valuation.Basic
 import Mathlib.Algebra.Order.Group.Basic
 import Mathlib.Algebra.Polynomial.Eval.Coeff
 import Mathlib.Algebra.Polynomial.Monic
+import Mathlib.RingTheory.Polynomial.Subring
+import Mathlib.RingTheory.Valuation.Integral
 
 /-!
 # Valuations of roots of monic polynomials
@@ -19,8 +21,9 @@ import Mathlib.Algebra.Polynomial.Monic
 Elementary estimates for a valuation `ν` on a commutative ring: a product of two `ν`-integral
 elements that is a `ν`-unit has `ν`-unit factors, and for a monic polynomial `p` with
 `ν`-integral coefficients the leading term dominates at any `t` with `1 < ν t`, so that
-`ν (p.eval t) = ν t ^ p.natDegree`. Consequently a root of such a `p` is `ν`-integral — the
-concrete form of the fact that valuation rings are integrally closed.
+`ν (p.eval t) = ν t ^ p.natDegree`. Mathlib has the *inequality* that such an estimate gives, as
+integral closedness of the valuation ring; the equality is what is added here, and
+`le_one_of_root_monic` is Mathlib's statement in the coefficientwise form the callers use.
 
 ## Main results
 
@@ -28,7 +31,7 @@ concrete form of the fact that valuation rings are integrally closed.
 * `Valuation.map_eval_eq_of_one_lt`: `ν (p.eval t) = ν t ^ p.natDegree` for monic `p` with
   `ν`-integral coefficients and `1 < ν t`.
 * `Valuation.le_one_of_root_monic`: a root of a monic polynomial with `ν`-integral coefficients
-  is `ν`-integral.
+  is `ν`-integral, from `Valuation.Integers.isIntegral_iff_v_le_one`.
 
 ## Roadmap
 
@@ -55,16 +58,6 @@ open Polynomial
 
 variable {L Γ : Type*} [CommRing L] [LinearOrderedCommGroupWithZero Γ] (ν : Valuation L Γ)
   {t a b : L}
-
-/-- Every natural number is integral for a valuation: `ν (n : R) ≤ 1`, by the ultrametric
-inequality applied to `n` copies of `1`. -/
-lemma map_natCast_le_one {R : Type*} [Ring R] (ν : Valuation R Γ) (n : ℕ) :
-    ν (n : R) ≤ 1 := by
-  induction n with
-  | zero => simp
-  | succ k ih =>
-    rw [Nat.cast_succ]
-    exact (ν.map_add _ _).trans (max_le ih ν.map_one.le)
 
 /-- If a product of two integral elements is a unit, then each factor is a unit. -/
 lemma eq_one_of_mul_eq_one (ha : ν a ≤ 1) (hb : ν b ≤ 1) (hab : ν (a * b) = 1) :
@@ -95,14 +88,24 @@ lemma map_eval_eq_of_one_lt {p : L[X]} (hp : p.Monic)
   rw [heval, ν.map_add_eq_of_lt_right hlt, map_pow]
 
 /-- A root of a monic polynomial whose coefficients are integral for the valuation `ν` is itself
-integral. (This is a concrete form of the fact that valuation rings are integrally closed.) -/
+integral: such a root is integral over `ν.integer`, and a valuation ring is integrally closed
+(`Valuation.Integers.isIntegral_iff_v_le_one`). Stated in terms of the coefficients, which is how
+the callers have the hypothesis. -/
 lemma le_one_of_root_monic {p : L[X]} (hp : p.Monic)
     (hcoeff : ∀ i < p.natDegree, ν (p.coeff i) ≤ 1) (heq : p.eval t = 0) :
     ν t ≤ 1 := by
-  by_contra! hlt
-  have h := ν.map_eval_eq_of_one_lt hp hcoeff hlt
-  rw [heq, map_zero] at h
-  exact pow_ne_zero _ (zero_lt_one.trans hlt).ne' h.symm
+  have hsub : (↑p.coeffs : Set L) ⊆ ν.integer := by
+    intro a ha
+    obtain ⟨i, -, rfl⟩ := Polynomial.mem_coeffs_iff.mp ha
+    rcases lt_trichotomy i p.natDegree with hi | hi | hi
+    · exact hcoeff i hi
+    · simp [hi, hp.coeff_natDegree]
+    · simp [p.coeff_eq_zero_of_natDegree_lt hi]
+  have hmap : (p.toSubring ν.integer hsub).map (algebraMap ν.integer L) = p :=
+    Polynomial.map_toSubring p ν.integer hsub
+  refine (Valuation.integer.integers ν).mem_of_integral
+    ⟨p.toSubring _ hsub, (Polynomial.monic_toSubring _ _ _).mpr hp, ?_⟩
+  rw [Polynomial.eval₂_eq_eval_map, hmap, heq]
 
 end Valuation
 

@@ -21,7 +21,7 @@ relative to when the "bad" primes are given downstairs:
 ## Main definitions
 
 * `IsDedekindDomain.HeightOneSpectrum.primesAbove`: the primes of `B` above a set of primes
-  of `R`.
+  of `R`, as a preimage under `HeightOneSpectrum.under`.
 * `IsDedekindDomain.selmerGroupAbove`: the `n`-Selmer group of `L` relative to the primes of `B`
   above `S`.
 
@@ -55,36 +55,27 @@ public section
 namespace IsDedekindDomain
 
 variable (R : Type*) [CommRing R] [IsDedekindDomain R]
-  (B : Type*) [CommRing B] [IsDedekindDomain B] [Algebra R B]
+  (B : Type*) [CommRing B] [IsDedekindDomain B] [Algebra R B] [Algebra.IsIntegral R B]
 
 namespace HeightOneSpectrum
 
-/-- The primes of `B` lying above a set `S` of primes of `R`. -/
+/-- The primes of `B` lying above a set `S` of primes of `R`: the preimage of `S` under the
+contraction `HeightOneSpectrum.under R`. -/
 def primesAbove (S : Set (HeightOneSpectrum R)) : Set (HeightOneSpectrum B) :=
-  {w | ∃ v ∈ S, v.asIdeal = w.asIdeal.under R}
-
--- `HeightOneSpectrum` and `primesAbove` need only the ring structure, so the section's
--- Dedekind hypotheses are dropped from the results that do not use them.
-omit [IsDedekindDomain R] [IsDedekindDomain B] in
-lemma primesAbove_mono {S T : Set (HeightOneSpectrum R)} (hST : S ⊆ T) :
-    primesAbove R B S ⊆ primesAbove R B T :=
-  fun _ ⟨v, hv, hva⟩ ↦ ⟨v, hST hv, hva⟩
-
-omit [IsDedekindDomain R] [IsDedekindDomain B] in
-@[simp]
-lemma primesAbove_empty : primesAbove R B (∅ : Set (HeightOneSpectrum R)) = ∅ := by
-  ext w
-  simp [primesAbove]
-
-variable [Algebra.IsIntegral R B]
+  under R ⁻¹' S
 
 /-- A prime of `B` lies above `S` exactly when its contraction to `R` lies in `S`. -/
 @[simp]
 lemma mem_primesAbove_iff (S : Set (HeightOneSpectrum R)) (w : HeightOneSpectrum B) :
-    w ∈ primesAbove R B S ↔ under R w ∈ S := by
-  refine ⟨fun ⟨v, hv, hva⟩ ↦ ?_, fun hw ↦ ⟨under R w, hw, rfl⟩⟩
-  have hunder : under R w = v := HeightOneSpectrum.ext hva.symm
-  rwa [hunder]
+    w ∈ primesAbove R B S ↔ under R w ∈ S := Iff.rfl
+
+lemma primesAbove_mono {S T : Set (HeightOneSpectrum R)} (hST : S ⊆ T) :
+    primesAbove R B S ⊆ primesAbove R B T :=
+  Set.preimage_mono hST
+
+@[simp]
+lemma primesAbove_empty : primesAbove R B (∅ : Set (HeightOneSpectrum R)) = ∅ :=
+  Set.preimage_empty
 
 /-- Only finitely many primes of `B` lie above a finite set of primes of `R`: each fiber
 injects into `Ideal.primesOver`, which is finite for a Dedekind extension. -/
@@ -92,7 +83,7 @@ lemma primesAbove_finite [Module.IsTorsionFree R B] {S : Set (HeightOneSpectrum 
     (hS : S.Finite) : (primesAbove R B S).Finite := by
   have hsub : primesAbove R B S ⊆
       ⋃ v ∈ S, {w : HeightOneSpectrum B | w.asIdeal ∈ v.asIdeal.primesOver B} :=
-    fun w ⟨v, hv, hva⟩ ↦ Set.mem_biUnion hv ⟨w.isPrime, ⟨hva⟩⟩
+    fun w hw ↦ Set.mem_biUnion hw ⟨w.isPrime, ⟨rfl⟩⟩
   refine (hS.biUnion fun v _ ↦ ?_).subset hsub
   have := v.isMaximal
   exact (IsDedekindDomain.primesOver_finite v.asIdeal B).preimage
@@ -107,9 +98,9 @@ def selmerGroupAbove (L : Type*) [Field L] [Algebra B L] [IsFractionRing B L]
     (S : Set (HeightOneSpectrum R)) (n : ℕ) : Subgroup (Lˣ ⧸ (powMonoidHom n : Lˣ →* Lˣ).range) :=
   selmerGroup (R := B) (K := L) (S := HeightOneSpectrum.primesAbove R B S) (n := n)
 
-omit [IsDedekindDomain R] in
-/-- A class of units lies in the Selmer group relative to `S` exactly when its valuation is
-trivial at every prime of `B` not lying above `S`. -/
+/-- A class of units lies in the Selmer group relative to `S` exactly when its
+`valuationOfNeZeroMod n` is trivial at every prime of `B` not lying above `S`, i.e. `n` divides
+the `w`-adic valuation there. -/
 @[simp]
 lemma mem_selmerGroupAbove_iff (L : Type*) [Field L] [Algebra B L] [IsFractionRing B L]
     (S : Set (HeightOneSpectrum R)) (n : ℕ) (x : Lˣ ⧸ (powMonoidHom n : Lˣ →* Lˣ).range) :

@@ -51,14 +51,7 @@ namespace QuotientGroup
 subgroups of `n`-th powers. -/
 def congrRangePowMonoidHom {G H : Type*} [CommGroup G] [CommGroup H] (e : G ≃* H) (n : ℕ) :
     G ⧸ (powMonoidHom n : G →* G).range ≃* H ⧸ (powMonoidHom n : H →* H).range :=
-  QuotientGroup.congr _ _ e <| by
-    ext x
-    simp only [Subgroup.mem_map, MonoidHom.mem_range, powMonoidHom_apply]
-    refine ⟨?_, ?_⟩
-    · rintro ⟨_, ⟨u, rfl⟩, rfl⟩
-      exact ⟨e u, by simp⟩
-    · rintro ⟨u, rfl⟩
-      exact ⟨e.symm u ^ n, ⟨_, rfl⟩, by simp⟩
+  QuotientGroup.congr _ _ e (e.map_range_powMonoidHom n)
 
 @[simp]
 lemma congrRangePowMonoidHom_mk {G H : Type*} [CommGroup G] [CommGroup H] (e : G ≃* H) (n : ℕ)

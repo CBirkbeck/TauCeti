@@ -83,7 +83,7 @@ instance instFiniteDimensional (p : f.Factors) : FiniteDimensional K (AdjoinRoot
   (powerBasis p.irreducible.ne_zero).finite
 
 lemma minpoly_root_factor (p : f.Factors) : minpoly K (root (p : K[X])) = (p : K[X]) := by
-  rw [minpoly_root p.irreducible.ne_zero, p.monic.leadingCoeff, inv_one, map_one, mul_one]
+  simpa using AdjoinRoot.minpoly_powerBasis_gen_of_monic p.monic
 
 open IntermediateField in
 /-- If `f` is separable, then each field factor of `K[X] ⧸ (f)` is a separable extension of `K`.
