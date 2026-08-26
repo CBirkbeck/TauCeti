@@ -43,8 +43,8 @@ the lower level. The `q`-expansion results go up only.
 ## Main results
 
 * `TauCeti.ModularForm.levelRaise_apply`: `(V_d f) τ = f (d τ)`, the defining formula from which
-  the algebraic properties (`levelRaise_one_apply`, `levelRaise_one`, `levelRaise_levelRaise`,
-  `levelRaise_injective`) all follow by `ext`.
+  the algebraic properties (`levelRaise_one_apply`, `ModularForm.levelRaise_one`,
+  `levelRaise_levelRaise`, `levelRaise_injective`) all follow by `ext`.
 * `TauCeti.Gamma1_map_le_conjAct_scaleGL`, `TauCeti.Gamma0_map_le_conjAct_scaleGL`: the level
   transport, `Γ₁(dM) ≤ diag(d,1)⁻¹ Γ₁(M) diag(d,1)` and likewise for `Γ₀`, which is what makes
   `V_d` a map `M_k(Γ₁(M)) → M_k(Γ₁(dM))`.
@@ -73,7 +73,8 @@ the lower level. The `q`-expansion results go up only.
   `V₁` at a divisor. Reading a form of level `M` as a form of level `N` for any `M ∣ N` carries
   `M_k(Γ₁(M), χ)` into `M_k(Γ₁(N), χ ∘ ZMod.unitsMap)`, and likewise for `S_k`. These are the
   `d = 1` case of the two theorems above, restated for the subgroup inclusion `ofLe`; the
-  restatement is exactly `levelRaise_one`, so no nebentypus argument is repeated for them.
+  restatement is exactly `ModularForm.levelRaise_one` and `CuspForm.levelRaise_one`, so no
+  nebentypus argument is repeated for them.
 * `TauCeti.slash_conjScale_eq_smul_of_slash_scaleGL`,
   `TauCeti.mdifferentiable_of_comp_scaleGL_smul`: the descent, for an `f : ℍ → ℂ` not assumed to
   be a form. If the level-raise of `f` is an eigenvector of the slash by `γ`, then `f` is one
@@ -286,8 +287,12 @@ lemma levelRaise_one_apply [𝒢'.HasDetOne] (h : 𝒢' ≤ ConjAct.toConjAct (s
 /-- **`V₁` is the restriction map, as forms.** The pointwise statement of
 `TauCeti.ModularForm.levelRaise_one_apply`, packaged as an equality of modular forms: at `d = 1`
 the level-raising operator *is* `ofLe`. This is what lets a statement about `V_d` be specialised
-to one about restriction along `𝒢' ≤ 𝒢`, rather than reproved for it. -/
-lemma levelRaise_one [𝒢'.HasDetOne] (h : 𝒢' ≤ ConjAct.toConjAct (scaleGL 1)⁻¹ • 𝒢)
+to one about restriction along `𝒢' ≤ 𝒢`, rather than reproved for it.
+
+It is stated in the root `ModularForm` namespace, beside `ModularForm.ofLe`, so that dot
+notation on a `ModularForm` resolves. -/
+lemma _root_.ModularForm.levelRaise_one [𝒢'.HasDetOne]
+    (h : 𝒢' ≤ ConjAct.toConjAct (scaleGL 1)⁻¹ • 𝒢)
     (h' : 𝒢' ≤ 𝒢) (f : ModularForm 𝒢 k) :
     levelRaise 1 h f = _root_.ModularForm.ofLe h' f :=
   _root_.ModularForm.ext fun τ ↦ (levelRaise_one_apply h f τ).trans
@@ -367,8 +372,12 @@ lemma levelRaise_one_apply [𝒢'.HasDetOne] (h : 𝒢' ≤ ConjAct.toConjAct (s
 /-- **`V₁` is the restriction map, as forms.** The pointwise statement of
 `TauCeti.CuspForm.levelRaise_one_apply`, packaged as an equality of cusp forms: at `d = 1` the
 level-raising operator *is* `ofLe`. This is what lets a statement about `V_d` be specialised to
-one about restriction along `𝒢' ≤ 𝒢`, rather than reproved for it. -/
-lemma levelRaise_one [𝒢'.HasDetOne] (h : 𝒢' ≤ ConjAct.toConjAct (scaleGL 1)⁻¹ • 𝒢)
+one about restriction along `𝒢' ≤ 𝒢`, rather than reproved for it.
+
+It is stated in the root `CuspForm` namespace, beside `CuspForm.ofLe`, so that dot notation
+on a `CuspForm` resolves. -/
+lemma _root_.CuspForm.levelRaise_one [𝒢'.HasDetOne]
+    (h : 𝒢' ≤ ConjAct.toConjAct (scaleGL 1)⁻¹ • 𝒢)
     (h' : 𝒢' ≤ 𝒢) (f : CuspForm 𝒢 k) :
     levelRaise 1 h f = _root_.CuspForm.ofLe h' f :=
   _root_.CuspForm.ext fun τ ↦ (levelRaise_one_apply h f τ).trans
@@ -772,7 +781,7 @@ theorem ModularForm.ofLe_mem_modFormCharSpace {M N : ℕ} (χ : (ZMod M)ˣ →* 
       modFormCharSpace k (χ.comp (ZMod.unitsMap h)) := by
   have hdvd : 1 * M ∣ N := by rwa [one_mul]
   have := levelRaise_mem_modFormCharSpace_of_dvd hdvd χ hf
-  rwa [levelRaise_one _ (Gamma1_map_le_Gamma1_map_of_dvd h)] at this
+  rwa [_root_.ModularForm.levelRaise_one _ (Gamma1_map_le_Gamma1_map_of_dvd h)] at this
 
 /-- **The nebentypus of a level restriction (cusp forms).** For `M ∣ N`, reading a cusp form of
 level `M` as a cusp form of level `N` carries `S_k(Γ₁(M), χ)` into
@@ -785,7 +794,7 @@ theorem CuspForm.ofLe_mem_cuspFormCharSpace {M N : ℕ} (χ : (ZMod M)ˣ →* �
       cuspFormCharSpace k (χ.comp (ZMod.unitsMap h)) := by
   have hdvd : 1 * M ∣ N := by rwa [one_mul]
   have := levelRaise_mem_cuspFormCharSpace_of_dvd hdvd χ hf
-  rwa [levelRaise_one _ (Gamma1_map_le_Gamma1_map_of_dvd h)] at this
+  rwa [_root_.CuspForm.levelRaise_one _ (Gamma1_map_le_Gamma1_map_of_dvd h)] at this
 
 end Restriction
 

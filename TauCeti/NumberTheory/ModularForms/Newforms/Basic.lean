@@ -139,7 +139,7 @@ theorem ofLe_mem_cuspFormsOld [NeZero N] (h : M ∣ N) (hM : M ≠ N) (k : ℤ)
   have h1 : 1 * M ∣ N := by rwa [one_mul]
   have := levelRaise_mem_cuspFormsOld h1 hM k f
   -- At `d = 1`, level-raising is exactly restriction along the subgroup inclusion.
-  rwa [CuspForm.levelRaise_one _ (Gamma1_map_le_Gamma1_map_of_dvd h)] at this
+  rwa [_root_.CuspForm.levelRaise_one _ (Gamma1_map_le_Gamma1_map_of_dvd h)] at this
 
 /-- **Level one has no oldforms**: `1` has no proper divisors. -/
 @[simp]
