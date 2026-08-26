@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Weierstrass
+public import Mathlib.RingTheory.PowerSeries.Substitution
 public import TauCeti.RingTheory.PowerSeries.SelfConvolution
 
 /-!
@@ -21,9 +22,9 @@ constructs that series, proves it satisfies the equation, and proves it is the o
 vanishing constant coefficient that does.
 
 The equation is also recorded with its parameter left free, as `WeierstrassCurve.wEquationRHS`,
-and its solution shown unique at any parameter: the formal group obtains the inverse and the
-group law by substitution, and a substituted series solves the equation at the substituted
-parameter rather than at `z`.
+and its solution shown unique at every parameter with vanishing constant coefficient: the formal
+group obtains the inverse and the group law by substitution, and a substituted series solves the
+equation at the substituted parameter rather than at `z`.
 
 ## Main definitions
 
@@ -41,8 +42,12 @@ parameter rather than at `z`.
 * `WeierstrassCurve.eq_formalW_of_wEquation`: **Silverman AEC IV.1.1(a), uniqueness** — any
   power series with vanishing constant coefficient satisfying that equation equals `w(z)`. The
   two together are the full statement, that `w(z)` is *the* such series.
-* `WeierstrassCurve.eq_of_wEquation`: uniqueness at an arbitrary parameter — two series with
-  vanishing constant coefficient solving the equation at the same parameter are equal.
+* `WeierstrassCurve.eq_of_wEquation`: uniqueness at any parameter that itself has vanishing
+  constant coefficient — two series with vanishing constant coefficient solving the equation at
+  that parameter are equal.
+* `WeierstrassCurve.subst_wEquationRHS` and `WeierstrassCurve.subst_formalW_wEquation`:
+  substituting a series `q` into the equation gives the equation at `q`, so `w(q)` solves it
+  there. With `eq_of_wEquation` this is what identifies substituted solutions.
 * `WeierstrassCurve.formalWCoeff_recurrence`: the coefficientwise recurrence — each coefficient
   of `w(z)` above the leading one, from the strictly earlier ones. This is the form to compute
   with; the strong recursion behind `formalWCoeff` is an implementation detail.
@@ -302,80 +307,14 @@ theorem formalW_wEquation :
     simp only [h2, h3, h4, ite_true, ite_false]
     ring
 
-/-- **Silverman AEC IV.1.1(a), uniqueness.** A power series with vanishing constant coefficient
-that satisfies the `w`-equation is `formalW W`. Together with `formalW_wEquation` this is the
-full statement of Silverman AEC IV.1.1(a): `formalW W` is *the* such series.
+/-! ### Uniqueness at a parameter with vanishing constant coefficient
 
-Only `constantCoeff w = 0` is assumed: the equation at degrees `1` and `2` then forces those two
-coefficients to vanish as well, because every occurrence of `w` on its right-hand side is
-multiplied by `X` or sits in a square or a cube. -/
-theorem eq_formalW_of_wEquation (w : PowerSeries R)
-    (h0 : PowerSeries.constantCoeff w = 0)
-    (hw : w = wEquationRHS W PowerSeries.X w) :
-    w = formalW W := by
-  rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply] at h0
-  -- Degrees `1` and `2` are forced, so the induction below can still start from degree `3`.
-  have hv0 : ∀ k, k < 1 → PowerSeries.coeff k w = 0 := by
-    intro k hk; interval_cases k; exact h0
-  have h1 : PowerSeries.coeff 1 w = 0 := by
-    have hL := congrArg (PowerSeries.coeff 1) hw
-    rw [coeff_wEquationRHS,
-      PowerSeries.selfConvTwo_eq_zero hv0 (show (1 : ℕ) < 2 * 1 by omega),
-      PowerSeries.selfConvTwo_eq_zero hv0 (show (1 : ℕ) - 1 < 2 * 1 by omega),
-      PowerSeries.selfConvThree_eq_zero hv0 (show (1 : ℕ) < 3 * 1 by omega)] at hL
-    simpa [h0] using hL
-  have hv1 : ∀ k, k < 2 → PowerSeries.coeff k w = 0 := by
-    intro k hk; interval_cases k; exacts [h0, h1]
-  have h2 : PowerSeries.coeff 2 w = 0 := by
-    have hL := congrArg (PowerSeries.coeff 2) hw
-    rw [coeff_wEquationRHS,
-      PowerSeries.selfConvTwo_eq_zero hv1 (show (2 : ℕ) < 2 * 2 by omega),
-      PowerSeries.selfConvTwo_eq_zero hv1 (show (2 : ℕ) - 1 < 2 * 2 by omega),
-      PowerSeries.selfConvThree_eq_zero hv1 (show (2 : ℕ) < 3 * 2 by omega)] at hL
-    simpa [h0, h1] using hL
-  have hlow : ∀ k, k < 3 → PowerSeries.coeff k w = 0 := by
-    intro k hk; interval_cases k; exacts [h0, h1, h2]
-  have hc2 : ∀ m, m < 6 → PowerSeries.selfConvTwo (fun k => PowerSeries.coeff k w) m = 0 :=
-    fun _ hm => PowerSeries.selfConvTwo_eq_zero hlow hm
-  have hc3 : ∀ m, m < 9 → PowerSeries.selfConvThree (fun k => PowerSeries.coeff k w) m = 0 :=
-    fun _ hm => PowerSeries.selfConvThree_eq_zero hlow hm
-  ext n
-  -- The equation determines each coefficient from the strictly earlier ones, so this is a
-  -- strong induction: at index `n` the right-hand side involves `w` only below `n`, by
-  -- `coeff_wEquationRHS` together with `PowerSeries.selfConvTwo_congr` and
-  -- `PowerSeries.selfConvThree_congr`.
-  induction n using Nat.strong_induction_on with
-  | _ n ih =>
-    rcases lt_trichotomy n 3 with h | h | h
-    · rw [hlow n h, coeff_formalW, formalWCoeff_eq_zero_of_lt W h]
-    · subst h
-      have hL := congrArg (PowerSeries.coeff 3) hw
-      rw [coeff_wEquationRHS] at hL
-      rw [hL, coeff_formalW, formalWCoeff_three]
-      simp [hlow 1 (by omega), hlow 2 (by omega), hc2, hc3]
-    · have hL := congrArg (PowerSeries.coeff n) hw
-      rw [coeff_wEquationRHS] at hL
-      have hw0 : (fun k => PowerSeries.coeff k w) 0 = 0 := hlow 0 (by omega)
-      have hf0 : (fun k => formalWCoeff W k) 0 = 0 := formalWCoeff_zero W
-      have hagree : ∀ m, m < n → PowerSeries.coeff m w = formalWCoeff W m := fun m hm => by
-        rw [ih m hm, coeff_formalW]
-      have h2' : ¬ n = 3 := by omega
-      have h3 : 1 ≤ n := by omega
-      have h4 : 2 ≤ n := by omega
-      rw [hL, coeff_formalW, formalWCoeff_recurrence W h,
-        PowerSeries.selfConvTwo_congr hw0 hf0 hagree,
-        PowerSeries.selfConvTwo_congr (n := n - 1) hw0 hf0 (fun m hm => hagree m (by omega)),
-        PowerSeries.selfConvThree_congr hw0 hf0 hagree,
-        hagree (n - 1) (by omega), hagree (n - 2) (by omega)]
-      simp only [h2', h3, h4, ite_true, ite_false]
-      ring
-
-/-! ### Uniqueness at an arbitrary parameter
-
-`eq_formalW_of_wEquation` above identifies the solution of the `w`-equation at the parameter
-`z`. The formal group needs the same statement at an arbitrary parameter series, because the
-inverse and the group law are obtained by substituting one series into another, and such a
-substitution solves the equation at the substituted parameter rather than at `z`.
+The formal group needs uniqueness not only at the parameter `z` but at any parameter series
+with vanishing constant coefficient, because the inverse and the group law are obtained by
+substituting one series into another, and such a substitution solves the equation at the
+substituted parameter rather than at `z`. Vanishing of the constant coefficient is exactly what
+makes the equation determine its solution: it is what forces the `n`-th coefficient of the
+right-hand side to depend only on the earlier coefficients of the unknown.
 -/
 
 /-- Multiplying by a series with vanishing constant coefficient makes the `n`-th coefficient of
@@ -423,9 +362,13 @@ private theorem coeff_wEquationRHS_congr {q v v' : PowerSeries R}
   rw [coeff_mul_congr hq h, coeff_mul_congr hq2 h, hsq n le_rfl,
     coeff_mul_congr hq fun m hm => hsq m hm.le, hcb]
 
-/-- **Uniqueness of the solution of the `w`-equation, at an arbitrary parameter.** Two power
-series with vanishing constant coefficient that satisfy the `w`-equation at the same parameter
-series are equal.
+/-- **Uniqueness of the solution of the `w`-equation.** Two power series with vanishing constant
+coefficient that satisfy the `w`-equation at the same parameter series `q` are equal, provided
+`q` too has vanishing constant coefficient.
+
+The hypothesis on `q` is what drives the induction: it is exactly what makes the `n`-th
+coefficient of the right-hand side depend only on the coefficients of the unknown strictly below
+`n`, so that the equation determines its solution one coefficient at a time.
 
 `eq_formalW_of_wEquation` is the case `q = z`, where the solution is moreover identified as
 `formalW W`. -/
@@ -440,5 +383,53 @@ theorem eq_of_wEquation {q v v' : PowerSeries R} (hq : PowerSeries.constantCoeff
     have hR := congrArg (PowerSeries.coeff n) h'
     rw [hL, hR]
     exact coeff_wEquationRHS_congr W hq hv hv' ih
+
+/-- **Silverman AEC IV.1.1(a), uniqueness.** A power series with vanishing constant coefficient
+that satisfies the `w`-equation is `formalW W`. Together with `formalW_wEquation` this is the
+full statement of Silverman AEC IV.1.1(a): `formalW W` is *the* such series.
+
+Only `constantCoeff w = 0` is assumed: the equation at degrees `1` and `2` then forces those two
+coefficients to vanish as well, because every occurrence of `w` on its right-hand side is
+multiplied by `X` or sits in a square or a cube. -/
+theorem eq_formalW_of_wEquation (w : PowerSeries R)
+    (h0 : PowerSeries.constantCoeff w = 0)
+    (hw : w = wEquationRHS W PowerSeries.X w) :
+    w = formalW W :=
+  eq_of_wEquation W (by simp) h0 (by simp) hw (formalW_wEquation W)
+
+/-! ### Substituting into the equation
+
+Substituting a series `q` into the `w`-equation at the parameter `z` gives the equation at the
+parameter `q`. With `eq_of_wEquation` this is what identifies a substituted solution, and it is
+how the formal group's inverse and group law are recognised.
+
+Mathlib's `PowerSeries.subst` is defined only over a `CommRing`, so this section is stated there;
+the uniqueness theorem above needs no such hypothesis and keeps the `CommSemiring` of the rest of
+this file.
+-/
+
+section CommRing
+
+variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
+
+/-- Substitution passes through the `w`-equation, carrying the parameter with it: substituting
+`q` into the right-hand side at parameter `z` gives the right-hand side at parameter `q`. -/
+theorem subst_wEquationRHS {q : PowerSeries R} (hq : PowerSeries.HasSubst q) (v : PowerSeries R) :
+    PowerSeries.subst q (wEquationRHS W PowerSeries.X v) =
+      wEquationRHS W q (PowerSeries.subst q v) := by
+  simp only [wEquationRHS_def, PowerSeries.subst_add hq, PowerSeries.subst_mul hq,
+    PowerSeries.subst_pow hq, PowerSeries.subst_C, PowerSeries.subst_X hq]
+  rfl
+
+/-- The `w`-expansion composed with a substitutable series `q` solves the `w`-equation at the
+parameter `q`. This is the hypothesis `eq_of_wEquation` consumes: any other series with vanishing
+constant coefficient solving the equation at `q` is equal to `w(q)`. -/
+theorem subst_formalW_wEquation {q : PowerSeries R} (hq : PowerSeries.HasSubst q) :
+    PowerSeries.subst q (formalW W) =
+      wEquationRHS W q (PowerSeries.subst q (formalW W)) := by
+  conv_lhs => rw [formalW_wEquation W]
+  exact subst_wEquationRHS W hq (formalW W)
+
+end CommRing
 
 end WeierstrassCurve
