@@ -138,8 +138,11 @@ geometric one: `φ s` is a unit by `isUnit_of_forall_comap_mem_rationalSubset`, 
 
 The passage from "sub-unit at every point of `Spa (B, B⁺)`" to "in `B⁺`" is Wedhorn's
 Proposition 7.52(1), applied through `mem_of_forall_vle_one`; its hypotheses on the target are
-`hopenB` and `[IsIntegrallyClosedIn Bplus B]`. The hypothesis `hplus` is the remaining half of
-`B⁺` being a ring of integral elements that the proof uses, namely `B⁺ ⊆ B°`.
+`hopenB`, `[IsIntegrallyClosedIn Bplus B]` and `[IsHuberRing B]`. The hypothesis `hplus` is the
+remaining half of `B⁺` being a ring of integral elements that the proof uses, namely `B⁺ ⊆ B°`.
+
+Asking `B` to be Huber is not a restriction added here: Wedhorn states Lemma 8.1 for a continuous
+homomorphism into a *complete affinoid ring*, and an affinoid ring is a Huber pair.
 
 These are properties of the pair `(B, B⁺)` alone: they mention neither `φ` nor `T` nor `s`. The
 per-morphism algebraic conditions of the universal property are replaced by the single geometric
@@ -148,7 +151,7 @@ theorem existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset [IsTo
     (P : PairOfDefinition A) (Aplus : Subring A) (T : Finset A) (s : A) (S : Type*) [CommRing S]
     [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S)
     {B : Type*} [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [NonarchimedeanRing B]
-    [CompleteSpace B] [T0Space B] (Bplus : Subring B)
+    [IsHuberRing B] [CompleteSpace B] [T0Space B] (Bplus : Subring B)
     (hmax : ∀ 𝔪 : Ideal B, 𝔪.IsMaximal → IsOpen (𝔪 : Set B))
     (hopenB : IsOpen (Bplus : Set B)) [IsIntegrallyClosedIn Bplus B]
     (hplus : Bplus ≤ powerBoundedSubring B) {φ : A →+* B} (hφ : ContinuousAt φ 0)
