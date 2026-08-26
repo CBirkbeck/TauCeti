@@ -5,8 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.FieldTheory.AlgebraicClosure
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Eval
+import Mathlib.FieldTheory.AlgebraicClosure
+import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Eval
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.GenericPoint
 
 /-!
@@ -389,4 +389,3 @@ theorem translation_apply_genericY_some {x₁ y₁ : F} (h : W.Nonsingular x₁ 
 end WeierstrassCurve.Affine
 
 end
-
