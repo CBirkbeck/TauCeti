@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
-public import Mathlib.RingTheory.Kaehler.Basic
 public import Mathlib.RingTheory.Kaehler.Polynomial
 public import Mathlib.RingTheory.Unramified.Field
 
@@ -39,6 +38,8 @@ hence separable algebraic, which contradicts `x` being transcendental over `F`.
 
 ## Main results
 
+* `WeierstrassCurve.Affine.invariantDifferentialDenom_def`,
+  `WeierstrassCurve.Affine.invariantDifferential_def`: the two defining formulas.
 * `WeierstrassCurve.Affine.invariantDifferentialDenom_ne_zero`: the denominator is nonzero.
 * `WeierstrassCurve.Affine.D_X_ne_zero`: `D x ≠ 0` in `Ω[K(E)/F]`.
 * `WeierstrassCurve.Affine.invariantDifferential_ne_zero`: `ω ≠ 0` in `Ω[K(E)/F]`.
@@ -98,15 +99,15 @@ private lemma polynomialY_ne_zero [E.IsElliptic] : E.polynomialY ≠ 0 := by
     simp only [coeff_add, mul_coeff_zero, coeff_C_zero, coeff_X_zero, mul_zero, zero_add,
       coeff_zero] at this
     exact this
-  refine absurd ((show WeierstrassCurve.Δ E = 0 by
-    simp only [WeierstrassCurve.Δ]
-    rw [show WeierstrassCurve.b₂ E = 0 by
-        simp only [WeierstrassCurve.b₂, ha1]; linear_combination 2 * E.a₂ * h1,
-      show WeierstrassCurve.b₄ E = 0 by
-        simp only [WeierstrassCurve.b₄, ha1, ha3]; linear_combination E.a₄ * h1,
-      show WeierstrassCurve.b₆ E = 0 by
-        simp only [WeierstrassCurve.b₆, ha3]; linear_combination 2 * E.a₆ * h1]
-    ring) ▸ E.isUnit_Δ) not_isUnit_zero
+  have hb₂ : WeierstrassCurve.b₂ E = 0 := by
+    simp only [WeierstrassCurve.b₂, ha1]; linear_combination 2 * E.a₂ * h1
+  have hb₄ : WeierstrassCurve.b₄ E = 0 := by
+    simp only [WeierstrassCurve.b₄, ha1, ha3]; linear_combination E.a₄ * h1
+  have hb₆ : WeierstrassCurve.b₆ E = 0 := by
+    simp only [WeierstrassCurve.b₆, ha3]; linear_combination 2 * E.a₆ * h1
+  have hΔ : WeierstrassCurve.Δ E = 0 := by
+    simp only [WeierstrassCurve.Δ]; rw [hb₂, hb₄, hb₆]; ring
+  exact absurd (hΔ ▸ E.isUnit_Δ) not_isUnit_zero
 
 /-- `W_Y` stays nonzero in the coordinate ring: its degree is below `deg W`, so it is not a
 multiple of `W`. -/
@@ -174,13 +175,27 @@ private lemma algebraMap_a₁_mul_X_add_a₃ :
 
 /-- The denominator `2y + a₁x + a₃` of the invariant differential, as an element of `K(E)`. It
 is the image of the partial derivative `W_Y = polynomialY`; `algebraMap_mk_polynomialY` is that
-identification, and it is nonzero exactly when `E` is elliptic. -/
+identification, and `invariantDifferentialDenom_ne_zero` shows it is nonzero when `E` is
+elliptic. The converse fails: `y² = x³` over `ℚ` is singular, yet its `W_Y = 2y` is nonzero. -/
 noncomputable def invariantDifferentialDenom : E.FunctionField :=
   2 * algebraMap E.CoordinateRing E.FunctionField (AdjoinRoot.root E.polynomial) +
     algebraMap F E.FunctionField E.a₁ *
       algebraMap E.CoordinateRing E.FunctionField
         (algebraMap (Polynomial F) E.CoordinateRing Polynomial.X) +
     algebraMap F E.FunctionField E.a₃
+
+/-- The defining formula for `invariantDifferentialDenom`. The definition body is not exposed, so
+this equation lemma is how a consumer in another module computes with it. That is also why the
+proof is the parenthesised `(rfl)`: a bare `rfl` is rejected for a theorem exported from this
+module, exactly as for `invar_def` and `ψc_def` in `DivisionPolynomial/`. -/
+theorem invariantDifferentialDenom_def :
+    invariantDifferentialDenom E =
+      2 * algebraMap E.CoordinateRing E.FunctionField (AdjoinRoot.root E.polynomial) +
+        algebraMap F E.FunctionField E.a₁ *
+          algebraMap E.CoordinateRing E.FunctionField
+            (algebraMap (Polynomial F) E.CoordinateRing Polynomial.X) +
+        algebraMap F E.FunctionField E.a₃ :=
+  (rfl)
 
 /-- **The denominator of the invariant differential is nonzero.** It is the image of `W_Y` in
 `K(E)`, and `W_Y` is a nonzero polynomial of degree below `deg W`, so it survives both
@@ -214,17 +229,10 @@ private lemma algebraMap_polynomial_injective :
 private lemma aeval_algebraMap_X (p : Polynomial F) :
     Polynomial.aeval (algebraMap (Polynomial F) E.FunctionField Polynomial.X) p =
       algebraMap (Polynomial F) E.FunctionField p := by
-  induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add, map_add, hp, hq]
-  | monomial n a =>
-    rw [Polynomial.aeval_monomial]
-    -- `aeval_monomial` leaves the coefficient as `algebraMap F _ a`; it is definitionally the
-    -- image of `Polynomial.C a` under the tower, which is the form `C_mul_X_pow_eq_monomial`
-    -- below needs. No rewrite lemma states that reassociation, so the step is a `change`.
-    change algebraMap (Polynomial F) E.FunctionField (Polynomial.C a) *
-        algebraMap (Polynomial F) E.FunctionField Polynomial.X ^ n =
-      algebraMap (Polynomial F) E.FunctionField (Polynomial.monomial n a)
-    rw [← map_pow, ← map_mul, Polynomial.C_mul_X_pow_eq_monomial]
+  have h := Polynomial.aeval_algHom
+    (IsScalarTower.toAlgHom F (Polynomial F) E.FunctionField) Polynomial.X
+  rw [Polynomial.aeval_X_left, AlgHom.comp_id] at h
+  exact DFunLike.congr_fun h p
 
 /-- `x` is transcendental over `F`. -/
 private lemma not_isAlgebraic_X :
@@ -270,9 +278,7 @@ private lemma weierstrass_relation_coordinateRing :
     AdjoinRoot.mk_eq_mk.mpr ⟨1, by rw [WeierstrassCurve.Affine.polynomial]; ring1⟩
   rw [AdjoinRoot.mk_X] at Y_sq
   simp only [map_sub, map_mul, AdjoinRoot.mk_X] at Y_sq
-  have hcc : ∀ p : Polynomial F, AdjoinRoot.mk E.polynomial (Polynomial.C p) =
-    algebraMap (Polynomial F) E.CoordinateRing p := fun _ => rfl
-  rw [hcc, hcc] at Y_sq
+  rw [AdjoinRoot.mk_C, AdjoinRoot.mk_C, ← AdjoinRoot.algebraMap_eq] at Y_sq
   linear_combination Y_sq
 
 /-- The Weierstrass relation, transported from `F[E]` to `K(E)`. -/
@@ -302,11 +308,11 @@ private lemma D_root [E.IsElliptic]
     algebraMap E.CoordinateRing E.FunctionField (AdjoinRoot.root E.polynomial)
   set c := algebraMap (Polynomial F) E.FunctionField
     (Polynomial.C E.a₁ * Polynomial.X + Polynomial.C E.a₃)
+  have hDc : D c = 0 := D_algebraMap_polynomial E hDx _
   have hsmul : (2 * y + c) • D y = 0 := by
     have hD_lhs : D (y ^ 2 + c * y) = (2 * y + c) • D y := by
-      rw [map_add, sq, Derivation.leibniz, Derivation.leibniz,
-        show D c = 0 from D_algebraMap_polynomial E hDx _, smul_zero, add_zero, add_smul,
-        two_mul, add_smul]
+      rw [map_add, sq, Derivation.leibniz, Derivation.leibniz, hDc, smul_zero, add_zero,
+        add_smul, two_mul, add_smul]
     rw [← hD_lhs, weierstrass_relation E]
     exact D_algebraMap_polynomial E hDx _
   have hne : 2 * y + c ≠ 0 := two_mul_root_add_ne_zero E
@@ -337,25 +343,9 @@ private lemma D_eq_zero [E.IsElliptic]
     (hDx : KaehlerDifferential.D F E.FunctionField
       (algebraMap (Polynomial F) E.FunctionField Polynomial.X) = 0) (s : E.FunctionField) :
     KaehlerDifferential.D F E.FunctionField s = 0 := by
-  set D := KaehlerDifferential.D F E.FunctionField
   obtain ⟨a, b, hb, hab⟩ := IsFractionRing.div_surjective (A := E.CoordinateRing) s
-  rw [← hab, div_eq_mul_inv, Derivation.leibniz, D_algebraMap_coordinateRing E hDx a, smul_zero,
-    add_zero]
-  have hb_ne : algebraMap E.CoordinateRing E.FunctionField b ≠ 0 :=
-    (IsLocalization.map_units E.FunctionField ⟨b, hb⟩).ne_zero
-  have h1 : algebraMap E.CoordinateRing E.FunctionField b •
-      D ((algebraMap E.CoordinateRing E.FunctionField b)⁻¹) = 0 := by
-    have hone : D (algebraMap E.CoordinateRing E.FunctionField b *
-        (algebraMap E.CoordinateRing E.FunctionField b)⁻¹) = 0 := by
-      rw [mul_inv_cancel₀ hb_ne, Derivation.map_one_eq_zero]
-    rwa [Derivation.leibniz, D_algebraMap_coordinateRing E hDx b, smul_zero, add_zero] at hone
-  have hDinv : D ((algebraMap E.CoordinateRing E.FunctionField b)⁻¹) = 0 := by
-    rw [show D ((algebraMap E.CoordinateRing E.FunctionField b)⁻¹) =
-      (algebraMap E.CoordinateRing E.FunctionField b)⁻¹ •
-        (algebraMap E.CoordinateRing E.FunctionField b •
-          D ((algebraMap E.CoordinateRing E.FunctionField b)⁻¹)) from by
-      rw [smul_smul, inv_mul_cancel₀ hb_ne, one_smul], h1, smul_zero]
-  rw [hDinv, smul_zero]
+  rw [← hab, (KaehlerDifferential.D F E.FunctionField).leibniz_div_const _ _
+    (D_algebraMap_coordinateRing E hDx b), D_algebraMap_coordinateRing E hDx a, smul_zero]
 
 /-- **The differential of `x` is nonzero.** If it vanished, `D` would vanish identically, so
 `Ω[K(E)/F] = 0` and `K(E)/F` would be formally unramified, hence separable algebraic —
