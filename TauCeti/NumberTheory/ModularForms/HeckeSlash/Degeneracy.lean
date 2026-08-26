@@ -92,7 +92,10 @@ private lemma natDiagGL_mul_upperTriRep (hd : 0 < d) (b : Fin p) {q r : ℕ} (hr
   -- `map_zpow` is disabled: it moves the exponent outside `mapGL`, where the entrywise
   -- description of `T` no longer applies.
   have hT : ∀ n : ℤ, (↑(mapGL ℚ (ModularGroup.T ^ n)) : Matrix (Fin 2) (Fin 2) ℚ) =
-      !![1, (n : ℚ); 0, 1] := fun n ↦ by simp [-map_zpow]
+      !![1, (n : ℚ); 0, 1] := fun n ↦ by
+    ext i j
+    fin_cases i <;> fin_cases j <;>
+      simp [mapGL_coe_matrix, ModularGroup.coe_T_zpow, -map_zpow]
   apply Units.ext
   rw [Units.val_mul, Units.val_mul, Units.val_mul, hdiag, coe_upperTriRep, coe_upperTriRep, hT]
   ext i j
