@@ -112,8 +112,11 @@ theorem xShift_apply_zero (s : MvPowerSeries (Fin 1) M) :
     (xShift A s : (Fin 1 →₀ ℕ) → M) 0 = 0 := by
   simp [xShift_apply]
 
-/-- In degree `j + 1`, `xShift A s` takes the degree-`j` coefficient of `s`. -/
-@[simp]
+/-- In degree `j + 1`, `xShift A s` takes the degree-`j` coefficient of `s`.
+
+Deliberately not `@[simp]`: `Finsupp.single 0 (j + 1)` is not in simp normal form, since
+`Finsupp.single_add` rewrites it to `Finsupp.single 0 j + Finsupp.single 0 1`, so the
+annotation could never fire. The uses in this file rewrite with it explicitly. -/
 theorem xShift_apply_single_succ (s : MvPowerSeries (Fin 1) M) (j : ℕ) :
     (xShift A s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 (j + 1)) =
       (s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 j) := by
