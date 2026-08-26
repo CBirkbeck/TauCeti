@@ -5,9 +5,10 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.RingTheory.Huber.ClosedSubmodule
+public import TauCeti.RingTheory.Huber.Basic
 public import TauCeti.RingTheory.Huber.Restricted.PowerSeries
 public import Mathlib.LinearAlgebra.TensorProduct.Pi
+import TauCeti.RingTheory.Huber.ClosedSubmodule
 import Mathlib.Algebra.FiveLemma
 import Mathlib.LinearAlgebra.TensorProduct.RightExactness
 
@@ -543,8 +544,7 @@ noncomputable def restrictedMvPowerSeriesBaseChangeEquiv :
 theorem restrictedMvPowerSeriesBaseChangeEquiv_apply
     (x : TensorProduct A M (restrictedMvPowerSeriesSubring k A)) :
     restrictedMvPowerSeriesBaseChangeEquiv k A M x = restrictedMvPowerSeriesBaseChange x := by
-  rw [restrictedMvPowerSeriesBaseChangeEquiv]
-  rfl
+  simp only [restrictedMvPowerSeriesBaseChangeEquiv, LinearEquiv.ofBijective_apply]
 
 end ModuleFinite
 
