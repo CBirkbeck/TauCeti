@@ -226,11 +226,20 @@ theorem eval₂_mulByIntXHom_polynomial_eq_zero [W.IsElliptic] {n : ℤ}
 
 /-- **`ψₙ` does not vanish at the generic point** when `n` is invertible in `F`.
 
-The hypothesis is on `n` in `F`, not on `n` in `ℤ`: in characteristic `p` it excludes `n = p`,
-where `[p]` is inseparable. That case is true as well — `ΨSq n` is prime to `Φ n`, which has
-positive degree — but the coprimality is not in Mathlib or on `main`, so the results below take
-the non-vanishing as a hypothesis and this lemma discharges it in the case that is available.
-Nothing downstream has to be restated when the general form arrives. -/
+The hypothesis is on `n` in `F`, not on `n` in `ℤ`: in characteristic `p` it excludes `n = p`.
+That case is true too, but it is not reachable from what is currently available. Every
+non-vanishing lemma in Mathlib's division-polynomial development is characteristic-conditional
+in the same way — `preΨ_ne_zero`, `ΨSq_ne_zero`, `Ψ₃_ne_zero`, `preΨ₄_ne_zero` — because each
+is proved from a leading coefficient (`(W.ΨSq n).coeff (n.natAbs ^ 2 - 1) = n ^ 2`), and that
+is exactly what vanishes when `p ∣ n`. The char-free route instead needs
+`IsCoprime (W.Φ n) (W.ΨSq n)` (Silverman, Exercise III.3.7), which is in neither Mathlib nor
+`main`; proving it goes through an algebraically closed base change and belongs beside the
+division polynomials rather than here.
+
+So `mulByIntPullback` takes the non-vanishing as a *hypothesis* rather than deriving it, and
+this lemma discharges that hypothesis in the case that is available. The construction itself
+carries no characteristic restriction, so when the coprimality lands the general case follows
+with nothing here restated — only a second discharge lemma beside this one. -/
 theorem psiFunctionField_ne_zero {n : ℤ} (hn : (n : F) ≠ 0) : psiFunctionField W n ≠ 0 := by
   intro h
   have hΨ : W.ΨSq n ≠ 0 := WeierstrassCurve.ΨSq_ne_zero W hn
