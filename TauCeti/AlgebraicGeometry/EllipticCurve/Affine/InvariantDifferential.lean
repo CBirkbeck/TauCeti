@@ -45,7 +45,7 @@ hence separable algebraic, which contradicts `x` being transcendental over `F`.
 
 ## References
 
-* [Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], III.1.5 and III.5.
+* [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], III.1.5 and III.5.
 
 ## Provenance
 
@@ -54,8 +54,12 @@ Ported from the AINTLIB `HasseWeil` project (Chris Birkbeck), Apache-2.0, file
 `513e83879e2f`: `D_x_ne_zero`, `denom_ne_zero`, `invariantDifferential` and
 `invariantDifferential_ne_zero`. The proofs are reorganised here: the source carried a
 `maxHeartbeats` override on a single monolithic `D_x_ne_zero`, whose nested steps are separate
-private lemmas below, and the source's `denom_ne_zero` argument, which it repeated verbatim inside
-`D_x_ne_zero`, is proved once as `algebraMap_mk_polynomialY`.
+private lemmas below, and no declaration here needs a heartbeat override. Two arguments the
+source repeated are proved once: the denominator argument, which it gave both as
+`denom_ne_zero` and inline inside `D_x_ne_zero`, is `algebraMap_mk_polynomialY` together with
+`two_mul_root_add_ne_zero`; and its `aeval` helper, likewise duplicated inline, is
+`aeval_algebraMap_X`. The source's `[DecidableEq F]` hypothesis is dropped: nothing here uses
+it, so it is not carried on the public statements.
 -/
 
 public section
