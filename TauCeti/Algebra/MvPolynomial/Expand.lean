@@ -58,7 +58,36 @@ theorem MvPolynomial.monomial_mem_span_monomial_lt {σ R : Type*} [CommSemiring 
       Submodule.span (MvPolynomial.expand (σ := σ) (R := R) n).range
         (Set.range fun β : σ → Fin n =>
           MvPolynomial.monomial (Finsupp.equivFunOnFinite.symm fun i => (β i : ℕ)) (1 : R)) := by
-  sorry
+  classical
+  -- the exponent `d i` splits as `n * (d i / n) + d i % n`
+  have hexp :
+      n • (Finsupp.equivFunOnFinite.symm fun i => d i / n)
+        + (Finsupp.equivFunOnFinite.symm fun i =>
+            ((⟨d i % n, Nat.mod_lt _ hn⟩ : Fin n) : ℕ)) = d := by
+    ext i
+    simp [Nat.div_add_mod]
+  -- the sub-`n` part is one of the generators
+  have hmem :
+      MvPolynomial.monomial (Finsupp.equivFunOnFinite.symm fun i =>
+          ((⟨d i % n, Nat.mod_lt _ hn⟩ : Fin n) : ℕ)) (1 : R) ∈
+        Submodule.span (MvPolynomial.expand (σ := σ) (R := R) n).range
+          (Set.range fun β : σ → Fin n =>
+            MvPolynomial.monomial (Finsupp.equivFunOnFinite.symm fun i => (β i : ℕ)) (1 : R)) :=
+    Submodule.subset_span ⟨fun i => ⟨d i % n, Nat.mod_lt _ hn⟩, rfl⟩
+  -- name the scalar, so that the `•`/`*` defeq check stays cheap
+  obtain ⟨a, ha⟩ : ∃ a : (MvPolynomial.expand (σ := σ) (R := R) n).range,
+      (a : MvPolynomial σ R)
+        = (MvPolynomial.expand (σ := σ) (R := R) n)
+            (MvPolynomial.monomial (Finsupp.equivFunOnFinite.symm fun i => d i / n) r) :=
+    ⟨⟨_, AlgHom.mem_range_self _ _⟩, rfl⟩
+  have key : (MvPolynomial.monomial d r : MvPolynomial σ R)
+      = (MvPolynomial.expand (σ := σ) (R := R) n)
+            (MvPolynomial.monomial (Finsupp.equivFunOnFinite.symm fun i => d i / n) r) *
+          MvPolynomial.monomial (Finsupp.equivFunOnFinite.symm fun i =>
+            ((⟨d i % n, Nat.mod_lt _ hn⟩ : Fin n) : ℕ)) (1 : R) := by
+    rw [MvPolynomial.expand_monomial, MvPolynomial.monomial_mul_monomial, mul_one, hexp]
+  rw [key, ← ha]
+  exact Submodule.smul_mem _ a hmem
 
 /-- Source: Stacks, Lemma 10.161.13 (tag 032O), proof: "`R′[x^{1/q}]` is finite over `R[x]`".
 Over the image of `MvPolynomial.expand n`, the finitely many monomials with all exponents below
@@ -68,7 +97,10 @@ theorem MvPolynomial.span_monomial_lt_eq_top {σ R : Type*} [CommSemiring R] [Fi
     Submodule.span (MvPolynomial.expand (σ := σ) (R := R) n).range
       (Set.range fun β : σ → Fin n =>
         MvPolynomial.monomial (Finsupp.equivFunOnFinite.symm fun i => (β i : ℕ)) (1 : R)) = ⊤ := by
-  sorry
+  rw [eq_top_iff]
+  rintro f -
+  exact MvPolynomial.induction_on' f (fun d r => MvPolynomial.monomial_mem_span_monomial_lt hn d r)
+    (fun p q hp hq => Submodule.add_mem _ hp hq)
 
 /-- Source: Stacks, Lemma 10.161.13 (tag 032O), proof: "`R′[x^{1/q}]` is finite over `R[x]`".
 `MvPolynomial.expand n` is a finite ring map for `0 < n`: the polynomial ring is spanned over
