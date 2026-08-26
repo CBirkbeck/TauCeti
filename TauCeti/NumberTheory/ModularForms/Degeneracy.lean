@@ -89,6 +89,7 @@ and the conductor statement of Layer 4 is phrased with this normalization of `V_
   [`HeckeRIngs/GL2/LevelRaise.lean`](https://github.com/CBirkbeck/AINTLIB), declarations
   `exists_T_levelRaiseConj_T_factor` (:491) and its supports
   `eq_T_zpow_mul_levelRaiseConj_mul_T_zpow` (:471), `primeProductCoprime` (:410),
+  `dvd_primeProductCoprime_of_not_dvd` (:413), `not_dvd_primeProductCoprime_of_dvd` (:419),
   `exists_shift_isCoprime` (:430), `shiftJ` (:450), `shiftJ_spec` (:453) and
   `natCast_dvd_levelRaiseConj_lower_left` (:465), all Apache-2.0 at commit
   `2baa76f742bdb4fb8ee323fabba41203bd390e08`. The source's `levelRaiseConjOfDvd` (:98) is this
