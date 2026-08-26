@@ -68,12 +68,6 @@ variable {M d N p : ℕ} (k : ℤ)
 
 /-! ### The shift matrix -/
 
-/-- Every power of the translation `T = !![1, 1; 0, 1]` lies in `Γ₁(M)`, at every level: its
-diagonal is `1` and its lower-left entry is `0` before any reduction. -/
-private lemma T_zpow_mem_Gamma1 (M : ℕ) (q : ℤ) : ModularGroup.T ^ q ∈ Gamma1 M := by
-  rw [Gamma1_mem]
-  simp [ModularGroup.coe_T_zpow, -map_zpow]
-
 /-- A `Γ₁(M)`-invariant function is fixed by the rational slash of any power of `T`. -/
 private lemma slash_mapGL_T_zpow {f : ℍ → ℂ}
     (hf : ∀ γ ∈ (Gamma1 M).map (mapGL ℝ), f ∣[k] γ = f) (q : ℤ) :
