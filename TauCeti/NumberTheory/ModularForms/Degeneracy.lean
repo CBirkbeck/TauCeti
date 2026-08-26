@@ -41,9 +41,10 @@ the upper half-plane to `τ ↦ f (d τ)`. It is the slash action by `diag(d, 1)
   `V_d` a map `M_k(Γ₁(M)) → M_k(Γ₁(dM))`.
 * `TauCeti.exists_eq_T_zpow_mul_conjScale_mul_T_zpow`: the `T`-factorisation, in the other
   direction. For `l ∣ N`, every `γ' ∈ Γ₀(N / l)` is `T ^ i * conjScale l γ c * T ^ j` for some
-  `γ ∈ Γ₀(N)` — a level can be raised back from `N / l` to `N` at the cost of two translations —
-  together with the bookkeeping `γ 1 1 = γ' 1 1 - γ' 1 0 * j` that pins the lower-right entry a
-  nebentypus of level `N` reads off `γ`.
+  `i, j, c : ℤ` and some `γ ∈ Γ₀(N)` whose lower-left entry factors as `γ 1 0 = l * c` — a level
+  can be raised back from `N / l` to `N` at the cost of two translations — together with the
+  bookkeeping `γ 1 1 = γ' 1 1 - γ' 1 0 * j` that pins the lower-right entry of `γ`, which is what
+  a nebentypus of level `N` reads off it.
 * `TauCeti.ModularForm.slash_levelRaise_eq_smul`, `TauCeti.CuspForm.slash_levelRaise_eq_smul`:
   the eigenvalue transport. Slashing `V_d f` by `γ` produces the same scalar that slashing `f`
   by the conjugate matrix `conjScale d γ` does.
@@ -446,10 +447,11 @@ private lemma mem_Gamma0_of_eq_mul_of_dvd {l N : ℕ} (hlN : l ∣ N) {γ : SL(2
   exact mul_dvd_mul_left _ hdvd
 
 /-- **The `T`-factorisation of `Γ₀(N / l)`.** For `l ∣ N`, every `γ' ∈ Γ₀(N / l)` is a product
-`T ^ i * conjScale l γ c * T ^ j` with `i, j : ℤ` and `γ ∈ Γ₀(N)`: the level of `γ'` can be raised
-back from `N / l` to `N` at the cost of two translations. Since `conjScale` and the translations
-all fix the lower-right entry up to the recorded shift, the last conjunct pins the lower-right
-entry of `γ`, which is what a nebentypus of level `N` reads off it. -/
+`T ^ i * conjScale l γ c * T ^ j` for some `i, j, c : ℤ` and some `γ ∈ Γ₀(N)` whose lower-left
+entry factors as `γ 1 0 = l * c`: the level of `γ'` can be raised back from `N / l` to `N` at the
+cost of two translations. Since `conjScale` and the translations all fix the lower-right entry up
+to the recorded shift, the last conjunct `γ 1 1 = γ' 1 1 - γ' 1 0 * j` pins the lower-right entry
+of `γ`, which is what a nebentypus of level `N` reads off it. -/
 theorem exists_eq_T_zpow_mul_conjScale_mul_T_zpow (l N : ℕ) [NeZero l] (hlN : l ∣ N) (γ' : SL(2, ℤ))
     (hγ' : γ' ∈ Gamma0 (N / l)) : ∃ (i j c : ℤ) (γ : SL(2, ℤ)) (hc : γ 1 0 = l * c),
       γ ∈ Gamma0 N ∧ γ' = ModularGroup.T ^ i * conjScale l γ c hc * ModularGroup.T ^ j ∧
