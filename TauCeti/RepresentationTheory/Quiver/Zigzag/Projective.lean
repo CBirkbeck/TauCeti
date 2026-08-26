@@ -320,7 +320,7 @@ theorem linearIndependent_zigzagProjectiveBasisFun (hns : ∀ i : V, ∃ j, G.Ad
 
 /-- Multiplying any element of the zigzag quotient by the vertex idempotent `e_i` lands in the
 span of the vertex, outgoing-arrow and volume family of `Z e_i`. -/
-private theorem mul_zigzagVertexIdempotent_mem_span_zigzagProjectiveBasisFun (i : V)
+private theorem mul_zigzagVertexIdempotent_mem_span_range_zigzagProjectiveBasisFun (i : V)
     (x : nonisolatedZigzagQuotient k G) :
     x * zigzagVertexIdempotent k G i ∈
       Submodule.span k (Set.range fun b : ZigzagProjectiveBasisIndex G i =>
@@ -382,7 +382,7 @@ theorem span_range_zigzagProjectiveBasisFun_eq_top (i : V) :
       -- Expose the local inclusion so the fixed-point membership criterion applies.
       change (x : nonisolatedZigzagQuotient k G) ∈ S
       rw [← (mem_zigzagProjective_iff k G).mp x.2]
-      exact mul_zigzagVertexIdempotent_mem_span_zigzagProjectiveBasisFun k G i x
+      exact mul_zigzagVertexIdempotent_mem_span_range_zigzagProjectiveBasisFun k G i x
   apply Submodule.map_injective_of_injective (f := val) Subtype.val_injective
   rw [Submodule.map_top, ← hS, Submodule.map_span, ← Set.range_comp]
   rfl
