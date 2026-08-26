@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.XSubT
+public import TauCeti.AlgebraicGeometry.EllipticCurve.NormalForms
 
 /-!
 # Base change of the étale algebra, and the local condition of `2`-descent
@@ -86,10 +87,6 @@ lemma map_f : (W.map σ).toAffine.f = W.f.map σ := by
   simp only [f, Polynomial.map_add, Polynomial.map_pow, Polynomial.map_mul, Polynomial.map_X,
     Polynomial.map_C, map_a₂, map_a₄, map_a₆]
 
-instance [W.IsCharNeTwoNF] : (W.map σ).IsCharNeTwoNF where
-  a₁ := by simp [map_a₁]
-  a₃ := by simp [map_a₃]
-
 lemma eval_map_f (x : K) : (W.map σ).toAffine.f.eval (σ x) = σ (W.f.eval x) := by
   rw [map_f, Polynomial.eval_map, Polynomial.eval₂_at_apply]
 
@@ -98,9 +95,6 @@ lemma map_fCofactor (x : K) : (W.fCofactor x).map σ = (W.map σ).toAffine.fCofa
     Polynomial.map_X, Polynomial.map_C, map_a₂, map_a₄, map_add, map_mul, map_pow]
 
 variable (L : Type*) [Field L] [Algebra K L]
-
-instance [W.IsCharNeTwoNF] : (W⁄L).IsCharNeTwoNF :=
-  inferInstanceAs (W.map (algebraMap K L)).IsCharNeTwoNF
 
 lemma eval_baseChange_f (x : K) :
     (W⁄L).toAffine.f.eval (algebraMap K L x) = algebraMap K L (W.f.eval x) :=
