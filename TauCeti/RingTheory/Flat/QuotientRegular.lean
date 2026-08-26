@@ -54,11 +54,11 @@ variable {R : Type u} {B : Type*} [CommRing R] [CommRing B] [Algebra R B]
 generated `R`-module `M`, then `B ⧸ (g)` is a flat `R`-module.
 
 This is the `Tor`-sequence step of Wedhorn's Lemma 8.31(2), as a diagram chase against
-`Module.Flat.iff_rTensor_injective`: for an ideal `I`, an element of `I ⊗ B ⧸ (g)` killed by
+`Module.Flat.iff_rTensor_injective`: for an ideal `I`, an element of `I ⊗ B ⧸ (g)` killed in
 `R ⊗ B ⧸ (g)` lifts to `I ⊗ B`, is there the image of `g` times something in `R ⊗ B`, and
 regularity of `g` on `R ⧸ I ⊗ B` shows that something comes from `I ⊗ B`, so the element is
-`g` times an element of `I ⊗ B` and dies in `I ⊗ B ⧸ (g)`. Flatness of `B` enters twice, as
-injectivity of `I ⊗ B → R ⊗ B`. -/
+`g` times an element of `I ⊗ B` and dies in `I ⊗ B ⧸ (g)`. Flatness of `B` enters twice: as
+exactness of `I ⊗ B → R ⊗ B → R ⧸ I ⊗ B`, and as injectivity of `I ⊗ B → R ⊗ B`. -/
 theorem quotient_span_singleton_of_lTensor_mulLeft_injective [Flat R B] (g : B)
     (hg : ∀ (M : Type u) [AddCommGroup M] [Module R M] [Module.Finite R M],
       Function.Injective (LinearMap.lTensor M (LinearMap.mulLeft R g))) :
