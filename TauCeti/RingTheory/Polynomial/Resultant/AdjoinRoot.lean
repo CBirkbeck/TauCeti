@@ -10,6 +10,7 @@ public import Mathlib.RingTheory.AdjoinRoot
 public import Mathlib.RingTheory.Norm.Basic
 public import Mathlib.RingTheory.Polynomial.Resultant.Basic
 public import TauCeti.RingTheory.Polynomial.DegreeLT
+public import TauCeti.RingTheory.Polynomial.Resultant.Basic
 
 /-!
 # The norm on `AdjoinRoot g` is a resultant
@@ -45,6 +46,9 @@ No signs appear anywhere: `B` is an endomorphism, so the two blocks are never re
   onto `AdjoinRoot g`, with `coe_degreeLTEquiv_symm_apply`/`_mk` characterising its inverse.
 * `AdjoinRoot.norm_mk_eq_det_mulModByMonic`, `AdjoinRoot.norm_mk_eq_resultant` — the norm as a
   determinant, and then as a resultant.
+* `AdjoinRoot.norm_mk_C_sub_X`, `AdjoinRoot.norm_mk_C_sub_X_add` — the two values that resultant
+  algebra reads off it: the norm of `x - θ`, and, when `g` has `x` as a root, the norm of the
+  corrected representative `x - θ + q θ` that replaces it.
 
 ## Provenance
 
@@ -56,6 +60,11 @@ targets Lean `v4.32.0` and predates parts of Mathlib's current API, so this is a
 rather than a copy: `degreeLTEquiv` is built from Mathlib's `AdjoinRoot.modByMonicHom` instead of
 from a bijectivity argument, and the source's `Monic.resultant_one_right` is replaced by
 Mathlib's `Polynomial.resultant_one_right`.
+
+`norm_mk_C_sub_X` and `norm_mk_C_sub_X_add` come from the same repository at the same commit,
+`EllipticCurves/WeakMordellWeil.lean` lines 277-313, where they are stated for the polynomial of
+an elliptic curve. Their proofs use no curve input beyond monicity and the factorization, so they
+are stated here at that level instead.
 -/
 
 public section
@@ -289,5 +298,39 @@ theorem norm_mk_eq_resultant (hg : g.Monic) (p : R[X]) :
     ← LinearMap.det_toMatrix b₁, resultant, ← toMatrix_sylvesterMap' g p le_rfl le_rfl, key,
     Matrix.det_mul, toMatrix_sylvesterMap' g 1 le_rfl (by simp), ← resultant,
     resultant_one_right, hg.coeff_natDegree, one_pow, one_mul]
+
+/-- **The norm of `x - θ` is `g x`.** Here `θ` is the image of `X` in `AdjoinRoot g`, so
+`mk g (C x - X)` is `x - θ`. -/
+theorem norm_mk_C_sub_X (hg : g.Monic) (x : R) :
+    Algebra.norm R (mk g (C x - X)) = g.eval x := by
+  nontriviality R
+  rw [norm_mk_eq_resultant hg, natDegree_C_sub_X, resultant_C_sub_X_right _ _ _ le_rfl]
+
+/-- **At a root the corrected representative has square norm.** If `g = q * (X - C x)` with `q`
+monic of degree at least `2`, then `x - θ` is a zero divisor in `AdjoinRoot g`, and the corrected
+representative `x - θ + q θ` that replaces it has norm `(q.eval x) ^ 2`.
+
+The factorization splits the resultant into two factors, each equal to `q.eval x`: against
+`X - C x` the corrected representative is evaluated at `x`, and against `q` the added multiple of
+`q` drops out, leaving a resultant with `C x - X`. -/
+theorem norm_mk_C_sub_X_add {q : R[X]} {x : R} (hq : q.Monic) (hd : 2 ≤ q.natDegree)
+    (hgq : g = q * (X - C x)) :
+    Algebra.norm R (mk g (C x - X + q)) = q.eval x ^ 2 := by
+  nontriviality R
+  have hg : g.Monic := by rw [hgq]; exact hq.mul (monic_X_sub_C x)
+  have hp : (C x - X + q).natDegree = q.natDegree :=
+    natDegree_add_eq_right_of_natDegree_lt (by rw [natDegree_C_sub_X]; lia)
+  have hpx : (C x - X + q).eval x = q.eval x := by simp
+  have hmul : C x - X + q = (C x - X) + q * 1 := by ring
+  have hres : q.resultant (C x - X) q.natDegree q.natDegree = q.eval x := by
+    have hk : 1 + (q.natDegree - 1) = q.natDegree := by lia
+    have h := resultant_add_right_deg q (C x - X) q.natDegree 1 (q.natDegree - 1)
+      (natDegree_C_sub_X x).le
+    rw [hk] at h
+    rw [h, hq.coeff_natDegree, one_pow, one_mul, resultant_C_sub_X_right _ _ _ le_rfl]
+  rw [norm_mk_eq_resultant hg, hp, hgq, hq.natDegree_mul (monic_X_sub_C x),
+    resultant_mul_left _ _ _ _ hp.le, natDegree_X_sub_C, resultant_X_sub_C_left _ _ _ hp.le, hpx,
+    hmul, resultant_add_mul_right q (C x - X) 1 q.natDegree q.natDegree (by simp) le_rfl, hres]
+  ring
 
 end AdjoinRoot

@@ -8,18 +8,21 @@ module
 public import Mathlib.RingTheory.Polynomial.Resultant.Basic
 
 /-!
-# The resultant against a reversed linear factor
+# The reversed linear factor `C x - X`
 
-Mathlib evaluates the resultant against a power of `X - C x`
-(`Polynomial.resultant_X_sub_C_pow_right`). This file records the companion for the *reversed*
-linear polynomial `C x - X`, which is the shape that arises as `x - θ` in `AdjoinRoot f`: the
-answer is `f.eval x`, with **no sign**. The absence of a sign is the point — `C x - X` is
-`-(X - C x)`, which contributes `(-1) ^ m`, and `resultant_X_sub_C_pow_right` contributes another
-`(-1) ^ m`, so the two cancel.
+Mathlib evaluates the resultant against the linear polynomial `X - C x` on either side
+(`Polynomial.resultant_X_sub_C_left`, `Polynomial.resultant_X_sub_C_right`). This file records
+the two facts about the *reversed* polynomial `C x - X`, which is the shape that arises as
+`x - θ` in `AdjoinRoot f`: its degree, and its resultant on the right.
+
+The resultant is `f.eval x`, with **no sign** — that absence is the point. `C x - X` is
+`C (-1) * (X - C x)`, which contributes `(-1) ^ m`, and `resultant_X_sub_C_right` contributes
+another `(-1) ^ m`, so the two cancel.
 
 ## Main results
 
-* `Polynomial.resultant_C_sub_X`
+* `Polynomial.natDegree_C_sub_X`
+* `Polynomial.resultant_C_sub_X_right`
 
 ## Provenance
 
@@ -35,16 +38,19 @@ namespace Polynomial
 
 variable {R : Type*} [CommRing R]
 
-/-- The resultant of `f` with the linear polynomial `C x - X` is `f.eval x`. Note the absence of
-a sign: `C x - X` is `-(X - C x)`, and the two signs cancel. -/
-theorem resultant_C_sub_X (f : R[X]) (x : R) (m : ℕ) (hm : f.natDegree ≤ m) :
+/-- The reversed linear polynomial `C x - X` has degree `1`, like `X - C x`. -/
+@[simp]
+theorem natDegree_C_sub_X [Nontrivial R] (x : R) : (C x - X).natDegree = 1 := by
+  rw [natDegree_sub, natDegree_X_sub_C]
+
+/-- The resultant of `f` with the reversed linear polynomial `C x - X` is `f.eval x`. Note the
+absence of a sign: `C x - X` is `-(X - C x)`, and the two signs cancel. -/
+@[simp]
+theorem resultant_C_sub_X_right (f : R[X]) (x : R) (m : ℕ) (hm : f.natDegree ≤ m) :
     f.resultant (C x - X) m 1 = f.eval x := by
-  have h : f.resultant (X - C x) m 1 = (-1) ^ m * f.eval x := by
-    have := resultant_X_sub_C_pow_right f x m 1 hm
-    rwa [pow_one, mul_one, pow_one] at this
   -- `C x - X` is `X - C x` scaled by the constant `-1`
   have hneg : C x - X = C (-1 : R) * (X - C x) := by simp
-  rw [hneg, resultant_C_mul_right, h, ← mul_assoc, ← pow_add, ← two_mul, pow_mul, neg_one_sq,
-    one_pow, one_mul]
+  rw [hneg, resultant_C_mul_right, resultant_X_sub_C_right f m x hm, ← mul_assoc, ← pow_add,
+    ← two_mul, pow_mul, neg_one_sq, one_pow, one_mul]
 
 end Polynomial
