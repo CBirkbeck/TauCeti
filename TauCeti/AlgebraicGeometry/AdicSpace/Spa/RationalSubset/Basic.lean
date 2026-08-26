@@ -250,6 +250,31 @@ theorem rationalSubset_inter (Aplus : Subring A) (T₁ T₂ : Finset A) (s₁ s�
   rw [rationalSubset_def, rationalSubset_def, rationalSubset_def, ← basicOpenFinset_inter]
   exact (Set.inter_inter_distrib_left _ _ _).symm
 
+/-- **A rational subset is the intersection of its one-numerator pieces**:
+`R(T/s) = ⋂ t ∈ T, R({t}/s)` for nonempty `T`. This is the finite-family companion of
+`rationalSubset_inter`, and it unfolds directly from Definition 7.29 — a point dominates every
+numerator by `s` exactly when it dominates each one separately. It is the decomposition that a
+refinement to a *standard* rational cover consumes.
+
+Nonemptiness of `T` cannot be dropped. Each `R({t}/s)` carries the ambient `spa A⁺` condition and
+the requirement that the denominator be off the support, alongside its own numerator condition, so
+some member of the family is what transports those two to the left-hand side. For `T = ∅` the
+left-hand side is still cut out inside `spa A⁺` while the empty intersection is everything, and
+the two sides differ.
+
+Deliberately not `@[simp]`: the right-hand side is again a rational subset over a singleton, which
+matches the left-hand pattern, so the rewrite re-fires on each factor instead of terminating. -/
+theorem rationalSubset_eq_iInter_singleton (Aplus : Subring A) (T : Finset A) (hT : T.Nonempty)
+    (s : A) : rationalSubset Aplus T s = ⋂ t ∈ T, rationalSubset Aplus {t} s := by
+  ext v
+  simp only [Set.mem_iInter, mem_rationalSubset_iff, Finset.mem_singleton, forall_eq]
+  constructor
+  · rintro ⟨hv, hvT, hvs⟩ t ht
+    exact ⟨hv, hvT t ht, hvs⟩
+  · intro h
+    obtain ⟨t₀, ht₀⟩ := hT
+    exact ⟨(h t₀ ht₀).1, fun t ht => (h t ht).2.1, (h t₀ ht₀).2.2⟩
+
 /-! ### Re-presenting a contained rational subset -/
 
 open scoped Classical Pointwise in
