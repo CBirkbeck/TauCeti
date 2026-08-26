@@ -53,7 +53,7 @@ private lemma chord_x_ne {q₁ q₂ w₁ w₂ : F} (hw₁0 : w₁ ≠ 0) (hw₂0
   linear_combination h
 
 /-- The parametrized point `(q/w, -1/w)` is nonsingular whenever `(q, w)` satisfies the
-Weierstrass equation in the `(t, w)`-chart and the discriminant does not vanish. -/
+Weierstrass equation in the `(z, w)`-chart and the discriminant does not vanish. -/
 lemma chord_point_nonsingular {q w : F}
     (hw : w = q ^ 3 + W.a₁ * q * w + W.a₂ * q ^ 2 * w + W.a₃ * w ^ 2 +
       W.a₄ * q * w ^ 2 + W.a₆ * w ^ 3)
@@ -96,9 +96,7 @@ private lemma chord_addX {AA Λ N q₁ q₂ w₁ w₂ T₃ wT : F}
     (hT₃ : AA * (T₃ + q₁ + q₂) =
       -(W.a₁ * Λ + W.a₂ * N + W.a₃ * Λ ^ 2 + 2 * W.a₄ * Λ * N + 3 * W.a₆ * Λ ^ 2 * N))
     (hwT : wT = Λ * T₃ + N) (hA : AA ≠ 0) (hq12 : q₁ - q₂ ≠ 0) (hN0 : N ≠ 0)
-    (hw₁0 : w₁ ≠ 0) (hw₂0 : w₂ ≠ 0) (hwT0 : wT ≠ 0)
-    -- used implicitly by `field_simp` to clear the denominators below
-    (_hxq : q₁ / w₁ ≠ q₂ / w₂) (_hne : q₁ / w₁ - q₂ / w₂ ≠ 0) :
+    (hw₁0 : w₁ ≠ 0) (hw₂0 : w₂ ≠ 0) (hwT0 : wT ≠ 0) :
     T₃ / wT = W.toAffine.addX (q₁ / w₁) (q₂ / w₂) (Λ / N) := by
   rw [Affine.addX]
   field_simp
@@ -145,9 +143,7 @@ private lemma chord_addY {AA Λ N q₁ q₂ w₁ w₂ T₃ wT : F}
     (hT₃ : AA * (T₃ + q₁ + q₂) =
       -(W.a₁ * Λ + W.a₂ * N + W.a₃ * Λ ^ 2 + 2 * W.a₄ * Λ * N + 3 * W.a₆ * Λ ^ 2 * N))
     (hwT : wT = Λ * T₃ + N) (hA : AA ≠ 0) (hq12 : q₁ - q₂ ≠ 0) (hN0 : N ≠ 0)
-    (hw₁0 : w₁ ≠ 0) (hw₂0 : w₂ ≠ 0) (hwT0 : wT ≠ 0)
-    -- used implicitly by `field_simp` to clear the denominators below
-    (_hxq : q₁ / w₁ ≠ q₂ / w₂) (_hne : q₁ / w₁ - q₂ / w₂ ≠ 0) :
+    (hw₁0 : w₁ ≠ 0) (hw₂0 : w₂ ≠ 0) (hwT0 : wT ≠ 0) :
     (1 - W.a₁ * T₃ - W.a₃ * wT) / wT =
       W.toAffine.addY (q₁ / w₁) (q₂ / w₂) (-1 / w₁) (Λ / N) := by
   rw [Affine.addY, Affine.negAddY, Affine.addX, Affine.negY]
@@ -240,8 +236,8 @@ private lemma chord_addX_addY {q₁ q₂ w₁ w₂ Λ N T₃ wT : F}
   have hCub₁ := chord_cubic W rfl hw₁ hline₁
   have hCub₂ := chord_cubic W rfl hw₂ hline₂
   rw [hℓ]
-  exact ⟨chord_addX W rfl hline₁ hline₂ hCub₁ hCub₂ hT₃ hwT hA hq12 hN0 hw₁0 hw₂0 hwT0 hxq hne,
-    chord_addY W rfl hline₁ hline₂ hCub₁ hCub₂ hT₃ hwT hA hq12 hN0 hw₁0 hw₂0 hwT0 hxq hne⟩
+  exact ⟨chord_addX W rfl hline₁ hline₂ hCub₁ hCub₂ hT₃ hwT hA hq12 hN0 hw₁0 hw₂0 hwT0,
+    chord_addY W rfl hline₁ hline₂ hCub₁ hCub₂ hT₃ hwT hA hq12 hN0 hw₁0 hw₂0 hwT0⟩
 
 
 /-- The chord construction computes the group law, at the level of nonsingular points. -/
