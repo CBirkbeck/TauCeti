@@ -48,8 +48,12 @@ namespace Affine
 
 variable {K : Type*} [Field K] (W : Affine K) [W.IsCharNeTwoNF] [W.IsElliptic] [DecidableEq K]
 
-/-- **The `2`-torsion of `W(K)` is the origin together with the points `(x, 0)` at the roots of
-`f`**, so its order is the number of roots of `f` in `K` plus one. -/
+/-- **The `2`-torsion of `W(K)` has one more element than `f` has roots in `K`.**
+
+The underlying reason is that the `2`-torsion is the origin together with the points `(x, 0)` at
+the roots of `f`; that set equality is established inside the proof, but only the cardinality is
+exported, because that is all the archimedean local-image count consumes. A caller needing the
+identification itself should ask for it as its own theorem. -/
 theorem card_ker_nsmul_two : Nat.card (nsmulAddMonoidHom (α := W.Point) 2).ker =
     Nat.card {x : K // W.f.eval x = 0} + 1 := by
   have h2F : (2 : K) ≠ 0 := Ring.two_ne_zero (ringChar_ne_two W)
@@ -68,13 +72,7 @@ theorem card_ker_nsmul_two : Nat.card (nsmulAddMonoidHom (α := W.Point) 2).ker 
       induction P with
       | zero => exact Set.mem_insert _ _
       | some x y h =>
-        have h2 : (2 : ℕ) • (Point.some x y h : W.Point) = 0 := hP
-        have hord : addOrderOf (Point.some x y h : W.Point) = 2 := by
-          rcases (Nat.dvd_prime Nat.prime_two).mp
-            (addOrderOf_dvd_iff_nsmul_eq_zero.mpr h2) with h1 | h1
-          · exact absurd (AddMonoid.addOrderOf_eq_one_iff.mp h1) (Point.some_ne_zero h)
-          · exact h1
-        have hy := y_eq_zero_of_order_two h2F h hord
+        have hy := y_eq_zero_of_order_two h2F h (hP : (2 : ℕ) • (Point.some x y h : W.Point) = 0)
         subst hy
         have hx : W.f.eval x = 0 := by
           have := (W.equation_iff_eval_f_eq_sq x 0).mp h.1

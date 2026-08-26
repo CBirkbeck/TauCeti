@@ -122,7 +122,7 @@ theorem isInteger_of_torsion {x y : ℚ}
     IsLocalization.IsInteger ℤ x ∧ IsLocalization.IsInteger ℤ y := by
   rcases isInteger_or_order_two_of_torsion_rat hns htor with h | ⟨h2, -, -⟩
   · exact h
-  · have hy : y = 0 := y_eq_zero_of_order_two two_ne_zero hns h2
+  · have hy : y = 0 := y_eq_zero_of_order_two two_ne_zero hns (h2 ▸ addOrderOf_nsmul_eq_zero _)
     refine ⟨?_, hy ▸ ⟨0, by simp⟩⟩
     have hmonic : (X ^ 3 + C W.a₂ * X ^ 2 + C W.a₄ * X + C W.a₆ : ℤ[X]).Monic := by
       simpa [add_assoc] using monic_X_pow_add (n := 3) (by compute_degree!)
