@@ -91,52 +91,56 @@ lemma σ_mapGL_real_eq_refl (s : SL(2, ℤ)) :
     UpperHalfPlane.σ (mapGL ℝ s) = ContinuousAlgEquiv.refl ℝ ℂ :=
   σ_eq_refl_of_det_pos (det_pos_of_mem_slGL (MonoidHom.mem_range.mpr ⟨s, rfl⟩))
 
-/-! ### Slash invariance under a fixed matrix -/
+/-! ### Slash invariance under a fixed matrix
 
-/-- The matrices whose slash action fixes a given function, as a subgroup of `SL(2, ℤ)`. It
-exists so that invariance can be pushed to integer powers by `zpow_mem`. -/
-private def slashStabilizer (k : ℤ) (f : ℍ → ℂ) : Subgroup SL(2, ℤ) where
-  carrier := {γ | f ∣[k] (mapGL ℝ γ : GL (Fin 2) ℝ) = f}
-  one_mem' := by simp only [Set.mem_ofPred_eq, map_one, SlashAction.slash_one]
-  mul_mem' := fun {a b} ha hb ↦ by
-    simp only [Set.mem_ofPred_eq] at ha hb ⊢
-    rw [map_mul, SlashAction.slash_mul, ha, hb]
-  inv_mem' := fun {a} ha ↦ by
-    simp only [Set.mem_ofPred_eq] at ha ⊢
-    have hinv : (mapGL ℝ a : GL (Fin 2) ℝ) * mapGL ℝ a⁻¹ = 1 := by
-      rw [← map_mul, mul_inv_cancel, map_one]
-    have h := SlashAction.slash_mul k (mapGL ℝ a) (mapGL ℝ a⁻¹) f
-    rw [hinv, SlashAction.slash_one, ha] at h
-    exact h.symm
+Ported from the AINTLIB `LeanModularForms` project (Chris Birkbeck), Apache-2.0, file
+`LeanModularForms/Eigenforms/ConductorTheorem.lean` at commit
+`2baa76f742bdb4fb8ee323fabba41203bd390e08`
+(<https://github.com/CBirkbeck/AINTLIB>): `slash_T_zpow_eq_self_of_slash_T_eq` (:176) and
+`conductor_slash_T_conj_eq` (:186). The source states both for powers of `ModularGroup.T` in
+`SL(2, ℤ)`; they are recorded here for `GL (Fin 2) ℝ`, which is all their proofs use. -/
 
-/-- Membership in `slashStabilizer` unfolds to the slash identity it is defined by. -/
-private lemma mem_slashStabilizer {k : ℤ} {f : ℍ → ℂ} {γ : SL(2, ℤ)} :
-    γ ∈ slashStabilizer k f ↔ f ∣[k] (mapGL ℝ γ : GL (Fin 2) ℝ) = f := Iff.rfl
+/-- The weight-`k` slash action read as a `MulAction` of the opposite group, so that the
+generic fixed-point API applies to it. Slashing is a *right* action — `SlashAction.slash_mul`
+reverses the order — hence the `ᵐᵒᵖ`. The weight is a parameter rather than a constant, so
+this is a `def` introduced by `let` at its one use site rather than an instance. -/
+@[instance_reducible]
+private noncomputable def slashMulAction (k : ℤ) : MulAction (GL (Fin 2) ℝ)ᵐᵒᵖ (ℍ → ℂ) where
+  smul A f := f ∣[k] A.unop
+  one_smul f := SlashAction.slash_one k f
+  mul_smul A B f := SlashAction.slash_mul k B.unop A.unop f
 
-/-- **Slash invariance passes to every integer power.** If `f ∣[k] γ = f` then
-`f ∣[k] γ ^ j = f` for every `j : ℤ`, because the matrices fixing `f` form a subgroup. -/
-lemma slash_zpow_eq_self_of_slash_eq (k : ℤ) (f : ℍ → ℂ) (γ : SL(2, ℤ))
-    (hf : f ∣[k] (mapGL ℝ γ : GL (Fin 2) ℝ) = f) (j : ℤ) :
-    f ∣[k] (mapGL ℝ (γ ^ j) : GL (Fin 2) ℝ) = f :=
-  mem_slashStabilizer.mp (zpow_mem (mem_slashStabilizer.mpr hf) j)
+/-- **Slash invariance passes to every integer power.** If `f ∣[k] A = f` then
+`f ∣[k] A ^ j = f` for every `j : ℤ`: `f` is a fixed point of the slash action of `A`, and
+`MulAction.mem_fixedBy_zpow` carries a fixed point along every integer power. -/
+lemma slash_zpow_eq_self_of_slash_eq (k : ℤ) (f : ℍ → ℂ) {A : GL (Fin 2) ℝ}
+    (hf : f ∣[k] A = f) (j : ℤ) : f ∣[k] (A ^ j) = f := by
+  let _inst := slashMulAction k
+  exact MulAction.mem_fixedBy_zpow (g := MulOpposite.op A) hf j
 
 /-- **An eigenvalue law survives multiplication on both sides by powers of an invariance.** If
 `f` is fixed by `δ` and slashing by `γ` multiplies it by `z`, then slashing by
-`δ ^ i * γ * δ ^ j` does too, for independent `i` and `j` — this is a conjugate only in the
+`δ ^ i * γ * δ ^ j` does too, for independent `i` and `j` — this is a conjugation only in the
 special case `j = -i`.
-Nothing is asked of `γ` beyond that law, and `σ` never appears in the conclusion because every
-`SL(2, ℤ)` matrix has positive determinant (`σ_mapGL_real_eq_refl`).
+
+Nothing is asked of `γ` beyond that law. The determinant hypothesis on `δ` is exactly what
+keeps `σ` out of the conclusion: `σ` is then trivial on every power of `δ`, so the scalar `z`
+passes through the outer slash unconjugated. For `δ` in the image of `SL(2, ℤ)` that
+hypothesis is `det_pos_of_mem_slGL`.
 
 The level-lowering step of the conductor theorem is the case `δ = T`, with `γ` the conjugate
 `conjScale l γ' c` supplied by the `T`-factorisation of `Γ₀(N / l)`. -/
-lemma slash_zpow_mul_mul_zpow_eq_smul (k : ℤ) (f : ℍ → ℂ) (δ : SL(2, ℤ))
-    (hδ : f ∣[k] (mapGL ℝ δ : GL (Fin 2) ℝ) = f) (γ : SL(2, ℤ)) {z : ℂ}
-    (hγ : f ∣[k] (mapGL ℝ γ : GL (Fin 2) ℝ) = z • f) (i j : ℤ) :
-    f ∣[k] (mapGL ℝ (δ ^ i * γ * δ ^ j) : GL (Fin 2) ℝ) = z • f := by
-  rw [map_mul, map_mul, SlashAction.slash_mul, SlashAction.slash_mul,
-    slash_zpow_eq_self_of_slash_eq k f δ hδ i, hγ, _root_.ModularForm.smul_slash,
-    σ_mapGL_real_eq_refl, ContinuousAlgEquiv.refl_apply,
-    slash_zpow_eq_self_of_slash_eq k f δ hδ j]
+lemma slash_zpow_mul_mul_zpow_eq_smul (k : ℤ) (f : ℍ → ℂ) {δ γ : GL (Fin 2) ℝ}
+    (hδdet : 0 < (δ : Matrix (Fin 2) (Fin 2) ℝ).det) (hδ : f ∣[k] δ = f) {z : ℂ}
+    (hγ : f ∣[k] γ = z • f) (i j : ℤ) :
+    f ∣[k] (δ ^ i * γ * δ ^ j) = z • f := by
+  have hσ : UpperHalfPlane.σ (δ ^ j) = ContinuousAlgEquiv.refl ℝ ℂ := by
+    refine σ_eq_refl_of_det_pos ?_
+    rw [← Matrix.GeneralLinearGroup.val_det_apply] at hδdet ⊢
+    simpa using zpow_pos hδdet j
+  rw [SlashAction.slash_mul, SlashAction.slash_mul,
+    slash_zpow_eq_self_of_slash_eq k f hδ i, hγ, _root_.ModularForm.smul_slash, hσ,
+    ContinuousAlgEquiv.refl_apply, slash_zpow_eq_self_of_slash_eq k f hδ j]
 
 /-- `CuspForm.mcast` does not change the pointwise values of a cusp form: the `CuspForm`
 analogue of Mathlib's `ModularForm.mcast_apply`, which Mathlib does not yet provide. -/
