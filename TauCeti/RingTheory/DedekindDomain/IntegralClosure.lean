@@ -5,11 +5,10 @@ Authors: The Tau Ceti contributors
 -/
 module
 
--- Proof-only: Krull–Akizuki supplies the Noetherian half, and is not named in the statement.
+-- Proof-only: Krull–Akizuki supplies the Noetherian half, and is not named in any statement.
 import TauCeti.RingTheory.IntegralClosure.NormalizationFinite
--- Proof-only: the integral closure's own fraction field is built inside the proof.
-import Mathlib.RingTheory.Localization.Integral
 public import Mathlib.RingTheory.DedekindDomain.Basic
+public import Mathlib.RingTheory.Localization.Integral
 
 /-!
 # The integral closure of a Dedekind domain is Dedekind, with no separability
@@ -31,6 +30,10 @@ unchanged.
 
 * `TauCeti.IsIntegralClosure.isDedekindDomain`: an integral closure of a Dedekind domain in a finite
   extension of its fraction field is a Dedekind domain, with no separability hypothesis.
+* `TauCeti.integralClosure.isDedekindDomain`: the same for Mathlib's `integralClosure A L`, with
+  the fraction field chosen by the caller.
+* `TauCeti.integralClosure.isDedekindDomain_fractionRing`: the instance form, with
+  `K := FractionRing A`.
 
 ## Design
 
@@ -42,12 +45,15 @@ still needs a normalization-finiteness theorem of Nagata type, which this reposi
 `TauCeti/AlgebraicGeometry/EllipticCurve/Isogeny/IntermediateRing/Finite.lean` records the same gap
 on the isogeny side.
 
-**Why `C` is abstract.** The statement is about any `C` with `[IsIntegralClosure C A L]` rather than
-about Mathlib's `integralClosure A L` subalgebra, following the convention of the Krull–Akizuki
-theorem it consumes. The consumer that motivates it,
+**Why `C` is abstract, and why it need not be a domain.** The main statement is about any `C` with
+`[IsIntegralClosure C A L]` rather than about Mathlib's `integralClosure A L` subalgebra, following
+the convention of the Krull–Akizuki theorem it consumes. The consumer that motivates it,
 `TauCeti.Isogeny.isDedekindDomain_intermediateRing`, holds a `Subring` of a function field which is
-known to be an integral closure but is not that subalgebra; and taking `C` abstractly leaves the
-subalgebra case available as the instance `C := integralClosure A L`.
+known to be an integral closure but is not that subalgebra. The subalgebra case is then supplied
+as `integralClosure.isDedekindDomain` and, with `K := FractionRing A`, as the instance
+`integralClosure.isDedekindDomain_fractionRing`, mirroring the pair Mathlib provides under
+separability. `C` is not assumed to be a domain: `C → L` is injective, so `IsDomain C` is derived
+inside the proof, as the Krull–Akizuki theorem does.
 
 ## Provenance
 
@@ -78,12 +84,16 @@ and with the same explicit arguments `A K L C` in the same order, so a call site
 by name alone. Separability serves only to make the trace pairing nondegenerate and so deliver
 Noetherianity, and Krull–Akizuki (`TauCeti.IsIntegralClosure.isNoetherianRing`) delivers that
 without it. Finiteness of `C` as an `A`-module, which the separable route yields as a by-product,
-is *not* available here. -/
+is *not* available here.
+
+`C` need not be given as a domain: it embeds in the field `L`. -/
 theorem IsIntegralClosure.isDedekindDomain (A : Type*) [CommRing A] [IsDedekindDomain A]
     (K : Type*) [Field K] [Algebra A K] [IsFractionRing A K] (L : Type*) [Field L] [Algebra A L]
-    [Algebra K L] [IsScalarTower A K L] [Module.Finite K L] (C : Type*) [CommRing C] [IsDomain C]
+    [Algebra K L] [IsScalarTower A K L] [Module.Finite K L] (C : Type*) [CommRing C]
     [Algebra A C] [Algebra C L] [IsScalarTower A C L] [IsIntegralClosure C A L] :
     IsDedekindDomain C :=
+  have : IsDomain C := Function.Injective.isDomain (algebraMap C L)
+    (IsIntegralClosure.algebraMap_injective C A L)
   have : IsFractionRing C L := IsIntegralClosure.isFractionRing_of_finite_extension A K L C
   have : Algebra.IsIntegral A C := IsIntegralClosure.isIntegral_algebra A L
   { _root_.TauCeti.IsIntegralClosure.isNoetherianRing (A := A) (L := L) K C,
@@ -91,5 +101,27 @@ theorem IsIntegralClosure.isDedekindDomain (A : Type*) [CommRing A] [IsDedekindD
     (isIntegrallyClosed_iff L).mpr fun {x} hx =>
       ⟨IsIntegralClosure.mk' C x (isIntegral_trans (R := A) _ hx),
         IsIntegralClosure.algebraMap_mk' _ _ _⟩ with : IsDedekindDomain C }
+
+/-- **Mathlib's `integralClosure` of a Dedekind domain is a Dedekind domain**, in a finite
+extension `L` of a chosen fraction field `K`, with no separability. This is Mathlib's
+`integralClosure.isDedekindDomain` without `[Algebra.IsSeparable K L]`.
+
+This cannot be an instance since `K` cannot be inferred; see
+`integralClosure.isDedekindDomain_fractionRing` for the instance with `K := FractionRing A`. -/
+theorem integralClosure.isDedekindDomain (A : Type*) [CommRing A] [IsDedekindDomain A]
+    (K : Type*) [Field K] [Algebra A K] [IsFractionRing A K] (L : Type*) [Field L] [Algebra A L]
+    [Algebra K L] [IsScalarTower A K L] [Module.Finite K L] :
+    IsDedekindDomain (integralClosure A L) :=
+  IsIntegralClosure.isDedekindDomain A K L (integralClosure A L)
+
+/-- **The instance form**: for a finite extension `L` of `FractionRing A`, not assumed separable,
+Mathlib's `integralClosure A L` is a Dedekind domain. This is Mathlib's
+`integralClosure.isDedekindDomain_fractionRing` without `[Algebra.IsSeparable (FractionRing A) L]`;
+see `integralClosure.isDedekindDomain` to choose the fraction field yourself. -/
+instance integralClosure.isDedekindDomain_fractionRing {A : Type*} [CommRing A]
+    [IsDedekindDomain A] {L : Type*} [Field L] [Algebra A L] [Algebra (FractionRing A) L]
+    [IsScalarTower A (FractionRing A) L] [Module.Finite (FractionRing A) L] :
+    IsDedekindDomain (integralClosure A L) :=
+  integralClosure.isDedekindDomain A (FractionRing A) L
 
 end TauCeti
