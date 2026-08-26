@@ -19,9 +19,10 @@ import Mathlib.RingTheory.Radical.Basic
 # The monic irreducible factors of a polynomial over a field
 
 For a polynomial `f` over a field `K`, `Polynomial.Factors f` is the type of its distinct monic
-irreducible factors: the subtype of `K[X]` cut out by `p.Monic ∧ Irreducible p ∧ p ∣ f`. Working
+irreducible factors: the subtype of `K[X]` cut out by `Irreducible p ∧ p.Monic ∧ p ∣ f`. Working
 with this subtype rather than with `normalizedFactors f` keeps `DecidableEq K` out of the
-statements; the two are compared by `Polynomial.Factors.mem_normalizedFactors_iff`.
+statements; the two are compared by Mathlib's `Polynomial.mem_normalizedFactors_iff`, whose
+conjunct order the predicate above follows.
 
 The factors are pairwise coprime, and when `f` is nonzero and squarefree their product is
 associated to `f`, so the ideal `(f)` is the intersection of the ideals `(p)`. That is the input
@@ -30,7 +31,8 @@ for the Chinese Remainder decomposition of `K[X] ⧸ (f)` into the fields `K[X] 
 ## Main definitions
 
 * `Polynomial.Factors`: the distinct monic irreducible factors of `f`, as a type.
-* `Polynomial.Factors.linearEquivRoots`: the linear factors correspond to the roots of `f`.
+* `Polynomial.Factors.linearEquivRoots`: the linear factors correspond to the roots of `f`, with
+  `linearEquivRoots_apply` and `linearEquivRoots_symm_apply` computing both directions.
 
 ## Main results
 
@@ -120,6 +122,19 @@ noncomputable def linearEquivRoots :
     -- `X - C x`, which is what the `change` displays.
     change -(X - C (x : K)).coeff 0 = _
     simp
+
+/-- `linearEquivRoots` sends a monic linear factor to the root it records, the negated constant
+coefficient. -/
+@[simp]
+lemma linearEquivRoots_apply (p : {p : f.Factors // (p : K[X]).natDegree = 1}) :
+    (linearEquivRoots p : K) = -((p : f.Factors) : K[X]).coeff 0 :=
+  (rfl)
+
+/-- `linearEquivRoots.symm` sends a root `x` to the monic linear factor `X - C x`. -/
+@[simp]
+lemma linearEquivRoots_symm_apply (x : {x : K // f.eval x = 0}) :
+    ((linearEquivRoots.symm x : f.Factors) : K[X]) = X - C (x : K) :=
+  (rfl)
 
 /-- Distinct monic irreducible factors of `f` are coprime: each spans a maximal ideal, and the
 two ideals differ because a monic polynomial is determined by the ideal it spans. -/

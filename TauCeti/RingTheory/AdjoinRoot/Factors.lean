@@ -32,7 +32,7 @@ equivalence and its compatibility with products are in
 ## Main definitions
 
 * `AdjoinRoot.equivPiFactors`: `K[X] ⧸ (f) ≃ₐ[K] Π p, K[X] ⧸ (p)`.
-* `AdjoinRoot.projFactor`: the projection onto the factor `K[X] ⧸ (p)`.
+* `AdjoinRoot.projFactor`: the projection onto the factor `K[X] ⧸ (p)`, as a `K`-algebra map.
 * `AdjoinRoot.modPowEquivPiFactors`: the `n`-th power classes of units of `K[X] ⧸ (f)` are the
   product of those of its field factors.
 
@@ -115,10 +115,10 @@ lemma equivPiFactors_mk (hf : f ≠ 0) (hsq : Squarefree f) (q : K[X]) (p : f.Fa
     equivPiFactors hf hsq (mk f q) p = mk (p : K[X]) q :=
   (rfl)
 
-/-- The projection of `K[X] ⧸ (f)` onto the field factor `K[X] ⧸ (p)`. -/
+/-- The projection of `K[X] ⧸ (f)` onto the field factor `K[X] ⧸ (p)`, as a `K`-algebra map. -/
 noncomputable def projFactor (hf : f ≠ 0) (hsq : Squarefree f) (p : f.Factors) :
-    AdjoinRoot f →+* AdjoinRoot (p : K[X]) :=
-  (Pi.evalRingHom _ p).comp (equivPiFactors hf hsq).toRingEquiv.toRingHom
+    AdjoinRoot f →ₐ[K] AdjoinRoot (p : K[X]) :=
+  (Pi.evalAlgHom K _ p).comp (equivPiFactors hf hsq).toAlgHom
 
 @[simp]
 lemma projFactor_mk (hf : f ≠ 0) (hsq : Squarefree f) (q : K[X]) (p : f.Factors) :
@@ -141,7 +141,7 @@ noncomputable def modPowEquivPiFactors (hf : f ≠ 0) (hsq : Squarefree f) (n : 
 lemma modPowEquivPiFactors_mk (hf : f ≠ 0) (hsq : Squarefree f) (n : ℕ)
     (u : (AdjoinRoot f)ˣ) (p : f.Factors) :
     modPowEquivPiFactors hf hsq n (QuotientGroup.mk u) p =
-      QuotientGroup.mk (Units.map (projFactor hf hsq p).toMonoidHom u) := by
+      QuotientGroup.mk (Units.map (projFactor hf hsq p).toRingHom.toMonoidHom u) := by
   simp only [modPowEquivPiFactors, MulEquiv.trans_apply, QuotientGroup.congrRangePowMonoidHom_mk,
     Units.modPowPiEquiv_mk]
   exact congrArg QuotientGroup.mk (Units.ext rfl)
@@ -161,7 +161,7 @@ lemma modPow_mk_eq_one_iff_forall_factors (hf : f ≠ 0) (hsq : Squarefree f) (n
     (u : (AdjoinRoot f)ˣ) :
     (QuotientGroup.mk u : (AdjoinRoot f)ˣ ⧸ (powMonoidHom n : (AdjoinRoot f)ˣ →* _).range) = 1 ↔
       ∀ p : f.Factors,
-        (QuotientGroup.mk (Units.map (projFactor hf hsq p).toMonoidHom u) :
+        (QuotientGroup.mk (Units.map (projFactor hf hsq p).toRingHom.toMonoidHom u) :
           (AdjoinRoot (p : K[X]))ˣ ⧸
             (powMonoidHom n : (AdjoinRoot (p : K[X]))ˣ →* _).range) = 1 := by
   rw [← map_eq_one_iff (modPowEquivPiFactors hf hsq n) (modPowEquivPiFactors hf hsq n).injective,

@@ -29,7 +29,7 @@ a representative.
   has trivial `v`-adic `valuationOfNeZeroMod n` exactly when `n` divides its `v`-adic valuation.
 * `IsDedekindDomain.HeightOneSpectrum.dvd_toAdd_valuationOfNeZero`: if the `v`-adic valuation of
   a unit is the `n`-th power of that of another unit, then `n` divides its `v`-adic order.
-* `IsDedekindDomain.HeightOneSpectrum.finite_setOf_valuation_ne_one`: a nonzero element has
+* `IsDedekindDomain.HeightOneSpectrum.finite_setOfPred_valuation_ne_one`: a nonzero element has
   trivial valuation at all but finitely many primes.
 
 Michael Stoll's elliptic-curves formalisation
@@ -38,7 +38,7 @@ Michael Stoll's elliptic-curves formalisation
 `HeightOneSpectrum.valuationOfNeZero_eq_iff` in this role; no such lemma exists at our Mathlib
 pin, so it is supplied here, with `valuationOfNeZero_eq_one_iff` as its `m = 1` case.
 `valuationOfNeZeroMod_mk_eq_one_iff`, `dvd_toAdd_valuationOfNeZero` and
-`finite_setOf_valuation_ne_one` are adapted from that source's
+`finite_setOfPred_valuation_ne_one` are adapted from that source's
 `EllipticCurves/Mathlib/Basic.lean`. Following this repository's convention for adapted material,
 the upstream authorship is credited here rather than in the copyright header.
 -/
@@ -94,7 +94,7 @@ theorem dvd_toAdd_valuationOfNeZero (v : HeightOneSpectrum R) {n : ℕ} {u z : K
 
 /-- A nonzero element of the fraction field of a Dedekind domain has trivial valuation at all
 but finitely many primes. -/
-theorem finite_setOf_valuation_ne_one {x : K} (hx : x ≠ 0) :
+theorem finite_setOfPred_valuation_ne_one {x : K} (hx : x ≠ 0) :
     {v : HeightOneSpectrum R | v.valuation K x ≠ 1}.Finite := by
   refine ((Support.finite R x).union (Support.finite R x⁻¹)).subset fun v hv ↦ ?_
   rcases lt_or_gt_of_ne hv with h | h
