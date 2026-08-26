@@ -48,6 +48,9 @@ AINTLIB `LeanModularForms` project
 * `SlashInvariantForm.slash_action_eqn_of_det_pos`: the transformation law
   `f (γ • τ) = |det γ| ^ (1 - k) * denom γ τ ^ k * f τ` for `γ` of positive determinant,
   generalising Mathlib's `slash_action_eqn''`, which assumes `det γ = 1`.
+* `slash_zpow_eq_self_of_slash_eq`, `slash_zpow_mul_mul_zpow_eq_smul`: slash
+  invariance passes to integer powers, and an eigenvalue law survives multiplication on both
+  sides by powers of an invariance.
 * `Subgroup.IsArithmetic.isCusp_of_isCusp`: any two arithmetic groups have the same cusps.
 * `ModularForm.mem_range_ofLeₗ_iff`, `CuspForm.mem_range_ofLeₗ_iff`: for `Γ' ≤ Γ` with every
   cusp of `Γ` a cusp of `Γ'`, a form for `Γ'` extends to `Γ` exactly when it is `Γ`-slash
@@ -87,6 +90,51 @@ determinant of a mapped `SL(2, ℤ)` matrix reduces through `GeneralLinearGroup.
 lemma σ_mapGL_real_eq_refl (s : SL(2, ℤ)) :
     UpperHalfPlane.σ (mapGL ℝ s) = ContinuousAlgEquiv.refl ℝ ℂ :=
   σ_eq_refl_of_det_pos (det_pos_of_mem_slGL (MonoidHom.mem_range.mpr ⟨s, rfl⟩))
+
+/-! ### Slash invariance under a fixed matrix -/
+
+/-- The matrices whose slash action fixes a given function, as a subgroup of `SL(2, ℤ)`. It
+exists so that invariance can be pushed to integer powers by `zpow_mem`. -/
+private def slashStabilizer (k : ℤ) (f : ℍ → ℂ) : Subgroup SL(2, ℤ) where
+  carrier := {γ | f ∣[k] (mapGL ℝ γ : GL (Fin 2) ℝ) = f}
+  one_mem' := by simp only [Set.mem_ofPred_eq, map_one, SlashAction.slash_one]
+  mul_mem' := fun {a b} ha hb ↦ by
+    simp only [Set.mem_ofPred_eq] at ha hb ⊢
+    rw [map_mul, SlashAction.slash_mul, ha, hb]
+  inv_mem' := fun {a} ha ↦ by
+    simp only [Set.mem_ofPred_eq] at ha ⊢
+    have hinv : (mapGL ℝ a : GL (Fin 2) ℝ) * mapGL ℝ a⁻¹ = 1 := by
+      rw [← map_mul, mul_inv_cancel, map_one]
+    have h := SlashAction.slash_mul k (mapGL ℝ a) (mapGL ℝ a⁻¹) f
+    rw [hinv, SlashAction.slash_one, ha] at h
+    exact h.symm
+
+/-- Membership in `slashStabilizer` unfolds to the slash identity it is defined by. -/
+private lemma mem_slashStabilizer {k : ℤ} {f : ℍ → ℂ} {γ : SL(2, ℤ)} :
+    γ ∈ slashStabilizer k f ↔ f ∣[k] (mapGL ℝ γ : GL (Fin 2) ℝ) = f := Iff.rfl
+
+/-- **Slash invariance passes to every integer power.** If `f ∣[k] γ = f` then
+`f ∣[k] γ ^ j = f` for every `j : ℤ`, because the matrices fixing `f` form a subgroup. -/
+lemma slash_zpow_eq_self_of_slash_eq (k : ℤ) (f : ℍ → ℂ) (γ : SL(2, ℤ))
+    (hf : f ∣[k] (mapGL ℝ γ : GL (Fin 2) ℝ) = f) (j : ℤ) :
+    f ∣[k] (mapGL ℝ (γ ^ j) : GL (Fin 2) ℝ) = f :=
+  mem_slashStabilizer.mp (zpow_mem (mem_slashStabilizer.mpr hf) j)
+
+/-- **An eigenvalue law survives conjugation by powers of an invariance.** If `f` is fixed by
+`δ` and slashing by `γ` multiplies it by `z`, then slashing by `δ ^ i * γ * δ ^ j` does too.
+Nothing is asked of `γ` beyond that law, and `σ` never appears in the conclusion because every
+`SL(2, ℤ)` matrix has positive determinant (`σ_mapGL_real_eq_refl`).
+
+The level-lowering step of the conductor theorem is the case `δ = T`, with `γ` the conjugate
+`conjScale l γ' c` supplied by the `T`-factorisation of `Γ₀(N / l)`. -/
+lemma slash_zpow_mul_mul_zpow_eq_smul (k : ℤ) (f : ℍ → ℂ) (δ : SL(2, ℤ))
+    (hδ : f ∣[k] (mapGL ℝ δ : GL (Fin 2) ℝ) = f) (γ : SL(2, ℤ)) {z : ℂ}
+    (hγ : f ∣[k] (mapGL ℝ γ : GL (Fin 2) ℝ) = z • f) (i j : ℤ) :
+    f ∣[k] (mapGL ℝ (δ ^ i * γ * δ ^ j) : GL (Fin 2) ℝ) = z • f := by
+  rw [map_mul, map_mul, SlashAction.slash_mul, SlashAction.slash_mul,
+    slash_zpow_eq_self_of_slash_eq k f δ hδ i, hγ, _root_.ModularForm.smul_slash,
+    σ_mapGL_real_eq_refl, ContinuousAlgEquiv.refl_apply,
+    slash_zpow_eq_self_of_slash_eq k f δ hδ j]
 
 /-- `CuspForm.mcast` does not change the pointwise values of a cusp form: the `CuspForm`
 analogue of Mathlib's `ModularForm.mcast_apply`, which Mathlib does not yet provide. -/
