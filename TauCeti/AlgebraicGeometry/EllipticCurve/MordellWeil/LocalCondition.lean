@@ -54,7 +54,7 @@ repository has a single spelling of square classes. Accordingly `localRes` is bu
 
 `pointMap` is Mathlib's `WeierstrassCurve.Affine.Point.map` and is not a new construction: the
 only content is the alignment of `W` with `W⁄K`, which `baseChange_self` supplies and
-`Point.congr` transports along.
+Mathlib's `AddEquiv.cast` transports along.
 
 ## Provenance
 
@@ -148,32 +148,31 @@ section PointMap
 
 variable [DecidableEq K] [DecidableEq L]
 
-/-- Transport of points along an equality of Weierstrass curves. -/
-def Point.congr {W₁ W₂ : Affine K} (h : W₁ = W₂) : W₁.Point ≃+ W₂.Point := by
-  subst h; exact AddEquiv.refl _
+/-- Transporting an affine point along an equality of curves carries its coordinates unchanged.
 
-lemma Point.congr_zero {W₁ W₂ : Affine K} (h : W₁ = W₂) :
-    Point.congr h (0 : W₁.Point) = 0 := by subst h; rfl
-
-lemma Point.congr_some {W₁ W₂ : Affine K} (h : W₁ = W₂) {x y : K} (hp : W₁.Nonsingular x y) :
-    Point.congr h (Point.some x y hp) = Point.some x y (h ▸ hp) := by subst h; rfl
+The transport itself is Mathlib's `AddEquiv.cast`, which is `Equiv.cast (congrArg _ h)` bundled
+as an `AddEquiv`; this is the one fact about it that mentions `Point.some`, and Mathlib has no
+lemma of that shape because `Point` is not one of its indexed families. -/
+lemma cast_point_some {W₁ W₂ : Affine K} (h : W₁ = W₂) {x y : K} (hp : W₁.Nonsingular x y) :
+    AddEquiv.cast (M := fun W' : Affine K => W'.Point) h (Point.some x y hp) =
+      Point.some x y (h ▸ hp) := by
+  subst h; rfl
 
 /-- The base-change homomorphism on points, `W(K) →+ W(L)`: Mathlib's
 `WeierstrassCurve.Affine.Point.map`, aligned with the plain base change `W⁄L` via
 `baseChange_self`. -/
 noncomputable def pointMap : W.Point →+ (W⁄L).toAffine.Point :=
   (Point.map (W' := W) (Algebra.ofId K L)).comp
-    (Point.congr (W.baseChange_self).symm).toAddMonoidHom
+    (AddEquiv.cast (M := fun W' : Affine K => W'.Point) W.baseChange_self.symm).toAddMonoidHom
 
 @[simp]
-lemma pointMap_zero : W.pointMap L 0 = 0 := by
-  simp [pointMap, Point.congr_zero]
+lemma pointMap_zero : W.pointMap L 0 = 0 := map_zero _
 
 lemma pointMap_some {x y : K} (h : W.Nonsingular x y) : W.pointMap L (Point.some x y h) =
       Point.some (W' := (W⁄L).toAffine) (algebraMap K L x) (algebraMap K L y)
         (show (W⁄L).toAffine.Nonsingular (algebraMap K L x) (algebraMap K L y) from
           (W.map_nonsingular (algebraMap K L).injective x y).mpr h) := by
-  rw [pointMap, AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, Point.congr_some,
+  rw [pointMap, AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, cast_point_some,
     Point.map_some]
   rfl
 
