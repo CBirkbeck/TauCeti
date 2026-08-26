@@ -19,6 +19,15 @@ original series.
 ## Main results
 
 * `MvPowerSeries.coeff_rename_const`: the coefficients of `rename (fun _ => s)`.
+
+## Provenance
+
+Adapted from Michael Stoll's `EllipticCurves` project
+(`github.com/MichaelStollBayreuth/EllipticCurves`, Apache-2.0, pinned by
+`TauCetiRoadmap/EllipticCurves/README.md` at `66889eada51a`),
+`EllipticCurves/WeierstrassFormalGroup/Chord.lean`, the private lemma `coeff_rename_single`.
+There it is stated only where it is used; it carries no elliptic content, so it is recorded
+here as a lemma about `MvPowerSeries.rename` on its own.
 -/
 
 public section

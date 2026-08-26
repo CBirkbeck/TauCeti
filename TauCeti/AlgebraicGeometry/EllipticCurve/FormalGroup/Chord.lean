@@ -31,10 +31,13 @@ from `formalThirdRoot` by composing with the formal inverse, which is left to a 
 
 ## Main results
 
+* `WeierstrassCurve.coeff_formalSlope`, `WeierstrassCurve.formalIntercept_def` and
+  `WeierstrassCurve.formalThirdRoot_def`: the defining formulas, as named lemmas. Rewrite with
+  these rather than unfolding the definitions.
 * `WeierstrassCurve.formalSlope_mul_sub`: the defining property `λ · (z₂ - z₁) = w(z₂) - w(z₁)`
   of the slope, which is what justifies calling it a divided difference.
-* `WeierstrassCurve.formalIntercept_eq_rename_inr`: the intercept is symmetric in its two
-  parameters, so the chord really does depend only on the pair of points.
+* `WeierstrassCurve.formalIntercept_eq_rename_inr`: the intercept computed from the second point
+  is the same series, so it does not depend on which of the two points is used to fix it.
 * `WeierstrassCurve.constantCoeff_formalSlope`, `_formalIntercept`, `_formalThirdRoot`: all
   three series vanish at the origin.
 
@@ -44,8 +47,9 @@ from `formalThirdRoot` by composing with the formal inverse, which is left to a 
 `z₂ - z₁` is not a unit in `R⟦z₁, z₂⟧`, so the divided difference has to be written down
 directly and `formalSlope_mul_sub` recovers the property that names it.
 
-Unlike `formalW`, which makes sense over a `CommSemiring`, the chord data needs subtraction
-and so is stated over a `CommRing`.
+The slope and its coefficients need no subtraction, so they are stated over a `CommSemiring`,
+matching `formalW`. Everything from `formalSlope_mul_sub` onwards subtracts, and so is stated
+over a `CommRing`.
 
 ## References
 
@@ -57,8 +61,11 @@ Adapted from Michael Stoll's `EllipticCurves` project
 (`github.com/MichaelStollBayreuth/EllipticCurves`, Apache-2.0, pinned by
 `TauCetiRoadmap/EllipticCurves/README.md` at `66889eada51a`),
 `EllipticCurves/WeierstrassFormalGroup/Chord.lean`, its `Chord` section down to the third-root
-series. The source's `wSeries` and `vSeries` are `formalW` and `formalU`, so neither is
-re-ported and everything here is stated over the existing `w`-expansion API.
+series — declarations `slopeSeries`, `coeff_slopeSeries`, `slopeSeries_mul_sub`,
+`interceptSeries`, `interceptSeries_eq`, `constantCoeff_slopeSeries`,
+`constantCoeff_interceptSeries`, `thirdRootSeries` and `constantCoeff_thirdRootSeries`. The
+source's `wSeries` and `vSeries` are `formalW` and `formalU`, so neither is re-ported and
+everything here is stated over the existing `w`-expansion API.
 -/
 
 public section
@@ -66,26 +73,6 @@ public section
 namespace WeierstrassCurve
 
 open MvPowerSeries
-
-variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
-
-/-! ### The slope and intercept of the chord -/
-
-/-- The slope of the chord through the points with parameters `z₁` and `z₂`, that is, the
-divided difference `λ(z₁, z₂) = (w(z₂) - w(z₁)) / (z₂ - z₁)`.
-
-It is defined through its coefficients: the coefficient of `z₁ ^ i * z₂ ^ j` is the coefficient
-of `z ^ (i + j + 1)` in `w(z)`. See `formalSlope_mul_sub` for the property this encodes.
-
-The definition is `@[expose]`d because the coefficient formula *is* the definition here: it is
-what `coeff_formalSlope` states, and there is no implementation detail to keep back. -/
-@[expose] noncomputable def formalSlope : MvPowerSeries (Unit ⊕ Unit) R :=
-  fun d => PowerSeries.coeff (d (Sum.inl ()) + d (Sum.inr ()) + 1) (formalW W)
-
-theorem coeff_formalSlope (d : Unit ⊕ Unit →₀ ℕ) :
-    coeff d (formalSlope W) =
-      PowerSeries.coeff (d (Sum.inl ()) + d (Sum.inr ()) + 1) (formalW W) :=
-  rfl
 
 private theorem eq_single_inr_iff (d : Unit ⊕ Unit →₀ ℕ) :
     d = Finsupp.single (Sum.inr ()) (d (Sum.inr ())) ↔ d (Sum.inl ()) = 0 := by
@@ -103,6 +90,43 @@ private theorem eq_single_inl_iff (d : Unit ⊕ Unit →₀ ℕ) :
   | .inl () => simp
   | .inr () => simpa using h
 
+section CommSemiring
+
+variable {R : Type*} [CommSemiring R] (W : WeierstrassCurve R)
+
+/-! ### The slope of the chord -/
+
+/-- The slope of the chord through the points with parameters `z₁` and `z₂`, that is, the
+divided difference `λ(z₁, z₂) = (w(z₂) - w(z₁)) / (z₂ - z₁)`.
+
+It is defined through its coefficients: the coefficient of `z₁ ^ i * z₂ ^ j` is the coefficient
+of `z ^ (i + j + 1)` in `w(z)`. See `formalSlope_mul_sub` for the property this encodes. -/
+noncomputable def formalSlope : MvPowerSeries (Unit ⊕ Unit) R :=
+  fun d => PowerSeries.coeff (d (Sum.inl ()) + d (Sum.inr ()) + 1) (formalW W)
+
+/-- The defining formula for `formalSlope`: the coefficient of `z₁ ^ i * z₂ ^ j` in the slope is
+the coefficient of `z ^ (i + j + 1)` in `w(z)`. -/
+theorem coeff_formalSlope (d : Unit ⊕ Unit →₀ ℕ) :
+    coeff d (formalSlope W) =
+      PowerSeries.coeff (d (Sum.inl ()) + d (Sum.inr ()) + 1) (formalW W) :=
+  (rfl)
+
+/-- The slope of the chord vanishes at the origin. -/
+@[simp]
+theorem constantCoeff_formalSlope : constantCoeff (formalSlope W) = 0 := by
+  have h : constantCoeff (formalSlope W) =
+      PowerSeries.coeff ((0 : Unit ⊕ Unit →₀ ℕ) (Sum.inl ()) +
+        (0 : Unit ⊕ Unit →₀ ℕ) (Sum.inr ()) + 1) (formalW W) :=
+    coeff_formalSlope W 0
+  rw [h, coeff_formalW]
+  exact formalWCoeff_eq_zero_of_lt W (by simp)
+
+end CommSemiring
+
+section CommRing
+
+variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
+
 /-- The defining property of the slope: `λ(z₁, z₂) * (z₂ - z₁) = w(z₂) - w(z₁)`. -/
 theorem formalSlope_mul_sub :
     formalSlope W * (X (Sum.inr ()) - X (Sum.inl ())) =
@@ -110,11 +134,7 @@ theorem formalSlope_mul_sub :
   ext d
   set i := d (Sum.inl ()) with hi
   set j := d (Sum.inr ()) with hj
-  rw [mul_sub, map_sub, map_sub,
-    show (X (Sum.inr ()) : MvPowerSeries (Unit ⊕ Unit) R) =
-      monomial (Finsupp.single (Sum.inr ()) 1) 1 from rfl,
-    show (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit) R) =
-      monomial (Finsupp.single (Sum.inl ()) 1) 1 from rfl,
+  rw [mul_sub, map_sub, map_sub, X_def (Sum.inr ()), X_def (Sum.inl ()),
     coeff_mul_monomial, coeff_mul_monomial, coeff_rename_const, coeff_rename_const]
   have hsubr : 1 ≤ j → (d - Finsupp.single (Sum.inr ()) 1 : Unit ⊕ Unit →₀ ℕ) (Sum.inl ()) +
       (d - Finsupp.single (Sum.inr ()) 1 : Unit ⊕ Unit →₀ ℕ) (Sum.inr ()) + 1 = i + j := by
@@ -132,37 +152,36 @@ theorem formalSlope_mul_sub :
     coeff_formalSlope]
   split_ifs with h1 h2 h3 h4 <;> grind
 
+/-! ### The intercept of the chord -/
+
 /-- The intercept `ν(z₁, z₂) = w(z₁) - λ(z₁, z₂) z₁` of the chord through the points with
 parameters `z₁` and `z₂`. -/
 noncomputable def formalIntercept : MvPowerSeries (Unit ⊕ Unit) R :=
   rename (fun _ => Sum.inl ()) (formalW W) - formalSlope W * X (Sum.inl ())
 
-/-- The intercept of the chord is symmetric in its two parameters: computing it from the second
-point gives the same series. -/
+/-- The defining formula for `formalIntercept`, in terms of the first point. -/
+theorem formalIntercept_def :
+    formalIntercept W =
+      rename (fun _ => Sum.inl ()) (formalW W) - formalSlope W * X (Sum.inl ()) :=
+  (rfl)
+
+/-- The intercept computed from the second point is the same series: `ν` does not depend on
+which of the two points is used to fix the chord. -/
 theorem formalIntercept_eq_rename_inr :
     formalIntercept W =
       rename (fun _ => Sum.inr ()) (formalW W) - formalSlope W * X (Sum.inr ()) := by
   have h := formalSlope_mul_sub W
-  simp only [formalIntercept]
+  rw [formalIntercept_def]
   linear_combination h
 
-@[simp]
-theorem constantCoeff_formalSlope : constantCoeff (formalSlope W) = 0 := by
-  have h : constantCoeff (formalSlope W) =
-      PowerSeries.coeff ((0 : Unit ⊕ Unit →₀ ℕ) (Sum.inl ()) +
-        (0 : Unit ⊕ Unit →₀ ℕ) (Sum.inr ()) + 1) (formalW W) :=
-    coeff_formalSlope W 0
-  rw [h, coeff_formalW]
-  exact formalWCoeff_eq_zero_of_lt W (by simp)
-
-/-- `constantCoeff_formalW` transported to the one-variable `MvPowerSeries` spelling, which is
-what `rename` produces. -/
-theorem constantCoeff_formalW_mv : constantCoeff (formalW W) = 0 :=
-  constantCoeff_formalW W
-
+/-- The intercept of the chord vanishes at the origin. -/
 @[simp]
 theorem constantCoeff_formalIntercept : constantCoeff (formalIntercept W) = 0 := by
-  simp [formalIntercept, constantCoeff_rename, constantCoeff_formalW_mv]
+  -- `constantCoeff_formalW` is stated for the `PowerSeries` spelling of the same map, so it is
+  -- transported here by definitional equality rather than by a public restatement.
+  have hW : constantCoeff (formalW W) = 0 := constantCoeff_formalW W
+  rw [formalIntercept_def]
+  simp [constantCoeff_rename, hW]
 
 /-! ### The third point of the chord -/
 
@@ -181,8 +200,23 @@ noncomputable def formalThirdRoot : MvPowerSeries (Unit ⊕ Unit) R :=
       invOfUnit (1 + C W.a₂ * formalSlope W + C W.a₄ * formalSlope W ^ 2 +
         C W.a₆ * formalSlope W ^ 3) 1
 
+/-- The defining formula for `formalThirdRoot`, as read off Vieta's formulas. -/
+theorem formalThirdRoot_def :
+    formalThirdRoot W =
+      -X (Sum.inl ()) - X (Sum.inr ()) -
+        (C W.a₁ * formalSlope W + C W.a₂ * formalIntercept W + C W.a₃ * formalSlope W ^ 2 +
+            2 * C W.a₄ * formalSlope W * formalIntercept W +
+            3 * C W.a₆ * formalSlope W ^ 2 * formalIntercept W) *
+          invOfUnit (1 + C W.a₂ * formalSlope W + C W.a₄ * formalSlope W ^ 2 +
+            C W.a₆ * formalSlope W ^ 3) 1 :=
+  (rfl)
+
+/-- The parameter of the third point of the chord vanishes at the origin. -/
 @[simp]
 theorem constantCoeff_formalThirdRoot : constantCoeff (formalThirdRoot W) = 0 := by
-  simp [formalThirdRoot]
+  rw [formalThirdRoot_def]
+  simp
+
+end CommRing
 
 end WeierstrassCurve
