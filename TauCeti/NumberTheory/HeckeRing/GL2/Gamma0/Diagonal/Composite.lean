@@ -19,9 +19,9 @@ assembled over a prime factorisation is [not] proved here". This file assembles 
 the primes of `n`, least prime first. The assembly is `TauCeti.Nat.primePowerProd` rather than
 `n.factorization.prod`: a `Finsupp.prod` needs a `CommMonoid` instance, and the Hecke ring
 `𝕋 (Δ₀(N)) (Γ₀(N)) ℤ` carries only a `Ring` one — its commutativity is a theorem about the
-Atkin–Lehner anti-involution, not a structure field. The ordered product asks only for a
-`MulOneClass` — weaker still than a `Monoid`, since its bracketing is fixed and associativity
-never enters — and so is available now.
+Atkin–Lehner anti-involution, not a structure field. The ordered product asks only for `One`
+and `Mul` — its bracketing is fixed, so neither associativity nor a unit law enters — and so is
+available now.
 
 The block map is `heckeTGeneratorRecGamma0 N` applied directly, with no primality guard. That
 is exactly what `Diagonal/PrimePower.lean` bought by dropping `Nat.Prime p` from the recurrence:
@@ -33,11 +33,12 @@ hypothesis of the lemmas rather than as a guard inside the definition.
 ## What is not here
 
 Coprime multiplicativity `T_{mn} = T_m · T_n` and the per-prime product formula both need the
-Hecke ring of `Γ₀(N)` to be commutative — `TauCeti.Nat.primePowerProd_mul_of_coprime` is stated
-for a `CommMonoid`, and the Chebyshev manipulation behind the product formula for a `CommRing`.
-That commutativity is not on `main` yet, so neither result is stated here. Nothing below is
-blocked by its absence, and `heckeTCompositeGamma0_def` is the hook the multiplicative half
-will instantiate through.
+blocks of the `Γ₀(N)` Hecke ring to commute — `TauCeti.Nat.primePowerProd_mul_of_coprime` is
+stated in a `Monoid`, but under the hypothesis that each block of `n` commutes with the blocks
+of `m` at larger primes, and the Chebyshev manipulation behind the product formula needs a
+`CommRing`. That commutativity is not on `main` yet, so neither result is stated here. Nothing
+below is blocked by its absence, and `heckeTCompositeGamma0_def` is the hook the multiplicative
+half will instantiate through.
 
 ## Main definitions
 
@@ -129,13 +130,15 @@ theorem heckeTCompositeGamma0_prime_pow {p : ℕ} (hp : p.Prime) (v : ℕ) :
   · simp
   · exact TauCeti.Nat.primePowerProd_prime_pow _ hp hv
 
-/-- At a prime the composite is the generator: `T_p` assembled is `T_p`. Marked `@[simp]`
-alongside `heckeTCompositeGamma0_prime_pow`, which cannot fire here: a bare prime is not
-syntactically a power, so without this lemma a prime input does not reduce to the generator. -/
+/-- At a prime the composite is the generator: `T_p` assembled is `T_p`. This is
+`TauCeti.Nat.primePowerProd_prime` read through the definition. Marked `@[simp]` alongside
+`heckeTCompositeGamma0_prime_pow`, which cannot fire here: a bare prime is not syntactically a
+power, so without this lemma a prime input does not reduce to the generator. -/
 @[simp]
 theorem heckeTCompositeGamma0_prime {p : ℕ} (hp : p.Prime) :
     heckeTCompositeGamma0 N p = heckeTGeneratorGamma0 N p := by
-  simpa using heckeTCompositeGamma0_prime_pow N hp 1
+  rw [heckeTCompositeGamma0_def, TauCeti.Nat.primePowerProd_prime _ hp,
+    heckeTGeneratorRecGamma0_one]
 
 /-- When `p` shares a factor with the level the scalar term of the recurrence vanishes and the
 composite degenerates to a power of the generator: `T_{p^v} = T_p^v`. This is the bad-prime
