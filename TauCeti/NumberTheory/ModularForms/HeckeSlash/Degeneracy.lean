@@ -27,9 +27,9 @@ normalising scalars are absent:
   entry `d b` leaves the range `b < p`. Writing `d b = q p + r` puts the excess into `T ^ q`,
   which the level-`M` invariance of `f` absorbs, leaving the representative `r`. Coprimality of
   `d` and `p` makes `b ↦ r` a permutation of `Fin p`, so the sum is merely reindexed.
-* the diamond term, which commutes because `diag(d, 1)` and `diag(p, 1)` do
-  (`TauCeti.scaleGL_mul`), once `TauCeti.CuspForm.diamondOpCusp_levelRaise` has moved `⟨p⟩`
-  across `V_d`.
+* the diamond term, which commutes because positive diagonal matrices do — `natDiagGL_comm`, a
+  consequence of `natDiagGL_mul` — once `TauCeti.CuspForm.diamondOpCusp_levelRaise` has moved
+  `⟨p⟩` across `V_d`.
 
 ## Main results
 
@@ -46,9 +46,9 @@ The mathematics follows `heckeT_p_all_levelRaise_comm` and its supporting lemmas
 `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck, lines 45–311.
 No proof code is transcribed: that development works with bare coset functions `heckeT_p_ut` and
 `heckeT_p_fun` and a `Γ₁`-shift matrix of its own, and splits `Tₚ` on whether `p` divides the
-level, whereas here `Tₚ` is the single-formula operator of `HeckeSlash/Prime.lean`, the shift is
+level, whereas here `Tₚ` is the single-formula operator of `HeckeSlash/Operators.lean`, the shift is
 Mathlib's `ModularGroup.T`, and the level-raise is the general `TauCeti.CuspForm.levelRaise` of
-`Degeneracy.lean`, stated at `d * M ∣ N` rather than at `d * M = N`.
+`ModularForms/Degeneracy.lean`, stated at `d * M ∣ N` rather than at `d * M = N`.
 
 ## References
 
@@ -149,10 +149,12 @@ theorem heckeSlashUpperTri_slash_natDiagGL (hd : 0 < d) (hp : 0 < p) (hdp : Nat.
   rw [← Equiv.sum_comp (mulModEquiv hp hdp) fun b ↦ (f ∣[k] upperTriRep p b) ∣[k]
     (natDiagGL 2 ![d, 1] : GL (Fin 2) ℚ)]
   refine Finset.sum_congr rfl fun b _ ↦ ?_
+  -- the reindexed representative is `d b mod p`, by the defining lemma of `mulModEquiv`
+  have hb : mulModEquiv hp hdp b = ⟨d * (b : ℕ) % p, Nat.mod_lt _ hp⟩ :=
+    Fin.ext (mulModEquiv_apply hp hdp b)
   rw [← SlashAction.slash_mul,
     natDiagGL_mul_upperTriRep hd b (Nat.mod_lt _ hp) (Nat.div_add_mod' (d * (b : ℕ)) p).symm,
-    SlashAction.slash_mul, slash_mapGL_T_zpow k hf, SlashAction.slash_mul]
-  rfl
+    SlashAction.slash_mul, slash_mapGL_T_zpow k hf, SlashAction.slash_mul, hb]
 
 /-! ### `Tₚ` and `V_d` -/
 
