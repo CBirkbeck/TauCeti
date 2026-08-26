@@ -33,13 +33,18 @@ defined through these convolutions well founded.
 
 * `PowerSeries.selfConvTwo_def`, `PowerSeries.selfConvThree_def`: the defining formulas, as
   named lemmas. Rewrite with these rather than unfolding the definitions.
-* `PowerSeries.coeff_pow_two`, `PowerSeries.coeff_pow_three`: those sums do compute the
-  coefficients of `w ^ 2` and `w ^ 3`.
+* `PowerSeries.coeff_pow_two_eq_selfConvTwo`,
+  `PowerSeries.coeff_pow_three_eq_selfConvThree`: those sums do compute the coefficients of
+  `w ^ 2` and `w ^ 3`.
+* `PowerSeries.selfConvTwo_congr_le`, `PowerSeries.selfConvThree_congr_le`: the convolution at
+  `m` depends only on the values of the function on `[0, m]`. No hypothesis is needed.
 * `PowerSeries.selfConvTwo_congr`, `PowerSeries.selfConvThree_congr`: for a function vanishing at
-  `0`, the convolution at `n` depends only on the values strictly below `n`.
-* `PowerSeries.selfConvTwo_truncate`, `PowerSeries.selfConvTwo_truncate_sub_one`,
-  `PowerSeries.selfConvThree_truncate`: truncating the function above the index in question
-  leaves the convolution unchanged.
+  `0`, that bound sharpens to the values strictly below `n`.
+* `PowerSeries.selfConvTwo_truncate`, `PowerSeries.selfConvThree_truncate` and their
+  `_of_lt` companions: truncating the function above `n` leaves the convolution unchanged at `n`
+  (needing `f 0 = 0`) and at every smaller index (needing nothing).
+* `PowerSeries.selfConvTwo_eq_zero`, `PowerSeries.selfConvThree_eq_zero`: a function vanishing
+  below `d` has square vanishing below `2 * d` and cube vanishing below `3 * d`.
 
 ## Provenance
 
@@ -81,7 +86,7 @@ theorem selfConvThree_def (f : ℕ → R) (n : ℕ) :
   (rfl)
 
 /-- `selfConvTwo` computes the coefficients of a square. -/
-theorem coeff_pow_two (w : PowerSeries R) (n : ℕ) :
+theorem coeff_pow_two_eq_selfConvTwo (w : PowerSeries R) (n : ℕ) :
     coeff n (w ^ 2) = selfConvTwo (fun k => coeff k w) n := by
   rw [sq, coeff_mul,
     Finset.Nat.sum_antidiagonal_eq_sum_range_succ
@@ -89,12 +94,12 @@ theorem coeff_pow_two (w : PowerSeries R) (n : ℕ) :
   rfl
 
 /-- `selfConvThree` computes the coefficients of a cube. -/
-theorem coeff_pow_three (w : PowerSeries R) (n : ℕ) :
+theorem coeff_pow_three_eq_selfConvThree (w : PowerSeries R) (n : ℕ) :
     coeff n (w ^ 3) = selfConvThree (fun k => coeff k w) n := by
   rw [pow_succ' w 2, coeff_mul,
     Finset.Nat.sum_antidiagonal_eq_sum_range_succ
       (M := R) (fun i j => coeff i w * coeff j (w ^ 2)) n]
-  simp only [coeff_pow_two, selfConvThree, selfConvTwo, Finset.mul_sum]
+  simp only [coeff_pow_two_eq_selfConvTwo, selfConvThree, selfConvTwo, Finset.mul_sum]
   exact Finset.sum_congr rfl fun i _ =>
     Finset.sum_congr rfl fun j _ => (mul_assoc _ _ _).symm
 
@@ -136,24 +141,67 @@ theorem selfConvThree_congr {f g : ℕ → R} (hf : f 0 = 0) (hg : g 0 = 0) {n :
     subst this
     simp [hf, hg]
 
+/-- `selfConvTwo f m` depends only on the values of `f` on `[0, m]`. Unlike `selfConvTwo_congr`
+this needs no hypothesis on `f`, because every index occurring in the sum is at most `m`; the
+vanishing hypothesis there buys the strict bound `< m` instead. -/
+theorem selfConvTwo_congr_le {f g : ℕ → R} {m : ℕ} (h : ∀ k, k ≤ m → f k = g k) :
+    selfConvTwo f m = selfConvTwo g m := by
+  simp only [selfConvTwo]
+  refine Finset.sum_congr rfl fun i hi => ?_
+  simp only [Finset.mem_range, Nat.lt_succ_iff] at hi
+  rw [h i hi, h _ (by omega)]
+
+/-- The cube analogue of `selfConvTwo_congr_le`. -/
+theorem selfConvThree_congr_le {f g : ℕ → R} {m : ℕ} (h : ∀ k, k ≤ m → f k = g k) :
+    selfConvThree f m = selfConvThree g m := by
+  simp only [selfConvThree]
+  refine Finset.sum_congr rfl fun i hi => ?_
+  refine Finset.sum_congr rfl fun j hj => ?_
+  simp only [Finset.mem_range, Nat.lt_succ_iff] at hi hj
+  rw [h i (by omega), h j (by omega), h _ (by omega)]
+
 /-- Truncating `f` above `n` does not change `selfConvTwo f n`, when `f 0 = 0`. -/
 theorem selfConvTwo_truncate (f : ℕ → R) (hf : f 0 = 0) (n : ℕ) :
     selfConvTwo (fun m => if m < n then f m else 0) n = selfConvTwo f n :=
   selfConvTwo_congr (by by_cases h : 0 < n <;> simp [h, hf]) hf fun m hm => by simp [hm]
 
-/-- The shifted form of `selfConvTwo_truncate` needed at index `n - 1`. -/
-theorem selfConvTwo_truncate_sub_one (f : ℕ → R) (n : ℕ) (hn : 1 ≤ n) :
-    selfConvTwo (fun m => if m < n then f m else 0) (n - 1) = selfConvTwo f (n - 1) := by
-  simp only [selfConvTwo]
-  refine Finset.sum_congr rfl fun i hi => ?_
-  simp only [Finset.mem_range] at hi
-  have h1 : i < n := by omega
-  have h2 : n - 1 - i < n := by omega
-  simp [h1, h2]
+/-- Below the truncation index no hypothesis on `f` is needed. -/
+theorem selfConvTwo_truncate_of_lt (f : ℕ → R) {k n : ℕ} (h : k < n) :
+    selfConvTwo (fun m => if m < n then f m else 0) k = selfConvTwo f k :=
+  selfConvTwo_congr_le fun j hj => by simp [show j < n by omega]
 
 /-- Truncating `f` above `n` does not change `selfConvThree f n`, when `f 0 = 0`. -/
 theorem selfConvThree_truncate (f : ℕ → R) (hf : f 0 = 0) (n : ℕ) :
     selfConvThree (fun m => if m < n then f m else 0) n = selfConvThree f n :=
   selfConvThree_congr (by by_cases h : 0 < n <;> simp [h, hf]) hf fun m hm => by simp [hm]
+
+/-- The cube analogue of `selfConvTwo_truncate_of_lt`. -/
+theorem selfConvThree_truncate_of_lt (f : ℕ → R) {k n : ℕ} (h : k < n) :
+    selfConvThree (fun m => if m < n then f m else 0) k = selfConvThree f k :=
+  selfConvThree_congr_le fun j hj => by simp [show j < n by omega]
+
+/-- A series vanishing below degree `d` has square vanishing below degree `2 * d`: in every term
+of the convolution one of the two factors sits at an index below `d`. -/
+theorem selfConvTwo_eq_zero {f : ℕ → R} {d : ℕ} (hf : ∀ k, k < d → f k = 0) {n : ℕ}
+    (hn : n < 2 * d) : selfConvTwo f n = 0 := by
+  simp only [selfConvTwo]
+  refine Finset.sum_eq_zero fun i hi => ?_
+  simp only [Finset.mem_range, Nat.lt_succ_iff] at hi
+  by_cases h : i < d
+  · rw [hf i h, zero_mul]
+  · rw [hf (n - i) (by omega), mul_zero]
+
+/-- A series vanishing below degree `d` has cube vanishing below degree `3 * d`. -/
+theorem selfConvThree_eq_zero {f : ℕ → R} {d : ℕ} (hf : ∀ k, k < d → f k = 0) {n : ℕ}
+    (hn : n < 3 * d) : selfConvThree f n = 0 := by
+  simp only [selfConvThree]
+  refine Finset.sum_eq_zero fun i hi => ?_
+  refine Finset.sum_eq_zero fun j hj => ?_
+  simp only [Finset.mem_range, Nat.lt_succ_iff] at hi hj
+  by_cases h : i < d
+  · rw [hf i h, zero_mul, zero_mul]
+  · by_cases h' : j < d
+    · rw [hf j h', mul_zero, zero_mul]
+    · rw [hf (n - i - j) (by omega), mul_zero]
 
 end PowerSeries
