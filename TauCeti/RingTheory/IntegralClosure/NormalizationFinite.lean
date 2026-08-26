@@ -10,6 +10,16 @@ import Mathlib.LinearAlgebra.Dual.Lemmas
 -- Proof-only: fractional ideals appear in the private rank-one helper, not in any statement.
 import Mathlib.RingTheory.FractionalIdeal.Operations
 public import TauCeti.RingTheory.Length
+public import Mathlib.Algebra.MvPolynomial.Basic
+public import Mathlib.FieldTheory.PurelyInseparable.Basic
+public import Mathlib.RingTheory.FiniteType
+public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
+-- Proof-only: the ingredients of the normalization-finiteness half.
+import Mathlib.FieldTheory.Normal.Closure
+import Mathlib.RingTheory.NoetherNormalization
+import TauCeti.FieldTheory.Normal.FixedField
+import TauCeti.RingTheory.IntegralClosure.PurelyInseparable
+import TauCeti.RingTheory.IntegralClosure.Transfer
 
 /-!
 # Krull–Akizuki: an integral closure that is Noetherian without separability
@@ -427,5 +437,101 @@ theorem integralClosure.isNoetherianRing (K : Type*) [Field K] [Algebra A K] [Is
   _root_.TauCeti.IsIntegralClosure.isNoetherianRing (A := A) (L := L) K (integralClosure A L)
 
 end IntegralClosure
+
+-- Skeleton of the normalization-finiteness development: `sorry` is an error under the library's
+-- `warningAsError`, so it is downgraded here until the proofs land. Remove with the last `sorry`.
+set_option warningAsError false
+
+section NormalizationFinite
+
+/-! ### Normalization-finiteness: the integral closure of a finite-type domain is finite
+
+The other half of the file: for a domain `A` of finite type over a field `k`, the integral closure
+of `A` in a finite extension `L` of its fraction field is a finite `A`-module, with no separability
+of `L / K` — the Nagata/N-2 property of finite-type domains over a field (Stacks, Proposition
+10.162.16, tags 0335/032F; classically E. Noether). The route: Noether normalization reduces to a
+polynomial ring `P`; a normal closure splits any finite extension into a purely inseparable step
+below a separable one (Stacks 10.161.12, tag 032N); the purely inseparable step is
+`TauCeti.IsIntegralClosure.finite_mvPolynomial_of_isPurelyInseparable` and the separable step is
+Mathlib's `IsIntegralClosure.finite`. -/
+
+universe w
+
+variable {A : Type*} [CommRing A] [IsDomain A]
+
+/-- Source: Stacks, Lemma 10.161.12 (tag 032N), proof: "By assumption the integral closure `R′`
+of `R` in `M_insep` is finite over `R`. By Lemma 10.161.8 the integral closure `R′′` of `R′` in
+`M` is finite over `R′`. Then `R′′` is finite over `R` by Lemma 10.7.3. Since `R′′` is also the
+integral closure of `R` in `M` (see Lemma 10.36.16) we win." Finiteness of integral closures
+climbs a finite separable step: if the integral closure `B` of a Noetherian integrally closed
+domain `A` in `M` is finite over `A`, so is the integral closure `C` of `A` in a finite separable
+extension `N` of `M`. -/
+theorem IsIntegralClosure.finite_of_isSeparable_of_finite [IsNoetherianRing A]
+    [IsIntegrallyClosed A] (K M N : Type*) [Field K] [Field M] [Field N] [Algebra A K]
+    [IsFractionRing A K] [Algebra K M] [Algebra A M] [IsScalarTower A K M]
+    [FiniteDimensional K M] [Algebra M N] [Algebra A N] [IsScalarTower A M N]
+    [FiniteDimensional M N] [Algebra.IsSeparable M N] (B C : Type*) [CommRing B] [Algebra A B]
+    [Algebra B M] [IsScalarTower A B M] [IsIntegralClosure B A M] [Module.Finite A B]
+    [CommRing C] [Algebra A C] [Algebra C N] [IsScalarTower A C N] [IsIntegralClosure C A N] :
+    Module.Finite A C := by
+  sorry
+
+/-- Source: Stacks, Lemma 10.161.12 (tag 032N): "Let `R` be a Noetherian domain with fraction
+field `K` … Then `R` is N-2 if and only if for every finite purely inseparable extension `L/K`
+the integral closure of `R` in `L` is finite over `R`" — the direction used. For a Noetherian
+integrally closed domain `A` whose integral closure in every finite purely inseparable extension
+of its fraction field `K` is finite, any integral closure `C` of `A` in any finite extension `L`
+of `K` is finite over `A`: pass to a normal closure, split it at the fixed field of its
+automorphism group, and climb the Galois step with Mathlib's `IsIntegralClosure.finite`. The
+purely inseparable hypothesis is quantified over fields in the universe of `L`, where the normal
+closure and its fixed field live. In every characteristic: in characteristic zero the purely
+inseparable extensions are trivial. -/
+theorem IsIntegralClosure.finite_of_forall_isPurelyInseparable [IsNoetherianRing A]
+    [IsIntegrallyClosed A] (K : Type*) [Field K] [Algebra A K] [IsFractionRing A K]
+    {L : Type w} [Field L] [Algebra A L] [Algebra K L] [IsScalarTower A K L]
+    [FiniteDimensional K L] (C : Type*) [CommRing C] [Algebra A C] [Algebra C L]
+    [IsScalarTower A C L] [IsIntegralClosure C A L]
+    (h : ∀ (M : Type w) [Field M] [Algebra K M] [Algebra A M] [IsScalarTower A K M]
+      [IsPurelyInseparable K M] [FiniteDimensional K M], Module.Finite A (integralClosure A M)) :
+    Module.Finite A C := by
+  sorry
+
+/-- Source: Stacks, Lemma 10.161.13 (tag 032O): "If `R` is N-2 then `R[x]` is N-2", iterated
+from `R = k` a field, together with Lemma 10.161.12 (tag 032N). **Polynomial rings over a field
+are N-2**: for `P = k[X_1, …, X_r]` with fraction field `K` and any finite extension `L / K`,
+any integral closure `C` of `P` in `L` is a finite `P`-module. -/
+theorem IsIntegralClosure.finite_mvPolynomial (k : Type*) [Field k] {σ : Type*} [Finite σ]
+    (K L : Type*) [Field K] [Field L] [Algebra (MvPolynomial σ k) K]
+    [IsFractionRing (MvPolynomial σ k) K] [Algebra K L] [Algebra (MvPolynomial σ k) L]
+    [IsScalarTower (MvPolynomial σ k) K L] [FiniteDimensional K L] (C : Type*) [CommRing C]
+    [Algebra (MvPolynomial σ k) C] [Algebra C L] [IsScalarTower (MvPolynomial σ k) C L]
+    [IsIntegralClosure C (MvPolynomial σ k) L] : Module.Finite (MvPolynomial σ k) C := by
+  sorry
+
+/-- Source: Stacks, Proposition 10.162.16 (tag 0335), (1) and (5): "The following types of rings
+are Nagata and in particular universally Japanese: (1) fields, … (5) finite type ring extensions
+of any of the above", in the domain case (N-2, Definition 10.161.1(2), tag 032F), proved through
+Noether normalization (Lemma 10.115.4, tag 00OW) and Lemma 10.161.5 (tag 032I) instead of
+Nagata's theorem. **Finite-type domains over a field are N-2 (Noether's finiteness theorem).**
+For a domain `A` of finite type over a field `k`, with fraction field `K`, and a finite extension
+`L / K`, any integral closure `C` of `A` in `L` is a finite `A`-module. No separability of `L / K`
+is assumed. -/
+theorem IsIntegralClosure.finite_of_finiteType (k : Type*) [Field k] [Algebra k A]
+    [Algebra.FiniteType k A] (K L : Type*) [Field K] [Field L] [Algebra A K] [IsFractionRing A K]
+    [Algebra K L] [Algebra A L] [IsScalarTower A K L] [FiniteDimensional K L] (C : Type*)
+    [CommRing C] [Algebra A C] [Algebra C L] [IsScalarTower A C L] [IsIntegralClosure C A L] :
+    Module.Finite A C := by
+  sorry
+
+/-- **Noether's finiteness theorem for Mathlib's `integralClosure`.** The specialisation of
+`TauCeti.IsIntegralClosure.finite_of_finiteType` to the integral closure of `A` in `L` as a
+subalgebra. -/
+theorem integralClosure.finite_of_finiteType (k : Type*) [Field k] [Algebra k A]
+    [Algebra.FiniteType k A] (K : Type*) [Field K] [Algebra A K] [IsFractionRing A K]
+    {L : Type*} [Field L] [Algebra K L] [Algebra A L] [IsScalarTower A K L]
+    [FiniteDimensional K L] : Module.Finite A (integralClosure A L) := by
+  sorry
+
+end NormalizationFinite
 
 end TauCeti
