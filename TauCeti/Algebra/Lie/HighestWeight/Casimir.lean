@@ -367,9 +367,7 @@ private theorem representation_casimirElement_apply_eq_sum
     · exact Finset.sum_congr rfl fun α hα ↦ sum_casimirBilin_proj_pos bs hv
         ((mem_posRootsFinset _ base α).mp hα)
     · refine sum_casimirBilin_proj_neg bs hv ?_
-      rw [← IsKilling.rootSystem_reflectionPerm_self_eq_neg]
-      exact (reflectionPerm_self_mem_posRoots_iff_mem_negRoots (IsKilling.rootSystem H) base α).mpr
-        (by simpa [mem_posRootsFinset] using hα)
+      exact neg_mem_posRoots_of_mem_negRoots base (by simpa [mem_posRootsFinset] using hα)
   rw [hpart_zero, hpart_root, ← add_smul]
 
 /-- **The Casimir scalar of a highest weight.** This is the scalar by which the Casimir element
@@ -437,14 +435,8 @@ theorem casimir_smul_of_isHighestWeightVector_of_lieSpan_eq_top
   have hker : ∀ w : M, f w = 0 ↔
       UniversalEnvelopingAlgebra.representation K L M (casimirElement K L) w = c • w := fun w ↦ by
     simp [hf, sub_eq_zero]
-  have hcentral : ∀ (x : L) (w : M), f ⁅x, w⁆ = ⁅x, f w⁆ := by
-    intro x w
-    have h := congrArg (UniversalEnvelopingAlgebra.representation K L M)
-      (ι_mul_casimirElement (K := K) (L := L) x)
-    rw [map_mul, map_mul, UniversalEnvelopingAlgebra.representation_ι] at h
-    have h₁ := congrArg (fun g : Module.End K M ↦ g w) h
-    simp only [Module.End.mul_apply, LieModule.toEnd_apply_apply] at h₁
-    simp [hf, h₁]
+  have hcentral : ∀ (x : L) (w : M), f ⁅x, w⁆ = ⁅x, f w⁆ := fun x w ↦ by
+    simp [hf, representation_casimirElement_lie x w]
   set N : LieSubmodule K L M :=
     { __ := LinearMap.ker f
       lie_mem := fun {x w} hw ↦ by

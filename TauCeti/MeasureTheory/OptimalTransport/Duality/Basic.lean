@@ -33,6 +33,8 @@ be finite or measurable.
 
 ## Main statements
 
+* `TauCeti.dualFeasible_ofReal_iff` — for a nonnegative real cost, feasibility for the
+  associated extended cost is the plain real pointwise inequality;
 * `TauCeti.DualFeasible.kantorovichDualValue_le_lintegral` — weak duality against one coupling;
 * `TauCeti.DualFeasible.kantorovichDualValue_le_transportCost` — weak duality against the primal
   infimum;
@@ -91,6 +93,14 @@ theorem dualFeasible_iff_ofReal_add_le : DualFeasible c φ ψ ↔
 theorem DualFeasible.ofReal_add_le (h : DualFeasible c φ ψ) (x : X) (y : Y) :
     ENNReal.ofReal (φ x + ψ y) ≤ c (x, y) :=
   dualFeasible_iff_ofReal_add_le.1 h x y
+
+/-- Dual feasibility for the extended cost attached to a nonnegative real cost is the plain
+real pointwise inequality. This is the bridge from a real linear-programming dual constraint to
+the canonical `TauCeti.DualFeasible` predicate. -/
+theorem dualFeasible_ofReal_iff {c : X × Y → ℝ} (hc : ∀ z, 0 ≤ c z) (φ : X → ℝ) (ψ : Y → ℝ) :
+    DualFeasible (fun z ↦ ENNReal.ofReal (c z)) φ ψ ↔ ∀ x y, φ x + ψ y ≤ c (x, y) := by
+  rw [dualFeasible_iff_ofReal_add_le]
+  exact forall_congr' fun x ↦ forall_congr' fun y ↦ ENNReal.ofReal_le_ofReal_iff (hc (x, y))
 
 /-- Increasing the cost preserves dual feasibility. -/
 theorem DualFeasible.mono_cost (h : DualFeasible c φ ψ) (hcc' : c ≤ c') :
@@ -192,6 +202,14 @@ theorem DualFeasible.ofReal_kantorovichDualValue_le_transportCost (h : DualFeasi
     (hφ : Integrable φ μ) (hψ : Integrable ψ ν) :
   ENNReal.ofReal (kantorovichDualValue μ ν φ ψ) ≤ transportCost c μ ν :=
   le_transportCost fun _π hπ ↦ h.ofReal_kantorovichDualValue_le_lintegral hφ hψ hπ
+
+/-- **Kantorovich weak duality in finite real form.** If the primal value is finite, every
+integrable feasible dual value is at most its real representative. -/
+theorem DualFeasible.kantorovichDualValue_le_toReal_transportCost (h : DualFeasible c φ ψ)
+    (hne : transportCost c μ ν ≠ ⊤) (hφ : Integrable φ μ) (hψ : Integrable ψ ν) :
+    kantorovichDualValue μ ν φ ψ ≤ (transportCost c μ ν).toReal :=
+  (ENNReal.ofReal_le_iff_le_toReal hne).1
+    (h.ofReal_kantorovichDualValue_le_transportCost hφ hψ)
 
 /-- **Kantorovich weak duality.** Every integrable feasible dual value is at most the primal
 transport cost. The comparison in `EReal` remains meaningful when the primal value is `∞`. -/

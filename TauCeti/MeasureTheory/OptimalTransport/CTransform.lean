@@ -5,6 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.Data.Fintype.Order
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 public import Mathlib.Order.GaloisConnection.Basic
 public import Mathlib.Topology.Instances.EReal.Lemmas
 public import TauCeti.Data.EReal.Operations
@@ -20,7 +22,9 @@ that transform, the two closure operations it generates, the `c`-concave potenti
 and the contact set on which the dual constraint is an equality. It is the finite-real slice of
 the roadmap's broader transform interface; the extended-cost, analytic-sublevel, and compact
 attainment/lower-semicontinuity interfaces are separate follow-up slices. The elementary
-upper-semicontinuity result for infimal transforms is included here.
+upper-semicontinuity result for infimal transforms, the Borel measurability it gives with no
+hypothesis on the opposite factor, and a metric continuity result for real-valued transforms are
+included here.
 
 Even for a finite real cost and a finite real potential the infimum defining the transform can
 be `-∞`, so the transform must have an extended-real codomain; and once the codomain is
@@ -34,10 +38,11 @@ is *not* the right one: with `c ≡ ⊤` and `φ ≡ 0`, `EReal` subtraction giv
 double transform of `φ` is `⊥` on nonempty factors and the inequality `φ ≤ φᶜᶜ` fails. The
 extended-cost interface needs its own conventions and is not built here.
 
-Nothing in this file is measure-theoretic: apart from the upper-semicontinuity results, the two
-factors are bare types and the results are order-theoretic identities about the transform. They
-are the algebraic half of the Kantorovich dual problem, to be combined with the integrability
-conditions that make the two marginal integrals of a dual pair meaningful.
+Apart from the upper-semicontinuity and Borel measurability results, and the metric continuity
+result on pseudometric spaces, the two factors are bare types and the results are
+order-theoretic identities about the transform. They are the algebraic and topological halves of
+the Kantorovich dual problem, to be combined with the integrability conditions that make the two
+marginal integrals of a dual pair meaningful.
 
 ## Main definitions
 
@@ -61,9 +66,15 @@ conditions that make the two marginal integrals of a dual pair meaningful.
   transform;
 * `TauCeti.isCConcave_iff` — `c`-concavity is exactly being fixed by the double transform;
 * `TauCeti.upperSemicontinuous_cTransform` — an infimal transform of upper-semicontinuous
-  sections is upper semicontinuous;
+  sections is upper semicontinuous, and `TauCeti.measurable_cTransform_of_upperSemicontinuous` —
+  it is then Borel measurable, while `TauCeti.uniformContinuous_iInf_sub` shows that a
+  real-valued infimal transform is uniformly continuous when the target-variable sections of the
+  cost share a uniform modulus and its infima are finite;
 * `TauCeti.cTransform_add_const` — the transform turns an additive real constant into its
   negative, which is the normalisation freedom of the dual problem;
+* `TauCeti.cTransform_coe` and `TauCeti.cTransformSymm_coe` — the extended-real transforms of
+  coerced real potentials agree with the corresponding real infima whenever those infima are
+  bounded below;
 * `TauCeti.contactSet_subset_contactSet_cTransformSymm_cTransform` — sequentially transforming a
   feasible pair gives a dominating feasible pair with a larger contact set, and
   `TauCeti.cTransformSymm_cTransform_eq_of_mem_cSuperdifferential` — a potential agrees with its
@@ -255,6 +266,58 @@ theorem cTransformSymm_of_isEmpty [IsEmpty Y] (c : X × Y → ℝ) (ψ : Y → E
   simpa only [cTransformSymm_eq_cTransform] using
     cTransform_of_isEmpty (fun p : Y × X => c (p.2, p.1)) ψ x
 
+/-- The `EReal`-valued infimal transform `TauCeti.cTransform` of a real potential is a
+real-valued infimum whenever that infimum is bounded below. -/
+theorem cTransform_coe [Nonempty X] (c : X × Y → ℝ) (φ : X → ℝ) (y : Y)
+    (hbdd : BddBelow (Set.range fun x ↦ c (x, y) - φ x)) :
+    cTransform c (fun x ↦ (φ x : EReal)) y = ((⨅ x, (c (x, y) - φ x) : ℝ) : EReal) := by
+  rw [cTransform_apply]
+  refine le_antisymm (le_of_forall_gt_imp_ge_of_dense fun b hb ↦ ?_) (le_iInf fun x ↦ ?_)
+  · rcases eq_top_or_lt_top b with rfl | hbt
+    · exact le_top
+    · have hbot : b ≠ ⊥ := ((EReal.bot_lt_coe _).trans hb).ne'
+      have hbr : ((b.toReal : ℝ) : EReal) = b := EReal.coe_toReal hbt.ne hbot
+      have hlt : (⨅ x, (c (x, y) - φ x)) < b.toReal := by
+        rw [← EReal.coe_lt_coe_iff, hbr]
+        exact hb
+      obtain ⟨x, hx⟩ := exists_lt_of_ciInf_lt hlt
+      refine (iInf_le _ x).trans ?_
+      rw [← hbr]
+      simpa only [EReal.coe_sub] using EReal.coe_le_coe_iff.2 hx.le
+  · simpa only [EReal.coe_sub] using EReal.coe_le_coe_iff.2 (ciInf_le hbdd x)
+
+/-- The `EReal`-valued symmetric infimal transform `TauCeti.cTransformSymm` of a real potential is
+a real-valued infimum whenever that infimum is bounded below. -/
+theorem cTransformSymm_coe [Nonempty Y] (c : X × Y → ℝ) (ψ : Y → ℝ) (x : X)
+    (hbdd : BddBelow (Set.range fun y ↦ c (x, y) - ψ y)) :
+    cTransformSymm c (fun y ↦ (ψ y : EReal)) x =
+      ((⨅ y, (c (x, y) - ψ y) : ℝ) : EReal) := by
+  simpa only [cTransformSymm_eq_cTransform] using
+    cTransform_coe (fun p : Y × X ↦ c (p.2, p.1)) ψ x hbdd
+
+/-- The infimal `c`-transform of a real potential inherits a uniform modulus of continuity from
+the target-variable sections of the cost. -/
+theorem uniformContinuous_iInf_sub [PseudoMetricSpace Y] [Nonempty X]
+    {c : X × Y → ℝ} {φ : X → ℝ}
+    (hc : ∀ ε > 0, ∃ δ > 0, ∀ x y y', dist y y' < δ → dist (c (x, y)) (c (x, y')) < ε)
+    (hbdd : ∀ y, BddBelow (Set.range fun x ↦ c (x, y) - φ x)) :
+    UniformContinuous fun y ↦ ⨅ x, (c (x, y) - φ x) := by
+  refine Metric.uniformContinuous_iff.2 fun ε hε ↦ ?_
+  obtain ⟨δ, hδ, hcδ⟩ := hc (ε / 2) (by positivity)
+  have key : ∀ y₁ y₂ : Y, dist y₁ y₂ < δ →
+      (⨅ x, (c (x, y₁) - φ x)) - ε / 2 ≤ ⨅ x, (c (x, y₂) - φ x) := by
+    intro y₁ y₂ h
+    refine le_ciInf fun x ↦ ?_
+    have h1 : (⨅ x, (c (x, y₁) - φ x)) ≤ c (x, y₁) - φ x := ciInf_le (hbdd y₁) x
+    have h2 : dist (c (x, y₁)) (c (x, y₂)) < ε / 2 := hcδ x y₁ y₂ h
+    rw [Real.dist_eq, abs_lt] at h2
+    linarith [h2.1, h2.2]
+  refine ⟨δ, hδ, fun y y' hy' ↦ ?_⟩
+  have h1 := key y' y (by rwa [dist_comm])
+  have h2 := key y y' hy'
+  rw [Real.dist_eq, abs_lt]
+  constructor <;> linarith
+
 /-- A `c`-transform is upper semicontinuous when each function in its defining infimum is upper
 semicontinuous. -/
 theorem upperSemicontinuous_cTransform [TopologicalSpace Y]
@@ -311,6 +374,20 @@ theorem upperSemicontinuous_cTransformSymm_of_continuous [TopologicalSpace X]
     UpperSemicontinuous (cTransformSymm c ψ) :=
   upperSemicontinuous_cTransformSymm_of_upperSemicontinuous
     (fun y => (hc y).upperSemicontinuous) ψ
+
+/-- A `c`-transform is Borel measurable whenever every section `y ↦ c (x, y)` of the cost is
+upper semicontinuous. No hypothesis on the source is needed in this regime. -/
+theorem measurable_cTransform_of_upperSemicontinuous [TopologicalSpace Y] [MeasurableSpace Y]
+    [OpensMeasurableSpace Y] (hc : ∀ x, UpperSemicontinuous fun y => c (x, y)) (φ : X → EReal) :
+    Measurable (cTransform c φ) :=
+  (upperSemicontinuous_cTransform_of_upperSemicontinuous hc φ).measurable
+
+/-- A symmetric `c`-transform is Borel measurable whenever every section `x ↦ c (x, y)` of the
+cost is upper semicontinuous. -/
+theorem measurable_cTransformSymm_of_upperSemicontinuous [TopologicalSpace X] [MeasurableSpace X]
+    [OpensMeasurableSpace X] (hc : ∀ y, UpperSemicontinuous fun x => c (x, y)) (ψ : Y → EReal) :
+    Measurable (cTransformSymm c ψ) :=
+  (upperSemicontinuous_cTransformSymm_of_upperSemicontinuous hc ψ).measurable
 
 /-- Subtracting a sum whose final term is real can be reassociated when the minuend is real. -/
 private theorem coe_sub_add_coe (b : EReal) (d a : ℝ) :

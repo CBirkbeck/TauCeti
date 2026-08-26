@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.WeightTorus
+public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Weight.Torus
 public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Generated.Basic
 public import TauCeti.AlgebraicGeometry.GroupScheme.ClosedSubgroup
 
@@ -114,6 +114,36 @@ theorem le_kostantToralDefiningIdeal_iff
   · rintro ⟨hroot, htorus⟩ (i | _)
     · exact hroot i
     · exact htorus
+
+/-- **A surjective endomorphism of the ambient coordinate Hopf algebra which reindexes the
+root-subgroup coordinate maps and carries the weight-torus coordinate map to itself up to an
+injective postcomposition pulls the toral defining ideal into itself.**
+
+The conclusion is one containment, not invariance: an automorphism fixing the ideal needs this
+lemma once for itself and once for its inverse. -/
+theorem kostantToralDefiningIdeal_comap_le_of_comp_eq
+    (φ : GeneralLinear.coordinateHopfAlgebra ℤ n ⟶ GeneralLinear.coordinateHopfAlgebra ℤ n)
+    (hφ : Function.Surjective φ.hom) (s : I → I)
+    (t : (DiagonalizableGroup.coordinateRing ℤ (SplitTorus.characterGroup κ)).obj ⟶
+      (DiagonalizableGroup.coordinateRing ℤ (SplitTorus.characterGroup κ)).obj)
+    (ht : Function.Injective t.hom)
+    (hroot : ∀ i, φ ≫ kostantRootSubgroupCoordinateMap e h ρ M hM (s i) (hnil (s i)) b =
+      kostantRootSubgroupCoordinateMap e h ρ M hM i (hnil i) b)
+    (htorus : φ ≫ GeneralLinear.weightTorusCoordinateMap wt =
+      GeneralLinear.weightTorusCoordinateMap wt ≫ t) :
+    (kostantToralDefiningIdeal e h ρ M hM hnil b wt).comap φ.hom hφ ≤
+      kostantToralDefiningIdeal e h ρ M hM hnil b wt := by
+  refine CommHopfAlgCat.comap_commonKernelHopfIdeal_le_of_comp_eq_comp
+    (kostantToralGeneratorMap e h ρ M hM hnil b wt) φ hφ
+    (fun j => match j with | .inl i => .inl (s i) | .inr _ => .inr ())
+    (fun j => match j with | .inl _ => 𝟙 _ | .inr _ => t) ?_ ?_
+  · rintro (i | u)
+    · exact fun _ _ hxy => hxy
+    · exact ht
+  · rintro (i | u)
+    · simpa only [kostantToralGeneratorMap, kostantToralGeneratorCodomain, Category.comp_id]
+        using hroot i
+    · simpa only [kostantToralGeneratorMap, kostantToralGeneratorCodomain] using htorus
 
 /-- Every represented root-subgroup coordinate map kills the toral defining ideal. -/
 theorem kostantToralDefiningIdeal_toIdeal_le_root_ker (i : I) :
