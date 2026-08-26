@@ -40,7 +40,7 @@ enters only when a caller discharges the domination hypothesis by that route.
 
 ## Main results
 
-* `TauCeti.ValuationSpectrum.rationalSubset_insert_of_forall_vlt` : a numerator already strictly
+* `TauCeti.ValuationSpectrum.rationalSubset_insert_of_forall_vle` : a numerator already
   dominated by the denominator throughout `R(T/s)` may be adjoined to `T` without changing the
   subset. This is the step that closes the chain at `Xₙ = U`.
 * `TauCeti.ValuationSpectrum.exists_rationalSubset_chain` : Remark 7.55 itself — the descending
@@ -60,14 +60,14 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A]
 
 open scoped Classical in
 /-- **A numerator dominated by the denominator may be adjoined for free.** If every point of
-`R(T/s)` satisfies `v(u) < v(s)`, then adjoining `u` to the numerators does not change the
+`R(T/s)` satisfies `v(u) ≤ v(s)`, then adjoining `u` to the numerators does not change the
 rational subset.
 
 This is the step that closes Wedhorn's chain of Remark 7.55 at `Xₙ = U`: the whole point of
 choosing `u` dominated by `s` on `U` is that the extra numerator condition it contributes is
 already satisfied there. -/
-theorem rationalSubset_insert_of_forall_vlt (Aplus : Subring A) (T : Finset A) (s u : A)
-    (hu : ∀ v ∈ rationalSubset Aplus T s, v.toValuativeRel.vlt u s) :
+theorem rationalSubset_insert_of_forall_vle (Aplus : Subring A) (T : Finset A) (s u : A)
+    (hu : ∀ v ∈ rationalSubset Aplus T s, v.toValuativeRel.vle u s) :
     rationalSubset Aplus (insert u T) s = rationalSubset Aplus T s := by
   refine Set.Subset.antisymm
     (rationalSubset_subset_rationalSubset_of_subset Aplus (Finset.subset_insert u T) s)
@@ -76,7 +76,7 @@ theorem rationalSubset_insert_of_forall_vlt (Aplus : Subring A) (T : Finset A) (
   refine (mem_rationalSubset_iff Aplus _ s v).mpr ⟨hv'.1, fun t ht ↦ ?_, hv'.2.2⟩
   let _ := v.toValuativeRel
   rcases Finset.mem_insert.mp ht with rfl | ht
-  · exact (hu v hv).vle
+  · exact hu v hv
   · exact hv'.2.1 t ht
 
 open scoped Classical in
@@ -90,20 +90,19 @@ private theorem insert_take_toFinset_mono {α : Type*} (u : α) (l : List α) {i
   rw [List.mem_toFinset] at ha ⊢
   exact (List.take_prefix_take_left hij).subset ha
 
-/-- Taking one more element of a list adds exactly that element to the prefix.
-
-Stated as an explicit membership characterisation because `simp` will not do this rewrite:
-having rewritten `l.take (i + 1)` to `l.take i ++ [l[i]]`, `simp` normalises the append
-straight back to `l.take (i + 1)`, silently undoing the step. -/
+/-- Taking one more element of a list adds exactly that element to the prefix. -/
 private theorem mem_take_add_one_iff {α : Type*} {l : List α} {i : ℕ} (hlen : i < l.length)
     (a : α) : a ∈ l.take (i + 1) ↔ a = l[i] ∨ a ∈ l.take i := by
+  -- An explicit membership characterisation, because `simp` will not do this rewrite: having
+  -- rewritten `l.take (i + 1)` to `l.take i ++ [l[i]]`, `simp` normalises the append straight
+  -- back to `l.take (i + 1)`, silently undoing the step.
   rw [List.take_add_one, List.getElem?_eq_getElem hlen, List.mem_append]
   have hopt : ∀ x : α, a ∈ (some x : Option α).toList ↔ a = x := fun x ↦ by simp
   simp only [hopt]
   tauto
 
 open scoped Classical in
-/-- **Wedhorn Remark 7.55: the chain of rational subsets.** Let `u` be strictly dominated by `s`
+/-- **Wedhorn Remark 7.55: the chain of rational subsets.** Let `u` be dominated by `s`
 throughout `U = R(T/s)`. Then there is a descending chain of rational subsets
 
 ```text
@@ -117,7 +116,7 @@ member is a rational subset by construction rather than by a separate argument. 
 `T` is `Finset.toList`; any enumeration would do, and the statement fixes one only so that the
 `i`-th step has a name. -/
 theorem exists_rationalSubset_chain (Aplus : Subring A) (T : Finset A) (s u : A)
-    (hu : ∀ v ∈ rationalSubset Aplus T s, v.toValuativeRel.vlt u s) : ∃ N : ℕ → Finset A,
+    (hu : ∀ v ∈ rationalSubset Aplus T s, v.toValuativeRel.vle u s) : ∃ N : ℕ → Finset A,
       N 0 = {u} ∧
       (∀ i, rationalSubset Aplus (N i) s ⊆ spa Aplus) ∧
       Antitone (fun i ↦ rationalSubset Aplus (N i) s) ∧
@@ -131,15 +130,18 @@ theorem exists_rationalSubset_chain (Aplus : Subring A) (T : Finset A) (s u : A)
   · intro i hi
     have hlen : i < T.toList.length := by simpa [Finset.length_toList] using hi
     refine ⟨T.toList[i], Finset.mem_toList.mp (List.getElem_mem hlen), ?_⟩
+    -- `change` only unfolds the chosen witness: `N i` is by definition
+    -- `insert u ((T.toList.take i).toFinset)`, so this restates the goal up to defeq.
     change insert u (T.toList.take (i + 1)).toFinset
         = insert T.toList[i] (insert u (T.toList.take i).toFinset)
     ext a
     simp only [Finset.mem_insert, List.mem_toFinset, mem_take_add_one_iff hlen a]
     tauto
-  · change rationalSubset Aplus (insert u (T.toList.take T.card).toFinset) s
+  · -- As above, `change` only unfolds the witness `N T.card` to its definition.
+    change rationalSubset Aplus (insert u (T.toList.take T.card).toFinset) s
         = rationalSubset Aplus T s
     rw [← Finset.length_toList, List.take_length, Finset.toList_toFinset]
-    exact rationalSubset_insert_of_forall_vlt Aplus T s u hu
+    exact rationalSubset_insert_of_forall_vle Aplus T s u hu
 
 end TauCeti.ValuationSpectrum
 
