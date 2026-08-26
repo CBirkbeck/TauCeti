@@ -73,6 +73,10 @@ those proofs uses anything about that series. Generalised to an arbitrary series
 `TauCeti.RingTheory.PowerSeries.SelfConvolution`, which this file imports and which carries
 their attribution.
 
+The source works over a commutative ring. Nothing here needs additive inverses — the equation,
+the recursion and both halves of IV.1.1(a) use only sums and products — so everything is stated
+over a `CommSemiring`.
+
 The source does **not** prove uniqueness: its closing note records that the factoring step is
 blocked by a `PowerSeries` typeclass gap (`RightDistribClass` and `IsRightCancelAdd` failing to
 synthesize), and names coefficient induction as the untried alternative. That is the route
@@ -87,7 +91,7 @@ public section
 
 namespace TauCeti
 
-variable {R : Type*} [CommRing R]
+variable {R : Type*} [CommSemiring R]
 
 /-! ### The series `w(z)` -/
 
@@ -112,7 +116,7 @@ noncomputable def formalW (W : WeierstrassCurve R) : PowerSeries R :=
   PowerSeries.mk (formalWCoeff W)
 
 /-- The coefficients of the unit part `u(z) = w(z) / z ^ 3` of the `w`-expansion. -/
-@[expose] noncomputable def formalUCoeff (W : WeierstrassCurve R) : ℕ → R :=
+noncomputable def formalUCoeff (W : WeierstrassCurve R) : ℕ → R :=
   fun n => formalWCoeff W (n + 3)
 
 /-- The unit part `u(z) = w(z) / z ^ 3` of the `w`-expansion, as a power series. -/
@@ -167,7 +171,7 @@ theorem formalWCoeff_recurrence {n : ℕ} (hn : 3 < n) :
 
 /-- The unit-part coefficients are the coefficients of `w(z)` shifted down by three. -/
 @[simp]
-theorem formalUCoeff_apply (n : ℕ) : formalUCoeff W n = formalWCoeff W (n + 3) := rfl
+theorem formalUCoeff_apply (n : ℕ) : formalUCoeff W n = formalWCoeff W (n + 3) := (rfl)
 
 /-- The unit part starts at `1`. Not `@[simp]`: with `formalUCoeff_apply` in the simp set this
 is already reachable from `formalWCoeff_three`, and tagging it too is a `simpNF` duplicate. -/
