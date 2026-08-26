@@ -179,17 +179,15 @@ namespace CoordinatePullback
 
 variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F}
 
-/-- Once the image of the coordinate of `W₂` under an `F`-algebra map into the function field of
-`W₁` has a pole at infinity, the affine coordinate of `W₁` is integral over the image of that
-map. -/
-private theorem isIntegral_X_over_range_of_one_lt_infinityPlace
-    (f : W₂.CoordinateRing →ₐ[F] W₁.FunctionField)
-    (h : 1 < infinityPlace W₁ (f (algebraMap F[X] W₂.CoordinateRing X))) :
+/-- Once an `F`-algebra map into the function field of `W₁` sends some element to one with a pole
+at infinity, the affine coordinate of `W₁` is integral over the image of that map. -/
+private theorem isIntegral_X_over_range_of_one_lt_infinityPlace {A : Type*} [CommRing A]
+    [Algebra F A] (f : A →ₐ[F] W₁.FunctionField) (a : A) (h : 1 < infinityPlace W₁ (f a)) :
     IsIntegral f.range.toSubring (algebraMap F[X] W₁.FunctionField X) :=
   isIntegral_of_forall_valuation_le_one fun v hvle ↦ by
     let _ : ValuativeRel W₁.FunctionField := v
     let u := ValuativeRel.valuation W₁.FunctionField
-    have hmemV : ∀ c : W₂.CoordinateRing, f c ∈ u.valuationSubring := fun c ↦
+    have hmemV : ∀ c : A, f c ∈ u.valuationSubring := fun c ↦
       (Valuation.mem_valuationSubring_iff _ _).2
         ((Valuation.vle_one_iff u).1 (hvle (f c) ⟨c, rfl⟩))
     have hFV : ∀ c : F, algebraMap F W₁.FunctionField c ∈ u.valuationSubring := fun c ↦ by
@@ -228,7 +226,7 @@ theorem mapsInfinity_of_one_lt_infinityPlace (σ : W₂.FunctionField →ₐ[F] 
       (congrArg σ (IsScalarTower.algebraMap_apply F[X] W₂.CoordinateRing W₂.FunctionField X)).symm
     let e := (AlgEquiv.ofInjective f hf).toRingEquiv
     exact (e.isIntegral_iff (by rfl) _).2
-      (isIntegral_X_over_range_of_one_lt_infinityPlace f (by rw [hfX]; exact h))
+      (isIntegral_X_over_range_of_one_lt_infinityPlace f _ (by rw [hfX]; exact h))
   -- Every polynomial in that coordinate is then integral, so `F[X]` acts on the integral closure.
   have hmemq : ∀ q : F[X], algebraMap F[X] W₁.FunctionField q ∈ C := by
     intro q
