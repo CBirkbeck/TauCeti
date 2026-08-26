@@ -11,11 +11,14 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Basic
 import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
 
 /-!
-# The coordinate pullback of multiplication by `n`
+# The coordinate pullback of multiplication by `n`, for `n` invertible in the base field
 
 `Isogeny/Basic.lean` gives the identity coordinate pullback and `Isogeny/Frobenius.lean` gives
-the Frobenius one. This file gives `[n]`: for `n` with `ψₙ` non-vanishing at the generic point,
-multiplication by `n` pulls back to a map `W.CoordinateRing →ₐ[F] W.FunctionField`.
+the Frobenius one. This file gives `[n]`, for `n` invertible in `F`: multiplication by such an
+`n` pulls back to a map `W.CoordinateRing →ₐ[F] W.FunctionField`.
+
+**The hypothesis is `(n : F) ≠ 0`, not `n ≠ 0`**, so in characteristic `p` this file does not
+construct `[p]`. That is a genuine limitation and not a convention: see "What is not here".
 
 The construction is the division-polynomial formula read at the *generic* point. The coordinate
 ring `W.CoordinateRing` is `F[X][Y]` modulo the Weierstrass relation, so the pair `(X, Y)` is
@@ -24,6 +27,16 @@ it has coordinates `φₙ / ψₙ²` and `ωₙ / ψₙ³` by the division-polyn
 `X` and `Y` there is exactly a coordinate pullback.
 
 ## What is not here
+
+`[p]` in characteristic `p`. Everything below asks that `n` be invertible in `F`, because the
+non-vanishing of `ψₙ` at the generic point is derived from `Mathlib.ΨSq_ne_zero`, which reads
+the degree off the leading coefficient `n ^ 2` — exactly what vanishes when `p ∣ n`. Every
+non-vanishing lemma in Mathlib's division-polynomial development is conditional in the same way
+(`preΨ_ne_zero`, `ΨSq_ne_zero`, `Ψ₃_ne_zero`, `preΨ₄_ne_zero`). The characteristic-free route
+needs `IsCoprime (W.Φ n) (W.ΨSq n)` (Silverman, Exercise III.3.7), which is in neither Mathlib
+nor `main` and which belongs beside the division polynomials rather than here. When it lands,
+`mulByIntPullback` generalises by weakening its hypothesis to `n ≠ 0`; no statement below
+changes shape.
 
 The `MapsInfinity` condition, and so `[n]` as an `Isogeny W W`, are not proved here. Neither
 criterion `Isogeny/Basic.lean` offers applies directly: `mapsInfinity_of_pow` wants a fixed
@@ -259,11 +272,14 @@ value for `Y` satisfying that polynomial — here `φₙ/ψₙ²` and `ωₙ/ψ�
 `eval₂_mulByIntXHom_polynomial_eq_zero`.
 
 `AdjoinRoot.lift` produces a ring hom; `CoordinatePullback` asks for an `F`-algebra hom, and the
-two agree because the lift sends a constant to itself. -/
-noncomputable def mulByIntPullback [W.IsElliptic] {n : ℤ} (hn : psiFunctionField W n ≠ 0) :
+two agree because the lift sends a constant to itself.
+
+Defined only for `n` invertible in `F`. In characteristic `p` this does not give `[p]`; the
+obstruction is `psiFunctionField_ne_zero`, and the file header says what closing it needs. -/
+noncomputable def mulByIntPullback [W.IsElliptic] {n : ℤ} (hnF : (n : F) ≠ 0) :
     CoordinatePullback W W :=
   { AdjoinRoot.lift (mulByIntXHom W n) (mulByIntY W n)
-      (eval₂_mulByIntXHom_polynomial_eq_zero W hn) with
+      (eval₂_mulByIntXHom_polynomial_eq_zero W (psiFunctionField_ne_zero W hnF)) with
     commutes' := fun r ↦ by
       rw [IsScalarTower.algebraMap_apply F F[X] W.CoordinateRing]
       simp [mulByIntXHom] }
@@ -274,14 +290,14 @@ Stated with `AdjoinRoot.of`, not `algebraMap F[X] W.CoordinateRing`, because
 `AdjoinRoot.algebraMap_eq` is itself a `simp` lemma: a goal mentioning the class of `X` is
 already normalised this way by the time this fires. -/
 @[simp]
-theorem mulByIntPullback_genericX [W.IsElliptic] {n : ℤ} (hn : psiFunctionField W n ≠ 0) :
-    mulByIntPullback W hn (AdjoinRoot.of W.polynomial X) = mulByIntX W n := by
+theorem mulByIntPullback_genericX [W.IsElliptic] {n : ℤ} (hnF : (n : F) ≠ 0) :
+    mulByIntPullback W hnF (AdjoinRoot.of W.polynomial X) = mulByIntX W n := by
   simp [mulByIntPullback, mulByIntXHom]
 
 /-- The pullback of `[n]` sends the class of `Y` to `ωₙ/ψₙ³`. -/
 @[simp]
-theorem mulByIntPullback_genericY [W.IsElliptic] {n : ℤ} (hn : psiFunctionField W n ≠ 0) :
-    mulByIntPullback W hn (AdjoinRoot.root W.polynomial) = mulByIntY W n := by
+theorem mulByIntPullback_genericY [W.IsElliptic] {n : ℤ} (hnF : (n : F) ≠ 0) :
+    mulByIntPullback W hnF (AdjoinRoot.root W.polynomial) = mulByIntY W n := by
   simp [mulByIntPullback]
 
 end Isogeny
