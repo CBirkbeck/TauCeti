@@ -32,7 +32,8 @@ group. For the polydisc itself, a nonarchimedean ring topology suffices.
 
 ## Main definitions
 
-* `TauCeti.ValuationSpectrum.closedPolydisc`: the closed polydisc `Spa (A⟨T⟩, A⟨T⟩°)`.
+* `TauCeti.ValuationSpectrum.closedPolydisc`: the closed polydisc `Spa (A⟨T⟩, A⟨T⟩°)`, with
+  `mem_closedPolydisc_iff` as its membership rule.
 * `TauCeti.ValuationSpectrum.evalAtHom`: evaluation of restricted power series at `a ∈ (A°)ᵏ`, as a
   ring homomorphism `A⟨T⟩ →+* A`.
 * `TauCeti.ValuationSpectrum.classicalPoint`: the classical point of the closed polydisc attached
@@ -81,6 +82,18 @@ lemma closedPolydisc_def :
       spa (powerBoundedSubring (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))
         isWeightFamily_one_weight)) :=
   (rfl)
+
+/-- Membership in the closed polydisc: a point of `Spv (A⟨T₁, …, Tₖ⟩)` lies on the polydisc
+exactly when it is continuous and sub-unit on the power-bounded elements. This is `mem_spa_iff`
+specialized to the polydisc, and is the elimination rule consumers use on a point of it. -/
+@[simp]
+lemma mem_closedPolydisc_iff
+    (v : Spv (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))
+      isWeightFamily_one_weight)) :
+    v ∈ closedPolydisc k A ↔ v.IsContinuous ∧
+      ∀ f ∈ powerBoundedSubring (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))
+        isWeightFamily_one_weight), v.toValuativeRel.vle f 1 := by
+  rw [closedPolydisc_def, mem_spa_iff]
 
 end Polydisc
 
