@@ -8,6 +8,7 @@ module
 public import TauCeti.RingTheory.Huber.Basic
 public import TauCeti.RingTheory.Huber.Restricted.PowerSeries
 public import Mathlib.LinearAlgebra.TensorProduct.Pi
+public import Mathlib.Topology.Algebra.Module.ModuleTopology
 import TauCeti.RingTheory.Huber.ClosedSubmodule
 import Mathlib.Algebra.FiveLemma
 import Mathlib.LinearAlgebra.TensorProduct.RightExactness
@@ -70,10 +71,11 @@ type `M ⊗[A] MvPowerSeries (Fin k) A →ₗ[A] MvPowerSeries (Fin k) M`.
   to be an `AddCommGroup`, unlike the rest of this file: a diagram chase subtracts.
 
 * `restrictedMvPowerSeriesBaseChange_bijective`: **Remark 8.29** — over a complete noetherian
-  Tate ring the comparison map is bijective for every finite `M` that is a complete metrisable
-  topological `A`-module. The two presentation-level halves are applied to the strict presentation
-  `TauCeti.Huber.IsTateRing.exists_presentation_isStrictMap_isOpenMap` supplies; that is where the
-  Tate, noetherian and completeness hypotheses enter, and the only place they do.
+  Tate ring the comparison map is bijective for every finite `M` with its canonical topology,
+  Mathlib's module topology. The two presentation-level halves are applied to the strict
+  presentation `TauCeti.Huber.IsTateRing.exists_presentation_isStrictMap_isOpenMap` supplies;
+  that is where the Tate, noetherian and completeness hypotheses on `A` enter, and the only place
+  they do. Nothing beyond the module topology is asked of `M`.
 * `restrictedMvPowerSeriesBaseChangeEquiv`: the same, packaged as
   `M ⊗[A] A⟨T₁, …, Tₖ⟩ ≃ₗ[A] M⟨T₁, …, Tₖ⟩` — the form the Layer 4.1 consequences consume — with
   `restrictedMvPowerSeriesBaseChangeEquiv_apply` identifying it with the comparison map.
@@ -130,8 +132,9 @@ Mathlib does not have; its section variables also include `HasLocLiftPowerBounde
 this repository deliberately replaced. The presentation-level statements here instead take a
 strict presentation as a hypothesis and so carry no Tate, noetherian, completeness or
 module-topology assumption at all; `restrictedMvPowerSeriesBaseChange_bijective` then discharges
-that hypothesis from `M` being a finite complete metrisable module over a complete noetherian Tate
-ring, through this repository's open mapping theorem rather than AINTLIB's.
+that hypothesis for a finite `M` with its module topology over a complete noetherian Tate ring —
+openness of `Aⁿ ↠ M` is now Mathlib's own `IsModuleTopology.isOpenMap_of_surjective`, and
+strictness of the relation map comes from this repository's open mapping theorem on `Aᵐ`.
 
 ## References
 
@@ -497,12 +500,14 @@ open scoped Uniformity
 variable {k : ℕ} {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [CompleteSpace A]
   [(𝓤 A).IsCountablyGenerated] [T0Space A] [NonarchimedeanRing A] [IsTateRing A]
   [IsNoetherianRing A]
-  {M : Type*} [AddCommGroup M] [UniformSpace M] [IsUniformAddGroup M] [CompleteSpace M]
-  [(𝓤 M).IsCountablyGenerated] [T0Space M] [Module A M] [ContinuousSMul A M] [Module.Finite A M]
+  {M : Type*} [AddCommGroup M] [Module A M] [Module.Finite A M] [TopologicalSpace M]
+  [ContinuousAdd M] [IsModuleTopology A M]
 
 /-- **Remark 8.29.** Over a complete noetherian Tate ring `A`, the comparison map
-`M ⊗[A] A⟨T₁, …, Tₖ⟩ → M⟨T₁, …, Tₖ⟩` is bijective for every finitely generated `M` that is a
-complete metrisable topological `A`-module.
+`M ⊗[A] A⟨T₁, …, Tₖ⟩ → M⟨T₁, …, Tₖ⟩` is bijective for every finitely generated `A`-module `M`
+"endowed with its canonical topology (Proposition 6.18(1))" — Mathlib's module topology,
+`IsModuleTopology A M`, which every complete first-countable module topology on `M` is
+(`TauCeti.Huber.IsTateRing.isModuleTopology`).
 
 This is Wedhorn's argument as he gives it: choose a presentation `Aⁿ →[u] Aᵐ →[p] M → 0` with `u`
 strict and `p` open — `TauCeti.Huber.IsTateRing.exists_presentation_isStrictMap_isOpenMap`, which
@@ -513,10 +518,11 @@ latter as the filter inequality it consumes, and strictness of `u` to the former
 at `0` of `u.rangeRestrict`, read off through
 `LinearMap.isStrictMap_iff_isOpenQuotientMap_rangeRestrict`.
 
-Wedhorn takes `M` "endowed with its canonical topology (Proposition 6.18(1))". That topology is
-not constructed here; the hypotheses on `M` are those a complete metrisable topological
-`A`-module carries, which the canonical topology satisfies, and under which
-`TauCeti.Huber.IsTateRing.isModuleTopology` identifies the topology with the module topology. -/
+No completeness or separation of `M` is assumed: the presentation is open because the module
+topology is the quotient topology along `Aᵐ ↠ M`, and strict because its relations have closed
+range in `Aᵐ`. `ContinuousAdd M` appears among the hypotheses only because `M⟨T₁, …, Tₖ⟩` is a
+submodule under it; it follows from `IsModuleTopology A M` (`IsModuleTopology.toContinuousAdd`),
+which instance search cannot use since `A` does not occur in the goal. -/
 theorem restrictedMvPowerSeriesBaseChange_bijective :
     Function.Bijective (restrictedMvPowerSeriesBaseChange :
       TensorProduct A M (restrictedMvPowerSeriesSubring k A) →
@@ -530,8 +536,8 @@ theorem restrictedMvPowerSeriesBaseChange_bijective :
       (map_zero p ▸ hopen.nhds_le 0)⟩
 
 variable (k A M) in
-/-- **Remark 8.29**, packaged: `M ⊗[A] A⟨T₁, …, Tₖ⟩ ≃ₗ[A] M⟨T₁, …, Tₖ⟩` for a finite complete
-metrisable module `M` over a complete noetherian Tate ring. This is the form the Layer 4.1
+/-- **Remark 8.29**, packaged: `M ⊗[A] A⟨T₁, …, Tₖ⟩ ≃ₗ[A] M⟨T₁, …, Tₖ⟩` for a finite module `M`
+with its module topology over a complete noetherian Tate ring. This is the form the Layer 4.1
 consequences consume; `restrictedMvPowerSeriesBaseChange_bijective` is the content. -/
 noncomputable def restrictedMvPowerSeriesBaseChangeEquiv :
     TensorProduct A M (restrictedMvPowerSeriesSubring k A) ≃ₗ[A]
