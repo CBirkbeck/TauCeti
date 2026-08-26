@@ -22,7 +22,7 @@ The engine is the polarization identity
 of a pure tensor as an alternating sum of pure powers and needs no invertibility. Dividing by
 `(#ι)!` then turns the symmetrization into a projection onto the invariants; that step is not
 special to permutations of tensor factors, and is taken here from
-`Representation.range_sum_eq_invariants`, which says that the group sum of any finite-group
+`Representation.range_norm_eq_invariants`, which says that the group sum of any finite-group
 representation has the invariants as its range once the group order is invertible.
 
 This is the spanning half of the double centralizer in Schur-Weyl duality. There `ι` is finite and
@@ -141,8 +141,8 @@ theorem invariants_reindexRepresentation (h : IsUnit ((Fintype.card ι)! : R)) :
   let : Invertible ((Fintype.card (Equiv.Perm ι) : R)) := by
     rw [Fintype.card_perm]; exact h.invertible
   refine le_antisymm (fun y hy => ?_) (Submodule.span_le.mpr ?_)
-  · obtain ⟨z, rfl⟩ := (Representation.range_sum_eq_invariants _).ge hy
-    simpa [LinearMap.sum_apply] using sum_reindexRepresentation_mem_span z
+  · obtain ⟨z, rfl⟩ := (Representation.range_norm_eq_invariants _).ge hy
+    simpa [Representation.norm, LinearMap.sum_apply] using sum_reindexRepresentation_mem_span z
   · rintro _ ⟨x, rfl⟩
     exact tprod_const_mem_invariants x
 
