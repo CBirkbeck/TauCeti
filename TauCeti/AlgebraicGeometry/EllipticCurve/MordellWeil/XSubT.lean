@@ -18,7 +18,6 @@ public import TauCeti.Algebra.Polynomial.LinearFactor
 public import TauCeti.RingTheory.AdjoinRoot
 import TauCeti.Algebra.Group.PowMonoidHom
 import TauCeti.RingTheory.Polynomial.Resultant.AdjoinRoot
-import TauCeti.RingTheory.Polynomial.Resultant.Basic
 
 /-!
 # The `x - T` map of an elliptic curve into its étale algebra
@@ -377,7 +376,9 @@ condition needs, the norm of `x - T` itself on the branch where that is already 
 /-- **At a root of `f` the norm of the corrected representative is a square.** If `x` is a root
 of `f` then `x - T + fCofactor x` — the element `μX` uses on that branch — has norm `(f' x) ^ 2`,
 where `f' x = 3 * x ^ 2 + 2 * W.a₂ * x + W.a₄` is `derivative_f` evaluated at `x`. Being a square
-is what makes its class in `W.M` trivial. -/
+makes that *norm* trivial in the square classes of `K`, which is the condition Step 5 puts on the
+image of `μ`. It does not make the class of `x - T + fCofactor x` itself trivial in `W.M`: that
+would say the element is a square in `W.Aˣ`, which is a different and stronger statement. -/
 theorem norm_mk_C_sub_X_add_fCofactor {x : K} (hx : W.f.eval x = 0) :
     Algebra.norm K (AdjoinRoot.mk W.f (C x - X + W.fCofactor x))
       = (3 * x ^ 2 + 2 * W.a₂ * x + W.a₄) ^ 2 := by
