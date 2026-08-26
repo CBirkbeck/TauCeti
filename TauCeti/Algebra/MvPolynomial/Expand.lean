@@ -107,7 +107,24 @@ theorem MvPolynomial.span_monomial_lt_eq_top {σ R : Type*} [CommSemiring R] [Fi
 `R[X_i ^ n]` by the monomials with exponents below `n`. -/
 theorem MvPolynomial.finite_expand {σ R : Type*} [CommRing R] [Finite σ] {n : ℕ} (hn : 0 < n) :
     (MvPolynomial.expand (σ := σ) (R := R) n).toRingHom.Finite := by
-  sorry
+  classical
+  -- `MvPolynomial σ R` is a finite module over the subalgebra `R[X_i ^ n]`
+  have hfin : Module.Finite (MvPolynomial.expand (σ := σ) (R := R) n).range
+      (MvPolynomial σ R) :=
+    Module.Finite.of_fg_top (Submodule.fg_def.2 ⟨_, Set.finite_range _,
+      MvPolynomial.span_monomial_lt_eq_top hn⟩)
+  -- Factor `expand n` as `R[X_i] ↠ R[X_i ^ n] ↪ R[X_i]`. Going through the range keeps the
+  -- `Module (MvPolynomial σ R) (MvPolynomial σ R)` diamond out of the way: instance search
+  -- picks `Semiring.toModule` (plain multiplication), not the `expand`-algebra the statement
+  -- means, and the two are not defeq.
+  have h₁ : ((MvPolynomial.expand (σ := σ) (R := R) n).rangeRestrict.toRingHom).Finite :=
+    RingHom.Finite.of_surjective _ (AlgHom.rangeRestrict_surjective _)
+  have h₂ : ((MvPolynomial.expand (σ := σ) (R := R) n).range.val.toRingHom).Finite := hfin
+  have hfac : (MvPolynomial.expand (σ := σ) (R := R) n).toRingHom
+      = ((MvPolynomial.expand (σ := σ) (R := R) n).range.val.toRingHom).comp
+        ((MvPolynomial.expand (σ := σ) (R := R) n).rangeRestrict.toRingHom) := rfl
+  rw [hfac]
+  exact RingHom.Finite.comp h₂ h₁
 
 /-- Source: Stacks, Lemma 10.161.13 (tag 032O), proof: "Since `R` is N-2 we see that `R′` is
 finite over `R` and hence `R′[x^{1/q}]` is finite over `R[x]`". Polynomial rings preserve
