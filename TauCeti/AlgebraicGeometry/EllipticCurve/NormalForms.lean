@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.AlgebraicGeometry.EllipticCurve.NormalForms
 
 /-!
@@ -25,6 +26,7 @@ re-established by hand at every such crossing.
 * `WeierstrassCurve.isCharNeTwoNF_map`: `a₁ = a₃ = 0` is preserved by a ring hom.
 * `WeierstrassCurve.isCharNeTwoNF_baseChange`: the same for a base change, which is the spelling
   consumers hold. Both are instances, so the crossing is silent.
+* `WeierstrassCurve.y_eq_zero_of_order_two`: a point of order two has `y = 0`.
 -/
 
 public section
@@ -47,5 +49,21 @@ caller holds and instance search does not unfold it. -/
 instance isCharNeTwoNF_baseChange [Algebra R S] [W.IsCharNeTwoNF] :
     (W.baseChange S).IsCharNeTwoNF :=
   W.isCharNeTwoNF_map (algebraMap R S)
+
+/-- **In characteristic-≠-2 normal form, a two-torsion point has `y = 0`.** Negation is
+`(x, y) ↦ (x, -y)`, so a point equal to its own negative has `2y = 0`; cancelling `2` finishes it.
+
+Nothing here sees `ℤ` or `ℚ`, and nothing needs `a₂ = 0`: the argument is the normal-form identity
+plus the ability to cancel `2` in the point's own field, so those are exactly the hypotheses. -/
+lemma y_eq_zero_of_order_two {F : Type*} [Field F] [DecidableEq F]
+    {E : WeierstrassCurve F} [E.IsCharNeTwoNF] (h2F : (2 : F) ≠ 0)
+    {x y : F} (hns : E.toAffine.Nonsingular x y)
+    (h2 : addOrderOf (Affine.Point.some _ _ hns) = 2) : y = 0 := by
+  have hP : (2 : ℕ) • (Affine.Point.some _ _ hns) = 0 := h2 ▸ addOrderOf_nsmul_eq_zero _
+  rw [two_nsmul, add_eq_zero_iff_eq_neg, Affine.Point.neg_some, Affine.Point.some.injEq] at hP
+  have hneg : E.toAffine.negY x y = -y := by
+    simp [Affine.negY, a₁_of_isCharNeTwoNF, a₃_of_isCharNeTwoNF]
+  have hy : 2 * y = 0 := by linear_combination hP.2.trans hneg
+  exact (mul_eq_zero.mp hy).resolve_left h2F
 
 end WeierstrassCurve

@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.XSubT
+public import TauCeti.AlgebraicGeometry.EllipticCurve.NormalForms
 
 /-!
 # The `2`-torsion of the group of points of a Weierstrass curve
@@ -47,31 +48,11 @@ namespace Affine
 
 variable {K : Type*} [Field K] (W : Affine K) [W.IsCharNeTwoNF] [W.IsElliptic] [DecidableEq K]
 
-variable {W} in
-/-- A point `(x, 0)` at a root of `f` is killed by `2`: in a characteristic `≠ 2` normal form its
-negative is `(x, -0) = (x, 0)`. -/
-lemma two_nsmul_some_eq_zero {x : K} (hx : W.f.eval x = 0) :
-    (2 : ℕ) • (Point.some _ _ (W.nonsingular_of_eval_f_eq_zero hx) : W.Point) = 0 := by
-  rw [two_nsmul, add_eq_zero_iff_eq_neg, Point.neg_some, Point.some.injEq]
-  refine ⟨rfl, ?_⟩
-  rw [negY_of_isCharNeTwoNF, neg_zero]
-
-variable {W} in
-/-- Conversely, an affine `2`-torsion point has `y = 0`: `(x, y) = -(x, y) = (x, -y)` forces
-`2y = 0`, and `2 ≠ 0` in the base field. -/
-lemma y_eq_zero_of_two_nsmul_eq_zero {x y : K}
-    (h : W.Nonsingular x y) (h2 : (2 : ℕ) • (Point.some _ _ h : W.Point) = 0) : y = 0 := by
-  have h20 : (2 : K) ≠ 0 := Ring.two_ne_zero <| ringChar_ne_two W
-  rw [two_nsmul, add_eq_zero_iff_eq_neg, Point.neg_some, Point.some.injEq] at h2
-  have hy : 2 * y = 0 := by linear_combination h2.2.trans (negY_of_isCharNeTwoNF ..)
-  rcases mul_eq_zero.mp hy with h' | h'
-  · exact absurd h' h20
-  · exact h'
-
 /-- **The `2`-torsion of `W(K)` is the origin together with the points `(x, 0)` at the roots of
 `f`**, so its order is the number of roots of `f` in `K` plus one. -/
 theorem card_ker_nsmul_two : Nat.card (nsmulAddMonoidHom (α := W.Point) 2).ker =
     Nat.card {x : K // W.f.eval x = 0} + 1 := by
+  have h2F : (2 : K) ≠ 0 := Ring.two_ne_zero (ringChar_ne_two W)
   have hfin : Finite {x : K | W.f.eval x = 0} :=
     Set.Finite.to_subtype (Polynomial.finite_setOfPred_isRoot W.f_ne_zero)
   set pt : {x : K | W.f.eval x = 0} → W.Point :=
@@ -87,7 +68,13 @@ theorem card_ker_nsmul_two : Nat.card (nsmulAddMonoidHom (α := W.Point) 2).ker 
       induction P with
       | zero => exact Set.mem_insert _ _
       | some x y h =>
-        have hy := y_eq_zero_of_two_nsmul_eq_zero h hP
+        have h2 : (2 : ℕ) • (Point.some x y h : W.Point) = 0 := hP
+        have hord : addOrderOf (Point.some x y h : W.Point) = 2 := by
+          rcases (Nat.dvd_prime Nat.prime_two).mp
+            (addOrderOf_dvd_iff_nsmul_eq_zero.mpr h2) with h1 | h1
+          · exact absurd (AddMonoid.addOrderOf_eq_one_iff.mp h1) (Point.some_ne_zero h)
+          · exact h1
+        have hy := y_eq_zero_of_order_two h2F h hord
         subst hy
         have hx : W.f.eval x = 0 := by
           have := (W.equation_iff_eval_f_eq_sq x 0).mp h.1
@@ -96,7 +83,8 @@ theorem card_ker_nsmul_two : Nat.card (nsmulAddMonoidHom (α := W.Point) 2).ker 
     · intro hP
       rcases Set.mem_insert_iff.mp hP with rfl | ⟨x, rfl⟩
       · exact zero_mem _
-      · exact two_nsmul_some_eq_zero x.2
+      · simp only [SetLike.mem_coe, AddMonoidHom.mem_ker, nsmulAddMonoidHom_apply, two_nsmul]
+        exact Point.add_self_of_Y_eq (by rw [negY_of_isCharNeTwoNF, neg_zero])
   calc Nat.card (nsmulAddMonoidHom (α := W.Point) 2).ker
       = ((nsmulAddMonoidHom (α := W.Point) 2).ker : Set W.Point).ncard := Nat.card_coe_set_eq _
     _ = (insert 0 (Set.range pt)).ncard := by rw [hset]
