@@ -9,6 +9,7 @@ public import Mathlib.LinearAlgebra.Determinant
 public import Mathlib.RingTheory.AdjoinRoot
 public import Mathlib.RingTheory.Norm.Basic
 public import Mathlib.RingTheory.Polynomial.Resultant.Basic
+public import TauCeti.Algebra.Polynomial.LinearFactor
 public import TauCeti.RingTheory.Polynomial.DegreeLT
 public import TauCeti.RingTheory.Polynomial.Resultant.Basic
 

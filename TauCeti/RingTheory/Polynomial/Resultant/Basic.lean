@@ -8,20 +8,18 @@ module
 public import Mathlib.RingTheory.Polynomial.Resultant.Basic
 
 /-!
-# The reversed linear factor `C x - X`
+# The resultant against a reversed linear factor
 
 Mathlib evaluates the resultant against the linear polynomial `X - C x` on either side
-(`Polynomial.resultant_X_sub_C_left`, `Polynomial.resultant_X_sub_C_right`). This file records
-the two facts about the *reversed* polynomial `C x - X`, which is the shape that arises as
-`x - θ` in `AdjoinRoot f`: its degree, and its resultant on the right.
+(`Polynomial.resultant_X_sub_C_left`, `Polynomial.resultant_X_sub_C_right`). This file records the
+companion for the *reversed* polynomial `C x - X`, which is the shape that arises as `x - θ` in
+`AdjoinRoot f`: the answer is `f.eval x`, with **no sign**.
 
-The resultant is `f.eval x`, with **no sign** — that absence is the point. `C x - X` is
-`C (-1) * (X - C x)`, which contributes `(-1) ^ m`, and `resultant_X_sub_C_right` contributes
-another `(-1) ^ m`, so the two cancel.
+That absence is the point. `C x - X` is `C (-1) * (X - C x)`, which contributes `(-1) ^ m`, and
+`resultant_X_sub_C_right` contributes another `(-1) ^ m`, so the two cancel.
 
 ## Main results
 
-* `Polynomial.natDegree_C_sub_X`
 * `Polynomial.resultant_C_sub_X_right`
 
 ## Provenance
@@ -37,11 +35,6 @@ public section
 namespace Polynomial
 
 variable {R : Type*} [CommRing R]
-
-/-- The reversed linear polynomial `C x - X` has degree `1`, like `X - C x`. -/
-@[simp]
-theorem natDegree_C_sub_X [Nontrivial R] (x : R) : (C x - X).natDegree = 1 := by
-  rw [natDegree_sub, natDegree_X_sub_C]
 
 /-- The resultant of `f` with the reversed linear polynomial `C x - X` is `f.eval x`. Note the
 absence of a sign: `C x - X` is `-(X - C x)`, and the two signs cancel. -/
