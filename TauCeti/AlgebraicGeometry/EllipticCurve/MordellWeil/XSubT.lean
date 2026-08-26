@@ -511,7 +511,7 @@ lemma M.sq_eq_one (m : W.M) : m ^ 2 = 1 := by
   rw [← QuotientGroup.mk_pow]
   exact (QuotientGroup.eq_one_iff _).mpr ⟨u, rfl⟩
 
-lemma M.mul_self (m : W.M) : m * m = 1 := by rw [← sq, sq_eq_one]
+@[simp] lemma M.mul_self (m : W.M) : m * m = 1 := by rw [← sq, sq_eq_one]
 
 @[simp] lemma M.inv_eq_self (m : W.M) : m⁻¹ = m := inv_eq_of_mul_eq_one_right (M.mul_self m)
 
