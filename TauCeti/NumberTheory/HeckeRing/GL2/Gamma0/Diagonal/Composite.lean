@@ -166,10 +166,11 @@ theorem heckeTCompositeGamma0_prime_pow_of_not_coprime {p : ℕ} (hp : p.Prime)
 
 The classical multiplicative relation among the `Γ₀(N)` Hecke operators, at the level of the
 Hecke ring. Together with `heckeTCompositeGamma0_prime_pow`, which identifies the composite on
-a prime power with the Diamond–Shurman recurrence family, it determines `T_n` for every `n`
-from the prime-power data: split `n` into its prime powers here, then evaluate each factor
-there. No hypothesis relates `m` or `n` to the level — the bad primes are already absorbed
-into the blocks. -/
+a prime power with the Diamond–Shurman recurrence family, it determines `T_n` for every
+*positive* `n` from the prime-power data: split `n` into its prime powers here, then evaluate
+each factor there. The junk input `0` has no factorisation to split and is fixed separately by
+`heckeTCompositeGamma0_zero`. No hypothesis relates `m` or `n` to the level — the bad primes
+are already absorbed into the blocks. -/
 theorem heckeTCompositeGamma0_mul_of_coprime {m n : ℕ} (hmn : m.Coprime n) :
     heckeTCompositeGamma0 N (m * n) = heckeTCompositeGamma0 N m * heckeTCompositeGamma0 N n := by
   -- One application of `primePowerProd_mul_of_coprime`, not an induction: it already sorts the
