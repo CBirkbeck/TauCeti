@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.RingTheory.Huber.ClosedSubmodule
 public import TauCeti.RingTheory.Huber.Restricted.PowerSeries
 public import Mathlib.LinearAlgebra.TensorProduct.Pi
 import Mathlib.Algebra.FiveLemma
@@ -14,11 +15,12 @@ import Mathlib.LinearAlgebra.TensorProduct.RightExactness
 # Base change for restricted power series
 
 Wedhorn's Remark 8.29 compares `M ⊗[A] A⟨T₁, …, Tₖ⟩` with `M⟨T₁, …, Tₖ⟩` for a finitely generated
-module `M` over a complete strongly noetherian Tate ring. This file builds the comparison map, in
-the generality where it exists: writing it down needs no finiteness and no completeness, only
-continuity of the scalar action — beyond the hypotheses the two objects themselves carry, namely
-that `A` is nonarchimedean (without which `A⟨T₁, …, Tₖ⟩` is not a subring) and `ContinuousAdd M`
-(without which `M⟨T₁, …, Tₖ⟩` is not a submodule).
+module `M` over a complete noetherian Tate ring, and finds them isomorphic. This file builds the
+comparison map in the generality where it exists — writing it down needs no finiteness and no
+completeness, only continuity of the scalar action, beyond the hypotheses the two objects
+themselves carry, namely that `A` is nonarchimedean (without which `A⟨T₁, …, Tₖ⟩` is not a
+subring) and `ContinuousAdd M` (without which `M⟨T₁, …, Tₖ⟩` is not a submodule) — and then proves
+Remark 8.29 by reducing along a strict finite presentation of `M`.
 
 The ambient map is Mathlib's: `TensorProduct.piScalarRightHom A A M (Fin k →₀ ℕ)` already has the
 type `M ⊗[A] MvPowerSeries (Fin k) A →ₗ[A] MvPowerSeries (Fin k) M`.
@@ -63,14 +65,21 @@ type `M ⊗[A] MvPowerSeries (Fin k) A →ₗ[A] MvPowerSeries (Fin k) M`.
 * `restrictedMvPowerSeriesBaseChange_injective_of_presentation`: **the comparison map is
   injective** for an `M` presented by `Aⁿ →[u] Aᵐ →[p] M → 0` whose first map is strict onto its
   image. This is the half surjectivity leaves open, and it is where exactness of the presentation
-  is used; it runs on Mathlib's four lemma rather than on a hand-rolled diagram chase.
-* `restrictedMvPowerSeriesBaseChangeEquiv`: **Remark 8.29 proper** — the two halves bundled as
-  `M ⊗[A] A⟨T₁, …, Tₖ⟩ ≃ₗ[A] M⟨T₁, …, Tₖ⟩`, with `restrictedMvPowerSeriesBaseChangeEquiv_apply`
-  identifying it with the comparison map.
+  is used; it runs on Mathlib's four lemma rather than on a hand-rolled diagram chase. It asks `M`
+  to be an `AddCommGroup`, unlike the rest of this file: a diagram chase subtracts.
 
-Both ask `M` to be an `AddCommGroup`, unlike the rest of this file: a diagram chase subtracts.
-Strictness of `u` is hypothesised rather than derived — see
-`restrictedMvPowerSeriesBaseChange_injective_of_presentation` for why.
+* `restrictedMvPowerSeriesBaseChange_bijective`: **Remark 8.29** — over a complete noetherian
+  Tate ring the comparison map is bijective for every finite `M` that is a complete metrisable
+  topological `A`-module. The two presentation-level halves are applied to the strict presentation
+  `TauCeti.Huber.IsTateRing.exists_presentation_isStrictMap_isOpenMap` supplies; that is where the
+  Tate, noetherian and completeness hypotheses enter, and the only place they do.
+* `restrictedMvPowerSeriesBaseChangeEquiv`: the same, packaged as
+  `M ⊗[A] A⟨T₁, …, Tₖ⟩ ≃ₗ[A] M⟨T₁, …, Tₖ⟩` — the form the Layer 4.1 consequences consume — with
+  `restrictedMvPowerSeriesBaseChangeEquiv_apply` identifying it with the comparison map.
+
+The two presentation-level statements hypothesise the topological properties of the presentation,
+`hmap` and `hstrict`, rather than deriving them, and so carry no Tate, noetherian or completeness
+assumption; the headline theorem is where those are spent.
 
 ## Implementation notes
 
@@ -117,8 +126,11 @@ The hypotheses differ, which is why this is a separate development rather than a
 fixes `M` to carry the *module topology* and assumes `Module.Finite A M`, deriving openness of
 `Aⁿ ↠ M` from its own `IsModuleTopology.isOpenMap_of_surjective_of_finite`, which the pinned
 Mathlib does not have; its section variables also include `HasLocLiftPowerBounded`, the typeclass
-this repository deliberately replaced. The statement here instead takes a strict presentation as a
-hypothesis and so carries no Tate, noetherian, completeness or module-topology assumption at all.
+this repository deliberately replaced. The presentation-level statements here instead take a
+strict presentation as a hypothesis and so carry no Tate, noetherian, completeness or
+module-topology assumption at all; `restrictedMvPowerSeriesBaseChange_bijective` then discharges
+that hypothesis from `M` being a finite complete metrisable module over a complete noetherian Tate
+ring, through this repository's open mapping theorem rather than AINTLIB's.
 
 ## References
 
@@ -200,8 +212,8 @@ private theorem isRestricted_mvPowerSeriesBaseChange_map
 /-- **The comparison map of Wedhorn Remark 8.29**: `M ⊗[A] A⟨T₁, …, Tₖ⟩ →ₗ[A] M⟨T₁, …, Tₖ⟩`.
 
 Mathlib's base-change map restricted on both sides. Remark 8.29 asserts that it is an isomorphism
-when `M` is finitely generated over a complete strongly noetherian Tate ring, which is not proved
-here. -/
+when `M` is finitely generated over a complete noetherian Tate ring; that is
+`restrictedMvPowerSeriesBaseChange_bijective` below. -/
 noncomputable def restrictedMvPowerSeriesBaseChange :
     TensorProduct A M (restrictedMvPowerSeriesSubring k A) →ₗ[A]
       restrictedMvPowerSeriesSubmodule k A M :=
@@ -422,8 +434,8 @@ theorem restrictedMvPowerSeriesBaseChange_surjective_of_presentation {m : ℕ} {
 /-- **Remark 8.29's comparison map is injective for a finitely generated module.** Given a
 presentation `Aⁿ →[u] Aᵐ →[p] M → 0` whose first map is strict onto its image, the comparison map
 `M ⊗[A] A⟨T₁, …, Tₖ⟩ → M⟨T₁, …, Tₖ⟩` is injective. With
-`restrictedMvPowerSeriesBaseChange_surjective_of_presentation` this is Remark 8.29 proper,
-packaged as `restrictedMvPowerSeriesBaseChangeEquiv`.
+`restrictedMvPowerSeriesBaseChange_surjective_of_presentation` this gives Remark 8.29,
+`restrictedMvPowerSeriesBaseChange_bijective`, once a strict presentation is in hand.
 
 The proof is a four lemma applied to
 
@@ -444,16 +456,16 @@ diagram chase subtracts, and Mathlib's four lemma is stated over `AddCommGroup` 
 Nothing else here needs it.
 
 `hstrict` is the one input the presentation does not supply. It holds as soon as `range u` is
-closed in `Aᵐ`, and over a complete strongly noetherian Tate ring every submodule of a finitely
-generated module is closed; but deducing it that way needs an open mapping argument this file
-cannot reach, so strictness is hypothesised here, exactly as
-`restrictedMvPowerSeriesSubmoduleMap_range_eq_ker` hypothesises it. -/
+closed in `Aᵐ`, and over a complete noetherian Tate ring every submodule of a finitely generated
+module is closed (`TauCeti.Huber.isClosed_of_isNoetherian`). That deduction is made once, in
+`TauCeti.Huber.IsTateRing.exists_presentation_isStrictMap_isOpenMap`; here strictness is
+hypothesised, exactly as `restrictedMvPowerSeriesSubmoduleMap_range_eq_ker` hypothesises it, so
+that this statement carries no hypothesis on `A` beyond the ambient ones. -/
 theorem restrictedMvPowerSeriesBaseChange_injective_of_presentation {m : ℕ} {M : Type*}
     [AddCommGroup M] [TopologicalSpace M] [Module A M] [ContinuousAdd M] [ContinuousSMul A M]
-    [(nhds (0 : Fin n → A)).IsCountablyGenerated]
-    (u : (Fin n → A) →ₗ[A] (Fin m → A)) (hu : ContinuousAt u 0)
-    (p : (Fin m → A) →ₗ[A] M) (hp : ContinuousAt p 0) (hsurj : Function.Surjective p)
-    (hexact : LinearMap.range u = LinearMap.ker p)
+    [(nhds (0 : Fin n → A)).IsCountablyGenerated] (u : (Fin n → A) →ₗ[A] (Fin m → A))
+    (hu : ContinuousAt u 0) (p : (Fin m → A) →ₗ[A] M) (hp : ContinuousAt p 0)
+    (hsurj : Function.Surjective p) (hexact : LinearMap.range u = LinearMap.ker p)
     (hstrict : nhds (0 : LinearMap.range u) ≤ Filter.map u.rangeRestrict (nhds 0)) :
     Function.Injective (restrictedMvPowerSeriesBaseChange :
       TensorProduct A M (restrictedMvPowerSeriesSubring k A) →
@@ -475,47 +487,66 @@ theorem restrictedMvPowerSeriesBaseChange_injective_of_presentation {m : ℕ} {M
     (restrictedMvPowerSeriesBaseChange_fin_bijective (k := k) (n := m)).injective
     (LinearMap.rTensor_surjective _ hsurj)
 
-/-- **Remark 8.29.** For a module presented by `Aⁿ →[u] Aᵐ →[p] M → 0` with `u` strict onto its
-image and `p` open at `0`, the comparison map is an isomorphism
-`M ⊗[A] A⟨T₁, …, Tₖ⟩ ≃ₗ[A] M⟨T₁, …, Tₖ⟩`.
+end FiniteFree
 
-This is the form the Layer 4.1 consequences consume. The two halves are
-`restrictedMvPowerSeriesBaseChange_injective_of_presentation` and
-`restrictedMvPowerSeriesBaseChange_surjective_of_presentation`, and the hypotheses are exactly
-their union: `hmap` is used only for surjectivity and `hstrict` only for injectivity. -/
-noncomputable def restrictedMvPowerSeriesBaseChangeEquiv {m : ℕ} {M : Type*}
-    [AddCommGroup M] [TopologicalSpace M] [Module A M] [ContinuousAdd M] [ContinuousSMul A M]
-    [(nhds (0 : Fin n → A)).IsCountablyGenerated]
-    [(nhds (0 : Fin m → A)).IsCountablyGenerated]
-    (u : (Fin n → A) →ₗ[A] (Fin m → A)) (hu : ContinuousAt u 0)
-    (p : (Fin m → A) →ₗ[A] M) (hp : ContinuousAt p 0) (hsurj : Function.Surjective p)
-    (hexact : LinearMap.range u = LinearMap.ker p)
-    (hstrict : nhds (0 : LinearMap.range u) ≤ Filter.map u.rangeRestrict (nhds 0))
-    (hmap : nhds (0 : M) ≤ Filter.map p (nhds (0 : Fin m → A))) :
+section ModuleFinite
+
+open scoped Uniformity
+
+variable {k : ℕ} {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [CompleteSpace A]
+  [(𝓤 A).IsCountablyGenerated] [T0Space A] [NonarchimedeanRing A] [IsTateRing A]
+  [IsNoetherianRing A]
+  {M : Type*} [AddCommGroup M] [UniformSpace M] [IsUniformAddGroup M] [CompleteSpace M]
+  [(𝓤 M).IsCountablyGenerated] [T0Space M] [Module A M] [ContinuousSMul A M] [Module.Finite A M]
+
+/-- **Remark 8.29.** Over a complete noetherian Tate ring `A`, the comparison map
+`M ⊗[A] A⟨T₁, …, Tₖ⟩ → M⟨T₁, …, Tₖ⟩` is bijective for every finitely generated `M` that is a
+complete metrisable topological `A`-module.
+
+This is Wedhorn's argument as he gives it: choose a presentation `Aⁿ →[u] Aᵐ →[p] M → 0` with `u`
+strict and `p` open — `TauCeti.Huber.IsTateRing.exists_presentation_isStrictMap_isOpenMap`, which
+is where `A` being Tate, noetherian and complete is spent — and apply the two presentation-level
+halves, `restrictedMvPowerSeriesBaseChange_injective_of_presentation` and
+`restrictedMvPowerSeriesBaseChange_surjective_of_presentation`. Openness of `p` is passed to the
+latter as the filter inequality it consumes, and strictness of `u` to the former as the openness
+at `0` of `u.rangeRestrict`, read off through
+`LinearMap.isStrictMap_iff_isOpenQuotientMap_rangeRestrict`.
+
+Wedhorn takes `M` "endowed with its canonical topology (Proposition 6.18(1))". That topology is
+not constructed here; the hypotheses on `M` are those a complete metrisable topological
+`A`-module carries, which the canonical topology satisfies, and under which
+`TauCeti.Huber.IsTateRing.isModuleTopology` identifies the topology with the module topology. -/
+theorem restrictedMvPowerSeriesBaseChange_bijective :
+    Function.Bijective (restrictedMvPowerSeriesBaseChange :
+      TensorProduct A M (restrictedMvPowerSeriesSubring k A) →
+        restrictedMvPowerSeriesSubmodule k A M) := by
+  obtain ⟨n, m, u, p, hu, hp, hsurj, hexact, hstrict, hopen⟩ :=
+    IsTateRing.exists_presentation_isStrictMap_isOpenMap (A := A) (M := M)
+  exact ⟨restrictedMvPowerSeriesBaseChange_injective_of_presentation u hu.continuousAt p
+      hp.continuousAt hsurj (LinearMap.exact_iff.mp hexact).symm (map_zero u.rangeRestrict ▸
+        (LinearMap.isStrictMap_iff_isOpenQuotientMap_rangeRestrict.mp hstrict).isOpenMap.nhds_le 0),
+    restrictedMvPowerSeriesBaseChange_surjective_of_presentation p hp.continuousAt hsurj
+      (map_zero p ▸ hopen.nhds_le 0)⟩
+
+variable (k A M) in
+/-- **Remark 8.29**, packaged: `M ⊗[A] A⟨T₁, …, Tₖ⟩ ≃ₗ[A] M⟨T₁, …, Tₖ⟩` for a finite complete
+metrisable module `M` over a complete noetherian Tate ring. This is the form the Layer 4.1
+consequences consume; `restrictedMvPowerSeriesBaseChange_bijective` is the content. -/
+noncomputable def restrictedMvPowerSeriesBaseChangeEquiv :
     TensorProduct A M (restrictedMvPowerSeriesSubring k A) ≃ₗ[A]
       restrictedMvPowerSeriesSubmodule k A M :=
   LinearEquiv.ofBijective restrictedMvPowerSeriesBaseChange
-    ⟨restrictedMvPowerSeriesBaseChange_injective_of_presentation u hu p hp hsurj hexact hstrict,
-      restrictedMvPowerSeriesBaseChange_surjective_of_presentation p hp hsurj hmap⟩
+    restrictedMvPowerSeriesBaseChange_bijective
 
 /-- `restrictedMvPowerSeriesBaseChangeEquiv` *is* the comparison map. -/
 @[simp]
-theorem restrictedMvPowerSeriesBaseChangeEquiv_apply {m : ℕ} {M : Type*}
-    [AddCommGroup M] [TopologicalSpace M] [Module A M] [ContinuousAdd M] [ContinuousSMul A M]
-    [(nhds (0 : Fin n → A)).IsCountablyGenerated]
-    [(nhds (0 : Fin m → A)).IsCountablyGenerated]
-    (u : (Fin n → A) →ₗ[A] (Fin m → A)) (hu : ContinuousAt u 0)
-    (p : (Fin m → A) →ₗ[A] M) (hp : ContinuousAt p 0) (hsurj : Function.Surjective p)
-    (hexact : LinearMap.range u = LinearMap.ker p)
-    (hstrict : nhds (0 : LinearMap.range u) ≤ Filter.map u.rangeRestrict (nhds 0))
-    (hmap : nhds (0 : M) ≤ Filter.map p (nhds (0 : Fin m → A)))
+theorem restrictedMvPowerSeriesBaseChangeEquiv_apply
     (x : TensorProduct A M (restrictedMvPowerSeriesSubring k A)) :
-    restrictedMvPowerSeriesBaseChangeEquiv u hu p hp hsurj hexact hstrict hmap x =
-      restrictedMvPowerSeriesBaseChange x := by
+    restrictedMvPowerSeriesBaseChangeEquiv k A M x = restrictedMvPowerSeriesBaseChange x := by
   rw [restrictedMvPowerSeriesBaseChangeEquiv]
   rfl
 
-end FiniteFree
+end ModuleFinite
 
 end TauCeti.Huber
 
