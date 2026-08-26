@@ -101,20 +101,23 @@ theorem heckeTCompositeGamma0_def (n : ℕ) :
 
 /-- The junk input: `0` has no factorisation, and the empty product is the identity. -/
 @[simp]
-theorem heckeTCompositeGamma0_zero : heckeTCompositeGamma0 N 0 = 1 :=
-  TauCeti.Nat.primePowerProd_zero _
+theorem heckeTCompositeGamma0_zero : heckeTCompositeGamma0 N 0 = 1 := by
+  simpa only [heckeTCompositeGamma0_def] using
+    TauCeti.Nat.primePowerProd_zero (heckeTGeneratorRecGamma0 N)
 
 /-- `T₁ = 1`: the empty product over the empty factorisation. -/
 @[simp]
-theorem heckeTCompositeGamma0_one : heckeTCompositeGamma0 N 1 = 1 :=
-  TauCeti.Nat.primePowerProd_one _
+theorem heckeTCompositeGamma0_one : heckeTCompositeGamma0 N 1 = 1 := by
+  simpa only [heckeTCompositeGamma0_def] using
+    TauCeti.Nat.primePowerProd_one (heckeTGeneratorRecGamma0 N)
 
 /-- **The peeling step**: for `1 < n` the composite splits off the block at the least prime
 factor of `n`, carrying its whole multiplicity. -/
 theorem heckeTCompositeGamma0_of_one_lt {n : ℕ} (hn : 1 < n) : heckeTCompositeGamma0 N n =
     heckeTGeneratorRecGamma0 N n.minFac (n.factorization n.minFac) *
-      heckeTCompositeGamma0 N (n / n.minFac ^ n.factorization n.minFac) :=
-  TauCeti.Nat.primePowerProd_of_one_lt _ hn
+      heckeTCompositeGamma0 N (n / n.minFac ^ n.factorization n.minFac) := by
+  simpa only [heckeTCompositeGamma0_def] using
+    TauCeti.Nat.primePowerProd_of_one_lt (heckeTGeneratorRecGamma0 N) hn
 
 /-- **On a prime power the composite is the recurrence family**: `T_{p^v}` assembled is
 `T_{p^v}` generated.
@@ -128,7 +131,8 @@ theorem heckeTCompositeGamma0_prime_pow {p : ℕ} (hp : p.Prime) (v : ℕ) :
     heckeTCompositeGamma0 N (p ^ v) = heckeTGeneratorRecGamma0 N p v := by
   rcases eq_or_ne v 0 with rfl | hv
   · simp
-  · exact TauCeti.Nat.primePowerProd_prime_pow _ hp hv
+  · simpa only [heckeTCompositeGamma0_def] using
+      TauCeti.Nat.primePowerProd_prime_pow (heckeTGeneratorRecGamma0 N) hp hv
 
 /-- At a prime the composite is the generator: `T_p` assembled is `T_p`. This is
 `TauCeti.Nat.primePowerProd_prime` read through the definition. Marked `@[simp]` alongside
