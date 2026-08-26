@@ -78,10 +78,13 @@ lemma primesAbove_empty : primesAbove R B (∅ : Set (HeightOneSpectrum R)) = �
 
 variable [Algebra.IsIntegral R B]
 
+/-- A prime of `B` lies above `S` exactly when its contraction to `R` lies in `S`. -/
+@[simp]
 lemma mem_primesAbove_iff (S : Set (HeightOneSpectrum R)) (w : HeightOneSpectrum B) :
     w ∈ primesAbove R B S ↔ under R w ∈ S := by
   refine ⟨fun ⟨v, hv, hva⟩ ↦ ?_, fun hw ↦ ⟨under R w, hw, rfl⟩⟩
-  rwa [show under R w = v from HeightOneSpectrum.ext hva.symm]
+  have hunder : under R w = v := HeightOneSpectrum.ext hva.symm
+  rwa [hunder]
 
 /-- Only finitely many primes of `B` lie above a finite set of primes of `R`: each fiber
 injects into `Ideal.primesOver`, which is finite for a Dedekind extension. -/
@@ -105,6 +108,9 @@ def selmerGroupAbove (L : Type*) [Field L] [Algebra B L] [IsFractionRing B L]
   selmerGroup (R := B) (K := L) (S := HeightOneSpectrum.primesAbove R B S) (n := n)
 
 omit [IsDedekindDomain R] in
+/-- A class of units lies in the Selmer group relative to `S` exactly when its valuation is
+trivial at every prime of `B` not lying above `S`. -/
+@[simp]
 lemma mem_selmerGroupAbove_iff (L : Type*) [Field L] [Algebra B L] [IsFractionRing B L]
     (S : Set (HeightOneSpectrum R)) (n : ℕ) (x : Lˣ ⧸ (powMonoidHom n : Lˣ →* Lˣ).range) :
     x ∈ selmerGroupAbove R B L S n ↔

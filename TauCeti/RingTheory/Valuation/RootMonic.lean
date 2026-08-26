@@ -27,8 +27,8 @@ concrete form of the fact that valuation rings are integrally closed.
 * `Valuation.eq_one_of_mul_eq_one`: if `ν a ≤ 1`, `ν b ≤ 1` and `ν (a * b) = 1`, then `ν a = 1`.
 * `Valuation.map_eval_eq_of_one_lt`: `ν (p.eval t) = ν t ^ p.natDegree` for monic `p` with
   `ν`-integral coefficients and `1 < ν t`.
-* `Valuation.le_one_of_root_monic`: a root of a monic polynomial of positive degree with
-  `ν`-integral coefficients is `ν`-integral.
+* `Valuation.le_one_of_root_monic`: a root of a monic polynomial with `ν`-integral coefficients
+  is `ν`-integral.
 
 ## Roadmap
 
@@ -56,6 +56,8 @@ open Polynomial
 variable {L Γ : Type*} [CommRing L] [LinearOrderedCommGroupWithZero Γ] (ν : Valuation L Γ)
   {t a b : L}
 
+/-- Every natural number is integral for a valuation: `ν (n : R) ≤ 1`, by the ultrametric
+inequality applied to `n` copies of `1`. -/
 lemma map_natCast_le_one {R : Type*} [Ring R] (ν : Valuation R Γ) (n : ℕ) :
     ν (n : R) ≤ 1 := by
   induction n with
@@ -92,17 +94,15 @@ lemma map_eval_eq_of_one_lt {p : L[X]} (hp : p.Monic)
       _ < ν t ^ n := pow_lt_pow_right₀ ht hi
   rw [heval, ν.map_add_eq_of_lt_right hlt, map_pow]
 
-/-- A root of a monic polynomial of positive degree with coefficients that are integral for the
-valuation `ν` is itself integral. (This is a concrete form of the fact that valuation rings are
-integrally closed.) -/
+/-- A root of a monic polynomial whose coefficients are integral for the valuation `ν` is itself
+integral. (This is a concrete form of the fact that valuation rings are integrally closed.) -/
 lemma le_one_of_root_monic {p : L[X]} (hp : p.Monic)
-    (hcoeff : ∀ i < p.natDegree, ν (p.coeff i) ≤ 1) (hdeg : p.natDegree ≠ 0)
-    (heq : p.eval t = 0) :
+    (hcoeff : ∀ i < p.natDegree, ν (p.coeff i) ≤ 1) (heq : p.eval t = 0) :
     ν t ≤ 1 := by
   by_contra! hlt
   have h := ν.map_eval_eq_of_one_lt hp hcoeff hlt
   rw [heq, map_zero] at h
-  exact (zero_lt_one.trans hlt).ne' (pow_eq_zero_iff hdeg |>.mp h.symm)
+  exact pow_ne_zero _ (zero_lt_one.trans hlt).ne' h.symm
 
 end Valuation
 

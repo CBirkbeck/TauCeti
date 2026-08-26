@@ -115,14 +115,20 @@ noncomputable def linearEquivRoots :
     dvd_iff_isRoot.mpr x.2⟩, natDegree_X_sub_C _⟩
   left_inv p := by
     refine Subtype.ext (Subtype.ext ?_)
+    -- `invFun (toFun p)` is the monic linear polynomial with the recorded root; the `change`
+    -- only replaces it by that polynomial, which is how `invFun` is defined.
     change X - C (-((p : f.Factors) : K[X]).coeff 0) = _
     conv_rhs => rw [(p : f.Factors).monic.eq_X_add_C p.2]
     rw [map_neg, sub_neg_eq_add]
   right_inv x := by
     refine Subtype.ext ?_
+    -- likewise `toFun (invFun x)` is by definition the negated constant coefficient of
+    -- `X - C x`, which is what the `change` displays.
     change -(X - C (x : K)).coeff 0 = _
     simp
 
+/-- Distinct monic irreducible factors of `f` are coprime: each spans a maximal ideal, and the
+two ideals differ because a monic polynomial is determined by the ideal it spans. -/
 lemma isCoprime {p q : f.Factors} (hne : p ≠ q) : IsCoprime (p : K[X]) (q : K[X]) :=
   (Ideal.isCoprime_span_singleton_iff _ _).mp <| Ideal.isCoprime_iff_sup_eq.mpr <|
     Ideal.IsMaximal.coprime_of_ne
@@ -135,6 +141,8 @@ lemma isCoprime_span {p q : f.Factors} (hne : p ≠ q) :
     IsCoprime (Ideal.span {(p : K[X])}) (Ideal.span {(q : K[X])}) :=
   (Ideal.isCoprime_span_singleton_iff _ _).mpr (isCoprime hne)
 
+/-- A nonzero squarefree polynomial is associated to the product of its distinct monic
+irreducible factors. -/
 lemma associated_prod [Fintype f.Factors] (hf : f ≠ 0) (hsq : Squarefree f) :
     Associated (∏ p : f.Factors, (p : K[X])) f := by
   classical
@@ -160,6 +168,9 @@ lemma sum_natDegree_le [Fintype f.Factors] (hf : f ≠ 0) :
   exact natDegree_le_of_dvd
     (Fintype.prod_dvd_of_coprime (fun p q hpq ↦ isCoprime hpq) fun p ↦ p.dvd) hf
 
+/-- For `f` nonzero and squarefree, the ideal `(f)` is the intersection of the ideals `(p)` over
+the monic irreducible factors `p` of `f`. This is the input for the Chinese Remainder
+decomposition of `K[X] ⧸ (f)`. -/
 lemma span_eq_iInf_span (hf : f ≠ 0) (hsq : Squarefree f) :
     Ideal.span {f} = ⨅ p : f.Factors, Ideal.span {(p : K[X])} := by
   have : Fintype f.Factors := @Fintype.ofFinite _ (finite hf)

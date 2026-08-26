@@ -5,9 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Algebra.Group.Pi.Units
 public import Mathlib.RingTheory.AdjoinRoot
-public import Mathlib.GroupTheory.QuotientGroup.Basic
+public import TauCeti.GroupTheory.QuotientGroup.PowMonoidHom
 public import TauCeti.RingTheory.Polynomial.Factors
 
 import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
@@ -26,7 +25,9 @@ of units — the group underlying the `2`-Selmer group of an étale algebra.
 
 Throughout, the group of `n`-th power classes of units of a commutative monoid `α` is spelled
 as the quotient `αˣ ⧸ (powMonoidHom n).range`, matching
-`Mathlib.RingTheory.DedekindDomain.SelmerGroup`.
+`Mathlib.RingTheory.DedekindDomain.SelmerGroup`; the transport of that quotient along an
+equivalence and its compatibility with products are in
+`TauCeti.GroupTheory.QuotientGroup.PowMonoidHom`.
 
 ## Main definitions
 
@@ -44,10 +45,9 @@ as the quotient `αˣ ⧸ (powMonoidHom n).range`, matching
 
 ## Implementation notes
 
-The `_mk` lemmas below hold by `rfl`, and they are part of the public interface, so the
-definitions they unfold — `congrRangePowMonoidHom`, `modPowPiEquiv`, `equivPiFactors`,
-`projFactor` and `modPowEquivPiFactors` — carry `@[expose]`: without it the module system rejects
-a `rfl` proof of an exported statement whose definitions are opaque downstream.
+`equivPiFactors_mk` and `projFactor_mk` hold by `rfl`, written `(rfl)`: the parenthesised form is
+elaborated in this module, where the definitions it unfolds are visible, whereas a bare `rfl`
+proof of an exported statement would ask for those definitions to be exposed downstream.
 
 ## Roadmap
 
@@ -62,58 +62,14 @@ componentwise. Nothing here mentions a curve.
 Adapted, with the author's proofs, from Michael Stoll's `EllipticCurves` project
 (`github.com/MichaelStollBayreuth/EllipticCurves`, Apache-2.0, pinned by
 `TauCetiRoadmap/EllipticCurves/README.md` at `66889eada51a`),
-`EllipticCurves/Mathlib/Basic.lean`, sections `modPow` and `EtaleDecomposition`. The source
-abbreviates the group of `n`-th power classes as `Units.modPow`; here it is the quotient directly.
-The source is written against Lean `v4.32.0`; this is a forward port.
+`EllipticCurves/Mathlib/Basic.lean`, section `EtaleDecomposition`. The source abbreviates the
+group of `n`-th power classes as `Units.modPow`; here it is the quotient directly. The source is
+written against Lean `v4.32.0`; this is a forward port.
 -/
 
 public section
 
 open Polynomial
-
-/-! ### Power classes of units under equivalences and products -/
-
-namespace QuotientGroup
-
-/-- A multiplicative equivalence of commutative groups induces one on the quotients by the
-subgroups of `n`-th powers. -/
-@[expose]
-def congrRangePowMonoidHom {G H : Type*} [CommGroup G] [CommGroup H] (e : G ≃* H) (n : ℕ) :
-    G ⧸ (powMonoidHom n : G →* G).range ≃* H ⧸ (powMonoidHom n : H →* H).range :=
-  QuotientGroup.congr _ _ e <| by
-    ext x
-    simp only [Subgroup.mem_map, MonoidHom.mem_range, powMonoidHom_apply]
-    refine ⟨?_, ?_⟩
-    · rintro ⟨_, ⟨u, rfl⟩, rfl⟩
-      exact ⟨e u, by simp⟩
-    · rintro ⟨u, rfl⟩
-      exact ⟨e.symm u ^ n, ⟨_, rfl⟩, by simp⟩
-
-@[simp]
-lemma congrRangePowMonoidHom_mk {G H : Type*} [CommGroup G] [CommGroup H] (e : G ≃* H) (n : ℕ)
-    (g : G) :
-    congrRangePowMonoidHom e n (QuotientGroup.mk g) = QuotientGroup.mk (e g) :=
-  rfl
-
-end QuotientGroup
-
-namespace Units
-
-/-- Taking `n`-th power classes of units commutes with products. -/
-@[expose] noncomputable def modPowPiEquiv {ι : Type*} (α : ι → Type*) [(i : ι) → CommMonoid (α i)]
-    (n : ℕ) :
-    ((i : ι) → α i)ˣ ⧸ (powMonoidHom n : ((i : ι) → α i)ˣ →* _).range ≃*
-      ((i : ι) → (α i)ˣ ⧸ (powMonoidHom n : (α i)ˣ →* _).range) :=
-  (QuotientGroup.congrRangePowMonoidHom MulEquiv.piUnits n).trans <|
-    QuotientGroup.mulEquivPiModRangePowMonoidHom (fun i ↦ (α i)ˣ) n
-
-@[simp]
-lemma modPowPiEquiv_mk {ι : Type*} (α : ι → Type*) [(i : ι) → CommMonoid (α i)] (n : ℕ)
-    (u : ((i : ι) → α i)ˣ) (i : ι) :
-    modPowPiEquiv α n (QuotientGroup.mk u) i = QuotientGroup.mk (MulEquiv.piUnits u i) := by
-  simp [modPowPiEquiv, QuotientGroup.mulEquivPiModRangePowMonoidHom_apply]
-
-end Units
 
 /-! ### The field factors of `K[X] ⧸ (f)` -/
 
@@ -146,7 +102,7 @@ lemma isSeparable_of_separable (hf : f.Separable) (p : f.Factors) :
 /-- **Chinese Remainder Theorem** for `AdjoinRoot`: for `f` nonzero and squarefree,
 `K[X] ⧸ (f)` is the product of the fields `K[X] ⧸ (p)` over the monic irreducible factors `p`
 of `f`. -/
-@[expose] noncomputable def equivPiFactors (hf : f ≠ 0) (hsq : Squarefree f) :
+noncomputable def equivPiFactors (hf : f ≠ 0) (hsq : Squarefree f) :
     AdjoinRoot f ≃ₐ[K] ((p : f.Factors) → AdjoinRoot (p : K[X])) :=
   have : Finite f.Factors := Factors.finite hf
   AlgEquiv.ofRingEquiv (f :=
@@ -157,23 +113,23 @@ of `f`. -/
 @[simp]
 lemma equivPiFactors_mk (hf : f ≠ 0) (hsq : Squarefree f) (q : K[X]) (p : f.Factors) :
     equivPiFactors hf hsq (mk f q) p = mk (p : K[X]) q :=
-  rfl
+  (rfl)
 
 /-- The projection of `K[X] ⧸ (f)` onto the field factor `K[X] ⧸ (p)`. -/
-@[expose] noncomputable def projFactor (hf : f ≠ 0) (hsq : Squarefree f) (p : f.Factors) :
+noncomputable def projFactor (hf : f ≠ 0) (hsq : Squarefree f) (p : f.Factors) :
     AdjoinRoot f →+* AdjoinRoot (p : K[X]) :=
   (Pi.evalRingHom _ p).comp (equivPiFactors hf hsq).toRingEquiv.toRingHom
 
 @[simp]
 lemma projFactor_mk (hf : f ≠ 0) (hsq : Squarefree f) (q : K[X]) (p : f.Factors) :
     projFactor hf hsq p (mk f q) = mk (p : K[X]) q :=
-  rfl
+  (rfl)
 
 /-! ### Square classes, and `n`-th power classes, of the factors -/
 
 /-- The `n`-th power classes of units of `K[X] ⧸ (f)` are the product of those of its
 field factors. -/
-@[expose] noncomputable def modPowEquivPiFactors (hf : f ≠ 0) (hsq : Squarefree f) (n : ℕ) :
+noncomputable def modPowEquivPiFactors (hf : f ≠ 0) (hsq : Squarefree f) (n : ℕ) :
     (AdjoinRoot f)ˣ ⧸ (powMonoidHom n : (AdjoinRoot f)ˣ →* _).range ≃*
       ((p : f.Factors) → (AdjoinRoot (p : K[X]))ˣ ⧸
         (powMonoidHom n : (AdjoinRoot (p : K[X]))ˣ →* _).range) :=
