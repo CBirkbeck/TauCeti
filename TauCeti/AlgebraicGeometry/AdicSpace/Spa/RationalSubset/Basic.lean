@@ -63,6 +63,9 @@ layer deferred above.
   in the adic spectrum.
 * `TauCeti.ValuationSpectrum.rationalSubset_subset_rationalSubset_of_subset` : the rational
   subset is antitone in its numerator set.
+* `TauCeti.ValuationSpectrum.rationalSubset_insert_of_forall_vle` : a numerator already
+  dominated by the denominator throughout `R(T/s)` may be adjoined to `T` without changing the
+  subset.
 * `TauCeti.ValuationSpectrum.rationalSubset_insert_self` : the denominator may be inserted
   among the numerators.
 * `TauCeti.ValuationSpectrum.rationalSubset_singleton_one` : the whole spectrum is the
@@ -170,6 +173,27 @@ replace `T` by `T ∪ {s}`" (Definition 7.29). -/
 theorem rationalSubset_insert_self (Aplus : Subring A) (T : Finset A) (s : A) :
     rationalSubset Aplus (insert s T) s = rationalSubset Aplus T s := by
   rw [rationalSubset_def, rationalSubset_def, basicOpenFinset_insert_self]
+
+open scoped Classical in
+/-- **A numerator dominated by the denominator may be adjoined for free.** If every point of
+`R(T/s)` satisfies `v(u) ≤ v(s)`, then adjoining `u` to the numerators does not change the
+rational subset.
+
+This is the step that closes Wedhorn's chain of Remark 7.55 at `Xₙ = U`: the whole point of
+choosing `u` dominated by `s` on `U` is that the extra numerator condition it contributes is
+already satisfied there. -/
+theorem rationalSubset_insert_of_forall_vle (Aplus : Subring A) (T : Finset A) (s u : A)
+    (hu : ∀ v ∈ rationalSubset Aplus T s, v.toValuativeRel.vle u s) :
+    rationalSubset Aplus (insert u T) s = rationalSubset Aplus T s := by
+  refine Set.Subset.antisymm
+    (rationalSubset_subset_rationalSubset_of_subset Aplus (Finset.subset_insert u T) s)
+    fun v hv ↦ ?_
+  have hv' := (mem_rationalSubset_iff Aplus T s v).mp hv
+  refine (mem_rationalSubset_iff Aplus _ s v).mpr ⟨hv'.1, fun t ht ↦ ?_, hv'.2.2⟩
+  let _ := v.toValuativeRel
+  rcases Finset.mem_insert.mp ht with rfl | ht
+  · exact hu v hv
+  · exact hv'.2.1 t ht
 
 /-- The whole adic spectrum is the rational subset `R({1}/1)` — Wedhorn's observation that
 `Spa (A, A⁺)` itself is rational. The single condition `v(1) ≤ v(1) ≠ 0` holds at every
