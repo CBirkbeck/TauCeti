@@ -31,9 +31,9 @@ Neither associativity nor a unit law enters the definition — the bracketing is
 stated at `One` plus `Mul`, in the same spirit as `List.prod`, which Lean defines at `Mul` plus
 `One`. `mul_one` is needed once, to collapse the single block of a prime power. Associativity
 enters with the multiplicativity on coprime arguments, which is stated in a `Monoid` under the
-hypothesis it actually uses — each block of one argument commutes with each block of the other
-— so that the monoid of the previous paragraph can use it. Only the `Finsupp.prod` comparison
-needs the full `CommMonoid`.
+hypothesis it actually uses — each block of `n` commutes with the blocks of `m` at larger primes,
+the pairs that merging the two increasing sequences has to exchange — so that the monoid of the
+previous paragraph can use it. Only the `Finsupp.prod` comparison needs the full `CommMonoid`.
 
 ## Main definitions
 
@@ -47,7 +47,7 @@ needs the full `CommMonoid`.
 * `Commute.primePowerProd_right`: an element commuting with every block commutes with the
   ordered product.
 * `TauCeti.Nat.primePowerProd_mul_of_coprime`: multiplicativity on coprime arguments, given
-  that the blocks of the two arguments commute.
+  that each block of `n` commutes with the blocks of `m` at larger primes.
 * `TauCeti.Nat.primePowerProd_eq_factorization_prod`: in a `CommMonoid` it is
   `n.factorization.prod f`.
 
@@ -60,10 +60,11 @@ and `primePowerProd_of_one_lt` are proved by unfolding it and `Nat.strongRec` on
 after them goes through those equations and never through the body again.
 
 Coprime multiplicativity is a strong induction on `m * n`. The least prime of `m * n` lies in
-exactly one of the factors; when it lies in `m` the peeling step and the induction hypothesis
-already give the answer, and when it lies in `n` the same argument with the roles of `m` and
-`n` swapped gives the two ordered products in the wrong order, which is the one place the
-commutation hypothesis is used.
+exactly one of the factors, and the peeling step splits off its block. When it lies in `m` the
+induction hypothesis and the peeling step for `m` already give the answer. When it lies in `n`
+its block comes out ahead of the whole of `primePowerProd f m`; it sits below every prime of
+`m`, so the commutation hypothesis moves it past that product — the one place the hypothesis is
+used — and the peeling step for `n` reassembles `primePowerProd f n`.
 
 ## Provenance
 
@@ -72,10 +73,10 @@ Hecke file inside the `HeckeRing.GL2.Unified` namespace. They are combinatorics 
 `Nat.minFac` carrying no Hecke content, so they are lifted here. The source asks
 `Monoid`/`CommMonoid` and writes the recursion out by hand; here the classes are weakened to
 `One` plus `Mul`, the recursion is routed through mathlib's `Nat.recOnPrimePow`, the coprime
-multiplicativity is proved in a `Monoid` from blockwise commutation instead of being read off
-the `Finsupp.prod` comparison, and that comparison is stated for every `n` rather than only for
-`n ≠ 0`. The comparison is `private` in the source and is exposed here, since it is the
-statement tying the definition to mathlib's idiom.
+multiplicativity is proved in a `Monoid` from the commutation of the block pairs that merging
+exchanges instead of being read off the `Finsupp.prod` comparison, and that comparison is
+stated for every `n` rather than only for `n ≠ 0`. The comparison is `private` in the source
+and is exposed here, since it is the statement tying the definition to mathlib's idiom.
 
 ## References
 
@@ -180,41 +181,111 @@ theorem _root_.Commute.primePowerProd_right (f : ℕ → ℕ → M) {x : M} {n :
       exact h q (block_ordCompl hq).1
     · rcases Nat.le_one_iff_eq_zero_or_eq_one.1 (not_lt.1 hn) with rfl | rfl <;> simp
 
-/-- The case of `primePowerProd_mul_of_coprime` in which the least prime of `m * n` lies in
-`m`, given the induction hypothesis for smaller products: the block at `m.minFac` splits off,
-`ordCompl[m.minFac] m * n` is handled by `ih`, and `primePowerProd_of_one_lt` reassembles
-`primePowerProd f m`. No commutation is needed here. -/
-private theorem primePowerProd_mul_of_minFac_dvd (f : ℕ → ℕ → M) {m n : ℕ} (hmn : m.Coprime n)
-    (h1 : 1 < m * n) (hr : (m * n).minFac ∣ m)
-    (ih : ∀ {m' n' : ℕ}, m' * n' < m * n → m'.Coprime n' →
-      (∀ p ∈ m'.primeFactors, ∀ q ∈ n'.primeFactors,
-        Commute (f p (m'.factorization p)) (f q (n'.factorization q))) →
-      primePowerProd f (m' * n') = primePowerProd f m' * primePowerProd f n')
-    (hf : ∀ p ∈ m.primeFactors, ∀ q ∈ n.primeFactors,
-      Commute (f p (m.factorization p)) (f q (n.factorization q))) :
-    primePowerProd f (m * n) = primePowerProd f m * primePowerProd f n := by
-  have hrp := Nat.minFac_prime h1.ne'
+/-- The peeling step for a product `k = m * n` whose least prime `p` does not divide `n`: the
+block split off is the block of `m` at `p`, and what remains is the product over
+`ordCompl[p] m * n`. Stated with `k` free so that either factor of `m * n` can play `m`. -/
+private theorem primePowerProd_of_minFac_not_dvd (f : ℕ → ℕ → M) {k m n p : ℕ} (h1 : 1 < k)
+    (hp : k.minFac = p) (hk : k = m * n) (hn : ¬p ∣ n) :
+    primePowerProd f k = f p (m.factorization p) * primePowerProd f (ordCompl[p] m * n) := by
+  subst hk
+  have hm0 : m ≠ 0 := by rintro rfl; simp at h1
   have hn0 : n ≠ 0 := by rintro rfl; simp at h1
-  have hm1 : 1 < m :=
-    hrp.two_le.trans (Nat.le_of_dvd (Nat.pos_of_ne_zero (by rintro rfl; simp at h1)) hr)
-  have hrn : ¬(m * n).minFac ∣ n :=
-    hrp.coprime_iff_not_dvd.1 (Nat.Coprime.coprime_dvd_left hr hmn)
-  have hmin : m.minFac = (m * n).minFac :=
-    le_antisymm (Nat.minFac_le_of_dvd hrp.two_le hr)
-      (Nat.minFac_le_of_dvd (Nat.minFac_prime hm1.ne').two_le (m.minFac_dvd.mul_right n))
-  rw [primePowerProd_of_one_lt f h1, Nat.ordCompl_mul, Nat.factorization_mul_of_coprime hmn,
-    Finsupp.add_apply, Nat.factorization_eq_zero_of_not_dvd hrn, add_zero, pow_zero, Nat.div_one,
-    ← hmin, ih (Nat.mul_lt_mul_of_pos_right (ordCompl_minFac_lt hm1) (Nat.pos_of_ne_zero hn0))
-      (Nat.Coprime.coprime_dvd_left (Nat.ordCompl_dvd m _) hmn) (fun p hp q hq ↦ by
-        rw [(block_ordCompl hp).2]; exact hf p (block_ordCompl hp).1 q hq),
-    ← mul_assoc, ← primePowerProd_of_one_lt f hm1]
+  have hblock : (m * n).factorization p = m.factorization p := by
+    rw [Nat.factorization_mul hm0 hn0, Finsupp.add_apply, Nat.factorization_eq_zero_of_not_dvd hn,
+      add_zero]
+  have hcompl : ordCompl[p] (m * n) = ordCompl[p] m * n := by
+    rw [Nat.ordCompl_mul,
+      (Nat.ordCompl_eq_self_iff_zero_or_not_dvd n (hp ▸ Nat.minFac_prime h1.ne')).2 (Or.inr hn)]
+  rw [primePowerProd_of_one_lt f h1, hp, hcompl, hblock]
+
+/-- The case of `primePowerProd_mul_of_coprime` in which the least prime `p` of `m * n` lies in
+`m`, given the induction hypothesis for smaller products: the peeling step splits off the block
+of `m` at `p`, the induction hypothesis splits the product over `ordCompl[p] m * n`, and the
+peeling step for `m` reassembles `primePowerProd f m`. No commutation is involved. -/
+private theorem primePowerProd_mul_of_minFac_dvd_left (f : ℕ → ℕ → M) {m n p : ℕ}
+    (hmn : m.Coprime n) (h1 : 1 < m * n) (hp : (m * n).minFac = p) (hpm : p ∣ m)
+    (ih : ∀ {m' n' : ℕ}, m' * n' < m * n → m'.Coprime n' →
+      (∀ q ∈ m'.primeFactors, ∀ r ∈ n'.primeFactors, r < q →
+        Commute (f q (m'.factorization q)) (f r (n'.factorization r))) →
+      primePowerProd f (m' * n') = primePowerProd f m' * primePowerProd f n')
+    (hf : ∀ q ∈ m.primeFactors, ∀ r ∈ n.primeFactors, r < q →
+      Commute (f q (m.factorization q)) (f r (n.factorization r))) :
+    primePowerProd f (m * n) = primePowerProd f m * primePowerProd f n := by
+  have hrp : p.Prime := hp ▸ Nat.minFac_prime h1.ne'
+  have hm0 : m ≠ 0 := by rintro rfl; simp at h1
+  have hn0 : n ≠ 0 := by rintro rfl; simp at h1
+  have hpn : ¬p ∣ n := hrp.coprime_iff_not_dvd.1 (hmn.coprime_dvd_left hpm)
+  have hm1 : 1 < m := hrp.two_le.trans (Nat.le_of_dvd (Nat.pos_of_ne_zero hm0) hpm)
+  have hmin : m.minFac = p :=
+    le_antisymm (Nat.minFac_le_of_dvd hrp.two_le hpm)
+      (hp ▸ Nat.minFac_le_of_dvd (Nat.minFac_prime hm1.ne').two_le (m.minFac_dvd.mul_right n))
+  have hih : primePowerProd f (ordCompl[p] m * n) =
+      primePowerProd f (ordCompl[p] m) * primePowerProd f n :=
+    ih (Nat.mul_lt_mul_of_pos_right (hmin ▸ ordCompl_minFac_lt hm1) (Nat.pos_of_ne_zero hn0))
+      (Nat.Coprime.coprime_dvd_left (Nat.ordCompl_dvd m p) hmn) fun q hq r hr hlt ↦ by
+        rw [(block_ordCompl hq).2]; exact hf q (block_ordCompl hq).1 r hr hlt
+  calc primePowerProd f (m * n)
+      = f p (m.factorization p) * primePowerProd f (ordCompl[p] m * n) :=
+        primePowerProd_of_minFac_not_dvd f h1 hp rfl hpn
+    _ = f p (m.factorization p) * primePowerProd f (ordCompl[p] m) * primePowerProd f n := by
+        rw [hih, mul_assoc]
+    _ = primePowerProd f m * primePowerProd f n := by
+        rw [← hmin, ← primePowerProd_of_one_lt f hm1]
+
+/-- The case of `primePowerProd_mul_of_coprime` in which the least prime `p` of `m * n` lies in
+`n`, given the induction hypothesis for smaller products: the peeling step splits off the block
+of `n` at `p` ahead of everything, the induction hypothesis splits the product over
+`m * ordCompl[p] n`, and since `p` lies below every prime of `m` the commutation hypothesis
+moves that block past `primePowerProd f m`, where the peeling step for `n` reassembles
+`primePowerProd f n`. -/
+private theorem primePowerProd_mul_of_minFac_dvd_right (f : ℕ → ℕ → M) {m n p : ℕ}
+    (hmn : m.Coprime n) (h1 : 1 < m * n) (hp : (m * n).minFac = p) (hpn : p ∣ n)
+    (ih : ∀ {m' n' : ℕ}, m' * n' < m * n → m'.Coprime n' →
+      (∀ q ∈ m'.primeFactors, ∀ r ∈ n'.primeFactors, r < q →
+        Commute (f q (m'.factorization q)) (f r (n'.factorization r))) →
+      primePowerProd f (m' * n') = primePowerProd f m' * primePowerProd f n')
+    (hf : ∀ q ∈ m.primeFactors, ∀ r ∈ n.primeFactors, r < q →
+      Commute (f q (m.factorization q)) (f r (n.factorization r))) :
+    primePowerProd f (m * n) = primePowerProd f m * primePowerProd f n := by
+  have hrp : p.Prime := hp ▸ Nat.minFac_prime h1.ne'
+  have hm0 : m ≠ 0 := by rintro rfl; simp at h1
+  have hn0 : n ≠ 0 := by rintro rfl; simp at h1
+  have hpm : ¬p ∣ m := hrp.coprime_iff_not_dvd.1 (hmn.symm.coprime_dvd_left hpn)
+  have hn1 : 1 < n := hrp.two_le.trans (Nat.le_of_dvd (Nat.pos_of_ne_zero hn0) hpn)
+  have hmin : n.minFac = p :=
+    le_antisymm (Nat.minFac_le_of_dvd hrp.two_le hpn)
+      (hp ▸ Nat.minFac_le_of_dvd (Nat.minFac_prime hn1.ne').two_le (n.minFac_dvd.mul_left m))
+  have hih : primePowerProd f (m * ordCompl[p] n) =
+      primePowerProd f m * primePowerProd f (ordCompl[p] n) :=
+    ih (Nat.mul_lt_mul_of_pos_left (hmin ▸ ordCompl_minFac_lt hn1) (Nat.pos_of_ne_zero hm0))
+      (hmn.coprime_dvd_right (Nat.ordCompl_dvd n p)) fun q hq r hr hlt ↦ by
+        rw [(block_ordCompl hr).2]; exact hf q hq r (block_ordCompl hr).1 hlt
+  -- `p` is the least prime of `m * n` and is prime to `m`, so it lies below every prime of `m`
+  have hlt : ∀ q ∈ m.primeFactors, p < q := fun q hq ↦ by
+    obtain ⟨hq, hqm, -⟩ := Nat.mem_primeFactors.1 hq
+    exact lt_of_le_of_ne (hp ▸ Nat.minFac_le_of_dvd hq.two_le (hqm.mul_right n))
+      (by rintro rfl; exact hpm hqm)
+  have hcomm : Commute (f p (n.factorization p)) (primePowerProd f m) :=
+    Commute.primePowerProd_right f fun q hq ↦
+      (hf q hq p (Nat.mem_primeFactors.2 ⟨hrp, hpn, hn0⟩) (hlt q hq)).symm
+  calc primePowerProd f (m * n)
+      = f p (n.factorization p) * primePowerProd f (m * ordCompl[p] n) := by
+        rw [primePowerProd_of_minFac_not_dvd f h1 hp (mul_comm m n) hpm,
+          mul_comm (ordCompl[p] n) m]
+    _ = f p (n.factorization p) * (primePowerProd f m * primePowerProd f (ordCompl[p] n)) := by
+        rw [hih]
+    _ = primePowerProd f m * (f p (n.factorization p) * primePowerProd f (ordCompl[p] n)) :=
+        hcomm.left_comm _
+    _ = primePowerProd f m * primePowerProd f n := by
+        rw [← hmin, ← primePowerProd_of_one_lt f hn1]
 
 /-- **Multiplicativity on coprime arguments.** When `m` and `n` share no prime, the blocks of
-`m * n` are the blocks of `m` together with those of `n`, interleaved by size; moving the blocks
-of `n` past those of `m` is exactly what the commutation hypothesis allows. In a `CommMonoid`
-it is discharged by `fun _ _ _ _ ↦ Commute.all _ _`. -/
+`m * n` are the blocks of `m` together with those of `n`, interleaved by size; sorting them into
+the blocks of `m` followed by those of `n` moves each block of `n` past the blocks of `m` at
+larger primes, and those are the only pairs asked to commute. In a `CommMonoid` it is discharged
+by `fun _ _ _ _ _ ↦ Commute.all _ _`. -/
 theorem primePowerProd_mul_of_coprime (f : ℕ → ℕ → M) {m n : ℕ} (hmn : m.Coprime n)
-    (hf : ∀ p ∈ m.primeFactors, ∀ q ∈ n.primeFactors,
+    (hf : ∀ p ∈ m.primeFactors, ∀ q ∈ n.primeFactors, q < p →
       Commute (f p (m.factorization p)) (f q (n.factorization q))) :
     primePowerProd f (m * n) = primePowerProd f m * primePowerProd f n := by
   obtain ⟨k, hk⟩ : ∃ k, m * n = k := ⟨_, rfl⟩
@@ -231,12 +302,10 @@ theorem primePowerProd_mul_of_coprime (f : ℕ → ℕ → M) {m n : ℕ} (hmn :
         ⟨Nat.eq_one_of_mul_eq_one_right h0, Nat.eq_one_of_mul_eq_one_left h0⟩
       simp
   rcases (Nat.minFac_prime h1.ne').dvd_mul.1 (Nat.minFac_dvd _) with hr | hr
-  · exact primePowerProd_mul_of_minFac_dvd f hmn h1 hr (fun hlt hc hf' ↦ ih _ hlt hc hf' rfl) hf
-  · rw [mul_comm m n] at h1 hr ih ⊢
-    refine (primePowerProd_mul_of_minFac_dvd f hmn.symm h1 hr
-      (fun hlt hc hf' ↦ ih _ hlt hc hf' rfl) fun q hq p hp ↦ (hf p hp q hq).symm).trans ?_
-    exact (Commute.primePowerProd_right f fun q hq ↦
-      (Commute.primePowerProd_right f fun p hp ↦ (hf p hp q hq).symm).symm).symm.eq
+  · exact primePowerProd_mul_of_minFac_dvd_left f hmn h1 rfl hr
+      (fun hlt hc hf' ↦ ih _ hlt hc hf' rfl) hf
+  · exact primePowerProd_mul_of_minFac_dvd_right f hmn h1 rfl hr
+      (fun hlt hc hf' ↦ ih _ hlt hc hf' rfl) hf
 
 end Monoid
 
