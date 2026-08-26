@@ -35,20 +35,20 @@ injective (`CoordinateRing.algHom_injective`) and so extendable to the fraction 
 
 ## Main definitions
 
-* `TauCeti.WeierstrassCurve.Affine.translatedPoint`: the translate `g + P` of the generic point.
-* `TauCeti.WeierstrassCurve.Affine.translation`: the automorphism `τ_P^*` of the function field.
-* `TauCeti.WeierstrassCurve.Affine.translationHom`: the action, as a monoid homomorphism out of
+* `WeierstrassCurve.Affine.translatedPoint`: the translate `g + P` of the generic point.
+* `WeierstrassCurve.Affine.translation`: the automorphism `τ_P^*` of the function field.
+* `WeierstrassCurve.Affine.translationHom`: the action, as a monoid homomorphism out of
   `Multiplicative W.Point`.
 
 ## Main results
 
-* `TauCeti.WeierstrassCurve.Affine.translation_zero` and
-  `TauCeti.WeierstrassCurve.Affine.translation_add`: the action laws, `τ_O^* = 1` and
+* `WeierstrassCurve.Affine.translation_zero` and
+  `WeierstrassCurve.Affine.translation_add`: the action laws, `τ_O^* = 1` and
   `τ_{P + Q}^* = τ_P^* ≫ τ_Q^*`.
-* `TauCeti.WeierstrassCurve.Affine.translation_eq_one_iff` and
-  `TauCeti.WeierstrassCurve.Affine.translation_injective`: the action is faithful.
-* `TauCeti.WeierstrassCurve.Affine.translation_apply_genericX_some` and
-  `TauCeti.WeierstrassCurve.Affine.translation_apply_genericY_some`: for an affine `P` the two
+* `WeierstrassCurve.Affine.translation_eq_one_iff` and
+  `WeierstrassCurve.Affine.translation_injective`: the action is faithful.
+* `WeierstrassCurve.Affine.translation_apply_genericX_some` and
+  `WeierstrassCurve.Affine.translation_apply_genericY_some`: for an affine `P` the two
   coordinate functions are moved by the Weierstrass addition formulas, which is what identifies
   this automorphism with the pullback of `τ_P`.
 
@@ -80,8 +80,6 @@ public section
 open Polynomial WeierstrassCurve WeierstrassCurve.Affine
 
 open scoped Polynomial.Bivariate
-
-namespace TauCeti
 
 namespace WeierstrassCurve.Affine
 
@@ -386,6 +384,5 @@ theorem translation_apply_genericY_some {x₁ y₁ : F} (h : W.Nonsingular x₁ 
 
 end WeierstrassCurve.Affine
 
-end TauCeti
-
 end
+

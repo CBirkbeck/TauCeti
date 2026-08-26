@@ -20,17 +20,17 @@ return satisfies `Nonsingular` as soon as the point is nonzero.
 
 ## Main definitions
 
-* `TauCeti.WeierstrassCurve.Affine.Point.xCoord` and
-  `TauCeti.WeierstrassCurve.Affine.Point.yCoord`: the two coordinates, `0` at the point at
+* `WeierstrassCurve.Affine.Point.xCoord` and
+  `WeierstrassCurve.Affine.Point.yCoord`: the two coordinates, `0` at the point at
   infinity.
 
 ## Main results
 
-* `TauCeti.WeierstrassCurve.Affine.Point.nonsingular_coords` and
-  `TauCeti.WeierstrassCurve.Affine.Point.some_coords`: a nonzero point is `Point.some` of its two
+* `WeierstrassCurve.Affine.Point.nonsingular_coords` and
+  `WeierstrassCurve.Affine.Point.some_coords`: a nonzero point is `Point.some` of its two
   coordinates, which satisfy `Nonsingular`.
-* `TauCeti.WeierstrassCurve.Affine.Point.map_xCoord` and
-  `TauCeti.WeierstrassCurve.Affine.Point.map_yCoord`: both accessors commute with Mathlib's
+* `WeierstrassCurve.Affine.Point.map_xCoord` and
+  `WeierstrassCurve.Affine.Point.map_yCoord`: both accessors commute with Mathlib's
   `Point.map` along an algebra homomorphism, the point at infinity included — the form the
   translation action consumes.
 
@@ -53,8 +53,6 @@ records no `y`).
 public section
 
 open WeierstrassCurve
-
-namespace TauCeti
 
 namespace WeierstrassCurve.Affine.Point
 
@@ -108,27 +106,21 @@ variable {S F K : Type*} [CommRing S] [Field F] [Field K] [Algebra R S] [Algebra
 both sides are `0` there. -/
 @[simp]
 theorem map_xCoord (f : F →ₐ[S] K) (P : (W⁄F).toAffine.Point) :
-    xCoord (_root_.WeierstrassCurve.Affine.Point.map f P)
+    xCoord (Point.map f P)
       = f (xCoord P) := by
   cases P with
-  | zero =>
-    rw [← _root_.WeierstrassCurve.Affine.Point.zero_def, map_zero, xCoord_zero, xCoord_zero,
-      map_zero]
+  | zero => exact f.toRingHom.map_zero.symm
   | some x y h => (rfl)
 
 /-- **The `y`-coordinate commutes with `Point.map`.** -/
 @[simp]
 theorem map_yCoord (f : F →ₐ[S] K) (P : (W⁄F).toAffine.Point) :
-    yCoord (_root_.WeierstrassCurve.Affine.Point.map f P)
+    yCoord (Point.map f P)
       = f (yCoord P) := by
   cases P with
-  | zero =>
-    rw [← _root_.WeierstrassCurve.Affine.Point.zero_def, map_zero, yCoord_zero, yCoord_zero,
-      map_zero]
+  | zero => exact f.toRingHom.map_zero.symm
   | some x y h => (rfl)
 
 end WeierstrassCurve.Affine.Point
-
-end TauCeti
 
 end

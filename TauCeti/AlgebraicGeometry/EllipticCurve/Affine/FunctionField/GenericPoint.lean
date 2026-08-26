@@ -21,19 +21,19 @@ coordinates in the function field, and it is the object that turns statements ab
 
 ## Main definitions
 
-* `TauCeti.WeierstrassCurve.Affine.genericX` and `TauCeti.WeierstrassCurve.Affine.genericY`: the
+* `WeierstrassCurve.Affine.genericX` and `WeierstrassCurve.Affine.genericY`: the
   two coordinate functions, as elements of the function field.
-* `TauCeti.WeierstrassCurve.Affine.genericPoint`: the point of `W⁄F(W)` they cut out.
+* `WeierstrassCurve.Affine.genericPoint`: the point of `W⁄F(W)` they cut out.
 
 ## Main results
 
-* `TauCeti.WeierstrassCurve.Affine.equation_genericX_genericY`: the two coordinate functions
+* `WeierstrassCurve.Affine.equation_genericX_genericY`: the two coordinate functions
   satisfy the Weierstrass equation of the base change. Stated over an arbitrary commutative ring:
   it is the defining relation of the coordinate ring and needs no ellipticity.
-* `TauCeti.WeierstrassCurve.Affine.transcendental_genericX` and
-  `TauCeti.WeierstrassCurve.Affine.genericX_ne_algebraMap`: the coordinate `x` is transcendental
+* `WeierstrassCurve.Affine.transcendental_genericX` and
+  `WeierstrassCurve.Affine.genericX_ne_algebraMap`: the coordinate `x` is transcendental
   over the base field, so it takes no constant value.
-* `TauCeti.WeierstrassCurve.Affine.instIsEllipticBaseChange`: an elliptic curve stays elliptic
+* `WeierstrassCurve.Affine.instIsEllipticBaseChange`: an elliptic curve stays elliptic
   under base change. Mathlib has this for `W.map f` but not for `W⁄A`, which is the form the point
   group of a base change is stated over.
 
@@ -60,8 +60,6 @@ public section
 open Polynomial WeierstrassCurve WeierstrassCurve.Affine
 
 open scoped Polynomial.Bivariate
-
-namespace TauCeti
 
 namespace WeierstrassCurve.Affine
 
@@ -108,7 +106,7 @@ theorem equation_genericX_genericY :
     · simp [genericY_def]
   have h := RingHom.congr_fun key W.polynomial
   simp only [RingHom.comp_apply, AdjoinRoot.mk_self, map_zero] at h
-  rw [_root_.WeierstrassCurve.Affine.Equation, _root_.WeierstrassCurve.Affine.map_polynomial]
+  rw [Affine.Equation, Affine.map_polynomial]
   exact h
 
 section Field
@@ -135,7 +133,7 @@ instance instIsEllipticBaseChange {A : Type*} [CommRing A] [Algebra F A] : (W⁄
 /-- The generic point is nonsingular. -/
 theorem nonsingular_genericX_genericY :
     (W⁄W.FunctionField).toAffine.Nonsingular (genericX W) (genericY W) :=
-  _root_.WeierstrassCurve.Affine.equation_iff_nonsingular.1 (equation_genericX_genericY W)
+  Affine.equation_iff_nonsingular.1 (equation_genericX_genericY W)
 
 /-- **The generic point of `W`**: the tautological point of `W` with coordinates in its own
 function field. -/
@@ -157,7 +155,5 @@ theorem yCoord_genericPoint : Point.yCoord (genericPoint W) = genericY W :=
 end Field
 
 end WeierstrassCurve.Affine
-
-end TauCeti
 
 end
