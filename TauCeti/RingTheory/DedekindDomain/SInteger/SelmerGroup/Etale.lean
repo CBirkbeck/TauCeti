@@ -5,19 +5,18 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
-import Mathlib.NumberTheory.NumberField.ClassNumber
-public import TauCeti.RingTheory.DedekindDomain.SInteger.SelmerGroup
+public import TauCeti.RingTheory.DedekindDomain.SInteger.SelmerGroup.Basic
 
 /-!
-# Selmer groups of a finite etale algebra, and the number-field case
+# Selmer groups of a finite etale algebra
 
 The finiteness of the Selmer group proved in
-`TauCeti.RingTheory.DedekindDomain.SInteger.SelmerGroup` is stated for a Dedekind domain with a
-fraction *field*. The arithmetic application needs it for a finite etale algebra `A` over a
+`TauCeti.RingTheory.DedekindDomain.SInteger.SelmerGroup.Basic` is stated for a Dedekind domain
+with a fraction *field*. The arithmetic application needs it for a finite etale algebra `A` over a
 number field, which is not a field but a product of them. This file makes that step: it forms the
-product of the Selmer groups of the factors, transports it along a decomposition of `A` into
-fields, and records the number-field case where both finiteness hypotheses are theorems.
+product of the Selmer groups of the factors and transports it along a decomposition of `A` into
+fields. The number-field case, where both finiteness hypotheses are theorems of Mathlib, is
+`TauCeti.RingTheory.DedekindDomain.SInteger.SelmerGroup.NumberField`.
 
 ## Main definitions
 
@@ -29,8 +28,6 @@ fields, and records the number-field case where both finiteness hypotheses are t
 
 * `IsDedekindDomain.finite_selmerGroupPi` and `IsDedekindDomain.finite_selmerGroupOfEquiv`: both
   are finite, for finitely many factors each with finite class group and finitely generated units.
-* `IsDedekindDomain.finite_selmerGroup_of_numberField`: over a number field the hypotheses are
-  theorems of Mathlib, so `K(S, n)` is finite for every finite `S` and every `n` with `NeZero n`.
 
 ## Implementation notes
 
@@ -75,6 +72,7 @@ noncomputable def selmerGroupPi :
   Subgroup.pi Set.univ fun i ↦ selmerGroup (R := B i) (K := L i) (S := S i) (n := n)
 
 /-- Membership in the product is membership in each factor. -/
+@[simp]
 lemma mem_selmerGroupPi_iff
     (x : (i : ι) → (L i)ˣ ⧸ (powMonoidHom n : (L i)ˣ →* (L i)ˣ).range) :
     x ∈ selmerGroupPi L B S n ↔
@@ -102,6 +100,7 @@ noncomputable def selmerGroupOfEquiv
   (selmerGroupPi L B S n).comap e.toMonoidHom
 
 /-- Membership in the transported Selmer group is the Selmer condition on each factor. -/
+@[simp]
 lemma mem_selmerGroupOfEquiv_iff
     (e : Aˣ ⧸ (powMonoidHom n : Aˣ →* Aˣ).range ≃*
       ((i : ι) → (L i)ˣ ⧸ (powMonoidHom n : (L i)ˣ →* (L i)ˣ).range))
@@ -121,27 +120,6 @@ theorem finite_selmerGroupOfEquiv [Finite ι] [(i : ι) → Finite (ClassGroup (
     fun x y hxy ↦ Subtype.ext <| e.injective <| congrArg Subtype.val hxy
 
 end Etale
-
-/-! ### Number fields
-
-For the ring of integers of a number field both finiteness hypotheses are theorems of Mathlib --
-the class number theorem and Dirichlet's unit theorem -- so `K(S, n)` is finite for every finite
-`S` and every `n` with `NeZero n`. -/
-
-section NumberField
-
-open NumberField
-
-variable (F : Type*) [Field F] [NumberField F] (S : Set (HeightOneSpectrum (𝓞 F))) (n : ℕ)
-
-/-- The Selmer group `K(S, n)` of a number field is finite for `S` finite and `n` with
-`NeZero n`. -/
-theorem finite_selmerGroup_of_numberField [NeZero n] (hS : S.Finite) :
-    Finite (selmerGroup (R := 𝓞 F) (K := F) (S := S) (n := n)) := by
-  have : Finite S := hS.to_subtype
-  infer_instance
-
-end NumberField
 
 end IsDedekindDomain
 
