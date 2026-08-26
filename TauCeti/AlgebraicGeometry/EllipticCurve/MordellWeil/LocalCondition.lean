@@ -77,6 +77,24 @@ namespace WeierstrassCurve
 
 namespace Affine
 
+section CommRing
+
+variable {R : Type*} [CommRing R] (W : Affine R)
+
+/-- Base changing along the identity algebra map returns the curve itself. Stated over a
+commutative ring: it is a formal `map` identity and uses nothing about `R` beyond its ring
+structure. -/
+lemma baseChange_self : (W⁄R).toAffine = W := by
+  -- `WeierstrassCurve.baseChange` (Weierstrass.lean:236) is a plain `def` and Mathlib exposes no
+  -- unfolding lemma for it, so this one definitional step cannot be replaced by an API rewrite.
+  -- It must be `change` rather than `show`: the step rewrites the goal rather than restating it,
+  -- which is exactly what `linter.style.show` requires. Everything after it is a named rewrite.
+  change W.map (algebraMap R R) = W
+  rw [show algebraMap R R = RingHom.id R from Algebra.algebraMap_self]
+  exact W.map_id
+
+end CommRing
+
 variable {K : Type*} [Field K] (W : Affine K)
 
 section BaseChange
@@ -139,11 +157,6 @@ lemma localRes_unit {a : W.A} (ha : IsUnit a) :
   rw [localRes_mk]
   exact congrArg _ (Units.ext rfl)
 
-lemma baseChange_self : (W⁄K).toAffine = W := by
-  change W.map (algebraMap K K) = W
-  rw [show algebraMap K K = RingHom.id K from Algebra.algebraMap_self]
-  exact W.map_id
-
 section PointMap
 
 variable [DecidableEq K] [DecidableEq L]
@@ -153,7 +166,7 @@ variable [DecidableEq K] [DecidableEq L]
 The transport itself is Mathlib's `AddEquiv.cast`, which is `Equiv.cast (congrArg _ h)` bundled
 as an `AddEquiv`; this is the one fact about it that mentions `Point.some`, and Mathlib has no
 lemma of that shape because `Point` is not one of its indexed families. -/
-lemma cast_point_some {W₁ W₂ : Affine K} (h : W₁ = W₂) {x y : K} (hp : W₁.Nonsingular x y) :
+private lemma cast_point_some {W₁ W₂ : Affine K} (h : W₁ = W₂) {x y : K} (hp : W₁.Nonsingular x y) :
     AddEquiv.cast (M := fun W' : Affine K => W'.Point) h (Point.some x y hp) =
       Point.some x y (h ▸ hp) := by
   subst h; rfl
@@ -165,9 +178,13 @@ noncomputable def pointMap : W.Point →+ (W⁄L).toAffine.Point :=
   (Point.map (W' := W) (Algebra.ofId K L)).comp
     (AddEquiv.cast (M := fun W' : Affine K => W'.Point) W.baseChange_self.symm).toAddMonoidHom
 
-@[simp]
-lemma pointMap_zero : W.pointMap L 0 = 0 := map_zero _
+/-- The base-change map on an affine point carries its coordinates along `algebraMap K L`.
 
+The type ascription on the nonsingularity proof is load-bearing and cannot be dropped:
+`map_nonsingular` produces it at `W.map (algebraMap K L)`, and although `W⁄L` is a reducible
+abbreviation for exactly that, the elaborator does not unfold it at `instances` transparency,
+so the two printings do not unify without being told the target type. -/
+@[simp]
 lemma pointMap_some {x y : K} (h : W.Nonsingular x y) : W.pointMap L (Point.some x y h) =
       Point.some (W' := (W⁄L).toAffine) (algebraMap K L x) (algebraMap K L y)
         (show (W⁄L).toAffine.Nonsingular (algebraMap K L x) (algebraMap K L y) from
@@ -190,6 +207,7 @@ noncomputable def localCondition : Subgroup W.M :=
   ((μ (W := (W⁄L).toAffine)).range).comap (W.localRes L)
 
 open scoped Classical in
+@[simp]
 lemma mem_localCondition_iff {m : W.M} :
     m ∈ W.localCondition L ↔ W.localRes L m ∈ (μ (W := (W⁄L).toAffine)).range :=
   Subgroup.mem_comap
@@ -230,7 +248,7 @@ theorem localRes_comp_μ : (W.localRes L).comp (μ (W := W)) =
     μ_apply]
   cases P with
   | zero =>
-      rw [show (Point.zero : W.Point) = 0 from rfl, μ₀_zero, map_one, W.pointMap_zero L,
+      rw [← Point.zero_def, μ₀_zero, map_one, map_zero (W.pointMap L),
         μ₀_zero (W := (W⁄L).toAffine)]
   | some x y hP =>
       rw [μ₀_some, W.pointMap_some L hP, μ₀_some (W := (W⁄L).toAffine), W.localRes_μX L x]
