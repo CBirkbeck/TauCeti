@@ -31,11 +31,11 @@ of `H`.
 
 * `TauCeti.subgroupCharSum`: the character sum `∑_{h ∈ H} χ(h) h` in `k[G]`;
 * `TauCeti.subgroupCharSum_coeff`: its coefficients are `χ` on `H` and zero off `H`;
-* `TauCeti.of_mul_subgroupCharSum` and `TauCeti.subgroupCharSum_mul_of`: the two translation
-  laws, scaling by `χ(p⁻¹)` for `p ∈ H`;
+* `TauCeti.single_mul_subgroupCharSum` and `TauCeti.subgroupCharSum_mul_single`: the two
+  translation laws, scaling by `χ(p⁻¹)` for `p ∈ H`;
 * `TauCeti.subgroupCharSum_mul_self`: the character sum squares to `Nat.card H` times itself;
-* `TauCeti.subgroupCharSum_eq_one` and `TauCeti.subgroupCharSum_eq_sum`: its values on the two
-  extreme subgroups, `⊥` and `⊤`.
+* `TauCeti.subgroupCharSum_eq_one` and `TauCeti.subgroupCharSum_eq_sum_of_eq_top`: its values on
+  the two extreme subgroups, `⊥` and `⊤`.
 -/
 
 public section
@@ -43,15 +43,6 @@ public section
 namespace TauCeti
 
 variable {k G : Type*} [CommSemiring k] [Group G] (χ : G →* k) (H : Subgroup G) [Fintype H]
-
-/-- The values of a character at `g⁻¹` and at `g` multiply to `1`, in that order. -/
-private theorem char_inv_mul_self (g : G) : χ g⁻¹ * χ g = 1 := by
-  rw [← map_mul, inv_mul_cancel, map_one]
-
-/-- The values of a character at `g` and at `g⁻¹` multiply to `1`, in that order.  Both orders
-are recorded because the two are consumed by rewrites that meet them already associated. -/
-private theorem char_mul_inv_self (g : G) : χ g * χ g⁻¹ = 1 := by
-  rw [← map_mul, mul_inv_cancel, map_one]
 
 /-- The **character sum** `∑_{h ∈ H} χ(h) h` of a multiplicative character `χ` over a finite
 subgroup `H`, as an element of the group algebra `k[G]`. -/
@@ -64,6 +55,7 @@ theorem subgroupCharSum_def :
   (rfl)
 
 /-- The coefficient of a group element in the character sum is `χ` on `H` and zero off `H`. -/
+@[simp]
 theorem subgroupCharSum_coeff [DecidablePred (· ∈ H)] (g : G) :
     (subgroupCharSum χ H).coeff g = if g ∈ H then χ g else 0 := by
   rw [subgroupCharSum_def, MonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply]
@@ -80,36 +72,40 @@ theorem subgroupCharSum_coeff [DecidablePred (· ∈ H)] (g : G) :
       rw [Finsupp.single_eq_of_ne' fun e : (h : G) = g => hg (e ▸ h.property), mul_zero]
 
 /-- Left multiplication by a member of `H` scales the character sum by `χ` of its inverse. -/
-theorem of_mul_subgroupCharSum (p : H) :
-    MonoidAlgebra.of k G (p : G) * subgroupCharSum χ H =
+@[simp]
+theorem single_mul_subgroupCharSum (p : H) :
+    MonoidAlgebra.single (p : G) 1 * subgroupCharSum χ H =
       χ ((p : G)⁻¹) • subgroupCharSum χ H := by
-  rw [subgroupCharSum_def, Finset.mul_sum, Finset.smul_sum]
+  rw [subgroupCharSum_def, ← MonoidAlgebra.of_apply, Finset.mul_sum, Finset.smul_sum]
   simp_rw [mul_smul_comm, ← (MonoidAlgebra.of k G).map_mul]
   apply Fintype.sum_equiv (Equiv.mulLeft p)
   intro h
   simp only [Equiv.coe_mulLeft, Subgroup.coe_mul, map_mul, smul_smul]
-  rw [← mul_assoc, char_inv_mul_self, one_mul]
+  rw [← mul_assoc, map_mul_eq_one χ (inv_mul_cancel (p : G)), one_mul]
 
 /-- Right multiplication by a member of `H` scales the character sum by `χ` of its inverse. -/
-theorem subgroupCharSum_mul_of (p : H) :
-    subgroupCharSum χ H * MonoidAlgebra.of k G (p : G) =
+@[simp]
+theorem subgroupCharSum_mul_single (p : H) :
+    subgroupCharSum χ H * MonoidAlgebra.single (p : G) 1 =
       χ ((p : G)⁻¹) • subgroupCharSum χ H := by
-  rw [subgroupCharSum_def, Finset.sum_mul, Finset.smul_sum]
+  rw [subgroupCharSum_def, ← MonoidAlgebra.of_apply, Finset.sum_mul, Finset.smul_sum]
   simp_rw [smul_mul_assoc, ← (MonoidAlgebra.of k G).map_mul]
   apply Fintype.sum_equiv (Equiv.mulRight p)
   intro h
   simp only [Equiv.coe_mulRight, Subgroup.coe_mul, map_mul, smul_smul]
-  rw [mul_left_comm, char_inv_mul_self, mul_one]
+  rw [mul_left_comm, map_mul_eq_one χ (inv_mul_cancel (p : G)), mul_one]
 
 /-- The character sum squares to the order of `H` times itself. -/
+@[simp]
 theorem subgroupCharSum_mul_self :
     subgroupCharSum χ H * subgroupCharSum χ H = Nat.card H • subgroupCharSum χ H := by
   nth_rewrite 1 [subgroupCharSum_def]
   rw [Finset.sum_mul]
-  simp_rw [smul_mul_assoc, of_mul_subgroupCharSum, smul_smul, char_mul_inv_self, one_smul]
+  simp_rw [smul_mul_assoc, MonoidAlgebra.of_apply, single_mul_subgroupCharSum, smul_smul,
+    ← map_mul, mul_inv_cancel, map_one, one_smul]
   rw [Finset.sum_const, Finset.card_univ, Nat.card_eq_fintype_card]
 
-/-- The character sum over the trivial subgroup is the empty sum, `1`. -/
+/-- Over the trivial subgroup the character sum has the single term `χ 1 • 1`, so it is `1`. -/
 theorem subgroupCharSum_eq_one (h : H = ⊥) : subgroupCharSum χ H = 1 := by
   classical
   ext g
@@ -118,7 +114,7 @@ theorem subgroupCharSum_eq_one (h : H = ⊥) : subgroupCharSum χ H = 1 := by
   · simp [subgroupCharSum_coeff, h, MonoidAlgebra.one_def, Subgroup.mem_bot, hg]
 
 /-- The character sum over the whole group is the `χ`-weighted sum over the group. -/
-theorem subgroupCharSum_eq_sum [Fintype G] (h : H = ⊤) :
+theorem subgroupCharSum_eq_sum_of_eq_top [Fintype G] (h : H = ⊤) :
     subgroupCharSum χ H = ∑ g : G, χ g • MonoidAlgebra.of k G g := by
   rw [subgroupCharSum_def]
   refine Finset.sum_bij (fun h _ => (h : G)) (fun _ _ => Finset.mem_univ _)
