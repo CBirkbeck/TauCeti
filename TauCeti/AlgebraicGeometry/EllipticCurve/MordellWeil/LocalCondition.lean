@@ -84,6 +84,7 @@ variable {R : Type*} [CommRing R] (W : Affine R)
 /-- Base changing along the identity algebra map returns the curve itself. Stated over a
 commutative ring: it is a formal `map` identity and uses nothing about `R` beyond its ring
 structure. -/
+@[simp]
 lemma baseChange_self : (W⁄R).toAffine = W := by
   -- `WeierstrassCurve.baseChange` (Weierstrass.lean:236) is a plain `def` and Mathlib exposes no
   -- unfolding lemma for it, so this one definitional step cannot be replaced by an API rewrite.
@@ -93,37 +94,47 @@ lemma baseChange_self : (W⁄R).toAffine = W := by
   rw [show algebraMap R R = RingHom.id R from Algebra.algebraMap_self]
   exact W.map_id
 
+section Map
+
+variable {S : Type*} [CommRing S] (σ : R →+* S)
+
+lemma map_f : (W.map σ).toAffine.f = W.f.map σ := by
+  simp only [f, Polynomial.map_add, Polynomial.map_pow, Polynomial.map_mul, Polynomial.map_X,
+    Polynomial.map_C, map_a₂, map_a₄, map_a₆]
+
+lemma eval_map_f (x : R) : (W.map σ).toAffine.f.eval (σ x) = σ (W.f.eval x) := by
+  rw [map_f, Polynomial.eval_map, Polynomial.eval₂_at_apply]
+
+lemma map_fCofactor (x : R) : (W.fCofactor x).map σ = (W.map σ).toAffine.fCofactor (σ x) := by
+  simp only [fCofactor, Polynomial.map_add, Polynomial.map_pow, Polynomial.map_mul,
+    Polynomial.map_X, Polynomial.map_C, map_a₂, map_a₄, map_add, map_mul, map_pow]
+
+end Map
+
+section Algebra
+
+variable (S : Type*) [CommRing S] [Algebra R S]
+
+lemma eval_baseChange_f (x : R) :
+    (W⁄S).toAffine.f.eval (algebraMap R S x) = algebraMap R S (W.f.eval x) :=
+  W.eval_map_f (algebraMap R S) x
+
+lemma baseChange_fCofactor (x : R) :
+    (W.fCofactor x).map (algebraMap R S) = (W⁄S).toAffine.fCofactor (algebraMap R S x) :=
+  W.map_fCofactor (algebraMap R S) x
+
+lemma baseChange_f : (W⁄S).toAffine.f = W.f.map (algebraMap R S) :=
+  W.map_f (algebraMap R S)
+
+end Algebra
+
 end CommRing
 
 variable {K : Type*} [Field K] (W : Affine K)
 
 section BaseChange
 
-variable {L₀ : Type*} [Field L₀] (σ : K →+* L₀)
-
-lemma map_f : (W.map σ).toAffine.f = W.f.map σ := by
-  simp only [f, Polynomial.map_add, Polynomial.map_pow, Polynomial.map_mul, Polynomial.map_X,
-    Polynomial.map_C, map_a₂, map_a₄, map_a₆]
-
-lemma eval_map_f (x : K) : (W.map σ).toAffine.f.eval (σ x) = σ (W.f.eval x) := by
-  rw [map_f, Polynomial.eval_map, Polynomial.eval₂_at_apply]
-
-lemma map_fCofactor (x : K) : (W.fCofactor x).map σ = (W.map σ).toAffine.fCofactor (σ x) := by
-  simp only [fCofactor, Polynomial.map_add, Polynomial.map_pow, Polynomial.map_mul,
-    Polynomial.map_X, Polynomial.map_C, map_a₂, map_a₄, map_add, map_mul, map_pow]
-
 variable (L : Type*) [Field L] [Algebra K L]
-
-lemma eval_baseChange_f (x : K) :
-    (W⁄L).toAffine.f.eval (algebraMap K L x) = algebraMap K L (W.f.eval x) :=
-  W.eval_map_f (algebraMap K L) x
-
-lemma baseChange_fCofactor (x : K) :
-    (W.fCofactor x).map (algebraMap K L) = (W⁄L).toAffine.fCofactor (algebraMap K L x) :=
-  W.map_fCofactor (algebraMap K L) x
-
-lemma baseChange_f : (W⁄L).toAffine.f = W.f.map (algebraMap K L) :=
-  W.map_f (algebraMap K L)
 
 /-- The base-change homomorphism `K[X]⧸⟨f⟩ →+* L[X]⧸⟨f⟩` of étale algebras, as an instance of
 `AdjoinRoot.map` (so that its API — `map_of`, `map_root`, `map_comp_map`, `mapRingEquiv` —
@@ -147,11 +158,11 @@ lemma localRes_mk (u : W.Aˣ) :
     W.localRes L (QuotientGroup.mk u) = QuotientGroup.mk (Units.map (W.mapA L).toMonoidHom u) :=
   QuotientGroup.map_mk _ _ _ _ u
 
-/-- The base-change map on square classes, on the class of a unit given as `IsUnit a`.
-
-Deliberately **not** `@[simp]`: the left-hand side is not in simp-normal form, because
-`localRes_mk` rewrites `W.localRes L ↑ha.unit` first, so the attribute could never fire. This
-lemma is for explicit `rw` at the `localRes_μX` call sites below. -/
+/-- The base-change map on square classes, on the class of a unit given as `IsUnit a`. -/
+-- Deliberately NOT `@[simp]`: the left-hand side is not in simp-normal form, because
+-- `localRes_mk` rewrites `W.localRes L ↑ha.unit` first, so the attribute could never fire —
+-- tagging it is what failed the simp-NF lint on this branch. It is for explicit `rw` at the
+-- `localRes_μX` call sites below.
 lemma localRes_unit {a : W.A} (ha : IsUnit a) :
     W.localRes L (ha.unit : W.M) = ((ha.map (W.mapA L)).unit : (W⁄L).toAffine.M) := by
   rw [localRes_mk]
@@ -159,18 +170,19 @@ lemma localRes_unit {a : W.A} (ha : IsUnit a) :
 
 section PointMap
 
-variable [DecidableEq K] [DecidableEq L]
-
+open scoped Classical in
 /-- Transporting an affine point along an equality of curves carries its coordinates unchanged.
 
 The transport itself is Mathlib's `AddEquiv.cast`, which is `Equiv.cast (congrArg _ h)` bundled
 as an `AddEquiv`; this is the one fact about it that mentions `Point.some`, and Mathlib has no
 lemma of that shape because `Point` is not one of its indexed families. -/
-private lemma cast_point_some {W₁ W₂ : Affine K} (h : W₁ = W₂) {x y : K} (hp : W₁.Nonsingular x y) :
+private lemma cast_point_some {W₁ W₂ : Affine K} (h : W₁ = W₂) {x y : K}
+    (hp : W₁.Nonsingular x y) :
     AddEquiv.cast (M := fun W' : Affine K => W'.Point) h (Point.some x y hp) =
       Point.some x y (h ▸ hp) := by
   subst h; rfl
 
+open scoped Classical in
 /-- The base-change homomorphism on points, `W(K) →+ W(L)`: Mathlib's
 `WeierstrassCurve.Affine.Point.map`, aligned with the plain base change `W⁄L` via
 `baseChange_self`. -/
@@ -178,17 +190,17 @@ noncomputable def pointMap : W.Point →+ (W⁄L).toAffine.Point :=
   (Point.map (W' := W) (Algebra.ofId K L)).comp
     (AddEquiv.cast (M := fun W' : Affine K => W'.Point) W.baseChange_self.symm).toAddMonoidHom
 
-/-- The base-change map on an affine point carries its coordinates along `algebraMap K L`.
-
-The type ascription on the nonsingularity proof is load-bearing and cannot be dropped:
-`map_nonsingular` produces it at `W.map (algebraMap K L)`, and although `W⁄L` is a reducible
-abbreviation for exactly that, the elaborator does not unfold it at `instances` transparency,
-so the two printings do not unify without being told the target type. -/
+open scoped Classical in
+/-- The base-change map on an affine point carries its coordinates along `algebraMap K L`. -/
 @[simp]
 lemma pointMap_some {x y : K} (h : W.Nonsingular x y) : W.pointMap L (Point.some x y h) =
       Point.some (W' := (W⁄L).toAffine) (algebraMap K L x) (algebraMap K L y)
         (show (W⁄L).toAffine.Nonsingular (algebraMap K L x) (algebraMap K L y) from
           (W.map_nonsingular (algebraMap K L).injective x y).mpr h) := by
+  -- The type ascription above is load-bearing: `map_nonsingular` produces the nonsingularity
+  -- proof at `W.map (algebraMap K L)`, and although `W⁄L` is a reducible abbreviation for
+  -- exactly that, the elaborator does not unfold it at `instances` transparency, so the two
+  -- identically-printing types do not unify without being told the target.
   rw [pointMap, AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, cast_point_some,
     Point.map_some]
   rfl
@@ -235,7 +247,6 @@ theorem localRes_μX (x : K) :
     simp only [mapA_mk, Polynomial.map_sub,
       Polynomial.map_C, Polynomial.map_X]
 
-variable [DecidableEq K]
 
 open scoped Classical in
 /-- Naturality of the descent map under base change: restricting square classes after the
