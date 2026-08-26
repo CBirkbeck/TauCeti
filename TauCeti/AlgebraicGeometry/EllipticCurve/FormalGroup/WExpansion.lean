@@ -169,7 +169,8 @@ theorem formalWCoeff_recurrence {n : ℕ} (hn : 3 < n) :
 @[simp]
 theorem formalUCoeff_apply (n : ℕ) : formalUCoeff W n = formalWCoeff W (n + 3) := rfl
 
-@[simp]
+/-- The unit part starts at `1`. Not `@[simp]`: with `formalUCoeff_apply` in the simp set this
+is already reachable from `formalWCoeff_three`, and tagging it too is a `simpNF` duplicate. -/
 theorem formalUCoeff_zero : formalUCoeff W 0 = 1 :=
   formalWCoeff_three W
 
