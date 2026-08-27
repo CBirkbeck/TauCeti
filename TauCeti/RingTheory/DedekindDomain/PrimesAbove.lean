@@ -110,6 +110,21 @@ def selmerGroupAbove (L : Type*) [Field L] [Algebra B L] [IsFractionRing B L]
     (S : Set (HeightOneSpectrum R)) (n : ℕ) : Subgroup (Lˣ ⧸ (powMonoidHom n : Lˣ →* Lˣ).range) :=
   selmerGroup (R := B) (K := L) (S := HeightOneSpectrum.primesAbove R B S) (n := n)
 
+/-- `selmerGroupAbove` is the ordinary Selmer group taken over the primes above `S`.
+
+The definition says exactly this, but `selmerGroupAbove` is not `@[expose]`, so a downstream
+module cannot see it; this lemma is how such a module rewrites between the two spellings — in
+particular to reach `IsDedekindDomain.selmerGroupPi` and `selmerGroupOfEquiv`, which are stated
+in terms of `selmerGroup`.
+
+Proved by the parenthesised `(rfl)`: the definition is visible here, whereas a bare `rfl` proof of
+an exported statement would ask for `selmerGroupAbove` to be exposed downstream. -/
+lemma selmerGroupAbove_def (L : Type*) [Field L] [Algebra B L] [IsFractionRing B L]
+    (S : Set (HeightOneSpectrum R)) (n : ℕ) :
+    selmerGroupAbove R B L S n =
+      selmerGroup (R := B) (K := L) (S := HeightOneSpectrum.primesAbove R B S) (n := n) :=
+  (rfl)
+
 /-- A class of units lies in the Selmer group relative to `S` exactly when its
 `valuationOfNeZeroMod n` is trivial at every prime of `B` not lying above `S`, i.e. `n` divides
 the `w`-adic valuation there. -/

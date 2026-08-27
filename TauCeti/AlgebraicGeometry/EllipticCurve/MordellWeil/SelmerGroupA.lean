@@ -7,6 +7,7 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.BadPrimes
 public import TauCeti.RingTheory.DedekindDomain.SelmerGroup
+public import TauCeti.RingTheory.DedekindDomain.SInteger.SelmerGroup.Etale
 
 /-!
 # Step 6 of the weak Mordell–Weil theorem: the image of the descent map lies in `A(S,2)`
@@ -36,8 +37,9 @@ componentwise statement into one about `W.M` along the decomposition `modPowEqui
 
 * `WeierstrassCurve.Affine.selmerGroupFactor`: the `2`-Selmer group of one field factor,
   relative to the primes above the bad primes.
-* `WeierstrassCurve.Affine.selmerGroupPi`: their product over the factors.
-* `WeierstrassCurve.Affine.selmerGroupA`: `A(S,2)`, as a subgroup of `W.M`.
+* `WeierstrassCurve.Affine.selmerGroupA`: `A(S,2)`, as a subgroup of `W.M`. This is
+  `IsDedekindDomain.selmerGroupOfEquiv` at the decomposition of `W.A` into its field factors; the
+  product over the factors is that file's `selmerGroupPi` and is not re-formed here.
 
 ## Main results
 
@@ -85,16 +87,23 @@ section Selmer
 
 variable [W.IsElliptic] [W.IsCharNeTwoNF]
 
-/-- The image of the generic `x - T` representative in the field factor `K[X] ⧸ (p)` is
-`x - θ`. -/
-lemma projFactor_mk_C_sub_X (x : K) (p : W.f.Factors) :
+/-- The image of the generic `x - T` representative in the field factor `K[X] ⧸ (p)` is `x - θ`.
+
+`private`, and deliberately a named lemma rather than an inlined rewrite chain at its one use
+site: `AdjoinRoot.projFactor` is not `@[expose]`, so the chain
+`projFactor_mk, map_sub, mk_X, mk_C, algebraMap_eq` cannot be run underneath the `IsUnit.unit`
+that the use site presents — `rw` reports `motive is not type correct` together with
+`definitions were not unfolded ...: AdjoinRoot.projFactor`. Stated at the top level the equation
+elaborates here, where `projFactor` is visible, and applies at the use site by `exact`. -/
+private lemma projFactor_mk_C_sub_X (x : K) (p : W.f.Factors) :
     AdjoinRoot.projFactor W.f_ne_zero W.squarefree_f p (AdjoinRoot.mk W.f (C x - X)) =
       ι p x - θ p := by
   rw [AdjoinRoot.projFactor_mk, map_sub, AdjoinRoot.mk_X, AdjoinRoot.mk_C,
     AdjoinRoot.algebraMap_eq]
 
-/-- The image of the `2`-torsion `x - T` representative in the field factor `K[X] ⧸ (p)`. -/
-lemma projFactor_mk_C_sub_X_add_fCofactor (x : K) (p : W.f.Factors) :
+/-- The image of the `2`-torsion `x - T` representative in the field factor `K[X] ⧸ (p)`.
+`private`, for the same reason as `projFactor_mk_C_sub_X`. -/
+private lemma projFactor_mk_C_sub_X_add_fCofactor (x : K) (p : W.f.Factors) :
     AdjoinRoot.projFactor W.f_ne_zero W.squarefree_f p
         (AdjoinRoot.mk W.f (C x - X + W.fCofactor x)) =
       ι p x - θ p + AdjoinRoot.mk (p : K[X]) (W.fCofactor x) := by
@@ -109,32 +118,36 @@ noncomputable def selmerGroupFactor (p : W.f.Factors) :
     Subgroup ((𝕃 p)ˣ ⧸ (powMonoidHom 2 : (𝕃 p)ˣ →* (𝕃 p)ˣ).range) :=
   selmerGroupAbove R (W.ringOfIntegersFactor R p) (𝕃 p) (W.badPrimes R) 2
 
-/-- `A(S,2)` in the product decomposition: the product of the `2`-Selmer groups of the field
-factors of `W.A`. -/
-noncomputable def selmerGroupPi :
-    Subgroup ((p : W.f.Factors) → (𝕃 p)ˣ ⧸ (powMonoidHom 2 : (𝕃 p)ˣ →* (𝕃 p)ˣ).range) :=
-  Subgroup.pi Set.univ (W.selmerGroupFactor R)
-
 /-- `A(S,2)`, as a subgroup of `W.M`: the classes whose image in each field factor lies in the
-`2`-Selmer group of that factor. Step 6 asserts that `im μ ≤ A(S,2)`. -/
+`2`-Selmer group of that factor. Step 6 asserts that `im μ ≤ A(S,2)`.
+
+This is `IsDedekindDomain.selmerGroupOfEquiv` — the Selmer group of an étale algebra transported
+along a decomposition into fields — specialised to the decomposition of `W.A` into the factors
+`K[X] ⧸ (p)`. Stating it that way rather than re-forming the product and its comap by hand is
+what makes `Finite (W.selmerGroupA R)` available directly from
+`IsDedekindDomain.finite_selmerGroupOfEquiv`. -/
 noncomputable def selmerGroupA : Subgroup W.M :=
-  (W.selmerGroupPi R).comap
-    (AdjoinRoot.modPowEquivPiFactors W.f_ne_zero W.squarefree_f 2).toMonoidHom
+  IsDedekindDomain.selmerGroupOfEquiv (fun p : W.f.Factors ↦ 𝕃 p)
+    (fun p ↦ W.ringOfIntegersFactor R p)
+    (fun p ↦ HeightOneSpectrum.primesAbove R (W.ringOfIntegersFactor R p) (W.badPrimes R)) 2
+    (AdjoinRoot.modPowEquivPiFactors W.f_ne_zero W.squarefree_f 2)
 
 /-- Membership in `A(S,2)`, componentwise: a square class lies in it exactly when each of its
 components along the decomposition of `W.A` into field factors lies in the Selmer group of that
 factor. -/
+@[simp]
 lemma mem_selmerGroupA_iff (m : W.M) :
     m ∈ W.selmerGroupA R ↔ ∀ p : W.f.Factors,
       AdjoinRoot.modPowEquivPiFactors W.f_ne_zero W.squarefree_f 2 m p ∈
         W.selmerGroupFactor R p := by
-  simp [selmerGroupA, selmerGroupPi, Subgroup.mem_pi]
+  simp [selmerGroupA, selmerGroupFactor, IsDedekindDomain.selmerGroupAbove_def]
 
 /-- Membership of the class of a unit in the `2`-Selmer group of a field factor: its valuation is
 even at every prime of the ring of integers not lying above a bad prime.
 
 Proved through `mem_selmerGroupAbove_iff` rather than by unfolding: `selmerGroupAbove` is not
 `@[expose]`, so its definition is unavailable here, and only its characterising lemma is. -/
+@[simp]
 lemma mem_selmerGroupFactor_unit_iff (p : W.f.Factors) (u : (𝕃 p)ˣ) :
     (QuotientGroup.mk u : (𝕃 p)ˣ ⧸ (powMonoidHom 2 : (𝕃 p)ˣ →* (𝕃 p)ˣ).range) ∈
         W.selmerGroupFactor R p ↔
@@ -157,9 +170,9 @@ lemma mem_selmerGroupFactor_of_eval_f_ne_zero {x y : K} (h : W.Equation x y)
 
 /-- `2`-torsion case of the arithmetic input: `f x = 0`.
 
-By `projFactor_mk_C_sub_X_add_fCofactor` the `p`-component of `μX x` is `x - θ + fCofactor x`,
-which by `valuation_projFactor_torsion_eq_one` is a unit at every prime `w` not lying above a bad
-prime. Its valuation is therefore `0`, in particular even. -/
+Projecting the corrected representative to the factor gives `x - θ + fCofactor x`, which by
+`valuation_projFactor_torsion_eq_one` is a unit at every prime `w` not lying above a bad prime.
+Its valuation is therefore `0`, in particular even. -/
 lemma mem_selmerGroupFactor_of_eval_f_eq_zero {x : K} (hx : W.f.eval x = 0) (p : W.f.Factors) :
     (QuotientGroup.mk ((isUnit_mk_sub_X_add_fCofactor_of_eval_f_eq_zero hx).map
       (AdjoinRoot.projFactor W.f_ne_zero W.squarefree_f p)).unit :

@@ -171,33 +171,56 @@ section BadPrimes
 variable (R : Type*) [CommRing R] [IsDedekindDomain R] [Algebra R K] [IsFractionRing R K]
   {v : HeightOneSpectrum R}
 
+/-- **Membership in `badPrimes`, as an arithmetic condition.** A prime is bad exactly when `2` or
+`Δ` fails to be a unit there, or one of `a₂`, `a₄`, `a₆` fails to be integral there.
+
+This is the characteristic lemma for `badPrimes`: the five projections below are read off from it,
+and it is what a consumer should use rather than unfolding the nested unions in the definition. -/
+@[simp]
+lemma mem_badPrimes_iff :
+    v ∈ W.badPrimes R ↔
+      v.valuation K 2 ≠ 1 ∨ v.valuation K W.Δ ≠ 1 ∨ 1 < v.valuation K W.a₂ ∨
+        1 < v.valuation K W.a₄ ∨ 1 < v.valuation K W.a₆ := by
+  simp only [badPrimes, Set.mem_union, Set.mem_ofPred_eq, HeightOneSpectrum.Support]
+  tauto
+
+/-- The five good-prime conditions, packaged: at a prime that is not bad, `2` and `Δ` are units
+and `a₂`, `a₄`, `a₆` are integral. -/
+lemma notMem_badPrimes_iff :
+    v ∉ W.badPrimes R ↔
+      v.valuation K 2 = 1 ∧ v.valuation K W.Δ = 1 ∧ v.valuation K W.a₂ ≤ 1 ∧
+        v.valuation K W.a₄ ≤ 1 ∧ v.valuation K W.a₆ ≤ 1 := by
+  rw [W.mem_badPrimes_iff R]
+  push Not
+  rfl
+
 /-- At a good prime, `a₂` is integral: a prime where it is not lies in its support, hence is
 bad. -/
 lemma valuation_a₂_le_one_of_notMem_badPrimes (hv : v ∉ W.badPrimes R) :
     v.valuation K W.a₂ ≤ 1 :=
-  not_lt.mp fun hlt ↦ hv (.inl (.inl (.inr hlt)))
+  ((W.notMem_badPrimes_iff R).mp hv).2.2.1
 
 /-- At a good prime, `a₄` is integral. -/
 lemma valuation_a₄_le_one_of_notMem_badPrimes (hv : v ∉ W.badPrimes R) :
     v.valuation K W.a₄ ≤ 1 :=
-  not_lt.mp fun hlt ↦ hv (.inl (.inr hlt))
+  ((W.notMem_badPrimes_iff R).mp hv).2.2.2.1
 
 /-- At a good prime, `a₆` is integral. -/
 lemma valuation_a₆_le_one_of_notMem_badPrimes (hv : v ∉ W.badPrimes R) :
     v.valuation K W.a₆ ≤ 1 :=
-  not_lt.mp fun hlt ↦ hv (.inr hlt)
+  ((W.notMem_badPrimes_iff R).mp hv).2.2.2.2
 
 /-- At a good prime, the discriminant is a unit. This is the half of `badPrimes` that makes the
 reduction of `W` nonsingular there, and it is what `valuation_deriv_root_eq_one` consumes. -/
 lemma valuation_Δ_eq_one_of_notMem_badPrimes (hv : v ∉ W.badPrimes R) :
     v.valuation K W.Δ = 1 :=
-  not_not.mp fun hne ↦ hv (.inl (.inl (.inl (.inr hne))))
+  ((W.notMem_badPrimes_iff R).mp hv).2.1
 
 /-- At a good prime, `2` is a unit. Needed because the descent is a `2`-descent: the completion
 of the square behind `equation_iff_eval_f_eq_sq` must stay invertible. -/
 lemma valuation_two_eq_one_of_notMem_badPrimes (hv : v ∉ W.badPrimes R) :
     v.valuation K 2 = 1 :=
-  not_not.mp fun hne ↦ hv (.inl (.inl (.inl (.inl hne))))
+  ((W.notMem_badPrimes_iff R).mp hv).1
 
 end BadPrimes
 
@@ -357,15 +380,30 @@ lemma valuation_deriv_root_eq_one
   exact W.valuation_algebraMap_eq_one R p
     (W.valuation_Δ_eq_one_of_notMem_badPrimes R (W.under_notMem_badPrimes R p hw))
 
+/-- The cofactor of `x - θ` in the Weierstrass cubic, rewritten around the derivative: it differs
+from `f' θ = 3θ² + 2a₂θ + a₄` by the multiple `(x - θ)(x + 2θ + a₂)`.
+
+Both `valuation_cofactor_eq_one` and `valuation_projFactor_torsion_eq_one` turn on this single
+identity — the first to see that the cofactor is a unit when `x - θ` is not, the second to see
+that the two coincide when `x = θ`. It is stated in the shape `mk_fCofactor_eq` produces, so that
+both call sites rewrite with it directly. -/
+private lemma cofactor_eq_sub_mul_add_deriv {L : Type*} [CommRing L] (s t A₂ A : L) :
+    t ^ 2 + (s + A₂) * t + (s ^ 2 + A₂ * s + A)
+      = (s - t) * (s + 2 * t + A₂) + (3 * t ^ 2 + 2 * A₂ * t + A) := by
+  ring
+
 /-- At a prime `w` not above a bad prime, if `x` is `w`-integral and `x - θ` is not a `w`-unit,
-then the cofactor `x² + θx + θ² + a₂(x + θ) + a₄` is a `w`-unit: modulo `x - θ` it equals
-`f' θ`. -/
+then the cofactor `θ² + (x + a₂)θ + (x² + a₂x + a₄)` is a `w`-unit: modulo `x - θ` it equals
+`f' θ`.
+
+Stated in the shape `mk_fCofactor_eq` produces, so that it applies to the image of `fCofactor x`
+in the field factor without reshaping. -/
 lemma valuation_cofactor_eq_one {x : K}
     (hw : w ∉ HeightOneSpectrum.primesAbove R (W.ringOfIntegersFactor R p) (W.badPrimes R))
     (hx : w.valuation (𝕃 p) (ι p x) ≤ 1)
     (hlt : w.valuation (𝕃 p) (ι p x - θ p) < 1) :
-    w.valuation (𝕃 p) (ι p x ^ 2 + θ p * ι p x + θ p ^ 2
-      + ι p W.a₂ * (ι p x + θ p) + ι p W.a₄) = 1 := by
+    w.valuation (𝕃 p) (θ p ^ 2 + (ι p x + ι p W.a₂) * θ p
+      + (ι p x ^ 2 + ι p W.a₂ * ι p x + ι p W.a₄)) = 1 := by
   set L := 𝕃 p
   set ν := w.valuation L
   set t := θ p
@@ -380,9 +418,7 @@ lemma valuation_cofactor_eq_one {x : K}
   have hlt' : ν ((s - t) * (s + 2 * t + A₂)) < ν (3 * t ^ 2 + 2 * A₂ * t + A) := by
     rw [hderiv, map_mul]
     exact (mul_le_of_le_one_right' h2t).trans_lt hlt
-  rw [show s ^ 2 + t * s + t ^ 2 + A₂ * (s + t) + A
-      = (s - t) * (s + 2 * t + A₂) + (3 * t ^ 2 + 2 * A₂ * t + A) by ring,
-    ν.map_add_eq_of_lt_right hlt', hderiv]
+  rw [cofactor_eq_sub_mul_add_deriv s t A₂ A, ν.map_add_eq_of_lt_right hlt', hderiv]
 
 /-- If `x` is a root of `f`, then at a prime `w` not above a bad prime the `p`-component of the
 `x - T` representative is a unit.
@@ -415,17 +451,16 @@ lemma valuation_projFactor_torsion_eq_one {x : K} (hx : W.f.eval x = 0)
     linear_combination hs - W.root_cubic_eq_zero p
   rcases mul_eq_zero.mp hprod with h0 | h0
   · -- `x = θ`: the component is `f' θ`
-    rw [h0, zero_add, show t ^ 2 + (s + A₂) * t + (s ^ 2 + A₂ * s + A)
-        = (s - t) * (s + 2 * t + A₂) + (3 * t ^ 2 + 2 * A₂ * t + A) by ring,
-      h0, zero_mul, zero_add, hderiv]
+    rw [h0, zero_add, cofactor_eq_sub_mul_add_deriv s t A₂ A, h0, zero_mul, zero_add, hderiv]
   · -- the cofactor vanishes: the component is `x - θ`, and `f' θ = -(x - θ)(x + 2θ + a₂)`
     rw [h0, add_zero]
     have hst : s - t ∈ ν.integer := sub_mem hs1 ht
     have h2t : s + 2 * t + A₂ ∈ ν.integer :=
       add_mem (add_mem hs1 (mul_mem (ofNat_mem _ 2) ht)) hA₂
-    refine ν.eq_one_of_mul_eq_one hst h2t ?_
-    rw [show (s - t) * (s + 2 * t + A₂) = -(3 * t ^ 2 + 2 * A₂ * t + A) by linear_combination h0,
-      Valuation.map_neg, hderiv]
+    -- the same identity again: with the cofactor `0`, it reads `(x - θ)(x + 2θ + a₂) = -f' θ`
+    have hneg : (s - t) * (s + 2 * t + A₂) = -(3 * t ^ 2 + 2 * A₂ * t + A) := by
+      linear_combination h0
+    exact ν.eq_one_of_mul_eq_one hst h2t (by rw [hneg, Valuation.map_neg, hderiv])
 
 end RingOfIntegers
 
@@ -448,7 +483,7 @@ include h hx hu hw
 The coefficients `a₂`, `a₄`, `a₆` and the root `θ` are `w`-integral, so `1 < ν x` makes the
 leading term of the cubic dominate: `ν (f x) = ν x ³`, hence `ν y ² = ν x ³`. Also `ν θ ≤ 1 < ν x`
 gives `ν (x - θ) = ν x`. Therefore `ν (x - θ) = ν (y / x) ²` is an even power. -/
-lemma even_valuationOfNeZero_sub_root_of_one_lt
+private lemma even_valuationOfNeZero_sub_root_of_one_lt
     (hx' : 1 < w.valuation (𝕃 p) (ι p x)) :
     (2 : ℤ) ∣ Multiplicative.toAdd (w.valuationOfNeZero u) := by
   set L := 𝕃 p
@@ -483,7 +518,7 @@ Over `L` the Weierstrass equation factors as `y ² = (x - θ) * c` with cofactor
 `c = x ² + θ x + θ ² + a₂ (x + θ) + a₄`. If `x - θ` is a `w`-unit there is nothing to do.
 Otherwise `ν (x - θ) < 1`, and since `c = (x - θ) * (x + 2 θ + a₂) + f' θ` with `f' θ` a `w`-unit,
 the cofactor is a `w`-unit. Hence `ν (x - θ) = ν y ²` is an even power. -/
-lemma even_valuationOfNeZero_sub_root_of_le_one
+private lemma even_valuationOfNeZero_sub_root_of_le_one
     (hx' : w.valuation (𝕃 p) (ι p x) ≤ 1) :
     (2 : ℤ) ∣ Multiplicative.toAdd (w.valuationOfNeZero u) := by
   set L := 𝕃 p
@@ -497,8 +532,8 @@ lemma even_valuationOfNeZero_sub_root_of_le_one
   have heqL : (algebraMap K L y) ^ 2 = algebraMap K L x ^ 3 + A₂ * algebraMap K L x ^ 2 +
       A * algebraMap K L x + algebraMap K L W.a₆ := by
     rw [hA₂def, hAdef, ← W.map_eval_f, (equation_iff_eval_f_eq_sq W x y).mp h, map_pow]
-  have hfac : (u : L) * (algebraMap K L x ^ 2 + t * algebraMap K L x + t ^ 2
-        + A₂ * (algebraMap K L x + t) + A) =
+  have hfac : (u : L) * (t ^ 2 + (algebraMap K L x + A₂) * t
+        + (algebraMap K L x ^ 2 + A₂ * algebraMap K L x + A)) =
       (algebraMap K L y) ^ 2 := by
     rw [hu]
     linear_combination -W.root_cubic_eq_zero p - heqL
@@ -510,8 +545,8 @@ lemma even_valuationOfNeZero_sub_root_of_le_one
   -- otherwise `w` divides `x - θ`, and then it cannot divide the cofactor
   replace hlt : ν (u : L) < 1 := lt_of_le_of_ne hu1 hlt
   rw [hu] at hlt
-  have hcof : ν (algebraMap K L x ^ 2 + t * algebraMap K L x + t ^ 2
-      + A₂ * (algebraMap K L x + t) + A) = 1 :=
+  have hcof : ν (t ^ 2 + (algebraMap K L x + A₂) * t
+      + (algebraMap K L x ^ 2 + A₂ * algebraMap K L x + A)) = 1 :=
     W.valuation_cofactor_eq_one R p hw hx' hlt
   have hy0 : algebraMap K L y ≠ 0 := (_root_.map_ne_zero _).mpr (W.y_ne_zero_of_eval_f_ne_zero h hx)
   have hkey : ν (u : L) = ν ((Units.mk0 _ hy0 : Lˣ) : L) ^ 2 := by
