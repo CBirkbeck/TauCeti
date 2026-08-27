@@ -64,8 +64,10 @@ sign at every real place. The extra factor `θ` is what absorbs the sign that th
 not have to. -/
 theorem isTotallyPositive_or_neg_of_mul_ringOfIntegersQuadraticConj_eq_neg_one
     (hmin : minpoly ℤ θ = X ^ 2 - C d) (hgen : Algebra.adjoin ℚ {(θ : K)} = ⊤) {u : 𝓞 K}
-    (hu : u ≠ 0) (hnorm : u * ringOfIntegersQuadraticConj hmin hgen u = -1) :
+    (hnorm : u * ringOfIntegersQuadraticConj hmin hgen u = -1) :
     IsTotallyPositive ((θ * u : 𝓞 K) : K) ∨ IsTotallyPositive (-((θ * u : 𝓞 K) : K)) := by
+  -- `u = 0` would make the norm `0`, not `-1`.
+  have hu : u ≠ 0 := by rintro rfl; simp at hnorm
   have hθK : ((θ : 𝓞 K) : K) ≠ 0 := coe_gen_ne_zero hmin
   have huK : (u : K) ≠ 0 := RingOfIntegers.coe_ne_zero_iff.mpr hu
   have hu' : (u : K) * quadraticConj hmin hgen (u : K) = -1 := by

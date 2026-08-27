@@ -228,7 +228,7 @@ theorem exists_nonempty_prod_narrowMk0_eq_one (hmin : minpoly ℤ θ = X ^ 2 - C
         (u : 𝓞 K) * ringOfIntegersQuadraticConj hmin hgen (u : 𝓞 K) = 1 := fun u =>
       (mul_ringOfIntegersQuadraticConj_unit_eq_one_or_neg_one hmin hgen u).resolve_right
         fun h => hA ⟨u, isTotallyPositive_or_neg_of_mul_ringOfIntegersQuadraticConj_eq_neg_one
-          hmin hgen u.ne_zero h⟩
+          hmin hgen h⟩
     obtain ⟨ε, hεpos, hεsq⟩ := exists_isTotallyPositive_notMem_square hmin hgen hcomplex hnormone
     refine exists_nonempty_prod_narrowMk0_eq_one_of_unit hmin hgen hprime hover hεpos fun v hv =>
       hεsq ?_
