@@ -61,10 +61,11 @@ noncomputable def genericX : W.FunctionField :=
 noncomputable def genericY : W.FunctionField :=
   algebraMap W.CoordinateRing W.FunctionField (AdjoinRoot.root W.polynomial)
 
-/-- **The defining equation of `genericX`.** Under the module system a `def`'s body is sealed
-across the module boundary even inside a `public section`, so a downstream file can unfold it by
-neither `rw` nor `simp only`. This lemma and `genericY_def` are how the two are computed with
-from outside. -/
+/-- **The defining equation of `genericX`.** Under the module system a `def`'s body is not
+exposed across the module boundary even inside a `public section`, so a downstream file can
+unfold `genericX` by neither `simp only` — *Invalid simp theorem: Expected a definition with an
+exposed body* — nor `rw`, there being no equation lemma for it to use. This lemma and
+`genericY_def` are how the two are computed with from outside. -/
 theorem genericX_def : W.genericX =
     algebraMap W.CoordinateRing W.FunctionField (algebraMap R[X] W.CoordinateRing X) := (rfl)
 
@@ -76,14 +77,6 @@ theorem genericY_def : W.genericY =
 noncomputable abbrev functionFieldCurve : WeierstrassCurve.Affine W.FunctionField :=
   W.map (algebraMap R W.FunctionField)
 
-/-- The composite `R → W.FunctionField` factors through the coordinate ring. Used to turn
-statements about the base-changed curve into statements about images under
-`algebraMap W.CoordinateRing W.FunctionField`. -/
-theorem algebraMap_functionField_eq_comp :
-    (algebraMap R W.FunctionField : R →+* W.FunctionField) =
-      (algebraMap W.CoordinateRing W.FunctionField).comp (algebraMap R W.CoordinateRing) :=
-  (IsScalarTower.algebraMap_eq R W.CoordinateRing W.FunctionField).symm
-
 /-- **Evaluating at the generic point is reduction modulo the Weierstrass relation.** A bivariate
 polynomial over `R`, pushed to the function field and evaluated at `(genericX, genericY)`, is the
 image of its class in the coordinate ring.
@@ -94,7 +87,8 @@ theorem evalEval_genericPoint (p : R[X][Y]) :
     (p.map (mapRingHom (algebraMap R W.FunctionField))).evalEval W.genericX W.genericY =
       algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W p) := by
   conv_lhs =>
-    rw [algebraMap_functionField_eq_comp W, ← mapRingHom_comp, ← Polynomial.map_map]
+    rw [IsScalarTower.algebraMap_eq R W.CoordinateRing W.FunctionField, ← mapRingHom_comp,
+      ← Polynomial.map_map]
   set g := algebraMap W.CoordinateRing W.FunctionField
   set q := Polynomial.map (mapRingHom (algebraMap R W.CoordinateRing)) p with hq
   -- `genericX` and `genericY` are already of the form `g _`; say so, or the rewrite below
