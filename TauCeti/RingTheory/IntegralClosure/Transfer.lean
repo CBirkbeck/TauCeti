@@ -9,7 +9,7 @@ public import Mathlib.Algebra.Module.Torsion.Free
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Mathlib.RingTheory.IntegralClosure.IsIntegralClosure.Basic
 public import Mathlib.RingTheory.Localization.FractionRing
-public import Mathlib.RingTheory.Noetherian.Defs
+public import Mathlib.RingTheory.Noetherian.Basic
 
 /-!
 # Transport principles for integral closures and their finiteness
@@ -62,7 +62,11 @@ of `R` in `B`. The converse of Mathlib's `IsIntegralClosure.tower_top`. -/
 theorem IsIntegralClosure.tower_bot {R A B C : Type*} [CommRing R] [CommRing A] [CommRing B]
     [CommRing C] [Algebra R A] [Algebra R B] [Algebra A B] [Algebra C B] [IsScalarTower R A B]
     [IsIntegralClosure C A B] [Algebra.IsIntegral R A] : IsIntegralClosure C R B := by
-  sorry
+  refine ⟨IsIntegralClosure.algebraMap_injective C A B, fun {x} ↦ ⟨fun hx ↦ ?_, fun hy ↦ ?_⟩⟩
+  · -- integral over `R` ⇒ integral over `A`, so it is hit by `C`
+    exact (IsIntegralClosure.isIntegral_iff (A := C) (R := A)).mp hx.tower_top
+  · -- hit by `C` ⇒ integral over `A`, and `A` is integral over `R`
+    exact isIntegral_trans x ((IsIntegralClosure.isIntegral_iff (A := C) (R := A)).mpr hy)
 
 /-- Source: Stacks, Lemma 10.161.12 (tag 032N), proof: "Choose a finite normal field extension
 `M/K` containing `L`. As `R` is Noetherian it suffices to show that the integral closure of `R`
@@ -75,7 +79,18 @@ theorem IsIntegralClosure.finite_of_injective {A : Type*} [CommRing A] [IsNoethe
     [IsIntegralClosure C A M] [Algebra A C'] [Algebra C' K'] [IsScalarTower A C' K']
     [IsIntegralClosure C' A K'] [Module.Finite A C'] (ι : M →ₐ[A] K')
     (hι : Function.Injective ι) : Module.Finite A C := by
-  sorry
+  -- `C → M → K'` makes `C` an algebra over which `IsIntegralClosure.lift` can land in `C'`
+  let _ : Algebra C K' := (ι.toRingHom.comp (algebraMap C M)).toAlgebra
+  have : IsScalarTower A C K' := IsScalarTower.of_algebraMap_eq fun a ↦ by
+    change algebraMap A K' a = ι (algebraMap C M (algebraMap A C a))
+    rw [← IsScalarTower.algebraMap_apply A C M a, AlgHom.commutes]
+  have : Algebra.IsIntegral A C := ⟨fun x ↦ IsIntegralClosure.isIntegral A M x⟩
+  have hinj : Function.Injective (IsIntegralClosure.lift (S := C) A C' K') := fun a b hab ↦ by
+    refine IsIntegralClosure.algebraMap_injective C A M (hι ?_)
+    have h := congrArg (algebraMap C' K') hab
+    rwa [IsIntegralClosure.algebraMap_lift, IsIntegralClosure.algebraMap_lift] at h
+  exact Module.Finite.of_injective
+    (IsIntegralClosure.lift (S := C) A C' K').toLinearMap hinj
 
 /-- Source: Stacks, Lemma 10.161.5 (tag 032I), proof: "Let `M` be a finite field extension of
 the fraction field of `S`. Then `M` is also a finite field extension of `K`" (`S` finite over
