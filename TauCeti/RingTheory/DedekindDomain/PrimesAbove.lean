@@ -22,9 +22,9 @@ relative to when the "bad" primes are given downstairs:
 ## Main definitions
 
 * `IsDedekindDomain.HeightOneSpectrum.comapOfNeBot`: the contraction of a height-one prime along
-  an arbitrary ring homomorphism, given that the contraction is nonzero. Mathlib's
-  `HeightOneSpectrum.comap` covers the surjective case; this covers the integral-embedding case,
-  where surjectivity fails.
+  an arbitrary ring homomorphism, given that the contraction is nonzero. It generalises Mathlib's
+  `HeightOneSpectrum.comap`, which derives that hypothesis from surjectivity; the maps needed here
+  are embeddings into completions, which are neither surjective nor integral.
 * `IsDedekindDomain.HeightOneSpectrum.primesAbove`: the primes of `B` above a set of primes
   of `R`, as a preimage under `HeightOneSpectrum.under`.
 * `IsDedekindDomain.selmerGroupAbove`: the `n`-Selmer group of `L` relative to the primes of `B`
@@ -111,11 +111,14 @@ variable {B C : Type*} [CommRing B] [IsDedekindDomain B] [CommRing C] [IsDedekin
 homomorphism `ψ : B →+* C`, given that the contraction is nonzero.
 
 Mathlib's `IsDedekindDomain.HeightOneSpectrum.comap` is the same construction, but it asks for `ψ`
-to be **surjective** and derives the `ne_bot` field from that. The maps this repository contracts
-along are integral embeddings — a ring of integers of a global field factor into the ring of
-integers of a local one — which are never surjective, so that hypothesis is unavailable and the
-`ne_bot` hypothesis is taken directly instead. The two agree wherever both apply; neither is a
-special case of the other in Lean, since the hypotheses differ.
+to be **surjective** and derives the `ne_bot` field from that. `comapOfNeBot` **generalises** it:
+the surjective case is recovered by supplying `(Ideal.eq_bot_of_comap_eq_bot' hf).mt w.ne_bot`, and
+only the converse fails.
+
+The generality is needed because the maps contracted along here are embeddings into completions —
+`R → v.adicCompletionIntegers K` — which are neither surjective, so Mathlib's `comap` does not
+apply, nor integral `Algebra` maps, so `HeightOneSpectrum.under` does not either. (`ℤ → ℤ_p` is
+flat, not integral.) The `ne_bot` hypothesis has to be supplied by hand.
 
 Not `@[simps]`: the generated `asIdeal` projection is proved by `rfl`, and a bare `rfl` proof of a
 statement exported from this module would require `comapOfNeBot` and its field proofs to be
