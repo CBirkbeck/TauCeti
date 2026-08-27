@@ -18,9 +18,10 @@ unit and every fraction `φ t / φ s` is power-bounded
 (`TauCeti.Huber.PairOfDefinition.existsUnique_continuous_ringHom_completion_locTopology`).
 Wedhorn's Lemma 8.1 replaces those two algebraic conditions by a single *geometric* one — that
 `Spa(φ)` factors
-through the rational subset `U = R(T/s)`. This file carries that replacement out **for targets
-whose maximal ideals are open** — see *The hypothesis that is not yet Wedhorn's* below, because
-that class does not include the rings Wedhorn applies Lemma 8.1 to.
+through the rational subset `U = R(T/s)`. This file carries that replacement out with the unit
+`φ s` kept as a hypothesis, which asks nothing of the target's maximal ideals; Wedhorn's own
+shape, where the unit is *derived* from the geometric condition, follows as a corollary for
+targets whose maximal ideals are open — see *The hypothesis that is not yet Wedhorn's* below.
 
 Wedhorn's proof has three steps, and all three are discharged here:
 
@@ -33,9 +34,10 @@ The step `φ s ∈ B^×` is Wedhorn's Proposition 7.52(2), which is on hand as
 `TauCeti.ValuationSpectrum.isUnit_of_forall_not_vle_zero`; the step `|φ(t)/φ(s)|_w ≤ 1` is a
 division by that unit. The step from there to `φ(t)/φ(s) ∈ B⁺` is Proposition 7.52(1), available
 as `TauCeti.ValuationSpectrum.mem_of_forall_vle_one`, which the assembly consumes at its one use
-site. All three steps are therefore proved, and the result below is Wedhorn's Lemma 8.1 in
-conditional form — for targets whose maximal ideals are open, and **not** in the generality
-Wedhorn states it in; see *The hypothesis that is not yet Wedhorn's* below.
+site. All three steps are therefore proved. Only step 1 asks anything of maximal ideals, so the
+assembly takes the unit as a hypothesis and steps 2 and 3 carry the rest; Wedhorn's own statement,
+which derives the unit, is the corollary obtained by discharging step 1 under `hmax`. See *The
+hypothesis that is not yet Wedhorn's* below for what that costs and what it does not cost.
 
 The other half of Lemma 8.1, that `Spa ρ : Spa A⟨T/s⟩ → Spa A` factors through `U`, is already
 `TauCeti.ValuationSpectrum.spaComapLoc_mem_rationalSubset`; it is not repeated here.
@@ -46,10 +48,13 @@ The other half of Lemma 8.1, that `Spa ρ : Spa A⟨T/s⟩ → Spa A` factors th
   `Spa (B, B⁺)` pulls back into `R(T/s)`, the denominator becomes a unit in `B`.
 * `TauCeti.ValuationSpectrum.vle_one_of_comap_mem_rationalSubset` : at a point whose pullback
   lies in `R(T/s)`, the fraction `φ t / φ s` is sub-unit.
+* `existsUnique_continuous_ringHom_of_isUnit_of_forall_comap_mem_rationalSubset` : the geometric
+  universal property — a continuous `φ : A → B` whose `Spa(φ)` factors through `R(T/s)` and whose
+  `φ s` is a unit extends across `A → A⟨T/s⟩` in exactly one continuous way. Nothing is asked of
+  the maximal ideals of `B`.
 * `TauCeti.ValuationSpectrum.existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset` :
-  the geometric universal property — a continuous `φ : A → B` whose `Spa(φ)` factors through
-  `R(T/s)` extends across `A → A⟨T/s⟩` in exactly one continuous way, for a target whose maximal
-  ideals are open.
+  the same, with the unit obtained from the geometric condition by step 1, for a target whose
+  maximal ideals are open.
 
 ## The hypothesis that is not yet Wedhorn's
 
@@ -57,8 +62,13 @@ The other half of Lemma 8.1, that `Spa ρ : Spa A⟨T/s⟩ → Spa A` factors th
 is not harmless: by `TauCeti.Huber.IsTateRing.isOpen_iff_eq_top` an ideal of a Tate ring is open
 exactly when it is `⊤`, so a nonzero Tate ring has no open maximal ideal at all. Wedhorn states
 Lemma 8.1 for a complete *affinoid* target, and the affinoid rings §8 works with are Tate in its
-principal case. **So the result below is vacuous for Tate targets, the principal case of §8, and
-must not be cited as Lemma 8.1 without that restriction.**
+principal case. **So the `hmax` corollary below is vacuous for Tate targets, the principal case
+of §8, and must not be cited as Lemma 8.1 without that restriction.**
+
+The restriction is confined to that corollary. The theorem it comes from takes `φ s` being a unit
+as a hypothesis and asks nothing of maximal ideals, so it applies to Tate targets the moment a
+unit criterion for them exists; what is missing is a form of Wedhorn's Proposition 7.52(2) for
+complete Tate rings, which belongs to `Spa/Points.lean` and not to this file.
 
 It is non-vacuous for *complete* adic Huber targets — `ℤ_p` and its kin — and that is the
 generality in which it is stated. Completeness is doing work in that sentence, not decoration: in
@@ -203,13 +213,45 @@ openness of `B⁺`, `[IsIntegrallyClosedIn Bplus B]` and `[IsHuberRing B]`. The 
 so they are carried by the single hypothesis `hB` rather than spelled out one by one.
 
 Asking `B` to be Huber is not a restriction added here: Wedhorn states Lemma 8.1 for a continuous
-homomorphism into a *complete affinoid ring*, and an affinoid ring is a Huber pair. It does not,
-however, discharge `hmax`: see the module docstring for why openness of the maximal ideals cannot
-be derived from it.
+homomorphism into a *complete affinoid ring*, and an affinoid ring is a Huber pair.
+
+The unit `φ s` is a hypothesis rather than something derived: deriving it is step 1, which is the
+only step that asks anything of the maximal ideals of `B`. Keeping it here leaves this statement
+usable for Tate targets, for which no maximal ideal is open; the derived form is the corollary
+below.
 
 These are properties of the pair `(B, B⁺)` alone: they mention neither `φ` nor `T` nor `s`. The
 per-morphism algebraic conditions of the universal property are replaced by the single geometric
 condition `hfac`, at the cost of hypotheses on the target that are checked once. -/
+theorem existsUnique_continuous_ringHom_of_isUnit_of_forall_comap_mem_rationalSubset
+    [IsTopologicalRing A]
+    (P : PairOfDefinition A) (Aplus : Subring A) (T : Finset A) (s : A) (S : Type*) [CommRing S]
+    [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S)
+    {B : Type*} [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [NonarchimedeanRing B]
+    [IsHuberRing B] [CompleteSpace B] [T0Space B] (Bplus : Subring B)
+    (hB : IsRingOfIntegralElements Bplus) {φ : A →+* B} (hφ : ContinuousAt φ 0)
+    (hs : IsUnit (φ s))
+    (hfac : ∀ w ∈ spa Bplus, comap φ w ∈ rationalSubset Aplus T s) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    ∃! g : UniformSpace.Completion S →+* B,
+      Continuous g ∧ g.comp (toCompletionLoc P T s S hden) = φ := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  refine existsUnique_continuous_ringHom_completion_locTopology P T s S hden hφ hs fun t ht ↦ ?_
+  have := hB.isIntegrallyClosedIn
+  exact mem_powerBoundedSubring.mp
+    (hB.le_powerBoundedSubring (mem_of_forall_vle_one hB.isOpen fun w hw ↦
+      vle_one_of_comap_mem_rationalSubset hs (hfac w hw) ht))
+
+/-- **Wedhorn's Lemma 8.1, for a target with open maximal ideals.** The geometric universal
+property in the shape Wedhorn states it: the unit `φ s` is not assumed but derived from the
+factorisation, which is step 1 and is what `hmax` pays for.
+
+`hmax` is vacuous for every nonzero Tate ring, so this corollary is the restricted form; the
+theorem above is the one to reach for otherwise. See the module docstring. -/
 theorem existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset [IsTopologicalRing A]
     (P : PairOfDefinition A) (Aplus : Subring A) (T : Finset A) (s : A) (S : Type*) [CommRing S]
     [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S)
@@ -222,15 +264,8 @@ theorem existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset [IsTo
     letI := isUniformAddGroup_locUniformSpace P T s S hden
     letI := isTopologicalRing_locUniformSpace P T s S hden
     ∃! g : UniformSpace.Completion S →+* B,
-      Continuous g ∧ g.comp (toCompletionLoc P T s S hden) = φ := by
-  let _ := locUniformSpace P T s S hden
-  have _ := isUniformAddGroup_locUniformSpace P T s S hden
-  have _ := isTopologicalRing_locUniformSpace P T s S hden
-  have hs : IsUnit (φ s) := isUnit_of_forall_comap_mem_rationalSubset T hmax hfac
-  refine existsUnique_continuous_ringHom_completion_locTopology P T s S hden hφ hs fun t ht ↦ ?_
-  have := hB.isIntegrallyClosedIn
-  exact mem_powerBoundedSubring.mp
-    (hB.le_powerBoundedSubring (mem_of_forall_vle_one hB.isOpen fun w hw ↦
-      vle_one_of_comap_mem_rationalSubset hs (hfac w hw) ht))
+      Continuous g ∧ g.comp (toCompletionLoc P T s S hden) = φ :=
+  existsUnique_continuous_ringHom_of_isUnit_of_forall_comap_mem_rationalSubset P Aplus T s S hden
+    Bplus hB hφ (isUnit_of_forall_comap_mem_rationalSubset T hmax hfac) hfac
 
 end TauCeti.ValuationSpectrum
