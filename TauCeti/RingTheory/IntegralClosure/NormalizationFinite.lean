@@ -521,7 +521,28 @@ theorem IsIntegralClosure.finite_of_forall_isPurelyInseparable [IsNoetherianRing
     (h : ∀ (M : Type w) [Field M] [Algebra K M] [Algebra A M] [IsScalarTower A K M]
       [IsPurelyInseparable K M] [FiniteDimensional K M], Module.Finite A (integralClosure A M)) :
     Module.Finite A C := by
-  sorry
+  -- `A` and `K` already act on `AlgebraicClosure L` through `L`: these instances are NOT built
+  -- by hand. `AlgebraicClosure.instSMulOfIsScalarTower` already derives them, and introducing
+  -- them manually creates a diamond (the same trap as in D3 with `OreLocalization`).
+  have : Algebra.IsAlgebraic K (AlgebraicClosure L) :=
+    Algebra.IsAlgebraic.trans (R := K) (S := L) (A := AlgebraicClosure L)
+  -- `N`: a finite normal extension of `K` containing `L`
+  set N := IntermediateField.normalClosure K L (AlgebraicClosure L) with hN
+  have : IsScalarTower A L N := IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
+  -- `Mi`: the purely inseparable part, with `N / Mi` Galois (Artin)
+  set Mi := IntermediateField.fixedField (⊤ : Subgroup (N ≃ₐ[K] N)) with hMi
+  have : IsPurelyInseparable K Mi := IntermediateField.isPurelyInseparable_fixedField_top K N
+  have : IsGalois Mi N := IsGalois.of_fixed_field N (⊤ : Subgroup (N ≃ₐ[K] N))
+  have : FiniteDimensional K Mi := FiniteDimensional.left K Mi N
+  have : FiniteDimensional Mi N := FiniteDimensional.right K Mi N
+  have : IsScalarTower A Mi N := IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
+  -- the purely inseparable hypothesis, then the separable climb, then descent to `L`
+  have : Module.Finite A (integralClosure A Mi) := h Mi
+  have : Module.Finite A (integralClosure A N) :=
+    IsIntegralClosure.finite_of_isSeparable_of_finite K Mi N
+      (integralClosure A Mi) (integralClosure A N)
+  exact IsIntegralClosure.finite_of_injective (C' := integralClosure A N)
+    (IsScalarTower.toAlgHom A L N) (algebraMap L N).injective
 
 /-- Source: Stacks, Lemma 10.161.13 (tag 032O): "If `R` is N-2 then `R[x]` is N-2", iterated
 from `R = k` a field, together with Lemma 10.161.12 (tag 032N). **Polynomial rings over a field

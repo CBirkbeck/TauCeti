@@ -25,8 +25,6 @@ of a polynomial ring in a separable extension is no longer a polynomial ring.
 
 * `TauCeti.IntermediateField.isPurelyInseparable_fixedField_top`: for `E / F` normal, the fixed
   field of `Gal(E/F)` is purely inseparable over `F`.
-* `TauCeti.IntermediateField.isGalois_fixedField_top`: for `E / F` finite, `E` is Galois over
-  the fixed field of `Gal(E/F)`.
 
 ## Provenance
 
@@ -88,18 +86,5 @@ theorem IntermediateField.isPurelyInseparable_fixedField_top (F E : Type*) [Fiel
   refine ⟨a, hinj ?_⟩
   rw [← IsScalarTower.algebraMap_apply]
   simpa [hy] using ha
-
-/-- Source: Stacks, Fields, Lemma 9.27.3(2): "`E_insep ⊂ E` is Galois", with
-`E_insep = E^{Aut(E/F)}`. For a finite extension `E / F`, `E` is Galois over the fixed field of
-its full automorphism group (Artin; Mathlib's `IsGalois.of_fixed_field`, transported from
-`FixedPoints.subfield` to `IntermediateField.fixedField ⊤`). Deliberately not an instance: the
-`⊤` argument makes it a poor one. -/
-theorem IntermediateField.isGalois_fixedField_top (F E : Type*) [Field F] [Field E] [Algebra F E]
-    [FiniteDimensional F E] :
-    IsGalois (IntermediateField.fixedField (⊤ : Subgroup (E ≃ₐ[F] E))) E :=
-  -- `IntermediateField.fixedField ⊤` and `FixedPoints.subfield ⊤ E` are both
-  -- `MulAction.fixedPoints`, and the defeq is transparent: Mathlib itself closes a
-  -- `fixedField ⊤` goal this way in `FieldTheory/Galois/Basic.lean:485`.
-  IsGalois.of_fixed_field E (⊤ : Subgroup (E ≃ₐ[F] E))
 
 end TauCeti
