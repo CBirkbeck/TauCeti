@@ -10,7 +10,6 @@ public import TauCeti.NumberTheory.LegendreSymbol.Frobenius
 public import TauCeti.NumberTheory.NumberField.IntegralSqrt
 import TauCeti.NumberTheory.NumberField.AutomorphismAction
 import Mathlib.Algebra.CharP.Basic
-import Mathlib.RingTheory.IntegralClosure.Algebra.Basic
 
 /-!
 # Frobenius elements of a Galois number field and their action on square roots
