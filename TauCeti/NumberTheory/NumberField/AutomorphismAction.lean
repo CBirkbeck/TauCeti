@@ -10,9 +10,13 @@ public import Mathlib.NumberTheory.NumberField.Basic
 /-!
 # Automorphisms acting on the ring of integers
 
-An automorphism of a number field restricts to the ring of integers, because it preserves
+A ring automorphism of a field restricts to its ring of integers, because it preserves
 integrality. This file records how that restricted action relates to the ambient one: the
 structure map `𝓞 K → K` is equivariant, carrying `σ • z` to `σ` applied to the image of `z`.
+
+The automorphism is taken over an arbitrary base ring `R`, matching the generality of
+`integralClosure.coe_smul`; the number-field case is `R = ℚ`. Nothing here needs `K` to be
+finite-dimensional, so `[NumberField K]` is deliberately not assumed.
 
 Mathlib proves the corresponding statement for a general integral closure
 (`integralClosure.coe_smul`), stated with the coercion and with the action written as a scalar
@@ -31,14 +35,14 @@ open scoped NumberField
 
 namespace NumberField
 
-variable {K : Type*} [Field K] [NumberField K]
+variable {R K : Type*} [CommRing R] [Field K] [Algebra R K]
 
-/-- **`algebraMap` intertwines the Galois actions on `𝓞 K` and on `K`.** The action on the ring
-of integers is the restriction of the action on `K` (`integralClosure.coe_smul`), so the structure
-map sends `σ • z` to `σ` applied to the image of `z`.
+/-- **`algebraMap` intertwines the automorphism actions on `𝓞 K` and on `K`.** The action on the
+ring of integers is the restriction of the action on `K` (`integralClosure.coe_smul`), so the
+structure map sends `σ • z` to `σ` applied to the image of `z`.
 
 Not named `algebraMap_smul`: that is Mathlib's unrelated `algebraMap R A r • m = r • m`. -/
-@[simp] theorem algebraMap_smul_eq_apply (σ : K ≃ₐ[ℚ] K) (z : 𝓞 K) :
+@[simp] theorem algebraMap_smul_eq_apply (σ : K ≃ₐ[R] K) (z : 𝓞 K) :
     algebraMap (𝓞 K) K (σ • z) = σ (algebraMap (𝓞 K) K z) := by
   have hcoe : algebraMap (𝓞 K) K (σ • z) = σ • algebraMap (𝓞 K) K z := by
     rw [← NumberField.RingOfIntegers.coe_eq_algebraMap,
