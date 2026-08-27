@@ -554,7 +554,11 @@ theorem IsIntegralClosure.finite_mvPolynomial (k : Type*) [Field k] {σ : Type*}
     [IsScalarTower (MvPolynomial σ k) K L] [FiniteDimensional K L] (C : Type*) [CommRing C]
     [Algebra (MvPolynomial σ k) C] [Algebra C L] [IsScalarTower (MvPolynomial σ k) C L]
     [IsIntegralClosure C (MvPolynomial σ k) L] : Module.Finite (MvPolynomial σ k) C := by
-  sorry
+  -- `MvPolynomial σ k` is Noetherian (Hilbert) and integrally closed (it is a UFD), so the
+  -- reduction E1 applies; its purely inseparable hypothesis is exactly Milestone 1.
+  exact IsIntegralClosure.finite_of_forall_isPurelyInseparable (L := L) K C
+    fun M _ _ _ _ _ _ ↦ IsIntegralClosure.finite_mvPolynomial_of_isPurelyInseparable k K M
+      (integralClosure (MvPolynomial σ k) M)
 
 /-- Source: Stacks, Proposition 10.162.16 (tag 0335), (1) and (5): "The following types of rings
 are Nagata and in particular universally Japanese: (1) fields, … (5) finite type ring extensions
