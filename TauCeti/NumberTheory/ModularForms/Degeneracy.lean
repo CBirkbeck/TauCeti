@@ -736,8 +736,12 @@ theorem ModularForm.levelRaise_mem_modFormCharSpace (M d : ℕ) [NeZero d]
   levelRaise_mem_modFormCharSpace_of_dvd dvd_rfl χ hf
 
 /-- **The nebentypus of a level-raise (cusp forms).** For `d * M ∣ N`, `V_d` carries
-`S_k(Γ₁(M), χ)` into `S_k(Γ₁(N), χ ∘ (ZMod N)ˣ → (ZMod M)ˣ)`. These are the inclusions whose
-images span the old subspace of `S_k(Γ₁(N), χ)`. -/
+`S_k(Γ₁(M), χ)` into `S_k(Γ₁(N), χ ∘ (ZMod N)ˣ → (ZMod M)ˣ)`: the character of `V_d f` at level
+`N` is the character of `f` read along the reduction map.
+
+This is the character half only. That `V_d f` is *old* is the separate statement
+`TauCeti.levelRaise_mem_cuspFormsOld`, which additionally needs `M ≠ N` and is about the
+character-free `TauCeti.cuspFormsOld N k`. -/
 theorem CuspForm.levelRaise_mem_cuspFormCharSpace_of_dvd {M d N : ℕ} [NeZero d]
     (hdvd : d * M ∣ N) (χ : (ZMod M)ˣ →* ℂˣ)
     {f : CuspForm ((Gamma1 M).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) :
