@@ -128,10 +128,12 @@ theorem twistedHeckeSlashSum_twistedHeckeSlashSum (f : ℍ → ℂ) :
   rw [twistedHeckeSlashSum_slash k χ D₁ f (det_rightCosetRep_pos_of_delta0 D₂ w),
     Finset.smul_sum]
   refine Finset.sum_congr rfl fun v _ ↦ ?_
-  rw [smul_smul, nebentypusWeight_def, nebentypusWeight_def,
-    show (⟨rightCosetRep D₁ v * rightCosetRep D₂ w,
-        mul_mem (rightCosetRep_mem_Delta0 D₁ v) (rightCosetRep_mem_Delta0 D₂ w)⟩ : Delta0 N) =
-      ⟨_, rightCosetRep_mem_Delta0 D₁ v⟩ * ⟨_, rightCosetRep_mem_Delta0 D₂ w⟩ from rfl,
+  -- The two weights multiply because `delta0NebentypusChar` is a `MonoidHom` on `Δ₀(N)`, and
+  -- `map_mul` needs its argument as a product of bundled elements rather than the single bundled
+  -- product the statement carries. `MulMemClass.mk_mul_mk` is the submonoid API for that step; it
+  -- holds by `rfl`, but naming it keeps the proof independent of how `Δ₀(N)`'s multiplication is
+  -- built, which an inline `rfl` here would silently depend on.
+  rw [smul_smul, nebentypusWeight_def, nebentypusWeight_def, ← MulMemClass.mk_mul_mk,
     map_mul, Units.val_mul, mul_comm]
 
 end Composite
