@@ -161,4 +161,25 @@ theorem formalInverseEval_mem {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ 
       exact zero_mem _)
   simpa [formalInverseEval, eval₂] using key
 
+/-- **The defining formula for the denominator's value**: `1 - a₁ t - a₃ w(t)`. -/
+theorem formalInverseDenomEval_eq {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
+    W.formalInverseDenomEval t = 1 - W.a₁ * t - W.a₃ * W.formalWEval t := by
+  have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
+  have hEp : PowerSeries.HasEval t := isTopologicallyNilpotent_of_mem_of_isAdic hI ht
+  have h := congrArg (PowerSeries.eval₂Hom (S := O) hcont hEp) W.formalInverseDenom_def
+  rw [map_sub, map_sub, map_one, map_mul, map_mul] at h
+  simpa [formalInverseDenomEval, formalWEval, PowerSeries.coe_eval₂Hom, PowerSeries.eval₂_C,
+    PowerSeries.eval₂_X] using h
+
+/-- **The defining formula for the formal inverse's value**: `ι(t) = -t / (1 - a₁ t - a₃ w(t))`,
+written through the series inverse of the denominator. -/
+theorem formalInverseEval_eq {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
+    W.formalInverseEval t = -(t * W.formalInverseDenomInvEval t) := by
+  have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
+  have hEp : PowerSeries.HasEval t := isTopologicallyNilpotent_of_mem_of_isAdic hI ht
+  have h := congrArg (PowerSeries.eval₂Hom (S := O) hcont hEp) W.formalInverse_def
+  rw [map_neg, map_mul] at h
+  simpa [formalInverseEval, formalInverseDenomInvEval, PowerSeries.coe_eval₂Hom,
+    PowerSeries.eval₂_X] using h
+
 end WeierstrassCurve
