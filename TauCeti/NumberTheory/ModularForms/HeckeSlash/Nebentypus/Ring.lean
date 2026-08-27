@@ -6,12 +6,12 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.ModularForms.DiamondOperators
-public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus
+public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Basic
 
 /-!
 # The `ℤ`-linear extension of the twisted slash sum, and the `χ`-invariant function space
 
-`HeckeSlash/Nebentypus.lean` attaches a `ℂ`-linear endomorphism `twistedHeckeSlashSumEnd` of
+`HeckeSlash/Nebentypus/Basic.lean` attaches a `ℂ`-linear endomorphism `twistedHeckeSlashSumEnd` of
 `ℍ → ℂ` to a single double coset of `Γ₀(N)`, weighting each summand by the nebentypus character
 of its own representative. This file does the two things that assignment needs before it can be
 called an action of the Hecke ring on a space of forms.
