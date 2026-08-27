@@ -7,7 +7,6 @@ module
 
 public import TauCeti.RingTheory.Huber.Restricted.Flat
 public import TauCeti.RingTheory.Flat.QuotientRegular
-import Mathlib.RingTheory.Flat.Tensor
 
 /-!
 # The Laurent quotients `A⟨X⟩/(f - X)` and `A⟨X⟩/(1 - f X)` are flat
@@ -16,6 +15,13 @@ Wedhorn's Lemma 8.31(2): for a complete noetherian Tate ring `A` and `f ∈ A`, 
 `A⟨X⟩/(f - X)` and `A⟨X⟩/(1 - f X)` are flat over `A`. They are the coordinate rings of the
 Laurent rational subsets `{|f| ≤ 1}` and `{|f| ≥ 1}` of `Spa A` (Wedhorn, Example 6.38), which is
 why Proposition 8.30 consumes them.
+
+Wedhorn's "complete noetherian Tate ring" is spelled here as the full standing hypothesis list of
+the final section: `A` is a complete `T0` uniform additive group whose uniformity is countably
+generated, and is a nonarchimedean, Tate and noetherian ring (`CompleteSpace`, `T0Space`,
+`(𝓤 A).IsCountablyGenerated`, `NonarchimedeanRing`, `IsTateRing`, `IsNoetherianRing`). The
+uniform-structure hypotheses are what make Wedhorn's completeness and separation assumptions
+usable in Lean; none of them is derivable from the others here.
 
 Wedhorn's proof: `A⟨X⟩/(g)` is flat as soon as multiplication by `g` is injective on `M⟨X⟩` for
 every finitely generated `M` — the `Tor`-sequence claim that is
@@ -60,11 +66,14 @@ open scoped Uniformity
 public section
 
 namespace TauCeti.Huber
-/-! ### One variable: the coefficient shift -/
+/-! ### One variable: the coefficient shift
+
+Stated over a semiring and an additive monoid: the shift is pure reindexing, and nothing here
+needs subtraction. The regularity results below, which do, keep `CommRing` and `AddCommGroup`. -/
 
 section Shift
 
-variable {A : Type*} [CommRing A]
+variable {A : Type*} [Semiring A]
 
 /-- Exponents of one-variable series are natural numbers: `n ↦ n 0`, inverse `j ↦ single 0 j`. -/
 private noncomputable def expEquiv : (Fin 1 →₀ ℕ) ≃ ℕ :=
@@ -75,7 +84,7 @@ private noncomputable def expEquiv : (Fin 1 →₀ ℕ) ≃ ℕ :=
 @[simp] private theorem expEquiv_symm_apply (j : ℕ) : expEquiv.symm j = Finsupp.single 0 j :=
   Finsupp.unique_single (expEquiv.symm j)
 
-variable {M : Type*} [AddCommGroup M] [Module A M]
+variable {M : Type*} [AddCommMonoid M] [Module A M]
 
 variable (A) in
 /-- **Multiplication by `X` on series with coefficients in a module**: the coefficient shift
@@ -325,6 +334,9 @@ private theorem eq_zero_of_smul_eq_zero_of_smul_succ [IsNoetherian A M] {f : A} 
   have hcl : c l = 0 := by
     have h1 : c l = f ^ (l + 1) • c (2 * l + 1) := by
       have := hshift (l + 1) l
+      -- `hshift` produces the index in the form `l + (l + 1)`; the stabilisation below is
+      -- stated at `2 * l + 1`, so the two spellings are reconciled here rather than by
+      -- restating `hshift`.
       rwa [show l + (l + 1) = 2 * l + 1 by ring] at this
     rw [h1, ← ha, smul_comm, hpow, smul_zero]
   rcases le_or_gt j l with hj | hj
@@ -406,7 +418,11 @@ theorem lTensor_mulLeft_algebraMap_sub_restrictedX_injective (f : A) :
     (by rw [map_zero]; exact Subtype.ext h')
 
 variable (A) in
-/-- **`A⟨X⟩/(f - X)` is flat over a complete noetherian Tate ring** (Wedhorn, Lemma 8.31(2)). -/
+/-- **`A⟨X⟩/(f - X)` is flat over a complete noetherian Tate ring** (Wedhorn, Lemma 8.31(2)).
+
+"Complete noetherian Tate ring" abbreviates this section's standing hypotheses on `A`:
+`CompleteSpace`, `T0Space` and `(𝓤 A).IsCountablyGenerated` for the uniform structure, and
+`NonarchimedeanRing`, `IsTateRing`, `IsNoetherianRing` for the ring. -/
 theorem flat_quotient_algebraMap_sub_restrictedX (f : A) :
     Module.Flat A (restrictedMvPowerSeriesSubring 1 A ⧸
       Ideal.span {algebraMap A (restrictedMvPowerSeriesSubring 1 A) f - restrictedX}) := by
@@ -415,7 +431,9 @@ theorem flat_quotient_algebraMap_sub_restrictedX (f : A) :
     lTensor_mulLeft_algebraMap_sub_restrictedX_injective (N := A ⧸ I) f
 
 variable (A) in
-/-- **`A⟨X⟩/(1 - f X)` is flat over a complete noetherian Tate ring** (Wedhorn, Lemma 8.31(2)). -/
+/-- **`A⟨X⟩/(1 - f X)` is flat over a complete noetherian Tate ring** (Wedhorn, Lemma 8.31(2)).
+
+Same standing hypotheses on `A` as `flat_quotient_algebraMap_sub_restrictedX`. -/
 theorem flat_quotient_one_sub_algebraMap_mul_restrictedX (f : A) :
     Module.Flat A (restrictedMvPowerSeriesSubring 1 A ⧸
       Ideal.span {1 - algebraMap A (restrictedMvPowerSeriesSubring 1 A) f * restrictedX}) := by
