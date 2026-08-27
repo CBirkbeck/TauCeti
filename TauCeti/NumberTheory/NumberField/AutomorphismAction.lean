@@ -44,6 +44,8 @@ structure map sends `σ • z` to `σ` applied to the image of `z`.
 Not named `algebraMap_smul`: that is Mathlib's unrelated `algebraMap R A r • m = r • m`. -/
 @[simp] theorem algebraMap_smul_eq_apply (σ : K ≃ₐ[R] K) (z : 𝓞 K) :
     algebraMap (𝓞 K) K (σ • z) = σ (algebraMap (𝓞 K) K z) :=
+  -- `integralClosure.coe_smul` proves this up to two definitional identifications:
+  -- `RingOfIntegers.val` is an `abbrev` for `algebraMap`, and `AlgEquiv.smul_def` is `rfl`.
   integralClosure.coe_smul σ z
 
 end NumberField
