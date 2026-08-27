@@ -17,8 +17,9 @@ continuous `φ : A → B` into a complete `B` extends across `ρ : A → A⟨T/s
 unit and every fraction `φ t / φ s` is power-bounded
 (`TauCeti.Huber.existsUnique_continuous_ringHom_completion_locTopology`). Wedhorn's Lemma 8.1
 replaces those two algebraic conditions by a single *geometric* one — that `Spa(φ)` factors
-through the rational subset `U = R(T/s)`. **This file carries that replacement out: Lemma 8.1 is
-proved here.**
+through the rational subset `U = R(T/s)`. This file carries that replacement out **for targets
+whose maximal ideals are open** — see *The hypothesis that is not yet Wedhorn's* below, because
+that class does not include the rings Wedhorn applies Lemma 8.1 to.
 
 Wedhorn's proof has three steps, and all three are discharged here:
 
@@ -31,7 +32,9 @@ The step `φ s ∈ B^×` is Wedhorn's Proposition 7.52(2), which is on hand as
 `TauCeti.ValuationSpectrum.isUnit_of_forall_not_vle_zero`; the step `|φ(t)/φ(s)|_w ≤ 1` is a
 division by that unit. The step from there to `φ(t)/φ(s) ∈ B⁺` is Proposition 7.52(1), available
 as `TauCeti.ValuationSpectrum.mem_of_forall_vle_one`, which the assembly consumes at its one use
-site. All three steps are therefore proved, and the result below **is** Wedhorn's Lemma 8.1.
+site. All three steps are therefore proved, and the result below is Wedhorn's Lemma 8.1 in
+conditional form — for targets whose maximal ideals are open, and **not** in the generality
+Wedhorn states it in; see *The hypothesis that is not yet Wedhorn's* below.
 
 The other half of Lemma 8.1, that `Spa ρ : Spa A⟨T/s⟩ → Spa A` factors through `U`, is already
 `TauCeti.ValuationSpectrum.spaComapLoc_mem_rationalSubset`; it is not repeated here.
@@ -43,8 +46,29 @@ The other half of Lemma 8.1, that `Spa ρ : Spa A⟨T/s⟩ → Spa A` factors th
 * `TauCeti.ValuationSpectrum.vle_one_of_forall_comap_mem_rationalSubset` : under the same
   hypothesis every fraction `φ t / φ s` is sub-unit at every point of `Spa (B, B⁺)`.
 * `TauCeti.ValuationSpectrum.existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset` :
-  **Wedhorn's Lemma 8.1** — a continuous `φ : A → B` whose `Spa(φ)` factors through `R(T/s)`
-  extends across `A → A⟨T/s⟩` in exactly one continuous way.
+  the geometric universal property — a continuous `φ : A → B` whose `Spa(φ)` factors through
+  `R(T/s)` extends across `A → A⟨T/s⟩` in exactly one continuous way, for a target whose maximal
+  ideals are open.
+
+## The hypothesis that is not yet Wedhorn's
+
+`hmax`, openness of the target's maximal ideals, is **not** a hypothesis Wedhorn imposes, and it
+is not harmless: by `TauCeti.Huber.IsTateRing.isOpen_iff_eq_top` an ideal of a Tate ring is open
+exactly when it is `⊤`, so a nonzero Tate ring has no open maximal ideal at all. Wedhorn states
+Lemma 8.1 for a complete *affinoid* target, and §8's affinoid rings are Tate. **So the result
+below is vacuous for exactly the targets Wedhorn intends, and must not be cited as Lemma 8.1.**
+It is non-vacuous for adic Huber targets, whose maximal ideals are open — `ℤ_p` and its kin — and
+that is the generality in which it is stated.
+
+The obstruction is inherited, not introduced here. `hmax` is carried by
+`TauCeti.ValuationSpectrum.isUnit_of_forall_not_vle_zero`, this repository's only unit-detection
+lemma over `spa`, which in turn gets it from `exists_mem_spa_supp_eq` — main's Proposition 7.51,
+whose docstring records that it is "weakened from maximal to" open prime. Removing `hmax` needs a
+form of Wedhorn's Proposition 7.52(2) for complete Tate rings that does not route through open
+maximal ideals; that is a change to `Spa/Points.lean` and is tracked separately. Note that 7.52(1)
+already avoids the problem — `mem_of_forall_vle_one` goes through
+`isIntegral_of_forall_continuous_valuation_le_one` and asks nothing of maximal ideals — so the
+asymmetry between the two halves of 7.52 on main is where a fix should start.
 
 ## What this file consumes
 
@@ -134,7 +158,7 @@ theorem vle_one_of_forall_comap_mem_rationalSubset {φ : A →+* B} {Aplus : Sub
 
 end Steps
 
-/-! ### Lemma 8.1
+/-! ### Lemma 8.1, for targets with open maximal ideals
 
 The assembly. `S` is an algebraic localisation of `A` away from `s` carrying the localisation
 topology, so that `A⟨T/s⟩` is its separated completion, and the three `letI`s naming the
@@ -142,9 +166,12 @@ uniformity and its two companions are the ones every statement about `A⟨T/s⟩
 
 open TauCeti.Huber TauCeti.Huber.PairOfDefinition
 
-/-- **Wedhorn's Lemma 8.1**: a continuous `φ : A → B` into a complete `(B, B⁺)` whose `Spa(φ)`
-factors through the rational subset `R(T/s)` extends across the structure map `ρ : A → A⟨T/s⟩`
-in exactly one continuous way.
+/-- **The geometric universal property of `A⟨T/s⟩`, for a target with open maximal ideals**: a
+continuous `φ : A → B` into a complete `(B, B⁺)` whose `Spa(φ)` factors through the rational
+subset `R(T/s)` extends across the structure map `ρ : A → A⟨T/s⟩` in exactly one continuous way.
+
+This is **not** Wedhorn's Lemma 8.1 in the generality he states it: `hmax` is vacuous for nonzero
+Tate rings, which are the targets §8 applies it to. See the module docstring.
 
 The two algebraic conditions of
 `TauCeti.Huber.existsUnique_continuous_ringHom_completion_locTopology` are discharged from the
