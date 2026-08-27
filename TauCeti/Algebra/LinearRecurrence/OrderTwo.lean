@@ -61,6 +61,28 @@ each fails to for a different reason.
 
 So the results below are proved directly for an arbitrary sequence, which is also the form in
 which they are consumed.
+
+## References
+
+The consumer is the prime-power Hecke recurrence of `TauCetiRoadmap/ModularForms`,
+`T_(p^(r+2)) = T_p * T_(p^(r+1)) - p^(k-1) * ⟨p⟩ * T_(p^r)`: taking `d r = T_(p^r)`, `D = T_p` and
+`S = p^(k-1) * ⟨p⟩` turns `linearRec₂_mul_eq_sum_pow_mul` into the product formula for
+`T_(p^r) * T_(p^s)`. That instantiation belongs to the Hecke tree, and nothing in this file
+mentions a Hecke operator.
+
+## Provenance
+
+Ported from AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0), the roadmap's nominated source
+for `TauCetiRoadmap/ModularForms`, at commit `2baa76f742bdb4fb8ee323fabba41203bd390e08`,
+`projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/Unified/Gamma0RingDn.lean`, section
+`FormalChebyshev` (lines 63-109), where the two results are the `private` lemmas `formal_D_mul_d`
+and `formal_ppow_mul`.
+
+They are ported public here rather than kept private: they are the reusable content of that
+block, and a private copy would have to be re-ported by every consumer. The hypotheses are
+AINTLIB's, unchanged; `D`, `S` and `d` become `variable`s, the names follow Mathlib's
+statement-describing convention instead of the source's `formal_*` working names, and the first
+proof spells out the step that the source discharges with `grind`.
 -/
 
 public section
