@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.NumberTheory.ModularForms.Cusps.Basic
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Diagonal.QExpansion
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Operators
 
@@ -22,19 +23,20 @@ normalising scalar `d ^ (k - 1)` — the slash by `diag(d, 1)`. So the theorem s
 statement about each summand, and each is proved in the `diag(d, 1)`-slash form, where the
 normalising scalars are absent:
 
-* the upper-triangular sum, `heckeSlashUpperTri_slash_natDiagGL`. The two slashes do **not**
+* the upper-triangular sum, `heckeSlashUpperTri_slash_scaleRep_comm`. The two slashes do **not**
   commute termwise: `diag(d, 1) · !![1, b; 0, p]` is `!![1, d b; 0, p] · diag(d, 1)`, whose upper
   entry `d b` leaves the range `b < p`. Writing `d b = q p + r` puts the excess into `T ^ q`,
   which the level-`M` invariance of `f` absorbs, leaving the representative `r`. Coprimality of
   `d` and `p` makes `b ↦ r` a permutation of `Fin p`, so the sum is merely reindexed.
-* the diamond term, which commutes because positive diagonal matrices do — `natDiagGL_comm`, a
-  consequence of `natDiagGL_mul` — once `TauCeti.CuspForm.diamondOpCusp_levelRaise` has moved
+* the diamond term, which commutes because natural diagonal matrices do —
+  `HeckeRing.GLn.natDiagGL_comm` — once `TauCeti.CuspForm.diamondOpCusp_levelRaise` has moved
   `⟨p⟩` across `V_d`.
 
 ## Main results
 
-* `HeckeRing.GL2.heckeSlashUpperTri_slash_natDiagGL`: the upper-triangular sum commutes with the
-  slash by `diag(d, 1)`, for any function fixed by the powers of `T` and any `d` coprime to `p`.
+* `HeckeRing.GL2.heckeSlashUpperTri_slash_scaleRep_comm`: the upper-triangular sum commutes with
+  the slash by `scaleRep d = diag(d, 1)`, for any function fixed by the powers of `T` and any `d`
+  coprime to `p`.
 * `HeckeRing.GL2.heckeTCuspNat_levelRaise`: **`Tₚ (V_d f) = V_d (Tₚ f)`** for `p` prime and
   coprime to the raised level `N`.
 
@@ -76,76 +78,62 @@ private lemma slash_mapGL_T_zpow {f : ℍ → ℂ}
 
 /-! ### The upper-triangular representatives under `diag(d, 1)` -/
 
-/-- **The commutation of `diag(d, 1)` past an upper-triangular representative.** Both sides are
-`!![d, d b; 0, p]`: on the right, `d b = q p + r` is split so that the representative index `r`
-is again in range, at the cost of the shift `T ^ q`. -/
-private lemma natDiagGL_mul_upperTriRep (hd : 0 < d) (b : Fin p) {q r : ℕ} (hr : r < p)
+/-- **The commutation of `scaleRep d = diag(d, 1)` past an upper-triangular representative.**
+Both sides are `!![d, d b; 0, p]`: on the right, `d b = q p + r` is split so that the
+representative index `r` is again in range, at the cost of the shift `T ^ q`. -/
+private lemma scaleRep_mul_upperTriRep (hd : 0 < d) (b : Fin p) {q r : ℕ} (hr : r < p)
     (hqr : d * (b : ℕ) = q * p + r) :
-    natDiagGL 2 ![d, 1] * upperTriRep p b =
-      mapGL ℚ (ModularGroup.T ^ (q : ℤ)) * (upperTriRep p ⟨r, hr⟩ * natDiagGL 2 ![d, 1]) := by
-  have hd1 : ∀ i : Fin 2, 0 < ![d, 1] i := fun i ↦ by fin_cases i <;> simp [hd]
+    scaleRep d * upperTriRep p b =
+      mapGL ℚ (ModularGroup.T ^ (q : ℤ)) * (upperTriRep p ⟨r, hr⟩ * scaleRep d) := by
   have hmod : (d : ℚ) * ((b : ℕ) : ℚ) = (q : ℚ) * (p : ℚ) + (r : ℚ) := by exact_mod_cast hqr
-  have hdiag : (↑(natDiagGL 2 ![d, 1]) : Matrix (Fin 2) (Fin 2) ℚ) = !![(d : ℚ), 0; 0, 1] := by
-    rw [natDiagGL_coe 2 _ hd1]
-    ext i j
-    fin_cases i <;> fin_cases j <;> simp
   apply Units.ext
-  rw [Units.val_mul, Units.val_mul, Units.val_mul, hdiag, coe_upperTriRep, coe_upperTriRep,
-    coe_mapGL_T_zpow]
+  rw [Units.val_mul, Units.val_mul, Units.val_mul, coe_scaleRep d hd, coe_upperTriRep,
+    coe_upperTriRep]
   ext i j
+  -- three of the four entries close by `simp`; the bullet makes the surviving one explicit, so a
+  -- change in the simp set fails here rather than silently redirecting `linarith`.
   fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two]
-  linarith
-
-/-- **Positive natural diagonal matrices commute.** This is what makes the diamond term of `Tₚ`
-pass through `V_d`: both are slashes by a `diag(·, 1)`. -/
-private lemma natDiagGL_comm (hd : 0 < d) (hp : 0 < p) :
-    natDiagGL 2 ![d, 1] * natDiagGL 2 ![p, 1] = natDiagGL 2 ![p, 1] * natDiagGL 2 ![d, 1] := by
-  have hd1 : ∀ i : Fin 2, 0 < ![d, 1] i := fun i ↦ by fin_cases i <;> simp [hd]
-  have hp1 : ∀ i : Fin 2, 0 < ![p, 1] i := fun i ↦ by fin_cases i <;> simp [hp]
-  rw [natDiagGL_mul 2 _ _ hd1 hp1, natDiagGL_mul 2 _ _ hp1 hd1, mul_comm ![d, 1] ![p, 1]]
+  · linarith
 
 /-! ### Reindexing by multiplication -/
 
-/-- Multiplication by `d` modulo `p` permutes `Fin p` when `d` and `p` are coprime. -/
+/-- Multiplication by `d` modulo `p` permutes `Fin p` when `d` and `p` are coprime.  Injectivity
+is `Nat.ModEq.cancel_left_of_coprime`: the two indices are already congruent mod `p`, and both
+are below `p`. -/
 private noncomputable def mulModEquiv (hp : 0 < p) (hdp : Nat.Coprime d p) : Fin p ≃ Fin p :=
-  haveI : NeZero p := ⟨hp.ne'⟩
   Equiv.ofBijective (fun b ↦ ⟨d * (b : ℕ) % p, Nat.mod_lt _ hp⟩)
-    (Finite.injective_iff_bijective.mp (by
-      intro b₁ b₂ hb
-      have hcast : ((d * (b₁ : ℕ) : ℕ) : ZMod p) = ((d * (b₂ : ℕ) : ℕ) : ZMod p) :=
-        (ZMod.natCast_eq_natCast_iff' _ _ _).mpr (by simpa using congrArg Fin.val hb)
-      rw [Nat.cast_mul, Nat.cast_mul] at hcast
-      have hunit : IsUnit ((d : ℕ) : ZMod p) := (ZMod.isUnit_iff_coprime d p).mpr hdp
-      have hval : ((b₁ : ℕ) : ZMod p) = ((b₂ : ℕ) : ZMod p) := hunit.mul_left_cancel hcast
-      have := (ZMod.natCast_eq_natCast_iff' _ _ _).mp hval
-      rwa [Nat.mod_eq_of_lt b₁.isLt, Nat.mod_eq_of_lt b₂.isLt, Fin.val_eq_val] at this))
+    (Finite.injective_iff_bijective.mp fun b₁ b₂ hb ↦ Fin.ext (by
+      have := Nat.ModEq.cancel_left_of_coprime hdp.symm (congrArg Fin.val hb)
+      rwa [Nat.ModEq, Nat.mod_eq_of_lt b₁.isLt, Nat.mod_eq_of_lt b₂.isLt] at this))
 
+/-- The index the permutation sends `b` to, as a natural number. -/
 @[simp]
-private lemma mulModEquiv_apply (hp : 0 < p) (hdp : Nat.Coprime d p) (b : Fin p) :
+private lemma coe_mulModEquiv (hp : 0 < p) (hdp : Nat.Coprime d p) (b : Fin p) :
     (mulModEquiv hp hdp b : ℕ) = d * (b : ℕ) % p := (rfl)
 
 /-! ### The upper-triangular sum against `diag(d, 1)` -/
 
-/-- **The upper-triangular slash sum commutes with the slash by `diag(d, 1)`**, for `d` coprime
-to `p` and any function fixed by the rational slash of every power of `T`. This is the
-level-raising half of `heckeTCuspNat_levelRaise`, stated before the normalising scalar of `V_d`
-is introduced.
+/-- **The upper-triangular slash sum commutes with the slash by `scaleRep d = diag(d, 1)`**, for
+`d` coprime to `p` and any function fixed by the rational slash of every power of `T`. This is
+the level-raising half of `heckeTCuspNat_levelRaise`, stated before the normalising scalar of
+`V_d` is introduced.
 
 Invariance under the powers of `T` is all the reindexing consumes: no level enters the
 statement, and a `Γ₁(M)`-invariant function meets the hypothesis via `slash_mapGL_T_zpow`. -/
-theorem heckeSlashUpperTri_slash_natDiagGL (hd : 0 < d) (hp : 0 < p) (hdp : Nat.Coprime d p)
-    {f : ℍ → ℂ} (hT : ∀ q : ℤ, f ∣[k] (mapGL ℚ (ModularGroup.T ^ q) : GL (Fin 2) ℚ) = f) :
-    heckeSlashUpperTri k p (f ∣[k] (natDiagGL 2 ![d, 1] : GL (Fin 2) ℚ)) =
-      heckeSlashUpperTri k p f ∣[k] (natDiagGL 2 ![d, 1] : GL (Fin 2) ℚ) := by
+theorem heckeSlashUpperTri_slash_scaleRep_comm (hd : 0 < d) (hp : 0 < p)
+    (hdp : Nat.Coprime d p) {f : ℍ → ℂ}
+    (hT : ∀ q : ℤ, f ∣[k] (mapGL ℚ (ModularGroup.T ^ q) : GL (Fin 2) ℚ) = f) :
+    heckeSlashUpperTri k p (f ∣[k] (scaleRep d : GL (Fin 2) ℚ)) =
+      heckeSlashUpperTri k p f ∣[k] (scaleRep d : GL (Fin 2) ℚ) := by
   rw [heckeSlashUpperTri_def, heckeSlashUpperTri_def, SlashAction.sum_slash]
   rw [← Equiv.sum_comp (mulModEquiv hp hdp) fun b ↦ (f ∣[k] upperTriRep p b) ∣[k]
-    (natDiagGL 2 ![d, 1] : GL (Fin 2) ℚ)]
+    (scaleRep d : GL (Fin 2) ℚ)]
   refine Finset.sum_congr rfl fun b _ ↦ ?_
   -- the reindexed representative is `d b mod p`, by the defining lemma of `mulModEquiv`
   have hb : mulModEquiv hp hdp b = ⟨d * (b : ℕ) % p, Nat.mod_lt _ hp⟩ :=
-    Fin.ext (mulModEquiv_apply hp hdp b)
+    Fin.ext (coe_mulModEquiv hp hdp b)
   rw [← SlashAction.slash_mul,
-    natDiagGL_mul_upperTriRep hd b (Nat.mod_lt _ hp) (Nat.div_add_mod' (d * (b : ℕ)) p).symm,
+    scaleRep_mul_upperTriRep hd b (Nat.mod_lt _ hp) (Nat.div_add_mod' (d * (b : ℕ)) p).symm,
     SlashAction.slash_mul, hT, SlashAction.slash_mul, hb]
 
 /-! ### `Tₚ` and `V_d` -/
@@ -177,16 +165,17 @@ theorem heckeTCuspNat_levelRaise (hdvd : d * M ∣ N) (hp : p.Prime)
   have hunits : ZMod.unitsMap hMdvd (ZMod.unitOfCoprime p hpN) = ZMod.unitOfCoprime p hpM := by
     ext
     simp [ZMod.unitsMap_def, ZMod.coe_unitOfCoprime]
-  have hscale : ∀ g : ℍ → ℂ, g ∣[k] scaleGL d = g ∣[k] (natDiagGL 2 ![d, 1] : GL (Fin 2) ℚ) :=
-    fun g ↦ by rw [ModularForm.rat_slash, map_natDiagGL_d_one_eq_scaleGL]
+  have hscale : ∀ g : ℍ → ℂ, g ∣[k] scaleGL d = g ∣[k] (scaleRep d : GL (Fin 2) ℚ) :=
+    fun g ↦ by rw [ModularForm.rat_slash, scaleRep_def, map_natDiagGL_d_one_eq_scaleGL]
   refine DFunLike.coe_injective ?_
   simp only [coe_heckeTCuspNat_prime k hp, CuspForm.coe_levelRaise,
     diamondOpCuspNat_of_coprime k hpN, diamondOpCuspNat_of_coprime k hpM,
     CuspForm.diamondOpCusp_levelRaise hdvd k (ZMod.unitOfCoprime p hpN) f, hunits,
     SlashAction.add_slash, smul_add, heckeSlashUpperTri_smul, hscale]
   refine congrArg₂ (· + ·) ?_ ?_
-  · rw [heckeSlashUpperTri_slash_natDiagGL k hdpos hp.pos hpd.symm (slash_mapGL_T_zpow k hf)]
+  · rw [heckeSlashUpperTri_slash_scaleRep_comm k hdpos hp.pos hpd.symm
+      (slash_mapGL_T_zpow k hf)]
   · rw [ModularForm.rat_smul_slash_of_det_pos k (det_scaleRep_pos p), ← SlashAction.slash_mul,
-      ← SlashAction.slash_mul, scaleRep_def, natDiagGL_comm hdpos hp.pos]
+      ← SlashAction.slash_mul, scaleRep_def, scaleRep_def, natDiagGL_comm]
 
 end HeckeRing.GL2
