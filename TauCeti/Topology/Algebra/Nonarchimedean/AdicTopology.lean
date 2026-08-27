@@ -65,13 +65,13 @@ theorem isClosed_pow (hI : IsAdic I) (n : ℕ) : IsClosed ((I ^ n : Ideal R) : S
   exact AddSubgroup.isClosed_of_isOpen (I ^ n).toAddSubgroup hopen
 
 /-- In a ring whose topology is the `I`-adic one, every element of `I` is topologically
-nilpotent: its powers enter every `I ^ m`, and those are a neighbourhood basis of zero.
-
-Mathlib proves this for its `WithIdeal` class, whose topology is adic *by construction*. A ring
-that merely satisfies `IsAdic I` cannot reach that version — its topology is already fixed, so it
-is not a variable the `WithIdeal` instance may substitute — and the argument is therefore run
-against `IsAdic.hasBasis_nhds_zero` instead, exactly as `isOpen_pow` above is run against
-`Ideal.openAddSubgroup`. -/
+nilpotent. -/
+-- The powers of `a` enter every `I ^ m`, and those are a neighbourhood basis of zero. Mathlib
+-- proves this for its `WithIdeal` class, whose topology is adic *by construction*. A ring that
+-- merely satisfies `IsAdic I` cannot reach that version — its topology is already fixed, so it
+-- is not a variable the `WithIdeal` instance may substitute — and the argument is therefore run
+-- against `IsAdic.hasBasis_nhds_zero` instead, exactly as `isOpen_pow` above is run against
+-- `Ideal.openAddSubgroup`.
 theorem isTopologicallyNilpotent_of_mem (hI : IsAdic I) {a : R} (ha : a ∈ I) :
     IsTopologicallyNilpotent a := by
   suffices ∀ m : ℕ, ∃ n₀, ∀ n, n₀ ≤ n → a ^ n ∈ I ^ m by
