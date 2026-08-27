@@ -9,6 +9,8 @@ public import Mathlib.Algebra.MvPolynomial.Basic
 public import Mathlib.FieldTheory.PurelyInseparable.Exponent
 public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 public import Mathlib.RingTheory.Noetherian.Defs
+public import TauCeti.FieldTheory.PurelyInseparable.Embedding
+public import TauCeti.RingTheory.IntegralClosure.Transfer
 -- Proof-only: the integral basis of a finite extension of the fraction field.
 import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 -- Proof-only: polynomial rings over a field are Noetherian UFDs, hence integrally closed.
@@ -102,7 +104,14 @@ theorem IsIntegralClosure.finite_of_forall_exists_pow_eq (A K M C A' K' : Type*)
     (h : ∀ x ∈ s, ∃ y : A', algebraMap A' K' y ^ p ^ n =
       algebraMap K K' (IsPurelyInseparable.iterateFrobenius K M p hn x)) :
     Module.Finite A C := by
-  sorry
+  -- (i) the root hypothesis embeds `M` into `K'` over `K` (leaf B2)
+  obtain ⟨ι⟩ := IsPurelyInseparable.nonempty_algHom_of_forall_exists_pow_eq K M p hn K' hs
+    fun x hx ↦ ((h x hx).elim fun y hy ↦ ⟨algebraMap A' K' y, hy⟩)
+  -- (ii) `A'` is integrally closed and integral over `A`, so it IS the integral closure of `A`
+  -- in `K'` — supplied by Mathlib's `IsIntegralClosure.of_isIntegrallyClosed` instance.
+  -- (iii) finiteness then descends along the embedding (leaf T2)
+  exact IsIntegralClosure.finite_of_injective (C' := A') (ι.restrictScalars A)
+    (ι.restrictScalars A).toRingHom.injective
 
 /-- Source: Stacks, Lemma 10.161.13 (tag 032O): "If `R` is N-2 then `R[x]` is N-2", second
 paragraph of the proof, for `R = k` a field and `r` variables at once. **The purely inseparable
