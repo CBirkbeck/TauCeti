@@ -7,7 +7,7 @@ module
 
 public import Mathlib.NumberTheory.Height.EllipticCurve
 public import Mathlib.NumberTheory.Height.Northcott
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Duplication
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.AddSubMap
 
 /-!
 # The naïve height on an elliptic curve, and the approximate parallelogram law
@@ -34,17 +34,13 @@ addition formulae, their transport to `Point.xRep`, and finiteness of the fibres
 mentions no height and lives in
 `TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Duplication`.
 
-The `sym2x` section below stays here rather than moving beside it because
-`Point.sym2x_eq_xRep` is `private`: it is shared by the commuting square and by
-`abs_logHeight_sym2x_sub_le`, and `private` does not cross a module boundary, so separating them
-would require making that bridge public again — which is exactly the duplication of Mathlib's
-`sym2x` that the review asked to remove.
+The commuting square it runs on, and the affine-coordinate arithmetic under that, mention no
+height and live in `TauCeti.AlgebraicGeometry.EllipticCurve.Affine.AddSubMap` and
+`TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Duplication`.
 
 ## Main results
 
 * `WeierstrassCurve.Affine.Point.naiveHeight` : the naïve height `logHeight P.xRep`.
-* `WeierstrassCurve.Affine.Point.exists_smul_sym2x_add_sub_eq_addSubMap_sym2x` : the commuting
-  square, up to a nonzero scalar.
 * `WeierstrassCurve.Affine.approx_parallelogram_law` : the approximate parallelogram law.
 * `WeierstrassCurve.Affine.finite_naiveHeight_le` : finiteness of points of bounded naïve height.
 
@@ -76,6 +72,9 @@ Mathlib in the same pull request, per this repository's no-compatibility-shims r
 
 public section
 
+
+public section
+
 open Height MvPolynomial Nat
 
 namespace WeierstrassCurve
@@ -83,103 +82,6 @@ namespace WeierstrassCurve
 namespace Affine
 
 variable {F : Type*} [Field F] {W : Affine F}
-
-/-! ### `sym2x` and the addition-and-multiplication map -/
-
-/-- `sym2x` written out in the projective `xRep` coordinates.
-
-`private`, and stated rather than unfolded, because Mathlib's `sym2x` is **not exposed**:
-`Mathlib/AlgebraicGeometry/EllipticCurve/Affine/AddSubMap.lean` opens a plain `public section`, so
-across the module boundary the body is unavailable and both `simp [Point.sym2x]` and
-`rw [Point.sym2x]` are rejected outright — `Invalid simp theorem \`sym2x\`: Expected a definition
-with an exposed body`, and `Invalid rewrite argument`. Mathlib exports only the four
-per-constructor `@[simp]` lemmas, so the general equation is recovered here by matching on those
-four cases. It is private because it is a local proof bridge, not API: the canonical `sym2x`
-remains Mathlib's. -/
-private lemma Point.sym2x_eq_xRep (P Q : W.Point) :
-    P.sym2x Q = ![P.xRep 0 * Q.xRep 0, P.xRep 0 * Q.xRep 1 + P.xRep 1 * Q.xRep 0,
-      P.xRep 1 * Q.xRep 1] := by
-  match P, Q with
-  | 0, 0 => simp [Point.xRep_zero]
-  | 0, .some x y h => simp [Point.xRep_zero, Point.xRep_some]
-  | .some x y h, 0 => simp [Point.xRep_zero, Point.xRep_some]
-  | .some x y h, .some x' y' h' => simp [Point.xRep_some]
-
-private lemma Point.sym2x_P_P_eq_addSubMap (P : W.Point) :
-    sym2x P P = fun i ↦ (addSubMap W i).eval <| P.sym2x 0 := by
-  match P with
-  | 0 =>
-    simp only [sym2x_zero_zero, succ_eq_add_one, reduceAdd, addSubMap, Fin.isValue]
-    ext i : 1
-    fin_cases i <;> simp
-  | some .. =>
-    simp only [sym2x_some_some, succ_eq_add_one, reduceAdd, sym2x_some_zero, addSubMap, Fin.isValue]
-    ext i : 1
-    fin_cases i <;> simp [pow_two, two_mul]
-
-section Decidable
-
-variable [DecidableEq F]
-
-private lemma Point.sym2x_P_add_P_zero (P : W.Point) :
-    ∃ t : F, t ≠ 0 ∧ t • sym2x (P + P) 0 = fun i ↦ (addSubMap W i).eval <| P.sym2x P := by
-  match P with
-  | 0 =>
-    refine ⟨1, one_ne_zero, ?_⟩
-    rw [add_zero, sym2x_zero_zero, one_smul, addSubMap]
-    ext i : 1
-    fin_cases i <;> simp
-  | some x y h =>
-    have Heq := (W.equation_iff x y).mp h.1
-    have Hrs : (fun i ↦ (addSubMap W i).eval <| (some x y h).sym2x (some x y h)) =
-          ![x ^ 4 - W.b₄ * x ^ 2 - 2 * W.b₆ * x - W.b₈,
-            4 * x ^ 3 + W.b₂ * x ^ 2 + 2 * W.b₄ * x + W.b₆, 0] := by
-      ext i : 1
-      fin_cases i <;> simp [addSubMap] <;> ring
-    rw [Hrs]
-    by_cases! H : y = W.negY x y
-    · have H' := (den_duplication_eq_zero_iff h.1).mpr H
-      rw [H', add_self_of_Y_eq H, sym2x_zero_zero]
-      refine ⟨_, den_duplication_ne_zero_or_num_duplication_ne_zero h |>.neg_resolve_left H', ?_⟩
-      simp
-    · have H' := (den_duplication_eq_zero_iff h.1).not.mpr H
-      refine ⟨_, H', ?_⟩
-      simp [Point.sym2x_eq_xRep, Point.xRep_add_self_of_Y_ne h H, mul_div_cancel₀ _ H']
-
-/-- `sym2x (P + Q) (P - Q)` is equal, up to scaling by a nonzero constant, to `addSubMap W`
-applied to `sym2x P Q`. -/
-lemma Point.exists_smul_sym2x_add_sub_eq_addSubMap_sym2x (P Q : W.Point) :
-    ∃ t : F, t ≠ 0 ∧ t • sym2x (P + Q) (P - Q) = fun i ↦ (addSubMap W i).eval <| sym2x P Q := by
-  rcases eq_or_ne P Q with rfl | hPQ
-  · simpa using P.sym2x_P_add_P_zero
-  rcases eq_or_ne Q (-P) with rfl | hPQ'
-  · simpa [sym2x_neg_right, Point.sym2x_comm 0] using P.sym2x_P_add_P_zero
-  match P, Q with
-  | P, 0 =>  exact ⟨1, one_ne_zero, by simpa using P.sym2x_P_P_eq_addSubMap⟩
-  | 0, Q =>
-    refine ⟨1, one_ne_zero, ?_⟩
-    simpa [sym2x_neg_right, sym2x_comm _ Q] using Q.sym2x_P_P_eq_addSubMap
-  | some xP yP hP, some xQ yQ hQ =>
-    have hxPQ : xP ≠ xQ := fun Heq ↦ by grind only [X_eq_iff.mp Heq]
-    have Hrs : (fun i ↦ (addSubMap W i).eval <| (some xP yP hP).sym2x (some xQ yQ hQ)) =
-        ![(xP * xQ) ^ 2 - W.b₄ * (xP * xQ) - W.b₆ * (xP + xQ) - W.b₈,
-          2 * (xP + xQ) * (xP * xQ) + W.b₂ * (xP * xQ) + W.b₄ * (xP + xQ) + W.b₆,
-          (xP - xQ) ^ 2] := by
-      ext i : 1
-      fin_cases i <;> simp [addSubMap]
-      ring
-    have : xP - xQ ≠ 0 := sub_ne_zero_of_ne hxPQ
-    refine ⟨(xP - xQ) ^ 2, pow_ne_zero 2 this, ?_⟩
-    -- The following relations are needed for the `grobner` calls below.
-    have HeqP := (W.equation_iff xP yP).mp hP.1
-    have HeqQ := (W.equation_iff xQ yQ).mp hQ.1
-    rw [Hrs, Point.sym2x_eq_xRep, Point.xRep_add_of_X_ne hP hQ hxPQ,
-      Point.xRep_sub_of_X_ne hP hQ hxPQ,
-      b₂, b₄, b₆, b₈]
-    ext i : 1
-    fin_cases i <;> simp [field] <;> grobner
-
-end Decidable
 
 /-! ### The naïve height -/
 
@@ -201,6 +103,16 @@ lemma Point.naiveHeight_eq_logHeight₁ {P : W.Point} :
   | 0 => simp [naiveHeight, xRep]
   | some .. => simpa [naiveHeight] using (logHeight₁_eq_logHeight _).symm
 
+/-- The point at infinity has height zero: its representative is `![1, 0]`. -/
+@[simp]
+lemma Point.naiveHeight_zero : (0 : W.Point).naiveHeight = 0 := by
+  simp [Point.xRep_zero]
+
+/-- Negation preserves the naïve height, since `P` and `-P` share an `x`-coordinate. -/
+@[simp]
+lemma Point.naiveHeight_neg (P : W.Point) : (-P).naiveHeight = P.naiveHeight := by
+  simp [naiveHeight_eq_logHeight, Point.xRep_neg]
+
 variable (W)
 
 /-- The height of `sym2x P Q` differs from `h(P) + h(Q)` by a bounded amount. -/
@@ -218,7 +130,12 @@ lemma abs_logHeight_sym2x_sub_le :
 
 variable [W.toAffine.IsElliptic]
 
-/-- **The approximate parallelogram law** for the naïve height on an elliptic curve. -/
+/-- **The approximate parallelogram law** for the naïve height on an elliptic curve.
+
+The ellipticity hypothesis is not decorative and cannot be dropped: the proof consumes Mathlib's
+`abs_logHeight_addSubMap_sub_two_mul_logHeight_le`, which is stated under `[W.IsElliptic]` and
+whose own proof uses the discriminant unit `W.Δ'⁻¹`, an object that exists only for an elliptic
+curve. -/
 theorem approx_parallelogram_law [DecidableEq F] :
     ∃ C, ∀ (P Q : W.Point),
       |(P + Q).naiveHeight + (P - Q).naiveHeight - 2 * (P.naiveHeight + Q.naiveHeight)| ≤ C := by

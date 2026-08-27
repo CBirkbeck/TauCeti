@@ -63,7 +63,12 @@ lemma den_duplication_eq {x y : R} (h : W'.Equation x y) :
   simp only [b₂, b₄, b₆]
   linear_combination -4 * Heq
 
-/-- The duplication denominator vanishes exactly at the points of order dividing `2`. -/
+/-- The duplication denominator vanishes exactly when the solution is fixed by `negY`.
+
+Deliberately *not* phrased as "the points of order dividing `2`": `R` here is only a reduced
+commutative ring and `(x, y)` only a solution of the Weierstrass equation, so there is no group
+in which such a point has an order. That reading needs a field and nonsingularity, and belongs
+with a statement carrying those hypotheses. -/
 lemma den_duplication_eq_zero_iff [IsReduced R] {x y : R} (h : W'.Equation x y) :
     4 * x ^ 3 + W'.b₂ * x ^ 2 + 2 * W'.b₄ * x + W'.b₆ = 0 ↔ y = W'.negY x y := by
   rw [den_duplication_eq h, sq_eq_zero_iff, negY]
