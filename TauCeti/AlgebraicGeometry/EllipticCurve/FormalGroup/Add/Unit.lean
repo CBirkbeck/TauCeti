@@ -127,8 +127,8 @@ private theorem X_mul_subst_unitR_formalSlope :
   rw [h1, h2] at h
   linear_combination -h
 
-/-- The chord through a point and the origin is vertical in the `(z, w)` chart: its intercept
-vanishes. -/
+/-- The chord through a point and the origin has vanishing intercept: its equation in the
+`(z, w)` chart is `w = λz`, so it passes through the origin. -/
 private theorem subst_unitR_formalIntercept :
     subst (Sum.elim X (fun _ ↦ 0) : Unit ⊕ Unit → MvPowerSeries Unit R)
       (formalIntercept W) = 0 := by
@@ -360,7 +360,7 @@ theorem coeff_formalAdd_sub_eq_zero_of_degree_lt {d : Unit ⊕ Unit →₀ ℕ} 
       d = Finsupp.single (Sum.inl ()) a + Finsupp.single (Sum.inr ()) b := fun a b ha hb ↦
     Finsupp.ext fun s ↦ by rcases s with u | u <;> simp [← ha, ← hb]
   rcases hcase with ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩ <;>
-    rw [show d = _ from hext _ _ h1 h2] <;>
+    rw [hext _ _ h1 h2] <;>
     simp [coeff_zero_eq_constantCoeff_apply,
       constantCoeff_formalAdd W, coeff_single_inl_formalAdd W, coeff_single_inr_formalAdd W,
       Finsupp.single_eq_single_iff,
