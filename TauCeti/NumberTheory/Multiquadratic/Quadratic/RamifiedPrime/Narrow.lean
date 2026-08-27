@@ -174,38 +174,6 @@ theorem exists_nonempty_prod_narrowMk0_eq_one_of_unit
     exact absurd hσγ (hne v)
   · exact hSne
 
-/-- **Without a totally positive associate of `θ`, every unit has norm one.** If no unit `u`
-makes `θ * u` or its negative totally positive, then `u * conj u = 1` for every unit: the
-alternative `u * conj u = -1` would make `θu / conj (θu)` the square `u ^ 2`, and hence exhibit
-the associate the hypothesis denies. -/
-private theorem mul_ringOfIntegersQuadraticConj_unit_eq_one_of_forall_not_isTotallyPositive
-    (hmin : minpoly ℤ θ = X ^ 2 - C d) (hgen : Algebra.adjoin ℚ {(θ : K)} = ⊤)
-    (hA : ¬ ∃ u : (𝓞 K)ˣ, IsTotallyPositive ((θ * (u : 𝓞 K) : 𝓞 K) : K) ∨
-      IsTotallyPositive (-((θ * (u : 𝓞 K) : 𝓞 K) : K))) (u : (𝓞 K)ˣ) :
-    (u : 𝓞 K) * ringOfIntegersQuadraticConj hmin hgen (u : 𝓞 K) = 1 := by
-  have hθK : ((θ : 𝓞 K) : K) ≠ 0 := coe_gen_ne_zero hmin
-  rcases mul_ringOfIntegersQuadraticConj_unit_eq_one_or_neg_one hmin hgen u with h | h
-  · exact h
-  · refine absurd ⟨u, ?_⟩ hA
-    -- With `u σu = -1`, the ratio `θu / σ(θu)` is the square `u²`.
-    have huK : ((u : 𝓞 K) : K) ≠ 0 := RingOfIntegers.coe_ne_zero_iff.mpr u.ne_zero
-    have hu' : ((u : 𝓞 K) : K) * quadraticConj hmin hgen ((u : 𝓞 K) : K) = -1 := by
-      simpa [coe_ringOfIntegersQuadraticConj] using congrArg (fun x : 𝓞 K => (x : K)) h
-    have hcjK : quadraticConj hmin hgen ((θ * (u : 𝓞 K) : 𝓞 K) : K) =
-        -(θ : K) * quadraticConj hmin hgen ((u : 𝓞 K) : K) := by
-      push_cast
-      rw [map_mul, quadraticConj_gen hmin hgen]
-    have hcjne : quadraticConj hmin hgen ((u : 𝓞 K) : K) ≠ 0 := fun h0 => by
-      rw [h0, mul_zero] at hu'
-      exact zero_ne_one (neg_eq_zero.mp hu'.symm).symm
-    have hdiv : ((θ * (u : 𝓞 K) : 𝓞 K) : K) /
-        quadraticConj hmin hgen ((θ * (u : 𝓞 K) : 𝓞 K) : K) = ((u : 𝓞 K) : K) ^ 2 := by
-      rw [hcjK, div_eq_iff (by simp [hθK, hcjne])]
-      push_cast
-      linear_combination ((θ : K) * ((u : 𝓞 K) : K)) * hu'
-    exact isTotallyPositive_or_isTotallyPositive_neg_of_isTotallyPositive_div_quadraticConj
-      hmin hgen (by rw [hdiv]; exact isTotallyPositive_sq huK)
-
 /-- **An explicit relation of narrow genus theory.** For `K = ℚ(√d)` with `d` squarefree and
 `1 < |d|`, some *nonempty* set `S` of ramified primes has `∏_{p ∈ S} [𝔭_p]⁺ = 1` in `Cl⁺(K)`.
 
@@ -256,8 +224,11 @@ theorem exists_nonempty_prod_narrowMk0_eq_one (hmin : minpoly ℤ θ = X ^ 2 - C
       intro hTC
       exact hA ⟨1, Or.inl (isTotallyPositive_iff.mpr fun w hw =>
         absurd hw (InfinitePlace.not_isReal_iff_isComplex.mpr (IsTotallyComplex.isComplex w)))⟩
-    have hnormone :=
-      mul_ringOfIntegersQuadraticConj_unit_eq_one_of_forall_not_isTotallyPositive hmin hgen hA
+    have hnormone : ∀ u : (𝓞 K)ˣ,
+        (u : 𝓞 K) * ringOfIntegersQuadraticConj hmin hgen (u : 𝓞 K) = 1 := fun u =>
+      (mul_ringOfIntegersQuadraticConj_unit_eq_one_or_neg_one hmin hgen u).resolve_right
+        fun h => hA ⟨u, isTotallyPositive_or_neg_of_mul_ringOfIntegersQuadraticConj_eq_neg_one
+          hmin hgen u.ne_zero h⟩
     obtain ⟨ε, hεpos, hεsq⟩ := exists_isTotallyPositive_notMem_square hmin hgen hcomplex hnormone
     refine exists_nonempty_prod_narrowMk0_eq_one_of_unit hmin hgen hprime hover hεpos fun v hv =>
       hεsq ?_
