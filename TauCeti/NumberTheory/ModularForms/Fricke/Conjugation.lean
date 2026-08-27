@@ -303,6 +303,12 @@ public theorem coe_frickeConjGamma1 (σ : ↥(Gamma1 N)) :
 
 section NeZero
 
+/-- The value of mathlib's `Gamma0Map` on a `Γ₀(N)` element: it is the lower-right entry, reduced.
+`Gamma0Map` is a bare `MonoidHom.mk`, so this is definitional; naming it keeps the one
+definitional step out of the `simp` sets below. -/
+private theorem gamma0Map_apply (g : ↥(Gamma0 N)) :
+    Gamma0Map N g = (((g : Matrix (Fin 2) (Fin 2) ℤ) 1 1 : ℤ) : ZMod N) := rfl
+
 /-- **The Fricke conjugation inverts the diamond label.** `Gamma0Map` reads the lower-right entry
 mod `N`; conjugation swaps the two diagonal entries, so it reads `a` where it read `d`, and
 `a · d ≡ 1 (mod N)` because `det σ = 1` and `N ∣ c`.
@@ -313,34 +319,41 @@ involution has to redo the determinant argument. -/
 public theorem gamma0Map_frickeConjGamma0_mul (σ : ↥(Gamma0 N)) :
     Gamma0Map N (frickeConjGamma0 σ) * Gamma0Map N σ = 1 := by
   have hcast := intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0 (M := N) σ.property
-  simpa [Gamma0Map, coe_frickeConjGamma0] using hcast
+  simp only [gamma0Map_apply, coe_frickeConjGamma0, coe_frickeConjSL]
+  simpa using hcast
 
 variable [NeZero N]
 
-/-- **The Fricke conjugation is an involution at nonzero level**: applying it twice is the
-identity on `Γ₀(N)`.
+/-- **Applying the entry map twice is the identity, at nonzero level**, on `SL(2, ℤ)` itself:
+this is the entrywise content of the involution, stated where a consumer holding a plain
+`frickeConjSL σ` can use it without wrapping into `Γ₀(N)`. The two bundled involutions below are
+`Subtype.ext` of this.
 
 This genuinely needs `N ≠ 0`. At level zero the lower-left entry `-N·b` of `frickeConjSL σ` is
 `0` whatever `b` is, so the formula forgets `b` and cannot be undone; see the `Level` section of
 the module docstring. -/
-@[simp]
 -- The reason is that `W² = (-N) • 1` is central, so conjugating twice does nothing; the proof
 -- below is the entrywise form of that over `ℤ`, with no `W` in sight.
-public theorem frickeConjGamma0_frickeConjGamma0 (σ : ↥(Gamma0 N)) :
-    frickeConjGamma0 (frickeConjGamma0 σ) = σ := by
+public theorem frickeConjSL_frickeConjSL (σ : ↥(Gamma0 N)) :
+    frickeConjSL ⟨frickeConjSL σ, frickeConjSL_mem_Gamma0 σ⟩ = (σ : SL(2, ℤ)) := by
   have hN : (N : ℤ) ≠ 0 := Int.natCast_ne_zero.mpr (NeZero.ne N)
-  have hdiv : ((frickeConjGamma0 σ : ↥(Gamma0 N)) : Matrix (Fin 2) (Fin 2) ℤ) 1 0 / (N : ℤ) =
+  have hdiv : ((frickeConjSL σ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) 1 0 / (N : ℤ) =
       -(σ : Matrix (Fin 2) (Fin 2) ℤ) 0 1 := by
-    have hentry : ((frickeConjGamma0 σ : ↥(Gamma0 N)) : Matrix (Fin 2) (Fin 2) ℤ) 1 0 =
+    have hentry : ((frickeConjSL σ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) 1 0 =
         (N : ℤ) * -(σ : Matrix (Fin 2) (Fin 2) ℤ) 0 1 := by
-      rw [coe_frickeConjGamma0, coe_frickeConjSL]
+      rw [coe_frickeConjSL]
       simp
     rw [hentry, Int.mul_ediv_cancel_left _ hN]
-  apply Subtype.ext
-  rw [coe_frickeConjGamma0]
   ext i j
-  rw [coe_frickeConjSL, hdiv, coe_frickeConjGamma0, coe_frickeConjSL]
+  rw [coe_frickeConjSL, hdiv, coe_frickeConjSL]
   fin_cases i <;> fin_cases j <;> simp [natCast_mul_lowerLeft_ediv]
+
+/-- **The Fricke conjugation is an involution at nonzero level**: applying it twice is the
+identity on `Γ₀(N)`. This is `frickeConjSL_frickeConjSL` read through `Subtype.ext`. -/
+@[simp]
+public theorem frickeConjGamma0_frickeConjGamma0 (σ : ↥(Gamma0 N)) :
+    frickeConjGamma0 (frickeConjGamma0 σ) = σ :=
+  Subtype.ext (frickeConjSL_frickeConjSL σ)
 
 /-- `frickeConjGamma0` is involutive, in the form `Function.Involutive` consumes. -/
 public theorem frickeConjGamma0_involutive :
@@ -378,16 +391,12 @@ public theorem frickeConjGamma0MulEquiv_symm :
 
 /-- The `Γ₁(N)` counterpart of `frickeConjGamma0_frickeConjGamma0`. -/
 @[simp]
--- Transports the `Γ₀(N)` involution across the two wrappers, relying on two definitional facts:
--- `frickeConjGamma1` and `frickeConjGamma0` have the same underlying map `frickeConjSL`, so both
--- sides reduce to it on the underlying element, and the two differing `Γ₀(N)`-membership proofs
--- are identified by proof irrelevance. Routing it through the `coe` lemmas instead does not work:
--- `frickeConjGamma0_frickeConjGamma0` is itself `@[simp]`, so `simpa` closes the transported term
--- to `True` before it can discharge the goal.
+-- Read off the value of `frickeConjGamma1` through `coe_frickeConjGamma1` and closed by the
+-- `SL(2, ℤ)`-level involution, so this leans on no identification between two different bundled
+-- maps. The one remaining definitional step is `coe_frickeConjGamma1` itself, which is `(rfl)`.
 public theorem frickeConjGamma1_frickeConjGamma1 (σ : ↥(Gamma1 N)) :
     frickeConjGamma1 (frickeConjGamma1 σ) = σ :=
-  Subtype.ext (congrArg (Subtype.val (p := fun g => g ∈ Gamma0 N))
-    (frickeConjGamma0_frickeConjGamma0 ⟨σ, Gamma1_in_Gamma0 N σ.property⟩))
+  Subtype.ext (frickeConjSL_frickeConjSL ⟨σ, Gamma1_in_Gamma0 N σ.property⟩)
 
 /-- `frickeConjGamma1` is involutive, in the form `Function.Involutive` consumes. -/
 public theorem frickeConjGamma1_involutive :
