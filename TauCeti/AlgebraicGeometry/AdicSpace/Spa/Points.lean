@@ -27,6 +27,9 @@ it is supplied by `Ideal.isOpen_of_isMaximal_of_isOpen_isTopologicallyNilpotent`
   is the support of a point of the adic spectrum.
 * `TauCeti.ValuationSpectrum.isUnit_of_forall_not_vle_zero` : Proposition 7.52(2) — if no point
   of `Spa(A, A⁺)` vanishes on `f`, then `f` is a unit.
+* `TauCeti.ValuationSpectrum.span_eq_top_of_forall_mem_spa_exists_not_vle_zero` : the converse
+  half of Corollary 7.53 — if every point of `Spa(A, A⁺)` is nonzero somewhere on `T`, then `T`
+  generates the unit ideal.
 
 ## Provenance
 
@@ -64,18 +67,15 @@ theorem exists_mem_spa_supp_eq (Aplus : Subring A) (𝔭 : Ideal A) [𝔭.IsPrim
 /-- **The converse half of Wedhorn Corollary 7.53.** If every maximal ideal of `A` is open and
 every point of `Spa(A, A⁺)` is nonzero on some member of `T`, then `T` generates the unit ideal.
 
-Contrapositive of Proposition 7.51: were `T` not to generate, it would lie in a maximal ideal,
-which is open by hypothesis and hence the support of a point — and that point would vanish on
-every member of `T`.
-
 Wedhorn states this for a complete affinoid ring, where every maximal ideal is automatically
 open; the openness hypothesis is what replaces completeness here, matching the generality the
 forward half already has in
-`TauCeti.ValuationSpectrum.mem_rationalSubset_of_span_eq_top_of_mem_spa`. -/
+`TauCeti.ValuationSpectrum.mem_rationalSubset_of_span_eq_top_of_mem_spa`. `T` is an arbitrary
+set: finiteness plays no part, and enters only in the rational-cover corollary. -/
 theorem span_eq_top_of_forall_mem_spa_exists_not_vle_zero (Aplus : Subring A)
-    (hmax : ∀ (𝔪 : Ideal A), 𝔪.IsMaximal → IsOpen (𝔪 : Set A)) {T : Finset A}
+    (hmax : ∀ (𝔪 : Ideal A), 𝔪.IsMaximal → IsOpen (𝔪 : Set A)) {T : Set A}
     (h : ∀ v ∈ spa Aplus, ∃ t ∈ T, ¬ v.toValuativeRel.vle t 0) :
-    Ideal.span (T : Set A) = ⊤ := by
+    Ideal.span T = ⊤ := by
   by_contra hne
   obtain ⟨𝔪, h𝔪, hle⟩ := Ideal.exists_le_maximal _ hne
   obtain ⟨v, hv, rfl⟩ := exists_mem_spa_supp_eq Aplus 𝔪 (hmax 𝔪 h𝔪)
@@ -85,14 +85,14 @@ theorem span_eq_top_of_forall_mem_spa_exists_not_vle_zero (Aplus : Subring A)
 /-- **Proposition 7.52(2)**: if every maximal ideal of `A` is open and no point of
 `Spa(A, A⁺)` vanishes on `f`, then `f` is a unit.
 
-This is the singleton case of `span_eq_top_of_forall_mem_spa_exists_not_vle_zero`: the argument
-is the same contrapositive of Proposition 7.51, so it is derived rather than repeated. -/
+Wedhorn states this for a complete affinoid ring; as with the converse above, openness of the
+maximal ideals is what replaces completeness. -/
 theorem isUnit_of_forall_not_vle_zero (Aplus : Subring A)
     (hmax : ∀ (𝔪 : Ideal A), 𝔪.IsMaximal → IsOpen (𝔪 : Set A)) {f : A}
     (h : ∀ v ∈ spa Aplus, ¬ v.toValuativeRel.vle f 0) : IsUnit f := by
   rw [← Ideal.span_singleton_eq_top]
   simpa using span_eq_top_of_forall_mem_spa_exists_not_vle_zero Aplus hmax
-    (T := {f}) fun v hv ↦ ⟨f, Finset.mem_singleton_self f, h v hv⟩
+    (T := {f}) fun v hv ↦ ⟨f, Set.mem_singleton f, h v hv⟩
 
 end
 
