@@ -18,9 +18,15 @@ coordinate functions: `v_∞ x = exp 2` and `v_∞ y = exp 3`, i.e. `x` has a do
 and `y` a triple one. This file does the same for `x ∘ [n]`, the `x`-coordinate of `[n]` at the
 generic point built in `Isogeny/MulByInt/Basic.lean`.
 
-The answer is that **nothing changes**: `v_∞ (x ∘ [n]) = exp 2 = v_∞ x`. The pole order at `O`
-is unaffected by `[n]`, even though the *total* degree of the pole divisor grows like `n²` —
-the extra poles sit at the other points of `[n]⁻¹(O)`, not at `O`.
+The answer, **for `n` nonzero in `F`**, is that nothing changes: `v_∞ (x ∘ [n]) = exp 2 = v_∞ x`.
+The pole order at `O` is unaffected by `[n]`, even though the *total* degree of the pole divisor
+grows like `n²` — the extra poles sit at the other points of `[n]⁻¹(O)`, not at `O`.
+
+Every result below carries `(n : F) ≠ 0`, inherited from Mathlib's `natDegree_ΨSq`, which reads
+the degree of `ψₙ²` off the leading coefficient `n ²`. So `n = 0` and the multiples of the
+characteristic are **not** covered: this file does not say what `v_∞ (x ∘ [p])` is in
+characteristic `p`. Closing that needs the same `IsCoprime (W.Φ n) (W.ΨSq n)` that
+`Isogeny/MulByInt/Basic.lean` records as the gap in `psiFunctionField_ne_zero`.
 
 ## The computation
 
@@ -41,9 +47,9 @@ than something growing with `n`.
 * `TauCeti.Isogeny.infinityPlace_phiFunctionField`,
   `TauCeti.Isogeny.infinityPlace_psiFunctionField_sq`: the two pole orders, `2n²` and
   `2(n² - 1)`.
-* `TauCeti.Isogeny.infinityPlace_mulByIntX`: `v_∞ (x ∘ [n]) = exp 2`.
-* `TauCeti.Isogeny.infinityPlace_mulByIntX_eq_infinityPlace_genericX`: equivalently, `[n]` does
-  not change the pole order of `x` at infinity.
+* `TauCeti.Isogeny.infinityPlace_mulByIntX`: `v_∞ (x ∘ [n]) = exp 2`, for `(n : F) ≠ 0`.
+* `TauCeti.Isogeny.infinityPlace_mulByIntX_eq_infinityPlace_genericX`: equivalently, for
+  `(n : F) ≠ 0`, `[n]` does not change the pole order of `x` at infinity.
 
 ## References
 
@@ -72,22 +78,16 @@ variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
 
 namespace Isogeny
 
-/-- The image in the function field of the class of a *constant* bivariate polynomial is that
-polynomial's image under the `F[X] → W.FunctionField` algebra map.
-
-This is the one definitional step the two valuation computations below both need, written out:
-`AdjoinRoot.mk_C` turns the class of `C p` into `AdjoinRoot.of`, `AdjoinRoot.algebraMap_eq`
-identifies that with `algebraMap F[X] W.CoordinateRing`, and the scalar tower
-`F[X] → W.CoordinateRing → W.FunctionField` closes it. -/
-private theorem algebraMap_mk_C (p : F[X]) :
-    algebraMap W.CoordinateRing W.FunctionField (Affine.CoordinateRing.mk W (C p)) =
-      algebraMap F[X] W.FunctionField p := by
-  rw [AdjoinRoot.mk_C, ← AdjoinRoot.algebraMap_eq, ← IsScalarTower.algebraMap_apply]
+-- The canonical `mk W (C p) = algebraMap _ _ p`, exposed in `Affine/CoordinateRing.lean` for
+-- this use. It sits under TauCeti's own `WeierstrassCurve.Affine` root, not Mathlib's, so it is
+-- opened by name rather than reached through the `Affine.` prefix used elsewhere here.
+open TauCeti.WeierstrassCurve.Affine.CoordinateRing (mk_C_eq_algebraMap)
 
 /-- `Φₙ` at the generic point is the image of the univariate `Φₙ`. -/
 theorem phiFunctionField_eq_algebraMap (n : ℤ) :
     phiFunctionField W n = algebraMap F[X] W.FunctionField (W.Φ n) := by
-  rw [phiFunctionField_def, Affine.CoordinateRing.mk_φ, algebraMap_mk_C]
+  rw [phiFunctionField_def, Affine.CoordinateRing.mk_φ,
+    mk_C_eq_algebraMap, ← IsScalarTower.algebraMap_apply]
 
 /-- **`Φₙ` has a pole of order `2n²` at infinity.** Its degree is `n²` and it is nonzero for
 every `n`, both without any hypothesis on the characteristic. -/
@@ -113,7 +113,8 @@ which vanishes when the characteristic divides `n`. -/
 theorem infinityPlace_psiFunctionField_sq {n : ℤ} (hnF : (n : F) ≠ 0) :
     W.infinityPlace (psiFunctionField W n ^ 2) =
       WithZero.exp (2 * ((n.natAbs : ℤ) ^ 2 - 1)) := by
-  rw [psiFunctionField_sq, algebraMap_mk_C,
+  rw [psiFunctionField_sq, mk_C_eq_algebraMap,
+    ← IsScalarTower.algebraMap_apply,
     Affine.infinityPlace_algebraMap_polynomial W (W.ΨSq_ne_zero hnF), W.natDegree_ΨSq hnF]
   -- `natDegree_ΨSq` gives `n.natAbs ^ 2 - 1` as a *natural* subtraction, so the cast only
   -- distributes once `1 ≤ n.natAbs ^ 2` is available.
@@ -124,8 +125,9 @@ theorem infinityPlace_psiFunctionField_sq {n : ℤ} (hnF : (n : F) ≠ 0) :
   push_cast
   ring
 
-/-- **`[n]` does not move the pole of `x` at infinity**: `v_∞ (x ∘ [n]) = exp 2`, the same value
-`infinityPlace.X` gives for `x` itself.
+/-- **`[n]` does not move the pole of `x` at infinity, when `(n : F) ≠ 0`**:
+`v_∞ (x ∘ [n]) = exp 2`, the same value `infinityPlace.X` gives for `x` itself. The hypothesis is
+on the image of `n` in `F`, so `n = 0` and the multiples of the characteristic are excluded.
 
 The two pole orders `2n²` and `2(n² - 1)` differ by exactly `2`, and that difference is the
 answer. The total pole divisor of `x ∘ [n]` does grow with `n`, but its other poles sit at the
@@ -137,8 +139,8 @@ theorem infinityPlace_mulByIntX {n : ℤ} (hnF : (n : F) ≠ 0) :
     infinityPlace_psiFunctionField_sq W hnF, ← WithZero.exp_sub]
   ring_nf
 
-/-- The same statement read against `x` itself: `[n]` preserves the valuation at infinity of the
-`x`-coordinate. -/
+/-- The same statement read against `x` itself: for `(n : F) ≠ 0`, `[n]` preserves the valuation
+at infinity of the `x`-coordinate. -/
 theorem infinityPlace_mulByIntX_eq_infinityPlace_genericX {n : ℤ} (hnF : (n : F) ≠ 0) :
     W.infinityPlace (mulByIntX W n) = W.infinityPlace (W.genericX) := by
   -- `infinityPlace.X` is stated on the two-step `F[X] → CoordinateRing → FunctionField` image,
