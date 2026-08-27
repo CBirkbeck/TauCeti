@@ -355,8 +355,9 @@ public theorem frickeConjGamma0_involutive :
 `Γ₀(N) ≃* Γ₀(N)` that `frickeConjGamma0` becomes once it is known to be involutive. It is its
 own inverse.
 
-This is the declaration that expresses that `W` *normalizes* `Γ₀(N)`, and it is why the name
-carries `Conj` where `frickeConjGamma0` does not. -/
+This is the declaration that expresses that `W` *normalizes* `Γ₀(N)`: `frickeConjGamma0` maps
+the subgroup into itself at every level, and the level hypothesis is what upgrades that to an
+isomorphism. -/
 public def frickeConjGamma0MulEquiv : ↥(Gamma0 N) ≃* ↥(Gamma0 N) where
   toFun := frickeConjGamma0
   invFun := frickeConjGamma0
@@ -379,15 +380,14 @@ public theorem frickeConjGamma0MulEquiv_symm :
     (frickeConjGamma0MulEquiv (N := N)).symm = frickeConjGamma0MulEquiv :=
   (rfl)
 
-/-- The `Γ₁(N)` counterpart of `frickeConjGamma0_frickeConjGamma0`.
-
-The proof transports the `Γ₀(N)` involution across the two wrappers, and relies on two
-definitional facts worth naming: `frickeConjGamma1` and `frickeConjGamma0` have the same
-underlying map `frickeConjSL`, so both sides reduce to it on the underlying element, and the two
-differing `Γ₀(N)`-membership proofs are identified by proof irrelevance. Routing it through the
-`coe` lemmas instead does not work: `frickeConjGamma0_frickeConjGamma0` is itself `@[simp]`, so
-`simpa` closes the transported term to `True` before it can discharge the goal. -/
+/-- The `Γ₁(N)` counterpart of `frickeConjGamma0_frickeConjGamma0`. -/
 @[simp]
+-- Transports the `Γ₀(N)` involution across the two wrappers, relying on two definitional facts:
+-- `frickeConjGamma1` and `frickeConjGamma0` have the same underlying map `frickeConjSL`, so both
+-- sides reduce to it on the underlying element, and the two differing `Γ₀(N)`-membership proofs
+-- are identified by proof irrelevance. Routing it through the `coe` lemmas instead does not work:
+-- `frickeConjGamma0_frickeConjGamma0` is itself `@[simp]`, so `simpa` closes the transported term
+-- to `True` before it can discharge the goal.
 public theorem frickeConjGamma1_frickeConjGamma1 (σ : ↥(Gamma1 N)) :
     frickeConjGamma1 (frickeConjGamma1 σ) = σ :=
   Subtype.ext (congrArg (Subtype.val (p := fun g => g ∈ Gamma0 N))
