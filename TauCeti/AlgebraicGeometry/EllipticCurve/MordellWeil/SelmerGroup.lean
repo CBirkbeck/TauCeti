@@ -17,11 +17,14 @@ condition: a global one, that the norm class is trivial (`WeierstrassCurve.Affin
 local one at each place (`WeierstrassCurve.Affine.localCondition`). The subgroup cut out by all
 of them is the **2-Selmer group**, and the descent map `μ` lands inside it.
 
-Its value is that it is a *computable* upper bound: `ker μ = 2 • W(K)`, so `im μ ≅ W(K)/2W(K)`,
-whose order is `2 ^ rank W(K) * #W(K)[2]`. Bounding the Selmer cardinality therefore bounds the
-rank. That last step is `pow_rank_le_card_of_range_μ_le`, stated for an arbitrary finite subgroup
-containing `im μ` rather than for the Selmer group itself, so that it applies before the Selmer
-group is known to be finite.
+Its value is as an upper bound on the rank: `ker μ = 2 • W(K)`, so `im μ ≅ W(K)/2W(K)`, whose
+order is `2 ^ rank W(K) * #W(K)[2]`. Any *finite* subgroup containing `im μ` therefore bounds the
+rank, and that is `pow_rank_le_card_of_range_μ_le`, stated for an arbitrary finite `S` rather
+than for the Selmer group itself.
+
+Nothing here establishes that the Selmer group is finite, over the arbitrary Dedekind domain and
+auxiliary fields used below or otherwise; that is a separate result, and so is any effective
+computation of the resulting bound.
 
 ## Main definitions
 
