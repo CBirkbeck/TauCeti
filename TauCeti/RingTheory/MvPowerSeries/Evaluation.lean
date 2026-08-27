@@ -22,11 +22,12 @@ Two further results serve the same arguments from either side. Arguments drawn f
 `MvPowerSeries.HasEval` in the first place, so that the value is defined at all; and the value is
 congruent to the image of the constant term modulo `I`.
 
-Both come out of the estimates above rather than from a fresh argument. For `HasEval`, each
-argument is topologically nilpotent because it lies in `I`, and the decay condition at infinity is
-vacuous when there are finitely many variables. For the congruence, subtracting the constant term
-kills the constant monomial and every surviving monomial carries an argument, so the difference is
-the `k = 1` case of `eval₂_mem_pow` applied to `f - C (constantCoeff f)`.
+They are proved differently. `hasEval_of_mem` does not use the estimates above at all: each
+argument is topologically nilpotent because it lies in `I`, and over finitely many variables the
+decay condition at infinity is vacuous. `eval₂_sub_constantCoeff_mem` is the one that reduces to
+them — subtracting the constant term kills the constant monomial and every surviving monomial
+carries an argument, so the difference is the `k = 1` case of `eval₂_mem_pow` applied to
+`f - C (constantCoeff f)`.
 
 The three bounds have the same one-line mechanism. `MvPowerSeries.hasSum_eval₂` writes the value
 as the sum of its monomial values `φ (coeff d f) * ∏ s, a s ^ d s`; each such monomial is checked
