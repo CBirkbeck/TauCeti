@@ -104,6 +104,7 @@ noncomputable def selmerGroup₂ : Subgroup W.M :=
 
 open scoped Classical in
 /-- Membership in the 2-Selmer group, unfolded into its three defining conditions. -/
+@[simp]
 theorem mem_selmerGroup₂_iff {m : W.M} :
     m ∈ W.selmerGroup₂ R Loc ↔ W.normM m = 1 ∧
       (∀ v : HeightOneSpectrum R, m ∈ W.localCondition (v.adicCompletion K)) ∧
@@ -124,8 +125,7 @@ open scoped Classical in
 theorem card_range_μ [AddGroup.FG W.Point] :
     Nat.card (μ (W := W)).range =
       2 ^ finrank ℤ W.Point * Nat.card (nsmulAddMonoidHom (α := W.Point) 2).ker := by
-  rw [← Nat.card_congr (QuotientGroup.quotientKerEquivRange (μ (W := W))).toEquiv, ker_μ_eq,
-    ← Subgroup.index_eq_card, AddSubgroup.index_toSubgroup,
+  rw [← Subgroup.index_ker (μ (W := W)), ker_μ_eq, AddSubgroup.index_toSubgroup,
     AddSubgroup.index_range_nsmul_of_fg _ two_ne_zero]
 
 open scoped Classical in
@@ -140,6 +140,6 @@ theorem pow_rank_le_card_of_range_μ_le [AddGroup.FG W.Point] {S : Subgroup W.M}
     (h : (μ (W := W)).range ≤ S) :
     2 ^ finrank ℤ W.Point * Nat.card (nsmulAddMonoidHom (α := W.Point) 2).ker ≤ Nat.card S := by
   rw [← W.card_range_μ]
-  exact Nat.card_le_card_of_injective _ (Subgroup.inclusion_injective h)
+  exact Subgroup.card_le_of_le h
 
 end WeierstrassCurve.Affine
