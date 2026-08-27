@@ -8,7 +8,6 @@ module
 public import Mathlib.LinearAlgebra.Determinant
 public import Mathlib.RingTheory.AdjoinRoot
 public import Mathlib.RingTheory.Norm.Basic
-public import Mathlib.RingTheory.Polynomial.Resultant.Basic
 public import TauCeti.Algebra.Polynomial.LinearFactor
 public import TauCeti.RingTheory.Polynomial.DegreeLT
 public import TauCeti.RingTheory.Polynomial.Resultant.Basic
@@ -302,6 +301,7 @@ theorem norm_mk_eq_resultant (hg : g.Monic) (p : R[X]) :
 
 /-- **The norm of `x - θ` is `g x`.** Here `θ` is the image of `X` in `AdjoinRoot g`, so
 `mk g (C x - X)` is `x - θ`. -/
+@[simp]
 theorem norm_mk_C_sub_X (hg : g.Monic) (x : R) :
     Algebra.norm R (mk g (C x - X)) = g.eval x := by
   nontriviality R
@@ -317,6 +317,7 @@ the added multiple of `q` drops out, leaving a resultant with `C x - X`. Below t
 resultant bookkeeping does not apply and the representative is a scalar instead: at
 `q.natDegree = 1` the `X` terms cancel and it is `C (q.eval x)` in an algebra of rank `2`, and at
 `q.natDegree = 0` it is `1`, as is `q.eval x`. -/
+@[simp]
 theorem norm_mk_C_sub_X_add {q : R[X]} {x : R} (hq : q.Monic) (hgq : g = q * (X - C x)) :
     Algebra.norm R (mk g (C x - X + q)) = q.eval x ^ 2 := by
   nontriviality R
