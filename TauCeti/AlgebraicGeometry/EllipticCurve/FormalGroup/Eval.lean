@@ -8,6 +8,7 @@ module
 public import Mathlib.RingTheory.Jacobson.Ideal
 public import Mathlib.RingTheory.PowerSeries.Evaluation
 public import Mathlib.Topology.Algebra.Nonarchimedean.AdicTopology
+public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Inverse
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.WExpansion
 public import TauCeti.RingTheory.MvPowerSeries.Evaluation
 
@@ -113,5 +114,51 @@ local ring's maximal ideal, or for the ideal of definition of a complete adic ri
 theorem isUnit_formalUEval {I : Ideal O} (hI : IsAdic I) (hJ : I ≤ Ideal.jacobson ⊥) {t : O}
     (ht : t ∈ I) : IsUnit (W.formalUEval t) :=
   Ideal.isUnit_of_sub_one_mem_jacobson_bot _ (hJ (W.formalUEval_sub_one_mem hI ht))
+
+/-! ### The inverse-side evaluations
+
+Note which series these evaluate. The source's `uSeries` is this repository's
+`formalInverseDenom`, **not** `formalU`; `formalU` is the source's `vSeries`, evaluated above as
+`formalUEval`. Both are `PowerSeries O`, so pairing an evaluation with the wrong one would compile.
+-/
+
+/-- The value of the formal inverse's denominator `1 - a₁ z - a₃ w(z)` at a parameter. -/
+noncomputable def formalInverseDenomEval (t : O) : O :=
+  eval₂ (RingHom.id O) t W.formalInverseDenom
+
+/-- The value at a parameter of the power-series inverse of `formalInverseDenom`. -/
+noncomputable def formalInverseDenomInvEval (t : O) : O :=
+  eval₂ (RingHom.id O) t (PowerSeries.invOfUnit W.formalInverseDenom 1)
+
+/-- The value of the formal inverse `ι(z)` at a parameter. -/
+noncomputable def formalInverseEval (t : O) : O := eval₂ (RingHom.id O) t W.formalInverse
+
+/-- The denominator's value and the value of its series inverse multiply to `1`. -/
+theorem formalInverseDenomEval_mul_inv {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
+    W.formalInverseDenomEval t * W.formalInverseDenomInvEval t = 1 := by
+  have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
+  have hEp : PowerSeries.HasEval t := isTopologicallyNilpotent_of_mem_of_isAdic hI ht
+  have h := congrArg (PowerSeries.eval₂Hom (S := O) hcont hEp)
+    W.mul_invOfUnit_formalInverseDenom
+  rw [map_mul, map_one] at h
+  simpa [formalInverseDenomEval, formalInverseDenomInvEval, PowerSeries.coe_eval₂Hom] using h
+
+/-- The denominator's value at a parameter is a unit. -/
+theorem isUnit_formalInverseDenomEval {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
+    IsUnit (W.formalInverseDenomEval t) :=
+  IsUnit.of_mul_eq_one _ (W.formalInverseDenomEval_mul_inv hI ht)
+
+/-- The formal inverse maps a parameter of `I` back into `I`: it vanishes at the origin. -/
+theorem formalInverseEval_mem {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
+    W.formalInverseEval t ∈ I := by
+  have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
+  have hE : MvPowerSeries.HasEval (fun _ : Unit ↦ t) :=
+    PowerSeries.hasEval (isTopologicallyNilpotent_of_mem_of_isAdic hI ht)
+  have key := MvPowerSeries.eval₂_mem_pow (k := 1) hcont hE hI (by simpa using ht)
+    W.formalInverse (by
+      rw [show MvPowerSeries.constantCoeff W.formalInverse
+          = constantCoeff W.formalInverse from rfl, W.constantCoeff_formalInverse]
+      exact zero_mem _)
+  simpa [formalInverseEval, eval₂] using key
 
 end WeierstrassCurve
