@@ -82,16 +82,15 @@ namespace HeckeRing.GL2
 
 variable {N : ℕ} (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) [NeZero N]
 
+-- The enumeration `∑` needs. `HeckeSlash/Composition.lean` does exactly this for the unweighted
+-- sums, and it is what `Basic.lean`'s own `local instance` resolves to, so the `∑`s here and the
+-- ones `twistedHeckeSlashSum_def` unfolds to are the same term. Declaring a bespoke instance
+-- instead would need one per section, and the second would be auto-named with an underscore.
+attribute [local instance] Fintype.ofFinite
+
 section Chosen
 
 variable (D : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)))
-
-/-- The enumeration `∑` needs, chosen exactly as in `HeckeSlash/Nebentypus/Basic.lean` so that the
-two sums are the same term. -/
-noncomputable local instance :
-    Fintype (DecompQuotient ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))
-      (D.out : GL (Fin 2) ℚ)⁻¹) :=
-  Fintype.ofFinite _
 
 /-- **Slashing a twisted slash sum multiplies the representatives on the right**, the weights
 riding along unchanged. The weighted counterpart of `heckeSlashSum_slash`, which needs no
@@ -110,12 +109,6 @@ end Chosen
 section Composite
 
 variable (D₁ D₂ : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)))
-
-noncomputable local instance (D : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ))
-    ((Gamma0 N).map (mapGL ℚ))) :
-    Fintype (DecompQuotient ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))
-      (D.out : GL (Fin 2) ℚ)⁻¹) :=
-  Fintype.ofFinite _
 
 /-- **The composite of two twisted slash sums**, over the representatives they are defined with,
 for an arbitrary `f : ℍ → ℂ`.
