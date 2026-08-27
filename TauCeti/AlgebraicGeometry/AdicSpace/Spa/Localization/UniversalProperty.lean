@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.Basic
-public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Points
+import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Points
 import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Integral
 
 /-!
@@ -15,8 +15,9 @@ import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Integral
 The coordinate ring `A⟨T/s⟩` of a rational subset has an *algebraic* universal property: a
 continuous `φ : A → B` into a complete `B` extends across `ρ : A → A⟨T/s⟩` as soon as `φ s` is a
 unit and every fraction `φ t / φ s` is power-bounded
-(`TauCeti.Huber.existsUnique_continuous_ringHom_completion_locTopology`). Wedhorn's Lemma 8.1
-replaces those two algebraic conditions by a single *geometric* one — that `Spa(φ)` factors
+(`TauCeti.Huber.PairOfDefinition.existsUnique_continuous_ringHom_completion_locTopology`).
+Wedhorn's Lemma 8.1 replaces those two algebraic conditions by a single *geometric* one — that
+`Spa(φ)` factors
 through the rational subset `U = R(T/s)`. This file carries that replacement out **for targets
 whose maximal ideals are open** — see *The hypothesis that is not yet Wedhorn's* below, because
 that class does not include the rings Wedhorn applies Lemma 8.1 to.
@@ -93,7 +94,7 @@ continuous homomorphism into a *complete affinoid ring*, and an affinoid ring is
 
 Openness of the maximal ideals of `B` is carried separately, as `hmax`, and **is not** derivable
 from `[IsHuberRing B]`. The route through
-`TauCeti.Ideal.isOpen_of_isMaximal_of_isOpen_isTopologicallyNilpotent` needs
+`Ideal.isOpen_of_isMaximal_of_isOpen_isTopologicallyNilpotent` needs
 `[IsLinearTopology B B]` — a basis of zero-neighbourhoods by *ideals* — which no Huber instance
 supplies and which would defeat the purpose: by `TauCeti.Huber.IsTateRing.isOpen_iff_eq_top` an
 ideal of a Tate ring is open exactly when it is `⊤`, so a nonzero Tate ring has neither a proper
@@ -130,8 +131,9 @@ rational subset `R(T/s)`, then no point of `Spa (B, B⁺)` vanishes on `φ s`, s
 by Wedhorn's Proposition 7.52(2).
 
 This is the first step of Wedhorn's Lemma 8.1. Openness of the maximal ideals of `B` is the
-hypothesis that 7.52(2) carries; for a complete linearly topologized ring it is supplied by
-`TauCeti.Ideal.isOpen_of_isMaximal_of_isOpen_isTopologicallyNilpotent`. -/
+hypothesis that 7.52(2) carries; `Ideal.isOpen_of_isMaximal_of_isOpen_isTopologicallyNilpotent`
+supplies it for a complete Hausdorff linearly topologized ring whose topologically nilpotent
+locus is open, as it is for a Huber ring. -/
 theorem isUnit_of_forall_comap_mem_rationalSubset {φ : A →+* B} {Aplus : Subring A}
     {Bplus : Subring B} (T : Finset A) {s : A}
     (hmax : ∀ 𝔪 : Ideal B, 𝔪.IsMaximal → IsOpen (𝔪 : Set B))
@@ -157,11 +159,8 @@ theorem vle_one_of_forall_comap_mem_rationalSubset {φ : A →+* B} {Aplus : Sub
   have hvle : w.toValuativeRel.vle (φ t) (φ s) := by
     have h := ((mem_rationalSubset_iff Aplus T s _).mp (hfac w hw)).2.1 t ht
     rwa [comap_vle] at h
-  have hinv : φ s * ↑hs.unit⁻¹ = 1 := by
-    have h := hs.unit.mul_inv
-    rwa [hs.unit_spec] at h
   have h := w.toValuativeRel.mul_vle_mul_left hvle (↑hs.unit⁻¹ : B)
-  rwa [hinv] at h
+  rwa [hs.mul_val_inv] at h
 
 end Steps
 
@@ -181,8 +180,9 @@ This is **not** Wedhorn's Lemma 8.1 in the generality he states it: `hmax` is va
 Tate rings, which are the targets §8 applies it to. See the module docstring.
 
 The two algebraic conditions of
-`TauCeti.Huber.existsUnique_continuous_ringHom_completion_locTopology` are discharged from the
-geometric one: `φ s` is a unit by `isUnit_of_forall_comap_mem_rationalSubset`, and each fraction
+`TauCeti.Huber.PairOfDefinition.existsUnique_continuous_ringHom_completion_locTopology` are
+discharged from the geometric one: `φ s` is a unit by
+`isUnit_of_forall_comap_mem_rationalSubset`, and each fraction
 `φ t / φ s` is sub-unit at every point of `Spa (B, B⁺)` by
 `vle_one_of_forall_comap_mem_rationalSubset`, hence lies in `B⁺` and so is power-bounded.
 
