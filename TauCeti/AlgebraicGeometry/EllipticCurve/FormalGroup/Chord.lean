@@ -238,7 +238,7 @@ theorem rename_swap_formalIntercept :
 origin, hence a unit. This is what lets `formalThirdRoot` divide by it, and it is recorded here
 rather than reproved at each use. -/
 @[simp]
-theorem constantCoeff_thirdRootDenom :
+theorem constantCoeff_formalThirdRootDenom :
     constantCoeff (1 + C W.a₂ * formalSlope W + C W.a₄ * formalSlope W ^ 2 +
       C W.a₆ * formalSlope W ^ 3) = 1 := by
   simp
@@ -279,7 +279,7 @@ theorem constantCoeff_formalThirdRoot : constantCoeff (formalThirdRoot W) = 0 :=
 makes the formal group law commutative. -/
 theorem rename_swap_formalThirdRoot :
     rename Sum.swap (formalThirdRoot W) = formalThirdRoot W := by
-  have hD := constantCoeff_thirdRootDenom W
+  have hD := constantCoeff_formalThirdRootDenom W
   have hD' : constantCoeff (rename Sum.swap (1 + C W.a₂ * formalSlope W +
       C W.a₄ * formalSlope W ^ 2 + C W.a₆ * formalSlope W ^ 3)) = 1 := by
     rw [constantCoeff_rename]; exact hD
@@ -323,8 +323,8 @@ theorem map_formalThirdRoot :
   have hinv := MvPowerSeries.ringHom_invOfUnit (σ := Unit ⊕ Unit) (τ := Unit ⊕ Unit)
     (MvPowerSeries.map φ)
     (D := 1 + C W.a₂ * formalSlope W + C W.a₄ * formalSlope W ^ 2 + C W.a₆ * formalSlope W ^ 3)
-    (u := 1) (v := 1) (constantCoeff_thirdRootDenom W)
-    (by rw [MvPowerSeries.constantCoeff_map, constantCoeff_thirdRootDenom]; simp)
+    (u := 1) (v := 1) (constantCoeff_formalThirdRootDenom W)
+    (by rw [MvPowerSeries.constantCoeff_map, constantCoeff_formalThirdRootDenom]; simp)
   rw [formalThirdRoot_def, formalThirdRoot_def]
   simp only [map_sub, map_neg, map_add, map_one, map_mul, map_pow, map_ofNat,
     MvPowerSeries.map_X, MvPowerSeries.map_C, map_formalSlope W φ, map_formalIntercept W φ,
