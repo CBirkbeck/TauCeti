@@ -47,6 +47,13 @@ line 539, at the roadmap's pin `66889eada51a74c2f5dfb7fb5909b0b5a0a2d96e`, Apach
 Stoll). The construction is the source's; what changed is the hypothesis — the source and this
 version take the nonvanishing of the contraction as a hypothesis, where Mathlib's
 `HeightOneSpectrum.comap` instead derives it from surjectivity of the map.
+
+`Ideal.ne_bot_of_comap_ne_bot` plays the role of the source's
+`comap_ne_bot_of_comap_comap_ne_bot` (`EllipticCurves/Mathlib/Basic.lean` line 270): it is what
+discharges that nonvanishing hypothesis when a prime is contracted through an intermediate ring.
+It is stated here in the general form — an arbitrary ideal and an injective ring homomorphism,
+with the map producing the ideal dropped, since it plays no role — and proved from Mathlib's
+`Ideal.comap_bot_of_injective`.
 -/
 
 public section
@@ -112,6 +119,22 @@ theorem count_factors_map_of_ringEquiv (e : R ≃+* R') {p I : Ideal R} (hp : Pr
   exact le_antisymm ((key _).mp le_rfl) ((key _).mpr le_rfl)
 
 end RingEquivDedekind
+
+section Injective
+
+/-- If the contraction of `J` along an injective ring homomorphism is nonzero, so is `J` itself.
+
+This is the eliminator that discharges the nonvanishing hypothesis of
+`IsDedekindDomain.HeightOneSpectrum.comapOfNeBot` when a prime is contracted through an
+intermediate ring: contract all the way down to a base where nonvanishing is already known, and
+read the intermediate step off from that. Only injectivity of the *lower* map is needed; the map
+producing `J` plays no role, so it does not appear. -/
+theorem ne_bot_of_comap_ne_bot {R S F : Type*} [Semiring R] [Semiring S] [FunLike F R S]
+    [RingHomClass F R S] (f : F) (hf : Function.Injective f) {J : Ideal S}
+    (h : J.comap f ≠ ⊥) : J ≠ ⊥ :=
+  fun h0 ↦ h (h0 ▸ comap_bot_of_injective f hf)
+
+end Injective
 
 end Ideal
 

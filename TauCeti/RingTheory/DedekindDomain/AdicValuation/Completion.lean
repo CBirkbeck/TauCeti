@@ -16,8 +16,8 @@ identifies a condition imposed at the maximal ideal of `𝒪_v` with the conditi
 
 ## Main results
 
-* `IsDedekindDomain.HeightOneSpectrum.under_maximalIdeal_adicCompletionIntegers`: the maximal
-  ideal of `𝒪_v` lies under `v`.
+* `IsDedekindDomain.HeightOneSpectrum.under_maximalIdeal_adicCompletionIntegers`: `v` is the
+  prime lying under the maximal ideal of `𝒪_v`.
 
 ## Roadmap
 
@@ -43,7 +43,8 @@ namespace IsDedekindDomain.HeightOneSpectrum
 variable {R : Type*} [CommRing R] [IsDedekindDomain R]
   {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
 
-/-- The maximal ideal of the ring of integers of the completion of `K` at `v` lies under `v`. -/
+/-- The prime of `R` lying under the maximal ideal of the ring of integers of the completion of
+`K` at `v` is `v` itself. -/
 @[simp]
 lemma under_maximalIdeal_adicCompletionIntegers (v : HeightOneSpectrum R) :
     (IsLocalRing.maximalIdeal (v.adicCompletionIntegers K)).under R = v.asIdeal := by
