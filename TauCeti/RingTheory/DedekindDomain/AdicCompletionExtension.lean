@@ -107,6 +107,7 @@ the valuation of the completion.
 
 This is what lets a condition stated at the height-one primes of `𝒪_v` be read as a condition on
 `K_v`: `𝒪_v` is a discrete valuation ring, so it has exactly one, and it induces `Valued.v`. -/
+@[simp]
 theorem valuation_maximalIdeal_adicCompletionIntegers (x : v.adicCompletion K) :
     (IsDiscreteValuationRing.maximalIdeal (v.adicCompletionIntegers K)).valuation
       (v.adicCompletion K) x = Valued.v x := by
@@ -185,6 +186,7 @@ noncomputable def adicCompletionExtension : v.adicCompletion K →+* w.adicCompl
 
 /-- The completion of `x : K_v` under `adicCompletionExtension` is the base change of its
 underlying element of the completion of `WithVal (v.valuation K)`. -/
+@[simp]
 lemma toCompletion_adicCompletionExtension (x : v.adicCompletion K) :
     (adicCompletionExtension K L v w x).toCompletion =
       UniformSpace.Completion.mapRingHom
@@ -193,6 +195,8 @@ lemma toCompletion_adicCompletionExtension (x : v.adicCompletion K) :
   (rfl)
 
 /-- The square with sides `K → K_v → L_w` and `K → L → L_w` commutes. -/
+-- Not `@[simp]`: the `simpNF` linter rejects it, because `simp` rewrites the left-hand side
+-- further through `WithVal.equiv_symm_apply`, so this is not in simp normal form.
 lemma adicCompletionExtension_coe (x : K) :
     adicCompletionExtension K L v w (x : v.adicCompletion K) =
       (algebraMap K L x : w.adicCompletion L) := by
@@ -204,6 +208,7 @@ lemma adicCompletionExtension_coe (x : K) :
 open WithZeroTopology in
 /-- The valuation on `L_w` restricted along `K_v → L_w` is the valuation on `K_v` raised to the
 ramification index of `w` over `v`. -/
+@[simp]
 lemma valued_adicCompletionExtension (x : v.adicCompletion K) :
     Valued.v (adicCompletionExtension K L v w x) =
       Valued.v x ^ v.asIdeal.ramificationIdx' w.asIdeal := by
@@ -240,7 +245,8 @@ noncomputable def adicCompletionIntegersExtension :
       fun x ↦ adicCompletionExtension_mem_adicCompletionIntegers K L v w x
 
 /-- `adicCompletionIntegersExtension` agrees with `adicCompletionExtension` on the integers. -/
-lemma algebraMap_adicCompletionIntegersExtension (x : v.adicCompletionIntegers K) :
+@[simp]
+lemma coe_adicCompletionIntegersExtension (x : v.adicCompletionIntegers K) :
     (adicCompletionIntegersExtension K L v w x : w.adicCompletion L) =
       adicCompletionExtension K L v w (x : v.adicCompletion K) :=
   (rfl)
@@ -252,6 +258,7 @@ Stated with `Ideal.comap` of the explicit ring homomorphism, not `Ideal.under`: 
 `Ideal.comap (algebraMap A B)` and so needs an `Algebra (v.adicCompletionIntegers K)
 (w.adicCompletionIntegers L)` instance, which does not exist — the extension is a bare `RingHom`.
 Naming it `under_` would assert a contraction along an `algebraMap` that is not there. -/
+@[simp]
 lemma comap_maximalIdeal_adicCompletionIntegersExtension :
     (IsLocalRing.maximalIdeal (w.adicCompletionIntegers L)).comap
         (adicCompletionIntegersExtension K L v w) =
@@ -262,7 +269,7 @@ lemma comap_maximalIdeal_adicCompletionIntegersExtension :
     (WithZero (Multiplicative ℤ))))).trans <| Iff.trans ?_
       (Valuation.mem_maximalIdeal_iff (v := (Valued.v : Valuation (v.adicCompletion K)
         (WithZero (Multiplicative ℤ))))).symm
-  rw [algebraMap_adicCompletionIntegersExtension K L v w, valued_adicCompletionExtension]
+  rw [coe_adicCompletionIntegersExtension K L v w, valued_adicCompletionExtension]
   exact pow_lt_one_iff
     (Ideal.IsDedekindDomain.ramificationIdx'_ne_zero_of_liesOver w.asIdeal v.ne_bot)
 
