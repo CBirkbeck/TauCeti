@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Algebra.Module.Torsion.Free
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Mathlib.RingTheory.IntegralClosure.IsIntegralClosure.Basic
 public import Mathlib.FieldTheory.Minpoly.Field
@@ -26,8 +25,8 @@ the abstract `IsIntegralClosure` form and independent of the others.
   module over the Noetherian ring `A`, so is the integral closure in a ring that embeds into it —
   the "as `R` is Noetherian it suffices to enlarge the field" step that Stacks uses in
   Lemmas 10.161.5, 10.161.12 and 10.161.13.
-* Fraction fields: the fraction field of a domain finite over `R` is finite-dimensional over the
-  fraction field of `R`, for arbitrary fraction fields (Mathlib states this only for
+* Fraction fields: the fraction field of a domain `S` finite over `R` is finite-dimensional over
+  any intermediate field `K` with `R → K → L` (Mathlib states this only for the concrete
   `FractionRing R` and `FractionRing S`).
 
 ## Main results
@@ -69,8 +68,7 @@ theorem IsIntegralClosure.tower_bot {R A B C : Type*} [CommRing R] [CommRing A] 
 /-- Source: Stacks, Lemma 10.161.12 (tag 032N), proof: "Choose a finite normal field extension
 `M/K` containing `L`. As `R` is Noetherian it suffices to show that the integral closure of `R`
 in `M` is finite over `R`." Finiteness of integral closures descends along injective `A`-algebra
-maps of the top rings: `C` maps `A`-linearly and injectively into `C'`, and a submodule of a
-finite module over a Noetherian ring is finite. -/
+maps of the top rings. -/
 theorem IsIntegralClosure.finite_of_injective {A : Type*} [CommRing A] [IsNoetherianRing A]
     {M K' : Type*} [CommRing M] [CommRing K'] [Algebra A M] [Algebra A K'] {C C' : Type*}
     [CommRing C] [CommRing C'] [Algebra A C] [Algebra C M] [IsScalarTower A C M]
@@ -80,8 +78,9 @@ theorem IsIntegralClosure.finite_of_injective {A : Type*} [CommRing A] [IsNoethe
   -- `C → M → K'` makes `C` an algebra over which `IsIntegralClosure.lift` can land in `C'`
   let _ : Algebra C K' := (ι.toRingHom.comp (algebraMap C M)).toAlgebra
   have : IsScalarTower A C K' := IsScalarTower.of_algebraMap_eq fun a ↦ by
-    change algebraMap A K' a = ι (algebraMap C M (algebraMap A C a))
-    rw [← IsScalarTower.algebraMap_apply A C M a, AlgHom.commutes]
+    rw [RingHom.algebraMap_toAlgebra, RingHom.comp_apply,
+      ← IsScalarTower.algebraMap_apply A C M a]
+    exact (ι.commutes a).symm
   have : Algebra.IsIntegral A C := ⟨fun x ↦ IsIntegralClosure.isIntegral A M x⟩
   have hinj : Function.Injective (IsIntegralClosure.lift (S := C) A C' K') := fun a b hab ↦ by
     refine IsIntegralClosure.algebraMap_injective C A M (hι ?_)
@@ -94,7 +93,10 @@ theorem IsIntegralClosure.finite_of_injective {A : Type*} [CommRing A] [IsNoethe
 the fraction field of `S`. Then `M` is also a finite field extension of `K`" (`S` finite over
 `R`, `K` the fraction field of `R`). The fraction field of a domain `S` finite and torsion-free
 over a domain `R` is finite-dimensional over the fraction field of `R`, for abstract fraction
-fields `K` and `L`; Mathlib's instance covers only `FractionRing R` and `FractionRing S`. -/
+fields `K` and `L`. NOTE the hypotheses are weaker than that sentence suggests: `K` need only
+be an intermediate field with `R → K → L`, not a fraction field of `R`, and neither `R` being a
+domain nor `S` torsion-free over it is assumed. Mathlib covers only the concrete
+`FractionRing R` / `FractionRing S` case. -/
 theorem IsFractionRing.finiteDimensional_of_finite (R S K L : Type*) [CommRing R] [CommRing S]
     [IsDomain S] [Algebra R S] [Module.Finite R S]
     [Field K] [Field L] [Algebra R K] [Algebra S L] [IsFractionRing S L]
