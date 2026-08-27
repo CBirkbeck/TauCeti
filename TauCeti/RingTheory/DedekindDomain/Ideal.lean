@@ -111,16 +111,6 @@ end Ideal
 
 namespace IsDedekindDomain.HeightOneSpectrum
 
-/-- The maximal ideal is the only height-one prime of a discrete valuation ring.
-
-Mathlib has `IsDiscreteValuationRing.maximalIdeal` as a `HeightOneSpectrum` and
-`IsLocalRing.eq_maximalIdeal` for ideals, but not that the two agree at the level of
-`HeightOneSpectrum`. That identification is what lets a statement about the height-one primes of a
-discrete valuation ring be read as a statement about its valuation. -/
-lemma eq_maximalIdeal {A : Type*} [CommRing A] [IsDomain A] [IsDiscreteValuationRing A]
-    (P : HeightOneSpectrum A) : P = IsDiscreteValuationRing.maximalIdeal A :=
-  HeightOneSpectrum.ext (IsLocalRing.eq_maximalIdeal P.isMaximal)
-
 section RingEquivTransport
 
 variable {R R' : Type*} [CommRing R] [CommRing R']
@@ -267,5 +257,23 @@ theorem IsPrimeTo.induction_on {motive : Ideal R → Prop} (h : IsPrimeTo I S)
       exact mul_prime (HeightOneSpectrum.ofPrime hp) J hbad hJ (ih hJ)
 
 end Ideal
+
+section DiscreteValuationRing
+
+namespace IsDedekindDomain.HeightOneSpectrum
+
+/-- The maximal ideal is the only height-one prime of a discrete valuation ring.
+
+Mathlib has `IsDiscreteValuationRing.maximalIdeal` as a `HeightOneSpectrum` and
+`IsLocalRing.eq_maximalIdeal` for ideals, but not that the two agree at the level of
+`HeightOneSpectrum`. That identification is what lets a statement about the height-one primes of a
+discrete valuation ring be read as a statement about its valuation. -/
+lemma eq_maximalIdeal {A : Type*} [CommRing A] [IsDomain A] [IsDiscreteValuationRing A]
+    (P : HeightOneSpectrum A) : P = IsDiscreteValuationRing.maximalIdeal A :=
+  HeightOneSpectrum.ext (IsLocalRing.eq_maximalIdeal P.isMaximal)
+
+end IsDedekindDomain.HeightOneSpectrum
+
+end DiscreteValuationRing
 
 end

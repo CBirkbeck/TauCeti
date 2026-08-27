@@ -247,7 +247,12 @@ lemma algebraMap_adicCompletionIntegersExtension (x : v.adicCompletionIntegers K
   (rfl)
 
 /-- The maximal ideal of the ring of integers of `L_w` contracts to the maximal ideal of the ring
-of integers of `K_v`. -/
+of integers of `K_v`.
+
+Stated with `Ideal.comap` of the explicit ring homomorphism, not `Ideal.under`: `Ideal.under A` is
+`Ideal.comap (algebraMap A B)` and so needs an `Algebra (v.adicCompletionIntegers K)
+(w.adicCompletionIntegers L)` instance, which does not exist — the extension is a bare `RingHom`.
+Naming it `under_` would assert a contraction along an `algebraMap` that is not there. -/
 lemma comap_maximalIdeal_adicCompletionIntegersExtension :
     (IsLocalRing.maximalIdeal (w.adicCompletionIntegers L)).comap
         (adicCompletionIntegersExtension K L v w) =
