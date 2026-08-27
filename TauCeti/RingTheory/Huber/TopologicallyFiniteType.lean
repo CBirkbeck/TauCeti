@@ -5,29 +5,47 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.RingTheory.Huber.WeightedEval.Completion
+public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Completion
 
 /-!
 # Homomorphisms topologically of finite type
 
-Wedhorn's §6.6. A ring homomorphism `φ : A → B` into a complete `f`-adic ring is *topologically of
-finite type* when `B` is presented as a quotient of a weighted restricted power-series algebra
-`A⟨X₁, …, Xₖ⟩_T` over `A` — by a map that is surjective, continuous and open, and is a map of
-`A`-algebras. It is *strictly* topologically of finite type when the trivial weight family
-`Tᵢ = {1}` suffices, so that the presenting algebra is the ordinary `A⟨X₁, …, Xₖ⟩`.
+Wedhorn's §6.6. A ring homomorphism `φ : A → B` is *topologically of finite type* when `B` is
+presented as an `A`-algebra by an open quotient map out of the completion of a weighted restricted
+power-series ring `A⟨X₁, …, Xₖ⟩_T` on finitely many variables, each weight `Tᵢ` finite. It is
+*strictly* topologically of finite type when the trivial weight family `Tᵢ = {1}` suffices, so
+that the presenting algebra is `TauCeti.Huber.restrictedMvPowerSeriesCompletion`, the object this
+library writes `A⟨X₁, …, Xₖ⟩`.
 
 The notion is what three results the adic-spaces roadmap needs are stated in terms of: the second
 half of Proposition and Definition 6.36 (a Tate ring is strongly noetherian exactly when every
 Tate ring topologically of finite type over it is noetherian), Remark 6.37(1), and Example 6.38,
 which Proposition 8.30 cites by name.
 
+## What is and is not assumed
+
+Wedhorn states 6.28 and 6.29 for an `f`-adic `A` and a *complete* `f`-adic `B`. **Those standing
+hypotheses are deliberately not imposed here**: the definitions ask only that `A` be a
+nonarchimedean topological commutative ring — the least that lets `A⟨X⟩_T` be formed at all — and
+that `B` be a topological commutative ring. The predicates are therefore defined on a wider class
+than Wedhorn's, and agree with his on the class he considers. A consumer that needs completeness
+of `B` should assume it alongside, not read it out of these definitions.
+
+## Notation, and one thing it is easy to get backwards
+
+`A⟨X₁, …, Xₖ⟩_T` names the **uncompleted** weighted ring `TauCeti.Huber.weightedRestrictedSubring`
+of Wedhorn's Remark and Definition 5.48, as it does in the roadmap (`AdicSpaces/README.md`, §0.4).
+Wedhorn's presenting algebra in 6.28/6.29 is its **completion**, which he writes `Â⟨…⟩`; at the
+trivial weight family that completion is `restrictedMvPowerSeriesCompletion`, which this library
+writes `A⟨X₁, …, Xₖ⟩` without a subscript. So the domain of `π` below is a completion throughout,
+never the subring itself.
+
 ## The weighted algebra, and why not the Tate-only one
 
-The presenting algebra is the **weighted** `A⟨X⟩_T`, not `A⟨X⟩`. That is Wedhorn's own Proposition
-and Definition 6.29(i), and it is what the roadmap asks for (`AdicSpaces/README.md`, §5.2): the
-Tate-only algebra is too narrow downstream, since `A_inf` is Huber and not Tate. Definition 6.28,
-the strict variant, is the Tate-only case; the implication between them is
-`IsStrictlyTopologicallyFiniteType.isTopologicallyFiniteType`.
+The presenting algebra is the **weighted** one. That is Wedhorn's own 6.29(i), and it is what the
+roadmap asks for (`AdicSpaces/README.md`, §5.2): the Tate-only algebra is too narrow downstream,
+since `A_inf` is Huber and not Tate. Definition 6.28, the strict variant, is the Tate-only case;
+the implication between them is `IsStrictlyTopologicallyFiniteType.isTopologicallyFiniteType`.
 
 Two conditions on the weight family are in play and they are not the same. Wedhorn's standing
 hypothesis on `T` — needed even to *form* `A⟨X⟩_T` — is `TauCeti.Huber.IsWeightFamily`, that
@@ -38,10 +56,6 @@ lemma's docstring). Finiteness of each `Tᵢ` is a separate requirement of 6.29(
 the notion one of *finite* type — and is carried explicitly, since `IsWeightFamily` does not imply
 it.
 
-Wedhorn writes the presenting algebra `Â⟨X₁, …, Xₖ⟩_T`, with the completion taken after forming the
-restricted series; `UniformSpace.Completion (weightedRestrictedSubring T hT)` is that algebra, and
-is what the roadmap writes `A⟨X₁, …, Xₖ⟩_T`.
-
 ## Main definitions
 
 * `TauCeti.Huber.IsStrictlyTopologicallyFiniteType`: Wedhorn Definition 6.28.
@@ -49,8 +63,12 @@ is what the roadmap writes `A⟨X₁, …, Xₖ⟩_T`.
 
 ## Main results
 
+* `TauCeti.Huber.isStrictlyTopologicallyFiniteType_algebraMap`: the structure map
+  `A → A⟨X₁, …, Xₖ⟩` is strictly topologically of finite type — the presentation by the identity.
 * `TauCeti.Huber.IsStrictlyTopologicallyFiniteType.isTopologicallyFiniteType`: strictly
   topologically of finite type implies topologically of finite type, by the trivial weight family.
+* `TauCeti.Huber.IsTopologicallyFiniteType.continuous`: such a `φ` is continuous, since it factors
+  through the presenting algebra's structure map.
 
 ## References
 
@@ -68,48 +86,58 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
   {B : Type*} [CommRing B] [TopologicalSpace B]
 
 /-- **Wedhorn Proposition and Definition 6.29(i)**: `φ : A → B` is *topologically of finite type*
-when `B` is presented, as an `A`-algebra, by a surjective continuous open homomorphism out of a
-weighted restricted power-series algebra `A⟨X₁, …, Xₖ⟩_T` on finitely many variables with each
-weight `Tᵢ` finite. -/
+when `B` is presented, as an `A`-algebra, by an open quotient map out of the completion of a
+weighted restricted power-series ring on finitely many variables with each weight `Tᵢ` finite. -/
 def IsTopologicallyFiniteType (φ : A →+* B) : Prop :=
   ∃ (k : ℕ) (T : Fin k → Set A) (_ : ∀ i, (T i).Finite) (hT : IsWeightFamily T)
     (π : Completion (weightedRestrictedSubring T hT) →+* B),
-    Function.Surjective π ∧ Continuous π ∧ IsOpenMap π ∧
-      π.comp (Completion.coeRingHom.comp (weightedC T hT)) = φ
+    IsOpenQuotientMap π ∧ π.comp (algebraMap A (Completion (weightedRestrictedSubring T hT))) = φ
 
 /-- Unfolding lemma for the sealed definition `TauCeti.Huber.IsTopologicallyFiniteType`. -/
 theorem isTopologicallyFiniteType_iff {φ : A →+* B} :
     IsTopologicallyFiniteType φ ↔
       ∃ (k : ℕ) (T : Fin k → Set A) (_ : ∀ i, (T i).Finite) (hT : IsWeightFamily T)
         (π : Completion (weightedRestrictedSubring T hT) →+* B),
-        Function.Surjective π ∧ Continuous π ∧ IsOpenMap π ∧
-          π.comp (Completion.coeRingHom.comp (weightedC T hT)) = φ :=
+        IsOpenQuotientMap π ∧
+          π.comp (algebraMap A (Completion (weightedRestrictedSubring T hT))) = φ :=
   (Iff.rfl)
 
 /-- **Wedhorn Definition 6.28**: `φ : A → B` is *strictly* topologically of finite type when the
-presenting algebra can be taken to be the ordinary `A⟨X₁, …, Xₖ⟩`, the trivial weight family. -/
+presenting algebra can be taken to be `A⟨X₁, …, Xₖ⟩`, the trivial weight family. -/
 def IsStrictlyTopologicallyFiniteType (φ : A →+* B) : Prop :=
-  ∃ (k : ℕ) (π : Completion (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))
-      isWeightFamily_one_weight) →+* B),
-    Function.Surjective π ∧ Continuous π ∧ IsOpenMap π ∧
-      π.comp (Completion.coeRingHom.comp (weightedC _ isWeightFamily_one_weight)) = φ
+  ∃ (k : ℕ) (π : restrictedMvPowerSeriesCompletion k A →+* B),
+    IsOpenQuotientMap π ∧
+      π.comp (algebraMap A (restrictedMvPowerSeriesCompletion k A)) = φ
 
 /-- Unfolding lemma for the sealed definition
 `TauCeti.Huber.IsStrictlyTopologicallyFiniteType`. -/
 theorem isStrictlyTopologicallyFiniteType_iff {φ : A →+* B} :
     IsStrictlyTopologicallyFiniteType φ ↔
-      ∃ (k : ℕ) (π : Completion (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))
-          isWeightFamily_one_weight) →+* B),
-        Function.Surjective π ∧ Continuous π ∧ IsOpenMap π ∧
-          π.comp (Completion.coeRingHom.comp (weightedC _ isWeightFamily_one_weight)) = φ :=
+      ∃ (k : ℕ) (π : restrictedMvPowerSeriesCompletion k A →+* B),
+        IsOpenQuotientMap π ∧
+          π.comp (algebraMap A (restrictedMvPowerSeriesCompletion k A)) = φ :=
   (Iff.rfl)
+
+/-- **The presentation by the identity**: the structure map `A → A⟨X₁, …, Xₖ⟩` is strictly
+topologically of finite type. This is the witness that the conditions are simultaneously
+satisfiable, and the `k = 0` case says the completion map `A → Â` is one too. -/
+theorem isStrictlyTopologicallyFiniteType_algebraMap (k : ℕ) :
+    IsStrictlyTopologicallyFiniteType (algebraMap A (restrictedMvPowerSeriesCompletion k A)) :=
+  ⟨k, RingHom.id _, IsOpenQuotientMap.id, RingHom.id_comp _⟩
 
 /-- The trivial weight family is finite and satisfies the standing hypothesis, so a strict
 presentation is a presentation. -/
 theorem IsStrictlyTopologicallyFiniteType.isTopologicallyFiniteType {φ : A →+* B}
     (h : IsStrictlyTopologicallyFiniteType φ) : IsTopologicallyFiniteType φ := by
-  obtain ⟨k, π, hsurj, hcont, hopen, hcomm⟩ := h
-  exact ⟨k, _, fun _ ↦ Set.finite_singleton 1, isWeightFamily_one_weight, π, hsurj, hcont, hopen,
-    hcomm⟩
+  obtain ⟨k, π, hπ, hcomm⟩ := h
+  exact ⟨k, _, fun _ ↦ Set.finite_singleton 1, isWeightFamily_one_weight, π, hπ, hcomm⟩
+
+/-- A homomorphism topologically of finite type is continuous: it factors as an open quotient map
+after the presenting algebra's structure map, and both are continuous. -/
+theorem IsTopologicallyFiniteType.continuous {φ : A →+* B} (h : IsTopologicallyFiniteType φ) :
+    Continuous φ := by
+  obtain ⟨k, T, _, hT, π, hπ, hcomm⟩ := h
+  rw [← hcomm]
+  exact hπ.continuous.comp (continuous_algebraMap_completion_weightedRestrictedSubring k A hT)
 
 end TauCeti.Huber
