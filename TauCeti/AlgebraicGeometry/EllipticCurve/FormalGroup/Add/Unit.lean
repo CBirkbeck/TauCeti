@@ -29,8 +29,8 @@ requires in the first place.
   **unit laws** `F(z, 0) = z` and `F(0, z) = z`.
 * `WeierstrassCurve.coeff_single_inl_formalAdd` and
   `WeierstrassCurve.coeff_single_inr_formalAdd`: both linear coefficients of `F` are `1`.
-* `WeierstrassCurve.coeff_formalAdd_sub_of_degree_lt`: below total degree two, `F` agrees with
-  `z₁ + z₂`.
+* `WeierstrassCurve.coeff_formalAdd_sub_eq_zero_of_degree_lt`: below total degree two, `F` agrees
+  with `z₁ + z₂`.
 
 ## Implementation notes
 
@@ -197,6 +197,9 @@ private theorem subst_unitR_formalThirdRoot_eq {L : PowerSeries R}
     rw [hD, ← coe_substAlgHom hasSubst_unitR]
     simp only [map_add, map_mul, map_pow, map_one]
     rw [coe_substAlgHom hasSubst_unitR]
+    -- `PowerSeries.C` is *defined* as `MvPowerSeries.C` (Mathlib `PowerSeries/Basic.lean`, with
+    -- `PowerSeries.C_apply` as its pointwise form), so this is a definition unfolding, not a
+    -- coincidence of representation.
     simp only [subst_C, show (C : R →+* MvPowerSeries Unit R) = PowerSeries.C from rfl, hL]
   have hD1 : constantCoeff D = 1 := by simp [hD]
   have hD1' : PowerSeries.constantCoeff
@@ -212,6 +215,7 @@ private theorem subst_unitR_formalThirdRoot_eq {L : PowerSeries R}
   rw [formalThirdRoot_def, ← hD, ← coe_substAlgHom hasSubst_unitR]
   simp only [map_sub, map_neg, map_add, map_mul, map_pow, map_ofNat]
   rw [coe_substAlgHom hasSubst_unitR]
+  -- as above: `PowerSeries.C` is by definition `MvPowerSeries.C`.
   simp only [subst_C, subst_X hasSubst_unitR, hInv, subst_unitR_formalIntercept, hL,
     show (C : R →+* MvPowerSeries Unit R) = PowerSeries.C from rfl]
   have h1 : ((Sum.elim X (fun _ ↦ 0) : Unit ⊕ Unit → MvPowerSeries Unit R)) (Sum.inr ()) = 0 := rfl
@@ -227,6 +231,7 @@ the first parameter and `0` for the second sends `formalThirdRoot` to `formalInv
 The identity is motivated by the chord through a point and the origin meeting the curve again at
 the negative of that point, but nothing about points of the curve is proved here — only the
 corresponding identity of power series. -/
+@[simp]
 theorem subst_unitR_formalThirdRoot :
     subst (Sum.elim X (fun _ ↦ 0) : Unit ⊕ Unit → MvPowerSeries Unit R)
       (formalThirdRoot W) = formalInverse W := by
@@ -266,6 +271,7 @@ theorem subst_unitR_formalThirdRoot :
 /-! ### The unit laws -/
 
 /-- **The right unit law**: `F(z, 0) = z`. Adding the origin does nothing. -/
+@[simp]
 theorem subst_unitR_formalAdd :
     subst (Sum.elim X (fun _ ↦ 0) : Unit ⊕ Unit → MvPowerSeries Unit R)
       (formalAdd W) = PowerSeries.X := by
@@ -285,6 +291,7 @@ private theorem hasSubst_unitL :
   hasSubst_of_constantCoeff_zero (by rintro (j | j) <;> simp)
 
 /-- **The left unit law**: `F(0, z) = z`, by the right unit law and commutativity. -/
+@[simp]
 theorem subst_unitL_formalAdd :
     subst (Sum.elim (fun _ ↦ 0) X : Unit ⊕ Unit → MvPowerSeries Unit R)
       (formalAdd W) = PowerSeries.X := by
@@ -318,6 +325,8 @@ private theorem coeff_single_eq_one_of_subst_eq_X {f : MvPowerSeries (Unit ⊕ U
       exact constantCoeff_X ()
     · rw [hfam s h, map_zero]
   have h := congrArg (coeff (Finsupp.single () 1)) hsubst
+  -- `PowerSeries R` *is* `MvPowerSeries Unit R`, and `PowerSeries.X` is `MvPowerSeries.X ()`; the
+  -- `show` names that definitional identity so the rewrite has a syntactic target to fire on.
   rw [coeff_subst hS, show (PowerSeries.X : PowerSeries R) = X () from rfl,
     coeff_X, ite_eq_left rfl] at h
   rw [finsum_eq_single _ (Finsupp.single s₀ 1) (fun d hd ↦ ?_)] at h
@@ -337,6 +346,7 @@ private theorem coeff_single_eq_one_of_subst_eq_X {f : MvPowerSeries (Unit ⊕ U
         ite_eq_right (by simpa using fun h ↦ absurd h.symm hne1), smul_zero]
 
 /-- The linear coefficient of the addition series in the first parameter is `1`. -/
+@[simp]
 theorem coeff_single_inl_formalAdd :
     coeff (Finsupp.single (Sum.inl ()) 1) (formalAdd W) = 1 :=
   coeff_single_eq_one_of_subst_eq_X rfl
@@ -347,6 +357,7 @@ theorem coeff_single_inl_formalAdd :
     (subst_unitR_formalAdd W)
 
 /-- The linear coefficient of the addition series in the second parameter is `1`. -/
+@[simp]
 theorem coeff_single_inr_formalAdd :
     coeff (Finsupp.single (Sum.inr ()) 1) (formalAdd W) = 1 :=
   coeff_single_eq_one_of_subst_eq_X rfl
@@ -365,7 +376,7 @@ private theorem degree_two_var (d : Unit ⊕ Unit →₀ ℕ) :
 
 /-- **Below total degree two the group law is addition**: the coefficients of
 `formalAdd W - X (Sum.inl ()) - X (Sum.inr ())` vanish on every exponent of total degree `< 2`. -/
-theorem coeff_formalAdd_sub_of_degree_lt {d : Unit ⊕ Unit →₀ ℕ} (hd : d.degree < 2) :
+theorem coeff_formalAdd_sub_eq_zero_of_degree_lt {d : Unit ⊕ Unit →₀ ℕ} (hd : d.degree < 2) :
     coeff d (formalAdd W - X (Sum.inl ()) - X (Sum.inr ())) = 0 := by
   rw [degree_two_var] at hd
   simp only [map_sub, coeff_X]
@@ -377,7 +388,7 @@ theorem coeff_formalAdd_sub_of_degree_lt {d : Unit ⊕ Unit →₀ ℕ} (hd : d.
     Finsupp.ext fun s ↦ by rcases s with u | u <;> simp [← ha, ← hb]
   rcases hcase with ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩ <;>
     rw [show d = _ from hext _ _ h1 h2] <;>
-    simp [show coeff (0 : Unit ⊕ Unit →₀ ℕ) (formalAdd W) = constantCoeff (formalAdd W) from rfl,
+    simp [coeff_zero_eq_constantCoeff_apply,
       constantCoeff_formalAdd W, coeff_single_inl_formalAdd W, coeff_single_inr_formalAdd W,
       Finsupp.single_eq_single_iff,
       (Ne.symm (Finsupp.single_ne_zero.mpr one_ne_zero) :
