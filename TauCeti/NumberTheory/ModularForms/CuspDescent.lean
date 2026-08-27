@@ -34,7 +34,8 @@ is to name `diag(d, 1)` over `ℚ` and record that it pushes forward to `scaleGL
 * `TauCeti.isZeroAtImInfty_slash_inv_scaleGL_mul_mapGL`: a cusp form therefore vanishes at
   `i∞` after slashing by `diag(d, 1)⁻¹ · A`.
 * `TauCeti.isZeroAt_of_smul_slash_scaleGL_eq`: **vanishing at the cusps descends** — if the
-  level-raise of `f` is a cusp form, then `f` vanishes at every cusp of an arithmetic subgroup.
+  level-raise of `f` is a cusp form for any arithmetic subgroup, then `f` vanishes at every cusp of
+  any arithmetic subgroup.
 
 ## Provenance
 
@@ -109,24 +110,31 @@ lemma isCusp_inv_scaleGL_mul_mapGL_smul_infty (d : ℕ) [NeZero d] (A : SL(2, �
   have := hinfty.smul_map_ratCast ((scaleGLRat d)⁻¹ * (mapGL ℚ A : GL (Fin 2) ℚ))
   rwa [map_mul, map_inv, map_ratCast_scaleGLRat, A.map_mapGL] at this
 
-variable {N : ℕ} [NeZero N] {k : ℤ}
+variable {k : ℤ} {F : Type*} [FunLike F ℍ ℂ]
 
 /-- A cusp form vanishes at `i∞` after slashing by `diag(d, 1)⁻¹ · A`, because that matrix sends
-`∞` to a cusp and `CuspFormClass.zero_at_cusps` covers every cusp. -/
-lemma isZeroAtImInfty_slash_inv_scaleGL_mul_mapGL (d : ℕ) [NeZero d]
-    (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) (A : SL(2, ℤ)) :
-    IsZeroAtImInfty (⇑g ∣[k] (((scaleGL d)⁻¹ : GL (Fin 2) ℝ) * (mapGL ℝ A : GL (Fin 2) ℝ))) :=
-  CuspFormClass.zero_at_cusps g
-    (isCusp_inv_scaleGL_mul_mapGL_smul_infty d A ((Gamma1 N).map (mapGL ℝ))) _ rfl
+`∞` to a cusp and `CuspFormClass.zero_at_cusps` covers every cusp.
 
-/-- **Vanishing at the cusps descends through `V_d`.** If the level-raise of `f` is a cusp form of
-level `Γ₁(N)`, then `f` vanishes at every cusp of an arithmetic subgroup.
+Nothing here is specific to a level: the cusp condition above holds for *any* arithmetic subgroup,
+and `zero_at_cusps` asks only that `g` be a cusp form for the same one. Stated over
+`CuspFormClass` so it applies to `CuspForm` and to anything else carrying that class. -/
+lemma isZeroAtImInfty_slash_inv_scaleGL_mul_mapGL {Γ' : Subgroup (GL (Fin 2) ℝ)}
+    [Γ'.IsArithmetic] [CuspFormClass F Γ' k] (d : ℕ) [NeZero d] (g : F) (A : SL(2, ℤ)) :
+    IsZeroAtImInfty (⇑g ∣[k] (((scaleGL d)⁻¹ : GL (Fin 2) ℝ) * (mapGL ℝ A : GL (Fin 2) ℝ))) :=
+  CuspFormClass.zero_at_cusps g (isCusp_inv_scaleGL_mul_mapGL_smul_infty d A Γ') _ rfl
+
+/-- **Vanishing at the cusps descends through `V_d`.** If the level-raise of `f` is a cusp form —
+for *any* arithmetic subgroup — then `f` vanishes at every cusp of any arithmetic subgroup.
+
+The two subgroups are independent and neither is a level of `f`: `Γ'` is where `g` is a cusp form,
+and `Γ` is where the cusp `c` lives. `f` itself is only a function, which is the situation the
+conductor theorem is in.
 
 With the transformation law (`slash_conjScale_eq_smul_of_slash_scaleGL`) and holomorphy
 (`mdifferentiable_of_comp_scaleGL_smul`) of `Degeneracy.lean`'s `Descent` section, this is the
 third and last condition needed to exhibit `f` as a cusp form of the lower level. -/
-theorem isZeroAt_of_smul_slash_scaleGL_eq (d : ℕ) [NeZero d] (f : ℍ → ℂ)
-    (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)
+theorem isZeroAt_of_smul_slash_scaleGL_eq {Γ' : Subgroup (GL (Fin 2) ℝ)} [Γ'.IsArithmetic]
+    [CuspFormClass F Γ' k] (d : ℕ) [NeZero d] (f : ℍ → ℂ) (g : F)
     (hg : ⇑g = (d : ℂ) ^ (1 - k) • (f ∣[k] scaleGL d))
     (Γ : Subgroup (GL (Fin 2) ℝ)) [Γ.IsArithmetic] {c : OnePoint ℝ} (hc : IsCusp c Γ) :
     IsZeroAt c f k := by
