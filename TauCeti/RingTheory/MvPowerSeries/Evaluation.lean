@@ -20,7 +20,13 @@ coefficient into a power of `I`.
 
 Two further results serve the same arguments from either side. Arguments drawn from `I` satisfy
 `MvPowerSeries.HasEval` in the first place, so that the value is defined at all; and the value is
-congruent to the image of the constant term modulo `I`, which is the `k = 1` estimate rearranged.
+congruent to the image of the constant term modulo `I`.
+
+Both come out of the estimates above rather than from a fresh argument. For `HasEval`, each
+argument is topologically nilpotent because it lies in `I`, and the decay condition at infinity is
+vacuous when there are finitely many variables. For the congruence, subtracting the constant term
+kills the constant monomial and every surviving monomial carries an argument, so the difference is
+the `k = 1` case of `eval₂_mem_pow` applied to `f - C (constantCoeff f)`.
 
 The three bounds have the same one-line mechanism. `MvPowerSeries.hasSum_eval₂` writes the value
 as the sum of its monomial values `φ (coeff d f) * ∏ s, a s ^ d s`; each such monomial is checked
@@ -163,16 +169,16 @@ theorem eval₂_mem_pow_mul (hφ : Continuous φ) (ha : HasEval a) (hI : IsAdic 
 
 omit [IsUniformAddGroup S] [CompleteSpace S] [T2Space S] [IsTopologicalRing S]
   [IsLinearTopology S S] in
-/-- **A family drawn from an adic ideal can be substituted into a power series.** Both halves of
-`HasEval` come for free: each argument is topologically nilpotent because it lies in `I`, and the
-vanishing condition at infinity is vacuous for finitely many variables. -/
+/-- **A family drawn from an adic ideal can be substituted into a power series.** For an index
+type with finitely many variables, lying in `I` is the only condition the arguments need: it
+already gives them the `HasEval` property that evaluation requires. -/
 theorem hasEval_of_mem [Finite σ] (hI : IsAdic I) (hmem : ∀ i, a i ∈ I) : HasEval a where
   hpow s := hI.isTopologicallyNilpotent_of_mem (hmem s)
   tendsto_zero := by simp [Filter.cofinite_eq_bot]
 
-/-- **The value differs from the image of the constant term by an element of `I`.** Subtracting
-the constant term kills the constant monomial, and every surviving monomial carries an argument;
-this is `eval₂_mem_pow` at `k = 1`. -/
+/-- **The value differs from the image of the constant term by an element of `I`.** Equivalently,
+for arguments drawn from `I` the value of `f` is congruent to the image of its constant term
+modulo `I`. -/
 theorem eval₂_sub_constantCoeff_mem (hφ : Continuous φ) (ha : HasEval a)
     (hI : IsAdic I) (hmem : ∀ i, a i ∈ I) (f : MvPowerSeries σ R) :
     eval₂ φ a f - φ (constantCoeff f) ∈ I := by
