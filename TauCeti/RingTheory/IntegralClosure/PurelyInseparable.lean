@@ -9,6 +9,7 @@ public import Mathlib.Algebra.MvPolynomial.Basic
 public import Mathlib.FieldTheory.PurelyInseparable.Exponent
 public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 public import Mathlib.RingTheory.Noetherian.Defs
+public import TauCeti.Algebra.MvPolynomial.Expand
 public import TauCeti.FieldTheory.PurelyInseparable.Embedding
 public import TauCeti.RingTheory.IntegralClosure.Transfer
 -- Proof-only: the integral basis of a finite extension of the fraction field.
@@ -59,10 +60,6 @@ proof of Stacks, Lemma 10.161.13 (tag 032O), with its "some details omitted" spe
 -/
 
 public section
-
--- Skeleton of the normalization-finiteness development: `sorry` is an error under the library's
--- `warningAsError`, so it is downgraded here until the proofs land. Remove with the last `sorry`.
-set_option warningAsError false
 
 namespace TauCeti
 
@@ -125,6 +122,78 @@ theorem IsIntegralClosure.finite_mvPolynomial_of_isPurelyInseparable (k : Type*)
     (C : Type*) [CommRing C] [Algebra (MvPolynomial σ k) C] [Algebra C M]
     [IsScalarTower (MvPolynomial σ k) C M] [IsIntegralClosure C (MvPolynomial σ k) M] :
     Module.Finite (MvPolynomial σ k) C := by
-  sorry
+  classical
+  obtain ⟨p, _⟩ := ExpChar.exists k
+  -- `Algebra k K` is NOT an instance (Lean does not compose algebra maps), so the exponential
+  -- characteristic is transported along `k → MvPolynomial σ k → K` in two steps instead.
+  have _ : ExpChar K p := expChar_of_injective_algebraMap
+    (IsFractionRing.injective (MvPolynomial σ k) K) p
+  set n := IsPurelyInseparable.exponent K M with hn
+  set φ := IsPurelyInseparable.iterateFrobenius K M p (le_refl n) with hφ
+  -- a `K`-basis of `M` made of elements integral over `P`, lifted into `C`
+  obtain ⟨sb, b, hb⟩ := FiniteDimensional.exists_is_basis_integral (MvPolynomial σ k) K M
+  have hbC : ∀ j, ∃ c : C, algebraMap C M c = b j := fun j ↦
+    IsIntegralClosure.isIntegral_iff.mp (hb j)
+  choose cb hcb using hbC
+  -- D1: each `φ (b j)` already comes from `P`
+  have hg : ∀ j, ∃ a : MvPolynomial σ k, algebraMap (MvPolynomial σ k) K a = φ (b j) := by
+    intro j
+    obtain ⟨a, ha⟩ :=
+      IsIntegralClosure.exists_algebraMap_eq_iterateFrobenius (A := MvPolynomial σ k)
+        (K := K) (M := M) (C := C) p (le_refl n) (cb j)
+    exact ⟨a, by rw [ha, hcb j]⟩
+  choose g hgg using hg
+  -- collect the finitely many coefficients that must acquire `p ^ n`-th roots
+  set cs : Finset k := Finset.univ.biUnion fun j : sb ↦ (g j).support.image fun d ↦ (g j).coeff d
+    with hcs
+  -- B1: a finite extension of `k` containing those roots
+  obtain ⟨k', _, _, hk'fin, hk'root⟩ :=
+    exists_finiteDimensional_forall_exists_pow_eq k cs (n := p ^ n) (pow_pos (expChar_pos k p) n)
+  have hkk' : Function.Injective (algebraMap k k') := (algebraMap k k').injective
+  have _ : ExpChar k' p := expChar_of_injective_algebraMap hkk' p
+  -- the coefficient extension `P → P'`, injective and finite
+  set f : MvPolynomial σ k →+* MvPolynomial σ k' :=
+    (MvPolynomial.map (algebraMap k k')).comp
+      (MvPolynomial.expand (σ := σ) (R := k) (p ^ n)).toRingHom with hf
+  have hfinj : Function.Injective f :=
+    (MvPolynomial.map_injective _ hkk').comp
+      (MvPolynomial.expand_injective (pow_pos (expChar_pos k p) n))
+  have hffin : f.Finite :=
+    RingHom.Finite.comp
+      (MvPolynomial.finite_map (RingHom.finite_algebraMap.mpr hk'fin))
+      (MvPolynomial.finite_expand (pow_pos (expChar_pos k p) n))
+  -- make `P'` a finite `P`-algebra, and `K' := Frac P'` a `P`-algebra through it
+  let _ : Algebra (MvPolynomial σ k) (MvPolynomial σ k') := f.toAlgebra
+  have : Module.Finite (MvPolynomial σ k) (MvPolynomial σ k') := hffin
+  -- `Algebra P (Frac P')` and its scalar tower are NOT built by hand: `FractionRing` is an
+  -- `OreLocalization`, which already derives them from `Algebra P P'`. Introducing them manually
+  -- creates a diamond against `OreLocalization.instSMulOfIsScalarTower`.
+  have hPK' : Function.Injective
+      (algebraMap (MvPolynomial σ k) (FractionRing (MvPolynomial σ k'))) :=
+    (IsFractionRing.injective (MvPolynomial σ k') _).comp hfinj
+  -- `K` is an ABSTRACT fraction field of `P`, so the map to `K'` is `IsFractionRing.lift`, not
+  -- `FractionRing.liftAlgebra`: no diamond arises because `K` is not `FractionRing P`.
+  let _ : Algebra K (FractionRing (MvPolynomial σ k')) := (IsFractionRing.lift hPK').toAlgebra
+  have : IsScalarTower (MvPolynomial σ k) K (FractionRing (MvPolynomial σ k')) :=
+    IsScalarTower.of_algebraMap_eq fun x ↦ (IsFractionRing.lift_algebraMap hPK' x).symm
+  refine IsIntegralClosure.finite_of_forall_exists_pow_eq (MvPolynomial σ k) K M C
+    (MvPolynomial σ k') (FractionRing (MvPolynomial σ k')) p (le_refl n)
+    (s := Set.range b) ?_ ?_
+  · -- a basis spans, and `adjoin` contains the span
+    refine eq_top_iff.mpr fun x _ ↦ ?_
+    have := b.mem_span x
+    exact (Submodule.span_le (p := (IntermediateField.adjoin K (Set.range b)).toSubmodule)).mpr
+      (IntermediateField.subset_adjoin K _) this
+  · -- the root hypothesis, from A5 applied to `g j`
+    rintro _ ⟨j, rfl⟩
+    obtain ⟨y, hy⟩ := MvPolynomial.exists_pow_eq_map_expand (algebraMap k k') p n
+      (g := g j) fun d hd ↦ hk'root _ (by
+        refine Finset.mem_biUnion.mpr ⟨j, Finset.mem_univ j, ?_⟩
+        exact Finset.mem_image.mpr ⟨d, hd, rfl⟩)
+    refine ⟨y, ?_⟩
+    rw [← map_pow, hy]
+    have hfg : MvPolynomial.map (algebraMap k k') (MvPolynomial.expand (p ^ n) (g j))
+        = algebraMap (MvPolynomial σ k) (MvPolynomial σ k') (g j) := rfl
+    rw [hfg, ← IsScalarTower.algebraMap_apply, ← hgg j, ← IsScalarTower.algebraMap_apply]
 
 end TauCeti
