@@ -110,6 +110,39 @@ end Ideal
 
 namespace IsDedekindDomain.HeightOneSpectrum
 
+section Comap
+
+variable {B C : Type*} [CommRing B] [IsDedekindDomain B] [CommRing C] [IsDedekindDomain C]
+
+/-- The height-one prime of `B` obtained by contracting a height-one prime of `C` along a ring
+homomorphism `ψ : B →+* C`, given that the contraction is nonzero.
+
+Mathlib's `IsDedekindDomain.HeightOneSpectrum.comap` is the same construction, but it asks for `ψ`
+to be **surjective** and derives the `ne_bot` field from that. `comapOfNeBot` **generalises** it:
+the surjective case is recovered by supplying `(Ideal.eq_bot_of_comap_eq_bot' hf).mt w.ne_bot`, and
+only the converse fails.
+
+The generality is needed because the maps contracted along here are embeddings into completions —
+`R → v.adicCompletionIntegers K` — which are neither surjective, so Mathlib's `comap` does not
+apply, nor integral `Algebra` maps, so `HeightOneSpectrum.under` does not either. (`ℤ → ℤ_p` is
+flat, not integral.) The `ne_bot` hypothesis has to be supplied by hand. -/
+def comapOfNeBot (ψ : B →+* C) (w : HeightOneSpectrum C) (hne : w.asIdeal.comap ψ ≠ ⊥) :
+    HeightOneSpectrum B where
+  asIdeal := w.asIdeal.comap ψ
+  isPrime := w.isPrime.comap ψ
+  ne_bot := hne
+
+omit [IsDedekindDomain B] [IsDedekindDomain C] in
+-- `(rfl)` elaborates here, where the definition is visible.
+/-- The underlying ideal of `comapOfNeBot` is the contracted ideal. -/
+@[simp]
+lemma comapOfNeBot_asIdeal (ψ : B →+* C) (w : HeightOneSpectrum C)
+    (hne : w.asIdeal.comap ψ ≠ ⊥) :
+    (comapOfNeBot ψ w hne).asIdeal = w.asIdeal.comap ψ :=
+  (rfl)
+
+end Comap
+
 section RingEquivTransport
 
 variable {R R' : Type*} [CommRing R] [CommRing R']

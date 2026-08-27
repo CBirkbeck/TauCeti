@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
 public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 public import Mathlib.RingTheory.DedekindDomain.SelmerGroup
 
@@ -21,10 +20,6 @@ relative to when the "bad" primes are given downstairs:
 
 ## Main definitions
 
-* `IsDedekindDomain.HeightOneSpectrum.comapOfNeBot`: the contraction of a height-one prime along
-  an arbitrary ring homomorphism, given that the contraction is nonzero. It generalises Mathlib's
-  `HeightOneSpectrum.comap`, which derives that hypothesis from surjectivity; the maps needed here
-  are embeddings into completions, which are neither surjective nor integral.
 * `IsDedekindDomain.HeightOneSpectrum.primesAbove`: the primes of `B` above a set of primes
   of `R`, as a preimage under `HeightOneSpectrum.under`.
 * `IsDedekindDomain.selmerGroupAbove`: the `n`-Selmer group of `L` relative to the primes of `B`
@@ -32,11 +27,6 @@ relative to when the "bad" primes are given downstairs:
 
 ## Main results
 
-* `Ideal.comap_ne_bot_of_comap_comap_ne_bot`: a contraction is nonzero once its further
-  contraction along an injective map is, which is how the hypothesis of `comapOfNeBot` is
-  discharged in practice.
-* `IsDedekindDomain.HeightOneSpectrum.comap_maximalIdeal_adicCompletionIntegers`: the maximal
-  ideal of the integers of the `v`-adic completion contracts to `v`.
 * `IsDedekindDomain.HeightOneSpectrum.liesOver_under`: the `LiesOver` instance relating a prime
   to its contraction, which the `under`-indexed results downstream need.
 * `IsDedekindDomain.HeightOneSpectrum.mem_primesAbove_iff`: `w` lies above `S` iff
@@ -61,30 +51,10 @@ Adapted, with the author's proofs, from Michael Stoll's `EllipticCurves` project
 `HeightOneSpectrum.below`; at our Mathlib pin that map is `HeightOneSpectrum.under`, which is
 used here instead.
 
-`comapOfNeBot`, `comap_maximalIdeal_adicCompletionIntegers` and
-`Ideal.comap_ne_bot_of_comap_comap_ne_bot` are adapted from that source's
-`EllipticCurves/Mathlib/Basic.lean`, lines 539, 594 and 270 respectively. They are shared
-substrate rather than part of any one rung: the semilocal comparison, the finiteness of the
-`2`-Selmer group, and the local image counts all contract primes of a local field factor back to
-the base, and all three consume these.
-
 The source is written against Lean `v4.32.0`; this is a forward port.
 -/
 
 public section
-
-/-- An ideal contraction is nonzero as soon as its further contraction along an injective ring
-homomorphism is nonzero.
-
-Stated here because it is what supplies the nonvanishing hypothesis of
-`IsDedekindDomain.HeightOneSpectrum.comapOfNeBot` below at its use sites: one contracts a prime of
-a local factor all the way down to the base, where nonvanishing is known, and reads the
-intermediate step off from that. -/
-lemma Ideal.comap_ne_bot_of_comap_comap_ne_bot {R S T : Type*} [CommRing R] [CommRing S]
-    [CommRing T] {ρ : R →+* S} {φ : S →+* T} (hρ : Function.Injective ρ) {I : Ideal T}
-    (h : (I.comap φ).comap ρ ≠ ⊥) : I.comap φ ≠ ⊥ := fun h0 ↦
-  h (by
-    rw [h0, ← RingHom.ker_eq_comap_bot, (RingHom.injective_iff_ker_eq_bot ρ).mp hρ])
 
 namespace IsDedekindDomain
 
@@ -102,67 +72,6 @@ is the one this file exists to feed — do not fire without it. -/
 instance liesOver_under (w : HeightOneSpectrum B) :
     w.asIdeal.LiesOver (under R w).asIdeal :=
   ⟨rfl⟩
-
-section Comap
-
-variable {B C : Type*} [CommRing B] [IsDedekindDomain B] [CommRing C] [IsDedekindDomain C]
-
-/-- The height-one prime of `B` obtained by contracting a height-one prime of `C` along a ring
-homomorphism `ψ : B →+* C`, given that the contraction is nonzero.
-
-Mathlib's `IsDedekindDomain.HeightOneSpectrum.comap` is the same construction, but it asks for `ψ`
-to be **surjective** and derives the `ne_bot` field from that. `comapOfNeBot` **generalises** it:
-the surjective case is recovered by supplying `(Ideal.eq_bot_of_comap_eq_bot' hf).mt w.ne_bot`, and
-only the converse fails.
-
-The generality is needed because the maps contracted along here are embeddings into completions —
-`R → v.adicCompletionIntegers K` — which are neither surjective, so Mathlib's `comap` does not
-apply, nor integral `Algebra` maps, so `HeightOneSpectrum.under` does not either. (`ℤ → ℤ_p` is
-flat, not integral.) The `ne_bot` hypothesis has to be supplied by hand.
-
-Not `@[simps]`: the generated `asIdeal` projection is proved by `rfl`, and a bare `rfl` proof of a
-statement exported from this module would require `comapOfNeBot` and its field proofs to be
-exposed downstream. The projection is written out below with the parenthesised `(rfl)` instead,
-which elaborates here where the definition is visible. -/
-def comapOfNeBot (ψ : B →+* C) (w : HeightOneSpectrum C) (hne : w.asIdeal.comap ψ ≠ ⊥) :
-    HeightOneSpectrum B where
-  asIdeal := w.asIdeal.comap ψ
-  isPrime := w.isPrime.comap ψ
-  ne_bot := hne
-
-omit [IsDedekindDomain B] [IsDedekindDomain C] in
-/-- The underlying ideal of `comapOfNeBot` is the contracted ideal.
-
-The `IsDedekindDomain` instances are needed to *state* this — they are part of what
-`HeightOneSpectrum` means here — but the proof erases them, so they are omitted rather than
-suppressed with a linter option. -/
-@[simp]
-lemma comapOfNeBot_asIdeal (ψ : B →+* C) (w : HeightOneSpectrum C)
-    (hne : w.asIdeal.comap ψ ≠ ⊥) :
-    (comapOfNeBot ψ w hne).asIdeal = w.asIdeal.comap ψ :=
-  (rfl)
-
-end Comap
-
-section AdicCompletion
-
-variable {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
-
-/-- The maximal ideal of the ring of integers of the completion of `K` at `v` contracts to `v`
-itself. This is what identifies the prime obtained by `comapOfNeBot` from a completion with the
-prime one started from. -/
-theorem comap_maximalIdeal_adicCompletionIntegers (v : HeightOneSpectrum R) :
-    (IsLocalRing.maximalIdeal (v.adicCompletionIntegers K)).comap
-      (algebraMap R (v.adicCompletionIntegers K)) = v.asIdeal := by
-  ext x
-  rw [Ideal.mem_comap, ← valuation_lt_one_iff_mem (K := K)]
-  refine (Valuation.mem_maximalIdeal_iff (v := (Valued.v : Valuation (v.adicCompletion K)
-    (WithZero (Multiplicative ℤ))))).trans ?_
-  rw [show ((algebraMap R (v.adicCompletionIntegers K) x : v.adicCompletionIntegers K) :
-    v.adicCompletion K) = ((algebraMap R K x : K) : v.adicCompletion K) from rfl,
-    valuedAdicCompletion_eq_valuation']
-
-end AdicCompletion
 
 /-- The primes of `B` lying above a set `S` of primes of `R`: the preimage of `S` under the
 contraction `HeightOneSpectrum.under R`. -/
