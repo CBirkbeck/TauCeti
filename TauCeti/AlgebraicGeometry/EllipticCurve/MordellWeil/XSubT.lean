@@ -1038,13 +1038,13 @@ omit [DecidableEq K] in
 representative is `(f' x) ^ 2`. -/
 lemma normM_μX_eq_one {x y : K} (h : W.Equation x y) : W.normM (W.μX x) = 1 := by
   rcases eq_or_ne (W.f.eval x) 0 with hx | hx
-  · rw [μX_of_eval_f_eq_zero hx, normM_mk, TauCeti.mk_eq_one_iff_exists_pow]
+  · rw [μX_of_eval_f_eq_zero hx, normM_mk, TauCeti.powMonoidHom_range_mk_eq_one_iff_exists_pow]
     exact ⟨3 * x ^ 2 + 2 * W.a₂ * x + W.a₄, by
       simpa using (W.norm_mk_C_sub_X_add_fCofactor hx).symm⟩
-  · rw [μX_of_eval_f_ne_zero hx, normM_mk, TauCeti.mk_eq_one_iff_exists_pow]
+  · rw [μX_of_eval_f_ne_zero hx, normM_mk, TauCeti.powMonoidHom_range_mk_eq_one_iff_exists_pow]
     refine ⟨y, ?_⟩
     simpa using ((equation_iff_eval_f_eq_sq W x y).mp h).symm.trans
-      (AdjoinRoot.norm_mk_C_sub_X W.monic_f x).symm
+      (AdjoinRoot.norm_algebraMap_sub_root W.monic_f x).symm
 
 omit [DecidableEq K] in
 @[simp]
