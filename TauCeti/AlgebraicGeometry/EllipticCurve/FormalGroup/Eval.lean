@@ -182,4 +182,17 @@ theorem formalInverseEval_eq {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I
   simpa [formalInverseEval, formalInverseDenomInvEval, PowerSeries.coe_eval₂Hom,
     PowerSeries.eval₂_X] using h
 
+/-- **The `w`-equation at a parameter.** Evaluating `formalW_wEquation` at `t` shows `w(t)` is a
+fixed point of `v ↦ wEquationRHS W t v`, which is the Weierstrass equation in the coordinates
+`x = z / w`, `y = -1 / w`. -/
+theorem formalWEval_eq {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
+    W.formalWEval t = wEquationRHS W t (W.formalWEval t) := by
+  have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
+  have hEp : PowerSeries.HasEval t := isTopologicallyNilpotent_of_mem_of_isAdic hI ht
+  have h := congrArg (PowerSeries.eval₂Hom (S := O) hcont hEp) W.formalW_wEquation
+  rw [wEquationRHS_powerSeries] at h
+  simp only [map_add, map_mul, map_pow] at h
+  simpa [formalWEval, wEquationRHS_def, PowerSeries.coe_eval₂Hom, PowerSeries.eval₂_C,
+    PowerSeries.eval₂_X] using h
+
 end WeierstrassCurve
