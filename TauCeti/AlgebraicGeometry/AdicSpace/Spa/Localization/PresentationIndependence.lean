@@ -36,28 +36,35 @@ presentation independence under the same hypothesis: each composite fixes the st
 from `A`, hence is the identity, so the two coordinate rings are canonically isomorphic. That
 is the shape `TauCeti.Huber.presentationRingEquiv` has been waiting for — it produces the
 isomorphism *given* comparison maps both ways, and nothing supplies them from an equality of
-rational subsets. This file supplies them from 7.52(1) for the two coordinate rings, which is
-short of supplying them outright.
+rational subsets. This file supplies them, assuming only that the coordinate rings' plus subrings
+are open.
 
 ## Main results
 
 * `TauCeti.ValuationSpectrum.existsUnique_continuous_ringHom_of_rationalSubset_subset` :
-  **Proposition 8.2(1) reduced to Proposition 7.52(1)** — a containment of rational subsets
-  induces a unique continuous comparison map of coordinate rings, *given* 7.52(1) for the
-  target.
-* `TauCeti.ValuationSpectrum.presentationRingEquivOfEq` : **presentation independence reduced
-  to the same input** — two presentations of the same rational subset have canonically
-  isomorphic coordinate rings, *given* 7.52(1) for both coordinate rings.
+  **Wedhorn's Proposition 8.2(1)** — a containment of rational subsets induces a unique
+  continuous comparison map of coordinate rings.
+* `TauCeti.ValuationSpectrum.presentationRingEquivOfEq` : **presentation independence** — two
+  presentations of the same rational subset have canonically isomorphic coordinate rings.
 
-## The hypothesis both results carry
+## The hypotheses both results carry
 
-Lemma 8.1 needs Wedhorn's Proposition 7.52(1) for its *target*, and 7.52(1) is absent from this
-repository — see `TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.UniversalProperty` for why
-it does not follow from a valuative criterion quantifying over all valuations. Instantiating
-Lemma 8.1 at a coordinate ring therefore inherits that hypothesis, here `hmem`, together with
-openness of the target's maximal ideals, `hmax`.
+Wedhorn's Proposition 7.52(1) is no longer among them. It landed in #4552 as
+`TauCeti.ValuationSpectrum.mem_of_forall_vle_one` and is consumed inside Lemma 8.1, so
+instantiating Lemma 8.1 at a coordinate ring no longer inherits it. What each instantiation does
+inherit is what 7.52(1) asks of that coordinate ring as a *pair*:
 
-So these results are *not* unconditional, and the gap is exactly the one
+* `hmax`, openness of the target's maximal ideals — carried rather than derived, because the
+  route through `Ideal.isOpen_of_isMaximal_of_isOpen_isTopologicallyNilpotent` wants
+  `IsLinearTopology`, which by `IsTateRing.isOpen_iff_eq_top` no nonzero Tate ring has;
+* openness of the plus subring `A_U⁺`, which is **not** proved anywhere on main and is the one
+  remaining obligation of this file. It is a strictly smaller one than the `hmem` it replaces:
+  `hmem` was "prove Wedhorn 7.52(1) at this coordinate ring", whereas this is a single concrete
+  topological fact about a subring the repository already constructs. Integral closedness needs
+  no hypothesis at all — `isIntegrallyClosedIn_completedPlusSubring` is an instance, because
+  `completedPlusSubring` is *defined* as an integral closure.
+
+The gap that remains is exactly the one
 `TauCeti.RingTheory.Huber.LocalizationTopology.Restriction` already names: it records that the
 refinement route "removes that dependency" precisely because a refining presentation makes the
 fraction distinguished, so that `isPowerBounded_divBy` covers it — which a bare containment does
@@ -85,18 +92,20 @@ open TauCeti.Huber TauCeti.Huber.PairOfDefinition
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
-/-- **Wedhorn's Proposition 8.2(1) reduced to his Proposition 7.52(1)**, and not 8.2(1) itself:
-if the rational subset presented by `T'` over `s'` is contained in the one presented by `T` over
-`s`, then exactly one continuous ring homomorphism `A⟨T/s⟩ → A⟨T'/s'⟩` is compatible with the
-structure maps from `A` — *provided* the target coordinate ring satisfies 7.52(1).
+/-- **Wedhorn's Proposition 8.2(1)**: if the rational subset presented by `T'` over `s'` is
+contained in the one presented by `T` over `s`, then exactly one continuous ring homomorphism
+`A⟨T/s⟩ → A⟨T'/s'⟩` is compatible with the structure maps from `A`.
 
 This is the containment form of `TauCeti.Huber.existsUnique_continuous_ringHom_of_refines`, which
 asks instead that the second presentation refine the first syntactically. The proof is Wedhorn's:
 `Spa ρ'` factors through `R(T'/s')` by `spaComapLoc_mem_rationalSubset`, so the containment makes
 it factor through `R(T/s)`, which is the hypothesis of Lemma 8.1.
 
-The two hypotheses on the target are Lemma 8.1's: `hmax` is openness of the maximal ideals, which
-Wedhorn's Proposition 7.52(2) needs, and `hmem` is his Proposition 7.52(1), absent here. -/
+The two hypotheses on the target are Lemma 8.1's, and neither is Proposition 7.52(1) — that is
+now consumed inside Lemma 8.1 itself. `hmax` is openness of the maximal ideals, which Wedhorn's
+Proposition 7.52(2) needs; the second is openness of the target's plus subring `A_U⁺`, which
+7.52(1) asks of the pair and which is not proved anywhere on main. Integral closedness of `A_U⁺`
+needs no hypothesis: `isIntegrallyClosedIn_completedPlusSubring` is an instance. -/
 theorem existsUnique_continuous_ringHom_of_rationalSubset_subset (P : PairOfDefinition A)
     (Aplus : Subring A) (hAplus : ∀ ⦃a⦄, a ∈ Aplus → IsPowerBounded a) (T : Finset A) (s : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
@@ -111,9 +120,8 @@ theorem existsUnique_continuous_ringHom_of_rationalSubset_subset (P : PairOfDefi
     letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
     (∀ 𝔪 : Ideal (UniformSpace.Completion S'), 𝔪.IsMaximal →
         IsOpen (𝔪 : Set (UniformSpace.Completion S'))) →
-    (∀ f : UniformSpace.Completion S',
-        (∀ w ∈ spa (completedPlusSubring P Aplus T' s' S' hden'),
-          w.toValuativeRel.vle f 1) → f ∈ completedPlusSubring P Aplus T' s' S' hden') →
+    IsOpen ((completedPlusSubring P Aplus T' s' S' hden' :
+      Subring (UniformSpace.Completion S')) : Set (UniformSpace.Completion S')) →
     ∃! σ : UniformSpace.Completion S →+* UniformSpace.Completion S',
       Continuous σ ∧
         σ.comp (toCompletionLoc P T s S hden) = toCompletionLoc P T' s' S' hden' := by
@@ -124,24 +132,23 @@ theorem existsUnique_continuous_ringHom_of_rationalSubset_subset (P : PairOfDefi
   have _ := isUniformAddGroup_locUniformSpace P T' s' S' hden'
   have _ := isTopologicalRing_locUniformSpace P T' s' S' hden'
   let _ := isHuberRing_completion_locTopology P T' s' S' hden'
-  intro hmax hmem
+  intro hmax hopen'
   refine existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset P Aplus T s S hden
-    (completedPlusSubring P Aplus T' s' S' hden') hmax hmem
+    (completedPlusSubring P Aplus T' s' S' hden') hmax hopen'
     (completedPlusSubring_le_powerBoundedSubring P Aplus hAplus T' s' S' hden')
     (continuous_toCompletionLoc P T' s' S' hden').continuousAt fun w hw ↦ hsub ?_
   -- `Spa ρ'` lands in `R(T'/s')`; the containment carries it into `R(T/s)`
   simpa only [spaComapLoc_val] using
     spaComapLoc_mem_rationalSubset P Aplus T' s' S' hden' ⟨w, hw⟩
 
-/-- **Presentation independence reduced to Wedhorn's Proposition 7.52(1)**, and not presentation
-independence itself: two presentations of the *same* rational subset have canonically isomorphic
-coordinate rings, *provided* both coordinate rings satisfy 7.52(1).
+/-- **Presentation independence**: two presentations of the *same* rational subset have
+canonically isomorphic coordinate rings.
 
 Wedhorn's Proposition 8.2(1) applies in both directions, and
 `TauCeti.Huber.presentationRingEquiv` turns the two comparison maps into an isomorphism — each
 composite is compatible with the structure map from `A`, hence is the identity. Supplying those
 two maps from an equality of rational subsets is the step that `presentationRingEquiv`'s own
-docstring calls "a separate step"; this takes that step as far as 7.52(1) allows.
+docstring calls "a separate step"; this takes that step.
 
 Each direction carries the target-side hypotheses of Lemma 8.1, so there are two of each: the
 primed pair for `A⟨T'/s'⟩` and the unprimed pair for `A⟨T/s⟩`. -/
@@ -159,14 +166,12 @@ noncomputable def presentationRingEquivOfEq (P : PairOfDefinition A) (Aplus : Su
     letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
     (∀ 𝔪 : Ideal (UniformSpace.Completion S'), 𝔪.IsMaximal →
         IsOpen (𝔪 : Set (UniformSpace.Completion S'))) →
-    (∀ f : UniformSpace.Completion S',
-        (∀ w ∈ spa (completedPlusSubring P Aplus T' s' S' hden'),
-          w.toValuativeRel.vle f 1) → f ∈ completedPlusSubring P Aplus T' s' S' hden') →
+    IsOpen ((completedPlusSubring P Aplus T' s' S' hden' :
+      Subring (UniformSpace.Completion S')) : Set (UniformSpace.Completion S')) →
     (∀ 𝔪 : Ideal (UniformSpace.Completion S), 𝔪.IsMaximal →
         IsOpen (𝔪 : Set (UniformSpace.Completion S))) →
-    (∀ f : UniformSpace.Completion S,
-        (∀ w ∈ spa (completedPlusSubring P Aplus T s S hden),
-          w.toValuativeRel.vle f 1) → f ∈ completedPlusSubring P Aplus T s S hden) →
+    IsOpen ((completedPlusSubring P Aplus T s S hden :
+      Subring (UniformSpace.Completion S)) : Set (UniformSpace.Completion S)) →
     UniformSpace.Completion S ≃+* UniformSpace.Completion S' := by
   let _ := locUniformSpace P T s S hden
   have _ := isUniformAddGroup_locUniformSpace P T s S hden
@@ -174,13 +179,15 @@ noncomputable def presentationRingEquivOfEq (P : PairOfDefinition A) (Aplus : Su
   let _ := locUniformSpace P T' s' S' hden'
   have _ := isUniformAddGroup_locUniformSpace P T' s' S' hden'
   have _ := isTopologicalRing_locUniformSpace P T' s' S' hden'
-  intro hmax' hmem' hmax hmem
+  let _ := isHuberRing_completion_locTopology P T s S hden
+  let _ := isHuberRing_completion_locTopology P T' s' S' hden'
+  intro hmax' hopen' hmax hopen
   -- the comparison maps are *data*, so they are extracted with `Exists.choose`; `obtain` would
   -- be eliminating an `ExistsUnique` (a `Prop`) into `Type`
   have hg := existsUnique_continuous_ringHom_of_rationalSubset_subset P Aplus hAplus T s S hden
-    T' s' S' hden' heq.ge hmax' hmem'
+    T' s' S' hden' heq.ge hmax' hopen'
   have hh := existsUnique_continuous_ringHom_of_rationalSubset_subset P Aplus hAplus T' s' S'
-    hden' T s S hden heq.le hmax hmem
+    hden' T s S hden heq.le hmax hopen
   exact presentationRingEquiv P T s S hden T' s' S' hden' hg.choose hh.choose
     hg.choose_spec.1.1 hh.choose_spec.1.1 hg.choose_spec.1.2 hh.choose_spec.1.2
 
