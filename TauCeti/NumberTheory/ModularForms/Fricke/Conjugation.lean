@@ -8,6 +8,7 @@ module
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import TauCeti.NumberTheory.ModularForms.Fricke.Matrix
 import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
+import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups
 
 /-!
 # Conjugating `Γ₀(N)` and `Γ₁(N)` by the Fricke matrix
@@ -91,6 +92,9 @@ itself defined at an arbitrary algebra.
   unital, at every level. These are what the bundled endomorphisms above are built from.
 * `TauCeti.frickeConjGamma0_frickeConjGamma0`, `TauCeti.frickeConjGamma1_frickeConjGamma1`:
   for `[NeZero N]`, applying the entry map twice is the identity.
+* `TauCeti.gamma0Map_frickeConjGamma0_mul`: the `Gamma0Map` images of `frickeConjGamma0 σ` and
+  of `σ` are inverse in `ZMod N`, at every level. This is the `ZMod`-level content of AINTLIB's
+  diamond-character companion; see the Provenance section.
 * `TauCeti.frickeConjGamma0MulEquiv_apply`, `TauCeti.frickeConjGamma0MulEquiv_symm`, and their
   `Γ₁` twins: the automorphisms act as the endomorphisms and are their own inverses. These, with
   `coe_frickeConjGamma0` and `coe_frickeConjGamma1`, are the intended interface for the bundled
@@ -135,10 +139,11 @@ each along `ℚ → ℝ` by hand, in `glMap_frickeGL_mul_mapGL` and `mapGL_mul_g
 them over `K` as below makes both transports the corresponding instance, so those two lemmas have
 no counterpart here.
 
-The diamond-character companion `Gamma0MapUnits_frickeConjSL` is deliberately *not* ported: it
-is stated in terms of AINTLIB's `Gamma0MapUnits`, the unit-valued refinement of mathlib's
-`CongruenceSubgroup.Gamma0Map`, which TauCeti does not have. It belongs with that definition
-rather than here, and nothing in this file needs it.
+The diamond-character companion `Gamma0MapUnits_frickeConjSL` is *partly* ported. Its
+`ZMod`-level content is `gamma0Map_frickeConjGamma0_mul` below. Only the unit-valued refinement is
+left out, because it is stated in terms of AINTLIB's `Gamma0MapUnits`, the unit-valued refinement
+of mathlib's `CongruenceSubgroup.Gamma0Map`, which TauCeti does not have; that part belongs with
+that definition rather than here, and follows from the shipped lemma by `MonoidHom.toHomUnits`.
 
 ## References
 
@@ -307,16 +312,7 @@ applying `MonoidHom.toHomUnits`. Without it a consumer computing a nebentypus al
 involution has to redo the determinant argument. -/
 public theorem gamma0Map_frickeConjGamma0_mul (σ : ↥(Gamma0 N)) :
     Gamma0Map N (frickeConjGamma0 σ) * Gamma0Map N σ = 1 := by
-  have hdet : (σ : Matrix (Fin 2) (Fin 2) ℤ) 0 0 * (σ : Matrix (Fin 2) (Fin 2) ℤ) 1 1 -
-      (σ : Matrix (Fin 2) (Fin 2) ℤ) 0 1 * (σ : Matrix (Fin 2) (Fin 2) ℤ) 1 0 = 1 :=
-    fin_two_mul_sub_mul_eq_one (σ : SL(2, ℤ))
-  have hc : (((σ : Matrix (Fin 2) (Fin 2) ℤ) 1 0 : ℤ) : ZMod N) = 0 := Gamma0_mem.mp σ.property
-  have hcast : (((σ : Matrix (Fin 2) (Fin 2) ℤ) 0 0 : ℤ) : ZMod N) *
-      (((σ : Matrix (Fin 2) (Fin 2) ℤ) 1 1 : ℤ) : ZMod N) -
-      (((σ : Matrix (Fin 2) (Fin 2) ℤ) 0 1 : ℤ) : ZMod N) *
-        (((σ : Matrix (Fin 2) (Fin 2) ℤ) 1 0 : ℤ) : ZMod N) = 1 := by
-    exact_mod_cast congrArg (Int.cast : ℤ → ZMod N) hdet
-  rw [hc, mul_zero, sub_zero] at hcast
+  have hcast := intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0 (M := N) σ.property
   simpa [Gamma0Map, coe_frickeConjGamma0] using hcast
 
 variable [NeZero N]
