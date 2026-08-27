@@ -55,10 +55,17 @@ The other half of Lemma 8.1, that `Spa ρ : Spa A⟨T/s⟩ → Spa A` factors th
 `hmax`, openness of the target's maximal ideals, is **not** a hypothesis Wedhorn imposes, and it
 is not harmless: by `TauCeti.Huber.IsTateRing.isOpen_iff_eq_top` an ideal of a Tate ring is open
 exactly when it is `⊤`, so a nonzero Tate ring has no open maximal ideal at all. Wedhorn states
-Lemma 8.1 for a complete *affinoid* target, and §8's affinoid rings are Tate. **So the result
-below is vacuous for exactly the targets Wedhorn intends, and must not be cited as Lemma 8.1.**
-It is non-vacuous for adic Huber targets, whose maximal ideals are open — `ℤ_p` and its kin — and
-that is the generality in which it is stated.
+Lemma 8.1 for a complete *affinoid* target, and the affinoid rings §8 works with are Tate in its
+principal case. **So the result below is vacuous for Tate targets, the principal case of §8, and
+must not be cited as Lemma 8.1 without that restriction.**
+
+It is non-vacuous for *complete* adic Huber targets — `ℤ_p` and its kin — and that is the
+generality in which it is stated. Completeness is doing work in that sentence, not decoration: in
+a complete adic ring the ideal of definition lies in the Jacobson radical, so every maximal ideal
+contains it and is therefore open. Drop completeness and the conclusion fails — `ℤ` with the
+`p`-adic topology is adic Huber, and its maximal ideal `(q)` for a prime `q ≠ p` contains no power
+of `p`, so it is not open. Only this prose was ever at stake: the theorem assumes
+`[CompleteSpace B]`.
 
 The obstruction is inherited, not introduced here. `hmax` is carried by
 `TauCeti.ValuationSpectrum.isUnit_of_forall_not_vle_zero`, this repository's only unit-detection
