@@ -129,10 +129,15 @@ upstream, `natCast_mul_lowerLeft_ediv` here), `frickeConjSL` with its coercion l
 `frickeConjGamma0` and `frickeConjGamma1` with their involution lemmas, and the two `MulEquiv`s
 `frickeConjGamma0MulEquiv` and `frickeConjGamma1MulEquiv` with their `apply`/`symm` lemmas.
 
-AINTLIB names the divisibility witness `botLeftDiv` and keeps it private; it is private
-here too, and `coe_frickeConjSL` writes the quotient `c / N` out instead, so the public API is
-the matrix formula alone. AINTLIB obtains the witness as the `Exists.choose` of the `Γ₀(N)`
-divisibility, which makes it and `frickeConjSL` `noncomputable` and their entries opaque; here it
+AINTLIB names the divisibility witness `botLeftDiv` and keeps it private. Here its spec is
+**public**, as `natCast_mul_lowerLeft_ediv`, and it is `@[simp]`: `coe_frickeConjSL` writes the
+quotient `c / N` out as an `Int.ediv`, so a consumer of that `simp` lemma needs the spec to make
+progress, and keeping it private would force every use site to re-derive `(N : ℤ) ∣ c` from
+`Gamma0_mem`. The public API is therefore the matrix formula together with that one normalization
+rule.
+
+AINTLIB obtains the witness as the `Exists.choose` of the `Γ₀(N)` divisibility, which makes it and
+`frickeConjSL` `noncomputable` and their entries opaque; here it
 is the honest quotient `c / N`, exact because `N ∣ c`, so both definitions are computable and
 reduce entrywise. AINTLIB states the two normalization identities over `ℚ` and then transports
 each along `ℚ → ℝ` by hand, in `glMap_frickeGL_mul_mapGL` and `mapGL_mul_glMap_frickeGL`; stating
@@ -164,6 +169,7 @@ variable {N : ℕ}
 Public because `coe_frickeConjSL` displays `c / N`, an `Int.ediv`: without this a consumer of that
 `simp` lemma is left with an opaque quotient and has to re-derive `(N : ℤ) ∣ c` from `Gamma0_mem`
 at every use site. This is the only place the `Γ₀(N)` divisibility is used. -/
+@[simp]
 public theorem natCast_mul_lowerLeft_ediv (σ : ↥(Gamma0 N)) :
     (N : ℤ) * ((σ : Matrix (Fin 2) (Fin 2) ℤ) 1 0 / (N : ℤ)) =
       (σ : Matrix (Fin 2) (Fin 2) ℤ) 1 0 :=
