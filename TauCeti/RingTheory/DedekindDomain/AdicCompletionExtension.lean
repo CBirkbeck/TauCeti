@@ -9,6 +9,7 @@ public import Mathlib.NumberTheory.NumberField.Completion.FinitePlace
 public import Mathlib.NumberTheory.RamificationInertia.Valuation
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation
 public import Mathlib.RingTheory.Valuation.Discrete.IsDiscreteValuationRing
+public import TauCeti.RingTheory.DedekindDomain.Ideal
 public import TauCeti.RingTheory.DedekindDomain.SelmerGroup
 
 /-!
@@ -38,8 +39,6 @@ global étale algebra with its images in the completions passes through exactly 
 
 ## Main results
 
-* `IsDedekindDomain.HeightOneSpectrum.eq_maximalIdeal`: a discrete valuation ring has exactly one
-  height-one prime.
 * `IsDedekindDomain.HeightOneSpectrum.valuation_maximalIdeal_adicCompletionIntegers`: the
   valuation attached to the maximal ideal of `𝒪_v` is the valuation of `K_v`.
 * `IsDedekindDomain.HeightOneSpectrum.valued_adicCompletionExtension`: along the extension the
@@ -87,17 +86,6 @@ public section
 open IsDedekindDomain WithZero
 
 namespace IsDedekindDomain.HeightOneSpectrum
-
-/-- The maximal ideal is the only height-one prime of a discrete valuation ring.
-
-Mathlib has `IsDiscreteValuationRing.maximalIdeal` as a `HeightOneSpectrum` and
-`IsLocalRing.eq_maximalIdeal` for ideals, but not the statement that the two agree at the level of
-`HeightOneSpectrum`, which is what identifies "the valuation at a height-one prime of `𝒪_v`" with
-"the valuation of `K_v`" below. -/
-lemma _root_.IsDedekindDomain.HeightOneSpectrum.eq_maximalIdeal {A : Type*} [CommRing A]
-    [IsDomain A] [IsDiscreteValuationRing A] (P : HeightOneSpectrum A) :
-    P = IsDiscreteValuationRing.maximalIdeal A :=
-  HeightOneSpectrum.ext (IsLocalRing.eq_maximalIdeal P.isMaximal)
 
 variable {R : Type*} [CommRing R] [IsDedekindDomain R]
   {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K] (v : HeightOneSpectrum R)
