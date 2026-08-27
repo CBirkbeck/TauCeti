@@ -101,8 +101,18 @@ layer deferred above.
   intersection identity conditioned on each denominator lying in its numerator set and the
   same insert-absorption discharging that condition. Here the rational subset is instead the
   trace of the merged `Spv A`-level `basicOpenFinset`, so the identities are inherited from
-  `basicOpenFinset_insert_self` and `basicOpenFinset_inter` rather than reproved; nothing was
-  copied.
+  `basicOpenFinset_insert_self` and `basicOpenFinset_inter` rather than reproved; no proof code
+  is taken from that file.
+* `rationalSubset_eq_biInter_singleton` is adapted from a *different* AINTLIB file and revision:
+  commit `37bbdaeb9ad9e3bc9f0d660feadc2779e455a91c`,
+  `projects/AdicSpaces/Adic spaces/LaurentRefinementCore.lean`, theorem
+  `rationalOpen_eq_iInter_singleton` (line 48). The statement is restated for this repository's
+  API — that development spells the object `rationalOpen`, takes `A⁺` from a `[PlusSubring A]`
+  instance and carries the `spa` conjunct inline, whereas `rationalSubset` takes
+  `(Aplus : Subring A)` explicitly and cuts inside `spa Aplus` — but the *proof* follows the
+  source closely: the same `ext`/`constructor` split, the same three-part destructuring, and the
+  same use of a witness from `hT` to transport the two `t`-independent conditions. Only the
+  unfolding step differs, `mem_rationalSubset_iff` here against `rationalOpen` there.
 -/
 
 public section
@@ -262,8 +272,9 @@ refinement to a *standard* rational cover consumes.
 Nonemptiness of `T` cannot be dropped. Each `R({t}/s)` carries the ambient `spa A⁺` condition and
 the requirement that the denominator be off the support, alongside its own numerator condition, so
 some member of the family is what transports those two to the left-hand side. For `T = ∅` the
-left-hand side is still cut out inside `spa A⁺` while the empty intersection is everything, and
-the two sides differ.
+left-hand side is still cut out inside `spa A⁺` while the empty intersection is everything, so the
+two sides need not agree. (They can still coincide: if `Spv A` is empty — as it is over the zero
+ring — both sides are empty.)
 
 Deliberately not `@[simp]`: the right-hand side is again a rational subset over a singleton, which
 matches the left-hand pattern, so the rewrite re-fires on each factor instead of terminating. -/
