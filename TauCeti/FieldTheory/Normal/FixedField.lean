@@ -38,10 +38,6 @@ Lemma 9.27.3(2) (tag 030M), the splitting used by Stacks 10.161.12 (tag 032N).
 
 public section
 
--- Skeleton of the normalization-finiteness development: `sorry` is an error under the library's
--- `warningAsError`, so it is downgraded here until the proofs land. Remove with the last `sorry`.
-set_option warningAsError false
-
 namespace TauCeti
 
 /-- Source: Stacks, Fields, Lemma 9.27.3(2): "`F ⊂ E_insep` is purely inseparable", with
@@ -52,7 +48,46 @@ orbit. -/
 theorem IntermediateField.isPurelyInseparable_fixedField_top (F E : Type*) [Field F] [Field E]
     [Algebra F E] [Normal F E] :
     IsPurelyInseparable F (IntermediateField.fixedField (⊤ : Subgroup (E ≃ₐ[F] E))) := by
-  sorry
+  refine ⟨inferInstance, fun x hx ↦ ?_⟩
+  have hinj : Function.Injective
+      (algebraMap (IntermediateField.fixedField (⊤ : Subgroup (E ≃ₐ[F] E))) E) :=
+    RingHom.injective _
+  set y : E := (x : E) with hy
+  have hint : IsIntegral F y := Normal.isIntegral ‹Normal F E› y
+  have hyx : minpoly F y = minpoly F x := minpoly.algebraMap_eq hinj x
+  have hsep : (minpoly F y).Separable := by rw [hyx]; exact hx
+  -- Every Galois conjugate of `y` is `y` itself: a conjugate is `σ y` for some automorphism `σ`,
+  -- and `y` lies in the fixed field of all of them.
+  have hall : ∀ z : E, Polynomial.aeval z (minpoly F y) = 0 → z = y := by
+    intro z hz
+    obtain ⟨σ, hσ⟩ := minpoly.exists_algEquiv_of_root' (Algebra.IsAlgebraic.isAlgebraic y) hz
+    rw [← hσ]
+    exact (IntermediateField.mem_fixedField_iff _ _).mp x.2 σ (Subgroup.mem_top σ)
+  -- `minpoly F y` splits in `E` and is separable, so it has `natDegree` many distinct roots;
+  -- all of them are `y`, so that degree is one.
+  set q : Polynomial E := (minpoly F y).map (algebraMap F E) with hq
+  have hq0 : q ≠ 0 := ((minpoly.monic hint).map (algebraMap F E)).ne_zero
+  have hcard : Multiset.card q.roots = q.natDegree :=
+    Polynomial.splits_iff_card_roots.mp (Normal.splits ‹Normal F E› y)
+  have hnodup : q.roots.Nodup := Polynomial.nodup_roots (Polynomial.Separable.map hsep)
+  have hsub : q.roots ⊆ {y} := by
+    intro z hz
+    rw [Polynomial.mem_roots hq0] at hz
+    refine Multiset.mem_singleton.mpr (hall z ?_)
+    rw [Polynomial.aeval_def, Polynomial.eval₂_eq_eval_map]
+    exact hz
+  have hle : Multiset.card q.roots ≤ 1 := by
+    simpa using Multiset.card_le_card ((Multiset.le_iff_subset hnodup).mpr hsub)
+  have h1 : 0 < (minpoly F y).natDegree := minpoly.natDegree_pos hint
+  have h2 : q.natDegree = (minpoly F y).natDegree :=
+    Polynomial.natDegree_map _
+  have hnd : (minpoly F y).natDegree = 1 := by omega
+  have hdeg : (minpoly F y).degree = 1 := by
+    rw [Polynomial.degree_eq_natDegree (minpoly.ne_zero hint), hnd]; rfl
+  obtain ⟨a, ha⟩ := minpoly.mem_range_of_degree_eq_one F y hdeg
+  refine ⟨a, hinj ?_⟩
+  rw [← IsScalarTower.algebraMap_apply]
+  simpa [hy] using ha
 
 /-- Source: Stacks, Fields, Lemma 9.27.3(2): "`E_insep ⊂ E` is Galois", with
 `E_insep = E^{Aut(E/F)}`. For a finite extension `E / F`, `E` is Galois over the fixed field of
