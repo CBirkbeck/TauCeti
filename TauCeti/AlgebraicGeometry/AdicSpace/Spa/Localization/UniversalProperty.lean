@@ -85,11 +85,16 @@ what turns the sub-unit bound on `φ t / φ s` into membership in `B⁺`. It is 
 `TauCeti.ValuationSpectrum.mem_of_forall_vle_one`, landed in #4552. It asks three things of the
 target:
 
-* `hopenB : IsOpen (Bplus : Set B)`,
+* `IsOpen (Bplus : Set B)`,
 * `[IsIntegrallyClosedIn Bplus B]`,
 * `[IsHuberRing B]`.
 
-The last is not a restriction added to make the proof go through: Wedhorn states Lemma 8.1 for a
+The first two, together with `B⁺ ⊆ B°`, are the three fields of
+`TauCeti.Huber.IsRingOfIntegralElements Bplus`, so the assembly below asks for that one bundled
+hypothesis rather than spelling them out; with `[IsHuberRing B]` they are exactly a Huber pair on
+`B`, and a consumer holding a `TauCeti.Huber.Pair B` passes its `isRingOfIntegralElements`
+field. `[IsHuberRing B]` is not a restriction added to make the proof go
+through: Wedhorn states Lemma 8.1 for a
 continuous homomorphism into a *complete affinoid ring*, and an affinoid ring is a Huber pair.
 
 Openness of the maximal ideals of `B` is carried separately, as `hmax`, and **is not** derivable
@@ -188,8 +193,9 @@ discharged from the geometric one: `φ s` is a unit by
 
 The passage from "sub-unit at every point of `Spa (B, B⁺)`" to "in `B⁺`" is Wedhorn's
 Proposition 7.52(1), applied through `mem_of_forall_vle_one`; its hypotheses on the target are
-`hopenB`, `[IsIntegrallyClosedIn Bplus B]` and `[IsHuberRing B]`. The hypothesis `hplus` is the
-remaining half of `B⁺` being a ring of integral elements that the proof uses, namely `B⁺ ⊆ B°`.
+openness of `B⁺`, `[IsIntegrallyClosedIn Bplus B]` and `[IsHuberRing B]`. The proof also uses
+`B⁺ ⊆ B°`. Those three conditions on `B⁺` are exactly the fields of `IsRingOfIntegralElements`,
+so they are carried by the single hypothesis `hB` rather than spelled out one by one.
 
 Asking `B` to be Huber is not a restriction added here: Wedhorn states Lemma 8.1 for a continuous
 homomorphism into a *complete affinoid ring*, and an affinoid ring is a Huber pair. It does not,
@@ -205,8 +211,7 @@ theorem existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset [IsTo
     {B : Type*} [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [NonarchimedeanRing B]
     [IsHuberRing B] [CompleteSpace B] [T0Space B] (Bplus : Subring B)
     (hmax : ∀ 𝔪 : Ideal B, 𝔪.IsMaximal → IsOpen (𝔪 : Set B))
-    (hopenB : IsOpen (Bplus : Set B)) [IsIntegrallyClosedIn Bplus B]
-    (hplus : Bplus ≤ powerBoundedSubring B) {φ : A →+* B} (hφ : ContinuousAt φ 0)
+    (hB : IsRingOfIntegralElements Bplus) {φ : A →+* B} (hφ : ContinuousAt φ 0)
     (hfac : ∀ w ∈ spa Bplus, comap φ w ∈ rationalSubset Aplus T s) :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
@@ -218,8 +223,9 @@ theorem existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset [IsTo
   have _ := isTopologicalRing_locUniformSpace P T s S hden
   have hs : IsUnit (φ s) := isUnit_of_forall_comap_mem_rationalSubset T hmax hfac
   refine existsUnique_continuous_ringHom_completion_locTopology P T s S hden hφ hs fun t ht ↦ ?_
+  have := hB.isIntegrallyClosedIn
   exact mem_powerBoundedSubring.mp
-    (hplus (mem_of_forall_vle_one hopenB fun w hw ↦
+    (hB.le_powerBoundedSubring (mem_of_forall_vle_one hB.isOpen fun w hw ↦
       vle_one_of_forall_comap_mem_rationalSubset hs hfac ht hw))
 
 end TauCeti.ValuationSpectrum
