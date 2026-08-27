@@ -38,6 +38,41 @@ Names follow the series on this side rather than the source's: the evaluation of
 is not order-preserving — the source's `uSeries` is this repository's `formalInverseDenom`, while
 `formalU` is the source's `vSeries` — and every series here has the same type, so a mismatched
 pairing would compile.
+
+## References
+
+* [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], IV.1.
+
+## Provenance
+
+Adapted from Michael Stoll's `EllipticCurves` project
+(`github.com/MichaelStollBayreuth/EllipticCurves`, Apache-2.0, pinned by
+`TauCetiRoadmap/EllipticCurves/README.md` at `66889eada51a`, whose full expansion is
+`66889eada51a74c2f5dfb7fb5909b0b5a0a2d96e`),
+`EllipticCurves/WeierstrassFormalGroup/Eval.lean` — its evaluation layer down to the formal
+inverse, declarations `wEval`, `vEval`, `wEval_mem`, `wEval_eq`, `wEval_eq_cube_mul`,
+`vEval_sub_one_mem`, `isUnit_vEval`, `uEval`, `duEval`, `iotaEval`, `uEval_eq`,
+`uEval_mul_duEval`, `isUnit_uEval`, `iotaEval_eq` and `iotaEval_mem`.
+
+Four things are spelled differently here.
+
+* The source evaluates through its own `ChabautyColeman.MvPSeries.eval`, which is by definition
+  `MvPowerSeries.eval₂ (RingHom.id _)`. That wrapper is not ported; the definitions use Mathlib's
+  `PowerSeries.eval₂` directly, as `TauCeti/RingTheory/MvPowerSeries/Evaluation.lean` already does
+  for the membership estimates this file calls.
+* The source's three `eval_mem_maximalIdeal_pow` lemmas are that same file's
+  `MvPowerSeries.eval₂_mem_pow`, `_mul` and `_add_mul`, which are stated for an arbitrary adic
+  ideal rather than the maximal one, so none of the three is re-ported.
+* The source's `IsLocalRing.isUnit_of_sub_one_mem_maximalIdeal` is Mathlib's
+  `Ideal.isUnit_of_sub_one_mem_jacobson_bot`, and the results here are correspondingly stated over
+  `I ≤ Ideal.jacobson ⊥` rather than over a local ring — the hypothesis Mathlib's own adic results
+  use. `IsLocalRing` is therefore not needed in this file at all.
+* The source's `wPoly` is this repository's `WeierstrassCurve.wEquationRHS`, which is generic over
+  an algebra, so evaluating it at `O` gives the element-level equation without a second
+  definition.
+
+The adic hypothesis is carried as an explicit `IsAdic I` argument for the reason given under
+implementation notes above.
 -/
 
 public section
