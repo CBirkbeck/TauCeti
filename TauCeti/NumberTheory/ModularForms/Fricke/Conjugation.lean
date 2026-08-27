@@ -7,7 +7,6 @@ module
 
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import TauCeti.NumberTheory.ModularForms.Fricke.Matrix
-import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups
 
 /-!
@@ -328,6 +327,16 @@ public theorem gamma0Map_frickeConjGamma0_mul (σ : ↥(Gamma0 N)) :
   simp only [gamma0Map_apply, coe_frickeConjGamma0, coe_frickeConjSL]
   simpa using hcast
 
+/-- **The unit-valued form of `gamma0Map_frickeConjGamma0_mul`**: on units, the `Gamma0Map` image
+of `frickeConjGamma0 σ` is the inverse of that of `σ`. This is the shape the diamond-character and
+nebentypus consumers work in, obtained from the `ZMod` identity through Mathlib's
+`MonoidHom.toHomUnits`. -/
+@[simp]
+public theorem toHomUnits_gamma0Map_frickeConjGamma0_eq_inv (σ : ↥(Gamma0 N)) :
+    (Gamma0Map N).toHomUnits (frickeConjGamma0 σ) = ((Gamma0Map N).toHomUnits σ)⁻¹ := by
+  refine eq_inv_of_mul_eq_one_left (Units.ext ?_)
+  simpa [MonoidHom.coe_toHomUnits] using gamma0Map_frickeConjGamma0_mul σ
+
 variable [NeZero N]
 
 /-- **Applying the entry map twice is the identity, at nonzero level**, on `SL(2, ℤ)` itself:
@@ -373,12 +382,11 @@ own inverse.
 This is the declaration that expresses that `W` *normalizes* `Γ₀(N)`: `frickeConjGamma0` maps
 the subgroup into itself at every level, and the level hypothesis is what upgrades that to an
 isomorphism. -/
-public def frickeConjGamma0MulEquiv : ↥(Gamma0 N) ≃* ↥(Gamma0 N) where
-  toFun := frickeConjGamma0
-  invFun := frickeConjGamma0
-  left_inv := frickeConjGamma0_involutive
-  right_inv := frickeConjGamma0_involutive
-  map_mul' := map_mul frickeConjGamma0
+public def frickeConjGamma0MulEquiv : ↥(Gamma0 N) ≃* ↥(Gamma0 N) :=
+  -- Mathlib's `Function.Involutive.toPerm` already supplies the `toFun = invFun`
+  -- scaffolding; only multiplicativity is ours to add.
+  { frickeConjGamma0_involutive.toPerm (frickeConjGamma0 (N := N)) with
+    map_mul' := map_mul frickeConjGamma0 }
 
 /-- `frickeConjGamma0MulEquiv` acts as `frickeConjGamma0`. This is its defining lemma and, with
 `frickeConjGamma0MulEquiv_symm`, the intended interface: a consumer simplifies through these
@@ -411,12 +419,11 @@ public theorem frickeConjGamma1_involutive :
 
 /-- **The Fricke conjugation as an automorphism of `Γ₁(N)`**, for nonzero level; the `Γ₁`
 counterpart of `frickeConjGamma0MulEquiv`. -/
-public def frickeConjGamma1MulEquiv : ↥(Gamma1 N) ≃* ↥(Gamma1 N) where
-  toFun := frickeConjGamma1
-  invFun := frickeConjGamma1
-  left_inv := frickeConjGamma1_involutive
-  right_inv := frickeConjGamma1_involutive
-  map_mul' := map_mul frickeConjGamma1
+public def frickeConjGamma1MulEquiv : ↥(Gamma1 N) ≃* ↥(Gamma1 N) :=
+  -- Mathlib's `Function.Involutive.toPerm` already supplies the `toFun = invFun`
+  -- scaffolding; only multiplicativity is ours to add.
+  { frickeConjGamma1_involutive.toPerm (frickeConjGamma1 (N := N)) with
+    map_mul' := map_mul frickeConjGamma1 }
 
 /-- `frickeConjGamma1MulEquiv` acts as `frickeConjGamma1`; the `Γ₁(N)` counterpart of
 `frickeConjGamma0MulEquiv_apply`. -/
