@@ -398,8 +398,12 @@ that: the norm is a square. It does **not** by itself say the norm is trivial in
 classes of `K` — that needs `f' x ≠ 0`, which the hypothesis `hx` alone does not give, and a
 vanishing norm is not a class in `Kˣ ⧸ (Kˣ)²` at all. Nor does it make the class of
 `x - T + fCofactor x` itself trivial in `W.M`: that would say the element is a square in `W.Aˣ`,
-which is a different and stronger statement. -/
-@[simp]
+which is a different and stronger statement.
+
+Deliberately **not** `@[simp]`, unlike its `AdjoinRoot` counterparts: there is no useful
+simp-normal form here. `simp` expands `W.fCofactor x` as well as pushing `mk` through the sum, so
+the normalised left-hand side is the full nine-term expression in `of` and `root`, which is not a
+statement worth stating. Use it by explicit `rw`. -/
 theorem norm_mk_C_sub_X_add_fCofactor {x : K} (hx : W.f.eval x = 0) :
     Algebra.norm K (AdjoinRoot.mk W.f (C x - X + W.fCofactor x))
       = (3 * x ^ 2 + 2 * W.a₂ * x + W.a₄) ^ 2 := by
