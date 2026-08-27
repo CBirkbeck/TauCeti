@@ -44,8 +44,8 @@ The other half of Lemma 8.1, that `Spa ρ : Spa A⟨T/s⟩ → Spa A` factors th
 
 * `TauCeti.ValuationSpectrum.isUnit_of_forall_comap_mem_rationalSubset` : if every point of
   `Spa (B, B⁺)` pulls back into `R(T/s)`, the denominator becomes a unit in `B`.
-* `TauCeti.ValuationSpectrum.vle_one_of_forall_comap_mem_rationalSubset` : under the same
-  hypothesis every fraction `φ t / φ s` is sub-unit at every point of `Spa (B, B⁺)`.
+* `TauCeti.ValuationSpectrum.vle_one_of_comap_mem_rationalSubset` : at a point whose pullback
+  lies in `R(T/s)`, the fraction `φ t / φ s` is sub-unit.
 * `TauCeti.ValuationSpectrum.existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset` :
   the geometric universal property — a continuous `φ : A → B` whose `Spa(φ)` factors through
   `R(T/s)` extends across `A → A⟨T/s⟩` in exactly one continuous way, for a target whose maximal
@@ -149,20 +149,25 @@ theorem isUnit_of_forall_comap_mem_rationalSubset {φ : A →+* B} {Aplus : Subr
   rw [comap_vle, map_zero]
   exact hw0
 
-/-- **The fractions are sub-unit.** If every point of `Spa (B, B⁺)` pulls back into `R(T/s)`,
-then at every such point the fraction `φ t / φ s` has value at most `1`.
+omit [TopologicalSpace B] in
+/-- **The fractions are sub-unit.** At a point of `Spv B` whose pullback lies in `R(T/s)`, the
+fraction `φ t / φ s` has value at most `1`.
 
 This is the second step of Wedhorn's Lemma 8.1: the pullback condition gives `|φ t|_w ≤ |φ s|_w`,
 and dividing by the unit `φ s` — which `isUnit_of_forall_comap_mem_rationalSubset` supplies —
 turns that into `|φ t / φ s|_w ≤ 1`. Nothing beyond the pullback condition is used, so the unit
-enters as an argument rather than being re-derived. -/
-theorem vle_one_of_forall_comap_mem_rationalSubset {φ : A →+* B} {Aplus : Subring A}
-    {Bplus : Subring B} {T : Finset A} {s : A} (hs : IsUnit (φ s))
-    (hfac : ∀ w ∈ spa Bplus, comap φ w ∈ rationalSubset Aplus T s) {t : A} (ht : t ∈ T)
-    {w : Spv B} (hw : w ∈ spa Bplus) :
+enters as an argument rather than being re-derived.
+
+The pullback condition is taken at the single point `w` where it is spent, not as a hypothesis
+quantified over `spa B⁺`: the proof looks at no other point, and `Bplus` then plays no part in
+the statement at all, so no topology on `B` is needed either. The assembly holds the quantified
+form and passes `hfac w hw`. -/
+theorem vle_one_of_comap_mem_rationalSubset {φ : A →+* B} {Aplus : Subring A}
+    {T : Finset A} {s : A} (hs : IsUnit (φ s)) {w : Spv B}
+    (hmem : comap φ w ∈ rationalSubset Aplus T s) {t : A} (ht : t ∈ T) :
     w.toValuativeRel.vle (φ t * ↑hs.unit⁻¹) 1 := by
   have hvle : w.toValuativeRel.vle (φ t) (φ s) := by
-    have h := ((mem_rationalSubset_iff Aplus T s _).mp (hfac w hw)).2.1 t ht
+    have h := ((mem_rationalSubset_iff Aplus T s _).mp hmem).2.1 t ht
     rwa [comap_vle] at h
   have h := w.toValuativeRel.mul_vle_mul_left hvle (↑hs.unit⁻¹ : B)
   rwa [hs.mul_val_inv] at h
@@ -189,7 +194,7 @@ The two algebraic conditions of
 discharged from the geometric one: `φ s` is a unit by
 `isUnit_of_forall_comap_mem_rationalSubset`, and each fraction
 `φ t / φ s` is sub-unit at every point of `Spa (B, B⁺)` by
-`vle_one_of_forall_comap_mem_rationalSubset`, hence lies in `B⁺` and so is power-bounded.
+`vle_one_of_comap_mem_rationalSubset`, hence lies in `B⁺` and so is power-bounded.
 
 The passage from "sub-unit at every point of `Spa (B, B⁺)`" to "in `B⁺`" is Wedhorn's
 Proposition 7.52(1), applied through `mem_of_forall_vle_one`; its hypotheses on the target are
@@ -226,6 +231,6 @@ theorem existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset [IsTo
   have := hB.isIntegrallyClosedIn
   exact mem_powerBoundedSubring.mp
     (hB.le_powerBoundedSubring (mem_of_forall_vle_one hB.isOpen fun w hw ↦
-      vle_one_of_forall_comap_mem_rationalSubset hs hfac ht hw))
+      vle_one_of_comap_mem_rationalSubset hs (hfac w hw) ht))
 
 end TauCeti.ValuationSpectrum
