@@ -11,6 +11,7 @@ public import Mathlib.Topology.Algebra.Nonarchimedean.AdicTopology
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Inverse
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.WExpansion
 public import TauCeti.RingTheory.MvPowerSeries.Evaluation
+public import TauCeti.Topology.Algebra.Nonarchimedean.AdicTopology
 
 /-!
 # Evaluating the `w`-expansion and the formal inverse at a parameter
@@ -111,24 +112,13 @@ omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
 /-- `formalUEval` is evaluation of `formalU` through the identity ring hom. -/
 theorem formalUEval_def (t : O) : W.formalUEval t = eval₂ (RingHom.id O) t W.formalU := (rfl)
 
-omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
-  [IsLinearTopology O O] in
-/-- An element of an ideal defining the topology is topologically nilpotent. This is
-`WithIdeal.isTopologicallyNilpotent_of_mem` transported along the equality of topologies that
-`IsAdic` asserts, so that it applies to a ring carrying its topology by some other route. -/
-theorem isTopologicallyNilpotent_of_mem_of_isAdic {I : Ideal O} (hI : IsAdic I) {t : O}
-    (ht : t ∈ I) : IsTopologicallyNilpotent t := by
-  suffices ∀ m : ℕ, ∃ n₀, ∀ n, n₀ ≤ n → t ^ n ∈ I ^ m by
-    simpa [IsTopologicallyNilpotent, hI.hasBasis_nhds_zero.tendsto_right_iff]
-  exact fun m ↦ ⟨m, fun n hn ↦ Ideal.pow_le_pow_right hn (Ideal.pow_mem_pow ht _)⟩
-
 /-- The value of the `w`-expansion at a parameter of `I` again lies in `I`: the expansion has
 vanishing constant coefficient, and every other monomial carries a factor of the parameter. -/
 theorem formalWEval_mem {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
     W.formalWEval t ∈ I := by
   have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
   have hE : MvPowerSeries.HasEval (fun _ : Unit ↦ t) :=
-    PowerSeries.hasEval (isTopologicallyNilpotent_of_mem_of_isAdic hI ht)
+    PowerSeries.hasEval (hI.isTopologicallyNilpotent_of_mem ht)
   have key := MvPowerSeries.eval₂_mem_pow (k := 1) hcont hE hI (by simpa using ht) W.formalW (by
     rw [← PowerSeries.constantCoeff_eq, W.constantCoeff_formalW]
     exact zero_mem _)
@@ -139,7 +129,7 @@ theorem formalWEval_mem {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
 theorem formalUEval_sub_one_mem {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
     W.formalUEval t - 1 ∈ I := by
   have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
-  have hEp : PowerSeries.HasEval t := isTopologicallyNilpotent_of_mem_of_isAdic hI ht
+  have hEp : PowerSeries.HasEval t := hI.isTopologicallyNilpotent_of_mem ht
   have hE : MvPowerSeries.HasEval (fun _ : Unit ↦ t) := PowerSeries.hasEval hEp
   have key := MvPowerSeries.eval₂_mem_pow (k := 1) hcont hE hI (by simpa using ht)
     (W.formalU - 1) (by
@@ -158,7 +148,7 @@ factorisation `formalW_eq_X_pow_mul_formalU` of the series. -/
 theorem formalWEval_eq_cube_mul {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
     W.formalWEval t = t ^ 3 * W.formalUEval t := by
   have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
-  have hE : PowerSeries.HasEval t := isTopologicallyNilpotent_of_mem_of_isAdic hI ht
+  have hE : PowerSeries.HasEval t := hI.isTopologicallyNilpotent_of_mem ht
   have h := congrArg (PowerSeries.eval₂Hom (S := O) hcont hE) W.formalW_eq_X_pow_mul_formalU
   rw [map_mul, map_pow] at h
   simpa [formalWEval, formalUEval, PowerSeries.coe_eval₂Hom, PowerSeries.eval₂_X] using h
@@ -211,7 +201,7 @@ theorem formalInverseEval_def (t : O) :
 theorem formalInverseDenomEval_mul_inv {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
     W.formalInverseDenomEval t * W.formalInverseDenomInvEval t = 1 := by
   have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
-  have hEp : PowerSeries.HasEval t := isTopologicallyNilpotent_of_mem_of_isAdic hI ht
+  have hEp : PowerSeries.HasEval t := hI.isTopologicallyNilpotent_of_mem ht
   have h := congrArg (PowerSeries.eval₂Hom (S := O) hcont hEp)
     W.mul_invOfUnit_formalInverseDenom
   rw [map_mul, map_one] at h
@@ -227,7 +217,7 @@ theorem formalInverseEval_mem {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ 
     W.formalInverseEval t ∈ I := by
   have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
   have hE : MvPowerSeries.HasEval (fun _ : Unit ↦ t) :=
-    PowerSeries.hasEval (isTopologicallyNilpotent_of_mem_of_isAdic hI ht)
+    PowerSeries.hasEval (hI.isTopologicallyNilpotent_of_mem ht)
   have key := MvPowerSeries.eval₂_mem_pow (k := 1) hcont hE hI (by simpa using ht)
     W.formalInverse (by
       rw [← PowerSeries.constantCoeff_eq, W.constantCoeff_formalInverse]
@@ -238,7 +228,7 @@ theorem formalInverseEval_mem {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ 
 theorem formalInverseDenomEval_eq {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
     W.formalInverseDenomEval t = 1 - W.a₁ * t - W.a₃ * W.formalWEval t := by
   have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
-  have hEp : PowerSeries.HasEval t := isTopologicallyNilpotent_of_mem_of_isAdic hI ht
+  have hEp : PowerSeries.HasEval t := hI.isTopologicallyNilpotent_of_mem ht
   have h := congrArg (PowerSeries.eval₂Hom (S := O) hcont hEp) W.formalInverseDenom_def
   rw [map_sub, map_sub, map_one, map_mul, map_mul] at h
   simpa [formalInverseDenomEval, formalWEval, PowerSeries.coe_eval₂Hom, PowerSeries.eval₂_C,
@@ -249,7 +239,7 @@ written through the series inverse of the denominator. -/
 theorem formalInverseEval_eq {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
     W.formalInverseEval t = -(t * W.formalInverseDenomInvEval t) := by
   have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
-  have hEp : PowerSeries.HasEval t := isTopologicallyNilpotent_of_mem_of_isAdic hI ht
+  have hEp : PowerSeries.HasEval t := hI.isTopologicallyNilpotent_of_mem ht
   have h := congrArg (PowerSeries.eval₂Hom (S := O) hcont hEp) W.formalInverse_def
   rw [map_neg, map_mul] at h
   simpa [formalInverseEval, formalInverseDenomInvEval, PowerSeries.coe_eval₂Hom,
@@ -261,7 +251,7 @@ fixed point of `v ↦ wEquationRHS W t v`, which is the Weierstrass equation in 
 theorem formalWEval_wEquation {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
     W.formalWEval t = wEquationRHS W t (W.formalWEval t) := by
   have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
-  have hEp : PowerSeries.HasEval t := isTopologicallyNilpotent_of_mem_of_isAdic hI ht
+  have hEp : PowerSeries.HasEval t := hI.isTopologicallyNilpotent_of_mem ht
   have h := congrArg (PowerSeries.eval₂Hom (S := O) hcont hEp) W.formalW_wEquation
   rw [wEquationRHS_powerSeries] at h
   simp only [map_add, map_mul, map_pow] at h
