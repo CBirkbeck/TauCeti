@@ -52,7 +52,7 @@ comparison map to `(A ⧸ I) ⊗[A] A⟨X⟩`, which is what Mathlib's ideal cri
 `Module.Flat.quotient_span_singleton_of_lTensor_mulLeft_injective`, asks for. No topology enters
 beyond the module topology of `A ⧸ I` (`IsModuleTopology.instQuot`).
 
-Exponents of one-variable series are identified with `ℕ` through `expEquiv`; the shift is
+Exponents of one-variable series are identified with `ℕ` through `Finsupp.uniqueEquiv`; the shift is
 stated on `MvPowerSeries (Fin 1) M`, with no topology, and restricted afterwards.
 
 ## References
@@ -74,15 +74,6 @@ needs subtraction. The regularity results below, which do, keep `CommRing` and `
 section Shift
 
 variable {A : Type*} [Semiring A]
-
-/-- Exponents of one-variable series are natural numbers: `n ↦ n 0`, inverse `j ↦ single 0 j`. -/
-private noncomputable def expEquiv : (Fin 1 →₀ ℕ) ≃ ℕ :=
-  Finsupp.equivFunOnFinite.trans (Equiv.funUnique (Fin 1) ℕ)
-
-@[simp] private theorem expEquiv_apply (n : Fin 1 →₀ ℕ) : expEquiv n = n 0 := (rfl)
-
-@[simp] private theorem expEquiv_symm_apply (j : ℕ) : expEquiv.symm j = Finsupp.single 0 j :=
-  Finsupp.unique_single (expEquiv.symm j)
 
 variable {M : Type*} [AddCommMonoid M] [Module A M]
 
@@ -145,21 +136,25 @@ theorem xShift_apply_single_succ (s : MvPowerSeries (Fin 1) M) (j : ℕ) :
 theorem IsRestricted.xShift [TopologicalSpace M] {s : MvPowerSeries (Fin 1) M}
     (hs : IsRestricted s) : IsRestricted (TauCeti.Huber.xShift A s) := by
   simp only [isRestricted_iff, Filter.ZeroAtFilter] at hs ⊢
-  -- Move to sequences indexed by `ℕ` through `expEquiv`.
-  have hs' : Tendsto (fun j : ℕ ↦ (s : (Fin 1 →₀ ℕ) → M) (expEquiv.symm j)) cofinite (nhds 0) :=
-    hs.comp expEquiv.symm.injective.tendsto_cofinite
+  -- Exponents of a one-variable series are natural numbers. `Finsupp.uniqueEquiv 0` is Mathlib's
+  -- name for that bijection, and the shift is a reindexing along it.
+  have hs' : Tendsto (fun j : ℕ ↦
+      (s : (Fin 1 →₀ ℕ) → M) ((Finsupp.uniqueEquiv (0 : Fin 1)).symm j)) cofinite (nhds 0) :=
+    hs.comp (Finsupp.uniqueEquiv (0 : Fin 1)).symm.injective.tendsto_cofinite
   have h2 : Tendsto (fun j : ℕ ↦ if j = 0 then (0 : M) else
-      (s : (Fin 1 →₀ ℕ) → M) (expEquiv.symm (j - 1))) cofinite (nhds 0) := by
+      (s : (Fin 1 →₀ ℕ) → M) ((Finsupp.uniqueEquiv (0 : Fin 1)).symm (j - 1)))
+      cofinite (nhds 0) := by
     rw [Nat.cofinite_eq_atTop] at hs' ⊢
     rw [← Filter.tendsto_add_atTop_iff_nat 1]
     simpa using hs'
   have key : (TauCeti.Huber.xShift A s : (Fin 1 →₀ ℕ) → M) =
-      (fun j : ℕ ↦ if j = 0 then (0 : M) else (s : (Fin 1 →₀ ℕ) → M) (expEquiv.symm (j - 1))) ∘
-        expEquiv := by
+      (fun j : ℕ ↦ if j = 0 then (0 : M) else
+        (s : (Fin 1 →₀ ℕ) → M) ((Finsupp.uniqueEquiv (0 : Fin 1)).symm (j - 1))) ∘
+        Finsupp.uniqueEquiv (0 : Fin 1) := by
     funext n
     simp [xShift_apply]
   rw [key]
-  exact h2.comp expEquiv.injective.tendsto_cofinite
+  exact h2.comp (Finsupp.uniqueEquiv (0 : Fin 1)).injective.tendsto_cofinite
 
 end Shift
 
