@@ -6,6 +6,9 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.CoordinateRing
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Coords
+-- Proof-only: evaluation of the coordinate ring, which supplies the equation at the generic point.
+import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Eval
 
 /-!
 # The generic point of an affine Weierstrass curve
@@ -15,43 +18,59 @@ classes of `X` and `Y` in the function field are a pair satisfying that relation
 `W.FunctionField`. They are the *generic point*: a point of `W` base-changed to its own function
 field.
 
-What is proved here is exactly that — that the pair is a point (`equation_genericPoint`), and
-that evaluating a bivariate polynomial at it is reduction modulo the Weierstrass relation
-(`evalEval_genericPoint`). The word "generic" is the usual geometric one, but no specialisation
-property is established: nothing below says that a statement about this point transfers to the
-points of `W`, and no consumer may rely on that.
+What is proved here is that the pair is a point (`equation_genericPoint`,
+`equation_genericX_genericY`), that evaluating a bivariate polynomial at it is reduction modulo the
+Weierstrass relation (`evalEval_genericPoint`), and that on an elliptic curve over a field the
+resulting solution is nonsingular, cutting out a point `genericPoint` of `W⁄F(W)`.
 
-The two facts worth having are `equation_genericPoint`, that the pair really is a point, and
-`evalEval_genericPoint`, that evaluating a bivariate polynomial there is the same as reducing it
-modulo the Weierstrass relation. The second is what makes the generic point usable: it turns any
-polynomial expression evaluated at `(X, Y)` into a coordinate-ring element, where that ring's
-own API applies.
+The word "generic" is the usual geometric one, but no specialisation property is established:
+nothing below says that a statement about this point transfers to the points of `W`, and no
+consumer may rely on that.
 
 ## Main definitions
 
 * `WeierstrassCurve.Affine.genericX`, `WeierstrassCurve.Affine.genericY`: the coordinates.
 * `WeierstrassCurve.Affine.functionFieldCurve`: `W` base-changed to `W.FunctionField`.
+* `WeierstrassCurve.Affine.genericPoint`: the point of `W⁄F(W)` cut out by the generic coordinates.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.equation_genericPoint`: the generic point satisfies the equation.
-* `WeierstrassCurve.Affine.nonsingular_genericPoint`: and is nonsingular, on an elliptic curve.
+* `WeierstrassCurve.Affine.equation_genericPoint` and
+  `WeierstrassCurve.Affine.equation_genericX_genericY`: the generic point satisfies the equation.
+* `WeierstrassCurve.Affine.nonsingular_genericPoint` and
+  `WeierstrassCurve.Affine.nonsingular_genericX_genericY`: and is nonsingular, on an elliptic curve.
 * `WeierstrassCurve.Affine.evalEval_genericPoint`: evaluation there is reduction.
+* `WeierstrassCurve.Affine.transcendental_genericX` and
+  `WeierstrassCurve.Affine.genericX_ne_algebraMap`: the coordinate `x` is transcendental
+  over the base field, so it takes no constant value.
+
+## Roadmap
+
+`TauCetiRoadmap/EllipticCurves/README.md`, **Layer 0.5**, whose third milestone asks for the
+"function-field pullbacks of the translations `τ_P`, with the action and composition laws". Those
+pullbacks are evaluation at the translates of the generic point, built in
+`TauCeti/AlgebraicGeometry/EllipticCurve/Affine/FunctionField/Translation.lean`; this file is the
+point they translate.
 
 ## References
 
-* [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], II.1.
+* [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], II.1, II.2.
+
+## Provenance
+
+Not a port: none of the pinned sources introduces the generic point. The equation at the generic
+point is the coordinate-ring relation `AdjoinRoot.mk_self`, pushed into the fraction field.
 -/
 
 public section
 
-open Polynomial
+open Polynomial WeierstrassCurve WeierstrassCurve.Affine
 
 open scoped Polynomial.Bivariate
 
 namespace WeierstrassCurve.Affine
 
-variable {R : Type*} [CommRing R] (W : WeierstrassCurve.Affine R)
+variable {R : Type*} [CommRing R] (W : _root_.WeierstrassCurve.Affine R)
 
 /-- The generic `x`-coordinate: the class of `X` in the function field. -/
 noncomputable def genericX : W.FunctionField :=
@@ -72,6 +91,12 @@ theorem genericX_def : W.genericX =
 /-- **The defining equation of `genericY`.** -/
 theorem genericY_def : W.genericY =
     algebraMap W.CoordinateRing W.FunctionField (AdjoinRoot.root W.polynomial) := (rfl)
+
+/-- The generic coordinate `x` is the image of polynomial `X` under the induced map from `R[X]`
+to the function field. -/
+theorem genericX_eq_algebraMap : genericX W = algebraMap R[X] W.FunctionField X := by
+  rw [genericX_def, IsScalarTower.algebraMap_apply R[X] W.CoordinateRing W.FunctionField]
+  (rfl)
 
 /-- `W` base-changed to its own function field. The generic point is a point of it. -/
 noncomputable abbrev functionFieldCurve : WeierstrassCurve.Affine W.FunctionField :=
@@ -113,19 +138,61 @@ theorem equation_genericPoint : W.functionFieldCurve.Equation W.genericX W.gener
   dsimp only [Equation, functionFieldCurve]
   rw [map_polynomial, evalEval_genericPoint W W.polynomial, AdjoinRoot.mk_self, map_zero]
 
+/-- **The two coordinate functions satisfy the Weierstrass equation of the base change to the
+function field**: they are the coordinates of the generic point. -/
+theorem equation_genericX_genericY :
+    (W.map (algebraMap R W.FunctionField)).toAffine.Equation (genericX W) (genericY W) :=
+  equation_genericPoint W
+
 section Field
 
-variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
+variable {F : Type*} [Field F] (W : _root_.WeierstrassCurve.Affine F)
+
+/-- **The coordinate function `x` is transcendental over the base field.** -/
+theorem transcendental_genericX : Transcendental F (genericX W) := by
+  rw [genericX_eq_algebraMap]
+  exact (transcendental_algebraMap_iff
+    (FaithfulSMul.algebraMap_injective F[X] W.FunctionField)).2 (Polynomial.transcendental_X F)
+
+/-- **The coordinate function `x` takes no constant value**, being transcendental. -/
+theorem genericX_ne_algebraMap (x₁ : F) : genericX W ≠ algebraMap F W.FunctionField x₁ :=
+  fun hc ↦ transcendental_genericX W (hc ▸ isAlgebraic_algebraMap _)
+
+variable [W.IsElliptic]
 
 /-- The generic point is nonsingular, so it is an affine point of the base-changed curve.
 
 This is the only statement here that needs a field rather than a commutative ring: it goes
 through `equation_iff_nonsingular`, which does. Everything above is stated over `[CommRing R]`,
 which is all `CoordinateRing` and `FunctionField` ask for — both are `abbrev`s at that class. -/
-theorem nonsingular_genericPoint [W.IsElliptic] :
+theorem nonsingular_genericPoint :
     W.functionFieldCurve.Nonsingular W.genericX W.genericY :=
   equation_iff_nonsingular.mp (equation_genericPoint W)
+
+/-- The generic point is nonsingular. -/
+theorem nonsingular_genericX_genericY :
+    (W⁄W.FunctionField).toAffine.Nonsingular (genericX W) (genericY W) :=
+  nonsingular_genericPoint W
+
+/-- **The generic point of `W`**: the tautological point of `W` with coordinates in its own
+function field. -/
+noncomputable def genericPoint : (W⁄W.FunctionField).toAffine.Point :=
+  .some _ _ (nonsingular_genericX_genericY W)
+
+/-- The generic point is the affine point whose coordinates are `genericX W` and `genericY W`. -/
+theorem genericPoint_eq_some : genericPoint W =
+    .some (genericX W) (genericY W) (nonsingular_genericX_genericY W) := (rfl)
+
+@[simp]
+theorem xCoord_genericPoint : Point.xCoord (genericPoint W) = genericX W :=
+  Point.xCoord_some _
+
+@[simp]
+theorem yCoord_genericPoint : Point.yCoord (genericPoint W) = genericY W :=
+  Point.yCoord_some _
 
 end Field
 
 end WeierstrassCurve.Affine
+
+end
