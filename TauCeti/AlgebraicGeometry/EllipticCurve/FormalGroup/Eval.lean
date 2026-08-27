@@ -230,4 +230,24 @@ theorem formalWEval_eq {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
   simpa [formalWEval, wEquationRHS_def, PowerSeries.coe_eval₂Hom, PowerSeries.eval₂_C,
     PowerSeries.eval₂_X] using h
 
+/-- The value of the series inverse of the denominator is a unit. -/
+theorem isUnit_formalInverseDenomInvEval {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
+    IsUnit (W.formalInverseDenomInvEval t) :=
+  IsUnit.of_mul_eq_one _ (by rw [mul_comm]; exact W.formalInverseDenomEval_mul_inv hI ht)
+
+/-- Over a domain, `w` does not vanish at a nonzero parameter: the factorisation
+`w(t) = t ^ 3 * u(t)` has a unit second factor. -/
+theorem formalWEval_ne_zero [IsDomain O] {I : Ideal O} (hI : IsAdic I)
+    (hJ : I ≤ Ideal.jacobson ⊥) {t : O} (ht : t ∈ I) (ht0 : t ≠ 0) : W.formalWEval t ≠ 0 := by
+  rw [W.formalWEval_eq_cube_mul hI ht]
+  exact mul_ne_zero (pow_ne_zero 3 ht0) (W.isUnit_formalUEval hI hJ ht).ne_zero
+
+/-- Over a domain, the formal inverse does not vanish at a nonzero parameter: `ι(t)` is `-t` times
+a unit. -/
+theorem formalInverseEval_ne_zero [IsDomain O] {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I)
+    (ht0 : t ≠ 0) : W.formalInverseEval t ≠ 0 := by
+  rw [W.formalInverseEval_eq hI ht]
+  exact neg_ne_zero.mpr
+    (mul_ne_zero ht0 (W.isUnit_formalInverseDenomInvEval hI ht).ne_zero)
+
 end WeierstrassCurve
