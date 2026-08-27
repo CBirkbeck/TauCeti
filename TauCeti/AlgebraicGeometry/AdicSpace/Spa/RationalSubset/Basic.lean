@@ -76,6 +76,9 @@ layer deferred above.
   relatively open in the subspace `spa A⁺`.
 * `TauCeti.ValuationSpectrum.rationalSubset_inter` : the intersection identity above — the
   set-level half of Remark 7.30(5).
+* `TauCeti.ValuationSpectrum.rationalSubset_eq_biInter_singleton` : over a nonempty `T`, a
+  rational subset is the intersection of its one-numerator pieces `R({t}/s)`, the decomposition
+  a refinement to a standard rational cover consumes.
 * `TauCeti.ValuationSpectrum.exists_refinement_of_subset` : the re-presentation step of Wedhorn
   §8.2 — from `R(T'/s') ⊆ R(T/s)`, a presentation `R(T''/(s · s'))` of the smaller subset whose
   denominator has each original denominator as a factor and whose numerators contain `t · s'` for
@@ -264,7 +267,7 @@ the two sides differ.
 
 Deliberately not `@[simp]`: the right-hand side is again a rational subset over a singleton, which
 matches the left-hand pattern, so the rewrite re-fires on each factor instead of terminating. -/
-theorem rationalSubset_eq_iInter_singleton (Aplus : Subring A) (T : Finset A) (hT : T.Nonempty)
+theorem rationalSubset_eq_biInter_singleton (Aplus : Subring A) (T : Finset A) (hT : T.Nonempty)
     (s : A) : rationalSubset Aplus T s = ⋂ t ∈ T, rationalSubset Aplus {t} s := by
   ext v
   simp only [Set.mem_iInter, mem_rationalSubset_iff, Finset.mem_singleton, forall_eq]
