@@ -8,6 +8,7 @@ module
 public import Mathlib.RingTheory.MvPowerSeries.Inverse
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.WExpansion
 public import TauCeti.RingTheory.MvPowerSeries.Equiv
+public import TauCeti.RingTheory.MvPowerSeries.Inverse
 
 /-!
 # The chord through two points of a Weierstrass curve near the origin
@@ -73,9 +74,12 @@ Adapted from Michael Stoll's `EllipticCurves` project
 series together with the swap-invariance block — declarations `slopeSeries`, `coeff_slopeSeries`,
 `slopeSeries_mul_sub`, `interceptSeries`, `interceptSeries_eq`, `constantCoeff_slopeSeries`,
 `constantCoeff_interceptSeries`, `thirdRootSeries`, `constantCoeff_thirdRootSeries`,
-`rename_swap_slopeSeries`, `rename_swap_interceptSeries`, `rename_swap_invOfUnit` and
-`rename_swap_thirdRootSeries`. The source's `wSeries` and `vSeries` are `formalW` and `formalU`,
-so neither is re-ported and everything here is stated over the existing `w`-expansion API. Where
+`rename_swap_slopeSeries`, `rename_swap_interceptSeries` and `rename_swap_thirdRootSeries`.
+The source's `rename_swap_invOfUnit` is not ported: it is the general
+`MvPowerSeries.map_invOfUnit` specialised to `rename Sum.swap`, and is used as such.
+
+The source's `wSeries` and `vSeries` are `formalW` and `formalU`, so neither is re-ported and
+everything here is stated over the existing `w`-expansion API. Where
 the source writes `MvPowerSeries.rename (fun _ => i)`, this file uses the equal Mathlib map
 `PowerSeries.toMvPowerSeries i`.
 -/
@@ -262,21 +266,6 @@ theorem constantCoeff_formalThirdRoot : constantCoeff (formalThirdRoot W) = 0 :=
   rw [formalThirdRoot_def]
   simp
 
-/-- Renaming commutes with `invOfUnit` on a series with constant coefficient `1`. -/
-private theorem rename_swap_invOfUnit {D : MvPowerSeries (Unit ⊕ Unit) R}
-    (hD : constantCoeff D = 1) :
-    rename Sum.swap (invOfUnit D 1) = invOfUnit (rename Sum.swap D) 1 := by
-  have h1 : rename Sum.swap D * rename Sum.swap (invOfUnit D 1) = 1 := by
-    rw [← map_mul, mul_invOfUnit D 1 (by rw [hD]; rfl), map_one]
-  have h2 : rename Sum.swap D * invOfUnit (rename Sum.swap D) 1 = 1 :=
-    mul_invOfUnit _ 1 (by rw [constantCoeff_rename, hD]; rfl)
-  calc rename Sum.swap (invOfUnit D 1)
-      = rename Sum.swap (invOfUnit D 1) *
-        (rename Sum.swap D * invOfUnit (rename Sum.swap D) 1) := by rw [h2, mul_one]
-    _ = (rename Sum.swap D * rename Sum.swap (invOfUnit D 1)) *
-        invOfUnit (rename Sum.swap D) 1 := by ring
-    _ = invOfUnit (rename Sum.swap D) 1 := by rw [h1, one_mul]
-
 /-- The third point of the chord is unchanged by exchanging the two parameters. This is what
 makes the formal group law commutative. -/
 theorem rename_swap_formalThirdRoot :
@@ -284,9 +273,13 @@ theorem rename_swap_formalThirdRoot :
   have hD : constantCoeff (1 + C W.a₂ * formalSlope W + C W.a₄ * formalSlope W ^ 2 +
       C W.a₆ * formalSlope W ^ 3) = 1 := by
     simp
+  have hD' : constantCoeff (rename Sum.swap (1 + C W.a₂ * formalSlope W +
+      C W.a₄ * formalSlope W ^ 2 + C W.a₆ * formalSlope W ^ 3)) = 1 := by
+    rw [constantCoeff_rename]; exact hD
   rw [formalThirdRoot_def]
   simp only [map_sub, map_neg, map_add, map_mul, map_pow, map_one, map_ofNat, rename_X,
-    rename_C, rename_swap_formalSlope, rename_swap_formalIntercept, rename_swap_invOfUnit hD]
+    rename_C, rename_swap_formalSlope, rename_swap_formalIntercept,
+    MvPowerSeries.map_invOfUnit (rename Sum.swap) hD hD']
   simp only [show Sum.swap (Sum.inl () : Unit ⊕ Unit) = Sum.inr () from rfl,
     show Sum.swap (Sum.inr () : Unit ⊕ Unit) = Sum.inl () from rfl]
   ring
