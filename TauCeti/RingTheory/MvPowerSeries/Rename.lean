@@ -23,6 +23,8 @@ comparison itself, which is what a caller reindexing a series needs.
 
 * `MvPowerSeries.subst_rename`: substituting into `rename e p` reindexes the family, i.e. it is
   substituting `g ∘ e` into `p`.
+* `sumUnitEmbFinTwo`: the reindexing `Unit ⊕ Unit ↪ Fin 2`, for presenting a series in two
+  separately-named variables over `Fin 2`.
 
 ## Provenance
 
@@ -32,6 +34,26 @@ It is recorded here rather than inside its caller because it carries no elliptic
 -/
 
 public section
+
+/-- **The reindexing `Unit ⊕ Unit ↪ Fin 2`**, sending the left summand to `0` and the right to `1`.
+
+Two separately-named variables and the two variables of `Fin 2` are the two ways a two-variable
+object gets indexed, and translating between them is pure bookkeeping — Mathlib has
+`boolEquivPUnitSumPUnit` and `finSumFinEquiv` but nothing of this shape, and composing those two
+would go through `Bool` and a `PUnit` universe adjustment for no gain.
+
+It is an `Embedding` rather than a bare function because injectivity is what turns a coefficient
+under `MvPowerSeries.rename` into an equality rather than a sum over a fibre — see
+`MvPowerSeries.coeff_embDomain_rename`. -/
+def sumUnitEmbFinTwo : (Unit ⊕ Unit) ↪ Fin 2 where
+  toFun := Sum.elim (fun _ ↦ 0) (fun _ ↦ 1)
+  inj' := by decide
+
+@[simp]
+theorem sumUnitEmbFinTwo_inl : sumUnitEmbFinTwo (Sum.inl ()) = 0 := by decide
+
+@[simp]
+theorem sumUnitEmbFinTwo_inr : sumUnitEmbFinTwo (Sum.inr ()) = 1 := by decide
 
 namespace MvPowerSeries
 
