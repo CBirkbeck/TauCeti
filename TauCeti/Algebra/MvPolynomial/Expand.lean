@@ -5,9 +5,10 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Algebra.CharP.Defs
+public import Mathlib.Algebra.CharP.Lemmas
 public import Mathlib.Algebra.MvPolynomial.Expand
 public import Mathlib.RingTheory.Finiteness.Basic
+public import Mathlib.RingTheory.MvPolynomial.Basic
 
 /-!
 # Finiteness of `MvPolynomial.expand` and of `MvPolynomial.map`
@@ -41,10 +42,6 @@ Stacks 10.161.13 (tag 032O), stated for `n` variables at once.
 -/
 
 public section
-
--- Skeleton of the normalization-finiteness development: `sorry` is an error under the library's
--- `warningAsError`, so it is downgraded here until the proofs land. Remove with the last `sorry`.
-set_option warningAsError false
 
 namespace TauCeti
 
@@ -176,6 +173,22 @@ theorem MvPolynomial.exists_pow_eq_map_expand {σ R S : Type*} [CommRing R] [Com
     (f : R →+* S) (p : ℕ) [ExpChar S p] (n : ℕ) {g : MvPolynomial σ R}
     (hg : ∀ i ∈ g.support, ∃ d : S, d ^ p ^ n = f (g.coeff i)) :
     ∃ h : MvPolynomial σ S, h ^ p ^ n = MvPolynomial.map f (MvPolynomial.expand (p ^ n) g) := by
-  sorry
+  classical
+  -- total-ise the choice of roots, so the witness is a plain sum over `g.support`
+  have hg' : ∀ i : σ →₀ ℕ, ∃ d : S, i ∈ g.support → d ^ p ^ n = f (g.coeff i) := by
+    intro i
+    by_cases hi : i ∈ g.support
+    · obtain ⟨d, hd⟩ := hg i hi
+      exact ⟨d, fun _ ↦ hd⟩
+    · exact ⟨0, fun h ↦ absurd h hi⟩
+  choose d hd using hg'
+  refine ⟨∑ α ∈ g.support, MvPolynomial.monomial α (d α), ?_⟩
+  -- Frobenius is additive, so the `p ^ n`-th power is taken monomial by monomial
+  rw [sum_pow_char_pow]
+  conv_rhs => rw [MvPolynomial.as_sum g]
+  rw [map_sum, map_sum]
+  refine Finset.sum_congr rfl fun α hα ↦ ?_
+  rw [MvPolynomial.monomial_pow, hd α hα, MvPolynomial.expand_monomial,
+    MvPolynomial.map_monomial]
 
 end TauCeti
