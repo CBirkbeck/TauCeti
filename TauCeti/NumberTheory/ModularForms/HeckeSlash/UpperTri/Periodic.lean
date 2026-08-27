@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Logic.Equiv.Fin.Rotate
+public import TauCeti.Data.ZMod.FinEquiv
 public import TauCeti.NumberTheory.ModularForms.Cusps.Basic
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Sum
 
@@ -179,19 +180,22 @@ private lemma scaleRep_mul_upperTriRep (hd : 0 < d) (b : Fin p) {q r : ℕ} (hr 
   fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two]
   · linarith
 
-/-- Multiplication by `d` modulo `p` permutes `Fin p` when `d` and `p` are coprime.  Injectivity
-is `Nat.ModEq.cancel_left_of_coprime`: the two indices are already congruent mod `p`, and both
-are below `p`. -/
+/-- Multiplication by `d` modulo `p` permutes `Fin p` when `d` and `p` are coprime. It *is*
+multiplication by the unit `ZMod.unitOfCoprime d hdp` of `ZMod p`, read through
+`ZMod.finEquiv`, so the permutation property is the unit's and nothing is proved here. -/
 private noncomputable def mulModEquiv (hp : 0 < p) (hdp : Nat.Coprime d p) : Fin p ≃ Fin p :=
-  Equiv.ofBijective (fun b ↦ ⟨d * (b : ℕ) % p, Nat.mod_lt _ hp⟩)
-    (Finite.injective_iff_bijective.mp fun b₁ b₂ hb ↦ Fin.ext (by
-      have := Nat.ModEq.cancel_left_of_coprime hdp.symm (congrArg Fin.val hb)
-      rwa [Nat.ModEq, Nat.mod_eq_of_lt b₁.isLt, Nat.mod_eq_of_lt b₂.isLt] at this))
+  haveI : NeZero p := ⟨hp.ne'⟩
+  (ZMod.finEquiv p).toEquiv.trans <|
+    (Units.mulLeft (ZMod.unitOfCoprime d hdp)).trans (ZMod.finEquiv p).toEquiv.symm
 
-/-- The index the permutation sends `b` to, as a natural number. -/
+/-- The index the permutation sends `b` to, as a natural number. This is what
+`ZMod.finEquiv_symm_apply_val` is for: the `Fin p` representative of a residue has that
+residue's `val`. -/
 @[simp]
 private lemma coe_mulModEquiv (hp : 0 < p) (hdp : Nat.Coprime d p) (b : Fin p) :
-    (mulModEquiv p hp hdp b : ℕ) = d * (b : ℕ) % p := (rfl)
+    (mulModEquiv p hp hdp b : ℕ) = d * (b : ℕ) % p := by
+  have : NeZero p := ⟨hp.ne'⟩
+  simp [mulModEquiv, ZMod.coe_unitOfCoprime, ← Nat.cast_mul, ZMod.val_natCast]
 
 /-- **The upper-triangular slash sum commutes with the slash by `scaleRep d = diag(d, 1)`**, for
 `d` coprime to `p` and any `T`-invariant function. This is the level-raising half of
