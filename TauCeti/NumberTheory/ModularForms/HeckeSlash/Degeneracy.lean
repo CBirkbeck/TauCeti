@@ -35,7 +35,8 @@ normalising scalars are absent:
 ## Main results
 
 * `HeckeRing.GL2.heckeSlashUpperTri_slash_scaleRep_comm`: the upper-triangular sum commutes with
-  the slash by `scaleRep d = diag(d, 1)`, for any function fixed by the powers of `T` and any `d`
+  the slash by `scaleRep d = diag(d, 1)`, for any function fixed by the natural powers of `T`
+  and any `d`
   coprime to `p`.
 * `HeckeRing.GL2.heckeTCuspNat_levelRaise`: **`Tₚ (V_d f) = V_d (Tₚ f)`** for `p` prime and
   coprime to the raised level `N`.
@@ -70,11 +71,12 @@ variable {M d N p : ℕ} (k : ℤ)
 
 /-! ### The shift matrix -/
 
-/-- A `Γ₁(M)`-invariant function is fixed by the rational slash of any power of `T`. -/
-private lemma slash_mapGL_T_zpow {f : ℍ → ℂ}
-    (hf : ∀ γ ∈ (Gamma1 M).map (mapGL ℝ), f ∣[k] γ = f) (q : ℤ) :
+/-- A `Γ₁(M)`-invariant function is fixed by the rational slash of any natural power of `T`. -/
+private lemma slash_mapGL_T_pow {f : ℍ → ℂ}
+    (hf : ∀ γ ∈ (Gamma1 M).map (mapGL ℝ), f ∣[k] γ = f) (q : ℕ) :
     f ∣[k] (mapGL ℚ (ModularGroup.T ^ q) : GL (Fin 2) ℚ) = f :=
-  ModularForm.slash_eq_of_mem_map_mapGL hf (Subgroup.mem_map_of_mem _ (T_zpow_mem_Gamma1 M q))
+  ModularForm.slash_eq_of_mem_map_mapGL hf
+    (Subgroup.mem_map_of_mem _ (by simpa using T_zpow_mem_Gamma1 M (q : ℤ)))
 
 /-! ### The upper-triangular representatives under `diag(d, 1)` -/
 
@@ -84,7 +86,7 @@ representative index `r` is again in range, at the cost of the shift `T ^ q`. -/
 private lemma scaleRep_mul_upperTriRep (hd : 0 < d) (b : Fin p) {q r : ℕ} (hr : r < p)
     (hqr : d * (b : ℕ) = q * p + r) :
     scaleRep d * upperTriRep p b =
-      mapGL ℚ (ModularGroup.T ^ (q : ℤ)) * (upperTriRep p ⟨r, hr⟩ * scaleRep d) := by
+      mapGL ℚ (ModularGroup.T ^ q) * (upperTriRep p ⟨r, hr⟩ * scaleRep d) := by
   have hmod : (d : ℚ) * ((b : ℕ) : ℚ) = (q : ℚ) * (p : ℚ) + (r : ℚ) := by exact_mod_cast hqr
   apply Units.ext
   rw [Units.val_mul, Units.val_mul, Units.val_mul, coe_scaleRep d hd, coe_upperTriRep,
@@ -118,11 +120,13 @@ private lemma coe_mulModEquiv (hp : 0 < p) (hdp : Nat.Coprime d p) (b : Fin p) :
 the level-raising half of `heckeTCuspNat_levelRaise`, stated before the normalising scalar of
 `V_d` is introduced.
 
-Invariance under the powers of `T` is all the reindexing consumes: no level enters the
-statement, and a `Γ₁(M)`-invariant function meets the hypothesis via `slash_mapGL_T_zpow`. -/
+Invariance under the *natural* powers of `T` is all the reindexing consumes — the shift it
+produces is `T ^ q` for the quotient `q` of `d b` by `p` — so no level and no negative power
+enters the statement. A `Γ₁(M)`-invariant function meets the hypothesis via
+`slash_mapGL_T_pow`. -/
 theorem heckeSlashUpperTri_slash_scaleRep_comm (hd : 0 < d) (hp : 0 < p)
     (hdp : Nat.Coprime d p) {f : ℍ → ℂ}
-    (hT : ∀ q : ℤ, f ∣[k] (mapGL ℚ (ModularGroup.T ^ q) : GL (Fin 2) ℚ) = f) :
+    (hT : ∀ q : ℕ, f ∣[k] (mapGL ℚ (ModularGroup.T ^ q) : GL (Fin 2) ℚ) = f) :
     heckeSlashUpperTri k p (f ∣[k] (scaleRep d : GL (Fin 2) ℚ)) =
       heckeSlashUpperTri k p f ∣[k] (scaleRep d : GL (Fin 2) ℚ) := by
   rw [heckeSlashUpperTri_def, heckeSlashUpperTri_def, SlashAction.sum_slash]
@@ -174,7 +178,7 @@ theorem heckeTCuspNat_levelRaise (hdvd : d * M ∣ N) (hp : p.Prime)
     SlashAction.add_slash, smul_add, heckeSlashUpperTri_smul, hscale]
   refine congrArg₂ (· + ·) ?_ ?_
   · rw [heckeSlashUpperTri_slash_scaleRep_comm k hdpos hp.pos hpd.symm
-      (slash_mapGL_T_zpow k hf)]
+      (slash_mapGL_T_pow k hf)]
   · rw [ModularForm.rat_smul_slash_of_det_pos k (det_scaleRep_pos p), ← SlashAction.slash_mul,
       ← SlashAction.slash_mul, scaleRep_def, scaleRep_def, natDiagGL_comm]
 
