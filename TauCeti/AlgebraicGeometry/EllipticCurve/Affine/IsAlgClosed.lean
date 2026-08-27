@@ -18,7 +18,7 @@ involved, which is why it lives here rather than with any consumer.
 
 ## Main results
 
-* `TauCeti.WeierstrassCurve.Affine.exists_point_on_curve`: over an algebraically closed field
+* `WeierstrassCurve.Affine.exists_point_on_curve`: over an algebraically closed field
   every element is the `x`-coordinate of a solution of `W.Equation`.
 
 Stated for an arbitrary affine Weierstrass curve over an algebraically closed field. It yields a
@@ -50,13 +50,11 @@ public section
 
 open Polynomial
 
-namespace TauCeti
-
 namespace WeierstrassCurve
 
 namespace Affine
 
-variable {F : Type*} [Field F] [IsAlgClosed F] (W : _root_.WeierstrassCurve.Affine F)
+variable {F : Type*} [Field F] [IsAlgClosed F] (W : Affine F)
 
 /-- **Over an algebraically closed field every `x`-coordinate is realised by a point.** Solving the
 Weierstrass equation for `y` at a fixed `x` is finding a root of a quadratic, which an
@@ -73,4 +71,4 @@ end Affine
 
 end WeierstrassCurve
 
-end TauCeti
+end

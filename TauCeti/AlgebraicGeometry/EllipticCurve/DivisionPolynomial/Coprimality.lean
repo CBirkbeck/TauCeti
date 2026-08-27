@@ -107,7 +107,7 @@ theorem isCoprime_Φ_ΨSq (n : ℤ) (hΔ : W.Δ ≠ 0) : IsCoprime (W.Φ n) (W.�
   obtain ⟨hΦ, hΨ⟩ := h
   simp only [Polynomial.coe_aeval_eq_eval] at hΦ hΨ
   -- a common root of `Φₙ` and `ΨSqₙ` is the `x`-coordinate of a point of the curve
-  obtain ⟨b, hb⟩ := Affine.exists_point_on_curve W'.toAffine a
+  obtain ⟨b, hb⟩ := W'.toAffine.exists_point_on_curve a
   have hΔ' : W'.Δ ≠ 0 := by rw [hW', map_Δ]; exact (map_ne_zero_iff f f.injective).mpr hΔ
   have hns : W'.toAffine.Nonsingular a b :=
     (W'.toAffine.equation_iff_nonsingular_of_Δ_ne_zero hΔ').mp hb
