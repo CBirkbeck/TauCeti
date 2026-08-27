@@ -403,10 +403,12 @@ consumer of this lemma has and which this statement deliberately does not assume
 Nor does it make the class of `x - T + fCofactor x` itself trivial in `W.M`: that would say the
 element is a square in `W.Aˣ`, which is a different and stronger statement.
 
-Deliberately **not** `@[simp]`, unlike its `AdjoinRoot` counterparts: there is no useful
-simp-normal form here. `simp` expands `W.fCofactor x` as well as pushing `mk` through the sum, so
-the normalised left-hand side is the full nine-term expression in `of` and `root`, which is not a
-statement worth stating. Use it by explicit `rw`. -/
+Deliberately **not** `@[simp]`, as its general form `AdjoinRoot.norm_mk_C_sub_X_add` is not
+either, but for a different reason. There the obstruction is the side conditions: `hgq` and `hq`
+are rigid goals the default discharger would have to prove. Here they are already discharged, and
+the obstruction is the left-hand side itself: `simp` expands `W.fCofactor x` as well as pushing
+`mk` through the sum, so the normalised form is the full nine-term expression in `of` and `root`,
+which is not a statement worth stating. Use it by explicit `rw`. -/
 theorem norm_mk_C_sub_X_add_fCofactor {x : K} (hx : W.f.eval x = 0) :
     Algebra.norm K (AdjoinRoot.mk W.f (C x - X + W.fCofactor x))
       = (3 * x ^ 2 + 2 * W.a₂ * x + W.a₄) ^ 2 := by
