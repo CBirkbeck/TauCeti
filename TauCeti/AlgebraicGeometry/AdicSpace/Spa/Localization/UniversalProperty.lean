@@ -32,7 +32,9 @@ The step `φ s ∈ B^×` is Wedhorn's Proposition 7.52(2), which is on hand as
 `TauCeti.ValuationSpectrum.isUnit_of_forall_not_vle_zero`; the step `|φ(t)/φ(s)|_w ≤ 1` is a
 division by that unit. The step from there to `φ(t)/φ(s) ∈ B⁺` is Proposition 7.52(1), available
 as `TauCeti.ValuationSpectrum.mem_of_forall_vle_one`, which the assembly consumes at its one use
-site. All three steps are therefore proved, and the result below **is** Wedhorn's Lemma 8.1.
+site. All three steps are therefore proved, and the result below is Wedhorn's Lemma 8.1 in
+conditional form — for targets whose maximal ideals are open, and **not** in the generality
+Wedhorn states it in; see *The hypothesis that is not yet Wedhorn's* below.
 
 The other half of Lemma 8.1, that `Spa ρ : Spa A⟨T/s⟩ → Spa A` factors through `U`, is already
 `TauCeti.ValuationSpectrum.spaComapLoc_mem_rationalSubset`; it is not repeated here.
@@ -156,7 +158,7 @@ theorem vle_one_of_forall_comap_mem_rationalSubset {φ : A →+* B} {Aplus : Sub
 
 end Steps
 
-/-! ### Lemma 8.1
+/-! ### Lemma 8.1, for targets with open maximal ideals
 
 The assembly. `S` is an algebraic localisation of `A` away from `s` carrying the localisation
 topology, so that `A⟨T/s⟩` is its separated completion, and the three `letI`s naming the
