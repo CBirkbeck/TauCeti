@@ -145,15 +145,7 @@ lemma mem_selmerGroupA_iff (m : W.M) :
 /-- **`A(S,2)` is finite**, given that each factor's ring of integers has finite class group and
 finitely generated unit group.
 
-Immediate from `IsDedekindDomain.finite_selmerGroupOfEquiv`, because `selmerGroupA` *is* a
-`selmerGroupOfEquiv`: there are finitely many factors, since `f` has finitely many monic
-irreducible divisors, and finitely many relevant primes, since finitely many lie above the
-finitely many bad primes.
-
-Stated here rather than beside the weak Mordell-Weil theorem that consumes it: `selmerGroupA` is
-not `@[expose]`, so downstream the goal `Finite (selmerGroupA R)` and the conclusion of
-`finite_selmerGroupOfEquiv` are not visibly the same type, and closing that gap costs an
-`isDefEq` timeout. In this module the definition is visible and the proof is one `exact`. -/
+This is the finiteness that bounds the image of the descent map, and hence `E(K)/2E(K)`. -/
 theorem finite_selmerGroupA
     [(p : W.f.Factors) → Finite (ClassGroup (W.ringOfIntegersFactor R p))]
     [(p : W.f.Factors) → Monoid.FG (W.ringOfIntegersFactor R p)ˣ] :

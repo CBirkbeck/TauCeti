@@ -12,7 +12,7 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.SelmerGroupA
 
 Let `W : y² = f(x) = x³ + a₂x² + a₄x + a₆` be an elliptic curve in characteristic `≠ 2` normal
 form over a field `K`, and let `R` be a Dedekind domain with fraction field `K`. **Step 7**, and
-with it the weak Mordell–Weil theorem, is `finite_index_range_nsmulAddMonoidHom_two`: the subgroup
+with it the weak Mordell–Weil theorem, is `finiteIndex_range_nsmulAddMonoidHom_two`: the subgroup
 `2E(K)` has finite index in `E(K)`.
 
 Everything hard is already done. Step 4 (`ker_μ_eq`) says the kernel of the descent map `μ` is
@@ -27,9 +27,9 @@ about an arbitrary Dedekind domain.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.finite_index_range_nsmulAddMonoidHom_two_iff`: the criterion — `2E(K)`
+* `WeierstrassCurve.Affine.finiteIndex_range_nsmulAddMonoidHom_two_iff`: the criterion — `2E(K)`
   has finite index exactly when the image of `μ` is finite.
-* `WeierstrassCurve.Affine.finite_index_range_nsmulAddMonoidHom_two`: **the weak Mordell–Weil
+* `WeierstrassCurve.Affine.finiteIndex_range_nsmulAddMonoidHom_two`: **the weak Mordell–Weil
   theorem.**
 
 ## Roadmap
@@ -68,9 +68,9 @@ variable [DecidableEq K]
 /-- **The criterion behind the weak Mordell–Weil theorem**: `2E(K)` has finite index in `E(K)`
 exactly when the image of the descent map is finite.
 
-This is Step 4 restated: `ker_μ_eq` identifies the kernel of `μ` with `2E(K)`, so the first
-isomorphism theorem makes `E(K)/2E(K)` and the image of `μ` the same group. -/
-lemma finite_index_range_nsmulAddMonoidHom_two_iff :
+`E(K)/2E(K)` and the image of `μ` are the same group, so finiteness of either is finiteness of
+the other. -/
+lemma finiteIndex_range_nsmulAddMonoidHom_two_iff :
     (nsmulAddMonoidHom (α := W.Point) 2).range.FiniteIndex ↔ Finite (μ (W := W)).range := by
   rw [← AddSubgroup.finiteIndex_toSubgroup_iff, ← ker_μ_eq,
     Equiv.finite_iff (QuotientGroup.quotientKerEquivRange (μ (W := W))).symm.toEquiv]
@@ -90,12 +90,10 @@ form `y² = x³ + a₂x² + a₄x + a₆` over the fraction field `K` of a Dedek
 that for each irreducible factor `p` of the cubic the ring of integers of `K[X] ⧸ (p)` has finite
 class group and finitely generated unit group.
 
-The image of `μ` lies in `A(S,2)` by Step 6 and `A(S,2)` is finite, so the image is finite; the
-criterion turns that into finiteness of the index. This is the input to the descent argument in
-the Mordell–Weil theorem proper. -/
-theorem finite_index_range_nsmulAddMonoidHom_two :
+This is the input to the descent argument in the Mordell–Weil theorem proper. -/
+theorem finiteIndex_range_nsmulAddMonoidHom_two :
     (nsmulAddMonoidHom (α := W.Point) 2).range.FiniteIndex := by
-  rw [W.finite_index_range_nsmulAddMonoidHom_two_iff]
+  rw [W.finiteIndex_range_nsmulAddMonoidHom_two_iff]
   have := W.finite_selmerGroupA R
   exact ((W.selmerGroupA R : Set W.M).toFinite.subset (W.range_μ_le_selmerGroupA R)).to_subtype
 
