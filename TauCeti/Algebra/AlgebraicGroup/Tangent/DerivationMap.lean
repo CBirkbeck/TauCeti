@@ -210,7 +210,7 @@ theorem derivationComp_comp {A'' : Type*} [CommSemiring A''] [Bialgebra R A'']
 
 /-- **Precomposition along a section is undone by precomposition along its retraction.** If
 `φ.comp χ` is the identity then `derivationComp χ` inverts `derivationComp φ`. -/
-theorem derivationComp_derivationComp_of_comp_eq_id (φ : A' →ₐc[R] A) (χ : A →ₐc[R] A')
+theorem derivationComp_derivationComp_eq_self_of_comp_eq_id (φ : A' →ₐc[R] A) (χ : A →ₐc[R] A')
     (h : φ.comp χ = BialgHom.id R A)
     (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
     derivationComp (B := B) χ (derivationComp (B := B) φ d) = d := by

@@ -97,7 +97,7 @@ private theorem tensorProductComponents_ofTensorProductComponents_fst
     LieHom.coe_toLinearMap, derivationCompLieHom_apply, LinearMap.add_apply, LinearMap.comp_apply,
     LinearMap.fst_apply, LinearMap.snd_apply]
   rw [map_add]
-  have hdiag := derivationComp_derivationComp_of_comp_eq_id (B := B)
+  have hdiag := derivationComp_derivationComp_eq_self_of_comp_eq_id (B := B)
     (TauCeti.Bialgebra.TensorProduct.projectLeft (R := R) (H₁ := H₁) (H₂ := H₂))
     (TauCeti.Bialgebra.TensorProduct.includeLeft (R := R) (H₁ := H₁) (H₂ := H₂))
     TauCeti.Bialgebra.TensorProduct.projectLeft_comp_includeLeft d.1
@@ -121,7 +121,7 @@ private theorem tensorProductComponents_ofTensorProductComponents_snd
     LieHom.coe_toLinearMap, derivationCompLieHom_apply, LinearMap.add_apply, LinearMap.comp_apply,
     LinearMap.fst_apply, LinearMap.snd_apply]
   rw [map_add]
-  have hdiag := derivationComp_derivationComp_of_comp_eq_id (B := B)
+  have hdiag := derivationComp_derivationComp_eq_self_of_comp_eq_id (B := B)
     (TauCeti.Bialgebra.TensorProduct.projectRight (R := R) (H₁ := H₁) (H₂ := H₂))
     (TauCeti.Bialgebra.TensorProduct.includeRight (R := R) (H₁ := H₁) (H₂ := H₂))
     TauCeti.Bialgebra.TensorProduct.projectRight_comp_includeRight d.2
