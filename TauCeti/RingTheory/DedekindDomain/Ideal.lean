@@ -40,6 +40,13 @@ adapted from Michael Stoll's elliptic-curves formalisation
 roadmap's pin `66889eada51a`, Apache 2.0, by Michael Stoll); following this repository's
 convention for adapted material, the upstream authorship is credited here rather than in the
 copyright header.
+
+`IsDedekindDomain.HeightOneSpectrum.comapOfNeBot` and its projection are likewise adapted from that
+formalisation (`github.com/MichaelStollBayreuth/EllipticCurves`, `EllipticCurves/Mathlib/Basic.lean`
+line 539, at the roadmap's pin `66889eada51a74c2f5dfb7fb5909b0b5a0a2d96e`, Apache 2.0, by Michael
+Stoll). The construction is the source's; what changed is the hypothesis — the source and this
+version take the nonvanishing of the contraction as a hypothesis, where Mathlib's
+`HeightOneSpectrum.comap` instead derives it from surjectivity of the map.
 -/
 
 public section
@@ -125,7 +132,11 @@ only the converse fails.
 The generality is needed because the maps contracted along here are embeddings into completions —
 `R → v.adicCompletionIntegers K` — which are neither surjective, so Mathlib's `comap` does not
 apply, nor integral `Algebra` maps, so `HeightOneSpectrum.under` does not either. (`ℤ → ℤ_p` is
-flat, not integral.) The `ne_bot` hypothesis has to be supplied by hand. -/
+flat, not integral.) The `ne_bot` hypothesis has to be supplied by hand.
+
+Adapted from Michael Stoll's `EllipticCurves` (`EllipticCurves/Mathlib/Basic.lean` line 539, Apache
+2.0, at the roadmap's pin `66889eada51a74c2f5dfb7fb5909b0b5a0a2d96e`); the `ne_bot`-as-hypothesis
+formulation is the source's. -/
 def comapOfNeBot (ψ : B →+* C) (w : HeightOneSpectrum C) (hne : w.asIdeal.comap ψ ≠ ⊥) :
     HeightOneSpectrum B where
   asIdeal := w.asIdeal.comap ψ
