@@ -439,10 +439,6 @@ theorem integralClosure.isNoetherianRing (K : Type*) [Field K] [Algebra A K] [Is
 
 end IntegralClosure
 
--- Skeleton of the normalization-finiteness development: `sorry` is an error under the library's
--- `warningAsError`, so it is downgraded here until the proofs land. Remove with the last `sorry`.
-set_option warningAsError false
-
 section NormalizationFinite
 
 /-! ### Normalization-finiteness: the integral closure of a finite-type domain is finite
@@ -638,8 +634,10 @@ subalgebra. -/
 theorem integralClosure.finite_of_finiteType (k : Type*) [Field k] [Algebra k A]
     [Algebra.FiniteType k A] (K : Type*) [Field K] [Algebra A K] [IsFractionRing A K]
     {L : Type*} [Field L] [Algebra K L] [Algebra A L] [IsScalarTower A K L]
-    [FiniteDimensional K L] : Module.Finite A (integralClosure A L) := by
-  sorry
+    [FiniteDimensional K L] : Module.Finite A (integralClosure A L) :=
+  -- same shape as `integralClosure.isNoetherianRing` above: specialise to Mathlib's
+  -- `integralClosure A L`, which carries the canonical `IsIntegralClosure` instance.
+  _root_.TauCeti.IsIntegralClosure.finite_of_finiteType (A := A) k K L (integralClosure A L)
 
 end NormalizationFinite
 
