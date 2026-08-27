@@ -131,7 +131,40 @@ finite over `R` and hence `R′[x^{1/q}]` is finite over `R[x]`". Polynomial rin
 module-finiteness of the coefficient map: `MvPolynomial.map f` is finite whenever `f` is. -/
 theorem MvPolynomial.finite_map {σ R S : Type*} [CommRing R] [CommRing S] {f : R →+* S}
     (hf : f.Finite) : (MvPolynomial.map (σ := σ) f).Finite := by
-  sorry
+  classical
+  let _ : Algebra R S := f.toAlgebra
+  obtain ⟨t, htfin, ht⟩ := Submodule.fg_def.mp (Module.finite_def.mp hf)
+  let _ : Algebra (MvPolynomial σ R) (MvPolynomial σ S) := (MvPolynomial.map (σ := σ) f).toAlgebra
+  refine Module.finite_def.mpr (Submodule.fg_def.mpr
+    ⟨MvPolynomial.C '' t, htfin.image _, eq_top_iff.mpr fun p _ ↦ ?_⟩)
+  refine MvPolynomial.induction_on' p (fun α c ↦ ?_) (fun p q hp hq ↦ Submodule.add_mem _ hp hq)
+  refine Submodule.span_induction
+    (p := fun c _ ↦ MvPolynomial.monomial α c ∈
+      Submodule.span (MvPolynomial σ R) (MvPolynomial.C '' t))
+    ?_ ?_ ?_ ?_ (ht ▸ Submodule.mem_top : c ∈ Submodule.span R t)
+  · -- a generator `x ∈ t`, as the constant `C x`, scaled by the monomial `X ^ α`
+    intro x hx
+    have hx' : MvPolynomial.monomial α x
+        = (MvPolynomial.monomial α (1 : R)) • (MvPolynomial.C x : MvPolynomial σ S) := by
+      rw [Algebra.smul_def]
+      change _ = MvPolynomial.map f (MvPolynomial.monomial α 1) * MvPolynomial.C x
+      rw [MvPolynomial.map_monomial, map_one, mul_comm, MvPolynomial.C_mul_monomial, mul_one]
+    rw [hx']
+    exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨x, hx, rfl⟩)
+  · simp
+  · intro x y _ _ hx hy
+    rw [map_add]
+    exact Submodule.add_mem _ hx hy
+  · -- an `R`-scalar becomes the constant `C r` acting through `MvPolynomial.map f`
+    intro r x _ hx
+    have hr : MvPolynomial.monomial α (r • x)
+        = (MvPolynomial.C r : MvPolynomial σ R) • MvPolynomial.monomial α x := by
+      rw [Algebra.smul_def]
+      change _ = MvPolynomial.map f (MvPolynomial.C r) * MvPolynomial.monomial α x
+      rw [MvPolynomial.map_C, MvPolynomial.C_mul_monomial]
+      rfl
+    rw [hr]
+    exact Submodule.smul_mem _ _ hx
 
 /-- Source: Stacks, Lemma 10.161.13 (tag 032O), proof: "There exists a finite purely inseparable
 field extension `L′/K` and `q = p^e` such that `L ⊂ L′(x^{1/q})`; some details omitted" — the
