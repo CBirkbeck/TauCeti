@@ -42,10 +42,12 @@ are open.
 ## Main results
 
 * `TauCeti.ValuationSpectrum.existsUnique_continuous_ringHom_of_rationalSubset_subset` :
-  **Wedhorn's Proposition 8.2(1)** — a containment of rational subsets induces a unique
-  continuous comparison map of coordinate rings.
-* `TauCeti.ValuationSpectrum.presentationRingEquivOfEq` : **presentation independence** — two
-  presentations of the same rational subset have canonically isomorphic coordinate rings.
+  Wedhorn's Proposition 8.2(1) **for a target whose maximal ideals and plus subring are open** —
+  under those two hypotheses a containment of rational subsets induces a unique continuous
+  comparison map of coordinate rings. Wedhorn asks for neither, so this is not yet his statement.
+* `TauCeti.ValuationSpectrum.presentationRingEquivOfEq` : presentation independence **under the
+  same two hypotheses on each of the two coordinate rings** — two presentations of the same
+  rational subset then have canonically isomorphic coordinate rings.
 
 ## The hypotheses both results carry
 
@@ -92,9 +94,14 @@ open TauCeti.Huber TauCeti.Huber.PairOfDefinition
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
-/-- **Wedhorn's Proposition 8.2(1)**: if the rational subset presented by `T'` over `s'` is
+/-- **Wedhorn's Proposition 8.2(1), for a target whose maximal ideals and plus subring are
+open**: under those two hypotheses, if the rational subset presented by `T'` over `s'` is
 contained in the one presented by `T` over `s`, then exactly one continuous ring homomorphism
 `A⟨T/s⟩ → A⟨T'/s'⟩` is compatible with the structure maps from `A`.
+
+Wedhorn imposes neither hypothesis, so **this is not yet Proposition 8.2(1) in the generality he
+states it**, and it should not be cited as that. The two are inherited from Lemma 8.1 and are
+discussed in the module docstring.
 
 This is the containment form of `TauCeti.Huber.existsUnique_continuous_ringHom_of_refines`, which
 asks instead that the second presentation refine the first syntactically. The proof is Wedhorn's:
@@ -141,8 +148,12 @@ theorem existsUnique_continuous_ringHom_of_rationalSubset_subset (P : PairOfDefi
   simpa only [spaComapLoc_val] using
     spaComapLoc_mem_rationalSubset P Aplus T' s' S' hden' ⟨w, hw⟩
 
-/-- **Presentation independence**: two presentations of the *same* rational subset have
+/-- **Presentation independence, for coordinate rings whose maximal ideals and plus subrings are
+open**: under those hypotheses on both rings, two presentations of the *same* rational subset have
 canonically isomorphic coordinate rings.
+
+As with Proposition 8.2(1) above, the unconditional statement is not proved here: the hypotheses
+are inherited from Lemma 8.1 and Wedhorn asks for neither.
 
 Wedhorn's Proposition 8.2(1) applies in both directions, and
 `TauCeti.Huber.presentationRingEquiv` turns the two comparison maps into an isomorphism — each
