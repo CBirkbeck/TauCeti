@@ -75,7 +75,11 @@ theorem IsIntegralClosure.exists_algebraMap_eq_iterateFrobenius {A K M C : Type*
     (p : ℕ) [ExpChar K p] {n : ℕ} (hn : IsPurelyInseparable.exponent K M ≤ n) (c : C) :
     ∃ a : A, algebraMap A K a =
       IsPurelyInseparable.iterateFrobenius K M p hn (algebraMap C M c) := by
-  sorry
+  -- `A` is integrally closed, so it suffices that the value is integral over `A` — and that is
+  -- read off in `M`, where the value becomes the `p ^ n`-th power of an element integral over `A`.
+  refine IsIntegrallyClosed.isIntegral_iff.mp (IsIntegral.tower_bot (algebraMap K M).injective ?_)
+  rw [IsPurelyInseparable.algebraMap_iterateFrobenius]
+  exact ((IsIntegralClosure.isIntegral A M c).algebraMap (B := M)).pow _
 
 /-- Source: Stacks, Lemma 10.161.13 (tag 032O), proof: "As `R[x]` is Noetherian it suffices to
 show that the integral closure of `R[x]` in `L′(x^{1/q})` is finite over `R[x]`. And this
