@@ -61,7 +61,10 @@ its full automorphism group (Artin; Mathlib's `IsGalois.of_fixed_field`, transpo
 `⊤` argument makes it a poor one. -/
 theorem IntermediateField.isGalois_fixedField_top (F E : Type*) [Field F] [Field E] [Algebra F E]
     [FiniteDimensional F E] :
-    IsGalois (IntermediateField.fixedField (⊤ : Subgroup (E ≃ₐ[F] E))) E := by
-  sorry
+    IsGalois (IntermediateField.fixedField (⊤ : Subgroup (E ≃ₐ[F] E))) E :=
+  -- `IntermediateField.fixedField ⊤` and `FixedPoints.subfield ⊤ E` are both
+  -- `MulAction.fixedPoints`, and the defeq is transparent: Mathlib itself closes a
+  -- `fixedField ⊤` goal this way in `FieldTheory/Galois/Basic.lean:485`.
+  IsGalois.of_fixed_field E (⊤ : Subgroup (E ≃ₐ[F] E))
 
 end TauCeti

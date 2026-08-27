@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
+public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 public import Mathlib.FieldTheory.PurelyInseparable.Exponent
 
 /-!
@@ -58,7 +59,19 @@ theorem exists_finiteDimensional_forall_exists_pow_eq (F : Type u) [Field F] (s 
     {n : ℕ} (hn : 0 < n) :
     ∃ (E : Type u) (_ : Field E) (_ : Algebra F E),
       FiniteDimensional F E ∧ ∀ c ∈ s, ∃ d : E, d ^ n = algebraMap F E c := by
-  sorry
+  classical
+  -- pick an `n`-th root of each `c` inside an algebraic closure, then adjoin the finitely many
+  have hroot : ∀ c : F, ∃ d : AlgebraicClosure F,
+      d ^ n = algebraMap F (AlgebraicClosure F) c := fun c ↦ IsAlgClosed.exists_pow_nat_eq _ hn
+  choose d hd using hroot
+  have hTfin : (d '' (s : Set F)).Finite := s.finite_toSet.image d
+  have : Finite (d '' (s : Set F)) := hTfin
+  refine ⟨IntermediateField.adjoin F (d '' (s : Set F)), inferInstance, inferInstance,
+    IntermediateField.finiteDimensional_adjoin (fun x _ ↦ Algebra.IsIntegral.isIntegral x),
+    fun c hc ↦ ⟨⟨d c, IntermediateField.subset_adjoin F _ ⟨c, hc, rfl⟩⟩, ?_⟩⟩
+  ext
+  push_cast
+  exact hd c
 
 /-- Source: Stacks, Lemma 10.161.13 (tag 032O), proof: "`L ⊂ L′(x^{1/q})`; some details omitted"
 — the embedding. Let `M / K` be purely inseparable of exponent at most `n`, with Frobenius
