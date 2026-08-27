@@ -176,10 +176,7 @@ private theorem subst_unitR_formalThirdRoot_eq {L : PowerSeries R}
     rw [hD, ← coe_substAlgHom hasSubst_unitR]
     simp only [map_add, map_mul, map_pow, map_one]
     rw [coe_substAlgHom hasSubst_unitR]
-    -- `PowerSeries.C` is *defined* as `MvPowerSeries.C` (Mathlib `PowerSeries/Basic.lean`, with
-    -- `PowerSeries.C_apply` as its pointwise form), so this is a definition unfolding, not a
-    -- coincidence of representation.
-    simp only [subst_C, show (C : R →+* MvPowerSeries Unit R) = PowerSeries.C from rfl, hL]
+    simp only [subst_C, ← PowerSeries.C_apply, hL]
   have hD1 : constantCoeff D = 1 := by simp [hD]
   have hD1' : PowerSeries.constantCoeff
       (1 + PowerSeries.C W.a₂ * L + PowerSeries.C W.a₄ * L ^ 2 +
@@ -195,9 +192,8 @@ private theorem subst_unitR_formalThirdRoot_eq {L : PowerSeries R}
   rw [formalThirdRoot_def, ← hD, ← coe_substAlgHom hasSubst_unitR]
   simp only [map_sub, map_neg, map_add, map_mul, map_pow, map_ofNat]
   rw [coe_substAlgHom hasSubst_unitR]
-  -- as above: `PowerSeries.C` is by definition `MvPowerSeries.C`.
   simp only [subst_C, subst_X hasSubst_unitR, hInv, subst_unitR_formalIntercept, hL,
-    show (C : R →+* MvPowerSeries Unit R) = PowerSeries.C from rfl]
+    ← PowerSeries.C_apply]
   have h1 : ((Sum.elim X (fun _ ↦ 0) : Unit ⊕ Unit → MvPowerSeries Unit R)) (Sum.inr ()) = 0 := rfl
   have h2 : ((Sum.elim X (fun _ ↦ 0) : Unit ⊕ Unit → MvPowerSeries Unit R))
       (Sum.inl ()) = PowerSeries.X := rfl
@@ -305,10 +301,7 @@ private theorem coeff_single_eq_one_of_subst_eq_X {f : MvPowerSeries (Unit ⊕ U
       exact constantCoeff_X ()
     · rw [hfam s h, map_zero]
   have h := congrArg (coeff (Finsupp.single () 1)) hsubst
-  -- `PowerSeries R` *is* `MvPowerSeries Unit R`, and `PowerSeries.X` is `MvPowerSeries.X ()`; the
-  -- `show` names that definitional identity so the rewrite has a syntactic target to fire on.
-  rw [coeff_subst hS, show (PowerSeries.X : PowerSeries R) = X () from rfl,
-    coeff_X, ite_eq_left rfl] at h
+  rw [coeff_subst hS, PowerSeries.X_apply, coeff_X, ite_eq_left rfl] at h
   rw [finsum_eq_single _ (Finsupp.single s₀ 1) (fun d hd ↦ ?_)] at h
   · rwa [Finsupp.prod_single_index (h := fun s e ↦ fam s ^ e) (pow_zero _), hfam₀, pow_one,
       coeff_X, ite_eq_left rfl, smul_eq_mul, mul_one] at h
