@@ -35,7 +35,9 @@ has `X = Z = 0`, so there was no common factor.
 
 **Coprimality needs no hypothesis on `n`.** The statement holds at `n = 0` as well, where it reads
 `IsCoprime 1 0` — true because `Φ_zero` makes the first argument a unit — and the proof below never
-splits on `n`. The two consequences recorded here do need `n ≠ 0`, and take it explicitly.
+splits on `n`. Since no hypothesis mentions `n` it is an explicit argument, while
+`ΨSq_ne_zero_of_Δ_ne_zero` does need `n ≠ 0` and reads `n` off that hypothesis instead — the
+split Mathlib's own `Φ_ne_zero` and `ΨSq_ne_zero` make in this same family.
 
 **`W.Δ ≠ 0` is necessary, not an artefact of the proof.** On the cusp curve `Y² = X³` every
 coefficient vanishes and `cusp_Ψ₂Sq` computes `Ψ₂Sq = 4X³`, while `Φ₂` is `X⁴`; the two share the
@@ -86,7 +88,7 @@ namespace WeierstrassCurve
 
 open TauCeti.WeierstrassCurve
 
-variable {F : Type*} [Field F] (W : WeierstrassCurve F) {n : ℤ}
+variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 
 /-- **Over an algebraically closed field every `x`-coordinate is realised by a point.** Solving the
 Weierstrass equation for `y` at a fixed `x` is finding a root of a quadratic, which an
@@ -103,7 +105,7 @@ theorem exists_point_on_curve [IsAlgClosed F] (a : F) : ∃ b : F, W.toAffine.Eq
 `x`-coordinate `Φₙ / ΨSqₙ` of `n • (x, y)` is in lowest terms (Sutherland Lemma 6.8, Silverman
 Exercise III.3.7). Nonsingularity is necessary and no hypothesis on `n` is needed; see the module
 docstring for both. -/
-theorem isCoprime_Φ_ΨSq (hΔ : W.Δ ≠ 0) : IsCoprime (W.Φ n) (W.ΨSq n) := by
+theorem isCoprime_Φ_ΨSq (n : ℤ) (hΔ : W.Δ ≠ 0) : IsCoprime (W.Φ n) (W.ΨSq n) := by
   let f := algebraMap F (AlgebraicClosure F)
   rw [← Polynomial.isCoprime_map f, ← map_Φ, ← map_ΨSq]
   set W' := W.map f with hW'
@@ -136,8 +138,8 @@ theorem isCoprime_Φ_ΨSq (hΔ : W.Δ ≠ 0) : IsCoprime (W.Φ n) (W.ΨSq n) := 
 /-- **`ΨSqₙ` is nonzero on a nonsingular curve, in every characteristic.** Mathlib's
 `ΨSq_ne_zero` assumes `(n : F) ≠ 0` instead; see the module docstring on why neither statement
 subsumes the other. -/
-theorem ΨSq_ne_zero_of_Δ_ne_zero (hΔ : W.Δ ≠ 0) (hn : n ≠ 0) : W.ΨSq n ≠ 0 := fun h ↦
+theorem ΨSq_ne_zero_of_Δ_ne_zero {n : ℤ} (hΔ : W.Δ ≠ 0) (hn : n ≠ 0) : W.ΨSq n ≠ 0 := fun h ↦
   (W.natDegree_Φ_pos hn).ne'
-    (natDegree_eq_zero_of_isUnit (isCoprime_zero_right.mp (h ▸ W.isCoprime_Φ_ΨSq hΔ)))
+    (natDegree_eq_zero_of_isUnit (isCoprime_zero_right.mp (h ▸ W.isCoprime_Φ_ΨSq n hΔ)))
 
 end WeierstrassCurve
