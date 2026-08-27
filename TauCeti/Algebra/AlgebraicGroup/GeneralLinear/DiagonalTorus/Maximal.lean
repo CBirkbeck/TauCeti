@@ -83,6 +83,20 @@ theorem quotientPointsSubgroup_diagonalTorusDefiningIdeal (A : CommAlgCat.{u} k)
 
 variable [IsAlgClosed k]
 
+private instance instNontrivialUnitsOfInfiniteField {F : Type*} [Field F] [Infinite F] :
+    Nontrivial Fˣ := by
+  let U := {x : F // x ∈ ({0} : Set F)ᶜ}
+  let _ : Infinite U := (Set.toFinite ({0} : Set F)).infinite_compl.to_subtype
+  obtain ⟨x, y, hxy⟩ := exists_pair_ne U
+  refine ⟨Units.mk0 x (by
+      simpa only [Set.mem_compl_iff, Set.mem_singleton_iff] using x.property),
+    Units.mk0 y (by
+      simpa only [Set.mem_compl_iff, Set.mem_singleton_iff] using y.property), ?_⟩
+  intro h
+  apply hxy
+  apply Subtype.ext
+  exact congrArg Units.val h
+
 omit [IsAlgClosed k] in
 private theorem isReduced_quotient_diagonalTorusDefiningIdeal :
     IsReduced (CommHopfAlgCat.quotient (coordinateHopfAlgebra k n)
@@ -91,6 +105,21 @@ private theorem isReduced_quotient_diagonalTorusDefiningIdeal :
   let hf : Function.Surjective f := diagonalTorusCoordinateMap_surjective k n
   let e := HopfIdeal.kerLiftBialgEquiv f hf
   exact isReduced_of_injective e.toAlgEquiv.toRingEquiv.toRingHom e.injective
+
+omit [IsAlgClosed k] in
+private theorem pointsMulEquiv_diagonalTorusPoints_symm (t : Fin n → kˣ) :
+    pointsMulEquiv (R := k) (A := k) n
+        (diagonalTorusPoints
+          ((SplitTorus.pointsMulEquiv (R := k) (A := k)).symm
+            (fun i : ULift.{u} (Fin n) ↦ t i.down))) =
+      diagGL t := by
+  rw [pointsMulEquiv_diagonalTorusPoints]
+  congr 1
+  funext i
+  rw [diagonalTorusCoordinates_apply]
+  exact congrFun
+    ((SplitTorus.pointsMulEquiv (R := k) (A := k)).apply_symm_apply
+      (fun j : ULift.{u} (Fin n) ↦ t j.down)) (ULift.up i)
 
 /-- **The diagonal torus of `GL_n` is maximal among reduced commutative closed subgroup
 schemes over an algebraically closed field.**
@@ -105,18 +134,6 @@ theorem eq_diagonalTorusDefiningIdeal_of_le_of_isCocomm
     [Coalgebra.IsCocomm k (CommHopfAlgCat.quotient (coordinateHopfAlgebra k n) I)]
     (hI : I ≤ diagonalTorusDefiningIdeal k n) :
     I = diagonalTorusDefiningIdeal k n := by
-  let U := {x : k // x ∈ ({0} : Set k)ᶜ}
-  let _ : Infinite U := (Set.toFinite ({0} : Set k)).infinite_compl.to_subtype
-  let _ : Nontrivial kˣ := ⟨by
-    obtain ⟨x, y, hxy⟩ := exists_pair_ne U
-    refine ⟨Units.mk0 x (by
-        simpa only [Set.mem_compl_iff, Set.mem_singleton_iff] using x.property),
-      Units.mk0 y (by
-        simpa only [Set.mem_compl_iff, Set.mem_singleton_iff] using y.property), ?_⟩
-    intro h
-    apply hxy
-    apply Subtype.ext
-    exact congrArg Units.val h⟩
   let H := coordinateHopfAlgebra k n
   let D := diagonalTorusDefiningIdeal k n
   let A := CommAlgCat.of k k
@@ -144,16 +161,8 @@ theorem eq_diagonalTorusDefiningIdeal_of_le_of_isCocomm
       refine ⟨q, ?_⟩
       exact mapPointsFunctor_diagonalTorusCoordinateMap_app A q
     refine ⟨d, hDG hdD, ?_⟩
-    calc
-      e.toMonoidHom d = e d := rfl
-      _ = diagGL (diagonalTorusCoordinates (SplitTorus.pointsMulEquiv q)) := by
-        exact pointsMulEquiv_diagonalTorusPoints q
-      _ = diagGL t := by
-        congr 1
-        have hs : SplitTorus.pointsMulEquiv q = s :=
-          MulEquiv.apply_symm_apply (SplitTorus.pointsMulEquiv (R := k) (A := k)) s
-        funext i
-        rw [diagonalTorusCoordinates_apply, hs]
+    change e d = diagGL t
+    simpa only [e, d, q, s] using pointsMulEquiv_diagonalTorusPoints_symm k n t
   have hP : P = TauCeti.diagonalTorus k n :=
     eq_diagonalTorus_of_le_of_isMulCommutative P hdiagonalP
   have hpoints : GI = GD := by
@@ -167,16 +176,7 @@ theorem eq_diagonalTorusDefiningIdeal_of_le_of_isCocomm
           (MonoidAlgebra k (Multiplicative (ULift.{u} (Fin n) →₀ ℤ)) →ₐ[k] k) :=
         (SplitTorus.pointsMulEquiv (R := k) (A := k)).symm s
       have hdiag : e (diagonalTorusPoints (R := k) (N := n) (A := k) q) = diagGL t := by
-        calc
-          e (diagonalTorusPoints (R := k) (N := n) (A := k) q) =
-              diagGL (diagonalTorusCoordinates (SplitTorus.pointsMulEquiv q)) := by
-            exact pointsMulEquiv_diagonalTorusPoints q
-          _ = diagGL t := by
-            congr 1
-            have hs : SplitTorus.pointsMulEquiv q = s :=
-              MulEquiv.apply_symm_apply (SplitTorus.pointsMulEquiv (R := k) (A := k)) s
-            funext i
-            rw [diagonalTorusCoordinates_apply, hs]
+        simpa only [e, q, s] using pointsMulEquiv_diagonalTorusPoints_symm k n t
       dsimp only [GD, D]
       rw [quotientPointsSubgroup_diagonalTorusDefiningIdeal]
       refine ⟨q, ?_⟩
