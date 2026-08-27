@@ -44,17 +44,18 @@ The other half of Lemma 8.1, that `Spa ρ : Spa A⟨T/s⟩ → Spa A` factors th
 
 ## Main results
 
-* `TauCeti.ValuationSpectrum.isUnit_of_forall_comap_mem_rationalSubset` : if every point of
-  `Spa (B, B⁺)` pulls back into `R(T/s)`, the denominator becomes a unit in `B`.
-* `TauCeti.ValuationSpectrum.vle_one_of_comap_mem_rationalSubset` : at a point whose pullback
-  lies in `R(T/s)`, the fraction `φ t / φ s` is sub-unit.
+All four are in the `TauCeti.ValuationSpectrum` namespace.
+
+* `isUnit_of_forall_comap_mem_rationalSubset` : if every point of `Spa (B, B⁺)` pulls back into
+  `R(T/s)`, the denominator becomes a unit in `B`.
+* `vle_one_of_comap_mem_rationalSubset` : at a point whose pullback lies in `R(T/s)`, the
+  fraction `φ t / φ s` is sub-unit.
 * `existsUnique_continuous_ringHom_of_isUnit_of_forall_comap_mem_rationalSubset` : the geometric
   universal property — a continuous `φ : A → B` whose `Spa(φ)` factors through `R(T/s)` and whose
   `φ s` is a unit extends across `A → A⟨T/s⟩` in exactly one continuous way. Nothing is asked of
   the maximal ideals of `B`.
-* `TauCeti.ValuationSpectrum.existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset` :
-  the same, with the unit obtained from the geometric condition by step 1, for a target whose
-  maximal ideals are open.
+* `existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset` : the same, with the unit
+  obtained from the geometric condition by step 1, for a target whose maximal ideals are open.
 
 ## The hypothesis that is not yet Wedhorn's
 
@@ -184,7 +185,7 @@ theorem vle_one_of_comap_mem_rationalSubset {φ : A →+* B} {Aplus : Subring A}
 
 end Steps
 
-/-! ### Lemma 8.1, for targets with open maximal ideals
+/-! ### Lemma 8.1: the geometric universal property
 
 The assembly. `S` is an algebraic localisation of `A` away from `s` carrying the localisation
 topology, so that `A⟨T/s⟩` is its separated completion, and the three `letI`s naming the
@@ -192,17 +193,14 @@ uniformity and its two companions are the ones every statement about `A⟨T/s⟩
 
 open TauCeti.Huber TauCeti.Huber.PairOfDefinition
 
-/-- **The geometric universal property of `A⟨T/s⟩`, for a target with open maximal ideals**: a
-continuous `φ : A → B` into a complete `(B, B⁺)` whose `Spa(φ)` factors through the rational
-subset `R(T/s)` extends across the structure map `ρ : A → A⟨T/s⟩` in exactly one continuous way.
+/-- **The geometric universal property of `A⟨T/s⟩`, with `φ s` a unit**: a continuous
+`φ : A → B` into a complete `(B, B⁺)` whose `Spa(φ)` factors through the rational subset
+`R(T/s)`, and for which `φ s` is a unit, extends across the structure map `ρ : A → A⟨T/s⟩` in
+exactly one continuous way.
 
-This is **not** Wedhorn's Lemma 8.1 in the generality he states it: `hmax` is vacuous for nonzero
-Tate rings, which are the targets §8 applies it to. See the module docstring.
-
-The two algebraic conditions of
-`TauCeti.Huber.PairOfDefinition.existsUnique_continuous_ringHom_completion_locTopology` are
-discharged from the geometric one: `φ s` is a unit by
-`isUnit_of_forall_comap_mem_rationalSubset`, and each fraction
+Of the two algebraic conditions of
+`TauCeti.Huber.PairOfDefinition.existsUnique_continuous_ringHom_completion_locTopology`, the
+first is the hypothesis `hs`; the second is discharged from the geometric one: each fraction
 `φ t / φ s` is sub-unit at every point of `Spa (B, B⁺)` by
 `vle_one_of_comap_mem_rationalSubset`, hence lies in `B⁺` and so is power-bounded.
 
