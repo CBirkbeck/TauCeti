@@ -88,9 +88,7 @@ private noncomputable def ofTensorProductComponents :
       (LinearMap.snd B _ _))
 
 /-- The **left** component of the round trip: restricting the extension of `d` along
-`includeLeft` returns `d.1`. The diagonal term collapses because `projectLeft` is a section
-of `includeLeft`, and the cross term vanishes because `includeLeft h = h ⊗ₜ 1` while a
-derivation kills `1`. -/
+`includeLeft` returns `d.1`. -/
 private theorem tensorProductComponents_ofTensorProductComponents_fst
     (d : _root_.Derivation R H₁ (Bialgebra.CounitAlgebra R H₁ B) ×
       _root_.Derivation R H₂ (Bialgebra.CounitAlgebra R H₂ B)) :
@@ -109,6 +107,7 @@ private theorem tensorProductComponents_ofTensorProductComponents_fst
           (TauCeti.Bialgebra.TensorProduct.projectRight
             (R := R) (H₁ := H₁) (H₂ := H₂)) d.2) = d.1
   rw [map_add]
+  -- The diagonal term collapses: `projectLeft` is a section of `includeLeft`.
   have hdiag : derivationComp (B := B)
       (TauCeti.Bialgebra.TensorProduct.includeLeft (R := R) (H₁ := H₁) (H₂ := H₂))
       (derivationComp (B := B)
@@ -118,6 +117,7 @@ private theorem tensorProductComponents_ofTensorProductComponents_fst
       TauCeti.Bialgebra.TensorProduct.projectLeft_comp_includeLeft,
       derivationComp_id, LinearMap.id_apply]
   rw [hdiag]
+  -- The cross term vanishes: `includeLeft h = h ⊗ₜ 1`, and a derivation kills `1`.
   have hcross : derivationComp (B := B)
       (TauCeti.Bialgebra.TensorProduct.includeLeft (R := R) (H₁ := H₁) (H₂ := H₂))
       (derivationComp (B := B)
@@ -134,9 +134,7 @@ private theorem tensorProductComponents_ofTensorProductComponents_fst
   rw [hcross, add_zero]
 
 /-- The **right** component of the round trip: restricting the extension of `d` along
-`includeRight` returns `d.2`. The diagonal term collapses because `projectRight` is a
-section of `includeRight`, and the cross term vanishes because `includeRight h = 1 ⊗ₜ h`
-while a derivation kills `1`. -/
+`includeRight` returns `d.2`. -/
 private theorem tensorProductComponents_ofTensorProductComponents_snd
     (d : _root_.Derivation R H₁ (Bialgebra.CounitAlgebra R H₁ B) ×
       _root_.Derivation R H₂ (Bialgebra.CounitAlgebra R H₂ B)) :
@@ -154,6 +152,7 @@ private theorem tensorProductComponents_ofTensorProductComponents_snd
           (TauCeti.Bialgebra.TensorProduct.projectRight
             (R := R) (H₁ := H₁) (H₂ := H₂)) d.2) = d.2
   rw [map_add]
+  -- The diagonal term collapses: `projectRight` is a section of `includeRight`.
   have hdiag : derivationComp (B := B)
       (TauCeti.Bialgebra.TensorProduct.includeRight (R := R) (H₁ := H₁) (H₂ := H₂))
       (derivationComp (B := B)
@@ -163,6 +162,7 @@ private theorem tensorProductComponents_ofTensorProductComponents_snd
       TauCeti.Bialgebra.TensorProduct.projectRight_comp_includeRight,
       derivationComp_id, LinearMap.id_apply]
   rw [hdiag]
+  -- The cross term vanishes: `includeRight h = 1 ⊗ₜ h`, and a derivation kills `1`.
   have hcross : derivationComp (B := B)
       (TauCeti.Bialgebra.TensorProduct.includeRight (R := R) (H₁ := H₁) (H₂ := H₂))
       (derivationComp (B := B)
