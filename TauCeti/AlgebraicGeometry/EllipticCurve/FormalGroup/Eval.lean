@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.RingTheory.Jacobson.Ideal
 public import Mathlib.RingTheory.PowerSeries.Evaluation
 public import Mathlib.Topology.Algebra.Nonarchimedean.AdicTopology
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.WExpansion
@@ -76,5 +77,41 @@ theorem formalWEval_mem {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
       W.constantCoeff_formalW]
     exact zero_mem _)
   simpa [formalWEval, eval₂] using key
+
+/-- The value of the unit part differs from `1` by an element of `I`: its constant coefficient is
+`1`, and every other monomial carries a factor of the parameter. -/
+theorem formalUEval_sub_one_mem {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
+    W.formalUEval t - 1 ∈ I := by
+  have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
+  have hEp : PowerSeries.HasEval t := isTopologicallyNilpotent_of_mem_of_isAdic hI ht
+  have hE : MvPowerSeries.HasEval (fun _ : Unit ↦ t) := PowerSeries.hasEval hEp
+  have key := MvPowerSeries.eval₂_mem_pow (k := 1) hcont hE hI (by simpa using ht)
+    (W.formalU - 1) (by
+      rw [show MvPowerSeries.constantCoeff (W.formalU - 1)
+          = constantCoeff (W.formalU - 1) from rfl]
+      simp [W.constantCoeff_formalU])
+  -- `eval₂` is additive only through `eval₂Hom`, which needs the continuity and `HasEval` data.
+  have hsplit : eval₂ (RingHom.id O) t (W.formalU - 1) = W.formalUEval t - 1 := by
+    have h := map_sub (PowerSeries.eval₂Hom (S := O) hcont hEp) W.formalU 1
+    rw [map_one] at h
+    simpa [formalUEval, PowerSeries.coe_eval₂Hom] using h
+  rw [← hsplit]
+  simpa [eval₂] using key
+
+/-- **The factorisation `w(t) = t ^ 3 * u(t)`** at a parameter, from the corresponding
+factorisation `formalW_eq_X_pow_mul_formalU` of the series. -/
+theorem formalWEval_eq_cube_mul {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
+    W.formalWEval t = t ^ 3 * W.formalUEval t := by
+  have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
+  have hE : PowerSeries.HasEval t := isTopologicallyNilpotent_of_mem_of_isAdic hI ht
+  have h := congrArg (PowerSeries.eval₂Hom (S := O) hcont hE) W.formalW_eq_X_pow_mul_formalU
+  rw [map_mul, map_pow] at h
+  simpa [formalWEval, formalUEval, PowerSeries.coe_eval₂Hom, PowerSeries.eval₂_X] using h
+
+/-- The value of the unit part is a unit, when `I` lies in the Jacobson radical — as it does for a
+local ring's maximal ideal, or for the ideal of definition of a complete adic ring. -/
+theorem isUnit_formalUEval {I : Ideal O} (hI : IsAdic I) (hJ : I ≤ Ideal.jacobson ⊥) {t : O}
+    (ht : t ∈ I) : IsUnit (W.formalUEval t) :=
+  Ideal.isUnit_of_sub_one_mem_jacobson_bot _ (hJ (W.formalUEval_sub_one_mem hI ht))
 
 end WeierstrassCurve
