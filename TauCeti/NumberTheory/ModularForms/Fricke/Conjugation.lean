@@ -7,7 +7,7 @@ module
 
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import TauCeti.NumberTheory.ModularForms.Fricke.Matrix
-import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups
+import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
 
 /-!
 # Conjugating `Γ₀(N)` and `Γ₁(N)` by the Fricke matrix
@@ -143,11 +143,14 @@ each along `ℚ → ℝ` by hand, in `glMap_frickeGL_mul_mapGL` and `mapGL_mul_g
 them over `K` as below makes both transports the corresponding instance, so those two lemmas have
 no counterpart here.
 
-The diamond-character companion `Gamma0MapUnits_frickeConjSL` is *partly* ported. Its
-`ZMod`-level content is `gamma0Map_frickeConjGamma0_mul` below. Only the unit-valued refinement is
-left out, because it is stated in terms of AINTLIB's `Gamma0MapUnits`, the unit-valued refinement
-of mathlib's `CongruenceSubgroup.Gamma0Map`, which TauCeti does not have; that part belongs with
-that definition rather than here, and follows from the shipped lemma by `MonoidHom.toHomUnits`.
+The diamond-character companion `Gamma0MapUnits_frickeConjSL` is ported in both of its halves.
+Its `ZMod`-level content is `gamma0Map_frickeConjGamma0_mul` below, and its unit-valued content is
+`toHomUnits_gamma0Map_frickeConjGamma0_eq_inv`. The two differ from upstream in how they reach the
+units: AINTLIB states the refinement in terms of its own `Gamma0MapUnits`, a unit-valued refinement
+of mathlib's `CongruenceSubgroup.Gamma0Map`, whereas here the same content is obtained from the
+`ZMod` identity through mathlib's `MonoidHom.toHomUnits`. What is *not* ported is that
+`Gamma0MapUnits` definition itself: TauCeti does not have it, and it belongs with the `Gamma0Map`
+API rather than with the Fricke conjugation.
 
 ## References
 
@@ -318,9 +321,9 @@ private theorem gamma0Map_apply (g : ↥(Gamma0 N)) :
 mod `N`; conjugation swaps the two diagonal entries, so it reads `a` where it read `d`, and
 `a · d ≡ 1 (mod N)` because `det σ = 1` and `N ∣ c`.
 
-Stated at the `ZMod` level, which is where `Gamma0Map` lands; the unit-valued form follows by
-applying `MonoidHom.toHomUnits`. Without it a consumer computing a nebentypus along the Fricke
-involution has to redo the determinant argument. -/
+Stated at the `ZMod` level, which is where `Gamma0Map` lands; the unit-valued form is
+`toHomUnits_gamma0Map_frickeConjGamma0_eq_inv`, derived from this one. Without it a consumer
+computing a nebentypus along the Fricke involution has to redo the determinant argument. -/
 public theorem gamma0Map_frickeConjGamma0_mul (σ : ↥(Gamma0 N)) :
     Gamma0Map N (frickeConjGamma0 σ) * Gamma0Map N σ = 1 := by
   have hcast := intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0 (M := N) σ.property
