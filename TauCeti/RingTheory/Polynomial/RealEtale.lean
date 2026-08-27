@@ -8,7 +8,7 @@ module
 public import Mathlib.Algebra.Polynomial.FieldDivision
 public import Mathlib.Analysis.Complex.Polynomial.Basic
 public import Mathlib.RingTheory.AdjoinRoot
-public import Mathlib.RingTheory.UniqueFactorizationDomain.NormalizedFactors
+public import TauCeti.RingTheory.Polynomial.Factors
 
 /-!
 # Evaluating a real étale algebra at its real and complex places
@@ -36,7 +36,7 @@ half-plane once `p` is quadratic, and evaluation there identifies `ℝ[X]/p` wit
   `ℝ`-algebra hom `ℝ[X]/p → ℂ` for any irreducible `p` and, for a quadratic `p`, an
   isomorphism.
 * `Polynomial.etaleEvalHom` : the evaluation map
-  `ℝ[X]/f → ({x // f.eval x = 0} → ℝ) × ({p ∈ normalizedFactors f // deg p = 2} → ℂ)`.
+  `ℝ[X]/f → ({x // f.eval x = 0} → ℝ) × ({p : f.Factors // deg p = 2} → ℂ)`.
 
 ## Main results
 
@@ -53,12 +53,12 @@ Apache-2.0) at commit `66889eada51ac1eb2a1c98b3c1ba5b0bbe64a8d0`, file
 Two things are spelled differently here, in both cases because Mathlib already has what the
 source provides for itself.
 
-* The source indexes the quadratic factors by its own `Polynomial.Factors` wrapper — a subtype of
-  monic irreducible divisors, introduced there to avoid the `DecidableEq` that `normalizedFactors`
-  carries. Over `ℝ` that motivation does not apply, since `Real.decidableEq` is an instance, so the
-  factors are indexed by membership in `normalizedFactors` directly and the wrapper is not needed.
-  `Polynomial.mem_normalizedFactors_iff` is Mathlib's, and supplies monic, irreducible and divides
-  in one step.
+* The source indexes the quadratic factors by its own `Polynomial.Factors` wrapper — a subtype
+  of monic irreducible divisors. That wrapper is now this repository's, ported by #4730, so the
+  factors are indexed by `f.Factors` here too and its API is reused rather than reproved:
+  `Polynomial.Factors.isCoprime` for pairwise coprimality, `Polynomial.Factors.associated_prod`
+  for the product of the distinct factors, and `Polynomial.Factors.linearEquivRoots` for the
+  correspondence between the linear factors and the roots.
 * The source proves `Module.finrank ℝ (AdjoinRoot p) = p.natDegree` for itself. That is Mathlib's
   `finrank_quotient_span_eq_natDegree`, which is stronger — it needs no `p ≠ 0` — so it is used
   instead. It has to be ascribed at the `AdjoinRoot` spelling before rewriting, since `rw` does not
@@ -67,7 +67,7 @@ source provides for itself.
 
 public section
 
-open Complex UniqueFactorizationMonoid
+open Complex
 
 namespace Polynomial
 
@@ -157,9 +157,8 @@ variable {f : ℝ[X]}
 /-- The tuple of evaluation points: each real root of `f`, and the upper root of each
 degree-2 factor. -/
 noncomputable def etaleTuple (f : ℝ[X]) :
-    ({x : ℝ // f.eval x = 0} → ℝ) ×
-      ({p : ℝ[X] // p ∈ normalizedFactors f ∧ p.natDegree = 2} → ℂ) :=
-  (fun x ↦ (x : ℝ), fun p ↦ selectedRoot (irreducible_of_normalized_factor _ p.2.1))
+    ({x : ℝ // f.eval x = 0} → ℝ) × ({p : f.Factors // (p : ℝ[X]).natDegree = 2} → ℂ) :=
+  (fun x ↦ (x : ℝ), fun p ↦ selectedRoot (p : f.Factors).irreducible)
 
 /-- The real-root component of `aeval (etaleTuple f) q` is `q.eval x`. -/
 @[simp]
@@ -172,17 +171,14 @@ theorem aeval_etaleTuple_fst (q : ℝ[X]) (x : {x : ℝ // f.eval x = 0}) :
   rw [← h]
   -- `(etaleTuple f).1 x` is by definition the real number `x`, so this is ordinary evaluation.
   change aeval ((etaleTuple f).1 x) q = q.eval (x : ℝ)
-  simp [etaleTuple, aeval_def, eval₂_id]
+  simp [etaleTuple]
 
 /-- The degree-2-factor component of `aeval (etaleTuple f) q` is the value at the upper root. -/
 @[simp]
-theorem aeval_etaleTuple_snd (q : ℝ[X])
-    (p : {p : ℝ[X] // p ∈ normalizedFactors f ∧ p.natDegree = 2}) :
-    (aeval (etaleTuple f) q).2 p
-      = aeval (selectedRoot (irreducible_of_normalized_factor _ p.2.1)) q := by
+theorem aeval_etaleTuple_snd (q : ℝ[X]) (p : {p : f.Factors // (p : ℝ[X]).natDegree = 2}) :
+    (aeval (etaleTuple f) q).2 p = aeval (selectedRoot (p : f.Factors).irreducible) q := by
   have h := aeval_algHom_apply
-    ((Pi.evalAlgHom ℝ
-      (fun _ : {p : ℝ[X] // p ∈ normalizedFactors f ∧ p.natDegree = 2} ↦ ℂ) p).comp
+    ((Pi.evalAlgHom ℝ (fun _ : {p : f.Factors // (p : ℝ[X]).natDegree = 2} ↦ ℂ) p).comp
       (AlgHom.snd ℝ _ _)) (etaleTuple f) q
   simp only [AlgHom.comp_apply, AlgHom.snd_apply, Pi.evalAlgHom_apply] at h
   rw [← h]
@@ -196,9 +192,9 @@ theorem aeval_etaleTuple : aeval (etaleTuple f) f = 0 := by
   have h2 : (aeval (etaleTuple f) f).2 = 0 := by
     funext p
     rw [Pi.zero_apply, aeval_etaleTuple_snd]
-    have hirr := irreducible_of_normalized_factor _ p.2.1
-    have hdvd : aeval (selectedRoot hirr) (p : ℝ[X]) ∣ aeval (selectedRoot hirr) f :=
-      _root_.map_dvd _ (dvd_of_mem_normalizedFactors p.2.1)
+    have hirr := (p : f.Factors).irreducible
+    have hdvd : aeval (selectedRoot hirr) ((p : f.Factors) : ℝ[X]) ∣ aeval (selectedRoot hirr) f :=
+      _root_.map_dvd _ (p : f.Factors).dvd
     rw [aeval_selectedRoot] at hdvd
     exact zero_dvd_iff.mp hdvd
   exact Prod.ext h1 h2
@@ -207,8 +203,7 @@ theorem aeval_etaleTuple : aeval (etaleTuple f) f = 0 := by
 of the residue fields: `ℝ` at each real root, `ℂ` at each irreducible quadratic factor. -/
 noncomputable def etaleEvalHom (f : ℝ[X]) :
     AdjoinRoot f →ₐ[ℝ]
-      ({x : ℝ // f.eval x = 0} → ℝ) ×
-        ({p : ℝ[X] // p ∈ normalizedFactors f ∧ p.natDegree = 2} → ℂ) :=
+      ({x : ℝ // f.eval x = 0} → ℝ) × ({p : f.Factors // (p : ℝ[X]).natDegree = 2} → ℂ) :=
   AdjoinRoot.liftAlgHom f (Algebra.ofId ℝ _) (etaleTuple f) (by
     have := aeval_etaleTuple (f := f); rwa [aeval_def] at this)
 
@@ -228,10 +223,9 @@ theorem etaleEvalHom_mk_fst (q : ℝ[X]) (x : {x : ℝ // f.eval x = 0}) :
 
 /-- The degree-2-factor component on a representative. Not `@[simp]`, for the same reason as
 `etaleEvalHom_mk_fst`. -/
-theorem etaleEvalHom_mk_snd (q : ℝ[X])
-    (p : {p : ℝ[X] // p ∈ normalizedFactors f ∧ p.natDegree = 2}) :
+theorem etaleEvalHom_mk_snd (q : ℝ[X]) (p : {p : f.Factors // (p : ℝ[X]).natDegree = 2}) :
     (etaleEvalHom f (AdjoinRoot.mk f q)).2 p
-      = aeval (selectedRoot (irreducible_of_normalized_factor _ p.2.1)) q := by
+      = aeval (selectedRoot (p : f.Factors).irreducible) q := by
   rw [etaleEvalHom_mk, aeval_etaleTuple_snd]
 
 /-- **The evaluation map is injective for squarefree `f`.** A class killed at every
@@ -242,60 +236,38 @@ theorem etaleEvalHom_injective (hsq : Squarefree f) :
   classical
   -- `Squarefree` already excludes `0` over a domain, so nonvanishing is not a separate hypothesis.
   have hf : f ≠ 0 := hsq.ne_zero
-  have : Finite {p : ℝ[X] // p ∈ normalizedFactors f} :=
-    (normalizedFactors f).finite_toSet.to_subtype
-  have : Fintype {p : ℝ[X] // p ∈ normalizedFactors f} := Fintype.ofFinite _
+  have : Finite f.Factors := Factors.finite hf
+  have : Fintype f.Factors := Fintype.ofFinite _
   rw [injective_iff_map_eq_zero]
   intro a ha
   obtain ⟨q, rfl⟩ := AdjoinRoot.mk_surjective a
   rw [AdjoinRoot.mk_eq_zero]
-  -- Every irreducible factor divides `q`: a linear one because `q` vanishes at its root, a
-  -- quadratic one because `q` vanishes at its upper root, which has it as minimal polynomial.
-  have hfac (p : {p : ℝ[X] // p ∈ normalizedFactors f}) : (p : ℝ[X]) ∣ q := by
-    obtain ⟨hirr, hmon, hdvd⟩ := (Polynomial.mem_normalizedFactors_iff hf).mp p.2
+  -- Every irreducible factor divides `q`: a linear one because `q` vanishes at the root it
+  -- records, a quadratic one because `q` vanishes at its selected root, which has it as minimal
+  -- polynomial.
+  have hfac (p : f.Factors) : (p : ℝ[X]) ∣ q := by
     rcases eq_or_ne (p : ℝ[X]).natDegree 1 with h1 | h1
-    · set x₀ := -(p : ℝ[X]).coeff 0 with hx0
-      have hpx : (p : ℝ[X]) = X - C x₀ := by
-        conv_lhs => rw [hmon.eq_X_add_C h1]
-        rw [hx0, map_neg, sub_neg_eq_add]
-      have hroot : f.eval x₀ = 0 :=
-        eval_eq_zero_of_dvd_of_eval_eq_zero hdvd (by rw [hpx]; simp)
-      have hq : q.eval x₀ = 0 := by
-        have h := congrArg (·.1 ⟨x₀, hroot⟩) ha
-        simpa using h
-      rw [hpx]
+    · -- `Factors.linearEquivRoots` carries the linear factor to the root of `f` it records,
+      -- together with the proof that `f` vanishes there.
+      obtain ⟨x, hx⟩ : ∃ x : {x : ℝ // f.eval x = 0}, (p : ℝ[X]) = X - C (x : ℝ) :=
+        ⟨Factors.linearEquivRoots ⟨p, h1⟩, by
+          conv_lhs => rw [p.monic.eq_X_add_C h1]
+          rw [Factors.linearEquivRoots_apply, map_neg, sub_neg_eq_add]⟩
+      have hq : q.eval (x : ℝ) = 0 := by simpa using congrArg (·.1 x) ha
+      rw [hx]
       exact dvd_iff_isRoot.mpr hq
     · have hd2 : (p : ℝ[X]).natDegree = 2 := by
-        have h0 := hirr.natDegree_pos
-        have h2 := hirr.natDegree_le_two
+        have h0 := p.irreducible.natDegree_pos
+        have h2 := p.irreducible.natDegree_le_two
         omega
-      have hq : aeval (selectedRoot hirr) q = 0 := by
-        have h := congrArg (·.2 ⟨(p : ℝ[X]), p.2, hd2⟩) ha
-        simpa using h
-      rw [minpoly.eq_of_irreducible_of_monic hirr (aeval_selectedRoot hirr) hmon]
+      have hq : aeval (selectedRoot p.irreducible) q = 0 := by
+        simpa using congrArg (·.2 ⟨p, hd2⟩) ha
+      rw [minpoly.eq_of_irreducible_of_monic p.irreducible (aeval_selectedRoot p.irreducible)
+        p.monic]
       exact minpoly.dvd ℝ _ hq
-  -- The distinct factors are pairwise coprime, so their product divides `q`; and that product is
-  -- `f` up to a unit, because squarefreeness makes `normalizedFactors f` duplicate-free.
-  have hcop : ∀ p₁ p₂ : {p : ℝ[X] // p ∈ normalizedFactors f}, p₁ ≠ p₂ →
-      IsCoprime (p₁ : ℝ[X]) (p₂ : ℝ[X]) := by
-    intro p₁ p₂ hne
-    obtain ⟨h₁, hm₁, -⟩ := (Polynomial.mem_normalizedFactors_iff hf).mp p₁.2
-    obtain ⟨h₂, hm₂, -⟩ := (Polynomial.mem_normalizedFactors_iff hf).mp p₂.2
-    refine (Ideal.isCoprime_span_singleton_iff _ _).mp <| Ideal.isCoprime_iff_sup_eq.mpr <|
-      Ideal.IsMaximal.coprime_of_ne (PrincipalIdealRing.isMaximal_of_irreducible h₁)
-        (PrincipalIdealRing.isMaximal_of_irreducible h₂) fun h ↦ hne <| Subtype.ext <|
-      eq_of_monic_of_associated hm₁ hm₂ <| Ideal.span_singleton_eq_span_singleton.mp h
-  have hprod : Associated (∏ p : {p : ℝ[X] // p ∈ normalizedFactors f}, (p : ℝ[X])) f := by
-    have hcoe : ∏ p : {p : ℝ[X] // p ∈ normalizedFactors f}, (p : ℝ[X]) =
-        ∏ p ∈ (normalizedFactors f).toFinset, p := by
-      refine (Fintype.prod_equiv (Equiv.subtypeEquivRight fun p ↦ ?_) _ _ fun x ↦ ?_).trans
-        (Finset.prod_coe_sort _ fun x ↦ x)
-      · exact (Multiset.mem_toFinset).symm
-      · rw [Equiv.subtypeEquivRight_apply]
-    rw [hcoe, Finset.prod_eq_multiset_prod, Multiset.toFinset_val,
-      Multiset.dedup_eq_self.mpr ((squarefree_iff_nodup_normalizedFactors hf).mp hsq),
-      Multiset.map_id']
-    exact prod_normalizedFactors hf
-  exact hprod.symm.dvd.trans (Fintype.prod_dvd_of_coprime (fun _ _ hab ↦ hcop _ _ hab) hfac)
+  -- The distinct factors are pairwise coprime, so their product divides `q`; and squarefreeness
+  -- makes that product `f` up to a unit.
+  exact (Factors.associated_prod hf hsq).symm.dvd.trans
+    (Fintype.prod_dvd_of_coprime (fun _ _ hne ↦ Factors.isCoprime hne) hfac)
 
 end Polynomial
