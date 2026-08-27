@@ -34,15 +34,15 @@ every finitely generated `M` — the `Tor`-sequence claim that is
 * `TauCeti.Huber.flat_quotient_algebraMap_sub_restrictedX`: `A⟨X⟩/(f - X)` is flat over `A`.
 * `TauCeti.Huber.flat_quotient_one_sub_algebraMap_mul_restrictedX`: `A⟨X⟩/(1 - f X)` is flat
   over `A`.
-* `TauCeti.Huber.xShift`: multiplication by `X` on series with coefficients in a module, as the
-  coefficient shift; `TauCeti.Huber.restrictedXShift` is its restriction to `M⟨X⟩`.
+* `TauCeti.Huber.mulX`: multiplication by `X` on series with coefficients in a module, which
+  shifts every coefficient up by one; `TauCeti.Huber.restrictedMulX` restricts it to `M⟨X⟩`.
 
 ## Implementation notes
 
-The comparison map intertwines `X • ·` on `M ⊗[A] A⟨X⟩` with the coefficient shift on `M⟨X⟩`
+The comparison map intertwines `X • ·` on `M ⊗[A] A⟨X⟩` with multiplication by `X` on `M⟨X⟩`
 (`restrictedMvPowerSeriesBaseChange_comp_lTensor_mulLeft_restrictedX`), and scalars act as
-scalars. So `(1 - f X) • ·` and `(f - X) • ·` on `M ⊗[A] A⟨X⟩` are `id - f • xShift` and
-`f • id - xShift` on coefficients — that is
+scalars. So `(1 - f X) • ·` and `(f - X) • ·` on `M ⊗[A] A⟨X⟩` are `id - f • mulX` and
+`f • id - mulX` on coefficients — that is
 `lTensor_mulLeft_one_sub_algebraMap_mul_restrictedX` and
 `lTensor_mulLeft_algebraMap_sub_restrictedX`. The first is injective by induction
 on the coefficient index. The second is Wedhorn's argument: if `f • s = X s` then `f • s₀ = 0`
@@ -54,8 +54,9 @@ comparison map to `(A ⧸ I) ⊗[A] A⟨X⟩`, which is what Mathlib's ideal cri
 `Module.Flat.quotient_span_singleton_of_lTensor_mulLeft_injective`, asks for. No topology enters
 beyond the module topology of `A ⧸ I` (`IsModuleTopology.instQuot`).
 
-Exponents of one-variable series are identified with `ℕ` through `Finsupp.uniqueEquiv`; the shift is
-stated on `MvPowerSeries (Fin 1) M`, with no topology, and restricted afterwards.
+Exponents of one-variable series are identified with `ℕ` through `Finsupp.uniqueEquiv`;
+multiplication by `X` is stated on `MvPowerSeries (Fin 1) M`, with no topology, and restricted
+afterwards.
 
 ## References
 
@@ -68,29 +69,29 @@ open scoped Uniformity
 public section
 
 namespace TauCeti.Huber
-/-! ### One variable: the coefficient shift
+/-! ### One variable: multiplication by `X`
 
-Stated over a semiring and an additive monoid: the shift is pure reindexing, and nothing here
+Stated over a semiring and an additive monoid: it is pure reindexing, and nothing here
 needs subtraction. The regularity results below, which do, keep `CommRing` and `AddCommGroup`. -/
 
-section Shift
+section MulX
 
 variable {A : Type*} [Semiring A]
 
 variable {M : Type*} [AddCommMonoid M] [Module A M]
 
 variable (A) in
-/-- **Multiplication by `X` on series with coefficients in a module**: the coefficient shift
+/-- **Multiplication by `X` on series with coefficients in a module**: on coefficients it is
 `∑ mⱼ Xʲ ↦ ∑ mⱼ Xʲ⁺¹`. This is what `X • ·` on `M⟨X⟩ = M ⊗[A] A⟨X⟩` looks like on coefficients
 (`restrictedMvPowerSeriesBaseChange_tmul_restrictedX_mul`). -/
-noncomputable def xShift : MvPowerSeries (Fin 1) M →ₗ[A] MvPowerSeries (Fin 1) M where
+noncomputable def mulX : MvPowerSeries (Fin 1) M →ₗ[A] MvPowerSeries (Fin 1) M where
   -- `MvPowerSeries (Fin 1) M` unfolds to the coefficient function type, but only
   -- definitionally; the ascription is what lets the lambda below elaborate against it.
   toFun s := show (Fin 1 →₀ ℕ) → M from
     fun n ↦ if n 0 = 0 then 0 else (s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 (n 0 - 1))
   map_add' s t := by
     funext n
-    -- Present the goal in `xShift`'s defining if-then-else form so `split_ifs` can fire. This
+    -- Present the goal in `mulX`'s defining if-then-else form so `split_ifs` can fire. This
     -- is a definitional unfolding of the structure field, not an equation, so there is no
     -- lemma for `rw` to use; `change` is the step.
     change (if n 0 = 0 then (0 : M) else (s + t : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 (n 0 - 1))) =
@@ -108,38 +109,38 @@ noncomputable def xShift : MvPowerSeries (Fin 1) M →ₗ[A] MvPowerSeries (Fin 
     · simp
     · rfl
 
-/-- The coefficients of `xShift A s`: it vanishes in degree `0`, and in every other
+/-- The coefficients of `mulX A s`: it vanishes in degree `0`, and in every other
 degree it takes the coefficient of `s` one degree down. -/
 @[simp]
-theorem xShift_apply (s : MvPowerSeries (Fin 1) M) (n : Fin 1 →₀ ℕ) :
-    (xShift A s : (Fin 1 →₀ ℕ) → M) n =
+theorem coeff_mulX (s : MvPowerSeries (Fin 1) M) (n : Fin 1 →₀ ℕ) :
+    (mulX A s : (Fin 1 →₀ ℕ) → M) n =
       if n 0 = 0 then 0 else (s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 (n 0 - 1)) := (rfl)
 
-/-- `xShift A s` has no constant term.
+/-- `mulX A s` has no constant term.
 
-Not `@[simp]`: the general equation `xShift_apply` above is `@[simp]` and rewrites this
+Not `@[simp]`: the general equation `coeff_mulX` above is `@[simp]` and rewrites this
 left-hand side first, so annotating the degree-`0` specialisation too would leave it out of
 simp normal form. `simp` proves this statement on its own. -/
-theorem xShift_apply_zero (s : MvPowerSeries (Fin 1) M) :
-    (xShift A s : (Fin 1 →₀ ℕ) → M) 0 = 0 := by
-  simp [xShift_apply]
+theorem coeff_zero_mulX (s : MvPowerSeries (Fin 1) M) :
+    (mulX A s : (Fin 1 →₀ ℕ) → M) 0 = 0 := by
+  simp [coeff_mulX]
 
-/-- In degree `j + 1`, `xShift A s` takes the degree-`j` coefficient of `s`.
+/-- In degree `j + 1`, `mulX A s` takes the degree-`j` coefficient of `s`.
 
 Deliberately not `@[simp]`: `Finsupp.single 0 (j + 1)` is not in simp normal form, since
 `Finsupp.single_add` rewrites it to `Finsupp.single 0 j + Finsupp.single 0 1`, so the
 annotation could never fire. The uses in this file rewrite with it explicitly. -/
-theorem xShift_apply_single_succ (s : MvPowerSeries (Fin 1) M) (j : ℕ) :
-    (xShift A s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 (j + 1)) =
+theorem coeff_succ_mulX (s : MvPowerSeries (Fin 1) M) (j : ℕ) :
+    (mulX A s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 (j + 1)) =
       (s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 j) := by
-  simp [xShift_apply]
+  simp [coeff_mulX]
 
-/-- The shift preserves restrictedness: it reindexes the coefficients along `j ↦ j + 1`. -/
-theorem IsRestricted.xShift [TopologicalSpace M] {s : MvPowerSeries (Fin 1) M}
-    (hs : IsRestricted s) : IsRestricted (TauCeti.Huber.xShift A s) := by
+/-- Multiplication by `X` preserves restrictedness: it reindexes coefficients along `j ↦ j + 1`. -/
+theorem IsRestricted.mulX [TopologicalSpace M] {s : MvPowerSeries (Fin 1) M}
+    (hs : IsRestricted s) : IsRestricted (TauCeti.Huber.mulX A s) := by
   simp only [isRestricted_iff, Filter.ZeroAtFilter] at hs ⊢
   -- Exponents of a one-variable series are natural numbers. `Finsupp.uniqueEquiv 0` is Mathlib's
-  -- name for that bijection, and the shift is a reindexing along it.
+  -- name for that bijection, and multiplication by `X` is a reindexing along it.
   have hs' : Tendsto (fun j : ℕ ↦
       (s : (Fin 1 →₀ ℕ) → M) ((Finsupp.uniqueEquiv (0 : Fin 1)).symm j)) cofinite (nhds 0) :=
     hs.comp (Finsupp.uniqueEquiv (0 : Fin 1)).symm.injective.tendsto_cofinite
@@ -149,16 +150,16 @@ theorem IsRestricted.xShift [TopologicalSpace M] {s : MvPowerSeries (Fin 1) M}
     rw [Nat.cofinite_eq_atTop] at hs' ⊢
     rw [← Filter.tendsto_add_atTop_iff_nat 1]
     simpa using hs'
-  have key : (TauCeti.Huber.xShift A s : (Fin 1 →₀ ℕ) → M) =
+  have key : (TauCeti.Huber.mulX A s : (Fin 1 →₀ ℕ) → M) =
       (fun j : ℕ ↦ if j = 0 then (0 : M) else
         (s : (Fin 1 →₀ ℕ) → M) ((Finsupp.uniqueEquiv (0 : Fin 1)).symm (j - 1))) ∘
         Finsupp.uniqueEquiv (0 : Fin 1) := by
     funext n
-    simp [xShift_apply]
+    simp [coeff_mulX]
   rw [key]
   exact h2.comp (Finsupp.uniqueEquiv (0 : Fin 1)).injective.tendsto_cofinite
 
-end Shift
+end MulX
 
 /-! ### Multiplication by `X` and by scalars, through the comparison map -/
 
@@ -181,54 +182,54 @@ theorem coe_restrictedX :
 variable {M : Type*} [AddCommGroup M] [Module A M] [TopologicalSpace M] [ContinuousAdd M]
   [ContinuousSMul A M]
 
-/-- The coefficient shift on `M⟨X⟩`. -/
-noncomputable def restrictedXShift :
+/-- Multiplication by `X` on `M⟨X⟩`. -/
+noncomputable def restrictedMulX :
     restrictedMvPowerSeriesSubmodule 1 A M →ₗ[A] restrictedMvPowerSeriesSubmodule 1 A M :=
-  (xShift A).restrict fun _ hs ↦ mem_restrictedMvPowerSeriesSubmodule.mpr
-    (mem_restrictedMvPowerSeriesSubmodule.mp hs).xShift
+  (mulX A).restrict fun _ hs ↦ mem_restrictedMvPowerSeriesSubmodule.mpr
+    (mem_restrictedMvPowerSeriesSubmodule.mp hs).mulX
 
 omit [NonarchimedeanRing A] in
-/-- `restrictedXShift` acts as `xShift` on the underlying series. -/
+/-- `restrictedMulX` acts as `mulX` on the underlying series. -/
 @[simp]
-theorem coe_restrictedXShift (s : restrictedMvPowerSeriesSubmodule 1 A M) :
-    ((restrictedXShift s : restrictedMvPowerSeriesSubmodule 1 A M) : MvPowerSeries (Fin 1) M) =
-      xShift A (s : MvPowerSeries (Fin 1) M) := (rfl)
+theorem coe_restrictedMulX (s : restrictedMvPowerSeriesSubmodule 1 A M) :
+    ((restrictedMulX s : restrictedMvPowerSeriesSubmodule 1 A M) : MvPowerSeries (Fin 1) M) =
+      mulX A (s : MvPowerSeries (Fin 1) M) := (rfl)
 
 /-- On a pure tensor, multiplying the series factor by `X` shifts the coefficients of the
-comparison map's value. -/
+comparison map's value up by one. -/
 theorem restrictedMvPowerSeriesBaseChange_tmul_restrictedX_mul (m : M)
     (b : restrictedMvPowerSeriesSubring 1 A) :
     restrictedMvPowerSeriesBaseChange (TensorProduct.tmul A m (restrictedX * b)) =
-      restrictedXShift (restrictedMvPowerSeriesBaseChange (TensorProduct.tmul A m b)) := by
+      restrictedMulX (restrictedMvPowerSeriesBaseChange (TensorProduct.tmul A m b)) := by
   apply restrictedMvPowerSeriesSubmodule_ext
   intro n
   obtain ⟨j, rfl⟩ : ∃ j, n = Finsupp.single 0 j := ⟨n 0, Finsupp.unique_single n⟩
-  rw [coeff_restrictedMvPowerSeriesBaseChange_tmul, coe_restrictedXShift, Subring.coe_mul,
+  rw [coeff_restrictedMvPowerSeriesBaseChange_tmul, coe_restrictedMulX, Subring.coe_mul,
     coe_restrictedX]
   cases j with
-  | zero => rw [Finsupp.single_zero, xShift_apply_zero, MvPowerSeries.coeff_zero_X_mul, zero_smul]
+  | zero => rw [Finsupp.single_zero, coeff_zero_mulX, MvPowerSeries.coeff_zero_X_mul, zero_smul]
   | succ j =>
-    rw [xShift_apply_single_succ, coeff_restrictedMvPowerSeriesBaseChange_tmul,
+    rw [coeff_succ_mulX, coeff_restrictedMvPowerSeriesBaseChange_tmul,
       -- `Finsupp.single_add` splits `single 0 (1 + j)`, so the exponent is commuted in
       -- place here rather than in a separate step.
       show j + 1 = 1 + j from Nat.add_comm j 1, Finsupp.single_add, MvPowerSeries.X_def,
       MvPowerSeries.coeff_add_monomial_mul, one_mul]
 
-/-- The comparison map intertwines `X • ·` on `M ⊗[A] A⟨X⟩` with the coefficient shift. -/
+/-- The comparison map intertwines `X • ·` on `M ⊗[A] A⟨X⟩` with multiplication by `X`. -/
 theorem restrictedMvPowerSeriesBaseChange_comp_lTensor_mulLeft_restrictedX :
     (restrictedMvPowerSeriesBaseChange : TensorProduct A M (restrictedMvPowerSeriesSubring 1 A)
         →ₗ[A] restrictedMvPowerSeriesSubmodule 1 A M) ∘ₗ
       LinearMap.lTensor M (LinearMap.mulLeft A restrictedX) =
-    restrictedXShift ∘ₗ restrictedMvPowerSeriesBaseChange :=
+    restrictedMulX ∘ₗ restrictedMvPowerSeriesBaseChange :=
   TensorProduct.ext' fun m b ↦ by
     simp only [LinearMap.comp_apply, LinearMap.lTensor_tmul, LinearMap.mulLeft_apply]
     exact restrictedMvPowerSeriesBaseChange_tmul_restrictedX_mul m b
 
-/-- Through the comparison map, `X • ·` on `M ⊗[A] A⟨X⟩` is the coefficient shift on `M⟨X⟩`. -/
+/-- Through the comparison map, `X • ·` on `M ⊗[A] A⟨X⟩` is multiplication by `X` on `M⟨X⟩`. -/
 theorem restrictedMvPowerSeriesBaseChange_lTensor_mulLeft_restrictedX
     (z : TensorProduct A M (restrictedMvPowerSeriesSubring 1 A)) :
     restrictedMvPowerSeriesBaseChange (LinearMap.lTensor M (LinearMap.mulLeft A restrictedX) z) =
-      restrictedXShift (restrictedMvPowerSeriesBaseChange z) :=
+      restrictedMulX (restrictedMvPowerSeriesBaseChange z) :=
   LinearMap.congr_fun restrictedMvPowerSeriesBaseChange_comp_lTensor_mulLeft_restrictedX z
 
 omit [TopologicalSpace M] [ContinuousAdd M] [ContinuousSMul A M] in
@@ -263,20 +264,20 @@ section Regular
 variable {A : Type*} [CommRing A] {M : Type*} [AddCommGroup M] [Module A M]
 
 /-- **Multiplication by `1 - f X` is injective on series with coefficients in any module.** -/
-theorem id_sub_smul_xShift_injective (f : A) :
-    Function.Injective (LinearMap.id - f • xShift A : MvPowerSeries (Fin 1) M →ₗ[A] _) := by
+theorem id_sub_smul_mulX_injective (f : A) :
+    Function.Injective (LinearMap.id - f • mulX A : MvPowerSeries (Fin 1) M →ₗ[A] _) := by
   rw [injective_iff_map_eq_zero]
   intro s hs
-  have hs' : s = f • xShift A s := by
+  have hs' : s = f • mulX A s := by
     simpa [sub_eq_zero] using hs
   have hc : ∀ j, (s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 j) =
-      f • (xShift A s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 j) := fun j ↦
+      f • (mulX A s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 j) := fun j ↦
     congrArg (fun t : MvPowerSeries (Fin 1) M ↦ (t : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 j)) hs'
   have hzero : ∀ j, (s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 j) = 0 := by
     intro j
     induction j with
     | zero => simpa using hc 0
-    | succ j ih => rw [hc (j + 1), xShift_apply_single_succ, ih, smul_zero]
+    | succ j ih => rw [hc (j + 1), coeff_succ_mulX, ih, smul_zero]
   -- Equality of one-variable series is definitionally equality of their coefficient
   -- functions, which is what `funext` needs to see.
   change (s : (Fin 1 →₀ ℕ) → M) = 0
@@ -340,18 +341,18 @@ private theorem eq_zero_of_smul_eq_zero_of_smul_succ [IsNoetherian A M] {f : A} 
 
 /-- **Multiplication by `f - X` is injective on series with coefficients in a noetherian
 module.** -/
-theorem smul_id_sub_xShift_injective [IsNoetherian A M] (f : A) :
-    Function.Injective (f • LinearMap.id - xShift A : MvPowerSeries (Fin 1) M →ₗ[A] _) := by
+theorem smul_id_sub_mulX_injective [IsNoetherian A M] (f : A) :
+    Function.Injective (f • LinearMap.id - mulX A : MvPowerSeries (Fin 1) M →ₗ[A] _) := by
   rw [injective_iff_map_eq_zero]
   intro s hs
-  have hs' : f • s = xShift A s := by
+  have hs' : f • s = mulX A s := by
     simpa [sub_eq_zero] using hs
   have hrec : ∀ j, f • (s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 j) =
-      (xShift A s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 j) := fun j ↦
+      (mulX A s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 j) := fun j ↦
     congrArg (fun t : MvPowerSeries (Fin 1) M ↦ (t : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 j)) hs'
   have hall := eq_zero_of_smul_eq_zero_of_smul_succ
     (c := fun j ↦ (s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 j)) (by simpa using hrec 0)
-    fun j ↦ by have := hrec (j + 1); rwa [xShift_apply_single_succ] at this
+    fun j ↦ by have := hrec (j + 1); rwa [coeff_succ_mulX] at this
   -- Equality of one-variable series is definitionally equality of their coefficient
   -- functions, which is what `funext` needs to see.
   change (s : (Fin 1 →₀ ℕ) → M) = 0
@@ -382,10 +383,10 @@ theorem lTensor_mulLeft_one_sub_algebraMap_mul_restrictedX_injective (f : A) :
     (congrArg restrictedMvPowerSeriesBaseChange hz)
   simp only [LinearMap.sub_apply, LinearMap.id_apply, LinearMap.smul_apply, map_sub, map_smul,
     restrictedMvPowerSeriesBaseChange_lTensor_mulLeft_restrictedX, map_zero,
-    Submodule.coe_sub, Submodule.coe_smul, coe_restrictedXShift, Submodule.coe_zero] at h
+    Submodule.coe_sub, Submodule.coe_smul, coe_restrictedMulX, Submodule.coe_zero] at h
   have h' : ((restrictedMvPowerSeriesBaseChange z : restrictedMvPowerSeriesSubmodule 1 A N) :
       MvPowerSeries (Fin 1) N) = 0 :=
-    (injective_iff_map_eq_zero _).mp (id_sub_smul_xShift_injective f) _ (by simpa using h)
+    (injective_iff_map_eq_zero _).mp (id_sub_smul_mulX_injective f) _ (by simpa using h)
   exact (restrictedMvPowerSeriesBaseChange_bijective (k := 1) (A := A) (M := N)).injective
     (by rw [map_zero]; exact Subtype.ext h')
 
@@ -400,10 +401,10 @@ theorem lTensor_mulLeft_algebraMap_sub_restrictedX_injective (f : A) :
     (congrArg restrictedMvPowerSeriesBaseChange hz)
   simp only [LinearMap.sub_apply, LinearMap.id_apply, LinearMap.smul_apply, map_sub, map_smul,
     restrictedMvPowerSeriesBaseChange_lTensor_mulLeft_restrictedX, map_zero,
-    Submodule.coe_sub, Submodule.coe_smul, coe_restrictedXShift, Submodule.coe_zero] at h
+    Submodule.coe_sub, Submodule.coe_smul, coe_restrictedMulX, Submodule.coe_zero] at h
   have h' : ((restrictedMvPowerSeriesBaseChange z : restrictedMvPowerSeriesSubmodule 1 A N) :
       MvPowerSeries (Fin 1) N) = 0 :=
-    (injective_iff_map_eq_zero _).mp (smul_id_sub_xShift_injective f) _ (by simpa using h)
+    (injective_iff_map_eq_zero _).mp (smul_id_sub_mulX_injective f) _ (by simpa using h)
   exact (restrictedMvPowerSeriesBaseChange_bijective (k := 1) (A := A) (M := N)).injective
     (by rw [map_zero]; exact Subtype.ext h')
 
