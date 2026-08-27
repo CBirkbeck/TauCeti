@@ -71,10 +71,9 @@ The source's `addSeries`, `thirdRootSeries`, `slopeSeries`, `interceptSeries`, `
 applies to the rest of that file. The source's `rename (fun _ ↦ s)` spelling is replaced by
 `PowerSeries.toMvPowerSeries s` throughout, as elsewhere in `FormalGroup/`.
 
-The source's private `ringHom_invOfUnit` is kept private here. It carries no elliptic content and
-belongs in a general file, and #4832 adds exactly that as `MvPowerSeries.map_invOfUnit`; this file
-cannot depend on #4832, whose parent differs, so the helper stays local and its removal is a
-follow-up once #4832 lands.
+The source's private `ringHom_invOfUnit` is not ported. It carries no elliptic content, and the
+general statement now lives in a general file as `MvPowerSeries.ringHom_invOfUnit`, which this file
+uses directly.
 -/
 
 public section
@@ -141,26 +140,6 @@ private theorem subst_unitR_formalIntercept :
   rw [h2]
   linear_combination -X_mul_subst_unitR_formalSlope W
 
-/-- A ring homomorphism fixing the constant coefficient `1` transports `invOfUnit`. Stated for a
-bundled-hom class so that it applies to `substAlgHom`.
-
-This is a private specialisation. The general statement is `MvPowerSeries.map_invOfUnit`, added by
-#4832; this file cannot consume it yet because its parent is #4819. Replacing this helper by that
-lemma is filed as a one-line follow-up. -/
-private theorem ringHom_invOfUnit {R' : Type*} [CommRing R'] {σ' τ' : Type*} {F : Type*}
-    [FunLike F (MvPowerSeries σ' R) (MvPowerSeries τ' R')]
-    [RingHomClass F (MvPowerSeries σ' R) (MvPowerSeries τ' R')] (φ : F)
-    {D : MvPowerSeries σ' R} (hD : constantCoeff D = 1)
-    (hD' : constantCoeff (φ D) = 1) :
-    φ (invOfUnit D 1) = invOfUnit (φ D) 1 := by
-  have h1 : φ D * φ (invOfUnit D 1) = 1 := by
-    rw [← map_mul, mul_invOfUnit D 1 (by rw [hD]; rfl), map_one]
-  have h2 : φ D * invOfUnit (φ D) 1 = 1 := mul_invOfUnit _ 1 (by rw [hD']; rfl)
-  calc φ (invOfUnit D 1)
-      = φ (invOfUnit D 1) * (φ D * invOfUnit (φ D) 1) := by rw [h2, mul_one]
-    _ = (φ D * φ (invOfUnit D 1)) * invOfUnit (φ D) 1 := by ring
-    _ = invOfUnit (φ D) 1 := by rw [h1, one_mul]
-
 /-! ### The third point of a chord through the origin -/
 
 /-- **The `z`-cancelled `w`-equation.** If `z · L = w(z)` then `L` satisfies the equation obtained
@@ -209,7 +188,8 @@ private theorem subst_unitR_formalThirdRoot_eq {L : PowerSeries R}
   have hInv : subst (Sum.elim X (fun _ ↦ 0) : Unit ⊕ Unit → MvPowerSeries Unit R) (invOfUnit D 1) =
       invOfUnit (1 + PowerSeries.C W.a₂ * L + PowerSeries.C W.a₄ * L ^ 2 +
         PowerSeries.C W.a₆ * L ^ 3) 1 := by
-    have h := ringHom_invOfUnit (R' := R) (substAlgHom hasSubst_unitR) hD1
+    have h := MvPowerSeries.ringHom_invOfUnit (S := R) (u := 1) (v := 1)
+      (substAlgHom hasSubst_unitR) hD1
       (by rw [coe_substAlgHom, hDsub]; exact hD1')
     rwa [coe_substAlgHom, hDsub] at h
   rw [formalThirdRoot_def, ← hD, ← coe_substAlgHom hasSubst_unitR]
