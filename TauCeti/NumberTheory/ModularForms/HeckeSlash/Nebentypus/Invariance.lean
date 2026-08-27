@@ -18,14 +18,14 @@ preserve, the `χ`-invariant functions. `HeckeSlash/Nebentypus/Ring.lean` names 
 
 ## Why the weights are exactly right
 
-The whole proof rests on one observation. Write `χ̃ = delta0NebentypusChar N χ`, a monoid hom on
-`Δ₀(N)`, and read the summands of the twisted sum as the *weighted slash* `χ̃ x • (f ∣[k] x)` at
+The whole proof rests on one observation. Write `χ' = delta0NebentypusChar N χ`, a monoid hom on
+`Δ₀(N)`, and read the summands of the twisted sum as the *weighted slash* `χ' x • (f ∣[k] x)` at
 `x ∈ Δ₀(N)`. For `f` in the character space and `γ ∈ Γ₀(N)` this quantity is unchanged when `x`
 is multiplied on the left by `γ`: slashing by `γ` scales `f` by the nebentypus `χ (d_γ)`, while the
-weight picks up `χ̃ γ`, and `Delta0UpperUnit_mapGL` says the two are mutually inverse. So the
+weight picks up `χ' γ`, and `Delta0UpperUnit_mapGL` says the two are mutually inverse. So the
 weighted slash is a function of the right coset `Γ₀(N) x` alone — which is precisely the
 representative-independence the unweighted `heckeSlashSum` lacks on a `χ`-eigenfunction, and the
-reason the character has to enter as `χ̃` rather than as `χ ∘ Gamma0Map`.
+reason the character has to enter as `χ'` rather than as `χ ∘ Gamma0Map`.
 
 Granted that, the argument is Shimura's Proposition 3.37 unchanged, exactly as in
 `HeckeSlash/Invariance.lean`: right multiplication by `γ` permutes the right cosets, the
@@ -82,13 +82,13 @@ namespace HeckeRing.GL2
 variable {N : ℕ} (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
 
 /-- **The weighted slash absorbs a left factor from `Γ₀(N)`.** For `f` in the character space,
-`γ ∈ Γ₀(N)` and `x ∈ Δ₀(N)`, `χ̃ (γ x) • (f ∣[k] γ x) = χ̃ x • (f ∣[k] x)`, where
-`χ̃ = delta0NebentypusChar N χ`.
+`γ ∈ Γ₀(N)` and `x ∈ Δ₀(N)`, `χ' (γ x) • (f ∣[k] γ x) = χ' x • (f ∣[k] x)`, where
+`χ' = delta0NebentypusChar N χ`.
 
 This is the reason the twisting works: the weighted slash depends only on the right coset
 `Γ₀(N) x`, so the summands of `twistedHeckeSlashSum` do not see the representative the definition
 chooses, even though `f` is merely a `χ`-eigenfunction and not invariant. The two factors that
-cancel are the eigenvalue `χ (d_γ)` the slash picks up and the weight `χ̃ γ`, which
+cancel are the eigenvalue `χ (d_γ)` the slash picks up and the weight `χ' γ`, which
 `Delta0UpperUnit_mapGL` makes its inverse.
 
 The product is taken as a separate variable `y` with `hxy` naming it, rather than written into the
