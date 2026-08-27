@@ -7,6 +7,7 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
 public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.IsAlgClosed
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Eval
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.ZSMul
 
@@ -25,8 +26,6 @@ has `X = Z = 0`, so there was no common factor.
 
 ## Main results
 
-* `WeierstrassCurve.exists_point_on_curve`: over an algebraically closed field every element is
-  the `x`-coordinate of a point of the curve.
 * `WeierstrassCurve.isCoprime_Φ_ΨSq`: `IsCoprime (W.Φ n) (W.ΨSq n)` whenever `W.Δ ≠ 0`.
 * `WeierstrassCurve.ΨSq_ne_zero_of_Δ_ne_zero`: `W.ΨSq n ≠ 0` for `n ≠ 0`, with **no** hypothesis
   on the characteristic.
@@ -65,7 +64,9 @@ HasseWeil project at `dev/hasse-weil @ 513e83879e2f` — the revision
 `TauCetiRoadmap/EllipticCurves/README.md:1071` pins for that project, as distinct from the
 restructured `projects/HasseWeil` copy carried at the NagellLutz entry's `dev/modular-curves` pin.
 Source file `projects/HasseWeil/HasseWeil/Auxiliary/DivisionPolynomial.lean`, section
-`Coprimality`, declarations `exists_point_on_curve` and `isCoprime_Φ_ΨSq`. That file's header reads
+`Coprimality`, declaration `isCoprime_Φ_ΨSq`. The section's `exists_point_on_curve`, which the
+proof below calls, is ported in `Affine/IsAlgClosed.lean` instead, since it is about
+`Affine.Equation` and mentions no division polynomial. That file's header reads
 `Authors: David Kurniadi Angdinata, Junyan Xu`; following this repository's convention for adapted
 material the upstream authorship is credited here rather than in the copyright header.
 
@@ -90,17 +91,6 @@ open TauCeti.WeierstrassCurve
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 
-/-- **Over an algebraically closed field every `x`-coordinate is realised by a point.** Solving the
-Weierstrass equation for `y` at a fixed `x` is finding a root of a quadratic, which an
-algebraically closed field always has. -/
-theorem exists_point_on_curve [IsAlgClosed F] (a : F) : ∃ b : F, W.toAffine.Equation a b := by
-  obtain ⟨b, hb⟩ := IsAlgClosed.exists_root
-    (C 1 * X ^ 2 + C (W.a₁ * a + W.a₃) * X + C (-(a ^ 3 + W.a₂ * a ^ 2 + W.a₄ * a + W.a₆)))
-    (by rw [degree_quadratic one_ne_zero]; simp)
-  rw [IsRoot.def] at hb
-  simp only [eval_add, eval_mul, eval_pow, eval_C, eval_X, one_mul] at hb
-  exact ⟨b, (W.toAffine.equation_iff a b).mpr (by linear_combination hb)⟩
-
 /-- **The division polynomials `Φₙ` and `ΨSqₙ` of a nonsingular curve are coprime**, so the
 `x`-coordinate `Φₙ / ΨSqₙ` of `n • (x, y)` is in lowest terms (Sutherland Lemma 6.8, Silverman
 Exercise III.3.7). Nonsingularity is necessary and no hypothesis on `n` is needed; see the module
@@ -117,7 +107,7 @@ theorem isCoprime_Φ_ΨSq (n : ℤ) (hΔ : W.Δ ≠ 0) : IsCoprime (W.Φ n) (W.�
   obtain ⟨hΦ, hΨ⟩ := h
   simp only [Polynomial.coe_aeval_eq_eval] at hΦ hΨ
   -- a common root of `Φₙ` and `ΨSqₙ` is the `x`-coordinate of a point of the curve
-  obtain ⟨b, hb⟩ := W'.exists_point_on_curve a
+  obtain ⟨b, hb⟩ := Affine.exists_point_on_curve W'.toAffine a
   have hΔ' : W'.Δ ≠ 0 := by rw [hW', map_Δ]; exact (map_ne_zero_iff f f.injective).mpr hΔ
   have hns : W'.toAffine.Nonsingular a b :=
     (W'.toAffine.equation_iff_nonsingular_of_Δ_ne_zero hΔ').mp hb
