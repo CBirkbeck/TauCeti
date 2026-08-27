@@ -47,7 +47,7 @@ half-plane once `p` is quadratic, and evaluation there identifies `ℝ[X]/p` wit
 ## Provenance
 
 Adapted from Michael Stoll's `EllipticCurves` (`github.com/MichaelStollBayreuth/EllipticCurves`,
-Apache-2.0) at commit `66889eada51ac1eb2a1c98b3c1ba5b0bbe64a8d0`, file
+Apache-2.0) at commit `66889eada51a74c2f5dfb7fb5909b0b5a0a2d96e`, file
 `EllipticCurves/Mathlib/RealEtale.lean`, the section preceding the square-class decomposition.
 
 Two things are spelled differently here, in both cases because Mathlib already has what the
