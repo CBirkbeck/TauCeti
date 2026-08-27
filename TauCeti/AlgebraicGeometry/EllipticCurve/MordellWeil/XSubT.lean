@@ -387,18 +387,21 @@ the norm condition on the image of the map is read off from its norm, which is a
 computation is `AdjoinRoot.norm_mk_C_sub_X_add`, stated there for any monic polynomial split off
 a linear factor; here it is specialised to `f = fCofactor x * (X - C x)`. The other value the
 condition needs, the norm of `x - T` itself on the branch where that is already a unit, is
-`AdjoinRoot.norm_mk_C_sub_X W.monic_f x`.
+`AdjoinRoot.norm_algebraMap_sub_root W.monic_f x`.
 -/
 
 /-- **At a root of `f` the norm of the corrected representative is a square.** If `x` is a root
 of `f` then `x - T + fCofactor x` — the element `μX` uses on that branch — has norm `(f' x) ^ 2`,
 where `f' x = 3 * x ^ 2 + 2 * W.a₂ * x + W.a₄` is `derivative_f` evaluated at `x`. The statement
-is exactly
-that: the norm is a square. It does **not** by itself say the norm is trivial in the square
-classes of `K` — that needs `f' x ≠ 0`, which the hypothesis `hx` alone does not give, and a
-vanishing norm is not a class in `Kˣ ⧸ (Kˣ)²` at all. Nor does it make the class of
-`x - T + fCofactor x` itself trivial in `W.M`: that would say the element is a square in `W.Aˣ`,
-which is a different and stronger statement.
+is exactly that: the norm is a square.
+
+It does **not** by itself say the norm is trivial in the square classes of `K` — that needs
+`f' x ≠ 0`, and a vanishing norm is not a class in `Kˣ ⧸ (Kˣ)²` at all. Under
+`[W.IsElliptic] [W.IsCharNeTwoNF]` that non-vanishing is `deriv_f_ne_zero hx`, which every
+consumer of this lemma has and which this statement deliberately does not assume.
+
+Nor does it make the class of `x - T + fCofactor x` itself trivial in `W.M`: that would say the
+element is a square in `W.Aˣ`, which is a different and stronger statement.
 
 Deliberately **not** `@[simp]`, unlike its `AdjoinRoot` counterparts: there is no useful
 simp-normal form here. `simp` expands `W.fCofactor x` as well as pushing `mk` through the sum, so

@@ -46,8 +46,8 @@ variable {R : Type*} [CommRing R]
 
 /-- The reversed linear polynomial `C x - X` has degree `1`, like `X - C x`.
 
-Stated over a `Ring` rather than the file's ambient `CommRing`: the proof is `natDegree_sub`
-followed by `natDegree_X_sub_C`, and neither needs commutativity. -/
+Stated over a `Ring` rather than the file's ambient `CommRing`: neither the statement nor its
+proof uses commutativity. -/
 @[simp]
 theorem natDegree_C_sub_X {R : Type*} [Ring R] [Nontrivial R] (x : R) :
     (C x - X).natDegree = 1 := by
