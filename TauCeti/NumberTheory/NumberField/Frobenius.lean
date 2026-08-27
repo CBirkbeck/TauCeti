@@ -8,7 +8,7 @@ module
 public import Mathlib.NumberTheory.NumberField.Ideal.Basic
 public import TauCeti.NumberTheory.LegendreSymbol.Frobenius
 public import TauCeti.NumberTheory.NumberField.IntegralSqrt
-public import TauCeti.NumberTheory.NumberField.AutomorphismAction
+import TauCeti.NumberTheory.NumberField.AutomorphismAction
 import Mathlib.Algebra.CharP.Basic
 import Mathlib.RingTheory.IntegralClosure.Algebra.Basic
 
@@ -29,7 +29,7 @@ services on top of Mathlib's `RingTheory/Frobenius.lean`:
 * **the square-root action** — for `p` odd and `x ∈ K` with `x² = d ∈ ℤ`, `p ∤ d`, a
   Frobenius at any ideal `Q` over `p` satisfies `σ x = legendreSym p d • x`, transporting the
   `𝓞 K`-level computation `TauCeti.AlgHom.IsArithFrobAt.apply_sqrt` along the Galois action
-  on the ring of integers (via `integralClosure.coe_smul`), with the `σ x = x`
+  on the ring of integers (via `NumberField.algebraMap_smul_eq_apply`), with the `σ x = x`
   characterization read off from it.
 
 `TauCeti.NumberTheory.Multiquadratic.Frobenius` combines the two to describe the Frobenius of

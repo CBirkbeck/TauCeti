@@ -7,7 +7,7 @@ module
 
 public import TauCeti.NumberTheory.Multiquadratic.Prime.Discriminant.Compositum
 public import TauCeti.NumberTheory.NumberField.RamifiedPrimes
-public import TauCeti.NumberTheory.NumberField.AutomorphismAction
+import TauCeti.NumberTheory.NumberField.AutomorphismAction
 import TauCeti.NumberTheory.NumberField.Quadratic.TotalRamification
 import TauCeti.NumberTheory.RamificationInertia.Tower
 import TauCeti.NumberTheory.Multiquadratic.Prime.Discriminant.Independence
