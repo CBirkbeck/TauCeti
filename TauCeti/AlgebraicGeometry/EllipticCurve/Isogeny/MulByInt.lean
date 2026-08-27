@@ -53,29 +53,34 @@ Every definition here is paired with a `_def` equation lemma, because a `def`'s 
 across the module boundary even inside a `public section`. Without them the file cannot be
 computed with from outside at all.
 
-Two facts are the whole content here, and both are about the generic point rather than about
-`n`:
+One fact is the whole content here: `equation_mulByInt`, that the pair `(φₙ/ψₙ², ωₙ/ψₙ³)`
+satisfies the equation of the base-changed curve. It is *not* a polynomial identity to be
+checked; it holds because `n • P` is a point of the curve whenever `P` is, which is
+`WeierstrassCurve.zsmul_point_eq_smulEval` at the generic point.
 
-* `equation_genericPoint` — the generic point satisfies the equation of the base-changed curve.
-  This is the affine shadow of `AdjoinRoot.eval₂_root`: the Weierstrass polynomial is what is
-  quotiented out, so it vanishes at the class of `Y`.
-* `eval₂_mulByIntXHom_polynomial_eq_zero` — the pair `(φₙ/ψₙ², ωₙ/ψₙ³)` satisfies it too. This is
-  *not* a polynomial identity to be checked; it holds because `n • P` is a point of the curve
-  whenever `P` is, which is `WeierstrassCurve.zsmul_point_eq_smulEval` at the generic point.
+That the generic point is itself a point of the curve — the other half of the argument — lives
+in `Affine/FunctionField/GenericPoint.lean` as `WeierstrassCurve.Affine.equation_genericPoint`,
+since it is about `W` and not about `[n]`.
 
 ## Main definitions
 
-* `TauCeti.Isogeny.genericX`, `TauCeti.Isogeny.genericY`: the generic point of `W`.
-* `TauCeti.Isogeny.mulByIntX`, `TauCeti.Isogeny.mulByIntY`: the coordinates of `[n]` there.
-* `TauCeti.Isogeny.mulByIntPullback`: the coordinate pullback of `[n]`.
+* `TauCeti.Isogeny.mulByIntX`, `TauCeti.Isogeny.mulByIntY`: the rational expressions
+  `φₙ/ψₙ²` and `ωₙ/ψₙ³`, the coordinates of `[n]` at the generic point where `ψₙ ≠ 0`.
+* `TauCeti.Isogeny.mulByIntPullback`: the coordinate pullback of `[n]`, given `ψₙ ≠ 0`.
+* `TauCeti.Isogeny.mulByIntPullbackOfInvertible`: its specialisation to `n` invertible in `F`,
+  where that hypothesis is discharged.
+
+The generic point itself (`genericX`, `genericY`, `functionFieldCurve`) is not defined here; it
+is `WeierstrassCurve.Affine`'s, in `Affine/FunctionField/GenericPoint.lean`.
 
 ## Main results
 
-* `TauCeti.Isogeny.equation_genericPoint`: the generic point is a point of `W` over the function
-  field.
-* `TauCeti.Isogeny.eval₂_mulByIntXHom_polynomial_eq_zero`: so is `[n]` of it.
-* `TauCeti.Isogeny.psiFunctionField_ne_zero`: `ψₙ` does not vanish there when `n` is invertible
-  in `F`.
+* `TauCeti.Isogeny.equation_mulByInt`: the coordinates of `[n]` satisfy the equation of `W` over
+  its function field.
+* `TauCeti.Isogeny.psiFunctionField_ne_zero`: `ψₙ` does not vanish at the generic point when `n`
+  is invertible in `F`, which is what discharges the hypothesis above.
+* `TauCeti.Isogeny.mulByIntPullback_X`, `TauCeti.Isogeny.mulByIntPullback_Y`: the values of the
+  pullback on the two coordinates.
 
 ## References
 
@@ -248,7 +253,7 @@ theorem psiFunctionField_ne_zero {n : ℤ} (hn : (n : F) ≠ 0) : psiFunctionFie
 /-- **The coordinate pullback of `[n]`.** The coordinate ring is `F[X]` with a root of the
 Weierstrass polynomial adjoined, so a map out of it is exactly a value for `X` together with a
 value for `Y` satisfying that polynomial — here `φₙ/ψₙ²` and `ωₙ/ψₙ³`, which satisfy it by
-`eval₂_mulByIntXHom_polynomial_eq_zero`.
+`equation_mulByInt`.
 
 `AdjoinRoot.lift` produces a ring hom; `CoordinatePullback` asks for an `F`-algebra hom, and the
 two agree because the lift sends a constant to itself.
