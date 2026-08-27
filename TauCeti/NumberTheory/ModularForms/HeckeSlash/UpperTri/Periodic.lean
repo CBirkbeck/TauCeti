@@ -201,11 +201,9 @@ private lemma coe_mulModEquiv (hp : 0 < p) (hdp : Nat.Coprime d p) (b : Fin p) :
 `d` coprime to `p` and any `T`-invariant function. This is the level-raising half of
 `heckeTCuspNat_levelRaise`, stated before the normalising scalar of `V_d` is introduced.
 
-Invariance under `T` alone is all the reindexing consumes: the shift it produces is `T ^ q` for
-the quotient `q` of `d b` by `p`, and those powers are derived from `hT` inside the proof, so no
-level and no explicit power enters the statement. A form invariant under a congruence subgroup
-containing `T` — every `Γ₁(M)` — meets the hypothesis; `HeckeSlash/Degeneracy.lean` is the
-consumer. -/
+Invariance under `T` alone is the whole hypothesis: no level and no explicit power enters the
+statement, so a form invariant under any congruence subgroup containing `T` — every `Γ₁(M)` —
+qualifies. `HeckeSlash/Degeneracy.lean` is the consumer. -/
 @[grind =]
 theorem heckeSlashUpperTri_slash_scaleRep_comm (hd : 0 < d) (hp : 0 < p)
     (hdp : Nat.Coprime d p) {f : ℍ → ℂ}
