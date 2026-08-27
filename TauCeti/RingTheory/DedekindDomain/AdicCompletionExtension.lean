@@ -197,8 +197,7 @@ lemma adicCompletionExtension_coe (x : K) :
     adicCompletionExtension K L v w (x : v.adicCompletion K) =
       (algebraMap K L x : w.adicCompletion L) := by
   apply adicCompletion.ext
-  rw [toCompletion_adicCompletionExtension, show (↑x : v.adicCompletion K).toCompletion
-      = ((WithVal.equiv (v.valuation K)).symm x : (v.valuation K).Completion) from rfl,
+  rw [toCompletion_adicCompletionExtension, adicCompletion.coe_toCompletion,
     UniformSpace.Completion.mapRingHom_coe]
   rfl
 
