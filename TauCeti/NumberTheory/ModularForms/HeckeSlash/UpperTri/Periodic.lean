@@ -213,9 +213,8 @@ theorem heckeSlashUpperTri_slash_scaleRep_comm (hd : 0 < d) (hp : 0 < p)
     heckeSlashUpperTri k p (f ∣[k] (scaleRep d : GL (Fin 2) ℚ)) =
       heckeSlashUpperTri k p f ∣[k] (scaleRep d : GL (Fin 2) ℚ) := by
   have hTpow (q : ℕ) : f ∣[k] (mapGL ℚ (ModularGroup.T ^ q) : GL (Fin 2) ℚ) = f := by
-    induction q with
-    | zero => rw [pow_zero, map_one, SlashAction.slash_one]
-    | succ n ih => rw [pow_succ, map_mul, SlashAction.slash_mul, ih, hT]
+    rw [ModularForm.rat_slash_mapGL, map_pow, ← zpow_natCast]
+    exact slash_zpow_eq_self_of_slash_eq k f (by rwa [ModularForm.rat_slash_mapGL] at hT) q
   rw [heckeSlashUpperTri_def, heckeSlashUpperTri_def, SlashAction.sum_slash]
   rw [← Equiv.sum_comp (mulModEquiv p hp hdp) fun b ↦ (f ∣[k] upperTriRep p b) ∣[k]
     (scaleRep d : GL (Fin 2) ℚ)]
