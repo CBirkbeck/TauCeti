@@ -341,7 +341,8 @@ def typeDSimpleIndex (n : ℕ) (hn : 4 ≤ n) (i : Fin n) : Fin (2 * n * (n - 1)
   Fin.castLE (typeD_le_two_mul_mul hn) i
 
 @[simp] lemma typeDSimpleIndex_val (hn : 4 ≤ n) (i : Fin n) :
-    (typeDSimpleIndex n hn i : ℕ) = i := (rfl)
+    (typeDSimpleIndex n hn i : ℕ) = i := by
+  simp [typeDSimpleIndex]
 
 lemma typeDSimpleIndex_injective (hn : 4 ≤ n) : Injective (typeDSimpleIndex n hn) :=
   Fin.castLE_injective (typeD_le_two_mul_mul hn)

@@ -256,7 +256,8 @@ private def typeBSimplePair (i : Fin n) : Fin (2 * n) × Fin n :=
 def typeBSimpleIndex (n : ℕ) (i : Fin n) : Fin (2 * n ^ 2) :=
   Fin.castLE (typeB_le_two_mul_sq n) i
 
-@[simp] lemma typeBSimpleIndex_val (i : Fin n) : (typeBSimpleIndex n i : ℕ) = i := (rfl)
+@[simp] lemma typeBSimpleIndex_val (i : Fin n) : (typeBSimpleIndex n i : ℕ) = i := by
+  simp [typeBSimpleIndex]
 
 lemma typeBSimpleIndex_injective : Injective (typeBSimpleIndex n) :=
   Fin.castLE_injective (typeB_le_two_mul_sq n)

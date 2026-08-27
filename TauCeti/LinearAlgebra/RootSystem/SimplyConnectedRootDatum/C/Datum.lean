@@ -431,7 +431,8 @@ private lemma typeC_le_two_mul_sq (n : ℕ) : n ≤ 2 * n ^ 2 :=
 def typeCSimpleIndex (n : ℕ) (i : Fin n) : Fin (2 * n ^ 2) :=
   Fin.castLE (typeC_le_two_mul_sq n) i
 
-@[simp] lemma typeCSimpleIndex_val (i : Fin n) : (typeCSimpleIndex n i : ℕ) = i := (rfl)
+@[simp] lemma typeCSimpleIndex_val (i : Fin n) : (typeCSimpleIndex n i : ℕ) = i := by
+  simp [typeCSimpleIndex]
 
 lemma typeCSimpleIndex_injective : Injective (typeCSimpleIndex n) :=
   Fin.castLE_injective (typeC_le_two_mul_sq n)

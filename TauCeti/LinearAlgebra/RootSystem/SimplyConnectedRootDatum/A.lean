@@ -395,7 +395,8 @@ theorem pairing_typeASimplyConnectedRootDatum_comm (k l : Fin (n * (n + 1))) :
 def typeASimpleIndex (n : ℕ) (i : Fin n) : Fin (n * (n + 1)) :=
   Fin.castLE (Nat.le_mul_of_pos_right n n.succ_pos) i
 
-@[simp] lemma typeASimpleIndex_val (i : Fin n) : (typeASimpleIndex n i : ℕ) = i := (rfl)
+@[simp] lemma typeASimpleIndex_val (i : Fin n) : (typeASimpleIndex n i : ℕ) = i := by
+  simp [typeASimpleIndex]
 
 lemma typeASimpleIndex_injective : Injective (typeASimpleIndex n) :=
   Fin.castLE_injective (Nat.le_mul_of_pos_right n n.succ_pos)
