@@ -38,6 +38,10 @@ global étale algebra with its images in the completions passes through exactly 
 
 * `IsDedekindDomain.HeightOneSpectrum.valuation_maximalIdeal_adicCompletionIntegers`: the
   valuation attached to the maximal ideal of `𝒪_v` is the valuation of `K_v`.
+* `IsDedekindDomain.HeightOneSpectrum.valuationOfNeZero_maximalIdeal_adicCompletionIntegers` and
+  `IsDedekindDomain.HeightOneSpectrum.valuation_adicCompletion_algebraMap`: the same identification
+  in the two forms the square-class conditions of the `2`-descent are stated in — on units of `K`,
+  and at an arbitrary height-one prime of `𝒪_v`.
 * `IsDedekindDomain.HeightOneSpectrum.valued_adicCompletionExtension`: along the extension the
   valuation is raised to the ramification index.
 * `IsDedekindDomain.HeightOneSpectrum.comap_maximalIdeal_adicCompletionIntegersExtension`: the
@@ -95,9 +99,11 @@ variable {R : Type*} [CommRing R] [IsDedekindDomain R]
   {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K] (v : HeightOneSpectrum R)
 
 /-- An irreducible element of the ring of integers of a completion has valuation `exp (-1)`. -/
-theorem valued_irreducible_adicCompletionIntegers {π : v.adicCompletionIntegers K}
+theorem valued_algebraMap_eq_exp_neg_one_of_irreducible {π : v.adicCompletionIntegers K}
     (hπ : Irreducible π) :
     Valued.v (algebraMap (v.adicCompletionIntegers K) (v.adicCompletion K) π) = exp (-1) := by
+  -- `v.adicCompletionIntegers K` is by definition `Valued.v.valuationSubring`, which is what lets
+  -- `π`'s maximal ideal be retyped as an ideal of the valuation subring here.
   have hgen : IsLocalRing.maximalIdeal (Valued.v : Valuation (v.adicCompletion K)
       ℤᵐ⁰).valuationSubring = Ideal.span {π} := hπ.maximalIdeal_eq
   have huni := Valuation.isUniformizer_of_maximalIdeal_eq_span
@@ -134,13 +140,13 @@ theorem valuation_maximalIdeal_adicCompletionIntegers (x : v.adicCompletion K) :
     simp [IsDiscreteValuationRing.maximalIdeal]
   have hu2 : Valued.v (algebraMap (v.adicCompletionIntegers K) (v.adicCompletion K)
       (u : v.adicCompletionIntegers K)) = 1 :=
-    (Valuation.valuationSubring.integers (v := Valued.v)).valuation_unit u
+    (adicCompletionIntegers.integers K v).valuation_unit u
   have hπ1 : (IsDiscreteValuationRing.maximalIdeal
       (v.adicCompletionIntegers K)).intValuation π = exp (-1) :=
     (IsDiscreteValuationRing.maximalIdeal _).intValuation_singleton hπ.ne_zero
       hπ.maximalIdeal_eq
   have hπ2 : Valued.v (algebraMap (v.adicCompletionIntegers K) (v.adicCompletion K) π) =
-      exp (-1) := v.valued_irreducible_adicCompletionIntegers hπ
+      exp (-1) := v.valued_algebraMap_eq_exp_neg_one_of_irreducible hπ
   simp only [map_mul, map_pow]
   rw [hu1, hu2, hπ1, hπ2]
 
@@ -189,8 +195,8 @@ noncomputable def adicCompletionExtension : v.adicCompletion K →+* w.adicCompl
       (uniformContinuous_algebraMap_liesOver (K := K) (L := L) v w).continuous).comp
       (adicCompletion.equiv K v).toRingHom
 
-/-- The completion of `x : K_v` under `adicCompletionExtension` is the base change of its
-underlying element of the completion of `WithVal (v.valuation K)`. -/
+/-- Under `toCompletion`, the image of `x` is `UniformSpace.Completion.map` of the algebra map
+applied to `x.toCompletion`. -/
 @[simp]
 lemma toCompletion_adicCompletionExtension (x : v.adicCompletion K) :
     (adicCompletionExtension K L v w x).toCompletion =
@@ -209,6 +215,10 @@ lemma adicCompletionExtension_coe (x : K) :
   rw [toCompletion_adicCompletionExtension, adicCompletion.coe_toCompletion,
     UniformSpace.Completion.map_coe
       (uniformContinuous_algebraMap_liesOver (K := K) (L := L) v w)]
+  -- `WithVal` is a type synonym, so `algebraMap (WithVal _) (WithVal _)` is `algebraMap K L`
+  -- transported along it; these two rewrites name that identification rather than leaving it to
+  -- a bare `rfl`.
+  rw [WithVal.algebraMap_left_apply, WithVal.algebraMap_right_apply]
   rfl
 
 /-- `adicCompletionExtension` is continuous. -/
@@ -267,10 +277,11 @@ lemma valued_adicCompletionExtension (x : v.adicCompletion K) :
     Valued.valuedCompletion_apply, Valued.valuedCompletion_apply]
   exact valuation_liesOver (K := K) L v w (WithVal.equiv (v.valuation K) a)
 
+/-- The extension maps the ring of integers of `K_v` into the ring of integers of `L_w`. -/
 lemma adicCompletionExtension_mem_adicCompletionIntegers (x : v.adicCompletionIntegers K) :
     adicCompletionExtension K L v w (x : v.adicCompletion K) ∈ w.adicCompletionIntegers L := by
   rw [mem_adicCompletionIntegers, valued_adicCompletionExtension]
-  exact pow_le_one' x.2 _
+  exact pow_le_one' ((mem_adicCompletionIntegers ..).mp x.2) _
 
 /-- The restriction of `adicCompletionExtension` to the rings of integers. -/
 noncomputable def adicCompletionIntegersExtension :
