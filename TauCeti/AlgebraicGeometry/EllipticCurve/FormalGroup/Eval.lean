@@ -13,16 +13,27 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.WExpansion
 public import TauCeti.RingTheory.MvPowerSeries.Evaluation
 
 /-!
-# Evaluating the `w`-expansion at a parameter
+# Evaluating the `w`-expansion and the formal inverse at a parameter
 
 For a Weierstrass curve `W` over a topological ring `O` whose topology is the `I`-adic one, the
-`w`-expansion of `FormalGroup/WExpansion.lean` can be evaluated at a parameter `t ∈ I`. This file
-provides that evaluation and its basic membership properties.
+`w`-expansion of `FormalGroup/WExpansion.lean` and the formal inverse of `FormalGroup/Inverse.lean`
+can both be evaluated at a parameter `t ∈ I`. This file provides those evaluations and their basic
+membership, unit and non-vanishing properties.
+
+The two layers are proved the same way. Each value is confined to `I` because the corresponding
+series has vanishing constant coefficient and every other monomial carries a factor of the
+parameter, which is `MvPowerSeries.eval₂_mem_pow` at `k = 1`; each unit statement comes from a
+value congruent to `1` modulo an ideal inside the Jacobson radical. The inverse layer additionally
+carries the denominator `1 - a₁ z - a₃ w(z)`, whose value is invertible, so that `ι(t)` factors as
+`-t` times a unit.
 
 ## Main definitions
 
 * `WeierstrassCurve.formalWEval` : the value `w(t)` of the `w`-expansion at `t`.
 * `WeierstrassCurve.formalUEval` : the value `u(t)` of its unit part `w(z) / z ^ 3`.
+* `WeierstrassCurve.formalInverseDenomEval` : the value of the denominator `1 - a₁ z - a₃ w(z)`.
+* `WeierstrassCurve.formalInverseDenomInvEval` : the value of that denominator's series inverse.
+* `WeierstrassCurve.formalInverseEval` : the value `ι(t)` of the formal inverse at `t`.
 
 ## Implementation notes
 
@@ -87,8 +98,18 @@ variable {O : Type*} [CommRing O] [UniformSpace O] [IsUniformAddGroup O] [Comple
 /-- The value of the `w`-expansion at a parameter. -/
 noncomputable def formalWEval (t : O) : O := eval₂ (RingHom.id O) t W.formalW
 
+omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
+  [IsLinearTopology O O] in
+/-- `formalWEval` is evaluation of `formalW` through the identity ring hom. -/
+theorem formalWEval_def (t : O) : W.formalWEval t = eval₂ (RingHom.id O) t W.formalW := (rfl)
+
 /-- The value of the unit part `u(z) = w(z) / z ^ 3` at a parameter. -/
 noncomputable def formalUEval (t : O) : O := eval₂ (RingHom.id O) t W.formalU
+
+omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
+  [IsLinearTopology O O] in
+/-- `formalUEval` is evaluation of `formalU` through the identity ring hom. -/
+theorem formalUEval_def (t : O) : W.formalUEval t = eval₂ (RingHom.id O) t W.formalU := (rfl)
 
 omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
   [IsLinearTopology O O] in
@@ -109,8 +130,7 @@ theorem formalWEval_mem {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
   have hE : MvPowerSeries.HasEval (fun _ : Unit ↦ t) :=
     PowerSeries.hasEval (isTopologicallyNilpotent_of_mem_of_isAdic hI ht)
   have key := MvPowerSeries.eval₂_mem_pow (k := 1) hcont hE hI (by simpa using ht) W.formalW (by
-    rw [show MvPowerSeries.constantCoeff W.formalW = constantCoeff W.formalW from rfl,
-      W.constantCoeff_formalW]
+    rw [← PowerSeries.constantCoeff_eq, W.constantCoeff_formalW]
     exact zero_mem _)
   simpa [formalWEval, eval₂] using key
 
@@ -123,8 +143,7 @@ theorem formalUEval_sub_one_mem {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t �
   have hE : MvPowerSeries.HasEval (fun _ : Unit ↦ t) := PowerSeries.hasEval hEp
   have key := MvPowerSeries.eval₂_mem_pow (k := 1) hcont hE hI (by simpa using ht)
     (W.formalU - 1) (by
-      rw [show MvPowerSeries.constantCoeff (W.formalU - 1)
-          = constantCoeff (W.formalU - 1) from rfl]
+      rw [← PowerSeries.constantCoeff_eq]
       simp [W.constantCoeff_formalU])
   -- `eval₂` is additive only through `eval₂Hom`, which needs the continuity and `HasEval` data.
   have hsplit : eval₂ (RingHom.id O) t (W.formalU - 1) = W.formalUEval t - 1 := by
@@ -161,12 +180,32 @@ Note which series these evaluate. The source's `uSeries` is this repository's
 noncomputable def formalInverseDenomEval (t : O) : O :=
   eval₂ (RingHom.id O) t W.formalInverseDenom
 
+omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
+  [IsLinearTopology O O] in
+/-- `formalInverseDenomEval` is evaluation of `formalInverseDenom` through the identity ring
+hom. -/
+theorem formalInverseDenomEval_def (t : O) :
+    W.formalInverseDenomEval t = eval₂ (RingHom.id O) t W.formalInverseDenom := (rfl)
+
 /-- The value at a parameter of the power-series inverse of `formalInverseDenom`. -/
 noncomputable def formalInverseDenomInvEval (t : O) : O :=
   eval₂ (RingHom.id O) t (PowerSeries.invOfUnit W.formalInverseDenom 1)
 
+omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
+  [IsLinearTopology O O] in
+/-- `formalInverseDenomInvEval` is evaluation of the series inverse of `formalInverseDenom`
+through the identity ring hom. -/
+theorem formalInverseDenomInvEval_def (t : O) : W.formalInverseDenomInvEval t =
+    eval₂ (RingHom.id O) t (PowerSeries.invOfUnit W.formalInverseDenom 1) := (rfl)
+
 /-- The value of the formal inverse `ι(z)` at a parameter. -/
 noncomputable def formalInverseEval (t : O) : O := eval₂ (RingHom.id O) t W.formalInverse
+
+omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
+  [IsLinearTopology O O] in
+/-- `formalInverseEval` is evaluation of `formalInverse` through the identity ring hom. -/
+theorem formalInverseEval_def (t : O) :
+    W.formalInverseEval t = eval₂ (RingHom.id O) t W.formalInverse := (rfl)
 
 /-- The denominator's value and the value of its series inverse multiply to `1`. -/
 theorem formalInverseDenomEval_mul_inv {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
@@ -191,8 +230,7 @@ theorem formalInverseEval_mem {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ 
     PowerSeries.hasEval (isTopologicallyNilpotent_of_mem_of_isAdic hI ht)
   have key := MvPowerSeries.eval₂_mem_pow (k := 1) hcont hE hI (by simpa using ht)
     W.formalInverse (by
-      rw [show MvPowerSeries.constantCoeff W.formalInverse
-          = constantCoeff W.formalInverse from rfl, W.constantCoeff_formalInverse]
+      rw [← PowerSeries.constantCoeff_eq, W.constantCoeff_formalInverse]
       exact zero_mem _)
   simpa [formalInverseEval, eval₂] using key
 
@@ -220,7 +258,7 @@ theorem formalInverseEval_eq {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I
 /-- **The `w`-equation at a parameter.** Evaluating `formalW_wEquation` at `t` shows `w(t)` is a
 fixed point of `v ↦ wEquationRHS W t v`, which is the Weierstrass equation in the coordinates
 `x = z / w`, `y = -1 / w`. -/
-theorem formalWEval_eq {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
+theorem formalWEval_wEquation {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
     W.formalWEval t = wEquationRHS W t (W.formalWEval t) := by
   have hcont : Continuous ⇑(RingHom.id O) := by simpa using continuous_id
   have hEp : PowerSeries.HasEval t := isTopologicallyNilpotent_of_mem_of_isAdic hI ht
@@ -242,12 +280,12 @@ theorem formalWEval_ne_zero [IsDomain O] {I : Ideal O} (hI : IsAdic I)
   rw [W.formalWEval_eq_cube_mul hI ht]
   exact mul_ne_zero (pow_ne_zero 3 ht0) (W.isUnit_formalUEval hI hJ ht).ne_zero
 
-/-- Over a domain, the formal inverse does not vanish at a nonzero parameter: `ι(t)` is `-t` times
-a unit. -/
-theorem formalInverseEval_ne_zero [IsDomain O] {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I)
+/-- The formal inverse does not vanish at a nonzero parameter: `ι(t)` is `-t` times a unit, and
+multiplying by a unit cannot create a zero. No domain hypothesis is needed — unlike
+`formalWEval_ne_zero`, whose factor `t ^ 3` can vanish at a nonzero nilpotent `t`. -/
+theorem formalInverseEval_ne_zero {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I)
     (ht0 : t ≠ 0) : W.formalInverseEval t ≠ 0 := by
-  rw [W.formalInverseEval_eq hI ht]
-  exact neg_ne_zero.mpr
-    (mul_ne_zero ht0 (W.isUnit_formalInverseDenomInvEval hI ht).ne_zero)
+  rw [W.formalInverseEval_eq hI ht, neg_ne_zero]
+  exact fun h ↦ ht0 ((W.isUnit_formalInverseDenomInvEval hI ht).mul_left_eq_zero.mp h)
 
 end WeierstrassCurve
