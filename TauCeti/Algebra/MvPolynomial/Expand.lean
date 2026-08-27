@@ -37,19 +37,26 @@ in `S[X_i]`.
 
 Roadmap: EllipticCurves, the Layers 0-1 target *Function-field foundations and isogenies*
 (`TauCetiRoadmap/EllipticCurves/README.md:1096`), through the support module
-`RingTheory/IntegralClosure/NormalizationFinite`. The mathematics is the finiteness sentence of
-Stacks 10.161.13 (tag 032O), stated for `n` variables at once.
+`RingTheory/IntegralClosure/NormalizationFinite`.
+
+The argument is the finiteness sentence of Stacks 10.161.13 (tag 032O). **That lemma is
+univariate**: it is stated for the rings `R[x]` and `R'[x^{1/q}]` in a single variable. What is
+formalized here is its multivariate form, over a finite variable type `σ`, which is what the
+`n`-variable Noether normalization downstream needs. The mathematical content of each step is
+Stacks'; the passage to several variables at once is not, and is not claimed as such below.
 -/
 
 public section
 
 namespace TauCeti
 
-/-- Source: Stacks, Lemma 10.161.13 (tag 032O), proof: "`R′[x^{1/q}]` is finite over `R[x]`" —
+/-- Multivariate form of the univariate argument in Stacks, Lemma 10.161.13 (tag 032O).
+Proof: "`R′[x^{1/q}]` is finite over `R[x]`" —
 the inductive step of the spanning argument. Every monomial lies in the span, over the image of
 `MvPolynomial.expand n`, of the monomials with all exponents below `n`: write each exponent as
 `n * γ + β` with `β < n`, so that `X ^ (n • γ + β) = expand n (X ^ γ) * X ^ β`. -/
-theorem MvPolynomial.monomial_mem_span_monomial_lt {σ R : Type*} [CommSemiring R] [Finite σ]
+private theorem MvPolynomial.monomial_mem_span_monomial_lt {σ R : Type*} [CommSemiring R]
+    [Finite σ]
     {n : ℕ} (hn : 0 < n) (d : σ →₀ ℕ) (r : R) :
     MvPolynomial.monomial d r ∈
       Submodule.span (MvPolynomial.expand (σ := σ) (R := R) n).range
@@ -86,7 +93,8 @@ theorem MvPolynomial.monomial_mem_span_monomial_lt {σ R : Type*} [CommSemiring 
   rw [key, ← ha]
   exact Submodule.smul_mem _ a hmem
 
-/-- Source: Stacks, Lemma 10.161.13 (tag 032O), proof: "`R′[x^{1/q}]` is finite over `R[x]`".
+/-- Multivariate form of the univariate argument in Stacks, Lemma 10.161.13 (tag 032O).
+Proof: "`R′[x^{1/q}]` is finite over `R[x]`".
 Over the image of `MvPolynomial.expand n`, the finitely many monomials with all exponents below
 `n` span the whole polynomial ring. -/
 theorem MvPolynomial.span_monomial_lt_eq_top {σ R : Type*} [CommSemiring R] [Finite σ] {n : ℕ}
@@ -99,7 +107,8 @@ theorem MvPolynomial.span_monomial_lt_eq_top {σ R : Type*} [CommSemiring R] [Fi
   exact MvPolynomial.induction_on' f (fun d r => MvPolynomial.monomial_mem_span_monomial_lt hn d r)
     (fun p q hp hq => Submodule.add_mem _ hp hq)
 
-/-- Source: Stacks, Lemma 10.161.13 (tag 032O), proof: "`R′[x^{1/q}]` is finite over `R[x]`".
+/-- Multivariate form of the univariate argument in Stacks, Lemma 10.161.13 (tag 032O).
+Proof: "`R′[x^{1/q}]` is finite over `R[x]`".
 `MvPolynomial.expand n` is a finite ring map for `0 < n`: the polynomial ring is spanned over
 `R[X_i ^ n]` by the monomials with exponents below `n`. -/
 theorem MvPolynomial.finite_expand {σ R : Type*} [CommRing R] [Finite σ] {n : ℕ} (hn : 0 < n) :
@@ -123,7 +132,8 @@ theorem MvPolynomial.finite_expand {σ R : Type*} [CommRing R] [Finite σ] {n : 
   rw [hfac]
   exact RingHom.Finite.comp h₂ h₁
 
-/-- Source: Stacks, Lemma 10.161.13 (tag 032O), proof: "Since `R` is N-2 we see that `R′` is
+/-- Multivariate form of the univariate argument in Stacks, Lemma 10.161.13 (tag 032O).
+Proof: "Since `R` is N-2 we see that `R′` is
 finite over `R` and hence `R′[x^{1/q}]` is finite over `R[x]`". Polynomial rings preserve
 module-finiteness of the coefficient map: `MvPolynomial.map f` is finite whenever `f` is. -/
 theorem MvPolynomial.finite_map {σ R S : Type*} [CommRing R] [CommRing S] {f : R →+* S}
@@ -163,13 +173,14 @@ theorem MvPolynomial.finite_map {σ R S : Type*} [CommRing R] [CommRing S] {f : 
     rw [hr]
     exact Submodule.smul_mem _ _ hx
 
-/-- Source: Stacks, Lemma 10.161.13 (tag 032O), proof: "There exists a finite purely inseparable
+/-- Multivariate form of the univariate argument in Stacks, Lemma 10.161.13 (tag 032O).
+Proof: "There exists a finite purely inseparable
 field extension `L′/K` and `q = p^e` such that `L ⊂ L′(x^{1/q})`; some details omitted" — the
 coefficient half of the omitted details. If every coefficient of `g` has a `p ^ n`-th root in
 `S`, then `g(X ^ (p ^ n))`, read in `S[X_i]`, is a `p ^ n`-th power: with
 `h = ∑ d_α X ^ α` for `d_α ^ (p ^ n) = f (coeff α g)`, Frobenius gives
 `h ^ (p ^ n) = ∑ f (coeff α g) X ^ (p ^ n • α)`. -/
-theorem MvPolynomial.exists_pow_eq_map_expand {σ R S : Type*} [CommRing R] [CommRing S]
+theorem MvPolynomial.exists_pow_eq_map_expand {σ R S : Type*} [CommSemiring R] [CommSemiring S]
     (f : R →+* S) (p : ℕ) [ExpChar S p] (n : ℕ) {g : MvPolynomial σ R}
     (hg : ∀ i ∈ g.support, ∃ d : S, d ^ p ^ n = f (g.coeff i)) :
     ∃ h : MvPolynomial σ S, h ^ p ^ n = MvPolynomial.map f (MvPolynomial.expand (p ^ n) g) := by
