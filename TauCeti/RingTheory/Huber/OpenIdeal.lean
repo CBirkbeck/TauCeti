@@ -105,6 +105,20 @@ theorem IsTateRing.isOpen_iff_eq_top [IsTateRing A] (J : Ideal A) :
     IsOpen (J : Set A) ↔ J = ⊤ :=
   ⟨IsTateRing.eq_top_of_isOpen, fun h ↦ h.symm ▸ isOpen_univ⟩
 
+/-- **A nonzero Tate ring has no open maximal ideal**, so requiring every maximal ideal to be
+open forces the ring to be zero: an open ideal is `⊤`, and a maximal ideal is proper.
+
+Worth naming because that hypothesis is easy to write down and impossible to satisfy. Wedhorn's
+Proposition 7.52(2) carries it, and the statements that inherit it — among them
+`TauCeti.ValuationSpectrum.isUnit_of_forall_not_vle_zero` — are therefore vacuous on exactly the
+affinoid rings they are meant for, since those are Tate. -/
+theorem IsTateRing.subsingleton_of_forall_isMaximal_isOpen [IsTateRing A]
+    (hmax : ∀ 𝔪 : Ideal A, 𝔪.IsMaximal → IsOpen (𝔪 : Set A)) : Subsingleton A := by
+  rw [← not_nontrivial_iff_subsingleton]
+  intro _
+  obtain ⟨𝔪, h𝔪⟩ := Ideal.exists_maximal A
+  exact h𝔪.ne_top ((IsTateRing.isOpen_iff_eq_top 𝔪).mp (hmax 𝔪 h𝔪))
+
 end Tate
 
 end TauCeti.Huber
