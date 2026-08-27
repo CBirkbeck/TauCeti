@@ -7,6 +7,7 @@ module
 
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.WExpansion
+public import TauCeti.RingTheory.MvPowerSeries.Inverse
 
 /-!
 # The formal inverse of a Weierstrass curve
@@ -124,23 +125,17 @@ theorem hasSubst_formalInverse : PowerSeries.HasSubst (formalInverse W) :=
 
 /-! ### Substituting the formal inverse -/
 
-/-- Substitution along `ι` fixes `1`. -/
-private theorem subst_formalInverse_one :
-    PowerSeries.subst (formalInverse W) (1 : PowerSeries R) = 1 := by
-  rw [← PowerSeries.coe_substAlgHom (hasSubst_formalInverse W), map_one]
+/-- Substitution along `ι` carries `invOfUnit` to the `invOfUnit` of the image.
 
-/-- Substitution along `ι` carries `invOfUnit` to the `invOfUnit` of the image. -/
+This is `MvPowerSeries.map_invOfUnit` for the substitution homomorphism; the argument that a
+ring homomorphism commutes with `invOfUnit` is not repeated here. -/
 private theorem subst_formalInverse_invOfUnit {D : PowerSeries R}
     (hD : PowerSeries.constantCoeff D = 1)
     (hD' : PowerSeries.constantCoeff (PowerSeries.subst (formalInverse W) D) = 1) :
     PowerSeries.subst (formalInverse W) (PowerSeries.invOfUnit D 1) =
       PowerSeries.invOfUnit (PowerSeries.subst (formalInverse W) D) 1 := by
-  have hmul : PowerSeries.subst (formalInverse W) D *
-      PowerSeries.invOfUnit (PowerSeries.subst (formalInverse W) D) 1 = 1 :=
-    PowerSeries.mul_invOfUnit _ 1 (by rw [hD']; rfl)
-  refine (IsUnit.of_mul_eq_one _ hmul).mul_left_cancel ?_
-  rw [hmul, ← PowerSeries.subst_mul (hasSubst_formalInverse W),
-    PowerSeries.mul_invOfUnit _ 1 (by rw [hD]; rfl), subst_formalInverse_one W]
+  rw [← PowerSeries.coe_substAlgHom (hasSubst_formalInverse W)] at hD' ⊢
+  exact MvPowerSeries.map_invOfUnit (PowerSeries.substAlgHom (hasSubst_formalInverse W)) hD hD'
 
 /-- Composing the `w`-expansion with the formal inverse gives `-w / (1 - a₁ z - a₃ w)`, the
 `w`-coordinate of the negative point.
