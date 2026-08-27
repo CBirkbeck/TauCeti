@@ -225,6 +225,13 @@ lemma le_conjAct_inv_scaleGL_mul {d e : ℕ} [NeZero d] [NeZero e]
   rw [mem_conjAct_inv_scaleGL_iff, key]
   exact k₂
 
+/-- At `d = 1` the conjugation condition *is* the subgroup inclusion: `diag(1, 1)` is the
+identity, so `𝒢' ≤ diag(1, 1)⁻¹ 𝒢 diag(1, 1)` says no more than `𝒢' ≤ 𝒢`. This is what lets
+`levelRaise_one` name its `ofLe` without carrying a second inclusion hypothesis. -/
+lemma le_of_le_conjAct_inv_scaleGL_one (h : 𝒢' ≤ ConjAct.toConjAct (scaleGL 1)⁻¹ • 𝒢) :
+    𝒢' ≤ 𝒢 := by
+  simpa using h
+
 namespace ModularForm
 
 /-- The level-raising (degeneracy) operator `V_d`, `(V_d f) τ = f (d τ)`, as a map from modular
@@ -291,12 +298,12 @@ to one about restriction along `𝒢' ≤ 𝒢`, rather than reproved for it.
 
 It is stated in the root `ModularForm` namespace, beside `ModularForm.ofLe`, so that dot
 notation on a `ModularForm` resolves. -/
+@[simp]
 lemma _root_.ModularForm.levelRaise_one [𝒢'.HasDetOne]
-    (h : 𝒢' ≤ ConjAct.toConjAct (scaleGL 1)⁻¹ • 𝒢)
-    (h' : 𝒢' ≤ 𝒢) (f : ModularForm 𝒢 k) :
-    levelRaise 1 h f = _root_.ModularForm.ofLe h' f :=
+    (h : 𝒢' ≤ ConjAct.toConjAct (scaleGL 1)⁻¹ • 𝒢) (f : ModularForm 𝒢 k) :
+    levelRaise 1 h f = _root_.ModularForm.ofLe (le_of_le_conjAct_inv_scaleGL_one h) f :=
   _root_.ModularForm.ext fun τ ↦ (levelRaise_one_apply h f τ).trans
-    (congrFun (_root_.ModularForm.coe_ofLe h' f) τ).symm
+    (congrFun (_root_.ModularForm.coe_ofLe _ f) τ).symm
 
 /-- The level-raising operators compose: `V_d ∘ V_e = V_{de}`. -/
 @[simp]
@@ -376,12 +383,12 @@ one about restriction along `𝒢' ≤ 𝒢`, rather than reproved for it.
 
 It is stated in the root `CuspForm` namespace, beside `CuspForm.ofLe`, so that dot notation
 on a `CuspForm` resolves. -/
+@[simp]
 lemma _root_.CuspForm.levelRaise_one [𝒢'.HasDetOne]
-    (h : 𝒢' ≤ ConjAct.toConjAct (scaleGL 1)⁻¹ • 𝒢)
-    (h' : 𝒢' ≤ 𝒢) (f : CuspForm 𝒢 k) :
-    levelRaise 1 h f = _root_.CuspForm.ofLe h' f :=
+    (h : 𝒢' ≤ ConjAct.toConjAct (scaleGL 1)⁻¹ • 𝒢) (f : CuspForm 𝒢 k) :
+    levelRaise 1 h f = _root_.CuspForm.ofLe (le_of_le_conjAct_inv_scaleGL_one h) f :=
   _root_.CuspForm.ext fun τ ↦ (levelRaise_one_apply h f τ).trans
-    (congrFun (_root_.CuspForm.coe_ofLe h' f) τ).symm
+    (congrFun (_root_.CuspForm.coe_ofLe _ f) τ).symm
 
 /-- The level-raising operators compose: `V_d ∘ V_e = V_{de}`. -/
 @[simp]
@@ -785,7 +792,7 @@ theorem ModularForm.ofLe_mem_modFormCharSpace {M N : ℕ} (χ : (ZMod M)ˣ →* 
       modFormCharSpace k (χ.comp (ZMod.unitsMap h)) := by
   have hdvd : 1 * M ∣ N := by rwa [one_mul]
   have := levelRaise_mem_modFormCharSpace_of_dvd hdvd χ hf
-  rwa [_root_.ModularForm.levelRaise_one _ (Gamma1_map_le_Gamma1_map_of_dvd h)] at this
+  rwa [_root_.ModularForm.levelRaise_one] at this
 
 /-- **The nebentypus of a level restriction (cusp forms).** For `M ∣ N`, reading a cusp form of
 level `M` as a cusp form of level `N` carries `S_k(Γ₁(M), χ)` into
@@ -798,7 +805,7 @@ theorem CuspForm.ofLe_mem_cuspFormCharSpace {M N : ℕ} (χ : (ZMod M)ˣ →* �
       cuspFormCharSpace k (χ.comp (ZMod.unitsMap h)) := by
   have hdvd : 1 * M ∣ N := by rwa [one_mul]
   have := levelRaise_mem_cuspFormCharSpace_of_dvd hdvd χ hf
-  rwa [_root_.CuspForm.levelRaise_one _ (Gamma1_map_le_Gamma1_map_of_dvd h)] at this
+  rwa [_root_.CuspForm.levelRaise_one] at this
 
 end Restriction
 
