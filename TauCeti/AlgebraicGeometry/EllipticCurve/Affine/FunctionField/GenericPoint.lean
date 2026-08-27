@@ -74,28 +74,27 @@ variable {R : Type*} [CommRing R] (W : _root_.WeierstrassCurve.Affine R)
 
 /-- The generic `x`-coordinate: the class of `X` in the function field. -/
 noncomputable def genericX : W.FunctionField :=
-  algebraMap W.CoordinateRing W.FunctionField (algebraMap R[X] W.CoordinateRing X)
+  algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W (C X))
 
 /-- The generic `y`-coordinate: the class of `Y` in the function field. -/
 noncomputable def genericY : W.FunctionField :=
-  algebraMap W.CoordinateRing W.FunctionField (AdjoinRoot.root W.polynomial)
+  algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y)
 
-/-- **The defining equation of `genericX`.** Under the module system a `def`'s body is not
-exposed across the module boundary even inside a `public section`, so a downstream file can
-unfold `genericX` by neither `simp only` — *Invalid simp theorem: Expected a definition with an
-exposed body* — nor `rw`, there being no equation lemma for it to use. This lemma and
-`genericY_def` are how the two are computed with from outside. -/
-theorem genericX_def : W.genericX =
-    algebraMap W.CoordinateRing W.FunctionField (algebraMap R[X] W.CoordinateRing X) := (rfl)
+/-- The generic coordinate `x` is the image of the coordinate-ring class of `X` in the function
+field. -/
+theorem genericX_def :
+    genericX W = algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W (C X)) := (rfl)
 
-/-- **The defining equation of `genericY`.** -/
-theorem genericY_def : W.genericY =
-    algebraMap W.CoordinateRing W.FunctionField (AdjoinRoot.root W.polynomial) := (rfl)
+/-- The generic coordinate `y` is the image of the coordinate-ring class of `Y` in the function
+field. -/
+theorem genericY_def :
+    genericY W = algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y) := (rfl)
 
 /-- The generic coordinate `x` is the image of polynomial `X` under the induced map from `R[X]`
 to the function field. -/
 theorem genericX_eq_algebraMap : genericX W = algebraMap R[X] W.FunctionField X := by
-  rw [genericX_def, IsScalarTower.algebraMap_apply R[X] W.CoordinateRing W.FunctionField]
+  rw [genericX_def, IsScalarTower.algebraMap_apply R[X] W.CoordinateRing W.FunctionField,
+    AdjoinRoot.algebraMap_eq]
   (rfl)
 
 /-- `W` base-changed to its own function field. The generic point is a point of it. -/
@@ -116,13 +115,12 @@ theorem evalEval_genericPoint (p : R[X][Y]) :
       ← Polynomial.map_map]
   set g := algebraMap W.CoordinateRing W.FunctionField
   set q := Polynomial.map (mapRingHom (algebraMap R W.CoordinateRing)) p with hq
-  -- `genericX` and `genericY` are already of the form `g _`; say so, or the rewrite below
-  -- cannot see its own pattern `evalEval (g _) (g _) (map (mapRingHom g) _)`.
   change (q.map (mapRingHom g)).evalEval (g _) (g _) = g _
   rw [Polynomial.map_mapRingHom_evalEval]
   congr 1
   rw [hq]
   rw [← Polynomial.eval₂_eval₂RingHom_apply]
+  rw [CoordinateRing.mk_C_X]
   have hinner : eval₂RingHom (algebraMap R W.CoordinateRing) (algebraMap R[X] W.CoordinateRing X) =
       algebraMap R[X] W.CoordinateRing := by
     ext x
