@@ -84,7 +84,7 @@ level `M` and then raising the level.
 
 Coprimality is not decoration: at `p ∣ N` the diamond term of `Tₚ` vanishes at level `N` but need
 not vanish at level `M`, and `b ↦ d b mod p` stops being a permutation once `p ∣ d`. -/
-@[grind]
+@[grind =]
 theorem heckeTCuspNat_levelRaise (hdvd : d * M ∣ N) (hp : p.Prime)
     (hpN : Nat.Coprime p N) (f : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) :
     haveI : NeZero N := ⟨fun hN ↦ hp.ne_one (by simpa [hN] using hpN)⟩

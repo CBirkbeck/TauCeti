@@ -202,7 +202,7 @@ the quotient `q` of `d b` by `p`, and those powers are derived from `hT` inside 
 level and no explicit power enters the statement. A form invariant under a congruence subgroup
 containing `T` — every `Γ₁(M)` — meets the hypothesis; `HeckeSlash/Degeneracy.lean` is the
 consumer. -/
-@[grind]
+@[grind =]
 theorem heckeSlashUpperTri_slash_scaleRep_comm (hd : 0 < d) (hp : 0 < p)
     (hdp : Nat.Coprime d p) {f : ℍ → ℂ}
     (hT : f ∣[k] (mapGL ℚ ModularGroup.T : GL (Fin 2) ℚ) = f) :
