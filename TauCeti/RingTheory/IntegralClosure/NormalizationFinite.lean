@@ -16,6 +16,7 @@ public import Mathlib.RingTheory.FiniteType
 public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 -- Proof-only: the ingredients of the normalization-finiteness half.
 import Mathlib.FieldTheory.Normal.Closure
+import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 import Mathlib.RingTheory.NoetherNormalization
 import TauCeti.FieldTheory.Normal.FixedField
 import TauCeti.RingTheory.IntegralClosure.PurelyInseparable
@@ -474,7 +475,33 @@ theorem IsIntegralClosure.finite_of_isSeparable_of_finite [IsNoetherianRing A]
     [Algebra B M] [IsScalarTower A B M] [IsIntegralClosure B A M] [Module.Finite A B]
     [CommRing C] [Algebra A C] [Algebra C N] [IsScalarTower A C N] [IsIntegralClosure C A N] :
     Module.Finite A C := by
-  sorry
+  -- `B` is a domain with fraction field `M`, integrally closed and Noetherian: everything
+  -- Mathlib's separable `IsIntegralClosure.finite` needs of its base ring.
+  have : IsDomain B :=
+    (IsIntegralClosure.equiv A B M (integralClosure A M)).toMulEquiv.isDomain (integralClosure A M)
+  have : IsFractionRing B M :=
+    IsIntegralClosure.isFractionRing_of_finite_extension (A := A) (C := B) K M
+  have : IsIntegrallyClosed (integralClosure A M) :=
+    integralClosure.isIntegrallyClosedOfFiniteExtension K
+  have : IsIntegrallyClosed B := IsIntegrallyClosed.of_equiv
+    (IsIntegralClosure.equiv A B M (integralClosure A M)).symm.toRingEquiv
+  have : IsNoetherianRing B := IsNoetherianRing.of_finite A B
+  -- `B` acts on `N` through `M`
+  let _ : Algebra B N := ((algebraMap M N).comp (algebraMap B M)).toAlgebra
+  have : IsScalarTower B M N := IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
+  have : IsScalarTower A B N := IsScalarTower.of_algebraMap_eq fun x ↦ by
+    change algebraMap A N x = algebraMap M N (algebraMap B M (algebraMap A B x))
+    rw [← IsScalarTower.algebraMap_apply A B M, ← IsScalarTower.algebraMap_apply A M N]
+  -- `B` is integral over `A`, so `C` is also the integral closure of `B` in `N`
+  have : IsIntegralClosure C B N := IsIntegralClosure.tower_top (R := A)
+  let _ : Algebra B C := (IsIntegralClosure.lift A C N (S := B)).toRingHom.toAlgebra
+  have : IsScalarTower B C N := IsScalarTower.of_algebraMap_eq fun x ↦
+    (IsIntegralClosure.algebraMap_lift A C N x).symm
+  have : IsScalarTower A B C := IsScalarTower.of_algebraMap_eq fun x ↦
+    ((IsIntegralClosure.lift A C N (S := B)).commutes x).symm
+  -- the separable step is Mathlib's, then compose finiteness
+  have : Module.Finite B C := _root_.IsIntegralClosure.finite B M N C
+  exact Module.Finite.trans B C
 
 /-- Source: Stacks, Lemma 10.161.12 (tag 032N): "Let `R` be a Noetherian domain with fraction
 field `K` … Then `R` is N-2 if and only if for every finite purely inseparable extension `L/K`
