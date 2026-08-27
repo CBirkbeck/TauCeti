@@ -6,9 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.NumberTheory.NumberField.Completion.FinitePlace
-public import Mathlib.NumberTheory.RamificationInertia.Valuation
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
-public import Mathlib.RingTheory.Valuation.Discrete.IsDiscreteValuationRing
 public import TauCeti.RingTheory.DedekindDomain.Ideal
 public import TauCeti.RingTheory.DedekindDomain.SelmerGroup
 
@@ -45,6 +42,10 @@ global étale algebra with its images in the completions passes through exactly 
   valuation is raised to the ramification index.
 * `IsDedekindDomain.HeightOneSpectrum.comap_maximalIdeal_adicCompletionIntegersExtension`: the
   maximal ideal of `𝒪_w` contracts to the maximal ideal of `𝒪_v`.
+* `IsDedekindDomain.HeightOneSpectrum.continuous_adicCompletionExtension` and
+  `IsDedekindDomain.HeightOneSpectrum.eq_adicCompletionExtension_of_continuous`: the extension is
+  continuous, and is the only continuous ring homomorphism `K_v →+* L_w` extending `K → L`. Together
+  these are its universal property, usable without unfolding the definition.
 
 ## Roadmap
 
@@ -72,13 +73,16 @@ source, which serves other consumers, is deliberately left out. The source is wr
 
 ## Implementation notes
 
-`Mathlib.NumberTheory.NumberField.Completion.FinitePlace` is imported for two instances only —
-`IsDiscreteValuationRing (v.adicCompletionIntegers K)` and
+`Mathlib.NumberTheory.NumberField.Completion.FinitePlace` is the sole Mathlib import. It is needed
+for two instances — `IsDiscreteValuationRing (v.adicCompletionIntegers K)` and
 `(Valued.v : Valuation (v.adicCompletion K) ℤᵐ⁰).IsRankOneDiscrete`. Both are stated there for an
 arbitrary Dedekind domain and its fraction field, not for number fields, so nothing in this file
-depends on number-field theory; they simply live in that module upstream. The import is named
-rather than broad, and this note records the reason so the placement of a `NumberTheory` import
-inside `RingTheory` is not mistaken for a layering slip.
+depends on number-field theory; they simply live in that module upstream. This note records the
+reason so the placement of a `NumberTheory` import inside `RingTheory` is not mistaken for a
+layering slip.
+
+It also transitively supplies the ramification-valuation and adic-valuation modules, so those are
+not imported directly.
 -/
 
 public section
@@ -168,7 +172,7 @@ section Extension
 
 variable {R : Type*} [CommRing R] [IsDedekindDomain R]
   {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
-  {B : Type*} [CommRing B] [IsDedekindDomain B] [Algebra R B] [Module.IsTorsionFree R B]
+  {B : Type*} [CommRing B] [IsDedekindDomain B] [Algebra R B]
   {L : Type*} [Field L] [Algebra K L] [Algebra R L] [IsScalarTower R K L]
   [Algebra B L] [IsFractionRing B L] [IsScalarTower R B L]
   (v : HeightOneSpectrum R) (w : HeightOneSpectrum B) [w.asIdeal.LiesOver v.asIdeal]
@@ -178,6 +182,7 @@ variable (K L)
 /-- The extension of adic completions along `w ∣ v`: the ring homomorphism `K_v →+* L_w`
 continuously extending `K → L`. -/
 noncomputable def adicCompletionExtension : v.adicCompletion K →+* w.adicCompletion L :=
+  haveI : FaithfulSMul R B := FaithfulSMul.of_field_isFractionRing R B K L
   (adicCompletion.equiv L w).symm.toRingHom.comp <|
     (UniformSpace.Completion.mapRingHom
       (algebraMap (WithVal (v.valuation K)) (WithVal (w.valuation L)))
@@ -189,9 +194,8 @@ underlying element of the completion of `WithVal (v.valuation K)`. -/
 @[simp]
 lemma toCompletion_adicCompletionExtension (x : v.adicCompletion K) :
     (adicCompletionExtension K L v w x).toCompletion =
-      UniformSpace.Completion.mapRingHom
-        (algebraMap (WithVal (v.valuation K)) (WithVal (w.valuation L)))
-        (uniformContinuous_algebraMap_liesOver (K := K) (L := L) v w).continuous x.toCompletion :=
+      UniformSpace.Completion.map
+        (algebraMap (WithVal (v.valuation K)) (WithVal (w.valuation L))) x.toCompletion :=
   (rfl)
 
 /-- The square with sides `K → K_v → L_w` and `K → L → L_w` commutes. -/
@@ -200,10 +204,40 @@ lemma toCompletion_adicCompletionExtension (x : v.adicCompletion K) :
 lemma adicCompletionExtension_coe (x : K) :
     adicCompletionExtension K L v w (x : v.adicCompletion K) =
       (algebraMap K L x : w.adicCompletion L) := by
+  have : FaithfulSMul R B := FaithfulSMul.of_field_isFractionRing R B K L
   apply adicCompletion.ext
   rw [toCompletion_adicCompletionExtension, adicCompletion.coe_toCompletion,
-    UniformSpace.Completion.mapRingHom_coe]
+    UniformSpace.Completion.map_coe
+      (uniformContinuous_algebraMap_liesOver (K := K) (L := L) v w)]
   rfl
+
+/-- `adicCompletionExtension` is continuous. -/
+theorem continuous_adicCompletionExtension :
+    Continuous (adicCompletionExtension K L v w) := by
+  have h : (adicCompletionExtension K L v w : v.adicCompletion K → w.adicCompletion L) =
+      adicCompletion.ofCompletion ∘ UniformSpace.Completion.map
+        (algebraMap (WithVal (v.valuation K)) (WithVal (w.valuation L))) ∘
+        adicCompletion.toCompletion := by
+    funext x
+    rw [Function.comp_apply, Function.comp_apply, ← toCompletion_adicCompletionExtension,
+      adicCompletion.ofCompletion_toCompletion]
+  rw [h]
+  exact (adicCompletion.continuous_ofCompletion L w).comp
+    (UniformSpace.Completion.continuous_map.comp (adicCompletion.continuous_toCompletion K v))
+
+/-- `adicCompletionExtension` is the *only* continuous ring homomorphism `K_v →+* L_w` extending
+`K → L`: `K` is dense in `K_v`, so a continuous map out of it is pinned by its values there.
+
+This is the universal property, available without unfolding the definition. -/
+theorem eq_adicCompletionExtension_of_continuous {f : v.adicCompletion K →+* w.adicCompletion L}
+    (hf : Continuous f)
+    (hfK : ∀ x : K, f (x : v.adicCompletion K) = (algebraMap K L x : w.adicCompletion L)) :
+    f = adicCompletionExtension K L v w :=
+  DFunLike.coe_injective <| (v.denseRange_algebraMap K).equalizer hf
+    (continuous_adicCompletionExtension K L v w)
+    (funext fun x ↦ by
+      simp only [Function.comp_apply, algebraMap_adicCompletion, Algebra.algebraMap_self_apply]
+      rw [hfK x, adicCompletionExtension_coe])
 
 open WithZeroTopology in
 /-- The valuation on `L_w` restricted along `K_v → L_w` is the valuation on `K_v` raised to the
@@ -212,6 +246,7 @@ ramification index of `w` over `v`. -/
 lemma valued_adicCompletionExtension (x : v.adicCompletion K) :
     Valued.v (adicCompletionExtension K L v w x) =
       Valued.v x ^ v.asIdeal.ramificationIdx' w.asIdeal := by
+  have : FaithfulSMul R B := FaithfulSMul.of_field_isFractionRing R B K L
   rw [← adicCompletion.valued_toCompletion L w (adicCompletionExtension K L v w x),
     toCompletion_adicCompletionExtension, ← adicCompletion.valued_toCompletion K v x]
   have hsurjK : Function.Surjective (⇑(Valued.v : Valuation (v.valuation K).Completion ℤᵐ⁰)) :=
@@ -227,8 +262,9 @@ lemma valued_adicCompletionExtension (x : v.adicCompletion K) :
   · exact (Valued.continuous_valuation_of_surjective hsurjL).comp
       UniformSpace.Completion.continuous_map
   intro a
-  rw [UniformSpace.Completion.mapRingHom_coe, Valued.valuedCompletion_apply,
-    Valued.valuedCompletion_apply]
+  rw [UniformSpace.Completion.map_coe
+      (uniformContinuous_algebraMap_liesOver (K := K) (L := L) v w),
+    Valued.valuedCompletion_apply, Valued.valuedCompletion_apply]
   exact valuation_liesOver (K := K) L v w (WithVal.equiv (v.valuation K) a)
 
 lemma adicCompletionExtension_mem_adicCompletionIntegers (x : v.adicCompletionIntegers K) :
@@ -270,6 +306,7 @@ lemma comap_maximalIdeal_adicCompletionIntegersExtension :
       (Valuation.mem_maximalIdeal_iff (v := (Valued.v : Valuation (v.adicCompletion K)
         (WithZero (Multiplicative ℤ))))).symm
   rw [coe_adicCompletionIntegersExtension K L v w, valued_adicCompletionExtension]
+  have : FaithfulSMul R B := FaithfulSMul.of_field_isFractionRing R B K L
   exact pow_lt_one_iff
     (Ideal.IsDedekindDomain.ramificationIdx'_ne_zero_of_liesOver w.asIdeal v.ne_bot)
 
