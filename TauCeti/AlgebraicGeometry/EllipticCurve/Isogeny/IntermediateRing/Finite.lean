@@ -13,25 +13,24 @@ import TauCeti.RingTheory.IntegralClosure.NormalizationFinite
 /-!
 # The intermediate ring is module-finite over the target coordinate ring
 
-For an isogeny with separable function-field extension and integrally closed target coordinate
-ring, `φ.intermediateRing` is a finite `W₂.CoordinateRing`-module. This is the finiteness that the
-relative ideal norm — and through it `pushClass` and the induced map on points — needs.
+For **any** isogeny, `φ.intermediateRing` is a finite `W₂.CoordinateRing`-module. This is the
+finiteness that the relative ideal norm — and through it `pushClass` and the induced map on
+points — needs.
 
-**Separability is a limitation of the available proof, not of the result.** The statement is
-expected to hold without it: `W₂.CoordinateRing` is a finitely generated domain over `F` and
-`W₁.FunctionField` is finite over `W₂.FunctionField`, so Noether's finiteness theorem gives
-module-finiteness of the integral closure, Frobenius included. What forces the hypothesis here is
-that the only route Mathlib provides is `IsIntegralClosure.finite`, whose section carries
-`[Algebra.IsSeparable K L]` because it argues through the trace pairing, and the trace form is
-nondegenerate exactly for separable extensions. The general case needs a different argument —
-excellence, or N-2 finiteness for finitely generated algebras over a field — which is not available
-upstream and is left as separate work.
+**No separability, and no integral-closedness.** Both hypotheses this file once carried are gone.
+The proof is `TauCeti.IsIntegralClosure.finite_of_finiteType`, Noether's finiteness theorem for
+finite-type domains over a field, proved in
+`TauCeti/RingTheory/IntegralClosure/NormalizationFinite.lean`: `W₂.CoordinateRing` is a finitely
+generated `F`-domain and `W₁.FunctionField` is finite over `W₂.FunctionField`, which is all it
+needs. Mathlib's `IsIntegralClosure.finite` — the route this file used to take — carries
+`[Algebra.IsSeparable K L]` because it argues through the trace pairing, and the trace form
+degenerates inseparably; that is exactly the restriction the N-2 development removes, so the
+Frobenius isogenies are now covered on the same footing as the separable ones.
 
 ## Main results
 
 * `TauCeti.Isogeny.moduleFinite_intermediateRing`: `φ.intermediateRing` is module-finite over
-  `W₂.CoordinateRing`, for an integrally closed `W₂.CoordinateRing` and separable function-field
-  extension.
+  `W₂.CoordinateRing`, for any isogeny.
 
 ## Design
 
@@ -48,8 +47,9 @@ same corestriction, and the two together are what a caller needs.
 
 ## Provenance
 
-The statement and the proof route — `IsIntegralClosure.finite` against a normal base — are those of
-`module_finite` in AINTLIB's `HasseWeil/Curves/RamificationFinite.lean`
+The statement is that of `module_finite` in AINTLIB's `HasseWeil/Curves/RamificationFinite.lean`
+(the proof route is not: that source argues through `IsIntegralClosure.finite` against a normal
+base, and so needs separability, whereas this file goes through Noether finiteness and does not)
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `dev/hasse-weil @ 513e83879e2f`); that file's header
 reads `Authors: Chris Birkbeck`, credited here rather than in the copyright header, following this
 repository's convention for adapted material and matching `IntermediateRing/Basic.lean`. The source
@@ -71,20 +71,11 @@ namespace Isogeny
 
 variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F}
 
--- Skeleton of the normalization-finiteness development: `sorry` is an error under the library's
--- `warningAsError`, so it is downgraded here until the proofs land. Remove with the last `sorry`.
-set_option warningAsError false
-
 /-- **The intermediate ring is module-finite over the target coordinate ring.** Source: Noether's
 finiteness theorem, `TauCeti.IsIntegralClosure.finite_of_finiteType`, applied to the finite-type
 `F`-domain `W₂.CoordinateRing` and the finite extension `W₁.FunctionField / W₂.FunctionField`;
-no separability of the function-field extension is needed.
-
-Integral closedness of `W₂.CoordinateRing` is what the proof spends, so it is assumed directly
-rather than through `[W₂.IsElliptic]`, matching the sibling `id_intermediateRing`; for an elliptic
-curve it is discharged by `WeierstrassCurve.Affine.isIntegrallyClosed_coordinateRing`. -/
+no separability of the function-field extension is needed. -/
 theorem moduleFinite_intermediateRing (φ : Isogeny W₁ W₂)
-    [IsIntegrallyClosed W₂.CoordinateRing]
     [Algebra W₂.CoordinateRing W₁.FunctionField]
     [Algebra W₂.FunctionField W₁.FunctionField]
     [IsScalarTower W₂.CoordinateRing W₂.FunctionField W₁.FunctionField]
@@ -92,7 +83,14 @@ theorem moduleFinite_intermediateRing (φ : Isogeny W₁ W₂)
     [IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField]
     (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x) :
     Module.Finite W₂.CoordinateRing φ.intermediateRing := by
-  sorry
+  -- the coordinate-ring hypothesis `h` upgrades to the function-field one, the same way
+  -- `IntermediateRing/Rank.lean` does it
+  have : FiniteDimensional W₂.FunctionField W₁.FunctionField :=
+    φ.finiteDimensional_functionField (φ.algebraMap_functionField_eq_fieldPullback h)
+  have : IsIntegralClosure φ.intermediateRing W₂.CoordinateRing W₁.FunctionField :=
+    isIntegralClosure_intermediateRing φ h
+  exact IsIntegralClosure.finite_of_finiteType F W₂.FunctionField W₁.FunctionField
+    φ.intermediateRing
 
 end Isogeny
 
