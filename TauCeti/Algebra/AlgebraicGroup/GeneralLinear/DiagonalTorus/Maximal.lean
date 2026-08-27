@@ -161,6 +161,7 @@ theorem eq_diagonalTorusDefiningIdeal_of_le_of_isCocomm
       refine ⟨q, ?_⟩
       exact mapPointsFunctor_diagonalTorusCoordinateMap_app A q
     refine ⟨d, hDG hdD, ?_⟩
+    -- Unfold the `e.toMonoidHom` coercion introduced by `Subgroup.map` to the coercion of `e`.
     change e d = diagGL t
     simpa only [e, d, q, s] using pointsMulEquiv_diagonalTorusPoints_symm k n t
   have hP : P = TauCeti.diagonalTorus k n :=
