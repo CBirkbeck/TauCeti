@@ -173,21 +173,21 @@ private theorem mulByIntXHom_def (n : ℤ) :
 Not `@[simp]`, and neither are the two below: `smulEval` is an `abbrev`, so `simp` unfolds the
 left-hand side through `Function.comp_apply` and `map_ψ` before these could fire, and `simpNF`
 rejects them. They are `rw`-lemmas for the equation proof, not normal forms. -/
-theorem smulEval_genericPoint_two (n : ℤ) :
+theorem smulEval_genericPoint_Z (n : ℤ) :
     smulEval W.functionFieldCurve W.genericX W.genericY n 2 = psiFunctionField W n := by
   dsimp only [smulEval, Affine.functionFieldCurve, Function.comp_def]
   rw [map_ψ, psiFunctionField]
   exact Affine.evalEval_genericPoint W (W.ψ n)
 
 /-- The `X`-coordinate of the Jacobian triple of `[n]` at the generic point is `φₙ`. -/
-theorem smulEval_genericPoint_zero (n : ℤ) :
+theorem smulEval_genericPoint_X (n : ℤ) :
     smulEval W.functionFieldCurve W.genericX W.genericY n 0 = phiFunctionField W n := by
   dsimp only [smulEval, Affine.functionFieldCurve, Function.comp_def]
   rw [map_φ, phiFunctionField]
   exact Affine.evalEval_genericPoint W (W.φ n)
 
 /-- The `Y`-coordinate of the Jacobian triple of `[n]` at the generic point is `ωₙ`. -/
-theorem smulEval_genericPoint_one (n : ℤ) :
+theorem smulEval_genericPoint_Y (n : ℤ) :
     smulEval W.functionFieldCurve W.genericX W.genericY n 1 = omegaFunctionField W n := by
   dsimp only [smulEval, Affine.functionFieldCurve, Function.comp_def]
   rw [map_ω, omegaFunctionField]
@@ -217,9 +217,9 @@ private theorem eval₂_mulByIntXHom_polynomial_eq_zero [W.IsElliptic] {n : ℤ}
     rw [← Jacobian.nonsingularLift_iff, ← zsmul_point_eq_smulEval _ hns n]
     exact (n • Jacobian.Point.fromAffine (Affine.Point.some _ _ hns)).nonsingular
   have hZ : smulEval W.functionFieldCurve W.genericX W.genericY n 2 ≠ 0 := by
-    rw [smulEval_genericPoint_two]; exact hn
+    rw [smulEval_genericPoint_Z]; exact hn
   have hJ := (Jacobian.equation_of_Z_ne_zero hZ).mp hsmul.1
-  rwa [smulEval_genericPoint_zero, smulEval_genericPoint_one, smulEval_genericPoint_two,
+  rwa [smulEval_genericPoint_X, smulEval_genericPoint_Y, smulEval_genericPoint_Z,
     ← mulByIntX_def, ← mulByIntY_def] at hJ
 
 /-- **`ψₙ` does not vanish at the generic point** when `n` is invertible in `F`.

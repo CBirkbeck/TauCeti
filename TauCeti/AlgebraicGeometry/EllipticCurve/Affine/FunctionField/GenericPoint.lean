@@ -10,10 +10,16 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.CoordinateRing
 /-!
 # The generic point of an affine Weierstrass curve
 
-The coordinate ring `W.CoordinateRing` is `F[X][Y]` modulo the Weierstrass relation, so the
+The coordinate ring `W.CoordinateRing` is `R[X][Y]` modulo the Weierstrass relation, so the
 classes of `X` and `Y` in the function field are a pair satisfying that relation over
 `W.FunctionField`. They are the *generic point*: a point of `W` base-changed to its own function
-field, and the universal one, in that a statement about it specialises to every point of `W`.
+field.
+
+What is proved here is exactly that — that the pair is a point (`equation_genericPoint`), and
+that evaluating a bivariate polynomial at it is reduction modulo the Weierstrass relation
+(`evalEval_genericPoint`). The word "generic" is the usual geometric one, but no specialisation
+property is established: nothing below says that a statement about this point transfers to the
+points of `W`, and no consumer may rely on that.
 
 The two facts worth having are `equation_genericPoint`, that the pair really is a point, and
 `evalEval_genericPoint`, that evaluating a bivariate polynomial there is the same as reducing it
@@ -45,11 +51,11 @@ open scoped Polynomial.Bivariate
 
 namespace WeierstrassCurve.Affine
 
-variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
+variable {R : Type*} [CommRing R] (W : WeierstrassCurve.Affine R)
 
 /-- The generic `x`-coordinate: the class of `X` in the function field. -/
 noncomputable def genericX : W.FunctionField :=
-  algebraMap W.CoordinateRing W.FunctionField (algebraMap F[X] W.CoordinateRing X)
+  algebraMap W.CoordinateRing W.FunctionField (algebraMap R[X] W.CoordinateRing X)
 
 /-- The generic `y`-coordinate: the class of `Y` in the function field. -/
 noncomputable def genericY : W.FunctionField :=
@@ -60,7 +66,7 @@ across the module boundary even inside a `public section`, so a downstream file 
 neither `rw` nor `simp only`. This lemma and `genericY_def` are how the two are computed with
 from outside. -/
 theorem genericX_def : W.genericX =
-    algebraMap W.CoordinateRing W.FunctionField (algebraMap F[X] W.CoordinateRing X) := (rfl)
+    algebraMap W.CoordinateRing W.FunctionField (algebraMap R[X] W.CoordinateRing X) := (rfl)
 
 /-- **The defining equation of `genericY`.** -/
 theorem genericY_def : W.genericY =
@@ -68,29 +74,29 @@ theorem genericY_def : W.genericY =
 
 /-- `W` base-changed to its own function field. The generic point is a point of it. -/
 noncomputable abbrev functionFieldCurve : WeierstrassCurve.Affine W.FunctionField :=
-  W.map (algebraMap F W.FunctionField)
+  W.map (algebraMap R W.FunctionField)
 
-/-- The composite `F → W.FunctionField` factors through the coordinate ring. Used to turn
+/-- The composite `R → W.FunctionField` factors through the coordinate ring. Used to turn
 statements about the base-changed curve into statements about images under
 `algebraMap W.CoordinateRing W.FunctionField`. -/
 theorem algebraMap_functionField_eq_comp :
-    (algebraMap F W.FunctionField : F →+* W.FunctionField) =
-      (algebraMap W.CoordinateRing W.FunctionField).comp (algebraMap F W.CoordinateRing) :=
-  (IsScalarTower.algebraMap_eq F W.CoordinateRing W.FunctionField).symm
+    (algebraMap R W.FunctionField : R →+* W.FunctionField) =
+      (algebraMap W.CoordinateRing W.FunctionField).comp (algebraMap R W.CoordinateRing) :=
+  (IsScalarTower.algebraMap_eq R W.CoordinateRing W.FunctionField).symm
 
 /-- **Evaluating at the generic point is reduction modulo the Weierstrass relation.** A bivariate
-polynomial over `F`, pushed to the function field and evaluated at `(genericX, genericY)`, is the
+polynomial over `R`, pushed to the function field and evaluated at `(genericX, genericY)`, is the
 image of its class in the coordinate ring.
 
 This is the workhorse: it converts any polynomial expression at the generic point into the image
 of a coordinate-ring element, where the ring's own API applies. -/
-theorem evalEval_genericPoint (p : F[X][Y]) :
-    (p.map (mapRingHom (algebraMap F W.FunctionField))).evalEval W.genericX W.genericY =
+theorem evalEval_genericPoint (p : R[X][Y]) :
+    (p.map (mapRingHom (algebraMap R W.FunctionField))).evalEval W.genericX W.genericY =
       algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W p) := by
   conv_lhs =>
     rw [algebraMap_functionField_eq_comp W, ← mapRingHom_comp, ← Polynomial.map_map]
   set g := algebraMap W.CoordinateRing W.FunctionField
-  set q := Polynomial.map (mapRingHom (algebraMap F W.CoordinateRing)) p with hq
+  set q := Polynomial.map (mapRingHom (algebraMap R W.CoordinateRing)) p with hq
   -- `genericX` and `genericY` are already of the form `g _`; say so, or the rewrite below
   -- cannot see its own pattern `evalEval (g _) (g _) (map (mapRingHom g) _)`.
   change (q.map (mapRingHom g)).evalEval (g _) (g _) = g _
@@ -98,10 +104,10 @@ theorem evalEval_genericPoint (p : F[X][Y]) :
   congr 1
   rw [hq]
   rw [← Polynomial.eval₂_eval₂RingHom_apply]
-  have hinner : eval₂RingHom (algebraMap F W.CoordinateRing) (algebraMap F[X] W.CoordinateRing X) =
-      algebraMap F[X] W.CoordinateRing := by
+  have hinner : eval₂RingHom (algebraMap R W.CoordinateRing) (algebraMap R[X] W.CoordinateRing X) =
+      algebraMap R[X] W.CoordinateRing := by
     ext x
-    · simp [IsScalarTower.algebraMap_apply F F[X] W.CoordinateRing]
+    · simp [IsScalarTower.algebraMap_apply R R[X] W.CoordinateRing]
     · simp
   rw [hinner, ← Polynomial.aeval_def]
   exact AdjoinRoot.aeval_eq p
@@ -113,9 +119,19 @@ theorem equation_genericPoint : W.functionFieldCurve.Equation W.genericX W.gener
   dsimp only [Equation, functionFieldCurve]
   rw [map_polynomial, evalEval_genericPoint W W.polynomial, AdjoinRoot.mk_self, map_zero]
 
-/-- The generic point is nonsingular, so it is an affine point of the base-changed curve. -/
+section Field
+
+variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
+
+/-- The generic point is nonsingular, so it is an affine point of the base-changed curve.
+
+This is the only statement here that needs a field rather than a commutative ring: it goes
+through `equation_iff_nonsingular`, which does. Everything above is stated over `[CommRing R]`,
+which is all `CoordinateRing` and `FunctionField` ask for — both are `abbrev`s at that class. -/
 theorem nonsingular_genericPoint [W.IsElliptic] :
     W.functionFieldCurve.Nonsingular W.genericX W.genericY :=
   equation_iff_nonsingular.mp (equation_genericPoint W)
+
+end Field
 
 end WeierstrassCurve.Affine
