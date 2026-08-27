@@ -573,7 +573,64 @@ theorem IsIntegralClosure.finite_of_finiteType (k : Type*) [Field k] [Algebra k 
     [Algebra K L] [Algebra A L] [IsScalarTower A K L] [FiniteDimensional K L] (C : Type*)
     [CommRing C] [Algebra A C] [Algebra C L] [IsScalarTower A C L] [IsIntegralClosure C A L] :
     Module.Finite A C := by
-  sorry
+  classical
+  -- Noether normalization: a polynomial subring `P` over which `A` is finite
+  obtain ⟨s, g, hginj, hgfin⟩ := exists_finite_inj_algHom_of_fg k A
+  let _ : Algebra (MvPolynomial (Fin s) k) A := g.toRingHom.toAlgebra
+  have : Module.Finite (MvPolynomial (Fin s) k) A := hgfin
+  -- transport `P`'s action along `A` to `K`, `L` and `C`
+  let _ : Algebra (MvPolynomial (Fin s) k) K :=
+    ((algebraMap A K).comp (algebraMap (MvPolynomial (Fin s) k) A)).toAlgebra
+  have : IsScalarTower (MvPolynomial (Fin s) k) A K := IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
+  let _ : Algebra (MvPolynomial (Fin s) k) L :=
+    ((algebraMap A L).comp (algebraMap (MvPolynomial (Fin s) k) A)).toAlgebra
+  have : IsScalarTower (MvPolynomial (Fin s) k) A L := IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
+  let _ : Algebra (MvPolynomial (Fin s) k) C :=
+    ((algebraMap A C).comp (algebraMap (MvPolynomial (Fin s) k) A)).toAlgebra
+  have : IsScalarTower (MvPolynomial (Fin s) k) A C := IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
+  have : IsScalarTower (MvPolynomial (Fin s) k) C L := IsScalarTower.of_algebraMap_eq fun x ↦ by
+    change algebraMap A L (algebraMap _ A x) = algebraMap C L (algebraMap A C (algebraMap _ A x))
+    rw [← IsScalarTower.algebraMap_apply A C L]
+  -- `C` is also the integral closure of `P` in `L`, since `A` is integral over `P`
+  have : IsIntegralClosure C (MvPolynomial (Fin s) k) L :=
+    IsIntegralClosure.tower_bot (R := MvPolynomial (Fin s) k) (A := A)
+  have hPK : Function.Injective (algebraMap (MvPolynomial (Fin s) k) K) :=
+    (IsFractionRing.injective A K).comp hginj
+  have hAL : Function.Injective (algebraMap A L) := by
+    rw [IsScalarTower.algebraMap_eq A K L]
+    exact (algebraMap K L).injective.comp (IsFractionRing.injective A K)
+  have hPL : Function.Injective (algebraMap (MvPolynomial (Fin s) k) L) := hAL.comp hginj
+  -- Here `FractionRing P` really is the CONCRETE fraction ring, so `FractionRing.liftAlgebra` is
+  -- the right tool — unlike D3, where `K` was an abstract `IsFractionRing` and the tool was
+  -- `IsFractionRing.lift`. Introduced locally, as its docstring directs.
+  have : FaithfulSMul (MvPolynomial (Fin s) k) K :=
+    (faithfulSMul_iff_algebraMap_injective _ _).mpr hPK
+  have : FaithfulSMul (MvPolynomial (Fin s) k) L :=
+    (faithfulSMul_iff_algebraMap_injective _ _).mpr hPL
+  let _ : Algebra (FractionRing (MvPolynomial (Fin s) k)) K := FractionRing.liftAlgebra _ K
+  let _ : Algebra (FractionRing (MvPolynomial (Fin s) k)) L := FractionRing.liftAlgebra _ L
+  have : IsScalarTower (FractionRing (MvPolynomial (Fin s) k)) K L :=
+    IsScalarTower.of_algebraMap_eq' <|
+      IsFractionRing.lift_unique hPL (f := (algebraMap K L).comp
+        (algebraMap (FractionRing (MvPolynomial (Fin s) k)) K)) fun x ↦ by
+          rw [RingHom.comp_apply,
+            ← IsScalarTower.algebraMap_apply (MvPolynomial (Fin s) k)
+              (FractionRing (MvPolynomial (Fin s) k)) K,
+            IsScalarTower.algebraMap_apply (MvPolynomial (Fin s) k) A K,
+            ← IsScalarTower.algebraMap_apply A K L,
+            ← IsScalarTower.algebraMap_apply (MvPolynomial (Fin s) k) A L]
+  have : Module.IsTorsionFree (MvPolynomial (Fin s) k) A :=
+    Module.isTorsionFree_iff_algebraMap_injective.mpr hginj
+  -- `Frac P → K` is finite (T3), hence so is `Frac P → L`
+  have : FiniteDimensional (FractionRing (MvPolynomial (Fin s) k)) K :=
+    IsFractionRing.finiteDimensional_of_finite (MvPolynomial (Fin s) k) A
+      (FractionRing (MvPolynomial (Fin s) k)) K
+  have : FiniteDimensional (FractionRing (MvPolynomial (Fin s) k)) L :=
+    FiniteDimensional.trans (FractionRing (MvPolynomial (Fin s) k)) K L
+  -- Milestone 2 over `P`, then restrict scalars back to `A`
+  have : Module.Finite (MvPolynomial (Fin s) k) C :=
+    IsIntegralClosure.finite_mvPolynomial k (FractionRing (MvPolynomial (Fin s) k)) L C
+  exact Module.Finite.of_restrictScalars_finite (MvPolynomial (Fin s) k) A C
 
 /-- **Noether's finiteness theorem for Mathlib's `integralClosure`.** The specialisation of
 `TauCeti.IsIntegralClosure.finite_of_finiteType` to the integral closure of `A` in `L` as a
