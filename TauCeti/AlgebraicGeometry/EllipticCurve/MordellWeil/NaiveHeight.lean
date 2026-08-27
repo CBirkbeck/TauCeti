@@ -93,7 +93,9 @@ variable [AdmissibleAbsValues F]
 noncomputable def Point.naiveHeight (P : W.Point) : ℝ :=
   logHeight P.xRep
 
-@[simp]
+/-- The defining equation. Deliberately **not** `@[simp]`: tagging it makes `naiveHeight`
+disappear on sight, which puts `naiveHeight_zero` and `naiveHeight_neg` out of simp-normal form
+and makes them redundant. See the `api-design` thread on the PR. -/
 lemma Point.naiveHeight_eq_logHeight (P : W.Point) : P.naiveHeight = logHeight P.xRep := by
   simp [Point.naiveHeight]
 
@@ -106,7 +108,7 @@ lemma Point.naiveHeight_eq_logHeight₁ {P : W.Point} :
 /-- The point at infinity has height zero: its representative is `![1, 0]`. -/
 @[simp]
 lemma Point.naiveHeight_zero : (0 : W.Point).naiveHeight = 0 := by
-  simp [Point.xRep_zero]
+  simp [naiveHeight_eq_logHeight, Point.xRep_zero]
 
 /-- Negation preserves the naïve height, since `P` and `-P` share an `x`-coordinate. -/
 @[simp]
