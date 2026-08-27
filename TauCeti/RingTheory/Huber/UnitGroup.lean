@@ -5,9 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Topology.Algebra.Ring.Ideal
 public import TauCeti.RingTheory.Huber.RingOfDefinition
 public import TauCeti.Topology.Algebra.Nonarchimedean.GeometricSeries
+public import TauCeti.Topology.Algebra.Ring.MaximalIdeals
 
 /-!
 # The unit group of a complete Huber ring is open, and maximal ideals are closed
@@ -21,8 +21,8 @@ The argument is Wedhorn's. The topologically nilpotent elements of a Huber ring 
 (`TauCeti.Huber.isOpen_setOf_isTopologicallyNilpotent`), and completeness makes `1 + A°°` consist
 of units (`IsTopologicallyNilpotent.isUnit_one_add`). Around a unit `u` the set of `x` with
 `u⁻¹x - 1` topologically nilpotent is then an open neighbourhood of `u` made of units, so the unit
-group is open. Its complement is therefore closed and contains every proper ideal, so the closure
-of a maximal ideal is again a proper ideal containing it, hence equal to it by maximality.
+group is open. Closedness of maximal ideals is then immediate from
+`Ideal.isClosed_of_isMaximal_of_isOpen_isUnit`, which holds over any topological ring.
 
 ## Why this does not assume a linear topology
 
@@ -40,23 +40,19 @@ form of Proposition 7.51 that survives the Tate case.
 
 ## Main results
 
-* `Ideal.isClosed_of_isMaximal_of_isOpen_isUnit` : over any topological ring, a maximal ideal is
-  closed as soon as the unit group is open. This is the general engine and mentions neither
-  completeness nor a Huber structure.
 * `TauCeti.Huber.isOpen_setOf_isUnit` : the unit group of a complete Huber ring is open.
 * `TauCeti.Huber.isClosed_of_isMaximal` : **Wedhorn Proposition 7.51, closedness half** — every
   maximal ideal of a complete Huber ring is closed.
 
 ## Provenance
 
-Adapted from AINTLIB (see References), section `MaximalIdealClosed` and section `OpenUnits` of the
-source file, which has both statements as `isClosed_of_isMaximal_of_isOpen_units` and
-`isOpen_units_of_isOpen_topologicallyNilpotent`. The closedness argument is that file's, essentially
-verbatim.
+Adapted from AINTLIB (see References), section `OpenUnits` of the source file, where the statement
+is `isOpen_units_of_isOpen_topologicallyNilpotent`. (That file's other half, the closedness
+argument, is carried over in `TauCeti.Topology.Algebra.Ring.MaximalIdeals`.)
 
-The openness argument is **not**, and the difference is the point of this file. AINTLIB covers a
-unit `u` by the additive translate `u + A°°`, which forces it to rewrite `u + a = u * (1 + u⁻¹a)`
-and to know that `u⁻¹a` is again topologically nilpotent — that is
+The openness argument is **not** taken over verbatim, and the difference is the point of this
+file. AINTLIB covers a unit `u` by the additive translate `u + A°°`, which forces it to rewrite
+`u + a = u * (1 + u⁻¹a)` and to know that `u⁻¹a` is again topologically nilpotent — that is
 `IsTopologicallyNilpotent.mul_left`, which Mathlib states only under `[IsLinearTopology R R]`, so
 AINTLIB carries that hypothesis. It is not removable there: in a Tate ring `A°°` is not an ideal,
 and `ℚ_p` is a counterexample, with `p` topologically nilpotent but `p⁻² * p = p⁻¹` not. The
@@ -79,21 +75,6 @@ discharged rather than carried, and the Huber-level statements need no side cond
 public section
 
 open Topology
-
-/-- **A maximal ideal of a topological ring is closed once the unit group is open.** The closure
-of `𝔪` is an ideal containing `𝔪`, and it is proper because it avoids the units — the units are
-open, so their complement is a closed set containing `𝔪` and hence its closure. Maximality then
-forces the closure to be `𝔪` itself. -/
-theorem Ideal.isClosed_of_isMaximal_of_isOpen_isUnit {A : Type*} [CommRing A]
-    [TopologicalSpace A] [IsTopologicalRing A] (hU : IsOpen {a : A | IsUnit a}) (𝔪 : Ideal A)
-    [𝔪.IsMaximal] : IsClosed (𝔪 : Set A) := by
-  rw [← closure_eq_iff_isClosed, ← Ideal.coe_closure]
-  congr 1
-  have hne : 𝔪.closure ≠ ⊤ := by
-    rw [Ideal.ne_top_iff_one]
-    exact fun h1 ↦ (closure_minimal (fun x hx ↦ mt (Ideal.eq_top_of_isUnit_mem 𝔪 hx)
-      (Ideal.IsMaximal.ne_top ‹_›)) hU.isClosed_compl h1) isUnit_one
-  exact (Ideal.IsMaximal.eq_of_le ‹_› hne fun x hx ↦ subset_closure hx).symm
 
 namespace TauCeti.Huber
 
