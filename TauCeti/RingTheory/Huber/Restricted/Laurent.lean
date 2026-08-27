@@ -67,12 +67,12 @@ section Shift
 variable {A : Type*} [CommRing A]
 
 /-- Exponents of one-variable series are natural numbers: `n ↦ n 0`, inverse `j ↦ single 0 j`. -/
-noncomputable def expEquiv : (Fin 1 →₀ ℕ) ≃ ℕ :=
+private noncomputable def expEquiv : (Fin 1 →₀ ℕ) ≃ ℕ :=
   Finsupp.equivFunOnFinite.trans (Equiv.funUnique (Fin 1) ℕ)
 
-@[simp] theorem expEquiv_apply (n : Fin 1 →₀ ℕ) : expEquiv n = n 0 := (rfl)
+@[simp] private theorem expEquiv_apply (n : Fin 1 →₀ ℕ) : expEquiv n = n 0 := (rfl)
 
-@[simp] theorem expEquiv_symm_apply (j : ℕ) : expEquiv.symm j = Finsupp.single 0 j :=
+@[simp] private theorem expEquiv_symm_apply (j : ℕ) : expEquiv.symm j = Finsupp.single 0 j :=
   Finsupp.unique_single (expEquiv.symm j)
 
 variable {M : Type*} [AddCommGroup M] [Module A M]
@@ -82,10 +82,15 @@ variable (A) in
 `∑ mⱼ Xʲ ↦ ∑ mⱼ Xʲ⁺¹`. This is what `X • ·` on `M⟨X⟩ = M ⊗[A] A⟨X⟩` looks like on coefficients
 (`restrictedMvPowerSeriesBaseChange_tmul_restrictedX_mul`). -/
 noncomputable def xShift : MvPowerSeries (Fin 1) M →ₗ[A] MvPowerSeries (Fin 1) M where
+  -- `MvPowerSeries (Fin 1) M` unfolds to the coefficient function type, but only
+  -- definitionally; the ascription is what lets the lambda below elaborate against it.
   toFun s := show (Fin 1 →₀ ℕ) → M from
     fun n ↦ if n 0 = 0 then 0 else (s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 (n 0 - 1))
   map_add' s t := by
     funext n
+    -- Present the goal in `xShift`'s defining if-then-else form so `split_ifs` can fire. This
+    -- is a definitional unfolding of the structure field, not an equation, so there is no
+    -- lemma for `rw` to use; `change` is the step.
     change (if n 0 = 0 then (0 : M) else (s + t : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 (n 0 - 1))) =
       (if n 0 = 0 then (0 : M) else (s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 (n 0 - 1))) +
         (if n 0 = 0 then (0 : M) else (t : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 (n 0 - 1)))
@@ -94,6 +99,7 @@ noncomputable def xShift : MvPowerSeries (Fin 1) M →ₗ[A] MvPowerSeries (Fin 
     · rfl
   map_smul' a s := by
     funext n
+    -- Same definitional unfolding as in `map_add'`.
     change (if n 0 = 0 then (0 : M) else (a • s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 (n 0 - 1))) =
       a • (if n 0 = 0 then (0 : M) else (s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 (n 0 - 1)))
     split_ifs
@@ -102,12 +108,16 @@ noncomputable def xShift : MvPowerSeries (Fin 1) M →ₗ[A] MvPowerSeries (Fin 
 
 /-- The coefficients of `xShift A s`: it vanishes in degree `0`, and in every other
 degree it takes the coefficient of `s` one degree down. -/
+@[simp]
 theorem xShift_apply (s : MvPowerSeries (Fin 1) M) (n : Fin 1 →₀ ℕ) :
     (xShift A s : (Fin 1 →₀ ℕ) → M) n =
       if n 0 = 0 then 0 else (s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 (n 0 - 1)) := (rfl)
 
-/-- `xShift A s` has no constant term. -/
-@[simp]
+/-- `xShift A s` has no constant term.
+
+Not `@[simp]`: the general equation `xShift_apply` above is `@[simp]` and rewrites this
+left-hand side first, so annotating the degree-`0` specialisation too would leave it out of
+simp normal form. `simp` proves this statement on its own. -/
 theorem xShift_apply_zero (s : MvPowerSeries (Fin 1) M) :
     (xShift A s : (Fin 1 →₀ ℕ) → M) 0 = 0 := by
   simp [xShift_apply]
@@ -193,6 +203,8 @@ theorem restrictedMvPowerSeriesBaseChange_tmul_restrictedX_mul (m : M)
   | zero => rw [Finsupp.single_zero, xShift_apply_zero, MvPowerSeries.coeff_zero_X_mul, zero_smul]
   | succ j =>
     rw [xShift_apply_single_succ, coeff_restrictedMvPowerSeriesBaseChange_tmul,
+      -- `Finsupp.single_add` splits `single 0 (1 + j)`, so the exponent is commuted in
+      -- place here rather than in a separate step.
       show j + 1 = 1 + j from Nat.add_comm j 1, Finsupp.single_add, MvPowerSeries.X_def,
       MvPowerSeries.coeff_add_monomial_mul, one_mul]
 
@@ -252,7 +264,7 @@ section Regular
 variable {A : Type*} [CommRing A] {M : Type*} [AddCommGroup M] [Module A M]
 
 /-- **Multiplication by `1 - f X` is injective on series with coefficients in any module.** -/
-theorem injective_id_sub_smul_xShift (f : A) :
+theorem id_sub_smul_xShift_injective (f : A) :
     Function.Injective (LinearMap.id - f • xShift A : MvPowerSeries (Fin 1) M →ₗ[A] _) := by
   rw [injective_iff_map_eq_zero]
   intro s hs
@@ -266,13 +278,15 @@ theorem injective_id_sub_smul_xShift (f : A) :
     induction j with
     | zero => simpa using hc 0
     | succ j ih => rw [hc (j + 1), xShift_apply_single_succ, ih, smul_zero]
+  -- Equality of one-variable series is definitionally equality of their coefficient
+  -- functions, which is what `funext` needs to see.
   change (s : (Fin 1 →₀ ℕ) → M) = 0
   funext n
   rw [Finsupp.unique_single n]
   exact hzero _
 
 /-- From `f • c (j + 1) = c j`, every term of the sequence is `f ^ i` times a later one. -/
-theorem eq_pow_smul_of_smul_succ {f : A} {c : ℕ → M} (hsucc : ∀ j, f • c (j + 1) = c j) :
+private theorem eq_pow_smul_of_smul_succ {f : A} {c : ℕ → M} (hsucc : ∀ j, f • c (j + 1) = c j) :
     ∀ i j, c j = f ^ i • c (j + i) := by
   intro i
   induction i with
@@ -285,7 +299,7 @@ theorem eq_pow_smul_of_smul_succ {f : A} {c : ℕ → M} (hsucc : ∀ j, f • c
 each step vanishes.** This is the noetherian stabilisation in Wedhorn's proof of Lemma 8.31(2):
 the submodules spanned by the initial terms increase, so they stabilise at some `l`; then `c l`
 generates all of them and is divisible by an arbitrarily large power of `f`, so it vanishes. -/
-theorem eq_zero_of_smul_eq_zero_of_smul_succ [IsNoetherian A M] {f : A} {c : ℕ → M}
+private theorem eq_zero_of_smul_eq_zero_of_smul_succ [IsNoetherian A M] {f : A} {c : ℕ → M}
     (h0 : f • c 0 = 0) (hsucc : ∀ j, f • c (j + 1) = c j) (j : ℕ) : c j = 0 := by
   have hshift := eq_pow_smul_of_smul_succ hsucc
   have hpow : ∀ j, f ^ (j + 1) • c j = 0 := by
@@ -324,7 +338,7 @@ theorem eq_zero_of_smul_eq_zero_of_smul_succ [IsNoetherian A M] {f : A} {c : ℕ
 
 /-- **Multiplication by `f - X` is injective on series with coefficients in a noetherian
 module.** -/
-theorem injective_smul_id_sub_xShift [IsNoetherian A M] (f : A) :
+theorem smul_id_sub_xShift_injective [IsNoetherian A M] (f : A) :
     Function.Injective (f • LinearMap.id - xShift A : MvPowerSeries (Fin 1) M →ₗ[A] _) := by
   rw [injective_iff_map_eq_zero]
   intro s hs
@@ -336,6 +350,8 @@ theorem injective_smul_id_sub_xShift [IsNoetherian A M] (f : A) :
   have hall := eq_zero_of_smul_eq_zero_of_smul_succ
     (c := fun j ↦ (s : (Fin 1 →₀ ℕ) → M) (Finsupp.single 0 j)) (by simpa using hrec 0)
     fun j ↦ by have := hrec (j + 1); rwa [xShift_apply_single_succ] at this
+  -- Equality of one-variable series is definitionally equality of their coefficient
+  -- functions, which is what `funext` needs to see.
   change (s : (Fin 1 →₀ ℕ) → M) = 0
   funext n
   rw [Finsupp.unique_single n]
@@ -354,7 +370,7 @@ variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [Comple
   [ContinuousAdd N] [IsModuleTopology A N]
 
 /-- `1 - f X` acts injectively on `N ⊗[A] A⟨X⟩` for a finite `N` with its module topology. -/
-theorem injective_lTensor_mulLeft_one_sub_algebraMap_mul_restrictedX (f : A) :
+theorem lTensor_mulLeft_one_sub_algebraMap_mul_restrictedX_injective (f : A) :
     Function.Injective (LinearMap.lTensor N (LinearMap.mulLeft A
       (1 - algebraMap A (restrictedMvPowerSeriesSubring 1 A) f * restrictedX))) := by
   rw [lTensor_mulLeft_one_sub_algebraMap_mul_restrictedX, injective_iff_map_eq_zero]
@@ -367,12 +383,12 @@ theorem injective_lTensor_mulLeft_one_sub_algebraMap_mul_restrictedX (f : A) :
     Submodule.coe_sub, Submodule.coe_smul, coe_restrictedXShift, Submodule.coe_zero] at h
   have h' : ((restrictedMvPowerSeriesBaseChange z : restrictedMvPowerSeriesSubmodule 1 A N) :
       MvPowerSeries (Fin 1) N) = 0 :=
-    (injective_iff_map_eq_zero _).mp (injective_id_sub_smul_xShift f) _ (by simpa using h)
+    (injective_iff_map_eq_zero _).mp (id_sub_smul_xShift_injective f) _ (by simpa using h)
   exact (restrictedMvPowerSeriesBaseChange_bijective (k := 1) (A := A) (M := N)).injective
     (by rw [map_zero]; exact Subtype.ext h')
 
 /-- `f - X` acts injectively on `N ⊗[A] A⟨X⟩` for a finite `N` with its module topology. -/
-theorem injective_lTensor_mulLeft_algebraMap_sub_restrictedX (f : A) :
+theorem lTensor_mulLeft_algebraMap_sub_restrictedX_injective (f : A) :
     Function.Injective (LinearMap.lTensor N (LinearMap.mulLeft A
       (algebraMap A (restrictedMvPowerSeriesSubring 1 A) f - restrictedX))) := by
   rw [lTensor_mulLeft_algebraMap_sub_restrictedX, injective_iff_map_eq_zero]
@@ -385,7 +401,7 @@ theorem injective_lTensor_mulLeft_algebraMap_sub_restrictedX (f : A) :
     Submodule.coe_sub, Submodule.coe_smul, coe_restrictedXShift, Submodule.coe_zero] at h
   have h' : ((restrictedMvPowerSeriesBaseChange z : restrictedMvPowerSeriesSubmodule 1 A N) :
       MvPowerSeries (Fin 1) N) = 0 :=
-    (injective_iff_map_eq_zero _).mp (injective_smul_id_sub_xShift f) _ (by simpa using h)
+    (injective_iff_map_eq_zero _).mp (smul_id_sub_xShift_injective f) _ (by simpa using h)
   exact (restrictedMvPowerSeriesBaseChange_bijective (k := 1) (A := A) (M := N)).injective
     (by rw [map_zero]; exact Subtype.ext h')
 
@@ -396,7 +412,7 @@ theorem flat_quotient_algebraMap_sub_restrictedX (f : A) :
       Ideal.span {algebraMap A (restrictedMvPowerSeriesSubring 1 A) f - restrictedX}) := by
   have := flat_restrictedMvPowerSeriesSubring (k := 1) (A := A)
   exact Module.Flat.quotient_span_singleton_of_lTensor_mulLeft_injective _ fun I _ ↦
-    injective_lTensor_mulLeft_algebraMap_sub_restrictedX (N := A ⧸ I) f
+    lTensor_mulLeft_algebraMap_sub_restrictedX_injective (N := A ⧸ I) f
 
 variable (A) in
 /-- **`A⟨X⟩/(1 - f X)` is flat over a complete noetherian Tate ring** (Wedhorn, Lemma 8.31(2)). -/
@@ -405,7 +421,7 @@ theorem flat_quotient_one_sub_algebraMap_mul_restrictedX (f : A) :
       Ideal.span {1 - algebraMap A (restrictedMvPowerSeriesSubring 1 A) f * restrictedX}) := by
   have := flat_restrictedMvPowerSeriesSubring (k := 1) (A := A)
   exact Module.Flat.quotient_span_singleton_of_lTensor_mulLeft_injective _ fun I _ ↦
-    injective_lTensor_mulLeft_one_sub_algebraMap_mul_restrictedX (N := A ⧸ I) f
+    lTensor_mulLeft_one_sub_algebraMap_mul_restrictedX_injective (N := A ⧸ I) f
 
 end Laurent
 
