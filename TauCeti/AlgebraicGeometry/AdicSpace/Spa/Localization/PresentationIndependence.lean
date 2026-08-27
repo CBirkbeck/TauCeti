@@ -36,8 +36,8 @@ presentation independence under the same hypothesis: each composite fixes the st
 from `A`, hence is the identity, so the two coordinate rings are canonically isomorphic. That
 is the shape `TauCeti.Huber.presentationRingEquiv` has been waiting for — it produces the
 isomorphism *given* comparison maps both ways, and nothing supplies them from an equality of
-rational subsets. This file supplies them, assuming only that the coordinate rings' plus subrings
-are open.
+rational subsets. This file supplies them, assuming that the coordinate rings' maximal ideals and
+plus subrings are open.
 
 ## Main results
 
@@ -141,8 +141,9 @@ theorem existsUnique_continuous_ringHom_of_rationalSubset_subset (P : PairOfDefi
   let _ := isHuberRing_completion_locTopology P T' s' S' hden'
   intro hmax hopen'
   refine existsUnique_continuous_ringHom_of_forall_comap_mem_rationalSubset P Aplus T s S hden
-    (completedPlusSubring P Aplus T' s' S' hden') hmax hopen'
-    (completedPlusSubring_le_powerBoundedSubring P Aplus hAplus T' s' S' hden')
+    (completedPlusSubring P Aplus T' s' S' hden') hmax
+    ⟨hopen', inferInstance,
+      completedPlusSubring_le_powerBoundedSubring P Aplus hAplus T' s' S' hden'⟩
     (continuous_toCompletionLoc P T' s' S' hden').continuousAt fun w hw ↦ hsub ?_
   -- `Spa ρ'` lands in `R(T'/s')`; the containment carries it into `R(T/s)`
   simpa only [spaComapLoc_val] using
