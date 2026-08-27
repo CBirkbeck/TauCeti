@@ -142,6 +142,30 @@ lemma mem_selmerGroupA_iff (m : W.M) :
         W.selmerGroupFactor R p := by
   simp [selmerGroupA, selmerGroupFactor, IsDedekindDomain.selmerGroupAbove_def]
 
+/-- **`A(S,2)` is finite**, given that each factor's ring of integers has finite class group and
+finitely generated unit group.
+
+Immediate from `IsDedekindDomain.finite_selmerGroupOfEquiv`, because `selmerGroupA` *is* a
+`selmerGroupOfEquiv`: there are finitely many factors, since `f` has finitely many monic
+irreducible divisors, and finitely many relevant primes, since finitely many lie above the
+finitely many bad primes.
+
+Stated here rather than beside the weak Mordell-Weil theorem that consumes it: `selmerGroupA` is
+not `@[expose]`, so downstream the goal `Finite (selmerGroupA R)` and the conclusion of
+`finite_selmerGroupOfEquiv` are not visibly the same type, and closing that gap costs an
+`isDefEq` timeout. In this module the definition is visible and the proof is one `exact`. -/
+theorem finite_selmerGroupA
+    [(p : W.f.Factors) → Finite (ClassGroup (W.ringOfIntegersFactor R p))]
+    [(p : W.f.Factors) → Monoid.FG (W.ringOfIntegersFactor R p)ˣ] :
+    Finite (W.selmerGroupA R) :=
+  have : Finite W.f.Factors := Polynomial.Factors.finite W.f_ne_zero
+  IsDedekindDomain.finite_selmerGroupOfEquiv (fun p : W.f.Factors ↦ 𝕃 p)
+    (fun p ↦ W.ringOfIntegersFactor R p)
+    (fun p ↦ HeightOneSpectrum.primesAbove R (W.ringOfIntegersFactor R p) (W.badPrimes R)) 2
+    (fun p ↦ HeightOneSpectrum.primesAbove_finite R (W.ringOfIntegersFactor R p)
+      (W.finite_badPrimes R))
+    (AdjoinRoot.modPowEquivPiFactors W.f_ne_zero W.squarefree_f 2)
+
 /-- Membership of the class of a unit in the `2`-Selmer group of a field factor: its valuation is
 even at every prime of the ring of integers not lying above a bad prime.
 
