@@ -8,6 +8,7 @@ module
 public import Mathlib.NumberTheory.NumberField.Ideal.Basic
 public import TauCeti.NumberTheory.LegendreSymbol.Frobenius
 public import TauCeti.NumberTheory.NumberField.IntegralSqrt
+public import TauCeti.NumberTheory.NumberField.AutomorphismAction
 import Mathlib.Algebra.CharP.Basic
 import Mathlib.RingTheory.IntegralClosure.Algebra.Basic
 
@@ -87,14 +88,7 @@ theorem isArithFrobAt_apply_sqrt (hodd : p ≠ 2) {d : ℤ} (hd : ¬ (p : ℤ) �
   have hsmul : σ • integralSqrt hx = legendreSym p d • integralSqrt hx :=
     TauCeti.IsArithFrobAt.smul_sqrt hσ hodd hd (integralSqrt_sq hx)
   have hcoe := congrArg (algebraMap (𝓞 K) K) hsmul
-  -- `algebraMap` intertwines the Galois actions on `𝓞 K` and `K` (`integralClosure.coe_smul`).
-  have hbridge : algebraMap (𝓞 K) K (σ • integralSqrt hx) =
-      σ (algebraMap (𝓞 K) K (integralSqrt hx)) := by
-    have hc : algebraMap (𝓞 K) K (σ • integralSqrt hx) =
-        σ • algebraMap (𝓞 K) K (integralSqrt hx) :=
-      integralClosure.coe_smul σ (integralSqrt hx)
-    rw [hc, AlgEquiv.smul_def]
-  rw [map_zsmul, algebraMap_integralSqrt, hbridge] at hcoe
+  rw [map_zsmul, algebraMap_integralSqrt, algebraMap_smul_eq_apply] at hcoe
   rwa [algebraMap_integralSqrt] at hcoe
 
 /-- **A Frobenius fixes `√d` iff `d` is a quadratic residue mod `p`.** Under the hypotheses of
