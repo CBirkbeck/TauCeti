@@ -41,8 +41,10 @@ every finitely generated `M` — the `Tor`-sequence claim that is
 
 The comparison map intertwines `X • ·` on `M ⊗[A] A⟨X⟩` with the coefficient shift on `M⟨X⟩`
 (`restrictedMvPowerSeriesBaseChange_comp_lTensor_mulLeft_restrictedX`), and scalars act as
-scalars (`lTensor_mulLeft_algebraMap`). So `(1 - f X) • ·` and `(f - X) • ·` on `M ⊗[A] A⟨X⟩`
-are `id - f • xShift` and `f • id - xShift` on coefficients. The first is injective by induction
+scalars. So `(1 - f X) • ·` and `(f - X) • ·` on `M ⊗[A] A⟨X⟩` are `id - f • xShift` and
+`f • id - xShift` on coefficients — that is
+`lTensor_mulLeft_one_sub_algebraMap_mul_restrictedX` and
+`lTensor_mulLeft_algebraMap_sub_restrictedX`. The first is injective by induction
 on the coefficient index. The second is Wedhorn's argument: if `f • s = X s` then `f • s₀ = 0`
 and `f • sⱼ₊₁ = sⱼ`, so every coefficient is a power of `f` times a later one; the chain of
 submodules spanned by the initial coefficients stabilises because `M` is noetherian, the
@@ -222,16 +224,6 @@ theorem restrictedMvPowerSeriesBaseChange_comp_lTensor_mulLeft_restrictedX :
     simp only [LinearMap.comp_apply, LinearMap.lTensor_tmul, LinearMap.mulLeft_apply]
     exact restrictedMvPowerSeriesBaseChange_tmul_restrictedX_mul m b
 
-omit [TopologicalSpace M] [ContinuousAdd M] [ContinuousSMul A M] in
-/-- Multiplying the series factor by a scalar is the scalar action on the tensor product. -/
-theorem lTensor_mulLeft_algebraMap (f : A) :
-    LinearMap.lTensor M
-        (LinearMap.mulLeft A (algebraMap A (restrictedMvPowerSeriesSubring 1 A) f)) =
-      f • LinearMap.id :=
-  TensorProduct.ext' fun m b ↦ by
-    simp [LinearMap.lTensor_tmul, LinearMap.mulLeft_apply, ← Algebra.smul_def,
-      TensorProduct.tmul_smul]
-
 /-- Through the comparison map, `X • ·` on `M ⊗[A] A⟨X⟩` is the coefficient shift on `M⟨X⟩`. -/
 theorem restrictedMvPowerSeriesBaseChange_lTensor_mulLeft_restrictedX
     (z : TensorProduct A M (restrictedMvPowerSeriesSubring 1 A)) :
@@ -261,7 +253,10 @@ theorem lTensor_mulLeft_algebraMap_sub_restrictedX (f : A) :
 
 end Compat
 
-/-! ### Regularity of `1 - f X` and of `f - X` on `M⟨X⟩` -/
+/-! ### Regularity of `1 - f X` and of `f - X` on `MvPowerSeries (Fin 1) M`
+
+Restrictedness is irrelevant to these two lemmas, so they are stated on all of
+`MvPowerSeries (Fin 1) M`, with no topology; the statements on `M⟨X⟩` follow by restriction. -/
 
 section Regular
 
