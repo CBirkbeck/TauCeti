@@ -42,10 +42,6 @@ inseparable `L' / K` and `q = p ^ e` with `L ⊂ L'(x^{1/q})`.
 
 public section
 
--- Skeleton of the normalization-finiteness development: `sorry` is an error under the library's
--- `warningAsError`, so it is downgraded here until the proofs land. Remove with the last `sorry`.
-set_option warningAsError false
-
 universe u
 
 namespace TauCeti
@@ -85,6 +81,44 @@ theorem IsPurelyInseparable.nonempty_algHom_of_forall_exists_pow_eq (K M : Type*
     (h : ∀ x ∈ s, ∃ y : K',
       y ^ p ^ n = algebraMap K K' (IsPurelyInseparable.iterateFrobenius K M p hn x)) :
     Nonempty (M →ₐ[K] K') := by
-  sorry
+  classical
+  -- B2.0: `K'` inherits the exponential characteristic from `K`
+  have : ExpChar K' p := expChar_of_injective_algebraMap (algebraMap K K').injective p
+  set φ := IsPurelyInseparable.iterateFrobenius K M p hn with hφ
+  set ψ := iterateFrobenius K' p n with hψ
+  set θ : M →+* K' := (algebraMap K K').comp φ with hθ
+  have hψ_apply : ∀ y : K', ψ y = y ^ p ^ n := fun _ ↦ rfl
+  -- B2.2: the good set contains the image of `K` (this is the `K`-algebra law)
+  have hKmem : ∀ a : K, algebraMap K M a ∈ Subfield.comap θ ψ.fieldRange := by
+    intro a
+    refine RingHom.mem_fieldRange.mpr ⟨algebraMap K K' a, ?_⟩
+    rw [hψ_apply, ← map_pow]
+    change _ = θ (algebraMap K M a)
+    rw [hθ, RingHom.comp_apply, hφ, IsPurelyInseparable.iterateFrobenius_algebraMap]
+  -- B2.1 + B2.4: promote the good set and show it is everything
+  set G : IntermediateField K M :=
+    (Subfield.comap θ ψ.fieldRange).toIntermediateField hKmem with hG
+  have hsG : s ⊆ (G : Set M) := by
+    intro x hx
+    obtain ⟨y, hy⟩ := h x hx
+    exact RingHom.mem_fieldRange.mpr ⟨y, by rw [hψ_apply, hy]; rfl⟩
+  have hGtop : G = ⊤ := by
+    rw [eq_top_iff, ← hs]
+    exact IntermediateField.adjoin_le_iff.mpr hsG
+  have hgood : ∀ x : M, θ x ∈ ψ.fieldRange := by
+    intro x
+    have hx : x ∈ G := by rw [hGtop]; exact IntermediateField.mem_top
+    exact hx
+  -- B2.6: invert `ψ` on its range. The range equivalence is taken at the RING level: `ψ` is only
+  -- `K`-semilinear (along Frobenius), so no `K`-algebra equivalence is available here.
+  refine ⟨{ toRingHom := (ψ.rangeRestrictFieldEquiv.symm.toRingHom).comp
+              (θ.codRestrict ψ.fieldRange hgood)
+            commutes' := fun a ↦ ?_ }⟩
+  -- `K`-linearity is forced by injectivity of `ψ`, not proved separately
+  refine ψ.injective ?_
+  change ψ (ψ.rangeRestrictFieldEquiv.symm ⟨θ (algebraMap K M a), hgood _⟩) = ψ (algebraMap K K' a)
+  rw [RingHom.rangeRestrictFieldEquiv_apply_symm_apply, hψ_apply, ← map_pow]
+  change θ (algebraMap K M a) = _
+  rw [hθ, RingHom.comp_apply, hφ, IsPurelyInseparable.iterateFrobenius_algebraMap]
 
 end TauCeti
