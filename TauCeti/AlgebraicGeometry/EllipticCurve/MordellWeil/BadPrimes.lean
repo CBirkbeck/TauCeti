@@ -216,8 +216,12 @@ lemma valuation_Δ_eq_one_of_notMem_badPrimes (hv : v ∉ W.badPrimes R) :
     v.valuation K W.Δ = 1 :=
   ((W.notMem_badPrimes_iff R).mp hv).2.1
 
-/-- At a good prime, `2` is a unit. Needed because the descent is a `2`-descent: the completion
-of the square behind `equation_iff_eval_f_eq_sq` must stay invertible. -/
+/-- At a good prime, `2` is a unit: the `2`-component of `badPrimes`, read off like the other four.
+
+Nothing in these files consumes it. Step 6 needs `Δ` to be a unit and `a₂`, `a₄`, `a₆` to be
+integral at a good prime, and never the valuation of `2`; it is recorded here so that the
+projections out of `badPrimes` are complete. In the source this file is adapted from, its uses are
+in the semilocal comparison (`EllipticCurves/SelmerGroup.lean`), a later rung of the descent. -/
 lemma valuation_two_eq_one_of_notMem_badPrimes (hv : v ∉ W.badPrimes R) :
     v.valuation K 2 = 1 :=
   ((W.notMem_badPrimes_iff R).mp hv).1
