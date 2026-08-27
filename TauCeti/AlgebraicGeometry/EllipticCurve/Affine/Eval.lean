@@ -157,17 +157,21 @@ noncomputable def evalAlgHom (h : (W.map (algebraMap R A)).toAffine.Equation x y
     rw [hmk] at hc
     simpa using hc
 
+/-- Evaluating the class of a polynomial in the coordinate ring is mapped polynomial evaluation
+at the given solution of the Weierstrass equation. -/
 @[simp]
 theorem evalAlgHom_mk (h : (W.map (algebraMap R A)).toAffine.Equation x y) (p : R[X][Y]) :
     evalAlgHom h (CoordinateRing.mk W p) =
       (p.map (mapRingHom (algebraMap R A))).evalEval x y :=
   evalRingHom_mk h p
 
+/-- Evaluation sends the coordinate-ring class of `X` to the first coordinate `x`. -/
 theorem evalAlgHom_mk_C_X (h : (W.map (algebraMap R A)).toAffine.Equation x y) :
     evalAlgHom h (CoordinateRing.mk W (C X)) = x := by
   rw [evalAlgHom_mk]
   simp [evalEval_C]
 
+/-- Evaluation sends the coordinate-ring class of `Y` to the second coordinate `y`. -/
 theorem evalAlgHom_mk_Y (h : (W.map (algebraMap R A)).toAffine.Equation x y) :
     evalAlgHom h (CoordinateRing.mk W Y) = y := by
   rw [evalAlgHom_mk]

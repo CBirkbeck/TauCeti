@@ -157,10 +157,12 @@ private theorem transcendental_xCoord_translatedPoint (P : W.Point) :
       norm_num
     · have heq := (_root_.WeierstrassCurve.Affine.equation_iff u v).1 hns.left
       have hb' : algebraMap 𝔽 W.FunctionField (⟨_, hb⟩ : 𝔽)
-          = (W⁄W.FunctionField).a₁ * u + (W⁄W.FunctionField).a₃ := (rfl)
+          = (W⁄W.FunctionField).a₁ * u + (W⁄W.FunctionField).a₃ := by
+        simp only [IntermediateField.algebraMap_apply]
       have hc' : algebraMap 𝔽 W.FunctionField (⟨_, hc⟩ : 𝔽)
           = -(u ^ 3 + (W⁄W.FunctionField).a₂ * u ^ 2 + (W⁄W.FunctionField).a₄ * u
-            + (W⁄W.FunctionField).a₆) := (rfl)
+            + (W⁄W.FunctionField).a₆) := by
+        simp only [IntermediateField.algebraMap_apply]
       simp only [eval₂_add, eval₂_mul, eval₂_X, eval₂_C, eval₂_X_pow, hb', hc']
       linear_combination heq
   have hv : v ∈ 𝔽 := isIntegral_trans (R := F) v hv𝔽

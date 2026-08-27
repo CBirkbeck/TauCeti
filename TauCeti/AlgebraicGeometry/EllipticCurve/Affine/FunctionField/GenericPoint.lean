@@ -71,14 +71,18 @@ noncomputable def genericX : W.FunctionField :=
 noncomputable def genericY : W.FunctionField :=
   algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y)
 
-/-- The equation lemma for `genericX`, which the module boundary makes necessary. -/
+/-- The generic coordinate `x` is the image of the coordinate-ring class of `X` in the function
+field. -/
 theorem genericX_def :
     genericX W = algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W (C X)) := (rfl)
 
-/-- The equation lemma for `genericY`, which the module boundary makes necessary. -/
+/-- The generic coordinate `y` is the image of the coordinate-ring class of `Y` in the function
+field. -/
 theorem genericY_def :
     genericY W = algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y) := (rfl)
 
+/-- The generic coordinate `x` is the image of polynomial `X` under the induced map from `R[X]`
+to the function field. -/
 theorem genericX_eq_algebraMap : genericX W = algebraMap R[X] W.FunctionField X := by
   rw [genericX_def, IsScalarTower.algebraMap_apply R[X] W.CoordinateRing W.FunctionField,
     AdjoinRoot.algebraMap_eq]
@@ -121,7 +125,7 @@ function field. -/
 noncomputable def genericPoint : (W⁄W.FunctionField).toAffine.Point :=
   .some _ _ (nonsingular_genericX_genericY W)
 
-/-- The equation lemma for `genericPoint`, which the module boundary makes necessary. -/
+/-- The generic point is the affine point whose coordinates are `genericX W` and `genericY W`. -/
 theorem genericPoint_eq_some : genericPoint W =
     .some (genericX W) (genericY W) (nonsingular_genericX_genericY W) := (rfl)
 
