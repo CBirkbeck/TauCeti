@@ -265,8 +265,8 @@ This is the *canonical* half of presentation independence: it says the compariso
 isomorphism and is determined by compatibility, not that the compatibility hypotheses hold for
 two presentations of the same rational subset. Supplying those is a separate step, and it is not
 taken unconditionally anywhere: `TauCeti.ValuationSpectrum.presentationRingEquivOfEq` derives
-them from an equality of rational subsets through Wedhorn's Proposition 8.2(1), but only given
-his Proposition 7.52(1) for each coordinate ring, which this repository does not have. -/
+them from an equality of rational subsets through Wedhorn's Proposition 8.2(1), but only for
+coordinate rings whose maximal ideals and whose plus subring are open. -/
 noncomputable def presentationRingEquiv [IsTopologicalRing A]
     (P : PairOfDefinition A) (T : Finset A) (s : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]

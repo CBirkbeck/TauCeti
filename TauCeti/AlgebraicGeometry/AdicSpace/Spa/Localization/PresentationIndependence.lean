@@ -17,11 +17,11 @@ numerator. Wedhorn's Proposition 8.2(1) asks for the comparison under the weaker
 hypothesis that the rational subsets are *contained* in one another, and this file instantiates
 Lemma 8.1 at a coordinate ring to get it.
 
-**Neither Proposition 8.2(1) nor presentation independence is proved here.** Lemma 8.1 is
-available in this repository only as a reduction to Wedhorn's Proposition 7.52(1), which is
-absent, and instantiating it inherits that hypothesis. What is proved below is each of the two
-results *given* 7.52(1) for the coordinate rings involved; neither may be cited as the result
-Wedhorn states.
+**Neither result is yet Wedhorn's in the generality he states it.** Instantiating Lemma 8.1 at a
+coordinate ring inherits what Lemma 8.1 asks of a target pair, and below that is two hypotheses
+carried rather than derived: openness of the target's maximal ideals, and openness of the plus
+subring `A_U⁺`. Until both are discharged neither result may be cited as the statement Wedhorn
+gives. See *The hypotheses both results carry* for why each is still there.
 
 > (1) If `U' ⊆ U`, then there exists a unique continuous homomorphism `σ : A⟨T/s⟩ → A⟨T'/s'⟩`
 > such that `σ ∘ ρ = ρ'`.
