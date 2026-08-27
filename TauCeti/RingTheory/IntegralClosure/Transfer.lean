@@ -36,8 +36,8 @@ the abstract `IsIntegralClosure` form and independent of the others.
   closure of `R` in `B` when `A` is integral over `R`.
 * `TauCeti.IsIntegralClosure.finite_of_injective`: finiteness of an integral closure descends
   along an injective `A`-algebra map of the top rings, over a Noetherian `A`.
-* `TauCeti.IsFractionRing.finiteDimensional_of_finite`: `Frac S / Frac R` is finite when `S / R`
-  is a finite extension of domains.
+* `TauCeti.IsFractionRing.finiteDimensional_of_finite`: `Frac S` is finite-dimensional over any
+  intermediate field `K`, when `S` is a finite `R`-module.
 
 ## Provenance
 
@@ -96,8 +96,8 @@ the fraction field of `S`. Then `M` is also a finite field extension of `K`" (`S
 over a domain `R` is finite-dimensional over the fraction field of `R`, for abstract fraction
 fields `K` and `L`; Mathlib's instance covers only `FractionRing R` and `FractionRing S`. -/
 theorem IsFractionRing.finiteDimensional_of_finite (R S K L : Type*) [CommRing R] [CommRing S]
-    [IsDomain R] [IsDomain S] [Algebra R S] [Module.IsTorsionFree R S] [Module.Finite R S]
-    [Field K] [Field L] [Algebra R K] [IsFractionRing R K] [Algebra S L] [IsFractionRing S L]
+    [IsDomain S] [Algebra R S] [Module.Finite R S]
+    [Field K] [Field L] [Algebra R K] [Algebra S L] [IsFractionRing S L]
     [Algebra K L] [Algebra R L] [IsScalarTower R K L] [IsScalarTower R S L] :
     FiniteDimensional K L := by
   classical
