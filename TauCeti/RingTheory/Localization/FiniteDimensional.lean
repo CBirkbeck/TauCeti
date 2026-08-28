@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Mathlib.RingTheory.IntegralClosure.IsIntegralClosure.Basic
 public import Mathlib.RingTheory.Localization.FractionRing
 
@@ -61,20 +60,12 @@ theorem IsFractionRing.finiteDimensional_of_finite (R S K L : Type*) [CommRing R
   -- `V` is the `K`-span of the image of a finite `R`-generating set of `S`
   set V : Submodule K L := Submodule.span K ((algebraMap S L) '' (t : Set S)) with hV
   -- every element of `S` already lies in `V`: an `R`-scalar is a `K`-scalar along `R → K → L`
-  have hS : ∀ x : S, algebraMap S L x ∈ V := by
-    intro x
-    have hx : x ∈ Submodule.span R (t : Set S) := ht ▸ Submodule.mem_top
-    induction hx using Submodule.span_induction with
-    | mem y hy => exact Submodule.subset_span ⟨y, hy, rfl⟩
-    | zero => simp
-    | add y z _ _ hy hz => simpa [map_add] using V.add_mem hy hz
-    | smul r y _ hy =>
-        have : algebraMap S L (r • y)
-            = algebraMap R K r • algebraMap S L y := by
-          rw [Algebra.smul_def, map_mul, ← IsScalarTower.algebraMap_apply R S L,
-            Algebra.smul_def, ← IsScalarTower.algebraMap_apply R K L]
-        rw [this]
-        exact V.smul_mem _ hy
+  -- the `R`-span of the mapped generators already contains the image of `S`, and the `K`-span
+  -- contains the `R`-span
+  have hS : ∀ x : S, algebraMap S L x ∈ V := fun x ↦
+    Submodule.span_subset_span R K _
+      (Submodule.map_mem_span_algebraMap_image (T := L) x (t : Set S)
+        (ht ▸ Submodule.mem_top))
   -- `V` absorbs multiplication by the image of `S`
   have hmul : ∀ (x : S) (v : L), v ∈ V → algebraMap S L x * v ∈ V := by
     intro x v hv

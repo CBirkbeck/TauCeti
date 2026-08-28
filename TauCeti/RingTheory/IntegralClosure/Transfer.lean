@@ -50,7 +50,7 @@ the integral closure of `A` in `C`." Here in the form used by normalization-fini
 the integral closure of `A` in `B` and `A` is integral over `R`, then `C` is the integral closure
 of `R` in `B`. The converse of Mathlib's `IsIntegralClosure.tower_top`. -/
 theorem IsIntegralClosure.tower_bot {R A B C : Type*} [CommRing R] [CommRing A] [CommRing B]
-    [CommRing C] [Algebra R A] [Algebra R B] [Algebra A B] [Algebra C B] [IsScalarTower R A B]
+    [CommSemiring C] [Algebra R A] [Algebra R B] [Algebra A B] [Algebra C B] [IsScalarTower R A B]
     [IsIntegralClosure C A B] [Algebra.IsIntegral R A] : IsIntegralClosure C R B := by
   refine ⟨IsIntegralClosure.algebraMap_injective C A B, fun {x} ↦ ⟨fun hx ↦ ?_, fun hy ↦ ?_⟩⟩
   · -- integral over `R` ⇒ integral over `A`, so it is hit by `C`
