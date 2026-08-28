@@ -33,6 +33,9 @@ This file formalizes the analytic locus of the adic spectrum `Spa(A, A⁺)`.
   `Spv A` (and hence `Spa(A, A⁺)`) is analytic.
 * `TauCeti.ValuationSpectrum.spaAnalytic_eq_spa_of_isTateRing` : **Wedhorn Remark 7.40(3)**,
   for a Tate ring `A`, the analytic locus is the entire adic spectrum.
+* `TauCeti.ValuationSpectrum.trivialSection_suppFun_mem_spa` : **Wedhorn Remark 7.42(3)** —
+  for a non-analytic point, the trivial valuation at its support is again a point of the adic
+  spectrum.
 * `TauCeti.ValuationSpectrum.isOpen_val_preimage_spaAnalytic` : the analytic locus is open.
 * `TauCeti.ValuationSpectrum.spaAnalytic_eq_biUnion_rationalSubset` : generators of an ideal of
   definition give a finite rational cover of the analytic locus.
@@ -41,8 +44,8 @@ This file formalizes the analytic locus of the adic spectrum `Spa(A, A⁺)`.
 
 ## References
 
-* T. Wedhorn, *Adic Spaces*, arXiv:1910.05934v1, Definition 7.39, Remark 7.40(3), and
-  Proposition 7.49.
+* T. Wedhorn, *Adic Spaces*, arXiv:1910.05934v1, Definition 7.39, Remark 7.40(3),
+  Remark 7.42(3), and Proposition 7.49.
 -/
 
 public section
@@ -89,6 +92,21 @@ theorem spaAnalytic_subset_spa (Aplus : Subring A) :
 /-- Enlarging the plus ring shrinks the analytic locus. -/
 theorem spaAnalytic_antitone : Antitone (spaAnalytic (A := A)) := fun _ _ hle ↦
   Set.inter_subset_inter_left _ (spa_antitone hle)
+
+/-- **Wedhorn Remark 7.42(3).** For a *non-analytic* point `v`, the trivial valuation at `supp v`
+is again a point of the adic spectrum. Wedhorn obtains it as the vertical generization `v/Γ_v`;
+that construction is not yet available here, so this states the trivial-valuation form directly,
+which is what the generization is.
+
+Non-analyticity is definitionally the openness of `supp v`, so the hypothesis *is* the input
+`trivialSection_mem_spa` asks for and nothing has to be derived. Two hypotheses Wedhorn's statement
+carries are therefore absent here: `v` need not itself lie in `spa Aplus`, and `A` need not be a
+topological ring. -/
+theorem trivialSection_suppFun_mem_spa (Aplus : Subring A) {v : Spv A}
+    (hv : ¬ IsAnalyticPoint v) : trivialSection (suppFun v) ∈ spa Aplus := by
+  refine trivialSection_mem_spa Aplus ?_
+  rw [suppFun_asIdeal]
+  exact not_not.mp ((isAnalyticPoint_def v).not.mp hv)
 
 section TopologicalRing
 
