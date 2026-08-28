@@ -23,7 +23,8 @@ pointwise topologically nilpotent family admits evaluation; arguments drawn from
 `MvPowerSeries.HasEval` in the first place, so that the value is defined at all; and the value is
 congruent to the image of the constant term modulo `I`.
 
-They are proved differently. `hasEval_of_finite` does not use the estimates above at all: over
+They are proved differently. `hasEval_of_finite_of_isTopologicallyNilpotent` does not use the
+estimates above at all: over
 finitely many variables the decay condition at infinity is vacuous, so topological nilpotence
 of each argument is the whole content. `hasEval_of_mem` is its corollary, obtained by supplying
 that nilpotence from membership in `I` through `IsAdic.isTopologicallyNilpotent_of_mem`.
@@ -45,7 +46,8 @@ type need not be finite, because the summation argument uses only the `Tendsto a
 already carried by `HasEval`. Taking `I` to be `IsLocalRing.maximalIdeal S` and `φ` to be
 `RingHom.id S` recovers the source statements.
 
-Finiteness of `σ` survives in `hasEval_of_finite`, where it is what makes the decay condition of
+Finiteness of `σ` survives in `hasEval_of_finite_of_isTopologicallyNilpotent`, where it is what
+makes the decay condition of
 `HasEval` vacuous; that is the one place the hypothesis does work, and `hasEval_of_mem` inherits
 it from there.
 
@@ -57,7 +59,8 @@ it from there.
   arguments of `I ^ j`, takes values in `I ^ (c * j)`.
 * `MvPowerSeries.eval₂_mem_pow_add_mul` : if moreover `φ` sends every coefficient into `I ^ k`,
   the value lies in `I ^ (k + c * j)`.
-* `MvPowerSeries.hasEval_of_finite` : finitely many topologically nilpotent arguments are an
+* `MvPowerSeries.hasEval_of_finite_of_isTopologicallyNilpotent` : finitely many topologically
+  nilpotent arguments are an
   admissible evaluation point.
 * `MvPowerSeries.hasEval_of_mem` : a family of finitely many arguments drawn from `I` is an
   admissible evaluation point.
@@ -198,7 +201,8 @@ variable {σ : Type*} {S : Type*} [CommRing S] [TopologicalSpace S] {a : σ → 
 /-- **Finitely many topologically nilpotent arguments can be substituted into a power series.**
 Over finitely many variables the decay condition `HasEval` asks for at infinity is vacuous, so
 pointwise topological nilpotence is the whole of it. -/
-theorem hasEval_of_finite [Finite σ] (h : ∀ i, IsTopologicallyNilpotent (a i)) : HasEval a where
+theorem hasEval_of_finite_of_isTopologicallyNilpotent [Finite σ]
+    (h : ∀ i, IsTopologicallyNilpotent (a i)) : HasEval a where
   hpow := h
   tendsto_zero := by simp [Filter.cofinite_eq_bot]
 
@@ -206,7 +210,7 @@ theorem hasEval_of_finite [Finite σ] (h : ∀ i, IsTopologicallyNilpotent (a i)
 type with finitely many variables, lying in `I` is the only condition the arguments need: it
 already gives them the `HasEval` property that evaluation requires. -/
 theorem hasEval_of_mem [Finite σ] (hI : IsAdic I) (hmem : ∀ i, a i ∈ I) : HasEval a :=
-  hasEval_of_finite fun s ↦ hI.isTopologicallyNilpotent_of_mem (hmem s)
+  hasEval_of_finite_of_isTopologicallyNilpotent fun s ↦ hI.isTopologicallyNilpotent_of_mem (hmem s)
 
 end HasEval
 

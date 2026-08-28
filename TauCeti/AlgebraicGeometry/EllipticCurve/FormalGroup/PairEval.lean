@@ -18,8 +18,8 @@ of parameters, as `FormalGroup/Eval.lean` evaluates the one-variable series at a
 carries the identities of series over to identities of values.
 
 The pair is the family `Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂` on `Unit ⊕ Unit`, and it admits
-evaluation as soon as each parameter does — `MvPowerSeries.hasEval_of_finite`, the decay
-condition being vacuous over finitely many variables.
+evaluation as soon as each parameter does — the decay condition is vacuous over finitely many
+variables, so `MvPowerSeries.hasEval_of_finite_of_isTopologicallyNilpotent` applies.
 
 ## Main definitions
 
@@ -44,8 +44,8 @@ condition being vacuous over finitely many variables.
 
 Two of the series are built from one-variable ones through `PowerSeries.toMvPowerSeries` and
 `MvPowerSeries.subst`; evaluating those is `PowerSeries.eval₂_id_toMvPowerSeries` and
-`MvPowerSeries.aeval_subst`, both of which hold over a coefficient ring that is not discrete —
-which the ambient adic ring is not.
+`MvPowerSeries.aeval_subst`, neither of which requires the coefficient ring to be discrete —
+which matters here, because the ambient adic ring need not be.
 
 ## References
 
@@ -102,7 +102,7 @@ omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
 private theorem hasEval_pair {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
     (h₂ : PowerSeries.HasEval t₂) :
     MvPowerSeries.HasEval (Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂ : Unit ⊕ Unit → O) :=
-  MvPowerSeries.hasEval_of_finite <| by rintro (_ | _) <;> assumption
+  MvPowerSeries.hasEval_of_finite_of_isTopologicallyNilpotent <| by rintro (_ | _) <;> assumption
 
 omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
   [IsLinearTopology O O] in

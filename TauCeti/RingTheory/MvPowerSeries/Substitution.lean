@@ -161,6 +161,7 @@ one and then evaluating is evaluating at `a i`.
 it is stated for `eval₂` rather than `aeval` because the evaluation of a family is what consumers
 hold, and the `aeval` form would carry the `HasEval` proof in a position where two propositionally
 equal parameters are not definitionally equal. -/
+@[simp]
 theorem eval₂_toMvPowerSeries {σ : Type*} {a : σ → T} (ha : MvPowerSeries.HasEval a) (i : σ)
     (f : PowerSeries R) :
     MvPowerSeries.eval₂ (algebraMap R T) a (toMvPowerSeries i f) =
@@ -187,6 +188,7 @@ syntactically so, and `algebraMap` is not reducible; that is easy to discharge o
 against a goal phrased over `RingHom.id`. An evaluation layer whose coefficients and values are
 the same ring — what the formal group of a curve over an adic ring needs — is phrased that way
 throughout, so it is this form its `simp` sets can use. -/
+@[simp]
 theorem eval₂_id_toMvPowerSeries {σ : Type*} {a : σ → R} (ha : MvPowerSeries.HasEval a) (i : σ)
     (f : PowerSeries R) :
     MvPowerSeries.eval₂ (RingHom.id R) a (toMvPowerSeries i f) =
