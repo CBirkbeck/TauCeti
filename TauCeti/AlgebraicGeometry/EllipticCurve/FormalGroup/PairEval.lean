@@ -104,6 +104,14 @@ private theorem hasEval_pair {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
     MvPowerSeries.HasEval (Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂ : Unit ⊕ Unit → O) :=
   MvPowerSeries.hasEval_of_finite <| by rintro (_ | _) <;> assumption
 
+omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
+  [IsLinearTopology O O] in
+/-- A parameter drawn from a positive power of an adic ideal admits evaluation: it lies in `I`,
+and every element of `I` is topologically nilpotent for the `I`-adic topology. -/
+private theorem hasEval_of_mem_pow {I : Ideal O} (hI : IsAdic I) {k : ℕ} (hk : k ≠ 0) {t : O}
+    (ht : t ∈ I ^ k) : PowerSeries.HasEval t :=
+  hI.isTopologicallyNilpotent_of_mem (Ideal.pow_le_self hk ht)
+
 /-- Evaluation at a pair of parameters, as a ring homomorphism. The transport lemmas below take
 identities of series to identities of values along this map. -/
 private noncomputable def evalPair {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
@@ -189,18 +197,21 @@ theorem formalInterceptEval_eq {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
 /-- The slope of the chord at parameters of `I ^ k` again lies in `I ^ k`: the slope series has
 vanishing constant coefficient. -/
 theorem formalSlopeEval_mem {I : Ideal O} (hI : IsAdic I) {k : ℕ} {t₁ t₂ : O}
-    (h₁ : PowerSeries.HasEval t₁) (h₂ : PowerSeries.HasEval t₂) (hk₁ : t₁ ∈ I ^ k)
-    (hk₂ : t₂ ∈ I ^ k) : W.formalSlopeEval t₁ t₂ ∈ I ^ k :=
-  MvPowerSeries.eval₂_mem_pow (φ := RingHom.id O) continuous_ringHomId
-    (hasEval_pair h₁ h₂) hI (pair_mem hk₁ hk₂) W.formalSlope (by simp)
+    (hk₁ : t₁ ∈ I ^ k) (hk₂ : t₂ ∈ I ^ k) : W.formalSlopeEval t₁ t₂ ∈ I ^ k := by
+  rcases eq_or_ne k 0 with rfl | hk
+  · simp
+  · exact MvPowerSeries.eval₂_mem_pow (φ := RingHom.id O) continuous_ringHomId
+      (hasEval_pair (hasEval_of_mem_pow hI hk hk₁) (hasEval_of_mem_pow hI hk hk₂)) hI
+      (pair_mem hk₁ hk₂) W.formalSlope (by simp)
 
 /-- The third point's parameter at parameters of `I ^ k` again lies in `I ^ k`. -/
 theorem formalThirdRootEval_mem {I : Ideal O} (hI : IsAdic I) {k : ℕ} {t₁ t₂ : O}
-    (h₁ : PowerSeries.HasEval t₁) (h₂ : PowerSeries.HasEval t₂) (hk₁ : t₁ ∈ I ^ k)
-    (hk₂ : t₂ ∈ I ^ k) : W.formalThirdRootEval t₁ t₂ ∈ I ^ k :=
-  MvPowerSeries.eval₂_mem_pow (φ := RingHom.id O) continuous_ringHomId
-    (hasEval_pair h₁ h₂) hI (pair_mem hk₁ hk₂) W.formalThirdRoot
-    (by simp)
+    (hk₁ : t₁ ∈ I ^ k) (hk₂ : t₂ ∈ I ^ k) : W.formalThirdRootEval t₁ t₂ ∈ I ^ k := by
+  rcases eq_or_ne k 0 with rfl | hk
+  · simp
+  · exact MvPowerSeries.eval₂_mem_pow (φ := RingHom.id O) continuous_ringHomId
+      (hasEval_pair (hasEval_of_mem_pow hI hk hk₁) (hasEval_of_mem_pow hI hk hk₂)) hI
+      (pair_mem hk₁ hk₂) W.formalThirdRoot (by simp)
 
 /-- **Vieta's formula at a pair of parameters**, cleared of the inverse of the cubic's leading
 coefficient: the third root satisfies
@@ -255,8 +266,12 @@ theorem formalAddEval_eq {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
 deviates from their sum by an element of `I ^ (2 * k)`, because it agrees with `z₁ + z₂` below
 total degree two. -/
 theorem formalAddEval_sub_add_mem {I : Ideal O} (hI : IsAdic I) {k : ℕ} {t₁ t₂ : O}
-    (h₁ : PowerSeries.HasEval t₁) (h₂ : PowerSeries.HasEval t₂) (hk₁ : t₁ ∈ I ^ k)
-    (hk₂ : t₂ ∈ I ^ k) : W.formalAddEval t₁ t₂ - (t₁ + t₂) ∈ I ^ (2 * k) := by
+    (hk₁ : t₁ ∈ I ^ k) (hk₂ : t₂ ∈ I ^ k) :
+    W.formalAddEval t₁ t₂ - (t₁ + t₂) ∈ I ^ (2 * k) := by
+  rcases eq_or_ne k 0 with rfl | hk
+  · simp
+  have h₁ : PowerSeries.HasEval t₁ := hasEval_of_mem_pow hI hk hk₁
+  have h₂ : PowerSeries.HasEval t₂ := hasEval_of_mem_pow hI hk hk₂
   have heval : MvPowerSeries.eval₂ (RingHom.id O) (Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂)
       (W.formalAdd - MvPowerSeries.X (Sum.inl ()) - MvPowerSeries.X (Sum.inr ())) =
       W.formalAddEval t₁ t₂ - (t₁ + t₂) := by
