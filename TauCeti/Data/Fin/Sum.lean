@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Logic.Equiv.Defs
-public import Mathlib.Logic.Equiv.Fin.Basic
+import Mathlib.Logic.Equiv.Fin.Basic
 
 /-!
 # The two-element sum as `Fin 2`
@@ -23,6 +23,13 @@ rewrite rather than unfold it.
 
 * `unitSumUnitEquivFinTwo`: the equivalence `Unit ⊕ Unit ≃ Fin 2`, sending the left summand to
   `0` and the right to `1`.
+
+## Implementation notes
+
+The composition is an implementation detail: the four evaluation lemmas characterise the
+equivalence completely, so `Mathlib.Logic.Equiv.Fin.Basic`, which supplies `finOneEquiv` and
+`finSumFinEquiv` and is used only in the definition body, is imported privately rather than
+re-exported. Only `Mathlib.Logic.Equiv.Defs`, needed for the type of the declaration, is public.
 -/
 
 public section
