@@ -18,8 +18,8 @@ of parameters, as `FormalGroup/Eval.lean` evaluates the one-variable series at a
 carries the identities of series over to identities of values.
 
 The pair is the family `Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂` on `Unit ⊕ Unit`, and it admits
-evaluation as soon as each parameter does — `MvPowerSeries.hasEval_sumElim`, the decay condition
-being vacuous over finitely many variables.
+evaluation as soon as each parameter does — `MvPowerSeries.hasEval_of_finite`, the decay
+condition being vacuous over finitely many variables.
 
 ## Main definitions
 
@@ -84,41 +84,41 @@ namespace WeierstrassCurve
 variable {O : Type*} [CommRing O] [UniformSpace O] [IsUniformAddGroup O] [CompleteSpace O]
   [T2Space O] [IsTopologicalRing O] [IsLinearTopology O O] (W : WeierstrassCurve O)
 
-/-- The pair `(t₁, t₂)` as a family indexed by the two variables of the chord construction. -/
-private def pair (t₁ t₂ : O) : Unit ⊕ Unit → O := Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂
-
-omit [CommRing O] [UniformSpace O] [IsUniformAddGroup O] [CompleteSpace O] [T2Space O]
+omit [UniformSpace O] [IsUniformAddGroup O] [CompleteSpace O] [T2Space O]
   [IsTopologicalRing O] [IsLinearTopology O O] in
-/-- The pair takes the first parameter on the first variable. -/
-private theorem pair_inl (t₁ t₂ : O) : pair t₁ t₂ (Sum.inl ()) = t₁ := rfl
+/-- Both entries of the pair lie in `I ^ k` as soon as the two parameters do. -/
+private theorem pair_mem {I : Ideal O} {k : ℕ} {t₁ t₂ : O} (hk₁ : t₁ ∈ I ^ k) (hk₂ : t₂ ∈ I ^ k) :
+    ∀ i, (Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂ : Unit ⊕ Unit → O) i ∈ I ^ k := by
+  rintro (_ | _) <;> [exact hk₁; exact hk₂]
 
-omit [CommRing O] [UniformSpace O] [IsUniformAddGroup O] [CompleteSpace O] [T2Space O]
-  [IsTopologicalRing O] [IsLinearTopology O O] in
-/-- The pair takes the second parameter on the second variable. -/
-private theorem pair_inr (t₁ t₂ : O) : pair t₁ t₂ (Sum.inr ()) = t₂ := rfl
+omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
+  [IsLinearTopology O O] in
+/-- The identity ring homomorphism is continuous. -/
+private theorem continuous_ringHomId : Continuous (RingHom.id O) := by simpa using continuous_id
 
 omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
   [IsLinearTopology O O] in
 /-- A pair of parameters admits evaluation as soon as each of them does. -/
 private theorem hasEval_pair {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
-    (h₂ : PowerSeries.HasEval t₂) : MvPowerSeries.HasEval (pair t₁ t₂) :=
+    (h₂ : PowerSeries.HasEval t₂) :
+    MvPowerSeries.HasEval (Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂ : Unit ⊕ Unit → O) :=
   MvPowerSeries.hasEval_of_finite <| by rintro (_ | _) <;> assumption
 
-/-- Evaluation at a pair of parameters, as a ring homomorphism. Every identity in this file is
-the image of an identity of series under this map. -/
+/-- Evaluation at a pair of parameters, as a ring homomorphism. The transport lemmas below take
+identities of series to identities of values along this map. -/
 private noncomputable def evalPair {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
     (h₂ : PowerSeries.HasEval t₂) : MvPowerSeries (Unit ⊕ Unit) O →+* O :=
-  MvPowerSeries.eval₂Hom (φ := RingHom.id O) (by simpa using continuous_id) (hasEval_pair h₁ h₂)
+  MvPowerSeries.eval₂Hom (φ := RingHom.id O) continuous_ringHomId (hasEval_pair h₁ h₂)
 
 /-- `evalPair` is `MvPowerSeries.eval₂` at the identity ring hom, as a function. -/
 private theorem coe_evalPair {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
     (h₂ : PowerSeries.HasEval t₂) :
-    ⇑(evalPair h₁ h₂) = MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂) :=
+    ⇑(evalPair h₁ h₂) = MvPowerSeries.eval₂ (RingHom.id O) (Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂) :=
   MvPowerSeries.coe_eval₂Hom (φ := RingHom.id O) _ (hasEval_pair h₁ h₂)
 
 /-- The value of the slope series at a pair of parameters. -/
 noncomputable def formalSlopeEval (t₁ t₂ : O) : O :=
-  MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂) W.formalSlope
+  MvPowerSeries.eval₂ (RingHom.id O) (Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂) W.formalSlope
 
 omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
   [IsLinearTopology O O] in
@@ -130,7 +130,7 @@ theorem formalSlopeEval_def (t₁ t₂ : O) :
 
 /-- The value of the intercept series at a pair of parameters. -/
 noncomputable def formalInterceptEval (t₁ t₂ : O) : O :=
-  MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂) W.formalIntercept
+  MvPowerSeries.eval₂ (RingHom.id O) (Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂) W.formalIntercept
 
 omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
   [IsLinearTopology O O] in
@@ -143,7 +143,7 @@ theorem formalInterceptEval_def (t₁ t₂ : O) :
 
 /-- The value of the third-root series at a pair of parameters. -/
 noncomputable def formalThirdRootEval (t₁ t₂ : O) : O :=
-  MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂) W.formalThirdRoot
+  MvPowerSeries.eval₂ (RingHom.id O) (Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂) W.formalThirdRoot
 
 omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
   [IsLinearTopology O O] in
@@ -156,7 +156,7 @@ theorem formalThirdRootEval_def (t₁ t₂ : O) :
 
 /-- The value of the addition series at a pair of parameters. -/
 noncomputable def formalAddEval (t₁ t₂ : O) : O :=
-  MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂) W.formalAdd
+  MvPowerSeries.eval₂ (RingHom.id O) (Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂) W.formalAdd
 
 omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
   [IsLinearTopology O O] in
@@ -166,40 +166,13 @@ theorem formalAddEval_def (t₁ t₂ : O) :
       MvPowerSeries.eval₂ (RingHom.id O) (Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂)
         W.formalAdd := (rfl)
 
-omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
-  [IsLinearTopology O O] in
-/-- Folding lemma: the evaluation of `formalSlope` at the pair is `formalSlopeEval`.
-Stated over the private `pair` so the transport proofs rewrite with it rather than
-relying on definitional equality. -/
-private theorem eval_pair_formalSlope (t₁ t₂ : O) :
-    MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂) W.formalSlope =
-      W.formalSlopeEval t₁ t₂ := rfl
-
-omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
-  [IsLinearTopology O O] in
-/-- Folding lemma: the evaluation of `formalIntercept` at the pair is `formalInterceptEval`.
-Stated over the private `pair` so the transport proofs rewrite with it rather than
-relying on definitional equality. -/
-private theorem eval_pair_formalIntercept (t₁ t₂ : O) :
-    MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂) W.formalIntercept =
-      W.formalInterceptEval t₁ t₂ := rfl
-
-omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
-  [IsLinearTopology O O] in
-/-- Folding lemma: the evaluation of `formalThirdRoot` at the pair is `formalThirdRootEval`.
-Stated over the private `pair` so the transport proofs rewrite with it rather than
-relying on definitional equality. -/
-private theorem eval_pair_formalThirdRoot (t₁ t₂ : O) :
-    MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂) W.formalThirdRoot =
-      W.formalThirdRootEval t₁ t₂ := rfl
-
 /-- **The evaluated slope identity**: `λ(t₁, t₂) * (t₂ - t₁) = w(t₂) - w(t₁)`. -/
 theorem formalSlopeEval_mul_sub {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
     (h₂ : PowerSeries.HasEval t₂) :
     W.formalSlopeEval t₁ t₂ * (t₂ - t₁) = W.formalWEval t₂ - W.formalWEval t₁ := by
   have h := congrArg (evalPair h₁ h₂) W.formalSlope_mul_sub
   rw [map_mul, map_sub, map_sub] at h
-  simpa [formalSlopeEval, W.formalWEval_def, coe_evalPair, pair_inl, pair_inr,
+  simpa [formalSlopeEval, W.formalWEval_def, coe_evalPair, Sum.elim_inl, Sum.elim_inr,
     PowerSeries.eval₂_id_toMvPowerSeries (hasEval_pair h₁ h₂),
     MvPowerSeries.eval₂_X] using h
 
@@ -209,8 +182,8 @@ theorem formalInterceptEval_eq {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
     W.formalInterceptEval t₁ t₂ = W.formalWEval t₁ - W.formalSlopeEval t₁ t₂ * t₁ := by
   have h := congrArg (evalPair h₁ h₂) W.formalIntercept_def
   rw [map_sub, map_mul] at h
-  simpa [formalInterceptEval, formalSlopeEval, W.formalWEval_def, coe_evalPair, pair_inl,
-    pair_inr, PowerSeries.eval₂_id_toMvPowerSeries (hasEval_pair h₁ h₂),
+  simpa [formalInterceptEval, formalSlopeEval, W.formalWEval_def, coe_evalPair, Sum.elim_inl,
+    Sum.elim_inr, PowerSeries.eval₂_id_toMvPowerSeries (hasEval_pair h₁ h₂),
     MvPowerSeries.eval₂_X] using h
 
 /-- The slope of the chord at parameters of `I ^ k` again lies in `I ^ k`: the slope series has
@@ -218,15 +191,15 @@ vanishing constant coefficient. -/
 theorem formalSlopeEval_mem {I : Ideal O} (hI : IsAdic I) {k : ℕ} {t₁ t₂ : O}
     (h₁ : PowerSeries.HasEval t₁) (h₂ : PowerSeries.HasEval t₂) (hk₁ : t₁ ∈ I ^ k)
     (hk₂ : t₂ ∈ I ^ k) : W.formalSlopeEval t₁ t₂ ∈ I ^ k :=
-  MvPowerSeries.eval₂_mem_pow (φ := RingHom.id O) (by simpa using continuous_id)
-    (hasEval_pair h₁ h₂) hI (by rintro (_ | _) <;> [exact hk₁; exact hk₂]) W.formalSlope (by simp)
+  MvPowerSeries.eval₂_mem_pow (φ := RingHom.id O) continuous_ringHomId
+    (hasEval_pair h₁ h₂) hI (pair_mem hk₁ hk₂) W.formalSlope (by simp)
 
 /-- The third point's parameter at parameters of `I ^ k` again lies in `I ^ k`. -/
 theorem formalThirdRootEval_mem {I : Ideal O} (hI : IsAdic I) {k : ℕ} {t₁ t₂ : O}
     (h₁ : PowerSeries.HasEval t₁) (h₂ : PowerSeries.HasEval t₂) (hk₁ : t₁ ∈ I ^ k)
     (hk₂ : t₂ ∈ I ^ k) : W.formalThirdRootEval t₁ t₂ ∈ I ^ k :=
-  MvPowerSeries.eval₂_mem_pow (φ := RingHom.id O) (by simpa using continuous_id)
-    (hasEval_pair h₁ h₂) hI (by rintro (_ | _) <;> [exact hk₁; exact hk₂]) W.formalThirdRoot
+  MvPowerSeries.eval₂_mem_pow (φ := RingHom.id O) continuous_ringHomId
+    (hasEval_pair h₁ h₂) hI (pair_mem hk₁ hk₂) W.formalThirdRoot
     (by simp)
 
 /-- **Vieta's formula at a pair of parameters**, cleared of the inverse of the cubic's leading
@@ -246,13 +219,14 @@ theorem formalThirdRootEval_relation {t₁ t₂ : O} (h₁ : PowerSeries.HasEval
     (1 + MvPowerSeries.C W.a₂ * W.formalSlope + MvPowerSeries.C W.a₄ * W.formalSlope ^ 2 +
       MvPowerSeries.C W.a₆ * W.formalSlope ^ 3) 1 (by simp))
   simp only [map_sub, map_neg, map_add, map_mul, map_pow, map_one, map_ofNat, coe_evalPair,
-    MvPowerSeries.eval₂_X, MvPowerSeries.eval₂_C, RingHom.id_apply, pair_inl, pair_inr] at hT hD
-  simp only [W.eval_pair_formalSlope, W.eval_pair_formalIntercept,
-    W.eval_pair_formalThirdRoot] at hT hD
+    MvPowerSeries.eval₂_X, MvPowerSeries.eval₂_C, RingHom.id_apply, Sum.elim_inl,
+    Sum.elim_inr] at hT hD
+  simp only [← W.formalSlopeEval_def, ← W.formalInterceptEval_def,
+    ← W.formalThirdRootEval_def] at hT hD
   set L := W.formalSlopeEval t₁ t₂
   set N := W.formalInterceptEval t₁ t₂
   set T := W.formalThirdRootEval t₁ t₂
-  set d := MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂)
+  set d := MvPowerSeries.eval₂ (RingHom.id O) (Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂)
     (MvPowerSeries.invOfUnit (1 + MvPowerSeries.C W.a₂ * W.formalSlope +
       MvPowerSeries.C W.a₄ * W.formalSlope ^ 2 + MvPowerSeries.C W.a₆ * W.formalSlope ^ 3) 1)
   clear_value L N T d
@@ -275,7 +249,7 @@ theorem formalAddEval_eq {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
     (PowerSeries.hasEval hT') W.formalInverse
   rw [← W.formalAdd_def] at h
   simpa [formalAddEval, W.formalInverseEval_def, MvPowerSeries.coe_aeval, PowerSeries.eval₂,
-    W.eval_pair_formalThirdRoot] using h
+    ← W.formalThirdRootEval_def] using h
 
 /-- **The group law is `t₁ + t₂` to first order**: at parameters of `I ^ k` the addition series
 deviates from their sum by an element of `I ^ (2 * k)`, because it agrees with `z₁ + z₂` below
@@ -283,14 +257,14 @@ total degree two. -/
 theorem formalAddEval_sub_add_mem {I : Ideal O} (hI : IsAdic I) {k : ℕ} {t₁ t₂ : O}
     (h₁ : PowerSeries.HasEval t₁) (h₂ : PowerSeries.HasEval t₂) (hk₁ : t₁ ∈ I ^ k)
     (hk₂ : t₂ ∈ I ^ k) : W.formalAddEval t₁ t₂ - (t₁ + t₂) ∈ I ^ (2 * k) := by
-  have heval : MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂)
+  have heval : MvPowerSeries.eval₂ (RingHom.id O) (Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂)
       (W.formalAdd - MvPowerSeries.X (Sum.inl ()) - MvPowerSeries.X (Sum.inr ())) =
       W.formalAddEval t₁ t₂ - (t₁ + t₂) := by
     rw [← coe_evalPair h₁ h₂, map_sub, map_sub]
-    simp [coe_evalPair, formalAddEval, MvPowerSeries.eval₂_X, pair_inl, pair_inr, sub_sub]
+    simp [coe_evalPair, formalAddEval, MvPowerSeries.eval₂_X, Sum.elim_inl, Sum.elim_inr, sub_sub]
   rw [← heval]
-  exact MvPowerSeries.eval₂_mem_pow_mul (φ := RingHom.id O) (by simpa using continuous_id)
-    (hasEval_pair h₁ h₂) hI (by rintro (_ | _) <;> [exact hk₁; exact hk₂]) _
+  exact MvPowerSeries.eval₂_mem_pow_mul (φ := RingHom.id O) continuous_ringHomId
+    (hasEval_pair h₁ h₂) hI (pair_mem hk₁ hk₂) _
     (fun d hd ↦ W.coeff_formalAdd_sub_eq_zero_of_degree_lt hd)
 
 end WeierstrassCurve

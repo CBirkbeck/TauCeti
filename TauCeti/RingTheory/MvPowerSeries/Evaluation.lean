@@ -5,7 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.Data.Finite.Sum
 public import Mathlib.RingTheory.MvPowerSeries.Evaluation
 public import TauCeti.Topology.Algebra.Nonarchimedean.AdicTopology
 
@@ -19,16 +18,18 @@ confined to `I ^ k` as soon as the arguments are and `φ` sends the constant ter
 confinement improves when the series vanishes in low total degree or when `φ` sends every
 coefficient into a power of `I`.
 
-Two further results serve the same arguments from either side. Arguments drawn from `I` satisfy
-`MvPowerSeries.HasEval` in the first place, so that the value is defined at all; and the value is
-congruent to the image of the constant term modulo `I`.
+Three further results serve the same arguments from either side. Over finitely many variables
+every family admits evaluation; arguments drawn from `I` satisfy `MvPowerSeries.HasEval` in the
+first place, so that the value is defined at all; and the value is congruent to the image of the
+constant term modulo `I`.
 
-They are proved differently. `hasEval_of_mem` does not use the estimates above at all: each
-argument is topologically nilpotent because it lies in `I`, and over finitely many variables the
-decay condition at infinity is vacuous. `eval₂_sub_constantCoeff_mem` is the one that reduces to
-them — subtracting the constant term kills the constant monomial and every surviving monomial
-carries an argument, so the difference is the `k = 1` case of `eval₂_mem_pow` applied to
-`f - C (constantCoeff f)`.
+They are proved differently. `hasEval_of_finite` does not use the estimates above at all: over
+finitely many variables the decay condition at infinity is vacuous, so topological nilpotence
+of each argument is the whole content. `hasEval_of_mem` is its corollary, obtained by supplying
+that nilpotence from membership in `I` through `IsAdic.isTopologicallyNilpotent_of_mem`.
+`eval₂_sub_constantCoeff_mem` is the one that reduces to them — subtracting the constant term
+kills the constant monomial and every surviving monomial carries an argument, so the difference
+is the `k = 1` case of `eval₂_mem_pow` applied to `f - C (constantCoeff f)`.
 
 The three bounds have the same one-line mechanism. `MvPowerSeries.hasSum_eval₂` writes the value
 as the sum of its monomial values `φ (coeff d f) * ∏ s, a s ^ d s`; each such monomial is checked
@@ -44,8 +45,9 @@ type need not be finite, because the summation argument uses only the `Tendsto a
 already carried by `HasEval`. Taking `I` to be `IsLocalRing.maximalIdeal S` and `φ` to be
 `RingHom.id S` recovers the source statements.
 
-Finiteness of `σ` survives in `hasEval_of_mem` alone, where it is what makes the decay condition
-of `HasEval` vacuous; that is the one place the hypothesis does work rather than being inherited.
+Finiteness of `σ` survives in `hasEval_of_finite`, where it is what makes the decay condition of
+`HasEval` vacuous; that is the one place the hypothesis does work, and `hasEval_of_mem` inherits
+it from there.
 
 ## Main results
 

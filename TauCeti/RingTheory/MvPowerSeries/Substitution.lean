@@ -45,9 +45,12 @@ uniformities are shadowed, so the evaluation the statement is about is never re-
   family — the case of `aeval_subst` at a single variable, which is how a one-variable series
   meets a two-variable evaluation.
 
-Both are wanted for the formal group of an elliptic curve over a complete local ring, where the
-group law is a power series over the very ring it is evaluated in: the involution relating the
-`w`-expansion to the formal inverse is an identity between two such evaluated substitutions.
+The two `aeval_subst` results are wanted for the formal group of an elliptic curve over a complete
+local ring, where the group law is a power series over the very ring it is evaluated in: the
+involution relating the `w`-expansion to the formal inverse is an identity between two such
+evaluated substitutions. The two `toMvPowerSeries` results serve the same development from the
+other side: the chord construction is a two-variable series, and its identities are proved by
+evaluating one-variable series — `w`, the slope, the formal inverse — at entries of the pair.
 
 ## Provenance
 
@@ -58,6 +61,11 @@ Apache-2.0) at commit `66889eada51a74c2f5dfb7fb5909b0b5a0a2d96e`, file
 `eval`. Here the three rings are independent and the statement is about Mathlib's
 `MvPowerSeries.aeval`; it equally generalises Mathlib's `MvPowerSeries.eval₂_subst`, whose
 `DiscreteUniformity` hypotheses it removes.
+
+`PowerSeries.eval₂_toMvPowerSeries` and `PowerSeries.eval₂_id_toMvPowerSeries` are the same
+source file's `eval_pair_rename` and `eval_pair_subst_single`, respelled: the source moves a
+one-variable series into two variables along `MvPowerSeries.rename (fun _ ↦ i)`, whereas these
+transport along `PowerSeries.toMvPowerSeries i`.
 
 The proof is not the source's. That one establishes continuity of `subst` for the ambient product
 topologies (its own `MvPowerSeries.continuous_subst'`) and applies uniqueness there; refining the
