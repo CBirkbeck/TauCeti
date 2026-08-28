@@ -102,7 +102,6 @@ private lemma Point.sym2x_P_add_P_zero (P : W.Point) :
     ext i : 1
     fin_cases i <;> simp
   | some x y h =>
-    have Heq := (W.equation_iff x y).mp h.1
     have Hrs : (fun i ↦ (addSubMap W i).eval <| (some x y h).sym2x (some x y h)) =
           ![x ^ 4 - W.b₄ * x ^ 2 - 2 * W.b₆ * x - W.b₈,
             4 * x ^ 3 + W.b₂ * x ^ 2 + 2 * W.b₄ * x + W.b₆, 0] := by

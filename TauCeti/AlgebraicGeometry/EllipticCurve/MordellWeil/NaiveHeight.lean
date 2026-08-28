@@ -123,7 +123,6 @@ lemma abs_logHeight_sym2x_sub_le :
   obtain ⟨C, hC⟩ := abs_logHeight_sym2_sub_le F
   refine ⟨C, fun P Q ↦ ?_⟩
   rw [P.naiveHeight_eq_logHeight, Q.naiveHeight_eq_logHeight, Point.sym2x_eq_xRep]
-  have H₁ := logHeight_fun_mul_eq P.xRep_ne_zero Q.xRep_ne_zero
   have H (v : Fin 2 → F) : ![v 0, v 1] = v := by ext i : 1; fin_cases i <;> simp
   have h₀ (P : W.Point) : ![P.xRep 0, P.xRep 1] ≠ 0 := H P.xRep ▸ P.xRep_ne_zero
   specialize hC (h₀ P) (h₀ Q)
