@@ -6,9 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Logic.Equiv.Defs
-public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Data.Fintype.Fin
-public import Mathlib.Tactic.FinCases
+public import Mathlib.Logic.Equiv.Fin.Basic
 
 /-!
 # The two-element sum as `Fin 2`
@@ -17,8 +15,9 @@ public import Mathlib.Tactic.FinCases
 named slot, or one variable per numeral. Translating between them is pure bookkeeping, needed
 wherever an object indexed by named slots must be presented against an API indexed by `Fin 2`.
 
-Mathlib has `boolEquivPUnitSumPUnit` and `finSumFinEquiv`, but nothing of this shape; composing
-those two routes through `Bool` and a `PUnit` universe adjustment for no gain.
+This is Mathlib's own composition — `finOneEquiv` on each summand, then `finSumFinEquiv` — given
+a name and the four evaluation lemmas, so that call sites reindexing a two-variable object can
+rewrite rather than unfold it.
 
 ## Main definitions
 
@@ -33,11 +32,8 @@ public section
 An `Equiv` rather than a bare `Function.Embedding`: injectivity is what turns a coefficient under
 a reindexing into an equality rather than a sum over a fibre, but surjectivity is what lets a
 statement about *every* `Fin 2` index be pulled back, and both directions are wanted downstream. -/
-def unitSumUnitEquivFinTwo : (Unit ⊕ Unit) ≃ Fin 2 where
-  toFun := Sum.elim (fun _ ↦ 0) (fun _ ↦ 1)
-  invFun := ![Sum.inl (), Sum.inr ()]
-  left_inv := by rintro (⟨⟩ | ⟨⟩) <;> rfl
-  right_inv := by intro x; fin_cases x <;> rfl
+def unitSumUnitEquivFinTwo : (Unit ⊕ Unit) ≃ Fin 2 :=
+  (Equiv.sumCongr finOneEquiv.symm finOneEquiv.symm).trans finSumFinEquiv
 
 @[simp]
 theorem unitSumUnitEquivFinTwo_inl : unitSumUnitEquivFinTwo (Sum.inl ()) = 0 := by decide
