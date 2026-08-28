@@ -49,6 +49,12 @@ other presentation's coordinate ring and that the plus subrings are open.
   same two hypotheses in each direction** — two presentations of the same rational subset then
   have canonically isomorphic coordinate rings.
 
+`presentationRingEquivOfEq` is a `def`, so it comes with the lemmas that pin down what it is
+without unfolding the proof term: `continuous_presentationRingEquivOfEq`, and
+`presentationRingEquivOfEq_coe_comp_toCompletionLoc` together with its `symm` counterpart, which
+say the isomorphism and its inverse commute with the structure maps from `A`. That compatibility
+is what determines it, so a consumer needs nothing else.
+
 ## The hypotheses both results carry
 
 Wedhorn's Proposition 7.52(1) is no longer among them. It landed in #4552 as
@@ -205,5 +211,109 @@ noncomputable def presentationRingEquivOfEq (P : PairOfDefinition A) (Aplus : Su
     hden' T s S hden heq.le hs hopen
   exact presentationRingEquiv P T s S hden T' s' S' hden' hg.choose hh.choose
     hg.choose_spec.1.1 hh.choose_spec.1.1 hg.choose_spec.1.2 hh.choose_spec.1.2
+
+/-- The presentation-independence isomorphism is continuous. This is
+`TauCeti.Huber.continuous_presentationRingEquiv` at the two comparison maps this file supplies. -/
+theorem continuous_presentationRingEquivOfEq (P : PairOfDefinition A) (Aplus : Subring A)
+    (hAplus : ∀ ⦃a⦄, a ∈ Aplus → IsPowerBounded a) (T : Finset A) (s : A) (S : Type*)
+    [CommRing S] [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S)
+    (T' : Finset A) (s' : A) (S' : Type*) [CommRing S'] [Algebra A S']
+    [IsLocalization.Away s' S'] (hden' : HasDenominatorPower P T' s' S')
+    (heq : rationalSubset Aplus T s = rationalSubset Aplus T' s') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s' S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
+    ∀ (hs' : IsUnit (toCompletionLoc P T' s' S' hden' s))
+      (hopen' : IsOpen ((completedPlusSubring P Aplus T' s' S' hden' :
+        Subring (UniformSpace.Completion S')) : Set (UniformSpace.Completion S')))
+      (hs : IsUnit (toCompletionLoc P T s S hden s'))
+      (hopen : IsOpen ((completedPlusSubring P Aplus T s S hden :
+        Subring (UniformSpace.Completion S)) : Set (UniformSpace.Completion S))),
+      Continuous (presentationRingEquivOfEq P Aplus hAplus T s S hden T' s' S' hden' heq
+        hs' hopen' hs hopen) := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  let _ := locUniformSpace P T' s' S' hden'
+  have _ := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+  have _ := isTopologicalRing_locUniformSpace P T' s' S' hden'
+  intro hs' hopen' hs hopen
+  exact continuous_presentationRingEquiv P T s S hden T' s' S' hden' _ _ _ _ _ _
+
+/-- The isomorphism is compatible with the structure maps from `A`, which is the property that
+determines it. -/
+theorem presentationRingEquivOfEq_coe_comp_toCompletionLoc
+    (P : PairOfDefinition A) (Aplus : Subring A)
+    (hAplus : ∀ ⦃a⦄, a ∈ Aplus → IsPowerBounded a) (T : Finset A) (s : A) (S : Type*)
+    [CommRing S] [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S)
+    (T' : Finset A) (s' : A) (S' : Type*) [CommRing S'] [Algebra A S']
+    [IsLocalization.Away s' S'] (hden' : HasDenominatorPower P T' s' S')
+    (heq : rationalSubset Aplus T s = rationalSubset Aplus T' s') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s' S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
+    ∀ (hs' : IsUnit (toCompletionLoc P T' s' S' hden' s))
+      (hopen' : IsOpen ((completedPlusSubring P Aplus T' s' S' hden' :
+        Subring (UniformSpace.Completion S')) : Set (UniformSpace.Completion S')))
+      (hs : IsUnit (toCompletionLoc P T s S hden s'))
+      (hopen : IsOpen ((completedPlusSubring P Aplus T s S hden :
+        Subring (UniformSpace.Completion S)) : Set (UniformSpace.Completion S))),
+      (((presentationRingEquivOfEq P Aplus hAplus T s S hden T' s' S' hden' heq
+          hs' hopen' hs hopen : UniformSpace.Completion S ≃+* UniformSpace.Completion S') :
+        UniformSpace.Completion S →+* UniformSpace.Completion S')).comp
+          (toCompletionLoc P T s S hden) = toCompletionLoc P T' s' S' hden' := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  let _ := locUniformSpace P T' s' S' hden'
+  have _ := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+  have _ := isTopologicalRing_locUniformSpace P T' s' S' hden'
+  intro hs' hopen' hs hopen
+  exact presentationRingEquiv_coe_comp_toCompletionLoc P T s S hden T' s' S' hden' _ _ _ _ _ _
+
+/-- The inverse is compatible with the structure maps the other way. -/
+theorem presentationRingEquivOfEq_symm_coe_comp_toCompletionLoc
+    (P : PairOfDefinition A) (Aplus : Subring A)
+    (hAplus : ∀ ⦃a⦄, a ∈ Aplus → IsPowerBounded a) (T : Finset A) (s : A) (S : Type*)
+    [CommRing S] [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S)
+    (T' : Finset A) (s' : A) (S' : Type*) [CommRing S'] [Algebra A S']
+    [IsLocalization.Away s' S'] (hden' : HasDenominatorPower P T' s' S')
+    (heq : rationalSubset Aplus T s = rationalSubset Aplus T' s') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s' S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
+    ∀ (hs' : IsUnit (toCompletionLoc P T' s' S' hden' s))
+      (hopen' : IsOpen ((completedPlusSubring P Aplus T' s' S' hden' :
+        Subring (UniformSpace.Completion S')) : Set (UniformSpace.Completion S')))
+      (hs : IsUnit (toCompletionLoc P T s S hden s'))
+      (hopen : IsOpen ((completedPlusSubring P Aplus T s S hden :
+        Subring (UniformSpace.Completion S)) : Set (UniformSpace.Completion S))),
+      (((presentationRingEquivOfEq P Aplus hAplus T s S hden T' s' S' hden' heq
+          hs' hopen' hs hopen).symm :
+        UniformSpace.Completion S' ≃+* UniformSpace.Completion S) :
+          UniformSpace.Completion S' →+* UniformSpace.Completion S).comp
+          (toCompletionLoc P T' s' S' hden') = toCompletionLoc P T s S hden := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  let _ := locUniformSpace P T' s' S' hden'
+  have _ := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+  have _ := isTopologicalRing_locUniformSpace P T' s' S' hden'
+  intro hs' hopen' hs hopen
+  refine RingHom.ext fun a ↦ ?_
+  have hfwd := RingHom.congr_fun (presentationRingEquivOfEq_coe_comp_toCompletionLoc
+    P Aplus hAplus T s S hden T' s' S' hden' heq hs' hopen' hs hopen) a
+  simp only [RingHom.coe_comp, Function.comp_apply] at hfwd ⊢
+  rw [← hfwd]
+  exact RingEquiv.symm_apply_apply _ _
 
 end TauCeti.ValuationSpectrum
