@@ -24,15 +24,29 @@ operator `U_p` is a different object and a form need not be an eigenvector of it
 
 ## Main declarations
 
-* `WeierstrassCurve`-style bundling is deliberately not introduced: `IsEigenformAwayFromLevel` is
-  a `Prop` on an existing `CuspForm`, not a new structure. The consumers that need it need the
-  predicate.
+* `HeckeRing.GL2.IsEigenformAwayFromLevel`: the predicate, with
+  `HeckeRing.GL2.isEigenformAwayFromLevel_def` as its characteristic restatement — the module
+  does not expose the definition's body, so that lemma is how downstream callers prove and
+  eliminate it.
+* `HeckeRing.GL2.heckeTCuspNat_eq_qExpansion_coeff_smul_of_isEigenformAwayFromLevel`: for a
+  normalized good eigenform, the `T_p` eigenvalue at a good prime is `a_p(f)`.
+
+No bundled structure is introduced: this is a `Prop` on an existing `CuspForm`, because that is
+what the consumers need.
 
 ## Implementation notes
 
 The condition is stated over `heckeTCuspNat`, the packaged operator of
 `HeckeSlash/Operators.lean`, rather than over the raw double-coset endomorphism it unfolds to.
 That packaging exists precisely so that statements about `T_n` have one spelling.
+
+## Provenance
+
+Adapted from the AINTLIB `LeanModularForms` project
+(`HeckeRIngs/GL2/Newforms/Basic.lean`, Chris Birkbeck, Apache-2.0): the predicate `IsEigenform`,
+renamed per the roadmap's prescribed spelling and restated over `heckeTCuspNat`. The source's
+all-`n` variant `IsFullEigenform`, its bundled `Eigenform` structure and that structure's
+accessors are deliberately not ported — the consumers here need the predicate.
 -/
 
 public section
@@ -52,6 +66,13 @@ def IsEigenformAwayFromLevel (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) : Pro
   ∃ a : ℕ+ → ℂ, ∀ n : ℕ+, Nat.Coprime n.val N →
     haveI : NeZero n.val := ⟨n.pos.ne'⟩
     heckeTCuspNat k n.val f = a n • f
+
+/-- The defining equation of `IsEigenformAwayFromLevel`. The module does not expose the
+definition's body, so this is how downstream modules prove and eliminate the predicate. -/
+theorem isEigenformAwayFromLevel_def (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
+    IsEigenformAwayFromLevel k f ↔ ∃ a : ℕ+ → ℂ, ∀ n : ℕ+, Nat.Coprime n.val N →
+      haveI : NeZero n.val := ⟨n.pos.ne'⟩
+      heckeTCuspNat k n.val f = a n • f := Iff.rfl
 
 /-- **The `T_p` eigenvalue of a normalized good eigenform is its `p`-th Fourier coefficient.**
 For `p` a prime not dividing the level and `f` normalized (`a₁(f) = 1`), the eigenvector equation
