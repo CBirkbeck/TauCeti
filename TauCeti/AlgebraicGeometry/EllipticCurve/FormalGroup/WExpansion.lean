@@ -46,8 +46,9 @@ equation at the substituted parameter rather than at `z`.
   constant coefficient — two series with vanishing constant coefficient solving the equation at
   that parameter are equal.
 * `WeierstrassCurve.eq_of_wEquation_mvPowerSeries`: that same uniqueness one index type up, for
-  series in `MvPowerSeries σ R`. It is a sibling of `eq_of_wEquation` and not a generalisation of
-  it: filtering by total degree means subtracting, which costs the `CommSemiring` hypothesis.
+  series in `MvPowerSeries σ S` over any commutative `R`-algebra `S`. It is a sibling of
+  `eq_of_wEquation` and not a generalisation of it: filtering by total degree means subtracting,
+  so it needs `[CommRing S]` where the univariate statement holds over a `CommSemiring`.
 * `WeierstrassCurve.subst_wEquationRHS` and `WeierstrassCurve.subst_formalW_wEquation`:
   substituting a series `q` into the equation gives the equation at `q`, so `w(q)` solves it
   there. When moreover `constantCoeff q = 0`, `eq_subst_formalW_of_wEquation` combines this with
@@ -92,7 +93,7 @@ contraction route, adapted from the same project's
 `EllipticCurves/WeierstrassFormalGroup/ThirdPoint.lean`, declarations `mvWStepAt` and
 `eq_of_mvWStepAt_fixed`. Two things there are deliberately not ported. Stoll's `mvWStepAt` is a
 second copy of the equation; `wEquationRHS` is stated over an arbitrary `R`-algebra, so reading it
-in `MvPowerSeries σ R` already *is* that definition. And Stoll's filtration is carried by a private
+in `MvPowerSeries σ S` already *is* that definition. And Stoll's filtration is carried by a private
 predicate `LowVanish k f`, "every coefficient of total degree below `k` vanishes" — that is
 Mathlib's `MvPowerSeries.order`, so the estimates here are stated as `(k : ℕ∞) ≤ f.order` and the
 predicate and its nine lemmas are not ported either.
@@ -462,7 +463,7 @@ theorem eq_subst_formalW_of_wEquation {q v : PowerSeries R}
 /-! ### Uniqueness over a multivariate power series ring
 
 `eq_of_wEquation` argues by strong induction on the coefficient index, which needs that index to be
-linearly ordered. Over `MvPowerSeries σ R` no such order is available, so the induction runs on the
+linearly ordered. Over `MvPowerSeries σ S` no such order is available, so the induction runs on the
 total degree instead: `MvPowerSeries.order` is exactly the filtration by total degree, and the
 right-hand side of the `w`-equation is a contraction for it. That argument needs additive inverses,
 so this material stays in the `CommRing` section rather than joining the `CommSemiring` development
@@ -471,8 +472,13 @@ above; the two uniqueness statements are siblings and neither subsumes the other
 
 /-- The `w`-equation in `MvPowerSeries σ S` itself, where the structure map factors as
 `MvPowerSeries.C` after `algebraMap R S`. This is the spelling the order estimates below match
-against. -/
-theorem wEquationRHS_mvPowerSeries {σ S : Type*} [CommRing S] [Algebra R S]
+against.
+
+Private: it is an implementation detail of those estimates, and consumers wanting the equation
+itself have `wEquationRHS_def`. It asks only `[CommSemiring S]` — the identity is an unfolding and
+subtracts nothing, unlike the contraction and uniqueness results below, which need `[CommRing S]`.
+-/
+private theorem wEquationRHS_mvPowerSeries {σ S : Type*} [CommSemiring S] [Algebra R S]
     (q v : MvPowerSeries σ S) :
     wEquationRHS W q v =
       q ^ 3 + MvPowerSeries.C (algebraMap R S W.a₁) * q * v +
