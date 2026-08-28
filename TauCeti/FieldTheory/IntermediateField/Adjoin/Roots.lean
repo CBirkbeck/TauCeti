@@ -15,8 +15,12 @@ For finitely many elements of a field `F` and `0 < n`, there is a finite extensi
 which each of them has an `n`-th root: adjoin the roots inside an algebraic closure.
 
 Nothing here is specific to purely inseparable extensions or to a characteristic exponent; the
-result is stated for an arbitrary positive power. Its first consumer is the embedding theorem in
-`TauCeti/FieldTheory/PurelyInseparable/Embedding.lean`.
+result is stated for an arbitrary positive power.
+
+It has no consumer in this repository yet. The motivating application is the `L'` of Stacks
+10.161.13 (tag 032O), feeding `RingTheory/IntegralClosure/NormalizationFinite`: the embedding
+theorem in `TauCeti/FieldTheory/PurelyInseparable/Embedding.lean` assumes exactly such an
+extension as a hypothesis rather than building one, so it does not use this lemma.
 
 ## Main results
 
@@ -36,12 +40,12 @@ universe u
 
 namespace TauCeti
 
-/-- An auxiliary root-adjoining construction: for finitely many elements `s` of a field `F` and
-`0 < n`, there is a finite extension `E` of `F` in which every `c ∈ s` has an `n`-th root (adjoin
-the roots inside an algebraic closure). Both conjuncts concern the same witness `E`, which is why
-they are bundled.
+/-- For finitely many elements `s` of a field `F` and `0 < n`, there is a finite extension `E` of
+`F` in which every `c ∈ s` has an `n`-th root: adjoin the roots inside an algebraic closure. Both
+conjuncts concern the same witness `E`, which is why they are bundled.
 
-This feeds the construction of the extension `L′` in Stacks, Lemma 10.161.13 (tag 032O) —
+This is the shape the construction of the extension `L′` in Stacks, Lemma 10.161.13 (tag 032O)
+needs —
 "There exists a finite purely inseparable field extension `L′/K` and `q = p^e` such that
 `L ⊂ L′(x^{1/q})`" — but is NOT that extension: nothing here asserts that `E / F` is purely
 inseparable, only that it is finite and contains the required roots. -/
@@ -54,8 +58,7 @@ theorem exists_finiteDimensional_forall_exists_pow_eq (F : Type u) [Field F] (s 
   have hroot : ∀ c : F, ∃ d : AlgebraicClosure F,
       d ^ n = algebraMap F (AlgebraicClosure F) c := fun c ↦ IsAlgClosed.exists_pow_nat_eq _ hn
   choose d hd using hroot
-  have hTfin : (d '' (s : Set F)).Finite := s.finite_toSet.image d
-  have : Finite (d '' (s : Set F)) := hTfin
+  have : Finite (d '' (s : Set F)) := (s.finite_toSet.image d).to_subtype
   refine ⟨IntermediateField.adjoin F (d '' (s : Set F)), inferInstance, inferInstance,
     IntermediateField.finiteDimensional_adjoin (fun x _ ↦ Algebra.IsIntegral.isIntegral x),
     fun c hc ↦ ⟨⟨d c, IntermediateField.subset_adjoin F _ ⟨c, hc, rfl⟩⟩, ?_⟩⟩

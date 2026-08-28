@@ -22,7 +22,7 @@ normalization-finiteness needs, `k'(X_1, …, X_r)`, is not perfect.
 The companion existence statement — for finitely many elements of a field, a finite extension
 containing `n`-th roots of all of them — is
 `TauCeti.exists_finiteDimensional_forall_exists_pow_eq`, in
-`TauCeti/FieldTheory/IntermediateField/AdjoinRoots.lean`; nothing about it is specific to purely
+`TauCeti/FieldTheory/IntermediateField/Adjoin/Roots.lean`; nothing about it is specific to purely
 inseparable extensions.
 
 ## Main results
