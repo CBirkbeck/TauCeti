@@ -7,6 +7,8 @@ module
 
 public import Mathlib.Logic.Equiv.Defs
 public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Fintype.Fin
+public import Mathlib.Tactic.FinCases
 
 /-!
 # The two-element sum as `Fin 2`
@@ -34,8 +36,8 @@ statement about *every* `Fin 2` index be pulled back, and both directions are wa
 def unitSumUnitEquivFinTwo : (Unit ⊕ Unit) ≃ Fin 2 where
   toFun := Sum.elim (fun _ ↦ 0) (fun _ ↦ 1)
   invFun := ![Sum.inl (), Sum.inr ()]
-  left_inv := by decide
-  right_inv := by decide
+  left_inv := by rintro (⟨⟩ | ⟨⟩) <;> rfl
+  right_inv := by intro x; fin_cases x <;> rfl
 
 @[simp]
 theorem unitSumUnitEquivFinTwo_inl : unitSumUnitEquivFinTwo (Sum.inl ()) = 0 := by decide
