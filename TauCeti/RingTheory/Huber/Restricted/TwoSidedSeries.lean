@@ -5,7 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.RingTheory.Huber.Restricted.PowerSeries
+public import Mathlib.Order.Filter.ZeroAndBoundedAtFilter
+public import TauCeti.Topology.Algebra.Nonarchimedean.ZeroAtFilter
 
 /-!
 # Two-sided restricted series `A⟨X, X⁻¹⟩`
@@ -46,13 +47,12 @@ a placement hazard:
 
 ## Main results
 
-* `TauCeti.Huber.zeroAtFilter_cofinite_iff_finite_notMem`: over a nonarchimedean additive group,
-  a family tends to `0` cofinitely **iff** all but finitely many of its members lie in each open
-  additive subgroup. This is Wedhorn's phrasing of the condition, and the `←` direction is what
-  makes it usable as a criterion rather than only as a consequence. Stated for an arbitrary index
-  type, since neither direction looks at the index set.
-* `TauCeti.Huber.mem_twoSidedRestrictedSubmodule_iff_finite_notMem`: that criterion at `ℤ`, which
-  is Example 6.39's defining condition verbatim.
+* `TauCeti.Huber.mem_twoSidedRestrictedSubmodule_iff_finite_notMem`: Example 6.39's defining
+  condition verbatim — membership is the finiteness condition on open additive subgroups. It is
+  the `ℤ` case of `NonarchimedeanAddGroup.zeroAtFilter_cofinite_iff_finite_notMem`, which is
+  stated for an arbitrary index type in
+  `TauCeti/Topology/Algebra/Nonarchimedean/ZeroAtFilter.lean` because neither direction of it
+  looks at the index set or at series.
 * `TauCeti.Huber.twoSidedRestrictedSubmodule_ext`: coefficientwise extensionality.
 
 ## Implementation notes
@@ -74,33 +74,6 @@ public section
 open Filter Topology
 
 namespace TauCeti.Huber
-
-section Criterion
-
-variable {ι : Type*} {G : Type*} [AddGroup G] [TopologicalSpace G]
-
-/-- **Restrictedness, as Wedhorn states it.** A family tends to `0` along the cofinite filter
-exactly when, for every open additive subgroup `W`, all but finitely many of its members lie in
-`W`.
-
-The `→` direction holds in any topological additive group, and is the form
-`TauCeti.Huber.IsRestricted.finite_coeff_notMem` records for one-sided series. The `←` direction
-is where nonarchimedeanness enters: it supplies an open subgroup inside each neighbourhood of
-zero, which turns the family of open subgroups into a neighbourhood basis and so upgrades the
-consequence into a criterion.
-
-Neither direction inspects the index set, so `ι` is arbitrary. -/
-theorem zeroAtFilter_cofinite_iff_finite_notMem [NonarchimedeanAddGroup G] {f : ι → G} :
-    ZeroAtFilter cofinite f ↔ ∀ W : OpenAddSubgroup G, {n | f n ∉ (W : Set G)}.Finite := by
-  refine ⟨fun hf W ↦ ?_, fun h ↦ ?_⟩
-  · have := (tendsto_nhds.mp hf) _ W.isOpen (SetLike.mem_coe.mpr W.zero_mem)
-    rwa [Filter.mem_cofinite] at this
-  · refine tendsto_nhds.mpr fun U hU h0 ↦ ?_
-    obtain ⟨W, hWU⟩ := NonarchimedeanAddGroup.is_nonarchimedean U (hU.mem_nhds h0)
-    rw [Filter.mem_cofinite]
-    exact (h W).subset fun n hn ↦ fun hnW ↦ hn (hWU hnW)
-
-end Criterion
 
 section Submodule
 
@@ -144,7 +117,7 @@ outside. -/
 theorem mem_twoSidedRestrictedSubmodule_iff_finite_notMem {f : ℤ → M} :
     f ∈ twoSidedRestrictedSubmodule A M ↔
       ∀ W : OpenAddSubgroup M, {n | f n ∉ (W : Set M)}.Finite :=
-  zeroAtFilter_cofinite_iff_finite_notMem
+  NonarchimedeanAddGroup.zeroAtFilter_cofinite_iff_finite_notMem
 
 end WedhornCriterion
 
