@@ -7,8 +7,6 @@ module
 
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Mathlib.RingTheory.IntegralClosure.IsIntegralClosure.Basic
-public import Mathlib.FieldTheory.Minpoly.Field
-public import Mathlib.RingTheory.Algebraic.Basic
 public import Mathlib.RingTheory.Localization.FractionRing
 public import Mathlib.RingTheory.Noetherian.Basic
 
@@ -16,7 +14,8 @@ public import Mathlib.RingTheory.Noetherian.Basic
 # Transport principles for integral closures and their finiteness
 
 Three general facts that the finiteness of integral closures is assembled from, each stated in
-the abstract `IsIntegralClosure` form and independent of the others.
+an abstract typeclass form — `IsIntegralClosure` for the first two, `IsFractionRing` for the
+third — and independent of the others.
 
 * Descending the base: an integral closure of `A` in `B` is also the integral closure of `R` in
   `B` when `A` is integral over `R` — the converse of Mathlib's `IsIntegralClosure.tower_top`,
@@ -147,19 +146,14 @@ theorem IsFractionRing.finiteDimensional_of_finite (R S K L : Type*) [CommRing R
         exact V.smul_mem _ (hS _)
   -- inverses: `b⁻¹` is a `K`-polynomial in `b` divided by a nonzero constant coefficient
   have hinv : ∀ b : S, b ∈ nonZeroDivisors S → (algebraMap S L b)⁻¹ ∈ V := by
-    intro b hb
-    have hb0 : algebraMap S L b ≠ 0 :=
-      (map_ne_zero_iff _ (IsFractionRing.injective S L)).mpr (nonZeroDivisors.ne_zero hb)
+    intro b _
     have hint : IsIntegral K (algebraMap S L b) :=
       (IsIntegral.map (IsScalarTower.toAlgHom R S L) (IsIntegral.of_finite R b)).tower_top
-    set p := minpoly K (algebraMap S L b) with hp
-    have key : (algebraMap S L b)⁻¹
-        = (-(p.coeff 0)⁻¹) • Polynomial.aeval (algebraMap S L b) p.divX := by
-      rw [inv_eq_of_root_of_coeff_zero_ne_zero (minpoly.aeval K _)
-        (minpoly.coeff_zero_ne_zero hint hb0), Algebra.smul_def, map_neg, map_inv₀, neg_mul,
-        ← div_eq_inv_mul]
-    rw [key]
-    exact V.smul_mem _ (hpoly b _)
+    -- the inverse of a nonzero integral element already lies in the algebra it generates
+    obtain ⟨q, hq⟩ :=
+      Algebra.adjoin_mem_exists_aeval K (algebraMap S L b) hint.inv_mem_adjoin
+    rw [← hq]
+    exact hpoly b q
   -- `L` is the fraction field of `S`, so `V` is everything
   have htop : V = ⊤ := by
     refine eq_top_iff.mpr fun z _ ↦ ?_
