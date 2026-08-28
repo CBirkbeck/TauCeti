@@ -28,7 +28,8 @@ Mathlib's `Valuation.ltAddSubgroup` packages a sublevel set as an additive subgr
 indexed by `Γ₀ˣ` and so forces a `LinearOrderedCommGroupWithZero` codomain. `IsContinuous` is
 stated over a `LinearOrderedCommMonoidWithZero`, matching Mathlib's `Valuation`, and this
 criterion is stated over one too — the strict triangle inequality needs no inverses. The
-subgroup is therefore built where it is used rather than taken from Mathlib.
+subgroup used below is therefore `TauCeti.Valuation.ltAddSubgroupOfNeZero`, the analogue of
+Mathlib's construction at the weaker codomain, rather than Mathlib's own.
 
 ## Main results
 
