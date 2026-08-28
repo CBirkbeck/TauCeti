@@ -43,7 +43,25 @@ namespace MvPowerSeries
 
 open Filter Finsupp
 
-variable {σ τ υ R : Type*} [CommRing R]
+variable {σ τ υ R : Type*}
+
+section CommSemiring
+
+variable [CommSemiring R]
+
+/-- **A linear coefficient survives a renaming along an embedding.** Mathlib's
+`coeff_embDomain_rename` states this for a general exponent through `Finsupp.embDomain`; at a
+single variable the `single (e i) n` spelling is the one a caller meets. -/
+@[simp]
+theorem coeff_single_rename (e : σ ↪ τ) (p : MvPowerSeries σ R) (i : σ) (n : ℕ) :
+    coeff (single (e i) n) (rename e p) = coeff (single i n) p := by
+  rw [← embDomain_single, coeff_embDomain_rename]
+
+end CommSemiring
+
+section CommRing
+
+variable [CommRing R]
 
 /-- **Substituting into a renamed series reindexes the family**: `rename e p` followed by
 substituting `g` is `p` with `g ∘ e` substituted.
@@ -58,12 +76,6 @@ theorem subst_rename (e : σ → τ) [TendstoCofinite e] (p : MvPowerSeries σ R
   rw [rename_eq_subst, subst_comp_subst_apply (HasSubst.X_comp _) hg]
   simp [subst_X hg, Function.comp_def]
 
-/-- **A linear coefficient survives a renaming along an embedding.** Mathlib's
-`coeff_embDomain_rename` states this for a general exponent through `Finsupp.embDomain`; at a
-single variable the `single (e i) n` spelling is the one a caller meets. -/
-@[simp]
-theorem coeff_single_rename (e : σ ↪ τ) (p : MvPowerSeries σ R) (i : σ) (n : ℕ) :
-    coeff (single (e i) n) (rename e p) = coeff (single i n) p := by
-  rw [← embDomain_single, coeff_embDomain_rename]
+end CommRing
 
 end MvPowerSeries

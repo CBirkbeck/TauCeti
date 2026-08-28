@@ -44,3 +44,11 @@ theorem unitSumUnitEquivFinTwo_inl : unitSumUnitEquivFinTwo (Sum.inl ()) = 0 := 
 
 @[simp]
 theorem unitSumUnitEquivFinTwo_inr : unitSumUnitEquivFinTwo (Sum.inr ()) = 1 := by decide
+
+@[simp]
+theorem unitSumUnitEquivFinTwo_symm_zero :
+    unitSumUnitEquivFinTwo.symm 0 = Sum.inl () := by decide
+
+@[simp]
+theorem unitSumUnitEquivFinTwo_symm_one :
+    unitSumUnitEquivFinTwo.symm 1 = Sum.inr () := by decide
