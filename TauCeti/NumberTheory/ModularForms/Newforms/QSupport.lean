@@ -33,7 +33,7 @@ The underlying power-series predicate is not stated here: it is generic material
 
 ## Main results
 
-* `TauCeti.CuspForm.isSupportedOnDvd_qExpansion_levelRaise` and its modular-form counterpart: the
+* `CuspForm.isSupportedOnDvd_qExpansion_levelRaise` and its modular-form counterpart: the
   image of the level-raising operator `V_d` is supported on multiples of `d` — the forward half of
   the Atkin-Lehner description of the old subspace.
 * `TauCeti.range_levelRaise_le_qSupportedOnDvdSubmodule`: the same statement for the `ℂ`-linear
@@ -102,7 +102,7 @@ private theorem one_mem_strictPeriods_Gamma1_map (M : ℕ) :
 
 /-- **Level-raising lands in the supported subspace, for modular forms.** The image `V_d g` has
 `q`-expansion supported on multiples of `d`, because `aₙ(V_d g)` vanishes unless `d ∣ n`. -/
-theorem ModularForm.isSupportedOnDvd_qExpansion_levelRaise (M : ℕ)
+theorem _root_.ModularForm.isSupportedOnDvd_qExpansion_levelRaise (M : ℕ)
     (g : ModularForm ((Gamma1 M).map (mapGL ℝ)) k) :
     IsSupportedOnDvd d
       (qExpansion 1 (ModularForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL M d) g)) :=
@@ -112,7 +112,7 @@ theorem ModularForm.isSupportedOnDvd_qExpansion_levelRaise (M : ℕ)
 
 /-- **Level-raising lands in the supported subspace, for cusp forms** — the forward half of the
 Atkin-Lehner correspondence. -/
-theorem CuspForm.isSupportedOnDvd_qExpansion_levelRaise (M : ℕ)
+theorem _root_.CuspForm.isSupportedOnDvd_qExpansion_levelRaise (M : ℕ)
     (g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) :
     IsSupportedOnDvd d
       (qExpansion 1 (CuspForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL M d) g)) :=
