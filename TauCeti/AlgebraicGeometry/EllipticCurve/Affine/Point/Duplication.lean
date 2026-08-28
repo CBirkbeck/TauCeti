@@ -8,14 +8,13 @@ module
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 
 /-!
-# The duplication formulae and the fibres of the projective `x`-coordinate
+# The duplication formulae and the `x`-coordinate addition formulae
 
 Affine-coordinate arithmetic on a Weierstrass curve, independent of any theory of heights: the
-numerator and denominator of the duplication formula, the `x`-coordinate addition formulae, their
-transport to the projective representative `Point.xRep`, and the finiteness of the fibres of
-`xRep`.
+numerator and denominator of the duplication formula, the `x`-coordinate addition formulae, and
+their transport to the projective representative `Point.xRep`.
 
-The fibres of `xRep` are *not* here: they use none of these formulae and live in
+Finiteness of the fibres of `xRep` is *not* here — it uses none of these formulae and lives in
 `TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.XRep`.
 
 Nothing here mentions a height. These are consumed by

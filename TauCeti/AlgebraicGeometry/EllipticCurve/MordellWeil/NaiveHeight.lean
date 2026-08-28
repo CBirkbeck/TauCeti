@@ -30,14 +30,12 @@ those symmetric functions by the quadratic `addSubMap`, and the height of a valu
 homogeneous polynomial map is controlled by the height of its argument. The commuting square
 holds only up to a nonzero scalar, which is harmless because `logHeight` is scale-invariant.
 
-The affine-coordinate arithmetic it runs on — the duplication formulae, the `x`-coordinate
-addition formulae, their transport to `Point.xRep`, and finiteness of the fibres of `xRep` —
-mentions no height and lives in
-`TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Duplication`.
-
-The commuting square it runs on, and the affine-coordinate arithmetic under that, mention no
-height and live in `TauCeti.AlgebraicGeometry.EllipticCurve.Affine.AddSubMap` and
-`TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Duplication`.
+Everything this runs on mentions no height and lives under `Affine/`: the commuting square in
+`TauCeti.AlgebraicGeometry.EllipticCurve.Affine.AddSubMap`; the duplication formulae, the
+`x`-coordinate addition formulae and their transport to `Point.xRep` in
+`TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Duplication`; and finiteness of the fibres
+of `xRep`, which the Northcott instance consumes, in
+`TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.XRep`.
 
 ## Main results
 
