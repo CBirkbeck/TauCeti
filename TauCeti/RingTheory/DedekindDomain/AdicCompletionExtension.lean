@@ -7,7 +7,7 @@ module
 
 public import Mathlib.NumberTheory.NumberField.Completion.FinitePlace
 public import TauCeti.RingTheory.DedekindDomain.Ideal
-public import TauCeti.RingTheory.DedekindDomain.SelmerGroup
+public import TauCeti.RingTheory.DedekindDomain.ValuationOfNeZero
 
 /-!
 # Extension of adic completions along an extension of Dedekind domains
@@ -38,10 +38,12 @@ global étale algebra with its images in the completions passes through exactly 
 
 * `IsDedekindDomain.HeightOneSpectrum.valuation_maximalIdeal_adicCompletionIntegers`: the
   valuation attached to the maximal ideal of `𝒪_v` is the valuation of `K_v`.
+* `IsDedekindDomain.HeightOneSpectrum.valuation_adicCompletionIntegers`: the same identification
+  at an arbitrary height-one prime of `𝒪_v`, for every element of `K_v`.
 * `IsDedekindDomain.HeightOneSpectrum.valuationOfNeZero_maximalIdeal_adicCompletionIntegers` and
-  `IsDedekindDomain.HeightOneSpectrum.valuation_adicCompletion_algebraMap`: the same identification
-  in the two forms the square-class conditions of the `2`-descent are stated in — on units of `K`,
-  and at an arbitrary height-one prime of `𝒪_v`.
+  `IsDedekindDomain.HeightOneSpectrum.valuation_adicCompletion_algebraMap`: the two restrictions
+  of it the square-class conditions of the `2`-descent are stated in — on units of `K`, and on the
+  image of `K`.
 * `IsDedekindDomain.HeightOneSpectrum.valued_adicCompletionExtension`: along the extension the
   valuation is raised to the ramification index.
 * `IsDedekindDomain.HeightOneSpectrum.comap_maximalIdeal_adicCompletionIntegersExtension`: the
@@ -163,11 +165,19 @@ theorem valuationOfNeZero_maximalIdeal_adicCompletionIntegers (u : Kˣ) :
   exact v.valuedAdicCompletion_eq_valuation' _
 
 /-- Any height-one prime `P` of the valuation ring `𝒪_v` — necessarily its maximal ideal —
-induces on `K` the valuation `v` itself. -/
+induces on `K_v` the valuation of the completion. -/
+theorem valuation_adicCompletionIntegers (P : HeightOneSpectrum (v.adicCompletionIntegers K))
+    (x : v.adicCompletion K) :
+    P.valuation (v.adicCompletion K) x = Valued.v x := by
+  rw [P.eq_maximalIdeal, valuation_maximalIdeal_adicCompletionIntegers]
+
+/-- Any height-one prime `P` of the valuation ring `𝒪_v` — necessarily its maximal ideal —
+induces on `K` the valuation `v` itself: the restriction to `K` of
+`valuation_adicCompletionIntegers`. -/
 theorem valuation_adicCompletion_algebraMap (P : HeightOneSpectrum (v.adicCompletionIntegers K))
     (z : K) :
     P.valuation (v.adicCompletion K) (algebraMap K (v.adicCompletion K) z) = v.valuation K z := by
-  rw [P.eq_maximalIdeal, valuation_maximalIdeal_adicCompletionIntegers]
+  rw [valuation_adicCompletionIntegers]
   exact v.valuedAdicCompletion_eq_valuation' z
 
 end IsDedekindDomain.HeightOneSpectrum
@@ -278,6 +288,7 @@ lemma valued_adicCompletionExtension (x : v.adicCompletion K) :
   exact valuation_liesOver (K := K) L v w (WithVal.equiv (v.valuation K) a)
 
 /-- The extension maps the ring of integers of `K_v` into the ring of integers of `L_w`. -/
+@[simp]
 lemma adicCompletionExtension_mem_adicCompletionIntegers (x : v.adicCompletionIntegers K) :
     adicCompletionExtension K L v w (x : v.adicCompletion K) ∈ w.adicCompletionIntegers L := by
   rw [mem_adicCompletionIntegers, valued_adicCompletionExtension]
