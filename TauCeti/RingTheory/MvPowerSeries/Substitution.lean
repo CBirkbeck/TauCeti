@@ -172,11 +172,13 @@ variable {R : Type*} [CommRing R] [UniformSpace R] [IsUniformAddGroup R] [IsTopo
 
 /-- `PowerSeries.eval₂_toMvPowerSeries` at the identity ring homomorphism.
 
-This is **not** a cosmetic restatement. `algebraMap R R` and `RingHom.id R` are definitionally
-equal but not syntactically so, and `algebraMap` is not reducible, so `simp` cannot match the
-general lemma against a goal phrased over `RingHom.id`. An evaluation layer whose coefficients and
-values are the same ring — which is what the formal group of a curve over an adic ring needs — is
-always phrased over `RingHom.id`, so without this form the general lemma is unusable there. -/
+The specialization exists so that consumers phrased over `RingHom.id` need not perform the
+normalization themselves. `algebraMap R R` and `RingHom.id R` are definitionally equal but not
+syntactically so, and `algebraMap` is not reducible; that is easy to discharge once, as the
+`simpa` below does, but it means the general lemma does not fire as a `simp` *rewrite rule*
+against a goal phrased over `RingHom.id`. An evaluation layer whose coefficients and values are
+the same ring — what the formal group of a curve over an adic ring needs — is phrased that way
+throughout, so it is this form its `simp` sets can use. -/
 theorem eval₂_id_toMvPowerSeries {σ : Type*} {a : σ → R} (ha : MvPowerSeries.HasEval a) (i : σ)
     (f : PowerSeries R) :
     MvPowerSeries.eval₂ (RingHom.id R) a (toMvPowerSeries i f) =
