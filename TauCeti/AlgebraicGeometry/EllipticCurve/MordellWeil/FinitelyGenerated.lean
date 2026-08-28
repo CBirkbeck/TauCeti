@@ -66,8 +66,11 @@ section Northcott
 variable [AdmissibleAbsValues F] [Northcott (logHeight₁ (K := F))]
 variable [DecidableEq F] [W.toAffine.IsElliptic]
 
-/-- The torsion subgroup of the group of `K`-rational points on an elliptic curve over a
-number field `K` is finite. -/
+/-- The torsion subgroup of `E(F)` is finite, for any field `F` carrying admissible absolute
+values whose `logHeight₁` satisfies the Northcott property. No number field is needed: the
+descent uses only the approximate parallelogram law and Northcott finiteness, both of which are
+available at that generality. A number field is one such `F`, via
+`Mathlib/NumberTheory/Height/NumberField.lean`. -/
 theorem finite_torsion : Finite (AddCommGroup.torsion W.Point) := by
   obtain ⟨C, hC⟩ := approx_parallelogram_law W
   exact AddCommGroup.finite_torsion_of_descent' hC

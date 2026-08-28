@@ -50,9 +50,9 @@ theorem isIntegralClosure_int_integralClosure :
     IsIntegralClosure (integralClosure (𝓞 K) L) ℤ L := by
   refine ⟨Subtype.val_injective, fun {x} ↦ ⟨fun hx ↦ ?_, fun ⟨y, hy⟩ ↦ ?_⟩⟩
   · exact ⟨⟨x, IsIntegral.tower_top (A := 𝓞 K) hx⟩, rfl⟩
-  · have hyint : IsIntegral (𝓞 K) (y : L) := y.2
-    have := isIntegral_trans (R := ℤ) (y : L) hyint
-    rwa [show (y : L) = x from hy] at this
+  · have hyint : IsIntegral (𝓞 K) (algebraMap (integralClosure (𝓞 K) L) L y) := y.2
+    have := isIntegral_trans (R := ℤ) _ hyint
+    rwa [hy] at this
 
 variable [NumberField K] [FiniteDimensional K L]
 
