@@ -33,8 +33,9 @@ coset vocabulary vendored from the in-review mathlib4 PR
 * `LeftCosetModule.instIsScalarTowerMulOpposite`,
   `LeftCosetModule.instSMulCommClassMulOpposite`: the scalar operations are homogeneous in,
   and commute with, the coefficients.
-* `LeftCosetModule.card_filter_orbit_eq_multiplicity` (private): Shimura's pair count, the
-  combinatorial core of the compatibility law.
+* `LeftCosetModule.card_filter_smulOrbit_eq_multiplicity`: Shimura's pair count, the
+  combinatorial core of the compatibility law and the public bridge from iterated coset orbits
+  to the Hecke ring's structure constants.
 
 ## References
 
@@ -244,8 +245,12 @@ private lemma mem_smulOrbit_iff_rep {g w : Δ} {x : HeckeCoset Δ ⊥ H} :
 open Classical in
 /-- **Shimura's pair count** (the heart of Proposition 3.4): for a left coset in the orbit
 of `D₀`, the number of intermediate cosets of the `D₁`-orbit whose `D₂`-orbit contains it
-is the multiplicity of `D₀` in the product `D₁ * D₂`. -/
-private lemma card_filter_orbit_eq_multiplicity {D₁ D₂ D₀ : HeckeCoset Δ H H} {β : Δ}
+is the multiplicity of `D₀` in the product `D₁ * D₂`.
+
+This is the pointwise bridge between the right-coset enumeration used by Hecke actions and the
+left-coset definition of `DoubleCoset.multiplicity`. In particular, it is the count needed to
+regroup a composite of two orbit sums by its output coset. -/
+theorem card_filter_smulOrbit_eq_multiplicity {D₁ D₂ D₀ : HeckeCoset Δ H H} {β : Δ}
     {x : HeckeCoset Δ ⊥ H} (hx : x ∈ smulOrbit H D₀.rep β) :
     ((smulOrbit H D₁.rep β).filter fun i ↦ x ∈ smulOrbit H D₂.rep i.rep).card =
       multiplicity H H H (D₁.rep : G) (D₂.rep : G) (D₀.rep : G) := by
@@ -310,7 +315,7 @@ private lemma single_mul_smul_single (D₁ D₂ : HeckeCoset Δ H H) (q : HeckeC
   rw [sum_smulOrbit_single_apply, sum_sum_single_apply]
   by_cases h : ∃ D₀ : HeckeCoset Δ H H, x ∈ smulOrbit H D₀.rep q.rep
   · obtain ⟨D₀, hD₀⟩ := h
-    rw [sum_ite_orbit_eq _ _ _ hD₀, card_filter_orbit_eq_multiplicity hD₀,
+    rw [sum_ite_orbit_eq _ _ _ hD₀, card_filter_smulOrbit_eq_multiplicity hD₀,
       HeckeCosetModule.structureConstants_apply]
     simp only [nsmul_eq_mul]
     -- the multiplicity enters as a natural-number cast, which is central
