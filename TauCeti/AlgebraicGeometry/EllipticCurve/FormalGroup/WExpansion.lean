@@ -47,7 +47,8 @@ equation at the substituted parameter rather than at `z`.
   that parameter are equal.
 * `WeierstrassCurve.eq_of_wEquation_mvPowerSeries`: that same uniqueness one index type up, for
   series in `MvPowerSeries σ R`. It is a sibling of `eq_of_wEquation` and not a generalisation of
-  it: filtering by total degree means subtracting, which costs the `CommSemiring` hypothesis.
+  it: filtering by total degree needs subtraction, so this one asks for a `CommRing`, where the
+  univariate statement holds over a `CommSemiring`.
 * `WeierstrassCurve.subst_wEquationRHS` and `WeierstrassCurve.subst_formalW_wEquation`:
   substituting a series `q` into the equation gives the equation at `q`, so `w(q)` solves it
   there. When moreover `constantCoeff q = 0`, `eq_subst_formalW_of_wEquation` combines this with
@@ -469,15 +470,6 @@ so this material stays in the `CommRing` section rather than joining the `CommSe
 above; the two uniqueness statements are siblings and neither subsumes the other.
 -/
 
-/-- The `w`-equation in `MvPowerSeries σ R` itself, where the structure map is `MvPowerSeries.C`.
-This is the spelling the order estimates below match against. -/
-theorem wEquationRHS_mvPowerSeries {σ : Type*} (q v : MvPowerSeries σ R) :
-    wEquationRHS W q v =
-      q ^ 3 + MvPowerSeries.C W.a₁ * q * v + MvPowerSeries.C W.a₂ * q ^ 2 * v +
-        MvPowerSeries.C W.a₃ * v ^ 2 + MvPowerSeries.C W.a₄ * q * v ^ 2 +
-        MvPowerSeries.C W.a₆ * v ^ 3 :=
-  (rfl)
-
 /-- **The right-hand side of the `w`-equation is a contraction for the total-degree filtration.**
 If two candidate solutions agree below total degree `k`, then the values of the equation at them
 agree below total degree `k + 1`. Every occurrence of the unknown is multiplied by the parameter,
@@ -499,9 +491,10 @@ private theorem le_order_wEquationRHS_sub {σ : Type*} {q u v : MvPowerSeries σ
     push_cast
     exact (add_le_add hf hg).trans MvPowerSeries.le_order_mul
   have hC : ∀ {m : ℕ} (a : R) {f : MvPowerSeries σ R}, (m : ℕ∞) ≤ f.order →
-      (m : ℕ∞) ≤ (MvPowerSeries.C a * f).order := by
+      (m : ℕ∞) ≤ (algebraMap R (MvPowerSeries σ R) a * f).order := by
     intro m a f hf
-    exact (hf.trans le_add_self).trans MvPowerSeries.le_order_mul
+    rw [← Algebra.smul_def]
+    exact hf.trans MvPowerSeries.le_order_smul
   -- The three differences that carry the gain.
   have hq2 : ((2 : ℕ) : ℕ∞) ≤ (q * q).order := hmul hq hq
   have hlin : ((k + 1 : ℕ) : ℕ∞) ≤ (q * (u - v)).order := hmono (by omega) (hmul hq h)
@@ -515,10 +508,12 @@ private theorem le_order_wEquationRHS_sub {σ : Type*} {q u v : MvPowerSeries σ
     exact hmono (by omega) (hmul (hadd (hadd (hmul hu hu) (hmul hu hv)) (hmul hv hv)) h)
   -- Reassemble the difference and bound each summand.
   have hstep : wEquationRHS W q u - wEquationRHS W q v =
-      MvPowerSeries.C W.a₁ * (q * (u - v)) + MvPowerSeries.C W.a₂ * (q * q * (u - v)) +
-        MvPowerSeries.C W.a₃ * (u ^ 2 - v ^ 2) + MvPowerSeries.C W.a₄ * (q * (u ^ 2 - v ^ 2)) +
-        MvPowerSeries.C W.a₆ * (u ^ 3 - v ^ 3) := by
-    rw [wEquationRHS_mvPowerSeries, wEquationRHS_mvPowerSeries]
+      algebraMap R (MvPowerSeries σ R) W.a₁ * (q * (u - v)) +
+        algebraMap R (MvPowerSeries σ R) W.a₂ * (q * q * (u - v)) +
+        algebraMap R (MvPowerSeries σ R) W.a₃ * (u ^ 2 - v ^ 2) +
+        algebraMap R (MvPowerSeries σ R) W.a₄ * (q * (u ^ 2 - v ^ 2)) +
+        algebraMap R (MvPowerSeries σ R) W.a₆ * (u ^ 3 - v ^ 3) := by
+    rw [wEquationRHS_def, wEquationRHS_def]
     ring
   rw [hstep]
   refine hadd (hadd (hadd (hadd (hC _ hlin) (hC _ ?_)) (hC _ hsq)) (hC _ ?_)) (hC _ hcb)
