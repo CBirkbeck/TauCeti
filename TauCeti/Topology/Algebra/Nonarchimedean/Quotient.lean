@@ -22,11 +22,12 @@ level and transported with `@[to_additive]`, and the ring statement is derived f
 one rather than reproved — the same way Mathlib derives `NonarchimedeanRing (R × S)` from the
 additive group instance on a product.
 
-Deriving it does take one step, because `R ⧸ I` and `R ⧸ I.toAddSubgroup` are *definitionally*
-equal but not syntactically so: Mathlib's `topologicalRing_quotient` already builds the
-topological-ring structure of `R ⧸ I` out of `QuotientAddGroup.instIsTopologicalAddGroup`, yet
-instance search does not see through the two `HasQuotient` instances on its own. Naming
-`I.toAddSubgroup` once is what lets the additive instance apply.
+Both instances factor through one transport lemma. `NonarchimedeanGroup.of_isOpenMap` says the
+property passes along *any* continuous open homomorphism, which is all the quotient map is ever
+used for here; it strictly generalizes Mathlib's `NonarchimedeanGroup.nonarchimedean_of_emb`, the
+embedding case. The group instance applies it to `QuotientGroup.mk'`, and the ring instance applies
+its additive form to `Ideal.Quotient.mk` through `QuotientRing.isOpenMap_coe` — so no
+identification of `R ⧸ I` with a quotient by `I.toAddSubgroup` is involved.
 
 The consumer is the universal property of a rational localisation
 (`TauCeti.Huber.PairOfDefinition.existsUnique_continuous_ringHom_completion_locTopology`), which
@@ -36,6 +37,8 @@ universal property to `C ⧸ a` needs exactly the ring instance below.
 
 ## Main results
 
+* `NonarchimedeanGroup.of_isOpenMap`, and its additive form `NonarchimedeanAddGroup.of_isOpenMap`:
+  nonarchimedeanity transports along a continuous open homomorphism.
 * `QuotientGroup.instNonarchimedeanGroup`, and its additive form
   `QuotientAddGroup.instNonarchimedeanAddGroup`: `G ⧸ N` is nonarchimedean when `G` is.
 * `Ideal.Quotient.instNonarchimedeanRing`: `R ⧸ I` is nonarchimedean when `R` is.
