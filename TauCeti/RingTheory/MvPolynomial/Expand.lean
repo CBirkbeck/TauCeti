@@ -131,9 +131,13 @@ theorem MvPolynomial.finite_expand {σ R : Type*} [CommRing R] [Finite σ] {n : 
   have h₁ : ((MvPolynomial.expand (σ := σ) (R := R) n).rangeRestrict.toRingHom).Finite :=
     RingHom.Finite.of_surjective _ (AlgHom.rangeRestrict_surjective _)
   have h₂ : ((MvPolynomial.expand (σ := σ) (R := R) n).range.val.toRingHom).Finite := hfin
+  -- from Mathlib's `(Subalgebra.val _).comp φ.rangeRestrict = φ`, rather than by `rfl`, so the
+  -- factorisation does not depend on how bundled-hom composition happens to be implemented
   have hfac : (MvPolynomial.expand (σ := σ) (R := R) n).toRingHom
       = ((MvPolynomial.expand (σ := σ) (R := R) n).range.val.toRingHom).comp
-        ((MvPolynomial.expand (σ := σ) (R := R) n).rangeRestrict.toRingHom) := rfl
+        ((MvPolynomial.expand (σ := σ) (R := R) n).rangeRestrict.toRingHom) :=
+    congrArg AlgHom.toRingHom
+      (MvPolynomial.expand (σ := σ) (R := R) n).val_comp_rangeRestrict.symm
   rw [hfac]
   exact RingHom.Finite.comp h₂ h₁
 
