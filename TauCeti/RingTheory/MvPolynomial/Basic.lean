@@ -28,17 +28,16 @@ sits in this file rather than that one.
 Roadmap: EllipticCurves, the Layers 0-1 target *Function-field foundations and isogenies*
 (`TauCetiRoadmap/EllipticCurves/README.md:1096`), through the support module
 `RingTheory/IntegralClosure/NormalizationFinite`. The argument is Stacks 10.161.13 (tag 032O),
-which is univariate; the multivariate form is not claimed as source material.
+which is univariate; the multivariate form is not claimed as source material. This file is the
+"Since `R` is N-2 we see that `R'` is finite over `R`" half of that lemma's finiteness step.
 -/
 
 public section
 
 namespace TauCeti
 
-/-- Multivariate form of the univariate argument in Stacks, Lemma 10.161.13 (tag 032O).
-Proof: "Since `R` is N-2 we see that `R′` is
-finite over `R` and hence `R′[x^{1/q}]` is finite over `R[x]`". Polynomial rings preserve
-module-finiteness of the coefficient map: `MvPolynomial.map f` is finite whenever `f` is. -/
+/-- Polynomial rings preserve module-finiteness of the coefficient map: `MvPolynomial.map f` is
+finite whenever `f` is. -/
 theorem MvPolynomial.finite_map {σ R S : Type*} [CommRing R] [CommRing S] {f : R →+* S}
     (hf : f.Finite) : (MvPolynomial.map (σ := σ) f).Finite := by
   classical
