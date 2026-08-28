@@ -63,7 +63,10 @@ a placement hazard:
   directness** — `A⟨X, X⁻¹⟩` is the sum of its non-negative and negative parts, and that sum is
   direct. This is fact (i) of Wedhorn's Lemma 8.33 at the level of coefficients, and it is what
   the diagram chase there needs; the Example 6.39 universal property does not supply it.
-* `Filter.ZeroAtFilter.of_forall_eq_or_eq_zero`: zeroing coefficients keeps a family
+* `TauCeti.Huber.twoSidedRestrictedSubmodule_eq_sup_compl`: the same decomposition along an
+  arbitrary set of degrees and its complement, of which the sign partition above is a special
+  case. Nothing in the argument uses the order on `ℤ`, only that the two sets are complementary.
+* `Filter.ZeroAtFilter.of_eventually_eq_or_eq_zero`: zeroing coefficients keeps a family
   restricted. Stated pointwise rather than for an indicator, so it carries no decidability
   hypothesis; it is what makes the decomposition land inside the submodule rather than merely
   inside `ℤ → M`.
@@ -166,26 +169,42 @@ theorem disjoint_pi_compl_bot_of_disjoint {ι : Type*} {s t : Set ι} (h : Disjo
 
 variable (A M) [ContinuousAdd M] [ContinuousConstSMul A M]
 
+/-- **The degree decomposition along any set of degrees and its complement.** A two-sided
+restricted family is the sum of its part supported in `s` and its part supported in `sᶜ`. The
+argument uses nothing about `s` beyond the two sets being complementary: the witnesses are the
+two indicators of `f`, each restricted by `Filter.ZeroAtFilter.of_eventually_eq_or_eq_zero`, and
+they add back to `f` by `Set.indicator_self_add_compl`. The sign partition of
+`twoSidedRestrictedSubmodule_eq_sup` is the case `s = {n | 0 ≤ n}`. -/
+theorem twoSidedRestrictedSubmodule_eq_sup_compl (s : Set ℤ) :
+    twoSidedRestrictedSubmodule A M =
+      (twoSidedRestrictedSubmodule A M ⊓
+          Submodule.pi sᶜ fun _ ↦ (⊥ : Submodule A M)) ⊔
+        (twoSidedRestrictedSubmodule A M ⊓
+          Submodule.pi s fun _ ↦ (⊥ : Submodule A M)) := by
+  refine le_antisymm (fun f hf ↦ ?_) (sup_le inf_le_left inf_le_left)
+  refine Submodule.mem_sup.mpr
+    ⟨s.indicator f, ⟨?_, ?_⟩, sᶜ.indicator f, ⟨?_, ?_⟩, ?_⟩
+  · exact hf.of_eventually_eq_or_eq_zero (.of_forall fun n ↦ by
+      by_cases h : n ∈ s <;> simp [h])
+  · intro n hn; simpa [Set.indicator_apply] using fun h ↦ absurd h (by simpa using hn)
+  · exact hf.of_eventually_eq_or_eq_zero (.of_forall fun n ↦ by
+      by_cases h : n ∈ sᶜ <;> simp [h])
+  · intro n hn; simpa [Set.indicator_apply] using fun h ↦ absurd h (by simpa using hn)
+  · exact Set.indicator_self_add_compl _ f
+
 /-- **Wedhorn's degree decomposition, Lemma 8.33(i).** A two-sided restricted family is the sum of
 its non-negative part and its negative part: `A⟨z, z⁻¹⟩ = A⟨z⟩ + z⁻¹A⟨z⁻¹⟩` at the level of
-coefficients. Each summand is again restricted by `Filter.ZeroAtFilter.of_forall_eq_or_eq_zero`. -/
+coefficients. This is `twoSidedRestrictedSubmodule_eq_sup_compl` at the sign partition, which is
+where the restrictedness of each summand is established. -/
 theorem twoSidedRestrictedSubmodule_eq_sup :
     twoSidedRestrictedSubmodule A M =
       (twoSidedRestrictedSubmodule A M ⊓
           Submodule.pi {n : ℤ | 0 ≤ n}ᶜ fun _ ↦ (⊥ : Submodule A M)) ⊔
         (twoSidedRestrictedSubmodule A M ⊓
           Submodule.pi {n : ℤ | n < 0}ᶜ fun _ ↦ (⊥ : Submodule A M)) := by
-  refine le_antisymm (fun f hf ↦ ?_) (sup_le inf_le_left inf_le_left)
-  have hcompl : {n : ℤ | n < 0} = {n : ℤ | 0 ≤ n}ᶜ := by ext n; simp [not_le]
-  refine Submodule.mem_sup.mpr
-    ⟨{n : ℤ | 0 ≤ n}.indicator f, ⟨?_, ?_⟩, {n : ℤ | n < 0}.indicator f, ⟨?_, ?_⟩, ?_⟩
-  · exact hf.of_forall_eq_or_eq_zero fun n ↦ by
-      by_cases h : n ∈ {n : ℤ | 0 ≤ n} <;> simp [h]
-  · intro n hn; simpa [Set.indicator_apply] using fun h ↦ absurd h (by simpa using hn)
-  · exact hf.of_forall_eq_or_eq_zero fun n ↦ by
-      by_cases h : n ∈ {n : ℤ | n < 0} <;> simp [h]
-  · intro n hn; simpa [Set.indicator_apply] using fun h ↦ absurd h (by simpa using hn)
-  · rw [hcompl]; exact Set.indicator_self_add_compl _ f
+  have hcompl : {n : ℤ | n < 0}ᶜ = {n : ℤ | 0 ≤ n} := by ext n; simp
+  rw [hcompl]
+  exact twoSidedRestrictedSubmodule_eq_sup_compl A M {n : ℤ | 0 ≤ n}
 
 /-- **The decomposition is direct.** A family supported in non-negative degrees and in negative
 degrees at once is zero, so the two summands of `twoSidedRestrictedSubmodule_eq_sup` meet in `⊥`.
