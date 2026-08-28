@@ -5,7 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.RingTheory.PowerSeries.Order
 public import Mathlib.RingTheory.PowerSeries.Substitution
 
 /-!
@@ -20,14 +19,14 @@ no zero divisors, the order of `PowerSeries.subst f g` is *determined* by the or
 Mathlib provides only the inequality. `PowerSeries.le_order_subst` and its five companions
 (`le_weightedOrder_subst`, `le_order_subst_left`, `le_order_subst_right` and the two primed forms)
 all bound the order of a substitution from below; none determines it. The bound is what a caller
-can prove without hypotheses on the coefficient ring, and the equality is what a caller usually
-needs — additivity of the height of a composite formal-group homomorphism, for instance, is the
-equality read at `order`.
+can prove without hypotheses on the coefficient ring; the equality is what a caller needs whenever
+the order of a substitution must be computed rather than merely estimated.
 
-`NoZeroDivisors R` is exactly what upgrades the bound to an equality: it is what makes
-`order_mul` additive, and without it the leading terms of `f ^ order g` and of the substituted
-tail can cancel. No hypothesis on `g` is needed — the proof splits on `g = 0` and on whether `g`
-has vanishing constant coefficient, and the subsingleton case is handled uniformly.
+`NoZeroDivisors R` is exactly what upgrades the bound to an equality: it is the hypothesis of
+`order_mul` and `order_pow`, and what it rules out is that a product of nonzero leading
+coefficients is itself zero. No hypothesis on `g` is needed — the proof dispatches the
+subsingleton case first, then splits on `g = 0` and on whether `g` has vanishing constant
+coefficient.
 
 ## Main results
 
@@ -56,8 +55,12 @@ namespace PowerSeries
 variable {R : Type*} [CommRing R]
 
 /-- The constant coefficient of `PowerSeries.subst f g` is that of `g`, when `constantCoeff f = 0`.
-This is Mathlib's `constantCoeff_subst` finsum with every term but the `d = 0` one killed by
-`constantCoeff f = 0`. -/
+
+This is not a re-derivation of `PowerSeries.constantCoeff_subst`: that lemma is stated over
+`MvPowerSeries.constantCoeff`, so it does not apply to a `PowerSeries.constantCoeff` goal without
+first bridging the two namespaces. `coeff_zero_eq_constantCoeff` is that bridge; `coeff_subst'` is
+then the coefficient formula that matches, and `constantCoeff f = 0` kills every term of the
+resulting `finsum` but the `d = 0` one. -/
 private lemma constantCoeff_subst_of_constantCoeff_eq_zero {f : PowerSeries R}
     (hf : constantCoeff f = 0) (g : PowerSeries R) :
     constantCoeff (subst f g) = constantCoeff g := by
@@ -73,9 +76,12 @@ private lemma constantCoeff_subst_of_constantCoeff_eq_zero {f : PowerSeries R}
 over a commutative ring with no zero divisors,
 `order (subst f g) = order g * order f`.
 
-Mathlib's `le_order_subst` gives only `order g * order f ≤ order (subst f g)`. The hypothesis
-`constantCoeff f = 0` is what makes the substitution well defined (`HasSubst f`); `NoZeroDivisors`
-is what prevents the leading terms from cancelling and so upgrades the bound to an equality. -/
+Mathlib's `le_order_subst` gives only `order g * order f ≤ order (subst f g)`. `subst` is already
+total, so the hypothesis `constantCoeff f = 0` does not define it: it supplies `HasSubst f`, which
+is what the substitution lemmas used here (`subst_mul`, `subst_pow`, `subst_X`, `coeff_subst'`)
+require. `NoZeroDivisors` keeps the leading-coefficient products taken by `order_mul` and
+`order_pow` from vanishing, and so upgrades the bound to an equality. -/
+@[simp]
 theorem order_subst [NoZeroDivisors R] {f g : PowerSeries R} (hf : constantCoeff f = 0) :
     order (subst f g : PowerSeries R) = g.order * f.order := by
   have hsub : HasSubst f := HasSubst.of_constantCoeff_zero' hf
@@ -95,7 +101,7 @@ theorem order_subst [NoZeroDivisors R] {f g : PowerSeries R} (hf : constantCoeff
       rw [← coe_substAlgHom hsub]; exact map_zero _
     have hf_ord_ne_zero : order f ≠ 0 := by
       rw [order_ne_zero_iff_constCoeff_eq_zero]; exact hf
-    rw [show (subst f (0 : PowerSeries R) : PowerSeries R) = 0 from hz, order_zero]
+    rw [hz, order_zero]
     exact (ENat.top_mul hf_ord_ne_zero).symm
   by_cases hcg : constantCoeff g = 0
   · -- `g ≠ 0` with vanishing constant coefficient: split off `X ^ order g`.
