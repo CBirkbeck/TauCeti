@@ -212,32 +212,6 @@ theorem IsAdic.comap (e : B ≃+* A) (he : IsInducing e) {I : Ideal A} (h : IsAd
 
 end Transport
 
-section Absorb
-
-variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
-
-/-- **A topologically nilpotent element absorbs any element into any open subring.** For `s`
-topologically nilpotent and `B` open, `a * s ^ n` lies in `B` for all large `n`.
-
-This is the single-element form of `PairOfDefinition.exists_pow_idealOfDefinition_mul_mem`, and
-the same argument: multiplication by `a` is continuous, so `B` pulls back to a neighbourhood of
-`0`, and the powers of `s` converge to `0`. No Huber structure is used — only an open subring and
-a nilpotent element. -/
-theorem eventually_mul_pow_mem_of_isTopologicallyNilpotent {s : A}
-    (hs : IsTopologicallyNilpotent s) {B : Subring A} (hB : IsOpen (B : Set A)) (a : A) :
-    ∀ᶠ n : ℕ in Filter.atTop, a * s ^ n ∈ B :=
-  hs ((hB.preimage (continuous_const_mul a)).mem_nhds (by simp))
-
-/-- The existential form of `eventually_mul_pow_mem_of_isTopologicallyNilpotent`: some power of a
-topologically nilpotent element carries `a` into an open subring. This is the step Wedhorn's
-Lemma 7.44(1) uses to make `B_s → A_s` surjective. -/
-theorem exists_mul_pow_mem_of_isTopologicallyNilpotent {s : A}
-    (hs : IsTopologicallyNilpotent s) {B : Subring A} (hB : IsOpen (B : Set A)) (a : A) :
-    ∃ n : ℕ, a * s ^ n ∈ B :=
-  (eventually_mul_pow_mem_of_isTopologicallyNilpotent hs hB a).exists
-
-end Absorb
-
 namespace PairOfDefinition
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A]
