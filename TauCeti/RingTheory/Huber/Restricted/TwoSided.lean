@@ -16,13 +16,19 @@ for every neighbourhood `U` of zero, all but finitely many `aₙ` lie in `U`. Th
 *coefficient object* — the families themselves, with extensionality — and nothing else. The ring
 structure (convolution), its topology, and the presentation `A⟨X, Y⟩/(XY - 1)` are separate.
 
-## Not to be confused with `TauCeti.RingTheory.Huber.Restricted.Laurent`
+## Why this file is not called `Laurent`
 
-That module is titled "The Laurent quotients `A⟨X⟩/(f - X)` and `A⟨X⟩/(1 - f X)` are flat" and
-serves Wedhorn 8.31(2) and Example 6.38. Its series are indexed by `ℕ` — it works inside
-`MvPowerSeries (Fin 1) A` — and its content is `mulX`, `restrictedX` and flatness of two
-quotients. The object here is indexed by `ℤ` and is not a quotient of anything. The two share the
-word "Laurent" and nothing else; neither subsumes the other.
+"Laurent" already means two other things nearby, so the name is avoided here deliberately:
+
+* `TauCeti.RingTheory.Huber.Restricted.Laurent` — "The Laurent quotients `A⟨X⟩/(f - X)` and
+  `A⟨X⟩/(1 - f X)` are flat", Wedhorn 8.31(2) and Example 6.38. Indexed by `ℕ`, inside
+  `MvPowerSeries (Fin 1) A`; its content is `mulX`, `restrictedX` and flatness of two quotients.
+  Those quotients are the two *pieces* of the cover whose *overlap* the object here serves.
+* `TauCeti.RingTheory.Huber.LaurentSeries` — `K⸨X⸩` for a field `K` with the `X`-adic topology,
+  the equal-characteristic Tate example.
+
+The object here is the two-sided restricted series over a general coefficient ring, indexed by
+`ℤ`, and is not a quotient of anything.
 
 ## Why `Filter.zeroAtFilterSubmodule`
 
