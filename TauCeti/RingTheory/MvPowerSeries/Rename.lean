@@ -19,16 +19,16 @@ operations and the law that lets them be compared — `rename_eq_subst`, which s
 the substitution sending each variable to a variable — but not the comparison itself, which is
 what a caller reindexing a series needs.
 
-Reading a *linear* coefficient through a renaming along an embedding is likewise available only
-through `coeff_embDomain_rename`, which speaks about `Finsupp.embDomain`; at a single variable
-that is the more usable `single (e i) n`.
+Reading the coefficient of a single-variable monomial through a renaming along an embedding is
+likewise available only through `coeff_embDomain_rename`, which speaks about `Finsupp.embDomain`;
+at one variable raised to an arbitrary power the `single (e i) n` spelling is the more usable one.
 
 ## Main results
 
 * `MvPowerSeries.subst_rename`: substituting into `rename e p` reindexes the family, i.e. it is
   substituting `g ∘ e` into `p`.
-* `MvPowerSeries.coeff_single_rename`: the coefficient of `rename e p` at `single (e i) n` is the
-  coefficient of `p` at `single i n`.
+* `MvPowerSeries.coeff_single_rename`: the coefficient of `rename e p` at the single-variable
+  monomial `single (e i) n` is the coefficient of `p` at `single i n`, for any exponent `n`.
 
 ## Provenance
 
@@ -49,9 +49,9 @@ section CommSemiring
 
 variable [CommSemiring R]
 
-/-- **A linear coefficient survives a renaming along an embedding.** Mathlib's
-`coeff_embDomain_rename` states this for a general exponent through `Finsupp.embDomain`; at a
-single variable the `single (e i) n` spelling is the one a caller meets. -/
+/-- **A single-variable monomial's coefficient survives a renaming along an embedding**, for any
+exponent `n`. Mathlib's `coeff_embDomain_rename` states this through `Finsupp.embDomain`; at one
+variable the `single (e i) n` spelling is the one a caller meets. -/
 @[simp]
 theorem coeff_single_rename (e : σ ↪ τ) (p : MvPowerSeries σ R) (i : σ) (n : ℕ) :
     coeff (single (e i) n) (rename e p) = coeff (single i n) p := by

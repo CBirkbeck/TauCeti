@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Unit
-public import TauCeti.RingTheory.MvPowerSeries.Rename
 public import TauCeti.Data.Fin.Sum
 
 /-!
@@ -29,8 +28,9 @@ be the `toPowerSeries` field of the instance.
 
 ## Main results
 
-* `WeierstrassCurve.coeff_single_zero_renameFin_formalAdd`,
-  `WeierstrassCurve.coeff_single_one_renameFin_formalAdd`: the two linear coefficients.
+* `WeierstrassCurve.coeff_single_zero_rename_unitSumUnitEquivFinTwo_formalAdd` and
+  `WeierstrassCurve.coeff_single_one_rename_unitSumUnitEquivFinTwo_formalAdd`:
+  the two linear coefficients.
 
 ## Provenance
 
@@ -51,7 +51,7 @@ variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
 /-- The linear coefficient of the reindexed addition series in the variable `0` is `1` — the
 `lin_coeff_X` field. -/
 @[simp]
-theorem coeff_single_zero_renameFin_formalAdd :
+theorem coeff_single_zero_rename_unitSumUnitEquivFinTwo_formalAdd :
     coeff (single (0 : Fin 2) 1)
       (rename unitSumUnitEquivFinTwo (formalAdd W)) = 1 := by
   have h := coeff_single_rename unitSumUnitEquivFinTwo.toEmbedding (formalAdd W) (Sum.inl ()) 1
@@ -60,7 +60,7 @@ theorem coeff_single_zero_renameFin_formalAdd :
 /-- The linear coefficient of the reindexed addition series in the variable `1` is `1` — the
 `lin_coeff_Y` field. -/
 @[simp]
-theorem coeff_single_one_renameFin_formalAdd :
+theorem coeff_single_one_rename_unitSumUnitEquivFinTwo_formalAdd :
     coeff (single (1 : Fin 2) 1)
       (rename unitSumUnitEquivFinTwo (formalAdd W)) = 1 := by
   have h := coeff_single_rename unitSumUnitEquivFinTwo.toEmbedding (formalAdd W) (Sum.inr ()) 1
