@@ -162,7 +162,7 @@ theorem exists_alt_unit_in_coset_with_char_separation {N : ℕ} [NeZero N] {d : 
 /-- **From equal reductions to an integer congruence.** Two units with the same image under the
 reduction `(ZMod N)ˣ → (ZMod (N / l))ˣ` have representatives congruent modulo `N / l`, as integers.
 This is the arithmetic bridge between the unit bookkeeping and the matrix entries. -/
-theorem natCast_val_sub_dvd_of_unitsMap_eq {N l : ℕ} [NeZero N] [NeZero l] (h_dvd : l ∣ N)
+theorem natCast_val_sub_dvd_of_unitsMap_eq {N l : ℕ} [NeZero N] (h_dvd : l ∣ N)
     (u u' : (ZMod N)ˣ)
     (h_eq : ZMod.unitsMap ⟨l, (Nat.div_mul_cancel h_dvd).symm⟩ u =
       ZMod.unitsMap ⟨l, (Nat.div_mul_cancel h_dvd).symm⟩ u') :
