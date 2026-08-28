@@ -79,6 +79,20 @@ variable (D : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map
 -- The enumeration `∑` needs, as in `Nebentypus/Basic.lean` and `Nebentypus/Composition.lean`.
 attribute [local instance] Fintype.ofFinite
 
+/-- **A covering family already lies in `Δ₀(N)`.** Each `aᵢ` lies in its own right coset, hence in
+the double coset of `D.out`, which the Hecke triple places back inside `Δ₀(N)`.
+
+So membership is not an extra hypothesis on the statements below: it is implied by the covering,
+and is stated through this lemma only so that the twisting character can be applied to `aᵢ` without
+rebuilding the proof term inside every statement. -/
+theorem mem_Delta0_of_cover {ι : Type*} {a : ι → GL (Fin 2) ℚ}
+    (hcover : doubleCoset (D.out : GL (Fin 2) ℚ) ((Gamma0 N).map (mapGL ℚ))
+        ((Gamma0 N).map (mapGL ℚ)) =
+      ⋃ i, MulOpposite.op (a i) • (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) :
+        Set (GL (Fin 2) ℚ))) (i : ι) : a i ∈ Delta0 N :=
+  IsHeckeTriple.mem_of_mem_doubleCoset D.out.2
+    (hcover ▸ Set.mem_iUnion_of_mem i (mem_own_rightCoset _ _))
+
 /-- **The twisted slash sum of a `χ`-eigenfunction is the weighted sum over any decomposition of
 the double coset into right cosets.** If the right cosets `Γ₀(N) aᵢ` are pairwise distinct and
 cover `Γ₀(N) D.out Γ₀(N)`, and every `aᵢ` lies in `Δ₀(N)`, then `twistedHeckeSlashSum k χ D f` is
@@ -87,15 +101,12 @@ cover `Γ₀(N) D.out Γ₀(N)`, and every `aᵢ` lies in `Δ₀(N)`, then `twis
 So the twisted operator, like the untwisted one, is attached to the double coset rather than to
 the representatives `twistedHeckeSlashSum` happens to choose.
 
-The hypothesis `ha` has no untwisted counterpart and is forced by the weight: an arbitrary
-representative must lie in `Δ₀(N)` for the twisting character to be applied to it at all, whereas
-the bare slash of `heckeSlashSum_eq_sum_of_rightCosets` asks nothing of `aᵢ`. The chosen
-representatives satisfy it by `rightCosetRep_mem_Delta0`.
-
-The proof is the untwisted one with its per-summand step replaced: the comparison of the two
-enumerations is identical, and only `smul_slash_eq_of_rightCoset_eq` differs. -/
+Unlike an earlier form of this statement, membership of the `aᵢ` in `Δ₀(N)` is **not** a
+hypothesis: `hcover` already forces it, by `mem_Delta0_of_cover` above. The character is applied to
+`aᵢ` through that derived term, so a caller supplies only the cover and the injectivity, exactly as
+in the untwisted `heckeSlashSum_eq_sum_of_rightCosets`. -/
 theorem twistedHeckeSlashSum_eq_sum_of_rightCosets {ι : Type*} [Fintype ι]
-    (a : ι → GL (Fin 2) ℚ) (ha : ∀ i, a i ∈ Delta0 N)
+    (a : ι → GL (Fin 2) ℚ)
     (hcover : doubleCoset (D.out : GL (Fin 2) ℚ) ((Gamma0 N).map (mapGL ℚ))
         ((Gamma0 N).map (mapGL ℚ)) =
       ⋃ i, MulOpposite.op (a i) • (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) :
@@ -104,7 +115,8 @@ theorem twistedHeckeSlashSum_eq_sum_of_rightCosets {ι : Type*} [Fintype ι]
       (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) : Set (GL (Fin 2) ℚ)))
     (f : ℍ → ℂ) (hf : f ∈ functionCharSpace k χ) :
     twistedHeckeSlashSum k χ D f =
-      ∑ i, (delta0NebentypusChar N χ ⟨a i, ha i⟩ : ℂ) • (f ∣[k] a i) := by
+      ∑ i, (delta0NebentypusChar N χ ⟨a i, mem_Delta0_of_cover D hcover i⟩ : ℂ) •
+        (f ∣[k] a i) := by
   classical
   -- The coset bookkeeping is not twisted: matching this family against the one
   -- `twistedHeckeSlashSum` sums over involves no weight and no character, so it is
@@ -114,7 +126,7 @@ theorem twistedHeckeSlashSum_eq_sum_of_rightCosets {ι : Type*} [Fintype ι]
   rw [twistedHeckeSlashSum_def]
   refine (Fintype.sum_bijective φ hbij _ _ fun i ↦ ?_).symm
   rw [nebentypusWeight_def]
-  exact (smul_slash_eq_of_rightCoset_eq k χ f hf (ha i)
+  exact (smul_slash_eq_of_rightCoset_eq k χ f hf (mem_Delta0_of_cover D hcover i)
     (rightCosetRep_mem_Delta0 D (φ i)) (hφ i)).symm
 
 end HeckeRing.GL2

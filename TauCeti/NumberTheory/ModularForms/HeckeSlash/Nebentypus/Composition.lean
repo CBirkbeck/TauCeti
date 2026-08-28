@@ -64,7 +64,7 @@ reason: that is the carrier on which the hypothesis comes for free.
 * `HeckeRing.GL2.twistedHeckeSlashSum_twistedHeckeSlashSum`: the composite of two twisted sums, as
   a double sum over products of representatives weighted by the character of the product.
 * `HeckeRing.GL2.twistedHeckeSlashSum_twistedHeckeSlashSum_eq_sum_of_rightCosets`: the same
-  composite over *any* families of representatives lying in `Δ₀(N)`.
+  composite over *any* families of representatives of the right cosets.
 * `HeckeRing.GL2.twistedHeckeSlashSum_twistedHeckeSlashSum_eq_twistedHeckeSlashSum`: the collapse
   onto a single twisted sum, when the product set is one double coset and the products meet each
   of its right cosets once.
@@ -181,8 +181,7 @@ section Free
 
 variable (D₁ D₂ : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)))
   {ι κ : Type*}
-  (a : ι → GL (Fin 2) ℚ) (ha : ∀ i, a i ∈ Delta0 N)
-  (b : κ → GL (Fin 2) ℚ) (hb : ∀ j, b j ∈ Delta0 N)
+  (a : ι → GL (Fin 2) ℚ) (b : κ → GL (Fin 2) ℚ)
   (hcover₁ : doubleCoset (D₁.out : GL (Fin 2) ℚ) ((Gamma0 N).map (mapGL ℚ))
     ((Gamma0 N).map (mapGL ℚ)) =
     ⋃ i, MulOpposite.op (a i) • (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) :
@@ -199,7 +198,7 @@ variable (D₁ D₂ : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma
 include hcover₁ hinj₁ hcover₂ hinj₂ in
 /-- **The multiplicativity of the twisted slash sum**, over any families of representatives. For a
 `χ`-eigenfunction `f` and families `(aᵢ)`, `(bⱼ)` of representatives of the right cosets of the two
-double cosets, all lying in `Δ₀(N)`,
+double cosets,
 
 `twistedHeckeSlashSum k χ D₂ (twistedHeckeSlashSum k χ D₁ f) = ∑_{i,j} χ'(aᵢ bⱼ) • (f ∣[k] aᵢ bⱼ)`,
 
@@ -218,23 +217,24 @@ theorem twistedHeckeSlashSum_twistedHeckeSlashSum_eq_sum_of_rightCosets [Fintype
     (f : ℍ → ℂ)
     (hf : f ∈ functionCharSpace k χ) :
     twistedHeckeSlashSum k χ D₂ (twistedHeckeSlashSum k χ D₁ f) =
-      ∑ i, ∑ j, (delta0NebentypusChar N χ ⟨a i * b j, mul_mem (ha i) (hb j)⟩ : ℂ) •
-        (f ∣[k] (a i * b j)) := by
-  rw [twistedHeckeSlashSum_eq_sum_of_rightCosets k χ D₂ b hb hcover₂ hinj₂ _
+      ∑ i, ∑ j, (delta0NebentypusChar N χ ⟨a i * b j,
+          mul_mem (mem_Delta0_of_cover D₁ hcover₁ i)
+            (mem_Delta0_of_cover D₂ hcover₂ j)⟩ : ℂ) • (f ∣[k] (a i * b j)) := by
+  rw [twistedHeckeSlashSum_eq_sum_of_rightCosets k χ D₂ b hcover₂ hinj₂ _
       (twistedHeckeSlashSum_mem_functionCharSpace k χ D₁ f hf), Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ ↦ ?_
-  rw [twistedHeckeSlashSum_eq_sum_of_rightCosets k χ D₁ a ha hcover₁ hinj₁ f hf,
+  rw [twistedHeckeSlashSum_eq_sum_of_rightCosets k χ D₁ a hcover₁ hinj₁ f hf,
     SlashAction.sum_slash, Finset.smul_sum]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
   rw [ModularForm.rat_smul_slash_of_det_pos k
-      (posDetInt_le_glpos 2 (Delta0_le_posDetInt N (hb j))) _ _,
+      (posDetInt_le_glpos 2 (Delta0_le_posDetInt N (mem_Delta0_of_cover D₂ hcover₂ j))) _ _,
     ← SlashAction.slash_mul k (a i) (b j) f, smul_smul, ← MulMemClass.mk_mul_mk, map_mul,
     Units.val_mul, mul_comm]
 
 variable [Finite ι] [Finite κ]
   (D₃ : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)))
 
-include ha hb hcover₁ hinj₁ hcover₂ hinj₂ in
+include hcover₁ hinj₁ hcover₂ hinj₂ in
 /-- **The composite of two twisted slash sums is the twisted slash sum of a single double coset**,
 when the product set is that coset and the products `aᵢ bⱼ` meet each of its right cosets exactly
 once.
@@ -265,14 +265,13 @@ theorem twistedHeckeSlashSum_twistedHeckeSlashSum_eq_twistedHeckeSlashSum
   let _ : Fintype ι := Fintype.ofFinite ι
   let _ : Fintype κ := Fintype.ofFinite κ
   rw [twistedHeckeSlashSum_eq_sum_of_rightCosets k χ D₃ (fun p : ι × κ ↦ a p.1 * b p.2)
-      (fun p ↦ mul_mem (ha p.1) (hb p.2))
       (hD₃.trans (doubleCoset_mul_doubleCoset_eq_iUnion_rightCosets a b hcover₁ hcover₂))
       hinj₃ f hf,
-    twistedHeckeSlashSum_twistedHeckeSlashSum_eq_sum_of_rightCosets k χ D₁ D₂ a ha b hb
+    twistedHeckeSlashSum_twistedHeckeSlashSum_eq_sum_of_rightCosets k χ D₁ D₂ a b
       hcover₁ hinj₁ hcover₂ hinj₂ f hf,
     Fintype.sum_prod_type]
 
-include ha hb hcover₁ hinj₁ hcover₂ hinj₂ in
+include hcover₁ hinj₁ hcover₂ hinj₂ in
 /-- **The twisted Hecke operators multiply.** On the character space, and when the product set is
 the single double coset `D₃` with no right-coset collisions among the products, the composite of
 the operators of `D₁` and `D₂` is the operator of `D₃`.
@@ -301,8 +300,8 @@ theorem twistedHeckeSlashSumCharEnd_mul_of_doubleCoset_eq_mul
     twistedHeckeSlashSumCharEnd k χ D₂ * twistedHeckeSlashSumCharEnd k χ D₁ =
       twistedHeckeSlashSumCharEnd k χ D₃ := by
   ext f x
-  have := congrFun (twistedHeckeSlashSum_twistedHeckeSlashSum_eq_twistedHeckeSlashSum k χ D₁ D₂ a ha
-    b hb hcover₁ hinj₁ hcover₂ hinj₂ D₃ hD₃ hinj₃ f f.2) x
+  have := congrFun (twistedHeckeSlashSum_twistedHeckeSlashSum_eq_twistedHeckeSlashSum k χ D₁ D₂
+    a b hcover₁ hinj₁ hcover₂ hinj₂ D₃ hD₃ hinj₃ f f.2) x
   simpa [Module.End.mul_apply] using this
 
 end Free
