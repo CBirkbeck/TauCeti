@@ -118,8 +118,11 @@ theorem valued_algebraMap_eq_exp_neg_one_of_irreducible {π : v.adicCompletionIn
 the valuation of the completion.
 
 This is what lets a condition stated at the height-one primes of `𝒪_v` be read as a condition on
-`K_v`: `𝒪_v` is a discrete valuation ring, so it has exactly one, and it induces `Valued.v`. -/
-@[simp]
+`K_v`: `𝒪_v` is a discrete valuation ring, so it has exactly one, and it induces `Valued.v`.
+
+Not `@[simp]`: this is the special case `P = IsDiscreteValuationRing.maximalIdeal _` of
+`valuation_adicCompletionIntegers`, which carries the annotation instead. With both marked, the
+`simpNF` linter rejects this one — "simp can prove this" — because the general form subsumes it. -/
 theorem valuation_maximalIdeal_adicCompletionIntegers (x : v.adicCompletion K) :
     (IsDiscreteValuationRing.maximalIdeal (v.adicCompletionIntegers K)).valuation
       (v.adicCompletion K) x = Valued.v x := by
@@ -166,6 +169,7 @@ theorem valuationOfNeZero_maximalIdeal_adicCompletionIntegers (u : Kˣ) :
 
 /-- Any height-one prime `P` of the valuation ring `𝒪_v` — necessarily its maximal ideal —
 induces on `K_v` the valuation of the completion. -/
+@[simp]
 theorem valuation_adicCompletionIntegers (P : HeightOneSpectrum (v.adicCompletionIntegers K))
     (x : v.adicCompletion K) :
     P.valuation (v.adicCompletion K) x = Valued.v x := by
