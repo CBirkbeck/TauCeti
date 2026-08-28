@@ -167,8 +167,7 @@ theorem levelRaise_mem_qSupportedOnDvdSubmodule {N : ℕ} (M : ℕ)
 /-- **The range of `V_d` lies in the supported submodule.** Stated for the `ℂ`-linear map, which is
 the shape `TauCeti.cuspFormsOld` is assembled from, so the old subspace is contained in the
 supported submodule divisor by divisor. -/
-theorem range_levelRaise_le_qSupportedOnDvdSubmodule {N : ℕ} [NeZero N] (M : ℕ) [NeZero M]
-    (h : d * M ∣ N) :
+theorem range_levelRaise_le_qSupportedOnDvdSubmodule {N : ℕ} (M : ℕ) (h : d * M ∣ N) :
     LinearMap.range (CuspForm.levelRaiseₗ (k := k) d (Gamma1_map_le_conjAct_scaleGL_of_dvd h)) ≤
       qSupportedOnDvdSubmodule N k d := by
   rintro _ ⟨g, rfl⟩
