@@ -24,14 +24,16 @@ serves Wedhorn 8.31(2) and Example 6.38. Its series are indexed by `ℕ` — it 
 quotients. The object here is indexed by `ℤ` and is not a quotient of anything. The two share the
 word "Laurent" and nothing else; neither subsumes the other.
 
-## Why `ZeroAtFilter cofinite`
+## Why `Filter.zeroAtFilterSubmodule`
 
 This is the idiom already in use for the one-sided object:
 `TauCeti.Huber.IsRestricted` is defined as `Tendsto (coeff f) cofinite (𝓝 0)`, and
 `TauCeti.Huber.isRestricted_iff` records that this *is* Mathlib's `Filter.ZeroAtFilter` at
 `cofinite`. Wedhorn's condition on a two-sided family is that same condition at index type `ℤ`
-rather than `Fin k →₀ ℕ`, so it is stated the same way rather than as a bespoke finiteness
-predicate. `finite_notMem_of_mem_laurentRestricted` recovers Wedhorn's own phrasing.
+rather than `Fin k →₀ ℕ`, so it is built the same way: `restrictedMvPowerSeriesSubmodule` is
+`Filter.zeroAtFilterSubmodule A (cofinite : Filter (Fin k →₀ ℕ))`, and this is the same
+combinator at `cofinite : Filter ℤ`. `finite_notMem_of_mem_laurentRestricted` recovers Wedhorn's
+own phrasing.
 
 ## Main definitions
 
@@ -51,17 +53,15 @@ open scoped Topology
 
 namespace TauCeti.Huber
 
-variable {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
+variable {A : Type*} [CommRing A] [TopologicalSpace A] [ContinuousAdd A]
+  [ContinuousConstSMul A A]
 
 /-- **Wedhorn Example 6.39**, the coefficient families of `A⟨X, X⁻¹⟩`: two-sided families
 `a : ℤ → A` such that for every neighbourhood `U` of zero, `aₙ ∈ U` for all but finitely many
 `n` — that is, `a` tends to `0` along `cofinite`. -/
-def laurentRestricted (A : Type*) [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A] :
-    Submodule A (ℤ → A) where
-  carrier := {a | ZeroAtFilter cofinite a}
-  zero_mem' := zero_zeroAtFilter _
-  add_mem' ha hb := ha.add hb
-  smul_mem' c _ ha := ha.smul c
+def laurentRestricted (A : Type*) [CommRing A] [TopologicalSpace A] [ContinuousAdd A]
+    [ContinuousConstSMul A A] : Submodule A (ℤ → A) :=
+  Filter.zeroAtFilterSubmodule A (Filter.cofinite : Filter ℤ)
 
 /-- Membership, unfolded. -/
 theorem mem_laurentRestricted_iff {a : ℤ → A} :
