@@ -96,9 +96,8 @@ theorem genericY_def :
 /-- The generic coordinate `x` is the image of polynomial `X` under the induced map from `R[X]`
 to the function field. -/
 theorem genericX_eq_algebraMap : genericX W = algebraMap R[X] W.FunctionField X := by
-  rw [genericX_def, IsScalarTower.algebraMap_apply R[X] W.CoordinateRing W.FunctionField,
-    AdjoinRoot.algebraMap_eq]
-  (rfl)
+  rw [genericX_def, TauCeti.WeierstrassCurve.Affine.CoordinateRing.mk_C_eq_algebraMap,
+    IsScalarTower.algebraMap_apply R[X] W.CoordinateRing W.FunctionField]
 
 /-- **Evaluating at the generic point is reduction modulo the Weierstrass relation.** A bivariate
 polynomial over `R`, pushed to the function field and evaluated at `(genericX, genericY)`, is the

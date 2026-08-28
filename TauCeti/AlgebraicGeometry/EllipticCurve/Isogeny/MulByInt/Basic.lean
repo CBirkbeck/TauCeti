@@ -12,6 +12,7 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Basic
 -- Mathlib's `ΨSq_ne_zero` for the characteristic-conditional discharge, and this repository's
 -- `ΨSq_ne_zero_of_Δ_ne_zero` for the characteristic-free one.
 import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
+import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Eval
 import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Coprimality
 
 /-!
@@ -167,9 +168,10 @@ public statement of what they add up to. They are not `@[simp]` either — `smul
 `abbrev`, so `simp` unfolds the left-hand side through `Function.comp_apply` and `map_ψ` before
 these could fire, and `simpNF` rejects them. -/
 private theorem smulEval_genericPoint_Z (n : ℤ) :
-    smulEval (W⁄W.FunctionField).toAffine W.genericX W.genericY n 2 =
+  smulEval (W⁄W.FunctionField).toAffine W.genericX W.genericY n 2 =
       psiFunctionField W n := by
   dsimp only [smulEval, Function.comp_def]
+  -- `W⁄W.FunctionField` abbreviates the mapped curve; expose that spelling for `map_ψ`.
   change ((W.map (algebraMap F W.FunctionField)).ψ n).evalEval W.genericX W.genericY = _
   rw [map_ψ, psiFunctionField]
   exact Affine.evalEval_genericX_genericY W (W.ψ n)
@@ -179,6 +181,7 @@ private theorem smulEval_genericPoint_X (n : ℤ) :
     smulEval (W⁄W.FunctionField).toAffine W.genericX W.genericY n 0 =
       phiFunctionField W n := by
   dsimp only [smulEval, Function.comp_def]
+  -- `W⁄W.FunctionField` abbreviates the mapped curve; expose that spelling for `map_φ`.
   change ((W.map (algebraMap F W.FunctionField)).φ n).evalEval W.genericX W.genericY = _
   rw [map_φ, phiFunctionField]
   exact Affine.evalEval_genericX_genericY W (W.φ n)
@@ -188,6 +191,7 @@ private theorem smulEval_genericPoint_Y (n : ℤ) :
     smulEval (W⁄W.FunctionField).toAffine W.genericX W.genericY n 1 =
       omegaFunctionField W n := by
   dsimp only [smulEval, Function.comp_def]
+  -- `W⁄W.FunctionField` abbreviates the mapped curve; expose that spelling for `map_ω`.
   change ((W.map (algebraMap F W.FunctionField)).ω n).evalEval W.genericX W.genericY = _
   rw [map_ω, omegaFunctionField]
   exact Affine.evalEval_genericX_genericY W (W.ω n)
@@ -273,18 +277,7 @@ point, which is what makes `φₙ/ψₙ²` and `ωₙ/ψₙ³` defined. Two lemm
 `mulByIntPullbackOfNeZero` is the packaged form. -/
 noncomputable def mulByIntPullback [W.IsElliptic] {n : ℤ} (hn : psiFunctionField W n ≠ 0) :
     CoordinatePullback W W :=
-  AdjoinRoot.liftAlgHom W.polynomial (aeval (mulByIntX W n)) (mulByIntY W n) <| by
-    -- `liftAlgHom` wants the equation in `eval₂` form against the coerced `aeval`, and
-    -- `equation_mulByInt` is the same fact with the base change written out.
-    have hcoe : ((aeval (mulByIntX W n) : F[X] →ₐ[F] W.FunctionField) :
-        F[X] →+* W.FunctionField) =
-        eval₂RingHom (algebraMap F W.FunctionField) (mulByIntX W n) :=
-      RingHom.ext fun _ ↦ rfl
-    have h := equation_mulByInt W hn
-    dsimp only [Affine.Equation, Affine.baseChange, WeierstrassCurve.baseChange] at h
-    rw [Affine.map_polynomial, ← eval₂_eval₂RingHom_apply] at h
-    rw [hcoe]
-    exact h
+  Affine.CoordinateRing.evalAlgHom (equation_mulByInt W hn)
 
 /-- **The coordinate pullback of `[n]` for every `n ≠ 0`**, the non-vanishing hypothesis of
 `mulByIntPullback` being discharged by `psiFunctionField_ne_zero_of_Δ_ne_zero`. This is the
@@ -305,8 +298,7 @@ theorem mulByIntPullback_mk [W.IsElliptic] {n : ℤ} (hn : psiFunctionField W n 
     mulByIntPullback W hn (Affine.CoordinateRing.mk W p) =
       (p.map (mapRingHom (algebraMap F W.FunctionField))).evalEval (mulByIntX W n)
         (mulByIntY W n) := by
-  rw [mulByIntPullback, AdjoinRoot.liftAlgHom_mk]
-  exact eval₂_eval₂RingHom_apply (algebraMap F W.FunctionField) _ _ p
+  exact Affine.CoordinateRing.evalAlgHom_mk _ p
 
 /-- The pullback of `[n]` sends the class of `X` to `φₙ/ψₙ²`.
 
@@ -316,13 +308,15 @@ already normalised this way by the time this fires. -/
 @[simp]
 theorem mulByIntPullback_X [W.IsElliptic] {n : ℤ} (hn : psiFunctionField W n ≠ 0) :
     mulByIntPullback W hn (AdjoinRoot.of W.polynomial X) = mulByIntX W n := by
-  rw [mulByIntPullback, AdjoinRoot.liftAlgHom_of, aeval_X]
+  simpa [mulByIntPullback] using
+    Affine.CoordinateRing.evalAlgHom_mk_C_X (equation_mulByInt W hn)
 
 /-- The pullback of `[n]` sends the class of `Y` to `ωₙ/ψₙ³`. -/
 @[simp]
 theorem mulByIntPullback_Y [W.IsElliptic] {n : ℤ} (hn : psiFunctionField W n ≠ 0) :
     mulByIntPullback W hn (AdjoinRoot.root W.polynomial) = mulByIntY W n := by
-  rw [mulByIntPullback, AdjoinRoot.liftAlgHom_root]
+  simpa [mulByIntPullback] using
+    Affine.CoordinateRing.evalAlgHom_mk_Y (equation_mulByInt W hn)
 
 end Isogeny
 

@@ -88,6 +88,7 @@ theorem algHom_mk_eq_evalEval (f : W.CoordinateRing →ₐ[R] A) (p : R[X][Y]) :
         (f (CoordinateRing.mk W Y)) := by
   let g : R[X][Y] →ₐ[R] A :=
     f.comp ((AdjoinRoot.mkₐ W.polynomial).restrictScalars R)
+  -- Unfold the local abbreviation `g` so the polynomial evaluation equivalence sees its argument.
   change g p = _
   have hg : g = aevalAeval (g (C X)) (g Y) :=
     ((aevalAevalEquiv R A).apply_symm_apply g).symm
@@ -104,6 +105,7 @@ theorem equation_of_algHom (f : W.CoordinateRing →ₐ[R] A) :
     (W⁄A).toAffine.Equation
       (f (CoordinateRing.mk W (C X)))
       (f (CoordinateRing.mk W Y)) := by
+  -- `W⁄A` is the canonical base-change abbreviation for `W.map (algebraMap R A)`.
   change (W.map (algebraMap R A)).Equation _ _
   rw [Affine.Equation, Affine.map_polynomial,
     ← algHom_mk_eq_evalEval f W.polynomial, AdjoinRoot.mk_self, map_zero]
@@ -117,51 +119,34 @@ theorem algHom_ext {f g : W.CoordinateRing →ₐ[R] A}
       g (CoordinateRing.mk W Y)) : f = g := by
   apply AdjoinRoot.algHom_ext'
   · apply Polynomial.algHom_ext
+    -- The first generator exposed by the two extensionality lemmas is the class of `C X`.
     change f (CoordinateRing.mk W (C X)) = g (CoordinateRing.mk W (C X))
     exact hX
-  · change f (CoordinateRing.mk W Y) = g (CoordinateRing.mk W Y)
+  · -- The adjoined root is definitionally the class of `Y`.
+    change f (CoordinateRing.mk W Y) = g (CoordinateRing.mk W Y)
     exact hY
-
-/-- The coordinate-ring map underlying `evalAlgHom`, before it is packaged as an algebra
-homomorphism: base change to `A`, then evaluate. -/
-private noncomputable def evalRingHom
-    (h : (W⁄A).toAffine.Equation x y) :
-    W.CoordinateRing →+* A :=
-  (AdjoinRoot.evalEval
-    (show Polynomial.evalEval x y (W.map (algebraMap R A)).polynomial = 0 from by
-      change (W.map (algebraMap R A)).Equation x y at h
-      exact h)).comp
-    (CoordinateRing.map W (algebraMap R A))
-
-private theorem evalRingHom_mk
-    (h : (W⁄A).toAffine.Equation x y) (p : R[X][Y]) :
-    evalRingHom h (CoordinateRing.mk W p) =
-      (p.map (mapRingHom (algebraMap R A))).evalEval x y := by
-  rw [evalRingHom, RingHom.comp_apply,
-    CoordinateRing.map_mk, AdjoinRoot.evalEval_mk]
 
 /-- **Evaluation of the coordinate ring at a point of the base-changed curve.** A solution
 `(x, y)` of the Weierstrass equation of `W⁄A` is a point of `W` with coordinates in `A`, and
 substituting it into a polynomial function factors through the coordinate ring. -/
-noncomputable def evalAlgHom (h : (W⁄A).toAffine.Equation x y) :
-    W.CoordinateRing →ₐ[R] A where
-  __ := evalRingHom h
-  commutes' c := by
-    have hc := evalRingHom_mk h (CC c)
-    have hmk : CoordinateRing.mk W (CC c) =
-        algebraMap R W.CoordinateRing c := by
-      rw [IsScalarTower.algebraMap_apply R R[X] W.CoordinateRing, AdjoinRoot.algebraMap_eq]
-      (rfl)
-    rw [hmk] at hc
-    simpa using hc
+noncomputable def evalAlgHom (h : (W⁄A).toAffine.Equation x y) : W.CoordinateRing →ₐ[R] A :=
+  AdjoinRoot.liftAlgHom W.polynomial (Polynomial.aeval x) y <| by
+    have hcoe : ((Polynomial.aeval x : R[X] →ₐ[R] A) : R[X] →+* A) =
+        eval₂RingHom (algebraMap R A) x := RingHom.ext fun _ ↦ rfl
+    -- Unfold the base-change equation and express bivariate evaluation as `eval₂`.
+    dsimp only [Affine.Equation, Affine.baseChange, WeierstrassCurve.baseChange] at h
+    rw [Affine.map_polynomial, ← eval₂_eval₂RingHom_apply] at h
+    rw [hcoe]
+    exact h
 
 /-- Evaluating the class of a polynomial in the coordinate ring is mapped polynomial evaluation
 at the given solution of the Weierstrass equation. -/
 @[simp]
 theorem evalAlgHom_mk (h : (W⁄A).toAffine.Equation x y) (p : R[X][Y]) :
     evalAlgHom h (CoordinateRing.mk W p) =
-      (p.map (mapRingHom (algebraMap R A))).evalEval x y :=
-  evalRingHom_mk h p
+      (p.map (mapRingHom (algebraMap R A))).evalEval x y := by
+  rw [evalAlgHom, AdjoinRoot.liftAlgHom_mk]
+  exact eval₂_eval₂RingHom_apply (algebraMap R A) x y p
 
 /-- Evaluation sends the coordinate-ring class of `X` to the first coordinate `x`. -/
 theorem evalAlgHom_mk_C_X (h : (W⁄A).toAffine.Equation x y) :
@@ -174,13 +159,6 @@ theorem evalAlgHom_mk_Y (h : (W⁄A).toAffine.Equation x y) :
     evalAlgHom h (CoordinateRing.mk W Y) = y := by
   rw [evalAlgHom_mk]
   simp
-
-/-- The class of the coordinate `X` is the image of `X` under the structure map of the coordinate
-ring over the polynomial ring. -/
-theorem mk_C_X : CoordinateRing.mk W (C X) =
-    algebraMap R[X] W.CoordinateRing X := by
-  rw [AdjoinRoot.algebraMap_eq]
-  (rfl)
 
 section Field
 

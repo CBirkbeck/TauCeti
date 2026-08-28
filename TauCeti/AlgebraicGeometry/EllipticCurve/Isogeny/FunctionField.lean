@@ -145,7 +145,7 @@ theorem transcendental_pullback_X (φ : Isogeny W₁ W₂) :
   have hx₁_transcendental : Transcendental F x₁ := by
     have hx₁_eq : x₁ = WeierstrassCurve.Affine.genericX W₁ := by
       rw [WeierstrassCurve.Affine.genericX_def,
-        WeierstrassCurve.Affine.CoordinateRing.mk_C_X]
+        WeierstrassCurve.Affine.CoordinateRing.mk_C_eq_algebraMap]
     rw [hx₁_eq]
     exact WeierstrassCurve.Affine.transcendental_genericX W₁
   exact hx₁_transcendental hx₁.isAlgebraic
@@ -155,7 +155,7 @@ injective, by the general criterion `CoordinateRing.algHom_injective`: the pullb
 coordinate `x` is transcendental. -/
 theorem pullback_injective (φ : Isogeny W₁ W₂) : Function.Injective φ.pullback :=
   WeierstrassCurve.Affine.CoordinateRing.algHom_injective φ.pullback <| by
-    rw [WeierstrassCurve.Affine.CoordinateRing.mk_C_X]
+    rw [WeierstrassCurve.Affine.CoordinateRing.mk_C_eq_algebraMap]
     exact φ.transcendental_pullback_X
 
 /-- The function-field pullback induced by an isogeny. It is the unique extension of the

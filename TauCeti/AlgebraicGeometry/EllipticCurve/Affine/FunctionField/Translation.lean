@@ -7,6 +7,7 @@ module
 
 import Mathlib.FieldTheory.AlgebraicClosure
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Eval
+import TauCeti.AlgebraicGeometry.EllipticCurve.Integrality
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.GenericPoint
 
 /-!
@@ -113,41 +114,6 @@ theorem translatedGenericPoint_ne_zero (P : (W⁄F).toAffine.Point) :
     rw [← xCoord_genericPoint, hneg, Point.xCoord_neg, Point.xCoord_map, Algebra.ofId_apply]
   exact transcendental_genericX W (hx ▸ isAlgebraic_algebraMap _)
 
-omit [DecidableEq F] [W.IsElliptic] in
-/-- **The Weierstrass equation makes the second coordinate integral whenever the first is.**
-For a nonzero point over the function field, the second coordinate satisfies the monic quadratic
-obtained by viewing the Weierstrass equation as a polynomial in `y`. -/
-theorem isIntegral_yCoord_of_isIntegral_xCoord
-    {Q : (W⁄W.FunctionField).toAffine.Point} (hQ : Q ≠ 0)
-    (hx : IsIntegral F (Point.xCoord Q)) : IsIntegral F (Point.yCoord Q) := by
-  set 𝔽 := algebraicClosure F W.FunctionField
-  set u := Point.xCoord Q
-  set v := Point.yCoord Q
-  have hns : (W⁄W.FunctionField).toAffine.Nonsingular u v := Point.nonsingular_coords hQ
-  have hu : u ∈ 𝔽 := hx
-  have hb : (W⁄W.FunctionField).a₁ * u + (W⁄W.FunctionField).a₃ ∈ 𝔽 :=
-    𝔽.add_mem (𝔽.mul_mem (𝔽.algebraMap_mem _) hu) (𝔽.algebraMap_mem _)
-  have hc : -(u ^ 3 + (W⁄W.FunctionField).a₂ * u ^ 2 + (W⁄W.FunctionField).a₄ * u
-      + (W⁄W.FunctionField).a₆) ∈ 𝔽 :=
-    𝔽.neg_mem (𝔽.add_mem (𝔽.add_mem (𝔽.add_mem (𝔽.pow_mem hu 3)
-      (𝔽.mul_mem (𝔽.algebraMap_mem _) (𝔽.pow_mem hu 2)))
-      (𝔽.mul_mem (𝔽.algebraMap_mem _) hu)) (𝔽.algebraMap_mem _))
-  have hv𝔽 : IsIntegral 𝔽 v := by
-    refine ⟨X ^ 2 + (C (⟨_, hb⟩ : 𝔽) * X + C ⟨_, hc⟩), Polynomial.monic_X_pow_add ?_, ?_⟩
-    · compute_degree
-      norm_num
-    · have heq := (_root_.WeierstrassCurve.Affine.equation_iff u v).1 hns.left
-      have hb' : algebraMap 𝔽 W.FunctionField (⟨_, hb⟩ : 𝔽) =
-          (W⁄W.FunctionField).a₁ * u + (W⁄W.FunctionField).a₃ := by
-        simp only [IntermediateField.algebraMap_apply]
-      have hc' : algebraMap 𝔽 W.FunctionField (⟨_, hc⟩ : 𝔽) =
-          -(u ^ 3 + (W⁄W.FunctionField).a₂ * u ^ 2 + (W⁄W.FunctionField).a₄ * u
-            + (W⁄W.FunctionField).a₆) := by
-        simp only [IntermediateField.algebraMap_apply]
-      simp only [eval₂_add, eval₂_mul, eval₂_X, eval₂_C, eval₂_X_pow, hb', hc']
-      linear_combination heq
-  exact isIntegral_trans (R := F) v hv𝔽
-
 /-- **The `x`-coordinate of a translate of the generic point is transcendental.** Were it
 algebraic, so would be the `y`-coordinate — the Weierstrass equation is monic of degree `2` in
 `y` — so the translate would come from the relative algebraic closure of `F` in the function
@@ -163,7 +129,8 @@ private theorem transcendental_xCoord_translatedGenericPoint (P : (W⁄F).toAffi
   set v := Point.yCoord Q
   have hns : (W⁄W.FunctionField).toAffine.Nonsingular u v := Point.nonsingular_coords hQ
   have hu : u ∈ 𝔽 := halg.isIntegral
-  have hv : v ∈ 𝔽 := isIntegral_yCoord_of_isIntegral_xCoord W hQ hu
+  have hv : v ∈ 𝔽 :=
+    TauCeti.WeierstrassCurve.isIntegral_y_of_equation_of_isIntegral_x W hns.left hu
   -- the point therefore descends to the algebraic closure, and so does the generic point
   have hnsE : (W⁄𝔽).toAffine.Nonsingular (⟨u, hu⟩ : 𝔽) ⟨v, hv⟩ :=
     (_root_.WeierstrassCurve.Affine.baseChange_nonsingular (W := W)
@@ -294,6 +261,16 @@ noncomputable def translation (P : (W⁄F).toAffine.Point) :
   AlgEquiv.ofAlgHom (translationAux W P) (translationAux W (-P))
     (by rw [comp_translationAux, neg_add_cancel, translationAux_zero])
     (by rw [comp_translationAux, add_neg_cancel, translationAux_zero])
+
+/-- **Translation of a regular function is evaluation at the translated generic point.** -/
+@[simp]
+theorem translation_apply_mk (P : (W⁄F).toAffine.Point) (p : F[X][Y]) :
+    translation W P
+        (algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W p)) =
+      (p.map (mapRingHom (algebraMap F W.FunctionField))).evalEval
+        (Point.xCoord (translatedGenericPoint W P))
+        (Point.yCoord (translatedGenericPoint W P)) :=
+  (translationAux_algebraMap W P _).trans (CoordinateRing.evalAlgHom_mk _ p)
 
 /-- **Translation carries the generic point to the translated generic point.** -/
 theorem map_translation_genericPoint (P : (W⁄F).toAffine.Point) :
