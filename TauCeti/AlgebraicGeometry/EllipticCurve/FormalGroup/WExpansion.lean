@@ -479,7 +479,7 @@ series with vanishing constant coefficient that satisfy the `w`-equation at the 
 are equal, provided `q` too has vanishing constant coefficient.
 
 The coefficients are taken in an arbitrary `R`-algebra `S`, matching `wEquationRHS` itself and the
-substitution lemmas above, so the statement survives scalar extension of the curve's base ring.
+substitution lemmas, so the statement survives scalar extension of the curve's base ring.
 
 This is `eq_of_wEquation` one index type up. It is not a generalisation of it: the argument here
 subtracts, so it needs `[CommRing S]` on the coefficient algebra, whereas the univariate statement
