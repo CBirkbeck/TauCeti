@@ -36,12 +36,14 @@ The constant is nonzero, so `W_N` is invertible with `W_N⁻¹ = c⁻¹ • W_N`
   are the `simp`-normal ones.
 * `TauCeti.frickeScalar_def`: the defining equation of the constant, for clients that
   cannot unfold it.
+* `TauCeti.frickeScalar_eq`: its evaluated form `(-1) ^ k * N ^ (k - 2)`.
 * `TauCeti.frickeScalar_ne_zero`: the constant is nonzero, which is what makes `W_N`
   invertible.
-* `TauCeti.frickeOperator_comp_smul_frickeOperator` and its three siblings: the two-sided
-  inverse laws `W_N ∘ (c⁻¹ • W_N) = id = (c⁻¹ • W_N) ∘ W_N`, on modular and on cusp forms.
+* The two-sided inverse laws `W_N ∘ (c⁻¹ • W_N) = id = (c⁻¹ • W_N) ∘ W_N`, on modular and on
+  cusp forms, are `private`: they exist only as the `LinearEquiv.ofLinearMap` arguments of the two
+  equivalences above, which together with `frickeOperator_frickeOperator` are the public surface.
 * `TauCeti.slash_mul_frickeGL`: slashing by `A * W` is `frickeScalar N k •` slashing by
-  `A * W⁻¹`. This is the form the character-space transport consumes, where the two Fricke
+  `A * W⁻¹`. This is the form the character-space transport will consume, where the two Fricke
   factors of a conjugated operator have to be collapsed onto one representative.
 
 ## Where the scalar comes from
@@ -93,6 +95,24 @@ be visible inside `frickeGL_sq_slash`, which rewrites with this lemma explicitly
 public theorem frickeScalar_def (N : ℕ) (k : ℤ) :
     frickeScalar N k = (N : ℂ) ^ (2 * (k - 1)) * (-(N : ℂ)) ^ (-k) := (rfl)
 
+/-- **The evaluated form of the scalar**, `(-1) ^ k * N ^ (k - 2)`, which is how
+`Fricke/Operator.lean` describes it and the form the normalized operator
+`𝒲_N = (√N) ^ (2 - k) • (· ∣[k] W)` needs in order to be an involution in even weight.
+
+`[NeZero N]` is load-bearing rather than ambient: at `N = 0`, `k = 2` the two sides differ. -/
+public theorem frickeScalar_eq (k : ℤ) :
+    frickeScalar N k = (-1) ^ k * (N : ℂ) ^ (k - 2) := by
+  have hN : (N : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr (NeZero.ne N)
+  have hneg : ((-1 : ℂ)) ^ (-k) = (-1 : ℂ) ^ k := by
+    rw [zpow_neg]
+    refine inv_eq_of_mul_eq_one_right ?_
+    rw [← zpow_add₀ (by norm_num : (-1 : ℂ) ≠ 0), ← two_mul, zpow_mul]
+    norm_num
+  rw [frickeScalar_def, show (-(N : ℂ)) = (-1) * (N : ℂ) by ring, mul_zpow, hneg,
+    ← mul_assoc, mul_comm ((N : ℂ) ^ (2 * (k - 1))) ((-1 : ℂ) ^ k), mul_assoc,
+    ← zpow_add₀ hN]
+  ring_nf
+
 /-- `frickeScalar N k` is nonzero. This is what makes the Fricke operator invertible, with
 inverse `(frickeScalar N k)⁻¹ • W_N`; see `frickeOperatorEquiv`. -/
 public theorem frickeScalar_ne_zero (k : ℤ) : frickeScalar N k ≠ 0 := by
@@ -105,7 +125,7 @@ private theorem frickeGL_sq_eq_scalar (hN : (N : ℝ) ≠ 0) : frickeGL ℝ N * 
     Matrix.GeneralLinearGroup.scalar (Fin 2) (Units.mk0 (-(N : ℝ)) (neg_ne_zero.mpr hN)) := by
   ext i j
   rw [← sq, coe_frickeGL_sq]
-  simp [Matrix.GeneralLinearGroup.scalar, Matrix.scalar_apply, Matrix.smul_apply,
+  simp [Matrix.GeneralLinearGroup.coe_scalar, Matrix.scalar_apply, Matrix.smul_apply,
     Matrix.one_apply, Matrix.diagonal_apply]
 
 /-- **Slashing by `W²` is multiplication by `frickeScalar N k`.** `W² = (-N) • 1` is a scalar
@@ -121,11 +141,7 @@ public theorem frickeGL_sq_slash (k : ℤ) (f : ℍ → ℂ) :
   have hpos : 0 < ((Matrix.GeneralLinearGroup.scalar (Fin 2) u).det : ℝ) := by
     rw [hdet]
     exact pow_pos ((Nat.cast_pos (α := ℝ)).mpr (NeZero.pos N)) 2
-  have hσ : σ (Matrix.GeneralLinearGroup.scalar (Fin 2) u) = ContinuousAlgEquiv.refl ℝ ℂ := by
-    rw [σ]
-    -- `hpos` decides the branch: `σ` is the identity exactly on positive determinant.
-    split_ifs
-    rfl
+  have hσ := UpperHalfPlane.σ_eq_refl_of_det_pos hpos
   ext z
   rw [ModularForm.slash_apply, frickeGL_sq_eq_scalar hN, ← hu, hσ, glScalar_smul, denom_scalar,
     hdet, abs_of_nonneg (by positivity : (0 : ℝ) ≤ (N : ℝ) ^ 2)]
@@ -151,9 +167,9 @@ public theorem frickeOperator_frickeOperator (k : ℤ) :
       frickeScalar N k • LinearMap.id := by
   ext f z
   simp only [LinearMap.coe_comp, Function.comp_apply, LinearMap.smul_apply, LinearMap.id_coe,
-    id_eq]
-  rw [coe_frickeOperator, coe_frickeOperator, ← SlashAction.slash_mul, frickeGL_sq_slash]
-  rfl
+    id_eq, FunLike.coe_smul, Pi.smul_apply]
+  rw [coe_frickeOperator, coe_frickeOperator, ← SlashAction.slash_mul, frickeGL_sq_slash,
+    Pi.smul_apply]
 
 /-- **`W_N (W_N f) = frickeScalar N k • f`** for a modular form `f`, the pointwise form of
 `frickeOperator_frickeOperator`. This, not the composition equality, is the simp-normal form: a
@@ -165,14 +181,14 @@ public theorem frickeOperator_frickeOperator_apply (k : ℤ)
   LinearMap.congr_fun (frickeOperator_frickeOperator (N := N) k) f
 
 /-- **`c⁻¹ • W_N` inverts `W_N` on the right** on `M_k(Γ₁(N))`, for `c = frickeScalar N k`. -/
-public theorem frickeOperator_comp_smul_frickeOperator (k : ℤ) :
+private theorem frickeOperator_comp_smul_frickeOperator (k : ℤ) :
     (frickeOperator (N := N) k).comp ((frickeScalar N k)⁻¹ • frickeOperator (N := N) k) =
       LinearMap.id := by
   rw [LinearMap.comp_smul, frickeOperator_frickeOperator, smul_smul,
     inv_mul_cancel₀ (frickeScalar_ne_zero (N := N) k), one_smul]
 
 /-- **`c⁻¹ • W_N` inverts `W_N` on the left** on `M_k(Γ₁(N))`, for `c = frickeScalar N k`. -/
-public theorem smul_frickeOperator_comp_frickeOperator (k : ℤ) :
+private theorem smul_frickeOperator_comp_frickeOperator (k : ℤ) :
     ((frickeScalar N k)⁻¹ • frickeOperator (N := N) k).comp (frickeOperator (N := N) k) =
       LinearMap.id := by
   rw [LinearMap.smul_comp, frickeOperator_frickeOperator, smul_smul,
@@ -208,9 +224,9 @@ public theorem frickeOperatorCusp_frickeOperatorCusp (k : ℤ) :
   -- modular forms, and `frickeOperator_coe_cuspForm` says the two operators agree under that
   -- embedding, so the slash-by-`W²` computation lives only in `frickeOperator_frickeOperator`.
   ext f z
-  have h := congrFun (congrArg DFunLike.coe (LinearMap.congr_fun
+  have h := DFunLike.congr_fun (LinearMap.congr_fun
     (frickeOperator_frickeOperator (N := N) k)
-    (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k))) z
+    (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) z
   simpa [frickeOperator_coe_cuspForm] using h
 
 /-- **`W_N (W_N f) = frickeScalar N k • f`** for a cusp form `f`, the pointwise and simp-normal
@@ -222,14 +238,14 @@ public theorem frickeOperatorCusp_frickeOperatorCusp_apply (k : ℤ)
   LinearMap.congr_fun (frickeOperatorCusp_frickeOperatorCusp (N := N) k) f
 
 /-- **`c⁻¹ • W_N` inverts `W_N` on the right** on `S_k(Γ₁(N))`, for `c = frickeScalar N k`. -/
-public theorem frickeOperatorCusp_comp_smul_frickeOperatorCusp (k : ℤ) :
+private theorem frickeOperatorCusp_comp_smul_frickeOperatorCusp (k : ℤ) :
     (frickeOperatorCusp (N := N) k).comp
         ((frickeScalar N k)⁻¹ • frickeOperatorCusp (N := N) k) = LinearMap.id := by
   rw [LinearMap.comp_smul, frickeOperatorCusp_frickeOperatorCusp, smul_smul,
     inv_mul_cancel₀ (frickeScalar_ne_zero (N := N) k), one_smul]
 
 /-- **`c⁻¹ • W_N` inverts `W_N` on the left** on `S_k(Γ₁(N))`, for `c = frickeScalar N k`. -/
-public theorem smul_frickeOperatorCusp_comp_frickeOperatorCusp (k : ℤ) :
+private theorem smul_frickeOperatorCusp_comp_frickeOperatorCusp (k : ℤ) :
     ((frickeScalar N k)⁻¹ • frickeOperatorCusp (N := N) k).comp
         (frickeOperatorCusp (N := N) k) = LinearMap.id := by
   rw [LinearMap.smul_comp, frickeOperatorCusp_frickeOperatorCusp, smul_smul,
