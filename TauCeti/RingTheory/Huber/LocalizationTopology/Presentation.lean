@@ -266,7 +266,7 @@ isomorphism and is determined by compatibility, not that the compatibility hypot
 two presentations of the same rational subset. Supplying those is a separate step, and it is not
 taken unconditionally anywhere: `TauCeti.ValuationSpectrum.presentationRingEquivOfEq` derives
 them from an equality of rational subsets through Wedhorn's Proposition 8.2(1), but only for
-coordinate rings whose maximal ideals and whose plus subring are open. -/
+coordinate rings in which the denominators are invertible and whose plus subrings are open. -/
 noncomputable def presentationRingEquiv [IsTopologicalRing A]
     (P : PairOfDefinition A) (T : Finset A) (s : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]

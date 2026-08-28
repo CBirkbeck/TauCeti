@@ -58,8 +58,8 @@ priori on presentation data. Two results close the gap, and neither is yet avail
 * refinement maps between two presentations of the *same* rational subset are isomorphisms, so that
   `p ↦ A⟨p.num / p.den⟩` descends to a function of the subset. The isomorphism is supplied by
   `TauCeti.ValuationSpectrum.presentationRingEquivOfEq`, but only for coordinate rings whose
-  maximal ideals and whose plus subrings are open — Wedhorn asks for neither, so the descent is
-  not yet unconditional; and
+  denominators are invertible in each other's coordinate ring and whose plus subrings are open —
+  Wedhorn asks for neither, so the descent is not yet unconditional; and
 * the presentation index is then cofinal in the subset index, so the two limits agree.
 
 Until both are available unconditionally, no result here may be read as computing `𝒪_X(V)`, and
