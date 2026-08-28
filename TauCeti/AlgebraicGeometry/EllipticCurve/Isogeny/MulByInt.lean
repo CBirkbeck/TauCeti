@@ -66,7 +66,8 @@ checked; it holds because `n • P` is a point of the curve whenever `P` is, whi
 `WeierstrassCurve.zsmul_point_eq_smulEval` at the generic point.
 
 That the generic point is itself a point of the curve — the other half of the argument — lives
-in `Affine/FunctionField/GenericPoint.lean` as `WeierstrassCurve.Affine.equation_genericPoint`,
+in `Affine/FunctionField/GenericPoint.lean` as
+`WeierstrassCurve.Affine.equation_genericX_genericY`,
 since it is about `W` and not about `[n]`.
 
 ## Main definitions
@@ -207,7 +208,10 @@ identity: it holds because `n • P` is again a point of the curve whenever `P` 
 in affine coordinates — where it becomes exactly this equation. -/
 theorem equation_mulByInt [W.IsElliptic] {n : ℤ} (hn : psiFunctionField W n ≠ 0) :
     W.functionFieldCurve.Equation (mulByIntX W n) (mulByIntY W n) := by
-  have hns := W.nonsingular_genericPoint
+  have hns : W.functionFieldCurve.Nonsingular W.genericX W.genericY := by
+    -- Match the explicit base-change statement of the generic-coordinate theorem.
+    change (W⁄W.FunctionField).toAffine.Nonsingular W.genericX W.genericY
+    exact W.nonsingular_genericX_genericY
   have hsmul : Jacobian.Nonsingular W.functionFieldCurve.toJacobian
       (smulEval W.functionFieldCurve W.genericX W.genericY n) := by
     rw [← Jacobian.nonsingularLift_iff, ← zsmul_point_eq_smulEval _ hns n]
