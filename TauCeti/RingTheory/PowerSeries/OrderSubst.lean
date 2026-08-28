@@ -41,11 +41,9 @@ private constant-coefficient helper. The source module imports only
 `Mathlib.RingTheory.PowerSeries.Substitution` and `Mathlib.RingTheory.PowerSeries.Order`, and is
 ported here unchanged in mathematical content.
 
-The helper is kept private and is not a re-derivation of Mathlib API: Mathlib's
-`PowerSeries.constantCoeff_subst` states the constant coefficient as a `finsum`, and
-`PowerSeries.constantCoeff_subst_eq_zero` covers only the case where it vanishes. Neither gives
-`constantCoeff (subst f g) = constantCoeff g`, which is that `finsum` evaluated using
-`constantCoeff f = 0`, and which both branches of the main proof consume.
+The helper is kept private: it is Mathlib's `PowerSeries.constantCoeff_subst` `finsum`
+evaluated using `constantCoeff f = 0`, which both branches of the main proof consume.
+`PowerSeries.constantCoeff_subst_eq_zero` covers only the case where the result vanishes.
 -/
 
 public section
@@ -56,20 +54,24 @@ variable {R : Type*} [CommRing R]
 
 /-- The constant coefficient of `PowerSeries.subst f g` is that of `g`, when `constantCoeff f = 0`.
 
-This is not a re-derivation of `PowerSeries.constantCoeff_subst`: that lemma is stated over
-`MvPowerSeries.constantCoeff`, so it does not apply to a `PowerSeries.constantCoeff` goal without
-first bridging the two namespaces. `coeff_zero_eq_constantCoeff` is that bridge; `coeff_subst'` is
-then the coefficient formula that matches, and `constantCoeff f = 0` kills every term of the
-resulting `finsum` but the `d = 0` one. -/
+This reuses Mathlib's `PowerSeries.constantCoeff_subst`. That lemma is stated over
+`MvPowerSeries.constantCoeff`, which is definitionally `PowerSeries.constantCoeff`, so the goal is
+restated with `change` before rewriting; the only new content is the evaluation of the resulting
+`finsum`, where `constantCoeff f = 0` kills every term but the `d = 0` one. -/
 private lemma constantCoeff_subst_of_constantCoeff_eq_zero {f : PowerSeries R}
     (hf : constantCoeff f = 0) (g : PowerSeries R) :
     constantCoeff (subst f g) = constantCoeff g := by
   have hsub : HasSubst f := HasSubst.of_constantCoeff_zero' hf
-  rw [← coeff_zero_eq_constantCoeff, coeff_subst' hsub g 0, finsum_eq_single _ 0]
+  -- `PowerSeries.constantCoeff` is definitionally `MvPowerSeries.constantCoeff`, so the goal can
+  -- be restated over the latter; that is what lets `constantCoeff_subst` apply directly instead of
+  -- rebuilding its `finsum` from `coeff_subst'`.
+  change MvPowerSeries.constantCoeff (subst f g) = constantCoeff g
+  rw [constantCoeff_subst hsub g, finsum_eq_single _ 0]
   · simp
   · intro d hd
-    have hc : coeff 0 (f ^ d) = (0 : R) := by
-      rw [coeff_zero_eq_constantCoeff, map_pow, hf, zero_pow hd]
+    have hc : MvPowerSeries.constantCoeff (f ^ d) = (0 : R) := by
+      change constantCoeff (f ^ d) = 0
+      rw [map_pow, hf, zero_pow hd]
     rw [hc, smul_zero]
 
 /-- **The order of a substitution, as an equality**: for `f g : R⟦X⟧` with `constantCoeff f = 0`
