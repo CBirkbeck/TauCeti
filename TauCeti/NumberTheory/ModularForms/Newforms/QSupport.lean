@@ -6,29 +6,33 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.ModularForms.Degeneracy
+public import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
+public import TauCeti.NumberTheory.ModularForms.QExpansion.Basic
+public import TauCeti.RingTheory.PowerSeries.Support
 
 /-!
 # Power series supported on multiples of `d`
 
 A power series is *supported on multiples of `d`* when every coefficient at an index not
 divisible by `d` vanishes. This is the coefficient condition behind the Atkin–Lehner
-description of the old subspace: the image of the level-raising operator `V_d` consists
-exactly of forms whose `q`-expansion is supported on multiples of `d`.
+description of the old subspace, of which this file proves the **forward inclusion**: the image
+of the level-raising operator `V_d` is contained in the forms whose `q`-expansion is supported on
+multiples of `d`. The converse — that every such form is in the image, which is what would make
+the description exact — is not proved here and needs hypotheses this file does not carry.
 
-The predicate is stated for a power series over an arbitrary semiring rather than for a
-`q`-expansion, so that the closure lemmas below are available before any modular input is
-introduced.
+The underlying power-series predicate is not stated here: it is generic material and lives in
+`TauCeti/RingTheory/PowerSeries/Support.lean`, from which this file pulls
+`supportedOnDvdSubmodule` back along the `q`-expansion.
 
 ## Main definitions
 
-* `TauCeti.IsSupportedOnDvd`: the support condition on a power series.
-* `TauCeti.QExpansionSupportedOnDvd`: the same condition on the period-1 `q`-expansion of a
+* `TauCeti.QExpansionSupportedOnDvd`: the support condition on the period-1 `q`-expansion of a
   cusp form.
+* `TauCeti.qSupportedOnDvdSubmodule`: the cusp forms satisfying it, as the pullback of
+  `TauCeti.supportedOnDvdSubmodule` along the `q`-expansion.
 
 ## Main results
 
-* `TauCeti.IsSupportedOnDvd.add`, `.smul`, `.neg`, `.sub`: the condition is preserved by the
-  module operations, which is what makes the forms satisfying it a submodule.
 * `TauCeti.CuspForm.isSupportedOnDvd_qExpansion_levelRaise` and its modular-form counterpart: the
   image of the level-raising operator `V_d` is supported on multiples of `d` — the forward half of
   the Atkin-Lehner description of the old subspace.
@@ -76,51 +80,6 @@ open scoped Manifold MatrixGroups ModularForm Pointwise
 
 namespace TauCeti
 
-/-- A power series is **supported on multiples of `d`** when its coefficient at every index
-not divisible by `d` vanishes. -/
-def IsSupportedOnDvd {R : Type*} [Semiring R] (d : ℕ) (P : PowerSeries R) : Prop :=
-  ∀ n : ℕ, ¬ d ∣ n → P.coeff n = 0
-
-/-- `IsSupportedOnDvd` restated as an `Iff`, so the defining condition is available to `rw`
-without unfolding the definition. -/
-theorem isSupportedOnDvd_iff {R : Type*} [Semiring R] {d : ℕ} {P : PowerSeries R} :
-    IsSupportedOnDvd d P ↔ ∀ n : ℕ, ¬ d ∣ n → P.coeff n = 0 := (Iff.rfl)
-
-namespace IsSupportedOnDvd
-
-variable {R S : Type*} {d : ℕ} {P Q : PowerSeries R}
-
-/-- The elimination form: a supported series has vanishing coefficients away from the
-multiples of `d`. -/
-theorem coeff_of_not_dvd [Semiring R] (hP : IsSupportedOnDvd d P) {n : ℕ} (hn : ¬ d ∣ n) :
-    P.coeff n = 0 := hP n hn
-
-@[simp]
-theorem zero [Semiring R] (d : ℕ) : IsSupportedOnDvd d (0 : PowerSeries R) := fun _ _ ↦ by simp
-
-theorem add [Semiring R] (hP : IsSupportedOnDvd d P) (hQ : IsSupportedOnDvd d Q) :
-    IsSupportedOnDvd d (P + Q) := fun n hn ↦ by
-  rw [map_add, hP n hn, hQ n hn, zero_add]
-
-theorem smul [Semiring R] [Semiring S] [Module S R] (c : S) (hP : IsSupportedOnDvd d P) :
-    IsSupportedOnDvd d (c • P) := fun n hn ↦ by
-  simp [hP n hn]
-
-theorem neg [Ring R] (hP : IsSupportedOnDvd d P) : IsSupportedOnDvd d (-P) := fun n hn ↦ by
-  rw [map_neg, hP n hn, neg_zero]
-
-theorem sub [Ring R] (hP : IsSupportedOnDvd d P) (hQ : IsSupportedOnDvd d Q) :
-    IsSupportedOnDvd d (P - Q) := sub_eq_add_neg P Q ▸ hP.add hQ.neg
-
-/-- The constant power series `1` is supported on multiples of any `d`: its only nonzero
-coefficient sits at `0`, which every `d` divides. -/
-theorem one [Semiring R] (d : ℕ) : IsSupportedOnDvd d (1 : PowerSeries R) := fun n hn ↦ by
-  rcases Nat.eq_zero_or_pos n with rfl | hpos
-  · exact absurd (dvd_zero d) hn
-  · simp [PowerSeries.coeff_one, hpos.ne']
-
-end IsSupportedOnDvd
-
 section QExpansion
 
 variable {M d : ℕ} [NeZero M] [NeZero d] {k : ℤ}
@@ -147,7 +106,7 @@ theorem ModularForm.isSupportedOnDvd_qExpansion_levelRaise (M : ℕ)
     (g : ModularForm ((Gamma1 M).map (mapGL ℝ)) k) :
     IsSupportedOnDvd d
       (qExpansion 1 (ModularForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL M d) g)) :=
-  fun n hn ↦ by
+  isSupportedOnDvd_iff.mpr fun n hn ↦ by
     simp [ModularForm.qExpansion_levelRaise_coeff (one_mem_strictPeriods_Gamma1_map M)
       (one_mem_strictPeriods_Gamma1_map (d * M)) (Gamma1_map_le_conjAct_scaleGL M d) g n, hn]
 
@@ -157,35 +116,37 @@ theorem CuspForm.isSupportedOnDvd_qExpansion_levelRaise (M : ℕ)
     (g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) :
     IsSupportedOnDvd d
       (qExpansion 1 (CuspForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL M d) g)) :=
-  fun n hn ↦ by
+  isSupportedOnDvd_iff.mpr fun n hn ↦ by
     simp [CuspForm.qExpansion_levelRaise_coeff (one_mem_strictPeriods_Gamma1_map M)
       (one_mem_strictPeriods_Gamma1_map (d * M)) (Gamma1_map_le_conjAct_scaleGL M d) g n, hn]
 
 /-- The submodule of cusp forms of level `Γ₁(M)` whose period-1 `q`-expansion is supported on
-multiples of `d`. Closure under the module operations is the additivity and homogeneity of the
-`q`-expansion, which hold because `1` is a strict period. -/
+multiples of `d`, as the pullback of `supportedOnDvdSubmodule` along the `q`-expansion. Taking it
+as a `comap` is what supplies closure under the module operations: that is the linearity already
+bundled into `ModularForm.qExpansionLinearMap`, which holds because `1` is a strict period. -/
 noncomputable def qSupportedOnDvdSubmodule (M : ℕ) (k : ℤ) (d : ℕ) :
-    Submodule ℂ (CuspForm ((Gamma1 M).map (mapGL ℝ)) k) where
-  carrier := {f | QExpansionSupportedOnDvd d f}
-  zero_mem' n _ := by simp [qExpansion_zero]
-  add_mem' {f g} hf hg := by
-    simpa [QExpansionSupportedOnDvd,
-      ModularForm.qExpansion_add one_pos (one_mem_strictPeriods_Gamma1_map M) f g] using hf.add hg
-  smul_mem' c f hf := by
-    simpa [QExpansionSupportedOnDvd,
-      ModularForm.qExpansion_smul one_pos (one_mem_strictPeriods_Gamma1_map M) c f] using hf.smul c
+    Submodule ℂ (CuspForm ((Gamma1 M).map (mapGL ℝ)) k) :=
+  (supportedOnDvdSubmodule ℂ d).comap
+    ((ModularForm.qExpansionLinearMap one_pos (one_mem_strictPeriods_Gamma1_map M) k).comp
+      CuspForm.toModularFormₗ)
 
 omit [NeZero M] [NeZero d] in
-/-- Membership in `qSupportedOnDvdSubmodule` is the `q`-support condition, by definition. -/
+/-- Membership in `qSupportedOnDvdSubmodule` is the `q`-support condition. -/
 @[simp]
 theorem mem_qSupportedOnDvdSubmodule {f : CuspForm ((Gamma1 M).map (mapGL ℝ)) k} :
-    f ∈ qSupportedOnDvdSubmodule M k d ↔ QExpansionSupportedOnDvd d f := (Iff.rfl)
+    f ∈ qSupportedOnDvdSubmodule M k d ↔ QExpansionSupportedOnDvd d f := by
+  -- The `comap` is taken along the inclusion into `ModularForm`, which changes nothing
+  -- pointwise, so the two `q`-expansions are the same function.
+  have hcoe : ⇑(CuspForm.toModularFormₗ f) = ⇑f := funext fun _ ↦ rfl
+  simp [qSupportedOnDvdSubmodule, QExpansionSupportedOnDvd,
+    ModularForm.qExpansionLinearMap_apply, hcoe]
 
 omit [NeZero M] [NeZero d] in
 /-- Membership in `qSupportedOnDvdSubmodule`, spelled out on coefficients. -/
 theorem mem_qSupportedOnDvdSubmodule_iff {f : CuspForm ((Gamma1 M).map (mapGL ℝ)) k} :
     f ∈ qSupportedOnDvdSubmodule M k d ↔
-      ∀ n : ℕ, ¬ d ∣ n → (qExpansion 1 f).coeff n = 0 := (Iff.rfl)
+      ∀ n : ℕ, ¬ d ∣ n → (qExpansion 1 f).coeff n = 0 :=
+  mem_qSupportedOnDvdSubmodule.trans isSupportedOnDvd_iff
 
 /-- **Level-raising into a divisible level lands in the supported submodule.** For `d * M ∣ N`,
 the operator `V_d` carries `S_k(Γ₁(M))` into the cusp forms whose `q`-expansion is supported on
@@ -193,9 +154,10 @@ multiples of `d` — the forward half of the Atkin–Lehner description of the o
 theorem levelRaise_mem_qSupportedOnDvdSubmodule {N : ℕ} (M : ℕ)
     (h : d * M ∣ N) (g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) :
     CuspForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL_of_dvd h) g ∈
-      qSupportedOnDvdSubmodule N k d := fun n hn ↦ by
-  simp [CuspForm.qExpansion_levelRaise_coeff (one_mem_strictPeriods_Gamma1_map M)
-    (one_mem_strictPeriods_Gamma1_map N) (Gamma1_map_le_conjAct_scaleGL_of_dvd h) g n, hn]
+      qSupportedOnDvdSubmodule N k d :=
+  mem_qSupportedOnDvdSubmodule.mpr <| isSupportedOnDvd_iff.mpr fun n hn ↦ by
+    simp [CuspForm.qExpansion_levelRaise_coeff (one_mem_strictPeriods_Gamma1_map M)
+      (one_mem_strictPeriods_Gamma1_map N) (Gamma1_map_le_conjAct_scaleGL_of_dvd h) g n, hn]
 
 /-- **The range of `V_d` lies in the supported submodule.** Stated for the `ℂ`-linear map, which is
 the shape `TauCeti.cuspFormsOld` is assembled from, so the old subspace is contained in the
