@@ -10,6 +10,7 @@ public import Mathlib.GroupTheory.Solvable
 public import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Basic
 public import TauCeti.Algebra.AlgebraicGroup.Product
+public import TauCeti.GroupTheory.Solvable
 
 /-!
 # Geometric solvability of affine groups
@@ -108,13 +109,6 @@ theorem geometricallySolvablePointsCommHopfAlgProperty_quotient
     (CommHopfAlgCat.mkQuotient H I) _ hH
   exact Ideal.Quotient.mkₐ_surjective k I.toIdeal
 
-/-- **A solvable product has solvable factors.** Each projection is surjective, so solvability
-transports along it. Mathlib has the transport lemmas but no product form. -/
-private theorem isSolvable_and_isSolvable_of_isSolvable_prod {G H : Type*} [Group G] [Group H]
-    [Group.IsSolvable (G × H)] : Group.IsSolvable G ∧ Group.IsSolvable H :=
-  ⟨Group.isSolvable_of_surjective (f := MonoidHom.fst G H) fun x ↦ ⟨(x, 1), rfl⟩,
-    Group.isSolvable_of_surjective (f := MonoidHom.snd G H) fun x ↦ ⟨(1, x), rfl⟩⟩
-
 /-- The tensor-product coordinate algebra has solvable geometric points exactly when both
 factors do. Contravariantly, this is closure and reflection of solvability by direct products of
 affine groups. -/
@@ -154,10 +148,7 @@ theorem geometricallySolvablePointsCommHopfAlgProperty_tensorProduct_iff
           WithConv (K →ₐ[k] AlgebraicClosure k))
         (G' := WithConv (((H : Type v) ⊗[k] (K : Type v)) →ₐ[k] AlgebraicClosure k))
         (f := finv) hfinv_injective
-    let _ : Group.IsSolvable
-        (WithConv (H →ₐ[k] AlgebraicClosure k) ×
-          WithConv (K →ₐ[k] AlgebraicClosure k)) := hprod
-    exact isSolvable_and_isSolvable_of_isSolvable_prod
+    exact isSolvable_prod_iff.mp hprod
   · rintro ⟨hH, hK⟩
     let _ : Group.IsSolvable (WithConv (H →ₐ[k] AlgebraicClosure k)) := hH
     let _ : Group.IsSolvable (WithConv (K →ₐ[k] AlgebraicClosure k)) := hK
