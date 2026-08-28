@@ -53,6 +53,10 @@ shrinking part.
 * `TauCeti.CommHopfAlgCat.pointsFunctor_faithful` and
   `TauCeti.CommHopfAlgCat.pointsFunctor_full`: points recover coordinate Hopf algebra
   morphisms.
+* `TauCeti.CommHopfAlgCat.homOfPointsMap`: the coordinate morphism a natural map of points
+  functors comes from, with `TauCeti.CommHopfAlgCat.mapPointsFunctor_homOfPointsMap` its
+  defining property. This is the form in which fullness is used downstream, where a group-scheme
+  morphism is built from its natural action on points.
 * `TauCeti.CommHopfAlgCat.essImage_pointsFunctor`: the essential image consists exactly of
   group functors with corepresentable underlying functor.
 
@@ -494,6 +498,35 @@ instance pointsFunctor_full :
     dsimp [groupYonedaPointsFunctor]
     infer_instance
   exact Functor.Full.of_iso (groupYonedaPointsFunctorIso (R := R))
+
+/-- The coordinate Hopf-algebra morphism that a natural transformation of group-valued points
+functors comes from, recovered by fullness of the functor of points.
+
+Its direction is `K ⟶ H`, opposite to that of the natural map
+`pointsFunctor H ⟶ pointsFunctor K` it is recovered from. -/
+noncomputable def homOfPointsMap {H K : _root_.CommHopfAlgCat.{u} R}
+    (α : HopfAlgebra.pointsFunctor (R := R) (H := H) ⟶
+      HopfAlgebra.pointsFunctor (R := R) (H := K)) :
+    K ⟶ H :=
+  ((pointsFunctor.{u, u, u} (R := R) :
+      (_root_.CommHopfAlgCat.{u} R)ᵒᵖ ⥤ CommAlgCat.{u} R ⥤ GrpCat.{u}).preimage
+    (X := op H) (Y := op K) α).unop
+
+/-- Pre-composition by the recovered coordinate morphism is the natural points map it was
+recovered from. This is the defining property of `TauCeti.CommHopfAlgCat.homOfPointsMap`, and
+the only thing its users need. -/
+theorem mapPointsFunctor_homOfPointsMap {H K : _root_.CommHopfAlgCat.{u} R}
+    (α : HopfAlgebra.pointsFunctor (R := R) (H := H) ⟶
+      HopfAlgebra.pointsFunctor (R := R) (H := K)) :
+    (mapPointsFunctor (homOfPointsMap α) :
+      HopfAlgebra.pointsFunctor (R := R) (H := H) ⟶
+        HopfAlgebra.pointsFunctor (R := R) (H := K)) = α := by
+  unfold homOfPointsMap
+  rw [← pointsFunctor_map]
+  exact Functor.map_preimage
+    (pointsFunctor.{u, u, u} (R := R) :
+      (_root_.CommHopfAlgCat.{u} R)ᵒᵖ ⥤ CommAlgCat.{u} R ⥤ GrpCat.{u}) _
+
 
 /-- Precomposition by `unopUnop` turns representability on a double opposite into
 corepresentability. This is the type-valued variance correction underlying the essential-image
