@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.Data.Finite.Sum
 public import Mathlib.RingTheory.MvPowerSeries.Evaluation
 public import TauCeti.Topology.Algebra.Nonarchimedean.AdicTopology
 
@@ -54,8 +55,11 @@ of `HasEval` vacuous; that is the one place the hypothesis does work rather than
   arguments of `I ^ j`, takes values in `I ^ (c * j)`.
 * `MvPowerSeries.eval₂_mem_pow_add_mul` : if moreover `φ` sends every coefficient into `I ^ k`,
   the value lies in `I ^ (k + c * j)`.
+* `MvPowerSeries.hasEval_of_finite` : finitely many topologically nilpotent arguments are an
+  admissible evaluation point.
 * `MvPowerSeries.hasEval_of_mem` : a family of finitely many arguments drawn from `I` is an
   admissible evaluation point.
+* `MvPowerSeries.hasEval_sumElim` : two such families assemble into one on a sum type.
 * `MvPowerSeries.eval₂_sub_constantCoeff_mem` : the value and the image of the constant term
   differ by an element of `I`.
 
@@ -170,12 +174,30 @@ theorem eval₂_mem_pow_mul (hφ : Continuous φ) (ha : HasEval a) (hI : IsAdic 
 
 omit [IsUniformAddGroup S] [CompleteSpace S] [T2Space S] [IsTopologicalRing S]
   [IsLinearTopology S S] in
+/-- **Finitely many topologically nilpotent arguments can be substituted into a power series.**
+Over finitely many variables the decay condition `HasEval` asks for at infinity is vacuous, so
+pointwise topological nilpotence is the whole of it. -/
+theorem hasEval_of_finite [Finite σ] (h : ∀ i, IsTopologicallyNilpotent (a i)) : HasEval a where
+  hpow := h
+  tendsto_zero := by simp [Filter.cofinite_eq_bot]
+
+omit [IsUniformAddGroup S] [CompleteSpace S] [T2Space S] [IsTopologicalRing S]
+  [IsLinearTopology S S] in
 /-- **A family drawn from an adic ideal can be substituted into a power series.** For an index
 type with finitely many variables, lying in `I` is the only condition the arguments need: it
 already gives them the `HasEval` property that evaluation requires. -/
-theorem hasEval_of_mem [Finite σ] (hI : IsAdic I) (hmem : ∀ i, a i ∈ I) : HasEval a where
-  hpow s := hI.isTopologicallyNilpotent_of_mem (hmem s)
-  tendsto_zero := by simp [Filter.cofinite_eq_bot]
+theorem hasEval_of_mem [Finite σ] (hI : IsAdic I) (hmem : ∀ i, a i ∈ I) : HasEval a :=
+  hasEval_of_finite fun s ↦ hI.isTopologicallyNilpotent_of_mem (hmem s)
+
+omit [IsUniformAddGroup S] [CompleteSpace S] [T2Space S] [IsTopologicalRing S]
+  [IsLinearTopology S S] in
+/-- **A pair of topologically nilpotent arguments can be substituted into a two-variable power
+series.** Mathlib's `HasEval` constructions cover a constant family, a single variable and images
+under a continuous map, but not a family assembled from two others; this is that case. -/
+theorem hasEval_sumElim {τ : Type*} [Finite σ] [Finite τ] {b : σ → S} {c : τ → S}
+    (hb : ∀ i, IsTopologicallyNilpotent (b i)) (hc : ∀ j, IsTopologicallyNilpotent (c j)) :
+    HasEval (Sum.elim b c) :=
+  hasEval_of_finite <| by rintro (i | j) <;> simp [hb, hc]
 
 /-- **The value differs from the image of the constant term by an element of `I`.** Equivalently,
 for arguments drawn from `I` the value of `f` is congruent to the image of its constant term

@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.RingTheory.MvPowerSeries.Equiv
 public import Mathlib.RingTheory.PowerSeries.Substitution
 
 /-!
@@ -39,6 +40,10 @@ uniformities are shadowed, so the evaluation the statement is about is never re-
 * `MvPowerSeries.aeval_subst` : a continuous algebra homomorphism applied to a substitution is the
   evaluation at the substituted family.
 * `PowerSeries.aeval_subst` : the same for a substitution into a univariate series.
+* `PowerSeries.eval₂_toMvPowerSeries` and `PowerSeries.eval₂_id_toMvPowerSeries` : evaluating a
+  univariate series viewed in several variables is evaluating it at the matching entry of the
+  family — the case of `aeval_subst` at a single variable, which is how a one-variable series
+  meets a two-variable evaluation.
 
 Both are wanted for the formal group of an elliptic curve over a complete local ring, where the
 group law is a power series over the very ring it is evaluated in: the involution relating the
@@ -139,5 +144,41 @@ theorem aeval_subst {a : MvPowerSeries τ S} {ε : MvPowerSeries τ S →ₐ[R] 
     (hε : Continuous ε) (hb : HasEval (ε a)) (f : PowerSeries R) :
     ε (subst a f) = aeval hb f :=
   MvPowerSeries.aeval_subst ha.const hε (hasEval hb) f
+
+/-- Evaluating the image of a univariate series under `PowerSeries.toMvPowerSeries i` at a family
+`a` is evaluating the series itself at the entry `a i`: sending the single variable to the `i`-th
+one and then evaluating is evaluating at `a i`.
+
+`toMvPowerSeries` is a substitution, so this is `aeval_subst` at the family `MvPowerSeries.X i`;
+it is stated for `eval₂` rather than `aeval` because the evaluation of a family is what consumers
+hold, and the `aeval` form would carry the `HasEval` proof in a position where two propositionally
+equal parameters are not definitionally equal. -/
+theorem eval₂_toMvPowerSeries {σ : Type*} {a : σ → T} (ha : MvPowerSeries.HasEval a) (i : σ)
+    (f : PowerSeries R) :
+    MvPowerSeries.eval₂ (algebraMap R T) a (toMvPowerSeries i f) =
+      eval₂ (algebraMap R T) (a i) f := by
+  have hX : MvPowerSeries.aeval ha (MvPowerSeries.X i) = a i :=
+    (congrFun (MvPowerSeries.coe_aeval (R := R) ha) (MvPowerSeries.X i)).trans
+      (MvPowerSeries.eval₂_X (algebraMap R T) a i)
+  have h := aeval_subst (HasSubst.X i) (MvPowerSeries.continuous_aeval ha) (hX ▸ ha.hpow i) f
+  rw [← toMvPowerSeries_eq_subst] at h
+  rw [← congrFun (MvPowerSeries.coe_aeval (R := R) ha) (toMvPowerSeries i f), h,
+    congrFun (coe_aeval (hX ▸ ha.hpow i)) f, hX]
+
+section SelfEval
+
+variable {R : Type*} [CommRing R] [UniformSpace R] [IsUniformAddGroup R] [IsTopologicalRing R]
+  [IsLinearTopology R R] [T2Space R] [CompleteSpace R]
+
+/-- `PowerSeries.eval₂_toMvPowerSeries` at the identity ring homomorphism, which is the form the
+evaluation layer of a formal group uses: there the coefficients and the values live in the same
+ring, so `algebraMap` is not the shape the statement is met in. -/
+theorem eval₂_id_toMvPowerSeries {σ : Type*} {a : σ → R} (ha : MvPowerSeries.HasEval a) (i : σ)
+    (f : PowerSeries R) :
+    MvPowerSeries.eval₂ (RingHom.id R) a (toMvPowerSeries i f) =
+      eval₂ (RingHom.id R) (a i) f := by
+  simpa using eval₂_toMvPowerSeries (R := R) (T := R) ha i f
+
+end SelfEval
 
 end PowerSeries
