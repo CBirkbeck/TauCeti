@@ -61,11 +61,12 @@ variable {B : Type*} [Ring B]
 
 /-- If some `i ∈ I` is such that `1 + i` annihilates `I ^ n`, then `I ^ (n + 1) = I ^ n`.
 
-Commutativity is not needed. The two cases are genuinely different: for `n ≥ 1` the element
-`i * x` lands in `I * I ^ n = I ^ (n + 1)`, whereas at `n = 0` that identity fails for a left
-ideal, and the conclusion `I = ⊤` comes instead from `1 + i` annihilating `1`. -/
+Commutativity is not needed. -/
 theorem pow_succ_eq_pow_of_forall_mul_eq_zero {I : _root_.Ideal B} {i : B} (hi : i ∈ I) {n : ℕ}
     (h : ∀ x ∈ I ^ n, (1 + i) * x = 0) : I ^ (n + 1) = I ^ n := by
+  -- The two cases are genuinely different: for `n ≥ 1` the element `i * x` lands in
+  -- `I * I ^ n = I ^ (n + 1)`, whereas at `n = 0` that identity fails for a left ideal, and the
+  -- conclusion `I = ⊤` comes instead from `1 + i` annihilating `1`.
   refine le_antisymm (_root_.Ideal.pow_le_pow_right (Nat.le_succ n)) fun x hx ↦ ?_
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · have hone : (1 : B) + i = 0 := by
