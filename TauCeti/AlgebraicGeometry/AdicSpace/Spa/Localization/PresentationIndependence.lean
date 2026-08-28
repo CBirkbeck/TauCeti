@@ -50,10 +50,11 @@ other presentation's coordinate ring and that the plus subrings are open.
   have canonically isomorphic coordinate rings.
 
 `presentationRingEquivOfEq` is a `def`, so it comes with the lemmas that pin down what it is
-without unfolding the proof term: `continuous_presentationRingEquivOfEq`, and
-`presentationRingEquivOfEq_coe_comp_toCompletionLoc` together with its `symm` counterpart, which
-say the isomorphism and its inverse commute with the structure maps from `A`. That compatibility
-is what determines it, so a consumer needs nothing else.
+without unfolding the proof term: `continuous_presentationRingEquivOfEq` and
+`continuous_presentationRingEquivOfEq_symm`, which make it an isomorphism of *topological*
+rings, and `presentationRingEquivOfEq_coe_comp_toCompletionLoc` together with its `symm`
+counterpart, which say the isomorphism and its inverse commute with the structure maps from `A`.
+That compatibility is what determines it, so a consumer needs nothing else.
 
 ## The hypotheses both results carry
 
@@ -315,5 +316,38 @@ theorem presentationRingEquivOfEq_symm_coe_comp_toCompletionLoc
   simp only [RingHom.coe_comp, Function.comp_apply] at hfwd ⊢
   rw [← hfwd]
   exact RingEquiv.symm_apply_apply _ _
+
+/-- The inverse of the presentation-independence isomorphism is continuous. Together with
+`continuous_presentationRingEquivOfEq` this says the isomorphism is one of topological rings, so
+a consumer never has to unfold it to move continuously in either direction. -/
+theorem continuous_presentationRingEquivOfEq_symm
+    (P : PairOfDefinition A) (Aplus : Subring A)
+    (hAplus : ∀ ⦃a⦄, a ∈ Aplus → IsPowerBounded a) (T : Finset A) (s : A) (S : Type*)
+    [CommRing S] [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S)
+    (T' : Finset A) (s' : A) (S' : Type*) [CommRing S'] [Algebra A S']
+    [IsLocalization.Away s' S'] (hden' : HasDenominatorPower P T' s' S')
+    (heq : rationalSubset Aplus T s = rationalSubset Aplus T' s') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s' S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
+    ∀ (hs' : IsUnit (toCompletionLoc P T' s' S' hden' s))
+      (hopen' : IsOpen ((completedPlusSubring P Aplus T' s' S' hden' :
+        Subring (UniformSpace.Completion S')) : Set (UniformSpace.Completion S')))
+      (hs : IsUnit (toCompletionLoc P T s S hden s'))
+      (hopen : IsOpen ((completedPlusSubring P Aplus T s S hden :
+        Subring (UniformSpace.Completion S)) : Set (UniformSpace.Completion S))),
+      Continuous (presentationRingEquivOfEq P Aplus hAplus T s S hden T' s' S' hden' heq
+        hs' hopen' hs hopen).symm := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  let _ := locUniformSpace P T' s' S' hden'
+  have _ := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+  have _ := isTopologicalRing_locUniformSpace P T' s' S' hden'
+  intro hs' hopen' hs hopen
+  exact continuous_presentationRingEquiv_symm P T s S hden T' s' S' hden' _ _ _ _ _ _
 
 end TauCeti.ValuationSpectrum
