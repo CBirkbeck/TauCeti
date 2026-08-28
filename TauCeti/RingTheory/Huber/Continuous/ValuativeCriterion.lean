@@ -307,7 +307,8 @@ private theorem exists_continuous_valuation_of_forall_le (P : PairOfDefinition R
           restrictToConvex_apply_of_mem v₀ H habs hv₀t₀ne humem]
       rw [hval]
       exact exists_pow_lt_of_isCofinalElement humem
-        (isCofinalElement_closure_singleton (Units.val_lt_val.mp (by simpa [hu] using hglt))) hγ
+        ((isCofinalElement_iff_subset_closure
+          (Units.val_lt_val.mp (by simpa [hu] using hglt))).mpr (by simp [hH])) hγ
   exact exists_spv_of_isContinuous vext hextcont hextB hextx
 
 /-! ### The construction, for a domain -/
