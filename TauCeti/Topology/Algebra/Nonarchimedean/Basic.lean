@@ -44,6 +44,17 @@ theorem nonarchimedean_of_isOpenMap {G H : Type*} [Group G] [TopologicalSpace G]
     (hf : ContinuousAt f 1) (hopen : IsOpenMap f) : NonarchimedeanGroup H where
   is_nonarchimedean U hU := by
     obtain ⟨V, hV⟩ := NonarchimedeanGroup.is_nonarchimedean (G := G) _ (hf (by simpa using hU))
-    exact ⟨⟨V.toSubgroup.map f, hopen _ V.isOpen⟩, Set.image_subset_iff.2 hV⟩
+    -- `Subgroup.coe_map` rewrites the carrier of `V.toSubgroup.map f` to the image `f '' V`,
+    -- which is the form both `hopen` and `hV` are stated in. It holds by `rfl`, but is named
+    -- here rather than left to unfolding.
+    refine ⟨⟨V.toSubgroup.map f, ?_⟩, ?_⟩
+    · -- `OpenSubgroup`'s field is stated about `.carrier`; naming it as the subgroup's coercion
+      -- is what lets `Subgroup.coe_map` rewrite it to the image `f '' V`.
+      change IsOpen ((V.toSubgroup.map f : Subgroup H) : Set H)
+      simpa only [Subgroup.coe_map, OpenSubgroup.coe_toSubgroup] using hopen _ V.isOpen
+    · -- likewise the subset goal is stated through the `OpenSubgroup` constructor, so its
+      -- carrier is named as a `Subgroup` coercion before `Subgroup.coe_map` can rewrite it.
+      change ((V.toSubgroup.map f : Subgroup H) : Set H) ⊆ U
+      simpa only [Subgroup.coe_map, OpenSubgroup.coe_toSubgroup] using Set.image_subset_iff.2 hV
 
 end NonarchimedeanGroup
