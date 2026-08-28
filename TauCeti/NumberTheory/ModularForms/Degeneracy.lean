@@ -807,8 +807,12 @@ theorem slash_mapGL_eq_self_of_mem_Gamma1_div (l N : ℕ) [NeZero l] (hlN : l �
   have hchar : (χ ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) : ℂ) = 1 := by
     obtain ⟨-, hd, hcz⟩ := (Gamma1_mem _ _).mp hδ
     have hγ' : γ ∈ Gamma0 (N / l) := Gamma0_le_Gamma0_of_dvd (Nat.div_dvd_of_dvd hlN) hγ
+    -- `Gamma0Map_apply` reads the label as the lower-right entry. Instantiating it here, with the
+    -- entry spelled as `hdiag` spells it, keeps the subtype coercion in one named step instead of
+    -- leaving it for `rw` to discharge silently.
+    have hentry : Gamma0Map (N / l) ⟨γ, hγ'⟩ = ((γ 1 1 : ℤ) : ZMod (N / l)) := Gamma0Map_apply _
     have hlabel : Gamma0Map (N / l) ⟨γ, hγ'⟩ = 1 := by
-      rw [Gamma0Map_apply, hdiag]
+      rw [hentry, hdiag]
       push_cast
       rw [hd, hcz, zero_mul, sub_zero]
     have hred : ZMod.unitsMap (Nat.div_dvd_of_dvd hlN)
