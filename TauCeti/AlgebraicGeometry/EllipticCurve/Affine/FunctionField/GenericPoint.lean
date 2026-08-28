@@ -121,7 +121,7 @@ theorem equation_genericX_genericY :
 
 namespace FunctionField
 
-variable {F A : Type*} [Field F] [Field A] [Algebra F A]
+variable {F A : Type*} [Field F] [CommRing A] [Algebra F A]
   {W : _root_.WeierstrassCurve.Affine F}
 
 /-- **Algebra homomorphisms out of the function field are determined on the coordinate ring.** -/
@@ -130,7 +130,8 @@ theorem algHom_ext {f g : W.FunctionField →ₐ[F] A}
       f (algebraMap W.CoordinateRing W.FunctionField z) =
         g (algebraMap W.CoordinateRing W.FunctionField z)) : f = g := by
   apply AlgHom.coe_ringHom_injective
-  apply IsFractionRing.ringHom_ext (A := W.CoordinateRing) (K := W.FunctionField) (L := A)
+  apply IsLocalization.ringHom_ext (nonZeroDivisors W.CoordinateRing)
+  apply RingHom.ext
   intro z
   exact h z
 
