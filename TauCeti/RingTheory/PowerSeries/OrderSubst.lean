@@ -95,7 +95,7 @@ theorem order_subst [NoZeroDivisors R] {f g : PowerSeries R} (hf : constantCoeff
       rw [← coe_substAlgHom hsub]; exact map_zero _
     have hf_ord_ne_zero : order f ≠ 0 := by
       rw [order_ne_zero_iff_constCoeff_eq_zero]; exact hf
-    rw [show (subst f (0 : PowerSeries R) : PowerSeries R) = 0 from hz, order_zero, order_zero]
+    rw [show (subst f (0 : PowerSeries R) : PowerSeries R) = 0 from hz, order_zero]
     exact (ENat.top_mul hf_ord_ne_zero).symm
   by_cases hcg : constantCoeff g = 0
   · -- `g ≠ 0` with vanishing constant coefficient: split off `X ^ order g`.
