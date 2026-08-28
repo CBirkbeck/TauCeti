@@ -182,11 +182,7 @@ theorem isContinuous_extendToLocalization [IsTopologicalRing A]
   obtain ⟨n, -, hn⟩ := P.hasBasis_nhds_zero.mem_iff.mp hnhds
   -- The sublevel set is an additive subgroup containing an open one, hence open.
   let G : AddSubgroup S :=
-    { carrier := {x : S |
-        v.extendToLocalization (Valuation.powers_le_supp_primeCompl hs) S x < v a / v (y : A)}
-      add_mem' := fun hx hz ↦ lt_of_le_of_lt (Valuation.map_add _ _ _) (max_lt hx hz)
-      zero_mem' := by simpa using zero_lt_iff.mpr hb
-      neg_mem' := fun {x} hx ↦ by simpa using hx }
+    (v.extendToLocalization (Valuation.powers_le_supp_primeCompl hs) S).ltAddSubgroupOfNeZero hb
   exact AddSubgroup.isOpen_mono (H₁ := locIdealImage P T s S n) (H₂ := G)
     (fun x hx ↦ extendToLocalization_lt_of_mem_locIdealImage S P T s hs hA₀ hT
       (fun c hc ↦ hn hc) hx)

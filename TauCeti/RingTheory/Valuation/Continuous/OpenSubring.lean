@@ -85,42 +85,54 @@ open Set Topology
 variable {A : Type*} [Ring A] [TopologicalSpace A]
   {Γ₀ : Type*} [LinearOrderedCommMonoidWithZero Γ₀]
 
+/-- **A sublevel set of a valuation is open as soon as it is a neighbourhood of `0`.** The set is
+an additive subgroup (`Valuation.ltAddSubgroupOfNeZero`), and a subgroup which is a neighbourhood
+of `0` is open, so no other point has to be checked. This is the reusable content of the file; the
+subring criterion below is one way of supplying the neighbourhood. -/
+theorem isOpen_lt_of_mem_nhds_zero [SeparatelyContinuousAdd A] {v : Valuation A Γ₀} {γ : Γ₀}
+    (h : {a : A | v a < γ} ∈ 𝓝 (0 : A)) : IsOpen {a : A | v a < γ} := by
+  rcases eq_or_ne γ 0 with rfl | hγ
+  · simp
+  exact (v.ltAddSubgroupOfNeZero hγ).isOpen_of_mem_nhds (g := 0) h
+
+/-- **A sublevel set is open once any open set around `0` sits inside it.** The convenient form of
+`Valuation.isOpen_lt_of_mem_nhds_zero`: the witness need only be open and contain `0`. -/
+theorem isOpen_lt_of_subset_of_isOpen [SeparatelyContinuousAdd A] {v : Valuation A Γ₀} {γ : Γ₀}
+    {U : Set A} (hU : IsOpen U) (h0 : (0 : A) ∈ U) (hsub : U ⊆ {a : A | v a < γ}) :
+    IsOpen {a : A | v a < γ} :=
+  isOpen_lt_of_mem_nhds_zero (Filter.mem_of_superset (hU.mem_nhds h0) hsub)
+
 /-- **A sublevel set is open as soon as its trace on an open subring is.**
 
 The two sets are not related by the topology — the trace is in general far smaller. What carries
-the openness across is that `{a | v a < γ}` is an additive subgroup, by the strict triangle
-inequality, and a subgroup which is a neighbourhood of `0` is open; openness of `B` is what makes
-the trace such a neighbourhood. -/
+the openness across is `Valuation.isOpen_lt_of_subset_of_isOpen`: openness of `B` makes the trace
+an open set around `0` inside the sublevel set. Only openness of `B` and `0 ∈ B` are used, which
+is why the two lemmas above are stated for a bare set. -/
 theorem isOpen_lt_of_isOpen_subring_lt [SeparatelyContinuousAdd A] {B : Subring A}
     (hB : IsOpen (B : Set A)) {v : Valuation A Γ₀} {γ : Γ₀}
     (h : IsOpen {b : B | v (b : A) < γ}) : IsOpen {a : A | v a < γ} := by
   rcases eq_or_ne γ 0 with rfl | hγ
   · simp
-  have h0 : (0 : Γ₀) < γ := zero_lt_iff.mpr hγ
-  let S : AddSubgroup A :=
-    { carrier := {a : A | v a < γ}
-      add_mem' := fun ha hb ↦ lt_of_le_of_lt (v.map_add _ _) (max_lt ha hb)
-      zero_mem' := by simpa using h0
-      neg_mem' := fun {x} hx ↦ by simpa [v.map_neg] using hx }
-  have hopen : IsOpen ((Subtype.val : B → A) '' {b : B | v (b : A) < γ}) :=
-    hB.isOpenMap_subtype_val _ h
-  have hmem : (0 : A) ∈ (Subtype.val : B → A) '' {b : B | v (b : A) < γ} :=
-    ⟨⟨0, B.zero_mem⟩, by simpa using h0, rfl⟩
-  refine S.isOpen_of_mem_nhds (g := 0) (Filter.mem_of_superset (hopen.mem_nhds hmem) ?_)
+  refine isOpen_lt_of_subset_of_isOpen (hB.isOpenMap_subtype_val _ h)
+    ⟨⟨0, B.zero_mem⟩, by simpa using zero_lt_iff.mpr hγ, rfl⟩ ?_
   rintro _ ⟨b, hb, rfl⟩
   exact hb
 
-/-- **A sufficient criterion for continuity, tested on an open subring.** If every sublevel set
-of `v` has open trace on the open subring `B`, then `v` is continuous.
+/-- **A sufficient criterion for continuity, tested on an open subring.** If the trace on the open
+subring `B` of every sublevel set at an *attained* value is open, then `v` is continuous.
 
-The hypothesis quantifies `γ` over the whole codomain, which is strictly stronger than continuity
-of the restriction `v.comap B.subtype`: the latter is the attained-value predicate and supplies
-openness only at values `v` takes on `B`. So this does **not** combine with
-`Valuation.IsContinuous.comap` to give Wedhorn's equality `Cont(A) = g⁻¹(Cont(B))` — see the
-module docstring for what closing that gap would cost. -/
-theorem isContinuous_of_isOpen_subring_lt [SeparatelyContinuousAdd A] {B : Subring A}
+The quantifier runs over the attained values `v b`, matching `Valuation.IsContinuous` itself:
+`Valuation.isOpen_lt_of_isOpen_subring_lt` applies at each `γ` separately, so asking for openness
+at every `γ` of the codomain would be strictly stronger for no gain — and, as
+`Valuation.Continuous.Basic` documents, the whole-codomain condition is not even an invariant of
+the equivalence class of `v`.
+
+This is **not** Wedhorn's Lemma 7.44(2): see the module docstring for the gap and its cost. -/
+theorem isContinuous_of_forall_isOpen_subring_lt [SeparatelyContinuousAdd A] {B : Subring A}
     (hB : IsOpen (B : Set A)) {v : Valuation A Γ₀}
-    (h : ∀ γ : Γ₀, IsOpen {b : B | v (b : A) < γ}) : v.IsContinuous :=
-  isContinuous_of_forall_isOpen_lt fun γ ↦ isOpen_lt_of_isOpen_subring_lt hB (h γ)
+    (h : ∀ b : A, IsOpen {x : B | v (x : A) < v b}) : v.IsContinuous :=
+  -- `IsContinuous` is sealed outside `Continuous/Basic.lean`, so the quantifier is reached
+  -- through `isContinuous_def` rather than by unfolding.
+  isContinuous_def.mpr fun b ↦ isOpen_lt_of_isOpen_subring_lt hB (h b)
 
 end Valuation
