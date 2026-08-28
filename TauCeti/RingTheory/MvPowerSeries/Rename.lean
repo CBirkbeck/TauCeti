@@ -9,55 +9,39 @@ public import Mathlib.RingTheory.MvPowerSeries.Rename
 public import Mathlib.RingTheory.MvPowerSeries.Substitution
 
 /-!
-# Substituting into a renamed multivariate power series
+# Renaming the variables of a multivariate power series
 
-Renaming the variables of a multivariate power series and substituting for them are the two ways
-of changing what the variables of a series stand for, and they interact in the obvious way: a
-substitution applied after a renaming is the substitution along the renamed index.
+Two gaps in Mathlib's `rename` API, both about comparing a renaming with another operation on the
+same series.
 
-Mathlib has both operations and the law that lets them be compared — `rename_eq_subst`, which
-says a renaming *is* the substitution sending each variable to a variable — but not the
-comparison itself, which is what a caller reindexing a series needs.
+Substituting after renaming is the substitution along the renamed index: Mathlib has both
+operations and the law that lets them be compared — `rename_eq_subst`, which says a renaming *is*
+the substitution sending each variable to a variable — but not the comparison itself, which is
+what a caller reindexing a series needs.
+
+Reading a *linear* coefficient through a renaming along an embedding is likewise available only
+through `coeff_embDomain_rename`, which speaks about `Finsupp.embDomain`; at a single variable
+that is the more usable `single (e i) n`.
 
 ## Main results
 
 * `MvPowerSeries.subst_rename`: substituting into `rename e p` reindexes the family, i.e. it is
   substituting `g ∘ e` into `p`.
-* `sumUnitEmbFinTwo`: the reindexing `Unit ⊕ Unit ↪ Fin 2`, for presenting a series in two
-  separately-named variables over `Fin 2`.
+* `MvPowerSeries.coeff_single_rename`: the coefficient of `rename e p` at `single (e i) n` is the
+  coefficient of `p` at `single i n`.
 
 ## Provenance
 
-No external source: the statement is a gap in Mathlib's `MvPowerSeries` API and the proof is
-three steps of that same API (`rename_eq_subst`, `HasSubst.X_comp`, `subst_comp_subst_apply`).
-It is recorded here rather than inside its caller because it carries no elliptic content.
+No external source: both statements are gaps in Mathlib's `MvPowerSeries` API and each proof is a
+few steps of that same API. They are recorded here rather than inside their callers because they
+carry no elliptic content.
 -/
 
 public section
 
-/-- **The reindexing `Unit ⊕ Unit ↪ Fin 2`**, sending the left summand to `0` and the right to `1`.
-
-Two separately-named variables and the two variables of `Fin 2` are the two ways a two-variable
-object gets indexed, and translating between them is pure bookkeeping — Mathlib has
-`boolEquivPUnitSumPUnit` and `finSumFinEquiv` but nothing of this shape, and composing those two
-would go through `Bool` and a `PUnit` universe adjustment for no gain.
-
-It is an `Embedding` rather than a bare function because injectivity is what turns a coefficient
-under `MvPowerSeries.rename` into an equality rather than a sum over a fibre — see
-`MvPowerSeries.coeff_embDomain_rename`. -/
-def sumUnitEmbFinTwo : (Unit ⊕ Unit) ↪ Fin 2 where
-  toFun := Sum.elim (fun _ ↦ 0) (fun _ ↦ 1)
-  inj' := by decide
-
-@[simp]
-theorem sumUnitEmbFinTwo_inl : sumUnitEmbFinTwo (Sum.inl ()) = 0 := by decide
-
-@[simp]
-theorem sumUnitEmbFinTwo_inr : sumUnitEmbFinTwo (Sum.inr ()) = 1 := by decide
-
 namespace MvPowerSeries
 
-open Filter
+open Filter Finsupp
 
 variable {σ τ υ R : Type*} [CommRing R]
 
@@ -73,5 +57,13 @@ theorem subst_rename (e : σ → τ) [TendstoCofinite e] (p : MvPowerSeries σ R
     (rename e p).subst g = p.subst (g ∘ e) := by
   rw [rename_eq_subst, subst_comp_subst_apply (HasSubst.X_comp _) hg]
   simp [subst_X hg, Function.comp_def]
+
+/-- **A linear coefficient survives a renaming along an embedding.** Mathlib's
+`coeff_embDomain_rename` states this for a general exponent through `Finsupp.embDomain`; at a
+single variable the `single (e i) n` spelling is the one a caller meets. -/
+@[simp]
+theorem coeff_single_rename (e : σ ↪ τ) (p : MvPowerSeries σ R) (i : σ) (n : ℕ) :
+    coeff (single (e i) n) (rename e p) = coeff (single i n) p := by
+  rw [← embDomain_single, coeff_embDomain_rename]
 
 end MvPowerSeries
