@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.LinearAlgebra.Pi
 public import TauCeti.Order.Filter.ZeroAndBoundedAtFilter
 public import TauCeti.Topology.Algebra.Nonarchimedean.ZeroAtFilter
 
@@ -44,10 +45,6 @@ a placement hazard:
 
 * `TauCeti.Huber.twoSidedRestrictedSubmodule`: the `A`-module of two-sided restricted families,
   the coefficient object underlying `A⟨X, X⁻¹⟩`.
-* `TauCeti.Huber.disjoint_pi_compl_bot_of_disjoint`: disjoint index sets give disjoint
-  submodules of families vanishing outside them. Stated for
-  an arbitrary set because nothing in it is about `ℤ` or about the sign of a degree; Mathlib has
-  the `Finsupp` analogue, `Finsupp.supported`, but no `Pi` one.
 
 ## Main results
 
@@ -155,18 +152,6 @@ variable (A M : Type*) [Semiring A] [AddCommMonoid M] [TopologicalSpace M] [Modu
 
 variable {A M}
 
-omit [TopologicalSpace M] in
-/-- **Disjoint sets of indices give disjoint submodules of families vanishing outside them.**
-A family vanishing outside `s` and outside `t` at once, for `s` and `t` disjoint, vanishes
-everywhere. The submodules are Mathlib's `Submodule.pi` at the zero submodule. -/
-theorem disjoint_pi_compl_bot_of_disjoint {ι : Type*} {s t : Set ι} (h : Disjoint s t) :
-    Disjoint (Submodule.pi sᶜ fun _ ↦ (⊥ : Submodule A M))
-      (Submodule.pi tᶜ fun _ ↦ (⊥ : Submodule A M)) :=
-  Submodule.disjoint_def.mpr fun f hs ht ↦ funext fun i ↦ by
-    by_cases hi : i ∈ s
-    · exact ht i (Set.disjoint_left.mp h hi)
-    · exact hs i hi
-
 variable (A M) [ContinuousAdd M] [ContinuousConstSMul A M]
 
 /-- **The degree decomposition along any set of degrees and its complement.** A two-sided
@@ -220,7 +205,8 @@ theorem disjoint_twoSidedRestricted_nonneg_neg :
     rw [Set.disjoint_left]
     intro n hn hn'
     exact lt_irrefl n (lt_of_lt_of_le hn' hn)
-  exact (disjoint_pi_compl_bot_of_disjoint (A := A) (M := M) hst).mono inf_le_right inf_le_right
+  exact (Submodule.disjoint_pi_compl_bot_of_disjoint (A := A) (M := M) hst).mono
+    inf_le_right inf_le_right
 
 end DegreeSplit
 
