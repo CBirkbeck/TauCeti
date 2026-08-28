@@ -109,6 +109,7 @@ private theorem baseChangePoint_some {x₁ y₁ : F} (h : W.Nonsingular x₁ y�
 noncomputable def translatedPoint (P : W.Point) : (W⁄W.FunctionField).toAffine.Point :=
   genericPoint W + baseChangePoint W P
 
+@[simp]
 theorem translatedPoint_zero : translatedPoint W 0 = genericPoint W := by
   rw [translatedPoint, map_zero, add_zero]
 
@@ -326,6 +327,7 @@ theorem translation_apply_genericY (P : W.Point) :
 /-- **The translation action is faithful**: only the point at infinity acts trivially. Both
 coordinates of the translate of the generic point being unmoved makes the translate the generic
 point itself. -/
+@[simp]
 theorem translation_eq_one_iff {P : W.Point} : translation W P = 1 ↔ P = 0 := by
   refine ⟨fun h ↦ ?_, fun h ↦ h ▸ translation_zero W⟩
   have hx : Point.xCoord (translatedPoint W P) = Point.xCoord (genericPoint W) := by
