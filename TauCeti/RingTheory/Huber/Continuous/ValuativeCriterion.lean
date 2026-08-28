@@ -47,7 +47,7 @@ continuous in three moves:
    Continuity is then `isContinuous_of_forall_le_of_cofinalValue`, and the bounds at `B` and at
    `x` are `restrictToConvex_mul_inv_le_one` and `one_lt_restrictToConvex_mul_inv`.
 
-Moves 2 and 3 together are `exists_continuous_valuation_of_exists_ne_zero` below. They are
+Moves 2 and 3 together are `exists_continuous_valuation_of_forall_le` below. They are
 stated there for an arbitrary valuation of `R`, not for the pullback of `V`: nothing in them
 uses the fraction field, and `Spv R` already hides the value group, so the convex subgroup and
 the extension can be built inside and never surface. The assembly is then move 1, the two
