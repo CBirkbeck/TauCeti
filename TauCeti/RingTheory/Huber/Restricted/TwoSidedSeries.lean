@@ -44,7 +44,8 @@ a placement hazard:
 
 * `TauCeti.Huber.twoSidedRestrictedSubmodule`: the `A`-module of two-sided restricted families,
   the coefficient object underlying `A⟨X, X⁻¹⟩`.
-* `TauCeti.Huber.supportedOn`: the families vanishing outside a given set of degrees. Stated for
+* `TauCeti.Huber.disjoint_pi_bot_of_disjoint_compl`: disjoint index sets give disjoint
+  submodules of families vanishing outside them. Stated for
   an arbitrary set because nothing in it is about `ℤ` or about the sign of a degree; Mathlib has
   the `Finsupp` analogue, `Finsupp.supported`, but no `Pi` one.
 
@@ -149,30 +150,15 @@ section DegreeSplit
 
 variable (A M : Type*) [Semiring A] [AddCommMonoid M] [TopologicalSpace M] [Module A M]
 
-/-- The families supported on a set of degrees: those vanishing at every index outside `s`.
-
-Stated for an arbitrary `s` rather than for the two half-lines it is used at below, because
-nothing in it is about `ℤ` or about the sign of a degree. Mathlib has the `Finsupp` analogue,
-`Finsupp.supported`, but no `Pi` one. -/
-def supportedOn {ι : Type*} (s : Set ι) : Submodule A (ι → M) where
-  carrier := {f | ∀ n ∉ s, f n = 0}
-  zero_mem' _ _ := rfl
-  add_mem' hf hg n hn := by simp [hf n hn, hg n hn]
-  smul_mem' c _ hf n hn := by simp [hf n hn]
-
 variable {A M}
 
 omit [TopologicalSpace M] in
-/-- Membership in `supportedOn` is vanishing outside the set of degrees. -/
-@[simp]
-theorem mem_supportedOn {ι : Type*} {s : Set ι} {f : ι → M} :
-    f ∈ supportedOn A M s ↔ ∀ n ∉ s, f n = 0 := (Iff.rfl)
-
-omit [TopologicalSpace M] in
-/-- **Disjoint sets of indices give disjoint supported submodules.** A family supported on both
-of two disjoint sets vanishes everywhere. -/
-theorem disjoint_supportedOn {ι : Type*} {s t : Set ι} (h : Disjoint s t) :
-    Disjoint (supportedOn A M s) (supportedOn A M t) :=
+/-- **Disjoint sets of indices give disjoint submodules of families vanishing outside them.**
+A family vanishing outside `s` and outside `t` at once, for `s` and `t` disjoint, vanishes
+everywhere. The submodules are Mathlib's `Submodule.pi` at the zero submodule. -/
+theorem disjoint_pi_bot_of_disjoint_compl {ι : Type*} {s t : Set ι} (h : Disjoint s t) :
+    Disjoint (Submodule.pi sᶜ fun _ ↦ (⊥ : Submodule A M))
+      (Submodule.pi tᶜ fun _ ↦ (⊥ : Submodule A M)) :=
   Submodule.disjoint_def.mpr fun f hs ht ↦ funext fun i ↦ by
     by_cases hi : i ∈ s
     · exact ht i (Set.disjoint_left.mp h hi)
@@ -185,29 +171,37 @@ its non-negative part and its negative part: `A⟨z, z⁻¹⟩ = A⟨z⟩ + z⁻
 coefficients. Each summand is again restricted by `zeroAtFilter_of_forall_eq_or_eq_zero`. -/
 theorem twoSidedRestrictedSubmodule_eq_sup :
     twoSidedRestrictedSubmodule A M =
-      (twoSidedRestrictedSubmodule A M ⊓ supportedOn A M {n : ℤ | 0 ≤ n}) ⊔
-        (twoSidedRestrictedSubmodule A M ⊓ supportedOn A M {n : ℤ | n < 0}) := by
+      (twoSidedRestrictedSubmodule A M ⊓
+          Submodule.pi {n : ℤ | 0 ≤ n}ᶜ fun _ ↦ (⊥ : Submodule A M)) ⊔
+        (twoSidedRestrictedSubmodule A M ⊓
+          Submodule.pi {n : ℤ | n < 0}ᶜ fun _ ↦ (⊥ : Submodule A M)) := by
   refine le_antisymm (fun f hf ↦ ?_) (sup_le inf_le_left inf_le_left)
+  have hcompl : {n : ℤ | n < 0} = {n : ℤ | 0 ≤ n}ᶜ := by ext n; simp [not_le]
   refine Submodule.mem_sup.mpr
-    ⟨fun n ↦ if 0 ≤ n then f n else 0, ⟨?_, ?_⟩, fun n ↦ if n < 0 then f n else 0, ⟨?_, ?_⟩, ?_⟩
-  · exact hf.of_forall_eq_or_eq_zero fun n ↦ by split_ifs <;> simp
-  · intro n hn; simpa using fun h ↦ absurd h (by simpa using hn)
-  · exact hf.of_forall_eq_or_eq_zero fun n ↦ by split_ifs <;> simp
-  · intro n hn; simpa using fun h ↦ absurd h (by simpa using hn)
-  · funext n; by_cases h : (0 : ℤ) ≤ n <;> simp [h, not_lt.mpr, not_le.mp]
+    ⟨{n : ℤ | 0 ≤ n}.indicator f, ⟨?_, ?_⟩, {n : ℤ | n < 0}.indicator f, ⟨?_, ?_⟩, ?_⟩
+  · exact hf.of_forall_eq_or_eq_zero fun n ↦ by
+      by_cases h : n ∈ {n : ℤ | 0 ≤ n} <;> simp [h]
+  · intro n hn; simpa [Set.indicator_apply] using fun h ↦ absurd h (by simpa using hn)
+  · exact hf.of_forall_eq_or_eq_zero fun n ↦ by
+      by_cases h : n ∈ {n : ℤ | n < 0} <;> simp [h]
+  · intro n hn; simpa [Set.indicator_apply] using fun h ↦ absurd h (by simpa using hn)
+  · rw [hcompl]; exact Set.indicator_self_add_compl _ f
 
 /-- **The decomposition is direct.** A family supported in non-negative degrees and in negative
 degrees at once is zero, so the two summands of `twoSidedRestrictedSubmodule_eq_sup` meet in `⊥`.
 Together they exhibit `A⟨z, z⁻¹⟩` as the internal direct sum of the two half-line pieces. -/
 theorem disjoint_twoSidedRestricted_nonneg_neg :
-    Disjoint (twoSidedRestrictedSubmodule A M ⊓ supportedOn A M {n : ℤ | 0 ≤ n})
-      (twoSidedRestrictedSubmodule A M ⊓ supportedOn A M {n : ℤ | n < 0}) :=
+    Disjoint
+      (twoSidedRestrictedSubmodule A M ⊓
+        Submodule.pi {n : ℤ | 0 ≤ n}ᶜ fun _ ↦ (⊥ : Submodule A M))
+      (twoSidedRestrictedSubmodule A M ⊓
+        Submodule.pi {n : ℤ | n < 0}ᶜ fun _ ↦ (⊥ : Submodule A M)) :=
   by
   have hst : Disjoint {n : ℤ | 0 ≤ n} {n : ℤ | n < 0} := by
     rw [Set.disjoint_left]
     intro n hn hn'
     exact lt_irrefl n (lt_of_lt_of_le hn' hn)
-  exact (disjoint_supportedOn (A := A) (M := M) hst).mono inf_le_right inf_le_right
+  exact (disjoint_pi_bot_of_disjoint_compl (A := A) (M := M) hst).mono inf_le_right inf_le_right
 
 end DegreeSplit
 
