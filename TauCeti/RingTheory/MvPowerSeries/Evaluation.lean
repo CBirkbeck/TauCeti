@@ -59,7 +59,6 @@ of `HasEval` vacuous; that is the one place the hypothesis does work rather than
   admissible evaluation point.
 * `MvPowerSeries.hasEval_of_mem` : a family of finitely many arguments drawn from `I` is an
   admissible evaluation point.
-* `MvPowerSeries.hasEval_sumElim` : two such families assemble into one on a sum type.
 * `MvPowerSeries.eval₂_sub_constantCoeff_mem` : the value and the image of the constant term
   differ by an element of `I`.
 
@@ -188,16 +187,6 @@ type with finitely many variables, lying in `I` is the only condition the argume
 already gives them the `HasEval` property that evaluation requires. -/
 theorem hasEval_of_mem [Finite σ] (hI : IsAdic I) (hmem : ∀ i, a i ∈ I) : HasEval a :=
   hasEval_of_finite fun s ↦ hI.isTopologicallyNilpotent_of_mem (hmem s)
-
-omit [IsUniformAddGroup S] [CompleteSpace S] [T2Space S] [IsTopologicalRing S]
-  [IsLinearTopology S S] in
-/-- **A pair of topologically nilpotent arguments can be substituted into a two-variable power
-series.** Mathlib's `HasEval` constructions cover a constant family, a single variable and images
-under a continuous map, but not a family assembled from two others; this is that case. -/
-theorem hasEval_sumElim {τ : Type*} [Finite σ] [Finite τ] {b : σ → S} {c : τ → S}
-    (hb : ∀ i, IsTopologicallyNilpotent (b i)) (hc : ∀ j, IsTopologicallyNilpotent (c j)) :
-    HasEval (Sum.elim b c) :=
-  hasEval_of_finite <| by rintro (i | j) <;> simp [hb, hc]
 
 /-- **The value differs from the image of the constant term by an element of `I`.** Equivalently,
 for arguments drawn from `I` the value of `f` is congruent to the image of its constant term

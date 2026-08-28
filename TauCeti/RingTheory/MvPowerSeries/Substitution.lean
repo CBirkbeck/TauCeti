@@ -170,9 +170,13 @@ section SelfEval
 variable {R : Type*} [CommRing R] [UniformSpace R] [IsUniformAddGroup R] [IsTopologicalRing R]
   [IsLinearTopology R R] [T2Space R] [CompleteSpace R]
 
-/-- `PowerSeries.eval₂_toMvPowerSeries` at the identity ring homomorphism, which is the form the
-evaluation layer of a formal group uses: there the coefficients and the values live in the same
-ring, so `algebraMap` is not the shape the statement is met in. -/
+/-- `PowerSeries.eval₂_toMvPowerSeries` at the identity ring homomorphism.
+
+This is **not** a cosmetic restatement. `algebraMap R R` and `RingHom.id R` are definitionally
+equal but not syntactically so, and `algebraMap` is not reducible, so `simp` cannot match the
+general lemma against a goal phrased over `RingHom.id`. An evaluation layer whose coefficients and
+values are the same ring — which is what the formal group of a curve over an adic ring needs — is
+always phrased over `RingHom.id`, so without this form the general lemma is unusable there. -/
 theorem eval₂_id_toMvPowerSeries {σ : Type*} {a : σ → R} (ha : MvPowerSeries.HasEval a) (i : σ)
     (f : PowerSeries R) :
     MvPowerSeries.eval₂ (RingHom.id R) a (toMvPowerSeries i f) =

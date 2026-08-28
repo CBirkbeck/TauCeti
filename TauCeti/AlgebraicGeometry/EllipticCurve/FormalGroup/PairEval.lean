@@ -102,7 +102,7 @@ omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
 /-- A pair of parameters admits evaluation as soon as each of them does. -/
 private theorem hasEval_pair {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
     (h₂ : PowerSeries.HasEval t₂) : MvPowerSeries.HasEval (pair t₁ t₂) :=
-  MvPowerSeries.hasEval_sumElim (fun _ ↦ h₁) fun _ ↦ h₂
+  MvPowerSeries.hasEval_of_finite <| by rintro (_ | _) <;> assumption
 
 /-- Evaluation at a pair of parameters, as a ring homomorphism. Every identity in this file is
 the image of an identity of series under this map. -/
@@ -166,6 +166,33 @@ theorem formalAddEval_def (t₁ t₂ : O) :
       MvPowerSeries.eval₂ (RingHom.id O) (Sum.elim (fun _ ↦ t₁) fun _ ↦ t₂)
         W.formalAdd := (rfl)
 
+omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
+  [IsLinearTopology O O] in
+/-- Folding lemma: the evaluation of `formalSlope` at the pair is `formalSlopeEval`.
+Stated over the private `pair` so the transport proofs rewrite with it rather than
+relying on definitional equality. -/
+private theorem eval_pair_formalSlope (t₁ t₂ : O) :
+    MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂) W.formalSlope =
+      W.formalSlopeEval t₁ t₂ := rfl
+
+omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
+  [IsLinearTopology O O] in
+/-- Folding lemma: the evaluation of `formalIntercept` at the pair is `formalInterceptEval`.
+Stated over the private `pair` so the transport proofs rewrite with it rather than
+relying on definitional equality. -/
+private theorem eval_pair_formalIntercept (t₁ t₂ : O) :
+    MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂) W.formalIntercept =
+      W.formalInterceptEval t₁ t₂ := rfl
+
+omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
+  [IsLinearTopology O O] in
+/-- Folding lemma: the evaluation of `formalThirdRoot` at the pair is `formalThirdRootEval`.
+Stated over the private `pair` so the transport proofs rewrite with it rather than
+relying on definitional equality. -/
+private theorem eval_pair_formalThirdRoot (t₁ t₂ : O) :
+    MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂) W.formalThirdRoot =
+      W.formalThirdRootEval t₁ t₂ := rfl
+
 /-- **The evaluated slope identity**: `λ(t₁, t₂) * (t₂ - t₁) = w(t₂) - w(t₁)`. -/
 theorem formalSlopeEval_mul_sub {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
     (h₂ : PowerSeries.HasEval t₂) :
@@ -220,12 +247,8 @@ theorem formalThirdRootEval_relation {t₁ t₂ : O} (h₁ : PowerSeries.HasEval
       MvPowerSeries.C W.a₆ * W.formalSlope ^ 3) 1 (by simp))
   simp only [map_sub, map_neg, map_add, map_mul, map_pow, map_one, map_ofNat, coe_evalPair,
     MvPowerSeries.eval₂_X, MvPowerSeries.eval₂_C, RingHom.id_apply, pair_inl, pair_inr] at hT hD
-  simp only [show MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂) W.formalSlope =
-      W.formalSlopeEval t₁ t₂ from rfl,
-    show MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂) W.formalIntercept =
-      W.formalInterceptEval t₁ t₂ from rfl,
-    show MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂) W.formalThirdRoot =
-      W.formalThirdRootEval t₁ t₂ from rfl] at hT hD
+  simp only [W.eval_pair_formalSlope, W.eval_pair_formalIntercept,
+    W.eval_pair_formalThirdRoot] at hT hD
   set L := W.formalSlopeEval t₁ t₂
   set N := W.formalInterceptEval t₁ t₂
   set T := W.formalThirdRootEval t₁ t₂
@@ -239,14 +262,9 @@ theorem formalThirdRootEval_relation {t₁ t₂ : O} (h₁ : PowerSeries.HasEval
 /-- **The addition series at a pair of parameters is the formal inverse of the third root**:
 `F(t₁, t₂) = ι(t₃(t₁, t₂))`, the sum of two points being the negative of the third point of the
 chord through them. -/
-theorem formalAddEval_eq {I : Ideal O} (hI : IsAdic I) {t₁ t₂ : O}
-    (h₁ : PowerSeries.HasEval t₁) (h₂ : PowerSeries.HasEval t₂) (hm₁ : t₁ ∈ I) (hm₂ : t₂ ∈ I) :
+theorem formalAddEval_eq {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
+    (h₂ : PowerSeries.HasEval t₂) (hT : PowerSeries.HasEval (W.formalThirdRootEval t₁ t₂)) :
     W.formalAddEval t₁ t₂ = W.formalInverseEval (W.formalThirdRootEval t₁ t₂) := by
-  have hmem : W.formalThirdRootEval t₁ t₂ ∈ I := by
-    simpa using W.formalThirdRootEval_mem (k := 1) hI h₁ h₂ (by simpa using hm₁)
-      (by simpa using hm₂)
-  have hT : PowerSeries.HasEval (W.formalThirdRootEval t₁ t₂) :=
-    hI.isTopologicallyNilpotent_of_mem hmem
   have hae : MvPowerSeries.aeval (hasEval_pair h₁ h₂) W.formalThirdRoot =
       W.formalThirdRootEval t₁ t₂ :=
     congrFun (MvPowerSeries.coe_aeval (hasEval_pair h₁ h₂)) W.formalThirdRoot
@@ -257,8 +275,7 @@ theorem formalAddEval_eq {I : Ideal O} (hI : IsAdic I) {t₁ t₂ : O}
     (PowerSeries.hasEval hT') W.formalInverse
   rw [← W.formalAdd_def] at h
   simpa [formalAddEval, W.formalInverseEval_def, MvPowerSeries.coe_aeval, PowerSeries.eval₂,
-    show MvPowerSeries.eval₂ (RingHom.id O) (pair t₁ t₂) W.formalThirdRoot =
-      W.formalThirdRootEval t₁ t₂ from rfl] using h
+    W.eval_pair_formalThirdRoot] using h
 
 /-- **The group law is `t₁ + t₂` to first order**: at parameters of `I ^ k` the addition series
 deviates from their sum by an element of `I ^ (2 * k)`, because it agrees with `z₁ + z₂` below
