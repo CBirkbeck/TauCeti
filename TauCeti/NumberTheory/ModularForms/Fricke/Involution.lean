@@ -108,7 +108,11 @@ public theorem frickeScalar_eq (k : ℤ) :
     refine inv_eq_of_mul_eq_one_right ?_
     rw [← zpow_add₀ (by norm_num : (-1 : ℂ) ≠ 0), ← two_mul, zpow_mul]
     norm_num
-  rw [frickeScalar_def, show (-(N : ℂ)) = (-1) * (N : ℂ) by ring, mul_zpow, hneg,
+  -- `frickeScalar_def` leaves the sign trapped inside the base of `(-N) ^ (-k)`. Splitting it off
+  -- as `-1 * N` is what lets `mul_zpow` separate the two factors, so that `hneg` can turn
+  -- `(-1) ^ (-k)` into `(-1) ^ k` and `zpow_add₀` can merge `N ^ (-k)` with `N ^ (2 * (k - 1))`.
+  have hsplit : (-(N : ℂ)) = (-1) * (N : ℂ) := by ring
+  rw [frickeScalar_def, hsplit, mul_zpow, hneg,
     ← mul_assoc, mul_comm ((N : ℂ) ^ (2 * (k - 1))) ((-1 : ℂ) ^ k), mul_assoc,
     ← zpow_add₀ hN]
   ring_nf
