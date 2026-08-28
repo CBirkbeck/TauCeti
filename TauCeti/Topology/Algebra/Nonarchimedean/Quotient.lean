@@ -5,7 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
+public import TauCeti.Topology.Algebra.Nonarchimedean.Basic
 public import Mathlib.Topology.Algebra.Group.Quotient
 public import Mathlib.Topology.Algebra.Ring.Ideal
 
@@ -22,10 +22,11 @@ level and transported with `@[to_additive]`, and the ring statement is derived f
 one rather than reproved — the same way Mathlib derives `NonarchimedeanRing (R × S)` from the
 additive group instance on a product.
 
-Both instances factor through one transport lemma. `NonarchimedeanGroup.of_isOpenMap` says the
-property passes along *any* continuous open homomorphism, which is all the quotient map is ever
-used for here; it strictly generalizes Mathlib's `NonarchimedeanGroup.nonarchimedean_of_emb`, the
-embedding case. The group instance applies it to `QuotientGroup.mk'`, and the ring instance applies
+Both instances factor through one transport lemma,
+`NonarchimedeanGroup.nonarchimedean_of_isOpenMap` in
+`TauCeti.Topology.Algebra.Nonarchimedean.Basic`: the property passes along *any* open homomorphism
+continuous at the identity, which is all the quotient map is ever used for here. The group
+instance applies it to `QuotientGroup.mk'`, and the ring instance applies
 its additive form to `Ideal.Quotient.mk` through `QuotientRing.isOpenMap_coe` — so no
 identification of `R ⧸ I` with a quotient by `I.toAddSubgroup` is involved.
 
@@ -37,8 +38,6 @@ universal property to `C ⧸ a` needs exactly the ring instance below.
 
 ## Main results
 
-* `NonarchimedeanGroup.of_isOpenMap`, and its additive form `NonarchimedeanAddGroup.of_isOpenMap`:
-  nonarchimedeanity transports along a continuous open homomorphism.
 * `QuotientGroup.instNonarchimedeanGroup`, and its additive form
   `QuotientAddGroup.instNonarchimedeanAddGroup`: `G ⧸ N` is nonarchimedean when `G` is.
 * `Ideal.Quotient.instNonarchimedeanRing`: `R ⧸ I` is nonarchimedean when `R` is.
@@ -52,35 +51,16 @@ public section
 
 open Topology
 
-namespace NonarchimedeanGroup
-
-/-- **Transport along a continuous open homomorphism.** If `f : G →* H` is continuous and open and
-`G` is nonarchimedean, so is `H`: the image of an open subgroup inside `f ⁻¹' U` is an open
-subgroup inside `U`. This strictly generalizes Mathlib's
-`NonarchimedeanGroup.nonarchimedean_of_emb`, which is the case of an embedding; nothing here
-needs `f` to be injective. -/
-@[to_additive /-- **Transport along a continuous open homomorphism.** If `f : G →+ H` is continuous
-and open and `G` is nonarchimedean, so is `H`. -/]
-theorem of_isOpenMap {G H : Type*} [Group G] [TopologicalSpace G] [NonarchimedeanGroup G]
-    [Group H] [TopologicalSpace H] [IsTopologicalGroup H] (f : G →* H) (hf : Continuous f)
-    (hopen : IsOpenMap f) : NonarchimedeanGroup H where
-  is_nonarchimedean U hU := by
-    obtain ⟨V, hV⟩ :=
-      NonarchimedeanGroup.is_nonarchimedean (G := G) _ (hf.tendsto 1 (by simpa using hU))
-    exact ⟨⟨V.toSubgroup.map f, hopen _ V.isOpen⟩, Set.image_subset_iff.2 hV⟩
-
-end NonarchimedeanGroup
-
 namespace QuotientGroup
 
 variable {G : Type*} [Group G] [TopologicalSpace G] [NonarchimedeanGroup G] (N : Subgroup G)
   [N.Normal]
 
 /-- A quotient of a nonarchimedean group is nonarchimedean: the quotient map is continuous and
-open, so this is `NonarchimedeanGroup.of_isOpenMap`. -/
+open, so this is `NonarchimedeanGroup.nonarchimedean_of_isOpenMap`. -/
 @[to_additive /-- A quotient of a nonarchimedean additive group is nonarchimedean. -/]
 instance instNonarchimedeanGroup : NonarchimedeanGroup (G ⧸ N) :=
-  .of_isOpenMap (QuotientGroup.mk' N) continuous_mk isOpenMap_coe
+  .nonarchimedean_of_isOpenMap (QuotientGroup.mk' N) continuous_mk.continuousAt isOpenMap_coe
 
 end QuotientGroup
 
@@ -93,8 +73,8 @@ continuous and open, so the additive transport lemma applies directly; the nonar
 then inherited, as for `NonarchimedeanRing (R × S)` in Mathlib. -/
 instance instNonarchimedeanRing : NonarchimedeanRing (R ⧸ I) :=
   haveI : NonarchimedeanAddGroup (R ⧸ I) :=
-    .of_isOpenMap (Ideal.Quotient.mk I).toAddMonoidHom continuous_quot_mk
-      (QuotientRing.isOpenMap_coe I)
+    .nonarchimedean_of_isOpenMap (Ideal.Quotient.mk I).toAddMonoidHom
+      continuous_quot_mk.continuousAt (QuotientRing.isOpenMap_coe I)
   { is_nonarchimedean := NonarchimedeanAddGroup.is_nonarchimedean }
 
 end Ideal.Quotient
