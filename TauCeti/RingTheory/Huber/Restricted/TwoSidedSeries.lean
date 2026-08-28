@@ -117,8 +117,12 @@ variable {A M : Type*} [Semiring A] [AddCommGroup M] [TopologicalSpace M] [Modul
 
 /-- **The membership criterion in Wedhorn's form**: a family lies in the submodule exactly when,
 for every open additive subgroup, only finitely many of its members lie outside. At `M = A` this
-is Example 6.39's defining condition on the coefficients, verbatim. -/
-@[simp]
+is Example 6.39's defining condition on the coefficients, verbatim.
+
+Deliberately **not** `@[simp]`: `mem_twoSidedRestrictedSubmodule` is already `@[simp]` and rewrites
+this left-hand side to `ZeroAtFilter cofinite f`, so tagging this one too fails the `simpNF` linter
+— simp reaches the membership unfolding first and this lemma can never fire. The `@[simp]` stays on
+the membership lemma, matching the one-sided `mem_restrictedMvPowerSeriesSubmodule`. -/
 theorem mem_twoSidedRestrictedSubmodule_iff_finite_notMem {f : ℤ → M} :
     f ∈ twoSidedRestrictedSubmodule A M ↔
       ∀ W : OpenAddSubgroup M, {n | f n ∉ (W : Set M)}.Finite := by
