@@ -138,9 +138,8 @@ theorem spa_eq_empty_of_one_mem_closure_zero (Aplus : Subring A)
   rw [spa_def, cont_eq_empty_of_one_mem_closure_zero h, Set.empty_inter]
 
 omit [SeparatelyContinuousAdd A] in
-/-- A prime containing an open ideal is itself open, so its trivial valuation is a point of the
-adic spectrum: the sub-unit condition on `A⁺` is vacuous for a trivial valuation, since `1` lies
-outside a prime. -/
+/-- The trivial valuation of an open prime is a point of the adic spectrum, for any plus ring:
+`A⁺` is unconstrained because a trivial valuation is sub-unit on all of `A`. -/
 theorem trivialSection_mem_spa (Aplus : Subring A) {p : PrimeSpectrum A}
     (hp : IsOpen (p.asIdeal : Set A)) : trivialSection p ∈ spa Aplus := by
   rw [mem_spa_iff]
@@ -151,10 +150,6 @@ theorem trivialSection_mem_spa (Aplus : Subring A) {p : PrimeSpectrum A}
 omit [SeparatelyContinuousAdd A] in
 /-- **The `Spa (A, A⁺) = ∅ → 1 ∈ closure {0}` half of Wedhorn Proposition 7.49(1)**, the converse
 of `spa_eq_empty_of_one_mem_closure_zero`, under the hypothesis that `closure {0}` is open.
-
-If some prime contained `closure {0}` it would contain an open additive subgroup, hence be open,
-and its trivial valuation would then be a point of `Spa (A, A⁺)`. So an empty adic spectrum
-leaves no prime above `closure {0}`, forcing that ideal to be everything.
 
 The openness hypothesis is Wedhorn 7.49(2) and is *not* proved here: it needs the microbiality
 substrate, and is taken as given exactly as Wedhorn's proof takes it. -/
@@ -177,6 +172,7 @@ theorem one_mem_closure_zero_of_spa_eq_empty [IsTopologicalRing A] (Aplus : Subr
   rw [h] at hmem
   exact hmem
 
+omit [SeparatelyContinuousAdd A] in
 /-- **Wedhorn Proposition 7.49(1)**, both directions, once `closure {0}` is open: the adic
 spectrum is empty exactly when `1` lies in the closure of zero. -/
 theorem spa_eq_empty_iff_one_mem_closure_zero [IsTopologicalRing A] (Aplus : Subring A)
