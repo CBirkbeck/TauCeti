@@ -13,8 +13,8 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.ZeroAtFilter
 Wedhorn's Example 6.39 introduces, for a Tate ring `A`, the ring of formal series
 `∑_{n ∈ ℤ} aₙ Xⁿ` whose coefficients satisfy a convergence condition: for every neighbourhood `U`
 of zero, all but finitely many `aₙ` lie in `U`. This module builds the underlying coefficient
-object — the `A`-module of such two-sided families — together with its coefficients and
-extensionality.
+object — the `A`-module of such two-sided families — together with its coefficients,
+extensionality, and the decomposition of that module by degree.
 
 The condition is exactly the one `TauCeti.Huber.IsRestricted` already expresses for the
 one-sided series `A⟨X₁, …, Xₖ⟩`: a coefficient family tending to `0` along the cofinite filter,
@@ -43,6 +43,9 @@ a placement hazard:
 
 * `TauCeti.Huber.twoSidedRestrictedSubmodule`: the `A`-module of two-sided restricted families,
   the coefficient object underlying `A⟨X, X⁻¹⟩`.
+* `TauCeti.Huber.supportedOn`: the families vanishing outside a given set of degrees. Stated for
+  an arbitrary set because nothing in it is about `ℤ` or about the sign of a degree; Mathlib has
+  the `Finsupp` analogue, `Finsupp.supported`, but no `Pi` one.
 
 ## Main results
 
@@ -53,6 +56,15 @@ a placement hazard:
   `TauCeti/Topology/Algebra/Nonarchimedean/ZeroAtFilter.lean` because neither direction of it
   looks at the index set or at series.
 * `TauCeti.Huber.twoSidedRestrictedSubmodule_ext`: coefficientwise extensionality.
+* `TauCeti.Huber.twoSidedRestrictedSubmodule_eq_sup` and
+  `TauCeti.Huber.disjoint_twoSidedRestricted_nonneg_neg`: **the degree decomposition and its
+  directness** — `A⟨X, X⁻¹⟩` is the sum of its non-negative and negative parts, and that sum is
+  direct. This is fact (i) of Wedhorn's Lemma 8.33 at the level of coefficients, and it is what
+  the diagram chase there needs; the Example 6.39 universal property does not supply it.
+* `TauCeti.Huber.zeroAtFilter_of_forall_eq_or_eq_zero`: zeroing coefficients keeps a family
+  restricted. Stated pointwise rather than for an indicator, so it carries no decidability
+  hypothesis; it is what makes the decomposition land inside the submodule rather than merely
+  inside `ℤ → M`.
 
 ## Implementation notes
 
@@ -65,7 +77,8 @@ finite sum. That is separate work and does not belong to this rung.
 
 ## References
 
-* [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), Example 6.39.
+* [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), Example 6.39 and §8.2.1,
+  Lemma 8.33.
 -/
 
 public section
@@ -130,5 +143,77 @@ theorem mem_twoSidedRestrictedSubmodule_iff_finite_notMem {f : ℤ → M} :
   exact NonarchimedeanAddGroup.zeroAtFilter_cofinite_iff_finite_notMem
 
 end WedhornCriterion
+
+section DegreeSplit
+
+variable (A M : Type*) [Semiring A] [AddCommMonoid M] [TopologicalSpace M] [Module A M]
+
+/-- The families supported on a set of degrees: those vanishing at every index outside `s`.
+
+Stated for an arbitrary `s` rather than for the two half-lines it is used at below, because
+nothing in it is about `ℤ` or about the sign of a degree. Mathlib has the `Finsupp` analogue,
+`Finsupp.supported`, but no `Pi` one. -/
+def supportedOn (s : Set ℤ) : Submodule A (ℤ → M) where
+  carrier := {f | ∀ n ∉ s, f n = 0}
+  zero_mem' _ _ := rfl
+  add_mem' hf hg n hn := by simp [hf n hn, hg n hn]
+  smul_mem' c _ hf n hn := by simp [hf n hn]
+
+variable {A M}
+
+omit [TopologicalSpace M] in
+/-- Membership in `supportedOn` is vanishing outside the set of degrees. -/
+@[simp]
+theorem mem_supportedOn {s : Set ℤ} {f : ℤ → M} :
+    f ∈ supportedOn A M s ↔ ∀ n ∉ s, f n = 0 := (Iff.rfl)
+
+/-- **Zeroing coefficients keeps a family restricted.** If every coefficient of `g` is either the
+corresponding coefficient of `f` or `0`, then `g` inherits the convergence condition: zeroing can
+only shrink the set of indices at which the family leaves a neighbourhood of `0`.
+
+Stated pointwise rather than for an indicator so that it carries no decidability hypothesis. It is
+what makes the degree split below land *inside* the submodule rather than merely inside
+`ℤ → M`. -/
+theorem zeroAtFilter_of_forall_eq_or_eq_zero {f g : ℤ → M} (hf : ZeroAtFilter cofinite f)
+    (h : ∀ n, g n = f n ∨ g n = 0) : ZeroAtFilter cofinite g := by
+  intro U hU
+  have h0 : (0 : M) ∈ U := mem_of_mem_nhds hU
+  refine Filter.mem_map.mpr (Filter.mem_cofinite.mpr (Set.Finite.subset
+    (Filter.mem_cofinite.mp (Filter.mem_map.mp (hf hU))) fun n hn ↦ ?_))
+  rcases h n with hgn | hgn
+  · simpa [hgn] using hn
+  · exact absurd (by simpa [hgn] using h0) hn
+
+variable (A M) [ContinuousAdd M] [ContinuousConstSMul A M]
+
+/-- **Wedhorn's degree decomposition, Lemma 8.33(i).** A two-sided restricted family is the sum of
+its non-negative part and its negative part: `A⟨z, z⁻¹⟩ = A⟨z⟩ + z⁻¹A⟨z⁻¹⟩` at the level of
+coefficients. Each summand is again restricted by `zeroAtFilter_of_forall_eq_or_eq_zero`. -/
+theorem twoSidedRestrictedSubmodule_eq_sup :
+    twoSidedRestrictedSubmodule A M =
+      (twoSidedRestrictedSubmodule A M ⊓ supportedOn A M {n : ℤ | 0 ≤ n}) ⊔
+        (twoSidedRestrictedSubmodule A M ⊓ supportedOn A M {n : ℤ | n < 0}) := by
+  refine le_antisymm (fun f hf ↦ ?_) (sup_le inf_le_left inf_le_left)
+  refine Submodule.mem_sup.mpr
+    ⟨fun n ↦ if 0 ≤ n then f n else 0, ⟨?_, ?_⟩, fun n ↦ if n < 0 then f n else 0, ⟨?_, ?_⟩, ?_⟩
+  · exact zeroAtFilter_of_forall_eq_or_eq_zero hf fun n ↦ by split_ifs <;> simp
+  · intro n hn; simpa using fun h ↦ absurd h (by simpa using hn)
+  · exact zeroAtFilter_of_forall_eq_or_eq_zero hf fun n ↦ by split_ifs <;> simp
+  · intro n hn; simpa using fun h ↦ absurd h (by simpa using hn)
+  · funext n; by_cases h : (0 : ℤ) ≤ n <;> simp [h, not_lt.mpr, not_le.mp]
+
+/-- **The decomposition is direct.** A family supported in non-negative degrees and in negative
+degrees at once is zero, so the two summands of `twoSidedRestrictedSubmodule_eq_sup` meet in `⊥`.
+Together they exhibit `A⟨z, z⁻¹⟩` as the internal direct sum of the two half-line pieces. -/
+theorem disjoint_twoSidedRestricted_nonneg_neg :
+    Disjoint (twoSidedRestrictedSubmodule A M ⊓ supportedOn A M {n : ℤ | 0 ≤ n})
+      (twoSidedRestrictedSubmodule A M ⊓ supportedOn A M {n : ℤ | n < 0}) := by
+  refine Submodule.disjoint_def.mpr fun f hnonneg hneg ↦ ?_
+  funext n
+  by_cases h : (0 : ℤ) ≤ n
+  · exact hneg.2 n (by simpa using h)
+  · exact hnonneg.2 n (by simpa using h)
+
+end DegreeSplit
 
 end TauCeti.Huber
