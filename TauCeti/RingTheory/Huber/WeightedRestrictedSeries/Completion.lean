@@ -236,7 +236,7 @@ theorem weightedMapCompletionEquiv_symm_apply (e : A ≃+* B) (he : Continuous e
     (y : UniformSpace.Completion (weightedRestrictedSubring S hS)) :
     (weightedMapCompletionEquiv e he he' hT hS hTS hST).symm y
       = weightedMapCompletion (φ := (e.symm : B →+* A)) he' hS hT hST y := by
-  simp only [weightedMapCompletionEquiv, RingEquiv.ofRingHom_symm, RingEquiv.ofRingHom_apply]
+  simp only [weightedMapCompletionEquiv, RingEquiv.ofRingHom_symm_apply]
 
 end Functoriality
 
