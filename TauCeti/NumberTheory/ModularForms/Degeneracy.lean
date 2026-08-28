@@ -778,8 +778,9 @@ character value `χ` reads off `γ`, if `f` is `T`-periodic, and if `χ` is triv
 the reduction `(ZMod N)ˣ → (ZMod (N/l))ˣ`, then `f` is invariant under all of `Γ₁(N / l)`.
 
 This is the step that converts a nebentypus into honest invariance, and it is where the conductor
-drops: a form whose character already factors through `N / l` is invariant under the smaller group,
-which is what the conductor argument turns into a statement about newforms.
+drops: a form whose character already factors through `N / l` is invariant under all of
+`Γ₁(N / l)`, the larger congruence subgroup at the lower level, which is what the conductor
+argument turns into a statement about newforms.
 
 Adapted from `conductor_slash_eq_self_of_mem_Gamma1_div` in AINTLIB
 (`Eigenforms/ConductorTheorem.lean`:217, Chris Birkbeck, Apache-2.0, commit
@@ -806,10 +807,14 @@ theorem slash_mapGL_eq_self_of_mem_Gamma1_div (l N : ℕ) [NeZero l] (hlN : l �
   have hchar : (χ ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) : ℂ) = 1 := by
     obtain ⟨-, hd, hcz⟩ := (Gamma1_mem _ _).mp hδ
     have hγ' : γ ∈ Gamma0 (N / l) := Gamma0_le_Gamma0_of_dvd (Nat.div_dvd_of_dvd hlN) hγ
+    -- Mathlib builds `Gamma0Map` as a bare `MonoidHom.mk` and provides no lemma for its value,
+    -- so reading it as the lower-right entry is a definitional step that cannot be avoided; the
+    -- one lemma naming it, `gamma0Map_apply` in `Fricke/Conjugation.lean`, is `private` there and
+    -- so unavailable here. Naming it once keeps the rest of the proof independent of that
+    -- representation.
+    have hentry : Gamma0Map (N / l) ⟨γ, hγ'⟩ = ((γ 1 1 : ℤ) : ZMod (N / l)) := rfl
     have hlabel : Gamma0Map (N / l) ⟨γ, hγ'⟩ = 1 := by
-      -- `Gamma0Map` is by definition the lower-right entry read in `ZMod (N / l)`
-      change ((γ 1 1 : ℤ) : ZMod (N / l)) = 1
-      rw [hdiag]
+      rw [hentry, hdiag]
       push_cast
       rw [hd, hcz, zero_mul, sub_zero]
     have hred : ZMod.unitsMap (Nat.div_dvd_of_dvd hlN)
