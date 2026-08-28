@@ -485,6 +485,53 @@ theorem isDedekindDomain_coordinateRing [W.IsElliptic] : IsDedekindDomain W.Coor
 
 end IntegrallyClosed
 
+section EvenFunctions
+
+variable {F : Type*} [Field F] (W : _root_.WeierstrassCurve.Affine F)
+
+namespace CoordinateRing
+
+/-- **The conjugation-fixed elements are exactly the functions of `x`.** In characteristic other
+than two, an element of the coordinate ring is fixed by `conj` precisely when it lies in the image
+of `F[X]`, that is, when it does not involve `y`.
+
+This completes the involution API: `conj` is the involution, `conj_conj` its involutivity,
+`conj_smul_basis` its action on the basis and `mul_conj` its norm; this is its fixed-point set.
+
+Characteristic two is genuinely excluded rather than merely inconvenient: there `conj` fixes
+`mk W Y` whenever `a₁ = a₃ = 0`, so the statement fails. -/
+theorem conj_eq_self_iff [NeZero (2 : F)] (x : W.CoordinateRing) :
+    conj W x = x ↔ ∃ p : F[X], x = p • (1 : W.CoordinateRing) := by
+  refine ⟨fun h => ?_, ?_⟩
+  · obtain ⟨p, q, rfl⟩ := exists_smul_basis_eq x
+    refine ⟨p, ?_⟩
+    -- The trace identity turns `conj x = x` into `2x = 2p - q·(a₁X + a₃)`, whose basis
+    -- coordinates then force `q = 0` because `2 ≠ 0` in the domain `F[X]`.
+    have hq : q = 0 := by
+      -- Conjugation negates the `Y`-coordinate, so `conj x = x` forces `q = -q`. Comparing
+      -- coordinates is `smul_basis_eq_zero`; the passage from `q + q = 0` to `q = 0` is where
+      -- characteristic two is excluded, and it is taken in the `F`-module `F[X]` so that only
+      -- `(2 : F) ≠ 0` is needed rather than a numeral in `F[X]`.
+      rw [conj_smul_basis, negPolynomial, ← sub_eq_zero] at h
+      have h2 : (-(q * (C W.a₁ * X + C W.a₃))) • (1 : W.CoordinateRing) +
+          (-(q + q)) • mk W Y = 0 := by
+        rw [← h, smul_mk_eq_mk, smul_mk_eq_mk, ← map_sub]
+        congr 1
+        simp only [map_neg, map_mul, map_add]
+        ring
+      have hqq : (2 : F) • q = 0 := by
+        rw [two_smul]
+        have := (smul_basis_eq_zero h2).2
+        rwa [neg_eq_zero] at this
+      exact (smul_eq_zero.mp hqq).resolve_left (NeZero.ne (2 : F))
+    rw [hq, zero_smul, add_zero]
+  · rintro ⟨p, rfl⟩
+    rw [map_smul, map_one]
+
+end CoordinateRing
+
+end EvenFunctions
+
 end WeierstrassCurve.Affine
 
 end TauCeti
