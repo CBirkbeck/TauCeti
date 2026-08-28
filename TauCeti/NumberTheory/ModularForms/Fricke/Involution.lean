@@ -84,7 +84,7 @@ variable {N : ℕ} [NeZero N]
 public noncomputable def frickeScalar (N : ℕ) (k : ℤ) : ℂ :=
   (N : ℂ) ^ (2 * (k - 1)) * (-(N : ℂ)) ^ (-k)
 
-/-- Defining equation for `frickeScalar`. The definition sits in a `public section` without
+/-- Defining equation for `frickeScalar`. The definition is `public` but is not marked
 `@[expose]`, so a downstream module rewrites with this rather than unfolding the body.
 
 Deliberately not `@[simp]`: `frickeScalar N k` is the normal form here, not the expanded product.
@@ -204,11 +204,14 @@ cusp forms. -/
 public theorem frickeOperatorCusp_frickeOperatorCusp (k : ℤ) :
     (frickeOperatorCusp (N := N) k).comp (frickeOperatorCusp (N := N) k) =
       frickeScalar N k • LinearMap.id := by
+  -- Descended from the modular-form statement rather than recomputed: cusp forms embed in
+  -- modular forms, and `frickeOperator_coe_cuspForm` says the two operators agree under that
+  -- embedding, so the slash-by-`W²` computation lives only in `frickeOperator_frickeOperator`.
   ext f z
-  simp only [LinearMap.coe_comp, Function.comp_apply, LinearMap.smul_apply, LinearMap.id_coe,
-    id_eq]
-  rw [coe_frickeOperatorCusp, coe_frickeOperatorCusp, ← SlashAction.slash_mul, frickeGL_sq_slash]
-  rfl
+  have h := congrFun (congrArg DFunLike.coe (LinearMap.congr_fun
+    (frickeOperator_frickeOperator (N := N) k)
+    (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k))) z
+  simpa [frickeOperator_coe_cuspForm] using h
 
 /-- **`W_N (W_N f) = frickeScalar N k • f`** for a cusp form `f`, the pointwise and simp-normal
 form of `frickeOperatorCusp_frickeOperatorCusp`. -/
