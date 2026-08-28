@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.RingTheory.Huber.Basic
+public import TauCeti.RingTheory.Valuation.LtAddSubgroup
 public import TauCeti.RingTheory.Valuation.Continuous.Basic
 
 /-!
@@ -70,7 +71,9 @@ theorem isContinuous_iff_forall_exists_idealImage_subset (P : PairOfDefinition A
     exact ⟨n, hn⟩
   · obtain ⟨n, hn⟩ := h b hb
     -- the sublevel set is an additive subgroup, by the strict triangle inequality
-    exact AddSubgroup.isOpen_mono (H₁ := P.idealImage n) (H₂ := v.ltAddSubgroupOfNeZero hb) hn
-      (P.isOpen_idealImage n)
+    have hopen := AddSubgroup.isOpen_mono (H₁ := P.idealImage n)
+      (H₂ := v.ltAddSubgroupOfNeZero hb)
+      (fun x hx ↦ (Valuation.mem_ltAddSubgroupOfNeZero hb).mpr (hn hx)) (P.isOpen_idealImage n)
+    rwa [Valuation.coe_ltAddSubgroupOfNeZero] at hopen
 
 end TauCeti.Huber.PairOfDefinition

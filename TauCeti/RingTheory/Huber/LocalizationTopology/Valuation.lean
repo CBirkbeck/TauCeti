@@ -7,6 +7,7 @@ module
 
 public import Mathlib.RingTheory.Valuation.Integral
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Plus
+public import TauCeti.RingTheory.Valuation.LtAddSubgroup
 public import TauCeti.RingTheory.Valuation.Continuous.Basic
 public import TauCeti.RingTheory.Valuation.ExtendToLocalization
 
@@ -181,12 +182,13 @@ theorem isContinuous_extendToLocalization [IsTopologicalRing A]
     (hv.isOpen_lt_div a hy).mem_nhds (by simpa using zero_lt_iff.mpr hb)
   obtain ⟨n, -, hn⟩ := P.hasBasis_nhds_zero.mem_iff.mp hnhds
   -- The sublevel set is an additive subgroup containing an open one, hence open.
-  let G : AddSubgroup S :=
-    (v.extendToLocalization (Valuation.powers_le_supp_primeCompl hs) S).ltAddSubgroupOfNeZero hb
-  exact AddSubgroup.isOpen_mono (H₁ := locIdealImage P T s S n) (H₂ := G)
-    (fun x hx ↦ extendToLocalization_lt_of_mem_locIdealImage S P T s hs hA₀ hT
-      (fun c hc ↦ hn hc) hx)
+  have hopen := AddSubgroup.isOpen_mono (H₁ := locIdealImage P T s S n)
+    (H₂ := (v.extendToLocalization (Valuation.powers_le_supp_primeCompl hs) S).ltAddSubgroupOfNeZero
+      hb)
+    (fun x hx ↦ (Valuation.mem_ltAddSubgroupOfNeZero hb).mpr
+      (extendToLocalization_lt_of_mem_locIdealImage S P T s hs hA₀ hT (fun c hc ↦ hn hc) hx))
     (isOpen_locIdealImage P T s S hden n)
+  rwa [Valuation.coe_ltAddSubgroupOfNeZero] at hopen
 
 end PairOfDefinition
 

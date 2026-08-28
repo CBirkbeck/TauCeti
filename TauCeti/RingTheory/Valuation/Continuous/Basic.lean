@@ -109,33 +109,6 @@ variable {A : Type*} [Ring A] [TopologicalSpace A]
   {Γ₀ : Type*} [LinearOrderedCommMonoidWithZero Γ₀]
   {Γ₀' : Type*} [LinearOrderedCommMonoidWithZero Γ₀']
 
-/-- **A sublevel set of a valuation, as an additive subgroup.** For `γ ≠ 0` the set
-`{a | v a < γ}` is an additive subgroup, by the strict triangle inequality
-`v (x + y) ≤ max (v x) (v y)` and `v (-x) = v x`; `γ ≠ 0` is what puts `0` in it.
-
-Mathlib's `Valuation.ltAddSubgroup` is the same construction indexed by `Γ₀ˣ`, which forces a
-`LinearOrderedCommGroupWithZero` codomain. `IsContinuous` and everything below it is stated over a
-`LinearOrderedCommMonoidWithZero`, so that version is unavailable here and this is the analogue at
-the weaker codomain — no inverses are needed, only the strict triangle inequality.
-
-Exposed, so that the sites using it can unfold to the underlying set. -/
-@[expose]
-def ltAddSubgroupOfNeZero (v : Valuation A Γ₀) {γ : Γ₀} (hγ : γ ≠ 0) : AddSubgroup A where
-  carrier := {a : A | v a < γ}
-  add_mem' ha hb := lt_of_le_of_lt (v.map_add _ _) (max_lt ha hb)
-  zero_mem' := by simpa using zero_lt_iff.mpr hγ
-  neg_mem' hx := by simpa [v.map_neg] using hx
-
-omit [TopologicalSpace A] in
-@[simp]
-theorem mem_ltAddSubgroupOfNeZero {v : Valuation A Γ₀} {γ : Γ₀} (hγ : γ ≠ 0) {a : A} :
-    a ∈ v.ltAddSubgroupOfNeZero hγ ↔ v a < γ := Iff.rfl
-
-omit [TopologicalSpace A] in
-@[simp]
-theorem coe_ltAddSubgroupOfNeZero {v : Valuation A Γ₀} {γ : Γ₀} (hγ : γ ≠ 0) :
-    (v.ltAddSubgroupOfNeZero hγ : Set A) = {a : A | v a < γ} := rfl
-
 /-- **Continuity of a valuation, in attained-value form.** Every set `{a | v a < v b}` is open.
 
 This is *not* literally Wedhorn's Definition 7.7, which quantifies over the whole value group
