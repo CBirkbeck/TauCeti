@@ -9,6 +9,7 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Basic
 import Mathlib.RingTheory.Polynomial.IsIntegral
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Eval
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finrank
+import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.GenericPoint
 
 /-!
 # Function-field pullbacks of isogenies
@@ -142,12 +143,11 @@ theorem transcendental_pullback_X (φ : Isogeny W₁ W₂) :
   have hx₁ : IsIntegral F x₁ :=
     isIntegral_of_isIntegral_map φ.pullback.toRingHom himage hx₁_over_target
   have hx₁_transcendental : Transcendental F x₁ := by
-    have hx₁_eq : x₁ = algebraMap F[X] W₁.FunctionField X :=
-      (IsScalarTower.algebraMap_apply F[X] W₁.CoordinateRing W₁.FunctionField X).symm
+    have hx₁_eq : x₁ = WeierstrassCurve.Affine.genericX W₁ := by
+      rw [WeierstrassCurve.Affine.genericX_def,
+        WeierstrassCurve.Affine.CoordinateRing.mk_C_X]
     rw [hx₁_eq]
-    exact (transcendental_algebraMap_iff
-      (FaithfulSMul.algebraMap_injective F[X] W₁.FunctionField)).2
-        (Polynomial.transcendental_X F)
+    exact WeierstrassCurve.Affine.transcendental_genericX W₁
   exact hx₁_transcendental hx₁.isAlgebraic
 
 /-- The coordinate pullback of any isogeny of affine Weierstrass curves over a field is
