@@ -769,6 +769,48 @@ theorem CuspForm.levelRaise_mem_cuspFormCharSpace (M d : ℕ) [NeZero d]
       cuspFormCharSpace k (χ.comp (ZMod.unitsMap (Dvd.intro_left d rfl : M ∣ d * M))) :=
   levelRaise_mem_cuspFormCharSpace_of_dvd dvd_rfl χ hf
 
+/-- **Γ₁(N/l)-invariance from a nebentypus of level `N` that factors through `N / l`.**
+
+If the level-raise `f ∣[k] V_l` is an eigenvector of every `γ ∈ Γ₀(N)` with eigenvalue the
+character value `χ` reads off `γ`, if `f` is `T`-periodic, and if `χ` is trivial on the kernel of
+the reduction `(ZMod N)ˣ → (ZMod (N/l))ˣ`, then `f` is invariant under all of `Γ₁(N / l)`.
+
+This is the step that converts a nebentypus into honest invariance, and it is where the conductor
+drops: `exists_eq_T_zpow_mul_conjScale_mul_T_zpow` writes `δ ∈ Γ₁(N/l)` as
+`T ^ i * conjScale l γ c * T ^ j` with `γ ∈ Γ₀(N)`, the two translations are absorbed by
+`T`-periodicity through `slash_zpow_mul_mul_zpow_eq_smul`, and the middle factor contributes the
+character value read off `γ 1 1` — which the factorisation forces to be `1`, because `γ 1 1` is
+congruent to `δ 1 1 ≡ 1` modulo `N / l`. -/
+theorem slash_mapGL_eq_self_of_mem_Gamma1_div (l N : ℕ) [NeZero l] [NeZero N] (hlN : l ∣ N)
+    (hNl : N / l ∣ N) (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
+    (hχ : ∀ u : (ZMod N)ˣ, ZMod.unitsMap hNl u = 1 → χ u = 1) (f : ℍ → ℂ)
+    (hnb : ∀ (γ : SL(2, ℤ)) (hγ : γ ∈ Gamma0 N),
+      (f ∣[k] scaleGL l) ∣[k] mapGL ℝ γ =
+        (χ ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) : ℂ) • (f ∣[k] scaleGL l))
+    (hT : f ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) = f)
+    (δ : SL(2, ℤ)) (hδ : δ ∈ Gamma1 (N / l)) :
+    f ∣[k] (mapGL ℝ δ : GL (Fin 2) ℝ) = f := by
+  obtain ⟨i, j, c, γ, hc, hγ, hfactor, hdiag⟩ :=
+    exists_eq_T_zpow_mul_conjScale_mul_T_zpow l N hlN δ (Gamma1_in_Gamma0 _ hδ)
+  have hdet : 0 < ((mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) :
+      Matrix (Fin 2) (Fin 2) ℝ).det := by
+    rw [← Matrix.GeneralLinearGroup.val_det_apply, Matrix.SpecialLinearGroup.det_mapGL]
+    norm_num
+  have hconj := slash_conjScale_eq_smul_of_slash_scaleGL (k := k) f γ hc (hnb γ hγ)
+  -- the character value is `1`: `γ 1 1` is congruent to `δ 1 1 ≡ 1` modulo `N / l`
+  have hchar : (χ ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) : ℂ) = 1 := by
+    obtain ⟨-, hd, hcz⟩ := (Gamma1_mem _ _).mp hδ
+    have hred : ZMod.unitsMap hNl ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) = 1 := by
+      apply Units.ext
+      have hval : ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩ : ZMod N) = ((γ 1 1 : ℤ) : ZMod N) := rfl
+      rw [Units.val_one, ZMod.unitsMap_def, Units.coe_map, MonoidHom.coe_coe, hval,
+        ZMod.castHom_apply, ZMod.cast_intCast hNl, hdiag]
+      push_cast
+      rw [hd, hcz, zero_mul, sub_zero]
+    rw [hχ _ hred, Units.val_one]
+  rw [hfactor, map_mul, map_mul, map_zpow, map_zpow,
+    slash_zpow_mul_mul_zpow_eq_smul k f hdet hT hconj i j, hchar, one_smul]
+
 end Nebentypus
 
 /-! ### The nebentypus character of a level restriction -/
