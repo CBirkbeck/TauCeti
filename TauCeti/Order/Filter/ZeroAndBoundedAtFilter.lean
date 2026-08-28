@@ -75,6 +75,19 @@ theorem ZeroAtFilter.comp {γ : Type*} [Zero β] [TopologicalSpace β] [Zero γ]
   have h := Filter.Tendsto.comp hφ hg
   rwa [h0] at h
 
+/-- **Zeroing values keeps a function zero at a filter.** If every value of `g` is either the
+corresponding value of `f` or `0`, then `g` inherits `ZeroAtFilter`: since `0` lies in every
+neighbourhood of `0`, the preimage of such a neighbourhood under `g` contains the one under `f`.
+
+Stated pointwise rather than for an indicator, so it carries no decidability hypothesis and also
+covers truncations that are not indicators. -/
+theorem ZeroAtFilter.of_forall_eq_or_eq_zero [Zero β] [TopologicalSpace β] {f g : α → β}
+    (hf : ZeroAtFilter l f) (h : ∀ a, g a = f a ∨ g a = 0) : ZeroAtFilter l g := fun _ hU ↦
+  Filter.mem_map.mpr (Filter.mem_of_superset (Filter.mem_map.mp (hf hU)) fun a ha ↦ by
+    rcases h a with he | he
+    · simpa [he] using ha
+    · simpa [he] using mem_of_mem_nhds hU)
+
 end Filter
 
 end

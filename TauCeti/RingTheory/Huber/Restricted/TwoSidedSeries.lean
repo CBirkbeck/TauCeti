@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.Order.Filter.ZeroAndBoundedAtFilter
 public import TauCeti.Topology.Algebra.Nonarchimedean.ZeroAtFilter
 
 /-!
@@ -153,7 +154,7 @@ variable (A M : Type*) [Semiring A] [AddCommMonoid M] [TopologicalSpace M] [Modu
 Stated for an arbitrary `s` rather than for the two half-lines it is used at below, because
 nothing in it is about `ℤ` or about the sign of a degree. Mathlib has the `Finsupp` analogue,
 `Finsupp.supported`, but no `Pi` one. -/
-def supportedOn (s : Set ℤ) : Submodule A (ℤ → M) where
+def supportedOn {ι : Type*} (s : Set ι) : Submodule A (ι → M) where
   carrier := {f | ∀ n ∉ s, f n = 0}
   zero_mem' _ _ := rfl
   add_mem' hf hg n hn := by simp [hf n hn, hg n hn]
@@ -164,25 +165,18 @@ variable {A M}
 omit [TopologicalSpace M] in
 /-- Membership in `supportedOn` is vanishing outside the set of degrees. -/
 @[simp]
-theorem mem_supportedOn {s : Set ℤ} {f : ℤ → M} :
+theorem mem_supportedOn {ι : Type*} {s : Set ι} {f : ι → M} :
     f ∈ supportedOn A M s ↔ ∀ n ∉ s, f n = 0 := (Iff.rfl)
 
-/-- **Zeroing coefficients keeps a family restricted.** If every coefficient of `g` is either the
-corresponding coefficient of `f` or `0`, then `g` inherits the convergence condition: zeroing can
-only shrink the set of indices at which the family leaves a neighbourhood of `0`.
-
-Stated pointwise rather than for an indicator so that it carries no decidability hypothesis. It is
-what makes the degree split below land *inside* the submodule rather than merely inside
-`ℤ → M`. -/
-theorem zeroAtFilter_of_forall_eq_or_eq_zero {f g : ℤ → M} (hf : ZeroAtFilter cofinite f)
-    (h : ∀ n, g n = f n ∨ g n = 0) : ZeroAtFilter cofinite g := by
-  intro U hU
-  have h0 : (0 : M) ∈ U := mem_of_mem_nhds hU
-  refine Filter.mem_map.mpr (Filter.mem_cofinite.mpr (Set.Finite.subset
-    (Filter.mem_cofinite.mp (Filter.mem_map.mp (hf hU))) fun n hn ↦ ?_))
-  rcases h n with hgn | hgn
-  · simpa [hgn] using hn
-  · exact absurd (by simpa [hgn] using h0) hn
+omit [TopologicalSpace M] in
+/-- **Disjoint sets of indices give disjoint supported submodules.** A family supported on both
+of two disjoint sets vanishes everywhere. -/
+theorem disjoint_supportedOn {ι : Type*} {s t : Set ι} (h : Disjoint s t) :
+    Disjoint (supportedOn A M s) (supportedOn A M t) :=
+  Submodule.disjoint_def.mpr fun f hs ht ↦ funext fun i ↦ by
+    by_cases hi : i ∈ s
+    · exact ht i (Set.disjoint_left.mp h hi)
+    · exact hs i hi
 
 variable (A M) [ContinuousAdd M] [ContinuousConstSMul A M]
 
@@ -196,9 +190,9 @@ theorem twoSidedRestrictedSubmodule_eq_sup :
   refine le_antisymm (fun f hf ↦ ?_) (sup_le inf_le_left inf_le_left)
   refine Submodule.mem_sup.mpr
     ⟨fun n ↦ if 0 ≤ n then f n else 0, ⟨?_, ?_⟩, fun n ↦ if n < 0 then f n else 0, ⟨?_, ?_⟩, ?_⟩
-  · exact zeroAtFilter_of_forall_eq_or_eq_zero hf fun n ↦ by split_ifs <;> simp
+  · exact hf.of_forall_eq_or_eq_zero fun n ↦ by split_ifs <;> simp
   · intro n hn; simpa using fun h ↦ absurd h (by simpa using hn)
-  · exact zeroAtFilter_of_forall_eq_or_eq_zero hf fun n ↦ by split_ifs <;> simp
+  · exact hf.of_forall_eq_or_eq_zero fun n ↦ by split_ifs <;> simp
   · intro n hn; simpa using fun h ↦ absurd h (by simpa using hn)
   · funext n; by_cases h : (0 : ℤ) ≤ n <;> simp [h, not_lt.mpr, not_le.mp]
 
@@ -207,12 +201,13 @@ degrees at once is zero, so the two summands of `twoSidedRestrictedSubmodule_eq_
 Together they exhibit `A⟨z, z⁻¹⟩` as the internal direct sum of the two half-line pieces. -/
 theorem disjoint_twoSidedRestricted_nonneg_neg :
     Disjoint (twoSidedRestrictedSubmodule A M ⊓ supportedOn A M {n : ℤ | 0 ≤ n})
-      (twoSidedRestrictedSubmodule A M ⊓ supportedOn A M {n : ℤ | n < 0}) := by
-  refine Submodule.disjoint_def.mpr fun f hnonneg hneg ↦ ?_
-  funext n
-  by_cases h : (0 : ℤ) ≤ n
-  · exact hneg.2 n (by simpa using h)
-  · exact hnonneg.2 n (by simpa using h)
+      (twoSidedRestrictedSubmodule A M ⊓ supportedOn A M {n : ℤ | n < 0}) :=
+  by
+  have hst : Disjoint {n : ℤ | 0 ≤ n} {n : ℤ | n < 0} := by
+    rw [Set.disjoint_left]
+    intro n hn hn'
+    exact lt_irrefl n (lt_of_lt_of_le hn' hn)
+  exact (disjoint_supportedOn (A := A) (M := M) hst).mono inf_le_right inf_le_right
 
 end DegreeSplit
 
