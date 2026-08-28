@@ -46,6 +46,9 @@ subspace is still missing.
 
 ## Main results
 
+* `TauCeti.neZero_of_mul_dvd_left` and `TauCeti.neZero_of_mul_dvd_right`: the two `NeZero` side
+  conditions carried by the hypothesis `d * M ∣ N`. They are used inside the statements below,
+  which is why they are public rather than proof-local.
 * `TauCeti.levelRaise_mem_cuspFormsOld` and `TauCeti.cuspFormsOld_le`: the introduction and
   elimination rules for the old subspace.
 * `TauCeti.levelRaise_mem_cuspFormsOldMultiples` and `TauCeti.cuspFormsOldMultiples_le`: the
@@ -96,12 +99,17 @@ variable {k : ℤ}
 
 /-! ### Level transport at a divisor -/
 
-/-- A factor of a divisor of a nonzero number is nonzero. -/
-private lemma neZero_of_mul_dvd_left {d M N : ℕ} [NeZero N] (h : d * M ∣ N) : NeZero d :=
+/-- **The level-raising index is nonzero.** From `d * M ∣ N` and `N ≠ 0`, the index `d` of the
+level-raising operator `V_d` is nonzero. It is stated as a `NeZero` instance, and it is public
+because the hypothesis `d * M ∣ N` occurs in the *statements* below, which cannot mention `V_d`
+until the instance is available. -/
+theorem neZero_of_mul_dvd_left {d M N : ℕ} [NeZero N] (h : d * M ∣ N) : NeZero d :=
   ⟨fun hd ↦ NeZero.ne N (by simpa [hd] using h)⟩
 
-/-- A factor of a divisor of a nonzero number is nonzero. -/
-private lemma neZero_of_mul_dvd_right {d M N : ℕ} [NeZero N] (h : d * M ∣ N) : NeZero M :=
+/-- **The source level is nonzero.** From `d * M ∣ N` and `N ≠ 0`, the level `M` that `V_d` raises
+from is nonzero, which is what indexing `S_k(Γ₁(M))` needs. Public for the same reason as
+`neZero_of_mul_dvd_left`. -/
+theorem neZero_of_mul_dvd_right {d M N : ℕ} [NeZero N] (h : d * M ∣ N) : NeZero M :=
   ⟨fun hM ↦ NeZero.ne N (by simpa [hM] using h)⟩
 
 /-! ### The old subspace -/
@@ -122,7 +130,7 @@ variable {M d N : ℕ}
 is old. -/
 theorem levelRaise_mem_cuspFormsOld [NeZero N] (h : d * M ∣ N) (hM : M ≠ N)
     (k : ℤ) (f : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) :
-    haveI : NeZero d := ⟨fun hd ↦ NeZero.ne N (by simpa [hd] using h)⟩
+    haveI : NeZero d := neZero_of_mul_dvd_left h
     CuspForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL_of_dvd h) f ∈ cuspFormsOld N k :=
   let _ := neZero_of_mul_dvd_left h
   Submodule.mem_iSup_of_mem M (Submodule.mem_iSup_of_mem d
@@ -133,7 +141,7 @@ proper divisor level contains the whole old subspace. -/
 theorem cuspFormsOld_le [NeZero N] {V : Submodule ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)}
     (hV : ∀ (M d : ℕ) (h : d * M ∣ N), M ≠ N →
       ∀ f : CuspForm ((Gamma1 M).map (mapGL ℝ)) k,
-        haveI : NeZero d := ⟨fun hd ↦ NeZero.ne N (by simpa [hd] using h)⟩
+        haveI : NeZero d := neZero_of_mul_dvd_left h
         CuspForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL_of_dvd h) f ∈ V) :
     cuspFormsOld N k ≤ V := by
   refine iSup_le fun M ↦ iSup_le fun d ↦ iSup_le fun h ↦ ?_
@@ -176,7 +184,7 @@ theorem cuspFormsOld_le_of_prime [NeZero N]
           rcases hd with rfl | rfl
           · exact ⟨p, by rw [← hpL]; ring⟩
           · exact ⟨1, by rw [← hpL, mul_one]⟩
-        haveI : NeZero d := ⟨fun hd ↦ NeZero.ne N (by simpa [hd] using hdvd)⟩
+        haveI : NeZero d := neZero_of_mul_dvd_left hdvd
         CuspForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL_of_dvd hdvd) g ∈ V) :
     cuspFormsOld N k ≤ V := by
   refine cuspFormsOld_le fun M d hdvd hM f ↦ ?_
@@ -227,7 +235,7 @@ is Petersson-orthogonal to `V_d g` for every cusp form `g` of proper divisor lev
 theorem mem_cuspFormsNew_iff [NeZero N] {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} :
     f ∈ cuspFormsNew N k ↔ ∀ (M d : ℕ) (h : d * M ∣ N), M ≠ N →
       ∀ g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k,
-        haveI : NeZero d := ⟨fun hd ↦ NeZero.ne N (by simpa [hd] using h)⟩
+        haveI : NeZero d := neZero_of_mul_dvd_left h
         peterssonInnerCosets
           (CuspForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL_of_dvd h) g) f = 0 := by
   rw [cuspFormsNew]
@@ -289,9 +297,9 @@ def cuspFormsOldMultiples (N : ℕ) [NeZero N] (k : ℤ) (m : ℕ) :
 lies in `cuspFormsOldMultiples`. -/
 theorem levelRaise_mem_cuspFormsOldMultiples [NeZero N] {m : ℕ} (h : d * M ∣ N) (hM : M ≠ N)
     (hm : m ∣ M) (k : ℤ) (g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k)
-    (hg : haveI : NeZero M := ⟨fun hM ↦ NeZero.ne N (by simpa [hM] using h)⟩
+    (hg : haveI : NeZero M := neZero_of_mul_dvd_right h
       g ∈ cuspFormsNew M k) :
-    haveI : NeZero d := ⟨fun hd ↦ NeZero.ne N (by simpa [hd] using h)⟩
+    haveI : NeZero d := neZero_of_mul_dvd_left h
     CuspForm.levelRaiseₗ (k := k) d (Gamma1_map_le_conjAct_scaleGL_of_dvd h) g ∈
       cuspFormsOldMultiples N k m :=
   let _ := neZero_of_mul_dvd_left h
@@ -321,9 +329,9 @@ theorem cuspFormsOldMultiples_le [NeZero N] {m : ℕ}
     {V : Submodule ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)}
     (hV : ∀ (M d : ℕ) (h : d * M ∣ N), M ≠ N → m ∣ M →
       ∀ g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k,
-        haveI : NeZero M := ⟨fun hM ↦ NeZero.ne N (by simpa [hM] using h)⟩
+        haveI : NeZero M := neZero_of_mul_dvd_right h
         g ∈ cuspFormsNew M k →
-        haveI : NeZero d := ⟨fun hd ↦ NeZero.ne N (by simpa [hd] using h)⟩
+        haveI : NeZero d := neZero_of_mul_dvd_left h
         CuspForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL_of_dvd h) g ∈ V) :
     cuspFormsOldMultiples N k m ≤ V := by
   refine iSup_le fun M ↦ iSup_le fun d ↦ iSup_le fun h ↦ ?_
