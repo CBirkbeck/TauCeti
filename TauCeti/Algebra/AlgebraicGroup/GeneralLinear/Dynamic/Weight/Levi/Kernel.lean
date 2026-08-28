@@ -78,16 +78,8 @@ theorem mem_weightUnipotentInParabolicPointsSubgroup_iff_limit_eq_one
     have hcoe : (p : HopfAlgebra.points (R := R) (H := coordinateHopfAlgebra R N)
         (CommAlgCat.of R A)) =
         CommHopfAlgCat.quotientPointsHom (coordinateHopfAlgebra R N)
-          (weightParabolicDefiningHopfIdeal R w) (CommAlgCat.of R A) g := by
-      let p' : Cocharacter.parabolic A (weightCocharacter (R := R) w) :=
-        eqToHom (Cocharacter.parabolicFunctor_obj
-          (weightCocharacter (R := R) w) (CommAlgCat.of R A))
-          ((weightParabolicPointsIso R w).hom.app (CommAlgCat.of R A) g)
-      have hp : p = p' := by
-        apply Subtype.ext
-        rfl
-      rw [hp]
-      exact coe_weightParabolicPointsIso_hom_app_apply R w g
+          (weightParabolicDefiningHopfIdeal R w) (CommAlgCat.of R A) g :=
+      coe_weightParabolicPointsIso_hom_app_apply R w g
     have hpUnipotent : (p : HopfAlgebra.points
         (R := R) (H := coordinateHopfAlgebra R N) (CommAlgCat.of R A)) ∈
         Cocharacter.unipotent A (weightCocharacter (R := R) w) := by
