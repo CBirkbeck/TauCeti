@@ -141,7 +141,7 @@ private theorem one_mem_strictPeriods_Gamma1_map (M : ℕ) :
 /-- The submodule of cusp forms of level `Γ₁(M)` whose period-1 `q`-expansion is supported on
 multiples of `d`. Closure under the module operations is the additivity and homogeneity of the
 `q`-expansion, which hold because `1` is a strict period. -/
-noncomputable def qSupportedOnDvdSubmodule (M : ℕ) [NeZero M] (k : ℤ) (d : ℕ) :
+noncomputable def qSupportedOnDvdSubmodule (M : ℕ) (k : ℤ) (d : ℕ) :
     Submodule ℂ (CuspForm ((Gamma1 M).map (mapGL ℝ)) k) where
   carrier := {f | QExpansionSupportedOnDvd d f}
   zero_mem' n _ := by simp [qExpansion_zero]
@@ -157,7 +157,7 @@ noncomputable def qSupportedOnDvdSubmodule (M : ℕ) [NeZero M] (k : ℤ) (d : �
 /-- **Level-raising into a divisible level lands in the supported submodule.** For `d * M ∣ N`,
 the operator `V_d` carries `S_k(Γ₁(M))` into the cusp forms whose `q`-expansion is supported on
 multiples of `d` — the forward half of the Atkin–Lehner description of the old subspace. -/
-theorem levelRaise_mem_qSupportedOnDvdSubmodule {N : ℕ} [NeZero N] (M : ℕ) [NeZero M]
+theorem levelRaise_mem_qSupportedOnDvdSubmodule {N : ℕ} (M : ℕ)
     (h : d * M ∣ N) (g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) :
     CuspForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL_of_dvd h) g ∈
       qSupportedOnDvdSubmodule N k d := fun n hn ↦ by
