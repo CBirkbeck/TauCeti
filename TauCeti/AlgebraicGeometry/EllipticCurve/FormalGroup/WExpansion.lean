@@ -469,36 +469,41 @@ so this material stays in the `CommRing` section rather than joining the `CommSe
 above; the two uniqueness statements are siblings and neither subsumes the other.
 -/
 
-/-- The `w`-equation in `MvPowerSeries σ R` itself, where the structure map is `MvPowerSeries.C`.
-This is the spelling the order estimates below match against. -/
-theorem wEquationRHS_mvPowerSeries {σ : Type*} (q v : MvPowerSeries σ R) :
+/-- The `w`-equation in `MvPowerSeries σ S` itself, where the structure map factors as
+`MvPowerSeries.C` after `algebraMap R S`. This is the spelling the order estimates below match
+against. -/
+theorem wEquationRHS_mvPowerSeries {σ S : Type*} [CommRing S] [Algebra R S]
+    (q v : MvPowerSeries σ S) :
     wEquationRHS W q v =
-      q ^ 3 + MvPowerSeries.C W.a₁ * q * v + MvPowerSeries.C W.a₂ * q ^ 2 * v +
-        MvPowerSeries.C W.a₃ * v ^ 2 + MvPowerSeries.C W.a₄ * q * v ^ 2 +
-        MvPowerSeries.C W.a₆ * v ^ 3 :=
-  (rfl)
+      q ^ 3 + MvPowerSeries.C (algebraMap R S W.a₁) * q * v +
+        MvPowerSeries.C (algebraMap R S W.a₂) * q ^ 2 * v +
+        MvPowerSeries.C (algebraMap R S W.a₃) * v ^ 2 +
+        MvPowerSeries.C (algebraMap R S W.a₄) * q * v ^ 2 +
+        MvPowerSeries.C (algebraMap R S W.a₆) * v ^ 3 := by
+  simp only [wEquationRHS_def, MvPowerSeries.algebraMap_apply]
 
 /-- **The right-hand side of the `w`-equation is a contraction for the total-degree filtration.**
 If two candidate solutions agree below total degree `k`, then the values of the equation at them
 agree below total degree `k + 1`. Every occurrence of the unknown is multiplied by the parameter,
 which has positive order, or sits in a square or a cube of a series of positive order, and that is
 where the extra degree comes from. -/
-private theorem le_order_wEquationRHS_sub {σ : Type*} {q u v : MvPowerSeries σ R}
+private theorem le_order_wEquationRHS_sub {σ S : Type*} [CommRing S] [Algebra R S]
+    {q u v : MvPowerSeries σ S}
     (hq : 1 ≤ q.order) (hu : 1 ≤ u.order) (hv : 1 ≤ v.order) {k : ℕ}
     (h : (k : ℕ∞) ≤ (u - v).order) :
     ((k + 1 : ℕ) : ℕ∞) ≤ (wEquationRHS W q u - wEquationRHS W q v).order := by
   -- The order estimates used below, in the vocabulary of `MvPowerSeries.order`.
-  have hmono : ∀ {m n : ℕ} {f : MvPowerSeries σ R}, m ≤ n → (n : ℕ∞) ≤ f.order →
+  have hmono : ∀ {m n : ℕ} {f : MvPowerSeries σ S}, m ≤ n → (n : ℕ∞) ≤ f.order →
       (m : ℕ∞) ≤ f.order := fun hmn hf => (Nat.cast_le.mpr hmn).trans hf
-  have hadd : ∀ {m : ℕ} {f g : MvPowerSeries σ R}, (m : ℕ∞) ≤ f.order → (m : ℕ∞) ≤ g.order →
+  have hadd : ∀ {m : ℕ} {f g : MvPowerSeries σ S}, (m : ℕ∞) ≤ f.order → (m : ℕ∞) ≤ g.order →
       (m : ℕ∞) ≤ (f + g).order :=
     fun hf hg => (le_min hf hg).trans MvPowerSeries.min_order_le_add
-  have hmul : ∀ {m n : ℕ} {f g : MvPowerSeries σ R}, (m : ℕ∞) ≤ f.order → (n : ℕ∞) ≤ g.order →
+  have hmul : ∀ {m n : ℕ} {f g : MvPowerSeries σ S}, (m : ℕ∞) ≤ f.order → (n : ℕ∞) ≤ g.order →
       ((m + n : ℕ) : ℕ∞) ≤ (f * g).order := by
     intro m n f g hf hg
     push_cast
     exact (add_le_add hf hg).trans MvPowerSeries.le_order_mul
-  have hC : ∀ {m : ℕ} (a : R) {f : MvPowerSeries σ R}, (m : ℕ∞) ≤ f.order →
+  have hC : ∀ {m : ℕ} (a : S) {f : MvPowerSeries σ S}, (m : ℕ∞) ≤ f.order →
       (m : ℕ∞) ≤ (MvPowerSeries.C a * f).order := by
     intro m a f hf
     exact (hf.trans le_add_self).trans MvPowerSeries.le_order_mul
@@ -515,9 +520,11 @@ private theorem le_order_wEquationRHS_sub {σ : Type*} {q u v : MvPowerSeries σ
     exact hmono (by omega) (hmul (hadd (hadd (hmul hu hu) (hmul hu hv)) (hmul hv hv)) h)
   -- Reassemble the difference and bound each summand.
   have hstep : wEquationRHS W q u - wEquationRHS W q v =
-      MvPowerSeries.C W.a₁ * (q * (u - v)) + MvPowerSeries.C W.a₂ * (q * q * (u - v)) +
-        MvPowerSeries.C W.a₃ * (u ^ 2 - v ^ 2) + MvPowerSeries.C W.a₄ * (q * (u ^ 2 - v ^ 2)) +
-        MvPowerSeries.C W.a₆ * (u ^ 3 - v ^ 3) := by
+      MvPowerSeries.C (algebraMap R S W.a₁) * (q * (u - v)) +
+        MvPowerSeries.C (algebraMap R S W.a₂) * (q * q * (u - v)) +
+        MvPowerSeries.C (algebraMap R S W.a₃) * (u ^ 2 - v ^ 2) +
+        MvPowerSeries.C (algebraMap R S W.a₄) * (q * (u ^ 2 - v ^ 2)) +
+        MvPowerSeries.C (algebraMap R S W.a₆) * (u ^ 3 - v ^ 3) := by
     rw [wEquationRHS_mvPowerSeries, wEquationRHS_mvPowerSeries]
     ring
   rw [hstep]
@@ -532,7 +539,8 @@ are equal, provided `q` too has vanishing constant coefficient.
 This is `eq_of_wEquation` one index type up. It is not a generalisation of it: the argument here
 subtracts, so it needs a `CommRing`, whereas the univariate statement holds over a `CommSemiring`.
 -/
-theorem eq_of_wEquation_mvPowerSeries {σ : Type*} {q v v' : MvPowerSeries σ R}
+theorem eq_of_wEquation_mvPowerSeries {σ S : Type*} [CommRing S] [Algebra R S]
+    {q v v' : MvPowerSeries σ S}
     (hq : MvPowerSeries.constantCoeff q = 0) (hv : MvPowerSeries.constantCoeff v = 0)
     (hv' : MvPowerSeries.constantCoeff v' = 0) (h : v = wEquationRHS W q v)
     (h' : v' = wEquationRHS W q v') : v = v' := by
