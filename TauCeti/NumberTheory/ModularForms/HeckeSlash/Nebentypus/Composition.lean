@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Composition
-public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Invariance
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Independence
 
 /-!
@@ -57,8 +56,6 @@ reason: that is the carrier on which the hypothesis comes for free.
 
 ## Main definitions
 
-* `HeckeRing.GL2.twistedHeckeSlashSumCharEnd`: the twisted slash sum as an endomorphism of the
-  character space.
 
 ## Main results
 
@@ -66,7 +63,6 @@ reason: that is the carrier on which the hypothesis comes for free.
   representatives on the right, the weights riding along unchanged.
 * `HeckeRing.GL2.twistedHeckeSlashSum_twistedHeckeSlashSum`: the composite of two twisted sums, as
   a double sum over products of representatives weighted by the character of the product.
-* `HeckeRing.GL2.coe_twistedHeckeSlashSumCharEnd`: the restricted operator on underlying functions.
 * `HeckeRing.GL2.twistedHeckeSlashSum_twistedHeckeSlashSum_eq_sum_of_rightCosets`: the same
   composite over *any* families of representatives lying in `Δ₀(N)`.
 * `HeckeRing.GL2.twistedHeckeSlashSum_twistedHeckeSlashSum_eq_twistedHeckeSlashSum`: the collapse
@@ -180,30 +176,6 @@ theorem twistedHeckeSlashSum_twistedHeckeSlashSum (f : ℍ → ℂ) :
     map_mul, Units.val_mul, mul_comm]
 
 end Composite
-
-section CharSpace
-
-/-- **The twisted slash sum as an endomorphism of the character space.** `twistedHeckeSlashSumEnd`
-is an endomorphism of *all* of `ℍ → ℂ`, and its own docstring records that this is the wrong
-carrier: the point of the weighting is that the twisted sum preserves the `χ`-eigenspace. It does,
-by `twistedHeckeSlashSum_mem_functionCharSpace`, so it restricts — and on this carrier, unlike on
-`ℍ → ℂ`, the operators multiply. -/
-noncomputable def twistedHeckeSlashSumCharEnd
-    (D : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))) :
-    Module.End ℂ (functionCharSpace k χ) :=
-  (twistedHeckeSlashSumEnd k χ D).restrict fun f hf ↦ by
-    simpa using twistedHeckeSlashSum_mem_functionCharSpace k χ D f hf
-
-/-- The restricted endomorphism is the twisted slash sum on underlying functions. -/
-@[simp] lemma coe_twistedHeckeSlashSumCharEnd
-    (D : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)))
-    (f : functionCharSpace k χ) :
-    (twistedHeckeSlashSumCharEnd k χ D f : ℍ → ℂ) = twistedHeckeSlashSum k χ D f := by
-  -- `twistedHeckeSlashSumEnd`'s body is sealed to this module, so the coercion is unfolded through
-  -- its own interface lemma rather than by `rfl`.
-  simp [twistedHeckeSlashSumCharEnd]
-
-end CharSpace
 
 section Free
 
