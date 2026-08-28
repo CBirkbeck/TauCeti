@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Order.Filter.ZeroAndBoundedAtFilter
-public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
+public import TauCeti.Topology.Algebra.Nonarchimedean.OpenAddSubgroupBasis
 
 /-!
 # Cofinite convergence in a nonarchimedean group is a finiteness condition
@@ -38,17 +38,14 @@ variable {ι : Type*} {G : Type*} [AddGroup G] [TopologicalSpace G] [Nonarchimed
 along the cofinite filter exactly when, for every open additive subgroup `W`, all but finitely
 many of its members lie in `W`.
 
-The `→` direction needs only that an open subgroup is a neighbourhood of zero. The `←` direction
-is where nonarchimedeanness is used: it supplies an open subgroup inside each neighbourhood of
-zero, so the open subgroups are a neighbourhood basis and the finiteness condition is enough. -/
+Both directions are the single fact that the open subgroups are a basis of `𝓝 0`
+(`NonarchimedeanAddGroup.nhds_zero_hasBasis_openAddSubgroup`), read through
+`Filter.HasBasis.tendsto_right_iff`: convergence along a filter is membership of each basic
+neighbourhood eventually, and `Filter.eventually_cofinite` turns "eventually along `cofinite`"
+into the finiteness of the exceptional set. -/
 theorem zeroAtFilter_cofinite_iff_finite_notMem {f : ι → G} :
     ZeroAtFilter cofinite f ↔ ∀ W : OpenAddSubgroup G, {n | f n ∉ (W : Set G)}.Finite := by
-  refine ⟨fun hf W ↦ ?_, fun h ↦ ?_⟩
-  · have := (tendsto_nhds.mp hf) _ W.isOpen (SetLike.mem_coe.mpr W.zero_mem)
-    rwa [Filter.mem_cofinite] at this
-  · refine tendsto_nhds.mpr fun U hU h0 ↦ ?_
-    obtain ⟨W, hWU⟩ := NonarchimedeanAddGroup.is_nonarchimedean U (hU.mem_nhds h0)
-    rw [Filter.mem_cofinite]
-    exact (h W).subset fun n hn ↦ fun hnW ↦ hn (hWU hnW)
+  simp only [ZeroAtFilter, (nhds_zero_hasBasis_openAddSubgroup G).tendsto_right_iff, true_implies,
+    Filter.eventually_cofinite]
 
 end NonarchimedeanAddGroup

@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Order.Filter.ZeroAndBoundedAtFilter
 public import TauCeti.Topology.Algebra.Nonarchimedean.ZeroAtFilter
 
 /-!
@@ -80,9 +79,13 @@ section Submodule
 variable (A M : Type*) [Semiring A] [AddCommMonoid M] [TopologicalSpace M] [Module A M]
   [ContinuousAdd M] [ContinuousConstSMul A M]
 
-/-- **The two-sided restricted families `A⟨X, X⁻¹⟩`** of Wedhorn's Example 6.39: the `A`-module of
-families `ℤ → M` tending to `0` along the cofinite filter, i.e. those `∑_{n ∈ ℤ} aₙ Xⁿ` for which
-every neighbourhood of zero omits only finitely many coefficients.
+/-- **The two-sided restricted `M`-valued families**: the `A`-module of families `ℤ → M` tending
+to `0` along the cofinite filter, i.e. those whose coefficients leave every neighbourhood of zero
+finitely often.
+
+At `M = A` this is the coefficient object of Wedhorn's `A⟨X, X⁻¹⟩` (Example 6.39). It is only the
+*coefficients*: no ring structure is defined here, so this is not yet that algebra — see the
+implementation notes.
 
 This is `TauCeti.Huber.restrictedMvPowerSeriesSubmodule`'s condition at the index set `ℤ`, and is
 built from the same Mathlib primitive. -/
@@ -91,14 +94,15 @@ def twoSidedRestrictedSubmodule : Submodule A (ℤ → M) :=
 
 variable {A M}
 
-/-- Membership in `A⟨X, X⁻¹⟩` is the convergence condition on the coefficients. -/
+/-- Membership is the convergence condition on the coefficient family. -/
 @[simp]
 theorem mem_twoSidedRestrictedSubmodule {f : ℤ → M} :
     f ∈ twoSidedRestrictedSubmodule A M ↔ ZeroAtFilter cofinite f := (Iff.rfl)
 
-/-- **Coefficientwise extensionality** for `A⟨X, X⁻¹⟩`: a two-sided restricted family is
-determined by its coefficients. This is the uniqueness statement the two-piece Laurent cover's
-diagram chase consumes when it compares `∑ aₖ ζᵏ` with `∑ bₖ ζ⁻ᵏ`. -/
+/-- **Coefficientwise extensionality**: two members of the submodule that agree at every index are
+equal. This is subtype-and-function extensionality, nothing more — in particular it does *not* say
+that a coefficient family is recovered from any sum it represents, which would need an evaluation
+map that does not exist until there is a ring structure. -/
 @[ext]
 theorem twoSidedRestrictedSubmodule_ext {f g : twoSidedRestrictedSubmodule A M}
     (h : ∀ n, (f : ℤ → M) n = (g : ℤ → M) n) : f = g :=
@@ -111,13 +115,15 @@ section WedhornCriterion
 variable {A M : Type*} [Semiring A] [AddCommGroup M] [TopologicalSpace M] [Module A M]
   [ContinuousConstSMul A M] [NonarchimedeanAddGroup M]
 
-/-- **Example 6.39's defining condition, verbatim**: a two-sided family lies in `A⟨X, X⁻¹⟩`
-exactly when, for every open additive subgroup, only finitely many of its coefficients lie
-outside. -/
+/-- **The membership criterion in Wedhorn's form**: a family lies in the submodule exactly when,
+for every open additive subgroup, only finitely many of its members lie outside. At `M = A` this
+is Example 6.39's defining condition on the coefficients, verbatim. -/
+@[simp]
 theorem mem_twoSidedRestrictedSubmodule_iff_finite_notMem {f : ℤ → M} :
     f ∈ twoSidedRestrictedSubmodule A M ↔
-      ∀ W : OpenAddSubgroup M, {n | f n ∉ (W : Set M)}.Finite :=
-  NonarchimedeanAddGroup.zeroAtFilter_cofinite_iff_finite_notMem
+      ∀ W : OpenAddSubgroup M, {n | f n ∉ (W : Set M)}.Finite := by
+  rw [mem_twoSidedRestrictedSubmodule]
+  exact NonarchimedeanAddGroup.zeroAtFilter_cofinite_iff_finite_notMem
 
 end WedhornCriterion
 
