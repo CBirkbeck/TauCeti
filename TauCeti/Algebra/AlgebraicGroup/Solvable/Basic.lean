@@ -108,6 +108,13 @@ theorem geometricallySolvablePointsCommHopfAlgProperty_quotient
     (CommHopfAlgCat.mkQuotient H I) _ hH
   exact Ideal.Quotient.mkₐ_surjective k I.toIdeal
 
+/-- **A solvable product has solvable factors.** Each projection is surjective, so solvability
+transports along it. Mathlib has the transport lemmas but no product form. -/
+private theorem isSolvable_and_isSolvable_of_isSolvable_prod {G H : Type*} [Group G] [Group H]
+    [Group.IsSolvable (G × H)] : Group.IsSolvable G ∧ Group.IsSolvable H :=
+  ⟨Group.isSolvable_of_surjective (f := MonoidHom.fst G H) fun x ↦ ⟨(x, 1), rfl⟩,
+    Group.isSolvable_of_surjective (f := MonoidHom.snd G H) fun x ↦ ⟨(1, x), rfl⟩⟩
+
 /-- The tensor-product coordinate algebra has solvable geometric points exactly when both
 factors do. Contravariantly, this is closure and reflection of solvability by direct products of
 affine groups. -/
@@ -150,17 +157,7 @@ theorem geometricallySolvablePointsCommHopfAlgProperty_tensorProduct_iff
     let _ : Group.IsSolvable
         (WithConv (H →ₐ[k] AlgebraicClosure k) ×
           WithConv (K →ₐ[k] AlgebraicClosure k)) := hprod
-    constructor
-    · exact Group.isSolvable_of_surjective
-        (G := WithConv (H →ₐ[k] AlgebraicClosure k) ×
-          WithConv (K →ₐ[k] AlgebraicClosure k))
-        (G' := WithConv (H →ₐ[k] AlgebraicClosure k))
-        (f := MonoidHom.fst _ _) (fun x ↦ ⟨(x, 1), rfl⟩)
-    · exact Group.isSolvable_of_surjective
-        (G := WithConv (H →ₐ[k] AlgebraicClosure k) ×
-          WithConv (K →ₐ[k] AlgebraicClosure k))
-        (G' := WithConv (K →ₐ[k] AlgebraicClosure k))
-        (f := MonoidHom.snd _ _) (fun x ↦ ⟨(1, x), rfl⟩)
+    exact isSolvable_and_isSolvable_of_isSolvable_prod
   · rintro ⟨hH, hK⟩
     let _ : Group.IsSolvable (WithConv (H →ₐ[k] AlgebraicClosure k)) := hH
     let _ : Group.IsSolvable (WithConv (K →ₐ[k] AlgebraicClosure k)) := hK
