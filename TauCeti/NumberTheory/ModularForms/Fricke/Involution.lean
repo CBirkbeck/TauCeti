@@ -34,6 +34,8 @@ The constant is nonzero, so `W_N` is invertible with `W_N⁻¹ = c⁻¹ • W_N`
 * `TauCeti.frickeOperator_frickeOperator_apply`,
   `TauCeti.frickeOperatorCusp_frickeOperatorCusp_apply`: the pointwise forms of those two, which
   are the `simp`-normal ones.
+* `TauCeti.frickeScalar_def`: the defining equation of the constant, for clients that
+  cannot unfold it.
 * `TauCeti.frickeScalar_ne_zero`: the constant is nonzero, which is what makes `W_N`
   invertible.
 * `TauCeti.frickeOperator_comp_smul_frickeOperator` and its three siblings: the two-sided
@@ -82,6 +84,15 @@ variable {N : ℕ} [NeZero N]
 public noncomputable def frickeScalar (N : ℕ) (k : ℤ) : ℂ :=
   (N : ℂ) ^ (2 * (k - 1)) * (-(N : ℂ)) ^ (-k)
 
+/-- Defining equation for `frickeScalar`. The definition sits in a `public section` without
+`@[expose]`, so a downstream module rewrites with this rather than unfolding the body.
+
+Deliberately not `@[simp]`: `frickeScalar N k` is the normal form here, not the expanded product.
+Every statement below is phrased in terms of the named constant, and the two factors only need to
+be visible inside `frickeGL_sq_slash`, which rewrites with this lemma explicitly. -/
+public theorem frickeScalar_def (N : ℕ) (k : ℤ) :
+    frickeScalar N k = (N : ℂ) ^ (2 * (k - 1)) * (-(N : ℂ)) ^ (-k) := (rfl)
+
 /-- `frickeScalar N k` is nonzero. This is what makes the Fricke operator invertible, with
 inverse `(frickeScalar N k)⁻¹ • W_N`; see `frickeOperatorEquiv`. -/
 public theorem frickeScalar_ne_zero (k : ℤ) : frickeScalar N k ≠ 0 := by
@@ -118,7 +129,7 @@ public theorem frickeGL_sq_slash (k : ℤ) (f : ℍ → ℂ) :
   ext z
   rw [ModularForm.slash_apply, frickeGL_sq_eq_scalar hN, ← hu, hσ, glScalar_smul, denom_scalar,
     hdet, abs_of_nonneg (by positivity : (0 : ℝ) ≤ (N : ℝ) ^ 2)]
-  push_cast [hu, frickeScalar]
+  push_cast [hu, frickeScalar_def]
   rw [← zpow_natCast (N : ℂ) 2, ← zpow_mul]
   simp only [ContinuousAlgEquiv.refl_apply, Nat.cast_ofNat, Units.val_mk0, Complex.ofReal_neg,
     Complex.ofReal_natCast, zpow_neg, Pi.smul_apply, smul_eq_mul]
@@ -141,7 +152,7 @@ public theorem frickeOperator_frickeOperator (k : ℤ) :
   ext f z
   simp only [LinearMap.coe_comp, Function.comp_apply, LinearMap.smul_apply, LinearMap.id_coe,
     id_eq]
-  rw [frickeOperator_coe, frickeOperator_coe, ← SlashAction.slash_mul, frickeGL_sq_slash]
+  rw [coe_frickeOperator, coe_frickeOperator, ← SlashAction.slash_mul, frickeGL_sq_slash]
   rfl
 
 /-- **`W_N (W_N f) = frickeScalar N k • f`** for a modular form `f`, the pointwise form of
@@ -196,7 +207,7 @@ public theorem frickeOperatorCusp_frickeOperatorCusp (k : ℤ) :
   ext f z
   simp only [LinearMap.coe_comp, Function.comp_apply, LinearMap.smul_apply, LinearMap.id_coe,
     id_eq]
-  rw [frickeOperatorCusp_coe, frickeOperatorCusp_coe, ← SlashAction.slash_mul, frickeGL_sq_slash]
+  rw [coe_frickeOperatorCusp, coe_frickeOperatorCusp, ← SlashAction.slash_mul, frickeGL_sq_slash]
   rfl
 
 /-- **`W_N (W_N f) = frickeScalar N k • f`** for a cusp form `f`, the pointwise and simp-normal

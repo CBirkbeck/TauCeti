@@ -5,35 +5,42 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.NumberTheory.ModularForms.Cusps
 public import TauCeti.NumberTheory.ModularForms.Basic
 public import TauCeti.NumberTheory.ModularForms.Fricke.Conjugation
 
 /-!
-# The Fricke operator on modular and cusp forms
+# The Fricke slash operator on modular and cusp forms
 
 The Fricke matrix `W = !![0, -1; N, 0]` of `TauCeti/NumberTheory/ModularForms/Fricke/Matrix.lean`
 normalizes `Γ₁(N)`, by `frickeConjSL_mem_Gamma1` of
-`TauCeti/NumberTheory/ModularForms/Fricke/Conjugation.lean`. Slashing by `W` therefore preserves
-weight-`k` invariance under `Γ₁(N)`, and this file packages `f ↦ f ∣[k] W` as the **Fricke
-operator** `W_N`, a `ℂ`-linear endomorphism of `M_k(Γ₁(N))` and of `S_k(Γ₁(N))`.
+`TauCeti/NumberTheory/ModularForms/Fricke/Conjugation.lean`. Read in `GL (Fin 2) ℝ` that is the
+subgroup identity `Gamma1_map_inv_conjAct_frickeGL_eq`, and this file packages `f ↦ f ∣[k] W` as
+a `ℂ`-linear endomorphism `frickeOperator` of `M_k(Γ₁(N))` and `frickeOperatorCusp` of
+`S_k(Γ₁(N))`.
 
-## Main results
+## What this operator is, and what it is not
 
-* `TauCeti.frickeSlash_invariant`: slashing by `W` preserves `Γ₁(N)`-invariance.
+`frickeOperator` is the **raw slash by `W`**: it carries no normalizing scalar, and it is
+therefore **not an involution**. With mathlib's weight-`k` slash and `W² = (-N) • 1`
+(`coe_frickeGL_sq`) it squares to multiplication by the scalar `N ^ (2 * (k - 1)) * (-N) ^ (-k)`,
+that is `(-1) ^ k * N ^ (k - 2)`. That scalar is AINTLIB's `frickeScalar N k`, where the identity
+is proved; it is not restated here.
 
-## Main definitions
+The roadmap's Fricke operator is the **normalized** `𝒲_N = (√N) ^ (2 - k) • (· ∣[k] W)`, which
+brings that scalar down to `(-1) ^ k` and so is an involution in even weight — the weights the
+sign theory lives in. It is a later rung, and every downstream statement about signs, eigenvalues
+and functional equations is about `𝒲_N`, not about the map defined here. The name
+`frickeOperator` is AINTLIB's own name for the un-normalized map that this file ports, and the
+roadmap names it as the declaration to migrate, so it is kept; a consumer wanting `𝒲_N` must
+supply the normalization.
 
-* `TauCeti.frickeOperator`: the Fricke operator on `M_k(Γ₁(N))`.
-* `TauCeti.frickeOperatorCusp`: the Fricke operator on `S_k(Γ₁(N))`.
+## Construction
 
-## The base field
-
-`frickeGL` is parameterized by the field it is read in, so the slash here is by `frickeGL ℝ N`
-directly, with no transport from `GL (Fin 2) ℚ`. The one place a rational model is still needed
-is `frickeGL_isCusp_smul`: mathlib detects a cusp of `SL₂(ℤ)` by rationality of the point
-(`isCusp_SL2Z_iff`), so the image point has to be exhibited as a rational one, and
-`map_ratCast_frickeGL` identifies `W` over `ℝ` as the base change of `W` over `ℚ` for that step.
+Both operators are mathlib's `ModularForm.translate`/`CuspForm.translate` — which slash by an
+arbitrary `g : GL (Fin 2) ℝ` and carry holomorphy and the cusp conditions with them — transported
+back to level `Γ₁(N)` along `Gamma1_map_inv_conjAct_frickeGL_eq` with `mcast`. This is the
+construction `diamondOpAux` of `TauCeti/NumberTheory/ModularForms/DiamondOperators.lean` already
+uses for conjugation by `Γ₀(N)`. Nothing about the cusps is proved here.
 
 ## `ℂ`-linearity
 
@@ -41,6 +48,21 @@ Scalars commute past a slash only on the positive-determinant branch — mathlib
 `ModularForm.smul_slash` otherwise carries the twist `σ A c`, which is complex conjugation.
 `det W = N > 0`, so `ModularForm.smul_slash_of_det_pos` of
 `TauCeti/NumberTheory/ModularForms/Basic.lean` applies and gives `map_smul'` for both operators.
+
+## Main definitions
+
+* `TauCeti.frickeOperator`: the un-normalized Fricke slash operator on `M_k(Γ₁(N))`.
+* `TauCeti.frickeOperatorCusp`: the un-normalized Fricke slash operator on `S_k(Γ₁(N))`.
+
+## Main results
+
+* `TauCeti.Gamma1_map_inv_conjAct_frickeGL_eq`: `W` normalizes the image of `Γ₁(N)` in
+  `GL (Fin 2) ℝ`. This is the group-level content of the construction, and what the later rungs
+  (the character-space transport, the `W_Q` family) consume.
+* `TauCeti.coe_frickeOperator`, `TauCeti.coe_frickeOperatorCusp`: on underlying functions both
+  operators are `⇑f ∣[k] W`.
+* `TauCeti.frickeOperator_coe_cuspForm`: the two operators agree under the coercion
+  `S_k(Γ₁(N)) → M_k(Γ₁(N))`.
 
 ## Provenance
 
@@ -51,9 +73,16 @@ roadmap.
 
 AINTLIB slashes by `(frickeGL N : GL (Fin 2) ℚ)` and lets the coercion to `GL (Fin 2) ℝ` do the
 work, so its `frickeSlash_invariant` consumes the hand-transported identity
-`glMap_frickeGL_mul_mapGL`; here the identity is available over `ℝ` as an instance of
-`frickeGL_mul_mapGL`, so no transport lemma appears. For the same reason AINTLIB's
-`frickeGL_det_pos` is `val_det_frickeGL_pos` read at `ℝ`.
+`glMap_frickeGL_mul_mapGL`; here `W` is read over `ℝ` directly, as an instance of the
+field-parameterized `frickeGL_mul_mapGL`, so no transport lemma appears. For the same reason
+AINTLIB's `frickeGL_det_pos` is `val_det_frickeGL_pos` read at `ℝ`.
+
+Neither the slash-invariance nor the cusp conditions are ported. AINTLIB builds both operators
+field by field, deriving invariance from its own `frickeSlash_invariant` and rebuilding the image
+cusp by hand out of `isCusp_SL2Z_iff` before descending along the finite index of `Γ₁(N)` in
+`SL₂(ℤ)`. Here the normalizer identity `Gamma1_map_inv_conjAct_frickeGL_eq` reduces both
+operators to `translate`, which mathlib proves for an arbitrary real matrix, so neither argument
+is needed.
 
 AINTLIB proves `ℂ`-linearity with its own `smul_slash_pos_det`; the corresponding TauCeti lemma
 `ModularForm.smul_slash_of_det_pos` was already on hand, and is more general (any scalar `α`
@@ -73,117 +102,97 @@ It belongs with that definition and with the character-space transport, not here
 
 open Matrix Matrix.SpecialLinearGroup CongruenceSubgroup UpperHalfPlane
 
-open scoped MatrixGroups ModularForm
+open scoped MatrixGroups ModularForm Pointwise
 
 namespace TauCeti
 
 variable {N : ℕ} [NeZero N] {k : ℤ}
 
-/-- `W` over `ℝ` is the base change of `W` over `ℚ`: both are `!![0, -1; N, 0]`. -/
-private theorem map_ratCast_frickeGL :
-    Matrix.GeneralLinearGroup.map (Rat.castHom ℝ) (frickeGL ℚ N) = frickeGL ℝ N := by
-  apply Units.ext
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp [coe_frickeGL]
+/-- **`W` normalizes `Γ₁(N)` in `GL (Fin 2) ℝ`**: conjugating the image of `Γ₁(N)` by the Fricke
+matrix returns that same subgroup. This is `frickeConjSL_mem_Gamma1` — that `W σ W⁻¹` stays in
+`Γ₁(N)` — turned into a statement about the subgroup itself, which is the form the operators
+below and the later Fricke rungs consume.
 
-/-- The determinant of `W`, read as a matrix over `ℝ`, is positive. This is the form the
-positive-determinant slash lemmas consume. -/
-private theorem det_coe_frickeGL_real_pos :
-    0 < ((frickeGL ℝ N : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ).det := by
-  rw [← Matrix.GeneralLinearGroup.val_det_apply]
-  exact val_det_frickeGL_pos
+Both inclusions come from the normalization identities of `Fricke/Conjugation.lean`:
+`frickeGL_mul_mapGL` moves `W` rightwards past `σ` and gives `⊇`, and `mapGL_mul_frickeGL`
+moves it leftwards and gives `⊆`. The shape matches `Gamma1_map_inv_conjAct_eq`, the same
+statement for conjugation by `Γ₀(N)`. -/
+public theorem Gamma1_map_inv_conjAct_frickeGL_eq :
+    ConjAct.toConjAct (frickeGL ℝ N)⁻¹ • (Gamma1 N).map (mapGL ℝ) = (Gamma1 N).map (mapGL ℝ) := by
+  ext y
+  simp only [Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def,
+    ConjAct.ofConjAct_toConjAct, map_inv, inv_inv, Subgroup.mem_map]
+  constructor
+  · rintro ⟨τ, hτ, hτy⟩
+    refine ⟨frickeConjSL ⟨τ, Gamma1_in_Gamma0 N hτ⟩, frickeConjSL_mem_Gamma1 τ hτ, ?_⟩
+    have h : mapGL ℝ τ * frickeGL ℝ N
+        = frickeGL ℝ N * mapGL ℝ (frickeConjSL ⟨τ, Gamma1_in_Gamma0 N hτ⟩) :=
+      mapGL_mul_frickeGL ℝ ⟨τ, Gamma1_in_Gamma0 N hτ⟩
+    rw [hτy] at h
+    refine (mul_left_cancel (a := frickeGL ℝ N) ?_).symm
+    rw [← h]
+    group
+  · rintro ⟨σ, hσ, rfl⟩
+    refine ⟨frickeConjSL ⟨σ, Gamma1_in_Gamma0 N hσ⟩, frickeConjSL_mem_Gamma1 σ hσ, ?_⟩
+    have h : frickeGL ℝ N * mapGL ℝ σ
+        = mapGL ℝ (frickeConjSL ⟨σ, Gamma1_in_Gamma0 N hσ⟩) * frickeGL ℝ N :=
+      frickeGL_mul_mapGL ℝ ⟨σ, Gamma1_in_Gamma0 N hσ⟩
+    rw [h]
+    group
 
-/-- **Slash-invariance of `f ∣[k] W` under `Γ₁(N)`**: if `f` is invariant under the image of
-`Γ₁(N)` in `GL (Fin 2) ℝ`, then so is `f ∣[k] W`. This is `frickeConjSL_mem_Gamma1` — that `W`
-conjugates `Γ₁(N)` into itself — read through the slash action. -/
-public theorem frickeSlash_invariant {f : ℍ → ℂ} (hf : ∀ γ ∈ (Gamma1 N).map (mapGL ℝ), f ∣[k] γ = f)
-    {γ : GL (Fin 2) ℝ} (hγ : γ ∈ (Gamma1 N).map (mapGL ℝ)) :
-    (f ∣[k] frickeGL ℝ N) ∣[k] γ = f ∣[k] frickeGL ℝ N := by
-  obtain ⟨σ, hσ, rfl⟩ := Subgroup.mem_map.mp hγ
-  rw [← SlashAction.slash_mul, frickeGL_mul_mapGL ℝ ⟨σ, Gamma1_in_Gamma0 N hσ⟩,
-    SlashAction.slash_mul, hf _ (Subgroup.mem_map.mpr ⟨_, frickeConjSL_mem_Gamma1 σ hσ, rfl⟩)]
+/-- **The Fricke slash operator** on `M_k(Γ₁(N))`: `f ↦ f ∣[k] W` for `W = !![0, -1; N, 0]`,
+as a `ℂ`-linear endomorphism.
 
-/-- **Cusp transport for `W`**: a cusp of `Γ₁(N)` is carried by `W` to another cusp of `Γ₁(N)`.
-Cusps of `SL₂(ℤ)` are exactly the rational points of `OnePoint ℝ`, and `W` has rational entries,
-so it permutes them; the statement descends from `SL₂(ℤ)` to `Γ₁(N)` because the latter has
-finite index. -/
-private theorem frickeGL_isCusp_smul {c : OnePoint ℝ} (hc : IsCusp c ((Gamma1 N).map (mapGL ℝ))) :
-    IsCusp (frickeGL ℝ N • c) ((Gamma1 N).map (mapGL ℝ)) := by
-  have hc_SL : IsCusp c ((⊤ : Subgroup SL(2, ℤ)).map (mapGL ℝ)) :=
-    hc.mono (Subgroup.map_mono le_top)
-  rw [← MonoidHom.range_eq_map] at hc_SL
-  have hsmul_SL : IsCusp (frickeGL ℝ N • c) (mapGL ℝ : SL(2, ℤ) →* _).range := by
-    rw [isCusp_SL2Z_iff] at hc_SL ⊢
-    obtain ⟨q, rfl⟩ := hc_SL
-    refine ⟨frickeGL ℚ N • q, ?_⟩
-    rw [← Rat.coe_castHom, OnePoint.map_smul, map_ratCast_frickeGL]
-  rw [MonoidHom.range_eq_map] at hsmul_SL
-  have : ((Gamma1 N).map (mapGL ℝ)).IsFiniteRelIndex
-      ((⊤ : Subgroup SL(2, ℤ)).map (mapGL ℝ)) := ⟨by
-    rw [Subgroup.relIndex_map_map_of_injective _ _ mapGL_injective,
-      Subgroup.relIndex_top_right]
-    exact Subgroup.FiniteIndex.index_ne_zero⟩
-  exact hsmul_SL.of_isFiniteRelIndex
-
-/-- Boundedness at the cusps transports along `W`, by `frickeGL_isCusp_smul`. -/
-private theorem frickeGL_bdd_at_cusps (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)
-    {c : OnePoint ℝ} (hc : IsCusp c ((Gamma1 N).map (mapGL ℝ))) :
-    c.IsBoundedAt (⇑f ∣[k] frickeGL ℝ N) k :=
-  OnePoint.IsBoundedAt.smul_iff.mp (f.bdd_at_cusps' (frickeGL_isCusp_smul hc))
-
-/-- **The Fricke operator `W_N`** on `M_k(Γ₁(N))`: `f ↦ f ∣[k] W` for `W = !![0, -1; N, 0]`.
-Slash-invariance comes from `W` normalizing `Γ₁(N)` (`frickeSlash_invariant`) and boundedness at
-the cusps from `frickeGL_isCusp_smul`; it is `ℂ`-linear because `det W = N > 0`. -/
+This is mathlib's `ModularForm.translate` by `W`, whose level `W⁻¹ Γ₁(N) W` is `Γ₁(N)` again by
+`Gamma1_map_inv_conjAct_frickeGL_eq`; `mcast` transports it back. It carries **no** normalizing
+scalar and is not an involution — see the module docstring. -/
 public noncomputable def frickeOperator (k : ℤ) :
     ModularForm ((Gamma1 N).map (mapGL ℝ)) k →ₗ[ℂ] ModularForm ((Gamma1 N).map (mapGL ℝ)) k where
   toFun f :=
-    { toSlashInvariantForm :=
-        { toFun := ⇑f ∣[k] frickeGL ℝ N
-          slash_action_eq' _ hγ :=
-            frickeSlash_invariant
-              (fun _ hδ ↦ SlashInvariantFormClass.slash_action_eq f _ hδ) hγ }
-      holo' := (ModularFormClass.holo f).slash k _
-      bdd_at_cusps' hc := frickeGL_bdd_at_cusps f hc }
+    ModularForm.mcast rfl (ModularForm.translate f (frickeGL ℝ N))
+      Gamma1_map_inv_conjAct_frickeGL_eq.symm
   map_add' f g := by
     ext z
-    simp only [FunLike.coe_add, SlashAction.add_slash, _root_.add_apply]
-    rfl
+    exact congr_fun (SlashAction.add_slash k (frickeGL ℝ N) ⇑f ⇑g) z
   map_smul' c f := by
     ext z
-    simp only [FunLike.coe_smul, ModularForm.smul_slash_of_det_pos k det_coe_frickeGL_real_pos,
-      RingHom.id_apply, _root_.smul_apply, smul_eq_mul]
-    rfl
+    exact congr_fun (ModularForm.smul_slash_of_det_pos k val_det_frickeGL_pos ⇑f c) z
 
+/-- On underlying functions the Fricke slash operator is `⇑f ∣[k] W`. -/
 @[simp]
-public theorem frickeOperator_coe (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) :
+public theorem coe_frickeOperator (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) :
     (⇑(frickeOperator (N := N) k f) : ℍ → ℂ) = ⇑f ∣[k] frickeGL ℝ N := (rfl)
 
-/-- **The Fricke operator `W_N` on cusp forms** `S_k(Γ₁(N))`: the cusp-form counterpart of
-`frickeOperator`, vanishing at the cusps transporting through `frickeGL_isCusp_smul` exactly as
-boundedness does. -/
+/-- **The Fricke slash operator on cusp forms** `S_k(Γ₁(N))`: the cusp-form counterpart of
+`frickeOperator`, built the same way from `CuspForm.translate`, so vanishing at the cusps comes
+from mathlib exactly as boundedness does. -/
 public noncomputable def frickeOperatorCusp (k : ℤ) :
     CuspForm ((Gamma1 N).map (mapGL ℝ)) k →ₗ[ℂ] CuspForm ((Gamma1 N).map (mapGL ℝ)) k where
   toFun f :=
-    { toSlashInvariantForm :=
-        { toFun := ⇑f ∣[k] frickeGL ℝ N
-          slash_action_eq' _ hγ :=
-            frickeSlash_invariant
-              (fun _ hδ ↦ SlashInvariantFormClass.slash_action_eq f _ hδ) hγ }
-      holo' := (CuspFormClass.holo f).slash k _
-      zero_at_cusps' hc :=
-        OnePoint.IsZeroAt.smul_iff.mp (f.zero_at_cusps' (frickeGL_isCusp_smul hc)) }
+    CuspForm.mcast rfl (CuspForm.translate f (frickeGL ℝ N))
+      Gamma1_map_inv_conjAct_frickeGL_eq.symm
   map_add' f g := by
     ext z
-    simp only [FunLike.coe_add, SlashAction.add_slash, _root_.add_apply]
-    rfl
+    exact congr_fun (SlashAction.add_slash k (frickeGL ℝ N) ⇑f ⇑g) z
   map_smul' c f := by
     ext z
-    simp only [FunLike.coe_smul, ModularForm.smul_slash_of_det_pos k det_coe_frickeGL_real_pos,
-      RingHom.id_apply, _root_.smul_apply, smul_eq_mul]
-    rfl
+    exact congr_fun (ModularForm.smul_slash_of_det_pos k val_det_frickeGL_pos ⇑f c) z
 
+/-- On underlying functions the Fricke slash operator on cusp forms is `⇑f ∣[k] W`. -/
 @[simp]
-public theorem frickeOperatorCusp_coe (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
+public theorem coe_frickeOperatorCusp (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     (⇑(frickeOperatorCusp (N := N) k f) : ℍ → ℂ) = ⇑f ∣[k] frickeGL ℝ N := (rfl)
+
+/-- **The two Fricke slash operators agree under the coercion** `S_k(Γ₁(N)) → M_k(Γ₁(N))`:
+both slash by `W`, which does not see whether a form vanishes at the cusps. This is the
+counterpart of `diamondOp_coe_cuspForm` for the diamond operators. -/
+@[simp]
+public theorem frickeOperator_coe_cuspForm (k : ℤ)
+    (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
+    frickeOperator k (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) =
+      (frickeOperatorCusp k f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) :=
+  DFunLike.coe_injective <| by
+    rw [coe_frickeOperator, ModularFormClass.coe_modularForm, ModularFormClass.coe_modularForm,
+      coe_frickeOperatorCusp]
 
 end TauCeti
