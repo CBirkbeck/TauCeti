@@ -51,16 +51,21 @@ variable {R : Type*} [CommRing R] [IsDedekindDomain R]
 
 /-- The `Multiplicative ℤ`-valued valuation of a unit is determined by the `ℤᵐ⁰`-valued one.
 Mathlib carries only the coerced form `valuationOfNeZero_eq`, which this complements. -/
+@[simp]
 theorem valuationOfNeZero_eq_iff (v : HeightOneSpectrum R) (u : Kˣ) (m : Multiplicative ℤ) :
     v.valuationOfNeZero u = m ↔ v.valuation K (u : K) = (m : WithZero (Multiplicative ℤ)) := by
   rw [← WithZero.coe_inj, valuationOfNeZero_eq]
 
 /-- A unit has trivial `v`-adic `valuationOfNeZero` iff its `v`-adic valuation is `1`, the case
-`m = 1` of `valuationOfNeZero_eq_iff`. -/
-@[simp]
+`m = 1` of `valuationOfNeZero_eq_iff`.
+
+Not `@[simp]`: it is the `m = 1` instance of `valuationOfNeZero_eq_iff`, which carries the
+annotation instead. With both marked, `simpNF` rejects this one — "simp can prove this" — because
+the general form subsumes it. Every consumer names it explicitly, so nothing depends on the
+attribute. -/
 theorem valuationOfNeZero_eq_one_iff (v : HeightOneSpectrum R) (x : Kˣ) :
     v.valuationOfNeZero x = 1 ↔ v.valuation K (x : K) = 1 := by
-  simpa using valuationOfNeZero_eq_iff v x 1
+  simp
 
 end IsDedekindDomain.HeightOneSpectrum
 
