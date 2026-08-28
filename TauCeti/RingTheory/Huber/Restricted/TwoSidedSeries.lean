@@ -44,7 +44,7 @@ a placement hazard:
 
 * `TauCeti.Huber.twoSidedRestrictedSubmodule`: the `A`-module of two-sided restricted families,
   the coefficient object underlying `A⟨X, X⁻¹⟩`.
-* `TauCeti.Huber.disjoint_pi_bot_of_disjoint_compl`: disjoint index sets give disjoint
+* `TauCeti.Huber.disjoint_pi_compl_bot_of_disjoint`: disjoint index sets give disjoint
   submodules of families vanishing outside them. Stated for
   an arbitrary set because nothing in it is about `ℤ` or about the sign of a degree; Mathlib has
   the `Finsupp` analogue, `Finsupp.supported`, but no `Pi` one.
@@ -63,7 +63,7 @@ a placement hazard:
   directness** — `A⟨X, X⁻¹⟩` is the sum of its non-negative and negative parts, and that sum is
   direct. This is fact (i) of Wedhorn's Lemma 8.33 at the level of coefficients, and it is what
   the diagram chase there needs; the Example 6.39 universal property does not supply it.
-* `TauCeti.Huber.zeroAtFilter_of_forall_eq_or_eq_zero`: zeroing coefficients keeps a family
+* `Filter.ZeroAtFilter.of_forall_eq_or_eq_zero`: zeroing coefficients keeps a family
   restricted. Stated pointwise rather than for an indicator, so it carries no decidability
   hypothesis; it is what makes the decomposition land inside the submodule rather than merely
   inside `ℤ → M`.
@@ -156,7 +156,7 @@ omit [TopologicalSpace M] in
 /-- **Disjoint sets of indices give disjoint submodules of families vanishing outside them.**
 A family vanishing outside `s` and outside `t` at once, for `s` and `t` disjoint, vanishes
 everywhere. The submodules are Mathlib's `Submodule.pi` at the zero submodule. -/
-theorem disjoint_pi_bot_of_disjoint_compl {ι : Type*} {s t : Set ι} (h : Disjoint s t) :
+theorem disjoint_pi_compl_bot_of_disjoint {ι : Type*} {s t : Set ι} (h : Disjoint s t) :
     Disjoint (Submodule.pi sᶜ fun _ ↦ (⊥ : Submodule A M))
       (Submodule.pi tᶜ fun _ ↦ (⊥ : Submodule A M)) :=
   Submodule.disjoint_def.mpr fun f hs ht ↦ funext fun i ↦ by
@@ -168,7 +168,7 @@ variable (A M) [ContinuousAdd M] [ContinuousConstSMul A M]
 
 /-- **Wedhorn's degree decomposition, Lemma 8.33(i).** A two-sided restricted family is the sum of
 its non-negative part and its negative part: `A⟨z, z⁻¹⟩ = A⟨z⟩ + z⁻¹A⟨z⁻¹⟩` at the level of
-coefficients. Each summand is again restricted by `zeroAtFilter_of_forall_eq_or_eq_zero`. -/
+coefficients. Each summand is again restricted by `Filter.ZeroAtFilter.of_forall_eq_or_eq_zero`. -/
 theorem twoSidedRestrictedSubmodule_eq_sup :
     twoSidedRestrictedSubmodule A M =
       (twoSidedRestrictedSubmodule A M ⊓
@@ -201,7 +201,7 @@ theorem disjoint_twoSidedRestricted_nonneg_neg :
     rw [Set.disjoint_left]
     intro n hn hn'
     exact lt_irrefl n (lt_of_lt_of_le hn' hn)
-  exact (disjoint_pi_bot_of_disjoint_compl (A := A) (M := M) hst).mono inf_le_right inf_le_right
+  exact (disjoint_pi_compl_bot_of_disjoint (A := A) (M := M) hst).mono inf_le_right inf_le_right
 
 end DegreeSplit
 
