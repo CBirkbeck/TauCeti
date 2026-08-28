@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
+import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 public import Mathlib.FieldTheory.PurelyInseparable.Exponent
 
 /-!
@@ -46,11 +46,15 @@ universe u
 
 namespace TauCeti
 
-/-- Source: Stacks, Lemma 10.161.13 (tag 032O), proof: "There exists a finite purely inseparable
-field extension `L′/K` and `q = p^e` such that `L ⊂ L′(x^{1/q})`; some details omitted" — the
-extension `L'`. For finitely many elements `s` of a field `F` and `0 < n`, there is a finite
-extension `E` of `F` in which every `c ∈ s` has an `n`-th root (adjoin roots inside an algebraic
-closure). Both conjuncts concern the same witness `E`, which is why they are bundled. -/
+/-- An auxiliary root-adjoining construction: for finitely many elements `s` of a field `F` and
+`0 < n`, there is a finite extension `E` of `F` in which every `c ∈ s` has an `n`-th root (adjoin
+the roots inside an algebraic closure). Both conjuncts concern the same witness `E`, which is why
+they are bundled.
+
+This feeds the construction of the extension `L′` in Stacks, Lemma 10.161.13 (tag 032O) —
+"There exists a finite purely inseparable field extension `L′/K` and `q = p^e` such that
+`L ⊂ L′(x^{1/q})`" — but is NOT that extension: nothing here asserts that `E / F` is purely
+inseparable, only that it is finite and contains the required roots. -/
 theorem exists_finiteDimensional_forall_exists_pow_eq (F : Type u) [Field F] (s : Finset F)
     {n : ℕ} (hn : 0 < n) :
     ∃ (E : Type u) (_ : Field E) (_ : Algebra F E),
@@ -87,7 +91,8 @@ theorem IsPurelyInseparable.nonempty_algHom_of_forall_exists_pow_eq (K M : Type*
   set φ := IsPurelyInseparable.iterateFrobenius K M p hn with hφ
   set ψ := iterateFrobenius K' p n with hψ
   set θ : M →+* K' := (algebraMap K K').comp φ with hθ
-  have hψ_apply : ∀ y : K', ψ y = y ^ p ^ n := fun _ ↦ rfl
+  have hψ_apply : ∀ y : K', ψ y = y ^ p ^ n := fun y ↦
+    iterateFrobenius_def (R := K') (p := p) (n := n) (x := y)
   -- The single computation both the `K`-algebra law (B2.2) and the `K`-linearity of the
   -- assembled embedding (B2.6) rest on: on the image of `K`, `θ` and `ψ` agree.
   have hKθ : ∀ a : K, θ (algebraMap K M a) = ψ (algebraMap K K' a) := fun a ↦ by
