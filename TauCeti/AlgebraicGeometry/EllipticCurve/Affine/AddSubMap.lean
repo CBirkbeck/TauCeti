@@ -51,7 +51,7 @@ namespace Affine
 
 variable {F : Type*} [Field F] {W : Affine F}
 
-/-! ### `sym2x` and the addition-and-multiplication map -/
+/-! ### `sym2x` and the addition-and-subtraction map -/
 
 /-- `sym2x` written out in the projective `xRep` coordinates.
 

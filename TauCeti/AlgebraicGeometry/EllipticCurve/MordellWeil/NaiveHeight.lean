@@ -8,6 +8,7 @@ module
 public import Mathlib.NumberTheory.Height.EllipticCurve
 public import Mathlib.NumberTheory.Height.Northcott
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.AddSubMap
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.XRep
 
 /-!
 # The naïve height on an elliptic curve, and the approximate parallelogram law
@@ -99,6 +100,9 @@ and makes them redundant. See the `api-design` thread on the PR. -/
 lemma Point.naiveHeight_eq_logHeight (P : W.Point) : P.naiveHeight = logHeight P.xRep := by
   simp [Point.naiveHeight]
 
+/-- The naïve height as a *scalar* logarithmic height: it is `logHeight₁` of the zeroth
+homogeneous coordinate `P.xRep 0`. This is the form the Northcott instance consumes, since
+`Northcott` is stated for `logHeight₁`. -/
 lemma Point.naiveHeight_eq_logHeight₁ {P : W.Point} :
     P.naiveHeight = logHeight₁ (P.xRep 0) := by
   match P with

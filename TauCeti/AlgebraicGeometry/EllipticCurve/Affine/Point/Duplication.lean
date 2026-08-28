@@ -15,6 +15,9 @@ numerator and denominator of the duplication formula, the `x`-coordinate additio
 transport to the projective representative `Point.xRep`, and the finiteness of the fibres of
 `xRep`.
 
+The fibres of `xRep` are *not* here: they use none of these formulae and live in
+`TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.XRep`.
+
 Nothing here mentions a height. These are consumed by
 `TauCeti.AlgebraicGeometry.EllipticCurve.Affine.AddSubMap` and, through it, by the naïve-height
 development in `TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.NaiveHeight`.
@@ -26,8 +29,6 @@ development in `TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.NaiveHeight`
   formulae, as quotients.
 * `WeierstrassCurve.Affine.Point.xRep_add_self_of_Y_ne` and companions : the same, transported to
   the projective representative.
-* `WeierstrassCurve.Affine.finite_preimage_xRep`, `finite_preimage_xRep0` : the fibres of `xRep`
-  are finite.
 
 ## Relation to Mathlib
 
@@ -158,29 +159,6 @@ lemma Point.xRep_sub_of_X_ne {xP yP xQ yQ : F} (hP : W.Nonsingular xP yP)
   grind only [negY]
 
 end Decidable
-
-/-- Only finitely many points share a given projective `x`-coordinate. -/
-lemma finite_preimage_xRep (x : F) : {P : W.Point | P.xRep = ![x, 1]}.Finite := by
-  rcases Set.eq_empty_or_nonempty {P : W.Point | P.xRep = ![x, 1]} with h | h
-  · exact h ▸ Set.finite_empty
-  choose Q hQ using h
-  simp only [Set.mem_ofPred_eq] at hQ
-  have hpair : {P : W.Point | P.xRep = ![x, 1]} = {Q, -Q} := by
-    ext : 1; simp [← hQ, Point.xRep_eq_xRep_iff]
-  rw [hpair]
-  simp
-
-/-- Only finitely many points share a given value of `xRep 0`, the zeroth *homogeneous*
-coordinate of the projective representative. For a nonzero point this is the affine
-`x`-coordinate, but at the point at infinity `xRep = ![1, 0]`, so the value there is `1` — which
-is why the proof carries the extra `{0}` case. -/
-lemma finite_preimage_xRep0 (x : F) : {P : W.Point | P.xRep 0 = x}.Finite := by
-  have : {P : W.Point | P.xRep 0 = x} ⊆ {P | P.xRep = ![x, 1]} ∪ {0} := by
-    intro P hP
-    match P with
-    | 0 => simp
-    | .some x' y h => simp_all [Point.xRep_some]
-  exact (finite_preimage_xRep x).union (Set.finite_singleton 0) |>.subset this
 
 end Affine
 
