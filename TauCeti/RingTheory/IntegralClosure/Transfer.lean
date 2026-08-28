@@ -24,8 +24,8 @@ third — and independent of the others.
   module over the Noetherian ring `A`, so is the integral closure in a ring that embeds into it —
   the "as `R` is Noetherian it suffices to enlarge the field" step that Stacks uses in
   Lemmas 10.161.5, 10.161.12 and 10.161.13.
-* Fraction fields: the fraction field of a domain `S` finite over `R` is finite-dimensional over
-  any intermediate field `K` with `R → K → L` (Mathlib states this only for the concrete
+* Fraction fields: a fraction field of a ring `S` finite over `R` is finite-dimensional over any
+  intermediate field `K` with `R → K → L` (Mathlib states this only for the concrete
   `FractionRing R` and `FractionRing S`).
 
 ## Main results
@@ -88,16 +88,16 @@ theorem IsIntegralClosure.finite_of_injective {A : Type*} [CommRing A] [IsNoethe
   exact Module.Finite.of_injective
     (IsIntegralClosure.lift (S := C) A C' K').toLinearMap hinj
 
-/-- Source: Stacks, Lemma 10.161.5 (tag 032I), proof: "Let `M` be a finite field extension of
-the fraction field of `S`. Then `M` is also a finite field extension of `K`" (`S` finite over
-`R`, `K` the fraction field of `R`). The fraction field of a domain `S` finite and torsion-free
-over a domain `R` is finite-dimensional over the fraction field of `R`, for abstract fraction
-fields `K` and `L`. NOTE the hypotheses are weaker than that sentence suggests: `K` need only
-be an intermediate field with `R → K → L`, not a fraction field of `R`, and neither `R` being a
-domain nor `S` torsion-free over it is assumed. Mathlib covers only the concrete
-`FractionRing R` / `FractionRing S` case. -/
+/-- A fraction field `L` of a ring `S` that is finite as an `R`-module is finite-dimensional
+over any intermediate field `K`, that is, any field with `R → K → L`.
+
+This is the content of Stacks, Lemma 10.161.5 (tag 032I) — "Let `M` be a finite field extension
+of the fraction field of `S`. Then `M` is also a finite field extension of `K`" — but the
+hypotheses here are weaker than that sentence suggests, and deliberately so: `K` need not be a
+fraction field of `R`, and no domain or torsion-freeness assumption on `R` or `S` is used.
+Mathlib covers only the concrete `FractionRing R` / `FractionRing S` case. -/
 theorem IsFractionRing.finiteDimensional_of_finite (R S K L : Type*) [CommRing R] [CommRing S]
-    [IsDomain S] [Algebra R S] [Module.Finite R S]
+    [Algebra R S] [Module.Finite R S]
     [Field K] [Field L] [Algebra R K] [Algebra S L] [IsFractionRing S L]
     [Algebra K L] [Algebra R L] [IsScalarTower R K L] [IsScalarTower R S L] :
     FiniteDimensional K L := by
