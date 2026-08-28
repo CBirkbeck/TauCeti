@@ -441,6 +441,13 @@ theorem suppFun_comap {B : Type*} [CommRing B] (φ : A →+* B) (v : Spv B) :
     suppFun (comap φ v) = PrimeSpectrum.comap φ (suppFun v) := by
   ext; simp [mem_supp_iff, comap_vle]
 
+/-- The support of a pulled-back point, as an ideal of `A`: the `Ideal`-level form of
+`suppFun_comap`, which says the same thing about `suppFun` and `PrimeSpectrum.comap`. -/
+@[simp]
+theorem supp_comap {B : Type*} [CommRing B] (φ : A →+* B) (v : Spv B) :
+    (comap φ v).supp = Ideal.comap φ v.supp :=
+  congrArg PrimeSpectrum.asIdeal (suppFun_comap φ v)
+
 /-! ### The trivial-valuation section of the support map -/
 
 /-- The trivial-valuation section of the support map (Wedhorn, Remark 4.6): the point of
