@@ -75,6 +75,39 @@ private theorem degree_zeros_le_finrank_adjoin (hF : IsFunctionField k F) {z : F
       rw [max_eq_left (hsupport P hP).le]
     _ ≤ (Module.finrank k⟮z⟯ F : ℤ) := hbound
 
+/-- The products `c * x ^ j` with `j ≤ l` lie in `L(l (x)_∞ + C)`, as soon as the poles of `c` are
+dominated by `C`. The principal divisor of `c * x ^ j` splits off against `l (x)_∞ + C` into four
+effective pieces: the zeros of `c`, the slack `C - (c)_∞`, `j` copies of the zeros of `x`, and the
+remaining `l - j` copies of its poles. -/
+theorem mem_riemannRochSpace_mul_pow (hF : IsFunctionField k F) (x c : Fˣ) {C : Divisor k F}
+    (hC : Divisor.poles hF c ≤ C) {j l : ℕ} (hjl : j ≤ l) :
+    (c : F) * (x : F) ^ j ∈ riemannRochSpace (l • Divisor.poles hF x + C) := by
+  have hpow : Divisor.principal hF (x ^ j) = j • Divisor.principal hF x := by
+    rw [← zpow_natCast x j, Divisor.principal_zpow, natCast_zsmul]
+  have hsplit : l • Divisor.poles hF x =
+      j • Divisor.poles hF x + (l - j) • Divisor.poles hF x := by
+    rw [← add_nsmul, Nat.add_sub_cancel' hjl]
+  have hkey : Divisor.principal hF (c * x ^ j) + (l • Divisor.poles hF x + C) =
+      Divisor.zeros hF c + (C - Divisor.poles hF c) +
+        j • Divisor.zeros hF x + (l - j) • Divisor.poles hF x := by
+    rw [Divisor.principal_mul, hpow, hsplit,
+      ← Divisor.zeros_sub_poles hF c, ← Divisor.zeros_sub_poles hF x]
+    module
+  have hnonneg : (0 : Divisor k F) ≤
+      Divisor.principal hF (c * x ^ j) + (l • Divisor.poles hF x + C) := by
+    rw [hkey]
+    refine add_nonneg (add_nonneg (add_nonneg ?_ ?_) ?_) ?_
+    · exact WeilDivisor.isEffective_iff_zero_le.mp (Divisor.isEffective_zeros hF c)
+    · exact sub_nonneg.mpr hC
+    · exact nsmul_nonneg
+        (WeilDivisor.isEffective_iff_zero_le.mp (Divisor.isEffective_zeros hF x)) _
+    · exact nsmul_nonneg
+        (WeilDivisor.isEffective_iff_zero_le.mp (Divisor.isEffective_poles hF x)) _
+  have hval : ((c * x ^ j : Fˣ) : F) = (c : F) * (x : F) ^ j := by
+    rw [Units.val_mul, Units.val_pow_eq_pow_val]
+  rw [← hval]
+  exact (mem_riemannRochSpace_units_iff hF).mpr hnonneg
+
 /-- **The growth estimate** behind Stichtenoth's proofs of Theorems 1.4.11 and 1.4.14, in divisor
 form: if the functions `c i` are linearly independent over `k⟮x⟯` and all their poles are
 dominated by one divisor `C`, then the `#ι * (l + 1)` products `c i * x ^ j` with `j ≤ l` are
@@ -86,36 +119,8 @@ theorem Divisor.card_mul_succ_le_dim_nsmul_poles_add (hF : IsFunctionField k F) 
     Fintype.card ι * (l + 1) ≤ Divisor.dim (l • Divisor.poles hF x + C) := by
   classical
   have hmem : ∀ p : ι × Fin (l + 1),
-      (c p.1 : F) * (x : F) ^ (p.2 : ℕ) ∈ riemannRochSpace (l • Divisor.poles hF x + C) := by
-    rintro ⟨i, j⟩
-    have hjle : (j : ℕ) ≤ l := Nat.lt_succ_iff.mp j.isLt
-    have hpow : Divisor.principal hF (x ^ (j : ℕ)) =
-        (j : ℕ) • Divisor.principal hF x := by
-      rw [← zpow_natCast x (j : ℕ), Divisor.principal_zpow, natCast_zsmul]
-    have hsplit : l • Divisor.poles hF x =
-        (j : ℕ) • Divisor.poles hF x + (l - (j : ℕ)) • Divisor.poles hF x := by
-      rw [← add_nsmul, Nat.add_sub_cancel' hjle]
-    have hkey : Divisor.principal hF (c i * x ^ (j : ℕ)) +
-          (l • Divisor.poles hF x + C) =
-        Divisor.zeros hF (c i) + (C - Divisor.poles hF (c i)) +
-          (j : ℕ) • Divisor.zeros hF x + (l - (j : ℕ)) • Divisor.poles hF x := by
-      rw [Divisor.principal_mul, hpow, hsplit,
-        ← Divisor.zeros_sub_poles hF (c i), ← Divisor.zeros_sub_poles hF x]
-      module
-    have hnonneg : (0 : Divisor k F) ≤
-        Divisor.principal hF (c i * x ^ (j : ℕ)) + (l • Divisor.poles hF x + C) := by
-      rw [hkey]
-      refine add_nonneg (add_nonneg (add_nonneg ?_ ?_) ?_) ?_
-      · exact WeilDivisor.isEffective_iff_zero_le.mp (Divisor.isEffective_zeros hF (c i))
-      · exact sub_nonneg.mpr (hC i)
-      · exact nsmul_nonneg
-          (WeilDivisor.isEffective_iff_zero_le.mp (Divisor.isEffective_zeros hF x)) _
-      · exact nsmul_nonneg
-          (WeilDivisor.isEffective_iff_zero_le.mp (Divisor.isEffective_poles hF x)) _
-    have hval : ((c i * x ^ (j : ℕ) : Fˣ) : F) = (c i : F) * (x : F) ^ (j : ℕ) := by
-      rw [Units.val_mul, Units.val_pow_eq_pow_val]
-    rw [← hval]
-    exact (mem_riemannRochSpace_units_iff hF).mpr hnonneg
+      (c p.1 : F) * (x : F) ^ (p.2 : ℕ) ∈ riemannRochSpace (l • Divisor.poles hF x + C) :=
+    fun p ↦ mem_riemannRochSpace_mul_pow hF x (c p.1) (hC p.1) (Nat.lt_succ_iff.mp p.2.isLt)
   have hfam := Transcendental.linearIndependent_mul_pow_fin hx hc (l + 1)
   have hv : LinearIndependent k fun p : ι × Fin (l + 1) ↦
       (⟨(c p.1 : F) * (x : F) ^ (p.2 : ℕ), hmem p⟩ :
