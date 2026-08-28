@@ -780,10 +780,19 @@ drops: `exists_eq_T_zpow_mul_conjScale_mul_T_zpow` writes `δ ∈ Γ₁(N/l)` as
 `T ^ i * conjScale l γ c * T ^ j` with `γ ∈ Γ₀(N)`, the two translations are absorbed by
 `T`-periodicity through `slash_zpow_mul_mul_zpow_eq_smul`, and the middle factor contributes the
 character value read off `γ 1 1` — which the factorisation forces to be `1`, because `γ 1 1` is
-congruent to `δ 1 1 ≡ 1` modulo `N / l`. -/
+congruent to `δ 1 1 ≡ 1` modulo `N / l`.
+
+Adapted from `conductor_slash_eq_self_of_mem_Gamma1_div` in AINTLIB
+(`Eigenforms/ConductorTheorem.lean`:217, Chris Birkbeck, Apache-2.0, commit
+`2baa76f742bdb4fb8ee323fabba41203bd390e08`). The source states it over its own `levelRaiseFun`
+and a `DirichletCharacter`, and routes through a conductor-specific helper; here it is stated over
+`scaleGL` and a units-valued character, and assembled from
+`exists_eq_T_zpow_mul_conjScale_mul_T_zpow`,
+`slash_zpow_mul_mul_zpow_eq_smul` and
+`slash_conjScale_eq_smul_of_slash_scaleGL`. -/
 theorem slash_mapGL_eq_self_of_mem_Gamma1_div (l N : ℕ) [NeZero l] (hlN : l ∣ N)
-    (hNl : N / l ∣ N) (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
-    (hχ : ∀ u : (ZMod N)ˣ, ZMod.unitsMap hNl u = 1 → χ u = 1) (f : ℍ → ℂ)
+    (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
+    (hχ : ∀ u : (ZMod N)ˣ, ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) u = 1 → χ u = 1) (f : ℍ → ℂ)
     (hnb : ∀ (γ : SL(2, ℤ)) (hγ : γ ∈ Gamma0 N),
       (f ∣[k] scaleGL l) ∣[k] mapGL ℝ γ =
         (χ ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) : ℂ) • (f ∣[k] scaleGL l))
@@ -792,19 +801,17 @@ theorem slash_mapGL_eq_self_of_mem_Gamma1_div (l N : ℕ) [NeZero l] (hlN : l �
     f ∣[k] (mapGL ℝ δ : GL (Fin 2) ℝ) = f := by
   obtain ⟨i, j, c, γ, hc, hγ, hfactor, hdiag⟩ :=
     exists_eq_T_zpow_mul_conjScale_mul_T_zpow l N hlN δ (Gamma1_in_Gamma0 _ hδ)
-  have hdet : 0 < ((mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) :
-      Matrix (Fin 2) (Fin 2) ℝ).det := by
-    rw [← Matrix.GeneralLinearGroup.val_det_apply, Matrix.SpecialLinearGroup.det_mapGL]
-    norm_num
+  have hdet := det_pos_of_mem_slGL (MonoidHom.mem_range.mpr ⟨ModularGroup.T, rfl⟩)
   have hconj := slash_conjScale_eq_smul_of_slash_scaleGL (k := k) f γ hc (hnb γ hγ)
   -- the character value is `1`: `γ 1 1` is congruent to `δ 1 1 ≡ 1` modulo `N / l`
   have hchar : (χ ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) : ℂ) = 1 := by
     obtain ⟨-, hd, hcz⟩ := (Gamma1_mem _ _).mp hδ
-    have hred : ZMod.unitsMap hNl ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) = 1 := by
+    have hred : ZMod.unitsMap (Nat.div_dvd_of_dvd hlN)
+        ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) = 1 := by
       apply Units.ext
       have hval : ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩ : ZMod N) = ((γ 1 1 : ℤ) : ZMod N) := rfl
       rw [Units.val_one, ZMod.unitsMap_def, Units.coe_map, MonoidHom.coe_coe, hval,
-        ZMod.castHom_apply, ZMod.cast_intCast hNl, hdiag]
+        ZMod.castHom_apply, ZMod.cast_intCast (Nat.div_dvd_of_dvd hlN), hdiag]
       push_cast
       rw [hd, hcz, zero_mul, sub_zero]
     rw [hχ _ hred, Units.val_one]
