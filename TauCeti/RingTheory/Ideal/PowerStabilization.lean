@@ -17,17 +17,11 @@ about the ring beyond `Semiring` is used, and no annihilator appears.
 
 The second is the conditional stabilization criterion: if some `i ∈ I` is such that `1 + i`
 annihilates `I ^ n`, then `I ^ (n + 1) = I ^ n`, and hence the powers are constant from `n` on.
-The annihilating element is a **hypothesis** here.
+The annihilating element is a **hypothesis** here, and neither statement needs commutativity.
 
 Finite generation of `I`, and the localization at `1 + I` that produces such an `i` in Wedhorn's
 proof of Proposition 7.49(2), are deliberately **outside** this module: nothing below mentions a
-localization, and no theorem here derives the annihilator. The submonoid `1 + I` is defined
-because it is the natural home of that element, and because being a *submonoid* is what allows
-finitely many annihilating witnesses to be combined into one.
-
-## Main definitions
-
-* `Ideal.oneAdd`: the submonoid `1 + I` of `B`.
+localization, and no theorem here derives the annihilator.
 
 ## Main results
 
@@ -65,43 +59,34 @@ section Ring
 
 variable {B : Type*} [Ring B]
 
-/-- The submonoid `1 + I` of `B`, for an ideal `I`. It is multiplicatively closed because
-`ab - 1 = a(b - 1) + (a - 1)`, which needs only closure of `I` under left multiplication. -/
-def oneAdd (I : _root_.Ideal B) : Submonoid B where
-  carrier := {x | x - 1 ∈ I}
-  one_mem' := by simp
-  mul_mem' {a b} ha hb := by
-    simp only [Set.mem_ofPred_eq] at ha hb ⊢
-    have h : a * b - 1 = a * (b - 1) + (a - 1) := by
-      rw [mul_sub, mul_one]; abel
-    rw [h]
-    exact I.add_mem (I.mul_mem_left _ hb) ha
+/-- If some `i ∈ I` is such that `1 + i` annihilates `I ^ n`, then `I ^ (n + 1) = I ^ n`.
 
-@[simp]
-theorem mem_oneAdd {I : _root_.Ideal B} {x : B} : x ∈ I.oneAdd ↔ x - 1 ∈ I := Iff.rfl
-
-end Ring
-
-section CommRing
-
-variable {B : Type*} [CommRing B]
-
-/-- If some `i ∈ I` is such that `1 + i` annihilates `I ^ n`, then `I ^ (n + 1) = I ^ n`. -/
+Commutativity is not needed. The two cases are genuinely different: for `n ≥ 1` the element
+`i * x` lands in `I * I ^ n = I ^ (n + 1)`, whereas at `n = 0` that identity fails for a left
+ideal, and the conclusion `I = ⊤` comes instead from `1 + i` annihilating `1`. -/
 theorem pow_succ_eq_pow_of_forall_mul_eq_zero {I : _root_.Ideal B} {i : B} (hi : i ∈ I) {n : ℕ}
     (h : ∀ x ∈ I ^ n, (1 + i) * x = 0) : I ^ (n + 1) = I ^ n := by
   refine le_antisymm (_root_.Ideal.pow_le_pow_right (Nat.le_succ n)) fun x hx ↦ ?_
-  have hx0 : x = -(x * i) := by
-    have hxx : (1 + i) * x = 0 := h x hx
-    have hsum : x * i + x = 0 := by rw [← hxx]; ring
-    exact eq_neg_of_add_eq_zero_right hsum
-  rw [hx0, pow_succ]
-  exact neg_mem (mul_mem_mul hx hi)
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · have hone : (1 : B) + i = 0 := by
+      simpa using h 1 (by rw [Submodule.pow_zero, Ideal.one_eq_top]; trivial)
+    have h1 : (1 : B) ∈ I := by
+      rw [eq_neg_iff_add_eq_zero.mpr hone]
+      exact neg_mem hi
+    rw [Submodule.pow_one, (eq_top_iff_one I).mpr h1]
+    trivial
+  · have hx0 : x = -(i * x) := by
+      have hxx : (1 + i) * x = 0 := h x hx
+      have hsum : i * x + x = 0 := by rw [← hxx, add_mul, one_mul, add_comm]
+      exact eq_neg_of_add_eq_zero_right hsum
+    rw [I.pow_succ' hn.ne', hx0]
+    exact neg_mem (mul_mem_mul hi hx)
 
 /-- Under the same hypothesis, the powers of `I` are constant from `n` on. -/
 theorem pow_eq_pow_of_forall_mul_eq_zero {I : _root_.Ideal B} {i : B} (hi : i ∈ I) {n : ℕ}
     (h : ∀ x ∈ I ^ n, (1 + i) * x = 0) {k : ℕ} (hk : n ≤ k) : I ^ k = I ^ n :=
   pow_eq_pow_of_pow_succ_eq_pow (pow_succ_eq_pow_of_forall_mul_eq_zero hi h) hk
 
-end CommRing
+end Ring
 
 end Ideal
