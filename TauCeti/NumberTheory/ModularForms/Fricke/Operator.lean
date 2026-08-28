@@ -209,16 +209,18 @@ public theorem frickeOperator_coe_cuspForm (k : ℤ)
     rw [coe_frickeOperator, ModularFormClass.coe_modularForm, ModularFormClass.coe_modularForm,
       coe_frickeOperatorCusp]
 
-/-- **The diamond shift** `W ∘ ⟨d⟩ = ⟨d⁻¹⟩ ∘ W` on `M_k(Γ₁(N))`.
-
-Slashing by `W` moves a representative `g` of `d` across it as `frickeConjSL g`
-(`mapGL_mul_frickeGL`), and that matrix carries the diamond label `d⁻¹`
-(`toHomUnits_gamma0Map_frickeConjGamma0_eq_inv`). Since both diamond operators may be evaluated
-at any representative with the right label (`coe_diamondOp`), the two sides are the same slash by
-a product. -/
+/-- **The diamond shift** `W ∘ ⟨d⟩ = ⟨d⁻¹⟩ ∘ W` on `M_k(Γ₁(N))`: the Fricke operator does not
+commute with the diamond operators, it inverts their label. Read on a nebentypus space this says
+`W` carries `M_k(Γ₁(N), χ)` into `M_k(Γ₁(N), χ⁻¹)`. -/
+@[simp]
 public theorem frickeOperator_diamondOp (k : ℤ) (d : (ZMod N)ˣ) :
     (frickeOperator (N := N) k).comp (diamondOp k d) =
       (diamondOp k d⁻¹).comp (frickeOperator (N := N) k) := by
+  -- `W` moves a representative `g` of `d` across it as `frickeConjSL g`
+  -- (`mapGL_mul_frickeGL`), and that matrix carries the label `d⁻¹`
+  -- (`toHomUnits_gamma0Map_frickeConjGamma0_eq_inv`). `coe_diamondOp` evaluates a diamond
+  -- operator at any representative with the right label, so both sides become one slash by a
+  -- product.
   obtain ⟨g, hg⟩ := Gamma0Map_toHomUnits_surjective (N := N) d
   refine LinearMap.ext fun f ↦ DFunLike.coe_injective ?_
   rw [LinearMap.comp_apply, LinearMap.comp_apply, coe_frickeOperator,
@@ -227,15 +229,18 @@ public theorem frickeOperator_diamondOp (k : ℤ) (d : (ZMod N)ˣ) :
     mapGL_mul_frickeGL]
 
 /-- **The diamond shift on cusp forms**: the `S_k(Γ₁(N))` counterpart of
-`frickeOperator_diamondOp`, proved the same way from `coe_diamondOpCusp`. -/
+`frickeOperator_diamondOp`. -/
+@[simp]
 public theorem frickeOperatorCusp_diamondOpCusp (k : ℤ) (d : (ZMod N)ˣ) :
     (frickeOperatorCusp (N := N) k).comp (diamondOpCusp k d) =
       (diamondOpCusp k d⁻¹).comp (frickeOperatorCusp (N := N) k) := by
-  obtain ⟨g, hg⟩ := Gamma0Map_toHomUnits_surjective (N := N) d
-  refine LinearMap.ext fun f ↦ DFunLike.coe_injective ?_
-  rw [LinearMap.comp_apply, LinearMap.comp_apply, coe_frickeOperatorCusp,
-    coe_diamondOpCusp k d g hg, coe_diamondOpCusp k d⁻¹ (frickeConjGamma0 g) (by simp [hg]),
-    coe_frickeOperatorCusp, ← SlashAction.slash_mul, ← SlashAction.slash_mul,
-    coe_frickeConjGamma0, mapGL_mul_frickeGL]
+  -- Both operators commute with the coercion `S_k(Γ₁(N)) → M_k(Γ₁(N))`, so this is the modular
+  -- identity read on the image; no second representative-and-slash argument is needed.
+  refine LinearMap.ext fun f ↦ DFunLike.coe_injective (funext fun z ↦ ?_)
+  have h := LinearMap.congr_fun (frickeOperator_diamondOp (N := N) k d)
+    (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)
+  rw [LinearMap.comp_apply, LinearMap.comp_apply, diamondOp_coe_cuspForm,
+    frickeOperator_coe_cuspForm, frickeOperator_coe_cuspForm, diamondOp_coe_cuspForm] at h
+  simpa [LinearMap.comp_apply] using DFunLike.congr_fun h z
 
 end TauCeti
