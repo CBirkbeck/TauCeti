@@ -781,7 +781,7 @@ drops: `exists_eq_T_zpow_mul_conjScale_mul_T_zpow` writes `δ ∈ Γ₁(N/l)` as
 `T`-periodicity through `slash_zpow_mul_mul_zpow_eq_smul`, and the middle factor contributes the
 character value read off `γ 1 1` — which the factorisation forces to be `1`, because `γ 1 1` is
 congruent to `δ 1 1 ≡ 1` modulo `N / l`. -/
-theorem slash_mapGL_eq_self_of_mem_Gamma1_div (l N : ℕ) [NeZero l] [NeZero N] (hlN : l ∣ N)
+theorem slash_mapGL_eq_self_of_mem_Gamma1_div (l N : ℕ) [NeZero l] (hlN : l ∣ N)
     (hNl : N / l ∣ N) (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
     (hχ : ∀ u : (ZMod N)ˣ, ZMod.unitsMap hNl u = 1 → χ u = 1) (f : ℍ → ℂ)
     (hnb : ∀ (γ : SL(2, ℤ)) (hγ : γ ∈ Gamma0 N),
