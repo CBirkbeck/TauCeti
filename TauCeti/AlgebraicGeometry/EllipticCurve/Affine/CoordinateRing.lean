@@ -485,11 +485,19 @@ theorem isDedekindDomain_coordinateRing [W.IsElliptic] : IsDedekindDomain W.Coor
 
 end IntegrallyClosed
 
+end WeierstrassCurve.Affine
+
+end TauCeti
+
 section EvenFunctions
 
-variable {F : Type*} [Field F] (W : _root_.WeierstrassCurve.Affine F)
+variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
 
-namespace CoordinateRing
+namespace WeierstrassCurve.Affine.CoordinateRing
+
+-- `conj` lives in TauCeti's namespace, but this lemma must not: its own namespace is a Mathlib
+-- type's, and dot notation there does not elaborate from inside `namespace TauCeti`.
+open TauCeti.WeierstrassCurve.Affine.CoordinateRing
 
 /-- **The conjugation-fixed elements are exactly the functions of `x`.** In characteristic other
 than two, an element of the coordinate ring is fixed by `conj` precisely when it lies in the image
@@ -528,10 +536,6 @@ theorem conj_eq_self_iff [NeZero (2 : F)] (x : W.CoordinateRing) :
   · rintro ⟨p, rfl⟩
     rw [map_smul, map_one]
 
-end CoordinateRing
+end WeierstrassCurve.Affine.CoordinateRing
 
 end EvenFunctions
-
-end WeierstrassCurve.Affine
-
-end TauCeti
