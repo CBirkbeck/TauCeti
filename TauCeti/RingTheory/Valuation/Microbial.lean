@@ -12,7 +12,7 @@ public import TauCeti.RingTheory.Valuation.Coarsen
 
 Wedhorn's Definition 5.46(v) calls a valuation *microbial* when some convex subgroup of its value
 group has height-one quotient. This module records that condition and connects it to the
-coarsening `TauCeti.Valuation.coarsenByUnits`, which is the vertical generization `v/H` of
+coarsening `Valuation.coarsenByUnits`, which is the vertical generization `v/H` of
 Wedhorn's Remark 4.12(1): the subgroup a microbial valuation supplies is exactly the one to
 coarsen by.
 
@@ -26,15 +26,20 @@ condition, and no rank or height development is needed.
 
 ## Main definitions
 
-* `TauCeti.Valuation.IsMicrobial` : Wedhorn 5.46(v), as a condition on the value monoid.
+* `Valuation.IsMicrobial` : Wedhorn 5.46(v), as a condition on the value monoid.
 
 ## Main results
 
-* `TauCeti.Valuation.IsMicrobial.exists_coarsenByUnits` : over a microbial value monoid every
+* `Valuation.IsMicrobial.exists_coarsenByUnits` : over a microbial value monoid every
   valuation admits a vertical generization whose value units have height one — the subgroup handed
   over by the definition is the one `coarsenByUnits` consumes.
 
 ## Implementation notes
+
+Declared in the root `Valuation` namespace, not in `TauCeti.Valuation`, matching
+`TauCeti/RingTheory/Valuation/Coarsen.lean`. `Valuation` is a Mathlib type, so nesting it under
+`TauCeti` shadows it and dot-notation on a valuation stops elaborating; the repository's
+dot-notation guard rejects that.
 
 The condition is stated over `Γ₀ˣ`, the units of the valuation's value monoid, rather than over
 Wedhorn's `Γ_v = valueGroup (.ofClass v)`. That is what makes the witness directly usable:
@@ -55,7 +60,7 @@ The *characteristic* subgroup `cΓ_v` of Wedhorn 4.13 is a different notion and 
 
 public section
 
-namespace TauCeti.Valuation
+namespace Valuation
 
 open TauCeti
 
@@ -81,4 +86,4 @@ theorem IsMicrobial.exists_coarsenByUnits (h : IsMicrobial Γ₀) (v : Valuation
         MulArchimedean (Γ₀ˣ ⧸ H.toSubgroup) :=
   h.imp fun H hH => ⟨v.coarsenByUnits H, rfl, hH.1, hH.2⟩
 
-end TauCeti.Valuation
+end Valuation
