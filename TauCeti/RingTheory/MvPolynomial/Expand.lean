@@ -14,10 +14,12 @@ public import Mathlib.RingTheory.MvPolynomial.Basic
 # Finiteness of `MvPolynomial.expand`
 
 The polynomial ring `R[X_i]` is a finite module over its image under `MvPolynomial.expand n`
-(the subring `R[X_i ^ n]`), spanned by the monomials whose exponents are all below `n`; and
-`MvPolynomial.map f` is a finite ring map whenever `f` is. Composed, they say that
+(the subring `R[X_i ^ n]`), spanned by the monomials whose exponents are all below `n`.
+
+Composed with the finiteness of `MvPolynomial.map f` — a separate result, proved in
+`TauCeti/RingTheory/MvPolynomial/Basic.lean` and not imported here — this gives that
 `k'[X_1, …, X_r]` is a finite module over `k[X_1 ^ q, …, X_r ^ q]` for a finite extension
-`k' / k` — the finiteness that Stacks 10.161.13 (tag 032O) records as "`R'[x^{1/q}]` is finite
+`k' / k`, the finiteness that Stacks 10.161.13 (tag 032O) records as "`R'[x^{1/q}]` is finite
 over `R[x]`" and that the purely inseparable half of normalization-finiteness rests on.
 
 Also here is the coefficient-level Frobenius computation behind Stacks' "some details omitted":
@@ -37,6 +39,14 @@ in `S[X_i]`.
 Roadmap: EllipticCurves, the Layers 0-1 target *Function-field foundations and isogenies*
 (`TauCetiRoadmap/EllipticCurves/README.md:1096`), through the support module
 `RingTheory/IntegralClosure/NormalizationFinite`.
+
+All three results are the multivariate form of the univariate argument in Stacks, Lemma 10.161.13
+(tag 032O), whose proof records only "`R′[x^{1/q}]` is finite over `R[x]`" for the first two. The
+third is the coefficient half of the details that lemma omits: "There exists a finite purely
+inseparable field extension `L′/K` and `q = p^e` such that `L ⊂ L′(x^{1/q})`; some details
+omitted". Concretely, with `h = ∑ d_α X ^ α` for `d_α ^ (p ^ n) = f (coeff α g)`, Frobenius gives
+`h ^ (p ^ n) = ∑ f (coeff α g) X ^ (p ^ n • α)`. The multivariate forms are not claimed as source
+material.
 
 The argument is the finiteness sentence of Stacks 10.161.13 (tag 032O). **That lemma is
 univariate**: it is stated for the rings `R[x]` and `R'[x^{1/q}]` in a single variable. What is
@@ -92,10 +102,8 @@ private theorem MvPolynomial.monomial_mem_span_monomial_lt {σ R : Type*} [CommS
   rw [key, ← ha]
   exact Submodule.smul_mem _ a hmem
 
-/-- Multivariate form of the univariate argument in Stacks, Lemma 10.161.13 (tag 032O).
-Proof: "`R′[x^{1/q}]` is finite over `R[x]`".
-Over the image of `MvPolynomial.expand n`, the finitely many monomials with all exponents below
-`n` span the whole polynomial ring. -/
+/-- Over the image of `MvPolynomial.expand n`, the finitely many monomials with all exponents
+below `n` span the whole polynomial ring. -/
 theorem MvPolynomial.span_monomial_lt_eq_top {σ R : Type*} [CommSemiring R] [Finite σ] {n : ℕ}
     (hn : 0 < n) :
     Submodule.span (MvPolynomial.expand (σ := σ) (R := R) n).range
@@ -106,9 +114,7 @@ theorem MvPolynomial.span_monomial_lt_eq_top {σ R : Type*} [CommSemiring R] [Fi
   exact MvPolynomial.induction_on' f (fun d r => MvPolynomial.monomial_mem_span_monomial_lt hn d r)
     (fun p q hp hq => Submodule.add_mem _ hp hq)
 
-/-- Multivariate form of the univariate argument in Stacks, Lemma 10.161.13 (tag 032O).
-Proof: "`R′[x^{1/q}]` is finite over `R[x]`".
-`MvPolynomial.expand n` is a finite ring map for `0 < n`: the polynomial ring is spanned over
+/-- `MvPolynomial.expand n` is a finite ring map for `0 < n`: the polynomial ring is spanned over
 `R[X_i ^ n]` by the monomials with exponents below `n`. -/
 theorem MvPolynomial.finite_expand {σ R : Type*} [CommRing R] [Finite σ] {n : ℕ} (hn : 0 < n) :
     (MvPolynomial.expand (σ := σ) (R := R) n).toRingHom.Finite := by
@@ -131,13 +137,8 @@ theorem MvPolynomial.finite_expand {σ R : Type*} [CommRing R] [Finite σ] {n : 
   rw [hfac]
   exact RingHom.Finite.comp h₂ h₁
 
-/-- Multivariate form of the univariate argument in Stacks, Lemma 10.161.13 (tag 032O).
-Proof: "There exists a finite purely inseparable
-field extension `L′/K` and `q = p^e` such that `L ⊂ L′(x^{1/q})`; some details omitted" — the
-coefficient half of the omitted details. If every coefficient of `g` has a `p ^ n`-th root in
-`S`, then `g(X ^ (p ^ n))`, read in `S[X_i]`, is a `p ^ n`-th power: with
-`h = ∑ d_α X ^ α` for `d_α ^ (p ^ n) = f (coeff α g)`, Frobenius gives
-`h ^ (p ^ n) = ∑ f (coeff α g) X ^ (p ^ n • α)`. -/
+/-- If every coefficient of `g` has a `p ^ n`-th root in `S`, then `g(X ^ (p ^ n))`, read in
+`S[X_i]`, is a `p ^ n`-th power. -/
 theorem MvPolynomial.exists_pow_eq_map_expand {σ R S : Type*} [CommSemiring R] [CommSemiring S]
     (f : R →+* S) (p : ℕ) [ExpChar S p] (n : ℕ) {g : MvPolynomial σ R}
     (hg : ∀ i ∈ g.support, ∃ d : S, d ^ p ^ n = f (g.coeff i)) :
