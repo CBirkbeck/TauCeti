@@ -24,6 +24,7 @@ public section
 namespace TauCeti
 
 /-- A direct product of groups is solvable exactly when both of its factors are. -/
+@[simp]
 theorem isSolvable_prod_iff {G H : Type*} [Group G] [Group H] :
     Group.IsSolvable (G × H) ↔ Group.IsSolvable G ∧ Group.IsSolvable H :=
   ⟨fun _ ↦ ⟨Group.isSolvable_of_surjective (f := MonoidHom.fst G H) fun x ↦ ⟨(x, 1), rfl⟩,
