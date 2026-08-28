@@ -106,66 +106,11 @@ theorem twistedHeckeSlashSum_eq_sum_of_rightCosets {ι : Type*} [Fintype ι]
     twistedHeckeSlashSum k χ D f =
       ∑ i, (delta0NebentypusChar N χ ⟨a i, ha i⟩ : ℂ) • (f ∣[k] a i) := by
   classical
-  have hcover' : doubleCoset (D.out : GL (Fin 2) ℚ) ((Gamma0 N).map (mapGL ℚ))
-      ((Gamma0 N).map (mapGL ℚ)) =
-      ⋃ v, MulOpposite.op (rightCosetRep D v) •
-        (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) : Set (GL (Fin 2) ℚ)) := by
-    simpa only [rightCosetRep_def] using
-      doubleCoset_eq_iUnion_rightCosets _ _ (D.out : GL (Fin 2) ℚ)
-  have hinj' : Function.Injective fun v : DecompQuotient ((Gamma0 N).map (mapGL ℚ))
-      ((Gamma0 N).map (mapGL ℚ)) (D.out : GL (Fin 2) ℚ)⁻¹ ↦
-      MulOpposite.op (rightCosetRep D v) •
-        (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) : Set (GL (Fin 2) ℚ)) := by
-    simpa only [rightCosetRep_def] using
-      op_mul_out_inv_smul_injective _ _ (D.out : GL (Fin 2) ℚ)
-  have hself : ∀ x : GL (Fin 2) ℚ, x ∈ MulOpposite.op x •
-      (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) : Set (GL (Fin 2) ℚ)) := fun x ↦
-    (mem_rightCoset_iff x).mpr (by rw [mul_inv_cancel]; exact one_mem _)
-  have hmatch : ∀ x y : GL (Fin 2) ℚ, x ∈ MulOpposite.op y •
-      (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) : Set (GL (Fin 2) ℚ)) →
-      MulOpposite.op x • (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) :
-          Set (GL (Fin 2) ℚ)) =
-        MulOpposite.op y • (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) :
-          Set (GL (Fin 2) ℚ)) := fun x y hxy ↦
-    (rightCoset_eq_iff _).mpr (by simpa using inv_mem ((mem_rightCoset_iff y).mp hxy))
-  have key : ∀ i, ∃ v, MulOpposite.op (a i) •
-      (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) : Set (GL (Fin 2) ℚ)) =
-      MulOpposite.op (rightCosetRep D v) •
-        (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) : Set (GL (Fin 2) ℚ)) := by
-    intro i
-    have hmem : a i ∈ doubleCoset (D.out : GL (Fin 2) ℚ) ((Gamma0 N).map (mapGL ℚ))
-        ((Gamma0 N).map (mapGL ℚ)) := by
-      rw [hcover]; exact Set.mem_iUnion_of_mem i (hself (a i))
-    rw [hcover'] at hmem
-    obtain ⟨v, hv⟩ := Set.mem_iUnion.mp hmem
-    exact ⟨v, hmatch _ _ hv⟩
-  have key' : ∀ v, ∃ i, MulOpposite.op (rightCosetRep D v) •
-      (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) : Set (GL (Fin 2) ℚ)) =
-      MulOpposite.op (a i) •
-        (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) : Set (GL (Fin 2) ℚ)) := by
-    intro v
-    have hmem : rightCosetRep D v ∈ doubleCoset (D.out : GL (Fin 2) ℚ)
-        ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) := by
-      rw [hcover']; exact Set.mem_iUnion_of_mem v (hself (rightCosetRep D v))
-    rw [hcover] at hmem
-    obtain ⟨i, hi⟩ := Set.mem_iUnion.mp hmem
-    exact ⟨i, hmatch _ _ hi⟩
-  obtain ⟨φ, hφ⟩ : ∃ φ : ι → DecompQuotient ((Gamma0 N).map (mapGL ℚ))
-      ((Gamma0 N).map (mapGL ℚ)) (D.out : GL (Fin 2) ℚ)⁻¹, ∀ i,
-      MulOpposite.op (a i) •
-          (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) : Set (GL (Fin 2) ℚ)) =
-        MulOpposite.op (rightCosetRep D (φ i)) •
-          (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) : Set (GL (Fin 2) ℚ)) :=
-    ⟨fun i ↦ (key i).choose, fun i ↦ (key i).choose_spec⟩
-  have hcoset : ∀ i j, φ i = φ j → MulOpposite.op (a i) •
-      (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) : Set (GL (Fin 2) ℚ)) =
-      MulOpposite.op (a j) •
-        (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) : Set (GL (Fin 2) ℚ)) :=
-    fun i j hij ↦ by rw [hφ i, hφ j, hij]
-  have hbij : Function.Bijective φ := by
-    refine ⟨fun i j hij ↦ hinj (hcoset i j hij), fun v ↦ ?_⟩
-    obtain ⟨i, hi⟩ := key' v
-    exact ⟨i, (hinj' (hi.trans (hφ i))).symm⟩
+  -- The coset bookkeeping is not twisted: matching this family against the one
+  -- `twistedHeckeSlashSum` sums over involves no weight and no character, so it is
+  -- `exists_bijective_rightCosetRep_smul_eq` of `HeckeSlash/Independence.lean`, shared with the
+  -- unweighted `heckeSlashSum_eq_sum_of_rightCosets`. Only the per-summand step below is twisted.
+  obtain ⟨φ, hbij, hφ⟩ := exists_bijective_rightCosetRep_smul_eq D a hcover hinj
   rw [twistedHeckeSlashSum_def]
   refine (Fintype.sum_bijective φ hbij _ _ fun i ↦ ?_).symm
   rw [nebentypusWeight_def]

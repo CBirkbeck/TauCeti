@@ -10,15 +10,24 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Invariance
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Independence
 
 /-!
-# The composite of two nebentypus-twisted slash sums, and the multiplicativity it yields
+# The composite of two nebentypus-twisted slash sums
 
 `HeckeSlash/Composition.lean` computes the composite of two *unweighted* slash sums, first over the
 representatives they are defined with and then over free families, and collapses it onto a single
-double coset. This file is the weighted counterpart of that development, and it carries it through
-to the end: the nebentypus-twisted Hecke operators **multiply**, which is the gap
-`HeckeSlash/Nebentypus/Ring.lean` records when it calls `twistedHeckeSlashRingLinearMap`
-"`ℤ`-linear in the ring element, but not known to be multiplicative, so this is not yet a ring
-action".
+double coset. This file is the weighted counterpart of that development, up to and including the
+operator statement: for a single pair of double cosets whose product set is a third, the twisted
+operators of `D₁` and `D₂` compose to the operator of `D₃` on the character space.
+
+⚠ That is a *generator-level* statement, and it is **not** the multiplicativity
+`HeckeSlash/Nebentypus/Ring.lean` records as missing. That gap is about
+`twistedHeckeSlashRingLinearMap : 𝕋 … →ₗ[ℤ] Module.End ℂ (ℍ → ℂ)`, over arbitrary elements of the
+Hecke ring and on all of `ℍ → ℂ`; this file proves only the single-double-coset case, only on
+`functionCharSpace k χ`, and only under the per-triple hypotheses `hD₃` and `hinj₃`. That map is
+untouched here and remains merely `ℤ`-linear. As in the untwisted file, the general
+multiplicity-weighted composite `∑_D m(D₁, D₂; D) · T_D` — and with it the ring homomorphism
+`𝕋 → Module.End` — is not proved here; it needs the count that each right coset of a fixed `D` is
+hit by the same number of pairs, together with the left/right handedness reconciliation that
+`DoubleCoset.multiplicity` requires.
 
 ## Why the weights multiply, and why that is the whole point
 
@@ -220,9 +229,10 @@ include hcover₁ hinj₁ hcover₂ hinj₂ in
 `χ`-eigenfunction `f` and families `(aᵢ)`, `(bⱼ)` of representatives of the right cosets of the two
 double cosets, all lying in `Δ₀(N)`,
 
-`W(W f) = ∑_{i,j} χ'(aᵢ bⱼ) • (f ∣[k] (aᵢ bⱼ))`,
+`twistedHeckeSlashSum k χ D₂ (twistedHeckeSlashSum k χ D₁ f) = ∑_{i,j} χ'(aᵢ bⱼ) • (f ∣[k] aᵢ bⱼ)`,
 
-the summand at `(i, j)` weighted by the character of the *product*.
+writing `χ'` for `delta0NebentypusChar N χ`: the summand at `(i, j)` is weighted by the character of
+the *product*.
 
 The weighted counterpart of `heckeSlashSum_heckeSlashSum_eq_sum_of_rightCosets`, and the free-family
 form of `twistedHeckeSlashSum_twistedHeckeSlashSum` above. The eigenfunction property is used twice,
@@ -257,11 +267,11 @@ include ha hb hcover₁ hinj₁ hcover₂ hinj₂ in
 when the product set is that coset and the products `aᵢ bⱼ` meet each of its right cosets exactly
 once.
 
-This is the collapse, and with it the twisted assignment is multiplicative rather than merely
-`ℤ`-linear — the gap `HeckeSlash/Nebentypus/Ring.lean` records. The weighted counterpart of
+This is the collapse, for a `χ`-eigenfunction `f` — the identity is false without `hf`, as the
+module docstring records. The weighted counterpart of
 `heckeSlashSum_heckeSlashSum_eq_heckeSlashSum`, and its two hypotheses play the same roles: `hD₃`
 says the product set is the single coset `D₃`, and `hinj₃` says the products have no right-coset
-collisions. Neither identifies `hinj₃` with the left-representative count of
+collisions. This does not identify `hinj₃` with the left-representative count used by
 `DoubleCoset.multiplicity`. The covering half that
 `twistedHeckeSlashSum_eq_sum_of_rightCosets` would otherwise need is automatic, by
 `doubleCoset_mul_doubleCoset_eq_iUnion_rightCosets`.
@@ -295,9 +305,9 @@ include ha hb hcover₁ hinj₁ hcover₂ hinj₂ in
 the single double coset `D₃` with no right-coset collisions among the products, the composite of
 the operators of `D₁` and `D₂` is the operator of `D₃`.
 
-This is the multiplicativity that `HeckeSlash/Nebentypus/Ring.lean` records as missing —
-`twistedHeckeSlashRingLinearMap` is there described as "`ℤ`-linear in the ring element, but not
-known to be multiplicative, so this is not yet a ring action". It is the weighted counterpart of
+This is the generator-level input that a multiplicativity proof for
+`twistedHeckeSlashRingLinearMap` would consume; it does not itself close that gap, which concerns
+arbitrary Hecke-ring elements on all of `ℍ → ℂ`. It is the weighted counterpart of
 `heckeSlashGamma1ModularFormEnd_mul_of_doubleCoset_eq_mul`, and it is stated on the character space
 for the same reason that one is stated on `ModularForm`: that is the carrier on which the
 hypothesis the underlying identity needs — here `f ∈ functionCharSpace`, there `Γ₁`-invariance —
