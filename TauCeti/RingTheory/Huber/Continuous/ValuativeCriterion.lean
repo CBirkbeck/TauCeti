@@ -306,6 +306,9 @@ private theorem exists_continuous_valuation_of_forall_le (P : PairOfDefinition R
         rw [hvext, P.extendValuation_coe vr hsA₀ hsnil hvrsne t₀, hvr,
           restrictToConvex_apply_of_mem v₀ H habs hv₀t₀ne humem]
       rw [hval]
+      -- `u < 1` is cofinal for the convex subgroup it generates: Wedhorn Remark 1.19
+      -- ([T. Wedhorn, *Adic Spaces*][wedhorn_adic], arXiv:1910.05934v1) at `H = closure {u}`,
+      -- where the containment it asks for is the identity.
       exact exists_pow_lt_of_isCofinalElement humem
         ((isCofinalElement_iff_subset_closure
           (Units.val_lt_val.mp (by simpa [hu] using hglt))).mpr (by simp [hH])) hγ
