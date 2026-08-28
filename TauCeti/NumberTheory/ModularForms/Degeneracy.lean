@@ -45,6 +45,8 @@ the lower level. The `q`-expansion results go up only.
 * `TauCeti.ModularForm.levelRaise_apply`: `(V_d f) τ = f (d τ)`, the defining formula from which
   the algebraic properties (`levelRaise_one_apply`, `ModularForm.levelRaise_one`,
   `levelRaise_levelRaise`, `levelRaise_injective`) all follow by `ext`.
+* `TauCeti.slash_mapGL_eq_self_of_mem_Gamma1_div`: a function whose level-raise carries a
+  nebentypus that factors through `N / l` is invariant under all of `Γ₁(N / l)`.
 * `TauCeti.Gamma1_map_le_conjAct_scaleGL`, `TauCeti.Gamma0_map_le_conjAct_scaleGL`: the level
   transport, `Γ₁(dM) ≤ diag(d,1)⁻¹ Γ₁(M) diag(d,1)` and likewise for `Γ₀`, which is what makes
   `V_d` a map `M_k(Γ₁(M)) → M_k(Γ₁(dM))`.
@@ -776,11 +778,8 @@ character value `χ` reads off `γ`, if `f` is `T`-periodic, and if `χ` is triv
 the reduction `(ZMod N)ˣ → (ZMod (N/l))ˣ`, then `f` is invariant under all of `Γ₁(N / l)`.
 
 This is the step that converts a nebentypus into honest invariance, and it is where the conductor
-drops: `exists_eq_T_zpow_mul_conjScale_mul_T_zpow` writes `δ ∈ Γ₁(N/l)` as
-`T ^ i * conjScale l γ c * T ^ j` with `γ ∈ Γ₀(N)`, the two translations are absorbed by
-`T`-periodicity through `slash_zpow_mul_mul_zpow_eq_smul`, and the middle factor contributes the
-character value read off `γ 1 1` — which the factorisation forces to be `1`, because `γ 1 1` is
-congruent to `δ 1 1 ≡ 1` modulo `N / l`.
+drops: a form whose character already factors through `N / l` is invariant under the smaller group,
+which is what the conductor argument turns into a statement about newforms.
 
 Adapted from `conductor_slash_eq_self_of_mem_Gamma1_div` in AINTLIB
 (`Eigenforms/ConductorTheorem.lean`:217, Chris Birkbeck, Apache-2.0, commit
@@ -806,14 +805,17 @@ theorem slash_mapGL_eq_self_of_mem_Gamma1_div (l N : ℕ) [NeZero l] (hlN : l �
   -- the character value is `1`: `γ 1 1` is congruent to `δ 1 1 ≡ 1` modulo `N / l`
   have hchar : (χ ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) : ℂ) = 1 := by
     obtain ⟨-, hd, hcz⟩ := (Gamma1_mem _ _).mp hδ
-    have hred : ZMod.unitsMap (Nat.div_dvd_of_dvd hlN)
-        ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) = 1 := by
-      apply Units.ext
-      have hval : ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩ : ZMod N) = ((γ 1 1 : ℤ) : ZMod N) := rfl
-      rw [Units.val_one, ZMod.unitsMap_def, Units.coe_map, MonoidHom.coe_coe, hval,
-        ZMod.castHom_apply, ZMod.cast_intCast (Nat.div_dvd_of_dvd hlN), hdiag]
+    have hγ' : γ ∈ Gamma0 (N / l) := Gamma0_le_Gamma0_of_dvd (Nat.div_dvd_of_dvd hlN) hγ
+    have hlabel : Gamma0Map (N / l) ⟨γ, hγ'⟩ = 1 := by
+      -- `Gamma0Map` is by definition the lower-right entry read in `ZMod (N / l)`
+      change ((γ 1 1 : ℤ) : ZMod (N / l)) = 1
+      rw [hdiag]
       push_cast
       rw [hd, hcz, zero_mul, sub_zero]
+    have hred : ZMod.unitsMap (Nat.div_dvd_of_dvd hlN)
+        ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) = 1 := by
+      rw [← Gamma0Map_toHomUnits_of_dvd (Nat.div_dvd_of_dvd hlN) ⟨γ, hγ⟩ hγ']
+      exact Units.ext hlabel
     rw [hχ _ hred, Units.val_one]
   rw [hfactor, map_mul, map_mul, map_zpow, map_zpow,
     slash_zpow_mul_mul_zpow_eq_smul k f hdet hT hconj i j, hchar, one_smul]
