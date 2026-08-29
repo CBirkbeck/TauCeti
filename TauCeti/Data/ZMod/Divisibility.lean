@@ -18,10 +18,18 @@ residue `j : ZMod n` satisfies `n ∣ a - j.val * b` over `ℤ`. The solution is
 is returned as a residue class together with its canonical representative `j.val`, which is the
 form a coset representative indexed by `Fin n` needs.
 
-Extracted from `TauCeti/NumberTheory/ModularForms/CongruenceSubgroups.lean`, where it was private;
-that index calculation was ported from the AINTLIB `LeanModularForms` project
+`ZMod.exists_dvd_sub_val_mul` was extracted from
+`TauCeti/NumberTheory/ModularForms/CongruenceSubgroups.lean`, where it was private; that index
+calculation was ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/HeckeRIngs/GL2/CongruenceIndex.lean`, Chris Birkbeck, Apache-2.0). The lemma is
 consumed there and in `HeckeRing/GL2/Gamma1/CoprimeCosets.lean`.
+
+`ZMod.natCast_dvd_val_sub_of_unitsMap_eq` is adapted from the same project (Chris Birkbeck,
+`github.com/CBirkbeck/AINTLIB`, Apache-2.0) at commit `2baa76f74`, file
+`projects/LeanModularForms/LeanModularForms/Eigenforms/ConductorTheorem.lean`, declaration
+`natCast_val_sub_dvd_of_unitsMap_eq` (:665). Two departures from the source: it is stated for an
+arbitrary divisor `d ∣ N` rather than only for the reduction modulo `N / l`, which is all its
+proof uses, and the name places the divisibility in Mathlib's operand order.
 
 ## Main results
 
