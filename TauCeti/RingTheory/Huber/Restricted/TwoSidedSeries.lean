@@ -60,9 +60,11 @@ a placement hazard:
   directness** — `A⟨X, X⁻¹⟩` is the sum of its non-negative and negative parts, and that sum is
   direct. This is fact (i) of Wedhorn's Lemma 8.33 at the level of coefficients, and it is what
   the diagram chase there needs; the Example 6.39 universal property does not supply it.
-* `TauCeti.Huber.twoSidedRestrictedSubmodule_eq_sup_compl`: the same decomposition along an
-  arbitrary set of degrees and its complement, of which the sign partition above is a special
-  case. Nothing in the argument uses the order on `ℤ`, only that the two sets are complementary.
+* `TauCeti.Huber.twoSidedRestrictedSubmodule_eq_sup_compl` and
+  `TauCeti.Huber.disjoint_twoSidedRestricted_compl`: the same decomposition and directness along
+  an arbitrary set of degrees and its complement, of which the sign partition above is a special
+  case. Nothing in either argument uses the order on `ℤ`, only that the two sets are
+  complementary.
 * `Filter.ZeroAtFilter.of_eventually_eq_or_eq_zero`: zeroing coefficients keeps a family
   restricted. Stated pointwise rather than for an indicator, so it carries no decidability
   hypothesis; it is what makes the decomposition land inside the submodule rather than merely
@@ -191,22 +193,38 @@ theorem twoSidedRestrictedSubmodule_eq_sup :
   rw [hcompl]
   exact twoSidedRestrictedSubmodule_eq_sup_compl A M {n : ℤ | 0 ≤ n}
 
+/-- **The degree decomposition along any set of degrees is direct.** A family supported in `sᶜ`
+and in `s` at once is zero, so the two summands of `twoSidedRestrictedSubmodule_eq_sup_compl`
+meet in `⊥`. As with the decomposition itself, the argument uses nothing about `s` beyond the
+two sets being complementary: the witness is `Submodule.disjoint_pi_compl_bot_of_disjoint` at
+`Disjoint s sᶜ`. The sign partition of `disjoint_twoSidedRestricted_nonneg_neg` is the case
+`s = {n | 0 ≤ n}`. -/
+theorem disjoint_twoSidedRestricted_compl (s : Set ℤ) :
+    Disjoint
+      (twoSidedRestrictedSubmodule A M ⊓
+        Submodule.pi sᶜ fun _ ↦ (⊥ : Submodule A M))
+      (twoSidedRestrictedSubmodule A M ⊓
+        Submodule.pi s fun _ ↦ (⊥ : Submodule A M)) := by
+  have h : Disjoint (Submodule.pi sᶜ fun _ ↦ (⊥ : Submodule A M))
+      (Submodule.pi s fun _ ↦ (⊥ : Submodule A M)) := by
+    have hs := Submodule.disjoint_pi_compl_bot_of_disjoint (A := A) (M := M)
+      (disjoint_compl_right (a := s))
+    rwa [compl_compl] at hs
+  exact h.mono inf_le_right inf_le_right
+
 /-- **The decomposition is direct.** A family supported in non-negative degrees and in negative
 degrees at once is zero, so the two summands of `twoSidedRestrictedSubmodule_eq_sup` meet in `⊥`.
-Together they exhibit `A⟨z, z⁻¹⟩` as the internal direct sum of the two half-line pieces. -/
+Together they exhibit `A⟨z, z⁻¹⟩` as the internal direct sum of the two half-line pieces. This is
+`disjoint_twoSidedRestricted_compl` at the sign partition. -/
 theorem disjoint_twoSidedRestricted_nonneg_neg :
     Disjoint
       (twoSidedRestrictedSubmodule A M ⊓
         Submodule.pi {n : ℤ | 0 ≤ n}ᶜ fun _ ↦ (⊥ : Submodule A M))
       (twoSidedRestrictedSubmodule A M ⊓
-        Submodule.pi {n : ℤ | n < 0}ᶜ fun _ ↦ (⊥ : Submodule A M)) :=
-  by
-  have hst : Disjoint {n : ℤ | 0 ≤ n} {n : ℤ | n < 0} := by
-    rw [Set.disjoint_left]
-    intro n hn hn'
-    exact lt_irrefl n (lt_of_lt_of_le hn' hn)
-  exact (Submodule.disjoint_pi_compl_bot_of_disjoint (A := A) (M := M) hst).mono
-    inf_le_right inf_le_right
+        Submodule.pi {n : ℤ | n < 0}ᶜ fun _ ↦ (⊥ : Submodule A M)) := by
+  have hcompl : {n : ℤ | n < 0}ᶜ = {n : ℤ | 0 ≤ n} := by ext n; simp
+  rw [hcompl]
+  exact disjoint_twoSidedRestricted_compl A M {n : ℤ | 0 ≤ n}
 
 end DegreeSplit
 
