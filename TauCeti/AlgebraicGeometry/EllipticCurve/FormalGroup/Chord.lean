@@ -310,6 +310,13 @@ theorem rename_swap_formalThirdRoot :
     show Sum.swap (Sum.inr () : Unit ⊕ Unit) = Sum.inl () from rfl]
   ring
 
+/-- The two-variable family that substitutes `formalThirdRoot` for the single variable of a
+one-variable series. Stated here, beside `formalThirdRoot` itself, because the substitution it
+witnesses is used from this file onwards. -/
+theorem hasSubst_formalThirdRoot :
+    HasSubst (fun _ : Unit ↦ formalThirdRoot W) :=
+  hasSubst_of_constantCoeff_zero fun _ ↦ constantCoeff_formalThirdRoot W
+
 /-! ### The third point lies on the chord
 
 Vieta's formulas produce `formalThirdRoot` from the coefficients of the chord cubic, which by
@@ -343,18 +350,20 @@ private theorem line_at_thirdRoot :
     intro i
     rw [PowerSeries.toMvPowerSeries_eq_subst]
     exact subst_formalW_wEquation W (PowerSeries.HasSubst.X i)
-  have hC1 : formalSlope W * X (Sum.inl ()) + formalIntercept W =
-      wEquationRHS W (X (Sum.inl ()))
-        (formalSlope W * X (Sum.inl ()) + formalIntercept W) := by
-    rw [show formalSlope W * X (Sum.inl ()) + formalIntercept W =
-      (formalW W).toMvPowerSeries (Sum.inl ()) by rw [formalIntercept_def]; ring]
-    exact hline _
-  have hC2 : formalSlope W * X (Sum.inr ()) + formalIntercept W =
-      wEquationRHS W (X (Sum.inr ()))
-        (formalSlope W * X (Sum.inr ()) + formalIntercept W) := by
-    rw [show formalSlope W * X (Sum.inr ()) + formalIntercept W =
-      (formalW W).toMvPowerSeries (Sum.inr ()) by rw [formalIntercept_eq_inr]; ring]
-    exact hline _
+  -- The chord passes through both of its own endpoints. `Unit ⊕ Unit` has exactly the two
+  -- elements `inl ()` and `inr ()`, so the case split is exhaustive and the two endpoints share
+  -- one argument: `formalIntercept` is defined from the first point and `formalIntercept_eq_inr`
+  -- says the second point gives the same series.
+  have hchord : ∀ i : Unit ⊕ Unit,
+      formalSlope W * X i + formalIntercept W = (formalW W).toMvPowerSeries i := by
+    rintro (⟨⟩ | ⟨⟩)
+    · rw [formalIntercept_def]; ring
+    · rw [formalIntercept_eq_inr]; ring
+  have hC : ∀ i : Unit ⊕ Unit, formalSlope W * X i + formalIntercept W =
+      wEquationRHS W (X i) (formalSlope W * X i + formalIntercept W) := fun i =>
+    (hchord i).trans ((hline i).trans (by rw [hchord i]))
+  have hC1 := hC (Sum.inl ())
+  have hC2 := hC (Sum.inr ())
   have hAd : (1 + C W.a₂ * formalSlope W + C W.a₄ * formalSlope W ^ 2 +
       C W.a₆ * formalSlope W ^ 3) *
       invOfUnit (1 + C W.a₂ * formalSlope W + C W.a₄ * formalSlope W ^ 2 +
@@ -399,10 +408,7 @@ theorem subst_formalThirdRoot_formalW :
       formalSlope W * formalThirdRoot W + formalIntercept W := by
   refine eq_of_wEquation_mvPowerSeries W (constantCoeff_formalThirdRoot W) ?_ ?_ ?_
     (line_at_thirdRoot W)
-  -- `hasSubst_formalThirdRoot` is stated downstream, in `Add/Series.lean`, so the one-line
-  -- Mathlib composite it packages is used directly here.
-  · exact constantCoeff_subst_eq_zero
-      (hasSubst_of_constantCoeff_zero fun _ ↦ constantCoeff_formalThirdRoot W)
+  · exact constantCoeff_subst_eq_zero (hasSubst_formalThirdRoot W)
       (fun _ ↦ constantCoeff_formalThirdRoot W) (constantCoeff_formalW W)
   · simp
   · exact subst_formalW_wEquation W (PowerSeries.HasSubst.of_constantCoeff_zero
