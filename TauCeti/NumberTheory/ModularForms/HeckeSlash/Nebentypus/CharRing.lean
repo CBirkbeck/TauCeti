@@ -8,7 +8,7 @@ module
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Composition
 
 /-!
-# The Hecke ring acts on the `χ`-invariant functions, multiplicatively on basis elements
+# A conditional anti-multiplicativity identity for the twisted slash sum on basis elements
 
 `HeckeSlash/Nebentypus/Ring.lean` extends the twisted slash sum `ℤ`-linearly over the Hecke ring,
 but on the wrong carrier: `twistedHeckeSlashRingLinearMap` lands in `Module.End ℂ (ℍ → ℂ)`, and
@@ -22,13 +22,14 @@ multiplicativity of `Nebentypus/Composition.lean` is read on the basis elements 
 
 ## Why the character space is the right carrier
 
-Multiplicativity is false on `ℍ → ℂ`. The composite of two twisted sums collapses to the sum of a
-single double coset only for a `χ`-eigenfunction — `twistedHeckeSlashSum_mem_functionCharSpace` is
-what makes the inner sum eligible for the outer one — so the equation cannot be stated, let alone
-proved, before the carrier is cut down. That is exactly the relation `functionCharSpace` names, and
-it is why this file exists as the successor of `Nebentypus/Ring.lean` rather than as part of it:
-`Nebentypus/Ring.lean` sits below `Nebentypus/Invariance.lean` in the import graph and cannot see
-the restricted operator.
+Multiplicativity is not available on `ℍ → ℂ` from the API on hand. No counterexample is claimed
+here — only that nothing available supplies it. The composite of two twisted sums is known to
+collapse to the sum of a single double coset just for a `χ`-eigenfunction, since
+`twistedHeckeSlashSum_mem_functionCharSpace` is what makes the inner sum eligible for the outer
+one, so the equation is not in reach before the carrier is cut down. That is exactly the relation
+`functionCharSpace` names, and it is why this file exists as the successor of
+`Nebentypus/Ring.lean` rather than as part of it: `Nebentypus/Ring.lean` sits below
+`Nebentypus/Invariance.lean` in the import graph and cannot see the restricted operator.
 
 ## The order is reversed, and that is not an accident
 
@@ -56,9 +57,12 @@ is the part that follows from what is on hand, stated with those hypotheses carr
 
 * `HeckeRing.GL2.twistedHeckeSlashRingCharLinearMap_single`: the value on a basis element is the
   scaled twisted operator of that double coset. With `map_zero`/`map_add` this determines the map.
-* `HeckeRing.GL2.twistedHeckeSlashRingCharLinearMap_mul_single_single`: **the Hecke ring acts
-  multiplicatively on the character space**, where the product of two double cosets is again a
-  single double coset.
+* `HeckeRing.GL2.twistedHeckeSlashRingCharLinearMap_mul_single_single`: **a conditional
+  anti-multiplicativity identity on basis elements** — when the product of two double cosets is
+  again a single double coset with no right-coset collisions, the image of the product of two
+  basis elements is the composite of their images *in the opposite order*. This is not a
+  multiplicative action of the Hecke ring: it is stated for basis elements only, under those two
+  hypotheses, and no ring homomorphism is constructed.
 
 ## Provenance
 
@@ -136,8 +140,11 @@ variable (D₁ D₂ : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma
   (D₃ : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)))
 
 include hcover₁ hinj₁ hcover₂ hinj₂ in
-/-- **The Hecke ring acts multiplicatively on the character space**, where the product of two
-double cosets is again a single double coset.
+/-- **A conditional anti-multiplicativity identity on basis elements.** When the product of the
+two double cosets is again a single double coset with no right-coset collisions, the image of
+`single D₁ 1 * single D₂ 1` is the composite of the images in the opposite order. Stated for basis
+elements only, under those hypotheses; this is not a multiplicative action of the Hecke ring, and
+no ring homomorphism follows from it.
 
 This is the ring-level reading of `twistedHeckeSlashSumCharEnd_mul_of_doubleCoset_eq_mul`: the two
 criteria line up, one on each side, with `HeckeCosetModule.mul_single_single_of_mulMap_eq`
