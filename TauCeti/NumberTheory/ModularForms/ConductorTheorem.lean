@@ -5,27 +5,32 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.ModularForms.CuspDescent
 public import Mathlib.NumberTheory.DirichletCharacter.Basic
 
 /-!
-# The level-lowering dichotomy: the pieces that precede the descent
+# The level-lowering dichotomy: the character arithmetic that precedes the descent
 
 Let `l ∣ N`, let `χ` be a Dirichlet character mod `N`, and let `f` be a `T`-periodic function on
 `ℍ` whose level-raise by `l` is a cusp form in `S_k(N, χ)`. The conductor theorem says that
 either `χ` factors through `N / l` and `f` is itself a cusp form of the lowered level, or `f = 0`.
 
-This file collects the arithmetic input to that argument, ahead of the descent itself:
+This file collects the character-and-unit arithmetic that argument runs on, ahead of the descent
+itself:
 
 * a **unit witnessing non-factorisation** — if `χ` does not factor through `d ∣ N`, some unit is
   trivial modulo `d` yet non-trivial under `χ`;
-* a **two-multiplier vanishing** principle — a function that is an eigenvector of one slash with
-  two different eigenvalues is zero, which is how the second branch of the dichotomy is reached;
-* a **controlled lift** `gamma0LiftLowerLeftN` of a unit to `Γ₀(N)` whose lower-left entry is
-  exactly `N`, together with its four matrix entries and its diamond label.
+* **character separation within a coset** — every unit has a partner with the same reduction
+  modulo `d` but a different character value, so `χ` cannot be read off the reduction alone;
+* the **integer congruence** that turns equal reductions into a divisibility, which is how the
+  unit bookkeeping reaches the matrix entries.
 
-The three analytic conditions the descent needs are not here and are not ported: they are
-`TauCeti.slash_conjScale_eq_smul_of_slash_scaleGL` and
+Everything else the dichotomy needs is deliberately elsewhere. The `Γ₀(N)` element of prescribed
+lower-left entry and diamond label is `CongruenceSubgroup.gamma0Twist`
+(`CongruenceSubgroups/Basic.lean`), with `gamma0Twist_apply_one_zero`,
+`gamma0Twist_apply_one_one` and `Gamma0Map_toHomUnits_gamma0Twist`; for a unit `u` it is used at
+`p = (u : ZMod N).val`, which is coprime to `N` by `ZMod.val_coe_unit_coprime`. The
+two-multiplier vanishing principle is Mathlib's `smul_left_injective` applied in `ℍ → ℂ`. The
+three analytic conditions are `TauCeti.slash_conjScale_eq_smul_of_slash_scaleGL` and
 `TauCeti.mdifferentiable_of_comp_scaleGL_smul` in `Degeneracy.lean`, and
 `TauCeti.isZeroAt_of_smul_slash_scaleGL_eq` in `CuspDescent.lean`, all three stated for an `f`
 that is only a function — which is exactly this theorem's situation.
@@ -33,27 +38,32 @@ that is only a function — which is exactly this theorem's situation.
 ## Main results
 
 * `TauCeti.exists_unit_of_not_factorsThrough`: the unit witnessing non-factorisation.
-* `TauCeti.fun_eq_zero_of_two_multipliers`: two distinct multipliers force vanishing.
-* `TauCeti.gamma0LiftLowerLeftN`: the controlled `Γ₀(N)` lift, with
-  `TauCeti.toHomUnits_gamma0LiftLowerLeftN` recovering the unit it lifts.
+* `TauCeti.exists_alt_unit_in_coset_with_char_separation`: the character is not a function of the
+  reduction modulo `d`.
+* `TauCeti.natCast_val_sub_dvd_of_unitsMap_eq`: equal reductions give an integer congruence.
 
 ## Provenance
 
 Adapted from the AINTLIB `LeanModularForms` project (Chris Birkbeck,
 `github.com/CBirkbeck/AINTLIB`, Apache-2.0) at commit `2baa76f74`, file
 `projects/LeanModularForms/LeanModularForms/Eigenforms/ConductorTheorem.lean`, declarations
-`exists_unit_of_not_factorsThrough` (:542), `fun_eq_zero_of_two_multipliers` (:555),
-`gamma0LiftLowerLeftN` (:564) with its entry lemmas (:590-:607, :688),
-`exists_kernel_unit_with_char_shift` (:646),
+`exists_unit_of_not_factorsThrough` (:542),
 `exists_alt_unit_in_coset_with_char_separation` (:656) and
 `natCast_val_sub_dvd_of_unitsMap_eq` (:665).
 
-Two deliberate departures from the source. The source states the diamond label through its own
-`Gamma0MapUnits`; this repository has no such abbreviation — deliberately, as
-`Fricke/Conjugation.lean` records — so the label is read through `CongruenceSubgroup.Gamma0Map`'s
-`toHomUnits` instead, and no second unit-valued map is introduced. And the source states
+Three deliberate departures from the source. The source builds its own `Γ₀(N)` lift of a unit
+(`gamma0LiftLowerLeftN`, :564, with entry lemmas at :590-:607 and :688) and its own
+two-multiplier vanishing lemma (`fun_eq_zero_of_two_multipliers`, :555); neither is ported,
+because this repository already has `CongruenceSubgroup.gamma0Twist` and Mathlib already has
+`smul_left_injective`. The source also reaches the coset form through an intermediate shift form
+(`exists_kernel_unit_with_char_shift`, :646); since each is a one-line consequence of the other,
+only the coset form is ported and it is proved directly. The source states
 `natCast_val_sub_dvd_of_unitsMap_eq` only for the reduction modulo `N / l`; it is stated here for
-an arbitrary divisor `d ∣ N`, which is all its proof uses.
+an arbitrary divisor `d ∣ N`, which is all its proof uses. Finally, the source states the two
+character lemmas for `ℂ`-valued characters; they are stated here for any `CommMonoidWithZero`
+target, which is the generality of the Mathlib lemma they run on
+(`DirichletCharacter.factorsThrough_iff_ker_unitsMap`), and which lets this file import only
+`Mathlib.NumberTheory.DirichletCharacter.Basic`.
 
 ## References
 
@@ -62,129 +72,29 @@ an arbitrary divisor `d ∣ N`, which is all its proof uses.
 
 public section
 
-open Matrix Matrix.SpecialLinearGroup UpperHalfPlane CongruenceSubgroup Function
-open scoped Manifold MatrixGroups ModularForm Pointwise
-
 namespace TauCeti
 
 /-- **A unit witnessing non-factorisation.** If `χ` mod `N` does not factor through `d ∣ N`, then
 some unit is trivial modulo `d` while `χ` is non-trivial on it: the kernel of the reduction is not
 contained in the kernel of `χ`. -/
-theorem exists_unit_of_not_factorsThrough {N : ℕ} [NeZero N] {d : ℕ} (hd : d ∣ N)
-    {χ : DirichletCharacter ℂ N} (h_not_fac : ¬ χ.FactorsThrough d) :
+theorem exists_unit_of_not_factorsThrough {R : Type*} [CommMonoidWithZero R] {N : ℕ} [NeZero N]
+    {d : ℕ} (hd : d ∣ N) {χ : DirichletCharacter R N} (h_not_fac : ¬ χ.FactorsThrough d) :
     ∃ u : (ZMod N)ˣ, ZMod.unitsMap hd u = 1 ∧ χ.toUnitHom u ≠ 1 := by
   rw [DirichletCharacter.factorsThrough_iff_ker_unitsMap hd] at h_not_fac
   obtain ⟨u, hu_ker, hu_chi⟩ := SetLike.not_le_iff_exists.mp h_not_fac
   exact ⟨u, MonoidHom.mem_ker.mp hu_ker, hu_chi ∘ MonoidHom.mem_ker.mpr⟩
 
-/-- **Two distinct multipliers force vanishing.** If `f ∣[k] M` equals both `c₁ • f` and `c₂ • f`
-with `c₁ ≠ c₂`, then `f = 0`. This is how the dichotomy reaches its second branch: a character
-that fails to descend produces two incompatible multipliers for the same slash. -/
-theorem fun_eq_zero_of_two_multipliers (k : ℤ) (f : ℍ → ℂ) (M : GL (Fin 2) ℝ)
-    {c₁ c₂ : ℂ} (hne : c₁ ≠ c₂) (h₁ : f ∣[k] M = c₁ • f) (h₂ : f ∣[k] M = c₂ • f) : f = 0 := by
-  have h_diff : (c₁ - c₂) • f = 0 := by rw [sub_smul, h₁.symm.trans h₂, sub_self]
-  exact (smul_eq_zero.mp h_diff).resolve_left (sub_ne_zero.mpr hne)
-
-/-- **The Bézout matrix of a unit.** For `u : (ZMod N)ˣ` this is `!![a, b; N, e]` with `e` the
-canonical lift of `u`, `a` the canonical lift of `u⁻¹`, and `b = (a * e - 1) / N`. It is factored
-out of `gamma0LiftLowerLeftN` so that the entry lemmas below are read off an ordinary matrix,
-rather than through the `Γ₀(N)` subtype and the `SL(2, ℤ)` wrapper. -/
-@[expose]
-def gamma0LiftMatrix (N : ℕ) (u : (ZMod N)ˣ) : Matrix (Fin 2) (Fin 2) ℤ :=
-  !![((u⁻¹.val : ZMod N).val : ℤ),
-      (((u⁻¹.val : ZMod N).val : ℤ) * ((u.val : ZMod N).val : ℤ) - 1) / (N : ℤ);
-    (N : ℤ), ((u.val : ZMod N).val : ℤ)]
-
-/-- **The Bézout divisibility.** `N` divides `a * e - 1`, because the two canonical lifts
-multiply to `1` modulo `N`. This is what makes the upper-right entry of `gamma0LiftMatrix` an
-integer with the intended value. -/
-theorem natCast_dvd_gamma0LiftMatrix_bezout (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    (N : ℤ) ∣ ((u⁻¹.val : ZMod N).val : ℤ) * ((u.val : ZMod N).val : ℤ) - 1 := by
-  rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
-  push_cast
-  rw [ZMod.natCast_zmod_val, ZMod.natCast_zmod_val, ← Units.val_mul, inv_mul_cancel,
-    Units.val_one, sub_self]
-
-/-- The Bézout matrix has determinant `1`. -/
-@[simp]
-theorem det_gamma0LiftMatrix (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    (gamma0LiftMatrix N u).det = 1 := by
-  have hb := Int.ediv_mul_cancel (natCast_dvd_gamma0LiftMatrix_bezout N u)
-  rw [gamma0LiftMatrix, Matrix.det_fin_two_of]
-  linarith [hb]
-
-/-- **The controlled `Γ₀(N)` lift of a unit**, the Bézout matrix `gamma0LiftMatrix` read as an
-element of `Γ₀(N)`. Its lower-left entry is exactly `N`, which is what lets it be used where a
-`Γ₀(N)` element of prescribed shape is needed. -/
-noncomputable def gamma0LiftLowerLeftN (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    ↥(Gamma0 N) :=
-  ⟨⟨gamma0LiftMatrix N u, det_gamma0LiftMatrix N u⟩,
-    Gamma0_mem.mpr (by simp [gamma0LiftMatrix])⟩
-
-/-- The controlled lift is exactly the Bézout matrix. Every entry lemma below is a `simp`
-consequence of this one identification, so none of them depends on definitional equality
-through the subtype and wrapper layers. It is deliberately not `@[simp]`: its left-hand side is a
-prefix of the entry lemmas' left-hand sides, so tagging it would rewrite theirs and take them out
-of simp-normal form. -/
-theorem val_gamma0LiftLowerLeftN (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    (gamma0LiftLowerLeftN N u : SL(2, ℤ)).val = gamma0LiftMatrix N u := (rfl)
-
-/-- The lower-left entry of the controlled lift is `N`. -/
-@[simp]
-theorem gamma0LiftLowerLeftN_lower_left (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 1 0 : ℤ) = (N : ℤ) := by
-  simp [val_gamma0LiftLowerLeftN, gamma0LiftMatrix]
-
-/-- The lower-right entry of the controlled lift is the chosen lift of `u`. -/
-@[simp]
-theorem gamma0LiftLowerLeftN_lower_right (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 1 1 : ℤ) = ((u.val : ZMod N).val : ℤ) := by
-  simp [val_gamma0LiftLowerLeftN, gamma0LiftMatrix]
-
-/-- The upper-left entry of the controlled lift is the chosen lift of `u⁻¹`. -/
-@[simp]
-theorem gamma0LiftLowerLeftN_upper_left (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 0 0 : ℤ) = ((u⁻¹.val : ZMod N).val : ℤ) := by
-  simp [val_gamma0LiftLowerLeftN, gamma0LiftMatrix]
-
-/-- **The controlled lift has diamond label `u`.** Read through `Gamma0Map`'s unit-valued
-refinement, the lift recovers exactly the unit it was built from. -/
-@[simp]
-theorem toHomUnits_gamma0LiftLowerLeftN (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    (Gamma0Map N).toHomUnits (gamma0LiftLowerLeftN N u) = u := by
-  apply Units.ext
-  simp only [MonoidHom.coe_toHomUnits, Gamma0Map, MonoidHom.coe_mk, OneHom.coe_mk,
-    gamma0LiftLowerLeftN_lower_right]
-  push_cast
-  rw [ZMod.natCast_zmod_val]
-
-/-- The upper-right entry of the controlled lift is the Bézout coefficient `(a * e - 1) / N`. -/
-@[simp]
-theorem gamma0LiftLowerLeftN_upper_right (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 0 1 : ℤ) =
-      (((u⁻¹.val : ZMod N).val : ℤ) * ((u.val : ZMod N).val : ℤ) - 1) / (N : ℤ) := by
-  simp [val_gamma0LiftLowerLeftN, gamma0LiftMatrix]
-
-/-- **A kernel unit that shifts the character.** If `χ` does not factor through `d`, then for any
-`u` there is a `v` trivial modulo `d` with `χ (u * v) ≠ χ u`: multiplying by the witness of
-non-factorisation moves the character value while fixing the reduction. -/
-theorem exists_kernel_unit_with_char_shift {N : ℕ} [NeZero N] {d : ℕ} (hd : d ∣ N)
-    {χ : DirichletCharacter ℂ N} (h_not_fac : ¬ χ.FactorsThrough d) (u : (ZMod N)ˣ) :
-    ∃ v : (ZMod N)ˣ, ZMod.unitsMap hd v = 1 ∧ χ.toUnitHom (u * v) ≠ χ.toUnitHom u := by
-  obtain ⟨v, hv_ker, hv_chi⟩ := exists_unit_of_not_factorsThrough hd h_not_fac
-  refine ⟨v, hv_ker, ?_⟩
-  rw [map_mul, Ne, mul_eq_left]
-  exact hv_chi
-
 /-- **Character separation within a coset.** Under non-factorisation, every `u` has a partner `u'`
 with the same reduction modulo `d` but a different character value — so the character cannot be
 read off the reduction alone. -/
-theorem exists_alt_unit_in_coset_with_char_separation {N : ℕ} [NeZero N] {d : ℕ} (hd : d ∣ N)
-    {χ : DirichletCharacter ℂ N} (h_not_fac : ¬ χ.FactorsThrough d) (u : (ZMod N)ˣ) :
+theorem exists_alt_unit_in_coset_with_char_separation {R : Type*} [CommMonoidWithZero R] {N : ℕ}
+    [NeZero N] {d : ℕ} (hd : d ∣ N) {χ : DirichletCharacter R N}
+    (h_not_fac : ¬ χ.FactorsThrough d) (u : (ZMod N)ˣ) :
     ∃ u' : (ZMod N)ˣ,
       ZMod.unitsMap hd u' = ZMod.unitsMap hd u ∧ χ.toUnitHom u' ≠ χ.toUnitHom u := by
-  obtain ⟨v, hv_ker, hv_chi⟩ := exists_kernel_unit_with_char_shift hd h_not_fac u
-  exact ⟨u * v, by rw [map_mul, hv_ker, mul_one], hv_chi⟩
+  obtain ⟨v, hv_ker, hv_chi⟩ := exists_unit_of_not_factorsThrough hd h_not_fac
+  exact ⟨u * v, by rw [map_mul, hv_ker, mul_one],
+    by rw [map_mul, Ne, mul_eq_left]; exact hv_chi⟩
 
 /-- **From equal reductions to an integer congruence.** Two units with the same image under the
 reduction `(ZMod N)ˣ → (ZMod d)ˣ` along `d ∣ N` have representatives congruent modulo `d`, as
