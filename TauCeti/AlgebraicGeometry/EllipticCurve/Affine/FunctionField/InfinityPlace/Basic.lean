@@ -271,12 +271,12 @@ theorem infinityPlace.algebraMap_eq_sq (r : RatFunc F) :
   rw [infinityPlace_apply, Algebra.norm_algebraMap, finrank_functionField, map_pow]
 
 open scoped Classical in
-/-- **The valuation at infinity of a rational function of `x`** is `exp` of twice its degree.
+/-- **The valuation at infinity of a nonzero rational function of `x`** is `exp` of twice its
+degree: `v_∞ r = exp (2 * r.intDegree)`, which is `ord_∞ r = -2 * r.intDegree`.
 
-`infinityPlace.algebraMap_eq_sq`, composed with Mathlib's valuation of a nonzero rational function
-at its `intDegree`: the extension `F(W)/F(x)` is quadratic, so the exponent doubles. The pole order
-at infinity is therefore `-2 * intDegree`, which is why a rational function of `x` lies in the
-maximal ideal at infinity exactly when its degree is negative. -/
+The factor two is the ramification index of the place at infinity over the infinite place of
+`F(x)`, so a nonzero rational function of `x` lies in the maximal ideal at infinity exactly when
+its degree is negative. -/
 theorem infinityPlace_algebraMap_ratFunc {r : RatFunc F} (hr : r ≠ 0) :
     infinityPlace W (algebraMap (RatFunc F) W.FunctionField r) =
       WithZero.exp (2 * r.intDegree) := by
@@ -285,10 +285,9 @@ theorem infinityPlace_algebraMap_ratFunc {r : RatFunc F} (hr : r ≠ 0) :
   ring_nf
 
 open scoped Classical in
-/-- **The valuation at infinity of a polynomial in `x`** is `exp` of twice its degree.
-
-The polynomial case of `infinityPlace_algebraMap_ratFunc`, whose `intDegree` is the `natDegree`
-here. `infinityPlace.X` is the further case `p = X`. -/
+/-- **The valuation at infinity of a polynomial in `x`** is `exp` of twice its degree: a nonzero
+polynomial of degree `n` has a pole of order `2 * n` at infinity. `infinityPlace.X` is the case
+`p = X`. -/
 theorem infinityPlace_algebraMap_polynomial {p : F[X]} (hp : p ≠ 0) :
     infinityPlace W (algebraMap F[X] W.FunctionField p) =
       WithZero.exp (2 * (p.natDegree : ℤ)) := by
