@@ -51,10 +51,10 @@ from `formalThirdRoot` by composing with the formal inverse, which is left to a 
 * `WeierstrassCurve.formalIntercept_eq_inr`: the intercept computed from the second point.
 * `WeierstrassCurve.constantCoeff_formalSlope`, `_formalIntercept`, `_formalThirdRoot`: all
   three series vanish at the origin.
-* `WeierstrassCurve.subst_formalThirdRoot_formalW`: over a domain the third point really lies
-  on the chord — reading the `w`-expansion at `formalThirdRoot` returns the chord line read
-  there. This is what makes the third root the parameter of an intersection point rather than
-  merely a root of the cubic.
+* `WeierstrassCurve.subst_formalThirdRoot_formalW`: the third point really lies on the chord —
+  reading the `w`-expansion at `formalThirdRoot` returns the chord line read there. This is what
+  makes the third root the parameter of an intersection point rather than merely a root of the
+  cubic.
 
 ## Implementation notes
 
@@ -91,11 +91,12 @@ the source writes `MvPowerSeries.rename (fun _ => i)`, this file uses the equal 
 The on-line section is adapted from the same project's
 `EllipticCurves/WeierstrassFormalGroup/GroupLaw.lean`, its `Domain` section — declarations
 `line_at_thirdRoot` and `subst_thirdRootSeries_wSeries`. Four of that section's steps are not
-ported, because this repository already has them: `X_inl_ne_X_inr` is Mathlib's
-`MvPowerSeries.X_inj`; `line_left` and `line_right` are `formalIntercept_def` and
-`formalIntercept_eq_inr` with the terms moved across the equals sign; and `wsAt_rename` is
-`subst_formalW_wEquation` read through Mathlib's `PowerSeries.toMvPowerSeries_eq_subst`. All
-are inlined at their single use site. The source's `LowVanish` hypotheses have no counterpart
+ported. `X_inl_ne_X_inr` is not needed at all: the cancellation runs through
+`MvPowerSeries.X_sub_X_mem_nonZeroDivisors`, which never separates the two variables. The other
+three this repository already has — `line_left` and `line_right` are `formalIntercept_def` and
+`formalIntercept_eq_inr` with the terms moved across the equals sign, and `wsAt_rename` is
+`subst_formalW_wEquation` read through Mathlib's `PowerSeries.toMvPowerSeries_eq_subst`; all
+three are inlined at their single use site. The source's `LowVanish` hypotheses have no counterpart
 here at all, since `eq_of_wEquation_mvPowerSeries` takes vanishing constant coefficients
 directly.
 
