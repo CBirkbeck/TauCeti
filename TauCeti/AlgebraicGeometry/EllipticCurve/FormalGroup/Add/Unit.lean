@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Series
-public import TauCeti.RingTheory.MvPowerSeries.Rename
+import TauCeti.RingTheory.MvPowerSeries.Rename
 
 /-!
 # The unit laws and the linear part of the chord group law

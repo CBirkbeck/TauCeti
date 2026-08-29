@@ -7,6 +7,7 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Unit
 public import TauCeti.Data.Fin.Sum
+import TauCeti.RingTheory.MvPowerSeries.Rename
 
 /-!
 # The addition series presented over `Fin 2`
