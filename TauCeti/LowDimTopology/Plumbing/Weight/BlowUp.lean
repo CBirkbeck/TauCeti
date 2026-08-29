@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 import Mathlib.Tactic.LinearCombination
-public import TauCeti.Data.Int.MulPred
+import TauCeti.Data.Int.MulPred
 public import TauCeti.LowDimTopology.Plumbing.BlowUp
 public import TauCeti.LowDimTopology.Plumbing.Weight.Sublevel
 

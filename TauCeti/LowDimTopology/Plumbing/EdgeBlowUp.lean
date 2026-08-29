@@ -6,8 +6,8 @@ Authors: The Tau Ceti contributors
 module
 
 import Mathlib.Tactic.LinearCombination
+import TauCeti.Data.Int.MulPred
 public import Mathlib.Data.Fintype.BigOperators
-public import TauCeti.Data.Int.MulPred
 public import TauCeti.LowDimTopology.Plumbing.Characteristic
 public import TauCeti.LowDimTopology.Plumbing.NegativeDefinite
 public import TauCeti.LowDimTopology.Plumbing.Weight.Sublevel
