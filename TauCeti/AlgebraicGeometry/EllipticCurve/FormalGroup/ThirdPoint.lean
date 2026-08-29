@@ -72,11 +72,10 @@ lemma chord_point_nonsingular {q w : F}
 The geometric reading needs `AA` pinned: **when** `AA = 1 + a₂Λ + a₄Λ² + a₆Λ³`, which is what
 `hAA2` supplies at every use below, this is the cubic whose roots are the parameters of the points
 where the chord meets the curve. For an unconstrained `AA` it is just the substituted expression
-and carries no such meaning.
-
-`AA` is abstracted rather than inlined because the `linear_combination` certificates below are
-written against it as a single atom; substituting the expansion into this definition makes `ring`
-fail in all three of `chord_cubic`, `chord_addX` and `chord_addY`. -/
+and carries no such meaning. -/
+-- `AA` is carried as a parameter rather than inlined because the `linear_combination` certificates
+-- below are written against it as a single atom: substituting the expansion here makes `ring` fail
+-- in `chord_cubic`, `chord_addX` and `chord_addY` alike.
 private def chordCubic (AA Λ N q : F) : F :=
   -N + AA * q ^ 3 + W.a₃ * N ^ 2 + W.a₆ * N ^ 3 - Λ * q + Λ * W.a₁ * q ^ 2 +
     N * W.a₁ * q + N * W.a₂ * q ^ 2 + W.a₃ * Λ ^ 2 * q ^ 2 + W.a₄ * q * N ^ 2 +
