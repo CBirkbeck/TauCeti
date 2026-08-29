@@ -35,6 +35,8 @@ condition, and no rank or height development is needed.
 * `Valuation.IsMicrobial.exists_coarsenByUnits` : a microbial valuation admits a vertical
   generization whose value group has height one — the subgroup handed over by the definition is
   the one `coarsenByUnits` consumes.
+* `Valuation.isMicrobial_of_mulArchimedean` and `Valuation.not_isMicrobial_of_subsingleton` : the
+  predicate holds of every rank-one valuation and fails of every trivial one.
 
 ## Implementation notes
 
@@ -109,5 +111,28 @@ theorem IsMicrobial.exists_coarsenByUnits {v : Valuation R Γ₀} (hv : v.IsMicr
         Nontrivial ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) ∧
           MulArchimedean ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) :=
   hv.imp fun H hH => ⟨v.restrict.coarsenByUnits H, rfl, hH.1, hH.2⟩
+
+/-- **A valuation whose value group is trivial is not microbial.** The definition is therefore not
+vacuously satisfied: it genuinely constrains `v`.
+
+This is the degenerate case that distinguishes `IsMicrobial` from the condition read on the
+ambient `Γ₀ˣ`, which a trivial valuation into a large enough `Γ₀` would satisfy. -/
+theorem not_isMicrobial_of_subsingleton {v : Valuation R Γ₀}
+    (h : Subsingleton (ValueGroup₀ (.ofClass v))ˣ) : ¬ v.IsMicrobial := by
+  rintro ⟨H, hnt, -⟩
+  exact (not_nontrivial_iff_subsingleton.mpr
+    (Function.Surjective.subsingleton QuotientGroup.mk_surjective)) hnt
+
+/-- **A rank-one valuation is microbial**, witnessed by `H = ⊥`. "Rank one" is `Γ_v` nontrivial and
+archimedean, exactly as in the module docstring, so the quotient `Γ_v ⧸ ⊥ ≃ Γ_v` already has
+height one and no proper convex subgroup is needed.
+
+With `not_isMicrobial_of_subsingleton` this pins the predicate from both sides: it holds of every
+rank-one valuation and fails of every trivial one. -/
+theorem isMicrobial_of_mulArchimedean {v : Valuation R Γ₀}
+    [Nontrivial (ValueGroup₀ (.ofClass v))ˣ] [MulArchimedean (ValueGroup₀ (.ofClass v))ˣ] :
+    v.IsMicrobial :=
+  ⟨⊥, Function.Surjective.nontrivial ConvexSubgroup.quotientBotOrderIso.surjective,
+    ConvexSubgroup.mulArchimedean_of_orderMonoidIso ConvexSubgroup.quotientBotOrderIso⟩
 
 end Valuation
