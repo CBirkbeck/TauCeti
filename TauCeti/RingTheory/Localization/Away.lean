@@ -39,8 +39,6 @@ Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
   splits as `(a · r)/s · (b · u)/s`, each half carrying one factor of the denominator.
 * `TauCeti.Localization.awayLift_divBy`: the comparison map to a localisation at a multiple
   `w = u * r` rescales fractions by the cofactor, sending `a/u` to `(a · r)/w`.
-* `TauCeti.Localization.awayMap_subtype_injective`: the induced map on localisations of a
-  subring is injective.
 
 ## Provenance
 
@@ -212,23 +210,5 @@ adic spectrum. -/
 bijective. -/
 instance isLocalizationAwayOne (R : Type*) [CommSemiring R] : IsLocalization.Away (1 : R) R :=
   IsLocalization.away_of_isUnit_of_bijective _ isUnit_one (Equiv.refl _).bijective
-
-/-! ### Localising a subring
-
-Inverting an element of a subring `B ≤ A` on both sides gives a map `B_s → A_s`, and it is always
-injective: an element of `B` that dies in `A` is already zero. Surjectivity is a genuinely
-different matter and needs more than algebra — see
-`TauCeti/RingTheory/Localization/OpenSubring.lean`. -/
-
-/-- **The localisation of a subring injects into the localisation of the ring.** `B → A` is
-injective, so an element of `B` dying in `A` is already zero, and
-`IsLocalization.Away.map_injective_iff` is met at the zeroth power of `s`. -/
-theorem awayMap_subtype_injective {A : Type*} [CommRing A] {B : Subring A} {s : B}
-    (Bs As : Type*) [CommRing Bs] [CommRing As]
-    [Algebra B Bs] [IsLocalization.Away s Bs]
-    [Algebra A As] [IsLocalization.Away (B.subtype s) As] :
-    Function.Injective (IsLocalization.Away.map Bs As B.subtype s) := by
-  rw [IsLocalization.Away.map_injective_iff]
-  exact fun b hb ↦ ⟨0, by rw [pow_zero, one_mul]; exact Subtype.ext hb⟩
 
 end TauCeti.Localization

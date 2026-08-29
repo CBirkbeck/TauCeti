@@ -5,7 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.RingTheory.Localization.Away
+public import Mathlib.RingTheory.Localization.Away.Basic
 public import TauCeti.Topology.Algebra.TopologicallyNilpotent
 
 /-!
@@ -17,8 +17,7 @@ nilpotent in `A`. Inverting `s` on both sides does not distinguish the two rings
 
 The point is that `B` is open, so a topologically nilpotent `s` absorbs every element of `A` into
 `B` after enough multiplications. Passing to `B_s` makes that absorption invertible, which is
-exactly what surjectivity needs. Injectivity is not topological at all and lives one file down, in
-`RingTheory/Localization/Away.lean`, as `TauCeti.Localization.awayMap_subtype_injective`.
+exactly what surjectivity needs. Injectivity is not topological at all and is Mathlib's already.
 
 ## Implementation notes
 
@@ -29,6 +28,11 @@ commuting the product.
 
 Only `ContinuousMul` is assumed, matching the absorption lemma: continuity of addition, a
 nonarchimedean neighbourhood basis and any Huber structure are all irrelevant here.
+
+Injectivity is not proved here at all: it is Mathlib's `IsLocalization.map_injective_of_injective`
+applied to `Subring.subtype_injective`, which already says an injective ring map induces an
+injective map on the corresponding localisations. Nothing about the subring being *open*, or about
+`s`, enters that half.
 
 ## Source
 
@@ -67,11 +71,13 @@ theorem awayMap_subtype_surjective_of_isTopologicallyNilpotent (hB : IsOpen (B :
 
 /-- **Inverting a topologically nilpotent element does not see an open subring.** For `B` an open
 subring of `A` and `s : B` topologically nilpotent in `A`, the induced map `B_s → A_s` is a ring
-isomorphism: injective for any subring, surjective because `s` absorbs into the open `B`. -/
+isomorphism: injective for any subring by `IsLocalization.map_injective_of_injective`, surjective
+because `s` absorbs into the open `B`. -/
 noncomputable def awayRingEquivOfIsTopologicallyNilpotent (hB : IsOpen (B : Set A))
     (hs : IsTopologicallyNilpotent (s : A)) : Bs ≃+* As :=
-  RingEquiv.ofBijective _ ⟨awayMap_subtype_injective Bs As,
-    awayMap_subtype_surjective_of_isTopologicallyNilpotent Bs As hB hs⟩
+  RingEquiv.ofBijective _
+    ⟨IsLocalization.map_injective_of_injective _ _ _ B.subtype_injective,
+      awayMap_subtype_surjective_of_isTopologicallyNilpotent Bs As hB hs⟩
 
 @[simp] theorem coe_awayRingEquivOfIsTopologicallyNilpotent (hB : IsOpen (B : Set A))
     (hs : IsTopologicallyNilpotent (s : A)) :
