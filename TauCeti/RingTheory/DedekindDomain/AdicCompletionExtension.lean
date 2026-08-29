@@ -314,22 +314,15 @@ theorem ringChar_residueField_adicCompletionIntegers_ne_two (hv2 : (2 : R) ∉ v
   -- first, `2` is not in the maximal ideal of `𝒪_v`: it contracts to `v`
   have h2 : IsLocalRing.residue (v.adicCompletionIntegers K) 2 ≠ 0 := by
     intro h0
-    have hmem : (2 : v.adicCompletionIntegers K) ∈
-        IsLocalRing.maximalIdeal (v.adicCompletionIntegers K) :=
-      Ideal.Quotient.eq_zero_iff_mem.mp h0
-    rw [show (2 : v.adicCompletionIntegers K) = algebraMap R (v.adicCompletionIntegers K) 2
-        from (map_ofNat _ 2).symm, ← Ideal.mem_comap, ← Ideal.under_def,
-      v.under_maximalIdeal_adicCompletionIntegers] at hmem
-    exact hv2 hmem
+    refine hv2 ?_
+    rw [← v.under_maximalIdeal_adicCompletionIntegers (K := K), Ideal.under_def, Ideal.mem_comap,
+      map_ofNat]
+    exact Ideal.Quotient.eq_zero_iff_mem.mp h0
   -- characteristic `2` would make the residue of `2` vanish
   intro h
   refine h2 ?_
-  have h0 : ((2 : ℕ) : IsLocalRing.ResidueField (v.adicCompletionIntegers K)) = 0 := by
-    rw [← h]; exact ringChar.Nat.cast_ringChar
-  rw [Nat.cast_ofNat] at h0
-  rw [show IsLocalRing.residue (v.adicCompletionIntegers K) 2 =
-    (2 : IsLocalRing.ResidueField (v.adicCompletionIntegers K)) from map_ofNat _ 2]
-  exact h0
+  rw [map_ofNat, ← Nat.cast_ofNat, ← h]
+  exact ringChar.Nat.cast_ringChar
 
 /-- **At a place of odd residue characteristic and finite residue field, `𝒪_v` has a unit that is
 not a square in `K_v`.** Any lift of a non-square of the residue field works: a square root in
@@ -341,30 +334,27 @@ theorem exists_unit_not_isSquare [Finite (R ⧸ v.asIdeal)] (hv2 : (2 : R) ∉ v
         (c : v.adicCompletionIntegers K)) := by
   have hfin : Finite (IsLocalRing.ResidueField (v.adicCompletionIntegers K)) :=
     Finite.of_equiv _ (v.residueFieldEquivAdicCompletionIntegers (K := K)).toEquiv
+  -- `𝒪_v` is the ring of integers of the valuation of `K_v`; that supplies both the
+  -- injectivity of `𝒪_v → K_v` and the characterization of its units by valuation `1`
+  have hint := adicCompletionIntegers.integers K v
   obtain ⟨a, ha⟩ := FiniteField.exists_nonsquare
     (v.ringChar_residueField_adicCompletionIntegers_ne_two (K := K) hv2)
   have ha0 : a ≠ 0 := fun h ↦ ha (h ▸ IsSquare.zero)
   -- lift the non-square to a unit of `𝒪_v`
   obtain ⟨x, rfl⟩ := IsLocalRing.residue_surjective (R := v.adicCompletionIntegers K) a
-  have hxu : IsUnit x := by
-    by_contra h
-    exact ha0 (Ideal.Quotient.eq_zero_iff_mem.mpr h)
+  have hxu : IsUnit x := (IsLocalRing.residue_ne_zero_iff_isUnit x).mp ha0
   refine ⟨hxu.unit, fun ⟨d, hd⟩ ↦ ?_⟩
   rw [IsUnit.unit_spec] at hd
   -- a square root of a unit has valuation `1`, because the value group is torsion-free
-  have hx1 : Valued.v (algebraMap (v.adicCompletionIntegers K) (v.adicCompletion K) x) = 1 := by
-    rw [show x = (hxu.unit : v.adicCompletionIntegers K) from hxu.unit_spec.symm]
-    exact (Valuation.valuationSubring.integers (v := Valued.v)).valuation_unit hxu.unit
+  have hx1 : Valued.v (algebraMap (v.adicCompletionIntegers K) (v.adicCompletion K) x) = 1 :=
+    hint.isUnit_iff_valuation_eq_one.mp hxu
   rw [hd, map_mul] at hx1
   have hd1 : Valued.v d = 1 :=
     le_antisymm (mul_self_le_one_iff.mp hx1.le) (one_le_mul_self_iff.mp hx1.ge)
   -- hence it lies in `𝒪_v` and reduces to a square root of the non-square
   have hdmem : d ∈ v.adicCompletionIntegers K := (mem_adicCompletionIntegers R K v).mpr hd1.le
-  have hinj : Function.Injective
-      (algebraMap (v.adicCompletionIntegers K) (v.adicCompletion K)) :=
-    fun a b h ↦ Subtype.ext h
   have hx_eq : x = (⟨d, hdmem⟩ : v.adicCompletionIntegers K) * ⟨d, hdmem⟩ :=
-    hinj (by rw [map_mul]; exact hd)
+    hint.hom_inj (by rw [map_mul]; exact hd)
   exact ha ⟨IsLocalRing.residue _ ⟨d, hdmem⟩, by rw [hx_eq, map_mul]⟩
 
 end IsDedekindDomain.HeightOneSpectrum
