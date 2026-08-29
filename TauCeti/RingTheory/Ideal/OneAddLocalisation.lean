@@ -19,13 +19,18 @@ element of `1 + I` annihilates a power of `I`.
 
 Only that implication is proved here, and only under `I.FG`; the converse is not stated.
 
+The nilpotence step is separated out and is not about localisation at all: it holds for the image
+of `I` in *any* commutative `B`-algebra whose primes all contain it, and needs only semirings.
+Localisation enters afterwards, to turn "the image is zero" into an annihilator lying in `1 + I`.
+
 ## Main results
 
 * `Ideal.oneAdd`: `1 + I` as a submonoid of `B`.
-* `Ideal.exists_pow_map_eq_bot`: if `I` is finitely generated and its image lies in every
-  prime of the localisation, some power of that image is zero.
-* `Ideal.exists_mem_oneAdd_forall_mul_eq_zero`: the same hypothesis produces a single
-  `s ∈ 1 + I` with `s * x = 0` for every `x ∈ I ^ n`.
+* `Ideal.exists_pow_map_eq_bot`: if `I` is finitely generated and its image lies in every prime
+  of an arbitrary commutative `B`-algebra, some power of that image is zero. Stated over
+  semirings, and applied below to the localisation.
+* `Ideal.exists_mem_oneAdd_forall_mul_eq_zero`: for a localisation at `1 + I`, the same
+  hypothesis produces a single `s ∈ 1 + I` with `s * x = 0` for every `x ∈ I ^ n`.
 
 ## References
 
@@ -39,6 +44,26 @@ public section
 namespace Ideal
 
 open scoped Pointwise
+
+section Nilpotent
+
+variable {B C : Type*} [CommSemiring B] [CommSemiring C] [Algebra B C] {I : Ideal B}
+
+/-- **A power of the image of `I` vanishes.** If every prime of `C` contains the image of `I`,
+that image lies in the nilradical; being finitely generated it is then nilpotent.
+
+Nothing here needs `C` to be a localisation — only a `B`-algebra in which the image of `I` is
+contained in every prime — and nothing needs subtraction, so this is stated over semirings while
+the rest of the file works over `CommRing` for `oneAdd`. It is used below at `C = (1 + I)⁻¹ B`,
+which is the case arising in the proof of Wedhorn's Proposition 7.49(2). -/
+theorem exists_pow_map_eq_bot (hfg : I.FG)
+    (hprime : ∀ P : Ideal C, P.IsPrime → I.map (algebraMap B C) ≤ P) :
+    ∃ n : ℕ, (I.map (algebraMap B C)) ^ n = ⊥ := by
+  obtain ⟨n, hn⟩ := (hfg.map (algebraMap B C)).isNilpotent_iff_le_nilradical.mpr
+    fun x hx ↦ mem_nilradical.mpr (nilpotent_iff_mem_prime.mpr fun P hP ↦ hprime P hP hx)
+  exact ⟨n, by simpa using hn⟩
+
+end Nilpotent
 
 variable {B : Type*} [CommRing B] (I : Ideal B)
 
@@ -57,23 +82,6 @@ def oneAdd : Submonoid B where
 @[simp] lemma mem_oneAdd {x : B} : x ∈ oneAdd I ↔ x - 1 ∈ I := Iff.rfl
 
 variable {I} {C : Type*} [CommRing C] [Algebra B C]
-
-/-- **A power of the image of `I` vanishes.** If every prime of `C` contains the image of `I`,
-that image lies in the nilradical; being finitely generated it is then nilpotent.
-
-Nothing here needs `C` to be a localisation — only a `B`-algebra in which the image of `I` is
-contained in every prime. It is used below at `C = (1 + I)⁻¹ B`, which is the case arising in the
-proof of Wedhorn's Proposition 7.49(2). -/
-theorem exists_pow_map_eq_bot (hfg : I.FG)
-    (hprime : ∀ P : Ideal C, P.IsPrime → I.map (algebraMap B C) ≤ P) :
-    ∃ n : ℕ, (I.map (algebraMap B C)) ^ n = ⊥ := by
-  have hle : I.map (algebraMap B C) ≤ (⊥ : Ideal C).radical := by
-    intro x hx
-    rw [Ideal.radical_eq_sInf, Submodule.mem_sInf]
-    rintro P ⟨-, hP⟩
-    exact hprime P hP hx
-  obtain ⟨n, hn⟩ := Ideal.exists_pow_le_of_le_radical_of_fg hle (hfg.map _)
-  exact ⟨n, le_bot_iff.mp hn⟩
 
 section Localisation
 
