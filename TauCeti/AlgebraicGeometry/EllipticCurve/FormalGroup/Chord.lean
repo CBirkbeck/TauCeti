@@ -97,6 +97,10 @@ ported, because this repository already has them: `X_inl_ne_X_inr` is Mathlib's
 are inlined at their single use site. The source's `LowVanish` hypotheses have no counterpart
 here at all, since `eq_of_wEquation_mvPowerSeries` takes vanishing constant coefficients
 directly.
+
+The source guards `line_at_thirdRoot` with `set_option maxRecDepth 4000 in`. That is not ported:
+TauCeti's CI forbids `set_option` under `TauCeti/`, and the proof elaborates at the default
+depth here, so the guard was never load-bearing for this statement.
 -/
 
 public section
@@ -323,7 +327,6 @@ section IsDomain
 
 variable [IsDomain R]
 
-set_option maxRecDepth 4000 in
 /-- The chord line, read at the third root, satisfies the `w`-equation at that parameter.
 
 This is Vieta's formula in the form the uniqueness of the `w`-expansion can consume: the third
