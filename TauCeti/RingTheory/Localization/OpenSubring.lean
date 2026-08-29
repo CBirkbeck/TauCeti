@@ -54,7 +54,12 @@ namespace TauCeti.Localization
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [ContinuousMul A]
 variable {B : Subring A} {s : B}
-variable (Bs As : Type*) [CommRing Bs] [CommRing As]
+
+section Surjective
+
+-- Surjectivity needs no subtraction in the localisations: `IsLocalization.Away.map_surjective_iff`
+-- is stated over a `CommSemiring`, unlike its injectivity counterpart, which re-binds `CommRing`.
+variable (Bs As : Type*) [CommSemiring Bs] [CommSemiring As]
   [Algebra B Bs] [IsLocalization.Away s Bs]
   [Algebra A As] [IsLocalization.Away (B.subtype s) As]
 
@@ -68,6 +73,16 @@ theorem awayMap_subtype_surjective_of_isTopologicallyNilpotent (hB : IsOpen (B :
   intro a
   obtain ⟨n, hn⟩ := exists_mul_pow_mem_of_isTopologicallyNilpotent hs hB a
   exact ⟨⟨a * (s : A) ^ n, hn⟩, n, mul_comm a ((s : A) ^ n)⟩
+
+end Surjective
+
+section RingEquiv
+
+-- The isomorphism itself is a `RingEquiv`, and its injectivity half goes through
+-- `IsLocalization.map_injective_of_injective`, so here the targets must be rings.
+variable (Bs As : Type*) [CommRing Bs] [CommRing As]
+  [Algebra B Bs] [IsLocalization.Away s Bs]
+  [Algebra A As] [IsLocalization.Away (B.subtype s) As]
 
 /-- **Inverting a topologically nilpotent element does not see an open subring.** For `B` an open
 subring of `A` and `s : B` topologically nilpotent in `A`, the induced map `B_s → A_s` is a ring
@@ -86,6 +101,8 @@ noncomputable def awayRingEquivOfIsTopologicallyNilpotent (hB : IsOpen (B : Set 
   -- `rfl` cannot see through `awayRingEquivOfIsTopologicallyNilpotent`: its body is not exposed
   -- outside this module, so the coercion is unfolded through `RingEquiv`'s own interface lemma.
   RingEquiv.coe_ofBijective _ _
+
+end RingEquiv
 
 end TauCeti.Localization
 
