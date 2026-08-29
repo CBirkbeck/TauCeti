@@ -85,46 +85,67 @@ theorem fun_eq_zero_of_two_multipliers (k : ℤ) (f : ℍ → ℂ) (M : GL (Fin 
   have h_diff : (c₁ - c₂) • f = 0 := by rw [sub_smul, h₁.symm.trans h₂, sub_self]
   exact (smul_eq_zero.mp h_diff).resolve_left (sub_ne_zero.mpr hne)
 
-/-- **The controlled `Γ₀(N)` lift of a unit.** For `u : (ZMod N)ˣ` this is the Bézout matrix
-`!![a, b; N, e]` with `e` a lift of `u`, `a` a lift of `u⁻¹`, and `b = (a * e - 1) / N`. Its
-lower-left entry is exactly `N`, which is what lets it be used where a `Γ₀(N)` element of
-prescribed shape is needed. -/
+/-- **The Bézout matrix of a unit.** For `u : (ZMod N)ˣ` this is `!![a, b; N, e]` with `e` the
+canonical lift of `u`, `a` the canonical lift of `u⁻¹`, and `b = (a * e - 1) / N`. It is factored
+out of `gamma0LiftLowerLeftN` so that the entry lemmas below are read off an ordinary matrix,
+rather than through the `Γ₀(N)` subtype and the `SL(2, ℤ)` wrapper. -/
+@[expose]
+def gamma0LiftMatrix (N : ℕ) (u : (ZMod N)ˣ) : Matrix (Fin 2) (Fin 2) ℤ :=
+  !![((u⁻¹.val : ZMod N).val : ℤ),
+      (((u⁻¹.val : ZMod N).val : ℤ) * ((u.val : ZMod N).val : ℤ) - 1) / (N : ℤ);
+    (N : ℤ), ((u.val : ZMod N).val : ℤ)]
+
+/-- **The Bézout divisibility.** `N` divides `a * e - 1`, because the two canonical lifts
+multiply to `1` modulo `N`. This is what makes the upper-right entry of `gamma0LiftMatrix` an
+integer with the intended value. -/
+theorem natCast_dvd_gamma0LiftMatrix_bezout (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
+    (N : ℤ) ∣ ((u⁻¹.val : ZMod N).val : ℤ) * ((u.val : ZMod N).val : ℤ) - 1 := by
+  rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
+  push_cast
+  rw [ZMod.natCast_zmod_val, ZMod.natCast_zmod_val, ← Units.val_mul, inv_mul_cancel,
+    Units.val_one, sub_self]
+
+/-- The Bézout matrix has determinant `1`. -/
+@[simp]
+theorem det_gamma0LiftMatrix (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
+    (gamma0LiftMatrix N u).det = 1 := by
+  have hb := Int.ediv_mul_cancel (natCast_dvd_gamma0LiftMatrix_bezout N u)
+  rw [gamma0LiftMatrix, Matrix.det_fin_two_of]
+  linarith [hb]
+
+/-- **The controlled `Γ₀(N)` lift of a unit**, the Bézout matrix `gamma0LiftMatrix` read as an
+element of `Γ₀(N)`. Its lower-left entry is exactly `N`, which is what lets it be used where a
+`Γ₀(N)` element of prescribed shape is needed. -/
 noncomputable def gamma0LiftLowerLeftN (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    ↥(Gamma0 N) := by
-  let e : ℤ := ((u.val : ZMod N).val : ℤ)
-  let a : ℤ := ((u⁻¹.val : ZMod N).val : ℤ)
-  have h_ae : ((a * e : ℤ) : ZMod N) = 1 := by
-    simp only [a, e]
-    push_cast
-    rw [ZMod.natCast_zmod_val, ZMod.natCast_zmod_val, ← Units.val_mul, inv_mul_cancel,
-      Units.val_one]
-  have h_dvd : (N : ℤ) ∣ (a * e - 1) := by
-    rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
-    push_cast
-    rw [show ((a : ZMod N) * (e : ZMod N) - 1 : ZMod N) = ((a * e : ℤ) : ZMod N) - 1 by
-        push_cast; ring, h_ae]
-    ring
-  let b : ℤ := (a * e - 1) / (N : ℤ)
-  refine ⟨⟨!![a, b; (N : ℤ), e], ?det⟩, ?gamma0⟩
-  · have hb : b * (N : ℤ) = a * e - 1 := Int.ediv_mul_cancel h_dvd
-    rw [Matrix.det_fin_two_of]
-    linarith [hb]
-  · exact Gamma0_mem.mpr (by simp)
+    ↥(Gamma0 N) :=
+  ⟨⟨gamma0LiftMatrix N u, det_gamma0LiftMatrix N u⟩,
+    Gamma0_mem.mpr (by simp [gamma0LiftMatrix])⟩
+
+/-- The controlled lift is exactly the Bézout matrix. Every entry lemma below is a `simp`
+consequence of this one identification, so none of them depends on definitional equality
+through the subtype and wrapper layers. It is deliberately not `@[simp]`: its left-hand side is a
+prefix of the entry lemmas' left-hand sides, so tagging it would rewrite theirs and take them out
+of simp-normal form. -/
+theorem val_gamma0LiftLowerLeftN (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
+    (gamma0LiftLowerLeftN N u : SL(2, ℤ)).val = gamma0LiftMatrix N u := (rfl)
 
 /-- The lower-left entry of the controlled lift is `N`. -/
 @[simp]
 theorem gamma0LiftLowerLeftN_lower_left (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 1 0 : ℤ) = (N : ℤ) := (rfl)
+    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 1 0 : ℤ) = (N : ℤ) := by
+  simp [val_gamma0LiftLowerLeftN, gamma0LiftMatrix]
 
 /-- The lower-right entry of the controlled lift is the chosen lift of `u`. -/
 @[simp]
 theorem gamma0LiftLowerLeftN_lower_right (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 1 1 : ℤ) = ((u.val : ZMod N).val : ℤ) := (rfl)
+    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 1 1 : ℤ) = ((u.val : ZMod N).val : ℤ) := by
+  simp [val_gamma0LiftLowerLeftN, gamma0LiftMatrix]
 
 /-- The upper-left entry of the controlled lift is the chosen lift of `u⁻¹`. -/
 @[simp]
 theorem gamma0LiftLowerLeftN_upper_left (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 0 0 : ℤ) = ((u⁻¹.val : ZMod N).val : ℤ) := (rfl)
+    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 0 0 : ℤ) = ((u⁻¹.val : ZMod N).val : ℤ) := by
+  simp [val_gamma0LiftLowerLeftN, gamma0LiftMatrix]
 
 /-- **The controlled lift has diamond label `u`.** Read through `Gamma0Map`'s unit-valued
 refinement, the lift recovers exactly the unit it was built from. -/
@@ -141,7 +162,8 @@ theorem toHomUnits_gamma0LiftLowerLeftN (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
 @[simp]
 theorem gamma0LiftLowerLeftN_upper_right (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
     ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 0 1 : ℤ) =
-      (((u⁻¹.val : ZMod N).val : ℤ) * ((u.val : ZMod N).val : ℤ) - 1) / (N : ℤ) := (rfl)
+      (((u⁻¹.val : ZMod N).val : ℤ) * ((u.val : ZMod N).val : ℤ) - 1) / (N : ℤ) := by
+  simp [val_gamma0LiftLowerLeftN, gamma0LiftMatrix]
 
 /-- **A kernel unit that shifts the character.** If `χ` does not factor through `d`, then for any
 `u` there is a `v` trivial modulo `d` with `χ (u * v) ≠ χ u`: multiplying by the witness of
