@@ -226,12 +226,12 @@ private theorem valuation_sum_eq_exp_neg {x t : F} (hx : 0 < P.ord x) (ht : P.or
 
 /-! ### Proposition 1.3.3 -/
 
-/-- **Stichtenoth's family is linearly independent over `k⟮x⟯`.** Given uniformizers `t P` at each
-place of `S` that are units at the other places of `S`, and lifts `u P j` of a `k`-basis of each
-residue field that are as small as `x` at the other places, the products `u P j * t P ^ a` for
-`a < ord_P x` form a `k⟮x⟯`-linearly independent family. This is the content of Stichtenoth,
-Proposition 1.3.3; counting the family is all that remains. -/
-private theorem linearIndependent_stichtenothFamily {x : F}
+/-- **The products `u P j * t P ^ a` are linearly independent over `k⟮x⟯`.** Given
+uniformizers `t P` at each place of `S` that are units at the other places of `S`, and lifts
+`u P j` of a `k`-basis of each residue field that are as small as `x` at the other places, the
+products `u P j * t P ^ a` for `a < ord_P x` form a `k⟮x⟯`-linearly independent family. This is
+the content of Stichtenoth, Proposition 1.3.3; counting the family is all that remains. -/
+private theorem linearIndependent_mul_pow_of_linearIndependent_residue {x : F}
     {S : Finset (Place k F)} (hS : ∀ P ∈ S, 0 < P.ord x)
     {t : {P : Place k F // P ∈ S} → F}
     (ht1 : ∀ P : {P : Place k F // P ∈ S}, (P : Place k F).ord (t P) = 1)
@@ -357,9 +357,6 @@ independence of Stichtenoth's family says on the nose. -/
 private theorem sum_toNat_mul_finrank_le {x : F} [FiniteDimensional k⟮x⟯ F]
     {S : Finset (Place k F)} (hS : ∀ P ∈ S, 0 < P.ord x) :
     ∑ P ∈ S, (P.ord x).toNat * Module.finrank k P.ResidueField ≤ Module.finrank k⟮x⟯ F := by
-  rcases S.eq_empty_or_nonempty with rfl | ⟨P₁, hP₁⟩
-  · simp
-  have hx0 : x ≠ 0 := by rintro rfl; simpa using hS P₁ hP₁
   -- A `k`-basis of each residue field, which is finite over `k` because `x` is a parameter.
   obtain ⟨b⟩ : Nonempty (∀ P : {P : Place k F // P ∈ S},
       Module.Basis (Fin (Module.finrank k (P : Place k F).ResidueField)) k
@@ -375,17 +372,11 @@ private theorem sum_toNat_mul_finrank_le {x : F} [FiniteDimensional k⟮x⟯ F]
   choose u humem hures huord using fun (P : {P : Place k F // P ∈ S})
       (j : Fin (Module.finrank k (P : Place k F).ResidueField)) ↦
     (P : Place k F).exists_residue_eq_and_forall_mem_ord_eq S (b P j) (fun Q ↦ Q.ord x)
-  have hune : ∀ (P : {P : Place k F // P ∈ S}) j, u P j ≠ 0 := by
-    intro P j h
-    refine (b P).ne_zero j ?_
-    have hu_zero : (⟨u P j, humem P j⟩ : (P : Place k F).integers) = 0 := Subtype.ext h
-    rw [← hures P j, hu_zero]
-    exact map_zero _
   have hlib : ∀ P : {P : Place k F // P ∈ S}, LinearIndependent k
       fun j ↦ IsLocalRing.residue (P : Place k F).integers ⟨u P j, humem P j⟩ := fun P ↦ by
     simpa only [hures P] using (b P).linearIndependent
   -- Stichtenoth's family, indexed by a place of `S`, an exponent and a basis vector.
-  have key := linearIndependent_stichtenothFamily hS ht1 ht0 humem huord hlib
+  have key := linearIndependent_mul_pow_of_linearIndependent_residue hS ht1 ht0 humem huord hlib
   have hcard := key.fintype_card_le_finrank
   rw [Fintype.card_sigma] at hcard
   simp only [Fintype.card_prod, Fintype.card_fin] at hcard
