@@ -22,7 +22,7 @@ carries `M_k(Γ₁(N), χ)` into `M_k(Γ₁(N), χ⁻¹)`, and since `W_N ∘ W_
   `χ`-nebentypus space, landing in the `χ⁻¹`-nebentypus space, on modular and on cusp forms.
 * `TauCeti.frickeCharEquiv`, `TauCeti.frickeCharCuspEquiv`: those restrictions bundled as linear
   isomorphisms `M_k(Γ₁(N), χ) ≃ₗ[ℂ] M_k(Γ₁(N), χ⁻¹)` and `S_k(Γ₁(N), χ) ≃ₗ[ℂ] S_k(Γ₁(N), χ⁻¹)`,
-  with inverse `frickeScalar N k⁻¹ • W_N`.
+  with inverse `(frickeScalar N k)⁻¹ • W_N`.
 
 ## Main results
 
@@ -36,8 +36,12 @@ The target character is mathlib's `χ⁻¹`, the inverse in the commutative grou
 (`MonoidHom.instCommGroup`), for which `MonoidHom.inv_apply` gives `χ⁻¹ d = (χ d)⁻¹`. The source
 introduces a named `chiConj χ = χ.comp invMonoidHom` for this; that is the same monoid hom —
 `χ d⁻¹ = (χ d)⁻¹` is `map_inv` — so no definition is made here, matching the `χ⁻¹` spelling
-already used in the module docstring of `Fricke/Operator.lean`. The round trip a two-sided
-inverse needs is then mathlib's `inv_inv` rather than a bespoke `chiConj_chiConj` lemma.
+already used in the module docstring of `Fricke/Operator.lean`.
+
+The round trip `χ⁻¹⁻¹ = χ` that a two-sided inverse needs is `inv_inv_monoidHom` below. That is
+mathlib's `inv_inv` mathematically, but `inv_inv` is stated for `InvolutiveInv` and does not match
+the `Inv (M →* G)` instance path syntactically, so it is proved pointwise instead, where the
+inversion happens in `ℂˣ`.
 
 ## Provenance
 
@@ -113,87 +117,87 @@ public theorem frickeOperatorCusp_mem_cuspFormCharSpace (k : ℤ) (χ : (ZMod N)
     using h.symm
 
 /-- **The Fricke operator restricted to a nebentypus space**, as a `ℂ`-linear map
-`M_k(Γ₁(N), χ) →ₗ[ℂ] M_k(Γ₁(N), χ⁻¹)`. This is `frickeCharEquiv` without its inverse; it is
-`frickeOperator` on underlying forms (`frickeCharRestrict_coe`). -/
-public noncomputable def frickeCharRestrict (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) :
-    modFormCharSpace k χ →ₗ[ℂ] modFormCharSpace k χ⁻¹ where
-  toFun f := ⟨frickeOperator k (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k),
-    frickeOperator_mem_modFormCharSpace k χ f.property⟩
-  map_add' _ _ := Subtype.ext (map_add (frickeOperator k) _ _)
-  map_smul' c _ := Subtype.ext (map_smul (frickeOperator k) c _)
+`M_k(Γ₁(N), χ) →ₗ[ℂ] M_k(Γ₁(N), χ⁻¹)`.
 
-/-- On underlying modular forms, `frickeCharRestrict` is `frickeOperator`. -/
-@[simp]
-public theorem frickeCharRestrict_coe (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
-    (f : modFormCharSpace k χ) :
-    ((frickeCharRestrict k χ f : modFormCharSpace k χ⁻¹) :
-        ModularForm ((Gamma1 N).map (mapGL ℝ)) k) =
-      frickeOperator k (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) := (rfl)
+This is `frickeOperator` cut down by `LinearMap.restrict`, so mathlib's
+`LinearMap.coe_restrict_apply` is already the `simp` lemma identifying it with `frickeOperator`
+on underlying forms; no separate coercion lemma is stated here. -/
+public noncomputable def frickeCharRestrict (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) :
+    modFormCharSpace k χ →ₗ[ℂ] modFormCharSpace k χ⁻¹ :=
+  (frickeOperator k).restrict fun _ hf ↦ frickeOperator_mem_modFormCharSpace k χ hf
 
 /-- **The Fricke operator restricted to a nebentypus space of cusp forms**, as a `ℂ`-linear map
 `S_k(Γ₁(N), χ) →ₗ[ℂ] S_k(Γ₁(N), χ⁻¹)`. The cusp-form counterpart of `frickeCharRestrict`. -/
 public noncomputable def frickeCharCuspRestrict (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) :
-    cuspFormCharSpace k χ →ₗ[ℂ] cuspFormCharSpace k χ⁻¹ where
-  toFun f := ⟨frickeOperatorCusp k (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k),
-    frickeOperatorCusp_mem_cuspFormCharSpace k χ f.property⟩
-  map_add' _ _ := Subtype.ext (map_add (frickeOperatorCusp k) _ _)
-  map_smul' c _ := Subtype.ext (map_smul (frickeOperatorCusp k) c _)
-
-/-- On underlying cusp forms, `frickeCharCuspRestrict` is `frickeOperatorCusp`. -/
-@[simp]
-public theorem frickeCharCuspRestrict_coe (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
-    (f : cuspFormCharSpace k χ) :
-    ((frickeCharCuspRestrict k χ f : cuspFormCharSpace k χ⁻¹) :
-        CuspForm ((Gamma1 N).map (mapGL ℝ)) k) =
-      frickeOperatorCusp k (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) := (rfl)
+    cuspFormCharSpace k χ →ₗ[ℂ] cuspFormCharSpace k χ⁻¹ :=
+  (frickeOperatorCusp k).restrict fun _ hf ↦ frickeOperatorCusp_mem_cuspFormCharSpace k χ hf
 
 /-- **The Fricke isomorphism between nebentypus spaces**
 `M_k(Γ₁(N), χ) ≃ₗ[ℂ] M_k(Γ₁(N), χ⁻¹)`.
 
-The forward map is `frickeCharRestrict`; the inverse is `frickeScalar N k⁻¹ •` the Fricke
+The forward map is `frickeCharRestrict`; the inverse is `(frickeScalar N k)⁻¹ •` the Fricke
 operator again, which lands back in the `χ`-space because `χ⁻¹⁻¹ = χ`. Both round trips are
-`frickeOperator_frickeOperator_apply` followed by cancelling the nonzero
-`frickeScalar N k`. -/
+`frickeOperator_frickeOperator_apply` followed by cancelling the nonzero `frickeScalar N k`. -/
 public noncomputable def frickeCharEquiv (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) :
-    modFormCharSpace k χ ≃ₗ[ℂ] modFormCharSpace k χ⁻¹ where
-  toLinearMap := frickeCharRestrict k χ
-  invFun g := ⟨(frickeScalar N k)⁻¹ • frickeOperator k (g : ModularForm _ k), by
-    have h := frickeOperator_mem_modFormCharSpace k χ⁻¹ g.property
-    rw [inv_inv_monoidHom] at h
-    exact Submodule.smul_mem _ _ h⟩
-  left_inv f := by
-    apply Subtype.ext
-    change (frickeScalar N k)⁻¹ • frickeOperator k (frickeOperator k
-      (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) = (f : ModularForm _ k)
-    rw [frickeOperator_frickeOperator_apply, smul_smul,
-      inv_mul_cancel₀ (frickeScalar_ne_zero (N := N) k), one_smul]
-  right_inv g := by
-    apply Subtype.ext
-    change frickeOperator k ((frickeScalar N k)⁻¹ • frickeOperator k
-      (g : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) = (g : ModularForm _ k)
-    rw [map_smul, frickeOperator_frickeOperator_apply, smul_smul,
-      inv_mul_cancel₀ (frickeScalar_ne_zero (N := N) k), one_smul]
+    modFormCharSpace k χ ≃ₗ[ℂ] modFormCharSpace k χ⁻¹ :=
+  LinearEquiv.ofLinearMap (frickeCharRestrict k χ)
+    ((frickeScalar N k)⁻¹ • (frickeOperator k).restrict fun _ hf ↦ by
+      have h := frickeOperator_mem_modFormCharSpace k χ⁻¹ hf
+      rwa [inv_inv_monoidHom] at h)
+    (LinearMap.ext fun _ ↦ Subtype.ext (by
+      simp [frickeCharRestrict, smul_smul, inv_mul_cancel₀ (frickeScalar_ne_zero (N := N) k)]))
+    (LinearMap.ext fun _ ↦ Subtype.ext (by
+      simp [frickeCharRestrict, smul_smul, inv_mul_cancel₀ (frickeScalar_ne_zero (N := N) k)]))
+
+/-- On underlying modular forms, `frickeCharEquiv` is `frickeOperator`. -/
+@[simp]
+public theorem coe_frickeCharEquiv_apply (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
+    (f : modFormCharSpace k χ) :
+    ((frickeCharEquiv k χ f : modFormCharSpace k χ⁻¹) :
+        ModularForm ((Gamma1 N).map (mapGL ℝ)) k) =
+      frickeOperator k (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) := (rfl)
+
+/-- On underlying modular forms, the inverse of `frickeCharEquiv` is
+`(frickeScalar N k)⁻¹ • frickeOperator`. -/
+@[simp]
+public theorem coe_frickeCharEquiv_symm_apply (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
+    (g : modFormCharSpace k χ⁻¹) :
+    (((frickeCharEquiv k χ).symm g : modFormCharSpace k χ) :
+        ModularForm ((Gamma1 N).map (mapGL ℝ)) k) =
+      (frickeScalar N k)⁻¹ • frickeOperator k (g : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) :=
+  (rfl)
 
 /-- **The Fricke isomorphism between nebentypus spaces of cusp forms**
 `S_k(Γ₁(N), χ) ≃ₗ[ℂ] S_k(Γ₁(N), χ⁻¹)`. The cusp-form counterpart of `frickeCharEquiv`. -/
 public noncomputable def frickeCharCuspEquiv (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) :
-    cuspFormCharSpace k χ ≃ₗ[ℂ] cuspFormCharSpace k χ⁻¹ where
-  toLinearMap := frickeCharCuspRestrict k χ
-  invFun g := ⟨(frickeScalar N k)⁻¹ • frickeOperatorCusp k (g : CuspForm _ k), by
-    have h := frickeOperatorCusp_mem_cuspFormCharSpace k χ⁻¹ g.property
-    rw [inv_inv_monoidHom] at h
-    exact Submodule.smul_mem _ _ h⟩
-  left_inv f := by
-    apply Subtype.ext
-    change (frickeScalar N k)⁻¹ • frickeOperatorCusp k (frickeOperatorCusp k
-      (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)) = (f : CuspForm _ k)
-    rw [frickeOperatorCusp_frickeOperatorCusp_apply, smul_smul,
-      inv_mul_cancel₀ (frickeScalar_ne_zero (N := N) k), one_smul]
-  right_inv g := by
-    apply Subtype.ext
-    change frickeOperatorCusp k ((frickeScalar N k)⁻¹ • frickeOperatorCusp k
-      (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)) = (g : CuspForm _ k)
-    rw [map_smul, frickeOperatorCusp_frickeOperatorCusp_apply, smul_smul,
-      inv_mul_cancel₀ (frickeScalar_ne_zero (N := N) k), one_smul]
+    cuspFormCharSpace k χ ≃ₗ[ℂ] cuspFormCharSpace k χ⁻¹ :=
+  LinearEquiv.ofLinearMap (frickeCharCuspRestrict k χ)
+    ((frickeScalar N k)⁻¹ • (frickeOperatorCusp k).restrict fun _ hf ↦ by
+      have h := frickeOperatorCusp_mem_cuspFormCharSpace k χ⁻¹ hf
+      rwa [inv_inv_monoidHom] at h)
+    (LinearMap.ext fun _ ↦ Subtype.ext (by
+      simp [frickeCharCuspRestrict, smul_smul,
+        inv_mul_cancel₀ (frickeScalar_ne_zero (N := N) k)]))
+    (LinearMap.ext fun _ ↦ Subtype.ext (by
+      simp [frickeCharCuspRestrict, smul_smul,
+        inv_mul_cancel₀ (frickeScalar_ne_zero (N := N) k)]))
+
+/-- On underlying cusp forms, `frickeCharCuspEquiv` is `frickeOperatorCusp`. -/
+@[simp]
+public theorem coe_frickeCharCuspEquiv_apply (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
+    (f : cuspFormCharSpace k χ) :
+    ((frickeCharCuspEquiv k χ f : cuspFormCharSpace k χ⁻¹) :
+        CuspForm ((Gamma1 N).map (mapGL ℝ)) k) =
+      frickeOperatorCusp k (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) := (rfl)
+
+/-- On underlying cusp forms, the inverse of `frickeCharCuspEquiv` is
+`(frickeScalar N k)⁻¹ • frickeOperatorCusp`. -/
+@[simp]
+public theorem coe_frickeCharCuspEquiv_symm_apply (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
+    (g : cuspFormCharSpace k χ⁻¹) :
+    (((frickeCharCuspEquiv k χ).symm g : cuspFormCharSpace k χ) :
+        CuspForm ((Gamma1 N).map (mapGL ℝ)) k) =
+      (frickeScalar N k)⁻¹ • frickeOperatorCusp k (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :=
+  (rfl)
 
 end TauCeti
