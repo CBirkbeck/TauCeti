@@ -19,20 +19,20 @@ single element of `1 + I`.
 
 ## Main results
 
-* `TauCeti.Ideal.oneAdd`: `1 + I` as a submonoid of `B`.
-* `TauCeti.Ideal.exists_pow_map_eq_bot`: if `I` is finitely generated and its image lies in every
+* `Ideal.oneAdd`: `1 + I` as a submonoid of `B`.
+* `Ideal.exists_pow_map_eq_bot`: if `I` is finitely generated and its image lies in every
   prime of the localisation, some power of that image is zero.
-* `TauCeti.Ideal.exists_mem_one_add_mul_pow_eq_zero`: the same hypothesis produces a single
+* `Ideal.exists_mem_oneAdd_forall_mul_eq_zero`: the same hypothesis produces a single
   `s ∈ 1 + I` with `s * x = 0` for every `x ∈ I ^ n`.
 -/
 
 public section
 
-namespace TauCeti.Ideal
+namespace Ideal
 
 open scoped Pointwise
 
-variable {B : Type*} [CommRing B] (I : _root_.Ideal B)
+variable {B : Type*} [CommRing B] (I : Ideal B)
 
 /-- **`1 + I` is a submonoid.** Closure is the identity
 `(1 + a)(1 + b) = 1 + (ab + a + b)`, written here on representatives as
@@ -57,14 +57,14 @@ Nothing here needs `C` to be a localisation — only a `B`-algebra in which the 
 contained in every prime. Wedhorn applies it to `C = (1 + I)⁻¹ B`, where that hypothesis is what
 his claim supplies. -/
 theorem exists_pow_map_eq_bot (hfg : I.FG)
-    (hprime : ∀ P : _root_.Ideal C, P.IsPrime → I.map (algebraMap B C) ≤ P) :
+    (hprime : ∀ P : Ideal C, P.IsPrime → I.map (algebraMap B C) ≤ P) :
     ∃ n : ℕ, (I.map (algebraMap B C)) ^ n = ⊥ := by
-  have hle : I.map (algebraMap B C) ≤ (⊥ : _root_.Ideal C).radical := by
+  have hle : I.map (algebraMap B C) ≤ (⊥ : Ideal C).radical := by
     intro x hx
-    rw [_root_.Ideal.radical_eq_sInf, Submodule.mem_sInf]
+    rw [Ideal.radical_eq_sInf, Submodule.mem_sInf]
     rintro P ⟨-, hP⟩
     exact hprime P hP hx
-  obtain ⟨n, hn⟩ := _root_.Ideal.exists_pow_le_of_le_radical_of_fg hle (hfg.map _)
+  obtain ⟨n, hn⟩ := Ideal.exists_pow_le_of_le_radical_of_fg hle (hfg.map _)
   exact ⟨n, le_bot_iff.mp hn⟩
 
 section Localisation
@@ -75,7 +75,7 @@ variable [IsLocalization (oneAdd I) C]
 localisation; each generator is then killed in `B` by some element of `1 + I`, and the product of
 those finitely many elements — again in `1 + I`, since it is a submonoid — kills all of `I ^ n`. -/
 theorem exists_mem_oneAdd_forall_mul_eq_zero (hfg : I.FG)
-    (hprime : ∀ P : _root_.Ideal C, P.IsPrime → I.map (algebraMap B C) ≤ P) :
+    (hprime : ∀ P : Ideal C, P.IsPrime → I.map (algebraMap B C) ≤ P) :
     ∃ (n : ℕ) (s : B), s ∈ oneAdd I ∧ ∀ x ∈ I ^ n, s * x = 0 := by
   classical
   obtain ⟨n, hn⟩ := exists_pow_map_eq_bot (C := C) hfg hprime
@@ -83,15 +83,15 @@ theorem exists_mem_oneAdd_forall_mul_eq_zero (hfg : I.FG)
   have hzero : ∀ x ∈ I ^ n, algebraMap B C x = 0 := by
     intro x hx
     have : algebraMap B C x ∈ (I ^ n).map (algebraMap B C) :=
-      _root_.Ideal.mem_map_of_mem _ hx
-    rwa [_root_.Ideal.map_pow, hn, _root_.Ideal.mem_bot] at this
+      Ideal.mem_map_of_mem _ hx
+    rwa [Ideal.map_pow, hn, Ideal.mem_bot] at this
   -- a finite generating set for `I ^ n`
   obtain ⟨T, hT⟩ := (hfg.pow : (I ^ n).FG)
   -- an annihilator in `1 + I` for each generator
   have hgen : ∀ t ∈ T, ∃ m : oneAdd I, (m : B) * t = 0 := by
     intro t ht
     exact (IsLocalization.map_eq_zero_iff (oneAdd I) C t).mp
-      (hzero t (hT ▸ _root_.Ideal.subset_span ht))
+      (hzero t (hT ▸ Ideal.subset_span ht))
   choose m hm using hgen
   refine ⟨n, ∏ t ∈ T.attach, (m t.1 t.2 : B), ?_, ?_⟩
   · exact Submonoid.prod_mem _ fun t _ ↦ (m t.1 t.2).2
@@ -107,4 +107,4 @@ theorem exists_mem_oneAdd_forall_mul_eq_zero (hfg : I.FG)
 
 end Localisation
 
-end TauCeti.Ideal
+end Ideal
