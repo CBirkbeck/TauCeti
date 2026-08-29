@@ -67,6 +67,16 @@ theorem isAnalyticPoint_def (v : Spv A) :
     IsAnalyticPoint v ↔ ¬ IsOpen (v.supp : Set A) :=
   Iff.rfl
 
+/-- **Wedhorn Remark 7.42(3).** At a non-analytic point the trivial valuation on the support is
+again a point of the adic spectrum, for any plus ring.
+
+Being non-analytic is, by definition, openness of the support, which is exactly what
+`trivialSection_mem_spa_iff` asks for; `suppFun_asIdeal` is the identification of `v.supp` with
+the underlying ideal of `suppFun v`, and holds by `rfl`. -/
+theorem trivialSection_suppFun_mem_spa (Aplus : Subring A) {v : Spv A}
+    (hv : ¬ IsAnalyticPoint v) : trivialSection (suppFun v) ∈ spa Aplus :=
+  (trivialSection_mem_spa_iff Aplus _).mpr (suppFun_asIdeal v ▸ not_not.mp hv)
+
 /-- **Wedhorn's Analytic Locus `Spa(A, A⁺)ᵃ`**: the subset of `spa Aplus` consisting of analytic
 points (Definition 7.39). -/
 def spaAnalytic (Aplus : Subring A) : Set (Spv A) :=
