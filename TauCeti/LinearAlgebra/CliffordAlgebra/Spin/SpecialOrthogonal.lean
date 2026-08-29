@@ -81,8 +81,7 @@ private theorem lipschitzDet_unitι [Module.Free R M] [Module.Finite R M]
 /-- **The parity formula is multiplicative.** If `involute` acts on `x` and on `y` as the scalar
 `lipschitzDet`, it does so on the product. This is the `mul` closure step of
 `involute_eq_det_smul_of_mem_lipschitz`: the two scalars are central, so they collect in front. -/
-private theorem involute_mul_lipschitzDet [Module.Free R M] [Module.Finite R M]
-    (Q : QuadraticForm R M) {x y : (CliffordAlgebra Q)ˣ}
+private theorem involute_mul_lipschitzDet (Q : QuadraticForm R M) {x y : (CliffordAlgebra Q)ˣ}
     (hx : x ∈ lipschitzGroup Q) (hy : y ∈ lipschitzGroup Q)
     (ihx : involute (Q := Q) (x : CliffordAlgebra Q) =
       algebraMap R (CliffordAlgebra Q) (↑(lipschitzDet Q ⟨x, hx⟩)) * x)
