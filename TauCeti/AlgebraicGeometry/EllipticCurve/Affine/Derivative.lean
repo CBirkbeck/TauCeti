@@ -21,29 +21,32 @@ derivative it is named after.
 * `WeierstrassCurve.Affine.derivative_polynomial`: `W_Y` is `Polynomial.derivative W(X, Y)`, an
   identity of bivariate polynomials. No evaluation is involved: `R[X][Y]` is a polynomial ring in
   `Y` over `R[X]`, so `Polynomial.derivative` already differentiates in `Y`.
+* `WeierstrassCurve.Affine.equivPolynomial_mapCoeffs_polynomial`: `W_X` is the coefficientwise
+  derivative of `W(X, Y)`, again an identity of bivariate polynomials with no evaluation involved.
 * `WeierstrassCurve.Affine.derivative_eval_polynomial`: the chain rule along a substitution
   `Y := p`, which expresses `derivative (W(X, p))` through *both* partials. For a constant
   `p = C y` the `Y`-term drops out and this reads `W_X(X, y)`.
 
-Both hold over an arbitrary commutative ring.
+All three hold over an arbitrary commutative ring.
 
 ## Implementation notes
 
 `Polynomial.derivative` on `R[X][Y]` differentiates in `Y`, so `derivative_polynomial` is an
 identity of bivariate polynomials with no evaluation anywhere. Differentiating in `X` instead means
-differentiating the coefficients, and that *is* expressible bare, as
-`PolynomialModule.equivPolynomialSelf (Polynomial.derivative'.mapCoeffs W.polynomial)` — the shape
-standing on the right of `Polynomial.Bivariate.pderiv_zero_equivMvPolynomial`; no `MvPolynomial`
-transport is needed to say it.
+differentiating the coefficients, which `Derivation.mapCoeffs` does; reading the result back in
+`R[X][Y]` along `PolynomialModule.equivPolynomial` gives the shape standing on the right of
+`Polynomial.Bivariate.pderiv_zero_equivMvPolynomial`, so no `MvPolynomial` transport is needed to
+state that partial either.
 
-`derivative_eval_polynomial` is nonetheless stated after substituting `Y := p`, for two reasons
-that are about usability rather than expressibility: that is the form consumers meet the partials
-in, and it avoids a round trip through `PolynomialModule`. At that level the two partials appear
-together, as the chain rule, rather than one at a time.
+Each partial is therefore stated bare and one at a time, and the chain rule is *derived* from the
+two rather than taken as primitive: `derivative_eval_polynomial` follows from
+`equivPolynomial_mapCoeffs_polynomial` and `derivative_polynomial` through
+`Derivation.apply_eval_eq`. The substituted form remains the one most consumers meet, so it is
+kept, but it is now a corollary of the bare identities rather than the only statement of them.
 
 ## Provenance
 
-Both identities come from the proof of
+Two of the three identities come from the proof of
 `WeierstrassCurve.Affine.Point.nonsingular_of_isUnit_XYIdeal` in `Affine/Point/ToClass.lean`,
 which is itself ported from the AINTLIB `HasseWeil` project
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, by Chris Birkbeck), where they were local `have`s
@@ -55,6 +58,9 @@ over a commutative ring. `derivative_eval_polynomial` goes beyond its `have`: th
 only the constant substitution `p = C y`, for which the `Y`-term drops out, so the chain rule for
 an arbitrary `p : R[X]` is a generalisation of it rather than an extraction of it. The constant
 case is what the call site in `ToClass.lean` recovers.
+
+`equivPolynomial_mapCoeffs_polynomial` has no counterpart in the source: the `have`s worked
+with the substituted form throughout, and the bare `X`-partial is stated here for the first time.
 -/
 
 public section
@@ -73,17 +79,31 @@ nose. -/
     derivative_C, derivative_X_pow, derivative_X, C_ofNat, Nat.cast_ofNat, zero_mul, zero_add,
     sub_zero, mul_one, pow_one, Nat.add_one_sub_one]
 
+/-- **The `X`-partial derivative of `W(X, Y)` is a coefficientwise derivative.** Differentiating
+`W(X, Y)` in `X` means differentiating its coefficients, which `Derivation.mapCoeffs` does; reading
+the result back in `R[X][Y]` gives `W_X(X, Y)` on the nose. -/
+@[simp] theorem equivPolynomial_mapCoeffs_polynomial :
+    PolynomialModule.equivPolynomial (derivative'.mapCoeffs W.polynomial) = W.polynomialX := by
+  rw [← PolynomialModule.equivPolynomialSelf_apply_eq]
+  have h : PolynomialModule.equivPolynomialSelf (PolynomialModule.single R[X] 0 1) = 1 := by simp
+  simp [polynomial, polynomialX, map_sub, map_add, Derivation.leibniz,
+    -PolynomialModule.equivPolynomialSelf_apply_eq, map_smul, smul_eq_mul, C_ofNat, h]
+  ring
+
 /-- **The chain rule for `W(X, Y)` along a substitution `Y := p`.** Differentiating the
 one-variable polynomial `W(X, p)` splits into the two partials of `W`, the `Y`-one weighted by
 `p'`. Substituting a constant `p = C y` kills the second term and leaves `W_X(X, y)`. -/
 @[simp] theorem derivative_eval_polynomial (p : R[X]) :
     derivative (W.polynomial.eval p) =
       W.polynomialX.eval p + W.polynomialY.eval p * derivative p := by
-  simp only [polynomial, polynomialX, polynomialY, C_add, C_mul, C_pow, eval_sub, eval_add,
-    eval_pow, eval_X, eval_mul, eval_C, eval_ofNat, derivative_sub, derivative_add, derivative_mul,
-    derivative_C, derivative_pow, derivative_X, C_ofNat, Nat.cast_ofNat, zero_mul, add_zero,
-    zero_add, mul_one, pow_one, Nat.add_one_sub_one]
-  ring
+  -- Evaluating a `PolynomialModule R[X] R[X]` agrees with evaluating the polynomial it names.
+  have hbridge : ∀ m : PolynomialModule R[X] R[X],
+      PolynomialModule.eval p m = eval p (PolynomialModule.equivPolynomial m) := by
+    intro m
+    induction m using PolynomialModule.induction_linear <;> simp_all [mul_comm]
+  have h := Derivation.apply_eval_eq (derivative' (R := R)) p W.polynomial
+  rw [hbridge, equivPolynomial_mapCoeffs_polynomial, derivative_polynomial] at h
+  simpa using h
 
 end WeierstrassCurve.Affine
 

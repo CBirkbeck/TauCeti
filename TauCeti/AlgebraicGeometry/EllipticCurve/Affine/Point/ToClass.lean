@@ -295,7 +295,7 @@ private theorem nonsingular_of_isUnit_XYIdeal {x y : F} (heq : W.Equation x y)
     simpa using hs.1
   have hWY : dY W.polynomial = 0 := by
     rw [hdY_apply, W.derivative_polynomial]
-    exact hs.2
+    simpa only [evalEval] using hs.2
   have hdX_mul (p q : P) : dX (p * q) =
       p.evalEval x y * dX q + q.evalEval x y * dX p := by
     rw [hdX_apply, hdX_apply, hdX_apply]
