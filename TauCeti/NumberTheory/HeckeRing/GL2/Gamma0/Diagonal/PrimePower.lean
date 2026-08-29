@@ -33,8 +33,8 @@ asks `Nat.Prime` either. The elements *are* the classical `T_p` and `T_{p^r}` of
 exactly when `p` is prime — that is the intended reading, and the recurrence is chosen to
 match it — but nothing below assumes it, so nothing below is named for it.
 
-Neither the per-prime product formula nor the composite element assembled over a prime
-factorisation is proved here; this file supplies the generators those need.
+The composite element assembled over a prime factorisation is not built here; this file
+supplies the generators it needs, and the per-prime product formula they satisfy.
 
 ## Main definitions
 
@@ -62,14 +62,14 @@ factorisation is proved here; this file supplies the generators those need.
   `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck,
   `LeanModularForms/HeckeRIngs/GL2/Unified/Gamma0RingDn.lean`, declarations `heckeRingDp`,
   `heckeRingSpp`, `heckeRingSpp_of_not_coprime`, `heckeRingDppow`, `heckeRingDppow_zero`,
-  `heckeRingDppow_one`, `heckeRingDppow_succ_succ` and
-  `heckeRingDppow_eq_pow_of_not_coprime`. Three hypotheses of the source are dropped here: the
-  generator no longer asks `0 < p`, and neither the scalar generator nor the iterated family
-  asks `Nat.Prime p` — none is needed to define the elements or to prove the
-  recurrence, and carrying them would force every consumer to supply a primality proof for a
-  statement that does not use it. The names follow this namespace's `heckeT*` family rather
-  than the source's `heckeRing*`, and drop the source's `p`/`prime` vocabulary along with the
-  hypothesis it stood for.
+  `heckeRingDppow_one`, `heckeRingDppow_succ_succ`, `heckeRingDppow_eq_pow_of_not_coprime`
+  and `heckeRingDppow_mul`. Four hypotheses of the source are dropped here: the generator no
+  longer asks `0 < p`, and none of the scalar generator, the iterated family and the product
+  formula asks `Nat.Prime p` — none is needed to define the elements, to prove the recurrence,
+  or to derive the product formula from it, and carrying them would force every consumer to
+  supply a primality proof for a statement that does not use it. The names follow this
+  namespace's `heckeT*` family rather than the source's `heckeRing*`, and drop the source's
+  `p`/`prime` vocabulary along with the hypothesis it stood for.
 -/
 
 public section
