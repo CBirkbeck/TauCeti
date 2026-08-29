@@ -50,6 +50,10 @@ from `formalThirdRoot` by composing with the formal inverse, which is left to a 
 * `WeierstrassCurve.formalIntercept_eq_inr`: the intercept computed from the second point.
 * `WeierstrassCurve.constantCoeff_formalSlope`, `_formalIntercept`, `_formalThirdRoot`: all
   three series vanish at the origin.
+* `WeierstrassCurve.subst_formalThirdRoot_formalW`: over a domain the third point really lies
+  on the chord — reading the `w`-expansion at `formalThirdRoot` returns the chord line read
+  there. This is what makes the third root the parameter of an intersection point rather than
+  merely a root of the cubic.
 
 ## Implementation notes
 
@@ -82,6 +86,17 @@ The source's `wSeries` and `vSeries` are `formalW` and `formalU`, so neither is 
 everything here is stated over the existing `w`-expansion API. Where
 the source writes `MvPowerSeries.rename (fun _ => i)`, this file uses the equal Mathlib map
 `PowerSeries.toMvPowerSeries i`.
+
+The on-line section is adapted from the same project's
+`EllipticCurves/WeierstrassFormalGroup/GroupLaw.lean`, its `Domain` section — declarations
+`line_at_thirdRoot` and `subst_thirdRootSeries_wSeries`. Four of that section's steps are not
+ported, because this repository already has them: `X_inl_ne_X_inr` is Mathlib's
+`MvPowerSeries.X_inj`; `line_left` and `line_right` are `formalIntercept_def` and
+`formalIntercept_eq_inr` with the terms moved across the equals sign; and `wsAt_rename` is
+`subst_formalW_wEquation` read through Mathlib's `PowerSeries.toMvPowerSeries_eq_subst`. All
+are inlined at their single use site. The source's `LowVanish` hypotheses have no counterpart
+here at all, since `eq_of_wEquation_mvPowerSeries` takes vanishing constant coefficients
+directly.
 -/
 
 public section
@@ -290,6 +305,107 @@ theorem rename_swap_formalThirdRoot :
   simp only [show Sum.swap (Sum.inl () : Unit ⊕ Unit) = Sum.inr () from rfl,
     show Sum.swap (Sum.inr () : Unit ⊕ Unit) = Sum.inl () from rfl]
   ring
+
+/-! ### The third point lies on the chord
+
+Vieta's formulas produce `formalThirdRoot` from the coefficients of the chord cubic, which by
+itself says nothing about where the curve meets that chord: it is an identity between series, not
+a statement that the point with parameter `z₃` lies on the line `w = λ z + ν`. Over a domain it
+does, and the argument is the classical one — the cubic already has `z₁` and `z₂` among its
+roots, so cancelling `z₁ - z₂` from the difference of the two identities pins the third.
+
+`[IsDomain R]` is used for that cancellation and nothing else: `MvPowerSeries.X_inj` separates
+the two variables, and Mathlib's `NoZeroDivisors (MvPowerSeries σ R)` — which needs no hypothesis
+on `σ` — turns the separation into cancellation.
+-/
+
+section IsDomain
+
+variable [IsDomain R]
+
+set_option maxRecDepth 4000 in
+/-- The chord line, read at the third root, satisfies the `w`-equation at that parameter.
+
+This is Vieta's formula in the form the uniqueness of the `w`-expansion can consume: the third
+root is characterised here by *solving the equation*, not by its coefficient formula. -/
+private theorem line_at_thirdRoot :
+    formalSlope W * formalThirdRoot W + formalIntercept W =
+      wEquationRHS W (formalThirdRoot W)
+        (formalSlope W * formalThirdRoot W + formalIntercept W) := by
+  -- The curve meets the chord at each of the two given parameters. Both are the `w`-equation at
+  -- a variable, which is `subst_formalW_wEquation` read through `toMvPowerSeries`.
+  have hline : ∀ i : Unit ⊕ Unit,
+      (formalW W).toMvPowerSeries i =
+        wEquationRHS W (X i) ((formalW W).toMvPowerSeries i) := by
+    intro i
+    rw [PowerSeries.toMvPowerSeries_eq_subst]
+    exact subst_formalW_wEquation W (PowerSeries.HasSubst.X i)
+  have hC1 : formalSlope W * X (Sum.inl ()) + formalIntercept W =
+      wEquationRHS W (X (Sum.inl ()))
+        (formalSlope W * X (Sum.inl ()) + formalIntercept W) := by
+    rw [show formalSlope W * X (Sum.inl ()) + formalIntercept W =
+      (formalW W).toMvPowerSeries (Sum.inl ()) by rw [formalIntercept_def]; ring]
+    exact hline _
+  have hC2 : formalSlope W * X (Sum.inr ()) + formalIntercept W =
+      wEquationRHS W (X (Sum.inr ()))
+        (formalSlope W * X (Sum.inr ()) + formalIntercept W) := by
+    rw [show formalSlope W * X (Sum.inr ()) + formalIntercept W =
+      (formalW W).toMvPowerSeries (Sum.inr ()) by rw [formalIntercept_eq_inr]; ring]
+    exact hline _
+  have hAd : (1 + C W.a₂ * formalSlope W + C W.a₄ * formalSlope W ^ 2 +
+      C W.a₆ * formalSlope W ^ 3) *
+      invOfUnit (1 + C W.a₂ * formalSlope W + C W.a₄ * formalSlope W ^ 2 +
+        C W.a₆ * formalSlope W ^ 3) 1 = 1 :=
+    mul_invOfUnit _ 1 (by simp)
+  simp only [wEquationRHS_def, ← c_eq_algebraMap] at hC1 hC2 ⊢
+  rw [formalThirdRoot_def]
+  set Λ := formalSlope W
+  set N := formalIntercept W
+  set t₁ := (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit) R) with ht₁
+  set t₂ := (X (Sum.inr ()) : MvPowerSeries (Unit ⊕ Unit) R) with ht₂
+  set d := invOfUnit (1 + C W.a₂ * Λ + C W.a₄ * Λ ^ 2 + C W.a₆ * Λ ^ 3) 1
+  -- Cancel `t₁ - t₂` from the difference of the two identities: what survives is the linear
+  -- coefficient of the chord cubic, which is what Vieta's formula divides by the leading one.
+  have hsub : (t₁ - t₂) * (-(1 + C W.a₂ * Λ + C W.a₄ * Λ ^ 2 + C W.a₆ * Λ ^ 3) *
+      (t₁ ^ 2 + t₁ * t₂ + t₂ ^ 2) -
+      (C W.a₁ * Λ + C W.a₂ * N + C W.a₃ * Λ ^ 2 + 2 * C W.a₄ * Λ * N +
+        3 * C W.a₆ * Λ ^ 2 * N) * (t₁ + t₂) +
+      (Λ - (C W.a₁ * N + 2 * C W.a₃ * Λ * N + C W.a₄ * N ^ 2 +
+        3 * C W.a₆ * Λ * N ^ 2))) = 0 := by
+    linear_combination hC1 - hC2
+  have hne : t₁ - t₂ ≠ 0 := by
+    rw [ht₁, ht₂, sub_ne_zero]
+    exact fun h ↦ by simpa using X_inj.mp h
+  have hE1 := (mul_eq_zero.mp hsub).resolve_left hne
+  clear_value Λ N t₁ t₂ d
+  set B := C W.a₁ * Λ + C W.a₂ * N + C W.a₃ * Λ ^ 2 + 2 * C W.a₄ * Λ * N +
+    3 * C W.a₆ * Λ ^ 2 * N with hB
+  set T := -t₁ - t₂ - B * d with hT
+  clear_value B T
+  linear_combination hC1 + (T - t₁) * hE1 + ((T - t₁) * (T - t₂) * B) * hAd -
+    ((T - t₁) * (T - t₂) * (1 + C W.a₂ * Λ + C W.a₄ * Λ ^ 2 + C W.a₆ * Λ ^ 3)) * hT +
+    (T ^ 2 - t₁ ^ 2) * hB
+
+/-- **The third intersection point lies on the chord.** Reading the `w`-expansion at the third
+root gives the chord line read there: `w(z₃(z₁, z₂)) = λ(z₁, z₂) · z₃(z₁, z₂) + ν(z₁, z₂)`.
+
+This is what makes `formalThirdRoot` the parameter of an actual third intersection point rather
+than merely the third root of a cubic, and it is the identity the addition series is built on. -/
+theorem subst_formalThirdRoot_formalW :
+    subst (fun _ : Unit ↦ formalThirdRoot W) (formalW W) =
+      formalSlope W * formalThirdRoot W + formalIntercept W := by
+  refine eq_of_wEquation_mvPowerSeries W (constantCoeff_formalThirdRoot W) ?_ ?_ ?_
+    (line_at_thirdRoot W)
+  -- `hasSubst_formalThirdRoot` is stated downstream, in `Add/Series.lean`, so the one-line
+  -- Mathlib composite it packages is used directly here.
+  · exact constantCoeff_subst_eq_zero
+      (hasSubst_of_constantCoeff_zero fun _ ↦ constantCoeff_formalThirdRoot W)
+      (fun _ ↦ constantCoeff_formalThirdRoot W) (constantCoeff_formalW W)
+  · simp
+  · exact subst_formalW_wEquation W (PowerSeries.HasSubst.of_constantCoeff_zero
+      (constantCoeff_formalThirdRoot W))
+
+end IsDomain
 
 /-! ### Base change
 
