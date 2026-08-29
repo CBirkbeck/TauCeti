@@ -21,19 +21,25 @@ derivative it is named after.
 * `WeierstrassCurve.Affine.derivative_polynomial`: `W_Y` is `Polynomial.derivative W(X, Y)`, an
   identity of bivariate polynomials. No evaluation is involved: `R[X][Y]` is a polynomial ring in
   `Y` over `R[X]`, so `Polynomial.derivative` already differentiates in `Y`.
-* `WeierstrassCurve.Affine.derivative_eval_polynomial`: for each `y : R`, `W_X(X, y)` is the
-  derivative of the one-variable polynomial `W(X, y)`.
+* `WeierstrassCurve.Affine.derivative_eval_polynomial`: the chain rule along a substitution
+  `Y := p`, which expresses `derivative (W(X, p))` through *both* partials. For a constant
+  `p = C y` the `Y`-term drops out and this reads `W_X(X, y)`.
 
 Both hold over an arbitrary commutative ring.
 
 ## Implementation notes
 
-The two statements are asymmetric because `Polynomial.derivative` on `R[X][Y]` differentiates in
-`Y` only. Differentiating in `X` means differentiating the coefficients instead, and Mathlib's
-bivariate API reaches that only by transporting to `MvPolynomial`, in
-`Polynomial.Bivariate.pderiv_zero_equivMvPolynomial`. Substituting `Y := y` before differentiating
-avoids that detour and produces the `X`-partial in the shape its consumers use, at the cost of
-fixing a `y`.
+`Polynomial.derivative` on `R[X][Y]` differentiates in `Y`, so `derivative_polynomial` is an
+identity of bivariate polynomials with no evaluation anywhere. Differentiating in `X` instead means
+differentiating the coefficients, and that *is* expressible bare, as
+`PolynomialModule.equivPolynomialSelf (Polynomial.derivative'.mapCoeffs W.polynomial)` — the shape
+standing on the right of `Polynomial.Bivariate.pderiv_zero_equivMvPolynomial`; no `MvPolynomial`
+transport is needed to say it.
+
+`derivative_eval_polynomial` is nonetheless stated after substituting `Y := p`, for two reasons
+that are about usability rather than expressibility: that is the form consumers meet the partials
+in, and it avoids a round trip through `PolynomialModule`. At that level the two partials appear
+together, as the chain rule, rather than one at a time.
 
 ## Provenance
 
@@ -56,18 +62,20 @@ variable {R : Type*} [CommRing R] {W : Affine R}
 /-- **The `Y`-partial derivative of `W(X, Y)` is a `Polynomial.derivative`.** Viewing `R[X][Y]` as
 a polynomial ring in `Y` over `R[X]`, differentiating `W(X, Y)` in `Y` gives `W_Y(X, Y)` on the
 nose. -/
-theorem derivative_polynomial : derivative W.polynomial = W.polynomialY := by
+@[simp] theorem derivative_polynomial : derivative W.polynomial = W.polynomialY := by
   simp only [polynomial, polynomialY, derivative_sub, derivative_add, derivative_mul,
     derivative_C, derivative_X_pow, derivative_X, C_ofNat, Nat.cast_ofNat, zero_mul, zero_add,
     sub_zero, mul_one, pow_one, Nat.add_one_sub_one]
 
-/-- **The `X`-partial derivative of `W(X, Y)` is a `Polynomial.derivative`,** after substituting a
-value for `Y`. Differentiating the one-variable polynomial `W(X, y)` gives `W_X(X, y)`. -/
-theorem derivative_eval_polynomial (y : R) :
-    derivative (W.polynomial.eval (C y)) = W.polynomialX.eval (C y) := by
-  simp only [polynomial, polynomialX, C_add, C_mul, C_pow, eval_sub, eval_add, eval_pow, eval_X,
-    eval_mul, eval_C, eval_ofNat, derivative_sub, derivative_add, derivative_mul, derivative_C,
-    derivative_pow, derivative_X, C_ofNat, Nat.cast_ofNat, zero_mul, mul_zero, add_zero,
+/-- **The chain rule for `W(X, Y)` along a substitution `Y := p`.** Differentiating the
+one-variable polynomial `W(X, p)` splits into the two partials of `W`, the `Y`-one weighted by
+`p'`. Substituting a constant `p = C y` kills the second term and leaves `W_X(X, y)`. -/
+@[simp] theorem derivative_eval_polynomial (p : R[X]) :
+    derivative (W.polynomial.eval p) =
+      W.polynomialX.eval p + W.polynomialY.eval p * derivative p := by
+  simp only [polynomial, polynomialX, polynomialY, C_add, C_mul, C_pow, eval_sub, eval_add,
+    eval_pow, eval_X, eval_mul, eval_C, eval_ofNat, derivative_sub, derivative_add, derivative_mul,
+    derivative_C, derivative_pow, derivative_X, C_ofNat, Nat.cast_ofNat, zero_mul, add_zero,
     zero_add, mul_one, pow_one, Nat.add_one_sub_one]
   ring
 

@@ -292,7 +292,7 @@ private theorem nonsingular_of_isUnit_XYIdeal {x y : F} (heq : W.Equation x y)
   have hdY_apply (p : P) : dY p = (p.derivative.eval (C y)).eval x := rfl
   have hWX : dX W.polynomial = 0 := by
     rw [hdX_apply, W.derivative_eval_polynomial]
-    exact hs.1
+    simpa using hs.1
   have hWY : dY W.polynomial = 0 := by
     rw [hdY_apply, W.derivative_polynomial]
     exact hs.2
