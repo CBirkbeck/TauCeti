@@ -119,24 +119,20 @@ public theorem frickeOperatorCusp_mem_cuspFormCharSpace (k : ℤ) (χ : (ZMod N)
 /-- **The Fricke operator restricted to a nebentypus space**, as a `ℂ`-linear map
 `M_k(Γ₁(N), χ) →ₗ[ℂ] M_k(Γ₁(N), χ⁻¹)`.
 
-This is `frickeOperator` cut down by `LinearMap.restrict`. Naming the restriction destroys the
-`LinearMap.restrict` head symbol, so mathlib's `LinearMap.coe_restrict_apply` no longer fires on
-it; `coe_frickeCharRestrict_apply` below restates it under this name. -/
+This is `frickeOperator` cut down by `LinearMap.restrict`. -/
 public noncomputable def frickeCharRestrict (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) :
     modFormCharSpace k χ →ₗ[ℂ] modFormCharSpace k χ⁻¹ :=
   (frickeOperator k).restrict fun _ hf ↦ frickeOperator_mem_modFormCharSpace k χ hf
 
-/-- On underlying modular forms, `frickeCharRestrict` is `frickeOperator`.
-
-Mathlib's `LinearMap.coe_restrict_apply` cannot fire here: naming the restriction as a `def`
-destroys the `LinearMap.restrict` head symbol, so the `simp` lemma no longer matches. This states
-the same fact through the name that does. -/
+/-- On underlying modular forms, `frickeCharRestrict` is `frickeOperator`. -/
 @[simp]
 public theorem coe_frickeCharRestrict_apply (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
     (f : modFormCharSpace k χ) :
     ((frickeCharRestrict k χ f : modFormCharSpace k χ⁻¹) :
         ModularForm ((Gamma1 N).map (mapGL ℝ)) k) =
       frickeOperator k (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) :=
+  -- Naming the restriction as a `def` destroys the `LinearMap.restrict` head symbol, so
+  -- `LinearMap.coe_restrict_apply` does not fire as a `simp` lemma; it still applies by name.
   LinearMap.coe_restrict_apply _ _
 
 /-- **The Fricke operator restricted to a nebentypus space of cusp forms**, as a `ℂ`-linear map
@@ -155,20 +151,17 @@ public theorem coe_frickeCharCuspRestrict_apply (k : ℤ) (χ : (ZMod N)ˣ →* 
       frickeOperatorCusp k (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :=
   LinearMap.coe_restrict_apply _ _
 
-/-- **The Fricke automorphism carries the `χ`-space onto the `χ⁻¹`-space.**
-
-This is the surjective refinement of `frickeOperator_mem_modFormCharSpace`, which gives only the
-forward inclusion. The reverse one is the same statement read at `χ⁻¹`: a `g` in the `χ⁻¹`-space
-is the image of `(frickeOperatorEquiv k).symm g`, which lies in the `χ`-space because
-`frickeOperator k g` does — by `frickeOperator_mem_modFormCharSpace` at `χ⁻¹` and `χ⁻¹⁻¹ = χ` —
-and the space is closed under the scalar. Stated as a `Submodule.map` equality because that is
-what `LinearEquiv.ofSubmodules` consumes. -/
+/-- **The Fricke automorphism carries the `χ`-space onto the `χ⁻¹`-space.** The surjective
+refinement of `frickeOperator_mem_modFormCharSpace`, which gives only the forward inclusion. -/
+@[simp]
 public theorem map_frickeOperatorEquiv_modFormCharSpace (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) :
     (modFormCharSpace k χ).map (frickeOperatorEquiv (N := N) k : _ →ₗ[ℂ] _) =
       modFormCharSpace k χ⁻¹ := by
   refine le_antisymm ?_ fun g hg ↦ ?_
   · rintro _ ⟨f, hf, rfl⟩
     simpa using frickeOperator_mem_modFormCharSpace k χ hf
+  -- The reverse inclusion is the same statement read at `χ⁻¹`, via `χ⁻¹⁻¹ = χ` and closure
+  -- of the space under the scalar.
   · refine ⟨(frickeOperatorEquiv (N := N) k).symm g, ?_,
       by simp [smul_smul, inv_mul_cancel₀ (frickeScalar_ne_zero (N := N) k)]⟩
     have h := frickeOperator_mem_modFormCharSpace k χ⁻¹ hg
@@ -179,9 +172,7 @@ public theorem map_frickeOperatorEquiv_modFormCharSpace (k : ℤ) (χ : (ZMod N)
 `M_k(Γ₁(N), χ) ≃ₗ[ℂ] M_k(Γ₁(N), χ⁻¹)`.
 
 The ambient automorphism `frickeOperatorEquiv` restricted to the pair of character spaces it
-matches up, via `LinearEquiv.ofSubmodules`. The inverse and both round trips come from the
-ambient equivalence; only the surjectivity of the restriction is proved here, as
-`map_frickeOperatorEquiv_modFormCharSpace`. -/
+matches up. -/
 public noncomputable def frickeCharEquiv (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) :
     modFormCharSpace k χ ≃ₗ[ℂ] modFormCharSpace k χ⁻¹ :=
   (frickeOperatorEquiv (N := N) k).ofSubmodules _ _
@@ -207,7 +198,8 @@ public theorem coe_frickeCharEquiv_symm_apply (k : ℤ) (χ : (ZMod N)ˣ →* �
   simp [frickeCharEquiv]
 
 /-- **The Fricke automorphism carries the `χ`-space of cusp forms onto the `χ⁻¹`-space.** The
-cusp-form counterpart of `map_frickeOperatorEquiv_modFormCharSpace`, proved the same way. -/
+cusp-form counterpart of `map_frickeOperatorEquiv_modFormCharSpace`. -/
+@[simp]
 public theorem map_frickeOperatorCuspEquiv_cuspFormCharSpace (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) :
     (cuspFormCharSpace k χ).map (frickeOperatorCuspEquiv (N := N) k : _ →ₗ[ℂ] _) =
       cuspFormCharSpace k χ⁻¹ := by
