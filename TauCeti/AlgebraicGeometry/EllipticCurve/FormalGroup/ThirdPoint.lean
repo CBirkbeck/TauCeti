@@ -75,7 +75,7 @@ where the chord meets the curve. For an unconstrained `AA` it is just the substi
 and carries no such meaning. -/
 -- `AA` is carried as a parameter rather than inlined because the `linear_combination` certificates
 -- below are written against it as a single atom: substituting the expansion here makes `ring` fail
--- in `chord_cubic`, `chord_addX` and `chord_addY` alike.
+-- in `chordCubic_eq_zero`, `chord_addX` and `chord_addY` alike.
 private def chordCubic (AA Λ N q : F) : F :=
   -N + AA * q ^ 3 + W.a₃ * N ^ 2 + W.a₆ * N ^ 3 - Λ * q + Λ * W.a₁ * q ^ 2 +
     N * W.a₁ * q + N * W.a₂ * q ^ 2 + W.a₃ * Λ ^ 2 * q ^ 2 + W.a₄ * q * N ^ 2 +
@@ -84,7 +84,7 @@ private def chordCubic (AA Λ N q : F) : F :=
 
 /-- Each chord parameter is a root of `chordCubic`: a point of the `(z, w)`-chart lying on the
 line `w = Λ z + N` has its parameter annihilate the cubic. Applied at each of `z₁`, `z₂`. -/
-private lemma chord_cubic {AA Λ N q w : F}
+private lemma chordCubic_eq_zero {AA Λ N q w : F}
     (hAA2 : AA = 1 + W.a₂ * Λ + W.a₄ * Λ ^ 2 + W.a₆ * Λ ^ 3)
     (hw : w = q ^ 3 + W.a₁ * q * w + W.a₂ * q ^ 2 * w + W.a₃ * w ^ 2 +
       W.a₄ * q * w ^ 2 + W.a₆ * w ^ 3)
@@ -235,8 +235,8 @@ private lemma chord_addX_addY {q₁ q₂ w₁ w₂ Λ N T₃ wT : F}
     rw [Affine.slope_of_X_ne hxq, div_eq_div_iff (sub_ne_zero.mpr hxq) hN0]
     field_simp
     linear_combination (w₂ - Λ * q₂) * hline₁ - w₁ * hline₂ + Λ * q₂ * hline₁
-  have hCub₁ := chord_cubic W rfl hw₁ hline₁
-  have hCub₂ := chord_cubic W rfl hw₂ hline₂
+  have hCub₁ := chordCubic_eq_zero W rfl hw₁ hline₁
+  have hCub₂ := chordCubic_eq_zero W rfl hw₂ hline₂
   rw [hℓ]
   exact ⟨chord_addX W rfl hline₁ hline₂ hCub₁ hCub₂ hT₃ hwT hA hq12 hN0 hw₁0 hw₂0 hwT0,
     chord_addY W rfl hline₁ hline₂ hCub₁ hCub₂ hT₃ hwT hA hq12 hN0 hw₁0 hw₂0 hwT0⟩
