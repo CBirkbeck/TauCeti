@@ -114,10 +114,15 @@ private theorem exists_sub_C_eq_zero_or_intDegree_neg (A : RatFunc F)
     have h := Polynomial.modByMonic_add_div A.num A.denom
     rw [hc] at h
     linear_combination h
+  -- `A.num = A * A.denom` in the function field: the defining property of `num` and `denom`,
+  -- taken as a term so the identity below is closed by `ring` rather than by ordered rewriting.
+  have hnumA : algebraMap F[X] (RatFunc F) A.num = A * algebraMap F[X] (RatFunc F) A.denom :=
+    (div_eq_iff hdenMap0).mp (RatFunc.num_div_denom A)
   have key : A - RatFunc.C c = algebraMap F[X] (RatFunc F) (A.num %ₘ A.denom) /
       algebraMap F[X] (RatFunc F) A.denom := by
-    rw [hnum, map_sub, map_mul, RatFunc.algebraMap_C, sub_div, RatFunc.num_div_denom,
-      mul_div_assoc, div_self hdenMap0, mul_one]
+    rw [eq_div_iff hdenMap0, hnum]
+    simp only [map_sub, map_mul, RatFunc.algebraMap_C, hnumA]
+    ring
   rw [key]
   rcases eq_or_ne (A.num %ₘ A.denom) 0 with h0 | h0
   · exact Or.inl (by simp [h0])
