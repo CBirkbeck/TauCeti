@@ -9,6 +9,7 @@ public import Mathlib.RingTheory.MvPowerSeries.Inverse
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.WExpansion
 public import TauCeti.RingTheory.MvPowerSeries.Equiv
 public import TauCeti.RingTheory.MvPowerSeries.Inverse
+public import TauCeti.RingTheory.MvPowerSeries.NonZeroDivisors
 
 /-!
 # The chord through two points of a Weierstrass curve near the origin
@@ -321,18 +322,15 @@ theorem hasSubst_formalThirdRoot :
 
 Vieta's formulas produce `formalThirdRoot` from the coefficients of the chord cubic, which by
 itself says nothing about where the curve meets that chord: it is an identity between series, not
-a statement that the point with parameter `z₃` lies on the line `w = λ z + ν`. Over a domain it
-does, and the argument is the classical one — the cubic already has `z₁` and `z₂` among its
-roots, so cancelling `z₁ - z₂` from the difference of the two identities pins the third.
+a statement that the point with parameter `z₃` lies on the line `w = λ z + ν`. It does, and the
+argument is the classical one — the cubic already has `z₁` and `z₂` among its roots, so cancelling
+`z₁ - z₂` from the difference of the two identities pins the third.
 
-`[IsDomain R]` is used for that cancellation and nothing else: `MvPowerSeries.X_inj` separates
-the two variables, and Mathlib's `NoZeroDivisors (MvPowerSeries σ R)` — which needs no hypothesis
-on `σ` — turns the separation into cancellation.
+That cancellation needs no hypothesis on `R`. The difference of two distinct variables is a
+non-zero-divisor of `MvPowerSeries (Unit ⊕ Unit) R` over an arbitrary commutative ring
+(`MvPowerSeries.X_sub_X_mem_nonZeroDivisors`), because the coefficient recursion behind it never
+cancels anything in `R`.
 -/
-
-section IsDomain
-
-variable [IsDomain R]
 
 /-- The chord line, read at the third root, satisfies the `w`-equation at that parameter.
 
@@ -385,10 +383,10 @@ private theorem line_at_thirdRoot :
       (Λ - (C W.a₁ * N + 2 * C W.a₃ * Λ * N + C W.a₄ * N ^ 2 +
         3 * C W.a₆ * Λ * N ^ 2))) = 0 := by
     linear_combination hC1 - hC2
-  have hne : t₁ - t₂ ≠ 0 := by
-    rw [ht₁, ht₂, sub_ne_zero]
-    exact fun h ↦ by simpa using X_inj.mp h
-  have hE1 := (mul_eq_zero.mp hsub).resolve_left hne
+  have hreg : ∀ x : MvPowerSeries (Unit ⊕ Unit) R, (t₁ - t₂) * x = 0 → x = 0 := by
+    rw [ht₁, ht₂]
+    exact (X_sub_X_mem_nonZeroDivisors (by simp)).1
+  have hE1 := hreg _ hsub
   clear_value Λ N t₁ t₂ d
   set B := C W.a₁ * Λ + C W.a₂ * N + C W.a₃ * Λ ^ 2 + 2 * C W.a₄ * Λ * N +
     3 * C W.a₆ * Λ ^ 2 * N with hB
@@ -403,6 +401,7 @@ root gives the chord line read there: `w(z₃(z₁, z₂)) = λ(z₁, z₂) · z
 
 This is what makes `formalThirdRoot` the parameter of an actual third intersection point rather
 than merely the third root of a cubic, and it is the identity the addition series is built on. -/
+@[simp]
 theorem subst_formalThirdRoot_formalW :
     subst (fun _ : Unit ↦ formalThirdRoot W) (formalW W) =
       formalSlope W * formalThirdRoot W + formalIntercept W := by
@@ -414,7 +413,6 @@ theorem subst_formalThirdRoot_formalW :
   · exact subst_formalW_wEquation W (PowerSeries.HasSubst.of_constantCoeff_zero
       (constantCoeff_formalThirdRoot W))
 
-end IsDomain
 
 /-! ### Base change
 
