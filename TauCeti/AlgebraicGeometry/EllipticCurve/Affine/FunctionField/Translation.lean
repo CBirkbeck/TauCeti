@@ -311,12 +311,14 @@ theorem translationHom_apply (P : Multiplicative (W⁄F).toAffine.Point) :
 
 /-- **The translation moves the coordinate `x` to the `x`-coordinate of the translate of the
 generic point**: this is what makes `translation` the pullback of `τ_P`. -/
+@[simp]
 theorem translation_apply_genericX (P : (W⁄F).toAffine.Point) :
     translation W P (genericX W) = Point.xCoord (translatedGenericPoint W P) :=
   translationAux_genericX W P
 
 /-- **The translation moves the coordinate `y` to the `y`-coordinate of the translate of the
 generic point.** -/
+@[simp]
 theorem translation_apply_genericY (P : (W⁄F).toAffine.Point) :
     translation W P (genericY W) = Point.yCoord (translatedGenericPoint W P) :=
   translationAux_genericY W P
