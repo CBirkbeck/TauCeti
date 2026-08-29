@@ -13,9 +13,11 @@ import Mathlib.Tactic.Ring
 /-!
 # Localising a ring at `1 + I`
 
-For an ideal `I` of a commutative ring `B`, the set `1 + I` is a submonoid, and localising at it
-makes every element of `I` lie in every prime exactly when a power of `I` is annihilated by a
-single element of `1 + I`.
+For an ideal `I` of a commutative ring `B`, the set `1 + I` is a submonoid. If `I` is finitely
+generated and its image in a localisation at `1 + I` lies in every prime there, then a single
+element of `1 + I` annihilates a power of `I`.
+
+Only that implication is proved here, and only under `I.FG`; the converse is not stated.
 
 ## Main results
 
@@ -24,6 +26,12 @@ single element of `1 + I`.
   prime of the localisation, some power of that image is zero.
 * `Ideal.exists_mem_oneAdd_forall_mul_eq_zero`: the same hypothesis produces a single
   `s ∈ 1 + I` with `s * x = 0` for every `x ∈ I ^ n`.
+
+## References
+
+* T. Wedhorn, *Adic Spaces*, arXiv:1910.05934v1, Proposition 7.49(2). The construction here
+  follows the argument of that proposition's proof, which localises at `1 + I` in exactly this
+  way; the statements below are stated for their own sake and do not mention `Spa`.
 -/
 
 public section
@@ -54,8 +62,8 @@ variable {I} {C : Type*} [CommRing C] [Algebra B C]
 that image lies in the nilradical; being finitely generated it is then nilpotent.
 
 Nothing here needs `C` to be a localisation — only a `B`-algebra in which the image of `I` is
-contained in every prime. Wedhorn applies it to `C = (1 + I)⁻¹ B`, where that hypothesis is what
-his claim supplies. -/
+contained in every prime. It is used below at `C = (1 + I)⁻¹ B`, which is the case arising in the
+proof of Wedhorn's Proposition 7.49(2). -/
 theorem exists_pow_map_eq_bot (hfg : I.FG)
     (hprime : ∀ P : Ideal C, P.IsPrime → I.map (algebraMap B C) ≤ P) :
     ∃ n : ℕ, (I.map (algebraMap B C)) ^ n = ⊥ := by
@@ -71,9 +79,10 @@ section Localisation
 
 variable [IsLocalization (oneAdd I) C]
 
-/-- **A single element of `1 + I` annihilates a power of `I`.** Part (a) kills `I ^ n` in the
-localisation; each generator is then killed in `B` by some element of `1 + I`, and the product of
-those finitely many elements — again in `1 + I`, since it is a submonoid — kills all of `I ^ n`. -/
+/-- **A single element of `1 + I` annihilates a power of `I`.** Let `I` be a finitely generated
+ideal of `B` whose image in a localisation `C` at `1 + I` is contained in every prime of `C`.
+Then there are `n : ℕ` and `s ∈ 1 + I` with `s * x = 0` for every `x ∈ I ^ n` — one `s` serving
+the whole of `I ^ n`, not one per element. -/
 theorem exists_mem_oneAdd_forall_mul_eq_zero (hfg : I.FG)
     (hprime : ∀ P : Ideal C, P.IsPrime → I.map (algebraMap B C) ≤ P) :
     ∃ (n : ℕ) (s : B), s ∈ oneAdd I ∧ ∀ x ∈ I ^ n, s * x = 0 := by
