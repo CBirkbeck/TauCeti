@@ -50,10 +50,19 @@ repository's `CuspForm.levelRaiseₗ` accepts the divisibility hypothesis direct
 Adapted from the AINTLIB `LeanModularForms` project (Chris Birkbeck,
 `github.com/CBirkbeck/AINTLIB`, Apache-2.0) at commit `2baa76f74`, file
 `projects/LeanModularForms/LeanModularForms/Eigenforms/AtkinLehner.lean`, declarations
-`IsSupportedOnDvd` and its namespace `zero`, `add`, `smul`, `neg`, `sub`, `one`, together with
-`QExpansionSupportedOnDvd`, `qExpansion_modularFormLevelRaise_isSupportedOnDvd`,
-`qExpansion_levelRaise_isSupportedOnDvd`, renamed here to
-`ModularForm.isSupportedOnDvd_qExpansion_levelRaise` and its cusp-form counterpart.
+`QExpansionSupportedOnDvd`, `qSupportedOnDvdSubmodule`,
+`levelRaise_mem_qSupportedOnDvdSubmodule`, `qExpansion_modularFormLevelRaise_isSupportedOnDvd`
+and `qExpansion_levelRaise_isSupportedOnDvd`. The last two are renamed here to
+`ModularForm.isSupportedOnDvd_qExpansion_levelRaise` and its cusp-form counterpart, and
+`range_levelRaise_le_qSupportedOnDvdSubmodule` is the cast-free form of the source's
+`range_castLevelRaise_le_qSupportedOnDvdSubmodule`. The underlying power-series predicate
+`IsSupportedOnDvd` comes from the same source file but lives in
+`TauCeti/RingTheory/PowerSeries/Support.lean` and is attributed there.
+
+`qSupportedOnDvdSubmodule` is not a transcription: the source builds the submodule by hand,
+discharging `zero_mem'`, `add_mem'` and `smul_mem'` from the predicate's closure lemmas, whereas
+here it is the `comap` of `supportedOnDvdSubmodule` along the `q`-expansion, so that closure is
+inherited from the linearity already bundled into `ModularForm.qExpansionLinearMap`.
 
 The source's two forward lemmas are proved here directly from
 `TauCeti.ModularForm.qExpansion_levelRaise_coeff` and its cusp-form counterpart, which
@@ -63,9 +72,9 @@ transporting along `qExpansion_ext2`; that detour is unnecessary here and is not
 source's `modularFormLevelRaise`/`levelRaise` name pair is this repository's
 `ModularForm.levelRaise`/`CuspForm.levelRaise`, distinguished by namespace rather than by prefix.
 
-The source states the predicate inside its `HeckeRing.GL2.AtkinLehner` namespace; here it is a
-statement about power series alone and is placed accordingly, since nothing in it mentions a
-modular form.
+The source keeps the predicate and its modular-form consequences in one file, inside its
+`HeckeRing.GL2.AtkinLehner` namespace. Here the predicate is a statement about power series
+alone, so what the source keeps together is split across two files.
 
 ## References
 

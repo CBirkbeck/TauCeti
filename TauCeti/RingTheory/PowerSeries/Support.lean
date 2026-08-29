@@ -28,6 +28,17 @@ forms by pulling `supportedOnDvdSubmodule` back along the `q`-expansion.
 
 * `TauCeti.IsSupportedOnDvd.add`, `.smul`, `.neg`, `.sub`: the condition is preserved by the
   module operations.
+
+## Provenance
+
+`IsSupportedOnDvd` and its closure lemmas `zero`, `add`, `smul`, `neg`, `sub`, `one` are adapted
+from the AINTLIB `LeanModularForms` project (Chris Birkbeck,
+`github.com/CBirkbeck/AINTLIB`, Apache-2.0) at commit `2baa76f74`, file
+`projects/LeanModularForms/LeanModularForms/Eigenforms/AtkinLehner.lean`. The source states them
+over `ℂ`, inside its `HeckeRing.GL2.AtkinLehner` namespace; here they are about power series over
+a semiring — `neg` and `sub` over a ring, `smul` over a module — and are placed in `RingTheory/`
+accordingly, since nothing in them mentions a modular form. The modular-form consequences the
+source draws from them are in `TauCeti/NumberTheory/ModularForms/Newforms/QSupport.lean`.
 -/
 
 public section
