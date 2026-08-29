@@ -66,8 +66,17 @@ lemma chord_point_nonsingular {q w : F}
 
 
 /-- The cubic in the chord parameter left by substituting the line `w = Λ z + N` into the
-`(z, w)`-form of the Weierstrass equation, written with its leading coefficient `AA` abstracted.
-Its three roots are the parameters of the three points where the chord meets the curve. -/
+`(z, w)`-form of the Weierstrass equation, with its leading coefficient carried as the parameter
+`AA`.
+
+The geometric reading needs `AA` pinned: **when** `AA = 1 + a₂Λ + a₄Λ² + a₆Λ³`, which is what
+`hAA2` supplies at every use below, this is the cubic whose roots are the parameters of the points
+where the chord meets the curve. For an unconstrained `AA` it is just the substituted expression
+and carries no such meaning.
+
+`AA` is abstracted rather than inlined because the `linear_combination` certificates below are
+written against it as a single atom; substituting the expansion into this definition makes `ring`
+fail in all three of `chord_cubic`, `chord_addX` and `chord_addY`. -/
 private def chordCubic (AA Λ N q : F) : F :=
   -N + AA * q ^ 3 + W.a₃ * N ^ 2 + W.a₆ * N ^ 3 - Λ * q + Λ * W.a₁ * q ^ 2 +
     N * W.a₁ * q + N * W.a₂ * q ^ 2 + W.a₃ * Λ ^ 2 * q ^ 2 + W.a₄ * q * N ^ 2 +
