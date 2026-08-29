@@ -230,13 +230,8 @@ private theorem valuation_sum_eq_exp_neg {x t : F} (hx : 0 < P.ord x) (ht : P.or
 place of `S` that are units at the other places of `S`, and lifts `u P j` of a `k`-basis of each
 residue field that are as small as `x` at the other places, the products `u P j * t P ^ a` for
 `a < ord_P x` form a `k⟮x⟯`-linearly independent family. This is the content of Stichtenoth,
-Proposition 1.3.3; counting the family is all that remains.
-
-The proof clears a common power of `x` from the coefficients, then localises at the place `P₀`
-carrying the surviving lowest-degree coefficient: there the valuation of its own block is
-`exp (-A)` exactly, while every other block is at most `exp (-ord_{P₀} x)`, and `A < ord_{P₀} x`
-makes that a contradiction. -/
-private theorem linearIndependent_stichtenothFamily {x : F} (hx0 : x ≠ 0)
+Proposition 1.3.3; counting the family is all that remains. -/
+private theorem linearIndependent_stichtenothFamily {x : F}
     {S : Finset (Place k F)} (hS : ∀ P ∈ S, 0 < P.ord x)
     {t : {P : Place k F // P ∈ S} → F}
     (ht1 : ∀ P : {P : Place k F // P ∈ S}, (P : Place k F).ord (t P) = 1)
@@ -247,7 +242,6 @@ private theorem linearIndependent_stichtenothFamily {x : F} (hx0 : x ≠ 0)
     (humem : ∀ (P : {P : Place k F // P ∈ S}) j, u P j ∈ (P : Place k F).integers)
     (huord : ∀ (P : {P : Place k F // P ∈ S}) j (Q : Place k F), Q ∈ S → Q ≠ (P : Place k F) →
       Q.ord (u P j) = Q.ord x)
-    (hune : ∀ (P : {P : Place k F // P ∈ S}) j, u P j ≠ 0)
     (hlib : ∀ P : {P : Place k F // P ∈ S}, LinearIndependent k
       fun j ↦ IsLocalRing.residue (P : Place k F).integers ⟨u P j, humem P j⟩) :
     LinearIndependent k⟮x⟯
@@ -255,6 +249,22 @@ private theorem linearIndependent_stichtenothFamily {x : F} (hx0 : x ≠ 0)
           Fin (Module.finrank k (P : Place k F).ResidueField) ↦
         u i.1 i.2.2 * t i.1 ^ (i.2.1 : ℕ)) := by
   classical
+  -- Clear a common power of `x` from the coefficients, then localise at the place `P₀` carrying
+  -- the surviving lowest-degree coefficient: there the valuation of its own block is `exp (-A)`
+  -- exactly, while every other block is at most `exp (-ord_{P₀} x)`, and `A < ord_{P₀} x` makes
+  -- that a contradiction.
+  rcases S.eq_empty_or_nonempty with rfl | ⟨P₁, hP₁⟩
+  · have : IsEmpty (Σ P : {P : Place k F // P ∈ (∅ : Finset (Place k F))},
+        Fin ((P : Place k F).ord x).toNat ×
+          Fin (Module.finrank k (P : Place k F).ResidueField)) :=
+      ⟨fun i ↦ Finset.notMem_empty _ i.1.2⟩
+    exact linearIndependent_empty_type
+  have hx0 : x ≠ 0 := by rintro rfl; simpa using hS P₁ hP₁
+  -- Linear independence of the residue vectors already forces each lift to be nonzero.
+  have hune : ∀ (P : {P : Place k F // P ∈ S}) j, u P j ≠ 0 := fun P j h ↦
+    (hlib P).ne_zero j <| by
+      rw [show (⟨u P j, humem P j⟩ : (P : Place k F).integers) = 0 from Subtype.ext h]
+      exact map_zero _
   rw [← LinearIndependent.iff_fractionRing (Algebra.adjoin k {x}) k⟮x⟯,
     Fintype.linearIndependent_iff]
   intro g hsum i₁
@@ -375,7 +385,7 @@ private theorem sum_toNat_mul_finrank_le {x : F} [FiniteDimensional k⟮x⟯ F]
       fun j ↦ IsLocalRing.residue (P : Place k F).integers ⟨u P j, humem P j⟩ := fun P ↦ by
     simpa only [hures P] using (b P).linearIndependent
   -- Stichtenoth's family, indexed by a place of `S`, an exponent and a basis vector.
-  have key := linearIndependent_stichtenothFamily hx0 hS ht1 ht0 humem huord hune hlib
+  have key := linearIndependent_stichtenothFamily hS ht1 ht0 humem huord hlib
   have hcard := key.fintype_card_le_finrank
   rw [Fintype.card_sigma] at hcard
   simp only [Fintype.card_prod, Fintype.card_fin] at hcard
