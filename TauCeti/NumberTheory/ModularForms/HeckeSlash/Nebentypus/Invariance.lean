@@ -78,7 +78,7 @@ public section
 open Matrix Matrix.SpecialLinearGroup UpperHalfPlane CongruenceSubgroup DoubleCoset
   HeckeRing.GLn
 
-open scoped MatrixGroups ModularForm HeckeCosetModule
+open scoped MatrixGroups ModularForm
 
 namespace HeckeRing.GL2
 
@@ -261,31 +261,6 @@ noncomputable def twistedHeckeSlashSumCharEnd
   -- `twistedHeckeSlashSumEnd`'s body is sealed to this module, so the coercion is unfolded through
   -- its own interface lemma rather than by `rfl`.
   simp [twistedHeckeSlashSumCharEnd]
-
-/-- The `ℤ`-linear extension of `twistedHeckeSlashSumCharEnd` to formal `ℤ`-combinations of double
-cosets of `Γ₀(N)`, on the carrier the twisted sum preserves.
-
-`twistedHeckeSlashRingLinearMap` (`Nebentypus/Ring.lean`) is the same extension on all of
-`ℍ → ℂ`. The two are not interchangeable: the composition results of
-`Nebentypus/Composition.lean` are available only on the character space, so the carrier is what
-distinguishes them, and neither is a specialisation of the other.
-
-`𝕋 Δ H ℤ` unfolds to `HeckeCoset Δ H H →₀ ℤ` carrying the transported module structure, which is
-why `Finsupp.linearCombination` applies at this type. -/
-noncomputable def twistedHeckeSlashRingCharLinearMap :
-    𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ →ₗ[ℤ] Module.End ℂ (functionCharSpace k χ) :=
-  Finsupp.linearCombination ℤ fun D ↦ twistedHeckeSlashSumCharEnd k χ D
-
-/-- The value on a basis element is the scaled twisted operator of that double coset. -/
-@[simp] lemma twistedHeckeSlashRingCharLinearMap_single
-    (D : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))) (c : ℤ) :
-    twistedHeckeSlashRingCharLinearMap k χ (HeckeCosetModule.single ℤ D c) =
-      c • twistedHeckeSlashSumCharEnd k χ D :=
-  -- As in `twistedHeckeSlashRingLinearMap_single`: `Finsupp.linearCombination_single` does not
-  -- apply, since `HeckeCosetModule.single` is a separate, non-exposed `def`.
-  (Finsupp.linearCombination_apply (R := ℤ)
-    (v := fun D ↦ twistedHeckeSlashSumCharEnd k χ D) _).trans
-    (HeckeCosetModule.sum_single_index ℤ (zero_smul _ _))
 
 end HeckeRing.GL2
 
