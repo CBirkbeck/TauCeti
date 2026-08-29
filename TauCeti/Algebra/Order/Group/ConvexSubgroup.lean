@@ -57,8 +57,6 @@ built from `closure` in the forthcoming valuation-spectrum development of `Spv (
   and `⊤`.
 * `TauCeti.ConvexSubgroup.quotientBotOrderIso` : The quotient by `⊥` is the group itself, as an
   order isomorphism, so order-theoretic properties transfer across it.
-* `TauCeti.ConvexSubgroup.mulArchimedean_of_orderMonoidIso` : `MulArchimedean` transports along
-  an order isomorphism of ordered groups.
 
 ## References
 
@@ -659,15 +657,6 @@ theorem quotientMk_lt_one_of_notMem {a : Γ} (ha : a ≤ 1) (haH : a ∉ H) :
     simpa using H.quotientMk_monotone ha
   refine hle.lt_of_ne fun heq ↦ haH ?_
   exact (QuotientGroup.eq_one_iff a).mp (by simpa using heq)
-
-/-- Transport `MulArchimedean` along an order isomorphism of ordered groups. Archimedeanness is a
-statement about `≤` and powers, both of which an `OrderMonoidIso` preserves in each direction. -/
-theorem mulArchimedean_of_orderMonoidIso {A B : Type*} [CommGroup A] [PartialOrder A]
-    [CommGroup B] [PartialOrder B] (e : A ≃*o B) [MulArchimedean B] : MulArchimedean A where
-  arch x {y} hy := by
-    obtain ⟨n, hn⟩ := MulArchimedean.arch (e x) (y := e y)
-      (by rwa [← map_one e, map_lt_map_iff])
-    exact ⟨n, by rwa [← map_pow, map_le_map_iff] at hn⟩
 
 /-- **The quotient by `⊥` is the group itself, as an ordered group.** `QuotientGroup.quotientBot`
 identifies the underlying groups; this upgrades it to an order isomorphism, which is what carries

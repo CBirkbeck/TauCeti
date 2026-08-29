@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.GroupTheory.ArchimedeanDensely
 public import TauCeti.RingTheory.Valuation.Coarsen
 
 /-!
@@ -133,6 +134,6 @@ theorem isMicrobial_of_mulArchimedean {v : Valuation R Γ₀}
     [Nontrivial (ValueGroup₀ (.ofClass v))ˣ] [MulArchimedean (ValueGroup₀ (.ofClass v))ˣ] :
     v.IsMicrobial :=
   ⟨⊥, Function.Surjective.nontrivial ConvexSubgroup.quotientBotOrderIso.surjective,
-    ConvexSubgroup.mulArchimedean_of_orderMonoidIso ConvexSubgroup.quotientBotOrderIso⟩
+    ConvexSubgroup.quotientBotOrderIso.symm.mulArchimedean⟩
 
 end Valuation
