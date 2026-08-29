@@ -5,7 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.RingTheory.Localization.Away.Basic
+public import TauCeti.RingTheory.Localization.Away
 public import TauCeti.Topology.Algebra.TopologicallyNilpotent
 
 /-!
@@ -17,17 +17,15 @@ nilpotent in `A`. Inverting `s` on both sides does not distinguish the two rings
 
 The point is that `B` is open, so a topologically nilpotent `s` absorbs every element of `A` into
 `B` after enough multiplications. Passing to `B_s` makes that absorption invertible, which is
-exactly what surjectivity needs, while injectivity is free because `B → A` is injective to begin
-with.
+exactly what surjectivity needs. Injectivity is not topological at all and lives one file down, in
+`RingTheory/Localization/Away.lean`, as `TauCeti.Localization.awayMap_subtype_injective`.
 
 ## Implementation notes
 
-Both halves go through the Mathlib criteria rather than through elements of the localisations.
-`IsLocalization.Away.map_injective_iff` reduces injectivity to "if `b` dies in `A` then some
-`sⁿ * b` dies in `B`", which holds with `n = 0` since `Subring.subtype` is injective — no power of
-`s` is needed. `IsLocalization.Away.map_surjective_iff` reduces surjectivity to "every `a : A` is
-`sᵐ` times the image of something in `B`", which is `exists_mul_pow_mem_of_isTopologicallyNilpotent`
-verbatim, up to commuting the product.
+Surjectivity goes through the Mathlib criterion rather than through elements of the localisations:
+`IsLocalization.Away.map_surjective_iff` reduces it to "every `a : A` is `sᵐ` times the image of
+something in `B`", which is `exists_mul_pow_mem_of_isTopologicallyNilpotent` verbatim, up to
+commuting the product.
 
 Only `ContinuousMul` is assumed, matching the absorption lemma: continuity of addition, a
 nonarchimedean neighbourhood basis and any Huber structure are all irrelevant here.
@@ -40,36 +38,26 @@ between the complements of the two closed subsets, is **not** proved in this fil
 
 ## Main results
 
-* `injective_awayMap_subtype`: the induced map on localisations is injective, for any subring.
-* `surjective_awayMap_subtype_of_isTopologicallyNilpotent`: it is surjective when the subring is
-  open and `s` is topologically nilpotent.
-* `bijective_awayMap_subtype_of_isTopologicallyNilpotent`: hence bijective.
-* `awayRingEquivOfIsTopologicallyNilpotent`: the isomorphism `B_s ≃+* A_s` it packages.
+* `TauCeti.Localization.awayMap_subtype_surjective_of_isTopologicallyNilpotent`: the induced map on
+  localisations is surjective when the subring is open and `s` is topologically nilpotent.
+* `TauCeti.Localization.awayRingEquivOfIsTopologicallyNilpotent`: the resulting isomorphism
+  `B_s ≃+* A_s`.
 -/
 
 public section
 
-variable {A : Type*} [CommRing A]
+namespace TauCeti.Localization
+
+variable {A : Type*} [CommRing A] [TopologicalSpace A] [ContinuousMul A]
 variable {B : Subring A} {s : B}
 variable (Bs As : Type*) [CommRing Bs] [CommRing As]
   [Algebra B Bs] [IsLocalization.Away s Bs]
   [Algebra A As] [IsLocalization.Away (B.subtype s) As]
 
-/-- **The localisation of a subring injects into the localisation of the ring.** No topology and no
-openness are needed: `B → A` is injective, so an element of `B` that dies in `A` is already zero,
-and the criterion is met with the zeroth power of `s`. -/
-theorem injective_awayMap_subtype :
-    Function.Injective (IsLocalization.Away.map Bs As B.subtype s) := by
-  rw [IsLocalization.Away.map_injective_iff]
-  exact fun b hb ↦ ⟨0, by rw [pow_zero, one_mul]; exact Subtype.ext hb⟩
-
--- The topology enters only from here: it is what makes `s` absorb elements of `A` into `B`.
-variable [TopologicalSpace A] [ContinuousMul A]
-
 /-- **The localisation of an open subring surjects onto the localisation of the ring.** Given
 `a : A`, the topologically nilpotent `s` absorbs it into the open subring `B` after some number of
 multiplications, and inverting `s` undoes them. -/
-theorem surjective_awayMap_subtype_of_isTopologicallyNilpotent (hB : IsOpen (B : Set A))
+theorem awayMap_subtype_surjective_of_isTopologicallyNilpotent (hB : IsOpen (B : Set A))
     (hs : IsTopologicallyNilpotent (s : A)) :
     Function.Surjective (IsLocalization.Away.map Bs As B.subtype s) := by
   rw [IsLocalization.Away.map_surjective_iff]
@@ -78,19 +66,12 @@ theorem surjective_awayMap_subtype_of_isTopologicallyNilpotent (hB : IsOpen (B :
   exact ⟨⟨a * (s : A) ^ n, hn⟩, n, mul_comm a ((s : A) ^ n)⟩
 
 /-- **Inverting a topologically nilpotent element does not see an open subring.** For `B` an open
-subring of `A` and `s : B` topologically nilpotent in `A`, the induced map `B_s → A_s` is
-bijective. -/
-theorem bijective_awayMap_subtype_of_isTopologicallyNilpotent (hB : IsOpen (B : Set A))
-    (hs : IsTopologicallyNilpotent (s : A)) :
-    Function.Bijective (IsLocalization.Away.map Bs As B.subtype s) :=
-  ⟨injective_awayMap_subtype Bs As,
-    surjective_awayMap_subtype_of_isTopologicallyNilpotent Bs As hB hs⟩
-
-/-- The isomorphism `B_s ≃+* A_s` of
-`bijective_awayMap_subtype_of_isTopologicallyNilpotent`. -/
+subring of `A` and `s : B` topologically nilpotent in `A`, the induced map `B_s → A_s` is a ring
+isomorphism: injective for any subring, surjective because `s` absorbs into the open `B`. -/
 noncomputable def awayRingEquivOfIsTopologicallyNilpotent (hB : IsOpen (B : Set A))
     (hs : IsTopologicallyNilpotent (s : A)) : Bs ≃+* As :=
-  RingEquiv.ofBijective _ (bijective_awayMap_subtype_of_isTopologicallyNilpotent Bs As hB hs)
+  RingEquiv.ofBijective _ ⟨awayMap_subtype_injective Bs As,
+    awayMap_subtype_surjective_of_isTopologicallyNilpotent Bs As hB hs⟩
 
 @[simp] theorem coe_awayRingEquivOfIsTopologicallyNilpotent (hB : IsOpen (B : Set A))
     (hs : IsTopologicallyNilpotent (s : A)) :
@@ -99,5 +80,7 @@ noncomputable def awayRingEquivOfIsTopologicallyNilpotent (hB : IsOpen (B : Set 
   -- `rfl` cannot see through `awayRingEquivOfIsTopologicallyNilpotent`: its body is not exposed
   -- outside this module, so the coercion is unfolded through `RingEquiv`'s own interface lemma.
   RingEquiv.coe_ofBijective _ _
+
+end TauCeti.Localization
 
 end
