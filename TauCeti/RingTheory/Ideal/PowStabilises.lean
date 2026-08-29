@@ -21,11 +21,36 @@ deeper, so `I ^ n` is contained in `I ^ (n + 1)` and the two agree.
 
 * `TauCeti.Ideal.pow_eq_pow_succ_of_forall_one_add_mul_eq_zero`: `I ^ n = I ^ (n + 1)`.
 * `TauCeti.Ideal.pow_eq_pow_of_le_of_pow_eq_pow_succ`: `I ^ k = I ^ n` for all `k ≥ n`.
+
+## References
+
+These are the closing step of the proof of Proposition 7.49(2) in
+[T. Wedhorn, *Adic Spaces*](https://arxiv.org/abs/1910.05934) (arXiv:1910.05934v1), extracted as
+ideal-power stabilisation. Wedhorn reaches `(1 + i) I ^ n = 0` by localising at `1 + I`; that
+route needs the adic setting, whereas the implication recorded here does not, so it is stated
+over an arbitrary (semi)ring.
 -/
 
 public section
 
 namespace TauCeti.Ideal
+
+section CommSemiring
+
+variable {B : Type*} [CommSemiring B] {I : _root_.Ideal B}
+
+/-- **The powers stabilise from `n` on**, once `I ^ n = I ^ (n + 1)`. No commutativity and no
+additive inverses are used: the induction rewrites with `pow_succ` alone. -/
+theorem pow_eq_pow_of_le_of_pow_eq_pow_succ {n : ℕ} (hstab : I ^ n = I ^ (n + 1)) :
+    ∀ {k : ℕ}, n ≤ k → I ^ k = I ^ n := by
+  intro k hk
+  induction k, hk using Nat.le_induction with
+  | base => rfl
+  | succ m hm ih => rw [pow_succ, ih, ← pow_succ, ← hstab]
+
+end CommSemiring
+
+section CommRing
 
 variable {B : Type*} [CommRing B] {I : _root_.Ideal B}
 
@@ -41,12 +66,6 @@ theorem pow_eq_pow_succ_of_forall_one_add_mul_eq_zero {i : B} (hi : i ∈ I) {n 
   rw [hxeq, pow_succ]
   exact neg_mem (_root_.Ideal.mul_mem_mul hx hi)
 
-/-- **The powers stabilise from `n` on**, once `I ^ n = I ^ (n + 1)`. -/
-theorem pow_eq_pow_of_le_of_pow_eq_pow_succ {n : ℕ} (hstab : I ^ n = I ^ (n + 1)) :
-    ∀ {k : ℕ}, n ≤ k → I ^ k = I ^ n := by
-  intro k hk
-  induction k, hk using Nat.le_induction with
-  | base => rfl
-  | succ m hm ih => rw [pow_succ, ih, ← pow_succ, ← hstab]
+end CommRing
 
 end TauCeti.Ideal
