@@ -43,12 +43,17 @@ Adapted from the AINTLIB `LeanModularForms` project (Chris Birkbeck,
 `github.com/CBirkbeck/AINTLIB`, Apache-2.0) at commit `2baa76f74`, file
 `projects/LeanModularForms/LeanModularForms/Eigenforms/ConductorTheorem.lean`, declarations
 `exists_unit_of_not_factorsThrough` (:542), `fun_eq_zero_of_two_multipliers` (:555),
-`gamma0LiftLowerLeftN` (:564) and its entry lemmas (:590-:607).
+`gamma0LiftLowerLeftN` (:564) with its entry lemmas (:590-:607, :688),
+`exists_kernel_unit_with_char_shift` (:646),
+`exists_alt_unit_in_coset_with_char_separation` (:656) and
+`natCast_val_sub_dvd_of_unitsMap_eq` (:665).
 
-The source states the diamond label through its own `Gamma0MapUnits`; this repository has no such
-abbreviation — deliberately, as `Fricke/Conjugation.lean` records — so the label is read through
-`CongruenceSubgroup.Gamma0Map`'s `toHomUnits` instead, and no second unit-valued map is
-introduced.
+Two deliberate departures from the source. The source states the diamond label through its own
+`Gamma0MapUnits`; this repository has no such abbreviation — deliberately, as
+`Fricke/Conjugation.lean` records — so the label is read through `CongruenceSubgroup.Gamma0Map`'s
+`toHomUnits` instead, and no second unit-valued map is introduced. And the source states
+`natCast_val_sub_dvd_of_unitsMap_eq` only for the reduction modulo `N / l`; it is stated here for
+an arbitrary divisor `d ∣ N`, which is all its proof uses.
 
 ## References
 
@@ -84,13 +89,12 @@ theorem fun_eq_zero_of_two_multipliers (k : ℤ) (f : ℍ → ℂ) (M : GL (Fin 
 `!![a, b; N, e]` with `e` a lift of `u`, `a` a lift of `u⁻¹`, and `b = (a * e - 1) / N`. Its
 lower-left entry is exactly `N`, which is what lets it be used where a `Γ₀(N)` element of
 prescribed shape is needed. -/
-@[expose]
 noncomputable def gamma0LiftLowerLeftN (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
     ↥(Gamma0 N) := by
   let e : ℤ := ((u.val : ZMod N).val : ℤ)
   let a : ℤ := ((u⁻¹.val : ZMod N).val : ℤ)
   have h_ae : ((a * e : ℤ) : ZMod N) = 1 := by
-    change (((((u⁻¹.val : ZMod N).val : ℤ) * ((u.val : ZMod N).val : ℤ)) : ℤ) : ZMod N) = 1
+    simp only [a, e]
     push_cast
     rw [ZMod.natCast_zmod_val, ZMod.natCast_zmod_val, ← Units.val_mul, inv_mul_cancel,
       Units.val_one]
@@ -102,25 +106,25 @@ noncomputable def gamma0LiftLowerLeftN (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
     ring
   let b : ℤ := (a * e - 1) / (N : ℤ)
   refine ⟨⟨!![a, b; (N : ℤ), e], ?det⟩, ?gamma0⟩
-  · rw [Matrix.det_fin_two_of]
-    change a * e - b * (N : ℤ) = 1
-    linarith [Int.ediv_mul_cancel h_dvd]
+  · have hb : b * (N : ℤ) = a * e - 1 := Int.ediv_mul_cancel h_dvd
+    rw [Matrix.det_fin_two_of]
+    linarith [hb]
   · exact Gamma0_mem.mpr (by simp)
 
 /-- The lower-left entry of the controlled lift is `N`. -/
 @[simp]
 theorem gamma0LiftLowerLeftN_lower_left (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 1 0 : ℤ) = (N : ℤ) := rfl
+    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 1 0 : ℤ) = (N : ℤ) := (rfl)
 
 /-- The lower-right entry of the controlled lift is the chosen lift of `u`. -/
 @[simp]
 theorem gamma0LiftLowerLeftN_lower_right (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 1 1 : ℤ) = ((u.val : ZMod N).val : ℤ) := rfl
+    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 1 1 : ℤ) = ((u.val : ZMod N).val : ℤ) := (rfl)
 
 /-- The upper-left entry of the controlled lift is the chosen lift of `u⁻¹`. -/
 @[simp]
 theorem gamma0LiftLowerLeftN_upper_left (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 0 0 : ℤ) = ((u⁻¹.val : ZMod N).val : ℤ) := rfl
+    ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 0 0 : ℤ) = ((u⁻¹.val : ZMod N).val : ℤ) := (rfl)
 
 /-- **The controlled lift has diamond label `u`.** Read through `Gamma0Map`'s unit-valued
 refinement, the lift recovers exactly the unit it was built from. -/
@@ -128,8 +132,8 @@ refinement, the lift recovers exactly the unit it was built from. -/
 theorem toHomUnits_gamma0LiftLowerLeftN (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
     (Gamma0Map N).toHomUnits (gamma0LiftLowerLeftN N u) = u := by
   apply Units.ext
-  change ((((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 1 1 : ℤ)) : ZMod N) = (u : ZMod N)
-  rw [gamma0LiftLowerLeftN_lower_right]
+  simp only [MonoidHom.coe_toHomUnits, Gamma0Map, MonoidHom.coe_mk, OneHom.coe_mk,
+    gamma0LiftLowerLeftN_lower_right]
   push_cast
   rw [ZMod.natCast_zmod_val]
 
@@ -137,7 +141,7 @@ theorem toHomUnits_gamma0LiftLowerLeftN (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
 @[simp]
 theorem gamma0LiftLowerLeftN_upper_right (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
     ((gamma0LiftLowerLeftN N u : SL(2, ℤ)).val 0 1 : ℤ) =
-      (((u⁻¹.val : ZMod N).val : ℤ) * ((u.val : ZMod N).val : ℤ) - 1) / (N : ℤ) := rfl
+      (((u⁻¹.val : ZMod N).val : ℤ) * ((u.val : ZMod N).val : ℤ) - 1) / (N : ℤ) := (rfl)
 
 /-- **A kernel unit that shifts the character.** If `χ` does not factor through `d`, then for any
 `u` there is a `v` trivial modulo `d` with `χ (u * v) ≠ χ u`: multiplying by the witness of
@@ -146,8 +150,9 @@ theorem exists_kernel_unit_with_char_shift {N : ℕ} [NeZero N] {d : ℕ} (hd : 
     {χ : DirichletCharacter ℂ N} (h_not_fac : ¬ χ.FactorsThrough d) (u : (ZMod N)ˣ) :
     ∃ v : (ZMod N)ˣ, ZMod.unitsMap hd v = 1 ∧ χ.toUnitHom (u * v) ≠ χ.toUnitHom u := by
   obtain ⟨v, hv_ker, hv_chi⟩ := exists_unit_of_not_factorsThrough hd h_not_fac
-  refine ⟨v, hv_ker, fun h ↦ hv_chi <| mul_left_cancel <|
-    show χ.toUnitHom u * χ.toUnitHom v = χ.toUnitHom u * 1 by rw [← map_mul, h, mul_one]⟩
+  refine ⟨v, hv_ker, ?_⟩
+  rw [map_mul, Ne, mul_eq_left]
+  exact hv_chi
 
 /-- **Character separation within a coset.** Under non-factorisation, every `u` has a partner `u'`
 with the same reduction modulo `d` but a different character value — so the character cannot be
@@ -160,25 +165,21 @@ theorem exists_alt_unit_in_coset_with_char_separation {N : ℕ} [NeZero N] {d : 
   exact ⟨u * v, by rw [map_mul, hv_ker, mul_one], hv_chi⟩
 
 /-- **From equal reductions to an integer congruence.** Two units with the same image under the
-reduction `(ZMod N)ˣ → (ZMod (N / l))ˣ` have representatives congruent modulo `N / l`, as integers.
-This is the arithmetic bridge between the unit bookkeeping and the matrix entries. -/
-theorem natCast_val_sub_dvd_of_unitsMap_eq {N l : ℕ} [NeZero N] (h_dvd : l ∣ N)
-    (u u' : (ZMod N)ˣ)
-    (h_eq : ZMod.unitsMap ⟨l, (Nat.div_mul_cancel h_dvd).symm⟩ u =
-      ZMod.unitsMap ⟨l, (Nat.div_mul_cancel h_dvd).symm⟩ u') :
-    ((N / l : ℕ) : ℤ) ∣ (((u : ZMod N).val : ℤ) - ((u' : ZMod N).val : ℤ)) := by
-  have hNl_dvd_N : (N / l) ∣ N := ⟨l, (Nat.div_mul_cancel h_dvd).symm⟩
-  have h_cast_eq : ZMod.castHom hNl_dvd_N (ZMod (N / l)) (u : ZMod N) =
-      ZMod.castHom hNl_dvd_N (ZMod (N / l)) (u' : ZMod N) := by
+reduction `(ZMod N)ˣ → (ZMod d)ˣ` along `d ∣ N` have representatives congruent modulo `d`, as
+integers. This is the arithmetic bridge between the unit bookkeeping and the matrix entries; the
+dichotomy applies it at `d = N / l`. -/
+theorem natCast_val_sub_dvd_of_unitsMap_eq {N : ℕ} [NeZero N] {d : ℕ} (hd : d ∣ N)
+    (u u' : (ZMod N)ˣ) (h_eq : ZMod.unitsMap hd u = ZMod.unitsMap hd u') :
+    (d : ℤ) ∣ (((u : ZMod N).val : ℤ) - ((u' : ZMod N).val : ℤ)) := by
+  have h_cast_eq : ZMod.castHom hd (ZMod d) (u : ZMod N) =
+      ZMod.castHom hd (ZMod d) (u' : ZMod N) := by
     have hh := congr_arg Units.val h_eq
     rwa [ZMod.unitsMap_val, ZMod.unitsMap_val] at hh
   rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
   push_cast
   rw [ZMod.natCast_val (u : ZMod N), ZMod.natCast_val (u' : ZMod N),
-    show (ZMod.cast ((u : ZMod N) : ZMod N) : ZMod (N / l)) =
-      ZMod.castHom hNl_dvd_N (ZMod (N / l)) (u : ZMod N) from rfl,
-    show (ZMod.cast ((u' : ZMod N) : ZMod N) : ZMod (N / l)) =
-      ZMod.castHom hNl_dvd_N (ZMod (N / l)) (u' : ZMod N) from rfl, h_cast_eq]
+    ← ZMod.castHom_apply (h := hd) (u : ZMod N), ← ZMod.castHom_apply (h := hd) (u' : ZMod N),
+    h_cast_eq]
   ring
 
 end TauCeti
