@@ -43,12 +43,18 @@ together, as the chain rule, rather than one at a time.
 
 ## Provenance
 
-Both statements were extracted from the proof of
+Both identities come from the proof of
 `WeierstrassCurve.Affine.Point.nonsingular_of_isUnit_XYIdeal` in `Affine/Point/ToClass.lean`,
 which is itself ported from the AINTLIB `HasseWeil` project
-(`github.com/CBirkbeck/AINTLIB`, Apache-2.0, by Chris Birkbeck). There they were local `have`s
-over a field, and stated after evaluating at a point; here they are stated over a commutative
-ring, and before evaluation.
+(`github.com/CBirkbeck/AINTLIB`, Apache-2.0, by Chris Birkbeck), where they were local `have`s
+over a field, stated after evaluating at a point.
+
+They are restated here to different degrees, and only one of them is a straight extraction.
+`derivative_polynomial` is the identity the `have` already had, moved ahead of the evaluation and
+over a commutative ring. `derivative_eval_polynomial` goes beyond its `have`: that one covered
+only the constant substitution `p = C y`, for which the `Y`-term drops out, so the chain rule for
+an arbitrary `p : R[X]` is a generalisation of it rather than an extraction of it. The constant
+case is what the call site in `ToClass.lean` recovers.
 -/
 
 public section
