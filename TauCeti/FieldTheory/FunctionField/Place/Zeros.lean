@@ -261,10 +261,10 @@ private theorem linearIndependent_stichtenothFamily {x : F}
     exact linearIndependent_empty_type
   have hx0 : x ≠ 0 := by rintro rfl; simpa using hS P₁ hP₁
   -- Linear independence of the residue vectors already forces each lift to be nonzero.
-  have hune : ∀ (P : {P : Place k F // P ∈ S}) j, u P j ≠ 0 := fun P j h ↦
-    (hlib P).ne_zero j <| by
-      rw [show (⟨u P j, humem P j⟩ : (P : Place k F).integers) = 0 from Subtype.ext h]
-      exact map_zero _
+  have hune : ∀ (P : {P : Place k F // P ∈ S}) j, u P j ≠ 0 := by
+    intro P j h
+    have hu0 : (⟨u P j, humem P j⟩ : (P : Place k F).integers) = 0 := Subtype.ext h
+    exact (hlib P).ne_zero j (by rw [hu0, map_zero])
   rw [← LinearIndependent.iff_fractionRing (Algebra.adjoin k {x}) k⟮x⟯,
     Fintype.linearIndependent_iff]
   intro g hsum i₁
