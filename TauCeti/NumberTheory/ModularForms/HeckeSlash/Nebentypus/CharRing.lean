@@ -107,8 +107,7 @@ noncomputable def twistedHeckeSlashRingCharLinearMap :
 
 /-- The value on a basis element is the scaled twisted operator of that double coset. -/
 @[simp] lemma twistedHeckeSlashRingCharLinearMap_single
-    (D : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)))
-    (c : ℤ) :
+    (D : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))) (c : ℤ) :
     twistedHeckeSlashRingCharLinearMap k χ (HeckeCosetModule.single ℤ D c) =
       c • twistedHeckeSlashSumCharEnd k χ D :=
   -- As in `twistedHeckeSlashRingLinearMap_single`: `Finsupp.linearCombination_single` does not
@@ -159,8 +158,7 @@ theorem twistedHeckeSlashRingCharLinearMap_mul_single_single
       ((Gamma0 N).map (mapGL ℚ)) D₁.rep D₂.rep p = D₃)
     (hmul : multiplicity ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))
       ((Gamma0 N).map (mapGL ℚ)) (D₁.rep : GL (Fin 2) ℚ) (D₂.rep : GL (Fin 2) ℚ)
-      (D₃.rep : GL (Fin 2) ℚ) ≤ 1) :
-    twistedHeckeSlashRingCharLinearMap k χ
+      (D₃.rep : GL (Fin 2) ℚ) ≤ 1) : twistedHeckeSlashRingCharLinearMap k χ
         (HeckeCosetModule.single ℤ D₁ 1 * HeckeCosetModule.single ℤ D₂ 1) =
       twistedHeckeSlashRingCharLinearMap k χ (HeckeCosetModule.single ℤ D₂ 1) *
         twistedHeckeSlashRingCharLinearMap k χ (HeckeCosetModule.single ℤ D₁ 1) := by
