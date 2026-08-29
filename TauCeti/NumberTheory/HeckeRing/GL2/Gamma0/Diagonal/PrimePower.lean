@@ -8,6 +8,9 @@ module
 public import TauCeti.NumberTheory.HeckeRing.Associativity
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.Elem
 
+import TauCeti.Algebra.LinearRecurrence.OrderTwo
+import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.AtkinLehner
+
 /-!
 # The diagonal generators of the `Γ₀(N)` Hecke ring
 
@@ -44,6 +47,9 @@ factorisation is proved here; this file supplies the generators those need.
 * `HeckeRing.GL2.heckeTGeneratorRecGamma0_succ_succ`: the recurrence, as a rewriting rule.
 * `HeckeRing.GL2.heckeTGeneratorRecGamma0_eq_generator_pow_of_not_coprime`: when `p` shares a
   factor with the level, the recurrence degenerates to a power of the generator.
+* `HeckeRing.GL2.heckeTGeneratorRecGamma0_mul`: **Shimura, Theorem 3.24(3)** at level `Γ₀(N)`,
+  the per-prime product formula `T_{p^r} · T_{p^s} = ∑_{i ≤ r} pⁱ · S_pⁱ · T_{p^{r+s−2i}}`
+  for `r ≤ s`.
 
 ## References
 
@@ -216,5 +222,40 @@ theorem heckeTGeneratorRecGamma0_eq_generator_pow_of_not_coprime {p : ℕ}
   | more r _ih0 ih1 =>
     simp [heckeTGeneratorRecGamma0_succ_succ, heckeTScalarGamma0_of_not_coprime N hpN, ih1,
       ← pow_succ']
+
+/-! ## The product formula
+
+`heckeTGeneratorRecGamma0` is a two-term linear recurrence with `D = T_p` and `S = p · S_p`, so
+a product of two of its terms is an instance of `TauCeti.linearRec₂_mul_eq_sum_pow_mul`. That is
+the route `heckeT_prime_pow_mul` already takes at level one (`GL2/Recurrence.lean`); the only
+input beyond the recurrence is that `D` and `S` commute. -/
+
+/-- `T_p` commutes with the scalar `p · S_p`.
+
+The `Γ₀(N)` Hecke ring is commutative: `atkinLehnerAntiInvolution` fixes every double coset
+(`atkinLehnerAntiInvolution_onHeckeCoset_eq_self`), which is what
+`HeckeCosetModule.mul_comm_of_antiInvolution` asks for. An integer multiple of a commuting
+element still commutes. -/
+private lemma commute_heckeTGeneratorGamma0_smul_heckeTScalarGamma0 (p : ℕ) :
+    Commute (heckeTGeneratorGamma0 N p) ((p : ℤ) • heckeTScalarGamma0 N p) :=
+  Commute.smul_right (HeckeCosetModule.mul_comm_of_antiInvolution ℤ
+    (atkinLehnerAntiInvolution N) (atkinLehnerAntiInvolution_onHeckeCoset_eq_self N) _ _) _
+
+/-- **Shimura, Theorem 3.24(3)** at level `Γ₀(N)` — the per-prime product formula:
+`T_{p^r} · T_{p^s} = ∑_{i ≤ r} pⁱ · S_pⁱ · T_{p^{r+s−2i}}` for `r ≤ s`, so that no product of
+two `T`-values survives on the right.
+
+No primality is asked of `p`, for the same reason the recurrence does not ask it. When `p`
+shares a factor with the level `S_p = 0`, every summand but `i = 0` drops and the identity
+degenerates to `T_p^r · T_p^s = T_p^{r+s}`. -/
+theorem heckeTGeneratorRecGamma0_mul (p : ℕ) {r s : ℕ} (hrs : r ≤ s) :
+    heckeTGeneratorRecGamma0 N p r * heckeTGeneratorRecGamma0 N p s =
+      ∑ i ∈ Finset.range (r + 1), (p : ℤ) ^ i • (heckeTScalarGamma0 N p ^ i *
+        heckeTGeneratorRecGamma0 N p (r + s - 2 * i)) := by
+  rw [TauCeti.linearRec₂_mul_eq_sum_pow_mul (heckeTGeneratorRecGamma0_zero N p)
+    (heckeTGeneratorRecGamma0_one N p)
+    (commute_heckeTGeneratorGamma0_smul_heckeTScalarGamma0 N p)
+    (heckeTGeneratorRecGamma0_succ_succ N p) hrs]
+  exact Finset.sum_congr rfl fun i _ ↦ by rw [smul_pow, smul_mul_assoc]
 
 end HeckeRing.GL2
