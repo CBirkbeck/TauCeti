@@ -468,6 +468,17 @@ lemma eq_maximalIdeal {A : Type*} [CommRing A] [IsDomain A] [IsDiscreteValuation
     (P : HeightOneSpectrum A) : P = IsDiscreteValuationRing.maximalIdeal A :=
   HeightOneSpectrum.ext (IsLocalRing.eq_maximalIdeal P.isMaximal)
 
+/-- The underlying ideal of `IsDiscreteValuationRing.maximalIdeal`, as a `HeightOneSpectrum`, is
+`IsLocalRing.maximalIdeal`.
+
+True by `rfl`, but needed as a rewrite rule: contracting a prime along a ring homomorphism lands
+on `asIdeal`, whereas the lemmas identifying the contraction — `comap_maximalIdeal_*` — are stated
+for `IsLocalRing.maximalIdeal`. -/
+@[simp]
+lemma asIdeal_maximalIdeal (A : Type*) [CommRing A] [IsDomain A] [IsDiscreteValuationRing A] :
+    (IsDiscreteValuationRing.maximalIdeal A).asIdeal = IsLocalRing.maximalIdeal A :=
+  rfl
+
 end IsDedekindDomain.HeightOneSpectrum
 
 end DiscreteValuationRing
