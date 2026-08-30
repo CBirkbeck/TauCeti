@@ -206,7 +206,6 @@ The three conditions defining a cusp form are exactly the three descent statemen
 transformation law is `slash_mapGL_eq_self_of_mem_Gamma1_div`, holomorphy is
 `mdifferentiable_of_comp_scaleGL_smul`, and vanishing at the cusps is
 `isZeroAt_of_smul_slash_scaleGL_eq`. -/
-@[expose]
 noncomputable def cuspFormOfSmulSlashScaleGL (l N : ℕ) [NeZero l] [NeZero N] (hlN : l ∣ N) (k : ℤ)
     (χ : (ZMod N)ˣ →* ℂˣ)
     (hχ : ∀ u : (ZMod N)ˣ, ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) u = 1 → χ u = 1) (f : ℍ → ℂ)
@@ -226,7 +225,11 @@ noncomputable def cuspFormOfSmulSlashScaleGL (l N : ℕ) [NeZero l] [NeZero N] (
     have : NeZero (N / l) := ⟨(Nat.div_pos (Nat.le_of_dvd (NeZero.pos N) hlN) (NeZero.pos l)).ne'⟩
     exact isZeroAt_of_smul_slash_scaleGL_eq l f g hg _ hc
 
-/-- The bundled `cuspFormOfSmulSlashScaleGL` has underlying function `f`. -/
+/-- The bundled `cuspFormOfSmulSlashScaleGL` has underlying function `f`.
+
+`cuspFormOfSmulSlashScaleGL` is deliberately not `@[expose]`, so this lemma is written `(rfl)`
+rather than `rfl`: the parentheses opt out of exporting the definitional equality, which this
+lemma itself replaces downstream. Same convention as `ModularForm.coe_ofLe` in `Basic.lean`. -/
 @[simp]
 lemma coe_cuspFormOfSmulSlashScaleGL (l N : ℕ) [NeZero l] [NeZero N] (hlN : l ∣ N) (k : ℤ)
     (χ : (ZMod N)ˣ →* ℂˣ)
@@ -234,7 +237,7 @@ lemma coe_cuspFormOfSmulSlashScaleGL (l N : ℕ) [NeZero l] [NeZero N] (hlN : l 
     (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) (hgχ : g ∈ cuspFormCharSpace k χ)
     (hg : ⇑g = (l : ℂ) ^ (1 - k) • (f ∣[k] scaleGL l))
     (hT : f ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) = f) :
-    ⇑(cuspFormOfSmulSlashScaleGL l N hlN k χ hχ f g hgχ hg hT) = f := rfl
+    ⇑(cuspFormOfSmulSlashScaleGL l N hlN k χ hχ f g hgχ hg hT) = f := (rfl)
 
 end TauCeti
 
