@@ -21,8 +21,8 @@ field.
 
 What is proved here is that the pair is a point (`equation_genericX_genericY`), that evaluating a
 bivariate polynomial at it is reduction modulo the Weierstrass relation
-(`evalEval_genericX_genericY`), and that on an elliptic curve over a field the resulting solution is
-nonsingular, cutting out a point `genericPoint` of `W⁄F(W)`.
+(`evalEval_genericX_genericY`), and that on an elliptic curve over a nontrivial commutative ring
+the resulting solution is nonsingular, cutting out a point `genericPoint` of `W⁄F(W)`.
 
 The word "generic" is the usual geometric one, but no specialisation property is established:
 nothing below says that a statement about this point transfers to the points of `W`, and no
@@ -133,14 +133,18 @@ theorem transcendental_genericX : Transcendental F (genericX W) := by
 theorem genericX_ne_algebraMap (x₁ : F) : genericX W ≠ algebraMap F W.FunctionField x₁ :=
   fun hc ↦ transcendental_genericX W (hc ▸ isAlgebraic_algebraMap _)
 
-variable [W.IsElliptic]
+end Field
+
+section Elliptic
+
+variable [Nontrivial R] [W.IsElliptic]
 
 /-- The generic coordinates are nonsingular, so they define an affine point of the base-changed
 curve.
 
-The field section starts with transcendence of `x`; this statement additionally needs
-`[W.IsElliptic]` to turn the equation into nonsingularity. Everything before that section is
-stated over `[CommRing R]`. -/
+No field is needed: `equation_iff_nonsingular`, applied to the base change `W⁄W.FunctionField`,
+asks only that the base change be elliptic, which it inherits from `W`, and that
+`W.FunctionField` be nontrivial, which it inherits from `R` through the coordinate ring. -/
 theorem nonsingular_genericX_genericY :
     (W⁄W.FunctionField).toAffine.Nonsingular W.genericX W.genericY := by
   exact equation_iff_nonsingular.mp (equation_genericX_genericY W)
@@ -162,7 +166,7 @@ theorem xCoord_genericPoint : Point.xCoord (genericPoint W) = genericX W :=
 theorem yCoord_genericPoint : Point.yCoord (genericPoint W) = genericY W :=
   Point.yCoord_some _
 
-end Field
+end Elliptic
 
 end WeierstrassCurve.Affine
 
