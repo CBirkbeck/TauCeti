@@ -45,11 +45,12 @@ submodule of a finite module over a Noetherian ring is finite.
 
 ## Main results
 
-* `TauCeti.IsIntegralClosure.exists_algebraMap_eq_iterateFrobenius`: the `q`-th power of an
-  element of the integral closure lies in the (integrally closed) base ring.
+* `IsIntegral.exists_algebraMap_eq_iterateFrobenius`: the `q`-th power of an element
+  integral over the (integrally closed) base ring lies in that ring.
 * `TauCeti.IsIntegralClosure.finite_of_forall_exists_pow_eq`: the abstract assembly — an
-  integral closure in a purely inseparable extension is finite as soon as some finite integrally
-  closed overring's fraction field absorbs the `q`-th powers of a generating set.
+  integral closure in a purely inseparable extension is finite as soon as some overring finite
+  over the base, and an integral closure of it in a larger field, absorbs the `q`-th powers of a
+  generating set.
 * `TauCeti.IsIntegralClosure.finite_mvPolynomial_of_isPurelyInseparable`: the theorem for
   polynomial rings over a field.
 
@@ -68,39 +69,37 @@ namespace TauCeti
 universe u
 
 /-- Source: Stacks, Lemma 10.161.13 (tag 032O), proof: "And this integral closure is equal to
-`R′[x^{1/q}]`" — the elementwise input: for `c` in the integral closure `C` of an integrally
-closed domain `A` in a purely inseparable extension `M` of its fraction field `K`, the
-`p ^ n`-th power `c ^ (p ^ n)` lies in `K` and is integral over `A`, hence comes from `A`. -/
-theorem IsIntegralClosure.exists_algebraMap_eq_iterateFrobenius {A K M C : Type*} [CommRing A]
+`R′[x^{1/q}]`" — the elementwise input: for `x` integral over an integrally closed domain `A`,
+lying in a purely inseparable extension `M` of its fraction field `K`, the `p ^ n`-th power
+`x ^ (p ^ n)` lies in `K` and is integral over `A`, hence comes from `A`. -/
+theorem _root_.IsIntegral.exists_algebraMap_eq_iterateFrobenius {A K M : Type*} [CommRing A]
     [IsIntegrallyClosed A] [Field K] [Algebra A K] [IsFractionRing A K] [Field M] [Algebra K M]
-    [Algebra A M] [IsScalarTower A K M] [CommRing C] [Algebra A C] [Algebra C M]
-    [IsScalarTower A C M] [IsIntegralClosure C A M] [IsPurelyInseparable.HasExponent K M]
-    (p : ℕ) [ExpChar K p] {n : ℕ} (hn : IsPurelyInseparable.exponent K M ≤ n) (c : C) :
-    ∃ a : A, algebraMap A K a =
-      IsPurelyInseparable.iterateFrobenius K M p hn (algebraMap C M c) := by
+    [Algebra A M] [IsScalarTower A K M] [IsPurelyInseparable.HasExponent K M]
+    (p : ℕ) [ExpChar K p] {n : ℕ} (hn : IsPurelyInseparable.exponent K M ≤ n) {x : M}
+    (hx : IsIntegral A x) :
+    ∃ a : A, algebraMap A K a = IsPurelyInseparable.iterateFrobenius K M p hn x := by
   -- `A` is integrally closed, so it suffices that the value is integral over `A` — and that is
   -- read off in `M`, where the value becomes the `p ^ n`-th power of an element integral over `A`.
   refine IsIntegrallyClosed.isIntegral_iff.mp (IsIntegral.tower_bot (algebraMap K M).injective ?_)
   rw [IsPurelyInseparable.algebraMap_iterateFrobenius]
-  exact ((IsIntegralClosure.isIntegral A M c).algebraMap (B := M)).pow _
+  exact hx.pow _
 
 /-- Source: Stacks, Lemma 10.161.13 (tag 032O), proof: "As `R[x]` is Noetherian it suffices to
 show that the integral closure of `R[x]` in `L′(x^{1/q})` is finite over `R[x]`. And this
 integral closure is equal to `R′[x^{1/q}]` … finite over `R[x]`." The abstract assembly. Let `C`
 be the integral closure of a Noetherian ring `A` in a purely inseparable extension `M` of a field
 `K` over `A`, of exponent at most `n`. (In the application `K` is the fraction field of `A`; the
-argument only uses the tower `A → K → M`, so that is not assumed.) Let `A'` be an integrally
-closed domain, finite over
-`A`, with fraction field `K'` over `K`, such that for a generating set `s` of `M` over `K` the
-`p ^ n`-th power of each `x ∈ s` (an element of `K`) becomes a `p ^ n`-th power of an element of
-`A'` in `K'`. Then `M` embeds into `K'` over `K`, `A'` is the integral closure of `A` in `K'`,
-and `C` is a finite `A`-module. -/
+argument only uses the tower `A → K → M`, so that is not assumed.) Let `A'` be an integral
+closure of `A` in a field `K'` over `K`, finite over `A`, such that for a generating set `s` of
+`M` over `K` the `p ^ n`-th power of each `x ∈ s` (an element of `K`) becomes a `p ^ n`-th power
+of an element of `A'` in `K'`. Then `M` embeds into `K'` over `K`, and `C` is a finite
+`A`-module. -/
 theorem IsIntegralClosure.finite_of_forall_exists_pow_eq (A K M C A' K' : Type*) [CommRing A]
     [IsNoetherianRing A] [Field K] [Field M] [Algebra A K] [Algebra K M]
     [Algebra A M] [IsScalarTower A K M] [CommRing C] [Algebra A C] [Algebra C M]
-    [IsScalarTower A C M] [IsIntegralClosure C A M] [CommRing A'] [IsIntegrallyClosed A']
-    [Field K'] [Algebra A A'] [Module.Finite A A'] [Algebra A' K'] [IsFractionRing A' K']
-    [Algebra A K'] [Algebra K K'] [IsScalarTower A A' K'] [IsScalarTower A K K']
+    [IsScalarTower A C M] [IsIntegralClosure C A M] [CommRing A'] [Field K'] [Algebra A A']
+    [Module.Finite A A'] [Algebra A' K'] [Algebra A K'] [Algebra K K'] [IsScalarTower A A' K']
+    [IsScalarTower A K K'] [IsIntegralClosure A' A K']
     [IsPurelyInseparable.HasExponent K M] (p : ℕ) [ExpChar K p] {n : ℕ}
     (hn : IsPurelyInseparable.exponent K M ≤ n) {s : Set M}
     (hs : IntermediateField.adjoin K s = ⊤)
@@ -110,9 +109,8 @@ theorem IsIntegralClosure.finite_of_forall_exists_pow_eq (A K M C A' K' : Type*)
   -- (i) the root hypothesis embeds `M` into `K'` over `K` (leaf B2)
   obtain ⟨ι⟩ := IsPurelyInseparable.nonempty_algHom_of_forall_exists_pow_eq K M p hn K' hs
     fun x hx ↦ ((h x hx).elim fun y hy ↦ ⟨algebraMap A' K' y, hy⟩)
-  -- (ii) `A'` is integrally closed and integral over `A`, so it IS the integral closure of `A`
-  -- in `K'` — supplied by Mathlib's `IsIntegralClosure.of_isIntegrallyClosed` instance.
-  -- (iii) finiteness then descends along the embedding (leaf T2)
+  -- (ii) finiteness then descends along that embedding, `A'` being the integral closure of `A`
+  -- in `K'` by hypothesis (leaf T2)
   exact IsIntegralClosure.finite_of_injective (C' := A') (ι.restrictScalars A)
     (ι.restrictScalars A).toRingHom.injective
 
@@ -126,26 +124,16 @@ instances away from their use site creates diamonds against
 
 /-- A `K`-basis of `M` consisting of elements integral over `A`, together with the preimages in
 `A` of the `p ^ n`-th powers of its vectors. This is Mathlib's integral basis fed through
-`IsIntegralClosure.exists_algebraMap_eq_iterateFrobenius` one vector at a time. -/
-private theorem exists_basis_iterateFrobenius_eq_algebraMap (A K M C : Type*) [CommRing A]
+`IsIntegral.exists_algebraMap_eq_iterateFrobenius` one vector at a time. -/
+private theorem exists_basis_iterateFrobenius_eq_algebraMap (A K M : Type*) [CommRing A]
     [IsDomain A] [IsIntegrallyClosed A] [Field K] [Algebra A K] [IsFractionRing A K] [Field M]
-    [Algebra K M] [Algebra A M] [IsScalarTower A K M] [FiniteDimensional K M] [CommRing C]
-    [Algebra A C] [Algebra C M] [IsScalarTower A C M] [IsIntegralClosure C A M]
+    [Algebra K M] [Algebra A M] [IsScalarTower A K M] [FiniteDimensional K M]
     [IsPurelyInseparable.HasExponent K M] (p : ℕ) [ExpChar K p] {n : ℕ}
     (hn : IsPurelyInseparable.exponent K M ≤ n) :
     ∃ (sb : Finset M) (b : Module.Basis sb K M) (g : sb → A), ∀ j,
       algebraMap A K (g j) = IsPurelyInseparable.iterateFrobenius K M p hn (b j) := by
   obtain ⟨sb, b, hb⟩ := FiniteDimensional.exists_is_basis_integral A K M
-  have hbC : ∀ j, ∃ c : C, algebraMap C M c = b j := fun j ↦
-    IsIntegralClosure.isIntegral_iff.mp (hb j)
-  choose cb hcb using hbC
-  have hg : ∀ j, ∃ a : A,
-      algebraMap A K a = IsPurelyInseparable.iterateFrobenius K M p hn (b j) := by
-    intro j
-    obtain ⟨a, ha⟩ := IsIntegralClosure.exists_algebraMap_eq_iterateFrobenius
-      (A := A) (K := K) (M := M) (C := C) p hn (cb j)
-    exact ⟨a, by rw [ha, hcb j]⟩
-  choose g hgg using hg
+  choose g hgg using fun j ↦ (hb j).exists_algebraMap_eq_iterateFrobenius p hn
   exact ⟨sb, b, g, hgg⟩
 
 /-- A finite extension of `k` in which every coefficient of each of the finitely many polynomials
@@ -162,23 +150,6 @@ private theorem exists_finiteDimensional_forall_coeff_exists_pow_eq {k : Type u}
     (Finset.univ.biUnion fun j ↦ (g j).support.image fun d ↦ (g j).coeff d) hm
   exact ⟨k', inferInstance, inferInstance, hfin, fun j d hd ↦ hroot _
     (Finset.mem_biUnion.mpr ⟨j, Finset.mem_univ j, Finset.mem_image.mpr ⟨d, hd, rfl⟩⟩)⟩
-
-/-- The coefficient-and-Frobenius extension `k[X_i] → k'[X_i]`, `X_i ↦ X_i ^ m`, is injective. -/
-private theorem injective_map_comp_expand {k k' : Type*} [Field k] [Field k'] [Algebra k k']
-    {σ : Type*} {m : ℕ} (hm : 0 < m) :
-    Function.Injective ((MvPolynomial.map (algebraMap k k')).comp
-      (MvPolynomial.expand (σ := σ) (R := k) m).toRingHom) :=
-  (MvPolynomial.map_injective _ (algebraMap k k').injective).comp
-    (MvPolynomial.expand_injective hm)
-
-/-- The coefficient-and-Frobenius extension `k[X_i] → k'[X_i]`, `X_i ↦ X_i ^ m`, is a finite ring
-map when `k' / k` is finite, so it makes `k'[X_i]` a finite `k[X_i]`-module. -/
-private theorem finite_map_comp_expand {k k' : Type*} [Field k] [Field k'] [Algebra k k']
-    (hk' : Module.Finite k k') {σ : Type*} [Finite σ] {m : ℕ} (hm : 0 < m) :
-    ((MvPolynomial.map (algebraMap k k')).comp
-      (MvPolynomial.expand (σ := σ) (R := k) m).toRingHom).Finite :=
-  RingHom.Finite.comp (MvPolynomial.finite_map (RingHom.finite_algebraMap.mpr hk'))
-    (MvPolynomial.finite_expand hm)
 
 /-- Adjoining a `K`-basis of `M` to `K` gives all of `M`: the basis already spans, and `adjoin`
 contains the span. -/
@@ -209,7 +180,7 @@ theorem IsIntegralClosure.finite_mvPolynomial_of_isPurelyInseparable (k : Type*)
   set n := IsPurelyInseparable.exponent K M
   -- a `K`-basis of `M` integral over `P`, and (D1) the preimages in `P` of the `p ^ n`-th powers
   obtain ⟨sb, b, g, hgg⟩ :=
-    exists_basis_iterateFrobenius_eq_algebraMap (MvPolynomial σ k) K M C p (le_refl n)
+    exists_basis_iterateFrobenius_eq_algebraMap (MvPolynomial σ k) K M p (le_refl n)
   -- B1: a finite extension of `k` holding `p ^ n`-th roots of the coefficients of the `g j`
   obtain ⟨k', _, _, hk'fin, hk'root⟩ :=
     exists_finiteDimensional_forall_coeff_exists_pow_eq g (pow_pos (expChar_pos k p) n)
@@ -218,8 +189,12 @@ theorem IsIntegralClosure.finite_mvPolynomial_of_isPurelyInseparable (k : Type*)
   set f : MvPolynomial σ k →+* MvPolynomial σ k' :=
     (MvPolynomial.map (algebraMap k k')).comp
       (MvPolynomial.expand (σ := σ) (R := k) (p ^ n)).toRingHom
-  have hfinj : Function.Injective f := injective_map_comp_expand (pow_pos (expChar_pos k p) n)
-  have hffin : f.Finite := finite_map_comp_expand hk'fin (pow_pos (expChar_pos k p) n)
+  have hfinj : Function.Injective f :=
+    (MvPolynomial.map_injective _ (algebraMap k k').injective).comp
+      (MvPolynomial.expand_injective (pow_pos (expChar_pos k p) n))
+  have hffin : f.Finite :=
+    RingHom.Finite.comp (MvPolynomial.finite_map (RingHom.finite_algebraMap.mpr hk'fin))
+      (MvPolynomial.finite_expand (pow_pos (expChar_pos k p) n))
   -- make `P'` a finite `P`-algebra, and `K' := Frac P'` a `P`-algebra through it
   let _ : Algebra (MvPolynomial σ k) (MvPolynomial σ k') := f.toAlgebra
   have : Module.Finite (MvPolynomial σ k) (MvPolynomial σ k') := hffin
@@ -245,7 +220,9 @@ theorem IsIntegralClosure.finite_mvPolynomial_of_isPurelyInseparable (k : Type*)
     refine ⟨y, ?_⟩
     rw [← map_pow, hy]
     have hfg : MvPolynomial.map (algebraMap k k') (MvPolynomial.expand (p ^ n) (g j))
-        = algebraMap (MvPolynomial σ k) (MvPolynomial σ k') (g j) := rfl
+        = algebraMap (MvPolynomial σ k) (MvPolynomial σ k') (g j) := by
+      rw [RingHom.algebraMap_toAlgebra]
+      rfl
     rw [hfg, ← IsScalarTower.algebraMap_apply, ← hgg j, ← IsScalarTower.algebraMap_apply]
 
 end TauCeti
