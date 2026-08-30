@@ -5,32 +5,31 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.RingTheory.Ideal.Nilpotent
 public import Mathlib.RingTheory.Localization.Defs
-public import Mathlib.RingTheory.Noetherian.Nilpotent
 public import Mathlib.RingTheory.Finiteness.Ideal
 import Mathlib.Tactic.Ring
 
 /-!
-# Localising a ring at `1 + I`
+# Localising a semiring at `1 + I`
 
-For an ideal `I` of a commutative ring `B`, the set `1 + I` is a submonoid. If `I` is finitely
+For an ideal `I` of a commutative semiring `B`, the set `1 + I` is a submonoid. If `I` is finitely
 generated and its image in a localisation at `1 + I` lies in every prime there, then a single
 element of `1 + I` annihilates a power of `I`.
 
 Only that implication is proved here, and only under `I.FG`; the converse is not stated.
 
-The nilpotence step is separated out and is not about localisation at all: it holds for the image
-of `I` in *any* commutative `B`-algebra whose primes all contain it, and needs only semirings.
-Localisation enters afterwards, to turn "the image is zero" into an annihilator lying in `1 + I`.
+The nilpotence step is not about localisation at all and lives in
+`TauCeti.RingTheory.Ideal.Nilpotent` as `Ideal.exists_pow_map_eq_bot`. Localisation enters here,
+to turn "the image of `I ^ n` is zero" into an annihilator lying in `1 + I`.
 
 ## Main results
 
-* `Ideal.oneAdd`: `1 + I` as a submonoid of `B`.
-* `Ideal.exists_pow_map_eq_bot`: if `I` is finitely generated and its image lies in every prime
-  of an arbitrary commutative `B`-algebra, some power of that image is zero. Stated over
-  semirings, and applied below to the localisation.
-* `Ideal.exists_mem_oneAdd_forall_mul_eq_zero`: for a localisation at `1 + I`, the same
-  hypothesis produces a single `s ∈ 1 + I` with `s * x = 0` for every `x ∈ I ^ n`.
+* `Ideal.oneAdd`: `1 + I` as a submonoid of `B`. Membership is recorded existentially, as
+  `∃ a ∈ I, x = 1 + a`, so that no subtraction is needed.
+* `Ideal.exists_mem_oneAdd_forall_mul_eq_zero`: if `I` is finitely generated and its image in a
+  localisation `C` at `1 + I` is contained in every prime of `C`, there is a single `s ∈ 1 + I`
+  with `s * x = 0` for every `x ∈ I ^ n`.
 
 ## References
 
@@ -43,45 +42,19 @@ public section
 
 namespace Ideal
 
-open scoped Pointwise
+variable {B : Type*} [CommSemiring B] (I : Ideal B)
 
-section Nilpotent
-
-variable {B C : Type*} [CommSemiring B] [CommSemiring C] [Algebra B C] {I : Ideal B}
-
-/-- **A power of the image of `I` vanishes.** If every prime of `C` contains the image of `I`,
-that image lies in the nilradical; being finitely generated it is then nilpotent.
-
-Nothing here needs `C` to be a localisation — only a `B`-algebra in which the image of `I` is
-contained in every prime — and nothing needs subtraction, so this is stated over semirings while
-the rest of the file works over `CommRing` for `oneAdd`. It is used below at `C = (1 + I)⁻¹ B`,
-which is the case arising in the proof of Wedhorn's Proposition 7.49(2). -/
-theorem exists_pow_map_eq_bot (hfg : I.FG)
-    (hprime : ∀ P : Ideal C, P.IsPrime → I.map (algebraMap B C) ≤ P) :
-    ∃ n : ℕ, (I.map (algebraMap B C)) ^ n = ⊥ := by
-  obtain ⟨n, hn⟩ := (hfg.map (algebraMap B C)).isNilpotent_iff_le_nilradical.mpr
-    fun x hx ↦ mem_nilradical.mpr (nilpotent_iff_mem_prime.mpr fun P hP ↦ hprime P hP hx)
-  exact ⟨n, by simpa using hn⟩
-
-end Nilpotent
-
-variable {B : Type*} [CommRing B] (I : Ideal B)
-
-/-- **`1 + I` is a submonoid.** Closure is the identity
-`(1 + a)(1 + b) = 1 + (ab + a + b)`, written here on representatives as
-`ab - 1 = (a - 1)(b - 1) + (a - 1) + (b - 1)`. -/
+/-- **`1 + I` is a submonoid.** Closure is the identity `(1 + a)(1 + b) = 1 + (a + b + a * b)`. -/
 def oneAdd : Submonoid B where
-  carrier := {x | x - 1 ∈ I}
-  one_mem' := by simp
-  mul_mem' {a b} ha hb := by
-    simp only [Set.mem_ofPred_eq] at *
-    have hexp : a * b - 1 = (a - 1) * (b - 1) + (a - 1) + (b - 1) := by ring
-    rw [hexp]
-    exact I.add_mem (I.add_mem (I.mul_mem_left _ hb) ha) hb
+  carrier := {x | ∃ a ∈ I, x = 1 + a}
+  one_mem' := ⟨0, I.zero_mem, (add_zero 1).symm⟩
+  mul_mem' {_ _} := by
+    rintro ⟨a, ha, rfl⟩ ⟨b, hb, rfl⟩
+    exact ⟨a + b + a * b, I.add_mem (I.add_mem ha hb) (I.mul_mem_left a hb), by ring⟩
 
-@[simp] lemma mem_oneAdd {x : B} : x ∈ oneAdd I ↔ x - 1 ∈ I := Iff.rfl
+@[simp] lemma mem_oneAdd {x : B} : x ∈ oneAdd I ↔ ∃ a ∈ I, x = 1 + a := Iff.rfl
 
-variable {I} {C : Type*} [CommRing C] [Algebra B C]
+variable {I} {C : Type*} [CommSemiring C] [Algebra B C]
 
 section Localisation
 
