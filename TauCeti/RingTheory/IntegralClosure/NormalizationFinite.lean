@@ -460,11 +460,12 @@ variable {A : Type*} [CommRing A] [IsDomain A]
 of `R` in `M_insep` is finite over `R`. By Lemma 10.161.8 the integral closure `R′′` of `R′` in
 `M` is finite over `R′`. Then `R′′` is finite over `R` by Lemma 10.7.3. Since `R′′` is also the
 integral closure of `R` in `M` (see Lemma 10.36.16) we win." Finiteness of integral closures
-climbs a finite separable step: if the integral closure `B` of a Noetherian integrally closed
-domain `A` in `M` is finite over `A`, so is the integral closure `C` of `A` in a finite separable
-extension `N` of `M`. -/
+climbs a finite separable step: if the integral closure `B` of a Noetherian domain `A` in `M` is
+finite over `A`, so is the integral closure `C` of `A` in a finite separable extension `N` of `M`.
+`A` itself need not be integrally closed: the base that Mathlib's `IsIntegralClosure.finite` needs
+integrally closed is `B`. -/
 theorem IsIntegralClosure.finite_of_isSeparable_of_finite [IsNoetherianRing A]
-    [IsIntegrallyClosed A] (K M N : Type*) [Field K] [Field M] [Field N] [Algebra A K]
+    (K M N : Type*) [Field K] [Field M] [Field N] [Algebra A K]
     [IsFractionRing A K] [Algebra K M] [Algebra A M] [IsScalarTower A K M]
     [FiniteDimensional K M] [Algebra M N] [Algebra A N] [IsScalarTower A M N]
     [FiniteDimensional M N] [Algebra.IsSeparable M N] (B C : Type*) [CommRing B] [Algebra A B]
@@ -502,15 +503,15 @@ theorem IsIntegralClosure.finite_of_isSeparable_of_finite [IsNoetherianRing A]
 /-- Source: Stacks, Lemma 10.161.12 (tag 032N): "Let `R` be a Noetherian domain with fraction
 field `K` … Then `R` is N-2 if and only if for every finite purely inseparable extension `L/K`
 the integral closure of `R` in `L` is finite over `R`" — the direction used. For a Noetherian
-integrally closed domain `A` whose integral closure in every finite purely inseparable extension
-of its fraction field `K` is finite, any integral closure `C` of `A` in any finite extension `L`
-of `K` is finite over `A`: pass to a normal closure, split it at the fixed field of its
+domain `A` whose integral closure in every finite purely inseparable extension of its fraction
+field `K` is finite, any integral closure `C` of `A` in any finite extension `L` of `K` is finite
+over `A`: pass to a normal closure, split it at the fixed field of its
 automorphism group, and climb the Galois step with Mathlib's `IsIntegralClosure.finite`. The
 purely inseparable hypothesis is quantified over fields in the universe of `L`, where the normal
 closure and its fixed field live. In every characteristic: in characteristic zero the purely
 inseparable extensions are trivial. -/
 theorem IsIntegralClosure.finite_of_forall_isPurelyInseparable [IsNoetherianRing A]
-    [IsIntegrallyClosed A] (K : Type*) [Field K] [Algebra A K] [IsFractionRing A K]
+    (K : Type*) [Field K] [Algebra A K] [IsFractionRing A K]
     {L : Type w} [Field L] [Algebra A L] [Algebra K L] [IsScalarTower A K L]
     [FiniteDimensional K L] (C : Type*) [CommRing C] [Algebra A C] [Algebra C L]
     [IsScalarTower A C L] [IsIntegralClosure C A L]
@@ -550,8 +551,8 @@ theorem IsIntegralClosure.finite_mvPolynomial (k : Type*) [Field k] {σ : Type*}
     [IsScalarTower (MvPolynomial σ k) K L] [FiniteDimensional K L] (C : Type*) [CommRing C]
     [Algebra (MvPolynomial σ k) C] [Algebra C L] [IsScalarTower (MvPolynomial σ k) C L]
     [IsIntegralClosure C (MvPolynomial σ k) L] : Module.Finite (MvPolynomial σ k) C := by
-  -- `MvPolynomial σ k` is Noetherian (Hilbert) and integrally closed (it is a UFD), so the
-  -- reduction E1 applies; its purely inseparable hypothesis is exactly Milestone 1.
+  -- `MvPolynomial σ k` is Noetherian (Hilbert), so the reduction E1 applies; its purely
+  -- inseparable hypothesis is exactly Milestone 1.
   exact IsIntegralClosure.finite_of_forall_isPurelyInseparable (L := L) K C
     fun M _ _ _ _ _ _ ↦ IsIntegralClosure.finite_mvPolynomial_of_isPurelyInseparable k K M
       (integralClosure (MvPolynomial σ k) M)
@@ -559,7 +560,7 @@ theorem IsIntegralClosure.finite_mvPolynomial (k : Type*) [Field k] {σ : Type*}
 /-- Source: Stacks, Proposition 10.162.16 (tag 0335), (1) and (5): "The following types of rings
 are Nagata and in particular universally Japanese: (1) fields, … (5) finite type ring extensions
 of any of the above", in the domain case (N-2, Definition 10.161.1(2), tag 032F), proved through
-Noether normalization (Lemma 10.115.4, tag 00OW) and Lemma 10.161.5 (tag 032I) instead of
+Noether normalization (Lemma 10.115.4, tag 00OY) and Lemma 10.161.5 (tag 032I) instead of
 Nagata's theorem. **Finite-type domains over a field are N-2 (Noether's finiteness theorem).**
 For a domain `A` of finite type over a field `k`, with fraction field `K`, and a finite extension
 `L / K`, any integral closure `C` of `A` in `L` is a finite `A`-module. No separability of `L / K`
