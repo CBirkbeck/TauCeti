@@ -11,31 +11,32 @@ public import Mathlib.RingTheory.Finiteness.Ideal
 /-!
 # A power of the image of a finitely generated ideal
 
-Let `I` be an ideal of a commutative semiring `B` and let `C` be a `B`-algebra. If every prime of
-`C` contains the image of `I`, that image lies in the nilradical of `C`; when `I` is finitely
-generated the image is then a nilpotent ideal, so one of its powers is `⊥`.
+Let `I` be an ideal of a semiring `B` and let `f : B →+* C` be a ring homomorphism into a
+commutative semiring. If every prime of `C` contains `I.map f`, that image lies in the nilradical
+of `C`; when `I` is finitely generated the image is then a nilpotent ideal, so one of its powers
+is `⊥`.
 
 Nothing here mentions localisation, and nothing subtracts, so the statement is made for an
-arbitrary commutative semiring algebra.
+arbitrary ring homomorphism, with commutativity assumed only where primes are taken.
 
 ## Main results
 
-* `Ideal.exists_pow_map_eq_bot`: if `I` is finitely generated and `I.map (algebraMap B C)` is
-  contained in every prime of `C`, then `(I.map (algebraMap B C)) ^ n = ⊥` for some `n`.
+* `Ideal.exists_pow_map_eq_bot`: if `I` is finitely generated and `I.map f` is contained in every
+  prime of `C`, then `(I.map f) ^ n = ⊥` for some `n`.
 -/
 
 public section
 
 namespace Ideal
 
-variable {B C : Type*} [CommSemiring B] [CommSemiring C] [Algebra B C] {I : Ideal B}
+variable {B C : Type*} [Semiring B] [CommSemiring C] {I : Ideal B}
 
-/-- **A power of the image of `I` vanishes.** If every prime of `C` contains the image of `I`,
-that image lies in the nilradical; being finitely generated it is then nilpotent. -/
-theorem exists_pow_map_eq_bot (hfg : I.FG)
-    (hprime : ∀ P : Ideal C, P.IsPrime → I.map (algebraMap B C) ≤ P) :
-    ∃ n : ℕ, (I.map (algebraMap B C)) ^ n = ⊥ := by
-  obtain ⟨n, hn⟩ := (hfg.map (algebraMap B C)).isNilpotent_iff_le_nilradical.mpr
+/-- **A power of the image of `I` vanishes.** If every prime of `C` contains the image of `I`
+under `f`, that image lies in the nilradical; being finitely generated it is then nilpotent. -/
+theorem exists_pow_map_eq_bot (f : B →+* C) (hfg : I.FG)
+    (hprime : ∀ P : Ideal C, P.IsPrime → I.map f ≤ P) :
+    ∃ n : ℕ, (I.map f) ^ n = ⊥ := by
+  obtain ⟨n, hn⟩ := (hfg.map f).isNilpotent_iff_le_nilradical.mpr
     fun x hx ↦ mem_nilradical.mpr (nilpotent_iff_mem_prime.mpr fun P hP ↦ hprime P hP hx)
   exact ⟨n, by simpa using hn⟩
 
