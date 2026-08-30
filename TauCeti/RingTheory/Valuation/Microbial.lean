@@ -31,11 +31,6 @@ condition, and no rank or height development is needed.
 
 ## Main results
 
-* `Valuation.IsMicrobial.exists_height_one_quotient` : the defining quotient has height one, with
-  "height at most one" in its convex-subgroup form.
-* `Valuation.IsMicrobial.exists_coarsenByUnits` : a microbial valuation admits a vertical
-  generization whose value group has height one — the subgroup handed over by the definition is
-  the one `coarsenByUnits` consumes.
 * `Valuation.isMicrobial_of_mulArchimedean` and `Valuation.not_isMicrobial_of_subsingleton` : the
   predicate holds of every rank-one valuation and fails of every trivial one.
 
@@ -86,32 +81,6 @@ def IsMicrobial (v : Valuation R Γ₀) : Prop :=
   ∃ H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ,
     Nontrivial ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) ∧
       MulArchimedean ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup)
-
-/-- **The quotient a microbial valuation supplies has height one.** Unfolding the definition with
-`ConvexSubgroup.mulArchimedean_iff_forall_eq_bot_or_eq_top`: the quotient is nontrivial and its
-only convex subgroups are `⊥` and `⊤`. -/
-theorem IsMicrobial.exists_height_one_quotient {v : Valuation R Γ₀} (hv : v.IsMicrobial) :
-    ∃ H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ,
-      Nontrivial ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) ∧
-        ∀ K : ConvexSubgroup ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup), K = ⊥ ∨ K = ⊤ :=
-  hv.imp fun _ h =>
-    ⟨h.1, ConvexSubgroup.mulArchimedean_iff_forall_eq_bot_or_eq_top.mp h.2⟩
-
-/-- **A microbial valuation has a height-one vertical generization.** The convex subgroup the
-definition supplies is exactly the one to coarsen by, so the generization is
-`v.restrict.coarsenByUnits H` — Wedhorn's `v/H` of Remark 4.12(1) — and it takes values in
-`Γ_v ⧸ H`, which the definition makes nontrivial and archimedean.
-
-The coarsening is of `v.restrict`, the corestriction of `v` to the value monoid it actually
-attains, so the generization lands in a quotient of `Γ_v` itself rather than of the ambient
-`Γ₀ˣ`. -/
-theorem IsMicrobial.exists_coarsenByUnits {v : Valuation R Γ₀} (hv : v.IsMicrobial) :
-    ∃ (H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ)
-      (w : Valuation R (WithZero ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup))),
-      w = v.restrict.coarsenByUnits H ∧
-        Nontrivial ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) ∧
-          MulArchimedean ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) :=
-  hv.imp fun H hH => ⟨v.restrict.coarsenByUnits H, rfl, hH.1, hH.2⟩
 
 /-- **A valuation whose value group is trivial is not microbial.** The definition is therefore not
 vacuously satisfied: it genuinely constrains `v`.
