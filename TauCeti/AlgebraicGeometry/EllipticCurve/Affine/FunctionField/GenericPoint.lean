@@ -119,24 +119,6 @@ theorem equation_genericX_genericY :
   CoordinateRing.equation_of_algHom
     (IsScalarTower.toAlgHom R W.CoordinateRing W.FunctionField)
 
-namespace FunctionField
-
-variable {F A : Type*} [Field F] [CommRing A] [Algebra F A]
-  {W : _root_.WeierstrassCurve.Affine F}
-
-/-- **Algebra homomorphisms out of the function field are determined on the coordinate ring.** -/
-theorem algHom_ext {f g : W.FunctionField →ₐ[F] A}
-    (h : ∀ z : W.CoordinateRing,
-      f (algebraMap W.CoordinateRing W.FunctionField z) =
-        g (algebraMap W.CoordinateRing W.FunctionField z)) : f = g := by
-  apply AlgHom.coe_ringHom_injective
-  apply IsLocalization.ringHom_ext (nonZeroDivisors W.CoordinateRing)
-  apply RingHom.ext
-  intro z
-  exact h z
-
-end FunctionField
-
 section Field
 
 variable {F : Type*} [Field F] (W : _root_.WeierstrassCurve.Affine F)

@@ -115,6 +115,14 @@ theorem eq_of_coords {P Q : W.Point} (hP : P ≠ 0) (hQ : Q ≠ 0)
 theorem xCoord_neg (P : W.Point) : xCoord (-P) = xCoord P := by
   cases P <;> (rfl)
 
+/-- **The `y`-coordinate of the negation of a nonzero point.** -/
+@[simp]
+theorem yCoord_neg {P : W.Point} (hP : P ≠ 0) :
+    yCoord (-P) = W.negY (xCoord P) (yCoord P) := by
+  cases P with
+  | zero => exact absurd rfl hP
+  | some x y h => rfl
+
 variable {S F K : Type*} [CommRing S] [Field F] [Field K] [Algebra R S] [Algebra R F]
   [Algebra S F] [IsScalarTower R S F] [Algebra R K] [Algebra S K] [IsScalarTower R S K]
   [DecidableEq F] [DecidableEq K]

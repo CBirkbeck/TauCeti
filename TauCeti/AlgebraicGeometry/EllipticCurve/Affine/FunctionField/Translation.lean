@@ -228,8 +228,13 @@ private theorem comp_translationAlgHom (P Q : (W⁄F).toAffine.Point) :
 /-- **Composition of translation pullbacks**, on the function field. -/
 private theorem comp_translationAux (P Q : (W⁄F).toAffine.Point) :
     (translationAux W Q).comp (translationAux W P) = translationAux W (P + Q) := by
-  apply FunctionField.algHom_ext
+  apply IsLocalization.algHom_ext (nonZeroDivisors W.CoordinateRing)
+  apply AlgHom.ext
   intro z
+  simp only [AlgHom.comp_apply]
+  change translationAux W Q
+      (translationAux W P (algebraMap W.CoordinateRing W.FunctionField z)) =
+    translationAux W (P + Q) (algebraMap W.CoordinateRing W.FunctionField z)
   have h : translationAux W Q
       (translationAux W P (algebraMap W.CoordinateRing W.FunctionField z)) =
       translationAlgHom W (P + Q) z := by
@@ -246,8 +251,12 @@ private theorem translationAlgHom_zero :
       IsScalarTower.toAlgHom_apply, genericY_def]
 
 private theorem translationAux_zero : translationAux W 0 = AlgHom.id F W.FunctionField := by
-  apply FunctionField.algHom_ext
+  apply IsLocalization.algHom_ext (nonZeroDivisors W.CoordinateRing)
+  apply AlgHom.ext
   intro z
+  simp only [AlgHom.comp_apply]
+  change translationAux W 0 (algebraMap W.CoordinateRing W.FunctionField z) =
+    algebraMap W.CoordinateRing W.FunctionField z
   have h : translationAux W 0 (algebraMap W.CoordinateRing W.FunctionField z) =
       algebraMap W.CoordinateRing W.FunctionField z := by
     rw [translationAux_algebraMap, translationAlgHom_zero, IsScalarTower.toAlgHom_apply]
