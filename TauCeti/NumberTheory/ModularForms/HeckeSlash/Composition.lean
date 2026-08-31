@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.NumberTheory.HeckeRing.Handedness
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.CuspRing
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Ring
 
@@ -43,8 +44,11 @@ it, so it is answered where the rest of the double-coset vocabulary lives: they 
 **product set** `Γ₁ δ₁ Γ₂ · Γ₂ δ₂ Γ₃`, by
 `DoubleCoset.doubleCoset_mul_doubleCoset_eq_iUnion_rightCosets` (`HeckeRing/Basic.lean`). They do
 so with repetition, which is why the criterion below has to be told separately that the cosets
-are distinct. These right-coset collision counts are not identified here with
-`DoubleCoset.multiplicity`, which is defined using left-coset representatives.
+are distinct. How often each right coset is met is counted by
+`card_pairs_mem_rightCoset_eq_multiplicity` below, which identifies that count with
+`DoubleCoset.multiplicity`. Since the multiplicity counts *left*-coset representatives, the
+identification inverts all three arguments and exchanges the two factors; the group-theoretic
+content of it is `HeckeRing/Handedness.lean`.
 
 ## What this does and does not give
 
@@ -59,10 +63,13 @@ cusp-form companion apply both criteria at once, so the ring product of two basi
 to the composite of their operators.
 
 ⚠ The general multiplicity-weighted statement — the composite as `∑_D m(D₁, D₂; D) · T_D`, and
-with it the ring homomorphism `𝕋 → Module.End` — is **not** proved here. It needs, beyond this
-file, the count that each right coset of a fixed `D` is hit by the same number of pairs, and a
-reconciliation of handedness: `DoubleCoset.multiplicity` counts pairs of *left*-coset
-representatives while the slash sum runs over right cosets.
+with it the ring homomorphism `𝕋 → Module.End` — is still **not** proved here, but its two
+counting ingredients now are. `card_pairs_mem_rightCoset_eq_multiplicity` reconciles the
+handedness, identifying the right-coset collision count with the multiplicity, and
+`card_pairs_mem_rightCoset_congr` supplies the uniformity: each right coset of a fixed `D` is met
+by the same number of pairs. What is still missing is the assembly — partitioning the pairs
+`(v, w)` according to the double coset their product lies in, for which the product set must be
+known to meet only finitely many double cosets.
 
 ## Main results
 
@@ -75,6 +82,10 @@ representatives while the slash sum runs over right cosets.
 * `HeckeRing.GL2.heckeSlashSum_heckeSlashSum_eq_heckeSlashSum`: the composite is the slash sum of
   a third double coset, when the product set is that coset and the pairs are in bijection with
   its right cosets.
+* `HeckeRing.GL2.card_pairs_mem_rightCoset_eq_multiplicity` and
+  `HeckeRing.GL2.card_pairs_mem_rightCoset_congr`: **the handedness reconciliation** — the number
+  of pairs of representatives whose product meets a given right coset is Shimura's multiplicity,
+  and it is the same for every right coset of one double coset.
 * `HeckeRing.GL2.heckeSlashGamma1RingModularFormLinearMap_mul_single_single` and
   `HeckeRing.GL2.heckeSlashGamma1CuspRingLinearMap_mul_single_single`: the ring-level reading of
   those two — the Hecke ring acts multiplicatively on basis elements whose product is a single
@@ -131,6 +142,43 @@ theorem heckeSlashSum_heckeSlashSum (f : ℍ → ℂ) :
   rw [heckeSlashSum_def k D₂, Finset.sum_comm]
   exact Finset.sum_congr rfl fun w _ ↦ heckeSlashSum_slash k D₁ f (rightCosetRep D₂ w)
 
+omit [Finite (DecompQuotient Γ₂ Γ₁ (D₁.out : GL (Fin 2) ℚ)⁻¹)]
+  [Finite (DecompQuotient Γ₃ Γ₂ (D₂.out : GL (Fin 2) ℚ)⁻¹)] in
+/-- **The right-coset collisions among the products `aᵥ b_w` are counted by Shimura's
+multiplicity**, which is the identification the module docstring records as missing.
+
+The count is of pairs whose product lands in a fixed right coset `Γ₁ d`; it is the multiplicity
+of `d⁻¹` for the *reversed* triple, because inversion is what converts the right-coset index the
+slash sum runs over into the left-coset index `DoubleCoset.multiplicity` is defined with. The
+group-theoretic content is `DoubleCoset.card_pairs_mem_rightCoset_eq_multiplicity`; here it is
+merely read on `rightCosetRep`. -/
+theorem card_pairs_mem_rightCoset_eq_multiplicity (d : GL (Fin 2) ℚ) :
+    Nat.card {p : DecompQuotient Γ₂ Γ₁ (D₁.out : GL (Fin 2) ℚ)⁻¹ ×
+          DecompQuotient Γ₃ Γ₂ (D₂.out : GL (Fin 2) ℚ)⁻¹ |
+        rightCosetRep D₁ p.1 * rightCosetRep D₂ p.2 ∈
+          MulOpposite.op d • (Γ₁ : Set (GL (Fin 2) ℚ))} =
+      multiplicity Γ₃ Γ₂ Γ₁ (D₂.out : GL (Fin 2) ℚ)⁻¹ (D₁.out : GL (Fin 2) ℚ)⁻¹ d⁻¹ := by
+  simp only [rightCosetRep_def]
+  exact DoubleCoset.card_pairs_mem_rightCoset_eq_multiplicity Γ₁ Γ₂ Γ₃ _ _ d
+
+/-- **Each right coset of a fixed double coset is met by the same number of pairs `(v, w)`** — the
+other half of what the module docstring records as missing.
+
+Together with `card_pairs_mem_rightCoset_eq_multiplicity` this is what lets the count factor out
+of the composite of two slash sums: on the right cosets of one double coset it is a constant. -/
+theorem card_pairs_mem_rightCoset_congr {d d' : GL (Fin 2) ℚ}
+    (hd : d' ∈ doubleCoset d (Γ₁ : Set (GL (Fin 2) ℚ)) Γ₃) :
+    Nat.card {p : DecompQuotient Γ₂ Γ₁ (D₁.out : GL (Fin 2) ℚ)⁻¹ ×
+          DecompQuotient Γ₃ Γ₂ (D₂.out : GL (Fin 2) ℚ)⁻¹ |
+        rightCosetRep D₁ p.1 * rightCosetRep D₂ p.2 ∈
+          MulOpposite.op d' • (Γ₁ : Set (GL (Fin 2) ℚ))} =
+      Nat.card {p : DecompQuotient Γ₂ Γ₁ (D₁.out : GL (Fin 2) ℚ)⁻¹ ×
+          DecompQuotient Γ₃ Γ₂ (D₂.out : GL (Fin 2) ℚ)⁻¹ |
+        rightCosetRep D₁ p.1 * rightCosetRep D₂ p.2 ∈
+          MulOpposite.op d • (Γ₁ : Set (GL (Fin 2) ℚ))} := by
+  simp only [rightCosetRep_def]
+  exact DoubleCoset.card_pairs_mem_rightCoset_congr Γ₁ Γ₂ Γ₃ _ _ hd
+
 end Composite
 
 section Free
@@ -177,8 +225,9 @@ exactly once.
 
 The two hypotheses are formally analogous to those of
 `HeckeCosetModule.mul_single_single_of_mulMap_eq`: `hD₃` says that the product set is the single
-coset `D₃`, while `hinj₃` says that the products have no right-coset collisions. This does not
-identify `hinj₃` with the left-representative count used by `DoubleCoset.multiplicity`. The
+coset `D₃`, while `hinj₃` says that the products have no right-coset collisions. `hinj₃` is left
+as the bare injectivity it is used as; `card_pairs_mem_rightCoset_eq_multiplicity` is what says
+that the collision count it rules out is `DoubleCoset.multiplicity`. The
 covering half of the hypothesis `heckeSlashSum_eq_sum_of_rightCosets` would otherwise need is
 automatic, by `doubleCoset_mul_doubleCoset_eq_iUnion_rightCosets`. -/
 theorem heckeSlashSum_heckeSlashSum_eq_heckeSlashSum
