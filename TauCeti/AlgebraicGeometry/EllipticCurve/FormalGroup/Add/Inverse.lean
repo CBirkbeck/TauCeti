@@ -319,7 +319,7 @@ private theorem invPair_vieta_cofactor_absurd (h2 : (2 : O) ≠ 0)
 
 Over a domain with `2 ≠ 0` and `ι ≠ z`: the chord through `(z, w(z))` and its negative is the
 vertical line through them, which meets the curve again only at the point at infinity. -/
-private theorem subst_invPair_formalThirdRoot (hne : formalInverse W ≠ X ()) (h2 : (2 : O) ≠ 0) :
+theorem subst_invPair_formalThirdRoot (hne : formalInverse W ≠ X ()) (h2 : (2 : O) ≠ 0) :
     subst (Sum.elim X (fun _ ↦ formalInverse W) : Unit ⊕ Unit → MvPowerSeries Unit O)
       (formalThirdRoot W) = 0 := by
   have hNp := subst_invPair_formalIntercept W hne
