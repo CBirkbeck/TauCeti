@@ -66,8 +66,11 @@ lemma doubleCoset_inv (Γ₁ Γ₂ : Subgroup G) (g : G) :
     inv_coe_set, ← mul_assoc]
 
 /-- **Inverting a double coset exchanges its flanking subgroups**: `x ∈ Γ₁ g Γ₂` if and only if
-`x⁻¹ ∈ Γ₂ g⁻¹ Γ₁`. The membership form of `doubleCoset_inv`. -/
-@[simp]
+`x⁻¹ ∈ Γ₂ g⁻¹ Γ₁`. The membership form of `doubleCoset_inv`.
+
+Not `@[simp]`, unlike `doubleCoset_inv`: `mem_doubleCoset_iff_mk_mem_orbit` already rewrites
+membership in a double coset to membership in a `MulAction.orbit`, so this left-hand side is not
+in simp normal form and `simpNF` rejects it. Apply it by name. -/
 lemma inv_mem_doubleCoset_inv_iff {Γ₁ Γ₂ : Subgroup G} {g x : G} :
     x⁻¹ ∈ doubleCoset g⁻¹ (Γ₂ : Set G) Γ₁ ↔ x ∈ doubleCoset g (Γ₁ : Set G) Γ₂ := by
   rw [← doubleCoset_inv, Set.mem_inv, inv_inv]
