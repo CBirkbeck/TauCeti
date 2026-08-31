@@ -16,8 +16,8 @@ public import TauCeti.NumberTheory.NumberField.AutomorphismAction
 Let `K` be a number field, `F` an extension field of `K`, `𝔭` a height-one prime of `𝓞 K`, and
 `Q` an ideal of `𝓞 F` lying over `𝔭`. An *arithmetic Frobenius* at `Q` is a `σ` with
 `σ x ≡ x ^ 𝔑𝔭 (mod Q)` for every `x : 𝓞 F` (Mathlib's `IsArithFrobAt`). This file records what
-such a `σ` does to a root of unity: if `ζ` is a primitive `m`-th root of unity in `F` and `𝔭`
-does not divide `m`, then
+such a `σ` does to a root of unity: if `ζ` is an `m`-th root of unity in `F` and `𝔭` does not
+divide `m`, then
 
 `σ ζ = ζ ^ 𝔑𝔭`.
 
@@ -34,7 +34,7 @@ it rather than at `Q`.
 ## Main results
 
 * `NumberField.isArithFrobAt_zeta_pow`: an arithmetic Frobenius at an ideal of `𝓞 F` over `𝔭`
-  raises a primitive `m`-th root of unity to the power `𝔑𝔭`, when `𝔭 ∤ m`.
+  raises an `m`-th root of unity to the power `𝔑𝔭`, when `𝔭 ∤ m`.
 
 ## Implementation notes
 
@@ -43,12 +43,19 @@ Frobenius. It therefore applies to every arithmetic Frobenius at `Q`, needs no f
 residue ring `𝓞 F ⧸ Q` (which a chosen Frobenius needs in order to exist), and lets a consumer
 supply whichever representative it holds.
 
-There is no cyclotomic hypothesis on `F / K`. `IsCyclotomicExtension {m} K F` is the ambient
-setting in which the result gets used, but the proof needs only that `ζ` is a root of unity lying
-in `F`, so assuming it would leave an unused hypothesis on the statement. For the same reason `F`
-is not assumed to be a number field: only `K` has to be one, so that `𝔭` has an absolute norm.
-And `Q`, which in use is a prime above `𝔭`, is only required to lie over it: `IsArithFrobAt` reads
-as a congruence modulo `Q` for any ideal, and nothing below needs `Q` to be prime.
+`ζ` is asked only for `ζ ^ m = 1`, not for `IsPrimitiveRoot ζ m`. Primitivity plays no part: the
+underlying `IsArithFrobAt.apply_of_pow_eq_one` is itself stated for any root of unity, and a
+caller holding `hζ : IsPrimitiveRoot ζ m` passes `hζ.pow_eq_one`. Nor is `[NeZero m]` assumed —
+`hm` already forces `m ≠ 0`, since every ideal contains `0`. Being a root of unity is also what
+makes `ζ` an algebraic integer here (`IsIntegral.of_pow`), so no cyclotomic structure is needed to
+package it into `𝓞 F`.
+
+There is likewise no cyclotomic hypothesis on `F / K`. `IsCyclotomicExtension {m} K F` is the
+ambient setting in which the result gets used, but the proof never looks at it, so assuming it
+would leave an unused hypothesis on the statement. For the same reason `F` is not assumed to be a
+number field: only `K` has to be one, so that `𝔭` has an absolute norm. And `Q`, which in use is a
+prime above `𝔭`, is only required to lie over it: `IsArithFrobAt` reads as a congruence modulo `Q`
+for any ideal, and nothing below needs `Q` to be prime.
 
 ## References
 
@@ -71,30 +78,36 @@ namespace NumberField
 variable {K F : Type*} [Field K] [NumberField K] [Field F] [Algebra K F]
 
 /-- **An arithmetic Frobenius raises a root of unity to the norm of the prime below it.** Let `ζ`
-be a primitive `m`-th root of unity in an extension field `F` of a number field `K`, let `𝔭` be
-a height-one prime of `𝓞 K` not dividing `m`, and let `σ` be an arithmetic Frobenius at an ideal
+be an `m`-th root of unity in an extension field `F` of a number field `K`, let `𝔭` be a
+height-one prime of `𝓞 K` not dividing `m`, and let `σ` be an arithmetic Frobenius at an ideal
 `Q` of `𝓞 F` lying over `𝔭`.
 Then `σ ζ = ζ ^ 𝔑𝔭`.
 
 The exponent is the absolute norm of `𝔭`, not its inverse: over `ℚ` this is `ζ_m ↦ ζ_m ^ p`. -/
-theorem isArithFrobAt_zeta_pow {m : ℕ} [NeZero m] {ζ : F} (hζ : IsPrimitiveRoot ζ m)
+theorem isArithFrobAt_zeta_pow {m : ℕ} {ζ : F} (hζ : ζ ^ m = 1)
     (𝔭 : HeightOneSpectrum (𝓞 K)) (hm : (m : 𝓞 K) ∉ 𝔭.asIdeal)
     (Q : Ideal (𝓞 F)) [Q.LiesOver 𝔭.asIdeal]
     {σ : F ≃ₐ[K] F} (hσ : IsArithFrobAt (𝓞 K) σ Q) :
     σ ζ = ζ ^ Ideal.absNorm 𝔭.asIdeal := by
+  -- `m ≠ 0`: otherwise `(m : 𝓞 K)` is `0`, which lies in every ideal.
+  have hm0 : 0 < m := Nat.pos_of_ne_zero fun h ↦ hm (by simp [h])
+  -- A root of unity is an algebraic integer: `ζ ^ m` is `1`, which is integral, and `m > 0`.
+  have hζmem : ζ ∈ integralClosure ℤ F :=
+    IsIntegral.of_pow hm0 (by rw [hζ]; exact isIntegral_one)
   -- `𝔭` is the contraction of `Q`, so `𝔭 ∤ m` says exactly that `m` avoids `Q`.
   have hmQ : (m : 𝓞 F) ∉ Q := fun hmem ↦
     hm ((Ideal.mem_of_liesOver Q 𝔭.asIdeal (m : 𝓞 K)).mpr (by rwa [map_natCast]))
   -- The residue cardinality that `IsArithFrobAt` powers by is the absolute norm of `𝔭`.
   have hcard : Nat.card (𝓞 K ⧸ Q.under (𝓞 K)) = Ideal.absNorm 𝔭.asIdeal := by
     rw [← Q.over_def 𝔭.asIdeal, Ideal.absNorm_apply, Submodule.cardQuot_apply]
-  -- Compute in `𝓞 F` on the integral root of unity, then push the identity down to `F`.
-  have key := hσ.apply_of_pow_eq_one hζ.toInteger_isPrimitiveRoot.pow_eq_one hmQ
+  -- Name the algebraic integer carrying `ζ`, so the rewrites below see an opaque element.
+  obtain ⟨z, hval⟩ : ∃ z : 𝓞 F, algebraMap (𝓞 F) F z = ζ :=
+    ⟨⟨ζ, hζmem⟩, RingOfIntegers.map_mk ζ hζmem⟩
+  have hpow : z ^ m = 1 := RingOfIntegers.ext (by simp only [map_pow, hval, map_one]; exact hζ)
+  -- Compute in `𝓞 F` on that integer, then push the identity down to `F`.
+  have key := hσ.apply_of_pow_eq_one hpow hmQ
   rw [hcard] at key
-  -- `hζ.toInteger` is `ζ` packaged with its integrality witness, so the structure map returns
-  -- `ζ` unchanged, and it carries the action on `𝓞 F` to the action on `F`.
-  have hval : algebraMap (𝓞 F) F hζ.toInteger = ζ := RingOfIntegers.map_mk ζ _
-  have hact : algebraMap (𝓞 F) F (MulSemiringAction.toAlgHom (𝓞 K) (𝓞 F) σ hζ.toInteger) = σ ζ := by
+  have hact : algebraMap (𝓞 F) F (MulSemiringAction.toAlgHom (𝓞 K) (𝓞 F) σ z) = σ ζ := by
     rw [MulSemiringAction.toAlgHom_apply, algebraMap_smul_eq_apply, hval]
   -- The two sides of `key` map to the two sides of the goal.
   have hmap := congrArg (algebraMap (𝓞 F) F) key
