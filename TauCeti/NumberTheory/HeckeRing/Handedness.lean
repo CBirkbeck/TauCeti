@@ -59,6 +59,7 @@ variable {G : Type*} [Group G]
 
 /-- **Inverting a double coset exchanges its flanking subgroups.** As sets,
 `(Γ₁ g Γ₂)⁻¹ = Γ₂ g⁻¹ Γ₁`. -/
+@[simp]
 lemma doubleCoset_inv (Γ₁ Γ₂ : Subgroup G) (g : G) :
     (doubleCoset g (Γ₁ : Set G) Γ₂)⁻¹ = doubleCoset g⁻¹ (Γ₂ : Set G) Γ₁ := by
   rw [doubleCoset, doubleCoset, mul_inv_rev, mul_inv_rev, Set.inv_singleton, inv_coe_set,
@@ -66,6 +67,7 @@ lemma doubleCoset_inv (Γ₁ Γ₂ : Subgroup G) (g : G) :
 
 /-- **Inverting a double coset exchanges its flanking subgroups**: `x ∈ Γ₁ g Γ₂` if and only if
 `x⁻¹ ∈ Γ₂ g⁻¹ Γ₁`. The membership form of `doubleCoset_inv`. -/
+@[simp]
 lemma inv_mem_doubleCoset_inv_iff {Γ₁ Γ₂ : Subgroup G} {g x : G} :
     x⁻¹ ∈ doubleCoset g⁻¹ (Γ₂ : Set G) Γ₁ ↔ x ∈ doubleCoset g (Γ₁ : Set G) Γ₂ := by
   rw [← doubleCoset_inv, Set.mem_inv, inv_inv]
