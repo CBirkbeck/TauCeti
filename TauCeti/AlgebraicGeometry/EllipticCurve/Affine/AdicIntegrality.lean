@@ -7,8 +7,9 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Basic
 public import Mathlib.Topology.Algebra.Valued.ValuationTopology
-import Mathlib.RingTheory.Valuation.LocalSubring
+import Mathlib.RingTheory.Valuation.Integral
 import TauCeti.AlgebraicGeometry.EllipticCurve.Integrality
+import TauCeti.RingTheory.Valuation.RootMonic
 
 /-!
 # Integral points of a Weierstrass curve over a discretely valued field
@@ -42,12 +43,13 @@ and the fact that its value group is `ℤᵐ⁰`, which is what makes the parity
 
 ## Implementation notes
 
-The `y`-half of the dichotomy is not proved here. Once `x` is known to be integral,
-`TauCeti.WeierstrassCurve.isIntegral_y_of_equation_of_isIntegral_x` gives that `y` is integral over
-`O` from the curve equation alone, over any algebra and with no valuation in sight; `O` is a
-valuation subring, hence integrally closed in `F`, so integrality over it is membership. Only the
-`x`-half — the parity argument that rules out `v(x) = exp 1` — is genuinely about the valuation,
-and it is the only half that needs the estimates below.
+The `y`-half of the dichotomy is not reproved by a valuation computation. Once `x` is known to be
+integral, `TauCeti.WeierstrassCurve.isIntegral_y_of_equation_of_isIntegral_x` gives that `y` is
+integral over `O` from the curve equation alone, over any algebra and with no valuation in sight;
+`O` is a valuation subring, hence integrally closed in `F`, so integrality over it is membership.
+That is how the main theorem discharges its `y`-half. Only the `x`-half — the parity argument that
+rules out `v(x) = exp 1` — is genuinely about the valuation, and it is the only half that needs
+the estimates below.
 
 ## Placement
 
@@ -138,24 +140,14 @@ theorem valuation_a₆_le_one : Valued.v W.a₆ ≤ 1 := by
   rw [← hW, WeierstrassCurve.map_a₆]; exact W₀.a₆.2
 
 /-- For `v(x) > 1`, the right-hand side of the Weierstrass equation has valuation `v(x)³`: the
-`x³` term strictly dominates the rest. -/
+`x³` term strictly dominates the rest. This is `Valuation.map_cubic_of_one_lt` at the
+coefficients `a₂`, `a₄`, `a₆`, whose integrality the model supplies. -/
 private lemma valuation_rhs_eq {x : F} (hA1 : 1 < Valued.v x) :
     Valued.v (x ^ 3 + (W.a₂ * x ^ 2 + (W.a₄ * x + W.a₆))) = Valued.v x ^ 3 := by
-  set A := Valued.v x
-  have h1 : Valued.v (W.a₂ * x ^ 2) ≤ A ^ 2 := by
-    rw [map_mul, map_pow]
-    exact (mul_le_mul' (valuation_a₂_le_one hW) le_rfl).trans_eq (one_mul _)
-  have h2 : Valued.v (W.a₄ * x) ≤ A ^ 2 := by
-    rw [map_mul]
-    exact ((mul_le_mul' (valuation_a₄_le_one hW) le_rfl).trans_eq (one_mul _)).trans
-      (le_self_pow hA1.le (by lia))
-  have h3 : Valued.v W.a₆ ≤ A ^ 2 :=
-    (valuation_a₆_le_one hW).trans (hA1.le.trans (le_self_pow hA1.le (by lia)))
-  have hlow : Valued.v (W.a₂ * x ^ 2 + (W.a₄ * x + W.a₆)) < A ^ 3 :=
-    lt_of_le_of_lt ((Valued.v.map_add _ _).trans
-      (max_le h1 ((Valued.v.map_add _ _).trans (max_le h2 h3))))
-      (pow_lt_pow_right₀ hA1 (by lia))
-  rw [Valuation.map_add_eq_of_lt_left _ (by rw [map_pow]; exact hlow), map_pow]
+  rw [show x ^ 3 + (W.a₂ * x ^ 2 + (W.a₄ * x + W.a₆)) = x ^ 3 + W.a₂ * x ^ 2 + W.a₄ * x + W.a₆ by
+    ring]
+  exact Valued.v.map_cubic_of_one_lt (valuation_a₂_le_one hW) (valuation_a₄_le_one hW)
+    (valuation_a₆_le_one hW) hA1
 
 /-- When `v(y)` dominates `v(x)` and exceeds `1`, the left-hand side of the Weierstrass equation
 has valuation `v(y)²`: the `y²` term strictly dominates the rest. -/
@@ -217,9 +209,10 @@ variable [Valued F ℤᵐ⁰] {W : Affine F}
   {W₀ : WeierstrassCurve (Valued.v : Valuation F ℤᵐ⁰).valuationSubring}
   (hW : W₀.map (algebraMap (Valued.v : Valuation F ℤᵐ⁰).valuationSubring F) = W)
 
-/-- Squaring `exp 1` gives `exp 2`. Named because `exp` is not a `simp`-normal form here: the
-bound produced by `valuation_lhs_le` is `(exp 1) ^ 2` while the right-hand side is compared as
-`exp _`, and no ordinary rewrite bridges the two. -/
+-- Named rather than inlined because `exp` is not a `simp`-normal form here: the bound produced by
+-- `valuation_lhs_le` is `(exp 1) ^ 2` while the right-hand side is compared as `exp _`, and no
+-- ordinary rewrite bridges the two.
+/-- Squaring `exp 1` gives `exp 2`. -/
 private lemma exp_one_sq : (exp (1 : ℤ) : ℤᵐ⁰) ^ 2 = exp (2 : ℤ) := by
   rw [← exp_nsmul, nsmul_eq_mul]; norm_num
 
