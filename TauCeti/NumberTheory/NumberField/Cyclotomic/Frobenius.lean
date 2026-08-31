@@ -91,9 +91,13 @@ theorem isArithFrobAt_zeta_pow {m : ℕ} [NeZero m] {ζ : F} (hζ : IsPrimitiveR
   -- Compute in `𝓞 F` on the integral root of unity, then push the identity down to `F`.
   have key := hσ.apply_of_pow_eq_one hζ.toInteger_isPrimitiveRoot.pow_eq_one hmQ
   rw [hcard] at key
+  -- `hζ.toInteger` is `ζ` packaged with its integrality witness, so the structure map returns
+  -- `ζ` unchanged, and it carries the action on `𝓞 F` to the action on `F`.
+  have hval : algebraMap (𝓞 F) F hζ.toInteger = ζ := RingOfIntegers.map_mk ζ _
+  have hact : algebraMap (𝓞 F) F (MulSemiringAction.toAlgHom (𝓞 K) (𝓞 F) σ hζ.toInteger) = σ ζ := by
+    rw [MulSemiringAction.toAlgHom_apply, algebraMap_smul_eq_apply, hval]
+  -- The two sides of `key` map to the two sides of the goal.
   have hmap := congrArg (algebraMap (𝓞 F) F) key
-  rwa [map_pow, show algebraMap (𝓞 F) F hζ.toInteger = ζ from rfl,
-    show algebraMap (𝓞 F) F (MulSemiringAction.toAlgHom (𝓞 K) (𝓞 F) σ hζ.toInteger) = σ ζ from
-      algebraMap_smul_eq_apply σ hζ.toInteger] at hmap
+  rwa [map_pow, hval, hact] at hmap
 
 end NumberField
