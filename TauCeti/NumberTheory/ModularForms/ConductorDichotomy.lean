@@ -343,7 +343,7 @@ private lemma unitsMap_Gamma0Map_toHomUnits_eq_of_diag {l : ℕ} (hlN : l ∣ N)
 produces a cusp form of level `N / l`; this identifies its nebentypus as the lowered character
 `hfac.χ₀`, which is what makes the descent an eigenform statement rather than merely a level
 statement. -/
-theorem cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace {l : ℕ} [NeZero l] [NeZero (N / l)]
+theorem cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace {l : ℕ} [NeZero l]
     (hlN : l ∣ N) (k : ℤ) {χ : DirichletCharacter ℂ N} (hfac : χ.FactorsThrough (N / l)) (f : ℍ → ℂ)
     (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) (hgχ : g ∈ cuspFormCharSpace k χ.toUnitHom)
     (hg : ⇑g = (l : ℂ) ^ (1 - k) • (f ∣[k] scaleGL l))
@@ -376,7 +376,7 @@ This is Miyake's Theorem 4.6.4. The two horns are `TauCeti.cuspFormOfSmulSlashSc
 `TauCeti.cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace`, and
 `TauCeti.eq_zero_of_not_forall_unitsMap_eq_one`; the case split is on the single proposition that
 one assumes and the other negates. -/
-theorem exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero {l : ℕ} [NeZero l] [NeZero (N / l)]
+theorem exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero {l : ℕ} [NeZero l]
     (hlN : l ∣ N) (k : ℤ) (χ : DirichletCharacter ℂ N) (f : ℍ → ℂ)
     (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) (hgχ : g ∈ cuspFormCharSpace k χ.toUnitHom)
     (hg : ⇑g = (l : ℂ) ^ (1 - k) • (f ∣[k] scaleGL l))
