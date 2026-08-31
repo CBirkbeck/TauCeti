@@ -177,14 +177,16 @@ lemma natCast_dvd_val_sub_val_of_unitsMap_eq (hd : d ∣ N) {u u' : (ZMod N)ˣ}
   push_cast
   rw [ZMod.natCast_val, ZMod.natCast_val,
     show (ZMod.cast ((u : (ZMod N)ˣ) : ZMod N) : ZMod d) =
-      ZMod.castHom hd (ZMod d) ((u : (ZMod N)ˣ) : ZMod N) from rfl,
+      ZMod.castHom hd (ZMod d) ((u : (ZMod N)ˣ) : ZMod N) from
+        (ZMod.castHom_apply _).symm,
     show (ZMod.cast ((u' : (ZMod N)ˣ) : ZMod N) : ZMod d) =
-      ZMod.castHom hd (ZMod d) ((u' : (ZMod N)ˣ) : ZMod N) from rfl, hcast]
+      ZMod.castHom hd (ZMod d) ((u' : (ZMod N)ˣ) : ZMod N) from
+        (ZMod.castHom_apply _).symm, hcast]
   ring
 
 /-- The lower-left entry of the controlled lift, factored as `l * (N / l)`. This is the shape
 `TauCeti.conjScale` asks for, and it records `N / l` as the cofactor. -/
-lemma gamma0LiftOfUnit_apply_one_zero_eq_mul {l : ℕ} (hlN : l ∣ N) (u : (ZMod N)ˣ) :
+private lemma gamma0LiftOfUnit_apply_one_zero_eq_mul {l : ℕ} (hlN : l ∣ N) (u : (ZMod N)ˣ) :
     (gamma0LiftOfUnit N u : SL(2, ℤ)) 1 0 = (l : ℤ) * ((N / l : ℕ) : ℤ) := by
   rw [gamma0LiftOfUnit_apply_one_zero]
   exact_mod_cast (Nat.mul_div_cancel' hlN).symm
@@ -218,7 +220,8 @@ of the controlled lift of `u` is a translate — on both sides — of the conjug
 lift of some `u'` on which the character takes a *different* value. Since the function the
 vanishing argument is applied to is `T`-periodic, the two translations cost nothing, and the two
 sides therefore exhibit one slash with two different multipliers. -/
-theorem exists_eq_T_zpow_mul_conjScale_mul_T_zpow_of_apply_ne {l : ℕ} [NeZero l] (hlN : l ∣ N)
+private theorem exists_eq_T_zpow_mul_conjScale_mul_T_zpow_of_apply_ne {l : ℕ} [NeZero l]
+    (hlN : l ∣ N)
     {χ : (ZMod N)ˣ →* ℂˣ}
     (hχ : ¬ ∀ u : (ZMod N)ˣ, ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) u = 1 → χ u = 1) (u : (ZMod N)ˣ)
     : ∃ (i j : ℤ) (u' : (ZMod N)ˣ), χ u' ≠ χ u ∧ conjScale l (gamma0LiftOfUnit N u)
@@ -292,9 +295,7 @@ theorem eq_zero_of_not_forall_unitsMap_eq_one {l : ℕ} [NeZero l] (hlN : l ∣ 
     intro v
     have h := slash_conjScale_eq_smul_of_slash_scaleGL (k := k) f (gamma0LiftOfUnit N v)
       (gamma0LiftOfUnit_apply_one_zero_eq_mul hlN v) (hnb _ (gamma0LiftOfUnit N v).property)
-    rwa [show ((⟨(gamma0LiftOfUnit N v : SL(2, ℤ)), (gamma0LiftOfUnit N v).property⟩ :
-      ↥(Gamma0 N))) = gamma0LiftOfUnit N v from rfl,
-      Gamma0Map_toHomUnits_gamma0LiftOfUnit] at h
+    rwa [Subtype.coe_eta, Gamma0Map_toHomUnits_gamma0LiftOfUnit] at h
   -- the same slash, read through the refactoring, has the multiplier of the separating unit
   have halt : f ∣[k] (mapGL ℝ (conjScale l (gamma0LiftOfUnit N 1) ((N / l : ℕ) : ℤ)
       (gamma0LiftOfUnit_apply_one_zero_eq_mul hlN 1)) : GL (Fin 2) ℝ) = (χ u' : ℂ) • f := by
@@ -305,20 +306,6 @@ theorem eq_zero_of_not_forall_unitsMap_eq_one {l : ℕ} [NeZero l] (hlN : l ∣ 
 
 
 /-! ### The dichotomy -/
-
-/-- A Dirichlet character that factors through `d` is trivial on the kernel of `ZMod.unitsMap`.
-This is the hypothesis `TauCeti.cuspFormOfSmulSlashScaleGL` takes, read off `FactorsThrough`. -/
-lemma toUnitHom_eq_one_of_unitsMap_eq_one {χ : DirichletCharacter ℂ N} {d : ℕ} (hd : d ∣ N)
-    (h : χ.FactorsThrough d) (u : (ZMod N)ˣ) (hu : ZMod.unitsMap hd u = 1) : χ.toUnitHom u = 1 :=
-  MonoidHom.mem_ker.mp
-    (DirichletCharacter.factorsThrough_iff_ker_unitsMap hd |>.mp h (MonoidHom.mem_ker.mpr hu))
-
-omit [NeZero N] in
-/-- The character of a `FactorsThrough` witness is its lowered character, pulled back. -/
-lemma toUnitHom_eq_comp_unitsMap {χ : DirichletCharacter ℂ N} {d : ℕ} (h : χ.FactorsThrough d)
-    : χ.toUnitHom = h.χ₀.toUnitHom.comp (ZMod.unitsMap h.dvd) := by
-  conv_lhs => rw [h.eq_changeLevel]
-  rw [DirichletCharacter.changeLevel_toUnitHom]
 
 omit [NeZero N] in
 /-- The `T`-factorisation lift carries the same nebentypus label as the element it lifts, once
@@ -349,7 +336,8 @@ theorem cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace {l : ℕ} [NeZero l]
     (hg : ⇑g = (l : ℂ) ^ (1 - k) • (f ∣[k] scaleGL l))
     (hT : f ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) = f)
     : cuspFormOfSmulSlashScaleGL l N hlN k χ.toUnitHom
-    (toUnitHom_eq_one_of_unitsMap_eq_one (Nat.div_dvd_of_dvd hlN) hfac) f g hgχ hg hT ∈
+    (fun _ hu ↦ MonoidHom.mem_ker.mp (DirichletCharacter.factorsThrough_iff_ker_unitsMap
+      (Nat.div_dvd_of_dvd hlN) |>.mp hfac (MonoidHom.mem_ker.mpr hu))) f g hgχ hg hT ∈
       cuspFormCharSpace k hfac.χ₀.toUnitHom := by
   rw [mem_cuspFormCharSpace_iff_nebentypus]
   intro γ'
@@ -362,7 +350,8 @@ theorem cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace {l : ℕ} [NeZero l]
   -- the label of the lift reduces to the label of `γ'`, so the two characters agree
   have hchar : (χ.toUnitHom ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) : ℂ) =
       (hfac.χ₀.toUnitHom ((Gamma0Map (N / l)).toHomUnits γ') : ℂ) := by
-    rw [toUnitHom_eq_comp_unitsMap hfac, MonoidHom.comp_apply,
+    conv_lhs => rw [hfac.eq_changeLevel]
+    rw [DirichletCharacter.changeLevel_toUnitHom, MonoidHom.comp_apply,
       unitsMap_Gamma0Map_toHomUnits_eq_of_diag hlN hγ γ' hdiag]
   rw [hfactor, map_mul, map_mul, map_zpow, map_zpow,
     slash_zpow_mul_mul_zpow_eq_smul k f hdet hT hconj i j, hchar]
