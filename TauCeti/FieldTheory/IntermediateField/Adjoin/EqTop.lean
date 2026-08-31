@@ -22,8 +22,8 @@ the splitting law shows a decomposition-group element fixes every generator `√
 it is trivial, and the Frobenius computation concludes the same when every Legendre symbol
 is `1`.
 
-*Changing the base of a simple extension.* For a tower `K ⊆ L ⊆ M` in which `M` is generated
-over `L` by a single element `ζ`, the compositum of `K(ζ)` — generated over the *bottom* of the
+*Changing the base of a generated extension.* For a tower `K ⊆ L ⊆ M` in which a set `t`
+generates `M` over `L`, the compositum of `K(t)` — generated over the *bottom* of the
 tower — with the image of `L` is already all of `M`. That is the shape every compositum argument
 over the base `K` needs, because Mathlib's engines (`IntermediateField.fixingSubgroup_sup`,
 `IntermediateField.normal_sup`, and the linear-disjointness API) all take two intermediate
@@ -35,15 +35,17 @@ fields of a *single* extension `M / K` together with a hypothesis that their joi
   generating set are equal.
 * `TauCeti.IntermediateField.algEquiv_eq_one_of_adjoin_eq_top`: an automorphism fixing each
   element of a generating set is `1`.
-* `TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top`: for a tower `K ⊆ L ⊆ M` with
-  `M = L(ζ)`, the compositum `K(ζ) ⊔ L` is `⊤` inside `M`.
+* `TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top`: for a tower `K ⊆ L ⊆ M` in which
+  `t` generates `M` over `L`, the compositum `K(t) ⊔ L` is `⊤` inside `M`.
 
 ## Implementation notes
 
-`adjoin_sup_fieldRange_eq_top` takes its hypothesis as `Algebra.adjoin L {ζ} = ⊤` — generation
-as an `L`-*algebra* — rather than as `IntermediateField.adjoin L {ζ} = ⊤`, because that is the
-form the cyclotomic API supplies (`IsCyclotomicExtension.adjoin_primitive_root_eq_top`). Over a
-field the two agree, but taking the algebra form avoids making every caller convert.
+`adjoin_sup_fieldRange_eq_top` takes its hypothesis as `Algebra.adjoin L t = ⊤` — generation
+as an `L`-*algebra* — rather than as `IntermediateField.adjoin L t = ⊤`, because that is the
+form the cyclotomic API supplies (`IsCyclotomicExtension.adjoin_primitive_root_eq_top`, with
+`t = {ζ}`). Over a field the two agree, but taking the algebra form avoids making every caller
+convert. The statement is set-valued rather than single-generator because the induction over
+`Algebra.adjoin` never inspects `t`: the generator case is just `IntermediateField.subset_adjoin`.
 
 `adjoin_sup_fieldRange_eq_top` is adapted from the Birkbeck–Brasca Chebotarev density project,
 where the step is inlined into a larger `adjoin_induction`.
@@ -85,22 +87,20 @@ theorem algEquiv_eq_one_of_adjoin_eq_top (htop : IntermediateField.adjoin F s = 
     {σ : E ≃ₐ[F] E} (hfix : ∀ x ∈ s, σ x = x) : σ = 1 :=
   algEquiv_ext_of_adjoin_eq_top htop (σ := σ) (τ := 1) (by simpa using hfix)
 
-/-- **The compositum step.** If `M` is generated over `L` by `ζ`, then inside `M` the
-compositum of `K(ζ)` with the image of `L` is all of `M`, for any base field `K` of the
+/-- **The compositum step.** If a set `t` generates `M` over `L`, then inside `M` the
+compositum of `K(t)` with the image of `L` is all of `M`, for any base field `K` of the
 tower. This is the input to Mathlib's compositum engines
-(`IntermediateField.fixingSubgroup_sup`, `IntermediateField.normal_sup`). -/
+(`IntermediateField.fixingSubgroup_sup`, `IntermediateField.normal_sup`). The single-generator
+case `t = {ζ}` is the one the cyclotomic compositum uses; it is obtained by specialisation. -/
 theorem adjoin_sup_fieldRange_eq_top (K L M : Type*) [Field K] [Field L] [Field M]
-    [Algebra K L] [Algebra K M] [Algebra L M] [IsScalarTower K L M] {ζ : M}
-    (hadj : Algebra.adjoin L ({ζ} : Set M) = ⊤) :
-    IntermediateField.adjoin K {ζ} ⊔ (IsScalarTower.toAlgHom K L M).fieldRange = ⊤ := by
+    [Algebra K L] [Algebra K M] [Algebra L M] [IsScalarTower K L M] {t : Set M}
+    (hadj : Algebra.adjoin L t = ⊤) :
+    IntermediateField.adjoin K t ⊔ (IsScalarTower.toAlgHom K L M).fieldRange = ⊤ := by
   refine top_le_iff.mp fun x _ ↦ ?_
-  have hx : x ∈ Algebra.adjoin L ({ζ} : Set M) := hadj ▸ Algebra.mem_top
+  have hx : x ∈ Algebra.adjoin L t := hadj ▸ Algebra.mem_top
   refine Algebra.adjoin_induction (fun y hy ↦ ?_) (fun r ↦ ?_)
     (fun a b _ _ ha hb ↦ add_mem ha hb) (fun a b _ _ ha hb ↦ mul_mem ha hb) hx
-  · rw [Set.mem_singleton_iff] at hy
-    subst hy
-    exact le_sup_left (α := IntermediateField K M)
-      (IntermediateField.mem_adjoin_simple_self K y)
+  · exact le_sup_left (α := IntermediateField K M) (IntermediateField.subset_adjoin K t hy)
   · exact le_sup_right (α := IntermediateField K M) ⟨r, rfl⟩
 
 end TauCeti.IntermediateField

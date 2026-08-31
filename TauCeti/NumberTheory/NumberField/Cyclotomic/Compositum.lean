@@ -5,9 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.FieldTheory.Galois.Basic
 public import Mathlib.NumberTheory.Cyclotomic.Gal
-public import TauCeti.FieldTheory.IntermediateField.Adjoin.EqTop
 public import TauCeti.NumberTheory.NumberField.Cyclotomic.Finrank
 
 /-!
@@ -39,12 +37,16 @@ the degree identity `[M : K] = φ m` is `IsCyclotomicExtension.finrank_eq_totien
 
 ## Implementation notes
 
-The file is split by hypothesis strength. `isGalois_of_isGalois_of_isCyclotomicExtension` and
-`restrictNormalHom_prod_autToPow_injective` are pure field theory and carry no `NumberField`
-instances — the first needs no hypothesis beyond the tower itself (algebraicity and separability
-of `M / K` are both derived inside the proof from `IsGalois K L` and the cyclotomic tower), and the
-second needs no arithmetic at all.
-Only the results downstream of the degree count, which mention `discr L`, take number fields.
+The file is split by hypothesis strength, in three steps.
+`restrictNormalHom_prod_autToPow_injective` comes first and assumes only `[Normal K L]`:
+normality is exactly what defines
+`AlgEquiv.restrictNormalHom L`, and the faithfulness argument never separates anything, so
+requiring `IsGalois K L` there would be an avoidable hypothesis. Next
+`isGalois_of_isGalois_of_isCyclotomicExtension` turns on `[IsGalois K L]`, needing no hypothesis
+beyond the tower itself (algebraicity and separability of `M / K` are both derived inside the
+proof from `IsGalois K L` and the cyclotomic tower). Both are pure field theory and carry no
+`NumberField` instances. Only the results downstream of the degree count, which mention
+`discr L`, take number fields.
 
 That `M / K` is Galois is *derived*, not assumed: `M` is the compositum of `L` with `K(ζ)`,
 both of which are normal over `K`, and the engine for a compositum of two normal extensions is
@@ -76,49 +78,15 @@ section Compositum
 
 variable (K L M : Type*) [Field K] [Field L] [Field M]
   [Algebra K L] [Algebra K M] [Algebra L M] [IsScalarTower K L M]
-  [IsGalois K L] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} L M]
+  (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} L M]
 
-include L m in
-/-- **The cyclotomic compositum of a Galois extension is Galois.** If `L / K` is Galois and
-`M = L(μ_m)`, then `M / K` is Galois: `M` is the compositum of `L` with `K(ζ)`
-(`TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top`), both of which are normal over `K`,
-and a compositum of normal extensions is normal (`IntermediateField.normal_sup`). Separability
-is transitivity along the tower: `L / K` is separable because it is Galois, and `M / L` because a
-cyclotomic extension is (`IsCyclotomicExtension.isSeparable`) — no characteristic assumption is
-needed, since a primitive `m`-th root of unity exists in `M` only if the characteristic does not
-divide `m`.
+section Faithful
 
-Both tower hypotheses are needed, which is what the name records: the cyclotomic extension is
-`M / L`, and `L / K` is Galois. Mathlib's `IsCyclotomicExtension.isGalois` is the one-step
-statement, for a cyclotomic extension of the base itself.
+/-! Faithfulness of the joint restriction needs only that `L / K` is *normal* — enough to
+define `AlgEquiv.restrictNormalHom L` — not that it is Galois. Separability of `L / K` enters
+only with the compositum-Galois and degree-count results below. -/
 
-This is what makes `IsGalois K M` a *conclusion* of this file rather than a hypothesis of the
-results below. It is a theorem and not an `instance` because neither `L` nor `m` can be
-recovered from the goal `IsGalois K M`, so there is no synthesization order; call sites
-introduce it with `have` instead. -/
-theorem isGalois_of_isGalois_of_isCyclotomicExtension : IsGalois K M := by
-  obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot (S := {m}) L M
-    (Set.mem_singleton m) (NeZero.ne m)
-  -- `M / K` is algebraic: `L / K` is Galois hence algebraic, and `M / L` is a cyclotomic
-  -- extension for the single modulus `m`, hence finite. This is what the dropped `NumberField`
-  -- instances used to supply.
-  have : FiniteDimensional L M := IsCyclotomicExtension.finiteDimensional (S := {m}) (K := L) M
-  have : Algebra.IsIntegral K M := Algebra.IsIntegral.trans L
-  have hcyc : IsCyclotomicExtension {m} K (IntermediateField.adjoin K {ζ}) :=
-    hζ.intermediateField_adjoin_isCyclotomicExtension (K := K)
-  have : IsGalois K (IntermediateField.adjoin K {ζ}) :=
-    IsCyclotomicExtension.isGalois (S := {m}) (K := K) (L := IntermediateField.adjoin K {ζ})
-  have : Normal K ((IsScalarTower.toAlgHom K L M).fieldRange) :=
-    Normal.of_algEquiv (AlgEquiv.ofInjectiveField (IsScalarTower.toAlgHom K L M))
-  have hsup : Normal K
-      (IntermediateField.adjoin K {ζ} ⊔ (IsScalarTower.toAlgHom K L M).fieldRange :
-        IntermediateField K M) := IntermediateField.normal_sup K M _ _
-  rw [TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top K L M
-    (IsCyclotomicExtension.adjoin_primitive_root_eq_top (n := m) hζ)] at hsup
-  have : Normal K M := Normal.of_algEquiv (h := hsup) IntermediateField.topEquiv
-  have : Algebra.IsSeparable L M := IsCyclotomicExtension.isSeparable (S := {m}) (K := L) (L := M)
-  have : Algebra.IsSeparable K M := Algebra.IsSeparable.trans K L M
-  exact ⟨⟩
+variable [Normal K L]
 
 /-- **The joint restriction is faithful.** An automorphism of `M = L(μ_m)` over `K` that is
 trivial on `L` and trivial on the `m`-th roots of unity is the identity. No arithmetic
@@ -168,6 +136,52 @@ theorem restrictNormalHom_prod_autToPow_injective {ζ : M} (hζ : IsPrimitiveRoo
       (IsCyclotomicExtension.adjoin_primitive_root_eq_top (n := m) hζ)
   rw [htop, IntermediateField.fixingSubgroup_top, Subgroup.mem_bot] at hmem
   exact hmem
+
+end Faithful
+
+variable [IsGalois K L]
+
+include L m in
+/-- **The cyclotomic compositum of a Galois extension is Galois.** If `L / K` is Galois and
+`M = L(μ_m)`, then `M / K` is Galois: `M` is the compositum of `L` with `K(ζ)`
+(`TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top`), both of which are normal over `K`,
+and a compositum of normal extensions is normal (`IntermediateField.normal_sup`). Separability
+is transitivity along the tower: `L / K` is separable because it is Galois, and `M / L` because a
+cyclotomic extension is (`IsCyclotomicExtension.isSeparable`) — no characteristic assumption is
+needed, since a primitive `m`-th root of unity exists in `M` only if the characteristic does not
+divide `m`.
+
+Both tower hypotheses are needed, which is what the name records: the cyclotomic extension is
+`M / L`, and `L / K` is Galois. Mathlib's `IsCyclotomicExtension.isGalois` is the one-step
+statement, for a cyclotomic extension of the base itself.
+
+This is what makes `IsGalois K M` a *conclusion* of this file rather than a hypothesis of the
+results below. It is a theorem and not an `instance` because neither `L` nor `m` can be
+recovered from the goal `IsGalois K M`, so there is no synthesization order; call sites
+introduce it with `have` instead. -/
+theorem isGalois_of_isGalois_of_isCyclotomicExtension : IsGalois K M := by
+  obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot (S := {m}) L M
+    (Set.mem_singleton m) (NeZero.ne m)
+  -- `M / K` is algebraic: `L / K` is Galois hence algebraic, and `M / L` is a cyclotomic
+  -- extension for the single modulus `m`, hence finite. This is what the dropped `NumberField`
+  -- instances used to supply.
+  have : FiniteDimensional L M := IsCyclotomicExtension.finiteDimensional (S := {m}) (K := L) M
+  have : Algebra.IsIntegral K M := Algebra.IsIntegral.trans L
+  have hcyc : IsCyclotomicExtension {m} K (IntermediateField.adjoin K {ζ}) :=
+    hζ.intermediateField_adjoin_isCyclotomicExtension (K := K)
+  have : IsGalois K (IntermediateField.adjoin K {ζ}) :=
+    IsCyclotomicExtension.isGalois (S := {m}) (K := K) (L := IntermediateField.adjoin K {ζ})
+  have : Normal K ((IsScalarTower.toAlgHom K L M).fieldRange) :=
+    Normal.of_algEquiv (AlgEquiv.ofInjectiveField (IsScalarTower.toAlgHom K L M))
+  have hsup : Normal K
+      (IntermediateField.adjoin K {ζ} ⊔ (IsScalarTower.toAlgHom K L M).fieldRange :
+        IntermediateField K M) := IntermediateField.normal_sup K M _ _
+  rw [TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top K L M
+    (IsCyclotomicExtension.adjoin_primitive_root_eq_top (n := m) hζ)] at hsup
+  have : Normal K M := Normal.of_algEquiv (h := hsup) IntermediateField.topEquiv
+  have : Algebra.IsSeparable L M := IsCyclotomicExtension.isSeparable (S := {m}) (K := L) (L := M)
+  have : Algebra.IsSeparable K M := Algebra.IsSeparable.trans K L M
+  exact ⟨⟩
 
 /-! The remaining results are arithmetic: they need the discriminant of `L`, hence number
 fields rather than bare characteristic-zero fields. -/
