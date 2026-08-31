@@ -14,7 +14,7 @@ public import TauCeti.NumberTheory.NumberField.AutomorphismAction
 # The arithmetic Frobenius on roots of unity
 
 Let `K` be a number field, `F` an extension field of `K`, `𝔭` a height-one prime of `𝓞 K`, and
-`Q` a prime of `𝓞 F` lying over `𝔭`. An *arithmetic Frobenius* at `Q` is a `σ` with
+`Q` an ideal of `𝓞 F` lying over `𝔭`. An *arithmetic Frobenius* at `Q` is a `σ` with
 `σ x ≡ x ^ 𝔑𝔭 (mod Q)` for every `x : 𝓞 F` (Mathlib's `IsArithFrobAt`). This file records what
 such a `σ` does to a root of unity: if `ζ` is a primitive `m`-th root of unity in `F` and `𝔭`
 does not divide `m`, then
@@ -33,7 +33,7 @@ it rather than at `Q`.
 
 ## Main results
 
-* `NumberField.isArithFrobAt_zeta_pow`: an arithmetic Frobenius at a prime of `𝓞 F` over `𝔭`
+* `NumberField.isArithFrobAt_zeta_pow`: an arithmetic Frobenius at an ideal of `𝓞 F` over `𝔭`
   raises a primitive `m`-th root of unity to the power `𝔑𝔭`, when `𝔭 ∤ m`.
 
 ## Implementation notes
@@ -47,6 +47,8 @@ There is no cyclotomic hypothesis on `F / K`. `IsCyclotomicExtension {m} K F` is
 setting in which the result gets used, but the proof needs only that `ζ` is a root of unity lying
 in `F`, so assuming it would leave an unused hypothesis on the statement. For the same reason `F`
 is not assumed to be a number field: only `K` has to be one, so that `𝔭` has an absolute norm.
+And `Q`, which in use is a prime above `𝔭`, is only required to lie over it: `IsArithFrobAt` reads
+as a congruence modulo `Q` for any ideal, and nothing below needs `Q` to be prime.
 
 ## References
 
@@ -70,14 +72,14 @@ variable {K F : Type*} [Field K] [NumberField K] [Field F] [Algebra K F]
 
 /-- **An arithmetic Frobenius raises a root of unity to the norm of the prime below it.** Let `ζ`
 be a primitive `m`-th root of unity in an extension field `F` of a number field `K`, let `𝔭` be
-a height-one prime of `𝓞 K` not dividing `m`, and let `σ` be an arithmetic Frobenius at a prime
+a height-one prime of `𝓞 K` not dividing `m`, and let `σ` be an arithmetic Frobenius at an ideal
 `Q` of `𝓞 F` lying over `𝔭`.
 Then `σ ζ = ζ ^ 𝔑𝔭`.
 
 The exponent is the absolute norm of `𝔭`, not its inverse: over `ℚ` this is `ζ_m ↦ ζ_m ^ p`. -/
 theorem isArithFrobAt_zeta_pow {m : ℕ} [NeZero m] {ζ : F} (hζ : IsPrimitiveRoot ζ m)
     (𝔭 : HeightOneSpectrum (𝓞 K)) (hm : (m : 𝓞 K) ∉ 𝔭.asIdeal)
-    (Q : Ideal (𝓞 F)) [Q.IsPrime] [Q.LiesOver 𝔭.asIdeal]
+    (Q : Ideal (𝓞 F)) [Q.LiesOver 𝔭.asIdeal]
     {σ : F ≃ₐ[K] F} (hσ : IsArithFrobAt (𝓞 K) σ Q) :
     σ ζ = ζ ^ Ideal.absNorm 𝔭.asIdeal := by
   -- `𝔭` is the contraction of `Q`, so `𝔭 ∤ m` says exactly that `m` avoids `Q`.
