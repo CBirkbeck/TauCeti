@@ -21,7 +21,9 @@ coordinates of an affine point.
 
 The dichotomy is the sharp one: `v(x)` is never `exp 1`. Either the point is integral,
 `v(x) ≤ 1` and `v(y) ≤ 1`, or it is a pole of order at least two in `x`, `exp 2 ≤ v(x)`. There is
-nothing in between, because on the curve `v(y)² = v(x)³` at a pole, so `v(x)` has even exponent.
+nothing in between: at a pole `v(y)² = v(x)³`, and `exp 3` is not a square, which rules out the
+one intermediate value. Only pole order one is excluded here — the general statement that every
+pole order is even is not proved.
 
 The two halves need different hypotheses, and are stated that way. The coefficient bounds — and
 the estimates on the two sides of the Weierstrass equation — never look at the value group, so
@@ -107,7 +109,11 @@ variable {F : Type*} [Field F]
 
 Nothing in this section looks at the value group: an integral model bounds the coefficients, and
 the two sides of the Weierstrass equation are estimated, for any `Γ₀`. Only the dichotomy below
-needs `Γ₀ = ℤᵐ⁰`. -/
+needs `Γ₀ = ℤᵐ⁰`.
+
+`Field F` cannot be weakened here: the integral model `W₀` is a curve over
+`(Valued.v).valuationSubring`, and `Valuation.valuationSubring` is defined only for a field
+(`Mathlib/RingTheory/Valuation/ValuationSubring.lean:33`). -/
 
 section Coefficients
 
@@ -140,14 +146,13 @@ theorem valuation_a₆_le_one : Valued.v W.a₆ ≤ 1 := by
   rw [← hW, WeierstrassCurve.map_a₆]; exact W₀.a₆.2
 
 /-- For `v(x) > 1`, the right-hand side of the Weierstrass equation has valuation `v(x)³`: the
-`x³` term strictly dominates the rest. This is `Valuation.map_cubic_of_one_lt` at the
+`x³` term strictly dominates the rest. This is `Valuation.map_cubic_eq_of_one_lt` at the
 coefficients `a₂`, `a₄`, `a₆`, whose integrality the model supplies. -/
 private lemma valuation_rhs_eq {x : F} (hA1 : 1 < Valued.v x) :
     Valued.v (x ^ 3 + (W.a₂ * x ^ 2 + (W.a₄ * x + W.a₆))) = Valued.v x ^ 3 := by
-  rw [show x ^ 3 + (W.a₂ * x ^ 2 + (W.a₄ * x + W.a₆)) = x ^ 3 + W.a₂ * x ^ 2 + W.a₄ * x + W.a₆ by
-    ring]
-  exact Valued.v.map_cubic_of_one_lt (valuation_a₂_le_one hW) (valuation_a₄_le_one hW)
-    (valuation_a₆_le_one hW) hA1
+  convert Valued.v.map_cubic_eq_of_one_lt (valuation_a₂_le_one hW) (valuation_a₄_le_one hW)
+    (valuation_a₆_le_one hW) hA1 using 2
+  ring
 
 /-- When `v(y)` dominates `v(x)` and exceeds `1`, the left-hand side of the Weierstrass equation
 has valuation `v(y)²`: the `y²` term strictly dominates the rest. -/
@@ -220,7 +225,7 @@ section
 
 include hW
 
-/-- **No affine point has `v(x) = exp 1`**: a pole of the `x`-coordinate has even order.
+/-- **No affine point has `v(x) = exp 1`**: the `x`-coordinate has no pole of order one.
 
 If `v(x) = exp 1` then the right-hand side of the Weierstrass equation has valuation `exp 3`. The
 left-hand side cannot match it: for `v(y) ≤ exp 1` it is bounded by `exp 2`, and for `v(y) > exp 1`
@@ -288,3 +293,4 @@ end
 end Discrete
 
 end WeierstrassCurve.Affine
+

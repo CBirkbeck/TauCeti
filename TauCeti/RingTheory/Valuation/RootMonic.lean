@@ -113,16 +113,23 @@ lemma le_one_of_root_monic {p : L[X]} (hp : p.Monic)
 
 section Cubic
 
--- `Nontrivial L` is what `compute_degree!` needs to know the leading coefficient `1` is nonzero,
--- i.e. that the cubic really has degree `3`.
-variable [Nontrivial L] {c : L}
+variable {c : L}
+
+include ν in
+/-- A ring carrying a valuation is nontrivial: `(0 : L) = 1` would force `(0 : Γ) = 1`, which a
+`LinearOrderedCommGroupWithZero` forbids. This is what `compute_degree!` needs below to know the
+leading coefficient `1` is nonzero, i.e. that the cubic really has degree `3`; deriving it here
+keeps `Nontrivial L` out of the signatures, which hold over any `L`. -/
+private lemma nontrivial_of_valuation : Nontrivial L :=
+  nontrivial_of_ne 0 1 fun h ↦ zero_ne_one (by rw [← ν.map_zero, h, ν.map_one])
 
 /-- The non-leading coefficients of `X³ + aX² + bX + c` are `a`, `b`, `c` (and zeros), so they
 are integral as soon as `a`, `b`, `c` are. This is the coefficient hypothesis that the general
 lemmas above take. -/
-lemma cubic_coeff_le_one (ha : ν a ≤ 1) (hb : ν b ≤ 1) (hc : ν c ≤ 1) :
+private lemma cubic_coeff_le_one (ha : ν a ≤ 1) (hb : ν b ≤ 1) (hc : ν c ≤ 1) :
     ∀ i < (X ^ 3 + C a * X ^ 2 + C b * X + C c).natDegree,
       ν ((X ^ 3 + C a * X ^ 2 + C b * X + C c).coeff i) ≤ 1 := by
+  have := nontrivial_of_valuation ν
   have hdeg : (X ^ 3 + C a * X ^ 2 + C b * X + C c).natDegree = 3 := by compute_degree!
   intro i hi
   rw [hdeg] at hi
@@ -130,8 +137,9 @@ lemma cubic_coeff_le_one (ha : ν a ≤ 1) (hb : ν b ≤ 1) (hc : ν c ≤ 1) :
 
 /-- A monic cubic with integral coefficients, evaluated at an element of value `> 1`, is
 dominated by its leading term. -/
-lemma map_cubic_of_one_lt (ha : ν a ≤ 1) (hb : ν b ≤ 1) (hc : ν c ≤ 1) (ht : 1 < ν t) :
+lemma map_cubic_eq_of_one_lt (ha : ν a ≤ 1) (hb : ν b ≤ 1) (hc : ν c ≤ 1) (ht : 1 < ν t) :
     ν (t ^ 3 + a * t ^ 2 + b * t + c) = ν t ^ 3 := by
+  have := nontrivial_of_valuation ν
   have hp : (X ^ 3 + C a * X ^ 2 + C b * X + C c).Monic := by monicity!
   have hdeg : (X ^ 3 + C a * X ^ 2 + C b * X + C c).natDegree = 3 := by compute_degree!
   have h := ν.map_eval_eq_of_one_lt hp (cubic_coeff_le_one ν ha hb hc) ht
@@ -142,6 +150,7 @@ lemma map_cubic_of_one_lt (ha : ν a ≤ 1) (hb : ν b ≤ 1) (hc : ν c ≤ 1) 
 lemma le_one_of_root_cubic (ha : ν a ≤ 1) (hb : ν b ≤ 1) (hc : ν c ≤ 1)
     (heq : t ^ 3 + a * t ^ 2 + b * t + c = 0) :
     ν t ≤ 1 := by
+  have := nontrivial_of_valuation ν
   have hp : (X ^ 3 + C a * X ^ 2 + C b * X + C c).Monic := by monicity!
   refine ν.le_one_of_root_monic hp (cubic_coeff_le_one ν ha hb hc) ?_
   simpa using heq
