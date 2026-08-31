@@ -6,16 +6,19 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.GroupTheory.ArchimedeanDensely
-public import TauCeti.RingTheory.Valuation.Coarsen
+public import Mathlib.RingTheory.Valuation.Basic
+public import TauCeti.Algebra.Order.Group.ConvexSubgroup
 
 /-!
 # Microbial valuations
 
 Wedhorn's Definition 5.46(v) calls a valuation *microbial* when some convex subgroup of its value
-group has height-one quotient. This module records that condition and connects it to the
-coarsening `Valuation.coarsenByUnits`, which is the vertical generization `v/H` of
-Wedhorn's Remark 4.12(1): the subgroup a microbial valuation supplies is exactly the one to
-coarsen by.
+group has height-one quotient. This module records that condition.
+
+What consumes it is the coarsening `Valuation.coarsenByUnits` of
+`TauCeti/RingTheory/Valuation/Coarsen.lean`, which is the vertical generization `v/H` of Wedhorn's
+Remark 4.12(1): the subgroup a microbial valuation supplies is exactly the one to coarsen by. That
+direction of use is downstream, so this module does not import the coarsening.
 
 ## Height one, without a height theory
 
@@ -31,6 +34,8 @@ condition, and no rank or height development is needed.
 
 ## Main results
 
+* `Valuation.isMicrobial_iff` : the characteristic lemma, restating the predicate as its defining
+  existential so that consumers need not unfold it.
 * `Valuation.isMicrobial_of_mulArchimedean` and `Valuation.not_isMicrobial_of_subsingleton` : the
   predicate holds of every rank-one valuation and fails of every trivial one.
 
@@ -77,10 +82,22 @@ are its only convex subgroups.
 Stated over `(ValueGroup₀ (.ofClass v))ˣ`, the values `v` actually attains, and not over the
 ambient `Γ₀ˣ`: the latter does not mention `v`, so a trivial valuation into a large enough `Γ₀`
 would satisfy it although its own value group is trivial, hence not of height one. -/
+@[expose]
 def IsMicrobial (v : Valuation R Γ₀) : Prop :=
   ∃ H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ,
     Nontrivial ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) ∧
       MulArchimedean ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup)
+
+/-- **The characteristic lemma for `IsMicrobial`**: it is exactly its defining existential, so a
+consumer can obtain the convex subgroup from it, or supply one to build it, without unfolding the
+predicate.
+
+Deliberately not `@[simp]`: the right-hand side is the strictly larger term, so rewriting in this
+direction takes a named predicate out of normal form rather than into it. -/
+theorem isMicrobial_iff {v : Valuation R Γ₀} :
+    v.IsMicrobial ↔ ∃ H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ,
+      Nontrivial ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) ∧
+        MulArchimedean ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) := Iff.rfl
 
 /-- **A valuation whose value group is trivial is not microbial.** The definition is therefore not
 vacuously satisfied: it genuinely constrains `v`.

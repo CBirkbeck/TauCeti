@@ -55,8 +55,10 @@ built from `closure` in the forthcoming valuation-spectrum development of `Spv (
 * `TauCeti.ConvexSubgroup.mulArchimedean_iff_forall_eq_bot_or_eq_top` : A linearly ordered
   commutative group is `MulArchimedean` exactly when its only convex subgroups are `⊥`
   and `⊤`.
-* `TauCeti.ConvexSubgroup.quotientBotOrderIso` : The quotient by `⊥` is the group itself, as an
-  order isomorphism, so order-theoretic properties transfer across it.
+* `TauCeti.ConvexSubgroup.quotientBotMulEquiv` : The quotient by `⊥` is the group itself, as a
+  multiplicative equivalence.
+* `TauCeti.ConvexSubgroup.quotientBotOrderIso` : the same map as an order isomorphism, so
+  order-theoretic properties transfer across it.
 
 ## References
 
@@ -658,26 +660,58 @@ theorem quotientMk_lt_one_of_notMem {a : Γ} (ha : a ≤ 1) (haH : a ∉ H) :
   refine hle.lt_of_ne fun heq ↦ haH ?_
   exact (QuotientGroup.eq_one_iff a).mp (by simpa using heq)
 
-/-- **The quotient by `⊥` is the group itself, as an ordered group.** `QuotientGroup.quotientBot`
-identifies the underlying groups; this upgrades it to an order isomorphism, which is what carries
-order-theoretic properties such as `Nontrivial` and `MulArchimedean` across. -/
+/-- **The quotient by `⊥` is the group itself.** `QuotientGroup.quotientBot` identifies the two
+groups once `bot_toSubgroup` has rewritten which subgroup is being quotiented by. This is the
+underlying multiplicative equivalence of `quotientBotOrderIso`; it is named separately so that its
+action on a representative is available as the rewrite `quotientBotMulEquiv_mk`. -/
+@[expose]
+noncomputable def quotientBotMulEquiv : (Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup) ≃* Γ :=
+  (QuotientGroup.quotientMulEquivOfEq (bot_toSubgroup (Γ := Γ))).trans QuotientGroup.quotientBot
+
+@[simp]
+theorem quotientBotMulEquiv_mk (a : Γ) :
+    quotientBotMulEquiv ((a : Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup)) = a := rfl
+
+@[simp]
+theorem quotientBotMulEquiv_symm_apply (a : Γ) :
+    quotientBotMulEquiv.symm a = (a : Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup) := rfl
+
+/-- **`quotientBotMulEquiv` is an order equivalence.** Quotienting by `⊥` leaves the order alone:
+`a ≤ b` in the quotient unfolds to `b⁻¹ * a ≤ 1` or `b⁻¹ * a = 1`, and both give `a ≤ b`.
+
+This exists to supply the `map_le_map_iff'` field of `quotientBotOrderIso`, so it is stated before
+that isomorphism is available. Downstream, prefer `map_le_map_iff` on `quotientBotOrderIso`. -/
+theorem quotientBotMulEquiv_le_quotientBotMulEquiv_iff
+    {a b : Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup} :
+    quotientBotMulEquiv a ≤ quotientBotMulEquiv b ↔ a ≤ b := by
+  induction a using QuotientGroup.induction_on with | _ a =>
+  induction b using QuotientGroup.induction_on with | _ b =>
+  have key : b⁻¹ * a ≤ 1 ↔ a ≤ b := by
+    rw [mul_comm, ← div_eq_mul_inv]; exact div_le_one'
+  simp only [quotientBotMulEquiv_mk]
+  rw [quotient_le_iff]
+  simp only [bot_toSubgroup, Subgroup.mem_bot]
+  constructor
+  · intro h; exact Or.inl (key.mpr h)
+  · rintro (h | h)
+    · exact key.mp h
+    · exact le_of_eq (inv_mul_eq_one.mp h).symm
+
+/-- **The quotient by `⊥` is the group itself, as an ordered group.** This upgrades
+`quotientBotMulEquiv` to an order isomorphism, which is what carries order-theoretic properties
+such as `Nontrivial` and `MulArchimedean` across. -/
+@[expose]
 noncomputable def quotientBotOrderIso : (Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup) ≃*o Γ :=
-  { (QuotientGroup.quotientMulEquivOfEq (bot_toSubgroup (Γ := Γ))).trans
-      QuotientGroup.quotientBot with
-    map_le_map_iff' := by
-      intro a b
-      induction a using QuotientGroup.induction_on with | _ a =>
-      induction b using QuotientGroup.induction_on with | _ b =>
-      have key : b⁻¹ * a ≤ 1 ↔ a ≤ b := by
-        rw [mul_comm, ← div_eq_mul_inv]; exact div_le_one'
-      change a ≤ b ↔ _
-      rw [quotient_le_iff]
-      simp only [bot_toSubgroup, Subgroup.mem_bot]
-      constructor
-      · intro h; exact Or.inl (key.mpr h)
-      · rintro (h | h)
-        · exact key.mp h
-        · exact le_of_eq (inv_mul_eq_one.mp h).symm }
+  { quotientBotMulEquiv with
+    map_le_map_iff' := quotientBotMulEquiv_le_quotientBotMulEquiv_iff }
+
+@[simp]
+theorem quotientBotOrderIso_mk (a : Γ) :
+    quotientBotOrderIso ((a : Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup)) = a := rfl
+
+@[simp]
+theorem quotientBotOrderIso_symm_apply (a : Γ) :
+    quotientBotOrderIso.symm a = (a : Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup) := rfl
 
 end Quotient
 
