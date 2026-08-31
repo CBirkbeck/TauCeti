@@ -25,9 +25,10 @@ Miyake states the lemma.
 
 Subtracting that filter from `f` leaves the complementary *`h`-form*, which keeps exactly the
 coefficients at indices **not** coprime to `L`. It is obtained at the single level `N * L ^ 2`,
-which is what the filter costs when the primes of `L` are not assumed to divide `N`: a prime
-already dividing `N` is paid for out of `L`, while one that does not needs a second factor to
-climb to and back down from, so `L` enters squared.
+for an arbitrary nonzero `L` — neither squarefree, nor with its primes dividing `N`. Two
+successive raises are what buys that, and `L` pays for each: the first reads `f` at `L * N`, so
+that the primes of `L` divide the level the filter needs them to divide, and filtering there
+costs a second factor. The construction never lowers a level.
 
 ## Main results
 
@@ -36,7 +37,7 @@ climb to and back down from, so `L` enters squared.
 * `TauCeti.exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_of_squarefree`:
   Miyake's Lemma 4.6.5 as stated, at level `L * N`.
 * `TauCeti.exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero`: the `h`-form,
-  the complementary filter for a squarefree `L`, at level `N * L ^ 2`.
+  the complementary filter for an arbitrary nonzero `L`, at level `N * L ^ 2`.
 
 ## Implementation notes
 
@@ -53,14 +54,12 @@ the number of primes left to peel and the level it lands at is existentially qua
 the equation `M' = ∏ S * M` recorded alongside. That keeps the recursion free of any transport
 along an equality of levels: the caller substitutes the equation once, at a concrete level.
 
-The `h`-form needs the same peeling but at a level *fixed in advance*, since its answer is
-required at `N * L ^ 2`. `TauCeti.HasFilterRoom` is what makes that possible: it records, per
-prime, the room the target level must already contain for that prime's step, and the two
-`HasFilterRoom` transport lemmas carry it along each level raise. The same discipline on
-transport applies. A prime `q` outside `N` is reached by restricting to `q * N` and filtering
-there, so the step lands at `q * (q * N)`; that is `N * q ^ 2`, but only up to an equation of
-naturals, and the level is deliberately left in the shape the construction produced. The
-equation is used only inside proofs of divisibility, never to move a cusp form between levels.
+The `h`-form adds no peeling of its own. Its one obstacle is that the filter above needs the
+primes of `L` to divide the level it works over, which for an arbitrary `L` they need not; that
+is met by reading `f` at `L * N` first, where they do. The filter then lands at
+`∏ L.primeFactors * (L * N)`, which divides `N * L ^ 2` because `∏ L.primeFactors ∣ L`, so both
+`f` and its filter are read at `N * L ^ 2` and subtracted there. The divisibility is used only
+to move the forms along `CuspForm.ofLe`; no equation of levels is transported.
 
 ## Provenance
 
@@ -70,32 +69,26 @@ declarations `miyake_4_6_5_single_prime_dvd_N` and `miyake_4_6_5_iterated_L` wit
 source's `hp : p.Prime` is dropped from the single-`p` step and from the `q`-expansion
 cancellation, neither proof using it; the `Squarefree (∏ S)` hypothesis the source threads
 through the recursion only to feed itself disappears once the conclusion is stated at the level
-`∏ S * M`; and the nonzero-`L` statement is exposed here, the source stating only the
-squarefree form at this stage (its `_general` variant generalizes the target level, not `L`).
+`∏ S * M`; and both the filter and the `h`-form are stated here for an arbitrary nonzero `L`,
+the source stating only squarefree forms at this stage (its `_general` variant generalizes the
+target level, not `L`). The `h`-form in particular is not built by a second recursion: it
+composes the filter above with two applications of `CuspForm.ofLe`.
 
 `coprime_prod_primeFactors_iff` is AINTLIB's `coprime_prod_primeFactors_iff_coprime`, which
 lives one file up in `StrongMultiplicityOne.lean`. It is restated here for an arbitrary nonzero
 `L` rather than for the ambient level, and proved from `Nat.dvd_prod_primeFactors_pow_self`
 instead of by contradiction on a common prime divisor.
 
-The `h`-form and its prescribed-level recursion are adapted from the same source file: the
-declarations `miyake_4_6_5_single_prime_coprime_to_N`, `miyake_4_6_5_iterated_helper_general`,
-`miyake_4_6_5_iterated_L_general` and `miyake_h_form_general`, together with the two
-`dvd_conditions_*` arithmetic lemmas, restated here as `TauCeti.HasFilterRoom.mul_left_of_dvd`
-and `TauCeti.HasFilterRoom.mul_right_sq_of_not_dvd`. Deliberate differences from the source:
-the repeated divisibility side condition is named as `TauCeti.HasFilterRoom` rather than spelled
-out in six signatures; the source's `finish_peel_step`, `peel_step_of_dvd_N` and
-`peel_step_of_not_dvd_N` each take the whole induction hypothesis as an explicit argument, and
-are replaced here by two hypothesis-free lemmas —
-`TauCeti.exists_intermediate_of_filter_step`, which absorbs the case split on `q ∣ N` and
-reports only the intermediate level it reached, and
-`TauCeti.mem_and_qExpansion_coeff_eq_of_filter_comp`, stated over the *result* of the recursive
-call — leaving the induction itself with no case split; the source's `hp : p.Prime` is again
-dropped from the single-`p` step, which needs only that `p` be nonzero; the source casts the
-level along `p * (p * N) = N * p ^ 2` with `Eq.ndrec`, whereas here the step is stated at
-`q * (q * N)` and the equation is used only on divisibility statements; and the final
-`q`-expansion computation uses `ModularForm.qExpansion_sub` directly in place of the source's
-`sub_eq_add_neg` rewriting through `qExpansion_add` and `qExpansion_neg`.
+The `h`-form corresponds to `miyake_h_form_general` in the same source file, but shares none of
+its proof. The source reaches the prescribed level `N * L ^ 2` by a *second* recursion over the
+primes of `L`, carried at a level fixed in advance — the `miyake_4_6_5_single_prime_coprime_to_N`
+/ `miyake_4_6_5_iterated_helper_general` / `miyake_4_6_5_iterated_L_general` chain, with its
+`dvd_conditions_*` side conditions and its `Eq.ndrec` cast along `p * (p * N) = N * p ^ 2`.
+Here there is no second recursion: the `h`-form reads `f` at `L * N`, applies the filter already
+proved above, and moves both forms to `N * L ^ 2` along `CuspForm.ofLe`, so the whole
+prescribed-level apparatus of the source disappears. The final `q`-expansion computation uses
+`ModularForm.qExpansion_sub` directly in place of the source's `sub_eq_add_neg` rewriting
+through `qExpansion_add` and `qExpansion_neg`.
 
 ## References
 
@@ -250,213 +243,49 @@ theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_of_squarefr
   have key := exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime χ hf hLN
   rwa [hprod] at key
 
-
-/-- **Room to filter one more prime.** `HasFilterRoom p N M` says the target level `M` can still
-absorb a filtering step at `p` above the level `N`: a `p` that does not already divide `N` has to
-find `p ^ 2` inside `M`, because reaching it costs two level raises, while a `p` that does divide
-`N` only needs one more `p` inside `M / N`. -/
-private abbrev HasFilterRoom (p N M : ℕ) : Prop :=
-  (¬ p ∣ N → p ^ 2 ∣ M) ∧ (p ∣ N → p ∣ M / N)
-
-/-- Raising the level from `N` to `q * N` keeps the room at every prime `r ≠ q`, provided the
-step at `q` was itself paid for out of `M / N`. -/
-private theorem HasFilterRoom.mul_left_of_dvd {N M q r : ℕ} (hq : q.Prime) (hr : r.Prime)
-    (hrq : r ≠ q) (hr_room : HasFilterRoom r N M) (hq_div : q ∣ M / N) :
-    HasFilterRoom r (q * N) M := by
-  obtain ⟨hr_not, hr_dvd⟩ := hr_room
-  refine ⟨fun h ↦ hr_not fun hrN ↦ h (hrN.mul_left q), fun h ↦ ?_⟩
-  have hrN : r ∣ N :=
-    (hr.dvd_mul.mp h).resolve_left fun h' ↦ hrq ((Nat.prime_dvd_prime_iff_eq hr hq).mp h')
-  rw [show M / (q * N) = M / N / q by rw [mul_comm q N, Nat.div_div_eq_div_mul]]
-  obtain ⟨c, hc⟩ :=
-    ((Nat.coprime_primes hr hq).mpr hrq).mul_dvd_of_dvd_of_dvd (hr_dvd hrN) hq_div
-  exact ⟨c, by rw [hc, show r * q * c = r * c * q by ring, Nat.mul_div_cancel _ hq.pos]⟩
-
-/-- Raising the level from `N` to `N * q ^ 2` keeps the room at every prime `r ≠ q`, provided
-`M` really did contain the `q ^ 2` that a `q` outside `N` costs. -/
-private theorem HasFilterRoom.mul_right_sq_of_not_dvd {N M q r : ℕ} (hq : q.Prime) (hr : r.Prime)
-    (hrq : r ≠ q) (hqN : ¬ q ∣ N) (hNM : N ∣ M) (hr_room : HasFilterRoom r N M)
-    (hq2 : q ^ 2 ∣ M) : HasFilterRoom r (N * q ^ 2) M := by
-  obtain ⟨hr_not, hr_dvd⟩ := hr_room
-  refine ⟨fun h ↦ hr_not fun hrN ↦ h (hrN.mul_right (q ^ 2)), fun h ↦ ?_⟩
-  have hrN : r ∣ N :=
-    (hr.dvd_mul.mp h).resolve_right fun h' ↦
-      hrq ((Nat.prime_dvd_prime_iff_eq hr hq).mp (hr.dvd_of_dvd_pow h'))
-  have hq2' : q ^ 2 ∣ M / N := by
-    rw [(Nat.mul_div_cancel' hNM).symm] at hq2
-    exact ((hq.coprime_iff_not_dvd.mpr hqN).pow_left 2).dvd_of_dvd_mul_left hq2
-  rw [show M / (N * q ^ 2) = M / N / q ^ 2 by rw [Nat.div_div_eq_div_mul]]
-  obtain ⟨c, hc⟩ :=
-    (((Nat.coprime_primes hr hq).mpr hrq).pow_right 2).mul_dvd_of_dvd_of_dvd (hr_dvd hrN) hq2'
-  exact ⟨c, by rw [hc, show r * q ^ 2 * c = r * c * q ^ 2 by ring,
-    Nat.mul_div_cancel _ (pow_pos hq.pos 2)]⟩
-
-/-- **The filter at a `q` that need not divide the level.** Restricting `f` to level `q * N`
-puts `q` into the prime support of the level, after which the single-step filter applies and
-lands at `q * (q * N)`. The level is left in exactly that shape: it is `N * q ^ 2`, but only up
-to an equation of naturals, and rewriting along that equation here would mean transporting a
-cusp form. Callers use the equation on divisibility statements instead. -/
-private theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_not_dvd
-    (χ : (ZMod N)ˣ →* ℂˣ) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
-    (hf : f ∈ cuspFormCharSpace k χ) {q : ℕ} [NeZero q] :
-    ∃ g : CuspForm ((Gamma1 (q * (q * N))).map (mapGL ℝ)) k,
-      g ∈ cuspFormCharSpace k
-        (χ.comp (ZMod.unitsMap ((Nat.dvd_mul_left N q).trans (Nat.dvd_mul_left _ q)))) ∧
-      ∀ n, (qExpansion 1 g).coeff n = if q ∣ n then 0 else (qExpansion 1 f).coeff n := by
-  have hNqN : N ∣ q * N := Nat.dvd_mul_left N q
-  have : NeZero (q * N) := ⟨Nat.mul_ne_zero (NeZero.ne q) (NeZero.ne N)⟩
-  obtain ⟨g, hg, hgq⟩ :=
-    exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd (χ.comp (ZMod.unitsMap hNqN))
-      (CuspForm.ofLe_mem_cuspFormCharSpace χ hNqN hf)
-      (Nat.primeFactors_mono (Nat.dvd_mul_right q N) (NeZero.ne _))
-  exact ⟨g, by simpa only [MonoidHom.comp_assoc, ZMod.unitsMap_comp] using hg,
-    fun n ↦ by rw [hgq n, CuspForm.coe_ofLe]⟩
-
-/-- **Composing one prime's filter with the filter for the rest.** The intermediate form
-`g` deletes the multiples of `q`, and `g'` keeps from `g` only the indices coprime to `m`; the
-two together keep exactly the indices coprime to `q * m`. Stated over the *result* of the
-recursive call rather than over the recursion itself, so that no helper has to carry an
-induction hypothesis in its signature. -/
-private theorem mem_and_qExpansion_coeff_eq_of_filter_comp {N N' M : ℕ} {k : ℤ} {q m : ℕ}
-    (hq : q.Prime) (χ : (ZMod N)ˣ →* ℂˣ)
-    {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} {g : CuspForm ((Gamma1 N').map (mapGL ℝ)) k}
-    {g' : CuspForm ((Gamma1 M).map (mapGL ℝ)) k} (hNM : N ∣ M) {hNN' : N ∣ N'} {hN'M : N' ∣ M}
-    (hg' : g' ∈ cuspFormCharSpace k ((χ.comp (ZMod.unitsMap hNN')).comp (ZMod.unitsMap hN'M)))
-    (hgq : ∀ n, (qExpansion 1 g).coeff n = if q ∣ n then 0 else (qExpansion 1 f).coeff n)
-    (hg'q : ∀ n, (qExpansion 1 g').coeff n =
-      if Nat.Coprime n m then (qExpansion 1 g).coeff n else 0) :
-    g' ∈ cuspFormCharSpace k (χ.comp (ZMod.unitsMap hNM)) ∧
-      ∀ n, (qExpansion 1 g').coeff n =
-        if Nat.Coprime n (q * m) then (qExpansion 1 f).coeff n else 0 :=
-  ⟨by simpa only [MonoidHom.comp_assoc, ZMod.unitsMap_comp] using hg',
-    fun n ↦ by
-      rw [hg'q n, hgq n]
-      exact ite_coprime_ite_dvd_eq_ite_coprime_mul hq n _ _⟩
-
-/-- **One peeling step, on either side of `q ∣ N`.** There is an intermediate level `N'` between
-`N` and `M` at which `f` has already been filtered at `q`, and at which every prime of `S` still
-to be peeled keeps its room. The two cases differ only in where they land: `q * N` when `q`
-already divides `N`, and `q * (q * N)` when it does not and the climb must be paid for twice. -/
-private theorem exists_intermediate_of_filter_step {N M : ℕ} [NeZero N] {k : ℤ} {q : ℕ}
-    (hq : q.Prime) (χ : (ZMod N)ˣ →* ℂˣ) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
-    (hf : f ∈ cuspFormCharSpace k χ) (hNM : N ∣ M) {S : Finset ℕ} (hqS : q ∈ S)
-    (hSprime : ∀ p ∈ S, p.Prime) (hroom : ∀ p ∈ S, HasFilterRoom p N M) :
-    ∃ N', N' ≠ 0 ∧ ∃ (hNN' : N ∣ N') (_ : N' ∣ M),
-      (∀ p ∈ S.erase q, HasFilterRoom p N' M) ∧
-      ∃ g : CuspForm ((Gamma1 N').map (mapGL ℝ)) k,
-        g ∈ cuspFormCharSpace k (χ.comp (ZMod.unitsMap hNN')) ∧
-        ∀ n, (qExpansion 1 g).coeff n = if q ∣ n then 0 else (qExpansion 1 f).coeff n := by
-  have : NeZero q := ⟨hq.ne_zero⟩
-  obtain ⟨hq_not, hq_dvd⟩ := hroom q hqS
-  by_cases hqN : q ∣ N
-  · have : NeZero (q * N) := ⟨Nat.mul_ne_zero hq.ne_zero (NeZero.ne N)⟩
-    obtain ⟨g, hg, hgq⟩ := exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd χ hf
-      (Nat.primeFactors_mono hqN (NeZero.ne N))
-    exact ⟨q * N, Nat.mul_ne_zero hq.ne_zero (NeZero.ne N), Nat.dvd_mul_left N q,
-      calc q * N = N * q := by ring
-        _ ∣ N * (M / N) := Nat.mul_dvd_mul_left N (hq_dvd hqN)
-        _ = M := Nat.mul_div_cancel' hNM,
-      fun p hp ↦ (hroom p (Finset.mem_of_mem_erase hp)).mul_left_of_dvd hq
-        (hSprime p (Finset.mem_of_mem_erase hp)) (Finset.ne_of_mem_erase hp) (hq_dvd hqN),
-      g, hg, hgq⟩
-  · have hne : q * (q * N) ≠ 0 :=
-      Nat.mul_ne_zero hq.ne_zero (Nat.mul_ne_zero hq.ne_zero (NeZero.ne N))
-    have : NeZero (q * (q * N)) := ⟨hne⟩
-    have hsq : q * (q * N) = N * q ^ 2 := by ring
-    obtain ⟨g, hg, hgq⟩ :=
-      exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_not_dvd χ hf (q := q)
-    refine ⟨q * (q * N), hne, (Nat.dvd_mul_left N q).trans (Nat.dvd_mul_left _ q), ?_, ?_,
-      g, hg, hgq⟩
-    · rw [hsq]
-      exact ((hq.coprime_iff_not_dvd.mpr hqN).symm.pow_right 2).mul_dvd_of_dvd_of_dvd hNM
-        (hq_not hqN)
-    · intro p hp
-      rw [hsq]
-      exact (hroom p (Finset.mem_of_mem_erase hp)).mul_right_sq_of_not_dvd hq
-        (hSprime p (Finset.mem_of_mem_erase hp)) (Finset.ne_of_mem_erase hp) hqN hNM (hq_not hqN)
-
-/-- **The iterated filter at a prescribed level.** Peeling the primes of `S` off `f` one at a
-time, landing at a level `M` fixed in advance rather than at one manufactured by the recursion.
-That is what `HasFilterRoom` buys: each prime `p ∈ S` is guaranteed the room its own step will
-cost, so the recursion never has to raise `M`. Induction is on the number of primes left. -/
-private theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_of_room (m : ℕ) :
-    ∀ {N : ℕ} [NeZero N] {k : ℤ} (χ : (ZMod N)ˣ →* ℂˣ)
-      {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}, f ∈ cuspFormCharSpace k χ →
-      ∀ S : Finset ℕ, (∀ p ∈ S, p.Prime) → S.card = m → Squarefree (S.prod id) →
-      ∀ {M : ℕ} [NeZero M] (hNM : N ∣ M), S.prod id ∣ M → (∀ p ∈ S, HasFilterRoom p N M) →
-        ∃ g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k,
-          g ∈ cuspFormCharSpace k (χ.comp (ZMod.unitsMap hNM)) ∧
-          ∀ n, (qExpansion 1 g).coeff n =
-            if Nat.Coprime n (S.prod id) then (qExpansion 1 f).coeff n else 0 := by
-  induction m with
-  | zero =>
-    intro N _ k χ f hf S _ hScard _ M _ hNM _ _
-    obtain rfl := Finset.card_eq_zero.mp hScard
-    exact ⟨CuspForm.ofLe (Gamma1_map_le_Gamma1_map_of_dvd hNM) f,
-      CuspForm.ofLe_mem_cuspFormCharSpace χ hNM hf, fun n ↦ by simp [CuspForm.coe_ofLe]⟩
-  | succ m ih =>
-    intro N _ k χ f hf S hSprime hScard hSsq M _ hNM hSM hroom
-    obtain ⟨q, hqS⟩ := Finset.card_pos.mp (by omega : 0 < S.card)
-    have hq : q.Prime := hSprime q hqS
-    have hprod : S.prod id = q * (S.erase q).prod id := (Finset.mul_prod_erase _ _ hqS).symm
-    have hEM : (S.erase q).prod id ∣ M := dvd_trans ⟨q, by rw [hprod]; ring⟩ hSM
-    obtain ⟨N', hN'0, hNN', hN'M, hroom', g, hg, hgq⟩ :=
-      exists_intermediate_of_filter_step hq χ hf hNM hqS hSprime hroom
-    have : NeZero N' := ⟨hN'0⟩
-    obtain ⟨g', hg', hg'q⟩ := ih (χ.comp (ZMod.unitsMap hNN')) hg (S.erase q)
-      (fun p hp ↦ hSprime p (Finset.mem_of_mem_erase hp))
-      (by rw [Finset.card_erase_of_mem hqS, hScard]; omega)
-      (hprod ▸ hSsq).of_mul_right hN'M hEM hroom'
-    obtain ⟨h₁, h₂⟩ := mem_and_qExpansion_coeff_eq_of_filter_comp hq χ hNM hg' hgq hg'q
-    exact ⟨g', h₁, fun n ↦ by rw [hprod]; exact h₂ n⟩
-
-/-- The iterated filter for a squarefree `L`, at a prescribed level `M` with room for every
-prime of `L`. -/
-private theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_of_room_squarefree
-    (χ : (ZMod N)ˣ →* ℂˣ) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
-    (hf : f ∈ cuspFormCharSpace k χ) {L : ℕ} (hL : Squarefree L) {M : ℕ} [NeZero M]
-    (hNM : N ∣ M) (hLM : L ∣ M) (hroom : ∀ p ∈ L.primeFactors, HasFilterRoom p N M) :
-    ∃ g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k,
-      g ∈ cuspFormCharSpace k (χ.comp (ZMod.unitsMap hNM)) ∧
-      ∀ n, (qExpansion 1 g).coeff n =
-        if Nat.Coprime n L then (qExpansion 1 f).coeff n else 0 := by
-  have hprod : L.primeFactors.prod id = L := by
-    simpa using Nat.prod_primeFactors_of_squarefree hL
-  obtain ⟨g, hg, hgq⟩ :=
-    exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_of_room L.primeFactors.card χ hf
-      L.primeFactors (fun _ ↦ Nat.prime_of_mem_primeFactors) rfl (by rw [hprod]; exact hL) hNM
-      (by rw [hprod]; exact hLM) hroom
-  exact ⟨g, hg, fun n ↦ by simpa only [hprod] using hgq n⟩
-
-/-- **Miyake's `h`-form.** For `f ∈ S_k(Γ₁(N), χ)` and a squarefree `L`, there is a cusp form
+/-- **Miyake's `h`-form.** For `f ∈ S_k(Γ₁(N), χ)` and any nonzero `L`, there is a cusp form
 `h` of level `N * L ^ 2`, with the nebentypus `χ` read at that level, whose `q`-expansion is
 that of `f` restricted to the indices *not* coprime to `L`:
 
 `aₙ(h) = if (n, L) = 1 then 0 else aₙ(f)`.
 
 It is `f` minus its coprime-index filter, so this is the complement of
-`exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime`. The level `N * L ^ 2` is what
-the filter costs: a prime of `L` already dividing `N` is paid for out of `L`, and one that does
-not needs a second factor, which is why `L` enters squared. -/
+`exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime`. Nothing is assumed about `L`
+beyond `L ≠ 0`: no squarefreeness, and no relation between the primes of `L` and those of `N`.
+
+The level `N * L ^ 2` is what buying that freedom costs, and it is bought by two raises rather
+than one. The filter theorem needs the primes of `L` to divide the level it works over, so `f`
+is first read at `L * N`, where they do; filtering there costs a further `∏ L.primeFactors`,
+landing at `∏ L.primeFactors * (L * N)`, which divides `N * L ^ 2` since
+`∏ L.primeFactors ∣ L`. -/
 theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero (χ : (ZMod N)ˣ →* ℂˣ)
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {L : ℕ}
-    [NeZero L] (hL : Squarefree L) :
+    [NeZero L] :
     ∃ h : CuspForm ((Gamma1 (N * L ^ 2)).map (mapGL ℝ)) k,
       h ∈ cuspFormCharSpace k (χ.comp (ZMod.unitsMap (Nat.dvd_mul_right N (L ^ 2)))) ∧
-      ∀ n, (qExpansion 1 h).coeff n =
-        if Nat.Coprime n L then 0 else (qExpansion 1 f).coeff n := by
-  have hNM : N ∣ N * L ^ 2 := Nat.dvd_mul_right N (L ^ 2)
-  have : NeZero (N * L ^ 2) := ⟨Nat.mul_ne_zero (NeZero.ne N) (pow_ne_zero 2 (NeZero.ne L))⟩
+      ∀ n, (qExpansion 1 h).coeff n = if Nat.Coprime n L then 0 else (qExpansion 1 f).coeff n := by
+  have hNM : N ∣ L * N := Nat.dvd_mul_left N L
+  have : NeZero (L * N) := ⟨Nat.mul_ne_zero (NeZero.ne L) (NeZero.ne N)⟩
+  have hsub : L.primeFactors ⊆ (L * N).primeFactors :=
+    Nat.primeFactors_mono (Nat.dvd_mul_right L N) (NeZero.ne _)
   obtain ⟨g, hg, hgq⟩ :=
-    exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_of_room_squarefree χ hf hL hNM
-      (dvd_mul_of_dvd_right (dvd_pow_self L two_ne_zero) N) fun p hp ↦ by
-        have hpL : p ∣ L := Nat.dvd_of_mem_primeFactors hp
-        refine ⟨fun _ ↦ dvd_mul_of_dvd_right (pow_dvd_pow_of_dvd hpL 2) N, fun _ ↦ ?_⟩
-        rw [Nat.mul_div_cancel_left _ (Nat.pos_of_ne_zero (NeZero.ne N))]
-        exact dvd_pow hpL two_ne_zero
-  refine ⟨CuspForm.ofLe (Gamma1_map_le_Gamma1_map_of_dvd hNM) f - g,
-    Submodule.sub_mem _ (CuspForm.ofLe_mem_cuspFormCharSpace χ hNM hf) hg, fun n ↦ ?_⟩
-  rw [FunLike.coe_sub, _root_.ModularForm.qExpansion_sub one_pos
-    (one_mem_strictPeriods_Gamma1_map _), map_sub, hgq n, CuspForm.coe_ofLe]
-  split_ifs <;> simp
+    exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime (χ.comp (ZMod.unitsMap hNM))
+      (CuspForm.ofLe_mem_cuspFormCharSpace χ hNM hf) hsub
+  -- the filtered form lives at `∏ L.primeFactors * (L * N)`; raise it to `N * L ^ 2`
+  have hgM : L.primeFactors.prod id * (L * N) ∣ N * L ^ 2 := by
+    refine (mul_dvd_mul_right (Nat.prod_primeFactors_dvd L) (L * N)).trans ?_
+    exact dvd_of_eq (by ring)
+  have hNM2 : N ∣ N * L ^ 2 := Nat.dvd_mul_right N (L ^ 2)
+  refine ⟨CuspForm.ofLe (Gamma1_map_le_Gamma1_map_of_dvd hNM2) f -
+      CuspForm.ofLe (Gamma1_map_le_Gamma1_map_of_dvd hgM) g,
+    Submodule.sub_mem _ (CuspForm.ofLe_mem_cuspFormCharSpace χ hNM2 hf) ?_, fun n ↦ ?_⟩
+  · have := CuspForm.ofLe_mem_cuspFormCharSpace _ hgM hg
+    rwa [MonoidHom.comp_assoc, MonoidHom.comp_assoc, ZMod.unitsMap_comp, ZMod.unitsMap_comp] at this
+  · rw [FunLike.coe_sub, _root_.ModularForm.qExpansion_sub one_pos
+      (one_mem_strictPeriods_Gamma1_map _), map_sub, CuspForm.coe_ofLe, CuspForm.coe_ofLe]
+    have hq : (qExpansion 1 g).coeff n =
+        if Nat.Coprime n L then (qExpansion 1 f).coeff n else 0 := by
+      simpa [CuspForm.coe_ofLe] using hgq n
+    rw [hq]
+    split_ifs <;> simp
 end TauCeti
