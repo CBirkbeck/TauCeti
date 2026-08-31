@@ -82,7 +82,6 @@ are its only convex subgroups.
 Stated over `(ValueGroup₀ (.ofClass v))ˣ`, the values `v` actually attains, and not over the
 ambient `Γ₀ˣ`: the latter does not mention `v`, so a trivial valuation into a large enough `Γ₀`
 would satisfy it although its own value group is trivial, hence not of height one. -/
-@[expose]
 def IsMicrobial (v : Valuation R Γ₀) : Prop :=
   ∃ H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ,
     Nontrivial ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) ∧
@@ -94,10 +93,15 @@ predicate.
 
 Deliberately not `@[simp]`: the right-hand side is the strictly larger term, so rewriting in this
 direction takes a named predicate out of normal form rather than into it. -/
-theorem isMicrobial_iff {v : Valuation R Γ₀} :
+private theorem isMicrobial_iff_aux {v : Valuation R Γ₀} :
     v.IsMicrobial ↔ ∃ H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ,
       Nontrivial ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) ∧
         MulArchimedean ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) := Iff.rfl
+
+theorem isMicrobial_iff {v : Valuation R Γ₀} :
+    v.IsMicrobial ↔ ∃ H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ,
+      Nontrivial ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) ∧
+        MulArchimedean ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) := isMicrobial_iff_aux
 
 /-- **A valuation whose value group is trivial is not microbial.** The definition is therefore not
 vacuously satisfied: it genuinely constrains `v`.
@@ -106,7 +110,8 @@ This is the degenerate case that distinguishes `IsMicrobial` from the condition 
 ambient `Γ₀ˣ`, which a trivial valuation into a large enough `Γ₀` would satisfy. -/
 theorem not_isMicrobial_of_subsingleton {v : Valuation R Γ₀}
     (h : Subsingleton (ValueGroup₀ (.ofClass v))ˣ) : ¬ v.IsMicrobial := by
-  rintro ⟨H, hnt, -⟩
+  intro hv
+  obtain ⟨H, hnt, -⟩ := isMicrobial_iff.mp hv
   exact (not_nontrivial_iff_subsingleton.mpr
     (Function.Surjective.subsingleton QuotientGroup.mk_surjective)) hnt
 
@@ -119,7 +124,8 @@ rank-one valuation and fails of every trivial one. -/
 theorem isMicrobial_of_mulArchimedean {v : Valuation R Γ₀}
     [Nontrivial (ValueGroup₀ (.ofClass v))ˣ] [MulArchimedean (ValueGroup₀ (.ofClass v))ˣ] :
     v.IsMicrobial :=
-  ⟨⊥, Function.Surjective.nontrivial ConvexSubgroup.quotientBotOrderIso.surjective,
-    ConvexSubgroup.quotientBotOrderIso.symm.mulArchimedean⟩
+  isMicrobial_iff.mpr
+    ⟨⊥, Function.Surjective.nontrivial ConvexSubgroup.quotientBotOrderIso.surjective,
+      ConvexSubgroup.quotientBotOrderIso.symm.mulArchimedean⟩
 
 end Valuation

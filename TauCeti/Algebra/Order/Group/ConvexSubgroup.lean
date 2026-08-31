@@ -661,37 +661,24 @@ theorem quotientMk_lt_one_of_notMem {a : Γ} (ha : a ≤ 1) (haH : a ∉ H) :
   exact (QuotientGroup.eq_one_iff a).mp (by simpa using heq)
 
 /-- **The quotient by `⊥` is the group itself.** `QuotientGroup.quotientBot` identifies the two
-groups once `bot_toSubgroup` has rewritten which subgroup is being quotiented by. This is the
-underlying multiplicative equivalence of `quotientBotOrderIso`; it is named separately so that its
-action on a representative is available as the rewrite `quotientBotMulEquiv_mk`. -/
-@[expose]
-noncomputable def quotientBotMulEquiv : (Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup) ≃* Γ :=
+groups once `bot_toSubgroup` has rewritten which subgroup is being quotiented by.
+
+Private implementation detail: this is only the underlying multiplicative equivalence of
+`quotientBotOrderIso`, which is the reusable object. It is named at all so that the order
+comparison below can be stated before that isomorphism exists. -/
+private noncomputable def quotientBotMulEquiv : (Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup) ≃* Γ :=
   (QuotientGroup.quotientMulEquivOfEq (bot_toSubgroup (Γ := Γ))).trans QuotientGroup.quotientBot
 
 omit [IsOrderedMonoid Γ] in
-/-- **`quotientBotMulEquiv` sends the class of `a` to `a`.**
-
-Deliberately not `@[simp]`, and the same holds for the three application lemmas below. Every one
-of them mentions `Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup`, and `bot_toSubgroup` is itself a `simp`
-lemma rewriting `(⊥ : ConvexSubgroup Γ).toSubgroup` to `(⊥ : Subgroup Γ)`. So `simp` normalises
-that subterm — in the coercion's type arguments, which come from the equivalence's own domain, not
-just in the argument — and a left-hand side spelled this way could never match afterwards. Marking
-these `@[simp]` would add four rules that can never fire.
-
-The normal form is not reachable either. Restating the *definitions* over `Γ ⧸ (⊥ : Subgroup Γ)`
-would turn this equivalence into `QuotientGroup.quotientBot` itself, and for the order isomorphism
-it is not even well-formed: `quotientLinearOrder` has head `LinearOrder (Γ ⧸ ?H.toSubgroup)`, so
-synthesis cannot invert the projection and `LinearOrder (Γ ⧸ (⊥ : Subgroup Γ))` does not exist.
-
-All four therefore stay explicit rewrites, which is what consumers need to avoid unfolding the
-noncomputable constructions. -/
-theorem quotientBotMulEquiv_mk (a : Γ) :
+/-- **`quotientBotMulEquiv` sends the class of `a` to `a`.** Not `@[simp]`; see
+`quotientBotOrderIso_mk` for why none of these application lemmas can be. -/
+private theorem quotientBotMulEquiv_mk (a : Γ) :
     quotientBotMulEquiv ((a : Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup)) = a := rfl
 
 omit [IsOrderedMonoid Γ] in
 /-- **`quotientBotMulEquiv.symm` sends `a` to its class.** Not `@[simp]`; see
-`quotientBotMulEquiv_mk`. -/
-theorem quotientBotMulEquiv_symm_apply (a : Γ) :
+`quotientBotOrderIso_mk`. -/
+private theorem quotientBotMulEquiv_symm_apply (a : Γ) :
     quotientBotMulEquiv.symm a = (a : Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup) := rfl
 
 /-- **`quotientBotMulEquiv` is an order equivalence.** Quotienting by `⊥` leaves the order alone:
@@ -699,7 +686,7 @@ theorem quotientBotMulEquiv_symm_apply (a : Γ) :
 
 This exists to supply the `map_le_map_iff'` field of `quotientBotOrderIso`, so it is stated before
 that isomorphism is available. Downstream, prefer `map_le_map_iff` on `quotientBotOrderIso`. -/
-theorem quotientBotMulEquiv_le_quotientBotMulEquiv_iff
+private theorem quotientBotMulEquiv_le_quotientBotMulEquiv_iff
     {a b : Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup} :
     quotientBotMulEquiv a ≤ quotientBotMulEquiv b ↔ a ≤ b := by
   induction a using QuotientGroup.induction_on with | _ a =>
@@ -715,23 +702,50 @@ theorem quotientBotMulEquiv_le_quotientBotMulEquiv_iff
     · exact key.mp h
     · exact le_of_eq (inv_mul_eq_one.mp h).symm
 
-/-- **The quotient by `⊥` is the group itself, as an ordered group.** This upgrades
-`quotientBotMulEquiv` to an order isomorphism, which is what carries order-theoretic properties
-such as `Nontrivial` and `MulArchimedean` across. -/
-@[expose]
+/-- **The quotient by `⊥` is the group itself, as an ordered group.** This is the reusable object
+of this section: it carries order-theoretic properties such as `Nontrivial` and `MulArchimedean`
+across the identification.
+
+Its body is sealed. Consumers work through `quotientBotOrderIso_mk` and
+`quotientBotOrderIso_symm_apply` rather than by unfolding the construction, exactly as they do for
+`quotientLinearOrder`. -/
 noncomputable def quotientBotOrderIso : (Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup) ≃*o Γ :=
   { quotientBotMulEquiv with
     map_le_map_iff' := quotientBotMulEquiv_le_quotientBotMulEquiv_iff }
 
-/-- **`quotientBotOrderIso` sends the class of `a` to `a`.** Not `@[simp]`; see
-`quotientBotMulEquiv_mk`. -/
-theorem quotientBotOrderIso_mk (a : Γ) :
+/-- The `rfl` proof of `quotientBotOrderIso_mk`, kept private because it unfolds the sealed
+`quotientBotOrderIso`, which an exported theorem may not do. -/
+private theorem quotientBotOrderIso_mk_aux (a : Γ) :
     quotientBotOrderIso ((a : Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup)) = a := rfl
 
-/-- **`quotientBotOrderIso.symm` sends `a` to its class.** Not `@[simp]`; see
-`quotientBotMulEquiv_mk`. -/
-theorem quotientBotOrderIso_symm_apply (a : Γ) :
+/-- **`quotientBotOrderIso` sends the class of `a` to `a`.**
+
+Deliberately not `@[simp]`, and the same holds for every application lemma in this group. Each
+mentions `Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup`, and `bot_toSubgroup` is itself a `simp` lemma
+rewriting `(⊥ : ConvexSubgroup Γ).toSubgroup` to `(⊥ : Subgroup Γ)`. So `simp` normalises that
+subterm — in the coercion's type arguments, which come from the isomorphism's own domain, not just
+in the argument — and a left-hand side spelled this way could never match afterwards. Marking these
+`@[simp]` would add rules that can never fire.
+
+The normal form is not reachable either: `quotientLinearOrder` has head
+`LinearOrder (Γ ⧸ ?H.toSubgroup)`, so synthesis cannot invert the projection and
+`LinearOrder (Γ ⧸ (⊥ : Subgroup Γ))` does not exist — there is no ordered quotient to state the
+simp-normal form over. These therefore stay explicit rewrites, which is what lets consumers avoid
+unfolding the sealed construction. -/
+theorem quotientBotOrderIso_mk (a : Γ) :
+    quotientBotOrderIso ((a : Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup)) = a :=
+  quotientBotOrderIso_mk_aux a
+
+/-- The `rfl` proof of `quotientBotOrderIso_symm_apply`, private for the same reason as
+`quotientBotOrderIso_mk_aux`. -/
+private theorem quotientBotOrderIso_symm_apply_aux (a : Γ) :
     quotientBotOrderIso.symm a = (a : Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup) := rfl
+
+/-- **`quotientBotOrderIso.symm` sends `a` to its class.** Not `@[simp]`; see
+`quotientBotOrderIso_mk`. -/
+theorem quotientBotOrderIso_symm_apply (a : Γ) :
+    quotientBotOrderIso.symm a = (a : Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup) :=
+  quotientBotOrderIso_symm_apply_aux a
 
 end Quotient
 
