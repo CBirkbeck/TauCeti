@@ -317,8 +317,8 @@ private theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_not_
 two together keep exactly the indices coprime to `q * m`. Stated over the *result* of the
 recursive call rather than over the recursion itself, so that no helper has to carry an
 induction hypothesis in its signature. -/
-private theorem mem_and_qExpansion_coeff_eq_of_filter_comp {N N' M : ℕ} [NeZero N] [NeZero N']
-    [NeZero M] {k : ℤ} {q m : ℕ} (hq : q.Prime) (χ : (ZMod N)ˣ →* ℂˣ)
+private theorem mem_and_qExpansion_coeff_eq_of_filter_comp {N N' M : ℕ} {k : ℤ} {q m : ℕ}
+    (hq : q.Prime) (χ : (ZMod N)ˣ →* ℂˣ)
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} {g : CuspForm ((Gamma1 N').map (mapGL ℝ)) k}
     {g' : CuspForm ((Gamma1 M).map (mapGL ℝ)) k} (hNM : N ∣ M) {hNN' : N ∣ N'} {hN'M : N' ∣ M}
     (hg' : g' ∈ cuspFormCharSpace k ((χ.comp (ZMod.unitsMap hNN')).comp (ZMod.unitsMap hN'M)))
