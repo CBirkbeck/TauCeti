@@ -19,8 +19,8 @@ inverses of the members of `C`, and it has the same size as `C`. A class fixed b
 a **real** class (`TauCeti.IsRealClass`).
 
 Powering likewise commutes with conjugation, so for a **monoid** `M` it too descends to the
-conjugacy classes: `C ^ j` is the class of the `j`-th powers of the members of `C`, recorded as a
-`Pow (ConjClasses M) ℕ` instance.
+conjugacy classes: `ConjClasses.pow C j`, written `C ^ j`, is the class of the `j`-th powers of
+the members of `C`.
 
 The other fact collected here is that the size of a conjugacy class is the index of the centralizer
 of any of its members, and so divides the order of the group: the orbit-stabilizer theorem for the
@@ -42,7 +42,8 @@ conjugation action.
 * `TauCeti.ConjClasses.card_carrier_dvd_card`: the size of a conjugacy class divides the order of
   the group, with `TauCeti.ConjClasses.card_carrier_cast_ne_zero` the consequence that the size of
   a class is nonzero in any semiring where the group order is.
-* `ConjClasses.mem_carrier_pow_iff`: an element lies in `C ^ j` exactly when it is a
+* `ConjClasses.pow`: the power operation itself, with `C ^ j` its notation.
+* `ConjClasses.mem_pow_iff`: an element lies in `C ^ j` exactly when it is a
   `j`-th power of a member of `C`, with `ConjClasses.mk_pow` the computation rule.
 * `ConjClasses.pow_zero`, `ConjClasses.pow_one` and
   `ConjClasses.pow_mul`: the identity and composition laws for that power.
@@ -52,17 +53,19 @@ conjugation action.
 
 The inversion is an instance rather than a plain function so that the notation `C⁻¹`, the
 involutivity lemma `inv_inv` and the reindexing equivalence `Equiv.inv` are all available for
-conjugacy classes. Powering is an instance for the same reason: it buys the notation `C ^ j` and
-lets the `Monoid.npow`-shaped lemmas below be stated in the usual form. There is still no
+conjugacy classes. Powering is instead a named definition `ConjClasses.pow` with a `Pow` instance
+delegating to it, so that the roadmap's `C.pow j` and the notation `C ^ j` are the same function;
+the lemmas below are all stated in the `^` form. There is still no
 multiplication on `ConjClasses M` — `Pow (ConjClasses M) ℕ` is a bare power operation, not the
 `npow` field of a monoid structure, and none of the lemmas here presuppose one.
 
 The power operation is developed for the Chebotarev roadmap (`Chebotarev/README.md` Layer 1,
 "consumed Frobenius classes and powers of conjugacy classes", whose `Suggested.lean` pins these
 signatures); its consumer there is the von Mangoldt fibre, which sums over the classes `C ^ j`.
-That is also why `ConjClasses.pow_two_cyclicFour` is kept as a regression: a group of
+That is also why a `pow_two_cyclicFour` regression is kept: a group of
 exponent two has no proper nonidentity square, so it cannot separate a correct power operation
-from one that collapses to the identity. This operation is *not* adapted from the
+from one that collapses to the identity. It is `private`, being a check on this development
+rather than reusable conjugacy-class API. This operation is *not* adapted from the
 Birkbeck–Brasca `chebotarev-density` development, which works with `ConjClasses.mk` and
 `Subgroup.zpowers` directly and never forms `C ^ j`.
 -/
@@ -202,28 +205,27 @@ theorem isRealClass_mk_iff {g : G} : IsRealClass (ConjClasses.mk g) ↔ IsConj g
   rw [isRealClass_iff_inv_eq, ConjClasses.inv_mk, ConjClasses.mk_eq_mk_iff_isConj]
   exact ⟨IsConj.symm, IsConj.symm⟩
 
-section Powers
-
-variable {M : Type*} [Monoid M]
-
-/-- **Powers of a conjugacy class.** Powering respects conjugacy (`IsConj.pow`), so it descends
-to the conjugacy classes of a monoid: `C ^ j` is the class of the `j`-th powers of the members
-of `C`. -/
-instance instPowConjClassesNat : Pow (ConjClasses M) ℕ where
-  pow C j := Quotient.map (· ^ j) (fun _ _ h ↦ IsConj.pow j h) C
-
-end Powers
-
 end TauCeti
 
 /-! ### Powers of a conjugacy class
 
 These live in the root `ConjClasses` namespace, not under `TauCeti`, so that dot
-notation on Mathlib's `ConjClasses` type elaborates (`C.pow_zero`, `C.pow_mul`). -/
+notation on Mathlib's `ConjClasses` type elaborates (`C.pow`, `C.pow_zero`, `C.pow_mul`). -/
 
 namespace ConjClasses
 
 variable {M : Type*} [Monoid M]
+
+/-- **The `j`-th power of a conjugacy class.** Powering respects conjugacy (`IsConj.pow`), so it
+descends to the conjugacy classes of a monoid: `C.pow j` is the class of the `j`-th powers of the
+members of `C`. The `Pow` instance below spells it `C ^ j`, which is the form every lemma here
+is stated in. -/
+@[expose]
+def pow (C : ConjClasses M) (j : ℕ) : ConjClasses M :=
+  Quotient.map (· ^ j) (fun _ _ h ↦ IsConj.pow j h) C
+
+instance instPowNat : Pow (ConjClasses M) ℕ :=
+  ⟨ConjClasses.pow⟩
 
 /-- The `j`-th power of the class of `a` is the class of `a ^ j`. -/
 @[simp]
@@ -231,7 +233,8 @@ theorem mk_pow (a : M) (j : ℕ) : ConjClasses.mk a ^ j = ConjClasses.mk (a ^ j)
   rfl
 
 /-- An element lies in `C ^ j` exactly when it is a `j`-th power of a member of `C`. -/
-theorem mem_carrier_pow_iff {C : ConjClasses M} {τ : M} {j : ℕ} :
+@[simp]
+theorem mem_pow_iff {C : ConjClasses M} {τ : M} {j : ℕ} :
     τ ∈ (C ^ j).carrier ↔ ∃ σ ∈ C.carrier, σ ^ j = τ := by
   obtain ⟨a, rfl⟩ := ConjClasses.exists_rep C
   simp only [mk_pow, _root_.ConjClasses.mem_carrier_iff_mk_eq,
@@ -245,16 +248,19 @@ theorem mem_carrier_pow_iff {C : ConjClasses M} {τ : M} {j : ℕ} :
   have h2 : (c : M) * τ = a ^ j * ↑c := hc
   exact (Units.mul_right_inj c).mp (h1.trans h2.symm)
 
+/-- The zeroth power of any conjugacy class is the class of `1`. -/
 @[simp]
 theorem pow_zero (C : ConjClasses M) : C ^ 0 = 1 := by
   obtain ⟨a, rfl⟩ := ConjClasses.exists_rep C
   rw [mk_pow, _root_.pow_zero, ← _root_.ConjClasses.one_eq_mk_one]
 
+/-- The first power of a conjugacy class is the class itself. -/
 @[simp]
 theorem pow_one (C : ConjClasses M) : C ^ 1 = C := by
   obtain ⟨a, rfl⟩ := ConjClasses.exists_rep C
   rw [mk_pow, _root_.pow_one]
 
+/-- Iterated powers compose: raising `C ^ i` to the `j`-th power gives `C ^ (i * j)`. -/
 theorem pow_mul (C : ConjClasses M) (i j : ℕ) : (C ^ i) ^ j = C ^ (i * j) := by
   obtain ⟨a, rfl⟩ := ConjClasses.exists_rep C
   rw [mk_pow, mk_pow, mk_pow, _root_.pow_mul]
@@ -270,7 +276,7 @@ theorem map_pow {N : Type*} [Monoid N] (f : M →* N) (C : ConjClasses M) (j : �
 squares to the class of the element of order two. A group of exponent two cannot witness this:
 it has no proper nonidentity square, so it cannot tell a correct power operation from one that
 collapses to the identity. -/
-theorem pow_two_cyclicFour :
+private theorem pow_two_cyclicFour :
     ConjClasses.mk (Multiplicative.ofAdd (1 : ZMod 4)) ^ 2 =
       ConjClasses.mk (Multiplicative.ofAdd (2 : ZMod 4)) := by
   rw [mk_pow, ← ofAdd_nsmul, nsmul_eq_mul, mul_one]
