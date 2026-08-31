@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 public import Mathlib.NumberTheory.NumberField.Ideal.Basic
 public import Mathlib.RingTheory.Frobenius
 public import TauCeti.NumberTheory.NumberField.AutomorphismAction
@@ -33,8 +32,8 @@ it rather than at `Q`.
 
 ## Main results
 
-* `NumberField.isArithFrobAt_zeta_pow`: an arithmetic Frobenius at an ideal of `𝓞 F` over `𝔭`
-  raises an `m`-th root of unity to the power `𝔑𝔭`, when `𝔭 ∤ m`.
+* `AlgHom.IsArithFrobAt.apply_eq_pow_absNorm_of_pow_eq_one`: an arithmetic Frobenius at an ideal
+  of `𝓞 F` over `𝔭` raises an `m`-th root of unity to the power `𝔑𝔭`, when `𝔭 ∤ m`.
 
 ## Implementation notes
 
@@ -49,6 +48,12 @@ caller holding `hζ : IsPrimitiveRoot ζ m` passes `hζ.pow_eq_one`. Nor is `[Ne
 `hm` already forces `m ≠ 0`, since every ideal contains `0`. Being a root of unity is also what
 makes `ζ` an algebraic integer here (`IsIntegral.of_pow`), so no cyclotomic structure is needed to
 package it into `𝓞 F`.
+
+The statement uses the monoid-action `IsArithFrobAt`, whose head symbol unfolds to
+`AlgHom.IsArithFrobAt`; the theorem lives in that namespace so a caller can write
+`hσ.apply_eq_pow_absNorm_of_pow_eq_one`, matching Mathlib's own `apply_of_pow_eq_one`. Inside
+that namespace the bare name `IsArithFrobAt` would resolve to the two-argument `AlgHom` form,
+so the hypothesis names the monoid-action abbrev as `_root_.IsArithFrobAt`.
 
 There is likewise no cyclotomic hypothesis on `F / K`. `IsCyclotomicExtension {m} K F` is the
 ambient setting in which the result gets used, but the proof never looks at it, so assuming it
@@ -73,7 +78,9 @@ open scoped NumberField
 
 open IsDedekindDomain (HeightOneSpectrum)
 
-namespace NumberField
+namespace AlgHom.IsArithFrobAt
+
+open NumberField
 
 variable {K F : Type*} [Field K] [NumberField K] [Field F] [Algebra K F]
 
@@ -84,10 +91,10 @@ height-one prime of `𝓞 K` not dividing `m`, and let `σ` be an arithmetic Fro
 Then `σ ζ = ζ ^ 𝔑𝔭`.
 
 The exponent is the absolute norm of `𝔭`, not its inverse: over `ℚ` this is `ζ_m ↦ ζ_m ^ p`. -/
-theorem isArithFrobAt_zeta_pow {m : ℕ} {ζ : F} (hζ : ζ ^ m = 1)
+theorem apply_eq_pow_absNorm_of_pow_eq_one {m : ℕ} {ζ : F} (hζ : ζ ^ m = 1)
     (𝔭 : HeightOneSpectrum (𝓞 K)) (hm : (m : 𝓞 K) ∉ 𝔭.asIdeal)
     (Q : Ideal (𝓞 F)) [Q.LiesOver 𝔭.asIdeal]
-    {σ : F ≃ₐ[K] F} (hσ : IsArithFrobAt (𝓞 K) σ Q) :
+    {σ : F ≃ₐ[K] F} (hσ : _root_.IsArithFrobAt (𝓞 K) σ Q) :
     σ ζ = ζ ^ Ideal.absNorm 𝔭.asIdeal := by
   -- `m ≠ 0`: otherwise `(m : 𝓞 K)` is `0`, which lies in every ideal.
   have hm0 : 0 < m := Nat.pos_of_ne_zero fun h ↦ hm (by simp [h])
@@ -113,4 +120,4 @@ theorem isArithFrobAt_zeta_pow {m : ℕ} {ζ : F} (hζ : ζ ^ m = 1)
   have hmap := congrArg (algebraMap (𝓞 F) F) key
   rwa [map_pow, hval, hact] at hmap
 
-end NumberField
+end AlgHom.IsArithFrobAt
