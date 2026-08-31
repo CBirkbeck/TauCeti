@@ -263,6 +263,53 @@ theorem exists_eq_T_zpow_mul_conjScale_mul_T_zpow_of_apply_ne {l : ℕ} [NeZero 
     (Int.ediv_mul_cancel hdvd_e) hdet hdet'
 
 
+/-! ### The vanishing horn -/
+
+/-- One slash with two different multipliers forces the function to vanish. -/
+lemma eq_zero_of_slash_eq_smul_of_slash_eq_smul (k : ℤ) (f : ℍ → ℂ) (A : GL (Fin 2) ℝ)
+    {z₁ z₂ : ℂ} (hne : z₁ ≠ z₂) (h₁ : f ∣[k] A = z₁ • f) (h₂ : f ∣[k] A = z₂ • f) : f = 0 := by
+  have hsub : (z₁ - z₂) • f = 0 := by rw [sub_smul, ← h₁, ← h₂, sub_self]
+  exact (smul_eq_zero.mp hsub).resolve_left (sub_ne_zero.mpr hne)
+
+/-- **The vanishing horn of the level-lowering dichotomy.** If the nebentypus `χ` of the
+level-raise of `f` is *not* trivial on the kernel of `(ZMod N)ˣ → (ZMod (N / l))ˣ`, and `f` is
+`T`-periodic, then `f = 0`.
+
+The hypotheses `hnb` and `hT` are exactly the ones
+`TauCeti.slash_mapGL_eq_self_of_mem_Gamma1_div` takes for the descent, and `hχ` is the negation
+of the triviality that `TauCeti.cuspFormOfSmulSlashScaleGL` assumes, so this is the complementary
+case of the descent and neither statement restates the other's hypotheses. -/
+theorem eq_zero_of_not_forall_unitsMap_eq_one {l : ℕ} [NeZero l] (hlN : l ∣ N) (k : ℤ)
+    {χ : (ZMod N)ˣ →* ℂˣ}
+    (hχ : ¬ ∀ u : (ZMod N)ˣ, ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) u = 1 → χ u = 1) (f : ℍ → ℂ)
+    (hnb : ∀ (γ : SL(2, ℤ)) (hγ : γ ∈ Gamma0 N),
+      (f ∣[k] scaleGL l) ∣[k] mapGL ℝ γ =
+        (χ ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) : ℂ) • (f ∣[k] scaleGL l))
+    (hT : f ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) = f) :
+    f = 0 := by
+  -- start from the identity unit; the separation supplies the partner that breaks the tie
+  obtain ⟨i, j, u', hne, hfactor⟩ :=
+    exists_eq_T_zpow_mul_conjScale_mul_T_zpow_of_apply_ne hlN hχ 1
+  have hdet := det_pos_of_mem_slGL (MonoidHom.mem_range.mpr ⟨ModularGroup.T, rfl⟩)
+  -- the multiplier attached to the lift of a unit is the character at that unit
+  have hmul : ∀ v : (ZMod N)ˣ,
+      f ∣[k] (mapGL ℝ (conjScale l (gamma0LiftOfUnit N v) ((N / l : ℕ) : ℤ)
+        (gamma0LiftOfUnit_apply_one_zero_eq_mul hlN v)) : GL (Fin 2) ℝ) = (χ v : ℂ) • f := by
+    intro v
+    have h := slash_conjScale_eq_smul_of_slash_scaleGL (k := k) f (gamma0LiftOfUnit N v)
+      (gamma0LiftOfUnit_apply_one_zero_eq_mul hlN v) (hnb _ (gamma0LiftOfUnit N v).property)
+    rwa [show ((⟨(gamma0LiftOfUnit N v : SL(2, ℤ)), (gamma0LiftOfUnit N v).property⟩ :
+      ↥(Gamma0 N))) = gamma0LiftOfUnit N v from rfl,
+      Gamma0Map_toHomUnits_gamma0LiftOfUnit] at h
+  -- the same slash, read through the refactoring, has the multiplier of the separating unit
+  have halt : f ∣[k] (mapGL ℝ (conjScale l (gamma0LiftOfUnit N 1) ((N / l : ℕ) : ℤ)
+      (gamma0LiftOfUnit_apply_one_zero_eq_mul hlN 1)) : GL (Fin 2) ℝ) = (χ u' : ℂ) • f := by
+    rw [hfactor, map_mul, map_mul, map_zpow, map_zpow]
+    exact slash_zpow_mul_mul_zpow_eq_smul k f hdet hT (hmul u') i j
+  exact eq_zero_of_slash_eq_smul_of_slash_eq_smul k f _
+    (fun h ↦ hne (Units.ext h)) halt (hmul 1)
+
+
 end TauCeti
 
 end
