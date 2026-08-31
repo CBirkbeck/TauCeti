@@ -40,6 +40,12 @@ the degree identity `[M : K] = φ m` is `IsCyclotomicExtension.finrank_eq_totien
 
 ## Implementation notes
 
+The file is split by hypothesis strength. `isGalois_of_isGalois_of_isCyclotomicExtension` and
+`restrictNormalHom_prod_autToPow_injective` are pure field theory and carry no `NumberField`
+instances — the first needs only `CharZero K` (algebraicity of `M / K` is derived inside the
+proof from `IsGalois K L` and the cyclotomic tower), and the second needs no arithmetic at all.
+Only the results downstream of the degree count, which mention `discr L`, take number fields.
+
 That `M / K` is Galois is *derived*, not assumed: `M` is the compositum of `L` with `K(ζ)`,
 both of which are normal over `K`, and the engine for a compositum of two normal extensions is
 Mathlib's `IntermediateField.normal_sup`. So `Gal(M/K)` below rests on no hypothesis beyond
@@ -68,12 +74,11 @@ namespace NumberField.Chebotarev
 
 section Compositum
 
-variable (K L M : Type*) [Field K] [NumberField K] [Field L] [NumberField L] [Field M]
-  [NumberField M] [Algebra K L] [Algebra K M] [Algebra L M] [IsScalarTower K L M]
+variable (K L M : Type*) [Field K] [Field L] [Field M]
+  [Algebra K L] [Algebra K M] [Algebra L M] [IsScalarTower K L M]
   [IsGalois K L] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} L M]
 
 include L m in
-omit [NumberField L] in
 /-- **The cyclotomic compositum of a Galois extension is Galois.** If `L / K` is Galois and
 `M = L(μ_m)`, then `M / K` is Galois: `M` is the compositum of `L` with `K(ζ)`
 (`TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top`), both of which are normal over `K`,
@@ -88,9 +93,14 @@ This is what makes `IsGalois K M` a *conclusion* of this file rather than a hypo
 results below. It is a theorem and not an `instance` because neither `L` nor `m` can be
 recovered from the goal `IsGalois K M`, so there is no synthesization order; call sites
 introduce it with `have` instead. -/
-theorem isGalois_of_isGalois_of_isCyclotomicExtension : IsGalois K M := by
+theorem isGalois_of_isGalois_of_isCyclotomicExtension [CharZero K] : IsGalois K M := by
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot (S := {m}) L M
     (Set.mem_singleton m) (NeZero.ne m)
+  -- `M / K` is algebraic: `L / K` is Galois hence algebraic, and `M / L` is a cyclotomic
+  -- extension for the single modulus `m`, hence finite. This is what the dropped `NumberField`
+  -- instances used to supply.
+  have : FiniteDimensional L M := IsCyclotomicExtension.finiteDimensional (S := {m}) (K := L) M
+  have : Algebra.IsIntegral K M := Algebra.IsIntegral.trans L
   have hcyc : IsCyclotomicExtension {m} K (IntermediateField.adjoin K {ζ}) :=
     hζ.intermediateField_adjoin_isCyclotomicExtension (K := K)
   have : IsGalois K (IntermediateField.adjoin K {ζ}) :=
@@ -105,19 +115,6 @@ theorem isGalois_of_isGalois_of_isCyclotomicExtension : IsGalois K M := by
   have : Normal K M := Normal.of_algEquiv (h := hsup) IntermediateField.topEquiv
   exact ⟨⟩
 
-/-- **The cyclotomic character of the top layer is bijective.** For `M = L(μ_m)` with `m`
-coprime to `discr L`, the character `Gal(M/L) → (ZMod m)ˣ` is a bijection: it is injective by
-`IsPrimitiveRoot.autToPow_injective`, and both sides have `φ m` elements by
-`IsCyclotomicExtension.finrank_eq_totient`. -/
-theorem autToPow_bijective (hcop : ((NumberField.discr L).natAbs).Coprime m)
-    {ζ : M} (hζ : IsPrimitiveRoot ζ m) : Function.Bijective (hζ.autToPow L) := by
-  have : IsGalois L M := IsCyclotomicExtension.isGalois (S := {m}) (K := L) (L := M)
-  have hcard : Nat.card Gal(M/L) = Nat.card (ZMod m)ˣ := by
-    rw [IsGalois.card_aut_eq_finrank L M, IsCyclotomicExtension.finrank_eq_totient L M m hcop,
-      Nat.card_eq_fintype_card, ZMod.card_units_eq_totient]
-  exact (Nat.bijective_iff_injective_and_card _).mpr ⟨hζ.autToPow_injective L, hcard⟩
-
-omit [NumberField K] [NumberField L] in
 /-- **The joint restriction is faithful.** An automorphism of `M = L(μ_m)` over `K` that is
 trivial on `L` and trivial on the `m`-th roots of unity is the identity. No arithmetic
 hypothesis is needed: this is Mathlib's compositum engine
@@ -166,6 +163,23 @@ theorem restrictNormalHom_prod_autToPow_injective {ζ : M} (hζ : IsPrimitiveRoo
       (IsCyclotomicExtension.adjoin_primitive_root_eq_top (n := m) hζ)
   rw [htop, IntermediateField.fixingSubgroup_top, Subgroup.mem_bot] at hmem
   exact hmem
+
+/-! The remaining results are arithmetic: they need the discriminant of `L`, hence number
+fields rather than bare characteristic-zero fields. -/
+
+variable [NumberField K] [NumberField L] [NumberField M]
+
+/-- **The cyclotomic character of the top layer is bijective.** For `M = L(μ_m)` with `m`
+coprime to `discr L`, the character `Gal(M/L) → (ZMod m)ˣ` is a bijection: it is injective by
+`IsPrimitiveRoot.autToPow_injective`, and both sides have `φ m` elements by
+`IsCyclotomicExtension.finrank_eq_totient`. -/
+theorem autToPow_bijective (hcop : ((NumberField.discr L).natAbs).Coprime m)
+    {ζ : M} (hζ : IsPrimitiveRoot ζ m) : Function.Bijective (hζ.autToPow L) := by
+  have : IsGalois L M := IsCyclotomicExtension.isGalois (S := {m}) (K := L) (L := M)
+  have hcard : Nat.card Gal(M/L) = Nat.card (ZMod m)ˣ := by
+    rw [IsGalois.card_aut_eq_finrank L M, IsCyclotomicExtension.finrank_eq_totient L M m hcop,
+      Nat.card_eq_fintype_card, ZMod.card_units_eq_totient]
+  exact (Nat.bijective_iff_injective_and_card _).mpr ⟨hζ.autToPow_injective L, hcard⟩
 
 /-- **The joint restriction is bijective.** The two restrictions out of `Gal(M/K)` — to
 `Gal(L/K)`, and to `(ZMod m)ˣ` via the cyclotomic character — are jointly bijective.
