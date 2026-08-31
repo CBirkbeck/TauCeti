@@ -23,6 +23,8 @@ character — are *jointly* bijective:
 
 * `NumberField.Chebotarev.finrank_eq_totient`: the degree identity `[M : K] = φ m` for an
   `m`-th cyclotomic extension `M / K` of number fields with `m` coprime to `discr K`.
+* `NumberField.Chebotarev.isGalois_of_isCyclotomicExtension`: `M / K` is itself Galois, so
+  `Gal(M/K)` below is not an extra assumption.
 * `NumberField.Chebotarev.restrictNormalHom_prod_autToPow_injective`: the joint restriction
   is faithful (no arithmetic hypothesis needed).
 * `NumberField.Chebotarev.restrictNormalHom_prod_autToPow_bijective`: it is bijective.
@@ -131,7 +133,36 @@ section Compositum
 
 variable (K L M : Type*) [Field K] [NumberField K] [Field L] [NumberField L] [Field M]
   [NumberField M] [Algebra K L] [Algebra K M] [Algebra L M] [IsScalarTower K L M]
-  [IsGalois K L] [IsGalois K M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} L M]
+  [IsGalois K L] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} L M]
+
+include L m in
+omit [NumberField L] in
+/-- **The cyclotomic compositum of a Galois extension is Galois.** If `L / K` is Galois and
+`M = L(μ_m)`, then `M / K` is Galois: `M` is the compositum of `L` with `K(ζ)`
+(`adjoin_sup_fieldRange_eq_top`), both of which are normal over `K`, and a compositum of normal
+extensions is normal (`IntermediateField.normal_sup`). Separability is automatic in
+characteristic zero.
+
+This is what makes `IsGalois K M` a *conclusion* of this file rather than a hypothesis of the
+results below. It is a theorem and not an `instance` because neither `L` nor `m` can be
+recovered from the goal `IsGalois K M`, so there is no synthesization order; call sites
+introduce it with `have` instead. -/
+theorem isGalois_of_isCyclotomicExtension : IsGalois K M := by
+  obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot (S := {m}) L M
+    (Set.mem_singleton m) (NeZero.ne m)
+  have hcyc : IsCyclotomicExtension {m} K (IntermediateField.adjoin K {ζ}) :=
+    hζ.intermediateField_adjoin_isCyclotomicExtension (K := K)
+  have : IsGalois K (IntermediateField.adjoin K {ζ}) :=
+    IsCyclotomicExtension.isGalois (S := {m}) (K := K) (L := IntermediateField.adjoin K {ζ})
+  have : Normal K ((IsScalarTower.toAlgHom K L M).fieldRange) :=
+    Normal.of_algEquiv (AlgEquiv.ofInjectiveField (IsScalarTower.toAlgHom K L M))
+  have hsup : Normal K
+      (IntermediateField.adjoin K {ζ} ⊔ (IsScalarTower.toAlgHom K L M).fieldRange :
+        IntermediateField K M) := IntermediateField.normal_sup K M _ _
+  rw [adjoin_sup_fieldRange_eq_top K L M
+    (IsCyclotomicExtension.adjoin_primitive_root_eq_top (n := m) hζ)] at hsup
+  have : Normal K M := Normal.of_algEquiv (h := hsup) IntermediateField.topEquiv
+  exact ⟨⟩
 
 /-- **The cyclotomic character of the top layer is bijective.** For `M = L(μ_m)` with `m`
 coprime to `discr L`, the character `Gal(M/L) → (ZMod m)ˣ` is a bijection: it is injective by
@@ -145,7 +176,7 @@ theorem autToPow_bijective (hcop : ((NumberField.discr L).natAbs).Coprime m)
       Nat.card_eq_fintype_card, ZMod.card_units_eq_totient]
   exact (Nat.bijective_iff_injective_and_card _).mpr ⟨hζ.autToPow_injective L, hcard⟩
 
-omit [NumberField K] [NumberField L] [IsGalois K M] in
+omit [NumberField K] [NumberField L] in
 /-- **The joint restriction is faithful.** An automorphism of `M = L(μ_m)` over `K` that is
 trivial on `L` and trivial on the `m`-th roots of unity is the identity. No arithmetic
 hypothesis is needed: this is Mathlib's compositum engine
@@ -203,6 +234,7 @@ theorem restrictNormalHom_prod_autToPow_bijective
     (hcop : ((NumberField.discr L).natAbs).Coprime m) {ζ : M} (hζ : IsPrimitiveRoot ζ m) :
     Function.Bijective ((AlgEquiv.restrictNormalHom L).prod (hζ.autToPow K)) := by
   have : IsGalois L M := IsCyclotomicExtension.isGalois (S := {m}) (K := L) (L := M)
+  have : IsGalois K M := isGalois_of_isCyclotomicExtension K L M m
   have hcard : Nat.card Gal(M/K) = Nat.card (Gal(L/K) × (ZMod m)ˣ) := by
     rw [Nat.card_prod, IsGalois.card_aut_eq_finrank K M, IsGalois.card_aut_eq_finrank K L,
       ← Module.finrank_mul_finrank K L M, finrank_eq_totient L M m hcop,
