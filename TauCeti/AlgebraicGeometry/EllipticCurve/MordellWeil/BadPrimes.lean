@@ -463,7 +463,8 @@ private lemma even_valuationOfNeZero_sub_root_of_one_lt
       algebraMap K L W.a₄ * algebraMap K L x + algebraMap K L W.a₆ := by
     rw [← W.map_eval_f, (equation_iff_eval_f_eq_sq W x y).mp h, map_pow]
   have hval : ν (algebraMap K L y) ^ 2 = ν (algebraMap K L x) ^ 3 := by
-    rw [← map_pow, heq, ν.map_cubic_of_one_lt (W.valuation_a₂_le_one_of_notMem_primesAbove R p hw)
+    rw [← map_pow, heq,
+      ν.map_cubic_eq_of_one_lt (W.valuation_a₂_le_one_of_notMem_primesAbove R p hw)
       (W.valuation_a₄_le_one_of_notMem_primesAbove R p hw)
       (W.valuation_a₆_le_one_of_notMem_primesAbove R p hw) hx']
   -- `ν (x - θ) = ν x`, since `θ` is integral and `x` is not

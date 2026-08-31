@@ -33,7 +33,7 @@ integral closedness of the valuation ring; the equality is what is added here, a
   `ν`-integral coefficients and `1 < ν t`.
 * `Valuation.le_one_of_root_monic`: a root of a monic polynomial with `ν`-integral coefficients
   is `ν`-integral, from `Valuation.Integers.isIntegral_iff_v_le_one`.
-* `Valuation.map_cubic_of_one_lt` and `Valuation.le_one_of_root_cubic`: the two statements above
+* `Valuation.map_cubic_eq_of_one_lt` and `Valuation.le_one_of_root_cubic`: the two statements above
   for the monic cubic `t³ + at² + bt + c`, which is the shape a Weierstrass equation takes.
 
 ## Roadmap
