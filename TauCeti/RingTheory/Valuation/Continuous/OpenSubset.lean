@@ -18,14 +18,19 @@ any one neighbourhood of `0`.
 
 ## The mechanism
 
-The whole content is that `{a | v a < γ}` is an **additive subgroup** —
-`Valuation.ltAddSubgroupOfNeZero` — and a subgroup which is a neighbourhood of `0` is open. That
-step is isolated as `Valuation.isOpen_lt_of_mem_nhds_zero`, in which no test set appears at all.
+The threshold `γ = 0` is a separate and trivial case throughout: `{a | v a < 0}` is empty, hence
+open, and every result below holds there for that reason alone. The description that follows is of
+the case `γ ≠ 0`, which is where all the content sits.
+
+The whole content is that `{a | v a < γ}` is then an **additive subgroup** —
+`Valuation.ltAddSubgroupOfNeZero`, which is indexed by a proof of `γ ≠ 0` for exactly this reason —
+and a subgroup which is a neighbourhood of `0` is open. That step is isolated as
+`Valuation.isOpen_lt_of_mem_nhds_zero`, in which no test set appears at all.
 
 A test set enters only as one way of producing that neighbourhood. The trace `{u : U | v u < γ}` is
 in general far smaller than `{a : A | v a < γ}`, so openness does not pass between them for
 topological reasons; what openness of `U` buys is that the trace, open in the subspace topology, has
-open image in `A`, and that image contains `0`.
+open image in `A`, and that this image contains `0`, since `v 0 = 0 < γ`.
 
 That argument needs no more than continuity of translation by a fixed element, so it is stated over
 `[SeparatelyContinuousAdd A]` and over a `LinearOrderedCommMonoidWithZero` codomain, in keeping with
@@ -115,8 +120,9 @@ variable {A : Type*} [Ring A] [TopologicalSpace A] [SeparatelyContinuousAdd A]
 
 /-- **A sublevel set which is a neighbourhood of `0` is open.**
 
-This is the entire mechanism: `{a | v a < γ}` is an additive subgroup, and a subgroup which is a
-neighbourhood of `0` is open. Nothing about a test set enters. -/
+This is the entire mechanism. For `γ ≠ 0` the sublevel set is an additive subgroup, and a subgroup
+which is a neighbourhood of `0` is open; for `γ = 0` it is empty, hence open outright, and the
+hypothesis is not used. Nothing about a test set enters. -/
 theorem isOpen_lt_of_mem_nhds_zero {v : Valuation A Γ₀} {γ : Γ₀}
     (h : {a : A | v a < γ} ∈ 𝓝 (0 : A)) : IsOpen {a : A | v a < γ} := by
   rcases eq_or_ne γ 0 with rfl | hγ
@@ -127,8 +133,10 @@ theorem isOpen_lt_of_mem_nhds_zero {v : Valuation A Γ₀} {γ : Γ₀}
 
 /-- **A sublevel set is open as soon as its trace on an open subset containing `0` is.**
 
-The two sets are not related by the topology — the trace is in general far smaller. Openness of `U`
-makes the trace's image a neighbourhood of `0`, and `isOpen_lt_of_mem_nhds_zero` does the rest. -/
+The two sets are not related by the topology — the trace is in general far smaller. For `γ ≠ 0`,
+openness of `U` makes the trace's image a neighbourhood of `0` — it is open, and contains `0`
+because `v 0 = 0 < γ` — and `isOpen_lt_of_mem_nhds_zero` does the rest. For `γ = 0` both sets are
+empty and there is nothing to prove. -/
 theorem isOpen_lt_of_isOpen_trace_lt {U : Set A} (hU : IsOpen U) (hU0 : (0 : A) ∈ U)
     {v : Valuation A Γ₀} {γ : Γ₀} (h : IsOpen {u : U | v (u : A) < γ}) :
     IsOpen {a : A | v a < γ} := by
