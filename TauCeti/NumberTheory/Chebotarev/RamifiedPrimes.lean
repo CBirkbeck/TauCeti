@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.NumberTheory.NumberField.Discriminant.Different
-public import Mathlib.RingTheory.DedekindDomain.Factorization
+public import TauCeti.RingTheory.DedekindDomain.RamificationLocus
 
 /-!
 # The primes of a number field ramifying in a finite extension
@@ -33,18 +33,18 @@ wrapped in a named predicate, matching how the roadmap states it. A `Prop`-value
 
 ## Main results
 
-* `NumberField.Chebotarev.finite_setOf_ramified`: only finitely many primes ramify.
 * `NumberField.Chebotarev.mem_ramifiedPrimes_iff`: the defining condition for membership.
 
 ## Relation to the absolute `NumberField.ramifiedPrimes`
 
-Both names introduced here already exist one namespace up, and this is deliberate rather than an
+Every name used here already exists one namespace up, and this is deliberate rather than an
 oversight. `TauCeti/NumberTheory/NumberField/RamifiedPrimes.lean` carries
 
-* `NumberField.ramifiedPrimes (K) : Set ℕ`, the *rational* primes ramifying in `K`, and
-* `@[simp] NumberField.mem_ramifiedPrimes_iff`, proved by `Iff.rfl`,
+* `NumberField.ramifiedPrimes (K) : Set ℕ`, the *rational* primes ramifying in `K`,
+* `@[simp] NumberField.mem_ramifiedPrimes_iff`, proved by `Iff.rfl`, and
+* `NumberField.finite_ramifiedPrimes`,
 
-i.e. the same two short names, in the same shape. They are kept apart rather than unified:
+i.e. the same short names, in the same shape. They are kept apart rather than unified:
 
 * They are the same *shape* — "not `Algebra.IsUnramifiedIn` the top ring at an ideal of the base"
   — but at different bases. The absolute one is `ℤ`-to-`𝓞 K`; this one is `𝓞 K`-to-`𝓞 L`. Neither
@@ -60,7 +60,8 @@ i.e. the same two short names, in the same shape. They are kept apart rather tha
 Two consequences to be aware of when using this file. First, `NumberField.Chebotarev` is nested
 inside `NumberField`, so within it a bare `ramifiedPrimes` or `mem_ramifiedPrimes_iff` resolves to
 the declaration here and shadows the absolute one; a `Chebotarev` file that also wants the
-absolute notion must write `_root_.NumberField.ramifiedPrimes`. Second, both `_iff` lemmas are
+absolute notion must write `_root_.NumberField.ramifiedPrimes`. (The finiteness lemma is private,
+so its name collides only inside this file.) Second, both `_iff` lemmas are
 `@[simp]`, but their left-hand sides head-match on different types — membership in a `Set ℕ`
 against membership in a `Finset (HeightOneSpectrum (𝓞 K))` — so `simp` never has to choose
 between them.
@@ -85,35 +86,33 @@ namespace NumberField.Chebotarev
 variable (K L : Type*) [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
 
 /-- **Only finitely many primes of `K` ramify in `L`.** Each ramified `𝔭` is the contraction of a
-prime of `𝓞 L` dividing the different ideal, and a nonzero ideal has finitely many prime divisors.
+ramified prime of `𝓞 L`, and there are finitely many of those.
 
-Stated for the underlying `Set` rather than for `ramifiedPrimes` itself, because it is what
-*builds* that `Finset`; the absolute analogue `_root_.NumberField.finite_ramifiedPrimes` runs the
-other way round, its `ramifiedPrimes` being a `Set` that this lemma would then cut down. -/
-theorem finite_setOf_ramified : {𝔭 : HeightOneSpectrum (𝓞 K) |
+Private, and stated for the underlying `Set` rather than for `ramifiedPrimes` itself, because its
+only role is to *build* that `Finset`; consumers take finiteness from the `Finset` and membership
+from `mem_ramifiedPrimes_iff`. The absolute analogue `_root_.NumberField.finite_ramifiedPrimes`
+runs the other way round, its `ramifiedPrimes` being a `Set` that the lemma then cuts down. -/
+private theorem finite_ramifiedPrimes : {𝔭 : HeightOneSpectrum (𝓞 K) |
     ¬ ∀ (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver 𝔭.asIdeal],
       Algebra.IsUnramifiedAt (𝓞 K) Q}.Finite := by
-  -- The different ideal is nonzero, hence divisible by only finitely many primes of `𝓞 L`.
-  have hbot : differentIdeal (𝓞 K) (𝓞 L) ≠ 0 := by
-    rw [Ideal.zero_eq_bot]; exact differentIdeal_ne_bot
   -- `asIdeal` is injective, so it suffices to bound the image of the set in `Ideal (𝓞 K)`.
   refine Set.Finite.of_finite_image ?_ HeightOneSpectrum.asIdeal_injective.injOn
-  -- Each ramified `𝔭` is the contraction of a prime of `𝓞 L` dividing the different.
-  refine Set.Finite.subset ((Ideal.finite_factors hbot).image
-    (fun w : HeightOneSpectrum (𝓞 L) ↦ w.asIdeal.under (𝓞 K))) ?_
+  -- Each ramified `𝔭` is the contraction of a ramified prime of `𝓞 L`, and the ramification
+  -- locus of `𝓞 L` over `𝓞 K` is finite.
+  refine Set.Finite.subset ((Algebra.finite_compl_unramifiedLocus (𝓞 K) (𝓞 L)).image
+    (fun Q : PrimeSpectrum (𝓞 L) ↦ Q.asIdeal.under (𝓞 K))) ?_
   rintro _ ⟨𝔭, h𝔭, rfl⟩
   simp only [Set.mem_ofPred_eq, not_forall] at h𝔭
   obtain ⟨Q, hQp, hQlo, hQnu⟩ := h𝔭
-  exact ⟨⟨Q, hQp, Ideal.ne_bot_of_liesOver_of_ne_bot 𝔭.ne_bot Q⟩,
-    dvd_differentIdeal_iff.mpr hQnu, hQlo.over.symm⟩
+  exact ⟨⟨Q, hQp⟩, hQnu, hQlo.over.symm⟩
 
 /-- **The primes of `K` that ramify in `L`.** The height-one primes `𝔭` of `𝓞 K` for which some
-prime of `𝓞 L` over `𝔭` is ramified, collected into a `Finset` by `finite_setOf_ramified`.
+prime of `𝓞 L` over `𝔭` is ramified, collected into a `Finset` by `finite_ramifiedPrimes`.
 
 This is the relative notion; `_root_.NumberField.ramifiedPrimes` is the absolute one, over `ℤ`
 and valued in `Set ℕ`. See the module docstring. -/
 noncomputable def ramifiedPrimes : Finset (HeightOneSpectrum (𝓞 K)) :=
-  (finite_setOf_ramified K L).toFinset
+  (finite_ramifiedPrimes K L).toFinset
 
 variable {K L}
 
