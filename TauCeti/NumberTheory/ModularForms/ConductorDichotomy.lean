@@ -37,10 +37,10 @@ of two lifts. That is what `TauCeti.gamma0LiftOfUnit` is for: an explicit Bézou
 * `TauCeti.gamma0LiftOfUnit`: the controlled `Γ₀(N)` lift of a unit, with lower-left entry `N`,
   together with its four entries and the fact that it lifts the unit it was built from.
 * `TauCeti.exists_unitsMap_eq_and_apply_ne`: character separation along a `ZMod.unitsMap`-coset.
-* `TauCeti.exists_eq_T_zpow_mul_conjScale_mul_T_zpow_of_apply_ne`: the refactoring step — the
-  conjugated lift of `u` is a translate of the conjugated lift of a separating `u'`.
 * `TauCeti.eq_zero_of_not_forall_unitsMap_eq_one`: **the vanishing horn**.
-* `TauCeti.exists_cuspForm_of_factorsThrough_or_eq_zero`: **the level-lowering dichotomy**, in
+* `TauCeti.cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace`: the descent horn carries the
+  lowered nebentypus `hfac.χ₀`.
+* `TauCeti.exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero`: **the level-lowering dichotomy**, in
   the roadmap's `DirichletCharacter` phrasing — either `χ` factors through `N / l` and `f` is a
   cusp form of level `N / l` for the lowered character, or `f = 0`.
 
