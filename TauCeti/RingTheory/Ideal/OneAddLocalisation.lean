@@ -121,15 +121,16 @@ commutative ring `B` whose image in a localisation `C` at `1 + I` lies in every 
 This is the closing step of Wedhorn's proof of Proposition 7.49(2), and the reason the localisation
 is introduced there at all. Note what the conclusion does *not* mention: neither `C` nor `1 + I`
 survives it, so a caller who has discharged the hypothesis is left with a statement purely about
-`I`. The two halves are `exists_mem_oneAdd_forall_mul_eq_zero`, which produces the annihilator, and
-`pow_eq_pow_of_forall_mul_eq_zero`, which turns an annihilator of the shape `1 + i` into
-stabilization; membership in `1 + I` is exactly the shape that second lemma expects, which is why
-the submonoid is recorded existentially. -/
+`I`. -/
 theorem exists_forall_pow_eq_pow (hfg : I.FG)
     (hprime : ∀ P : Ideal C, P.IsPrime → I.map (algebraMap B C) ≤ P) :
     ∃ n : ℕ, ∀ k, n ≤ k → I ^ k = I ^ n := by
+  -- The two halves are `exists_mem_oneAdd_forall_mul_eq_zero`, which produces the annihilator,
+  -- and `pow_eq_pow_of_forall_mul_eq_zero`, which turns an annihilator of the shape `1 + i` into
+  -- stabilization; membership in `1 + I` is exactly the shape that second lemma expects, which is
+  -- why the submonoid is recorded existentially.
   obtain ⟨n, s, hs, hann⟩ := exists_mem_oneAdd_forall_mul_eq_zero (C := C) hfg hprime
-  obtain ⟨a, ha, rfl⟩ := hs
+  obtain ⟨a, ha, rfl⟩ := (mem_oneAdd I).mp hs
   exact ⟨n, fun k hk ↦ pow_eq_pow_of_forall_mul_eq_zero ha hann hk⟩
 
 end CommRing
