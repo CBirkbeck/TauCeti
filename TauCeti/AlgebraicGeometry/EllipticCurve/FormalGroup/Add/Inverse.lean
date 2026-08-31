@@ -6,14 +6,19 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Series
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Universal
 
 /-!
 # The inverse law of the chord group law
 
 `FormalGroup/Add/Series.lean` produces `formalAdd`, the series `F(z₁, z₂) = ι(z₃(z₁, z₂))` of the
 chord construction, and `FormalGroup/Add/Unit.lean` proves its two unit laws. This file proves the
-remaining group-law axiom that does not need associativity: the **inverse law** `F(z, ι(z)) = 0`,
-where `ι = formalInverse` is the formal inverse.
+**inverse law** `F(z, ι(z)) = 0`, where `ι = formalInverse` is the formal inverse.
+
+This is not one of the axioms of `FormalGroup`, which asks only for the constant and linear
+coefficients and for associativity; a formal group law has a unique inverse series regardless.
+What the identity says is that the series produced from the curve's negation is that inverse, so
+the geometric `ι` and the abstract one agree.
 
 Geometrically the chord through a point `P` and its negative `-P` is the vertical line through
 them, which meets the curve again at the point at infinity; so the third root `z₃(z, ι(z))`
@@ -27,13 +32,14 @@ vanishes, and `F(z, ι(z)) = ι(z₃(z, ι(z))) = ι(0) = 0`.
 
 ## Implementation notes
 
-Both results need `O` to be a domain in which `2 ≠ 0`. The nondegeneracy `ι ≠ z` that the chord
-argument turns on is not a second hypothesis: it follows from `2 ≠ 0` by comparing linear
-coefficients, and is derived here. Over the universal curve `2 ≠ 0` is discharged once and for
-all, which is where it belongs; it is carried as a hypothesis here rather than as an instance
-argument.
+Both results hold over an arbitrary commutative ring, but the chord argument does not prove them
+there: it divides by `ι - z`, so it needs `O` to be a domain, and it reaches `2 = 0` in the branch
+it has to rule out. Both hypotheses are met by `ℤ[A₁, ⋯, A₆]`, so the argument runs over the
+universal curve, and `map_specialize` then carries the conclusion to every `W` — the descent
+`DivisionPolynomial/Omega.lean` also runs. The nondegeneracy `ι ≠ z` is not a further hypothesis:
+it follows from `2 ≠ 0` by comparing linear coefficients.
 
-The specialization is the substitution of the family `Sum.elim X (fun _ ↦ formalInverse W)`,
+The pair `(z, ι(z))` enters as the substituted family `Sum.elim X (fun _ ↦ formalInverse W)`,
 written inline throughout, as `Add/Unit.lean` writes its own two families inline: it appears only
 in this file, and naming it would add a definition whose unfolding lemma every proof would carry.
 
@@ -335,12 +341,9 @@ private theorem invPair_vieta_cofactor_absurd (h2 : (2 : O) ≠ 0)
   simp only [inv_one, Units.val_one] at h3
   exact h2 (by linear_combination h3)
 
-/-- **The third point of the chord through a point and its formal inverse is the origin.**
-
-Over a domain with `2 ≠ 0`: the chord through `(z, w(z))` and its negative is the vertical line
-through them, which meets the curve again only at the point at infinity. -/
-@[simp]
-theorem subst_invPair_formalThirdRoot (h2 : (2 : O) ≠ 0) :
+/-- The third-root vanishing over a domain in which `2 ≠ 0`, the case the chord argument proves
+directly. `subst_invPair_formalThirdRoot` descends it to an arbitrary commutative ring. -/
+private theorem subst_invPair_formalThirdRoot_of_isDomain (h2 : (2 : O) ≠ 0) :
     subst (Sum.elim X (fun _ ↦ formalInverse W) : Unit ⊕ Unit → MvPowerSeries Unit O)
       (formalThirdRoot W) = 0 := by
   have hNp := subst_invPair_formalIntercept W (formalInverse_ne_X W h2)
@@ -371,13 +374,39 @@ theorem subst_invPair_formalThirdRoot (h2 : (2 : O) ≠ 0) :
   exact (mul_eq_zero.mp hTP).resolve_right
     fun hbranch ↦ invPair_vieta_cofactor_absurd W h2 hTc hslope hrel hbranch
 
+end Domain
+
+/-- **The third point of the chord through a point and its formal inverse is the origin**:
+`z₃(z, ι(z)) = 0`.
+
+The chord through `(z, w(z))` and its negative is the vertical line through them, which meets the
+curve again only at the point at infinity.
+
+The chord argument needs a domain in which `2 ≠ 0`; the identity itself needs neither, and is
+obtained here by descent from the universal curve, whose base `ℤ[A₁, ⋯, A₆]` supplies both. -/
+@[simp]
+theorem subst_invPair_formalThirdRoot :
+    subst (Sum.elim X (fun _ ↦ formalInverse W) : Unit ⊕ Unit → MvPowerSeries Unit O)
+      (formalThirdRoot W) = 0 := by
+  conv_lhs => rw [← W.map_specialize]
+  rw [map_formalThirdRoot, map_formalInverse]
+  have hfam : (Sum.elim X (fun _ ↦ PowerSeries.map W.specialize (formalInverse Universal.curve)) :
+        Unit ⊕ Unit → MvPowerSeries Unit O) =
+      fun i ↦ MvPowerSeries.map W.specialize
+        (Sum.elim X (fun _ ↦ formalInverse Universal.curve) i) := by
+    funext i
+    -- `PowerSeries.map` is by definition `MvPowerSeries.map` at the one-element index type;
+    -- unfolding it is what reconciles the two spellings in the `inr` branch.
+    cases i <;> simp [PowerSeries.map]
+  rw [hfam, ← MvPowerSeries.map_subst (hasSubst_invPair Universal.curve),
+    subst_invPair_formalThirdRoot_of_isDomain Universal.curve two_ne_zero, map_zero]
+
 /-- **The inverse law of the chord group law**: `F(z, ι(z)) = 0`.
 
-The sum of a point and its formal inverse is the origin. With the two unit laws in
-`Add/Unit.lean` and the symmetry `rename_swap_formalAdd`, this is the last of the group-law
-axioms that does not need associativity. -/
+The sum of a point and its formal inverse is the origin, so `formalInverse` is the inverse series
+of `formalAdd`; with `rename_swap_formalAdd` it is a two-sided one. -/
 @[simp]
-theorem subst_invPair_formalAdd (h2 : (2 : O) ≠ 0) :
+theorem subst_invPair_formalAdd :
     subst (Sum.elim X (fun _ ↦ formalInverse W) : Unit ⊕ Unit → MvPowerSeries Unit O)
       (formalAdd W) = 0 := by
   rw [formalAdd_def, subst_comp_subst_apply (hasSubst_formalThirdRoot W) (hasSubst_invPair W)]
@@ -385,10 +414,8 @@ theorem subst_invPair_formalAdd (h2 : (2 : O) ≠ 0) :
   have hT : (fun _ : Unit ↦ subst (Sum.elim X (fun _ ↦ formalInverse W) :
         Unit ⊕ Unit → MvPowerSeries Unit O) (formalThirdRoot W)) =
       fun _ : Unit ↦ (0 : MvPowerSeries Unit O) :=
-    funext fun _ ↦ subst_invPair_formalThirdRoot W h2
+    funext fun _ ↦ subst_invPair_formalThirdRoot W
   rw [hT]
   exact PowerSeries.subst_zero_of_constantCoeff_zero (constantCoeff_formalInverse W)
-
-end Domain
 
 end WeierstrassCurve
