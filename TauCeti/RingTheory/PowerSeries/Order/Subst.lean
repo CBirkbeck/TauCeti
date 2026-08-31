@@ -32,6 +32,14 @@ coefficient.
 
 * `PowerSeries.order_subst` : the order of a substitution, as an equality.
 
+## Placement
+
+This is general power-series infrastructure: it names no curve, no formal group and no elliptic
+object, and it imports only `Mathlib.RingTheory.PowerSeries.Substitution`. It therefore sits under
+`TauCeti/RingTheory/PowerSeries/`, with the rest of the order material, as
+`Order/Subst.lean` — beside the existing `Order.lean` rather than flat alongside it. It does not
+import `Order.lean`; the two are grouped by topic, not by dependency.
+
 ## Provenance
 
 Adapted from Chris Birkbeck's `AINTLIB` (`github.com/CBirkbeck/AINTLIB`, Apache-2.0), branch
