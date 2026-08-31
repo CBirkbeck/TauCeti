@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-public import TauCeti.FieldTheory.IntermediateField.Adjoin.SupFieldRange
+public import TauCeti.FieldTheory.IntermediateField.Adjoin.EqTop
 
 /-!
 # The degree of a cyclotomic extension of a number field

@@ -7,7 +7,7 @@ module
 
 public import Mathlib.FieldTheory.Galois.Basic
 public import Mathlib.NumberTheory.Cyclotomic.Gal
-public import TauCeti.FieldTheory.IntermediateField.Adjoin.SupFieldRange
+public import TauCeti.FieldTheory.IntermediateField.Adjoin.EqTop
 public import TauCeti.NumberTheory.NumberField.Cyclotomic.Finrank
 
 /-!
@@ -36,7 +36,7 @@ The two general prerequisites this rests on are stated where they belong rather 
 the degree identity `[M : K] = φ m` is `IsCyclotomicExtension.finrank_eq_totient` in
 `TauCeti.NumberTheory.NumberField.Cyclotomic.Finrank`, and the compositum step
 `K(ζ) ⊔ L = ⊤` is `TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top` in
-`TauCeti.FieldTheory.IntermediateField.Adjoin.SupFieldRange`. Neither mentions Chebotarev.
+`TauCeti.FieldTheory.IntermediateField.Adjoin.EqTop`. Neither mentions Chebotarev.
 
 ## Implementation notes
 
