@@ -19,7 +19,7 @@ established.
 
 This file supplies the arithmetic criterion: if `m` is coprime to the discriminant of `K`, then
 
-`[M : K] = φ m`   for `M / K` an `m`-th cyclotomic extension of number fields.
+`[M : K] = φ m`   for `M / K` an `m`-th cyclotomic extension with `K` a number field.
 
 The mechanism is linear disjointness rather than a direct irreducibility argument. Inside `M`,
 the two subfields `ℚ(ζ)` and (the image of) `K` have coprime discriminants, so Mathlib's
@@ -65,14 +65,22 @@ theorem prime_dvd_of_dvd_natAbs_discr (E : Type*) [Field E] [NumberField E] (m :
 end Rat
 
 /-- **The cyclotomic degree over a number field base.** If `M / K` is an `m`-th cyclotomic
-extension of number fields and `m` is coprime to `discr K`, then `[M : K] = φ m`.
+extension with `K` a number field and `m` coprime to `discr K`, then `[M : K] = φ m`.
+
+Only the base `K` is assumed to be a number field: `M` is one automatically, being finite over
+`K` by `IsCyclotomicExtension.finiteDimensional`, so requiring `[NumberField M]` of the caller
+would be an avoidable hypothesis.
 
 Coprimality is what replaces irreducibility of `Φ_m` over `K`: it makes `ℚ(ζ)` and the image of
 `K` linearly disjoint inside `M`, and their compositum is `M`. -/
-theorem finrank_eq_totient (K M : Type*) [Field K] [NumberField K] [Field M] [NumberField M]
+theorem finrank_eq_totient (K M : Type*) [Field K] [NumberField K] [Field M]
     [Algebra K M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} K M]
     (hcop : ((NumberField.discr K).natAbs).Coprime m) :
     Module.finrank K M = m.totient := by
+  -- `M` is a number field rather than assumed one: a cyclotomic extension of a number field is
+  -- finite over it, and a finite extension of a number field is again a number field.
+  have : FiniteDimensional K M := IsCyclotomicExtension.finiteDimensional (S := {m}) (K := K) M
+  have : NumberField M := NumberField.of_module_finite (K := K) (L := M)
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot (S := {m}) K M
     (Set.mem_singleton m) (NeZero.ne m)
   set K₁ : IntermediateField ℚ M := IntermediateField.adjoin ℚ {ζ}

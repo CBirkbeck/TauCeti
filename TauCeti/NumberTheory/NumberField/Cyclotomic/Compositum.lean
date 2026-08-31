@@ -184,9 +184,11 @@ theorem isGalois_of_isGalois_of_isCyclotomicExtension : IsGalois K M := by
   exact ⟨⟩
 
 /-! The remaining results are arithmetic: they need the discriminant of `L`, hence number
-fields rather than bare characteristic-zero fields. -/
+fields rather than bare characteristic-zero fields. Only the *base* fields `K` and `L` carry
+`NumberField`; `M` does not, because a cyclotomic extension of a number field is finite over it
+and so is a number field already — the instances it needs are installed locally where used. -/
 
-variable [NumberField K] [NumberField L] [NumberField M]
+variable [NumberField K] [NumberField L]
 
 /-- **The cyclotomic character of the top layer is bijective.** For `M = L(μ_m)` with `m`
 coprime to `discr L`, the character `Gal(M/L) → (ZMod m)ˣ` is a bijection: it is injective by
@@ -194,6 +196,7 @@ coprime to `discr L`, the character `Gal(M/L) → (ZMod m)ˣ` is a bijection: it
 `IsCyclotomicExtension.finrank_eq_totient`. -/
 theorem autToPow_bijective (hcop : ((NumberField.discr L).natAbs).Coprime m)
     {ζ : M} (hζ : IsPrimitiveRoot ζ m) : Function.Bijective (hζ.autToPow L) := by
+  have : FiniteDimensional L M := IsCyclotomicExtension.finiteDimensional (S := {m}) (K := L) M
   have : IsGalois L M := IsCyclotomicExtension.isGalois (S := {m}) (K := L) (L := M)
   have hcard : Nat.card Gal(M/L) = Nat.card (ZMod m)ˣ := by
     rw [IsGalois.card_aut_eq_finrank L M, IsCyclotomicExtension.finrank_eq_totient L M m hcop,
@@ -210,6 +213,8 @@ the degree identity `IsCyclotomicExtension.finrank_eq_totient`, since `[M : K] =
 private theorem restrictNormalHom_prod_autToPow_bijective
     (hcop : ((NumberField.discr L).natAbs).Coprime m) {ζ : M} (hζ : IsPrimitiveRoot ζ m) :
     Function.Bijective ((AlgEquiv.restrictNormalHom L).prod (hζ.autToPow K)) := by
+  have : FiniteDimensional L M := IsCyclotomicExtension.finiteDimensional (S := {m}) (K := L) M
+  have : FiniteDimensional K M := FiniteDimensional.trans K L M
   have : IsGalois L M := IsCyclotomicExtension.isGalois (S := {m}) (K := L) (L := M)
   have : IsGalois K M := isGalois_of_isGalois_of_isCyclotomicExtension K L M m
   have hcard : Nat.card Gal(M/K) = Nat.card (Gal(L/K) × (ZMod m)ˣ) := by
