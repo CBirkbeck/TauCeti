@@ -5,47 +5,55 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
 public import Mathlib.RingTheory.Valuation.LocalSubring
+public import Mathlib.RingTheory.Valuation.ValuationSubring
+public import Mathlib.Topology.Algebra.Valued.ValuationTopology
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Integrality
 
 /-!
-# Integral points of a Weierstrass curve over an adic completion
+# Integral points of a Weierstrass curve over a discretely valued field
 
-Let `R` be a Dedekind domain with fraction field `K`, let `v` be a height-one prime of `R`, and let
-`W` be a Weierstrass curve over the completion `K_v` that comes from a model `W₀` over the valuation
-ring `O_v`. This file records the valuation estimates that such a model forces, and the dichotomy
-they produce for the coordinates of an affine point.
+Let `F` be a field carrying a `ℤᵐ⁰`-valued valuation `v`, let `O` be the valuation subring of `v`,
+and let `W` be a Weierstrass curve over `F` that comes from a model `W₀` over `O`. This file
+records the valuation estimates that such a model forces, and the dichotomy they produce for the
+coordinates of an affine point.
 
 The dichotomy is the sharp one: `v(x)` is never `exp 1`. Either the point is integral,
 `v(x) ≤ 1` and `v(y) ≤ 1`, or it is a pole of order at least two in `x`, `exp 2 ≤ v(x)`. There is
 nothing in between, because on the curve `v(y)² = v(x)³` at a pole, so `v(x)` has even exponent.
 
+The motivating instance is the completion of the fraction field of a Dedekind domain at a
+height-one prime: there `IsDedekindDomain.HeightOneSpectrum.adicCompletionIntegers` is by
+definition the valuation subring of `Valued.v`, so that case is literally an instance of what is
+below. Nothing here uses completeness, or the Dedekind hypothesis behind it — only the valuation
+and the fact that its value group is `ℤᵐ⁰`, which is what makes the parity argument work.
+
 ## Main results
 
-* `WeierstrassCurve.Affine.valued_a₁_le_one` and its `a₂`, `a₃`, `a₄` companions: the coefficients
-  of a curve with an integral model are integral.
-* `WeierstrassCurve.Affine.valued_le_one_of_valued_x_lt_exp_two`: an affine point whose `x`-adic
-  pole has order less than two has both coordinates integral.
+* `WeierstrassCurve.Affine.valued_a₁_le_one` and its `a₂`, `a₃`, `a₄`, `a₆` companions: the
+  coefficients of a curve with an integral model are integral.
+* `WeierstrassCurve.Affine.valued_x_le_one_and_valued_y_le_one_of_valued_x_lt_exp_two`:
+  an affine point whose `x`-adic pole has order less than two has both coordinates integral.
 
 ## Implementation notes
 
 The `y`-half of the dichotomy is not proved here. Once `x` is known to be integral,
 `TauCeti.WeierstrassCurve.isIntegral_y_of_equation_of_isIntegral_x` gives that `y` is integral over
-`O_v` from the curve equation alone, over any algebra and with no valuation in sight; `O_v` is a
-valuation subring, hence integrally closed in `K_v`, so integrality over it is membership. Only the
-`x`-half — the parity argument that rules out `v(x) = exp 1` — is genuinely about the valuation, and
-it is the only half that needs the estimates below.
+`O` from the curve equation alone, over any algebra and with no valuation in sight; `O` is a
+valuation subring, hence integrally closed in `F`, so integrality over it is membership. Only the
+`x`-half — the parity argument that rules out `v(x) = exp 1` — is genuinely about the valuation,
+and it is the only half that needs the estimates below.
 
-## Why this file is not under `FormalGroup/`
+## Placement
 
-The formal group over `K_v` is the reason these estimates are wanted: they are what identifies the
-kernel of reduction, on which the formal group converges, as the locus `exp 2 ≤ v(x)`. But nothing
-here mentions a power series. The content is the integrality of a point, which is what
-`EllipticCurve/Integrality.lean` is about over a unique factorisation domain and what this file is
-about over a complete discretely valued field, and the main result of that file is what discharges
-half of the one below. So the two sit together, and `FormalGroup/` imports this rather than
-containing it.
+Every declaration here lives in `WeierstrassCurve.Affine` and is about `Affine.Equation`, so the
+file sits in `EllipticCurve/Affine/` with the rest of the affine-point API.
+
+It is not under `FormalGroup/`, although the formal group is what makes these estimates wanted:
+they are what identifies the kernel of reduction, on which the formal group converges, as the
+locus `exp 2 ≤ v(x)`. But nothing here mentions a power series; the content is the integrality of
+an affine point. No `FormalGroup/` file imports this module today — the milestones below are the
+future consumers.
 
 This supplies the valuation substrate for the formal-group milestones of
 `TauCetiRoadmap/EllipticCurves/README.md`, Layer 1, item "The formal group — four milestones
@@ -61,31 +69,40 @@ Adapted from the Stoll `EllipticCurves` development
 `EllipticCurves/WeierstrassFormalGroup/Foundations.lean`: `valued_a₁`–`valued_a₄` (:125–:128),
 `valued_a₆` (:129), `valued_lhs_eq_rhs` (:72), `valued_rhs_eq` (:132), `valued_lhs_eq` (:164),
 `valued_lhs_le` (:185), `valued_ne_exp_one` (:202) and `integral_of_not_mem` (:264), which is
-`valued_le_one_of_valued_x_lt_exp_two` here.
+`valued_x_le_one_and_valued_y_le_one_of_valued_x_lt_exp_two` here.
 
-Three departures. The source's private `coe_a₁`–`coe_a₆` (:110–:122) are not ported: each is a
-one-line restatement of the structure map, and the four public coefficient bounds prove it inline
+Five departures. The source's private `coe_a₁`–`coe_a₆` (:110–:122) are not ported: each is a
+one-line restatement of the structure map, and the five public coefficient bounds prove it inline
 instead. (Mathlib's `WeierstrassCurve.integralModel_a₁_eq`–`a₆_eq` state the same content for
 Mathlib's *chosen* integral model, obtained by choice; they cannot discharge these, which are
 about a *given* model `W₀`, so the bounds stay — but no separate coercion layer is introduced for
-them.) The hypothesis is stated positively as `Valued.v x < exp 2` rather than the source's
-`¬ exp 2 ≤ Valued.v x`. And the `y`-half is proved by reuse rather than by the source's valuation
-computation: the source derives it from a `valued_rhs_le` bound (:151), whereas here
-`isIntegral_y_of_equation_of_isIntegral_x` plus integral closedness of `O_v` gives it directly, so
-that bound has no consumer and is not ported.
+them.) The setting is more general: the source works over `v.adicCompletion K` and
+`v.adicCompletionIntegers K`, whereas no step uses completeness or the Dedekind hypothesis, so the
+results are stated over any `[Field F] [Valued F ℤᵐ⁰]` and its valuation subring — a weaker
+hypothesis set that still covers the source's case definitionally. `valued_a₆_le_one` is public
+here although the source's `valued_a₆` (:129) is private: the five coefficient bounds are one API,
+and a consumer holding a given integral model needs all five. The hypothesis is stated positively
+as `Valued.v x < exp 2` rather than the source's `¬ exp 2 ≤ Valued.v x`. And the `y`-half is
+proved by reuse rather than by the source's valuation computation: the source derives it from a
+`valued_rhs_le` bound (:151), whereas here `isIntegral_y_of_equation_of_isIntegral_x` plus
+integral closedness of `O` gives it directly, so that bound has no consumer and is not ported.
 -/
 
 public section
 
-open IsDedekindDomain IsDedekindDomain.HeightOneSpectrum WithZero
+open WithZero
 
 namespace WeierstrassCurve.Affine
 
-variable {R : Type*} [CommRing R] [IsDedekindDomain R]
-  {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
-  {v : HeightOneSpectrum R} {W : Affine (v.adicCompletion K)}
-  {W₀ : WeierstrassCurve (v.adicCompletionIntegers K)}
-  (hW : W₀.map (algebraMap (v.adicCompletionIntegers K) (v.adicCompletion K)) = W)
+variable {F : Type*} [Field F] [Valued F ℤᵐ⁰] {W : Affine F}
+  {W₀ : WeierstrassCurve (Valued.v : Valuation F ℤᵐ⁰).valuationSubring}
+  (hW : W₀.map (algebraMap (Valued.v : Valuation F ℤᵐ⁰).valuationSubring F) = W)
+
+/-- Squaring `exp 1` gives `exp 2`. Named because `exp` is not a `simp`-normal form here: the
+bound produced by `valued_lhs_le` is `(exp 1) ^ 2` while the right-hand side is compared as
+`exp _`, and no ordinary rewrite bridges the two. -/
+private lemma exp_one_sq : (exp (1 : ℤ) : ℤᵐ⁰) ^ 2 = exp (2 : ℤ) := by
+  rw [← exp_nsmul, nsmul_eq_mul]; norm_num
 
 section
 
@@ -108,12 +125,12 @@ theorem valued_a₄_le_one : Valued.v W.a₄ ≤ 1 := by
   rw [← hW, WeierstrassCurve.map_a₄]; exact W₀.a₄.2
 
 /-- The `a₆`-coefficient of a curve with an integral model is integral. -/
-private theorem valued_a₆_le_one : Valued.v W.a₆ ≤ 1 := by
+theorem valued_a₆_le_one : Valued.v W.a₆ ≤ 1 := by
   rw [← hW, WeierstrassCurve.map_a₆]; exact W₀.a₆.2
 
 /-- For `v(x) > 1`, the right-hand side of the Weierstrass equation has valuation `v(x)³`: the
 `x³` term strictly dominates the rest. -/
-private lemma valued_rhs_eq {x : v.adicCompletion K} (hA1 : 1 < Valued.v x) :
+private lemma valued_rhs_eq {x : F} (hA1 : 1 < Valued.v x) :
     Valued.v (x ^ 3 + (W.a₂ * x ^ 2 + (W.a₄ * x + W.a₆))) = Valued.v x ^ 3 := by
   set A := Valued.v x
   have h1 : Valued.v (W.a₂ * x ^ 2) ≤ A ^ 2 := by
@@ -133,7 +150,7 @@ private lemma valued_rhs_eq {x : v.adicCompletion K} (hA1 : 1 < Valued.v x) :
 
 /-- When `v(y)` dominates `v(x)` and exceeds `1`, the left-hand side of the Weierstrass equation
 has valuation `v(y)²`: the `y²` term strictly dominates the rest. -/
-private lemma valued_lhs_eq {x y : v.adicCompletion K} (hAB : Valued.v x < Valued.v y)
+private lemma valued_lhs_eq {x y : F} (hAB : Valued.v x < Valued.v y)
     (hB1 : 1 < Valued.v y) : Valued.v (y ^ 2 + (W.a₁ * x * y + W.a₃ * y)) = Valued.v y ^ 2 := by
   set B := Valued.v y
   have h2 : Valued.v (W.a₁ * x * y) < B ^ 2 := by
@@ -153,7 +170,7 @@ private lemma valued_lhs_eq {x y : v.adicCompletion K} (hAB : Valued.v x < Value
 
 /-- A common bound `C ≥ 1` on `v(x)` and `v(y)` bounds the left-hand side of the Weierstrass
 equation by `C²`. -/
-private lemma valued_lhs_le {x y : v.adicCompletion K} {C : ℤᵐ⁰} (hxC : Valued.v x ≤ C)
+private lemma valued_lhs_le {x y : F} {C : ℤᵐ⁰} (hxC : Valued.v x ≤ C)
     (hyC : Valued.v y ≤ C) (h1C : 1 ≤ C) :
     Valued.v (y ^ 2 + (W.a₁ * x * y + W.a₃ * y)) ≤ C ^ 2 := by
   refine le_trans (Valued.v.map_add _ _) (max_le ?_ (le_trans (Valued.v.map_add _ _)
@@ -173,7 +190,7 @@ end
 
 /-- The two sides of the Weierstrass equation have the same valuation, for any point on the
 curve. -/
-private lemma valued_lhs_eq_rhs {x y : v.adicCompletion K} (hxy : W.Equation x y) :
+private lemma valued_lhs_eq_rhs {x y : F} (hxy : W.Equation x y) :
     Valued.v (y ^ 2 + (W.a₁ * x * y + W.a₃ * y)) =
       Valued.v (x ^ 3 + (W.a₂ * x ^ 2 + (W.a₄ * x + W.a₆))) :=
   congrArg Valued.v (by linear_combination (W.equation_iff x y).mp hxy)
@@ -187,7 +204,7 @@ include hW
 If `v(x) = exp 1` then the right-hand side of the Weierstrass equation has valuation `exp 3`. The
 left-hand side cannot match it: for `v(y) ≤ exp 1` it is bounded by `exp 2`, and for `v(y) > exp 1`
 it equals `v(y)²`, which is an even power of `exp` and so is never `exp 3`. -/
-private lemma valued_ne_exp_one {x y : v.adicCompletion K} (hxy : W.Equation x y) :
+private lemma valued_ne_exp_one {x y : F} (hxy : W.Equation x y) :
     Valued.v x ≠ exp (1 : ℤ) := by
   intro hA1
   have hval := valued_lhs_eq_rhs hxy
@@ -198,8 +215,7 @@ private lemma valued_ne_exp_one {x y : v.adicCompletion K} (hxy : W.Equation x y
   rcases le_or_gt (Valued.v y) (exp 1) with hB1 | hB1
   · -- `v(y) ≤ exp 1` bounds the left-hand side by `exp 2 < exp 3`
     have hle := valued_lhs_le hW hA1.le hB1 (by rw [← exp_zero, exp_le_exp]; lia)
-    rw [hval, hRHS, show (exp 1 : ℤᵐ⁰) ^ 2 = exp (2 : ℤ) by
-      rw [← exp_nsmul, nsmul_eq_mul]; norm_num, exp_le_exp] at hle
+    rw [hval, hRHS, exp_one_sq, exp_le_exp] at hle
     lia
   · -- `v(y) > exp 1` gives `v(y)² = exp 3`, impossible by parity
     have hB3 : Valued.v y ^ 2 = exp (3 : ℤ) := by
@@ -214,7 +230,7 @@ private lemma valued_ne_exp_one {x y : v.adicCompletion K} (hxy : W.Equation x y
 /-- The `x`-half of the dichotomy: an `x`-coordinate whose pole has order less than two is
 integral. Its valuation is a power of `exp`, the exponent is at most `1` by hypothesis, and
 `valued_ne_exp_one` rules the exponent `1` out. -/
-private lemma valued_x_le_one_of_lt_exp_two {x y : v.adicCompletion K} (hxy : W.Equation x y)
+private lemma valued_x_le_one_of_lt_exp_two {x y : F} (hxy : W.Equation x y)
     (hx : Valued.v x < exp (2 : ℤ)) : Valued.v x ≤ 1 := by
   rcases eq_or_ne (Valued.v x) 0 with h0 | h0
   · exact h0 ▸ zero_le
@@ -231,7 +247,7 @@ private lemma valued_x_le_one_of_lt_exp_two {x y : v.adicCompletion K} (hxy : W.
 
 The `x`-coordinate of an affine point of `W` is either integral or has a pole of order at least
 two, and in the former case the `y`-coordinate is integral too. -/
-theorem valued_le_one_of_valued_x_lt_exp_two {x y : v.adicCompletion K} (hxy : W.Equation x y)
+theorem valued_x_le_one_and_valued_y_le_one_of_valued_x_lt_exp_two {x y : F} (hxy : W.Equation x y)
     (hx : Valued.v x < exp (2 : ℤ)) : Valued.v x ≤ 1 ∧ Valued.v y ≤ 1 := by
   have hA1 := valued_x_le_one_of_lt_exp_two hW hxy hx
   refine ⟨hA1, ?_⟩
@@ -239,7 +255,7 @@ theorem valued_le_one_of_valued_x_lt_exp_two {x y : v.adicCompletion K} (hxy : W
   -- (`isIntegral_y_of_equation_of_isIntegral_x`), and `O_v` is integrally closed in `K_v`.
   obtain ⟨y₀, hy₀⟩ := IsIntegrallyClosed.isIntegral_iff.mp
     (_root_.TauCeti.WeierstrassCurve.isIntegral_y_of_equation_of_isIntegral_x W₀ (hW ▸ hxy)
-      (isIntegral_algebraMap (x := (⟨x, hA1⟩ : v.adicCompletionIntegers K))))
+      (isIntegral_algebraMap (x := (⟨x, hA1⟩ : (Valued.v : Valuation F ℤᵐ⁰).valuationSubring))))
   exact hy₀ ▸ y₀.2
 
 end
