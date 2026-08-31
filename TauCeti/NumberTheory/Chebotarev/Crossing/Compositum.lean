@@ -7,7 +7,8 @@ module
 
 public import Mathlib.FieldTheory.Galois.Basic
 public import Mathlib.NumberTheory.Cyclotomic.Gal
-public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+public import TauCeti.FieldTheory.IntermediateField.Adjoin.SupFieldRange
+public import TauCeti.NumberTheory.NumberField.Cyclotomic.Finrank
 
 /-!
 # The cyclotomic compositum `M = L(μ_m)` and its joint restriction isomorphism
@@ -21,28 +22,32 @@ character — are *jointly* bijective:
 
 ## Main results
 
-* `NumberField.Chebotarev.finrank_eq_totient`: the degree identity `[M : K] = φ m` for an
-  `m`-th cyclotomic extension `M / K` of number fields with `m` coprime to `discr K`.
-* `NumberField.Chebotarev.isGalois_of_isCyclotomicExtension`: `M / K` is itself Galois, so
-  `Gal(M/K)` below is not an extra assumption.
+* `NumberField.Chebotarev.isGalois_of_isGalois_of_isCyclotomicExtension`: `M / K` is itself
+  Galois, so `Gal(M/K)` below is not an extra assumption.
+* `NumberField.Chebotarev.autToPow_bijective`: the cyclotomic character
+  `Gal(M/L) → (ZMod m)ˣ` is bijective.
 * `NumberField.Chebotarev.restrictNormalHom_prod_autToPow_injective`: the joint restriction
   is faithful (no arithmetic hypothesis needed).
 * `NumberField.Chebotarev.restrictNormalHom_prod_autToPow_bijective`: it is bijective.
-* `NumberField.Chebotarev.galEquivProd`: that map packaged as a `MulEquiv`.
-* `NumberField.Chebotarev.autToPow_bijective`: the cyclotomic character
-  `Gal(M/L) → (ZMod m)ˣ` is bijective.
+* `NumberField.Chebotarev.galEquivProd`: that map packaged as a `MulEquiv`, with
+  `NumberField.Chebotarev.galEquivProd_apply` computing both of its components.
+
+The two general prerequisites this rests on are stated where they belong rather than here:
+the degree identity `[M : K] = φ m` is `IsCyclotomicExtension.finrank_eq_totient` in
+`TauCeti.NumberTheory.NumberField.Cyclotomic.Finrank`, and the compositum step
+`K(ζ) ⊔ L = ⊤` is `TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top` in
+`TauCeti.FieldTheory.IntermediateField.Adjoin.SupFieldRange`. Neither mentions Chebotarev.
 
 ## Implementation notes
 
-That `M / K` is Galois is *derived*, not assumed: `M` is the compositum of `K(ζ)` with the
-image of `L` (`adjoin_sup_fieldRange_eq_top`), both of which are normal over `K`, and the
-engine for a compositum of two normal extensions is Mathlib's `IntermediateField.normal_sup`.
-So `Gal(M/K)` below rests on no hypothesis beyond `IsGalois K L` and the cyclotomic tower.
+That `M / K` is Galois is *derived*, not assumed: `M` is the compositum of `L` with `K(ζ)`,
+both of which are normal over `K`, and the engine for a compositum of two normal extensions is
+Mathlib's `IntermediateField.normal_sup`. So `Gal(M/K)` below rests on no hypothesis beyond
+`IsGalois K L` and the cyclotomic tower.
 
 Faithfulness of the joint restriction is *not* re-derived here: it is Mathlib's compositum
 engine `IntermediateField.fixingSubgroup_sup` (with `fixingSubgroup_top`), applied to `K(ζ)`
-and the image of `L` inside `M`, whose compositum is `M` by `adjoin_sup_fieldRange_eq_top`.
-We invoke that shared lemma rather than
+and the image of `L` inside `M`. We invoke that shared lemma rather than
 `IntermediateField.restrictRestrictAlgEquivMapHom_injective`, which is built from it, because
 the latter concerns `Gal(M/L) →* Gal(K(ζ)/K)` whereas the map here is defined on `Gal(M/K)`;
 using it would first require transporting an element of `Gal(M/K)` that fixes `L` into
@@ -61,79 +66,6 @@ public section
 
 namespace NumberField.Chebotarev
 
-/-- **The compositum step.** If `M` is generated over `L` by `ζ`, then inside `M` the
-compositum of `K(ζ)` with the image of `L` is all of `M`, for any base field `K` of the
-tower. This is the input to Mathlib's compositum engine
-(`IntermediateField.fixingSubgroup_sup`) and is used both for the degree identity and for
-faithfulness of the joint restriction. -/
-theorem adjoin_sup_fieldRange_eq_top (K L M : Type*) [Field K] [Field L] [Field M]
-    [Algebra K L] [Algebra K M] [Algebra L M] [IsScalarTower K L M] {ζ : M}
-    (hadj : Algebra.adjoin L ({ζ} : Set M) = ⊤) :
-    IntermediateField.adjoin K {ζ} ⊔ (IsScalarTower.toAlgHom K L M).fieldRange = ⊤ := by
-  refine top_le_iff.mp fun x _ ↦ ?_
-  have hx : x ∈ Algebra.adjoin L ({ζ} : Set M) := hadj ▸ Algebra.mem_top
-  refine Algebra.adjoin_induction (fun y hy ↦ ?_) (fun r ↦ ?_)
-    (fun a b _ _ ha hb ↦ add_mem ha hb) (fun a b _ _ ha hb ↦ mul_mem ha hb) hx
-  · rw [Set.mem_singleton_iff] at hy
-    subst hy
-    exact le_sup_left (α := IntermediateField K M)
-      (IntermediateField.mem_adjoin_simple_self K y)
-  · exact le_sup_right (α := IntermediateField K M) ⟨r, rfl⟩
-
-/-- A prime dividing the discriminant of an `m`-th cyclotomic extension of `ℚ` divides `m`. -/
-theorem prime_dvd_of_dvd_natAbs_discr (E : Type*) [Field E] [NumberField E] (m : ℕ) [NeZero m]
-    [IsCyclotomicExtension {m} ℚ E] {p : ℕ} (hp : p.Prime)
-    (hpd : p ∣ (NumberField.discr E).natAbs) : p ∣ m := by
-  refine hp.dvd_of_dvd_pow (n := m.totient) (hpd.trans ?_)
-  obtain ⟨c, hc⟩ := Nat.prod_primeFactors_pow_totient_ediv_dvd (NeZero.pos m)
-  rw [IsCyclotomicExtension.Rat.natAbs_discr (K := E) (n := m), hc,
-    Nat.mul_div_cancel_left _ (Finset.prod_pos fun q hq ↦
-      pow_pos (Nat.prime_of_mem_primeFactors hq).pos _)]
-  exact dvd_mul_left _ _
-
-/-- **The cyclotomic degree over a number field base.** If `M / K` is an `m`-th cyclotomic
-extension of number fields and `m` is coprime to `discr K`, then `[M : K] = φ m`. -/
-theorem finrank_eq_totient (K M : Type*) [Field K] [NumberField K] [Field M] [NumberField M]
-    [Algebra K M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} K M]
-    (hcop : ((NumberField.discr K).natAbs).Coprime m) :
-    Module.finrank K M = m.totient := by
-  obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot (S := {m}) K M
-    (Set.mem_singleton m) (NeZero.ne m)
-  set K₁ : IntermediateField ℚ M := IntermediateField.adjoin ℚ {ζ}
-  set K₂ : IntermediateField ℚ M := (IsScalarTower.toAlgHom ℚ K M).fieldRange
-  have : IsCyclotomicExtension {m} ℚ K₁ :=
-    hζ.intermediateField_adjoin_isCyclotomicExtension (K := ℚ)
-  have : IsGalois ℚ K₁ := IsCyclotomicExtension.isGalois (S := {m}) (K := ℚ) (L := K₁)
-  have hfinK₁ : Module.finrank ℚ K₁ = m.totient :=
-    IsCyclotomicExtension.finrank K₁ (Polynomial.cyclotomic.irreducible_rat (NeZero.pos m))
-  have hsup : K₁ ⊔ K₂ = ⊤ :=
-    adjoin_sup_fieldRange_eq_top ℚ K M
-      (IsCyclotomicExtension.adjoin_primitive_root_eq_top (n := m) hζ)
-  let eK₂ : K ≃+* K₂ := ((IsScalarTower.toAlgHom ℚ K M : K →+* M)).rangeRestrictFieldEquiv
-  have hdiscrK₂ : NumberField.discr K₂ = NumberField.discr K :=
-    (NumberField.discr_eq_discr_of_ringEquiv (f := eK₂)).symm
-  have hcoprime : IsCoprime (NumberField.discr K₁) (NumberField.discr K₂) := by
-    rw [hdiscrK₂, Int.isCoprime_iff_gcd_eq_one, Int.gcd]
-    by_contra hne
-    obtain ⟨p, hp, hpdvd⟩ := Nat.exists_prime_and_dvd hne
-    rw [Nat.dvd_gcd_iff] at hpdvd
-    obtain ⟨hpa, hpb⟩ := hpdvd
-    have hpm : p ∣ m := prime_dvd_of_dvd_natAbs_discr K₁ m hp hpa
-    have hpgcd : p ∣ Nat.gcd (NumberField.discr K).natAbs m := Nat.dvd_gcd hpb hpm
-    rw [hcop] at hpgcd
-    exact hp.one_lt.ne' (Nat.dvd_one.mp hpgcd)
-  have hld : K₁.LinearDisjoint K₂ :=
-    NumberField.linearDisjoint_of_isGalois_isCoprime_discr (L := M) K₁ K₂ hcoprime
-  have hfr : Module.finrank K₂ M = Module.finrank ℚ K₁ := hld.finrank_right_eq_finrank hsup
-  have hrelabel : Module.finrank K M = Module.finrank K₂ M := by
-    refine Algebra.finrank_eq_of_equiv_equiv eK₂ (RingEquiv.refl M) ?_
-    ext x
-    -- Both sides are the image of `x` in `M`; `eK₂` is that map with its range restricted,
-    -- so unfolding the range coercion makes the two sides syntactically equal.
-    change ((eK₂ x : M)) = (IsScalarTower.toAlgHom ℚ K M : K →+* M) x
-    rfl
-  rw [hrelabel, hfr, hfinK₁]
-
 section Compositum
 
 variable (K L M : Type*) [Field K] [NumberField K] [Field L] [NumberField L] [Field M]
@@ -144,15 +76,19 @@ include L m in
 omit [NumberField L] in
 /-- **The cyclotomic compositum of a Galois extension is Galois.** If `L / K` is Galois and
 `M = L(μ_m)`, then `M / K` is Galois: `M` is the compositum of `L` with `K(ζ)`
-(`adjoin_sup_fieldRange_eq_top`), both of which are normal over `K`, and a compositum of normal
-extensions is normal (`IntermediateField.normal_sup`). Separability is automatic in
-characteristic zero.
+(`TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top`), both of which are normal over `K`,
+and a compositum of normal extensions is normal (`IntermediateField.normal_sup`). Separability
+is automatic in characteristic zero.
+
+Both tower hypotheses are needed, which is what the name records: the cyclotomic extension is
+`M / L`, and `L / K` is Galois. Mathlib's `IsCyclotomicExtension.isGalois` is the one-step
+statement, for a cyclotomic extension of the base itself.
 
 This is what makes `IsGalois K M` a *conclusion* of this file rather than a hypothesis of the
 results below. It is a theorem and not an `instance` because neither `L` nor `m` can be
 recovered from the goal `IsGalois K M`, so there is no synthesization order; call sites
 introduce it with `have` instead. -/
-theorem isGalois_of_isCyclotomicExtension : IsGalois K M := by
+theorem isGalois_of_isGalois_of_isCyclotomicExtension : IsGalois K M := by
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot (S := {m}) L M
     (Set.mem_singleton m) (NeZero.ne m)
   have hcyc : IsCyclotomicExtension {m} K (IntermediateField.adjoin K {ζ}) :=
@@ -164,7 +100,7 @@ theorem isGalois_of_isCyclotomicExtension : IsGalois K M := by
   have hsup : Normal K
       (IntermediateField.adjoin K {ζ} ⊔ (IsScalarTower.toAlgHom K L M).fieldRange :
         IntermediateField K M) := IntermediateField.normal_sup K M _ _
-  rw [adjoin_sup_fieldRange_eq_top K L M
+  rw [TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top K L M
     (IsCyclotomicExtension.adjoin_primitive_root_eq_top (n := m) hζ)] at hsup
   have : Normal K M := Normal.of_algEquiv (h := hsup) IntermediateField.topEquiv
   exact ⟨⟩
@@ -172,12 +108,12 @@ theorem isGalois_of_isCyclotomicExtension : IsGalois K M := by
 /-- **The cyclotomic character of the top layer is bijective.** For `M = L(μ_m)` with `m`
 coprime to `discr L`, the character `Gal(M/L) → (ZMod m)ˣ` is a bijection: it is injective by
 `IsPrimitiveRoot.autToPow_injective`, and both sides have `φ m` elements by
-`finrank_eq_totient`. -/
+`IsCyclotomicExtension.finrank_eq_totient`. -/
 theorem autToPow_bijective (hcop : ((NumberField.discr L).natAbs).Coprime m)
     {ζ : M} (hζ : IsPrimitiveRoot ζ m) : Function.Bijective (hζ.autToPow L) := by
   have : IsGalois L M := IsCyclotomicExtension.isGalois (S := {m}) (K := L) (L := M)
   have hcard : Nat.card Gal(M/L) = Nat.card (ZMod m)ˣ := by
-    rw [IsGalois.card_aut_eq_finrank L M, finrank_eq_totient L M m hcop,
+    rw [IsGalois.card_aut_eq_finrank L M, IsCyclotomicExtension.finrank_eq_totient L M m hcop,
       Nat.card_eq_fintype_card, ZMod.card_units_eq_totient]
   exact (Nat.bijective_iff_injective_and_card _).mpr ⟨hζ.autToPow_injective L, hcard⟩
 
@@ -226,7 +162,7 @@ theorem restrictNormalHom_prod_autToPow_injective {ζ : M} (hζ : IsPrimitiveRoo
       exact hLfix x
   have htop : IntermediateField.adjoin K {ζ} ⊔ (IsScalarTower.toAlgHom K L M).fieldRange
       = (⊤ : IntermediateField K M) :=
-    adjoin_sup_fieldRange_eq_top K L M
+    TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top K L M
       (IsCyclotomicExtension.adjoin_primitive_root_eq_top (n := m) hζ)
   rw [htop, IntermediateField.fixingSubgroup_top, Subgroup.mem_bot] at hmem
   exact hmem
@@ -234,15 +170,16 @@ theorem restrictNormalHom_prod_autToPow_injective {ζ : M} (hζ : IsPrimitiveRoo
 /-- **The joint restriction is bijective.** The two restrictions out of `Gal(M/K)` — to
 `Gal(L/K)`, and to `(ZMod m)ˣ` via the cyclotomic character — are jointly bijective.
 Faithfulness is `restrictNormalHom_prod_autToPow_injective`; surjectivity is then forced by
-the degree identity `finrank_eq_totient`, since `[M : K] = [L : K] · φ m`. -/
+the degree identity `IsCyclotomicExtension.finrank_eq_totient`, since `[M : K] = [L : K] · φ m`.
+-/
 theorem restrictNormalHom_prod_autToPow_bijective
     (hcop : ((NumberField.discr L).natAbs).Coprime m) {ζ : M} (hζ : IsPrimitiveRoot ζ m) :
     Function.Bijective ((AlgEquiv.restrictNormalHom L).prod (hζ.autToPow K)) := by
   have : IsGalois L M := IsCyclotomicExtension.isGalois (S := {m}) (K := L) (L := M)
-  have : IsGalois K M := isGalois_of_isCyclotomicExtension K L M m
+  have : IsGalois K M := isGalois_of_isGalois_of_isCyclotomicExtension K L M m
   have hcard : Nat.card Gal(M/K) = Nat.card (Gal(L/K) × (ZMod m)ˣ) := by
     rw [Nat.card_prod, IsGalois.card_aut_eq_finrank K M, IsGalois.card_aut_eq_finrank K L,
-      ← Module.finrank_mul_finrank K L M, finrank_eq_totient L M m hcop,
+      ← Module.finrank_mul_finrank K L M, IsCyclotomicExtension.finrank_eq_totient L M m hcop,
       Nat.card_eq_fintype_card (α := (ZMod m)ˣ), ZMod.card_units_eq_totient]
   exact (Nat.bijective_iff_injective_and_card _).mpr
     ⟨restrictNormalHom_prod_autToPow_injective K L M m hζ, hcard⟩
@@ -251,6 +188,19 @@ theorem restrictNormalHom_prod_autToPow_bijective
 noncomputable def galEquivProd (hcop : ((NumberField.discr L).natAbs).Coprime m)
     {ζ : M} (hζ : IsPrimitiveRoot ζ m) : Gal(M/K) ≃* Gal(L/K) × (ZMod m)ˣ :=
   MulEquiv.ofBijective _ (restrictNormalHom_prod_autToPow_bijective K L M m hcop hζ)
+
+/-- Both components of `galEquivProd`: it sends `σ` to its restriction to `L` paired with its
+cyclotomic character. Consumers should compute with this rather than unfolding the
+`MulEquiv.ofBijective` that packages it. -/
+@[simp]
+theorem galEquivProd_apply (hcop : ((NumberField.discr L).natAbs).Coprime m)
+    {ζ : M} (hζ : IsPrimitiveRoot ζ m) (σ : Gal(M/K)) :
+    galEquivProd K L M m hcop hζ σ = (σ.restrictNormal L, hζ.autToPow K σ) := by
+  -- Not a bare `rfl`: this theorem is exported, so `galEquivProd`'s body is not available for
+  -- unfolding downstream. Rewriting by its equation lemma first leaves a defeq between
+  -- `AlgEquiv.restrictNormalHom L σ` and `σ.restrictNormal L`, which is Mathlib's to discharge.
+  rw [galEquivProd]
+  rfl
 
 end Compositum
 
