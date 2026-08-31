@@ -27,9 +27,11 @@ vanishes, and `F(z, ι(z)) = ι(z₃(z, ι(z))) = ι(0) = 0`.
 
 ## Implementation notes
 
-Both results need `O` to be a domain in which `2 ≠ 0`, and need `ι ≠ X`; over the universal
-curve these are discharged once and for all, which is where they belong. They are carried as
-hypotheses here rather than as instance arguments.
+Both results need `O` to be a domain in which `2 ≠ 0`. The nondegeneracy `ι ≠ z` that the chord
+argument turns on is not a second hypothesis: it follows from `2 ≠ 0` by comparing linear
+coefficients, and is derived here. Over the universal curve `2 ≠ 0` is discharged once and for
+all, which is where it belongs; it is carried as a hypothesis here rather than as an instance
+argument.
 
 The specialization is the substitution of the family `Sum.elim X (fun _ ↦ formalInverse W)`,
 written inline throughout, as `Add/Unit.lean` writes its own two families inline: it appears only
@@ -260,6 +262,23 @@ private theorem subst_invPair_formalIntercept_mul :
     formalInverse_def W
   linear_combination formalInverse W * hi₁ - X () * hi₂ + formalW W * hd
 
+/-! ### The formal inverse is not the identity -/
+
+/-- **The formal inverse is not the identity** when `2 ≠ 0`: the linear coefficient of `ι` is
+`-1`, while that of `z` is `1`. This discharges the nondegeneracy the chord argument needs, so
+neither of the two results below has to carry it as a hypothesis. -/
+private theorem formalInverse_ne_X (h2 : (2 : O) ≠ 0) : formalInverse W ≠ X () := by
+  intro h
+  -- `PowerSeries.X` is `MvPowerSeries.X ()`: defeq, but not syntactically equal, so `h` is
+  -- restated here in the one-variable spelling the coefficient lemmas are stated in.
+  have h1 : PowerSeries.coeff 1 (formalInverse W) = PowerSeries.coeff 1 PowerSeries.X :=
+    congrArg (PowerSeries.coeff 1) h
+  rw [formalInverse_def, map_neg, PowerSeries.coeff_succ_X_mul,
+    PowerSeries.coeff_zero_eq_constantCoeff_apply, PowerSeries.constantCoeff_invOfUnit,
+    PowerSeries.coeff_one_X] at h1
+  simp only [inv_one, Units.val_one] at h1
+  exact h2 (by linear_combination -h1)
+
 section Domain
 
 variable [IsDomain O]
@@ -302,14 +321,15 @@ private theorem invPair_vieta_cofactor_absurd (h2 : (2 : O) ≠ 0)
         PowerSeries.X_dvd_iff.mpr (by simp [hddef])
       obtain ⟨c, hc⟩ := h1d
       exact ⟨c, by rw [hd]; linear_combination X () * hc⟩
-    have d3 : (X () : MvPowerSeries Unit O) ∣ formalInverse W - X () :=
-      PowerSeries.X_dvd_iff.mpr
-        (by simp [show (X () : MvPowerSeries Unit O) = PowerSeries.X from rfl])
-    rw [show (X () : MvPowerSeries Unit O) ^ 4 = X () * X () ^ 2 * X () by ring]
+    have d3 : (X () : MvPowerSeries Unit O) ∣ formalInverse W - X () := ⟨-d - 1, by rw [hd]; ring⟩
+    -- The three factors above carry `z`, `z ^ 2` and `z` respectively; split `z ^ 4` to match.
+    have hsplit : (X () : MvPowerSeries Unit O) ^ 4 = X () * X () ^ 2 * X () := by ring
+    rw [hsplit]
     exact mul_dvd_mul (mul_dvd_mul (Dvd.dvd.mul_left d1 _) d2) d3
   have h3 := congrArg (PowerSeries.coeff 3) hcontr
   rw [PowerSeries.X_pow_dvd_iff.mp hdvd 3 (by lia), formalW_eq_X_pow_mul_formalU,
-    mul_assoc, show (3 : ℕ) = 0 + 3 from rfl, PowerSeries.coeff_X_pow_mul] at h3
+    mul_assoc, PowerSeries.coeff_X_pow_mul'] at h3
+  simp only [le_refl, ↓reduceIte, Nat.sub_self] at h3
   rw [PowerSeries.coeff_zero_eq_constantCoeff_apply, map_mul, constantCoeff_formalU,
     map_add, map_one, one_mul, hddef, PowerSeries.constantCoeff_invOfUnit] at h3
   simp only [inv_one, Units.val_one] at h3
@@ -317,12 +337,13 @@ private theorem invPair_vieta_cofactor_absurd (h2 : (2 : O) ≠ 0)
 
 /-- **The third point of the chord through a point and its formal inverse is the origin.**
 
-Over a domain with `2 ≠ 0` and `ι ≠ z`: the chord through `(z, w(z))` and its negative is the
-vertical line through them, which meets the curve again only at the point at infinity. -/
-theorem subst_invPair_formalThirdRoot (hne : formalInverse W ≠ X ()) (h2 : (2 : O) ≠ 0) :
+Over a domain with `2 ≠ 0`: the chord through `(z, w(z))` and its negative is the vertical line
+through them, which meets the curve again only at the point at infinity. -/
+@[simp]
+theorem subst_invPair_formalThirdRoot (h2 : (2 : O) ≠ 0) :
     subst (Sum.elim X (fun _ ↦ formalInverse W) : Unit ⊕ Unit → MvPowerSeries Unit O)
       (formalThirdRoot W) = 0 := by
-  have hNp := subst_invPair_formalIntercept W hne
+  have hNp := subst_invPair_formalIntercept W (formalInverse_ne_X W h2)
   have hOL := subst_invPair_online W
   have hrel := subst_invPair_formalThirdRoot_relation W
   have hslope := subst_invPair_formalSlope_mul W
@@ -355,14 +376,17 @@ theorem subst_invPair_formalThirdRoot (hne : formalInverse W ≠ X ()) (h2 : (2 
 The sum of a point and its formal inverse is the origin. With the two unit laws in
 `Add/Unit.lean` and the symmetry `rename_swap_formalAdd`, this is the last of the group-law
 axioms that does not need associativity. -/
-theorem subst_invPair_formalAdd (hne : formalInverse W ≠ X ()) (h2 : (2 : O) ≠ 0) :
+@[simp]
+theorem subst_invPair_formalAdd (h2 : (2 : O) ≠ 0) :
     subst (Sum.elim X (fun _ ↦ formalInverse W) : Unit ⊕ Unit → MvPowerSeries Unit O)
       (formalAdd W) = 0 := by
   rw [formalAdd_def, subst_comp_subst_apply (hasSubst_formalThirdRoot W) (hasSubst_invPair W)]
-  rw [show (fun _ : Unit ↦ subst (Sum.elim X (fun _ ↦ formalInverse W) :
-      Unit ⊕ Unit → MvPowerSeries Unit O) (formalThirdRoot W)) =
-    (fun _ : Unit ↦ (0 : MvPowerSeries Unit O)) from
-      funext fun _ ↦ subst_invPair_formalThirdRoot W hne h2]
+  -- The outer substitution is at the constant family `0`, by the third-root vanishing above.
+  have hT : (fun _ : Unit ↦ subst (Sum.elim X (fun _ ↦ formalInverse W) :
+        Unit ⊕ Unit → MvPowerSeries Unit O) (formalThirdRoot W)) =
+      fun _ : Unit ↦ (0 : MvPowerSeries Unit O) :=
+    funext fun _ ↦ subst_invPair_formalThirdRoot W h2
+  rw [hT]
   exact PowerSeries.subst_zero_of_constantCoeff_zero (constantCoeff_formalInverse W)
 
 end Domain
