@@ -10,11 +10,11 @@ public import TauCeti.RingTheory.Valuation.Continuous.Basic
 import TauCeti.RingTheory.Valuation.LtAddSubgroup
 
 /-!
-# A sufficient criterion for continuity, tested on an open subset
+# A sufficient criterion for continuity, tested on a neighbourhood of zero
 
-If `U` is an open subset of `A` containing `0`, and the sublevel set at each attained value `v b`
-has open trace on `U`, then `v` is continuous on `A`. Continuity of a valuation is thus detected on
-any one neighbourhood of `0`.
+If `U` is a neighbourhood of `0` in `A`, and the sublevel set at each attained value `v b` has open
+trace on `U`, then `v` is continuous on `A`. Continuity of a valuation is thus detected on any one
+neighbourhood of `0`.
 
 ## The mechanism
 
@@ -29,23 +29,24 @@ and a subgroup which is a neighbourhood of `0` is open. That step is isolated as
 
 A test set enters only as one way of producing that neighbourhood. The trace `{u : U | v u < γ}` is
 in general far smaller than `{a : A | v a < γ}`, so openness does not pass between them for
-topological reasons; what openness of `U` buys is that the trace, open in the subspace topology, has
-open image in `A`, and that this image contains `0`, since `v 0 = 0 < γ`.
+topological reasons. Openness in the subspace topology says the trace is `V ∩ U` for some ambient
+open `V`; that `V` contains `0`, since `v 0 = 0 < γ`, so `V ∩ U` is a neighbourhood of `0` as soon
+as `U` is one, and it lies inside the sublevel set.
 
 That argument needs no more than continuity of translation by a fixed element, so it is stated over
 `[SeparatelyContinuousAdd A]` and over a `LinearOrderedCommMonoidWithZero` codomain, in keeping with
 `TauCeti/RingTheory/Valuation/Continuous/Basic.lean`, which asks for compatibility per result rather
 than up front. No Huber-ring hypothesis and no ideal of definition enter.
 
-## Why an open subset and not an open subring
+## Why a neighbourhood and not an open subring
 
 The intended instantiation is a ring of definition `A₀` of a Huber ring `A`, which is an open
 subring; that is the shape in which Wedhorn uses the criterion. The argument, however, consumes no
-closure property of the test set whatever — neither additive nor multiplicative — only that `U` is
-open and that `0 ∈ U`. Additive closure *is* essential to the proof, but of the sublevel set rather
-than of `U`: it is exactly the subgroup step above. Stating the result for an open subring would
-therefore carry a hypothesis the proof never uses, so the subring case is left to the caller, who
-supplies `A₀.zero_mem`.
+closure property of the test set whatever — neither additive nor multiplicative — and not even
+openness: only that `U` is a neighbourhood of `0`. Additive closure *is* essential to the proof, but
+of the sublevel set rather than of `U`: it is exactly the subgroup step above. Stating the result
+for an open subring would therefore carry hypotheses the proof never uses, so the subring case is
+left to the caller, who supplies `A₀.zero_mem` and `IsOpen.mem_nhds`.
 
 ## What is *not* proved here
 
@@ -131,23 +132,30 @@ theorem isOpen_lt_of_mem_nhds_zero {v : Valuation A Γ₀} {γ : Γ₀}
   exact (v.ltAddSubgroupOfNeZero hγ).isOpen_of_mem_nhds (g := 0)
     (by rwa [coe_ltAddSubgroupOfNeZero hγ])
 
-/-- **A sublevel set is open as soon as its trace on an open subset containing `0` is.**
+/-- **A sublevel set is open as soon as its trace on a neighbourhood of `0` is.**
 
-The two sets are not related by the topology — the trace is in general far smaller. For `γ ≠ 0`,
-openness of `U` makes the trace's image a neighbourhood of `0` — it is open, and contains `0`
-because `v 0 = 0 < γ` — and `isOpen_lt_of_mem_nhds_zero` does the rest. For `γ = 0` both sets are
-empty and there is nothing to prove. -/
-theorem isOpen_lt_of_isOpen_trace_lt {U : Set A} (hU : IsOpen U) (hU0 : (0 : A) ∈ U)
+The two sets are not related by the topology — the trace is in general far smaller. `U` itself need
+not be open. For `γ ≠ 0`, openness of the trace in the subspace topology exhibits it as `V ∩ U` for
+an ambient open `V`; that `V` contains `0` because `v 0 = 0 < γ`, so `V ∩ U` is a neighbourhood of
+`0` lying inside the sublevel set, and `isOpen_lt_of_mem_nhds_zero` does the rest. For `γ = 0` both
+sets are empty and there is nothing to prove. -/
+theorem isOpen_lt_of_isOpen_trace_lt {U : Set A} (hU : U ∈ 𝓝 (0 : A))
     {v : Valuation A Γ₀} {γ : Γ₀} (h : IsOpen {u : U | v (u : A) < γ}) :
     IsOpen {a : A | v a < γ} := by
   rcases eq_or_ne γ 0 with rfl | hγ
   · simp
+  obtain ⟨V, hV, hVU⟩ := isOpen_induced_iff.mp h
+  have h0U : (0 : A) ∈ U := mem_of_mem_nhds hU
+  have h0V : (⟨0, h0U⟩ : U) ∈ Subtype.val ⁻¹' V := by
+    rw [hVU]; simpa using zero_lt_iff.mpr hγ
   refine isOpen_lt_of_mem_nhds_zero (Filter.mem_of_superset
-    ((hU.isOpenMap_subtype_val _ h).mem_nhds ⟨⟨0, hU0⟩, by simpa using zero_lt_iff.mpr hγ, rfl⟩) ?_)
-  rintro _ ⟨u, hu, rfl⟩
-  simpa using hu
+    (Filter.inter_mem (hV.mem_nhds h0V) hU) ?_)
+  rintro a ⟨haV, haU⟩
+  have hmem : (⟨a, haU⟩ : U) ∈ Subtype.val ⁻¹' V := haV
+  rw [hVU] at hmem
+  simpa using hmem
 
-/-- **A sufficient criterion for continuity, tested on an open subset containing `0`.** If the
+/-- **A sufficient criterion for continuity, tested on a neighbourhood of `0`.** If the
 sublevel set at each attained value `v b` has open trace on `U`, then `v` is continuous.
 
 The thresholds range over the values `v` attains on all of `A`, which is strictly more than
@@ -155,8 +163,8 @@ continuity of the restriction of `v` to a subring carried by `U` supplies: that 
 attained-value predicate for the subring, so it gives openness only at the values `v` takes on the
 subring. So this does **not** combine with `Valuation.IsContinuous.comap` to give Wedhorn's equality
 `Cont(A) = g⁻¹(Cont(B))` — see the module docstring for what closing that gap would cost. -/
-theorem isContinuous_of_forall_isOpen_trace_lt {U : Set A} (hU : IsOpen U) (hU0 : (0 : A) ∈ U)
+theorem isContinuous_of_forall_isOpen_trace_lt {U : Set A} (hU : U ∈ 𝓝 (0 : A))
     {v : Valuation A Γ₀} (h : ∀ b : A, IsOpen {u : U | v (u : A) < v b}) : v.IsContinuous :=
-  isContinuous_def.mpr fun b ↦ isOpen_lt_of_isOpen_trace_lt hU hU0 (h b)
+  isContinuous_def.mpr fun b ↦ isOpen_lt_of_isOpen_trace_lt hU (h b)
 
 end Valuation
