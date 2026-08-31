@@ -34,6 +34,11 @@ character — are *jointly* bijective:
 
 ## Implementation notes
 
+That `M / K` is Galois is *derived*, not assumed: `M` is the compositum of `K(ζ)` with the
+image of `L` (`adjoin_sup_fieldRange_eq_top`), both of which are normal over `K`, and the
+engine for a compositum of two normal extensions is Mathlib's `IntermediateField.normal_sup`.
+So `Gal(M/K)` below rests on no hypothesis beyond `IsGalois K L` and the cyclotomic tower.
+
 Faithfulness of the joint restriction is *not* re-derived here: it is Mathlib's compositum
 engine `IntermediateField.fixingSubgroup_sup` (with `fixingSubgroup_top`), applied to `K(ζ)`
 and the image of `L` inside `M`, whose compositum is `M` by `adjoin_sup_fieldRange_eq_top`.
