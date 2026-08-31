@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.NumberTheory.DirichletCharacter.Basic
 public import TauCeti.NumberTheory.ModularForms.CuspDescent
 
 /-!
@@ -308,6 +309,100 @@ theorem eq_zero_of_not_forall_unitsMap_eq_one {l : ℕ} [NeZero l] (hlN : l ∣ 
     exact slash_zpow_mul_mul_zpow_eq_smul k f hdet hT (hmul u') i j
   exact eq_zero_of_slash_eq_smul_of_slash_eq_smul k f _
     (fun h ↦ hne (Units.ext h)) halt (hmul 1)
+
+
+/-! ### The dichotomy -/
+
+/-- A Dirichlet character that factors through `d` is trivial on the kernel of `ZMod.unitsMap`.
+This is the hypothesis `TauCeti.cuspFormOfSmulSlashScaleGL` takes, read off `FactorsThrough`. -/
+lemma toUnitHom_eq_one_of_unitsMap_eq_one {χ : DirichletCharacter ℂ N} {d : ℕ} (hd : d ∣ N)
+    (h : χ.FactorsThrough d) (u : (ZMod N)ˣ) (hu : ZMod.unitsMap hd u = 1) : χ.toUnitHom u = 1 :=
+  MonoidHom.mem_ker.mp
+    (DirichletCharacter.factorsThrough_iff_ker_unitsMap hd |>.mp h (MonoidHom.mem_ker.mpr hu))
+
+omit [NeZero N] in
+/-- The character of a `FactorsThrough` witness is its lowered character, pulled back. -/
+lemma toUnitHom_eq_comp_unitsMap {χ : DirichletCharacter ℂ N} {d : ℕ}
+    (h : χ.FactorsThrough d) :
+    χ.toUnitHom = h.χ₀.toUnitHom.comp (ZMod.unitsMap h.dvd) := by
+  conv_lhs => rw [h.eq_changeLevel]
+  rw [DirichletCharacter.changeLevel_toUnitHom]
+
+omit [NeZero N] in
+/-- The `T`-factorisation lift carries the same nebentypus label as the element it lifts, once
+reduced to level `N / l`. The lower-left entry of a `Γ₀(N / l)` element vanishes there, so the
+recorded shift `γ' 1 0 * j` drops out. -/
+private lemma unitsMap_Gamma0Map_toHomUnits_eq_of_diag {l : ℕ} (hlN : l ∣ N) [NeZero (N / l)]
+    {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 N) (γ' : ↥(Gamma0 (N / l))) {j : ℤ}
+    (hdiag : γ 1 1 = (γ' : SL(2, ℤ)) 1 1 - (γ' : SL(2, ℤ)) 1 0 * j) :
+    ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) =
+      (Gamma0Map (N / l)).toHomUnits γ' := by
+  have hγ' : γ ∈ Gamma0 (N / l) := Gamma0_le_Gamma0_of_dvd (Nat.div_dvd_of_dvd hlN) hγ
+  rw [← Gamma0Map_toHomUnits_of_dvd (Nat.div_dvd_of_dvd hlN) ⟨γ, hγ⟩ hγ']
+  refine Units.ext ?_
+  have h10 : (((γ' : SL(2, ℤ)) 1 0 : ℤ) : ZMod (N / l)) = 0 := Gamma0_mem.mp γ'.property
+  rw [MonoidHom.coe_toHomUnits, MonoidHom.coe_toHomUnits, Gamma0Map_apply, Gamma0Map_apply,
+    hdiag]
+  push_cast
+  rw [h10]
+  ring
+
+/-- **The descended cusp form carries the lowered nebentypus.** `cuspFormOfSmulSlashScaleGL`
+produces a cusp form of level `N / l`; this identifies its nebentypus as the lowered character
+`hfac.χ₀`, which is what makes the descent an eigenform statement rather than merely a level
+statement. -/
+theorem cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace {l : ℕ} [NeZero l] [NeZero (N / l)]
+    (hlN : l ∣ N) (k : ℤ) {χ : DirichletCharacter ℂ N} (hfac : χ.FactorsThrough (N / l))
+    (f : ℍ → ℂ) (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)
+    (hgχ : g ∈ cuspFormCharSpace k χ.toUnitHom)
+    (hg : ⇑g = (l : ℂ) ^ (1 - k) • (f ∣[k] scaleGL l))
+    (hT : f ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) = f) :
+    cuspFormOfSmulSlashScaleGL l N hlN k χ.toUnitHom
+        (toUnitHom_eq_one_of_unitsMap_eq_one (Nat.div_dvd_of_dvd hlN) hfac) f g hgχ hg hT ∈
+      cuspFormCharSpace k hfac.χ₀.toUnitHom := by
+  rw [mem_cuspFormCharSpace_iff_nebentypus]
+  intro γ'
+  rw [coe_cuspFormOfSmulSlashScaleGL]
+  obtain ⟨i, j, c, γ, hc, hγ, hfactor, hdiag⟩ :=
+    exists_eq_T_zpow_mul_conjScale_mul_T_zpow l N hlN (γ' : SL(2, ℤ)) γ'.property
+  have hdet := det_pos_of_mem_slGL (MonoidHom.mem_range.mpr ⟨ModularGroup.T, rfl⟩)
+  have hconj := slash_conjScale_eq_smul_of_slash_scaleGL (k := k) f γ hc
+    (nebentypus_slash_scaleGL_of_mem_cuspFormCharSpace hgχ hg γ hγ)
+  -- the label of the lift reduces to the label of `γ'`, so the two characters agree
+  have hchar : (χ.toUnitHom ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) : ℂ) =
+      (hfac.χ₀.toUnitHom ((Gamma0Map (N / l)).toHomUnits γ') : ℂ) := by
+    rw [toUnitHom_eq_comp_unitsMap hfac, MonoidHom.comp_apply,
+      unitsMap_Gamma0Map_toHomUnits_eq_of_diag hlN hγ γ' hdiag]
+  rw [hfactor, map_mul, map_mul, map_zpow, map_zpow,
+    slash_zpow_mul_mul_zpow_eq_smul k f hdet hT hconj i j, hchar]
+
+/-- **The level-lowering dichotomy.** For `l ∣ N`, a Dirichlet character `χ` of level `N`, and a
+`T`-periodic `f : ℍ → ℂ` whose level-raise by `l` is a cusp form in `S_k(N, χ)`: *either* `χ`
+factors through `N / l` and `f` is itself a cusp form in `S_k(N / l, χ↓)` for the lowered
+character, *or* `f = 0`.
+
+This is Miyake's Theorem 4.6.4. The two horns are `TauCeti.cuspFormOfSmulSlashScaleGL` with
+`TauCeti.cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace`, and
+`TauCeti.eq_zero_of_not_forall_unitsMap_eq_one`; the case split is on the single proposition that
+one assumes and the other negates. -/
+theorem exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero {l : ℕ} [NeZero l] [NeZero (N / l)]
+    (hlN : l ∣ N) (k : ℤ) (χ : DirichletCharacter ℂ N) (f : ℍ → ℂ)
+    (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)
+    (hgχ : g ∈ cuspFormCharSpace k χ.toUnitHom)
+    (hg : ⇑g = (l : ℂ) ^ (1 - k) • (f ∣[k] scaleGL l))
+    (hT : f ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) = f) :
+    (∃ hfac : χ.FactorsThrough (N / l), ∃ F : CuspForm ((Gamma1 (N / l)).map (mapGL ℝ)) k,
+      F ∈ cuspFormCharSpace k hfac.χ₀.toUnitHom ∧ ⇑F = f) ∨ f = 0 := by
+  classical
+  by_cases hfac : χ.FactorsThrough (N / l)
+  · exact .inl ⟨hfac, _,
+      cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace hlN k hfac f g hgχ hg hT,
+      coe_cuspFormOfSmulSlashScaleGL l N hlN k χ.toUnitHom _ f g hgχ hg hT⟩
+  · refine .inr (eq_zero_of_not_forall_unitsMap_eq_one hlN k ?_ f
+      (nebentypus_slash_scaleGL_of_mem_cuspFormCharSpace hgχ hg) hT)
+    exact fun h ↦ hfac ((DirichletCharacter.factorsThrough_iff_ker_unitsMap
+      (Nat.div_dvd_of_dvd hlN)).mpr fun u hu ↦ MonoidHom.mem_ker.mpr
+        (h u (MonoidHom.mem_ker.mp hu)))
 
 
 end TauCeti
