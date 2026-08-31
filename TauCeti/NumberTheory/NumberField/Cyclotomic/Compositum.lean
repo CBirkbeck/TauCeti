@@ -22,28 +22,28 @@ character — are *jointly* bijective:
 
 ## Main results
 
-* `NumberField.Chebotarev.isGalois_of_isGalois_of_isCyclotomicExtension`: `M / K` is itself
+* `IsCyclotomicExtension.isGalois_of_isGalois_of_isCyclotomicExtension`: `M / K` is itself
   Galois, so `Gal(M/K)` below is not an extra assumption.
-* `NumberField.Chebotarev.autToPow_bijective`: the cyclotomic character
+* `IsCyclotomicExtension.autToPow_bijective`: the cyclotomic character
   `Gal(M/L) → (ZMod m)ˣ` is bijective.
-* `NumberField.Chebotarev.restrictNormalHom_prod_autToPow_injective`: the joint restriction
+* `IsCyclotomicExtension.restrictNormalHom_prod_autToPow_injective`: the joint restriction
   is faithful (no arithmetic hypothesis needed).
-* `NumberField.Chebotarev.restrictNormalHom_prod_autToPow_bijective`: it is bijective.
-* `NumberField.Chebotarev.galEquivProd`: that map packaged as a `MulEquiv`, with
-  `NumberField.Chebotarev.galEquivProd_apply` computing both of its components.
+* `IsCyclotomicExtension.galEquivProd`: that map packaged as a `MulEquiv`, with
+  `IsCyclotomicExtension.galEquivProd_apply` computing both of its components.
 
 The two general prerequisites this rests on are stated where they belong rather than here:
 the degree identity `[M : K] = φ m` is `IsCyclotomicExtension.finrank_eq_totient` in
 `TauCeti.NumberTheory.NumberField.Cyclotomic.Finrank`, and the compositum step
 `K(ζ) ⊔ L = ⊤` is `TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top` in
-`TauCeti.FieldTheory.IntermediateField.Adjoin.EqTop`. Neither mentions Chebotarev.
+`TauCeti.FieldTheory.IntermediateField.Adjoin.EqTop`.
 
 ## Implementation notes
 
 The file is split by hypothesis strength. `isGalois_of_isGalois_of_isCyclotomicExtension` and
 `restrictNormalHom_prod_autToPow_injective` are pure field theory and carry no `NumberField`
-instances — the first needs only `CharZero K` (algebraicity of `M / K` is derived inside the
-proof from `IsGalois K L` and the cyclotomic tower), and the second needs no arithmetic at all.
+instances — the first needs no hypothesis beyond the tower itself (algebraicity and separability
+of `M / K` are both derived inside the proof from `IsGalois K L` and the cyclotomic tower), and the
+second needs no arithmetic at all.
 Only the results downstream of the degree count, which mention `discr L`, take number fields.
 
 That `M / K` is Galois is *derived*, not assumed: `M` is the compositum of `L` with `K(ζ)`,
@@ -70,7 +70,7 @@ Adapted from the Birkbeck–Brasca Chebotarev density project.
 
 public section
 
-namespace NumberField.Chebotarev
+namespace IsCyclotomicExtension
 
 section Compositum
 
@@ -83,7 +83,10 @@ include L m in
 `M = L(μ_m)`, then `M / K` is Galois: `M` is the compositum of `L` with `K(ζ)`
 (`TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top`), both of which are normal over `K`,
 and a compositum of normal extensions is normal (`IntermediateField.normal_sup`). Separability
-is automatic in characteristic zero.
+is transitivity along the tower: `L / K` is separable because it is Galois, and `M / L` because a
+cyclotomic extension is (`IsCyclotomicExtension.isSeparable`) — no characteristic assumption is
+needed, since a primitive `m`-th root of unity exists in `M` only if the characteristic does not
+divide `m`.
 
 Both tower hypotheses are needed, which is what the name records: the cyclotomic extension is
 `M / L`, and `L / K` is Galois. Mathlib's `IsCyclotomicExtension.isGalois` is the one-step
@@ -93,7 +96,7 @@ This is what makes `IsGalois K M` a *conclusion* of this file rather than a hypo
 results below. It is a theorem and not an `instance` because neither `L` nor `m` can be
 recovered from the goal `IsGalois K M`, so there is no synthesization order; call sites
 introduce it with `have` instead. -/
-theorem isGalois_of_isGalois_of_isCyclotomicExtension [CharZero K] : IsGalois K M := by
+theorem isGalois_of_isGalois_of_isCyclotomicExtension : IsGalois K M := by
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot (S := {m}) L M
     (Set.mem_singleton m) (NeZero.ne m)
   -- `M / K` is algebraic: `L / K` is Galois hence algebraic, and `M / L` is a cyclotomic
@@ -113,6 +116,8 @@ theorem isGalois_of_isGalois_of_isCyclotomicExtension [CharZero K] : IsGalois K 
   rw [TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top K L M
     (IsCyclotomicExtension.adjoin_primitive_root_eq_top (n := m) hζ)] at hsup
   have : Normal K M := Normal.of_algEquiv (h := hsup) IntermediateField.topEquiv
+  have : Algebra.IsSeparable L M := IsCyclotomicExtension.isSeparable (S := {m}) (K := L) (L := M)
+  have : Algebra.IsSeparable K M := Algebra.IsSeparable.trans K L M
   exact ⟨⟩
 
 /-- **The joint restriction is faithful.** An automorphism of `M = L(μ_m)` over `K` that is
@@ -185,8 +190,10 @@ theorem autToPow_bijective (hcop : ((NumberField.discr L).natAbs).Coprime m)
 `Gal(L/K)`, and to `(ZMod m)ˣ` via the cyclotomic character — are jointly bijective.
 Faithfulness is `restrictNormalHom_prod_autToPow_injective`; surjectivity is then forced by
 the degree identity `IsCyclotomicExtension.finrank_eq_totient`, since `[M : K] = [L : K] · φ m`.
--/
-theorem restrictNormalHom_prod_autToPow_bijective
+
+`private`: it exists only to build `galEquivProd`, after which it is recoverable as
+`(galEquivProd K L M m hcop hζ).bijective`, so exporting it would duplicate that canonical API. -/
+private theorem restrictNormalHom_prod_autToPow_bijective
     (hcop : ((NumberField.discr L).natAbs).Coprime m) {ζ : M} (hζ : IsPrimitiveRoot ζ m) :
     Function.Bijective ((AlgEquiv.restrictNormalHom L).prod (hζ.autToPow K)) := by
   have : IsGalois L M := IsCyclotomicExtension.isGalois (S := {m}) (K := L) (L := M)
@@ -218,4 +225,4 @@ theorem galEquivProd_apply (hcop : ((NumberField.discr L).natAbs).Coprime m)
 
 end Compositum
 
-end NumberField.Chebotarev
+end IsCyclotomicExtension
