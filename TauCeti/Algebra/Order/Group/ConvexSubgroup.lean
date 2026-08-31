@@ -668,10 +668,12 @@ action on a representative is available as the rewrite `quotientBotMulEquiv_mk`.
 noncomputable def quotientBotMulEquiv : (Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup) ≃* Γ :=
   (QuotientGroup.quotientMulEquivOfEq (bot_toSubgroup (Γ := Γ))).trans QuotientGroup.quotientBot
 
+omit [IsOrderedMonoid Γ] in
 @[simp]
 theorem quotientBotMulEquiv_mk (a : Γ) :
     quotientBotMulEquiv ((a : Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup)) = a := rfl
 
+omit [IsOrderedMonoid Γ] in
 @[simp]
 theorem quotientBotMulEquiv_symm_apply (a : Γ) :
     quotientBotMulEquiv.symm a = (a : Γ ⧸ (⊥ : ConvexSubgroup Γ).toSubgroup) := rfl
