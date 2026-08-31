@@ -42,11 +42,11 @@ conjugation action.
 * `TauCeti.ConjClasses.card_carrier_dvd_card`: the size of a conjugacy class divides the order of
   the group, with `TauCeti.ConjClasses.card_carrier_cast_ne_zero` the consequence that the size of
   a class is nonzero in any semiring where the group order is.
-* `TauCeti.ConjClasses.mem_carrier_pow_iff`: an element lies in `C ^ j` exactly when it is a
-  `j`-th power of a member of `C`, with `TauCeti.ConjClasses.mk_pow` the computation rule.
-* `TauCeti.ConjClasses.pow_zero`, `TauCeti.ConjClasses.pow_one` and
-  `TauCeti.ConjClasses.pow_mul`: the identity and composition laws for that power.
-* `TauCeti.ConjClasses.map_pow`: the power is natural in the monoid.
+* `ConjClasses.mem_carrier_pow_iff`: an element lies in `C ^ j` exactly when it is a
+  `j`-th power of a member of `C`, with `ConjClasses.mk_pow` the computation rule.
+* `ConjClasses.pow_zero`, `ConjClasses.pow_one` and
+  `ConjClasses.pow_mul`: the identity and composition laws for that power.
+* `ConjClasses.map_pow`: the power is natural in the monoid.
 
 ## Implementation notes
 
@@ -60,7 +60,7 @@ multiplication on `ConjClasses M` — `Pow (ConjClasses M) ℕ` is a bare power 
 The power operation is developed for the Chebotarev roadmap (`Chebotarev/README.md` Layer 1,
 "consumed Frobenius classes and powers of conjugacy classes", whose `Suggested.lean` pins these
 signatures); its consumer there is the von Mangoldt fibre, which sums over the classes `C ^ j`.
-That is also why `TauCeti.ConjClasses.pow_two_cyclicFour` is kept as a regression: a group of
+That is also why `ConjClasses.pow_two_cyclicFour` is kept as a regression: a group of
 exponent two has no proper nonidentity square, so it cannot separate a correct power operation
 from one that collapses to the identity. This operation is *not* adapted from the
 Birkbeck–Brasca `chebotarev-density` development, which works with `ConjClasses.mk` and
@@ -212,7 +212,18 @@ of `C`. -/
 instance instPowConjClassesNat : Pow (ConjClasses M) ℕ where
   pow C j := Quotient.map (· ^ j) (fun _ _ h ↦ IsConj.pow j h) C
 
+end Powers
+
+end TauCeti
+
+/-! ### Powers of a conjugacy class
+
+These live in the root `ConjClasses` namespace, not under `TauCeti`, so that dot
+notation on Mathlib's `ConjClasses` type elaborates (`C.pow_zero`, `C.pow_mul`). -/
+
 namespace ConjClasses
+
+variable {M : Type*} [Monoid M]
 
 /-- The `j`-th power of the class of `a` is the class of `a ^ j`. -/
 @[simp]
@@ -266,7 +277,3 @@ theorem pow_two_cyclicFour :
   norm_cast
 
 end ConjClasses
-
-end Powers
-
-end TauCeti
