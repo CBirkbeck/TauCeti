@@ -55,10 +55,8 @@ built from `closure` in the forthcoming valuation-spectrum development of `Spv (
 * `TauCeti.ConvexSubgroup.mulArchimedean_iff_forall_eq_bot_or_eq_top` : A linearly ordered
   commutative group is `MulArchimedean` exactly when its only convex subgroups are `⊥`
   and `⊤`.
-* `TauCeti.ConvexSubgroup.quotientBotMulEquiv` : The quotient by `⊥` is the group itself, as a
-  multiplicative equivalence.
-* `TauCeti.ConvexSubgroup.quotientBotOrderIso` : the same map as an order isomorphism, so
-  order-theoretic properties transfer across it.
+* `TauCeti.ConvexSubgroup.quotientBotOrderIso` : The quotient by `⊥` is the group itself, as an
+  order isomorphism, so order-theoretic properties transfer across it.
 
 ## References
 
