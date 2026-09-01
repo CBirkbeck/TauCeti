@@ -24,6 +24,11 @@ containing them: this file base changes `W` along `O → MvPowerSeries σ O → 
 
 * `WeierstrassCurve.algebraMap_subst_formalW_wEquation` : the substituted `w`-expansion still
   solves the `w`-equation after being pushed into `KK`, now read on `fracCurve`.
+* `WeierstrassCurve.subst_pair_formalIntercept_eq_inl`,
+  `WeierstrassCurve.subst_pair_formalIntercept_eq_inr` : the chord's intercept at a pair, read
+  from either of the two points.
+* `WeierstrassCurve.subst_pair_formalIntercept_mul_sub` : the cross combination
+  `q₁ w(q₂) - q₂ w(q₁) = ν(q₁, q₂) * (q₁ - q₂)`, which is what the two readings buy.
 
 ## Provenance
 
@@ -117,6 +122,20 @@ theorem subst_pair_formalIntercept_eq_inr {q₁ q₂ : MvPowerSeries σ O} (h₁
   have hr : (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
       Unit ⊕ Unit → MvPowerSeries σ O) (Sum.inr ()) = q₂ := rfl
   rwa [hr] at h
+
+/-- The cross combination `q₁ w(q₂) - q₂ w(q₁)` is expressed through the intercept alone:
+`q₁ w(q₂) - q₂ w(q₁) = ν(q₁, q₂) * (q₁ - q₂)`.
+
+Reading the intercept from *both* points is what makes the slope cancel: subtracting the two
+readings weighted by `q₂` and `q₁` removes `λ` entirely. This is the form the associativity
+assembly needs in order to know that the chord's `x`-coordinates are distinct. -/
+theorem subst_pair_formalIntercept_mul_sub {q₁ q₂ : MvPowerSeries σ O}
+    (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0) :
+    q₁ * PowerSeries.subst q₂ (formalW W) - q₂ * PowerSeries.subst q₁ (formalW W) =
+      subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+        (formalIntercept W) * (q₁ - q₂) := by
+  linear_combination q₂ * subst_pair_formalIntercept_eq_inl W h₁ h₂ -
+    q₁ * subst_pair_formalIntercept_eq_inr W h₁ h₂
 
 /-! ### The parametrized point -/
 
