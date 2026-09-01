@@ -38,7 +38,7 @@ shift `T ^ i` — is read off the determinants rather than off a formula for tho
 
 ## Main results
 
-* `TauCeti.eq_zero_of_not_forall_unitsMap_eq_one`: **the vanishing horn**.
+* `TauCeti.eq_zero_of_not_forall_apply_eq_one_of_unitsMap_eq_one`: **the vanishing horn**.
 * `TauCeti.cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace`: the descent horn carries the
   lowered nebentypus `hfac.χ₀`.
 * `TauCeti.exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero`: **the level-lowering dichotomy**, in
@@ -81,20 +81,7 @@ namespace TauCeti
 
 variable {N : ℕ} [NeZero N]
 
-/-! ### The `Γ₀(N)` lift of a unit -/
-
-/-- Shorthand for the Bézout twist at a representative of a unit: `CongruenceSubgroup.gamma0Twist`
-at `p = (u : ZMod N).val`. It is reducible, so the `gamma0Twist` entry, membership and
-character-label lemmas apply to it unchanged. -/
-private noncomputable abbrev gamma0TwistOfUnit (u : (ZMod N)ˣ) : SL(2, ℤ) :=
-  gamma0Twist N (u : ZMod N).val (ZMod.val_coe_unit_coprime u)
-
-/-- **The Bézout twist at a representative of `u` lifts `u`.** The nebentypus reads the
-lower-right entry, and there that entry is `(u : ZMod N).val`. -/
-private lemma Gamma0Map_toHomUnits_gamma0TwistOfUnit (u : (ZMod N)ˣ) :
-    (Gamma0Map N).toHomUnits ⟨gamma0TwistOfUnit u, gamma0Twist_mem_Gamma0 _⟩ = u :=
-  (Gamma0Map_toHomUnits_gamma0Twist _).trans <|
-    Units.ext <| by rw [ZMod.coe_unitOfCoprime, ZMod.natCast_val, ZMod.cast_id]
+/-! ### The lower-left entry of the Bézout twist -/
 
 omit [NeZero N] in
 /-- The lower-left entry of the Bézout twist, factored as `l * (N / l)`. This is the shape
@@ -146,7 +133,7 @@ of the Bézout lift of `u` is a translate — on both sides — of the conjugate
 `u'` on which the character takes a *different* value. Since the function the vanishing argument
 is applied to is `T`-periodic, the two translations cost nothing, and the two sides therefore
 exhibit one slash with two different multipliers. -/
-private theorem exists_eq_T_zpow_mul_conjScale_mul_T_zpow_of_apply_ne {l : ℕ} [NeZero l]
+private theorem exists_apply_ne_and_eq_T_zpow_mul_conjScale_mul_T_zpow {l : ℕ} [NeZero l]
     (hlN : l ∣ N)
     {χ : (ZMod N)ˣ →* ℂˣ}
     (hχ : ¬ ∀ u : (ZMod N)ˣ, ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) u = 1 → χ u = 1) (u : (ZMod N)ˣ)
@@ -197,7 +184,8 @@ The hypotheses `hnb` and `hT` are exactly the ones
 `TauCeti.slash_mapGL_eq_self_of_mem_Gamma1_div` takes for the descent, and `hχ` is the negation
 of the triviality that `TauCeti.cuspFormOfSmulSlashScaleGL` assumes, so this is the complementary
 case of the descent and neither statement restates the other's hypotheses. -/
-theorem eq_zero_of_not_forall_unitsMap_eq_one {l : ℕ} [NeZero l] (hlN : l ∣ N) (k : ℤ)
+theorem eq_zero_of_not_forall_apply_eq_one_of_unitsMap_eq_one {l : ℕ} [NeZero l]
+    (hlN : l ∣ N) (k : ℤ)
     {χ : (ZMod N)ˣ →* ℂˣ}
     (hχ : ¬ ∀ u : (ZMod N)ˣ, ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) u = 1 → χ u = 1) (f : ℍ → ℂ)
     (hnb : ∀ (γ : SL(2, ℤ)) (hγ : γ ∈ Gamma0 N), (f ∣[k] scaleGL l) ∣[k] mapGL ℝ γ = (χ ((Gamma0Map
@@ -205,7 +193,7 @@ theorem eq_zero_of_not_forall_unitsMap_eq_one {l : ℕ} [NeZero l] (hlN : l ∣ 
     (hT : f ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) = f) : f = 0 := by
   -- start from the identity unit; the separation supplies the partner that breaks the tie
   obtain ⟨i, j, u', hne, hfactor⟩ :=
-    exists_eq_T_zpow_mul_conjScale_mul_T_zpow_of_apply_ne hlN hχ 1
+    exists_apply_ne_and_eq_T_zpow_mul_conjScale_mul_T_zpow hlN hχ 1
   have hdet := det_pos_of_mem_slGL (MonoidHom.mem_range.mpr ⟨ModularGroup.T, rfl⟩)
   -- the multiplier attached to the lift of a unit is the character at that unit
   have hmul : ∀ v : (ZMod N)ˣ,
@@ -284,8 +272,8 @@ character, *or* `f = 0`.
 
 This is Miyake's Theorem 4.6.4. The two horns are `TauCeti.cuspFormOfSmulSlashScaleGL` with
 `TauCeti.cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace`, and
-`TauCeti.eq_zero_of_not_forall_unitsMap_eq_one`; the case split is on the single proposition that
-one assumes and the other negates. -/
+`TauCeti.eq_zero_of_not_forall_apply_eq_one_of_unitsMap_eq_one`; the case split is on the
+single proposition that one assumes and the other negates. -/
 theorem exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero {l : ℕ} [NeZero l]
     (hlN : l ∣ N) (k : ℤ) (χ : DirichletCharacter ℂ N) (f : ℍ → ℂ)
     (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) (hgχ : g ∈ cuspFormCharSpace k χ.toUnitHom)
@@ -298,7 +286,7 @@ theorem exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero {l : ℕ} [NeZero l]
   · exact .inl ⟨hfac, _,
       cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace hlN k hfac f g hgχ hg hT,
       coe_cuspFormOfSmulSlashScaleGL l N hlN k χ.toUnitHom _ f g hgχ hg hT⟩
-  · refine .inr (eq_zero_of_not_forall_unitsMap_eq_one hlN k ?_ f
+  · refine .inr (eq_zero_of_not_forall_apply_eq_one_of_unitsMap_eq_one hlN k ?_ f
       (nebentypus_slash_scaleGL_of_mem_cuspFormCharSpace hgχ hg) hT)
     exact fun h ↦ hfac ((DirichletCharacter.factorsThrough_iff_ker_unitsMap
       (Nat.div_dvd_of_dvd hlN)).mpr fun u hu ↦ MonoidHom.mem_ker.mpr

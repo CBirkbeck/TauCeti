@@ -66,6 +66,10 @@ infrastructure independent of the diamond operators.
   lower-right entry of a matrix in `Γ₀(N)` (via strong approximation for `SL₂`).
 * `CongruenceSubgroup.gamma0Twist`: an explicit `Γ₀(N)` element whose lower-right entry is any
   natural number coprime to `N`.
+* `CongruenceSubgroup.Gamma0Map_toHomUnits_gamma0TwistOfUnit`: the Bézout twist taken at a
+  representative of a unit `u` is a `Γ₀(N)` element whose nebentypus label is exactly `u` — the
+  constructive counterpart of `Gamma0Map_toHomUnits_surjective`, which gives no control over the
+  entries.
 * `CongruenceSubgroup.neg_one_mem_Gamma0` and
   `CongruenceSubgroup.Gamma0Map_toHomUnits_negOne`: `-I ∈ Γ₀(N)`, with lower-right entry the
   unit `-1`; `CongruenceSubgroup.neg_one_mem_Gamma1_iff`: `-I ∈ Γ₁(N) ↔ N ∣ 2`.
@@ -289,6 +293,23 @@ lemma Gamma0Map_toHomUnits_gamma0Twist {p : ℕ} (h : Nat.Coprime p N) :
     (Gamma0Map N).toHomUnits ⟨gamma0Twist N p h, gamma0Twist_mem_Gamma0 h⟩ =
       ZMod.unitOfCoprime p h :=
   Units.ext (by simp [Gamma0Map_apply, gamma0Twist_apply_one_one h])
+
+/-- Shorthand for the Bézout twist at a representative of a unit: `gamma0Twist` at
+`p = (u : ZMod N).val`. It is reducible, so the `gamma0Twist` entry, membership and
+character-label lemmas apply to it unchanged. -/
+noncomputable abbrev gamma0TwistOfUnit (u : (ZMod N)ˣ) : SL(2, ℤ) :=
+  gamma0Twist N (u : ZMod N).val (ZMod.val_coe_unit_coprime u)
+
+/-- **The Bézout twist at a representative of `u` lifts `u`.** The nebentypus reads the
+lower-right entry, and there that entry is `(u : ZMod N).val`.
+
+This is the constructive form of `Gamma0Map_toHomUnits_surjective`: that lemma produces *some*
+preimage of `u`, whereas this one names an explicit matrix whose bottom row is `(N, u.val)`, which
+is what an argument comparing the entries of two lifts needs. -/
+lemma Gamma0Map_toHomUnits_gamma0TwistOfUnit [NeZero N] (u : (ZMod N)ˣ) :
+    (Gamma0Map N).toHomUnits ⟨gamma0TwistOfUnit u, gamma0Twist_mem_Gamma0 _⟩ = u :=
+  (Gamma0Map_toHomUnits_gamma0Twist _).trans <|
+    Units.ext <| by rw [ZMod.coe_unitOfCoprime, ZMod.natCast_val, ZMod.cast_id]
 
 /-- `-I` lies in `Γ₀(N)`: its lower-left entry is `0`. -/
 theorem neg_one_mem_Gamma0 : (-1 : SL(2, ℤ)) ∈ Gamma0 N := by
