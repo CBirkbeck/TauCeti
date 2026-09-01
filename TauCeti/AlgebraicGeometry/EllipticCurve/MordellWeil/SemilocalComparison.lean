@@ -136,16 +136,16 @@ curve has no bad primes. -/
 private lemma badPrimes_adicCompletionIntegers {v : HeightOneSpectrum (𝓞 F)}
     (hv : v ∉ W.badPrimes (𝓞 F)) : 𝕎[v].badPrimes 𝒪_[v] = ∅ := by
   ext P
-  simp only [Set.mem_empty_iff_false, iff_false]
+  simp only [Set.mem_empty_iff_false, iff_false, mem_badPrimes_iff]
   have hPval (z : F) : P.valuation F_[v] (algebraMap F F_[v] z) = v.valuation F z :=
     valuation_adicCompletion_algebraMap v P z
   have hone {y : F} {c : F_[v]} (hc : c = algebraMap F F_[v] y)
       (h : P.valuation F_[v] c ≠ 1) : v.valuation F y ≠ 1 := by
     rwa [hc, hPval] at h
   have hsupp {y : F} {c : F_[v]} (hc : c = algebraMap F F_[v] y)
-      (h : P ∈ HeightOneSpectrum.Support 𝒪_[v] c) : ¬ v.valuation F y ≤ 1 :=
-    not_le.mpr <| by rwa [HeightOneSpectrum.Support, Set.mem_setOf_eq, hc, hPval] at h
-  rintro ((((h | h) | h) | h) | h)
+      (h : 1 < P.valuation F_[v] c) : ¬ v.valuation F y ≤ 1 :=
+    not_le.mpr <| by rwa [hc, hPval] at h
+  rintro (h | h | h | h | h)
   · exact hone (by rw [map_ofNat]) h (W.valuation_two_eq_one_of_notMem_badPrimes (𝓞 F) hv)
   · exact hone (_root_.WeierstrassCurve.map_Δ ..) h
       (W.valuation_Δ_eq_one_of_notMem_badPrimes (𝓞 F) hv)
@@ -209,6 +209,15 @@ private noncomputable def algebraAdicCompletionFactor (p : W.f.Factors)
   (adicCompletionExtension F (𝕃 p) v w).toAlgebra
 
 attribute [local instance] algebraAdicCompletionFactor
+
+/- The `algebraMap` of that local instance is `adicCompletionExtension` itself. Stated here,
+where `algebraAdicCompletionFactor` is visible, because `adicCompletionExtension` is not exposed
+outside its own module, so the identification is not available by `rfl` at the use sites. -/
+private lemma algebraMap_adicCompletionFactor_apply (p : W.f.Factors)
+    (w : HeightOneSpectrum (W.ringOfIntegersFactor (𝓞 F) p)) [w.asIdeal.LiesOver v.asIdeal]
+    (x : F_[v]) :
+    algebraMap F_[v] (w.adicCompletion (𝕃 p)) x = adicCompletionExtension F (𝕃 p) v w x :=
+  rfl
 
 /- The square `F → F_v → (F[X] ⧸ (p))_w` = `F → F[X] ⧸ (p) → (F[X] ⧸ (p))_w` of coefficient maps. -/
 private lemma algebraMap_adicCompletion_comp (p : W.f.Factors)
@@ -282,7 +291,8 @@ private lemma localFactorEmb_comp_algebraMap (p : W.f.Factors)
   rw [RingHom.comp_apply, IsScalarTower.algebraMap_apply 𝒪_[v] F_[v]
       (AdjoinRoot (W.localFactor v p w : F_[v][X])),
     AdjoinRoot.algebraMap_eq, W.localFactorEmb_of v p w]
-  rfl
+  rw [RingHom.comp_apply, W.algebraMap_adicCompletionFactor_apply v p w]
+  exact congrArg _ (coe_adicCompletionIntegersExtension F (𝕃 p) v w c).symm
 
 /- The embedding maps the local ring of integers into the integers of the completion. -/
 private lemma localFactorEmb_mem_adicCompletionIntegers (p : W.f.Factors)
@@ -322,7 +332,7 @@ private lemma comap_localFactorIntegerEmb_ne_bot (p : W.f.Factors)
     (w : HeightOneSpectrum (W.ringOfIntegersFactor (𝓞 F) p)) [w.asIdeal.LiesOver v.asIdeal] :
     (IsDiscreteValuationRing.maximalIdeal (w.adicCompletionIntegers (𝕃 p))).asIdeal.comap
       (W.localFactorIntegerEmb v p w) ≠ ⊥ := by
-  refine Ideal.comap_ne_bot_of_comap_comap_ne_bot (FaithfulSMul.algebraMap_injective 𝒪_[v]
+  refine Ideal.ne_bot_of_comap_ne_bot _ (FaithfulSMul.algebraMap_injective 𝒪_[v]
     (𝕎[v].ringOfIntegersFactor 𝒪_[v] (W.localFactor v p w))) ?_
   have hsq0 : (W.localFactorIntegerEmb v p w).comp
       (algebraMap 𝒪_[v] (𝕎[v].ringOfIntegersFactor 𝒪_[v] (W.localFactor v p w))) =
@@ -384,6 +394,7 @@ private lemma dvd_toAdd_valuationOfNeZero_of_localFactor (p : W.f.Factors)
   exact hkey
 
 /- The double contraction of a prime of the local ring of integers is `v`. -/
+omit [W.IsElliptic] [IsCharNeTwoNF W] in
 private lemma comap_comap_integerMapOfDvd {p : W.f.Factors} {q : 𝕎[v].f.Factors}
     (hq : (q : F_[v][X]) ∣ (p : F[X]).map (algebraMap F F_[v]))
     (w : HeightOneSpectrum (𝕎[v].ringOfIntegersFactor 𝒪_[v] q)) :
@@ -393,25 +404,29 @@ private lemma comap_comap_integerMapOfDvd {p : W.f.Factors} {q : 𝕎[v].f.Facto
   have h1 : w.asIdeal.comap (algebraMap 𝒪_[v] (𝕎[v].ringOfIntegersFactor 𝒪_[v] q)) =
       IsLocalRing.maximalIdeal 𝒪_[v] :=
     IsLocalRing.eq_maximalIdeal (HeightOneSpectrum.under 𝒪_[v] w).isMaximal
-  rw [h1, HeightOneSpectrum.comap_maximalIdeal_adicCompletionIntegers]
+  rw [h1, ← Ideal.under_def, HeightOneSpectrum.under_maximalIdeal_adicCompletionIntegers]
 
 /- The contraction of a prime of the local ring of integers to the global one is nonzero. -/
+omit [W.IsElliptic] [IsCharNeTwoNF W] in
 private lemma comap_integerMapOfDvd_ne_bot {p : W.f.Factors} {q : 𝕎[v].f.Factors}
     (hq : (q : F_[v][X]) ∣ (p : F[X]).map (algebraMap F F_[v]))
     (w : HeightOneSpectrum (𝕎[v].ringOfIntegersFactor 𝒪_[v] q)) :
     w.asIdeal.comap (W.integerMapOfDvd v hq) ≠ ⊥ := by
-  refine Ideal.comap_ne_bot_of_comap_comap_ne_bot (FaithfulSMul.algebraMap_injective (𝓞 F)
+  refine Ideal.ne_bot_of_comap_ne_bot _ (FaithfulSMul.algebraMap_injective (𝓞 F)
     (W.ringOfIntegersFactor (𝓞 F) p)) ?_
   rw [W.comap_comap_integerMapOfDvd v hq w]
   exact v.ne_bot
 
 /- The contracted prime lies over `v`. -/
+omit [W.IsElliptic] [IsCharNeTwoNF W] in
 private lemma under_comapOfNeBot_integerMapOfDvd {p : W.f.Factors} {q : 𝕎[v].f.Factors}
     (hq : (q : F_[v][X]) ∣ (p : F[X]).map (algebraMap F F_[v]))
     (w : HeightOneSpectrum (𝕎[v].ringOfIntegersFactor 𝒪_[v] q)) :
     HeightOneSpectrum.under (𝓞 F) (HeightOneSpectrum.comapOfNeBot (W.integerMapOfDvd v hq) w
       (W.comap_integerMapOfDvd_ne_bot v hq w)) = v :=
-  HeightOneSpectrum.ext (W.comap_comap_integerMapOfDvd v hq w)
+  HeightOneSpectrum.ext <| by
+    simpa [HeightOneSpectrum.under, HeightOneSpectrum.comapOfNeBot_asIdeal] using
+      W.comap_comap_integerMapOfDvd v hq w
 
 /- The base-change maps of the field factors are compatible with the CRT projections. -/
 private lemma map_projFactor {p : W.f.Factors} {q : 𝕎[v].f.Factors}
