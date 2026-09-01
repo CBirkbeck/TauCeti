@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+import TauCeti.Data.ZMod.Divisibility
 public import Mathlib.NumberTheory.DirichletCharacter.Basic
 public import TauCeti.NumberTheory.ModularForms.CuspDescent
 
@@ -111,27 +112,6 @@ private lemma Gamma0Map_toHomUnits_gamma0TwistOfUnit (u : (ZMod N)ˣ) :
   (Gamma0Map_toHomUnits_gamma0Twist _).trans <|
     Units.ext <| by rw [ZMod.coe_unitOfCoprime, ZMod.natCast_val, ZMod.cast_id]
 
-/-- **Units in one `ZMod.unitsMap`-coset have congruent values.** Passing to representatives, two
-units with the same image modulo `d` differ by a multiple of `d` in `ℤ`. This is what turns the
-character-separating partner into the integer shifts of the refactoring. -/
-lemma natCast_dvd_val_sub_val_of_unitsMap_eq (hd : d ∣ N) {u u' : (ZMod N)ˣ}
-    (h : ZMod.unitsMap hd u = ZMod.unitsMap hd u') : (d : ℤ) ∣
-    ((((u : (ZMod N)ˣ) : ZMod N).val : ℤ) - (((u' : (ZMod N)ˣ) : ZMod N).val : ℤ)) := by
-  have hcast : ZMod.castHom hd (ZMod d) ((u : (ZMod N)ˣ) : ZMod N) =
-      ZMod.castHom hd (ZMod d) ((u' : (ZMod N)ˣ) : ZMod N) := by
-    have hh := congrArg Units.val h
-    rwa [ZMod.unitsMap_val, ZMod.unitsMap_val] at hh
-  rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
-  push_cast
-  rw [ZMod.natCast_val, ZMod.natCast_val,
-    show (ZMod.cast ((u : (ZMod N)ˣ) : ZMod N) : ZMod d) =
-      ZMod.castHom hd (ZMod d) ((u : (ZMod N)ˣ) : ZMod N) from
-        (ZMod.castHom_apply _).symm,
-    show (ZMod.cast ((u' : (ZMod N)ˣ) : ZMod N) : ZMod d) =
-      ZMod.castHom hd (ZMod d) ((u' : (ZMod N)ˣ) : ZMod N) from
-        (ZMod.castHom_apply _).symm, hcast]
-  ring
-
 omit [NeZero N] in
 /-- The lower-left entry of the Bézout twist, factored as `l * (N / l)`. This is the shape
 `TauCeti.conjScale` asks for, and it records `N / l` as the cofactor. -/
@@ -204,7 +184,7 @@ private theorem exists_eq_T_zpow_mul_conjScale_mul_T_zpow_of_apply_ne {l : ℕ} 
   -- the lower-right entries are the unit values, so the coset congruence is one between them
   have hdvd_e : Nl ∣ gamma0TwistOfUnit u 1 1 - gamma0TwistOfUnit u' 1 1 := by
     rw [gamma0Twist_apply_one_one, gamma0Twist_apply_one_one]
-    exact natCast_dvd_val_sub_val_of_unitsMap_eq (Nat.div_dvd_of_dvd hlN) hcoset.symm
+    exact ZMod.natCast_dvd_val_sub_of_unitsMap_eq (Nat.div_dvd_of_dvd hlN) _ _ hcoset.symm
   obtain ⟨i, hi⟩ := dvd_sub_of_dvd_sub_of_det (hdet u) (hdet u') hdvd_e
   obtain ⟨j, hj⟩ := hdvd_e
   refine ⟨i, j, u', hne, Subtype.ext ?_⟩
