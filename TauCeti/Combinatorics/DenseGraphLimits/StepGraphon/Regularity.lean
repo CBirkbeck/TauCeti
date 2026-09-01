@@ -123,48 +123,22 @@ theorem exists_refinement_energy_add_sq_le (P : Finpartition (Set.univ : Set Ω)
   rw [graphonPartitionEnergy_increment μ P Q hP hQ hQP W]
   simpa only [L, add_comm] using add_le_add_left hgain (graphonPartitionEnergy μ P hP W)
 
-/-- **Frieze--Kannan weak regularity.** Every graphon has a measurable block-average step graphon
-within `ε` in cut norm, on a partition with at most `4 ^ (⌈1 / ε²⌉ + 1)` parts. -/
-theorem weak_regularity_frieze_kannan (W : Graphon Ω μ) {ε : ℝ} (hε : 0 < ε) :
-    ∃ (P : Finpartition (Set.univ : Set Ω)) (hP : ∀ p ∈ P.parts, MeasurableSet p),
-      P.parts.card ≤ 4 ^ (Nat.ceil (1 / ε ^ 2) + 1) ∧
-      cutNorm μ (W.toSymmKernel - (stepGraphonAvg (μ := μ) P hP W).toSymmKernel) ≤ ε := by
-  let N := Nat.ceil (1 / ε ^ 2) + 1
-  let δ := ε ^ 2
-  -- Iteration invariant: after `n` allowed refinements, either the approximation is good or the
-  -- energy has grown by `n * δ`, while the starting part budget is `4 ^ (N - n)`.
-  suffices hiter : ∀ n : ℕ, n ≤ N →
+/-- The refinement invariant behind `weak_regularity_frieze_kannan`: from a measurable partition
+with at most `4 ^ (N - n)` parts, `n` further refinement steps stay inside a budget of `4 ^ N`
+parts and either reach a partition whose block averages approximate `W` to within `ε` in cut
+norm, or raise the partition energy by at least `n * ε ^ 2`. The bound holds for every `N`, which
+is what the induction needs; applying it at `n = N` with `N` past `1 / ε ^ 2` makes the energy
+alternative contradict `graphonPartitionEnergy_le_one`, leaving the approximation. -/
+private theorem exists_refinement_cutNorm_le_or_energy_add_mul_sq_le
+    (W : Graphon Ω μ) {ε : ℝ} (hε : 0 < ε) (N : ℕ) :
+    ∀ n : ℕ, n ≤ N →
       ∀ (P : Finpartition (Set.univ : Set Ω)) (hP : ∀ p ∈ P.parts, MeasurableSet p),
         P.parts.card ≤ 4 ^ (N - n) →
         ∃ (Q : Finpartition (Set.univ : Set Ω)) (hQ : ∀ q ∈ Q.parts, MeasurableSet q),
           Q.parts.card ≤ 4 ^ N ∧
             (cutNorm μ (W.toSymmKernel - (stepGraphonAvg (μ := μ) Q hQ W).toSymmKernel) ≤ ε ∨
-              graphonPartitionEnergy μ P hP W + (n : ℝ) * δ ≤
-                graphonPartitionEnergy μ Q hQ W) by
-    -- Instantiate the invariant at the indiscrete partition and rule out the energy-growth branch.
-    let P₀ : Finpartition (Set.univ : Set Ω) := ⊤
-    have hP₀ : ∀ p ∈ P₀.parts, MeasurableSet p := by
-      intro p hp
-      have : p = Set.univ := Finset.mem_singleton.mp
-        (Finpartition.parts_top_subset (Set.univ : Set Ω) hp)
-      subst p
-      exact MeasurableSet.univ
-    have hP₀_card : P₀.parts.card ≤ 4 ^ (N - N) := by
-      rw [Nat.sub_self, pow_zero]
-      exact Finset.card_le_one.mpr (Finpartition.parts_top_subsingleton _)
-    obtain ⟨Q, hQ, hQcard, hgood | henergy⟩ := hiter N le_rfl P₀ hP₀ hP₀_card
-    · exact ⟨Q, hQ, by simpa [N] using hQcard, hgood⟩
-    · have hQenergy := graphonPartitionEnergy_le_one μ Q hQ W
-      have hP₀energy := graphonPartitionEnergy_nonneg μ P₀ hP₀ W
-      have hN : 1 < (N : ℝ) * δ := by
-        have hceil : 1 / ε ^ 2 ≤ (Nat.ceil (1 / ε ^ 2) : ℕ) := Nat.le_ceil _
-        dsimp only [N, δ]
-        push_cast
-        have hεsq : 0 < ε ^ 2 := sq_pos_of_pos hε
-        calc
-          1 = (1 / ε ^ 2) * ε ^ 2 := by field_simp
-          _ < ((Nat.ceil (1 / ε ^ 2) : ℕ) + 1 : ℝ) * ε ^ 2 := by nlinarith
-      linarith
+              graphonPartitionEnergy μ P hP W + (n : ℝ) * ε ^ 2 ≤
+                graphonPartitionEnergy μ Q hQ W) := by
   intro n hn
   induction n with
   | zero =>
@@ -172,7 +146,7 @@ theorem weak_regularity_frieze_kannan (W : Graphon Ω μ) {ε : ℝ} (hε : 0 < 
       intro P hP hPcard
       exact ⟨P, hP, by simpa using hPcard, Or.inr (by simp)⟩
   | succ n ih =>
-      -- Refinement step: stop if already good, otherwise gain `δ` and apply the induction
+      -- Refinement step: stop if already good, otherwise gain `ε ^ 2` and apply the induction
       -- hypothesis to the refined partition with the remaining part budget.
       intro P hP hPcard
       by_cases hgood :
@@ -192,9 +166,42 @@ theorem weak_regularity_frieze_kannan (W : Graphon Ω μ) {ε : ℝ} (hε : 0 < 
         obtain ⟨R, hR, hRcard, hRgood | hRenergy⟩ := ih (by omega) Q hQ hQcard
         · exact ⟨R, hR, hRcard, Or.inl hRgood⟩
         · refine ⟨R, hR, hRcard, Or.inr ?_⟩
-          dsimp only [δ] at hQenergy hRenergy ⊢
           push_cast
           nlinarith
+
+/-- **Frieze--Kannan weak regularity.** Every graphon has a measurable block-average step graphon
+within `ε` in cut norm, on a partition with at most `4 ^ (⌈1 / ε²⌉ + 1)` parts. -/
+theorem weak_regularity_frieze_kannan (W : Graphon Ω μ) {ε : ℝ} (hε : 0 < ε) :
+    ∃ (P : Finpartition (Set.univ : Set Ω)) (hP : ∀ p ∈ P.parts, MeasurableSet p),
+      P.parts.card ≤ 4 ^ (Nat.ceil (1 / ε ^ 2) + 1) ∧
+      cutNorm μ (W.toSymmKernel - (stepGraphonAvg (μ := μ) P hP W).toSymmKernel) ≤ ε := by
+  let N := Nat.ceil (1 / ε ^ 2) + 1
+  -- Instantiate the refinement invariant at the indiscrete partition, then rule out the
+  -- energy-growth branch: `N` steps would push the energy past its upper bound of one.
+  let P₀ : Finpartition (Set.univ : Set Ω) := ⊤
+  have hP₀ : ∀ p ∈ P₀.parts, MeasurableSet p := by
+    intro p hp
+    have : p = Set.univ := Finset.mem_singleton.mp
+      (Finpartition.parts_top_subset (Set.univ : Set Ω) hp)
+    subst p
+    exact MeasurableSet.univ
+  have hP₀_card : P₀.parts.card ≤ 4 ^ (N - N) := by
+    rw [Nat.sub_self, pow_zero]
+    exact Finset.card_le_one.mpr (Finpartition.parts_top_subsingleton _)
+  obtain ⟨Q, hQ, hQcard, hgood | henergy⟩ :=
+    exists_refinement_cutNorm_le_or_energy_add_mul_sq_le μ W hε N N le_rfl P₀ hP₀ hP₀_card
+  · exact ⟨Q, hQ, by simpa [N] using hQcard, hgood⟩
+  · have hQenergy := graphonPartitionEnergy_le_one μ Q hQ W
+    have hP₀energy := graphonPartitionEnergy_nonneg μ P₀ hP₀ W
+    have hN : 1 < (N : ℝ) * ε ^ 2 := by
+      have hceil : 1 / ε ^ 2 ≤ (Nat.ceil (1 / ε ^ 2) : ℕ) := Nat.le_ceil _
+      dsimp only [N]
+      push_cast
+      have hεsq : 0 < ε ^ 2 := sq_pos_of_pos hε
+      calc
+        1 = (1 / ε ^ 2) * ε ^ 2 := by field_simp
+        _ < ((Nat.ceil (1 / ε ^ 2) : ℕ) + 1 : ℝ) * ε ^ 2 := by nlinarith
+    linarith
 
 end DenseGraphLimits
 
