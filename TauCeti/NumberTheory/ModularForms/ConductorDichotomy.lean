@@ -29,13 +29,13 @@ is exactly what nontriviality on the kernel provides — exhibits `f ∣[k] A` a
 
 The refactoring step needs the lift's lower-left entry to be *exactly* `N`, not merely divisible
 by it, because `conjScale l · c` records the cofactor `c` and the argument compares the cofactors
-of two lifts. That is what `TauCeti.gamma0LiftOfUnit` is for: an explicit Bézout lift
-`!![a, b; N, e]` of a prescribed unit, with `a` and `e` the values of `u⁻¹` and `u`.
+of two lifts. `CongruenceSubgroup.gamma0Twist N p h` is already such a lift, so a unit `u` is
+lifted by taking `p` to be the representative `(u : ZMod N).val`. Only the bottom row of that
+lift is specified, so the congruence between the *upper*-left entries of two of them — the
+shift `T ^ i` — is read off the determinants rather than off a formula for those entries.
 
 ## Main results
 
-* `TauCeti.gamma0LiftOfUnit`: the controlled `Γ₀(N)` lift of a unit, with lower-left entry `N`,
-  together with its four entries and the fact that it lifts the unit it was built from.
 * `TauCeti.exists_unitsMap_eq_and_apply_ne`: character separation along a `ZMod.unitsMap`-coset.
 * `TauCeti.eq_zero_of_not_forall_unitsMap_eq_one`: **the vanishing horn**.
 * `TauCeti.cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace`: the descent horn carries the
@@ -63,8 +63,10 @@ two phrasings is mathlib's `DirichletCharacter.factorsThrough_iff_ker_unitsMap`.
   the Case B block of `conductor_theorem_dichotomy_cuspForm_strong`. The source's
   `levelRaiseConjOfDvd` is this repository's `conjScale`, its `levelRaiseFun l k f` is
   `l ^ (1 - k) • (f ∣[k] scaleGL l)`, and its `Gamma0MapUnits` is `(Gamma0Map N).toHomUnits`, so
-  none of those three is ported again. The source's `exists_T_levelRaiseConj_T_factor` is already
-  here as `exists_eq_T_zpow_mul_conjScale_mul_T_zpow`, and its `loweredCharacter` is mathlib's
+  none of those three is ported again. Its explicit Bézout lift of a unit is this repository's
+  `CongruenceSubgroup.gamma0Twist`, specialized at a representative of the unit, so that is not
+  ported again either. The source's `exists_T_levelRaiseConj_T_factor` is already here as
+  `exists_eq_T_zpow_mul_conjScale_mul_T_zpow`, and its `loweredCharacter` is mathlib's
   `DirichletCharacter.FactorsThrough.χ₀`.
 -/
 
@@ -94,74 +96,20 @@ theorem exists_unitsMap_eq_and_apply_ne (hd : d ∣ N) {χ : (ZMod N)ˣ →* ℂ
   exact ⟨u * v, by rw [map_mul, hv, mul_one], fun h ↦ hχv <| mul_left_cancel <| by
     rw [← map_mul, h, mul_one]⟩
 
-/-! ### The controlled `Γ₀(N)` lift of a unit -/
+/-! ### The `Γ₀(N)` lift of a unit -/
 
-/-- `N` divides `(u⁻¹).val * u.val - 1`, the determinant defect of the Bézout lift below. -/
-private lemma N_dvd_unit_val_mul_val_sub_one (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) : (N : ℤ) ∣
-    ((((u⁻¹ : (ZMod N)ˣ) : ZMod N).val : ℤ) * (((u : (ZMod N)ˣ) : ZMod N).val : ℤ) - 1) := by
-  rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
-  push_cast
-  rw [ZMod.natCast_val, ZMod.natCast_val, ZMod.cast_id, ZMod.cast_id, ← Units.val_mul,
-    inv_mul_cancel, Units.val_one]
-  ring
+/-- Shorthand for the Bézout twist at a representative of a unit: `CongruenceSubgroup.gamma0Twist`
+at `p = (u : ZMod N).val`. It is reducible, so the `gamma0Twist` entry, membership and
+character-label lemmas apply to it unchanged. -/
+private noncomputable abbrev gamma0TwistOfUnit (u : (ZMod N)ˣ) : SL(2, ℤ) :=
+  gamma0Twist N (u : ZMod N).val (ZMod.val_coe_unit_coprime u)
 
-/-- **The controlled `Γ₀(N)` lift of a unit.** The Bézout matrix `!![a, b; N, e]` with
-`e = (u : ZMod N).val`, `a = (u⁻¹ : ZMod N).val` and `b = (a * e - 1) / N`. Its lower-left entry
-is `N` on the nose — that is the point of the construction, since the refactoring step compares
-the cofactors of two such lifts — and its lower-right entry is a representative of `u`. -/
-noncomputable def gamma0LiftOfUnit (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) : ↥(Gamma0 N) := by
-  have hdet : (!![((u⁻¹ : (ZMod N)ˣ) : ZMod N).val, ((((u⁻¹ : (ZMod N)ˣ) : ZMod N).val : ℤ) *
-      (((u : (ZMod N)ˣ) : ZMod N).val : ℤ) - 1) / (N : ℤ);
-      (N : ℤ), ((u : (ZMod N)ˣ) : ZMod N).val] : Matrix (Fin 2) (Fin 2) ℤ).det = 1 := by
-    rw [Matrix.det_fin_two_of]
-    linarith [Int.ediv_mul_cancel (N_dvd_unit_val_mul_val_sub_one N u)]
-  -- keep the matrix at type `SL(2, ℤ)`: `SpecialLinearGroup` is a semireducible `def` over a
-  -- subtype, so an anonymous constructor at the expected type does not unify with `Gamma0_mem`
-  set γ : SL(2, ℤ) := ⟨_, hdet⟩ with hγ
-  refine ⟨γ, ?_⟩
-  rw [Gamma0_mem]
-  simp [hγ]
-
-/-- The lower-left entry of the controlled lift is `N` on the nose. -/
-@[simp]
-lemma gamma0LiftOfUnit_apply_one_zero (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    (gamma0LiftOfUnit N u : SL(2, ℤ)) 1 0 = (N : ℤ) := by
-  rw [gamma0LiftOfUnit]
-  simp
-
-/-- The lower-right entry of the controlled lift is the value of `u`. -/
-@[simp]
-lemma gamma0LiftOfUnit_apply_one_one (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    (gamma0LiftOfUnit N u : SL(2, ℤ)) 1 1 = (((u : (ZMod N)ˣ) : ZMod N).val : ℤ) := by
-  rw [gamma0LiftOfUnit]
-  simp
-
-/-- The upper-left entry of the controlled lift is the value of `u⁻¹`. -/
-@[simp]
-lemma gamma0LiftOfUnit_apply_zero_zero (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    (gamma0LiftOfUnit N u : SL(2, ℤ)) 0 0 = (((u⁻¹ : (ZMod N)ˣ) : ZMod N).val : ℤ) := by
-  rw [gamma0LiftOfUnit]
-  simp
-
-/-- The upper-right entry of the controlled lift is the Bézout cofactor. -/
-@[simp]
-lemma gamma0LiftOfUnit_apply_zero_one (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    (gamma0LiftOfUnit N u : SL(2, ℤ)) 0 1 =
-    ((((u⁻¹ : (ZMod N)ˣ) : ZMod N).val : ℤ) * (((u : (ZMod N)ˣ) : ZMod N).val : ℤ) - 1) /
-    (N : ℤ) := by
-  rw [gamma0LiftOfUnit]
-  simp
-
-/-- **The controlled lift lifts the unit it was built from.** This is what makes the lift usable:
-the nebentypus reads the lower-right entry, and here that entry is a representative of `u`. -/
-@[simp]
-lemma Gamma0Map_toHomUnits_gamma0LiftOfUnit (N : ℕ) [NeZero N] (u : (ZMod N)ˣ) :
-    (Gamma0Map N).toHomUnits (gamma0LiftOfUnit N u) = u := by
-  refine Units.ext ?_
-  rw [MonoidHom.coe_toHomUnits, Gamma0Map_apply, gamma0LiftOfUnit_apply_one_one]
-  push_cast
-  rw [ZMod.natCast_val, ZMod.cast_id]
-
+/-- **The Bézout twist at a representative of `u` lifts `u`.** The nebentypus reads the
+lower-right entry, and there that entry is `(u : ZMod N).val`. -/
+private lemma Gamma0Map_toHomUnits_gamma0TwistOfUnit (u : (ZMod N)ˣ) :
+    (Gamma0Map N).toHomUnits ⟨gamma0TwistOfUnit u, gamma0Twist_mem_Gamma0 _⟩ = u :=
+  (Gamma0Map_toHomUnits_gamma0Twist _).trans <|
+    Units.ext <| by rw [ZMod.coe_unitOfCoprime, ZMod.natCast_val, ZMod.cast_id]
 
 /-- **Units in one `ZMod.unitsMap`-coset have congruent values.** Passing to representatives, two
 units with the same image modulo `d` differ by a multiple of `d` in `ℤ`. This is what turns the
@@ -184,15 +132,29 @@ lemma natCast_dvd_val_sub_val_of_unitsMap_eq (hd : d ∣ N) {u u' : (ZMod N)ˣ}
         (ZMod.castHom_apply _).symm, hcast]
   ring
 
-/-- The lower-left entry of the controlled lift, factored as `l * (N / l)`. This is the shape
+omit [NeZero N] in
+/-- The lower-left entry of the Bézout twist, factored as `l * (N / l)`. This is the shape
 `TauCeti.conjScale` asks for, and it records `N / l` as the cofactor. -/
-private lemma gamma0LiftOfUnit_apply_one_zero_eq_mul {l : ℕ} (hlN : l ∣ N) (u : (ZMod N)ˣ) :
-    (gamma0LiftOfUnit N u : SL(2, ℤ)) 1 0 = (l : ℤ) * ((N / l : ℕ) : ℤ) := by
-  rw [gamma0LiftOfUnit_apply_one_zero]
+private lemma gamma0Twist_apply_one_zero_eq_mul {l p : ℕ} (hlN : l ∣ N) (h : Nat.Coprime p N) :
+    gamma0Twist N p h 1 0 = (l : ℤ) * ((N / l : ℕ) : ℤ) := by
+  rw [gamma0Twist_apply_one_zero]
   exact_mod_cast (Nat.mul_div_cancel' hlN).symm
 
 
 /-! ### Refactoring the conjugated lift through a separating unit -/
+
+/-- **The upper-left entries of two Bézout lifts are congruent too.** Only the bottom row of
+`CongruenceSubgroup.gamma0Twist` is specified, so the shift `T ^ i` cannot be read off a formula
+for the upper-left entries — and it does not have to be. The determinant makes the lower-right
+entry invertible modulo the cofactor `Nl`, and cancelling it turns the congruence of the
+lower-right entries into one of the upper-left entries. -/
+private lemma dvd_sub_of_dvd_sub_of_det {l Nl a a' e e' b b' : ℤ}
+    (hdet : a * e - b * (l * Nl) = 1) (hdet' : a' * e' - b' * (l * Nl) = 1)
+    (he : Nl ∣ e - e') : Nl ∣ a - a' := by
+  obtain ⟨c, hc⟩ := he
+  have hcop : IsCoprime e Nl := ⟨a, -(b * l), by linear_combination hdet⟩
+  refine hcop.symm.dvd_of_dvd_mul_right ⟨(b - b') * l - a' * c, ?_⟩
+  linear_combination hdet - hdet' - a' * hc
 
 /-- The matrix identity behind the refactoring: two Bézout lifts whose upper-left and lower-right
 entries agree modulo the cofactor `Nl` differ by translations on both sides. The determinant
@@ -216,50 +178,39 @@ private lemma eq_T_mul_mul_T_of_sub_eq {l Nl i j a a' e e' b b' : ℤ} (hNl : Nl
   · linarith
 
 /-- **The refactoring step.** For a character not trivial on the kernel, the `diag(l, 1)`-conjugate
-of the controlled lift of `u` is a translate — on both sides — of the conjugate of the controlled
-lift of some `u'` on which the character takes a *different* value. Since the function the
-vanishing argument is applied to is `T`-periodic, the two translations cost nothing, and the two
-sides therefore exhibit one slash with two different multipliers. -/
+of the Bézout lift of `u` is a translate — on both sides — of the conjugate of the lift of some
+`u'` on which the character takes a *different* value. Since the function the vanishing argument
+is applied to is `T`-periodic, the two translations cost nothing, and the two sides therefore
+exhibit one slash with two different multipliers. -/
 private theorem exists_eq_T_zpow_mul_conjScale_mul_T_zpow_of_apply_ne {l : ℕ} [NeZero l]
     (hlN : l ∣ N)
     {χ : (ZMod N)ˣ →* ℂˣ}
     (hχ : ¬ ∀ u : (ZMod N)ˣ, ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) u = 1 → χ u = 1) (u : (ZMod N)ˣ)
-    : ∃ (i j : ℤ) (u' : (ZMod N)ˣ), χ u' ≠ χ u ∧ conjScale l (gamma0LiftOfUnit N u)
-    ((N / l : ℕ) : ℤ)
-    (gamma0LiftOfUnit_apply_one_zero_eq_mul hlN u) = ModularGroup.T ^ i * conjScale l
-    (gamma0LiftOfUnit N u') ((N / l : ℕ) : ℤ)
-    (gamma0LiftOfUnit_apply_one_zero_eq_mul hlN u') * ModularGroup.T ^ j := by
+    : ∃ (i j : ℤ) (u' : (ZMod N)ˣ), χ u' ≠ χ u ∧ conjScale l (gamma0TwistOfUnit u)
+    ((N / l : ℕ) : ℤ) (gamma0Twist_apply_one_zero_eq_mul hlN _) = ModularGroup.T ^ i * conjScale l
+    (gamma0TwistOfUnit u') ((N / l : ℕ) : ℤ)
+    (gamma0Twist_apply_one_zero_eq_mul hlN _) * ModularGroup.T ^ j := by
   obtain ⟨u', hcoset, hne⟩ := exists_unitsMap_eq_and_apply_ne (Nat.div_dvd_of_dvd hlN) hχ u
-  set a : ℤ := (((u⁻¹ : (ZMod N)ˣ) : ZMod N).val : ℤ) with ha
-  set e : ℤ := (((u : (ZMod N)ˣ) : ZMod N).val : ℤ) with he
-  set a' : ℤ := (((u'⁻¹ : (ZMod N)ˣ) : ZMod N).val : ℤ) with ha'
-  set e' : ℤ := (((u' : (ZMod N)ˣ) : ZMod N).val : ℤ) with he'
   set Nl : ℤ := ((N / l : ℕ) : ℤ) with hNl
   have hNl_ne : Nl ≠ 0 := by
     rw [hNl, Nat.cast_ne_zero]
     exact (Nat.div_pos (Nat.le_of_dvd (Nat.pos_of_neZero N) hlN) (Nat.pos_of_neZero l)).ne'
-  have hNeq : (N : ℤ) = (l : ℤ) * Nl := by
-    rw [hNl]; exact_mod_cast (Nat.mul_div_cancel' hlN).symm
-  -- the two shifts are the cofactors of the coset congruences, on the inverses and on the units
-  have hdvd_a : Nl ∣ (a - a') :=
-    natCast_dvd_val_sub_val_of_unitsMap_eq (Nat.div_dvd_of_dvd hlN) (u := u⁻¹) (u' := u'⁻¹)
-      (by rw [map_inv, map_inv, hcoset])
-  have hdvd_e : Nl ∣ (e - e') :=
-    natCast_dvd_val_sub_val_of_unitsMap_eq (Nat.div_dvd_of_dvd hlN) hcoset.symm
-  refine ⟨(a - a') / Nl, (e - e') / Nl, u', hne, ?_⟩
-  have hdet : a * e - ((a * e - 1) / (N : ℤ)) * ((l : ℤ) * Nl) = 1 := by
-    rw [← hNeq]
-    linarith [Int.ediv_mul_cancel (N_dvd_unit_val_mul_val_sub_one N u)]
-  have hdet' : a' * e' - ((a' * e' - 1) / (N : ℤ)) * ((l : ℤ) * Nl) = 1 := by
-    rw [← hNeq]
-    linarith [Int.ediv_mul_cancel (N_dvd_unit_val_mul_val_sub_one N u')]
-  refine Subtype.ext ?_
+  -- the determinant of a lift, read through the factorization `N = l * (N / l)` of its
+  -- lower-left entry: this is the only thing known about the upper row
+  have hdet : ∀ v : (ZMod N)ˣ, gamma0TwistOfUnit v 0 0 * gamma0TwistOfUnit v 1 1 -
+      gamma0TwistOfUnit v 0 1 * ((l : ℤ) * Nl) = 1 := fun v => by
+    rw [← gamma0Twist_apply_one_zero_eq_mul (l := l) hlN (ZMod.val_coe_unit_coprime v)]
+    exact fin_two_mul_sub_mul_eq_one _
+  -- the lower-right entries are the unit values, so the coset congruence is one between them
+  have hdvd_e : Nl ∣ gamma0TwistOfUnit u 1 1 - gamma0TwistOfUnit u' 1 1 := by
+    rw [gamma0Twist_apply_one_one, gamma0Twist_apply_one_one]
+    exact natCast_dvd_val_sub_val_of_unitsMap_eq (Nat.div_dvd_of_dvd hlN) hcoset.symm
+  obtain ⟨i, hi⟩ := dvd_sub_of_dvd_sub_of_det (hdet u) (hdet u') hdvd_e
+  obtain ⟨j, hj⟩ := hdvd_e
+  refine ⟨i, j, u', hne, Subtype.ext ?_⟩
   rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_mul,
     ModularGroup.coe_T_zpow, ModularGroup.coe_T_zpow, coe_conjScale, coe_conjScale]
-  simp only [gamma0LiftOfUnit_apply_zero_zero, gamma0LiftOfUnit_apply_zero_one,
-    gamma0LiftOfUnit_apply_one_one, ← ha, ← he, ← ha', ← he', ← hNl]
-  exact eq_T_mul_mul_T_of_sub_eq hNl_ne (Int.ediv_mul_cancel hdvd_a)
-    (Int.ediv_mul_cancel hdvd_e) hdet hdet'
+  exact eq_T_mul_mul_T_of_sub_eq hNl_ne (by rw [hi]; ring) (by rw [hj]; ring) (hdet u) (hdet u')
 
 
 /-! ### The vanishing horn -/
@@ -290,15 +241,15 @@ theorem eq_zero_of_not_forall_unitsMap_eq_one {l : ℕ} [NeZero l] (hlN : l ∣ 
   have hdet := det_pos_of_mem_slGL (MonoidHom.mem_range.mpr ⟨ModularGroup.T, rfl⟩)
   -- the multiplier attached to the lift of a unit is the character at that unit
   have hmul : ∀ v : (ZMod N)ˣ,
-      f ∣[k] (mapGL ℝ (conjScale l (gamma0LiftOfUnit N v) ((N / l : ℕ) : ℤ)
-        (gamma0LiftOfUnit_apply_one_zero_eq_mul hlN v)) : GL (Fin 2) ℝ) = (χ v : ℂ) • f := by
+      f ∣[k] (mapGL ℝ (conjScale l (gamma0TwistOfUnit v) ((N / l : ℕ) : ℤ)
+        (gamma0Twist_apply_one_zero_eq_mul hlN _)) : GL (Fin 2) ℝ) = (χ v : ℂ) • f := by
     intro v
-    have h := slash_conjScale_eq_smul_of_slash_scaleGL (k := k) f (gamma0LiftOfUnit N v)
-      (gamma0LiftOfUnit_apply_one_zero_eq_mul hlN v) (hnb _ (gamma0LiftOfUnit N v).property)
-    rwa [Subtype.coe_eta, Gamma0Map_toHomUnits_gamma0LiftOfUnit] at h
+    have h := slash_conjScale_eq_smul_of_slash_scaleGL (k := k) f (gamma0TwistOfUnit v)
+      (gamma0Twist_apply_one_zero_eq_mul hlN _) (hnb _ (gamma0Twist_mem_Gamma0 _))
+    rwa [Gamma0Map_toHomUnits_gamma0TwistOfUnit] at h
   -- the same slash, read through the refactoring, has the multiplier of the separating unit
-  have halt : f ∣[k] (mapGL ℝ (conjScale l (gamma0LiftOfUnit N 1) ((N / l : ℕ) : ℤ)
-      (gamma0LiftOfUnit_apply_one_zero_eq_mul hlN 1)) : GL (Fin 2) ℝ) = (χ u' : ℂ) • f := by
+  have halt : f ∣[k] (mapGL ℝ (conjScale l (gamma0TwistOfUnit 1) ((N / l : ℕ) : ℤ)
+      (gamma0Twist_apply_one_zero_eq_mul hlN _)) : GL (Fin 2) ℝ) = (χ u' : ℂ) • f := by
     rw [hfactor, map_mul, map_mul, map_zpow, map_zpow]
     exact slash_zpow_mul_mul_zpow_eq_smul k f hdet hT (hmul u') i j
   exact eq_zero_of_slash_eq_smul_of_slash_eq_smul k f _
