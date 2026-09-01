@@ -68,7 +68,9 @@ primes of `L` to divide the level it works over, which for an arbitrary `L` they
 reading `f` at `L * N` first is what supplies that. Neither statement is made at a level fixed
 in advance, so no equation of levels is transported. Since `∏ L.primeFactors ∣ L`, the resulting
 `∏ L.primeFactors * (L * N)` divides `N * L ^ 2`; the squarefree corollary is where they
-coincide, and is the one place the level equation `L * (L * N) = N * L ^ 2` is rewritten.
+coincide. That last step is a `CuspForm.ofLe` along `dvd_of_eq`, not a rewrite of the level: the
+level occurs in the type of the divisibility proof carried beside it, so abstracting it is not
+type-correct, and transport along a divisibility is what the rest of the file uses anyway.
 
 ## Provenance
 
@@ -320,7 +322,8 @@ whose `q`-expansion is that of `f` restricted to the indices *not* coprime to `L
 
 This is `exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero` at a squarefree
 `L`, where `∏ L.primeFactors` is `L` itself, so the level is the classical `N * L ^ 2` at which
-Miyake states the lemma. -/
+Miyake states the lemma; `L * (L * N)` and `N * L ^ 2` agree, and the form is carried across that
+agreement along `CuspForm.ofLe`. -/
 theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero_of_squarefree
     (χ : (ZMod N)ˣ →* ℂˣ) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
     (hf : f ∈ cuspFormCharSpace k χ) {L : ℕ} (hL : Squarefree L) :
@@ -332,6 +335,12 @@ theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero_of_squ
     simpa using Nat.prod_primeFactors_of_squarefree hL
   have hlvl : L * (L * N) = N * L ^ 2 := by ring
   have key := exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero χ hf (L := L)
-  rwa [hprod, hlvl] at key
+  rw [hprod] at key
+  obtain ⟨h, hh, hhq⟩ := key
+  refine ⟨CuspForm.ofLe (Gamma1_map_le_Gamma1_map_of_dvd (dvd_of_eq hlvl)) h, ?_, fun n ↦ ?_⟩
+  · have := CuspForm.ofLe_mem_cuspFormCharSpace _ (dvd_of_eq hlvl) hh
+    rwa [MonoidHom.comp_assoc, ZMod.unitsMap_comp] at this
+  · rw [CuspForm.coe_ofLe]
+    exact hhq n
 
 end TauCeti
