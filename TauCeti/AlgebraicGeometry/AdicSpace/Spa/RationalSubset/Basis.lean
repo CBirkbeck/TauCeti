@@ -81,6 +81,10 @@ the basis arguments uses it.
 
 * T. Wedhorn, *Adic Spaces*, arXiv:1910.05934v1, Definition 7.29, Remark 7.30, Theorem 7.35,
   Corollary 7.53, and Lemma 6.6.
+
+One correction to the source: Wedhorn's proof of Theorem 7.35(2) cites Remark 7.30(4) for
+stability under finite intersection, but 7.30(4) is the statement that `R(T/s)` is rational
+for a unit `s`. The binary intersection this file iterates is Remark 7.30(5).
 -/
 
 public section
@@ -103,18 +107,17 @@ This is Wedhorn Lemma 6.6 applied to the inclusion of the numerator span into th
 after adjoining the denominator. -/
 theorem isAdmissible_extendedIdealOfDefinition_of_isOpen_span (P : PairOfDefinition A)
     {T : Finset A} {s : A} (hT : IsOpen (Ideal.span (T : Set A) : Set A)) :
-    IsAdmissible P.extendedIdealOfDefinition T s := by
-  rw [isAdmissible_iff]
-  refine (P.isOpen_iff_le_radical _).mp hT |>.trans (Ideal.radical_mono ?_)
-  exact Ideal.span_mono (Set.subset_insert s (T : Set A))
+    IsAdmissible P.extendedIdealOfDefinition T s :=
+  isAdmissible_iff.mpr <| ((P.isOpen_iff_le_radical _).mp hT).trans <|
+    Ideal.radical_mono <| Ideal.span_mono <| Set.subset_insert s (T : Set A)
 
 /-- An admissible numerator set becomes an open numerator ideal after adjoining its denominator.
-The rational subset itself is unchanged by this operation. -/
+The rational subset itself is unchanged by this operation. This is not a converse of
+`isAdmissible_extendedIdealOfDefinition_of_isOpen_span`, which assumes the span of `T` open. -/
 theorem isOpen_span_insert_of_isAdmissible_extendedIdealOfDefinition (P : PairOfDefinition A)
     {T : Finset A} {s : A} (hT : IsAdmissible P.extendedIdealOfDefinition T s) :
-    IsOpen (Ideal.span (insert s (T : Set A)) : Set A) := by
-  rw [P.isOpen_iff_le_radical]
-  exact isAdmissible_iff.mp hT
+    IsOpen (Ideal.span (insert s (T : Set A)) : Set A) :=
+  (P.isOpen_iff_le_radical _).mpr <| isAdmissible_iff.mp hT
 
 end TopologicalRing
 
@@ -153,11 +156,9 @@ open Classical in
 numerator sets after adjoining their respective denominators. This is the admissibility half of
 the intersection formula for rational subsets. -/
 private theorem isOpen_span_insert_mul_insert (P : PairOfDefinition A)
-    {T₁ T₂ : Finset A} {s₁ s₂ : A}
-    (hT₁ : IsOpen (Ideal.span (T₁ : Set A) : Set A))
+    {T₁ T₂ : Finset A} {s₁ s₂ : A} (hT₁ : IsOpen (Ideal.span (T₁ : Set A) : Set A))
     (hT₂ : IsOpen (Ideal.span (T₂ : Set A) : Set A)) :
     IsOpen (Ideal.span ((insert s₁ T₁ * insert s₂ T₂ : Finset A) : Set A) : Set A) := by
-  classical
   rw [P.isOpen_iff_le_radical]
   have hmul :=
     (isAdmissible_extendedIdealOfDefinition_of_isOpen_span (s := s₁) P hT₁).mul
@@ -171,8 +172,7 @@ private theorem isOpen_span_insert_mul_insert (P : PairOfDefinition A)
 intersection. The set identity is `rationalSubset_inter`; admissibility is multiplicative in
 `Spv(A,IA)`, and adjoining the product denominator turns it back into openness. -/
 theorem inter_mem_spaRationalFamily_of_pairOfDefinition (P : PairOfDefinition A)
-    {Aplus : Subring A}
-    {U V : Set (spa Aplus)} (hU : U ∈ spaRationalFamily Aplus)
+    {Aplus : Subring A} {U V : Set (spa Aplus)} (hU : U ∈ spaRationalFamily Aplus)
     (hV : V ∈ spaRationalFamily Aplus) : U ∩ V ∈ spaRationalFamily Aplus := by
   classical
   obtain ⟨T₁, s₁, hT₁, rfl⟩ := hU
@@ -196,8 +196,7 @@ induction is over the index set, with `univ_mem_spaRationalFamily` at the empty 
 throughout, so no choice is made inside the induction. -/
 theorem biInter_mem_spaRationalFamily_of_pairOfDefinition (P : PairOfDefinition A)
     {Aplus : Subring A} {ι : Type*} (s : Finset ι) {U : ι → Set (spa Aplus)}
-    (h : ∀ i ∈ s, U i ∈ spaRationalFamily Aplus) :
-    (⋂ i ∈ s, U i) ∈ spaRationalFamily Aplus := by
+    (h : ∀ i ∈ s, U i ∈ spaRationalFamily Aplus) : (⋂ i ∈ s, U i) ∈ spaRationalFamily Aplus := by
   classical
   induction s using Finset.induction_on with
   | empty => simpa using univ_mem_spaRationalFamily Aplus
@@ -210,12 +209,9 @@ theorem biInter_mem_spaRationalFamily_of_pairOfDefinition (P : PairOfDefinition 
 /-- **Wedhorn Theorem 7.35(2), finite-intersection half.** Over a Huber ring the rational family
 is closed under intersections indexed by a `Finset`. This is the form Wedhorn's Theorem 7.35(2)
 states — "a basis of quasi-compact open subsets which is stable under finite intersection" —
-whereas `inter_mem_spaRationalFamily` gives only the binary step it iterates. Wedhorn's proof of
-7.35(2) cites Remark 7.30(4) for the stability, but 7.30(4) is the statement that `R(T/s)` is
-rational for a unit `s`; the binary intersection used here is 7.30(5). -/
+whereas `inter_mem_spaRationalFamily` gives only the binary step it iterates. -/
 theorem biInter_mem_spaRationalFamily [IsHuberRing A] {Aplus : Subring A} {ι : Type*}
-    (s : Finset ι) {U : ι → Set (spa Aplus)}
-    (h : ∀ i ∈ s, U i ∈ spaRationalFamily Aplus) :
+    (s : Finset ι) {U : ι → Set (spa Aplus)} (h : ∀ i ∈ s, U i ∈ spaRationalFamily Aplus) :
     (⋂ i ∈ s, U i) ∈ spaRationalFamily Aplus :=
   (IsHuberRing.nonempty_pairOfDefinition (A := A)).elim
     fun P ↦ biInter_mem_spaRationalFamily_of_pairOfDefinition P s h
@@ -375,13 +371,8 @@ where the finite intersections of a cover are formed in `Opens` rather than in `
 theorem finsetInf_mem_spaRationalOpens [IsHuberRing A] {Aplus : Subring A} {ι : Type*}
     (s : Finset ι) {U : ι → Opens (spa Aplus)}
     (h : ∀ i ∈ s, U i ∈ spaRationalOpens Aplus) : s.inf U ∈ spaRationalOpens Aplus := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa using top_mem_spaRationalOpens Aplus
-  | insert a s ha ih =>
-    rw [Finset.inf_insert]
-    exact inf_mem_spaRationalOpens (h a (Finset.mem_insert_self a s))
-      (ih fun i hi ↦ h i (Finset.mem_insert_of_mem hi))
+  rw [mem_spaRationalOpens, Opens.coe_finset_inf, Finset.inf_set_eq_iInter]
+  exact biInter_mem_spaRationalFamily s fun i hi ↦ mem_spaRationalOpens.mp (h i hi)
 
 /-! ### Finite rational refinements -/
 
