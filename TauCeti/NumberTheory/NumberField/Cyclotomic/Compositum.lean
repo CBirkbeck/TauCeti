@@ -27,7 +27,11 @@ character — are *jointly* bijective:
 * `IsCyclotomicExtension.restrictNormalHom_prod_autToPow_injective`: the joint restriction
   is faithful (no arithmetic hypothesis needed).
 * `IsCyclotomicExtension.galEquivProd`: that map packaged as a `MulEquiv`, with
-  `IsCyclotomicExtension.galEquivProd_apply` computing both of its components.
+  `IsCyclotomicExtension.galEquivProd_apply` computing both of its components, and
+  `IsCyclotomicExtension.restrictNormal_galEquivProd_symm` together with
+  `IsCyclotomicExtension.autToPow_galEquivProd_symm` eliminating its inverse. Those four
+  `simp` lemmas are the whole interface: no consumer needs the `MulEquiv.ofBijective` that
+  packages the equivalence, in either direction.
 
 The two general prerequisites this rests on are stated where they belong rather than here:
 the degree identity `[M : K] = φ m` is `IsCyclotomicExtension.finrank_eq_totient` in
@@ -241,6 +245,28 @@ theorem galEquivProd_apply (hcop : ((NumberField.discr L).natAbs).Coprime m)
   -- `AlgEquiv.restrictNormalHom L σ` and `σ.restrictNormal L`, which is Mathlib's to discharge.
   rw [galEquivProd]
   rfl
+
+/-- Elimination for the inverse of `galEquivProd`, first component: the automorphism it produces
+restricts on `L` to the prescribed element of `Gal(L/K)`. Together with
+`autToPow_galEquivProd_symm` this characterises `(galEquivProd ...).symm`, so consumers never
+need the `MulEquiv.ofBijective` that packages it. -/
+@[simp]
+theorem restrictNormal_galEquivProd_symm (hcop : ((NumberField.discr L).natAbs).Coprime m)
+    {ζ : M} (hζ : IsPrimitiveRoot ζ m) (x : Gal(L/K) × (ZMod m)ˣ) :
+    ((galEquivProd K L M m hcop hζ).symm x).restrictNormal L = x.1 := by
+  have h := galEquivProd_apply K L M m hcop hζ ((galEquivProd K L M m hcop hζ).symm x)
+  rw [MulEquiv.apply_symm_apply] at h
+  exact (congrArg Prod.fst h).symm
+
+/-- Elimination for the inverse of `galEquivProd`, second component: the automorphism it produces
+has the prescribed cyclotomic character. -/
+@[simp]
+theorem autToPow_galEquivProd_symm (hcop : ((NumberField.discr L).natAbs).Coprime m)
+    {ζ : M} (hζ : IsPrimitiveRoot ζ m) (x : Gal(L/K) × (ZMod m)ˣ) :
+    hζ.autToPow K ((galEquivProd K L M m hcop hζ).symm x) = x.2 := by
+  have h := galEquivProd_apply K L M m hcop hζ ((galEquivProd K L M m hcop hζ).symm x)
+  rw [MulEquiv.apply_symm_apply] at h
+  exact (congrArg Prod.snd h).symm
 
 end Compositum
 
