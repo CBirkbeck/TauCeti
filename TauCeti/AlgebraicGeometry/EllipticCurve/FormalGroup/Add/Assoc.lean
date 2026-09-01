@@ -77,6 +77,27 @@ theorem algebraMap_subst_formalW_wEquation {q : MvPowerSeries σ O}
   rw [wEquationRHS_def, wEquationRHS_def]
   simp [fracCurve, map_add, map_mul, map_pow]
 
+/-! ### The chord data at the pair -/
+
+/-- The intercept of the chord through the two parametrized points, read at the pair `(q₁, q₂)`:
+`ν(q₁, q₂) = w(q₁) - λ(q₁, q₂) * q₁`. -/
+theorem subst_pair_formalIntercept {q₁ q₂ : MvPowerSeries σ O} (h₁ : constantCoeff q₁ = 0)
+    (h₂ : constantCoeff q₂ = 0) :
+    subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+        (formalIntercept W) =
+      PowerSeries.subst q₁ (formalW W) -
+        subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+          (formalSlope W) * q₁ := by
+  have h := congrArg (subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+    Unit ⊕ Unit → MvPowerSeries σ O)) (formalIntercept_def W)
+  rw [← coe_substAlgHom (hasSubst_pair h₁ h₂)] at h
+  simp only [map_sub, map_mul] at h
+  simp only [coe_substAlgHom (hasSubst_pair h₁ h₂), subst_pair_toMvPowerSeries_inl W h₁ h₂,
+    subst_X (hasSubst_pair h₁ h₂)] at h
+  have hl : (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+      Unit ⊕ Unit → MvPowerSeries σ O) (Sum.inl ()) = q₁ := rfl
+  rwa [hl] at h
+
 /-! ### The parametrized point -/
 
 variable [IsDomain O]
