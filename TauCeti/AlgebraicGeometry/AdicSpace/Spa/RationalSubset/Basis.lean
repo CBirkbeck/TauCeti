@@ -28,10 +28,17 @@ openness of `T · A` implies admissibility for `IA`; conversely, an admissible p
 has open numerator ideal after inserting `s` among the numerators, which does not change its
 rational subset. This comparison also transports closure under intersections and quasi-compactness.
 
-Closure under intersection is proved twice over: `inter_mem_spaRationalFamily` is the binary
-statement of Remark 7.30(5), and `biInter_mem_spaRationalFamily` iterates it to the finite
-intersections that Theorem 7.35(2) asserts and that Wedhorn's own proof of that theorem uses.
-The finite form is what a common refinement of a finite rational cover consumes.
+Closure under intersection appears in two strengths. Remark 7.30(5) is the binary statement,
+recorded here as `inter_mem_spaRationalFamily`; Theorem 7.35(2) asserts the stronger claim that
+the basis is stable under *finite* intersection, and `biInter_mem_spaRationalFamily` supplies it
+by iterating the binary lemma. The finite form is the one a common refinement of a finite
+rational cover consumes.
+
+Mathlib's `IsPiSystem.biInter_mem` is not usable for this. It is indexed by a `Finset (Set X)`
+rather than by a family, and it assumes both that the index set and the intersection itself are
+nonempty. The rational family is closed under intersection with no nonemptiness hypothesis, so
+the statements here carry none either, and the empty intersection is covered by
+`univ_mem_spaRationalFamily`.
 
 The plus ring is arbitrary here. The additional condition that it be a ring of integral
 elements is part of calling the resulting space the adic spectrum of a Huber pair, but none of
@@ -52,9 +59,8 @@ the basis arguments uses it.
   intersections, which is the stability clause of Wedhorn Theorem 7.35(2). It is stated over a
   `Finset` index, with `TauCeti.ValuationSpectrum.iInter_mem_spaRationalFamily` for a finite index
   type and `TauCeti.ValuationSpectrum.sInter_mem_spaRationalFamily` for a finite subfamily, the
-  form a refinement argument produces. The binary lemma is the step this iterates; neither implies
-  the other formally, since the induction also needs `univ_mem_spaRationalFamily` at the empty
-  stage.
+  form a refinement argument produces. The binary lemma stays the primitive: the induction proving
+  the finite form runs on it, with `univ_mem_spaRationalFamily` at the empty stage.
 * `TauCeti.ValuationSpectrum.inf_mem_spaRationalOpens` and
   `TauCeti.ValuationSpectrum.finsetInf_mem_spaRationalOpens`: the same two closure statements in
   the bundled `Opens` form, together with `TauCeti.ValuationSpectrum.top_mem_spaRationalOpens`.
@@ -183,7 +189,6 @@ theorem inter_mem_spaRationalFamily [IsHuberRing A] {Aplus : Subring A}
   (IsHuberRing.nonempty_pairOfDefinition (A := A)).elim
     fun P ↦ inter_mem_spaRationalFamily_of_pairOfDefinition P hU hV
 
-
 /-- **Wedhorn Theorem 7.35(2), finite-intersection half**, from a specified pair of definition:
 an intersection of finitely many rational subsets with open numerator ideal is again one. The
 induction is over the index set, with `univ_mem_spaRationalFamily` at the empty stage and
@@ -205,7 +210,9 @@ theorem biInter_mem_spaRationalFamily_of_pairOfDefinition (P : PairOfDefinition 
 /-- **Wedhorn Theorem 7.35(2), finite-intersection half.** Over a Huber ring the rational family
 is closed under intersections indexed by a `Finset`. This is the form Wedhorn's Theorem 7.35(2)
 states — "a basis of quasi-compact open subsets which is stable under finite intersection" —
-whereas `inter_mem_spaRationalFamily` gives only the binary step it iterates. -/
+whereas `inter_mem_spaRationalFamily` gives only the binary step it iterates. Wedhorn's proof of
+7.35(2) cites Remark 7.30(4) for the stability, but 7.30(4) is the statement that `R(T/s)` is
+rational for a unit `s`; the binary intersection used here is 7.30(5). -/
 theorem biInter_mem_spaRationalFamily [IsHuberRing A] {Aplus : Subring A} {ι : Type*}
     (s : Finset ι) {U : ι → Set (spa Aplus)}
     (h : ∀ i ∈ s, U i ∈ spaRationalFamily Aplus) :
@@ -347,12 +354,11 @@ theorem isBasis_spaRationalOpens [IsHuberRing A] (Aplus : Subring A) :
   TauCeti.TopologicalSpace.Opens.isBasis_of_isTopologicalBasis
     (isTopologicalBasis_spaRationalFamily Aplus)
 
-
 omit [IsTopologicalRing A] in
 /-- The whole space is a rational open, presented as `R({1}/1)`. -/
 theorem top_mem_spaRationalOpens (Aplus : Subring A) :
     (⊤ : Opens (spa Aplus)) ∈ spaRationalOpens Aplus :=
-  univ_mem_spaRationalFamily Aplus
+  mem_spaRationalOpens.mpr (univ_mem_spaRationalFamily Aplus)
 
 /-- **Wedhorn Remark 7.30(5)** in the bundled form: the rational opens are closed under binary
 meet. Meet of `Opens` is intersection of the underlying sets, so this is
@@ -360,7 +366,8 @@ meet. Meet of `Opens` is intersection of the underlying sets, so this is
 theorem inf_mem_spaRationalOpens [IsHuberRing A] {Aplus : Subring A}
     {U V : Opens (spa Aplus)} (hU : U ∈ spaRationalOpens Aplus)
     (hV : V ∈ spaRationalOpens Aplus) : U ⊓ V ∈ spaRationalOpens Aplus :=
-  inter_mem_spaRationalFamily hU hV
+  mem_spaRationalOpens.mpr
+    (inter_mem_spaRationalFamily (mem_spaRationalOpens.mp hU) (mem_spaRationalOpens.mp hV))
 
 /-- **Wedhorn Theorem 7.35(2), finite-intersection half**, in the bundled form: the rational
 opens are closed under `Finset.inf`. This is the shape a sheaf criterion on the basis takes,
