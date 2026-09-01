@@ -293,9 +293,7 @@ theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero_of_pri
 Nothing is assumed about `L` beyond `L ≠ 0`: neither squarefreeness, nor any relation between
 the primes of `L` and those of `N`. The level divides `N * L ^ 2`, equals it exactly when `L`
 is squarefree, and is strictly smaller when `L` has a repeated prime; the squarefree case is
-`exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero_of_squarefree`. A consumer
-wanting a larger level raises along `CuspForm.ofLe`, the divisibility coming from
-`Nat.prod_primeFactors_dvd`. -/
+`exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero_of_squarefree`. -/
 theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero (χ : (ZMod N)ˣ →* ℂˣ)
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {L : ℕ}
     [NeZero L] :
@@ -322,8 +320,7 @@ whose `q`-expansion is that of `f` restricted to the indices *not* coprime to `L
 
 This is `exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero` at a squarefree
 `L`, where `∏ L.primeFactors` is `L` itself, so the level is the classical `N * L ^ 2` at which
-Miyake states the lemma; `L * (L * N)` and `N * L ^ 2` agree, and the form is carried across that
-agreement along `CuspForm.ofLe`. -/
+Miyake states the lemma. -/
 theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero_of_squarefree
     (χ : (ZMod N)ˣ →* ℂˣ) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
     (hf : f ∈ cuspFormCharSpace k χ) {L : ℕ} (hL : Squarefree L) :
