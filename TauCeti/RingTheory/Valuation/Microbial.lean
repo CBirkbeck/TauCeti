@@ -87,17 +87,20 @@ def IsMicrobial (v : Valuation R Γ₀) : Prop :=
     Nontrivial ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) ∧
       MulArchimedean ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup)
 
-/-- **The characteristic lemma for `IsMicrobial`**: it is exactly its defining existential, so a
-consumer can obtain the convex subgroup from it, or supply one to build it, without unfolding the
-predicate.
-
-Deliberately not `@[simp]`: the right-hand side is the strictly larger term, so rewriting in this
-direction takes a named predicate out of normal form rather than into it. -/
+/-- The `Iff.rfl` proof of `isMicrobial_iff`, kept private because it unfolds the sealed
+`IsMicrobial`, which an exported theorem may not do. -/
 private theorem isMicrobial_iff_aux {v : Valuation R Γ₀} :
     v.IsMicrobial ↔ ∃ H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ,
       Nontrivial ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) ∧
         MulArchimedean ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) := Iff.rfl
 
+/-- **The characteristic lemma for `IsMicrobial`**: it is exactly its defining existential, so a
+consumer can obtain the convex subgroup from it, or supply one to build it, without unfolding the
+predicate. Since `IsMicrobial` is sealed, this is the whole of its introduction and elimination
+interface outside this module.
+
+Deliberately not `@[simp]`: the right-hand side is the strictly larger term, so rewriting in this
+direction takes a named predicate out of normal form rather than into it. -/
 theorem isMicrobial_iff {v : Valuation R Γ₀} :
     v.IsMicrobial ↔ ∃ H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ,
       Nontrivial ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) ∧
