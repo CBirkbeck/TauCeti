@@ -183,6 +183,20 @@ abbrev DecompQuotient (Γ₁ Γ₂ : Subgroup G) (g : G) :=
 instance (Γ₁ Γ₂ : Subgroup G) (g : G) : Nonempty (DecompQuotient Γ₁ Γ₂ g) :=
   ⟨QuotientGroup.mk 1⟩
 
+/-- **A double coset of `Γ` by an element of `Γ` is a single right coset.** Conjugation by `g ∈ Γ`
+maps `Γ` onto itself, so the subgroup indexing the decomposition is all of `Γ` and the quotient
+collapses. With the `Nonempty` instance above the index type is a singleton, which is what makes
+the slash sum over `Γ g Γ` a single summand. -/
+lemma subsingleton_decompQuotient (Γ : Subgroup G) {g : G} (hg : g ∈ Γ) :
+    Subsingleton (DecompQuotient Γ Γ g) := by
+  have hconj : (ConjAct.toConjAct g • Γ) = Γ := by
+    ext x
+    simp [Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def,
+      ConjAct.ofConjAct_toConjAct, Subgroup.mul_mem_cancel_left, Subgroup.mul_mem_cancel_right,
+      hg, inv_mem hg]
+  rw [hconj, Subgroup.subgroupOf_self]
+  infer_instance
+
 /-- The left cosets `σᵢ g Γ₂` of the decomposition of `Γ₁gΓ₂` are pairwise distinct: the map
 `i ↦ σᵢ g Γ₂` into `G ⧸ Γ₂` is injective. -/
 lemma mk_out_mul_injective (Γ₁ Γ₂ : Subgroup G) (g : G) :
