@@ -264,7 +264,12 @@ theorem pow_one (C : ConjClasses M) : C ^ 1 = C := by
   obtain ⟨a, rfl⟩ := ConjClasses.exists_rep C
   rw [mk_pow, _root_.pow_one]
 
-/-- Iterated powers compose: raising `C ^ i` to the `j`-th power gives `C ^ (i * j)`. -/
+/-- Iterated powers compose: raising `C ^ i` to the `j`-th power gives `C ^ (i * j)`. Tagged
+`@[simp]` because the single power is the normal form: it rewrites towards `C ^ (i * j)`, which
+is the direction the rest of this API (`pow_zero`, `pow_one`, `mk_pow`) already normalises to.
+Note this is the mirror image of Mathlib's root-level `pow_mul`, which orients the equation the
+other way for monoid elements. -/
+@[simp]
 theorem pow_mul (C : ConjClasses M) (i j : ℕ) : (C ^ i) ^ j = C ^ (i * j) := by
   obtain ⟨a, rfl⟩ := ConjClasses.exists_rep C
   rw [mk_pow, mk_pow, mk_pow, _root_.pow_mul]
