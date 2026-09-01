@@ -38,6 +38,11 @@ this file's, specialized; see the Provenance note there.
   read at `z₃`.
 * `WeierstrassCurve.subst_pair_formalW_formalAdd`: the `w`-expansion at the addition series,
   `w(F(q₁, q₂)) = -(w(z₃) * u(z₃)⁻¹)`.
+* `WeierstrassCurve.subst_pair_formalInverseDenom_mul`,
+  `WeierstrassCurve.subst_pair_formalInverseDenom_eq`: the denominator of the formal inverse,
+  read at `z₃`, is a unit and equals `1 - a₁ z₃ - a₃ w(z₃)`.
+* `WeierstrassCurve.subst_pair_formalAdd_eq`: the addition series written out,
+  `F(q₁, q₂) = -(z₃ * u(z₃)⁻¹)`.
 
 ## Implementation notes
 
@@ -300,5 +305,56 @@ theorem subst_pair_formalW_formalAdd (h₁ : constantCoeff q₁ = 0) (h₂ : con
       PowerSeries.subst (formalInverse W) (formalW W) from rfl,
     subst_formalInverse_formalW, ← coe_substAlgHom hT]
   simp only [map_neg, map_mul]
+
+/-- The denominator of the formal inverse, read at the third root `z₃(q₁, q₂)`, is still a unit:
+it times its `invOfUnit` is `1`. -/
+theorem subst_pair_formalInverseDenom_mul (h₁ : constantCoeff q₁ = 0)
+    (h₂ : constantCoeff q₂ = 0) :
+    subst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+          Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W)) (formalInverseDenom W) *
+        subst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+          Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W))
+          (PowerSeries.invOfUnit (formalInverseDenom W) 1) = 1 := by
+  have hT : HasSubst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+      Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W)) :=
+    hasSubst_of_constantCoeff_zero fun _ ↦ constantCoeff_subst_pair_formalThirdRoot W h₁ h₂
+  have h := congrArg (substAlgHom hT) (mul_invOfUnit_formalInverseDenom W)
+  simp only [map_mul, map_one] at h
+  simpa only [coe_substAlgHom hT] using h
+
+/-- The denominator of the formal inverse, read at the third root, written out:
+`u(z₃) = 1 - a₁ z₃ - a₃ w(z₃)`. -/
+theorem subst_pair_formalInverseDenom_eq (h₁ : constantCoeff q₁ = 0)
+    (h₂ : constantCoeff q₂ = 0) :
+    subst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+        Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W)) (formalInverseDenom W) =
+      1 - C W.a₁ * subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+          Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W) -
+        C W.a₃ * subst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+          Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W)) (formalW W) := by
+  have hT : HasSubst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+      Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W)) :=
+    hasSubst_of_constantCoeff_zero fun _ ↦ constantCoeff_subst_pair_formalThirdRoot W h₁ h₂
+  rw [formalInverseDenom_def, ← coe_substAlgHom hT]
+  simp only [map_sub, map_one, map_mul]
+  rw [coe_substAlgHom hT]
+  simp only [show (PowerSeries.C : O →+* PowerSeries O) = MvPowerSeries.C from rfl,
+    show (PowerSeries.X : PowerSeries O) = MvPowerSeries.X () from rfl, subst_C, subst_X hT]
+
+/-- The addition series at the pair, written out: `F(q₁, q₂) = -(z₃ * u(z₃)⁻¹)`. -/
+theorem subst_pair_formalAdd_eq (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0) :
+    subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W) =
+      -(subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+          (formalThirdRoot W) *
+        subst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+          Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W))
+          (PowerSeries.invOfUnit (formalInverseDenom W) 1)) := by
+  have hT : HasSubst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+      Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W)) :=
+    hasSubst_of_constantCoeff_zero fun _ ↦ constantCoeff_subst_pair_formalThirdRoot W h₁ h₂
+  rw [subst_pair_formalAdd W h₁ h₂, formalInverse_def, ← coe_substAlgHom hT]
+  simp only [map_neg, map_mul]
+  rw [coe_substAlgHom hT,
+    show (PowerSeries.X : PowerSeries O) = MvPowerSeries.X () from rfl, subst_X hT]
 
 end WeierstrassCurve
