@@ -21,6 +21,8 @@ argument for the conductor theorem consumes, and it is stated for characters val
 
 * `DirichletCharacter.exists_alt_unit_in_coset_with_char_separation`: character separation within
   a fibre of the reduction map.
+* `DirichletCharacter.factorsThrough_iff_forall_unitsMap_eq_one`: the factoring criterion with
+  both kernels unfolded, which is the pointwise form the level-lowering argument consumes.
 
 ## Provenance
 
@@ -36,6 +38,19 @@ consequence of the other, so only this form is ported and the extraction is done
 public section
 
 namespace DirichletCharacter
+
+/-- **Factoring through `d`, read pointwise.** Mathlib's
+`DirichletCharacter.factorsThrough_iff_ker_unitsMap` states the criterion as a containment of
+`MonoidHom.ker`s; this is that criterion with both kernels unfolded. The level-lowering argument
+carries its character as the units homomorphism `cuspFormCharSpace` is indexed by and needs the
+criterion in this shape at every site, so naming it here keeps the `MonoidHom.mem_ker` shuffle out
+of those proofs. -/
+theorem factorsThrough_iff_forall_unitsMap_eq_one {R : Type*} [CommMonoidWithZero R] {N : ℕ}
+    [NeZero N] {d : ℕ} (hd : d ∣ N) {χ : DirichletCharacter R N} :
+    χ.FactorsThrough d ↔ ∀ u : (ZMod N)ˣ, ZMod.unitsMap hd u = 1 → χ.toUnitHom u = 1 := by
+  rw [factorsThrough_iff_ker_unitsMap hd]
+  exact ⟨fun h u hu ↦ MonoidHom.mem_ker.mp (h (MonoidHom.mem_ker.mpr hu)),
+    fun h u hu ↦ MonoidHom.mem_ker.mpr (h u (MonoidHom.mem_ker.mp hu))⟩
 
 /-- **Character separation within a coset.** If `χ` does not factor through `d ∣ N`, then every
 unit `u` has a partner `u'` with the same reduction modulo `d` but a different character value —
