@@ -45,7 +45,8 @@ between the complements of the two closed subsets, is **not** proved in this fil
 * `TauCeti.Localization.awayMap_subtype_surjective_of_isTopologicallyNilpotent`: the induced map on
   localisations is surjective when the subring is open and `s` is topologically nilpotent.
 * `TauCeti.Localization.awayRingEquivOfIsTopologicallyNilpotent`: the resulting isomorphism
-  `B_s ≃+* A_s`.
+  `B_s ≃+* A_s`, with `awayMap_bijective` recording the same content as bijectivity of the
+  underlying `IsLocalization.Away.map`.
 -/
 
 public section
@@ -90,6 +91,15 @@ noncomputable def awayRingEquivOfIsTopologicallyNilpotent (hB : IsOpen (B : Set 
   -- `rfl` cannot see through `awayRingEquivOfIsTopologicallyNilpotent`: its body is not exposed
   -- outside this module, so the coercion is unfolded through `RingEquiv`'s own interface lemma.
   RingEquiv.coe_ofBijective _ _
+
+/-- **The induced map on localisations is bijective.** This is
+`awayRingEquivOfIsTopologicallyNilpotent` in the unbundled form that consumers phrased in terms of
+`IsLocalization.Away.map` need: the equivalence's body is not exposed, so reading its underlying
+map off it otherwise costs a rewrite by `coe_awayRingEquivOfIsTopologicallyNilpotent`. -/
+theorem awayMap_bijective (hB : IsOpen (B : Set A)) (hs : IsTopologicallyNilpotent (s : A)) :
+    Function.Bijective (IsLocalization.Away.map Bs As B.subtype s) := by
+  rw [← coe_awayRingEquivOfIsTopologicallyNilpotent Bs As hB hs]
+  exact (awayRingEquivOfIsTopologicallyNilpotent Bs As hB hs).bijective
 
 end TauCeti.Localization
 
