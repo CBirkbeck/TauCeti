@@ -32,6 +32,12 @@ this file's, specialized; see the Provenance note there.
   pair.
 * `WeierstrassCurve.subst_pair_formalThirdRoot_relation`: the defining relation of `z₃` at
   the pair, with that inverse cleared.
+* `WeierstrassCurve.constantCoeff_subst_pair_formalThirdRoot`: the third root at the pair again
+  vanishes at the origin, so it is itself a legitimate parameter.
+* `WeierstrassCurve.subst_pair_formalAdd`: the addition series at the pair is the formal inverse
+  read at `z₃`.
+* `WeierstrassCurve.subst_pair_formalW_formalAdd`: the `w`-expansion at the addition series,
+  `w(F(q₁, q₂)) = -(w(z₃) * u(z₃)⁻¹)`.
 
 ## Implementation notes
 
@@ -67,6 +73,18 @@ and `formalW` here, continuing the renaming this repository applies to that deve
 Stoll's `A` for Vieta's denominator is `formalThirdRootDenom` here, so `pair_A_mul` and
 `pair_T₃_relation` are `subst_pair_thirdRootDenom_mul` and
 `subst_pair_formalThirdRoot_relation`.
+
+Also from that file, `pair_thirdRoot_constantCoeff` is
+`constantCoeff_subst_pair_formalThirdRoot` and `pair_wF` is `subst_pair_formalW_formalAdd`.
+The source's `pair_F_comp` needs no counterpart of its own: it says the addition series at the
+pair is the inverse series read at the third root, which here is `formalAdd`'s *definition*
+(`Add/Series.lean`) pushed through the substitution, and that is `subst_pair_formalAdd`.
+
+**A naming trap worth recording, since the rename map above invites the wrong reading.** Stoll's
+`uSeries` (`Chord.lean:351`, `1 - a₁ z - a₃ w`) is `formalInverseDenom` here
+(`FormalGroup/Inverse.lean`), **not** `formalU`. This repository's `formalU` is a different
+series — the unit part of the `w`-expansion, `w = z³ u`. Anything ported from the source's `u`
+lemmas must target `formalInverseDenom`.
 
 The source's `pair_intercept_identity₁` and `pair_intercept_identity₂` are not ported here. Their
 consumers lie in the source's `Assembly` section, so they belong with that first consumer rather
