@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 import TauCeti.Data.ZMod.Divisibility
+import TauCeti.NumberTheory.DirichletCharacter.Basic
 public import Mathlib.NumberTheory.DirichletCharacter.Basic
 public import TauCeti.NumberTheory.ModularForms.CuspDescent
 
@@ -37,7 +38,6 @@ shift `T ^ i` — is read off the determinants rather than off a formula for tho
 
 ## Main results
 
-* `TauCeti.exists_unitsMap_eq_and_apply_ne`: character separation along a `ZMod.unitsMap`-coset.
 * `TauCeti.eq_zero_of_not_forall_unitsMap_eq_one`: **the vanishing horn**.
 * `TauCeti.cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace`: the descent horn carries the
   lowered nebentypus `hfac.χ₀`.
@@ -79,23 +79,7 @@ open scoped MatrixGroups ModularForm
 
 namespace TauCeti
 
-/-! ### Character separation along a coset -/
-
-variable {N : ℕ} [NeZero N] {d : ℕ}
-
-omit [NeZero N] in
-/-- If a character of `(ZMod N)ˣ` is not trivial on the kernel of `ZMod.unitsMap`, then every
-unit has a partner in its `ZMod.unitsMap`-coset on which the character takes a different value.
-This is the only consequence of nontriviality the vanishing argument uses. -/
-theorem exists_unitsMap_eq_and_apply_ne (hd : d ∣ N) {χ : (ZMod N)ˣ →* ℂˣ}
-    (hχ : ¬ ∀ u : (ZMod N)ˣ, ZMod.unitsMap hd u = 1 → χ u = 1) (u : (ZMod N)ˣ) : ∃ u' :
-    (ZMod N)ˣ, ZMod.unitsMap hd u' = ZMod.unitsMap hd u ∧ χ u' ≠ χ u := by
-  -- the failure of triviality is a single kernel unit `v` with `χ v ≠ 1`; translating `u` by it
-  -- stays in the coset and moves the value, since `χ (u * v) = χ u * χ v`
-  obtain ⟨v, hv, hχv⟩ : ∃ v : (ZMod N)ˣ, ZMod.unitsMap hd v = 1 ∧ χ v ≠ 1 := by
-    simpa only [not_forall, exists_prop] using hχ
-  exact ⟨u * v, by rw [map_mul, hv, mul_one], fun h ↦ hχv <| mul_left_cancel <| by
-    rw [← map_mul, h, mul_one]⟩
+variable {N : ℕ} [NeZero N]
 
 /-! ### The `Γ₀(N)` lift of a unit -/
 
@@ -170,7 +154,17 @@ private theorem exists_eq_T_zpow_mul_conjScale_mul_T_zpow_of_apply_ne {l : ℕ} 
     ((N / l : ℕ) : ℤ) (gamma0Twist_apply_one_zero_eq_mul hlN _) = ModularGroup.T ^ i * conjScale l
     (gamma0TwistOfUnit u') ((N / l : ℕ) : ℤ)
     (gamma0Twist_apply_one_zero_eq_mul hlN _) * ModularGroup.T ^ j := by
-  obtain ⟨u', hcoset, hne⟩ := exists_unitsMap_eq_and_apply_ne (Nat.div_dvd_of_dvd hlN) hχ u
+  -- the separation is `DirichletCharacter.exists_alt_unit_in_coset_with_char_separation`, read
+  -- through `MulChar.ofUnitHom`; `hχ` is the negation of `FactorsThrough` by
+  -- `DirichletCharacter.factorsThrough_iff_ker_unitsMap`, exactly as in the dichotomy below
+  have hnfac : ¬ DirichletCharacter.FactorsThrough (MulChar.ofUnitHom χ) (N / l) := by
+    refine fun hfac ↦ hχ fun v hv ↦ ?_
+    simpa using MonoidHom.mem_ker.mp
+      ((DirichletCharacter.factorsThrough_iff_ker_unitsMap _).mp hfac (MonoidHom.mem_ker.mpr hv))
+  obtain ⟨u', hcoset, hne⟩ :=
+    DirichletCharacter.exists_alt_unit_in_coset_with_char_separation
+      (Nat.div_dvd_of_dvd hlN) hnfac u
+  simp only [MulChar.toUnitHom_eq, MulChar.ofUnitHom_eq, Equiv.apply_symm_apply] at hne
   set Nl : ℤ := ((N / l : ℕ) : ℤ) with hNl
   have hNl_ne : Nl ≠ 0 := by
     rw [hNl, Nat.cast_ne_zero]
@@ -194,12 +188,6 @@ private theorem exists_eq_T_zpow_mul_conjScale_mul_T_zpow_of_apply_ne {l : ℕ} 
 
 
 /-! ### The vanishing horn -/
-
-/-- One slash with two different multipliers forces the function to vanish. -/
-lemma eq_zero_of_slash_eq_smul_of_slash_eq_smul (k : ℤ) (f : ℍ → ℂ) (A : GL (Fin 2) ℝ) {z₁ z₂ : ℂ}
-    (hne : z₁ ≠ z₂) (h₁ : f ∣[k] A = z₁ • f) (h₂ : f ∣[k] A = z₂ • f) : f = 0 := by
-  have hsub : (z₁ - z₂) • f = 0 := by rw [sub_smul, ← h₁, ← h₂, sub_self]
-  exact (smul_eq_zero.mp hsub).resolve_left (sub_ne_zero.mpr hne)
 
 /-- **The vanishing horn of the level-lowering dichotomy.** If the nebentypus `χ` of the
 level-raise of `f` is *not* trivial on the kernel of `(ZMod N)ˣ → (ZMod (N / l))ˣ`, and `f` is
@@ -232,8 +220,10 @@ theorem eq_zero_of_not_forall_unitsMap_eq_one {l : ℕ} [NeZero l] (hlN : l ∣ 
       (gamma0Twist_apply_one_zero_eq_mul hlN _)) : GL (Fin 2) ℝ) = (χ u' : ℂ) • f := by
     rw [hfactor, map_mul, map_mul, map_zpow, map_zpow]
     exact slash_zpow_mul_mul_zpow_eq_smul k f hdet hT (hmul u') i j
-  exact eq_zero_of_slash_eq_smul_of_slash_eq_smul k f _
-    (fun h ↦ hne (Units.ext h)) halt (hmul 1)
+  -- one slash with two different multipliers forces the function to vanish
+  have hsub : ((χ u' : ℂ) - (χ 1 : ℂ)) • f = 0 := by
+    rw [sub_smul, ← halt, ← hmul 1, sub_self]
+  exact (smul_eq_zero.mp hsub).resolve_left (sub_ne_zero.mpr fun h ↦ hne (Units.ext h))
 
 
 /-! ### The dichotomy -/
