@@ -1,0 +1,105 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
+-/
+module
+
+public import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
+
+/-!
+# Irreducibility of the cyclotomic polynomial from the degree of a cyclotomic extension
+
+Mathlib proves `[L : K] = φ n` for an `n`-th cyclotomic extension `L / K` once `Φ_n` is known to be
+irreducible over `K` (`IsCyclotomicExtension.finrank`). This file records the converse: the degree
+of `L / K` is always at most `φ n`, and as soon as it is at least `φ n` the polynomial `Φ_n` is
+irreducible over `K`. Together these give the equivalence
+`IsCyclotomicExtension.irreducible_cyclotomic_iff_finrank_eq_totient`.
+
+The argument is the classical one. `L = K(ζ)` for a primitive `n`-th root of unity `ζ`, so `[L : K]`
+is the degree of the minimal polynomial of `ζ` over `K`, and that minimal polynomial divides `Φ_n`;
+hence `[L : K] ≤ φ n`, and if equality holds then `Φ_n` is a monic multiple of the minimal
+polynomial of the same degree, so the two coincide and `Φ_n` is irreducible.
+
+## Main results
+
+* `IsCyclotomicExtension.finrank_le_totient`: `[L : K] ≤ φ n`.
+* `IsCyclotomicExtension.irreducible_cyclotomic_of_totient_le_finrank`: if `φ n ≤ [L : K]` then
+  `Φ_n` is irreducible over `K`.
+* `IsCyclotomicExtension.irreducible_cyclotomic_iff_finrank_eq_totient`: `Φ_n` is irreducible over
+  `K` if and only if `[L : K] = φ n`.
+
+## References
+
+This is the degree bookkeeping of Milne, *Algebraic Number Theory*, proof of Proposition 6.2, and
+of Sharifi, *Algebraic Number Theory*, proof of Lemma 3.1.13, where the base field is `ℚ`. It is
+the last step of Layer 7.2 of the Chebotarev roadmap, whose degree input comes from ramification.
+-/
+
+public section
+
+open Polynomial
+
+namespace IsCyclotomicExtension
+
+variable {n : ℕ} [NeZero n] (K : Type*) [Field K] (L : Type*) [CommRing L] [IsDomain L]
+  [Algebra K L] [IsCyclotomicExtension {n} K L]
+
+/-- **The degree of a cyclotomic extension is the degree of the minimal polynomial of `ζ`.**
+`L = K(ζ)` has the power basis `1, ζ, …` of length `deg (minpoly K ζ)`.
+
+Source: Mathlib, proof of `IsCyclotomicExtension.finrank`
+("`rw [((zeta_spec n K L).powerBasis K).finrank, IsPrimitiveRoot.powerBasis_dim, …]`"). -/
+private theorem finrank_eq_natDegree_minpoly_zeta :
+    Module.finrank K L = (minpoly K (zeta n K L)).natDegree := by
+  rw [((zeta_spec n K L).powerBasis K).finrank, IsPrimitiveRoot.powerBasis_dim]
+
+/-- **The minimal polynomial of `ζ` over `K` divides `Φ_n`.** A primitive `n`-th root of unity is a
+root of `Φ_n`.
+
+Source: Mathlib, `IsPrimitiveRoot.minpoly_dvd_cyclotomic` ("The minimal polynomial of a primitive
+`n`-th root of unity `μ` divides `cyclotomic n ℤ`"), here over the base field `K`. -/
+private theorem minpoly_zeta_dvd_cyclotomic : minpoly K (zeta n K L) ∣ cyclotomic n K := by
+  exact minpoly.dvd K _ (by simpa [aeval_def, eval₂_eq_eval_map, IsRoot.def]
+    using (zeta_spec n K L).isRoot_cyclotomic (NeZero.pos n))
+
+/-- **The degree of a cyclotomic extension is at most `φ n`.** `L = K(ζ)` for a primitive `n`-th
+root of unity `ζ`, whose minimal polynomial over `K` divides `Φ_n`.
+
+Source: Milne, *Algebraic Number Theory*, proof of Prop. 6.2 ("we know `[ℚ[ζ] : ℚ] ≤ φ(p^r)`");
+Sharifi, *Algebraic Number Theory*, proof of Lemma 3.1.13 ("`[ℚ(µ_{p^r}) : ℚ] ≤ deg Φ_{p^r}`"). -/
+theorem finrank_le_totient : Module.finrank K L ≤ n.totient := by
+  rw [finrank_eq_natDegree_minpoly_zeta (n := n) K L]
+  calc (minpoly K (zeta n K L)).natDegree ≤ (cyclotomic n K).natDegree :=
+        natDegree_le_of_dvd (minpoly_zeta_dvd_cyclotomic K L) (cyclotomic_ne_zero n K)
+    _ = n.totient := natDegree_cyclotomic n K
+
+/-- **A cyclotomic extension of full degree has irreducible cyclotomic polynomial.** If
+`φ n ≤ [L : K]` then the minimal polynomial of a primitive `n`-th root of unity, a monic divisor of
+`Φ_n`, has degree `φ n`, so it is `Φ_n`, which is therefore irreducible.
+
+Source: Milne, *Algebraic Number Theory*, proof of Prop. 6.2 ("(3.34) implies
+`[ℚ[ζ] : ℚ] ≥ φ(p^r)`. This proves (a)"); Sharifi, proof of Lemma 3.1.13 ("which forces
+`[ℚ(µ_{p^r}) : ℚ] = p^{r−1}(p − 1)`"). -/
+theorem irreducible_cyclotomic_of_totient_le_finrank (h : n.totient ≤ Module.finrank K L) :
+    Irreducible (cyclotomic n K) := by
+  have hζ := zeta_spec n K L
+  have hint : IsIntegral K (zeta n K L) := (hζ.isIntegral (NeZero.pos n)).tower_top
+  have hdeg : (cyclotomic n K).natDegree ≤ (minpoly K (zeta n K L)).natDegree := by
+    rw [natDegree_cyclotomic, ← finrank_eq_natDegree_minpoly_zeta (n := n) K L]; exact h
+  rw [eq_of_monic_of_dvd_of_natDegree_le (minpoly.monic hint) (cyclotomic.monic n K)
+    (minpoly_zeta_dvd_cyclotomic K L) hdeg]
+  exact minpoly.irreducible hint
+
+/-- **`Φ_n` is irreducible over `K` exactly when the cyclotomic extension has degree `φ n`.** The
+forward direction is Mathlib's `IsCyclotomicExtension.finrank`; the converse is
+`irreducible_cyclotomic_of_totient_le_finrank`.
+
+Source: as for the two lemmas it combines. -/
+theorem irreducible_cyclotomic_iff_finrank_eq_totient :
+    Irreducible (cyclotomic n K) ↔ Module.finrank K L = n.totient := by
+  exact ⟨fun h ↦ IsCyclotomicExtension.finrank L h,
+    fun h ↦ irreducible_cyclotomic_of_totient_le_finrank K L h.symm.le⟩
+
+end IsCyclotomicExtension
+
