@@ -84,11 +84,11 @@ variable {N : ℕ} [NeZero N]
 /-! ### The lower-left entry of the Bézout twist -/
 
 omit [NeZero N] in
-/-- The lower-left entry of the Bézout twist, factored as `l * (N / l)`. This is the shape
-`TauCeti.conjScale` asks for, and it records `N / l` as the cofactor. -/
-private lemma gamma0Twist_apply_one_zero_eq_mul {l p : ℕ} (hlN : l ∣ N) (h : Nat.Coprime p N) :
-    gamma0Twist N p h 1 0 = (l : ℤ) * ((N / l : ℕ) : ℤ) := by
-  rw [gamma0Twist_apply_one_zero]
+/-- The lower-left entry of the Bézout twist at a unit, factored as `l * (N / l)`. This is the
+shape `TauCeti.conjScale` asks for, and it records `N / l` as the cofactor. -/
+private lemma gamma0TwistOfUnit_apply_one_zero_eq_mul {l : ℕ} (hlN : l ∣ N) (u : (ZMod N)ˣ) :
+    gamma0TwistOfUnit u 1 0 = (l : ℤ) * ((N / l : ℕ) : ℤ) := by
+  rw [gamma0TwistOfUnit_apply_one_zero]
   exact_mod_cast (Nat.mul_div_cancel' hlN).symm
 
 
@@ -133,10 +133,11 @@ private theorem exists_apply_ne_and_eq_T_zpow_mul_conjScale_mul_T_zpow {l : ℕ}
     (hlN : l ∣ N)
     {χ : (ZMod N)ˣ →* ℂˣ}
     (hχ : ¬ ∀ u : (ZMod N)ˣ, ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) u = 1 → χ u = 1) (u : (ZMod N)ˣ)
-    : ∃ (i j : ℤ) (u' : (ZMod N)ˣ), χ u' ≠ χ u ∧ conjScale l (gamma0TwistOfUnit u)
-    ((N / l : ℕ) : ℤ) (gamma0Twist_apply_one_zero_eq_mul hlN _) = ModularGroup.T ^ i * conjScale l
-    (gamma0TwistOfUnit u') ((N / l : ℕ) : ℤ)
-    (gamma0Twist_apply_one_zero_eq_mul hlN _) * ModularGroup.T ^ j := by
+    : ∃ (i j : ℤ) (u' : (ZMod N)ˣ), χ u' ≠ χ u ∧
+      conjScale l (gamma0TwistOfUnit u) ((N / l : ℕ) : ℤ)
+        (gamma0TwistOfUnit_apply_one_zero_eq_mul hlN _) =
+      ModularGroup.T ^ i * conjScale l (gamma0TwistOfUnit u') ((N / l : ℕ) : ℤ)
+        (gamma0TwistOfUnit_apply_one_zero_eq_mul hlN _) * ModularGroup.T ^ j := by
   -- the separation is `DirichletCharacter.exists_alt_unit_in_coset_with_char_separation`, read
   -- through `MulChar.ofUnitHom`; `hχ` is the negation of `FactorsThrough` by
   -- `DirichletCharacter.factorsThrough_iff_ker_unitsMap`, exactly as in the dichotomy below
@@ -157,11 +158,11 @@ private theorem exists_apply_ne_and_eq_T_zpow_mul_conjScale_mul_T_zpow {l : ℕ}
   -- lower-left entry: this is the only thing known about the upper row
   have hdet : ∀ v : (ZMod N)ˣ, gamma0TwistOfUnit v 0 0 * gamma0TwistOfUnit v 1 1 -
       gamma0TwistOfUnit v 0 1 * ((l : ℤ) * Nl) = 1 := fun v => by
-    rw [← gamma0Twist_apply_one_zero_eq_mul (l := l) hlN (ZMod.val_coe_unit_coprime v)]
+    rw [← gamma0TwistOfUnit_apply_one_zero_eq_mul (l := l) hlN v]
     exact fin_two_mul_sub_mul_eq_one _
   -- the lower-right entries are the unit values, so the coset congruence is one between them
   have hdvd_e : Nl ∣ gamma0TwistOfUnit u 1 1 - gamma0TwistOfUnit u' 1 1 := by
-    rw [gamma0Twist_apply_one_one, gamma0Twist_apply_one_one]
+    rw [gamma0TwistOfUnit_apply_one_one, gamma0TwistOfUnit_apply_one_one]
     exact ZMod.natCast_dvd_val_sub_of_unitsMap_eq (Nat.div_dvd_of_dvd hlN) _ _ hcoset.symm
   obtain ⟨i, hi⟩ := dvd_sub_of_dvd_sub_of_det (hdet u) (hdet u') hdvd_e
   obtain ⟨j, hj⟩ := hdvd_e
@@ -195,14 +196,14 @@ theorem eq_zero_of_not_forall_apply_eq_one_of_unitsMap_eq_one {l : ℕ} [NeZero 
   -- the multiplier attached to the lift of a unit is the character at that unit
   have hmul : ∀ v : (ZMod N)ˣ,
       f ∣[k] (mapGL ℝ (conjScale l (gamma0TwistOfUnit v) ((N / l : ℕ) : ℤ)
-        (gamma0Twist_apply_one_zero_eq_mul hlN _)) : GL (Fin 2) ℝ) = (χ v : ℂ) • f := by
+        (gamma0TwistOfUnit_apply_one_zero_eq_mul hlN _)) : GL (Fin 2) ℝ) = (χ v : ℂ) • f := by
     intro v
     have h := slash_conjScale_eq_smul_of_slash_scaleGL (k := k) f (gamma0TwistOfUnit v)
-      (gamma0Twist_apply_one_zero_eq_mul hlN _) (hnb _ (gamma0Twist_mem_Gamma0 _))
+      (gamma0TwistOfUnit_apply_one_zero_eq_mul hlN _) (hnb _ (gamma0TwistOfUnit_mem_Gamma0 _))
     rwa [Gamma0Map_toHomUnits_gamma0TwistOfUnit] at h
   -- the same slash, read through the refactoring, has the multiplier of the separating unit
   have halt : f ∣[k] (mapGL ℝ (conjScale l (gamma0TwistOfUnit 1) ((N / l : ℕ) : ℤ)
-      (gamma0Twist_apply_one_zero_eq_mul hlN _)) : GL (Fin 2) ℝ) = (χ u' : ℂ) • f := by
+      (gamma0TwistOfUnit_apply_one_zero_eq_mul hlN _)) : GL (Fin 2) ℝ) = (χ u' : ℂ) • f := by
     rw [hfactor, map_mul, map_mul, map_zpow, map_zpow]
     exact slash_zpow_mul_mul_zpow_eq_smul k f hdet hT (hmul u') i j
   -- one slash with two different multipliers forces the function to vanish
