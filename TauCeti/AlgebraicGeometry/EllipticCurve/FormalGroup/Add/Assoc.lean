@@ -29,6 +29,8 @@ containing them: this file base changes `W` along `O → MvPowerSeries σ O → 
   from either of the two points.
 * `WeierstrassCurve.subst_pair_formalIntercept_mul_sub` : the cross combination
   `q₁ w(q₂) - q₂ w(q₁) = ν(q₁, q₂) * (q₁ - q₂)`, which is what the two readings buy.
+* `WeierstrassCurve.subst_pair_formalThirdRoot_ne_zero` : a nonzero intercept forces a nonzero
+  third root.
 
 ## Provenance
 
@@ -136,6 +138,21 @@ theorem subst_pair_formalIntercept_mul_sub {q₁ q₂ : MvPowerSeries σ O}
         (formalIntercept W) * (q₁ - q₂) := by
   linear_combination q₂ * subst_pair_formalIntercept_eq_inl W h₁ h₂ -
     q₁ * subst_pair_formalIntercept_eq_inr W h₁ h₂
+
+/-- A nonzero intercept forces a nonzero third root: at `z₃ = 0` the on-line identity
+`w(z₃) = λ z₃ + ν` collapses to `0 = ν`, since `w` has no constant term. -/
+theorem subst_pair_formalThirdRoot_ne_zero {q₁ q₂ : MvPowerSeries σ O}
+    (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0)
+    (hN : subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+      (formalIntercept W) ≠ 0) :
+    subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+      (formalThirdRoot W) ≠ 0 := by
+  intro h
+  refine hN ?_
+  have honline := subst_pair_online W h₁ h₂
+  rw [h, show (fun _ : Unit ↦ (0 : MvPowerSeries σ O)) = 0 from rfl,
+    subst_zero_of_constantCoeff_zero (constantCoeff_formalW W)] at honline
+  linear_combination -honline
 
 /-! ### The parametrized point -/
 
