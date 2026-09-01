@@ -220,7 +220,6 @@ variable {M : Type*} [Monoid M]
 descends to the conjugacy classes of a monoid: `C.pow j` is the class of the `j`-th powers of the
 members of `C`. The `Pow` instance below spells it `C ^ j`, which is the form every lemma here
 is stated in. -/
-@[expose]
 def pow (C : ConjClasses M) (j : ℕ) : ConjClasses M :=
   Quotient.map (· ^ j) (fun _ _ h ↦ IsConj.pow j h) C
 
@@ -229,8 +228,13 @@ instance instPowNat : Pow (ConjClasses M) ℕ :=
 
 /-- The `j`-th power of the class of `a` is the class of `a ^ j`. -/
 @[simp]
-theorem mk_pow (a : M) (j : ℕ) : ConjClasses.mk a ^ j = ConjClasses.mk (a ^ j) :=
-  rfl
+theorem mk_pow (a : M) (j : ℕ) : ConjClasses.mk a ^ j = ConjClasses.mk (a ^ j) := by
+  -- `pow` is sealed, so this is no longer `rfl`: a theorem exported from this module may only
+  -- unfold exposed definitions. Go through `pow`'s equation lemma, after which the statement is
+  -- exactly `Quotient`'s computation rule for `Quotient.map`.
+  change ConjClasses.pow (ConjClasses.mk a) j = ConjClasses.mk (a ^ j)
+  rw [ConjClasses.pow]
+  exact Quotient.map_mk _ _ _
 
 /-- An element lies in `C ^ j` exactly when it is a `j`-th power of a member of `C`. -/
 @[simp]
