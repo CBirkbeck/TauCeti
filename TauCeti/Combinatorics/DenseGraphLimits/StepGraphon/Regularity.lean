@@ -123,13 +123,16 @@ theorem exists_refinement_energy_add_sq_le (P : Finpartition (Set.univ : Set Ω)
   rw [graphonPartitionEnergy_increment μ P Q hP hQ hQP W]
   simpa only [L, add_comm] using add_le_add_left hgain (graphonPartitionEnergy μ P hP W)
 
-/-- The refinement invariant behind `weak_regularity_frieze_kannan`: from a measurable partition
-with at most `4 ^ (N - n)` parts, `n` further refinement steps stay inside a budget of `4 ^ N`
-parts and either reach a partition whose block averages approximate `W` to within `ε` in cut
-norm, or raise the partition energy by at least `n * ε ^ 2`. The bound holds for every `N`, which
-is what the induction needs; applying it at `n = N` with `N` past `1 / ε ^ 2` makes the energy
-alternative contradict `graphonPartitionEnergy_le_one`, leaving the approximation. -/
-private theorem exists_refinement_cutNorm_le_or_energy_add_mul_sq_le
+/-- The iteration invariant behind `weak_regularity_frieze_kannan`: from a measurable partition `P`
+with at most `4 ^ (N - n)` parts, `n` further applications of `exists_refinement_energy_add_sq_le`
+produce a measurable partition with at most `4 ^ N` parts whose block averages either approximate
+`W` to within `ε` in cut norm, or carry energy at least `n * ε ^ 2` above `P`'s. The conclusion
+records only that part-count bound and that dichotomy — it does **not** assert that the partition
+produced refines `P`, since nothing downstream needs it; the refinement relation is available one
+level down, from `exists_refinement_energy_add_sq_le`. The bound holds for every `N`, which is what
+the induction needs; applying it at `n = N` with `N` past `1 / ε ^ 2` makes the energy alternative
+contradict `graphonPartitionEnergy_le_one`, leaving the approximation. -/
+private theorem exists_partition_cutNorm_le_or_energy_add_mul_sq_le
     (W : Graphon Ω μ) {ε : ℝ} (hε : 0 < ε) (N : ℕ) :
     ∀ n : ℕ, n ≤ N →
       ∀ (P : Finpartition (Set.univ : Set Ω)) (hP : ∀ p ∈ P.parts, MeasurableSet p),
@@ -189,7 +192,7 @@ theorem weak_regularity_frieze_kannan (W : Graphon Ω μ) {ε : ℝ} (hε : 0 < 
     rw [Nat.sub_self, pow_zero]
     exact Finset.card_le_one.mpr (Finpartition.parts_top_subsingleton _)
   obtain ⟨Q, hQ, hQcard, hgood | henergy⟩ :=
-    exists_refinement_cutNorm_le_or_energy_add_mul_sq_le μ W hε N N le_rfl P₀ hP₀ hP₀_card
+    exists_partition_cutNorm_le_or_energy_add_mul_sq_le μ W hε N N le_rfl P₀ hP₀ hP₀_card
   · exact ⟨Q, hQ, by simpa [N] using hQcard, hgood⟩
   · have hQenergy := graphonPartitionEnergy_le_one μ Q hQ W
     have hP₀energy := graphonPartitionEnergy_nonneg μ P₀ hP₀ W
