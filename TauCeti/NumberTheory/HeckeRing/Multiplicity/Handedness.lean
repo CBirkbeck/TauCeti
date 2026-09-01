@@ -84,7 +84,6 @@ This is the uniformity that turns the composite of two slash sums into a multipl
 sum of slash sums: within one double coset every right coset contributes the same count, so that
 count factors out. -/
 theorem card_pairs_mem_rightCoset_congr (Γ₁ Γ₂ Γ₃ : Subgroup G) (δ₁ δ₂ : G) {d d' : G}
-    [Finite (DecompQuotient Γ₃ Γ₂ δ₂⁻¹)] [Finite (DecompQuotient Γ₂ Γ₁ δ₁⁻¹)]
     (hd : d' ∈ doubleCoset d (Γ₁ : Set G) Γ₃) :
     Nat.card {p : DecompQuotient Γ₂ Γ₁ δ₁⁻¹ × DecompQuotient Γ₃ Γ₂ δ₂⁻¹ |
         δ₁ * (p.1.out : G)⁻¹ * (δ₂ * (p.2.out : G)⁻¹) ∈ op d' • (Γ₁ : Set G)} =
