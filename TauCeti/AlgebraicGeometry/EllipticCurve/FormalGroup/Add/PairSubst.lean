@@ -70,9 +70,9 @@ Stoll's `A` for Vieta's denominator is `formalThirdRootDenom` here, so `pair_A_m
 
 The source's `pair_intercept_identity₁` and `pair_intercept_identity₂` are not ported here. Their
 consumers lie in the source's `Assembly` section, so they belong with that first consumer rather
-than in this file: `pair_intercept_identity₁` is
-`WeierstrassCurve.subst_pair_formalIntercept` in `FormalGroup/Add/Assoc.lean`, and
-`pair_intercept_identity₂` has no consumer here yet.
+than in this file: `pair_intercept_identity₁` and `pair_intercept_identity₂` are
+`WeierstrassCurve.subst_pair_formalIntercept_eq_inl` and
+`WeierstrassCurve.subst_pair_formalIntercept_eq_inr` in `FormalGroup/Add/Assoc.lean`.
 -/
 
 public section
