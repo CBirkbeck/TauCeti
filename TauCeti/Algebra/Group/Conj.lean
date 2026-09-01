@@ -274,7 +274,12 @@ theorem pow_mul (C : ConjClasses M) (i j : ℕ) : (C ^ i) ^ j = C ^ (i * j) := b
 theorem map_pow {N : Type*} [Monoid N] (f : M →* N) (C : ConjClasses M) (j : ℕ) :
     ConjClasses.map f (C ^ j) = ConjClasses.map f C ^ j := by
   obtain ⟨a, rfl⟩ := ConjClasses.exists_rep C
-  exact congrArg ConjClasses.mk (_root_.map_pow f a j)
+  -- Every reduction here is named rather than left to definitional unfolding. Mathlib has no
+  -- `map_mk` computation lemma for `ConjClasses.map`, which is a `Quotient.lift` and so computes
+  -- on representatives; that single reduction is isolated in `hmap` and used explicitly, after
+  -- which `mk_pow` handles both powers and `map_pow` finishes in `N`.
+  have hmap : ∀ x : M, ConjClasses.map f (ConjClasses.mk x) = ConjClasses.mk (f x) := fun _ ↦ rfl
+  rw [mk_pow, hmap, hmap, mk_pow, _root_.map_pow]
 
 /-- **A nonidentity square in the cyclic group of order four.** The class of the generator
 squares to the class of the element of order two. A group of exponent two cannot witness this:
