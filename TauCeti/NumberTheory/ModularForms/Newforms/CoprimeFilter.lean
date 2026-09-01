@@ -85,10 +85,9 @@ cancellation, neither proof using it; the `Squarefree (∏ S)` hypothesis the so
 through the recursion only to feed itself disappears once the conclusion is stated at the level
 `∏ S * M`; the filter is stated here for a nonzero, not-necessarily-squarefree `L` whose primes
 divide `N`, and the `h`-form for an arbitrary nonzero `L`, the source stating only squarefree
-forms at this stage (its `_general` variant generalizes the target level, not `L`). The
-`h`-form in particular is not built by a second recursion: in its
-general form it is one subtraction at the filter's own level, and the arbitrary-`L` form adds a
-single `CuspForm.ofLe` on top of it.
+forms at this stage (its `_general` variant generalizes the target level, not `L`). The `h`-form
+in particular is not built by a second recursion: in its general form it is one subtraction at
+the filter's own level, and each wider-`L` form adds a single `CuspForm.ofLe` on top of it.
 
 `coprime_prod_primeFactors_iff` is AINTLIB's `coprime_prod_primeFactors_iff_coprime`, which
 lives one file up in `StrongMultiplicityOne.lean`. It is restated here for an arbitrary nonzero
@@ -102,9 +101,13 @@ primes of `L`, carried at a level fixed in advance — the `miyake_4_6_5_single_
 `dvd_conditions_*` side conditions and its `Eq.ndrec` cast along `p * (p * N) = N * p ^ 2`.
 Here there is no second recursion: the `h`-form applies the filter already proved above and
 subtracts at the level that filter lands on, moving only `f` along `CuspForm.ofLe`, so the whole
-prescribed-level apparatus of the source disappears. The source's target level survives only as
-the squarefree corollary, where a single `ring`-proved rewrite of `L * (L * N) = N * L ^ 2`
-replaces the source's `Eq.ndrec` casts. The final `q`-expansion computation uses
+prescribed-level apparatus of the source disappears. The source's target level `N * L ^ 2`
+survives as a statement in its own right, but not as a squarefree one: it is
+`exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero''`, the arbitrary-`L`
+`h`-form read along `∏ L.primeFactors * (∏ L.primeFactors * N) ∣ N * L ^ 2` by a single
+`CuspForm.ofLe`, where the source casts with `Eq.ndrec`. Squarefreeness is not a hypothesis
+anywhere in the `h`-form chain; it is only the case in which that divisibility happens to be
+an equality. The final `q`-expansion computation uses
 `ModularForm.qExpansion_sub` directly in place of the source's `sub_eq_add_neg` rewriting
 through `qExpansion_add` and `qExpansion_neg`.
 
