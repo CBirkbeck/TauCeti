@@ -75,7 +75,24 @@ weighted sum depends on the chosen representatives, as `twistedHeckeSlashSum`'s 
 records. -/
 theorem twistedHeckeSlashSum_identity_coset (f : ℍ → ℂ) (hf : f ∈ functionCharSpace k χ) :
     twistedHeckeSlashSum k χ 1 f = f := by
-  sorry
+  have hout : (((1 : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ))
+      ((Gamma0 N).map (mapGL ℚ))).out : GL (Fin 2) ℚ)) ∈ (Gamma0 N).map (mapGL ℚ) :=
+    HeckeCoset.out_one_mem
+  -- `Γ₀(N) · 1 · Γ₀(N)` is a single right coset, so the sum has exactly one summand.
+  haveI : Subsingleton (DecompQuotient ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))
+      (((1 : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ))
+        ((Gamma0 N).map (mapGL ℚ))).out : GL (Fin 2) ℚ))⁻¹) :=
+    DoubleCoset.subsingleton_decompQuotient _ (inv_mem hout)
+  -- Evaluate the single summand at the class of `δ` itself, where `hcls` is `rfl`.
+  rw [twistedHeckeSlashSum_def,
+    Fintype.sum_subsingleton _ (⟦⟨_, hout⟩⟧ : DecompQuotient ((Gamma0 N).map (mapGL ℚ))
+      ((Gamma0 N).map (mapGL ℚ)) (((1 : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ))
+        ((Gamma0 N).map (mapGL ℚ))).out : GL (Fin 2) ℚ))⁻¹),
+    ← delta0NebentypusChar_smul_slash_eq_nebentypusWeight_smul_slash k χ 1 f hf hout rfl]
+  -- That representative is `δ δ⁻¹ = 1`, so the weight and the slash collapse together.
+  have hone : (⟨_, mul_inv_mem_Delta0 (1 : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ))
+      ((Gamma0 N).map (mapGL ℚ))) hout⟩ : Delta0 N) = 1 := Subtype.ext (mul_inv_cancel _)
+  rw [hone, map_one, Units.val_one, one_smul, mul_inv_cancel, SlashAction.slash_one]
 
 /-- **The endomorphism of the character space attached to the identity double coset is the
 identity.** This is `twistedHeckeSlashSum_identity_coset` read through the restriction of
