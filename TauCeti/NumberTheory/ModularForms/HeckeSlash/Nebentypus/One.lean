@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.NumberTheory.HeckeRing.One
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.CharRing
 
 /-!
@@ -81,13 +82,16 @@ identity.** This is `twistedHeckeSlashSum_identity_coset` read through the restr
 `Nebentypus/Invariance.lean`, where the `χ`-invariance hypothesis is carried by the carrier. -/
 @[simp] theorem twistedHeckeSlashSumCharEnd_one :
     twistedHeckeSlashSumCharEnd k χ 1 = 1 := by
-  sorry
+  refine LinearMap.ext fun f ↦ Subtype.ext ?_
+  rw [coe_twistedHeckeSlashSumCharEnd, LinearMap.one_apply]
+  exact twistedHeckeSlashSum_identity_coset k χ (f : ℍ → ℂ) f.2
 
 /-- **The `ℤ`-linear extension sends `1` to `1`** — the `map_one` half of the twisted Hecke ring
 homomorphism, which unlike `map_mul` needs no multiplicity count. -/
 @[simp] theorem twistedHeckeSlashRingCharLinearMap_one :
     twistedHeckeSlashRingCharLinearMap k χ 1 = 1 := by
-  sorry
+  rw [HeckeCosetModule.one_def, twistedHeckeSlashRingCharLinearMap_single, one_smul]
+  exact twistedHeckeSlashSumCharEnd_one k χ
 
 end HeckeRing.GL2
 
