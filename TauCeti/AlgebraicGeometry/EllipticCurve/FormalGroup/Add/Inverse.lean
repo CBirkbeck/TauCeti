@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.PairSubst
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Series
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Universal
 
@@ -85,23 +86,22 @@ variable {O : Type*} [CommRing O] (W : WeierstrassCurve O)
 substitution: both series have vanishing constant coefficient. -/
 private theorem hasSubst_invPair :
     HasSubst (Sum.elim X (fun _ ↦ formalInverse W) : Unit ⊕ Unit → MvPowerSeries Unit O) :=
-  hasSubst_of_constantCoeff_zero
-    (by rintro (j | j); exacts [constantCoeff_X j, constantCoeff_formalInverse W])
+  hasSubst_pair (constantCoeff_X ()) (constantCoeff_formalInverse W)
 
 /-- The `w`-expansion in the first parameter is unchanged by the specialization. -/
 private theorem subst_invPair_toMvPowerSeries_inl :
     subst (Sum.elim X (fun _ ↦ formalInverse W) : Unit ⊕ Unit → MvPowerSeries Unit O)
-      ((formalW W).toMvPowerSeries (Sum.inl ())) = formalW W := by
-  rw [PowerSeries.subst_toMvPowerSeries (hasSubst_invPair W), Sum.elim_inl]
-  exact PowerSeries.X_subst (formalW W)
+      ((formalW W).toMvPowerSeries (Sum.inl ())) = formalW W :=
+  (subst_pair_toMvPowerSeries_inl W (constantCoeff_X ()) (constantCoeff_formalInverse W)).trans
+    (PowerSeries.X_subst (formalW W))
 
 /-- The `w`-expansion in the second parameter becomes the `w`-coordinate of the negative point. -/
 private theorem subst_invPair_toMvPowerSeries_inr :
     subst (Sum.elim X (fun _ ↦ formalInverse W) : Unit ⊕ Unit → MvPowerSeries Unit O)
       ((formalW W).toMvPowerSeries (Sum.inr ())) =
-      -(formalW W * PowerSeries.invOfUnit (formalInverseDenom W) 1) := by
-  rw [PowerSeries.subst_toMvPowerSeries (hasSubst_invPair W), Sum.elim_inr]
-  exact subst_formalInverse_formalW W
+      -(formalW W * PowerSeries.invOfUnit (formalInverseDenom W) 1) :=
+  (subst_pair_toMvPowerSeries_inr W (constantCoeff_X ()) (constantCoeff_formalInverse W)).trans
+    (subst_formalInverse_formalW W)
 
 /-! ### The chord through a point and its formal inverse -/
 

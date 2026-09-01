@@ -110,4 +110,22 @@ theorem subst_pair_formalSlope_mul (h₁ : constantCoeff q₁ = 0) (h₂ : const
   rw [h1, h2] at h
   linear_combination h
 
+/-! ### The third point of the chord lies on the curve -/
+
+/-- The on-line identity at the pair `(q₁, q₂)`: reading the `w`-expansion at the third root
+gives the chord line read there. -/
+theorem subst_pair_online (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0) :
+    subst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+        Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W)) (formalW W) =
+      subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+          (formalSlope W) *
+        subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+          (formalThirdRoot W) +
+        subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+          (formalIntercept W) := by
+  have h := congrArg (substAlgHom (hasSubst_pair h₁ h₂)) (subst_formalThirdRoot_formalW W)
+  simp only [map_add, map_mul] at h
+  simp only [coe_substAlgHom (hasSubst_pair h₁ h₂)] at h
+  rwa [subst_comp_subst_apply (hasSubst_formalThirdRoot W) (hasSubst_pair h₁ h₂)] at h
+
 end WeierstrassCurve
