@@ -242,4 +242,15 @@ theorem constantCoeff_subst_pair_formalThirdRoot (h₁ : constantCoeff q₁ = 0)
   constantCoeff_subst_eq_zero (hasSubst_pair h₁ h₂) (by rintro (j | j) <;> simpa)
     (constantCoeff_formalThirdRoot W)
 
+/-- The addition series at the pair `(q₁, q₂)` is the formal inverse read at the third root
+`z₃(q₁, q₂)`.
+
+This is `formalAdd_def` pushed through the pair substitution, and it is the bridge that turns any
+one-variable identity about `formalInverse` into a statement about the group law at the pair. -/
+theorem subst_pair_formalAdd (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0) :
+    subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W) =
+      subst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+          Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W)) (formalInverse W) := by
+  rw [formalAdd_def, subst_comp_subst_apply (hasSubst_formalThirdRoot W) (hasSubst_pair h₁ h₂)]
+
 end WeierstrassCurve
