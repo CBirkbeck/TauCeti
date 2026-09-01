@@ -30,6 +30,10 @@ series evaluated at arguments of `I ^ n` is confined to `I ^ n`, in
   an open additive subgroup of a topological group being closed.
 * `IsAdic.isTopologicallyNilpotent_of_mem` : in a ring whose topology is `I`-adic, every element
   of `I` is topologically nilpotent.
+* `IsAdic.isLinearTopology` : a ring whose topology is `I`-adic is linearly topologized.
+* `IsAdic.nonarchimedeanRing` : a ring whose topology is `I`-adic is nonarchimedean.
+* `IsAdic.tendsto_zero_of_mem_pow` : a family whose members lie in growing powers of `I` tends to
+  zero, provided the exponents tend to infinity.
 
 ## Provenance
 
@@ -46,6 +50,18 @@ public section
 namespace IsAdic
 
 variable {R : Type*} [CommRing R] [TopologicalSpace R] {I : Ideal R}
+
+/-- In a ring whose topology is the `I`-adic one, the topology is linear: the powers of `I` form
+a basis of neighbourhoods of zero consisting of ideals. -/
+theorem isLinearTopology (hI : IsAdic I) : IsLinearTopology R R :=
+  IsLinearTopology.mk_of_hasBasis _ hI.hasBasis_nhds_zero
+
+/-- In a ring whose topology is the `I`-adic one, the ring is nonarchimedean: every neighbourhood
+of zero contains an open additive subgroup. -/
+theorem nonarchimedeanRing (hI : IsAdic I) : NonarchimedeanRing R := by
+  simp only [IsAdic] at hI
+  subst hI
+  exact I.nonarchimedean
 
 /-- In a ring whose topology is the `I`-adic one, every power of `I` is open. -/
 theorem isOpen_pow (hI : IsAdic I) (n : ℕ) : IsOpen ((I ^ n : Ideal R) : Set R) := by
@@ -75,5 +91,15 @@ theorem isTopologicallyNilpotent_of_mem (hI : IsAdic I) {a : R} (ha : a ∈ I) :
   suffices ∀ m : ℕ, ∃ n₀, ∀ n, n₀ ≤ n → a ^ n ∈ I ^ m by
     simpa [IsTopologicallyNilpotent, hI.hasBasis_nhds_zero.tendsto_right_iff]
   exact fun m ↦ ⟨m, fun n hn ↦ Ideal.pow_le_pow_right hn (Ideal.pow_mem_pow ha _)⟩
+
+open Filter Topology in
+/-- In a ring whose topology is the `I`-adic one, a family whose members lie in growing powers of
+`I` tends to zero, provided the exponents tend to infinity. -/
+theorem tendsto_zero_of_mem_pow (hI : IsAdic I) {γ : Type*} {l : Filter γ} {g : γ → R} {e : γ → ℕ}
+    (hg : ∀ i, g i ∈ I ^ e i) (he : Tendsto e l atTop) : Tendsto g l (𝓝 0) := by
+  rw [hI.hasBasis_nhds_zero.tendsto_right_iff]
+  intro k _
+  filter_upwards [he.eventually_ge_atTop k] with i hi
+  exact Ideal.pow_le_pow_right hi (hg i)
 
 end IsAdic
