@@ -61,10 +61,12 @@ group theory back and reads it as membership in a Selmer group.
 
 ## Implementation notes
 
-The three `Valuation` lemmas about the monic cubic `t³ + at² + bt + c` used to live here as
-`private` plumbing, on the grounds that this file and its sequel were their only consumers. They
-now have one outside `MordellWeil/`, so they sit with the general statements they specialize, in
-`TauCeti.RingTheory.Valuation.RootMonic`, and are used from here as `Valuation` dot notation.
+The `Valuation` lemmas about the monic cubic `t³ + at² + bt + c` used to live here as `private`
+plumbing, on the grounds that this file and its sequel were their only consumers. The two public
+statements now sit with the general statements they specialize, in
+`TauCeti.RingTheory.Valuation.RootMonic`, and are used from here as `Valuation` dot notation; one
+of them, `map_cubic_eq_of_one_lt`, has since gained a consumer outside `MordellWeil/`. The
+coefficient helper they share stays `private` there.
 The `Core` section still lives in this file rather than in `SelmerGroupA` because it is the last
 consumer of the `RingOfIntegers` estimates above.
 
