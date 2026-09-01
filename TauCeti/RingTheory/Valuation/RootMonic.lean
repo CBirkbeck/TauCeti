@@ -115,12 +115,13 @@ section Cubic
 
 variable {c : L}
 
+-- `compute_degree!` needs `Nontrivial L` below, to know that the leading coefficient `1` is
+-- nonzero and hence that the cubic really has degree `3`. Deriving it from `ν` here keeps
+-- `Nontrivial L` out of the signatures, which hold over any `L`.
 include ν in
-/-- A ring carrying a valuation is nontrivial: `(0 : L) = 1` would force `(0 : Γ) = 1`, which a
-`LinearOrderedCommGroupWithZero` forbids. This is what `compute_degree!` needs below to know the
-leading coefficient `1` is nonzero, i.e. that the cubic really has degree `3`; deriving it here
-keeps `Nontrivial L` out of the signatures, which hold over any `L`. -/
+/-- A ring carrying a valuation is nontrivial. -/
 private lemma nontrivial_of_valuation : Nontrivial L :=
+  -- `(0 : L) = 1` would force `(0 : Γ) = 1`, which a `LinearOrderedCommGroupWithZero` forbids.
   nontrivial_of_ne 0 1 fun h ↦ zero_ne_one (by rw [← ν.map_zero, h, ν.map_one])
 
 /-- The non-leading coefficients of `X³ + aX² + bX + c` are `a`, `b`, `c` (and zeros), so they
