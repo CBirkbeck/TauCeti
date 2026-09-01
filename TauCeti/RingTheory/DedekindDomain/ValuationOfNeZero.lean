@@ -104,7 +104,7 @@ theorem exists_valuationOfNeZero_map_eq (φ : L →+* N) (ψ : B →+* C)
   have : IsScalarTower B L N := .of_algebraMap_eq' rfl
   have : IsScalarTower B C N := .of_algebraMap_eq fun x ↦ (RingHom.congr_fun hcomp x).symm
   have : Module.IsTorsionFree B C := Module.isTorsionFree_iff_algebraMap_injective.mpr hψ
-  have : w.asIdeal.LiesOver (comapOfNeBot ψ w hne).asIdeal := ⟨rfl⟩
+  have : w.asIdeal.LiesOver (comapOfNeBot ψ w hne).asIdeal := ⟨comapOfNeBot_asIdeal ψ w hne⟩
   refine ⟨(comapOfNeBot ψ w hne).asIdeal.ramificationIdx' w.asIdeal, fun u ↦ ?_⟩
   rw [valuationOfNeZero_eq_iff, WithZero.coe_pow, valuationOfNeZero_eq, Units.coe_map,
     MonoidHom.coe_coe]

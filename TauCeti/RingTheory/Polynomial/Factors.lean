@@ -197,7 +197,7 @@ lemma exists_dvd_map {L : Type*} [Field L] (σ : K →+* L) (hf : f ≠ 0) {q : 
     rwa [map_multiset_prod, coe_mapRingHom] at h2
   obtain ⟨g, hgmem, hgdvd⟩ := hq.exists_mem_multiset_dvd (hdvd.trans h1.symm.dvd)
   obtain ⟨p₀, hp₀, rfl⟩ := Multiset.mem_map.mp hgmem
-  exact ⟨⟨p₀, (mem_normalizedFactors_iff hf).mp hp₀⟩, hgdvd⟩
+  exact ⟨⟨p₀, (Polynomial.mem_normalizedFactors_iff hf).mp hp₀⟩, hgdvd⟩
 
 end Factors
 
