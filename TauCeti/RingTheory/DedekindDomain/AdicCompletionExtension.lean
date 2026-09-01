@@ -6,6 +6,8 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.NumberTheory.NumberField.Completion.FinitePlace
+public import Mathlib.RingTheory.AdicCompletion.Topology
+public import Mathlib.RingTheory.Henselian
 public import TauCeti.RingTheory.DedekindDomain.AdicValuation.Completion
 public import TauCeti.RingTheory.DedekindDomain.Ideal
 public import TauCeti.RingTheory.DedekindDomain.ValuationOfNeZero
@@ -50,6 +52,10 @@ global étale algebra with its images in the completions passes through exactly 
 * `IsDedekindDomain.HeightOneSpectrum.exists_unit_not_isSquare`: at such a place, with finite
   residue field, `𝒪_v` carries a unit that is not a square in `K_v`. This is the input the
   local image count at a good odd place needs.
+* `IsDedekindDomain.HeightOneSpectrum.henselianLocalRing_adicCompletionIntegers`: the ring of
+  integers `𝒪_v` of a completion is a Henselian local ring, via
+  `isAdic_maximalIdeal_adicCompletionIntegers` (its subspace topology is the `𝔪`-adic one) and
+  `completeSpace_adicCompletionIntegers`.
 * `IsDedekindDomain.HeightOneSpectrum.valued_adicCompletionExtension`: along the extension the
   valuation is raised to the ramification index.
 * `IsDedekindDomain.HeightOneSpectrum.comap_maximalIdeal_adicCompletionIntegersExtension`: the
@@ -93,9 +99,14 @@ its proof: the source contracts the maximal ideal with its own
 same thing about the ordered value monoid in one line. The odd-residue-characteristic step is split
 out as `ringChar_residueField_adicCompletionIntegers_ne_two`, which the source keeps inline.
 
-Only the part the `2`-descent consumes is ported: the Henselian and completeness chain of the
-source, which serves other consumers, is deliberately left out. The source is written against Lean
-`v4.32.0`; this is a forward port.
+The Henselian and completeness chain of the source — `mem_maximalIdeal_pow_iff` and the
+`𝔪`-adic, completeness, `𝔪`-adic-completeness and Henselian results below — is ported here too;
+it serves consumers beyond the `2`-descent, notably the formal-group filtration. The source's
+`valued_irreducible_adicCompletionIntegers` is *not* ported: this repository already states it as
+`valued_algebraMap_eq_exp_neg_one_of_irreducible` above, and that is what the chain uses. One
+adaptation was needed against this repository's Mathlib: the source's two uses of `Set.mem_setOf`
+are deprecated here in favour of `Set.mem_ofPred`. The source is written against Lean `v4.32.0`;
+this is a forward port.
 
 ## Implementation notes
 
@@ -229,6 +240,24 @@ theorem span_singleton_eq_maximalIdeal_pow {x : v.adicCompletionIntegers K} {e :
   rw [Ideal.span_singleton_eq_span_singleton.mpr (associated_unit_mul_left _ _ u.isUnit),
     ← Ideal.span_singleton_pow, hπ.maximalIdeal_eq]
 
+/-- An element of `𝒪_v` lies in the `n`-th power of the maximal ideal exactly when its valuation
+is at most `exp (-n)`.
+
+This identifies the ideal filtration of `𝒪_v` with the valuation filtration it inherits from
+`K_v`, which is what makes the subspace topology visibly `𝔪`-adic below. -/
+theorem mem_maximalIdeal_pow_iff {x : v.adicCompletionIntegers K} {n : ℕ} :
+    x ∈ IsLocalRing.maximalIdeal (v.adicCompletionIntegers K) ^ n ↔
+      Valued.v (x : v.adicCompletion K) ≤ exp (-(n : ℤ)) := by
+  obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible (v.adicCompletionIntegers K)
+  have hπn : Valued.v (algebraMap (v.adicCompletionIntegers K) (v.adicCompletion K) (π ^ n)) =
+      exp (-(n : ℤ)) := by
+    rw [map_pow, map_pow, v.valued_algebraMap_eq_exp_neg_one_of_irreducible hπ, ← exp_nsmul]
+    simp
+  rw [← span_singleton_eq_maximalIdeal_pow v hπn, Ideal.mem_span_singleton]
+  have hint := Valuation.valuationSubring.integers (v := (Valued.v : Valuation
+    (v.adicCompletion K) ℤᵐ⁰))
+  exact ⟨fun h ↦ (hint.le_of_dvd h).trans hπn.le, fun h ↦ hint.dvd_of_le (h.trans_eq hπn.symm)⟩
+
 /-- Any element of the ring of integers of the completion is congruent to an element of `R`
 modulo the maximal ideal — equivalently, `R` surjects onto the residue field of `𝒪_v`.
 
@@ -356,6 +385,92 @@ theorem exists_unit_not_isSquare [Finite (R ⧸ v.asIdeal)] (hv2 : (2 : R) ∉ v
   have hx_eq : x = (⟨d, hdmem⟩ : v.adicCompletionIntegers K) * ⟨d, hdmem⟩ :=
     hint.hom_inj (by rw [map_mul]; exact hd)
   exact ha ⟨IsLocalRing.residue _ ⟨d, hdmem⟩, by rw [hx_eq, map_mul]⟩
+
+/-! ### `𝒪_v` is a complete adic Henselian local ring
+
+The subspace topology `𝒪_v` inherits from `K_v` is the `𝔪`-adic one, and `𝒪_v` is closed in the
+complete field `K_v`, hence complete. Being complete for the `𝔪`-adic topology it is `𝔪`-adically
+complete, and a local ring that is complete with respect to its maximal ideal is Henselian.
+-/
+
+/-- The ring of integers of an adic completion is a topological ring, as a subring of `K_v`. -/
+instance isTopologicalRing_adicCompletionIntegers :
+    IsTopologicalRing (v.adicCompletionIntegers K) :=
+  inferInstanceAs (IsTopologicalRing
+    (Valued.v (R := v.adicCompletion K)).valuationSubring.toSubring)
+
+/-- The subspace topology on the ring of integers `𝒪_v` of an adic completion is the `𝔪`-adic
+topology of its maximal ideal.
+
+Both inclusions come from `mem_maximalIdeal_pow_iff`: it exhibits each `𝔪 ^ n` as the preimage of
+a closed ball, which is open, and conversely lets a neighbourhood of `0` cut out by a valuation
+bound be undercut by some `𝔪 ^ n`. -/
+theorem isAdic_maximalIdeal_adicCompletionIntegers :
+    IsAdic (IsLocalRing.maximalIdeal (v.adicCompletionIntegers K)) := by
+  rw [isAdic_iff]
+  constructor
+  · -- each `𝔪 ^ n` is open: it is the preimage of a closed ball
+    intro n
+    obtain ⟨z, hz⟩ := v.valuedAdicCompletion_surjective K (exp (-(n : ℤ)))
+    have hr0 : Valued.v.restrict z ≠ 0 := by
+      intro h
+      have h0 : Valued.v z = 0 := by rw [← Valuation.embedding_restrict, h, map_zero]
+      rw [hz] at h0
+      exact exp_ne_zero h0
+    have : ((IsLocalRing.maximalIdeal (v.adicCompletionIntegers K) ^ n :
+          Ideal (v.adicCompletionIntegers K)) : Set (v.adicCompletionIntegers K)) =
+        (fun x : v.adicCompletionIntegers K ↦ (x : v.adicCompletion K)) ⁻¹'
+          {y | Valued.v.restrict y ≤ Valued.v.restrict z} := by
+      ext x
+      rw [Set.mem_preimage, Set.mem_ofPred, Valuation.restrict_le_iff_le_embedding,
+        Valuation.embedding_restrict, hz]
+      exact v.mem_maximalIdeal_pow_iff (K := K)
+    rw [this]
+    exact (Valued.isOpen_closedBall _ hr0).preimage continuous_subtype_val
+  · -- each neighbourhood of `0` contains some `𝔪 ^ n`
+    intro s hs
+    obtain ⟨t, ht, hts⟩ := mem_nhds_subtype _ _ _ |>.mp hs
+    rw [ZeroMemClass.coe_zero] at ht
+    obtain ⟨γ, hγ⟩ := Valued.mem_nhds_zero.mp ht
+    obtain ⟨m, hm⟩ : ∃ m : ℤ, exp m < MonoidWithZeroHom.ValueGroup₀.embedding γ.1 := by
+      obtain ⟨a, ha⟩ :=
+        WithZero.ne_zero_iff_exists.mp (MonoidWithZeroHom.ValueGroup₀.embedding_unit_ne_zero γ)
+      refine ⟨Multiplicative.toAdd a - 1, ?_⟩
+      rw [← ha, show (a : ℤᵐ⁰) = exp (Multiplicative.toAdd a) from rfl]
+      exact exp_lt_exp.mpr (by lia)
+    refine ⟨(-m).toNat, fun x hx ↦ hts ?_⟩
+    refine Set.mem_preimage.mpr (hγ ?_)
+    have h1 := v.mem_maximalIdeal_pow_iff (K := K) |>.mp hx
+    refine Set.mem_ofPred.mpr ((Valuation.restrict_lt_iff_lt_embedding (v := Valued.v)).mpr
+      (h1.trans_lt ?_))
+    calc exp (-(((-m).toNat : ℤ))) ≤ exp m := exp_le_exp.mpr (by lia)
+      _ < _ := hm
+
+/-- `𝒪_v` is complete: it is a closed subset of the complete field `K_v`. -/
+instance completeSpace_adicCompletionIntegers : CompleteSpace (v.adicCompletionIntegers K) :=
+  (Valued.isClosed_valuationSubring (v.adicCompletion K)).completeSpace_coe
+
+/-- `𝒪_v` is a uniform additive group, as an additive subgroup of `K_v`. -/
+instance isUniformAddGroup_adicCompletionIntegers :
+    IsUniformAddGroup (v.adicCompletionIntegers K) :=
+  ((Valued.v (R := v.adicCompletion K)).valuationSubring.toSubring.toAddSubgroup).isUniformAddGroup
+
+/-- `𝒪_v` is `𝔪`-adically complete: its topology is the `𝔪`-adic one and it is complete. -/
+instance isAdicComplete_adicCompletionIntegers :
+    IsAdicComplete (IsLocalRing.maximalIdeal (v.adicCompletionIntegers K))
+      (v.adicCompletionIntegers K) :=
+  -- `IsAdic` unfolds to an equality of topologies, so dot notation on it would resolve against
+  -- `Eq`; the lemma is `protected` and must be named in full.
+  (IsAdic.isAdicComplete_iff (v.isAdic_maximalIdeal_adicCompletionIntegers (K := K))).mpr
+    ⟨inferInstance, inferInstance⟩
+
+/-- **The ring of integers of an adic completion is a Henselian local ring.** It is a local ring
+that is complete with respect to its maximal ideal, and such rings are Henselian. -/
+instance henselianLocalRing_adicCompletionIntegers :
+    HenselianLocalRing (v.adicCompletionIntegers K) where
+  is_henselian f hf a₀ h₁ h₂ :=
+    (IsAdicComplete.henselianRing _
+      (IsLocalRing.maximalIdeal (v.adicCompletionIntegers K))).is_henselian f hf a₀ h₁ (h₂.map _)
 
 end IsDedekindDomain.HeightOneSpectrum
 
