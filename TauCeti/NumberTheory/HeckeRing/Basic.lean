@@ -194,8 +194,15 @@ lemma subsingleton_decompQuotient (Γ : Subgroup G) {g : G} (hg : g ∈ Γ) :
     simp [Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def,
       ConjAct.ofConjAct_toConjAct, Subgroup.mul_mem_cancel_left, Subgroup.mul_mem_cancel_right,
       hg, inv_mem hg]
-  rw [hconj, Subgroup.subgroupOf_self]
-  infer_instance
+  have htop : (ConjAct.toConjAct g • Γ).subgroupOf Γ = ⊤ := by
+    rw [hconj, Subgroup.subgroupOf_self]
+  -- `DecompQuotient` is an `abbrev`, so the quotient must be displayed before rewriting in it.
+  change Subsingleton (Γ ⧸ (ConjAct.toConjAct g • Γ).subgroupOf Γ)
+  rw [htop]
+  refine ⟨fun a b ↦ ?_⟩
+  obtain ⟨x, rfl⟩ := QuotientGroup.mk_surjective a
+  obtain ⟨y, rfl⟩ := QuotientGroup.mk_surjective b
+  exact QuotientGroup.eq.mpr (Subgroup.mem_top _)
 
 /-- The left cosets `σᵢ g Γ₂` of the decomposition of `Γ₁gΓ₂` are pairwise distinct: the map
 `i ↦ σᵢ g Γ₂` into `G ⧸ Γ₂` is injective. -/
