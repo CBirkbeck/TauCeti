@@ -51,11 +51,17 @@ Adapted from Michael Stoll's `EllipticCurves` project
 (`github.com/MichaelStollBayreuth/EllipticCurves`, Apache-2.0, pinned by
 `TauCetiRoadmap/EllipticCurves/README.md` at `66889eada51a`, whose full expansion is
 `66889eada51a74c2f5dfb7fb5909b0b5a0a2d96e`),
-`EllipticCurves/WeierstrassFormalGroup/ThirdPoint.lean`, declarations `hasSubst_pair`,
-`pair_slope_identity`, `pair_intercept_identity₁` and `pair_intercept_identity₂`.
+`EllipticCurves/WeierstrassFormalGroup/ThirdPoint.lean`, declarations `hasSubst_pair` and
+`pair_slope_identity`, together with `pair_online` from
+`EllipticCurves/WeierstrassFormalGroup/GroupLaw.lean`.
 
 The source's `slopeSeries`, `interceptSeries` and `wSeries` are `formalSlope`, `formalIntercept`
-and `formalW` here, continuing the renaming this repository applies to that development.
+and `formalW` here, continuing the renaming this repository applies to that development, so
+`pair_slope_identity` and `pair_online` are `subst_pair_formalSlope_mul` and `subst_pair_online`.
+
+The source's `pair_intercept_identity₁` and `pair_intercept_identity₂` are not ported here. Their
+consumers lie in the source's `Assembly` section, so they belong with that first consumer rather
+than in this file.
 -/
 
 public section
