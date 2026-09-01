@@ -143,9 +143,9 @@ private theorem exists_apply_ne_and_eq_T_zpow_mul_conjScale_mul_T_zpow {l : ℕ}
   -- `DirichletCharacter.factorsThrough_iff_ker_unitsMap`, exactly as in the dichotomy below
   have hnfac : ¬ DirichletCharacter.FactorsThrough (MulChar.ofUnitHom χ) (N / l) := by
     refine fun hfac ↦ hχ fun v hv ↦ ?_
-    simpa using
-      (DirichletCharacter.factorsThrough_iff_forall_toUnitHom_eq_one_of_unitsMap_eq_one _).mp
-        hfac v hv
+    simpa using MonoidHom.mem_ker.mp
+      ((DirichletCharacter.factorsThrough_iff_ker_unitsMap (Nat.div_dvd_of_dvd hlN)).mp hfac
+        (MonoidHom.mem_ker.mpr hv))
   obtain ⟨u', hcoset, hne⟩ :=
     DirichletCharacter.exists_alt_unit_in_coset_with_char_separation
       (Nat.div_dvd_of_dvd hlN) hnfac u
@@ -265,13 +265,15 @@ theorem exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero {l : ℕ} [NeZero l]
       rw [DirichletCharacter.changeLevel_toUnitHom]
     exact .inl ⟨hfac, _,
       cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace hlN k hcomp
-        ((DirichletCharacter.factorsThrough_iff_forall_toUnitHom_eq_one_of_unitsMap_eq_one _).mp
-          hfac) f g hgχ hg hT,
+        (fun u hu ↦ MonoidHom.mem_ker.mp
+          ((DirichletCharacter.factorsThrough_iff_ker_unitsMap (Nat.div_dvd_of_dvd hlN)).mp hfac
+            (MonoidHom.mem_ker.mpr hu))) f g hgχ hg hT,
       coe_cuspFormOfSmulSlashScaleGL l N hlN k χ.toUnitHom _ f g hgχ hg hT⟩
   · refine .inr (eq_zero_of_not_forall_apply_eq_one_of_unitsMap_eq_one hlN k ?_ f
       (nebentypus_slash_scaleGL_of_mem_cuspFormCharSpace hgχ hg) hT)
     exact fun h ↦ hfac
-      ((DirichletCharacter.factorsThrough_iff_forall_toUnitHom_eq_one_of_unitsMap_eq_one _).mpr h)
+      ((DirichletCharacter.factorsThrough_iff_ker_unitsMap (Nat.div_dvd_of_dvd hlN)).mpr
+        fun u hu ↦ MonoidHom.mem_ker.mpr (h u (MonoidHom.mem_ker.mp hu)))
 
 
 end TauCeti
