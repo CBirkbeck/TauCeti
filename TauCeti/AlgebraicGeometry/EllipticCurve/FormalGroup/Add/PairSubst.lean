@@ -231,4 +231,15 @@ theorem subst_pair_formalThirdRoot_relation (h₁ : constantCoeff q₁ = 0)
     (C W.a₁ * Lp + C W.a₂ * Np + C W.a₃ * Lp ^ 2 + 2 * C W.a₄ * Lp * Np +
       3 * C W.a₆ * Lp ^ 2 * Np) * hAd
 
+/-! ### The third root as a parameter in its own right -/
+
+/-- The third root, read at the pair `(q₁, q₂)`, again has vanishing constant coefficient, so it
+is itself a legitimate parameter to substitute into a one-variable series. -/
+theorem constantCoeff_subst_pair_formalThirdRoot (h₁ : constantCoeff q₁ = 0)
+    (h₂ : constantCoeff q₂ = 0) :
+    constantCoeff (subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+      (formalThirdRoot W)) = 0 :=
+  constantCoeff_subst_eq_zero (hasSubst_pair h₁ h₂) (by rintro (j | j) <;> simpa)
+    (constantCoeff_formalThirdRoot W)
+
 end WeierstrassCurve
