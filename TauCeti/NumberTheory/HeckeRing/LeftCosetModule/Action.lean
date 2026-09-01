@@ -266,17 +266,6 @@ theorem card_filter_smulOrbit_eq_multiplicity {D₁ D₂ : HeckeCoset Δ H H} {�
   rw [smulOrbit_congr D₂.rep (HeckeCoset.mk_rep _), mem_smulOrbit_iff_rep, hbase]
   exact Iff.rfl
 
-open Classical in
-/-- The pair count indexed by a chosen double coset containing the output. -/
-private lemma card_filter_smulOrbit_eq_multiplicity_of_mem
-    {D₁ D₂ D₀ : HeckeCoset Δ H H} {β : Δ} {x : HeckeCoset Δ ⊥ H}
-    (hx : x ∈ smulOrbit H D₀.rep β) :
-    ((smulOrbit H D₁.rep β).filter fun i ↦ x ∈ smulOrbit H D₂.rep i.rep).card =
-      multiplicity H H H (D₁.rep : G) (D₂.rep : G) (D₀.rep : G) := by
-  rw [card_filter_smulOrbit_eq_multiplicity,
-    multiplicity_doubleCoset_congr (D₁.rep : G) (D₂.rep : G)
-      (mem_smulOrbit_iff_rep.mp hx)]
-
 /-- Iterated orbit membership factors through a single orbit at the original base: the
 witnessing double coset is that of `β⁻¹ · x.rep`. -/
 private lemma exists_orbit_of_mem_orbit_orbit {g₁ g₂ β : Δ} {x i : HeckeCoset Δ ⊥ H}
@@ -325,8 +314,9 @@ private lemma single_mul_smul_single (D₁ D₂ : HeckeCoset Δ H H) (q : HeckeC
   rw [sum_smulOrbit_single_apply, sum_sum_single_apply]
   by_cases h : ∃ D₀ : HeckeCoset Δ H H, x ∈ smulOrbit H D₀.rep q.rep
   · obtain ⟨D₀, hD₀⟩ := h
-    rw [sum_ite_orbit_eq _ _ _ hD₀, card_filter_smulOrbit_eq_multiplicity_of_mem hD₀,
-      HeckeCosetModule.structureConstants_apply]
+    rw [sum_ite_orbit_eq _ _ _ hD₀, card_filter_smulOrbit_eq_multiplicity,
+      multiplicity_doubleCoset_congr (D₁.rep : G) (D₂.rep : G)
+        (mem_smulOrbit_iff_rep.mp hD₀), HeckeCosetModule.structureConstants_apply]
     simp only [nsmul_eq_mul]
     -- the multiplicity enters as a natural-number cast, which is central
     rw [mul_assoc c a b]
