@@ -117,16 +117,12 @@ theorem rootSubgroupCoordinateMap_surjective (k : Fin 6 ⊕ Fin 6) :
       (TauCeti.UniversalEnvelopingAlgebra.kostantRootSubgroupToralCoordinateMap
         (TauCeti.serreRootGenerator (CartanMatrix.E 6)ᵀ)
         (TauCeti.serreH ℚ (CartanMatrix.E 6)ᵀ) rep lattice.toAddSubgroup
-        (fun _ hu _ hv => rep_serreKostantForm_mem_lattice (by
-          rw [TauCeti.serreKostantForm_def]
-          exact hu) hv)
+        rep_kostantForm_mem_lattice
         isNilpotent_rep_serreRootGenerator latticeBasis DynkinType.e6MinusculeWeight k).hom :=
   TauCeti.UniversalEnvelopingAlgebra.kostantRootSubgroupToralCoordinateMap_surjective
     (TauCeti.serreRootGenerator (CartanMatrix.E 6)ᵀ)
     (TauCeti.serreH ℚ (CartanMatrix.E 6)ᵀ) rep lattice.toAddSubgroup
-    (fun _ hu _ hv => rep_serreKostantForm_mem_lattice (by
-      rw [TauCeti.serreKostantForm_def]
-      exact hu) hv)
+    rep_kostantForm_mem_lattice
     k isNilpotent_rep_serreRootGenerator latticeBasis DynkinType.e6MinusculeWeight
     isUnit_one (rep_serreRootGenerator_latticeBasis k)
     (rep_serreRootGenerator_sq_apply_latticeBasis k)
@@ -140,9 +136,7 @@ instance isClosedImmersion_rootSubgroup (k : Fin 6 ⊕ Fin 6) :
   exact TauCeti.UniversalEnvelopingAlgebra.isClosedImmersion_kostantRootSubgroupToToral
     (TauCeti.serreRootGenerator (CartanMatrix.E 6)ᵀ)
     (TauCeti.serreH ℚ (CartanMatrix.E 6)ᵀ) rep lattice.toAddSubgroup
-    (fun _ hu _ hv => rep_serreKostantForm_mem_lattice (by
-      rw [TauCeti.serreKostantForm_def]
-      exact hu) hv)
+    rep_kostantForm_mem_lattice
     k isNilpotent_rep_serreRootGenerator latticeBasis DynkinType.e6MinusculeWeight
     isUnit_one (rep_serreRootGenerator_latticeBasis k)
     (rep_serreRootGenerator_sq_apply_latticeBasis k)
