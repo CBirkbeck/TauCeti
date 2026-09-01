@@ -250,7 +250,37 @@ one-variable identity about `formalInverse` into a statement about the group law
 theorem subst_pair_formalAdd (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0) :
     subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W) =
       subst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-          Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W)) (formalInverse W) := by
+        Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W)) (formalInverse W) := by
   rw [formalAdd_def, subst_comp_subst_apply (hasSubst_formalThirdRoot W) (hasSubst_pair h₁ h₂)]
+
+/-- The `w`-expansion at the addition series, read at the pair `(q₁, q₂)`:
+`w(F(q₁, q₂)) = -(w(z₃) * u(z₃)⁻¹)`, where `z₃ = z₃(q₁, q₂)` is the third root and `u` is
+`formalInverseDenom`, the denominator of the formal inverse.
+
+This is the one-variable `subst_formalInverse_formalW` carried across by `subst_pair_formalAdd`,
+so the group law's `w` at a pair is never recomputed. The third root is spelled as a `Unit`-family
+substitution, matching `subst_pair_online`, so the two rewrite against each other. -/
+theorem subst_pair_formalW_formalAdd (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0) :
+    subst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+        Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W)) (formalW W) =
+      -(subst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+            Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W)) (formalW W) *
+        subst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+            Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W))
+          (PowerSeries.invOfUnit (formalInverseDenom W) 1)) := by
+  have hT : HasSubst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+      Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W)) :=
+    hasSubst_of_constantCoeff_zero fun _ ↦ constantCoeff_subst_pair_formalThirdRoot W h₁ h₂
+  have hfam : (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+        Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W)) =
+      fun _ : Unit ↦ subst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+        Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W)) (formalInverse W) :=
+    funext fun _ ↦ subst_pair_formalAdd W h₁ h₂
+  rw [hfam, ← subst_comp_subst_apply (hasSubst_of_constantCoeff_zero
+    fun _ ↦ constantCoeff_formalInverse W) hT,
+    show subst (fun _ : Unit ↦ formalInverse W) (formalW W) =
+      PowerSeries.subst (formalInverse W) (formalW W) from rfl,
+    subst_formalInverse_formalW, ← coe_substAlgHom hT]
+  simp only [map_neg, map_mul]
 
 end WeierstrassCurve
