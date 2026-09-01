@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.PairSubst
+public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.ThirdPoint
 
 /-!
 # The chord group law over the fraction field of the series ring
@@ -29,8 +30,14 @@ containing them: this file base changes `W` along `O → MvPowerSeries σ O → 
 Adapted from Michael Stoll's `EllipticCurves` project
 (`github.com/MichaelStollBayreuth/EllipticCurves`, Apache-2.0, pinned by
 `TauCetiRoadmap/EllipticCurves/README.md` at `66889eada51a`),
-`EllipticCurves/WeierstrassFormalGroup/GroupLaw.lean`, section `Assembly`, declarations
-`fracCurve` and `rho_weierstrass`.
+`EllipticCurves/WeierstrassFormalGroup/GroupLaw.lean`, sections `Domain` and `Assembly`,
+declarations `subst_wSeries_ne_zero`, `fracCurve`, `rho_weierstrass` and `thetaPoint`.
+
+The source's `wSeries` and `vSeries` are `formalW` and `formalU` here, continuing the renaming
+this repository applies to that development, so `subst_wSeries_ne_zero` is
+`subst_formalW_ne_zero`. `FormalGroup/Add/Inverse.lean` records that the source left that lemma
+unported because its only consumers lay in the source's `Assembly` and `Universal` sections;
+this file is the first of them.
 
 The statement is adapted rather than transcribed, because this repository states the `w`-equation
 differently. Stoll carries a second copy of the equation as a private `def mvWStepAt` and phrases
@@ -69,6 +76,45 @@ theorem algebraMap_subst_formalW_wEquation {q : MvPowerSeries σ O}
   conv_lhs => rw [subst_formalW_wEquation W hq]
   rw [wEquationRHS_def, wEquationRHS_def]
   simp [fracCurve, map_add, map_mul, map_pow]
+
+/-! ### The parametrized point -/
+
+variable [IsDomain O]
+
+/-- Over a domain the `w`-expansion at a nonzero parameter with vanishing constant coefficient is
+itself nonzero: it factors as `q ^ 3 * u(q)`, and `u` has constant coefficient `1`. -/
+private theorem subst_formalW_ne_zero {q : MvPowerSeries σ O} (hq : constantCoeff q = 0)
+    (hq0 : q ≠ 0) : PowerSeries.subst q (formalW W) ≠ 0 := by
+  have hs : PowerSeries.HasSubst q := PowerSeries.HasSubst.of_constantCoeff_zero hq
+  have hexp : PowerSeries.subst q (formalW W) = q ^ 3 * PowerSeries.subst q (formalU W) := by
+    conv_lhs => rw [formalW_eq_X_pow_mul_formalU]
+    rw [← PowerSeries.coe_substAlgHom hs, map_mul, map_pow, PowerSeries.coe_substAlgHom hs,
+      PowerSeries.subst_X hs]
+  rw [hexp]
+  refine mul_ne_zero (pow_ne_zero 3 hq0) fun h ↦ ?_
+  have hc := congrArg constantCoeff h
+  rw [map_zero, PowerSeries.constantCoeff_subst hs] at hc
+  rw [finsum_eq_single _ 0 fun d hd ↦ ?_] at hc
+  · rw [PowerSeries.coeff_zero_eq_constantCoeff, constantCoeff_formalU, pow_zero, map_one,
+      smul_eq_mul, mul_one] at hc
+    exact one_ne_zero hc
+  · rw [map_pow, hq, zero_pow hd, smul_zero]
+
+variable [IsFractionRing (MvPowerSeries σ O) KK]
+
+/-- The point of the base-changed curve carried by the parameter `q`: the solution `(q, w(q))` of
+the `w`-equation, read in `KK` and in the affine coordinates `(q / w, -1 / w)` of the chart. -/
+private noncomputable def thetaPoint (hΔ : (fracCurve W σ KK).Δ ≠ 0)
+    {q : MvPowerSeries σ O} (hq : constantCoeff q = 0) (hq0 : q ≠ 0) :
+    (fracCurve W σ KK).toAffine.Point :=
+  Affine.Point.some _ _ (chord_point_nonsingular (fracCurve W σ KK)
+    (by
+      simpa [wEquationRHS_def] using
+        W.algebraMap_subst_formalW_wEquation (KK := KK)
+          (PowerSeries.HasSubst.of_constantCoeff_zero hq))
+    (fun h ↦ W.subst_formalW_ne_zero hq hq0
+      (IsFractionRing.injective (MvPowerSeries σ O) KK (by rw [h, map_zero])))
+    hΔ)
 
 end WeierstrassCurve
 
