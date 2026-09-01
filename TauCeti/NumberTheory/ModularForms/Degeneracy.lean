@@ -776,20 +776,20 @@ theorem CuspForm.levelRaise_mem_cuspFormCharSpace (M d : ℕ) [NeZero d]
       cuspFormCharSpace k (χ.comp (ZMod.unitsMap (Dvd.intro_left d rfl : M ∣ d * M))) :=
   levelRaise_mem_cuspFormCharSpace_of_dvd dvd_rfl χ hf
 
-/-- **The `T`-factorisation lift carries the label of the element it lifts.** Reduced to level
-`N / l`, the nebentypus label of the `Γ₀(N)` element `γ` produced by
-`exists_eq_T_zpow_mul_conjScale_mul_T_zpow` is the label of the `Γ₀(N / l)` element `γ'` it was
-built from. The lower-left entry of a `Γ₀(N / l)` element vanishes there, so the recorded shift
-`γ' 1 0 * j` drops out. -/
-theorem unitsMap_Gamma0Map_toHomUnits_eq_of_diag {N l : ℕ} (hlN : l ∣ N) {γ : SL(2, ℤ)}
-    (hγ : γ ∈ Gamma0 N) (γ' : ↥(Gamma0 (N / l))) {j : ℤ}
+/-- **The `T`-factorisation lift carries the label of the element it lifts.** Reduced to a level
+`M ∣ N`, the nebentypus label of a `Γ₀(N)` element `γ` whose lower-right entry differs from that
+of `γ' ∈ Γ₀(M)` by a multiple of `γ' 1 0` — the output shape of
+`exists_eq_T_zpow_mul_conjScale_mul_T_zpow` — is the label of `γ'`. The lower-left entry of a
+`Γ₀(M)` element vanishes there, so the recorded shift `γ' 1 0 * j` drops out. Nothing here
+concerns the cofactor, so the statement is at a general divisor. -/
+private theorem unitsMap_Gamma0Map_toHomUnits_eq_of_diag {M N : ℕ} (hMN : M ∣ N) {γ : SL(2, ℤ)}
+    (hγ : γ ∈ Gamma0 N) (γ' : ↥(Gamma0 M)) {j : ℤ}
     (hdiag : γ 1 1 = (γ' : SL(2, ℤ)) 1 1 - (γ' : SL(2, ℤ)) 1 0 * j) :
-    ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) =
-      (Gamma0Map (N / l)).toHomUnits γ' := by
-  have hγ' : γ ∈ Gamma0 (N / l) := Gamma0_le_Gamma0_of_dvd (Nat.div_dvd_of_dvd hlN) hγ
-  rw [← Gamma0Map_toHomUnits_of_dvd (Nat.div_dvd_of_dvd hlN) ⟨γ, hγ⟩ hγ']
+    ZMod.unitsMap hMN ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) = (Gamma0Map M).toHomUnits γ' := by
+  have hγ' : γ ∈ Gamma0 M := Gamma0_le_Gamma0_of_dvd hMN hγ
+  rw [← Gamma0Map_toHomUnits_of_dvd hMN ⟨γ, hγ⟩ hγ']
   refine Units.ext ?_
-  have h10 : (((γ' : SL(2, ℤ)) 1 0 : ℤ) : ZMod (N / l)) = 0 := Gamma0_mem.mp γ'.property
+  have h10 : (((γ' : SL(2, ℤ)) 1 0 : ℤ) : ZMod M) = 0 := Gamma0_mem.mp γ'.property
   rw [MonoidHom.coe_toHomUnits, MonoidHom.coe_toHomUnits, Gamma0Map_apply, Gamma0Map_apply,
     hdiag]
   push_cast
@@ -827,7 +827,7 @@ theorem slash_mapGL_eq_smul_of_unitsMap_eq (l N : ℕ) [NeZero l] (hlN : l ∣ N
   have hchar : (χ ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) : ℂ) = (χ u : ℂ) := by
     have hlab : ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩) =
         ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) u := by
-      rw [unitsMap_Gamma0Map_toHomUnits_eq_of_diag hlN hγ γ' hdiag, hu]
+      rw [unitsMap_Gamma0Map_toHomUnits_eq_of_diag (Nat.div_dvd_of_dvd hlN) hγ γ' hdiag, hu]
     have hker : χ ((Gamma0Map N).toHomUnits ⟨γ, hγ⟩ * u⁻¹) = 1 := by
       refine hχ _ ?_
       rw [map_mul, map_inv, hlab]

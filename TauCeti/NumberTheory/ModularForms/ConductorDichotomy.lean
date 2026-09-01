@@ -114,19 +114,15 @@ private lemma eq_T_mul_mul_T_of_sub_eq {l Nl i j a a' e e' b b' : ℤ} (hNl : Nl
     (hi : i * Nl = a - a') (hj : j * Nl = e - e') (hdet : a * e - b * (l * Nl) = 1)
     (hdet' : a' * e' - b' * (l * Nl) = 1) : (!![a, l * b; Nl, e] : Matrix (Fin 2) (Fin 2) ℤ) =
       !![(1 : ℤ), i; 0, 1] * !![a', l * b'; Nl, e'] * !![(1 : ℤ), j; 0, 1] := by
-  ext p q
-  fin_cases p <;> fin_cases q <;>
-    simp only [Fin.zero_eta, Fin.isValue, Fin.mk_one, of_apply, cons_val', cons_val_one,
-      cons_val_fin_one, cons_val_zero, cons_mul, Nat.succ_eq_add_one, Nat.reduceAdd, vecMul_cons,
-      head_cons, one_smul, tail_cons, smul_cons, Int.zsmul_eq_mul, smul_empty, empty_vecMul,
-      add_zero, add_cons, empty_add_empty, zero_smul, zero_add, empty_mul,
-      Equiv.symm_apply_apply, mul_one, mul_zero]
-  · linarith
+  simp only [Matrix.mul_fin_two]
+  congrm !![?_, ?_; ?_, ?_]
+  · linear_combination -hi
   -- the upper-right entry is the only one the determinants are needed for: both sides agree
   -- after multiplying by the nonzero cofactor `Nl`, so cancel it
   · apply mul_left_cancel₀ hNl
     linear_combination -hdet + hdet' + (-e' - Nl * j) * hi + (-a) * hj
-  · linarith
+  · ring
+  · linear_combination -hj
 
 /-- **The refactoring step.** For a character not trivial on the kernel, the `diag(l, 1)`-conjugate
 of the Bézout lift of `u` is a translate — on both sides — of the conjugate of the lift of some
@@ -146,7 +142,9 @@ private theorem exists_apply_ne_and_eq_T_zpow_mul_conjScale_mul_T_zpow {l : ℕ}
   -- `DirichletCharacter.factorsThrough_iff_ker_unitsMap`, exactly as in the dichotomy below
   have hnfac : ¬ DirichletCharacter.FactorsThrough (MulChar.ofUnitHom χ) (N / l) := by
     refine fun hfac ↦ hχ fun v hv ↦ ?_
-    simpa using (DirichletCharacter.factorsThrough_iff_forall_unitsMap_eq_one _).mp hfac v hv
+    simpa using
+      (DirichletCharacter.factorsThrough_iff_forall_toUnitHom_eq_one_of_unitsMap_eq_one _).mp
+        hfac v hv
   obtain ⟨u', hcoset, hne⟩ :=
     DirichletCharacter.exists_alt_unit_in_coset_with_char_separation
       (Nat.div_dvd_of_dvd hlN) hnfac u
@@ -220,27 +218,24 @@ produces a cusp form of level `N / l`; this identifies its nebentypus as the low
 `hfac.χ₀`, which is what makes the descent an eigenform statement rather than merely a level
 statement. -/
 theorem cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace {l : ℕ} [NeZero l]
-    (hlN : l ∣ N) (k : ℤ) {χ : DirichletCharacter ℂ N} (hfac : χ.FactorsThrough (N / l))
-    (hχ : ∀ u : (ZMod N)ˣ, ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) u = 1 → χ.toUnitHom u = 1)
-    (f : ℍ → ℂ)
-    (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) (hgχ : g ∈ cuspFormCharSpace k χ.toUnitHom)
+    (hlN : l ∣ N) (k : ℤ) {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / l))ˣ →* ℂˣ}
+    (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hlN)))
+    (hχ : ∀ u : (ZMod N)ˣ, ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) u = 1 → χ u = 1) (f : ℍ → ℂ)
+    (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) (hgχ : g ∈ cuspFormCharSpace k χ)
     (hg : ⇑g = (l : ℂ) ^ (1 - k) • (f ∣[k] scaleGL l))
     (hT : f ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) = f) :
-    cuspFormOfSmulSlashScaleGL l N hlN k χ.toUnitHom hχ f g hgχ hg hT ∈
-      cuspFormCharSpace k hfac.χ₀.toUnitHom := by
+    cuspFormOfSmulSlashScaleGL l N hlN k χ hχ f g hgχ hg hT ∈ cuspFormCharSpace k χ₀ := by
   rw [mem_cuspFormCharSpace_iff_nebentypus]
   intro γ'
   rw [coe_cuspFormOfSmulSlashScaleGL]
   -- any unit of level `N` over the label of `γ'` will do; `slash_mapGL_eq_smul_of_unitsMap_eq`
-  -- is independent of the choice, and on such a unit `χ` agrees with the lowered character
+  -- is independent of the choice, and on such a unit `χ` is the lowered character at the label
   obtain ⟨u, hu⟩ := ZMod.unitsMap_surjective (Nat.div_dvd_of_dvd hlN)
     ((Gamma0Map (N / l)).toHomUnits γ')
-  have hval : (χ.toUnitHom u : ℂ) =
-      (hfac.χ₀.toUnitHom ((Gamma0Map (N / l)).toHomUnits γ') : ℂ) := by
-    conv_lhs => rw [hfac.eq_changeLevel]
-    rw [DirichletCharacter.changeLevel_toUnitHom, MonoidHom.comp_apply, hu]
+  have hval : (χ u : ℂ) = (χ₀ ((Gamma0Map (N / l)).toHomUnits γ') : ℂ) := by
+    rw [hcomp, MonoidHom.comp_apply, hu]
   rw [← hval]
-  exact slash_mapGL_eq_smul_of_unitsMap_eq l N hlN k χ.toUnitHom hχ f
+  exact slash_mapGL_eq_smul_of_unitsMap_eq l N hlN k χ hχ f
     (nebentypus_slash_scaleGL_of_mem_cuspFormCharSpace hgχ hg) hT γ' u hu
 
 /-- **The level-lowering dichotomy.** For `l ∣ N`, a Dirichlet character `χ` of level `N`, and a
@@ -261,13 +256,21 @@ theorem exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero {l : ℕ} [NeZero l]
       cuspFormCharSpace k hfac.χ₀.toUnitHom ∧ ⇑F = f) ∨ f = 0 := by
   classical
   by_cases hfac : χ.FactorsThrough (N / l)
-  · exact .inl ⟨hfac, _,
-      cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace hlN k hfac
-        ((DirichletCharacter.factorsThrough_iff_forall_unitsMap_eq_one _).mp hfac) f g hgχ hg hT,
+  · -- the lowered character is `hfac.χ₀`, and `hfac.eq_changeLevel` is what says `χ` is its
+    -- pullback along the reduction
+    have hcomp : χ.toUnitHom =
+        hfac.χ₀.toUnitHom.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hlN)) := by
+      conv_lhs => rw [hfac.eq_changeLevel]
+      rw [DirichletCharacter.changeLevel_toUnitHom]
+    exact .inl ⟨hfac, _,
+      cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace hlN k hcomp
+        ((DirichletCharacter.factorsThrough_iff_forall_toUnitHom_eq_one_of_unitsMap_eq_one _).mp
+          hfac) f g hgχ hg hT,
       coe_cuspFormOfSmulSlashScaleGL l N hlN k χ.toUnitHom _ f g hgχ hg hT⟩
-  · exact .inr (eq_zero_of_not_forall_apply_eq_one_of_unitsMap_eq_one hlN k
-      (fun h ↦ hfac ((DirichletCharacter.factorsThrough_iff_forall_unitsMap_eq_one _).mpr h)) f
+  · refine .inr (eq_zero_of_not_forall_apply_eq_one_of_unitsMap_eq_one hlN k ?_ f
       (nebentypus_slash_scaleGL_of_mem_cuspFormCharSpace hgχ hg) hT)
+    exact fun h ↦ hfac
+      ((DirichletCharacter.factorsThrough_iff_forall_toUnitHom_eq_one_of_unitsMap_eq_one _).mpr h)
 
 
 end TauCeti

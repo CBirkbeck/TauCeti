@@ -21,8 +21,9 @@ argument for the conductor theorem consumes, and it is stated for characters val
 
 * `DirichletCharacter.exists_alt_unit_in_coset_with_char_separation`: character separation within
   a fibre of the reduction map.
-* `DirichletCharacter.factorsThrough_iff_forall_unitsMap_eq_one`: the factoring criterion with
-  both kernels unfolded, which is the pointwise form the level-lowering argument consumes.
+* `DirichletCharacter.factorsThrough_iff_forall_toUnitHom_eq_one_of_unitsMap_eq_one`: the
+  factoring criterion with both kernels unfolded, which is the pointwise form the level-lowering
+  argument consumes.
 
 ## Provenance
 
@@ -45,7 +46,8 @@ namespace DirichletCharacter
 carries its character as the units homomorphism `cuspFormCharSpace` is indexed by and needs the
 criterion in this shape at every site, so naming it here keeps the `MonoidHom.mem_ker` shuffle out
 of those proofs. -/
-theorem factorsThrough_iff_forall_unitsMap_eq_one {R : Type*} [CommMonoidWithZero R] {N : ℕ}
+theorem factorsThrough_iff_forall_toUnitHom_eq_one_of_unitsMap_eq_one
+    {R : Type*} [CommMonoidWithZero R] {N : ℕ}
     [NeZero N] {d : ℕ} (hd : d ∣ N) {χ : DirichletCharacter R N} :
     χ.FactorsThrough d ↔ ∀ u : (ZMod N)ˣ, ZMod.unitsMap hd u = 1 → χ.toUnitHom u = 1 := by
   rw [factorsThrough_iff_ker_unitsMap hd]
