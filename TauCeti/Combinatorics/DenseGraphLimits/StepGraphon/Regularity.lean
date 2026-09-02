@@ -153,16 +153,14 @@ private theorem exists_partition_cutNorm_le_or_energy_add_mul_sq_le
       by_cases hgood :
           cutNorm μ (W.toSymmKernel - (stepGraphonAvg (μ := μ) P hP W).toSymmKernel) ≤ ε
       · refine ⟨P, hP, ?_, Or.inl hgood⟩
-        calc P.parts.card = 1 * P.parts.card := (one_mul _).symm
-          _ ≤ 4 ^ (n + 1) * P.parts.card :=
-            Nat.mul_le_mul (Nat.one_le_pow _ _ (by norm_num)) le_rfl
+        exact Nat.le_mul_of_pos_left _ (by positivity)
       · push Not at hgood
         obtain ⟨Q, hQ, _, hQcard_step, hQenergy⟩ :=
           exists_refinement_energy_add_sq_le μ P hP W hε hgood
         obtain ⟨R, hR, hRcard, hRdichotomy⟩ := ih Q hQ
         have hRbound : R.parts.card ≤ 4 ^ (n + 1) * P.parts.card := by
           calc R.parts.card ≤ 4 ^ n * Q.parts.card := hRcard
-            _ ≤ 4 ^ n * (4 * P.parts.card) := Nat.mul_le_mul le_rfl hQcard_step
+            _ ≤ 4 ^ n * (4 * P.parts.card) := Nat.mul_le_mul_left _ hQcard_step
             _ = 4 ^ (n + 1) * P.parts.card := by ring
         rcases hRdichotomy with hRgood | hRenergy
         · exact ⟨R, hR, hRbound, Or.inl hRgood⟩
@@ -193,7 +191,7 @@ theorem weak_regularity_frieze_kannan (W : Graphon Ω μ) {ε : ℝ} (hε : 0 < 
   · refine ⟨Q, hQ, ?_, hgood⟩
     have hbound : Q.parts.card ≤ 4 ^ N := by
       calc Q.parts.card ≤ 4 ^ N * P₀.parts.card := hQcard
-        _ ≤ 4 ^ N * 1 := Nat.mul_le_mul le_rfl hP₀_card
+        _ ≤ 4 ^ N * 1 := Nat.mul_le_mul_left _ hP₀_card
         _ = 4 ^ N := mul_one _
     simpa [N] using hbound
   · have hQenergy := graphonPartitionEnergy_le_one μ Q hQ W
