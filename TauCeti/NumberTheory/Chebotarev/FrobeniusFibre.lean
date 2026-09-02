@@ -24,7 +24,7 @@ The bijection is conjugation by a witnessing element, via Mathlib's `IsArithFrob
 
 ## Main results
 
-* `NumberField.Chebotarev.frobeniusFibre_card_eq_of_isConj` — conjugate Frobenius elements
+* `NumberField.Chebotarev.frobeniusFiber_card_eq_of_isConj` — conjugate Frobenius elements
   have equipotent fibres above a fixed prime of the base.
 
 ## Implementation notes
@@ -57,7 +57,7 @@ private theorem exists_isArithFrobAt_smul {K L : Type*} [Field K] [NumberField K
 
 /-- **Equipotent Frobenius fibres.** For `IsConj σ σ'`, the nonzero primes above `𝔭` with
 arithmetic Frobenius `σ` are equal in number to those with arithmetic Frobenius `σ'`. -/
-theorem frobeniusFibre_card_eq_of_isConj (K L : Type*) [Field K] [NumberField K] [Field L]
+theorem frobeniusFiber_card_eq_of_isConj (K L : Type*) [Field K] [NumberField K] [Field L]
     [NumberField L] [Algebra K L] [IsGalois K L] (𝔭 : Ideal (𝓞 K)) [𝔭.IsPrime] (σ σ' : L ≃ₐ[K] L)
     (hc : IsConj σ σ') :
     Nat.card {𝔓 : Ideal (𝓞 L) // ∃ (_ : 𝔓.IsPrime) (_ : 𝔓.LiesOver 𝔭) (_ : 𝔓 ≠ ⊥),
