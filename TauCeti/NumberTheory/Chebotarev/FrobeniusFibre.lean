@@ -45,38 +45,31 @@ open scoped NumberField Pointwise
 
 namespace NumberField.Chebotarev
 
-/-- **Equipotent Frobenius fibres.** For `IsConj σ σ'`, conjugating by a witnessing element
-is a bijection between the primes above `𝔭` whose arithmetic Frobenius is `σ` and those
-whose arithmetic Frobenius is `σ'`, so the two fibres have equal cardinality. -/
-theorem frobeniusFibre_card_eq_of_isConj (K L : Type*) [Field K] [NumberField K]
-    [Field L] [NumberField L] [Algebra K L] [IsGalois K L]
-    (𝔭 : Ideal (𝓞 K)) [𝔭.IsPrime] (σ σ' : L ≃ₐ[K] L) (hc : IsConj σ σ') :
+private theorem exists_isArithFrobAt_smul {K L : Type*} [Field K] [NumberField K] [Field L]
+    [NumberField L] [Algebra K L] [IsGalois K L] {𝔭 : Ideal (𝓞 K)} {σ τ c : L ≃ₐ[K] L}
+    {𝔓 : Ideal (𝓞 L)} (hτ : c * σ * c⁻¹ = τ)
+    (h : ∃ (_ : 𝔓.IsPrime) (_ : 𝔓.LiesOver 𝔭) (_ : 𝔓 ≠ ⊥), IsArithFrobAt (𝓞 K) σ 𝔓) :
+    ∃ (_ : (c • 𝔓).IsPrime) (_ : (c • 𝔓).LiesOver 𝔭) (_ : c • 𝔓 ≠ ⊥),
+      IsArithFrobAt (𝓞 K) τ (c • 𝔓) := by
+  obtain ⟨_, _, hne, hfrob⟩ := h
+  refine ⟨inferInstance, inferInstance, ?_, hτ ▸ hfrob.conj c⟩
+  simpa using (MulAction.injective c).ne hne
+
+/-- **Equipotent Frobenius fibres.** For `IsConj σ σ'`, the nonzero primes above `𝔭` with
+arithmetic Frobenius `σ` are equal in number to those with arithmetic Frobenius `σ'`. -/
+theorem frobeniusFibre_card_eq_of_isConj (K L : Type*) [Field K] [NumberField K] [Field L]
+    [NumberField L] [Algebra K L] [IsGalois K L] (𝔭 : Ideal (𝓞 K)) [𝔭.IsPrime] (σ σ' : L ≃ₐ[K] L)
+    (hc : IsConj σ σ') :
     Nat.card {𝔓 : Ideal (𝓞 L) // ∃ (_ : 𝔓.IsPrime) (_ : 𝔓.LiesOver 𝔭) (_ : 𝔓 ≠ ⊥),
-        IsArithFrobAt (𝓞 K) σ 𝔓}
-      = Nat.card {𝔓 : Ideal (𝓞 L) // ∃ (_ : 𝔓.IsPrime) (_ : 𝔓.LiesOver 𝔭) (_ : 𝔓 ≠ ⊥),
+        IsArithFrobAt (𝓞 K) σ 𝔓} =
+      Nat.card {𝔓 : Ideal (𝓞 L) // ∃ (_ : 𝔓.IsPrime) (_ : 𝔓.LiesOver 𝔭) (_ : 𝔓 ≠ ⊥),
         IsArithFrobAt (𝓞 K) σ' 𝔓} := by
-  obtain ⟨c, hc⟩ := isConj_iff.mp hc
+  -- conjugating by a witnessing element `c` is the bijection between the two fibres
+  obtain ⟨c, rfl⟩ := isConj_iff.mp hc
   refine Nat.card_congr (Equiv.subtypeEquiv (MulAction.toPerm c) fun 𝔓 ↦ ?_)
   simp only [MulAction.toPerm_apply]
-  constructor
-  · rintro ⟨hp, hP, hne, hfrob⟩
-    have := hp
-    have := hP
-    refine ⟨inferInstance, inferInstance, ?_, ?_⟩
-    · rw [← Ideal.smul_bot c]
-      exact (MulAction.injective c).ne hne
-    · exact hc ▸ hfrob.conj c
-  · rintro ⟨hp, hP, hne, hfrob⟩
-    have := hp
-    have := hP
-    have hsmul : c⁻¹ • (c • 𝔓) = 𝔓 := inv_smul_smul c 𝔓
-    have hp' : 𝔓.IsPrime := hsmul ▸ (inferInstance : (c⁻¹ • (c • 𝔓)).IsPrime)
-    have hP' : 𝔓.LiesOver 𝔭 := hsmul ▸ (inferInstance : (c⁻¹ • (c • 𝔓)).LiesOver 𝔭)
-    have hne' : 𝔓 ≠ ⊥ := by
-      rw [← hsmul, ← Ideal.smul_bot c⁻¹]
-      exact (MulAction.injective c⁻¹).ne hne
-    refine ⟨hp', hP', hne', ?_⟩
-    have hconj := hfrob.conj c⁻¹
-    rwa [hsmul, ← hc, show c⁻¹ * (c * σ * c⁻¹) * c⁻¹⁻¹ = σ by group] at hconj
+  refine ⟨exists_isArithFrobAt_smul rfl, fun h ↦ ?_⟩
+  -- the reverse direction is the same transport along `c⁻¹`
+  simpa using exists_isArithFrobAt_smul (c := c⁻¹) (τ := σ) (by group) h
 
 end NumberField.Chebotarev
