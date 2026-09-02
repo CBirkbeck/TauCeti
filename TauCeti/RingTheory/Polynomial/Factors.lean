@@ -184,11 +184,11 @@ lemma span_eq_iInf_span (hf : f ≠ 0) (hsq : Squarefree f) :
   rw [Ideal.iInf_span_singleton fun _ _ hpq ↦ isCoprime hpq]
   exact (Ideal.span_singleton_eq_span_singleton.mpr (associated_prod hf hsq)).symm
 
-/-- An irreducible factor of the image of `f` under a field embedding divides the image of one of
-the irreducible factors of `f`.
+/-- A prime factor of the image of `f` under a field embedding divides the image of one of the
+monic irreducible factors of `f`.
 
 This is what lets a local computation be indexed by the factors of `f` over the base field: every
-factor over the extension sits above exactly one of them. -/
+prime of the extension divides the image of at least one of them. -/
 lemma exists_dvd_map {L : Type*} [Field L] (σ : K →+* L) (hf : f ≠ 0) {q : L[X]} (hq : Prime q)
     (hdvd : q ∣ f.map σ) : ∃ p : f.Factors, q ∣ (p : K[X]).map σ := by
   classical
