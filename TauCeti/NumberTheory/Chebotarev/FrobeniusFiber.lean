@@ -12,8 +12,8 @@ public import TauCeti.NumberTheory.NumberField.AutomorphismAction
 /-!
 # Equipotent Frobenius fibers
 
-For an extension of number fields and a prime `𝔭` of the base, each `K`-automorphism `σ`
-of `L` cuts out the set of primes above `𝔭` that admit `σ` as an arithmetic
+For an extension of fields and a prime `𝔭` of the base's ring of integers, each
+`K`-automorphism `σ` of `L` cuts out the set of primes above `𝔭` that admit `σ` as an arithmetic
 Frobenius. These sets need not be disjoint: at a ramified prime several elements are a
 Frobenius at once, so this is a family of fibers rather than a partition. This file records
 that conjugate values are admitted equally often: the fiber over `σ` and the fiber over any
@@ -67,8 +67,8 @@ private theorem exists_isArithFrobAt_smul {K L : Type*} [Field K] [Field L]
 
 /-- **Equipotent Frobenius fibers.** For `IsConj σ σ'`, the nonzero primes above `𝔭` with
 arithmetic Frobenius `σ` are equal in number to those with arithmetic Frobenius `σ'`. -/
-theorem frobeniusFiber_card_eq_of_isConj (K L : Type*) [Field K] [NumberField K] [Field L]
-    [NumberField L] [Algebra K L] (𝔭 : Ideal (𝓞 K)) (σ σ' : L ≃ₐ[K] L)
+theorem frobeniusFiber_card_eq_of_isConj (K L : Type*) [Field K] [Field L]
+    [Algebra K L] (𝔭 : Ideal (𝓞 K)) (σ σ' : L ≃ₐ[K] L)
     (hc : IsConj σ σ') :
     Nat.card {𝔓 : Ideal (𝓞 L) // ∃ (_ : 𝔓.IsPrime) (_ : 𝔓.LiesOver 𝔭) (_ : 𝔓 ≠ ⊥),
         IsArithFrobAt (𝓞 K) σ 𝔓} =
