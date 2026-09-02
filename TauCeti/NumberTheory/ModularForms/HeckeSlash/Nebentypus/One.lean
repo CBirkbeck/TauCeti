@@ -89,7 +89,7 @@ theorem twistedHeckeSlashSum_identity_coset (f : ℍ → ℂ) (hf : f ∈ functi
   have : Subsingleton (DecompQuotient ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))
       (((1 : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ))
         ((Gamma0 N).map (mapGL ℚ))).out : GL (Fin 2) ℚ))⁻¹) :=
-    DoubleCoset.subsingleton_decompQuotient _ (inv_mem hout)
+    DoubleCoset.subsingleton_decompQuotient_of_mem (inv_mem hout)
   -- Evaluate the single summand at the class of `δ` itself, where `hcls` is `rfl`. The index and
   -- its `Fintype` are left to unification: `Fintype.sum_subsingleton` names the index and so
   -- re-synthesizes an instance that is not the one `twistedHeckeSlashSum` was defined with, and
