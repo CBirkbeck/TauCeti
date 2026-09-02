@@ -123,15 +123,17 @@ theorem exists_refinement_energy_add_sq_le (P : Finpartition (Set.univ : Set Ω)
   rw [graphonPartitionEnergy_increment μ P Q hP hQ hQP W]
   simpa only [L, add_comm] using add_le_add_left hgain (graphonPartitionEnergy μ P hP W)
 
-/-- The iteration invariant behind `weak_regularity_frieze_kannan`: `n` applications of
+/-- The iteration invariant behind `weak_regularity_frieze_kannan`: **at most** `n` applications of
 `exists_refinement_energy_add_sq_le` to a measurable partition `P` produce a measurable partition
 with at most `4 ^ n` times as many parts, whose block averages either approximate `W` to within `ε`
-in cut norm, or carry energy at least `n * ε ^ 2` above `P`'s. The conclusion records only that
-part-count bound and that dichotomy — it does **not** assert that the partition produced refines
-`P`, since nothing downstream needs it; the refinement relation is available one level down, from
-`exists_refinement_energy_add_sq_le`. Applying it to the indiscrete partition with `n` past
-`1 / ε ^ 2` makes the energy alternative contradict `graphonPartitionEnergy_le_one`, leaving the
-approximation. -/
+in cut norm, or carry energy at least `n * ε ^ 2` above `P`'s. The count is only an upper bound
+because the induction stops as soon as the cut-norm estimate holds, returning `P` itself; the
+energy alternative is what records how many steps were actually taken. The conclusion records only
+that part-count bound and that dichotomy — it does **not** assert that the partition produced
+refines `P`, since nothing downstream needs it; the refinement relation is available one level
+down, from `exists_refinement_energy_add_sq_le`. Applying it to the indiscrete partition with `n`
+past `1 / ε ^ 2` makes the energy alternative contradict `graphonPartitionEnergy_le_one`, leaving
+the approximation. -/
 private theorem exists_partition_cutNorm_le_or_energy_add_mul_sq_le
     (W : Graphon Ω μ) {ε : ℝ} (hε : 0 < ε) :
     ∀ (n : ℕ) (P : Finpartition (Set.univ : Set Ω)) (hP : ∀ p ∈ P.parts, MeasurableSet p),
