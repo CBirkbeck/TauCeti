@@ -193,6 +193,116 @@ private noncomputable def thetaPoint (hΔ : (fracCurve W σ KK).Δ ≠ 0)
       (IsFractionRing.injective (MvPowerSeries σ O) KK (by rw [h, map_zero])))
     hΔ)
 
+variable [DecidableEq KK] in
+/-- **The chord addition of parametrized points**: `θ(q₁) + θ(q₂) = θ(F(q₁, q₂))`.
+
+The two parametrized points lie on `fracCurve W`, the chord through them meets the curve again at
+the parameter `z₃`, and the addition series is exactly the reflection of that third point. So the
+group law of an honest Weierstrass curve, applied to the two points, computes `F(q₁, q₂)`. -/
+private theorem thetaPoint_add (hΔ : (fracCurve W σ KK).Δ ≠ 0)
+    {q₁ q₂ : MvPowerSeries σ O} (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0)
+    (hq₁0 : q₁ ≠ 0) (hq₂0 : q₂ ≠ 0)
+    (hN : subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+      (formalIntercept W) ≠ 0)
+    (hx : q₁ * PowerSeries.subst q₂ (formalW W) - q₂ * PowerSeries.subst q₁ (formalW W) ≠ 0)
+    (hF : constantCoeff (subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+      Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W)) = 0)
+    (hF0 : subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+      (formalAdd W) ≠ 0) :
+    W.thetaPoint hΔ h₁ hq₁0 + W.thetaPoint hΔ h₂ hq₂0 = W.thetaPoint hΔ hF hF0 := by
+  classical
+  set ρ := algebraMap (MvPowerSeries σ O) KK with hρ
+  have hinj : Function.Injective ρ := IsFractionRing.injective (MvPowerSeries σ O) KK
+  set Λp := subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+    Unit ⊕ Unit → MvPowerSeries σ O) (formalSlope W) with hΛp
+  set Np := subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+    Unit ⊕ Unit → MvPowerSeries σ O) (formalIntercept W) with hNp
+  set Tp := subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+    Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W) with hTp
+  set w₁ := PowerSeries.subst q₁ (formalW W) with hw₁'
+  set w₂ := PowerSeries.subst q₂ (formalW W) with hw₂'
+  set wT := PowerSeries.subst Tp (formalW W) with hwT'
+  -- the chord identities, read in `KK`
+  have hslope : ρ Λp * (ρ q₂ - ρ q₁) = ρ w₂ - ρ w₁ := by
+    rw [← map_sub, ← map_sub, ← map_mul]
+    exact congrArg ρ (subst_pair_formalSlope_mul W h₁ h₂)
+  have hNint : ρ Np = ρ w₁ - ρ Λp * ρ q₁ := by
+    rw [← map_mul, ← map_sub]
+    exact congrArg ρ (subst_pair_formalIntercept_eq_inl W h₁ h₂)
+  have hwTeq : ρ wT = ρ Λp * ρ Tp + ρ Np := by
+    have h := congrArg ρ (subst_pair_online W h₁ h₂)
+    simp only [map_add, map_mul] at h
+    exact h
+  have hT₃ : (1 + (fracCurve W σ KK).a₂ * ρ Λp + (fracCurve W σ KK).a₄ * ρ Λp ^ 2 +
+      (fracCurve W σ KK).a₆ * ρ Λp ^ 3) * (ρ Tp + ρ q₁ + ρ q₂) =
+      -((fracCurve W σ KK).a₁ * ρ Λp + (fracCurve W σ KK).a₂ * ρ Np +
+        (fracCurve W σ KK).a₃ * ρ Λp ^ 2 + 2 * (fracCurve W σ KK).a₄ * ρ Λp * ρ Np +
+        3 * (fracCurve W σ KK).a₆ * ρ Λp ^ 2 * ρ Np) := by
+    have h := congrArg ρ (subst_pair_formalThirdRoot_relation W h₁ h₂)
+    simp only [map_add, map_mul, map_neg, map_pow, map_one, map_ofNat] at h
+    simpa [fracCurve, MvPowerSeries.c_eq_algebraMap] using h
+  -- nonvanishing
+  have hA : (1 + (fracCurve W σ KK).a₂ * ρ Λp + (fracCurve W σ KK).a₄ * ρ Λp ^ 2 +
+      (fracCurve W σ KK).a₆ * ρ Λp ^ 3) ≠ 0 := by
+    intro h
+    refine subst_pair_thirdRootDenom_ne_zero W h₁ h₂ (hinj ?_)
+    simpa [fracCurve, MvPowerSeries.c_eq_algebraMap, map_zero] using h
+  have hTp0 : Tp ≠ 0 := subst_pair_formalThirdRoot_ne_zero W h₁ h₂ hN
+  have hw₁0 : ρ w₁ ≠ 0 := fun h ↦ W.subst_formalW_ne_zero h₁ hq₁0 (hinj (by rw [h, map_zero]))
+  have hw₂0 : ρ w₂ ≠ 0 := fun h ↦ W.subst_formalW_ne_zero h₂ hq₂0 (hinj (by rw [h, map_zero]))
+  have hTc : constantCoeff Tp = 0 := constantCoeff_subst_pair_formalThirdRoot W h₁ h₂
+  have hwT0 : ρ wT ≠ 0 := fun h ↦ W.subst_formalW_ne_zero hTc hTp0 (hinj (by rw [h, map_zero]))
+  have hxρ : ρ q₁ * ρ w₂ - ρ q₂ * ρ w₁ ≠ 0 := by
+    rw [← map_mul, ← map_mul, ← map_sub]
+    exact fun h ↦ hx (hinj (by rw [h, map_zero]))
+  -- the two parametrized points satisfy the Weierstrass equation of `fracCurve W`
+  have hwq₁ := by
+    simpa [wEquationRHS_def] using
+      W.algebraMap_subst_formalW_wEquation (KK := KK)
+        (PowerSeries.HasSubst.of_constantCoeff_zero h₁)
+  have hwq₂ := by
+    simpa [wEquationRHS_def] using
+      W.algebraMap_subst_formalW_wEquation (KK := KK)
+        (PowerSeries.HasSubst.of_constantCoeff_zero h₂)
+  -- the honest group law of `fracCurve W`, applied to the two points
+  obtain ⟨h₃, hadd⟩ := chord_point_add (fracCurve W σ KK) hwq₁ hwq₂ hslope hNint hT₃ hwTeq hA
+    hw₁0 hw₂0 hwT0 hxρ
+    (chord_point_nonsingular (fracCurve W σ KK) hwq₁ hw₁0 hΔ)
+    (chord_point_nonsingular (fracCurve W σ KK) hwq₂ hw₂0 hΔ)
+  refine Eq.trans (show W.thetaPoint hΔ h₁ hq₁0 + W.thetaPoint hΔ h₂ hq₂0 =
+    Affine.Point.some _ _ h₃ from hadd) ?_
+  -- identify the third point with the point of parameter `F(q₁, q₂)`
+  set sp := PowerSeries.subst Tp (PowerSeries.invOfUnit (formalInverseDenom W) 1) with hsp'
+  have hu : ρ (PowerSeries.subst Tp (formalInverseDenom W)) * ρ sp = 1 := by
+    rw [← map_mul, ← map_one ρ]
+    exact congrArg ρ (subst_pair_formalInverseDenom_mul W h₁ h₂)
+  have hueq : ρ (PowerSeries.subst Tp (formalInverseDenom W)) =
+      1 - (fracCurve W σ KK).a₁ * ρ Tp - (fracCurve W σ KK).a₃ * ρ wT := by
+    have h := congrArg ρ (subst_pair_formalInverseDenom_eq W h₁ h₂)
+    simp only [map_sub, map_mul, map_one, MvPowerSeries.c_eq_algebraMap] at h
+    exact h
+  have hsp0 : ρ sp ≠ 0 := by
+    intro h
+    rw [h, mul_zero] at hu
+    exact one_ne_zero hu.symm
+  have hFeq : ρ (subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+      Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W)) = -(ρ Tp * ρ sp) := by
+    have h := congrArg ρ (subst_pair_formalAdd_eq W h₁ h₂)
+    simp only [map_neg, map_mul] at h
+    exact h
+  have hwFeq : ρ (PowerSeries.subst (subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+      Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W)) (formalW W)) = -(ρ wT * ρ sp) := by
+    have h := congrArg ρ (subst_pair_formalW_formalAdd W h₁ h₂)
+    simp only [map_neg, map_mul] at h
+    exact h
+  rw [thetaPoint]
+  simp only [Affine.Point.some.injEq]
+  constructor
+  · rw [hFeq, hwFeq]
+    field_simp
+  · rw [hwFeq, div_eq_div_iff hwT0 (neg_ne_zero.mpr (mul_ne_zero hwT0 hsp0))]
+    linear_combination (-(ρ wT)) * hu + (ρ wT * ρ sp) * hueq
+
 end WeierstrassCurve
 
 end
