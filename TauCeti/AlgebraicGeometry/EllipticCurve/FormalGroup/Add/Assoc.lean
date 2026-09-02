@@ -38,7 +38,18 @@ Adapted from Michael Stoll's `EllipticCurves` project
 (`github.com/MichaelStollBayreuth/EllipticCurves`, Apache-2.0, pinned by
 `TauCetiRoadmap/EllipticCurves/README.md` at `66889eada51a`),
 `EllipticCurves/WeierstrassFormalGroup/GroupLaw.lean`, sections `Domain` and `Assembly`,
-declarations `subst_wSeries_ne_zero`, `fracCurve`, `rho_weierstrass` and `thetaPoint`.
+declarations `subst_wSeries_ne_zero`, `fracCurve`, `rho_weierstrass`, `thetaPoint`,
+`thetaPoint_add`, `thetaPoint_neg`, `thetaPoint_inj` and `pair_intercept_ne_zero_of_ne`, together
+with the single-parameter helpers `single_u_mul`, `single_iota_eq`, `single_u_eq` and
+`single_wIota`.
+
+Two of those are proved differently here, because this repository already has the content in a
+more usable form. `pair_intercept_ne_zero_of_ne` collapses the cross combination with the single
+rewrite `subst_pair_formalIntercept_mul_sub` where the source combines its two intercept readings
+by hand; and Stoll's `hA` step inside `thetaPoint_add` argues through the constant coefficient,
+whereas `subst_pair_thirdRootDenom_mul` already exhibits an explicit inverse. The four
+single-parameter helpers are likewise transports of the `FormalGroup/Inverse.lean` identities
+along `PowerSeries.subst q`, not re-derivations of them.
 
 The source's `wSeries` and `vSeries` are `formalW` and `formalU` here, continuing the renaming
 this repository applies to that development, so `subst_wSeries_ne_zero` is
@@ -393,6 +404,88 @@ private theorem thetaPoint_neg (hΔ : (fracCurve W σ KK).Δ ≠ 0)
     field_simp
     linear_combination
       ρ (PowerSeries.subst q (PowerSeries.invOfUnit (formalInverseDenom W) 1)) * hueq - hu
+
+/-- **The parametrized point determines the parameter**: `θ` is injective.
+
+The `y`-coordinate `-1 / w(q)` already pins down `w(q)`, and the `x`-coordinate `q / w(q)` then
+pins down `q`. -/
+private theorem thetaPoint_inj (hΔ : (fracCurve W σ KK).Δ ≠ 0)
+    {q₁ q₂ : MvPowerSeries σ O} (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0)
+    (hq₁0 : q₁ ≠ 0) (hq₂0 : q₂ ≠ 0)
+    (h : W.thetaPoint hΔ h₁ hq₁0 = W.thetaPoint hΔ h₂ hq₂0) : q₁ = q₂ := by
+  classical
+  set ρ := algebraMap (MvPowerSeries σ O) KK with hρ
+  have hinj : Function.Injective ρ := IsFractionRing.injective (MvPowerSeries σ O) KK
+  simp only [thetaPoint, Affine.Point.some.injEq] at h
+  simp only [← hρ] at h
+  have hw₁0 : ρ (PowerSeries.subst q₁ (formalW W)) ≠ 0 := fun hh ↦
+    W.subst_formalW_ne_zero h₁ hq₁0 (hinj (by rw [hh, map_zero]))
+  have hw₂0 : ρ (PowerSeries.subst q₂ (formalW W)) ≠ 0 := fun hh ↦
+    W.subst_formalW_ne_zero h₂ hq₂0 (hinj (by rw [hh, map_zero]))
+  have hw : ρ (PowerSeries.subst q₁ (formalW W)) = ρ (PowerSeries.subst q₂ (formalW W)) := by
+    have h2 := h.2
+    field_simp at h2
+    linear_combination h2
+  refine hinj ?_
+  have h1 := h.1
+  rw [div_eq_div_iff hw₁0 hw₂0, hw] at h1
+  exact mul_right_cancel₀ hw₂0 h1
+
+/-- The intercept at a pair is nonzero as soon as the two parameters are distinct and not
+mutually inverse.
+
+If the intercept vanished, the cross combination `q₁ w(q₂) - q₂ w(q₁)` would vanish with it, so
+the two parametrized points would share an `x`-coordinate and hence agree up to sign. Injectivity
+of `θ` then contradicts one of the two hypotheses. -/
+private theorem pair_intercept_ne_zero_of_ne (hΔ : (fracCurve W σ KK).Δ ≠ 0)
+    {q₁ q₂ : MvPowerSeries σ O} (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0)
+    (hq₁0 : q₁ ≠ 0) (hq₂0 : q₂ ≠ 0) (hne₁ : q₁ ≠ q₂)
+    (hne₂ : q₁ ≠ PowerSeries.subst q₂ (formalInverse W)) :
+    subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+      (formalIntercept W) ≠ 0 := by
+  classical
+  intro h0
+  set ρ := algebraMap (MvPowerSeries σ O) KK with hρ
+  have hinj : Function.Injective ρ := IsFractionRing.injective (MvPowerSeries σ O) KK
+  have hs₂ : PowerSeries.HasSubst q₂ := PowerSeries.HasSubst.of_constantCoeff_zero h₂
+  -- a vanishing intercept collapses the cross combination, so the `x`-coordinates agree
+  have hqw : q₁ * PowerSeries.subst q₂ (formalW W) -
+      q₂ * PowerSeries.subst q₁ (formalW W) = 0 := by
+    rw [subst_pair_formalIntercept_mul_sub W h₁ h₂, h0, zero_mul]
+  have hw₁0 : ρ (PowerSeries.subst q₁ (formalW W)) ≠ 0 := fun hh ↦
+    W.subst_formalW_ne_zero h₁ hq₁0 (hinj (by rw [hh, map_zero]))
+  have hw₂0 : ρ (PowerSeries.subst q₂ (formalW W)) ≠ 0 := fun hh ↦
+    W.subst_formalW_ne_zero h₂ hq₂0 (hinj (by rw [hh, map_zero]))
+  have hx : ρ q₁ / ρ (PowerSeries.subst q₁ (formalW W)) =
+      ρ q₂ / ρ (PowerSeries.subst q₂ (formalW W)) := by
+    rw [div_eq_div_iff hw₁0 hw₂0, ← map_mul, ← map_mul]
+    exact congrArg ρ (by linear_combination hqw)
+  have hcase := (Affine.Point.X_eq_iff
+    (h₁ := chord_point_nonsingular (fracCurve W σ KK)
+      (by
+        simpa [wEquationRHS_def] using W.algebraMap_subst_formalW_wEquation (KK := KK)
+          (PowerSeries.HasSubst.of_constantCoeff_zero h₁))
+      hw₁0 hΔ)
+    (h₂ := chord_point_nonsingular (fracCurve W σ KK)
+      (by simpa [wEquationRHS_def] using W.algebraMap_subst_formalW_wEquation (KK := KK) hs₂)
+      hw₂0 hΔ)).mp hx
+  -- the data carried by the inverted parameter
+  have hs0 : PowerSeries.subst q₂ (PowerSeries.invOfUnit (formalInverseDenom W) 1) ≠ 0 := by
+    intro hh
+    have hmul := W.subst_formalInverseDenom_mul hs₂
+    rw [hh, mul_zero] at hmul
+    exact one_ne_zero hmul.symm
+  have hi : constantCoeff (PowerSeries.subst q₂ (formalInverse W)) = 0 :=
+    PowerSeries.constantCoeff_subst_eq_zero h₂ (formalInverse W) (constantCoeff_formalInverse W)
+  have hi0 : PowerSeries.subst q₂ (formalInverse W) ≠ 0 := by
+    rw [W.subst_formalInverse_eq hs₂]
+    exact neg_ne_zero.mpr (mul_ne_zero hq₂0 hs0)
+  rcases hcase with hc | hc
+  · exact hne₁ (W.thetaPoint_inj hΔ h₁ h₂ hq₁0 hq₂0 hc)
+  · -- `hc` comes out of `X_eq_iff` with `thetaPoint` unfolded, so fold it back before rewriting
+    have hc' : W.thetaPoint hΔ h₁ hq₁0 = -W.thetaPoint hΔ h₂ hq₂0 := hc
+    rw [← W.thetaPoint_neg hΔ h₂ hq₂0 hi hi0] at hc'
+    exact hne₂ (W.thetaPoint_inj hΔ h₁ hi hq₁0 hi0 hc')
 
 end WeierstrassCurve
 
