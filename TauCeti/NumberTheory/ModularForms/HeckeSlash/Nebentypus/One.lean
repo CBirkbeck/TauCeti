@@ -64,9 +64,11 @@ namespace HeckeRing.GL2
 
 variable {N : ℕ} (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) [NeZero N]
 
--- The enumeration `∑` needs, as in `Nebentypus/Basic.lean` and `Nebentypus/Composition.lean`: the
--- `∑` that `twistedHeckeSlashSum_def` unfolds to is over this index, and `Basic.lean`'s own
--- `local instance` is not exported across the module boundary.
+-- The enumeration the `∑` index needs. `Nebentypus/Basic.lean` declares this instance `local`, so
+-- it is not exported across the module boundary, and every file in this tree that reasons about
+-- such a sum re-installs it (`Nebentypus/{Basic,Composition,Independence,Invariance}.lean`,
+-- `HeckeSlash/{Basic,Composition,Invariance}.lean`). The consumer below is `Finset.mem_univ`,
+-- which synthesizes it; removing this line fails that step, not the rewrite.
 attribute [local instance] Fintype.ofFinite
 
 /-- **The identity double coset acts as the identity on the character space.**
@@ -84,16 +86,19 @@ theorem twistedHeckeSlashSum_identity_coset (f : ℍ → ℂ) (hf : f ∈ functi
       ((Gamma0 N).map (mapGL ℚ))).out : GL (Fin 2) ℚ)) ∈ (Gamma0 N).map (mapGL ℚ) :=
     HeckeCoset.out_one_mem
   -- `Γ₀(N) · 1 · Γ₀(N)` is a single right coset, so the sum has exactly one summand.
-  haveI : Subsingleton (DecompQuotient ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))
+  have : Subsingleton (DecompQuotient ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))
       (((1 : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ))
         ((Gamma0 N).map (mapGL ℚ))).out : GL (Fin 2) ℚ))⁻¹) :=
     DoubleCoset.subsingleton_decompQuotient _ (inv_mem hout)
-  -- Evaluate the single summand at the class of `δ` itself, where `hcls` is `rfl`.
-  rw [twistedHeckeSlashSum_def,
-    Fintype.sum_subsingleton _ (⟦⟨_, hout⟩⟧ : DecompQuotient ((Gamma0 N).map (mapGL ℚ))
-      ((Gamma0 N).map (mapGL ℚ)) (((1 : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ))
-        ((Gamma0 N).map (mapGL ℚ))).out : GL (Fin 2) ℚ))⁻¹),
-    ← delta0NebentypusChar_smul_slash_eq_nebentypusWeight_smul_slash k χ 1 f hf hout rfl]
+  -- Evaluate the single summand at the class of `δ` itself, where `hcls` is `rfl`. The index and
+  -- its `Fintype` are left to unification: `Fintype.sum_subsingleton` names the index and so
+  -- re-synthesizes an instance that is not the one `twistedHeckeSlashSum` was defined with, and
+  -- the rewrite then fails to match. Here `s` and `f` are implicit and come from the goal.
+  rw [twistedHeckeSlashSum_def]
+  refine (Finset.sum_eq_single_of_mem ⟦⟨_, hout⟩⟧ ?_ ?_).trans ?_
+  · exact Finset.mem_univ _
+  · exact fun b _ hb ↦ absurd (Subsingleton.elim b _) hb
+  rw [← delta0NebentypusChar_smul_slash_eq_nebentypusWeight_smul_slash k χ 1 f hf hout rfl]
   -- That representative is `δ δ⁻¹ = 1`, so the weight and the slash collapse together.
   have hone : (⟨_, mul_inv_mem_Delta0 (1 : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ))
       ((Gamma0 N).map (mapGL ℚ))) hout⟩ : Delta0 N) = 1 := Subtype.ext (mul_inv_cancel _)
@@ -105,7 +110,7 @@ identity.** This is `twistedHeckeSlashSum_identity_coset` read through the restr
 @[simp] theorem twistedHeckeSlashSumCharEnd_one :
     twistedHeckeSlashSumCharEnd k χ 1 = 1 := by
   refine LinearMap.ext fun f ↦ Subtype.ext ?_
-  rw [coe_twistedHeckeSlashSumCharEnd, LinearMap.one_apply]
+  rw [coe_twistedHeckeSlashSumCharEnd, Module.End.one_apply]
   exact twistedHeckeSlashSum_identity_coset k χ (f : ℍ → ℂ) f.2
 
 /-- **The `ℤ`-linear extension sends `1` to `1`** — the `map_one` half of the twisted Hecke ring
