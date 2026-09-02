@@ -99,44 +99,39 @@ section Convolution
 
 variable {A : Type*} [Ring A] [TopologicalSpace A] [NonarchimedeanRing A]
 
-/-- The antidiagonal `{(i, j) | i + j = n}` in `ℤ × ℤ`, parametrised by its first coordinate.
-
-This is where the `ℤ`-indexed picture and Mathlib's fibre picture meet, and it is an `Equiv` rather
-than a `Finset` precisely because the antidiagonal is infinite. -/
+-- The antidiagonal `{(i, j) | i + j = n}` in `ℤ × ℤ`, parametrised by its first coordinate. This
+-- is where the `ℤ`-indexed picture and Mathlib's fibre picture meet, and it is an `Equiv` rather
+-- than a `Finset` precisely because the antidiagonal is infinite.
 private def addFiberEquivInt (n : ℤ) : ℤ ≃ (addFiber n : Set (ℤ × ℤ)) where
-  toFun k := ⟨(k, n - k), by simp [mem_addFiber]⟩
+  toFun k := ⟨(k, n - k), by grind⟩
   invFun ab := ab.1.1
   left_inv _ := rfl
-  right_inv ab := Subtype.ext (Prod.ext rfl (by have := mem_addFiber.mp ab.2; dsimp only; omega))
+  right_inv ab := by grind
 
 omit [NonarchimedeanRing A] in
 /-- **The coefficient formula for the two-sided product**: `(fg)ₙ = ∑' k, aₖ b_{n-k}`, the familiar
-Laurent convolution. Reindexing Mathlib's sum over `addFiber n` by the first coordinate is exactly
-`addFiberEquivInt`. -/
+Laurent convolution. -/
 theorem addConvolution_mul_apply (f g : ℤ → A) (n : ℤ) :
     addConvolution (LinearMap.mul ℤ A) f g n = ∑' k : ℤ, f k * g (n - k) :=
+  -- Reindexing Mathlib's sum over `addFiber n` by the first coordinate is exactly
+  -- `addFiberEquivInt`.
   ((addFiberEquivInt n).tsum_eq fun ab ↦ f ab.1.1 * g ab.1.2).symm
 
 /-- **The product of two restricted families is restricted**, so `A⟨X, X⁻¹⟩` is closed under the
 convolution. This is what makes it a ring rather than merely a module, and it needs neither
-completeness nor summability:
-`NonarchimedeanAddGroup.zeroAtFilter_cofinite_tsum_fiber` sums along the fibres of addition
-`ℤ × ℤ → ℤ`, and `tendsto_mul_cofinite_nhds_zero` supplies its hypothesis on `(i, j) ↦ aᵢbⱼ`. Where
-a coefficient sum fails to converge it is `0` by the `tsum` convention, and `0` lies in every
-subgroup, so the degenerate case costs nothing and no completeness hypothesis is needed to state
-closure. -/
+completeness nor summability. -/
 theorem addConvolution_mem_twoSidedRestrictedSubmodule {f g : ℤ → A}
     (hf : f ∈ twoSidedRestrictedSubmodule A A) (hg : g ∈ twoSidedRestrictedSubmodule A A) :
     addConvolution (LinearMap.mul ℤ A) f g ∈ twoSidedRestrictedSubmodule A A := by
   rw [mem_twoSidedRestrictedSubmodule] at hf hg ⊢
-  have key : addConvolution (LinearMap.mul ℤ A) f g
-      = fun n ↦ ∑' i : {i : ℤ × ℤ // i.1 + i.2 = n}, f i.1.1 * g i.1.2 :=
-    funext fun _ ↦ tsum_congr_set_coe (fun ab : ℤ × ℤ ↦ f ab.1 * g ab.2)
-      (Set.ext fun (_ : ℤ × ℤ) ↦ mem_addFiber)
-  rw [key]
-  exact NonarchimedeanAddGroup.zeroAtFilter_cofinite_tsum_fiber
-    (F := fun ab : ℤ × ℤ ↦ f ab.1 * g ab.2) (tendsto_mul_cofinite_nhds_zero hf hg)
-    (fun ab ↦ ab.1 + ab.2)
+  -- Summing along the fibres of addition `ℤ × ℤ → ℤ` preserves cofinite nullity, and the family
+  -- `(i, j) ↦ aᵢbⱼ` is cofinitely null because `f` and `g` are. Where a fibre's sum fails to
+  -- converge it is `0` by the `tsum` convention, and `0` lies in every subgroup, so the degenerate
+  -- case costs nothing and no completeness hypothesis is needed to state closure.
+  refine (NonarchimedeanAddGroup.zeroAtFilter_cofinite_tsum_fiber
+    (tendsto_mul_cofinite_nhds_zero hf hg) fun ab ↦ ab.1 + ab.2).congr fun _ ↦ ?_
+  -- Mathlib's fibre `addFiber n` is the antidiagonal `{(i, j) | i + j = n}`.
+  exact tsum_congr_set_coe (fun ab : ℤ × ℤ ↦ f ab.1 * g ab.2) <| Set.ext fun _ ↦ mem_addFiber.symm
 
 /-- **The product on `A⟨X, X⁻¹⟩`**: the coefficient convolution `(fg)ₙ = ∑' k, aₖ b_{n-k}`, which
 lands back in the submodule by `addConvolution_mem_twoSidedRestrictedSubmodule`. Only a
@@ -152,17 +147,17 @@ degree `0`. -/
 instance twoSidedRestrictedSubmodule.instOne : One (twoSidedRestrictedSubmodule A A) where
   one := ⟨Pi.single 0 1, single_mem_twoSidedRestrictedSubmodule 0 1⟩
 
-/-- The product is the convolution of the coefficient families. Its body is not exposed, so this
-is how it is computed outside this module. -/
+/-- The product is the convolution of the coefficient families. The `Mul` instance's body is not
+exposed, so this is how a product is computed outside this module. -/
 @[simp]
 theorem coe_mul_twoSidedRestrictedSubmodule (f g : twoSidedRestrictedSubmodule A A) :
-    ((f * g : twoSidedRestrictedSubmodule A A) : ℤ → A) =
-      addConvolution (LinearMap.mul ℤ A) f g := (rfl)
+    (↑(f * g) : ℤ → A) = addConvolution (LinearMap.mul ℤ A) f g := rfl
 
-/-- The unit is the family supported at degree `0` with value `1`. -/
+/-- The unit is the family supported at degree `0` with value `1`. The `One` instance's body is
+not exposed, so this is how the unit is computed outside this module. -/
 @[simp]
 theorem coe_one_twoSidedRestrictedSubmodule :
-    ((1 : twoSidedRestrictedSubmodule A A) : ℤ → A) = Pi.single 0 1 := (rfl)
+    ((1 : twoSidedRestrictedSubmodule A A) : ℤ → A) = Pi.single 0 1 := rfl
 
 end Convolution
 
@@ -172,13 +167,14 @@ variable {A M : Type*} [Semiring A] [AddCommGroup M] [UniformSpace M] [IsUniform
   [NonarchimedeanAddGroup M] [CompleteSpace M] [Module A M] [ContinuousConstSMul A M]
 
 /-- **Restrictedness is summability** over a complete nonarchimedean group: a family lies in the
-submodule exactly when it is summable. This is
-`NonarchimedeanAddGroup.summable_iff_tendsto_cofinite_zero` read through the membership criterion,
-and it is what turns Wedhorn's "the product of two such series is well defined" into a theorem. -/
+submodule exactly when it is summable. It is what turns Wedhorn's "the product of two such series
+is well defined" into a theorem. -/
 theorem mem_twoSidedRestrictedSubmodule_iff_summable {f : ℤ → M} :
-    f ∈ twoSidedRestrictedSubmodule A M ↔ Summable f := by
-  rw [mem_twoSidedRestrictedSubmodule]
-  exact (NonarchimedeanAddGroup.summable_iff_tendsto_cofinite_zero f).symm
+    f ∈ twoSidedRestrictedSubmodule A M ↔ Summable f :=
+  -- `NonarchimedeanAddGroup.summable_iff_tendsto_cofinite_zero` read through the membership
+  -- criterion: membership unfolds to cofinite nullity, which is that lemma's right-hand side.
+  mem_twoSidedRestrictedSubmodule.trans
+    (NonarchimedeanAddGroup.summable_iff_tendsto_cofinite_zero f).symm
 
 end Summable
 
@@ -188,22 +184,24 @@ variable {A : Type*} [Ring A] [UniformSpace A] [IsUniformAddGroup A] [Nonarchime
   [CompleteSpace A]
 
 /-- **Each coefficient of a product is a convergent series** (Wedhorn's "the convergent series
-`∑_{k + l = n} aₖ bₗ`"): restrictedness *is* summability over a complete nonarchimedean ring, so
-`Summable.mul_of_nonarchimedean` makes `(i, j) ↦ aᵢbⱼ` summable on all of `ℤ × ℤ`, and the
-antidiagonal `k ↦ (k, n - k)` is a subfamily. -/
+`∑_{k + l = n} aₖ bₗ`"). -/
 theorem summable_mul_sub_of_mem_twoSidedRestrictedSubmodule {f g : ℤ → A}
-    (hf : f ∈ twoSidedRestrictedSubmodule A A) (hg : g ∈ twoSidedRestrictedSubmodule A A)
-    (n : ℤ) : Summable fun k ↦ f k * g (n - k) :=
+    (hf : f ∈ twoSidedRestrictedSubmodule A A) (hg : g ∈ twoSidedRestrictedSubmodule A A) (n : ℤ) :
+    Summable fun k ↦ f k * g (n - k) :=
+  -- Restrictedness *is* summability over a complete nonarchimedean ring, so
+  -- `Summable.mul_of_nonarchimedean` makes `(i, j) ↦ aᵢbⱼ` summable on all of `ℤ × ℤ`.
   ((mem_twoSidedRestrictedSubmodule_iff_summable.mp hf).mul_of_nonarchimedean
     (mem_twoSidedRestrictedSubmodule_iff_summable.mp hg)).comp_injective
+    -- The antidiagonal `k ↦ (k, n - k)` is a subfamily of `ℤ × ℤ`.
     (i := fun k ↦ (k, n - k)) fun _ _ hab ↦ (Prod.mk.inj hab).1
 
 /-- **The convolution of two restricted families exists**, in the form Mathlib's distributivity
-lemmas for `DiscreteConvolution.addConvolution` consume: the same subfamily argument as
-`summable_mul_sub_of_mem_twoSidedRestrictedSubmodule`, on Mathlib's fibre `addFiber n`. -/
+lemmas for `DiscreteConvolution.addConvolution` consume. -/
 theorem addConvolutionExists_of_mem_twoSidedRestrictedSubmodule {f g : ℤ → A}
     (hf : f ∈ twoSidedRestrictedSubmodule A A) (hg : g ∈ twoSidedRestrictedSubmodule A A) :
     AddConvolutionExists (LinearMap.mul ℤ A) f g :=
+  -- The same subfamily argument as `summable_mul_sub_of_mem_twoSidedRestrictedSubmodule`, now on
+  -- Mathlib's fibre `addFiber n`: `(i, j) ↦ aᵢbⱼ` is summable on all of `ℤ × ℤ`.
   fun _ ↦ ((mem_twoSidedRestrictedSubmodule_iff_summable.mp hf).mul_of_nonarchimedean
     (mem_twoSidedRestrictedSubmodule_iff_summable.mp hg)).subtype _
 
@@ -211,32 +209,33 @@ variable [T0Space A]
 
 namespace twoSidedRestrictedSubmodule
 
-/-- Both bracketings of a triple product are the sum of `aᵢ bⱼ cₗ` over `{i + j + l = n}`. That
-fibre is indexed by `(m, k) ↦ (k, m - k, n - m)`, with `m` the degree of the partial product `fg`;
-summing first over `k` gives `((fg)h)ₙ`, while after the reindexing `(m, k) ↦ (k, m - k)` summing
-first over the second coordinate gives `(f(gh))ₙ`. -/
+/-- Both bracketings of a triple product are the sum of `aᵢ bⱼ cₗ` over `{i + j + l = n}`. It is
+the associativity field of `twoSidedRestrictedSubmodule.instRing`, so downstream of that instance
+the root `mul_assoc` applies — which is why this one is `protected`. -/
 protected theorem mul_assoc (f g h : twoSidedRestrictedSubmodule A A) :
     f * g * h = f * (g * h) := by
   ext n
   simp only [coe_mul_twoSidedRestrictedSubmodule, addConvolution_mul_apply]
+  -- Index that fibre by `(m, k) ↦ (k, m - k, n - m)`, with `m` the degree of the partial product
+  -- `fg`. It is a subfamily of `(i, j, l) ↦ aᵢbⱼcₗ`, which is summable on all of `ℤ × ℤ × ℤ`.
   have hF : Summable fun p : ℤ × ℤ ↦
       (f : ℤ → A) p.2 * (g : ℤ → A) (p.1 - p.2) * (h : ℤ → A) (n - p.1) :=
     (((mem_twoSidedRestrictedSubmodule_iff_summable.mp f.2).mul_of_nonarchimedean
       (mem_twoSidedRestrictedSubmodule_iff_summable.mp g.2)).mul_of_nonarchimedean
       (mem_twoSidedRestrictedSubmodule_iff_summable.mp h.2)).comp_injective
-      (i := fun p : ℤ × ℤ ↦ ((p.2, p.1 - p.2), n - p.1)) fun p q hpq ↦ by
-        simp only [Prod.mk.injEq] at hpq
-        exact Prod.ext (by omega) hpq.1.1
-  refine (hF.hasSum.prod_fiberwise fun m ↦ ?_).tsum_eq.trans
-    (HasSum.prod_fiberwise
+      (i := fun p : ℤ × ℤ ↦ ((p.2, p.1 - p.2), n - p.1)) fun p q hpq ↦ by grind
+  -- Both bracketings are that single sum, summed in two orders: fibring over `m` gives `((fg)h)ₙ`
+  -- by summing first over `k`, and fibring the reindexed family gives `(f(gh))ₙ`.
+  refine (hF.hasSum.prod_fiberwise fun m ↦ ?_).tsum_eq.trans (HasSum.prod_fiberwise
       (f := fun q : ℤ × ℤ ↦ (f : ℤ → A) q.1 * ((g : ℤ → A) q.2 * (h : ℤ → A) (n - q.1 - q.2)))
       ?_ fun k ↦ ?_).tsum_eq.symm
+  -- Fibre of `((fg)h)ₙ` over `m`: the `k`-series computing `(fg)ₘ`, scaled on the right by `h`.
   · exact (summable_mul_sub_of_mem_twoSidedRestrictedSubmodule f.2 g.2 m).hasSum.mul_right _
-  · refine ((Equiv.prodComm ℤ ℤ).trans
-      (Equiv.prodShear (Equiv.refl ℤ) Equiv.subRight)).hasSum_iff.mp ?_
-    convert hF.hasSum using 1
-    funext ⟨m, k⟩
-    simp [mul_assoc]
+  -- The reindexing `(m, k) ↦ (k, m - k)` is `Equiv.prodComm` followed by a shear; it carries `hF`
+  -- to the family whose fibres give `(f(gh))ₙ`, with `mul_assoc` rebracketing each term.
+  · refine ((Equiv.prodComm ℤ ℤ).trans ((Equiv.refl ℤ).prodShear Equiv.subRight)).hasSum_iff.mp ?_
+    simpa [Function.comp_def, mul_assoc] using hF.hasSum
+  -- Fibre of `(f(gh))ₙ` over `k`: the series computing `(gh)_{n - k}`, scaled on the left by `f`.
   · exact (summable_mul_sub_of_mem_twoSidedRestrictedSubmodule g.2 h.2 (n - k)).hasSum.mul_left _
 
 /-- **`A⟨X, X⁻¹⟩` is a ring** (Wedhorn, Example 6.39). The unit, the two annihilation laws and
