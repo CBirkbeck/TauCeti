@@ -24,8 +24,8 @@ relation — the one summed over the character group — in both its punctured a
 
 The file also registers `Fintype (G →* Mˣ)`, which Mathlib leaves at `Finite`; without it a
 consumer's own character sum does not elaborate, and two ad-hoc `Fintype.ofFinite` introductions
-give syntactically distinct sums. That instance needs only `Group G`, so it also serves consumers
-indexing over the characters of a finite noncommutative group.
+give syntactically distinct sums. That instance needs only `LeftCancelMonoid G`, so it also serves
+consumers indexing over the characters of a finite noncommutative group or monoid.
 
 ## Row orthogonality is Mathlib's, and is deliberately not restated here
 
@@ -65,11 +65,12 @@ namespace CommGroup
 
 variable {G : Type*} [Finite G] {M : Type*} [CommRing M] [IsDomain M]
 
-/-- The characters of a finite group valued in a domain form a `Fintype`. Mathlib registers only
-`Finite (G →* Mˣ)`, so a character sum written by a consumer has no `Finset` to range over
-without this; it mirrors `AddChar.instFintype`. Commutativity of `G` is not required: the
-finiteness instance holds for any finite left-cancellative monoid into the units of a domain. -/
-noncomputable instance instFintypeMonoidHomUnits [Group G] : Fintype (G →* Mˣ) :=
+/-- The characters of a finite left-cancellative monoid valued in a domain form a `Fintype`.
+Mathlib registers only `Finite (G →* Mˣ)`, so a character sum written by a consumer has no
+`Finset` to range over without this; it mirrors `AddChar.instFintype`. Neither commutativity nor
+invertibility is needed: `Finite (G →* Mˣ)` already holds at `LeftCancelMonoid`, which is where
+this is stated. -/
+noncomputable instance instFintypeMonoidHomUnits [LeftCancelMonoid G] : Fintype (G →* Mˣ) :=
   Fintype.ofFinite _
 
 variable [CommGroup G] [HasEnoughRootsOfUnity M (Monoid.exponent G)]

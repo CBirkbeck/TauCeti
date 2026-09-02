@@ -8,7 +8,7 @@ module
 public import Mathlib.RingTheory.RootsOfUnity.EnoughRootsOfUnity
 public import Mathlib.LinearAlgebra.Eigenspace.Pi
 public import Mathlib.LinearAlgebra.Eigenspace.Semisimple
-public import TauCeti.GroupTheory.FiniteAbelian.CharacterOrthogonality
+import TauCeti.GroupTheory.FiniteAbelian.CharacterOrthogonality
 
 /-!
 # Joint eigenvectors of commuting semisimple families
