@@ -68,8 +68,11 @@ subtraction, performed where the filter already lives, so only `f` is moved, alo
 statement. The arbitrary-`L` form is its instance after one more raise: the filter needs the
 primes of `L` to divide the level it works over, which for an arbitrary `L` they need not, and
 reading `f` at `∏ L.primeFactors * N` first is what supplies that — `∏ L.primeFactors` has
-exactly the primes of `L`, so it is the smallest raise that does, and it is why the level lands
-at `∏ L.primeFactors * (∏ L.primeFactors * N)` rather than at `∏ L.primeFactors * (L * N)`.
+exactly the primes of `L`, so it is the uniform raise the construction uses for every `L`, and it
+is why the level lands at `∏ L.primeFactors * (∏ L.primeFactors * N)` rather than at
+`∏ L.primeFactors * (L * N)`. It is not minimal: only the primes of `L` absent from `N` are
+needed, and when all of them already divide `N` no raise is required at all — that case is the
+filter's own hypothesis.
 Neither statement is made at a level fixed in advance, so no equation of levels is transported.
 Since `∏ L.primeFactors ∣ L`, that level divides `N * L ^ 2`, with equality exactly when `L` is
 squarefree; reading the `h`-form at the classical `N * L ^ 2` is a `CuspForm.ofLe` along that
