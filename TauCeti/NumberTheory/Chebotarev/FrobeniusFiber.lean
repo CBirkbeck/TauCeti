@@ -11,11 +11,11 @@ public import Mathlib.RingTheory.Ideal.Pointwise
 public import Mathlib.NumberTheory.NumberField.Basic
 
 /-!
-# Equipotent Frobenius fibres
+# Equipotent Frobenius fibers
 
 For a finite Galois extension of number fields and a prime `𝔭` of the base, the primes
 of the top field above `𝔭` are sorted by their arithmetic Frobenius. This file records
-that conjugate Frobenius values sort out equally often: the fibre over `σ` and the fibre
+that conjugate Frobenius values sort out equally often: the fiber over `σ` and the fiber
 over any conjugate `σ'` have the same cardinality.
 
 This is the "distributed evenly" step of Chebotarev's density theorem: it is what lets a
@@ -25,7 +25,7 @@ The bijection is conjugation by a witnessing element, via Mathlib's `IsArithFrob
 ## Main results
 
 * `NumberField.Chebotarev.frobeniusFiber_card_eq_of_isConj` — conjugate Frobenius elements
-  have equipotent fibres above a fixed prime of the base.
+  have equipotent fibers above a fixed prime of the base.
 
 ## Implementation notes
 
@@ -55,16 +55,16 @@ private theorem exists_isArithFrobAt_smul {K L : Type*} [Field K] [NumberField K
   refine ⟨inferInstance, inferInstance, ?_, hτ ▸ hfrob.conj c⟩
   simpa using (MulAction.injective c).ne hne
 
-/-- **Equipotent Frobenius fibres.** For `IsConj σ σ'`, the nonzero primes above `𝔭` with
+/-- **Equipotent Frobenius fibers.** For `IsConj σ σ'`, the nonzero primes above `𝔭` with
 arithmetic Frobenius `σ` are equal in number to those with arithmetic Frobenius `σ'`. -/
 theorem frobeniusFiber_card_eq_of_isConj (K L : Type*) [Field K] [NumberField K] [Field L]
-    [NumberField L] [Algebra K L] [IsGalois K L] (𝔭 : Ideal (𝓞 K)) [𝔭.IsPrime] (σ σ' : L ≃ₐ[K] L)
+    [NumberField L] [Algebra K L] [IsGalois K L] (𝔭 : Ideal (𝓞 K)) (σ σ' : L ≃ₐ[K] L)
     (hc : IsConj σ σ') :
     Nat.card {𝔓 : Ideal (𝓞 L) // ∃ (_ : 𝔓.IsPrime) (_ : 𝔓.LiesOver 𝔭) (_ : 𝔓 ≠ ⊥),
         IsArithFrobAt (𝓞 K) σ 𝔓} =
       Nat.card {𝔓 : Ideal (𝓞 L) // ∃ (_ : 𝔓.IsPrime) (_ : 𝔓.LiesOver 𝔭) (_ : 𝔓 ≠ ⊥),
         IsArithFrobAt (𝓞 K) σ' 𝔓} := by
-  -- conjugating by a witnessing element `c` is the bijection between the two fibres
+  -- conjugating by a witnessing element `c` is the bijection between the two fibers
   obtain ⟨c, rfl⟩ := isConj_iff.mp hc
   refine Nat.card_congr (Equiv.subtypeEquiv (MulAction.toPerm c) fun 𝔓 ↦ ?_)
   simp only [MulAction.toPerm_apply]
