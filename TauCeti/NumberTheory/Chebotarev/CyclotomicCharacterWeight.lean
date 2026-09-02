@@ -87,24 +87,36 @@ noncomputable def cyclotomicCharacterWeightFun (χ : (L ≃ₐ[K] L) →* ℂˣ)
     ((normalizedFactors 𝔞).map (cyclotomicCharacterPrimeValue (L := L) χ)).prod
 
 open Classical in
-/-- The unit ideal has weight `1`: it has no prime factors, so the product is empty. -/
-@[simp]
-theorem cyclotomicCharacterWeightFun_top (χ : (L ≃ₐ[K] L) →* ℂˣ) :
-    cyclotomicCharacterWeightFun (L := L) χ ⊤ = 1 := by
-  rw [cyclotomicCharacterWeightFun, if_neg (by simp [Ideal.top_ne_bot]), ← Ideal.one_eq_top,
-    normalizedFactors_one, Multiset.map_zero, Multiset.prod_zero]
-
-open Classical in
 /-- The zero ideal has weight `0`. -/
 @[simp]
 theorem cyclotomicCharacterWeightFun_bot (χ : (L ≃ₐ[K] L) →* ℂˣ) :
     cyclotomicCharacterWeightFun (L := L) χ ⊥ = 0 := by
-  rw [cyclotomicCharacterWeightFun, if_pos rfl]
+  simp [cyclotomicCharacterWeightFun]
 
 open Classical in
+/-- Away from the zero ideal the weight is the factorisation product. This is the form every
+proof below uses: it discharges the zero-ideal branch once, so the multiplicativity argument
+never has to mention it. -/
+theorem cyclotomicCharacterWeightFun_of_ne_bot (χ : (L ≃ₐ[K] L) →* ℂˣ) {𝔞 : Ideal (𝓞 K)}
+    (h𝔞 : 𝔞 ≠ ⊥) :
+    cyclotomicCharacterWeightFun (L := L) χ 𝔞 =
+      ((normalizedFactors 𝔞).map (cyclotomicCharacterPrimeValue (L := L) χ)).prod := by
+  simp [cyclotomicCharacterWeightFun, h𝔞]
+
+/-- The unit ideal has weight `1`: it has no prime factors, so the product is empty. -/
+@[simp]
+theorem cyclotomicCharacterWeightFun_top (χ : (L ≃ₐ[K] L) →* ℂˣ) :
+    cyclotomicCharacterWeightFun (L := L) χ ⊤ = 1 := by
+  rw [cyclotomicCharacterWeightFun_of_ne_bot χ top_ne_bot, ← Ideal.one_eq_top,
+    normalizedFactors_one, Multiset.map_zero, Multiset.prod_zero]
+
 /-- **Complete multiplicativity.** Transcribed from the source: `normalizedFactors` turns a
 product of ideals into a sum of multisets, and `Multiset.prod_add` turns that into a product of
-values. The zero ideal is handled by the explicit split, since `⊥ * 𝔟 = ⊥`. -/
+values. The zero ideal is handled by the explicit split, since `⊥ * 𝔟 = ⊥`.
+
+The nonvanishing side condition is built through `Ideal.mul_eq_bot` rather than `mul_ne_zero`:
+the latter produces `𝔞 * 𝔟 ≠ 0`, and although `0` and `⊥` are definitionally equal for ideals
+they are not syntactically equal, so `rw` cannot match it against the `⊥` in the definition. -/
 theorem cyclotomicCharacterWeightFun_mul (χ : (L ≃ₐ[K] L) →* ℂˣ) (𝔞 𝔟 : Ideal (𝓞 K)) :
     cyclotomicCharacterWeightFun (L := L) χ (𝔞 * 𝔟) =
       cyclotomicCharacterWeightFun (L := L) χ 𝔞 * cyclotomicCharacterWeightFun (L := L) χ 𝔟 := by
@@ -112,8 +124,71 @@ theorem cyclotomicCharacterWeightFun_mul (χ : (L ≃ₐ[K] L) →* ℂˣ) (𝔞
   · simp
   rcases eq_or_ne 𝔟 ⊥ with rfl | h𝔟
   · simp
-  rw [cyclotomicCharacterWeightFun, cyclotomicCharacterWeightFun, cyclotomicCharacterWeightFun,
-    if_neg h𝔞, if_neg h𝔟, if_neg (mul_ne_zero h𝔞 h𝔟), normalizedFactors_mul h𝔞 h𝔟,
+  have hab : 𝔞 * 𝔟 ≠ ⊥ := fun h ↦ (Ideal.mul_eq_bot.mp h).elim h𝔞 h𝔟
+  rw [cyclotomicCharacterWeightFun_of_ne_bot χ hab, cyclotomicCharacterWeightFun_of_ne_bot χ h𝔞,
+    cyclotomicCharacterWeightFun_of_ne_bot χ h𝔟, normalizedFactors_mul h𝔞 h𝔟,
     Multiset.map_add, Multiset.prod_add]
+
+open Classical in
+/-- On a height-one prime the weight is just the single prime value: the factorisation of a
+prime ideal is the one-element multiset. -/
+theorem cyclotomicCharacterWeightFun_heightOne (χ : (L ≃ₐ[K] L) →* ℂˣ)
+    (𝔭 : HeightOneSpectrum (𝓞 K)) :
+    cyclotomicCharacterWeightFun (L := L) χ 𝔭.asIdeal =
+      cyclotomicCharacterPrimeValue (L := L) χ 𝔭.asIdeal := by
+  rw [cyclotomicCharacterWeightFun_of_ne_bot χ 𝔭.ne_bot,
+    normalizedFactors_irreducible (Ideal.prime_of_isPrime 𝔭.ne_bot 𝔭.isPrime).irreducible,
+    normalize_eq, Multiset.map_singleton, Multiset.prod_singleton]
+
+open Classical in
+/-- The weight vanishes at a height-one prime exactly when that prime ramifies in `L`. This is
+the roadmap's design constraint made precise, and it is what makes the weight *total*: the bad
+primes are not left unconstrained, they are pinned to `0`. -/
+theorem cyclotomicCharacterWeightFun_heightOne_eq_zero_iff (χ : (L ≃ₐ[K] L) →* ℂˣ)
+    (𝔭 : HeightOneSpectrum (𝓞 K)) :
+    cyclotomicCharacterWeightFun (L := L) χ 𝔭.asIdeal = 0 ↔ 𝔭 ∈ ramifiedPrimes K L := by
+  have hmax : 𝔭.asIdeal.IsMaximal :=
+    Ring.DimensionLEOne.maximalOfPrime 𝔭.ne_bot 𝔭.isPrime
+  rw [cyclotomicCharacterWeightFun_heightOne, cyclotomicCharacterPrimeValue,
+    mem_ramifiedPrimes_iff]
+  split_ifs with h
+  · exact ⟨fun hz ↦ absurd hz (Units.ne_zero _), fun hr ↦ absurd h.2 hr⟩
+  · exact ⟨fun _ hc ↦ h ⟨hmax, hc⟩, fun _ ↦ rfl⟩
+
+open Classical in
+/-- **The cyclotomic character weight** of a Galois character `χ`, packaged as a
+`MultiplicativeIdealWeight`.
+
+Using that carrier rather than a bare function is what makes the roadmap's Euler product a
+consumer of existing supplier machinery: `toIdealArithmeticFunction` and
+`isMultiplicative_toIdealArithmeticFunction` carry it into the ideal Euler product without any
+further hypothesis. The finiteness field is discharged by `ramifiedPrimes`, which is already a
+`Finset`. -/
+noncomputable def cyclotomicCharacterWeight (χ : (L ≃ₐ[K] L) →* ℂˣ) :
+    TauCeti.MultiplicativeIdealWeight K where
+  toMonoidWithZeroHom :=
+    { toFun := cyclotomicCharacterWeightFun (L := L) χ
+      map_zero' := cyclotomicCharacterWeightFun_bot χ
+      map_one' := by simp
+      map_mul' := cyclotomicCharacterWeightFun_mul χ }
+  finite_setOf_apply_eq_zero := by
+    refine Set.Finite.subset (ramifiedPrimes K L).finite_toSet fun 𝔭 h𝔭 ↦ ?_
+    exact (cyclotomicCharacterWeightFun_heightOne_eq_zero_iff χ 𝔭).mp h𝔭
+
+/-- Defining equation of `cyclotomicCharacterWeight`. Stated through the equation lemma rather
+than by `rfl`: the definition is sealed by the module system, so it is opaque even to a theorem
+in its own file. -/
+@[simp]
+theorem cyclotomicCharacterWeight_apply (χ : (L ≃ₐ[K] L) →* ℂˣ) (𝔞 : Ideal (𝓞 K)) :
+    cyclotomicCharacterWeight (L := L) χ 𝔞 = cyclotomicCharacterWeightFun (L := L) χ 𝔞 := by
+  rw [cyclotomicCharacterWeight]
+  rfl
+
+/-- The bad primes of the cyclotomic character weight are exactly the ramified primes. -/
+theorem badPrimes_cyclotomicCharacterWeight (χ : (L ≃ₐ[K] L) →* ℂˣ) :
+    (cyclotomicCharacterWeight (L := L) χ).badPrimes = ↑(ramifiedPrimes K L) := by
+  ext 𝔭
+  simpa [TauCeti.MultiplicativeIdealWeight.mem_badPrimes] using
+    cyclotomicCharacterWeightFun_heightOne_eq_zero_iff χ 𝔭
 
 end NumberField.Chebotarev
