@@ -7,19 +7,23 @@ module
 
 public import Mathlib.NumberTheory.RamificationInertia.Galois
 public import Mathlib.RingTheory.Frobenius
+public import TauCeti.NumberTheory.NumberField.AutomorphismAction
 
 /-!
 # Equipotent Frobenius fibers
 
-For a finite Galois extension of number fields and a prime `𝔭` of the base, each element
-`σ` of the Galois group cuts out the set of primes above `𝔭` that admit `σ` as an arithmetic
+For an extension of number fields and a prime `𝔭` of the base, each `K`-automorphism `σ`
+of `L` cuts out the set of primes above `𝔭` that admit `σ` as an arithmetic
 Frobenius. These sets need not be disjoint: at a ramified prime several elements are a
 Frobenius at once, so this is a family of fibers rather than a partition. This file records
 that conjugate values are admitted equally often: the fiber over `σ` and the fiber over any
 conjugate `σ'` have the same cardinality.
 
-This is the "distributed evenly" step of Chebotarev's density theorem: it is what lets a
-count over a whole conjugacy class be recovered from the count at a single representative.
+This is the "distributed evenly" step of Chebotarev's density theorem. At a prime unramified in
+`L` the fibers do partition the primes above `𝔭`, and there this is exactly what lets a count
+over a whole conjugacy class be recovered from the count at a single representative. That
+consequence needs the unramifiedness; the theorem below does not, and at a ramified `𝔭` it
+compares overlapping fibers rather than blocks of a partition.
 The bijection is not conjugation itself but the pointwise action `𝔓 ↦ c • 𝔓` of a witnessing
 element `c`; Mathlib's `IsArithFrobAt.conj` is what transports the Frobenius condition along
 it, sending a Frobenius `σ` at `𝔓` to the Frobenius `c * σ * c⁻¹` at `c • 𝔓`.
@@ -52,7 +56,7 @@ open scoped NumberField Pointwise
 namespace NumberField.Chebotarev
 
 private theorem exists_isArithFrobAt_smul {K L : Type*} [Field K] [NumberField K] [Field L]
-    [NumberField L] [Algebra K L] [IsGalois K L] {𝔭 : Ideal (𝓞 K)} {σ τ c : L ≃ₐ[K] L}
+    [NumberField L] [Algebra K L] {𝔭 : Ideal (𝓞 K)} {σ τ c : L ≃ₐ[K] L}
     {𝔓 : Ideal (𝓞 L)} (hτ : c * σ * c⁻¹ = τ)
     (h : ∃ (_ : 𝔓.IsPrime) (_ : 𝔓.LiesOver 𝔭) (_ : 𝔓 ≠ ⊥), IsArithFrobAt (𝓞 K) σ 𝔓) :
     ∃ (_ : (c • 𝔓).IsPrime) (_ : (c • 𝔓).LiesOver 𝔭) (_ : c • 𝔓 ≠ ⊥),
@@ -64,7 +68,7 @@ private theorem exists_isArithFrobAt_smul {K L : Type*} [Field K] [NumberField K
 /-- **Equipotent Frobenius fibers.** For `IsConj σ σ'`, the nonzero primes above `𝔭` with
 arithmetic Frobenius `σ` are equal in number to those with arithmetic Frobenius `σ'`. -/
 theorem frobeniusFiber_card_eq_of_isConj (K L : Type*) [Field K] [NumberField K] [Field L]
-    [NumberField L] [Algebra K L] [IsGalois K L] (𝔭 : Ideal (𝓞 K)) (σ σ' : L ≃ₐ[K] L)
+    [NumberField L] [Algebra K L] (𝔭 : Ideal (𝓞 K)) (σ σ' : L ≃ₐ[K] L)
     (hc : IsConj σ σ') :
     Nat.card {𝔓 : Ideal (𝓞 L) // ∃ (_ : 𝔓.IsPrime) (_ : 𝔓.LiesOver 𝔭) (_ : 𝔓 ≠ ⊥),
         IsArithFrobAt (𝓞 K) σ 𝔓} =
