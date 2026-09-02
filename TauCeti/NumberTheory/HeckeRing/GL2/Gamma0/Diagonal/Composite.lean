@@ -261,7 +261,7 @@ anti-involution is data. -/
 @[instance_reducible]
 private noncomputable def commRingHeckeRingGamma0 :
     CommRing (𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ) :=
-  { inferInstanceAs (Ring (𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ)) with
+  { (inferInstance : Ring (𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ)) with
     mul_comm := HeckeCosetModule.mul_comm_of_antiInvolution ℤ (atkinLehnerAntiInvolution N)
       (atkinLehnerAntiInvolution_onHeckeCoset_eq_self N) }
 
@@ -283,7 +283,7 @@ theorem heckeTCompositeGamma0_mul {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) :
     heckeTCompositeGamma0 N m * heckeTCompositeGamma0 N n =
       ∑ d ∈ (Nat.gcd m n).divisors, (d : ℤ) •
         (heckeTScalarCompositeGamma0 N d * heckeTCompositeGamma0 N (m * n / d ^ 2)) := by
-  letI := commRingHeckeRingGamma0 N
+  let := commRingHeckeRingGamma0 N
   simp only [heckeTCompositeGamma0_def, heckeTScalarCompositeGamma0_def]
   refine TauCeti.Nat.primePowerProd_mul_eq_sum_divisors_gcd _ _ (fun p hp r s hrs ↦ ?_) hm hn
   -- The per-prime table is `heckeTGeneratorRecGamma0_mul`; all that is needed is to read the
@@ -297,6 +297,6 @@ theorem heckeTCompositeGamma0_mul {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) :
     (heckeTScalarCompositeGamma0_def N (p ^ v)).symm.trans
       (heckeTScalarCompositeGamma0_prime_pow N hp v)
   simp only [hD, hS]
-  exact heckeTGeneratorRecGamma0_mul N hrs
+  exact heckeTGeneratorRecGamma0_mul N p hrs
 
 end HeckeRing.GL2
