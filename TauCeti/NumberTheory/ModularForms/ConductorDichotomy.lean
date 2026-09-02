@@ -38,8 +38,8 @@ shift `T ^ i` — is read off the determinants rather than off a formula for tho
 ## Main results
 
 * `TauCeti.eq_zero_of_not_forall_apply_eq_one_of_unitsMap_eq_one`: **the vanishing horn**.
-* `TauCeti.cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace`: the descent horn carries the
-  lowered nebentypus `hfac.χ₀`.
+* `TauCeti.cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace`: the descent horn carries any
+  character `χ₀` that `χ` pulls back from; the dichotomy specializes it to `hfac.χ₀`.
 * `TauCeti.exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero`: **the level-lowering dichotomy**, in
   the roadmap's `DirichletCharacter` phrasing — either `χ` factors through `N / l` and `f` is a
   cusp form of level `N / l` for the lowered character, or `f = 0`.
@@ -214,9 +214,10 @@ theorem eq_zero_of_not_forall_apply_eq_one_of_unitsMap_eq_one {l : ℕ} [NeZero 
 /-! ### The dichotomy -/
 
 /-- **The descended cusp form carries the lowered nebentypus.** `cuspFormOfSmulSlashScaleGL`
-produces a cusp form of level `N / l`; this identifies its nebentypus as the lowered character
-`hfac.χ₀`, which is what makes the descent an eigenform statement rather than merely a level
-statement. -/
+produces a cusp form of level `N / l`; this identifies its nebentypus as any character `χ₀` on
+`ZMod (N / l)` that `χ` pulls back from, which is the hypothesis `hcomp`, and that is what makes
+the descent an eigenform statement rather than merely a level statement. The dichotomy below
+specializes `χ₀` to `hfac.χ₀`. -/
 theorem cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace {l : ℕ} [NeZero l]
     (hlN : l ∣ N) (k : ℤ) {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / l))ˣ →* ℂˣ}
     (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hlN))) (f : ℍ → ℂ)
