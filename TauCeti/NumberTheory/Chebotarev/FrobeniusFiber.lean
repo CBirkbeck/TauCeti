@@ -55,8 +55,8 @@ open scoped NumberField Pointwise
 
 namespace NumberField.Chebotarev
 
-private theorem exists_isArithFrobAt_smul {K L : Type*} [Field K] [NumberField K] [Field L]
-    [NumberField L] [Algebra K L] {𝔭 : Ideal (𝓞 K)} {σ τ c : L ≃ₐ[K] L}
+private theorem exists_isArithFrobAt_smul {K L : Type*} [Field K] [Field L]
+    [Algebra K L] {𝔭 : Ideal (𝓞 K)} {σ τ c : L ≃ₐ[K] L}
     {𝔓 : Ideal (𝓞 L)} (hτ : c * σ * c⁻¹ = τ)
     (h : ∃ (_ : 𝔓.IsPrime) (_ : 𝔓.LiesOver 𝔭) (_ : 𝔓 ≠ ⊥), IsArithFrobAt (𝓞 K) σ 𝔓) :
     ∃ (_ : (c • 𝔓).IsPrime) (_ : (c • 𝔓).LiesOver 𝔭) (_ : c • 𝔓 ≠ ⊥),
