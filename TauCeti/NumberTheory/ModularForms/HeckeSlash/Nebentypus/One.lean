@@ -64,6 +64,11 @@ namespace HeckeRing.GL2
 
 variable {N : ℕ} (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) [NeZero N]
 
+-- The enumeration `∑` needs, as in `Nebentypus/Basic.lean` and `Nebentypus/Composition.lean`: the
+-- `∑` that `twistedHeckeSlashSum_def` unfolds to is over this index, and `Basic.lean`'s own
+-- `local instance` is not exported across the module boundary.
+attribute [local instance] Fintype.ofFinite
+
 /-- **The identity double coset acts as the identity on the character space.**
 
 The index of the sum is a singleton, because `Γ₀(N) · 1 · Γ₀(N)` is one right coset, and the
