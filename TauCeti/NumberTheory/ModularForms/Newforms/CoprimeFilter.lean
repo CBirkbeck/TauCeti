@@ -331,11 +331,9 @@ whose `q`-expansion is that of `f` restricted to the indices *not* coprime to `L
 
 `aₙ(h) = if (n, L) = 1 then 0 else aₙ(f)`.
 
-This is `exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero_prod_primeFactors_sq`
-read at `N * L ^ 2`, which the sharper level
-`∏ L.primeFactors * (∏ L.primeFactors * N)` divides because
-`∏ L.primeFactors ∣ L`. Squarefreeness is not needed: it is exactly the case where the two
-levels agree, and it is the level at which Miyake states the lemma. -/
+The two levels are related: `∏ L.primeFactors * (∏ L.primeFactors * N)` divides `N * L ^ 2`, with
+equality exactly when `L` is squarefree. `N * L ^ 2` is the level at which Miyake states the
+lemma. -/
 theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero_mul_sq
     (χ : (ZMod N)ˣ →* ℂˣ) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
     (hf : f ∈ cuspFormCharSpace k χ) {L : ℕ} [NeZero L] :
