@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.GroupTheory.FiniteAbelian.Duality
-public import Mathlib.RingTheory.IntegralDomain
 
 /-!
 # Column orthogonality and Fourier inversion for finite commutative groups
@@ -22,8 +21,10 @@ supports.
   over all characters vanishes.
 * `CommGroup.card_mul_eq_sum_of_sum_char_mul_eq_zero`: a function whose nontrivial character
   moments all vanish is recovered from its average.
-* `CommGroup.eq_of_sum_char_mul_eq_zero`: over a characteristic-zero domain the same hypothesis
-  forces the function to be constant.
+* `CommGroup.sum_char_apply_eq_ite`: the same sum in normal form, `#G` at `g = 1` and `0`
+  elsewhere.
+* `CommGroup.eq_of_sum_char_mul_eq_zero`: when the dual cardinality is nonzero in `M`, the same
+  hypothesis forces the function to be constant.
 
 ## Row orthogonality is Mathlib's, and is deliberately not restated here
 
@@ -37,9 +38,14 @@ relation should use the Mathlib lemma directly. (`MulChar.sum_eq_zero_of_ne_one`
 `Mathlib/NumberTheory/MulChar/Basic.lean` is the same content in the `MulChar` vocabulary,
 stated over a finite ring rather than a finite group.)
 
-The column relation genuinely is not in Mathlib in this generality: it appears only in the
-`ZMod n` specialisation `DirichletCharacter.sum_characters_eq_zero`, in
-`Mathlib/NumberTheory/DirichletCharacter/Orthogonality.lean`.
+The column relation genuinely is not in Mathlib in this generality. It appears there only in
+specialisations: the `ZMod n` one, `DirichletCharacter.sum_characters_eq_zero` in
+`Mathlib/NumberTheory/DirichletCharacter/Orthogonality.lean`, and the finite-additive-group one
+over `ℂ`, `AddChar.sum_apply_eq_ite` in
+`Mathlib/Analysis/Fourier/FiniteAbelian/PontryaginDuality.lean` (with
+`AddChar.sum_apply_eq_zero_iff_ne_zero` beside it). Neither implies the statement below, which is
+multiplicative and valued in an arbitrary domain with enough roots of unity rather than in `ℂ`
+or over `ZMod n`.
 
 ## References
 
@@ -50,7 +56,7 @@ carries the row relation as `sum_char_self_eq_zero_of_ne_one`; that declaration 
 in favour of Mathlib's `sum_hom_units_eq_zero`, as described above.
 -/
 
-@[expose] public section
+public section
 
 namespace CommGroup
 
@@ -68,6 +74,18 @@ theorem sum_char_apply_eq_zero_of_ne_one [Finite G] [HasEnoughRootsOfUnity M (Mo
     fun h ↦ hχ₀ <| Units.val_eq_one.mp <| DFunLike.congr_fun h χ₀
 
 variable [Fintype G] [HasEnoughRootsOfUnity M (Monoid.exponent G)]
+
+/-- **Column orthogonality in normal form**: the character sum is the dual cardinality at the
+identity and vanishes elsewhere. This is the shape indicator-formula consumers want, since it
+covers both cases at once and already converts the dual cardinality to `#G`. -/
+theorem sum_char_apply_eq_ite [Fintype (G →* Mˣ)] [DecidableEq G] (g : G) :
+    ∑ χ : G →* Mˣ, (χ g : M) = if g = 1 then (Fintype.card G : M) else 0 := by
+  have hcard : Fintype.card (G →* Mˣ) = Fintype.card G := by
+    rw [← Nat.card_eq_fintype_card, ← Nat.card_eq_fintype_card,
+      card_monoidHom_of_hasEnoughRootsOfUnity]
+  split
+  · next hg => subst hg; simp [hcard]
+  · next hg => exact sum_char_apply_eq_zero_of_ne_one hg
 
 /-- **Finite-abelian Fourier inversion.** If every nontrivial character moment of `f : G → M`
 vanishes — `∑ s, χ s * f s = 0` for each `χ ≠ 1` — then `f` is recovered from its average: for
@@ -89,15 +107,16 @@ theorem card_mul_eq_sum_of_sum_char_mul_eq_zero [Fintype (G →* Mˣ)] (f : G �
         (Finset.sum_eq_single_of_mem (1 : G →* Mˣ) (Finset.mem_univ _)
           fun χ _ hχ ↦ by rw [hf χ hχ, mul_zero]).trans (by simp)
 
-/-- **Vanishing nontrivial Fourier coefficients force a constant.** Over a characteristic-zero
-domain, if every nontrivial character moment of `f : G → M` vanishes (`∑ s, χ s * f s = 0` for
-`χ ≠ 1`), then `f` takes the same value at every pair of points. -/
-theorem eq_of_sum_char_mul_eq_zero [CharZero M] (f : G → M)
+/-- **Vanishing nontrivial Fourier coefficients force a constant.** If every nontrivial character
+moment of `f : G → M` vanishes (`∑ s, χ s * f s = 0` for `χ ≠ 1`) and the dual cardinality is
+nonzero in `M`, then `f` takes the same value at every pair of points. -/
+theorem eq_of_sum_char_mul_eq_zero [Fintype (G →* Mˣ)]
+    (hcard : (Fintype.card (G →* Mˣ) : M) ≠ 0) (f : G → M)
     (hf : ∀ χ : G →* Mˣ, χ ≠ 1 → ∑ s : G, (χ s : M) * f s = 0) (u u' : G) : f u = f u' := by
   -- Immediate from `card_mul_eq_sum_of_sum_char_mul_eq_zero` — both values equal the common
-  -- average — after cancelling the nonzero dual cardinality.
-  have : Fintype (G →* Mˣ) := Fintype.ofFinite _
+  -- average — after cancelling the dual cardinality, which `hcard` assumes nonzero. Over a
+  -- characteristic-zero domain `hcard` is automatic from `Fintype.card_ne_zero`.
   have h := card_mul_eq_sum_of_sum_char_mul_eq_zero f hf
-  exact mul_left_cancel₀ (Nat.cast_ne_zero.mpr Fintype.card_ne_zero) <| (h u).trans (h u').symm
+  exact mul_left_cancel₀ hcard <| (h u).trans (h u').symm
 
 end CommGroup
