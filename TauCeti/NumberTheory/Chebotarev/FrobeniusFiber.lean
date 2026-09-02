@@ -7,20 +7,22 @@ module
 
 public import Mathlib.NumberTheory.RamificationInertia.Galois
 public import Mathlib.RingTheory.Frobenius
-public import Mathlib.RingTheory.Ideal.Pointwise
-public import Mathlib.NumberTheory.NumberField.Basic
 
 /-!
 # Equipotent Frobenius fibers
 
-For a finite Galois extension of number fields and a prime `𝔭` of the base, the primes
-of the top field above `𝔭` are sorted by their arithmetic Frobenius. This file records
-that conjugate Frobenius values sort out equally often: the fiber over `σ` and the fiber
-over any conjugate `σ'` have the same cardinality.
+For a finite Galois extension of number fields and a prime `𝔭` of the base, each element
+`σ` of the Galois group cuts out the set of primes above `𝔭` that admit `σ` as an arithmetic
+Frobenius. These sets need not be disjoint: at a ramified prime several elements are a
+Frobenius at once, so this is a family of fibers rather than a partition. This file records
+that conjugate values are admitted equally often: the fiber over `σ` and the fiber over any
+conjugate `σ'` have the same cardinality.
 
 This is the "distributed evenly" step of Chebotarev's density theorem: it is what lets a
 count over a whole conjugacy class be recovered from the count at a single representative.
-The bijection is conjugation by a witnessing element, via Mathlib's `IsArithFrobAt.conj`.
+The bijection is not conjugation itself but the pointwise action `𝔓 ↦ c • 𝔓` of a witnessing
+element `c`; Mathlib's `IsArithFrobAt.conj` is what transports the Frobenius condition along
+it, sending a Frobenius `σ` at `𝔓` to the Frobenius `c * σ * c⁻¹` at `c • 𝔓`.
 
 ## Main results
 
@@ -37,6 +39,10 @@ the statement and keeps the argument list free of an unused binder.
 
 * Sharifi, *Algebraic Number Theory*, Theorem 7.2.2 (p. 143).
 * Stevenhagen–Lenstra, *Chebotarëv and his density theorem*, Appendix.
+* Birkbeck–Brasca, [chebotarev-density](https://github.com/CBirkbeck/chebotarev-density)
+  (Apache-2.0), commit `8575c9df1ae0a61120ab5c964c7911414254bec7`, file
+  `CebotarevDensity/FixedFieldDensity.lean`, declaration `frobeniusFibre_card_eq_of_isConj`
+  (source line 54). The statement and proof below are adapted from that declaration.
 -/
 
 public section
