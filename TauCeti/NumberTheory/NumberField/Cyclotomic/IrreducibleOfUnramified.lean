@@ -62,111 +62,62 @@ namespace IsCyclotomicExtension
 
 variable {K : Type*} [Field K] [NumberField K]
 
-/-- **A prime of `𝓞 F` above `p` exists.** The prime `(p)` of `ℤ` has at least one prime of the
-ring of integers of a number field above it.
-
-Source: Sharifi, Theorem 2.5.11 ("write `pB = P₁^{e₁} ⋯ P_g^{e_g}` for some distinct nonzero prime
-ideals `Pᵢ` of `B` and positive integers `eᵢ`, for `1 ≤ i ≤ g` and some `g ≥ 1`"). -/
-private theorem exists_isPrime_liesOver (F : Type*) [Field F] [NumberField F] (p : ℕ)
-    [Fact p.Prime] :
-    ∃ 𝔔 : Ideal (𝓞 F), 𝔔.IsPrime ∧ 𝔔.LiesOver (Ideal.span {(p : ℤ)}) := by
-  have hp : (p : ℤ) ≠ 0 := by exact_mod_cast (Nat.Prime.ne_zero Fact.out)
-  have : (Ideal.span {(p : ℤ)}).IsPrime :=
-    (Ideal.span_singleton_prime hp).mpr (Nat.prime_iff_prime_int.mp Fact.out)
-  obtain ⟨Q, -, hQ, hQp⟩ := Ideal.exists_ideal_over_prime_of_isIntegral (Ideal.span {(p : ℤ)})
-    (⊥ : Ideal (𝓞 F)) (by
-      rw [Ideal.comap_bot_of_injective _ (RingHom.injective_int (algebraMap ℤ (𝓞 F)))]
-      exact bot_le)
-  exact ⟨Q, hQ, ⟨hQp.symm⟩⟩
-
-/-- **Total ramification of the cyclotomic subfield.** For a primitive `p^(k+1)`-th root of unity
-`ζ` in a number field `F` and a prime `𝔔` of `𝓞 F` above `p`, the prime of `ℚ(ζ)` below `𝔔` has
-ramification index `φ(p^(k+1)) = p^k (p - 1)` over `ℤ`.
-
-Source: Milne, *Algebraic Number Theory*, Prop. 6.2(c) ("`(p) = (π)^e` with `e = φ(p^r)`");
-Sharifi, Lemma 3.1.13 ("It is totally ramified"); Mathlib's
-`IsCyclotomicExtension.Rat.ramificationIdx_eq_of_prime_pow`. -/
-private theorem ramificationIdx_under_adjoin_eq (p k : ℕ) [Fact p.Prime] {F : Type*} [Field F]
-    [NumberField F] {ζ : F} (hζ : IsPrimitiveRoot ζ (p ^ (k + 1))) (𝔔 : Ideal (𝓞 F))
-    [𝔔.IsPrime] [𝔔.LiesOver (Ideal.span {(p : ℤ)})] :
-    (𝔔.under (𝓞 (IntermediateField.adjoin ℚ {ζ}))).ramificationIdx ℤ = p ^ k * (p - 1) := by
+private theorem totient_le_ramificationIdx_int (p k : ℕ) [Fact p.Prime] {F : Type*} [Field F]
+    [NumberField F] {ζ : F} (hζ : IsPrimitiveRoot ζ (p ^ (k + 1))) (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime]
+    [𝔔.LiesOver (Ideal.span {(p : ℤ)})] : (p ^ (k + 1)).totient ≤ 𝔔.ramificationIdx ℤ := by
+  -- `p` is totally ramified in `ℚ(ζ)`: Milne, Prop. 6.2(c) (`(p) = (π)^e` with `e = φ(p^r)`);
+  -- Sharifi, Lemma 3.1.13 ("It is totally ramified").
   have : IsCyclotomicExtension {p ^ (k + 1)} ℚ (IntermediateField.adjoin ℚ {ζ}) :=
     hζ.intermediateField_adjoin_isCyclotomicExtension ℚ
-  exact IsCyclotomicExtension.Rat.ramificationIdx_eq_of_prime_pow p k _ _
+  -- Indices multiply in towers: Sharifi, Remark 2.5.7 ("`e_{P/p} = e_{P/𝔓} e_{𝔓/p}`").
+  have h := (𝔔.under (𝓞 (IntermediateField.adjoin ℚ {ζ}))).ramificationIdx_below_le (R := ℤ) 𝔔
+  rwa [Rat.ramificationIdx_eq_of_prime_pow p k, ← Nat.totient_prime_pow_succ Fact.out] at h
 
-/-- **The absolute ramification index of a prime above `p` is at least `φ(p^(k+1))`.** In the tower
-`ℤ ⊆ 𝓞 ℚ(ζ) ⊆ 𝓞 F` the ramification index of `𝔔` over `ℤ` is the product of the index of the prime
-of `ℚ(ζ)` below it, which is `φ(p^(k+1))`, and a positive relative index.
-
-Source: Sharifi, Remark 2.5.7 ("`e_{P/p} = e_{P/𝔓} e_{𝔓/p}`"); Milne, Prop. 6.2(c). -/
-private theorem totient_le_ramificationIdx_int (p k : ℕ) [Fact p.Prime] {F : Type*} [Field F]
-    [NumberField F] {ζ : F} (hζ : IsPrimitiveRoot ζ (p ^ (k + 1))) (𝔔 : Ideal (𝓞 F))
-    [𝔔.IsPrime] [𝔔.LiesOver (Ideal.span {(p : ℤ)})] :
-    (p ^ (k + 1)).totient ≤ 𝔔.ramificationIdx ℤ := by
-  rw [Ideal.ramificationIdx_tower (R := ℤ) (𝔔.under (𝓞 (IntermediateField.adjoin ℚ {ζ}))) 𝔔,
-    ramificationIdx_under_adjoin_eq p k hζ 𝔔, Nat.totient_prime_pow Fact.out (Nat.succ_pos k),
-    Nat.succ_sub_one]
-  exact Nat.le_mul_of_pos_right _ (Ideal.ramificationIdx_pos 𝔔 _)
-
-/-- **Above an unramified prime, the prime of `K` below `𝔔` has ramification index one.**
-
-Source: Mathlib, `Algebra.IsUnramifiedIn.ramificationIdx_eq_one` ("For a prime `𝔓` of `S` lying
-over an unramified prime `𝔭` of `R`, the ramification index `e(𝔓 ∣ 𝔭)` equals `1`"); roadmap README
-Layer 7.2, "From `q` unramified in `K`". -/
 private theorem ramificationIdx_under_eq_one (p : ℕ) {F : Type*} [Field F] [Algebra K F]
     (hur : ∀ (𝔮 : Ideal (𝓞 K)) [𝔮.IsPrime] [𝔮.LiesOver (Ideal.span {(p : ℤ)})],
-      Algebra.IsUnramifiedAt ℤ 𝔮)
-    (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime] [𝔔.LiesOver (Ideal.span {(p : ℤ)})] :
-    (𝔔.under (𝓞 K)).ramificationIdx ℤ = 1 := by
-  have hunr : Algebra.IsUnramifiedIn (𝓞 K) (Ideal.span {(p : ℤ)}) :=
-    fun 𝔮 h𝔮 hlo ↦ by have := h𝔮; have := hlo; exact hur 𝔮
-  exact hunr.ramificationIdx_eq_one (Ideal.under_liesOver_of_liesOver (𝓞 K) 𝔔 _)
+    Algebra.IsUnramifiedAt ℤ 𝔮) (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime] [𝔔.LiesOver (Ideal.span {(p : ℤ)})] :
+    (𝔔.under (𝓞 K)).ramificationIdx ℤ = 1 :=
+  -- Roadmap README Layer 7.2, "From `q` unramified in `K`": `𝔮 = 𝔔 ∩ 𝓞 K` is unramified over `ℤ`.
+  Ideal.ramificationIdx_eq_one_iff.mpr (hur _)
 
-/-- **The relative ramification index above an unramified prime is at least `φ(p^(k+1))`.**
-Ramification indices multiply in the towers `ℤ ⊆ 𝓞 ℚ(ζ) ⊆ 𝓞 F` and `ℤ ⊆ 𝓞 K ⊆ 𝓞 F`; the first
-gives `e(𝔔 / p) ≥ φ(p^(k+1))`, the second `e(𝔔 / p) = e(𝔔 / 𝔮)` since `e(𝔮 / p) = 1`.
-
-Source: Sharifi, Remark 2.5.7 ("ramification indices and residue degrees are multiplicative in
-extensions"); roadmap README Layer 7.2, "From `q` unramified in `K`". -/
 private theorem totient_le_ramificationIdx (p k : ℕ) [Fact p.Prime] {F : Type*} [Field F]
     [NumberField F] [Algebra K F] [IsCyclotomicExtension {p ^ (k + 1)} K F]
     (hur : ∀ (𝔮 : Ideal (𝓞 K)) [𝔮.IsPrime] [𝔮.LiesOver (Ideal.span {(p : ℤ)})],
-      Algebra.IsUnramifiedAt ℤ 𝔮)
-    (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime] [𝔔.LiesOver (Ideal.span {(p : ℤ)})] :
+    Algebra.IsUnramifiedAt ℤ 𝔮) (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime] [𝔔.LiesOver (Ideal.span {(p : ℤ)})] :
     (p ^ (k + 1)).totient ≤ 𝔔.ramificationIdx (𝓞 K) := by
+  -- First tower `ℤ ⊆ 𝓞 ℚ(ζ) ⊆ 𝓞 F`, through a primitive root: `e(𝔔 / p) ≥ φ(p^(k+1))`.
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot (S := {p ^ (k + 1)}) K F
-    (Set.mem_singleton _)
-    (pow_ne_zero _ (Fact.out : p.Prime).ne_zero)
-  have h := totient_le_ramificationIdx_int p k hζ 𝔔
-  rwa [Ideal.ramificationIdx_tower (R := ℤ) (𝔔.under (𝓞 K)) 𝔔, ramificationIdx_under_eq_one p hur 𝔔,
-    one_mul] at h
+    (Set.mem_singleton _) (pow_ne_zero _ (Fact.out : p.Prime).ne_zero)
+  -- Second tower `ℤ ⊆ 𝓞 K ⊆ 𝓞 F`: indices multiply (Sharifi, Remark 2.5.7) and `e(𝔮 / p) = 1`
+  -- because `p` is unramified in `K` (roadmap README Layer 7.2), so `e(𝔔 / p) = e(𝔔 / 𝔮)`.
+  simpa [Ideal.ramificationIdx_tower (R := ℤ) (𝔔.under (𝓞 K)) 𝔔,
+    ramificationIdx_under_eq_one p hur 𝔔] using totient_le_ramificationIdx_int p k hζ 𝔔
 
-/-- **A relative ramification index is at most the degree of the extension.** The fundamental
-identity `∑ eᵢ fᵢ = [F : K]` bounds each `eᵢ`, and `[𝓞 F : 𝓞 K] = [F : K]`.
-
-Source: Sharifi, Theorem 2.5.11 ("`∑ eᵢ fᵢ = [L : K]`"); Milne, Theorem 3.34. -/
 private theorem ramificationIdx_le_finrank_of_isPrime {F : Type*} [Field F] [NumberField F]
-    [Algebra K F] (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime] :
-    𝔔.ramificationIdx (𝓞 K) ≤ Module.finrank K F := by
-  calc 𝔔.ramificationIdx (𝓞 K) ≤ Module.finrank (𝓞 K) (𝓞 F) :=
-        TauCeti.RamificationInertia.ramificationIdx_le_finrank (𝔔.under (𝓞 K)) 𝔔
-    _ = Module.finrank K F := (IsFractionRing.finrank_eq (𝓞 K) K (𝓞 F) F).symm
+    [Algebra K F] (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime] : 𝔔.ramificationIdx (𝓞 K) ≤ Module.finrank K F :=
+  -- The fundamental identity `∑ eᵢ fᵢ = [F : K]` bounds each `eᵢ`, and `[𝓞 F : 𝓞 K] = [F : K]`:
+  -- Sharifi, Theorem 2.5.11 ("`∑ eᵢ fᵢ = [L : K]`"); Milne, Theorem 3.34.
+  (TauCeti.RamificationInertia.ramificationIdx_le_finrank (𝔔.under (𝓞 K)) 𝔔).trans_eq
+    (IsFractionRing.finrank_eq (𝓞 K) K (𝓞 F) F).symm
 
 /-- **The degree of a cyclotomic extension above an unramified prime is at least `φ(p^(k+1))`.**
-A prime `𝔔` of `𝓞 F` above `p` has relative ramification index at least `φ(p^(k+1))` over `𝓞 K`,
-and a ramification index never exceeds the degree of the extension. This is the total ramification
-of `K(ζ_{p^(k+1)}) / K` above `p` that Layer 7.3 of the Chebotarev roadmap consumes.
+This is the total ramification of `K(ζ_{p^(k+1)}) / K` above `p` that Layer 7.3 of the Chebotarev
+roadmap consumes. Unlike `IsPrimitiveRoot.lcm_totient_le_finrank` it assumes no irreducibility, so
+it can feed `irreducible_cyclotomic_of_totient_le_finrank` rather than follow from it.
 
 Source: Sharifi, Theorem 2.5.11 (`∑ eᵢ fᵢ = [L : K]`); Milne, Theorem 3.34; roadmap README
 Layer 7.3 ("by 7.2 the extension `K(ζ_q)/K` is totally ramified at every prime above `q`"). -/
 theorem totient_le_finrank_of_unramified (p k : ℕ) [Fact p.Prime] (F : Type*) [Field F]
     [Algebra K F] [IsCyclotomicExtension {p ^ (k + 1)} K F]
     (hur : ∀ (𝔮 : Ideal (𝓞 K)) [𝔮.IsPrime] [𝔮.LiesOver (Ideal.span {(p : ℤ)})],
-      Algebra.IsUnramifiedAt ℤ 𝔮) :
-    (p ^ (k + 1)).totient ≤ Module.finrank K F := by
+      Algebra.IsUnramifiedAt ℤ 𝔮) : (p ^ (k + 1)).totient ≤ Module.finrank K F := by
   have : FiniteDimensional K F := IsCyclotomicExtension.finiteDimensional {p ^ (k + 1)} K F
-  have : NumberField F := NumberField.of_module_finite K F
-  obtain ⟨𝔔, h1, h2⟩ := exists_isPrime_liesOver F p
+  have : NumberField F := .of_module_finite K F
+  -- A prime of `𝓞 F` above `p`: Sharifi, Thm 2.5.11 (`pB = P₁^{e₁} ⋯ P_g^{e_g}` with `g ≥ 1`).
+  obtain ⟨𝔔, _, _⟩ := Ideal.exists_maximal_ideal_liesOver_of_isIntegral (Ideal.span {(p : ℤ)})
+    (S := 𝓞 F)
+  -- `𝔔` has relative ramification index at least `φ(p^(k+1))` over `𝓞 K`, and a ramification
+  -- index never exceeds the degree of the extension.
   exact (totient_le_ramificationIdx p k hur 𝔔).trans (ramificationIdx_le_finrank_of_isPrime 𝔔)
 
 variable (K) in
