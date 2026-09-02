@@ -154,6 +154,48 @@ theorem subst_pair_formalThirdRoot_ne_zero {q₁ q₂ : MvPowerSeries σ O}
     subst_zero_of_constantCoeff_zero (constantCoeff_formalW W)] at honline
   linear_combination -honline
 
+
+/-! ### The formal inverse at a parameter -/
+
+/-- The denominator of the formal inverse, read at a parameter, still multiplies its `invOfUnit`
+to `1`: substituting is a ring map, so it carries `mul_invOfUnit_formalInverseDenom` along. -/
+private theorem subst_formalInverseDenom_mul {q : MvPowerSeries σ O}
+    (hq : PowerSeries.HasSubst q) :
+    PowerSeries.subst q (formalInverseDenom W) *
+        PowerSeries.subst q (PowerSeries.invOfUnit (formalInverseDenom W) 1) = 1 := by
+  have h := congrArg (PowerSeries.substAlgHom hq) (mul_invOfUnit_formalInverseDenom W)
+  simp only [map_mul, map_one] at h
+  simpa only [PowerSeries.coe_substAlgHom hq] using h
+
+/-- The formal inverse read at a parameter: `ι(q) = -(q * u(q)⁻¹)`. -/
+private theorem subst_formalInverse_eq {q : MvPowerSeries σ O} (hq : PowerSeries.HasSubst q) :
+    PowerSeries.subst q (formalInverse W) =
+      -(q * PowerSeries.subst q (PowerSeries.invOfUnit (formalInverseDenom W) 1)) := by
+  rw [formalInverse_def, ← PowerSeries.coe_substAlgHom hq]
+  simp only [map_neg, map_mul]
+  rw [PowerSeries.coe_substAlgHom hq, PowerSeries.subst_X hq]
+
+/-- The denominator of the formal inverse read at a parameter, written out. -/
+private theorem subst_formalInverseDenom_eq {q : MvPowerSeries σ O}
+    (hq : PowerSeries.HasSubst q) :
+    PowerSeries.subst q (formalInverseDenom W) =
+      1 - C W.a₁ * q - C W.a₃ * PowerSeries.subst q (formalW W) := by
+  rw [formalInverseDenom_def, ← PowerSeries.coe_substAlgHom hq]
+  simp only [map_sub, map_one, map_mul, PowerSeries.substAlgHom_X,
+    PowerSeries.coe_substAlgHom, PowerSeries.subst_C]
+
+/-- The `w`-expansion at the inverted parameter: `w(ι(q)) = -(w(q) * u(q)⁻¹)`.
+
+This is the one-variable `subst_formalInverse_formalW` carried through the substitution `q`. -/
+private theorem subst_formalW_subst_formalInverse {q : MvPowerSeries σ O}
+    (hq : PowerSeries.HasSubst q) :
+    PowerSeries.subst (PowerSeries.subst q (formalInverse W)) (formalW W) =
+      -(PowerSeries.subst q (formalW W) *
+        PowerSeries.subst q (PowerSeries.invOfUnit (formalInverseDenom W) 1)) := by
+  rw [← PowerSeries.subst_comp_subst_apply (hasSubst_formalInverse W) hq,
+    subst_formalInverse_formalW, ← PowerSeries.coe_substAlgHom hq]
+  simp only [map_neg, map_mul]
+
 /-! ### The parametrized point -/
 
 variable [IsDomain O]
