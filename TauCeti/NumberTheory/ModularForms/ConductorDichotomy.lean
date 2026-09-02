@@ -6,8 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 import TauCeti.Data.ZMod.Divisibility
-import TauCeti.NumberTheory.DirichletCharacter.Basic
-public import Mathlib.NumberTheory.DirichletCharacter.Basic
+public import TauCeti.NumberTheory.DirichletCharacter.Basic
 public import TauCeti.NumberTheory.ModularForms.CuspDescent
 
 /-!
@@ -220,12 +219,16 @@ produces a cusp form of level `N / l`; this identifies its nebentypus as the low
 statement. -/
 theorem cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace {l : ℕ} [NeZero l]
     (hlN : l ∣ N) (k : ℤ) {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / l))ˣ →* ℂˣ}
-    (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hlN)))
-    (hχ : ∀ u : (ZMod N)ˣ, ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) u = 1 → χ u = 1) (f : ℍ → ℂ)
+    (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hlN))) (f : ℍ → ℂ)
     (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) (hgχ : g ∈ cuspFormCharSpace k χ)
     (hg : ⇑g = (l : ℂ) ^ (1 - k) • (f ∣[k] scaleGL l))
     (hT : f ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) = f) :
-    cuspFormOfSmulSlashScaleGL l N hlN k χ hχ f g hgχ hg hT ∈ cuspFormCharSpace k χ₀ := by
+    cuspFormOfSmulSlashScaleGL l N hlN k χ
+      (fun _ hu ↦ by rw [hcomp, MonoidHom.comp_apply, hu, map_one]) f g hgχ hg hT ∈
+      cuspFormCharSpace k χ₀ := by
+  -- `hcomp` already forces `χ` to be trivial on the kernel: `χ u = χ₀ (unitsMap … u) = χ₀ 1`
+  have hχ : ∀ u : (ZMod N)ˣ, ZMod.unitsMap (Nat.div_dvd_of_dvd hlN) u = 1 → χ u = 1 :=
+    fun _ hu ↦ by rw [hcomp, MonoidHom.comp_apply, hu, map_one]
   rw [mem_cuspFormCharSpace_iff_nebentypus]
   intro γ'
   rw [coe_cuspFormOfSmulSlashScaleGL]
@@ -264,10 +267,7 @@ theorem exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero {l : ℕ} [NeZero l]
       conv_lhs => rw [hfac.eq_changeLevel]
       rw [DirichletCharacter.changeLevel_toUnitHom]
     exact .inl ⟨hfac, _,
-      cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace hlN k hcomp
-        (fun u hu ↦ MonoidHom.mem_ker.mp
-          ((DirichletCharacter.factorsThrough_iff_ker_unitsMap (Nat.div_dvd_of_dvd hlN)).mp hfac
-            (MonoidHom.mem_ker.mpr hu))) f g hgχ hg hT,
+      cuspFormOfSmulSlashScaleGL_mem_cuspFormCharSpace hlN k hcomp f g hgχ hg hT,
       coe_cuspFormOfSmulSlashScaleGL l N hlN k χ.toUnitHom _ f g hgχ hg hT⟩
   · refine .inr (eq_zero_of_not_forall_apply_eq_one_of_unitsMap_eq_one hlN k ?_ f
       (nebentypus_slash_scaleGL_of_mem_cuspFormCharSpace hgχ hg) hT)
