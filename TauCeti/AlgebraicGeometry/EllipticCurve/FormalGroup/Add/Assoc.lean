@@ -7,6 +7,7 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.PairSubst
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Unit
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Universal
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.ThirdPoint
 
 /-!
@@ -57,6 +58,26 @@ this repository applies to that development, so `subst_wSeries_ne_zero` is
 `subst_formalW_ne_zero`. `FormalGroup/Add/Inverse.lean` records that the source left that lemma
 unported because its only consumers lay in the source's `Assembly` and `Universal` sections;
 this file is the first of them.
+
+The `Universal` section of the same file (declarations `universal_Δ_ne_zero` and
+`assoc_addSeries_universal`) is `fracCurve_universal_Δ_ne_zero` and `assoc_formalAdd_universal`
+here. Four of that section's nine declarations are not ported, because this repository already
+has them: `universal`, `exists_map_universal` and `universal_Δ_ne_zero` are `Universal.curve`,
+`map_specialize` and `Universal.curve_Δ_ne_zero`, and the source's `X_ne_X` and `X_ne_zero'` are
+Mathlib's `MvPowerSeries.X_inj` and `nonZeroDivisors.ne_zero MvPowerSeries.X_mem_nonzeroDivisors`.
+
+`FormalGroup/Add/Inverse.lean` records that the source's `interceptSeries_ne_zero` and
+`X_pair_intercept_ne_zero` were left unported for want of a consumer, and expects this file to be
+that consumer. It is not, and they stay unported: the source needs them only because it supplies
+the nonvanishing intercept two different ways, an elementary one at a pair of distinct variables
+and `pair_intercept_ne_zero_of_ne` elsewhere. Here `pair_intercept_ne_zero_of_ne` covers the
+variable pairs too, so `thetaPoint_add_of_ne` serves all four chord additions of the assembly and
+the elementary route has no call site.
+
+The assembly also runs two specializations of the three parameters where the source runs one.
+The source separates the middle parameter from the third with `X_ne_X`, a syntactic argument; the
+corresponding hypothesis here is `q₂ ≠ ι(q₃)`, which no syntactic argument reaches, so `χ'` sends
+the middle parameter to `X` and the other two to `0` exactly as `χ` does for the first.
 
 The statement is adapted rather than transcribed, because this repository states the `w`-equation
 differently. Stoll carries a second copy of the equation as a private `def mvWStepAt` and phrases
@@ -550,6 +571,189 @@ private theorem thetaPoint_add_of_ne (hΔ : (fracCurve W σ KK).Δ ≠ 0)
   refine W.thetaPoint_add hΔ h₁ h₂ hq₁0 hq₂0 hN ?_ hF hF0
   rw [subst_pair_formalIntercept_mul_sub W h₁ h₂]
   exact mul_ne_zero hN (sub_ne_zero.mpr hne₁)
+
+/-- A substitution that sends one series to `X` and another to `0` separates them. This is how
+every distinctness hypothesis of the associativity argument is discharged: specialize one of the
+three parameters to `X` and the other two to `0`. -/
+private theorem ne_of_subst_eq_X_of_subst_eq_zero {σ' : Type*}
+    {g : σ' → MvPowerSeries Unit O} {a b : MvPowerSeries σ' O}
+    (ha : subst g a = PowerSeries.X) (hb : subst g b = 0) : a ≠ b := fun hab ↦
+  PowerSeries.X_ne_zero (by rw [← ha, hab]; exact hb)
+
+/-! ### Associativity -/
+
+/-- The universal curve stays nonsingular over the fraction field of its series ring: `Δ` is a
+nonzero polynomial, and both `C` and the localization map are injective. -/
+private theorem fracCurve_universal_Δ_ne_zero (KK : Type*) [Field KK]
+    [Algebra (MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ)) KK]
+    [IsFractionRing (MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ)) KK] :
+    (fracCurve Universal.curve (Unit ⊕ Unit ⊕ Unit) KK).Δ ≠ 0 := by
+  rw [fracCurve, map_Δ]
+  intro h
+  rw [RingHom.comp_apply] at h
+  have h1 : (MvPowerSeries.C Universal.curve.Δ :
+      MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ)) = 0 := by
+    refine IsFractionRing.injective (MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ))
+      KK ?_
+    rw [map_zero]
+    simpa [MvPowerSeries.c_eq_algebraMap] using h
+  exact Universal.curve_Δ_ne_zero (MvPowerSeries.C_injective (h1.trans (map_zero _).symm))
+
+/-- **Associativity of the addition series for the universal curve.**
+
+The three parameters are the three coordinate variables of
+`ℤ[A₁, ⋯, A₆]⟦t₁, t₂, t₃⟧`, and the two ways of bracketing them are compared as points of the
+honest elliptic curve `fracCurve Universal.curve` over that ring's fraction field: `θ` turns each
+bracketing into a sum of three points, `thetaPoint_add_of_ne` computes both, associativity of the
+curve's group law identifies them, and `thetaPoint_inj` brings the equality back to the series. -/
+private theorem assoc_formalAdd_universal :
+    subst (Sum.elim
+        (fun _ ↦ subst (Sum.elim
+            (fun _ ↦ (X (Sum.inl ()) :
+              MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ)))
+            (fun _ ↦ X (Sum.inr (Sum.inl ()))) :
+              Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ))
+          (formalAdd Universal.curve))
+        (fun _ ↦ X (Sum.inr (Sum.inr ()))) :
+          Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ))
+      (formalAdd Universal.curve) =
+    subst (Sum.elim
+        (fun _ ↦ (X (Sum.inl ()) :
+          MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ)))
+        (fun _ ↦ subst (Sum.elim
+            (fun _ ↦ (X (Sum.inr (Sum.inl ())) :
+              MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ)))
+            (fun _ ↦ X (Sum.inr (Sum.inr ()))) :
+              Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ))
+          (formalAdd Universal.curve)) :
+          Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ))
+      (formalAdd Universal.curve) := by
+  classical
+  set R := MvPolynomial Coeff ℤ with hR
+  set KK := FractionRing (MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) with hKK
+  set χ := (Sum.elim (fun _ ↦ (PowerSeries.X : PowerSeries R)) (fun _ ↦ 0) :
+    Unit ⊕ Unit ⊕ Unit → MvPowerSeries Unit R) with hχdef
+  have hχ : HasSubst χ :=
+    hasSubst_of_constantCoeff_zero (by
+      rintro (j | j)
+      · exact PowerSeries.constantCoeff_X
+      · simp [hχdef])
+  have hΔ := fracCurve_universal_Δ_ne_zero KK
+  have hc₁ : constantCoeff (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = 0 :=
+    constantCoeff_X _
+  have hc₂ : constantCoeff (X (Sum.inr (Sum.inl ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = 0 :=
+    constantCoeff_X _
+  have hc₃ : constantCoeff (X (Sum.inr (Sum.inr ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = 0 :=
+    constantCoeff_X _
+  have h10 : (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) ≠ 0 :=
+    nonZeroDivisors.ne_zero X_mem_nonzeroDivisors
+  have h20 : (X (Sum.inr (Sum.inl ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) ≠ 0 :=
+    nonZeroDivisors.ne_zero X_mem_nonzeroDivisors
+  have h30 : (X (Sum.inr (Sum.inr ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) ≠ 0 :=
+    nonZeroDivisors.ne_zero X_mem_nonzeroDivisors
+  have hχ1 : subst χ (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = PowerSeries.X := by
+    rw [subst_X hχ]; rfl
+  have hχ2 : subst χ (X (Sum.inr (Sum.inl ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = 0 := by
+    rw [subst_X hχ]; rfl
+  have hχ3 : subst χ (X (Sum.inr (Sum.inr ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = 0 := by
+    rw [subst_X hχ]; rfl
+  have hχ0 : subst χ (0 : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = 0 := by
+    rw [← coe_substAlgHom hχ, map_zero]
+  -- the second specialization, which separates the middle parameter from the third
+  set χ' := (Sum.elim (fun _ ↦ (0 : MvPowerSeries Unit R))
+    (Sum.elim (fun _ ↦ (PowerSeries.X : PowerSeries R)) fun _ ↦ 0) :
+    Unit ⊕ Unit ⊕ Unit → MvPowerSeries Unit R) with hχ'def
+  have hχ' : HasSubst χ' :=
+    hasSubst_of_constantCoeff_zero (by
+      rintro (j | j | j)
+      · simp [hχ'def]
+      · exact PowerSeries.constantCoeff_X
+      · simp [hχ'def])
+  have hχ'2 : subst χ' (X (Sum.inr (Sum.inl ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) =
+      PowerSeries.X := by
+    rw [subst_X hχ']; rfl
+  have hχ'3 : subst χ' (X (Sum.inr (Sum.inr ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = 0 := by
+    rw [subst_X hχ']; rfl
+  -- the two inner sums
+  set F₁₂ := subst (Sum.elim (fun _ ↦ (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R))
+    (fun _ ↦ X (Sum.inr (Sum.inl ()))) : Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R)
+    (formalAdd Universal.curve) with hF₁₂def
+  set F₂₃ := subst (Sum.elim
+    (fun _ ↦ (X (Sum.inr (Sum.inl ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R))
+    (fun _ ↦ X (Sum.inr (Sum.inr ()))) : Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R)
+    (formalAdd Universal.curve) with hF₂₃def
+  have hF₁₂c : constantCoeff F₁₂ = 0 :=
+    constantCoeff_subst_eq_zero (hasSubst_pair hc₁ hc₂) (by rintro (j | j) <;> simp)
+      (constantCoeff_formalAdd _)
+  have hF₂₃c : constantCoeff F₂₃ = 0 :=
+    constantCoeff_subst_eq_zero (hasSubst_pair hc₂ hc₃) (by rintro (j | j) <;> simp)
+      (constantCoeff_formalAdd _)
+  have hχF₁₂ : subst χ F₁₂ = PowerSeries.X :=
+    subst_subst_pair_formalAdd_eq_X Universal.curve hχ hc₁ hc₂ hχ1 hχ2
+  have hχF₂₃ : subst χ F₂₃ = 0 :=
+    subst_subst_pair_formalAdd_eq_zero Universal.curve hχ hc₂ hc₃ hχ2 hχ3
+  -- the addition series itself is nonzero, and so is the sum of the last two parameters
+  have hFne : formalAdd Universal.curve ≠ 0 := by
+    intro h
+    have h2 := subst_unitR_formalAdd Universal.curve
+    rw [h, ← coe_substAlgHom (hasSubst_of_constantCoeff_zero
+      (by rintro (j | j) <;> simp : ∀ i, constantCoeff
+        ((Sum.elim X (fun _ ↦ 0) : Unit ⊕ Unit → MvPowerSeries Unit R) i) = 0)), map_zero] at h2
+    exact PowerSeries.X_ne_zero h2.symm
+  have hF₁₂0 : F₁₂ ≠ 0 := ne_of_subst_eq_X_of_subst_eq_zero hχF₁₂ hχ0
+  have hF₂₃0 : F₂₃ ≠ 0 := by
+    have hfam : (Sum.elim
+        (fun _ ↦ (X (Sum.inr (Sum.inl ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R))
+        (fun _ ↦ X (Sum.inr (Sum.inr ()))) : Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) =
+        X ∘ (Sum.elim (fun _ ↦ Sum.inr (Sum.inl ())) fun _ ↦ Sum.inr (Sum.inr ()) :
+          Unit ⊕ Unit → Unit ⊕ Unit ⊕ Unit) := by
+      funext s
+      rcases s with u | u <;> rfl
+    rw [hF₂₃def, hfam, ← rename_eq_subst]
+    intro h0
+    refine hFne (rename_injective (⟨Sum.elim (fun _ ↦ Sum.inr (Sum.inl ()))
+      fun _ ↦ Sum.inr (Sum.inr ()), ?_⟩ : Unit ⊕ Unit ↪ Unit ⊕ Unit ⊕ Unit) ?_)
+    · rintro (⟨⟩ | ⟨⟩) (⟨⟩ | ⟨⟩) hv
+      · rfl
+      · exact absurd hv (by simp)
+      · exact absurd hv (by simp)
+      · rfl
+    · rw [map_zero]
+      exact h0
+  -- distinctness: each pair is separated by one of the two specializations
+  have hne₁₂ := ne_of_subst_eq_X_of_subst_eq_zero hχ1 hχ2
+  have hne₁₂ι := ne_of_subst_eq_X_of_subst_eq_zero hχ1
+    (subst_subst_formalInverse_eq_zero Universal.curve hχ hc₂ hχ2)
+  have hne₂₃ := ne_of_subst_eq_X_of_subst_eq_zero hχ'2 hχ'3
+  have hne₂₃ι := ne_of_subst_eq_X_of_subst_eq_zero hχ'2
+    (subst_subst_formalInverse_eq_zero Universal.curve hχ' hc₃ hχ'3)
+  have hneL := ne_of_subst_eq_X_of_subst_eq_zero hχF₁₂ hχ3
+  have hneLι := ne_of_subst_eq_X_of_subst_eq_zero hχF₁₂
+    (subst_subst_formalInverse_eq_zero Universal.curve hχ hc₃ hχ3)
+  have hneR := ne_of_subst_eq_X_of_subst_eq_zero hχ1 hχF₂₃
+  have hneRι := ne_of_subst_eq_X_of_subst_eq_zero hχ1
+    (subst_subst_formalInverse_eq_zero Universal.curve hχ hF₂₃c hχF₂₃)
+  -- the two bracketed sums are again legitimate parameters
+  have hLc := constantCoeff_subst_eq_zero (hasSubst_pair hF₁₂c hc₃)
+    (by rintro (j | j) <;> simp [hF₁₂c]) (constantCoeff_formalAdd Universal.curve)
+  have hRc := constantCoeff_subst_eq_zero (hasSubst_pair hc₁ hF₂₃c)
+    (by rintro (j | j) <;> simp [hF₂₃c]) (constantCoeff_formalAdd Universal.curve)
+  have hL0 := ne_of_subst_eq_X_of_subst_eq_zero
+    (subst_subst_pair_formalAdd_eq_X Universal.curve hχ hF₁₂c hc₃ hχF₁₂ hχ3) hχ0
+  have hR0 := ne_of_subst_eq_X_of_subst_eq_zero
+    (subst_subst_pair_formalAdd_eq_X Universal.curve hχ hc₁ hF₂₃c hχ1 hχF₂₃) hχ0
+  -- the θ-chain: both bracketings compute the same sum of three points
+  have e₁₂ := thetaPoint_add_of_ne Universal.curve (KK := KK) hΔ hc₁ hc₂ h10 h20 hne₁₂ hne₁₂ι
+    hF₁₂c hF₁₂0
+  have e₂₃ := thetaPoint_add_of_ne Universal.curve (KK := KK) hΔ hc₂ hc₃ h20 h30 hne₂₃ hne₂₃ι
+    hF₂₃c hF₂₃0
+  have eL := thetaPoint_add_of_ne Universal.curve (KK := KK) hΔ hF₁₂c hc₃ hF₁₂0 h30 hneL hneLι
+    hLc hL0
+  have eR := thetaPoint_add_of_ne Universal.curve (KK := KK) hΔ hc₁ hF₂₃c h10 hF₂₃0 hneR hneRι
+    hRc hR0
+  have hpts : Universal.curve.thetaPoint hΔ hLc hL0 = Universal.curve.thetaPoint hΔ hRc hR0 := by
+    rw [← eL, ← e₁₂, ← eR, ← e₂₃, add_assoc]
+  exact thetaPoint_inj Universal.curve hΔ hLc hRc hL0 hR0 hpts
 
 end WeierstrassCurve
 
