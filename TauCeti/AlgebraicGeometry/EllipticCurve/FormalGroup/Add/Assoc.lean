@@ -345,6 +345,55 @@ private theorem thetaPoint_add (hΔ : (fracCurve W σ KK).Δ ≠ 0)
   · rw [hwFeq, div_eq_div_iff hwT0 (neg_ne_zero.mpr (mul_ne_zero hwT0 hsp0))]
     linear_combination (-(ρ wT)) * hu + (ρ wT * ρ sp) * hueq
 
+/-- **The parametrized point of the inverted parameter is the negative**: `θ(ι(q)) = -θ(q)`.
+
+The formal inverse was built to be the parameter of the reflected point, so this identifies that
+construction with the group inverse of `fracCurve W`. Both coordinates come out of the two
+readings of the inverse, `ι(q) = -(q * u(q)⁻¹)` and `w(ι(q)) = -(w(q) * u(q)⁻¹)`. -/
+private theorem thetaPoint_neg (hΔ : (fracCurve W σ KK).Δ ≠ 0)
+    {q : MvPowerSeries σ O} (hq : constantCoeff q = 0) (hq0 : q ≠ 0)
+    (hi : constantCoeff (PowerSeries.subst q (formalInverse W)) = 0)
+    (hi0 : PowerSeries.subst q (formalInverse W) ≠ 0) :
+    W.thetaPoint hΔ hi hi0 = -W.thetaPoint hΔ hq hq0 := by
+  classical
+  set ρ := algebraMap (MvPowerSeries σ O) KK with hρ
+  have hs : PowerSeries.HasSubst q := PowerSeries.HasSubst.of_constantCoeff_zero hq
+  have hu : ρ (PowerSeries.subst q (formalInverseDenom W)) *
+      ρ (PowerSeries.subst q (PowerSeries.invOfUnit (formalInverseDenom W) 1)) = 1 := by
+    rw [← map_mul, ← map_one ρ]
+    exact congrArg ρ (W.subst_formalInverseDenom_mul hs)
+  have hsp0 : ρ (PowerSeries.subst q (PowerSeries.invOfUnit (formalInverseDenom W) 1)) ≠ 0 := by
+    intro h
+    rw [h, mul_zero] at hu
+    exact one_ne_zero hu.symm
+  have hIeq : ρ (PowerSeries.subst q (formalInverse W)) =
+      -(ρ q * ρ (PowerSeries.subst q (PowerSeries.invOfUnit (formalInverseDenom W) 1))) := by
+    have h := congrArg ρ (W.subst_formalInverse_eq hs)
+    simpa only [map_neg, map_mul] using h
+  have hwIeq : ρ (PowerSeries.subst (PowerSeries.subst q (formalInverse W)) (formalW W)) =
+      -(ρ (PowerSeries.subst q (formalW W)) *
+        ρ (PowerSeries.subst q (PowerSeries.invOfUnit (formalInverseDenom W) 1))) := by
+    have h := congrArg ρ (W.subst_formalW_subst_formalInverse hs)
+    simpa only [map_neg, map_mul] using h
+  have hueq : ρ (PowerSeries.subst q (formalInverseDenom W)) =
+      1 - (fracCurve W σ KK).a₁ * ρ q -
+        (fracCurve W σ KK).a₃ * ρ (PowerSeries.subst q (formalW W)) := by
+    have h := congrArg ρ (W.subst_formalInverseDenom_eq hs)
+    simp only [map_sub, map_mul, map_one, MvPowerSeries.c_eq_algebraMap] at h
+    exact h
+  have hw0 : ρ (PowerSeries.subst q (formalW W)) ≠ 0 := fun h ↦
+    W.subst_formalW_ne_zero hq hq0
+      (IsFractionRing.injective (MvPowerSeries σ O) KK (by rw [h, map_zero]))
+  simp only [thetaPoint, Affine.Point.neg_some, Affine.Point.some.injEq]
+  simp only [← hρ]
+  constructor
+  · rw [hIeq, hwIeq]
+    field_simp
+  · rw [hwIeq, Affine.negY]
+    field_simp
+    linear_combination
+      ρ (PowerSeries.subst q (PowerSeries.invOfUnit (formalInverseDenom W) 1)) * hueq - hu
+
 end WeierstrassCurve
 
 end
