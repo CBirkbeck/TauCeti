@@ -93,7 +93,7 @@ variable {N p : ℕ} [NeZero N] (k : ℤ)
 /-- A divisor of a nonzero level is positive: the side condition the coset decomposition asks
 for, which `p ∣ N` and `NeZero N` already supply. -/
 private lemma pos_of_dvd (hpN : p ∣ N) : 0 < p :=
-  Nat.pos_of_ne_zero fun h ↦ NeZero.ne N (Nat.eq_zero_of_zero_dvd (h ▸ hpN))
+  Nat.pos_of_ne_zero (NeZero.of_dvd hpN).out
 
 /-- The prime factors of a divisor of a nonzero level are prime factors of the level: the
 hypothesis the coset decomposition asks for, in the form `p ∣ N` supplies. -/
