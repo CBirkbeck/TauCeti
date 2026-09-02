@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+import TauCeti.Algebra.GroupWithZero.Divisibility
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma1.UpperTriCosets
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Gamma1
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.ModularForm

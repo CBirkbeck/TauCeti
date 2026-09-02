@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.Algebra.GroupWithZero.Divisibility
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Prime
 
 /-!
