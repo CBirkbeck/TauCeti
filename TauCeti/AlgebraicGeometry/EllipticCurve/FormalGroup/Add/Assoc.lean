@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.PairSubst
+public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Unit
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.ThirdPoint
 
 /-!
@@ -206,6 +207,47 @@ private theorem subst_formalW_subst_formalInverse {q : MvPowerSeries σ O}
   rw [← PowerSeries.subst_comp_subst_apply (hasSubst_formalInverse W) hq,
     subst_formalInverse_formalW, ← PowerSeries.coe_substAlgHom hq]
   simp only [map_neg, map_mul]
+
+/-! ### Reading a pair through a further substitution -/
+
+/-- The addition series at a pair, read through a further substitution `g` that sends the first
+parameter to `X` and the second to `0`: the right unit law makes the result `X`. -/
+private theorem subst_subst_pair_formalAdd_eq_X {σ' : Type*}
+    {g : σ' → MvPowerSeries Unit O} (hg : HasSubst g) {a b : MvPowerSeries σ' O}
+    (ha : constantCoeff a = 0) (hb : constantCoeff b = 0)
+    (hga : subst g a = PowerSeries.X) (hgb : subst g b = 0) :
+    subst g (subst (Sum.elim (fun _ ↦ a) (fun _ ↦ b) : Unit ⊕ Unit → MvPowerSeries σ' O)
+      (formalAdd W)) = PowerSeries.X := by
+  rw [subst_comp_subst_apply (hasSubst_pair ha hb) hg,
+    show (fun s : Unit ⊕ Unit ↦ subst g (Sum.elim (fun _ ↦ a) (fun _ ↦ b) s)) =
+      (Sum.elim X (fun _ ↦ 0) : Unit ⊕ Unit → MvPowerSeries Unit O) from
+      funext fun s ↦ by rcases s with u | u; exacts [hga, hgb]]
+  exact subst_unitR_formalAdd W
+
+/-- The addition series at a pair, read through a further substitution `g` that kills both
+parameters: the result vanishes, since the series has no constant term. -/
+private theorem subst_subst_pair_formalAdd_eq_zero {σ' : Type*}
+    {g : σ' → MvPowerSeries Unit O} (hg : HasSubst g) {a b : MvPowerSeries σ' O}
+    (ha : constantCoeff a = 0) (hb : constantCoeff b = 0)
+    (hga : subst g a = 0) (hgb : subst g b = 0) :
+    subst g (subst (Sum.elim (fun _ ↦ a) (fun _ ↦ b) : Unit ⊕ Unit → MvPowerSeries σ' O)
+      (formalAdd W)) = 0 := by
+  rw [subst_comp_subst_apply (hasSubst_pair ha hb) hg,
+    show (fun s : Unit ⊕ Unit ↦ subst g (Sum.elim (fun _ ↦ a) (fun _ ↦ b) s)) =
+      (0 : Unit ⊕ Unit → MvPowerSeries Unit O) from
+      funext fun s ↦ by rcases s with u | u; exacts [hga, hgb]]
+  exact subst_zero_of_constantCoeff_zero (constantCoeff_formalAdd W)
+
+/-- The formal inverse at a parameter, read through a further substitution `g` that kills that
+parameter: the result vanishes, since the inverse has no constant term. -/
+private theorem subst_subst_formalInverse_eq_zero {σ' : Type*}
+    {g : σ' → MvPowerSeries Unit O} (hg : HasSubst g) {a : MvPowerSeries σ' O}
+    (ha : constantCoeff a = 0) (hga : subst g a = 0) :
+    subst g (subst (fun _ : Unit ↦ a) (formalInverse W)) = 0 := by
+  rw [subst_comp_subst_apply (hasSubst_of_constantCoeff_zero fun _ ↦ ha) hg,
+    show (fun _ : Unit ↦ subst g a) = (0 : Unit → MvPowerSeries Unit O) from
+      funext fun _ ↦ hga]
+  exact subst_zero_of_constantCoeff_zero (constantCoeff_formalInverse W)
 
 /-! ### The parametrized point -/
 
@@ -486,6 +528,28 @@ private theorem pair_intercept_ne_zero_of_ne (hΔ : (fracCurve W σ KK).Δ ≠ 0
     have hc' : W.thetaPoint hΔ h₁ hq₁0 = -W.thetaPoint hΔ h₂ hq₂0 := hc
     rw [← W.thetaPoint_neg hΔ h₂ hq₂0 hi hi0] at hc'
     exact hne₂ (W.thetaPoint_inj hΔ h₁ hi hq₁0 hi0 hc')
+
+variable [DecidableEq KK] in
+/-- **The chord addition of parametrized points, from distinctness alone**: `θ(q₁) + θ(q₂) =
+θ(F(q₁, q₂))` as soon as `q₁` is neither `q₂` nor its formal inverse.
+
+This is the form the associativity argument uses. Both nondegeneracy hypotheses of
+`thetaPoint_add` come out of those two: the intercept is nonzero by
+`pair_intercept_ne_zero_of_ne`, and the cross combination is then nonzero too, since
+`subst_pair_formalIntercept_mul_sub` factors it as `ν(q₁, q₂) (q₁ - q₂)`. -/
+private theorem thetaPoint_add_of_ne (hΔ : (fracCurve W σ KK).Δ ≠ 0)
+    {q₁ q₂ : MvPowerSeries σ O} (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0)
+    (hq₁0 : q₁ ≠ 0) (hq₂0 : q₂ ≠ 0) (hne₁ : q₁ ≠ q₂)
+    (hne₂ : q₁ ≠ PowerSeries.subst q₂ (formalInverse W))
+    (hF : constantCoeff (subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+      Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W)) = 0)
+    (hF0 : subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+      (formalAdd W) ≠ 0) :
+    W.thetaPoint hΔ h₁ hq₁0 + W.thetaPoint hΔ h₂ hq₂0 = W.thetaPoint hΔ hF hF0 := by
+  have hN := W.pair_intercept_ne_zero_of_ne hΔ h₁ h₂ hq₁0 hq₂0 hne₁ hne₂
+  refine W.thetaPoint_add hΔ h₁ h₂ hq₁0 hq₂0 hN ?_ hF hF0
+  rw [subst_pair_formalIntercept_mul_sub W h₁ h₂]
+  exact mul_ne_zero hN (sub_ne_zero.mpr hne₁)
 
 end WeierstrassCurve
 
