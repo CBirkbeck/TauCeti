@@ -109,6 +109,34 @@ private theorem isDifferenceCompletelyMonotone_integral_kernel {ψ : ℝ → ℝ
     rw [key]
     exact mul_nonneg (hψ0 s) hsign
 
+/-- Averaging an antitone function against a probability density supported in `(-ε, 0)` samples it
+only on `(t, t + ε)`, so the average is squeezed between `F (t + ε)` and `F t`. -/
+private theorem integral_kernel_mem_Icc_of_antitone {ψ F : ℝ → ℝ} {ε t : ℝ} (hFanti : Antitone F)
+    (hψ0 : ∀ s, 0 ≤ ψ s) (hψint : ∫ s, ψ s = 1) (hψi : Integrable ψ volume)
+    (hintF : Integrable (fun s => ψ s * F (t - s)) volume)
+    (hsupp : ∀ s : ℝ, ψ s ≠ 0 → -ε < s ∧ s < 0) :
+    (∫ s, ψ s * F (t - s)) ∈ Icc (F (t + ε)) (F t) := by
+  have hmass : ∀ c : ℝ, ∫ s, ψ s * c = c := by
+    intro c
+    rw [integral_mul_const, hψint, one_mul]
+  refine mem_Icc.mpr ⟨?_, ?_⟩
+  · have hle : ∀ s : ℝ, ψ s * F (t + ε) ≤ ψ s * F (t - s) := by
+      intro s
+      rcases eq_or_ne (ψ s) 0 with h0 | h0
+      · simp [h0]
+      · have hs1 := (hsupp s h0).1
+        exact mul_le_mul_of_nonneg_left (hFanti (by linarith)) (hψ0 s)
+    calc F (t + ε) = ∫ s, ψ s * F (t + ε) := (hmass _).symm
+      _ ≤ ∫ s, ψ s * F (t - s) := integral_mono (hψi.mul_const _) hintF hle
+  · have hle : ∀ s : ℝ, ψ s * F (t - s) ≤ ψ s * F t := by
+      intro s
+      rcases eq_or_ne (ψ s) 0 with h0 | h0
+      · simp [h0]
+      · have hs2 := (hsupp s h0).2
+        exact mul_le_mul_of_nonneg_left (hFanti (by linarith)) (hψ0 s)
+    calc ∫ s, ψ s * F (t - s) ≤ ∫ s, ψ s * F t := integral_mono hintF (hψi.mul_const _) hle
+      _ = F t := hmass _
+
 /-- **Smoothing a finite-difference completely monotone function.** If all mixed forward
 differences of `f` with nonnegative steps alternate in sign on `[0, ∞)`, then for every `ε > 0`
 there is a genuinely completely monotone `g` with
@@ -155,30 +183,7 @@ theorem IsDifferenceCompletelyMonotone.exists_isCompletelyMonotone_between_shift
   · -- The two-sided bound, from monotonicity of `F` and the normalization of `ψ`.
     have hintF : Integrable (fun s => ψ s * F (t - s)) volume :=
       hψc.convolutionExists_left (ContinuousLinearMap.mul ℝ ℝ) hψcont hFloc t
-    have hmass : ∀ c : ℝ, ∫ s, ψ s * c = c := by
-      intro c
-      rw [integral_mul_const, hψint, one_mul]
-    constructor
-    · have hle : ∀ s : ℝ, ψ s * F (t + ε) ≤ ψ s * F (t - s) := by
-        intro s
-        rcases eq_or_ne (ψ s) 0 with h0 | h0
-        · simp [h0]
-        · obtain ⟨hs1, hs2⟩ := hsupp s h0
-          exact mul_le_mul_of_nonneg_left
-            (hFcm.antitoneOn (mem_Ici.mpr (by linarith)) (mem_Ici.mpr (by linarith))
-              (by linarith)) (hψ0 s)
-      calc f (t + ε) = ∫ s, ψ s * F (t + ε) := by
-              rw [hmass, hFeq _ (by linarith)]
-        _ ≤ ∫ s, ψ s * F (t - s) := integral_mono (hψi.mul_const _) hintF hle
-    · have hle : ∀ s : ℝ, ψ s * F (t - s) ≤ ψ s * F t := by
-        intro s
-        rcases eq_or_ne (ψ s) 0 with h0 | h0
-        · simp [h0]
-        · obtain ⟨hs1, hs2⟩ := hsupp s h0
-          exact mul_le_mul_of_nonneg_left
-            (hFcm.antitoneOn (mem_Ici.mpr ht) (mem_Ici.mpr (by linarith)) (by linarith))
-            (hψ0 s)
-      calc ∫ s, ψ s * F (t - s) ≤ ∫ s, ψ s * F t := integral_mono hintF (hψi.mul_const _) hle
-        _ = f t := by rw [hmass, hFeq t ht]
+    rw [← hFeq _ (by linarith : (0 : ℝ) ≤ t + ε), ← hFeq t ht]
+    exact mem_Icc.mp (integral_kernel_mem_Icc_of_antitone hFanti hψ0 hψint hψi hintF hsupp)
 
 end TauCeti
