@@ -324,7 +324,7 @@ lower-right entry, and there that entry is `(u : ZMod N).val`.
 This is the constructive form of `Gamma0Map_toHomUnits_surjective`: that lemma produces *some*
 preimage of `u`, whereas this one names an explicit matrix whose bottom row is `(N, u.val)`, which
 is what an argument comparing the entries of two lifts needs. -/
-lemma Gamma0Map_toHomUnits_gamma0TwistOfUnit [NeZero N] (u : (ZMod N)ˣ) :
+@[simp] lemma Gamma0Map_toHomUnits_gamma0TwistOfUnit [NeZero N] (u : (ZMod N)ˣ) :
     (Gamma0Map N).toHomUnits ⟨gamma0TwistOfUnit u, gamma0TwistOfUnit_mem_Gamma0 u⟩ = u :=
   Units.ext <| by
     rw [MonoidHom.coe_toHomUnits, Gamma0Map_apply, gamma0TwistOfUnit_apply_one_one,
