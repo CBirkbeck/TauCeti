@@ -171,6 +171,12 @@ variable {H : Subgroup G}
 lemma rep_one_mem : (rep (1 : HeckeCoset Δ H H) : G) ∈ H := by
   simpa using rep_mem (1 : HeckeCoset Δ H H)
 
+/-- The identity double coset's representative lies in `H`, in the `Quotient.out` spelling that
+the coset-decomposition definitions use. `rep` sits in a `public section` without `@[expose]`, so
+a downstream module cannot convert between the two spellings itself; this states the fact in the
+form those definitions consume. -/
+lemma out_one_mem : ((1 : HeckeCoset Δ H H).out : G) ∈ H := rep_one_mem
+
 end HeckeCoset
 
 namespace DoubleCoset
