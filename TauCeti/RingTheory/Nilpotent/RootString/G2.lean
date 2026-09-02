@@ -254,8 +254,9 @@ attribute [local instance high] Algebra.toModule
 `D‹·›` vanishes from its own bound `k‹·›` onwards, then past
 `kx + ky + kz + 2 * kw + 3 * kv + 3 * ks` in either of the two weightings the product is zero.
 This is the vanishing half of `sum_smul_mul_sum_smul_of_chainG2Order`'s hypothesis, stated for
-arbitrary families so that the type-`G₂` proof only has to supply the six bounds. -/
-private theorem prod_eq_zero_of_le_of_chainG2Order {B : Type*} [Ring B]
+arbitrary families over any `MulZeroClass` so that the type-`G₂` proof only has to supply the six
+bounds. -/
+private theorem mul_eq_zero_of_le_of_chainG2Order {B : Type*} [MulZeroClass B]
     (Dx Dy Dz Dw Dv Ds : ℕ → B) {kx ky kz kw kv ks : ℕ}
     (hvx : ∀ n, kx ≤ n → Dx n = 0) (hvy : ∀ n, ky ≤ n → Dy n = 0)
     (hvz : ∀ n, kz ≤ n → Dz n = 0) (hvw : ∀ n, kw ≤ n → Dw n = 0)
@@ -341,7 +342,7 @@ theorem baseChangeExp_mul_baseChangeExp_of_commutator_eq_three_nsmul
     simp only [map_mul, map_sum] at h
     exact h
   · -- Outside the truncation the reordered sextuple has a vanishing factor.
-    exact prod_eq_zero_of_le_of_chainG2Order _ _ _ _ _ _
+    exact mul_eq_zero_of_le_of_chainG2Order _ _ _ _ _ _
       (forall_baseChange_integralDividedPower_eq_zero_of_le (R := R) x M hMx hkx)
       (forall_baseChange_integralDividedPower_eq_zero_of_le (R := R) y M hMy hky)
       (forall_baseChange_integralDividedPower_eq_zero_of_le (R := R) z M hMz hkz)
