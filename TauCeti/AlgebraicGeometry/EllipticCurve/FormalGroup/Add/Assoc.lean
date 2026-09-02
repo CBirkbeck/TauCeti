@@ -13,10 +13,15 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.ThirdPoint
 /-!
 # The chord group law over the fraction field of the series ring
 
-Associativity of the chord addition series is proved by transporting the honest group law of a
-Weierstrass curve. The parameters are power series, so the curve has to be read over a field
-containing them: this file base changes `W` along `O → MvPowerSeries σ O → KK` and records the
-`w`-equation there.
+**Associativity of the chord addition series**, `F(F(t₁, t₂), t₃) = F(t₁, F(t₂, t₃))`, proved by
+transporting the honest group law of a Weierstrass curve. The parameters are power series, so the
+curve has to be read over a field containing them: this file base changes `W` along
+`O → MvPowerSeries σ O → KK`, records the `w`-equation there, and identifies a parameter with the
+point `(q, w(q))` it names. Chord addition of those points *is* the addition series, so
+associativity of the curve's group law is associativity of the series.
+
+That argument needs a domain, so it runs over the universal curve, whose base `ℤ[A₁, ⋯, A₆]`
+supplies one; `map_specialize` carries the conclusion to every `W` over every commutative ring.
 
 ## Main definitions
 
@@ -33,6 +38,10 @@ containing them: this file base changes `W` along `O → MvPowerSeries σ O → 
   `q₁ w(q₂) - q₂ w(q₁) = ν(q₁, q₂) * (q₁ - q₂)`, which is what the two readings buy.
 * `WeierstrassCurve.subst_pair_formalThirdRoot_ne_zero` : a nonzero intercept forces a nonzero
   third root.
+* `WeierstrassCurve.assoc_formalAdd` : **the associativity of the addition series**, for every
+  Weierstrass curve over every commutative ring. This is the file's terminus, and the last axiom
+  of a commutative formal group law that this development was missing — `Add/Fin2.lean` records
+  how the three variables get reindexed into the shape of Mathlib's `FormalGroup.assoc` field.
 
 ## Provenance
 
@@ -228,6 +237,29 @@ private theorem subst_formalW_subst_formalInverse {q : MvPowerSeries σ O}
   rw [← PowerSeries.subst_comp_subst_apply (hasSubst_formalInverse W) hq,
     subst_formalInverse_formalW, ← PowerSeries.coe_substAlgHom hq]
   simp only [map_neg, map_mul]
+
+/-- The addition series read at a pair of variables again has vanishing constant coefficient, so
+it is itself a legitimate parameter — which is what lets the associativity argument feed one
+bracketed sum into another. -/
+private theorem constantCoeff_subst_pair_X_formalAdd {σ' : Type*} (s₁ s₂ : σ') :
+    constantCoeff (subst (Sum.elim (fun _ ↦ (X s₁ : MvPowerSeries σ' O)) (fun _ ↦ X s₂) :
+      Unit ⊕ Unit → MvPowerSeries σ' O) (formalAdd W)) = 0 :=
+  constantCoeff_subst_eq_zero (hasSubst_pair (constantCoeff_X _) (constantCoeff_X _))
+    (by rintro (j | j) <;> simp) (constantCoeff_formalAdd W)
+
+/-- Base change commutes with reading the addition series at a pair of variables: the variables
+are fixed by `MvPowerSeries.map`, so only `map_formalAdd` is doing any work. -/
+private theorem map_subst_pair_X_formalAdd {σ' S : Type*} [CommRing S] (φ : O →+* S)
+    (s₁ s₂ : σ') :
+    MvPowerSeries.map φ (subst (Sum.elim (fun _ ↦ (X s₁ : MvPowerSeries σ' O)) (fun _ ↦ X s₂) :
+        Unit ⊕ Unit → MvPowerSeries σ' O) (formalAdd W)) =
+      subst (Sum.elim (fun _ ↦ (X s₁ : MvPowerSeries σ' S)) (fun _ ↦ X s₂) :
+        Unit ⊕ Unit → MvPowerSeries σ' S) (formalAdd (W.map φ)) := by
+  rw [MvPowerSeries.map_subst (hasSubst_pair (constantCoeff_X _) (constantCoeff_X _)),
+    map_formalAdd]
+  congr 1
+  funext i
+  rcases i with u | u <;> simp
 
 /-! ### Reading a pair through a further substitution -/
 
@@ -683,11 +715,9 @@ private theorem assoc_formalAdd_universal :
     (fun _ ↦ X (Sum.inr (Sum.inr ()))) : Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R)
     (formalAdd Universal.curve) with hF₂₃def
   have hF₁₂c : constantCoeff F₁₂ = 0 :=
-    constantCoeff_subst_eq_zero (hasSubst_pair hc₁ hc₂) (by rintro (j | j) <;> simp)
-      (constantCoeff_formalAdd _)
+    constantCoeff_subst_pair_X_formalAdd Universal.curve _ _
   have hF₂₃c : constantCoeff F₂₃ = 0 :=
-    constantCoeff_subst_eq_zero (hasSubst_pair hc₂ hc₃) (by rintro (j | j) <;> simp)
-      (constantCoeff_formalAdd _)
+    constantCoeff_subst_pair_X_formalAdd Universal.curve _ _
   have hχF₁₂ : subst χ F₁₂ = PowerSeries.X :=
     subst_subst_pair_formalAdd_eq_X Universal.curve hχ hc₁ hc₂ hχ1 hχ2
   have hχF₂₃ : subst χ F₂₃ = 0 :=
@@ -754,6 +784,49 @@ private theorem assoc_formalAdd_universal :
   have hpts : Universal.curve.thetaPoint hΔ hLc hL0 = Universal.curve.thetaPoint hΔ hRc hR0 := by
     rw [← eL, ← e₁₂, ← eR, ← e₂₃, add_assoc]
   exact thetaPoint_inj Universal.curve hΔ hLc hRc hL0 hR0 hpts
+
+omit [IsDomain O] in
+/-- **Associativity of the chord addition series**, for every Weierstrass curve over every
+commutative ring: `F(F(t₁, t₂), t₃) = F(t₁, F(t₂, t₃))`.
+
+The chord construction proves this only where the curve has a group law to borrow, so the
+identity is proved for the universal curve — whose base `ℤ[A₁, ⋯, A₆]` is a domain, and whose
+series ring therefore has a fraction field — and `map_specialize` carries it to every `W`.
+
+With `constantCoeff_formalAdd`, `subst_unitR_formalAdd`, `subst_unitL_formalAdd` and
+`rename_swap_formalAdd`, this is the last axiom of a commutative formal group law; reindexing the
+three variables to `Fin 3` is what turns it into Mathlib's `FormalGroup.assoc` field. -/
+theorem assoc_formalAdd :
+    subst (Sum.elim
+        (fun _ ↦ subst (Sum.elim
+            (fun _ ↦ (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O))
+            (fun _ ↦ X (Sum.inr (Sum.inl ()))) :
+              Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O)
+          (formalAdd W))
+        (fun _ ↦ X (Sum.inr (Sum.inr ()))) :
+          Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O)
+      (formalAdd W) =
+    subst (Sum.elim
+        (fun _ ↦ (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O))
+        (fun _ ↦ subst (Sum.elim
+            (fun _ ↦ (X (Sum.inr (Sum.inl ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O))
+            (fun _ ↦ X (Sum.inr (Sum.inr ()))) :
+              Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O)
+          (formalAdd W)) :
+          Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O)
+      (formalAdd W) := by
+  have h := congrArg (MvPowerSeries.map W.specialize) assoc_formalAdd_universal
+  rw [MvPowerSeries.map_subst (hasSubst_pair
+      (constantCoeff_subst_pair_X_formalAdd Universal.curve _ _) (constantCoeff_X _)),
+    MvPowerSeries.map_subst (hasSubst_pair (constantCoeff_X _)
+      (constantCoeff_subst_pair_X_formalAdd Universal.curve _ _)),
+    ← map_formalAdd] at h
+  refine .trans ?_ (.trans h ?_)
+  all_goals
+    congr 1
+    · funext i
+      rcases i with u | u <;> simp [map_subst_pair_X_formalAdd, map_specialize]
+    · simp [map_specialize]
 
 end WeierstrassCurve
 
