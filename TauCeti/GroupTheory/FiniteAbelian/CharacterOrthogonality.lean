@@ -8,23 +8,23 @@ module
 public import Mathlib.GroupTheory.FiniteAbelian.Duality
 
 /-!
-# Column orthogonality and Fourier inversion for finite commutative groups
+# Column orthogonality for characters of a finite commutative group
 
 For a finite commutative group `G` and a domain `M` with enough roots of unity, the characters
 of `G` are the monoid homomorphisms `G →* Mˣ`. This file records the *column* orthogonality
-relation — the one summed over the character group — and the Fourier-inversion statement it
-supports.
+relation — the one summed over the character group — in both its punctured and its normal form.
 
 ## Main results
 
-* `CommGroup.sum_char_apply_eq_zero_of_ne_one`: for `g ≠ 1`, the sum `∑ χ : G →* Mˣ, χ g`
+* `CommGroup.sum_monoidHom_apply_eq_zero_of_ne_one`: for `g ≠ 1`, the sum `∑ χ : G →* Mˣ, χ g`
   over all characters vanishes.
-* `CommGroup.card_mul_eq_sum_of_sum_char_mul_eq_zero`: a function whose nontrivial character
-  moments all vanish is recovered from its average.
-* `CommGroup.sum_char_apply_eq_ite`: the same sum in normal form, `#G` at `g = 1` and `0`
-  elsewhere.
-* `CommGroup.eq_of_sum_char_mul_eq_zero`: when the dual cardinality is nonzero in `M`, the same
-  hypothesis forces the function to be constant.
+* `CommGroup.sum_monoidHom_apply_eq_ite`: the same sum in normal form, `Nat.card G` at `g = 1`
+  and `0` elsewhere. This is the shape an indicator-formula consumer wants, and it is the `simp`
+  normal form for such a sum.
+
+The file also registers `Fintype (G →* Mˣ)`, which Mathlib leaves at `Finite`; without it a
+consumer's own character sum does not elaborate, and two ad-hoc `Fintype.ofFinite` introductions
+give syntactically distinct sums.
 
 ## Row orthogonality is Mathlib's, and is deliberately not restated here
 
@@ -51,72 +51,51 @@ or over `ZMod n`.
 
 Adapted from `CebotarevDensity/ForMathlib/CharacterOrthogonality.lean` of
 [CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0,
-Birkbeck--Brasca) at commit `8575c9df1ae0a61120ab5c964c7911414254bec7`. The source file also
-carries the row relation as `sum_char_self_eq_zero_of_ne_one`; that declaration is dropped here
-in favour of Mathlib's `sum_hom_units_eq_zero`, as described above.
+Birkbeck--Brasca) at commit `8575c9df1ae0a61120ab5c964c7911414254bec7`. Only the column relation
+is taken. The source's row relation `sum_char_self_eq_zero_of_ne_one` is dropped in favour of
+Mathlib's `sum_hom_units_eq_zero`, as described above, and its two Fourier-inversion
+consequences — that a function whose nontrivial character moments all vanish is constant — are
+left in the source, having no consumer here.
 -/
 
 public section
 
 namespace CommGroup
 
-variable {G : Type*} [CommGroup G] {M : Type*} [CommRing M] [IsDomain M]
+variable {G : Type*} [CommGroup G] [Finite G] {M : Type*} [CommRing M] [IsDomain M]
+
+/-- The characters of a finite commutative group valued in a domain form a `Fintype`. Mathlib
+registers only `Finite (G →* Mˣ)`, so a character sum written by a consumer has no `Finset` to
+range over without this; it mirrors `AddChar.instFintype`. -/
+noncomputable instance instFintypeMonoidHomUnits : Fintype (G →* Mˣ) := Fintype.ofFinite _
+
+variable [HasEnoughRootsOfUnity M (Monoid.exponent G)]
 
 /-- **Character-column orthogonality** for a finite commutative group `G` valued in a domain `M`
 with enough roots of unity: for `g ≠ 1`, the sum of `χ g` over all characters `χ : G →* Mˣ`
 vanishes. -/
-theorem sum_char_apply_eq_zero_of_ne_one [Finite G] [HasEnoughRootsOfUnity M (Monoid.exponent G)]
-    [Fintype (G →* Mˣ)] {g : G} (hg : g ≠ 1) : ∑ χ : G →* Mˣ, (χ g : M) = 0 := by
+theorem sum_monoidHom_apply_eq_zero_of_ne_one {g : G} (hg : g ≠ 1) :
+    ∑ χ : G →* Mˣ, (χ g : M) = 0 := by
   -- A specialisation of `sum_hom_units_eq_zero` on the dual group `G →* Mˣ` along the
   -- evaluation homomorphism `χ ↦ χ g`.
   obtain ⟨χ₀, hχ₀⟩ := exists_apply_ne_one_of_hasEnoughRootsOfUnity G M hg
   exact sum_hom_units_eq_zero ((Units.coeHom M).comp (MonoidHom.eval g))
     fun h ↦ hχ₀ <| Units.val_eq_one.mp <| DFunLike.congr_fun h χ₀
 
-variable [Fintype G] [HasEnoughRootsOfUnity M (Monoid.exponent G)]
-
-/-- **Column orthogonality in normal form**: the character sum is the dual cardinality at the
-identity and vanishes elsewhere. This is the shape indicator-formula consumers want, since it
-covers both cases at once and already converts the dual cardinality to `#G`. -/
-theorem sum_char_apply_eq_ite [Fintype (G →* Mˣ)] [DecidableEq G] (g : G) :
-    ∑ χ : G →* Mˣ, (χ g : M) = if g = 1 then (Fintype.card G : M) else 0 := by
-  have hcard : Fintype.card (G →* Mˣ) = Fintype.card G := by
-    rw [← Nat.card_eq_fintype_card, ← Nat.card_eq_fintype_card,
-      card_monoidHom_of_hasEnoughRootsOfUnity]
+/-- **Column orthogonality in normal form**: the character sum is `Nat.card G` at the identity
+and vanishes elsewhere. This covers both cases at once, and states the identity value as the
+cardinality of `G` itself rather than of its dual, which is the shape an indicator-formula
+consumer wants. -/
+@[simp]
+theorem sum_monoidHom_apply_eq_ite [DecidableEq G] (g : G) :
+    ∑ χ : G →* Mˣ, (χ g : M) = if g = 1 then (Nat.card G : M) else 0 := by
   split
-  · next hg => subst hg; simp [hcard]
-  · next hg => exact sum_char_apply_eq_zero_of_ne_one hg
-
-/-- **Finite-abelian Fourier inversion.** If every nontrivial character moment of `f : G → M`
-vanishes — `∑ s, χ s * f s = 0` for each `χ ≠ 1` — then `f` is recovered from its average: for
-every `u`, `(#(G →* Mˣ)) * f u = ∑ s, f s`. -/
-theorem card_mul_eq_sum_of_sum_char_mul_eq_zero [Fintype (G →* Mˣ)] (f : G → M)
-    (hf : ∀ χ : G →* Mˣ, χ ≠ 1 → ∑ s : G, (χ s : M) * f s = 0) (u : G) :
-    (Fintype.card (G →* Mˣ) : M) * f u = ∑ s : G, f s := by
-  -- column orthogonality: every `s ≠ u` term of the double sum below vanishes
-  calc (Fintype.card (G →* Mˣ) : M) * f u
-      = ∑ s : G, ∑ χ : G →* Mˣ, (χ (u⁻¹ * s) : M) * f s := by
-        rw [Finset.sum_eq_single_of_mem u (Finset.mem_univ _) fun s _ hs ↦ by
-          rw [← Finset.sum_mul, sum_char_apply_eq_zero_of_ne_one
-            fun h ↦ hs (inv_mul_eq_one.mp h).symm, zero_mul]]
-        simp
-    _ = ∑ χ : G →* Mˣ, (χ u⁻¹ : M) * ∑ s : G, (χ s : M) * f s :=
-        Finset.sum_comm.trans (by simp [Finset.mul_sum, mul_assoc])
-    -- the hypothesis collapses the character sum to its principal term
-    _ = ∑ s : G, f s :=
-        (Finset.sum_eq_single_of_mem (1 : G →* Mˣ) (Finset.mem_univ _)
-          fun χ _ hχ ↦ by rw [hf χ hχ, mul_zero]).trans (by simp)
-
-/-- **Vanishing nontrivial Fourier coefficients force a constant.** If every nontrivial character
-moment of `f : G → M` vanishes (`∑ s, χ s * f s = 0` for `χ ≠ 1`) and the dual cardinality is
-nonzero in `M`, then `f` takes the same value at every pair of points. -/
-theorem eq_of_sum_char_mul_eq_zero [Fintype (G →* Mˣ)]
-    (hcard : (Fintype.card (G →* Mˣ) : M) ≠ 0) (f : G → M)
-    (hf : ∀ χ : G →* Mˣ, χ ≠ 1 → ∑ s : G, (χ s : M) * f s = 0) (u u' : G) : f u = f u' := by
-  -- Immediate from `card_mul_eq_sum_of_sum_char_mul_eq_zero` — both values equal the common
-  -- average — after cancelling the dual cardinality, which `hcard` assumes nonzero. Over a
-  -- characteristic-zero domain `hcard` is automatic from `Fintype.card_ne_zero`.
-  have h := card_mul_eq_sum_of_sum_char_mul_eq_zero f hf
-  exact mul_left_cancel₀ hcard <| (h u).trans (h u').symm
+  · next hg =>
+    subst hg
+    -- the dual of `G` has the cardinality of `G`, by Mathlib's character duality
+    have hcard : Fintype.card (G →* Mˣ) = Nat.card G := by
+      simpa using card_monoidHom_of_hasEnoughRootsOfUnity G M
+    simp [hcard]
+  · next hg => exact sum_monoidHom_apply_eq_zero_of_ne_one hg
 
 end CommGroup
