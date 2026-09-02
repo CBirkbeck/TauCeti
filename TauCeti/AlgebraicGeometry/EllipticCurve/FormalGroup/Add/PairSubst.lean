@@ -29,7 +29,7 @@ this file's, specialized; see the Provenance note there.
 * `WeierstrassCurve.subst_pair_online`: the `w`-expansion at the third root is the chord
   line read there.
 * `WeierstrassCurve.subst_pair_thirdRootDenom_mul`: Vieta's denominator stays a unit at the
-  pair.
+  pair, and `WeierstrassCurve.subst_pair_thirdRootDenom_ne_zero`: in particular it is nonzero.
 * `WeierstrassCurve.subst_pair_formalThirdRoot_relation`: the defining relation of `z₃` at
   the pair, with that inverse cleared.
 * `WeierstrassCurve.constantCoeff_subst_pair_formalThirdRoot`: the third root at the pair again
@@ -191,6 +191,25 @@ theorem subst_pair_thirdRootDenom_mul (h₁ : constantCoeff q₁ = 0) (h₂ : co
   simp only [map_mul, map_add, map_one, map_pow] at h
   simp only [coe_substAlgHom (hasSubst_pair h₁ h₂), subst_C] at h
   exact h
+
+/-- Vieta's denominator at the pair is nonzero, because it has an explicit inverse. Over a
+nontrivial base this is immediate from `subst_pair_thirdRootDenom_mul`; no coefficient
+computation is needed. -/
+theorem subst_pair_thirdRootDenom_ne_zero [Nontrivial O] (h₁ : constantCoeff q₁ = 0)
+    (h₂ : constantCoeff q₂ = 0) :
+    (1 + C W.a₂ *
+        subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+          (formalSlope W) +
+        C W.a₄ *
+        subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+          (formalSlope W) ^ 2 +
+        C W.a₆ *
+        subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+          (formalSlope W) ^ 3) ≠ 0 := by
+  intro h
+  have hmul := subst_pair_thirdRootDenom_mul W h₁ h₂
+  rw [h, zero_mul] at hmul
+  exact zero_ne_one hmul
 
 /-- The defining relation of the third root at the pair `(q₁, q₂)`, with the inverse of Vieta's
 denominator eliminated. -/
