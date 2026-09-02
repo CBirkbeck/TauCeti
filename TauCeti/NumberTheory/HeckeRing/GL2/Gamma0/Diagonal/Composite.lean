@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.Data.Nat.Factorization.PrimePowerProd
-public import TauCeti.Algebra.PrimePowerProd.DivisorTable
+public import TauCeti.Data.Nat.Factorization.PrimePowerProd.DivisorTable
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.PrimePower
 -- The Atkin–Lehner anti-involution and the commutativity it buys are used only inside the
 -- proof of `heckeTCompositeGamma0_mul_of_coprime` below, so private.
