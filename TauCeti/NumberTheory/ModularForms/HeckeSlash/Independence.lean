@@ -42,6 +42,10 @@ such `δ` may be used to form the sum.
 
 * `HeckeRing.GL2.slash_eq_of_rightCoset_eq`: slashing a `Γ₁`-invariant function by `x` depends
   only on the right coset `Γ₁ x`.
+* `HeckeRing.GL2.doubleCoset_eq_iUnion_rightCosetRep` and
+  `HeckeRing.GL2.op_rightCosetRep_smul_injective`: the chosen representatives cover the double
+  coset, and do so without repetition, stated in the `rightCosetRep` spelling. They are the two
+  hypotheses of the results below, discharged for the canonical family.
 * `HeckeRing.GL2.heckeSlashSum_eq_sum_of_rightCosets`: **the choice-free description of the
   slash sum.** For `Γ₁`-invariant `f`, `heckeSlashSum k D f = ∑ᵢ f ∣[k] aᵢ` for any family
   `(aᵢ)` whose right cosets `Γ₁ aᵢ` are distinct and cover the double coset.
@@ -85,6 +89,28 @@ lemma slash_eq_of_rightCoset_eq {f : ℍ → ℂ} (hf : ∀ γ ∈ Γ₁, f ∣[
     _ = f ∣[k] (y * x⁻¹ * x) := (SlashAction.slash_mul k (y * x⁻¹) x f).symm
     _ = f ∣[k] y := by rw [inv_mul_cancel_right]
 
+/-- **Shimura's decomposition, in the representatives `heckeSlashSum` uses.** The right cosets
+`Γ₁ (rightCosetRep D v)`, as `v` runs over `DecompQuotient Γ₂ Γ₁ (D.out)⁻¹`, cover the double
+coset `Γ₁ D.out Γ₂`.
+
+This is `DoubleCoset.doubleCoset_eq_iUnion_rightCosets` in the `rightCosetRep` spelling, which is
+the one `heckeSlashSum` is defined by. -/
+theorem doubleCoset_eq_iUnion_rightCosetRep :
+    doubleCoset (D.out : GL (Fin 2) ℚ) Γ₁ Γ₂ =
+      ⋃ v, MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set (GL (Fin 2) ℚ)) := by
+  simpa only [rightCosetRep_def] using
+    doubleCoset_eq_iUnion_rightCosets Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ)
+
+/-- **The cover of `Γ₁ D.out Γ₂` by the `rightCosetRep D v` is without repetition.** Distinct
+classes `v` name distinct right cosets `Γ₁ (rightCosetRep D v)`.
+
+This is `DoubleCoset.op_mul_out_inv_smul_injective` in the `rightCosetRep` spelling. -/
+theorem op_rightCosetRep_smul_injective :
+    Function.Injective fun v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹ ↦
+      MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set (GL (Fin 2) ℚ)) := by
+  simpa only [rightCosetRep_def] using
+    op_mul_out_inv_smul_injective Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ)
+
 variable [Finite (DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹)]
 
 omit [Finite (DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹)] in
@@ -106,15 +132,6 @@ theorem exists_bijective_rightCosetRep_smul_eq {ι : Type*} (a : ι → GL (Fin 
       ∀ i, MulOpposite.op (a i) • (Γ₁ : Set (GL (Fin 2) ℚ)) =
         MulOpposite.op (rightCosetRep D (φ i)) • (Γ₁ : Set (GL (Fin 2) ℚ)) := by
   classical
-  -- Shimura's decomposition, written with the representatives `heckeSlashSum` uses.
-  have hcover' : doubleCoset (D.out : GL (Fin 2) ℚ) Γ₁ Γ₂ =
-      ⋃ v, MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set (GL (Fin 2) ℚ)) := by
-    simpa only [rightCosetRep_def] using
-      doubleCoset_eq_iUnion_rightCosets Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ)
-  have hinj' : Function.Injective fun v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹ ↦
-      MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set (GL (Fin 2) ℚ)) := by
-    simpa only [rightCosetRep_def] using
-      op_mul_out_inv_smul_injective Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ)
   -- Mathlib's own lemma; stated for a submonoid, so `Γ₁` is passed through `toSubmonoid`.
   have hself : ∀ x : GL (Fin 2) ℚ, x ∈ MulOpposite.op x • (Γ₁ : Set (GL (Fin 2) ℚ)) := fun x ↦
     mem_own_rightCoset Γ₁.toSubmonoid x
@@ -128,14 +145,15 @@ theorem exists_bijective_rightCosetRep_smul_eq {ι : Type*} (a : ι → GL (Fin 
     intro i
     have hmem : a i ∈ doubleCoset (D.out : GL (Fin 2) ℚ) Γ₁ Γ₂ := by
       rw [hcover]; exact Set.mem_iUnion_of_mem i (hself (a i))
-    rw [hcover'] at hmem
+    rw [doubleCoset_eq_iUnion_rightCosetRep D] at hmem
     obtain ⟨v, hv⟩ := Set.mem_iUnion.mp hmem
     exact ⟨v, hmatch _ _ hv⟩
   have key' : ∀ v, ∃ i, MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set (GL (Fin 2) ℚ)) =
       MulOpposite.op (a i) • (Γ₁ : Set (GL (Fin 2) ℚ)) := by
     intro v
     have hmem : rightCosetRep D v ∈ doubleCoset (D.out : GL (Fin 2) ℚ) Γ₁ Γ₂ := by
-      rw [hcover']; exact Set.mem_iUnion_of_mem v (hself (rightCosetRep D v))
+      rw [doubleCoset_eq_iUnion_rightCosetRep D]
+      exact Set.mem_iUnion_of_mem v (hself (rightCosetRep D v))
     rw [hcover] at hmem
     obtain ⟨i, hi⟩ := Set.mem_iUnion.mp hmem
     exact ⟨i, hmatch _ _ hi⟩
@@ -152,7 +170,7 @@ theorem exists_bijective_rightCosetRep_smul_eq {ι : Type*} (a : ι → GL (Fin 
   have hbij : Function.Bijective φ := by
     refine ⟨fun i j hij ↦ hinj (hcoset i j hij), fun v ↦ ?_⟩
     obtain ⟨i, hi⟩ := key' v
-    exact ⟨i, (hinj' (hi.trans (hφ i))).symm⟩
+    exact ⟨i, (op_rightCosetRep_smul_injective D (hi.trans (hφ i))).symm⟩
   exact ⟨φ, hbij, hφ⟩
 
 /-- **The slash sum of a `Γ₁`-invariant function is the sum over any decomposition of the double
