@@ -181,8 +181,13 @@ integers not lying above a bad prime.
 
 The unit-level form of `mem_selmerGroupA_iff`. It is the form the semilocal comparison at the good
 finite places is stated against, because there the square class is always presented by an explicit
-unit of `W.A`. -/
-@[simp]
+unit of `W.A`.
+
+Not `@[simp]`, although its per-factor sibling `mem_selmerGroupFactor_unit_iff` is: with
+`mem_selmerGroupA_iff` and that sibling both marked, `simpNF` rejects this one — "simp can prove
+this" — because the two together already reduce it. Every consumer names it explicitly, so nothing
+depends on the attribute. This is the same situation as
+`IsDedekindDomain.HeightOneSpectrum.valuationOfNeZero_eq_one_iff`. -/
 lemma mem_selmerGroupA_unit_iff (a : W.Aˣ) :
     (QuotientGroup.mk a : W.M) ∈ W.selmerGroupA R ↔
       ∀ (p : W.f.Factors) (w : HeightOneSpectrum (W.ringOfIntegersFactor R p)),
