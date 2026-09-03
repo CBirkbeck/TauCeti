@@ -44,8 +44,7 @@ satisfies it is a statement about `V_d` and lives beside `V_d` in
 * `TauCeti.range_levelRaise_le_qSupportedOnDvdSubmodule`: the same statement for the `ℂ`-linear
   map, which is the shape `TauCeti.cuspFormsOld` is assembled from.
 * `TauCeti.iSup_range_levelRaise_le_qSupportedOnDvdSubmodule`: at a fixed `d`, the span of those
-  ranges over every `M` with `d * M ∣ N` — the `d`-degeneracy part of the old subspace — lies in
-  the submodule.
+  ranges over **every** `M` with `d * M ∣ N` lies in the submodule.
 
 The source reaches the same conclusion through a cast between cusp-form spaces at equal levels
 (`castCuspFormLinearEquiv`, `castLevelRaise`); that scaffolding is not ported, because this
@@ -67,7 +66,9 @@ Two further declarations of the source, `qExpansion_modularFormLevelRaise_isSupp
 `qExpansion_levelRaise_isSupportedOnDvd`, are in `Degeneracy.lean` as
 `ModularForm.isSupportedOnDvd_qExpansion_levelRaise` and its cusp-form counterpart; the
 underlying power-series predicate `PowerSeries.IsSupportedOnDvd` comes from the same source file
-but is in `TauCeti/RingTheory/PowerSeries/Support.lean`. Both are attributed where they live.
+but is in `TauCeti/RingTheory/PowerSeries/Support.lean`. Each carries its own AINTLIB
+provenance where it lives — `Degeneracy.lean`'s References for the two `V_d` lemmas,
+`Support.lean`'s Provenance for the predicate.
 
 `qSupportedOnDvdSubmodule` is not a transcription: the source builds the submodule by hand,
 discharging `zero_mem'`, `add_mem'` and `smul_mem'` from the predicate's closure lemmas, whereas
@@ -158,11 +159,15 @@ theorem range_levelRaise_le_qSupportedOnDvdSubmodule {N : ℕ} (M : ℕ) (h : d 
   rintro _ ⟨g, rfl⟩
   simpa only [CuspForm.levelRaiseₗ_apply] using levelRaise_mem_qSupportedOnDvdSubmodule M h g
 
-/-- **The `d`-degeneracy part of the old subspace is supported on multiples of `d`.** At a fixed
-`d`, the span of the ranges of `V_d : S_k(Γ₁(M)) → S_k(Γ₁(N))` over every `M` with `d * M ∣ N`
-lies in the supported submodule. This is the summand family of `TauCeti.cuspFormsOld` at fixed
-degeneracy `d`, which is the shape the Atkin–Lehner Main Lemma consumes. No such bound holds for
-the whole old subspace, whose supremum also runs over `d = 1`, where `V₁` is restriction and
+/-- **At a fixed `d`, every level-raise into `Γ₁(N)` is supported on multiples of `d`.** The span
+of the ranges of `V_d : S_k(Γ₁(M)) → S_k(Γ₁(N))` over every `M` with `d * M ∣ N` lies in the
+supported submodule.
+
+This is deliberately *not* the fixed-`d` summand family of `TauCeti.cuspFormsOld`: that one
+carries the proper-level condition `M ≠ N`, which the supremum here does not, so at `d = 1` this
+one includes `M = N` and hence the identity range. It is the wider statement, and it is what the
+Atkin–Lehner Main Lemma consumes at a fixed `d > 1`. No bound of this kind holds for
+`cuspFormsOld` itself, whose supremum also runs over `d = 1`, where `V₁` is restriction and
 imposes no support condition. -/
 theorem iSup_range_levelRaise_le_qSupportedOnDvdSubmodule (N : ℕ) :
     ⨆ (M : ℕ) (h : d * M ∣ N),

@@ -42,18 +42,22 @@ cusp forms by pulling `PowerSeries.supportedOnDvdSubmodule` back along the `q`-e
 
 ## Typeclass assumptions
 
-Each is the weakest Mathlib admits, which is worth recording because the statements look as though
-they should ask for less:
+Each declaration assumes only what its own operation needs, which is worth recording because the
+coefficient condition invites a uniform `[Semiring R]`:
 
-* the predicate, and every lemma mentioning a coefficient, needs `[Semiring R]`, because Mathlib's
-  only coefficient accessor is the bundled linear map `PowerSeries.coeff n : R⟦X⟧ →ₗ[R] R`
-  (`LinearMap.proj n`, declared under `variable [Semiring R]`). There is no unbundled reader, so
-  the condition cannot be stated at `[Zero R]`;
-* `.neg` and `.sub` need `[Ring R]`, because `Neg R⟦X⟧` is available only then;
-* `.smul` needs `[Semiring S] [Module S R]`, because Mathlib's only scalar action on power series
-  is `Module R (MvPowerSeries σ A)` for `[Semiring R] [AddCommMonoid A] [Module R A]`;
-* the two `expand` lemmas need `[CommRing R]`, because `PowerSeries.expand` is an `R`-algebra
-  homomorphism defined only there.
+* the predicate and `.zero` need only `[Zero R]`. `PowerSeries R` is `(Unit →₀ ℕ) → R`, so the
+  condition is stated by evaluating that function. Going through `PowerSeries.coeff` instead — a
+  bundled `R`-linear map — would force a semiring here and on every lemma below;
+* `.add` needs `[AddMonoid R]` and `.neg`, `.sub` need `[AddGroup R]`: those are exactly where
+  Mathlib puts `+` and `-` on `MvPowerSeries σ R`;
+* `.smul` needs `[Semiring S] [AddCommMonoid R] [Module S R]`, Mathlib's only scalar action on
+  power series;
+* `.one` and `.mul` need `[Semiring R]`, since they are about the ring operations, and the two
+  `expand` lemmas need `[CommRing R]`, since `PowerSeries.expand` is an `R`-algebra homomorphism
+  defined only there.
+
+`isSupportedOnDvd_iff` restates the predicate through `coeff` for the semiring consumers, which is
+how every use site spells it.
 
 ## Provenance
 
@@ -76,12 +80,19 @@ public section
 namespace PowerSeries
 
 /-- A power series is **supported on multiples of `d`** when its coefficient at every index
-not divisible by `d` vanishes. -/
-def IsSupportedOnDvd {R : Type*} [Semiring R] (d : ℕ) (P : PowerSeries R) : Prop :=
-  ∀ n : ℕ, ¬ d ∣ n → P.coeff n = 0
+not divisible by `d` vanishes.
 
-/-- `IsSupportedOnDvd` restated as an `Iff`, so the defining condition is available to `rw`
-without unfolding the definition. -/
+Stated by evaluating the underlying coefficient function — `PowerSeries R` is
+`(Unit →₀ ℕ) → R` — rather than through `PowerSeries.coeff`, which is a bundled `R`-linear map
+and would impose `[Semiring R]` on the predicate and on every closure lemma below. Only the
+operation each lemma is about is then assumed: `[AddMonoid R]` for `add`, `[AddGroup R]` for
+`neg` and `sub`, a semiring only where multiplication genuinely enters.
+`isSupportedOnDvd_iff` is the `coeff` form, for use once there is a semiring to state it in. -/
+def IsSupportedOnDvd {R : Type*} [Zero R] (d : ℕ) (P : PowerSeries R) : Prop :=
+  ∀ n : ℕ, ¬ d ∣ n → P (Finsupp.single () n) = 0
+
+/-- `IsSupportedOnDvd` in the `PowerSeries.coeff` spelling, which is how every consumer states
+it. Definitionally the same condition: `coeff n` is evaluation at `Finsupp.single () n`. -/
 theorem isSupportedOnDvd_iff {R : Type*} [Semiring R] {d : ℕ} {P : PowerSeries R} :
     IsSupportedOnDvd d P ↔ ∀ n : ℕ, ¬ d ∣ n → P.coeff n = 0 := (Iff.rfl)
 
@@ -90,29 +101,37 @@ namespace IsSupportedOnDvd
 variable {R S : Type*} {d : ℕ} {P Q : PowerSeries R}
 
 @[simp]
-theorem zero [Semiring R] (d : ℕ) : IsSupportedOnDvd d (0 : PowerSeries R) := fun _ _ ↦ by simp
+theorem zero [Zero R] (d : ℕ) : IsSupportedOnDvd d (0 : PowerSeries R) := fun _ _ ↦ rfl
 
-theorem add [Semiring R] (hP : IsSupportedOnDvd d P) (hQ : IsSupportedOnDvd d Q) :
+theorem add [AddMonoid R] (hP : IsSupportedOnDvd d P) (hQ : IsSupportedOnDvd d Q) :
     IsSupportedOnDvd d (P + Q) := fun n hn ↦ by
-  rw [map_add, hP n hn, hQ n hn, zero_add]
+  have happ : (P + Q) (Finsupp.single () n) =
+    P (Finsupp.single () n) + Q (Finsupp.single () n) := rfl
+  rw [happ, hP n hn, hQ n hn, zero_add]
 
-theorem smul [Semiring R] [Semiring S] [Module S R] (c : S) (hP : IsSupportedOnDvd d P) :
+theorem smul [Semiring S] [AddCommMonoid R] [Module S R] (c : S) (hP : IsSupportedOnDvd d P) :
     IsSupportedOnDvd d (c • P) := fun n hn ↦ by
-  simp [hP n hn]
+  have happ : (c • P) (Finsupp.single () n) = c • P (Finsupp.single () n) := rfl
+  rw [happ, hP n hn, smul_zero]
 
-theorem neg [Ring R] (hP : IsSupportedOnDvd d P) : IsSupportedOnDvd d (-P) := fun n hn ↦ by
-  rw [map_neg, hP n hn, neg_zero]
+theorem neg [AddGroup R] (hP : IsSupportedOnDvd d P) : IsSupportedOnDvd d (-P) := fun n hn ↦ by
+  have happ : (-P) (Finsupp.single () n) = -P (Finsupp.single () n) := rfl
+  rw [happ, hP n hn, neg_zero]
 
-theorem sub [Ring R] (hP : IsSupportedOnDvd d P) (hQ : IsSupportedOnDvd d Q) :
-    IsSupportedOnDvd d (P - Q) := sub_eq_add_neg P Q ▸ hP.add hQ.neg
+theorem sub [AddGroup R] (hP : IsSupportedOnDvd d P) (hQ : IsSupportedOnDvd d Q) :
+    IsSupportedOnDvd d (P - Q) := fun n hn ↦ by
+  have happ : (P - Q) (Finsupp.single () n) =
+    P (Finsupp.single () n) - Q (Finsupp.single () n) := rfl
+  rw [happ, hP n hn, hQ n hn, sub_zero]
 
 /-- The constant power series `1` is supported on multiples of any `d`: its only nonzero
 coefficient sits at `0`, which every `d` divides. -/
 @[simp]
-theorem one [Semiring R] (d : ℕ) : IsSupportedOnDvd d (1 : PowerSeries R) := fun n hn ↦ by
-  rcases Nat.eq_zero_or_pos n with rfl | hpos
-  · exact absurd (dvd_zero d) hn
-  · simp [PowerSeries.coeff_one, hpos.ne']
+theorem one [Semiring R] (d : ℕ) : IsSupportedOnDvd d (1 : PowerSeries R) :=
+  isSupportedOnDvd_iff.2 fun n hn ↦ by
+    rcases Nat.eq_zero_or_pos n with rfl | hpos
+    · exact absurd (dvd_zero d) hn
+    · simp [PowerSeries.coeff_one, hpos.ne']
 
 /-- **The condition is closed under multiplication.** In a coefficient of `P * Q` at an index
 `n` not divisible by `d`, each term `aᵢ · b_j` with `i + j = n` has one of its two factors at an
@@ -122,13 +141,14 @@ Both hypotheses are needed, and one-sidedness fails already over `ℕ`: `1` is s
 multiples of `2` while `1 * X = X` is not. The coefficient semiring has to be named — over the
 trivial one `X = 0`, which *is* supported. -/
 theorem mul [Semiring R] (hP : IsSupportedOnDvd d P) (hQ : IsSupportedOnDvd d Q) :
-    IsSupportedOnDvd d (P * Q) := fun n hn ↦ by
-  rw [PowerSeries.coeff_mul]
-  refine Finset.sum_eq_zero fun x hx ↦ ?_
-  rw [Finset.mem_antidiagonal] at hx
-  by_cases hi : d ∣ x.1
-  · rw [hQ x.2 fun hj ↦ hn (hx ▸ hi.add hj), mul_zero]
-  · rw [hP x.1 hi, zero_mul]
+    IsSupportedOnDvd d (P * Q) :=
+  isSupportedOnDvd_iff.2 fun n hn ↦ by
+    rw [PowerSeries.coeff_mul]
+    refine Finset.sum_eq_zero fun x hx ↦ ?_
+    rw [Finset.mem_antidiagonal] at hx
+    by_cases hi : d ∣ x.1
+    · rw [isSupportedOnDvd_iff.1 hQ x.2 fun hj ↦ hn (hx ▸ hi.add hj), mul_zero]
+    · rw [isSupportedOnDvd_iff.1 hP x.1 hi, zero_mul]
 
 end IsSupportedOnDvd
 

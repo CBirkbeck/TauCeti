@@ -126,6 +126,16 @@ and the conductor statement of Layer 4 is phrased with this normalization of `V_
   `ModularForm.slash_levelRaise_eq_smul` with `mem_modFormCharSpace_iff_nebentypus`, and the
   `ℂ`-linearity of `levelRaiseₗ`), and AINTLIB's two `fun_eq_..._inv_smul` lemmas are not
   needed, mathlib's `mdifferentiable_smul` reaching the holomorphy descent directly.
+* `ModularForm.isSupportedOnDvd_qExpansion_levelRaise` and its cusp-form counterpart are adapted
+  from [AINTLIB](https://github.com/CBirkbeck/AINTLIB) commit `2baa76f74`, Apache-2.0,
+  Chris Birkbeck, `projects/LeanModularForms/LeanModularForms/Eigenforms/AtkinLehner.lean`,
+  where they are `qExpansion_modularFormLevelRaise_isSupportedOnDvd` and
+  `qExpansion_levelRaise_isSupportedOnDvd`. They live here rather than beside the rest of that
+  file's material because they are statements about `V_d`; the power-series predicate they
+  conclude in is `PowerSeries.IsSupportedOnDvd`, adapted from the same source file into
+  `TauCeti/RingTheory/PowerSeries/Support.lean`. Each proof is one rewrite by
+  `qExpansion_levelRaise` and then `PowerSeries.isSupportedOnDvd_expand`, where the source
+  recomputes coefficients.
 -/
 
 public noncomputable section
