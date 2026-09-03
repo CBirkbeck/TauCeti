@@ -437,8 +437,10 @@ theorem integrable_id_laplaceMeasure (μ : ℝ) : Integrable id (laplaceMeasure 
 
 /-- **The mean deviation of a Laplace law from its location vanishes.**
 
-After translating by `μ` the integrand is odd, so reflection invariance of `volume` makes its
-integral zero. -/
+This is the vanishing first central moment, and it is what turns the location parameter into the
+mean: `integral_id_laplaceMeasure` is this result together with the total mass of the law. Reach for
+it directly when centring an integrand on `μ`; for the absolute central moments of every order, see
+`integral_pow_abs_sub_laplaceMeasure`. -/
 theorem integral_sub_const_laplaceMeasure (hb : 0 < b) (μ : ℝ) :
     ∫ y, (y - μ) ∂laplaceMeasure μ b = 0 := by
   rw [laplaceMeasure_eq_withDensity, integral_withDensity_eq_integral_toReal_smul
