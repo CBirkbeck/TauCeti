@@ -16,7 +16,8 @@ Mathlib attaches to a height one prime `v` of a Dedekind domain `R` a homomorphi
 `v.valuationOfNeZero : Kˣ →* Multiplicative ℤ`, the `v`-adic valuation of a unit of the fraction
 field read without the adjoined zero, and relates it to `v.valuation K` in one direction only:
 `valuationOfNeZero_eq` coerces it into `ℤᵐ⁰`. This file supplies the two complements that make it
-usable as a rewriting rule.
+usable as a rewriting rule, together with two lemmas transporting it along a compatible pair of
+embeddings of Dedekind domains and their fraction fields.
 
 ## Main results
 
@@ -36,8 +37,8 @@ usable as a rewriting rule.
 
 These live in their own module rather than beside their first consumer. `valuationOfNeZero` is
 declared in `Mathlib/RingTheory/DedekindDomain/SelmerGroup.lean`, so any host must import that;
-but the *generic* completion and `S`-integer APIs that need these two lemmas must not, in
-consequence, also inherit this repository's Selmer-group development. Keeping the pair here lets
+but the *generic* completion and `S`-integer APIs that need the two complements must not, in
+consequence, also inherit this repository's Selmer-group development. Keeping them here lets
 `TauCeti/RingTheory/DedekindDomain/AdicCompletionExtension.lean` use them without depending on
 `TauCeti/RingTheory/DedekindDomain/SelmerGroup.lean`, which is downstream of it.
 
@@ -55,6 +56,8 @@ header.
 
 public section
 
+open scoped WithZero
+
 namespace IsDedekindDomain.HeightOneSpectrum
 
 variable {R : Type*} [CommRing R] [IsDedekindDomain R]
@@ -64,7 +67,7 @@ variable {R : Type*} [CommRing R] [IsDedekindDomain R]
 Mathlib carries only the coerced form `valuationOfNeZero_eq`, which this complements. -/
 @[simp]
 theorem valuationOfNeZero_eq_iff (v : HeightOneSpectrum R) (u : Kˣ) (m : Multiplicative ℤ) :
-    v.valuationOfNeZero u = m ↔ v.valuation K (u : K) = (m : WithZero (Multiplicative ℤ)) := by
+    v.valuationOfNeZero u = m ↔ v.valuation K u = (m : ℤᵐ⁰) := by
   rw [← WithZero.coe_inj, valuationOfNeZero_eq]
 
 /-- A unit has trivial `v`-adic `valuationOfNeZero` iff its `v`-adic valuation is `1`, the case
@@ -75,8 +78,8 @@ annotation instead. With both marked, `simpNF` rejects this one — "simp can pr
 the general form subsumes it. Every consumer names it explicitly, so nothing depends on the
 attribute. -/
 theorem valuationOfNeZero_eq_one_iff (v : HeightOneSpectrum R) (x : Kˣ) :
-    v.valuationOfNeZero x = 1 ↔ v.valuation K (x : K) = 1 := by
-  simp
+    v.valuationOfNeZero x = 1 ↔ v.valuation K x = 1 := by
+  simp only [valuationOfNeZero_eq_iff, WithZero.coe_one]
 
 section Transport
 
@@ -89,25 +92,23 @@ of their fraction fields, the `w`-adic valuation of `φ u` is the valuation of `
 contracted prime `comapOfNeBot ψ w hne`, raised to a fixed power independent of `u` — namely the
 ramification index of `w` over that contraction. -/
 theorem exists_valuationOfNeZero_map_eq (φ : L →+* N) (ψ : B →+* C)
-    (hcomp : (algebraMap C N).comp ψ = φ.comp (algebraMap B L))
-    (w : HeightOneSpectrum C) (hne : w.asIdeal.comap ψ ≠ ⊥) :
+    (hcomp : (algebraMap C N).comp ψ = φ.comp (algebraMap B L)) (w : HeightOneSpectrum C)
+    (hne : w.asIdeal.comap ψ ≠ ⊥) :
     ∃ e : ℕ, ∀ u : Lˣ, w.valuationOfNeZero (Units.map (φ : L →* N) u) =
       (comapOfNeBot ψ w hne).valuationOfNeZero u ^ e := by
+  -- the tower of algebras that `valuation_liesOver` compares the two valuations along
   let _ : Algebra B C := ψ.toAlgebra
   let _ : Algebra L N := φ.toAlgebra
   let _ : Algebra B N := (φ.comp (algebraMap B L)).toAlgebra
-  have hψ : Function.Injective ψ := by
-    have h : Function.Injective ((algebraMap C N).comp ψ) := by
-      rw [hcomp]
-      exact φ.injective.comp (IsFractionRing.injective B L)
-    exact fun x y hxy ↦ h (by simp only [RingHom.comp_apply, hxy])
+  have hψ : Function.Injective ψ := .of_comp (f := algebraMap C N) <| by
+    rw [← RingHom.coe_comp, hcomp]
+    exact φ.injective.comp (IsFractionRing.injective B L)
   have : IsScalarTower B L N := .of_algebraMap_eq' rfl
-  have : IsScalarTower B C N := .of_algebraMap_eq fun x ↦ (RingHom.congr_fun hcomp x).symm
+  have : IsScalarTower B C N := .of_algebraMap_eq' hcomp.symm
   have : Module.IsTorsionFree B C := Module.isTorsionFree_iff_algebraMap_injective.mpr hψ
   have : w.asIdeal.LiesOver (comapOfNeBot ψ w hne).asIdeal := ⟨comapOfNeBot_asIdeal ψ w hne⟩
   refine ⟨(comapOfNeBot ψ w hne).asIdeal.ramificationIdx' w.asIdeal, fun u ↦ ?_⟩
-  rw [valuationOfNeZero_eq_iff, WithZero.coe_pow, valuationOfNeZero_eq, Units.coe_map,
-    MonoidHom.coe_coe]
+  rw [valuationOfNeZero_eq_iff, WithZero.coe_pow, valuationOfNeZero_eq]
   exact (valuation_liesOver N (comapOfNeBot ψ w hne) w (u : L)).symm
 
 /-- Divisibility of adic valuations transports along compatible embeddings: if the valuation of
@@ -118,13 +119,12 @@ This is the form in which the semilocal comparison of `2`-descent uses
 multiplication preserves divisibility, so parity — the case `n = 2` — survives in both
 directions. -/
 theorem dvd_toAdd_valuationOfNeZero_map (φ : L →+* N) (ψ : B →+* C)
-    (hcomp : (algebraMap C N).comp ψ = φ.comp (algebraMap B L))
-    (w : HeightOneSpectrum C) (hne : w.asIdeal.comap ψ ≠ ⊥) {n : ℕ} (u : Lˣ)
+    (hcomp : (algebraMap C N).comp ψ = φ.comp (algebraMap B L)) (w : HeightOneSpectrum C)
+    (hne : w.asIdeal.comap ψ ≠ ⊥) {n : ℕ} (u : Lˣ)
     (h : (n : ℤ) ∣ Multiplicative.toAdd ((comapOfNeBot ψ w hne).valuationOfNeZero u)) :
     (n : ℤ) ∣ Multiplicative.toAdd (w.valuationOfNeZero (Units.map (φ : L →* N) u)) := by
   obtain ⟨e, he⟩ := exists_valuationOfNeZero_map_eq φ ψ hcomp w hne
-  rw [he u, toAdd_pow, nsmul_eq_mul]
-  exact h.mul_left _
+  simpa only [he u, toAdd_pow, nsmul_eq_mul] using h.mul_left _
 
 end Transport
 
