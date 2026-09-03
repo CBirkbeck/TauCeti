@@ -10,7 +10,7 @@ public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.PrimePower
 -- The Atkin–Lehner anti-involution and the commutativity it buys are used only inside proofs,
 -- so private: pointwise in `heckeTCompositeGamma0_mul_of_coprime`, and as the structure
 -- `commRingHeckeRingGamma0` in `heckeTScalarCompositeGamma0_eq_zero_of_not_coprime` and
--- `heckeTCompositeGamma0_mul`.
+-- `heckeTCompositeGamma0_mul_eq_sum_divisors_gcd`.
 import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.AtkinLehner
 
 /-!
@@ -49,7 +49,8 @@ the Atkin–Lehner anti-involution.
   factorisation of `n`.
 * `HeckeRing.GL2.heckeTScalarCompositeGamma0`: the composite scalar `∏_p S_p ^ v_p(n)`,
   assembled by the same ordered product. It is the `S_d` indexing the divisor table, and it
-  carries the same peeling and coprime-multiplicativity API as the composite `T`.
+  carries the same `primePowerProd` API as the composite `T`, through
+  `heckeTScalarCompositeGamma0_def`.
 
 ## Main results
 
@@ -60,17 +61,19 @@ the Atkin–Lehner anti-involution.
   with the level the composite degenerates to a power of the generator.
 * `HeckeRing.GL2.heckeTCompositeGamma0_mul_of_coprime`: the composite is multiplicative on
   coprime arguments, `T_{mn} = T_m · T_n`.
-* `HeckeRing.GL2.heckeTCompositeGamma0_mul`: **the global multiplication table**
-  `T_m · T_n = ∑_{d ∣ gcd m n} d • (S_d · T_{mn/d²})`, for nonzero `m` and `n`. It subsumes the
-  coprime case, where the gcd is `1` and the sum collapses to its `d = 1` term.
+* `HeckeRing.GL2.heckeTCompositeGamma0_mul_eq_sum_divisors_gcd`: **the global multiplication table**
+  `T_m · T_n = ∑_{d ∣ gcd m n} d • (S_d · T_{mn/d²})`, for nonzero `m` and `n`. Named after the
+  generic theorem it instantiates: `_mul` alone would read as multiplicativity in the index, which
+  is the neighbouring `heckeTCompositeGamma0_mul_of_coprime`. At coprime `m` and `n` the gcd is `1`
+  and the sum collapses to its `d = 1` term, recovering that lemma.
 
 ## References
 
 * Diamond–Shurman, *A first course in modular forms*, §5.3 — the multiplicative assembly
   `T_n = ∏_p T_{p^{v_p(n)}}` this file transcribes to the ring.
 * [G. Shimura, *Introduction to the arithmetic theory of automorphic functions*][shimura1971],
-  §3.3 — Theorem 3.24(3), the multiplication table `heckeTCompositeGamma0_mul` states at level
-  `Γ₀(N)`.
+  §3.3 — Theorem 3.24(3), the multiplication table that
+  `heckeTCompositeGamma0_mul_eq_sum_divisors_gcd` states at level `Γ₀(N)`.
 * Ported from [AINTLIB](https://github.com/CBirkbeck/AINTLIB) commit
   `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck,
   `projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/Unified/Gamma0RingDn.lean`,
@@ -202,7 +205,8 @@ theorem heckeTCompositeGamma0_mul_of_coprime {m n : ℕ} (hmn : m.Coprime n) :
 /-- The composite **scalar** attached to `n`: the blocks `S_p ^ vₚ(n)` multiplied over the primes
 of `n`, least prime first, by the same ordered product that assembles `heckeTCompositeGamma0`.
 
-This is the `S_d` that indexes the divisor sum in `heckeTCompositeGamma0_mul`. At a prime power
+This is the `S_d` that indexes the divisor sum in
+`heckeTCompositeGamma0_mul_eq_sum_divisors_gcd`. At a prime power
 it is a power of the scalar operator, at `1` — as at the junk input `0` — the identity. Where `p`
 shares a factor with the level `S_p = 0`, so `heckeTScalarCompositeGamma0 N n = 0` as soon as
 `n` has such a prime to a positive power. -/
@@ -239,50 +243,26 @@ theorem heckeTScalarCompositeGamma0_prime_pow {p : ℕ} (hp : p.Prime) (v : ℕ)
   · simpa only [heckeTScalarCompositeGamma0_def] using
       TauCeti.Nat.primePowerProd_prime_pow (fun p v ↦ heckeTScalarGamma0 N p ^ v) hp hv
 
-/-- **At a bare prime the composite scalar is the scalar operator.** The `v = 1` case of
-`heckeTScalarCompositeGamma0_prime_pow`, stated separately for the same reason its
-`primePowerProd` counterpart is: a bare prime is not syntactically a power, so that lemma
-cannot fire on it. -/
-@[simp]
-theorem heckeTScalarCompositeGamma0_prime {p : ℕ} (hp : p.Prime) :
-    heckeTScalarCompositeGamma0 N p = heckeTScalarGamma0 N p := by
-  simpa using heckeTScalarCompositeGamma0_prime_pow N hp 1
-
-/-- **The peeling step for the composite scalar**, the companion of
-`heckeTCompositeGamma0_of_one_lt`: for `1 < n` the product splits off the block at the least
-prime factor of `n`, carrying its whole multiplicity. -/
-theorem heckeTScalarCompositeGamma0_of_one_lt {n : ℕ} (hn : 1 < n) :
-    heckeTScalarCompositeGamma0 N n =
-      heckeTScalarGamma0 N n.minFac ^ n.factorization n.minFac *
-        heckeTScalarCompositeGamma0 N (n / n.minFac ^ n.factorization n.minFac) := by
-  simpa only [heckeTScalarCompositeGamma0_def] using
-    TauCeti.Nat.primePowerProd_of_one_lt (fun p v ↦ heckeTScalarGamma0 N p ^ v) hn
-
-/-- **The composite scalar is multiplicative on coprime arguments**, the companion of
-`heckeTCompositeGamma0_mul_of_coprime` and proved the same way: one application of
-`TauCeti.Nat.primePowerProd_mul_of_coprime`, whose commutation obligation is discharged from the
-Atkin–Lehner anti-involution pointwise, keeping the statement in the ambient `Semiring`.
-
-Note this is multiplicativity of the *assembled* family in its index, not of `heckeTScalarGamma0`
-itself; the latter is a statement about `diagElemGamma0` and is not available here. -/
-theorem heckeTScalarCompositeGamma0_mul_of_coprime {m n : ℕ} (hmn : m.Coprime n) :
-    heckeTScalarCompositeGamma0 N (m * n) =
-      heckeTScalarCompositeGamma0 N m * heckeTScalarCompositeGamma0 N n := by
-  simpa only [heckeTScalarCompositeGamma0_def] using
-    TauCeti.Nat.primePowerProd_mul_of_coprime (fun p v ↦ heckeTScalarGamma0 N p ^ v) hmn
-      fun _ _ _ _ _ ↦ HeckeCosetModule.mul_comm_of_antiInvolution ℤ (atkinLehnerAntiInvolution N)
-        (atkinLehnerAntiInvolution_onHeckeCoset_eq_self N) _ _
-
 /-- The `Γ₀(N)` Hecke ring over `ℤ` as a *commutative* ring.
 
 `TauCeti.Nat.primePowerProd_mul_eq_sum_divisors_gcd` asks for a `CommSemiring` structure on the
 coefficient type, so the table below needs commutativity as a *structure* rather than as the
-pointwise `HeckeCosetModule.mul_comm_of_antiInvolution` the neighbouring proofs quote. A `CommRing`
-supplies one, and this builds the shortest such: it adds `mul_comm` to the *ambient* `Ring`
-instance rather than extending `commSemiringHeckeRingGamma0`, so every operation it carries — and
-hence the `CommSemiring` the generic theorem sees — is the ambient one by construction and no
-diamond is introduced. The statement of `heckeTCompositeGamma0_mul` is therefore in the ambient
-algebra, and only its proof sees this.
+pointwise `HeckeCosetModule.mul_comm_of_antiInvolution` the neighbouring proofs quote.
+
+`HeckeRing.GL2.commSemiringHeckeRingGamma0` supplies exactly that class and would be the obvious
+choice, but it cannot be used here, which is worth recording. It is built by
+`HeckeCosetModule.commSemiringOfAntiInvolution`, which extends `instSemiringHeckeRing`, whereas
+the `Mul` and `One` in the statements below come from the *ambient* `Ring` instance. The two agree
+definitionally but not syntactically, so the same `TauCeti.Nat.primePowerProd` term carries
+different instance arguments in the goal and in the generic lemma. Measured: under
+`commSemiringHeckeRingGamma0`, `TauCeti.Nat.primePowerProd_eq_factorization_prod` fails to rewrite
+a goal of literally its own shape, and the `CommSemiring` argument of the generic table is left
+stuck as a metavariable.
+
+This def adds `mul_comm` to the ambient `Ring` instead, so every operation it carries — and hence
+the `CommSemiring` the generic theorem sees — is the ambient one by construction, and no diamond
+is introduced. The statement of `heckeTCompositeGamma0_mul_eq_sum_divisors_gcd` is in the ambient
+algebra either way; only its proof sees this.
 
 Private and local for the same reason `commSemiringHeckeRingGamma0` is not an instance — the
 anti-involution is data. -/
@@ -295,7 +275,8 @@ private noncomputable def commRingHeckeRingGamma0 :
 
 /-- **The composite scalar vanishes at an index sharing a factor with the level.**
 
-This is what makes the bad divisors contribute nothing to `heckeTCompositeGamma0_mul`: the sum
+This is what makes the bad divisors contribute nothing to
+`heckeTCompositeGamma0_mul_eq_sum_divisors_gcd`: the sum
 there runs over *all* divisors of `gcd m n`, and the ones that are not prime to the level drop
 out through this lemma rather than being excluded from the index. -/
 @[simp]
@@ -318,8 +299,10 @@ theorem heckeTScalarCompositeGamma0_eq_zero_of_not_coprime {n : ℕ} (hn : n ≠
 `T_m · T_n = ∑_{d ∣ gcd m n} d • (S_d · T_{mn/d²})`.
 
 This is the composite counterpart of `heckeTGeneratorRecGamma0_mul`, which is the same identity
-one prime at a time, and it subsumes `heckeTCompositeGamma0_mul_of_coprime`: when `m` and `n` are
-coprime the gcd is `1`, the sum collapses to its `d = 1` term, and `S₁ = 1` leaves `T_m · T_n`.
+one prime at a time. At coprime `m` and `n` it specialises to
+`heckeTCompositeGamma0_mul_of_coprime`: the gcd is `1`, the sum collapses to its `d = 1` term, and
+`S₁ = 1` leaves `T_m · T_n`. Note the two `_mul`s differ — this one is about a product of two
+composite elements, that one about the index of a single element.
 
 Both arguments must be nonzero. `heckeTCompositeGamma0` sends `0` to the empty product `1` and
 `gcd 0 0 = 0` has no divisors, so at `m = n = 0` the left side is `1` and the right an empty sum.
@@ -328,7 +311,7 @@ Together with `heckeTCompositeGamma0_prime_pow` this determines every product of
 elements from the prime-power data. Divisors sharing a factor with the level contribute nothing,
 by `heckeTScalarCompositeGamma0_eq_zero_of_not_coprime`, so the sum over *all* divisors of
 `gcd m n` is the right index even though only the good ones carry weight. -/
-theorem heckeTCompositeGamma0_mul {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) :
+theorem heckeTCompositeGamma0_mul_eq_sum_divisors_gcd {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) :
     heckeTCompositeGamma0 N m * heckeTCompositeGamma0 N n =
       ∑ d ∈ (Nat.gcd m n).divisors, (d : ℤ) •
         (heckeTScalarCompositeGamma0 N d * heckeTCompositeGamma0 N (m * n / d ^ 2)) := by

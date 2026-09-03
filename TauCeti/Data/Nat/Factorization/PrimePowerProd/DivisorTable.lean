@@ -5,7 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.Data.Nat.Factorization.GcdSplit
 public import TauCeti.Data.Nat.Factorization.PrimePowerProd.Basic
+public import Mathlib.Data.Finset.NatDivisors
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Tactic.Ring
@@ -49,53 +51,32 @@ the per-prime table is the input rather than multiplicativity.
   `projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/Unified/Gamma0RingDn.lean`,
   section `FormalTable` (lines 186-438). The source states the table over `Finset.attach` of the
   divisors and keeps its whole section `private` inside a Hecke namespace; both are dropped here.
-  The summand never inspects a membership proof, so the sum is taken over `Nat.divisors` itself and
-  the reindexing is a `Finset.sum_nbij'` between plain finsets rather than between subtypes — which
-  also removes the source's four `Subtype.ext` obligations. The source's two factorization helpers
-  are one lemma here, their `0 < d` hypotheses being consequences of `¬p ∣ d`. The source's
-  `peelProd` is this repository's `TauCeti.Nat.primePowerProd`, and the statement is over `d ^ 2`
-  rather than the source's `d * d`.
+  The summand never inspects a membership proof, so the sum is taken over `Nat.divisors` itself.
+  The source builds the reindexing as an explicit bijection with four `Subtype.ext` obligations;
+  here the divisors of the coprime product are split by Mathlib's `Nat.divisors_mul` and
+  `Nat.Coprime.mul_injOn_divisors` and the prime-power factor by `Nat.sum_divisors_prime_pow`, so
+  no bijection is constructed and the source's factorization helpers are not needed. The gcd
+  splitting itself is `TauCeti.Data.Nat.Factorization.GcdSplit`. The source's `peelProd` is this
+  repository's `TauCeti.Nat.primePowerProd`, and the statement is over `d ^ 2` rather than the
+  source's `d * d`.
 -/
 
 public section
 
 open Finset
 
+open scoped Pointwise
+
 namespace TauCeti
 
 namespace Nat
 
-/-! ### Splitting a natural number at a prime -/
-
-/-- The `p`-adic valuation of `p ^ k * d` is `k` when `p` does not divide `d`.
-
-No positivity is asked of `d`: `¬p ∣ d` already forces `d ≠ 0`, since every prime divides `0`. -/
-private theorem factorization_pow_mul_self {p d : ℕ} (hp : p.Prime) (hpd : ¬p ∣ d) (k : ℕ) :
-    (p ^ k * d).factorization p = k := by
-  have hd : d ≠ 0 := fun h ↦ hpd (h ▸ dvd_zero p)
-  rw [Nat.factorization_mul (pow_ne_zero k hp.pos.ne') hd, Finsupp.add_apply,
-    hp.factorization_pow, Nat.factorization_eq_zero_of_not_dvd hpd]
-  simp
-
-/-- The greatest common divisor splits at a prime: if `p` divides neither `m'` nor `n'`, then the
-`p`-free part of `gcd (p^a·m') (p^b·n')` is `gcd m' n'` and its `p`-part is `p ^ min a b`. -/
-private theorem gcd_pow_mul_pow_mul {p a b m' n' : ℕ} (hp : p.Prime) (hm' : ¬p ∣ m')
-    (hn' : ¬p ∣ n') :
-    Nat.gcd (p ^ a * m') (p ^ b * n') = Nat.gcd m' n' * p ^ min a b := by
-  have hpa_m' : Nat.Coprime (p ^ a) m' := (hp.coprime_iff_not_dvd.2 hm').pow_left a
-  have hpa_n' : Nat.Coprime (p ^ a) n' := (hp.coprime_iff_not_dvd.2 hn').pow_left a
-  have hm'_pb : Nat.Coprime m' (p ^ b) := ((hp.coprime_iff_not_dvd.2 hm').pow_left b).symm
-  have hgcd_pp : Nat.gcd (p ^ a) (p ^ b) = p ^ min a b := by
-    rcases le_total a b with h | h
-    · rw [Nat.gcd_eq_left (pow_dvd_pow p h), min_eq_left h]
-    · rw [Nat.gcd_eq_right (pow_dvd_pow p h), min_eq_right h]
-  rw [hpa_m'.mul_gcd, Nat.Coprime.gcd_mul_right_cancel_right _ hpa_n'.symm,
-    Nat.Coprime.gcd_mul_left_cancel_right _ hm'_pb.symm, hgcd_pp, mul_comm]
+/-! ### The index, split at a prime -/
 
 /-- The index appearing on the right of the table, after a divisor `p^j·d'` of `gcd m n` has been
 split at `p`: the quotient `mn/(p^j·d')²` factors as a power of `p` times the corresponding
 quotient for the `p`-free parts, and the two factors are coprime. -/
-private theorem mul_div_mul_self {p a b m' n' m n d' j : ℕ} (hp : p.Prime)
+private theorem mul_div_sq_eq_pow_mul_of_not_dvd {p a b m' n' m n d' j : ℕ} (hp : p.Prime)
     (hm_eq : m = p ^ a * m') (hn_eq : n = p ^ b * n') (hm' : ¬p ∣ m') (hn' : ¬p ∣ n')
     (hd'm : d' ∣ m') (hd'n : d' ∣ n') (hj : j ≤ min a b) :
     m * n / (p ^ j * d' * (p ^ j * d')) =
@@ -113,86 +94,11 @@ private theorem mul_div_mul_self {p a b m' n' m n d' j : ℕ} (hp : p.Prime)
   rw [h1, h2, hab, pow_add, mul_assoc, Nat.mul_div_mul_left _ _ (pow_pos hp.pos (2 * j)),
     Nat.mul_div_assoc _ hdd]
 
-/-- The forward half of the reindexing bijection lands where it should: a `p`-power times a
-divisor of `g` divides `g * p ^ k`, as soon as the exponent is at most `k`. -/
-private theorem pow_mul_dvd_mul_pow {p g j d k : ℕ} (hj : j ≤ k) (hd : d ∣ g) :
-    p ^ j * d ∣ g * p ^ k :=
-  mul_comm (p ^ j) d ▸ Nat.mul_dvd_mul hd (pow_dvd_pow p hj)
-
-/-- The backward half of the reindexing bijection: when `g` is prime to `p`, a divisor of
-`g * p ^ k` splits into a `p`-part of exponent at most `k` and a `p`-free part dividing `g`.
-Stated as the membership the bijection has to produce. -/
-private theorem mem_range_product_divisors {p g k d : ℕ} (hp : p.Prime) (hg0 : g ≠ 0)
-    (hpg : ¬p ∣ g) (hd : d ∣ g * p ^ k) :
-    (d.factorization p, ordCompl[p] d) ∈ Finset.range (k + 1) ×ˢ g.divisors := by
-  have hprod0 : g * p ^ k ≠ 0 := Nat.mul_ne_zero hg0 (pow_ne_zero _ hp.pos.ne')
-  have hd0 : d ≠ 0 := ne_zero_of_dvd_ne_zero hprod0 hd
-  simp only [Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff]
-  refine ⟨?_, Nat.mem_divisors.2 ⟨?_, hg0⟩⟩
-  · calc d.factorization p ≤ (g * p ^ k).factorization p :=
-          (Nat.factorization_le_iff_dvd hd0 hprod0).2 hd p
-      _ = k := by rw [mul_comm]; exact factorization_pow_mul_self hp hpg _
-  · have hord : ordCompl[p] (g * p ^ k) = g := by
-      rw [mul_comm, Nat.ordCompl_pow_mul_of_not_dvd _ hp hpg]
-    exact hord ▸ Nat.ordCompl_dvd_ordCompl_of_dvd hd p
-
-/-- **The gcd splits at a prime**: the gcd of the `p`-free parts, times `p` to the smaller of the
-two valuations. This is the shape both the induction and the reindexing consume. -/
-private theorem gcd_eq_gcd_ordCompl_mul_pow_min {p m n : ℕ} (hp : p.Prime) (hm : m ≠ 0)
-    (hn : n ≠ 0) :
-    Nat.gcd m n = Nat.gcd (ordCompl[p] m) (ordCompl[p] n) *
-      p ^ min (m.factorization p) (n.factorization p) := by
-  have hm_eq : m = p ^ m.factorization p * ordCompl[p] m :=
-    (Nat.ordProj_mul_ordCompl_eq_self m p).symm
-  have hn_eq : n = p ^ n.factorization p * ordCompl[p] n :=
-    (Nat.ordProj_mul_ordCompl_eq_self n p).symm
-  conv_lhs => rw [hm_eq, hn_eq]
-  exact gcd_pow_mul_pow_mul hp (Nat.not_dvd_ordCompl hp hm) (Nat.not_dvd_ordCompl hp hn)
-
-/-- Splitting `p ^ j * d` at `p` returns `(j, d)` when `p` does not divide `d`: the two halves of
-the reindexing bijection are mutually inverse. -/
-private theorem factorization_ordCompl_pow_mul {p j d : ℕ} (hp : p.Prime) (hd : ¬p ∣ d) :
-    ((p ^ j * d).factorization p, ordCompl[p] (p ^ j * d)) = (j, d) := by
-  have hfact : (p ^ j * d).factorization p = j := factorization_pow_mul_self hp hd j
-  simp [hfact, Nat.mul_div_cancel_left d (pow_pos hp.pos j)]
-
-/-- Removing the `p`-part strictly shrinks the gcd, when `p` divides both arguments. This is what
-makes the induction in `primePowerProd_mul_eq_sum_divisors_gcd` terminate. -/
-private theorem gcd_ordCompl_lt {p m n : ℕ} (hp : p.Prime) (hm : m ≠ 0) (hn : n ≠ 0)
-    (hpm : p ∣ m) (hpn : p ∣ n)
-    (hgcd : Nat.gcd m n = Nat.gcd (ordCompl[p] m) (ordCompl[p] n) *
-      p ^ min (m.factorization p) (n.factorization p)) :
-    Nat.gcd (ordCompl[p] m) (ordCompl[p] n) < Nat.gcd m n := by
-  rw [hgcd]
-  refine lt_mul_of_one_lt_right (Nat.pos_of_ne_zero fun h ↦
-    (Nat.ordCompl_pos p hm).ne' (Nat.eq_zero_of_gcd_eq_zero_left h)) (Nat.one_lt_pow ?_ hp.one_lt)
-  have ha : 0 < m.factorization p := hp.factorization_pos_of_dvd hm hpm
-  have hb : 0 < n.factorization p := hp.factorization_pos_of_dvd hn hpn
-  omega
-
 /-! ### The table -/
 
 section CommSemiring
 
 variable {R : Type*} [CommSemiring R] (D S : ℕ → ℕ → R)
-
-/-- Coprime multiplicativity of the assembled family, in a commutative semiring: the commutation
-obligations of `primePowerProd_mul_of_coprime` are all discharged by `Commute.all`. -/
-private theorem primePowerProd_mul_coprime (f : ℕ → ℕ → R) {a b : ℕ} (hab : Nat.Coprime a b) :
-    primePowerProd f (a * b) = primePowerProd f a * primePowerProd f b :=
-  primePowerProd_mul_of_coprime f hab fun _ _ _ _ _ ↦ Commute.all _ _
-
-/-- Splitting the assembly at a prime: `f m` is its `p`-block times the assembly over the `p`-free
-part of `m`. Applied at both arguments of the table. -/
-private theorem primePowerProd_eq_ordProj_mul_ordCompl (f : ℕ → ℕ → R) {p m : ℕ} (hp : p.Prime)
-    (hm : m ≠ 0) :
-    primePowerProd f m =
-      primePowerProd f (p ^ m.factorization p) * primePowerProd f (ordCompl[p] m) := by
-  have hm_eq : m = p ^ m.factorization p * ordCompl[p] m :=
-    (Nat.ordProj_mul_ordCompl_eq_self m p).symm
-  conv_lhs => rw [hm_eq]
-  exact primePowerProd_mul_coprime f
-    ((hp.coprime_iff_not_dvd.2 (Nat.not_dvd_ordCompl hp hm)).pow_left _)
 
 /-- The two prime-power blocks may be put in `min`/`max` order, which is the shape the per-prime
 table is stated in. -/
@@ -205,25 +111,32 @@ private theorem primePowerProd_prime_pow_mul_min_max (f : ℕ → ℕ → R) (p 
 
 /-- The summand of the product of the two sums agrees with the summand of the target sum at the
 divisor `p ^ j * d'`. This is the pointwise half of the reindexing. -/
-private theorem smul_mul_smul_of_split {p a b m' n' m n d' j : ℕ} (hp : p.Prime)
-    (hm_eq : m = p ^ a * m') (hn_eq : n = p ^ b * n') (hm' : ¬p ∣ m') (hn' : ¬p ∣ n')
-    (hd'g : d' ∣ Nat.gcd m' n') (hpg : ¬p ∣ Nat.gcd m' n') (hj : j ≤ min a b) :
+private theorem primePowerProd_smul_mul_smul_of_not_dvd {p a b m' n' m n d' j : ℕ}
+    (hp : p.Prime) (hm_eq : m = p ^ a * m') (hn_eq : n = p ^ b * n') (hm' : ¬p ∣ m')
+    (hn' : ¬p ∣ n') (hd'g : d' ∣ Nat.gcd m' n') (hj : j ≤ min a b) :
     ((p ^ j : ℕ) • (primePowerProd S (p ^ j) *
         primePowerProd D (p ^ (min a b + max a b - 2 * j)))) *
       ((d' : ℕ) • (primePowerProd S d' * primePowerProd D (m' * n' / (d' * d')))) =
     ((p ^ j * d' : ℕ)) • (primePowerProd S (p ^ j * d') *
       primePowerProd D (m * n / (p ^ j * d' * (p ^ j * d')))) := by
-  obtain ⟨hidx, hcopD⟩ := mul_div_mul_self hp hm_eq hn_eq hm' hn'
+  have hpg : ¬p ∣ Nat.gcd m' n' := fun h ↦ hm' (h.trans (Nat.gcd_dvd_left m' n'))
+  obtain ⟨hidx, hcopD⟩ := mul_div_sq_eq_pow_mul_of_not_dvd hp hm_eq hn_eq hm' hn'
     (hd'g.trans (Nat.gcd_dvd_left m' n')) (hd'g.trans (Nat.gcd_dvd_right m' n')) hj
   have hcopS : Nat.Coprime (p ^ j) d' :=
     (hp.coprime_iff_not_dvd.2 fun h ↦ hpg (h.trans hd'g)).pow_left j
-  rw [smul_mul_smul_comm, hidx, primePowerProd_mul_coprime D hcopD,
-    primePowerProd_mul_coprime S hcopS]
+  rw [smul_mul_smul_comm, hidx, primePowerProd_mul_of_coprime_of_commMonoid D hcopD,
+    primePowerProd_mul_of_coprime_of_commMonoid S hcopS]
   ring_nf
 
 /-- The reindexing step: the product of the prime-power sum with the sum over the divisors of
-`gcd m' n'` is the sum over the divisors of `gcd m n`, via `(j, d') ↦ p ^ j * d'`. -/
-private theorem sum_mul_sum_eq_sum_divisors {p a b m' n' m n : ℕ} (hp : p.Prime) (hm'0 : m' ≠ 0)
+`gcd m' n'` is the sum over the divisors of `gcd m n`.
+
+`gcd m n` is the coprime product `gcd m' n' * p ^ min a b`, so `Nat.divisors_mul` splits its
+divisors as the pairwise products, injectively by `Nat.Coprime.mul_injOn_divisors`; the divisors of
+the prime-power factor are then re-indexed by their exponent with `Nat.sum_divisors_prime_pow`.
+What is left is the pointwise identity, which is
+`TauCeti.Nat.primePowerProd_smul_mul_smul_of_not_dvd`. -/
+private theorem primePowerProd_sum_mul_sum_eq_sum_divisors {p a b m' n' m n : ℕ} (hp : p.Prime)
     (hm' : ¬p ∣ m') (hn' : ¬p ∣ n') (hm_eq : m = p ^ a * m')
     (hn_eq : n = p ^ b * n') (hgcd : Nat.gcd m n = Nat.gcd m' n' * p ^ min a b) :
     (∑ j ∈ range (min a b + 1), (p ^ j : ℕ) • (primePowerProd S (p ^ j) *
@@ -232,28 +145,20 @@ private theorem sum_mul_sum_eq_sum_divisors {p a b m' n' m n : ℕ} (hp : p.Prim
         (d : ℕ) • (primePowerProd S d * primePowerProd D (m' * n' / (d * d)))) =
     ∑ d ∈ (Nat.gcd m n).divisors,
       (d : ℕ) • (primePowerProd S d * primePowerProd D (m * n / (d * d))) := by
-  have hg'0 : Nat.gcd m' n' ≠ 0 := fun h ↦ hm'0 (Nat.eq_zero_of_gcd_eq_zero_left h)
   have hpg' : ¬p ∣ Nat.gcd m' n' := fun h ↦ hm' (h.trans (Nat.gcd_dvd_left m' n'))
-  have hprod0 : Nat.gcd m' n' * p ^ min a b ≠ 0 :=
-    Nat.mul_ne_zero hg'0 (pow_ne_zero _ hp.pos.ne')
-  rw [Finset.sum_mul_sum, ← Finset.sum_product']
-  refine Finset.sum_nbij' (fun x ↦ p ^ x.1 * x.2)
-    (fun d ↦ (d.factorization p, ordCompl[p] d)) ?_ ?_ ?_ ?_ ?_
-  · rintro ⟨j, d'⟩ hx
-    simp only [Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff] at hx
-    rw [hgcd, Nat.mem_divisors]
-    exact ⟨pow_mul_dvd_mul_pow hx.1 (Nat.dvd_of_mem_divisors hx.2), hprod0⟩
-  · intro d hd
-    exact mem_range_product_divisors hp hg'0 hpg' (hgcd ▸ Nat.dvd_of_mem_divisors hd)
-  · rintro ⟨j, d'⟩ hx
-    simp only [Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff] at hx
-    exact factorization_ordCompl_pow_mul hp fun h ↦ hpg' (h.trans (Nat.dvd_of_mem_divisors hx.2))
-  · intro d _
-    exact Nat.ordProj_mul_ordCompl_eq_self d p
-  · rintro ⟨j, d'⟩ hx
-    simp only [Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff] at hx
-    exact smul_mul_smul_of_split D S hp hm_eq hn_eq hm' hn'
-      (Nat.dvd_of_mem_divisors hx.2) hpg' hx.1
+  have hcop : Nat.Coprime (Nat.gcd m' n') (p ^ min a b) :=
+    ((hp.coprime_iff_not_dvd.2 hpg').symm).pow_right _
+  rw [hgcd, Nat.divisors_mul,
+    show (Nat.gcd m' n').divisors * (p ^ min a b).divisors =
+      ((Nat.gcd m' n').divisors ×ˢ (p ^ min a b).divisors).image (fun q ↦ q.1 * q.2) from rfl,
+    Finset.sum_image hcop.mul_injOn_divisors, Finset.sum_product, Finset.sum_mul_sum,
+    Finset.sum_comm]
+  refine Finset.sum_congr rfl fun d' hd' ↦ ?_
+  rw [Nat.sum_divisors_prime_pow hp]
+  refine Finset.sum_congr rfl fun j hj ↦ ?_
+  rw [Nat.mul_comm d' (p ^ j)]
+  exact primePowerProd_smul_mul_smul_of_not_dvd D S hp hm_eq hn_eq hm' hn'
+    (Nat.dvd_of_mem_divisors hd') (Finset.mem_range_succ_iff.1 hj)
 
 /-- **The divisor multiplication table.** A family assembled over prime factorisations obeying the
 per-prime table `D_{p^r}·D_{p^s} = ∑_{i ≤ r} pⁱ • (S_{pⁱ}·D_{p^{r+s−2i}})` obeys the global one
@@ -276,7 +181,7 @@ theorem primePowerProd_mul_eq_sum_divisors_gcd
   | _ g ih =>
   rcases eq_or_ne g 1 with rfl | hg1
   · rw [Nat.divisors_one, Finset.sum_singleton, one_smul, Nat.one_mul,
-      Nat.div_one, primePowerProd_one, one_mul, ← primePowerProd_mul_coprime D hg]
+      Nat.div_one, primePowerProd_one, one_mul, ← primePowerProd_mul_of_coprime_of_commMonoid D hg]
   -- Split both arguments at the least prime `p` of the gcd.
   have hg0 : g ≠ 0 := fun h ↦ hm (Nat.eq_zero_of_gcd_eq_zero_left (hg.trans h))
   set p := g.minFac with hp_def
@@ -294,12 +199,12 @@ theorem primePowerProd_mul_eq_sum_divisors_gcd
   have hgcd := gcd_eq_gcd_ordCompl_mul_pow_min (p := p) hp hm hn
   -- The `p`-free gcd is strictly smaller, so the induction hypothesis applies to it.
   have hlt : Nat.gcd (ordCompl[p] m) (ordCompl[p] n) < g := by
-    rw [← hg]; exact gcd_ordCompl_lt hp hm hn hpm hpn hgcd
+    rw [← hg]; exact gcd_ordCompl_lt hp hm hn hpm hpn
   rw [← hg, primePowerProd_eq_ordProj_mul_ordCompl D hp hm,
     primePowerProd_eq_ordProj_mul_ordCompl D hp hn, mul_mul_mul_comm,
     primePowerProd_prime_pow_mul_min_max D p _ _, hppow p hp _ _ min_le_max,
     ih _ hlt hm'0 hn'0 rfl]
-  exact sum_mul_sum_eq_sum_divisors D S hp hm'0 hm' hn' hm_eq hn_eq hgcd
+  exact primePowerProd_sum_mul_sum_eq_sum_divisors D S hp hm' hn' hm_eq hn_eq hgcd
 
 end CommSemiring
 
