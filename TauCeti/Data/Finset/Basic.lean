@@ -45,8 +45,9 @@ subset is the complement of a singleton, and `Finset.piecewise` against such a c
 
 Use it to turn a formula indexed by the subsets that omit a single point into one indexed by the
 omitted point. -/
-theorem sum_subtype_card_eq_sum_update {ι α M : Type*} [Fintype ι] [DecidableEq ι]
-    [AddCommMonoid M] {m : ℕ} (hm : Fintype.card ι = m + 1) (F : (ι → α) → M) (f g : ι → α) :
+theorem sum_subtype_card_eq_sum_update {ι : Type*} {α : ι → Type*} {M : Type*} [Fintype ι]
+    [DecidableEq ι] [AddCommMonoid M] {m : ℕ} (hm : Fintype.card ι = m + 1)
+    (F : ((i : ι) → α i) → M) (f g : (i : ι) → α i) :
     (∑ s : {s : Finset ι // s.card = m}, F (s.1.piecewise f g)) =
       ∑ i : ι, F (Function.update f i (g i)) := by
   refine (Fintype.sum_bijective (fun a : ι ↦ ⟨{a}ᶜ, by
