@@ -57,24 +57,24 @@ namespace Matrix
 
 /-- Applying a matrix `A` in both strands re-expands a pure tensor of standard basis vectors back
 in the standard basis: the coefficient of `Pi.single p 1 ⊗ Pi.single q 1` is `A p x * A q y`. -/
-theorem piTensorProductMap_tprod_single {ι R : Type*} [Fintype ι] [DecidableEq ι] [CommSemiring R]
-    (A : Matrix ι ι R) (x y : ι) :
+theorem piTensorProductMap_tprod_single {ι κ R : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ]
+    [DecidableEq κ] [CommSemiring R] (A : Matrix κ ι R) (x y : ι) :
     PiTensorProduct.map (fun _ : Fin 2 => Matrix.mulVecLin A)
         (PiTensorProduct.tprod R ![Pi.single x (1 : R), Pi.single y (1 : R)]) =
-      ∑ p : ι, ∑ q : ι, (A p x * A q y) •
+      ∑ p : κ, ∑ q : κ, (A p x * A q y) •
         PiTensorProduct.tprod R ![Pi.single p (1 : R), Pi.single q (1 : R)] := by
-  have hcol : ∀ z : ι, A *ᵥ Pi.single z (1 : R) = ∑ p : ι, A p z • Pi.single p (1 : R) := by
+  have hcol : ∀ z : ι, A *ᵥ Pi.single z (1 : R) = ∑ p : κ, A p z • Pi.single p (1 : R) := by
     intro z
-    rw [Matrix.mulVec_single_one, ← (Pi.basisFun R ι).sum_repr (A.col z)]
+    rw [Matrix.mulVec_single_one, ← (Pi.basisFun R κ).sum_repr (A.col z)]
     simp [Matrix.col_apply]
   have hfun : (fun i : Fin 2 =>
       Matrix.mulVecLin A (![Pi.single x (1 : R), Pi.single y (1 : R)] i)) =
-      fun i : Fin 2 => ∑ p : ι, A p (![x, y] i) • Pi.single p (1 : R) := by
+      fun i : Fin 2 => ∑ p : κ, A p (![x, y] i) • Pi.single p (1 : R) := by
     funext i
     fin_cases i <;> simp [hcol]
   rw [PiTensorProduct.map_tprod, hfun,
     MultilinearMap.map_sum (PiTensorProduct.tprod R)
-      (g := fun i : Fin 2 => fun p : ι => A p (![x, y] i) • Pi.single p (1 : R)),
+      (g := fun i : Fin 2 => fun p : κ => A p (![x, y] i) • Pi.single p (1 : R)),
     ← TauCeti.sum_pi_fin_two fun p q => (A p x * A q y) •
       PiTensorProduct.tprod R ![Pi.single p (1 : R), Pi.single q (1 : R)]]
   refine Finset.sum_congr rfl fun r _ => ?_
