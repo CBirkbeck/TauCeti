@@ -16,11 +16,12 @@ ring of restricted power series, and one of the two maps that identify them goes
 quotient. This file supplies it: an evaluation `A⟨X⟩_T →+* B` that kills an ideal `𝔞` factors
 through `A⟨X⟩_T ⧸ 𝔞`, and the factorisation is again continuous.
 
-The factorisation itself is `Ideal.Quotient.lift`, and the map it produces is again continuous.
-`main` carries the same construction one level up, for morphisms of Huber pairs
-(`TauCeti.Huber.Pair.Hom.quotientLift`); that is the version to use when the source and target are
-Huber pairs rather than plain topological rings, since Wedhorn 5.50 speaks about ring
-homomorphisms and asks for no ring of integral elements.
+The same factorisation exists one level up, for morphisms of Huber pairs
+(`TauCeti.Huber.Pair.Hom.quotientLift`). The two differ in what the objects carry: a Huber pair
+comes with a ring of integral elements and its morphisms must preserve it, whereas Wedhorn's
+Proposition 5.50 — the universal property being transported here — speaks about ring
+homomorphisms of topological rings and asks for no such structure. Use the pair-level version when
+the source and target are Huber pairs, and this one otherwise.
 
 ## What is *not* assumed, and why it is worth saying
 
@@ -39,9 +40,9 @@ a well-behaved target should assume closedness alongside.
 ## Main results
 
 * `TauCeti.Huber.weightedEvalQuotientHom_comp_mk`: it is a factorisation of
-  `TauCeti.Huber.weightedEvalHom` through the quotient map, which is the property that
-  characterises it. The values on the images of the constants and the variables follow from it by
-  `simp`, so they get no separate lemmas.
+  `TauCeti.Huber.weightedEvalHom` through the quotient map. This is the property that characterises
+  the induced map, and it determines its values on the images of the constants and of the
+  variables.
 * `TauCeti.Huber.continuous_weightedEvalQuotientHom`: the induced map is continuous.
 * `TauCeti.Huber.existsUnique_continuous_ringHom_quotient_weightedRestrictedSubring`: it is the
   *only* continuous homomorphism out of `A⟨X⟩_T ⧸ 𝔞` with the prescribed values on the images of
