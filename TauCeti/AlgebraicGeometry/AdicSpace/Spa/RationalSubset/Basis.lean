@@ -107,17 +107,18 @@ This is Wedhorn Lemma 6.6 applied to the inclusion of the numerator span into th
 after adjoining the denominator. -/
 theorem isAdmissible_extendedIdealOfDefinition_of_isOpen_span (P : PairOfDefinition A)
     {T : Finset A} {s : A} (hT : IsOpen (Ideal.span (T : Set A) : Set A)) :
-    IsAdmissible P.extendedIdealOfDefinition T s :=
-  isAdmissible_iff.mpr <| ((P.isOpen_iff_le_radical _).mp hT).trans <|
-    Ideal.radical_mono <| Ideal.span_mono <| Set.subset_insert s (T : Set A)
+    IsAdmissible P.extendedIdealOfDefinition T s := by
+  rw [isAdmissible_iff]
+  refine (P.isOpen_iff_le_radical _).mp hT |>.trans (Ideal.radical_mono ?_)
+  exact Ideal.span_mono (Set.subset_insert s (T : Set A))
 
 /-- An admissible numerator set becomes an open numerator ideal after adjoining its denominator.
-The rational subset itself is unchanged by this operation. This is not a converse of
-`isAdmissible_extendedIdealOfDefinition_of_isOpen_span`, which assumes the span of `T` open. -/
+The rational subset itself is unchanged by this operation. -/
 theorem isOpen_span_insert_of_isAdmissible_extendedIdealOfDefinition (P : PairOfDefinition A)
     {T : Finset A} {s : A} (hT : IsAdmissible P.extendedIdealOfDefinition T s) :
-    IsOpen (Ideal.span (insert s (T : Set A)) : Set A) :=
-  (P.isOpen_iff_le_radical _).mpr <| isAdmissible_iff.mp hT
+    IsOpen (Ideal.span (insert s (T : Set A)) : Set A) := by
+  rw [P.isOpen_iff_le_radical]
+  exact isAdmissible_iff.mp hT
 
 end TopologicalRing
 
@@ -156,9 +157,11 @@ open Classical in
 numerator sets after adjoining their respective denominators. This is the admissibility half of
 the intersection formula for rational subsets. -/
 private theorem isOpen_span_insert_mul_insert (P : PairOfDefinition A)
-    {T₁ T₂ : Finset A} {s₁ s₂ : A} (hT₁ : IsOpen (Ideal.span (T₁ : Set A) : Set A))
+    {T₁ T₂ : Finset A} {s₁ s₂ : A}
+    (hT₁ : IsOpen (Ideal.span (T₁ : Set A) : Set A))
     (hT₂ : IsOpen (Ideal.span (T₂ : Set A) : Set A)) :
     IsOpen (Ideal.span ((insert s₁ T₁ * insert s₂ T₂ : Finset A) : Set A) : Set A) := by
+  classical
   rw [P.isOpen_iff_le_radical]
   have hmul :=
     (isAdmissible_extendedIdealOfDefinition_of_isOpen_span (s := s₁) P hT₁).mul
@@ -172,7 +175,8 @@ private theorem isOpen_span_insert_mul_insert (P : PairOfDefinition A)
 intersection. The set identity is `rationalSubset_inter`; admissibility is multiplicative in
 `Spv(A,IA)`, and adjoining the product denominator turns it back into openness. -/
 theorem inter_mem_spaRationalFamily_of_pairOfDefinition (P : PairOfDefinition A)
-    {Aplus : Subring A} {U V : Set (spa Aplus)} (hU : U ∈ spaRationalFamily Aplus)
+    {Aplus : Subring A}
+    {U V : Set (spa Aplus)} (hU : U ∈ spaRationalFamily Aplus)
     (hV : V ∈ spaRationalFamily Aplus) : U ∩ V ∈ spaRationalFamily Aplus := by
   classical
   obtain ⟨T₁, s₁, hT₁, rfl⟩ := hU
