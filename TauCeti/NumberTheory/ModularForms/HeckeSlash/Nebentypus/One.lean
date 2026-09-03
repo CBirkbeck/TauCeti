@@ -30,7 +30,7 @@ below. The two halves are independent, and this is the one that is unconditional
 
 ## Main results
 
-* `HeckeRing.GL2.twistedHeckeSlashSum_identity_coset`: the twisted slash sum over the identity
+* `HeckeRing.GL2.twistedHeckeSlashSum_one`: the twisted slash sum over the identity
   double coset returns a `χ`-invariant function unchanged.
 * `HeckeRing.GL2.twistedHeckeSlashSumCharEnd_one`: hence the endomorphism of the character space
   attached to the identity double coset is `1`.
@@ -80,11 +80,12 @@ nebentypus relation defining `functionCharSpace`.
 The `χ`-invariance hypothesis is essential and not an artefact: on a general `f : ℍ → ℂ` the
 weighted sum depends on the chosen representatives, as `twistedHeckeSlashSum`'s own docstring
 records. -/
-theorem twistedHeckeSlashSum_identity_coset (f : ℍ → ℂ) (hf : f ∈ functionCharSpace k χ) :
+theorem twistedHeckeSlashSum_one (f : ℍ → ℂ) (hf : f ∈ functionCharSpace k χ) :
     twistedHeckeSlashSum k χ 1 f = f := by
   have hout : (((1 : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ))
       ((Gamma0 N).map (mapGL ℚ))).out : GL (Fin 2) ℚ)) ∈ (Gamma0 N).map (mapGL ℚ) :=
-    HeckeCoset.rep_one_mem
+    -- `rep` is sealed, so `rep_one_mem` reaches this `Quotient.out` goal through `rep_def`.
+    by rw [← HeckeCoset.rep_def]; exact HeckeCoset.rep_one_mem
   -- `Γ₀(N) · 1 · Γ₀(N)` is a single right coset, so the sum has exactly one summand.
   have : Subsingleton (DecompQuotient ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))
       (((1 : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ))
@@ -105,13 +106,13 @@ theorem twistedHeckeSlashSum_identity_coset (f : ℍ → ℂ) (hf : f ∈ functi
   rw [hone, map_one, Units.val_one, one_smul, mul_inv_cancel, SlashAction.slash_one]
 
 /-- **The endomorphism of the character space attached to the identity double coset is the
-identity.** This is `twistedHeckeSlashSum_identity_coset` read through the restriction of
+identity.** This is `twistedHeckeSlashSum_one` read through the restriction of
 `Nebentypus/Invariance.lean`, where the `χ`-invariance hypothesis is carried by the carrier. -/
 @[simp] theorem twistedHeckeSlashSumCharEnd_one :
     twistedHeckeSlashSumCharEnd k χ 1 = 1 := by
   refine LinearMap.ext fun f ↦ Subtype.ext ?_
   rw [coe_twistedHeckeSlashSumCharEnd, Module.End.one_apply]
-  exact twistedHeckeSlashSum_identity_coset k χ (f : ℍ → ℂ) f.2
+  exact twistedHeckeSlashSum_one k χ (f : ℍ → ℂ) f.2
 
 /-- **The `ℤ`-linear extension sends `1` to `1`** — the `map_one` half of the twisted Hecke ring
 homomorphism, which unlike `map_mul` needs no multiplicity count. -/

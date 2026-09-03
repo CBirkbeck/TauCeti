@@ -94,13 +94,13 @@ variable {Δ : Submonoid G} {H₁ H₂ : Subgroup G}
 def toSet (D : HeckeCoset Δ H₁ H₂) : Set G :=
   Quotient.lift (fun g : Δ ↦ doubleCoset (g : G) H₁ H₂) (fun _ _ h ↦ h) D
 
-/-- A representative `g : Δ` of a double coset (via `Quotient.out`).
+/-- A representative `g : Δ` of a double coset (via `Quotient.out`). -/
+noncomputable def rep (D : HeckeCoset Δ H₁ H₂) : Δ := Quotient.out D
 
-Exposed: the coset-decomposition definitions downstream are stated over `Quotient.out`, so a
-consumer has to be able to see that the two spellings agree in order to use anything proved
-about `rep` — `mk_rep`, `rep_mem` and `rep_one_mem` all become unusable at a `Quotient.out`
-goal otherwise. -/
-@[expose] noncomputable def rep (D : HeckeCoset Δ H₁ H₂) : Δ := Quotient.out D
+/-- **The defining equation of `rep`.** The body is sealed, so this is what lets a downstream
+file move between the two spellings: the coset-decomposition definitions are stated over
+`Quotient.out`, while `mk_rep`, `rep_mem` and `rep_one_mem` are stated over `rep`. -/
+theorem rep_def (D : HeckeCoset Δ H₁ H₂) : D.rep = Quotient.out D := (rfl)
 
 @[simp] lemma mk_rep (D : HeckeCoset Δ H₁ H₂) : mk H₁ H₂ D.rep = D := Quotient.out_eq' D
 
