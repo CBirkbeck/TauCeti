@@ -49,9 +49,6 @@ by which the elliptic-net identities reach the division polynomials in the Lutz�
   discharging the preceding `if` conditions.
 * `reducedInvarDenom_zero`, `reducedInvarDenom_one`, `reducedInvarDenom_two`: its values at the
   small indices; the last is what fixes the normalisation.
-* `normEDS_of_two_dvd`, `normEDS_of_three_dvd`, `normEDS_of_six_dvd`: the index-splitting values
-  of a normalised EDS at an index divisible by `2`, `3` and `6`, releasing `b`, `c` and `b * c`
-  respectively.
 * `reducedInvarNum_eq_reducedInvarDenom_mul`: the reduced invariant identity,
   `reducedInvarNum b c d m = reducedInvarDenom b c d m * (d + b ^ 4)`, with no hypothesis on
   `b`, `c`, `d`.
@@ -316,21 +313,21 @@ theorem complEDS₂_eq_reducedInvarNum_sub :
 /-- **A normalised EDS at an index divisible by `6` releases the whole constant `b * c`.** Since
 `normEDS b c d 6` is `(normEDS b c d 5 - d ^ 2) * (b * c)`, an index with `6 ∣ k` factors as its
 `6`-complement at `k / 6` against that value, leaving `b * c` free. -/
-theorem normEDS_of_six_dvd (k : ℤ) (h : (6 : ℤ) ∣ k) :
+private theorem normEDS_of_six_dvd (k : ℤ) (h : (6 : ℤ) ∣ k) :
     normEDS b c d k = (normEDS b c d 5 - d ^ 2) * complEDS b c d 6 (k / 6) * (b * c) := by
   rw [← normEDS_mul_complEDS_div 6 k h, WeierstrassCurve.normEDS_six]
   ring
 
 /-- **A normalised EDS at an index divisible by `3` releases a factor `c`.** Since
 `normEDS b c d 3` is `c`, an index with `3 ∣ k` is its `3`-complement at `k / 3` times `c`. -/
-theorem normEDS_of_three_dvd (k : ℤ) (h : (3 : ℤ) ∣ k) :
+private theorem normEDS_of_three_dvd (k : ℤ) (h : (3 : ℤ) ∣ k) :
     normEDS b c d k = complEDS b c d 3 (k / 3) * c := by
   rw [← normEDS_mul_complEDS_div 3 k h, normEDS_three]
   ring
 
 /-- **A normalised EDS at an index divisible by `2` releases a factor `b`.** Since
 `normEDS b c d 2` is `b`, an index with `2 ∣ k` is its `2`-complement at `k / 2` times `b`. -/
-theorem normEDS_of_two_dvd (k : ℤ) (h : (2 : ℤ) ∣ k) :
+private theorem normEDS_of_two_dvd (k : ℤ) (h : (2 : ℤ) ∣ k) :
     normEDS b c d k = complEDS b c d 2 (k / 2) * b := by
   rw [← normEDS_mul_complEDS_div 2 k h, normEDS_two]
   ring
