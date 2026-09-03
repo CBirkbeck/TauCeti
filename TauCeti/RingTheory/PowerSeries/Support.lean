@@ -118,8 +118,9 @@ theorem one [Semiring R] (d : ℕ) : IsSupportedOnDvd d (1 : PowerSeries R) := f
 `n` not divisible by `d`, each term `aᵢ · b_j` with `i + j = n` has one of its two factors at an
 index away from the multiples of `d`: if `d ∣ i` then `d ∤ j`, since otherwise `d ∣ n`.
 
-Both hypotheses are needed. One-sidedness fails: over any semiring, `1` is supported on multiples
-of `2` while `1 * X = X` is not. -/
+Both hypotheses are needed, and one-sidedness fails already over `ℕ`: `1` is supported on
+multiples of `2` while `1 * X = X` is not. The coefficient semiring has to be named — over the
+trivial one `X = 0`, which *is* supported. -/
 theorem mul [Semiring R] (hP : IsSupportedOnDvd d P) (hQ : IsSupportedOnDvd d Q) :
     IsSupportedOnDvd d (P * Q) := fun n hn ↦ by
   rw [PowerSeries.coeff_mul]
