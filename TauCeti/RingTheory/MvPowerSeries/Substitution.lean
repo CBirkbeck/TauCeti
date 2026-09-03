@@ -178,6 +178,8 @@ respectively are distinct. -/
 noncomputable def coordSpecialize (i : σ') : σ' → MvPowerSeries Unit O :=
   fun j ↦ if j = i then PowerSeries.X else 0
 
+/-- The coordinate specialization at `i` is a legitimate substitution family over a finite index
+type: every image is either `X` or `0`, and both have vanishing constant coefficient. -/
 theorem hasSubst_coordSpecialize [Finite σ'] (i : σ') : HasSubst (coordSpecialize (O := O) i) :=
   hasSubst_of_constantCoeff_zero fun j ↦ by
     simp only [coordSpecialize]

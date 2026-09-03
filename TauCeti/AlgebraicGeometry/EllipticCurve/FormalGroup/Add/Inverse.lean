@@ -60,10 +60,9 @@ The source's `addSeries`, `thirdRootSeries`, `slopeSeries`, `interceptSeries`, `
 `formalInverse`, `formalInverseDenom` and `formalW` here, continuing the renaming this repository
 applies to the rest of that development.
 
-The source states its pair lemmas for an arbitrary pair `(q₁, q₂)` of series with vanishing
-constant coefficient, because its later `Assembly` and `Universal` sections reuse them at other
-pairs. Every one of them is used here only at the pair `(z, ι(z))`, so they are stated at that
-pair; the general forms belong with their first general consumer.
+`FormalGroup/Add/PairSubst.lean` proves the chord identities for an arbitrary pair `(q₁, q₂)` of
+series with vanishing constant coefficient; this module specializes them to the pair `(z, ι(z))`,
+which is the case the formal inverse law needs.
 
 The source's `subst_wSeries_ne_zero` is `subst_formalW_ne_zero` in `FormalGroup/Add/Assoc.lean`;
 its `interceptSeries_ne_zero` and `X_pair_intercept_ne_zero` have no counterpart in this
