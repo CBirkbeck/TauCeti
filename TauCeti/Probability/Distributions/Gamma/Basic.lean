@@ -94,12 +94,11 @@ private lemma gammaPDFReal_of_pos {x : ℝ} (hx : 0 < x) :
 `exp (-x) * x ^ k / k !` at a positive point: the two powers of `x` and the two exponentials each
 combine, leaving a single gamma kernel of shape `r + k` and rate `c + 1`.
 
-The factors are written out rather than as `gammaPDFReal` and `poissonPMFReal`: the former carries
-an `if 0 ≤ x` guard that is not definitional at a bound variable, and the latter is indexed by
-`ℝ≥0`, so either would cost the consumer a congruence step under its integral.
-
 The gamma rate `c` is arbitrary, so a gamma--Poisson mixture — which averages the Poisson rate `x`
 against a gamma law — can instantiate the identity pointwise at whatever rate that law carries. -/
+-- The factors are written out rather than as `gammaPDFReal` and `poissonPMFReal`: the former
+-- carries an `if 0 ≤ x` guard that is not definitional at a bound variable, and the latter is
+-- indexed by `ℝ≥0`, so either would cost the consumer a congruence step under its integral.
 theorem gammaKernel_mul_exp_mul_pow_div_factorial (c r : ℝ) (k : ℕ) {x : ℝ}
     (hx : x ∈ Ioi (0 : ℝ)) :
     c ^ r / Real.Gamma r * x ^ (r - 1) * Real.exp (-(c * x)) *
