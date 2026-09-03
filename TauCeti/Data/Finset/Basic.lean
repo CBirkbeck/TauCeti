@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.SetTheory.Cardinal.Finite
 
@@ -14,10 +14,9 @@ public import Mathlib.SetTheory.Cardinal.Finite
 
 * `TauCeti.card_nonempty_finset` counts the nonempty finsets of a finite type.
 * `TauCeti.sum_subtype_card_eq_sum_update` reindexes a sum over the subsets of size one less than
-  `card ι` as a sum over `ι`: those subsets are exactly the complements of singletons, and
-  overwriting a constant function on such a complement is updating it at the missing point. The
-  bijection is Mathlib's, taken from the inline argument in
-  `ContinuousMultilinearMap.changeOrigin_toFormalMultilinearSeries`.
+  `card ι` as a sum over `ι`. It is what turns a formula indexed by "all but one point" into one
+  indexed by the omitted point, as in the change-origin and derivative computations for
+  multilinear series.
 -/
 
 public section
@@ -38,18 +37,18 @@ theorem card_nonempty_finset {ι : Type*} [Finite ι] :
       Fintype.card_finset]
   rw [Nat.card_eq_fintype_card, Nat.card_eq_fintype_card, h]
 
+-- The bijection below is Mathlib's, taken from the inline argument in
+-- `ContinuousMultilinearMap.changeOrigin_toFormalMultilinearSeries`.
 /-- **Summing over the subsets of size one less than `card ι` is summing over the points.** Such a
 subset is the complement of a singleton, and `Finset.piecewise` against such a complement is
 `Function.update` at the missing point, so a sum of `F` over those subsets is a sum over `ι`.
 
-The bijection is the one used inside Mathlib's
-`ContinuousMultilinearMap.changeOrigin_toFormalMultilinearSeries`
-(`Mathlib/Analysis/Calculus/FDeriv/Analytic.lean`), where it appears inline and specialised to that
-proof's summand; this states it on its own, for an arbitrary summand and index type. -/
+Use it to turn a formula indexed by the subsets that omit a single point into one indexed by the
+omitted point. -/
 theorem sum_subtype_card_eq_sum_update {ι α M : Type*} [Fintype ι] [DecidableEq ι]
-    [AddCommMonoid M] {m : ℕ} (hm : Fintype.card ι = m + 1) (F : (ι → α) → M) (x y : α) :
-    (∑ s : {s : Finset ι // s.card = m}, F (s.1.piecewise (fun _ ↦ x) fun _ ↦ y)) =
-      ∑ i : ι, F (Function.update (fun _ ↦ x) i y) := by
+    [AddCommMonoid M] {m : ℕ} (hm : Fintype.card ι = m + 1) (F : (ι → α) → M) (f g : ι → α) :
+    (∑ s : {s : Finset ι // s.card = m}, F (s.1.piecewise f g)) =
+      ∑ i : ι, F (Function.update f i (g i)) := by
   refine (Fintype.sum_bijective (fun a : ι ↦ ⟨{a}ᶜ, by
     rw [Finset.card_compl, Finset.card_singleton, hm]
     omega⟩) ?_ _ _ fun i ↦ ?_).symm
