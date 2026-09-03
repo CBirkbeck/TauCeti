@@ -42,6 +42,9 @@ satisfies it is a statement about `V_d` and lives beside `V_d` in
   subspace.
 * `TauCeti.range_levelRaise_le_qSupportedOnDvdSubmodule`: the same statement for the `ℂ`-linear
   map, which is the shape `TauCeti.cuspFormsOld` is assembled from.
+* `TauCeti.iSup_range_levelRaise_le_qSupportedOnDvdSubmodule`: at a fixed `d`, the span of those
+  ranges over every `M` with `d * M ∣ N` — the `d`-degeneracy part of the old subspace — lies in
+  the submodule.
 
 The source reaches the same conclusion through a cast between cusp-form spaces at equal levels
 (`castCuspFormLinearEquiv`, `castLevelRaise`); that scaffolding is not ported, because this
@@ -153,6 +156,18 @@ theorem range_levelRaise_le_qSupportedOnDvdSubmodule {N : ℕ} (M : ℕ) (h : d 
       qSupportedOnDvdSubmodule N k d := by
   rintro _ ⟨g, rfl⟩
   simpa only [CuspForm.levelRaiseₗ_apply] using levelRaise_mem_qSupportedOnDvdSubmodule M h g
+
+/-- **The `d`-degeneracy part of the old subspace is supported on multiples of `d`.** At a fixed
+`d`, the span of the ranges of `V_d : S_k(Γ₁(M)) → S_k(Γ₁(N))` over every `M` with `d * M ∣ N`
+lies in the supported submodule. This is the summand family of `TauCeti.cuspFormsOld` at fixed
+degeneracy `d`, which is the shape the Atkin–Lehner Main Lemma consumes. No such bound holds for
+the whole old subspace, whose supremum also runs over `d = 1`, where `V₁` is restriction and
+imposes no support condition. -/
+theorem iSup_range_levelRaise_le_qSupportedOnDvdSubmodule (N : ℕ) :
+    ⨆ (M : ℕ) (h : d * M ∣ N),
+      LinearMap.range (CuspForm.levelRaiseₗ (k := k) d (Gamma1_map_le_conjAct_scaleGL_of_dvd h)) ≤
+        qSupportedOnDvdSubmodule N k d :=
+  iSup_le fun M ↦ iSup_le fun h ↦ range_levelRaise_le_qSupportedOnDvdSubmodule M h
 
 end QExpansion
 
