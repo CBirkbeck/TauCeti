@@ -169,7 +169,7 @@ end HasSubstPair
 
 section CoordSpecialize
 
-variable {O : Type*} [CommRing O] {σ' : Type*} [DecidableEq σ']
+variable {O : Type*} [CommRing O] {σ' : Type*}
 
 /-- The substitution sending the coordinate variable `i` to `X` and every other coordinate to `0`.
 
@@ -177,6 +177,9 @@ Specializing to it separates the coordinate `i` from all the others: with
 `ne_of_subst_eq_X_of_subst_eq_zero`, two series that this substitution sends to `X` and to `0`
 respectively are distinct. -/
 noncomputable def coordSpecialize (i : σ') : σ' → MvPowerSeries Unit O :=
+  -- classical decidability suffices: the definition is noncomputable regardless, so asking the
+  -- caller for `[DecidableEq σ']` would only narrow the API.
+  letI := Classical.decEq σ'
   fun j ↦ if j = i then PowerSeries.X else 0
 
 /-- The coordinate specialization at `i` is a legitimate substitution family, for an index type of
