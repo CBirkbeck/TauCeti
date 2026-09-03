@@ -16,10 +16,10 @@ Small pieces of product-measure theory with no `L²` or inner-product content.
 
 * `TauCeti.ae_of_ae_fst` / `TauCeti.ae_of_ae_snd` transfer an a.e. statement about one factor to the
   product measure, along `Measure.quasiMeasurePreserving_fst` / `_snd`.
-* `TauCeti.lintegral_cond_prod_le` bounds a lower Lebesgue integral against a product of two
-  conditional laws by any bound the integrand satisfies on the rectangle conditioned on: the two
-  a.e. transfers above confine each coordinate to its own set, and
-  `MeasureTheory.lintegral_le_const` finishes.
+* `TauCeti.lintegral_cond_prod_le` bounds a lower Lebesgue integral over a product of two
+  conditional laws by any bound the integrand satisfies on the rectangle conditioned on. Use it to
+  estimate an integral against two independently conditioned coordinates when the integrand is
+  controlled only on the pair of sets being conditioned on.
 * `TauCeti.setIntegral_eq_zero_of_forall_prod` is the binary-product specialization of the Dynkin
   (π-λ) step for Bochner integrals: a function whose integral vanishes on every measurable rectangle
   has vanishing integral on every measurable set. Rectangles are a π-system generating the product
@@ -53,12 +53,12 @@ theorem ae_of_ae_snd [SFinite ν] {p : β → Prop} (hp : ∀ᵐ y ∂ν, p y) :
 by `b` on `s ×ˢ t`, then its lower Lebesgue integral against the product of the laws of `μ` and `ν`
 conditioned on `s` and on `t` is at most `b`: conditioning confines each coordinate to its own set
 almost surely, so the bound holds almost everywhere on the product. -/
-theorem lintegral_cond_prod_le [IsFiniteMeasure μ] [IsFiniteMeasure ν] {s : Set α} {t : Set β}
-    (hs : MeasurableSet s) (ht : MeasurableSet t) (hμ : μ s ≠ 0) (hν : ν t ≠ 0)
+theorem lintegral_cond_prod_le {s : Set α} {t : Set β} (hs : MeasurableSet s)
+    (ht : MeasurableSet t) (hμ : μ s ≠ 0) (hμtop : μ s ≠ ∞) (hν : ν t ≠ 0) (hνtop : ν t ≠ ∞)
     {f : α × β → ℝ≥0∞} {b : ℝ≥0∞} (hf : ∀ x ∈ s, ∀ y ∈ t, f (x, y) ≤ b) :
     ∫⁻ z, f z ∂((μ[|s]).prod (ν[|t])) ≤ b := by
-  have := ProbabilityTheory.cond_isProbabilityMeasure hμ
-  have := ProbabilityTheory.cond_isProbabilityMeasure hν
+  have := ProbabilityTheory.cond_isProbabilityMeasure_of_finite hμ hμtop
+  have := ProbabilityTheory.cond_isProbabilityMeasure_of_finite hν hνtop
   refine lintegral_le_const ?_
   filter_upwards [ae_of_ae_fst (ν := ν[|t]) (ProbabilityTheory.ae_cond_mem (μ := μ) hs),
     ae_of_ae_snd (μ := μ[|s]) (ProbabilityTheory.ae_cond_mem (μ := ν) ht)] with ⟨x, y⟩ hx hy

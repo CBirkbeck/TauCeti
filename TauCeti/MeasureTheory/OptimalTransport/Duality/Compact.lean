@@ -283,11 +283,13 @@ private theorem transportCost_le_ofReal_cost {n m : ℕ} {qX : X → Fin n} {qY 
     intro i j
     rcases eq_or_ne (T i j) 0 with h | h
     · simp [h]
-    · exact mul_le_mul_of_nonneg_left (lintegral_cond_prod_le
+    · refine mul_le_mul_of_nonneg_left (lintegral_cond_prod_le
         (hqX (MeasurableSet.singleton i)) (hqY (MeasurableSet.singleton j))
-        (row_fiber_ne_zero hpμ T h) (col_fiber_ne_zero hpν T h)
-        fun x hx y hy ↦ ENNReal.ofReal_le_ofReal ((hC x y).trans_eq
-          (by rw [show qX x = i from hx, show qY y = j from hy]))) (by positivity)
+        (row_fiber_ne_zero hpμ T h) (measure_ne_top μ _)
+        (col_fiber_ne_zero hpν T h) (measure_ne_top ν _) fun x hx y hy ↦ ?_) (by positivity)
+      have hxi : qX x = i := by simpa only [Set.mem_preimage, Set.mem_singleton_iff] using hx
+      have hyj : qY y = j := by simpa only [Set.mem_preimage, Set.mem_singleton_iff] using hy
+      exact ENNReal.ofReal_le_ofReal ((hC x y).trans_eq (by rw [hxi, hyj]))
   have hentry : ∀ i j, T i j * ENNReal.ofReal (C (i, j))
       = ENNReal.ofReal (C (i, j) * T.toRealFun (i, j)) := by
     intro i j
