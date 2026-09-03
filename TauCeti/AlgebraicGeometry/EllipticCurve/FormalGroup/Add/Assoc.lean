@@ -107,77 +107,79 @@ variable {O : Type*} [CommRing O]
 
 /-- The curve `W` base changed to a field `KK` over the series ring `MvPowerSeries σ O`. The
 parameters of the chord construction are series, so the group law they satisfy is the group law of
-this curve. -/
+this curve. There is no `Algebra O KK` to run `WeierstrassCurve.baseChange` along, so this is the
+composite `map`, and it is Mathlib's `map_*` lemmas that unfolding it exposes. -/
 noncomputable def fracCurve (W : WeierstrassCurve O) (σ : Type*) (KK : Type*) [Field KK]
     [Algebra (MvPowerSeries σ O) KK] : WeierstrassCurve KK :=
-  W.map ((algebraMap (MvPowerSeries σ O) KK).comp (algebraMap O (MvPowerSeries σ O)))
+  W.map <| (algebraMap (MvPowerSeries σ O) KK).comp (algebraMap O (MvPowerSeries σ O))
 
 variable (W : WeierstrassCurve O) {σ : Type*} {KK : Type*} [Field KK]
   [Algebra (MvPowerSeries σ O) KK]
 
 /-- The `w`-expansion read at a substitutable parameter still solves the `w`-equation after being
-pushed into `KK`, where the equation is the one of `fracCurve W`. -/
-theorem algebraMap_subst_formalW_wEquation {q : MvPowerSeries σ O}
-    (hq : PowerSeries.HasSubst q) :
-    algebraMap (MvPowerSeries σ O) KK (PowerSeries.subst q (formalW W)) =
-      wEquationRHS (fracCurve W σ KK) (algebraMap (MvPowerSeries σ O) KK q)
-        (algebraMap (MvPowerSeries σ O) KK (PowerSeries.subst q (formalW W))) := by
+pushed into `KK`, where the equation is the one of `fracCurve W`.
+
+`subst_formalW_wEquation` is the same fixed point one level down, over `MvPowerSeries σ O`; here
+the parameter and the solution are both read in `KK`, so the coefficients travel across the base
+change too and the curve on the right is `fracCurve W σ KK` rather than `W`. Consumers such as
+`chord_point_nonsingular` want the equation written out, so this is normally applied through
+`simpa [wEquationRHS_def] using …`. -/
+theorem algebraMap_subst_formalW_wEquation {q : MvPowerSeries σ O} (hq : PowerSeries.HasSubst q) :
+    algebraMap (MvPowerSeries σ O) KK (PowerSeries.subst q (formalW W)) = wEquationRHS
+      (fracCurve W σ KK) (algebraMap (MvPowerSeries σ O) KK q)
+      (algebraMap (MvPowerSeries σ O) KK (PowerSeries.subst q (formalW W))) := by
   conv_lhs => rw [subst_formalW_wEquation W hq]
-  rw [wEquationRHS_def, wEquationRHS_def]
-  simp [fracCurve, map_add, map_mul, map_pow]
+  simp [fracCurve, wEquationRHS_def]
 
 /-! ### The chord data at the pair -/
 
 /-- The intercept of the chord through the two parametrized points, read at the pair `(q₁, q₂)`
-from the first point: `ν(q₁, q₂) = w(q₁) - λ(q₁, q₂) * q₁`. -/
+from the first point: `ν(q₁, q₂) = w(q₁) - λ(q₁, q₂) * q₁`.
+
+`subst_pair_formalIntercept_eq_inr` is the same intercept read from the second point; the two
+statements differ only in which parameter appears on the right, and rewriting with either one
+clears the intercept but leaves the slope behind. Combining the two readings is what cancels the
+slope, and that combination is already packaged as `subst_pair_formalIntercept_mul_sub`, so a
+consumer that wants the slope gone should reach for it rather than for these two. -/
 theorem subst_pair_formalIntercept_eq_inl {q₁ q₂ : MvPowerSeries σ O} (h₁ : constantCoeff q₁ = 0)
     (h₂ : constantCoeff q₂ = 0) :
     subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
-        (formalIntercept W) =
-      PowerSeries.subst q₁ (formalW W) -
-        subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
-          (formalSlope W) * q₁ := by
-  have h := congrArg (subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-    Unit ⊕ Unit → MvPowerSeries σ O)) (formalIntercept_def W)
-  rw [← coe_substAlgHom (hasSubst_pair h₁ h₂)] at h
-  simp only [map_sub, map_mul] at h
-  simp only [coe_substAlgHom (hasSubst_pair h₁ h₂), subst_pair_toMvPowerSeries_inl W h₁ h₂,
-    subst_X (hasSubst_pair h₁ h₂)] at h
-  have hl : (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-      Unit ⊕ Unit → MvPowerSeries σ O) (Sum.inl ()) = q₁ := rfl
-  rwa [hl] at h
+        (formalIntercept W) = PowerSeries.subst q₁ (formalW W) -
+      subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+        (formalSlope W) * q₁ := by
+  simp [formalIntercept_def, subst_sub (hasSubst_pair h₁ h₂), subst_mul (hasSubst_pair h₁ h₂),
+    subst_pair_toMvPowerSeries_inl W h₁ h₂, subst_X (hasSubst_pair h₁ h₂)]
 
 /-- The same intercept read from the second point: `ν(q₁, q₂) = w(q₂) - λ(q₁, q₂) * q₂`. Together
 with `subst_pair_formalIntercept_eq_inl` this is what expresses `q₁ * w(q₂) - q₂ * w(q₁)` through
-the intercept alone. -/
+the intercept alone.
+
+The two readings differ only in which parameter appears on the right, and rewriting with either
+one clears the intercept but leaves the slope behind; a consumer that wants the slope gone should
+reach for `subst_pair_formalIntercept_mul_sub`, which packages the combination that cancels it. -/
 theorem subst_pair_formalIntercept_eq_inr {q₁ q₂ : MvPowerSeries σ O} (h₁ : constantCoeff q₁ = 0)
     (h₂ : constantCoeff q₂ = 0) :
     subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
-        (formalIntercept W) =
-      PowerSeries.subst q₂ (formalW W) -
-        subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
-          (formalSlope W) * q₂ := by
-  have h := congrArg (subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-    Unit ⊕ Unit → MvPowerSeries σ O)) (formalIntercept_eq_inr W)
-  rw [← coe_substAlgHom (hasSubst_pair h₁ h₂)] at h
-  simp only [map_sub, map_mul] at h
-  simp only [coe_substAlgHom (hasSubst_pair h₁ h₂), subst_pair_toMvPowerSeries_inr W h₁ h₂,
-    subst_X (hasSubst_pair h₁ h₂)] at h
-  have hr : (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-      Unit ⊕ Unit → MvPowerSeries σ O) (Sum.inr ()) = q₂ := rfl
-  rwa [hr] at h
+        (formalIntercept W) = PowerSeries.subst q₂ (formalW W) -
+      subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+        (formalSlope W) * q₂ := by
+  linear_combination subst_pair_formalIntercept_eq_inl W h₁ h₂ + subst_pair_formalSlope_mul W h₁ h₂
 
 /-- The cross combination `q₁ w(q₂) - q₂ w(q₁)` is expressed through the intercept alone:
 `q₁ w(q₂) - q₂ w(q₁) = ν(q₁, q₂) * (q₁ - q₂)`.
 
-Reading the intercept from *both* points is what makes the slope cancel: subtracting the two
-readings weighted by `q₂` and `q₁` removes `λ` entirely. This is the form the associativity
-assembly needs in order to know that the chord's `x`-coordinates are distinct. -/
-theorem subst_pair_formalIntercept_mul_sub {q₁ q₂ : MvPowerSeries σ O}
-    (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0) :
+Reading the intercept from *both* points is what makes the slope cancel, so this is the one
+intercept identity with no `λ` in it: `subst_pair_formalIntercept_eq_inl` and
+`subst_pair_formalIntercept_eq_inr` each clear the intercept but leave the slope behind. The
+factored `(q₁ - q₂)` on the right is what the associativity assembly needs in order to know that
+the chord's `x`-coordinates are distinct; reach for it there as a single rewrite rather than
+recombining the two readings by hand. -/
+theorem subst_pair_formalIntercept_mul_sub {q₁ q₂ : MvPowerSeries σ O} (h₁ : constantCoeff q₁ = 0)
+    (h₂ : constantCoeff q₂ = 0) :
     q₁ * PowerSeries.subst q₂ (formalW W) - q₂ * PowerSeries.subst q₁ (formalW W) =
       subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
         (formalIntercept W) * (q₁ - q₂) := by
+  -- weighting the two readings by `q₂` and `q₁` makes the `λ` terms coincide and cancel
   linear_combination q₂ * subst_pair_formalIntercept_eq_inl W h₁ h₂ -
     q₁ * subst_pair_formalIntercept_eq_inr W h₁ h₂
 
@@ -195,7 +197,6 @@ theorem subst_pair_formalThirdRoot_ne_zero {q₁ q₂ : MvPowerSeries σ O}
   rw [h, show (fun _ : Unit ↦ (0 : MvPowerSeries σ O)) = 0 from rfl,
     subst_zero_of_constantCoeff_zero (constantCoeff_formalW W)] at honline
   linear_combination -honline
-
 
 /-! ### The formal inverse at a parameter -/
 
