@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Data.Nat.Factorization.PrimePowerProd.Basic
 public import TauCeti.Data.Nat.Factorization.PrimePowerProd.DivisorTable
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.PrimePower
 -- The Atkin–Lehner anti-involution and the commutativity it buys are used only inside proofs,
@@ -294,25 +293,25 @@ private noncomputable def commRingHeckeRingGamma0 :
     mul_comm := HeckeCosetModule.mul_comm_of_antiInvolution ℤ (atkinLehnerAntiInvolution N)
       (atkinLehnerAntiInvolution_onHeckeCoset_eq_self N) }
 
-/-- **The composite scalar vanishes at a bad prime.** If some prime sharing a factor with the
-level divides `n`, the block at that prime is `0` by `heckeTScalarGamma0_of_not_coprime` and it
-appears to a positive power, so the whole ordered product vanishes.
+/-- **The composite scalar vanishes at an index sharing a factor with the level.**
 
 This is what makes the bad divisors contribute nothing to `heckeTCompositeGamma0_mul`: the sum
 there runs over *all* divisors of `gcd m n`, and the ones that are not prime to the level drop
-out through this lemma rather than being excluded from the index.
-
-The proof reads the ordered product as a `Finsupp.prod`, which is a `CommMonoid` statement, so
-it is stated after `commRingHeckeRingGamma0` and uses it. -/
-theorem heckeTScalarCompositeGamma0_eq_zero_of_not_coprime {n p : ℕ} (hp : p.Prime) (hpn : p ∣ n)
-    (hn : n ≠ 0) (hpN : ¬ Nat.Coprime p N) :
+out through this lemma rather than being excluded from the index. -/
+@[simp]
+theorem heckeTScalarCompositeGamma0_eq_zero_of_not_coprime {n : ℕ} (hn : n ≠ 0)
+    (hnN : ¬ Nat.Coprime n N) :
     heckeTScalarCompositeGamma0 N n = 0 := by
+  -- Read as a `Finsupp.prod` — a `CommMonoid` statement, hence the local instance — with a
+  -- common prime factor of `n` and `N` as the vanishing block.
   let := commRingHeckeRingGamma0 N
+  obtain ⟨p, hp, hpn, hpN⟩ := Nat.Prime.not_coprime_iff_dvd.1 hnN
   have hv : n.factorization p ≠ 0 := (hp.factorization_pos_of_dvd hn hpn).ne'
   rw [heckeTScalarCompositeGamma0_def, TauCeti.Nat.primePowerProd_eq_factorization_prod]
   refine Finset.prod_eq_zero (i := p) ?_ ?_
   · simpa [Nat.support_factorization] using Nat.mem_primeFactors.2 ⟨hp, hpn, hn⟩
-  · simp only [heckeTScalarGamma0_of_not_coprime N hpN, zero_pow hv]
+  · have hpN' : ¬ Nat.Coprime p N := fun h ↦ (hp.coprime_iff_not_dvd.1 h) hpN
+    simp only [heckeTScalarGamma0_of_not_coprime N hpN', zero_pow hv]
 
 /-- **Shimura, Theorem 3.24(3)** at level `Γ₀(N)`, in full — the global multiplication table:
 
