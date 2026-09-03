@@ -435,38 +435,43 @@ theorem integrable_id_laplaceMeasure (μ : ℝ) : Integrable id (laplaceMeasure 
     simp
   · simp [laplaceMeasure_of_nonpos (not_lt.mp hb)]
 
+/-- **The mean deviation of a Laplace law from its location vanishes.**
+
+After translating by `μ` the integrand is odd, so reflection invariance of `volume` makes its
+integral zero. -/
+theorem integral_sub_const_laplaceMeasure (hb : 0 < b) (μ : ℝ) :
+    ∫ y, (y - μ) ∂laplaceMeasure μ b = 0 := by
+  rw [laplaceMeasure_eq_withDensity, integral_withDensity_eq_integral_toReal_smul
+    (measurable_laplacePDF μ b) (ae_of_all _ fun y => ENNReal.ofReal_lt_top)]
+  simp_rw [toReal_laplacePDF, smul_eq_mul]
+  have hshift : ∫ y, laplacePDFReal μ b y * (y - μ)
+      = ∫ y, (2 * b)⁻¹ * Real.exp (-|y| / b) * y :=
+    calc ∫ y, laplacePDFReal μ b y * (y - μ)
+        = ∫ y, (2 * b)⁻¹ * Real.exp (-|y - μ| / b) * (y - μ) := by
+          refine integral_congr_ae (ae_of_all _ fun y => ?_)
+          simp only [laplacePDFReal_of_pos hb]
+      _ = ∫ y, (2 * b)⁻¹ * Real.exp (-|y| / b) * y :=
+          integral_sub_right_eq_self
+            (fun u : ℝ => (2 * b)⁻¹ * Real.exp (-|u| / b) * u) μ
+  rw [hshift]
+  have hrefl : ∫ y : ℝ, (2 * b)⁻¹ * Real.exp (-|(-y)| / b) * (-y)
+      = ∫ y : ℝ, (2 * b)⁻¹ * Real.exp (-|y| / b) * y :=
+    (Measure.measurePreserving_neg (volume : Measure ℝ)).integral_comp
+      (Homeomorph.neg ℝ).measurableEmbedding
+      (fun u : ℝ => (2 * b)⁻¹ * Real.exp (-|u| / b) * u)
+  simp only [abs_neg, mul_neg] at hrefl
+  rw [integral_neg] at hrefl
+  linarith
+
 /-- **The mean of a Laplace law is its location.** -/
 theorem integral_id_laplaceMeasure (hb : 0 < b) (μ : ℝ) :
     ∫ y, y ∂laplaceMeasure μ b = μ := by
-  -- After translating by `μ`, the integrand is odd, so reflection invariance makes its integral
-  -- zero.
   have hp : IsProbabilityMeasure (laplaceMeasure μ b) := isProbabilityMeasure_laplaceMeasure hb μ
   have hsub : Integrable (fun y : ℝ => y - μ) (laplaceMeasure μ b) :=
     integrable_sub_const_laplaceMeasure (b := b) μ
-  have hodd : ∫ y, (y - μ) ∂laplaceMeasure μ b = 0 := by
-    rw [laplaceMeasure_eq_withDensity, integral_withDensity_eq_integral_toReal_smul
-      (measurable_laplacePDF μ b) (ae_of_all _ fun y => ENNReal.ofReal_lt_top)]
-    simp_rw [toReal_laplacePDF, smul_eq_mul]
-    have hshift : ∫ y, laplacePDFReal μ b y * (y - μ)
-        = ∫ y, (2 * b)⁻¹ * Real.exp (-|y| / b) * y :=
-      calc ∫ y, laplacePDFReal μ b y * (y - μ)
-          = ∫ y, (2 * b)⁻¹ * Real.exp (-|y - μ| / b) * (y - μ) := by
-            refine integral_congr_ae (ae_of_all _ fun y => ?_)
-            simp only [laplacePDFReal_of_pos hb]
-        _ = ∫ y, (2 * b)⁻¹ * Real.exp (-|y| / b) * y :=
-            integral_sub_right_eq_self
-              (fun u : ℝ => (2 * b)⁻¹ * Real.exp (-|u| / b) * u) μ
-    rw [hshift]
-    have hrefl : ∫ y : ℝ, (2 * b)⁻¹ * Real.exp (-|(-y)| / b) * (-y)
-        = ∫ y : ℝ, (2 * b)⁻¹ * Real.exp (-|y| / b) * y :=
-      (Measure.measurePreserving_neg (volume : Measure ℝ)).integral_comp
-        (Homeomorph.neg ℝ).measurableEmbedding
-        (fun u : ℝ => (2 * b)⁻¹ * Real.exp (-|u| / b) * u)
-    simp only [abs_neg, mul_neg] at hrefl
-    rw [integral_neg] at hrefl
-    linarith
   have : ∫ y, y ∂laplaceMeasure μ b = ∫ y, ((y - μ) + μ) ∂laplaceMeasure μ b := by simp
-  rw [this, integral_add hsub (integrable_const μ), hodd, integral_const]
+  rw [this, integral_add hsub (integrable_const μ), integral_sub_const_laplaceMeasure hb μ,
+    integral_const]
   simp
 
 /-- **The variance of a Laplace law with scale `b` is `2 * b ^ 2`.** -/
