@@ -17,7 +17,7 @@ this file proves, under the displayed bracket and nilpotence hypotheses, the con
 ⁅x_α(t), x_β(u)⁆ = x_{α+β}(c t u) x_{2α+β}(d t² u).
 ```
 
-`Commutator.lean` proves the underlying multiplication and conjugation identities for the
+`Commutator/Basic.lean` proves the underlying multiplication and conjugation identities for the
 divided-power actions. This file derives the canonical element-commutator form and transports it
 through an arbitrary finite integral basis to the represented general linear group. The
 scheme-valued form is in `RootSubgroup/Scheme/MultiplyLacedRelations.lean`.

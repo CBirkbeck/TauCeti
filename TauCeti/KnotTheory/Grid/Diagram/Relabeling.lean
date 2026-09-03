@@ -12,9 +12,9 @@ public import TauCeti.KnotTheory.Grid.Diagram.Basic
 
 This file records how relabeling and swapping rows or columns transports the column-of-row
 lookups of a grid state and the `O`/`X` column-of-row lookups of a grid diagram. These formulas
-depend only on the relabeling API of `Diagram.lean`; they are the lookup analogue of the existing
-`OColumnOfRow_apply`/`relabelColumns_O_apply` simp lemmas there, split into their own file only to
-respect the file-length limit.
+depend only on the relabeling API of `Diagram/Basic.lean`; they are the lookup analogue of the
+existing `OColumnOfRow_apply`/`relabelColumns_O_apply` simp lemmas there, split into their own file
+only to respect the file-length limit.
 
 A row relabeling reads the lookup at the inverse row label, a column relabeling applies the column
 permutation to the resulting column, and the swap corollaries specialize these to the elementary

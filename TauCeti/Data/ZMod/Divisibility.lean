@@ -19,7 +19,7 @@ is returned as a residue class together with its canonical representative `j.val
 form a coset representative indexed by `Fin n` needs.
 
 `ZMod.exists_dvd_sub_val_mul` was extracted from
-`TauCeti/NumberTheory/ModularForms/CongruenceSubgroups.lean`, where it was private; that index
+`TauCeti/NumberTheory/ModularForms/CongruenceSubgroups/Basic.lean`, where it was private; that index
 calculation was ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/HeckeRIngs/GL2/CongruenceIndex.lean`, Chris Birkbeck, Apache-2.0). The lemma is
 consumed there and in `HeckeRing/GL2/Gamma1/CoprimeCosets.lean`.

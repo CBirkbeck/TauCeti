@@ -56,9 +56,9 @@ algebra", which is consumed by milestone L0 of `TauCetiRoadmap/CFSGStatement/REA
 declaration that will consume it is `TauCeti.IsChevalleySystem`, whose ambient Lie algebra carries
 `[LieAlgebra.IsKilling K L]`, applied to `TauCeti.DynkinType.lieAlgebra`. That Lie algebra is
 defined over `ℚ`, and
-`TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/LieAlgebra.lean` records that it "is not
-asserted to be semisimple: Mathlib derives that from Geck's construction over an algebraically
-closed field, and `ℚ` is not one", Mathlib's
+`TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/LieAlgebra/Basic.lean` records that it
+"is not asserted to be semisimple: Mathlib derives that from Geck's construction over an
+algebraically closed field, and `ℚ` is not one", Mathlib's
 `RootPairing.GeckConstruction.instHasTrivialRadical` carrying an `[IsAlgClosed K]` hypothesis. This
 file supplies the general half of closing that gap; the remaining half is the identification of
 `AlgebraicClosure ℚ ⊗[ℚ] TauCeti.DynkinType.lieAlgebra` with Geck's Lie algebra over

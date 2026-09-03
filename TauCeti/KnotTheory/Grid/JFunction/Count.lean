@@ -15,7 +15,7 @@ public import TauCeti.KnotTheory.Grid.JFunction.Basic
 # The grid `J`-function as a neighbor count
 
 The ordered southwest count `GridPoint.I s t` and the symmetrized `J`-function are defined in
-`JFunction.lean` as cardinalities of a filtered product of point sets. This file records their
+`JFunction/Basic.lean` as cardinalities of a filtered product of point sets. This file records their
 fiberwise reading: `I s t` is the sum over the left points of the number of right points strictly
 northeast of them, and dually over the right points. Specializing the left (or right) argument to
 a singleton turns each `J`-pairing against a single grid point into a plain count of the strictly

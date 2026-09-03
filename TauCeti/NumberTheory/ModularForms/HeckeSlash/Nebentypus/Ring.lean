@@ -129,7 +129,7 @@ not yet a ring action.
 why `Finsupp.linearCombination` applies at this type. -/
 noncomputable def twistedHeckeSlashRingLinearMap :
     𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ →ₗ[ℤ] Module.End ℂ (ℍ → ℂ) :=
-  -- Eta-expanded on purpose: `Nebentypus.lean` introduces `[NeZero N]` *after* the double
+  -- Eta-expanded on purpose: `Nebentypus/Basic.lean` introduces `[NeZero N]` *after* the double
   -- coset in its `variable` block, so the partial application `twistedHeckeSlashSumEnd k χ`
   -- still expects the instance and does not have the function type `linearCombination` wants.
   Finsupp.linearCombination ℤ fun D ↦ twistedHeckeSlashSumEnd k χ D
