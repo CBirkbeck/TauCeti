@@ -37,9 +37,7 @@ Adapted from `tendsto_ratio_one_of_div_atTop_pm_bounded` in
 `CebotarevDensity/ForMathlib/LogOneDivSubOne.lean` of
 [CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0,
 Birkbeck--Brasca) at commit `8575c9df1ae0a61120ab5c964c7911414254bec7`. The source states it
-over `ℝ`; the statement here is over an arbitrary linearly ordered topological field, and the
-proof goes through Mathlib's `tendsto_bdd_div_atTop_nhds_zero` rather than from first
-principles.
+over `ℝ`; the statement here is over an arbitrary linearly ordered topological field.
 -/
 
 public section
