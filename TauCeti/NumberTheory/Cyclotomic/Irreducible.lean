@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.NumberTheory.Cyclotomic.Gal
 public import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
 
 /-!
@@ -28,6 +29,8 @@ polynomial of the same degree, so the two coincide and `Φ_n` is irreducible.
   `Φ_n` is irreducible over `K`.
 * `IsCyclotomicExtension.irreducible_cyclotomic_iff_finrank_eq_totient`: `Φ_n` is irreducible over
   `K` if and only if `[L : K] = φ n`.
+* `IsCyclotomicExtension.card_aut_eq_sub_one`: for `q` prime with `Φ_q` irreducible, a `q`-th
+  cyclotomic extension has exactly `q - 1` automorphisms.
 
 ## References
 
@@ -98,5 +101,21 @@ Source: as for the two lemmas it combines. -/
 theorem irreducible_cyclotomic_iff_finrank_eq_totient :
     Irreducible (cyclotomic n K) ↔ Module.finrank K L = n.totient :=
   ⟨IsCyclotomicExtension.finrank L, fun h ↦ irreducible_cyclotomic_of_totient_le_finrank K L h.ge⟩
+
+/-- **A `q`-th cyclotomic extension has exactly `q - 1` automorphisms**, for `q` prime with `Φ_q`
+irreducible over `K`. The count is `φ(q) = q - 1`, transported from `(ZMod q)ˣ` along Mathlib's
+`autEquivPow`.
+
+This is a cardinality statement and nothing more. For the group isomorphism
+`(F ≃ₐ[K] F) ≃* (ZMod q)ˣ` — and hence for cyclicity — use `autEquivPow` directly; for the degree
+rather than the automorphism count use `IsCyclotomicExtension.finrank`. Keeping `hirr` as a
+hypothesis rather than deriving it stops a caller from silently assuming the order. `q - 1` is
+truncated `ℕ` subtraction, equal to `q.totient` because `q` is prime. -/
+theorem card_aut_eq_sub_one (q : ℕ) [NeZero q] (F : Type*) [Field F] [Algebra K F]
+    [IsCyclotomicExtension {q} K F] (hq : q.Prime) (hirr : Irreducible (cyclotomic q K)) :
+    Nat.card (F ≃ₐ[K] F) = q - 1 := by
+  -- `(ZMod q)ˣ` has `φ(q) = q - 1` elements, as `q` is prime.
+  rw [Nat.card_congr (autEquivPow F hirr).toEquiv, Nat.card_eq_fintype_card,
+    ZMod.card_units_eq_totient, Nat.totient_prime hq]
 
 end IsCyclotomicExtension
