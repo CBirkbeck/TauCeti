@@ -13,10 +13,10 @@ public import Mathlib.SetTheory.Cardinal.Finite
 # Subsets of a finite type: how many there are, and how to sum over them
 
 * `TauCeti.card_nonempty_finset` counts the nonempty finsets of a finite type.
-* `TauCeti.sum_subtype_card_eq_sum_update` reindexes a sum over the subsets of size one less than
-  `card ι` as a sum over `ι`. It is what turns a formula indexed by "all but one point" into one
-  indexed by the omitted point, as in the change-origin and derivative computations for
-  multilinear series.
+* `TauCeti.sum_piecewise_eq_sum_update_of_card_eq_succ` reindexes a sum of `Finset.piecewise` terms
+  over the subsets of size one less than `card ι` as a sum of `Function.update` terms over `ι`. It
+  is what turns a formula indexed by "all but one point" into one indexed by the omitted point, as
+  in the change-origin and derivative computations for multilinear series.
 -/
 
 public section
@@ -45,8 +45,8 @@ subset is the complement of a singleton, and `Finset.piecewise` against such a c
 
 Use it to turn a formula indexed by the subsets that omit a single point into one indexed by the
 omitted point. -/
-theorem sum_subtype_card_eq_sum_update {ι : Type*} {α : ι → Type*} {M : Type*} [Fintype ι]
-    [DecidableEq ι] [AddCommMonoid M] {m : ℕ} (hm : Fintype.card ι = m + 1)
+theorem sum_piecewise_eq_sum_update_of_card_eq_succ {ι : Type*} {α : ι → Type*} {M : Type*}
+    [Fintype ι] [DecidableEq ι] [AddCommMonoid M] {m : ℕ} (hm : Fintype.card ι = m + 1)
     (F : ((i : ι) → α i) → M) (f g : (i : ι) → α i) :
     (∑ s : {s : Finset ι // s.card = m}, F (s.1.piecewise f g)) =
       ∑ i : ι, F (Function.update f i (g i)) := by

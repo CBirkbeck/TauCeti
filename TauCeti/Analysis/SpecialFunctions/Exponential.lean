@@ -178,7 +178,7 @@ theorem expFDerivTerm_eq_derivSeries (x : R) (n : ℕ) :
   change _ = continuousMultilinearCurryFin1 𝕂 R R _ y
   rw [continuousMultilinearCurryFin1_apply, _root_.sum_apply, Fin.snoc_zero]
   simp_rw [FormalMultilinearSeries.changeOriginSeriesTerm_apply]
-  rw [sum_subtype_card_eq_sum_update (by rw [Fintype.card_fin]; omega)]
+  rw [sum_piecewise_eq_sum_update_of_card_eq_succ (by rw [Fintype.card_fin]; omega)]
   simp only [mul_assoc, expSeries, smul_apply,
     ContinuousMultilinearMap.mkPiAlgebraFin_apply, List.ofFn_eq_map,
     (List.nodup_finRange (1 + n)).map_update, List.mem_finRange, ↓reduceIte,
