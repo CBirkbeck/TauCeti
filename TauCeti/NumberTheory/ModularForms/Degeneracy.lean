@@ -969,7 +969,6 @@ theorem ModularForm.qExpansion_levelRaise_coeff_Gamma1 (M : ℕ) [NeZero M] [NeZ
     (f : ModularForm ((Gamma1 M).map (mapGL ℝ)) k) (n : ℕ) :
     (qExpansion 1 (ModularForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL M d) f)).coeff n =
       if d ∣ n then (qExpansion 1 f).coeff (n / d) else 0 := by
-  have : NeZero (d * M) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne M)⟩
   refine ModularForm.qExpansion_levelRaise_coeff ?_ ?_ _ f n <;>
     exact one_mem_strictPeriods_Gamma1_map _
 
@@ -1004,7 +1003,6 @@ theorem CuspForm.qExpansion_levelRaise_coeff_Gamma1 (M : ℕ) [NeZero M] [NeZero
     (f : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) (n : ℕ) :
     (qExpansion 1 (CuspForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL M d) f)).coeff n =
       if d ∣ n then (qExpansion 1 f).coeff (n / d) else 0 := by
-  have : NeZero (d * M) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne M)⟩
   refine CuspForm.qExpansion_levelRaise_coeff ?_ ?_ _ f n <;>
     exact one_mem_strictPeriods_Gamma1_map _
 
