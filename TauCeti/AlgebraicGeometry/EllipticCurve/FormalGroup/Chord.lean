@@ -51,6 +51,10 @@ from `formalThirdRoot` by composing with the formal inverse, which is left to a 
 * `WeierstrassCurve.formalIntercept_eq_inr`: the intercept computed from the second point.
 * `WeierstrassCurve.constantCoeff_formalSlope`, `_formalIntercept`, `_formalThirdRoot`: all
   three series vanish at the origin.
+* `WeierstrassCurve.toMvPowerSeries_formalW_wEquation`: the `w`-expansion satisfies the
+  `w`-equation at each of the two parameters.
+* `WeierstrassCurve.formalSlope_mul_X_add_formalIntercept`: the chord passes through both of the
+  points it is built from.
 * `WeierstrassCurve.subst_formalThirdRoot_formalW`: the third point really lies on the chord —
   reading the `w`-expansion at `formalThirdRoot` returns the chord line read there. This is what
   makes the third root the parameter of an intersection point rather than merely a root of the
@@ -333,6 +337,26 @@ non-zero-divisor of `MvPowerSeries (Unit ⊕ Unit) R` over an arbitrary commutat
 cancels anything in `R`.
 -/
 
+/-- **The `w`-expansion satisfies the `w`-equation at each of the two parameters.** This is
+`subst_formalW_wEquation` read through `toMvPowerSeries`, which is the shape the two-variable
+chord identities consume. -/
+theorem toMvPowerSeries_formalW_wEquation (i : Unit ⊕ Unit) :
+    (formalW W).toMvPowerSeries i =
+      wEquationRHS W (X i) ((formalW W).toMvPowerSeries i) := by
+  rw [PowerSeries.toMvPowerSeries_eq_subst]
+  exact subst_formalW_wEquation W (PowerSeries.HasSubst.X i)
+
+/-- **The chord passes through both of the points it is built from**: at either parameter, the
+chord line `λ z + ν` takes the value `w` takes there.
+
+`formalIntercept` is defined from the first point, so at `inl` this is `formalIntercept_def`; at
+`inr` it is `formalIntercept_eq_inr`, which says the second point gives the same intercept. -/
+theorem formalSlope_mul_X_add_formalIntercept (i : Unit ⊕ Unit) :
+    formalSlope W * X i + formalIntercept W = (formalW W).toMvPowerSeries i := by
+  rcases i with ⟨⟩ | ⟨⟩
+  · rw [formalIntercept_def]; ring
+  · rw [formalIntercept_eq_inr]; ring
+
 /-- The chord line, read at the third root, satisfies the `w`-equation at that parameter.
 
 This is Vieta's formula in the form the uniqueness of the `w`-expansion can consume: the third
@@ -341,26 +365,13 @@ private theorem line_at_thirdRoot :
     formalSlope W * formalThirdRoot W + formalIntercept W =
       wEquationRHS W (formalThirdRoot W)
         (formalSlope W * formalThirdRoot W + formalIntercept W) := by
-  -- The curve meets the chord at each of the two given parameters. Both are the `w`-equation at
-  -- a variable, which is `subst_formalW_wEquation` read through `toMvPowerSeries`.
-  have hline : ∀ i : Unit ⊕ Unit,
-      (formalW W).toMvPowerSeries i =
-        wEquationRHS W (X i) ((formalW W).toMvPowerSeries i) := by
-    intro i
-    rw [PowerSeries.toMvPowerSeries_eq_subst]
-    exact subst_formalW_wEquation W (PowerSeries.HasSubst.X i)
-  -- The chord passes through both of its own endpoints. `Unit ⊕ Unit` has exactly the two
-  -- elements `inl ()` and `inr ()`, so the case split is exhaustive and the two endpoints share
-  -- one argument: `formalIntercept` is defined from the first point and `formalIntercept_eq_inr`
-  -- says the second point gives the same series.
-  have hchord : ∀ i : Unit ⊕ Unit,
-      formalSlope W * X i + formalIntercept W = (formalW W).toMvPowerSeries i := by
-    rintro (⟨⟩ | ⟨⟩)
-    · rw [formalIntercept_def]; ring
-    · rw [formalIntercept_eq_inr]; ring
+  -- The chord line, at either parameter, satisfies the `w`-equation there: it agrees with `w`
+  -- at that parameter, and `w` satisfies the equation.
   have hC : ∀ i : Unit ⊕ Unit, formalSlope W * X i + formalIntercept W =
       wEquationRHS W (X i) (formalSlope W * X i + formalIntercept W) := fun i =>
-    (hchord i).trans ((hline i).trans (by rw [hchord i]))
+    (formalSlope_mul_X_add_formalIntercept W i).trans
+      ((toMvPowerSeries_formalW_wEquation W i).trans
+        (by rw [formalSlope_mul_X_add_formalIntercept W i]))
   have hC1 := hC (Sum.inl ())
   have hC2 := hC (Sum.inr ())
   have hAd : (1 + C W.a₂ * formalSlope W + C W.a₄ * formalSlope W ^ 2 +
