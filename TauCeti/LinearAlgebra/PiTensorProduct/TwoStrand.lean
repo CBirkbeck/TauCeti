@@ -23,9 +23,12 @@ tensor square is being used for, so they live here rather than in any one consum
 
 * `TauCeti.sum_pi_fin_two`: a sum over `Fin 2 → ι` is a double sum over `ι`.
 * `TauCeti.tprod_fin_two`: a pure tensor on two strands is `⨂ₜ ![v 0, v 1]`.
+* `TauCeti.sum_comm_four`: two nested double sums may be exchanged as a whole.
 * `Matrix.piTensorProductMap_tprod_single`: applying a matrix in both strands re-expands a basis
   pure tensor in the standard basis. Use it whenever a two-strand pure tensor of standard basis
   vectors is pushed through `PiTensorProduct.map` and the result is wanted coefficientwise.
+* `Matrix.piTensorProductMap_bivector`: the same for a whole bivector `∑ x y, K x y • ⨂ₜ`, which
+  becomes the bivector of the congruate `A * K * Aᵀ`.
 -/
 
 public section
@@ -47,6 +50,20 @@ theorem tprod_fin_two {R M : Type*} [CommSemiring R] [AddCommMonoid M] [Module R
   congr 1
   funext i
   fin_cases i <;> simp
+
+/-- Two nested double sums may be exchanged as a whole. -/
+theorem sum_comm_four {ι M : Type*} [Fintype ι] [AddCommMonoid M]
+    (F : ι → ι → ι → ι → M) :
+    ∑ x : ι, ∑ y : ι, ∑ p : ι, ∑ q : ι, F x y p q
+      = ∑ p : ι, ∑ q : ι, ∑ x : ι, ∑ y : ι, F x y p q :=
+  calc ∑ x : ι, ∑ y : ι, ∑ p : ι, ∑ q : ι, F x y p q
+      = ∑ x : ι, ∑ p : ι, ∑ y : ι, ∑ q : ι, F x y p q :=
+        Finset.sum_congr rfl fun _ _ => Finset.sum_comm
+    _ = ∑ p : ι, ∑ x : ι, ∑ y : ι, ∑ q : ι, F x y p q := Finset.sum_comm
+    _ = ∑ p : ι, ∑ x : ι, ∑ q : ι, ∑ y : ι, F x y p q :=
+        Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => Finset.sum_comm
+    _ = ∑ p : ι, ∑ q : ι, ∑ x : ι, ∑ y : ι, F x y p q :=
+        Finset.sum_congr rfl fun _ _ => Finset.sum_comm
 
 end TauCeti
 
@@ -80,5 +97,42 @@ theorem piTensorProductMap_tprod_single {ι κ R : Type*} [Fintype ι] [Decidabl
     TauCeti.tprod_fin_two _
   rw [MultilinearMap.map_smul_univ, hr, Fin.prod_univ_two]
   simp
+
+/-- Applying a matrix `A` in both tensor factors turns the bivector of `K` into the bivector of the
+congruate `A * K * Aᵀ`. It is the computation behind the invariance of the Brauer cup. -/
+theorem piTensorProductMap_bivector {ι R : Type*} [Fintype ι] [DecidableEq ι] [CommSemiring R]
+    (A K : Matrix ι ι R) :
+    PiTensorProduct.map (fun _ : Fin 2 => Matrix.mulVecLin A)
+        (∑ x : ι, ∑ y : ι, K x y •
+          PiTensorProduct.tprod R ![Pi.single x (1 : R), Pi.single y (1 : R)]) =
+      ∑ p : ι, ∑ q : ι, (A * K * Aᵀ) p q •
+        PiTensorProduct.tprod R ![Pi.single p (1 : R), Pi.single q (1 : R)] := by
+  have hcoef : ∀ p q : ι,
+      ∑ x : ι, ∑ y : ι, K x y * (A p x * A q y) = (A * K * Aᵀ) p q := by
+    intro p q
+    rw [Matrix.mul_apply, Finset.sum_comm]
+    refine Finset.sum_congr rfl fun y _ => ?_
+    rw [Matrix.mul_apply, Finset.sum_mul]
+    refine Finset.sum_congr rfl fun x _ => ?_
+    simp only [Matrix.transpose_apply]
+    ring
+  calc
+    PiTensorProduct.map (fun _ : Fin 2 => Matrix.mulVecLin A)
+        (∑ x : ι, ∑ y : ι, K x y •
+          PiTensorProduct.tprod R ![Pi.single x (1 : R), Pi.single y (1 : R)])
+        = ∑ x : ι, ∑ y : ι, ∑ p : ι, ∑ q : ι,
+            (K x y * (A p x * A q y)) •
+              PiTensorProduct.tprod R ![Pi.single p (1 : R), Pi.single q (1 : R)] := by
+          simp only [map_sum, map_smul, Matrix.piTensorProductMap_tprod_single,
+            Finset.smul_sum, smul_smul]
+    _ = ∑ p : ι, ∑ q : ι, ∑ x : ι, ∑ y : ι,
+          (K x y * (A p x * A q y)) •
+            PiTensorProduct.tprod R ![Pi.single p (1 : R), Pi.single q (1 : R)] :=
+          TauCeti.sum_comm_four _
+    _ = ∑ p : ι, ∑ q : ι, (A * K * Aᵀ) p q •
+          PiTensorProduct.tprod R ![Pi.single p (1 : R), Pi.single q (1 : R)] := by
+          refine Finset.sum_congr rfl fun p _ => Finset.sum_congr rfl fun q _ => ?_
+          simp only [← Finset.sum_smul]
+          rw [hcoef p q]
 
 end Matrix
