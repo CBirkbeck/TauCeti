@@ -89,6 +89,7 @@ theorem sub [Ring R] (hP : IsSupportedOnDvd d P) (hQ : IsSupportedOnDvd d Q) :
 
 /-- The constant power series `1` is supported on multiples of any `d`: its only nonzero
 coefficient sits at `0`, which every `d` divides. -/
+@[simp]
 theorem one [Semiring R] (d : ℕ) : IsSupportedOnDvd d (1 : PowerSeries R) := fun n hn ↦ by
   rcases Nat.eq_zero_or_pos n with rfl | hpos
   · exact absurd (dvd_zero d) hn
