@@ -440,9 +440,14 @@ theorem integrable_id_laplaceMeasure (μ : ℝ) : Integrable id (laplaceMeasure 
 This is the vanishing first central moment, and it is what turns the location parameter into the
 mean: `integral_id_laplaceMeasure` is this result together with the total mass of the law. Reach for
 it directly when centring an integrand on `μ`; for the absolute central moments of every order, see
-`integral_pow_abs_sub_laplaceMeasure`. -/
-theorem integral_sub_const_laplaceMeasure (hb : 0 < b) (μ : ℝ) :
+`integral_pow_abs_sub_laplaceMeasure`.
+
+This needs no positivity hypothesis, unlike the moment formulas around it: for `b ≤ 0` the law
+degenerates to the zero measure (`laplaceMeasure_of_nonpos`), whose integral is `0` as well. -/
+theorem integral_sub_const_laplaceMeasure (μ : ℝ) :
     ∫ y, (y - μ) ∂laplaceMeasure μ b = 0 := by
+  rcases le_or_gt b 0 with hb | hb
+  · simp [laplaceMeasure_of_nonpos hb]
   rw [laplaceMeasure_eq_withDensity, integral_withDensity_eq_integral_toReal_smul
     (measurable_laplacePDF μ b) (ae_of_all _ fun y => ENNReal.ofReal_lt_top)]
   simp_rw [toReal_laplacePDF, smul_eq_mul]
@@ -456,11 +461,7 @@ theorem integral_sub_const_laplaceMeasure (hb : 0 < b) (μ : ℝ) :
           integral_sub_right_eq_self
             (fun u : ℝ => (2 * b)⁻¹ * Real.exp (-|u| / b) * u) μ
   rw [hshift]
-  have hrefl : ∫ y : ℝ, (2 * b)⁻¹ * Real.exp (-|(-y)| / b) * (-y)
-      = ∫ y : ℝ, (2 * b)⁻¹ * Real.exp (-|y| / b) * y :=
-    (Measure.measurePreserving_neg (volume : Measure ℝ)).integral_comp
-      (Homeomorph.neg ℝ).measurableEmbedding
-      (fun u : ℝ => (2 * b)⁻¹ * Real.exp (-|u| / b) * u)
+  have hrefl := integral_neg_eq_self (fun u : ℝ => (2 * b)⁻¹ * Real.exp (-|u| / b) * u) volume
   simp only [abs_neg, mul_neg] at hrefl
   rw [integral_neg] at hrefl
   linarith
@@ -472,7 +473,7 @@ theorem integral_id_laplaceMeasure (hb : 0 < b) (μ : ℝ) :
   have hsub : Integrable (fun y : ℝ => y - μ) (laplaceMeasure μ b) :=
     integrable_sub_const_laplaceMeasure (b := b) μ
   have : ∫ y, y ∂laplaceMeasure μ b = ∫ y, ((y - μ) + μ) ∂laplaceMeasure μ b := by simp
-  rw [this, integral_add hsub (integrable_const μ), integral_sub_const_laplaceMeasure hb μ,
+  rw [this, integral_add hsub (integrable_const μ), integral_sub_const_laplaceMeasure μ,
     integral_const]
   simp
 
