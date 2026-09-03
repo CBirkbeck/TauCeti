@@ -5,11 +5,13 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Data.Nat.Factorization.PrimePowerProd
+public import TauCeti.Data.Nat.Factorization.PrimePowerProd.Basic
 public import TauCeti.Data.Nat.Factorization.PrimePowerProd.DivisorTable
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.PrimePower
--- The Atkin–Lehner anti-involution and the commutativity it buys are used only inside the
--- proof of `heckeTCompositeGamma0_mul_of_coprime` below, so private.
+-- The Atkin–Lehner anti-involution and the commutativity it buys are used only inside proofs,
+-- so private: pointwise in `heckeTCompositeGamma0_mul_of_coprime`, and as the structure
+-- `commRingHeckeRingGamma0` in `heckeTScalarCompositeGamma0_eq_zero_of_not_coprime` and
+-- `heckeTCompositeGamma0_mul`.
 import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.AtkinLehner
 
 /-!
@@ -47,7 +49,8 @@ the Atkin–Lehner anti-involution.
 * `HeckeRing.GL2.heckeTCompositeGamma0`: the composite element assembled over the prime
   factorisation of `n`.
 * `HeckeRing.GL2.heckeTScalarCompositeGamma0`: the composite scalar `∏_p S_p ^ v_p(n)`,
-  assembled by the same ordered product. It is the `S_d` indexing the divisor table.
+  assembled by the same ordered product. It is the `S_d` indexing the divisor table, and it
+  carries the same peeling and coprime-multiplicativity API as the composite `T`.
 
 ## Main results
 
@@ -245,6 +248,31 @@ cannot fire on it. -/
 theorem heckeTScalarCompositeGamma0_prime {p : ℕ} (hp : p.Prime) :
     heckeTScalarCompositeGamma0 N p = heckeTScalarGamma0 N p := by
   simpa using heckeTScalarCompositeGamma0_prime_pow N hp 1
+
+/-- **The peeling step for the composite scalar**, the companion of
+`heckeTCompositeGamma0_of_one_lt`: for `1 < n` the product splits off the block at the least
+prime factor of `n`, carrying its whole multiplicity. -/
+theorem heckeTScalarCompositeGamma0_of_one_lt {n : ℕ} (hn : 1 < n) :
+    heckeTScalarCompositeGamma0 N n =
+      heckeTScalarGamma0 N n.minFac ^ n.factorization n.minFac *
+        heckeTScalarCompositeGamma0 N (n / n.minFac ^ n.factorization n.minFac) := by
+  simpa only [heckeTScalarCompositeGamma0_def] using
+    TauCeti.Nat.primePowerProd_of_one_lt (fun p v ↦ heckeTScalarGamma0 N p ^ v) hn
+
+/-- **The composite scalar is multiplicative on coprime arguments**, the companion of
+`heckeTCompositeGamma0_mul_of_coprime` and proved the same way: one application of
+`TauCeti.Nat.primePowerProd_mul_of_coprime`, whose commutation obligation is discharged from the
+Atkin–Lehner anti-involution pointwise, keeping the statement in the ambient `Semiring`.
+
+Note this is multiplicativity of the *assembled* family in its index, not of `heckeTScalarGamma0`
+itself; the latter is a statement about `diagElemGamma0` and is not available here. -/
+theorem heckeTScalarCompositeGamma0_mul_of_coprime {m n : ℕ} (hmn : m.Coprime n) :
+    heckeTScalarCompositeGamma0 N (m * n) =
+      heckeTScalarCompositeGamma0 N m * heckeTScalarCompositeGamma0 N n := by
+  simpa only [heckeTScalarCompositeGamma0_def] using
+    TauCeti.Nat.primePowerProd_mul_of_coprime (fun p v ↦ heckeTScalarGamma0 N p ^ v) hmn
+      fun _ _ _ _ _ ↦ HeckeCosetModule.mul_comm_of_antiInvolution ℤ (atkinLehnerAntiInvolution N)
+        (atkinLehnerAntiInvolution_onHeckeCoset_eq_self N) _ _
 
 /-- The `Γ₀(N)` Hecke ring over `ℤ` as a *commutative* ring.
 

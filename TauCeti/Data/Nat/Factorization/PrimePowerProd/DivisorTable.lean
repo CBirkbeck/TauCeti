@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Data.Nat.Factorization.PrimePowerProd
+public import TauCeti.Data.Nat.Factorization.PrimePowerProd.Basic
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Tactic.Ring
@@ -176,7 +176,7 @@ section CommSemiring
 
 variable {R : Type*} [CommSemiring R] (D S : ℕ → ℕ → R)
 
-/-- Coprime multiplicativity of the assembled family, in a commutative ring: the commutation
+/-- Coprime multiplicativity of the assembled family, in a commutative semiring: the commutation
 obligations of `primePowerProd_mul_of_coprime` are all discharged by `Commute.all`. -/
 private theorem primePowerProd_mul_coprime (f : ℕ → ℕ → R) {a b : ℕ} (hab : Nat.Coprime a b) :
     primePowerProd f (a * b) = primePowerProd f a * primePowerProd f b :=
