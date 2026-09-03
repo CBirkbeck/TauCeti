@@ -33,40 +33,23 @@ primes is what makes the ramified Euler factors drop out as `(1 - 0)⁻¹ = 1`.
 
 ## Main definitions
 
-* `NumberField.Chebotarev.galoisCharacterWeight`: the weight of `χ`, packaged as a
+* `MonoidHom.galoisCharacterWeight`: the weight of `χ`, packaged as a
   `TauCeti.MultiplicativeIdealWeight K`.
 
 ## Main results
 
-* `NumberField.Chebotarev.galoisCharacterWeight_heightOne_of_unramified`: at an unramified
-  height-one prime the weight is `χ` of the Artin symbol.
-* `NumberField.Chebotarev.galoisCharacterWeight_heightOne_eq_zero_iff`: the weight vanishes at a
-  height-one prime exactly when that prime ramifies in `L`.
-* `NumberField.Chebotarev.badPrimes_galoisCharacterWeight`: the bad primes of the weight are
-  exactly the ramified primes.
+* `MonoidHom.galoisCharacterWeight_apply_of_unramified`: at an unramified height-one prime the
+  weight is `χ` of the Artin symbol.
+* `MonoidHom.galoisCharacterWeight_apply_eq_zero_iff`: the weight vanishes at a height-one prime
+  exactly when that prime ramifies in `L`.
+* `MonoidHom.badPrimes_galoisCharacterWeight`: the bad primes of the weight are exactly the
+  ramified primes.
 
 ## Implementation notes
 
 The weight is packaged as a `TauCeti.MultiplicativeIdealWeight K` rather than as a bare function
-`Ideal (𝓞 K) → ℂ`. That carrier already supplies the `→*₀` bundling, the `badPrimes` API and
-`toIdealArithmeticFunction`, which restricts the weight to the nonzero ideals. No Euler-product
-identity is proved here; that restriction is the bridge a later Euler-product result is stated
-over.
-
-The prime value, the factorization product extending it and the lemmas that build the bundle are
-all `private`: they are construction scaffolding, and the multiplicativity, zero-ideal and
-unit-ideal laws are already available on any `MultiplicativeIdealWeight` as `map_mul`, `apply_bot`
-and `apply_top`. The public surface is the bundle together with the two facts that pin it down —
-its value at an unramified height-one prime, and its vanishing exactly at the ramified ones.
-
-Two deltas against the source, both forced by the target API:
-
-* the source's `frobeniusClass K L 𝔭` is total on ideals, whereas `NumberField.artinSymbol` takes
-  the unramifiedness proof as an argument and needs `𝔭.IsMaximal`. The value at a prime is
-  therefore produced by a `dite` on the ramification condition, which is exactly the negation of
-  membership in `ramifiedPrimes K L` supplied by `mem_ramifiedPrimes_iff`;
-* a `→*₀` must send `⊥` to `0`, whereas the raw factorization product sends `⊥` to the empty
-  product `1`. The zero ideal is therefore split off explicitly.
+`Ideal (𝓞 K) → ℂ`, so that the totality above is expressed in the carrier's own `badPrimes` API:
+the bad primes of `χ.galoisCharacterWeight` are exactly `ramifiedPrimes K L`.
 
 ## References
 
@@ -170,6 +153,15 @@ private theorem galoisCharacterWeightFun_heightOne_eq_zero_iff (χ : (L ≃ₐ[K
   · exact iff_of_false (Units.ne_zero _) (not_not_intro h.2)
   · exact iff_of_true rfl fun hc ↦ h ⟨𝔭.isMaximal, hc⟩
 
+end NumberField.Chebotarev
+
+open NumberField NumberField.Chebotarev
+
+namespace MonoidHom
+
+variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
+  [IsGalois K L]
+
 /-- **The ideal weight of a Galois character** `χ`, packaged as a `MultiplicativeIdealWeight`. On a
 height-one prime it is `χ (Frob 𝔭)` at the unramified primes and `0` at the ramified ones, extended
 to all ideals completely multiplicatively through the prime factorization. -/
@@ -191,7 +183,7 @@ private theorem galoisCharacterWeight_apply (χ : (L ≃ₐ[K] L) →* ℂˣ) (�
 /-- **Value at an unramified prime.** At a height-one prime unramified in `L` the weight is `χ` of
 the Artin symbol; together with the vanishing at ramified primes and complete multiplicativity this
 determines the weight. -/
-theorem galoisCharacterWeight_heightOne_of_unramified (χ : (L ≃ₐ[K] L) →* ℂˣ)
+theorem galoisCharacterWeight_apply_of_unramified (χ : (L ≃ₐ[K] L) →* ℂˣ)
     (𝔭 : HeightOneSpectrum (𝓞 K))
     (hur : ∀ (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver 𝔭.asIdeal],
       Algebra.IsUnramifiedAt (𝓞 K) Q) :
@@ -208,10 +200,11 @@ theorem galoisCharacterWeight_heightOne_of_unramified (χ : (L ≃ₐ[K] L) →*
 /-- The weight vanishes at a height-one prime exactly when that prime ramifies in `L`. This is what
 makes the weight *total*: the bad primes are not left unconstrained, they are pinned to `0`. -/
 @[simp]
-theorem galoisCharacterWeight_heightOne_eq_zero_iff (χ : (L ≃ₐ[K] L) →* ℂˣ)
+theorem galoisCharacterWeight_apply_eq_zero_iff (χ : (L ≃ₐ[K] L) →* ℂˣ)
     (𝔭 : HeightOneSpectrum (𝓞 K)) :
-    galoisCharacterWeight (L := L) χ 𝔭.asIdeal = 0 ↔ 𝔭 ∈ ramifiedPrimes K L :=
-  galoisCharacterWeightFun_heightOne_eq_zero_iff χ 𝔭
+    galoisCharacterWeight (L := L) χ 𝔭.asIdeal = 0 ↔ 𝔭 ∈ ramifiedPrimes K L := by
+  rw [galoisCharacterWeight_apply]
+  exact galoisCharacterWeightFun_heightOne_eq_zero_iff χ 𝔭
 
 /-- The bad primes of the weight are exactly the ramified primes. -/
 @[simp]
@@ -219,6 +212,6 @@ theorem badPrimes_galoisCharacterWeight (χ : (L ≃ₐ[K] L) →* ℂˣ) :
     (galoisCharacterWeight (L := L) χ).badPrimes = ↑(ramifiedPrimes K L) := by
   ext 𝔭
   simpa only [TauCeti.MultiplicativeIdealWeight.mem_badPrimes, Finset.mem_coe] using
-    galoisCharacterWeight_heightOne_eq_zero_iff χ 𝔭
+    galoisCharacterWeight_apply_eq_zero_iff χ 𝔭
 
-end NumberField.Chebotarev
+end MonoidHom
