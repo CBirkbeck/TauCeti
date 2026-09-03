@@ -14,8 +14,9 @@ public import TauCeti.NumberTheory.RamificationInertia.NumberField
 
 Let `K` be a number field and `p` a prime that is unramified in `K`. Then the cyclotomic polynomial
 `Φ_{p^(k+1)}` is irreducible over `K` for every `k`; in particular `Φ_p` is, so
-`[K(ζ_p) : K] = p - 1` and the Galois group of `K(ζ_p) / K` is the full unit group `(ℤ/pℤ)ˣ`, of
-order `p - 1`.
+`[K(ζ_p) : K] = p - 1`. For the Galois group itself, feed that irreducibility to Mathlib's
+`IsCyclotomicExtension.autEquivPow`, which yields `Gal(K(ζ_p)/K) ≃* (ZMod p)ˣ`; this file proves
+irreducibility and the ramification behind it, and does not restate that consequence.
 
 The mechanism is ramification, not an intersection of fields. Let `F / K` be a `p^(k+1)`-th
 cyclotomic extension and `𝔔` a prime of `𝓞 F` above `p`. Inside `F` the subfield `ℚ(ζ)` is the
