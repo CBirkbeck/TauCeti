@@ -50,6 +50,8 @@ built from `closure` in the forthcoming valuation-spectrum development of `Spv (
 * `TauCeti.ConvexSubgroup.mem_closure_of_nonempty_of_mul_mem_of_one_le` : For a nonempty set of
   elements `≥ 1` closed under multiplication, membership in the convex closure is boundedness
   by a single member.
+* `TauCeti.ConvexSubgroup.exists_one_lt_of_lt` : A strictly smaller convex subgroup is separated
+  from the larger one by an element above `1`.
 * `TauCeti.ConvexSubgroup.lt_closure_singleton` : An element outside a convex subgroup
   generates a strictly larger one.
 * `TauCeti.ConvexSubgroup.mulArchimedean_iff_forall_eq_bot_or_eq_top` : A linearly ordered
@@ -598,6 +600,20 @@ private theorem ordConnected_leftRel_fiber (H : ConvexSubgroup Γ) :
     mem_toSubgroup.mpr (H.convex (mem_toSubgroup.mp hy') (mem_toSubgroup.mp hx')
       (mul_le_mul_left (inv_le_inv' hz.2) b) (mul_le_mul_left (inv_le_inv' hz.1) b))
   exact QuotientGroup.eq.mpr hz'
+
+/-- **A strictly smaller convex subgroup is separated from the larger one by an element above `1`.**
+Convex subgroups are totally ordered, so `Δ < Γ'` means `Γ'` has a member outside `Δ`; taking that
+member's inverse if necessary produces one above `1`.
+
+The element above `1` is the point: a monotone map out of `Γ` gives only `≤`, and a witness of this
+shape is what turns such a bound into the strict inequality a cofinality argument needs. -/
+theorem exists_one_lt_of_lt {Γ' Δ : ConvexSubgroup Γ} (hlt : Δ < Γ') :
+    ∃ z, z ∈ Γ' ∧ z ∉ Δ ∧ 1 < z := by
+  obtain ⟨x, hxQ, hxD⟩ := SetLike.exists_of_lt hlt
+  rcases lt_trichotomy x 1 with hl | he | hg
+  · exact ⟨x⁻¹, inv_mem hxQ, fun e ↦ hxD (by simpa using inv_mem e), one_lt_inv'.mpr hl⟩
+  · exact absurd (he ▸ one_mem Δ) hxD
+  · exact ⟨x, hxQ, hxD, hg⟩
 
 variable (H : ConvexSubgroup Γ)
 
