@@ -246,12 +246,6 @@ private noncomputable def localFactorEmb (p : W.f.Factors)
       rw [W.coe_localFactor v p w]
       exact minpoly.aeval _ _)
 
-private lemma localFactorEmb_of (p : W.f.Factors)
-    (w : HeightOneSpectrum (W.ringOfIntegersFactor (𝓞 F) p)) [w.asIdeal.LiesOver v.asIdeal]
-    (c : F_[v]) :
-    W.localFactorEmb v p w (AdjoinRoot.of _ c) = algebraMap F_[v] (w.adicCompletion (𝕃 p)) c :=
-  AdjoinRoot.lift_of _
-
 /- The square `𝒪_v → F_v[X] ⧸ (q) → (F[X] ⧸ (p))_w` = `𝒪_v → 𝒪_w → (F[X] ⧸ (p))_w`. -/
 private lemma localFactorEmb_comp_algebraMap (p : W.f.Factors)
     (w : HeightOneSpectrum (W.ringOfIntegersFactor (𝓞 F) p)) [w.asIdeal.LiesOver v.asIdeal] :
@@ -262,7 +256,7 @@ private lemma localFactorEmb_comp_algebraMap (p : W.f.Factors)
   ext c
   rw [RingHom.comp_apply, IsScalarTower.algebraMap_apply 𝒪_[v] F_[v]
       (AdjoinRoot (W.localFactor v p w : F_[v][X])),
-    AdjoinRoot.algebraMap_eq, W.localFactorEmb_of v p w]
+    AdjoinRoot.algebraMap_eq, localFactorEmb, AdjoinRoot.lift_of]
   rw [RingHom.comp_apply, W.algebraMap_adicCompletionFactor_apply v p w]
   exact congrArg _ (coe_adicCompletionIntegersExtension F (𝕃 p) v w c).symm
 

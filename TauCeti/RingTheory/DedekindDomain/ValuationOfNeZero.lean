@@ -69,12 +69,9 @@ theorem valuationOfNeZero_eq_iff (v : HeightOneSpectrum R) (u : Kˣ) (m : Multip
   rw [← WithZero.coe_inj, valuationOfNeZero_eq]
 
 /-- A unit has trivial `v`-adic `valuationOfNeZero` iff its `v`-adic valuation is `1`, the case
-`m = 1` of `valuationOfNeZero_eq_iff`.
-
-Not `@[simp]`: it is the `m = 1` instance of `valuationOfNeZero_eq_iff`, which carries the
-annotation instead. With both marked, `simpNF` rejects this one — "simp can prove this" — because
-the general form subsumes it. Every consumer names it explicitly, so nothing depends on the
-attribute. -/
+`m = 1` of `valuationOfNeZero_eq_iff`. -/
+-- Deliberately not `@[simp]`: `valuationOfNeZero_eq_iff` carries the annotation, and with both
+-- marked `simpNF` rejects this one — "simp can prove this" — since the general form subsumes it.
 theorem valuationOfNeZero_eq_one_iff (v : HeightOneSpectrum R) (x : Kˣ) :
     v.valuationOfNeZero x = 1 ↔ v.valuation K x = 1 := by
   simp only [valuationOfNeZero_eq_iff, WithZero.coe_one]
