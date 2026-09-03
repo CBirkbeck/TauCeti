@@ -97,9 +97,7 @@ def toSet (D : HeckeCoset Δ H₁ H₂) : Set G :=
 /-- A representative `g : Δ` of a double coset (via `Quotient.out`). -/
 noncomputable def rep (D : HeckeCoset Δ H₁ H₂) : Δ := Quotient.out D
 
-/-- **The defining equation of `rep`.** The body is sealed, so this is what lets a downstream
-file move between the two spellings: the coset-decomposition definitions are stated over
-`Quotient.out`, while `mk_rep`, `rep_mem` and `rep_one_mem` are stated over `rep`. -/
+/-- The chosen representative of a double coset is its `Quotient.out` representative. -/
 theorem rep_def (D : HeckeCoset Δ H₁ H₂) : D.rep = Quotient.out D := (rfl)
 
 @[simp] lemma mk_rep (D : HeckeCoset Δ H₁ H₂) : mk H₁ H₂ D.rep = D := Quotient.out_eq' D
