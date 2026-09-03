@@ -36,18 +36,6 @@ places.
 * `WeierstrassCurve.Affine.mem_selmerGroupA_of_forall_localRes` (local to global): a square class
   that localizes to an unramified class at every good finite place is `S`-unramified.
 
-## Implementation notes
-
-Both directions rest on one fact about the objects rather than about the proofs: parity of a
-valuation is insensitive to ramification, because ramification multiplies the valuation by a fixed
-index (`IsDedekindDomain.HeightOneSpectrum.dvd_toAdd_valuationOfNeZero_map`). That is why the
-comparison needs only the extension of adic completions
-(`IsDedekindDomain.HeightOneSpectrum.adicCompletionExtension`) and **not** the full decomposition
-`W.A ⊗ F_v ≅ ∏ (𝕃 p)_w` of the completed étale algebra.
-
-All the helpers are `private`. They are scaffolding for the two theorems above and are stated in
-vocabulary — `localFactor`, `integerMapOfDvd` — that has no meaning outside this comparison.
-
 ## Provenance
 
 Adapted from Michael Stoll's elliptic-curves formalisation
