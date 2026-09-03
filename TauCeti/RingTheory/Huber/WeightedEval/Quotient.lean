@@ -15,13 +15,21 @@ ring of restricted power series, and one of the two maps that identify them goes
 quotient. This file supplies it: an evaluation `A⟨X⟩_T →+* B` that kills an ideal `𝔞` factors
 through `A⟨X⟩_T ⧸ 𝔞`, and the factorisation is again continuous.
 
-The factorisation itself is `Ideal.Quotient.lift`. What is not already available is its
-*continuity*: Mathlib puts the quotient topology on `R ⧸ I`
-(`topologicalRingQuotientTopology`) and proves the quotient map open
-(`QuotientRing.isOpenMap_coe`), but states nothing about a map lifted out of `R ⧸ I`. The proof
-below is the one line that closes that gap — the quotient map is a topological quotient map, so
-continuity of the lift is continuity of the evaluation it came from — and it is stated here, at
-the point of use, rather than as a general lemma about topological rings.
+The factorisation itself is `Ideal.Quotient.lift`, and its continuity is
+`continuous_coinduced_dom`: Mathlib gives `R ⧸ I` the coinduced (quotient) topology, so a map out
+of it is continuous exactly when its composite with the quotient map is — which is
+`TauCeti.Huber.continuous_weightedEvalHom`.
+
+## Relation to `TauCeti.Huber.Pair.Hom.quotientLift`
+
+This repository already carries the same move one level up, for **morphisms of Huber pairs**:
+`Pair.Hom.quotientLift` factors a `Hom S T` killing `J` through `S.quotient J`, by the same
+`Ideal.Quotient.lift` and the same `continuous_coinduced_dom` step. This file is *not* an instance
+of it and cannot be phrased as one: `A⟨X⟩_T` and `B` enter Wedhorn 5.50 as plain topological rings,
+with no ring of integral elements and so no `map_mem_plus` obligation to discharge, and the
+universal property being transported is about ring homomorphisms rather than pair morphisms. The
+two are siblings sharing a proof idiom, not a general lemma and its special case; a later rung
+needing the pair-level statement should use `Pair.Hom.quotientLift`.
 
 ## What is *not* assumed, and why it is worth saying
 
@@ -69,7 +77,7 @@ homomorphism `A⟨X⟩_T ⧸ 𝔞 →+* B` through which that evaluation factors
 This is `Ideal.Quotient.lift` at `TauCeti.Huber.weightedEvalHom`; it is named because Example
 6.38 uses it twice over, and because its continuity
 (`TauCeti.Huber.continuous_weightedEvalQuotientHom`) is the part that is not immediate. -/
-noncomputable def weightedEvalQuotientHom (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
+@[expose] noncomputable def weightedEvalQuotientHom (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
     (hb : IsWeightBounded φ T b) {𝔞 : Ideal (weightedRestrictedSubring T hT)}
     (h𝔞 : 𝔞 ≤ RingHom.ker (weightedEvalHom hT hφ hb)) :
     weightedRestrictedSubring T hT ⧸ 𝔞 →+* B :=
@@ -83,7 +91,7 @@ variable {hT : IsWeightFamily T} {hφ : ContinuousAt φ 0} {hb : IsWeightBounded
 @[simp]
 theorem weightedEvalQuotientHom_mk (f : weightedRestrictedSubring T hT) :
     weightedEvalQuotientHom hT hφ hb h𝔞 (Ideal.Quotient.mk 𝔞 f) = weightedEvalHom hT hφ hb f :=
-  (rfl)
+  rfl
 
 /-- **The defining factorisation**: composing the induced map with the quotient map returns the
 evaluation. With `Ideal.Quotient.ringHom_ext` this is what pins the induced map down, and it is
@@ -91,16 +99,14 @@ the form in which consumers use it. -/
 theorem weightedEvalQuotientHom_comp_mk :
     (weightedEvalQuotientHom hT hφ hb h𝔞).comp (Ideal.Quotient.mk 𝔞) =
       weightedEvalHom hT hφ hb :=
-  RingHom.ext fun _ ↦ rfl
+  Ideal.Quotient.lift_comp_mk 𝔞 _ _
 
-/-- **The induced map is continuous.** `A⟨X⟩_T ⧸ 𝔞` carries the quotient topology, so the
-quotient map is a topological quotient map and continuity of the induced map is exactly
-continuity of the evaluation, which is
+/-- **The induced map is continuous.** `A⟨X⟩_T ⧸ 𝔞` carries the coinduced topology, so continuity
+of a map out of it is continuity of its composite with the quotient map — here
 `TauCeti.Huber.continuous_weightedEvalHom`. -/
 theorem continuous_weightedEvalQuotientHom :
     Continuous (weightedEvalQuotientHom hT hφ hb h𝔞) := by
-  rw [(QuotientRing.isOpenQuotientMap_mk 𝔞).isQuotientMap.continuous_iff]
-  exact continuous_weightedEvalHom hT hφ hb
+  exact continuous_coinduced_dom.mpr (continuous_weightedEvalHom hT hφ hb)
 
 /-- The induced map sends the class of a constant series to its value under `φ`. -/
 @[simp]
@@ -123,7 +129,10 @@ Existence is `TauCeti.Huber.weightedEvalQuotientHom`. Uniqueness is the uniquene
 quotient map: a competitor composed with `Ideal.Quotient.mk` is a continuous homomorphism out of
 `A⟨X⟩_T` with the same values on the generators, so it *is* the evaluation, and a homomorphism
 out of a quotient is determined by that composite. -/
-theorem existsUnique_continuous_ringHom_quotient_weightedRestrictedSubring :
+theorem existsUnique_continuous_ringHom_quotient_weightedRestrictedSubring
+    (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0) (hb : IsWeightBounded φ T b)
+    {𝔞 : Ideal (weightedRestrictedSubring T hT)}
+    (h𝔞 : 𝔞 ≤ RingHom.ker (weightedEvalHom hT hφ hb)) :
     ∃! ψ : weightedRestrictedSubring T hT ⧸ 𝔞 →+* B, Continuous ψ ∧
       (∀ a, ψ (Ideal.Quotient.mk 𝔞 (weightedC T hT a)) = φ a) ∧
       ∀ i, ψ (Ideal.Quotient.mk 𝔞 (weightedX T hT i)) = b i :=
