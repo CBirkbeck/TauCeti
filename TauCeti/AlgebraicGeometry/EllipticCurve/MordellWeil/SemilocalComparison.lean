@@ -281,6 +281,10 @@ private lemma comap_localFactorIntegerEmb_ne_bot (p : W.f.Factors)
       adicCompletionIntegersExtension F (𝕃 p) v w := by
     ext c : 2
     exact RingHom.congr_fun (W.localFactorEmb_comp_algebraMap v p w) c
+  -- `comap_maximalIdeal_adicCompletionIntegersExtension` is stated for
+  -- `IsLocalRing.maximalIdeal`, while contracting a prime lands on the `HeightOneSpectrum`
+  -- wrapper's `asIdeal`. The two are the same term, but `rw` needs the goal written in the
+  -- second spelling and no named equality bridges them, so the identification is `rfl` here.
   rw [Ideal.comap_comap, hsq0,
     show (IsDiscreteValuationRing.maximalIdeal (w.adicCompletionIntegers (𝕃 p))).asIdeal =
       IsLocalRing.maximalIdeal (w.adicCompletionIntegers (𝕃 p)) from rfl,
