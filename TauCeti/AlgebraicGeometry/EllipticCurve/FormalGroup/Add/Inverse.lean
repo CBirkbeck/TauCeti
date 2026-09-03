@@ -97,45 +97,6 @@ private theorem invPair_eq :
       Sum.elim (fun _ ↦ (X () : MvPowerSeries Unit O)) (fun _ ↦ formalInverse W) :=
   funext fun j ↦ by rcases j with j | j <;> rfl
 
-/-- The defining property of the slope, read at the pair `(z, ι(z))`. -/
-private theorem subst_invPair_formalSlope_mul :
-    subst (Sum.elim X (fun _ ↦ formalInverse W) : Unit ⊕ Unit → MvPowerSeries Unit O)
-        (formalSlope W) * (formalInverse W - X ()) =
-      -(formalW W * PowerSeries.invOfUnit (formalInverseDenom W) 1) - formalW W := by
-  rw [invPair_eq]
-  refine (subst_pair_formalSlope_mul W (constantCoeff_X ())
-    (constantCoeff_formalInverse W)).trans ?_
-  -- `PowerSeries.X_subst` is stated for `PowerSeries.X`; instantiating the general lemma at
-  -- `q₁ = X ()` leaves the `MvPowerSeries.X ()` spelling of that same term, and the `show`
-  -- only picks which of the two `rw` is looking at.
-  rw [subst_formalInverse_formalW W,
-    show PowerSeries.subst (X () : MvPowerSeries Unit O) (formalW W) = formalW W from
-      PowerSeries.X_subst (formalW W)]
-
-/-- The intercept at the pair `(z, ι(z))`, computed from the first point. -/
-private theorem subst_invPair_formalIntercept_eq_inl :
-    subst (Sum.elim X (fun _ ↦ formalInverse W) : Unit ⊕ Unit → MvPowerSeries Unit O)
-        (formalIntercept W) =
-      formalW W - subst (Sum.elim X (fun _ ↦ formalInverse W) :
-        Unit ⊕ Unit → MvPowerSeries Unit O) (formalSlope W) * X () := by
-  rw [invPair_eq]
-  refine (subst_pair_formalIntercept_eq_inl W (constantCoeff_X ())
-    (constantCoeff_formalInverse W)).trans ?_
-  rw [show PowerSeries.subst (X () : MvPowerSeries Unit O) (formalW W) = formalW W from
-    PowerSeries.X_subst (formalW W)]
-
-/-- The intercept at the pair `(z, ι(z))`, computed from the second point. -/
-private theorem subst_invPair_formalIntercept_eq_inr :
-    subst (Sum.elim X (fun _ ↦ formalInverse W) : Unit ⊕ Unit → MvPowerSeries Unit O)
-        (formalIntercept W) =
-      -(formalW W * PowerSeries.invOfUnit (formalInverseDenom W) 1) -
-        subst (Sum.elim X (fun _ ↦ formalInverse W) :
-          Unit ⊕ Unit → MvPowerSeries Unit O) (formalSlope W) * formalInverse W := by
-  rw [invPair_eq]
-  refine (subst_pair_formalIntercept_eq_inr W (constantCoeff_X ())
-    (constantCoeff_formalInverse W)).trans ?_
-  rw [subst_formalInverse_formalW W]
-
 /-- The third root at the pair `(z, ι(z))` vanishes at the origin, so it may itself be
 substituted into a one-variable series. -/
 private theorem constantCoeff_subst_invPair_formalThirdRoot :
@@ -145,58 +106,22 @@ private theorem constantCoeff_subst_invPair_formalThirdRoot :
   exact constantCoeff_subst_pair_formalThirdRoot W (constantCoeff_X ())
     (constantCoeff_formalInverse W)
 
-/-- The defining relation of the third root at the pair `(z, ι(z))`, with the inverse of
-Vieta's denominator eliminated. -/
-private theorem subst_invPair_formalThirdRoot_relation :
-    (1 + C W.a₂ * subst (Sum.elim X (fun _ ↦ formalInverse W) :
-          Unit ⊕ Unit → MvPowerSeries Unit O) (formalSlope W) +
-        C W.a₄ * subst (Sum.elim X (fun _ ↦ formalInverse W) :
-          Unit ⊕ Unit → MvPowerSeries Unit O) (formalSlope W) ^ 2 +
-        C W.a₆ * subst (Sum.elim X (fun _ ↦ formalInverse W) :
-          Unit ⊕ Unit → MvPowerSeries Unit O) (formalSlope W) ^ 3) *
-      (subst (Sum.elim X (fun _ ↦ formalInverse W) :
-          Unit ⊕ Unit → MvPowerSeries Unit O) (formalThirdRoot W) + X () + formalInverse W) =
-      -(C W.a₁ * subst (Sum.elim X (fun _ ↦ formalInverse W) :
-            Unit ⊕ Unit → MvPowerSeries Unit O) (formalSlope W) +
-        C W.a₂ * subst (Sum.elim X (fun _ ↦ formalInverse W) :
-            Unit ⊕ Unit → MvPowerSeries Unit O) (formalIntercept W) +
-        C W.a₃ * subst (Sum.elim X (fun _ ↦ formalInverse W) :
-            Unit ⊕ Unit → MvPowerSeries Unit O) (formalSlope W) ^ 2 +
-        2 * C W.a₄ * subst (Sum.elim X (fun _ ↦ formalInverse W) :
-            Unit ⊕ Unit → MvPowerSeries Unit O) (formalSlope W) *
-          subst (Sum.elim X (fun _ ↦ formalInverse W) :
-            Unit ⊕ Unit → MvPowerSeries Unit O) (formalIntercept W) +
-        3 * C W.a₆ * subst (Sum.elim X (fun _ ↦ formalInverse W) :
-            Unit ⊕ Unit → MvPowerSeries Unit O) (formalSlope W) ^ 2 *
-          subst (Sum.elim X (fun _ ↦ formalInverse W) :
-            Unit ⊕ Unit → MvPowerSeries Unit O) (formalIntercept W)) := by
-  rw [invPair_eq]
-  exact subst_pair_formalThirdRoot_relation W (constantCoeff_X ())
-    (constantCoeff_formalInverse W)
-
-/-- The on-line identity at the pair `(z, ι(z))`: reading the `w`-expansion at the third root
-gives the chord line read there. -/
-private theorem subst_invPair_online :
-    subst (fun _ : Unit ↦ subst (Sum.elim X (fun _ ↦ formalInverse W) :
-        Unit ⊕ Unit → MvPowerSeries Unit O) (formalThirdRoot W)) (formalW W) =
-      subst (Sum.elim X (fun _ ↦ formalInverse W) :
-          Unit ⊕ Unit → MvPowerSeries Unit O) (formalSlope W) *
-        subst (Sum.elim X (fun _ ↦ formalInverse W) :
-          Unit ⊕ Unit → MvPowerSeries Unit O) (formalThirdRoot W) +
-        subst (Sum.elim X (fun _ ↦ formalInverse W) :
-          Unit ⊕ Unit → MvPowerSeries Unit O) (formalIntercept W) := by
-  rw [invPair_eq]
-  exact subst_pair_formalThirdRoot_formalW W (constantCoeff_X ())
-    (constantCoeff_formalInverse W)
-
 /-- **The chord through a point and its formal inverse passes through the origin**, in the form
 that holds over any base: the intercept at the pair `(z, ι(z))`, multiplied by `ι(z) - z`,
 vanishes. Over a domain the second factor is nonzero, and the intercept itself vanishes. -/
 private theorem subst_invPair_formalIntercept_mul :
     subst (Sum.elim X (fun _ ↦ formalInverse W) : Unit ⊕ Unit → MvPowerSeries Unit O)
         (formalIntercept W) * (formalInverse W - X ()) = 0 := by
-  have hi₁ := subst_invPair_formalIntercept_eq_inl W
-  have hi₂ := subst_invPair_formalIntercept_eq_inr W
+  -- the two readings of the intercept, taken from `PairSubst` at `(z, ι(z))` and turned back
+  -- into this module's spelling of the pair
+  have hi₁ := subst_pair_formalIntercept_eq_inl W (constantCoeff_X ())
+    (constantCoeff_formalInverse W)
+  have hi₂ := subst_pair_formalIntercept_eq_inr W (constantCoeff_X ())
+    (constantCoeff_formalInverse W)
+  rw [← invPair_eq,
+    show PowerSeries.subst (X () : MvPowerSeries Unit O) (formalW W) = formalW W from
+      PowerSeries.X_subst (formalW W)] at hi₁
+  rw [← invPair_eq, subst_formalInverse_formalW W] at hi₂
   -- `PowerSeries.X` is `MvPowerSeries.X ()`: defeq, but not syntactically equal, so this is
   -- `formalInverse_def` restated in the spelling `linear_combination` will normalize against.
   have hd : formalInverse W = -(X () * PowerSeries.invOfUnit (formalInverseDenom W) 1) :=
@@ -282,9 +207,18 @@ private theorem subst_invPair_formalThirdRoot_of_isDomain (h2 : (2 : O) ≠ 0) :
     subst (Sum.elim X (fun _ ↦ formalInverse W) : Unit ⊕ Unit → MvPowerSeries Unit O)
       (formalThirdRoot W) = 0 := by
   have hNp := subst_invPair_formalIntercept W (formalInverse_ne_X W h2)
-  have hOL := subst_invPair_online W
-  have hrel := subst_invPair_formalThirdRoot_relation W
-  have hslope := subst_invPair_formalSlope_mul W
+  -- the on-line identity, the third-root relation and the slope identity, taken from `PairSubst`
+  -- at `(z, ι(z))` and turned back into this module's spelling of the pair
+  have hOL := subst_pair_formalThirdRoot_formalW W (constantCoeff_X ())
+    (constantCoeff_formalInverse W)
+  have hrel := subst_pair_formalThirdRoot_relation W (constantCoeff_X ())
+    (constantCoeff_formalInverse W)
+  have hslope := subst_pair_formalSlope_mul W (constantCoeff_X ())
+    (constantCoeff_formalInverse W)
+  rw [← invPair_eq] at hOL hrel
+  rw [← invPair_eq, subst_formalInverse_formalW W,
+    show PowerSeries.subst (X () : MvPowerSeries Unit O) (formalW W) = formalW W from
+      PowerSeries.X_subst (formalW W)] at hslope
   have hTc := constantCoeff_subst_invPair_formalThirdRoot W
   have hfix := subst_formalW_wEquation W (PowerSeries.HasSubst.of_constantCoeff_zero hTc)
   rw [hNp, add_zero] at hOL
