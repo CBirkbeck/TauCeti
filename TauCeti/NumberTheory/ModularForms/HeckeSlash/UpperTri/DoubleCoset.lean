@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-import TauCeti.Algebra.GroupWithZero.Divisibility
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma1.UpperTriCosets
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Gamma1
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.ModularForm
@@ -94,7 +93,7 @@ variable {N p : ℕ} [NeZero N] (k : ℤ)
 /-- A divisor of a nonzero level is positive: the side condition the coset decomposition asks
 for, which `p ∣ N` and `NeZero N` already supply. -/
 private lemma pos_of_dvd (hpN : p ∣ N) : 0 < p :=
-  Nat.pos_of_ne_zero (NeZero.of_dvd hpN).out
+  Nat.pos_of_dvd_of_pos hpN (NeZero.pos N)
 
 /-- The prime factors of a divisor of a nonzero level are prime factors of the level: the
 hypothesis the coset decomposition asks for, in the form `p ∣ N` supplies. -/
