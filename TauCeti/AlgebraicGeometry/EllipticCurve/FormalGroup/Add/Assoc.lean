@@ -365,6 +365,17 @@ private theorem subst_formalW_ne_zero {q : MvPowerSeries σ O} (hq : constantCoe
 
 variable [IsFractionRing (MvPowerSeries σ O) KK]
 
+/-- The `w`-expansion at a nonzero parameter stays nonzero after being pushed into `KK`: the
+localization map of a fraction field is injective, so it cannot introduce a zero.
+
+Every parametrized point of this file needs its `w`-coordinate invertible in `KK`, so this is the
+form `subst_formalW_ne_zero` is actually used in. -/
+private theorem algebraMap_subst_formalW_ne_zero {q : MvPowerSeries σ O}
+    (hq : constantCoeff q = 0) (hq0 : q ≠ 0) :
+    algebraMap (MvPowerSeries σ O) KK (PowerSeries.subst q (formalW W)) ≠ 0 := fun h ↦
+  W.subst_formalW_ne_zero hq hq0
+    (IsFractionRing.injective (MvPowerSeries σ O) KK (by rw [h, map_zero]))
+
 /-- The point of the base-changed curve carried by the parameter `q`: the solution `(q, w(q))` of
 the `w`-equation, read in `KK` and in the affine coordinates `(q / w, -1 / w)` of the chart. -/
 private noncomputable def thetaPoint (hΔ : (fracCurve W σ KK).Δ ≠ 0)
@@ -375,8 +386,7 @@ private noncomputable def thetaPoint (hΔ : (fracCurve W σ KK).Δ ≠ 0)
       simpa [wEquationRHS_def] using
         W.algebraMap_subst_formalW_wEquation (KK := KK)
           (PowerSeries.HasSubst.of_constantCoeff_zero hq))
-    (fun h ↦ W.subst_formalW_ne_zero hq hq0
-      (IsFractionRing.injective (MvPowerSeries σ O) KK (by rw [h, map_zero])))
+    (W.algebraMap_subst_formalW_ne_zero hq hq0)
     hΔ)
 
 variable [DecidableEq KK] in
@@ -434,10 +444,10 @@ private theorem thetaPoint_add (hΔ : (fracCurve W σ KK).Δ ≠ 0)
     refine subst_pair_thirdRootDenom_ne_zero W h₁ h₂ (hinj ?_)
     simpa [fracCurve, MvPowerSeries.c_eq_algebraMap, map_zero] using h
   have hTp0 : Tp ≠ 0 := subst_pair_formalThirdRoot_ne_zero W h₁ h₂ hN
-  have hw₁0 : ρ w₁ ≠ 0 := fun h ↦ W.subst_formalW_ne_zero h₁ hq₁0 (hinj (by rw [h, map_zero]))
-  have hw₂0 : ρ w₂ ≠ 0 := fun h ↦ W.subst_formalW_ne_zero h₂ hq₂0 (hinj (by rw [h, map_zero]))
+  have hw₁0 : ρ w₁ ≠ 0 := W.algebraMap_subst_formalW_ne_zero h₁ hq₁0
+  have hw₂0 : ρ w₂ ≠ 0 := W.algebraMap_subst_formalW_ne_zero h₂ hq₂0
   have hTc : constantCoeff Tp = 0 := constantCoeff_subst_pair_formalThirdRoot W h₁ h₂
-  have hwT0 : ρ wT ≠ 0 := fun h ↦ W.subst_formalW_ne_zero hTc hTp0 (hinj (by rw [h, map_zero]))
+  have hwT0 : ρ wT ≠ 0 := W.algebraMap_subst_formalW_ne_zero hTc hTp0
   have hxρ : ρ q₁ * ρ w₂ - ρ q₂ * ρ w₁ ≠ 0 := by
     rw [← map_mul, ← map_mul, ← map_sub]
     exact fun h ↦ hx (hinj (by rw [h, map_zero]))
@@ -525,9 +535,8 @@ private theorem thetaPoint_neg (hΔ : (fracCurve W σ KK).Δ ≠ 0)
     have h := congrArg ρ (W.subst_formalInverseDenom_eq hs)
     simp only [map_sub, map_mul, map_one, MvPowerSeries.c_eq_algebraMap] at h
     exact h
-  have hw0 : ρ (PowerSeries.subst q (formalW W)) ≠ 0 := fun h ↦
-    W.subst_formalW_ne_zero hq hq0
-      (IsFractionRing.injective (MvPowerSeries σ O) KK (by rw [h, map_zero]))
+  have hw0 : ρ (PowerSeries.subst q (formalW W)) ≠ 0 :=
+    W.algebraMap_subst_formalW_ne_zero hq hq0
   simp only [thetaPoint, Affine.Point.neg_some, Affine.Point.some.injEq]
   simp only [← hρ]
   constructor
@@ -551,10 +560,10 @@ private theorem thetaPoint_inj (hΔ : (fracCurve W σ KK).Δ ≠ 0)
   have hinj : Function.Injective ρ := IsFractionRing.injective (MvPowerSeries σ O) KK
   simp only [thetaPoint, Affine.Point.some.injEq] at h
   simp only [← hρ] at h
-  have hw₁0 : ρ (PowerSeries.subst q₁ (formalW W)) ≠ 0 := fun hh ↦
-    W.subst_formalW_ne_zero h₁ hq₁0 (hinj (by rw [hh, map_zero]))
-  have hw₂0 : ρ (PowerSeries.subst q₂ (formalW W)) ≠ 0 := fun hh ↦
-    W.subst_formalW_ne_zero h₂ hq₂0 (hinj (by rw [hh, map_zero]))
+  have hw₁0 : ρ (PowerSeries.subst q₁ (formalW W)) ≠ 0 :=
+    W.algebraMap_subst_formalW_ne_zero h₁ hq₁0
+  have hw₂0 : ρ (PowerSeries.subst q₂ (formalW W)) ≠ 0 :=
+    W.algebraMap_subst_formalW_ne_zero h₂ hq₂0
   have hw : ρ (PowerSeries.subst q₁ (formalW W)) = ρ (PowerSeries.subst q₂ (formalW W)) := by
     have h2 := h.2
     field_simp at h2
@@ -585,10 +594,10 @@ private theorem pair_intercept_ne_zero_of_ne (hΔ : (fracCurve W σ KK).Δ ≠ 0
   have hqw : q₁ * PowerSeries.subst q₂ (formalW W) -
       q₂ * PowerSeries.subst q₁ (formalW W) = 0 := by
     rw [subst_pair_formalIntercept_mul_sub W h₁ h₂, h0, zero_mul]
-  have hw₁0 : ρ (PowerSeries.subst q₁ (formalW W)) ≠ 0 := fun hh ↦
-    W.subst_formalW_ne_zero h₁ hq₁0 (hinj (by rw [hh, map_zero]))
-  have hw₂0 : ρ (PowerSeries.subst q₂ (formalW W)) ≠ 0 := fun hh ↦
-    W.subst_formalW_ne_zero h₂ hq₂0 (hinj (by rw [hh, map_zero]))
+  have hw₁0 : ρ (PowerSeries.subst q₁ (formalW W)) ≠ 0 :=
+    W.algebraMap_subst_formalW_ne_zero h₁ hq₁0
+  have hw₂0 : ρ (PowerSeries.subst q₂ (formalW W)) ≠ 0 :=
+    W.algebraMap_subst_formalW_ne_zero h₂ hq₂0
   have hx : ρ q₁ / ρ (PowerSeries.subst q₁ (formalW W)) =
       ρ q₂ / ρ (PowerSeries.subst q₂ (formalW W)) := by
     rw [div_eq_div_iff hw₁0 hw₂0, ← map_mul, ← map_mul]
