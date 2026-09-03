@@ -19,7 +19,8 @@ up to a two-sided additive bounded error and `g` diverges, then `f / g` tends to
 
 ## Main results
 
-* `TauCeti.tendsto_ratio_one_of_div_atTop_pm_bounded` — if `g` tends to `atTop` along `l` and,
+* `TauCeti.tendsto_div_nhds_one_of_le_add_const_of_sub_const_le` — if `g` tends to `atTop`
+  along `l` and,
   eventually along `l`, `g - C₂ ≤ f ≤ g + C₁` for constants `C₁` and `C₂`, then `f / g` tends
   to `1`. No property of the denominator beyond divergence is used: the additive error washes
   out because `g` blows up.
@@ -30,13 +31,15 @@ The two error bounds are taken as separate `∃ C, ∀ᶠ …` hypotheses rather
 bound on `|f - g|`, because a caller that derives the two inequalities from different estimates
 arrives holding them in that shape and would otherwise have to recombine them.
 
-The same conclusion can be assembled from the `Asymptotics.IsEquivalent` API: the additive
-error is `=o[l] g` because `g` diverges, so `Asymptotics.IsEquivalent.add_isLittleO` gives
-`f ~[l] g`, and `Asymptotics.isEquivalent_iff_tendsto_one` turns that into the limit of the
-ratio. The elementary route taken here builds in one step on
-`tendsto_bdd_div_atTop_nhds_zero` and keeps
-both the hypotheses and the conclusion in the first-order `Filter.Tendsto` language, so that no
-caller has to introduce `IsEquivalent` merely to state a limit of a ratio.
+## References
+
+Adapted from `tendsto_ratio_one_of_div_atTop_pm_bounded` in
+`CebotarevDensity/ForMathlib/LogOneDivSubOne.lean` of
+[CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0,
+Birkbeck--Brasca) at commit `8575c9df1ae0a61120ab5c964c7911414254bec7`. The source states it
+over `ℝ`; the statement here is over an arbitrary linearly ordered topological field, and the
+proof goes through Mathlib's `tendsto_bdd_div_atTop_nhds_zero` rather than from first
+principles.
 -/
 
 public section
@@ -48,8 +51,9 @@ open Filter Topology
 /-- A ratio whose denominator diverges and whose numerator tracks it up to a two-sided additive
 bounded error tends to `1`. Contrast `tendsto_bdd_div_atTop_nhds_zero`, whose numerator is confined
 to a fixed interval and whose ratio tends to `0`. -/
-theorem tendsto_ratio_one_of_div_atTop_pm_bounded {𝕜 : Type*} {α : Type*} [Field 𝕜] [LinearOrder 𝕜]
-    [IsStrictOrderedRing 𝕜] [TopologicalSpace 𝕜] [OrderTopology 𝕜] {l : Filter α} {g f : α → 𝕜}
+theorem tendsto_div_nhds_one_of_le_add_const_of_sub_const_le {𝕜 α : Type*} [Field 𝕜]
+    [LinearOrder 𝕜] [IsStrictOrderedRing 𝕜] [TopologicalSpace 𝕜] [OrderTopology 𝕜]
+    {l : Filter α} {g f : α → 𝕜}
     (hg : Tendsto g l atTop) (h_le : ∃ C : 𝕜, ∀ᶠ s in l, f s ≤ g s + C)
     (h_lower : ∃ C : 𝕜, ∀ᶠ s in l, g s - C ≤ f s) : Tendsto (fun s ↦ f s / g s) l (𝓝 1) := by
   obtain ⟨C₁, hle⟩ := h_le

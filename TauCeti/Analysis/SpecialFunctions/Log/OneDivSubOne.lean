@@ -15,28 +15,34 @@ Analytic limit facts about `s ↦ log (1 / (s - 1))` on a right neighbourhood of
 function diverges to `+∞` there, and consequently any `f` that agrees with it up to a bounded
 additive error has `f s / log (1 / (s - 1))` tending to `1`.
 
-This is the shape in which Dirichlet density arguments are stated: an Euler-product estimate
-bounds a prime sum by `log (1 / (s - 1))` up to `O(1)`, and the density is then read off as the
-limit of the ratio. `TauCeti/NumberTheory/ArithmeticDirichletSeries/ResidueDegree.lean` names
-`P_all(s) = log (1 / (s - 1)) + O(1)` as an identity Layer 7.2 has still to prove, and records
-that the divergence of the all-prime Dirichlet sum which the Dirichlet density needs is not yet
-in the library; these lemmas are the analytic half of that step, and contain no number theory.
+This is the shape in which Dirichlet density arguments are stated. A prime sum is estimated as
+`log (1 / (s - 1)) + O(1)`, and the density is read off as the limit of the ratio of the sum to
+`log (1 / (s - 1))`: the divergence of the denominator is exactly what makes the `O(1)` error
+immaterial. Nothing here is specific to that application, and the file contains no number
+theory.
 
 ## Main results
 
 * `TauCeti.tendsto_log_one_div_sub_one_atTop` — `log (1 / (s - 1))` tends to `atTop` along
   `𝓝[>] 1`.
-* `TauCeti.tendsto_ratio_one_of_log_pm_bounded` — if `f` agrees with `log (1 / (s - 1))` up to a
+* `TauCeti.tendsto_div_log_nhds_one_of_le_add_const_of_sub_const_le` — if `f` agrees with
+  `log (1 / (s - 1))` up to a
   two-sided additive bounded error near `1` from the right, then `f s / log (1 / (s - 1))` tends
   to `1`.
 
 ## Implementation notes
 
-The ratio statement is the `g = log (1 / (s - 1))` case of
-`TauCeti.tendsto_ratio_one_of_div_atTop_pm_bounded`, whose proof uses nothing about the
-denominator beyond divergence. It is stated separately because the divergence hypothesis is then
-discharged once and for all, leaving callers to supply only the two error bounds they actually
-estimate.
+The quotient statement is the `g = log (1 / (s - 1))` case of
+`TauCeti.tendsto_div_nhds_one_of_le_add_const_of_sub_const_le`. It is stated separately so that
+the divergence hypothesis is discharged once and for all, leaving callers to supply only the two
+error bounds they actually estimate.
+
+## References
+
+Adapted from `tendsto_log_one_div_sub_one_atTop` and `tendsto_ratio_one_of_log_pm_bounded` in
+`CebotarevDensity/ForMathlib/LogOneDivSubOne.lean` of
+[CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0,
+Birkbeck--Brasca) at commit `8575c9df1ae0a61120ab5c964c7911414254bec7`.
 -/
 
 public section
@@ -61,11 +67,12 @@ theorem tendsto_log_one_div_sub_one_atTop :
 /-- If `f` agrees with `log (1 / (s - 1))` up to a two-sided additive bounded error on a right
 neighbourhood of `1`, then `f s / log (1 / (s - 1))` tends to `1`. The analytic content is only
 that `log (1 / (s - 1))` diverges, so the additive error washes out under division; the log-free
-statement is `TauCeti.tendsto_ratio_one_of_div_atTop_pm_bounded`. -/
-theorem tendsto_ratio_one_of_log_pm_bounded (f : ℝ → ℝ)
+statement is `TauCeti.tendsto_div_nhds_one_of_le_add_const_of_sub_const_le`. -/
+theorem tendsto_div_log_nhds_one_of_le_add_const_of_sub_const_le (f : ℝ → ℝ)
     (h_le : ∃ C : ℝ, ∀ᶠ s in 𝓝[>] (1 : ℝ), f s ≤ Real.log (1 / (s - 1)) + C)
     (h_lower : ∃ C : ℝ, ∀ᶠ s in 𝓝[>] (1 : ℝ), Real.log (1 / (s - 1)) - C ≤ f s) :
     Tendsto (fun s : ℝ ↦ f s / Real.log (1 / (s - 1))) (𝓝[>] 1) (𝓝 1) :=
-  tendsto_ratio_one_of_div_atTop_pm_bounded tendsto_log_one_div_sub_one_atTop h_le h_lower
+  tendsto_div_nhds_one_of_le_add_const_of_sub_const_le tendsto_log_one_div_sub_one_atTop h_le
+    h_lower
 
 end TauCeti
