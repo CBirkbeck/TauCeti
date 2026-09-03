@@ -8,7 +8,6 @@ module
 public import TauCeti.NumberTheory.ModularForms.Degeneracy
 public import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
 public import TauCeti.NumberTheory.ModularForms.QExpansion.Basic
-public import TauCeti.RingTheory.PowerSeries.Support
 
 import TauCeti.NumberTheory.ModularForms.Cusps.Basic
 

@@ -8,7 +8,6 @@ module
 import Mathlib.Data.Nat.Prime.Int
 import TauCeti.Data.ZMod.Divisibility
 public import Mathlib.NumberTheory.ModularForms.QExpansion
-public import Mathlib.RingTheory.PowerSeries.Expand
 public import TauCeti.Algebra.GroupWithZero.Divisibility
 public import TauCeti.NumberTheory.ModularForms.Basic
 public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Units
