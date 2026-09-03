@@ -7,6 +7,7 @@ module
 
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Cusps
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Holomorphic
+public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Independence
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Invariance
 
 /-!
@@ -19,9 +20,10 @@ nebentypus-twisted counterpart, and it lands on a different carrier.
 ## Why the carrier is the character space
 
 The unweighted sum is invariant for the level it is taken at, so it acts on all of
-`ModularForm (G.map (mapGL ℝ)) k`. The twisted sum is not: it preserves the `χ`-eigenspace and
-nothing larger, which is the whole point of the weighting
-(`twistedHeckeSlashSum_mem_functionCharSpace`). So the operators here are endomorphisms of
+`ModularForm (G.map (mapGL ℝ)) k`. The twisted sum is not: what is proved is that it preserves
+the `χ`-eigenspace (`twistedHeckeSlashSum_mem_functionCharSpace`), which is what the weighting
+buys. Whether that eigenspace is the largest subspace preserved is not established here and is
+not needed. So the operators here are endomorphisms of
 `modFormCharSpace k χ` and `cuspFormCharSpace k χ`, not of the ambient spaces, and the
 underlying `ModularForm` is built only for a form already known to lie in the character space.
 
@@ -67,7 +69,7 @@ public section
 open Matrix Matrix.SpecialLinearGroup UpperHalfPlane CongruenceSubgroup DoubleCoset
   HeckeRing.GLn
 
-open scoped MatrixGroups ModularForm Manifold
+open scoped MatrixGroups ModularForm Manifold Pointwise
 
 namespace HeckeRing.GL2
 
@@ -141,7 +143,9 @@ private noncomputable def twistedHeckeSlashCuspForm
 
 private lemma coe_twistedHeckeSlashCuspForm
     (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) (hf : f ∈ cuspFormCharSpace k χ) :
-    ⇑(twistedHeckeSlashCuspForm k χ D f hf) = twistedHeckeSlashSum k χ D (⇑f) := (rfl)
+    ⇑(twistedHeckeSlashCuspForm k χ D f hf) = twistedHeckeSlashSum k χ D (⇑f) :=
+  coe_twistedHeckeSlashModularForm k χ D (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)
+    ((coe_mem_modFormCharSpace_iff k χ f).mpr hf)
 
 /-- The twisted operator on a cusp form stays in the cusp-form character space, by
 `twistedHeckeSlashModularForm_mem` read back across `coe_mem_modFormCharSpace_iff`. -/
@@ -182,12 +186,60 @@ noncomputable def twistedHeckeSlashCuspFormCharEnd :
 /-- The endomorphism is `twistedHeckeSlashSum` on underlying functions. -/
 @[simp] lemma coe_twistedHeckeSlashModularFormCharEnd (f : modFormCharSpace k χ) :
     ⇑((twistedHeckeSlashModularFormCharEnd k χ D f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) =
-      twistedHeckeSlashSum k χ D (⇑(f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) := (rfl)
+      twistedHeckeSlashSum k χ D (⇑(f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) :=
+  coe_twistedHeckeSlashModularForm k χ D (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) f.2
 
 /-- The cusp-form endomorphism is `twistedHeckeSlashSum` on underlying functions. -/
 @[simp] lemma coe_twistedHeckeSlashCuspFormCharEnd (f : cuspFormCharSpace k χ) :
     ⇑((twistedHeckeSlashCuspFormCharEnd k χ D f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)) =
-      twistedHeckeSlashSum k χ D (⇑(f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)) := (rfl)
+      twistedHeckeSlashSum k χ D (⇑(f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)) :=
+  coe_twistedHeckeSlashCuspForm k χ D (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) f.2
+
+/-- **The twisted operator on modular forms is the weighted sum over any decomposition of the
+double coset into right cosets**: if the right cosets `Γ₀(N) aᵢ` are pairwise distinct and cover
+the double coset, then the operator is `∑ᵢ χ(aᵢ)⁻¹ • (f ∣[k] aᵢ)`. So it is attached to the double
+coset, not to the representatives `twistedHeckeSlashSum` happens to choose; the choice-independence
+itself is `twistedHeckeSlashSum_eq_sum_of_rightCosets` (`Nebentypus/Independence.lean`). This is
+the twisted counterpart of `coe_heckeSlashModularFormEnd_eq_sum`. -/
+lemma coe_twistedHeckeSlashModularFormCharEnd_eq_sum {ι : Type*} [Fintype ι]
+    (a : ι → GL (Fin 2) ℚ)
+    (hcover : doubleCoset (D.out : GL (Fin 2) ℚ) ((Gamma0 N).map (mapGL ℚ))
+        ((Gamma0 N).map (mapGL ℚ)) =
+      ⋃ i, MulOpposite.op (a i) • (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) :
+        Set (GL (Fin 2) ℚ)))
+    (hinj : Function.Injective fun i ↦ MulOpposite.op (a i) •
+      (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) : Set (GL (Fin 2) ℚ)))
+    (f : modFormCharSpace k χ) :
+    ⇑((twistedHeckeSlashModularFormCharEnd k χ D f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) =
+      ∑ i, (delta0NebentypusChar N χ ⟨a i, mem_Delta0_of_cover D hcover i⟩ : ℂ) •
+        (⇑(f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) ∣[k] a i) :=
+  (coe_twistedHeckeSlashModularFormCharEnd k χ D f).trans
+    (twistedHeckeSlashSum_eq_sum_of_rightCosets k χ D a hcover hinj _
+      ((coe_mem_functionCharSpace_iff k χ _).mpr f.2))
+
+/-- **The twisted operator on cusp forms is the weighted sum over any decomposition of the double
+coset into right cosets**, exactly as for modular forms. -/
+lemma coe_twistedHeckeSlashCuspFormCharEnd_eq_sum {ι : Type*} [Fintype ι]
+    (a : ι → GL (Fin 2) ℚ)
+    (hcover : doubleCoset (D.out : GL (Fin 2) ℚ) ((Gamma0 N).map (mapGL ℚ))
+        ((Gamma0 N).map (mapGL ℚ)) =
+      ⋃ i, MulOpposite.op (a i) • (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) :
+        Set (GL (Fin 2) ℚ)))
+    (hinj : Function.Injective fun i ↦ MulOpposite.op (a i) •
+      (((Gamma0 N).map (mapGL ℚ) : Subgroup (GL (Fin 2) ℚ)) : Set (GL (Fin 2) ℚ)))
+    (f : cuspFormCharSpace k χ) :
+    ⇑((twistedHeckeSlashCuspFormCharEnd k χ D f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)) =
+      ∑ i, (delta0NebentypusChar N χ ⟨a i, mem_Delta0_of_cover D hcover i⟩ : ℂ) •
+        (⇑(f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) ∣[k] a i) :=
+    by
+  -- The character-space membership is the modular-form one at the underlying form; the two
+  -- coercions to `ℍ → ℂ` agree, so naming the statement is what makes them match.
+  have hmem : ⇑(f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) ∈ functionCharSpace k χ :=
+    (coe_mem_functionCharSpace_iff k χ ((f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
+        ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).mpr
+      ((coe_mem_modFormCharSpace_iff k χ (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).mpr f.2)
+  exact (coe_twistedHeckeSlashCuspFormCharEnd k χ D f).trans
+    (twistedHeckeSlashSum_eq_sum_of_rightCosets k χ D a hcover hinj _ hmem)
 
 end HeckeRing.GL2
 
