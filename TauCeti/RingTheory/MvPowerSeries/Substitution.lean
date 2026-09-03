@@ -148,6 +148,52 @@ theorem hasSubst_pair (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂
 
 end HasSubstPair
 
+section CoordSpecialize
+
+variable {O : Type*} [CommRing O] {σ' : Type*} [DecidableEq σ'] [Finite σ']
+
+/-- The substitution sending the coordinate variable `i` to `X` and every other coordinate to `0`.
+
+Specializing to it separates the coordinate `i` from all the others: with
+`ne_of_subst_eq_X_of_subst_eq_zero`, two series that this substitution sends to `X` and to `0`
+respectively are distinct. -/
+noncomputable def coordSpecialize (i : σ') : σ' → MvPowerSeries Unit O :=
+  fun j ↦ if j = i then PowerSeries.X else 0
+
+theorem hasSubst_coordSpecialize (i : σ') : HasSubst (coordSpecialize (O := O) i) :=
+  hasSubst_of_constantCoeff_zero fun j ↦ by
+    simp only [coordSpecialize]
+    split
+    · exact PowerSeries.constantCoeff_X
+    · exact map_zero _
+
+/-- The specialization at `i` sends the `i`-th coordinate to `X`. -/
+@[simp]
+theorem subst_coordSpecialize_X_self (i : σ') :
+    subst (coordSpecialize (O := O) i) (X i : MvPowerSeries σ' O) = PowerSeries.X := by
+  simp [subst_X (hasSubst_coordSpecialize i), coordSpecialize]
+
+/-- The specialization at `i` kills every other coordinate. -/
+@[simp]
+theorem subst_coordSpecialize_X_of_ne {i j : σ'} (h : j ≠ i) :
+    subst (coordSpecialize (O := O) i) (X j : MvPowerSeries σ' O) = 0 := by
+  simp [subst_X (hasSubst_coordSpecialize i), coordSpecialize, h]
+
+/-- The specialization at `i` is a ring map, so it kills `0`. -/
+theorem subst_coordSpecialize_zero (i : σ') :
+    subst (coordSpecialize (O := O) i) (0 : MvPowerSeries σ' O) = 0 := by
+  rw [← coe_substAlgHom (hasSubst_coordSpecialize i), map_zero]
+
+end CoordSpecialize
+
+/-- A substitution that sends one series to `X` and another to `0` separates them: it is how a
+distinctness hypothesis is discharged by specializing one coordinate to `X` and the rest to
+`0`. -/
+theorem ne_of_subst_eq_X_of_subst_eq_zero {O : Type*} [CommRing O] [Nontrivial O] {σ' : Type*}
+    {g : σ' → MvPowerSeries Unit O} {a b : MvPowerSeries σ' O}
+    (ha : subst g a = PowerSeries.X) (hb : subst g b = 0) : a ≠ b := fun hab ↦
+  PowerSeries.X_ne_zero (by rw [← ha, hab]; exact hb)
+
 end MvPowerSeries
 
 namespace PowerSeries

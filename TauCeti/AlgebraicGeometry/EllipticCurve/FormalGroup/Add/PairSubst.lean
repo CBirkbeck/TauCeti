@@ -26,8 +26,8 @@ this file's, specialized; see the Provenance note there.
   `WeierstrassCurve.subst_pair_toMvPowerSeries_inr`: the one-variable `w`-expansion, embedded in
   either variable, becomes `w(q₁)` respectively `w(q₂)`.
 * `WeierstrassCurve.subst_pair_formalSlope_mul`: `λ(q₁, q₂) * (q₂ - q₁) = w(q₂) - w(q₁)`.
-* `WeierstrassCurve.subst_pair_online`: the `w`-expansion at the third root is the chord
-  line read there.
+* `WeierstrassCurve.subst_pair_formalThirdRoot_formalW`: the `w`-expansion at the third root
+  is the chord line read there.
 * `WeierstrassCurve.subst_pair_thirdRootDenom_mul`: Vieta's denominator stays a unit at the
   pair, and `WeierstrassCurve.subst_pair_thirdRootDenom_ne_zero`: in particular it is nonzero.
 * `WeierstrassCurve.subst_pair_formalThirdRoot_relation`: the defining relation of `z₃` at
@@ -80,7 +80,8 @@ from `EllipticCurves/WeierstrassFormalGroup/GroupLaw.lean`.
 
 The source's `slopeSeries`, `interceptSeries` and `wSeries` are `formalSlope`, `formalIntercept`
 and `formalW` here, continuing the renaming this repository applies to that development, so
-`pair_slope_identity` and `pair_online` are `subst_pair_formalSlope_mul` and `subst_pair_online`.
+`pair_slope_identity` and `pair_online` are `subst_pair_formalSlope_mul` and
+`subst_pair_formalThirdRoot_formalW`.
 Stoll's `A` for Vieta's denominator is `formalThirdRootDenom` here, so `pair_A_mul` and
 `pair_T₃_relation` are `subst_pair_thirdRootDenom_mul` and
 `subst_pair_formalThirdRoot_relation`.
@@ -151,7 +152,7 @@ theorem subst_pair_formalSlope_mul (h₁ : constantCoeff q₁ = 0) (h₂ : const
 
 /-- The on-line identity at the pair `(q₁, q₂)`: reading the `w`-expansion at the third root
 gives the chord line read there. -/
-theorem subst_pair_online (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0) :
+theorem subst_pair_formalThirdRoot_formalW (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0) :
     subst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
         Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W)) (formalW W) =
       subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
@@ -299,7 +300,8 @@ theorem subst_pair_formalAdd (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoe
 
 This is the one-variable `subst_formalInverse_formalW` carried across by `subst_pair_formalAdd`,
 so the group law's `w` at a pair is never recomputed. The third root is spelled as a `Unit`-family
-substitution, matching `subst_pair_online`, so the two rewrite against each other. -/
+substitution, matching `subst_pair_formalThirdRoot_formalW`, so the two rewrite against each
+other. -/
 theorem subst_pair_formalW_formalAdd (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0) :
     subst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
         Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W)) (formalW W) =
@@ -441,7 +443,7 @@ theorem subst_pair_formalThirdRoot_ne_zero (h₁ : constantCoeff q₁ = 0) (h₂
       (formalThirdRoot W) ≠ 0 := by
   intro h
   refine hN ?_
-  have honline := subst_pair_online W h₁ h₂
+  have honline := subst_pair_formalThirdRoot_formalW W h₁ h₂
   -- `rw [h]` leaves the substitution family as the literal `fun _ ↦ 0`, which is the zero
   -- function only definitionally, so it must be folded before
   -- `subst_zero_of_constantCoeff_zero` will match.
