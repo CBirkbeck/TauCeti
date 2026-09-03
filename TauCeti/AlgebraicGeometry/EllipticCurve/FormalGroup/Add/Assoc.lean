@@ -5,10 +5,11 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.PairSubst
-public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Unit
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Universal
-public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.ThirdPoint
+public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Series
+import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.PairSubst
+import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Unit
+import TauCeti.AlgebraicGeometry.EllipticCurve.Universal
+import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.ThirdPoint
 
 /-!
 # The chord group law over the fraction field of the series ring
