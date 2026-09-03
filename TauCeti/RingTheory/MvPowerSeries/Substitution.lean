@@ -132,6 +132,22 @@ theorem aeval_subst {a : σ → MvPowerSeries τ S} {ε : MvPowerSeries τ S →
   simpa only [AlgHom.coe_comp, Function.comp_apply, substAlgHom_apply] using DFunLike.congr_fun
     ((aeval_unique h1).symm.trans (mid.trans (aeval_unique h2'))) f
 
+section HasSubstPair
+
+variable {O : Type*} [CommRing O] {q₁ q₂ : MvPowerSeries σ O}
+
+/-- A pair of series with vanishing constant coefficient is a legitimate substitution family for
+the two variables indexed by `Unit ⊕ Unit`.
+
+This packages the `rintro`-and-`simpa` discharge of `hasSubst_of_constantCoeff_zero`'s hypothesis
+for the two-variable case, which is otherwise repeated at every substitution into a two-variable
+series. -/
+theorem hasSubst_pair (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0) :
+    HasSubst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O) :=
+  hasSubst_of_constantCoeff_zero (by rintro (j | j) <;> simpa)
+
+end HasSubstPair
+
 end MvPowerSeries
 
 namespace PowerSeries

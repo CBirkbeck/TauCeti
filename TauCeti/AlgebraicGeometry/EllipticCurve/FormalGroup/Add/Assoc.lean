@@ -23,25 +23,12 @@ associativity of the curve's group law is associativity of the series.
 That argument needs a domain, so it runs over the universal curve, whose base `ℤ[A₁, ⋯, A₆]`
 supplies one; `map_specialize` carries the conclusion to every `W` over every commutative ring.
 
-## Main definitions
-
-* `WeierstrassCurve.fracCurve` : `W` base changed to a field `KK` over the series ring.
-
 ## Main statements
 
-* `WeierstrassCurve.algebraMap_subst_formalW_wEquation` : the substituted `w`-expansion still
-  solves the `w`-equation after being pushed into `KK`, now read on `fracCurve`.
-* `WeierstrassCurve.subst_pair_formalIntercept_eq_inl`,
-  `WeierstrassCurve.subst_pair_formalIntercept_eq_inr` : the chord's intercept at a pair, read
-  from either of the two points.
-* `WeierstrassCurve.subst_pair_formalIntercept_mul_sub` : the cross combination
-  `q₁ w(q₂) - q₂ w(q₁) = ν(q₁, q₂) * (q₁ - q₂)`, which is what the two readings buy.
-* `WeierstrassCurve.subst_pair_formalThirdRoot_ne_zero` : a nonzero intercept forces a nonzero
-  third root.
 * `WeierstrassCurve.formalAdd_assoc` : **the associativity of the addition series**, for every
-  Weierstrass curve over every commutative ring. This is the file's terminus, and the last axiom
-  of a commutative formal group law that this development was missing — `Add/Fin2.lean` records
-  how the three variables get reindexed into the shape of Mathlib's `FormalGroup.assoc` field.
+  Weierstrass curve over every commutative ring. It is this module's only exported result; the
+  fraction-field base change, the parametrized point `θ` and the chord additions it satisfies are
+  private implementation details of its proof.
 
 ## Provenance
 
@@ -239,6 +226,9 @@ private theorem subst_subst_pair_formalAdd_eq_X {σ' : Type*}
     (hga : subst g a = PowerSeries.X) (hgb : subst g b = 0) :
     subst g (subst (Sum.elim (fun _ ↦ a) (fun _ ↦ b) : Unit ⊕ Unit → MvPowerSeries σ' O)
       (formalAdd W)) = PowerSeries.X := by
+  -- The composite family is pointwise `X` and `0`, but only pointwise: the reshape below is
+  -- `funext`, not a definitional equality, and it is needed because `subst_unitR_formalAdd` is
+  -- stated for the `Sum.elim` spelling that `rw` must match syntactically.
   rw [subst_comp_subst_apply (hasSubst_pair ha hb) hg,
     show (fun s : Unit ⊕ Unit ↦ subst g (Sum.elim (fun _ ↦ a) (fun _ ↦ b) s)) =
       (Sum.elim X (fun _ ↦ 0) : Unit ⊕ Unit → MvPowerSeries Unit O) from
@@ -253,6 +243,8 @@ private theorem subst_subst_pair_formalAdd_eq_zero {σ' : Type*}
     (hga : subst g a = 0) (hgb : subst g b = 0) :
     subst g (subst (Sum.elim (fun _ ↦ a) (fun _ ↦ b) : Unit ⊕ Unit → MvPowerSeries σ' O)
       (formalAdd W)) = 0 := by
+  -- As above, the reshape is `funext` rather than defeq: `g` kills both components pointwise,
+  -- and the zero family is what `subst_zero_of_constantCoeff_zero` is stated against.
   rw [subst_comp_subst_apply (hasSubst_pair ha hb) hg,
     show (fun s : Unit ⊕ Unit ↦ subst g (Sum.elim (fun _ ↦ a) (fun _ ↦ b) s)) =
       (0 : Unit ⊕ Unit → MvPowerSeries Unit O) from
@@ -265,6 +257,7 @@ private theorem subst_subst_formalInverse_eq_zero {σ' : Type*}
     {g : σ' → MvPowerSeries Unit O} (hg : HasSubst g) {a : MvPowerSeries σ' O}
     (ha : constantCoeff a = 0) (hga : subst g a = 0) :
     subst g (subst (fun _ : Unit ↦ a) (formalInverse W)) = 0 := by
+  -- `funext` again, on the one-variable family this time.
   rw [subst_comp_subst_apply (hasSubst_of_constantCoeff_zero fun _ ↦ ha) hg,
     show (fun _ : Unit ↦ subst g a) = (0 : Unit → MvPowerSeries Unit O) from
       funext fun _ ↦ hga]
@@ -395,6 +388,9 @@ private theorem thetaPoint_add (hΔ : (fracCurve W σ KK).Δ ≠ 0)
     hw₁0 hw₂0 hwT0 hxρ
     (chord_point_nonsingular (fracCurve W σ KK) hwq₁ hw₁0 hΔ)
     (chord_point_nonsingular (fracCurve W σ KK) hwq₂ hw₂0 hΔ)
+  -- `hadd` is stated with the coordinates written out, and `thetaPoint` is *by definition* that
+  -- `Affine.Point.some`, so this folds the definition back. Unlike the reshapes above this one
+  -- really is a definitional equality, and it breaks if `thetaPoint` is ever restated.
   refine Eq.trans (show W.thetaPoint hΔ h₁ hq₁0 + W.thetaPoint hΔ h₂ hq₂0 =
     Affine.Point.some _ _ h₃ from hadd) ?_
   -- identify the third point with the point of parameter `F(q₁, q₂)`
@@ -743,9 +739,8 @@ The chord construction proves this only where the curve has a group law to borro
 identity is proved for the universal curve — whose base `ℤ[A₁, ⋯, A₆]` is a domain, and whose
 series ring therefore has a fraction field — and `map_specialize` carries it to every `W`.
 
-With `constantCoeff_formalAdd`, `subst_unitR_formalAdd`, `subst_unitL_formalAdd` and
-`rename_swap_formalAdd`, this is the last axiom of a commutative formal group law; reindexing the
-three variables to `Fin 3` is what turns it into Mathlib's `FormalGroup.assoc` field. -/
+The three variables are indexed by `Unit ⊕ Unit ⊕ Unit`, with the two bracketings written as
+nested substitutions of `formalAdd` into itself. -/
 theorem formalAdd_assoc :
     subst (Sum.elim
         (fun _ ↦ subst (Sum.elim

@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Series
+public import TauCeti.RingTheory.MvPowerSeries.Substitution
 
 /-!
 # The chord construction along an arbitrary pair of parameters
@@ -21,7 +22,6 @@ this file's, specialized; see the Provenance note there.
 
 ## Main results
 
-* `WeierstrassCurve.hasSubst_pair`: the pair is a legitimate substitution family.
 * `WeierstrassCurve.subst_pair_toMvPowerSeries_inl`,
   `WeierstrassCurve.subst_pair_toMvPowerSeries_inr`: the one-variable `w`-expansion, embedded in
   either variable, becomes `w(q₁)` respectively `w(q₂)`.
@@ -110,15 +110,8 @@ open MvPowerSeries
 variable {O : Type*} [CommRing O] (W : WeierstrassCurve O)
 variable {σ : Type*} {q₁ q₂ : MvPowerSeries σ O}
 
-/-! ### The substitution family -/
-
-/-- A pair of parameters with vanishing constant coefficient is a legitimate substitution
-family for the two-variable chord series. -/
-theorem hasSubst_pair (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0) :
-    HasSubst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O) :=
-  hasSubst_of_constantCoeff_zero (by rintro (j | j) <;> simpa)
-
 /-- The `w`-expansion in the first parameter becomes `w(q₁)`. -/
+@[simp]
 theorem subst_pair_toMvPowerSeries_inl (h₁ : constantCoeff q₁ = 0)
     (h₂ : constantCoeff q₂ = 0) :
     subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
@@ -126,6 +119,7 @@ theorem subst_pair_toMvPowerSeries_inl (h₁ : constantCoeff q₁ = 0)
   rw [PowerSeries.subst_toMvPowerSeries (hasSubst_pair h₁ h₂), Sum.elim_inl]
 
 /-- The `w`-expansion in the second parameter becomes `w(q₂)`. -/
+@[simp]
 theorem subst_pair_toMvPowerSeries_inr (h₁ : constantCoeff q₁ = 0)
     (h₂ : constantCoeff q₂ = 0) :
     subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
@@ -322,6 +316,9 @@ theorem subst_pair_formalW_formalAdd (h₁ : constantCoeff q₁ = 0) (h₂ : con
       fun _ : Unit ↦ subst (fun _ : Unit ↦ subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
         Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W)) (formalInverse W) :=
     funext fun _ ↦ subst_pair_formalAdd W h₁ h₂
+  -- `PowerSeries.subst` *is* the `Unit`-indexed `MvPowerSeries.subst` by definition, so the
+  -- middle step is `rfl`; it is needed because `subst_formalInverse_formalW` is stated in the
+  -- univariate spelling while `subst_comp_subst_apply` produces the multivariable one.
   rw [hfam, ← subst_comp_subst_apply (hasSubst_of_constantCoeff_zero
     fun _ ↦ constantCoeff_formalInverse W) hT,
     show subst (fun _ : Unit ↦ formalInverse W) (formalW W) =
