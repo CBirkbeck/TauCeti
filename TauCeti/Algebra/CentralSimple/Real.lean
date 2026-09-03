@@ -296,7 +296,7 @@ dimension over a field.
 This is the substantive half of Frobenius' theorem, and the form to reach for once the dimension is
 known: `TauCeti.nonempty_algEquiv_real_or_quaternion` re-derives the degree bound and hands back a
 disjunction that still has to be eliminated. The absence of zero divisors is what rules out the
-other central four-dimensional `ℝ`-algebra, `Matrix (Fin 2) (Fin 2) ℝ`. -/
+split central simple algebra `Matrix (Fin 2) (Fin 2) ℝ`. -/
 theorem nonempty_algEquiv_quaternion_of_finrank_eq_four (D : Type*) [Ring D] [IsDomain D]
     [Algebra ℝ D] [Algebra.IsCentral ℝ D] (h4 : finrank ℝ D = 4) :
     Nonempty (D ≃ₐ[ℝ] ℍ[ℝ]) := by
