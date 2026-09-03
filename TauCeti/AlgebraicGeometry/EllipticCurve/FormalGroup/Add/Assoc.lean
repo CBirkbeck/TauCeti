@@ -52,7 +52,7 @@ Adapted from Michael Stoll's `EllipticCurves` project
 declarations `subst_wSeries_ne_zero`, `fracCurve`, `rho_weierstrass`, `thetaPoint`,
 `thetaPoint_add`, `thetaPoint_neg`, `thetaPoint_inj` and `pair_intercept_ne_zero_of_ne`, together
 with the single-parameter helpers `single_u_mul`, `single_iota_eq`, `single_u_eq` and
-`single_wIota`.
+`single_wIota` from `EllipticCurves/WeierstrassFormalGroup/ThirdPoint.lean`.
 
 Two of those are proved differently here, because this repository already has the content in a
 more usable form. `pair_intercept_ne_zero_of_ne` collapses the cross combination with the single
