@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
 public import TauCeti.NumberTheory.ModularForms.QExpansion.Basic
 public import TauCeti.RingTheory.PowerSeries.Support
 
+import TauCeti.NumberTheory.ModularForms.Cusps.Basic
+
 /-!
 # Cusp forms whose `q`-expansion is supported on multiples of `d`
 
