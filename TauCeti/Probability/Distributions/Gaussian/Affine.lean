@@ -41,9 +41,7 @@ namespace TauCeti
 variable {ι κ : Type*} [Fintype ι] [Fintype κ] [DecidableEq ι] [DecidableEq κ]
 
 /-- The covariance form of an affine image of a multivariate Gaussian is the one belonging to the
-congruated matrix `L * S * Lᵀ`. Over `ℝ` the conjugate transpose is the ordinary transpose, so this
-also gives positive semidefiniteness of the transformed covariance with no rank hypothesis on the
-rectangular map `L`. -/
+congruated matrix `L * S * Lᵀ`. The map `L` may be rectangular; no rank hypothesis is needed. -/
 private theorem covarianceBilin_map_affine_multivariateGaussian (m : EuclideanSpace ℝ ι)
     {S : Matrix ι ι ℝ} (hS : S.PosSemidef) (L : Matrix κ ι ℝ) (c : EuclideanSpace ℝ κ) :
     covarianceBilin
@@ -60,18 +58,16 @@ private theorem covarianceBilin_map_affine_multivariateGaussian (m : EuclideanSp
   rw [h_translate]
   rw [covarianceBilin_map_const_add]
   ext x y
-  -- Over `ℝ`, conjugate transpose is ordinary transpose; this also proves positivity of the
-  -- transformed covariance without any rank hypothesis on the rectangular matrix.
-  have hLstar : L.conjTranspose = L.transpose := by
-    ext i j
-    simp
+  -- Over `ℝ` the conjugate transpose is the ordinary transpose, so the congruate is positive
+  -- semidefinite with no rank hypothesis on the rectangular matrix.
   have hLS : (L * S * L.transpose).PosSemidef := by
-    rw [← hLstar]
+    rw [← Matrix.conjTranspose_eq_transpose_of_trivial L]
     exact hS.mul_mul_conjTranspose_same L
   have hTadj : T.adjoint = L.transpose.toEuclideanLin.toContinuousLinearMap := by
     rw [← LinearMap.adjoint_toContinuousLinearMap]
     congr 1
-    rw [← Matrix.toEuclideanLin_conjTranspose_eq_adjoint, hLstar]
+    rw [← Matrix.toEuclideanLin_conjTranspose_eq_adjoint,
+      Matrix.conjTranspose_eq_transpose_of_trivial L]
   rw [covarianceBilin_map IsGaussian.memLp_two_id,
     covarianceBilin_multivariateGaussian hS,
     covarianceBilin_multivariateGaussian hLS, hTadj]
