@@ -40,10 +40,7 @@ Apache-2.0) at commit `66889eada51a74c2f5dfb7fb5909b0b5a0a2d96e`, file
 `EllipticCurves/Mathlib/Chabauty/AdicTopology.lean`, where these appear under the same names
 among that development's Mathlib-bound material. That file describes its contents as the
 `IsAdic` counterparts of `Ideal.isLinearTopology` and `WithIdeal.isTopologicallyNilpotent_of_mem`,
-which is the reading taken here. The source's `IsAdic.isLinearTopology` and
-`IsAdic.nonarchimedeanRing` are deliberately not carried over: `hI ▸ I.isLinearTopology` and
-`hI ▸ I.nonarchimedean` are the whole content, so naming them would add a parallel API rather
-than a result.
+which is the reading taken here.
 -/
 
 public section
