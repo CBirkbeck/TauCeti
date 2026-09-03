@@ -38,24 +38,12 @@ places.
 
 ## Implementation notes
 
-Both directions rest on the same mechanism: parity of a valuation is insensitive to ramification,
-because ramification multiplies the valuation by a fixed index
-(`IsDedekindDomain.HeightOneSpectrum.dvd_toAdd_valuationOfNeZero_map`). The two directions differ
-only in which embedding carries the parity.
-
-*Global to local* factors the local étale algebra: every monic irreducible factor `q` of `f` over
-`F_v` divides the image of a unique factor `p` of `f` over `F`
-(`Polynomial.Factors.exists_dvd_map`), the induced `AdjoinRoot.map` restricts to the rings of
-integers (`integerMapOfDvd`), and the prime of the local ring of integers contracts to a prime
-`w ∣ v` of the ring of integers of `F[X] ⧸ (p)`.
-
-*Local to global* goes the other way, and needs a factor to start from: `localFactor` produces one,
-as the minimal polynomial over `F_v` of the image of the root of `p` in the completion of
-`F[X] ⧸ (p)` at `w`. The embedding `F_v[X] ⧸ (q) → (F[X] ⧸ (p))_w` then transports evenness back to
-the `w`-adic valuation. This uses only the extension of adic completions
-(`IsDedekindDomain.HeightOneSpectrum.adicCompletionExtension`), not the full decomposition
-`W.A ⊗ F_v ≅ ∏ (𝕃 p)_w` of the completed étale algebra: for parity, ramification is harmless in
-both directions, so the decomposition is not needed.
+Both directions rest on one fact about the objects rather than about the proofs: parity of a
+valuation is insensitive to ramification, because ramification multiplies the valuation by a fixed
+index (`IsDedekindDomain.HeightOneSpectrum.dvd_toAdd_valuationOfNeZero_map`). That is why the
+comparison needs only the extension of adic completions
+(`IsDedekindDomain.HeightOneSpectrum.adicCompletionExtension`) and **not** the full decomposition
+`W.A ⊗ F_v ≅ ∏ (𝕃 p)_w` of the completed étale algebra.
 
 All the helpers are `private`. They are scaffolding for the two theorems above and are stated in
 vocabulary — `localFactor`, `integerMapOfDvd` — that has no meaning outside this comparison.
@@ -412,15 +400,14 @@ variable [W.IsElliptic] [W.IsCharNeTwoNF]
 open AdjoinRoot in
 open scoped Classical in
 /-- **Semilocal comparison, global to local**: an `S`-unramified square class localizes to an
-unramified class at every good finite place.
-
-Each monic irreducible factor `q` of `f` over `F_v` divides the image of a factor `p` of `f`; the
-induced embedding `F[X] ⧸ (p) → F_v[X] ⧸ (q)` restricts to the rings of integers, the prime of the
-local ring of integers contracts to a prime `w ∣ v`, and the local valuation is the `w`-adic one
-raised to the ramification index, so evenness transfers. -/
+unramified class at every good finite place. -/
 theorem localRes_mem_selmerGroupA {v : HeightOneSpectrum (𝓞 F)} (hv : v ∉ W.badPrimes (𝓞 F))
     {m : W.M} (hm : m ∈ W.selmerGroupA (𝓞 F)) :
     W.localRes F_[v] m ∈ 𝕎[v].selmerGroupA 𝒪_[v] := by
+  -- Each monic irreducible factor `q` of `f` over `F_v` divides the image of a factor `p` of `f`;
+  -- the induced embedding `F[X] ⧸ (p) → F_v[X] ⧸ (q)` restricts to the rings of integers, the
+  -- prime of the local ring of integers contracts to a prime `w ∣ v`, and the local valuation is
+  -- the `w`-adic one raised to the ramification index, so evenness transfers.
   obtain ⟨a, rfl⟩ := QuotientGroup.mk'_surjective _ m
   simp only [QuotientGroup.mk'_apply] at hm ⊢
   simp only [mem_selmerGroupA_iff, AdjoinRoot.modPowEquivPiFactors_mk,
@@ -451,16 +438,15 @@ theorem localRes_mem_selmerGroupA {v : HeightOneSpectrum (𝓞 F)} (hv : v ∉ W
 open AdjoinRoot in
 open scoped Classical in
 /-- **Semilocal comparison, local to global**: a square class that localizes to an unramified class
-at every good finite place is `S`-unramified.
-
-Every prime `w` of a field factor `F[X] ⧸ (p)` above a good place `v` arises from a factor of `f`
-over `F_v`, namely the minimal polynomial of the image of the root in the completion at `w`
-(`localFactor`). Evenness of the valuation transports from the primes of the local ring of integers
-through the completion `(F[X] ⧸ (p))_w` back to `w`. -/
+at every good finite place is `S`-unramified. -/
 theorem mem_selmerGroupA_of_forall_localRes {m : W.M}
     (hm : ∀ v : HeightOneSpectrum (𝓞 F), v ∉ W.badPrimes (𝓞 F) →
       W.localRes F_[v] m ∈ 𝕎[v].selmerGroupA 𝒪_[v]) :
     m ∈ W.selmerGroupA (𝓞 F) := by
+  -- Every prime `w` of a field factor `F[X] ⧸ (p)` above a good place `v` arises from a factor of
+  -- `f` over `F_v`, namely the minimal polynomial of the image of the root in the completion at
+  -- `w` (`localFactor`). Evenness transports from the primes of the local ring of integers
+  -- through the completion `(F[X] ⧸ (p))_w` back to `w`.
   obtain ⟨a, rfl⟩ := QuotientGroup.mk'_surjective _ m
   simp only [QuotientGroup.mk'_apply]
   simp only [mem_selmerGroupA_iff, AdjoinRoot.modPowEquivPiFactors_mk,
