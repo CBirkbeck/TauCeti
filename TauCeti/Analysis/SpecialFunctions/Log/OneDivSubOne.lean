@@ -17,9 +17,10 @@ additive error has `f s / log (1 / (s - 1))` tending to `1`.
 
 This is the shape in which Dirichlet density arguments are stated: an Euler-product estimate
 bounds a prime sum by `log (1 / (s - 1))` up to `O(1)`, and the density is then read off as the
-limit of the ratio. `TauCeti/NumberTheory/ArithmeticDirichletSeries/ResidueDegree.lean` records
-`P_all(s) = log (1 / (s - 1)) + O(1)` as the input that the Dirichlet-density statements of
-Layer 7.2 need; these lemmas are the analytic half of that step, and contain no number theory.
+limit of the ratio. `TauCeti/NumberTheory/ArithmeticDirichletSeries/ResidueDegree.lean` names
+`P_all(s) = log (1 / (s - 1)) + O(1)` as an identity Layer 7.2 has still to prove, and records
+that the divergence of the all-prime Dirichlet sum which the Dirichlet density needs is not yet
+in the library; these lemmas are the analytic half of that step, and contain no number theory.
 
 ## Main results
 
