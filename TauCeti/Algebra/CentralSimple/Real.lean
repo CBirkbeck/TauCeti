@@ -289,16 +289,18 @@ end Algebra
 
 /-! ### Frobenius' theorem -/
 
-/-- A four-dimensional central division algebra over `ℝ` is `ℝ`-isomorphic to the Hamilton
-quaternions `ℍ[ℝ]`.
+/-- A four-dimensional central `ℝ`-algebra without zero divisors is `ℝ`-isomorphic to the Hamilton
+quaternions `ℍ[ℝ]`. Such an algebra is automatically a division algebra, being a domain of finite
+dimension over a field.
 
-A square root `i` of `-1` exists, and centrality supplies an `x` not commuting with it, so
-`TauCeti.exists_mul_self_eq_neg_one_and_mul_eq_neg_mul` produces an anticommuting second square
-root. The pair is a quaternion basis, and the resulting map `ℍ[ℝ] →ₐ[ℝ] D` is bijective by a
-dimension count. -/
-theorem nonempty_algEquiv_quaternion_of_finrank_eq_four (D : Type*) [DivisionRing D] [Algebra ℝ D]
-    [Algebra.IsCentral ℝ D] [FiniteDimensional ℝ D] (h4 : finrank ℝ D = 4) :
+This is the substantive half of Frobenius' theorem, and the form to reach for once the dimension is
+known: `TauCeti.nonempty_algEquiv_real_or_quaternion` re-derives the degree bound and hands back a
+disjunction that still has to be eliminated. The absence of zero divisors is what rules out the
+other central four-dimensional `ℝ`-algebra, `Matrix (Fin 2) (Fin 2) ℝ`. -/
+theorem nonempty_algEquiv_quaternion_of_finrank_eq_four (D : Type*) [Ring D] [IsDomain D]
+    [Algebra ℝ D] [Algebra.IsCentral ℝ D] (h4 : finrank ℝ D = 4) :
     Nonempty (D ≃ₐ[ℝ] ℍ[ℝ]) := by
+  have : FiniteDimensional ℝ D := .of_finrank_pos (by omega)
   obtain ⟨i, hi⟩ := exists_mul_self_eq_neg_one (D := D) (by omega)
   -- `i` is not central, because `-1` is not a square in `ℝ`.
   have hinotbot : i ∉ (⊥ : Subalgebra ℝ D) := by
@@ -335,9 +337,9 @@ theorem nonempty_algEquiv_quaternion_of_finrank_eq_four (D : Type*) [DivisionRin
 /-- **Frobenius' theorem.** A finite-dimensional division algebra over `ℝ` with centre `ℝ` is
 `ℝ`-isomorphic either to `ℝ` or to the Hamilton quaternions `ℍ[ℝ]`.
 
-The degree bound leaves `finrank ℝ D` equal to `1` or `4`. In the first case `D` is its own copy of
-`ℝ`; in the second it is the quaternions, by
-`TauCeti.nonempty_algEquiv_quaternion_of_finrank_eq_four`. -/
+This is the classification to use when nothing is known about `D` beyond the hypotheses. If
+`finrank ℝ D = 4` is already in hand, `TauCeti.nonempty_algEquiv_quaternion_of_finrank_eq_four`
+gives the quaternion isomorphism directly, with no disjunction to discharge. -/
 theorem nonempty_algEquiv_real_or_quaternion (D : Type*) [DivisionRing D] [Algebra ℝ D]
     [Algebra.IsCentral ℝ D] [FiniteDimensional ℝ D] :
     Nonempty (D ≃ₐ[ℝ] ℝ) ∨ Nonempty (D ≃ₐ[ℝ] ℍ[ℝ]) := by
