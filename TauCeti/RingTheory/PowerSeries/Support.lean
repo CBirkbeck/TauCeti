@@ -12,8 +12,12 @@ public import Mathlib.RingTheory.PowerSeries.Expand
 
 A power series is *supported on multiples of `d`* when every coefficient at an index not
 divisible by `d` vanishes. The condition is preserved by the module operations, so the series
-satisfying it form a submodule, and it is exactly what the substitution `q ↦ q ^ d`
-(`PowerSeries.expand`) produces.
+satisfying it form a submodule, and everything the substitution `q ↦ q ^ d`
+(`PowerSeries.expand`) produces satisfies it.
+
+**Only that one inclusion is proved here.** The converse — that every supported series is such a
+substitution — is not stated below, and nothing downstream needs it: the modular-form
+applications only ever need to know that a level-raise *is* supported.
 
 Nothing here mentions a modular form: the predicate is about power series over a semiring, and
 the modular-form consequences live in
@@ -32,9 +36,24 @@ cusp forms by pulling `PowerSeries.supportedOnDvdSubmodule` back along the `q`-e
   module operations.
 * `PowerSeries.isSupportedOnDvd_expand` and
   `PowerSeries.range_expand_le_supportedOnDvdSubmodule`: the substitution `q ↦ q ^ d` lands in the
-  supported series, in predicate and in submodule form. This is the only source of supported
-  series that the modular-form applications use, so every `q ↦ q ^ d` statement about a
-  `q`-expansion reduces to it.
+  supported series, in predicate and in submodule form — a containment, not an equality. This is
+  the only source of supported series that the modular-form applications use, so every
+  `q ↦ q ^ d` statement about a `q`-expansion reduces to it.
+
+## Typeclass assumptions
+
+Each is the weakest Mathlib admits, which is worth recording because the statements look as though
+they should ask for less:
+
+* the predicate, and every lemma mentioning a coefficient, needs `[Semiring R]`, because Mathlib's
+  only coefficient accessor is the bundled linear map `PowerSeries.coeff n : R⟦X⟧ →ₗ[R] R`
+  (`LinearMap.proj n`, declared under `variable [Semiring R]`). There is no unbundled reader, so
+  the condition cannot be stated at `[Zero R]`;
+* `.neg` and `.sub` need `[Ring R]`, because `Neg R⟦X⟧` is available only then;
+* `.smul` needs `[Semiring S] [Module S R]`, because Mathlib's only scalar action on power series
+  is `Module R (MvPowerSeries σ A)` for `[Semiring R] [AddCommMonoid A] [Module R A]`;
+* the two `expand` lemmas need `[CommRing R]`, because `PowerSeries.expand` is an `R`-algebra
+  homomorphism defined only there.
 
 ## Provenance
 
