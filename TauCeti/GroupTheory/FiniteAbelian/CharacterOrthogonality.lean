@@ -36,8 +36,8 @@ homomorphism `G →* R` into a domain. Specialising it to a character is
 `sum_hom_units_eq_zero ((Units.coeHom M).comp χ)`, i.e. the Mathlib lemma composed with the
 unit coercion and nothing else, so no declaration for it is added. Callers wanting the row
 relation should use the Mathlib lemma directly. (`MulChar.sum_eq_zero_of_ne_one` in
-`Mathlib/NumberTheory/MulChar/Basic.lean` is the same content in the `MulChar` vocabulary,
-stated over a finite ring rather than a finite group.)
+`Mathlib/NumberTheory/MulChar/Basic.lean` is the analogous statement in the `MulChar`
+vocabulary, for a multiplicative character of a finite commutative monoid valued in a domain.)
 
 The column relation genuinely is not in Mathlib in this generality. It appears there only in
 specialisations: the `ZMod n` one, `DirichletCharacter.sum_characters_eq_zero` in
@@ -50,13 +50,10 @@ or over `ZMod n`.
 
 ## References
 
-Adapted from `CebotarevDensity/ForMathlib/CharacterOrthogonality.lean` of
-[CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0,
-Birkbeck--Brasca) at commit `8575c9df1ae0a61120ab5c964c7911414254bec7`. Only the column relation
-is taken. The source's row relation `sum_char_self_eq_zero_of_ne_one` is dropped in favour of
-Mathlib's `sum_hom_units_eq_zero`, as described above, and its two Fourier-inversion
-consequences — that a function whose nontrivial character moments all vanish is constant — are
-left in the source, having no consumer here.
+Only `CommGroup.sum_monoidHom_apply_eq_zero_of_ne_one` is adapted from elsewhere: it comes from
+`sum_char_apply_eq_zero_of_ne_one` in `CebotarevDensity/ForMathlib/CharacterOrthogonality.lean`
+of [CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0,
+Birkbeck--Brasca) at commit `8575c9df1ae0a61120ab5c964c7911414254bec7`.
 -/
 
 public section
