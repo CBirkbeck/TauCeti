@@ -90,10 +90,13 @@ open MvPowerSeries
 variable {O : Type*} [CommRing O]
 
 
-/-- The curve `W` base changed to a field `KK` over the series ring `MvPowerSeries σ O`. The
-parameters of the chord construction are series, so the group law they satisfy is the group law of
-this curve. There is no `Algebra O KK` to run `WeierstrassCurve.baseChange` along, so this is the
-composite `map`, and it is Mathlib's `map_*` lemmas that unfolding it exposes. -/
+/-- The curve `W` base changed to a commutative ring `KK` over the series ring
+`MvPowerSeries σ O`. The parameters of the chord construction are series, so the group law they
+satisfy is the group law of this curve; the group-law arguments below specialize `KK` to a fraction
+field of the series ring, which is where the chord construction needs division, but the base change
+itself asks only for a commutative algebra. There is no `Algebra O KK` to run
+`WeierstrassCurve.baseChange` along, so this is the composite `map`, and it is Mathlib's `map_*`
+lemmas that unfolding it exposes. -/
 private noncomputable def fracCurve (W : WeierstrassCurve O) (σ : Type*) (KK : Type*)
     [CommRing KK] [Algebra (MvPowerSeries σ O) KK] : WeierstrassCurve KK :=
   W.map <| (algebraMap (MvPowerSeries σ O) KK).comp (algebraMap O (MvPowerSeries σ O))

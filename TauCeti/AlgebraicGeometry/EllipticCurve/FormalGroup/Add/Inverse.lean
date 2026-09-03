@@ -51,8 +51,7 @@ in this file, and naming it would add a definition whose unfolding lemma every p
 ## Provenance
 
 Adapted from Michael Stoll's `EllipticCurves` project
-(`github.com/MichaelStollBayreuth/EllipticCurves`, Apache-2.0, pinned by
-`TauCetiRoadmap/EllipticCurves/README.md` at `66889eada51a`),
+(`github.com/MichaelStollBayreuth/EllipticCurves`, Apache-2.0, `66889eada51a`),
 `EllipticCurves/WeierstrassFormalGroup/GroupLaw.lean` lines 118-308, the section `Domain`, and
 `EllipticCurves/WeierstrassFormalGroup/ThirdPoint.lean` lines 372-460, 501-577 and 630-653.
 
