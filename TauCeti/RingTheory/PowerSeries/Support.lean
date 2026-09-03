@@ -33,7 +33,7 @@ cusp forms by pulling `PowerSeries.supportedOnDvdSubmodule` back along the `q`-e
 ## Main results
 
 * `PowerSeries.IsSupportedOnDvd.add`, `.smul`, `.neg`, `.sub`: the condition is preserved by the
-  module operations.
+  module operations, and `.one`, `.mul` by the ring ones.
 * `PowerSeries.isSupportedOnDvd_expand` and
   `PowerSeries.range_expand_le_supportedOnDvdSubmodule`: the substitution `q ↦ q ^ d` lands in the
   supported series, in predicate and in submodule form — a containment, not an equality. This is
@@ -113,6 +113,21 @@ theorem one [Semiring R] (d : ℕ) : IsSupportedOnDvd d (1 : PowerSeries R) := f
   rcases Nat.eq_zero_or_pos n with rfl | hpos
   · exact absurd (dvd_zero d) hn
   · simp [PowerSeries.coeff_one, hpos.ne']
+
+/-- **The condition is closed under multiplication.** In a coefficient of `P * Q` at an index
+`n` not divisible by `d`, each term `aᵢ · b_j` with `i + j = n` has one of its two factors at an
+index away from the multiples of `d`: if `d ∣ i` then `d ∤ j`, since otherwise `d ∣ n`.
+
+Both hypotheses are needed. One-sidedness fails: over any semiring, `1` is supported on multiples
+of `2` while `1 * X = X` is not. -/
+theorem mul [Semiring R] (hP : IsSupportedOnDvd d P) (hQ : IsSupportedOnDvd d Q) :
+    IsSupportedOnDvd d (P * Q) := fun n hn ↦ by
+  rw [PowerSeries.coeff_mul]
+  refine Finset.sum_eq_zero fun x hx ↦ ?_
+  rw [Finset.mem_antidiagonal] at hx
+  by_cases hi : d ∣ x.1
+  · rw [hQ x.2 fun hj ↦ hn (hx ▸ hi.add hj), mul_zero]
+  · rw [hP x.1 hi, zero_mul]
 
 end IsSupportedOnDvd
 
