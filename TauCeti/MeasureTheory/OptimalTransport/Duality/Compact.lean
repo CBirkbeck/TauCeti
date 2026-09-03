@@ -259,6 +259,34 @@ private theorem isCoupling_glue {n m : ℕ} {qX : X → Fin n} {qY : Y → Fin m
     rw [hstep]
     exact ProbabilityTheory.sum_meas_smul_cond_fiber hqY ν
 
+/-- On the product of the conditional laws of the fibres `qX ⁻¹' {i}` and `qY ⁻¹' {j}`, a cost
+bounded by `b` on that pair of fibres has `ENNReal.ofReal`-integral at most `ENNReal.ofReal b`.
+Conditioning confines each coordinate to its own fibre almost surely, so the integrand is almost
+surely bounded by the constant. -/
+private theorem lintegral_ofReal_cond_prod_le {n m : ℕ} {qX : X → Fin n} {qY : Y → Fin m}
+    (hqX : Measurable qX) (hqY : Measurable qY) {μ : Measure X} [IsFiniteMeasure μ]
+    {ν : Measure Y} [IsFiniteMeasure ν] {i : Fin n} {j : Fin m}
+    (hi : μ (qX ⁻¹' {i}) ≠ 0) (hj : ν (qY ⁻¹' {j}) ≠ 0) {c : X × Y → ℝ} {b : ℝ}
+    (hb : ∀ x y, qX x = i → qY y = j → c (x, y) ≤ b) :
+    ∫⁻ z, ENNReal.ofReal (c z) ∂((μ[|qX ⁻¹' {i}]).prod (ν[|qY ⁻¹' {j}]))
+      ≤ ENNReal.ofReal b := by
+  have := ProbabilityTheory.cond_isProbabilityMeasure hi
+  have := ProbabilityTheory.cond_isProbabilityMeasure hj
+  have hfib1 : ∀ᵐ z ∂((μ[|qX ⁻¹' {i}]).prod (ν[|qY ⁻¹' {j}])), qX z.1 = i := by
+    refine (Measure.ae_prod_iff_ae_ae ?_).2 ?_
+    · exact (hqX.comp measurable_fst) (MeasurableSet.singleton i)
+    · filter_upwards [ProbabilityTheory.ae_cond_mem (μ := μ)
+        (hqX (MeasurableSet.singleton i))] with x hx
+      exact ae_of_all _ fun _ ↦ hx
+  have hfib2 : ∀ᵐ z ∂((μ[|qX ⁻¹' {i}]).prod (ν[|qY ⁻¹' {j}])), qY z.2 = j := by
+    refine (Measure.ae_prod_iff_ae_ae ?_).2 ?_
+    · exact (hqY.comp measurable_snd) (MeasurableSet.singleton j)
+    · exact ae_of_all _ fun _ ↦ ProbabilityTheory.ae_cond_mem (μ := ν)
+        (hqY (MeasurableSet.singleton j))
+  refine lintegral_le_const ?_
+  filter_upwards [hfib1, hfib2] with ⟨x, y⟩ hx hy
+  exact ENNReal.ofReal_le_ofReal (hb x y hx hy)
+
 /-- **Lifting a finite transportation matrix to a coupling.** Let two measurable maps `qX` and
 `qY` with finite ranges discretise the two marginals, and let `T` be a transportation matrix for
 the discretised masses. Gluing the conditional measures on the fibres of `qX` and `qY` along `T`
@@ -282,26 +310,9 @@ private theorem transportCost_le_ofReal_cost {n m : ℕ} {qX : X → Fin n} {qY 
     intro i j
     rcases eq_or_ne (T i j) 0 with h | h
     · simp [h]
-    · have := ProbabilityTheory.cond_isProbabilityMeasure (row_fiber_ne_zero hpμ T h)
-      have := ProbabilityTheory.cond_isProbabilityMeasure (col_fiber_ne_zero hpν T h)
-      refine mul_le_mul_of_nonneg_left ?_ (by positivity)
-      have hfib1 : ∀ᵐ z ∂((μ[|qX ⁻¹' {i}]).prod (ν[|qY ⁻¹' {j}])), qX z.1 = i := by
-        refine (Measure.ae_prod_iff_ae_ae ?_).2 ?_
-        · exact (hqX.comp measurable_fst) (MeasurableSet.singleton i)
-        · filter_upwards [ProbabilityTheory.ae_cond_mem (μ := μ)
-            (hqX (MeasurableSet.singleton i))] with x hx
-          exact ae_of_all _ fun _ ↦ hx
-      have hfib2 : ∀ᵐ z ∂((μ[|qX ⁻¹' {i}]).prod (ν[|qY ⁻¹' {j}])), qY z.2 = j := by
-        refine (Measure.ae_prod_iff_ae_ae ?_).2 ?_
-        · exact (hqY.comp measurable_snd) (MeasurableSet.singleton j)
-        · exact ae_of_all _ fun _ ↦ ProbabilityTheory.ae_cond_mem (μ := ν)
-            (hqY (MeasurableSet.singleton j))
-      refine le_trans (lintegral_mono_ae ?_) (by rw [lintegral_const, measure_univ, mul_one])
-      filter_upwards [hfib1, hfib2] with z h1 h2
-      refine ENNReal.ofReal_le_ofReal ?_
-      have hz := hC z.1 z.2
-      rw [h1, h2] at hz
-      simpa using hz
+    · exact mul_le_mul_of_nonneg_left (lintegral_ofReal_cond_prod_le hqX hqY
+        (row_fiber_ne_zero hpμ T h) (col_fiber_ne_zero hpν T h)
+        fun x y hx hy ↦ (hC x y).trans_eq (by rw [hx, hy])) (by positivity)
   have hentry : ∀ i j, T i j * ENNReal.ofReal (C (i, j))
       = ENNReal.ofReal (C (i, j) * T.toRealFun (i, j)) := by
     intro i j
