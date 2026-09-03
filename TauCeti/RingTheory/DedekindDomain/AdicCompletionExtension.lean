@@ -99,18 +99,15 @@ its proof: the source contracts the maximal ideal with its own
 same thing about the ordered value monoid in one line. The odd-residue-characteristic step is split
 out as `ringChar_residueField_adicCompletionIntegers_ne_two`, which the source keeps inline.
 
-The Henselian and completeness chain of the source — `mem_maximalIdeal_pow_iff` and the
-`𝔪`-adic, completeness, `𝔪`-adic-completeness and Henselian results below — is ported here too;
-it serves consumers beyond the `2`-descent, notably the formal-group filtration. The source's
-`valued_irreducible_adicCompletionIntegers` is *not* ported: this repository already states it as
-`valued_algebraMap_eq_exp_neg_one_of_irreducible` above, and that is what the chain uses. One
-adaptation was needed against this repository's Mathlib: the source's two uses of `Set.mem_setOf`
-are deprecated here in favour of `Set.mem_ofPred`. The source is written against Lean `v4.32.0`;
-this is a forward port.
+The Henselian and completeness chain — `mem_maximalIdeal_pow_iff` and the `𝔪`-adic,
+completeness, `𝔪`-adic-completeness and Henselian results below — comes from that same Stoll file.
+Where the source states `valued_irreducible_adicCompletionIntegers`, this repository already has
+`valued_algebraMap_eq_exp_neg_one_of_irreducible` above, and that is what the chain uses.
 
 ## Implementation notes
 
-`Mathlib.NumberTheory.NumberField.Completion.FinitePlace` is the sole Mathlib import. It is needed
+Three Mathlib modules are imported directly.
+`Mathlib.NumberTheory.NumberField.Completion.FinitePlace` is needed
 for two instances — `IsDiscreteValuationRing (v.adicCompletionIntegers K)` and
 `(Valued.v : Valuation (v.adicCompletion K) ℤᵐ⁰).IsRankOneDiscrete`. Both are stated there for an
 arbitrary Dedekind domain and its fraction field, not for number fields, so nothing in this file
@@ -119,7 +116,9 @@ reason so the placement of a `NumberTheory` import inside `RingTheory` is not mi
 layering slip.
 
 It also transitively supplies the ramification-valuation and adic-valuation modules, so those are
-not imported directly.
+not imported directly. The other two carry the vocabulary of the final section:
+`Mathlib.RingTheory.AdicCompletion.Topology` defines `IsAdic` and `IsAdicComplete`, and
+`Mathlib.RingTheory.Henselian` defines `HenselianLocalRing`.
 -/
 
 public section
@@ -245,6 +244,7 @@ is at most `exp (-n)`.
 
 This identifies the ideal filtration of `𝒪_v` with the valuation filtration it inherits from
 `K_v`, which is what makes the subspace topology visibly `𝔪`-adic below. -/
+@[simp]
 theorem mem_maximalIdeal_pow_iff {x : v.adicCompletionIntegers K} {n : ℕ} :
     x ∈ IsLocalRing.maximalIdeal (v.adicCompletionIntegers K) ^ n ↔
       Valued.v (x : v.adicCompletion K) ≤ exp (-(n : ℤ)) := by
@@ -253,10 +253,10 @@ theorem mem_maximalIdeal_pow_iff {x : v.adicCompletionIntegers K} {n : ℕ} :
       exp (-(n : ℤ)) := by
     rw [map_pow, map_pow, v.valued_algebraMap_eq_exp_neg_one_of_irreducible hπ, ← exp_nsmul]
     simp
-  rw [← span_singleton_eq_maximalIdeal_pow v hπn, Ideal.mem_span_singleton]
   have hint := Valuation.valuationSubring.integers (v := (Valued.v : Valuation
     (v.adicCompletion K) ℤᵐ⁰))
-  exact ⟨fun h ↦ (hint.le_of_dvd h).trans hπn.le, fun h ↦ hint.dvd_of_le (h.trans_eq hπn.symm)⟩
+  rw [← span_singleton_eq_maximalIdeal_pow v hπn, ← hπn]
+  exact Set.ext_iff.mp (hint.coe_span_singleton_eq_setOfPred_le_v_algebraMap (π ^ n)) x
 
 /-- Any element of the ring of integers of the completion is congruent to an element of `R`
 modulo the maximal ideal — equivalently, `R` surjects onto the residue field of `𝒪_v`.
@@ -431,10 +431,8 @@ theorem exists_maximalIdeal_pow_subset_of_mem_nhds {s : Set (v.adicCompletionInt
   rw [ZeroMemClass.coe_zero] at ht
   obtain ⟨γ, hγ⟩ := Valued.mem_nhds_zero.mp ht
   obtain ⟨m, hm⟩ : ∃ m : ℤ, exp m < MonoidWithZeroHom.ValueGroup₀.embedding γ.1 := by
-    obtain ⟨a, ha⟩ :=
-      WithZero.ne_zero_iff_exists.mp (MonoidWithZeroHom.ValueGroup₀.embedding_unit_ne_zero γ)
-    refine ⟨Multiplicative.toAdd a - 1, ?_⟩
-    rw [← ha, show (a : ℤᵐ⁰) = exp (Multiplicative.toAdd a) from rfl]
+    refine ⟨log (MonoidWithZeroHom.ValueGroup₀.embedding γ.1) - 1, ?_⟩
+    conv_rhs => rw [← exp_log (MonoidWithZeroHom.ValueGroup₀.embedding_unit_ne_zero γ)]
     exact exp_lt_exp.mpr (by lia)
   refine ⟨(-m).toNat, fun x hx ↦ hts ?_⟩
   refine Set.mem_preimage.mpr (hγ ?_)
