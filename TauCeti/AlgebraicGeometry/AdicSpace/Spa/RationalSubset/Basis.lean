@@ -30,15 +30,8 @@ rational subset. This comparison also transports closure under intersections and
 
 Closure under intersection appears in two strengths. Remark 7.30(5) is the binary statement,
 recorded here as `inter_mem_spaRationalFamily`; Theorem 7.35(2) asserts the stronger claim that
-the basis is stable under *finite* intersection, and `biInter_mem_spaRationalFamily` supplies it
-by iterating the binary lemma. The finite form is the one a common refinement of a finite
-rational cover consumes.
-
-Mathlib's `IsPiSystem.biInter_mem` is not usable for this. It is indexed by a `Finset (Set X)`
-rather than by a family, and it assumes both that the index set and the intersection itself are
-nonempty. The rational family is closed under intersection with no nonemptiness hypothesis, so
-the statements here carry none either, and the empty intersection is covered by
-`univ_mem_spaRationalFamily`.
+the basis is stable under *finite* intersection. The finite form is the one a common refinement
+of a finite rational cover consumes, and it carries no nonemptiness hypothesis.
 
 The plus ring is arbitrary here. The additional condition that it be a ring of integral
 elements is part of calling the resulting space the adic spectrum of a Huber pair, but none of
@@ -59,8 +52,9 @@ the basis arguments uses it.
   intersections, which is the stability clause of Wedhorn Theorem 7.35(2). It is stated over a
   `Finset` index, with `TauCeti.ValuationSpectrum.iInter_mem_spaRationalFamily` for a finite index
   type and `TauCeti.ValuationSpectrum.sInter_mem_spaRationalFamily` for a finite subfamily, the
-  form a refinement argument produces. The binary lemma stays the primitive: the induction proving
-  the finite form runs on it, with `univ_mem_spaRationalFamily` at the empty stage.
+  form a refinement argument produces.
+* `TauCeti.ValuationSpectrum.finiteInter_spaRationalFamily`: the same closure as Mathlib's
+  `FiniteInter` structure, which the three forms above are read off.
 * `TauCeti.ValuationSpectrum.inf_mem_spaRationalOpens` and
   `TauCeti.ValuationSpectrum.finsetInf_mem_spaRationalOpens`: the same two closure statements in
   the bundled `Opens` form, together with `TauCeti.ValuationSpectrum.top_mem_spaRationalOpens`.
@@ -193,32 +187,38 @@ theorem inter_mem_spaRationalFamily [IsHuberRing A] {Aplus : Subring A}
   (IsHuberRing.nonempty_pairOfDefinition (A := A)).elim
     fun P ↦ inter_mem_spaRationalFamily_of_pairOfDefinition P hU hV
 
-/-- **Wedhorn Theorem 7.35(2), finite-intersection half**, from a specified pair of definition:
-an intersection of finitely many rational subsets with open numerator ideal is again one. The
-induction is over the index set, with `univ_mem_spaRationalFamily` at the empty stage and
-`inter_mem_spaRationalFamily_of_pairOfDefinition` at each step; the pair `P` is fixed
-throughout, so no choice is made inside the induction. -/
-theorem biInter_mem_spaRationalFamily_of_pairOfDefinition (P : PairOfDefinition A)
-    {Aplus : Subring A} {ι : Type*} (s : Finset ι) {U : ι → Set (spa Aplus)}
-    (h : ∀ i ∈ s, U i ∈ spaRationalFamily Aplus) : (⋂ i ∈ s, U i) ∈ spaRationalFamily Aplus := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa using univ_mem_spaRationalFamily Aplus
-  | insert a s ha ih =>
-    rw [Finset.set_biInter_insert]
-    exact inter_mem_spaRationalFamily_of_pairOfDefinition P
-      (h a (Finset.mem_insert_self a s))
-      (ih fun i hi ↦ h i (Finset.mem_insert_of_mem hi))
+/-- **The rational family is closed under finite intersection**, from a specified pair of
+definition, as Mathlib's `FiniteInter` structure. -/
+theorem finiteInter_spaRationalFamily_of_pairOfDefinition (P : PairOfDefinition A)
+    (Aplus : Subring A) : FiniteInter (spaRationalFamily Aplus) where
+  univ_mem := univ_mem_spaRationalFamily Aplus
+  inter_mem _ hU _ hV := inter_mem_spaRationalFamily_of_pairOfDefinition P hU hV
 
-/-- **Wedhorn Theorem 7.35(2), finite-intersection half.** Over a Huber ring the rational family
-is closed under intersections indexed by a `Finset`. This is the form Wedhorn's Theorem 7.35(2)
-states — "a basis of quasi-compact open subsets which is stable under finite intersection" —
-whereas `inter_mem_spaRationalFamily` gives only the binary step it iterates. -/
+/-- **The rational family is closed under finite intersection**, over a Huber ring. -/
+theorem finiteInter_spaRationalFamily [IsHuberRing A] (Aplus : Subring A) :
+    FiniteInter (spaRationalFamily Aplus) :=
+  (IsHuberRing.nonempty_pairOfDefinition (A := A)).elim
+    fun P ↦ finiteInter_spaRationalFamily_of_pairOfDefinition P Aplus
+
+/-- **Wedhorn Theorem 7.35(2), finite-intersection half**, for a finite subfamily: an intersection
+of finitely many rational subsets is again rational. This is the unindexed form, and the one a
+refinement argument produces, where the finite family comes out of quasi-compactness rather than
+out of an index type — see `exists_finite_spaRationalFamily_refinement`. -/
+theorem sInter_mem_spaRationalFamily [IsHuberRing A] {Aplus : Subring A}
+    {𝒮 : Set (Set (spa Aplus))} (h𝒮 : 𝒮.Finite) (h : 𝒮 ⊆ spaRationalFamily Aplus) :
+    ⋂₀ 𝒮 ∈ spaRationalFamily Aplus := by
+  rw [← h𝒮.coe_toFinset] at h ⊢
+  exact (finiteInter_spaRationalFamily Aplus).finiteInter_mem _ h
+
+/-- **Wedhorn Theorem 7.35(2), finite-intersection half**, indexed by a `Finset`. This is the form
+Wedhorn's Theorem 7.35(2) states — "a basis of quasi-compact open subsets which is stable under
+finite intersection" — whereas `inter_mem_spaRationalFamily` gives only the binary case. -/
 theorem biInter_mem_spaRationalFamily [IsHuberRing A] {Aplus : Subring A} {ι : Type*}
     (s : Finset ι) {U : ι → Set (spa Aplus)} (h : ∀ i ∈ s, U i ∈ spaRationalFamily Aplus) :
-    (⋂ i ∈ s, U i) ∈ spaRationalFamily Aplus :=
-  (IsHuberRing.nonempty_pairOfDefinition (A := A)).elim
-    fun P ↦ biInter_mem_spaRationalFamily_of_pairOfDefinition P s h
+    (⋂ i ∈ s, U i) ∈ spaRationalFamily Aplus := by
+  rw [← Finset.set_biInter_coe, ← Set.sInter_image]
+  exact sInter_mem_spaRationalFamily (s.finite_toSet.image U)
+    (Set.image_subset_iff.mpr fun i hi ↦ h i hi)
 
 /-- **Wedhorn Theorem 7.35(2), finite-intersection half**, for a finite index type. -/
 theorem iInter_mem_spaRationalFamily [IsHuberRing A] {Aplus : Subring A} {ι : Type*} [Finite ι]
@@ -227,19 +227,6 @@ theorem iInter_mem_spaRationalFamily [IsHuberRing A] {Aplus : Subring A} {ι : T
   classical
   cases nonempty_fintype ι
   simpa using biInter_mem_spaRationalFamily Finset.univ (U := U) fun i _ ↦ h i
-
-/-- **Wedhorn Theorem 7.35(2), finite-intersection half**, for a finite subfamily. This is the
-unindexed form: the intersection of a finite set of rational subsets is rational. It is the shape
-a refinement argument takes, where the finite family comes out of quasi-compactness rather than
-out of an index type — see `exists_finite_spaRationalFamily_refinement`. -/
-theorem sInter_mem_spaRationalFamily [IsHuberRing A] {Aplus : Subring A}
-    {𝒮 : Set (Set (spa Aplus))} (h𝒮 : 𝒮.Finite) (h : 𝒮 ⊆ spaRationalFamily Aplus) :
-    ⋂₀ 𝒮 ∈ spaRationalFamily Aplus := by
-  classical
-  have hrw : ⋂₀ 𝒮 = ⋂ U ∈ h𝒮.toFinset, U := by
-    simp [Set.sInter_eq_biInter]
-  rw [hrw]
-  exact biInter_mem_spaRationalFamily _ fun U hU ↦ h (h𝒮.mem_toFinset.mp hU)
 
 /-! ### Basis and quasi-compactness -/
 
