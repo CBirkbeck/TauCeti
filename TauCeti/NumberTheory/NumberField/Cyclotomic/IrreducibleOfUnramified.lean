@@ -7,7 +7,7 @@ module
 
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
 public import TauCeti.NumberTheory.Cyclotomic.Irreducible
-public import TauCeti.NumberTheory.RamificationInertia.Tower
+public import TauCeti.NumberTheory.RamificationInertia.NumberField
 
 /-!
 # Unramifiedness makes the cyclotomic polynomial irreducible over a number field
@@ -60,6 +60,8 @@ public section
 open Polynomial
 open scoped NumberField
 
+open TauCeti.NumberField (ramificationIdx_le_finrank ramificationIdx_under_eq_one)
+
 namespace IsCyclotomicExtension
 
 variable {K : Type*} [Field K] [NumberField K]
@@ -75,13 +77,6 @@ private theorem totient_le_ramificationIdx_int (p k : ℕ) [Fact p.Prime] {F : T
   have h := (𝔔.under (𝓞 (IntermediateField.adjoin ℚ {ζ}))).ramificationIdx_below_le (R := ℤ) 𝔔
   rwa [Rat.ramificationIdx_eq_of_prime_pow p k, ← Nat.totient_prime_pow_succ Fact.out] at h
 
-private theorem ramificationIdx_under_eq_one (p : ℕ) {F : Type*} [Field F] [Algebra K F]
-    (hur : ∀ (𝔮 : Ideal (𝓞 K)) [𝔮.IsPrime] [𝔮.LiesOver (Ideal.span {(p : ℤ)})],
-    Algebra.IsUnramifiedAt ℤ 𝔮) (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime] [𝔔.LiesOver (Ideal.span {(p : ℤ)})] :
-    (𝔔.under (𝓞 K)).ramificationIdx ℤ = 1 :=
-  -- `𝔮 = 𝔔 ∩ 𝓞 K` lies above `p`, which is unramified in `K`, so `e(𝔮 / p) = 1`.
-  Ideal.ramificationIdx_eq_one_iff.mpr (hur _)
-
 private theorem totient_le_ramificationIdx (p k : ℕ) [Fact p.Prime] {F : Type*} [Field F]
     [NumberField F] [Algebra K F] [IsCyclotomicExtension {p ^ (k + 1)} K F]
     (hur : ∀ (𝔮 : Ideal (𝓞 K)) [𝔮.IsPrime] [𝔮.LiesOver (Ideal.span {(p : ℤ)})],
@@ -95,13 +90,6 @@ private theorem totient_le_ramificationIdx (p k : ℕ) [Fact p.Prime] {F : Type*
   simpa only [Ideal.ramificationIdx_tower (R := ℤ) (𝔔.under (𝓞 K)) 𝔔,
     ramificationIdx_under_eq_one p hur 𝔔, one_mul] using
     totient_le_ramificationIdx_int p k hζ 𝔔
-
-private theorem ramificationIdx_le_finrank_of_isPrime {F : Type*} [Field F] [NumberField F]
-    [Algebra K F] (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime] : 𝔔.ramificationIdx (𝓞 K) ≤ Module.finrank K F :=
-  -- The fundamental identity `∑ eᵢ fᵢ = [F : K]` bounds each `eᵢ`, and `[𝓞 F : 𝓞 K] = [F : K]`:
-  -- Sharifi, Theorem 2.5.11 ("`∑ eᵢ fᵢ = [L : K]`"); Milne, Theorem 3.34.
-  (TauCeti.RamificationInertia.ramificationIdx_le_finrank (𝔔.under (𝓞 K)) 𝔔).trans_eq
-    (IsFractionRing.finrank_eq (𝓞 K) K (𝓞 F) F).symm
 
 /-- **The degree of a cyclotomic extension above an unramified prime is at least `φ(p^(k+1))`.**
 Unlike `IsPrimitiveRoot.lcm_totient_le_finrank` it assumes no irreducibility, so it can feed
@@ -119,7 +107,7 @@ theorem totient_le_finrank_of_unramified (p k : ℕ) [Fact p.Prime] (F : Type*) 
     (S := 𝓞 F)
   -- `𝔔` has relative ramification index at least `φ(p^(k+1))` over `𝓞 K`, and a ramification
   -- index never exceeds the degree of the extension.
-  exact (totient_le_ramificationIdx p k hur 𝔔).trans (ramificationIdx_le_finrank_of_isPrime 𝔔)
+  exact (totient_le_ramificationIdx p k hur 𝔔).trans (ramificationIdx_le_finrank 𝔔)
 
 /-- **A cyclotomic extension is totally ramified above an unramified prime.** If `p` is unramified
 in `K`, every prime `𝔔` of `𝓞 F` above `p` has ramification index exactly `φ(p^(k+1))` over
@@ -138,7 +126,7 @@ theorem ramificationIdx_eq_totient (p k : ℕ) [Fact p.Prime] {F : Type*} [Field
     Algebra.IsUnramifiedAt ℤ 𝔮) (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime]
     [𝔔.LiesOver (Ideal.span {(p : ℤ)})] : 𝔔.ramificationIdx (𝓞 K) = (p ^ (k + 1)).totient := by
   have : NeZero (p ^ (k + 1)) := ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
-  exact le_antisymm ((ramificationIdx_le_finrank_of_isPrime 𝔔).trans (finrank_le_totient K F))
+  exact le_antisymm ((ramificationIdx_le_finrank 𝔔).trans (finrank_le_totient K F))
     (totient_le_ramificationIdx p k hur 𝔔)
 
 variable (K) in
