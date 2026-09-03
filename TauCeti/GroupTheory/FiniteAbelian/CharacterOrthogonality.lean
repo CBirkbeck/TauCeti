@@ -61,8 +61,6 @@ left in the source, having no consumer here.
 
 public section
 
-namespace CommGroup
-
 variable {G : Type*} [Finite G] {M : Type*} [CommRing M] [IsDomain M]
 
 /-- The characters of a finite left-cancellative monoid valued in a domain form a `Fintype`.
@@ -72,6 +70,8 @@ invertibility is needed: `Finite (G →* Mˣ)` already holds at `LeftCancelMonoi
 this is stated. -/
 noncomputable instance instFintypeMonoidHomUnits [LeftCancelMonoid G] : Fintype (G →* Mˣ) :=
   Fintype.ofFinite _
+
+namespace CommGroup
 
 variable [CommGroup G] [HasEnoughRootsOfUnity M (Monoid.exponent G)]
 
