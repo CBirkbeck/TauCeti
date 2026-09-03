@@ -73,16 +73,14 @@ instantiation is `A := W₁.CoordinateRing`, `M := φ.intermediateRing`, `R := W
 
 ## Provenance
 
-⚠ *mathlib-track*. `TauCetiRoadmap/EllipticCurves/README.md:1092` lists `pushClass` "by ideal
-extension and relative norm (`ClassGroup.extendedRelNormHom`)" among the components of
-D. Angdinata's shared isogeny development, on the way to `toPointHom`.
+⚠ *mathlib-track*. Adapted from D. Angdinata's shared isogeny development, `Isogeny.lean`, by
+David Kurniadi Angdinata, declarations `pushClassMonoidHom` and `pushClass`, which builds
+`pushClass` by ideal extension and relative norm (`ClassGroup.extendedRelNormHom`) on the way to
+`toPointHom`. No revision is cited because there is none to cite: that source is shared with its
+authors ahead of their Mathlib PRs, so the shared files are the contract, and it should be pinned
+to the PR numbers once those exist. For the same reason no licence is asserted here.
 
-Adapted from that development's `Isogeny.lean`, by David Kurniadi Angdinata, declarations
-`pushClassMonoidHom` and `pushClass`. No revision is cited because there is none to cite: the
-roadmap records this source as shared with its authors ahead of its Mathlib PRs, with "no public
-revision to pin, so the shared files are the contract", and directs that it be pinned to the PR
-numbers once those exist. For the same reason no licence is asserted here — the roadmap states one
-for its other pinned sources and none for this one. Two adaptations are forced by how this
+Two adaptations are forced by how this
 repository states the surrounding API:
 
 * the source writes `ClassGroup.extendedRelNormHom W₂.CoordinateRing W₁.CoordinateRing
