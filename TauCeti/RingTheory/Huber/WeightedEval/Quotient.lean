@@ -16,21 +16,11 @@ ring of restricted power series, and one of the two maps that identify them goes
 quotient. This file supplies it: an evaluation `A⟨X⟩_T →+* B` that kills an ideal `𝔞` factors
 through `A⟨X⟩_T ⧸ 𝔞`, and the factorisation is again continuous.
 
-The factorisation itself is `Ideal.Quotient.lift`, and its continuity is
-`continuous_coinduced_dom`: Mathlib gives `R ⧸ I` the coinduced (quotient) topology, so a map out
-of it is continuous exactly when its composite with the quotient map is — which is
-`TauCeti.Huber.continuous_weightedEvalHom`.
-
-## Relation to `TauCeti.Huber.Pair.Hom.quotientLift`
-
-This repository already carries the same move one level up, for **morphisms of Huber pairs**:
-`Pair.Hom.quotientLift` factors a `Hom S T` killing `J` through `S.quotient J`, by the same
-`Ideal.Quotient.lift` and the same `continuous_coinduced_dom` step. This file is *not* an instance
-of it and cannot be phrased as one: `A⟨X⟩_T` and `B` enter Wedhorn 5.50 as plain topological rings,
-with no ring of integral elements and so no `map_mem_plus` obligation to discharge, and the
-universal property being transported is about ring homomorphisms rather than pair morphisms. The
-two are siblings sharing a proof idiom, not a general lemma and its special case; a later rung
-needing the pair-level statement should use `Pair.Hom.quotientLift`.
+The factorisation itself is `Ideal.Quotient.lift`, and the map it produces is again continuous.
+`main` carries the same construction one level up, for morphisms of Huber pairs
+(`TauCeti.Huber.Pair.Hom.quotientLift`); that is the version to use when the source and target are
+Huber pairs rather than plain topological rings, since Wedhorn 5.50 speaks about ring
+homomorphisms and asks for no ring of integral elements.
 
 ## What is *not* assumed, and why it is worth saying
 
@@ -131,6 +121,21 @@ theorem existsUnique_continuous_ringHom_quotient_weightedRestrictedSubring
         (hψ.comp continuous_quot_mk) (continuous_weightedEvalHom hT hφ hb)
         (fun a ↦ (hC a).trans (weightedEvalHom_weightedC hT hφ hb a).symm)
         fun i ↦ (hX i).trans (weightedEvalHom_weightedX hT hφ hb i).symm⟩
+
+/-- **The universal property of `A⟨X⟩_T` on the quotient, under Wedhorn's own hypothesis.** The
+coordinatewise condition `IsWeightedVarPowerBounded` — each weighted variable power-bounded as a
+set, one index at a time — is the form Proposition 5.50 states, and this is the version to cite as
+5.50 on the quotient. -/
+theorem
+    existsUnique_continuous_ringHom_quotient_weightedRestrictedSubring_of_isWeightedVarPowerBounded
+    (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0) (hb : IsWeightedVarPowerBounded φ T b)
+    {𝔞 : Ideal (weightedRestrictedSubring T hT)} (h𝔞 : 𝔞 ≤ RingHom.ker
+      (weightedEvalHom hT hφ (isWeightBounded_of_isWeightedVarPowerBounded hb))) :
+    ∃! ψ : weightedRestrictedSubring T hT ⧸ 𝔞 →+* B, Continuous ψ ∧
+      (∀ a, ψ (Ideal.Quotient.mk 𝔞 (weightedC T hT a)) = φ a) ∧
+      ∀ i, ψ (Ideal.Quotient.mk 𝔞 (weightedX T hT i)) = b i :=
+  existsUnique_continuous_ringHom_quotient_weightedRestrictedSubring hT hφ
+    (isWeightBounded_of_isWeightedVarPowerBounded hb) h𝔞
 
 end TauCeti.Huber
 
