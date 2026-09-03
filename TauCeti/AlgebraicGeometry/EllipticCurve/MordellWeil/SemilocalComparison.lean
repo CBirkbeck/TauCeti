@@ -22,10 +22,12 @@ subgroups of `W.M` cut out by valuation conditions are in play:
 * `(W⁄F_v).toAffine.selmerGroupA 𝒪_v` — the same condition for the curve base-changed to the
   completion at a finite place `v`.
 
-This file proves that at a **good** finite place the two agree, in both directions. That is what
-makes the local conditions at the good finite places redundant: they are already implied by
-`A(S,2)`, so membership in the `2`-Selmer group reduces to the finitely many conditions at the bad
-and infinite places.
+This file compares the two at the **good** finite places, in both directions: an `S`-unramified
+class localizes to an unramified class at each good place, and conversely a class that localizes
+to an unramified class at every good place is `S`-unramified. That is what makes the local
+conditions at the good finite places redundant — they are already implied by `A(S,2)` — so
+membership in the `2`-Selmer group reduces to the finitely many conditions at the bad and infinite
+places.
 
 ## Main results
 
@@ -70,40 +72,12 @@ square classes as its own `Units.modPow`; they are re-spelled here to this repos
 spelling `Mˣ ⧸ (powMonoidHom n).range`, and `HeightOneSpectrum.below` is Mathlib's
 `HeightOneSpectrum.under`.
 
-## Roadmap
-
-`TauCetiRoadmap/EllipticCurves/README.md`, Layer 6 (Mordell–Weil), the explicit `2`-descent bullet.
 -/
 
 public section
 
 open IsDedekindDomain NumberField Polynomial
 
-namespace AdjoinRoot
-
-/-- The base-change map `K[X] ⧸ (p) →+* K_v[X] ⧸ (q)` of `AdjoinRoot`s at a completion is
-compatible with the algebra maps from the underlying Dedekind domain `R` and from the ring of
-integers of the completion.
-
-`private`, and stated here rather than beside `AdjoinRoot.map` in
-`TauCeti.RingTheory.AdjoinRoot.Factors`: it is not a fact about `AdjoinRoot` alone, since it names
-`adicCompletion` and `adicCompletionIntegers`, and this file is where those two developments
-first meet. -/
-private lemma map_comp_algebraMap {R : Type*} [CommRing R] [IsDedekindDomain R] {K : Type*}
-    [Field K] [Algebra R K] [IsFractionRing R K] (v : HeightOneSpectrum R) {p : K[X]}
-    {q : (v.adicCompletion K)[X]} (hq : q ∣ p.map (algebraMap K (v.adicCompletion K))) :
-    (AdjoinRoot.map (algebraMap K (v.adicCompletion K)) p q hq).comp
-        (algebraMap R (AdjoinRoot p)) =
-      (algebraMap (v.adicCompletionIntegers K) (AdjoinRoot q)).comp
-        (algebraMap R (v.adicCompletionIntegers K)) := by
-  ext c
-  simp only [RingHom.comp_apply]
-  rw [IsScalarTower.algebraMap_apply R K (AdjoinRoot p), AdjoinRoot.algebraMap_eq, map_of,
-    IsScalarTower.algebraMap_apply (v.adicCompletionIntegers K) (v.adicCompletion K)
-      (AdjoinRoot q), AdjoinRoot.algebraMap_eq]
-  rfl
-
-end AdjoinRoot
 
 namespace WeierstrassCurve.Affine
 
@@ -339,7 +313,9 @@ private lemma comap_localFactorIntegerEmb_ne_bot (p : W.f.Factors)
       adicCompletionIntegersExtension F (𝕃 p) v w := by
     ext c : 2
     exact RingHom.congr_fun (W.localFactorEmb_comp_algebraMap v p w) c
-  rw [Ideal.comap_comap, hsq0, IsDedekindDomain.HeightOneSpectrum.asIdeal_maximalIdeal,
+  rw [Ideal.comap_comap, hsq0,
+    show (IsDiscreteValuationRing.maximalIdeal (w.adicCompletionIntegers (𝕃 p))).asIdeal =
+      IsLocalRing.maximalIdeal (w.adicCompletionIntegers (𝕃 p)) from rfl,
     comap_maximalIdeal_adicCompletionIntegersExtension]
   exact IsDiscreteValuationRing.not_a_field _
 
@@ -481,14 +457,15 @@ theorem localRes_mem_selmerGroupA {v : HeightOneSpectrum (𝓞 F)} (hv : v ∉ W
 open AdjoinRoot in
 open scoped Classical in
 /-- **Semilocal comparison, local to global**: a square class that localizes to an unramified class
-at every finite place is `S`-unramified.
+at every good finite place is `S`-unramified.
 
 Every prime `w` of a field factor `F[X] ⧸ (p)` above a good place `v` arises from a factor of `f`
 over `F_v`, namely the minimal polynomial of the image of the root in the completion at `w`
 (`localFactor`). Evenness of the valuation transports from the primes of the local ring of integers
 through the completion `(F[X] ⧸ (p))_w` back to `w`. -/
 theorem mem_selmerGroupA_of_forall_localRes {m : W.M}
-    (hm : ∀ v : HeightOneSpectrum (𝓞 F), W.localRes F_[v] m ∈ 𝕎[v].selmerGroupA 𝒪_[v]) :
+    (hm : ∀ v : HeightOneSpectrum (𝓞 F), v ∉ W.badPrimes (𝓞 F) →
+      W.localRes F_[v] m ∈ 𝕎[v].selmerGroupA 𝒪_[v]) :
     m ∈ W.selmerGroupA (𝓞 F) := by
   obtain ⟨a, rfl⟩ := QuotientGroup.mk'_surjective _ m
   simp only [QuotientGroup.mk'_apply]
@@ -498,7 +475,7 @@ theorem mem_selmerGroupA_of_forall_localRes {m : W.M}
     W.under_notMem_badPrimes (𝓞 F) p hw
   refine W.dvd_toAdd_valuationOfNeZero_of_localFactor (HeightOneSpectrum.under (𝓞 F) w) p w a ?_
   refine (W.localRes_mem_selmerGroupA_iff (HeightOneSpectrum.under (𝓞 F) w) a).mp
-    (hm (HeightOneSpectrum.under (𝓞 F) w)) _ _ ?_
+    (hm (HeightOneSpectrum.under (𝓞 F) w) hv) _ _ ?_
   rw [HeightOneSpectrum.mem_primesAbove_iff, W.badPrimes_adicCompletionIntegers hv]
   exact Set.notMem_empty _
 

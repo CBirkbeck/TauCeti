@@ -182,6 +182,7 @@ integers not lying above a bad prime.
 The unit-level form of `mem_selmerGroupA_iff`. It is the form the semilocal comparison at the good
 finite places is stated against, because there the square class is always presented by an explicit
 unit of `W.A`. -/
+@[simp]
 lemma mem_selmerGroupA_unit_iff (a : W.Aˣ) :
     (QuotientGroup.mk a : W.M) ∈ W.selmerGroupA R ↔
       ∀ (p : W.f.Factors) (w : HeightOneSpectrum (W.ringOfIntegersFactor R p)),

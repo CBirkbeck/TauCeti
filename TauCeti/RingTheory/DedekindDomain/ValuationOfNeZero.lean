@@ -120,9 +120,9 @@ multiplication preserves divisibility, so parity — the case `n = 2` — surviv
 directions. -/
 theorem dvd_toAdd_valuationOfNeZero_map (φ : L →+* N) (ψ : B →+* C)
     (hcomp : (algebraMap C N).comp ψ = φ.comp (algebraMap B L)) (w : HeightOneSpectrum C)
-    (hne : w.asIdeal.comap ψ ≠ ⊥) {n : ℕ} (u : Lˣ)
-    (h : (n : ℤ) ∣ Multiplicative.toAdd ((comapOfNeBot ψ w hne).valuationOfNeZero u)) :
-    (n : ℤ) ∣ Multiplicative.toAdd (w.valuationOfNeZero (Units.map (φ : L →* N) u)) := by
+    (hne : w.asIdeal.comap ψ ≠ ⊥) {n : ℤ} (u : Lˣ)
+    (h : n ∣ Multiplicative.toAdd ((comapOfNeBot ψ w hne).valuationOfNeZero u)) :
+    n ∣ Multiplicative.toAdd (w.valuationOfNeZero (Units.map (φ : L →* N) u)) := by
   obtain ⟨e, he⟩ := exists_valuationOfNeZero_map_eq φ ψ hcomp w hne
   simpa only [he u, toAdd_pow, nsmul_eq_mul] using h.mul_left _
 
