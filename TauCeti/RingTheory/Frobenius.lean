@@ -17,14 +17,16 @@ independently of any number-field or Legendre-symbol specialization.
 For an ideal `p` of `R`, an element `σ` of the acting group cuts out the set of primes of `S` above
 `p` that admit `σ` as an arithmetic Frobenius. These sets need not be disjoint: at a ramified prime
 several elements are a Frobenius at once, so this is a family of fibers rather than a partition.
-Where the extension is unramified `IsArithFrobAt.eq_of_isUnramifiedAt` makes the fibers disjoint,
-and they exhaust the primes above `p` exactly when a Frobenius exists at each of them — which needs
-hypotheses of its own, such as those of `IsArithFrobAt.exists_of_isInvariant`.
+Disjointness at a prime `Q` is what `IsArithFrobAt.eq_of_isUnramifiedAt` below supplies, under
+hypotheses of its own: a faithful action, `S` Noetherian, `Q.primeCompl ≤ S⁰`, and
+`Algebra.IsUnramifiedAt R Q`. Exhaustion of the primes above `p` needs a Frobenius to exist at
+each of them, which again carries hypotheses of its own, such as those of
+`IsArithFrobAt.exists_of_isInvariant`.
 
 ## Main results
 
 * `IsArithFrobAt.eq_of_isUnramifiedAt` — a Frobenius element is unique for a faithful action at an
-  unramified prime.
+  unramified prime of a Noetherian ring whose prime complement consists of non-zero-divisors.
 * `TauCeti.nonempty_frobeniusFiber_equiv_of_isConj` — conjugate elements have equipotent fibers
   above a fixed ideal of the base, as a bijection between them.
 * `TauCeti.frobeniusFiber_card_eq_of_isConj` — the `Nat.card` form of that equipotence.
