@@ -84,7 +84,7 @@ theorem twistedHeckeSlashSum_identity_coset (f : ℍ → ℂ) (hf : f ∈ functi
     twistedHeckeSlashSum k χ 1 f = f := by
   have hout : (((1 : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ))
       ((Gamma0 N).map (mapGL ℚ))).out : GL (Fin 2) ℚ)) ∈ (Gamma0 N).map (mapGL ℚ) :=
-    HeckeCoset.out_one_mem
+    HeckeCoset.rep_one_mem
   -- `Γ₀(N) · 1 · Γ₀(N)` is a single right coset, so the sum has exactly one summand.
   have : Subsingleton (DecompQuotient ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))
       (((1 : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ))
