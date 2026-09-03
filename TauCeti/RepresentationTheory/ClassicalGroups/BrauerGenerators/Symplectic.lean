@@ -420,37 +420,6 @@ private theorem sum_comm_four {ι M : Type*} [Fintype ι] [AddCommMonoid M]
     _ = ∑ p : ι, ∑ q : ι, ∑ x : ι, ∑ y : ι, F x y p q :=
         Finset.sum_congr rfl fun _ _ => Finset.sum_comm
 
-/-- Applying `A` in both tensor slots expands a basis bivector back in the standard basis: the
-coefficient of `Pi.single p 1 ⊗ Pi.single q 1` is `A p x * A q y`. -/
-private theorem piTensorProductMap_tprod_single
-    (A : Matrix (Fin n ⊕ Fin n) (Fin n ⊕ Fin n) k) (x y : Fin n ⊕ Fin n) :
-    PiTensorProduct.map (fun _ : Fin 2 => Matrix.mulVecLin A)
-        (PiTensorProduct.tprod k ![Pi.single x (1 : k), Pi.single y (1 : k)]) =
-      ∑ p : Fin n ⊕ Fin n, ∑ q : Fin n ⊕ Fin n, (A p x * A q y) •
-        PiTensorProduct.tprod k ![Pi.single p (1 : k), Pi.single q (1 : k)] := by
-  have hcol : ∀ z : Fin n ⊕ Fin n,
-      A *ᵥ Pi.single z (1 : k) = ∑ p : Fin n ⊕ Fin n, A p z • Pi.single p (1 : k) := by
-    intro z
-    rw [Matrix.mulVec_single_one, ← (Pi.basisFun k (Fin n ⊕ Fin n)).sum_repr (A.col z)]
-    simp [Matrix.col_apply]
-  have hfun : (fun i : Fin 2 =>
-      Matrix.mulVecLin A (![Pi.single x (1 : k), Pi.single y (1 : k)] i)) =
-      fun i : Fin 2 => ∑ p : Fin n ⊕ Fin n, A p (![x, y] i) • Pi.single p (1 : k) := by
-    funext i
-    fin_cases i <;> simp [hcol]
-  rw [PiTensorProduct.map_tprod, hfun,
-    MultilinearMap.map_sum (PiTensorProduct.tprod k)
-      (g := fun i : Fin 2 => fun p : Fin n ⊕ Fin n =>
-        A p (![x, y] i) • Pi.single p (1 : k)),
-    ← sum_pi_fin_two fun p q => (A p x * A q y) •
-      PiTensorProduct.tprod k ![Pi.single p (1 : k), Pi.single q (1 : k)]]
-  refine Finset.sum_congr rfl fun r _ => ?_
-  have hr : PiTensorProduct.tprod k (fun i : Fin 2 => Pi.single (r i) (1 : k))
-      = PiTensorProduct.tprod k ![Pi.single (r 0) (1 : k), Pi.single (r 1) (1 : k)] :=
-    tprod_fin_two _
-  rw [MultilinearMap.map_smul_univ, hr, Fin.prod_univ_two]
-  simp
-
 /-- Applying a matrix in both tensor factors turns the bivector of `K` into the bivector of the
 congruate `A * K * Aᵀ`. This is the computation behind the invariance of the cup. -/
 private theorem piTensorProductMap_bivector
@@ -476,8 +445,8 @@ private theorem piTensorProductMap_bivector
         = ∑ x : Fin n ⊕ Fin n, ∑ y : Fin n ⊕ Fin n, ∑ p : Fin n ⊕ Fin n, ∑ q : Fin n ⊕ Fin n,
             (K x y * (A p x * A q y)) •
               PiTensorProduct.tprod k ![Pi.single p (1 : k), Pi.single q (1 : k)] := by
-          simp only [map_sum, map_smul, piTensorProductMap_tprod_single, Finset.smul_sum,
-            smul_smul]
+          simp only [map_sum, map_smul, Matrix.piTensorProductMap_tprod_single,
+            Finset.smul_sum, smul_smul]
     _ = ∑ p : Fin n ⊕ Fin n, ∑ q : Fin n ⊕ Fin n, ∑ x : Fin n ⊕ Fin n, ∑ y : Fin n ⊕ Fin n,
           (K x y * (A p x * A q y)) •
             PiTensorProduct.tprod k ![Pi.single p (1 : k), Pi.single q (1 : k)] :=
