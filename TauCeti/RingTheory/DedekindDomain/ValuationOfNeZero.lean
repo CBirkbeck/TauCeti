@@ -45,13 +45,11 @@ consequence, also inherit this repository's Selmer-group development. Keeping th
 ## Provenance
 
 Michael Stoll's elliptic-curves formalisation
-(`github.com/MichaelStollBayreuth/EllipticCurves`, at the `EllipticCurves` roadmap's pin
-`66889eada51a`, Apache 2.0, by Michael Stoll) reaches for a
-`HeightOneSpectrum.valuationOfNeZero_eq_iff`; no such lemma exists at our Mathlib pin, so it is
-supplied here. `exists_valuationOfNeZero_map_eq` and `dvd_toAdd_valuationOfNeZero_map` are adapted
-from the same source (`EllipticCurves/Mathlib/Basic.lean`). Following this repository's convention
-for adapted material, the upstream authorship is credited here rather than in the copyright
-header.
+(`github.com/MichaelStollBayreuth/EllipticCurves`, Apache 2.0, by Michael Stoll) at commit
+`66889eada51a` reaches for a `HeightOneSpectrum.valuationOfNeZero_eq_iff`; no such lemma exists at
+our Mathlib pin, so it is supplied here. `exists_valuationOfNeZero_map_eq` and
+`dvd_toAdd_valuationOfNeZero_map` are adapted from the same source
+(`EllipticCurves/Mathlib/Basic.lean`).
 -/
 
 public section

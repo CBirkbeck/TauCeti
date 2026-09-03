@@ -45,8 +45,6 @@ componentwise statement into one about `W.M` along the decomposition `modPowEqui
 
 * `WeierstrassCurve.Affine.mem_selmerGroupFactor_unit_iff`: a class of units lies in the Selmer
   group of a factor exactly when its valuation is even at every good prime.
-* `WeierstrassCurve.Affine.mem_selmerGroupA_unit_iff`: the same criterion for `A(S,2)` itself,
-  applied componentwise to the `projFactor`-components of a unit of `W.A`.
 * `WeierstrassCurve.Affine.μX_component_mem_selmerGroupFactor`: each component of `μX x` lies in
   the Selmer group of its factor.
 * `WeierstrassCurve.Affine.range_μ_le_selmerGroupA`: **Step 6**.
@@ -174,30 +172,6 @@ lemma mem_selmerGroupFactor_unit_iff (p : W.f.Factors) (u : (𝕃 p)ˣ) :
           (2 : ℤ) ∣ Multiplicative.toAdd (w.valuationOfNeZero u) := by
   rw [selmerGroupFactor, mem_selmerGroupAbove_iff]
   exact forall₂_congr fun w _ ↦ HeightOneSpectrum.valuationOfNeZeroMod_mk_eq_one_iff w 2 u
-
-/-- Membership of the class of a unit of the étale algebra in `A(S,2)`, componentwise: the
-valuation of each `projFactor`-component is even at every prime of the corresponding ring of
-integers not lying above a bad prime.
-
-The unit-level form of `mem_selmerGroupA_iff`. It is the form the semilocal comparison at the good
-finite places is stated against, because there the square class is always presented by an explicit
-unit of `W.A`.
-
-Not `@[simp]`, although its per-factor sibling `mem_selmerGroupFactor_unit_iff` is: with
-`mem_selmerGroupA_iff` and that sibling both marked, `simpNF` rejects this one — "simp can prove
-this" — because the two together already reduce it. Every consumer names it explicitly, so nothing
-depends on the attribute. This is the same situation as
-`IsDedekindDomain.HeightOneSpectrum.valuationOfNeZero_eq_one_iff`. -/
-lemma mem_selmerGroupA_unit_iff (a : W.Aˣ) :
-    (QuotientGroup.mk a : W.M) ∈ W.selmerGroupA R ↔
-      ∀ (p : W.f.Factors) (w : HeightOneSpectrum (W.ringOfIntegersFactor R p)),
-        w ∉ HeightOneSpectrum.primesAbove R (W.ringOfIntegersFactor R p) (W.badPrimes R) →
-          (2 : ℤ) ∣ Multiplicative.toAdd (w.valuationOfNeZero
-            (Units.map
-              (AdjoinRoot.projFactor W.f_ne_zero W.squarefree_f p).toRingHom.toMonoidHom a)) := by
-  rw [mem_selmerGroupA_iff]
-  exact forall_congr' fun p ↦ by
-    rw [AdjoinRoot.modPowEquivPiFactors_mk, mem_selmerGroupFactor_unit_iff]
 
 /-- Generic case of the arithmetic input: `f x ≠ 0`, so the `p`-component of `μX x` is the class
 of `x - θ`. -/

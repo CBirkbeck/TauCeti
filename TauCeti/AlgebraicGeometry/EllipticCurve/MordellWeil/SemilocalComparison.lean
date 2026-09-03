@@ -34,7 +34,7 @@ places.
 * `WeierstrassCurve.Affine.localRes_mem_selmerGroupA` (global to local): an `S`-unramified square
   class localizes to an unramified class at every good finite place.
 * `WeierstrassCurve.Affine.mem_selmerGroupA_of_forall_localRes` (local to global): a square class
-  that localizes to an unramified class at every finite place is `S`-unramified.
+  that localizes to an unramified class at every good finite place is `S`-unramified.
 
 ## Implementation notes
 
@@ -63,11 +63,9 @@ vocabulary — `localFactor`, `integerMapOfDvd` — that has no meaning outside 
 ## Provenance
 
 Adapted from Michael Stoll's elliptic-curves formalisation
-(`github.com/MichaelStollBayreuth/EllipticCurves`, Apache 2.0, by Michael Stoll), pinned by
-`TauCetiRoadmap/EllipticCurves/README.md` at `66889eada51a`: `EllipticCurves/SelmerGroup.lean`,
-section `Semilocal`, together with `AdjoinRoot.map_comp_algebraMap` from
-`EllipticCurves/Mathlib/Basic.lean`. Following this repository's convention for adapted material,
-the upstream authorship is credited here rather than in the copyright header. The source states
+(`github.com/MichaelStollBayreuth/EllipticCurves`, Apache 2.0, by Michael Stoll) at commit
+`66889eada51a`: `EllipticCurves/SelmerGroup.lean`, section `Semilocal`, together with
+`AdjoinRoot.map_comp_algebraMap` from `EllipticCurves/Mathlib/Basic.lean`. The source states
 square classes as its own `Units.modPow`; they are re-spelled here to this repository's single
 spelling `Mˣ ⧸ (powMonoidHom n).range`, and `HeightOneSpectrum.below` is Mathlib's
 `HeightOneSpectrum.under`.
@@ -340,7 +338,8 @@ private lemma localRes_mem_selmerGroupA_iff (a : W.Aˣ) :
           (Units.map (projFactor 𝕎[v].f_ne_zero 𝕎[v].squarefree_f q).toRingHom.toMonoidHom
             (Units.map (W.mapA F_[v]).toMonoidHom a))) := by
   rw [localRes_mk]
-  exact 𝕎[v].mem_selmerGroupA_unit_iff 𝒪_[v] _
+  simp only [mem_selmerGroupA_iff, AdjoinRoot.modPowEquivPiFactors_mk,
+    mem_selmerGroupFactor_unit_iff]
 
 /- Transport of the divisibility from the contracted prime of the local factor to `w`. -/
 private lemma dvd_toAdd_valuationOfNeZero_of_localFactor (p : W.f.Factors)
@@ -430,7 +429,8 @@ theorem localRes_mem_selmerGroupA {v : HeightOneSpectrum (𝓞 F)} (hv : v ∉ W
     W.localRes F_[v] m ∈ 𝕎[v].selmerGroupA 𝒪_[v] := by
   obtain ⟨a, rfl⟩ := QuotientGroup.mk'_surjective _ m
   simp only [QuotientGroup.mk'_apply] at hm ⊢
-  rw [mem_selmerGroupA_unit_iff] at hm
+  simp only [mem_selmerGroupA_iff, AdjoinRoot.modPowEquivPiFactors_mk,
+    mem_selmerGroupFactor_unit_iff] at hm
   rw [W.localRes_mem_selmerGroupA_iff v a]
   intro q w hw
   -- find the global factor `p` below the local factor `q`
@@ -469,7 +469,8 @@ theorem mem_selmerGroupA_of_forall_localRes {m : W.M}
     m ∈ W.selmerGroupA (𝓞 F) := by
   obtain ⟨a, rfl⟩ := QuotientGroup.mk'_surjective _ m
   simp only [QuotientGroup.mk'_apply]
-  rw [mem_selmerGroupA_unit_iff]
+  simp only [mem_selmerGroupA_iff, AdjoinRoot.modPowEquivPiFactors_mk,
+    mem_selmerGroupFactor_unit_iff]
   intro p w hw
   have hv : HeightOneSpectrum.under (𝓞 F) w ∉ W.badPrimes (𝓞 F) :=
     W.under_notMem_badPrimes (𝓞 F) p hw
