@@ -50,11 +50,11 @@ shifted rate is still positive.
 * `TauCeti.gammaMeasure_conv_gammaMeasure` — convolution at a common rate adds the shape
   parameters;
 * `TauCeti.gammaMeasure_map_const_mul` — scaling by `c > 0` sends the rate `r` to `r / c`;
-* `TauCeti.gammaKernel_mul_poissonKernel` — the pointwise algebra that collects a gamma kernel
-  against a Poisson kernel into a single gamma kernel of shifted shape and rate. It lives here
-  rather than with any one mixture because it is a statement about the gamma kernel alone, and it
-  is what lets an integral against `gammaMeasure` of a Poisson mass be evaluated by
-  `Real.integral_rpow_mul_exp_neg_mul_Ioi`.
+* `TauCeti.gammaKernel_mul_poissonPMF` — the pointwise algebra that collects a gamma kernel against
+  a Poisson probability weight into a single gamma kernel of shifted shape and rate. It relates the
+  two kernels rather than belonging to either, and it is shared infrastructure for the
+  gamma--Poisson mixture calculation: it is what reduces an integral against `gammaMeasure` of a
+  Poisson weight to `Real.integral_rpow_mul_exp_neg_mul_Ioi`.
 
 The cumulative distribution function is computed in
 `TauCeti/Probability/Distributions/Gamma/Cdf.lean`.
@@ -90,13 +90,13 @@ private lemma gammaPDFReal_of_pos {x : ℝ} (hx : 0 < x) :
     gammaPDFReal a r x = r ^ a / Real.Gamma a * x ^ (a - 1) * exp (-(r * x)) := by
   rw [gammaPDFReal, ite_eq_left hx.le]
 
-/-- Collecting the gamma kernel of shape `r` and rate `c` against the Poisson kernel of index `k`
-at a point: the two powers of `x` and the two exponentials each combine, leaving a single gamma
-kernel of shape `r + k` and rate `c + 1`.
+/-- Collecting the gamma kernel of shape `r` and rate `c` against the Poisson probability weight
+`exp (-x) * x ^ k / k !` at a point: the two powers of `x` and the two exponentials each combine,
+leaving a single gamma kernel of shape `r + k` and rate `c + 1`.
 
 The gamma rate `c` is arbitrary, so a gamma--Poisson mixture — which averages the Poisson rate `x`
 against a gamma law — can instantiate the identity pointwise at whatever rate that law carries. -/
-theorem gammaKernel_mul_poissonKernel (c r : ℝ) (k : ℕ) {x : ℝ} (hx : x ∈ Ioi (0 : ℝ)) :
+theorem gammaKernel_mul_poissonPMF (c r : ℝ) (k : ℕ) {x : ℝ} (hx : x ∈ Ioi (0 : ℝ)) :
     c ^ r / Real.Gamma r * x ^ (r - 1) * Real.exp (-(c * x)) *
         (Real.exp (-x) * x ^ k / k.factorial) =
       c ^ r / (Real.Gamma r * k.factorial) *

@@ -61,7 +61,7 @@ private lemma integral_poissonMass_gammaMeasure {r p : ℝ} (hr : 0 < r) (hp : 0
       Real.exp (-(p / (1 - p) * x))) *
         (Real.exp (-x) * x ^ k / k.factorial)) = _
   have hcongr := fun x (hx : x ∈ Ioi (0 : ℝ)) =>
-    TauCeti.gammaKernel_mul_poissonKernel (p / (1 - p)) r k hx
+    TauCeti.gammaKernel_mul_poissonPMF (p / (1 - p)) r k hx
   -- Euler's Gamma integral evaluates the kernel with shifted shape `r + k`.
   rw [setIntegral_congr_fun measurableSet_Ioi hcongr, integral_const_mul,
     Real.integral_rpow_mul_exp_neg_mul_Ioi hshape (by positivity : 0 < p / (1 - p) + 1),
