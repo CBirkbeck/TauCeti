@@ -112,10 +112,9 @@ theorem finrank_eq_totient (K M : Type*) [Field K] [NumberField K] [Field M]
   have hrelabel : Module.finrank K M = Module.finrank K₂ M := by
     refine Algebra.finrank_eq_of_equiv_equiv eK₂ (RingEquiv.refl M) ?_
     ext x
-    -- Both sides are the image of `x` in `M`; `eK₂` is that map with its range restricted,
-    -- so unfolding the range coercion makes the two sides syntactically equal.
-    change ((eK₂ x : M)) = (IsScalarTower.toAlgHom ℚ K M : K →+* M) x
-    rfl
+    -- `eK₂` is the embedding `K → M` with its range restricted, so coercing back to `M` returns
+    -- that embedding: `RingHom.rangeRestrictFieldEquiv_apply_coe`.
+    exact RingHom.rangeRestrictFieldEquiv_apply_coe _ x
   rw [hrelabel, hfr, hfinK₁]
 
 end IsCyclotomicExtension
