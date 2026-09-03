@@ -63,6 +63,8 @@ needed; the rest is the elementary Frobenius argument.
 * `TauCeti.exists_mul_self_eq_neg_one_and_mul_eq_neg_mul`: a square root of `-1` that is not
   central has an anticommuting partner, again a square root of `-1`.
 * `TauCeti.Algebra.deg_le_two`: **a real central division algebra has degree at most `2`.**
+* `TauCeti.nonempty_algEquiv_quaternion_of_finrank_eq_four`: a four-dimensional real central
+  division algebra is `ℍ[ℝ]`.
 * `TauCeti.nonempty_algEquiv_real_or_quaternion`: **Frobenius' theorem**, a real central division
   algebra is `ℝ` or `ℍ[ℝ]`.
 
@@ -287,14 +289,55 @@ end Algebra
 
 /-! ### Frobenius' theorem -/
 
+/-- A four-dimensional central division algebra over `ℝ` is `ℝ`-isomorphic to the Hamilton
+quaternions `ℍ[ℝ]`.
+
+A square root `i` of `-1` exists, and centrality supplies an `x` not commuting with it, so
+`TauCeti.exists_mul_self_eq_neg_one_and_mul_eq_neg_mul` produces an anticommuting second square
+root. The pair is a quaternion basis, and the resulting map `ℍ[ℝ] →ₐ[ℝ] D` is bijective by a
+dimension count. -/
+theorem nonempty_algEquiv_quaternion_of_finrank_eq_four (D : Type*) [DivisionRing D] [Algebra ℝ D]
+    [Algebra.IsCentral ℝ D] [FiniteDimensional ℝ D] (h4 : finrank ℝ D = 4) :
+    Nonempty (D ≃ₐ[ℝ] ℍ[ℝ]) := by
+  obtain ⟨i, hi⟩ := exists_mul_self_eq_neg_one (D := D) (by omega)
+  -- `i` is not central, because `-1` is not a square in `ℝ`.
+  have hinotbot : i ∉ (⊥ : Subalgebra ℝ D) := by
+    intro hmem
+    obtain ⟨t, ht⟩ := Algebra.mem_bot.1 hmem
+    have ht2 : algebraMap ℝ D (t * t) = algebraMap ℝ D (-1) := by
+      rw [map_mul, ht, hi, map_neg, map_one]
+    nlinarith [mul_self_nonneg t, (algebraMap ℝ D).injective ht2]
+  obtain ⟨x, hx⟩ : ∃ x : D, x * i ≠ i * x := by
+    by_contra hc
+    refine hinotbot ?_
+    have hmem : i ∈ Subalgebra.center ℝ D := Subalgebra.mem_center_iff.2 fun c ↦ by
+      by_contra hcc
+      exact hc ⟨c, hcc⟩
+    rwa [Algebra.IsCentral.center_eq_bot] at hmem
+  -- The anticommuting partner, and the quaternion basis the pair forms.
+  obtain ⟨j, hj, hanti⟩ := exists_mul_self_eq_neg_one_and_mul_eq_neg_mul hi hx
+  have hanti' : j * i = -(i * j) := by rw [hanti]; abel
+  let q : QuaternionAlgebra.Basis D (-1 : ℝ) 0 (-1) :=
+    { i := i, j := j, k := i * j
+      i_mul_i := by rw [hi]; simp
+      j_mul_j := by rw [hj]; simp
+      i_mul_j := rfl
+      j_mul_i := by rw [hanti']; simp }
+  have f : ℍ[ℝ] →ₐ[ℝ] D := q.liftHom
+  have hinj : Function.Injective f := f.toRingHom.injective
+  have hfr : finrank ℝ ℍ[ℝ] = finrank ℝ D := by
+    rw [_root_.Quaternion.finrank_eq_four, h4]
+  have hsurj : Function.Surjective f :=
+    (LinearMap.injective_iff_surjective_of_finrank_eq_finrank
+      (f := f.toLinearMap) hfr).1 hinj
+  exact ⟨(AlgEquiv.ofBijective f ⟨hinj, hsurj⟩).symm⟩
+
 /-- **Frobenius' theorem.** A finite-dimensional division algebra over `ℝ` with centre `ℝ` is
 `ℝ`-isomorphic either to `ℝ` or to the Hamilton quaternions `ℍ[ℝ]`.
 
 The degree bound leaves `finrank ℝ D` equal to `1` or `4`. In the first case `D` is its own copy of
-`ℝ`. In the second, a square root `i` of `-1` exists and centrality supplies an `x` not commuting
-with it, so `TauCeti.exists_mul_self_eq_neg_one_and_mul_eq_neg_mul` produces an anticommuting
-second square root; the pair is a quaternion basis, and the resulting map `ℍ[ℝ] →ₐ[ℝ] D` is
-bijective by a dimension count. -/
+`ℝ`; in the second it is the quaternions, by
+`TauCeti.nonempty_algEquiv_quaternion_of_finrank_eq_four`. -/
 theorem nonempty_algEquiv_real_or_quaternion (D : Type*) [DivisionRing D] [Algebra ℝ D]
     [Algebra.IsCentral ℝ D] [FiniteDimensional ℝ D] :
     Nonempty (D ≃ₐ[ℝ] ℝ) ∨ Nonempty (D ≃ₐ[ℝ] ℍ[ℝ]) := by
@@ -311,41 +354,9 @@ theorem nonempty_algEquiv_real_or_quaternion (D : Type*) [DivisionRing D] [Algeb
     have hbot : (⊥ : Subalgebra ℝ D) = ⊤ := Subalgebra.bot_eq_top_iff_finrank_eq_one.2 h1
     exact ⟨Subalgebra.topEquiv.symm.trans
       ((Subalgebra.equivOfEq _ _ hbot.symm).trans (Algebra.botEquiv ℝ D))⟩
-  · -- `finrank ℝ D = 4`: build a quaternion basis.
+  · -- `finrank ℝ D = 4`: the quaternions.
     right
     rw [hd] at hsq
-    have h4 : finrank ℝ D = 4 := by omega
-    obtain ⟨i, hi⟩ := exists_mul_self_eq_neg_one (D := D) (by omega)
-    -- `i` is not central, because `-1` is not a square in `ℝ`.
-    have hinotbot : i ∉ (⊥ : Subalgebra ℝ D) := by
-      intro hmem
-      obtain ⟨t, ht⟩ := Algebra.mem_bot.1 hmem
-      have ht2 : algebraMap ℝ D (t * t) = algebraMap ℝ D (-1) := by
-        rw [map_mul, ht, hi, map_neg, map_one]
-      nlinarith [mul_self_nonneg t, (algebraMap ℝ D).injective ht2]
-    obtain ⟨x, hx⟩ : ∃ x : D, x * i ≠ i * x := by
-      by_contra hc
-      refine hinotbot ?_
-      have hmem : i ∈ Subalgebra.center ℝ D := Subalgebra.mem_center_iff.2 fun c ↦ by
-        by_contra hcc
-        exact hc ⟨c, hcc⟩
-      rwa [Algebra.IsCentral.center_eq_bot] at hmem
-    -- The anticommuting partner, and the quaternion basis the pair forms.
-    obtain ⟨j, hj, hanti⟩ := exists_mul_self_eq_neg_one_and_mul_eq_neg_mul hi hx
-    have hanti' : j * i = -(i * j) := by rw [hanti]; abel
-    let q : QuaternionAlgebra.Basis D (-1 : ℝ) 0 (-1) :=
-      { i := i, j := j, k := i * j
-        i_mul_i := by rw [hi]; simp
-        j_mul_j := by rw [hj]; simp
-        i_mul_j := rfl
-        j_mul_i := by rw [hanti']; simp }
-    have f : ℍ[ℝ] →ₐ[ℝ] D := q.liftHom
-    have hinj : Function.Injective f := f.toRingHom.injective
-    have hfr : finrank ℝ ℍ[ℝ] = finrank ℝ D := by
-      rw [_root_.Quaternion.finrank_eq_four, h4]
-    have hsurj : Function.Surjective f :=
-      (LinearMap.injective_iff_surjective_of_finrank_eq_finrank
-        (f := f.toLinearMap) hfr).1 hinj
-    exact ⟨(AlgEquiv.ofBijective f ⟨hinj, hsurj⟩).symm⟩
+    exact nonempty_algEquiv_quaternion_of_finrank_eq_four D (by omega)
 
 end TauCeti
