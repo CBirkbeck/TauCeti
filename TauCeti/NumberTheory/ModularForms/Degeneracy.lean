@@ -14,6 +14,7 @@ public import TauCeti.NumberTheory.ModularForms.Basic
 public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Units
 public import TauCeti.NumberTheory.ModularForms.DiamondOperators
 public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Diagonal.Basic
+public import TauCeti.RingTheory.PowerSeries.Support
 
 import TauCeti.Analysis.Complex.UpperHalfPlane.Manifold
 import TauCeti.NumberTheory.ModularForms.Cusps.Basic
@@ -93,6 +94,10 @@ the lower level. The `q`-expansion results go up only.
   `PowerSeries.expand d`; on coefficients (`TauCeti.ModularForm.qExpansion_levelRaise_coeff`
   and `TauCeti.CuspForm.qExpansion_levelRaise_coeff`), `aₙ(V_d f) = a_{n/d}(f)` for `d ∣ n` and
   `0` otherwise.
+* `ModularForm.isSupportedOnDvd_qExpansion_levelRaise`,
+  `CuspForm.isSupportedOnDvd_qExpansion_levelRaise`: the same fact as a support statement — the
+  `q`-expansion of `V_d f` is supported on the multiples of `d`. This is the forward half of the
+  Atkin–Lehner description of the old subspace.
 
 The old subspace of Layer 3 of the ModularForms roadmap is spanned by the images of the `V_d`,
 and the conductor statement of Layer 4 is phrased with this normalization of `V_d`.
@@ -1007,6 +1012,29 @@ theorem CuspForm.qExpansion_levelRaise_coeff_Gamma1 (M : ℕ) [NeZero M] [NeZero
   have : NeZero (d * M) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne M)⟩
   refine CuspForm.qExpansion_levelRaise_coeff ?_ ?_ _ f n <;>
     exact one_mem_strictPeriods_Gamma1_map _
+
+/-- **Level-raising lands in the series supported on multiples of `d`.** The `q`-expansion of
+`V_d f` is the `PowerSeries.expand d` of that of `f`, so its coefficients away from the multiples
+of `d` vanish.
+
+This is the forward half of the Atkin–Lehner description of the old subspace: everything in the
+image of `V_d` satisfies the support condition. -/
+theorem _root_.ModularForm.isSupportedOnDvd_qExpansion_levelRaise [𝒢'.HasDetOne] [NeZero d]
+    (h𝒢 : (1 : ℝ) ∈ 𝒢.strictPeriods) (h𝒢' : (1 : ℝ) ∈ 𝒢'.strictPeriods)
+    (hle : 𝒢' ≤ ConjAct.toConjAct (scaleGL d)⁻¹ • 𝒢) (f : ModularForm 𝒢 k) :
+    PowerSeries.IsSupportedOnDvd d (qExpansion 1 (ModularForm.levelRaise d hle f)) := by
+  rw [ModularForm.qExpansion_levelRaise h𝒢 h𝒢' hle f]
+  exact PowerSeries.isSupportedOnDvd_expand (NeZero.ne d) _
+
+/-- **Level-raising lands in the series supported on multiples of `d`, for cusp forms.** The
+cusp-form reading of `ModularForm.isSupportedOnDvd_qExpansion_levelRaise`, which is the form the
+old subspace is described with. -/
+theorem _root_.CuspForm.isSupportedOnDvd_qExpansion_levelRaise [𝒢'.HasDetOne] [NeZero d]
+    (h𝒢 : (1 : ℝ) ∈ 𝒢.strictPeriods) (h𝒢' : (1 : ℝ) ∈ 𝒢'.strictPeriods)
+    (hle : 𝒢' ≤ ConjAct.toConjAct (scaleGL d)⁻¹ • 𝒢) (f : CuspForm 𝒢 k) :
+    PowerSeries.IsSupportedOnDvd d (qExpansion 1 (CuspForm.levelRaise d hle f)) := by
+  rw [CuspForm.qExpansion_levelRaise h𝒢 h𝒢' hle f]
+  exact PowerSeries.isSupportedOnDvd_expand (NeZero.ne d) _
 
 end QExpansion
 

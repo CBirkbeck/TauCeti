@@ -5,29 +5,36 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.RingTheory.PowerSeries.Basic
+public import Mathlib.RingTheory.PowerSeries.Expand
 
 /-!
 # Power series supported on multiples of `d`
 
 A power series is *supported on multiples of `d`* when every coefficient at an index not
 divisible by `d` vanishes. The condition is preserved by the module operations, so the series
-satisfying it form a submodule.
+satisfying it form a submodule, and it is exactly what the substitution `q ↦ q ^ d`
+(`PowerSeries.expand`) produces.
 
 Nothing here mentions a modular form: the predicate is about power series over a semiring, and
 the modular-form consequences live in
-`TauCeti/NumberTheory/ModularForms/Newforms/QSupport.lean`, which obtains its submodule of cusp
-forms by pulling `supportedOnDvdSubmodule` back along the `q`-expansion.
+`TauCeti/NumberTheory/ModularForms/Degeneracy.lean` and
+`TauCeti/NumberTheory/ModularForms/Newforms/QSupport.lean`, the latter obtaining its submodule of
+cusp forms by pulling `PowerSeries.supportedOnDvdSubmodule` back along the `q`-expansion.
 
 ## Main definitions
 
-* `TauCeti.IsSupportedOnDvd`: the support condition on a power series.
-* `TauCeti.supportedOnDvdSubmodule`: the same condition bundled as a submodule.
+* `PowerSeries.IsSupportedOnDvd`: the support condition on a power series.
+* `PowerSeries.supportedOnDvdSubmodule`: the same condition bundled as a submodule.
 
 ## Main results
 
-* `TauCeti.IsSupportedOnDvd.add`, `.smul`, `.neg`, `.sub`: the condition is preserved by the
+* `PowerSeries.IsSupportedOnDvd.add`, `.smul`, `.neg`, `.sub`: the condition is preserved by the
   module operations.
+* `PowerSeries.isSupportedOnDvd_expand` and
+  `PowerSeries.range_expand_le_supportedOnDvdSubmodule`: the substitution `q ↦ q ^ d` lands in the
+  supported series, in predicate and in submodule form. This is the only source of supported
+  series that the modular-form applications use, so every `q ↦ q ^ d` statement about a
+  `q`-expansion reduces to it.
 
 ## Provenance
 
@@ -36,14 +43,18 @@ from the AINTLIB `LeanModularForms` project (Chris Birkbeck,
 `github.com/CBirkbeck/AINTLIB`, Apache-2.0) at commit `2baa76f74`, file
 `projects/LeanModularForms/LeanModularForms/Eigenforms/AtkinLehner.lean`. The source states them
 over `ℂ`, inside its `HeckeRing.GL2.AtkinLehner` namespace; here they are about power series over
-a semiring — `neg` and `sub` over a ring, `smul` over a module — and are placed in `RingTheory/`
-accordingly, since nothing in them mentions a modular form. The modular-form consequences the
-source draws from them are in `TauCeti/NumberTheory/ModularForms/Newforms/QSupport.lean`.
+a semiring — `neg` and `sub` over a ring, `smul` over a module — and are placed in the
+`PowerSeries` namespace under `RingTheory/` accordingly, since nothing in them mentions a modular
+form. The modular-form consequences the source draws from them are in
+`TauCeti/NumberTheory/ModularForms/Degeneracy.lean`.
+
+The `expand` bridge has no counterpart in the source, which reaches the same conclusions by a
+coefficient computation at each use site.
 -/
 
 public section
 
-namespace TauCeti
+namespace PowerSeries
 
 /-- A power series is **supported on multiples of `d`** when its coefficient at every index
 not divisible by `d` vanishes. -/
@@ -58,11 +69,6 @@ theorem isSupportedOnDvd_iff {R : Type*} [Semiring R] {d : ℕ} {P : PowerSeries
 namespace IsSupportedOnDvd
 
 variable {R S : Type*} {d : ℕ} {P Q : PowerSeries R}
-
-/-- The elimination form: a supported series has vanishing coefficients away from the
-multiples of `d`. -/
-theorem coeff_of_not_dvd [Semiring R] (hP : IsSupportedOnDvd d P) {n : ℕ} (hn : ¬ d ∣ n) :
-    P.coeff n = 0 := hP n hn
 
 @[simp]
 theorem zero [Semiring R] (d : ℕ) : IsSupportedOnDvd d (0 : PowerSeries R) := fun _ _ ↦ by simp
@@ -102,6 +108,27 @@ def supportedOnDvdSubmodule (R : Type*) [Semiring R] (d : ℕ) : Submodule R (Po
 theorem mem_supportedOnDvdSubmodule {R : Type*} [Semiring R] {d : ℕ} {P : PowerSeries R} :
     P ∈ supportedOnDvdSubmodule R d ↔ IsSupportedOnDvd d P := (Iff.rfl)
 
-end TauCeti
+section Expand
+
+variable {R : Type*} [CommRing R] {d : ℕ}
+
+/-- **Substituting `q ↦ q ^ d` lands in the supported series.** Every coefficient of
+`PowerSeries.expand d` sits at a multiple of `d`, which is the defining condition. This is the
+bridge that turns a `q ↦ q ^ d` description of a series into the support condition, so the
+support statements downstream never repeat the coefficient computation. -/
+theorem isSupportedOnDvd_expand (hd : d ≠ 0) (P : PowerSeries R) :
+    IsSupportedOnDvd d (P.expand d hd) := fun _ hn ↦ coeff_expand_of_not_dvd d hd P hn
+
+/-- **The range of `PowerSeries.expand d` lies in the supported submodule**, the bundled form of
+`PowerSeries.isSupportedOnDvd_expand`. `expand` is an `AlgHom`, so the range is taken of its
+underlying linear map. -/
+theorem range_expand_le_supportedOnDvdSubmodule (hd : d ≠ 0) :
+    LinearMap.range (expand (R := R) d hd).toLinearMap ≤ supportedOnDvdSubmodule R d := by
+  rintro _ ⟨P, rfl⟩
+  exact isSupportedOnDvd_expand hd P
+
+end Expand
+
+end PowerSeries
 
 end
