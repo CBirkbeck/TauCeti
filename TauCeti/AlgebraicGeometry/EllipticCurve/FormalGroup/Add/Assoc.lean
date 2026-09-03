@@ -105,6 +105,43 @@ open MvPowerSeries
 
 variable {O : Type*} [CommRing O]
 
+section CoordSpecialize
+
+variable {σ' : Type*} [DecidableEq σ'] [Finite σ']
+
+/-- The substitution sending the coordinate variable `i` to `X` and every other coordinate to `0`.
+
+Specializing to it separates the parameter `i` from all the others, which is how the associativity
+assembly discharges its distinctness hypotheses: by
+`ne_of_subst_eq_X_of_subst_eq_zero`, two series that this substitution sends to `X` and to `0`
+respectively are distinct. -/
+private noncomputable def coordSpecialize (i : σ') : σ' → MvPowerSeries Unit O :=
+  fun j ↦ if j = i then PowerSeries.X else 0
+
+private theorem hasSubst_coordSpecialize (i : σ') : HasSubst (coordSpecialize (O := O) i) :=
+  hasSubst_of_constantCoeff_zero fun j ↦ by
+    simp only [coordSpecialize]
+    split
+    · exact PowerSeries.constantCoeff_X
+    · exact map_zero _
+
+/-- The specialization at `i` sends the `i`-th coordinate to `X`. -/
+private theorem subst_coordSpecialize_X_self (i : σ') :
+    subst (coordSpecialize (O := O) i) (X i : MvPowerSeries σ' O) = PowerSeries.X := by
+  simp [subst_X (hasSubst_coordSpecialize i), coordSpecialize]
+
+/-- The specialization at `i` kills every other coordinate. -/
+private theorem subst_coordSpecialize_X_of_ne {i j : σ'} (h : j ≠ i) :
+    subst (coordSpecialize (O := O) i) (X j : MvPowerSeries σ' O) = 0 := by
+  simp [subst_X (hasSubst_coordSpecialize i), coordSpecialize, h]
+
+/-- The specialization at `i` is a ring map, so it kills `0`. -/
+private theorem subst_coordSpecialize_zero (i : σ') :
+    subst (coordSpecialize (O := O) i) (0 : MvPowerSeries σ' O) = 0 := by
+  rw [← coe_substAlgHom (hasSubst_coordSpecialize i), map_zero]
+
+end CoordSpecialize
+
 /-- The curve `W` base changed to a field `KK` over the series ring `MvPowerSeries σ O`. The
 parameters of the chord construction are series, so the group law they satisfy is the group law of
 this curve. There is no `Algebra O KK` to run `WeierstrassCurve.baseChange` along, so this is the
@@ -613,6 +650,26 @@ private theorem ne_of_subst_eq_X_of_subst_eq_zero {σ' : Type*}
     (ha : subst g a = PowerSeries.X) (hb : subst g b = 0) : a ≠ b := fun hab ↦
   PowerSeries.X_ne_zero (by rw [← ha, hab]; exact hb)
 
+variable [DecidableEq KK] in
+/-- **The chord addition of parametrized points, from a separating substitution.**
+
+A single substitution sending `q₁` to `X` and `q₂` to `0` supplies both distinctness hypotheses of
+`thetaPoint_add_of_ne` at once: `q₁ ≠ q₂` directly, and `q₁ ≠ ι(q₂)` because the formal inverse of
+`q₂` has no constant term either, so the substitution kills it too. This is the form the
+associativity assembly uses, where the separating substitution is a `coordSpecialize`. -/
+private theorem thetaPoint_add_of_subst_separates (hΔ : (fracCurve W σ KK).Δ ≠ 0)
+    {g : σ → MvPowerSeries Unit O} (hg : HasSubst g)
+    {q₁ q₂ : MvPowerSeries σ O} (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0)
+    (hq₁0 : q₁ ≠ 0) (hq₂0 : q₂ ≠ 0)
+    (hg₁ : subst g q₁ = PowerSeries.X) (hg₂ : subst g q₂ = 0)
+    (hF : constantCoeff (subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
+      Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W)) = 0)
+    (hF0 : subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+      (formalAdd W) ≠ 0) :
+    W.thetaPoint hΔ h₁ hq₁0 + W.thetaPoint hΔ h₂ hq₂0 = W.thetaPoint hΔ hF hF0 :=
+  W.thetaPoint_add_of_ne hΔ h₁ h₂ hq₁0 hq₂0 (ne_of_subst_eq_X_of_subst_eq_zero hg₁ hg₂)
+    (ne_of_subst_eq_X_of_subst_eq_zero hg₁ (subst_subst_formalInverse_eq_zero W hg h₂ hg₂)) hF hF0
+
 /-! ### Associativity -/
 
 /-- The universal curve stays nonsingular over the fraction field of its series ring: `Δ` is a
@@ -664,13 +721,9 @@ private theorem assoc_formalAdd_universal :
   classical
   set R := MvPolynomial Coeff ℤ with hR
   set KK := FractionRing (MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) with hKK
-  set χ := (Sum.elim (fun _ ↦ (PowerSeries.X : PowerSeries R)) (fun _ ↦ 0) :
-    Unit ⊕ Unit ⊕ Unit → MvPowerSeries Unit R) with hχdef
-  have hχ : HasSubst χ :=
-    hasSubst_of_constantCoeff_zero (by
-      rintro (j | j)
-      · exact PowerSeries.constantCoeff_X
-      · simp [hχdef])
+  -- the specialization separating the first parameter from the other two
+  set χ := coordSpecialize (O := R) (Sum.inl () : Unit ⊕ Unit ⊕ Unit) with hχdef
+  have hχ : HasSubst χ := hasSubst_coordSpecialize _
   have hΔ := fracCurve_universal_Δ_ne_zero KK
   have hc₁ : constantCoeff (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = 0 :=
     constantCoeff_X _
@@ -684,29 +737,19 @@ private theorem assoc_formalAdd_universal :
     nonZeroDivisors.ne_zero X_mem_nonzeroDivisors
   have h30 : (X (Sum.inr (Sum.inr ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) ≠ 0 :=
     nonZeroDivisors.ne_zero X_mem_nonzeroDivisors
-  have hχ1 : subst χ (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = PowerSeries.X := by
-    rw [subst_X hχ]; rfl
-  have hχ2 : subst χ (X (Sum.inr (Sum.inl ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = 0 := by
-    rw [subst_X hχ]; rfl
-  have hχ3 : subst χ (X (Sum.inr (Sum.inr ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = 0 := by
-    rw [subst_X hχ]; rfl
-  have hχ0 : subst χ (0 : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = 0 := by
-    rw [← coe_substAlgHom hχ, map_zero]
+  have hχ1 := subst_coordSpecialize_X_self (O := R) (Sum.inl () : Unit ⊕ Unit ⊕ Unit)
+  have hχ2 := subst_coordSpecialize_X_of_ne (O := R)
+    (i := (Sum.inl () : Unit ⊕ Unit ⊕ Unit)) (j := Sum.inr (Sum.inl ())) (by simp)
+  have hχ3 := subst_coordSpecialize_X_of_ne (O := R)
+    (i := (Sum.inl () : Unit ⊕ Unit ⊕ Unit)) (j := Sum.inr (Sum.inr ())) (by simp)
+  have hχ0 := subst_coordSpecialize_zero (O := R) (Sum.inl () : Unit ⊕ Unit ⊕ Unit)
   -- the second specialization, which separates the middle parameter from the third
-  set χ' := (Sum.elim (fun _ ↦ (0 : MvPowerSeries Unit R))
-    (Sum.elim (fun _ ↦ (PowerSeries.X : PowerSeries R)) fun _ ↦ 0) :
-    Unit ⊕ Unit ⊕ Unit → MvPowerSeries Unit R) with hχ'def
-  have hχ' : HasSubst χ' :=
-    hasSubst_of_constantCoeff_zero (by
-      rintro (j | j | j)
-      · simp [hχ'def]
-      · exact PowerSeries.constantCoeff_X
-      · simp [hχ'def])
-  have hχ'2 : subst χ' (X (Sum.inr (Sum.inl ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) =
-      PowerSeries.X := by
-    rw [subst_X hχ']; rfl
-  have hχ'3 : subst χ' (X (Sum.inr (Sum.inr ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = 0 := by
-    rw [subst_X hχ']; rfl
+  -- the specialization separating the middle parameter from the other two
+  set χ' := coordSpecialize (O := R) (Sum.inr (Sum.inl ()) : Unit ⊕ Unit ⊕ Unit) with hχ'def
+  have hχ' : HasSubst χ' := hasSubst_coordSpecialize _
+  have hχ'2 := subst_coordSpecialize_X_self (O := R) (Sum.inr (Sum.inl ()) : Unit ⊕ Unit ⊕ Unit)
+  have hχ'3 := subst_coordSpecialize_X_of_ne (O := R)
+    (i := (Sum.inr (Sum.inl ()) : Unit ⊕ Unit ⊕ Unit)) (j := Sum.inr (Sum.inr ())) (by simp)
   -- the two inner sums
   set F₁₂ := subst (Sum.elim (fun _ ↦ (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R))
     (fun _ ↦ X (Sum.inr (Sum.inl ()))) : Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R)
@@ -723,47 +766,13 @@ private theorem assoc_formalAdd_universal :
     subst_subst_pair_formalAdd_eq_X Universal.curve hχ hc₁ hc₂ hχ1 hχ2
   have hχF₂₃ : subst χ F₂₃ = 0 :=
     subst_subst_pair_formalAdd_eq_zero Universal.curve hχ hc₂ hc₃ hχ2 hχ3
-  -- the addition series itself is nonzero, and so is the sum of the last two parameters
-  have hFne : formalAdd Universal.curve ≠ 0 := by
-    intro h
-    have h2 := subst_unitR_formalAdd Universal.curve
-    rw [h, ← coe_substAlgHom (hasSubst_of_constantCoeff_zero
-      (by rintro (j | j) <;> simp : ∀ i, constantCoeff
-        ((Sum.elim X (fun _ ↦ 0) : Unit ⊕ Unit → MvPowerSeries Unit R) i) = 0)), map_zero] at h2
-    exact PowerSeries.X_ne_zero h2.symm
+  -- each inner sum is nonzero: the specialization that separates its own two parameters
+  -- sends it to `X`, and `X ≠ 0`
+  have hχ'0 : subst χ' (0 : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = 0 := by
+    rw [← coe_substAlgHom hχ', map_zero]
   have hF₁₂0 : F₁₂ ≠ 0 := ne_of_subst_eq_X_of_subst_eq_zero hχF₁₂ hχ0
-  have hF₂₃0 : F₂₃ ≠ 0 := by
-    have hfam : (Sum.elim
-        (fun _ ↦ (X (Sum.inr (Sum.inl ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R))
-        (fun _ ↦ X (Sum.inr (Sum.inr ()))) : Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) =
-        X ∘ (Sum.elim (fun _ ↦ Sum.inr (Sum.inl ())) fun _ ↦ Sum.inr (Sum.inr ()) :
-          Unit ⊕ Unit → Unit ⊕ Unit ⊕ Unit) := by
-      funext s
-      rcases s with u | u <;> rfl
-    rw [hF₂₃def, hfam, ← rename_eq_subst]
-    intro h0
-    refine hFne (rename_injective (⟨Sum.elim (fun _ ↦ Sum.inr (Sum.inl ()))
-      fun _ ↦ Sum.inr (Sum.inr ()), ?_⟩ : Unit ⊕ Unit ↪ Unit ⊕ Unit ⊕ Unit) ?_)
-    · rintro (⟨⟩ | ⟨⟩) (⟨⟩ | ⟨⟩) hv
-      · rfl
-      · exact absurd hv (by simp)
-      · exact absurd hv (by simp)
-      · rfl
-    · rw [map_zero]
-      exact h0
-  -- distinctness: each pair is separated by one of the two specializations
-  have hne₁₂ := ne_of_subst_eq_X_of_subst_eq_zero hχ1 hχ2
-  have hne₁₂ι := ne_of_subst_eq_X_of_subst_eq_zero hχ1
-    (subst_subst_formalInverse_eq_zero Universal.curve hχ hc₂ hχ2)
-  have hne₂₃ := ne_of_subst_eq_X_of_subst_eq_zero hχ'2 hχ'3
-  have hne₂₃ι := ne_of_subst_eq_X_of_subst_eq_zero hχ'2
-    (subst_subst_formalInverse_eq_zero Universal.curve hχ' hc₃ hχ'3)
-  have hneL := ne_of_subst_eq_X_of_subst_eq_zero hχF₁₂ hχ3
-  have hneLι := ne_of_subst_eq_X_of_subst_eq_zero hχF₁₂
-    (subst_subst_formalInverse_eq_zero Universal.curve hχ hc₃ hχ3)
-  have hneR := ne_of_subst_eq_X_of_subst_eq_zero hχ1 hχF₂₃
-  have hneRι := ne_of_subst_eq_X_of_subst_eq_zero hχ1
-    (subst_subst_formalInverse_eq_zero Universal.curve hχ hF₂₃c hχF₂₃)
+  have hF₂₃0 : F₂₃ ≠ 0 := ne_of_subst_eq_X_of_subst_eq_zero
+    (subst_subst_pair_formalAdd_eq_X Universal.curve hχ' hc₂ hc₃ hχ'2 hχ'3) hχ'0
   -- the two bracketed sums are again legitimate parameters
   have hLc := constantCoeff_subst_eq_zero (hasSubst_pair hF₁₂c hc₃)
     (by rintro (j | j) <;> simp [hF₁₂c]) (constantCoeff_formalAdd Universal.curve)
@@ -773,15 +782,16 @@ private theorem assoc_formalAdd_universal :
     (subst_subst_pair_formalAdd_eq_X Universal.curve hχ hF₁₂c hc₃ hχF₁₂ hχ3) hχ0
   have hR0 := ne_of_subst_eq_X_of_subst_eq_zero
     (subst_subst_pair_formalAdd_eq_X Universal.curve hχ hc₁ hF₂₃c hχ1 hχF₂₃) hχ0
-  -- the θ-chain: both bracketings compute the same sum of three points
-  have e₁₂ := thetaPoint_add_of_ne Universal.curve (KK := KK) hΔ hc₁ hc₂ h10 h20 hne₁₂ hne₁₂ι
-    hF₁₂c hF₁₂0
-  have e₂₃ := thetaPoint_add_of_ne Universal.curve (KK := KK) hΔ hc₂ hc₃ h20 h30 hne₂₃ hne₂₃ι
-    hF₂₃c hF₂₃0
-  have eL := thetaPoint_add_of_ne Universal.curve (KK := KK) hΔ hF₁₂c hc₃ hF₁₂0 h30 hneL hneLι
-    hLc hL0
-  have eR := thetaPoint_add_of_ne Universal.curve (KK := KK) hΔ hc₁ hF₂₃c h10 hF₂₃0 hneR hneRι
-    hRc hR0
+  -- the θ-chain: both bracketings compute the same sum of three points, each addition licensed
+  -- by the specialization that separates its two summands
+  have e₁₂ := thetaPoint_add_of_subst_separates Universal.curve (KK := KK) hΔ hχ hc₁ hc₂ h10 h20
+    hχ1 hχ2 hF₁₂c hF₁₂0
+  have e₂₃ := thetaPoint_add_of_subst_separates Universal.curve (KK := KK) hΔ hχ' hc₂ hc₃ h20 h30
+    hχ'2 hχ'3 hF₂₃c hF₂₃0
+  have eL := thetaPoint_add_of_subst_separates Universal.curve (KK := KK) hΔ hχ hF₁₂c hc₃ hF₁₂0
+    h30 hχF₁₂ hχ3 hLc hL0
+  have eR := thetaPoint_add_of_subst_separates Universal.curve (KK := KK) hΔ hχ hc₁ hF₂₃c h10
+    hF₂₃0 hχ1 hχF₂₃ hRc hR0
   have hpts : Universal.curve.thetaPoint hΔ hLc hL0 = Universal.curve.thetaPoint hΔ hRc hR0 := by
     rw [← eL, ← e₁₂, ← eR, ← e₂₃, add_assoc]
   exact thetaPoint_inj Universal.curve hΔ hLc hRc hL0 hR0 hpts
