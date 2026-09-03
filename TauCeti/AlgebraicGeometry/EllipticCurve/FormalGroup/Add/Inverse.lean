@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.PairSubst
-public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Series
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Universal
 
 /-!
@@ -66,11 +65,9 @@ constant coefficient, because its later `Assembly` and `Universal` sections reus
 pairs. Every one of them is used here only at the pair `(z, ι(z))`, so they are stated at that
 pair; the general forms belong with their first general consumer.
 
-The source's `interceptSeries_ne_zero` and `X_pair_intercept_ne_zero` are not ported. Their only
-consumers are in the source's `Assembly` and `Universal` sections, which are not part of this
-development yet, so here they would be private lemmas with no consumer. The source's
-`subst_wSeries_ne_zero` was held back for that same reason; `FormalGroup/Add/Assoc.lean` is now
-the first of those consumers and carries it there as `subst_formalW_ne_zero`.
+The source's `subst_wSeries_ne_zero` is `subst_formalW_ne_zero` in `FormalGroup/Add/Assoc.lean`;
+its `interceptSeries_ne_zero` and `X_pair_intercept_ne_zero` have no counterpart in this
+repository.
 -/
 
 public section
