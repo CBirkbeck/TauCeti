@@ -23,14 +23,14 @@ character — are *jointly* bijective:
 
 * `IsCyclotomicExtension.isGalois_of_isGalois_of_isCyclotomicExtension`: `M / K` is itself
   Galois, so `Gal(M/K)` below is not an extra assumption.
-* `IsCyclotomicExtension.autToPow_bijective`: the cyclotomic character
+* `IsPrimitiveRoot.autToPow_bijective`: the cyclotomic character
   `Gal(M/L) → (ZMod m)ˣ` is bijective.
 * `IsCyclotomicExtension.restrictNormalHom_prod_autToPow_injective`: the joint restriction
   is faithful (no arithmetic hypothesis needed).
 * `IsCyclotomicExtension.galEquivProd`: that map packaged as a `MulEquiv`, with
   `IsCyclotomicExtension.galEquivProd_apply` computing both of its components, and
   `IsCyclotomicExtension.restrictNormal_galEquivProd_symm` together with
-  `IsCyclotomicExtension.autToPow_galEquivProd_symm` eliminating its inverse. Those four
+  `IsCyclotomicExtension.autToPow_galEquivProd_symm` eliminating its inverse. Those three
   `simp` lemmas are the whole interface: no consumer needs the `MulEquiv.ofBijective` that
   packages the equivalence, in either direction.
 
@@ -60,7 +60,10 @@ order for it; call sites introduce it with `have`.
 That `M / K` is Galois is *derived*, not assumed: `M` is the compositum of `L` with `K(ζ)`,
 both of which are normal over `K`, and the engine for a compositum of two normal extensions is
 Mathlib's `IntermediateField.normal_sup`. So `Gal(M/K)` below rests on no hypothesis beyond
-`IsGalois K L` and the cyclotomic tower.
+`IsGalois K L` and the cyclotomic tower. Separability comes from transitivity along the same
+tower: `L / K` is separable because it is Galois, and `M / L` because a cyclotomic extension is
+(`IsCyclotomicExtension.isSeparable`). No characteristic assumption is needed, since a primitive
+`m`-th root of unity exists in `M` only if the characteristic does not divide `m`.
 
 Faithfulness of the joint restriction is *not* re-derived here: it is Mathlib's compositum
 engine `IntermediateField.fixingSubgroup_sup` (with `fixingSubgroup_top`), applied to `K(ζ)`
@@ -80,6 +83,29 @@ Adapted from the Birkbeck–Brasca Chebotarev density project.
 -/
 
 public section
+
+section AutToPow
+
+variable (L : Type*) [Field L] [NumberField L] {M : Type*} [Field M] [Algebra L M]
+  {m : ℕ} [NeZero m] [IsCyclotomicExtension {m} L M]
+
+/-- **The cyclotomic character of the top layer is bijective.** For `M = L(μ_m)` with `m`
+coprime to `discr L`, the character `Gal(M/L) → (ZMod m)ˣ` is a bijection, so the top layer of
+the tower realises every prescribed action on the `m`-th roots of unity.
+
+Stated in `IsPrimitiveRoot` beside Mathlib's `IsPrimitiveRoot.autToPow_injective`, and with the
+same binder shape, so that `hζ.autToPow_bijective L` reads like its injective counterpart. -/
+theorem _root_.IsPrimitiveRoot.autToPow_bijective {ζ : M} (hζ : IsPrimitiveRoot ζ m)
+    (hcop : ((NumberField.discr L).natAbs).Coprime m) :
+    Function.Bijective (hζ.autToPow L) := by
+  have : FiniteDimensional L M := IsCyclotomicExtension.finiteDimensional (S := {m}) (K := L) M
+  have : IsGalois L M := IsCyclotomicExtension.isGalois (S := {m}) (K := L) (L := M)
+  have hcard : Nat.card Gal(M/L) = Nat.card (ZMod m)ˣ := by
+    rw [IsGalois.card_aut_eq_finrank L M, IsCyclotomicExtension.finrank_eq_totient L M m hcop,
+      Nat.card_eq_fintype_card, ZMod.card_units_eq_totient]
+  exact (Nat.bijective_iff_injective_and_card _).mpr ⟨hζ.autToPow_injective L, hcard⟩
+
+end AutToPow
 
 namespace IsCyclotomicExtension
 
@@ -151,13 +177,7 @@ variable [IsGalois K L]
 
 include L m in
 /-- **The cyclotomic compositum of a Galois extension is Galois.** If `L / K` is Galois and
-`M = L(μ_m)`, then `M / K` is Galois: `M` is the compositum of `L` with `K(ζ)`
-(`TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top`), both of which are normal over `K`,
-and a compositum of normal extensions is normal (`IntermediateField.normal_sup`). Separability
-is transitivity along the tower: `L / K` is separable because it is Galois, and `M / L` because a
-cyclotomic extension is (`IsCyclotomicExtension.isSeparable`) — no characteristic assumption is
-needed, since a primitive `m`-th root of unity exists in `M` only if the characteristic does not
-divide `m`.
+`M = L(μ_m)`, then `M / K` is Galois, so `Gal(M/K)` is available without a further hypothesis.
 
 Both tower hypotheses are needed, which is what the name records: the cyclotomic extension is
 `M / L`, and `L / K` is Galois. Mathlib's `IsCyclotomicExtension.isGalois` is the one-step
@@ -193,18 +213,6 @@ fields rather than bare characteristic-zero fields. Only the *base* fields `K` a
 and so is a number field already — the instances it needs are installed locally where used. -/
 
 variable [NumberField K] [NumberField L]
-
-/-- **The cyclotomic character of the top layer is bijective.** For `M = L(μ_m)` with `m`
-coprime to `discr L`, the character `Gal(M/L) → (ZMod m)ˣ` is a bijection, so the top layer of
-the tower realises every prescribed action on the `m`-th roots of unity. -/
-theorem autToPow_bijective (hcop : ((NumberField.discr L).natAbs).Coprime m)
-    {ζ : M} (hζ : IsPrimitiveRoot ζ m) : Function.Bijective (hζ.autToPow L) := by
-  have : FiniteDimensional L M := IsCyclotomicExtension.finiteDimensional (S := {m}) (K := L) M
-  have : IsGalois L M := IsCyclotomicExtension.isGalois (S := {m}) (K := L) (L := M)
-  have hcard : Nat.card Gal(M/L) = Nat.card (ZMod m)ˣ := by
-    rw [IsGalois.card_aut_eq_finrank L M, IsCyclotomicExtension.finrank_eq_totient L M m hcop,
-      Nat.card_eq_fintype_card, ZMod.card_units_eq_totient]
-  exact (Nat.bijective_iff_injective_and_card _).mpr ⟨hζ.autToPow_injective L, hcard⟩
 
 /-- **The joint restriction is bijective.** The two restrictions out of `Gal(M/K)` — to
 `Gal(L/K)`, and to `(ZMod m)ˣ` via the cyclotomic character — are jointly bijective.
