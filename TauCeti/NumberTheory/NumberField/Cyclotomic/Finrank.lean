@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-public import TauCeti.FieldTheory.IntermediateField.Adjoin.EqTop
+import TauCeti.FieldTheory.IntermediateField.Adjoin.EqTop
 
 /-!
 # The degree of a cyclotomic extension of a number field
@@ -39,8 +39,13 @@ input below.
 
 The hypothesis is `((NumberField.discr K).natAbs).Coprime m`, a statement about the *base*
 field. It is the condition an arithmetic caller can actually arrange — e.g. by choosing `m` to
-be a prime unramified in `K` — whereas the equivalent intersection or irreducibility conditions
+be a prime unramified in `K` — whereas the resulting intersection or irreducibility conditions
 would have to be re-derived from it at each use.
+
+Only the base `K` carries a `NumberField` hypothesis. `M` is finite over `K` by
+`IsCyclotomicExtension.finiteDimensional`, hence a number field on its own, so demanding
+`[NumberField M]` of the caller would be an avoidable hypothesis. The degree itself comes from
+linear disjointness of `ℚ(ζ)` and the image of `K` inside `M`, whose compositum is `M`.
 
 Adapted from the Birkbeck–Brasca Chebotarev density project.
 -/
@@ -67,12 +72,8 @@ end Rat
 /-- **The cyclotomic degree over a number field base.** If `M / K` is an `m`-th cyclotomic
 extension with `K` a number field and `m` coprime to `discr K`, then `[M : K] = φ m`.
 
-Only the base `K` is assumed to be a number field: `M` is one automatically, being finite over
-`K` by `IsCyclotomicExtension.finiteDimensional`, so requiring `[NumberField M]` of the caller
-would be an avoidable hypothesis.
-
-Coprimality is what replaces irreducibility of `Φ_m` over `K`: it makes `ℚ(ζ)` and the image of
-`K` linearly disjoint inside `M`, and their compositum is `M`. -/
+Coprimality to `discr K` stands in for irreducibility of `Φ_m` over `K`, and is the hypothesis
+an arithmetic caller can arrange directly. Only the base `K` need be a number field. -/
 theorem finrank_eq_totient (K M : Type*) [Field K] [NumberField K] [Field M]
     [Algebra K M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} K M]
     (hcop : ((NumberField.discr K).natAbs).Coprime m) :

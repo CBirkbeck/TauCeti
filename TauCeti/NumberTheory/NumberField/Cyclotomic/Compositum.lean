@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.NumberTheory.Cyclotomic.Gal
+import TauCeti.FieldTheory.IntermediateField.Adjoin.EqTop
 public import TauCeti.NumberTheory.NumberField.Cyclotomic.Finrank
 
 /-!
@@ -52,6 +53,10 @@ proof from `IsGalois K L` and the cyclotomic tower). Both are pure field theory 
 `NumberField` instances. Only the results downstream of the degree count, which mention
 `discr L`, take number fields.
 
+`isGalois_of_isGalois_of_isCyclotomicExtension` is a theorem and not an `instance` because
+neither `L` nor `m` can be recovered from the goal `IsGalois K M`, so there is no synthesization
+order for it; call sites introduce it with `have`.
+
 That `M / K` is Galois is *derived*, not assumed: `M` is the compositum of `L` with `K(ζ)`,
 both of which are normal over `K`, and the engine for a compositum of two normal extensions is
 Mathlib's `IntermediateField.normal_sup`. So `Gal(M/K)` below rests on no hypothesis beyond
@@ -94,8 +99,7 @@ variable [Normal K L]
 
 /-- **The joint restriction is faithful.** An automorphism of `M = L(μ_m)` over `K` that is
 trivial on `L` and trivial on the `m`-th roots of unity is the identity. No arithmetic
-hypothesis is needed: this is Mathlib's compositum engine
-(`IntermediateField.fixingSubgroup_sup`) applied to `K(ζ)` and `L`, whose compositum is `M`. -/
+hypothesis is needed, only normality of `L / K`. -/
 theorem restrictNormalHom_prod_autToPow_injective {ζ : M} (hζ : IsPrimitiveRoot ζ m) :
     Function.Injective ((AlgEquiv.restrictNormalHom L).prod (hζ.autToPow K)) := by
   rw [injective_iff_map_eq_one]
@@ -157,12 +161,8 @@ divide `m`.
 
 Both tower hypotheses are needed, which is what the name records: the cyclotomic extension is
 `M / L`, and `L / K` is Galois. Mathlib's `IsCyclotomicExtension.isGalois` is the one-step
-statement, for a cyclotomic extension of the base itself.
-
-This is what makes `IsGalois K M` a *conclusion* of this file rather than a hypothesis of the
-results below. It is a theorem and not an `instance` because neither `L` nor `m` can be
-recovered from the goal `IsGalois K M`, so there is no synthesization order; call sites
-introduce it with `have` instead. -/
+statement, for a cyclotomic extension of the base itself. Call sites introduce this with
+`have`; see the module Implementation notes. -/
 theorem isGalois_of_isGalois_of_isCyclotomicExtension : IsGalois K M := by
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot (S := {m}) L M
     (Set.mem_singleton m) (NeZero.ne m)
@@ -195,9 +195,8 @@ and so is a number field already — the instances it needs are installed locall
 variable [NumberField K] [NumberField L]
 
 /-- **The cyclotomic character of the top layer is bijective.** For `M = L(μ_m)` with `m`
-coprime to `discr L`, the character `Gal(M/L) → (ZMod m)ˣ` is a bijection: it is injective by
-`IsPrimitiveRoot.autToPow_injective`, and both sides have `φ m` elements by
-`IsCyclotomicExtension.finrank_eq_totient`. -/
+coprime to `discr L`, the character `Gal(M/L) → (ZMod m)ˣ` is a bijection, so the top layer of
+the tower realises every prescribed action on the `m`-th roots of unity. -/
 theorem autToPow_bijective (hcop : ((NumberField.discr L).natAbs).Coprime m)
     {ζ : M} (hζ : IsPrimitiveRoot ζ m) : Function.Bijective (hζ.autToPow L) := by
   have : FiniteDimensional L M := IsCyclotomicExtension.finiteDimensional (S := {m}) (K := L) M
