@@ -84,8 +84,6 @@ carry none, so the `Finset`-indexed Cauchy-product lemmas do not apply here at a
   `TauCeti.Huber.coe_algebraMap_twoSidedRestrictedSubmodule`: the computation API. The instance
   bodies are not exposed, so these are how a product, the unit, a monomial and the structure map are
   computed outside this module.
-* `TauCeti.Huber.convolution_assoc`: associativity of the coefficient convolution — the one ring
-  axiom Mathlib's `DiscreteConvolution` does not supply.
 
 ## Implementation notes
 
@@ -280,45 +278,41 @@ variable [T0Space A]
 
 namespace twoSidedRestrictedSubmodule
 
-/-- **The coefficient convolution is associative**: both bracketings of `fgh` are the sum of
-`aᵢ bⱼ cₗ` over `{i + j + l = n}`. This is the one ring axiom Mathlib's `DiscreteConvolution` does
-not supply, and it is what `twoSidedRestrictedSubmodule.instRing` is waiting on. It is named for the
-convolution rather than `mul_assoc` so that it neither shadows nor duplicates the standard lemma. -/
-theorem convolution_assoc (f g h : twoSidedRestrictedSubmodule A A) :
-    f * g * h = f * (g * h) := by
-  ext n
-  simp only [coe_mul_twoSidedRestrictedSubmodule, addConvolution_mul_apply]
-  -- Index that fibre by `(m, k) ↦ (k, m - k, n - m)`, with `m` the degree of the partial product
-  -- `fg`. It is a subfamily of `(i, j, l) ↦ aᵢbⱼcₗ`, which is summable on all of `ℤ × ℤ × ℤ`.
-  have hF : Summable fun p : ℤ × ℤ ↦
-      (f : ℤ → A) p.2 * (g : ℤ → A) (p.1 - p.2) * (h : ℤ → A) (n - p.1) :=
-    (((mem_twoSidedRestrictedSubmodule_iff_summable.mp f.2).mul_of_nonarchimedean
-      (mem_twoSidedRestrictedSubmodule_iff_summable.mp g.2)).mul_of_nonarchimedean
-      (mem_twoSidedRestrictedSubmodule_iff_summable.mp h.2)).comp_injective
-      (i := fun p : ℤ × ℤ ↦ ((p.2, p.1 - p.2), n - p.1)) fun p q hpq ↦ by grind
-  -- Both bracketings are that single sum, summed in two orders: fibring over `m` gives `((fg)h)ₙ`
-  -- by summing first over `k`, and fibring the reindexed family gives `(f(gh))ₙ`.
-  refine (hF.hasSum.prod_fiberwise fun m ↦ ?_).tsum_eq.trans (HasSum.prod_fiberwise
-      (f := fun q : ℤ × ℤ ↦ (f : ℤ → A) q.1 * ((g : ℤ → A) q.2 * (h : ℤ → A) (n - q.1 - q.2)))
-      ?_ fun k ↦ ?_).tsum_eq.symm
-  -- Fibre of `((fg)h)ₙ` over `m`: the `k`-series computing `(fg)ₘ`, scaled on the right by `h`.
-  · exact (summable_mul_sub_of_mem_twoSidedRestrictedSubmodule f.2 g.2 m).hasSum.mul_right
-      ((h : ℤ → A) (n - m))
-  -- The reindexing `(m, k) ↦ (k, m - k)` is `Equiv.prodComm` followed by a shear; it carries `hF`
-  -- to the family whose fibres give `(f(gh))ₙ`, with `mul_assoc` rebracketing each term.
-  · refine ((Equiv.prodComm ℤ ℤ).trans ((Equiv.refl ℤ).prodShear Equiv.subRight)).hasSum_iff.mp ?_
-    simpa [Function.comp_def, mul_assoc] using hF.hasSum
-  -- Fibre of `(f(gh))ₙ` over `k`: the series computing `(gh)_{n - k}`, scaled on the left by `f`.
-  · exact (summable_mul_sub_of_mem_twoSidedRestrictedSubmodule g.2 h.2 (n - k)).hasSum.mul_left
-      ((f : ℤ → A) k)
-
 /-- **`A⟨X, X⁻¹⟩` is a ring** (Wedhorn, Example 6.39). -/
 noncomputable instance instRing : Ring (twoSidedRestrictedSubmodule A A) where
   __ := Submodule.addCommGroup _
   __ := instMul
   __ := instOne
-  -- Associativity is the one ring axiom Mathlib's `DiscreteConvolution` lacks; it is proved here.
-  mul_assoc := convolution_assoc
+  -- Associativity is the one ring axiom Mathlib's `DiscreteConvolution` lacks, so it is proved
+  -- here rather than inherited. Both bracketings of `fgh` are the sum of `aᵢ bⱼ cₗ` over
+  -- `{i + j + l = n}`; the proof is inline because the statement, once this instance exists, is
+  -- exactly the standard `mul_assoc`.
+  mul_assoc f g h := by
+    ext n
+    simp only [coe_mul_twoSidedRestrictedSubmodule, addConvolution_mul_apply]
+    -- Index that fibre by `(m, k) ↦ (k, m - k, n - m)`, with `m` the degree of the partial product
+    -- `fg`. It is a subfamily of `(i, j, l) ↦ aᵢbⱼcₗ`, which is summable on all of `ℤ × ℤ × ℤ`.
+    have hF : Summable fun p : ℤ × ℤ ↦
+        (f : ℤ → A) p.2 * (g : ℤ → A) (p.1 - p.2) * (h : ℤ → A) (n - p.1) :=
+      (((mem_twoSidedRestrictedSubmodule_iff_summable.mp f.2).mul_of_nonarchimedean
+        (mem_twoSidedRestrictedSubmodule_iff_summable.mp g.2)).mul_of_nonarchimedean
+        (mem_twoSidedRestrictedSubmodule_iff_summable.mp h.2)).comp_injective
+        (i := fun p : ℤ × ℤ ↦ ((p.2, p.1 - p.2), n - p.1)) fun p q hpq ↦ by grind
+    -- Both bracketings are that single sum, summed in two orders: fibring over `m` gives `((fg)h)ₙ`
+    -- by summing first over `k`, and fibring the reindexed family gives `(f(gh))ₙ`.
+    refine (hF.hasSum.prod_fiberwise fun m ↦ ?_).tsum_eq.trans (HasSum.prod_fiberwise
+        (f := fun q : ℤ × ℤ ↦ (f : ℤ → A) q.1 * ((g : ℤ → A) q.2 * (h : ℤ → A) (n - q.1 - q.2)))
+        ?_ fun k ↦ ?_).tsum_eq.symm
+    -- Fibre of `((fg)h)ₙ` over `m`: the `k`-series computing `(fg)ₘ`, scaled on the right by `h`.
+    · exact (summable_mul_sub_of_mem_twoSidedRestrictedSubmodule f.2 g.2 m).hasSum.mul_right
+        ((h : ℤ → A) (n - m))
+    -- The reindexing `(m, k) ↦ (k, m - k)` is `Equiv.prodComm` followed by a shear; it carries `hF`
+    -- to the family whose fibres give `(f(gh))ₙ`, with `mul_assoc` rebracketing each term.
+    · refine ((Equiv.prodComm ℤ ℤ).trans ((Equiv.refl ℤ).prodShear Equiv.subRight)).hasSum_iff.mp ?_
+      simpa [Function.comp_def, mul_assoc] using hF.hasSum
+    -- Fibre of `(f(gh))ₙ` over `k`: the series computing `(gh)_{n - k}`, scaled on the left by `f`.
+    · exact (summable_mul_sub_of_mem_twoSidedRestrictedSubmodule g.2 h.2 (n - k)).hasSum.mul_left
+        ((f : ℤ → A) k)
   -- The unit laws are Mathlib's `single_addConvolution` and `addConvolution_single`, reached
   -- through the two coercion `simp` lemmas above.
   one_mul _ := Subtype.ext <| by simp
