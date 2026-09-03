@@ -79,7 +79,10 @@ nebentypus relation defining `functionCharSpace`.
 
 The `χ`-invariance hypothesis is essential and not an artefact: on a general `f : ℍ → ℂ` the
 weighted sum depends on the chosen representatives, as `twistedHeckeSlashSum`'s own docstring
-records. -/
+records. It is nonetheless the normal form of the identity coset's action, so this is `simp`
+like the two bundled statements below; the membership side condition is discharged from context
+at the use sites, where `f` is an element of the carrier. -/
+@[simp]
 theorem twistedHeckeSlashSum_one (f : ℍ → ℂ) (hf : f ∈ functionCharSpace k χ) :
     twistedHeckeSlashSum k χ 1 f = f := by
   have hout : (((1 : HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ))
