@@ -32,8 +32,7 @@ polynomial of the same degree, so the two coincide and `Φ_n` is irreducible.
 ## References
 
 This is the degree bookkeeping of Milne, *Algebraic Number Theory*, proof of Proposition 6.2, and
-of Sharifi, *Algebraic Number Theory*, proof of Lemma 3.1.13, where the base field is `ℚ`. It is
-the last step of Layer 7.2 of the Chebotarev roadmap, whose degree input comes from ramification.
+of Sharifi, *Algebraic Number Theory*, proof of Lemma 3.1.13, where the base field is `ℚ`.
 -/
 
 public section
