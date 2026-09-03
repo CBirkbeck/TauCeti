@@ -634,7 +634,8 @@ private theorem assoc_formalAdd_universal :
     (i := (Sum.inl () : Unit ⊕ Unit ⊕ Unit)) (j := Sum.inr (Sum.inl ())) (by simp)
   have hχ3 := subst_coordSpecialize_X_of_ne (O := R)
     (i := (Sum.inl () : Unit ⊕ Unit ⊕ Unit)) (j := Sum.inr (Sum.inr ())) (by simp)
-  have hχ0 := subst_coordSpecialize_zero (O := R) (Sum.inl () : Unit ⊕ Unit ⊕ Unit)
+  have hχ0 : subst χ (0 : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R) = 0 := by
+    rw [← coe_substAlgHom hχ, map_zero]
   -- the second specialization, which separates the middle parameter from the third
   -- the specialization separating the middle parameter from the other two
   set χ' := coordSpecialize (O := R) (Sum.inr (Sum.inl ()) : Unit ⊕ Unit ⊕ Unit) with hχ'def

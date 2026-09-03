@@ -46,8 +46,9 @@ uniformities are shadowed, so the evaluation the statement is about is never re-
   meets a two-variable evaluation.
 * `MvPowerSeries.hasSubst_pair` : a pair of series with vanishing constant coefficient is a
   legitimate substitution family for the two variables indexed by `Unit ⊕ Unit`.
-* `MvPowerSeries.coordSpecialize` and its `subst_coordSpecialize_*` lemmas : the substitution
-  sending one coordinate variable to `X` and every other to `0`.
+* `MvPowerSeries.coordSpecialize`, `MvPowerSeries.hasSubst_coordSpecialize` and the two
+  `subst_coordSpecialize_X_*` lemmas : the substitution sending one coordinate variable to `X` and
+  every other to `0`, for an index type of any size.
 * `MvPowerSeries.ne_of_subst_eq_X_of_subst_eq_zero` : a substitution sending one series to `X` and
   another to `0` separates them.
 
@@ -178,32 +179,36 @@ respectively are distinct. -/
 noncomputable def coordSpecialize (i : σ') : σ' → MvPowerSeries Unit O :=
   fun j ↦ if j = i then PowerSeries.X else 0
 
-/-- The coordinate specialization at `i` is a legitimate substitution family over a finite index
-type: every image is either `X` or `0`, and both have vanishing constant coefficient. -/
-theorem hasSubst_coordSpecialize [Finite σ'] (i : σ') : HasSubst (coordSpecialize (O := O) i) :=
-  hasSubst_of_constantCoeff_zero fun j ↦ by
-    simp only [coordSpecialize]
-    split
-    · exact PowerSeries.constantCoeff_X
-    · exact map_zero _
+/-- The coordinate specialization at `i` is a legitimate substitution family, for an index type of
+any size: every image is `X` or `0`, so every constant coefficient vanishes, and the coordinates
+carrying a given coefficient all lie in the singleton `{i}`. -/
+theorem hasSubst_coordSpecialize (i : σ') : HasSubst (coordSpecialize (O := O) i) where
+  const_coeff j := by
+    have h : constantCoeff (coordSpecialize (O := O) i j) = 0 := by
+      unfold coordSpecialize
+      split
+      · exact PowerSeries.constantCoeff_X
+      · exact map_zero _
+    rw [h]
+    exact IsNilpotent.zero
+  -- `Finite σ'` would give this immediately, but it is not needed: the family is `0` away from
+  -- `i`, so the coordinates carrying a nonzero coefficient sit inside the singleton `{i}`.
+  coeff_zero d := Set.Finite.subset (Set.finite_singleton i) fun j hj ↦ by
+    simp only [Set.mem_singleton_iff]
+    by_contra hne
+    exact hj (by simp [coordSpecialize, hne])
 
 /-- The specialization at `i` sends the `i`-th coordinate to `X`. -/
 @[simp]
-theorem subst_coordSpecialize_X_self [Finite σ'] (i : σ') :
+theorem subst_coordSpecialize_X_self (i : σ') :
     subst (coordSpecialize (O := O) i) (X i : MvPowerSeries σ' O) = PowerSeries.X := by
   simp [subst_X (hasSubst_coordSpecialize i), coordSpecialize]
 
 /-- The specialization at `i` kills every other coordinate. -/
 @[simp]
-theorem subst_coordSpecialize_X_of_ne [Finite σ'] {i j : σ'} (h : j ≠ i) :
+theorem subst_coordSpecialize_X_of_ne {i j : σ'} (h : j ≠ i) :
     subst (coordSpecialize (O := O) i) (X j : MvPowerSeries σ' O) = 0 := by
   simp [subst_X (hasSubst_coordSpecialize i), coordSpecialize, h]
-
-/-- The specialization at `i` is a ring map, so it kills `0`. -/
-@[simp]
-theorem subst_coordSpecialize_zero [Finite σ'] (i : σ') :
-    subst (coordSpecialize (O := O) i) (0 : MvPowerSeries σ' O) = 0 := by
-  rw [← coe_substAlgHom (hasSubst_coordSpecialize i), map_zero]
 
 end CoordSpecialize
 
