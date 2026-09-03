@@ -6,8 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
-public import Mathlib.NumberTheory.RamificationInertia.Unramified
-public import Mathlib.RingTheory.Ideal.GoingUp
 public import TauCeti.NumberTheory.Cyclotomic.Irreducible
 public import TauCeti.NumberTheory.RamificationInertia.Tower
 
