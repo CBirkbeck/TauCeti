@@ -122,6 +122,63 @@ private theorem mul_div_mul_self {p a b m' n' m n d' j : ℕ} (hp : p.Prime)
   rw [h1, h2, hab, pow_add, mul_assoc, Nat.mul_div_mul_left _ _ (pow_pos hp.pos (2 * j)),
     Nat.mul_div_assoc _ hdd]
 
+/-- The forward half of the reindexing bijection lands where it should: a `p`-power times a
+divisor of `g` divides `g * p ^ k`, as soon as the exponent is at most `k`. -/
+private theorem pow_mul_dvd_mul_pow {p g j d k : ℕ} (hj : j ≤ k) (hd : d ∣ g) :
+    p ^ j * d ∣ g * p ^ k :=
+  mul_comm (p ^ j) d ▸ Nat.mul_dvd_mul hd (pow_dvd_pow p hj)
+
+/-- The backward half of the reindexing bijection: when `g` is prime to `p`, a divisor of
+`g * p ^ k` splits into a `p`-part of exponent at most `k` and a `p`-free part dividing `g`.
+Stated as the membership the bijection has to produce. -/
+private theorem mem_range_product_divisors {p g k d : ℕ} (hp : p.Prime) (hg0 : g ≠ 0)
+    (hpg : ¬p ∣ g) (hd : d ∣ g * p ^ k) :
+    (d.factorization p, ordCompl[p] d) ∈ Finset.range (k + 1) ×ˢ g.divisors := by
+  have hprod0 : g * p ^ k ≠ 0 := Nat.mul_ne_zero hg0 (pow_ne_zero _ hp.pos.ne')
+  have hd0 : d ≠ 0 := ne_zero_of_dvd_ne_zero hprod0 hd
+  simp only [Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff]
+  refine ⟨?_, Nat.mem_divisors.2 ⟨?_, hg0⟩⟩
+  · calc d.factorization p ≤ (g * p ^ k).factorization p :=
+          (Nat.factorization_le_iff_dvd hd0 hprod0).2 hd p
+      _ = k := by rw [mul_comm]; exact factorization_pow_mul_self hp hpg _
+  · have hord : ordCompl[p] (g * p ^ k) = g := by
+      rw [mul_comm, Nat.ordCompl_pow_mul_of_not_dvd _ hp hpg]
+    exact hord ▸ Nat.ordCompl_dvd_ordCompl_of_dvd hd p
+
+/-- **The gcd splits at a prime**: the gcd of the `p`-free parts, times `p` to the smaller of the
+two valuations. This is the shape both the induction and the reindexing consume. -/
+private theorem gcd_eq_gcd_ordCompl_mul_pow_min {p m n : ℕ} (hp : p.Prime) (hm : m ≠ 0)
+    (hn : n ≠ 0) :
+    Nat.gcd m n = Nat.gcd (ordCompl[p] m) (ordCompl[p] n) *
+      p ^ min (m.factorization p) (n.factorization p) := by
+  have hm_eq : m = p ^ m.factorization p * ordCompl[p] m :=
+    (Nat.ordProj_mul_ordCompl_eq_self m p).symm
+  have hn_eq : n = p ^ n.factorization p * ordCompl[p] n :=
+    (Nat.ordProj_mul_ordCompl_eq_self n p).symm
+  conv_lhs => rw [hm_eq, hn_eq]
+  exact gcd_pow_mul_pow_mul hp (Nat.not_dvd_ordCompl hp hm) (Nat.not_dvd_ordCompl hp hn)
+
+/-- Splitting `p ^ j * d` at `p` returns `(j, d)` when `p` does not divide `d`: the two halves of
+the reindexing bijection are mutually inverse. -/
+private theorem factorization_ordCompl_pow_mul {p j d : ℕ} (hp : p.Prime) (hd : ¬p ∣ d) :
+    ((p ^ j * d).factorization p, ordCompl[p] (p ^ j * d)) = (j, d) := by
+  have hfact : (p ^ j * d).factorization p = j := factorization_pow_mul_self hp hd j
+  simp [hfact, Nat.mul_div_cancel_left d (pow_pos hp.pos j)]
+
+/-- Removing the `p`-part strictly shrinks the gcd, when `p` divides both arguments. This is what
+makes the induction in `primePowerProd_mul_eq_sum_divisors_gcd` terminate. -/
+private theorem gcd_ordCompl_lt {p m n : ℕ} (hp : p.Prime) (hm : m ≠ 0) (hn : n ≠ 0)
+    (hpm : p ∣ m) (hpn : p ∣ n)
+    (hgcd : Nat.gcd m n = Nat.gcd (ordCompl[p] m) (ordCompl[p] n) *
+      p ^ min (m.factorization p) (n.factorization p)) :
+    Nat.gcd (ordCompl[p] m) (ordCompl[p] n) < Nat.gcd m n := by
+  rw [hgcd]
+  refine lt_mul_of_one_lt_right (Nat.pos_of_ne_zero fun h ↦
+    (Nat.ordCompl_pos p hm).ne' (Nat.eq_zero_of_gcd_eq_zero_left h)) (Nat.one_lt_pow ?_ hp.one_lt)
+  have ha : 0 < m.factorization p := hp.factorization_pos_of_dvd hm hpm
+  have hb : 0 < n.factorization p := hp.factorization_pos_of_dvd hn hpn
+  omega
+
 /-! ### The table -/
 
 section CommRing
@@ -134,18 +191,41 @@ private theorem primePowerProd_mul_coprime (f : ℕ → ℕ → R) {a b : ℕ} (
     primePowerProd f (a * b) = primePowerProd f a * primePowerProd f b :=
   primePowerProd_mul_of_coprime f hab fun _ _ _ _ _ ↦ Commute.all _ _
 
+/-- Splitting the assembly at a prime: `f m` is its `p`-block times the assembly over the `p`-free
+part of `m`. Applied at both arguments of the table. -/
+private theorem primePowerProd_eq_ordProj_mul_ordCompl (f : ℕ → ℕ → R) {p m : ℕ} (hp : p.Prime)
+    (hm : m ≠ 0) :
+    primePowerProd f m =
+      primePowerProd f (p ^ m.factorization p) * primePowerProd f (ordCompl[p] m) := by
+  have hm_eq : m = p ^ m.factorization p * ordCompl[p] m :=
+    (Nat.ordProj_mul_ordCompl_eq_self m p).symm
+  conv_lhs => rw [hm_eq]
+  exact primePowerProd_mul_coprime f
+    ((hp.coprime_iff_not_dvd.2 (Nat.not_dvd_ordCompl hp hm)).pow_left _)
+
+/-- The two prime-power blocks may be put in `min`/`max` order, which is the shape the per-prime
+table is stated in. -/
+private theorem primePowerProd_prime_pow_mul_min_max (f : ℕ → ℕ → R) (p a b : ℕ) :
+    primePowerProd f (p ^ a) * primePowerProd f (p ^ b) =
+      primePowerProd f (p ^ min a b) * primePowerProd f (p ^ max a b) := by
+  rcases le_total a b with h | h
+  · rw [min_eq_left h, max_eq_right h]
+  · rw [min_eq_right h, max_eq_left h, mul_comm]
+
 /-- The summand of the product of the two sums agrees with the summand of the target sum at the
 divisor `p ^ j * d'`. This is the pointwise half of the reindexing. -/
 private theorem smul_mul_smul_of_split {p a b m' n' m n d' j : ℕ} (hp : p.Prime)
     (hm_eq : m = p ^ a * m') (hn_eq : n = p ^ b * n') (hm' : ¬p ∣ m') (hn' : ¬p ∣ n')
-    (hd'm : d' ∣ m') (hd'n : d' ∣ n') (hd' : ¬p ∣ d') (hj : j ≤ min a b) :
+    (hd'g : d' ∣ Nat.gcd m' n') (hpg : ¬p ∣ Nat.gcd m' n') (hj : j ≤ min a b) :
     ((p : ℤ) ^ j • (primePowerProd S (p ^ j) *
         primePowerProd D (p ^ (min a b + max a b - 2 * j)))) *
       ((d' : ℤ) • (primePowerProd S d' * primePowerProd D (m' * n' / (d' * d')))) =
     ((p ^ j * d' : ℕ) : ℤ) • (primePowerProd S (p ^ j * d') *
       primePowerProd D (m * n / (p ^ j * d' * (p ^ j * d')))) := by
-  obtain ⟨hidx, hcopD⟩ := mul_div_mul_self hp hm_eq hn_eq hm' hn' hd'm hd'n hj
-  have hcopS : Nat.Coprime (p ^ j) d' := (hp.coprime_iff_not_dvd.2 hd').pow_left j
+  obtain ⟨hidx, hcopD⟩ := mul_div_mul_self hp hm_eq hn_eq hm' hn'
+    (hd'g.trans (Nat.gcd_dvd_left m' n')) (hd'g.trans (Nat.gcd_dvd_right m' n')) hj
+  have hcopS : Nat.Coprime (p ^ j) d' :=
+    (hp.coprime_iff_not_dvd.2 fun h ↦ hpg (h.trans hd'g)).pow_left j
   rw [smul_mul_smul_comm, hidx, primePowerProd_mul_coprime D hcopD,
     primePowerProd_mul_coprime S hcopS, Nat.cast_mul, Nat.cast_pow]
   ring_nf
@@ -171,32 +251,18 @@ private theorem sum_mul_sum_eq_sum_divisors {p a b m' n' m n : ℕ} (hp : p.Prim
   · rintro ⟨j, d'⟩ hx
     simp only [Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff] at hx
     rw [hgcd, Nat.mem_divisors]
-    exact ⟨mul_comm (p ^ j) d' ▸ Nat.mul_dvd_mul (Nat.dvd_of_mem_divisors hx.2)
-      (pow_dvd_pow p hx.1), hprod0⟩
+    exact ⟨pow_mul_dvd_mul_pow hx.1 (Nat.dvd_of_mem_divisors hx.2), hprod0⟩
   · intro d hd
-    have hd_dvd : d ∣ Nat.gcd m' n' * p ^ min a b := hgcd ▸ Nat.dvd_of_mem_divisors hd
-    have hd0 : d ≠ 0 := ne_zero_of_dvd_ne_zero hprod0 hd_dvd
-    simp only [Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff]
-    refine ⟨?_, Nat.mem_divisors.2 ⟨?_, hg'0⟩⟩
-    · calc d.factorization p ≤ (Nat.gcd m' n' * p ^ min a b).factorization p :=
-            (Nat.factorization_le_iff_dvd hd0 hprod0).2 hd_dvd p
-        _ = min a b := by rw [mul_comm]; exact factorization_pow_mul_self hp hpg' _
-    · have hord : ordCompl[p] (Nat.gcd m' n' * p ^ min a b) = Nat.gcd m' n' := by
-        rw [mul_comm, Nat.ordCompl_pow_mul_of_not_dvd _ hp hpg']
-      exact hord ▸ Nat.ordCompl_dvd_ordCompl_of_dvd hd_dvd p
+    exact mem_range_product_divisors hp hg'0 hpg' (hgcd ▸ Nat.dvd_of_mem_divisors hd)
   · rintro ⟨j, d'⟩ hx
     simp only [Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff] at hx
-    have hpd' : ¬p ∣ d' := fun h ↦ hpg' (h.trans (Nat.dvd_of_mem_divisors hx.2))
-    have hfact : (p ^ j * d').factorization p = j := factorization_pow_mul_self hp hpd' j
-    simp [hfact, Nat.mul_div_cancel_left d' (pow_pos hp.pos j)]
+    exact factorization_ordCompl_pow_mul hp fun h ↦ hpg' (h.trans (Nat.dvd_of_mem_divisors hx.2))
   · intro d _
     exact Nat.ordProj_mul_ordCompl_eq_self d p
   · rintro ⟨j, d'⟩ hx
     simp only [Finset.mem_product, Finset.mem_range, Nat.lt_succ_iff] at hx
-    have hd'g : d' ∣ Nat.gcd m' n' := Nat.dvd_of_mem_divisors hx.2
     exact smul_mul_smul_of_split D S hp hm_eq hn_eq hm' hn'
-      (hd'g.trans (Nat.gcd_dvd_left m' n')) (hd'g.trans (Nat.gcd_dvd_right m' n'))
-      (fun h ↦ hpg' (h.trans hd'g)) hx.1
+      (Nat.dvd_of_mem_divisors hx.2) hpg' hx.1
 
 /-- **The divisor multiplication table.** A family assembled over prime factorisations obeying the
 per-prime table `D_{p^r}·D_{p^s} = ∑_{i ≤ r} pⁱ • (S_{pⁱ}·D_{p^{r+s−2i}})` obeys the global one
@@ -234,34 +300,13 @@ theorem primePowerProd_mul_eq_sum_divisors_gcd
     (Nat.ordProj_mul_ordCompl_eq_self m p).symm
   have hn_eq : n = p ^ n.factorization p * ordCompl[p] n :=
     (Nat.ordProj_mul_ordCompl_eq_self n p).symm
-  have hgcd : Nat.gcd m n = Nat.gcd (ordCompl[p] m) (ordCompl[p] n) *
-      p ^ min (m.factorization p) (n.factorization p) := by
-    conv_lhs => rw [hm_eq, hn_eq]
-    exact gcd_pow_mul_pow_mul hp hm' hn'
+  have hgcd := gcd_eq_gcd_ordCompl_mul_pow_min (p := p) hp hm hn
   -- The `p`-free gcd is strictly smaller, so the induction hypothesis applies to it.
   have hlt : Nat.gcd (ordCompl[p] m) (ordCompl[p] n) < g := by
-    rw [← hg, hgcd]
-    refine lt_mul_of_one_lt_right (Nat.pos_of_ne_zero fun h ↦
-      hm'0 (Nat.eq_zero_of_gcd_eq_zero_left h)) (Nat.one_lt_pow ?_ hp.one_lt)
-    have ha : 0 < m.factorization p := hp.factorization_pos_of_dvd hm hpm
-    have hb : 0 < n.factorization p := hp.factorization_pos_of_dvd hn hpn
-    omega
-  have hDm : primePowerProd D m =
-      primePowerProd D (p ^ m.factorization p) * primePowerProd D (ordCompl[p] m) := by
-    conv_lhs => rw [hm_eq]
-    exact primePowerProd_mul_coprime D ((hp.coprime_iff_not_dvd.2 hm').pow_left _)
-  have hDn : primePowerProd D n =
-      primePowerProd D (p ^ n.factorization p) * primePowerProd D (ordCompl[p] n) := by
-    conv_lhs => rw [hn_eq]
-    exact primePowerProd_mul_coprime D ((hp.coprime_iff_not_dvd.2 hn').pow_left _)
-  have hminmax : primePowerProd D (p ^ m.factorization p) *
-        primePowerProd D (p ^ n.factorization p) =
-      primePowerProd D (p ^ min (m.factorization p) (n.factorization p)) *
-        primePowerProd D (p ^ max (m.factorization p) (n.factorization p)) := by
-    rcases le_total (m.factorization p) (n.factorization p) with h | h
-    · rw [min_eq_left h, max_eq_right h]
-    · rw [min_eq_right h, max_eq_left h, mul_comm]
-  rw [← hg, hDm, hDn, mul_mul_mul_comm, hminmax, hppow p hp _ _ min_le_max,
+    rw [← hg]; exact gcd_ordCompl_lt hp hm hn hpm hpn hgcd
+  rw [← hg, primePowerProd_eq_ordProj_mul_ordCompl D hp hm,
+    primePowerProd_eq_ordProj_mul_ordCompl D hp hn, mul_mul_mul_comm,
+    primePowerProd_prime_pow_mul_min_max D p _ _, hppow p hp _ _ min_le_max,
     ih _ hlt hm'0 hn'0 rfl]
   exact sum_mul_sum_eq_sum_divisors D S hp hm'0 hm' hn' hm_eq hn_eq hgcd
 
