@@ -44,6 +44,24 @@ uniformities are shadowed, so the evaluation the statement is about is never re-
   univariate series viewed in several variables is evaluating it at the matching entry of the
   family — the case of `aeval_subst` at a single variable, which is how a one-variable series
   meets a two-variable evaluation.
+* `MvPowerSeries.hasSubst_pair` : a pair of series with vanishing constant coefficient is a
+  legitimate substitution family for the two variables indexed by `Unit ⊕ Unit`.
+* `MvPowerSeries.coordSpecialize` and its `subst_coordSpecialize_*` lemmas : the substitution
+  sending one coordinate variable to `X` and every other to `0`.
+* `MvPowerSeries.ne_of_subst_eq_X_of_subst_eq_zero` : a substitution sending one series to `X` and
+  another to `0` separates them.
+
+## Separating multivariable parameters
+
+The second group of results above is about *distinguishing* series rather than evaluating them.
+Two series of `MvPowerSeries σ' O` can be told apart by exhibiting a substitution that sends one
+to `X` and the other to `0`, since `X ≠ 0` in a nontrivial coefficient ring; `coordSpecialize i`
+is the substitution that does this for the coordinate variables, specializing `X i` to `X` and
+every other coordinate to `0`. Together they turn a distinctness obligation into a computation
+with `subst`, which is how a multivariable identity proved by comparing parametrized points gets
+its "the parameters are pairwise distinct" hypotheses. `hasSubst_pair` is the companion for the
+two-variable case, packaging the substitutability side condition that every substitution into a
+two-variable series has to discharge.
 
 The two `aeval_subst` results are wanted for the formal group of an elliptic curve over a complete
 local ring, where the group law is a power series over the very ring it is evaluated in: the
@@ -150,7 +168,7 @@ end HasSubstPair
 
 section CoordSpecialize
 
-variable {O : Type*} [CommRing O] {σ' : Type*} [DecidableEq σ'] [Finite σ']
+variable {O : Type*} [CommRing O] {σ' : Type*} [DecidableEq σ']
 
 /-- The substitution sending the coordinate variable `i` to `X` and every other coordinate to `0`.
 
@@ -160,7 +178,7 @@ respectively are distinct. -/
 noncomputable def coordSpecialize (i : σ') : σ' → MvPowerSeries Unit O :=
   fun j ↦ if j = i then PowerSeries.X else 0
 
-theorem hasSubst_coordSpecialize (i : σ') : HasSubst (coordSpecialize (O := O) i) :=
+theorem hasSubst_coordSpecialize [Finite σ'] (i : σ') : HasSubst (coordSpecialize (O := O) i) :=
   hasSubst_of_constantCoeff_zero fun j ↦ by
     simp only [coordSpecialize]
     split
@@ -169,18 +187,19 @@ theorem hasSubst_coordSpecialize (i : σ') : HasSubst (coordSpecialize (O := O) 
 
 /-- The specialization at `i` sends the `i`-th coordinate to `X`. -/
 @[simp]
-theorem subst_coordSpecialize_X_self (i : σ') :
+theorem subst_coordSpecialize_X_self [Finite σ'] (i : σ') :
     subst (coordSpecialize (O := O) i) (X i : MvPowerSeries σ' O) = PowerSeries.X := by
   simp [subst_X (hasSubst_coordSpecialize i), coordSpecialize]
 
 /-- The specialization at `i` kills every other coordinate. -/
 @[simp]
-theorem subst_coordSpecialize_X_of_ne {i j : σ'} (h : j ≠ i) :
+theorem subst_coordSpecialize_X_of_ne [Finite σ'] {i j : σ'} (h : j ≠ i) :
     subst (coordSpecialize (O := O) i) (X j : MvPowerSeries σ' O) = 0 := by
   simp [subst_X (hasSubst_coordSpecialize i), coordSpecialize, h]
 
 /-- The specialization at `i` is a ring map, so it kills `0`. -/
-theorem subst_coordSpecialize_zero (i : σ') :
+@[simp]
+theorem subst_coordSpecialize_zero [Finite σ'] (i : σ') :
     subst (coordSpecialize (O := O) i) (0 : MvPowerSeries σ' O) = 0 := by
   rw [← coe_substAlgHom (hasSubst_coordSpecialize i), map_zero]
 
