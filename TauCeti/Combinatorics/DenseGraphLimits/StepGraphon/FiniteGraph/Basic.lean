@@ -167,7 +167,7 @@ carried to an edge of `G` by the cell index, and `0` otherwise.
 This is the pointwise identity that makes `homDensity_finiteGraphGraphon` a counting argument: it
 replaces the integrand of the graphon homomorphism density by an indicator, whose integral is then
 the proportion of cell-index tuples that are graph homomorphisms. Use it whenever the edge product
-of a step graphon has to be evaluated at a fixed tuple. -/
+of a finite-graph graphon has to be evaluated at a fixed tuple. -/
 theorem prod_edgeFactor_finiteGraphGraphon (F : SimpleGraph V) [DecidableRel F.Adj]
     (G : SimpleGraph (Fin m)) (x : V → I) :
     ∏ e ∈ F.edgeFinset, edgeFactor (finiteGraphGraphon G) x e
