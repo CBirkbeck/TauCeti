@@ -131,10 +131,12 @@ theorem twoSidedRestrictedSubmodule_ext {f g : twoSidedRestrictedSubmodule A M}
 
 /-- **A family supported at a single degree is restricted**: its support lies in `{n}`, so it is
 eventually zero along the cofinite filter. At `M = A` these are the monomials `a Xⁿ` of
-`A⟨X, X⁻¹⟩`; this is the two-sided counterpart of `TauCeti.Huber.isRestricted_monomial` and is
-proved the same way, through `tendsto_cofinite_pure_iff`. Not `@[simp]`, for the reason given at
-`mem_twoSidedRestrictedSubmodule_iff_finite_notMem`: the membership lemma rewrites this left-hand
-side first. -/
+`A⟨X, X⁻¹⟩`; this is the two-sided counterpart of `TauCeti.Huber.isRestricted_monomial`. Both
+reduce to the support being contained in `{n}`, but by different routes: the one-sided lemma hands
+that to `isRestricted_of_hasFiniteSupport`, whereas this submodule is defined by cofinite
+convergence directly, so the finite support is fed to `tendsto_cofinite_pure_iff`. Not `@[simp]`,
+for the reason given at `mem_twoSidedRestrictedSubmodule_iff_finite_notMem`: the membership lemma
+rewrites this left-hand side first. -/
 theorem single_mem_twoSidedRestrictedSubmodule (n : ℤ) (m : M) :
     Pi.single n m ∈ twoSidedRestrictedSubmodule A M :=
   (tendsto_cofinite_pure_iff.mpr

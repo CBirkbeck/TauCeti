@@ -37,7 +37,7 @@ carry none, so the `Finset`-indexed Cauchy-product lemmas do not apply here at a
   and each antidiagonal, being a subfamily, is summable too — this is the source's "convergent
   series `∑_{k + l = n} aₖ bₗ`".
 * *Closure.* That the product is again restricted needs neither completeness nor summability. It is
-  `NonarchimedeanAddGroup.zeroAtFilter_cofinite_tsum_fiber` applied to addition `ℤ × ℤ → ℤ`: an
+  `NonarchimedeanAddGroup.zeroAtFilter_cofinite_tsum_fiberwise` applied to addition `ℤ × ℤ → ℤ`: an
   open subgroup omits only finitely many `aᵢbⱼ`, hence meets only finitely many antidiagonals, and
   an antidiagonal all of whose terms lie in an open — hence closed — subgroup sums back into it.
 * *Associativity.* Both `((fg)h)ₙ` and `(f(gh))ₙ` are the sum of `aᵢ bⱼ cₗ` over
@@ -135,7 +135,7 @@ theorem addConvolution_mem_twoSidedRestrictedSubmodule {f g : ℤ → A}
   -- `(i, j) ↦ aᵢbⱼ` is cofinitely null because `f` and `g` are. Where a fibre's sum fails to
   -- converge it is `0` by the `tsum` convention, and `0` lies in every subgroup, so the degenerate
   -- case costs nothing and no completeness hypothesis is needed to state closure.
-  refine (NonarchimedeanAddGroup.zeroAtFilter_cofinite_tsum_fiber
+  refine (NonarchimedeanAddGroup.zeroAtFilter_cofinite_tsum_fiberwise
     (tendsto_mul_cofinite_nhds_zero hf hg) fun ab ↦ ab.1 + ab.2).congr fun _ ↦ ?_
   -- Mathlib's fibre `addFiber n` is the antidiagonal `{(i, j) | i + j = n}`.
   exact tsum_congr_set_coe (fun ab : ℤ × ℤ ↦ f ab.1 * g ab.2) <| Set.ext fun _ ↦ mem_addFiber.symm
