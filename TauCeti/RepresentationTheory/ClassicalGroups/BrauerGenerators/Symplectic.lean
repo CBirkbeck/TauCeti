@@ -76,9 +76,11 @@ The index set is `Fin n ⊕ Fin n` rather than a general `l ⊕ l`, even though 
 `TauCeti.stdSymplecticBilinForm` and the standard representation `TauCeti.stdSymplecticRep` that
 this file consumes are pinned at `Fin n`.
 
-The bookkeeping for pure tensors on two strands that this file shares with the orthogonal one --
-`TauCeti.sum_pi_fin_two`, `TauCeti.tprod_fin_two` and `Matrix.piTensorProductMap_tprod_single` --
-carries no symplectic content and lives in `TauCeti.LinearAlgebra.PiTensorProduct.TwoStrand`.
+The bookkeeping for pure tensors on two strands carries no symplectic content and lives in
+`TauCeti.LinearAlgebra.PiTensorProduct.TwoStrand`. This file consumes one lemma from there,
+`Matrix.piTensorProductMap_bivector`, which pushes a whole bivector through the tensor square; the
+orthogonal file consumes the pointwise `Matrix.piTensorProductMap_tprod_single` together with
+`TauCeti.tprod_fin_two`, and `TauCeti.sum_pi_fin_two` supports those two from inside that module.
 
 ## Main definitions
 
