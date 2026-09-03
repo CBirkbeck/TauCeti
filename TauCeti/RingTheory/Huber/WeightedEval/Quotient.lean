@@ -108,14 +108,19 @@ theorem continuous_weightedEvalQuotientHom :
     Continuous (weightedEvalQuotientHom hT hφ hb h𝔞) := by
   exact continuous_coinduced_dom.mpr (continuous_weightedEvalHom hT hφ hb)
 
-/-- The induced map sends the class of a constant series to its value under `φ`. -/
-@[simp]
+/-- The induced map sends the class of a constant series to its value under `φ`.
+
+Deliberately **not** `@[simp]`: `weightedEvalQuotientHom_mk` is already `@[simp]` and rewrites this
+left-hand side to `weightedEvalHom hT hφ hb (weightedC T hT a)`, which the existing `@[simp]` set
+(`coe_weightedEvalHom`, `coe_weightedC`, `weightedEval_C`) then finishes. Tagging this one too fails
+the `simpNF` linter, because simp reaches the quotient unfolding first and this lemma can never
+fire. It is kept as the named value that the universal property below quotes. -/
 theorem weightedEvalQuotientHom_weightedC (a : A) :
     weightedEvalQuotientHom hT hφ hb h𝔞 (Ideal.Quotient.mk 𝔞 (weightedC T hT a)) = φ a := by
   rw [weightedEvalQuotientHom_mk, weightedEvalHom_weightedC]
 
-/-- The induced map sends the class of the `i`-th variable to `bᵢ`. -/
-@[simp]
+/-- The induced map sends the class of the `i`-th variable to `bᵢ`. Not `@[simp]`, for the reason
+given at `weightedEvalQuotientHom_weightedC`. -/
 theorem weightedEvalQuotientHom_weightedX (i : Fin k) :
     weightedEvalQuotientHom hT hφ hb h𝔞 (Ideal.Quotient.mk 𝔞 (weightedX T hT i)) = b i := by
   rw [weightedEvalQuotientHom_mk, weightedEvalHom_weightedX]
