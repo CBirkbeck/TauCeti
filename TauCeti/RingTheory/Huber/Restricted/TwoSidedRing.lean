@@ -44,12 +44,14 @@ carry none, so the `Finset`-indexed Cauchy-product lemmas do not apply here at a
   `{i + j + l = n}`, an infinite family summable by two applications of
   `Summable.mul_of_nonarchimedean`; summing it fibrewise in the degree of the partial product
   (`HasSum.prod_fiberwise`) gives the two bracketings, and uniqueness of limits identifies them.
-  Nothing of the sort is in Mathlib's `DiscreteConvolution`, which has the unit, distributivity
-  and commutativity but no associativity.
+  Nothing of the sort is in Mathlib's `DiscreteConvolution`, which supplies the unit, the
+  annihilation laws, distributivity, scalar compatibility and commutativity — every ring axiom
+  except associativity.
 
 ## Main definitions
 
-* `TauCeti.Huber.twoSidedRestrictedSubmodule.instMul`: the product on `A⟨X, X⁻¹⟩`, Mathlib's
+* `TauCeti.Huber.twoSidedRestrictedSubmodule.instMul` and `instOne`: the product and the unit on
+  `A⟨X, X⁻¹⟩`; the product is Mathlib's
   `DiscreteConvolution.addConvolution` along the bilinear map `LinearMap.mul ℤ A`.
 * `TauCeti.Huber.twoSidedRestrictedSubmodule.instRing`, `instCommRing`, `instAlgebra`: **the ring
   structure**, and the `A`-algebra structure of Example 6.39 when `A` is commutative.
@@ -64,6 +66,11 @@ carry none, so the `Finset`-indexed Cauchy-product lemmas do not apply here at a
 * `TauCeti.Huber.summable_mul_sub_of_mem_twoSidedRestrictedSubmodule` and
   `TauCeti.Huber.addConvolutionExists_of_mem_twoSidedRestrictedSubmodule`: over a complete ring the
   coefficient series of a product converge.
+* `TauCeti.Huber.coe_mul_twoSidedRestrictedSubmodule`,
+  `TauCeti.Huber.coe_one_twoSidedRestrictedSubmodule` and
+  `TauCeti.Huber.coe_algebraMap_twoSidedRestrictedSubmodule`: the computation API. The instance
+  bodies are not exposed, so these are how a product, the unit and the structure map are computed
+  outside this module.
 
 ## Implementation notes
 
@@ -81,7 +88,7 @@ axioms need the coefficient ring to be complete **and** Hausdorff (`[CompleteSpa
 completeness so that the coefficient series converge at all, and Hausdorffness so that `tsum` is a
 limit rather than a choice among limits — without it neither distributivity nor associativity is
 provable. This is exactly Wedhorn's convention, whose "complete" means "Hausdorff and every Cauchy
-filter basis converges" (Definition 5.31(4)–(5)), and it is the hypothesis list the consumer
+filter basis converges" (Definition 5.31(4)–(5)), and it is the hypothesis list the neighbouring
 `TauCeti.RingTheory.Huber.Restricted.Laurent` already carries.
 
 ## References
@@ -149,13 +156,13 @@ instance twoSidedRestrictedSubmodule.instOne : One (twoSidedRestrictedSubmodule 
 
 /-- The product is the convolution of the coefficient families. The `Mul` instance's body is not
 exposed, so this is how a product is computed outside this module. -/
-@[simp]
+@[simp, norm_cast]
 theorem coe_mul_twoSidedRestrictedSubmodule (f g : twoSidedRestrictedSubmodule A A) :
     (↑(f * g) : ℤ → A) = addConvolution (LinearMap.mul ℤ A) f g := rfl
 
 /-- The unit is the family supported at degree `0` with value `1`. The `One` instance's body is
 not exposed, so this is how the unit is computed outside this module. -/
-@[simp]
+@[simp, norm_cast]
 theorem coe_one_twoSidedRestrictedSubmodule :
     ((1 : twoSidedRestrictedSubmodule A A) : ℤ → A) = Pi.single 0 1 := rfl
 
@@ -209,9 +216,9 @@ variable [T0Space A]
 
 namespace twoSidedRestrictedSubmodule
 
-/-- Both bracketings of a triple product are the sum of `aᵢ bⱼ cₗ` over `{i + j + l = n}`. It is
-the associativity field of `twoSidedRestrictedSubmodule.instRing`, so downstream of that instance
-the root `mul_assoc` applies — which is why this one is `protected`. -/
+/-- Both bracketings of a triple product are the sum of `aᵢ bⱼ cₗ` over `{i + j + l = n}`. -/
+-- It is the associativity field of `twoSidedRestrictedSubmodule.instRing`. `protected` so that
+-- `open twoSidedRestrictedSubmodule` does not shadow `_root_.mul_assoc`.
 protected theorem mul_assoc (f g h : twoSidedRestrictedSubmodule A A) :
     f * g * h = f * (g * h) := by
   ext n
@@ -230,32 +237,38 @@ protected theorem mul_assoc (f g h : twoSidedRestrictedSubmodule A A) :
       (f := fun q : ℤ × ℤ ↦ (f : ℤ → A) q.1 * ((g : ℤ → A) q.2 * (h : ℤ → A) (n - q.1 - q.2)))
       ?_ fun k ↦ ?_).tsum_eq.symm
   -- Fibre of `((fg)h)ₙ` over `m`: the `k`-series computing `(fg)ₘ`, scaled on the right by `h`.
-  · exact (summable_mul_sub_of_mem_twoSidedRestrictedSubmodule f.2 g.2 m).hasSum.mul_right _
+  · exact (summable_mul_sub_of_mem_twoSidedRestrictedSubmodule f.2 g.2 m).hasSum.mul_right
+      ((h : ℤ → A) (n - m))
   -- The reindexing `(m, k) ↦ (k, m - k)` is `Equiv.prodComm` followed by a shear; it carries `hF`
   -- to the family whose fibres give `(f(gh))ₙ`, with `mul_assoc` rebracketing each term.
   · refine ((Equiv.prodComm ℤ ℤ).trans ((Equiv.refl ℤ).prodShear Equiv.subRight)).hasSum_iff.mp ?_
     simpa [Function.comp_def, mul_assoc] using hF.hasSum
   -- Fibre of `(f(gh))ₙ` over `k`: the series computing `(gh)_{n - k}`, scaled on the left by `f`.
-  · exact (summable_mul_sub_of_mem_twoSidedRestrictedSubmodule g.2 h.2 (n - k)).hasSum.mul_left _
+  · exact (summable_mul_sub_of_mem_twoSidedRestrictedSubmodule g.2 h.2 (n - k)).hasSum.mul_left
+      ((f : ℤ → A) k)
 
-/-- **`A⟨X, X⁻¹⟩` is a ring** (Wedhorn, Example 6.39). The unit, the two annihilation laws and
-distributivity are Mathlib's `DiscreteConvolution` lemmas, the latter fed by
-`addConvolutionExists_of_mem_twoSidedRestrictedSubmodule`; associativity is proved here. -/
+/-- **`A⟨X, X⁻¹⟩` is a ring** (Wedhorn, Example 6.39). -/
 noncomputable instance instRing : Ring (twoSidedRestrictedSubmodule A A) where
   __ := Submodule.addCommGroup _
   __ := instMul
   __ := instOne
+  -- Associativity is the one ring axiom Mathlib's `DiscreteConvolution` lacks; it is proved here.
   mul_assoc := twoSidedRestrictedSubmodule.mul_assoc
+  -- The unit laws are Mathlib's `single_addConvolution` and `addConvolution_single`, reached
+  -- through the two coercion `simp` lemmas above.
   one_mul _ := Subtype.ext <| by simp
   mul_one _ := Subtype.ext <| by simp
+  -- Distributivity is Mathlib's, fed by `addConvolutionExists_of_mem_twoSidedRestrictedSubmodule`:
+  -- the coefficient series converge, so each sum may be split in two.
   left_distrib f g h := Subtype.ext <|
     (addConvolutionExists_of_mem_twoSidedRestrictedSubmodule f.2 g.2).distrib_add _
       (addConvolutionExists_of_mem_twoSidedRestrictedSubmodule f.2 h.2)
   right_distrib f g h := Subtype.ext <|
     (addConvolutionExists_of_mem_twoSidedRestrictedSubmodule f.2 h.2).add_distrib _
       (addConvolutionExists_of_mem_twoSidedRestrictedSubmodule g.2 h.2)
-  zero_mul f := Subtype.ext (zero_addConvolution _ _)
-  mul_zero f := Subtype.ext (addConvolution_zero _ _)
+  -- The two annihilation laws are Mathlib's, and need no convergence hypothesis.
+  zero_mul _ := Subtype.ext <| zero_addConvolution _ _
+  mul_zero _ := Subtype.ext <| addConvolution_zero _ _
 
 end twoSidedRestrictedSubmodule
 
@@ -268,37 +281,36 @@ variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [Nonarc
 
 namespace twoSidedRestrictedSubmodule
 
-/-- **`A⟨X, X⁻¹⟩` is commutative when `A` is**: swapping the two coordinates of each antidiagonal
-is `DiscreteConvolution.addConvolution_comm`. -/
+/-- **`A⟨X, X⁻¹⟩` is commutative when `A` is** (Wedhorn, Example 6.39). -/
 noncomputable instance instCommRing : CommRing (twoSidedRestrictedSubmodule A A) where
   __ := instRing
-  mul_comm f g := Subtype.ext (addConvolution_comm (LinearMap.mul ℤ A) (f : ℤ → A) g mul_comm)
+  -- Commutativity is Mathlib's `addRingConvolution_comm`, which swaps the two coordinates of each
+  -- antidiagonal.
+  mul_comm f g := Subtype.ext <| addRingConvolution_comm (f : ℤ → A) g
 
 /-- **`A⟨X, X⁻¹⟩` is an `A`-algebra** (Wedhorn, Example 6.39), with the scalar action it already
-carries as a submodule of `ℤ → A`: scalars pass through each coefficient series by
-`Summable.tsum_mul_left`. -/
+carries as a submodule of `ℤ → A`. The instance's body is not exposed; its structure map is
+`coe_algebraMap_twoSidedRestrictedSubmodule`. -/
 noncomputable instance instAlgebra : Algebra A (twoSidedRestrictedSubmodule A A) :=
-  have h : ∀ (r : A) (f g : twoSidedRestrictedSubmodule A A), r • f * g = r • (f * g) :=
-    fun r f g ↦ by
-      ext n
-      simp only [coe_mul_twoSidedRestrictedSubmodule, addConvolution_mul_apply, Submodule.coe_smul,
-        Pi.smul_apply, smul_eq_mul]
-      rw [← (summable_mul_sub_of_mem_twoSidedRestrictedSubmodule f.2 g.2 n).tsum_mul_left r]
-      exact tsum_congr fun k ↦ mul_assoc _ _ _
-  Algebra.ofModule h fun r f g ↦ by rw [mul_comm, h, mul_comm]
+  -- Scalars pass through each coefficient series: our product is definitionally Mathlib's
+  -- `addRingConvolution`,
+  -- so `smul_addRingConvolution` and `addRingConvolution_smul` are the two hypotheses, fed by
+  -- `addConvolutionExists_of_mem_twoSidedRestrictedSubmodule`.
+  Algebra.ofModule
+    (fun r f g ↦ Subtype.ext <| smul_addRingConvolution r _ _ <|
+      addConvolutionExists_of_mem_twoSidedRestrictedSubmodule f.2 g.2)
+    fun r f g ↦ Subtype.ext <| addRingConvolution_smul r _ _ <|
+      addConvolutionExists_of_mem_twoSidedRestrictedSubmodule f.2 g.2
 
 end twoSidedRestrictedSubmodule
 
 /-- The structure map sends `a` to the constant series `a = a · X⁰`. It characterises
 `twoSidedRestrictedSubmodule.instAlgebra`, whose body is not exposed. -/
-@[simp]
+@[simp, norm_cast]
 theorem coe_algebraMap_twoSidedRestrictedSubmodule (a : A) :
-    ((algebraMap A (twoSidedRestrictedSubmodule A A) a : twoSidedRestrictedSubmodule A A) :
-        ℤ → A) = Pi.single 0 a := by
-  -- `Algebra.ofModule` sends `a` to `a • 1`, with the submodule's own scalar action, by definition.
-  change ((a • (1 : twoSidedRestrictedSubmodule A A) : twoSidedRestrictedSubmodule A A) : ℤ → A) = _
-  rw [Submodule.coe_smul, coe_one_twoSidedRestrictedSubmodule, ← Pi.single_smul, smul_eq_mul,
-    mul_one]
+    (algebraMap A (twoSidedRestrictedSubmodule A A) a : ℤ → A) = Pi.single 0 a := by
+  -- The structure map is `a • 1` for the submodule's own scalar action, so it is a `Pi.single`.
+  simp [Algebra.algebraMap_eq_smul_one, ← Pi.single_smul]
 
 end CommRing
 
