@@ -17,11 +17,6 @@ fifth cyclotomic polynomial factors as
 
 because `α + β = −1` and `αβ = (1 − s²)/4 = −1`. In particular `Φ_5` is not irreducible over `E`.
 
-This is the rejection test of Layer 7.2 of the Chebotarev roadmap. For `K = ℚ(√5)`, `L = K(√2)`
-and `q = 5`, the intersection `L ⊓ K(ζ_5)` is trivial, yet `[K(ζ_5) : K] = 2` rather than
-`q - 1 = 4`: the intersection of `L` with the cyclotomic extension says nothing about the degree,
-which is governed by whether `q` ramifies in `K` — and `5` ramifies in `ℚ(√5)`.
-
 The hypothesis `2 ≠ 0` is genuinely needed: over `ZMod 2` one has `1 ^ 2 = 5` while `Φ_5` is
 irreducible, since `2` has order `4` modulo `5`.
 
@@ -32,8 +27,8 @@ irreducible, since `2` has order `4` modulo `5`.
 
 ## References
 
-Layer 7.2 of the Chebotarev roadmap, acceptance test 11; the classical fact that `ℚ(√5)` is the
-quadratic subfield of `ℚ(ζ_5)` is Sharifi, *Algebraic Number Theory*, Lemma 3.2.2.
+That `ℚ(√5)` is the quadratic subfield of `ℚ(ζ_5)` is Sharifi, *Algebraic Number Theory*,
+Lemma 3.2.2.
 -/
 
 public section
@@ -60,21 +55,20 @@ theorem cyclotomic_five_eq_mul_of_sq_eq_five {s : E} (hs : s ^ 2 = 5) :
   simp only [Finset.sum_range_succ, Finset.sum_range_zero, pow_zero, pow_one, zero_add]
   linear_combination (X ^ 3 + X) * key - X ^ 2 * key2
 
-/-- **Layer 7.2, rejection test.** Over a field of characteristic not `2` containing a square root
-of `5` — for instance `K = ℚ(√5)` — the fifth cyclotomic polynomial is reducible, so
-`[K(ζ_5) : K] = 2` and not `q - 1 = 4`, even though `L ⊓ K(ζ_5) = ⊥` for `L = K(√2)`. Here `5`
-ramifies in `K`, which is exactly what the auxiliary-prime theorem excludes.
+/-- **`Φ_5` is reducible over a field containing `√5`.** By
+`cyclotomic_five_eq_mul_of_sq_eq_five` it splits off two quadratic factors, and a quadratic is
+never a unit, so `Φ_5` is not irreducible over `E`.
 
-Source: roadmap `Suggested.lean`, `not_irreducible_cyclotomic_five_of_sq_eq_five` (pinned
-statement, with the unused degree hypothesis dropped); roadmap README acceptance test 11. -/
+This bounds no degree by itself: `E` may already contain `ζ_5`, in which case `Φ_5` splits into
+linear factors. What the statement gives is reducibility, and hence that `Φ_5` is *not* the
+minimal polynomial of a primitive fifth root of unity over `E`. -/
 theorem not_irreducible_cyclotomic_five_of_sq_eq_five (h5 : ∃ x : E, x ^ 2 = 5) :
     ¬ Irreducible (cyclotomic 5 E) := by
   obtain ⟨s, hs⟩ := h5
   intro hirr
   have hdeg : ∀ a : E, (X ^ 2 - C a * X + 1 : E[X]).natDegree = 2 := fun a ↦ by
-    rw [show (X ^ 2 - C a * X + 1 : E[X]) = C 1 * X ^ 2 + C (-a) * X + C 1 by
-      simp [sub_eq_add_neg]]
-    exact natDegree_quadratic one_ne_zero
+    simpa [sub_eq_add_neg] using
+      natDegree_quadratic (a := (1 : E)) (b := -a) (c := 1) one_ne_zero
   rcases hirr.isUnit_or_isUnit (cyclotomic_five_eq_mul_of_sq_eq_five hs) with h | h <;>
     simpa [hdeg] using natDegree_eq_zero_of_isUnit h
 

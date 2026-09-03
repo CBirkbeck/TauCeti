@@ -37,20 +37,27 @@ whereas `[K(ζ_p) : K]` is a proper divisor of `p - 1` exactly when `K ∩ ℚ(�
 
 * `IsCyclotomicExtension.totient_le_finrank_of_unramified`: `φ(p^(k+1)) ≤ [F : K]` when `p` is
   unramified in `K`.
+* `IsCyclotomicExtension.ramificationIdx_eq_totient`: every prime of `𝓞 F` above `p` has
+  ramification index exactly `φ(p^(k+1))` over `𝓞 K`, so `F / K` is totally ramified there.
 * `IsCyclotomicExtension.irreducible_cyclotomic_prime_pow_of_unramified`: `Φ_{p^(k+1)}` is
   irreducible over `K` when `p` is unramified in `K`.
-* `IsCyclotomicExtension.irreducible_cyclotomic_of_unramified`: the prime case, in the shape the
-  Chebotarev roadmap pins for its auxiliary prime.
-* `IsCyclotomicExtension.card_auxiliaryCyclotomic`: the Galois group of a `q`-th cyclotomic
-  extension with `Φ_q` irreducible has exactly `q - 1` elements.
+* `IsCyclotomicExtension.irreducible_cyclotomic_of_unramified`: the prime case.
+* `IsCyclotomicExtension.card_aut_eq_sub_one`: a `q`-th cyclotomic extension with `Φ_q`
+  irreducible has exactly `q - 1` automorphisms.
 
 ## References
 
-Layer 7.2 of the Chebotarev roadmap (`TauCetiRoadmap/Chebotarev/README.md`), whose stated proof
-this file follows. Total ramification of `ℚ(ζ_{p^r})` at `p` is Milne, *Algebraic Number Theory*,
-Proposition 6.2, and Sharifi, *Algebraic Number Theory*, Lemma 3.1.13; the ramification bookkeeping
-is Sharifi, Remark 2.5.7 and Theorem 2.5.11. The argument mirrors
+Total ramification of `ℚ(ζ_{p^r})` at `p` is Milne, *Algebraic Number Theory*, Proposition 6.2,
+and Sharifi, *Algebraic Number Theory*, Lemma 3.1.13; the ramification bookkeeping is Sharifi,
+Remark 2.5.7 and Theorem 2.5.11. The argument mirrors
 `TauCeti.Multiquadratic.ramificationIdx_eq_two_of_liesOver_primeDiscriminantPrime`.
+
+The tower and discriminant bookkeeping was mined from the private declarations
+`prime_dvd_natAbs_discr_cyclotomic_dvd` and `cyclotomicField_finrank_eq` in
+`CebotarevDensity/Abelian.lean` of
+[CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0,
+Birkbeck--Brasca) at commit `8575c9df1ae0a61120ab5c964c7911414254bec7`. The source states those
+through coprimality to the discriminant; the results here are restated through unramifiedness.
 -/
 
 public section
@@ -77,7 +84,7 @@ private theorem ramificationIdx_under_eq_one (p : ℕ) {F : Type*} [Field F] [Al
     (hur : ∀ (𝔮 : Ideal (𝓞 K)) [𝔮.IsPrime] [𝔮.LiesOver (Ideal.span {(p : ℤ)})],
     Algebra.IsUnramifiedAt ℤ 𝔮) (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime] [𝔔.LiesOver (Ideal.span {(p : ℤ)})] :
     (𝔔.under (𝓞 K)).ramificationIdx ℤ = 1 :=
-  -- Roadmap README Layer 7.2, "From `q` unramified in `K`": `𝔮 = 𝔔 ∩ 𝓞 K` is unramified over `ℤ`.
+  -- `𝔮 = 𝔔 ∩ 𝓞 K` lies above `p`, which is unramified in `K`, so `e(𝔮 / p) = 1`.
   Ideal.ramificationIdx_eq_one_iff.mpr (hur _)
 
 private theorem totient_le_ramificationIdx (p k : ℕ) [Fact p.Prime] {F : Type*} [Field F]
@@ -89,7 +96,7 @@ private theorem totient_le_ramificationIdx (p k : ℕ) [Fact p.Prime] {F : Type*
   obtain ⟨ζ, hζ⟩ := exists_isPrimitiveRoot (S := {p ^ (k + 1)}) K F
     (Set.mem_singleton _) (pow_ne_zero _ (Fact.out : p.Prime).ne_zero)
   -- Second tower `ℤ ⊆ 𝓞 K ⊆ 𝓞 F`: indices multiply (Sharifi, Remark 2.5.7) and `e(𝔮 / p) = 1`
-  -- because `p` is unramified in `K` (roadmap README Layer 7.2), so `e(𝔔 / p) = e(𝔔 / 𝔮)`.
+  -- because `p` is unramified in `K`, so `e(𝔔 / p) = e(𝔔 / 𝔮)`.
   simpa only [Ideal.ramificationIdx_tower (R := ℤ) (𝔔.under (𝓞 K)) 𝔔,
     ramificationIdx_under_eq_one p hur 𝔔, one_mul] using
     totient_le_ramificationIdx_int p k hζ 𝔔
@@ -102,12 +109,10 @@ private theorem ramificationIdx_le_finrank_of_isPrime {F : Type*} [Field F] [Num
     (IsFractionRing.finrank_eq (𝓞 K) K (𝓞 F) F).symm
 
 /-- **The degree of a cyclotomic extension above an unramified prime is at least `φ(p^(k+1))`.**
-This is the total ramification of `K(ζ_{p^(k+1)}) / K` above `p` that Layer 7.3 of the Chebotarev
-roadmap consumes. Unlike `IsPrimitiveRoot.lcm_totient_le_finrank` it assumes no irreducibility, so
-it can feed `irreducible_cyclotomic_of_totient_le_finrank` rather than follow from it.
+Unlike `IsPrimitiveRoot.lcm_totient_le_finrank` it assumes no irreducibility, so it can feed
+`irreducible_cyclotomic_of_totient_le_finrank` rather than follow from it.
 
-Source: Sharifi, Theorem 2.5.11 (`∑ eᵢ fᵢ = [L : K]`); Milne, Theorem 3.34; roadmap README
-Layer 7.3 ("by 7.2 the extension `K(ζ_q)/K` is totally ramified at every prime above `q`"). -/
+Source: Sharifi, Theorem 2.5.11 (`∑ eᵢ fᵢ = [L : K]`); Milne, Theorem 3.34. -/
 theorem totient_le_finrank_of_unramified (p k : ℕ) [Fact p.Prime] (F : Type*) [Field F]
     [Algebra K F] [IsCyclotomicExtension {p ^ (k + 1)} K F]
     (hur : ∀ (𝔮 : Ideal (𝓞 K)) [𝔮.IsPrime] [𝔮.LiesOver (Ideal.span {(p : ℤ)})],
@@ -121,6 +126,26 @@ theorem totient_le_finrank_of_unramified (p k : ℕ) [Fact p.Prime] (F : Type*) 
   -- index never exceeds the degree of the extension.
   exact (totient_le_ramificationIdx p k hur 𝔔).trans (ramificationIdx_le_finrank_of_isPrime 𝔔)
 
+/-- **A cyclotomic extension is totally ramified above an unramified prime.** If `p` is unramified
+in `K`, every prime `𝔔` of `𝓞 F` above `p` has ramification index exactly `φ(p^(k+1))` over
+`𝓞 K` — which by `totient_le_finrank_of_unramified` is the full degree `[F : K]`, so there is a
+single prime above `p` and it is totally ramified.
+
+The three bounds `φ ≤ e(𝔔) ≤ [F : K] ≤ φ` collapse to equalities: the first is the tower
+computation, the second the fundamental identity `∑ eᵢ fᵢ = [F : K]`, and the third holds for any
+cyclotomic extension. This is the form the intersection argument consumes, where the lower bound
+alone is not enough.
+
+Source: Sharifi, *Algebraic Number Theory*, Theorem 2.5.11; Milne, Theorem 3.34. -/
+theorem ramificationIdx_eq_totient (p k : ℕ) [Fact p.Prime] {F : Type*} [Field F] [NumberField F]
+    [Algebra K F] [IsCyclotomicExtension {p ^ (k + 1)} K F]
+    (hur : ∀ (𝔮 : Ideal (𝓞 K)) [𝔮.IsPrime] [𝔮.LiesOver (Ideal.span {(p : ℤ)})],
+    Algebra.IsUnramifiedAt ℤ 𝔮) (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime]
+    [𝔔.LiesOver (Ideal.span {(p : ℤ)})] : 𝔔.ramificationIdx (𝓞 K) = (p ^ (k + 1)).totient := by
+  have : NeZero (p ^ (k + 1)) := ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  exact le_antisymm ((ramificationIdx_le_finrank_of_isPrime 𝔔).trans (finrank_le_totient K F))
+    (totient_le_ramificationIdx p k hur 𝔔)
+
 variable (K) in
 /-- **Unramifiedness gives irreducibility of `Φ_{p^(k+1)}`.** If the prime `p` is unramified in the
 number field `K`, then the `p^(k+1)`-th cyclotomic polynomial is irreducible over `K`.
@@ -131,8 +156,7 @@ and forces `K = ℚ` by `NumberField.finrank_eq_one_of_unramified`. Unramifiedne
 not necessary: irreducibility holds exactly when `K ∩ ℚ(ζ_{p^(k+1)}) = ℚ`. For `k = 0` see
 `irreducible_cyclotomic_of_unramified`.
 
-Source: roadmap README Layer 7.2, steps 1–3; Milne, Prop. 6.2 and Sharifi, Lemma 3.1.13 for the
-base `ℚ`. -/
+Source: Milne, Prop. 6.2 and Sharifi, Lemma 3.1.13 for the base `ℚ`. -/
 theorem irreducible_cyclotomic_prime_pow_of_unramified (p k : ℕ) [Fact p.Prime]
     (hur : ∀ (𝔮 : Ideal (𝓞 K)) [𝔮.IsPrime] [𝔮.LiesOver (Ideal.span {(p : ℤ)})],
       Algebra.IsUnramifiedAt ℤ 𝔮) : Irreducible (cyclotomic (p ^ (k + 1)) K) :=
@@ -142,8 +166,8 @@ theorem irreducible_cyclotomic_prime_pow_of_unramified (p k : ℕ) [Fact p.Prime
     totient_le_finrank_of_unramified p k _ hur
 
 variable (K) in
-/-- **Layer 7.2, the degree input the crossing actually needs.** If the prime `q` is unramified in
-the number field `K`, then the `q`-th cyclotomic polynomial is irreducible over `K`, hence
+/-- **Unramifiedness gives irreducibility of `Φ_q`.** If the prime `q` is unramified in the number
+field `K`, then the `q`-th cyclotomic polynomial is irreducible over `K`, hence
 `[K(ζ_q) : K] = q - 1`.
 
 `hur` is definitionally Mathlib's `Algebra.IsUnramifiedIn (𝓞 K) (Ideal.span {(q : ℤ)})`, so a proof
@@ -151,8 +175,7 @@ of that predicate can be passed directly. `L ⊓ K(ζ_q) = ⊥` is no substitute
 `K ∩ ℚ(ζ_q)`, which is what irreducibility is equivalent to. See
 `Polynomial.not_irreducible_cyclotomic_five_of_sq_eq_five` for the witness.
 
-Source: roadmap `Suggested.lean`, `irreducible_cyclotomic_of_unramified` (pinned statement); the
-case `k = 0` of `irreducible_cyclotomic_prime_pow_of_unramified`. -/
+Source: the case `k = 0` of `irreducible_cyclotomic_prime_pow_of_unramified`. -/
 theorem irreducible_cyclotomic_of_unramified (q : ℕ) (hq : q.Prime)
     (hur : ∀ (𝔮 : Ideal (𝓞 K)) [𝔮.IsPrime] [𝔮.LiesOver (Ideal.span {(q : ℤ)})],
       Algebra.IsUnramifiedAt ℤ 𝔮) : Irreducible (cyclotomic q K) := by
@@ -162,20 +185,16 @@ theorem irreducible_cyclotomic_of_unramified (q : ℕ) (hq : q.Prime)
 
 omit [NumberField K] in
 variable (K) in
-/-- **Layer 7.2, the auxiliary Galois group is the full unit group**, in particular cyclic of order
-`q - 1`. If `Φ_q` is irreducible over `K`, a `q`-th cyclotomic extension `F / K` has exactly
-`q - 1` automorphisms. The name records its role in the Chebotarev crossing, where `F = K(ζ_q)`
-for the auxiliary prime `q`.
+/-- **A `q`-th cyclotomic extension has exactly `q - 1` automorphisms**, for `q` prime with `Φ_q`
+irreducible over `K`. The count is `φ(q) = q - 1`, transported from `(ZMod q)ˣ` along Mathlib's
+`autEquivPow`.
 
-`hirr` is what `irreducible_cyclotomic_of_unramified` supplies, and keeping it a hypothesis stops a
-crossing argument from silently assuming the order. `q - 1` is truncated `ℕ` subtraction, equal to
-`q.totient` here because `q` is prime. For the degree rather than the automorphism count use
-Mathlib's `IsCyclotomicExtension.finrank`, and for the isomorphism itself `autEquivPow`.
-
-Source: roadmap `Suggested.lean`, `card_auxiliaryCyclotomic` (pinned statement); roadmap README
-Layer 7.2, step 3 ("the cyclotomic character `Gal(K(ζ_q)/K) ≃ (ZMod q)ˣ` is an isomorphism onto
-the full unit group, in particular cyclic of order `q - 1`"). -/
-theorem card_auxiliaryCyclotomic (q : ℕ) [NeZero q] (F : Type*) [Field F] [Algebra K F]
+This is a cardinality statement and nothing more. For the group isomorphism
+`(F ≃ₐ[K] F) ≃* (ZMod q)ˣ` — and hence for cyclicity — use `autEquivPow` directly; for the degree
+rather than the automorphism count use `IsCyclotomicExtension.finrank`. Keeping `hirr` as a
+hypothesis rather than deriving it stops a caller from silently assuming the order. `q - 1` is
+truncated `ℕ` subtraction, equal to `q.totient` because `q` is prime. -/
+theorem card_aut_eq_sub_one (q : ℕ) [NeZero q] (F : Type*) [Field F] [Algebra K F]
     [IsCyclotomicExtension {q} K F] (hq : q.Prime) (hirr : Irreducible (cyclotomic q K)) :
     Nat.card (F ≃ₐ[K] F) = q - 1 := by
   -- `(ZMod q)ˣ` has `φ(q) = q - 1` elements, as `q` is prime.
