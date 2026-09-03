@@ -309,11 +309,11 @@ private theorem windingNumber_lineHomotopy_div_eq_of_norm_div_lt (h₀ : IsPiece
       refine ⟨by positivity, ?_⟩
       rw [div_le_one hNpos]
       exact_mod_cast hkN
+    -- one stage of the subdivision advances the parameter by exactly `1 / N`
+    have hgap : ((k + 1 : ℕ) : ℝ) / N - (k : ℝ) / N = 1 / N := by push_cast; ring
     have hdisp : ‖lineHomotopy γ₀ γ₁ ((k + 1 : ℕ) / N) t
         - lineHomotopy γ₀ γ₁ ((k : ℝ) / N) t‖ = ‖γ₁ t - γ₀ t‖ / N := by
-      rw [lineHomotopy_sub, norm_smul, Real.norm_eq_abs,
-        show ((k + 1 : ℕ) : ℝ) / N - (k : ℝ) / N = 1 / N by push_cast; ring,
-        abs_of_pos (by positivity)]
+      rw [lineHomotopy_sub, norm_smul, Real.norm_eq_abs, hgap, abs_of_pos (by positivity)]
       ring
     rw [dist_eq_norm, dist_eq_norm, hdisp]
     exact lt_of_lt_of_le (hlt t ht) (hmle _ hmem t ht)
