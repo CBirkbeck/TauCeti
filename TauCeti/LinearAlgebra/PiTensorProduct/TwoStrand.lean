@@ -9,7 +9,6 @@ public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.LinearAlgebra.Matrix.ToLin
 public import Mathlib.LinearAlgebra.PiTensorProduct.Basic
-public import Mathlib.LinearAlgebra.StdBasis
 
 /-!
 # Pure tensors on two strands
