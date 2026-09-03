@@ -60,7 +60,7 @@ public section
 open Polynomial
 open scoped NumberField
 
-open TauCeti.NumberField (ramificationIdx_le_finrank ramificationIdx_under_eq_one)
+open TauCeti.NumberField (ramificationIdx_le_finrank)
 
 namespace IsCyclotomicExtension
 
@@ -88,7 +88,8 @@ private theorem totient_le_ramificationIdx (p k : ℕ) [Fact p.Prime] {F : Type*
   -- Second tower `ℤ ⊆ 𝓞 K ⊆ 𝓞 F`: indices multiply (Sharifi, Remark 2.5.7) and `e(𝔮 / p) = 1`
   -- because `p` is unramified in `K`, so `e(𝔔 / p) = e(𝔔 / 𝔮)`.
   simpa only [Ideal.ramificationIdx_tower (R := ℤ) (𝔔.under (𝓞 K)) 𝔔,
-    ramificationIdx_under_eq_one p hur 𝔔, one_mul] using
+    Algebra.IsUnramifiedIn.ramificationIdx_eq_one (R := ℤ) hur
+      (𝔓 := 𝔔.under (𝓞 K)) inferInstance, one_mul] using
     totient_le_ramificationIdx_int p k hζ 𝔔
 
 /-- **The degree of a cyclotomic extension above an unramified prime is at least `φ(p^(k+1))`.**
