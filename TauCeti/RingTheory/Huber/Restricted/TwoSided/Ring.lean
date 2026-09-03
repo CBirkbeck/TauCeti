@@ -69,14 +69,13 @@ carry none, so the `Finset`-indexed Cauchy-product lemmas do not apply here at a
   `TauCeti.Huber.addConvolutionExists_of_mem_twoSidedRestrictedSubmodule`: over a complete ring the
   coefficient series of a product converge.
 * `TauCeti.Huber.twoSidedMonomial_mul_twoSidedMonomial`: **monomials add degrees**,
-  `(a Xᵐ)(b Xⁿ) = ab X^{m+n}`, and hence the two inverse identities
-  `TauCeti.Huber.twoSidedMonomial_one_mul_twoSidedMonomial_neg_one` and
-  `TauCeti.Huber.twoSidedMonomial_neg_one_mul_twoSidedMonomial_one`. All three hold with no
-  completeness, summability or separation hypothesis, since only one term of the coefficient series
-  survives — which is why they are stated as multiplication identities rather than as `IsUnit`,
-  a claim that needs a monoid.
-* `TauCeti.Huber.isUnit_twoSidedMonomial_one`: **the Laurent variable is a unit**, once the ring
-  structure supplies the monoid the statement needs.
+  `(a Xᵐ)(b Xⁿ) = ab X^{m+n}`. It holds with no completeness, summability or separation hypothesis,
+  since only one term of the coefficient series survives, so it is stated well above the ring
+  axioms.
+* `TauCeti.Huber.isUnit_twoSidedMonomial_one`: **the Laurent variable is a unit**, with inverse the
+  degree-`(-1)` monomial — the content of Example 6.39. Both inverse identities are instances of the
+  degree-addition rule, so they get no separate lemmas; `IsUnit` itself needs the monoid that
+  arrives with the ring structure.
 * `TauCeti.Huber.coe_mul_apply`: the coefficient of a product read off an element of the submodule,
   `(fg)ₙ = ∑' k, aₖ b_{n-k}`.
 * `TauCeti.Huber.coe_mul_twoSidedRestrictedSubmodule`,
@@ -226,26 +225,6 @@ theorem twoSidedMonomial_mul_twoSidedMonomial (m n : ℤ) (a b : A) :
   · simp
   · rw [Pi.single_eq_of_ne hp, Pi.single_eq_of_ne (by grind : p - m ≠ n), mul_zero]
 
-/-- **The degree-`1` and degree-`(-1)` monomials are mutually inverse**: `X · X⁻¹ = 1`, where
-`X = twoSidedMonomial 1 1` is Wedhorn's `ζ`. This is what distinguishes `A⟨X, X⁻¹⟩` from the
-one-sided `A⟨X⟩`, and it is the content of Wedhorn's Example 6.39. -/
-@[simp]
-theorem twoSidedMonomial_one_mul_twoSidedMonomial_neg_one :
-    (twoSidedMonomial 1 1 * twoSidedMonomial (-1) 1 : twoSidedRestrictedSubmodule A A) = 1 := by
-  rw [twoSidedMonomial_mul_twoSidedMonomial]
-  norm_num
-
-/-- **The reverse identity** `X⁻¹ · X = 1`. Stated separately from
-`twoSidedMonomial_one_mul_twoSidedMonomial_neg_one` because the ring axioms — and with them
-commutativity of the convolution — are not available in this section: these two identities hold
-with no completeness, summability or separation hypothesis, so neither follows from the other
-here. -/
-@[simp]
-theorem twoSidedMonomial_neg_one_mul_twoSidedMonomial_one :
-    (twoSidedMonomial (-1) 1 * twoSidedMonomial 1 1 : twoSidedRestrictedSubmodule A A) = 1 := by
-  rw [twoSidedMonomial_mul_twoSidedMonomial]
-  norm_num
-
 end Monomial
 
 section Summable
@@ -357,9 +336,9 @@ Wedhorn's Example 6.39 is used in — `A⟨X, X⁻¹⟩` is the ring in which `X
 is stated here rather than beside the two multiplication identities because `IsUnit` needs a monoid,
 which arrives only with `twoSidedRestrictedSubmodule.instRing`. -/
 theorem isUnit_twoSidedMonomial_one : IsUnit (twoSidedMonomial 1 (1 : A)) :=
-  ⟨⟨twoSidedMonomial 1 1, twoSidedMonomial (-1) 1,
-    twoSidedMonomial_one_mul_twoSidedMonomial_neg_one,
-    twoSidedMonomial_neg_one_mul_twoSidedMonomial_one⟩, rfl⟩
+  -- both inverse identities are `twoSidedMonomial_mul_twoSidedMonomial` at `(1, -1)` and `(-1, 1)`,
+  -- finished by `twoSidedMonomial_zero_one`
+  ⟨⟨twoSidedMonomial 1 1, twoSidedMonomial (-1) 1, by simp, by simp⟩, rfl⟩
 
 end Ring
 
