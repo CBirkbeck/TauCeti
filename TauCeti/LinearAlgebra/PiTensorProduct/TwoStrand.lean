@@ -12,15 +12,13 @@ public import Mathlib.LinearAlgebra.PiTensorProduct.Basic
 public import Mathlib.LinearAlgebra.StdBasis
 
 /-!
-# Bookkeeping for the Brauer generators on two strands
+# Pure tensors on two strands
 
-A Brauer diagram on two strands acts on a tensor square, so the calculations in
-`TauCeti.RepresentationTheory.ClassicalGroups.BrauerGenerators.Orthogonal` and in
-`TauCeti.RepresentationTheory.ClassicalGroups.BrauerGenerators.Symplectic` both expand pure
-tensors indexed by `Fin 2`. That expansion needs the same two pieces of glue in either file: a sum
-over the functions `Fin 2 → ι` is a double sum, and a pure tensor indexed by `Fin 2` may be
-rewritten in `![·, ·]` form. Neither says anything about an invariant form, so both live here
-rather than being repeated in the two files that use them.
+Calculations on a tensor square index their pure tensors by `Fin 2`, and repeatedly need the same
+three pieces of bookkeeping: a sum over the functions `Fin 2 → ι` is a double sum, a pure tensor
+indexed by `Fin 2` may be rewritten in `![·, ·]` form, and pushing a matrix through both strands
+re-expands a basis pure tensor in the standard basis. None of them says anything about what the
+tensor square is being used for, so they live here rather than in any one consumer.
 
 ## Main results
 

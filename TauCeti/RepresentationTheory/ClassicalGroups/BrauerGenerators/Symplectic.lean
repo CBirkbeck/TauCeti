@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.RepresentationTheory.ClassicalGroups.BrauerGenerators.Basic
+public import TauCeti.LinearAlgebra.PiTensorProduct.TwoStrand
 public import TauCeti.RepresentationTheory.ClassicalGroups.Symplectic
 public import TauCeti.RepresentationTheory.Symmetric.TensorAction.Basic
 public import TauCeti.RepresentationTheory.Tensor.Power
@@ -77,8 +77,8 @@ The index set is `Fin n ⊕ Fin n` rather than a general `l ⊕ l`, even though 
 this file consumes are pinned at `Fin n`.
 
 The bookkeeping for pure tensors on two strands that this file shares with the orthogonal one --
-`TauCeti.sum_pi_fin_two` and `TauCeti.tprod_fin_two` -- carries no symplectic content and lives in
-`TauCeti.RepresentationTheory.ClassicalGroups.BrauerGenerators.Basic`.
+`TauCeti.sum_pi_fin_two`, `TauCeti.tprod_fin_two` and `Matrix.piTensorProductMap_tprod_single` --
+carries no symplectic content and lives in `TauCeti.LinearAlgebra.PiTensorProduct.TwoStrand`.
 
 ## Main definitions
 

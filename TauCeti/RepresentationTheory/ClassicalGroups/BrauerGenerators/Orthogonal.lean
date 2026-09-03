@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.RepresentationTheory.ClassicalGroups.BrauerGenerators.Basic
+public import TauCeti.LinearAlgebra.PiTensorProduct.TwoStrand
 public import TauCeti.RepresentationTheory.ClassicalGroups.Orthogonal
 public import TauCeti.RepresentationTheory.Symmetric.TensorAction.Basic
 public import TauCeti.RepresentationTheory.Tensor.Power
