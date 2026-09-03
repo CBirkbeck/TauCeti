@@ -188,7 +188,6 @@ private theorem galoisCharacterWeight_apply (χ : (L ≃ₐ[K] L) →* ℂˣ) (�
 /-- **Value at an unramified prime.** At a height-one prime unramified in `L` the weight is `χ` of
 the Artin symbol; together with the vanishing at ramified primes and complete multiplicativity this
 determines the weight. -/
-@[simp]
 theorem galoisCharacterWeight_heightOne_of_unramified (χ : (L ≃ₐ[K] L) →* ℂˣ)
     (𝔭 : HeightOneSpectrum (𝓞 K))
     (hur : ∀ (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver 𝔭.asIdeal],
