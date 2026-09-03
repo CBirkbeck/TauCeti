@@ -85,6 +85,30 @@ private lemma gammaPDFReal_of_pos {x : ℝ} (hx : 0 < x) :
     gammaPDFReal a r x = r ^ a / Real.Gamma a * x ^ (a - 1) * exp (-(r * x)) := by
   rw [gammaPDFReal, ite_eq_left hx.le]
 
+/-- Collecting a Gamma density against a Poisson mass at a point: the two powers of `x` and the two
+exponentials each combine, leaving a single Gamma-kernel term of shape `r + k` and rate `c + 1`.
+
+Stated for an arbitrary rate `c`, so that a mixture over the rate can instantiate it pointwise. -/
+theorem gammaDensity_mul_poissonMass (c r : ℝ) (k : ℕ) {x : ℝ} (hx : x ∈ Ioi (0 : ℝ)) :
+    c ^ r / Real.Gamma r * x ^ (r - 1) * Real.exp (-(c * x)) *
+        (Real.exp (-x) * x ^ k / k.factorial) =
+      c ^ r / (Real.Gamma r * k.factorial) *
+        (x ^ (r + (k : ℝ) - 1) * Real.exp (-((c + 1) * x))) := by
+  have hxpow : x ^ (r - 1) * x ^ k = x ^ (r + (k : ℝ) - 1) := by
+    rw [← Real.rpow_natCast x k, ← Real.rpow_add hx]
+    congr 1
+    ring
+  have hexp : Real.exp (-(c * x)) * Real.exp (-x) = Real.exp (-((c + 1) * x)) := by
+    rw [← Real.exp_add]
+    congr 1
+    ring
+  calc
+    c ^ r / Real.Gamma r * x ^ (r - 1) * Real.exp (-(c * x)) *
+        (Real.exp (-x) * x ^ k / k.factorial) =
+        c ^ r / (Real.Gamma r * k.factorial) *
+          ((x ^ (r - 1) * x ^ k) * (Real.exp (-(c * x)) * Real.exp (-x))) := by ring
+    _ = _ := by rw [hxpow, hexp]
+
 /-- An integral against the gamma law is the set integral of the weighted integrand over
 `(0, ∞)`. -/
 theorem integral_gammaMeasure_eq {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]

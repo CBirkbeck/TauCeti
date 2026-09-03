@@ -43,30 +43,6 @@ namespace TauCeti
 
 namespace Probability
 
-/-- Collecting a Gamma density against a Poisson mass at a point: the two powers of `x` and the two
-exponentials each combine, leaving a single Gamma-kernel term of shape `r + k` and rate `c + 1`.
-
-Stated for an arbitrary rate `c`; the Gamma--Poisson mixture uses it at `c = p / (1 - p)`. -/
-private lemma gammaDensity_mul_poissonMass (c r : ℝ) (k : ℕ) {x : ℝ} (hx : x ∈ Ioi (0 : ℝ)) :
-    c ^ r / Real.Gamma r * x ^ (r - 1) * Real.exp (-(c * x)) *
-        (Real.exp (-x) * x ^ k / k.factorial) =
-      c ^ r / (Real.Gamma r * k.factorial) *
-        (x ^ (r + (k : ℝ) - 1) * Real.exp (-((c + 1) * x))) := by
-  have hxpow : x ^ (r - 1) * x ^ k = x ^ (r + (k : ℝ) - 1) := by
-    rw [← Real.rpow_natCast x k, ← Real.rpow_add hx]
-    congr 1
-    ring
-  have hexp : Real.exp (-(c * x)) * Real.exp (-x) = Real.exp (-((c + 1) * x)) := by
-    rw [← Real.exp_add]
-    congr 1
-    ring
-  calc
-    c ^ r / Real.Gamma r * x ^ (r - 1) * Real.exp (-(c * x)) *
-        (Real.exp (-x) * x ^ k / k.factorial) =
-        c ^ r / (Real.Gamma r * k.factorial) *
-          ((x ^ (r - 1) * x ^ k) * (Real.exp (-(c * x)) * Real.exp (-x))) := by ring
-    _ = _ := by rw [hxpow, hexp]
-
 private lemma integral_poissonMass_gammaMeasure {r p : ℝ} (hr : 0 < r) (hp : 0 < p)
     (hp1 : p < 1) (k : ℕ) :
     ∫ x, Real.exp (-x) * x ^ k / k.factorial ∂gammaMeasure r (p / (1 - p)) =
@@ -85,7 +61,7 @@ private lemma integral_poissonMass_gammaMeasure {r p : ℝ} (hr : 0 < r) (hp : 0
       Real.exp (-(p / (1 - p) * x))) *
         (Real.exp (-x) * x ^ k / k.factorial)) = _
   have hcongr := fun x (hx : x ∈ Ioi (0 : ℝ)) =>
-    gammaDensity_mul_poissonMass (p / (1 - p)) r k hx
+    TauCeti.gammaDensity_mul_poissonMass (p / (1 - p)) r k hx
   -- Euler's Gamma integral evaluates the kernel with shifted shape `r + k`.
   rw [setIntegral_congr_fun measurableSet_Ioi hcongr, integral_const_mul,
     Real.integral_rpow_mul_exp_neg_mul_Ioi hshape (by positivity : 0 < p / (1 - p) + 1),
