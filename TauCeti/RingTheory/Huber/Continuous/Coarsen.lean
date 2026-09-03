@@ -56,6 +56,31 @@ argument does not transfer to this statement.
 
 public section
 
+namespace TauCeti
+
+-- Properness makes the quotient nontrivial, and a nontrivial linearly ordered commutative group
+-- has an element above `1`; surjectivity of the quotient map pulls that element back to `Γ`.
+private theorem ConvexSubgroup.exists_one_lt_quotientMk {Γ : Type*} [CommGroup Γ] [LinearOrder Γ]
+    [IsOrderedMonoid Γ] {H : ConvexSubgroup Γ} (hH : H ≠ ⊤) :
+    ∃ d : Γ, 1 < QuotientGroup.mk' H.toSubgroup d := by
+  have : Nontrivial (Γ ⧸ H.toSubgroup) :=
+    QuotientGroup.nontrivial_iff.mpr fun h ↦
+      hH (toSubgroup_injective (h.trans top_toSubgroup.symm))
+  obtain ⟨q, hq⟩ := exists_one_lt' (α := Γ ⧸ H.toSubgroup)
+  obtain ⟨d, rfl⟩ := QuotientGroup.mk'_surjective H.toSubgroup q
+  exact ⟨d, hq⟩
+
+-- Coarsening is monotone but not strictly so; shrinking the argument by a `d` whose class
+-- exceeds `1` is what recovers a strict inequality, and is the only use of properness.
+private theorem coarsenMapOfValueGroup_mul_inv_lt {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
+    (H : ConvexSubgroup Γ₀ˣ) {d : Γ₀ˣ} (hd : 1 < QuotientGroup.mk' H.toSubgroup d) {g : Γ₀}
+    (hg : g ≠ 0) : coarsenMapOfValueGroup H (g * (d : Γ₀)⁻¹) < coarsenMapOfValueGroup H g := by
+  rw [map_mul, map_inv₀, coarsenMapOfValueGroup_apply_coe]
+  refine mul_lt_of_lt_one_right (zero_lt_iff.mpr (by simpa using hg)) ?_
+  exact_mod_cast inv_lt_one'.mpr hd
+
+end TauCeti
+
 namespace Valuation
 
 open TauCeti TauCeti.Huber MonoidWithZeroHom
@@ -63,70 +88,49 @@ open TauCeti TauCeti.Huber MonoidWithZeroHom
 variable {A : Type*} [CommRing A] [TopologicalSpace A]
 variable {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
-/-- **Wedhorn Remark 7.11(2).** A vertical generization of a continuous valuation by a proper
-convex subgroup of its value group is again continuous.
+omit [TopologicalSpace A] in
+-- Every positive element of the coarsened value group is a ratio of attained values; shrinking
+-- that ratio by `d⁻¹` turns the monotone image of a cofinal power into a strict bound.
+private theorem cofinalValue_coarsenByUnits_restrict {v : Valuation A Γ₀}
+    {H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ} {d : (ValueGroup₀ (.ofClass v))ˣ}
+    (hd : 1 < QuotientGroup.mk' H.toSubgroup d) {a : A} (hcof : CofinalValue v a) :
+    CofinalValue (v.restrict.coarsenByUnits H) a := by
+  rw [cofinalValue_iff]
+  intro γ hγ
+  obtain ⟨r, q, hr, hq, hrq⟩ :=
+    (v.restrict.coarsenByUnits H).exists_div_eq_of_unit (Units.mk0 γ hγ.ne')
+  simp only [Units.val_mk0] at hrq
+  have hrv : v.restrict r ≠ 0 := fun h ↦ by simp [h] at hr
+  have hqv : v.restrict q ≠ 0 := fun h ↦ by simp [h] at hq
+  obtain ⟨n, hn⟩ := cofinalValue_iff.mp hcof
+    (v.restrict r / v.restrict q * (d : ValueGroup₀ (.ofClass v))⁻¹)
+    (by simp [zero_lt_iff, hrv, hqv, Units.ne_zero d])
+  refine ⟨n, ?_⟩
+  have hemb : ValueGroup₀.embedding γ =
+      (v.restrict.coarsenByUnits H) r / (v.restrict.coarsenByUnits H) q := by
+    rw [← hrq, map_div₀, Valuation.embedding_restrict, Valuation.embedding_restrict]
+  rw [← map_pow, Valuation.restrict_lt_iff_lt_embedding, hemb, coarsenByUnits_apply,
+    coarsenByUnits_apply, coarsenByUnits_apply, map_pow, ← map_div₀]
+  exact (coarsenMapOfValueGroup_monotone H hn.le).trans_lt
+    (coarsenMapOfValueGroup_mul_inv_lt H hd (div_ne_zero hrv hqv))
 
-The coarsening is taken on `v.restrict` rather than on `v`, so that `H ≠ ⊤` is properness in the
-value group, which is the hypothesis Wedhorn states. Properness enters only through the witness
-`d ∉ H` with `1 < d`: coarsening is monotone but not strictly so, and shrinking the target by
-`d⁻¹` is what recovers the strict inequality that cofinality requires. -/
+/-- **Wedhorn Remark 7.11(2).** A vertical generization of a continuous valuation by a proper
+convex subgroup of its value group is again continuous. -/
 theorem IsContinuous.coarsenByUnits_restrict [IsTopologicalRing A] [IsHuberRing A]
-    [ContinuousConstSMul Aᵐᵒᵖ A] {v : Valuation A Γ₀} (hv : v.IsContinuous)
-    {H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ} (hH : H ≠ ⊤) :
-    (v.restrict.coarsenByUnits H).IsContinuous := by
+    {v : Valuation A Γ₀} (hv : v.IsContinuous) {H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ}
+    (hH : H ≠ ⊤) : (v.restrict.coarsenByUnits H).IsContinuous := by
   obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := A)
   obtain ⟨s, hs⟩ := P.fg_idealOfDefinition
-  have hv' : v.restrict.IsContinuous := (v.isEquiv_restrict).isContinuous_iff.mp hv
-  obtain ⟨x, -, hxH⟩ := SetLike.exists_of_lt (lt_top_iff_ne_top.mpr hH)
-  have hx1 : x ≠ 1 := fun h ↦ hxH (h ▸ one_mem H)
-  obtain ⟨d, hd1, hdH⟩ : ∃ d : (ValueGroup₀ (.ofClass v))ˣ, 1 < d ∧ d ∉ H := by
-    rcases lt_or_gt_of_ne hx1 with hlt | hgt
-    · exact ⟨x⁻¹, by simpa using hlt, fun hmem ↦ hxH (by simpa using inv_mem hmem)⟩
-    · exact ⟨x, hgt, hxH⟩
-  have hdq : 1 < QuotientGroup.mk' H.toSubgroup d := by
-    have h := H.quotientMk_lt_one_of_notMem (a := d⁻¹) (by simpa using hd1.le)
-      (fun hmem ↦ hdH (by simpa using inv_mem hmem))
-    simpa using h
-  refine P.isContinuous_of_forall_cofinalValue _ hs ?_ ?_
-  · intro a ha
-    rw [coarsenByUnits_apply, ← map_one (coarsenMapOfValueGroup H)]
+  -- properness enters only through this witness, which the cofinality branch shrinks by
+  obtain ⟨d, hdq⟩ := ConvexSubgroup.exists_one_lt_quotientMk hH
+  refine P.isContinuous_of_forall_cofinalValue _ hs (fun a ha ↦ ?_) fun t ht ↦ ?_
+  · rw [coarsenByUnits_apply, ← map_one (coarsenMapOfValueGroup H)]
     exact coarsenMapOfValueGroup_monotone H
-      (hv'.lt_one_of_isTopologicallyNilpotent
+      ((v.isEquiv_restrict.isContinuous_iff.mp hv).lt_one_of_isTopologicallyNilpotent
         (P.isTopologicallyNilpotent_of_mem_idealOfDefinition ha)).le
-  · intro t ht
-    have hnil := P.isTopologicallyNilpotent_of_mem_idealOfDefinition (hs ▸ Ideal.subset_span ht)
-    have hcof : CofinalValue v (t : A) := hv.cofinalValue_of_isTopologicallyNilpotent hnil
-    rw [cofinalValue_iff]
-    intro γ hγ
-    obtain ⟨r, q, hr, hq, hrq⟩ :=
-      (v.restrict.coarsenByUnits H).exists_div_eq_of_unit (Units.mk0 γ hγ.ne')
-    simp only [Units.val_mk0] at hrq
-    have hrv : v.restrict r ≠ 0 := fun h ↦ by
-      rw [coarsenByUnits_apply, h, map_zero] at hr; exact lt_irrefl 0 hr
-    have hqv : v.restrict q ≠ 0 := fun h ↦ by
-      rw [coarsenByUnits_apply, h, map_zero] at hq; exact lt_irrefl 0 hq
-    obtain ⟨n, hn⟩ := cofinalValue_iff.mp hcof
-      (v.restrict r / v.restrict q * (d : ValueGroup₀ (.ofClass v))⁻¹)
-      (by simp [zero_lt_iff, hrv, hqv, Units.ne_zero d])
-    refine ⟨n, ?_⟩
-    have hemb : ValueGroup₀.embedding γ =
-        (v.restrict.coarsenByUnits H) r / (v.restrict.coarsenByUnits H) q := by
-      rw [← hrq, map_div₀, Valuation.embedding_restrict, Valuation.embedding_restrict]
-    rw [← map_pow, Valuation.restrict_lt_iff_lt_embedding, hemb, coarsenByUnits_apply,
-      coarsenByUnits_apply, coarsenByUnits_apply, map_pow, ← map_div₀]
-    calc coarsenMapOfValueGroup H (v.restrict ↑t ^ n)
-        ≤ coarsenMapOfValueGroup H
-            (v.restrict r / v.restrict q * (d : ValueGroup₀ (.ofClass v))⁻¹) :=
-          coarsenMapOfValueGroup_monotone H hn.le
-      _ < coarsenMapOfValueGroup H (v.restrict r / v.restrict q) := by
-          rw [map_mul, map_inv₀, coarsenMapOfValueGroup_apply_coe]
-          refine mul_lt_of_lt_one_right ?_ ?_
-          · refine zero_lt_iff.mpr ?_
-            rw [ne_eq, map_eq_zero, div_eq_zero_iff]
-            push Not
-            exact ⟨hrv, hqv⟩
-          · rw [← WithZero.coe_inv, WithZero.coe_lt_one]
-            simpa using hdq
+  · exact cofinalValue_coarsenByUnits_restrict hdq
+      (hv.cofinalValue_of_isTopologicallyNilpotent
+        (P.isTopologicallyNilpotent_of_mem_idealOfDefinition (hs ▸ Ideal.subset_span ht)))
 
 end Valuation
 
