@@ -399,52 +399,57 @@ instance isTopologicalRing_adicCompletionIntegers :
   inferInstanceAs (IsTopologicalRing
     (Valued.v (R := v.adicCompletion K)).valuationSubring.toSubring)
 
-/-- The subspace topology on the ring of integers `𝒪_v` of an adic completion is the `𝔪`-adic
-topology of its maximal ideal.
+/-- **Each power of the maximal ideal of `𝒪_v` is open**: `𝔪 ^ n` is the preimage under the
+inclusion `𝒪_v → K_v` of a closed valuation ball, and those are open. -/
+theorem isOpen_maximalIdeal_pow_adicCompletionIntegers (n : ℕ) :
+    IsOpen ((IsLocalRing.maximalIdeal (v.adicCompletionIntegers K) ^ n :
+      Ideal (v.adicCompletionIntegers K)) : Set (v.adicCompletionIntegers K)) := by
+  obtain ⟨z, hz⟩ := v.valuedAdicCompletion_surjective K (exp (-(n : ℤ)))
+  have hr0 : Valued.v.restrict z ≠ 0 := by
+    intro h
+    have h0 : Valued.v z = 0 := by rw [← Valuation.embedding_restrict, h, map_zero]
+    rw [hz] at h0
+    exact exp_ne_zero h0
+  have : ((IsLocalRing.maximalIdeal (v.adicCompletionIntegers K) ^ n :
+        Ideal (v.adicCompletionIntegers K)) : Set (v.adicCompletionIntegers K)) =
+      (fun x : v.adicCompletionIntegers K ↦ (x : v.adicCompletion K)) ⁻¹'
+        {y | Valued.v.restrict y ≤ Valued.v.restrict z} := by
+    ext x
+    rw [Set.mem_preimage, Set.mem_ofPred, Valuation.restrict_le_iff_le_embedding,
+      Valuation.embedding_restrict, hz]
+    exact v.mem_maximalIdeal_pow_iff (K := K)
+  rw [this]
+  exact (Valued.isOpen_closedBall _ hr0).preimage continuous_subtype_val
 
-Both inclusions come from `mem_maximalIdeal_pow_iff`: it exhibits each `𝔪 ^ n` as the preimage of
-a closed ball, which is open, and conversely lets a neighbourhood of `0` cut out by a valuation
-bound be undercut by some `𝔪 ^ n`. -/
+/-- **Every neighbourhood of `0` in `𝒪_v` contains a power of the maximal ideal.** A neighbourhood
+is cut out by a valuation bound, and `exp` takes some integer below that bound; the corresponding
+`𝔪 ^ n` is then undercut by it. -/
+theorem exists_maximalIdeal_pow_subset_of_mem_nhds {s : Set (v.adicCompletionIntegers K)}
+    (hs : s ∈ nhds 0) : ∃ n : ℕ, ((IsLocalRing.maximalIdeal (v.adicCompletionIntegers K) ^ n :
+      Ideal (v.adicCompletionIntegers K)) : Set (v.adicCompletionIntegers K)) ⊆ s := by
+  obtain ⟨t, ht, hts⟩ := mem_nhds_subtype _ _ _ |>.mp hs
+  rw [ZeroMemClass.coe_zero] at ht
+  obtain ⟨γ, hγ⟩ := Valued.mem_nhds_zero.mp ht
+  obtain ⟨m, hm⟩ : ∃ m : ℤ, exp m < MonoidWithZeroHom.ValueGroup₀.embedding γ.1 := by
+    obtain ⟨a, ha⟩ :=
+      WithZero.ne_zero_iff_exists.mp (MonoidWithZeroHom.ValueGroup₀.embedding_unit_ne_zero γ)
+    refine ⟨Multiplicative.toAdd a - 1, ?_⟩
+    rw [← ha, show (a : ℤᵐ⁰) = exp (Multiplicative.toAdd a) from rfl]
+    exact exp_lt_exp.mpr (by lia)
+  refine ⟨(-m).toNat, fun x hx ↦ hts ?_⟩
+  refine Set.mem_preimage.mpr (hγ ?_)
+  have h1 := v.mem_maximalIdeal_pow_iff (K := K) |>.mp hx
+  refine Set.mem_ofPred.mpr ((Valuation.restrict_lt_iff_lt_embedding (v := Valued.v)).mpr
+    (h1.trans_lt ?_))
+  calc exp (-(((-m).toNat : ℤ))) ≤ exp m := exp_le_exp.mpr (by lia)
+    _ < _ := hm
+
+/-- The subspace topology on the ring of integers `𝒪_v` of an adic completion is the `𝔪`-adic
+topology of its maximal ideal. -/
 theorem isAdic_maximalIdeal_adicCompletionIntegers :
-    IsAdic (IsLocalRing.maximalIdeal (v.adicCompletionIntegers K)) := by
-  rw [isAdic_iff]
-  constructor
-  · -- each `𝔪 ^ n` is open: it is the preimage of a closed ball
-    intro n
-    obtain ⟨z, hz⟩ := v.valuedAdicCompletion_surjective K (exp (-(n : ℤ)))
-    have hr0 : Valued.v.restrict z ≠ 0 := by
-      intro h
-      have h0 : Valued.v z = 0 := by rw [← Valuation.embedding_restrict, h, map_zero]
-      rw [hz] at h0
-      exact exp_ne_zero h0
-    have : ((IsLocalRing.maximalIdeal (v.adicCompletionIntegers K) ^ n :
-          Ideal (v.adicCompletionIntegers K)) : Set (v.adicCompletionIntegers K)) =
-        (fun x : v.adicCompletionIntegers K ↦ (x : v.adicCompletion K)) ⁻¹'
-          {y | Valued.v.restrict y ≤ Valued.v.restrict z} := by
-      ext x
-      rw [Set.mem_preimage, Set.mem_ofPred, Valuation.restrict_le_iff_le_embedding,
-        Valuation.embedding_restrict, hz]
-      exact v.mem_maximalIdeal_pow_iff (K := K)
-    rw [this]
-    exact (Valued.isOpen_closedBall _ hr0).preimage continuous_subtype_val
-  · -- each neighbourhood of `0` contains some `𝔪 ^ n`
-    intro s hs
-    obtain ⟨t, ht, hts⟩ := mem_nhds_subtype _ _ _ |>.mp hs
-    rw [ZeroMemClass.coe_zero] at ht
-    obtain ⟨γ, hγ⟩ := Valued.mem_nhds_zero.mp ht
-    obtain ⟨m, hm⟩ : ∃ m : ℤ, exp m < MonoidWithZeroHom.ValueGroup₀.embedding γ.1 := by
-      obtain ⟨a, ha⟩ :=
-        WithZero.ne_zero_iff_exists.mp (MonoidWithZeroHom.ValueGroup₀.embedding_unit_ne_zero γ)
-      refine ⟨Multiplicative.toAdd a - 1, ?_⟩
-      rw [← ha, show (a : ℤᵐ⁰) = exp (Multiplicative.toAdd a) from rfl]
-      exact exp_lt_exp.mpr (by lia)
-    refine ⟨(-m).toNat, fun x hx ↦ hts ?_⟩
-    refine Set.mem_preimage.mpr (hγ ?_)
-    have h1 := v.mem_maximalIdeal_pow_iff (K := K) |>.mp hx
-    refine Set.mem_ofPred.mpr ((Valuation.restrict_lt_iff_lt_embedding (v := Valued.v)).mpr
-      (h1.trans_lt ?_))
-    calc exp (-(((-m).toNat : ℤ))) ≤ exp m := exp_le_exp.mpr (by lia)
-      _ < _ := hm
+    IsAdic (IsLocalRing.maximalIdeal (v.adicCompletionIntegers K)) :=
+  isAdic_iff.mpr ⟨isOpen_maximalIdeal_pow_adicCompletionIntegers (K := K) v,
+    fun _ hs ↦ exists_maximalIdeal_pow_subset_of_mem_nhds (K := K) v hs⟩
 
 /-- `𝒪_v` is complete: it is a closed subset of the complete field `K_v`. -/
 instance completeSpace_adicCompletionIntegers : CompleteSpace (v.adicCompletionIntegers K) :=
