@@ -15,7 +15,9 @@ public import Mathlib.SetTheory.Cardinal.Finite
 * `TauCeti.card_nonempty_finset` counts the nonempty finsets of a finite type.
 * `TauCeti.sum_subtype_card_eq_sum_update` reindexes a sum over the subsets of size one less than
   `card ι` as a sum over `ι`: those subsets are exactly the complements of singletons, and
-  overwriting a constant function on such a complement is updating it at the missing point.
+  overwriting a constant function on such a complement is updating it at the missing point. The
+  bijection is Mathlib's, taken from the inline argument in
+  `ContinuousMultilinearMap.changeOrigin_toFormalMultilinearSeries`.
 -/
 
 public section
@@ -38,7 +40,12 @@ theorem card_nonempty_finset {ι : Type*} [Finite ι] :
 
 /-- **Summing over the subsets of size one less than `card ι` is summing over the points.** Such a
 subset is the complement of a singleton, and `Finset.piecewise` against such a complement is
-`Function.update` at the missing point, so a sum of `F` over those subsets is a sum over `ι`. -/
+`Function.update` at the missing point, so a sum of `F` over those subsets is a sum over `ι`.
+
+The bijection is the one used inside Mathlib's
+`ContinuousMultilinearMap.changeOrigin_toFormalMultilinearSeries`
+(`Mathlib/Analysis/Calculus/FDeriv/Analytic.lean`), where it appears inline and specialised to that
+proof's summand; this states it on its own, for an arbitrary summand and index type. -/
 theorem sum_subtype_card_eq_sum_update {ι α M : Type*} [Fintype ι] [DecidableEq ι]
     [AddCommMonoid M] {m : ℕ} (hm : Fintype.card ι = m + 1) (F : (ι → α) → M) (x y : α) :
     (∑ s : {s : Finset ι // s.card = m}, F (s.1.piecewise (fun _ ↦ x) fun _ ↦ y)) =
