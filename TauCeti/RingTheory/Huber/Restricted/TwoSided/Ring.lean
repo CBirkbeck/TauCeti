@@ -5,10 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Algebra.Algebra.Bilinear
 public import Mathlib.Topology.Algebra.InfiniteSum.DiscreteConvolution
 public import Mathlib.Topology.Algebra.InfiniteSum.Nonarchimedean
-public import TauCeti.RingTheory.Huber.Restricted.TwoSidedSeries
+public import TauCeti.RingTheory.Huber.Restricted.TwoSided.Series
 
 /-!
 # The ring of two-sided restricted series `A⟨X, X⁻¹⟩`
@@ -55,6 +54,9 @@ carry none, so the `Finset`-indexed Cauchy-product lemmas do not apply here at a
   `DiscreteConvolution.addConvolution` along the bilinear map `LinearMap.mul ℤ A`.
 * `TauCeti.Huber.twoSidedRestrictedSubmodule.instRing`, `instCommRing`, `instAlgebra`: **the ring
   structure**, and the `A`-algebra structure of Example 6.39 when `A` is commutative.
+* `TauCeti.Huber.twoSidedMonomial`: the monomial `a Xⁿ`, and with it
+  `TauCeti.Huber.twoSidedX` and `TauCeti.Huber.twoSidedXInv` — the Laurent variable `X` and its
+  inverse, which Wedhorn writes `ζ` and `ζ⁻¹`.
 
 ## Main results
 
@@ -66,11 +68,18 @@ carry none, so the `Finset`-indexed Cauchy-product lemmas do not apply here at a
 * `TauCeti.Huber.summable_mul_sub_of_mem_twoSidedRestrictedSubmodule` and
   `TauCeti.Huber.addConvolutionExists_of_mem_twoSidedRestrictedSubmodule`: over a complete ring the
   coefficient series of a product converge.
+* `TauCeti.Huber.twoSidedMonomial_mul_twoSidedMonomial`: **monomials add degrees**,
+  `(a Xᵐ)(b Xⁿ) = ab X^{m+n}`, and hence `TauCeti.Huber.twoSidedX_mul_twoSidedXInv`: `X` is a unit
+  with inverse `X⁻¹`. Both hold with no completeness, summability or separation hypothesis, since
+  only one term of the coefficient series survives.
+* `TauCeti.Huber.coe_mul_apply`: the coefficient of a product read off an element of the submodule,
+  `(fg)ₙ = ∑' k, aₖ b_{n-k}`.
 * `TauCeti.Huber.coe_mul_twoSidedRestrictedSubmodule`,
-  `TauCeti.Huber.coe_one_twoSidedRestrictedSubmodule` and
+  `TauCeti.Huber.coe_one_twoSidedRestrictedSubmodule`,
+  `TauCeti.Huber.coe_twoSidedMonomial` and
   `TauCeti.Huber.coe_algebraMap_twoSidedRestrictedSubmodule`: the computation API. The instance
-  bodies are not exposed, so these are how a product, the unit and the structure map are computed
-  outside this module.
+  bodies are not exposed, so these are how a product, the unit, a monomial and the structure map are
+  computed outside this module.
 
 ## Implementation notes
 
@@ -166,7 +175,83 @@ not exposed, so this is how the unit is computed outside this module. -/
 theorem coe_one_twoSidedRestrictedSubmodule :
     ((1 : twoSidedRestrictedSubmodule A A) : ℤ → A) = Pi.single 0 1 := rfl
 
+/-- **The coefficient formula for a product**, on the submodule rather than on raw families:
+`(fg)ₙ = ∑' k, aₖ b_{n-k}`. This is the form a consumer computing with elements of `A⟨X, X⁻¹⟩`
+wants, and it needs no completeness — where the series fails to converge both sides are `0` by the
+`tsum` convention. -/
+@[simp]
+theorem coe_mul_apply (f g : twoSidedRestrictedSubmodule A A) (n : ℤ) :
+    ((f * g : twoSidedRestrictedSubmodule A A) : ℤ → A) n
+      = ∑' k : ℤ, (f : ℤ → A) k * (g : ℤ → A) (n - k) := by
+  rw [coe_mul_twoSidedRestrictedSubmodule, addConvolution_mul_apply]
+
+/-- **The monomial `a Xⁿ`** of `A⟨X, X⁻¹⟩`: the family supported at degree `n` with value `a`.
+Restrictedness is `single_mem_twoSidedRestrictedSubmodule`. -/
+@[expose] def twoSidedMonomial (n : ℤ) (a : A) : twoSidedRestrictedSubmodule A A :=
+  ⟨Pi.single n a, single_mem_twoSidedRestrictedSubmodule n a⟩
+
+@[simp, norm_cast]
+theorem coe_twoSidedMonomial (n : ℤ) (a : A) :
+    (twoSidedMonomial n a : ℤ → A) = Pi.single n a := rfl
+
+/-- The unit is the degree-`0` monomial `1 = 1 · X⁰`. -/
+@[simp]
+theorem twoSidedMonomial_zero_one : twoSidedMonomial 0 (1 : A) = 1 := rfl
+
+/-- **The Laurent variable `X`**, the degree-`1` monomial. Wedhorn writes it `ζ`. -/
+@[expose] def twoSidedX : twoSidedRestrictedSubmodule A A := twoSidedMonomial 1 1
+
+/-- **The inverse Laurent variable `X⁻¹`**, the degree-`(-1)` monomial. It is a genuine inverse of
+`twoSidedX` (`twoSidedX_mul_twoSidedXInv`), which is what distinguishes `A⟨X, X⁻¹⟩` from the
+one-sided `A⟨X⟩`. -/
+@[expose] def twoSidedXInv : twoSidedRestrictedSubmodule A A := twoSidedMonomial (-1) 1
+
+@[simp, norm_cast]
+theorem coe_twoSidedX :
+    ((twoSidedX : twoSidedRestrictedSubmodule A A) : ℤ → A) = Pi.single 1 1 := rfl
+
+@[simp, norm_cast]
+theorem coe_twoSidedXInv :
+    ((twoSidedXInv : twoSidedRestrictedSubmodule A A) : ℤ → A) = Pi.single (-1) 1 := rfl
+
 end Convolution
+
+section Monomial
+
+variable {A : Type*} [Ring A] [TopologicalSpace A] [NonarchimedeanRing A]
+
+/-- **Monomials multiply by adding degrees**: `(a Xᵐ)(b Xⁿ) = ab X^{m+n}`.
+
+Only one term of the coefficient series is nonzero, so this needs neither completeness,
+summability, nor a separation axiom — unlike the ring axioms themselves. It is the computation rule
+for the Laurent expressions Wedhorn's §8.2.1 is written in. -/
+@[simp]
+theorem twoSidedMonomial_mul_twoSidedMonomial (m n : ℤ) (a b : A) :
+    twoSidedMonomial m a * twoSidedMonomial n b = twoSidedMonomial (m + n) (a * b) := by
+  ext p
+  -- Only `k = m` contributes to `∑' k, (a Xᵐ)ₖ (b Xⁿ)_{p-k}`.
+  rw [coe_mul_apply, coe_twoSidedMonomial, coe_twoSidedMonomial, coe_twoSidedMonomial,
+    tsum_eq_single m fun k hk ↦ by simp [Pi.single_eq_of_ne hk]]
+  -- What survives is `a · (b Xⁿ)_{p-m}`, which is `ab` exactly when `p = m + n`.
+  rcases eq_or_ne p (m + n) with rfl | hp
+  · simp
+  · rw [Pi.single_eq_of_ne hp, Pi.single_eq_of_ne (by grind : p - m ≠ n), mul_zero]
+
+/-- **`X` and `X⁻¹` are mutually inverse.** This is what distinguishes `A⟨X, X⁻¹⟩` from the
+one-sided `A⟨X⟩`, and it is the fact Wedhorn's Example 6.39 is about. -/
+@[simp]
+theorem twoSidedX_mul_twoSidedXInv :
+    (twoSidedX * twoSidedXInv : twoSidedRestrictedSubmodule A A) = 1 := by
+  rw [twoSidedX, twoSidedXInv, twoSidedMonomial_mul_twoSidedMonomial]
+  norm_num
+
+@[simp]
+theorem twoSidedXInv_mul_twoSidedX :
+    (twoSidedXInv * twoSidedX : twoSidedRestrictedSubmodule A A) = 1 := by
+  rw [twoSidedX, twoSidedXInv, twoSidedMonomial_mul_twoSidedMonomial]
+  norm_num
+
+end Monomial
 
 section Summable
 

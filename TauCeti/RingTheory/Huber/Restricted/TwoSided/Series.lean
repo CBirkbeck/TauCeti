@@ -57,7 +57,7 @@ a placement hazard:
 * `TauCeti.Huber.twoSidedRestrictedSubmodule_ext`: coefficientwise extensionality.
 * `TauCeti.Huber.single_mem_twoSidedRestrictedSubmodule`: a family supported at one degree is
   restricted; at `M = A` these are the monomials `a Xⁿ`, and `X⁰ = 1` is the unit of the ring
-  structure built in `TauCeti.RingTheory.Huber.Restricted.TwoSidedRing`.
+  structure built in `TauCeti.RingTheory.Huber.Restricted.TwoSided.Ring`.
 * `TauCeti.Huber.twoSidedRestrictedSubmodule_eq_sup` and
   `TauCeti.Huber.disjoint_twoSidedRestricted_nonneg_neg`: **the degree decomposition and its
   directness** — `A⟨X, X⁻¹⟩` is the sum of its non-negative and negative parts, and that sum is
@@ -76,7 +76,7 @@ a placement hazard:
 ## Implementation notes
 
 Only the additive and `A`-module structure is built here. The **ring** structure lives in
-`TauCeti.RingTheory.Huber.Restricted.TwoSidedRing`: the coefficient convolution
+`TauCeti.RingTheory.Huber.Restricted.TwoSided.Ring`: the coefficient convolution
 `(fg)ₙ = ∑_{i + j = n} aᵢ bⱼ` is a *finite* sum for one-sided series — which is what
 `TauCeti.Huber.IsRestricted.mul` exploits, through `MvPowerSeries.coeff_mul` over a finite
 antidiagonal — but over `ℤ` that antidiagonal is infinite, so multiplication needs a summability
