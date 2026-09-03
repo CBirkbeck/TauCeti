@@ -25,12 +25,15 @@ hypotheses of its own, such as those of `IsArithFrobAt.exists_of_isInvariant`.
 
 * `IsArithFrobAt.eq_of_isUnramifiedAt` — a Frobenius element is unique for a faithful action at an
   unramified prime.
-* `TauCeti.frobeniusFiber_card_eq_of_isConj` — conjugate elements have equipotent fibers above a
-  fixed ideal of the base.
+* `TauCeti.nonempty_frobeniusFiber_equiv_of_isConj` — conjugate elements have equipotent fibers
+  above a fixed ideal of the base, as a bijection between them.
+* `TauCeti.frobeniusFiber_card_eq_of_isConj` — the `Nat.card` form of that equipotence.
 
-The second is the "distributed evenly" step of Chebotarev's density theorem: where the fibers do
-partition the primes above `p`, it is what lets a count over a whole conjugacy class be recovered
-from the count at a single representative.
+The equipotence is the "distributed evenly" step of Chebotarev's density theorem: where the fibers
+do partition the primes above `p`, it is what lets a count over a whole conjugacy class be
+recovered from the count at a single representative. Because `S` is an arbitrary commutative ring
+the fibers may be infinite, and `Nat.card` is `0` on an infinite type; the bijection is therefore
+the primary statement and the `Nat.card` identity is derived from it.
 
 ## Implementation notes
 
@@ -51,8 +54,9 @@ available at every prime.
 * Birkbeck–Brasca, [chebotarev-density](https://github.com/CBirkbeck/chebotarev-density)
   (Apache-2.0), commit `8575c9df1ae0a61120ab5c964c7911414254bec7`, file
   `CebotarevDensity/FixedFieldDensity.lean`, declaration `frobeniusFibre_card_eq_of_isConj`
-  (source line 54). The statement and proof of `frobeniusFiber_card_eq_of_isConj` below are
-  adapted from that declaration.
+  (source line 54). The transport argument of `nonempty_frobeniusFiber_equiv_of_isConj` below,
+  and the statement of the `frobeniusFiber_card_eq_of_isConj` derived from it, are adapted from
+  that declaration; the source states only the `Nat.card` form.
 -/
 
 public section
@@ -87,19 +91,31 @@ private theorem exists_isArithFrobAt_smul {p : Ideal R} {σ τ c : G} {P : Ideal
   refine ⟨inferInstance, inferInstance, ?_, hτ ▸ hfrob.conj c⟩
   simpa using (MulAction.injective c).ne hne
 
-/-- **Equipotent Frobenius fibers.** For `IsConj σ σ'`, the nonzero primes of `S` above `p` with
-arithmetic Frobenius `σ` are equal in number to those with arithmetic Frobenius `σ'`. -/
-theorem frobeniusFiber_card_eq_of_isConj (p : Ideal R) (σ σ' : G) (hc : IsConj σ σ') :
-    Nat.card {P : Ideal S // ∃ (_ : P.IsPrime) (_ : P.LiesOver p) (_ : P ≠ ⊥),
-        IsArithFrobAt R σ P} =
-      Nat.card {P : Ideal S // ∃ (_ : P.IsPrime) (_ : P.LiesOver p) (_ : P ≠ ⊥),
-        IsArithFrobAt R σ' P} := by
+/-- **Equipotent Frobenius fibers.** For `IsConj σ σ'`, the action of a witnessing conjugator is a
+bijection from the nonzero primes of `S` above `p` with arithmetic Frobenius `σ` onto those with
+arithmetic Frobenius `σ'`. The bijection depends on the choice of conjugator, so it is stated as
+`Nonempty`. -/
+theorem nonempty_frobeniusFiber_equiv_of_isConj (p : Ideal R) (σ σ' : G) (hc : IsConj σ σ') :
+    Nonempty ({P : Ideal S // ∃ (_ : P.IsPrime) (_ : P.LiesOver p) (_ : P ≠ ⊥),
+        IsArithFrobAt R σ P} ≃
+      {P : Ideal S // ∃ (_ : P.IsPrime) (_ : P.LiesOver p) (_ : P ≠ ⊥),
+        IsArithFrobAt R σ' P}) := by
   -- conjugating by a witnessing element `c` is the bijection between the two fibers
   obtain ⟨c, rfl⟩ := isConj_iff.mp hc
-  refine Nat.card_congr (Equiv.subtypeEquiv (MulAction.toPerm c) fun P ↦ ?_)
+  refine ⟨Equiv.subtypeEquiv (MulAction.toPerm c) fun P ↦ ?_⟩
   simp only [MulAction.toPerm_apply]
   refine ⟨exists_isArithFrobAt_smul rfl, fun h ↦ ?_⟩
   -- the reverse direction is the same transport along `c⁻¹`
   simpa using exists_isArithFrobAt_smul (c := c⁻¹) (τ := σ) (by group) h
+
+/-- Conjugate elements have fibers of the same `Nat.card` above a fixed ideal of the base. This is
+the cardinality shadow of `nonempty_frobeniusFiber_equiv_of_isConj`: when the fibers are infinite
+both sides are `0`, so it is the bijection there that carries the content. -/
+theorem frobeniusFiber_card_eq_of_isConj (p : Ideal R) (σ σ' : G) (hc : IsConj σ σ') :
+    Nat.card {P : Ideal S // ∃ (_ : P.IsPrime) (_ : P.LiesOver p) (_ : P ≠ ⊥),
+        IsArithFrobAt R σ P} =
+      Nat.card {P : Ideal S // ∃ (_ : P.IsPrime) (_ : P.LiesOver p) (_ : P ≠ ⊥),
+        IsArithFrobAt R σ' P} :=
+  (nonempty_frobeniusFiber_equiv_of_isConj p σ σ' hc).elim Nat.card_congr
 
 end TauCeti
