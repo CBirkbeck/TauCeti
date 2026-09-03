@@ -80,7 +80,8 @@ The bookkeeping for pure tensors on two strands carries no symplectic content an
 `TauCeti.LinearAlgebra.PiTensorProduct.TwoStrand`. This file consumes one lemma from there,
 `Matrix.piTensorProductMap_bivector`, which pushes a whole bivector through the tensor square; the
 orthogonal file consumes the pointwise `Matrix.piTensorProductMap_tprod_single` together with
-`TauCeti.tprod_fin_two`, and `TauCeti.sum_pi_fin_two` supports those two from inside that module.
+`TauCeti.tprod_fin_two`, and `TauCeti.sum_pi_fin_two` supports
+`Matrix.piTensorProductMap_tprod_single` from inside that module.
 
 ## Main definitions
 
