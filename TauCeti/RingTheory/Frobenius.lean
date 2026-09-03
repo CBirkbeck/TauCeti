@@ -27,9 +27,9 @@ each of them, which again carries hypotheses of its own, such as those of
 
 * `IsArithFrobAt.eq_of_isUnramifiedAt` — a Frobenius element is unique for a faithful action at an
   unramified prime of a Noetherian ring whose prime complement consists of non-zero-divisors.
-* `TauCeti.nonempty_frobeniusFiber_equiv_of_isConj` — conjugate elements have equipotent fibers
+* `Ideal.nonempty_frobenius_fiber_equiv_of_isConj` — conjugate elements have equipotent fibers
   above a fixed ideal of the base, as a bijection between them.
-* `TauCeti.frobeniusFiber_card_eq_of_isConj` — the `Nat.card` form of that equipotence.
+* `Ideal.frobenius_fiber_card_eq_of_isConj` — the `Nat.card` form of that equipotence.
 
 The equipotence is the "distributed evenly" step of Chebotarev's density theorem: where the fibers
 do partition the primes above `p`, it is what lets a count over a whole conjugacy class be
@@ -56,8 +56,8 @@ available at every prime.
 * Birkbeck–Brasca, [chebotarev-density](https://github.com/CBirkbeck/chebotarev-density)
   (Apache-2.0), commit `8575c9df1ae0a61120ab5c964c7911414254bec7`, file
   `CebotarevDensity/FixedFieldDensity.lean`, declaration `frobeniusFibre_card_eq_of_isConj`
-  (source line 54). The transport argument of `nonempty_frobeniusFiber_equiv_of_isConj` below,
-  and the statement of the `frobeniusFiber_card_eq_of_isConj` derived from it, are adapted from
+  (source line 54). The transport argument of `nonempty_frobenius_fiber_equiv_of_isConj` below,
+  and the statement of the `frobenius_fiber_card_eq_of_isConj` derived from it, are adapted from
   that declaration; the source states only the `Nat.card` form.
 -/
 
@@ -67,7 +67,7 @@ open nonZeroDivisors
 
 open scoped Pointwise
 
-namespace TauCeti
+namespace Ideal
 
 /-- Suppose `S` is Noetherian and `Q` is a prime of `S` containing all zero-divisors. If the
 action of `G` on `S` is faithful and the extension is unramified at `Q`, then a Frobenius element
@@ -97,7 +97,7 @@ private theorem exists_isArithFrobAt_smul {p : Ideal R} {σ τ c : G} {P : Ideal
 bijection from the nonzero primes of `S` above `p` with arithmetic Frobenius `σ` onto those with
 arithmetic Frobenius `σ'`. The bijection depends on the choice of conjugator, so it is stated as
 `Nonempty`. -/
-theorem nonempty_frobeniusFiber_equiv_of_isConj (p : Ideal R) (σ σ' : G) (hc : IsConj σ σ') :
+theorem nonempty_frobenius_fiber_equiv_of_isConj (p : Ideal R) (σ σ' : G) (hc : IsConj σ σ') :
     Nonempty ({P : Ideal S // ∃ (_ : P.IsPrime) (_ : P.LiesOver p) (_ : P ≠ ⊥),
         IsArithFrobAt R σ P} ≃
       {P : Ideal S // ∃ (_ : P.IsPrime) (_ : P.LiesOver p) (_ : P ≠ ⊥),
@@ -111,13 +111,13 @@ theorem nonempty_frobeniusFiber_equiv_of_isConj (p : Ideal R) (σ σ' : G) (hc :
   simpa using exists_isArithFrobAt_smul (c := c⁻¹) (τ := σ) (by group) h
 
 /-- Conjugate elements have fibers of the same `Nat.card` above a fixed ideal of the base. This is
-the cardinality shadow of `nonempty_frobeniusFiber_equiv_of_isConj`: when the fibers are infinite
+the cardinality shadow of `nonempty_frobenius_fiber_equiv_of_isConj`: when the fibers are infinite
 both sides are `0`, so it is the bijection there that carries the content. -/
-theorem frobeniusFiber_card_eq_of_isConj (p : Ideal R) (σ σ' : G) (hc : IsConj σ σ') :
+theorem frobenius_fiber_card_eq_of_isConj (p : Ideal R) (σ σ' : G) (hc : IsConj σ σ') :
     Nat.card {P : Ideal S // ∃ (_ : P.IsPrime) (_ : P.LiesOver p) (_ : P ≠ ⊥),
         IsArithFrobAt R σ P} =
       Nat.card {P : Ideal S // ∃ (_ : P.IsPrime) (_ : P.LiesOver p) (_ : P ≠ ⊥),
         IsArithFrobAt R σ' P} :=
-  (nonempty_frobeniusFiber_equiv_of_isConj p σ σ' hc).elim Nat.card_congr
+  (nonempty_frobenius_fiber_equiv_of_isConj p σ σ' hc).elim Nat.card_congr
 
-end TauCeti
+end Ideal
