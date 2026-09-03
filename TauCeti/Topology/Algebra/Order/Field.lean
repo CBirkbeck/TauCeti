@@ -30,9 +30,11 @@ The two error bounds are taken as separate `∃ C, ∀ᶠ …` hypotheses rather
 bound on `|f - g|`, because a caller that derives the two inequalities from different estimates
 arrives holding them in that shape and would otherwise have to recombine them.
 
-The same conclusion can be assembled from the `Asymptotics.IsEquivalent` API, via
-`Asymptotics.isEquivalent_of_tendsto_one` and `Asymptotics.isEquivalent_iff_tendsto_one`. The
-elementary route taken here builds in one step on `tendsto_bdd_div_atTop_nhds_zero` and keeps
+The same conclusion can be assembled from the `Asymptotics.IsEquivalent` API: the additive
+error is `=o[l] g` because `g` diverges, so `Asymptotics.IsEquivalent.add_isLittleO` gives
+`f ~[l] g`, and `Asymptotics.isEquivalent_iff_tendsto_one` turns that into the limit of the
+ratio. The elementary route taken here builds in one step on
+`tendsto_bdd_div_atTop_nhds_zero` and keeps
 both the hypotheses and the conclusion in the first-order `Filter.Tendsto` language, so that no
 caller has to introduce `IsEquivalent` merely to state a limit of a ratio.
 -/
