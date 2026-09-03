@@ -84,6 +84,8 @@ carry none, so the `Finset`-indexed Cauchy-product lemmas do not apply here at a
   `TauCeti.Huber.coe_algebraMap_twoSidedRestrictedSubmodule`: the computation API. The instance
   bodies are not exposed, so these are how a product, the unit, a monomial and the structure map are
   computed outside this module.
+* `TauCeti.Huber.convolution_assoc`: associativity of the coefficient convolution — the one ring
+  axiom Mathlib's `DiscreteConvolution` does not supply.
 
 ## Implementation notes
 
@@ -191,16 +193,19 @@ theorem coe_mul_apply (f g : twoSidedRestrictedSubmodule A A) (n : ℤ) :
 
 /-- **The monomial `a Xⁿ`** of `A⟨X, X⁻¹⟩`: the family supported at degree `n` with value `a`.
 Restrictedness is `single_mem_twoSidedRestrictedSubmodule`. -/
-@[expose] def twoSidedMonomial (n : ℤ) (a : A) : twoSidedRestrictedSubmodule A A :=
+def twoSidedMonomial (n : ℤ) (a : A) : twoSidedRestrictedSubmodule A A :=
   ⟨Pi.single n a, single_mem_twoSidedRestrictedSubmodule n a⟩
 
+/-- The coefficient family of the monomial `a Xⁿ` is `Pi.single n a`: the value `a` in degree `n`
+and `0` elsewhere. The definition's body is not exposed, so this is how a monomial's coefficients
+are read outside this module. -/
 @[simp, norm_cast]
 theorem coe_twoSidedMonomial (n : ℤ) (a : A) :
-    (twoSidedMonomial n a : ℤ → A) = Pi.single n a := rfl
+    (twoSidedMonomial n a : ℤ → A) = Pi.single n a := (rfl)
 
 /-- The unit is the degree-`0` monomial `1 = 1 · X⁰`. -/
 @[simp]
-theorem twoSidedMonomial_zero_one : twoSidedMonomial 0 (1 : A) = 1 := rfl
+theorem twoSidedMonomial_zero_one : twoSidedMonomial 0 (1 : A) = 1 := (rfl)
 
 end Convolution
 
@@ -275,10 +280,11 @@ variable [T0Space A]
 
 namespace twoSidedRestrictedSubmodule
 
-/-- Both bracketings of a triple product are the sum of `aᵢ bⱼ cₗ` over `{i + j + l = n}`. -/
--- It is the associativity field of `twoSidedRestrictedSubmodule.instRing`. `protected` so that
--- `open twoSidedRestrictedSubmodule` does not shadow `_root_.mul_assoc`.
-protected theorem mul_assoc (f g h : twoSidedRestrictedSubmodule A A) :
+/-- **The coefficient convolution is associative**: both bracketings of `fgh` are the sum of
+`aᵢ bⱼ cₗ` over `{i + j + l = n}`. This is the one ring axiom Mathlib's `DiscreteConvolution` does
+not supply, and it is what `twoSidedRestrictedSubmodule.instRing` is waiting on. It is named for the
+convolution rather than `mul_assoc` so that it neither shadows nor duplicates the standard lemma. -/
+theorem convolution_assoc (f g h : twoSidedRestrictedSubmodule A A) :
     f * g * h = f * (g * h) := by
   ext n
   simp only [coe_mul_twoSidedRestrictedSubmodule, addConvolution_mul_apply]
@@ -312,7 +318,7 @@ noncomputable instance instRing : Ring (twoSidedRestrictedSubmodule A A) where
   __ := instMul
   __ := instOne
   -- Associativity is the one ring axiom Mathlib's `DiscreteConvolution` lacks; it is proved here.
-  mul_assoc := twoSidedRestrictedSubmodule.mul_assoc
+  mul_assoc := convolution_assoc
   -- The unit laws are Mathlib's `single_addConvolution` and `addConvolution_single`, reached
   -- through the two coercion `simp` lemmas above.
   one_mul _ := Subtype.ext <| by simp
