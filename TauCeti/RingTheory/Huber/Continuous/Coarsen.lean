@@ -23,35 +23,16 @@ Properness is not decoration. If `H` were all of `Γ_v` the coarsening would tak
 `0` and `1`, so `{a | w a < w b}` would be the support of `v`, and continuity would force that
 support to be open — which it need not be.
 
-## What the argument needs
-
-Continuity is rebuilt from Wedhorn Remark 7.11(1), the cofinal-value criterion, in the form
-`TauCeti.Huber.PairOfDefinition.isContinuous_of_forall_cofinalValue`. Two things have to survive
-the coarsening, and each is one step:
-
-* the bound `v a ≤ 1` on an ideal of definition, which is monotonicity of the coarsening map;
-* cofinality of `v a` there, which is Wedhorn Corollary 1.21 — the statement carried here by
-  `TauCeti.IsCofinalElement.quotientMk`.
-
-Only the second uses properness, and it uses it exactly once: a monotone map gives `≤`, so a
-witness `d ∉ H` with `1 < d` is what turns that into the strict inequality cofinality asks for.
-The target is shrunk by `d⁻¹` before `v`'s own cofinality is invoked, and the resulting slack is
-what survives as strictness downstairs.
-
 ## Main results
 
 * `Valuation.IsContinuous.coarsenByUnits_restrict`: the coarsening of a continuous valuation by a
   proper convex subgroup of its value group is continuous.
+* `Valuation.cofinalValue_coarsenByUnits_restrict`: coarsening by a proper convex subgroup
+  preserves cofinality of a value, which is the half properness is needed for.
 
 ## References
 
 * [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), Remark 7.11 and Corollary 1.21.
-
-AINTLIB's `coarsen_maxAvoid_isContinuous_mulArchimedean` is *not* the source of this proof and is
-not a specialization of it: it fixes `H` to be `maxAvoid g₀`, carries a cofinality hypothesis on
-`g₀`, bundles a `MulArchimedean` conclusion, and is proved against a definition of continuity
-quantifying over the whole codomain rather than over attained values. Its direct sublevel-set
-argument does not transfer to this statement.
 -/
 
 public section
@@ -89,12 +70,15 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A]
 variable {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
 omit [TopologicalSpace A] in
--- Every positive element of the coarsened value group is a ratio of attained values; shrinking
--- that ratio by `d⁻¹` turns the monotone image of a cofinal power into a strict bound.
-private theorem cofinalValue_coarsenByUnits_restrict {v : Valuation A Γ₀}
-    {H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ} {d : (ValueGroup₀ (.ofClass v))ˣ}
-    (hd : 1 < QuotientGroup.mk' H.toSubgroup d) {a : A} (hcof : CofinalValue v a) :
-    CofinalValue (v.restrict.coarsenByUnits H) a := by
+/-- **Coarsening by a proper convex subgroup preserves cofinality of a value.** This is the half of
+Wedhorn Remark 7.11(2) that properness is needed for: the coarsening map is monotone but not
+strictly so, and properness is exactly what supplies the room to recover a strict inequality. -/
+theorem cofinalValue_coarsenByUnits_restrict {v : Valuation A Γ₀}
+    {H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ} (hH : H ≠ ⊤) {a : A}
+    (hcof : CofinalValue v a) : CofinalValue (v.restrict.coarsenByUnits H) a := by
+  -- Every positive element of the coarsened value group is a ratio of attained values; shrinking
+  -- that ratio by `d⁻¹` turns the monotone image of a cofinal power into a strict bound.
+  obtain ⟨d, hd⟩ := ConvexSubgroup.exists_one_lt_quotientMk hH
   rw [cofinalValue_iff]
   intro γ hγ
   obtain ⟨r, q, hr, hq, hrq⟩ :=
@@ -121,14 +105,12 @@ theorem IsContinuous.coarsenByUnits_restrict [IsTopologicalRing A] [IsHuberRing 
     (hH : H ≠ ⊤) : (v.restrict.coarsenByUnits H).IsContinuous := by
   obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := A)
   obtain ⟨s, hs⟩ := P.fg_idealOfDefinition
-  -- properness enters only through this witness, which the cofinality branch shrinks by
-  obtain ⟨d, hdq⟩ := ConvexSubgroup.exists_one_lt_quotientMk hH
   refine P.isContinuous_of_forall_cofinalValue _ hs (fun a ha ↦ ?_) fun t ht ↦ ?_
   · rw [coarsenByUnits_apply, ← map_one (coarsenMapOfValueGroup H)]
     exact coarsenMapOfValueGroup_monotone H
       ((v.isEquiv_restrict.isContinuous_iff.mp hv).lt_one_of_isTopologicallyNilpotent
         (P.isTopologicallyNilpotent_of_mem_idealOfDefinition ha)).le
-  · exact cofinalValue_coarsenByUnits_restrict hdq
+  · exact cofinalValue_coarsenByUnits_restrict hH
       (hv.cofinalValue_of_isTopologicallyNilpotent
         (P.isTopologicallyNilpotent_of_mem_idealOfDefinition (hs ▸ Ideal.subset_span ht)))
 
