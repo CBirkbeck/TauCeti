@@ -124,8 +124,9 @@ private theorem primePowerProd_smul_mul_smul_of_not_dvd {p a b m' n' m n d' j : 
     (hd'g.trans (Nat.gcd_dvd_left m' n')) (hd'g.trans (Nat.gcd_dvd_right m' n')) hj
   have hcopS : Nat.Coprime (p ^ j) d' :=
     (hp.coprime_iff_not_dvd.2 fun h ↦ hpg (h.trans hd'g)).pow_left j
-  rw [smul_mul_smul_comm, hidx, primePowerProd_mul_of_coprime_of_commMonoid D hcopD,
-    primePowerProd_mul_of_coprime_of_commMonoid S hcopS]
+  rw [smul_mul_smul_comm, hidx,
+    primePowerProd_mul_of_coprime D hcopD fun _ _ _ _ _ ↦ Commute.all _ _,
+    primePowerProd_mul_of_coprime S hcopS fun _ _ _ _ _ ↦ Commute.all _ _]
   ring_nf
 
 /-- The reindexing step: the product of the prime-power sum with the sum over the divisors of
@@ -181,7 +182,8 @@ theorem primePowerProd_mul_eq_sum_divisors_gcd
   | _ g ih =>
   rcases eq_or_ne g 1 with rfl | hg1
   · rw [Nat.divisors_one, Finset.sum_singleton, one_smul, Nat.one_mul,
-      Nat.div_one, primePowerProd_one, one_mul, ← primePowerProd_mul_of_coprime_of_commMonoid D hg]
+      Nat.div_one, primePowerProd_one, one_mul,
+      ← primePowerProd_mul_of_coprime D hg fun _ _ _ _ _ ↦ Commute.all _ _]
   -- Split both arguments at the least prime `p` of the gcd.
   have hg0 : g ≠ 0 := fun h ↦ hm (Nat.eq_zero_of_gcd_eq_zero_left (hg.trans h))
   set p := g.minFac with hp_def
