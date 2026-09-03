@@ -276,12 +276,14 @@ theorem heckeTScalarCompositeGamma0_mul_of_coprime {m n : ℕ} (hmn : m.Coprime 
 
 /-- The `Γ₀(N)` Hecke ring over `ℤ` as a *commutative* ring.
 
-`TauCeti.Nat.primePowerProd_mul_eq_sum_divisors_gcd` is stated over a `CommRing`, so the table
-below needs commutativity as a structure rather than as the pointwise
-`HeckeCosetModule.mul_comm_of_antiInvolution` the neighbouring proofs quote. This adds `mul_comm`
-to the *ambient* `Ring` instance rather than extending `commSemiringHeckeRingGamma0`, so its ring
-structure is the ambient one by construction and no diamond is introduced: the statement of
-`heckeTCompositeGamma0_mul` is in the ambient algebra and only its proof sees this.
+`TauCeti.Nat.primePowerProd_mul_eq_sum_divisors_gcd` asks for a `CommSemiring` structure on the
+coefficient type, so the table below needs commutativity as a *structure* rather than as the
+pointwise `HeckeCosetModule.mul_comm_of_antiInvolution` the neighbouring proofs quote. A `CommRing`
+supplies one, and this builds the shortest such: it adds `mul_comm` to the *ambient* `Ring`
+instance rather than extending `commSemiringHeckeRingGamma0`, so every operation it carries — and
+hence the `CommSemiring` the generic theorem sees — is the ambient one by construction and no
+diamond is introduced. The statement of `heckeTCompositeGamma0_mul` is therefore in the ambient
+algebra, and only its proof sees this.
 
 Private and local for the same reason `commSemiringHeckeRingGamma0` is not an instance — the
 anti-involution is data. -/
