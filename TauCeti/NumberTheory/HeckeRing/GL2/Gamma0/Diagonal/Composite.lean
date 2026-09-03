@@ -34,23 +34,13 @@ primality and no junk branch to reason around. The primality of `n.minFac` still
 mathematical work — it is what `heckeTCompositeGamma0_prime_pow` runs on — but it enters as a
 hypothesis of the lemmas rather than as a guard inside the definition.
 
-## The two grades of commutativity
+## What this file adds to the per-prime theory
 
-The *per-prime* product formula is not proved here: it is `heckeTGeneratorRecGamma0_mul`, in
-`Diagonal/PrimePower.lean`, a statement about the recurrence family with no assembly in it. This
-file consumes it, and the two assembled results it proves ask for different things.
-
-Coprime multiplicativity `T_{mn} = T_m · T_n` asks only that a block of `n` commute with the
-blocks of `m` at larger primes — the hypothesis `TauCeti.Nat.primePowerProd_mul_of_coprime`
-carries in place of a `CommMonoid` instance — so it is proved in the ambient `Semiring` its
-neighbours use, with the obligations discharged pointwise from
-`HeckeCosetModule.mul_comm_of_antiInvolution`.
-
-The divisor table asks for more: `TauCeti.Nat.primePowerProd_mul_eq_sum_divisors_gcd` is stated
-over a `CommRing`, so commutativity is needed as a *structure* rather than pointwise. It enters
-through the private `commRingHeckeRingGamma0`, which adds `mul_comm` to the ambient `Ring`
-instance; the ring structure is therefore the ambient one by construction, and only the proof of
-`heckeTCompositeGamma0_mul` ever sees it.
+The *per-prime* product formula is `heckeTGeneratorRecGamma0_mul`, in `Diagonal/PrimePower.lean`,
+a statement about the recurrence family with no assembly in it. This file assembles it over a
+factorisation, in two forms: multiplicativity at coprime arguments, and the full divisor table at
+arbitrary nonzero ones. Both rest on the commutativity of the `Γ₀(N)` Hecke ring, which comes from
+the Atkin–Lehner anti-involution.
 
 ## Main definitions
 
@@ -247,6 +237,15 @@ theorem heckeTScalarCompositeGamma0_prime_pow {p : ℕ} (hp : p.Prime) (v : ℕ)
   · simpa only [heckeTScalarCompositeGamma0_def] using
       TauCeti.Nat.primePowerProd_prime_pow (fun p v ↦ heckeTScalarGamma0 N p ^ v) hp hv
 
+/-- **At a bare prime the composite scalar is the scalar operator.** The `v = 1` case of
+`heckeTScalarCompositeGamma0_prime_pow`, stated separately for the same reason its
+`primePowerProd` counterpart is: a bare prime is not syntactically a power, so that lemma
+cannot fire on it. -/
+@[simp]
+theorem heckeTScalarCompositeGamma0_prime {p : ℕ} (hp : p.Prime) :
+    heckeTScalarCompositeGamma0 N p = heckeTScalarGamma0 N p := by
+  simpa using heckeTScalarCompositeGamma0_prime_pow N hp 1
+
 /-- The `Γ₀(N)` Hecke ring over `ℤ` as a *commutative* ring.
 
 `TauCeti.Nat.primePowerProd_mul_eq_sum_divisors_gcd` is stated over a `CommRing`, so the table
@@ -265,6 +264,26 @@ private noncomputable def commRingHeckeRingGamma0 :
     mul_comm := HeckeCosetModule.mul_comm_of_antiInvolution ℤ (atkinLehnerAntiInvolution N)
       (atkinLehnerAntiInvolution_onHeckeCoset_eq_self N) }
 
+/-- **The composite scalar vanishes at a bad prime.** If some prime sharing a factor with the
+level divides `n`, the block at that prime is `0` by `heckeTScalarGamma0_of_not_coprime` and it
+appears to a positive power, so the whole ordered product vanishes.
+
+This is what makes the bad divisors contribute nothing to `heckeTCompositeGamma0_mul`: the sum
+there runs over *all* divisors of `gcd m n`, and the ones that are not prime to the level drop
+out through this lemma rather than being excluded from the index.
+
+The proof reads the ordered product as a `Finsupp.prod`, which is a `CommMonoid` statement, so
+it is stated after `commRingHeckeRingGamma0` and uses it. -/
+theorem heckeTScalarCompositeGamma0_eq_zero_of_not_coprime {n p : ℕ} (hp : p.Prime) (hpn : p ∣ n)
+    (hn : n ≠ 0) (hpN : ¬ Nat.Coprime p N) :
+    heckeTScalarCompositeGamma0 N n = 0 := by
+  let := commRingHeckeRingGamma0 N
+  have hv : n.factorization p ≠ 0 := (hp.factorization_pos_of_dvd hn hpn).ne'
+  rw [heckeTScalarCompositeGamma0_def, TauCeti.Nat.primePowerProd_eq_factorization_prod]
+  refine Finset.prod_eq_zero (i := p) ?_ ?_
+  · simpa [Nat.support_factorization] using Nat.mem_primeFactors.2 ⟨hp, hpn, hn⟩
+  · simp only [heckeTScalarGamma0_of_not_coprime N hpN, zero_pow hv]
+
 /-- **Shimura, Theorem 3.24(3)** at level `Γ₀(N)`, in full — the global multiplication table:
 
 `T_m · T_n = ∑_{d ∣ gcd m n} d • (S_d · T_{mn/d²})`.
@@ -277,14 +296,19 @@ Both arguments must be nonzero. `heckeTCompositeGamma0` sends `0` to the empty p
 `gcd 0 0 = 0` has no divisors, so at `m = n = 0` the left side is `1` and the right an empty sum.
 
 Together with `heckeTCompositeGamma0_prime_pow` this determines every product of two composite
-elements from the prime-power data, which is what makes the `T_n` span a ring over a
-factorisation. -/
+elements from the prime-power data. Divisors sharing a factor with the level contribute nothing,
+by `heckeTScalarCompositeGamma0_eq_zero_of_not_coprime`, so the sum over *all* divisors of
+`gcd m n` is the right index even though only the good ones carry weight. -/
 theorem heckeTCompositeGamma0_mul {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) :
     heckeTCompositeGamma0 N m * heckeTCompositeGamma0 N n =
       ∑ d ∈ (Nat.gcd m n).divisors, (d : ℤ) •
         (heckeTScalarCompositeGamma0 N d * heckeTCompositeGamma0 N (m * n / d ^ 2)) := by
   let := commRingHeckeRingGamma0 N
-  simp only [heckeTCompositeGamma0_def, heckeTScalarCompositeGamma0_def]
+  -- The generic table is stated over a `CommSemiring` with `ℕ`-scalars; the Hecke ring is a
+  -- `Ring`, where `natCast_zsmul` identifies those with the `ℤ`-scalars its neighbours use.
+  simp only [heckeTCompositeGamma0_def, heckeTScalarCompositeGamma0_def,
+    show ∀ (d : ℕ) (x : 𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ), (d : ℤ) • x = d • x from
+      fun d x ↦ natCast_zsmul x d]
   refine TauCeti.Nat.primePowerProd_mul_eq_sum_divisors_gcd _ _ (fun p hp r s hrs ↦ ?_) hm hn
   -- The per-prime table is `heckeTGeneratorRecGamma0_mul`; all that is needed is to read the
   -- assembled products at prime powers back as the blocks they are assembled from.
@@ -297,6 +321,7 @@ theorem heckeTCompositeGamma0_mul {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) :
     (heckeTScalarCompositeGamma0_def N (p ^ v)).symm.trans
       (heckeTScalarCompositeGamma0_prime_pow N hp v)
   simp only [hD, hS]
-  exact heckeTGeneratorRecGamma0_mul N p hrs
+  refine (heckeTGeneratorRecGamma0_mul N p hrs).trans (Finset.sum_congr rfl fun i _ ↦ ?_)
+  exact natCast_zsmul _ _
 
 end HeckeRing.GL2

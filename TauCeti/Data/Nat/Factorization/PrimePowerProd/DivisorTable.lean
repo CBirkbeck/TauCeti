@@ -13,9 +13,9 @@ import Mathlib.Tactic.Ring
 /-!
 # The divisor multiplication table of a prime-power-multiplicative family
 
-Fix a commutative ring `R` and two block maps `D S : ℕ → ℕ → R`, and assemble each over a prime
-factorisation with `TauCeti.Nat.primePowerProd`. Suppose the assembled `D` obeys the *per-prime*
-table: for a prime `p` and `r ≤ s`,
+Fix a commutative semiring `R` and two block maps `D S : ℕ → ℕ → R`, and assemble each over a
+prime factorisation with `TauCeti.Nat.primePowerProd`. Suppose the assembled `D` obeys the
+*per-prime* table: for a prime `p` and `r ≤ s`,
 
 `D_{p^r} · D_{p^s} = ∑_{i ≤ r} pⁱ • (S_{pⁱ} · D_{p^{r+s−2i}})`.
 
@@ -28,17 +28,8 @@ Then it obeys the *global* one, over every pair of nonzero arguments at once:
 * `TauCeti.Nat.primePowerProd_mul_eq_sum_divisors_gcd`: the global table, deduced from the
   per-prime one.
 
-The deduction is a strong induction on `gcd m n`. When the gcd is `1` the divisor sum collapses to
-its `d = 1` term and the statement is coprime multiplicativity. Otherwise split off the least prime
-`p` of the gcd: `m = p^a·m'` and `n = p^b·n'` with `p` dividing neither `m'` nor `n'`, so both
-products factor, the prime-power halves meet the hypothesis, and the coprime halves meet the
-induction hypothesis at the strictly smaller gcd `gcd m' n'`. Multiplying the two resulting sums
-gives a sum over `range (min a b + 1) ×ˢ (gcd m' n').divisors`, and
-
-`(i, d') ↦ pⁱ · d'`
-
-is a bijection from that onto `(gcd m n).divisors` — its inverse splits a divisor into its `p`-part
-and its `p`-free part. Under it the two summands agree.
+The scalars are natural numbers and no subtraction occurs, so a commutative semiring is enough;
+the Hecke-ring consumer is a ring and converts to its `ℤ`-scalars at the point of use.
 
 ## Relation to Mathlib
 
@@ -181,9 +172,9 @@ private theorem gcd_ordCompl_lt {p m n : ℕ} (hp : p.Prime) (hm : m ≠ 0) (hn 
 
 /-! ### The table -/
 
-section CommRing
+section CommSemiring
 
-variable {R : Type*} [CommRing R] (D S : ℕ → ℕ → R)
+variable {R : Type*} [CommSemiring R] (D S : ℕ → ℕ → R)
 
 /-- Coprime multiplicativity of the assembled family, in a commutative ring: the commutation
 obligations of `primePowerProd_mul_of_coprime` are all discharged by `Commute.all`. -/
@@ -217,17 +208,17 @@ divisor `p ^ j * d'`. This is the pointwise half of the reindexing. -/
 private theorem smul_mul_smul_of_split {p a b m' n' m n d' j : ℕ} (hp : p.Prime)
     (hm_eq : m = p ^ a * m') (hn_eq : n = p ^ b * n') (hm' : ¬p ∣ m') (hn' : ¬p ∣ n')
     (hd'g : d' ∣ Nat.gcd m' n') (hpg : ¬p ∣ Nat.gcd m' n') (hj : j ≤ min a b) :
-    ((p : ℤ) ^ j • (primePowerProd S (p ^ j) *
+    ((p ^ j : ℕ) • (primePowerProd S (p ^ j) *
         primePowerProd D (p ^ (min a b + max a b - 2 * j)))) *
-      ((d' : ℤ) • (primePowerProd S d' * primePowerProd D (m' * n' / (d' * d')))) =
-    ((p ^ j * d' : ℕ) : ℤ) • (primePowerProd S (p ^ j * d') *
+      ((d' : ℕ) • (primePowerProd S d' * primePowerProd D (m' * n' / (d' * d')))) =
+    ((p ^ j * d' : ℕ)) • (primePowerProd S (p ^ j * d') *
       primePowerProd D (m * n / (p ^ j * d' * (p ^ j * d')))) := by
   obtain ⟨hidx, hcopD⟩ := mul_div_mul_self hp hm_eq hn_eq hm' hn'
     (hd'g.trans (Nat.gcd_dvd_left m' n')) (hd'g.trans (Nat.gcd_dvd_right m' n')) hj
   have hcopS : Nat.Coprime (p ^ j) d' :=
     (hp.coprime_iff_not_dvd.2 fun h ↦ hpg (h.trans hd'g)).pow_left j
   rw [smul_mul_smul_comm, hidx, primePowerProd_mul_coprime D hcopD,
-    primePowerProd_mul_coprime S hcopS, Nat.cast_mul, Nat.cast_pow]
+    primePowerProd_mul_coprime S hcopS]
   ring_nf
 
 /-- The reindexing step: the product of the prime-power sum with the sum over the divisors of
@@ -235,12 +226,12 @@ private theorem smul_mul_smul_of_split {p a b m' n' m n d' j : ℕ} (hp : p.Prim
 private theorem sum_mul_sum_eq_sum_divisors {p a b m' n' m n : ℕ} (hp : p.Prime) (hm'0 : m' ≠ 0)
     (hm' : ¬p ∣ m') (hn' : ¬p ∣ n') (hm_eq : m = p ^ a * m')
     (hn_eq : n = p ^ b * n') (hgcd : Nat.gcd m n = Nat.gcd m' n' * p ^ min a b) :
-    (∑ j ∈ range (min a b + 1), (p : ℤ) ^ j • (primePowerProd S (p ^ j) *
+    (∑ j ∈ range (min a b + 1), (p ^ j : ℕ) • (primePowerProd S (p ^ j) *
         primePowerProd D (p ^ (min a b + max a b - 2 * j)))) *
       (∑ d ∈ (Nat.gcd m' n').divisors,
-        (d : ℤ) • (primePowerProd S d * primePowerProd D (m' * n' / (d * d)))) =
+        (d : ℕ) • (primePowerProd S d * primePowerProd D (m' * n' / (d * d)))) =
     ∑ d ∈ (Nat.gcd m n).divisors,
-      (d : ℤ) • (primePowerProd S d * primePowerProd D (m * n / (d * d))) := by
+      (d : ℕ) • (primePowerProd S d * primePowerProd D (m * n / (d * d))) := by
   have hg'0 : Nat.gcd m' n' ≠ 0 := fun h ↦ hm'0 (Nat.eq_zero_of_gcd_eq_zero_left h)
   have hpg' : ¬p ∣ Nat.gcd m' n' := fun h ↦ hm' (h.trans (Nat.gcd_dvd_left m' n'))
   have hprod0 : Nat.gcd m' n' * p ^ min a b ≠ 0 :=
@@ -274,17 +265,17 @@ has no divisors, so at `m = n = 0` the left side is `1` and the right an empty s
 theorem primePowerProd_mul_eq_sum_divisors_gcd
     (hppow : ∀ p : ℕ, p.Prime → ∀ r s : ℕ, r ≤ s →
       primePowerProd D (p ^ r) * primePowerProd D (p ^ s) =
-        ∑ i ∈ range (r + 1), (p : ℤ) ^ i • (primePowerProd S (p ^ i) *
+        ∑ i ∈ range (r + 1), (p ^ i : ℕ) • (primePowerProd S (p ^ i) *
           primePowerProd D (p ^ (r + s - 2 * i))))
     {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) :
     primePowerProd D m * primePowerProd D n =
       ∑ d ∈ (Nat.gcd m n).divisors,
-        (d : ℤ) • (primePowerProd S d * primePowerProd D (m * n / d ^ 2)) := by
+        (d : ℕ) • (primePowerProd S d * primePowerProd D (m * n / d ^ 2)) := by
   simp only [sq]
   induction hg : Nat.gcd m n using Nat.strong_induction_on generalizing m n with
   | _ g ih =>
   rcases eq_or_ne g 1 with rfl | hg1
-  · rw [Nat.divisors_one, Finset.sum_singleton, Nat.cast_one, one_smul, Nat.one_mul,
+  · rw [Nat.divisors_one, Finset.sum_singleton, one_smul, Nat.one_mul,
       Nat.div_one, primePowerProd_one, one_mul, ← primePowerProd_mul_coprime D hg]
   -- Split both arguments at the least prime `p` of the gcd.
   have hg0 : g ≠ 0 := fun h ↦ hm (Nat.eq_zero_of_gcd_eq_zero_left (hg.trans h))
@@ -310,7 +301,7 @@ theorem primePowerProd_mul_eq_sum_divisors_gcd
     ih _ hlt hm'0 hn'0 rfl]
   exact sum_mul_sum_eq_sum_divisors D S hp hm'0 hm' hn' hm_eq hn_eq hgcd
 
-end CommRing
+end CommSemiring
 
 end Nat
 
