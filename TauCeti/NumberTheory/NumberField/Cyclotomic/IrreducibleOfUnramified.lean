@@ -162,9 +162,8 @@ The degree `[B : K] = φ(p^(k+1))` is derived rather than assumed: unramifiednes
 ramification index at `φ(p^(k+1))` via `ramificationIdx_eq_totient`, and a ramification index never
 exceeds the degree while a cyclotomic degree never exceeds `φ`, so the two bounds meet.
 
-The degree therefore comes from the ramification count rather than from irreducibility of
-`Φ_{p^(k+1)}`, which is why this precedes `irreducible_cyclotomic_prime_pow_of_unramified` below
-without circularity. Specialised to `K = ℚ` it says a number field unramified at `p` meets
+The degree follows from the ramification bounds alone, with no assumption that `Φ_{p^(k+1)}` is
+irreducible over `K`. Specialised to `K = ℚ` it says a number field unramified at `p` meets
 `ℚ(ζ_{p^(k+1)})` trivially; over a general base it is the corresponding statement about
 `L ∩ K(ζ_{p^(k+1)})`. -/
 theorem inf_eq_bot_prime_pow_of_unramified {Ω : Type*} [Field Ω] [Algebra K Ω]
