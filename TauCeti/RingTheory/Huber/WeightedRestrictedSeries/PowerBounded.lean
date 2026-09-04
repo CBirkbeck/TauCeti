@@ -48,9 +48,7 @@ namespace TauCeti.Huber
 
 variable {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
 
-/-- **The variable `Xᵢ` is power-bounded** whenever `1 ∈ T i`. Multiplying by `Xᵢⁿ` moves the
-coefficient at `ν` to `ν + n · eᵢ`, and `1 ∈ T i` makes `Tν ⊆ T(ν + n · eᵢ)`, so the coefficient
-lands in a *larger* weight subgroup and one neighbourhood absorbs every power.
+/-- **The variable `Xᵢ` is power-bounded** whenever `1 ∈ T i`.
 
 Its use is to put the coordinates of the closed polydisc inside the plus ring `A⟨T⟩°` that
 `TauCeti.ValuationSpectrum.closedPolydisc` designates; there the weights are trivial, which is
@@ -58,6 +56,9 @@ Its use is to put the coordinates of the closed polydisc inside the plus ring `A
 theorem isPowerBounded_weightedX {T : Fin k → Set A} (hT : IsWeightFamily T) {i : Fin k}
     (hi : (1 : A) ∈ T i) : IsPowerBounded (weightedX T hT i) := by
   classical
+  -- multiplying by `Xᵢⁿ` moves the coefficient at `ν` to `ν + n · eᵢ`, and `1 ∈ T i` makes
+  -- `Tν ⊆ T(ν + n · eᵢ)`, so the coefficient lands in a *larger* weight subgroup and one
+  -- neighbourhood absorbs every power
   refine isPowerBounded_iff.mpr <| isBounded_iff.mpr fun U hU ↦ ?_
   have hbasis := hasBasis_nhds_zero_weightedTopology hT
   obtain ⟨W, -, hWU⟩ := hbasis.mem_iff.mp hU
@@ -98,15 +99,15 @@ theorem isPowerBounded_weightedX_one_weight (i : Fin k) :
 
 /-- **A power-bounded constant stays power-bounded**, at any weight family — no hypothesis on `T`
 beyond `TauCeti.Huber.IsWeightFamily`. Contrast `TauCeti.Huber.isPowerBounded_weightedX`, which
-does need the trivial family.
+needs `1 ∈ T i`.
 
-This is not an instance of continuity of `TauCeti.Huber.weightedC`: continuous ring homomorphisms
-do not preserve power-boundedness in general. With the variable case it places `A°[X₁, …, Xₖ]`
-inside `A⟨X₁, …, Xₖ⟩°`. -/
+With the variable case it places `A°[X₁, …, Xₖ]` inside `A⟨X₁, …, Xₖ⟩°`. -/
 theorem isPowerBounded_weightedC {T : Fin k → Set A} (hT : IsWeightFamily T) {a : A}
     (ha : IsPowerBounded a) : IsPowerBounded (weightedC T hT a) := by
-  -- the `n`-th power of the constant `a` multiplies every coefficient by `aⁿ` and moves none of
-  -- them, so the weight at each `ν` is unchanged and one neighbourhood absorbs the whole family
+  -- continuity of `weightedC` would not settle this: a continuous ring homomorphism need not
+  -- preserve power-boundedness. The `n`-th power of the constant `a` multiplies every coefficient
+  -- by `aⁿ` and moves none of them, so the weight at each `ν` is unchanged and one neighbourhood
+  -- absorbs the whole family
   refine isPowerBounded_iff.mpr <| isBounded_iff.mpr fun U hU ↦ ?_
   have hbasis := hasBasis_nhds_zero_weightedTopology hT
   obtain ⟨W, -, hWU⟩ := hbasis.mem_iff.mp hU
