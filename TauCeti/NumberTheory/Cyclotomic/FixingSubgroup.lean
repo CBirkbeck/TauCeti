@@ -15,7 +15,7 @@ public import TauCeti.RingTheory.RootsOfUnity.PrimitiveRoots
 
 ## Main results
 
-* `IsPrimitiveRoot.fixingSubgroup_adjoin_setOfPred_pow_eq_one`
+* `IsPrimitiveRoot.fixingSubgroup_adjoin_setOfPred_pow_eq_one_eq_ker_autToPow`
 
 ## References
 
@@ -35,8 +35,9 @@ open IntermediateField
 
 Use it to move between a condition on `Gal(M/K(μ_m))` and one on the cyclotomic character, which
 is the form a Galois splitting presents. -/
-theorem IsPrimitiveRoot.fixingSubgroup_adjoin_setOfPred_pow_eq_one {K M : Type*} [Field K] [Field M]
-    [Algebra K M] {m : ℕ} [NeZero m] {ζ : M} (hζ : IsPrimitiveRoot ζ m) :
+theorem IsPrimitiveRoot.fixingSubgroup_adjoin_setOfPred_pow_eq_one_eq_ker_autToPow
+    {K M : Type*} [Field K] [Field M] [Algebra K M] {m : ℕ} [NeZero m] {ζ : M}
+    (hζ : IsPrimitiveRoot ζ m) :
     (adjoin K {b : M | b ^ m = 1}).fixingSubgroup = (hζ.autToPow K).ker := by
   ext x
   rw [MonoidHom.mem_ker, hζ.autToPow_eq_one_iff, IntermediateField.mem_fixingSubgroup_iff]
