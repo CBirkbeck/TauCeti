@@ -97,12 +97,12 @@ We reuse Mathlib's `DiscreteConvolution.addConvolution` rather than defining a `
 convolution: it is the same sum over the same fibre, `addFiber n = {(i, j) | i + j = n}`.
 
 The multiplication and the closure result need only a nonarchimedean ring topology. The ring
-axioms need the coefficient ring to be complete **and** Hausdorff (`[CompleteSpace A] [T0Space A]`):
-completeness so that the coefficient series converge at all, and Hausdorffness so that `tsum` is a
-limit rather than a choice among limits — without it neither distributivity nor associativity is
-provable. This is exactly Wedhorn's convention, whose "complete" means "Hausdorff and every Cauchy
-filter basis converges" (Definition 5.31(4)–(5)), and it is the hypothesis list the neighbouring
-`TauCeti.RingTheory.Huber.Restricted.Laurent` already carries.
+axioms are proved here from the coefficient ring being complete **and** Hausdorff
+(`[CompleteSpace A] [T0Space A]`): the proofs of distributivity and associativity use completeness
+so that the coefficient series converge at all, and Hausdorffness so that `tsum` is a limit rather
+than a choice among limits. This is exactly Wedhorn's convention, whose "complete" means
+"Hausdorff and every Cauchy filter basis converges" (Definition 5.31(4)–(5)), and it is the
+hypothesis list the neighbouring `TauCeti.RingTheory.Huber.Restricted.Laurent` already carries.
 
 ## References
 
