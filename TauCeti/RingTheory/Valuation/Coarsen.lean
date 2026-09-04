@@ -84,8 +84,9 @@ theorem coarsenMapOfValueGroup_apply_coe (H : ConvexSubgroup Γ₀ˣ) (g : Γ₀
 
 open Classical in
 /-- **Shrinking by a unit whose class exceeds `1` strictly decreases the coarsened value.** The
-coarsening map is monotone but not strictly so; this is how a strict inequality is recovered, and
-it is the only place a proper convex subgroup is needed. -/
+coarsening map is monotone but not strictly so; this is the step that recovers a strict
+inequality from it. The unit whose class exceeds `1` is supplied by properness of the convex
+subgroup, which the caller establishes. -/
 theorem coarsenMapOfValueGroup_mul_inv_lt (H : ConvexSubgroup Γ₀ˣ) {d : Γ₀ˣ}
     (hd : 1 < QuotientGroup.mk' H.toSubgroup d) {g : Γ₀} (hg : g ≠ 0) :
     coarsenMapOfValueGroup H (g * (d : Γ₀)⁻¹) < coarsenMapOfValueGroup H g := by
@@ -115,6 +116,16 @@ noncomputable def coarsenByUnits (v : Valuation R Γ₀) (H : ConvexSubgroup Γ�
 theorem coarsenByUnits_apply (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ) (r : R) :
     v.coarsenByUnits H r = coarsenMapOfValueGroup H (v r) :=
   Valuation.map_apply _ _ _ _
+
+open TauCeti MonoidWithZeroHom in
+/-- **The coarsened valuation's own restricted value is the coarsening of `v`'s.** This is the
+bridge between the two presentations: a comparison stated about `v.coarsenByUnits H` on its own
+value group becomes a comparison of coarsened values of `v`. -/
+theorem embedding_restrict_coarsenByUnits (v : Valuation R Γ₀)
+    (H : ConvexSubgroup Γ₀ˣ) (x : R) :
+    ValueGroup₀.embedding ((v.coarsenByUnits H).restrict x)
+      = coarsenMapOfValueGroup H (v x) := by
+  rw [Valuation.embedding_restrict, coarsenByUnits_apply]
 
 /-- A value at most `1` whose unit avoids `H` lands strictly below `1` after coarsening. -/
 theorem coarsenByUnits_lt_one_of_notMem (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
@@ -167,13 +178,20 @@ theorem cofinalValue_coarsenByUnits_restrict {A : Type*} [Ring A] {v : Valuation
     (v.restrict r / v.restrict q * (d : ValueGroup₀ (.ofClass v))⁻¹)
     (by simp [zero_lt_iff, hrv, hqv, Units.ne_zero d])
   refine ⟨n, ?_⟩
-  have hemb : ValueGroup₀.embedding γ =
-      (v.restrict.coarsenByUnits H) r / (v.restrict.coarsenByUnits H) q := by
-    rw [← hrq, map_div₀, Valuation.embedding_restrict, Valuation.embedding_restrict]
-  rw [← map_pow, Valuation.restrict_lt_iff_lt_embedding, hemb, coarsenByUnits_apply,
-    coarsenByUnits_apply, coarsenByUnits_apply, map_pow, ← map_div₀]
-  exact (coarsenMapOfValueGroup_monotone H hn.le).trans_lt
-    (coarsenMapOfValueGroup_mul_inv_lt H hx (div_ne_zero hrv hqv))
+  -- Both sides are coarsenings of values of `v`, so the comparison happens in `Γ₀`'s coarsened
+  -- value monoid: monotonicity carries the cofinal power across, and the `d⁻¹` factor is what
+  -- turns the resulting `≤` into `<`.
+  have hγ' : ValueGroup₀.embedding γ =
+      coarsenMapOfValueGroup H (v.restrict r / v.restrict q) := by
+    rw [← hrq, map_div₀, embedding_restrict_coarsenByUnits, embedding_restrict_coarsenByUnits,
+      ← map_div₀]
+  rw [← map_pow, Valuation.restrict_lt_iff_lt_embedding, hγ']
+  calc (v.restrict.coarsenByUnits H) (a ^ n)
+      = coarsenMapOfValueGroup H (v.restrict a ^ n) := by rw [coarsenByUnits_apply, map_pow]
+    _ ≤ coarsenMapOfValueGroup H (v.restrict r / v.restrict q * (d : ValueGroup₀ (.ofClass v))⁻¹) :=
+        coarsenMapOfValueGroup_monotone H hn.le
+    _ < coarsenMapOfValueGroup H (v.restrict r / v.restrict q) :=
+        coarsenMapOfValueGroup_mul_inv_lt H hx (div_ne_zero hrv hqv)
 
 end
 
