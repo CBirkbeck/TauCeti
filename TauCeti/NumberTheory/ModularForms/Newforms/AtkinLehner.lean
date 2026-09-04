@@ -104,9 +104,10 @@ character space. Diamond–Shurman Theorem 5.7.1 assumes instead that `aₙ(f) =
 coprime to `N`, a condition naming no divisor. The two are not interchangeable, and the
 implication runs one way: since `l ∣ N` and `l ≠ 1`, every `n` coprime to `N` is in particular
 not divisible by `l`, so `QExpansionSupportedOnDvd l` is the stronger hypothesis — it kills
-every index off the multiples of `l`, not merely those prime to `N`. (The two coincide exactly
-when `l` and `N` have the same prime factors.) Getting from Diamond–Shurman's hypothesis to this
-one therefore means splitting `f` across the primes dividing `N`. -/
+every index off the multiples of `l`, not merely those prime to `N`. The two agree only in the
+degenerate case where `l` is prime and `N` is a power of `l`: if they agree then every prime `q`
+dividing `N` satisfies `l ∣ q`, forcing `q = l`. Getting from Diamond–Shurman's hypothesis to
+this one therefore means splitting `f` across the primes dividing `N`. -/
 theorem mem_cuspFormsOld_of_qExpansionSupportedOnDvd {l : ℕ} (hl : l ≠ 1) (hlN : l ∣ N)
     (χ : DirichletCharacter ℂ N) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
     (hfχ : f ∈ cuspFormCharSpace k χ.toUnitHom)
