@@ -44,8 +44,8 @@ scalars.
 `TauCeti/LinearAlgebra/IntegralLattice/Gram.lean` carries the same mathematics for an *integral*
 form — `gramMatrix`, `gramMatrix_reindex`, `gramDet_eq_gramDet`, `determinant`, `discriminant` —
 with the same argument about integral change-of-basis matrices having determinant `±1`. That
-development is `ℤ`-valued, so it cannot be reused for a map valued elsewhere, which is the gap
-filled here; it is a candidate to be rebased onto these lemmas separately.
+development is `ℤ`-valued: its Gram matrix has entries in the scalars, so it cannot serve a map
+valued in a larger codomain, which is the gap filled here.
 -/
 
 public section
