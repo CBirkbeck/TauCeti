@@ -115,10 +115,7 @@ theorem card_aut_eq_totient (n : ℕ) [NeZero n] (F : Type*) [CommRing F] [IsDom
 
 /-- **A `q`-th cyclotomic extension has exactly `q - 1` automorphisms**, for `q` prime with `Φ_q`
 irreducible over `K`. The subtraction is truncated `ℕ` subtraction, which agrees with the totient
-because `q` is prime.
-
-This is the Chebotarev roadmap's Layer 7.2 result, listed there as `card_auxiliaryCyclotomic`; the
-name here describes the conclusion instead. -/
+because `q` is prime. -/
 theorem card_aut_eq_sub_one (q : ℕ) (F : Type*) [CommRing F] [IsDomain F] [Algebra K F]
     (hq : q.Prime) [IsCyclotomicExtension {q} K F] (hirr : Irreducible (cyclotomic q K)) :
     Nat.card (F ≃ₐ[K] F) = q - 1 := by

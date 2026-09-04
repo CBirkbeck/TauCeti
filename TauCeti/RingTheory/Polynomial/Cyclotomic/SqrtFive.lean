@@ -27,9 +27,8 @@ irreducible, since `2` has order `4` modulo `5`.
 
 ## References
 
-This is the Chebotarev roadmap's Layer 7.2 rejection test (`TauCetiRoadmap/Chebotarev`,
-`Suggested.lean`, `not_irreducible_cyclotomic_five_of_sq_eq_five`): over `K = ℚ(√5)` the fifth
-cyclotomic polynomial is reducible, which is what makes the unramifiedness hypothesis necessary.
+Over `K = ℚ(√5)` the fifth cyclotomic polynomial is reducible. This is why irreducibility of
+`Φ_q` over a general base needs a hypothesis such as unramifiedness: `5` ramifies in `ℚ(√5)`.
 
 That `ℚ(√5)` is the quadratic subfield of `ℚ(ζ_5)` is Sharifi, *Algebraic Number Theory*,
 Lemma 3.2.2.
