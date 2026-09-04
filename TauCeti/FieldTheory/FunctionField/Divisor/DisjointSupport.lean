@@ -48,9 +48,10 @@ variable {k F : Type*} [Field k] [Field F] [Algebra k F]
 
 /-- **Every divisor class has a representative avoiding a given finite set of places.**
 
-This is what lets `TauCeti.Divisor.eval` be applied to a divisor and a function whose zeros and
-poles would otherwise meet: replace the divisor by a linearly equivalent one that avoids them.
-Weil reciprocity and the divisor construction of the Weil pairing both need the move. -/
+Evaluating a function on a divisor requires the divisor's support to miss the function's zeros and
+poles; this is what makes that arrangeable, by replacing the divisor with a linearly equivalent one
+that avoids them. Weil reciprocity and the divisor construction of the Weil pairing both need the
+move. -/
 theorem exists_linearlyEquivalent_disjoint_support (hF : IsFunctionField k F) (D : Divisor k F)
     (s : Finset (Place k F)) :
     ∃ D' : Divisor k F, (Place.orderSystem hF).LinearlyEquivalent D D' ∧
@@ -58,8 +59,10 @@ theorem exists_linearlyEquivalent_disjoint_support (hF : IsFunctionField k F) (D
   -- a function whose order on `s` is exactly minus that of `D`
   obtain ⟨g, hg0, hg⟩ := Place.exists_ne_zero_forall_mem_ord_eq s fun P ↦ -D.coeff P
   refine ⟨D + principal hF (Units.mk0 g hg0), ?_, ?_⟩
-  · rw [linearlyEquivalent_iff hF]
-    exact ⟨(Units.mk0 g hg0)⁻¹, by rw [principal_inv]; abel⟩
+  · have h := (Place.orderSystem hF).linearlyEquivalent_add_principalDivisor D
+      (Additive.ofMul (Units.mk0 g hg0))
+    rw [principalDivisor_eq hF, toMul_ofMul] at h
+    exact h.symm
   · rw [Finset.disjoint_left]
     intro P hP hPs
     rw [WeilDivisor.mem_support_iff, WeilDivisor.coeff_add, coeff_principal] at hP
