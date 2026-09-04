@@ -57,55 +57,19 @@ namespace TauCeti
 
 variable {N l : ℕ} [NeZero l] {k : ℤ}
 
-/-- Slashing by `T` translates the argument by one. -/
-private lemma slash_mapGL_T_apply (k : ℤ) (f : ℍ → ℂ) (τ : ℍ) :
-    (f ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ)) τ = f ((1 : ℝ) +ᵥ τ) := by
-  have hSL : (f ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ)) =
-      f ∣[k] (ModularGroup.T : SL(2, ℤ)) :=
-    (ModularForm.SL_slash (f := f) (k := k) ModularGroup.T).symm
-  rw [hSL, ModularForm.SL_slash_apply, UpperHalfPlane.modular_T_smul]
-  simp [UpperHalfPlane.denom, ModularGroup.coe_T]
-
-/-- Scaling down commutes with translation, at the cost of dividing the shift by `l`. -/
-private lemma inv_scaleGL_smul_vadd_one (τ : ℍ) :
-    ((scaleGL l)⁻¹ • ((1 : ℝ) +ᵥ τ) : ℍ) = ((1 : ℝ) / (l : ℝ)) +ᵥ ((scaleGL l)⁻¹ • τ) := by
-  have hl : (l : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr (NeZero.ne l)
-  have h : ∀ σ : ℍ, (((scaleGL l)⁻¹ • σ : ℍ) : ℂ) = (σ : ℂ) / (l : ℂ) := fun σ ↦ by
-    have hs := coe_scaleGL_smul (d := l) ((scaleGL l)⁻¹ • σ)
-    rw [smul_inv_smul] at hs
-    rw [hs, mul_comm, mul_div_assoc, div_self hl, mul_one]
-  apply UpperHalfPlane.ext
-  rw [h ((1 : ℝ) +ᵥ τ), UpperHalfPlane.coe_vadd, UpperHalfPlane.coe_vadd, h τ]
-  push_cast
-  ring
-
-/-- Translating by `1 / l` fixes every `q`-power the support condition leaves alive: it scales
-the `n`-th by an `l`-th root of unity to the `n`, trivial exactly when `l ∣ n`. -/
-private lemma smul_qParam_pow_shift_eq {c : ℕ → ℂ} (hc : ∀ n : ℕ, ¬ l ∣ n → c n = 0)
-    (σ : ℍ) (n : ℕ) :
-    c n • Function.Periodic.qParam (1 : ℝ) ((((1 : ℝ) / (l : ℝ)) +ᵥ σ : ℍ) : ℂ) ^ n =
-      c n • Function.Periodic.qParam (1 : ℝ) (σ : ℂ) ^ n := by
-  have hqP : Function.Periodic.qParam (1 : ℝ) ((((1 : ℝ) / (l : ℝ)) +ᵥ σ : ℍ) : ℂ) =
-      Function.Periodic.qParam (1 : ℝ) (σ : ℂ) *
-        Complex.exp (2 * (Real.pi : ℂ) * Complex.I / (l : ℂ)) := by
-    simp only [Function.Periodic.qParam, UpperHalfPlane.coe_vadd, ← Complex.exp_add]
-    congr 1
-    push_cast
-    ring
-  by_cases hln : l ∣ n
-  · obtain ⟨m, rfl⟩ := hln
-    rw [hqP, mul_pow, pow_mul (Complex.exp _) l m,
-      (Complex.isPrimitiveRoot_exp l (NeZero.ne l)).pow_eq_one, one_pow, mul_one]
-  · rw [hc n hln, zero_smul, zero_smul]
-
 /-- The scaled-down form is `T`-invariant, by uniqueness of the `q`-expansion sum. -/
-private lemma slash_T_eq_of_support (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)
+private lemma slash_T_eq_of_support {F : Type*} [FunLike F ℍ ℂ]
+    [ModularFormClass F ((Gamma1 N).map (mapGL ℝ)) k] (g : F)
     (hg : ∀ n : ℕ, ¬ l ∣ n → (qExpansion 1 g).coeff n = 0) :
     (fun τ ↦ (⇑g : ℍ → ℂ) ((scaleGL l)⁻¹ • τ)) ∣[k]
         (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) =
       fun τ ↦ (⇑g : ℍ → ℂ) ((scaleGL l)⁻¹ • τ) := by
   funext τ
-  rw [slash_mapGL_T_apply, inv_scaleGL_smul_vadd_one]
+  rw [show (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) =
+      ((ModularGroup.T ^ (1 : ℤ) : SL(2, ℤ)) : GL (Fin 2) ℝ) by
+        rw [zpow_one, Matrix.SpecialLinearGroup.coe_GL_eq_mapGL],
+    ← ModularForm.SL_slash, ModularForm.slash_T_zpow_apply]
+  rw [show ((1 : ℤ) : ℝ) = (1 : ℝ) from Int.cast_one, inv_scaleGL_smul_vadd]
   set σ : ℍ := (scaleGL l)⁻¹ • τ
   have h1 := one_mem_strictPeriods_Gamma1_map N
   have : Fact (IsCusp OnePoint.infty ((Gamma1 N).map (mapGL ℝ))) :=
@@ -117,19 +81,35 @@ private lemma slash_T_eq_of_support (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k
   rw [funext (smul_qParam_pow_shift_eq hg σ)] at Hσ'
   exact ((key σ).unique Hσ').symm
 
-/-- **Descent along a `q`-support condition.** A cusp form of level `Γ₁(N)` whose period-one
+/-- **Descent along a `q`-support condition.** A modular form of level `Γ₁(N)` whose period-one
 `q`-expansion is supported on the multiples of `l` is the renormalised slash by `diag(l, 1)` of a
-function invariant under the weight-`k` slash action of `T`. -/
-theorem exists_slash_T_invariant_of_qExpansionSupportedOnDvd
-    (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) (hg : QExpansionSupportedOnDvd l g) :
+function invariant under the weight-`k` slash action of `T`.
+
+No cusp condition enters: the argument needs only period-one invariance, holomorphy and
+boundedness at infinity, so it is stated for any `ModularFormClass`. -/
+theorem exists_slash_T_invariant_of_isSupportedOnDvd {F : Type*} [FunLike F ℍ ℂ]
+    [ModularFormClass F ((Gamma1 N).map (mapGL ℝ)) k] (g : F)
+    (hg : PowerSeries.IsSupportedOnDvd l (qExpansion 1 g)) :
     ∃ f : ℍ → ℂ, (⇑g : ℍ → ℂ) = (l : ℂ) ^ (1 - k) • (f ∣[k] scaleGL l) ∧
       f ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) = f := by
   refine ⟨fun τ ↦ (⇑g : ℍ → ℂ) ((scaleGL l)⁻¹ • τ), ?_,
-    slash_T_eq_of_support g (PowerSeries.isSupportedOnDvd_iff.1
-      (qExpansionSupportedOnDvd_iff.1 hg))⟩
+    slash_T_eq_of_support g (PowerSeries.isSupportedOnDvd_iff.1 hg)⟩
   rw [smul_slash_scaleGL_eq]
   funext τ
   rw [inv_smul_smul]
+
+namespace CuspForm
+
+/-- **Descent along a `q`-support condition, for cusp forms.** The specialisation of
+`TauCeti.exists_slash_T_invariant_of_isSupportedOnDvd` at a `CuspForm` and this repository's
+`QExpansionSupportedOnDvd`, which is the shape the Atkin–Lehner old-subspace argument consumes. -/
+theorem exists_slash_T_invariant_of_qExpansionSupportedOnDvd
+    (g : _root_.CuspForm ((Gamma1 N).map (mapGL ℝ)) k) (hg : QExpansionSupportedOnDvd l g) :
+    ∃ f : ℍ → ℂ, (⇑g : ℍ → ℂ) = (l : ℂ) ^ (1 - k) • (f ∣[k] scaleGL l) ∧
+      f ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) = f :=
+  exists_slash_T_invariant_of_isSupportedOnDvd g (qExpansionSupportedOnDvd_iff.1 hg)
+
+end CuspForm
 
 end TauCeti
 
