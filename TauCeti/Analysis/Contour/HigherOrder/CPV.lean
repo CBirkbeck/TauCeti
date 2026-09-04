@@ -62,7 +62,7 @@ antiderivative, at every window radius whose window lies inside `[a, b]` and con
 crossing. -/
 private theorem perWindow_boundary_tendsto_of_interior {γ : ℝ → ℂ} {a b t₀ : ℝ} {s : ℂ}
     {k n : ℕ} {P : Set ℝ} (h_imm : IsPwC1ImmersionOn γ a b)
-    (ht₀ : t₀ ∈ Ioo a b) (h_at : γ t₀ = s) (hk : 2 ≤ k) (hkn : k ≤ n) (h_flat : FlatOfOrder γ t₀ n)
+    (h_at : γ t₀ = s) (hk : 2 ≤ k) (hkn : k ≤ n) (h_flat : FlatOfOrder γ t₀ n)
     (h_B : ∀ L_R L_L : ℂ, Tendsto (deriv γ) (𝓝[>] t₀) (𝓝 L_R) →
       Tendsto (deriv γ) (𝓝[<] t₀) (𝓝 L_L) →
       (L_R / (‖L_R‖ : ℂ)) ^ (k - 1) = ((-L_L) / (‖L_L‖ : ℂ)) ^ (k - 1))
@@ -75,6 +75,7 @@ private theorem perWindow_boundary_tendsto_of_interior {γ : ℝ → ℂ} {a b t
       (𝓝[>] (0 : ℝ))
       (𝓝 (c * (-(↑(k - 1) : ℂ)⁻¹ * ((γ (t₀ + ρ) - s) ^ (k - 1))⁻¹) -
         c * (-(↑(k - 1) : ℂ)⁻¹ * ((γ (t₀ - ρ) - s) ^ (k - 1))⁻¹))) := by
+  have ht₀ : t₀ ∈ Ioo a b := ⟨by linarith, by linarith⟩
   have hab : a < b := ht₀.1.trans ht₀.2
   have hmin : min a b = a := min_eq_left hab.le
   have hmax : max a b = b := max_eq_right hab.le
@@ -169,7 +170,7 @@ theorem IsPwC1ImmersionOn.hasCauchyPVAt_pow_inv {γ : ℝ → ℂ} {a b : ℝ} {
     (fun t ht => by linarith [(h_endpts t ht).2])
     (fun t ht t' ht' hne => (h_pair t ht t' ht' hne).le)
     h_int_tr h_plain
-    (fun t₀ ht₀ => perWindow_boundary_tendsto_of_interior h_imm (h_Ioo t₀ ht₀)
+    (fun t₀ ht₀ => perWindow_boundary_tendsto_of_interior h_imm
       (hT_mem.mp ht₀).2 hk hkn (h_flat t₀ (hT_mem.mp ht₀).1 (hT_mem.mp ht₀).2)
       (h_B t₀ (hT_mem.mp ht₀).1 (hT_mem.mp ht₀).2) c p.countable_toSet hp hρ_pos
       (by linarith [(h_endpts t₀ ht₀).1]) (by linarith [(h_endpts t₀ ht₀).2])
