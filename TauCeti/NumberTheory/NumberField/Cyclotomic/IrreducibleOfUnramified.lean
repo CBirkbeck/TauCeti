@@ -145,6 +145,60 @@ theorem ramificationIdx_eq_totient (p k : ℕ) [Fact p.Prime] {F : Type*} [Field
   exact le_antisymm (𝔔.ramificationIdx_le_finrank_numberField.trans (finrank_le_totient K F))
     (totient_le_ramificationIdx p k hur 𝔔)
 
+/-- **A cyclotomic extension of full degree meets an unramified extension trivially.** For `A` and
+`B` intermediate fields of `Ω / K` with `B` a `q`-th cyclotomic extension of full degree `φ q`, if
+`q` is unramified in `A` then `A ⊓ B = ⊥`.
+
+`B / K` is totally ramified above `q` by `ramificationIdx_eq_totient`, while `A`, and hence
+`A ⊓ B`, is unramified there; multiplicativity in the tower hands the whole of `φ q` to
+`B / (A ⊓ B)`, and a ramification index never exceeds a degree, so `A ⊓ B` has degree one
+over `K`.
+
+The degree `[B : K] = φ q` is a **hypothesis** rather than derived, which is what keeps this
+independent of `irreducible_cyclotomic_of_unramified` below. Specialised to `K = ℚ` it is the
+statement that a number field unramified at `q` meets `ℚ(ζ_q)` trivially, with the degree supplied
+by Mathlib's `Polynomial.cyclotomic.irreducible_rat`; specialised to a general base it is the
+corresponding statement about `L ∩ K(ζ_q)`, with the degree supplied by the irreducibility proved
+below. Neither specialisation is circular, because the theorem itself consumes only the
+ramification count. -/
+theorem inf_eq_bot_of_finrank_eq_totient {Ω : Type*} [Field Ω] [Algebra K Ω]
+    (q : ℕ) (hq : q.Prime) (A B : IntermediateField K Ω) [NumberField A] [NumberField B]
+    [IsCyclotomicExtension {q} K B]
+    (hur : ∀ (P : Ideal (𝓞 A)) [P.IsPrime] [P.LiesOver (Ideal.span {(q : ℤ)})],
+      Algebra.IsUnramifiedAt ℤ P)
+    (hBK : Module.finrank K B = q.totient) :
+    A ⊓ B = ⊥ := by
+  set E := (A ⊓ B : IntermediateField K Ω) with hE
+  have : Fact q.Prime := ⟨hq⟩
+  have hEA : E ≤ A := inf_le_left
+  have hEB : E ≤ B := inf_le_right
+  have : Module.Finite K E := Module.Finite.of_injective
+    (IntermediateField.inclusion hEA).toLinearMap (IntermediateField.inclusion hEA).injective
+  have : NumberField E := .of_module_finite K _
+  let : Algebra E B := (IntermediateField.inclusion hEB).toAlgebra
+  let : IsScalarTower K E B := IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
+  obtain ⟨𝔔, h𝔔max, h𝔔lo⟩ := Ideal.exists_maximal_ideal_liesOver_of_isIntegral
+    (Ideal.span {(q : ℤ)}) (S := 𝓞 B)
+  have := h𝔔max
+  have := h𝔔lo
+  have hurK : ∀ (𝔮 : Ideal (𝓞 K)) [𝔮.IsPrime] [𝔮.LiesOver (Ideal.span {(q : ℤ)})],
+      Algebra.IsUnramifiedAt ℤ 𝔮 := fun 𝔮 ↦
+    TauCeti.RamificationInertia.isUnramifiedAt_of_forall_isUnramifiedAt hur 𝔮
+  have htot : 𝔔.ramificationIdx (𝓞 K) = q.totient := by
+    have : IsCyclotomicExtension {q ^ (0 + 1)} K B := by
+      simpa using ‹IsCyclotomicExtension {q} K B›
+    simpa using ramificationIdx_eq_totient (K := K) q 0 hurK 𝔔
+  have : Algebra.IsUnramifiedAt ℤ (𝔔.under (𝓞 E)) :=
+    TauCeti.RamificationInertia.isUnramifiedAt_of_forall_isUnramifiedAt hur _
+  have : Algebra.IsUnramifiedAt (𝓞 K) (𝔔.under (𝓞 E)) := .of_restrictScalars ℤ _
+  have he1 : (𝔔.under (𝓞 E)).ramificationIdx (𝓞 K) = 1 :=
+    Ideal.ramificationIdx_eq_one_of_isUnramifiedAt
+  have htower := Ideal.ramificationIdx_tower (R := 𝓞 K) (𝔔.under (𝓞 E)) 𝔔
+  have he2 : 𝔔.ramificationIdx (𝓞 E) = q.totient := by
+    rw [htot, he1, one_mul] at htower; exact htower.symm
+  exact IntermediateField.finrank_eq_one_iff.mp
+    (TauCeti.NumberField.finrank_eq_one_of_ramificationIdx_eq_finrank 𝔔 he2 hBK)
+
 variable (K) in
 /-- **Unramifiedness gives irreducibility of `Φ_{p^(k+1)}`.** If the prime `p` is unramified in the
 number field `K`, then the `p^(k+1)`-th cyclotomic polynomial is irreducible over `K`.
