@@ -19,22 +19,21 @@ Mathlib counts elements of an *exact* order: `IsCyclic.card_orderOf_eq_totient` 
 
 ## Main results
 
-* `IsCyclic.card_filter_dvd_orderOf`: the count is `∑ φ d` over the divisors `d` of the
-  group order with `f ∣ d`.
+* `IsCyclic.card_filter_dvd_orderOf`, and its additive counterpart: the count is `∑ φ d`
+  over the divisors `d` of the group order with `f ∣ d`.
 -/
 
 public section
 
 open Finset Nat
 
-namespace IsCyclic
-
 variable {α : Type*} [Group α] [Fintype α] [IsCyclic α]
 
 /-- **The elements of a cyclic group whose order is a multiple of `f`, counted by order.**
 Each divisor `d` of the group order contributes its `φ d` elements of order exactly `d`, and the
 condition `f ∣ orderOf τ` keeps precisely the divisors that `f` divides. -/
-theorem card_filter_dvd_orderOf (f : ℕ) :
+@[to_additive]
+theorem IsCyclic.card_filter_dvd_orderOf (f : ℕ) :
     #{τ : α | f ∣ orderOf τ} =
       ∑ d ∈ {d ∈ (Fintype.card α).divisors | f ∣ d}, φ d := by
   classical
@@ -53,5 +52,3 @@ theorem card_filter_dvd_orderOf (f : ℕ) :
     rw [mem_coe, mem_filter] at hτ
     rw [mem_coe, mem_filter, Nat.mem_divisors]
     exact ⟨⟨orderOf_dvd_card, Fintype.card_ne_zero⟩, hτ.2⟩
-
-end IsCyclic
