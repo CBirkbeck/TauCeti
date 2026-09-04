@@ -30,16 +30,25 @@ but nothing in the other direction from the parallelogram law alone. Its `parall
 construction in `Analysis/InnerProductSpace/OfNorm.lean` recovers an inner product from a *norm* on
 a real or complex space, using continuity. Neither applies to a function on a bare abelian group.
 
-## The torsion hypothesis is necessary, not defensive
+## The hypothesis is exactly the absence of `2`-torsion
 
-`N` is assumed `IsAddTorsionFree`. The derivation of the three-variable identity
-`map_add_add_of_parallelogram` produces it doubled — four instances of the parallelogram law
-combine to `2 • LHS = 2 • RHS` — and halving is the only step that needs anything of `N`.
+`htwo : IsSMulRegular N 2` says that doubling is injective on `N`, and that is precisely what the
+proofs consume. The three-variable identity `map_add_add_of_parallelogram` comes out **doubled** —
+four instances of the parallelogram law combine to `2 • LHS = 2 • RHS` — and halving is the only
+step in the file that uses anything of `N` at all.
 
-It cannot be dropped. With `M = N = ZMod 2` *every* function satisfies the parallelogram law,
+It is deliberately *not* `IsAddTorsionFree N`, which is strictly stronger and would exclude
+codomains where the construction is perfectly valid: `IsSMulRegular (ZMod 3) 2` holds even though
+`ZMod 3` has `3`-torsion.
+
+Nor can it be dropped. With `M = N = ZMod 2` *every* function satisfies the parallelogram law,
 because `x - y = x + y` and `2 • z = 0` there; the constant function `1` is then one that satisfies
-it while failing even `f 0 = 0`, which every quadratic form obeys. So the hypothesis is what makes
-the conclusion true, not merely what makes this proof work.
+it while failing even `f 0 = 0`, which every quadratic form obeys — and correspondingly
+`¬ IsSMulRegular (ZMod 2) 2`. So the hypothesis is what makes the conclusion true, not merely what
+makes this proof work.
+
+For a torsion-free codomain it is one term: `smul_right_injective N two_ne_zero` supplies it for
+`N = ℝ`, the canonical height's target, and for `N = ℤ`, the degree form's.
 
 ## Main results
 
@@ -74,23 +83,24 @@ namespace QuadraticMap
 
 open _root_.QuadraticMap
 
-variable {M N : Type*} [AddCommGroup M] [AddCommGroup N] [IsAddTorsionFree N] {f : M → N}
+variable {M N : Type*} [AddCommGroup M] [AddCommGroup N] {f : M → N}
+  (htwo : IsSMulRegular N (2 : ℕ))
   (hf : ∀ x y : M, f (x + y) + f (x - y) = 2 • f x + 2 • f y)
 
-include hf
+include htwo hf
 
 /-- The parallelogram law at `x = y = 0` forces `f 0 = 0`. -/
 theorem map_zero_of_parallelogram : f 0 = 0 := by
   have h := hf 0 0
   simp only [add_zero, sub_zero] at h
-  refine smul_right_injective N (r := (2 : ℤ)) (by norm_num) ?_
-  change (2 : ℤ) • f 0 = (2 : ℤ) • 0
+  refine htwo ?_
+  change (2 : ℕ) • f 0 = (2 : ℕ) • 0
   linear_combination (norm := module) -h
 
 /-- The parallelogram law at `x = 0` forces `f` to be even. -/
 theorem map_neg_of_parallelogram (x : M) : f (-x) = f x := by
   have h := hf 0 x
-  rw [zero_add, zero_sub, map_zero_of_parallelogram hf] at h
+  rw [zero_add, zero_sub, map_zero_of_parallelogram htwo hf] at h
   linear_combination (norm := module) h
 
 /-- **The three-variable identity.** A quadratic form satisfies
@@ -102,29 +112,29 @@ theorem map_add_add_of_parallelogram (x y z : M) :
   -- Four instances of the law. `x + z - y` and `x - (y - z)` are the same point, which is what
   -- lets the two occurrences of `f` at that point cancel; halving at the end is the only place
   -- torsion-freeness is used.
-  have h1 := hf (x + y) z
-  have h2 := hf x (y - z)
-  have h3 := hf y z
-  have h4 := hf (x + z) y
-  rw [show x + y - z = x + (y - z) by abel] at h1
-  rw [show x - (y - z) = x + z - y by abel] at h2
-  rw [show x + z + y = x + y + z by abel] at h4
-  refine smul_right_injective N (r := (2 : ℤ)) (by norm_num) ?_
-  change (2 : ℤ) • (f (x + y + z) + f x + f y + f z)
-      = (2 : ℤ) • (f (x + y) + f (y + z) + f (x + z))
-  linear_combination (norm := module) h1 + h4 - h2 - (2 : ℤ) • h3
+  have p1 := hf (x + y) z
+  have p2 := hf x (y - z)
+  have p3 := hf y z
+  have p4 := hf (x + z) y
+  rw [show x + y - z = x + (y - z) by abel] at p1
+  rw [show x - (y - z) = x + z - y by abel] at p2
+  rw [show x + z + y = x + y + z by abel] at p4
+  refine htwo ?_
+  change (2 : ℕ) • (f (x + y + z) + f x + f y + f z)
+      = (2 : ℕ) • (f (x + y) + f (y + z) + f (x + z))
+  linear_combination (norm := module) p1 + p4 - p2 - (2 : ℤ) • p3
 
 /-- **The polarisation is additive in its left argument.** -/
 theorem polar_add_left_of_parallelogram (x x' y : M) :
     polar f (x + x') y = polar f x y + polar f x' y := by
   simp only [polar]
-  linear_combination (norm := module) map_add_add_of_parallelogram hf x x' y
+  linear_combination (norm := module) map_add_add_of_parallelogram htwo hf x x' y
 
 /-- **The polarisation is additive in its right argument**, by symmetry. -/
 theorem polar_add_right_of_parallelogram (x y y' : M) :
     polar f x (y + y') = polar f x y + polar f x y' := by
   rw [polar_comm, polar_comm f x y, polar_comm f x y']
-  exact polar_add_left_of_parallelogram hf y y' x
+  exact polar_add_left_of_parallelogram htwo hf y y' x
 
 /-- Quadraticity for a natural multiple. Stated with an **integer** scalar on the right so that
 the induction step is a `ring` identity in `ℤ`: over `ℕ` it would read
@@ -132,7 +142,7 @@ the induction step is a `ring` identity in `ℤ`: over `ℕ` it would read
 private theorem map_nsmul_of_parallelogram (n : ℕ) (x : M) :
     f (n • x) = ((n : ℤ) * n) • f x := by
   induction n using Nat.twoStepInduction with
-  | zero => simpa using map_zero_of_parallelogram hf
+  | zero => simpa using map_zero_of_parallelogram htwo hf
   | one => simp
   | more n ih ih' =>
     -- the parallelogram law at `((n + 1) • x, x)` expresses the value at `(n + 2) • x`
@@ -147,24 +157,24 @@ private theorem map_nsmul_of_parallelogram (n : ℕ) (x : M) :
 `map_neg_of_parallelogram`. -/
 theorem map_zsmul_of_parallelogram (n : ℤ) (x : M) : f (n • x) = (n * n) • f x := by
   obtain ⟨m, rfl | rfl⟩ := n.eq_nat_or_neg
-  · rw [natCast_zsmul, map_nsmul_of_parallelogram hf]
-  · rw [neg_zsmul, natCast_zsmul, map_neg_of_parallelogram hf,
-      map_nsmul_of_parallelogram hf, neg_mul_neg]
+  · rw [natCast_zsmul, map_nsmul_of_parallelogram htwo hf]
+  · rw [neg_zsmul, natCast_zsmul, map_neg_of_parallelogram htwo hf,
+      map_nsmul_of_parallelogram htwo hf, neg_mul_neg]
 
 /-- The polarisation, as an additive homomorphism in its right argument. -/
 def polarAddHomRight (x : M) : M →+ N :=
-  AddMonoidHom.mk' (polar f x) fun a b ↦ polar_add_right_of_parallelogram hf x a b
+  AddMonoidHom.mk' (polar f x) fun a b ↦ polar_add_right_of_parallelogram htwo hf x a b
 
 /-- **The polarisation as a `ℤ`-bilinear map.** Additivity is all that has to be supplied:
 `M` and `N` are abelian groups, so an additive map between them is automatically `ℤ`-linear. -/
 noncomputable def polarBilinInt : LinearMap.BilinMap ℤ M N :=
-  (AddMonoidHom.mk' (fun x ↦ (polarAddHomRight hf x).toIntLinearMap)
+  (AddMonoidHom.mk' (fun x ↦ (polarAddHomRight htwo hf x).toIntLinearMap)
     fun a b ↦ by
       ext y
-      exact polar_add_left_of_parallelogram hf a b y).toIntLinearMap
+      exact polar_add_left_of_parallelogram htwo hf a b y).toIntLinearMap
 
 @[simp]
-theorem polarBilinInt_apply (x y : M) : polarBilinInt hf x y = polar f x y := by
+theorem polarBilinInt_apply (x y : M) : polarBilinInt htwo hf x y = polar f x y := by
   -- not `rfl`: an *exported* `rfl` theorem needs every definition it unfolds to be `@[expose]`d,
   -- and a tactic proof exports a proof term instead of a defeq obligation
   simp [polarBilinInt, polarAddHomRight]
@@ -173,13 +183,13 @@ theorem polarBilinInt_apply (x y : M) : polarBilinInt hf x y = polar f x y := by
 its companion bilinear map. -/
 noncomputable def ofParallelogram : _root_.QuadraticMap ℤ M N where
   toFun := f
-  toFun_smul := map_zsmul_of_parallelogram hf
-  exists_companion' := ⟨polarBilinInt hf, fun x y ↦ by
+  toFun_smul := map_zsmul_of_parallelogram htwo hf
+  exists_companion' := ⟨polarBilinInt htwo hf, fun x y ↦ by
     rw [polarBilinInt_apply, polar]
     abel⟩
 
 @[simp]
-theorem ofParallelogram_apply (x : M) : ofParallelogram hf x = f x := by
+theorem ofParallelogram_apply (x : M) : ofParallelogram htwo hf x = f x := by
   simp [ofParallelogram]
 
 end QuadraticMap
