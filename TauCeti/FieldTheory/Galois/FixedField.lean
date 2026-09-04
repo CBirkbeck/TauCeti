@@ -15,12 +15,14 @@ the fixed field of `H` and `E` generate `M` exactly when `H` meets the fixers of
 
 ## Main results
 
-* `IntermediateField.fixedField_sup_eq_top_iff`
+* `Subgroup.fixedField_sup_eq_top_iff`
 -/
 
 public section
 
-namespace IntermediateField
+open IntermediateField
+
+namespace Subgroup
 
 variable {K M : Type*} [Field K] [Field M] [Algebra K M] [FiniteDimensional K M] [IsGalois K M]
 
@@ -28,7 +30,11 @@ variable {K M : Type*} [Field K] [Field M] [Algebra K M] [FiniteDimensional K M]
 when `H ⊓ Gal(M/E)` is trivial.
 
 This is the Galois correspondence read in both directions: `fixingSubgroup` turns a join of fields
-into a meet of subgroups, and `fixedField` turns the trivial subgroup back into `⊤`. -/
+into a meet of subgroups, and `fixedField` turns the trivial subgroup back into `⊤`.
+
+Stated in the `Subgroup` namespace rather than `IntermediateField`, so that `H` — the first
+explicit argument, and the one `fixedField` is applied to — carries the dot notation: a consumer
+writes `H.fixedField_sup_eq_top_iff E`. -/
 theorem fixedField_sup_eq_top_iff (H : Subgroup (M ≃ₐ[K] M)) (E : IntermediateField K M) :
     fixedField H ⊔ E = ⊤ ↔ H ⊓ E.fixingSubgroup = ⊥ := by
   constructor
@@ -41,4 +47,4 @@ theorem fixedField_sup_eq_top_iff (H : Subgroup (M ≃ₐ[K] M)) (E : Intermedia
     have := congrArg fixedField hbot
     rwa [IsGalois.fixedField_fixingSubgroup, fixedField_bot] at this
 
-end IntermediateField
+end Subgroup
