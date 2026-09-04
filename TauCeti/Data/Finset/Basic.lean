@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Data.Set.PowersetCard
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.SetTheory.Cardinal.Finite
 
@@ -50,12 +51,12 @@ theorem sum_piecewise_eq_sum_update_of_card_eq_succ {ι : Type*} {α : ι → Ty
     (F : ((i : ι) → α i) → M) (f g : (i : ι) → α i) :
     (∑ s : {s : Finset ι // s.card = m}, F (s.1.piecewise f g)) =
       ∑ i : ι, F (Function.update f i (g i)) := by
-  refine (Fintype.sum_bijective (fun a : ι ↦ ⟨{a}ᶜ, by
-    rw [Finset.card_compl, Finset.card_singleton, hm]
-    omega⟩) ?_ _ _ fun i ↦ ?_).symm
-  · rw [Fintype.bijective_iff_injective_and_card]
-    refine ⟨fun _ _ ↦ (Finset.singleton_injective <| compl_injective <| Subtype.ext_iff.mp ·), ?_⟩
-    rw [Fintype.card_finset_len, hm, Nat.choose_succ_self_right]
-  · rw [Subtype.coe_mk, Finset.compl_singleton, Finset.piecewise_erase_univ]
+  refine (Fintype.sum_equiv (e := (Set.powersetCard.ofSingleton.trans
+    (Set.powersetCard.compl hm.symm)).trans
+      (Equiv.subtypeEquivRight fun _ ↦ Set.powersetCard.mem_iff)) _ _ fun i ↦ ?_).symm
+  have hval : (((Set.powersetCard.ofSingleton.trans (Set.powersetCard.compl hm.symm)).trans
+      (Equiv.subtypeEquivRight fun _ ↦ Set.powersetCard.mem_iff) : ι ≃ _) i : Finset ι) =
+      ({i} : Finset ι)ᶜ := rfl
+  rw [hval, Finset.compl_singleton, Finset.piecewise_erase_univ]
 
 end TauCeti
