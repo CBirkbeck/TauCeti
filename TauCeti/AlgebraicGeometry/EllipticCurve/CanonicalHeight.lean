@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.NaiveHeight
-import TauCeti.LinearAlgebra.QuadraticForm.OfParallelogram
+public import TauCeti.LinearAlgebra.QuadraticForm.OfParallelogram
 
 /-!
 # The canonical (Néron–Tate) height
@@ -323,5 +323,55 @@ theorem Point.canonicalHeight_eq_zero_iff_isOfFinAddOrder [W.toAffine.IsElliptic
     P.canonicalHeight = 0 ↔ IsOfFinAddOrder P :=
   ⟨Point.isOfFinAddOrder_of_canonicalHeight_eq_zero,
     Point.canonicalHeight_eq_zero_of_isOfFinAddOrder⟩
+
+variable (W) in
+/-- **The canonical height as a `ℤ`-quadratic form on `W.Point`.** The exact parallelogram law is
+the axiom a `QuadraticMap` asks for, so this adds no content: it is the packaging that lets
+Mathlib's `QuadraticMap.polar` API supply the Néron–Tate pairing and its bilinearity. -/
+noncomputable def canonicalHeightQuadratic [W.toAffine.IsElliptic] :
+    QuadraticMap ℤ W.Point ℝ :=
+  TauCeti.QuadraticMap.ofParallelogram (smul_right_injective ℝ two_ne_zero)
+    canonicalHeight_parallelogram_nsmul
+
+@[simp]
+theorem canonicalHeightQuadratic_apply [W.toAffine.IsElliptic] (P : W.Point) :
+    canonicalHeightQuadratic W P = P.canonicalHeight := by
+  rw [canonicalHeightQuadratic]
+  exact TauCeti.QuadraticMap.ofParallelogram_apply _ _ P
+
+variable (W) in
+/-- **The Néron–Tate pairing** `⟨P, Q⟩ = ½ (ĥ(P + Q) − ĥ(P) − ĥ(Q))`, as a `ℤ`-bilinear map.
+
+The `½` is the normalisation under which `⟨P, P⟩ = ĥ(P)` (`neronTatePairing_self`), the convention
+the regulator and the BSD formula are stated with. Mathlib's polar form is the unnormalised one —
+`QuadraticMap.polar_self` gives `polar ĥ P P = 2 • ĥ(P)` — so this is half of
+`(canonicalHeightQuadratic W).polarBilin` and not equal to it. -/
+noncomputable def neronTatePairing [W.toAffine.IsElliptic] : LinearMap.BilinMap ℤ W.Point ℝ :=
+  (2 : ℝ)⁻¹ • (canonicalHeightQuadratic W).polarBilin
+
+variable (W) in
+/-- The defining formula for the pairing. -/
+theorem neronTatePairing_apply [W.toAffine.IsElliptic] (P Q : W.Point) :
+    neronTatePairing W P Q
+      = ((P + Q).canonicalHeight - P.canonicalHeight - Q.canonicalHeight) / 2 := by
+  simp only [neronTatePairing, LinearMap.smul_apply, QuadraticMap.polarBilin_apply_apply,
+    QuadraticMap.polar, canonicalHeightQuadratic_apply]
+  ring
+
+variable (W) in
+/-- **On the diagonal the pairing is the canonical height itself** — the point of the `½`. -/
+@[simp]
+theorem neronTatePairing_self [W.toAffine.IsElliptic] (P : W.Point) :
+    neronTatePairing W P P = P.canonicalHeight := by
+  simp only [neronTatePairing, LinearMap.smul_apply, QuadraticMap.polarBilin_apply_apply,
+    QuadraticMap.polar_self, canonicalHeightQuadratic_apply]
+  simp
+
+variable (W) in
+/-- **The pairing is symmetric.** -/
+theorem neronTatePairing_comm [W.toAffine.IsElliptic] (P Q : W.Point) :
+    neronTatePairing W P Q = neronTatePairing W Q P := by
+  simp only [neronTatePairing, LinearMap.smul_apply, QuadraticMap.polarBilin_apply_apply]
+  rw [QuadraticMap.polar_comm]
 
 end WeierstrassCurve.Affine
