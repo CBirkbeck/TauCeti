@@ -98,11 +98,18 @@ theorem exists_slash_T_invariant_of_isSupportedOnDvd {F : Type*} [FunLike F ℍ 
   funext τ
   rw [inv_smul_smul]
 
+end TauCeti
+
 namespace CuspForm
+
+open TauCeti UpperHalfPlane CongruenceSubgroup Matrix.SpecialLinearGroup
+
+variable {N l : ℕ} [NeZero l] {k : ℤ}
 
 /-- **Descent along a `q`-support condition, for cusp forms.** The specialisation of
 `TauCeti.exists_slash_T_invariant_of_isSupportedOnDvd` at a `CuspForm` and this repository's
-`QExpansionSupportedOnDvd`, which is the shape the Atkin–Lehner old-subspace argument consumes. -/
+`QExpansionSupportedOnDvd`, which is the shape the Atkin–Lehner old-subspace argument consumes.
+-/
 theorem exists_slash_T_invariant_of_qExpansionSupportedOnDvd
     (g : _root_.CuspForm ((Gamma1 N).map (mapGL ℝ)) k) (hg : QExpansionSupportedOnDvd l g) :
     ∃ f : ℍ → ℂ, (⇑g : ℍ → ℂ) = (l : ℂ) ^ (1 - k) • (f ∣[k] scaleGL l) ∧
@@ -110,7 +117,5 @@ theorem exists_slash_T_invariant_of_qExpansionSupportedOnDvd
   exists_slash_T_invariant_of_isSupportedOnDvd g (qExpansionSupportedOnDvd_iff.1 hg)
 
 end CuspForm
-
-end TauCeti
 
 end
