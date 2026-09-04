@@ -12,9 +12,11 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.NaiveHeight
 
 The naïve height `h` is quadratic only up to a bounded error: `approx_parallelogram_law` gives a
 constant `C` with `|h(P + Q) + h(P - Q) - 2(h P + h Q)| ≤ C`. Tate's observation is that averaging
-that error away along the doubling map produces an honestly quadratic function. This file carries
-out that construction and records the two facts that pin it down: the limit exists, and it stays
-within a bounded distance of half of `h`.
+that error away along the doubling map removes it. This file carries
+out that construction and records the facts that pin the definition down: the limit exists, it
+stays within a bounded distance of half of `h`, and it takes the expected values at `0` and under
+negation. That the result is *honestly* quadratic — the exact parallelogram law — is a separate
+theorem and is not established in this file.
 
 `canonicalHeight P = (1/2) · lim_{n → ∞} h(2ⁿ P) / 4ⁿ`
 
@@ -126,27 +128,28 @@ theorem Point.tendsto_naiveHeight_two_pow_nsmul_div_four_pow [W.toAffine.IsEllip
     Tendsto (fun n : ℕ ↦ ((2 ^ n) • P).naiveHeight / (2 * 4 ^ n)) atTop
       (𝓝 P.canonicalHeight) := by
   obtain ⟨C, _, hC⟩ := exists_abs_naiveHeight_two_nsmul_sub W
-  obtain ⟨a, ha⟩ := cauchySeq_tendsto_of_complete
-    (cauchySeq_of_le_geometric (1 / 4) (C / 8) (by norm_num)
-      (dist_naiveHeight_div_succ_le hC P))
-  rwa [Point.canonicalHeight, ha.limUnder_eq]
+  exact (cauchySeq_of_le_geometric (1 / 4) (C / 8) (by norm_num)
+    (dist_naiveHeight_div_succ_le hC P)).tendsto_limUnder
 
 /-- The point at infinity has canonical height zero: every term of the defining sequence is
-`h 0 / 4 ^ n = 0`. -/
+`h 0 / (2 · 4 ^ n) = 0`. This is termwise, so it needs no convergence and no ellipticity. -/
 @[simp]
-theorem Point.canonicalHeight_zero [W.toAffine.IsElliptic] :
-    (0 : W.Point).canonicalHeight = 0 := by
-  refine tendsto_nhds_unique (Point.tendsto_naiveHeight_two_pow_nsmul_div_four_pow 0) ?_
-  simp
+theorem Point.canonicalHeight_zero : (0 : W.Point).canonicalHeight = 0 := by
+  have h : (fun n : ℕ ↦ ((2 ^ n) • (0 : W.Point)).naiveHeight / (2 * 4 ^ n)) = fun _ ↦ 0 := by
+    funext n; simp
+  rw [Point.canonicalHeight, h]
+  exact tendsto_const_nhds.limUnder_eq
 
 /-- Negation preserves the canonical height, because it preserves the naïve height and commutes
-with doubling, so the two defining sequences agree termwise. -/
+with doubling, so the two defining sequences agree termwise — again with no convergence or
+ellipticity needed. -/
 @[simp]
-theorem Point.canonicalHeight_neg [W.toAffine.IsElliptic] (P : W.Point) :
+theorem Point.canonicalHeight_neg (P : W.Point) :
     (-P).canonicalHeight = P.canonicalHeight := by
-  refine tendsto_nhds_unique (Point.tendsto_naiveHeight_two_pow_nsmul_div_four_pow (-P)) ?_
-  simpa only [smul_neg, Point.naiveHeight_neg] using
-    Point.tendsto_naiveHeight_two_pow_nsmul_div_four_pow P
+  have h : (fun n : ℕ ↦ ((2 ^ n) • (-P)).naiveHeight / (2 * 4 ^ n))
+      = fun n : ℕ ↦ ((2 ^ n) • P).naiveHeight / (2 * 4 ^ n) := by
+    funext n; rw [smul_neg, Point.naiveHeight_neg]
+  rw [Point.canonicalHeight, Point.canonicalHeight, h]
 
 /-- **The canonical height differs from half the naïve height by a bounded amount**, the bound
 depending only on the curve. The half is the normalisation described in the module docstring;
@@ -157,7 +160,7 @@ theorem Point.abs_canonicalHeight_sub_naiveHeight_le [W.toAffine.IsElliptic] :
   refine ⟨C / 8 / (1 - 1 / 4), fun P ↦ ?_⟩
   have hd := dist_le_of_le_geometric_of_tendsto₀ (1 / 4) (C / 8) (by norm_num)
     (dist_naiveHeight_div_succ_le hC P) (P.tendsto_naiveHeight_two_pow_nsmul_div_four_pow)
-  -- the zeroth term of the sequence is `h P` itself
+  -- the zeroth term of the sequence is `h P / 2`
   simpa [Real.dist_eq, abs_sub_comm] using hd
 
 end WeierstrassCurve.Affine
