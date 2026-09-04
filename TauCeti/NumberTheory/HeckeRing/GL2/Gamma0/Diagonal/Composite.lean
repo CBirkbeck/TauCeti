@@ -6,10 +6,10 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.Data.Nat.Factorization.PrimePowerProd.DivisorTable
-public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.PrimePower
+public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.ScalarMul
 -- The Atkin–Lehner anti-involution and the commutativity it buys are used only inside proofs,
 -- so private: pointwise in `heckeTCompositeGamma0_mul_of_coprime`, and as the structure
--- `commRingHeckeRingGamma0` in `heckeTScalarCompositeGamma0_eq_zero_of_not_coprime` and
+-- `commRingHeckeRingGamma0` in `heckeTScalarCompositeGamma0_eq_heckeTScalarGamma0` and
 -- `heckeTCompositeGamma0_mul_eq_sum_divisors_gcd`.
 import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.AtkinLehner
 
@@ -48,9 +48,10 @@ the Atkin–Lehner anti-involution.
 * `HeckeRing.GL2.heckeTCompositeGamma0`: the composite element assembled over the prime
   factorisation of `n`.
 * `HeckeRing.GL2.heckeTScalarCompositeGamma0`: the composite scalar `∏_p S_p ^ v_p(n)`,
-  assembled by the same ordered product. It is the `S_d` indexing the divisor table, and it
-  carries the same `primePowerProd` API as the composite `T`, through
-  `heckeTScalarCompositeGamma0_def`.
+  assembled by the same ordered product. It carries the same `primePowerProd` API as the
+  composite `T`, through `heckeTScalarCompositeGamma0_def`, and
+  `heckeTScalarCompositeGamma0_eq_heckeTScalarGamma0` identifies it with `heckeTScalarGamma0`
+  at every nonzero index — which is the family the divisor table is stated with.
 
 ## Main results
 
@@ -259,26 +260,34 @@ private noncomputable def commRingHeckeRingGamma0 :
     mul_comm := HeckeCosetModule.mul_comm_of_antiInvolution ℤ (atkinLehnerAntiInvolution N)
       (atkinLehnerAntiInvolution_onHeckeCoset_eq_self N) }
 
-/-- **The composite scalar vanishes at an index sharing a factor with the level.**
+/-- **The assembled scalar is the canonical scalar operator.** At every nonzero index the ordered
+product of the blocks `S_p ^ vₚ(n)` is `S_n` itself, so the divisor table below is stated with the
+scalar family the rest of the level-`N` Hecke API uses, and the assembled one never reaches a
+consumer.
 
-This is what makes the bad divisors contribute nothing to
-`heckeTCompositeGamma0_mul_eq_sum_divisors_gcd`: the sum
-there runs over *all* divisors of `gcd m n`, and the ones that are not prime to the level drop
-out through this lemma rather than being excluded from the index. -/
-@[simp]
-theorem heckeTScalarCompositeGamma0_eq_zero_of_not_coprime {n : ℕ} (hn : n ≠ 0)
-    (hnN : ¬ Nat.Coprime n N) :
-    heckeTScalarCompositeGamma0 N n = 0 := by
-  -- Read as a `Finsupp.prod` — a `CommMonoid` statement, hence the local instance — with a
-  -- common prime factor of `n` and `N` as the vanishing block.
+`0` is excluded because the two disagree there: the empty product is the identity, while
+`S₀ = 0`. -/
+theorem heckeTScalarCompositeGamma0_eq_heckeTScalarGamma0 :
+    ∀ {n : ℕ}, n ≠ 0 → heckeTScalarCompositeGamma0 N n = heckeTScalarGamma0 N n := by
   let := commRingHeckeRingGamma0 N
-  obtain ⟨p, hp, hpn, hpN⟩ := Nat.Prime.not_coprime_iff_dvd.1 hnN
-  have hv : n.factorization p ≠ 0 := (hp.factorization_pos_of_dvd hn hpn).ne'
-  rw [heckeTScalarCompositeGamma0_def, TauCeti.Nat.primePowerProd_eq_factorization_prod]
-  refine Finset.prod_eq_zero (i := p) ?_ ?_
-  · simpa [Nat.support_factorization] using Nat.mem_primeFactors.2 ⟨hp, hpn, hn⟩
-  · have hpN' : ¬ Nat.Coprime p N := fun h ↦ (hp.coprime_iff_not_dvd.1 h) hpN
-    simp only [heckeTScalarGamma0_of_not_coprime N hpN', zero_pow hv]
+  intro n
+  induction n using Nat.strong_induction_on with
+  | _ n ih =>
+    intro hn
+    rcases eq_or_lt_of_le (Nat.one_le_iff_ne_zero.mpr hn) with h1 | h1
+    · simp [← h1]
+    · have hp : (n.minFac).Prime := Nat.minFac_prime (by omega)
+      have hv : n.factorization n.minFac ≠ 0 :=
+        (hp.factorization_pos_of_dvd hn (Nat.minFac_dvd n)).ne'
+      have hlt : ordCompl[n.minFac] n < n :=
+        Nat.div_lt_self (Nat.pos_of_ne_zero hn) (Nat.one_lt_pow hv hp.one_lt)
+      have hne : ordCompl[n.minFac] n ≠ 0 := (Nat.ordCompl_pos n.minFac hn).ne'
+      rw [heckeTScalarCompositeGamma0_def,
+        TauCeti.Nat.primePowerProd_eq_ordProj_mul_ordCompl
+          (fun q w ↦ heckeTScalarGamma0 N q ^ w) hp hn,
+        ← heckeTScalarCompositeGamma0_def, ← heckeTScalarCompositeGamma0_def,
+        heckeTScalarCompositeGamma0_prime_pow N hp, ih _ hlt hne, heckeTScalarGamma0_pow,
+        heckeTScalarGamma0_mul, Nat.ordProj_mul_ordCompl_eq_self]
 
 /-- **Shimura, Theorem 3.24(3)** at level `Γ₀(N)`, in full — the global multiplication table:
 
@@ -294,13 +303,16 @@ Both arguments must be nonzero. `heckeTCompositeGamma0` sends `0` to the empty p
 
 Together with `heckeTCompositeGamma0_prime_pow` this determines every product of two composite
 elements from the prime-power data. Divisors sharing a factor with the level contribute nothing,
-by `heckeTScalarCompositeGamma0_eq_zero_of_not_coprime`, so the sum over *all* divisors of
+by `heckeTScalarGamma0_of_not_coprime`, so the sum over *all* divisors of
 `gcd m n` is the right index even though only the good ones carry weight. -/
 theorem heckeTCompositeGamma0_mul_eq_sum_divisors_gcd {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) :
     heckeTCompositeGamma0 N m * heckeTCompositeGamma0 N n =
       ∑ d ∈ (Nat.gcd m n).divisors, (d : ℤ) •
-        (heckeTScalarCompositeGamma0 N d * heckeTCompositeGamma0 N (m * n / d ^ 2)) := by
+        (heckeTScalarGamma0 N d * heckeTCompositeGamma0 N (m * n / d ^ 2)) := by
   let := commRingHeckeRingGamma0 N
+  rw [Finset.sum_congr rfl fun d hd ↦ congrArg _ (congrArg (· * _)
+    (heckeTScalarCompositeGamma0_eq_heckeTScalarGamma0 N
+      (Nat.pos_of_mem_divisors hd).ne').symm)]
   -- The generic table is stated over a `CommSemiring` with `ℕ`-scalars; the Hecke ring is a
   -- `Ring`, where `natCast_zsmul` identifies those with the `ℤ`-scalars its neighbours use.
   simp only [heckeTCompositeGamma0_def, heckeTScalarCompositeGamma0_def,
