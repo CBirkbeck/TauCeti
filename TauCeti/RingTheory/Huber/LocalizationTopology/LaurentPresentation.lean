@@ -11,16 +11,17 @@ public import TauCeti.RingTheory.Huber.WeightedEval.Quotient
 /-!
 # The Laurent presentation of a one-step refinement
 
-Adjoining one numerator `t` to a rational presentation `(T, s)` gives the refinement
-`(T, s) → (insert t T, s)`, and `A⟨(insert t T)/s⟩` is cut out of `A⟨T/s⟩⟨X⟩` by the single
-relation `X = t/s`. This file supplies the map that presentation asserts in one direction: a
-unique continuous ring homomorphism
+Let `(T', s)` refine `(T, s)` by enlarging the numerators, and let `t` be one of the new ones.
+Then `A⟨T'/s⟩` is cut out of `A⟨T/s⟩⟨X⟩` by the single relation `X = t/s`. This file supplies the
+map that presentation asserts in one direction: a unique continuous ring homomorphism
 
 ```text
-A⟨T/s⟩⟨X⟩ ⧸ (t/s - X)  →  A⟨(insert t T)/s⟩
+A⟨T/s⟩⟨X⟩ ⧸ (t/s - X)  →  A⟨T'/s⟩
 ```
 
-sending constants to the restriction map and `X` to `t/s`.
+sending constants to the restriction map and `X` to `t/s`. The case Wedhorn's Remark 7.55 chains
+is `T' = insert t T`, one numerator at a time; nothing here needs `T'` to have that shape, which is
+what keeps `DecidableEq A` out of the statements.
 
 The restriction map itself, and the fact that it carries `t/s` to `t/s`, live one file earlier in
 `TauCeti.RingTheory.Huber.LocalizationTopology.Restriction`: they need only the
@@ -67,7 +68,7 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
   (hden : HasDenominatorPower P T s S)
 
 /-- **The Laurent relation ideal `(t/s - X)`** of `A⟨T/s⟩⟨X⟩`, the single relation that cuts
-`A⟨(insert t T)/s⟩` out of the one-variable restricted series over `A⟨T/s⟩`. -/
+`A⟨T'/s⟩` out of the one-variable restricted series over `A⟨T/s⟩`. -/
 noncomputable def laurentRelationIdeal :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
@@ -113,69 +114,69 @@ theorem laurentRelationIdeal_quotientMk_weightedC :
 
 section OneStep
 
-variable [DecidableEq A] (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s S']
-  (hden' : HasDenominatorPower P (insert t T) s S')
+variable (T' : Finset A) (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s S']
+  (hden' : HasDenominatorPower P T' s S') (hTT' : ∀ u ∈ T, u ∈ T')
 
 /-- **The Laurent presentation of a one-step refinement, backward half.** There is exactly one
 continuous ring homomorphism
 
 ```text
-A⟨T/s⟩⟨X⟩ ⧸ (t/s - X)  →  A⟨(insert t T)/s⟩
+A⟨T/s⟩⟨X⟩ ⧸ (t/s - X)  →  A⟨T'/s⟩
 ```
 
-restricting to `TauCeti.Huber.PairOfDefinition.restrictionRingHomInsert` on constants, and
+restricting to `TauCeti.Huber.PairOfDefinition.restrictionRingHomOfSubset` on constants, and
 sending `X` to `t/s`.
 
 The only fact particular to this situation is
-`TauCeti.Huber.PairOfDefinition.restrictionRingHomInsert_coe_divBy`; everything else is the
+`TauCeti.Huber.PairOfDefinition.restrictionRingHomOfSubset_coe_divBy`; everything else is the
 universal property
 `TauCeti.Huber.existsUnique_continuous_ringHom_quotient_weightedRestrictedSubring` of the
 quotient. Wedhorn's Remark 7.55 chains such one-step refinements, and Proposition 8.30 reduces
 flatness of a general restriction map along that chain to this elementary case. -/
-theorem existsUnique_continuous_ringHom_laurentQuotient_restriction :
+theorem existsUnique_continuous_ringHom_laurentQuotient_restriction (ht : t ∈ T') :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
     letI := isTopologicalRing_locUniformSpace P T s S hden
     letI := isHuberRing_locUniformSpace P T s S hden
-    letI := locUniformSpace P (insert t T) s S' hden'
-    letI := isUniformAddGroup_locUniformSpace P (insert t T) s S' hden'
-    letI := isTopologicalRing_locUniformSpace P (insert t T) s S' hden'
-    letI := isHuberRing_locUniformSpace P (insert t T) s S' hden'
+    letI := locUniformSpace P (T') s S' hden'
+    letI := isUniformAddGroup_locUniformSpace P (T') s S' hden'
+    letI := isTopologicalRing_locUniformSpace P (T') s S' hden'
+    letI := isHuberRing_locUniformSpace P (T') s S' hden'
     ∃! ψ : (weightedRestrictedSubring
         (fun _ : Fin 1 ↦ ({1} : Set (UniformSpace.Completion S))) isWeightFamily_one_weight) ⧸
           laurentRelationIdeal P T s t S hden →+* UniformSpace.Completion S',
       Continuous ψ ∧
       (∀ a, ψ (Ideal.Quotient.mk _ (weightedC _ isWeightFamily_one_weight a)) =
-        restrictionRingHomInsert P T s S hden t S' hden' a) ∧
+        restrictionRingHomOfSubset P T s S hden T' S' hden' hTT' a) ∧
       ∀ i, ψ (Ideal.Quotient.mk _ (weightedX _ isWeightFamily_one_weight i)) =
         ((divBy t s : S') : UniformSpace.Completion S') := by
   let _ := locUniformSpace P T s S hden
   have _ := isUniformAddGroup_locUniformSpace P T s S hden
   have _ := isTopologicalRing_locUniformSpace P T s S hden
   have _ := isHuberRing_locUniformSpace P T s S hden
-  let _ := locUniformSpace P (insert t T) s S' hden'
-  have _ := isUniformAddGroup_locUniformSpace P (insert t T) s S' hden'
-  have _ := isTopologicalRing_locUniformSpace P (insert t T) s S' hden'
-  have _ := isHuberRing_locUniformSpace P (insert t T) s S' hden'
-  have hu' : IsUnit (toCompletionLoc P (insert t T) s S' hden' s) :=
-    isUnit_toCompletionLoc_of_dvd P (insert t T) s S' hden' dvd_rfl
-  set φ := restrictionRingHomInsert P T s S hden t S' hden' with hφdef
+  let _ := locUniformSpace P (T') s S' hden'
+  have _ := isUniformAddGroup_locUniformSpace P (T') s S' hden'
+  have _ := isTopologicalRing_locUniformSpace P (T') s S' hden'
+  have _ := isHuberRing_locUniformSpace P (T') s S' hden'
+  have hu' : IsUnit (toCompletionLoc P (T') s S' hden' s) :=
+    isUnit_toCompletionLoc_of_dvd P (T') s S' hden' dvd_rfl
+  set φ := restrictionRingHomOfSubset P T s S hden T' S' hden' hTT' with hφdef
   have hφ : ContinuousAt φ 0 :=
-    (continuous_restrictionRingHomInsert P T s S hden t S' hden').continuousAt
+    (continuous_restrictionRingHomOfSubset P T s S hden T' S' hden' hTT').continuousAt
   set b : Fin 1 → UniformSpace.Completion S' :=
     fun _ ↦ ((divBy t s : S') : UniformSpace.Completion S') with hbdef
   have hb : IsWeightBounded φ (fun _ : Fin 1 ↦ ({1} : Set (UniformSpace.Completion S))) b :=
     (isWeightBounded_one_weight_iff_forall_isPowerBounded φ b).2 fun _ ↦ by
-      rw [hbdef, ← toCompletionLoc_mul_unit_inv_eq_divBy P (insert t T) s S' hden' t hu']
-      exact isPowerBounded_toCompletionLoc_mul_unit_inv P (insert t T) s S' hden'
-        (mul_one s).symm hu' (by simp)
+      rw [hbdef, ← toCompletionLoc_mul_unit_inv_eq_divBy P (T') s S' hden' t hu']
+      exact isPowerBounded_toCompletionLoc_mul_unit_inv P (T') s S' hden'
+        (mul_one s).symm hu' (by simpa using ht)
   -- the evaluation kills `t/s - X`, so the relation ideal lands in its kernel
   have h𝔞 : laurentRelationIdeal P T s t S hden ≤
       RingHom.ker (weightedEvalHom isWeightFamily_one_weight hφ hb) := by
     rw [laurentRelationIdeal_def, Ideal.span_le, Set.singleton_subset_iff, SetLike.mem_coe,
       RingHom.mem_ker, map_sub, weightedEvalHom_weightedC, weightedEvalHom_weightedX,
       sub_eq_zero]
-    exact restrictionRingHomInsert_coe_divBy P T s S hden t S' hden'
+    exact restrictionRingHomOfSubset_coe_divBy P T s S hden T' S' hden' hTT' t
   exact existsUnique_continuous_ringHom_quotient_weightedRestrictedSubring
     isWeightFamily_one_weight hφ hb h𝔞
 
