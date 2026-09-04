@@ -90,36 +90,6 @@ private lemma gammaPDFReal_of_pos {x : ℝ} (hx : 0 < x) :
     gammaPDFReal a r x = r ^ a / Real.Gamma a * x ^ (a - 1) * exp (-(r * x)) := by
   rw [gammaPDFReal, ite_eq_left hx.le]
 
-/-- Collecting the gamma kernel `c ^ r / Γ r * x ^ (r - 1) * exp (-(c * x))` against
-`exp (-x) * x ^ k / k !` at a positive point: the two powers of `x` and the two exponentials each
-combine, leaving a single gamma kernel of shape `r + k` and rate `c + 1`.
-
-The gamma rate `c` is arbitrary, so a gamma--Poisson mixture — which averages the Poisson rate `x`
-against a gamma law — can instantiate the identity pointwise at whatever rate that law carries. -/
--- The factors are written out rather than as `gammaPDFReal` and `poissonPMFReal`: the former
--- carries an `if 0 ≤ x` guard that is not definitional at a bound variable, and the latter is
--- indexed by `ℝ≥0`, so either would cost the consumer a congruence step under its integral.
-theorem gammaKernel_mul_exp_mul_pow_div_factorial (c r : ℝ) (k : ℕ) {x : ℝ}
-    (hx : x ∈ Ioi (0 : ℝ)) :
-    c ^ r / Real.Gamma r * x ^ (r - 1) * Real.exp (-(c * x)) *
-        (Real.exp (-x) * x ^ k / k.factorial) =
-      c ^ r / (Real.Gamma r * k.factorial) *
-        (x ^ (r + (k : ℝ) - 1) * Real.exp (-((c + 1) * x))) := by
-  have hxpow : x ^ (r - 1) * x ^ k = x ^ (r + (k : ℝ) - 1) := by
-    rw [← Real.rpow_natCast x k, ← Real.rpow_add hx]
-    congr 1
-    ring
-  have hexp : Real.exp (-(c * x)) * Real.exp (-x) = Real.exp (-((c + 1) * x)) := by
-    rw [← Real.exp_add]
-    congr 1
-    ring
-  calc
-    c ^ r / Real.Gamma r * x ^ (r - 1) * Real.exp (-(c * x)) *
-        (Real.exp (-x) * x ^ k / k.factorial) =
-        c ^ r / (Real.Gamma r * k.factorial) *
-          ((x ^ (r - 1) * x ^ k) * (Real.exp (-(c * x)) * Real.exp (-x))) := by ring
-    _ = _ := by rw [hxpow, hexp]
-
 /-- An integral against the gamma law is the set integral of the weighted integrand over
 `(0, ∞)`. -/
 theorem integral_gammaMeasure_eq {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]

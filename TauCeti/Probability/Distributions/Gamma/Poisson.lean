@@ -43,6 +43,39 @@ namespace TauCeti
 
 namespace Probability
 
+namespace Real
+
+/-- Collecting the gamma kernel `c ^ r / Γ r * x ^ (r - 1) * exp (-(c * x))` against
+`exp (-x) * x ^ k / k !` at a positive point: the two powers of `x` and the two exponentials each
+combine, leaving a single gamma kernel of shape `r + k` and rate `c + 1`.
+
+The gamma rate `c` is arbitrary, so a gamma--Poisson mixture — which averages the Poisson rate `x`
+against a gamma law — can instantiate the identity pointwise at whatever rate that law carries. -/
+-- The factors are written out rather than as `gammaPDFReal` and `poissonPMFReal`: the former
+-- carries an `if 0 ≤ x` guard that is not definitional at a bound variable, and the latter is
+-- indexed by `ℝ≥0`, so either would cost the consumer a congruence step under its integral.
+theorem gammaKernel_mul_exp_mul_pow_div_factorial (c r : ℝ) (k : ℕ) {x : ℝ}
+    (hx : x ≠ 0) :
+    c ^ r / Real.Gamma r * x ^ (r - 1) * Real.exp (-(c * x)) *
+        (Real.exp (-x) * x ^ k / k.factorial) =
+      c ^ r / (Real.Gamma r * k.factorial) *
+        (x ^ (r + (k : ℝ) - 1) * Real.exp (-((c + 1) * x))) := by
+  have hxpow : x ^ (r - 1) * x ^ k = x ^ (r + (k : ℝ) - 1) := by
+    rw [show r + (k : ℝ) - 1 = r - 1 + (k : ℕ) by ring,
+      Real.rpow_add_natCast hx]
+  have hexp : Real.exp (-(c * x)) * Real.exp (-x) = Real.exp (-((c + 1) * x)) := by
+    rw [← Real.exp_add]
+    congr 1
+    ring
+  calc
+    c ^ r / Real.Gamma r * x ^ (r - 1) * Real.exp (-(c * x)) *
+        (Real.exp (-x) * x ^ k / k.factorial) =
+        c ^ r / (Real.Gamma r * k.factorial) *
+          ((x ^ (r - 1) * x ^ k) * (Real.exp (-(c * x)) * Real.exp (-x))) := by ring
+    _ = _ := by rw [hxpow, hexp]
+
+end Real
+
 private lemma integral_poissonMass_gammaMeasure {r p : ℝ} (hr : 0 < r) (hp : 0 < p)
     (hp1 : p < 1) (k : ℕ) :
     ∫ x, Real.exp (-x) * x ^ k / k.factorial ∂gammaMeasure r (p / (1 - p)) =
@@ -61,7 +94,7 @@ private lemma integral_poissonMass_gammaMeasure {r p : ℝ} (hr : 0 < r) (hp : 0
       Real.exp (-(p / (1 - p) * x))) *
         (Real.exp (-x) * x ^ k / k.factorial)) = _
   have hcongr := fun x (hx : x ∈ Ioi (0 : ℝ)) =>
-    TauCeti.gammaKernel_mul_exp_mul_pow_div_factorial (p / (1 - p)) r k hx
+    Real.gammaKernel_mul_exp_mul_pow_div_factorial (p / (1 - p)) r k hx.ne'
   -- Euler's Gamma integral evaluates the kernel with shifted shape `r + k`.
   rw [setIntegral_congr_fun measurableSet_Ioi hcongr, integral_const_mul,
     Real.integral_rpow_mul_exp_neg_mul_Ioi hshape (by positivity : 0 < p / (1 - p) + 1),
