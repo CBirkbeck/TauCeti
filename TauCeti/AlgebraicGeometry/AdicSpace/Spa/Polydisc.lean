@@ -7,7 +7,6 @@ module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Comap
 public import TauCeti.RingTheory.Huber.WeightedEval.Continuous
-public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.PowerBounded
 public import TauCeti.RingTheory.Huber.WeightedEval.Hom
 
 /-!

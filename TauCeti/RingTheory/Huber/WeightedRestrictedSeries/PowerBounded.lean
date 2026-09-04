@@ -9,76 +9,90 @@ public import TauCeti.RingTheory.Huber.PowerBounded
 public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Basic
 
 /-!
-# Power-bounded elements of `A⟨X₁, …, Xₖ⟩`
+# Power-bounded elements of `A⟨X₁, …, Xₖ⟩_T`
 
-The variables `Xᵢ` and the power-bounded constants are power-bounded in the restricted
-power-series ring. Together they place the image of `A°[X₁, …, Xₖ]` inside `A⟨X₁, …, Xₖ⟩°`, the
-plus ring `TauCeti.ValuationSpectrum.closedPolydisc` designates for the closed polydisc. They
-exhibit elements of that plus ring; they do not determine it.
+The variables `Xᵢ` and the power-bounded constants of a weighted restricted power-series ring are
+power-bounded in it. Together they exhibit the image of `A°[X₁, …, Xₖ]` inside `A⟨X₁, …, Xₖ⟩°`,
+the plus ring `TauCeti.ValuationSpectrum.closedPolydisc` designates for the closed polydisc; they
+exhibit elements of that plus ring rather than determining it.
 
-The two differ in how much of the weighted setting they need, and the difference is exactly
-whether the coefficient moves.
-
-Multiplying by a *constant* leaves every coefficient where it is, so the weight at `ν` is still
-`Tν`; a neighbourhood of `A` absorbing the powers of `a` therefore absorbs them coefficientwise,
-and `TauCeti.Huber.isPowerBounded_weightedC` holds for **every** weight family.
-
-Multiplying by `Xᵢⁿ` moves the coefficient at `ν` to `ν + n · eᵢ`, where the weight is `Tν · Tᵢⁿ`
-rather than `Tν`, and nothing in `TauCeti.Huber.IsWeightFamily` makes those comparable. So
-`TauCeti.Huber.isPowerBounded_weightedX` is stated at the trivial family `Tᵢ = {1}` — the one at
-which `TauCeti.Huber.weightedRestrictedSubring` is the ordinary ring of restricted power series —
-where `TauCeti.Huber.weightMul_one_weight` says every weight is the ambient subgroup and the basic
-neighbourhoods are shift-invariant.
+Neither result needs the trivial weight family. The constant result holds for every weight family;
+the variable result needs only `1 ∈ T i`, which the trivial family satisfies.
 
 ## Main results
 
-* `TauCeti.Huber.isPowerBounded_weightedX`: the variable `Xᵢ` is power-bounded.
-* `TauCeti.Huber.isPowerBounded_weightedC`: the constant `a` is power-bounded in `A⟨X⟩_T`, for any
-  weight family, as soon as it is power-bounded in `A`.
+* `TauCeti.Huber.isPowerBounded_weightedX`: the variable `Xᵢ` is power-bounded whenever `1 ∈ T i`,
+  with `TauCeti.Huber.isPowerBounded_weightedX_one_weight` the trivial-weight case the closed
+  polydisc uses.
+* `TauCeti.Huber.isPowerBounded_weightedC`: a constant power-bounded in `A` is power-bounded in
+  `A⟨X⟩_T`, for every weight family.
 
 ## References
 
 * [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), Definition 7.56 and
   Example 7.57.
 
-## Provenance
-
 AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0) at commit
-`2baa76f742bdb4fb8ee323fabba41203bd390e08` records the power-boundedness of `Xᵢ` in
-`projects/AdicSpaces/Adic spaces/Wedhorn828.lean`, but reaches it another way: there `Xᵢ` is
-power-bounded because it lies in a *ring of definition* of the series ring, whose elements are
-power-bounded because it is bounded. That route needs `A` to be Huber — a general nonarchimedean
-ring has no ring of definition to appeal to — so it does not prove the statement in the generality
-used here, and nothing was ported. The absorption argument below is direct and assumes only the
-nonarchimedean topology. Were the Huber case all that were wanted,
-`TauCeti.Huber.IsBounded.isPowerBounded_of_mem` is the TauCeti lemma that route would use.
+`2baa76f742bdb4fb8ee323fabba41203bd390e08`, `projects/AdicSpaces/Adic spaces/Wedhorn828.lean`,
+has the power-boundedness of `Xᵢ` under stronger hypotheses: there it follows from membership in a
+ring of definition, which needs `A` to be Huber. For that route in this repository, see
+`TauCeti.Huber.IsBounded.isPowerBounded_of_mem`.
 -/
-
 public section
+
+open Pointwise
 
 namespace TauCeti.Huber
 
 variable {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
 
-/-- **The variable `Xᵢ` is power-bounded**, at the trivial weight family. Unlike
-`TauCeti.Huber.isPowerBounded_weightedC` this does need that family; the module docstring says why.
+/-- **The variable `Xᵢ` is power-bounded** whenever `1 ∈ T i`. Multiplying by `Xᵢⁿ` moves the
+coefficient at `ν` to `ν + n · eᵢ`, and `1 ∈ T i` makes `Tν ⊆ T(ν + n · eᵢ)`, so the coefficient
+lands in a *larger* weight subgroup and one neighbourhood absorbs every power.
 
 Its use is to put the coordinates of the closed polydisc inside the plus ring `A⟨T⟩°` that
-`TauCeti.ValuationSpectrum.closedPolydisc` designates. -/
-theorem isPowerBounded_weightedX (i : Fin k) :
-    IsPowerBounded (weightedX (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight i) := by
-  -- multiplying by `Xᵢⁿ` only shifts coefficients, and at the trivial weight family every basic
-  -- neighbourhood asks the same of each coefficient, so one of them absorbs every power at once
+`TauCeti.ValuationSpectrum.closedPolydisc` designates; there the weights are trivial, which is
+`TauCeti.Huber.isPowerBounded_weightedX_one_weight`. -/
+theorem isPowerBounded_weightedX {T : Fin k → Set A} (hT : IsWeightFamily T) {i : Fin k}
+    (hi : (1 : A) ∈ T i) : IsPowerBounded (weightedX T hT i) := by
+  classical
   refine isPowerBounded_iff.mpr <| isBounded_iff.mpr fun U hU ↦ ?_
-  have hbasis := hasBasis_nhds_zero_weightedTopology (isWeightFamily_one_weight (k := k) (A := A))
+  have hbasis := hasBasis_nhds_zero_weightedTopology hT
   obtain ⟨W, -, hWU⟩ := hbasis.mem_iff.mp hU
   refine ⟨_, hbasis.mem_of_mem (i := W) trivial, ?_⟩
   rintro _ ⟨g, hg, _, ⟨n, rfl⟩, rfl⟩
   refine hWU ?_
-  simp only [SetLike.mem_coe, mem_weightedNhd, weightMul_one_weight] at hg ⊢
+  simp only [SetLike.mem_coe, mem_weightedNhd] at hg ⊢
   intro ν
-  push_cast [coe_weightedX, MvPowerSeries.X_pow_eq, MvPowerSeries.coeff_mul_monomial]
-  split <;> simp [hg]
+  have hcoe : ((g * weightedX T hT i ^ n : weightedRestrictedSubring T hT) :
+      MvPowerSeries (Fin k) A) = (g : MvPowerSeries (Fin k) A) * MvPowerSeries.X i ^ n := by
+    push_cast [coe_weightedX]
+    rfl
+  rw [hcoe, MvPowerSeries.X_pow_eq, MvPowerSeries.coeff_mul_monomial]
+  split
+  · -- the coefficient moves from `ν - n · eᵢ` to `ν`, and `1 ∈ T i` enlarges the weight
+    rename_i hle
+    have hone : (1 : A) ∈ weightPow T (Finsupp.single i n) := by
+      rw [weightPow_def]
+      refine Finset.prod_induction (fun j ↦ T j ^ (Finsupp.single i n) j)
+        (fun S : Set A ↦ (1 : A) ∈ S) (fun _ _ h h' ↦ ?_) ?_ fun j _ ↦ ?_
+      · simpa using Set.mul_mem_mul h h'
+      · simp
+      · rcases eq_or_ne j i with rfl | hj
+        · simpa using Set.one_mem_pow hi
+        · rw [Finsupp.single_eq_of_ne hj, pow_zero]
+          exact Set.mem_one.mpr rfl
+    rw [mul_one]
+    have h2 := mul_mem_weightMul_add_of_mem_weightPow hone (hg (ν - Finsupp.single i n))
+    rw [one_mul, tsub_add_cancel_of_le hle] at h2
+    exact h2
+  · exact (weightMul T ν W.toAddSubgroup).zero_mem
+
+/-- **The variable `Xᵢ` is power-bounded at the trivial weight family**, the case
+`TauCeti.ValuationSpectrum.closedPolydisc` uses. -/
+theorem isPowerBounded_weightedX_one_weight (i : Fin k) :
+    IsPowerBounded (weightedX (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight i) :=
+  isPowerBounded_weightedX _ rfl
 
 /-- **A power-bounded constant stays power-bounded**, at any weight family — no hypothesis on `T`
 beyond `TauCeti.Huber.IsWeightFamily`. Contrast `TauCeti.Huber.isPowerBounded_weightedX`, which
