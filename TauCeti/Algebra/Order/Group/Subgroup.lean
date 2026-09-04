@@ -30,11 +30,7 @@ a cofinality argument needs.
   material these lemmas serve, in particular Definition 1.16 and Corollary 1.21.
 
 Adapted from the AINTLIB development (Apache 2.0), file
-`projects/AdicSpaces/Adic spaces/OrderedGroupConvex.lean`, by way of
-`TauCeti.Algebra.Order.Group.Cofinal`: the above-`1` statement began there as a private helper of
-that cofinality development and was promoted, then stated for subgroups rather than convex
-subgroups, convexity playing no part in its proof. The below-`1` orientation is derived from it
-by inversion.
+`projects/AdicSpaces/Adic spaces/OrderedGroupConvex.lean`.
 -/
 
 public section
