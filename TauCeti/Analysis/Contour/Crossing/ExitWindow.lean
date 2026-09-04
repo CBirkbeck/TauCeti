@@ -413,7 +413,7 @@ theorem exists_radius_hasCauchyPVAt_exitCapWindow {γ : ℝ → ℂ} {s : ℂ} {
           ((γ (exitCapWindow γ s t₀ δ ε L_R L_L).upper - s) / L_R).arg : ℝ) : ℂ) *
             Complex.I) := by
   obtain ⟨R, hR, L_R, L_L, hL_R, hL_L, h_R, h_L, hspec⟩ :=
-    exists_radius_perWindow_tendsto_log_norm_add_arg h_imm hab ht₀ h_at
+    exists_radius_perWindow_tendsto_log_norm_add_arg h_imm ht₀ h_at
   refine ⟨R, hR, L_R, L_L, hL_R, hL_L, h_R, h_L, ?_⟩
   intro δ hδ hδR ha hb h_unique ε hε hεL hεR
   let W := exitCapWindow γ s t₀ δ ε L_R L_L
