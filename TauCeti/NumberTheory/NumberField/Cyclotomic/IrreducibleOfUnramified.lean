@@ -203,7 +203,7 @@ theorem inf_eq_bot_prime_pow_of_unramified {Ω : Type*} [Field Ω] [Algebra K Ω
   have he2 : 𝔔.ramificationIdx (𝓞 E) = (p ^ (k + 1)).totient := by
     rw [htot, he1, one_mul] at htower; exact htower.symm
   exact IntermediateField.finrank_eq_one_iff.mp
-    (𝔔.finrank_eq_one_of_ramificationIdx_eq_finrank he2 hBK)
+    (𝔔.finrank_eq_one_of_ramificationIdx_eq_finrank (he2.trans hBK.symm))
 
 /-- The prime case of `inf_eq_bot_prime_pow_of_unramified`, at `k = 0`. -/
 theorem inf_eq_bot_of_unramified {Ω : Type*} [Field Ω] [Algebra K Ω]

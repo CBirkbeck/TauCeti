@@ -54,12 +54,12 @@ The ramification index over `𝓞 E` is bounded by `[B : E]`, so `[B : K] ≤ [B
 theorem _root_.Ideal.finrank_eq_one_of_ramificationIdx_eq_finrank
     {E B : Type*} [Field E] [NumberField E]
     [Field B] [NumberField B] [Algebra K E] [Algebra K B] [Algebra E B] [IsScalarTower K E B]
-    (𝔔 : Ideal (𝓞 B)) [𝔔.IsPrime] {n : ℕ}
-    (he : 𝔔.ramificationIdx (𝓞 E) = n) (hB : Module.finrank K B = n) :
+    (𝔔 : Ideal (𝓞 B)) [𝔔.IsPrime]
+    (he : 𝔔.ramificationIdx (𝓞 E) = Module.finrank K B) :
     Module.finrank K E = 1 := by
   have hb := Ideal.ramificationIdx_le_finrank_numberField (K := E) (F := B) 𝔔
   have hle : Module.finrank K E * Module.finrank E B ≤ 1 * Module.finrank E B := by
-    rw [one_mul, Module.finrank_mul_finrank K E B, hB, ← he]; exact hb
+    rw [one_mul, Module.finrank_mul_finrank K E B, ← he]; exact hb
   exact le_antisymm (Nat.le_of_mul_le_mul_right hle Module.finrank_pos) Module.finrank_pos
 
 end TauCeti.NumberField
