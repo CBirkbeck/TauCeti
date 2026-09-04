@@ -27,9 +27,8 @@ Hence `[E : K] = 1`.
 
 ## References
 
-This is Layer 7.3 of the Chebotarev roadmap (`TauCetiRoadmap/Chebotarev`, `README.md`), which
-states the argument used here: by Layer 7.2 the cyclotomic extension is totally ramified above
-`q`, `A` is unramified there, and an extension that is both is trivial.
+The argument: the cyclotomic extension is totally ramified above `q`, `A` is unramified there,
+and an extension that is both is trivial.
 
 Milne, *Algebraic Number Theory*, proof of Proposition 6.2; Sharifi, *Algebraic Number Theory*,
 proof of Lemma 3.1.13. Both run this argument with `K = ℚ`.
