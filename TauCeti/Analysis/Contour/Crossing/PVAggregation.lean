@@ -74,9 +74,11 @@ private theorem eventually_intervalIntegrable_truncated_window {γ : ℝ → ℂ
     ∀ᶠ ε in 𝓝[>] (0 : ℝ),
       IntervalIntegrable (fun u => if ‖γ u - s‖ > ε then g (γ u) * deriv γ u else 0)
         MeasureTheory.volume (t - r) (t + r) := by
+  have h_window : t - r ≤ t + r := by linarith
+  have hab : a ≤ b := h_lo.trans (h_window.trans h_hi)
   filter_upwards [self_mem_nhdsWithin] with ε hε
   exact (h_int_tr ε hε).mono_set (by
-    rw [uIcc_of_le (show t - r ≤ t + r by linarith), uIcc_of_le (show a ≤ b by linarith)]
+    rw [uIcc_of_le h_window, uIcc_of_le hab]
     exact Icc_subset_Icc (by linarith) h_hi)
 
 /-- The between-piece principal value on a subinterval of `[a, b]` keeping distance `≥ m` from
