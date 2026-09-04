@@ -33,9 +33,10 @@ character — are *jointly* bijective:
   `IsCyclotomicExtension.autToPow_galEquivProd_symm` eliminating its inverse. Those three
   `simp` lemmas are the whole interface: no consumer needs the `MulEquiv.ofBijective` that
   packages the equivalence, in either direction.
-* `IsCyclotomicExtension.ker_autToPow_eq_comap_galEquivProd`: the same interface one level up,
-  on subgroups rather than elements — the kernel of the cyclotomic character is what
-  `galEquivProd` reads off as the `Gal(L/K)` factor.
+* `IsCyclotomicExtension.ker_autToPow_eq_comap_galEquivProd` and
+  `IsCyclotomicExtension.ker_restrictNormalHom_eq_comap_galEquivProd`: the same interface one
+  level up, on subgroups rather than elements — each component's kernel is what `galEquivProd`
+  reads off as the opposite factor.
 
 The two general prerequisites this rests on are stated where they belong rather than here:
 the degree identity `[M : K] = φ m` is `IsCyclotomicExtension.finrank_eq_totient` in
@@ -291,6 +292,24 @@ theorem ker_autToPow_eq_comap_galEquivProd (hcop : ((NumberField.discr L).natAbs
       ((⊤ : Subgroup Gal(L/K)).prod (⊥ : Subgroup (ZMod m)ˣ)) := by
   ext σ
   simp [Subgroup.mem_prod]
+
+/-- **The restriction's kernel is the second factor of the joint restriction.** The automorphisms
+of `M` acting trivially on `L` are exactly those that `galEquivProd` sends into `1 × (ZMod m)ˣ`.
+
+This is the mirror of `ker_autToPow_eq_comap_galEquivProd`: between them the two components of
+the equivalence are each characterised on subgroups, so a consumer holding either
+`Gal(M/L)` or `Gal(M/K(μ_m))` can transport it without unfolding `galEquivProd`. -/
+theorem ker_restrictNormalHom_eq_comap_galEquivProd
+    (hcop : ((NumberField.discr L).natAbs).Coprime m) {ζ : M} (hζ : IsPrimitiveRoot ζ m) :
+    (AlgEquiv.restrictNormalHom (F := K) (K₁ := M) L).ker =
+      Subgroup.comap (galEquivProd K L M m hcop hζ).toMonoidHom
+        ((⊥ : Subgroup Gal(L/K)).prod (⊤ : Subgroup (ZMod m)ˣ)) := by
+  ext σ
+  simp only [MonoidHom.mem_ker, Subgroup.mem_comap, MulEquiv.coe_toMonoidHom,
+    galEquivProd_apply, Subgroup.mem_prod, Subgroup.mem_bot, Subgroup.mem_top, and_true]
+  -- `AlgEquiv.restrictNormalHom L σ` and `σ.restrictNormal L` are definitionally equal; this is
+  -- the same step `galEquivProd_apply` discharges, and it is Mathlib's to make `rfl`.
+  rfl
 
 end Compositum
 
