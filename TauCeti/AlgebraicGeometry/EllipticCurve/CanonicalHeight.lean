@@ -40,6 +40,8 @@ with — is half of it. Getting this wrong would scale every later invariant.
 * `WeierstrassCurve.Affine.Point.canonicalHeight_zero` and
   `WeierstrassCurve.Affine.Point.canonicalHeight_neg`: its values at the two points every consumer
   meets first, as `@[simp]` normal forms.
+* `WeierstrassCurve.Affine.Point.canonicalHeight_nonneg`: it is non-negative, read off the
+  defining sequence termwise.
 * `WeierstrassCurve.Affine.Point.abs_canonicalHeight_sub_naiveHeight_le`: the canonical height stays
   within a bounded distance of *half* the naïve one, by a
   constant depending only on the curve. This is what makes the two interchangeable in
@@ -163,5 +165,13 @@ theorem Point.abs_canonicalHeight_sub_naiveHeight_le [W.toAffine.IsElliptic] :
     (dist_naiveHeight_div_succ_le hC P) (P.tendsto_naiveHeight_two_pow_nsmul_div_four_pow)
   -- the zeroth term of the sequence is `h P / 2`
   simpa [Real.dist_eq, abs_sub_comm] using hd
+
+/-- **The canonical height is non-negative.** Every term of the defining sequence is a quotient of
+non-negative quantities, so the limit is non-negative; no passage through the bounded difference
+from `h` is needed. -/
+theorem Point.canonicalHeight_nonneg [W.toAffine.IsElliptic] (P : W.Point) :
+    0 ≤ P.canonicalHeight :=
+  ge_of_tendsto' P.tendsto_naiveHeight_two_pow_nsmul_div_four_pow fun n ↦
+    div_nonneg (Point.naiveHeight_nonneg _) (by positivity)
 
 end WeierstrassCurve.Affine
