@@ -12,10 +12,10 @@ public import TauCeti.RingTheory.Huber.Restricted.TwoSided.Series
 /-!
 # The ring of two-sided restricted series `A⟨X, X⁻¹⟩`
 
-`TauCeti.Huber.twoSidedRestrictedSubmodule` is only the `A`-*module* of coefficient families
-underlying Wedhorn's `A⟨X, X⁻¹⟩` (Example 6.39). This module supplies the multiplication, which
-that file deliberately left out, and makes the coefficient object a ring — a commutative
-`A`-algebra when `A` is commutative, as the source states.
+`TauCeti.Huber.twoSidedRestrictedSubmodule` is the `A`-*module* of coefficient families
+underlying Wedhorn's `A⟨X, X⁻¹⟩` (Example 6.39). This module equips it with the convolution
+multiplication, making the coefficient object a ring — a commutative `A`-algebra when `A` is
+commutative, as the source states.
 
 ## Why this is not the one-sided argument
 
