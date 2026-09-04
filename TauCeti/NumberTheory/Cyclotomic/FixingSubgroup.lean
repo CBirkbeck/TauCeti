@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.FieldTheory.Galois.Basic
+public import TauCeti.NumberTheory.Cyclotomic.Adjoin
 public import TauCeti.RingTheory.RootsOfUnity.PrimitiveRoots
 
 /-!
@@ -24,10 +25,7 @@ subgroup is `Gal(M/K(μ_m))`, which is the reading the crossing argument uses.
 
 The identification of `Gal(M/K(μ_m))` with the `G × 1` factor of a Galois splitting is due to the
 Birkbeck--Brasca Chebotarev development,
-[CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0), which
-carries it out inline at its assembly site. Isolating it as a statement about the kernel of the
-cyclotomic character, so that it can be applied without unfolding a splitting, is what this file
-adds.
+[CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0).
 -/
 
 public section
@@ -43,12 +41,9 @@ theorem IsPrimitiveRoot.fixingSubgroup_adjoin_setOfPred_pow_eq_one_eq_ker_autToP
     (hζ : IsPrimitiveRoot ζ m) :
     (adjoin K {b : M | b ^ m = 1}).fixingSubgroup = (hζ.autToPow K).ker := by
   ext x
-  rw [MonoidHom.mem_ker, hζ.autToPow_eq_one_iff, IntermediateField.mem_fixingSubgroup_iff]
+  -- `K(μ_m) = K(ζ)`, so fixing the whole root-of-unity set is fixing the single generator.
+  rw [MonoidHom.mem_ker, hζ.autToPow_eq_one_iff, ← hζ.adjoin_singleton_eq_adjoin_nth_roots,
+    IntermediateField.mem_fixingSubgroup_iff]
   simp only [← AlgEquiv.smul_def]
   rw [IntermediateField.forall_mem_adjoin_smul_eq_self_iff]
-  refine ⟨fun h ↦ by simpa [AlgEquiv.smul_def] using h ζ hζ.pow_eq_one, fun h b hb ↦ ?_⟩
-  -- `x` fixes `ζ`, so it raises every `m`-th root of unity to the first power: that is
-  -- `map_eq_pow` at `j = 1`, from the file this one already imports.
-  have := TauCeti.IsPrimitiveRoot.map_eq_pow (j := 1) hζ (x : M ≃+* M).toRingHom
-    (by simpa using h) (Set.mem_ofPred_eq ▸ hb)
-  simpa [AlgEquiv.smul_def] using this
+  simp [AlgEquiv.smul_def]

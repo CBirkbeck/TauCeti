@@ -27,13 +27,8 @@ because the character records nothing but the power the root is sent to.
 
 ## References
 
-`autToPow_eq_one_iff` is the argument previously carried inline inside
-`IsCyclotomicExtension.restrictNormalHom_prod_autToPow_injective`
-(`TauCeti/NumberTheory/NumberField/Cyclotomic/Compositum.lean`), which is adapted from the
-Birkbeck--Brasca Chebotarev density project,
+`autToPow_eq_one_iff` is adapted from the Birkbeck--Brasca Chebotarev density project,
 [CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0).
-Extracting it here, so that the characterisation is available without a compositum in scope, is
-what this file adds; the credit travels with the proof.
 -/
 
 public section
