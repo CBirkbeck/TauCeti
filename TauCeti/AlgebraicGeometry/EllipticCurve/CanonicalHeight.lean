@@ -222,10 +222,12 @@ theorem Point.canonicalHeight_parallelogram_law [W.toAffine.IsElliptic] (P Q : W
       (tendsto_pow_atTop_atTop_of_one_lt (by norm_num : (1 : ℝ) < 4))
   linarith [tendsto_nhds_unique hg hzero]
 
+-- Not `@[simp]`: `canonicalHeight_nsmul` is, and it rewrites `2 • P` first, which would leave
+-- this lemma's left-hand side out of simp-normal form — the environment linter reports exactly
+-- that. Kept as a named lemma because `4 * canonicalHeight P` is the sharper right-hand side and
+-- is what a `rw` wants.
 /-- **Doubling scales the canonical height by four.** The parallelogram law at `Q = P`, where
-`P - Q = 0` contributes nothing. This is the normal form a consumer meets first; the general
-`n`-fold statement is a separate step. -/
-@[simp]
+`P - Q = 0` contributes nothing. -/
 theorem Point.canonicalHeight_two_nsmul [W.toAffine.IsElliptic] (P : W.Point) :
     (2 • P).canonicalHeight = 4 * P.canonicalHeight := by
   have h := canonicalHeight_parallelogram_law P P
@@ -261,12 +263,8 @@ theorem Point.canonicalHeight_zsmul [W.toAffine.IsElliptic] (n : ℤ) (P : W.Poi
     canonicalHeight_parallelogram_nsmul n P]
   ring
 
--- Not `@[simp]`, and that is forced rather than chosen: tagging it makes the existing
--- `canonicalHeight_two_nsmul` non-simp-normal, since `2 • P` would rewrite to
--- `((2 : ℕ) : ℝ) ^ 2 * canonicalHeight P` before the sharper `4 * canonicalHeight P` rule could
--- fire. The environment linter reports exactly that. The integer form below carries the tag, and
--- its left-hand side uses a different `smul` instance, so the two do not compete.
 /-- **The canonical height is quadratic in the point**, for a natural multiple. -/
+@[simp]
 theorem Point.canonicalHeight_nsmul [W.toAffine.IsElliptic] (n : ℕ) (P : W.Point) :
     (n • P).canonicalHeight = (n : ℝ) ^ 2 * P.canonicalHeight := by
   rw [← natCast_zsmul, Point.canonicalHeight_zsmul]
