@@ -72,9 +72,12 @@ namespace Nat
 
 /-! ### The index, split at a prime -/
 
-/-- The index appearing on the right of the table, after a divisor `p^j·d'` of `gcd m n` has been
-split at `p`: the quotient `mn/(p^j·d')²` factors as a power of `p` times the corresponding
-quotient for the `p`-free parts, and the two factors are coprime. -/
+/-- For `m = p^a·m'` and `n = p^b·n'` with `p` dividing neither `m'` nor `n'`, and `d'` a common
+divisor of `m'` and `n'` with `j ≤ min a b`:
+
+`mn/(p^j·d')² = p^{min a b + max a b − 2j} · (m'n'/d'²)`,
+
+and those two factors are coprime. -/
 private theorem mul_div_sq_eq_pow_mul_of_not_dvd {p a b m' n' m n d' j : ℕ} (hp : p.Prime)
     (hm_eq : m = p ^ a * m') (hn_eq : n = p ^ b * n') (hm' : ¬p ∣ m') (hn' : ¬p ∣ n')
     (hd'm : d' ∣ m') (hd'n : d' ∣ n') (hj : j ≤ min a b) :
@@ -99,8 +102,8 @@ section CommSemiring
 
 variable {R : Type*} [CommSemiring R] (D S : ℕ → ℕ → R)
 
-/-- The two prime-power blocks may be put in `min`/`max` order, which is the shape the per-prime
-table is stated in. -/
+/-- `f_{p^a} · f_{p^b} = f_{p^{min a b}} · f_{p^{max a b}}`: the two prime-power blocks may be
+reordered by size. -/
 private theorem primePowerProd_prime_pow_mul_min_max (f : ℕ → ℕ → R) (p a b : ℕ) :
     primePowerProd f (p ^ a) * primePowerProd f (p ^ b) =
       primePowerProd f (p ^ min a b) * primePowerProd f (p ^ max a b) := by
@@ -129,10 +132,8 @@ private theorem primePowerProd_smul_mul_smul_of_not_dvd {p a b m' n' m n d' j : 
     primePowerProd_mul_of_coprime S hcopS fun _ _ _ _ _ ↦ Commute.all _ _]
   ring_nf
 
-/-- The product of the prime-power sum over `j ≤ min a b` with the divisor sum over `gcd m' n'`
-is the divisor sum over `gcd m n`.
-
-This is the induction step of `TauCeti.Nat.primePowerProd_mul_eq_sum_divisors_gcd`. -/
+/-- When `gcd m n = gcd m' n' · p^{min a b}`, the product of the prime-power sum over
+`j ≤ min a b` with the divisor sum over `gcd m' n'` is the divisor sum over `gcd m n`. -/
 private theorem primePowerProd_sum_mul_sum_eq_sum_divisors {p a b m' n' m n : ℕ} (hp : p.Prime)
     (hm' : ¬p ∣ m') (hn' : ¬p ∣ n') (hm_eq : m = p ^ a * m')
     (hn_eq : n = p ^ b * n') (hgcd : Nat.gcd m n = Nat.gcd m' n' * p ^ min a b) :
