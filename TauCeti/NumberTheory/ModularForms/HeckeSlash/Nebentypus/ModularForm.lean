@@ -8,7 +8,6 @@ module
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Cusps
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Holomorphic
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Independence
-public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Invariance
 
 /-!
 # The twisted slash sum descends to the nebentypus character spaces
@@ -197,10 +196,17 @@ noncomputable def twistedHeckeSlashCuspFormCharEnd :
 
 /-- **The twisted operator on modular forms is the weighted sum over any decomposition of the
 double coset into right cosets**: if the right cosets `Γ₀(N) aᵢ` are pairwise distinct and cover
-the double coset, then the operator is `∑ᵢ χ(aᵢ)⁻¹ • (f ∣[k] aᵢ)`. So it is attached to the double
-coset, not to the representatives `twistedHeckeSlashSum` happens to choose; the choice-independence
-itself is `twistedHeckeSlashSum_eq_sum_of_rightCosets` (`Nebentypus/Independence.lean`). This is
-the twisted counterpart of `coe_heckeSlashModularFormEnd_eq_sum`. -/
+the double coset, then the operator is
+`∑ᵢ delta0NebentypusChar N χ ⟨aᵢ, _⟩ • (f ∣[k] aᵢ)`.
+
+The weight is not `χ` applied to `aᵢ` — `aᵢ : GL (Fin 2) ℚ` is not in the domain of `χ`. It is
+`delta0NebentypusChar`, which reads `χ` off the upper-left unit of the `Δ₀(N)` witness that the
+cover hypothesis supplies for `aᵢ` through `mem_Delta0_of_cover`.
+
+So the operator is attached to the double coset, not to the representatives
+`twistedHeckeSlashSum` happens to choose; the choice-independence itself is
+`twistedHeckeSlashSum_eq_sum_of_rightCosets` (`Nebentypus/Independence.lean`). This is the twisted
+counterpart of `coe_heckeSlashModularFormEnd_eq_sum`. -/
 lemma coe_twistedHeckeSlashModularFormCharEnd_eq_sum {ι : Type*} [Fintype ι]
     (a : ι → GL (Fin 2) ℚ)
     (hcover : doubleCoset (D.out : GL (Fin 2) ℚ) ((Gamma0 N).map (mapGL ℚ))
