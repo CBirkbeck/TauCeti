@@ -110,8 +110,7 @@ private theorem primePowerProd_prime_pow_mul_min_max (f : ℕ → ℕ → R) (p 
 
 /-- At the divisor `p ^ j · d'` of `gcd m n`, the two summands multiply to the target summand:
 `p^j • (S_{p^j}·D_{p^{…}}) * d' • (S_{d'}·D_{m'n'/d'²}) = (p^j·d') • (S_{p^j·d'}·D_{mn/(p^j·d')²})`.
-Both the scalar and the two families are multiplicative here because the indices `p ^ j` and `d'`
-are coprime, `d'` being a divisor of the `p`-free `gcd m' n'`. -/
+-/
 private theorem primePowerProd_smul_mul_smul_of_not_dvd {p a b m' n' m n d' j : ℕ}
     (hp : p.Prime) (hm_eq : m = p ^ a * m') (hn_eq : n = p ^ b * n') (hm' : ¬p ∣ m')
     (hn' : ¬p ∣ n') (hd'g : d' ∣ Nat.gcd m' n') (hj : j ≤ min a b) :
@@ -133,9 +132,7 @@ private theorem primePowerProd_smul_mul_smul_of_not_dvd {p a b m' n' m n d' j : 
 /-- The product of the prime-power sum over `j ≤ min a b` with the divisor sum over `gcd m' n'`
 is the divisor sum over `gcd m n`.
 
-This is the induction step of the table: `gcd m n` is the coprime product `gcd m' n' · p^{min a b}`,
-so its divisors are exactly the products `p^j · d'` of a divisor of each factor, and the two
-summands multiply to the summand there. -/
+This is the induction step of `TauCeti.Nat.primePowerProd_mul_eq_sum_divisors_gcd`. -/
 private theorem primePowerProd_sum_mul_sum_eq_sum_divisors {p a b m' n' m n : ℕ} (hp : p.Prime)
     (hm' : ¬p ∣ m') (hn' : ¬p ∣ n') (hm_eq : m = p ^ a * m')
     (hn_eq : n = p ^ b * n') (hgcd : Nat.gcd m n = Nat.gcd m' n' * p ^ min a b) :
