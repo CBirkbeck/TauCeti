@@ -27,10 +27,9 @@ because the character records nothing but the power the root is sent to.
 
 ## References
 
-`autToPow_eq_one_iff` names an identification that the Birkbeck--Brasca Chebotarev density
-project, [CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density)
-(Apache-2.0), makes inline rather than as a lemma; the statement and proof here are not adapted
-from it.
+The characterisation of the cyclotomic character's kernel by its value on a chosen primitive root
+is due to the Birkbeck--Brasca Chebotarev density project,
+[CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0).
 -/
 
 public section
