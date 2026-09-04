@@ -33,6 +33,8 @@ whereas `[K(ζ_p) : K]` is a proper divisor of `p - 1` exactly when `K ∩ ℚ(�
 
 ## Main results
 
+* `IsPrimitiveRoot.totient_le_ramificationIdx`: a primitive `p^(k+1)`-th root of unity in a
+  number field `F` forces `φ(p^(k+1)) ≤ e(𝔔 ∣ ℤ)` for every prime `𝔔` of `𝓞 F` above `p`.
 * `IsCyclotomicExtension.totient_le_finrank_of_unramified`: `φ(p^(k+1)) ≤ [F : K]` when `p` is
   unramified in `K`.
 * `IsCyclotomicExtension.ramificationIdx_eq_totient`: every prime of `𝓞 F` above `p` has
@@ -67,8 +69,17 @@ namespace IsCyclotomicExtension
 
 variable {K : Type*} [Field K] [NumberField K]
 
-private theorem totient_le_ramificationIdx_int (p k : ℕ) [Fact p.Prime] {F : Type*} [Field F]
-    [NumberField F] {ζ : F} (hζ : IsPrimitiveRoot ζ (p ^ (k + 1))) (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime]
+/-- **A primitive `p^(k+1)`-th root of unity forces ramification at least `φ(p^(k+1))` above
+`p`.** For any number field `F` containing such a root, every prime of `𝓞 F` above `p` has
+ramification index at least `φ(p^(k+1))` over `ℤ`.
+
+No cyclotomic-extension hypothesis is needed: the root alone pins `ℚ(ζ)` inside `F`, and `p` is
+totally ramified there.
+
+Source: Milne, *Algebraic Number Theory*, Proposition 6.2(c); Sharifi, Lemma 3.1.13. -/
+theorem _root_.IsPrimitiveRoot.totient_le_ramificationIdx {p k : ℕ} [Fact p.Prime] {F : Type*}
+    [Field F] [NumberField F] {ζ : F} (hζ : IsPrimitiveRoot ζ (p ^ (k + 1)))
+    (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime]
     [𝔔.LiesOver (Ideal.span {(p : ℤ)})] : (p ^ (k + 1)).totient ≤ 𝔔.ramificationIdx ℤ := by
   -- `p` is totally ramified in `ℚ(ζ)`: Milne, Prop. 6.2(c) (`(p) = (π)^e` with `e = φ(p^r)`);
   -- Sharifi, Lemma 3.1.13 ("It is totally ramified").
@@ -91,7 +102,7 @@ private theorem totient_le_ramificationIdx (p k : ℕ) [Fact p.Prime] {F : Type*
   simpa only [Ideal.ramificationIdx_tower (R := ℤ) (𝔔.under (𝓞 K)) 𝔔,
     Algebra.IsUnramifiedIn.ramificationIdx_eq_one (R := ℤ) hur
       (𝔓 := 𝔔.under (𝓞 K)) inferInstance, one_mul] using
-    totient_le_ramificationIdx_int p k hζ 𝔔
+    hζ.totient_le_ramificationIdx 𝔔
 
 /-- **The degree of a cyclotomic extension above an unramified prime is at least `φ(p^(k+1))`.**
 Unlike `IsPrimitiveRoot.lcm_totient_le_finrank` it assumes no irreducibility, so it can feed
@@ -122,12 +133,14 @@ cyclotomic extension. This is the form the intersection argument consumes, where
 alone is not enough.
 
 Source: Sharifi, *Algebraic Number Theory*, Theorem 2.5.11; Milne, Theorem 3.34. -/
-theorem ramificationIdx_eq_totient (p k : ℕ) [Fact p.Prime] {F : Type*} [Field F] [NumberField F]
+theorem ramificationIdx_eq_totient (p k : ℕ) [Fact p.Prime] {F : Type*} [Field F]
     [Algebra K F] [IsCyclotomicExtension {p ^ (k + 1)} K F]
     (hur : ∀ (𝔮 : Ideal (𝓞 K)) [𝔮.IsPrime] [𝔮.LiesOver (Ideal.span {(p : ℤ)})],
     Algebra.IsUnramifiedAt ℤ 𝔮) (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime]
     [𝔔.LiesOver (Ideal.span {(p : ℤ)})] : 𝔔.ramificationIdx (𝓞 K) = (p ^ (k + 1)).totient := by
   have : NeZero (p ^ (k + 1)) := ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  have : FiniteDimensional K F := finiteDimensional {p ^ (k + 1)} K F
+  have : NumberField F := .of_module_finite K F
   exact le_antisymm ((ramificationIdx_le_finrank 𝔔).trans (finrank_le_totient K F))
     (totient_le_ramificationIdx p k hur 𝔔)
 
