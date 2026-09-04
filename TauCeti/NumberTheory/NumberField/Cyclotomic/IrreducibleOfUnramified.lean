@@ -39,6 +39,10 @@ whereas `[K(ζ_p) : K]` is a proper divisor of `p - 1` exactly when `K ∩ ℚ(�
   unramified in `K`.
 * `IsCyclotomicExtension.ramificationIdx_eq_totient`: every prime of `𝓞 F` above `p` has
   ramification index exactly `φ(p^(k+1))` over `𝓞 K`, so `F / K` is totally ramified there.
+* `IsCyclotomicExtension.inf_eq_bot_prime_pow_of_unramified`: for intermediate fields `A` and `B`
+  of `Ω / K` with `B` a `p^(k+1)`-th cyclotomic extension, `p` unramified in `A` gives
+  `A ⊓ B = ⊥`.
+* `IsCyclotomicExtension.inf_eq_bot_of_unramified`: the prime case.
 * `IsCyclotomicExtension.irreducible_cyclotomic_prime_pow_of_unramified`: `Φ_{p^(k+1)}` is
   irreducible over `K` when `p` is unramified in `K`.
 * `IsCyclotomicExtension.irreducible_cyclotomic_of_unramified`: the prime case.
@@ -154,19 +158,21 @@ theorem ramificationIdx_eq_totient (p k : ℕ) [Fact p.Prime] {F : Type*} [Field
 `B / (A ⊓ B)`, and a ramification index never exceeds a degree, so `A ⊓ B` has degree one
 over `K`.
 
-The degree is a **hypothesis** rather than derived, which is what keeps this independent of
-`irreducible_cyclotomic_prime_pow_of_unramified` below. Specialised to `K = ℚ` it is the statement
-that a number field unramified at `p` meets `ℚ(ζ_{p^(k+1)})` trivially, with the degree supplied by
-Mathlib's `Polynomial.cyclotomic.irreducible_rat`; specialised to a general base it is the
-corresponding statement about `L ∩ K(ζ_{p^(k+1)})`, with the degree supplied by the irreducibility
-proved below. Neither specialisation is circular, because the theorem itself consumes only the
-ramification count. -/
-theorem inf_eq_bot_prime_pow_of_finrank_eq_totient {Ω : Type*} [Field Ω] [Algebra K Ω]
+The degree `[B : K] = φ(p^(k+1))` is **derived, not assumed**: unramifiedness already pins the
+ramification index at `φ(p^(k+1))` via `ramificationIdx_eq_totient`, and a ramification index never
+exceeds the degree while a cyclotomic degree never exceeds `φ`, so the two bounds meet. Requiring
+the degree as a hypothesis would have been redundant, and would have pushed onto every caller a
+fact this theorem's own hypotheses already give.
+
+This stays independent of `irreducible_cyclotomic_prime_pow_of_unramified` below: the degree comes
+from the ramification count, not from irreducibility of `Φ_{p^(k+1)}`, so there is no circularity.
+Specialised to `K = ℚ` it says a number field unramified at `p` meets `ℚ(ζ_{p^(k+1)})` trivially;
+specialised to a general base it is the corresponding statement about `L ∩ K(ζ_{p^(k+1)})`. -/
+theorem inf_eq_bot_prime_pow_of_unramified {Ω : Type*} [Field Ω] [Algebra K Ω]
     (p k : ℕ) [Fact p.Prime] (A B : IntermediateField K Ω) [NumberField A] [NumberField B]
     [IsCyclotomicExtension {p ^ (k + 1)} K B]
     (hur : ∀ (P : Ideal (𝓞 A)) [P.IsPrime] [P.LiesOver (Ideal.span {(p : ℤ)})],
-      Algebra.IsUnramifiedAt ℤ P)
-    (hBK : Module.finrank K B = (p ^ (k + 1)).totient) :
+      Algebra.IsUnramifiedAt ℤ P) :
     A ⊓ B = ⊥ := by
   set E := (A ⊓ B : IntermediateField K Ω) with hE
   have hEA : E ≤ A := inf_le_left
@@ -185,6 +191,9 @@ theorem inf_eq_bot_prime_pow_of_finrank_eq_totient {Ω : Type*} [Field Ω] [Alge
     TauCeti.RamificationInertia.isUnramifiedAt_of_forall_isUnramifiedAt hur 𝔮
   have htot : 𝔔.ramificationIdx (𝓞 K) = (p ^ (k + 1)).totient :=
     ramificationIdx_eq_totient (K := K) p k hurK 𝔔
+  -- The degree is squeezed between the same two bounds that pinned the ramification index.
+  have hBK : Module.finrank K B = (p ^ (k + 1)).totient :=
+    le_antisymm (finrank_le_totient K B) (htot ▸ 𝔔.ramificationIdx_le_finrank_numberField)
   have : Algebra.IsUnramifiedAt ℤ (𝔔.under (𝓞 E)) :=
     TauCeti.RamificationInertia.isUnramifiedAt_of_forall_isUnramifiedAt hur _
   have : Algebra.IsUnramifiedAt (𝓞 K) (𝔔.under (𝓞 E)) := .of_restrictScalars ℤ _
@@ -196,18 +205,17 @@ theorem inf_eq_bot_prime_pow_of_finrank_eq_totient {Ω : Type*} [Field Ω] [Alge
   exact IntermediateField.finrank_eq_one_iff.mp
     (TauCeti.NumberField.finrank_eq_one_of_ramificationIdx_eq_finrank 𝔔 he2 hBK)
 
-/-- The prime case of `inf_eq_bot_prime_pow_of_finrank_eq_totient`, at `k = 0`. This is the form
-the roadmap's Layer 7.2 step 2 and Layer 7.3 both use. -/
-theorem inf_eq_bot_of_finrank_eq_totient {Ω : Type*} [Field Ω] [Algebra K Ω]
+/-- The prime case of `inf_eq_bot_prime_pow_of_unramified`, at `k = 0`. This is the form the
+roadmap's Layer 7.2 step 2 and Layer 7.3 both use. -/
+theorem inf_eq_bot_of_unramified {Ω : Type*} [Field Ω] [Algebra K Ω]
     (q : ℕ) (hq : q.Prime) (A B : IntermediateField K Ω) [NumberField A] [NumberField B]
     [IsCyclotomicExtension {q} K B]
     (hur : ∀ (P : Ideal (𝓞 A)) [P.IsPrime] [P.LiesOver (Ideal.span {(q : ℤ)})],
-      Algebra.IsUnramifiedAt ℤ P)
-    (hBK : Module.finrank K B = q.totient) :
+      Algebra.IsUnramifiedAt ℤ P) :
     A ⊓ B = ⊥ := by
   have : Fact q.Prime := ⟨hq⟩
   have : IsCyclotomicExtension {q ^ (0 + 1)} K B := by simpa using ‹IsCyclotomicExtension {q} K B›
-  exact inf_eq_bot_prime_pow_of_finrank_eq_totient q 0 A B hur (by simpa using hBK)
+  exact inf_eq_bot_prime_pow_of_unramified q 0 A B hur
 
 
 variable (K) in
