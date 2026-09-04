@@ -158,16 +158,15 @@ theorem ramificationIdx_eq_totient (p k : ℕ) [Fact p.Prime] {F : Type*} [Field
 `B / (A ⊓ B)`, and a ramification index never exceeds a degree, so `A ⊓ B` has degree one
 over `K`.
 
-The degree `[B : K] = φ(p^(k+1))` is **derived, not assumed**: unramifiedness already pins the
+The degree `[B : K] = φ(p^(k+1))` is derived rather than assumed: unramifiedness already pins the
 ramification index at `φ(p^(k+1))` via `ramificationIdx_eq_totient`, and a ramification index never
-exceeds the degree while a cyclotomic degree never exceeds `φ`, so the two bounds meet. Requiring
-the degree as a hypothesis would have been redundant, and would have pushed onto every caller a
-fact this theorem's own hypotheses already give.
+exceeds the degree while a cyclotomic degree never exceeds `φ`, so the two bounds meet.
 
-This stays independent of `irreducible_cyclotomic_prime_pow_of_unramified` below: the degree comes
-from the ramification count, not from irreducibility of `Φ_{p^(k+1)}`, so there is no circularity.
-Specialised to `K = ℚ` it says a number field unramified at `p` meets `ℚ(ζ_{p^(k+1)})` trivially;
-specialised to a general base it is the corresponding statement about `L ∩ K(ζ_{p^(k+1)})`. -/
+The degree therefore comes from the ramification count rather than from irreducibility of
+`Φ_{p^(k+1)}`, which is why this precedes `irreducible_cyclotomic_prime_pow_of_unramified` below
+without circularity. Specialised to `K = ℚ` it says a number field unramified at `p` meets
+`ℚ(ζ_{p^(k+1)})` trivially; over a general base it is the corresponding statement about
+`L ∩ K(ζ_{p^(k+1)})`. -/
 theorem inf_eq_bot_prime_pow_of_unramified {Ω : Type*} [Field Ω] [Algebra K Ω]
     (p k : ℕ) [Fact p.Prime] (A B : IntermediateField K Ω) [NumberField A] [NumberField B]
     [IsCyclotomicExtension {p ^ (k + 1)} K B]
@@ -203,10 +202,9 @@ theorem inf_eq_bot_prime_pow_of_unramified {Ω : Type*} [Field Ω] [Algebra K Ω
   have he2 : 𝔔.ramificationIdx (𝓞 E) = (p ^ (k + 1)).totient := by
     rw [htot, he1, one_mul] at htower; exact htower.symm
   exact IntermediateField.finrank_eq_one_iff.mp
-    (TauCeti.NumberField.finrank_eq_one_of_ramificationIdx_eq_finrank 𝔔 he2 hBK)
+    (𝔔.finrank_eq_one_of_ramificationIdx_eq_finrank he2 hBK)
 
-/-- The prime case of `inf_eq_bot_prime_pow_of_unramified`, at `k = 0`. This is the form the
-roadmap's Layer 7.2 step 2 and Layer 7.3 both use. -/
+/-- The prime case of `inf_eq_bot_prime_pow_of_unramified`, at `k = 0`. -/
 theorem inf_eq_bot_of_unramified {Ω : Type*} [Field Ω] [Algebra K Ω]
     (q : ℕ) (hq : q.Prime) (A B : IntermediateField K Ω) [NumberField A] [NumberField B]
     [IsCyclotomicExtension {q} K B]
