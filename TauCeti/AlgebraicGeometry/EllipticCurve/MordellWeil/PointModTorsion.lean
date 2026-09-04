@@ -7,31 +7,26 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.CanonicalHeight
 public import Mathlib.LinearAlgebra.Quotient.Bilinear
--- Public so that a consumer importing this module gets the freeness and rank facts this module
--- states, without having to discover the implementation import itself. It also carries the
--- freeness instances transitively, so `Mathlib.LinearAlgebra.FreeModule.PID` is not imported here.
-public import Mathlib.LinearAlgebra.Dimension.Torsion.Basic
+public import Mathlib.Algebra.Module.Torsion.Basic
 
 /-!
 # The points modulo torsion, and the Néron-Tate pairing on them
 
 The Néron-Tate pairing vanishes as soon as either argument is torsion, so it descends to the
-quotient of the points by their torsion submodule. Under finite generation of the points that
-quotient is free of finite rank, and it is where the regulator is defined; freeness needs the
-hypothesis, so nothing below claims it unconditionally.
+quotient of the points by their torsion submodule, and the descended pairing is positive
+definite. That quotient is where the regulator is defined.
 
 ## Main definitions
 
-* `WeierstrassCurve.Affine.PointModTorsion`: the points modulo torsion. It is free of finite
-  rank once the points are finitely generated, but freeness is not part of the definition, so the
-  name says only what the quotient is.
+* `WeierstrassCurve.Affine.PointModTorsion`: the points modulo torsion. Its freeness and its
+  rank are Mathlib's, from `Module.free_of_finite_type_torsion_free'` and
+  `finrank_quotient_eq_of_le_torsion`, so neither is restated here.
 * `WeierstrassCurve.Affine.neronTatePairingModTorsion`: the Néron-Tate pairing on that quotient.
 * `WeierstrassCurve.Affine.neronTateGramMatrix`: its matrix in a basis, whose determinant is the
   regulator.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.finrank_pointModTorsion`: the quotient has the Mordell-Weil rank.
 * `WeierstrassCurve.Affine.torsion_le_ker_neronTatePairing`: the pairing kills the torsion
   submodule, which is what the descent consumes.
 * `WeierstrassCurve.Affine.neronTatePairingModTorsion_mk`: the descended pairing agrees with the
@@ -54,23 +49,6 @@ variable {F : Type*} [Field F] {W : Affine F} [AdmissibleAbsValues F] [Decidable
 variable (W) in
 /-- **The points modulo torsion**, the Mordell-Weil group with its torsion divided out. -/
 abbrev PointModTorsion := W.Point ⧸ Submodule.torsion ℤ W.Point
-
--- Not a restatement of `finrank_quotient_torsion_eq`. That lemma is stated for the
--- group-theoretic `(AddCommGroup.torsion M).toIntSubmodule`, and the submodule sits in a *type*
--- position here, so it cannot be rewritten to this quotient's `Submodule.torsion ℤ`: `exact` it
--- and unification exhausts the heartbeat limit at `isDefEq`, `▸` exhausts it at `whnf`, `simp
--- only [← Submodule.torsion_int, Submodule.toIntSubmodule_toAddSubgroup]` makes no progress, and
--- `rw` reports that the motive is not type correct. `finrank_quotient_eq_of_le_torsion` is the
--- general form and applies at `le_rfl` because this quotient is already by `Submodule.torsion ℤ`,
--- so this is the only statement of the rank a consumer of this module can actually use.
--- The rank is purely module-theoretic, so the absolute values play no part.
-omit [AdmissibleAbsValues F] in
-variable (W) in
-/-- **The quotient has the Mordell-Weil rank**: dividing by the torsion leaves the `ℤ`-rank
-alone, so a basis of the quotient is indexed by the rank of the points themselves. -/
-theorem finrank_pointModTorsion :
-    Module.finrank ℤ (PointModTorsion W) = Module.finrank ℤ W.Point :=
-  finrank_quotient_eq_of_le_torsion le_rfl
 
 /-- The pairing vanishes on the torsion submodule, which is what the descent consumes. -/
 theorem torsion_le_ker_neronTatePairing [W.toAffine.IsElliptic] :
