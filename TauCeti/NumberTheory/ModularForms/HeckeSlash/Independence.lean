@@ -38,15 +38,36 @@ depends on no choice, since `DoubleCoset.doubleCoset_eq_of_mem` gives the same s
 `δ` in it, and `heckeSlashSum_eq_sum_of_mem_doubleCoset` is the resulting statement that any
 such `δ` may be used to form the sum.
 
+## Repetition, and where it comes from
+
+`heckeSlashSum_eq_sum_of_rightCosets` asks its family to name each right coset exactly once. The
+composite of two slash sums does not: `heckeSlashSum_heckeSlashSum_eq_sum_of_rightCosets`
+(`HeckeSlash/Composition.lean`) presents that composite as a sum over *pairs* of representatives,
+and the products `aᵢ bⱼ` landing in one double coset name each of its right cosets not once but a
+fixed number of times — Shimura's multiplicity, by
+`DoubleCoset.card_pairs_mem_rightCoset_eq_multiplicity` and
+`DoubleCoset.card_pairs_mem_rightCoset_congr`. So the last statement below trades injectivity for
+that uniform repetition count and concludes a multiple of the slash sum. It is the step the
+multiplicity-weighted composite `∑_D m(D₁, D₂; D) · T_D` — and with it the ring homomorphism from
+the abstract Hecke ring — has been missing.
+
 ## Main results
 
 * `HeckeRing.GL2.slash_eq_of_rightCoset_eq`: slashing a `Γ₁`-invariant function by `x` depends
   only on the right coset `Γ₁ x`.
+* `HeckeRing.GL2.doubleCoset_eq_iUnion_rightCosetRep` and
+  `HeckeRing.GL2.op_rightCosetRep_smul_injective`: Shimura's decomposition and its distinctness,
+  in the `rightCosetRep` spelling the sum is written with, with
+  `HeckeRing.GL2.rightCosetRep_mem_doubleCoset` and
+  `HeckeRing.GL2.exists_rightCosetRep_smul_eq` the two membership facts they yield.
 * `HeckeRing.GL2.heckeSlashSum_eq_sum_of_rightCosets`: **the choice-free description of the
   slash sum.** For `Γ₁`-invariant `f`, `heckeSlashSum k D f = ∑ᵢ f ∣[k] aᵢ` for any family
   `(aᵢ)` whose right cosets `Γ₁ aᵢ` are distinct and cover the double coset.
 * `HeckeRing.GL2.heckeSlashSum_eq_sum_of_mem_doubleCoset`: the special case that fixes the
   choice of double-coset representative only: any `δ ∈ Γ₁ D.out Γ₂` gives the same sum.
+* `HeckeRing.GL2.sum_slash_eq_nsmul_heckeSlashSum`: **the weighted collapse.** A family naming
+  each right coset of the double coset exactly `m` times — repetitions allowed, covering not
+  assumed — sums to `m • heckeSlashSum k D f`.
 * `HeckeRing.GL2.heckeSlashSum_coe_eq_sum_of_rightCosets`: the same description for a form of
   level `G.map (mapGL ℝ)`, whose slash-invariance discharges the hypothesis `hf`. It is what
   `HeckeSlash/ModularForm.lean` reads off the two exported endomorphisms with, in
@@ -85,6 +106,40 @@ lemma slash_eq_of_rightCoset_eq {f : ℍ → ℂ} (hf : ∀ γ ∈ Γ₁, f ∣[
     _ = f ∣[k] (y * x⁻¹ * x) := (SlashAction.slash_mul k (y * x⁻¹) x f).symm
     _ = f ∣[k] y := by rw [inv_mul_cancel_right]
 
+/-- **Shimura's decomposition of the double coset**, written with the representatives
+`heckeSlashSum` is defined with: `Γ₁ δ Γ₂ = ⋃ᵥ Γ₁ (δ τᵥ⁻¹)`. This is
+`DoubleCoset.doubleCoset_eq_iUnion_rightCosets` in the `rightCosetRep` spelling. -/
+lemma doubleCoset_eq_iUnion_rightCosetRep :
+    doubleCoset (D.out : GL (Fin 2) ℚ) Γ₁ Γ₂ =
+      ⋃ v, MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set (GL (Fin 2) ℚ)) := by
+  simpa only [rightCosetRep_def] using
+    doubleCoset_eq_iUnion_rightCosets Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ)
+
+/-- **The pieces of that decomposition are pairwise distinct.** This is
+`DoubleCoset.op_mul_out_inv_smul_injective` in the `rightCosetRep` spelling. -/
+lemma op_rightCosetRep_smul_injective :
+    Function.Injective fun v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹ ↦
+      MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set (GL (Fin 2) ℚ)) := by
+  simpa only [rightCosetRep_def] using op_mul_out_inv_smul_injective Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ)
+
+/-- **Each chosen representative lies in the double coset**, being a member of its own piece. -/
+lemma rightCosetRep_mem_doubleCoset (v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹) :
+    rightCosetRep D v ∈ doubleCoset (D.out : GL (Fin 2) ℚ) Γ₁ Γ₂ := by
+  rw [doubleCoset_eq_iUnion_rightCosetRep D]
+  exact Set.mem_iUnion_of_mem v (mem_own_rightCoset Γ₁.toSubmonoid _)
+
+/-- **Every member of the double coset shares its right coset with a chosen representative.**
+It lies in one of the pieces, and two right cosets of `Γ₁` that meet are equal. -/
+lemma exists_rightCosetRep_smul_eq {x : GL (Fin 2) ℚ}
+    (hx : x ∈ doubleCoset (D.out : GL (Fin 2) ℚ) Γ₁ Γ₂) :
+    ∃ v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹,
+      MulOpposite.op x • (Γ₁ : Set (GL (Fin 2) ℚ)) =
+        MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set (GL (Fin 2) ℚ)) := by
+  rw [doubleCoset_eq_iUnion_rightCosetRep D] at hx
+  obtain ⟨v, hv⟩ := Set.mem_iUnion.mp hx
+  exact ⟨v, (rightCoset_eq_iff Γ₁).mpr (by simpa using inv_mem ((mem_rightCoset_iff _).mp hv))⟩
+
+
 variable [Finite (DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹)]
 
 omit [Finite (DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹)] in
@@ -106,54 +161,28 @@ theorem exists_bijective_rightCosetRep_smul_eq {ι : Type*} (a : ι → GL (Fin 
       ∀ i, MulOpposite.op (a i) • (Γ₁ : Set (GL (Fin 2) ℚ)) =
         MulOpposite.op (rightCosetRep D (φ i)) • (Γ₁ : Set (GL (Fin 2) ℚ)) := by
   classical
-  -- Shimura's decomposition, written with the representatives `heckeSlashSum` uses.
-  have hcover' : doubleCoset (D.out : GL (Fin 2) ℚ) Γ₁ Γ₂ =
-      ⋃ v, MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set (GL (Fin 2) ℚ)) := by
-    simpa only [rightCosetRep_def] using
-      doubleCoset_eq_iUnion_rightCosets Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ)
-  have hinj' : Function.Injective fun v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹ ↦
-      MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set (GL (Fin 2) ℚ)) := by
-    simpa only [rightCosetRep_def] using
-      op_mul_out_inv_smul_injective Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ)
   -- Mathlib's own lemma; stated for a submonoid, so `Γ₁` is passed through `toSubmonoid`.
   have hself : ∀ x : GL (Fin 2) ℚ, x ∈ MulOpposite.op x • (Γ₁ : Set (GL (Fin 2) ℚ)) := fun x ↦
     mem_own_rightCoset Γ₁.toSubmonoid x
-  -- Two right cosets of `Γ₁` that meet are equal, so each family's cosets occur in the other.
-  have hmatch : ∀ x y : GL (Fin 2) ℚ, x ∈ MulOpposite.op y • (Γ₁ : Set (GL (Fin 2) ℚ)) →
-      MulOpposite.op x • (Γ₁ : Set (GL (Fin 2) ℚ)) =
-        MulOpposite.op y • (Γ₁ : Set (GL (Fin 2) ℚ)) := fun x y hxy ↦
-    (rightCoset_eq_iff Γ₁).mpr (by simpa using inv_mem ((mem_rightCoset_iff y).mp hxy))
-  have key : ∀ i, ∃ v, MulOpposite.op (a i) • (Γ₁ : Set (GL (Fin 2) ℚ)) =
-      MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set (GL (Fin 2) ℚ)) := by
-    intro i
-    have hmem : a i ∈ doubleCoset (D.out : GL (Fin 2) ℚ) Γ₁ Γ₂ := by
-      rw [hcover]; exact Set.mem_iUnion_of_mem i (hself (a i))
-    rw [hcover'] at hmem
-    obtain ⟨v, hv⟩ := Set.mem_iUnion.mp hmem
-    exact ⟨v, hmatch _ _ hv⟩
+  -- Each family's cosets occur in the other: every `aᵢ` lies in the double coset, and every
+  -- chosen representative lies in some `Γ₁ aᵢ`, two right cosets that meet being equal.
+  choose φ hφ using fun i ↦ exists_rightCosetRep_smul_eq D
+    (hcover ▸ Set.mem_iUnion_of_mem i (hself (a i)))
   have key' : ∀ v, ∃ i, MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set (GL (Fin 2) ℚ)) =
       MulOpposite.op (a i) • (Γ₁ : Set (GL (Fin 2) ℚ)) := by
     intro v
-    have hmem : rightCosetRep D v ∈ doubleCoset (D.out : GL (Fin 2) ℚ) Γ₁ Γ₂ := by
-      rw [hcover']; exact Set.mem_iUnion_of_mem v (hself (rightCosetRep D v))
+    have hmem := rightCosetRep_mem_doubleCoset D v
     rw [hcover] at hmem
     obtain ⟨i, hi⟩ := Set.mem_iUnion.mp hmem
-    exact ⟨i, hmatch _ _ hi⟩
-  -- The two enumerations are matched by `φ`, and matched cosets have equal slashes.
-  obtain ⟨φ, hφ⟩ : ∃ φ : ι → DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹, ∀ i,
-      MulOpposite.op (a i) • (Γ₁ : Set (GL (Fin 2) ℚ)) =
-        MulOpposite.op (rightCosetRep D (φ i)) • (Γ₁ : Set (GL (Fin 2) ℚ)) :=
-    ⟨fun i ↦ (key i).choose, fun i ↦ (key i).choose_spec⟩
+    exact ⟨i, (rightCoset_eq_iff Γ₁).mpr (by simpa using inv_mem ((mem_rightCoset_iff _).mp hi))⟩
   -- Indices with the same image under `φ` name the same coset of the family `(aᵢ)`, which `hinj`
   -- then identifies; stated separately so that `hinj` is applied to this equality itself.
   have hcoset : ∀ i j, φ i = φ j → MulOpposite.op (a i) • (Γ₁ : Set (GL (Fin 2) ℚ)) =
       MulOpposite.op (a j) • (Γ₁ : Set (GL (Fin 2) ℚ)) := fun i j hij ↦ by
     rw [hφ i, hφ j, hij]
-  have hbij : Function.Bijective φ := by
-    refine ⟨fun i j hij ↦ hinj (hcoset i j hij), fun v ↦ ?_⟩
-    obtain ⟨i, hi⟩ := key' v
-    exact ⟨i, (hinj' (hi.trans (hφ i))).symm⟩
-  exact ⟨φ, hbij, hφ⟩
+  refine ⟨φ, ⟨fun i j hij ↦ hinj (hcoset i j hij), fun v ↦ ?_⟩, hφ⟩
+  obtain ⟨i, hi⟩ := key' v
+  exact ⟨i, (op_rightCosetRep_smul_injective D (hi.trans (hφ i))).symm⟩
 
 /-- **The slash sum of a `Γ₁`-invariant function is the sum over any decomposition of the double
 coset into right cosets.** If the right cosets `Γ₁ aᵢ` are pairwise distinct and cover
@@ -195,6 +224,50 @@ theorem heckeSlashSum_eq_sum_of_mem_doubleCoset {δ : GL (Fin 2) ℚ}
     (op_mul_out_inv_smul_injective Γ₁ Γ₂ δ) f hf
   rw [← doubleCoset_eq_of_mem hδ]
   exact doubleCoset_eq_iUnion_rightCosets Γ₁ Γ₂ δ
+
+/-- **A family naming each right coset the same number of times sums to a multiple of the slash
+sum.** In place of the injectivity of `heckeSlashSum_eq_sum_of_rightCosets`, ask that every right
+coset of the double coset be named by exactly `m` members of the family: then the sum over the
+family is `m • heckeSlashSum k D f`.
+
+Covering is not a hypothesis. A right coset named by no member forces `m = 0`, and then both
+sides vanish; for `m ≠ 0` the family does cover, so nothing is lost by leaving it out — and the
+caller below is spared having to prove it.
+
+This is the shape the composite of two slash sums arrives in. Grouping the products `aᵢ bⱼ` of
+`heckeSlashSum_heckeSlashSum_eq_sum_of_rightCosets` by the double coset they lie in, the group
+belonging to one double coset meets each of that coset's right cosets the same number of times
+(`DoubleCoset.card_pairs_mem_rightCoset_congr`), and that common count is Shimura's multiplicity
+(`DoubleCoset.card_pairs_mem_rightCoset_eq_multiplicity`) — so each group contributes a
+multiplicity-weighted slash sum, which is the missing step towards the ring homomorphism from the
+abstract Hecke ring. -/
+theorem sum_slash_eq_nsmul_heckeSlashSum {ι : Type*} [Fintype ι] (a : ι → GL (Fin 2) ℚ) (m : ℕ)
+    (hmem : ∀ i, a i ∈ doubleCoset (D.out : GL (Fin 2) ℚ) Γ₁ Γ₂)
+    (hcard : ∀ x ∈ doubleCoset (D.out : GL (Fin 2) ℚ) Γ₁ Γ₂,
+      Nat.card {i // MulOpposite.op (a i) • (Γ₁ : Set (GL (Fin 2) ℚ)) =
+        MulOpposite.op x • (Γ₁ : Set (GL (Fin 2) ℚ))} = m)
+    (f : ℍ → ℂ) (hf : ∀ γ ∈ Γ₁, f ∣[k] γ = f) :
+    ∑ i, f ∣[k] a i = m • heckeSlashSum k D f := by
+  classical
+  let _ : Fintype (DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹) := Fintype.ofFinite _
+  choose g hg using fun i ↦ exists_rightCosetRep_smul_eq D (hmem i)
+  rw [heckeSlashSum_def, Finset.smul_sum,
+    ← Finset.sum_fiberwise_of_maps_to (fun i _ ↦ Finset.mem_univ (g i)) fun i ↦ f ∣[k] a i]
+  refine Finset.sum_congr rfl fun v _ ↦ ?_
+  -- On the fibre of `v` every term is the slash by `v`'s representative, so the fibre
+  -- contributes its cardinality times that one value.
+  rw [Finset.sum_congr rfl fun i hi ↦
+      slash_eq_of_rightCoset_eq k hf ((Finset.mem_filter.mp hi).2 ▸ hg i), Finset.sum_const]
+  -- That cardinality is `m`: the fibre of `v` is the set of indices naming `v`'s right coset,
+  -- since `g i` and `v` name the same coset exactly when they are equal.
+  have hfib : (Finset.univ.filter fun i ↦ g i = v) =
+      Finset.univ.filter fun i ↦ MulOpposite.op (a i) • (Γ₁ : Set (GL (Fin 2) ℚ)) =
+        MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set (GL (Fin 2) ℚ)) :=
+    Finset.filter_congr fun i _ ↦
+      ⟨fun h ↦ h ▸ hg i, fun h ↦ op_rightCosetRep_smul_injective D ((hg i).symm.trans h)⟩
+  have hm := hcard _ (rightCosetRep_mem_doubleCoset D v)
+  rw [Nat.card_eq_fintype_card, Fintype.card_subtype] at hm
+  rw [hfib, hm]
 
 section Form
 

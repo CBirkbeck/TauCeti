@@ -66,9 +66,11 @@ with it the ring homomorphism `𝕋 → Module.End` — is still **not** proved 
 counting ingredients now are. `DoubleCoset.card_pairs_mem_rightCoset_eq_multiplicity`
 reconciles the handedness, identifying the right-coset collision count with the multiplicity,
 and `DoubleCoset.card_pairs_mem_rightCoset_congr` supplies the uniformity: each right coset of
-a fixed `D` is met by the same number of pairs. What is still missing is the assembly —
-partitioning the pairs `(v, w)` according to the double coset their product lies in, for which
-the product set must be known to meet only finitely many double cosets.
+a fixed `D` is met by the same number of pairs, and `sum_slash_eq_nsmul_heckeSlashSum`
+(`HeckeSlash/Independence.lean`) turns that uniform count into the weighted operator, one double
+coset at a time. What is still missing is the assembly — partitioning the pairs `(v, w)`
+according to the double coset their product lies in, for which the product set must be known to
+meet only finitely many double cosets.
 
 ## Main results
 
