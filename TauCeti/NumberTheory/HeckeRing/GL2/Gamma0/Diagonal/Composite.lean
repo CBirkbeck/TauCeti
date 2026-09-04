@@ -47,11 +47,6 @@ the Atkin–Lehner anti-involution.
 
 * `HeckeRing.GL2.heckeTCompositeGamma0`: the composite element assembled over the prime
   factorisation of `n`.
-* `HeckeRing.GL2.heckeTScalarCompositeGamma0`: the composite scalar `∏_p S_p ^ v_p(n)`,
-  assembled by the same ordered product. It carries the same `primePowerProd` API as the
-  composite `T`, through `heckeTScalarCompositeGamma0_def`, and
-  `heckeTScalarCompositeGamma0_eq_heckeTScalarGamma0` identifies it with `heckeTScalarGamma0`
-  at every nonzero index — which is the family the divisor table is stated with.
 
 ## Main results
 
@@ -211,24 +206,19 @@ This is the `S_d` that indexes the divisor sum in
 it is a power of the scalar operator, at `1` — as at the junk input `0` — the identity. Where `p`
 shares a factor with the level `S_p = 0`, so `heckeTScalarCompositeGamma0 N n = 0` as soon as
 `n` has such a prime to a positive power. -/
-noncomputable def heckeTScalarCompositeGamma0 (n : ℕ) : 𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ :=
+private noncomputable def heckeTScalarCompositeGamma0 (n : ℕ) :
+    𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ :=
   TauCeti.Nat.primePowerProd (fun p v ↦ heckeTScalarGamma0 N p ^ v) n
 
-/-- **The defining equation of the composite scalar.** As for `heckeTCompositeGamma0_def`, the
-body is sealed, so this is what reaches the `TauCeti.Nat.primePowerProd` API. -/
-theorem heckeTScalarCompositeGamma0_def (n : ℕ) :
+/-- The composite scalar expanded as the ordered product of the blocks `S_p ^ vₚ(n)` over the
+primes of `n`. -/
+private theorem heckeTScalarCompositeGamma0_def (n : ℕ) :
     heckeTScalarCompositeGamma0 N n =
       TauCeti.Nat.primePowerProd (fun p v ↦ heckeTScalarGamma0 N p ^ v) n := (rfl)
 
-/-- The junk input: `0` has no factorisation, and the empty product is the identity. -/
-@[simp]
-theorem heckeTScalarCompositeGamma0_zero : heckeTScalarCompositeGamma0 N 0 = 1 := by
-  simpa only [heckeTScalarCompositeGamma0_def] using
-    TauCeti.Nat.primePowerProd_zero (fun p v ↦ heckeTScalarGamma0 N p ^ v)
-
 /-- `S₁ = 1`: the empty product over the empty factorisation. -/
 @[simp]
-theorem heckeTScalarCompositeGamma0_one : heckeTScalarCompositeGamma0 N 1 = 1 := by
+private theorem heckeTScalarCompositeGamma0_one : heckeTScalarCompositeGamma0 N 1 = 1 := by
   simpa only [heckeTScalarCompositeGamma0_def] using
     TauCeti.Nat.primePowerProd_one (fun p v ↦ heckeTScalarGamma0 N p ^ v)
 
@@ -237,7 +227,7 @@ theorem heckeTScalarCompositeGamma0_one : heckeTScalarCompositeGamma0 N 1 = 1 :=
 As with `heckeTCompositeGamma0_prime_pow` no positivity is asked of `v`: at `v = 0` both sides
 are the identity, the left by `heckeTScalarCompositeGamma0_one` and the right by `pow_zero`. -/
 @[simp]
-theorem heckeTScalarCompositeGamma0_prime_pow {p : ℕ} (hp : p.Prime) (v : ℕ) :
+private theorem heckeTScalarCompositeGamma0_prime_pow {p : ℕ} (hp : p.Prime) (v : ℕ) :
     heckeTScalarCompositeGamma0 N (p ^ v) = heckeTScalarGamma0 N p ^ v := by
   rcases eq_or_ne v 0 with rfl | hv
   · simp
@@ -267,7 +257,7 @@ consumer.
 
 `0` is excluded because the two disagree there: the empty product is the identity, while
 `S₀ = 0`. -/
-theorem heckeTScalarCompositeGamma0_eq_heckeTScalarGamma0 :
+private theorem heckeTScalarCompositeGamma0_eq_heckeTScalarGamma0 :
     ∀ {n : ℕ}, n ≠ 0 → heckeTScalarCompositeGamma0 N n = heckeTScalarGamma0 N n := by
   let := commRingHeckeRingGamma0 N
   intro n

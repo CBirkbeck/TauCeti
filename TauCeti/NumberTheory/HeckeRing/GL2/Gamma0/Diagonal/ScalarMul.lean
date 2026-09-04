@@ -13,17 +13,9 @@ public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.PrimePower
 The scalar row of the multiplication table at level `N`: `T(c, c) · T(b₁, b₂) = T(cb₁, cb₂)`,
 and its consequence for the scalar operator, `S_m · S_n = S_{mn}`.
 
-`diag(c, c)` is central, so its `Γ₀(N)`-double coset is a single right coset
-(`degree_diagCosetGamma0_const`) and the convolution has one term with structure constant `1`.
-This is the level-`N` analogue of `HeckeRing.GLn.diagElem_const_mul`; the structure-constant
-computation itself is the generic `HeckeCosetModule.mul_single_single_of_mulMap_eq`, which is
-stated for an arbitrary Hecke triple and so applies to `Δ₀(N)` unchanged. Only the two
-hypotheses it takes are level-dependent.
-
-`HeckeCosetModule.single_mul_single_of_mem_normalizer` is the shorter route to `S_m · S_n`
-alone, both scalars being central. It does not reach `diagElemGamma0_const_mul`, which is the
-statement proved here: `diag(b)` normalizes `Γ₀(N)` only when `b₁ = b₂`, so the general
-scalar-times-diagonal product needs the one-sided argument below.
+`diag(c, c)` is central, so its `Γ₀(N)`-double coset is a single right coset. Multiplying by it
+therefore permutes nothing and only rescales the diagonal entries, which is the level-`N`
+analogue of `HeckeRing.GLn.diagElem_const_mul`.
 
 `heckeTScalarGamma0_mul` is unconditional: where a factor shares a factor with the level its
 operator vanishes, and so does the operator of the product, so the degenerate branches agree

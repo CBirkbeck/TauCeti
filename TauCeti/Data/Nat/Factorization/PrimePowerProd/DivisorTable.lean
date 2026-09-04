@@ -48,16 +48,11 @@ the per-prime table is the input rather than multiplicativity.
 * Ported from [AINTLIB](https://github.com/CBirkbeck/AINTLIB), Apache-2.0, Chris Birkbeck, commit
   `2baa76f742bdb4fb8ee323fabba41203bd390e08`,
   `projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/Unified/Gamma0RingDn.lean`,
-  section `FormalTable` (lines 186-438). The source states the table over `Finset.attach` of the
-  divisors and keeps its whole section `private` inside a Hecke namespace; both are dropped here.
-  The summand never inspects a membership proof, so the sum is taken over `Nat.divisors` itself.
-  The source builds the reindexing as an explicit bijection with four `Subtype.ext` obligations;
-  here the divisors of the coprime product are split by Mathlib's `Nat.divisors_mul` and
-  `Nat.Coprime.mul_injOn_divisors` and the prime-power factor by `Nat.sum_divisors_prime_pow`, so
-  no bijection is constructed and the source's factorization helpers are not needed. The gcd
-  splitting itself is `TauCeti.Data.Nat.Factorization.GcdSplit`. The source's `peelProd` is this
-  repository's `TauCeti.Nat.primePowerProd`, and the statement is over `d ^ 2` rather than the
-  source's `d * d`.
+  section `FormalTable` (lines 186-438). Two differences in the statement: the sum is taken over
+  `Nat.divisors` rather than its `Finset.attach`, the summand never inspecting a membership
+  proof, and the index is `d ^ 2` rather than the source's `d * d`. The source's `peelProd` is
+  this repository's `TauCeti.Nat.primePowerProd`, and the gcd splitting it needs is
+  `TauCeti.Data.Nat.Factorization.GcdSplit`.
 -/
 
 public section

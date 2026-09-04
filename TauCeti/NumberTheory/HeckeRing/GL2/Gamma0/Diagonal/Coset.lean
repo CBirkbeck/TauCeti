@@ -126,9 +126,8 @@ condition is vacuous in this branch, so it is irrelevant which proof is supplied
     diagCosetGamma0 N a hgcd = 1 :=
   congrArg (HeckeCoset.mk _ _) (Subtype.ext (natDiagGL_of_not_pos (n := 2) ha))
 
-/-- The representative of the `Γ₀(N)`-coset of `diag(a)` is `diag(a)` flanked by two elements of
-`Γ₀(N)`. With `rep` sealed this is the only route to the representative's shape, and it is what a
-product of two representatives is rewritten through. -/
+/-- The representative of the `Γ₀(N)`-coset of `diag(a)` differs from `diag(a)` by a left and a
+right factor in `Γ₀(N)`. -/
 lemma exists_rep_diagCosetGamma0_eq_mul_natDiagGL_mul (a : Fin 2 → ℕ)
     (hgcd : (∀ i, 0 < a i) → Nat.Coprime (a 0) N) :
     ∃ h₁ ∈ (Gamma0 N).map (mapGL ℚ), ∃ h₂ ∈ (Gamma0 N).map (mapGL ℚ),
