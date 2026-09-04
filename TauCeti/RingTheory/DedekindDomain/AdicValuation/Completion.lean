@@ -32,6 +32,15 @@ Everything here concerns one completion. The comparison of two completions along
 * `IsDedekindDomain.HeightOneSpectrum.henselianLocalRing_adicCompletionIntegers`: `𝒪_v` is a
   Henselian local ring, being local and complete for its maximal ideal.
 
+## Implementation notes
+
+`Mathlib.NumberTheory.NumberField.Completion.FinitePlace` supplies two instances used throughout —
+`IsDiscreteValuationRing (v.adicCompletionIntegers K)` and
+`(Valued.v : Valuation (v.adicCompletion K) ℤᵐ⁰).IsRankOneDiscrete`. Both are stated there for an
+arbitrary Dedekind domain and its fraction field, not for number fields, so nothing here depends on
+number-field theory; they simply live in that module upstream. This note records the reason so the
+placement of a `NumberTheory` import inside `RingTheory` is not mistaken for a layering slip.
+
 ## Motivation
 
 These results are consumed by a semilocal comparison in explicit `2`-descent, which matches a

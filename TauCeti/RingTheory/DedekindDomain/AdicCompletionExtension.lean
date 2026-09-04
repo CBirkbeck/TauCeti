@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.NumberTheory.NumberField.Completion.FinitePlace
 public import TauCeti.RingTheory.DedekindDomain.AdicValuation.Completion
 public import TauCeti.RingTheory.DedekindDomain.Ideal
 public import TauCeti.RingTheory.DedekindDomain.ValuationOfNeZero
@@ -99,16 +98,9 @@ valuation results it rests on.
 
 ## Implementation notes
 
-`Mathlib.NumberTheory.NumberField.Completion.FinitePlace` is the sole Mathlib import. It is needed
-for two instances — `IsDiscreteValuationRing (v.adicCompletionIntegers K)` and
-`(Valued.v : Valuation (v.adicCompletion K) ℤᵐ⁰).IsRankOneDiscrete`. Both are stated there for an
-arbitrary Dedekind domain and its fraction field, not for number fields, so nothing in this file
-depends on number-field theory; they simply live in that module upstream. This note records the
-reason so the placement of a `NumberTheory` import inside `RingTheory` is not mistaken for a
-layering slip.
-
-It also transitively supplies the ramification-valuation and adic-valuation modules, so those are
-not imported directly.
+Every Mathlib module this file needs arrives through
+`TauCeti.RingTheory.DedekindDomain.AdicValuation.Completion`, which is imported for the
+single-completion results and publicly re-exports them.
 -/
 
 public section
