@@ -141,9 +141,7 @@ private theorem primePowerProd_sum_mul_sum_eq_sum_divisors {p a b m' n' m n : �
   have hpg' : ¬p ∣ Nat.gcd m' n' := fun h ↦ hm' (h.trans (Nat.gcd_dvd_left m' n'))
   have hcop : Nat.Coprime (Nat.gcd m' n') (p ^ min a b) :=
     ((hp.coprime_iff_not_dvd.2 hpg').symm).pow_right _
-  rw [hgcd, Nat.divisors_mul,
-    show (Nat.gcd m' n').divisors * (p ^ min a b).divisors =
-      ((Nat.gcd m' n').divisors ×ˢ (p ^ min a b).divisors).image (fun q ↦ q.1 * q.2) from rfl,
+  rw [hgcd, Nat.divisors_mul, Finset.mul_def,
     Finset.sum_image hcop.mul_injOn_divisors, Finset.sum_product, Finset.sum_mul_sum,
     Finset.sum_comm]
   refine Finset.sum_congr rfl fun d' hd' ↦ ?_

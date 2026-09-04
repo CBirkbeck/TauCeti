@@ -112,11 +112,32 @@ private lemma multiplicity_const_le_one (c : ℕ) (hcN : Nat.Coprime c N) (b : F
   rfl
 
 /-- **Scalar multiplication at level `N`**: `T(c, c) · T(b) = T(c·b)`, the level-`N` analogue of
-`HeckeRing.GLn.diagElem_const_mul`. Both factors must be nondegenerate — positive and with head
-entry coprime to the level — since otherwise the left side has a vanishing factor. -/
-theorem diagElemGamma0_const_mul (c : ℕ) (hc : 0 < c) (hcN : Nat.Coprime c N) (b : Fin 2 → ℕ)
-    (hb : ∀ i, 0 < b i) (hbN : Nat.Coprime (b 0) N) :
+`HeckeRing.GLn.diagElem_const_mul`. No hypothesis is needed: where a factor is degenerate — not
+everywhere positive, or with head entry sharing a factor with the level — it vanishes, and so
+does `T(c·b)`, whose entries and head inherit the defect. -/
+theorem diagElemGamma0_const_mul (c : ℕ) (b : Fin 2 → ℕ) :
     diagElemGamma0 N (fun _ ↦ c) * diagElemGamma0 N b = diagElemGamma0 N ((fun _ ↦ c) * b) := by
+  by_cases hc : 0 < c
+  case neg =>
+    have hc0 : c = 0 := by omega
+    rw [diagElemGamma0_of_not_pos N fun h ↦ hc (h 0), zero_mul]
+    exact (diagElemGamma0_of_not_pos N fun h ↦ by simpa [hc0] using h 0).symm
+  by_cases hcN : Nat.Coprime c N
+  case neg =>
+    rw [diagElemGamma0_of_not_coprime N hcN, zero_mul]
+    exact (diagElemGamma0_of_not_coprime N fun h ↦
+      hcN (Nat.Coprime.coprime_dvd_left (dvd_mul_right c (b 0)) h)).symm
+  by_cases hb : ∀ i, 0 < b i
+  case neg =>
+    obtain ⟨i, hi⟩ := not_forall.1 hb
+    have hbi : b i = 0 := by omega
+    rw [diagElemGamma0_of_not_pos N hb, mul_zero]
+    exact (diagElemGamma0_of_not_pos N fun h ↦ by simpa [hbi] using h i).symm
+  by_cases hbN : Nat.Coprime (b 0) N
+  case neg =>
+    rw [diagElemGamma0_of_not_coprime N hbN, mul_zero]
+    exact (diagElemGamma0_of_not_coprime N fun h ↦
+      hbN (Nat.Coprime.coprime_dvd_left (dvd_mul_left (b 0) c) h)).symm
   have hcb : Nat.Coprime (((fun _ : Fin 2 ↦ c) * b) 0) N := Nat.coprime_mul_iff_left.mpr ⟨hcN, hbN⟩
   have hpos : ∀ i, 0 < ((fun _ : Fin 2 ↦ c) * b) i := fun i ↦ Nat.mul_pos hc (hb i)
   rw [diagElemGamma0_of_pos_of_coprime N (fun _ ↦ hc) hcN,
@@ -137,12 +158,11 @@ theorem heckeTScalarGamma0_mul (m n : ℕ) :
   · simp
   by_cases hmN : Nat.Coprime m N
   · by_cases hnN : Nat.Coprime n N
-    · have h : (fun _ : Fin 2 ↦ m) * ![n, n] = ![m * n, m * n] := by
+    · have hmm : (![m, m] : Fin 2 → ℕ) = fun _ ↦ m := by ext i; fin_cases i <;> rfl
+      have h : (fun _ : Fin 2 ↦ m) * ![n, n] = ![m * n, m * n] := by
         ext i; fin_cases i <;> simp
-      rw [heckeTScalarGamma0_def, heckeTScalarGamma0_def, heckeTScalarGamma0_def,
-        show (![m, m] : Fin 2 → ℕ) = fun _ ↦ m from by ext i; fin_cases i <;> rfl,
-        diagElemGamma0_const_mul N m hm hmN ![n, n]
-          (by intro i; fin_cases i <;> simpa using hn) (by simpa using hnN), h]
+      rw [heckeTScalarGamma0_def, heckeTScalarGamma0_def, heckeTScalarGamma0_def, hmm,
+        diagElemGamma0_const_mul N m ![n, n], h]
     · rw [heckeTScalarGamma0_of_not_coprime N hnN, mul_zero]
       exact (heckeTScalarGamma0_of_not_coprime N fun h ↦
         hnN (Nat.Coprime.coprime_dvd_left (dvd_mul_left n m) h)).symm
