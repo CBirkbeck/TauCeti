@@ -26,8 +26,10 @@ to `r + k`. Euler's Gamma integral then gives exactly the negative-binomial mass
 * `TauCeti.Probability.bind_gammaMeasure_poissonMeasure` — a Gamma mixture of Poisson laws is
   negative-binomial.
 * `Real.gammaKernel_mul_exp_mul_pow_div_factorial` — the pointwise algebra it runs on: at a
-  nonzero point, a gamma kernel of shape `r` and rate `c` times the Poisson weight
-  `exp (-x) * x ^ k / k !` collects into a single gamma kernel of shape `r + k` and rate `c + 1`.
+  nonzero point, `c ^ r / Γ r * x ^ (r - 1) * exp (-(c * x))` times `exp (-x) * x ^ k / k !`
+  collects into `c ^ r / (Γ r * k !) * (x ^ (r + k - 1) * exp (-((c + 1) * x)))`. The identity is
+  algebraic — it carries no positivity hypotheses — and the mixture proof below supplies the
+  probabilistic reading of its two sides.
 
 ## References
 
@@ -46,12 +48,16 @@ namespace TauCeti
 
 namespace Probability
 
-/-- Collecting the gamma kernel `c ^ r / Γ r * x ^ (r - 1) * exp (-(c * x))` against
-`exp (-x) * x ^ k / k !` at a nonzero point: the two powers of `x` and the two exponentials each
-combine, leaving a single gamma kernel of shape `r + k` and rate `c + 1`.
+/-- Collecting `c ^ r / Γ r * x ^ (r - 1) * exp (-(c * x))` against `exp (-x) * x ^ k / k !` at a
+nonzero point: the two powers of `x` and the two exponentials each combine, leaving
+`x ^ (r + k - 1) * exp (-((c + 1) * x))` under the constant `c ^ r / (Γ r * k !)`.
 
-The gamma rate `c` is arbitrary, so a gamma--Poisson mixture — which averages the Poisson rate `x`
-against a gamma law — can instantiate the identity pointwise at whatever rate that law carries. -/
+The identity is algebraic. Nothing here is assumed positive except that `x` is nonzero, so neither
+side need be a probability density, and the surviving constant is `c ^ r / (Γ r * k !)` rather than
+the `(c + 1) ^ (r + k) / Γ (r + k)` that would normalise the `x`-dependent factor into a gamma
+kernel of shape `r + k` and rate `c + 1`. The gamma--Poisson mixture below instantiates the
+identity pointwise at whatever rate its gamma law carries, and it is there that the two factors
+are the densities their shapes suggest. -/
 -- The factors are written out rather than as `gammaPDFReal` and `poissonPMFReal`: the former
 -- carries an `if 0 ≤ x` guard that is not definitional at a bound variable, and the latter is
 -- indexed by `ℝ≥0`, so either would cost the consumer a congruence step under its integral.
