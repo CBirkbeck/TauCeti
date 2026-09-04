@@ -39,6 +39,8 @@ the compositum is unramified over the quadratic base.
   every absolute ramification index upstairs by the intermediate absolute ramification index.
 * `TauCeti.RamificationInertia.isUnramifiedIn_of_finrank_le_of_under_ramificationIdx_eq_one`: a
   transverse unramified subextension of sufficiently small relative degree supplies that bound.
+* `TauCeti.RamificationInertia.isUnramifiedAt_of_forall_isUnramifiedAt`: unramifiedness over `ℤ`
+  descends from a module-finite extension to the subring below it, over any ideal of `ℤ`.
 -/
 
 public section
@@ -161,5 +163,33 @@ theorem isUnramifiedIn_of_finrank_le_of_under_ramificationIdx_eq_one
     _ ≤ q.ramificationIdx R := hrank
 
 end Tower
+
+section Descent
+
+variable {R S : Type*} [CommRing R] [IsDedekindDomain R] [CommRing S] [IsDomain S]
+  [Algebra R S] [Module.Finite R S] [Module.IsTorsionFree R S]
+  [Algebra.EssFiniteType ℤ R] [Algebra.EssFiniteType ℤ S]
+
+/-- **Unramifiedness over `ℤ` descends to a subring.** If every prime of `S` lying over an ideal
+`I` of `ℤ` is unramified over `ℤ`, then so is every prime of `R` below, for `S` module-finite and
+torsion-free over the Dedekind domain `R`.
+
+The direction is descent, not ascent: the hypothesis is upstairs and the conclusion downstairs.
+Every prime of `R` has some prime of `S` above it, that prime lies over the same `I`, and
+`Algebra.IsUnramifiedAt.of_liesOver` passes unramifiedness back down the relation.
+
+`I` is an arbitrary ideal because nothing in the argument inspects it; a caller working at a
+rational prime `p` instantiates `I := Ideal.span {(p : ℤ)}`. -/
+theorem isUnramifiedAt_of_forall_isUnramifiedAt {I : Ideal ℤ}
+    (hur : ∀ (P : Ideal S) [P.IsPrime] [P.LiesOver I], Algebra.IsUnramifiedAt ℤ P)
+    (𝔮 : Ideal R) [𝔮.IsPrime] [𝔮.LiesOver I] :
+    Algebra.IsUnramifiedAt ℤ 𝔮 := by
+  obtain ⟨P⟩ := (inferInstance : Nonempty (𝔮.primesOver S))
+  have : (P : Ideal S).IsPrime := P.2.1
+  have : (P : Ideal S).LiesOver 𝔮 := P.2.2
+  have : (P : Ideal S).LiesOver I := Ideal.LiesOver.trans (P : Ideal S) 𝔮 I
+  exact Algebra.IsUnramifiedAt.of_liesOver ℤ 𝔮 (P : Ideal S)
+
+end Descent
 
 end TauCeti.RamificationInertia
