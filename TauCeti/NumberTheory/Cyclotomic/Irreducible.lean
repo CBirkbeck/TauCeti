@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
+public import Mathlib.NumberTheory.Cyclotomic.Gal
 
 /-!
 # Irreducibility of the cyclotomic polynomial from the degree of a cyclotomic extension
@@ -28,6 +28,9 @@ polynomial of the same degree, so the two coincide and `Φ_n` is irreducible.
   `Φ_n` is irreducible over `K`.
 * `IsCyclotomicExtension.irreducible_cyclotomic_iff_finrank_eq_totient`: `Φ_n` is irreducible over
   `K` if and only if `[L : K] = φ n`.
+* `IsCyclotomicExtension.card_aut_eq_totient`: an `n`-th cyclotomic extension with `Φ_n`
+  irreducible has exactly `φ n` automorphisms.
+* `IsCyclotomicExtension.card_aut_eq_sub_one`: its prime case, `q - 1`.
 
 ## References
 
@@ -98,5 +101,28 @@ Source: as for the two lemmas it combines. -/
 theorem irreducible_cyclotomic_iff_finrank_eq_totient :
     Irreducible (cyclotomic n K) ↔ Module.finrank K L = n.totient :=
   ⟨IsCyclotomicExtension.finrank L, fun h ↦ irreducible_cyclotomic_of_totient_le_finrank K L h.ge⟩
+
+/-- **An `n`-th cyclotomic extension has exactly `φ n` automorphisms**, whenever `Φ_n` is
+irreducible over `K`. The count is transported from `(ZMod n)ˣ` along Mathlib's `autEquivPow`.
+
+Keeping `hirr` as a hypothesis rather than deriving it stops a caller from silently assuming the
+order. For the group isomorphism itself, and hence for cyclicity, use `autEquivPow` directly. -/
+theorem card_aut_eq_totient (n : ℕ) [NeZero n] (F : Type*) [Field F] [Algebra K F]
+    [IsCyclotomicExtension {n} K F] (hirr : Irreducible (cyclotomic n K)) :
+    Nat.card (F ≃ₐ[K] F) = n.totient := by
+  rw [Nat.card_congr (autEquivPow F hirr).toEquiv, Nat.card_eq_fintype_card,
+    ZMod.card_units_eq_totient]
+
+/-- **A `q`-th cyclotomic extension has exactly `q - 1` automorphisms**, for `q` prime with `Φ_q`
+irreducible over `K`. The subtraction is truncated `ℕ` subtraction, which agrees with the totient
+because `q` is prime.
+
+This is the Chebotarev roadmap's Layer 7.2 result, listed there as `card_auxiliaryCyclotomic`; the
+name here describes the conclusion instead. -/
+theorem card_aut_eq_sub_one (q : ℕ) (F : Type*) [Field F] [Algebra K F] (hq : q.Prime)
+    [IsCyclotomicExtension {q} K F] (hirr : Irreducible (cyclotomic q K)) :
+    Nat.card (F ≃ₐ[K] F) = q - 1 := by
+  have : NeZero q := ⟨hq.ne_zero⟩
+  rw [card_aut_eq_totient K q F hirr, Nat.totient_prime hq]
 
 end IsCyclotomicExtension
