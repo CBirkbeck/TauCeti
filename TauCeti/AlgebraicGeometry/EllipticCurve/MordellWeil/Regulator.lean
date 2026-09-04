@@ -32,6 +32,7 @@ determinant `±1`.
 * `WeierstrassCurve.Affine.regulator_eq_abs_det_neronTateGramMatrix`: the regulator is computed
   by any basis whatsoever.
 * `WeierstrassCurve.Affine.regulator_eq_one_of_finrank_eq_zero`: the rank-zero convention.
+* `WeierstrassCurve.Affine.regulator_nonneg`: the regulator is non-negative.
 
 ## References
 
