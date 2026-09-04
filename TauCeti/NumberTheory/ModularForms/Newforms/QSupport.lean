@@ -176,6 +176,16 @@ theorem iSup_range_levelRaise_le_qSupportedOnDvdSubmodule (N : ℕ) :
         qSupportedOnDvdSubmodule N k d :=
   iSup_le fun M ↦ iSup_le fun h ↦ range_levelRaise_le_qSupportedOnDvdSubmodule M h
 
+omit [NeZero M] [NeZero d] in
+/-- The translate `1 / d +ᵥ σ`, read in `ℂ`, is the subtraction `TauCeti.Periodic.qParam_sub`
+expects: that lemma is stated at `z - j`, and the shift here enters as a `+ᵥ` on `ℍ`. Naming the
+coercion bridge keeps the root-of-unity computation below free of casting. -/
+private lemma coe_vadd_one_div_eq_sub (σ : ℍ) :
+    ((((1 : ℝ) / (d : ℝ)) +ᵥ σ : ℍ) : ℂ) = (σ : ℂ) - -(1 / (d : ℂ)) := by
+  rw [UpperHalfPlane.coe_vadd]
+  push_cast
+  ring
+
 omit [NeZero M] in
 /-- **A shift by `1 / d` fixes every `q`-power the support condition leaves alive.** Translating
 the argument by `1 / d` scales the `n`-th `q`-power by a `d`-th root of unity raised to `n`, which
@@ -188,10 +198,7 @@ theorem smul_qParam_pow_shift_eq {c : ℕ → ℂ} (hc : ∀ n : ℕ, ¬ d ∣ n
   have hqP : Function.Periodic.qParam (1 : ℝ) ((((1 : ℝ) / (d : ℝ)) +ᵥ σ : ℍ) : ℂ) =
       Function.Periodic.qParam (1 : ℝ) (σ : ℂ) *
         Complex.exp (2 * (Real.pi : ℂ) * Complex.I / (d : ℂ)) := by
-    have h := TauCeti.Periodic.qParam_sub (h := (1 : ℝ)) (σ : ℂ) (-(1 / (d : ℂ)))
-    rw [show ((σ : ℂ) - -(1 / (d : ℂ))) = ((((1 : ℝ) / (d : ℝ)) +ᵥ σ : ℍ) : ℂ) from by
-      rw [UpperHalfPlane.coe_vadd]; push_cast; ring] at h
-    rw [h]
+    rw [coe_vadd_one_div_eq_sub, TauCeti.Periodic.qParam_sub]
     congr 1
     push_cast
     ring_nf

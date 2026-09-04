@@ -193,6 +193,7 @@ lemma coe_inv_scaleGL_smul [NeZero d] (τ : ℍ) : (((scaleGL d)⁻¹ • τ : �
   rw [hs, mul_comm, mul_div_assoc, div_self hd, mul_one]
 
 /-- Scaling down commutes with translation, at the cost of dividing the shift by `d`. -/
+@[simp]
 lemma inv_scaleGL_smul_vadd [NeZero d] (a : ℝ) (τ : ℍ) :
     ((scaleGL d)⁻¹ • ((a : ℝ) +ᵥ τ) : ℍ) = (a / (d : ℝ)) +ᵥ ((scaleGL d)⁻¹ • τ) := by
   apply UpperHalfPlane.ext
