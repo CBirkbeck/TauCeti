@@ -144,22 +144,6 @@ lemma abs_deriv_smul_studentTPDFReal (hν : 0 < ν) (q : ℝ) {z : ℝ} (hz : 0 
     rw [hreorder, h7]
   exact hgoal
 
-/-- The `q = 0` case of `abs_deriv_smul_studentTPDFReal`, with the beta kernel written out: under
-the chart `z ↦ z ^ 2 / ν` the unweighted Student t density is the half-line kernel
-`w ^ (-(1 / 2)) * (1 + w) ^ (-((ν + 1) / 2))` scaled by the normalising constant. This is the shape
-the cumulative distribution function needs, where the kernel occurs expanded rather than under its
-abbreviation. -/
-lemma abs_deriv_smul_studentTPDFReal_zero (hν : 0 < ν) {z : ℝ} (hz : 0 < z) :
-    |2 * z / ν| •
-        (Real.Gamma ((ν + 1) / 2) / (Real.sqrt (ν * Real.pi) * Real.Gamma (ν / 2)) *
-          ν ^ (1 / 2 : ℝ) / 2 *
-          ((z ^ 2 / ν) ^ (-(1 / 2 : ℝ)) * (1 + z ^ 2 / ν) ^ (-((ν + 1) / 2)))) =
-      studentTPDFReal ν z := by
-  have h := abs_deriv_smul_studentTPDFReal hν 0 hz
-  rw [Real.rpow_zero, mul_one] at h
-  rw [← h, studentTBetaKernel]
-  norm_num
-
 end Probability
 
 end TauCeti

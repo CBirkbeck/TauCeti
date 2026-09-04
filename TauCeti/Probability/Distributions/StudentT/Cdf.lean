@@ -72,9 +72,13 @@ private lemma integral_Ioi_studentTPDFReal_eq_betaKernel_tail (hν : 0 < ν) {y 
   have h12 : ∫ z in Ioi y, |2 * z / ν| • g1 (z ^ 2 / ν) =
       ∫ z in Ioi y, studentTPDFReal ν z := by
     refine setIntegral_congr_fun measurableSet_Ioi fun z hz => ?_
+    -- The chart lemma at `q = 0`: its `z ^ (0 : ℝ)` factor disappears, and the beta kernel
+    -- abbreviation unfolds to the explicit powers that `g1` is written with.
+    have h := abs_deriv_smul_studentTPDFReal hν 0 (hy.trans_lt hz)
+    rw [Real.rpow_zero, mul_one] at h
     dsimp only [g1]
-    rw [hC, hs]
-    exact abs_deriv_smul_studentTPDFReal_zero hν (hy.trans_lt hz)
+    rw [hC, hs, ← h, studentTBetaKernel]
+    norm_num
   have h1 : ∫ z in Ioi y, studentTPDFReal ν z = ∫ w in Ioi y0, g1 w := by
     rw [← h12, ← h11]
   set K := C * Real.rpow ν (1 / 2 : ℝ) / 2 with hK
