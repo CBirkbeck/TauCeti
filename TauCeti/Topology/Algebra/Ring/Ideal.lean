@@ -41,10 +41,8 @@ continuous surjection can land on a strictly coarser topology than the quotient 
 bijection is continuous but need not be open. What closes the gap is exactly the hypothesis that
 `f` is a *quotient map*, and with it the algebraic isomorphism becomes a homeomorphism.
 
-The quotient-map hypothesis is where the analysis lives. Over a Tate ring it is
-`TauCeti.Huber.IsTateRing.isQuotientMap`, an open mapping theorem, and supplying it is real work;
-everything downstream of it is the formal argument below, which uses nothing but injectivity of
-`RingHom.kerLift` and the universal property of the quotient topology.
+Over a Tate ring the quotient-map hypothesis is `TauCeti.Huber.IsTateRing.isQuotientMap`, an open
+mapping theorem.
 
 Note that closedness of `ker f` comes for free once `S` is `T1`, since a kernel is the preimage of
 a point; it is not a further hypothesis of the theorem but a consequence for its consumers, and
@@ -57,9 +55,8 @@ a point; it is not a further hypothesis of the theorem but a consequence for its
   automatically once `I` is known to be closed.
 * `Ideal.Quotient.continuous_lift`: a continuous ring homomorphism annihilating `I` induces a
   *continuous* homomorphism on `R ⧸ I`, with no hypothesis on `I`.
-* `RingHom.isOpenMap_kerLift`: the map `R ⧸ ker f →+* S` induced by `f` is open when `f` is a
-  quotient map.
-* `RingHom.isHomeomorph_kerLift`: it is a homeomorphism. `IsHomeomorph.homeomorph` bundles that as
+* `RingHom.isHomeomorph_kerLift`: the map `R ⧸ ker f →+* S` induced by `f` is a homeomorphism when
+  `f` is a quotient map. `IsHomeomorph.homeomorph` bundles that as
   `R ⧸ ker f ≃ₜ S`, and the map bundled is the ring homomorphism `RingHom.kerLift`, so the ring
   structure comes along with it and needs no transport of its own.
 
@@ -111,39 +108,26 @@ variable {R S : Type*} [TopologicalSpace R] [CommRing R] [TopologicalSpace S] [S
 
 namespace RingHom
 
-/-- **The lift of a quotient map to `R ⧸ ker f` is open.**
-
-Surjectivity of `f` is not enough on its own: it makes the lift a continuous bijection, and a
-continuous bijection is open only when the topology it lands in is no coarser than the one it
-carries. That `f` is a quotient map is exactly the statement that it is not coarser. -/
-theorem isOpenMap_kerLift (hq : IsQuotientMap (f : R → S)) : IsOpenMap (kerLift f) := by
-  intro U hU
-  -- `f` coinduces the topology of `S`, so it is enough to open the preimage; and that preimage is
-  -- `mk (ker f) ⁻¹' U`, because `RingHom.kerLift` is injective
-  rw [← hq.isCoinducing.isOpen_preimage]
-  have himg : ⇑f ⁻¹' (kerLift f '' U) = ⇑(Ideal.Quotient.mk (ker f)) ⁻¹' U := by
-    ext x
-    refine ⟨?_, fun hx ↦ ⟨_, hx, kerLift_mk f x⟩⟩
-    rintro ⟨u, hu, hux⟩
-    have hu' : u = Ideal.Quotient.mk (ker f) x :=
-      kerLift_injective f (hux.trans (kerLift_mk f x).symm)
-    exact Set.mem_preimage.mpr (hu' ▸ hu)
-  rw [himg]
-  exact hU.preimage continuous_coinduced_rng
-
 /-- **The topological first isomorphism theorem for rings.** A ring homomorphism that is a
 quotient map presents its target as the quotient of its source by its kernel, topologically as
 well as algebraically.
 
+A continuous surjection is not enough on its own. Surjectivity of `f` makes the lift bijective and
+continuity of `f` makes it continuous, but a continuous bijection is open only when the topology it
+lands in is no coarser than the one it carries; that `f` is a quotient map is exactly the statement
+that it is not coarser.
+
 `IsHomeomorph.homeomorph` turns this into `R ⧸ ker f ≃ₜ S`. What it bundles is `RingHom.kerLift`,
 which is a ring homomorphism, so a consumer needing the isomorphism of rings has it already —
 `RingHom.quotientKerEquivOfSurjective` is that same map. -/
-theorem isHomeomorph_kerLift (hq : IsQuotientMap (f : R → S)) : IsHomeomorph (kerLift f) where
-  continuous := Ideal.Quotient.continuous_lift (ker f) hq.continuous fun _ ↦ mem_ker.mp
-  isOpenMap := isOpenMap_kerLift hq
-  bijective := ⟨kerLift_injective f, fun y ↦
-    let ⟨x, hx⟩ := hq.surjective y
-    ⟨Ideal.Quotient.mk (ker f) x, (kerLift_mk f x).trans hx⟩⟩
+theorem isHomeomorph_kerLift (hq : IsQuotientMap (f : R → S)) : IsHomeomorph (kerLift f) := by
+  -- `f` factors as `kerLift f ∘ mk`, and `mk` coinduces, so the quotient-map hypothesis on `f`
+  -- transfers to `kerLift f`; injectivity then upgrades coinducing to open
+  have hcomp : ⇑(kerLift f) ∘ ⇑(Ideal.Quotient.mk (ker f)) = ⇑f := funext (kerLift_mk f)
+  have hmk : IsCoinducing ⇑(Ideal.Quotient.mk (ker f)) := ⟨rfl⟩
+  have hkl : IsQuotientMap ⇑(kerLift f) := .of_comp_of_isCoinducing (hcomp ▸ hq) hmk
+  exact ⟨hkl.continuous, hkl.isCoinducing.isOpenMap_of_injective (kerLift_injective f),
+    kerLift_injective f, hkl.surjective⟩
 
 end RingHom
 
