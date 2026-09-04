@@ -35,8 +35,7 @@ descent `φ` is supplied by the caller, so no hypothesis on the `q`-expansion of
   level-`l` descent is invariant under the weight-`k` slash action of `T`, is old.
 * `TauCeti.mem_cuspFormsOld_of_qExpansionSupportedOnDvd`: **the Atkin–Lehner step at one
   divisor** — the same conclusion from the `q`-expansion support condition alone, the descent
-  being supplied by `Newforms/Descent.lean`. This is not yet the roadmap's Atkin–Lehner Main
-  Lemma; see below.
+  being supplied by `Newforms/Descent.lean`.
 
 ## Provenance
 
@@ -100,11 +99,14 @@ a `T`-invariant `φ : ℍ → ℂ` with `f = l ^ (1 - k) • (φ ∣[k] diag(l, 
 `mem_cuspFormsOld_of_slash_T_eq` reads the level-lowering dichotomy off that. Nothing else about
 the `q`-expansion is used, and `l` need not be prime.
 
-⚠ This is one divisor and one character, and so is **not** the roadmap's Atkin–Lehner Main Lemma
-(Diamond–Shurman Theorem 5.7.1), which concludes oldness from `aₙ(f) = 0` at *every* `n` coprime
-to `N`. That hypothesis does not name a divisor: passing from it to this one is the sum over the
-primes dividing `N`, which is a separate argument and is not done here. What this supplies is the
-per-divisor, per-character input that argument consumes. -/
+⚠ The hypothesis is support on the multiples of **one** divisor `l`, for a form in **one**
+character space. Diamond–Shurman Theorem 5.7.1 assumes instead that `aₙ(f) = 0` at every `n`
+coprime to `N`, a condition naming no divisor. The two are not interchangeable, and the
+implication runs one way: since `l ∣ N` and `l ≠ 1`, every `n` coprime to `N` is in particular
+not divisible by `l`, so `QExpansionSupportedOnDvd l` is the stronger hypothesis — it kills
+every index off the multiples of `l`, not merely those prime to `N`. (The two coincide exactly
+when `l` and `N` have the same prime factors.) Getting from Diamond–Shurman's hypothesis to this
+one therefore means splitting `f` across the primes dividing `N`. -/
 theorem mem_cuspFormsOld_of_qExpansionSupportedOnDvd {l : ℕ} (hl : l ≠ 1) (hlN : l ∣ N)
     (χ : DirichletCharacter ℂ N) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
     (hfχ : f ∈ cuspFormCharSpace k χ.toUnitHom)
