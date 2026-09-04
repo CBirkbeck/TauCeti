@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.ModularForms.Degeneracy
-public import TauCeti.Analysis.Complex.Periodic
 public import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
 public import TauCeti.NumberTheory.ModularForms.QExpansion.Basic
 
@@ -175,38 +174,6 @@ theorem iSup_range_levelRaise_le_qSupportedOnDvdSubmodule (N : ℕ) :
       LinearMap.range (CuspForm.levelRaiseₗ (k := k) d (Gamma1_map_le_conjAct_scaleGL_of_dvd h)) ≤
         qSupportedOnDvdSubmodule N k d :=
   iSup_le fun M ↦ iSup_le fun h ↦ range_levelRaise_le_qSupportedOnDvdSubmodule M h
-
-omit [NeZero M] [NeZero d] in
-/-- The translate `1 / d +ᵥ σ`, read in `ℂ`, is the subtraction `TauCeti.Periodic.qParam_sub`
-expects: that lemma is stated at `z - j`, and the shift here enters as a `+ᵥ` on `ℍ`. Naming the
-coercion bridge keeps the root-of-unity computation below free of casting. -/
-private lemma coe_vadd_one_div_eq_sub (σ : ℍ) :
-    ((((1 : ℝ) / (d : ℝ)) +ᵥ σ : ℍ) : ℂ) = (σ : ℂ) - -(1 / (d : ℂ)) := by
-  rw [UpperHalfPlane.coe_vadd]
-  push_cast
-  ring
-
-omit [NeZero M] in
-/-- **A shift by `1 / d` fixes every `q`-power the support condition leaves alive.** Translating
-the argument by `1 / d` scales the `n`-th `q`-power by a `d`-th root of unity raised to `n`, which
-is trivial exactly on the multiples of `d` — and a coefficient function supported there kills
-every other index. This is what a `q`-support hypothesis is spent on when descending along `V_d`.
--/
-theorem smul_qParam_pow_shift_eq {c : ℕ → ℂ} (hc : ∀ n : ℕ, ¬ d ∣ n → c n = 0) (σ : ℍ) (n : ℕ) :
-    c n • Function.Periodic.qParam (1 : ℝ) ((((1 : ℝ) / (d : ℝ)) +ᵥ σ : ℍ) : ℂ) ^ n =
-      c n • Function.Periodic.qParam (1 : ℝ) (σ : ℂ) ^ n := by
-  have hqP : Function.Periodic.qParam (1 : ℝ) ((((1 : ℝ) / (d : ℝ)) +ᵥ σ : ℍ) : ℂ) =
-      Function.Periodic.qParam (1 : ℝ) (σ : ℂ) *
-        Complex.exp (2 * (Real.pi : ℂ) * Complex.I / (d : ℂ)) := by
-    rw [coe_vadd_one_div_eq_sub, TauCeti.Periodic.qParam_sub]
-    congr 1
-    push_cast
-    ring_nf
-  by_cases hdn : d ∣ n
-  · obtain ⟨m, rfl⟩ := hdn
-    rw [hqP, mul_pow, pow_mul (Complex.exp _) d m,
-      (Complex.isPrimitiveRoot_exp d (NeZero.ne d)).pow_eq_one, one_pow, mul_one]
-  · rw [hc n hdn, zero_smul, zero_smul]
 
 end QExpansion
 
