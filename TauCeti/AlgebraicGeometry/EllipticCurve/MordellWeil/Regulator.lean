@@ -6,7 +6,9 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.PointModTorsion
-public import TauCeti.LinearAlgebra.BilinearMap.GramCongruence
+-- The Gram-congruence lemmas are used only inside the proofs below, so the import is private:
+-- nothing in this module's exported statements mentions `toMatrix₂Aux`.
+import TauCeti.LinearAlgebra.BilinearMap.GramCongruence
 
 /-!
 # The regulator of an elliptic curve
