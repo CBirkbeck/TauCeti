@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Algebra.Module.LinearMap.Defs
 public import Mathlib.Algebra.Module.Equiv.Opposite
 public import TauCeti.NumberTheory.HeckeRing.Multiplication
 
@@ -17,20 +16,13 @@ A `Z`-linear map out of the Hecke ring is determined by its values on the basis 
 `F (x * y) = F x * F y` for all `x` and `y` follows from the special case where both arguments
 are basis elements, and likewise for the reversed identity `F (x * y) = F y * F x`.
 
-That is not automatic. Multiplicativity is a statement about a pair of arguments, so reducing it
-to basis elements needs the convolution to be biadditive and to commute with the scalars on both
-flanks. `HeckeCosetModule.single_mul_single` supplies the latter, exhibiting
-`single Z D₁ a * single Z D₂ b` as `a • b •` the structure constants and hence as
-`a • b • (single Z D₁ 1 * single Z D₂ 1)`.
-
 ## The reversed identity
 
 The Hecke ring acts on modular forms through the slash, which is a *right* action, while
 `Module.End` multiplies by composition; that is what motivates recording the reversed order
 alongside the plain one, so a consumer whose basis identity comes out reversed — as
 `HeckeRing.GL2.twistedHeckeSlashRingCharLinearMap_mul_single_single` does — need not route
-through `MulOpposite` itself. The two statements are related exactly that way: the reversed one is
-the plain one applied to `op ∘ F`. Both live in the `LinearMap` namespace, so a consumer writes
+through `MulOpposite` itself. Both live in the `LinearMap` namespace, so a consumer writes
 `F.map_mul_of_basis`.
 
 ## Main results
@@ -78,6 +70,9 @@ theorem map_mul_of_basis (F : 𝕋 Δ H Z →ₗ[Z] A)
       F (HeckeCosetModule.single Z D₁ 1 * HeckeCosetModule.single Z D₂ 1) =
         F (HeckeCosetModule.single Z D₁ 1) * F (HeckeCosetModule.single Z D₂ 1))
     (x y : 𝕋 Δ H Z) : F (x * y) = F x * F y := by
+  -- Both sides are biadditive in `(x, y)`, so `induction_linear` in each argument reduces to a
+  -- pair of basis elements; there `single_mul_single_eq_smul_smul` releases the two coefficients
+  -- and linearity of `F` puts them back.
   induction x using HeckeCosetModule.induction_linear with
   | h0 => simp
   | hadd x₁ x₂ h₁ h₂ => rw [_root_.add_mul, map_add, map_add, h₁, h₂, _root_.add_mul]
@@ -95,12 +90,14 @@ that sends a product of basis elements to the product of their images *in the op
 so on all of the ring.
 
 This is the order a right action produces, so it is the shape a slash-derived extension arrives
-in; it is `map_mul_of_basis` for the map `op ∘ F` into `Aᵐᵒᵖ`. -/
+in. -/
 theorem map_mul_reverse_of_basis (F : 𝕋 Δ H Z →ₗ[Z] A)
     (h : ∀ D₁ D₂ : HeckeCoset Δ H H,
       F (HeckeCosetModule.single Z D₁ 1 * HeckeCosetModule.single Z D₂ 1) =
         F (HeckeCosetModule.single Z D₂ 1) * F (HeckeCosetModule.single Z D₁ 1))
     (x y : 𝕋 Δ H Z) : F (x * y) = F y * F x :=
+  -- `op` turns the reversed hypothesis into the plain one over `Aᵐᵒᵖ`, so this is
+  -- `map_mul_of_basis` for `op ∘ F`, read back through `unop`.
   congrArg MulOpposite.unop <|
     map_mul_of_basis ((MulOpposite.opLinearEquiv Z).toLinearMap.comp F)
       (fun D₁ D₂ ↦ by simpa [MulOpposite.op_mul] using congrArg MulOpposite.op (h D₁ D₂)) x y
