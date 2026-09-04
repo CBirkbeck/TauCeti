@@ -63,23 +63,16 @@ For a torsion-free codomain it is one term: `smul_right_injective N two_ne_zero`
   `QuadraticMap.ofPolar`. Its companion bilinear map is `QuadraticMap.polarBilin` of it, which is
   the polarisation.
 
-## Implementation notes
-
-The three-variable identity `map_add_add_of_parallelogram` is derived **doubled**: four instances
-of the parallelogram law combine to `2 • LHS = 2 • RHS`, and halving it is the only step in the
-file that uses anything of `N` at all. Everything after it — biadditivity, quadraticity, the
-packaged `QuadraticMap` — is a rearrangement or an induction over that identity.
-
 ## Where this is used
 
 Two constructions in arithmetic geometry arrive at a function *known to satisfy the parallelogram
 law* and want it as a quadratic form.
 
-The canonical height of an elliptic curve is one: `canonicalHeight_parallelogram_law` establishes
-the law exactly, and the Néron–Tate height pairing is then the polarisation supplied here — the
-bilinear map whose Gram determinant on a basis is the regulator. The degree form on `End E` is the
-other, where the polarisation is the trace form and its non-negativity gives the Hasse bound by
-Cauchy–Schwarz (Silverman, *AEC*, V.1.2).
+The canonical height of an elliptic curve is one. It satisfies the parallelogram law exactly, and
+its polarisation is the Néron–Tate height pairing — the bilinear map whose Gram determinant on a
+basis of the free part of the Mordell–Weil group is the regulator. The degree form on `End E` is
+the other: its polarisation is the trace form, and non-negativity of the degree gives the Hasse
+bound by Cauchy–Schwarz (Silverman, *The Arithmetic of Elliptic Curves*, V.1.2).
 
 Both take values in a torsion-free group — `ℝ` and `ℤ` respectively — so both satisfy the
 hypothesis below with room to spare. Stated for a general abelian group so that neither carries
@@ -100,14 +93,16 @@ variable {M N : Type*} [AddCommGroup M] [AddCommGroup N] {f : M → N}
 
 include htwo hf
 
-/-- The parallelogram law at `x = y = 0` forces `f 0 = 0`. -/
+-- The parallelogram law at `x = y = 0`.
+/-- **A parallelogram-law function preserves zero.** -/
 theorem map_zero_of_parallelogram : f 0 = 0 := by
   have h := hf 0 0
   simp only [add_zero, sub_zero] at h
   apply htwo
   linear_combination (norm := module) -h
 
-/-- The parallelogram law at `x = 0` forces `f` to be even. -/
+-- The parallelogram law at `x = 0`.
+/-- **A parallelogram-law function is even.** -/
 theorem map_neg_of_parallelogram (x : M) : f (-x) = f x := by
   have h := hf 0 x
   rw [zero_add, zero_sub, map_zero_of_parallelogram htwo hf] at h
