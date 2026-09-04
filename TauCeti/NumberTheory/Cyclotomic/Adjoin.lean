@@ -21,7 +21,7 @@ Galois correspondence needs them.
 
 ## Main results
 
-* `IsPrimitiveRoot.adjoin_singleton_eq_adjoin_rootsOfUnity`: `K(ζ) = K(μ_m)`.
+* `IsPrimitiveRoot.adjoin_singleton_eq_adjoin_nth_roots`: `K(ζ) = K(μ_m)`.
 -/
 
 public section
@@ -33,13 +33,12 @@ extension of `K` containing a primitive `m`-th root of unity `ζ`.
 
 No algebraicity of the ambient extension is needed: each `m`-th root of unity is algebraic on
 its own, being a root of the nonzero polynomial `X ^ m - 1`. -/
-theorem IsPrimitiveRoot.adjoin_singleton_eq_adjoin_rootsOfUnity {K M : Type*} [Field K] [Field M]
+theorem IsPrimitiveRoot.adjoin_singleton_eq_adjoin_nth_roots {K M : Type*} [Field K] [Field M]
     [Algebra K M] {m : ℕ} [NeZero m] {ζ : M}
     (hζ : IsPrimitiveRoot ζ m) : adjoin K {ζ} = adjoin K {b : M | b ^ m = 1} := by
-  -- an `m`-th root of unity is a root of the nonzero polynomial `X ^ m - 1`
+  -- an `m`-th root of unity is algebraic, being a root of unity
   have halg : ∀ b : M, b ^ m = 1 → IsAlgebraic K b := fun b hb ↦
-    ⟨Polynomial.X ^ m - Polynomial.C 1,
-      Polynomial.X_pow_sub_C_ne_zero (Nat.pos_of_ne_zero (NeZero.ne m)) 1, by simp [hb]⟩
+    IsAlgebraic.of_pow (NeZero.pos m) (by rw [hb]; exact isAlgebraic_one)
   refine toSubalgebra_injective ?_
   rw [adjoin_toSubalgebra_of_isAlgebraic (S := {ζ})
       (fun x hx ↦ halg x (by rw [Set.mem_singleton_iff.mp hx]; exact hζ.pow_eq_one)),

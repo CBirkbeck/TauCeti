@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.NumberTheory.Cyclotomic.Gal
+public import TauCeti.FieldTheory.Galois.FixedField
 public import TauCeti.NumberTheory.Cyclotomic.Adjoin
 
 /-!
@@ -51,13 +51,9 @@ theorem IsPrimitiveRoot.fixedField_isCyclotomicExtension_of_inf_fixingSubgroup_e
     IsCyclotomicExtension {m} (fixedField H) M := by
   set F : IntermediateField K M := fixedField H
   set Kμ : IntermediateField K M := adjoin K {b : M | b ^ m = 1}
-  have hadjζ : adjoin K {ζ} = Kμ := hζ.adjoin_singleton_eq_adjoin_rootsOfUnity
+  have hadjζ : adjoin K {ζ} = Kμ := hζ.adjoin_singleton_eq_adjoin_nth_roots
   -- a trivial meet of fixing subgroups is a sup equal to `⊤`
-  have hsup : (F ⊔ Kμ).fixingSubgroup = ⊥ := by
-    rw [fixingSubgroup_sup, fixingSubgroup_fixedField, hmeet]
-  have htop : F ⊔ Kμ = ⊤ := by
-    have := congrArg fixedField hsup
-    rwa [IsGalois.fixedField_fixingSubgroup, fixedField_bot] at this
+  have htop : F ⊔ Kμ = ⊤ := (fixedField_sup_eq_top_iff H Kμ).mpr hmeet
   -- hence `ζ` generates `M` over `F`
   have htopF : adjoin F {ζ} = ⊤ := by
     apply restrictScalars_injective K
