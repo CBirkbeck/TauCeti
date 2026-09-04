@@ -53,6 +53,11 @@ with — is half of it. Getting this wrong would scale every later invariant.
   statement it specialises lives in `TauCeti/LinearAlgebra/QuadraticForm/OfParallelogram.lean`.
 * `WeierstrassCurve.Affine.Point.canonicalHeight_nonneg`: it is non-negative, read off the
   defining sequence termwise.
+* `WeierstrassCurve.Affine.Point.canonicalHeight_eq_zero_iff_isOfFinAddOrder`: it vanishes exactly
+  on the torsion points. The two directions are also available separately, because they need
+  different hypotheses: `canonicalHeight_eq_zero_of_isOfFinAddOrder` is quadraticity at a
+  vanishing multiple and needs no finiteness, while
+  `isOfFinAddOrder_of_canonicalHeight_eq_zero` is where the Northcott property is used.
 * `WeierstrassCurve.Affine.Point.abs_canonicalHeight_sub_naiveHeight_le`: the canonical height stays
   within a bounded distance of *half* the naïve one, by a
   constant depending only on the curve. This is what makes the two interchangeable in
@@ -270,5 +275,43 @@ theorem Point.canonicalHeight_nsmul [W.toAffine.IsElliptic] (n : ℕ) (P : W.Poi
   rw [← natCast_zsmul, Point.canonicalHeight_zsmul]
   push_cast
   ring
+
+/-- **A torsion point has canonical height zero.** Unlike the converse this needs no Northcott
+hypothesis, and so holds over every field carrying admissible absolute values: it is quadraticity
+at a vanishing multiple. -/
+theorem Point.canonicalHeight_eq_zero_of_isOfFinAddOrder [W.toAffine.IsElliptic] {P : W.Point}
+    (h : IsOfFinAddOrder P) : P.canonicalHeight = 0 := by
+  obtain ⟨n, hn, hnP⟩ := isOfFinAddOrder_iff_nsmul_eq_zero.1 h
+  -- `n • P = 0` with `n ≠ 0` turns quadraticity into `n ² · ĥ(P) = 0`.
+  have hq := Point.canonicalHeight_nsmul n P
+  rw [hnP, Point.canonicalHeight_zero] at hq
+  exact (mul_eq_zero.1 hq.symm).resolve_left (pow_ne_zero 2 (Nat.cast_ne_zero.2 (by omega)))
+
+/-- **A point of canonical height zero is torsion.** This is where Northcott finiteness enters:
+all the multiples of such a point have naïve height bounded by the single constant of
+`Point.abs_canonicalHeight_sub_naiveHeight_le`, so there are only finitely many of them. -/
+theorem Point.isOfFinAddOrder_of_canonicalHeight_eq_zero [W.toAffine.IsElliptic]
+    [Northcott (logHeight₁ (K := F))] {P : W.Point} (h : P.canonicalHeight = 0) :
+    IsOfFinAddOrder P := by
+  refine finite_multiples.1 ?_
+  obtain ⟨D, hD⟩ := Point.abs_canonicalHeight_sub_naiveHeight_le (W := W)
+  refine (finite_naiveHeight_le (W := W) (2 * D)).subset ?_
+  rintro Q ⟨n, rfl⟩
+  -- quadraticity gives `ĥ(n • P) = n ² · ĥ(P) = 0`, so the bound reads `|h(n • P) / 2| ≤ D`.
+  have h1 := hD (n • P)
+  rw [Point.canonicalHeight_nsmul, h, mul_zero] at h1
+  have h2 := (abs_le.1 h1).1
+  simp only [Set.mem_ofPred_eq]
+  linarith
+
+/-- **The canonical height vanishes exactly on the torsion points.** Together with
+`Point.canonicalHeight_nonneg` this is positive definiteness modulo torsion, which is what makes
+the Néron–Tate pairing an inner product on the free quotient and the regulator its Gram
+determinant. -/
+theorem Point.canonicalHeight_eq_zero_iff_isOfFinAddOrder [W.toAffine.IsElliptic]
+    [Northcott (logHeight₁ (K := F))] (P : W.Point) :
+    P.canonicalHeight = 0 ↔ IsOfFinAddOrder P :=
+  ⟨Point.isOfFinAddOrder_of_canonicalHeight_eq_zero,
+    Point.canonicalHeight_eq_zero_of_isOfFinAddOrder⟩
 
 end WeierstrassCurve.Affine
