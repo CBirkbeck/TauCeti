@@ -341,10 +341,8 @@ theorem primePowerProd_eq_factorization_prod (f : ℕ → ℕ → M) (n : ℕ) :
         _ = n.factorization.prod f := Finsupp.mul_prod_erase _ _ _ (minFac_mem_primeFactors h1)
     · rcases Nat.le_one_iff_eq_zero_or_eq_one.1 (not_lt.1 h1) with rfl | rfl <;> simp
 
-/-- **Splitting the assembly at a prime**: `primePowerProd f m` is its `p`-block times the
-assembly over the `p`-free part of `m`. The two factors have coprime indices, so this is
-`TauCeti.Nat.primePowerProd_mul_of_coprime` applied to `Nat.ordProj_mul_ordCompl_eq_self`, whose
-commutation obligations `Commute.all` discharges here. -/
+/-- **Splitting the assembly at a prime**: `primePowerProd f m` is its `p`-block
+`primePowerProd f (p ^ v_p(m))` times the assembly over the `p`-free part `ordCompl[p] m`. -/
 theorem primePowerProd_eq_ordProj_mul_ordCompl (f : ℕ → ℕ → M) {p m : ℕ} (hp : p.Prime)
     (hm : m ≠ 0) :
     primePowerProd f m =

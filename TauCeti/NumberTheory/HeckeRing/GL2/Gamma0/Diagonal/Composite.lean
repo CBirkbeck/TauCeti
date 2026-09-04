@@ -246,18 +246,15 @@ theorem heckeTScalarCompositeGamma0_prime_pow {p : ℕ} (hp : p.Prime) (v : ℕ)
 /-- The `Γ₀(N)` Hecke ring over `ℤ` as a *commutative* ring: the ambient `Ring` instance with
 `mul_comm` supplied by the Atkin–Lehner anti-involution.
 
-`TauCeti.Nat.primePowerProd_mul_eq_sum_divisors_gcd` asks for commutativity as a *structure*,
-where the neighbouring proofs quote it pointwise as
-`HeckeCosetModule.mul_comm_of_antiInvolution`. `HeckeRing.GL2.commSemiringHeckeRingGamma0` is the
-same mathematical fact, but it is built from `instSemiringHeckeRing` rather than from the ambient
-`Ring`, so its operations are only definitionally the ones these statements carry, and rewriting
-through it fails. This def extends the ambient `Ring` instead, which is why it exists.
-
-Private and local for the same reason `commSemiringHeckeRingGamma0` is not an instance — the
-anti-involution is data. -/
+Private and local for the same reason `HeckeRing.GL2.commSemiringHeckeRingGamma0` is not an
+instance — the anti-involution is data. -/
 @[instance_reducible]
 private noncomputable def commRingHeckeRingGamma0 :
     CommRing (𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ) :=
+  -- Not `commSemiringHeckeRingGamma0`, which is the same mathematical fact: that one is built from
+  -- `instSemiringHeckeRing`, so its `Mul` and `One` are only definitionally the ambient `Ring`'s,
+  -- and `rw` through it fails on goals stated with the ambient ones. Extending the ambient `Ring`
+  -- keeps the operations syntactically equal.
   { (inferInstance : Ring (𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ)) with
     mul_comm := HeckeCosetModule.mul_comm_of_antiInvolution ℤ (atkinLehnerAntiInvolution N)
       (atkinLehnerAntiInvolution_onHeckeCoset_eq_self N) }
@@ -290,8 +287,7 @@ theorem heckeTScalarCompositeGamma0_eq_zero_of_not_coprime {n : ℕ} (hn : n ≠
 This is the composite counterpart of `heckeTGeneratorRecGamma0_mul`, which is the same identity
 one prime at a time. At coprime `m` and `n` it specialises to
 `heckeTCompositeGamma0_mul_of_coprime`: the gcd is `1`, the sum collapses to its `d = 1` term, and
-`S₁ = 1` leaves `T_m · T_n`. Note the two `_mul`s differ — this one is about a product of two
-composite elements, that one about the index of a single element.
+`S₁ = 1` leaves `T_m · T_n`.
 
 Both arguments must be nonzero. `heckeTCompositeGamma0` sends `0` to the empty product `1` and
 `gcd 0 0 = 0` has no divisors, so at `m = n = 0` the left side is `1` and the right an empty sum.
