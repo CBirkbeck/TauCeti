@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.FieldTheory.Galois.Basic
 public import TauCeti.NumberTheory.Cyclotomic.Adjoin
 public import TauCeti.RingTheory.RootsOfUnity.PrimitiveRoots
 
