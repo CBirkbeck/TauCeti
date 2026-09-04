@@ -68,14 +68,20 @@ For a torsion-free codomain it is one term: `smul_right_injective N two_ne_zero`
   `QuadraticMap.ofPolar`. Its companion bilinear map is `QuadraticMap.polarBilin` of it, which is
   the polarisation.
 
-## Roadmap
+## Where this is used
 
-`TauCetiRoadmap/EllipticCurves/README.md` §Layer 6 names "the Néron–Tate bilinear pairing" as a
-milestone, and the pairing is exactly the polarisation of the canonical height, which is known to
-satisfy the parallelogram law (`WeierstrassCurve.Affine.Point.canonicalHeight_parallelogram_law`)
-before it is known to be quadratic. The same shape recurs for the degree form on `End E` behind the
-Hasse bound (§Layer 3, AEC V.1.2). Stated here for a general abelian group so that neither
-application carries its own copy.
+Two constructions in arithmetic geometry arrive at a function *known to satisfy the parallelogram
+law* and want it as a quadratic form.
+
+The canonical height of an elliptic curve is one: `canonicalHeight_parallelogram_law` establishes
+the law exactly, and the Néron–Tate height pairing is then the polarisation supplied here — the
+bilinear map whose Gram determinant on a basis is the regulator. The degree form on `End E` is the
+other, where the polarisation is the trace form and its non-negativity gives the Hasse bound by
+Cauchy–Schwarz (Silverman, *AEC*, V.1.2).
+
+Both take values in a torsion-free group — `ℝ` and `ℤ` respectively — so both satisfy the
+hypothesis below with room to spare. Stated for a general abelian group so that neither carries
+its own copy.
 -/
 
 public section
@@ -96,8 +102,7 @@ include htwo hf
 theorem map_zero_of_parallelogram : f 0 = 0 := by
   have h := hf 0 0
   simp only [add_zero, sub_zero] at h
-  refine htwo ?_
-  change (2 : ℕ) • f 0 = (2 : ℕ) • 0
+  apply htwo
   linear_combination (norm := module) -h
 
 /-- The parallelogram law at `x = 0` forces `f` to be even. -/
@@ -119,12 +124,12 @@ theorem map_add_add_of_parallelogram (x y z : M) :
   have p2 := hf x (y - z)
   have p3 := hf y z
   have p4 := hf (x + z) y
+  -- `f` is an arbitrary function, so `abel` cannot normalise *under* it: the arguments have to be
+  -- rewritten explicitly before the four instances share syntactic subterms and can be combined.
   rw [show x + y - z = x + (y - z) by abel] at p1
   rw [show x - (y - z) = x + z - y by abel] at p2
   rw [show x + z + y = x + y + z by abel] at p4
-  refine htwo ?_
-  change (2 : ℕ) • (f (x + y + z) + f x + f y + f z)
-      = (2 : ℕ) • (f (x + y) + f (y + z) + f (x + z))
+  apply htwo
   linear_combination (norm := module) p1 + p4 - p2 - (2 : ℤ) • p3
 
 /-- **The polarisation is additive in its left argument.** -/
@@ -155,6 +160,7 @@ private theorem map_nsmul_of_parallelogram (n : ℕ) (x : M) :
   | more n ih ih' =>
     -- the parallelogram law at `((n + 1) • x, x)` expresses the value at `(n + 2) • x`
     have h := hf ((n + 1) • x) x
+    -- again the arguments of `f`, not the ambient expression, are what must be reshaped
     rw [← succ_nsmul x (n + 1), show (n + 1) • x - x = n • x by
       rw [succ_nsmul, add_sub_cancel_right], ih, ih'] at h
     push_cast at h ⊢
