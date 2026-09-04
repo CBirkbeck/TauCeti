@@ -44,8 +44,12 @@ The coarsening construction itself is adapted from AINTLIB (see References),
 `WithZero.mapMonoidWithZeroHom` block replaced by Mathlib's `WithZero.map'` and the composite
 shaped as in Mathlib's own `LinearOrderedCommGroupWithZero` locally-finite instance.
 
-`Valuation.cofinalValue_coarsenByUnits_restrict` is not from that development. It is Wedhorn's
-Remark 7.11(2), proved here from `TauCeti.coarsenMapOfValueGroup_mul_inv_lt` and
+`Valuation.cofinalValue_coarsenByUnits_restrict` is not from that development. It is the
+topology-free cofinality ingredient of Wedhorn's Remark 7.11(2), not the remark itself: the
+continuity statement the remark makes is
+`TauCeti.Huber.IsContinuous.coarsenByUnits_restrict` in
+`TauCeti.RingTheory.Huber.Continuous.Coarsen`, which consumes this one. The order-level step it
+rests on is `TauCeti.coarsenMapOfValueGroup_mul_inv_lt`, together with
 `TauCeti.ConvexSubgroup.exists_one_lt_quotientMk`.
 
 ## References
