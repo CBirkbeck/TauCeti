@@ -33,6 +33,9 @@ character — are *jointly* bijective:
   `IsCyclotomicExtension.autToPow_galEquivProd_symm` eliminating its inverse. Those three
   `simp` lemmas are the whole interface: no consumer needs the `MulEquiv.ofBijective` that
   packages the equivalence, in either direction.
+* `IsCyclotomicExtension.ker_autToPow_eq_comap_galEquivProd`: the same interface one level up,
+  on subgroups rather than elements — the kernel of the cyclotomic character is what
+  `galEquivProd` reads off as the `Gal(L/K)` factor.
 
 The two general prerequisites this rests on are stated where they belong rather than here:
 the degree identity `[M : K] = φ m` is `IsCyclotomicExtension.finrank_eq_totient` in
@@ -274,6 +277,20 @@ theorem autToPow_galEquivProd_symm (hcop : ((NumberField.discr L).natAbs).Coprim
   have h := galEquivProd_apply K L M m hcop hζ ((galEquivProd K L M m hcop hζ).symm x)
   rw [MulEquiv.apply_symm_apply] at h
   exact (congrArg Prod.snd h).symm
+
+/-- **The cyclotomic character's kernel is the first factor of the joint restriction.** The
+automorphisms of `M` acting trivially on the `m`-th roots of unity are exactly those that
+`galEquivProd` sends into `Gal(L/K) × 1`; equivalently, the kernel of the cyclotomic character
+is the part of `Gal(M/K)` that the equivalence reads off as pure `Gal(L/K)`.
+
+This is the subgroup-level companion to `galEquivProd_apply`: that lemma computes the
+equivalence on elements, this one transports a distinguished subgroup across it. -/
+theorem ker_autToPow_eq_comap_galEquivProd (hcop : ((NumberField.discr L).natAbs).Coprime m)
+    {ζ : M} (hζ : IsPrimitiveRoot ζ m) :
+    (hζ.autToPow K).ker = Subgroup.comap (galEquivProd K L M m hcop hζ).toMonoidHom
+      ((⊤ : Subgroup Gal(L/K)).prod (⊥ : Subgroup (ZMod m)ˣ)) := by
+  ext σ
+  simp [Subgroup.mem_prod]
 
 end Compositum
 
