@@ -285,7 +285,13 @@ automorphisms of `M` acting trivially on the `m`-th roots of unity are exactly t
 is the part of `Gal(M/K)` that the equivalence reads off as pure `Gal(L/K)`.
 
 This is the subgroup-level companion to `galEquivProd_apply`: that lemma computes the
-equivalence on elements, this one transports a distinguished subgroup across it. -/
+equivalence on elements, this one transports a distinguished subgroup across it.
+
+Source: the identification of `Gal(M/K(μ_m))` with the `Gal(L/K) × 1` factor is credited to
+[CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0,
+Birkbeck--Brasca) at commit `55a89985d47a3befcf6069aca1da250ff088b5c7`, which states it in the
+docstring of the private `autToPow_eq_one_of_fixes` (`CebotarevDensity/Abelian.lean:659`) and
+performs the step inline; isolating it as a lemma over `galEquivProd` is not the source's. -/
 theorem ker_autToPow_eq_comap_galEquivProd (hcop : ((NumberField.discr L).natAbs).Coprime m)
     {ζ : M} (hζ : IsPrimitiveRoot ζ m) :
     (hζ.autToPow K).ker = Subgroup.comap (galEquivProd K L M m hcop hζ).toMonoidHom
@@ -298,7 +304,9 @@ of `M` acting trivially on `L` are exactly those that `galEquivProd` sends into 
 
 This is the mirror of `ker_autToPow_eq_comap_galEquivProd`: between them the two components of
 the equivalence are each characterised on subgroups, so a consumer holding either
-`Gal(M/L)` or `Gal(M/K(μ_m))` can transport it without unfolding `galEquivProd`. -/
+`Gal(M/L)` or `Gal(M/K(μ_m))` can transport it without unfolding `galEquivProd`.
+
+Source: as for `ker_autToPow_eq_comap_galEquivProd`. -/
 theorem ker_restrictNormalHom_eq_comap_galEquivProd
     (hcop : ((NumberField.discr L).natAbs).Coprime m) {ζ : M} (hζ : IsPrimitiveRoot ζ m) :
     (AlgEquiv.restrictNormalHom (F := K) (K₁ := M) L).ker =
@@ -307,9 +315,10 @@ theorem ker_restrictNormalHom_eq_comap_galEquivProd
   ext σ
   simp only [MonoidHom.mem_ker, Subgroup.mem_comap, MulEquiv.coe_toMonoidHom,
     galEquivProd_apply, Subgroup.mem_prod, Subgroup.mem_bot, Subgroup.mem_top, and_true]
-  -- `AlgEquiv.restrictNormalHom L σ` and `σ.restrictNormal L` are definitionally equal; this is
-  -- the same step `galEquivProd_apply` discharges, and it is Mathlib's to make `rfl`.
-  rfl
+  -- Rewriting rather than closing by `rfl`: `restrictNormalHom` is `MonoidHom.mk'` around
+  -- `restrictNormal`, so its equation lemma plus `MonoidHom.mk'_apply` gets there without
+  -- depending on how the wrapper is packaged.
+  rw [AlgEquiv.restrictNormalHom, MonoidHom.mk'_apply]
 
 end Compositum
 
