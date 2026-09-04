@@ -16,6 +16,15 @@ public import TauCeti.RingTheory.RootsOfUnity.PrimitiveRoots
 ## Main results
 
 * `IsPrimitiveRoot.fixingSubgroup_adjoin_setOfPred_pow_eq_one`
+
+## References
+
+The identification of `Gal(M/K(μ_m))` with the `G × 1` factor of a Galois splitting is due to the
+Birkbeck--Brasca Chebotarev development,
+[CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0), which
+carries it out inline at its assembly site. Isolating it as a statement about the kernel of the
+cyclotomic character, so that it can be applied without unfolding a splitting, is what this file
+adds.
 -/
 
 public section
