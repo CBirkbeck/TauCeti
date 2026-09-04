@@ -68,7 +68,7 @@ theorem subringCongr_one_weight_weightedC (a : A) :
 into the weighted one need this orientation. -/
 @[simp]
 theorem subringCongr_one_weight_symm_restrictedX (i : Fin k) :
-    (RingEquiv.subringCongr (weightedRestrictedSubring_one_weight (k := k) (A := A))).symm
+    RingEquiv.subringCongr (weightedRestrictedSubring_one_weight (k := k) (A := A)).symm
         (restrictedX i)
       = weightedX _ isWeightFamily_one_weight i :=
   Subtype.ext (by simp)
@@ -77,7 +77,7 @@ theorem subringCongr_one_weight_symm_restrictedX (i : Fin k) :
 `TauCeti.Huber.subringCongr_one_weight_weightedC`. -/
 @[simp]
 theorem subringCongr_one_weight_symm_algebraMap (a : A) :
-    (RingEquiv.subringCongr (weightedRestrictedSubring_one_weight (k := k) (A := A))).symm
+    RingEquiv.subringCongr (weightedRestrictedSubring_one_weight (k := k) (A := A)).symm
         (algebraMap A (restrictedMvPowerSeriesSubring k A) a)
       = weightedC _ isWeightFamily_one_weight a :=
   Subtype.ext (by simp [MvPowerSeries.algebraMap_apply])
