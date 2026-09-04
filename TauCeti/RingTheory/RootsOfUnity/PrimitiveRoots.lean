@@ -27,8 +27,10 @@ because the character records nothing but the power the root is sent to.
 
 ## References
 
-`autToPow_eq_one_iff` is adapted from the Birkbeck--Brasca Chebotarev density project,
-[CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0).
+`autToPow_eq_one_iff` names an identification that the Birkbeck--Brasca Chebotarev density
+project, [CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density)
+(Apache-2.0), makes inline rather than as a lemma; the statement and proof here are not adapted
+from it.
 -/
 
 public section
