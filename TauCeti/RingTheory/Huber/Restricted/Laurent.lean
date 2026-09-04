@@ -201,18 +201,6 @@ section Compat
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
 
-/-- The variable `Xᵢ` of `A⟨X₁, …, Xₖ⟩`, as an element of the restricted subring. -/
-noncomputable def restrictedX {k : ℕ} (i : Fin k) : restrictedMvPowerSeriesSubring k A :=
-  ⟨MvPowerSeries.X i, mem_restrictedMvPowerSeriesSubring.mpr <| by
-    rw [MvPowerSeries.X_def]
-    exact isRestricted_monomial _ _⟩
-
-/-- `restrictedX i` is the power series `Xᵢ` underneath. -/
-@[simp]
-theorem coe_restrictedX {k : ℕ} (i : Fin k) :
-    ((restrictedX i : restrictedMvPowerSeriesSubring k A) : MvPowerSeries (Fin k) A) =
-      MvPowerSeries.X i := (rfl)
-
 variable {M : Type*} [AddCommGroup M] [Module A M] [TopologicalSpace M] [ContinuousAdd M]
   [ContinuousSMul A M]
 
