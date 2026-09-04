@@ -48,8 +48,6 @@ subspace is still missing.
 
 * `TauCeti.levelRaise_mem_cuspFormsOld` and `TauCeti.cuspFormsOld_le`: the introduction and
   elimination rules for the old subspace.
-* `TauCeti.mem_cuspFormsOld_of_coe_eq_smul_slash_scaleGL`: the introduction rule stated on the
-  underlying function, for callers holding the level-raise as an equation on `ℍ`.
 * `TauCeti.levelRaise_mem_cuspFormsOldMultiples` and `TauCeti.cuspFormsOldMultiples_le`: the
   introduction and elimination rules for the refined old subspace.
 * `TauCeti.cuspFormsOldMultiples_le_cuspFormsOld` and
@@ -119,25 +117,6 @@ theorem levelRaise_mem_cuspFormsOld [NeZero N] (h : d * M ∣ N) (hM : M ≠ N)
   let _ := NeZero.of_dvd (dvd_of_mul_right_dvd h)
   Submodule.mem_iSup_of_mem M (Submodule.mem_iSup_of_mem d
     (Submodule.mem_iSup_of_mem ⟨h, hM⟩ ⟨f, CuspForm.levelRaiseₗ_apply d _ f⟩))
-
-/-- **The introduction rule read off the underlying function.** A cusp form of level `N` whose
-underlying function is `d ^ (1 - k) • (g ∣[k] diag(d, 1))` for a cusp form `g` of a proper divisor
-level `M` is old.
-
-This is `levelRaise_mem_cuspFormsOld` with the level-raise recognised through
-`TauCeti.CuspForm.coe_levelRaise` rather than named. A caller that obtained the identity as an
-equation of functions on `ℍ` — the level-lowering dichotomy
-`TauCeti.exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero` is the example — has no
-`TauCeti.CuspForm.levelRaise` term to point at, and coercion is injective, so producing one is
-exactly this lemma. -/
-theorem mem_cuspFormsOld_of_coe_eq_smul_slash_scaleGL [NeZero N] [NeZero d] (h : d * M ∣ N)
-    (hM : M ≠ N) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
-    {g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k}
-    (hfg : ⇑f = (d : ℂ) ^ (1 - k) • ((⇑g : ℍ → ℂ) ∣[k] scaleGL d)) :
-    f ∈ cuspFormsOld N k := by
-  rw [DFunLike.coe_injective (hfg.trans
-    (CuspForm.coe_levelRaise (Gamma1_map_le_conjAct_scaleGL_of_dvd h) g).symm)]
-  exact levelRaise_mem_cuspFormsOld h hM k g
 
 /-- **Elimination rule for the old subspace**: a subspace containing every level-raise from a
 proper divisor level contains the whole old subspace. -/
