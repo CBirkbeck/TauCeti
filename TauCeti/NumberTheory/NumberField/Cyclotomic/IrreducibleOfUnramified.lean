@@ -45,6 +45,10 @@ whereas `[K(ζ_p) : K]` is a proper divisor of `p - 1` exactly when `K ∩ ℚ(�
 
 ## References
 
+This is Layer 7.2 of the Chebotarev roadmap (`TauCetiRoadmap/Chebotarev`, `README.md`), whose
+heading is that unramifiedness, not an intersection of fields, is what gives the full cyclotomic
+degree.
+
 Total ramification of `ℚ(ζ_{p^r})` at `p` is Milne, *Algebraic Number Theory*, Proposition 6.2,
 and Sharifi, *Algebraic Number Theory*, Lemma 3.1.13; the ramification bookkeeping is Sharifi,
 Remark 2.5.7 and Theorem 2.5.11. The argument mirrors
