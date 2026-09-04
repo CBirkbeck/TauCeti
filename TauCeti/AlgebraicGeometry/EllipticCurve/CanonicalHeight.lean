@@ -328,24 +328,29 @@ variable (W) in
 /-- **The canonical height as a `ℤ`-quadratic form on `W.Point`.** The exact parallelogram law is
 the axiom a `QuadraticMap` asks for, so this adds no content: it is the packaging that lets
 Mathlib's `QuadraticMap.polar` API supply the Néron–Tate pairing and its bilinearity. -/
-noncomputable def canonicalHeightQuadratic [W.toAffine.IsElliptic] :
-    QuadraticMap ℤ W.Point ℝ :=
+noncomputable def canonicalHeightQuadratic [W.toAffine.IsElliptic] : QuadraticMap ℤ W.Point ℝ :=
   TauCeti.QuadraticMap.ofParallelogram (smul_right_injective ℝ two_ne_zero)
     canonicalHeight_parallelogram_nsmul
 
+-- Proved by applying `ofParallelogram_apply` rather than by unfolding: since
+-- `canonicalHeight_parallelogram_nsmul` is `private`, the elaborator hoists it into an auxiliary
+-- constant, and `simp [canonicalHeightQuadratic]` cannot see through that to fire
+-- `ofParallelogram_apply`. Unification can, because it reads the auxiliary constant's type.
 @[simp]
 theorem canonicalHeightQuadratic_apply [W.toAffine.IsElliptic] (P : W.Point) :
-    canonicalHeightQuadratic W P = P.canonicalHeight := by
-  rw [canonicalHeightQuadratic]
-  exact TauCeti.QuadraticMap.ofParallelogram_apply _ _ P
+    canonicalHeightQuadratic W P = P.canonicalHeight :=
+  TauCeti.QuadraticMap.ofParallelogram_apply _ _ P
 
 variable (W) in
-/-- **The Néron–Tate pairing** `⟨P, Q⟩ = ½ (ĥ(P + Q) − ĥ(P) − ĥ(Q))`, as a `ℤ`-bilinear map.
+/-- **The Néron–Tate pairing**: half of
+`canonicalHeight (P + Q) - canonicalHeight P - canonicalHeight Q`, as a `ℤ`-bilinear map
+(`neronTatePairing_apply`).
 
-The `½` is the normalisation under which `⟨P, P⟩ = ĥ(P)` (`neronTatePairing_self`), the convention
-the regulator and the BSD formula are stated with. Mathlib's polar form is the unnormalised one —
-`QuadraticMap.polar_self` gives `polar ĥ P P = 2 • ĥ(P)` — so this is half of
-`(canonicalHeightQuadratic W).polarBilin` and not equal to it. -/
+The halving is the normalisation under which the diagonal is the canonical height itself
+(`neronTatePairing_self`), which is the convention the regulator and the BSD formula are stated
+with. Mathlib's polar form is the unnormalised one — `QuadraticMap.polar_self` reads
+`polar Q x x = 2 • Q x` — so this is half of `(canonicalHeightQuadratic W).polarBilin` and not
+equal to it. -/
 noncomputable def neronTatePairing [W.toAffine.IsElliptic] : LinearMap.BilinMap ℤ W.Point ℝ :=
   (2 : ℝ)⁻¹ • (canonicalHeightQuadratic W).polarBilin
 
