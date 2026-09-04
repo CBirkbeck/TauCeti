@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.NaiveHeight
-public import TauCeti.LinearAlgebra.QuadraticForm.OfParallelogram
+import TauCeti.LinearAlgebra.QuadraticForm.OfParallelogram
 
 /-!
 # The canonical (Néron–Tate) height
@@ -254,12 +254,18 @@ private theorem canonicalHeight_parallelogram_nsmul [W.toAffine.IsElliptic] (P Q
 
 /-- **The canonical height is quadratic in the point**: it takes `n • P` to `n ^ 2` times its
 value at `P`, for an integer `n`. -/
+@[simp]
 theorem Point.canonicalHeight_zsmul [W.toAffine.IsElliptic] (n : ℤ) (P : W.Point) :
     (n • P).canonicalHeight = (n : ℝ) ^ 2 * P.canonicalHeight := by
   rw [TauCeti.QuadraticMap.map_zsmul_of_parallelogram (smul_right_injective ℝ two_ne_zero)
     canonicalHeight_parallelogram_nsmul n P]
   ring
 
+-- Not `@[simp]`, and that is forced rather than chosen: tagging it makes the existing
+-- `canonicalHeight_two_nsmul` non-simp-normal, since `2 • P` would rewrite to
+-- `((2 : ℕ) : ℝ) ^ 2 * canonicalHeight P` before the sharper `4 * canonicalHeight P` rule could
+-- fire. The environment linter reports exactly that. The integer form below carries the tag, and
+-- its left-hand side uses a different `smul` instance, so the two do not compete.
 /-- **The canonical height is quadratic in the point**, for a natural multiple. -/
 theorem Point.canonicalHeight_nsmul [W.toAffine.IsElliptic] (n : ℕ) (P : W.Point) :
     (n • P).canonicalHeight = (n : ℝ) ^ 2 * P.canonicalHeight := by
