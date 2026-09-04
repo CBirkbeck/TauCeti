@@ -58,12 +58,15 @@ For a torsion-free codomain it is one term: `smul_right_injective N two_ne_zero`
 * `TauCeti.QuadraticMap.map_add_add_of_parallelogram`: the three-variable identity
   `f (x + y + z) + f x + f y + f z = f (x + y) + f (y + z) + f (x + z)`. This is the whole
   content — biadditivity is a rearrangement of it.
-* `TauCeti.QuadraticMap.polar_add_left_of_parallelogram` and `polar_add_right_of_parallelogram`:
-  the polarisation is biadditive.
+* `TauCeti.QuadraticMap.polar_add_left_of_parallelogram` and
+  `polar_zsmul_left_of_parallelogram`: the polarisation is additive and `ℤ`-linear on the left.
+  Additivity on the right is not restated — it is `QuadraticMap.polar_add_right` of the packaged
+  map below.
 * `TauCeti.QuadraticMap.map_zsmul_of_parallelogram`: `f (n • x) = n ^ 2 • f x` for `n : ℤ`,
   written `(n * n) • f x` to match `QuadraticMap`'s `toFun_smul` field.
-* `TauCeti.QuadraticMap.ofParallelogram`: the resulting `QuadraticMap ℤ M N`, whose companion
-  bilinear map is the polarisation.
+* `TauCeti.QuadraticMap.ofParallelogram`: the resulting `QuadraticMap ℤ M N`, built with
+  `QuadraticMap.ofPolar`. Its companion bilinear map is `QuadraticMap.polarBilin` of it, which is
+  the polarisation.
 
 ## Roadmap
 
@@ -130,11 +133,16 @@ theorem polar_add_left_of_parallelogram (x x' y : M) :
   simp only [polar]
   linear_combination (norm := module) map_add_add_of_parallelogram htwo hf x x' y
 
-/-- **The polarisation is additive in its right argument**, by symmetry. -/
-theorem polar_add_right_of_parallelogram (x y y' : M) :
-    polar f x (y + y') = polar f x y + polar f x y' := by
-  rw [polar_comm, polar_comm f x y, polar_comm f x y']
-  exact polar_add_left_of_parallelogram htwo hf y y' x
+/-- **The polarisation is `ℤ`-linear in its left argument.** No new content: an additive map
+between abelian groups is automatically `ℤ`-linear, and this is that fact applied to
+`polar_add_left_of_parallelogram`. It is the last input `QuadraticMap.ofPolar` asks for.
+
+Additivity on the *right* is not stated separately: it is `QuadraticMap.polar_add_right` of the
+packaged `ofParallelogram` below. -/
+theorem polar_zsmul_left_of_parallelogram (a : ℤ) (x y : M) :
+    polar f (a • x) y = a • polar f x y :=
+  AddMonoidHom.map_zsmul
+    (AddMonoidHom.mk' (polar f · y) fun p q ↦ polar_add_left_of_parallelogram htwo hf p q y) a x
 
 /-- Quadraticity for a natural multiple. Stated with an **integer** scalar on the right so that
 the induction step is a `ring` identity in `ℤ`: over `ℕ` it would read
@@ -161,36 +169,27 @@ theorem map_zsmul_of_parallelogram (n : ℤ) (x : M) : f (n • x) = (n * n) •
   · rw [neg_zsmul, natCast_zsmul, map_neg_of_parallelogram htwo hf,
       map_nsmul_of_parallelogram htwo hf, neg_mul_neg]
 
-/-- The polarisation, as an additive homomorphism in its right argument. -/
-def polarAddHomRight (x : M) : M →+ N :=
-  AddMonoidHom.mk' (polar f x) fun a b ↦ polar_add_right_of_parallelogram htwo hf x a b
+/-- **A function satisfying the parallelogram law is a quadratic form.**
 
-/-- **The polarisation as a `ℤ`-bilinear map.** Additivity is all that has to be supplied:
-`M` and `N` are abelian groups, so an additive map between them is automatically `ℤ`-linear. -/
-noncomputable def polarBilinInt : LinearMap.BilinMap ℤ M N :=
-  (AddMonoidHom.mk' (fun x ↦ (polarAddHomRight htwo hf x).toIntLinearMap)
-    fun a b ↦ by
-      ext y
-      exact polar_add_left_of_parallelogram htwo hf a b y).toIntLinearMap
+Built with Mathlib's `QuadraticMap.ofPolar`, which asks for exactly the three facts above and
+assembles the companion bilinear map itself; `QuadraticMap.polarBilin` of the result is that map,
+so there is no separate bilinear-map definition here. -/
+noncomputable def ofParallelogram : _root_.QuadraticMap ℤ M N :=
+  .ofPolar f (map_zsmul_of_parallelogram htwo hf) (polar_add_left_of_parallelogram htwo hf)
+    (polar_zsmul_left_of_parallelogram htwo hf)
 
+/-- `ofParallelogram` coerces back to the function it was built from. Stated at the level of
+functions, not just pointwise: `QuadraticMap.polar` takes the *function* as its argument, so this
+is the form needed to rewrite `polar ⇑(ofParallelogram htwo hf)` to `polar f` and reach Mathlib's
+polar API — checked downstream rather than assumed. -/
 @[simp]
-theorem polarBilinInt_apply (x y : M) : polarBilinInt htwo hf x y = polar f x y := by
-  -- not `rfl`: an *exported* `rfl` theorem needs every definition it unfolds to be `@[expose]`d,
-  -- and a tactic proof exports a proof term instead of a defeq obligation
-  simp [polarBilinInt, polarAddHomRight]
-
-/-- **A function satisfying the parallelogram law is a quadratic form**, with the polarisation as
-its companion bilinear map. -/
-noncomputable def ofParallelogram : _root_.QuadraticMap ℤ M N where
-  toFun := f
-  toFun_smul := map_zsmul_of_parallelogram htwo hf
-  exists_companion' := ⟨polarBilinInt htwo hf, fun x y ↦ by
-    rw [polarBilinInt_apply, polar]
-    abel⟩
+theorem coe_ofParallelogram : (ofParallelogram htwo hf : M → N) = f := by
+  unfold ofParallelogram
+  rfl
 
 @[simp]
 theorem ofParallelogram_apply (x : M) : ofParallelogram htwo hf x = f x := by
-  simp [ofParallelogram]
+  simp
 
 end QuadraticMap
 
