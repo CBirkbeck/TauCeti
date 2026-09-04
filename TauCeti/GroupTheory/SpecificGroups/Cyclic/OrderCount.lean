@@ -32,7 +32,11 @@ variable {α : Type*} [Group α] [Fintype α] [IsCyclic α]
 /-- **The elements of a cyclic group whose order is a multiple of `f`, counted by order.**
 Each divisor `d` of the group order contributes its `φ d` elements of order exactly `d`, and the
 condition `f ∣ orderOf τ` keeps precisely the divisors that `f` divides. -/
-@[to_additive]
+@[to_additive
+/-- **The elements of a finite additive cyclic group whose order is a multiple of `f`, counted by
+order.** Each divisor `d` of the group order contributes its `φ d` elements of `addOrderOf`
+exactly `d`, and the condition `f ∣ addOrderOf τ` keeps precisely the divisors that `f`
+divides. -/]
 theorem IsCyclic.card_filter_dvd_orderOf (f : ℕ) :
     #{τ : α | f ∣ orderOf τ} =
       ∑ d ∈ {d ∈ (Fintype.card α).divisors | f ∣ d}, φ d := by
