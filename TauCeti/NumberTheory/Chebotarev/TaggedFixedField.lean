@@ -43,7 +43,7 @@ namespace TauCeti
 
 variable (K L M : Type*) [Field K] [NumberField K] [Field L] [NumberField L] [Field M]
   [Algebra K L] [Algebra K M] [Algebra L M] [IsScalarTower K L M] [IsGalois K L]
-  (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} L M] [FiniteDimensional K M] [IsGalois K M]
+  (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} L M]
 
 /-- **The tagged fixed field carries the cyclotomic extension.** For a tag `(σ, τ)` in the
 splitting `Gal(M/K) ≃ Gal(L/K) × (ZMod m)ˣ` whose first component's order divides the second's,
@@ -56,6 +56,9 @@ theorem fixedField_zpowers_isCyclotomicExtension
     (σ : Gal(L/K)) (τ : (ZMod m)ˣ) (hστ : orderOf σ ∣ orderOf τ) :
     IsCyclotomicExtension {m}
       (fixedField (Subgroup.zpowers ((galEquivProd K L M m hcop hζ).symm (σ, τ)))) M := by
+  have : FiniteDimensional L M := finiteDimensional {m} L M
+  have : FiniteDimensional K M := FiniteDimensional.trans K L M
+  have : IsGalois K M := isGalois_of_isGalois_of_isCyclotomicExtension K L M m
   refine hζ.fixedField_isCyclotomicExtension_of_inf_fixingSubgroup_eq_bot _ ?_
   rw [hζ.fixingSubgroup_adjoin_nth_roots_eq_ker_autToPow,
     ker_autToPow_eq_comap_galEquivProd K L M m hcop hζ]
