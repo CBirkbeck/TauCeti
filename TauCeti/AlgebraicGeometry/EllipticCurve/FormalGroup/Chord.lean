@@ -51,8 +51,6 @@ from `formalThirdRoot` by composing with the formal inverse, which is left to a 
 * `WeierstrassCurve.formalIntercept_eq_inr`: the intercept computed from the second point.
 * `WeierstrassCurve.constantCoeff_formalSlope`, `_formalIntercept`, `_formalThirdRoot`: all
   three series vanish at the origin.
-* `WeierstrassCurve.toMvPowerSeries_formalW_wEquation`: the `w`-expansion satisfies the
-  `w`-equation at each of the two parameters.
 * `WeierstrassCurve.formalSlope_mul_X_add_formalIntercept`: the chord passes through both of the
   points it is built from.
 * `WeierstrassCurve.subst_formalThirdRoot_formalW`: the third point really lies on the chord —
@@ -97,10 +95,13 @@ The on-line section is adapted from the same project's
 `line_at_thirdRoot` and `subst_thirdRootSeries_wSeries`. Four of that section's steps are not
 ported. `X_inl_ne_X_inr` is not needed at all: the cancellation runs through
 `MvPowerSeries.X_sub_X_mem_nonZeroDivisors`, which never separates the two variables. The other
-three this repository already has — `line_left` and `line_right` are `formalIntercept_def` and
-`formalIntercept_eq_inr` with the terms moved across the equals sign, and `wsAt_rename` is
-`subst_formalW_wEquation` read through Mathlib's `PowerSeries.toMvPowerSeries_eq_subst`; all
-three are inlined at their single use site. The source's `LowVanish` hypotheses have no counterpart
+three this repository already has. `line_left` and `line_right` are `formalIntercept_def` and
+`formalIntercept_eq_inr` with the terms moved across the equals sign; the two together are
+`formalSlope_mul_X_add_formalIntercept` here, which states them uniformly in the parameter rather
+than as a left and a right case. `wsAt_rename` is `subst_formalW_wEquation` read through Mathlib's
+`PowerSeries.toMvPowerSeries_eq_subst`; it is `toMvPowerSeries_formalW_wEquation` in
+`FormalGroup/WExpansion.lean`, stated there for an arbitrary index type since neither it nor its
+proof mentions the chord. The source's `LowVanish` hypotheses have no counterpart
 here at all, since `eq_of_wEquation_mvPowerSeries` takes vanishing constant coefficients
 directly.
 
@@ -337,20 +338,12 @@ non-zero-divisor of `MvPowerSeries (Unit ⊕ Unit) R` over an arbitrary commutat
 cancels anything in `R`.
 -/
 
-/-- **The `w`-expansion satisfies the `w`-equation at each of the two parameters.** This is
-`subst_formalW_wEquation` read through `toMvPowerSeries`, which is the shape the two-variable
-chord identities consume. -/
-theorem toMvPowerSeries_formalW_wEquation (i : Unit ⊕ Unit) :
-    (formalW W).toMvPowerSeries i =
-      wEquationRHS W (X i) ((formalW W).toMvPowerSeries i) := by
-  rw [PowerSeries.toMvPowerSeries_eq_subst]
-  exact subst_formalW_wEquation W (PowerSeries.HasSubst.X i)
-
 /-- **The chord passes through both of the points it is built from**: at either parameter, the
 chord line `λ z + ν` takes the value `w` takes there.
 
 `formalIntercept` is defined from the first point, so at `inl` this is `formalIntercept_def`; at
 `inr` it is `formalIntercept_eq_inr`, which says the second point gives the same intercept. -/
+@[simp]
 theorem formalSlope_mul_X_add_formalIntercept (i : Unit ⊕ Unit) :
     formalSlope W * X i + formalIntercept W = (formalW W).toMvPowerSeries i := by
   rcases i with ⟨⟩ | ⟨⟩

@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Weierstrass
+public import Mathlib.RingTheory.MvPowerSeries.Equiv
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import TauCeti.RingTheory.PowerSeries.SelfConvolution
 
@@ -54,6 +55,8 @@ equation at the substituted parameter rather than at `z`.
   substituting a series `q` into the equation gives the equation at `q`, so `w(q)` solves it
   there. When moreover `constantCoeff q = 0`, `eq_subst_formalW_of_wEquation` combines this with
   `eq_of_wEquation` to identify `w(q)` as the only such solution.
+* `WeierstrassCurve.toMvPowerSeries_formalW_wEquation`: the same at a single variable `X i`,
+  in the `toMvPowerSeries` spelling the multivariate consumers use.
 * `WeierstrassCurve.formalWCoeff_recurrence`: the coefficientwise recurrence — each coefficient
   of `w(z)` above the leading one, from the strictly earlier ones. This is the form to compute
   with; the strong recursion behind `formalWCoeff` is an implementation detail.
@@ -537,6 +540,15 @@ theorem subst_formalW_wEquation {τ S : Type*} [CommRing S] [Algebra R S] {a : M
     PowerSeries.subst a (formalW W) = wEquationRHS W a (PowerSeries.subst a (formalW W)) := by
   conv_lhs => rw [formalW_wEquation W]
   rw [subst_wEquationRHS W ha, PowerSeries.subst_X ha]
+
+/-- **The `w`-expansion read at a single variable solves the `w`-equation there.** This is
+`subst_formalW_wEquation` at the substitution `X i`, written through
+`PowerSeries.toMvPowerSeries`, which is the spelling the multivariate consumers use. -/
+theorem toMvPowerSeries_formalW_wEquation {σ : Type*} (i : σ) :
+    (formalW W).toMvPowerSeries i =
+      wEquationRHS W (MvPowerSeries.X i) ((formalW W).toMvPowerSeries i) := by
+  rw [PowerSeries.toMvPowerSeries_eq_subst]
+  exact subst_formalW_wEquation W (PowerSeries.HasSubst.X i)
 
 /-- **The substituted `w`-expansion is the unique solution at the substituted parameter.** For a
 parameter `q` with vanishing constant coefficient, any series with vanishing constant coefficient
