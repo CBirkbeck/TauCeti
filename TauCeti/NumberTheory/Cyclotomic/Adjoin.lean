@@ -28,13 +28,22 @@ public section
 
 open IntermediateField
 
-/-- **Adjoining one primitive `m`-th root adjoins them all.** `K(ζ) = K(μ_m)` inside any algebraic
-extension of `K` containing a primitive `m`-th root of unity `ζ`. -/
+/-- **Adjoining one primitive `m`-th root adjoins them all.** `K(ζ) = K(μ_m)` inside any
+extension of `K` containing a primitive `m`-th root of unity `ζ`.
+
+No algebraicity of the ambient extension is needed: each `m`-th root of unity is algebraic on
+its own, being a root of the nonzero polynomial `X ^ m - 1`. -/
 theorem IsPrimitiveRoot.adjoin_singleton_eq_adjoin_rootsOfUnity {K M : Type*} [Field K] [Field M]
-    [Algebra K M] [Algebra.IsAlgebraic K M] {m : ℕ} [NeZero m] {ζ : M}
+    [Algebra K M] {m : ℕ} [NeZero m] {ζ : M}
     (hζ : IsPrimitiveRoot ζ m) : adjoin K {ζ} = adjoin K {b : M | b ^ m = 1} := by
+  -- an `m`-th root of unity is a root of the nonzero polynomial `X ^ m - 1`
+  have halg : ∀ b : M, b ^ m = 1 → IsAlgebraic K b := fun b hb ↦
+    ⟨Polynomial.X ^ m - Polynomial.C 1,
+      Polynomial.X_pow_sub_C_ne_zero (Nat.pos_of_ne_zero (NeZero.ne m)) 1, by simp [hb]⟩
   refine toSubalgebra_injective ?_
-  rw [adjoin_toSubalgebra, adjoin_toSubalgebra]
+  rw [adjoin_toSubalgebra_of_isAlgebraic (S := {ζ})
+      (fun x hx ↦ halg x (by rw [Set.mem_singleton_iff.mp hx]; exact hζ.pow_eq_one)),
+    adjoin_toSubalgebra_of_isAlgebraic (S := {b : M | b ^ m = 1}) (fun x hx ↦ halg x hx)]
   refine (IsCyclotomicExtension.adjoin_roots_cyclotomic_eq_adjoin_root_cyclotomic
     (A := K) hζ).symm.trans ?_
   refine (IsCyclotomicExtension.adjoin_roots_cyclotomic_eq_adjoin_nth_roots (A := K) hζ).trans ?_
