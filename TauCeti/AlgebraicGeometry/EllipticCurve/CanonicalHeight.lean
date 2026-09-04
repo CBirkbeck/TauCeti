@@ -44,6 +44,8 @@ with — is half of it. Getting this wrong would scale every later invariant.
   satisfies the parallelogram law **exactly**, where the naïve height satisfies it only up to a
   bounded error. This is the point of the construction: it is the quadratic function the naïve
   height was approximating.
+* `WeierstrassCurve.Affine.Point.canonicalHeight_two_nsmul`: the doubling normal form
+  `canonicalHeight (2 • P) = 4 * canonicalHeight P`, the parallelogram law at `Q = P`.
 * `WeierstrassCurve.Affine.Point.abs_canonicalHeight_sub_naiveHeight_le`: the canonical height stays
   within a bounded distance of *half* the naïve one, by a
   constant depending only on the curve. This is what makes the two interchangeable in
@@ -51,8 +53,10 @@ with — is half of it. Getting this wrong would scale every later invariant.
 
 ## Implementation notes
 
-The doubling bound `|h(2P) - 4 h(P)| ≤ C` is the parallelogram law at `Q = P`, where `P - Q = 0`
-and `h(0) = 0`. Only that specialisation is used here, so it is kept private.
+The doubling bound `|h(2P) - 4 h(P)| ≤ C` is the approximate parallelogram law at `Q = P`, where
+`P - Q = 0` and `h(0) = 0`. **Convergence** needs only that specialisation, which is why it is
+private; `canonicalHeight_parallelogram_law` needs the full two-point law, and takes it directly
+from `approx_parallelogram_law`.
 
 Convergence is `cauchySeq_of_le_geometric` at ratio `1/4`: consecutive terms of
 `h(2ⁿ P) / (2 · 4ⁿ)` differ by
@@ -192,6 +196,10 @@ theorem Point.canonicalHeight_parallelogram_law [W.toAffine.IsElliptic] (P Q : W
     have h := hC ((2 ^ n) • P) ((2 ^ n) • Q)
     rw [← smul_add, ← smul_sub] at h
     simp only [hf, Real.norm_eq_abs]
+    -- The four terms are separate quotients by `2 · 4ⁿ`; `abs_div` below needs them as a single
+    -- quotient, and no rewrite reaches that shape, since collecting them is division arithmetic
+    -- rather than a rewrite. `field_simp` proves the collected form, so it is named here and
+    -- rewritten in one step; the denominator is nonzero by `positivity` at each later use.
     rw [show f (P + Q) n + f (P - Q) n - 2 * (f P n + f Q n)
         = (((2 ^ n) • (P + Q)).naiveHeight + ((2 ^ n) • (P - Q)).naiveHeight
             - 2 * (((2 ^ n) • P).naiveHeight + ((2 ^ n) • Q).naiveHeight)) / (2 * 4 ^ n) from by
@@ -206,5 +214,16 @@ theorem Point.canonicalHeight_parallelogram_law [W.toAffine.IsElliptic] (P Q : W
     simpa using (tendsto_const_nhds (x := C)).div_atTop
       (tendsto_pow_atTop_atTop_of_one_lt (by norm_num : (1 : ℝ) < 4))
   linarith [tendsto_nhds_unique hg hzero]
+
+/-- **Doubling scales the canonical height by four.** The parallelogram law at `Q = P`, where
+`P - Q = 0` contributes nothing. This is the normal form a consumer meets first; the general
+`n`-fold statement is a separate step. -/
+@[simp]
+theorem Point.canonicalHeight_two_nsmul [W.toAffine.IsElliptic] (P : W.Point) :
+    (2 • P).canonicalHeight = 4 * P.canonicalHeight := by
+  have h := canonicalHeight_parallelogram_law P P
+  rw [sub_self, canonicalHeight_zero, add_zero] at h
+  rw [two_nsmul]
+  linarith
 
 end WeierstrassCurve.Affine
