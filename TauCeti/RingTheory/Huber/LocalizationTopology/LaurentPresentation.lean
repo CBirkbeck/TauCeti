@@ -9,19 +9,25 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Restriction
 public import TauCeti.RingTheory.Huber.WeightedEval.Quotient
 
 /-!
-# The Laurent presentation of a one-step refinement
+# The Laurent quotient of a numerator enlargement, and its evaluation
 
-Let `(T', s)` refine `(T, s)` by enlarging the numerators, and let `t` be one of the new ones.
-Then `A⟨T'/s⟩` is cut out of `A⟨T/s⟩⟨X⟩` by the single relation `X = t/s`. This file supplies the
-map that presentation asserts in one direction: a unique continuous ring homomorphism
+Let `(T', s)` refine `(T, s)` by enlarging the numerators, and let `t ∈ T'`. Adjoining a variable
+`X` to `A⟨T/s⟩` and imposing the relation `X = t/s` gives `A⟨T/s⟩⟨X⟩ ⧸ (t/s - X)`. This file
+constructs the canonical evaluation out of it, and shows it is the only continuous ring
+homomorphism of its kind:
 
 ```text
 A⟨T/s⟩⟨X⟩ ⧸ (t/s - X)  →  A⟨T'/s⟩
 ```
 
-sending constants to the restriction map and `X` to `t/s`. The case Wedhorn's Remark 7.55 chains
-is `T' = insert t T`, one numerator at a time; nothing here needs `T'` to have that shape, which is
-what keeps `DecidableEq A` out of the statements.
+sending constants to the restriction map and `X` to `t/s`. Nothing here needs `T'` to have a
+particular shape, which is what keeps `DecidableEq A` out of the statements.
+
+**What is not claimed.** This constructs a map in one direction; it does not identify the two
+rings. For `T' = insert t T` — the case Wedhorn's Remark 7.55 chains, one numerator at a time —
+Remark 7.55 does present `A⟨T'/s⟩` as exactly this quotient, and Proposition 8.30 consumes that
+identification; proving it is separate work. For a general enlargement no identification is even
+expected, since `T'` may adjoin numerators other than `t`.
 
 The restriction map itself, and the fact that it carries `t/s` to `t/s`, live one file earlier in
 `TauCeti.RingTheory.Huber.LocalizationTopology.Restriction`: they need only the
@@ -117,7 +123,7 @@ section OneStep
 variable (T' : Finset A) (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s S']
   (hden' : HasDenominatorPower P T' s S') (hTT' : ∀ u ∈ T, u ∈ T')
 
-/-- **The Laurent presentation of a one-step refinement, backward half.** There is exactly one
+/-- **The canonical evaluation out of the Laurent quotient.** There is exactly one
 continuous ring homomorphism
 
 ```text
