@@ -63,10 +63,16 @@ Two constructions in arithmetic geometry arrive at a function *known to satisfy 
 law* and want it as a quadratic form.
 
 The canonical height of an elliptic curve is one. It satisfies the parallelogram law exactly, and
-its polarisation is the Néron–Tate height pairing — the bilinear map whose Gram determinant on a
-basis of the free part of the Mordell–Weil group is the regulator. The degree form on `End E` is
-the other: its polarisation is the trace form, and non-negativity of the degree gives the Hasse
-bound by Cauchy–Schwarz (Silverman, *The Arithmetic of Elliptic Curves*, V.1.2).
+its polarisation is the Néron–Tate height pairing **up to a factor of two**: by
+`QuadraticMap.polar_self` the polarisation here has `polar f x x = 2 • f x`, whereas the pairing
+whose Gram determinant on a basis of the free part of the Mordell–Weil group is the regulator is
+normalised so that `⟨P, P⟩` is the height itself. A consumer wanting the regulator convention
+halves this one; the choice is not made here, since halving is not available in a general abelian
+group.
+
+The degree form on `End E` is the other: its polarisation is the trace form, and non-negativity of
+the degree gives the Hasse bound by Cauchy–Schwarz (Silverman, *The Arithmetic of Elliptic
+Curves*, V.1.2).
 
 Both take values in a torsion-free group — `ℝ` and `ℤ` respectively — so both satisfy the
 hypothesis below with room to spare. Stated for a general abelian group so that neither carries
