@@ -121,7 +121,7 @@ open TauCeti MonoidWithZeroHom in
 /-- **The coarsened valuation's own restricted value is the coarsening of `v`'s.** This is the
 bridge between the two presentations: a comparison stated about `v.coarsenByUnits H` on its own
 value group becomes a comparison of coarsened values of `v`. -/
-theorem embedding_restrict_coarsenByUnits (v : Valuation R Γ₀)
+private theorem embedding_restrict_coarsenByUnits (v : Valuation R Γ₀)
     (H : ConvexSubgroup Γ₀ˣ) (x : R) :
     ValueGroup₀.embedding ((v.coarsenByUnits H).restrict x)
       = coarsenMapOfValueGroup H (v x) := by
@@ -144,6 +144,7 @@ section Supp
 variable {S : Type*} [CommRing S] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
 /-- Coarsening preserves the support. -/
+@[simp]
 theorem coarsenByUnits_supp (v : Valuation S Γ₀) (H : ConvexSubgroup Γ₀ˣ) :
     (v.coarsenByUnits H).supp = v.supp := by
   -- the coarsening map is a `→*₀` out of a `GroupWithZero`, so Mathlib's `map_eq_zero` already
