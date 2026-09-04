@@ -23,14 +23,9 @@ conditions as conclusions rather than as obligations left to the caller.
 
 ## Implementation notes
 
-Nothing here is deep. Primes congruent to `1` modulo `n` are unbounded
-(`Nat.exists_prime_gt_modEq_one`), and only finitely many primes ramify in a number field
-(`NumberField.finite_ramifiedPrimes`), so asking for a prime beyond both the caller's bound and
-every ramified prime of either field costs only a `max`. The last conjunct is then the cyclotomic
-irreducibility that unramifiedness already gives.
-
-The point of packaging it is that the four conditions are used at four different later stages, and
-each would otherwise have to re-derive a bound and re-discharge the consequences.
+The conditions are conclusions rather than obligations on the caller because they are needed
+together: a caller holding only the congruence would have to re-derive the bound against the
+ramified primes of both fields before it could discharge the rest.
 -/
 
 public section
