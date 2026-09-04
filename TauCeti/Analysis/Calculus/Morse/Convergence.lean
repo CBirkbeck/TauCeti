@@ -145,7 +145,7 @@ private theorem energy_drop_of_le_norm_gradient {C δ ε η : ℝ}
     (hdiff : ∀ y ∈ K, DifferentiableAt ℝ f y)
     (hcontg : ContinuousOn (fun t ↦ ∇ f (γ t)) (Ici 0)) (hC : ∀ y ∈ K, ‖∇ f y‖ ≤ C)
     (hUC : ∀ y ∈ K, ∀ z ∈ K, dist y z < η → dist (∇ f y) (∇ f z) < ε / 2)
-    (hδ : 0 < δ) (hCδ : C * δ < η) (hε : 0 ≤ ε) {t : ℝ} (ht : 0 ≤ t)
+    (hδ : 0 ≤ δ) (hCδ : C * δ < η) (hε : 0 ≤ ε) {t : ℝ} (ht : 0 ≤ t)
     (hbig : ε ≤ ‖∇ f (γ t)‖) :
     δ * (ε / 2) ^ 2 ≤ f (γ t) - f (γ (t + δ)) := by
   have hC0 : 0 ≤ C := (norm_nonneg _).trans (hC _ (hmaps (mem_Ici.mpr le_rfl)))
@@ -221,7 +221,7 @@ theorem tendsto_gradient_atTop
   obtain ⟨t, hbig, ht0, hlt⟩ :=
     (hcon.and_eventually ((eventually_ge_atTop (0 : ℝ)).and
       (hdrop.eventually (gt_mem_nhds hpos)))).exists
-  exact absurd (energy_drop_of_le_norm_gradient hγ hmaps hdiff hcontg hC hUC hδ hCδ hε.le ht0
+  exact absurd (energy_drop_of_le_norm_gradient hγ hmaps hdiff hcontg hC hUC hδ.le hCδ hε.le ht0
     (not_lt.mp hbig)) (not_le.mpr hlt)
 
 /-! ### The ω-limit set -/
