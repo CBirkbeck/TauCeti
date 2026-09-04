@@ -28,9 +28,8 @@ polynomial of the same degree, so the two coincide and `Φ_n` is irreducible.
   `Φ_n` is irreducible over `K`.
 * `IsCyclotomicExtension.irreducible_cyclotomic_iff_finrank_eq_totient`: `Φ_n` is irreducible over
   `K` if and only if `[L : K] = φ n`.
-* `IsCyclotomicExtension.card_aut_eq_totient`: an `n`-th cyclotomic extension with `Φ_n`
-  irreducible has exactly `φ n` automorphisms, and
-  `IsCyclotomicExtension.card_aut_eq_sub_one`: its prime case, `q - 1` automorphisms.
+* `IsCyclotomicExtension.card_aut_eq_sub_one`: a `q`-th cyclotomic extension with `Φ_q`
+  irreducible has exactly `q - 1` automorphisms, for `q` prime.
 
 ## References
 
@@ -102,26 +101,20 @@ theorem irreducible_cyclotomic_iff_finrank_eq_totient :
     Irreducible (cyclotomic n K) ↔ Module.finrank K L = n.totient :=
   ⟨IsCyclotomicExtension.finrank L, fun h ↦ irreducible_cyclotomic_of_totient_le_finrank K L h.ge⟩
 
-/-- **An `n`-th cyclotomic extension has exactly `φ n` automorphisms**, when `Φ_n` is irreducible
-over `K`. Mathlib's `IsCyclotomicExtension.autEquivPow` identifies the automorphism group with
-`(ZMod n)ˣ` under that hypothesis, and `ZMod.card_units_eq_totient` counts the latter. -/
-theorem card_aut_eq_totient (hirr : Irreducible (cyclotomic n K)) :
-    Nat.card (L ≃ₐ[K] L) = n.totient := by
-  rw [Nat.card_congr (autEquivPow L hirr).toEquiv, Nat.card_eq_fintype_card,
-    ZMod.card_units_eq_totient]
-
 /-- **A `q`-th cyclotomic extension has exactly `q - 1` automorphisms**, for `q` prime with `Φ_q`
-irreducible over `K`. This is `card_aut_eq_totient` at a prime, where `Nat.totient_prime` evaluates
-`φ q` as `q - 1`; the subtraction is truncated `ℕ` subtraction, which agrees with the totient
-because `q` is prime.
+irreducible over `K`. Mathlib's `IsCyclotomicExtension.autEquivPow` identifies the automorphism
+group with `(ZMod q)ˣ` under that hypothesis, `ZMod.card_units_eq_totient` counts the latter, and
+`Nat.totient_prime` evaluates `φ q` as `q - 1`; the subtraction is truncated `ℕ` subtraction, which
+agrees with the totient because `q` is prime.
 
 `hirr` is explicit rather than derived, so a caller cannot reach the count `q - 1` without
-supplying the irreducibility that justifies it. `NeZero q` is obtained from `hq`, so callers of the
-prime form need not carry that instance. -/
+supplying the irreducibility that justifies it. `NeZero q` is obtained from `hq`, so callers need
+not carry that instance. -/
 theorem card_aut_eq_sub_one (q : ℕ) (F : Type*) [CommRing F] [IsDomain F] [Algebra K F]
     (hq : q.Prime) [IsCyclotomicExtension {q} K F] (hirr : Irreducible (cyclotomic q K)) :
     Nat.card (F ≃ₐ[K] F) = q - 1 := by
   have : NeZero q := ⟨hq.ne_zero⟩
-  rw [card_aut_eq_totient (n := q) K F hirr, Nat.totient_prime hq]
+  rw [Nat.card_congr (autEquivPow F hirr).toEquiv, Nat.card_eq_fintype_card,
+    ZMod.card_units_eq_totient, Nat.totient_prime hq]
 
 end IsCyclotomicExtension
