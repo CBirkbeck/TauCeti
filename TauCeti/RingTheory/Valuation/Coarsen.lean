@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.RingTheory.Valuation.Basic
-public import TauCeti.Algebra.Order.Group.ConvexSubgroup
+public import TauCeti.Algebra.Order.Group.Cofinal
 public import TauCeti.RingTheory.Valuation.CharacteristicGroup
 
 /-!
@@ -30,9 +30,6 @@ facts the height-one generization of Wedhorn's Lemma 7.45 consumes.
 * `Valuation.coarsenByUnits_lt_one_of_notMem` : the collapse detects non-membership — a value
   at most `1` whose unit avoids `H` drops strictly below `1`. (Bounds by `1` come from
   `coarsenMapOfValueGroup_monotone` directly; no specialization is exported for them.)
-* `TauCeti.coarsenMapOfValueGroup_mul_inv_lt` : shrinking by a unit whose class exceeds `1`
-  strictly decreases the coarsened value — how a strict inequality is recovered from a map that
-  is only monotone.
 * `Valuation.cofinalValue_coarsenByUnits_restrict` : coarsening by a proper convex subgroup
   preserves cofinality of a value. This needs no topology on `A`.
 
@@ -46,11 +43,10 @@ shaped as in Mathlib's own `LinearOrderedCommGroupWithZero` locally-finite insta
 
 `Valuation.cofinalValue_coarsenByUnits_restrict` is not from that development. It is the
 topology-free cofinality ingredient of Wedhorn's Remark 7.11(2), not the remark itself: the
-continuity statement the remark makes is
-`TauCeti.Huber.IsContinuous.coarsenByUnits_restrict` in
+continuity statement the remark makes is `Valuation.IsContinuous.coarsenByUnits_restrict` in
 `TauCeti.RingTheory.Huber.Continuous.Coarsen`, which consumes this one. The order-level step it
-rests on is `TauCeti.coarsenMapOfValueGroup_mul_inv_lt`, together with
-`TauCeti.ConvexSubgroup.exists_one_lt_quotientMk`.
+rests on is `TauCeti.IsCofinalElement.quotientMk`, which is Wedhorn Corollary 1.21 and already on
+hand; nothing about strictness is redone here.
 
 ## References
 
@@ -90,18 +86,6 @@ theorem coarsenMapOfValueGroup_apply_coe (H : ConvexSubgroup Γ₀ˣ) (g : Γ₀
   have h : ((OrderMonoidIso.withZeroUnits (α := Γ₀)).symm.toMonoidWithZeroHom (g : Γ₀))
       = (g : WithZero Γ₀ˣ) := WithZero.withZeroUnitsEquiv_symm_apply_coe g
   rw [coarsenMapOfValueGroup, MonoidWithZeroHom.comp_apply, h, WithZero.map'_coe]
-
-open Classical in
-/-- **Shrinking by a unit whose class exceeds `1` strictly decreases the coarsened value.** The
-coarsening map is monotone but not strictly so; this is the step that recovers a strict
-inequality from it. The unit whose class exceeds `1` is supplied by properness of the convex
-subgroup, which the caller establishes. -/
-theorem coarsenMapOfValueGroup_mul_inv_lt (H : ConvexSubgroup Γ₀ˣ) {d : Γ₀ˣ}
-    (hd : 1 < QuotientGroup.mk' H.toSubgroup d) {g : Γ₀} (hg : g ≠ 0) :
-    coarsenMapOfValueGroup H (g * (d : Γ₀)⁻¹) < coarsenMapOfValueGroup H g := by
-  rw [map_mul, map_inv₀, coarsenMapOfValueGroup_apply_coe]
-  refine mul_lt_of_lt_one_right (zero_lt_iff.mpr (by simpa using hg)) ?_
-  exact_mod_cast inv_lt_one'.mpr hd
 
 end
 
@@ -156,38 +140,43 @@ end Supp
 open MonoidWithZeroHom in
 /-- **Coarsening by a proper convex subgroup preserves cofinality of a value.** This is the half of
 Wedhorn Remark 7.11(2) that properness is needed for: the coarsening map is monotone but not
-strictly so, and properness is exactly what supplies the room to recover a strict inequality. -/
+strictly so, and properness is exactly what supplies the room to recover a strict inequality.
+
+The recovery itself is not redone here. Cofinality of `v a` says that the powers of the unit
+`v a` fall below every element of the value group, which is `TauCeti.IsCofinalElement` for that
+group; `TauCeti.IsCofinalElement.quotientMk` — Wedhorn Corollary 1.21 — carries that to the
+quotient by `H`, and properness is the hypothesis it asks for. What is left is bookkeeping: the
+coarsened value monoid embeds in `WithZero (Γˣ ⧸ H)`, so a cofinal element of the *whole*
+quotient group is in particular below every value the coarsened valuation attains. -/
 theorem cofinalValue_coarsenByUnits_restrict {A : Type*} [Ring A] {v : Valuation A Γ₀}
     {H : ConvexSubgroup (ValueGroup₀ (.ofClass v))ˣ} (hH : H ≠ ⊤) {a : A}
     (hcof : CofinalValue v a) : CofinalValue (v.restrict.coarsenByUnits H) a := by
-  -- Every positive element of the coarsened value group is a ratio of attained values; shrinking
-  -- that ratio by `d⁻¹` turns the monotone image of a cofinal power into a strict bound.
-  obtain ⟨d, hx⟩ := H.exists_one_lt_quotientMk hH
-  rw [cofinalValue_iff]
-  intro γ hγ
-  obtain ⟨r, q, hr, hq, hrq⟩ :=
-    (v.restrict.coarsenByUnits H).exists_div_eq_of_unit (Units.mk0 γ hγ.ne')
-  simp only [Units.val_mk0] at hrq
-  have hrv : v.restrict r ≠ 0 := fun h ↦ by simp [h] at hr
-  have hqv : v.restrict q ≠ 0 := fun h ↦ by simp [h] at hq
-  obtain ⟨n, hn⟩ := cofinalValue_iff.mp hcof
-    (v.restrict r / v.restrict q * (d : ValueGroup₀ (.ofClass v))⁻¹)
-    (by simp [zero_lt_iff, hrv, hqv, Units.ne_zero d])
-  refine ⟨n, ?_⟩
-  -- Both sides are coarsenings of values of `v`, so the comparison happens in `Γ₀`'s coarsened
-  -- value monoid: monotonicity carries the cofinal power across, and the `d⁻¹` factor is what
-  -- turns the resulting `≤` into `<`.
-  have hγ' : ValueGroup₀.embedding γ =
-      coarsenMapOfValueGroup H (v.restrict r / v.restrict q) := by
-    rw [← hrq, map_div₀, Valuation.embedding_restrict, coarsenByUnits_apply,
-      Valuation.embedding_restrict, coarsenByUnits_apply, ← map_div₀]
-  rw [← map_pow, Valuation.restrict_lt_iff_lt_embedding, hγ']
-  calc (v.restrict.coarsenByUnits H) (a ^ n)
-      = coarsenMapOfValueGroup H (v.restrict a ^ n) := by rw [coarsenByUnits_apply, map_pow]
-    _ ≤ coarsenMapOfValueGroup H (v.restrict r / v.restrict q * (d : ValueGroup₀ (.ofClass v))⁻¹) :=
-        coarsenMapOfValueGroup_monotone H hn.le
-    _ < coarsenMapOfValueGroup H (v.restrict r / v.restrict q) :=
-        coarsenMapOfValueGroup_mul_inv_lt H hx (div_ne_zero hrv hqv)
+  rcases eq_or_ne (v.restrict a) 0 with h0 | h0
+  · -- a vanishing value stays vanishing, and `0` is below every positive element
+    rw [cofinalValue_iff]
+    intro γ hγ
+    have hz : (v.restrict.coarsenByUnits H).restrict a = 0 := by
+      rw [Valuation.restrict_eq_zero_iff, coarsenByUnits_apply, h0, map_zero]
+    exact ⟨1, by rwa [pow_one, hz]⟩
+  · set g : (ValueGroup₀ (.ofClass v))ˣ := Units.mk0 (v.restrict a) h0 with hgdef
+    -- cofinality of the value, read in the value group rather than the value monoid
+    have hcofg : TauCeti.IsCofinalElement (⊤ : Subgroup (ValueGroup₀ (.ofClass v))ˣ) g :=
+      isCofinalElement_def.mpr fun h _ ↦ by
+        obtain ⟨n, hn⟩ := cofinalValue_iff.mp hcof (h : ValueGroup₀ (.ofClass v))
+          (zero_lt_iff.mpr h.ne_zero)
+        exact ⟨n, by rwa [← Units.val_lt_val, Units.val_pow_eq_pow_val, hgdef, Units.val_mk0]⟩
+    have hquot := hcofg.quotientMk hH
+    rw [cofinalValue_iff]
+    intro γ hγ
+    -- a positive element of the coarsened value monoid embeds as the class of some `q`
+    have hemb : ValueGroup₀.embedding γ ≠ 0 := by simpa using hγ.ne'
+    obtain ⟨q, hq⟩ := WithZero.ne_zero_iff_exists.mp hemb
+    obtain ⟨n, hn⟩ := isCofinalElement_def.mp hquot q (Subgroup.mem_top q)
+    refine ⟨n, ?_⟩
+    rw [← map_pow, Valuation.restrict_lt_iff_lt_embedding, ← hq, coarsenByUnits_apply, map_pow,
+      ← Units.val_mk0 h0, ← hgdef, ← Units.val_pow_eq_pow_val, coarsenMapOfValueGroup_apply_coe,
+      map_pow]
+    exact_mod_cast hn
 
 end
 

@@ -58,8 +58,6 @@ built from `closure` in the forthcoming valuation-spectrum development of `Spv (
   and `⊤`.
 * `TauCeti.ConvexSubgroup.quotientBotOrderIso` : The quotient by `⊥` is the group itself, as an
   order isomorphism, so order-theoretic properties transfer across it.
-* `TauCeti.ConvexSubgroup.exists_one_lt_quotientMk` : A proper convex subgroup leaves an element
-  above `1` in its quotient.
 
 ## References
 
@@ -72,9 +70,6 @@ API (`Quotient.instLinearOrder` over order-connected fibers) rather than constru
 `quotientMk_monotone` and `quotientMk_lt_one_of_notMem` come from a different AINTLIB file:
 `projects/AdicSpaces/Adic spaces/ValuationCoarsening.lean` at commit `37bbdaeb`, where they are
 the order facts the coarsening construction consumes.
-
-`exists_one_lt_quotientMk` is in neither AINTLIB file. Its statement and proof are new here,
-assembled from `Subgroup.exists_one_lt_of_lt` and `quotientMk_lt_one_of_notMem`.
 -/
 
 public section
@@ -656,23 +651,6 @@ theorem quotientMk_lt_one_of_notMem {a : Γ} (ha : a ≤ 1) (haH : a ∉ H) :
     simpa using H.quotientMk_monotone ha
   refine hle.lt_of_ne fun heq ↦ haH ?_
   exact (QuotientGroup.eq_one_iff a).mp (by simpa using heq)
-
-/-- **A proper convex subgroup leaves an element above `1` in its quotient.** Properness is what
-supplies it: `H < ⊤` separates `H` from the whole group by some `z > 1` outside `H`, and `z⁻¹`
-then has class strictly below `1`, so the class of `z` is strictly above it.
-
-This is the order-theoretic content a cofinality argument needs from properness — the coarsening
-map is monotone but not strictly so, and an element above `1` in the quotient is the room that
-recovers a strict inequality. -/
-theorem exists_one_lt_quotientMk (hH : H ≠ ⊤) :
-    ∃ d : Γ, 1 < (QuotientGroup.mk' H.toSubgroup d : Γ ⧸ H.toSubgroup) := by
-  have hlt : H.toSubgroup < (⊤ : Subgroup Γ) :=
-    top_toSubgroup (Γ := Γ) ▸ toSubgroup_lt.mpr (lt_top_iff_ne_top.mpr hH)
-  obtain ⟨z, -, hzH, hz⟩ := Subgroup.exists_one_lt_of_lt hlt
-  refine ⟨z, ?_⟩
-  rw [← inv_lt_one', ← map_inv]
-  exact H.quotientMk_lt_one_of_notMem (inv_le_one'.mpr hz.le) fun hmem ↦
-    hzH (by simpa using inv_mem (mem_toSubgroup.mpr hmem))
 
 /-- **The quotient by `⊥` is the group itself.** `QuotientGroup.quotientBot` identifies the two
 groups once `bot_toSubgroup` has rewritten which subgroup is being quotiented by.
