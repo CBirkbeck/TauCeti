@@ -26,8 +26,12 @@ results of the first inside the localisation machinery of the second, crosses be
 
 ## Main results
 
-* `TauCeti.Huber.subringCongr_one_weight_weightedX`: the weighted variable is `restrictedX`.
-* `TauCeti.Huber.subringCongr_one_weight_weightedC`: the weighted constant is the algebra map.
+* `TauCeti.Huber.subringCongr_one_weight_weightedX` and
+  `TauCeti.Huber.subringCongr_one_weight_symm_restrictedX`: the weighted variable is
+  `restrictedX`, in both directions.
+* `TauCeti.Huber.subringCongr_one_weight_weightedC` and
+  `TauCeti.Huber.subringCongr_one_weight_symm_algebraMap`: the weighted constant is the algebra
+  map, in both directions.
 
 ## References
 
@@ -44,10 +48,10 @@ variable {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpace A] [Nonarchimedean
 /-- **The weighted variable is the restricted variable.** Transporting `weightedX` along the
 identification of the trivial-weight subring with the restricted subring gives `restrictedX`. -/
 @[simp]
-theorem subringCongr_one_weight_weightedX :
-    RingEquiv.subringCongr (weightedRestrictedSubring_one_weight (k := 1) (A := A))
-        (weightedX _ isWeightFamily_one_weight 0)
-      = restrictedX :=
+theorem subringCongr_one_weight_weightedX (i : Fin k) :
+    RingEquiv.subringCongr (weightedRestrictedSubring_one_weight (k := k) (A := A))
+        (weightedX _ isWeightFamily_one_weight i)
+      = restrictedX i :=
   Subtype.ext (by simp)
 
 /-- **The weighted constant is the algebra map.** Transporting `weightedC a` along the same
@@ -57,6 +61,25 @@ theorem subringCongr_one_weight_weightedC (a : A) :
     RingEquiv.subringCongr (weightedRestrictedSubring_one_weight (k := k) (A := A))
         (weightedC _ isWeightFamily_one_weight a)
       = algebraMap A (restrictedMvPowerSeriesSubring k A) a :=
+  Subtype.ext (by simp [MvPowerSeries.algebraMap_apply])
+
+/-- **The restricted variable is the weighted variable**, the inverse transport of
+`TauCeti.Huber.subringCongr_one_weight_weightedX`. Consumers going from the restricted vocabulary
+into the weighted one need this orientation. -/
+@[simp]
+theorem subringCongr_one_weight_symm_restrictedX (i : Fin k) :
+    (RingEquiv.subringCongr (weightedRestrictedSubring_one_weight (k := k) (A := A))).symm
+        (restrictedX i)
+      = weightedX _ isWeightFamily_one_weight i :=
+  Subtype.ext (by simp)
+
+/-- **The algebra map is the weighted constant**, the inverse transport of
+`TauCeti.Huber.subringCongr_one_weight_weightedC`. -/
+@[simp]
+theorem subringCongr_one_weight_symm_algebraMap (a : A) :
+    (RingEquiv.subringCongr (weightedRestrictedSubring_one_weight (k := k) (A := A))).symm
+        (algebraMap A (restrictedMvPowerSeriesSubring k A) a)
+      = weightedC _ isWeightFamily_one_weight a :=
   Subtype.ext (by simp [MvPowerSeries.algebraMap_apply])
 
 end TauCeti.Huber
