@@ -53,9 +53,12 @@ theorem gcd_pow_mul_pow_mul {p a b m' n' : ℕ} (hp : p.Prime) (hm' : ¬p ∣ m'
   rw [hpa_m'.mul_gcd, Nat.Coprime.gcd_mul_right_cancel_right _ hpa_n'.symm,
     Nat.Coprime.gcd_mul_left_cancel_right _ hm'_pb.symm, hgcd_pp, mul_comm]
 
-/-- **The gcd splits at a prime, canonically**: the gcd of the `p`-free parts, times `p` to the
-smaller of the two `p`-adic valuations. This is `TauCeti.Nat.gcd_pow_mul_pow_mul` applied to the
-splitting `m = p ^ (m.factorization p) * ordCompl[p] m`. -/
+/-- **The gcd splits at a prime, canonically**:
+
+`gcd m n = gcd (ordCompl[p] m) (ordCompl[p] n) · p ^ min (v_p m) (v_p n)`
+
+for nonzero `m` and `n` — the gcd of the `p`-free parts, times `p` to the smaller of the two
+`p`-adic valuations. -/
 theorem gcd_eq_gcd_ordCompl_mul_pow_min {p m n : ℕ} (hp : p.Prime) (hm : m ≠ 0)
     (hn : n ≠ 0) :
     Nat.gcd m n = Nat.gcd (ordCompl[p] m) (ordCompl[p] n) *
@@ -67,9 +70,11 @@ theorem gcd_eq_gcd_ordCompl_mul_pow_min {p m n : ℕ} (hp : p.Prime) (hm : m ≠
   conv_lhs => rw [hm_eq, hn_eq]
   exact gcd_pow_mul_pow_mul hp (Nat.not_dvd_ordCompl hp hm) (Nat.not_dvd_ordCompl hp hn)
 
-/-- **Removing the `p`-part strictly shrinks the gcd**, when `p` divides both arguments. This is
-what makes an induction along `TauCeti.Nat.gcd_eq_gcd_ordCompl_mul_pow_min` terminate: the
-cofactor `p ^ min _ _` is then a power of `p` with positive exponent, hence `> 1`. -/
+/-- **Removing the `p`-part strictly shrinks the gcd**, when `p` divides both arguments:
+
+`gcd (ordCompl[p] m) (ordCompl[p] n) < gcd m n`.
+
+This is what lets an induction along `TauCeti.Nat.gcd_eq_gcd_ordCompl_mul_pow_min` terminate. -/
 theorem gcd_ordCompl_lt {p m n : ℕ} (hp : p.Prime) (hm : m ≠ 0) (hn : n ≠ 0)
     (hpm : p ∣ m) (hpn : p ∣ n) :
     Nat.gcd (ordCompl[p] m) (ordCompl[p] n) < Nat.gcd m n := by
