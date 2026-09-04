@@ -63,7 +63,6 @@ public section
 open Polynomial
 open scoped NumberField
 
-open TauCeti.NumberField (ramificationIdx_le_finrank)
 
 namespace IsCyclotomicExtension
 
@@ -120,7 +119,7 @@ theorem totient_le_finrank_of_unramified (p k : ℕ) [Fact p.Prime] (F : Type*) 
     (S := 𝓞 F)
   -- `𝔔` has relative ramification index at least `φ(p^(k+1))` over `𝓞 K`, and a ramification
   -- index never exceeds the degree of the extension.
-  exact (totient_le_ramificationIdx p k hur 𝔔).trans (ramificationIdx_le_finrank 𝔔)
+  exact (totient_le_ramificationIdx p k hur 𝔔).trans 𝔔.ramificationIdx_le_finrank_numberField
 
 /-- **A cyclotomic extension is totally ramified above an unramified prime.** If `p` is unramified
 in `K`, every prime `𝔔` of `𝓞 F` above `p` has ramification index exactly `φ(p^(k+1))` over
@@ -141,7 +140,7 @@ theorem ramificationIdx_eq_totient (p k : ℕ) [Fact p.Prime] {F : Type*} [Field
   have : NeZero (p ^ (k + 1)) := ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
   have : FiniteDimensional K F := finiteDimensional {p ^ (k + 1)} K F
   have : NumberField F := .of_module_finite K F
-  exact le_antisymm ((ramificationIdx_le_finrank 𝔔).trans (finrank_le_totient K F))
+  exact le_antisymm (𝔔.ramificationIdx_le_finrank_numberField.trans (finrank_le_totient K F))
     (totient_le_ramificationIdx p k hur 𝔔)
 
 variable (K) in
@@ -150,7 +149,8 @@ number field `K`, then the `p^(k+1)`-th cyclotomic polynomial is irreducible ove
 
 `hur` is definitionally Mathlib's `Algebra.IsUnramifiedIn (𝓞 K) (Ideal.span {(p : ℤ)})`, so a proof
 of that predicate can be passed directly; the bundled `Algebra.Unramified ℤ (𝓞 K)` is far stronger,
-and forces `K = ℚ` by `NumberField.finrank_eq_one_of_unramified`. Unramifiedness is sufficient but
+and forces `Module.finrank ℚ K = 1` by `NumberField.finrank_eq_one_of_unramified`, hence a
+`ℚ`-algebra isomorphism `K ≃ₐ[ℚ] ℚ` rather than equality of types. Unramifiedness is sufficient but
 not necessary: irreducibility holds exactly when `K ∩ ℚ(ζ_{p^(k+1)}) = ℚ`. For `k = 0` see
 `irreducible_cyclotomic_of_unramified`.
 

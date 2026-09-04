@@ -28,9 +28,8 @@ polynomial of the same degree, so the two coincide and `Φ_n` is irreducible.
   `Φ_n` is irreducible over `K`.
 * `IsCyclotomicExtension.irreducible_cyclotomic_iff_finrank_eq_totient`: `Φ_n` is irreducible over
   `K` if and only if `[L : K] = φ n`.
-* `IsCyclotomicExtension.card_aut_eq_totient`: an `n`-th cyclotomic extension with `Φ_n`
-  irreducible has exactly `φ n` automorphisms.
-* `IsCyclotomicExtension.card_aut_eq_sub_one`: its prime case, `q - 1`.
+* `IsCyclotomicExtension.card_aut_eq_sub_one`: a `q`-th cyclotomic extension with `Φ_q`
+  irreducible has exactly `q - 1` automorphisms, for `q` prime.
 
 ## References
 
@@ -107,7 +106,7 @@ irreducible over `K`. The count is transported from `(ZMod n)ˣ` along Mathlib's
 
 Keeping `hirr` as a hypothesis rather than deriving it stops a caller from silently assuming the
 order. For the group isomorphism itself, and hence for cyclicity, use `autEquivPow` directly. -/
-theorem card_aut_eq_totient (n : ℕ) [NeZero n] (F : Type*) [Field F] [Algebra K F]
+private theorem card_aut_eq_totient (n : ℕ) [NeZero n] (F : Type*) [Field F] [Algebra K F]
     [IsCyclotomicExtension {n} K F] (hirr : Irreducible (cyclotomic n K)) :
     Nat.card (F ≃ₐ[K] F) = n.totient := by
   rw [Nat.card_congr (autEquivPow F hirr).toEquiv, Nat.card_eq_fintype_card,
