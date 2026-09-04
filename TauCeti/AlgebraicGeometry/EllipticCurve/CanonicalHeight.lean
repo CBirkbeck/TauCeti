@@ -24,11 +24,15 @@ within a bounded distance of `h`.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.Point.tendsto_naiveHeight_div_canonicalHeight`: the defining limit is
+* `WeierstrassCurve.Affine.Point.tendsto_naiveHeight_two_pow_nsmul_div_four_pow`: the defining
+  limit is
   attained, so `canonicalHeight` is the limit and not the junk value `limUnder` returns when a
   sequence does not converge. Every property of the canonical height is proved by transporting a
   property of `h`
   along this.
+* `WeierstrassCurve.Affine.Point.canonicalHeight_zero` and
+  `WeierstrassCurve.Affine.Point.canonicalHeight_neg`: its values at the two points every consumer
+  meets first, as `@[simp]` normal forms.
 * `WeierstrassCurve.Affine.Point.abs_canonicalHeight_sub_naiveHeight_le`: the canonical height stays
   within a bounded distance of the naïve one, by a
   constant depending only on the curve. This is what makes the two interchangeable in
@@ -65,7 +69,7 @@ variable {F : Type*} [Field F] {W : Affine F} [AdmissibleAbsValues F] [Decidable
 /-- **The canonical (Néron–Tate) height** `canonicalHeight P = lim h(2ⁿ P) / 4ⁿ`.
 
 The limit exists whenever the curve is elliptic
-(`Point.tendsto_naiveHeight_div_canonicalHeight`); the definition itself needs no hypothesis
+(`Point.tendsto_naiveHeight_two_pow_nsmul_div_four_pow`); the definition itself needs no hypothesis
 beyond those making `2 ^ n • P` meaningful, so it is stated without one. -/
 noncomputable def Point.canonicalHeight (P : W.Point) : ℝ :=
   limUnder atTop fun n : ℕ ↦ ((2 ^ n) • P).naiveHeight / 4 ^ n
@@ -108,13 +112,30 @@ private theorem dist_naiveHeight_div_succ_le [W.toAffine.IsElliptic] {C : ℝ}
 
 /-- **The defining limit is attained.** `canonicalHeight` is `limUnder`, which returns a junk value
 on a divergent sequence; this says the sequence converges, so the definition means what it says. -/
-theorem Point.tendsto_naiveHeight_div_canonicalHeight [W.toAffine.IsElliptic] (P : W.Point) :
+theorem Point.tendsto_naiveHeight_two_pow_nsmul_div_four_pow [W.toAffine.IsElliptic] (P : W.Point) :
     Tendsto (fun n : ℕ ↦ ((2 ^ n) • P).naiveHeight / 4 ^ n) atTop (𝓝 P.canonicalHeight) := by
   obtain ⟨C, _, hC⟩ := exists_abs_naiveHeight_two_nsmul_sub W
   obtain ⟨a, ha⟩ := cauchySeq_tendsto_of_complete
     (cauchySeq_of_le_geometric (1 / 4) (C / 4) (by norm_num)
       (dist_naiveHeight_div_succ_le hC P))
   rwa [Point.canonicalHeight, ha.limUnder_eq]
+
+/-- The point at infinity has canonical height zero: every term of the defining sequence is
+`h 0 / 4 ^ n = 0`. -/
+@[simp]
+theorem Point.canonicalHeight_zero [W.toAffine.IsElliptic] :
+    (0 : W.Point).canonicalHeight = 0 := by
+  refine tendsto_nhds_unique (Point.tendsto_naiveHeight_two_pow_nsmul_div_four_pow 0) ?_
+  simp
+
+/-- Negation preserves the canonical height, because it preserves the naïve height and commutes
+with doubling, so the two defining sequences agree termwise. -/
+@[simp]
+theorem Point.canonicalHeight_neg [W.toAffine.IsElliptic] (P : W.Point) :
+    (-P).canonicalHeight = P.canonicalHeight := by
+  refine tendsto_nhds_unique (Point.tendsto_naiveHeight_two_pow_nsmul_div_four_pow (-P)) ?_
+  simpa only [smul_neg, Point.naiveHeight_neg] using
+    Point.tendsto_naiveHeight_two_pow_nsmul_div_four_pow P
 
 /-- **The canonical height differs from the naïve height by a bounded amount**, the bound depending
 only on the curve. Northcott finiteness for `h` therefore transfers to the canonical height. -/
@@ -123,7 +144,7 @@ theorem Point.abs_canonicalHeight_sub_naiveHeight_le [W.toAffine.IsElliptic] :
   obtain ⟨C, _, hC⟩ := exists_abs_naiveHeight_two_nsmul_sub W
   refine ⟨C / 4 / (1 - 1 / 4), fun P ↦ ?_⟩
   have hd := dist_le_of_le_geometric_of_tendsto₀ (1 / 4) (C / 4) (by norm_num)
-    (dist_naiveHeight_div_succ_le hC P) (P.tendsto_naiveHeight_div_canonicalHeight)
+    (dist_naiveHeight_div_succ_le hC P) (P.tendsto_naiveHeight_two_pow_nsmul_div_four_pow)
   -- the zeroth term of the sequence is `h P` itself
   simpa [Real.dist_eq, abs_sub_comm] using hd
 
