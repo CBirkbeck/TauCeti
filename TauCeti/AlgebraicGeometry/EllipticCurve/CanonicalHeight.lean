@@ -33,11 +33,10 @@ with — is half of it. Getting this wrong would scale every later invariant.
 ## Main results
 
 * `WeierstrassCurve.Affine.Point.tendsto_naiveHeight_two_pow_nsmul_div_four_pow`: the defining
-  limit is
-  attained, so `canonicalHeight` is the limit and not the junk value `limUnder` returns when a
-  sequence does not converge. Every property of the canonical height is proved by transporting a
-  property of `h`
-  along this.
+  limit is attained, so `canonicalHeight` is the limit and not the junk value `limUnder`
+  returns when a sequence does not converge. Properties that genuinely need passage to the limit
+  are proved by transporting a property of `h` along this; the values at `0` and under negation
+  do not, and are proved termwise instead.
 * `WeierstrassCurve.Affine.Point.canonicalHeight_zero` and
   `WeierstrassCurve.Affine.Point.canonicalHeight_neg`: its values at the two points every consumer
   meets first, as `@[simp]` normal forms.
@@ -51,8 +50,10 @@ with — is half of it. Getting this wrong would scale every later invariant.
 The doubling bound `|h(2P) - 4 h(P)| ≤ C` is the parallelogram law at `Q = P`, where `P - Q = 0`
 and `h(0) = 0`. Only that specialisation is used here, so it is kept private.
 
-Convergence is `cauchySeq_of_le_geometric` at ratio `1/4`: consecutive terms of `h(2ⁿ P) / 4ⁿ`
-differ by `|h(2 · 2ⁿ P) - 4 h(2ⁿ P)| / 4ⁿ⁺¹ ≤ C / 4ⁿ⁺¹`. The same estimate feeds Mathlib's
+Convergence is `cauchySeq_of_le_geometric` at ratio `1/4`: consecutive terms of
+`h(2ⁿ P) / (2 · 4ⁿ)` differ by
+`|h(2 · 2ⁿ P) - 4 h(2ⁿ P)| / (2 · 4ⁿ⁺¹) ≤ C / (2 · 4ⁿ⁺¹) = (C/8) · (1/4)ⁿ`. The same estimate
+feeds Mathlib's
 `dist_le_of_le_geometric_of_tendsto₀`, which bounds the distance from the *zeroth* term — and the
 zeroth term is `h(P) / 2` — giving `|canonicalHeight P - h(P)/2| ≤ (C / 8) / (1 - 1/4) = C / 6`
 with no further work.
@@ -99,8 +100,8 @@ private theorem exists_abs_naiveHeight_two_nsmul_sub [W.toAffine.IsElliptic] :
   convert h using 2
   ring
 
-/-- Consecutive terms of `h(2ⁿ P) / 4ⁿ` differ geometrically at ratio `1/4`. This is the single
-estimate both results below run on. -/
+/-- Consecutive terms of `h(2ⁿ P) / (2 · 4ⁿ)` differ geometrically at ratio `1/4`, by
+`(C/8) · (1/4)ⁿ`. This is the single estimate both results below run on. -/
 private theorem dist_naiveHeight_div_succ_le [W.toAffine.IsElliptic] {C : ℝ}
     (hC : ∀ P : W.Point, |(2 • P).naiveHeight - 4 * P.naiveHeight| ≤ C) (P : W.Point) (n : ℕ) :
     dist (((2 ^ n) • P).naiveHeight / (2 * 4 ^ n))
