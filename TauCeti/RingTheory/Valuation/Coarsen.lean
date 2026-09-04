@@ -163,11 +163,7 @@ theorem cofinalValue_coarsenByUnits_restrict {A : Type*} [Ring A] {v : Valuation
     (hcof : CofinalValue v a) : CofinalValue (v.restrict.coarsenByUnits H) a := by
   -- Every positive element of the coarsened value group is a ratio of attained values; shrinking
   -- that ratio by `d⁻¹` turns the monotone image of a cofinal power into a strict bound.
-  have hnt : Nontrivial ((ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup) :=
-    QuotientGroup.nontrivial_iff.mpr fun h ↦ hH (ConvexSubgroup.toSubgroup_injective
-      (h.trans ConvexSubgroup.top_toSubgroup.symm))
-  obtain ⟨x, hx⟩ := exists_one_lt' (α := (ValueGroup₀ (.ofClass v))ˣ ⧸ H.toSubgroup)
-  obtain ⟨d, rfl⟩ := QuotientGroup.mk'_surjective H.toSubgroup x
+  obtain ⟨d, hx⟩ := H.exists_one_lt_quotientMk hH
   rw [cofinalValue_iff]
   intro γ hγ
   obtain ⟨r, q, hr, hq, hrq⟩ :=
