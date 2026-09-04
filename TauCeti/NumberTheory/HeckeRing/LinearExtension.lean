@@ -30,13 +30,14 @@ The Hecke ring acts on modular forms through the slash, which is a *right* actio
 alongside the plain one, so a consumer whose basis identity comes out reversed — as
 `HeckeRing.GL2.twistedHeckeSlashRingCharLinearMap_mul_single_single` does — need not route
 through `MulOpposite` itself. The two statements are related exactly that way: the reversed one is
-the plain one applied to `op ∘ F`.
+the plain one applied to `op ∘ F`. Both live in the `LinearMap` namespace, so a consumer writes
+`F.map_mul_of_basis`.
 
 ## Main results
 
-* `HeckeCosetModule.map_mul_of_basis`: a linear map that is multiplicative on basis elements is
+* `LinearMap.map_mul_of_basis`: a linear map that is multiplicative on basis elements is
   multiplicative.
-* `HeckeCosetModule.map_mul_reverse_of_basis`: the same with the factors on the right-hand side in
+* `LinearMap.map_mul_reverse_of_basis`: the same with the factors on the right-hand side in
   the opposite order.
 
 ## References
@@ -60,11 +61,22 @@ private lemma single_mul_single_eq_smul_smul (D₁ D₂ : HeckeCoset Δ H H) (a 
     single Z D₁ a * single Z D₂ b = a • b • (single Z D₁ 1 * single Z D₂ 1) := by
   rw [single_mul_single, single_mul_single, one_smul, one_smul]
 
+end HeckeCosetModule
+
+namespace LinearMap
+
+open scoped HeckeCosetModule
+
+variable {G : Type*} [Group G] {Δ : Submonoid G} {H : Subgroup G} [IsHeckeTriple Δ H H]
+variable {Z : Type*} [Semiring Z] {A : Type*} [NonUnitalNonAssocSemiring A] [Module Z A]
+  [IsScalarTower Z A A] [SMulCommClass Z A A]
+
 /-- **Multiplicativity is a basis-level condition.** A `Z`-linear map out of the Hecke ring that
-is multiplicative on the basis elements `single Z D 1` is multiplicative. -/
+is multiplicative on the basis elements `HeckeCosetModule.single Z D 1` is multiplicative. -/
 theorem map_mul_of_basis (F : 𝕋 Δ H Z →ₗ[Z] A)
     (h : ∀ D₁ D₂ : HeckeCoset Δ H H,
-      F (single Z D₁ 1 * single Z D₂ 1) = F (single Z D₁ 1) * F (single Z D₂ 1))
+      F (HeckeCosetModule.single Z D₁ 1 * HeckeCosetModule.single Z D₂ 1) =
+        F (HeckeCosetModule.single Z D₁ 1) * F (HeckeCosetModule.single Z D₂ 1))
     (x y : 𝕋 Δ H Z) : F (x * y) = F x * F y := by
   induction x using HeckeCosetModule.induction_linear with
   | h0 => simp
@@ -74,8 +86,9 @@ theorem map_mul_of_basis (F : 𝕋 Δ H Z →ₗ[Z] A)
     | h0 => simp
     | hadd y₁ y₂ h₁ h₂ => rw [_root_.mul_add, map_add, map_add, h₁, h₂, _root_.mul_add]
     | hsingle D₂ b =>
-      rw [single_mul_single_eq_smul_smul, map_smul, map_smul, h, ← smul_single_one Z D₁ a,
-        ← smul_single_one Z D₂ b, map_smul, map_smul, smul_mul_assoc, mul_smul_comm]
+      rw [HeckeCosetModule.single_mul_single_eq_smul_smul, map_smul, map_smul, h,
+        ← HeckeCosetModule.smul_single_one Z D₁ a, ← HeckeCosetModule.smul_single_one Z D₂ b,
+        map_smul, map_smul, smul_mul_assoc, mul_smul_comm]
 
 /-- **Anti-multiplicativity is a basis-level condition.** A `Z`-linear map out of the Hecke ring
 that sends a product of basis elements to the product of their images *in the opposite order* does
@@ -85,12 +98,13 @@ This is the order a right action produces, so it is the shape a slash-derived ex
 in; it is `map_mul_of_basis` for the map `op ∘ F` into `Aᵐᵒᵖ`. -/
 theorem map_mul_reverse_of_basis (F : 𝕋 Δ H Z →ₗ[Z] A)
     (h : ∀ D₁ D₂ : HeckeCoset Δ H H,
-      F (single Z D₁ 1 * single Z D₂ 1) = F (single Z D₂ 1) * F (single Z D₁ 1))
+      F (HeckeCosetModule.single Z D₁ 1 * HeckeCosetModule.single Z D₂ 1) =
+        F (HeckeCosetModule.single Z D₂ 1) * F (HeckeCosetModule.single Z D₁ 1))
     (x y : 𝕋 Δ H Z) : F (x * y) = F y * F x :=
   congrArg MulOpposite.unop <|
     map_mul_of_basis ((MulOpposite.opLinearEquiv Z).toLinearMap.comp F)
       (fun D₁ D₂ ↦ by simpa [MulOpposite.op_mul] using congrArg MulOpposite.op (h D₁ D₂)) x y
 
-end HeckeCosetModule
+end LinearMap
 
 end
