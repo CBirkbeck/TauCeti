@@ -102,7 +102,7 @@ private theorem exists_abs_naiveHeight_two_nsmul_sub [W.toAffine.IsElliptic] :
 
 /-- Consecutive terms of `h(2ⁿ P) / (2 · 4ⁿ)` differ geometrically at ratio `1/4`, by
 `(C/8) · (1/4)ⁿ`. This is the single estimate both results below run on. -/
-private theorem dist_naiveHeight_div_succ_le [W.toAffine.IsElliptic] {C : ℝ}
+private theorem dist_naiveHeight_div_succ_le {C : ℝ}
     (hC : ∀ P : W.Point, |(2 • P).naiveHeight - 4 * P.naiveHeight| ≤ C) (P : W.Point) (n : ℕ) :
     dist (((2 ^ n) • P).naiveHeight / (2 * 4 ^ n))
         (((2 ^ (n + 1)) • P).naiveHeight / (2 * 4 ^ (n + 1)))
