@@ -357,6 +357,113 @@ theorem restrictionRingHom_comp_restrictionRingHom (T''' : Finset A) (s''' : A) 
   rw [RingHom.comp_assoc, restrictionRingHom_comp_toCompletionLoc,
     restrictionRingHom_comp_toCompletionLoc]
 
+/-! ### Adjoining one numerator -/
+
+section OneStep
+
+variable [DecidableEq A] (t : A) (S' : Type*) [CommRing S'] [Algebra A S']
+  [IsLocalization.Away s S']
+
+/-- **The restriction map of a one-step numerator adjunction.** Adjoining `t` to the numerators
+refines `(T, s)` to `(insert t T, s)` with cofactor `1`, so
+`TauCeti.Huber.PairOfDefinition.restrictionRingHom` applies; this names the resulting map. Both of
+that map's side conditions are provable here, so nothing extra is assumed. -/
+noncomputable def restrictionRingHomInsert (hden' : HasDenominatorPower P (insert t T) s S') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P (insert t T) s S' hden'
+    letI := isUniformAddGroup_locUniformSpace P (insert t T) s S' hden'
+    letI := isTopologicalRing_locUniformSpace P (insert t T) s S' hden'
+    UniformSpace.Completion S →+* UniformSpace.Completion S' :=
+  restrictionRingHom P T s S hden (insert t T) s S' hden' 1 (mul_one s).symm
+    fun u hu ↦ by simpa using Finset.mem_insert_of_mem hu
+
+/-- The one-step restriction map is continuous. -/
+theorem continuous_restrictionRingHomInsert (hden' : HasDenominatorPower P (insert t T) s S') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P (insert t T) s S' hden'
+    letI := isUniformAddGroup_locUniformSpace P (insert t T) s S' hden'
+    letI := isTopologicalRing_locUniformSpace P (insert t T) s S' hden'
+    Continuous (restrictionRingHomInsert P T s S hden t S' hden') :=
+  continuous_restrictionRingHom P T s S hden (insert t T) s S' hden' 1 (mul_one s).symm
+    fun u hu ↦ by simpa using Finset.mem_insert_of_mem hu
+
+/-- **The one-step restriction map commutes with the structure maps from `A`.** -/
+@[simp]
+theorem restrictionRingHomInsert_comp_toCompletionLoc
+    (hden' : HasDenominatorPower P (insert t T) s S') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P (insert t T) s S' hden'
+    letI := isUniformAddGroup_locUniformSpace P (insert t T) s S' hden'
+    letI := isTopologicalRing_locUniformSpace P (insert t T) s S' hden'
+    (restrictionRingHomInsert P T s S hden t S' hden').comp (toCompletionLoc P T s S hden)
+      = toCompletionLoc P (insert t T) s S' hden' :=
+  restrictionRingHom_comp_toCompletionLoc P T s S hden (insert t T) s S' hden' 1 (mul_one s).symm
+    fun u hu ↦ by simpa using Finset.mem_insert_of_mem hu
+
+/-- **The two properties determine the one-step restriction map**, the specialisation of
+`TauCeti.Huber.PairOfDefinition.eq_restrictionRingHom`. -/
+theorem eq_restrictionRingHomInsert (hden' : HasDenominatorPower P (insert t T) s S') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P (insert t T) s S' hden'
+    letI := isUniformAddGroup_locUniformSpace P (insert t T) s S' hden'
+    letI := isTopologicalRing_locUniformSpace P (insert t T) s S' hden'
+    ∀ g : UniformSpace.Completion S →+* UniformSpace.Completion S', Continuous g →
+      g.comp (toCompletionLoc P T s S hden) = toCompletionLoc P (insert t T) s S' hden' →
+      g = restrictionRingHomInsert P T s S hden t S' hden' :=
+  eq_restrictionRingHom P T s S hden (insert t T) s S' hden' 1 (mul_one s).symm
+    fun u hu ↦ by simpa using Finset.mem_insert_of_mem hu
+
+/-- **The one-step restriction map carries `t/s` to `t/s`.** This is the fact particular to the
+refinement `(T, s) → (insert t T, s)`.
+
+Both structure maps from `A` commute with restriction, so `t` goes to `t` and `s` goes to `s`. The
+image of `s⁻¹` is then forced: `Units.map` carries the unit upstairs to the unit downstairs, and a
+unit determines its inverse. -/
+@[simp]
+theorem restrictionRingHomInsert_coe_divBy (hden' : HasDenominatorPower P (insert t T) s S') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P (insert t T) s S' hden'
+    letI := isUniformAddGroup_locUniformSpace P (insert t T) s S' hden'
+    letI := isTopologicalRing_locUniformSpace P (insert t T) s S' hden'
+    restrictionRingHomInsert P T s S hden t S' hden'
+        ((divBy t s : S) : UniformSpace.Completion S)
+      = ((divBy t s : S') : UniformSpace.Completion S') := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  let _ := locUniformSpace P (insert t T) s S' hden'
+  have _ := isUniformAddGroup_locUniformSpace P (insert t T) s S' hden'
+  have _ := isTopologicalRing_locUniformSpace P (insert t T) s S' hden'
+  have hu : IsUnit (toCompletionLoc P T s S hden s) :=
+    isUnit_toCompletionLoc_of_dvd P T s S hden dvd_rfl
+  have hu' : IsUnit (toCompletionLoc P (insert t T) s S' hden' s) :=
+    isUnit_toCompletionLoc_of_dvd P (insert t T) s S' hden' dvd_rfl
+  set φ := restrictionRingHomInsert P T s S hden t S' hden' with hφdef
+  have hcomp : ∀ a, φ (toCompletionLoc P T s S hden a)
+      = toCompletionLoc P (insert t T) s S' hden' a := fun a ↦ by
+    rw [hφdef, ← RingHom.comp_apply, restrictionRingHomInsert_comp_toCompletionLoc]
+  -- `Units.map φ` carries the unit upstairs to the unit downstairs, hence their inverses too
+  have hunit : Units.map (φ : _ →* _) hu.unit = hu'.unit :=
+    Units.ext (by simp only [Units.coe_map, MonoidHom.coe_coe, IsUnit.unit_spec, hcomp s])
+  have hinv : φ (↑hu.unit⁻¹) = ↑hu'.unit⁻¹ := by
+    rw [← hunit]
+    exact (Units.coe_map_inv _ _).symm
+  rw [← toCompletionLoc_mul_unit_inv_eq_divBy P T s S hden t hu,
+    ← toCompletionLoc_mul_unit_inv_eq_divBy P (insert t T) s S' hden' t hu',
+    map_mul, hcomp t, hinv]
+
+end OneStep
+
 end PairOfDefinition
 
 end
