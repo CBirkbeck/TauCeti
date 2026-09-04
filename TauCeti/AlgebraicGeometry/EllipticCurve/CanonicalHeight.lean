@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.NaiveHeight
+public import TauCeti.LinearAlgebra.QuadraticForm.OfParallelogram
 
 /-!
 # The canonical (Néron–Tate) height
@@ -46,6 +47,10 @@ with — is half of it. Getting this wrong would scale every later invariant.
   height was approximating.
 * `WeierstrassCurve.Affine.Point.canonicalHeight_two_nsmul`: the doubling normal form
   `canonicalHeight (2 • P) = 4 * canonicalHeight P`, the parallelogram law at `Q = P`.
+* `WeierstrassCurve.Affine.Point.canonicalHeight_zsmul` and
+  `WeierstrassCurve.Affine.Point.canonicalHeight_nsmul`: the value at `n • P` is `n ^ 2` times the
+  value at `P`. This exhibits the canonical height as a quadratic form on `W.Point`; the general
+  statement it specialises lives in `TauCeti/LinearAlgebra/QuadraticForm/OfParallelogram.lean`.
 * `WeierstrassCurve.Affine.Point.canonicalHeight_nonneg`: it is non-negative, read off the
   defining sequence termwise.
 * `WeierstrassCurve.Affine.Point.abs_canonicalHeight_sub_naiveHeight_le`: the canonical height stays
@@ -237,5 +242,29 @@ theorem Point.canonicalHeight_nonneg [W.toAffine.IsElliptic] (P : W.Point) :
     0 ≤ P.canonicalHeight :=
   ge_of_tendsto' P.tendsto_naiveHeight_two_pow_nsmul_div_four_pow fun n ↦
     div_nonneg (Point.naiveHeight_nonneg _) (by positivity)
+
+-- The parallelogram law in the shape `TauCeti.QuadraticMap.map_zsmul_of_parallelogram` consumes:
+-- that statement uses `2 • ·` in an arbitrary abelian group, while `canonicalHeight` lands in `ℝ`
+-- where the natural spelling is `2 * ·`.
+private theorem canonicalHeight_parallelogram_nsmul [W.toAffine.IsElliptic] (P Q : W.Point) :
+    (P + Q).canonicalHeight + (P - Q).canonicalHeight
+      = 2 • P.canonicalHeight + 2 • Q.canonicalHeight := by
+  rw [two_smul, two_smul]
+  linarith [Point.canonicalHeight_parallelogram_law P Q]
+
+/-- **The canonical height is quadratic in the point**: it takes `n • P` to `n ^ 2` times its
+value at `P`, for an integer `n`. -/
+theorem Point.canonicalHeight_zsmul [W.toAffine.IsElliptic] (n : ℤ) (P : W.Point) :
+    (n • P).canonicalHeight = (n : ℝ) ^ 2 * P.canonicalHeight := by
+  rw [TauCeti.QuadraticMap.map_zsmul_of_parallelogram (smul_right_injective ℝ two_ne_zero)
+    canonicalHeight_parallelogram_nsmul n P]
+  ring
+
+/-- **The canonical height is quadratic in the point**, for a natural multiple. -/
+theorem Point.canonicalHeight_nsmul [W.toAffine.IsElliptic] (n : ℕ) (P : W.Point) :
+    (n • P).canonicalHeight = (n : ℝ) ^ 2 * P.canonicalHeight := by
+  rw [← natCast_zsmul, Point.canonicalHeight_zsmul]
+  push_cast
+  ring
 
 end WeierstrassCurve.Affine
