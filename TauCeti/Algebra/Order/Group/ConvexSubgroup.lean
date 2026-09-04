@@ -72,6 +72,9 @@ API (`Quotient.instLinearOrder` over order-connected fibers) rather than constru
 `quotientMk_monotone` and `quotientMk_lt_one_of_notMem` come from a different AINTLIB file:
 `projects/AdicSpaces/Adic spaces/ValuationCoarsening.lean` at commit `37bbdaeb`, where they are
 the order facts the coarsening construction consumes.
+
+`exists_one_lt_quotientMk` is in neither AINTLIB file. Its statement and proof are new here,
+assembled from `Subgroup.exists_one_lt_of_lt` and `quotientMk_lt_one_of_notMem`.
 -/
 
 public section

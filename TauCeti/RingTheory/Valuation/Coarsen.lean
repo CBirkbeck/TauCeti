@@ -38,10 +38,15 @@ facts the height-one generization of Wedhorn's Lemma 7.45 consumes.
 
 ## Provenance
 
-Adapted from AINTLIB (see References), `projects/AdicSpaces/Adic spaces/ValuationCoarsening.lean`:
-the constructions and statements are that file's, with its local `WithZero.mapMonoidWithZeroHom`
-block replaced by Mathlib's `WithZero.map'` and the composite shaped as in Mathlib's own
-`LinearOrderedCommGroupWithZero` locally-finite instance.
+The coarsening construction itself is adapted from AINTLIB (see References),
+`projects/AdicSpaces/Adic spaces/ValuationCoarsening.lean`: `TauCeti.coarsenMapOfValueGroup`,
+`Valuation.coarsenByUnits` and the collapse statements about them are that file's, with its local
+`WithZero.mapMonoidWithZeroHom` block replaced by Mathlib's `WithZero.map'` and the composite
+shaped as in Mathlib's own `LinearOrderedCommGroupWithZero` locally-finite instance.
+
+`Valuation.cofinalValue_coarsenByUnits_restrict` is not from that development. It is Wedhorn's
+Remark 7.11(2), proved here from `TauCeti.coarsenMapOfValueGroup_mul_inv_lt` and
+`TauCeti.ConvexSubgroup.exists_one_lt_quotientMk`.
 
 ## References
 
@@ -117,16 +122,6 @@ theorem coarsenByUnits_apply (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ
     v.coarsenByUnits H r = coarsenMapOfValueGroup H (v r) :=
   Valuation.map_apply _ _ _ _
 
-open TauCeti MonoidWithZeroHom in
-/-- **The coarsened valuation's own restricted value is the coarsening of `v`'s.** This is the
-bridge between the two presentations: a comparison stated about `v.coarsenByUnits H` on its own
-value group becomes a comparison of coarsened values of `v`. -/
-private theorem embedding_restrict_coarsenByUnits (v : Valuation R Γ₀)
-    (H : ConvexSubgroup Γ₀ˣ) (x : R) :
-    ValueGroup₀.embedding ((v.coarsenByUnits H).restrict x)
-      = coarsenMapOfValueGroup H (v x) := by
-  rw [Valuation.embedding_restrict, coarsenByUnits_apply]
-
 /-- A value at most `1` whose unit avoids `H` lands strictly below `1` after coarsening. -/
 theorem coarsenByUnits_lt_one_of_notMem (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     {a : R} (ha_ne : v a ≠ 0) (ha_le : v a ≤ 1)
@@ -180,8 +175,8 @@ theorem cofinalValue_coarsenByUnits_restrict {A : Type*} [Ring A] {v : Valuation
   -- turns the resulting `≤` into `<`.
   have hγ' : ValueGroup₀.embedding γ =
       coarsenMapOfValueGroup H (v.restrict r / v.restrict q) := by
-    rw [← hrq, map_div₀, embedding_restrict_coarsenByUnits, embedding_restrict_coarsenByUnits,
-      ← map_div₀]
+    rw [← hrq, map_div₀, Valuation.embedding_restrict, coarsenByUnits_apply,
+      Valuation.embedding_restrict, coarsenByUnits_apply, ← map_div₀]
   rw [← map_pow, Valuation.restrict_lt_iff_lt_embedding, hγ']
   calc (v.restrict.coarsenByUnits H) (a ^ n)
       = coarsenMapOfValueGroup H (v.restrict a ^ n) := by rw [coarsenByUnits_apply, map_pow]
