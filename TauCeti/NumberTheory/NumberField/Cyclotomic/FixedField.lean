@@ -10,9 +10,12 @@ public import Mathlib.NumberTheory.Cyclotomic.Gal
 /-!
 # The fixed field of a cyclic subgroup meeting the cyclotomic fixers trivially
 
-If `M / L` is an `m`-th cyclotomic extension and `g` generates a cyclic subgroup of `Gal(M/K)`
+If `M` contains a primitive `m`-th root of unity and `g` generates a cyclic subgroup of `Gal(M/K)`
 meeting `Gal(M/K(μ_m))` trivially, then `M` is an `m`-th cyclotomic extension of the fixed field
-`M ^ ⟨g⟩` as well.
+`M ^ ⟨g⟩`.
+
+Only `M / K` is assumed finite and Galois. The root of unity enters as a hypothesis rather than
+through an ambient cyclotomic tower, so no intermediate field appears in the statement.
 
 ## Main results
 
@@ -28,15 +31,12 @@ namespace IsCyclotomicExtension
 /-- **The fixed field of `⟨g⟩` carries the cyclotomic extension**, whenever `⟨g⟩` meets the
 fixers of `K(μ_m)` trivially. -/
 theorem fixedField_of_zpowers_inf_fixingSubgroup_eq_bot {K M : Type*} [Field K] [Field M]
-    [Algebra K M] [FiniteDimensional K M] [IsGalois K M] {L : Type*} [Field L] [Algebra K L]
-    [Algebra L M] [IsScalarTower K L M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} L M]
-    (g : M ≃ₐ[K] M)
+    [Algebra K M] [FiniteDimensional K M] [IsGalois K M] {m : ℕ} [NeZero m] {ζ : M}
+    (hζ : IsPrimitiveRoot ζ m) (g : M ≃ₐ[K] M)
     (hmeet : Subgroup.zpowers g ⊓ (adjoin K {b : M | b ^ m = 1}).fixingSubgroup = ⊥) :
     IsCyclotomicExtension {m} (fixedField (Subgroup.zpowers g)) M := by
   set F : IntermediateField K M := fixedField (Subgroup.zpowers g)
   set Kμ : IntermediateField K M := adjoin K {b : M | b ^ m = 1}
-  obtain ⟨ζ, hζ⟩ : ∃ r : M, IsPrimitiveRoot r m :=
-    IsCyclotomicExtension.exists_isPrimitiveRoot (S := {m}) L M (Set.mem_singleton m) (NeZero.ne m)
   -- `K(ζ) = K(μ_m)`, so the hypothesis is about the fixers of `K(ζ)`
   have hadjζ : adjoin K {ζ} = Kμ :=
     le_antisymm
