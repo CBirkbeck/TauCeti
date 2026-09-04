@@ -76,15 +76,8 @@ theorem isPowerBounded_weightedX {T : Fin k → Set A} (hT : IsWeightFamily T) {
   · -- the coefficient moves from `ν - n · eᵢ` to `ν`, and `1 ∈ T i` enlarges the weight
     rename_i hle
     have hone : (1 : A) ∈ weightPow T (Finsupp.single i n) := by
-      rw [weightPow_def]
-      refine Finset.prod_induction (fun j ↦ T j ^ (Finsupp.single i n) j)
-        (fun S : Set A ↦ (1 : A) ∈ S) (fun _ _ h h' ↦ ?_) ?_ fun j _ ↦ ?_
-      · simpa using Set.mul_mem_mul h h'
-      · simp
-      · rcases eq_or_ne j i with rfl | hj
-        · simpa using Set.one_mem_pow hi
-        · rw [Finsupp.single_eq_of_ne hj, pow_zero]
-          exact Set.mem_one.mpr rfl
+      rw [weightPow_single]
+      exact Set.one_mem_pow hi
     rw [mul_one]
     have h2 := mul_mem_weightMul_add_of_mem_weightPow hone (hg (ν - Finsupp.single i n))
     rw [one_mul, tsub_add_cancel_of_le hle] at h2
