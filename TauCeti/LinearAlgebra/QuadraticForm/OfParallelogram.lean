@@ -50,7 +50,7 @@ For a torsion-free codomain it is one term: `smul_right_injective N two_ne_zero`
 * `TauCeti.QuadraticMap.map_zero_of_parallelogram`: `f 0 = 0`.
 * `TauCeti.QuadraticMap.map_neg_of_parallelogram`: `f (-x) = f x`.
 * `TauCeti.QuadraticMap.map_add_add_add_map_of_parallelogram`: the three-variable identity
-  `f (x + y + z) + (f x + f y + f z) = f (x + y) + f (y + z) + f (x + z)`, named after
+  `f (x + y + z) + (f x + f y + f z) = f (x + y) + f (y + z) + f (z + x)`, stated exactly as
   `QuadraticMap.map_add_add_add_map`.
 * `TauCeti.QuadraticMap.polar_add_left_of_parallelogram` and
   `polar_zsmul_left_of_parallelogram`: the polarisation is additive and `ℤ`-linear on the left.
@@ -110,13 +110,16 @@ theorem map_neg_of_parallelogram (x : M) : f (-x) = f x := by
   linear_combination (norm := module) h
 
 -- This is the substantive step: biadditivity of the polarisation below is a rearrangement of it.
--- Named after `QuadraticMap.map_add_add_add_map`, which is the same identity read off a quadratic
--- map instead of derived from the parallelogram law. The last summand is `f (x + z)` where that
--- lemma writes `f (z + x)`: commutativity inside an argument of an opaque `f` is not something
--- the normalisers can absorb, so the order the proof produces is the one stated.
+-- Stated exactly as `QuadraticMap.map_add_add_add_map`, the same identity read off a quadratic
+-- map instead of derived from the parallelogram law — `f (z + x)` included, which is what lets
+-- `polar_add_left_iff.mpr` consume it with no reshaping at the use site.
 /-- **The three-variable identity** satisfied by every quadratic form, in subtraction-free form. -/
 theorem map_add_add_add_map_of_parallelogram (x y z : M) :
-    f (x + y + z) + (f x + f y + f z) = f (x + y) + f (y + z) + f (x + z) := by
+    f (x + y + z) + (f x + f y + f z) = f (x + y) + f (y + z) + f (z + x) := by
+  -- `f (z + x)` is the goal's spelling but `f (x + z)` is what the instances below produce, and
+  -- commutativity inside an argument of an opaque `f` is invisible to `abel`, `module` and
+  -- `linear_combination`; pay for it once here rather than at every use site.
+  rw [show z + x = x + z from by abel]
   -- Four instances of the law. `x + z - y` and `x - (y - z)` are the same point, which is what
   -- lets the two occurrences of `f` at that point cancel; halving at the end is the only place
   -- torsion-freeness is used.
@@ -132,11 +135,11 @@ theorem map_add_add_add_map_of_parallelogram (x y z : M) :
   apply htwo
   linear_combination (norm := module) p1 + p4 - p2 - (2 : ℤ) • p3
 
+-- Exactly how Mathlib proves `QuadraticMap.polar_add_left` from `map_add_add_add_map`.
 /-- **The polarisation is additive in its left argument.** -/
 theorem polar_add_left_of_parallelogram (x x' y : M) :
-    polar f (x + x') y = polar f x y + polar f x' y := by
-  simp only [polar]
-  linear_combination (norm := module) map_add_add_add_map_of_parallelogram htwo hf x x' y
+    polar f (x + x') y = polar f x y + polar f x' y :=
+  polar_add_left_iff.mpr <| map_add_add_add_map_of_parallelogram htwo hf x x' y
 
 -- No new content: an additive map between abelian groups is automatically `ℤ`-linear, so this is
 -- `polar_add_left_of_parallelogram` transported. It is the last input `QuadraticMap.ofPolar` asks
@@ -179,7 +182,7 @@ theorem map_zsmul_of_parallelogram (n : ℤ) (x : M) : f (n • x) = (n * n) •
 -- the companion bilinear map itself, so no bilinear map is defined here.
 /-- **A function satisfying the parallelogram law is a quadratic form.** Its companion bilinear
 map is `QuadraticMap.polarBilin` of it, which is the polarisation. -/
-noncomputable def ofParallelogram : _root_.QuadraticMap ℤ M N :=
+def ofParallelogram : _root_.QuadraticMap ℤ M N :=
   .ofPolar f (map_zsmul_of_parallelogram htwo hf) (polar_add_left_of_parallelogram htwo hf)
     (polar_zsmul_left_of_parallelogram htwo hf)
 
