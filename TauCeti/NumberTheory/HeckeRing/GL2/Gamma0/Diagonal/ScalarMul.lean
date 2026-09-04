@@ -20,6 +20,11 @@ computation itself is the generic `HeckeCosetModule.mul_single_single_of_mulMap_
 stated for an arbitrary Hecke triple and so applies to `Δ₀(N)` unchanged. Only the two
 hypotheses it takes are level-dependent.
 
+`HeckeCosetModule.single_mul_single_of_mem_normalizer` is the shorter route to `S_m · S_n`
+alone, both scalars being central. It does not reach `diagElemGamma0_const_mul`, which is the
+statement proved here: `diag(b)` normalizes `Γ₀(N)` only when `b₁ = b₂`, so the general
+scalar-times-diagonal product needs the one-sided argument below.
+
 `heckeTScalarGamma0_mul` is unconditional: where a factor shares a factor with the level its
 operator vanishes, and so does the operator of the product, so the degenerate branches agree
 without a coprimality hypothesis. That is what lets `Composite.lean` identify the assembled
