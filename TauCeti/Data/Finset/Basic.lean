@@ -53,13 +53,9 @@ theorem sum_piecewise_eq_sum_update_of_card_eq_succ {ι : Type*} {α : ι → Ty
   refine (Fintype.sum_bijective (fun a : ι ↦ ⟨{a}ᶜ, by
     rw [Finset.card_compl, Finset.card_singleton, hm]
     omega⟩) ?_ _ _ fun i ↦ ?_).symm
-  · refine ⟨fun _ _ ↦ (Finset.singleton_injective <| compl_injective <| Subtype.ext_iff.mp ·), ?_⟩
-    intro ⟨s, hs⟩
-    have h : sᶜ.card = 1 := by
-      rw [Finset.card_compl, hs, hm]
-      omega
-    obtain ⟨a, ha⟩ := Finset.card_eq_one.mp h
-    exact ⟨a, Subtype.ext (compl_eq_comm.mp ha)⟩
+  · rw [Fintype.bijective_iff_injective_and_card]
+    refine ⟨fun _ _ ↦ (Finset.singleton_injective <| compl_injective <| Subtype.ext_iff.mp ·), ?_⟩
+    rw [Fintype.card_finset_len, hm, Nat.choose_succ_self_right]
   · rw [Subtype.coe_mk, Finset.compl_singleton, Finset.piecewise_erase_univ]
 
 end TauCeti
