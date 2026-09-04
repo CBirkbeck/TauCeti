@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.NumberTheory.Cyclotomic.Gal
+public import TauCeti.NumberTheory.Cyclotomic.Adjoin
 
 /-!
 # The fixed field of a subgroup meeting the cyclotomic fixers trivially
@@ -23,7 +24,6 @@ but the argument is the Galois correspondence and uses neither a generator nor c
 
 ## Main results
 
-* `IsPrimitiveRoot.adjoin_singleton_eq_adjoin_rootsOfUnity`
 * `IsPrimitiveRoot.fixedField_isCyclotomicExtension_of_inf_fixingSubgroup_eq_bot`
 
 ## Provenance
@@ -38,24 +38,6 @@ a cyclic subgroup over a tower `K ⊆ L ⊆ M` of number fields; the hypotheses 
 public section
 
 open IntermediateField
-
-/-- **Adjoining one primitive `m`-th root adjoins them all.** `K(ζ) = K(μ_m)` inside any field
-containing a primitive `m`-th root of unity `ζ`.
-
-This is the `IntermediateField` counterpart of Mathlib's `Algebra.adjoin` equalities
-`IsCyclotomicExtension.adjoin_roots_cyclotomic_eq_adjoin_root_cyclotomic` and
-`..._eq_adjoin_nth_roots`, obtained from them across `IntermediateField.adjoin_toSubalgebra`. -/
-theorem IsPrimitiveRoot.adjoin_singleton_eq_adjoin_rootsOfUnity {K M : Type*} [Field K] [Field M]
-    [Algebra K M] [Algebra.IsAlgebraic K M] {m : ℕ} [NeZero m] {ζ : M}
-    (hζ : IsPrimitiveRoot ζ m) : adjoin K {ζ} = adjoin K {b : M | b ^ m = 1} := by
-  refine toSubalgebra_injective ?_
-  rw [adjoin_toSubalgebra, adjoin_toSubalgebra]
-  refine (IsCyclotomicExtension.adjoin_roots_cyclotomic_eq_adjoin_root_cyclotomic
-    (A := K) hζ).symm.trans ?_
-  refine (IsCyclotomicExtension.adjoin_roots_cyclotomic_eq_adjoin_nth_roots (A := K) hζ).trans ?_
-  congr 1
-  ext b
-  simp [NeZero.ne m]
 
 /-- **The fixed field of `H` carries the cyclotomic extension**, whenever `H` meets the fixers of
 `K(μ_m)` trivially.
