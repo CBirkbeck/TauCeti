@@ -59,18 +59,19 @@ open Filter MeasureTheory Set Topology
 /-- At an interior parameter, a piecewise-`C¹` immersion has non-zero one-sided tangents:
 limits of `deriv γ` that are also one-sided derivatives. -/
 private theorem exists_one_sided_tangents {γ : ℝ → ℂ} {a b t₀ : ℝ}
-    (h_imm : IsPwC1ImmersionOn γ a b) (hab : a < b) (ht₀ : t₀ ∈ Ioo a b) :
+    (h_imm : IsPwC1ImmersionOn γ a b) (ht₀ : t₀ ∈ Ioo a b) :
     ∃ L_R L_L : ℂ, L_R ≠ 0 ∧ L_L ≠ 0 ∧
       Tendsto (deriv γ) (𝓝[>] t₀) (𝓝 L_R) ∧ Tendsto (deriv γ) (𝓝[<] t₀) (𝓝 L_L) ∧
       HasDerivWithinAt γ L_R (Ioi t₀) t₀ ∧ HasDerivWithinAt γ L_L (Iio t₀) t₀ := by
-  have hmin : min a b = a := min_eq_left hab.le
-  have hmax : max a b = b := max_eq_right hab.le
+  have hab : a ≤ b := (ht₀.1.trans ht₀.2).le
+  have hmin : min a b = a := min_eq_left hab
+  have hmax : max a b = b := max_eq_right hab
   obtain ⟨L_R, hL_R, h_tend_R⟩ := h_imm.exists_deriv_right_limit
     (by rw [hmin, hmax]; exact ⟨ht₀.1.le, ht₀.2⟩)
   obtain ⟨L_L, hL_L, h_tend_L⟩ := h_imm.exists_deriv_left_limit
     (by rw [hmin, hmax]; exact ⟨ht₀.1, ht₀.2.le⟩)
   have h_cont : ContinuousAt γ t₀ := h_imm.continuousOn.continuousAt
-    (by rw [uIcc_of_le hab.le]; exact Icc_mem_nhds ht₀.1 ht₀.2)
+    (by rw [uIcc_of_le hab]; exact Icc_mem_nhds ht₀.1 ht₀.2)
   have h_diff_R := h_imm.isPiecewiseC1On.eventually_differentiableAt_right
     (by rw [hmin, hmax]; exact ht₀)
   have h_diff_L := h_imm.isPiecewiseC1On.eventually_differentiableAt_left
@@ -103,7 +104,7 @@ theorem exists_radius_perWindow_tendsto_log_norm_add_arg
           ((((-L_L) / (γ l - s)).arg + ((γ u - s) / L_R).arg : ℝ) : ℂ) *
             Complex.I)) := by
   obtain ⟨L_R, L_L, hL_R, hL_L, h_tend_R, h_tend_L, h_dR, h_dL⟩ :=
-    exists_one_sided_tangents h_imm hab ht₀
+    exists_one_sided_tangents h_imm ht₀
   obtain ⟨R, hR_pos, hc_R, hc_L, hc_plus, hc_minus⟩ :=
     exists_crossing_slitPlane_radius h_dR h_dL h_at hL_R hL_L
   obtain ⟨p, hp⟩ := h_imm.isPiecewiseC1On.exists_finset_differentiableAt
