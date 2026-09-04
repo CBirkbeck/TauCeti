@@ -136,10 +136,13 @@ theorem exists_tendsto_comp_atTop
 
 /-! ### The gradient dies along the trajectory -/
 
-/-- **Across a short interval the energy drops by a definite amount.** If `‖∇ f (γ t)‖` is at
-least `ε` at a time `t ≥ 0`, and `δ` is short enough that the trajectory cannot move by `η` in that
-time, then the modulus `hUC` keeps the gradient above `ε / 2` throughout `[t, t + δ]`, and the
-energy identity turns that into a drop of `f` by at least `δ * (ε / 2) ^ 2`. -/
+/-- **Across a short interval the energy drops by at least `δ * (ε / 2) ^ 2`.** If `‖∇ f (γ t)‖`
+is at least `ε` at a time `t ≥ 0`, and `δ` is short enough that the trajectory cannot move by `η`
+in that time, then the modulus `hUC` keeps the gradient above `ε / 2` throughout `[t, t + δ]`, and
+the energy identity turns that into the stated drop of `f`.
+
+The bound is vacuous when `δ = 0` or `ε = 0`, both of which the hypotheses permit; the caller
+supplies a positive `δ` and `ε`. -/
 private theorem energy_drop_of_le_norm_gradient {C δ ε η : ℝ}
     (hγ : IsIntegralCurveOn γ (fun _ x ↦ -∇ f x) (Ici 0)) (hmaps : MapsTo γ (Ici 0) K)
     (hdiff : ∀ y ∈ K, DifferentiableAt ℝ f y)
