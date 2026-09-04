@@ -18,7 +18,7 @@ the rank of `𝓞 F` over `𝓞 K`.
 
 ## Main results
 
-* `TauCeti.NumberField.ramificationIdx_le_finrank`: for a prime `𝔔` of `𝓞 F` in an extension
+* `Ideal.ramificationIdx_le_finrank_numberField`: for a prime `𝔔` of `𝓞 F` in an extension
   `F / K` of number fields, `e(𝔔 / 𝓞 K) ≤ [F : K]`.
 -/
 
@@ -36,8 +36,9 @@ variable {K : Type*} [Field K] [NumberField K]
 This is `TauCeti.RamificationInertia.ramificationIdx_le_finrank` for the rings of integers,
 transported along `IsFractionRing.finrank_eq` so that the bound is the degree of the field
 extension rather than the rank of `𝓞 F` over `𝓞 K`. -/
-theorem ramificationIdx_le_finrank {F : Type*} [Field F] [NumberField F] [Algebra K F]
-    (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime] : 𝔔.ramificationIdx (𝓞 K) ≤ Module.finrank K F :=
+theorem _root_.Ideal.ramificationIdx_le_finrank_numberField {F : Type*} [Field F]
+    [NumberField F] [Algebra K F] (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime] :
+    𝔔.ramificationIdx (𝓞 K) ≤ Module.finrank K F :=
   -- The fundamental identity `∑ eᵢ fᵢ = [F : K]` bounds each `eᵢ`, and `[𝓞 F : 𝓞 K] = [F : K]`.
   (TauCeti.RamificationInertia.ramificationIdx_le_finrank (𝔔.under (𝓞 K)) 𝔔).trans_eq
     (IsFractionRing.finrank_eq (𝓞 K) K (𝓞 F) F).symm
