@@ -38,44 +38,9 @@ proof of Lemma 3.1.13. Both run this argument with `K = ℚ`.
 public section
 
 open scoped NumberField
-open Polynomial
+open Polynomial TauCeti.RamificationInertia TauCeti.NumberField
 
 namespace IsCyclotomicExtension
-
-/-- Unramifiedness above a rational prime descends along an integral extension: if every prime of
-`A` above `q` is unramified over `ℤ`, then so is every prime of a subring `S` below it.
-
-Stated at the level of rings rather than of fields because it is used twice at different bases —
-once for `𝓞 K` and once for `𝓞 (A ⊓ B)`. -/
-private theorem isUnramifiedAt_of_isIntegral {S A : Type*} [CommRing S] [CommRing A] [IsDomain A]
-    [IsDedekindDomain S] [Algebra S A] [Module.Finite S A]
-    [Module.IsTorsionFree S A] [Algebra.EssFiniteType ℤ S] [Algebra.EssFiniteType ℤ A] {q : ℕ}
-    (hur : ∀ (P : Ideal A) [P.IsPrime] [P.LiesOver (Ideal.span {(q : ℤ)})],
-      Algebra.IsUnramifiedAt ℤ P)
-    (𝔮 : Ideal S) [𝔮.IsPrime] [𝔮.LiesOver (Ideal.span {(q : ℤ)})] :
-    Algebra.IsUnramifiedAt ℤ 𝔮 := by
-  obtain ⟨P⟩ := (inferInstance : Nonempty (𝔮.primesOver A))
-  have : (P : Ideal A).IsPrime := P.2.1
-  have : (P : Ideal A).LiesOver 𝔮 := P.2.2
-  have : (P : Ideal A).LiesOver (Ideal.span {(q : ℤ)}) :=
-    Ideal.LiesOver.trans (P : Ideal A) 𝔮 (Ideal.span {(q : ℤ)})
-  exact Algebra.IsUnramifiedAt.of_liesOver ℤ 𝔮 (P : Ideal A)
-
-/-- **A totally ramified prime leaves no room for an intermediate field.** In a tower
-`K ≤ E ≤ B` of number fields, if a prime of `𝓞 B` is already as ramified over `𝓞 E` as the whole
-degree `[B : K]` allows, then `[E : K] = 1`.
-
-The ramification index over `𝓞 E` is bounded by `[B : E]`, so `[B : K] ≤ [B : E]`; against
-`[E : K] * [B : E] = [B : K]` that forces `[E : K] = 1`. -/
-private theorem finrank_eq_one_of_ramificationIdx_eq_finrank {K Ω : Type*} [Field K] [Field Ω]
-    [Algebra K Ω] (E B : IntermediateField K Ω) [NumberField E] [NumberField B] [Algebra E B]
-    [IsScalarTower K E B] [Module.Finite K E] (𝔔 : Ideal (𝓞 B)) [𝔔.IsPrime] {n : ℕ}
-    (he : 𝔔.ramificationIdx (𝓞 E) = n) (hB : Module.finrank K B = n) :
-    Module.finrank K E = 1 := by
-  have hb := Ideal.ramificationIdx_le_finrank_numberField (K := E) (F := B) 𝔔
-  have hle : Module.finrank K E * Module.finrank E B ≤ 1 * Module.finrank E B := by
-    rw [one_mul, Module.finrank_mul_finrank K E B, hB, ← he]; exact hb
-  exact le_antisymm (Nat.le_of_mul_le_mul_right hle Module.finrank_pos) Module.finrank_pos
 
 /-- **A cyclotomic extension meets an unramified extension trivially.** If `B` is a `q`-th
 cyclotomic extension of `K` for a prime `q`, and every prime of `𝓞 A` above `q` is unramified
@@ -103,7 +68,7 @@ theorem inf_eq_bot_of_unramified {K Ω : Type*} [Field K] [NumberField K] [Field
   have := h𝔔max
   have := h𝔔lo
   have hurK : ∀ (𝔮 : Ideal (𝓞 K)) [𝔮.IsPrime] [𝔮.LiesOver (Ideal.span {(q : ℤ)})],
-      Algebra.IsUnramifiedAt ℤ 𝔮 := fun 𝔮 ↦ isUnramifiedAt_of_isIntegral hur 𝔮
+      Algebra.IsUnramifiedAt ℤ 𝔮 := fun 𝔮 ↦ isUnramifiedAt_of_forall_isUnramifiedAt hur 𝔮
   -- `B / K` is totally ramified above `q`, and `[B : K] = φ q`
   have htot : 𝔔.ramificationIdx (𝓞 K) = q.totient := by
     have : IsCyclotomicExtension {q ^ (0 + 1)} K B := by
@@ -113,7 +78,7 @@ theorem inf_eq_bot_of_unramified {K Ω : Type*} [Field K] [NumberField K] [Field
     IsCyclotomicExtension.finrank B
       (IsCyclotomicExtension.irreducible_cyclotomic_of_unramified K q hq hurK)
   -- `E` is unramified above `q`, so it carries none of that ramification
-  have : Algebra.IsUnramifiedAt ℤ (𝔔.under (𝓞 E)) := isUnramifiedAt_of_isIntegral hur _
+  have : Algebra.IsUnramifiedAt ℤ (𝔔.under (𝓞 E)) := isUnramifiedAt_of_forall_isUnramifiedAt hur _
   have : Algebra.IsUnramifiedAt (𝓞 K) (𝔔.under (𝓞 E)) := .of_restrictScalars ℤ _
   have he1 : (𝔔.under (𝓞 E)).ramificationIdx (𝓞 K) = 1 :=
     Ideal.ramificationIdx_eq_one_of_isUnramifiedAt
@@ -122,6 +87,6 @@ theorem inf_eq_bot_of_unramified {K Ω : Type*} [Field K] [NumberField K] [Field
     rw [htot, he1, one_mul] at htower; exact htower.symm
   -- so all `φ q` of it lives in `B / E`, forcing `[E : K] = 1`
   exact IntermediateField.finrank_eq_one_iff.mp
-    (finrank_eq_one_of_ramificationIdx_eq_finrank E B 𝔔 he2 hBK)
+    (finrank_eq_one_of_ramificationIdx_eq_finrank 𝔔 he2 hBK)
 
 end IsCyclotomicExtension
