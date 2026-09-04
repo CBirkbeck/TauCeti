@@ -27,6 +27,10 @@ Hence `[E : K] = 1`.
 
 ## References
 
+This is Layer 7.3 of the Chebotarev roadmap (`TauCetiRoadmap/Chebotarev`, `README.md`), which
+states the argument used here: by Layer 7.2 the cyclotomic extension is totally ramified above
+`q`, `A` is unramified there, and an extension that is both is trivial.
+
 Milne, *Algebraic Number Theory*, proof of Proposition 6.2; Sharifi, *Algebraic Number Theory*,
 proof of Lemma 3.1.13. Both run this argument with `K = ℚ`.
 -/
@@ -43,8 +47,8 @@ namespace IsCyclotomicExtension
 
 Stated at the level of rings rather than of fields because it is used twice at different bases —
 once for `𝓞 K` and once for `𝓞 (A ⊓ B)`. -/
-theorem isUnramifiedAt_of_isIntegral {S A : Type*} [CommRing S] [CommRing A] [IsDomain A]
-    [IsDedekindDomain S] [Algebra S A] [Module.Finite S A] [FaithfulSMul S A]
+private theorem isUnramifiedAt_of_isIntegral {S A : Type*} [CommRing S] [CommRing A] [IsDomain A]
+    [IsDedekindDomain S] [Algebra S A] [Module.Finite S A]
     [Module.IsTorsionFree S A] [Algebra.EssFiniteType ℤ S] [Algebra.EssFiniteType ℤ A] {q : ℕ}
     (hur : ∀ (P : Ideal A) [P.IsPrime] [P.LiesOver (Ideal.span {(q : ℤ)})],
       Algebra.IsUnramifiedAt ℤ P)
