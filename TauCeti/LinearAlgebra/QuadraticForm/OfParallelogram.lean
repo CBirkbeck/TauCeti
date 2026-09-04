@@ -47,21 +47,15 @@ For a torsion-free codomain it is one term: `smul_right_injective N two_ne_zero`
 
 ## Main results
 
-* `TauCeti.QuadraticMap.map_zero_of_parallelogram` and
-  `TauCeti.QuadraticMap.map_neg_of_parallelogram`: `f 0 = 0` and `f (-x) = f x` come free from the
-  law; neither has to be assumed.
+* `TauCeti.QuadraticMap.map_zero_of_parallelogram`: `f 0 = 0`.
+* `TauCeti.QuadraticMap.map_neg_of_parallelogram`: `f (-x) = f x`.
 * `TauCeti.QuadraticMap.map_add_add_of_parallelogram`: the three-variable identity
-  `f (x + y + z) + f x + f y + f z = f (x + y) + f (y + z) + f (x + z)`. This is the whole
-  content — biadditivity is a rearrangement of it.
+  `f (x + y + z) + f x + f y + f z = f (x + y) + f (y + z) + f (x + z)`.
 * `TauCeti.QuadraticMap.polar_add_left_of_parallelogram` and
   `polar_zsmul_left_of_parallelogram`: the polarisation is additive and `ℤ`-linear on the left.
-  Additivity on the right is not restated — it is `QuadraticMap.polar_add_right` of the packaged
-  map below.
-* `TauCeti.QuadraticMap.map_zsmul_of_parallelogram`: `f (n • x) = n ^ 2 • f x` for `n : ℤ`,
-  written `(n * n) • f x` to match `QuadraticMap`'s `toFun_smul` field.
-* `TauCeti.QuadraticMap.ofParallelogram`: the resulting `QuadraticMap ℤ M N`, built with
-  `QuadraticMap.ofPolar`. Its companion bilinear map is `QuadraticMap.polarBilin` of it, which is
-  the polarisation.
+* `TauCeti.QuadraticMap.map_zsmul_of_parallelogram`: `f (n • x) = n ^ 2 • f x` for `n : ℤ`.
+* `TauCeti.QuadraticMap.ofParallelogram`: `f` as a `QuadraticMap ℤ M N`, with the polarisation as
+  its companion bilinear map.
 
 ## Where this is used
 
