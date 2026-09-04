@@ -46,6 +46,8 @@ with — is half of it. Getting this wrong would scale every later invariant.
   height was approximating.
 * `WeierstrassCurve.Affine.Point.canonicalHeight_two_nsmul`: the doubling normal form
   `canonicalHeight (2 • P) = 4 * canonicalHeight P`, the parallelogram law at `Q = P`.
+* `WeierstrassCurve.Affine.Point.canonicalHeight_nonneg`: it is non-negative, read off the
+  defining sequence termwise.
 * `WeierstrassCurve.Affine.Point.abs_canonicalHeight_sub_naiveHeight_le`: the canonical height stays
   within a bounded distance of *half* the naïve one, by a
   constant depending only on the curve. This is what makes the two interchangeable in
@@ -225,5 +227,12 @@ theorem Point.canonicalHeight_two_nsmul [W.toAffine.IsElliptic] (P : W.Point) :
   rw [sub_self, canonicalHeight_zero, add_zero] at h
   rw [two_nsmul]
   linarith
+/-- **The canonical height is non-negative.** Every term of the defining sequence is a quotient of
+non-negative quantities, so the limit is non-negative; no passage through the bounded difference
+from `h` is needed. -/
+theorem Point.canonicalHeight_nonneg [W.toAffine.IsElliptic] (P : W.Point) :
+    0 ≤ P.canonicalHeight :=
+  ge_of_tendsto' P.tendsto_naiveHeight_two_pow_nsmul_div_four_pow fun n ↦
+    div_nonneg (Point.naiveHeight_nonneg _) (by positivity)
 
 end WeierstrassCurve.Affine
