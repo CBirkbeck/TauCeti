@@ -53,10 +53,16 @@ with — is half of it. Getting this wrong would scale every later invariant.
   statement it specialises lives in `TauCeti/LinearAlgebra/QuadraticForm/OfParallelogram.lean`.
 * `WeierstrassCurve.Affine.Point.canonicalHeight_nonneg`: it is non-negative, read off the
   defining sequence termwise.
+* `WeierstrassCurve.Affine.Point.canonicalHeight_eq_zero_iff_isOfFinAddOrder`: it vanishes exactly
+  on the torsion points. The two directions are also available separately, because they need
+  different hypotheses: `canonicalHeight_eq_zero_of_isOfFinAddOrder` is quadraticity at a
+  vanishing multiple and needs no finiteness, while `isOfFinAddOrder_of_canonicalHeight_eq_zero`
+  assumes Northcott finiteness for the canonical height itself.
 * `WeierstrassCurve.Affine.Point.abs_canonicalHeight_sub_naiveHeight_le`: the canonical height stays
   within a bounded distance of *half* the naïve one, by a
   constant depending only on the curve. This is what makes the two interchangeable in
-  finiteness arguments — in particular Northcott finiteness transfers to it.
+  finiteness arguments — in particular Northcott finiteness transfers to it, which the `Northcott`
+  instance below makes formal.
 
 ## Implementation notes
 
@@ -270,5 +276,52 @@ theorem Point.canonicalHeight_nsmul [W.toAffine.IsElliptic] (n : ℕ) (P : W.Poi
   rw [← natCast_zsmul, Point.canonicalHeight_zsmul]
   push_cast
   ring
+
+/-- **A torsion point has canonical height zero.** Unlike the converse this needs no Northcott
+hypothesis, so it holds over every field carrying admissible absolute values. -/
+theorem Point.canonicalHeight_eq_zero_of_isOfFinAddOrder [W.toAffine.IsElliptic] {P : W.Point}
+    (h : IsOfFinAddOrder P) : P.canonicalHeight = 0 := by
+  -- Quadraticity at `n = addOrderOf P`, where `n • P = 0` and `n ≠ 0`: `n² * canonicalHeight P`
+  -- vanishes, and `n² ≠ 0`.
+  simpa [h.addOrderOf_pos.ne'] using (Point.canonicalHeight_nsmul (addOrderOf P) P).symm
+
+/-- **Northcott finiteness transfers from the naïve height to the canonical one.** This is what
+lets the results below assume Northcott for the canonical height itself while callers supply only
+the naïve height — or, through `MordellWeil/NaiveHeight.lean`, only the field height. -/
+instance [W.toAffine.IsElliptic] [Northcott (Point.naiveHeight (W := W))] :
+    Northcott (Point.canonicalHeight (W := W)) := by
+  -- `abs_canonicalHeight_sub_naiveHeight_le` gives a `D` for which `canonicalHeight Q ≤ B` forces
+  -- `naiveHeight Q ≤ 2 (B + D)`, so every sublevel set of the former sits inside a finite sublevel
+  -- set of the latter.
+  obtain ⟨D, hD⟩ := Point.abs_canonicalHeight_sub_naiveHeight_le (W := W)
+  refine ⟨fun B ↦ (Northcott.finite_le (h := Point.naiveHeight (W := W)) (2 * (B + D))).subset ?_⟩
+  intro Q hQ
+  simp only [Set.mem_ofPred_eq] at hQ ⊢
+  linarith [(abs_le.1 (hD Q)).1]
+
+/-- **A point of canonical height zero is torsion.** The hypothesis is `Northcott` for the
+canonical height, the class this API takes finiteness from; the instance above supplies it from
+the naïve height and `MordellWeil/NaiveHeight.lean` from the field height, so a caller carrying
+either of those needs nothing extra. -/
+theorem Point.isOfFinAddOrder_of_canonicalHeight_eq_zero [W.toAffine.IsElliptic]
+    [Northcott (Point.canonicalHeight (W := W))] {P : W.Point} (h : P.canonicalHeight = 0) :
+    IsOfFinAddOrder P := by
+  -- Quadraticity sends every multiple to `n² * canonicalHeight P = 0`, so they all lie in the
+  -- sublevel set `{Q | canonicalHeight Q ≤ 0}`, which Northcott makes finite.
+  refine finite_multiples.1 ?_
+  refine (Northcott.finite_le (h := Point.canonicalHeight (W := W)) 0).subset ?_
+  rintro Q ⟨n, rfl⟩
+  simp [h]
+
+/-- **The canonical height vanishes exactly on the torsion points**, identifying the kernel of
+the canonical height with the torsion subgroup. This is one input to positive definiteness on the
+free part, and so to the regulator; the others — polarising it, and finite generation of `W.Point`
+— are elsewhere, and neither is supplied here. -/
+@[simp]
+theorem Point.canonicalHeight_eq_zero_iff_isOfFinAddOrder [W.toAffine.IsElliptic]
+    [Northcott (Point.canonicalHeight (W := W))] (P : W.Point) :
+    P.canonicalHeight = 0 ↔ IsOfFinAddOrder P :=
+  ⟨Point.isOfFinAddOrder_of_canonicalHeight_eq_zero,
+    Point.canonicalHeight_eq_zero_of_isOfFinAddOrder⟩
 
 end WeierstrassCurve.Affine
