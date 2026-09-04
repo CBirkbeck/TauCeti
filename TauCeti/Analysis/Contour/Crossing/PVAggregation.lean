@@ -83,7 +83,7 @@ private theorem eventually_intervalIntegrable_truncated_window {γ : ℝ → ℂ
 `s`: the plain integral, with the truncated integrability restricted from `[a, b]`. Both public
 aggregations discharge their piece hypothesis through this. -/
 private theorem hasCauchyPVAt_plain_piece {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ} {a b m : ℝ}
-    (hab : a ≤ b) (hm_pos : 0 < m) (h_int_tr : ∀ ε : ℝ, 0 < ε →
+    (hm_pos : 0 < m) (h_int_tr : ∀ ε : ℝ, 0 < ε →
       IntervalIntegrable (fun t => if ‖γ t - s‖ > ε then g (γ t) * deriv γ t else 0)
         MeasureTheory.volume a b)
     {l u : ℝ} (hA : a ≤ l) (hlu : l ≤ u) (hu : u ≤ b)
@@ -92,7 +92,7 @@ private theorem hasCauchyPVAt_plain_piece {γ : ℝ → ℂ} {s : ℂ} {g : ℂ 
   HasCauchyPVAt.of_dist_lower_bound hm_pos (by rwa [uIcc_of_le hlu]) <| by
     filter_upwards [self_mem_nhdsWithin] with ε hε
     exact (h_int_tr ε hε).mono_set (by
-      rw [uIcc_of_le hlu, uIcc_of_le hab]
+      rw [uIcc_of_le hlu, uIcc_of_le (hA.trans (hlu.trans hu))]
       exact Icc_subset_Icc hA hu)
 
 /-- **Real-part boundary aggregation**: like
@@ -123,7 +123,7 @@ theorem exists_hasCauchyPVAt_re_eq_of_perWindow_tendsto_of_interiorDisjoint
   exact sorted_crossing_gluing_induction
     (Q := fun l u => ∃ v : ℂ, HasCauchyPVAt γ l u g s v ∧ v.re = Ψ u - Ψ l)
     (fun l u hA hlu hu h_far' => ⟨_,
-      hasCauchyPVAt_plain_piece hab hm_pos h_int_tr hA hlu hu h_far',
+      hasCauchyPVAt_plain_piece hm_pos h_int_tr hA hlu hu h_far',
       h_piece_re l u hA hlu hu h_far'⟩)
     (fun _ _ _ _ _ ⟨v₁, h₁, r₁⟩ ⟨v₂, h₂, r₂⟩ =>
       ⟨v₁ + v₂, h₁.concat h₂, by rw [Complex.add_re, r₁, r₂]; ring⟩)
@@ -165,7 +165,7 @@ theorem cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint {γ : ℝ → 
   obtain ⟨v, hv⟩ := sorted_crossing_gluing_induction
     (Q := fun l u => ∃ v : ℂ, HasCauchyPVAt γ l u g s v)
     (fun l u hA hlu hu h_far' =>
-      ⟨_, hasCauchyPVAt_plain_piece hab hm_pos h_int_tr hA hlu hu h_far'⟩)
+      ⟨_, hasCauchyPVAt_plain_piece hm_pos h_int_tr hA hlu hu h_far'⟩)
     (fun _ _ _ _ _ ⟨v₁, h₁⟩ ⟨v₂, h₂⟩ => ⟨v₁ + v₂, h₁.concat h₂⟩)
     (crossings.sort (· ≤ ·)) (Finset.sortedLT_sort crossings)
     (fun h => hr_nonneg (Finset.nonempty_iff_ne_empty.mpr fun he => h (by simp [he])))
@@ -211,7 +211,7 @@ theorem hasCauchyPVAt_of_perWindow_boundary_tendsto_of_interiorDisjoint {γ : �
         have h_bd := h_far' t ht
         rw [h_eq, sub_self, norm_zero] at h_bd
         linarith
-      have h0 := hasCauchyPVAt_plain_piece hab hm_pos h_int_tr hA hlu hu h_far'
+      have h0 := hasCauchyPVAt_plain_piece hm_pos h_int_tr hA hlu hu h_far'
       rwa [h_plain_eq l u hA hlu hu h_ne] at h0)
     (fun l u₀ u _ _ h₁ h₂ => by
       have h0 := h₁.concat h₂
