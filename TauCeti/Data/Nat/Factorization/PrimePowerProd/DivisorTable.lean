@@ -8,7 +8,6 @@ module
 public import TauCeti.Data.Nat.Factorization.GcdSplit
 public import TauCeti.Data.Nat.Factorization.PrimePowerProd.Basic
 public import Mathlib.Data.Finset.NatDivisors
-public import Mathlib.NumberTheory.Divisors
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Tactic.Ring
 
@@ -109,8 +108,10 @@ private theorem primePowerProd_prime_pow_mul_min_max (f : ℕ → ℕ → R) (p 
   · rw [min_eq_left h, max_eq_right h]
   · rw [min_eq_right h, max_eq_left h, mul_comm]
 
-/-- The summand of the product of the two sums agrees with the summand of the target sum at the
-divisor `p ^ j * d'`. This is the pointwise half of the reindexing. -/
+/-- At the divisor `p ^ j · d'` of `gcd m n`, the two summands multiply to the target summand:
+`p^j • (S_{p^j}·D_{p^{…}}) * d' • (S_{d'}·D_{m'n'/d'²}) = (p^j·d') • (S_{p^j·d'}·D_{mn/(p^j·d')²})`.
+Both the scalar and the two families are multiplicative here because the indices `p ^ j` and `d'`
+are coprime, `d'` being a divisor of the `p`-free `gcd m' n'`. -/
 private theorem primePowerProd_smul_mul_smul_of_not_dvd {p a b m' n' m n d' j : ℕ}
     (hp : p.Prime) (hm_eq : m = p ^ a * m') (hn_eq : n = p ^ b * n') (hm' : ¬p ∣ m')
     (hn' : ¬p ∣ n') (hd'g : d' ∣ Nat.gcd m' n') (hj : j ≤ min a b) :
@@ -129,14 +130,12 @@ private theorem primePowerProd_smul_mul_smul_of_not_dvd {p a b m' n' m n d' j : 
     primePowerProd_mul_of_coprime S hcopS fun _ _ _ _ _ ↦ Commute.all _ _]
   ring_nf
 
-/-- The reindexing step: the product of the prime-power sum with the sum over the divisors of
-`gcd m' n'` is the sum over the divisors of `gcd m n`.
+/-- The product of the prime-power sum over `j ≤ min a b` with the divisor sum over `gcd m' n'`
+is the divisor sum over `gcd m n`.
 
-`gcd m n` is the coprime product `gcd m' n' * p ^ min a b`, so `Nat.divisors_mul` splits its
-divisors as the pairwise products, injectively by `Nat.Coprime.mul_injOn_divisors`; the divisors of
-the prime-power factor are then re-indexed by their exponent with `Nat.sum_divisors_prime_pow`.
-What is left is the pointwise identity, which is
-`TauCeti.Nat.primePowerProd_smul_mul_smul_of_not_dvd`. -/
+This is the induction step of the table: `gcd m n` is the coprime product `gcd m' n' · p^{min a b}`,
+so its divisors are exactly the products `p^j · d'` of a divisor of each factor, and the two
+summands multiply to the summand there. -/
 private theorem primePowerProd_sum_mul_sum_eq_sum_divisors {p a b m' n' m n : ℕ} (hp : p.Prime)
     (hm' : ¬p ∣ m') (hn' : ¬p ∣ n') (hm_eq : m = p ^ a * m')
     (hn_eq : n = p ^ b * n') (hgcd : Nat.gcd m n = Nat.gcd m' n' * p ^ min a b) :

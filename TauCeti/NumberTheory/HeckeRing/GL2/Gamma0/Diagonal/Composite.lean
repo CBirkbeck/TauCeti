@@ -243,26 +243,15 @@ theorem heckeTScalarCompositeGamma0_prime_pow {p : ℕ} (hp : p.Prime) (v : ℕ)
   · simpa only [heckeTScalarCompositeGamma0_def] using
       TauCeti.Nat.primePowerProd_prime_pow (fun p v ↦ heckeTScalarGamma0 N p ^ v) hp hv
 
-/-- The `Γ₀(N)` Hecke ring over `ℤ` as a *commutative* ring.
+/-- The `Γ₀(N)` Hecke ring over `ℤ` as a *commutative* ring: the ambient `Ring` instance with
+`mul_comm` supplied by the Atkin–Lehner anti-involution.
 
-`TauCeti.Nat.primePowerProd_mul_eq_sum_divisors_gcd` asks for a `CommSemiring` structure on the
-coefficient type, so the table below needs commutativity as a *structure* rather than as the
-pointwise `HeckeCosetModule.mul_comm_of_antiInvolution` the neighbouring proofs quote.
-
-`HeckeRing.GL2.commSemiringHeckeRingGamma0` supplies exactly that class and would be the obvious
-choice, but it cannot be used here, which is worth recording. It is built by
-`HeckeCosetModule.commSemiringOfAntiInvolution`, which extends `instSemiringHeckeRing`, whereas
-the `Mul` and `One` in the statements below come from the *ambient* `Ring` instance. The two agree
-definitionally but not syntactically, so the same `TauCeti.Nat.primePowerProd` term carries
-different instance arguments in the goal and in the generic lemma. Measured: under
-`commSemiringHeckeRingGamma0`, `TauCeti.Nat.primePowerProd_eq_factorization_prod` fails to rewrite
-a goal of literally its own shape, and the `CommSemiring` argument of the generic table is left
-stuck as a metavariable.
-
-This def adds `mul_comm` to the ambient `Ring` instead, so every operation it carries — and hence
-the `CommSemiring` the generic theorem sees — is the ambient one by construction, and no diamond
-is introduced. The statement of `heckeTCompositeGamma0_mul_eq_sum_divisors_gcd` is in the ambient
-algebra either way; only its proof sees this.
+`TauCeti.Nat.primePowerProd_mul_eq_sum_divisors_gcd` asks for commutativity as a *structure*,
+where the neighbouring proofs quote it pointwise as
+`HeckeCosetModule.mul_comm_of_antiInvolution`. `HeckeRing.GL2.commSemiringHeckeRingGamma0` is the
+same mathematical fact, but it is built from `instSemiringHeckeRing` rather than from the ambient
+`Ring`, so its operations are only definitionally the ones these statements carry, and rewriting
+through it fails. This def extends the ambient `Ring` instead, which is why it exists.
 
 Private and local for the same reason `commSemiringHeckeRingGamma0` is not an instance — the
 anti-involution is data. -/
