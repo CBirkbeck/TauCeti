@@ -20,7 +20,7 @@ the rank of `𝓞 F` over `𝓞 K`.
 
 * `Ideal.ramificationIdx_le_finrank_numberField`: for a prime `𝔔` of `𝓞 F` in an extension
   `F / K` of number fields, `e(𝔔 / 𝓞 K) ≤ [F : K]`.
-* `TauCeti.NumberField.finrank_eq_one_of_ramificationIdx_eq_finrank`: in a tower `K ≤ E ≤ B`, a
+* `Ideal.finrank_eq_one_of_ramificationIdx_eq_finrank`: in a tower `K ≤ E ≤ B`, a
   prime of `𝓞 B` as ramified over `𝓞 E` as `[B : K]` allows forces `[E : K] = 1`.
 -/
 
@@ -51,7 +51,8 @@ of number fields, if a prime of `𝓞 B` is already as ramified over `𝓞 E` as
 
 The ramification index over `𝓞 E` is bounded by `[B : E]`, so `[B : K] ≤ [B : E]`; against
 `[E : K] * [B : E] = [B : K]` that forces `[E : K] = 1`. -/
-theorem finrank_eq_one_of_ramificationIdx_eq_finrank {E B : Type*} [Field E] [NumberField E]
+theorem _root_.Ideal.finrank_eq_one_of_ramificationIdx_eq_finrank
+    {E B : Type*} [Field E] [NumberField E]
     [Field B] [NumberField B] [Algebra K E] [Algebra K B] [Algebra E B] [IsScalarTower K E B]
     (𝔔 : Ideal (𝓞 B)) [𝔔.IsPrime] {n : ℕ}
     (he : 𝔔.ramificationIdx (𝓞 E) = n) (hB : Module.finrank K B = n) :
