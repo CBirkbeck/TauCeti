@@ -8,11 +8,15 @@ module
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 
 /-!
-# How a ring endomorphism acts on the roots of unity
+# Maps determined by their value on a primitive root
 
 In a domain the `n`-th roots of unity are exactly the powers of a primitive one, so a ring
 endomorphism is pinned down on all of them by its value on a single primitive `n`-th root: if it
 raises that root to the `j`-th power, it raises every `n`-th root of unity to the `j`-th power.
+
+The same principle characterises when the cyclotomic character `IsPrimitiveRoot.autToPow` is
+trivial: it kills an automorphism exactly when that automorphism fixes the chosen primitive root,
+because the character records nothing but the power the root is sent to.
 
 ## Main results
 
@@ -20,6 +24,16 @@ raises that root to the `j`-th power, it raises every `n`-th root of unity to th
   unity `ζ` to `ζ ^ j` sends every `n`-th root of unity `μ` to `μ ^ j`.
 * `IsPrimitiveRoot.autToPow_eq_one_iff`: the cyclotomic character kills an automorphism exactly
   when it fixes the chosen primitive root.
+
+## References
+
+`autToPow_eq_one_iff` is the argument previously carried inline inside
+`IsCyclotomicExtension.restrictNormalHom_prod_autToPow_injective`
+(`TauCeti/NumberTheory/NumberField/Cyclotomic/Compositum.lean`), which is adapted from the
+Birkbeck--Brasca Chebotarev density project,
+[CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0).
+Extracting it here, so that the characterisation is available without a compositum in scope, is
+what this file adds; the credit travels with the proof.
 -/
 
 public section

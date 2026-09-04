@@ -11,7 +11,10 @@ public import TauCeti.RingTheory.RootsOfUnity.PrimitiveRoots
 /-!
 # The automorphisms fixing the roots of unity
 
-`Gal(M/K(μ_m))` is the kernel of the cyclotomic character `IsPrimitiveRoot.autToPow`.
+The `K`-automorphisms of `M` fixing `K(μ_m)` pointwise are exactly the kernel of the cyclotomic
+character `IsPrimitiveRoot.autToPow`. No Galois, normality or separability hypothesis is needed —
+only that `M` contains a primitive `m`-th root of unity — although when `M / K` is Galois this
+subgroup is `Gal(M/K(μ_m))`, which is the reading the crossing argument uses.
 
 ## Main results
 
@@ -44,5 +47,8 @@ theorem IsPrimitiveRoot.fixingSubgroup_adjoin_setOfPred_pow_eq_one_eq_ker_autToP
   simp only [← AlgEquiv.smul_def]
   rw [IntermediateField.forall_mem_adjoin_smul_eq_self_iff]
   refine ⟨fun h ↦ by simpa [AlgEquiv.smul_def] using h ζ hζ.pow_eq_one, fun h b hb ↦ ?_⟩
-  obtain ⟨i, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one (Set.mem_ofPred_eq ▸ hb)
-  simp [h]
+  -- `x` fixes `ζ`, so it raises every `m`-th root of unity to the first power: that is
+  -- `map_eq_pow` at `j = 1`, from the file this one already imports.
+  have := TauCeti.IsPrimitiveRoot.map_eq_pow (j := 1) hζ (x : M ≃+* M).toRingHom
+    (by simpa using h) (Set.mem_ofPred_eq ▸ hb)
+  simpa [AlgEquiv.smul_def] using this
