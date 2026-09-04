@@ -122,12 +122,11 @@ which is a ring homomorphism, so a consumer needing the isomorphism of rings has
 `RingHom.quotientKerEquivOfSurjective` is that same map. -/
 theorem isHomeomorph_kerLift (hq : IsQuotientMap (f : R → S)) : IsHomeomorph (kerLift f) := by
   -- `f` factors as `kerLift f ∘ mk`, and `mk` coinduces, so the quotient-map hypothesis on `f`
-  -- transfers to `kerLift f`; injectivity then upgrades coinducing to open
+  -- transfers to `kerLift f`; an injective quotient map is a homeomorphism
   have hcomp : ⇑(kerLift f) ∘ ⇑(Ideal.Quotient.mk (ker f)) = ⇑f := funext (kerLift_mk f)
   have hmk : IsCoinducing ⇑(Ideal.Quotient.mk (ker f)) := ⟨rfl⟩
   have hkl : IsQuotientMap ⇑(kerLift f) := .of_comp_of_isCoinducing (hcomp ▸ hq) hmk
-  exact ⟨hkl.continuous, hkl.isCoinducing.isOpenMap_of_injective (kerLift_injective f),
-    kerLift_injective f, hkl.surjective⟩
+  exact isHomeomorph_iff_isQuotientMap_injective.mpr ⟨hkl, kerLift_injective f⟩
 
 end RingHom
 
