@@ -184,7 +184,9 @@ open Matrix
 
 universe u
 
-variable (k : Type u)
+-- `k` is implicit so that `M` is the first explicit argument: that is what makes the name
+-- `Matrix.detRowAlternating_mulVec` usable as `M.detRowAlternating_mulVec`.
+variable {k : Type u}
 
 /-- Multiplication by a square matrix scales the standard-basis determinant form by its
 determinant. This is `AlternatingMap.compLinearMap_eq_det_smul` at `ω = (Pi.basisFun k ι).det`,

@@ -63,7 +63,7 @@ theorem detRowAlternating_stdSLRep (g : Matrix.SpecialLinearGroup (Fin n) k)
     Matrix.detRowAlternating (fun i => stdSLRep k n g (v i)) =
       Matrix.detRowAlternating v := by
   simpa only [stdSLRep_apply_apply, g.det_coe, one_mul] using
-    Matrix.detRowAlternating_mulVec k (ι := Fin n) (g : Matrix (Fin n) (Fin n) k) v
+    Matrix.detRowAlternating_mulVec (ι := Fin n) (g : Matrix (Fin n) (Fin n) k) v
 
 /-- The special linear group acts trivially on the top exterior power of the standard
 representation: a matrix acts there by its determinant, which is one.
