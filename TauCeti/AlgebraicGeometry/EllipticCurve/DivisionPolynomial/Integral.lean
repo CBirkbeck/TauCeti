@@ -32,6 +32,10 @@ the descent step is not a theorem of this repository.
 * `TauCeti.WeierstrassCurve.monic_Φ_sub_C_mul_ΨSq`: `Φₙ − C c * ΨSqₙ` is monic, unconditionally.
 * `TauCeti.WeierstrassCurve.aeval_Φ_sub_C_mul_ΨSq_eq_zero`: the coordinate identity says exactly
   that `x` is a root of that polynomial.
+* `TauCeti.WeierstrassCurve.isIntegral_of_mul_eval_ΨSq_eq_eval_Φ`: the identity
+  `c * ΨSqₙ(x) = Φₙ(x)` with `c` from `R` makes `x` integral over `R`, for unrestricted `n` and
+  with no hypothesis beyond the ambient structures. This is the criterion the
+  multiplication-by-`n` isogeny consumes.
 * `TauCeti.WeierstrassCurve.isInteger_of_mul_eval_ΨSq_eq_eval_Φ`: in any `R`-algebra in which `R`
   is integrally closed, if `x' * ΨSqₙ(x) = Φₙ(x)` with `x'` coming from `R`, then so does `x` — a
   statement about two elements satisfying that identity, not about a point and its multiple.
@@ -100,6 +104,16 @@ theorem aeval_Φ_sub_C_mul_ΨSq_eq_zero {n : ℤ} {x : A} {c : R}
     Polynomial.map_mul, Polynomial.map_C, eval_sub, eval_mul, eval_C] at hid ⊢
   linear_combination -hid
 
+/-- **An integrality criterion for `Φₙ` and `ΨSqₙ`.**
+
+If `c * ΨSqₙ(x) = Φₙ(x)` with `c` coming from `R`, then `x` is integral over `R`: it is a root of
+`Φₙ − C c * ΨSqₙ`, which is monic. Beyond the commutative-ring and algebra structures nothing is
+assumed, and `n` is unrestricted: `n = 0` and the multiples of the characteristic are covered. -/
+theorem isIntegral_of_mul_eval_ΨSq_eq_eval_Φ (n : ℤ) {x : A} {c : R}
+    (hid : algebraMap R A c * ((W.baseChange A).ΨSq n).eval x = ((W.baseChange A).Φ n).eval x) :
+    IsIntegral R x :=
+  ⟨_, monic_Φ_sub_C_mul_ΨSq W n c, aeval_Φ_sub_C_mul_ΨSq_eq_zero W hid⟩
+
 /-- **An integral-root criterion for `Φₙ` and `ΨSqₙ`.**
 
 If `x' * ΨSqₙ(x) = Φₙ(x)` and `x'` comes from `R`, then so does `x`: it is a root of the monic
@@ -114,7 +128,7 @@ theorem isInteger_of_mul_eval_ΨSq_eq_eval_Φ [IsIntegrallyClosedIn R A] (n : �
     IsLocalization.IsInteger R x := by
   obtain ⟨c, hc⟩ := hx'
   exact RingHom.mem_rangeS.mpr (IsIntegrallyClosedIn.isIntegral_iff.mp
-    ⟨_, monic_Φ_sub_C_mul_ΨSq W n c, aeval_Φ_sub_C_mul_ΨSq_eq_zero W (hc ▸ hid)⟩)
+    (isIntegral_of_mul_eval_ΨSq_eq_eval_Φ W n (hc ▸ hid)))
 
 end Root
 

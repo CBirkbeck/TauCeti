@@ -82,6 +82,8 @@ is `WeierstrassCurve.Affine`'s, in `Affine/FunctionField/GenericPoint.lean`.
 * `TauCeti.Isogeny.psiFunctionField_ne_zero_of_Δ_ne_zero`: the same conclusion from `W.Δ ≠ 0`
   and `n ≠ 0`, with no hypothesis on the characteristic. These are the two discharges of
   `mulByIntPullback`'s hypothesis; neither subsumes the other.
+* `TauCeti.Isogeny.phiFunctionField_eq_algebraMap`: `Φₙ` at the generic point is the image of
+  the univariate `Φₙ`, the companion of `psiFunctionField_sq` for the numerator.
 * `TauCeti.Isogeny.mulByIntPullback_mk`: the pullback of an arbitrary class, as evaluation of a
   bivariate polynomial at `(φₙ/ψₙ², ωₙ/ψₙ³)`, with `TauCeti.Isogeny.mulByIntPullback_X` and
   `TauCeti.Isogeny.mulByIntPullback_Y` its values on the two coordinates.
@@ -152,6 +154,13 @@ theorem omegaFunctionField_def (n : ℤ) : omegaFunctionField W n =
 /-- **The defining equation of `phiFunctionField`.** -/
 theorem phiFunctionField_def (n : ℤ) : phiFunctionField W n =
     algebraMap W.CoordinateRing W.FunctionField (Affine.CoordinateRing.mk W (W.φ n)) := (rfl)
+
+/-- **`Φₙ` at the generic point is the image of the univariate `Φₙ`.** -/
+theorem phiFunctionField_eq_algebraMap (n : ℤ) :
+    phiFunctionField W n = algebraMap F[X] W.FunctionField (W.Φ n) := by
+  rw [phiFunctionField_def, Affine.CoordinateRing.mk_φ,
+    TauCeti.WeierstrassCurve.Affine.CoordinateRing.mk_C_eq_algebraMap,
+    ← IsScalarTower.algebraMap_apply]
 
 /-- **The defining equation of `mulByIntX`**: the `x`-coordinate of `[n]` is `φₙ / ψₙ²`. -/
 theorem mulByIntX_def (n : ℤ) :
