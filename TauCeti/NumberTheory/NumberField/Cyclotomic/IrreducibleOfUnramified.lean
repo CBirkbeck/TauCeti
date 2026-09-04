@@ -167,11 +167,13 @@ irreducible over `K`. Specialised to `K = ℚ` it says a number field unramified
 `ℚ(ζ_{p^(k+1)})` trivially; over a general base it is the corresponding statement about
 `L ∩ K(ζ_{p^(k+1)})`. -/
 theorem inf_eq_bot_prime_pow_of_unramified {Ω : Type*} [Field Ω] [Algebra K Ω]
-    (p k : ℕ) [Fact p.Prime] (A B : IntermediateField K Ω) [NumberField A] [NumberField B]
+    (p k : ℕ) [Fact p.Prime] (A B : IntermediateField K Ω) [NumberField A]
     [IsCyclotomicExtension {p ^ (k + 1)} K B]
     (hur : ∀ (P : Ideal (𝓞 A)) [P.IsPrime] [P.LiesOver (Ideal.span {(p : ℤ)})],
       Algebra.IsUnramifiedAt ℤ P) :
     A ⊓ B = ⊥ := by
+  have : FiniteDimensional K B := finiteDimensional {p ^ (k + 1)} K B
+  have : NumberField B := .of_module_finite K B
   set E := (A ⊓ B : IntermediateField K Ω) with hE
   have hEA : E ≤ A := inf_le_left
   have hEB : E ≤ B := inf_le_right
@@ -205,7 +207,7 @@ theorem inf_eq_bot_prime_pow_of_unramified {Ω : Type*} [Field Ω] [Algebra K Ω
 
 /-- The prime case of `inf_eq_bot_prime_pow_of_unramified`, at `k = 0`. -/
 theorem inf_eq_bot_of_unramified {Ω : Type*} [Field Ω] [Algebra K Ω]
-    (q : ℕ) (hq : q.Prime) (A B : IntermediateField K Ω) [NumberField A] [NumberField B]
+    (q : ℕ) (hq : q.Prime) (A B : IntermediateField K Ω) [NumberField A]
     [IsCyclotomicExtension {q} K B]
     (hur : ∀ (P : Ideal (𝓞 A)) [P.IsPrime] [P.LiesOver (Ideal.span {(q : ℤ)})],
       Algebra.IsUnramifiedAt ℤ P) :
