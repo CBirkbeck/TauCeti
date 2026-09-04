@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Data.Nat.Factorization.Basic
-public import Mathlib.Data.Nat.Prime.Pow
 
 /-!
 # Splitting a gcd at a prime
