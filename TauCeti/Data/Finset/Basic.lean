@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Data.Fintype.BigOperators
-public import Mathlib.Data.Set.PowersetCard
+import Mathlib.Data.Set.PowersetCard
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.SetTheory.Cardinal.Finite
 
@@ -38,6 +38,12 @@ theorem card_nonempty_finset {ι : Type*} [Finite ι] :
       Fintype.card_finset]
   rw [Nat.card_eq_fintype_card, Nat.card_eq_fintype_card, h]
 
+/-- The underlying `Finset` of `Set.powersetCard.ofSingleton a` is `{a}`. Mathlib states
+`ofSingleton` by its defining data rather than through a coercion lemma, so name the one step of
+definitional unfolding here instead of reducing a whole composite equivalence in place. -/
+private lemma coe_ofSingleton {ι : Type*} (a : ι) :
+    ((Set.powersetCard.ofSingleton a : Set.powersetCard ι 1) : Finset ι) = {a} := rfl
+
 -- The bijection below is Mathlib's, taken from the inline argument in
 -- `ContinuousMultilinearMap.changeOrigin_toFormalMultilinearSeries`.
 /-- **Summing over the subsets of size one less than `card ι` is summing over the points.** Such a
@@ -54,9 +60,8 @@ theorem sum_piecewise_eq_sum_update_of_card_eq_succ {ι : Type*} {α : ι → Ty
   refine (Fintype.sum_equiv (e := (Set.powersetCard.ofSingleton.trans
     (Set.powersetCard.compl hm.symm)).trans
       (Equiv.subtypeEquivRight fun _ ↦ Set.powersetCard.mem_iff)) _ _ fun i ↦ ?_).symm
-  have hval : (((Set.powersetCard.ofSingleton.trans (Set.powersetCard.compl hm.symm)).trans
-      (Equiv.subtypeEquivRight fun _ ↦ Set.powersetCard.mem_iff) : ι ≃ _) i : Finset ι) =
-      ({i} : Finset ι)ᶜ := rfl
-  rw [hval, Finset.compl_singleton, Finset.piecewise_erase_univ]
+  rw [Equiv.trans_apply, Equiv.trans_apply, Equiv.subtypeEquivRight_apply,
+    Set.powersetCard.coe_compl, coe_ofSingleton, Finset.compl_singleton,
+    Finset.piecewise_erase_univ]
 
 end TauCeti
