@@ -13,14 +13,18 @@ public import Mathlib.Algebra.Module.Torsion.Basic
 # The points modulo torsion, and the Néron-Tate pairing on them
 
 The Néron-Tate pairing vanishes as soon as either argument is torsion, so it descends to the
-quotient of the points by their torsion submodule, and the descended pairing is positive
-definite. That quotient is where the regulator is defined.
+quotient of the points by their torsion submodule, unconditionally. Under
+`[Northcott (Point.canonicalHeight (W := W))]` — the hypothesis that makes height zero force
+torsion — the descended pairing is moreover positive definite. That quotient is where the
+regulator is defined.
 
 ## Main definitions
 
-* `WeierstrassCurve.Affine.PointModTorsion`: the points modulo torsion. Its freeness and its
-  rank are Mathlib's, from `Module.free_of_finite_type_torsion_free'` and
-  `finrank_quotient_eq_of_le_torsion`, so neither is restated here.
+* `WeierstrassCurve.Affine.PointModTorsion`: the points modulo torsion. Neither its freeness nor
+  its rank is restated here, both being Mathlib's: under `[AddGroup.FG W.Point]` the quotient is
+  free of finite rank by `Module.free_of_finite_type_torsion_free'`, and its rank is
+  `Module.finrank ℤ W.Point` by `finrank_quotient_eq_of_le_torsion` at `le_rfl`. The definition
+  itself assumes neither, so the name says only what the quotient is.
 * `WeierstrassCurve.Affine.neronTatePairingModTorsion`: the Néron-Tate pairing on that quotient.
 * `WeierstrassCurve.Affine.neronTateGramMatrix`: its matrix in a basis, whose determinant is the
   regulator.
@@ -32,7 +36,8 @@ definite. That quotient is where the regulator is defined.
 * `WeierstrassCurve.Affine.neronTatePairingModTorsion_mk`: the descended pairing agrees with the
   original on representatives.
 * `WeierstrassCurve.Affine.neronTatePairingModTorsion_self_eq_zero_iff`: the descended pairing is
-  positive definite, which is what dividing by the torsion buys.
+  positive definite, given the `Northcott` hypothesis. This is what dividing by the torsion buys;
+  on `W.Point` itself the pairing is only semidefinite.
 * `WeierstrassCurve.Affine.isSymm_neronTateGramMatrix`: the Gram matrix is symmetric. The
   regulator is the determinant of this matrix in a basis of the quotient, and is defined
   separately.
