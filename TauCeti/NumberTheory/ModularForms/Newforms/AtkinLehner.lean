@@ -33,9 +33,10 @@ descent `φ` is supplied by the caller, so no hypothesis on the `q`-expansion of
 
 * `TauCeti.mem_cuspFormsOld_of_slash_T_eq`: a cusp form of level `Γ₁(N)` with a nebentypus, whose
   level-`l` descent is invariant under the weight-`k` slash action of `T`, is old.
-* `TauCeti.mem_cuspFormsOld_of_qExpansionSupportedOnDvd`: **the main lemma** — the same
-  conclusion from the `q`-expansion support condition alone, the descent being supplied by
-  `Newforms/Descent.lean`.
+* `TauCeti.mem_cuspFormsOld_of_qExpansionSupportedOnDvd`: **the Atkin–Lehner step at one
+  divisor** — the same conclusion from the `q`-expansion support condition alone, the descent
+  being supplied by `Newforms/Descent.lean`. This is not yet the roadmap's Atkin–Lehner Main
+  Lemma; see below.
 
 ## Provenance
 
@@ -91,13 +92,19 @@ theorem mem_cuspFormsOld_of_slash_T_eq {l : ℕ} (hl : l ≠ 1) (hlN : l ∣ N)
       rw [hf, hφ, SlashAction.zero_slash, smul_zero, FunLike.coe_zero]
     exact hf0 ▸ (cuspFormsOld N k).zero_mem
 
-/-- **The Atkin–Lehner main lemma.** A cusp form of level `Γ₁(N)` with a nebentypus, whose
-period-one `q`-expansion is supported on the multiples of a divisor `l ≠ 1` of `N`, is old.
+/-- **The Atkin–Lehner step at one divisor.** A cusp form of level `Γ₁(N)` with a nebentypus,
+whose period-one `q`-expansion is supported on the multiples of a divisor `l ≠ 1` of `N`, is old.
 
 The support condition is spent entirely on manufacturing the descent: `Descent.lean` turns it into
 a `T`-invariant `φ : ℍ → ℂ` with `f = l ^ (1 - k) • (φ ∣[k] diag(l, 1))`, and
 `mem_cuspFormsOld_of_slash_T_eq` reads the level-lowering dichotomy off that. Nothing else about
-the `q`-expansion is used, and `l` need not be prime. -/
+the `q`-expansion is used, and `l` need not be prime.
+
+⚠ This is one divisor and one character, and so is **not** the roadmap's Atkin–Lehner Main Lemma
+(Diamond–Shurman Theorem 5.7.1), which concludes oldness from `aₙ(f) = 0` at *every* `n` coprime
+to `N`. That hypothesis does not name a divisor: passing from it to this one is the sum over the
+primes dividing `N`, which is a separate argument and is not done here. What this supplies is the
+per-divisor, per-character input that argument consumes. -/
 theorem mem_cuspFormsOld_of_qExpansionSupportedOnDvd {l : ℕ} (hl : l ≠ 1) (hlN : l ∣ N)
     (χ : DirichletCharacter ℂ N) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
     (hfχ : f ∈ cuspFormCharSpace k χ.toUnitHom)
