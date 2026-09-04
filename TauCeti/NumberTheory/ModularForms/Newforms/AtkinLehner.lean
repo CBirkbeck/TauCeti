@@ -7,6 +7,7 @@ module
 
 public import TauCeti.NumberTheory.ModularForms.ConductorDichotomy
 public import TauCeti.NumberTheory.ModularForms.Newforms.Basic
+public import TauCeti.NumberTheory.ModularForms.Newforms.Descent
 
 /-!
 # A form with a periodic level-`l` descent is old
@@ -32,6 +33,9 @@ descent `φ` is supplied by the caller, so no hypothesis on the `q`-expansion of
 
 * `TauCeti.mem_cuspFormsOld_of_slash_T_eq`: a cusp form of level `Γ₁(N)` with a nebentypus, whose
   level-`l` descent is invariant under the weight-`k` slash action of `T`, is old.
+* `TauCeti.mem_cuspFormsOld_of_qExpansionSupportedOnDvd`: **the main lemma** — the same
+  conclusion from the `q`-expansion support condition alone, the descent being supplied by
+  `Newforms/Descent.lean`.
 
 ## Provenance
 
@@ -86,6 +90,24 @@ theorem mem_cuspFormsOld_of_slash_T_eq {l : ℕ} (hl : l ≠ 1) (hlN : l ∣ N)
   · have hf0 : f = 0 := DFunLike.coe_injective <| by
       rw [hf, hφ, SlashAction.zero_slash, smul_zero, FunLike.coe_zero]
     exact hf0 ▸ (cuspFormsOld N k).zero_mem
+
+/-- **The Atkin–Lehner main lemma.** A cusp form of level `Γ₁(N)` with a nebentypus, whose
+period-one `q`-expansion is supported on the multiples of a divisor `l ≠ 1` of `N`, is old.
+
+The support condition is spent entirely on manufacturing the descent: `Descent.lean` turns it into
+a `T`-invariant `φ : ℍ → ℂ` with `f = l ^ (1 - k) • (φ ∣[k] diag(l, 1))`, and
+`mem_cuspFormsOld_of_slash_T_eq` reads the level-lowering dichotomy off that. Nothing else about
+the `q`-expansion is used, and `l` need not be prime. -/
+theorem mem_cuspFormsOld_of_qExpansionSupportedOnDvd {l : ℕ} (hl : l ≠ 1) (hlN : l ∣ N)
+    (χ : DirichletCharacter ℂ N) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
+    (hfχ : f ∈ cuspFormCharSpace k χ.toUnitHom)
+    (hf : haveI : NeZero l := NeZero.of_dvd hlN
+      QExpansionSupportedOnDvd l f) :
+    f ∈ cuspFormsOld N k := by
+  have : NeZero l := NeZero.of_dvd hlN
+  obtain ⟨φ, hφ, hT⟩ :=
+    CuspForm.exists_eq_smul_slash_scaleGL_and_slash_T_eq_of_qExpansionSupportedOnDvd f hf
+  exact mem_cuspFormsOld_of_slash_T_eq hl hlN χ φ hfχ hφ hT
 
 end TauCeti
 
