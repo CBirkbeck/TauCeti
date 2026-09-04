@@ -12,9 +12,8 @@ public import Mathlib.Algebra.Group.Subgroup.Lattice
 # Separating subgroups of a linearly ordered group
 
 A subgroup strictly contained in another is separated from it by an element of prescribed sign:
-`Δ < Γ'` admits a member of `Γ'` outside `Δ` that exceeds `1`, and dually one below `1`. The
-witness is produced from any element of the difference by replacing it with its inverse when
-needed, so nothing beyond a group, a linear order and inversion reversing strict order is used.
+`Δ < Γ'` admits a member of `Γ'` outside `Δ` that exceeds `1`, and dually one below `1`. Nothing
+beyond a group, a linear order and inversion reversing strict order is assumed.
 
 That the witness has a *strict* sign is what these are for. A monotone map out of `Γ` carries a
 bound only to `≤`; a witness of this shape is what upgrades such a bound to the strict inequality
