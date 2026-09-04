@@ -39,8 +39,8 @@ the compositum is unramified over the quadratic base.
   every absolute ramification index upstairs by the intermediate absolute ramification index.
 * `TauCeti.RamificationInertia.isUnramifiedIn_of_finrank_le_of_under_ramificationIdx_eq_one`: a
   transverse unramified subextension of sufficiently small relative degree supplies that bound.
-* `TauCeti.RamificationInertia.isUnramifiedAt_of_forall_isUnramifiedAt`: unramifiedness over `ℤ`
-  descends from a module-finite extension to the subring below it, over any ideal of `ℤ`.
+* `TauCeti.RamificationInertia.isUnramifiedAt_of_forall_isUnramifiedAt`: unramifiedness descends
+  from an integral extension to the subring below it, over any base ring and any ideal of it.
 -/
 
 public section
@@ -166,29 +166,30 @@ end Tower
 
 section Descent
 
-variable {R S : Type*} [CommRing R] [IsDedekindDomain R] [CommRing S] [IsDomain S]
-  [Algebra R S] [Module.Finite R S] [Module.IsTorsionFree R S]
-  [Algebra.EssFiniteType ℤ R] [Algebra.EssFiniteType ℤ S]
+variable {A R S : Type*} [CommRing A] [CommRing R] [IsDedekindDomain R] [CommRing S] [IsDomain S]
+  [Algebra A R] [Algebra A S] [Algebra R S] [IsScalarTower A R S] [Algebra.IsIntegral R S]
+  [Module.IsTorsionFree R S] [Algebra.EssFiniteType A R] [Algebra.EssFiniteType A S]
 
-/-- **Unramifiedness over `ℤ` descends to a subring.** If every prime of `S` lying over an ideal
-`I` of `ℤ` is unramified over `ℤ`, then so is every prime of `R` below, for `S` module-finite and
+/-- **Unramifiedness descends to a subring.** If every prime of `S` lying over an ideal `I` of the
+base `A` is unramified over `A`, then so is every prime of `R` below, for `S` integral and
 torsion-free over the Dedekind domain `R`.
 
 The direction is descent, not ascent: the hypothesis is upstairs and the conclusion downstairs.
 Every prime of `R` has some prime of `S` above it, that prime lies over the same `I`, and
 `Algebra.IsUnramifiedAt.of_liesOver` passes unramifiedness back down the relation.
 
-`I` is an arbitrary ideal because nothing in the argument inspects it; a caller working at a
-rational prime `p` instantiates `I := Ideal.span {(p : ℤ)}`. -/
-theorem isUnramifiedAt_of_forall_isUnramifiedAt {I : Ideal ℤ}
-    (hur : ∀ (P : Ideal S) [P.IsPrime] [P.LiesOver I], Algebra.IsUnramifiedAt ℤ P)
+Nothing in the argument inspects `A` or `I`, which is why both are arbitrary: integrality is all
+that is needed to find a prime above, and the number-field use is the case `A := ℤ`,
+`I := Ideal.span {(p : ℤ)}`. -/
+theorem isUnramifiedAt_of_forall_isUnramifiedAt {I : Ideal A}
+    (hur : ∀ (P : Ideal S) [P.IsPrime] [P.LiesOver I], Algebra.IsUnramifiedAt A P)
     (𝔮 : Ideal R) [𝔮.IsPrime] [𝔮.LiesOver I] :
-    Algebra.IsUnramifiedAt ℤ 𝔮 := by
+    Algebra.IsUnramifiedAt A 𝔮 := by
   obtain ⟨P⟩ := (inferInstance : Nonempty (𝔮.primesOver S))
   have : (P : Ideal S).IsPrime := P.2.1
   have : (P : Ideal S).LiesOver 𝔮 := P.2.2
   have : (P : Ideal S).LiesOver I := Ideal.LiesOver.trans (P : Ideal S) 𝔮 I
-  exact Algebra.IsUnramifiedAt.of_liesOver ℤ 𝔮 (P : Ideal S)
+  exact Algebra.IsUnramifiedAt.of_liesOver A 𝔮 (P : Ideal S)
 
 end Descent
 
