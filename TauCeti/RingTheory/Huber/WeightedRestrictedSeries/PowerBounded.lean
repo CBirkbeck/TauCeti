@@ -85,7 +85,10 @@ theorem isPowerBounded_weightedX {T : Fin k → Set A} (hT : IsWeightFamily T) {
   · exact (weightMul T ν W.toAddSubgroup).zero_mem
 
 /-- **The variable `Xᵢ` is power-bounded at the trivial weight family**, the case
-`TauCeti.ValuationSpectrum.closedPolydisc` uses. -/
+`TauCeti.ValuationSpectrum.closedPolydisc` uses.
+
+`@[simp]` because it is unconditional: `simp` closes the goal outright rather than rewriting it. -/
+@[simp]
 theorem isPowerBounded_weightedX_one_weight (i : Fin k) :
     IsPowerBounded (weightedX (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight i) :=
   isPowerBounded_weightedX _ rfl
