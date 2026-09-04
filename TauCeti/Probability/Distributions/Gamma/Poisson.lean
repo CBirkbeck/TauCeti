@@ -21,10 +21,13 @@ The proof compares singleton masses. The Poisson mass contributes `exp (-x) * x 
 the Gamma density, changing its rate from `p / (1 - p)` to `1 / (1 - p)` and its shape from `r`
 to `r + k`. Euler's Gamma integral then gives exactly the negative-binomial mass.
 
-## Main result
+## Main results
 
 * `TauCeti.Probability.bind_gammaMeasure_poissonMeasure` — a Gamma mixture of Poisson laws is
   negative-binomial.
+* `Real.gammaKernel_mul_exp_mul_pow_div_factorial` — the pointwise algebra it runs on: at a
+  nonzero point, a gamma kernel of shape `r` and rate `c` times the Poisson weight
+  `exp (-x) * x ^ k / k !` collects into a single gamma kernel of shape `r + k` and rate `c + 1`.
 
 ## References
 
@@ -43,10 +46,8 @@ namespace TauCeti
 
 namespace Probability
 
-namespace Real
-
 /-- Collecting the gamma kernel `c ^ r / Γ r * x ^ (r - 1) * exp (-(c * x))` against
-`exp (-x) * x ^ k / k !` at a positive point: the two powers of `x` and the two exponentials each
+`exp (-x) * x ^ k / k !` at a nonzero point: the two powers of `x` and the two exponentials each
 combine, leaving a single gamma kernel of shape `r + k` and rate `c + 1`.
 
 The gamma rate `c` is arbitrary, so a gamma--Poisson mixture — which averages the Poisson rate `x`
@@ -54,13 +55,15 @@ against a gamma law — can instantiate the identity pointwise at whatever rate 
 -- The factors are written out rather than as `gammaPDFReal` and `poissonPMFReal`: the former
 -- carries an `if 0 ≤ x` guard that is not definitional at a bound variable, and the latter is
 -- indexed by `ℝ≥0`, so either would cost the consumer a congruence step under its integral.
-theorem gammaKernel_mul_exp_mul_pow_div_factorial (c r : ℝ) (k : ℕ) {x : ℝ}
+theorem _root_.Real.gammaKernel_mul_exp_mul_pow_div_factorial (c r : ℝ) (k : ℕ) {x : ℝ}
     (hx : x ≠ 0) :
     c ^ r / Real.Gamma r * x ^ (r - 1) * Real.exp (-(c * x)) *
         (Real.exp (-x) * x ^ k / k.factorial) =
       c ^ r / (Real.Gamma r * k.factorial) *
         (x ^ (r + (k : ℝ) - 1) * Real.exp (-((c + 1) * x))) := by
   have hxpow : x ^ (r - 1) * x ^ k = x ^ (r + (k : ℝ) - 1) := by
+    -- `Real.rpow_add_natCast` fires only on an exponent already in the shape `y + (n : ℕ)`,
+    -- so reassociate `r + k - 1` into `(r - 1) + k` before rewriting.
     rw [show r + (k : ℝ) - 1 = r - 1 + (k : ℕ) by ring,
       Real.rpow_add_natCast hx]
   have hexp : Real.exp (-(c * x)) * Real.exp (-x) = Real.exp (-((c + 1) * x)) := by
@@ -74,7 +77,6 @@ theorem gammaKernel_mul_exp_mul_pow_div_factorial (c r : ℝ) (k : ℕ) {x : ℝ
           ((x ^ (r - 1) * x ^ k) * (Real.exp (-(c * x)) * Real.exp (-x))) := by ring
     _ = _ := by rw [hxpow, hexp]
 
-end Real
 
 private lemma integral_poissonMass_gammaMeasure {r p : ℝ} (hr : 0 < r) (hp : 0 < p)
     (hp1 : p < 1) (k : ℕ) :

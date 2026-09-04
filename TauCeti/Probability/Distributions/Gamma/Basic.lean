@@ -50,11 +50,6 @@ shifted rate is still positive.
 * `TauCeti.gammaMeasure_conv_gammaMeasure` — convolution at a common rate adds the shape
   parameters;
 * `TauCeti.gammaMeasure_map_const_mul` — scaling by `c > 0` sends the rate `r` to `r / c`;
-* `TauCeti.gammaKernel_mul_exp_mul_pow_div_factorial` — the pointwise algebra that collects the
-  gamma kernel against `exp (-x) * x ^ k / k !` into a single gamma kernel of shifted shape and
-  rate. It is shared infrastructure for the gamma--Poisson mixture calculation: it reduces an
-  integral against `gammaMeasure` of a Poisson weight to
-  `Real.integral_rpow_mul_exp_neg_mul_Ioi`.
 
 The cumulative distribution function is computed in
 `TauCeti/Probability/Distributions/Gamma/Cdf.lean`.
