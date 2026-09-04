@@ -227,9 +227,12 @@ theorem Point.canonicalHeight_two_nsmul [W.toAffine.IsElliptic] (P : W.Point) :
   rw [sub_self, canonicalHeight_zero, add_zero] at h
   rw [two_nsmul]
   linarith
-/-- **The canonical height is non-negative.** Every term of the defining sequence is a quotient of
-non-negative quantities, so the limit is non-negative; no passage through the bounded difference
-from `h` is needed. -/
+-- Read off the defining sequence termwise: each term is a quotient of non-negative quantities.
+-- The bounded difference from `h` would only give `canonicalHeight P ≥ -C/6`, so it is not used.
+/-- **The canonical height is non-negative.** This is what makes it a candidate for the
+positive-definite form behind the Néron–Tate pairing and the regulator, and what lets
+`canonicalHeight P = 0` be a meaningful characterisation of torsion rather than one inequality
+among two. -/
 theorem Point.canonicalHeight_nonneg [W.toAffine.IsElliptic] (P : W.Point) :
     0 ≤ P.canonicalHeight :=
   ge_of_tendsto' P.tendsto_naiveHeight_two_pow_nsmul_div_four_pow fun n ↦
