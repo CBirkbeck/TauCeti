@@ -218,7 +218,7 @@ same coordinate are equal.  Only `P` need be assumed prime and nonzero: the shar
 coordinate places `Q` at `P`'s index in the list of primes over that rational prime,
 which already forces `Q` to lie in it.
 -/
-private theorem prime_eq_of_absNormUnder_eq_of_primeCoord_eq {P Q : Ideal (𝓞 F)}
+private theorem eq_of_absNormUnder_eq_of_primeCoord_eq {P Q : Ideal (𝓞 F)}
     (hP : P.IsPrime) (hP0 : P ≠ ⊥)
     (hr : absNormUnder F P = absNormUnder F Q) (hc : primeCoord F P = primeCoord F Q) : P = Q := by
   have hUeq : Ideal.under ℤ P = Ideal.under ℤ Q := under_eq_of_absNormUnder_eq F hr
@@ -329,7 +329,7 @@ private theorem count_eq_padicValNat {I : Ideal (𝓞 F)} {P : Ideal (𝓞 F)}
     have hQp : Q.IsPrime := isPrime_of_prime (prime_of_normalized_factor Q hQ.1)
     have hQ0 : Q ≠ ⊥ := ne_zero_of_mem_normalizedFactors hQ.1
     have hrb : absNormUnder F Q ≠ absNormUnder F P := fun h =>
-      hQP (prime_eq_of_absNormUnder_eq_of_primeCoord_eq F hQp hQ0 h hQ.2)
+      hQP (eq_of_absNormUnder_eq_of_primeCoord_eq F hQp hQ0 h hQ.2)
     have := hQp
     have : NeZero Q := ⟨hQ0⟩
     have hQbelow : (absNormUnder F Q).Prime := by
