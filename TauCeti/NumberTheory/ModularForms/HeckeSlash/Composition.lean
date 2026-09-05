@@ -128,9 +128,7 @@ result in the AINTLIB `LeanModularForms` project (Chris Birkbeck, Apache-2.0),
 `HeckePairAction` supplies, and weighted by `Finsupp.sum` over Hecke-ring structure constants.
 The version here is at a general Hecke triple, right-coset indexed as `heckeSlashSum` is, needs
 no anti-involution or determinant hypothesis, and takes its coefficient from
-`DoubleCoset.multiplicity`. No code is transcribed; the shared proof shape —
-`Fintype.sum_prod_type'`, then `Finset.sum_fiberwise_of_maps_to` along the coset-of-the-product
-map, then a per-fibre collapse — is the source's, and is cited here rather than claimed.
+`DoubleCoset.multiplicity`.
 -/
 
 public section
@@ -260,8 +258,8 @@ private noncomputable def pairRep (p : DecompQuotient Γ₂ Γ₁ (D₁.out : GL
     (IsHeckeTriple.mem_of_mem_doubleCoset (D₁.out).2 (rightCosetRep_mem_doubleCoset D₁ p.1))
     (IsHeckeTriple.mem_of_mem_doubleCoset (D₂.out).2 (rightCosetRep_mem_doubleCoset D₂ p.2))⟩
 
-/-- Defining equation for `pairRep`, used to read the product off a pair inside the proofs
-below. -/
+/-- The underlying matrix of `pairRep` is the product of the two right-coset
+representatives. -/
 private lemma coe_pairRep (p : DecompQuotient Γ₂ Γ₁ (D₁.out : GL (Fin 2) ℚ)⁻¹ ×
     DecompQuotient Γ₃ Γ₂ (D₂.out : GL (Fin 2) ℚ)⁻¹) :
     (pairRep D₁ D₂ p : GL (Fin 2) ℚ) = rightCosetRep D₁ p.1 * rightCosetRep D₂ p.2 := (rfl)
@@ -272,8 +270,8 @@ noncomputable def pairCoset (p : DecompQuotient Γ₂ Γ₁ (D₁.out : GL (Fin 
     DecompQuotient Γ₃ Γ₂ (D₂.out : GL (Fin 2) ℚ)⁻¹) : HeckeCoset Δ Γ₁ Γ₃ :=
   HeckeCoset.mk Γ₁ Γ₃ (pairRep D₁ D₂ p)
 
-/-- Defining equation for `pairCoset`, used inside the proofs below;
-`pairCoset_eq_iff` is the characterisation a caller wants. -/
+/-- `pairCoset` is the double coset of `pairRep`; `pairCoset_eq_iff` characterises it by
+membership. -/
 private lemma pairCoset_def (p : DecompQuotient Γ₂ Γ₁ (D₁.out : GL (Fin 2) ℚ)⁻¹ ×
     DecompQuotient Γ₃ Γ₂ (D₂.out : GL (Fin 2) ℚ)⁻¹) :
     pairCoset D₁ D₂ p = HeckeCoset.mk Γ₁ Γ₃ (pairRep D₁ D₂ p) := (rfl)
@@ -354,18 +352,21 @@ coefficient is `DoubleCoset.multiplicity Γ₃ Γ₂ Γ₁ δ₂⁻¹ δ₁⁻¹
 and all three arguments inverted relative to `HeckeCosetModule.structureConstants`; as the
 module docstring records, the two are not equal, and comparing them needs an anti-involution.
 
-The double cosets met are the image of a finite type under `pairCoset`, so no *index set* has
-to be assumed finite beyond the two input decomposition quotients. The right-hand side does
-need each output coset's own decomposition quotient to be finite, since `heckeSlashSum k D f`
-is a sum over it; that is the hypothesis this theorem takes, and `IsHeckeTriple Δ Γ₁ Γ₃`
-supplies it. -/
+No finiteness is assumed beyond the two input Hecke triples. The double cosets met are the
+image of a finite type under `pairCoset`, and the finiteness of each output coset's own
+decomposition quotient — which `heckeSlashSum k D f` sums over — comes from the composite
+triple `IsHeckeTriple Δ Γ₁ Γ₃`, which `IsHeckeTriple.trans` derives from the two given ones. -/
 theorem heckeSlashSum_heckeSlashSum_eq_sum_nsmul
-    [∀ D : HeckeCoset Δ Γ₁ Γ₃, Finite (DecompQuotient Γ₃ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹)]
     (f : ℍ → ℂ) (hf : ∀ γ ∈ Γ₁, f ∣[k] γ = f) :
+    letI : IsHeckeTriple Δ Γ₁ Γ₃ := IsHeckeTriple.trans (H₂ := Γ₂)
     heckeSlashSum k D₂ (heckeSlashSum k D₁ f) =
       ∑ D ∈ Finset.univ.image (pairCoset D₁ D₂),
         DoubleCoset.multiplicity Γ₃ Γ₂ Γ₁ (D₂.out : GL (Fin 2) ℚ)⁻¹ (D₁.out : GL (Fin 2) ℚ)⁻¹
           (D.out : GL (Fin 2) ℚ)⁻¹ • heckeSlashSum k D f := by
+  -- the same composite triple the statement derives; `IsHeckeTriple.trans` cannot be an
+  -- instance, since `Γ₂` does not occur in `IsHeckeTriple Δ Γ₁ Γ₃`, so it is named at both
+  -- points rather than found by synthesis
+  let _ : IsHeckeTriple Δ Γ₁ Γ₃ := IsHeckeTriple.trans (H₂ := Γ₂)
   rw [heckeSlashSum_heckeSlashSum, ← Fintype.sum_prod_type',
     ← Finset.sum_fiberwise_of_maps_to (g := pairCoset D₁ D₂)
       (fun p _ ↦ Finset.mem_image_of_mem _ (Finset.mem_univ p))]
