@@ -73,27 +73,26 @@ noncomputable def ratFuncAdjoinXPowRange (n : ℕ) : IntermediateField K W.Funct
 /-- The defining equation of `ratFuncAdjoinXPowRange`, in the form used by
 `IntermediateField.map` lemmas. -/
 theorem ratFuncAdjoinXPowRange_eq_map (n : ℕ) :
-    ratFuncAdjoinXPowRange W n =
-      (IntermediateField.adjoin K {(RatFunc.X : RatFunc K) ^ n}).map
-        (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField) := by
+    ratFuncAdjoinXPowRange W n = (IntermediateField.adjoin K {(RatFunc.X : RatFunc K) ^ n}).map
+      (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField) := by
   rw [ratFuncAdjoinXPowRange, ratFuncAdjoinRange_eq_map]
 
 /-- An element of `K(W)` lies in the copy of `K(x^n)` exactly when it is the image there of an
 element of `K(X^n)`. -/
 @[simp]
 theorem mem_ratFuncAdjoinXPowRange {n : ℕ} {z : W.FunctionField} :
-    z ∈ ratFuncAdjoinXPowRange W n ↔
-      ∃ r ∈ IntermediateField.adjoin K {(RatFunc.X : RatFunc K) ^ n},
-        IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField r = z := by
+    z ∈ ratFuncAdjoinXPowRange W n ↔ ∃ r ∈ IntermediateField.adjoin K {(RatFunc.X : RatFunc K) ^ n},
+      IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField r = z := by
   rw [ratFuncAdjoinXPowRange]
   exact mem_ratFuncAdjoinRange W
 
 /-- The generator: `x ^ n` lies in the copy of `K(x^n)`. -/
 theorem algebraMap_X_pow_mem_ratFuncAdjoinXPowRange (n : ℕ) :
-    algebraMap K[X] W.FunctionField X ^ n ∈ ratFuncAdjoinXPowRange W n :=
-  (mem_ratFuncAdjoinXPowRange W).mpr
-    ⟨(RatFunc.X : RatFunc K) ^ n, IntermediateField.mem_adjoin_simple_self _ _,
-      by rw [map_pow, toAlgHom_ratFuncX]⟩
+    algebraMap K[X] W.FunctionField X ^ n ∈ ratFuncAdjoinXPowRange W n := by
+  rw [ratFuncAdjoinXPowRange, show algebraMap K[X] W.FunctionField X ^ n =
+    algebraMap (RatFunc K) W.FunctionField ((RatFunc.X : RatFunc K) ^ n) by
+      rw [map_pow, ← toAlgHom_ratFuncX, IsScalarTower.coe_toAlgHom']]
+  exact algebraMap_mem_ratFuncAdjoinRange W _
 
 /-- `K(x^n)` sits inside `K(x)`, both read inside `K(W)`. -/
 theorem ratFuncAdjoinXPowRange_le_ratFuncRange (n : ℕ) :
