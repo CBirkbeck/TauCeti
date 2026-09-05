@@ -63,7 +63,7 @@ variable {K : Type*} [Field K] (W : WeierstrassCurve.Affine K)
 /-- Any subfield of `K(x)` sits inside `K(x)`, both read inside `K(W)`. -/
 theorem extendRight_le_ratFuncRange (F : IntermediateField K (RatFunc K)) :
     F.extendRight W.FunctionField ≤ ratFuncRange W := by
-  rw [ratFuncRange_eq_map, TauCeti.IntermediateField.extendRight_eq_map]
+  rw [ratFuncRange_eq_map, IntermediateField.extendRight_eq_map]
   exact IntermediateField.map_mono _ le_top
 
 /-- **`[K(x) : F]`, read inside `K(W)`**, is the degree it has inside `K(x)` itself. -/
@@ -71,7 +71,7 @@ theorem extendRight_le_ratFuncRange (F : IntermediateField K (RatFunc K)) :
 theorem relfinrank_extendRight (F : IntermediateField K (RatFunc K)) :
     relfinrank (F.extendRight W.FunctionField) (ratFuncRange W) =
       Module.finrank F (RatFunc K) := by
-  rw [ratFuncRange_eq_map, TauCeti.IntermediateField.extendRight_eq_map, relfinrank_map_map,
+  rw [ratFuncRange_eq_map, IntermediateField.extendRight_eq_map, relfinrank_map_map,
     relfinrank_top_right]
 
 /-- **`[K(W) : F] = 2 · [K(x) : F]`**: the inner storey contributes the degree of `F` and the
@@ -101,7 +101,7 @@ theorem extendRight_adjoin_eq_map_ratFuncRange {W' : WeierstrassCurve.Affine K} 
     (f : W'.FunctionField →ₐ[K] W.FunctionField)
     (hf : f (algebraMap K[X] W'.FunctionField X) = algebraMap (RatFunc K) W.FunctionField g) :
     (adjoin K {g}).extendRight W.FunctionField = (ratFuncRange W').map f := by
-  rw [TauCeti.IntermediateField.extendRight_eq_map, ratFuncRange_eq_map,
+  rw [IntermediateField.extendRight_eq_map, ratFuncRange_eq_map,
     IntermediateField.map_map, ← RatFunc.adjoin_X]
   simp only [IntermediateField.adjoin_map, Set.image_singleton, AlgHom.coe_comp,
     Function.comp_apply, toAlgHom_ratFuncX, hf]

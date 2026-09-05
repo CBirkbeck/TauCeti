@@ -19,18 +19,16 @@ the smallest intermediate field of `M / K` containing the image of `g`.
 
 ## Main results
 
-* `TauCeti.IntermediateField.extendRight_eq_map`: the copy, as an `IntermediateField.map`.
-* `TauCeti.IntermediateField.extendRight_le_iff`: the copy of `F` lies below an intermediate
+* `IntermediateField.extendRight_eq_map`: the copy, as an `IntermediateField.map`.
+* `IntermediateField.extendRight_le_iff`: the copy of `F` lies below an intermediate
   field exactly when that field contains every image from `F`.
-* `TauCeti.IntermediateField.extendRight_adjoin_le_iff`: the copy of `K⟮g⟯` lies inside an
+* `IntermediateField.extendRight_adjoin_le_iff`: the copy of `K⟮g⟯` lies inside an
   intermediate field exactly when that field contains the image of `g`.
 -/
 
 public section
 
-open IntermediateField
-
-namespace TauCeti.IntermediateField
+namespace IntermediateField
 
 variable {K L M : Type*} [Field K] [Field L] [Field M] [Algebra K L] [Algebra K M] [Algebra L M]
   [IsScalarTower K L M]
@@ -51,7 +49,7 @@ image from `F`.** This decides an inclusion pointwise, with no `comap`. -/
 theorem extendRight_le_iff {F : IntermediateField K L} {E : IntermediateField K M} :
     F.extendRight M ≤ E ↔ ∀ x ∈ F, algebraMap L M x ∈ E := by
   rw [extendRight_eq_map]
-  simp only [SetLike.le_def, IntermediateField.mem_map, forall_exists_index, and_imp]
+  simp only [SetLike.le_def, mem_map, forall_exists_index, and_imp]
   exact ⟨fun h x hx => h x hx (congrFun (IsScalarTower.coe_toAlgHom' K L M) x),
     fun h _ x hx hxz => hxz ▸ h x hx⟩
 
@@ -60,11 +58,11 @@ intermediate field exactly when that field contains the image of every element o
 theorem extendRight_adjoin_set_le_iff {s : Set L} {E : IntermediateField K M} :
     (adjoin K s).extendRight M ≤ E ↔ ∀ x ∈ s, algebraMap L M x ∈ E := by
   rw [extendRight_le_iff]
-  refine ⟨fun h x hx => h x (IntermediateField.subset_adjoin K s hx), fun h x hx => ?_⟩
+  refine ⟨fun h x hx => h x (subset_adjoin K s hx), fun h x hx => ?_⟩
   -- `K⟮s⟯` is the smallest intermediate field containing `s`, so it lies in the preimage of `E`
   -- as soon as every element of `s` does; `x` is then carried along.
   have hsub : adjoin K s ≤ E.comap (IsScalarTower.toAlgHom K L M) :=
-    IntermediateField.adjoin_le_iff.mpr h
+    adjoin_le_iff.mpr h
   exact hsub hx
 
 /-- **The universal property of the copy of a simple extension**: the copy of `K⟮g⟯` inside `M`
@@ -74,6 +72,6 @@ theorem extendRight_adjoin_le_iff {g : L} {E : IntermediateField K M} :
     (adjoin K {g}).extendRight M ≤ E ↔ algebraMap L M g ∈ E := by
   rw [extendRight_adjoin_set_le_iff, Set.forall_mem_singleton]
 
-end TauCeti.IntermediateField
+end IntermediateField
 
 end

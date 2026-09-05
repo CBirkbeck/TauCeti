@@ -79,7 +79,7 @@ noncomputable def ratFuncAdjoinXPowRange (n : ℕ) : IntermediateField K W.Funct
 theorem ratFuncAdjoinXPowRange_eq_map (n : ℕ) :
     ratFuncAdjoinXPowRange W n = (IntermediateField.adjoin K {(RatFunc.X : RatFunc K) ^ n}).map
       (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField) := by
-  rw [ratFuncAdjoinXPowRange, TauCeti.IntermediateField.extendRight_eq_map]
+  rw [ratFuncAdjoinXPowRange, IntermediateField.extendRight_eq_map]
 
 /-- An element of `K(W)` lies in the copy of `K(x^n)` exactly when it is the image there of an
 element of `K(X^n)`. -/
@@ -87,21 +87,21 @@ element of `K(X^n)`. -/
 theorem mem_ratFuncAdjoinXPowRange {n : ℕ} {z : W.FunctionField} :
     z ∈ ratFuncAdjoinXPowRange W n ↔ ∃ r ∈ IntermediateField.adjoin K {(RatFunc.X : RatFunc K) ^ n},
       IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField r = z := by
-  rw [ratFuncAdjoinXPowRange, TauCeti.IntermediateField.extendRight_eq_map]
+  rw [ratFuncAdjoinXPowRange, IntermediateField.extendRight_eq_map]
   exact IntermediateField.mem_map _
 
 /-- The generator: `x ^ n` lies in the copy of `K(x^n)`. -/
 theorem algebraMap_X_pow_mem_ratFuncAdjoinXPowRange (n : ℕ) :
     algebraMap K[X] W.FunctionField X ^ n ∈ ratFuncAdjoinXPowRange W n := by
   rw [ratFuncAdjoinXPowRange, algebraMap_X_pow_eq_algebraMap_ratFuncX_pow]
-  exact TauCeti.IntermediateField.extendRight_adjoin_le_iff.mp le_rfl
+  exact IntermediateField.extendRight_adjoin_le_iff.mp le_rfl
 
 /-- **The universal property**: the copy of `K(x^n)` lies inside an intermediate field exactly
 when that field contains `x ^ n`. -/
 @[simp]
 theorem ratFuncAdjoinXPowRange_le_iff {n : ℕ} {L : IntermediateField K W.FunctionField} :
     ratFuncAdjoinXPowRange W n ≤ L ↔ algebraMap K[X] W.FunctionField X ^ n ∈ L := by
-  rw [ratFuncAdjoinXPowRange, TauCeti.IntermediateField.extendRight_adjoin_le_iff,
+  rw [ratFuncAdjoinXPowRange, IntermediateField.extendRight_adjoin_le_iff,
     algebraMap_X_pow_eq_algebraMap_ratFuncX_pow]
 
 /-- `K(x^n)` sits inside `K(x)`, both read inside `K(W)`. -/
