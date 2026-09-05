@@ -148,6 +148,15 @@ theorem eval_neg (D : Divisor k F) (f : Fˣ) : eval (-D) f = (eval D f)⁻¹ :=
 theorem eval_sub (D E : Divisor k F) (f : Fˣ) : eval (D - E) f = eval D f / eval E f :=
   map_div (evalHom f) _ _
 
+/-- Raising the function to a power raises the value to that power: `f ^ n (D) = f(D) ^ n`. Like
+`eval_inv`, and unlike `eval_mul`, this needs no admissibility hypothesis. -/
+@[simp]
+theorem eval_zpow (D : Divisor k F) (f : Fˣ) (n : ℤ) : eval D (f ^ n) = eval D f ^ n := by
+  rw [eval_eq_finsuppProd, eval_eq_finsuppProd, Finsupp.prod, Finsupp.prod,
+    ← Finset.prod_zpow]
+  exact Finset.prod_congr rfl fun P _ ↦ by
+    rw [Place.normResidueOrOne_zpow, ← zpow_mul, ← zpow_mul, mul_comm]
+
 /-- Scaling a divisor raises the value to that power: `f(n • D) = f(D) ^ n`. This is what the
 `N(P) − N(O)` divisors of the Weil pairing are evaluated through. -/
 @[simp]
@@ -235,12 +244,20 @@ theorem IsUnitAtSupport.mul {D : Divisor k F} {f g : Fˣ} (hf : IsUnitAtSupport 
     (hg : IsUnitAtSupport D g) : IsUnitAtSupport D (f * g) :=
   fun P hP ↦ Place.ord_mul_eq_zero (hf P hP) (hg P hP)
 
+/-- Admissibility is closed under scaling the divisor: `n • D` has no places `D` does not. -/
+theorem IsUnitAtSupport.zsmul {D : Divisor k F} {f : Fˣ} (hf : IsUnitAtSupport D f) (n : ℤ) :
+    IsUnitAtSupport (n • D) f := fun P hP ↦ hf P (Finsupp.support_smul hP)
+
 -- Not `@[simp]`, for the reason recorded above `isUnitAtSupport_one`.
 /-- Admissibility is *invariant* under inversion, not merely closed under it: `ord_P f⁻¹` vanishes
 exactly when `ord_P f` does. -/
 theorem isUnitAtSupport_inv_iff {D : Divisor k F} {f : Fˣ} :
     IsUnitAtSupport D f⁻¹ ↔ IsUnitAtSupport D f := by
   simp only [isUnitAtSupport_iff, Units.val_inv_eq_inv_val, Place.ord_inv, neg_eq_zero]
+
+/-- Admissibility is closed under integer powers of the function. -/
+theorem IsUnitAtSupport.zpow {D : Divisor k F} {f : Fˣ} (hf : IsUnitAtSupport D f) (n : ℤ) :
+    IsUnitAtSupport D (f ^ n) := fun P hP ↦ Place.ord_zpow_eq_zero (hf P hP) n
 
 /-- Admissibility is closed under quotients of functions. -/
 theorem IsUnitAtSupport.div {D : Divisor k F} {f g : Fˣ} (hf : IsUnitAtSupport D f)

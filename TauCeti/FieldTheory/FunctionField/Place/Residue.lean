@@ -175,6 +175,9 @@ private theorem unitGroupMk_one (P : Place k F) :
 private theorem unitGroupMk_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
     P.unitGroupMk f⁻¹ (ord_inv_eq_zero hf) = (P.unitGroupMk f hf)⁻¹ := rfl
 
+private theorem unitGroupMk_zpow {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) (n : ℤ) :
+    P.unitGroupMk (f ^ n) (ord_zpow_eq_zero hf n) = P.unitGroupMk f hf ^ n := rfl
+
 private theorem unitGroupMk_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
     P.unitGroupMk (f / g) (ord_div_eq_zero hf hg)
@@ -210,6 +213,12 @@ theorem residueUnit_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
     P.residueUnit f⁻¹ (ord_inv_eq_zero hf) = (P.residueUnit f hf)⁻¹ := by
   rw [residueUnit, residueUnit, ← map_inv, unitGroupMk_inv hf]
 
+/-- **The residue takes powers with the function**: `(f ^ n)(P) = f(P) ^ n`. -/
+@[simp]
+theorem residueUnit_zpow {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) (n : ℤ) :
+    P.residueUnit (f ^ n) (ord_zpow_eq_zero hf n) = P.residueUnit f hf ^ n := by
+  rw [residueUnit, residueUnit, ← map_zpow, unitGroupMk_zpow hf]
+
 /-- **The residue divides with the function**: `(f / g)(P) = f(P) / g(P)`, at a place where both
 are units. -/
 @[simp]
@@ -232,6 +241,12 @@ theorem normResidue_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     P.normResidue (f / g) (ord_div_eq_zero hf hg) =
       P.normResidue f hf / P.normResidue g hg := by
   rw [normResidue, normResidue, normResidue, residueUnit_div hf hg, map_div]
+
+/-- **The norm of the residue takes powers with the function**: `N((f ^ n)(P)) = N(f(P)) ^ n`. -/
+@[simp]
+theorem normResidue_zpow {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) (n : ℤ) :
+    P.normResidue (f ^ n) (ord_zpow_eq_zero hf n) = P.normResidue f hf ^ n := by
+  rw [normResidue, normResidue, residueUnit_zpow hf, map_zpow]
 
 /-- **The total local factor is multiplicative in the function**, at a place where both factors
 are units. The hypotheses cannot be dropped: at a place where `f` and `g` have opposite nonzero
@@ -271,6 +286,21 @@ theorem normResidueOrOne_inv (P : Place k F) (f : Fˣ) :
   · have hfinv : P.ord ((f⁻¹ : Fˣ) : F) ≠ 0 :=
       fun h ↦ hf (by simpa using ord_inv_eq_zero h)
     rw [normResidueOrOne_of_ord_ne_zero hfinv, normResidueOrOne_of_ord_ne_zero hf, inv_one]
+
+/-- **Powers need no admissibility hypothesis**, for the same reason as `normResidueOrOne_inv`:
+where `f` is not a unit neither is any nonzero power of it, and both sides are `1`. -/
+@[simp]
+theorem normResidueOrOne_zpow (P : Place k F) (f : Fˣ) (n : ℤ) :
+    P.normResidueOrOne (f ^ n) = P.normResidueOrOne f ^ n := by
+  by_cases hf : P.ord (f : F) = 0
+  · rw [normResidueOrOne_of_ord_eq_zero (ord_zpow_eq_zero hf n),
+      normResidueOrOne_of_ord_eq_zero hf, normResidue_zpow hf]
+  · rcases eq_or_ne n 0 with rfl | hn
+    · simp
+    · have h : P.ord ((f ^ n : Fˣ) : F) ≠ 0 := by
+        rw [Units.val_zpow_eq_zpow_val, P.ord_zpow]
+        exact mul_ne_zero hn hf
+      rw [normResidueOrOne_of_ord_ne_zero h, normResidueOrOne_of_ord_ne_zero hf, one_zpow]
 
 /-- **The total local factor divides in the function**, at a place where both arguments are
 units. Like `normResidueOrOne_mul`, and unlike `normResidueOrOne_inv`, the hypotheses cannot be

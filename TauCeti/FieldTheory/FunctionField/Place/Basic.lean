@@ -205,6 +205,12 @@ theorem ord_inv_eq_zero {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
   rw [← P.ordAddMonoidHom_apply] at hf ⊢
   rw [ofMul_inv, _root_.map_neg, hf, neg_zero]
 
+/-- **A power of an order-zero unit has order zero.** -/
+theorem ord_zpow_eq_zero {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) (n : ℤ) :
+    P.ord ((f ^ n : Fˣ) : F) = 0 := by
+  rw [← P.ordAddMonoidHom_apply] at hf ⊢
+  rw [ofMul_zpow, map_zsmul, hf, smul_zero]
+
 /-- **A quotient of order-zero units has order zero.** -/
 theorem ord_div_eq_zero {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) : P.ord ((f / g : Fˣ) : F) = 0 := by
