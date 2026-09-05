@@ -323,6 +323,7 @@ lemma card_pairs_pairCoset_eq_multiplicity {x : GL (Fin 2) ℚ}
 
 variable (D₁ D₂)
 
+open Classical in
 /-- **The multiplicity-weighted composite**, and with it the general form of the composition law.
 For a `Γ₁`-invariant `f`, the composite of the two slash sums is the sum, over the double cosets
 met by the products `aᵥ b_w`, of Shimura's multiplicity times the slash sum of that coset:
@@ -338,13 +339,12 @@ fibre is a family of representatives lying in a single double coset
 (`card_pairs_pairCoset_eq_multiplicity`), and that is exactly what
 `sum_slash_eq_nsmul_heckeSlashSum` asks for. No finiteness beyond that of the two index types is
 needed: the double cosets met are the image of a finite type. -/
-theorem heckeSlashSum_heckeSlashSum_eq_sum_nsmul [IsHeckeTriple Δ Γ₁ Γ₃]
-    [DecidableEq (HeckeCoset Δ Γ₁ Γ₃)] (f : ℍ → ℂ) (hf : ∀ γ ∈ Γ₁, f ∣[k] γ = f) :
+theorem heckeSlashSum_heckeSlashSum_eq_sum_nsmul [IsHeckeTriple Δ Γ₁ Γ₃] (f : ℍ → ℂ)
+    (hf : ∀ γ ∈ Γ₁, f ∣[k] γ = f) :
     heckeSlashSum k D₂ (heckeSlashSum k D₁ f) =
       ∑ D ∈ Finset.univ.image (pairCoset D₁ D₂),
         DoubleCoset.multiplicity Γ₃ Γ₂ Γ₁ (D₂.out : GL (Fin 2) ℚ)⁻¹ (D₁.out : GL (Fin 2) ℚ)⁻¹
           (D.out : GL (Fin 2) ℚ)⁻¹ • heckeSlashSum k D f := by
-  classical
   rw [heckeSlashSum_heckeSlashSum, ← Fintype.sum_prod_type',
     ← Finset.sum_fiberwise_of_maps_to (g := pairCoset D₁ D₂)
       (fun p _ ↦ Finset.mem_image_of_mem _ (Finset.mem_univ p))]
