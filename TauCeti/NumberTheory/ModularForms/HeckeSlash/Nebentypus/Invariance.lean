@@ -130,14 +130,13 @@ lemma mul_inv_mem_Delta0 {h : GL (Fin 2) ℚ} (hh : h ∈ (Gamma0 N).map (mapGL 
     rw [Subgroup.mem_toSubmonoid, Gamma0Image_def]
     exact inv_mem hh))
 
-/-- The chosen representative `τᵥ` with `γ` attached on the right is the unnormalised
-representative `δ (γ⁻¹ τᵥ)⁻¹` of the class `γ⁻¹ • v`. -/
-private lemma rightCosetRep_mul_eq_mul_inv (γ : ↥(Gamma0 N))
+/-- The chosen representative `τᵥ` with any `g` attached on the right is `δ (g⁻¹ τᵥ)⁻¹`. Pure
+group algebra: no hypothesis on `g` is used, and at `g ∈ Γ₀(N)` the right-hand side is the
+unnormalised representative of the class `g⁻¹ • v`. -/
+private lemma rightCosetRep_mul_eq_mul_inv (g : GL (Fin 2) ℚ)
     (v : DecompQuotient ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))
       (D.out : GL (Fin 2) ℚ)⁻¹) :
-    rightCosetRep D v * (mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ) =
-      (D.out : GL (Fin 2) ℚ) *
-        ((mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ)⁻¹ * (v.out : GL (Fin 2) ℚ))⁻¹ := by
+    rightCosetRep D v * g = (D.out : GL (Fin 2) ℚ) * (g⁻¹ * (v.out : GL (Fin 2) ℚ))⁻¹ := by
   rw [rightCosetRep_def]
   group
 
@@ -166,7 +165,7 @@ private lemma nebentypusWeight_eq_char_mul_delta0NebentypusChar (γ : ↥(Gamma0
         (mul_mem (inv_mem (Subgroup.apply_coe_mem_map (mapGL ℚ) (Gamma0 N) γ)) v.out.2)⟩ :
       Delta0 N) =
       ⟨rightCosetRep D v, rightCosetRep_mem_Delta0 D v⟩ * ⟨_, mapGL_mem_Delta0 N γ⟩ :=
-    Subtype.ext (rightCosetRep_mul_eq_mul_inv D γ v).symm
+    Subtype.ext (rightCosetRep_mul_eq_mul_inv D (mapGL ℚ (γ : SL(2, ℤ))) v).symm
   rw [hfactor, map_mul, Units.val_mul, delta0NebentypusChar_mapGL, Units.val_inv_eq_inv_val,
     nebentypusWeight_def]
   field_simp
@@ -236,7 +235,7 @@ private lemma nebentypusWeight_smul_slash_slash_eq_char_smul (f : ℍ → ℂ)
   -- unnormalised representative of `γ⁻¹ • v`, then take `χ (d_γ)` out of the weight
   rw [ModularForm.rat_smul_slash_of_det_pos k
       (posDetInt_le_glpos 2 (Delta0_le_posDetInt N (mapGL_mem_Delta0 N γ))) _ _,
-    ← SlashAction.slash_mul, rightCosetRep_mul_eq_mul_inv D γ v,
+    ← SlashAction.slash_mul, rightCosetRep_mul_eq_mul_inv D (mapGL ℚ (γ : SL(2, ℤ))) v,
     nebentypusWeight_eq_char_mul_delta0NebentypusChar χ D γ v, mul_smul]
   -- what remains is that the unnormalised representative has the same weighted slash as `τ`
   exact congrArg _ (delta0NebentypusChar_smul_slash_eq_nebentypusWeight_smul_slash k χ D f hf hh
@@ -257,13 +256,10 @@ the weighting, which `HeckeSlash/Nebentypus/Basic.lean` and `HeckeSlash/Nebentyp
 state and defer: `twistedHeckeSlashSum k χ D` maps `functionCharSpace k χ` into itself, so the
 twisted operators live on the character space where the unweighted `heckeSlashSum` does not.
 
-The proof is Shimura's Proposition 3.37 with the character carried through. Right multiplication by
-`γ` permutes the right cosets — the permutation is `MulAction.toPerm` at `γ⁻¹`, exactly as in
-`HeckeSlash/Invariance.lean` — and the one new step is that a right factor of `γ` multiplies a
-summand's weight by `χ (d_γ)⁻¹`, which is
-`nebentypusWeight_eq_char_mul_delta0NebentypusChar`. Combining that with the reindexing gives the
-per-summand identity `nebentypusWeight_smul_slash_slash_eq_char_smul`, and the eigenvalue then
-comes back out of the sum and is what the conclusion asserts. -/
+This is Shimura's Proposition 3.37 with the character carried through. Right multiplication by `γ`
+permutes the right cosets, exactly as in `HeckeSlash/Invariance.lean`; what the weighting adds is
+that a right factor of `γ` multiplies a summand's weight by `χ (d_γ)⁻¹`. That eigenvalue is common
+to every summand, so it comes back out of the sum, and it is what the conclusion asserts. -/
 theorem twistedHeckeSlashSum_mem_functionCharSpace (f : ℍ → ℂ)
     (hf : f ∈ functionCharSpace k χ) :
     twistedHeckeSlashSum k χ D f ∈ functionCharSpace k χ := by
