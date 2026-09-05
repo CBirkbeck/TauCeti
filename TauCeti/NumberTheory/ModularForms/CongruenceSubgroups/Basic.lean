@@ -697,18 +697,10 @@ theorem Gamma_gcd_eq_sup (a b : ℕ) : Gamma (Nat.gcd a b) = Gamma a ⊔ Gamma b
     mem_Gamma_and_inv_mul_mem_Gamma_of_map_eq (congr_arg Subtype.val hβ) hMa hMb
   exact ⟨β, hβ_a, β⁻¹ * γ, hβ_b, by group⟩
 
-/-- **Coprime levels generate.** For an integer `d` coprime to `N`, the principal congruence
-subgroups of levels `N` and `|d|` together fill `SL₂(ℤ)`.
-
-This is `Gamma_gcd_eq_sup` restated at an integer level. `Int.gcd` is *defined* as `Nat.gcd`
-on the `natAbs`, but the two spellings are not interchangeable for `rw`, so the bridge is
-worth naming: callers reaching this fact from a determinant hypothesis have `Int.gcd`. -/
-theorem Gamma_sup_Gamma_natAbs_eq_top (N : ℕ) {d : ℤ} (hd : Int.gcd d N = 1) :
-    Gamma N ⊔ Gamma d.natAbs = ⊤ := by
-  have hgcd : Nat.gcd d.natAbs N = Int.gcd d N := by simp [Int.gcd]
-  have h := Gamma_gcd_eq_sup d.natAbs N
-  rw [hgcd, hd, Gamma_one_top] at h
-  rw [sup_comm]
-  exact h.symm
+/-- **Coprime levels generate.** The principal congruence subgroups of two coprime levels
+together fill `SL₂(ℤ)`. -/
+theorem Gamma_sup_Gamma_eq_top {a b : ℕ} (h : Nat.Coprime a b) : Gamma a ⊔ Gamma b = ⊤ := by
+  have hg := Gamma_gcd_eq_sup a b
+  rwa [h, Gamma_one_top, eq_comm] at hg
 
 end CongruenceSubgroup

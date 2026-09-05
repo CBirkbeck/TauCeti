@@ -121,8 +121,8 @@ private lemma dvd_and_gcd_of_Gamma_mul (τ A : Matrix (Fin 2) (Fin 2) ℤ)
     exact hshift ▸ (Int.isCoprime_iff_gcd_eq_one.mpr hA11).add_mul_right_left k
 
 /-- **The right factor lands in `Γ₀(N)`.** Let `α` be the integer matrix `A` over `ℚ`, with
-`N ∣ A 1 0` and `A 1 1` coprime to `N`, and let `τ_N` be congruent to the identity mod `N`.
-If the product `τ_N * α * γ₂'` lies in `Δ₀(N)`, then `γ₂' ∈ Γ₀(N)`. -/
+`N ∣ A 1 0` and `A 1 1` coprime to `N`, and let the lower row of `τ_N` be congruent to
+`(0, 1)` modulo `N`. If the product `τ_N * α * γ₂'` lies in `Δ₀(N)`, then `γ₂' ∈ Γ₀(N)`. -/
 private lemma mem_Gamma0_of_mul_mem_Delta0 (α : GL (Fin 2) ℚ) (A : Matrix (Fin 2) (Fin 2) ℤ)
     (hA : (↑α : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
     (hAN : (N : ℤ) ∣ A 1 0) (hA11 : Int.gcd (A 1 1) N = 1)
@@ -153,7 +153,8 @@ private lemma mem_doubleCoset_Gamma0Image_of_mem_Delta0
       DoubleCoset.doubleCoset α (Gamma0Image N) (Gamma0Image N) := by
   have : (Gamma N).Normal := Gamma_normal N
   -- coprimality of `det α` with `N` makes the two principal congruence subgroups fill `SL₂(ℤ)`
-  have h_top := Gamma_sup_Gamma_natAbs_eq_top N hdet
+  have h_top : Gamma N ⊔ Gamma A.det.natAbs = ⊤ :=
+    Gamma_sup_Gamma_eq_top (Nat.coprime_comm.mp (by simpa [Int.gcd] using hdet))
   obtain ⟨τ_N, hτ_N, τ_a, hτ_a, hσ₁_eq⟩ :=
     Subgroup.mem_sup_of_normal_left.mp (h_top ▸ Subgroup.mem_top σ₁)
   have hτ_N_Gamma0 : τ_N ∈ Gamma0 N := Gamma_le_Gamma0 N hτ_N
