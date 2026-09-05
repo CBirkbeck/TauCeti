@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.NumberTheory.HeckeRing.Multiplicity.Handedness
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.CuspRing
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Ring
 
@@ -61,14 +62,19 @@ are identified here: `heckeSlashGamma1RingModularFormLinearMap_mul_single_single
 cusp-form companion apply both criteria at once, so the ring product of two basis elements maps
 to the composite of their operators.
 
-⚠ The general multiplicity-weighted statement — the composite as `∑_D m(D₁, D₂; D) · T_D`, and
-with it the ring homomorphism `𝕋 → Module.End` — is still **not** proved here, but its two
-counting ingredients now are. `DoubleCoset.card_pairs_mem_rightCoset_eq_multiplicity`
-reconciles the handedness, identifying the right-coset collision count with the multiplicity,
-and `DoubleCoset.card_pairs_mem_rightCoset_congr` supplies the uniformity: each right coset of
-a fixed `D` is met by the same number of pairs. What is still missing is the assembly —
-partitioning the pairs `(v, w)` according to the double coset their product lies in, for which
-the product set must be known to meet only finitely many double cosets.
+The general multiplicity-weighted statement — the composite as `∑_D m(D₁, D₂; D) · T_D` — is
+`heckeSlashSum_heckeSlashSum_eq_sum_nsmul`, in the last section below. It partitions the pairs
+`(v, w)` by the double coset their product lies in, which is what `pairCoset` names; the double
+cosets met are the image of the finite type of pairs under that map, so no finiteness beyond
+that of the two index types is needed. Its two counting ingredients are
+`DoubleCoset.card_pairs_mem_rightCoset_eq_multiplicity`, which reconciles the handedness by
+identifying the right-coset collision count with the multiplicity, and
+`DoubleCoset.card_pairs_mem_rightCoset_congr`, which supplies the uniformity: each right coset
+of a fixed `D` is met by the same number of pairs.
+
+⚠ The ring homomorphism `𝕋 → Module.End` is still not built here. The weighted composite is its
+analytic half; what remains is to match the sum above against the convolution product of
+`HeckeCosetModule`, whose structure constants are the same multiplicities.
 
 ## Main results
 
@@ -85,6 +91,13 @@ the product set must be known to meet only finitely many double cosets.
   `HeckeRing.GL2.heckeSlashGamma1CuspRingLinearMap_mul_single_single`: the ring-level reading of
   those two — the Hecke ring acts multiplicatively on basis elements whose product is a single
   double coset. The map is an *anti*-homomorphism there, since `Module.End` composes.
+* `HeckeRing.GL2.pairCoset`: the double coset `Γ₁ (aᵥ b_w) Γ₃` that a pair of right-coset
+  representatives lands in — the map the double sum is fibred over.
+* `HeckeRing.GL2.card_pairs_pairCoset_eq_multiplicity`: each right coset of a double coset `D`
+  is met by `m(D₁, D₂; D)` of the pairs, whichever right coset of `D` is chosen.
+* `HeckeRing.GL2.heckeSlashSum_heckeSlashSum_eq_sum_nsmul`: **the multiplicity-weighted
+  composite**, `(f ∣[Γ₁ δ₁ Γ₂]ₖ) ∣[Γ₂ δ₂ Γ₃]ₖ = ∑_D m(D₁, D₂; D) • (f ∣[Γ₁ δ₃ Γ₃]ₖ)`, for a
+  `Γ₁`-invariant `f`.
 * `HeckeRing.GL2.heckeSlashGamma1ModularFormEnd_mul_of_doubleCoset_eq_mul` and
   `HeckeRing.GL2.heckeSlashGamma1CuspFormEnd_mul_of_doubleCoset_eq_mul`: the same criterion for
   the Hecke operators of level `Γ₁(N)`, as an equation between endomorphisms.
@@ -205,6 +218,137 @@ theorem heckeSlashSum_heckeSlashSum_eq_heckeSlashSum
     Fintype.sum_prod_type]
 
 end Free
+
+section Assembly
+
+variable [IsHeckeTriple Δ Γ₁ Γ₂] [IsHeckeTriple Δ Γ₂ Γ₃]
+  (D₁ : HeckeCoset Δ Γ₁ Γ₂) (D₂ : HeckeCoset Δ Γ₂ Γ₃)
+
+/-- **The product `aᵥ b_w` of a right-coset representative of `D₁` and one of `D₂`, as an element
+of `Δ`.** Each factor lies in the double coset of an element of `Δ`, hence in `Δ` itself by
+`IsHeckeTriple.mem_of_mem_doubleCoset`, and a submonoid is closed under multiplication.
+
+Membership in `Δ` is the point of the definition: it is what lets the product name an element of
+`HeckeCoset Δ Γ₁ Γ₃`, which is how the double sum below is partitioned. -/
+noncomputable def pairRep (p : DecompQuotient Γ₂ Γ₁ (D₁.out : GL (Fin 2) ℚ)⁻¹ ×
+    DecompQuotient Γ₃ Γ₂ (D₂.out : GL (Fin 2) ℚ)⁻¹) : Δ :=
+  ⟨rightCosetRep D₁ p.1 * rightCosetRep D₂ p.2, mul_mem
+    (IsHeckeTriple.mem_of_mem_doubleCoset (D₁.out).2 (rightCosetRep_mem_doubleCoset D₁ p.1))
+    (IsHeckeTriple.mem_of_mem_doubleCoset (D₂.out).2 (rightCosetRep_mem_doubleCoset D₂ p.2))⟩
+
+/-- Defining equation for `pairRep`. Since `pairRep` is not `@[expose]`, this is how a module
+downstream of this one reads the product off the pair. -/
+@[simp] lemma coe_pairRep (p : DecompQuotient Γ₂ Γ₁ (D₁.out : GL (Fin 2) ℚ)⁻¹ ×
+    DecompQuotient Γ₃ Γ₂ (D₂.out : GL (Fin 2) ℚ)⁻¹) :
+    (pairRep D₁ D₂ p : GL (Fin 2) ℚ) = rightCosetRep D₁ p.1 * rightCosetRep D₂ p.2 := (rfl)
+
+/-- **The double coset `Γ₁ (aᵥ b_w) Γ₃` a pair of representatives lands in.** This is the map the
+double sum of `heckeSlashSum_heckeSlashSum` is fibred over. -/
+noncomputable def pairCoset (p : DecompQuotient Γ₂ Γ₁ (D₁.out : GL (Fin 2) ℚ)⁻¹ ×
+    DecompQuotient Γ₃ Γ₂ (D₂.out : GL (Fin 2) ℚ)⁻¹) : HeckeCoset Δ Γ₁ Γ₃ :=
+  HeckeCoset.mk Γ₁ Γ₃ (pairRep D₁ D₂ p)
+
+/-- Defining equation for `pairCoset`, which is not `@[expose]` either. -/
+lemma pairCoset_def (p : DecompQuotient Γ₂ Γ₁ (D₁.out : GL (Fin 2) ℚ)⁻¹ ×
+    DecompQuotient Γ₃ Γ₂ (D₂.out : GL (Fin 2) ℚ)⁻¹) :
+    pairCoset D₁ D₂ p = HeckeCoset.mk Γ₁ Γ₃ (pairRep D₁ D₂ p) := (rfl)
+
+variable {D₁ D₂}
+variable {D : HeckeCoset Δ Γ₁ Γ₃} {p : DecompQuotient Γ₂ Γ₁ (D₁.out : GL (Fin 2) ℚ)⁻¹ ×
+  DecompQuotient Γ₃ Γ₂ (D₂.out : GL (Fin 2) ℚ)⁻¹}
+
+/-- The product of a pair lies in the double coset `pairCoset` assigns to it. -/
+lemma mem_doubleCoset_of_pairCoset_eq (h : pairCoset D₁ D₂ p = D) :
+    rightCosetRep D₁ p.1 * rightCosetRep D₂ p.2 ∈
+      doubleCoset (D.out : GL (Fin 2) ℚ) (Γ₁ : Set (GL (Fin 2) ℚ)) Γ₃ := by
+  have hD := HeckeCoset.eq_iff.mp
+    ((pairCoset_def D₁ D₂ p).symm.trans (h.trans (HeckeCoset.mk_rep D).symm))
+  rw [HeckeCoset.rep_def, coe_pairRep] at hD
+  exact hD ▸ mem_doubleCoset_self Γ₁ Γ₃ _
+
+/-- Conversely, a pair whose product lies in one right coset `Γ₁ x` of a double coset is in the
+fibre of `pairCoset` over that double coset: a right coset is contained in the double coset it
+generates, and `x` generates `D`. -/
+lemma pairCoset_eq_of_mem_rightCoset {x : GL (Fin 2) ℚ}
+    (hx : x ∈ doubleCoset (D.out : GL (Fin 2) ℚ) (Γ₁ : Set (GL (Fin 2) ℚ)) Γ₃)
+    (hp : rightCosetRep D₁ p.1 * rightCosetRep D₂ p.2 ∈
+      MulOpposite.op x • (Γ₁ : Set (GL (Fin 2) ℚ))) :
+    pairCoset D₁ D₂ p = D := by
+  have hmem : rightCosetRep D₁ p.1 * rightCosetRep D₂ p.2 ∈
+      doubleCoset (D.out : GL (Fin 2) ℚ) (Γ₁ : Set (GL (Fin 2) ℚ)) Γ₃ :=
+    doubleCoset_eq_of_mem hx ▸ mem_doubleCoset.mpr
+      ⟨_, (mem_rightCoset_iff x).mp hp, 1, one_mem _, by group⟩
+  rw [pairCoset_def, ← HeckeCoset.mk_rep D]
+  refine HeckeCoset.eq_iff.mpr ?_
+  rw [HeckeCoset.rep_def, coe_pairRep]
+  exact doubleCoset_eq_of_mem hmem
+
+/-- **Every right coset of a double coset `D` is met by the same number of pairs**, namely
+Shimura's multiplicity `m(D₁, D₂; D)`.
+
+Two facts combine. The pairs that meet the right coset `Γ₁ x` are automatically in the fibre of
+`pairCoset` over `D` (`pairCoset_eq_of_mem_rightCoset`), so restricting to that fibre changes
+nothing; and the resulting count is independent of which right coset of `D` is chosen
+(`DoubleCoset.card_pairs_mem_rightCoset_congr`) and equal to the multiplicity
+(`DoubleCoset.card_pairs_mem_rightCoset_eq_multiplicity`). -/
+lemma card_pairs_pairCoset_eq_multiplicity {x : GL (Fin 2) ℚ}
+    (hx : x ∈ doubleCoset (D.out : GL (Fin 2) ℚ) (Γ₁ : Set (GL (Fin 2) ℚ)) Γ₃) :
+    Nat.card {i : {q // pairCoset D₁ D₂ q = D} //
+        MulOpposite.op (rightCosetRep D₁ i.1.1 * rightCosetRep D₂ i.1.2) •
+            (Γ₁ : Set (GL (Fin 2) ℚ)) = MulOpposite.op x • (Γ₁ : Set (GL (Fin 2) ℚ))} =
+      DoubleCoset.multiplicity Γ₃ Γ₂ Γ₁ (D₂.out : GL (Fin 2) ℚ)⁻¹ (D₁.out : GL (Fin 2) ℚ)⁻¹
+        (D.out : GL (Fin 2) ℚ)⁻¹ := by
+  have hiff (y : GL (Fin 2) ℚ) :
+      (MulOpposite.op y • (Γ₁ : Set (GL (Fin 2) ℚ)) =
+          MulOpposite.op x • (Γ₁ : Set (GL (Fin 2) ℚ))) ↔
+        y ∈ MulOpposite.op x • (Γ₁ : Set (GL (Fin 2) ℚ)) := by
+    rw [rightCoset_eq_iff, mem_rightCoset_iff]
+    exact ⟨fun h ↦ by simpa using inv_mem h, fun h ↦ by simpa using inv_mem h⟩
+  rw [Nat.card_congr (Equiv.subtypeSubtypeEquivSubtype (p := fun q ↦ pairCoset D₁ D₂ q = D)
+      (q := fun q ↦ MulOpposite.op (rightCosetRep D₁ q.1 * rightCosetRep D₂ q.2) •
+        (Γ₁ : Set (GL (Fin 2) ℚ)) = MulOpposite.op x • (Γ₁ : Set (GL (Fin 2) ℚ)))
+      fun {q} hq ↦ pairCoset_eq_of_mem_rightCoset hx ((hiff _).mp hq)),
+    ← card_pairs_mem_rightCoset_eq_multiplicity Γ₁ Γ₂ Γ₃ (D₁.out : GL (Fin 2) ℚ)
+      (D₂.out : GL (Fin 2) ℚ) (D.out : GL (Fin 2) ℚ)]
+  simp only [hiff, rightCosetRep_def, Set.coe_ofPred]
+  exact card_pairs_mem_rightCoset_congr Γ₁ Γ₂ Γ₃ (D₁.out : GL (Fin 2) ℚ)
+    (D₂.out : GL (Fin 2) ℚ) hx
+
+variable (D₁ D₂)
+
+/-- **The multiplicity-weighted composite**, and with it the general form of the composition law.
+For a `Γ₁`-invariant `f`, the composite of the two slash sums is the sum, over the double cosets
+met by the products `aᵥ b_w`, of Shimura's multiplicity times the slash sum of that coset:
+
+`(f ∣[Γ₁ δ₁ Γ₂]ₖ) ∣[Γ₂ δ₂ Γ₃]ₖ = ∑_D m(D₁, D₂; D) • (f ∣[Γ₁ δ₃ Γ₃]ₖ)`.
+
+`heckeSlashSum_heckeSlashSum_eq_heckeSlashSum` is the special case of one double coset met once
+by each pair; this is the statement the ring homomorphism from the abstract Hecke ring needs.
+
+The proof partitions the double sum of `heckeSlashSum_heckeSlashSum` along `pairCoset`. Each
+fibre is a family of representatives lying in a single double coset
+(`mem_doubleCoset_of_pairCoset_eq`) which meets every right coset of it the same number of times
+(`card_pairs_pairCoset_eq_multiplicity`), and that is exactly what
+`sum_slash_eq_nsmul_heckeSlashSum` asks for. No finiteness beyond that of the two index types is
+needed: the double cosets met are the image of a finite type. -/
+theorem heckeSlashSum_heckeSlashSum_eq_sum_nsmul [IsHeckeTriple Δ Γ₁ Γ₃]
+    [DecidableEq (HeckeCoset Δ Γ₁ Γ₃)] (f : ℍ → ℂ) (hf : ∀ γ ∈ Γ₁, f ∣[k] γ = f) :
+    heckeSlashSum k D₂ (heckeSlashSum k D₁ f) =
+      ∑ D ∈ Finset.univ.image (pairCoset D₁ D₂),
+        DoubleCoset.multiplicity Γ₃ Γ₂ Γ₁ (D₂.out : GL (Fin 2) ℚ)⁻¹ (D₁.out : GL (Fin 2) ℚ)⁻¹
+          (D.out : GL (Fin 2) ℚ)⁻¹ • heckeSlashSum k D f := by
+  classical
+  rw [heckeSlashSum_heckeSlashSum, ← Fintype.sum_prod_type',
+    ← Finset.sum_fiberwise_of_maps_to (g := pairCoset D₁ D₂)
+      (fun p _ ↦ Finset.mem_image_of_mem _ (Finset.mem_univ p))]
+  refine Finset.sum_congr rfl fun D _ ↦ ?_
+  rw [Finset.sum_subtype (p := fun q ↦ pairCoset D₁ D₂ q = D)
+    (Finset.univ.filter fun q ↦ pairCoset D₁ D₂ q = D) (fun q ↦ by simp)
+    fun q ↦ f ∣[k] (rightCosetRep D₁ q.1 * rightCosetRep D₂ q.2)]
+  exact sum_slash_eq_nsmul_heckeSlashSum k D _ _ (fun i ↦ mem_doubleCoset_of_pairCoset_eq i.2)
+    (fun _ hx ↦ card_pairs_pairCoset_eq_multiplicity hx) f hf
+
+end Assembly
 
 section Gamma1
 
