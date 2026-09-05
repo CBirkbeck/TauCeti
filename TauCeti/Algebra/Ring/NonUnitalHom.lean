@@ -12,9 +12,8 @@ public import Mathlib.Algebra.Ring.Hom.Defs
 
 A map that preserves multiplication and zero need not preserve `1`, and the zero map shows it
 need not. Where multiplication in the codomain is left-cancellative away from zero there is
-nothing in between: either `p 1 = 0`, and then `p` kills every `x = x * 1`, or `p 1` cancels from
-`p 1 * p 1 = p 1 * 1` to leave `p 1 = 1`. Such a map is therefore identically zero or unital, the
-zero map being the only non-unital one; a unital one is promoted by `AlgHom.ofLinearMap` or
+nothing in between: such a map is identically zero or unital, the zero map being the only
+non-unital one. A unital one is promoted to a bundled unital map by `AlgHom.ofLinearMap` or
 `RingHom.mk'`.
 
 This is the dichotomy that lets a type of multiplicative maps carry a zero without adjoining one.
@@ -40,8 +39,9 @@ variable {A B G : Type*} [NonAssocSemiring A] [NonAssocSemiring B] [IsLeftCancel
 
 namespace NonUnitalRingHomClass
 
-/-- **A multiplicative map vanishes identically or is unital.** At `p 1 = 0` every `x = x * 1` is
-killed; otherwise `p 1` cancels from `p 1 * p 1 = p 1 * 1`. -/
+/-- **A multiplicative map vanishes identically or is unital.** -/
+-- Both branches are one rewrite: at `p 1 = 0` every `x = x * 1` is killed, and otherwise `p 1`
+-- cancels from `p 1 * p 1 = p 1 * 1`.
 theorem forall_apply_eq_zero_or_map_one (p : G) : (∀ x, p x = 0) ∨ p 1 = 1 := by
   by_cases h1 : p 1 = 0
   · exact Or.inl fun x => by rw [← mul_one x, map_mul, h1, mul_zero]

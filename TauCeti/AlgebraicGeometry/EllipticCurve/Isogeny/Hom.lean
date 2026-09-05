@@ -57,8 +57,6 @@ exactly at the zero map, which is what `degree_eq_zero_iff` records.
 ## References
 
 * [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], II.2 and III.6.
-* `TauCetiRoadmap/EllipticCurves/README.md`, Layer 1, "The hom-group and the degree form", the
-  source of the carrier's design.
 -/
 
 public section
@@ -79,6 +77,7 @@ def _root_.NonUnitalAlgHom.MapsInfinityOfMapOne
 
 /-- The condition unfolded, so a consumer can introduce and eliminate it without the definition's
 body: `MapsInfinityOfMapOne p` is exactly the implication it is defined to be. -/
+@[simp]
 theorem _root_.NonUnitalAlgHom.mapsInfinityOfMapOne_iff
     {p : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField} :
     p.MapsInfinityOfMapOne ↔ ∀ h : p 1 = 1,
