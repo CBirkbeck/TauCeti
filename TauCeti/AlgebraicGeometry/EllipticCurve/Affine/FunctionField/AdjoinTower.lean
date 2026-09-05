@@ -72,12 +72,10 @@ this setting because the statements below would otherwise carry an 85-character 
 noncomputable def ratFuncAdjoinRange (g : RatFunc K) : IntermediateField K W.FunctionField :=
   (IntermediateField.adjoin K {g}).extendRight W.FunctionField
 
-/-- `ratFuncAdjoinRange` in the `IntermediateField.map` form.
-
-This is the bridge the tower runs on, and it is load-bearing rather than an unfolding convenience:
-`extendRight` is spelled with `Algebra.algHom`, while `ratFuncRange_eq_map` produces
-`IsScalarTower.toAlgHom`, so `relfinrank_map_map` does not unify against the two without it, even
-though the two maps are the same term. -/
+/-- `K⟮g⟯`'s copy in `K(W)` is the image of `K⟮g⟯` under the inclusion `K(x) ⊆ K(W)`. -/
+-- Load-bearing rather than an unfolding convenience: `extendRight` is spelled with
+-- `Algebra.algHom` while `ratFuncRange_eq_map` produces `IsScalarTower.toAlgHom`, so
+-- `relfinrank_map_map` does not unify against the two without this, though the maps are one term.
 theorem ratFuncAdjoinRange_eq_map (g : RatFunc K) :
     ratFuncAdjoinRange W g = (IntermediateField.adjoin K {g}).map
       (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField) := by
@@ -131,7 +129,15 @@ private theorem finrank_of_relfinrank_ratFuncAdjoinRange {g : RatFunc K}
       Module.finrank (IntermediateField.adjoin K {g}) (RatFunc K) := by
   have htower := relfinrank_mul_finrank_top hle
   rw [h, finrank_ratFuncAdjoinRange] at htower
-  lia
+  exact Nat.eq_of_mul_eq_mul_left two_pos htower
+
+-- The map of a simple adjoin is the simple adjoin of the image. Naming it keeps the theorem
+-- below from threading `IntermediateField.adjoin_map` and `Set.image_singleton` through a longer
+-- rewrite chain.
+private theorem map_adjoin_singleton {L M : Type*} [Field L] [Field M] [Algebra K L] [Algebra K M]
+    (f : L →ₐ[K] M) (x : L) :
+    (IntermediateField.adjoin K {x}).map f = IntermediateField.adjoin K {f x} := by
+  rw [IntermediateField.adjoin_map, Set.image_singleton]
 
 /-- **The copy of `K⟮g⟯` inside `K(W)` is the image of the rational function field of `W'`**, for
 any embedding `f : K(W') → K(W)` of function fields carrying the affine coordinate of `W'` to `g`.
@@ -141,8 +147,8 @@ theorem ratFuncAdjoinRange_eq_map_ratFuncRange {W' : WeierstrassCurve.Affine K} 
     (hf : f (algebraMap K[X] W'.FunctionField X) = algebraMap (RatFunc K) W.FunctionField g) :
     ratFuncAdjoinRange W g = (ratFuncRange W').map f := by
   rw [ratFuncAdjoinRange_eq_map, ratFuncRange_eq_map, IntermediateField.map_map,
-    ← RatFunc.adjoin_X, IntermediateField.adjoin_map, IntermediateField.adjoin_map]
-  simp only [Set.image_singleton, AlgHom.coe_comp, Function.comp_apply, toAlgHom_ratFuncX, hf]
+    ← RatFunc.adjoin_X, map_adjoin_singleton, map_adjoin_singleton]
+  simp only [AlgHom.coe_comp, Function.comp_apply, toAlgHom_ratFuncX, hf]
   rw [IsScalarTower.coe_toAlgHom']
 
 /-- **`[K(W) : f(K(W'))] = [K(x) : K⟮g⟯]`** for an embedding `f : K(W') → K(W)` of function fields
