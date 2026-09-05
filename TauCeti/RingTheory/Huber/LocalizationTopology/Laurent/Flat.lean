@@ -5,7 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.Presentation
+public import TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.Identification
 public import TauCeti.RingTheory.Huber.Restricted.Laurent
 public import TauCeti.RingTheory.Huber.StronglyNoetherian
 
