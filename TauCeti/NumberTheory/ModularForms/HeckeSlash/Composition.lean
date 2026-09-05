@@ -72,9 +72,16 @@ identifying the right-coset collision count with the multiplicity, and
 `DoubleCoset.card_pairs_mem_rightCoset_congr`, which supplies the uniformity: each right coset
 of a fixed `D` is met by the same number of pairs.
 
-⚠ The ring homomorphism `𝕋 → Module.End` is still not built here. The weighted composite is its
-analytic half; what remains is to match the sum above against the convolution product of
-`HeckeCosetModule`, whose structure constants are the same multiplicities.
+⚠ The ring homomorphism `𝕋 → Module.End` is still not built here, and the remaining gap is
+wider than a change of notation. `HeckeCosetModule.structureConstants` weights `D` by
+`DoubleCoset.multiplicity Γ₁ Γ₂ Γ₃ δ₁ δ₂ δ₃`, whereas the sum below weights it by
+`DoubleCoset.multiplicity Γ₃ Γ₂ Γ₁ δ₂⁻¹ δ₁⁻¹ δ₃⁻¹` — the factors exchanged and all three
+arguments inverted, which is what the right-coset indexing of a slash sum forces. **These are
+not equal**, and no symmetry of `multiplicity` identifies them: the two counts run over
+`Γ ⧸ (Γ ∩ gΓ'g⁻¹)` and `Γ ⧸ (Γ ∩ g⁻¹Γ'g)`, the two degrees of a double coset, and those
+differ in general. Closing the gap needs an anti-involution rather than a rewriting of
+coefficients; `HeckeRing/GLn/TransposeAntiInvolution.lean` supplies one at level `SLₙ(ℤ)`, and
+it is what makes the Hecke ring commutative there (Shimura's Proposition 3.8).
 
 ## Main results
 
