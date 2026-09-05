@@ -13,14 +13,17 @@ public import Mathlib.RingTheory.Localization.FractionRing
 
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), §2.4.**
 
-A point `v : Spv A` carries a valuation on `A`, but not one on a field. This file makes it one.
-The support of `v` is prime, so `A ⧸ supp v` is a domain; the valuation kills the support by
-construction, so it descends there; and on the quotient it has trivial support, which is exactly
-the hypothesis needed to extend it along `A ⧸ supp v → Frac (A ⧸ supp v)`. The result is the
-**residue field** of `v`, carrying a valuation with the value group `v` already had.
+A point `v : Spv A` determines a valuation `v.valuation` on `A`, but not one on a field. This file
+makes it one. The support of `v` is prime, so `A ⧸ supp v` is a domain; `v.valuation` kills the
+support by construction, so it descends there as `quotientValuation v`; and on the quotient it has
+trivial support, which is exactly the hypothesis needed to extend it along
+`A ⧸ supp v → Frac (A ⧸ supp v)`. The result, `residueFieldValuation v`, is a valuation on the
+**residue field** of `v`, valued in the same `ValuativeRel.ValueGroupWithZero` as `v.valuation`.
 
-This is the factorisation the structure presheaf is read through: a section is evaluated at `v` by
-its image in the residue field, and the condition `v(f) ≤ 1` cutting out `𝒪_X⁺` is imposed there.
+Note that `v` itself is not a function: `Spv A` is a structure, and each of the three valuations
+here has to be named. This is the factorisation the structure presheaf is read through — a section
+is evaluated at `v` by its image in the residue field, and the condition cutting out `𝒪_X⁺` is
+`residueFieldValuation v` of that image being `≤ 1`.
 
 ## Main definitions
 
