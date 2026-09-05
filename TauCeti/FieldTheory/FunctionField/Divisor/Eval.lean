@@ -21,7 +21,8 @@ is what Weil reciprocity `f(div g) = g(div f)` compares. This file defines it. T
 `N_{F_P/k}(f(P))` are `TauCeti.Place.normResidueOrOne`, built in
 `FieldTheory/FunctionField/Place/Residue.lean`.
 
-The construction is total in `F`, and classical exactly where the local norms are: at a place
+The construction is total on `Fˣ` — every nonzero function, at every divisor — and classical
+where both the admissibility and the finiteness conditions below hold: at a place
 whose residue field is module-finite over `k`. `TauCeti.Place.finiteDimensional_residueField`
 supplies that at every place of an algebraic function field; absent it, `Algebra.norm` is the junk
 value `1` and the factor drops out silently, which is the convention `TauCeti.Place.degree`
