@@ -204,9 +204,8 @@ private lemma sum_ite_mem_multiplicity [IsHeckeTriple Δ H₂ H₃] [IsHeckeTrip
       Δ.mul_mem (Δ.mul_mem (Δ.mul_mem (Δ.mul_mem (IsHeckeTriple.mem_of_mem_left H₃ hβ) g₂.2)
         (IsHeckeTriple.mem_of_mem_left H₄ hc)) g₃.2) (IsHeckeTriple.mem_of_mem_right H₃ hy)
     set xΔ : Δ := ⟨β * (g₂ : G) * c * (g₃ : G) * y, hxΔ⟩
-    have hrep : ((HeckeCoset.mk H₂ H₄ xΔ).rep : G) ∈ doubleCoset (xΔ : G) H₂ H₄ := by
-      have h1 := HeckeCoset.rep_mem (HeckeCoset.mk H₂ H₄ xΔ)
-      rwa [HeckeCoset.toSet_mk] at h1
+    have hrep : ((HeckeCoset.mk H₂ H₄ xΔ).rep : G) ∈ doubleCoset (xΔ : G) H₂ H₄ :=
+      HeckeCoset.rep_mk_mem_doubleCoset xΔ
     refine hx (HeckeCoset.mk H₂ H₄ xΔ) ?_ ?_
     · rw [HeckeCoset.mem_image_mulMap_iff, multiplicity_doubleCoset_congr _ _ hrep]
       exact hne
@@ -258,15 +257,6 @@ private lemma sum_multiplicity_eq_card [IsHeckeTriple Δ H₁ H₂] [IsHeckeTrip
   exact Nat.card_congr (Set.equivOfEq (by
     ext j
     simp only [Set.mem_ofPred_eq, mul_inv_rev, mul_assoc]))
-
-/-- The element a `HeckeCoset` is built from lies in the double coset of that coset's chosen
-representative: `mk` and `rep` name the same double coset. -/
-private lemma mem_doubleCoset_rep_mk (w : Δ) :
-    (w : G) ∈ doubleCoset (((HeckeCoset.mk H₁ H₃ w).rep : Δ) : G) H₁ H₃ := by
-  have h := HeckeCoset.rep_mem (HeckeCoset.mk H₁ H₃ w)
-  rw [HeckeCoset.toSet_mk] at h
-  rw [doubleCoset_eq_of_mem h]
-  exact mem_doubleCoset_self H₁ H₃ _
 
 open Classical in
 /-- **The product of two multiplicities as a doubly-indexed indicator sum**, over the left
@@ -327,7 +317,8 @@ private lemma sum_image_mulMap_multiplicity_left [IsHeckeTriple Δ H₁ H₂]
   set E₀ : HeckeCoset Δ H₁ H₃ := HeckeCoset.mk H₁ H₃ ⟨wG, hwΔ⟩ with hE₀def
   have hE₀mem : E₀ ∈ Finset.univ.image (mulMap H₁ H₂ H₃ g₁ g₂) :=
     Finset.mem_image.mpr ⟨p, Finset.mem_univ p, HeckeCoset.mulMap_eq_mk _ _ _ _ _ _⟩
-  have hdec : wG ∈ doubleCoset ((E₀.rep : Δ) : G) H₁ H₃ := mem_doubleCoset_rep_mk ⟨wG, hwΔ⟩
+  have hdec : wG ∈ doubleCoset ((E₀.rep : Δ) : G) H₁ H₃ :=
+    HeckeCoset.mem_doubleCoset_rep_mk ⟨wG, hwΔ⟩
   rw [doubleCoset_eq_iUnion_leftCosets, Set.mem_iUnion] at hdec
   obtain ⟨l₀, hl₀⟩ := hdec
   rw [mem_leftCoset_iff] at hl₀
