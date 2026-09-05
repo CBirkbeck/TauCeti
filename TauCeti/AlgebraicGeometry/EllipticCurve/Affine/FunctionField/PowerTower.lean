@@ -90,8 +90,8 @@ element of `K(X^n)`. -/
 theorem mem_ratFuncAdjoinXPowRange {n : ℕ} {z : W.FunctionField} :
     z ∈ ratFuncAdjoinXPowRange W n ↔ ∃ r ∈ IntermediateField.adjoin K {(RatFunc.X : RatFunc K) ^ n},
       IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField r = z := by
-  rw [ratFuncAdjoinXPowRange]
-  exact TauCeti.IntermediateField.mem_extendRight
+  simp only [ratFuncAdjoinXPowRange, IntermediateField.extendRight, Algebra.algHom]
+  exact IntermediateField.mem_map _
 
 /-- The generator: `x ^ n` lies in the copy of `K(x^n)`. -/
 theorem algebraMap_X_pow_mem_ratFuncAdjoinXPowRange (n : ℕ) :

@@ -38,8 +38,8 @@ for it in this tower and no new object. Its membership and order API is generic 
 No result needs `W` to be elliptic: the Weierstrass equation alone gives the power basis, through
 `finrank_ratFuncRange`.
 
-The Frobenius and multiplication-by-`n` degree computations are both specialisations of this
-tower.
+The Frobenius degree computation is a specialisation of this tower, through
+`PowerTower.lean`; the multiplication-by-`n` degree is the intended next one.
 
 ## Provenance
 
