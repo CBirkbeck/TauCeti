@@ -39,10 +39,8 @@ the isogeny `[n]` itself appears here.
 
 Adapted from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0), pinned
 at `513e83879e2f8cbc626eb9e04d660e92be16ccba`: `HasseWeil/Basic.lean`, private declarations
-`max_natDegree_num_denom_mulByInt` and `finrank_ratFunc_mulByInt`. The proof structure is theirs:
-reduce the quotient to lowest terms through a unit gcd, then compare the two degrees. Two
-departures: that version assumes `n ≠ 0`, and it builds the rational-function-field dimension
-itself, which Mathlib's `RatFunc.finrank_eq_max_natDegree` now supplies.
+`max_natDegree_num_denom_mulByInt` and `finrank_ratFunc_mulByInt`. Adapted rather than ported:
+that version assumes `n ≠ 0`.
 -/
 
 public section
