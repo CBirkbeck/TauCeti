@@ -7,16 +7,15 @@ module
 
 public import Mathlib.Algebra.Ring.Hom.Defs
 
-import Mathlib.Algebra.GroupWithZero.Idempotent
-
 /-!
 # Unitality of a multiplicative map
 
 A map that preserves multiplication and zero need not preserve `1`, and the zero map shows it
 need not. Where multiplication in the codomain is left-cancellative away from zero there is
-nothing in between: `p 1` is idempotent, so it is `0` or `1`, and `p 1 = 0` forces `p` to vanish
-everywhere. Such a map is therefore either identically zero or unital, the zero map being the
-only non-unital one; a unital one is promoted by `AlgHom.ofLinearMap` or `RingHom.mk'`.
+nothing in between: either `p 1 = 0`, and then `p` kills every `x = x * 1`, or `p 1` cancels from
+`p 1 * p 1 = p 1 * 1` to leave `p 1 = 1`. Such a map is therefore identically zero or unital, the
+zero map being the only non-unital one; a unital one is promoted by `AlgHom.ofLinearMap` or
+`RingHom.mk'`.
 
 This is the dichotomy that lets a type of multiplicative maps carry a zero without adjoining one.
 
@@ -36,18 +35,18 @@ extensionality.
 
 public section
 
-variable {A B G : Type*} [NonAssocSemiring A] [Semiring B] [IsLeftCancelMulZero B]
-  [FunLike G A B]
-  [NonUnitalRingHomClass G A B]
+variable {A B G : Type*} [NonAssocSemiring A] [NonAssocSemiring B] [IsLeftCancelMulZero B]
+  [FunLike G A B] [NonUnitalRingHomClass G A B]
 
 namespace NonUnitalRingHomClass
 
-/-- **A multiplicative map vanishes identically or is unital.** `p 1` is idempotent, hence `0`
-or `1`, and at `0` the map kills every `x = x * 1`. -/
+/-- **A multiplicative map vanishes identically or is unital.** At `p 1 = 0` every `x = x * 1` is
+killed; otherwise `p 1` cancels from `p 1 * p 1 = p 1 * 1`. -/
 theorem forall_apply_eq_zero_or_map_one (p : G) : (∀ x, p x = 0) ∨ p 1 = 1 := by
-  have hidem : IsIdempotentElem (p 1) := by rw [IsIdempotentElem, ← map_mul, mul_one]
-  refine (IsIdempotentElem.iff_eq_zero_or_one.mp hidem).imp (fun hz x => ?_) id
-  rw [← mul_one x, map_mul, hz, mul_zero]
+  by_cases h1 : p 1 = 0
+  · exact Or.inl fun x => by rw [← mul_one x, map_mul, h1, mul_zero]
+  · refine Or.inr (mul_left_cancel₀ h1 ?_)
+    rw [← map_mul, mul_one, mul_one]
 
 /-- **A multiplicative map that is somewhere nonzero is unital.** -/
 theorem map_one_of_exists_apply_ne_zero {p : G} (hp : ∃ x, p x ≠ 0) : p 1 = 1 :=

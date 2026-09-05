@@ -51,13 +51,14 @@ this file.
 ## Implementation notes
 
 `degree 0 = 0` is a stipulation, not a theorem: the zero map's image generates no field, so there
-is no extension whose dimension could be measured. It is the value that extends `degree` — a
-quadratic function on the carrier, not an additive one — so that it vanishes exactly at the zero
-map, which `degree_eq_zero_iff` records.
+is no extension whose dimension could be measured. `0` is the value that makes `degree` vanish
+exactly at the zero map, which is what `degree_eq_zero_iff` records.
 
 ## References
 
 * [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], II.2 and III.6.
+* `TauCetiRoadmap/EllipticCurves/README.md`, Layer 1, "The hom-group and the degree form", the
+  source of the carrier's design.
 -/
 
 public section
@@ -75,6 +76,14 @@ def MapsInfinityOfMapOne (p : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionFiel
   ∀ h : p 1 = 1,
     CoordinatePullback.MapsInfinity (AlgHom.ofLinearMap ⟨⟨p, map_add p⟩, map_smul p⟩ h (map_mul p))
 
+/-- The condition unfolded, so a consumer can introduce and eliminate it without the definition's
+body: `MapsInfinityOfMapOne p` is exactly the implication it is defined to be. -/
+theorem mapsInfinityOfMapOne_iff {p : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField} :
+    MapsInfinityOfMapOne p ↔ ∀ h : p 1 = 1,
+      CoordinatePullback.MapsInfinity
+        (AlgHom.ofLinearMap ⟨⟨p, map_add p⟩, map_smul p⟩ h (map_mul p)) :=
+  (Iff.rfl)
+
 /-- **The carrier of `Hom(W₁, W₂)`**: an `F`-linear multiplicative map out of the target
 coordinate ring, pointed wherever it is unital. Its zero map is the zero morphism's formal
 representative and its unital elements are the isogenies. -/
@@ -88,11 +97,9 @@ structure Hom (W₁ W₂ : WeierstrassCurve.Affine F) where
 namespace Hom
 
 noncomputable instance : Zero (Hom W₁ W₂) where
-  zero := ⟨0, by
-    -- `MapsInfinityOfMapOne 0` is an implication out of `(0 : _ →ₙₐ[F] _) 1 = 1`, which fails
-    -- in a field; the condition is therefore vacuous at the zero map.
-    change ∀ h : (0 : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField) 1 = 1, _
-    exact fun h => absurd h (by simp)⟩
+  -- The condition is an implication out of `(0 : _ →ₙₐ[F] _) 1 = 1`, which fails in a field, so
+  -- it is vacuous at the zero map — which is exactly how that map enters the carrier.
+  zero := ⟨0, by simp [MapsInfinityOfMapOne]⟩
 
 @[simp]
 theorem toNonUnitalAlgHom_zero : (0 : Hom W₁ W₂).toNonUnitalAlgHom = 0 := (rfl)
