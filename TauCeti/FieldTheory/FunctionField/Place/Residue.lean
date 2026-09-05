@@ -182,6 +182,7 @@ private theorem unitGroupMk_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) 
 
 /-- **The residue is multiplicative in the function**, at a place where both factors are units:
 `(f g)(P) = f(P) · g(P)`. -/
+@[simp]
 theorem residueUnit_mul {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
     P.residueUnit (f * g) (ord_mul_eq_zero hf hg) =
@@ -190,6 +191,7 @@ theorem residueUnit_mul {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
 
 /-- **The norm of the residue is multiplicative in the function**, at a place where both factors
 are units. -/
+@[simp]
 theorem normResidue_mul {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
     P.normResidue (f * g) (ord_mul_eq_zero hf hg) =
@@ -203,12 +205,14 @@ theorem residueUnit_one (P : Place k F) :
   rw [residueUnit, ← map_one P.integers.unitGroupToResidueFieldUnits, unitGroupMk_one]
 
 /-- **The residue inverts with the function**: `f⁻¹(P) = f(P)⁻¹`. -/
+@[simp]
 theorem residueUnit_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
     P.residueUnit f⁻¹ (ord_inv_eq_zero hf) = (P.residueUnit f hf)⁻¹ := by
   rw [residueUnit, residueUnit, ← map_inv, unitGroupMk_inv hf]
 
 /-- **The residue divides with the function**: `(f / g)(P) = f(P) / g(P)`, at a place where both
 are units. -/
+@[simp]
 theorem residueUnit_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
     P.residueUnit (f / g) (ord_div_eq_zero hf hg) =
@@ -216,11 +220,13 @@ theorem residueUnit_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
   rw [residueUnit, residueUnit, residueUnit, ← map_div, unitGroupMk_div hf hg]
 
 /-- **The norm of the residue inverts with the function**: `N(f⁻¹(P)) = N(f(P))⁻¹`. -/
+@[simp]
 theorem normResidue_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
     P.normResidue f⁻¹ (ord_inv_eq_zero hf) = (P.normResidue f hf)⁻¹ := by
   rw [normResidue, normResidue, residueUnit_inv hf, map_inv]
 
 /-- **The norm of the residue divides with the function**: `N((f / g)(P)) = N(f(P)) / N(g(P))`. -/
+@[simp]
 theorem normResidue_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
     P.normResidue (f / g) (ord_div_eq_zero hf hg) =
@@ -231,6 +237,7 @@ theorem normResidue_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
 are units. The hypotheses cannot be dropped: at a place where `f` and `g` have opposite nonzero
 orders, `f * g` is a unit while neither factor is, so the left side is a genuine norm and the
 right side is `1`. -/
+@[simp]
 theorem normResidueOrOne_mul {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
     P.normResidueOrOne (f * g) = P.normResidueOrOne f * P.normResidueOrOne g := by
@@ -268,6 +275,7 @@ theorem normResidueOrOne_inv (P : Place k F) (f : Fˣ) :
 /-- **The total local factor divides in the function**, at a place where both arguments are
 units. Like `normResidueOrOne_mul`, and unlike `normResidueOrOne_inv`, the hypotheses cannot be
 dropped: a quotient can be a unit where neither argument is. -/
+@[simp]
 theorem normResidueOrOne_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
     P.normResidueOrOne (f / g) = P.normResidueOrOne f / P.normResidueOrOne g := by

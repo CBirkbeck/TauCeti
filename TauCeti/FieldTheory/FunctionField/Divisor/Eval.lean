@@ -146,6 +146,12 @@ theorem eval_neg (D : Divisor k F) (f : Fˣ) : eval (-D) f = (eval D f)⁻¹ :=
 theorem eval_sub (D E : Divisor k F) (f : Fˣ) : eval (D - E) f = eval D f / eval E f :=
   map_div (evalHom f) _ _
 
+/-- Scaling a divisor raises the value to that power: `f(n • D) = f(D) ^ n`. This is what the
+`N(P) − N(O)` divisors of the Weil pairing are evaluated through. -/
+@[simp]
+theorem eval_zsmul (n : ℤ) (D : Divisor k F) (f : Fˣ) : eval (n • D) f = eval D f ^ n := by
+  rw [eval, eval, ofAdd_zsmul, map_zpow]
+
 /-- On a single place with multiplicity, `f(n·P)` is the local factor raised to `n`. -/
 @[simp]
 theorem eval_single (P : Place k F) (n : ℤ) (f : Fˣ) :
