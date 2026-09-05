@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.ValuationSpectrum
-public import Mathlib.RingTheory.Localization.FractionRing
+public import Mathlib.RingTheory.LocalRing.ResidueField.Ideal
 
 /-!
 # The residue field of a point of the valuation spectrum
@@ -17,8 +17,9 @@ A point `v : Spv A` determines a valuation `v.valuation` on `A`, but not one on 
 makes it one. The support of `v` is prime, so `A ⧸ supp v` is a domain; `v.valuation` kills the
 support by construction, so it descends there as `quotientValuation v`; and on the quotient it has
 trivial support, which is exactly the hypothesis needed to extend it along
-`A ⧸ supp v → Frac (A ⧸ supp v)`. The result, `residueFieldValuation v`, is a valuation on the
-**residue field** of `v`, valued in the same `ValuativeRel.ValueGroupWithZero` as `v.valuation`.
+`A ⧸ supp v → κ(v)`, where `κ(v)` is Mathlib's `Ideal.ResidueField` of the prime ideal `supp v`.
+The result, `residueFieldValuation v`, is a valuation on that **residue field**, valued in the same
+`ValuativeRel.ValueGroupWithZero` as `v.valuation`.
 
 Note that `v` itself is not a function: `Spv A` is a structure, and each of the three valuations
 here has to be named. This is the factorisation the structure presheaf is read through — a section
@@ -29,9 +30,10 @@ is evaluated at `v` by its image in the residue field, and the condition cutting
 
 * `TauCeti.ValuationSpectrum.residueRing`: the quotient `A ⧸ supp v`, a domain.
 * `TauCeti.ValuationSpectrum.quotientValuation`: the valuation of `v` pushed to `A ⧸ supp v`.
-* `TauCeti.ValuationSpectrum.residueField`: the residue field `κ(v) = Frac (A ⧸ supp v)`.
 * `TauCeti.ValuationSpectrum.residueFieldValuation`: the extension of the quotient valuation to
-  `κ(v)`.
+  `κ(v) = (supp v).ResidueField`. The residue field itself is Mathlib's, not a new type: the
+  support is prime, and `Ideal.ResidueField` is the canonical `κ` of a prime ideal, with the
+  `IsFractionRing (A ⧸ supp v) (supp v).ResidueField` instance this extension needs.
 
 ## Main results
 
@@ -88,17 +90,13 @@ theorem quotientValuation_ne_zero (v : Spv A) {s : residueRing v} (hs : s ≠ 0)
       Ideal.map_quotient_self]
   simpa only [Ne, ← Valuation.mem_supp_iff, hsupp, Ideal.mem_bot] using hs
 
-/-- The **residue field** `κ(v) = Frac (A ⧸ supp v)` of a point of the valuation spectrum. The
-support is prime, so the residue ring is a domain and this is its fraction field. -/
-abbrev residueField (v : Spv A) := FractionRing (residueRing v)
-
 /-- The **residue-field valuation** of a point: the quotient valuation extended along
 `A ⧸ supp v → κ(v)`. Its value group is `ValuativeRel.ValueGroupWithZero`, the one `v.valuation`
 already takes values in. -/
 noncomputable def residueFieldValuation (v : Spv A) :
-    Valuation (residueField v) (@ValuativeRel.ValueGroupWithZero A _ v.toValuativeRel) :=
+    Valuation (v.supp.ResidueField) (@ValuativeRel.ValueGroupWithZero A _ v.toValuativeRel) :=
   (quotientValuation v).extendToLocalization
-    (fun _ hs ↦ quotientValuation_ne_zero v (nonZeroDivisors.ne_zero hs)) (residueField v)
+    (fun _ hs ↦ quotientValuation_ne_zero v (nonZeroDivisors.ne_zero hs)) (v.supp.ResidueField)
 
 /-- **The residue-ring valuation restricts to the valuation of `v`** along `A → A ⧸ supp v`: the
 descent changes nothing on elements of `A`. This is the characteristic property of
@@ -115,12 +113,12 @@ theorem quotientValuation_comap_quotientMk (v : Spv A) :
 `TauCeti.ValuationSpectrum.residueFieldValuation`. -/
 @[simp]
 theorem residueFieldValuation_algebraMap (v : Spv A) (x : residueRing v) :
-    residueFieldValuation v (algebraMap (residueRing v) (residueField v) x)
+    residueFieldValuation v (algebraMap (residueRing v) (v.supp.ResidueField) x)
       = quotientValuation v x := by
   simpa only [residueFieldValuation] using
     Valuation.extendToLocalization_apply_map_apply (quotientValuation v)
       (fun _ hs ↦ quotientValuation_ne_zero v (nonZeroDivisors.ne_zero hs))
-      (residueField v) x
+      (v.supp.ResidueField) x
 
 /-- **The residue-field valuation on a fraction**:
 `residueFieldValuation v (IsLocalization.mk' _ x s)` is
@@ -131,13 +129,13 @@ With `TauCeti.ValuationSpectrum.residueFieldValuation_algebraMap` this computes 
 every element of `κ(v)`, since every element of a fraction field is such a fraction. -/
 theorem residueFieldValuation_mk' (v : Spv A) (x : residueRing v)
     (s : (nonZeroDivisors (residueRing v))) :
-    residueFieldValuation v (IsLocalization.mk' (residueField v) x s)
+    residueFieldValuation v (IsLocalization.mk' (v.supp.ResidueField) x s)
       = quotientValuation v x / quotientValuation v s := by
   rw [div_eq_mul_inv]
   simpa only [residueFieldValuation] using
     Valuation.extendToLocalization_mk' (quotientValuation v)
       (fun _ hs ↦ quotientValuation_ne_zero v (nonZeroDivisors.ne_zero hs))
-      (residueField v) x s
+      (v.supp.ResidueField) x s
 
 end ValuationSpectrum
 
