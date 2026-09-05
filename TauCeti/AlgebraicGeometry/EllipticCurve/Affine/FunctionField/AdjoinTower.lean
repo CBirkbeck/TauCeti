@@ -5,8 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.FieldTheory.IntermediateField.ExtendRight
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finrank
+public import TauCeti.FieldTheory.IntermediateField.ExtendRight
 
 /-!
 # The tower `K⟮g⟯ ⊆ K(x) ⊆ K(W)` over an arbitrary generator
@@ -22,13 +22,12 @@ Everything here is generator-agnostic. A caller supplies `g` together with a the
 `g = X ^ n`, where that degree is `n`.
 
 The copy of `K⟮g⟯` inside `K(W)` is Mathlib's `IntermediateField.extendRight`, written
-`(IntermediateField.adjoin K {g}).extendRight W.FunctionField`; this file adds the membership,
-order and degree lemmas that construction needs here, and no new object.
+`(IntermediateField.adjoin K {g}).extendRight W.FunctionField`; this file adds the degree lemmas
+for it in this tower and no new object. Its membership and order API is generic and lives in
+`TauCeti.FieldTheory.IntermediateField.ExtendRight`.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.extendRight_adjoin_le_iff`: the universal property — the copy of
-  `K⟮g⟯` lies inside an intermediate field exactly when that field contains `g`.
 * `WeierstrassCurve.Affine.relfinrank_extendRight_adjoin`: `[K(x) : K⟮g⟯]`, read inside `K(W)`.
 * `WeierstrassCurve.Affine.finrank_extendRight_adjoin`: `[K(W) : K⟮g⟯] = 2 · [K(x) : K⟮g⟯]`.
 * `WeierstrassCurve.Affine.extendRight_adjoin_eq_map_ratFuncRange` and
@@ -62,35 +61,6 @@ open scoped RatFunc
 namespace WeierstrassCurve.Affine
 
 variable {K : Type*} [Field K] (W : WeierstrassCurve.Affine K)
-
-/-- An element of `K(W)` lies in the copy of `K⟮g⟯` exactly when it is the image there of an
-element of `K⟮g⟯`. -/
-@[simp]
-theorem mem_extendRight_adjoin {g : RatFunc K} {z : W.FunctionField} :
-    z ∈ (adjoin K {g}).extendRight W.FunctionField ↔ ∃ r ∈ adjoin K {g},
-      IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField r = z := by
-  simp only [IntermediateField.extendRight, Algebra.algHom]
-  exact IntermediateField.mem_map _
-
-/-- The generator: `g` itself lies in the copy of `K⟮g⟯`. -/
-theorem algebraMap_mem_extendRight_adjoin (g : RatFunc K) :
-    algebraMap (RatFunc K) W.FunctionField g ∈ (adjoin K {g}).extendRight W.FunctionField :=
-  (mem_extendRight_adjoin W).mpr ⟨g, IntermediateField.mem_adjoin_simple_self _ _,
-    congrFun (IsScalarTower.coe_toAlgHom' K (RatFunc K) W.FunctionField) g⟩
-
-/-- **The universal property**: the copy of `K⟮g⟯` lies inside an intermediate field exactly when
-that field contains `g`. `K⟮g⟯` is the smallest subfield of `K(W)` containing `K` and `g`. -/
-@[simp]
-theorem extendRight_adjoin_le_iff {g : RatFunc K} {L : IntermediateField K W.FunctionField} :
-    (adjoin K {g}).extendRight W.FunctionField ≤ L ↔
-      algebraMap (RatFunc K) W.FunctionField g ∈ L := by
-  simp only [IntermediateField.extendRight, Algebra.algHom,
-    IntermediateField.map_le_iff_le_comap, IntermediateField.adjoin_le_iff,
-    Set.singleton_subset_iff, SetLike.mem_coe]
-  -- What is left is `g ∈ L.comap (toAlgHom …) ↔ algebraMap … g ∈ L`. Mathlib has no
-  -- `IntermediateField.mem_comap`, and `Subalgebra.mem_comap` does not fire through the
-  -- structure-eta in `comap`, so this last step has no named lemma and stays definitional.
-  exact Iff.rfl
 
 /-- `K⟮g⟯` sits inside `K(x)`, both read inside `K(W)`. -/
 theorem extendRight_adjoin_le_ratFuncRange (g : RatFunc K) :

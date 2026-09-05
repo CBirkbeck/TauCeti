@@ -63,8 +63,8 @@ namespace WeierstrassCurve.Affine
 
 variable {K : Type*} [Field K] (W : WeierstrassCurve.Affine K)
 
-/-- `x ^ n`, read through `K(x)` rather than through `K[X]`. The three tower lemmas below all
-need this one coercion step, so it is named once rather than repeated. -/
+/-- The image of `X ^ n` in `K(W)` is the same whether `X ^ n` is read in `K[X]` or in `K(x)`. -/
+-- Named because the three tower lemmas below each need this one coercion step.
 private theorem algebraMap_X_pow_eq_algebraMap_ratFuncX_pow (n : ℕ) :
     algebraMap K[X] W.FunctionField X ^ n
       = algebraMap (RatFunc K) W.FunctionField ((RatFunc.X : RatFunc K) ^ n) := by
@@ -91,20 +91,20 @@ theorem mem_ratFuncAdjoinXPowRange {n : ℕ} {z : W.FunctionField} :
     z ∈ ratFuncAdjoinXPowRange W n ↔ ∃ r ∈ IntermediateField.adjoin K {(RatFunc.X : RatFunc K) ^ n},
       IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField r = z := by
   rw [ratFuncAdjoinXPowRange]
-  exact mem_extendRight_adjoin W
+  exact TauCeti.IntermediateField.mem_extendRight
 
 /-- The generator: `x ^ n` lies in the copy of `K(x^n)`. -/
 theorem algebraMap_X_pow_mem_ratFuncAdjoinXPowRange (n : ℕ) :
     algebraMap K[X] W.FunctionField X ^ n ∈ ratFuncAdjoinXPowRange W n := by
   rw [ratFuncAdjoinXPowRange, algebraMap_X_pow_eq_algebraMap_ratFuncX_pow]
-  exact algebraMap_mem_extendRight_adjoin W _
+  exact TauCeti.IntermediateField.algebraMap_mem_extendRight_adjoin _
 
 /-- **The universal property**: the copy of `K(x^n)` lies inside an intermediate field exactly
 when that field contains `x ^ n`. -/
 @[simp]
 theorem ratFuncAdjoinXPowRange_le_iff {n : ℕ} {L : IntermediateField K W.FunctionField} :
     ratFuncAdjoinXPowRange W n ≤ L ↔ algebraMap K[X] W.FunctionField X ^ n ∈ L := by
-  rw [ratFuncAdjoinXPowRange, extendRight_adjoin_le_iff,
+  rw [ratFuncAdjoinXPowRange, TauCeti.IntermediateField.extendRight_adjoin_le_iff,
     algebraMap_X_pow_eq_algebraMap_ratFuncX_pow]
 
 /-- `K(x^n)` sits inside `K(x)`, both read inside `K(W)`. -/
