@@ -6,9 +6,10 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basic
-public import TauCeti.RingTheory.Huber.OpenIdeal
 public import TauCeti.RingTheory.Huber.LocalizationTopology.CompleteSeparated.RefinementCategory
 public import TauCeti.Topology.Category.TopCommRingCat.CompleteSeparated.Limits
+
+import TauCeti.RingTheory.Huber.OpenIdeal
 
 /-!
 # The presentation-indexed limit behind the structure presheaf
