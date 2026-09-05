@@ -30,7 +30,9 @@ work is that an *ideal* of `A` containing the image of `Iⁿ` automatically cont
 * `TauCeti.Huber.PairOfDefinition.isOpen_mul`: the product of two open ideals is open — the
   powers of `I · A` witnessing each add.
 * `TauCeti.Huber.PairOfDefinition.isOpen_span_mul`: the span of a pointwise product of sets is
-  open when the two spans are, which is the form an intersection of rational subsets needs.
+  open when the two spans are.
+* `TauCeti.Huber.PairOfDefinition.isOpen_span_insert_mul_insert`: its `Finset` form with the two
+  denominators adjoined — the admissibility half of Wedhorn Remark 7.30(5).
 * `TauCeti.Huber.IsTateRing.isOpen_iff_eq_top`: an ideal of a Tate ring is open exactly when it is
   the whole ring.
 
@@ -127,6 +129,20 @@ theorem isOpen_span_mul (P : PairOfDefinition A) {S T : Set A}
     IsOpen (Ideal.span (S * T) : Set A) := by
   rw [← Ideal.span_mul_span]
   exact P.isOpen_mul hS hT
+
+open scoped Classical Pointwise in
+/-- **The numerator set of an intersection of rational subsets spans an open ideal.** Adjoining
+each denominator only enlarges a span, so this is `isOpen_span_mul` after two applications of
+`isOpen_of_le`. It is the admissibility half of Wedhorn Remark 7.30(5): the set identity
+`TauCeti.ValuationSpectrum.rationalSubset_inter` presents the intersection with numerators
+`insert s₁ T₁ * insert s₂ T₂`, and a rational subset is one whose numerator ideal is open. -/
+theorem isOpen_span_insert_mul_insert (P : PairOfDefinition A) {T₁ T₂ : Finset A} {s₁ s₂ : A}
+    (hT₁ : IsOpen (Ideal.span (T₁ : Set A) : Set A))
+    (hT₂ : IsOpen (Ideal.span (T₂ : Set A) : Set A)) :
+    IsOpen (Ideal.span ((insert s₁ T₁ * insert s₂ T₂ : Finset A) : Set A) : Set A) := by
+  rw [Finset.coe_mul]
+  exact P.isOpen_span_mul (P.isOpen_of_le (Ideal.span_mono (by simp)) hT₁)
+    (P.isOpen_of_le (Ideal.span_mono (by simp)) hT₂)
 
 end PairOfDefinition
 
