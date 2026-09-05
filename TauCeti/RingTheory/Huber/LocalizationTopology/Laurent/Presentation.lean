@@ -277,7 +277,8 @@ universal property
 `TauCeti.Huber.existsUnique_continuous_ringHom_quotient_weightedRestrictedSubring` of the
 quotient. In the special case `T' = insert t T`, Wedhorn's Remark 7.55 chains such refinements and
 Proposition 8.30 reduces flatness of a general restriction map along that chain to the elementary
-one; that reduction needs the identification of the two rings, which is not proved here. -/
+one; the identification that reduction needs is
+`TauCeti.Huber.PairOfDefinition.laurentQuotientRingEquiv`, below. -/
 theorem existsUnique_continuous_ringHom_laurentQuotient_restriction (ht : t ∈ T') :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
@@ -436,6 +437,42 @@ theorem eq_laurentQuotientRestrictionRingHom (ht : t ∈ T') :
     (existsUnique_continuous_ringHom_laurentQuotient_restriction P T s t S hden T' S' hden'
       hTT' ht).choose_spec.2 ψ ⟨hc, hC, hX⟩
 
+-- A ring homomorphism out of `A⟨T'/s⟩` that agrees with one out of `A⟨T/s⟩` after the structure
+-- maps from `A` sends the fraction `t/s` to the fraction `t/s`. Both `s`-inverses are inverses of
+-- the image of `s`, and inverses in a monoid are unique, so the two fractions correspond.
+private theorem map_divBy_of_comp_toCompletionLoc_eq {B : Type*} [CommRing B] :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s S' hden'
+    ∀ (g : UniformSpace.Completion S' →+* B) (φ : UniformSpace.Completion S →+* B),
+      g.comp (toCompletionLoc P T' s S' hden') = φ.comp (toCompletionLoc P T s S hden) →
+      g ((divBy t s : S') : UniformSpace.Completion S')
+        = φ ((divBy t s : S) : UniformSpace.Completion S) := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  let _ := locUniformSpace P T' s S' hden'
+  have _ := isUniformAddGroup_locUniformSpace P T' s S' hden'
+  have _ := isTopologicalRing_locUniformSpace P T' s S' hden'
+  intro g φ hge
+  have hu : IsUnit (toCompletionLoc P T s S hden s) :=
+    isUnit_toCompletionLoc_of_dvd P T s S hden dvd_rfl
+  have hu' : IsUnit (toCompletionLoc P T' s S' hden' s) :=
+    isUnit_toCompletionLoc_of_dvd P T' s S' hden' dvd_rfl
+  have hgs : g (toCompletionLoc P T' s S' hden' s) = φ (toCompletionLoc P T s S hden s) :=
+    congrArg (fun k : A →+* B ↦ k s) hge
+  have hgt : g (toCompletionLoc P T' s S' hden' t) = φ (toCompletionLoc P T s S hden t) :=
+    congrArg (fun k : A →+* B ↦ k t) hge
+  -- the two inverses of `s` correspond, being inverses of the same element of `B`
+  have hginv : g ↑hu'.unit⁻¹ = ↑(hu.map φ).unit⁻¹ := by
+    refine (Units.inv_eq_of_mul_eq_one_left ?_).symm
+    rw [(hu.map φ).unit_spec, ← hgs, ← map_mul, hu'.val_inv_mul, map_one]
+  rw [← toCompletionLoc_mul_unit_inv_eq_divBy P T' s S' hden' t hu', map_mul, hginv, hgt,
+    IsUnit.unit_inv_map φ hu, ← map_mul, toCompletionLoc_mul_unit_inv_eq_divBy P T s S hden t hu]
+
 -- The fraction `t/s` downstairs goes to the class of the variable. This is where the Laurent
 -- relation is used, and it needs nothing of the target beyond the ring structure: expand both
 -- fractions, move the inverse across with `IsUnit.unit_inv_map`, and read off the relation.
@@ -465,24 +502,7 @@ private theorem apply_divBy_eq_quotientMk_weightedX :
   have _ := isTopologicalRing_locUniformSpace P T' s S' hden'
   have _ := isHuberRing_locUniformSpace P T' s S' hden'
   intro g hge
-  have hu : IsUnit (toCompletionLoc P T s S hden s) :=
-    isUnit_toCompletionLoc_of_dvd P T s S hden dvd_rfl
-  have hu' : IsUnit (toCompletionLoc P T' s S' hden' s) :=
-    isUnit_toCompletionLoc_of_dvd P T' s S' hden' dvd_rfl
-  have hgs : g (toCompletionLoc P T' s S' hden' s)
-      = laurentStructureHom P T s t S hden (toCompletionLoc P T s S hden s) :=
-    congrArg (fun k : A →+* _ ↦ k s) hge
-  have hgt : g (toCompletionLoc P T' s S' hden' t)
-      = laurentStructureHom P T s t S hden (toCompletionLoc P T s S hden t) :=
-    congrArg (fun k : A →+* _ ↦ k t) hge
-  -- the two inverses of `s` correspond, being inverses of the same element
-  have hginv : g ↑hu'.unit⁻¹ = ↑(hu.map (laurentStructureHom P T s t S hden)).unit⁻¹ := by
-    refine (Units.inv_eq_of_mul_eq_one_left ?_).symm
-    rw [(hu.map (laurentStructureHom P T s t S hden)).unit_spec, ← hgs, ← map_mul,
-      hu'.val_inv_mul, map_one]
-  rw [← toCompletionLoc_mul_unit_inv_eq_divBy P T' s S' hden' t hu', map_mul, hginv, hgt,
-    IsUnit.unit_inv_map (laurentStructureHom P T s t S hden) hu, ← map_mul,
-    toCompletionLoc_mul_unit_inv_eq_divBy P T s S hden t hu]
+  rw [map_divBy_of_comp_toCompletionLoc_eq P T s t S hden T' S' hden' g _ hge]
   exact laurentRelationIdeal_quotientMk_weightedC P T s t S hden
 
 -- Agreement on the image of `A` propagates to all of `A⟨T/s⟩`: two continuous ring homomorphisms
@@ -519,12 +539,13 @@ private theorem comp_restrictionRingHomOfSubset_eq (hcl : letI := locUniformSpac
   have _ : T1Space (_ ⧸ laurentRelationIdeal P T s t S hden) :=
     (Ideal.Quotient.t1Space_iff _).mpr hcl
   intro g hgc hge
-  refine completion_locTopology_ringHom_ext_of_continuous P T s S hden _ _
-    (hgc.comp (continuous_restrictionRingHomOfSubset P T s S hden T' S' hden' hTT'))
-    (continuous_quotient_mk'.comp (continuous_weightedC isWeightFamily_one_weight)) ?_
-  rw [RingHom.comp_assoc,
-    restrictionRingHomOfSubset_comp_toCompletionLoc P T s S hden T' S' hden' hTT']
-  exact hge
+  exact (eq_comp_of_comp_toCompletionLoc_eq P T s S hden (toCompletionLoc P T' s S' hden')
+    ((laurentStructureHom P T s t S hden).comp (toCompletionLoc P T s S hden))
+    (restrictionRingHomOfSubset P T s S hden T' S' hden' hTT')
+    (continuous_restrictionRingHomOfSubset P T s S hden T' S' hden' hTT')
+    (restrictionRingHomOfSubset_comp_toCompletionLoc P T s S hden T' S' hden' hTT') g hgc hge
+    (laurentStructureHom P T s t S hden)
+    (continuous_quotient_mk'.comp (continuous_weightedC isWeightFamily_one_weight)) rfl).symm
 
 /-- **The forward map of the Laurent presentation.** If every numerator of `T'` either already
 lies in `T` or is the new one `t`, there is exactly one continuous ring homomorphism
@@ -538,8 +559,9 @@ compatible with the two structure maps from `A`.
 Paired with
 `TauCeti.Huber.PairOfDefinition.existsUnique_continuous_ringHom_laurentQuotient_restriction`
 this gives the two maps of Wedhorn's Remark 7.55, which Proposition 8.30 uses to reduce flatness
-of a general restriction map to the elementary one. Only the maps are constructed; that they are
-mutually inverse is separate work.
+of a general restriction map to the elementary one. They are mutually inverse — see
+`TauCeti.Huber.PairOfDefinition.laurentQuotientRingEquiv` and the two composite identities it is
+built from.
 
 The hypothesis beyond the splitting is what makes the target legitimate for
 `TauCeti.Huber.PairOfDefinition.existsUnique_continuous_ringHom_completion_locTopology`: a closed
@@ -750,10 +772,9 @@ theorem eq_laurentQuotientRingHom (hsplit : ∀ u ∈ T', u ∈ T ∨ u = t)
 
 end OneStep
 
-/-- **The two maps of Remark 7.55 compose to the identity of `A⟨T'/s⟩`.** Both sides are
-continuous ring homomorphisms out of a completion agreeing after the structure map from `A`, so
-`TauCeti.Huber.PairOfDefinition.completion_locTopology_ringHom_ext_of_continuous` identifies
-them. -/
+/-- **The two maps of Remark 7.55 compose to the identity of `A⟨T'/s⟩`**: going into the Laurent
+quotient and back out again is the identity of the enlarged rational localisation. -/
+@[simp]
 theorem laurentQuotientRestrictionRingHom_comp_laurentQuotientRingHom (ht : t ∈ T')
     (hsplit : ∀ u ∈ T', u ∈ T ∨ u = t)
     (hcl : letI := locUniformSpace P T s S hden
@@ -786,15 +807,14 @@ theorem laurentQuotientRestrictionRingHom_comp_laurentQuotientRingHom (ht : t �
     laurentQuotientRestrictionRingHom_quotientMk_weightedC P T s t S hden T' S' hden' hTT' ht
   have hgc := continuous_laurentQuotientRingHom P T s t S hden T' S' hden' hsplit hcl
   have hge := laurentQuotientRingHom_comp_toCompletionLoc P T s t S hden T' S' hden' hsplit hcl
-  refine completion_locTopology_ringHom_ext_of_continuous P T' s S' hden' _ _
-    (hψc.comp hgc) continuous_id ?_
+  refine eq_id_of_comp_toCompletionLoc_eq_self P T' s S' hden' _ (hψc.comp hgc) ?_
   rw [RingHom.comp_assoc, hge]
   exact RingHom.ext fun a ↦ (hψC _).trans <| DFunLike.congr_fun
     (restrictionRingHomOfSubset_comp_toCompletionLoc P T s S hden T' S' hden' hTT') a
 
-/-- **The two maps of Remark 7.55 compose to the identity of the Laurent quotient.** A
-homomorphism out of a quotient is determined by its composite with the quotient map, and a
-continuous one out of `A⟨T/s⟩⟨X⟩` by its values on the constants and the variable. -/
+/-- **The two maps of Remark 7.55 compose to the identity of the Laurent quotient**: going out of
+`A⟨T/s⟩⟨X⟩ ⧸ (t/s - X)` and back in again is its identity. -/
+@[simp]
 theorem laurentQuotientRingHom_comp_laurentQuotientRestrictionRingHom (ht : t ∈ T')
     (hsplit : ∀ u ∈ T', u ∈ T ∨ u = t)
     (hcl : letI := locUniformSpace P T s S hden
@@ -894,6 +914,8 @@ noncomputable def laurentQuotientRingEquiv (ht : t ∈ T') (hsplit : ∀ u ∈ T
     (laurentQuotientRingHom_comp_laurentQuotientRestrictionRingHom P T s t S hden T' S' hden'
       hTT' ht hsplit hcl)
 
+/-- The identification coerces to
+`TauCeti.Huber.PairOfDefinition.laurentQuotientRestrictionRingHom`, the map out of the quotient. -/
 @[simp]
 theorem laurentQuotientRingEquiv_apply (ht : t ∈ T') (hsplit : ∀ u ∈ T', u ∈ T ∨ u = t)
     (hcl : letI := locUniformSpace P T s S hden
@@ -911,9 +933,11 @@ theorem laurentQuotientRingEquiv_apply (ht : t ∈ T') (hsplit : ∀ u ∈ T', u
     letI := isTopologicalRing_locUniformSpace P T' s S' hden'
     letI := isHuberRing_locUniformSpace P T' s S' hden'
     ∀ x, laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit hcl x
-      = laurentQuotientRestrictionRingHom P T s t S hden T' S' hden' hTT' ht x :=
-  fun _ ↦ rfl
+      = laurentQuotientRestrictionRingHom P T s t S hden T' S' hden' hTT' ht x := fun _ ↦ by
+  simp only [laurentQuotientRingEquiv, RingEquiv.ofRingHom_apply]
 
+/-- The inverse of the identification coerces to
+`TauCeti.Huber.PairOfDefinition.laurentQuotientRingHom`, the map into the quotient. -/
 @[simp]
 theorem laurentQuotientRingEquiv_symm_apply (ht : t ∈ T') (hsplit : ∀ u ∈ T', u ∈ T ∨ u = t)
     (hcl : letI := locUniformSpace P T s S hden
@@ -931,8 +955,8 @@ theorem laurentQuotientRingEquiv_symm_apply (ht : t ∈ T') (hsplit : ∀ u ∈ 
     letI := isTopologicalRing_locUniformSpace P T' s S' hden'
     letI := isHuberRing_locUniformSpace P T' s S' hden'
     ∀ x, (laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit hcl).symm x
-      = laurentQuotientRingHom P T s t S hden T' S' hden' hsplit hcl x :=
-  fun _ ↦ rfl
+      = laurentQuotientRingHom P T s t S hden T' S' hden' hsplit hcl x := fun _ ↦ by
+  simp only [laurentQuotientRingEquiv, RingEquiv.ofRingHom_symm_apply]
 
 /-- The identification is continuous. -/
 theorem continuous_laurentQuotientRingEquiv (ht : t ∈ T') (hsplit : ∀ u ∈ T', u ∈ T ∨ u = t)
@@ -950,8 +974,9 @@ theorem continuous_laurentQuotientRingEquiv (ht : t ∈ T') (hsplit : ∀ u ∈ 
     letI := isUniformAddGroup_locUniformSpace P T' s S' hden'
     letI := isTopologicalRing_locUniformSpace P T' s S' hden'
     letI := isHuberRing_locUniformSpace P T' s S' hden'
-    Continuous (laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit hcl) :=
-  continuous_laurentQuotientRestrictionRingHom P T s t S hden T' S' hden' hTT' ht
+    Continuous (laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit hcl) := by
+  simpa only [funext (laurentQuotientRingEquiv_apply P T s t S hden T' S' hden' hTT' ht hsplit hcl)]
+    using continuous_laurentQuotientRestrictionRingHom P T s t S hden T' S' hden' hTT' ht
 
 /-- The inverse of the identification is continuous, so it is a homeomorphism. -/
 theorem continuous_laurentQuotientRingEquiv_symm (ht : t ∈ T')
@@ -970,8 +995,10 @@ theorem continuous_laurentQuotientRingEquiv_symm (ht : t ∈ T')
     letI := isUniformAddGroup_locUniformSpace P T' s S' hden'
     letI := isTopologicalRing_locUniformSpace P T' s S' hden'
     letI := isHuberRing_locUniformSpace P T' s S' hden'
-    Continuous (laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit hcl).symm :=
-  continuous_laurentQuotientRingHom P T s t S hden T' S' hden' hsplit hcl
+    Continuous (laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit hcl).symm := by
+  simpa only
+    [funext (laurentQuotientRingEquiv_symm_apply P T s t S hden T' S' hden' hTT' ht hsplit hcl)]
+    using continuous_laurentQuotientRingHom P T s t S hden T' S' hden' hsplit hcl
 
 end OneStep
 
