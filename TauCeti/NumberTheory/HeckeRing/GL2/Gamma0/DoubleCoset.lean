@@ -120,6 +120,39 @@ private lemma dvd_and_gcd_of_Gamma_mul (τ A : Matrix (Fin 2) (Fin 2) ℤ)
     have hshift : (τ * A) 1 1 = A 1 1 + k * (N : ℤ) := by linarith
     exact hshift ▸ (Int.isCoprime_iff_gcd_eq_one.mpr hA11).add_mul_right_left k
 
+/-- **Coprime levels generate.** For `d` coprime to `N`, the principal congruence subgroups of
+levels `N` and `|d|` together fill `SL₂(ℤ)`. -/
+private lemma Gamma_sup_Gamma_natAbs_eq_top {d : ℤ} (hd : Int.gcd d N = 1) :
+    Gamma N ⊔ Gamma d.natAbs = ⊤ := by
+  -- `Int.gcd` is *defined* as `Nat.gcd` on the `natAbs`, but the two spellings are not
+  -- interchangeable for `rw`, so the bridge is named.
+  have hgcd : Nat.gcd d.natAbs N = Int.gcd d N := by simp [Int.gcd]
+  have h := Gamma_gcd_eq_sup d.natAbs N
+  rw [hgcd, hd, Gamma_one_top] at h
+  rw [sup_comm]
+  exact h.symm
+
+/-- **The right factor lands in `Γ₀(N)`.** If `τ_N γ₂'` conjugates `α` into `Δ₀(N)` and `τ_N`
+is congruent to the identity mod `N`, then the lower-left entry of the whole product is
+divisible by `N`, and `dvd_and_gcd_of_Gamma_mul` transports that divisibility to `γ₂'`. -/
+private lemma mem_Gamma0_of_mul_mem_Delta0 (α : GL (Fin 2) ℚ) (A : Matrix (Fin 2) (Fin 2) ℤ)
+    (hA : (↑α : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
+    (hAN : (N : ℤ) ∣ A 1 0) (hA11 : Int.gcd (A 1 1) N = 1)
+    (τ_N γ₂' : SpecialLinearGroup (Fin 2) ℤ)
+    (hτ10 : (N : ℤ) ∣ (τ_N : Matrix (Fin 2) (Fin 2) ℤ) 1 0)
+    (hτ11 : (N : ℤ) ∣ ((τ_N : Matrix (Fin 2) (Fin 2) ℤ) 1 1 - 1))
+    (hmem : mapGL ℚ τ_N * α * mapGL ℚ γ₂' ∈ Delta0 N) :
+    γ₂' ∈ Gamma0 N := by
+  obtain ⟨B, hB, -, hBN, -⟩ := (mem_Delta0_iff N).mp hmem
+  obtain ⟨hCN, hC11⟩ := dvd_and_gcd_of_Gamma_mul N (τ_N : Matrix (Fin 2) (Fin 2) ℤ) A
+    hτ10 hτ11 hAN hA11
+  have hB_eq : B = (τ_N : Matrix (Fin 2) (Fin 2) ℤ) * A * (γ₂' : Matrix (Fin 2) (Fin 2) ℤ) :=
+    Matrix.map_injective Int.cast_injective
+      (hB.symm.trans (mapGL_mul_coe_eq_intMatrix 2 τ_N γ₂' α A hA))
+  rw [Gamma0_mem, ZMod.intCast_zmod_eq_zero_iff_dvd]
+  exact dvd_apply_one_zero_of_dvd_mul N _ (γ₂' : Matrix (Fin 2) (Fin 2) ℤ)
+    (hB_eq ▸ hBN) hCN hC11
+
 /-- The hard inclusion of Lemma 3.29(3): an element `σ₁ α σ₂` of the level-one double coset
 that lies in `Δ₀(N)` already lies in the `Γ₀(N)`-double coset. -/
 private lemma mem_doubleCoset_Gamma0Image_of_mem_Delta0
@@ -132,14 +165,7 @@ private lemma mem_doubleCoset_Gamma0Image_of_mem_Delta0
       DoubleCoset.doubleCoset α (Gamma0Image N) (Gamma0Image N) := by
   have : (Gamma N).Normal := Gamma_normal N
   -- coprimality of `det α` with `N` makes the two principal congruence subgroups fill `SL₂(ℤ)`
-  have h_top : Gamma N ⊔ Gamma A.det.natAbs = ⊤ := by
-    -- `Int.gcd` is *defined* as `Nat.gcd` on the `natAbs`, but the two spellings are not
-    -- interchangeable for `rw`, so the bridge is named.
-    have hgcd : Nat.gcd A.det.natAbs N = Int.gcd A.det N := by simp [Int.gcd]
-    have h := Gamma_gcd_eq_sup A.det.natAbs N
-    rw [hgcd, hdet, Gamma_one_top] at h
-    rw [sup_comm]
-    exact h.symm
+  have h_top := Gamma_sup_Gamma_natAbs_eq_top N hdet
   obtain ⟨τ_N, hτ_N, τ_a, hτ_a, hσ₁_eq⟩ :=
     Subgroup.mem_sup_of_normal_left.mp (h_top ▸ Subgroup.mem_top σ₁)
   have hτ_N_Gamma0 : τ_N ∈ Gamma0 N := Gamma_le_Gamma0 N hτ_N
@@ -164,16 +190,8 @@ private lemma mem_doubleCoset_Gamma0Image_of_mem_Delta0
     congr 1
     rw [← mul_assoc, hcross, mul_assoc]
   -- the new right factor is in `Γ₀(N)`: read off the lower-left entry of the whole product
-  have hγ₂'_mem : γ₂' ∈ Gamma0 N := by
-    obtain ⟨B, hB, -, hBN, -⟩ := (mem_Delta0_iff N).mp hmem
-    obtain ⟨hCN, hC11⟩ := dvd_and_gcd_of_Gamma_mul N (τ_N : Matrix (Fin 2) (Fin 2) ℤ) A
-      hτ10 hτ11 hAN hA11
-    have hB_eq : B = (τ_N : Matrix (Fin 2) (Fin 2) ℤ) * A * (γ₂' : Matrix (Fin 2) (Fin 2) ℤ) :=
-      Matrix.map_injective Int.cast_injective
-        (hB.symm.trans (hx_eq ▸ mapGL_mul_coe_eq_intMatrix 2 τ_N γ₂' α A hA))
-    rw [Gamma0_mem, ZMod.intCast_zmod_eq_zero_iff_dvd]
-    exact dvd_apply_one_zero_of_dvd_mul N _ (γ₂' : Matrix (Fin 2) (Fin 2) ℤ)
-      (hB_eq ▸ hBN) hCN hC11
+  have hγ₂'_mem : γ₂' ∈ Gamma0 N :=
+    mem_Gamma0_of_mul_mem_Delta0 N α A hA hAN hA11 τ_N γ₂' hτ10 hτ11 (hx_eq ▸ hmem)
   rw [DoubleCoset.mem_doubleCoset]
   exact ⟨mapGL ℚ τ_N, (mem_Gamma0Image_iff N).mpr ⟨τ_N, hτ_N_Gamma0, rfl⟩,
     mapGL ℚ γ₂', (mem_Gamma0Image_iff N).mpr ⟨γ₂', hγ₂'_mem, rfl⟩, hx_eq⟩
