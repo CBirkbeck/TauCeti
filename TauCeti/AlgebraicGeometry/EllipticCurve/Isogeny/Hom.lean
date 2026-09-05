@@ -144,9 +144,8 @@ noncomputable def toIsogeny {h : Hom W₁ W₂} (hz : h ≠ 0) : Isogeny W₁ W�
       refine hz (Hom.ext (NonUnitalAlgHom.ext fun x => ?_))
       rw [not_not.mp (hall x), toNonUnitalAlgHom_zero, NonUnitalAlgHom.zero_apply]))⟩
 
-/-- The pullback of the isogeny read off a nonzero element is that element's own map. This is
-the one place the two bundlings are identified; everything below goes through it rather than
-through the definitions. -/
+/-- The pullback of the isogeny read off a nonzero element is that element's own map. -/
+-- The one place the two bundlings are identified; the lemmas below rewrite through it.
 @[simp]
 theorem toIsogeny_pullback_apply {h : Hom W₁ W₂} (hz : h ≠ 0) (x : W₂.CoordinateRing) :
     (toIsogeny hz).pullback x = h.toNonUnitalAlgHom x :=

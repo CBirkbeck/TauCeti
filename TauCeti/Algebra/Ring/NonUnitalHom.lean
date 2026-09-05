@@ -25,11 +25,9 @@ This is the dichotomy that lets a type of multiplicative maps carry a zero witho
 
 ## Implementation notes
 
-Stated for `NonUnitalRingHomClass` rather than for a bundled `NonUnitalRingHom` or
-`NonUnitalAlgHom`: the proof uses only `map_mul`, so any bundled type in that class gets the
-result with no specialisation to restate. The conclusion is the pointwise `∀ x, p x = 0` because
-the class does not provide a `Zero` on the map type itself; a bundled consumer combines it with
-extensionality.
+The statement is class-general, over `NonUnitalRingHomClass`, so it holds of every bundled map
+type in that class without a specialisation for each. Its vanishing alternative is pointwise,
+`∀ x, p x = 0`, rather than `p = 0`, because the class carries no `Zero` on the map type.
 -/
 
 public section
