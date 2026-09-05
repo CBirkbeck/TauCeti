@@ -36,17 +36,14 @@ infinite-dimensional extension: `K(x^0) = K`, so both sides of each formula read
 
 No result needs `W` to be elliptic: the Weierstrass equation alone gives the power basis.
 
-## Roadmap
-
-`TauCetiRoadmap/EllipticCurves/README.md`, **Layer 1**. The finite-field Frobenius and relative
-Frobenius degree computations both use this tower.
+The finite-field Frobenius and relative Frobenius degree computations both use this tower.
 
 ## Provenance
 
-The tower argument now lives in `Affine/FunctionField/AdjoinTower.lean`, generalised over its
-generator; this file holds the `X ^ n` specialisation and its provenance is recorded there. Its
-finite-field ancestor is the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`,
-Apache-2.0, pinned by that roadmap at `dev/hasse-weil @ 513e83879e2f`),
+The tower argument lives in `Affine/FunctionField/AdjoinTower.lean`, stated for an arbitrary
+generator; this file holds the `X ^ n` specialisation. Its finite-field ancestor is the AINTLIB
+`HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, pinned at
+`513e83879e2f8cbc626eb9e04d660e92be16ccba`),
 `HasseWeil/FrobeniusIsogeny.lean`, where the exponent is the cardinality of a finite field and the
 embedding is the `q`-power map. The rational-function input `TauCeti.RatFunc.finrank_adjoin_X_pow`
 is recorded in `TauCeti/FieldTheory/RatFunc/PowerTower.lean`; the finite-field specialisation stays
@@ -82,7 +79,7 @@ noncomputable def ratFuncAdjoinXPowRange (n : ℕ) : IntermediateField K W.Funct
 theorem ratFuncAdjoinXPowRange_eq_map (n : ℕ) :
     ratFuncAdjoinXPowRange W n = (IntermediateField.adjoin K {(RatFunc.X : RatFunc K) ^ n}).map
       (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField) := by
-  simp only [ratFuncAdjoinXPowRange, IntermediateField.extendRight, Algebra.algHom]
+  rw [ratFuncAdjoinXPowRange, TauCeti.IntermediateField.extendRight_eq_map]
 
 /-- An element of `K(W)` lies in the copy of `K(x^n)` exactly when it is the image there of an
 element of `K(X^n)`. -/
@@ -90,14 +87,14 @@ element of `K(X^n)`. -/
 theorem mem_ratFuncAdjoinXPowRange {n : ℕ} {z : W.FunctionField} :
     z ∈ ratFuncAdjoinXPowRange W n ↔ ∃ r ∈ IntermediateField.adjoin K {(RatFunc.X : RatFunc K) ^ n},
       IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField r = z := by
-  simp only [ratFuncAdjoinXPowRange, IntermediateField.extendRight, Algebra.algHom]
+  rw [ratFuncAdjoinXPowRange, TauCeti.IntermediateField.extendRight_eq_map]
   exact IntermediateField.mem_map _
 
 /-- The generator: `x ^ n` lies in the copy of `K(x^n)`. -/
 theorem algebraMap_X_pow_mem_ratFuncAdjoinXPowRange (n : ℕ) :
     algebraMap K[X] W.FunctionField X ^ n ∈ ratFuncAdjoinXPowRange W n := by
   rw [ratFuncAdjoinXPowRange, algebraMap_X_pow_eq_algebraMap_ratFuncX_pow]
-  exact TauCeti.IntermediateField.algebraMap_mem_extendRight_adjoin _
+  exact TauCeti.IntermediateField.extendRight_adjoin_le_iff.mp le_rfl
 
 /-- **The universal property**: the copy of `K(x^n)` lies inside an intermediate field exactly
 when that field contains `x ^ n`. -/
@@ -110,14 +107,14 @@ theorem ratFuncAdjoinXPowRange_le_iff {n : ℕ} {L : IntermediateField K W.Funct
 /-- `K(x^n)` sits inside `K(x)`, both read inside `K(W)`. -/
 theorem ratFuncAdjoinXPowRange_le_ratFuncRange (n : ℕ) :
     ratFuncAdjoinXPowRange W n ≤ ratFuncRange W :=
-  extendRight_adjoin_le_ratFuncRange W _
+  extendRight_le_ratFuncRange W _
 
 /-- **`[K(x) : K(x^n)] = n`**, read inside `K(W)`. At `n = 0`, this is the `finrank` value
 `0` for the infinite-dimensional extension `K(x) / K`. -/
 @[simp]
 theorem relfinrank_ratFuncAdjoinXPowRange (n : ℕ) :
     relfinrank (ratFuncAdjoinXPowRange W n) (ratFuncRange W) = n := by
-  rw [ratFuncAdjoinXPowRange, relfinrank_extendRight_adjoin,
+  rw [ratFuncAdjoinXPowRange, relfinrank_extendRight,
     TauCeti.RatFunc.finrank_adjoin_X_pow]
 
 /-- **`[K(W) : K(x^n)] = 2n`.** At `n = 0`, both sides are `0`: the extension over
@@ -125,7 +122,7 @@ theorem relfinrank_ratFuncAdjoinXPowRange (n : ℕ) :
 @[simp]
 theorem finrank_ratFuncAdjoinXPowRange (n : ℕ) :
     Module.finrank (ratFuncAdjoinXPowRange W n) W.FunctionField = 2 * n := by
-  rw [ratFuncAdjoinXPowRange, finrank_extendRight_adjoin,
+  rw [ratFuncAdjoinXPowRange, finrank_extendRight,
     TauCeti.RatFunc.finrank_adjoin_X_pow]
 
 /-- **The copy of `K(x^n)` inside `K(W)` is the image of the rational function field of `W'`**,

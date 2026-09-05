@@ -19,6 +19,7 @@ the smallest intermediate field of `M / K` containing the image of `g`.
 
 ## Main results
 
+* `TauCeti.IntermediateField.extendRight_eq_map`: the copy, as an `IntermediateField.map`.
 * `TauCeti.IntermediateField.extendRight_le_iff`: the copy of `F` lies below an intermediate
   field exactly when that field contains every image from `F`.
 * `TauCeti.IntermediateField.extendRight_adjoin_le_iff`: the copy of `K⟮g⟯` lies inside an
@@ -34,38 +35,44 @@ namespace TauCeti.IntermediateField
 variable {K L M : Type*} [Field K] [Field L] [Field M] [Algebra K L] [Algebra K M] [Algebra L M]
   [IsScalarTower K L M]
 
+/-- `F.extendRight M` as an `IntermediateField.map`, spelled with `IsScalarTower.toAlgHom`. -/
+-- Load-bearing rather than a cosmetic unfolding: `extendRight` is defined through
+-- `Algebra.algHom`, while the `map` lemmas that meet it here are stated with
+-- `IsScalarTower.toAlgHom`. The two are one term but not one piece of syntax, and
+-- `relfinrank_map_map` will not unify across them.
+theorem extendRight_eq_map (F : IntermediateField K L) :
+    F.extendRight M = F.map (IsScalarTower.toAlgHom K L M) := rfl
+
 /-- **The copy of `F` is below an intermediate field exactly when that field contains every
-image from `F`.** This is the order characterisation: it decides an inclusion pointwise, with no
-`comap` and no unfolding of `extendRight` at the call site. -/
+image from `F`.** This decides an inclusion pointwise, with no `comap`. -/
 -- Not `@[simp]`: it and `extendRight_adjoin_le_iff` below cannot both be, since this rewrites
 -- that one's left-hand side and `simpNF` rejects the pair. The simple-extension form is the
 -- one worth reaching automatically, so it keeps the attribute and this is applied by name.
 theorem extendRight_le_iff {F : IntermediateField K L} {E : IntermediateField K M} :
     F.extendRight M ≤ E ↔ ∀ x ∈ F, algebraMap L M x ∈ E := by
-  simp only [IntermediateField.extendRight, Algebra.algHom, SetLike.le_def,
-    IntermediateField.mem_map, forall_exists_index, and_imp]
+  rw [extendRight_eq_map]
+  simp only [SetLike.le_def, IntermediateField.mem_map, forall_exists_index, and_imp]
   exact ⟨fun h x hx => h x hx (congrFun (IsScalarTower.coe_toAlgHom' K L M) x),
     fun h _ x hx hxz => hxz ▸ h x hx⟩
 
-/-- The generator: the image of `g` lies in the copy of `K⟮g⟯`. -/
-theorem algebraMap_mem_extendRight_adjoin (g : L) :
-    algebraMap L M g ∈ (adjoin K {g}).extendRight M := by
-  simp only [IntermediateField.extendRight, Algebra.algHom, IntermediateField.mem_map]
-  exact ⟨g, IntermediateField.mem_adjoin_simple_self _ _,
-    congrFun (IsScalarTower.coe_toAlgHom' K L M) g⟩
+/-- **The universal property of the copy of an adjoin**: the copy of `K⟮s⟯` inside `M` lies in an
+intermediate field exactly when that field contains the image of every element of `s`. -/
+theorem extendRight_adjoin_set_le_iff {s : Set L} {E : IntermediateField K M} :
+    (adjoin K s).extendRight M ≤ E ↔ ∀ x ∈ s, algebraMap L M x ∈ E := by
+  rw [extendRight_le_iff]
+  refine ⟨fun h x hx => h x (IntermediateField.subset_adjoin K s hx), fun h x hx => ?_⟩
+  -- `K⟮s⟯` is the smallest intermediate field containing `s`, so it lies in the preimage of `E`
+  -- as soon as every element of `s` does; `x` is then carried along.
+  have hsub : adjoin K s ≤ E.comap (IsScalarTower.toAlgHom K L M) :=
+    IntermediateField.adjoin_le_iff.mpr h
+  exact hsub hx
 
 /-- **The universal property of the copy of a simple extension**: the copy of `K⟮g⟯` inside `M`
 lies in an intermediate field exactly when that field contains the image of `g`. -/
 @[simp]
 theorem extendRight_adjoin_le_iff {g : L} {E : IntermediateField K M} :
     (adjoin K {g}).extendRight M ≤ E ↔ algebraMap L M g ∈ E := by
-  rw [extendRight_le_iff]
-  refine ⟨fun h => h g (IntermediateField.mem_adjoin_simple_self _ _), fun hg x hx => ?_⟩
-  -- `K⟮g⟯` is the smallest intermediate field containing `g`, so it lies in the preimage of `E`
-  -- as soon as `g` does; `x` is then carried along.
-  have : adjoin K {g} ≤ E.comap (IsScalarTower.toAlgHom K L M) :=
-    IntermediateField.adjoin_le_iff.mpr (Set.singleton_subset_iff.mpr hg)
-  exact this hx
+  rw [extendRight_adjoin_set_le_iff, Set.forall_mem_singleton]
 
 end TauCeti.IntermediateField
 

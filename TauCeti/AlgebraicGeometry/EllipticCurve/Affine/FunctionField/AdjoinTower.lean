@@ -28,8 +28,8 @@ for it in this tower and no new object. Its membership and order API is generic 
 
 ## Main results
 
-* `WeierstrassCurve.Affine.relfinrank_extendRight_adjoin`: `[K(x) : K⟮g⟯]`, read inside `K(W)`.
-* `WeierstrassCurve.Affine.finrank_extendRight_adjoin`: `[K(W) : K⟮g⟯] = 2 · [K(x) : K⟮g⟯]`.
+* `WeierstrassCurve.Affine.relfinrank_extendRight`: `[K(x) : F]`, read inside `K(W)`.
+* `WeierstrassCurve.Affine.finrank_extendRight`: `[K(W) : F] = 2 · [K(x) : F]`.
 * `WeierstrassCurve.Affine.extendRight_adjoin_eq_map_ratFuncRange` and
   `WeierstrassCurve.Affine.finrank_fieldRange_of_apply_X_eq`: for any embedding
   `f : K(W') → K(W)` of function fields sending the affine coordinate of `W'` to `g`, the copy of
@@ -38,14 +38,12 @@ for it in this tower and no new object. Its membership and order API is generic 
 No result needs `W` to be elliptic: the Weierstrass equation alone gives the power basis, through
 `finrank_ratFuncRange`.
 
-The Frobenius degree computation is a specialisation of this tower, through
-`PowerTower.lean`; the multiplication-by-`n` degree is the intended next one.
+The Frobenius degree computation is a specialisation of this tower, through `PowerTower.lean`.
 
 ## Provenance
 
-This generalises `Affine/FunctionField/PowerTower.lean`, which carried the identical construction
-and proofs for the single generator `X ^ n`; that file now derives its API from this one, and the
-argument, naming scheme and proof shapes are its. The finite-field ancestor of both is the AINTLIB
+The argument, naming scheme and proof shapes are `Affine/FunctionField/PowerTower.lean`'s, stated
+here for an arbitrary generator instead of `X ^ n`. The finite-field ancestor of both is the AINTLIB
 `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, pinned at
 `513e83879e2f8cbc626eb9e04d660e92be16ccba`), `HasseWeil/FrobeniusIsogeny.lean`, private
 declarations `frobFracRange`, `frobFracRange_le_frobRange`, `finrank_frobFracRange_functionField`
@@ -62,41 +60,38 @@ namespace WeierstrassCurve.Affine
 
 variable {K : Type*} [Field K] (W : WeierstrassCurve.Affine K)
 
-/-- `K⟮g⟯` sits inside `K(x)`, both read inside `K(W)`. -/
-theorem extendRight_adjoin_le_ratFuncRange (g : RatFunc K) :
-    (adjoin K {g}).extendRight W.FunctionField ≤ ratFuncRange W := by
-  rw [ratFuncRange_eq_map]
-  simp only [IntermediateField.extendRight, Algebra.algHom]
+/-- Any subfield of `K(x)` sits inside `K(x)`, both read inside `K(W)`. -/
+theorem extendRight_le_ratFuncRange (F : IntermediateField K (RatFunc K)) :
+    F.extendRight W.FunctionField ≤ ratFuncRange W := by
+  rw [ratFuncRange_eq_map, TauCeti.IntermediateField.extendRight_eq_map]
   exact IntermediateField.map_mono _ le_top
 
-/-- **`[K(x) : K⟮g⟯]`, read inside `K(W)`**, is the degree it has inside `K(x)` itself. -/
+/-- **`[K(x) : F]`, read inside `K(W)`**, is the degree it has inside `K(x)` itself. -/
 @[simp]
-theorem relfinrank_extendRight_adjoin (g : RatFunc K) :
-    relfinrank ((adjoin K {g}).extendRight W.FunctionField) (ratFuncRange W) =
-      Module.finrank (adjoin K {g}) (RatFunc K) := by
-  rw [ratFuncRange_eq_map]
-  simp only [IntermediateField.extendRight, Algebra.algHom]
-  rw [relfinrank_map_map, relfinrank_top_right]
+theorem relfinrank_extendRight (F : IntermediateField K (RatFunc K)) :
+    relfinrank (F.extendRight W.FunctionField) (ratFuncRange W) =
+      Module.finrank F (RatFunc K) := by
+  rw [ratFuncRange_eq_map, TauCeti.IntermediateField.extendRight_eq_map, relfinrank_map_map,
+    relfinrank_top_right]
 
-/-- **`[K(W) : K⟮g⟯] = 2 · [K(x) : K⟮g⟯]`**: the inner storey contributes the degree of `g` and
-the outer one contributes two. When `K(x)` is infinite-dimensional over `K⟮g⟯` both sides are `0`,
+/-- **`[K(W) : F] = 2 · [K(x) : F]`**: the inner storey contributes the degree of `F` and the
+outer one contributes two. When `K(x)` is infinite-dimensional over `F` both sides are `0`,
 `Module.finrank`'s value there. -/
 @[simp]
-theorem finrank_extendRight_adjoin (g : RatFunc K) :
-    Module.finrank ((adjoin K {g}).extendRight W.FunctionField) W.FunctionField =
-      2 * Module.finrank (adjoin K {g}) (RatFunc K) := by
-  rw [← relfinrank_mul_finrank_top (extendRight_adjoin_le_ratFuncRange W g),
-    relfinrank_extendRight_adjoin, finrank_ratFuncRange, Nat.mul_comm]
+theorem finrank_extendRight (F : IntermediateField K (RatFunc K)) :
+    Module.finrank (F.extendRight W.FunctionField) W.FunctionField =
+      2 * Module.finrank F (RatFunc K) := by
+  rw [← relfinrank_mul_finrank_top (extendRight_le_ratFuncRange W F),
+    relfinrank_extendRight, finrank_ratFuncRange, Nat.mul_comm]
 
-/-- If an intermediate field has relative degree two over `K⟮g⟯`, the degree of `K(W)` over it is
-`[K(x) : K⟮g⟯]`. This is the final tower step of `finrank_fieldRange_of_apply_X_eq`. -/
-private theorem finrank_of_relfinrank_extendRight_adjoin {g : RatFunc K}
-    {L : IntermediateField K W.FunctionField}
-    (hle : (adjoin K {g}).extendRight W.FunctionField ≤ L)
-    (h : relfinrank ((adjoin K {g}).extendRight W.FunctionField) L = 2) :
-    Module.finrank L W.FunctionField = Module.finrank (adjoin K {g}) (RatFunc K) := by
+/-- If an intermediate field has relative degree two over the copy of `F`, the degree of `K(W)`
+over it is `[K(x) : F]`. This is the final tower step of `finrank_fieldRange_of_apply_X_eq`. -/
+private theorem finrank_of_relfinrank_extendRight {F : IntermediateField K (RatFunc K)}
+    {L : IntermediateField K W.FunctionField} (hle : F.extendRight W.FunctionField ≤ L)
+    (h : relfinrank (F.extendRight W.FunctionField) L = 2) :
+    Module.finrank L W.FunctionField = Module.finrank F (RatFunc K) := by
   have htower := relfinrank_mul_finrank_top hle
-  rw [h, finrank_extendRight_adjoin] at htower
+  rw [h, finrank_extendRight] at htower
   exact Nat.eq_of_mul_eq_mul_left two_pos htower
 
 /-- **The copy of `K⟮g⟯` inside `K(W)` is the image of the rational function field of `W'`**, for
@@ -106,8 +101,8 @@ theorem extendRight_adjoin_eq_map_ratFuncRange {W' : WeierstrassCurve.Affine K} 
     (f : W'.FunctionField →ₐ[K] W.FunctionField)
     (hf : f (algebraMap K[X] W'.FunctionField X) = algebraMap (RatFunc K) W.FunctionField g) :
     (adjoin K {g}).extendRight W.FunctionField = (ratFuncRange W').map f := by
-  simp only [IntermediateField.extendRight, Algebra.algHom]
-  rw [ratFuncRange_eq_map, IntermediateField.map_map, ← RatFunc.adjoin_X]
+  rw [TauCeti.IntermediateField.extendRight_eq_map, ratFuncRange_eq_map,
+    IntermediateField.map_map, ← RatFunc.adjoin_X]
   simp only [IntermediateField.adjoin_map, Set.image_singleton, AlgHom.coe_comp,
     Function.comp_apply, toAlgHom_ratFuncX, hf]
   rw [IsScalarTower.coe_toAlgHom']
@@ -121,7 +116,7 @@ theorem finrank_fieldRange_of_apply_X_eq {W' : WeierstrassCurve.Affine K} {g : R
     (hf : f (algebraMap K[X] W'.FunctionField X) = algebraMap (RatFunc K) W.FunctionField g) :
     Module.finrank f.fieldRange W.FunctionField = Module.finrank (adjoin K {g}) (RatFunc K) := by
   have h := extendRight_adjoin_eq_map_ratFuncRange W f hf
-  refine finrank_of_relfinrank_extendRight_adjoin W ?_ ?_
+  refine finrank_of_relfinrank_extendRight W ?_ ?_
   · rw [h, AlgHom.fieldRange_eq_map]
     exact IntermediateField.map_mono _ le_top
   · rw [h, relfinrank_map_ratFuncRange_fieldRange]
