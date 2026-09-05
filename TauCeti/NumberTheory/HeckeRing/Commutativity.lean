@@ -263,24 +263,18 @@ private lemma out_mul_inv_mul_mem {g₁ g₂ d : G} {u : G} (hu : u ∈ H)
 the barred `i`-th one-sided term, the element `a_D⁻¹ a g₂` witnesses the transported term: its
 own one-sided expression lies in `H g₁ H`.
 
-This is the whole computation behind `commFwdMap`, stated on plain `a` and `b` so that the
-`Classical.choice` bookkeeping — which picks them out of `ι.exists_bar_eq` — stays in the
-definition and out of the mathematics. Neither `a ∈ H` nor `a_D ∈ H` is needed: both are
-cancelled algebraically. -/
-private lemma commFwdMap_mem_doubleCoset [IsHeckeTriple Δ H H] (g₁ g₂ d : Δ) {aD bD : G}
+Only the ambient monoid is needed: `H ≤ Δ` places the coset representative in `Δ`, and the
+one-sided term is assumed to lie there. -/
+private lemma commFwdMap_mem_doubleCoset (hHΔ : H.toSubmonoid ≤ Δ) (g₁ g₂ d : Δ) {aD bD : G}
     (hbD : bD ∈ H) (hbarD : ι.bar (d : G) d.2 = aD * (d : G) * bD)
     {a₁ b₁ : G} (ha₁ : a₁ ∈ H) (hb₁ : b₁ ∈ H)
     (hbar₁ : ι.bar (g₁ : G) g₁.2 = a₁ * (g₁ : G) * b₁)
     {i : DecompQuotient H H (g₁ : G)}
-    (hi : ((i.out : G) * g₁)⁻¹ * (d : G) ∈ doubleCoset (g₂ : G) (H : Set G) H)
+    (hxΔ : ((i.out : G) * g₁)⁻¹ * (d : G) ∈ Δ)
     {a b : G} (hb : b ∈ H)
-    (hbar : ι.bar (((i.out : G) * g₁)⁻¹ * (d : G))
-      (IsHeckeTriple.mem_of_mem_doubleCoset g₂.2 hi) = a * (g₂ : G) * b) :
+    (hbar : ι.bar (((i.out : G) * g₁)⁻¹ * (d : G)) hxΔ = a * (g₂ : G) * b) :
     (aD⁻¹ * a * (g₂ : G))⁻¹ * (d : G) ∈ doubleCoset (g₁ : G) (H : Set G) H := by
-  have houtΔ : ((i.out : H) : G) ∈ Δ :=
-    IsHeckeTriple.mem_of_mem_left (Δ := Δ) H (i.out : H).2
-  have hxΔ : ((i.out : G) * g₁)⁻¹ * (d : G) ∈ Δ :=
-    IsHeckeTriple.mem_of_mem_doubleCoset g₂.2 hi
+  have houtΔ : ((i.out : H) : G) ∈ Δ := hHΔ (i.out : H).2
   have houtg₁Δ : (i.out : G) * (g₁ : G) ∈ Δ := mul_mem houtΔ g₁.2
   have hd : (d : G) = (i.out : G) * (g₁ : G) * (((i.out : G) * g₁)⁻¹ * (d : G)) := by
     group
@@ -312,9 +306,7 @@ private lemma commFwdMap_mem_doubleCoset [IsHeckeTriple Δ H H] (g₁ g₂ d : �
 
 open Classical in
 /-- Shimura's change of variables: the anti-involution transports a member of the one-sided
-count set of `m(g₁, g₂; d)` to a member of the one-sided count set of `m(g₂, g₁; d)`. The
-computation is `commFwdMap_mem_doubleCoset`; all this definition adds is the choice of the
-barred decomposition it consumes. -/
+count set of `m(g₁, g₂; d)` to a member of the one-sided count set of `m(g₂, g₁; d)`. -/
 private noncomputable def commFwdMap [IsHeckeTriple Δ H H]
     (h_fix : ∀ D : HeckeCoset Δ H H, ι.onHeckeCoset D = D)
     (g₁ g₂ d : Δ) {aD bD : G} (haD : aD ∈ H) (hbD : bD ∈ H)
@@ -331,7 +323,9 @@ private noncomputable def commFwdMap [IsHeckeTriple Δ H H]
     ι.exists_bar_eq h_fix p.2
   ⟨QuotientGroup.mk ⟨aD⁻¹ * hx.choose, H.mul_mem (H.inv_mem haD) hx.choose_spec.1⟩,
     out_mul_inv_mul_mem _
-      (commFwdMap_mem_doubleCoset ι g₁ g₂ d hbD hbarD ha₁ hb₁ hbar₁ p.2
+      (commFwdMap_mem_doubleCoset ι (fun {_} hy ↦ IsHeckeTriple.mem_of_mem_left (Δ := Δ) H hy)
+        g₁ g₂ d hbD hbarD ha₁ hb₁ hbar₁
+        (IsHeckeTriple.mem_of_mem_doubleCoset g₂.2 p.2)
         hx.choose_spec.2.choose_spec.1 hx.choose_spec.2.choose_spec.2)⟩
 
 /-- Transport back through the anti-involution: two elements of `Δ` whose barred
