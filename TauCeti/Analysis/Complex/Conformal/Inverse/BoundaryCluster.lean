@@ -55,10 +55,12 @@ namespace TauCeti
 
 variable {U : Set ℂ} {f F : ℂ → ℂ} {a : ℂ}
 
-/-- **Forward inclusion of `clusterSetOn_invFunOn_eq_boundary_fiber`.** A point of the cluster set
+/-- **Forward inclusion of `clusterSetOn_invFunOn_eq_boundary_fiber`.** Private: this is the
+heavier half of that theorem's proof, not an API surface of its own — the equality subsumes it.
+A point of the cluster set
 of the inverse map over an image-boundary point lies on the frontier of `U`, and the continuous
 extension sends it to that boundary point. -/
-theorem clusterSetOn_invFunOn_subset_boundary_fiber
+private theorem clusterSetOn_invFunOn_subset_boundary_fiber
     (hUo : IsOpen U) (hfo : IsOpen (f '' U))
     (hfi : InjOn f U)
     (hFc : ContinuousOn F (closure U))
