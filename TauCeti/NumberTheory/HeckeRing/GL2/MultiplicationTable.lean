@@ -377,9 +377,8 @@ private lemma mulSupport_pp_subset (k : ℕ)
   exact mulSupport_pp_case_split p hp k a h_det h_dvd
 
 include hp in
-/-- Contrapositive of `mulSupport_pp_subset`: a coset other than the two in the support has
-multiplicity zero in `T(1,p) · T(1,pᵏ)`. Both multiplicity computations below need it in this
-quantified form, so it is stated once rather than reproved in each. -/
+/-- **A coset outside the two possible support cosets has multiplicity zero.** If `A` is
+neither `T(1, p^(k+1))` nor `T(p, pᵏ)`, its multiplicity in `T(1,p) · T(1,pᵏ)` vanishes. -/
 private lemma multiplicity_eq_zero_of_ne_diagCoset (k : ℕ)
     (A : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
     (h1 : A ≠ diagCoset ![1, p ^ (k + 1)]) (h2 : A ≠ diagCoset ![p, p ^ k]) :
