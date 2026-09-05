@@ -34,7 +34,8 @@ that identifying the pullback is all that remains.
   inside `F(W)`.
 * `WeierstrassCurve.finrank_ratFuncAdjoinΦDivΨSqRange`: `[F(W) : F(Φₙ/ΨSqₙ)] = 2n²`.
 * `WeierstrassCurve.finrank_fieldRange_of_apply_X_eq_Φ_div_ΨSq`: `[F(W) : f(F(W'))] = n²` for any
-  embedding `f` of function fields sending the affine coordinate of `W'` to `Φₙ / ΨSqₙ`.
+  embedding `f` of function fields sending the affine coordinate of `W'` to `Φₙ / ΨSqₙ`. The copy
+  of `F(Φₙ/ΨSqₙ)` is then the image of `F(x')`, by `Affine.extendRight_adjoin_eq_map_ratFuncRange`.
 
 Nonsingularity is assumed as `n ≠ 0 → W.Δ ≠ 0`, the form `finrank_adjoin_Φ_div_ΨSq` takes: at
 `n = 0` every displayed degree is `0` by `Module.finrank`'s value on an infinite extension, and
@@ -92,17 +93,6 @@ theorem finrank_ratFuncAdjoinΦDivΨSqRange (n : ℤ) (hΔ : n ≠ 0 → W.Δ �
       2 * n.natAbs ^ 2 := by
   rw [ratFuncAdjoinΦDivΨSqRange, Affine.finrank_extendRight,
     W.finrank_adjoin_Φ_div_ΨSq n hΔ]
-
-/-- **The copy of `F(Φₙ/ΨSqₙ)` inside `F(W)` is the image of the rational function field of
-`W'`**, for any embedding `f : F(W') → F(W)` of function fields carrying the affine coordinate of
-`W'` to `Φₙ / ΨSqₙ`. -/
-theorem ratFuncAdjoinΦDivΨSqRange_eq_map_ratFuncRange {W' : Affine F} {n : ℤ}
-    (f : W'.FunctionField →ₐ[F] W.toAffine.FunctionField)
-    (hf : f (algebraMap F[X] W'.FunctionField X) =
-      algebraMap (RatFunc F) W.toAffine.FunctionField
-        (algebraMap F[X] (RatFunc F) (W.Φ n) / algebraMap F[X] (RatFunc F) (W.ΨSq n))) :
-    ratFuncAdjoinΦDivΨSqRange W n = (Affine.ratFuncRange W').map f :=
-  Affine.extendRight_adjoin_eq_map_ratFuncRange W.toAffine f hf
 
 /-- **`[F(W) : f(F(W'))] = n²`** for an embedding `f : F(W') → F(W)` of function fields carrying
 the affine coordinate of `W'` to `Φₙ / ΨSqₙ`.
