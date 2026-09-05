@@ -19,10 +19,12 @@ between the Laurent quotient `A⟨T/s⟩⟨X⟩ ⧸ (t/s - X)` and the enlarged 
 `A⟨T'/s⟩`. This file proves them mutually inverse, so that Wedhorn's Remark 7.55 is available as
 an isomorphism of topological rings.
 
-Each composite is pinned by the uniqueness half of one universal property, and neither needs a new
-idea: `ψ ∘ g = id` on `A⟨T'/s⟩` because both sides are continuous ring homomorphisms agreeing
-after `toCompletionLoc`, and `g ∘ ψ = id` on the quotient by `Ideal.Quotient.ringHom_ext` followed
-by a comparison on the constants and the variable.
+The identification holds under the same `hsplit` the second map needs — `T'` adjoins no numerator
+beyond `t` — together with closedness of the relation ideal. For a general enlargement no
+identification is expected, since `T'` may adjoin other numerators.
+
+A consumer transports a statement about one side to the other: Proposition 8.30 uses it to carry
+flatness of the Laurent quotient over `A⟨T/s⟩` across to `A⟨T'/s⟩`.
 
 ## Main definitions
 
@@ -62,6 +64,23 @@ section OneStep
 
 variable (T' : Finset A) (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s S']
   (hden' : HasDenominatorPower P T' s S') (hTT' : ∀ u ∈ T, u ∈ T')
+
+-- The structure map of the Laurent quotient, `a ↦ [a]` on constants: `weightedC` followed by the
+-- quotient map. The two composite identities below are both proved by comparing against it.
+private noncomputable abbrev laurentStructureHom :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := isHuberRing_locUniformSpace P T s S hden
+    UniformSpace.Completion S →+* (weightedRestrictedSubring
+      (fun _ : Fin 1 ↦ ({1} : Set (UniformSpace.Completion S))) isWeightFamily_one_weight ⧸
+        laurentRelationIdeal P T s t S hden) :=
+  letI := locUniformSpace P T s S hden
+  letI := isUniformAddGroup_locUniformSpace P T s S hden
+  letI := isTopologicalRing_locUniformSpace P T s S hden
+  letI := isHuberRing_locUniformSpace P T s S hden
+  (Ideal.Quotient.mk (laurentRelationIdeal P T s t S hden)).comp
+    (weightedC _ isWeightFamily_one_weight)
 
 -- The fraction `t/s` downstairs goes to the class of the variable. This is where the Laurent
 -- relation is used, and it needs nothing of the target beyond the ring structure: expand both

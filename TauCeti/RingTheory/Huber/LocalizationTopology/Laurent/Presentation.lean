@@ -48,8 +48,6 @@ restriction/localisation theory, not the weighted-evaluation machinery imported 
 
 ## Main definitions
 
-* `TauCeti.Huber.PairOfDefinition.laurentStructureHom`: the structure map `a ↦ [a]` of the
-  Laurent quotient, which both universal properties below are stated through.
 * `TauCeti.Huber.PairOfDefinition.laurentRelationIdeal`: the ideal `(t/s - X)` of `A⟨T/s⟩⟨X⟩`,
   where `t/s` is `TauCeti.Localization.divBy` read in the completion via
   `TauCeti.Huber.PairOfDefinition.toCompletionLoc_mul_unit_inv_eq_divBy`.
@@ -232,24 +230,6 @@ section OneStep
 
 variable (T' : Finset A) (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s S']
   (hden' : HasDenominatorPower P T' s S') (hTT' : ∀ u ∈ T, u ∈ T')
-
-/-- **The structure map of the Laurent quotient**, `a ↦ [a]` on constants: the composite of
-`weightedC` with the quotient map. Both of Remark 7.55's maps are pinned by their behaviour
-against it, so it is the map the two universal properties of this file are stated through. -/
-noncomputable abbrev laurentStructureHom :
-    letI := locUniformSpace P T s S hden
-    letI := isUniformAddGroup_locUniformSpace P T s S hden
-    letI := isTopologicalRing_locUniformSpace P T s S hden
-    letI := isHuberRing_locUniformSpace P T s S hden
-    UniformSpace.Completion S →+* (weightedRestrictedSubring
-      (fun _ : Fin 1 ↦ ({1} : Set (UniformSpace.Completion S))) isWeightFamily_one_weight ⧸
-        laurentRelationIdeal P T s t S hden) :=
-  letI := locUniformSpace P T s S hden
-  letI := isUniformAddGroup_locUniformSpace P T s S hden
-  letI := isTopologicalRing_locUniformSpace P T s S hden
-  letI := isHuberRing_locUniformSpace P T s S hden
-  (Ideal.Quotient.mk (laurentRelationIdeal P T s t S hden)).comp
-    (weightedC _ isWeightFamily_one_weight)
 
 section OneStep
 
