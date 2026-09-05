@@ -94,7 +94,7 @@ lemma subgroupOf_conjAct_smul_mul_left_of_mem_normalizer (Γ₁ Γ₂ : Subgroup
 
 /-- **Membership in a double coset is invariant under left multiplication by the left
 subgroup.** -/
-lemma mul_mem_doubleCoset_iff {H K : Subgroup G} {b : G} (hb : b ∈ H) {a z : G} :
+@[simp] lemma mul_mem_doubleCoset_iff {H K : Subgroup G} {b : G} (hb : b ∈ H) {a z : G} :
     b * z ∈ doubleCoset a (H : Set G) K ↔ z ∈ doubleCoset a (H : Set G) K := by
   constructor
   · intro hz

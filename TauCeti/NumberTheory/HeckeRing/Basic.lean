@@ -120,7 +120,7 @@ lemma rep_mem (D : HeckeCoset Δ H₁ H₂) : (D.rep : G) ∈ D.toSet :=
 
 /-- **`mk` and `rep` name the same double coset**: the chosen representative of `mk H₁ H₂ w`
 spans the double coset `w` was taken from. -/
-lemma doubleCoset_rep_mk (w : Δ) :
+@[simp] lemma doubleCoset_rep_mk (w : Δ) :
     doubleCoset (((mk H₁ H₂ w).rep : Δ) : G) H₁ H₂ = doubleCoset (w : G) H₁ H₂ :=
   doubleCoset_eq_of_mem (by simpa using rep_mem (mk H₁ H₂ w))
 
