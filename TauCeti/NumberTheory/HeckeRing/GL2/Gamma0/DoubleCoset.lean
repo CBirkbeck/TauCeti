@@ -120,18 +120,6 @@ private lemma dvd_and_gcd_of_Gamma_mul (τ A : Matrix (Fin 2) (Fin 2) ℤ)
     have hshift : (τ * A) 1 1 = A 1 1 + k * (N : ℤ) := by linarith
     exact hshift ▸ (Int.isCoprime_iff_gcd_eq_one.mpr hA11).add_mul_right_left k
 
-/-- **Coprime levels generate.** For `d` coprime to `N`, the principal congruence subgroups of
-levels `N` and `|d|` together fill `SL₂(ℤ)`. -/
-private lemma Gamma_sup_Gamma_natAbs_eq_top {d : ℤ} (hd : Int.gcd d N = 1) :
-    Gamma N ⊔ Gamma d.natAbs = ⊤ := by
-  -- `Int.gcd` is *defined* as `Nat.gcd` on the `natAbs`, but the two spellings are not
-  -- interchangeable for `rw`, so the bridge is named.
-  have hgcd : Nat.gcd d.natAbs N = Int.gcd d N := by simp [Int.gcd]
-  have h := Gamma_gcd_eq_sup d.natAbs N
-  rw [hgcd, hd, Gamma_one_top] at h
-  rw [sup_comm]
-  exact h.symm
-
 /-- **The right factor lands in `Γ₀(N)`.** If `τ_N γ₂'` conjugates `α` into `Δ₀(N)` and `τ_N`
 is congruent to the identity mod `N`, then the lower-left entry of the whole product is
 divisible by `N`, and `dvd_and_gcd_of_Gamma_mul` transports that divisibility to `γ₂'`. -/
