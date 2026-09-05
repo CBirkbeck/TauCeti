@@ -437,42 +437,6 @@ theorem eq_laurentQuotientRestrictionRingHom (ht : t ∈ T') :
     (existsUnique_continuous_ringHom_laurentQuotient_restriction P T s t S hden T' S' hden'
       hTT' ht).choose_spec.2 ψ ⟨hc, hC, hX⟩
 
--- A ring homomorphism out of `A⟨T'/s⟩` that agrees with one out of `A⟨T/s⟩` after the structure
--- maps from `A` sends the fraction `t/s` to the fraction `t/s`. Both `s`-inverses are inverses of
--- the image of `s`, and inverses in a monoid are unique, so the two fractions correspond.
-private theorem map_divBy_of_comp_toCompletionLoc_eq {B : Type*} [CommRing B] :
-    letI := locUniformSpace P T s S hden
-    letI := isUniformAddGroup_locUniformSpace P T s S hden
-    letI := isTopologicalRing_locUniformSpace P T s S hden
-    letI := locUniformSpace P T' s S' hden'
-    letI := isUniformAddGroup_locUniformSpace P T' s S' hden'
-    letI := isTopologicalRing_locUniformSpace P T' s S' hden'
-    ∀ (g : UniformSpace.Completion S' →+* B) (φ : UniformSpace.Completion S →+* B),
-      g.comp (toCompletionLoc P T' s S' hden') = φ.comp (toCompletionLoc P T s S hden) →
-      g ((divBy t s : S') : UniformSpace.Completion S')
-        = φ ((divBy t s : S) : UniformSpace.Completion S) := by
-  let _ := locUniformSpace P T s S hden
-  have _ := isUniformAddGroup_locUniformSpace P T s S hden
-  have _ := isTopologicalRing_locUniformSpace P T s S hden
-  let _ := locUniformSpace P T' s S' hden'
-  have _ := isUniformAddGroup_locUniformSpace P T' s S' hden'
-  have _ := isTopologicalRing_locUniformSpace P T' s S' hden'
-  intro g φ hge
-  have hu : IsUnit (toCompletionLoc P T s S hden s) :=
-    isUnit_toCompletionLoc_of_dvd P T s S hden dvd_rfl
-  have hu' : IsUnit (toCompletionLoc P T' s S' hden' s) :=
-    isUnit_toCompletionLoc_of_dvd P T' s S' hden' dvd_rfl
-  have hgs : g (toCompletionLoc P T' s S' hden' s) = φ (toCompletionLoc P T s S hden s) :=
-    congrArg (fun k : A →+* B ↦ k s) hge
-  have hgt : g (toCompletionLoc P T' s S' hden' t) = φ (toCompletionLoc P T s S hden t) :=
-    congrArg (fun k : A →+* B ↦ k t) hge
-  -- the two inverses of `s` correspond, being inverses of the same element of `B`
-  have hginv : g ↑hu'.unit⁻¹ = ↑(hu.map φ).unit⁻¹ := by
-    refine (Units.inv_eq_of_mul_eq_one_left ?_).symm
-    rw [(hu.map φ).unit_spec, ← hgs, ← map_mul, hu'.val_inv_mul, map_one]
-  rw [← toCompletionLoc_mul_unit_inv_eq_divBy P T' s S' hden' t hu', map_mul, hginv, hgt,
-    IsUnit.unit_inv_map φ hu, ← map_mul, toCompletionLoc_mul_unit_inv_eq_divBy P T s S hden t hu]
-
 -- The fraction `t/s` downstairs goes to the class of the variable. This is where the Laurent
 -- relation is used, and it needs nothing of the target beyond the ring structure: expand both
 -- fractions, move the inverse across with `IsUnit.unit_inv_map`, and read off the relation.
@@ -502,7 +466,7 @@ private theorem apply_divBy_eq_quotientMk_weightedX :
   have _ := isTopologicalRing_locUniformSpace P T' s S' hden'
   have _ := isHuberRing_locUniformSpace P T' s S' hden'
   intro g hge
-  rw [map_divBy_of_comp_toCompletionLoc_eq P T s t S hden T' S' hden' g _ hge]
+  rw [map_divBy_of_comp_toCompletionLoc_eq P T s S hden T' S' hden' t g _ hge]
   exact laurentRelationIdeal_quotientMk_weightedC P T s t S hden
 
 -- Agreement on the image of `A` propagates to all of `A⟨T/s⟩`: two continuous ring homomorphisms
@@ -914,8 +878,35 @@ noncomputable def laurentQuotientRingEquiv (ht : t ∈ T') (hsplit : ∀ u ∈ T
     (laurentQuotientRingHom_comp_laurentQuotientRestrictionRingHom P T s t S hden T' S' hden'
       hTT' ht hsplit hcl)
 
-/-- The identification coerces to
-`TauCeti.Huber.PairOfDefinition.laurentQuotientRestrictionRingHom`, the map out of the quotient. -/
+/-- **The identification is `laurentQuotientRestrictionRingHom`**, as a ring homomorphism: it
+packages that map together with the inverse supplied by
+`TauCeti.Huber.PairOfDefinition.laurentQuotientRingHom`, rather than introducing a new one. -/
+@[simp]
+theorem laurentQuotientRingEquiv_coe (ht : t ∈ T') (hsplit : ∀ u ∈ T', u ∈ T ∨ u = t)
+    (hcl : letI := locUniformSpace P T s S hden
+      letI := isUniformAddGroup_locUniformSpace P T s S hden
+      letI := isTopologicalRing_locUniformSpace P T s S hden
+      letI := isHuberRing_locUniformSpace P T s S hden
+      IsClosed (laurentRelationIdeal P T s t S hden : Set (weightedRestrictedSubring
+        (fun _ : Fin 1 ↦ ({1} : Set (UniformSpace.Completion S))) isWeightFamily_one_weight))) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := isHuberRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s S' hden'
+    letI := isHuberRing_locUniformSpace P T' s S' hden'
+    ((laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit hcl :
+        (weightedRestrictedSubring
+      (fun _ : Fin 1 ↦ ({1} : Set (UniformSpace.Completion S))) isWeightFamily_one_weight ⧸
+        laurentRelationIdeal P T s t S hden) ≃+* UniformSpace.Completion S') :
+        (weightedRestrictedSubring
+      (fun _ : Fin 1 ↦ ({1} : Set (UniformSpace.Completion S))) isWeightFamily_one_weight ⧸
+        laurentRelationIdeal P T s t S hden) →+* UniformSpace.Completion S')
+      = laurentQuotientRestrictionRingHom P T s t S hden T' S' hden' hTT' ht :=
+  RingHom.ext fun _ ↦ by simp only [laurentQuotientRingEquiv]; rfl
+/-- The pointwise form of `TauCeti.Huber.PairOfDefinition.laurentQuotientRingEquiv_coe`. -/
 @[simp]
 theorem laurentQuotientRingEquiv_apply (ht : t ∈ T') (hsplit : ∀ u ∈ T', u ∈ T ∨ u = t)
     (hcl : letI := locUniformSpace P T s S hden
@@ -933,11 +924,39 @@ theorem laurentQuotientRingEquiv_apply (ht : t ∈ T') (hsplit : ∀ u ∈ T', u
     letI := isTopologicalRing_locUniformSpace P T' s S' hden'
     letI := isHuberRing_locUniformSpace P T' s S' hden'
     ∀ x, laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit hcl x
-      = laurentQuotientRestrictionRingHom P T s t S hden T' S' hden' hTT' ht x := fun _ ↦ by
-  simp only [laurentQuotientRingEquiv, RingEquiv.ofRingHom_apply]
+      = laurentQuotientRestrictionRingHom P T s t S hden T' S' hden' hTT' ht x :=
+  fun x ↦ DFunLike.congr_fun
+    (laurentQuotientRingEquiv_coe P T s t S hden T' S' hden' hTT' ht hsplit hcl) x
 
-/-- The inverse of the identification coerces to
-`TauCeti.Huber.PairOfDefinition.laurentQuotientRingHom`, the map into the quotient. -/
+
+/-- **The inverse of the identification is `laurentQuotientRingHom`**, as a ring homomorphism. -/
+@[simp]
+theorem laurentQuotientRingEquiv_symm_coe (ht : t ∈ T') (hsplit : ∀ u ∈ T', u ∈ T ∨ u = t)
+    (hcl : letI := locUniformSpace P T s S hden
+      letI := isUniformAddGroup_locUniformSpace P T s S hden
+      letI := isTopologicalRing_locUniformSpace P T s S hden
+      letI := isHuberRing_locUniformSpace P T s S hden
+      IsClosed (laurentRelationIdeal P T s t S hden : Set (weightedRestrictedSubring
+        (fun _ : Fin 1 ↦ ({1} : Set (UniformSpace.Completion S))) isWeightFamily_one_weight))) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := isHuberRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s S' hden'
+    letI := isHuberRing_locUniformSpace P T' s S' hden'
+    (((laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit hcl).symm :
+        UniformSpace.Completion S' ≃+* (weightedRestrictedSubring
+      (fun _ : Fin 1 ↦ ({1} : Set (UniformSpace.Completion S))) isWeightFamily_one_weight ⧸
+        laurentRelationIdeal P T s t S hden)) :
+        UniformSpace.Completion S' →+* (weightedRestrictedSubring
+      (fun _ : Fin 1 ↦ ({1} : Set (UniformSpace.Completion S))) isWeightFamily_one_weight ⧸
+        laurentRelationIdeal P T s t S hden))
+      = laurentQuotientRingHom P T s t S hden T' S' hden' hsplit hcl :=
+  RingHom.ext fun _ ↦ by simp only [laurentQuotientRingEquiv]; rfl
+/-- The pointwise form of
+`TauCeti.Huber.PairOfDefinition.laurentQuotientRingEquiv_symm_coe`. -/
 @[simp]
 theorem laurentQuotientRingEquiv_symm_apply (ht : t ∈ T') (hsplit : ∀ u ∈ T', u ∈ T ∨ u = t)
     (hcl : letI := locUniformSpace P T s S hden
@@ -955,8 +974,10 @@ theorem laurentQuotientRingEquiv_symm_apply (ht : t ∈ T') (hsplit : ∀ u ∈ 
     letI := isTopologicalRing_locUniformSpace P T' s S' hden'
     letI := isHuberRing_locUniformSpace P T' s S' hden'
     ∀ x, (laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit hcl).symm x
-      = laurentQuotientRingHom P T s t S hden T' S' hden' hsplit hcl x := fun _ ↦ by
-  simp only [laurentQuotientRingEquiv, RingEquiv.ofRingHom_symm_apply]
+      = laurentQuotientRingHom P T s t S hden T' S' hden' hsplit hcl x :=
+  fun x ↦ DFunLike.congr_fun
+    (laurentQuotientRingEquiv_symm_coe P T s t S hden T' S' hden' hTT' ht hsplit hcl) x
+
 
 /-- The identification is continuous. -/
 theorem continuous_laurentQuotientRingEquiv (ht : t ∈ T') (hsplit : ∀ u ∈ T', u ∈ T ∨ u = t)
