@@ -22,7 +22,7 @@ the smallest intermediate field of `M / K` containing the image of `g`.
 * `IntermediateField.extendRight_eq_map`: the copy, as an `IntermediateField.map`.
 * `IntermediateField.extendRight_le_iff`: the copy of `F` lies below an intermediate
   field exactly when that field contains every image from `F`.
-* `IntermediateField.extendRight_adjoin_le_iff`: the copy of `K⟮g⟯` lies inside an
+* `IntermediateField.extendRight_adjoin_simple_le_iff`: the copy of `K⟮g⟯` lies inside an
   intermediate field exactly when that field contains the image of `g`.
 -/
 
@@ -43,9 +43,9 @@ theorem extendRight_eq_map (F : IntermediateField K L) :
 
 /-- **The copy of `F` is below an intermediate field exactly when that field contains every
 image from `F`.** This decides an inclusion pointwise, with no `comap`. -/
--- Not `@[simp]`: it and `extendRight_adjoin_le_iff` below cannot both be, since this rewrites
--- that one's left-hand side and `simpNF` rejects the pair. The simple-extension form is the
--- one worth reaching automatically, so it keeps the attribute and this is applied by name.
+-- Not `@[simp]`: it and `extendRight_adjoin_simple_le_iff` below cannot both be, since this
+-- rewrites that one's left-hand side and `simpNF` rejects the pair. The simple-extension form
+-- is the one worth reaching automatically, so it keeps the attribute and this is used by name.
 theorem extendRight_le_iff {F : IntermediateField K L} {E : IntermediateField K M} :
     F.extendRight M ≤ E ↔ ∀ x ∈ F, algebraMap L M x ∈ E := by
   rw [extendRight_eq_map]
@@ -55,7 +55,7 @@ theorem extendRight_le_iff {F : IntermediateField K L} {E : IntermediateField K 
 
 /-- **The universal property of the copy of an adjoin**: the copy of `K⟮s⟯` inside `M` lies in an
 intermediate field exactly when that field contains the image of every element of `s`. -/
-theorem extendRight_adjoin_set_le_iff {s : Set L} {E : IntermediateField K M} :
+theorem extendRight_adjoin_le_iff {s : Set L} {E : IntermediateField K M} :
     (adjoin K s).extendRight M ≤ E ↔ ∀ x ∈ s, algebraMap L M x ∈ E := by
   rw [extendRight_le_iff]
   refine ⟨fun h x hx => h x (subset_adjoin K s hx), fun h x hx => ?_⟩
@@ -68,9 +68,9 @@ theorem extendRight_adjoin_set_le_iff {s : Set L} {E : IntermediateField K M} :
 /-- **The universal property of the copy of a simple extension**: the copy of `K⟮g⟯` inside `M`
 lies in an intermediate field exactly when that field contains the image of `g`. -/
 @[simp]
-theorem extendRight_adjoin_le_iff {g : L} {E : IntermediateField K M} :
+theorem extendRight_adjoin_simple_le_iff {g : L} {E : IntermediateField K M} :
     (adjoin K {g}).extendRight M ≤ E ↔ algebraMap L M g ∈ E := by
-  rw [extendRight_adjoin_set_le_iff, Set.forall_mem_singleton]
+  rw [extendRight_adjoin_le_iff, Set.forall_mem_singleton]
 
 end IntermediateField
 
