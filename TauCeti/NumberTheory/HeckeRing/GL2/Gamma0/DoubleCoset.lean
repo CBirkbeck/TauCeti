@@ -120,6 +120,20 @@ private lemma dvd_and_gcd_of_Gamma_mul (τ A : Matrix (Fin 2) (Fin 2) ℤ)
     have hshift : (τ * A) 1 1 = A 1 1 + k * (N : ℤ) := by linarith
     exact hshift ▸ (Int.isCoprime_iff_gcd_eq_one.mpr hA11).add_mul_right_left k
 
+/-- **The lower row of a `Γ(N)` element.** For `τ ∈ Γ(N)`, `N` divides `τ 1 0` and `τ 1 1 - 1`
+— the lower row is congruent to `(0, 1)` modulo `N`, which is the shape
+`mem_Gamma0_of_mul_mem_Delta0` consumes. -/
+private lemma dvd_lower_row_of_mem_Gamma {τ : SpecialLinearGroup (Fin 2) ℤ} (hτ : τ ∈ Gamma N) :
+    (N : ℤ) ∣ (τ : Matrix (Fin 2) (Fin 2) ℤ) 1 0 ∧
+      (N : ℤ) ∣ ((τ : Matrix (Fin 2) (Fin 2) ℤ) 1 1 - 1) := by
+  refine ⟨?_, ?_⟩
+  · have h0 := Gamma_le_Gamma0 N hτ
+    rwa [Gamma0_mem, ZMod.intCast_zmod_eq_zero_iff_dvd] at h0
+  · rw [Gamma_mem] at hτ
+    refine (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp ?_
+    push_cast
+    simp [hτ.2.2.2]
+
 /-- **The right factor lands in `Γ₀(N)`.** Let `α` be the integer matrix `A` over `ℚ`, with
 `N ∣ A 1 0` and `A 1 1` coprime to `N`, and let the lower row of `τ_N` be congruent to
 `(0, 1)` modulo `N`. If the product `τ_N * α * γ₂'` lies in `Δ₀(N)`, then `γ₂' ∈ Γ₀(N)`. -/
@@ -153,18 +167,14 @@ private lemma mem_doubleCoset_Gamma0Image_of_mem_Delta0
       DoubleCoset.doubleCoset α (Gamma0Image N) (Gamma0Image N) := by
   have : (Gamma N).Normal := Gamma_normal N
   -- coprimality of `det α` with `N` makes the two principal congruence subgroups fill `SL₂(ℤ)`
-  have h_top : Gamma N ⊔ Gamma A.det.natAbs = ⊤ :=
-    Gamma_sup_Gamma_eq_top (Nat.coprime_comm.mp (by simpa [Int.gcd] using hdet))
+  have h_top : Gamma N ⊔ Gamma A.det.natAbs = ⊤ := by
+    have hg := Gamma_gcd_eq_sup N A.det.natAbs
+    rwa [show Nat.gcd N A.det.natAbs = 1 by rw [Nat.gcd_comm]; simpa [Int.gcd] using hdet,
+      Gamma_one_top, eq_comm] at hg
   obtain ⟨τ_N, hτ_N, τ_a, hτ_a, hσ₁_eq⟩ :=
     Subgroup.mem_sup_of_normal_left.mp (h_top ▸ Subgroup.mem_top σ₁)
   have hτ_N_Gamma0 : τ_N ∈ Gamma0 N := Gamma_le_Gamma0 N hτ_N
-  have hτ10 : (N : ℤ) ∣ (τ_N : Matrix (Fin 2) (Fin 2) ℤ) 1 0 := by
-    rwa [Gamma0_mem, ZMod.intCast_zmod_eq_zero_iff_dvd] at hτ_N_Gamma0
-  have hτ11 : (N : ℤ) ∣ ((τ_N : Matrix (Fin 2) (Fin 2) ℤ) 1 1 - 1) := by
-    rw [Gamma_mem] at hτ_N
-    refine (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp ?_
-    push_cast
-    simp [hτ_N.2.2.2]
+  obtain ⟨hτ10, hτ11⟩ := dvd_lower_row_of_mem_Gamma N hτ_N
   -- the `Γ(det α)` factor crosses `α` and lands back in `SL₂(ℤ)`
   have hτ_ker : τ_a ∈ (SpecialLinearGroup.map (Int.castRingHom (ZMod A.det.natAbs))).ker := by
     rw [MonoidHom.mem_ker]

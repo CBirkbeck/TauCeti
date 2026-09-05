@@ -697,10 +697,4 @@ theorem Gamma_gcd_eq_sup (a b : ℕ) : Gamma (Nat.gcd a b) = Gamma a ⊔ Gamma b
     mem_Gamma_and_inv_mul_mem_Gamma_of_map_eq (congr_arg Subtype.val hβ) hMa hMb
   exact ⟨β, hβ_a, β⁻¹ * γ, hβ_b, by group⟩
 
-/-- **Coprime levels generate.** The principal congruence subgroups of two coprime levels
-together fill `SL₂(ℤ)`. -/
-theorem Gamma_sup_Gamma_eq_top {a b : ℕ} (h : Nat.Coprime a b) : Gamma a ⊔ Gamma b = ⊤ := by
-  have hg := Gamma_gcd_eq_sup a b
-  rwa [h, Gamma_one_top, eq_comm] at hg
-
 end CongruenceSubgroup
