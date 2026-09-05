@@ -5,37 +5,38 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Algebra.Ring.Hom.Defs
+public import Mathlib.Algebra.Group.Hom.Defs
+public import Mathlib.Algebra.GroupWithZero.Basic
 
 /-!
 # Unitality of a multiplicative map
 
-A map that preserves multiplication and zero need not preserve `1`, and the zero map shows it
-need not. Where multiplication in the codomain is left-cancellative away from zero there is
-nothing in between: such a map is identically zero or unital, the zero map being the only
-non-unital one. A unital one is promoted to a bundled unital map by `AlgHom.ofLinearMap` or
-`RingHom.mk'`.
+A multiplicative map need not preserve `1`, and the zero map shows it need not. Where
+multiplication in the codomain is left-cancellative away from zero there is nothing in between:
+such a map is identically zero or unital, the zero map being the only non-unital one. A unital
+one is promoted to a bundled unital map by `AlgHom.ofLinearMap` or `RingHom.mk'`.
 
 This is the dichotomy that lets a type of multiplicative maps carry a zero without adjoining one.
 
 ## Main results
 
-* `NonUnitalRingHomClass.forall_apply_eq_zero_or_map_one`: such a map vanishes identically or
-  sends `1` to `1`.
+* `MulHomClass.forall_apply_eq_zero_or_map_one`: such a map vanishes identically or sends `1`
+  to `1`.
 
 ## Implementation notes
 
-The statement is class-general, over `NonUnitalRingHomClass`, so it holds of every bundled map
-type in that class without a specialisation for each. Its vanishing alternative is pointwise,
-`∀ x, p x = 0`, rather than `p = 0`, because the class carries no `Zero` on the map type.
+The statement is class-general, over `MulHomClass`, so it holds of every bundled multiplicative
+map type — `MonoidHom`, `RingHom`, `NonUnitalAlgHom` — without a specialisation for each. Its
+vanishing alternative is pointwise, `∀ x, p x = 0`, rather than `p = 0`, because the class
+carries no `Zero` on the map type.
 -/
 
 public section
 
-variable {A B G : Type*} [NonAssocSemiring A] [NonAssocSemiring B] [IsLeftCancelMulZero B]
-  [FunLike G A B] [NonUnitalRingHomClass G A B]
+variable {A B G : Type*} [MulOneClass A] [MulZeroOneClass B] [IsLeftCancelMulZero B]
+  [FunLike G A B] [MulHomClass G A B]
 
-namespace NonUnitalRingHomClass
+namespace MulHomClass
 
 /-- **A multiplicative map vanishes identically or is unital.** -/
 -- Both branches are one rewrite: at `p 1 = 0` every `x = x * 1` is killed, and otherwise `p 1`
@@ -52,6 +53,6 @@ theorem map_one_of_exists_apply_ne_zero {p : G} (hp : ∃ x, p x ≠ 0) : p 1 = 
     obtain ⟨x, hx⟩ := hp
     exact hx (h x)
 
-end NonUnitalRingHomClass
+end MulHomClass
 
 end

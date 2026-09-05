@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Algebra.Ring.NonUnitalHom
+public import TauCeti.Algebra.GroupWithZero.Hom
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Degree
 
 /-!
@@ -19,7 +19,7 @@ spectrum — so it cannot be added to the isogenies as another pullback.
 This file carves the hom carrier out of a slightly larger mapping type instead, **adjoining
 nothing**: the `F`-linear *multiplicative* maps `R(W₂) → K(W₁)`, which include the zero map because
 multiplicativity does not force `1 ↦ 1`. Into a field there is nothing else new — `p 1` is
-idempotent, so `NonUnitalRingHomClass.forall_apply_eq_zero_or_map_one` splits the type as the zero
+idempotent, so `MulHomClass.forall_apply_eq_zero_or_map_one` splits the type as the zero
 map together with
 the unital maps, and a unital map with the pointedness condition is exactly an `Isogeny`. So the
 carrier is `{0} ⊔ Isogeny W₁ W₂` as a *set*, obtained by weakening unitality rather than by a
@@ -57,6 +57,10 @@ exactly at the zero map, which is what `degree_eq_zero_iff` records.
 ## References
 
 * [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], II.2 and III.6.
+
+The carrier's shape — that it adjoins no `WithZero`, and that the zero map is the unique
+non-unital element rather than an added tag — is this project's specification for the hom-group
+rather than something read off Silverman, who works with morphisms of curves.
 -/
 
 public section
@@ -138,7 +142,7 @@ theorem ofIsogeny_ne_zero (φ : Isogeny W₁ W₂) : ofIsogeny φ ≠ 0 := fun h
 map promotes to a pullback, and pointedness is the carrier's own condition. -/
 noncomputable def toIsogeny {h : Hom W₁ W₂} (hz : h ≠ 0) : Isogeny W₁ W₂ :=
   ⟨_, h.mapsInfinity_of_map_one
-    (NonUnitalRingHomClass.map_one_of_exists_apply_ne_zero (by
+    (MulHomClass.map_one_of_exists_apply_ne_zero (by
       by_contra hall
       rw [not_exists] at hall
       refine hz (Hom.ext (NonUnitalAlgHom.ext fun x => ?_))
