@@ -103,12 +103,15 @@ private noncomputable def evalHom (f : Fˣ) : Multiplicative (Divisor k F) →* 
 
 /-- **The value `f(D)` of a function on a divisor.**
 
-This is the classical quantity exactly where the local factors are: at every place whose residue
-field is module-finite over `k`, which `TauCeti.Place.finiteDimensional_residueField` supplies for
-every place of an algebraic function field. Absent that, `Algebra.norm` degenerates to `1`
-(`Algebra.norm_eq_one_of_not_module_finite`) and the corresponding factor drops out silently. See
-`TauCeti.Place.normResidue` for the full statement of the convention, which is the one
-`TauCeti.Place.degree` already follows. -/
+Two conditions separate this from the classical quantity, and both have to hold. `f` must be a
+unit at every place of `D` (`TauCeti.Divisor.IsUnitAtSupport`): the local factor is total, so at a
+zero or pole of `f` it is `1` rather than a norm, and that factor silently disappears. And every
+residue field involved must be module-finite over `k`, or `Algebra.norm` degenerates to `1` for
+the same reason (`Algebra.norm_eq_one_of_not_module_finite`).
+`TauCeti.Place.finiteDimensional_residueField` supplies the second at every place of an algebraic
+function field, so in the intended setting only admissibility is a real hypothesis — but it is
+one. See `TauCeti.Place.normResidue` for the full statement of the finiteness convention, which is
+the one `TauCeti.Place.degree` already follows. -/
 noncomputable def eval (D : Divisor k F) (f : Fˣ) : kˣ :=
   evalHom f (Multiplicative.ofAdd D)
 
@@ -148,8 +151,10 @@ theorem eval_single (P : Place k F) (n : ℤ) (f : Fˣ) :
     eval (Finsupp.single P n : Divisor k F) f = P.normResidueOrOne f ^ n := by
   simp [eval_eq_finsuppProd]
 
-/-- **`f` is a unit at every place of `D`** — the condition under which `f(D)` is the classical
-product and Weil reciprocity is stated. -/
+/-- **`f` is a unit at every place of `D`** — the condition under which no local factor is
+replaced by `1`, and the one Weil reciprocity is stated against. It is what makes `f(D)` a product
+of genuine norms; those norms are the classical ones under the separate finiteness condition
+recorded on `TauCeti.Divisor.eval`. -/
 def IsUnitAtSupport (D : Divisor k F) (f : Fˣ) : Prop :=
   ∀ P ∈ D.support, P.ord (f : F) = 0
 
@@ -159,7 +164,11 @@ in both directions. -/
 theorem isUnitAtSupport_iff {D : Divisor k F} {f : Fˣ} :
     IsUnitAtSupport D f ↔ ∀ P ∈ D.support, P.ord (f : F) = 0 := Iff.rfl
 
-/-- On an admissible divisor, `f(D)` is the textbook product `∏ N(f(P)) ^ n_P`. -/
+/-- On an admissible divisor, `f(D)` is the product `∏ N(f(P)) ^ n_P` of local norms. This is the
+textbook formula when the residue fields are module-finite over `k`, which
+`TauCeti.Place.finiteDimensional_residueField` gives for an algebraic function field; without that
+the factors are `Algebra.norm`'s junk value and the identity still holds, but of the formal
+product rather than of the classical one. -/
 -- The product is indexed by `D.support` as a subtype because `normResidue` takes the place's
 -- membership in the support as an argument.
 theorem eval_eq_prod_normResidue {D : Divisor k F} {f : Fˣ} (h : IsUnitAtSupport D f) :
@@ -214,8 +223,8 @@ theorem isUnitAtSupport_one (D : Divisor k F) : IsUnitAtSupport D (1 : Fˣ) :=
 
 /-- Admissibility is closed under products of functions. -/
 theorem IsUnitAtSupport.mul {D : Divisor k F} {f g : Fˣ} (hf : IsUnitAtSupport D f)
-    (hg : IsUnitAtSupport D g) : IsUnitAtSupport D (f * g) := fun P hP ↦ by
-  rw [Units.val_mul, P.ord_mul (Units.ne_zero f) (Units.ne_zero g), hf P hP, hg P hP, add_zero]
+    (hg : IsUnitAtSupport D g) : IsUnitAtSupport D (f * g) :=
+  fun P hP ↦ Place.ord_units_mul_eq_zero (hf P hP) (hg P hP)
 
 -- Not `@[simp]`, for the reason recorded above `isUnitAtSupport_one`.
 /-- Admissibility is *invariant* under inversion, not merely closed under it: `ord_P f⁻¹` vanishes

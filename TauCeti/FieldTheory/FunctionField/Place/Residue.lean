@@ -84,6 +84,21 @@ theorem mem_unitGroup_of_ord_eq_zero (P : Place k F) {f : Fˣ} (hf : P.ord (f : 
       ((P.isUnit_iff_ord_eq_zero (x := ⟨(f : F), P.mem_integers_iff_ord_nonneg.2 hf.ge⟩)
         (Units.ne_zero f)).2 hf)
 
+/-- The element of `𝒪_P`'s unit group named by a unit of order zero.
+
+This is the **only** place the subtype representation of `ValuationSubring.unitGroup` is used.
+That group is a subgroup of `Fˣ`, so its operations are computed on values, and the four laws
+below are therefore `rfl`; every group law for `residueUnit` and `normResidue` is one of them
+pushed through a `MonoidHom`, with no further appeal to the representation. -/
+private def unitGroupMk (P : Place k F) (f : Fˣ) (hf : P.ord (f : F) = 0) :
+    P.integers.unitGroup :=
+  ⟨f, P.mem_unitGroup_of_ord_eq_zero hf⟩
+
+private theorem coe_unitGroupMulEquiv_unitGroupMk (P : Place k F) (f : Fˣ)
+    (hf : P.ord (f : F) = 0) :
+    ((P.integers.unitGroupMulEquiv (P.unitGroupMk f hf) : P.integersˣ) : P.integers)
+      = ⟨(f : F), P.mem_integers_iff_ord_nonneg.2 hf.ge⟩ := rfl
+
 /-- **The residue `f(P)` of a function that is a unit at `P`**, as a unit of the residue field.
 Being a unit is what makes the residue nonzero, which is what lets it be raised to a negative
 power in `TauCeti.Divisor.eval`.
@@ -95,14 +110,17 @@ names, rather than a residue paired with a separate proof that it is nonzero. -/
 -- `MonoidHom`.
 noncomputable def residueUnit (P : Place k F) (f : Fˣ) (hf : P.ord (f : F) = 0) :
     P.ResidueFieldˣ :=
-  P.integers.unitGroupToResidueFieldUnits ⟨f, P.mem_unitGroup_of_ord_eq_zero hf⟩
+  P.integers.unitGroupToResidueFieldUnits (P.unitGroupMk f hf)
 
 /-- The residue field element underlying `residueUnit`: the residue of `f` in `𝒪_P / 𝔪_P`. -/
 @[simp]
 theorem coe_residueUnit (P : Place k F) (f : Fˣ) (hf : P.ord (f : F) = 0) :
     (P.residueUnit f hf : P.ResidueField)
       = IsLocalRing.residue P.integers ⟨(f : F), P.mem_integers_iff_ord_nonneg.2 hf.ge⟩ := by
-  rw [residueUnit, ValuationSubring.coe_unitGroupToResidueFieldUnits_apply]
+  rw [residueUnit, ValuationSubring.coe_unitGroupToResidueFieldUnits_apply,
+    coe_unitGroupMulEquiv_unitGroupMk]
+  -- what remains is `IsLocalRing.residue`'s own definition as `Ideal.Quotient.mk` of the maximal
+  -- ideal, not a fact about how the unit group is represented.
   rfl
 
 /-- **The norm to `k` of the residue of a function that is a unit at `P`.** The residue field
@@ -145,27 +163,48 @@ theorem normResidueOrOne_of_ord_ne_zero {P : Place k F} {f : Fˣ} (hf : P.ord (f
     P.normResidueOrOne f = 1 := by
   simp [normResidueOrOne, hf]
 
-/-- **A product of order-zero units has order zero.** These three lemmas supply the order
-hypotheses that the residue lemmas below would otherwise demand of their callers; they appear in
-those statements, so they are public. -/
+-- Admissibility is the kernel of `ordAddMonoidHom`, so these four are `map_add`, `map_neg`,
+-- `map_sub` and `map_zero` read through `ordAddMonoidHom_apply` rather than four fresh order
+-- calculations. They are public because `residueUnit` carries its admissibility proof as an
+-- argument: a law about `f * g`, `f⁻¹`, `f / g` or `1` has to name a proof for the composite in
+-- its own left-hand side, and these are those names.
+/-- **A product of order-zero units has order zero.** -/
 theorem ord_units_mul_eq_zero {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) : P.ord ((f * g : Fˣ) : F) = 0 := by
-  rw [Units.val_mul, P.ord_mul (Units.ne_zero f) (Units.ne_zero g), hf, hg, add_zero]
+  rw [← P.ordAddMonoidHom_apply] at hf hg ⊢
+  rw [ofMul_mul, map_add, hf, hg, add_zero]
 
 /-- **The inverse of an order-zero unit has order zero.** -/
 theorem ord_units_inv_eq_zero {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
     P.ord ((f⁻¹ : Fˣ) : F) = 0 := by
-  rw [Units.val_inv_eq_inv_val, P.ord_inv, hf, neg_zero]
+  rw [← P.ordAddMonoidHom_apply] at hf ⊢
+  rw [ofMul_inv, map_neg, hf, neg_zero]
 
 /-- **A quotient of order-zero units has order zero.** -/
 theorem ord_units_div_eq_zero {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) : P.ord ((f / g : Fˣ) : F) = 0 := by
-  rw [div_eq_mul_inv]
-  exact ord_units_mul_eq_zero hf (ord_units_inv_eq_zero hg)
+  rw [← P.ordAddMonoidHom_apply] at hf hg ⊢
+  rw [ofMul_div, map_sub, hf, hg, sub_zero]
 
 /-- **The unit `1` has order zero**, at every place. -/
 theorem ord_units_one_eq_zero (P : Place k F) : P.ord ((1 : Fˣ) : F) = 0 := by
-  rw [Units.val_one, P.ord_one]
+  rw [← P.ordAddMonoidHom_apply, ofMul_one, map_zero]
+
+private theorem unitGroupMk_mul {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
+    (hg : P.ord (g : F) = 0) :
+    P.unitGroupMk (f * g) (ord_units_mul_eq_zero hf hg)
+      = P.unitGroupMk f hf * P.unitGroupMk g hg := rfl
+
+private theorem unitGroupMk_one (P : Place k F) :
+    P.unitGroupMk 1 (ord_units_one_eq_zero P) = 1 := rfl
+
+private theorem unitGroupMk_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
+    P.unitGroupMk f⁻¹ (ord_units_inv_eq_zero hf) = (P.unitGroupMk f hf)⁻¹ := rfl
+
+private theorem unitGroupMk_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
+    (hg : P.ord (g : F) = 0) :
+    P.unitGroupMk (f / g) (ord_units_div_eq_zero hf hg)
+      = P.unitGroupMk f hf / P.unitGroupMk g hg := rfl
 
 /-- **The residue is multiplicative in the function**, at a place where both factors are units:
 `(f g)(P) = f(P) · g(P)`. -/
@@ -173,8 +212,7 @@ theorem residueUnit_mul {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
     P.residueUnit (f * g) (ord_units_mul_eq_zero hf hg) =
       P.residueUnit f hf * P.residueUnit g hg := by
-  rw [residueUnit, residueUnit, residueUnit, ← map_mul]
-  rfl
+  rw [residueUnit, residueUnit, residueUnit, ← map_mul, unitGroupMk_mul hf hg]
 
 /-- **The norm of the residue is multiplicative in the function**, at a place where both factors
 are units. -/
@@ -188,14 +226,12 @@ theorem normResidue_mul {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
 @[simp]
 theorem residueUnit_one (P : Place k F) :
     P.residueUnit 1 (ord_units_one_eq_zero P) = 1 := by
-  rw [residueUnit, ← map_one P.integers.unitGroupToResidueFieldUnits]
-  rfl
+  rw [residueUnit, ← map_one P.integers.unitGroupToResidueFieldUnits, unitGroupMk_one]
 
 /-- **The residue inverts with the function**: `f⁻¹(P) = f(P)⁻¹`. -/
 theorem residueUnit_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
     P.residueUnit f⁻¹ (ord_units_inv_eq_zero hf) = (P.residueUnit f hf)⁻¹ := by
-  rw [residueUnit, residueUnit, ← map_inv]
-  rfl
+  rw [residueUnit, residueUnit, ← map_inv, unitGroupMk_inv hf]
 
 /-- **The residue divides with the function**: `(f / g)(P) = f(P) / g(P)`, at a place where both
 are units. -/
@@ -203,8 +239,7 @@ theorem residueUnit_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
     P.residueUnit (f / g) (ord_units_div_eq_zero hf hg) =
       P.residueUnit f hf / P.residueUnit g hg := by
-  rw [residueUnit, residueUnit, residueUnit, ← map_div]
-  rfl
+  rw [residueUnit, residueUnit, residueUnit, ← map_div, unitGroupMk_div hf hg]
 
 /-- **The norm of the residue inverts with the function**: `N(f⁻¹(P)) = N(f(P))⁻¹`. -/
 theorem normResidue_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :

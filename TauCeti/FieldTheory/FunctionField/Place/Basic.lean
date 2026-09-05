@@ -30,6 +30,8 @@ equivalence is needed and equality of places *is* equality of valuations
   element has order `1`. It has the junk value `ord_P 0 = 0`.
 * `TauCeti.Place.ResidueField`: the residue field `F_P = 𝒪_P / 𝔪_P`, a `k`-algebra.
 * `TauCeti.Place.degree`: the degree `deg P = [F_P : k]` of a place.
+* `TauCeti.Place.ordAddMonoidHom`: `ord_P` bundled as an additive homomorphism on `Additive Fˣ`.
+  Restricting to units is what makes it additive, since `ord_P 0 = 0` is a junk value.
 
 ## Main results
 
@@ -167,6 +169,19 @@ theorem ord_pow (f : F) (n : ℕ) : P.ord (f ^ n) = n * P.ord f :=
 
 theorem ord_div {f g : F} (hf : f ≠ 0) (hg : g ≠ 0) :
     P.ord (f / g) = P.ord f - P.ord g := Valuation.ord_div P.valuation hf hg
+
+/-- The order of vanishing at a place, as a homomorphism out of the additivized group of units
+`Additive Fˣ`.  Restricting to units is what makes it additive: `ord_P` is only additive away
+from the junk value `ord_P 0 = 0`. -/
+noncomputable def ordAddMonoidHom (P : Place k F) : Additive Fˣ →+ ℤ :=
+  AddMonoidHom.mk' (fun z => P.ord ((Additive.toMul z : Fˣ) : F)) fun z w => by
+    simpa only [toMul_add, Units.val_mul] using
+      P.ord_mul (Units.ne_zero _) (Units.ne_zero _)
+
+@[simp]
+theorem ordAddMonoidHom_apply (P : Place k F) (z : Fˣ) :
+    P.ordAddMonoidHom (Additive.ofMul z) = P.ord (z : F) := by
+  simp [ordAddMonoidHom]
 
 @[simp]
 theorem ord_neg (f : F) : P.ord (-f) = P.ord f := Valuation.ord_neg P.valuation f
