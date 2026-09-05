@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basic
+public import TauCeti.RingTheory.Huber.OpenIdeal
 public import TauCeti.RingTheory.Huber.LocalizationTopology.CompleteSeparated.RefinementCategory
 public import TauCeti.Topology.Category.TopCommRingCat.CompleteSeparated.Limits
 
@@ -34,6 +35,10 @@ functor along the forgetful map, and the value is its limit — which exists bec
 
 ## Main results
 
+* `IsDirected (TauCeti.ValuationSpectrum.PresentationIndex Aplus V) (· ≤ ·)` : the index is
+  directed — two admissible presentations refining `V` have an admissible common refinement. This
+  is the admissibility half of Wedhorn Remark 7.30(5), which `Presentation.commonRefinement`
+  leaves to its consumers because `Presentation` carries no openness field.
 * `TauCeti.ValuationSpectrum.presentationLimit_hom_ext` : two morphisms into the limit agree as
   soon as their projections do.
 * `TauCeti.ValuationSpectrum.presentationLimitMap_comp_π` : restriction is reindexing —
@@ -123,6 +128,30 @@ theorem PresentationIndex.ext {i j : PresentationIndex (P := P) Aplus V} (h : i.
   cases j
   subst h
   rfl
+
+open scoped Classical Pointwise in
+/-- **The index is directed**: two admissible presentations refining `V` are both refined by their
+common refinement, which is again admissible.
+
+Both of the index's own fields have to be re-established, which is what
+`TauCeti.Huber.PairOfDefinition.Presentation.commonRefinement` deliberately does not do — it
+carries no openness field. The containment in `V` is the intersection identity
+`TauCeti.ValuationSpectrum.rationalSubset_inter`, and openness of the numerator span is
+`TauCeti.Huber.PairOfDefinition.isOpen_span_mul`: the common refinement's numerators are a
+pointwise product, and a product of open ideals is open. Together they are the admissibility half
+of Wedhorn Remark 7.30(5). -/
+instance : IsDirected (PresentationIndex (P := P) Aplus V) (· ≤ ·) := by
+  refine ⟨fun i j ↦ ⟨⟨i.pres.commonRefinement j.pres, ?_, ?_⟩,
+    i.pres.le_commonRefinement_left j.pres, i.pres.le_commonRefinement_right j.pres⟩⟩
+  · rw [PairOfDefinition.Presentation.commonRefinement_num, Finset.coe_mul]
+    exact P.isOpen_span_mul (P.isOpen_of_le (Ideal.span_mono (by simp)) i.isOpen_span)
+      (P.isOpen_of_le (Ideal.span_mono (by simp)) j.isOpen_span)
+  · refine le_trans ?_ i.le_open
+    intro v hv
+    rw [mem_spaBasicOpen] at hv ⊢
+    rw [PairOfDefinition.Presentation.commonRefinement_num,
+      PairOfDefinition.Presentation.commonRefinement_den, ← rationalSubset_inter] at hv
+    exact hv.1
 
 /-- Forgetting the containment is a functor to the category of all presentations. -/
 private def presentationIndexInclusion (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
