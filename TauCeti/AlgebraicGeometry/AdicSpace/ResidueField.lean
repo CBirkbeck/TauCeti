@@ -1,0 +1,83 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Chris Birkbeck
+-/
+module
+
+public import TauCeti.AlgebraicGeometry.AdicSpace.ValuationSpectrum
+public import Mathlib.RingTheory.Localization.FractionRing
+
+/-!
+# The residue field of a point of the valuation spectrum
+
+**Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), §2.4.**
+
+A point `v : Spv A` carries a valuation on `A`, but not one on a field. This file makes it one.
+The support of `v` is prime, so `A ⧸ supp v` is a domain; the valuation kills the support by
+construction, so it descends there; and on the quotient it has trivial support, which is exactly
+the hypothesis needed to extend it along `A ⧸ supp v → Frac (A ⧸ supp v)`. The result is the
+**residue field** of `v`, carrying a valuation with the value group `v` already had.
+
+This is the factorisation the structure presheaf is read through: a section is evaluated at `v` by
+its image in the residue field, and the condition `v(f) ≤ 1` cutting out `𝒪_X⁺` is imposed there.
+
+## Main definitions
+
+* `TauCeti.ValuationSpectrum.residueRing`: the quotient `A ⧸ supp v`, a domain.
+* `TauCeti.ValuationSpectrum.quotientValuation`: the valuation of `v` pushed to `A ⧸ supp v`.
+* `TauCeti.ValuationSpectrum.residueFieldValuation`: its extension to `Frac (A ⧸ supp v)`.
+
+## Main results
+
+* `TauCeti.ValuationSpectrum.quotientValuation_ne_zero`: on the residue ring the valuation has
+  trivial support. Passing to the quotient is what arranges this, and it is what
+  `Valuation.extendToLocalization` requires.
+
+## References
+
+* [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), §2.4.
+-/
+
+public section
+
+namespace TauCeti
+
+namespace ValuationSpectrum
+
+variable {A : Type*} [CommRing A]
+
+/-- The **residue ring** `A ⧸ supp v` of a point of the valuation spectrum. -/
+abbrev residueRing (v : Spv A) := A ⧸ v.supp
+
+/-- The residue ring is a domain, because the support of a point is a prime ideal. -/
+instance (v : Spv A) : IsDomain (residueRing v) :=
+  Ideal.Quotient.isDomain v.supp
+
+/-- The valuation induced on the residue ring `A ⧸ supp v`. The canonical valuation of `v` has
+`supp v` in its kernel — that is `TauCeti.ValuationSpectrum.supp_eq_valuation_supp` — so it
+descends to the quotient. -/
+noncomputable def quotientValuation (v : Spv A) :
+    Valuation (residueRing v) (@ValuativeRel.ValueGroupWithZero A _ v.toValuativeRel) :=
+  v.valuation.onQuot (le_of_eq v.supp_eq_valuation_supp)
+
+/-- **On the residue ring the valuation has trivial support**: a nonzero class has nonzero
+valuation. This is what passing to `A ⧸ supp v` buys, and it is the hypothesis
+`Valuation.extendToLocalization` needs in order to reach the fraction field. -/
+theorem quotientValuation_ne_zero (v : Spv A) {s : residueRing v} (hs : s ≠ 0) :
+    quotientValuation v s ≠ 0 := by
+  rwa [Ne, ← Valuation.mem_supp_iff, quotientValuation, Valuation.supp_quot,
+    ← v.supp_eq_valuation_supp, Ideal.map_quotient_self, Ideal.mem_bot]
+
+/-- The **residue-field valuation** of a point: the quotient valuation extended along
+`A ⧸ supp v → Frac (A ⧸ supp v)`. Its value group is the one `v` carries on `A`. -/
+noncomputable def residueFieldValuation (v : Spv A) :
+    Valuation (FractionRing (residueRing v))
+      (@ValuativeRel.ValueGroupWithZero A _ v.toValuativeRel) :=
+  (quotientValuation v).extendToLocalization
+    (fun _ hs ↦ quotientValuation_ne_zero v (nonZeroDivisors.ne_zero hs))
+    (FractionRing (residueRing v))
+
+end ValuationSpectrum
+
+end TauCeti
