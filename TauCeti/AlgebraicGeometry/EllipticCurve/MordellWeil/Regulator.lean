@@ -61,9 +61,10 @@ private theorem neronTateGramMatrix_eq_toMatrix₂Aux [W.toAffine.IsElliptic] {�
   simp
 
 /-- A change of basis acts on the Gram matrix of the Néron-Tate pairing by congruence, along the
-integer change-of-basis matrix. -/
-theorem neronTateGramMatrix_basis_change [W.toAffine.IsElliptic] {ι : Type*} [Fintype ι]
-    (b b' : Module.Basis ι ℤ (PointModTorsion W)) :
+integer change-of-basis matrix. The two bases need not share an index type: the change-of-basis
+matrix is then rectangular, and the congruence still typechecks. -/
+theorem neronTateGramMatrix_basis_change [W.toAffine.IsElliptic] {ι ι' : Type*} [Fintype ι]
+    (b : Module.Basis ι ℤ (PointModTorsion W)) (b' : Module.Basis ι' ℤ (PointModTorsion W)) :
     neronTateGramMatrix W b' = ((b.toMatrix b').map Int.cast)ᵀ * neronTateGramMatrix W b *
       ((b.toMatrix b').map Int.cast) := by
   simp only [neronTateGramMatrix_eq_toMatrix₂Aux]
