@@ -219,6 +219,7 @@ noncomputable def comp (g : Hom W₂ W₃) (f : Hom W₁ W₂) : Hom W₁ W₃ :
   exact if hg : g = 0 then 0 else if hf : f = 0 then 0 else
     ofIsogeny ((toIsogeny hg).comp (toIsogeny hf))
 
+/-- **The zero map absorbs on the left.** -/
 @[simp]
 theorem zero_comp (f : Hom W₁ W₂) : (0 : Hom W₂ W₃).comp f = 0 := by
   classical
@@ -227,6 +228,7 @@ theorem zero_comp (f : Hom W₁ W₂) : (0 : Hom W₂ W₃).comp f = 0 := by
   · rfl
   · exact absurd rfl ‹(0 : Hom W₂ W₃) ≠ 0›
 
+/-- **The zero map absorbs on the right.** -/
 @[simp]
 theorem comp_zero (g : Hom W₂ W₃) : g.comp (0 : Hom W₁ W₂) = 0 := by
   classical
@@ -290,18 +292,21 @@ theorem comp_assoc {W₄ : WeierstrassCurve.Affine F} (h : Hom W₃ W₄) (g : H
 noncomputable def id (W : WeierstrassCurve.Affine F) : Hom W W :=
   ofIsogeny (Isogeny.id W)
 
+/-- **The identity is a left unit for composition.** -/
 @[simp]
 theorem id_comp (f : Hom W₁ W₂) : (id W₂).comp f = f := by
   rcases f.eq_zero_or_exists_ofIsogeny with rfl | ⟨φ, rfl⟩
   · rw [comp_zero]
   · rw [id, ofIsogeny_comp_ofIsogeny, Isogeny.id_comp]
 
+/-- **The identity is a right unit for composition.** -/
 @[simp]
 theorem comp_id (f : Hom W₁ W₂) : f.comp (id W₁) = f := by
   rcases f.eq_zero_or_exists_ofIsogeny with rfl | ⟨φ, rfl⟩
   · rw [zero_comp]
   · rw [id, ofIsogeny_comp_ofIsogeny, Isogeny.comp_id]
 
+/-- **The identity has degree one**, its pullback being onto. -/
 @[simp]
 theorem degree_id (W : WeierstrassCurve.Affine F) : (id W).degree = 1 := by
   rw [id, degree_ofIsogeny, Isogeny.degree_id]
@@ -323,9 +328,11 @@ nonzero, since a composite of isogenies is an isogeny. -/
 instance : NoZeroDivisors (Hom W₁ W₁) where
   eq_zero_or_eq_zero_of_mul_eq_zero := comp_eq_zero_iff.mp
 
+/-- The monoid's multiplication is composition. -/
 @[simp]
 theorem mul_def (g f : Hom W₁ W₁) : g * f = g.comp f := (rfl)
 
+/-- The monoid's unit is the identity endomorphism. -/
 @[simp]
 theorem one_def : (1 : Hom W₁ W₁) = id W₁ := (rfl)
 
