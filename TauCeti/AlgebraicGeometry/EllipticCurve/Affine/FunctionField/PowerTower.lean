@@ -66,7 +66,7 @@ variable {K : Type*} [Field K] (W : WeierstrassCurve.Affine K)
 
 /-- `x ^ n`, read through `K(x)` rather than through `K[X]`. The three tower lemmas below all
 need this one coercion step, so it is named once rather than repeated. -/
-theorem algebraMap_X_pow_eq_algebraMap_ratFuncX_pow (n : ℕ) :
+private theorem algebraMap_X_pow_eq_algebraMap_ratFuncX_pow (n : ℕ) :
     algebraMap K[X] W.FunctionField X ^ n
       = algebraMap (RatFunc K) W.FunctionField ((RatFunc.X : RatFunc K) ^ n) := by
   rw [map_pow, ← toAlgHom_ratFuncX, IsScalarTower.coe_toAlgHom']
