@@ -259,9 +259,11 @@ twisted operators live on the character space where the unweighted `heckeSlashSu
 
 The proof is Shimura's Proposition 3.37 with the character carried through. Right multiplication by
 `γ` permutes the right cosets — the permutation is `MulAction.toPerm` at `γ⁻¹`, exactly as in
-`HeckeSlash/Invariance.lean` — and the one new step, that a right factor of `γ` multiplies a
-summand's weight by `χ (d_γ)⁻¹`, is `nebentypusWeight_smul_slash_slash_eq_char_smul`; that
-eigenvalue then comes back out of the sum and is what the conclusion asserts. -/
+`HeckeSlash/Invariance.lean` — and the one new step is that a right factor of `γ` multiplies a
+summand's weight by `χ (d_γ)⁻¹`, which is
+`nebentypusWeight_eq_char_mul_delta0NebentypusChar`. Combining that with the reindexing gives the
+per-summand identity `nebentypusWeight_smul_slash_slash_eq_char_smul`, and the eigenvalue then
+comes back out of the sum and is what the conclusion asserts. -/
 theorem twistedHeckeSlashSum_mem_functionCharSpace (f : ℍ → ℂ)
     (hf : f ∈ functionCharSpace k χ) :
     twistedHeckeSlashSum k χ D f ∈ functionCharSpace k χ := by
