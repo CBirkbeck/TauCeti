@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Algebra.Algebra.NonUnitalHom
+public import TauCeti.Algebra.Ring.NonUnitalHom
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Degree
 
 /-!
@@ -36,7 +36,7 @@ this file.
 
 ## Main definitions
 
-* `TauCeti.Isogeny.MapsInfinityOfMapOne`: the condition carving the carrier out — a map that is
+* `NonUnitalAlgHom.MapsInfinityOfMapOne`: the condition carving the carrier out — a map that is
   unital is pointed. It is vacuous at the zero map, which is how that map enters.
 * `TauCeti.Isogeny.Hom`: the carrier of `Hom(W₁, W₂)`, with `0` its zero map and
   `TauCeti.Isogeny.Hom.ofIsogeny` its nonzero elements.
@@ -72,14 +72,16 @@ variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F}
 /-- The condition carving the hom carrier out of the non-unital pullbacks: if the map is unital,
 it is pointed. At the zero map the hypothesis is unsatisfiable, so the condition is vacuous
 there — which is what lets the zero map into the carrier without a pointedness claim about it. -/
-def MapsInfinityOfMapOne (p : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField) : Prop :=
+def _root_.NonUnitalAlgHom.MapsInfinityOfMapOne
+    (p : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField) : Prop :=
   ∀ h : p 1 = 1,
     CoordinatePullback.MapsInfinity (AlgHom.ofLinearMap ⟨⟨p, map_add p⟩, map_smul p⟩ h (map_mul p))
 
 /-- The condition unfolded, so a consumer can introduce and eliminate it without the definition's
 body: `MapsInfinityOfMapOne p` is exactly the implication it is defined to be. -/
-theorem mapsInfinityOfMapOne_iff {p : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField} :
-    MapsInfinityOfMapOne p ↔ ∀ h : p 1 = 1,
+theorem _root_.NonUnitalAlgHom.mapsInfinityOfMapOne_iff
+    {p : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField} :
+    p.MapsInfinityOfMapOne ↔ ∀ h : p 1 = 1,
       CoordinatePullback.MapsInfinity
         (AlgHom.ofLinearMap ⟨⟨p, map_add p⟩, map_smul p⟩ h (map_mul p)) :=
   (Iff.rfl)
@@ -92,14 +94,14 @@ structure Hom (W₁ W₂ : WeierstrassCurve.Affine F) where
   /-- The underlying multiplicative map. Not an `AlgHom`: unitality is what the zero map fails. -/
   toNonUnitalAlgHom : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField
   /-- Pointedness, required only of the unital maps. -/
-  mapsInfinity_of_map_one : MapsInfinityOfMapOne toNonUnitalAlgHom
+  mapsInfinity_of_map_one : toNonUnitalAlgHom.MapsInfinityOfMapOne
 
 namespace Hom
 
 noncomputable instance : Zero (Hom W₁ W₂) where
   -- The condition is an implication out of `(0 : _ →ₙₐ[F] _) 1 = 1`, which fails in a field, so
   -- it is vacuous at the zero map — which is exactly how that map enters the carrier.
-  zero := ⟨0, by simp [MapsInfinityOfMapOne]⟩
+  zero := ⟨0, by simp [NonUnitalAlgHom.MapsInfinityOfMapOne]⟩
 
 @[simp]
 theorem toNonUnitalAlgHom_zero : (0 : Hom W₁ W₂).toNonUnitalAlgHom = 0 := (rfl)
