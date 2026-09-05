@@ -45,14 +45,19 @@ not consume one — so the guarantee is recorded here rather than in the signatu
   are named after `TauCeti.Algebra.coe_normUnits`, the adjacent lemma of the same shape.
 * `TauCeti.Place.normResidueOrOne_of_ord_eq_zero` and
   `TauCeti.Place.normResidueOrOne_of_ord_ne_zero`: the two branches of the total extension.
-* The group laws in the function: `residueUnit_one`, `residueUnit_mul`, `residueUnit_inv` and
-  their `normResidue` counterparts, together with `normResidueOrOne_one`, `normResidueOrOne_mul`
-  and `normResidueOrOne_inv` for the total form. Each of the partial ones takes the order
-  hypothesis of the *combined* function as an argument of its own, since that proof is what
-  indexes the left-hand side; the total form takes no such argument, which is what makes it the
-  form `TauCeti.Divisor.eval` is built on. The total form is asymmetric:
-  `normResidueOrOne_mul` needs both factors admissible, while `normResidueOrOne_inv` needs
-  nothing, since `ord_P f⁻¹ = -ord_P f` vanishes exactly when `ord_P f` does.
+* `TauCeti.Place.ord_units_mul_eq_zero`, `ord_units_inv_eq_zero`, `ord_units_div_eq_zero` and
+  `ord_units_one_eq_zero`: admissibility is a subgroup condition on `Fˣ`. These are public
+  because `residueUnit` carries its admissibility proof as an argument, so a law about `f * g`,
+  `f⁻¹`, `f / g` or `1` has to name a proof for the *composite* in its own left-hand side; these
+  are those names.
+* The group laws in the function: `residueUnit_one`, `residueUnit_mul`, `residueUnit_inv`,
+  `residueUnit_div` and their `normResidue` counterparts, together with `normResidueOrOne_one`,
+  `normResidueOrOne_mul`, `normResidueOrOne_inv` and `normResidueOrOne_div` for the total form.
+  Each partial law assumes only what its *inputs* need — `residueUnit_one` and `normResidue_one`
+  assume nothing at all — and derives the composite's order itself. The total form is asymmetric:
+  `normResidueOrOne_mul` and `normResidueOrOne_div` need both arguments admissible, while
+  `normResidueOrOne_inv` needs nothing, since `ord_P f⁻¹ = -ord_P f` vanishes exactly when
+  `ord_P f` does.
 
 ## References
 
@@ -152,6 +157,12 @@ theorem ord_units_inv_eq_zero {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0)
     P.ord ((f⁻¹ : Fˣ) : F) = 0 := by
   rw [Units.val_inv_eq_inv_val, P.ord_inv, hf, neg_zero]
 
+/-- **A quotient of order-zero units has order zero.** -/
+theorem ord_units_div_eq_zero {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
+    (hg : P.ord (g : F) = 0) : P.ord ((f / g : Fˣ) : F) = 0 := by
+  rw [div_eq_mul_inv]
+  exact ord_units_mul_eq_zero hf (ord_units_inv_eq_zero hg)
+
 /-- **The unit `1` has order zero**, at every place. -/
 theorem ord_units_one_eq_zero (P : Place k F) : P.ord ((1 : Fˣ) : F) = 0 := by
   rw [Units.val_one, P.ord_one]
@@ -186,10 +197,26 @@ theorem residueUnit_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
   rw [residueUnit, residueUnit, ← map_inv]
   rfl
 
+/-- **The residue divides with the function**: `(f / g)(P) = f(P) / g(P)`, at a place where both
+are units. -/
+theorem residueUnit_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
+    (hg : P.ord (g : F) = 0) :
+    P.residueUnit (f / g) (ord_units_div_eq_zero hf hg) =
+      P.residueUnit f hf / P.residueUnit g hg := by
+  rw [residueUnit, residueUnit, residueUnit, ← map_div]
+  rfl
+
 /-- **The norm of the residue inverts with the function**: `N(f⁻¹(P)) = N(f(P))⁻¹`. -/
 theorem normResidue_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
     P.normResidue f⁻¹ (ord_units_inv_eq_zero hf) = (P.normResidue f hf)⁻¹ := by
   rw [normResidue, normResidue, residueUnit_inv hf, map_inv]
+
+/-- **The norm of the residue divides with the function**: `N((f / g)(P)) = N(f(P)) / N(g(P))`. -/
+theorem normResidue_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
+    (hg : P.ord (g : F) = 0) :
+    P.normResidue (f / g) (ord_units_div_eq_zero hf hg) =
+      P.normResidue f hf / P.normResidue g hg := by
+  rw [normResidue, normResidue, normResidue, residueUnit_div hf hg, map_div]
 
 /-- **The total local factor is multiplicative in the function**, at a place where both factors
 are units. The hypotheses cannot be dropped: at a place where `f` and `g` have opposite nonzero
@@ -236,5 +263,14 @@ theorem normResidueOrOne_inv (P : Place k F) (f : Fˣ) :
       rw [Units.val_inv_eq_inv_val, P.ord_inv]
       simpa using hf
     rw [normResidueOrOne_of_ord_ne_zero hfinv, normResidueOrOne_of_ord_ne_zero hf, inv_one]
+
+/-- **The total local factor divides in the function**, at a place where both arguments are
+units. Like `normResidueOrOne_mul`, and unlike `normResidueOrOne_inv`, the hypotheses cannot be
+dropped: a quotient can be a unit where neither argument is. -/
+theorem normResidueOrOne_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
+    (hg : P.ord (g : F) = 0) :
+    P.normResidueOrOne (f / g) = P.normResidueOrOne f / P.normResidueOrOne g := by
+  rw [div_eq_mul_inv, normResidueOrOne_mul hf (ord_units_inv_eq_zero hg),
+    normResidueOrOne_inv, div_eq_mul_inv]
 
 end TauCeti.Place
