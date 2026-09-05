@@ -15,8 +15,10 @@ import TauCeti.LinearAlgebra.BilinearMap.GramCongruence
 
 The regulator is the absolute value of the determinant of the Néron-Tate pairing's Gram matrix
 on a basis of the points modulo torsion. It does not depend on the basis chosen: a change of
-basis transforms the Gram matrix by congruence, `G' = Mᵀ G M`, along an integer matrix `M` of
-determinant `±1`.
+basis transforms the Gram matrix by congruence, `G' = Mᵀ G M`, along the integer change-of-basis
+matrix `M`. The two bases need not be indexed by the same type, in which case `M` is rectangular
+and has no determinant; the absolute determinant is invariant all the same, because the index
+types of two bases of the same module are equivalent.
 
 ## Main definitions
 
