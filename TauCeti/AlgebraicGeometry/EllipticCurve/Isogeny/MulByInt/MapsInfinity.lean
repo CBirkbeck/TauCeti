@@ -47,7 +47,6 @@ because its source and target curves differ.
 
 ## Main results
 
-* `TauCeti.Isogeny.mulByIntX_mul_aeval_ΨSq`: the coordinate identity at the generic point.
 * `TauCeti.Isogeny.mapsInfinity_mulByIntPullback`: the pullback of `[n]` maps infinity to
   infinity.
 * `TauCeti.Isogeny.mulByIntIsogeny`: `[n]` as an `Isogeny W W`.
@@ -77,25 +76,11 @@ public section
 
 open Polynomial WeierstrassCurve WeierstrassCurve.Affine
 
-open TauCeti.WeierstrassCurve.Affine.CoordinateRing (mk_C_eq_algebraMap)
-
 namespace TauCeti
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
 
 namespace Isogeny
-
-/-- **The coordinate identity at the generic point**: `[n]*x · ΨSqₙ(x) = Φₙ(x)`. -/
-theorem mulByIntX_mul_aeval_ΨSq (n : ℤ) (hn : psiFunctionField W n ≠ 0) :
-    mulByIntX W n * aeval W.genericX (W.ΨSq n) = aeval W.genericX (W.Φ n) := by
-  have hphi : phiFunctionField W n = aeval W.genericX (W.Φ n) := by
-    rw [phiFunctionField_eq_algebraMap, W.algebraMap_eq_aeval_genericX]
-  have hpsi : psiFunctionField W n ^ 2 = aeval W.genericX (W.ΨSq n) := by
-    rw [psiFunctionField_sq, mk_C_eq_algebraMap,
-      ← IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField,
-      W.algebraMap_eq_aeval_genericX]
-  rw [← hphi, ← hpsi, mulByIntX_def]
-  exact div_mul_cancel₀ _ (pow_ne_zero 2 hn)
 
 -- Private: `mapsInfinity_mulByIntPullback` below states the stronger fact for every element of
 -- the coordinate ring, so a consumer wanting this one specialises `mapsInfinity_iff` instead.
@@ -107,10 +92,8 @@ private theorem isIntegralElem_genericX [W.IsElliptic] {n : ℤ}
   have hmap : (algebraMap W.CoordinateRing W.FunctionField).comp
       (algebraMap F W.CoordinateRing) = algebraMap F W.FunctionField := by
     ext x; rw [RingHom.algebraMap_toAlgebra]; exact (mulByIntPullback W hn).commutes x
-  -- The pair `monic_Φ_sub_C_mul_ΨSq` + `aeval_Φ_sub_C_mul_ΨSq_eq_zero` is applied rather than a
-  -- combined criterion: a new declaration in `Integral.lean` would take an explicit
-  -- `WeierstrassCurve` argument under `TauCeti.WeierstrassCurve`, which the dot-notation ratchet
-  -- rejects, and its baseline lives under the human-owned `scripts/`.
+  -- Monicity and the root equation are the two halves of the division-polynomial criterion, and
+  -- both are already available: the witness is `Φₙ − C ([n]*x) * ΨSqₙ` over the coordinate ring.
   refine ⟨(W.map (algebraMap F W.CoordinateRing)).Φ n -
       C (AdjoinRoot.of W.polynomial X) * (W.map (algebraMap F W.CoordinateRing)).ΨSq n,
     TauCeti.WeierstrassCurve.monic_Φ_sub_C_mul_ΨSq _ n _, ?_⟩
