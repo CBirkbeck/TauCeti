@@ -36,8 +36,10 @@ its image in the residue field, and the condition `v(f) ≤ 1` cutting out `𝒪
 * `TauCeti.ValuationSpectrum.quotientValuation_comap_quotientMk` and
   `TauCeti.ValuationSpectrum.residueFieldValuation_algebraMap`: the two characteristic equations,
   saying each valuation restricts to the previous one along the canonical map.
-* `TauCeti.ValuationSpectrum.residueFieldValuation_mk'`: the value of a fraction, `v (x/s) =
-  v x / v s`. With the previous lemma this computes the residue-field valuation on every element,
+* `TauCeti.ValuationSpectrum.residueFieldValuation_mk'`: the value of a fraction,
+  `residueFieldValuation v (IsLocalization.mk' _ x s) = quotientValuation v x /
+  quotientValuation v s`. With the previous lemma this computes the residue-field valuation on
+  every element,
   since every element of a fraction field is a fraction, and neither needs the definition
   unfolded. It is not a `simp` lemma; its docstring says why.
 
@@ -112,7 +114,11 @@ theorem residueFieldValuation_algebraMap (v : Spv A) (x : residueRing v) :
       (fun _ hs ↦ quotientValuation_ne_zero v (nonZeroDivisors.ne_zero hs))
       (FractionRing (residueRing v)) x
 
-/-- **The residue-field valuation on a fraction**: `x/s` has value `v x / v s`. Together with
+/-- **The residue-field valuation on a fraction**:
+`residueFieldValuation v (IsLocalization.mk' _ x s)` is
+`quotientValuation v x / quotientValuation v s`. The two sides live at different stages — the
+argument is a fraction of the residue *field*, the values are of the *quotient-ring*
+valuation. Together with
 `TauCeti.ValuationSpectrum.residueFieldValuation_algebraMap` this computes the valuation of every
 element of `Frac (A ⧸ supp v)`, since every element is such a fraction — and neither needs
 `TauCeti.ValuationSpectrum.residueFieldValuation` unfolded.
