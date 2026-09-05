@@ -26,7 +26,6 @@ work is that an *ideal* of `A` containing the image of `Iⁿ` automatically cont
   it contains a power of `I · A`.
 * `TauCeti.Huber.PairOfDefinition.isOpen_iff_le_radical`: an ideal of `A` is open exactly when its
   radical contains `I · A`.
-* `TauCeti.Huber.PairOfDefinition.isOpen_of_le`: openness passes up to a larger ideal.
 * `TauCeti.Huber.PairOfDefinition.isOpen_mul`: the product of two open ideals is open — the
   powers of `I · A` witnessing each add.
 * `TauCeti.Huber.PairOfDefinition.isOpen_span_mul`: the span of a pointwise product of sets is
@@ -100,14 +99,6 @@ theorem isOpen_iff_le_radical (P : PairOfDefinition A) (a : Ideal A) :
   exact ⟨fun ⟨n, hn⟩ _ hx ↦ ⟨n, hn (Ideal.pow_mem_pow hx n)⟩,
     fun h ↦ Ideal.exists_pow_le_of_le_radical_of_fg h P.fg_extendedIdealOfDefinition⟩
 
-/-- **An ideal above an open ideal is open.** Openness of an ideal is containment of a power of
-`I · A` (`TauCeti.Huber.PairOfDefinition.isOpen_iff_exists_pow_le`), and that containment is
-inherited upwards. -/
-theorem isOpen_of_le (P : PairOfDefinition A) {a b : Ideal A} (hab : a ≤ b)
-    (ha : IsOpen (a : Set A)) : IsOpen (b : Set A) :=
-  (P.isOpen_iff_exists_pow_le b).mpr <|
-    ((P.isOpen_iff_exists_pow_le a).mp ha).imp fun _ hn ↦ hn.trans hab
-
 /-- **The product of two open ideals is open.** If `a` contains `(I · A)ⁿ` and `b` contains
 `(I · A)ᵐ`, then `a * b` contains `(I · A)ⁿ⁺ᵐ`. Note this is a statement about the *product*
 ideal, which is smaller than the intersection: openness survives the smaller of the two. -/
@@ -133,7 +124,8 @@ theorem isOpen_span_mul (P : PairOfDefinition A) {S T : Set A}
 open scoped Classical Pointwise in
 /-- **The numerator set of an intersection of rational subsets spans an open ideal.** Adjoining
 each denominator only enlarges a span, so this is `isOpen_span_mul` after two applications of
-`isOpen_of_le`. It is the admissibility half of Wedhorn Remark 7.30(5): the set identity
+Mathlib's `Ideal.isOpen_of_isOpen_subideal`. It is the admissibility half of Wedhorn
+Remark 7.30(5): the set identity
 `TauCeti.ValuationSpectrum.rationalSubset_inter` presents the intersection with numerators
 `insert s₁ T₁ * insert s₂ T₂`, and a rational subset is one whose numerator ideal is open. -/
 theorem isOpen_span_insert_mul_insert (P : PairOfDefinition A) {T₁ T₂ : Finset A} {s₁ s₂ : A}
@@ -141,8 +133,8 @@ theorem isOpen_span_insert_mul_insert (P : PairOfDefinition A) {T₁ T₂ : Fins
     (hT₂ : IsOpen (Ideal.span (T₂ : Set A) : Set A)) :
     IsOpen (Ideal.span ((insert s₁ T₁ * insert s₂ T₂ : Finset A) : Set A) : Set A) := by
   rw [Finset.coe_mul]
-  exact P.isOpen_span_mul (P.isOpen_of_le (Ideal.span_mono (by simp)) hT₁)
-    (P.isOpen_of_le (Ideal.span_mono (by simp)) hT₂)
+  exact P.isOpen_span_mul (Ideal.isOpen_of_isOpen_subideal (Ideal.span_mono (by simp)) hT₁)
+    (Ideal.isOpen_of_isOpen_subideal (Ideal.span_mono (by simp)) hT₂)
 
 end PairOfDefinition
 
