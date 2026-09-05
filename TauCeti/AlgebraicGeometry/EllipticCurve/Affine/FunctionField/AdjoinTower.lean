@@ -97,7 +97,8 @@ theorem mem_ratFuncAdjoinRange {g : RatFunc K} {z : W.FunctionField} :
 /-- The generator: `g` itself lies in the copy of `K⟮g⟯`. -/
 theorem algebraMap_mem_ratFuncAdjoinRange (g : RatFunc K) :
     algebraMap (RatFunc K) W.FunctionField g ∈ ratFuncAdjoinRange W g :=
-  (mem_ratFuncAdjoinRange W).mpr ⟨g, IntermediateField.mem_adjoin_simple_self _ _, rfl⟩
+  (mem_ratFuncAdjoinRange W).mpr ⟨g, IntermediateField.mem_adjoin_simple_self _ _,
+    congrFun (IsScalarTower.coe_toAlgHom' K (RatFunc K) W.FunctionField) g⟩
 
 /-- **The universal property**: the copy of `K⟮g⟯` lies inside an intermediate field exactly when
 that field contains `g`. `K⟮g⟯` is the smallest subfield of `K(W)` containing `K` and `g`. -/
@@ -106,7 +107,9 @@ theorem ratFuncAdjoinRange_le_iff {g : RatFunc K} {L : IntermediateField K W.Fun
     ratFuncAdjoinRange W g ≤ L ↔ algebraMap (RatFunc K) W.FunctionField g ∈ L := by
   rw [ratFuncAdjoinRange_eq_map, IntermediateField.map_le_iff_le_comap,
     IntermediateField.adjoin_le_iff, Set.singleton_subset_iff]
-  rfl
+  change IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField g ∈ L ↔
+    algebraMap (RatFunc K) W.FunctionField g ∈ L
+  rw [IsScalarTower.coe_toAlgHom']
 
 /-- `K⟮g⟯` sits inside `K(x)`, both read inside `K(W)`. -/
 theorem ratFuncAdjoinRange_le_ratFuncRange (g : RatFunc K) :
@@ -142,14 +145,6 @@ private theorem finrank_of_relfinrank_ratFuncAdjoinRange {g : RatFunc K}
   rw [h, finrank_ratFuncAdjoinRange] at htower
   exact Nat.eq_of_mul_eq_mul_left two_pos htower
 
--- The map of a simple adjoin is the simple adjoin of the image. Naming it keeps the theorem
--- below from threading `IntermediateField.adjoin_map` and `Set.image_singleton` through a longer
--- rewrite chain.
-private theorem map_adjoin_singleton {L M : Type*} [Field L] [Field M] [Algebra K L] [Algebra K M]
-    (f : L →ₐ[K] M) (x : L) :
-    (IntermediateField.adjoin K {x}).map f = IntermediateField.adjoin K {f x} := by
-  rw [IntermediateField.adjoin_map, Set.image_singleton]
-
 /-- **The copy of `K⟮g⟯` inside `K(W)` is the image of the rational function field of `W'`**, for
 any embedding `f : K(W') → K(W)` of function fields carrying the affine coordinate of `W'` to `g`.
 This is the field the degree tower below is anchored at, in its two descriptions. -/
@@ -158,8 +153,9 @@ theorem ratFuncAdjoinRange_eq_map_ratFuncRange {W' : WeierstrassCurve.Affine K} 
     (hf : f (algebraMap K[X] W'.FunctionField X) = algebraMap (RatFunc K) W.FunctionField g) :
     ratFuncAdjoinRange W g = (ratFuncRange W').map f := by
   rw [ratFuncAdjoinRange_eq_map, ratFuncRange_eq_map, IntermediateField.map_map,
-    ← RatFunc.adjoin_X, map_adjoin_singleton, map_adjoin_singleton]
-  simp only [AlgHom.coe_comp, Function.comp_apply, toAlgHom_ratFuncX, hf]
+    ← RatFunc.adjoin_X]
+  simp only [IntermediateField.adjoin_map, Set.image_singleton, AlgHom.coe_comp,
+    Function.comp_apply, toAlgHom_ratFuncX, hf]
   rw [IsScalarTower.coe_toAlgHom']
 
 /-- **`[K(W) : f(K(W'))] = [K(x) : K⟮g⟯]`** for an embedding `f : K(W') → K(W)` of function fields

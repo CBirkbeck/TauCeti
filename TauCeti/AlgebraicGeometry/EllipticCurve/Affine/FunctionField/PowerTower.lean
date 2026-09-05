@@ -99,6 +99,14 @@ theorem algebraMap_X_pow_mem_ratFuncAdjoinXPowRange (n : ℕ) :
   rw [ratFuncAdjoinXPowRange, algebraMap_X_pow_eq_algebraMap_ratFuncX_pow]
   exact algebraMap_mem_ratFuncAdjoinRange W _
 
+/-- **The universal property**: the copy of `K(x^n)` lies inside an intermediate field exactly
+when that field contains `x ^ n`. -/
+@[simp]
+theorem ratFuncAdjoinXPowRange_le_iff {n : ℕ} {L : IntermediateField K W.FunctionField} :
+    ratFuncAdjoinXPowRange W n ≤ L ↔ algebraMap K[X] W.FunctionField X ^ n ∈ L := by
+  rw [ratFuncAdjoinXPowRange, ratFuncAdjoinRange_le_iff,
+    algebraMap_X_pow_eq_algebraMap_ratFuncX_pow]
+
 /-- `K(x^n)` sits inside `K(x)`, both read inside `K(W)`. -/
 theorem ratFuncAdjoinXPowRange_le_ratFuncRange (n : ℕ) :
     ratFuncAdjoinXPowRange W n ≤ ratFuncRange W :=
