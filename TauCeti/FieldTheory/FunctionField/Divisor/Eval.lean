@@ -70,9 +70,11 @@ unit, `eval (single P 1) * eval (single P (-1))` would be `0` while `eval 0 = 1`
 `zpow` identity holds unconditionally and the law is automatic.
 
 **The definition is total, with admissibility carried by the theorems.** Admissibility depends on
-the divisor, so a definition that demanded it could not be a homomorphism in the divisor variable
-at all: its domain would shrink with each `f`. Instead `Place.normResidueOrOne` is total, `eval` is
-a homomorphism outright, and `eval_eq_prod_normResidue` recovers the textbook formula wherever
+the divisor, so a definition that demanded it could not be a homomorphism on the divisor group: it
+would be one on the subgroup of divisors admissible for that particular `f` — a domain that shrinks
+with each `f`, which `IsUnitAtSupport.zero`, `.add`, `isUnitAtSupport_neg_iff` and `.sub` below
+describe. Instead `Place.normResidueOrOne` is total, `eval` is a homomorphism on the whole group,
+and `eval_eq_prod_normResidue` recovers the textbook formula wherever
 admissibility holds.
 
 ## References
@@ -246,6 +248,12 @@ theorem IsUnitAtSupport.div {D : Divisor k F} {f g : Fˣ} (hf : IsUnitAtSupport 
   rw [div_eq_mul_inv]
   exact hf.mul (isUnitAtSupport_inv_iff.2 hg)
 
+-- Neither `eval_mul` nor `eval_div` is `@[simp]`, unlike the eight local laws in
+-- `Place/Residue.lean` that have the same shape. The difference is the hypothesis: those assume
+-- `P.ord f = 0`, already a simp normal form, while `IsUnitAtSupport D f` is itself rewritten by
+-- the `@[simp]` `isUnitAtSupport_iff`. Tagging these two therefore makes lemmas that can never
+-- fire, and `#lint` says so outright — "Left-hand side does not simplify, when using the simp
+-- lemma on itself … The simp lemma may be invalid because hypothesis hf simplifies".
 /-- **`f(D)` is multiplicative in the function**, on a divisor admissible for both factors:
 `(f g)(D) = f(D) · g(D)`. This is the half of the divisor/function bilinearity that the
 bundled homomorphism behind `eval` does not give for free: it is a homomorphism in `D`, and this
