@@ -355,14 +355,15 @@ private lemma mulSupport_pp_subset (k : ℕ)
     rw [hSL_La, hSL_Ra]
     exact h_prod_eq
   -- Stage 4: determinants. Both sides of the product have determinant `p^(k+1)`, which pins
-  -- `a 0 * a 1`; the four `hdet` uses discharge the `SL₂` factors' determinants.
+  -- `a 0 * a 1`; the two coset representatives' determinants come from `diagCoset_rep_det`, and
+  -- the two `SL₂` factors' from `det_eq_one_of_mem_SLnZ`.
   have h_det := diag_entries_mul_eq_pow_succ p k a ha_pos (q.1.out : GL (Fin 2) ℚ)
     ((diagCoset ![1, p]).rep : GL (Fin 2) ℚ) (q.2.out : GL (Fin 2) ℚ)
     ((diagCoset ![1, p ^ k]).rep : GL (Fin 2) ℚ)
     (det_eq_one_of_mem_SLnZ 2 q.1.out.2)
-    (by rw [det_rep_diagCoset _ h1p_pos]; simp [Fin.prod_univ_two])
+    (by rw [diagCoset_rep_det _ h1p_pos]; simp [Fin.prod_univ_two])
     (det_eq_one_of_mem_SLnZ 2 q.2.out.2)
-    (by rw [det_rep_diagCoset _ h1pk_pos]; simp [Fin.prod_univ_two])
+    (by rw [diagCoset_rep_det _ h1pk_pos]; simp [Fin.prod_univ_two])
     SL_La SL_Ra h_prod_eq'
   -- Stage 5: the first invariant factor divides `p`, because conjugating the middle matrix
   -- keeps it integral. With `a 0 * a 1 = p^(k+1)` that leaves only the two claimed cosets.

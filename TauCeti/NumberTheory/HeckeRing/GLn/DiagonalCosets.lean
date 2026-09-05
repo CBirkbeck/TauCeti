@@ -234,12 +234,13 @@ lemma exists_rep_diagCoset_eq_mul_natDiagGL_mul (a : Fin n → ℕ) :
     exact HeckeCoset.rep_mem _
   exact mem_doubleCoset.mp hmem
 
-/-- **The determinant of a diagonal coset's chosen representative is `∏ i, a i`.** The `SLₙ(ℤ)`
-factors either side of `natDiagGL n a` in `exists_rep_diagCoset_eq_mul_natDiagGL_mul` have
-determinant `1`, so only the diagonal contributes. This is the form the determinant bookkeeping
-in `GL2/MultiplicationTable.lean` needs, where the representative — not `natDiagGL` — is what
-appears in the product being analysed. -/
-lemma det_rep_diagCoset (a : Fin n → ℕ) (ha : ∀ i, 0 < a i) :
+/-- **The determinant of a diagonal coset's chosen representative is `∏ i, a i`**, the same as
+that of `natDiagGL n a` itself, since the two differ only by factors from `SLₙ(ℤ)`.
+
+This is the form in which determinants of products written through chosen double-coset
+representatives are computed, where the representative and not the diagonal matrix is what
+occurs. -/
+@[simp] lemma diagCoset_rep_det (a : Fin n → ℕ) (ha : ∀ i, 0 < a i) :
     (((diagCoset a).rep : GL (Fin n) ℚ) : Matrix (Fin n) (Fin n) ℚ).det = ∏ i, (a i : ℚ) := by
   obtain ⟨h₁, hh₁, h₂, hh₂, hrep⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul a
   rw [hrep, Units.val_mul, Units.val_mul, Matrix.det_mul, Matrix.det_mul,
