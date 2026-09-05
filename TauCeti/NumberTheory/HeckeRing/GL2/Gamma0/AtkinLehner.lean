@@ -376,43 +376,11 @@ private lemma exists_sl2_mul_mul_eq_atkinLehnerEntries
     Matrix.dvd_diag_of_dvd_entries B (dA 0) dB LB RB hB_snf hdA_B 0
   have hdB0_dvd_dA0 : dB 0 ∣ dA 0 :=
     Matrix.dvd_diag_of_dvd_entries A (dB 0) dA LA RA hA_snf hdB_A 0
-  have hd0 : dA 0 = dB 0 := le_antisymm
-    (Int.le_of_dvd (hdB_pos 0) hdA0_dvd_dB0)
-    (Int.le_of_dvd (hdA_pos 0) hdB0_dvd_dA0)
-  have hprodA : dA 0 * dA 1 = A.det := by
-    have h := congrArg Matrix.det hA_snf
-    simp only [Matrix.det_mul, LA.2, RA.2, one_mul, mul_one, Matrix.det_diagonal,
-      Fin.prod_univ_two] at h
-    exact h.symm
-  have hprodB : dB 0 * dB 1 = B.det := by
-    have h := congrArg Matrix.det hB_snf
-    simp only [Matrix.det_mul, LB.2, RB.2, one_mul, mul_one, Matrix.det_diagonal,
-      Fin.prod_univ_two] at h
-    exact h.symm
-  have hd1 : dA 1 = dB 1 := mul_left_cancel₀ (ne_of_gt (hdA_pos 0)) (by
-    rw [hprodA, hd0, hprodB, hB_det])
-  have hdiag : Matrix.diagonal dA = Matrix.diagonal dB := by
-    congr 1
-    funext i
-    fin_cases i <;> assumption
-  refine ⟨LB⁻¹ * LA, RA * RB⁻¹, ?_⟩
-  have hLB : (LB⁻¹).val * LB.val = (1 : Matrix (Fin 2) (Fin 2) ℤ) := by
-    rw [← SpecialLinearGroup.coe_mul, inv_mul_cancel]
-    rfl
-  have hRB : RB.val * (RB⁻¹).val = (1 : Matrix (Fin 2) (Fin 2) ℤ) := by
-    rw [← SpecialLinearGroup.coe_mul, mul_inv_cancel]
-    rfl
-  calc
-    ((LB⁻¹ * LA : SpecialLinearGroup (Fin 2) ℤ) : Matrix (Fin 2) (Fin 2) ℤ) * A *
-        ((RA * RB⁻¹ : SpecialLinearGroup (Fin 2) ℤ) : Matrix (Fin 2) (Fin 2) ℤ) =
-        (LB⁻¹).val * (LA.val * A * RA.val) * (RB⁻¹).val := by
-          simp only [SpecialLinearGroup.coe_mul, Matrix.mul_assoc]
-    _ = (LB⁻¹).val * Matrix.diagonal dB * (RB⁻¹).val := by rw [hA_snf, hdiag]
-    _ = (LB⁻¹).val * (LB.val * B * RB.val) * (RB⁻¹).val := by rw [hB_snf]
-    _ = B := by
-      simp only [Matrix.mul_assoc]
-      rw [hRB, Matrix.mul_one, ← Matrix.mul_assoc (LB⁻¹).val, hLB, Matrix.one_mul]
-    _ = atkinLehnerEntries N A c := hB
+  have hdiag := Matrix.diagonal_eq_of_dvd_of_det_eq hdA_pos hdB_pos hA_snf hB_snf
+    (Matrix.dvd_diag_of_dvd_entries B (dA 0) dB LB RB hB_snf hdA_B 0)
+    (Matrix.dvd_diag_of_dvd_entries A (dB 0) dA LA RA hA_snf hdB_A 0) hB_det.symm
+  -- equal Smith normal forms make the two matrices `SL₂(ℤ)`-equivalent
+  exact Matrix.exists_SL_mul_mul_eq_of_diagonal_eq hA_snf hB_snf hdiag
 
 /-- An integer that is a unit mod `N` is coprime to `N`. -/
 private lemma int_gcd_natCast_eq_one_of_isUnit {a : ℤ} (h : IsUnit (a : ZMod N)) :

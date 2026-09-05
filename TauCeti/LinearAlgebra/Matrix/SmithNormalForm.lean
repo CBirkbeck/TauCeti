@@ -949,4 +949,74 @@ theorem invariant_factor_zero_eq_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
   Int.eq_of_associated_of_nonneg (associated_invariant_factor_zero_gcd A d hd0 L R h) hnonneg
     (Int.nonneg_of_normalize_eq_self Finset.normalize_gcd)
 
+/-- **The product of the invariant factors is the determinant.** Both `SLₙ(ℤ)` factors have
+determinant `1`, so taking determinants through a Smith normal form leaves the diagonal. -/
+theorem prod_eq_det_of_smithNormalForm {A : Matrix (Fin n) (Fin n) ℤ}
+    {L R : SpecialLinearGroup (Fin n) ℤ} {d : Fin n → ℤ}
+    (h : (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
+      Matrix.diagonal d) :
+    ∏ i, d i = A.det := by
+  have hdet := congrArg Matrix.det h
+  simp only [Matrix.det_mul, L.2, R.2, one_mul, mul_one, Matrix.det_diagonal] at hdet
+  exact hdet.symm
+
+/-- **For `2 × 2` matrices, mutually dividing first invariant factors and equal determinants
+force equal Smith normal forms.** The first factors agree by antisymmetry, and the second is
+then pinned by the determinant.
+
+Stated at `Fin 2` because that is where two invariant factors and a determinant determine the
+diagonal; at larger `n` the intermediate factors are not fixed by these hypotheses. -/
+theorem diagonal_eq_of_dvd_of_det_eq {A B : Matrix (Fin 2) (Fin 2) ℤ}
+    {LA RA LB RB : SpecialLinearGroup (Fin 2) ℤ} {dA dB : Fin 2 → ℤ}
+    (hdA_pos : ∀ i, 0 < dA i) (hdB_pos : ∀ i, 0 < dB i)
+    (hA : (LA : Matrix (Fin 2) (Fin 2) ℤ) * A * (RA : Matrix (Fin 2) (Fin 2) ℤ) =
+      Matrix.diagonal dA)
+    (hB : (LB : Matrix (Fin 2) (Fin 2) ℤ) * B * (RB : Matrix (Fin 2) (Fin 2) ℤ) =
+      Matrix.diagonal dB)
+    (hAB : dA 0 ∣ dB 0) (hBA : dB 0 ∣ dA 0) (hdet : A.det = B.det) :
+    Matrix.diagonal dA = (Matrix.diagonal dB : Matrix (Fin 2) (Fin 2) ℤ) := by
+  have hd0 : dA 0 = dB 0 :=
+    le_antisymm (Int.le_of_dvd (hdB_pos 0) hAB) (Int.le_of_dvd (hdA_pos 0) hBA)
+  have hprodA : dA 0 * dA 1 = A.det := by
+    simpa [Fin.prod_univ_two] using prod_eq_det_of_smithNormalForm hA
+  have hprodB : dB 0 * dB 1 = B.det := by
+    simpa [Fin.prod_univ_two] using prod_eq_det_of_smithNormalForm hB
+  have hd1 : dA 1 = dB 1 :=
+    mul_left_cancel₀ (ne_of_gt (hdA_pos 0)) (by rw [hprodA, hd0, hprodB, hdet])
+  congr 1
+  funext i
+  fin_cases i <;> assumption
+
+/-- **Two matrices with the same Smith normal form are `SLₙ(ℤ)`-equivalent.** Given
+diagonalisations of `A` and `B` whose diagonals agree, the composites `L_B⁻¹ L_A` and
+`R_A R_B⁻¹` carry `A` to `B`.
+
+The hypothesis is equality of the diagonal *matrices* rather than of the invariant-factor
+tuples, which is what `smith_normal_form_unique` and the divisibility arguments produce. -/
+theorem exists_SL_mul_mul_eq_of_diagonal_eq {A B : Matrix (Fin n) (Fin n) ℤ}
+    {LA RA LB RB : SpecialLinearGroup (Fin n) ℤ} {dA dB : Fin n → ℤ}
+    (hA : (LA : Matrix (Fin n) (Fin n) ℤ) * A * (RA : Matrix (Fin n) (Fin n) ℤ) =
+      Matrix.diagonal dA)
+    (hB : (LB : Matrix (Fin n) (Fin n) ℤ) * B * (RB : Matrix (Fin n) (Fin n) ℤ) =
+      Matrix.diagonal dB)
+    (hd : Matrix.diagonal dA = (Matrix.diagonal dB : Matrix (Fin n) (Fin n) ℤ)) :
+    ∃ P Q : SpecialLinearGroup (Fin n) ℤ,
+      (P : Matrix (Fin n) (Fin n) ℤ) * A * (Q : Matrix (Fin n) (Fin n) ℤ) = B := by
+  refine ⟨LB⁻¹ * LA, RA * RB⁻¹, ?_⟩
+  have hLB : (LB⁻¹).val * LB.val = (1 : Matrix (Fin n) (Fin n) ℤ) := by
+    rw [← SpecialLinearGroup.coe_mul, inv_mul_cancel]
+    rfl
+  have hRB : RB.val * (RB⁻¹).val = (1 : Matrix (Fin n) (Fin n) ℤ) := by
+    rw [← SpecialLinearGroup.coe_mul, mul_inv_cancel]
+    rfl
+  calc ((LB⁻¹ * LA : SpecialLinearGroup (Fin n) ℤ) : Matrix (Fin n) (Fin n) ℤ) * A *
+        ((RA * RB⁻¹ : SpecialLinearGroup (Fin n) ℤ) : Matrix (Fin n) (Fin n) ℤ)
+      = (LB⁻¹).val * (LA.val * A * RA.val) * (RB⁻¹).val := by
+        simp only [SpecialLinearGroup.coe_mul, Matrix.mul_assoc]
+    _ = (LB⁻¹).val * Matrix.diagonal dB * (RB⁻¹).val := by rw [hA, hd]
+    _ = (LB⁻¹).val * (LB.val * B * RB.val) * (RB⁻¹).val := by rw [hB]
+    _ = B := by
+        simp only [Matrix.mul_assoc]
+        rw [hRB, Matrix.mul_one, ← Matrix.mul_assoc (LB⁻¹).val, hLB, Matrix.one_mul]
+
 end Matrix
