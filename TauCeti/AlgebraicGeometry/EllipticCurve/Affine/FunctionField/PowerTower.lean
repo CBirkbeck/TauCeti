@@ -87,11 +87,6 @@ theorem ratFuncAdjoinXPowRange_le_iff {n : ℕ} {L : IntermediateField K W.Funct
   rw [ratFuncAdjoinXPowRange, IntermediateField.extendRight_adjoin_simple_le_iff,
     algebraMap_X_pow_eq_algebraMap_ratFuncX_pow]
 
-/-- `K(x^n)` sits inside `K(x)`, both read inside `K(W)`. -/
-theorem ratFuncAdjoinXPowRange_le_ratFuncRange (n : ℕ) :
-    ratFuncAdjoinXPowRange W n ≤ ratFuncRange W :=
-  extendRight_le_ratFuncRange W _
-
 /-- **`[K(x) : K(x^n)] = n`**, read inside `K(W)`. At `n = 0`, this is the `finrank` value
 `0` for the infinite-dimensional extension `K(x) / K`. -/
 @[simp]
