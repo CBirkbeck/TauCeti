@@ -175,7 +175,7 @@ theorem primePowerProd_mul_eq_sum_divisors_gcd
       Nat.div_one, primePowerProd_one, one_mul,
       ← primePowerProd_mul_of_coprime D hg fun _ _ _ _ _ ↦ Commute.all _ _]
   -- Split both arguments at the least prime `p` of the gcd.
-  set p := g.minFac with hp_def
+  set p := g.minFac
   have hp : p.Prime := Nat.minFac_prime hg1
   have hpm : p ∣ m := (Nat.minFac_dvd g).trans (hg ▸ Nat.gcd_dvd_left m n)
   have hpn : p ∣ n := (Nat.minFac_dvd g).trans (hg ▸ Nat.gcd_dvd_right m n)
