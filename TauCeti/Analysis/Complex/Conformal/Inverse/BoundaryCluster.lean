@@ -58,9 +58,7 @@ variable {U : Set ℂ} {f F : ℂ → ℂ} {a : ℂ}
 /-- The cluster set of `invFunOn f U` over an image-boundary point `a` is contained in the fibre
 `{z | z ∈ frontier U ∧ F z = a}`: such a point lies on the frontier of `U`, and the continuous
 extension `F` carries it to `a`.
-
-This is the forward inclusion of `clusterSetOn_invFunOn_eq_boundary_fiber`, which subsumes it; it
-is private because it exists to keep that proof readable, not as an API of its own. -/
+ -/
 private theorem clusterSetOn_invFunOn_subset_boundary_fiber
     (hUo : IsOpen U) (hfo : IsOpen (f '' U))
     (hfi : InjOn f U)
