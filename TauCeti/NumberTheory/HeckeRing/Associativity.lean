@@ -61,20 +61,6 @@ private lemma nat_card_setOf_eq_sum {A : Type*} [Fintype A] (P : A → Prop) :
   rw [Nat.card_eq_fintype_card, Fintype.card_subtype, Finset.card_filter]
   simp [Set.mem_ofPred_eq]
 
-/-- Membership in a double coset is invariant under left multiplication by the left
-subgroup. -/
-private lemma mul_mem_doubleCoset_iff {β : G} (hβ : β ∈ Γ₂) {a z : G} :
-    β * z ∈ doubleCoset a Γ₂ Γ₃ ↔ z ∈ doubleCoset a Γ₂ Γ₃ := by
-  constructor
-  · intro hz
-    obtain ⟨x, hx, y, hy, hxy⟩ := mem_doubleCoset.mp hz
-    refine mem_doubleCoset.mpr ⟨β⁻¹ * x, Γ₂.mul_mem (Γ₂.inv_mem hβ) hx, y, hy, ?_⟩
-    rw [mul_assoc, mul_assoc, ← mul_assoc x, ← hxy, inv_mul_cancel_left]
-  · intro hz
-    obtain ⟨x, hx, y, hy, rfl⟩ := mem_doubleCoset.mp hz
-    exact mem_doubleCoset.mpr ⟨β * x, Γ₂.mul_mem hβ hx, y, hy, by
-      simp only [mul_assoc]⟩
-
 open Classical in
 /-- The fibre of the multiplicity over a fixed first representative: for fixed `w`, there is
 exactly one representative `τⱼ` with `w τⱼ h Γ₃ = d Γ₃` if `w⁻¹d ∈ Γ₂hΓ₃`, and none
@@ -273,23 +259,6 @@ private lemma sum_multiplicity_eq_card [IsHeckeTriple Δ H₁ H₂] [IsHeckeTrip
     ext j
     simp only [Set.mem_ofPred_eq, mul_inv_rev, mul_assoc]))
 
-/-- **Translating an inverse along a left coset.** If `w` and `x` lie in the same left coset
-of `H₃`, then `x⁻¹ d` and `w⁻¹ d` lie in the same double coset `H₃ g₃ H₄`: the two differ by
-the factor `(x⁻¹ w)⁻¹ ∈ H₃`, which `mul_mem_doubleCoset_iff` absorbs. -/
-private lemma inv_mul_mem_doubleCoset_iff_of_mem {w x d g₃ : G} (h : x⁻¹ * w ∈ H₃) :
-    x⁻¹ * d ∈ doubleCoset g₃ (H₃ : Set G) H₄ ↔ w⁻¹ * d ∈ doubleCoset g₃ (H₃ : Set G) H₄ := by
-  have hw : w⁻¹ * d = (x⁻¹ * w)⁻¹ * (x⁻¹ * d) := by
-    simp only [mul_inv_rev, inv_inv, mul_assoc, mul_inv_cancel_left]
-  rw [hw, mul_mem_doubleCoset_iff (H₃.inv_mem h)]
-
-/-- **Recognising a double coset from a quotient equation.** If `w` agrees with `l x` modulo
-`H₃` for some `l ∈ H₁`, then `w` lies in the double coset `H₁ x H₃`. -/
-private lemma mem_doubleCoset_of_quotient_eq {w x l : G} (hl : l ∈ H₁)
-    (h : (w : G ⧸ H₃) = ((l * x : G) : G ⧸ H₃)) : w ∈ doubleCoset x (H₁ : Set G) H₃ :=
-  mem_doubleCoset.mpr ⟨l, hl, (l * x)⁻¹ * w,
-    by simpa [mul_inv_rev, mul_assoc] using H₃.inv_mem (QuotientGroup.eq.mp h),
-    (mul_inv_cancel_left _ _).symm⟩
-
 /-- The element a `HeckeCoset` is built from lies in the double coset of that coset's chosen
 representative: `mk` and `rep` name the same double coset. -/
 private lemma mem_doubleCoset_rep_mk (w : Δ) :
@@ -302,11 +271,10 @@ private lemma mem_doubleCoset_rep_mk (w : Δ) :
 open Classical in
 /-- **The product of two multiplicities as a doubly-indexed indicator sum**, over the left
 cosets `l` of `H₁ E H₃` and the pairs `p`, of the indicator of the two conditions holding
-together. The second factor is expanded by `multiplicity_eq_card_filter` and the first by
-`multiplicity_def`, each then turned into a sum of indicators by `nat_card_setOf_eq_sum`. -/
+together. -/
 private lemma multiplicity_mul_multiplicity_eq_sum_indicator [IsHeckeTriple Δ H₁ H₂]
-    [IsHeckeTriple Δ H₂ H₃] [IsHeckeTriple Δ H₃ H₄] [IsHeckeTriple Δ H₁ H₃] (g₁ g₂ g₃ d : Δ)
-    (E : HeckeCoset Δ H₁ H₃) :
+    [IsHeckeTriple Δ H₂ H₃] [IsHeckeTriple Δ H₃ H₄] (g₁ g₂ g₃ d : Δ)
+    (E : HeckeCoset Δ H₁ H₃) [Fintype (DecompQuotient H₁ H₃ (E.rep : G))] :
     multiplicity H₁ H₂ H₃ (g₁ : G) (g₂ : G) (E.rep : G) *
         multiplicity H₁ H₃ H₄ (E.rep : G) (g₃ : G) (d : G) =
       ∑ l : DecompQuotient H₁ H₃ (E.rep : G),
