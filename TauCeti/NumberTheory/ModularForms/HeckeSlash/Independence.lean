@@ -62,6 +62,8 @@ double coset contributes to the multiplicity-weighted composite `∑_D m(D₁, D
 * `HeckeRing.GL2.sum_slash_eq_nsmul_heckeSlashSum`: **the weighted collapse.** A family naming
   each right coset of the double coset exactly `m` times — repetitions allowed, covering not
   assumed — sums to `m • heckeSlashSum k D f`.
+* `HeckeRing.GL2.sum_slash_coe_eq_nsmul_heckeSlashSum`: the weighted collapse for a form,
+  whose slash-invariance discharges `hf`.
 * `HeckeRing.GL2.heckeSlashSum_coe_eq_sum_of_rightCosets`: the same description for a form of
   level `G.map (mapGL ℝ)`, whose slash-invariance discharges the hypothesis `hf`. It is what
   `HeckeSlash/ModularForm.lean` reads off the two exported endomorphisms with, in
@@ -251,6 +253,25 @@ theorem heckeSlashSum_coe_eq_sum_of_rightCosets {ι : Type*} [Fintype ι] (a : �
       MulOpposite.op (a i) • (G.map (mapGL ℚ) : Set (GL (Fin 2) ℚ)))
     (f : F) : heckeSlashSum k D ⇑f = ∑ i, ⇑f ∣[k] a i :=
   heckeSlashSum_eq_sum_of_rightCosets k D a hcover hinj ⇑f fun _ hγ ↦
+    ModularForm.slash_eq_of_mem_map_mapGL
+      (fun γ' hγ' ↦ SlashInvariantFormClass.slash_action_eq f γ' hγ') hγ
+
+/-- **The weighted collapse for a form of level `G.map (mapGL ℝ)`.** This is
+`sum_slash_eq_nsmul_heckeSlashSum` with the hypothesis `hf` discharged, exactly as
+`heckeSlashSum_coe_eq_sum_of_rightCosets` discharges it for the unweighted statement: a form of
+that level is slash-invariant under `G.map (mapGL ℚ)` by `ModularForm.slash_eq_of_mem_map_mapGL`.
+
+`F` is any type of slash-invariant forms, so this covers `SlashInvariantForm`, `ModularForm` and
+`CuspForm` at once, and a consumer working on a character space need not rebuild the invariance
+bridge. -/
+theorem sum_slash_coe_eq_nsmul_heckeSlashSum {ι : Type*} [Fintype ι] (a : ι → GL (Fin 2) ℚ)
+    (m : ℕ)
+    (hmem : ∀ i, a i ∈ doubleCoset (D.out : GL (Fin 2) ℚ) (G.map (mapGL ℚ)) (G.map (mapGL ℚ)))
+    (hcard : ∀ x ∈ doubleCoset (D.out : GL (Fin 2) ℚ) (G.map (mapGL ℚ)) (G.map (mapGL ℚ)),
+      Nat.card {i // MulOpposite.op (a i) • (G.map (mapGL ℚ) : Set (GL (Fin 2) ℚ)) =
+        MulOpposite.op x • (G.map (mapGL ℚ) : Set (GL (Fin 2) ℚ))} = m)
+    (f : F) : ∑ i, ⇑f ∣[k] a i = m • heckeSlashSum k D ⇑f :=
+  sum_slash_eq_nsmul_heckeSlashSum k D a m hmem hcard ⇑f fun _ hγ ↦
     ModularForm.slash_eq_of_mem_map_mapGL
       (fun γ' hγ' ↦ SlashInvariantFormClass.slash_action_eq f γ' hγ') hγ
 
