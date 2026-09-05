@@ -58,9 +58,6 @@ map, which `degree_eq_zero_iff` records.
 ## References
 
 * [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], II.2 and III.6.
-* `TauCetiRoadmap/EllipticCurves/README.md`, Layer 1, "The hom-group and the degree form", for
-  the carrier's design: no `WithZero` adjunction, and the zero map as the unique non-unital
-  element.
 -/
 
 public section
@@ -78,14 +75,6 @@ def MapsInfinityOfMapOne (p : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionFiel
   ∀ h : p 1 = 1,
     CoordinatePullback.MapsInfinity (AlgHom.ofLinearMap ⟨⟨p, map_add p⟩, map_smul p⟩ h (map_mul p))
 
-/-- The condition unfolded: `MapsInfinityOfMapOne` is exactly the implication it is defined to
-be, stated so consumers introduce and eliminate it without unfolding the definition. -/
-theorem mapsInfinityOfMapOne_iff {p : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField} :
-    MapsInfinityOfMapOne p ↔ ∀ h : p 1 = 1,
-      CoordinatePullback.MapsInfinity
-        (AlgHom.ofLinearMap ⟨⟨p, map_add p⟩, map_smul p⟩ h (map_mul p)) :=
-  (Iff.rfl)
-
 /-- **The carrier of `Hom(W₁, W₂)`**: an `F`-linear multiplicative map out of the target
 coordinate ring, pointed wherever it is unital. Its zero map is the zero morphism's formal
 representative and its unital elements are the isogenies. -/
@@ -99,7 +88,11 @@ structure Hom (W₁ W₂ : WeierstrassCurve.Affine F) where
 namespace Hom
 
 noncomputable instance : Zero (Hom W₁ W₂) where
-  zero := ⟨0, mapsInfinityOfMapOne_iff.mpr fun h => absurd h (by simp)⟩
+  zero := ⟨0, by
+    -- `MapsInfinityOfMapOne 0` is an implication out of `(0 : _ →ₙₐ[F] _) 1 = 1`, which fails
+    -- in a field; the condition is therefore vacuous at the zero map.
+    change ∀ h : (0 : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField) 1 = 1, _
+    exact fun h => absurd h (by simp)⟩
 
 @[simp]
 theorem toNonUnitalAlgHom_zero : (0 : Hom W₁ W₂).toNonUnitalAlgHom = 0 := (rfl)
@@ -143,11 +136,20 @@ noncomputable def toIsogeny {h : Hom W₁ W₂} (hz : h ≠ 0) : Isogeny W₁ W�
       refine hz (Hom.ext (NonUnitalAlgHom.ext fun x => ?_))
       rw [not_not.mp (hall x), toNonUnitalAlgHom_zero, NonUnitalAlgHom.zero_apply]))⟩
 
+/-- The pullback of the isogeny read off a nonzero element is that element's own map. This is
+the one place the two bundlings are identified; everything below goes through it rather than
+through the definitions. -/
+@[simp]
+theorem toIsogeny_pullback_apply {h : Hom W₁ W₂} (hz : h ≠ 0) (x : W₂.CoordinateRing) :
+    (toIsogeny hz).pullback x = h.toNonUnitalAlgHom x :=
+  (rfl)
+
 /-- **`toIsogeny` is a section of `ofIsogeny`**: a nonzero element read as an isogeny and put
-back is unchanged. Both bundle the same underlying map. -/
+back is unchanged. -/
 @[simp]
 theorem ofIsogeny_toIsogeny {h : Hom W₁ W₂} (hz : h ≠ 0) : ofIsogeny (toIsogeny hz) = h :=
-  Hom.ext (rfl)
+  Hom.ext (NonUnitalAlgHom.ext fun x =>
+    (ofIsogeny_apply _ x).trans (toIsogeny_pullback_apply hz x))
 
 /-- **`toIsogeny` is a retraction of `ofIsogeny`**: an embedded isogeny read back is unchanged. -/
 @[simp]
