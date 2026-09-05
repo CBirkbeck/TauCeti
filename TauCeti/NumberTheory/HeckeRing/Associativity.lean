@@ -310,7 +310,7 @@ private lemma sum_image_mulMap_multiplicity_left [IsHeckeTriple Δ H₁ H₂]
   refine Finset.sum_congr rfl fun p _ ↦ ?_
   -- Step E: for each pair `p` there is exactly one pair `(E, l)` matching the coset of the
   -- product of the representatives of `p`.
-  set wG : G := (p.1.out : G) * g₁ * ((p.2.out : G) * g₂) with hwG
+  set wG : G := (p.1.out : G) * g₁ * ((p.2.out : G) * g₂)
   have hwΔ : wG ∈ Δ :=
     Δ.mul_mem (Δ.mul_mem (IsHeckeTriple.mem_of_mem_left H₂ p.1.out.2) g₁.2)
       (Δ.mul_mem (IsHeckeTriple.mem_of_mem_left H₃ p.2.out.2) g₂.2)
