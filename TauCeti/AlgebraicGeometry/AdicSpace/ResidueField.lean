@@ -29,7 +29,9 @@ is evaluated at `v` by its image in the residue field, and the condition cutting
 
 * `TauCeti.ValuationSpectrum.residueRing`: the quotient `A ⧸ supp v`, a domain.
 * `TauCeti.ValuationSpectrum.quotientValuation`: the valuation of `v` pushed to `A ⧸ supp v`.
-* `TauCeti.ValuationSpectrum.residueFieldValuation`: its extension to `Frac (A ⧸ supp v)`.
+* `TauCeti.ValuationSpectrum.residueField`: the residue field `κ(v) = Frac (A ⧸ supp v)`.
+* `TauCeti.ValuationSpectrum.residueFieldValuation`: the extension of the quotient valuation to
+  `κ(v)`.
 
 ## Main results
 
@@ -43,8 +45,8 @@ is evaluated at `v` by its image in the residue field, and the condition cutting
   `residueFieldValuation v (IsLocalization.mk' _ x s) = quotientValuation v x /
   quotientValuation v s`. With the previous lemma this computes the residue-field valuation on
   every element,
-  since every element of a fraction field is a fraction, and neither needs the definition
-  unfolded. It is not a `simp` lemma; its docstring says why.
+  since every element of a fraction field is a fraction, and neither needs the
+  definition unfolded.
 
 ## References
 
@@ -86,14 +88,17 @@ theorem quotientValuation_ne_zero (v : Spv A) {s : residueRing v} (hs : s ≠ 0)
       Ideal.map_quotient_self]
   simpa only [Ne, ← Valuation.mem_supp_iff, hsupp, Ideal.mem_bot] using hs
 
+/-- The **residue field** `κ(v) = Frac (A ⧸ supp v)` of a point of the valuation spectrum. The
+support is prime, so the residue ring is a domain and this is its fraction field. -/
+abbrev residueField (v : Spv A) := FractionRing (residueRing v)
+
 /-- The **residue-field valuation** of a point: the quotient valuation extended along
-`A ⧸ supp v → Frac (A ⧸ supp v)`. Its value group is the one `v` carries on `A`. -/
+`A ⧸ supp v → κ(v)`. Its value group is `ValuativeRel.ValueGroupWithZero`, the one `v.valuation`
+already takes values in. -/
 noncomputable def residueFieldValuation (v : Spv A) :
-    Valuation (FractionRing (residueRing v))
-      (@ValuativeRel.ValueGroupWithZero A _ v.toValuativeRel) :=
+    Valuation (residueField v) (@ValuativeRel.ValueGroupWithZero A _ v.toValuativeRel) :=
   (quotientValuation v).extendToLocalization
-    (fun _ hs ↦ quotientValuation_ne_zero v (nonZeroDivisors.ne_zero hs))
-    (FractionRing (residueRing v))
+    (fun _ hs ↦ quotientValuation_ne_zero v (nonZeroDivisors.ne_zero hs)) (residueField v)
 
 /-- **The residue-ring valuation restricts to the valuation of `v`** along `A → A ⧸ supp v`: the
 descent changes nothing on elements of `A`. This is the characteristic property of
@@ -110,36 +115,29 @@ theorem quotientValuation_comap_quotientMk (v : Spv A) :
 `TauCeti.ValuationSpectrum.residueFieldValuation`. -/
 @[simp]
 theorem residueFieldValuation_algebraMap (v : Spv A) (x : residueRing v) :
-    residueFieldValuation v (algebraMap (residueRing v) (FractionRing (residueRing v)) x)
+    residueFieldValuation v (algebraMap (residueRing v) (residueField v) x)
       = quotientValuation v x := by
   simpa only [residueFieldValuation] using
     Valuation.extendToLocalization_apply_map_apply (quotientValuation v)
       (fun _ hs ↦ quotientValuation_ne_zero v (nonZeroDivisors.ne_zero hs))
-      (FractionRing (residueRing v)) x
+      (residueField v) x
 
 /-- **The residue-field valuation on a fraction**:
 `residueFieldValuation v (IsLocalization.mk' _ x s)` is
 `quotientValuation v x / quotientValuation v s`. The two sides live at different stages — the
-argument is a fraction of the residue *field*, the values are of the *quotient-ring*
-valuation. Together with
-`TauCeti.ValuationSpectrum.residueFieldValuation_algebraMap` this computes the valuation of every
-element of `Frac (A ⧸ supp v)`, since every element is such a fraction — and neither needs
-`TauCeti.ValuationSpectrum.residueFieldValuation` unfolded.
+argument is a fraction of the residue field, the values are of the quotient-ring valuation.
 
-Deliberately **not** `@[simp]`, and the right-hand side is a quotient rather than
-`quotientValuation v x * (quotientValuation v s)⁻¹`: `simp` already carries the left-hand side to
-this exact form through `IsFractionRing.mk'_eq_div`, `map_div₀` and the `algebraMap` equation
-above, so the `simp` attribute fails `simpNF` on a left-hand side that is not in normal form.
-The lemma earns its place as the named, directly citable form of that chain. -/
+With `TauCeti.ValuationSpectrum.residueFieldValuation_algebraMap` this computes the valuation of
+every element of `κ(v)`, since every element of a fraction field is such a fraction. -/
 theorem residueFieldValuation_mk' (v : Spv A) (x : residueRing v)
     (s : (nonZeroDivisors (residueRing v))) :
-    residueFieldValuation v (IsLocalization.mk' (FractionRing (residueRing v)) x s)
+    residueFieldValuation v (IsLocalization.mk' (residueField v) x s)
       = quotientValuation v x / quotientValuation v s := by
   rw [div_eq_mul_inv]
   simpa only [residueFieldValuation] using
     Valuation.extendToLocalization_mk' (quotientValuation v)
       (fun _ hs ↦ quotientValuation_ne_zero v (nonZeroDivisors.ne_zero hs))
-      (FractionRing (residueRing v)) x s
+      (residueField v) x s
 
 end ValuationSpectrum
 
