@@ -10,6 +10,7 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 import Mathlib.Algebra.EuclideanDomain.Int
 -- `dvd_mul_mul_apply` and `dvd_diag_of_dvd_entries`, used only inside proofs below.
 import TauCeti.LinearAlgebra.Matrix.Divisibility
+import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Equivalence
 import Mathlib.Data.Int.GCD
 import Mathlib.Basic.Sign.Basic
 import Mathlib.LinearAlgebra.Determinant
@@ -827,15 +828,6 @@ private lemma prod_take_dvd_of_mul_diagonal_mul_eq {c d : Fin n → ℤ}
       simp only [Matrix.submatrix_apply, hgeq])
     simp [this]
 
-/-- Inverting a two-sided unimodular transformation. Used both by the uniqueness proof and by
-the content characterisation below, which otherwise repeat the same three lines. -/
-private lemma inv_mul_mul_inv_of_mul_mul_eq {S : Type*} [Semiring S]
-    {A B : Matrix (Fin n) (Fin n) S} (L R : GeneralLinearGroup (Fin n) S)
-    (h : (L : Matrix (Fin n) (Fin n) S) * A * (R : Matrix (Fin n) (Fin n) S) = B) :
-    (↑L⁻¹ : Matrix (Fin n) (Fin n) S) * B * (↑R⁻¹ : Matrix (Fin n) (Fin n) S) = A := by
-  rw [← h]
-  simp [Matrix.mul_assoc]
-
 /-- **Uniqueness of the Smith normal form**: two nonnegative diagonals with divisibility
 chains in the same `GL_n(ℤ)`-equivalence class are equal — including singular forms, whose
 chains vanish from the first zero on.  Together with
@@ -951,65 +943,21 @@ theorem invariant_factor_zero_eq_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
   Int.eq_of_associated_of_nonneg (associated_invariant_factor_zero_gcd A d hd0 L R h) hnonneg
     (Int.nonneg_of_normalize_eq_self Finset.normalize_gcd)
 
-/-- **The product of a diagonalisation's diagonal entries is the determinant.** Both `SLₙ`
-factors have determinant `1`, so taking determinants through `L * A * R = diagonal d` leaves
-the product of the diagonal.
+/-- **Two positive `Fin 2` diagonals with mutually dividing first entries and equal products
+are equal.** The first entries agree by antisymmetry, and the second is then pinned by the
+product.
 
-No divisibility chain is assumed, so `d` need not be the invariant factors. -/
-theorem prod_eq_det_of_mul_mul_eq_diagonal {S : Type*} [CommRing S]
-    {A : Matrix (Fin n) (Fin n) S} {L R : SpecialLinearGroup (Fin n) S} {d : Fin n → S}
-    (h : (L : Matrix (Fin n) (Fin n) S) * A * (R : Matrix (Fin n) (Fin n) S) =
-      Matrix.diagonal d) :
-    ∏ i, d i = A.det := by
-  have hdet := congrArg Matrix.det h
-  simp only [Matrix.det_mul, L.2, R.2, one_mul, mul_one, Matrix.det_diagonal] at hdet
-  exact hdet.symm
-
-/-- **For `2 × 2` matrices, mutually dividing first diagonal entries and equal determinants
-force equal diagonal forms.** The first entries agree by antisymmetry, and the second is then
-pinned by the determinant.
-
-Only diagonalisations are assumed, not Smith normal forms: no divisibility chain along `dA` or
-`dB` is used. Stated at `Fin 2` because that is where two diagonal entries and a determinant
-determine the diagonal; at larger `n` the intermediate entries are not fixed by these
-hypotheses. -/
-theorem diagonal_eq_of_dvd_of_det_eq {A B : Matrix (Fin 2) (Fin 2) ℤ}
-    {LA RA LB RB : SpecialLinearGroup (Fin 2) ℤ} {dA dB : Fin 2 → ℤ}
-    (hdA0_pos : 0 < dA 0) (hdB0_pos : 0 < dB 0)
-    (hA : (LA : Matrix (Fin 2) (Fin 2) ℤ) * A * (RA : Matrix (Fin 2) (Fin 2) ℤ) =
-      Matrix.diagonal dA)
-    (hB : (LB : Matrix (Fin 2) (Fin 2) ℤ) * B * (RB : Matrix (Fin 2) (Fin 2) ℤ) =
-      Matrix.diagonal dB)
-    (hAB : dA 0 ∣ dB 0) (hBA : dB 0 ∣ dA 0) (hdet : A.det = B.det) :
-    Matrix.diagonal dA = (Matrix.diagonal dB : Matrix (Fin 2) (Fin 2) ℤ) := by
+This is the arithmetic behind "equal determinants and mutually dividing first invariant factors
+determine a `2 × 2` diagonal form". No matrix hypothesis appears: callers obtain `hprod` from
+`Matrix.prod_eq_det_of_mul_mul_eq_diagonal` and an equality of determinants. -/
+theorem eq_of_dvd_of_dvd_of_mul_eq_mul {dA dB : Fin 2 → ℤ}
+    (hdA0_pos : 0 < dA 0) (hdB0_pos : 0 < dB 0) (hAB : dA 0 ∣ dB 0) (hBA : dB 0 ∣ dA 0)
+    (hprod : dA 0 * dA 1 = dB 0 * dB 1) : dA = dB := by
   have hd0 : dA 0 = dB 0 :=
     le_antisymm (Int.le_of_dvd hdB0_pos hAB) (Int.le_of_dvd hdA0_pos hBA)
-  have hprodA : dA 0 * dA 1 = A.det := by
-    simpa [Fin.prod_univ_two] using prod_eq_det_of_mul_mul_eq_diagonal hA
-  have hprodB : dB 0 * dB 1 = B.det := by
-    simpa [Fin.prod_univ_two] using prod_eq_det_of_mul_mul_eq_diagonal hB
   have hd1 : dA 1 = dB 1 :=
-    mul_left_cancel₀ (ne_of_gt hdA0_pos) (by rw [hprodA, hd0, hprodB, hdet])
-  congr 1
+    mul_left_cancel₀ (ne_of_gt hdA0_pos) (by rw [hprod, hd0])
   funext i
   fin_cases i <;> assumption
-
-/-- **Matrices sharing an `SLₙ`-transform are `SLₙ`-equivalent.** If `L_A A R_A = L_B B R_B`
-then `L_B⁻¹ L_A` and `R_A R_B⁻¹` carry `A` to `B`.
-
-Pure group algebra: nothing is assumed about the common value, which need not be diagonal.
-Callers holding two diagonalisations with equal diagonals compose them into this single
-hypothesis. -/
-theorem exists_SL_mul_mul_eq_of_mul_mul_eq {S : Type*} [CommRing S]
-    {A B : Matrix (Fin n) (Fin n) S} {LA RA LB RB : SpecialLinearGroup (Fin n) S}
-    (h : (LA : Matrix (Fin n) (Fin n) S) * A * (RA : Matrix (Fin n) (Fin n) S) =
-      (LB : Matrix (Fin n) (Fin n) S) * B * (RB : Matrix (Fin n) (Fin n) S)) :
-    ∃ P Q : SpecialLinearGroup (Fin n) S,
-      (P : Matrix (Fin n) (Fin n) S) * A * (Q : Matrix (Fin n) (Fin n) S) = B := by
-  refine ⟨LB⁻¹ * LA, RA * RB⁻¹, ?_⟩
-  -- `simp` normalises the `SLₙ` inverse to `adjugate`; `inv_def` with `det = 1` takes the
-  -- `GLₙ` inverse the same way, so the two sides meet.
-  simpa [SpecialLinearGroup.coe_mul, Matrix.mul_assoc, Matrix.inv_def] using
-    inv_mul_mul_inv_of_mul_mul_eq LB.toGL RB.toGL h.symm
 
 end Matrix

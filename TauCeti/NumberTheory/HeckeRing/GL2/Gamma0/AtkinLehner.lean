@@ -15,6 +15,7 @@ import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.CosetMap
 import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.Coset
 import TauCeti.LinearAlgebra.Matrix.Divisibility
 import TauCeti.LinearAlgebra.Matrix.SmithNormalForm
+import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Equivalence
 import Mathlib.Data.ZMod.Units
 
 /-!
@@ -376,10 +377,16 @@ private lemma exists_sl2_mul_mul_eq_atkinLehnerEntries
     Matrix.dvd_diag_of_dvd_entries B (dA 0) dB LB RB hB_snf hdA_B 0
   have hdB0_dvd_dA0 : dB 0 ∣ dA 0 :=
     Matrix.dvd_diag_of_dvd_entries A (dB 0) dA LA RA hA_snf hdB_A 0
-  have hdiag := Matrix.diagonal_eq_of_dvd_of_det_eq (hdA_pos 0) (hdB_pos 0) hA_snf hB_snf
-    hdA0_dvd_dB0 hdB0_dvd_dA0 hB_det.symm
+  -- the determinants agree, so the two diagonals have equal products
+  have hprodA : dA 0 * dA 1 = A.det := by
+    simpa [Fin.prod_univ_two] using Matrix.prod_eq_det_of_mul_mul_eq_diagonal hA_snf
+  have hprodB : dB 0 * dB 1 = B.det := by
+    simpa [Fin.prod_univ_two] using Matrix.prod_eq_det_of_mul_mul_eq_diagonal hB_snf
+  have hd : dA = dB := Matrix.eq_of_dvd_of_dvd_of_mul_eq_mul (hdA_pos 0) (hdB_pos 0)
+    hdA0_dvd_dB0 hdB0_dvd_dA0 (by rw [hprodA, hprodB, hB_det])
   -- the two diagonal forms coincide, so `A` and `B` share an `SL₂(ℤ)`-transform
-  exact Matrix.exists_SL_mul_mul_eq_of_mul_mul_eq (hA_snf.trans (hdiag.trans hB_snf.symm))
+  exact Matrix.exists_SL_mul_mul_eq_of_mul_mul_eq
+    (hA_snf.trans (by rw [hd]; exact hB_snf.symm))
 
 /-- An integer that is a unit mod `N` is coprime to `N`. -/
 private lemma int_gcd_natCast_eq_one_of_isUnit {a : ℤ} (h : IsUnit (a : ZMod N)) :
