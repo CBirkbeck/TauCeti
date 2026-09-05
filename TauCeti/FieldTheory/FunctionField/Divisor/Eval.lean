@@ -31,8 +31,6 @@ classical regime — the divisor and function laws are formal and hold for every
 ## Main definitions
 
 * `TauCeti.Divisor.eval`: `f(D)`, as a unit of `k`.
-* `TauCeti.Divisor.evalHom`: the same as a bundled homomorphism in the divisor variable, so the
-  divisor laws below hold with no admissibility hypothesis.
 * `TauCeti.Divisor.IsUnitAtSupport`: the admissibility condition — `f` is a unit at every place of
   `D`. This is exactly disjointness of `D` from the divisor of `f`
   (`isUnitAtSupport_iff_disjoint`).
@@ -100,7 +98,7 @@ namespace Divisor
 multiplicatively. Being a homomorphism outright is what makes `eval_zero`, `eval_add`, `eval_neg`
 and `eval_sub` hypothesis-free. The classical-regime caveat on `TauCeti.Divisor.eval` applies here
 unchanged. -/
-noncomputable def evalHom (f : Fˣ) : Multiplicative (Divisor k F) →* kˣ :=
+private noncomputable def evalHom (f : Fˣ) : Multiplicative (Divisor k F) →* kˣ :=
   (freeAbelianCharEquiv (σ := Place k F) (M := kˣ)).symm fun P ↦ P.normResidueOrOne f
 
 /-- **The value `f(D)` of a function on a divisor.**
@@ -113,17 +111,6 @@ every place of an algebraic function field. Absent that, `Algebra.norm` degenera
 `TauCeti.Place.degree` already follows. -/
 noncomputable def eval (D : Divisor k F) (f : Fˣ) : kˣ :=
   evalHom f (Multiplicative.ofAdd D)
-
-/-- `eval` is `evalHom` on the multiplicative copy of the divisor group. -/
-@[simp]
-theorem evalHom_ofAdd (D : Divisor k F) (f : Fˣ) :
-    evalHom f (Multiplicative.ofAdd D) = eval D f := by
-  rw [eval]
-
-/-- `evalHom` is `eval` on the additive copy of the divisor group. -/
-theorem evalHom_apply (D : Multiplicative (Divisor k F)) (f : Fˣ) :
-    evalHom f D = eval (Multiplicative.toAdd D) f := by
-  rw [← evalHom_ofAdd, ofAdd_toAdd]
 
 -- Deliberately **not** `@[simp]`, for the reason recorded on
 -- `WeierstrassCurve.Affine.Point.naiveHeight_eq_logHeight`: tagging a defining equation makes

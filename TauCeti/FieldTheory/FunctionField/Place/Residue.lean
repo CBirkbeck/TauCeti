@@ -140,40 +140,56 @@ theorem normResidueOrOne_of_ord_ne_zero {P : Place k F} {f : Fˣ} (hf : P.ord (f
     P.normResidueOrOne f = 1 := by
   simp [normResidueOrOne, hf]
 
+/-- **A product of order-zero units has order zero.** These three lemmas supply the order
+hypotheses that the residue lemmas below would otherwise demand of their callers; they appear in
+those statements, so they are public. -/
+theorem ord_units_mul_eq_zero {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
+    (hg : P.ord (g : F) = 0) : P.ord ((f * g : Fˣ) : F) = 0 := by
+  rw [Units.val_mul, P.ord_mul (Units.ne_zero f) (Units.ne_zero g), hf, hg, add_zero]
+
+/-- **The inverse of an order-zero unit has order zero.** -/
+theorem ord_units_inv_eq_zero {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
+    P.ord ((f⁻¹ : Fˣ) : F) = 0 := by
+  rw [Units.val_inv_eq_inv_val, P.ord_inv, hf, neg_zero]
+
+/-- **The unit `1` has order zero**, at every place. -/
+theorem ord_units_one_eq_zero (P : Place k F) : P.ord ((1 : Fˣ) : F) = 0 := by
+  rw [Units.val_one, P.ord_one]
+
 /-- **The residue is multiplicative in the function**, at a place where both factors are units:
 `(f g)(P) = f(P) · g(P)`. -/
 theorem residueUnit_mul {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
-    (hg : P.ord (g : F) = 0) (hfg : P.ord ((f * g : Fˣ) : F) = 0) :
-    P.residueUnit (f * g) hfg = P.residueUnit f hf * P.residueUnit g hg := by
+    (hg : P.ord (g : F) = 0) :
+    P.residueUnit (f * g) (ord_units_mul_eq_zero hf hg) =
+      P.residueUnit f hf * P.residueUnit g hg := by
   rw [residueUnit, residueUnit, residueUnit, ← map_mul]
   rfl
 
 /-- **The norm of the residue is multiplicative in the function**, at a place where both factors
 are units. -/
 theorem normResidue_mul {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
-    (hg : P.ord (g : F) = 0) (hfg : P.ord ((f * g : Fˣ) : F) = 0) :
-    P.normResidue (f * g) hfg = P.normResidue f hf * P.normResidue g hg := by
-  rw [normResidue, normResidue, normResidue, residueUnit_mul hf hg hfg, map_mul]
+    (hg : P.ord (g : F) = 0) :
+    P.normResidue (f * g) (ord_units_mul_eq_zero hf hg) =
+      P.normResidue f hf * P.normResidue g hg := by
+  rw [normResidue, normResidue, normResidue, residueUnit_mul hf hg, map_mul]
 
 /-- **The residue of the constant `1` is `1`.** -/
 @[simp]
-theorem residueUnit_one (P : Place k F) (hf : P.ord ((1 : Fˣ) : F) = 0) :
-    P.residueUnit 1 hf = 1 := by
+theorem residueUnit_one (P : Place k F) :
+    P.residueUnit 1 (ord_units_one_eq_zero P) = 1 := by
   rw [residueUnit, ← map_one P.integers.unitGroupToResidueFieldUnits]
   rfl
 
 /-- **The residue inverts with the function**: `f⁻¹(P) = f(P)⁻¹`. -/
-theorem residueUnit_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0)
-    (hfinv : P.ord ((f⁻¹ : Fˣ) : F) = 0) :
-    P.residueUnit f⁻¹ hfinv = (P.residueUnit f hf)⁻¹ := by
+theorem residueUnit_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
+    P.residueUnit f⁻¹ (ord_units_inv_eq_zero hf) = (P.residueUnit f hf)⁻¹ := by
   rw [residueUnit, residueUnit, ← map_inv]
   rfl
 
 /-- **The norm of the residue inverts with the function**: `N(f⁻¹(P)) = N(f(P))⁻¹`. -/
-theorem normResidue_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0)
-    (hfinv : P.ord ((f⁻¹ : Fˣ) : F) = 0) :
-    P.normResidue f⁻¹ hfinv = (P.normResidue f hf)⁻¹ := by
-  rw [normResidue, normResidue, residueUnit_inv hf hfinv, map_inv]
+theorem normResidue_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
+    P.normResidue f⁻¹ (ord_units_inv_eq_zero hf) = (P.normResidue f hf)⁻¹ := by
+  rw [normResidue, normResidue, residueUnit_inv hf, map_inv]
 
 /-- **The total local factor is multiplicative in the function**, at a place where both factors
 are units. The hypotheses cannot be dropped: at a place where `f` and `g` have opposite nonzero
@@ -182,10 +198,9 @@ right side is `1`. -/
 theorem normResidueOrOne_mul {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
     P.normResidueOrOne (f * g) = P.normResidueOrOne f * P.normResidueOrOne g := by
-  have hfg : P.ord ((f * g : Fˣ) : F) = 0 := by
-    rw [Units.val_mul, P.ord_mul (Units.ne_zero f) (Units.ne_zero g), hf, hg, add_zero]
-  rw [normResidueOrOne_of_ord_eq_zero hfg, normResidueOrOne_of_ord_eq_zero hf,
-    normResidueOrOne_of_ord_eq_zero hg, normResidue_mul hf hg hfg]
+  rw [normResidueOrOne_of_ord_eq_zero (ord_units_mul_eq_zero hf hg),
+    normResidueOrOne_of_ord_eq_zero hf, normResidueOrOne_of_ord_eq_zero hg,
+    normResidue_mul hf hg]
 
 -- Not `@[simp]`: since `normResidueOrOne_of_ord_eq_zero` is `@[simp]` and `simp` can discharge
 -- `ord_P 1 = 0` on its own, the total form is rewritten to `normResidue` before this could fire.
@@ -201,9 +216,9 @@ theorem normResidueOrOne_one (P : Place k F) : P.normResidueOrOne (1 : Fˣ) = 1 
 
 /-- The residue of the constant `1` has norm `1`. -/
 @[simp]
-theorem normResidue_one (P : Place k F) (hf : P.ord ((1 : Fˣ) : F) = 0) :
-    P.normResidue 1 hf = 1 := by
-  rw [← normResidueOrOne_of_ord_eq_zero hf, normResidueOrOne_one]
+theorem normResidue_one (P : Place k F) :
+    P.normResidue 1 (ord_units_one_eq_zero P) = 1 := by
+  rw [← normResidueOrOne_of_ord_eq_zero (ord_units_one_eq_zero P), normResidueOrOne_one]
 
 /-- **Inversion needs no admissibility hypothesis.** `ord_P f⁻¹ = -ord_P f` vanishes exactly when
 `ord_P f` does, so the two places of `normResidueOrOne`'s case split correspond under inversion
