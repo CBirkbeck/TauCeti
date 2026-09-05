@@ -196,7 +196,8 @@ theorem eval_eq_prod_normResidue {D : Divisor k F} {f : Fˣ} (h : IsUnitAtSuppor
   -- the right-hand side depends on the membership proof, so it cannot be matched against a
   -- `Finset` product directly; convert the left-hand side to the subtype product instead.
   calc eval D f = D.prod fun P n ↦ P.normResidueOrOne f ^ n := eval_eq_finsuppProd D f
-    _ = ∏ P ∈ D.support, P.normResidueOrOne f ^ WeilDivisor.coeff D P := rfl
+    _ = ∏ P ∈ D.support, P.normResidueOrOne f ^ WeilDivisor.coeff D P := by
+        simp only [Finsupp.prod, WeilDivisor.coeff]
     _ = ∏ P : D.support, P.1.normResidueOrOne f ^ WeilDivisor.coeff D P.1 :=
         (Finset.prod_coe_sort _ _).symm
     _ = ∏ P : D.support, P.1.normResidue f (isUnitAtSupport_iff.1 h P.1 P.2)
