@@ -33,10 +33,20 @@ its image in the residue field, and the condition `v(f) ≤ 1` cutting out `𝒪
 * `TauCeti.ValuationSpectrum.quotientValuation_ne_zero`: on the residue ring the valuation has
   trivial support. Passing to the quotient is what arranges this, and it is what
   `Valuation.extendToLocalization` requires.
+* `TauCeti.ValuationSpectrum.quotientValuation_comap_quotientMk` and
+  `TauCeti.ValuationSpectrum.residueFieldValuation_algebraMap`: the two characteristic equations,
+  saying each valuation restricts to the previous one along the canonical map.
 
 ## References
 
 * [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), §2.4.
+
+## Provenance
+
+Adapted from `github.com/CBirkbeck/AINTLIB` @ `37bbdaeb9ad9e3bc9f0d660feadc2779e455a91c`,
+Apache-2.0, file `projects/AdicSpaces/Adic spaces/CompletedResidueField.lean`: the declarations
+`residueRing`, `quotientValuation`, `quotientValuation_ne_zero` and `residueFieldValuation`,
+restated against TauCeti's own `Spv` API.
 -/
 
 public section
@@ -77,6 +87,24 @@ noncomputable def residueFieldValuation (v : Spv A) :
   (quotientValuation v).extendToLocalization
     (fun _ hs ↦ quotientValuation_ne_zero v (nonZeroDivisors.ne_zero hs))
     (FractionRing (residueRing v))
+
+/-- **The residue-ring valuation restricts to the valuation of `v`** along `A → A ⧸ supp v`: the
+descent changes nothing on elements of `A`. This is the characteristic property of
+`TauCeti.ValuationSpectrum.quotientValuation`, and the way to compute with it without unfolding
+`Valuation.onQuot`. -/
+@[simp]
+theorem quotientValuation_comap_quotientMk (v : Spv A) :
+    (quotientValuation v).comap (Ideal.Quotient.mk v.supp) = v.valuation :=
+  v.valuation.onQuot_comap_eq _
+
+/-- **The residue-field valuation restricts to the residue-ring valuation** along
+`A ⧸ supp v → Frac (A ⧸ supp v)`. This is the characteristic property of
+`TauCeti.ValuationSpectrum.residueFieldValuation`. -/
+@[simp]
+theorem residueFieldValuation_algebraMap (v : Spv A) (x : residueRing v) :
+    residueFieldValuation v (algebraMap (residueRing v) (FractionRing (residueRing v)) x)
+      = quotientValuation v x :=
+  Valuation.extendToLocalization_apply_map_apply _ _ _ _
 
 end ValuationSpectrum
 
