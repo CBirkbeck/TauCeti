@@ -36,7 +36,8 @@ extensionality.
 
 public section
 
-variable {A B G : Type*} [Semiring A] [Semiring B] [IsLeftCancelMulZero B] [FunLike G A B]
+variable {A B G : Type*} [NonAssocSemiring A] [Semiring B] [IsLeftCancelMulZero B]
+  [FunLike G A B]
   [NonUnitalRingHomClass G A B]
 
 namespace NonUnitalRingHomClass

@@ -19,7 +19,8 @@ spectrum — so it cannot be added to the isogenies as another pullback.
 This file carves the hom carrier out of a slightly larger mapping type instead, **adjoining
 nothing**: the `F`-linear *multiplicative* maps `R(W₂) → K(W₁)`, which include the zero map because
 multiplicativity does not force `1 ↦ 1`. Into a field there is nothing else new — `p 1` is
-idempotent, so `NonUnitalAlgHom.eq_zero_or_map_one` splits the type as the zero map together with
+idempotent, so `NonUnitalRingHomClass.forall_apply_eq_zero_or_map_one` splits the type as the zero
+map together with
 the unital maps, and a unital map with the pointedness condition is exactly an `Isogeny`. So the
 carrier is `{0} ⊔ Isogeny W₁ W₂` as a *set*, obtained by weakening unitality rather than by a
 `WithZero` adjunction.
@@ -50,12 +51,16 @@ this file.
 ## Implementation notes
 
 `degree 0 = 0` is a stipulation, not a theorem: the zero map's image generates no field, so there
-is no extension whose dimension could be measured. It is the value that makes `degree` additive
-in the sense the degree form needs.
+is no extension whose dimension could be measured. It is the value that extends `degree` — a
+quadratic function on the carrier, not an additive one — so that it vanishes exactly at the zero
+map, which `degree_eq_zero_iff` records.
 
 ## References
 
 * [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], II.2 and III.6.
+* `TauCetiRoadmap/EllipticCurves/README.md`, Layer 1, "The hom-group and the degree form", for
+  the carrier's design: no `WithZero` adjunction, and the zero map as the unique non-unital
+  element.
 -/
 
 public section
@@ -109,6 +114,11 @@ theorem ofIsogeny_apply (φ : Isogeny W₁ W₂) (x : W₂.CoordinateRing) :
     (ofIsogeny φ).toNonUnitalAlgHom x = φ.pullback x :=
   (rfl)
 
+/-- The underlying map of an embedded isogeny is its pullback. -/
+theorem toNonUnitalAlgHom_ofIsogeny (φ : Isogeny W₁ W₂) :
+    (ofIsogeny φ).toNonUnitalAlgHom = (φ.pullback : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField) :=
+  (rfl)
+
 /-- **The isogenies sit in the carrier as distinct elements.** -/
 theorem ofIsogeny_injective : Function.Injective (ofIsogeny (W₁ := W₁) (W₂ := W₂)) :=
   fun _ _ h => Isogeny.ext (AlgHom.ext fun x => congrArg (fun g => g.toNonUnitalAlgHom x) h)
@@ -138,6 +148,12 @@ back is unchanged. Both bundle the same underlying map. -/
 @[simp]
 theorem ofIsogeny_toIsogeny {h : Hom W₁ W₂} (hz : h ≠ 0) : ofIsogeny (toIsogeny hz) = h :=
   Hom.ext (rfl)
+
+/-- **`toIsogeny` is a retraction of `ofIsogeny`**: an embedded isogeny read back is unchanged. -/
+@[simp]
+theorem toIsogeny_ofIsogeny (φ : Isogeny W₁ W₂) :
+    toIsogeny (ofIsogeny_ne_zero φ) = φ :=
+  ofIsogeny_injective (ofIsogeny_toIsogeny _)
 
 /-- **Every element of the carrier is the zero map or an isogeny.** This is the dichotomy the
 carrier is built for: weakening unitality admits the zero map and nothing else. -/
