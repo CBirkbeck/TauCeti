@@ -354,8 +354,11 @@ coefficient is `DoubleCoset.multiplicity Γ₃ Γ₂ Γ₁ δ₂⁻¹ δ₁⁻¹
 and all three arguments inverted relative to `HeckeCosetModule.structureConstants`; as the
 module docstring records, the two are not equal, and comparing them needs an anti-involution.
 
-No finiteness beyond that of the two index types is assumed: the double cosets met are the
-image of a finite type under `pairCoset`. -/
+The double cosets met are the image of a finite type under `pairCoset`, so no *index set* has
+to be assumed finite beyond the two input decomposition quotients. The right-hand side does
+need each output coset's own decomposition quotient to be finite, since `heckeSlashSum k D f`
+is a sum over it; that is the hypothesis this theorem takes, and `IsHeckeTriple Δ Γ₁ Γ₃`
+supplies it. -/
 theorem heckeSlashSum_heckeSlashSum_eq_sum_nsmul
     [∀ D : HeckeCoset Δ Γ₁ Γ₃, Finite (DecompQuotient Γ₃ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹)]
     (f : ℍ → ℂ) (hf : ∀ γ ∈ Γ₁, f ∣[k] γ = f) :
