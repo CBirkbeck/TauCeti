@@ -9,7 +9,6 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.StandardComodule
 public import TauCeti.Algebra.Lie.E7.Minuscule.BaseChange
 import TauCeti.Algebra.Coalgebra.Comodule.GroupLike
 import TauCeti.Algebra.Coalgebra.Subcomodule.Corestrict
-import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.HopfIdealPoints.BaseChange
 import TauCeti.Algebra.Lie.E7.Minuscule.PointsFunctor
 
 /-!
