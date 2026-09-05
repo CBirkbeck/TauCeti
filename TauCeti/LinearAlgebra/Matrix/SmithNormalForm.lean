@@ -892,10 +892,12 @@ commit `2baa76f742bdb4fb8ee323fabba41203bd390e08`,
 divisibility directions privately at `Fin 2` as `snf_first_dvd_entry₂` and
 `dvd_snf_first_of_dvd_entries`, proved by entrywise cofactor algebra; the proofs here are a
 re-derivation at general `n`, where inverting the unimodular factors removes the need for that
-algebra. The source's third lemma `snf_mutual_dvd_eq` is **not** ported here: its conclusion follows
-from `Matrix.dvd_diag_of_dvd_entries` applied in both directions together with a determinant
-cancellation — it does *not* go through `Matrix.smith_normal_form_unique` — and it belongs
-with the Atkin–Lehner material that consumes it rather than here. -/
+algebra. The source's third lemma `snf_mutual_dvd_eq` is adapted here as
+`Matrix.diagonal_eq_of_dvd_of_det_eq`. It does *not* go through
+`Matrix.smith_normal_form_unique`: its conclusion follows from `Matrix.dvd_diag_of_dvd_entries`
+applied in both directions together with a determinant cancellation. The statement here is
+weaker in its hypotheses than the source's — it assumes only that the two transforms are
+diagonal, not that they are Smith normal forms, since no divisibility chain is used. -/
 
 /-- **The first entry of a chained diagonal form divides every entry.** If
 `L * A * R = diagonal d` with `L`, `R` unimodular and `d 0` dividing every `d k`, then `d 0`
@@ -949,26 +951,31 @@ theorem invariant_factor_zero_eq_gcd [NeZero n] (A : Matrix (Fin n) (Fin n) ℤ)
   Int.eq_of_associated_of_nonneg (associated_invariant_factor_zero_gcd A d hd0 L R h) hnonneg
     (Int.nonneg_of_normalize_eq_self Finset.normalize_gcd)
 
-/-- **The product of the invariant factors is the determinant.** Both `SLₙ(ℤ)` factors have
-determinant `1`, so taking determinants through a Smith normal form leaves the diagonal. -/
-theorem prod_eq_det_of_smithNormalForm {A : Matrix (Fin n) (Fin n) ℤ}
-    {L R : SpecialLinearGroup (Fin n) ℤ} {d : Fin n → ℤ}
-    (h : (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
+/-- **The product of a diagonalisation's diagonal entries is the determinant.** Both `SLₙ`
+factors have determinant `1`, so taking determinants through `L * A * R = diagonal d` leaves
+the product of the diagonal.
+
+No divisibility chain is assumed, so `d` need not be the invariant factors. -/
+theorem prod_eq_det_of_mul_mul_eq_diagonal {S : Type*} [CommRing S]
+    {A : Matrix (Fin n) (Fin n) S} {L R : SpecialLinearGroup (Fin n) S} {d : Fin n → S}
+    (h : (L : Matrix (Fin n) (Fin n) S) * A * (R : Matrix (Fin n) (Fin n) S) =
       Matrix.diagonal d) :
     ∏ i, d i = A.det := by
   have hdet := congrArg Matrix.det h
   simp only [Matrix.det_mul, L.2, R.2, one_mul, mul_one, Matrix.det_diagonal] at hdet
   exact hdet.symm
 
-/-- **For `2 × 2` matrices, mutually dividing first invariant factors and equal determinants
-force equal Smith normal forms.** The first factors agree by antisymmetry, and the second is
-then pinned by the determinant.
+/-- **For `2 × 2` matrices, mutually dividing first diagonal entries and equal determinants
+force equal diagonal forms.** The first entries agree by antisymmetry, and the second is then
+pinned by the determinant.
 
-Stated at `Fin 2` because that is where two invariant factors and a determinant determine the
-diagonal; at larger `n` the intermediate factors are not fixed by these hypotheses. -/
+Only diagonalisations are assumed, not Smith normal forms: no divisibility chain along `dA` or
+`dB` is used. Stated at `Fin 2` because that is where two diagonal entries and a determinant
+determine the diagonal; at larger `n` the intermediate entries are not fixed by these
+hypotheses. -/
 theorem diagonal_eq_of_dvd_of_det_eq {A B : Matrix (Fin 2) (Fin 2) ℤ}
     {LA RA LB RB : SpecialLinearGroup (Fin 2) ℤ} {dA dB : Fin 2 → ℤ}
-    (hdA_pos : ∀ i, 0 < dA i) (hdB_pos : ∀ i, 0 < dB i)
+    (hdA0_pos : 0 < dA 0) (hdB0_pos : 0 < dB 0)
     (hA : (LA : Matrix (Fin 2) (Fin 2) ℤ) * A * (RA : Matrix (Fin 2) (Fin 2) ℤ) =
       Matrix.diagonal dA)
     (hB : (LB : Matrix (Fin 2) (Fin 2) ℤ) * B * (RB : Matrix (Fin 2) (Fin 2) ℤ) =
@@ -976,47 +983,33 @@ theorem diagonal_eq_of_dvd_of_det_eq {A B : Matrix (Fin 2) (Fin 2) ℤ}
     (hAB : dA 0 ∣ dB 0) (hBA : dB 0 ∣ dA 0) (hdet : A.det = B.det) :
     Matrix.diagonal dA = (Matrix.diagonal dB : Matrix (Fin 2) (Fin 2) ℤ) := by
   have hd0 : dA 0 = dB 0 :=
-    le_antisymm (Int.le_of_dvd (hdB_pos 0) hAB) (Int.le_of_dvd (hdA_pos 0) hBA)
+    le_antisymm (Int.le_of_dvd hdB0_pos hAB) (Int.le_of_dvd hdA0_pos hBA)
   have hprodA : dA 0 * dA 1 = A.det := by
-    simpa [Fin.prod_univ_two] using prod_eq_det_of_smithNormalForm hA
+    simpa [Fin.prod_univ_two] using prod_eq_det_of_mul_mul_eq_diagonal hA
   have hprodB : dB 0 * dB 1 = B.det := by
-    simpa [Fin.prod_univ_two] using prod_eq_det_of_smithNormalForm hB
+    simpa [Fin.prod_univ_two] using prod_eq_det_of_mul_mul_eq_diagonal hB
   have hd1 : dA 1 = dB 1 :=
-    mul_left_cancel₀ (ne_of_gt (hdA_pos 0)) (by rw [hprodA, hd0, hprodB, hdet])
+    mul_left_cancel₀ (ne_of_gt hdA0_pos) (by rw [hprodA, hd0, hprodB, hdet])
   congr 1
   funext i
   fin_cases i <;> assumption
 
-/-- **Two matrices with the same Smith normal form are `SLₙ(ℤ)`-equivalent.** Given
-diagonalisations of `A` and `B` whose diagonals agree, the composites `L_B⁻¹ L_A` and
-`R_A R_B⁻¹` carry `A` to `B`.
+/-- **Matrices sharing an `SLₙ`-transform are `SLₙ`-equivalent.** If `L_A A R_A = L_B B R_B`
+then `L_B⁻¹ L_A` and `R_A R_B⁻¹` carry `A` to `B`.
 
-The hypothesis is equality of the diagonal *matrices* rather than of the invariant-factor
-tuples, which is what `smith_normal_form_unique` and the divisibility arguments produce. -/
-theorem exists_SL_mul_mul_eq_of_diagonal_eq {A B : Matrix (Fin n) (Fin n) ℤ}
-    {LA RA LB RB : SpecialLinearGroup (Fin n) ℤ} {dA dB : Fin n → ℤ}
-    (hA : (LA : Matrix (Fin n) (Fin n) ℤ) * A * (RA : Matrix (Fin n) (Fin n) ℤ) =
-      Matrix.diagonal dA)
-    (hB : (LB : Matrix (Fin n) (Fin n) ℤ) * B * (RB : Matrix (Fin n) (Fin n) ℤ) =
-      Matrix.diagonal dB)
-    (hd : Matrix.diagonal dA = (Matrix.diagonal dB : Matrix (Fin n) (Fin n) ℤ)) :
-    ∃ P Q : SpecialLinearGroup (Fin n) ℤ,
-      (P : Matrix (Fin n) (Fin n) ℤ) * A * (Q : Matrix (Fin n) (Fin n) ℤ) = B := by
+Pure group algebra: nothing is assumed about the common value, which need not be diagonal.
+Callers holding two diagonalisations with equal diagonals compose them into this single
+hypothesis. -/
+theorem exists_SL_mul_mul_eq_of_mul_mul_eq {S : Type*} [CommRing S]
+    {A B : Matrix (Fin n) (Fin n) S} {LA RA LB RB : SpecialLinearGroup (Fin n) S}
+    (h : (LA : Matrix (Fin n) (Fin n) S) * A * (RA : Matrix (Fin n) (Fin n) S) =
+      (LB : Matrix (Fin n) (Fin n) S) * B * (RB : Matrix (Fin n) (Fin n) S)) :
+    ∃ P Q : SpecialLinearGroup (Fin n) S,
+      (P : Matrix (Fin n) (Fin n) S) * A * (Q : Matrix (Fin n) (Fin n) S) = B := by
   refine ⟨LB⁻¹ * LA, RA * RB⁻¹, ?_⟩
-  have hLB : (LB⁻¹).val * LB.val = (1 : Matrix (Fin n) (Fin n) ℤ) := by
-    rw [← SpecialLinearGroup.coe_mul, inv_mul_cancel]
-    rfl
-  have hRB : RB.val * (RB⁻¹).val = (1 : Matrix (Fin n) (Fin n) ℤ) := by
-    rw [← SpecialLinearGroup.coe_mul, mul_inv_cancel]
-    rfl
-  calc ((LB⁻¹ * LA : SpecialLinearGroup (Fin n) ℤ) : Matrix (Fin n) (Fin n) ℤ) * A *
-        ((RA * RB⁻¹ : SpecialLinearGroup (Fin n) ℤ) : Matrix (Fin n) (Fin n) ℤ)
-      = (LB⁻¹).val * (LA.val * A * RA.val) * (RB⁻¹).val := by
-        simp only [SpecialLinearGroup.coe_mul, Matrix.mul_assoc]
-    _ = (LB⁻¹).val * Matrix.diagonal dB * (RB⁻¹).val := by rw [hA, hd]
-    _ = (LB⁻¹).val * (LB.val * B * RB.val) * (RB⁻¹).val := by rw [hB]
-    _ = B := by
-        simp only [Matrix.mul_assoc]
-        rw [hRB, Matrix.mul_one, ← Matrix.mul_assoc (LB⁻¹).val, hLB, Matrix.one_mul]
+  -- `simp` normalises the `SLₙ` inverse to `adjugate`; `inv_def` with `det = 1` takes the
+  -- `GLₙ` inverse the same way, so the two sides meet.
+  simpa [SpecialLinearGroup.coe_mul, Matrix.mul_assoc, Matrix.inv_def] using
+    inv_mul_mul_inv_of_mul_mul_eq LB.toGL RB.toGL h.symm
 
 end Matrix

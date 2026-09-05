@@ -376,11 +376,10 @@ private lemma exists_sl2_mul_mul_eq_atkinLehnerEntries
     Matrix.dvd_diag_of_dvd_entries B (dA 0) dB LB RB hB_snf hdA_B 0
   have hdB0_dvd_dA0 : dB 0 ∣ dA 0 :=
     Matrix.dvd_diag_of_dvd_entries A (dB 0) dA LA RA hA_snf hdB_A 0
-  have hdiag := Matrix.diagonal_eq_of_dvd_of_det_eq hdA_pos hdB_pos hA_snf hB_snf
-    (Matrix.dvd_diag_of_dvd_entries B (dA 0) dB LB RB hB_snf hdA_B 0)
-    (Matrix.dvd_diag_of_dvd_entries A (dB 0) dA LA RA hA_snf hdB_A 0) hB_det.symm
-  -- equal Smith normal forms make the two matrices `SL₂(ℤ)`-equivalent
-  exact Matrix.exists_SL_mul_mul_eq_of_diagonal_eq hA_snf hB_snf hdiag
+  have hdiag := Matrix.diagonal_eq_of_dvd_of_det_eq (hdA_pos 0) (hdB_pos 0) hA_snf hB_snf
+    hdA0_dvd_dB0 hdB0_dvd_dA0 hB_det.symm
+  -- the two diagonal forms coincide, so `A` and `B` share an `SL₂(ℤ)`-transform
+  exact Matrix.exists_SL_mul_mul_eq_of_mul_mul_eq (hA_snf.trans (hdiag.trans hB_snf.symm))
 
 /-- An integer that is a unit mod `N` is coprime to `N`. -/
 private lemma int_gcd_natCast_eq_one_of_isUnit {a : ℤ} (h : IsUnit (a : ZMod N)) :
