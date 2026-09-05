@@ -47,13 +47,15 @@ this file.
   an isogeny.
 * `TauCeti.Isogeny.Hom.degree_eq_zero_iff`: the degree vanishes exactly at the zero map.
 
-## Provenance
+## Implementation notes
 
-The design is `TauCetiRoadmap/EllipticCurves/README.md`, Layer 1, "The hom-group and the degree
-form": that the carrier adjoins no `WithZero` but is carved from the multiplicative maps, that the
-zero map is the unique non-unital element and a formal tag rather than a pullback, and that
-`degree 0 = 0` is stipulated because the zero map's image generates no field. The mathematics is
-Silverman, *The Arithmetic of Elliptic Curves*, II.2 and III.6.
+`degree 0 = 0` is a stipulation, not a theorem: the zero map's image generates no field, so there
+is no extension whose dimension could be measured. It is the value that makes `degree` additive
+in the sense the degree form needs.
+
+## References
+
+* [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], II.2 and III.6.
 -/
 
 public section
@@ -67,12 +69,17 @@ variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F}
 /-- The condition carving the hom carrier out of the non-unital pullbacks: if the map is unital,
 it is pointed. At the zero map the hypothesis is unsatisfiable, so the condition is vacuous
 there — which is what lets the zero map into the carrier without a pointedness claim about it. -/
--- `@[expose]`: members of the carrier are built and taken apart through this condition, so
--- consumers need to see that it is the implication and not an opaque `Prop`.
-@[expose]
 def MapsInfinityOfMapOne (p : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField) : Prop :=
   ∀ h : p 1 = 1,
     CoordinatePullback.MapsInfinity (AlgHom.ofLinearMap ⟨⟨p, map_add p⟩, map_smul p⟩ h (map_mul p))
+
+/-- The condition unfolded: `MapsInfinityOfMapOne` is exactly the implication it is defined to
+be, stated so consumers introduce and eliminate it without unfolding the definition. -/
+theorem mapsInfinityOfMapOne_iff {p : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField} :
+    MapsInfinityOfMapOne p ↔ ∀ h : p 1 = 1,
+      CoordinatePullback.MapsInfinity
+        (AlgHom.ofLinearMap ⟨⟨p, map_add p⟩, map_smul p⟩ h (map_mul p)) :=
+  (Iff.rfl)
 
 /-- **The carrier of `Hom(W₁, W₂)`**: an `F`-linear multiplicative map out of the target
 coordinate ring, pointed wherever it is unital. Its zero map is the zero morphism's formal
@@ -87,13 +94,12 @@ structure Hom (W₁ W₂ : WeierstrassCurve.Affine F) where
 namespace Hom
 
 noncomputable instance : Zero (Hom W₁ W₂) where
-  zero := ⟨0, fun h => absurd h (by simp)⟩
+  zero := ⟨0, mapsInfinityOfMapOne_iff.mpr fun h => absurd h (by simp)⟩
 
 @[simp]
-theorem toNonUnitalAlgHom_zero : (0 : Hom W₁ W₂).toNonUnitalAlgHom = 0 := rfl
+theorem toNonUnitalAlgHom_zero : (0 : Hom W₁ W₂).toNonUnitalAlgHom = 0 := (rfl)
 
 /-- An isogeny, as an element of the carrier. -/
-@[expose]
 noncomputable def ofIsogeny (φ : Isogeny W₁ W₂) : Hom W₁ W₂ where
   toNonUnitalAlgHom := (φ.pullback : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField)
   mapsInfinity_of_map_one _ := φ.mapsInfinity
@@ -101,7 +107,7 @@ noncomputable def ofIsogeny (φ : Isogeny W₁ W₂) : Hom W₁ W₂ where
 @[simp]
 theorem ofIsogeny_apply (φ : Isogeny W₁ W₂) (x : W₂.CoordinateRing) :
     (ofIsogeny φ).toNonUnitalAlgHom x = φ.pullback x :=
-  rfl
+  (rfl)
 
 /-- **The isogenies sit in the carrier as distinct elements.** -/
 theorem ofIsogeny_injective : Function.Injective (ofIsogeny (W₁ := W₁) (W₂ := W₂)) :=
@@ -113,28 +119,33 @@ theorem ofIsogeny_ne_zero (φ : Isogeny W₁ W₂) : ofIsogeny φ ≠ 0 := fun h
   refine one_ne_zero (α := W₁.FunctionField) ?_
   calc (1 : W₁.FunctionField)
       = φ.pullback 1 := (map_one _).symm
-    _ = (ofIsogeny φ).toNonUnitalAlgHom 1 := rfl
+    _ = (ofIsogeny φ).toNonUnitalAlgHom 1 := (ofIsogeny_apply φ 1).symm
     _ = (0 : Hom W₁ W₂).toNonUnitalAlgHom 1 := by rw [h]
-    _ = 0 := rfl
+    _ = 0 := by rw [toNonUnitalAlgHom_zero, NonUnitalAlgHom.zero_apply]
+
+/-- The isogeny a nonzero element of the carrier comes from: it is unital, so its underlying
+map promotes to a pullback, and pointedness is the carrier's own condition. -/
+noncomputable def toIsogeny {h : Hom W₁ W₂} (hz : h ≠ 0) : Isogeny W₁ W₂ :=
+  ⟨_, h.mapsInfinity_of_map_one
+    (NonUnitalRingHomClass.map_one_of_exists_apply_ne_zero (by
+      by_contra hall
+      rw [not_exists] at hall
+      refine hz (Hom.ext (NonUnitalAlgHom.ext fun x => ?_))
+      rw [not_not.mp (hall x), toNonUnitalAlgHom_zero, NonUnitalAlgHom.zero_apply]))⟩
+
+/-- **`toIsogeny` is a section of `ofIsogeny`**: a nonzero element read as an isogeny and put
+back is unchanged. Both bundle the same underlying map. -/
+@[simp]
+theorem ofIsogeny_toIsogeny {h : Hom W₁ W₂} (hz : h ≠ 0) : ofIsogeny (toIsogeny hz) = h :=
+  Hom.ext (rfl)
 
 /-- **Every element of the carrier is the zero map or an isogeny.** This is the dichotomy the
 carrier is built for: weakening unitality admits the zero map and nothing else. -/
 theorem eq_zero_or_exists_ofIsogeny (h : Hom W₁ W₂) :
     h = 0 ∨ ∃ φ : Isogeny W₁ W₂, h = ofIsogeny φ := by
-  rcases h.toNonUnitalAlgHom.eq_zero_or_map_one with hz | hone
-  · exact Or.inl (Hom.ext (hz.trans toNonUnitalAlgHom_zero.symm))
-  · exact Or.inr ⟨⟨_, h.mapsInfinity_of_map_one hone⟩, Hom.ext rfl⟩
-
-/-- The isogeny a nonzero element of the carrier comes from. -/
-noncomputable def toIsogeny {h : Hom W₁ W₂} (hz : h ≠ 0) : Isogeny W₁ W₂ :=
-  ⟨_, h.mapsInfinity_of_map_one (NonUnitalAlgHom.map_one_of_ne_zero fun hn =>
-    hz (Hom.ext (hn.trans toNonUnitalAlgHom_zero.symm)))⟩
-
-/-- **`toIsogeny` is a section of `ofIsogeny`**: a nonzero element read as an isogeny and put
-back is unchanged. -/
-@[simp]
-theorem ofIsogeny_toIsogeny {h : Hom W₁ W₂} (hz : h ≠ 0) : ofIsogeny (toIsogeny hz) = h :=
-  Hom.ext rfl
+  by_cases hz : h = 0
+  · exact Or.inl hz
+  · exact Or.inr ⟨toIsogeny hz, (ofIsogeny_toIsogeny hz).symm⟩
 
 /-- **The degree**, extended to the carrier by stipulating `degree 0 = 0`: the zero map's image
 generates no field, so there is no extension for a dimension to measure. -/
