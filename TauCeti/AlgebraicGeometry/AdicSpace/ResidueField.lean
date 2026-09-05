@@ -60,10 +60,6 @@ variable {A : Type*} [CommRing A]
 /-- The **residue ring** `A ⧸ supp v` of a point of the valuation spectrum. -/
 abbrev residueRing (v : Spv A) := A ⧸ v.supp
 
-/-- The residue ring is a domain, because the support of a point is a prime ideal. -/
-instance (v : Spv A) : IsDomain (residueRing v) :=
-  Ideal.Quotient.isDomain v.supp
-
 /-- The valuation induced on the residue ring `A ⧸ supp v`. The canonical valuation of `v` has
 `supp v` in its kernel — that is `TauCeti.ValuationSpectrum.supp_eq_valuation_supp` — so it
 descends to the quotient. -/
