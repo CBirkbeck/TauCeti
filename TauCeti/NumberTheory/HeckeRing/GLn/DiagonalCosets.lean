@@ -242,10 +242,11 @@ representatives are computed, where the representative and not the diagonal matr
 occurs. -/
 @[simp] lemma diagCoset_rep_det (a : Fin n → ℕ) (ha : ∀ i, 0 < a i) :
     (((diagCoset a).rep : GL (Fin n) ℚ) : Matrix (Fin n) (Fin n) ℚ).det = ∏ i, (a i : ℚ) := by
-  obtain ⟨h₁, hh₁, h₂, hh₂, hrep⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul a
-  rw [hrep, Units.val_mul, Units.val_mul, Matrix.det_mul, Matrix.det_mul,
-    det_eq_one_of_mem_SLnZ n hh₁, det_eq_one_of_mem_SLnZ n hh₂, natDiagGL_det n a ha, one_mul,
-    mul_one]
+  have hmem : ((diagCoset a).rep : GL (Fin n) ℚ) ∈
+      doubleCoset (natDiagGL n a) (SLnZ n) (SLnZ n) := by
+    rw [← diagCoset_toSet]
+    exact HeckeCoset.rep_mem _
+  rw [det_eq_of_mem_doubleCoset_SLnZ n hmem, natDiagGL_det n a ha]
 
 /-- Defining equation for the sealed `diagElem`. -/
 lemma diagElem_def (a : Fin n → ℕ) :
