@@ -516,7 +516,7 @@ the same element of the target, and inverses in a monoid are unique.
 
 This is the transport that identifies the fraction `t/s` across a numerator enlargement, and it
 needs nothing of the target beyond its ring structure. -/
-theorem map_divBy_of_comp_toCompletionLoc_eq (t : A) {B : Type*} [CommRing B] :
+theorem map_divBy_of_comp_toCompletionLoc_eq (t : A) {B : Type*} [Semiring B] :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
     letI := isTopologicalRing_locUniformSpace P T s S hden
