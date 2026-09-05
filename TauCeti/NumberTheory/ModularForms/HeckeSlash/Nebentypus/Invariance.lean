@@ -53,7 +53,9 @@ Adapted from the AINTLIB `LeanModularForms` project
 <https://github.com/CBirkbeck/AINTLIB> @ `2baa76f742bdb4fb8ee323fabba41203bd390e08`), whose
 `twistedHeckeSlashGen_preserves_invariant` (line 457) is the theorem below, with
 `twisted_weighted_slash_tRep_gen_of_mem` (line 319) and `delta0Nebentypus_left_weight` (line 391)
-its per-summand and weight-transformation steps.
+its per-summand and weight-transformation steps — which are, respectively, the private
+`nebentypusWeight_smul_slash_slash_eq_char_smul` and
+`nebentypusWeight_eq_char_mul_delta0NebentypusChar` here.
 
 Only the statements are taken. The source reaches them through some 210 lines of
 adjugate-and-correction plumbing — `gamma0Correction`, `gamma0_adjugate_decomp_eq`,
@@ -128,6 +130,44 @@ lemma mul_inv_mem_Delta0 {h : GL (Fin 2) ℚ} (hh : h ∈ (Gamma0 N).map (mapGL 
     rw [Subgroup.mem_toSubmonoid, Gamma0Image_def]
     exact inv_mem hh))
 
+/-- The unnormalised representative `δ (γ⁻¹ τᵥ)⁻¹` of the class `γ⁻¹ • v` is the chosen
+representative `τᵥ` with `γ` attached on the right. Both spellings are needed below — the first
+because it is what `mul_inv_mem_Delta0` and the weight lemma are stated at, the second because the
+slash has to be split as `(f ∣ τᵥ) ∣ γ`. -/
+private lemma rightCosetRep_mul_eq_mul_inv (γ : ↥(Gamma0 N))
+    (v : DecompQuotient ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))
+      (D.out : GL (Fin 2) ℚ)⁻¹) :
+    rightCosetRep D v * (mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ) =
+      (D.out : GL (Fin 2) ℚ) *
+        ((mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ)⁻¹ * (v.out : GL (Fin 2) ℚ))⁻¹ := by
+  rw [rightCosetRep_def]
+  group
+
+/-- **A right factor from `Γ₀(N)` scales the weight by `χ (d_γ)⁻¹.** By
+`rightCosetRep_mul_eq_mul_inv` the unnormalised representative of `γ⁻¹ • v` is `τᵥ γ`, so its
+weight is `Wᵥ` divided by `χ (d_γ)`: `delta0NebentypusChar` is multiplicative, and
+`delta0NebentypusChar_mapGL` inverts the nebentypus on `Γ₀(N)`.
+
+Stated in the direction the reindexing consumes it, with `Wᵥ` alone on the left, so that it can be
+rewritten under the slash. This is `delta0Nebentypus_left_weight` of the source. -/
+private lemma nebentypusWeight_eq_char_mul_delta0NebentypusChar (γ : ↥(Gamma0 N))
+    (v : DecompQuotient ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))
+      (D.out : GL (Fin 2) ℚ)⁻¹)
+    (hh : ((mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ)⁻¹ * (v.out : GL (Fin 2) ℚ)) ∈
+      (Gamma0 N).map (mapGL ℚ)) :
+    (nebentypusWeight χ D v : ℂ) = (↑(χ ((Gamma0Map N).toHomUnits γ)) : ℂ) *
+      (delta0NebentypusChar N χ ⟨(D.out : GL (Fin 2) ℚ) *
+        ((mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ)⁻¹ * (v.out : GL (Fin 2) ℚ))⁻¹,
+        mul_inv_mem_Delta0 D hh⟩ : ℂ) := by
+  rw [show (⟨(D.out : GL (Fin 2) ℚ) *
+          ((mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ)⁻¹ * (v.out : GL (Fin 2) ℚ))⁻¹,
+        mul_inv_mem_Delta0 D hh⟩ : Delta0 N) =
+      ⟨rightCosetRep D v, rightCosetRep_mem_Delta0 D v⟩ * ⟨_, mapGL_mem_Delta0 N γ⟩ from
+      Subtype.ext (rightCosetRep_mul_eq_mul_inv D γ v).symm,
+    map_mul, Units.val_mul, delta0NebentypusChar_mapGL, Units.val_inv_eq_inv_val,
+    nebentypusWeight_def]
+  field_simp
+
 /-- **An unnormalised representative carries the same weighted slash as the chosen one.** If `h` in
 `Γ₀(N)` has class `w`, then the weighted slash at `δ h⁻¹` is the `w`-th summand of
 `twistedHeckeSlashSum`.
@@ -172,6 +212,35 @@ lemma delta0NebentypusChar_smul_slash_eq_nebentypusWeight_smul_slash (f : ℍ �
     show (mapGL ℚ ((⟨σ, hσ⟩ : ↥(Gamma0 N)) : SL(2, ℤ)) : GL (Fin 2) ℚ) = mapGL ℚ σ from rfl, hσX]
   group
 
+/-- **Slashing a weighted summand by `γ` gives `χ (d_γ)` times the summand at `γ⁻¹ • v`.** The
+per-summand step of `twistedHeckeSlashSum_mem_functionCharSpace`, and
+`twisted_weighted_slash_tRep_gen_of_mem` of the source: the slash splits off `γ` on the right,
+`nebentypusWeight_eq_char_mul_delta0NebentypusChar` pulls `χ (d_γ)` out of the weight, and what
+is left is the unnormalised representative that
+`delta0NebentypusChar_smul_slash_eq_nebentypusWeight_smul_slash` identifies with the `γ⁻¹ • v`-th
+summand.
+
+`hmem` is `γ` in the rational copy of `Γ₀(N)`; it is a hypothesis rather than a local `have`
+because it names the group element doing the acting, so it occurs in the statement. -/
+private lemma nebentypusWeight_smul_slash_slash_eq_char_smul (f : ℍ → ℂ)
+    (hf : f ∈ functionCharSpace k χ) (γ : ↥(Gamma0 N))
+    (hmem : (mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ) ∈ (Gamma0 N).map (mapGL ℚ))
+    (v : DecompQuotient ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))
+      (D.out : GL (Fin 2) ℚ)⁻¹) :
+    ((nebentypusWeight χ D v : ℂ) • (f ∣[k] rightCosetRep D v)) ∣[k]
+        (mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ) =
+      (↑(χ ((Gamma0Map N).toHomUnits γ)) : ℂ) •
+        ((nebentypusWeight χ D ((⟨_, hmem⟩ : ↥((Gamma0 N).map (mapGL ℚ)))⁻¹ • v) : ℂ) •
+          (f ∣[k] rightCosetRep D ((⟨_, hmem⟩ : ↥((Gamma0 N).map (mapGL ℚ)))⁻¹ • v))) := by
+  have hh : ((mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ)⁻¹ * (v.out : GL (Fin 2) ℚ)) ∈
+      (Gamma0 N).map (mapGL ℚ) := mul_mem (inv_mem hmem) v.out.2
+  rw [ModularForm.rat_smul_slash_of_det_pos k
+      (posDetInt_le_glpos 2 (Delta0_le_posDetInt N (mapGL_mem_Delta0 N γ))) _ _,
+    ← SlashAction.slash_mul, rightCosetRep_mul_eq_mul_inv D γ v,
+    nebentypusWeight_eq_char_mul_delta0NebentypusChar χ D γ v hh, mul_smul]
+  exact congrArg _ (delta0NebentypusChar_smul_slash_eq_nebentypusWeight_smul_slash k χ D f hf hh
+    (MulAction.Quotient.mk_smul_out _ (⟨_, hmem⟩ : ↥((Gamma0 N).map (mapGL ℚ)))⁻¹ v))
+
 variable [NeZero N]
 
 /-- The enumeration `∑` needs, chosen exactly as in `HeckeSlash/Nebentypus/Basic.lean` so that the
@@ -188,9 +257,9 @@ twisted operators live on the character space where the unweighted `heckeSlashSu
 
 The proof is Shimura's Proposition 3.37 with the character carried through. Right multiplication by
 `γ` permutes the right cosets — the permutation is `MulAction.toPerm` at `γ⁻¹`, exactly as in
-`HeckeSlash/Invariance.lean` — and the one new step is that a right factor of `γ` multiplies a
-summand's weight by `χ (d_γ)⁻¹`, so that eigenvalue comes back out of the sum and is what the
-conclusion asserts. -/
+`HeckeSlash/Invariance.lean` — and the one new step, that a right factor of `γ` multiplies a
+summand's weight by `χ (d_γ)⁻¹`, is `nebentypusWeight_smul_slash_slash_eq_char_smul`; that
+eigenvalue then comes back out of the sum and is what the conclusion asserts. -/
 theorem twistedHeckeSlashSum_mem_functionCharSpace (f : ℍ → ℂ)
     (hf : f ∈ functionCharSpace k χ) :
     twistedHeckeSlashSum k χ D f ∈ functionCharSpace k χ := by
@@ -202,45 +271,12 @@ theorem twistedHeckeSlashSum_mem_functionCharSpace (f : ℍ → ℂ)
   -- `Γ₀(N)` the Hecke triple is built from, which is what acts on the coset index.
   have hmem : (mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ) ∈ (Gamma0 N).map (mapGL ℚ) :=
     Subgroup.mem_map.mpr ⟨_, γ.2, rfl⟩
-  have hgΔ : (mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ) ∈ Delta0 N := mapGL_mem_Delta0 N γ
-  -- Slashing the `v`-th weighted summand by `γ` gives `χ (d_γ)` times the summand at `γ⁻¹ • v`.
-  have hperm (v : DecompQuotient ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))
-      (D.out : GL (Fin 2) ℚ)⁻¹) :
-      ((nebentypusWeight χ D v : ℂ) • (f ∣[k] rightCosetRep D v)) ∣[k]
-          (mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ) =
-        (↑(χ ((Gamma0Map N).toHomUnits γ)) : ℂ) •
-          ((nebentypusWeight χ D ((⟨_, hmem⟩ : ↥((Gamma0 N).map (mapGL ℚ)))⁻¹ • v) : ℂ) •
-            (f ∣[k] rightCosetRep D ((⟨_, hmem⟩ : ↥((Gamma0 N).map (mapGL ℚ)))⁻¹ • v))) := by
-    have hh : ((mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ)⁻¹ * (v.out : GL (Fin 2) ℚ)) ∈
-        (Gamma0 N).map (mapGL ℚ) := mul_mem (inv_mem hmem) v.out.2
-    -- `aᵥ γ = δ τᵥ⁻¹ γ = δ (γ⁻¹ τᵥ)⁻¹`: an unnormalised representative of the class `γ⁻¹ • v`.
-    have hx : rightCosetRep D v * (mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ) =
-        (D.out : GL (Fin 2) ℚ) *
-          ((mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ)⁻¹ * (v.out : GL (Fin 2) ℚ))⁻¹ := by
-      rw [rightCosetRep_def]
-      group
-    -- Its weight is `Wᵥ · χ (d_γ)⁻¹`, because the twisting character is multiplicative on `Δ₀(N)`
-    -- and inverts the nebentypus on `Γ₀(N)`.
-    have hw : (nebentypusWeight χ D v : ℂ) = (↑(χ ((Gamma0Map N).toHomUnits γ)) : ℂ) *
-        (delta0NebentypusChar N χ ⟨(D.out : GL (Fin 2) ℚ) *
-          ((mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ)⁻¹ * (v.out : GL (Fin 2) ℚ))⁻¹,
-          mul_inv_mem_Delta0 D hh⟩ : ℂ) := by
-      rw [show (⟨(D.out : GL (Fin 2) ℚ) *
-              ((mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ)⁻¹ * (v.out : GL (Fin 2) ℚ))⁻¹,
-            mul_inv_mem_Delta0 D hh⟩ : Delta0 N) =
-          ⟨rightCosetRep D v, rightCosetRep_mem_Delta0 D v⟩ * ⟨_, hgΔ⟩ from Subtype.ext hx.symm,
-        map_mul, Units.val_mul, delta0NebentypusChar_mapGL, Units.val_inv_eq_inv_val,
-        nebentypusWeight_def]
-      field_simp
-    rw [ModularForm.rat_smul_slash_of_det_pos k
-        (posDetInt_le_glpos 2 (Delta0_le_posDetInt N hgΔ)) _ _,
-      ← SlashAction.slash_mul, hx, hw, mul_smul]
-    exact congrArg _ (delta0NebentypusChar_smul_slash_eq_nebentypusWeight_smul_slash k χ D f hf hh
-      (MulAction.Quotient.mk_smul_out _ (⟨_, hmem⟩ : ↥((Gamma0 N).map (mapGL ℚ)))⁻¹ v))
   rw [← ModularForm.rat_slash_mapGL, twistedHeckeSlashSum_def, SlashAction.sum_slash,
     Finset.smul_sum]
   exact Fintype.sum_equiv (MulAction.toPerm (⟨_, hmem⟩ : ↥((Gamma0 N).map (mapGL ℚ)))⁻¹) _ _
-    fun v ↦ by simpa only [MulAction.toPerm_apply] using hperm v
+    fun v ↦ by
+      simpa only [MulAction.toPerm_apply] using
+        nebentypusWeight_smul_slash_slash_eq_char_smul k χ D f hf γ hmem v
 
 /-- **The twisted slash sum as an endomorphism of the character space.** `twistedHeckeSlashSumEnd`
 is an endomorphism of *all* of `ℍ → ℂ`, and its own docstring records that this is the wrong
