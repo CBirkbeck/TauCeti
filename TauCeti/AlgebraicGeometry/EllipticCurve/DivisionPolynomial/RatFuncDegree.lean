@@ -39,10 +39,10 @@ the isogeny `[n]` itself appears here.
 
 Adapted from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0), pinned
 at `513e83879e2f8cbc626eb9e04d660e92be16ccba`: `HasseWeil/Basic.lean`, private declarations
-`max_natDegree_num_denom_mulByInt` and `finrank_ratFunc_mulByInt`. The gcd-is-a-unit route and the
-`div_C` / `natDegree_C_mul` / `natDegree_mul_C` degree bookkeeping are theirs. Two departures:
-that version assumes `n ≠ 0`, and it builds the rational-function-field dimension itself, which
-Mathlib's `RatFunc.finrank_eq_max_natDegree` now supplies.
+`max_natDegree_num_denom_mulByInt` and `finrank_ratFunc_mulByInt`. The proof structure is theirs:
+reduce the quotient to lowest terms through a unit gcd, then compare the two degrees. Two
+departures: that version assumes `n ≠ 0`, and it builds the rational-function-field dimension
+itself, which Mathlib's `RatFunc.finrank_eq_max_natDegree` now supplies.
 -/
 
 public section
@@ -55,33 +55,32 @@ variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 
 /-- **`Φₙ / ΨSqₙ` has degree `n²`**: adjoining it to `F` inside the rational function field
 leaves an extension of dimension `n²`. For `n ≠ 0` this is the statement that the `x`-coordinate
-map of `[n]` is a rational map of degree `n²`.
+map of `[n]` is a rational map of degree `n²` — the arithmetic half of `deg [n] = n²`.
 
-Mathlib's `RatFunc.finrank_eq_max_natDegree` reads that dimension off the numerator and
-denominator of the reduced fraction. For `n ≠ 0` those are `Φₙ` and `ΨSqₙ` themselves, up to a
-unit, because `isCoprime_Φ_ΨSq` puts the quotient in lowest terms; at `n = 0` they are not, which
-is why that case is proved separately. `natDegree_Φ` then gives the numerator degree `n²`
-exactly, while
-`natDegree_ΨSq_le` only bounds the denominator degree by `n² - 1` — which is all the maximum
-needs, and is the honest statement, since that degree drops when the characteristic divides `n`.
-
-No hypothesis on `n` is needed. At `n = 0` the quotient is not a coordinate of anything: `ΨSq₀`
-vanishes, so it is the junk value `0`. The equality survives as one between two zeros — `F⟮0⟯` is
-`⊥` and `F(x)` is not finite-dimensional over `F`, so the `finrank` is `0` by convention, and
+Nonsingularity is assumed only where it is used. At `n = 0` the quotient is not a coordinate of
+anything — `[0]` sends every point to infinity, and `ΨSq₀` vanishes, making the quotient the junk
+value `0` — and the equality holds there for a singular `W` too, as one between two zeros: `F⟮0⟯`
+is `⊥` and `F(x)` is not finite-dimensional over `F`, so the `finrank` is `0` by convention, while
 `(0 : ℤ).natAbs ^ 2` is `0` as well. `TauCeti.RatFunc.finrank_adjoin_X_pow` reads the same way at
 `n = 0`, for the same reason. -/
 @[simp]
-theorem finrank_adjoin_Φ_div_ΨSq (hΔ : W.Δ ≠ 0) (n : ℤ) :
+theorem finrank_adjoin_Φ_div_ΨSq (n : ℤ) (hΔ : n ≠ 0 → W.Δ ≠ 0) :
     Module.finrank
       (IntermediateField.adjoin F
         {algebraMap F[X] (RatFunc F) (W.Φ n) / algebraMap F[X] (RatFunc F) (W.ΨSq n)})
       (RatFunc F) = n.natAbs ^ 2 := by
+  -- `RatFunc.finrank_eq_max_natDegree` reads the dimension off the numerator and denominator of
+  -- the reduced fraction. For `n ≠ 0` those are `Φₙ` and `ΨSqₙ` up to a unit, since
+  -- `isCoprime_Φ_ΨSq` puts the quotient in lowest terms; `natDegree_Φ` gives the numerator degree
+  -- `n²` exactly, while `natDegree_ΨSq_le` only bounds the denominator degree by `n² - 1` — all
+  -- the maximum needs, and the honest bound, since that degree drops in characteristic dividing
+  -- `n`. At `n = 0` the fraction is `0`, so it is handled first, before any of this.
   classical
   rcases eq_or_ne n 0 with rfl | hn
   · rw [WeierstrassCurve.ΨSq_zero, map_zero, div_zero, RatFunc.finrank_eq_max_natDegree]
     simp
-  have hΨ : W.ΨSq n ≠ 0 := W.ΨSq_ne_zero_of_Δ_ne_zero hΔ hn
-  have hcop : IsCoprime (W.Φ n) (W.ΨSq n) := W.isCoprime_Φ_ΨSq n hΔ
+  have hΨ : W.ΨSq n ≠ 0 := W.ΨSq_ne_zero_of_Δ_ne_zero (hΔ hn) hn
+  have hcop : IsCoprime (W.Φ n) (W.ΨSq n) := W.isCoprime_Φ_ΨSq n (hΔ hn)
   have hgu : IsUnit (gcd (W.Φ n) (W.ΨSq n)) := gcd_isUnit_iff_isRelPrime.mpr hcop.isRelPrime
   obtain ⟨c, hc, hgcd⟩ := Polynomial.isUnit_iff.mp hgu
   have hcinv : c⁻¹ ≠ 0 := inv_ne_zero hc.ne_zero
