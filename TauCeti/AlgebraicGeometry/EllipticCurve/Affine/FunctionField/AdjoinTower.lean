@@ -29,6 +29,8 @@ Everything here is generator-agnostic. A caller supplies `g` together with a the
 
 ## Main results
 
+* `WeierstrassCurve.Affine.ratFuncAdjoinRange_le_iff`: the universal property — the copy of
+  `K⟮g⟯` lies inside an intermediate field exactly when that field contains `g`.
 * `WeierstrassCurve.Affine.relfinrank_ratFuncAdjoinRange`: `[K(x) : K⟮g⟯]`, read inside `K(W)`.
 * `WeierstrassCurve.Affine.finrank_ratFuncAdjoinRange`: `[K(W) : K⟮g⟯] = 2 · [K(x) : K⟮g⟯]`.
 * `WeierstrassCurve.Affine.ratFuncAdjoinRange_eq_map_ratFuncRange` and
@@ -96,6 +98,15 @@ theorem mem_ratFuncAdjoinRange {g : RatFunc K} {z : W.FunctionField} :
 theorem algebraMap_mem_ratFuncAdjoinRange (g : RatFunc K) :
     algebraMap (RatFunc K) W.FunctionField g ∈ ratFuncAdjoinRange W g :=
   (mem_ratFuncAdjoinRange W).mpr ⟨g, IntermediateField.mem_adjoin_simple_self _ _, rfl⟩
+
+/-- **The universal property**: the copy of `K⟮g⟯` lies inside an intermediate field exactly when
+that field contains `g`. `K⟮g⟯` is the smallest subfield of `K(W)` containing `K` and `g`. -/
+@[simp]
+theorem ratFuncAdjoinRange_le_iff {g : RatFunc K} {L : IntermediateField K W.FunctionField} :
+    ratFuncAdjoinRange W g ≤ L ↔ algebraMap (RatFunc K) W.FunctionField g ∈ L := by
+  rw [ratFuncAdjoinRange_eq_map, IntermediateField.map_le_iff_le_comap,
+    IntermediateField.adjoin_le_iff, Set.singleton_subset_iff]
+  rfl
 
 /-- `K⟮g⟯` sits inside `K(x)`, both read inside `K(W)`. -/
 theorem ratFuncAdjoinRange_le_ratFuncRange (g : RatFunc K) :
