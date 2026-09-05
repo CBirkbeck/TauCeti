@@ -120,9 +120,9 @@ private lemma dvd_and_gcd_of_Gamma_mul (τ A : Matrix (Fin 2) (Fin 2) ℤ)
     have hshift : (τ * A) 1 1 = A 1 1 + k * (N : ℤ) := by linarith
     exact hshift ▸ (Int.isCoprime_iff_gcd_eq_one.mpr hA11).add_mul_right_left k
 
-/-- **The right factor lands in `Γ₀(N)`.** If `τ_N γ₂'` conjugates `α` into `Δ₀(N)` and `τ_N`
-is congruent to the identity mod `N`, then the lower-left entry of the whole product is
-divisible by `N`, and `dvd_and_gcd_of_Gamma_mul` transports that divisibility to `γ₂'`. -/
+/-- **The right factor lands in `Γ₀(N)`.** Let `α` be the integer matrix `A` over `ℚ`, with
+`N ∣ A 1 0` and `A 1 1` coprime to `N`, and let `τ_N` be congruent to the identity mod `N`.
+If the product `τ_N * α * γ₂'` lies in `Δ₀(N)`, then `γ₂' ∈ Γ₀(N)`. -/
 private lemma mem_Gamma0_of_mul_mem_Delta0 (α : GL (Fin 2) ℚ) (A : Matrix (Fin 2) (Fin 2) ℤ)
     (hA : (↑α : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
     (hAN : (N : ℤ) ∣ A 1 0) (hA11 : Int.gcd (A 1 1) N = 1)
