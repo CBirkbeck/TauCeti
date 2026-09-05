@@ -28,10 +28,15 @@ The zero element is a formal tag. No compatibility between it and composition of
 claimed: the pullback identity a nonzero morphism satisfies is vacuous at zero, every point
 landing at infinity.
 
+Addition is not defined here. A sum of multiplicative maps is not multiplicative, so the carrier
+is not an additive subgroup of the linear maps; an additive structure on it has to be built from
+the elliptic-curve group law, which needs the rational addition formulas rather than anything in
+this file.
+
 ## Main definitions
 
-* `TauCeti.Isogeny.IsHomPullback`: the condition carving the carrier out — a map that is unital
-  is pointed.
+* `TauCeti.Isogeny.MapsInfinityOfMapOne`: the condition carving the carrier out — a map that is
+  unital is pointed. It is vacuous at the zero map, which is how that map enters.
 * `TauCeti.Isogeny.Hom`: the carrier of `Hom(W₁, W₂)`, with `0` its zero map and
   `TauCeti.Isogeny.Hom.ofIsogeny` its nonzero elements.
 * `TauCeti.Isogeny.Hom.degree`: the degree, extended by the stipulation `degree 0 = 0`.
@@ -39,13 +44,16 @@ landing at infinity.
 ## Main results
 
 * `TauCeti.Isogeny.Hom.eq_zero_or_exists_ofIsogeny`: every element is the zero map or comes from
-  a unique isogeny.
-* `TauCeti.Isogeny.Hom.ofIsogeny_injective` and `TauCeti.Isogeny.Hom.ofIsogeny_ne_zero`: the
-  isogenies sit in the carrier as distinct nonzero elements.
+  an isogeny.
+* `TauCeti.Isogeny.Hom.degree_eq_zero_iff`: the degree vanishes exactly at the zero map.
 
-The additive structure is **not** here. A sum of multiplicative maps is not multiplicative, so
-the carrier is not an additive subgroup of the linear maps; addition comes from the group law and
-is a milestone of its own.
+## Provenance
+
+The design is `TauCetiRoadmap/EllipticCurves/README.md`, Layer 1, "The hom-group and the degree
+form": that the carrier adjoins no `WithZero` but is carved from the multiplicative maps, that the
+zero map is the unique non-unital element and a formal tag rather than a pullback, and that
+`degree 0 = 0` is stipulated because the zero map's image generates no field. The mathematics is
+Silverman, *The Arithmetic of Elliptic Curves*, II.2 and III.6.
 -/
 
 public section
@@ -59,12 +67,12 @@ variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F}
 /-- The condition carving the hom carrier out of the non-unital pullbacks: if the map is unital,
 it is pointed. At the zero map the hypothesis is unsatisfiable, so the condition is vacuous
 there — which is what lets the zero map into the carrier without a pointedness claim about it. -/
--- `@[expose]` here and on the two constructions below: the members of this type are built and
--- taken apart by their underlying map, so consumers need that body, and the `rfl` lemmas
--- recording it are exported.
+-- `@[expose]`: members of the carrier are built and taken apart through this condition, so
+-- consumers need to see that it is the implication and not an opaque `Prop`.
 @[expose]
-def IsHomPullback (p : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField) : Prop :=
-  ∀ h : p 1 = 1, CoordinatePullback.MapsInfinity (p.toAlgHomOfMapOne h)
+def MapsInfinityOfMapOne (p : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField) : Prop :=
+  ∀ h : p 1 = 1,
+    CoordinatePullback.MapsInfinity (AlgHom.ofLinearMap ⟨⟨p, map_add p⟩, map_smul p⟩ h (map_mul p))
 
 /-- **The carrier of `Hom(W₁, W₂)`**: an `F`-linear multiplicative map out of the target
 coordinate ring, pointed wherever it is unital. Its zero map is the zero morphism's formal
@@ -74,7 +82,7 @@ structure Hom (W₁ W₂ : WeierstrassCurve.Affine F) where
   /-- The underlying multiplicative map. Not an `AlgHom`: unitality is what the zero map fails. -/
   toNonUnitalAlgHom : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField
   /-- Pointedness, required only of the unital maps. -/
-  isHomPullback : IsHomPullback toNonUnitalAlgHom
+  mapsInfinity_of_map_one : MapsInfinityOfMapOne toNonUnitalAlgHom
 
 namespace Hom
 
@@ -88,22 +96,18 @@ theorem toNonUnitalAlgHom_zero : (0 : Hom W₁ W₂).toNonUnitalAlgHom = 0 := rf
 @[expose]
 noncomputable def ofIsogeny (φ : Isogeny W₁ W₂) : Hom W₁ W₂ where
   toNonUnitalAlgHom := (φ.pullback : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField)
-  isHomPullback _ := φ.mapsInfinity
-
--- Not `@[simp]`: it rewrites `ofIsogeny_apply`'s left-hand side, and `simpNF` rejects the pair.
--- The applied form keeps the attribute, being the one a consumer meets.
-theorem toNonUnitalAlgHom_ofIsogeny (φ : Isogeny W₁ W₂) :
-    (ofIsogeny φ).toNonUnitalAlgHom = (φ.pullback : W₂.CoordinateRing →ₙₐ[F] W₁.FunctionField) :=
-  rfl
+  mapsInfinity_of_map_one _ := φ.mapsInfinity
 
 @[simp]
 theorem ofIsogeny_apply (φ : Isogeny W₁ W₂) (x : W₂.CoordinateRing) :
     (ofIsogeny φ).toNonUnitalAlgHom x = φ.pullback x :=
   rfl
 
+/-- **The isogenies sit in the carrier as distinct elements.** -/
 theorem ofIsogeny_injective : Function.Injective (ofIsogeny (W₁ := W₁) (W₂ := W₂)) :=
   fun _ _ h => Isogeny.ext (AlgHom.ext fun x => congrArg (fun g => g.toNonUnitalAlgHom x) h)
 
+/-- **No isogeny is the zero map**, since a pullback sends `1` to `1`. -/
 @[simp]
 theorem ofIsogeny_ne_zero (φ : Isogeny W₁ W₂) : ofIsogeny φ ≠ 0 := fun h => by
   refine one_ne_zero (α := W₁.FunctionField) ?_
@@ -119,14 +123,15 @@ theorem eq_zero_or_exists_ofIsogeny (h : Hom W₁ W₂) :
     h = 0 ∨ ∃ φ : Isogeny W₁ W₂, h = ofIsogeny φ := by
   rcases h.toNonUnitalAlgHom.eq_zero_or_map_one with hz | hone
   · exact Or.inl (Hom.ext (hz.trans toNonUnitalAlgHom_zero.symm))
-  · exact Or.inr ⟨⟨h.toNonUnitalAlgHom.toAlgHomOfMapOne hone, h.isHomPullback hone⟩, Hom.ext rfl⟩
+  · exact Or.inr ⟨⟨_, h.mapsInfinity_of_map_one hone⟩, Hom.ext rfl⟩
 
-/-- The isogeny an element comes from, when it is not the zero map. -/
+/-- The isogeny a nonzero element of the carrier comes from. -/
 noncomputable def toIsogeny {h : Hom W₁ W₂} (hz : h ≠ 0) : Isogeny W₁ W₂ :=
-  ⟨h.toNonUnitalAlgHom.toAlgHomOfMapOne (NonUnitalAlgHom.map_one_of_ne_zero (fun hn =>
-      hz (Hom.ext (hn.trans toNonUnitalAlgHom_zero.symm)))),
-    h.isHomPullback _⟩
+  ⟨_, h.mapsInfinity_of_map_one (NonUnitalAlgHom.map_one_of_ne_zero fun hn =>
+    hz (Hom.ext (hn.trans toNonUnitalAlgHom_zero.symm)))⟩
 
+/-- **`toIsogeny` is a section of `ofIsogeny`**: a nonzero element read as an isogeny and put
+back is unchanged. -/
 @[simp]
 theorem ofIsogeny_toIsogeny {h : Hom W₁ W₂} (hz : h ≠ 0) : ofIsogeny (toIsogeny hz) = h :=
   Hom.ext rfl
@@ -147,6 +152,16 @@ theorem degree_ofIsogeny (φ : Isogeny W₁ W₂) : (ofIsogeny φ).degree = φ.d
   split
   · exact absurd ‹ofIsogeny φ = 0› (ofIsogeny_ne_zero φ)
   · rw [ofIsogeny_injective (ofIsogeny_toIsogeny _)]
+
+/-- **The degree vanishes exactly at the zero map**: every isogeny has positive degree, so the
+stipulated value at zero is the only one. -/
+@[simp]
+theorem degree_eq_zero_iff (h : Hom W₁ W₂) : h.degree = 0 ↔ h = 0 := by
+  refine ⟨fun hd => ?_, fun hz => hz ▸ degree_zero⟩
+  rcases h.eq_zero_or_exists_ofIsogeny with hz | ⟨φ, hφ⟩
+  · exact hz
+  · rw [hφ, degree_ofIsogeny] at hd
+    exact absurd hd φ.degree_ne_zero
 
 end Hom
 
