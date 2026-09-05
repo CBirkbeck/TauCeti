@@ -276,7 +276,7 @@ private lemma sum_multiplicity_eq_card [IsHeckeTriple Δ H₁ H₂] [IsHeckeTrip
 /-- **Translating an inverse along a left coset.** If `w` and `x` lie in the same left coset
 of `H₃`, then `x⁻¹ d` and `w⁻¹ d` lie in the same double coset `H₃ g₃ H₄`: the two differ by
 the factor `(x⁻¹ w)⁻¹ ∈ H₃`, which `mul_mem_doubleCoset_iff` absorbs. -/
-private lemma mem_doubleCoset_inv_mul_iff_of_mem {w x d g₃ : G} (h : x⁻¹ * w ∈ H₃) :
+private lemma inv_mul_mem_doubleCoset_iff_of_mem {w x d g₃ : G} (h : x⁻¹ * w ∈ H₃) :
     x⁻¹ * d ∈ doubleCoset g₃ (H₃ : Set G) H₄ ↔ w⁻¹ * d ∈ doubleCoset g₃ (H₃ : Set G) H₄ := by
   have hw : w⁻¹ * d = (x⁻¹ * w)⁻¹ * (x⁻¹ * d) := by
     simp only [mul_inv_rev, inv_inv, mul_assoc, mul_inv_cancel_left]
@@ -300,13 +300,10 @@ private lemma mem_doubleCoset_rep_mk (w : Δ) :
   exact mem_doubleCoset_self H₁ H₃ _
 
 open Classical in
-/-- **The product of two multiplicities as a doubly-indexed indicator sum.** Expanding both
-factors by `multiplicity_eq_card_filter` turns the product into a sum over the left cosets `l`
-of `H₁ E H₃` and the pairs `p`, of the indicator of the two conditions holding together.
-
-The `show` ascription is what pins down the implicit arguments of `multiplicity_mul_left`:
-rewriting with the bare `.symm` leaves the translated target `↑l.out * ↑E.rep` undetermined,
-since it does not occur in the goal before the rewrite. -/
+/-- **The product of two multiplicities as a doubly-indexed indicator sum**, over the left
+cosets `l` of `H₁ E H₃` and the pairs `p`, of the indicator of the two conditions holding
+together. The second factor is expanded by `multiplicity_eq_card_filter` and the first by
+`multiplicity_def`, each then turned into a sum of indicators by `nat_card_setOf_eq_sum`. -/
 private lemma multiplicity_mul_multiplicity_eq_sum_indicator [IsHeckeTriple Δ H₁ H₂]
     [IsHeckeTriple Δ H₂ H₃] [IsHeckeTriple Δ H₃ H₄] [IsHeckeTriple Δ H₁ H₃] (g₁ g₂ g₃ d : Δ)
     (E : HeckeCoset Δ H₁ H₃) :
@@ -322,6 +319,9 @@ private lemma multiplicity_mul_multiplicity_eq_sum_indicator [IsHeckeTriple Δ H
   refine Finset.sum_congr rfl fun l _ ↦ ?_
   rw [mul_ite, mul_one, mul_zero]
   split_ifs with hcond
+  -- the `show` ascription pins down the implicit arguments of `multiplicity_mul_left`:
+  -- rewriting with the bare `.symm` leaves the translated target `↑l.out * ↑E.rep`
+  -- undetermined, since it does not occur in the goal before the rewrite
   · rw [show multiplicity H₁ H₂ H₃ (g₁ : G) (g₂ : G) (E.rep : G) =
         multiplicity H₁ H₂ H₃ (g₁ : G) (g₂ : G) ((l.out : G) * E.rep) from
         (multiplicity_mul_left l.out.2 _ _ _).symm,
@@ -384,8 +384,8 @@ private lemma sum_image_mulMap_multiplicity_left [IsHeckeTriple Δ H₁ H₂]
   have hiff : ((((l₀.out : G) * (E₀.rep : G))⁻¹ * d ∈ doubleCoset (g₃ : G) H₃ H₄) ∧
       ((wG : G) : G ⧸ H₃) = (((l₀.out : G) * (E₀.rep : G) : G) : G ⧸ H₃)) ↔
       (wG⁻¹ * (d : G) ∈ doubleCoset (g₃ : G) H₃ H₄) :=
-    ⟨fun hh ↦ (mem_doubleCoset_inv_mul_iff_of_mem hl₀).mp hh.1,
-      fun hh ↦ ⟨(mem_doubleCoset_inv_mul_iff_of_mem hl₀).mpr hh, hmk⟩⟩
+    ⟨fun hh ↦ (inv_mul_mem_doubleCoset_iff_of_mem hl₀).mp hh.1,
+      fun hh ↦ ⟨(inv_mul_mem_doubleCoset_iff_of_mem hl₀).mpr hh, hmk⟩⟩
   by_cases hd4 : wG⁻¹ * (d : G) ∈ doubleCoset (g₃ : G) H₃ H₄
   · rw [ite_eq_left (hiff.mpr hd4), ite_eq_left hd4]
   · rw [ite_eq_right fun hh ↦ hd4 (hiff.mp hh), ite_eq_right hd4]
