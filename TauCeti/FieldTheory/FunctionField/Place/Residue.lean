@@ -89,8 +89,9 @@ private theorem mem_unitGroup_of_ord_eq_zero (P : Place k F) {f : Fˣ} (hf : P.o
 
 This is the **only** place the subtype representation of `ValuationSubring.unitGroup` is used.
 That group is a subgroup of `Fˣ`, so its operations are computed on values, and the four laws
-below are therefore `rfl`; every group law for `residueUnit` and `normResidue` is one of them
-pushed through a `MonoidHom`, with no further appeal to the representation. -/
+below — product, identity, inverse, integer power — are therefore `rfl`. Every group law for
+`residueUnit` and `normResidue` is one of them pushed through a `MonoidHom`, or, in the case of
+the quotient laws, a product and an inverse composed. -/
 private def unitGroupMk (P : Place k F) (f : Fˣ) (hf : P.ord (f : F) = 0) :
     P.integers.unitGroup :=
   ⟨f, P.mem_unitGroup_of_ord_eq_zero hf⟩
@@ -178,11 +179,6 @@ private theorem unitGroupMk_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 
 private theorem unitGroupMk_zpow {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) (n : ℤ) :
     P.unitGroupMk (f ^ n) (ord_zpow_eq_zero hf n) = P.unitGroupMk f hf ^ n := rfl
 
-private theorem unitGroupMk_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
-    (hg : P.ord (g : F) = 0) :
-    P.unitGroupMk (f / g) (ord_div_eq_zero hf hg)
-      = P.unitGroupMk f hf / P.unitGroupMk g hg := rfl
-
 /-- **The residue is multiplicative in the function**, at a place where both factors are units:
 `(f g)(P) = f(P) · g(P)`. -/
 @[simp]
@@ -226,7 +222,9 @@ theorem residueUnit_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
     P.residueUnit (f / g) (ord_div_eq_zero hf hg) =
       P.residueUnit f hf / P.residueUnit g hg := by
-  rw [residueUnit, residueUnit, residueUnit, ← map_div, unitGroupMk_div hf hg]
+  -- division is multiplication by an inverse, so this needs no representation lemma of its own
+  conv_rhs => rw [div_eq_mul_inv, ← residueUnit_inv hg]
+  exact residueUnit_mul hf (ord_inv_eq_zero hg)
 
 /-- **The norm of the residue inverts with the function**: `N(f⁻¹(P)) = N(f(P))⁻¹`. -/
 @[simp]
