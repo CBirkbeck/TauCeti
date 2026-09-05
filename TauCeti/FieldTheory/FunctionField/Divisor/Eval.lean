@@ -225,7 +225,7 @@ theorem isUnitAtSupport_one (D : Divisor k F) : IsUnitAtSupport D (1 : Fˣ) :=
 /-- Admissibility is closed under products of functions. -/
 theorem IsUnitAtSupport.mul {D : Divisor k F} {f g : Fˣ} (hf : IsUnitAtSupport D f)
     (hg : IsUnitAtSupport D g) : IsUnitAtSupport D (f * g) :=
-  fun P hP ↦ Place.ord_units_mul_eq_zero (hf P hP) (hg P hP)
+  fun P hP ↦ Place.ord_mul_eq_zero (hf P hP) (hg P hP)
 
 -- Not `@[simp]`, for the reason recorded above `isUnitAtSupport_one`.
 /-- Admissibility is *invariant* under inversion, not merely closed under it: `ord_P f⁻¹` vanishes

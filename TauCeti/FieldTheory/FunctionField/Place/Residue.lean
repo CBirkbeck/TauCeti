@@ -45,11 +45,12 @@ not consume one — so the guarantee is recorded here rather than in the signatu
   are named after `TauCeti.Algebra.coe_normUnits`, the adjacent lemma of the same shape.
 * `TauCeti.Place.normResidueOrOne_of_ord_eq_zero` and
   `TauCeti.Place.normResidueOrOne_of_ord_ne_zero`: the two branches of the total extension.
-* `TauCeti.Place.ord_units_mul_eq_zero`, `ord_units_inv_eq_zero`, `ord_units_div_eq_zero` and
-  `ord_units_one_eq_zero`: admissibility is a subgroup condition on `Fˣ`. These are public
-  because `residueUnit` carries its admissibility proof as an argument, so a law about `f * g`,
-  `f⁻¹`, `f / g` or `1` has to name a proof for the *composite* in its own left-hand side; these
-  are those names.
+* `TauCeti.Place.ord_mul_eq_zero`, `ord_inv_eq_zero` and `ord_div_eq_zero`
+  (in `Place/Basic.lean`): admissibility is a subgroup condition on `Fˣ`. They are public because
+  `residueUnit` carries its admissibility proof as an argument, so a law about `f * g`, `f⁻¹` or
+  `f / g` has to name a proof for the *composite* in its own left-hand side; these are those
+  names. The identity case needs no such lemma — `((1 : Fˣ) : F)` is `1` definitionally, so
+  `TauCeti.Place.ord_one` already has the right type.
 * The group laws in the function: `residueUnit_one`, `residueUnit_mul`, `residueUnit_inv`,
   `residueUnit_div` and their `normResidue` counterparts, together with `normResidueOrOne_one`,
   `normResidueOrOne_mul`, `normResidueOrOne_inv` and `normResidueOrOne_div` for the total form.
@@ -165,25 +166,25 @@ theorem normResidueOrOne_of_ord_ne_zero {P : Place k F} {f : Fˣ} (hf : P.ord (f
 
 private theorem unitGroupMk_mul {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
-    P.unitGroupMk (f * g) (ord_units_mul_eq_zero hf hg)
+    P.unitGroupMk (f * g) (ord_mul_eq_zero hf hg)
       = P.unitGroupMk f hf * P.unitGroupMk g hg := rfl
 
 private theorem unitGroupMk_one (P : Place k F) :
-    P.unitGroupMk 1 (ord_units_one_eq_zero P) = 1 := rfl
+    P.unitGroupMk 1 P.ord_one = 1 := rfl
 
 private theorem unitGroupMk_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
-    P.unitGroupMk f⁻¹ (ord_units_inv_eq_zero hf) = (P.unitGroupMk f hf)⁻¹ := rfl
+    P.unitGroupMk f⁻¹ (ord_inv_eq_zero hf) = (P.unitGroupMk f hf)⁻¹ := rfl
 
 private theorem unitGroupMk_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
-    P.unitGroupMk (f / g) (ord_units_div_eq_zero hf hg)
+    P.unitGroupMk (f / g) (ord_div_eq_zero hf hg)
       = P.unitGroupMk f hf / P.unitGroupMk g hg := rfl
 
 /-- **The residue is multiplicative in the function**, at a place where both factors are units:
 `(f g)(P) = f(P) · g(P)`. -/
 theorem residueUnit_mul {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
-    P.residueUnit (f * g) (ord_units_mul_eq_zero hf hg) =
+    P.residueUnit (f * g) (ord_mul_eq_zero hf hg) =
       P.residueUnit f hf * P.residueUnit g hg := by
   rw [residueUnit, residueUnit, residueUnit, ← map_mul, unitGroupMk_mul hf hg]
 
@@ -191,38 +192,38 @@ theorem residueUnit_mul {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
 are units. -/
 theorem normResidue_mul {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
-    P.normResidue (f * g) (ord_units_mul_eq_zero hf hg) =
+    P.normResidue (f * g) (ord_mul_eq_zero hf hg) =
       P.normResidue f hf * P.normResidue g hg := by
   rw [normResidue, normResidue, normResidue, residueUnit_mul hf hg, map_mul]
 
 /-- **The residue of the constant `1` is `1`.** -/
 @[simp]
 theorem residueUnit_one (P : Place k F) :
-    P.residueUnit 1 (ord_units_one_eq_zero P) = 1 := by
+    P.residueUnit 1 P.ord_one = 1 := by
   rw [residueUnit, ← map_one P.integers.unitGroupToResidueFieldUnits, unitGroupMk_one]
 
 /-- **The residue inverts with the function**: `f⁻¹(P) = f(P)⁻¹`. -/
 theorem residueUnit_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
-    P.residueUnit f⁻¹ (ord_units_inv_eq_zero hf) = (P.residueUnit f hf)⁻¹ := by
+    P.residueUnit f⁻¹ (ord_inv_eq_zero hf) = (P.residueUnit f hf)⁻¹ := by
   rw [residueUnit, residueUnit, ← map_inv, unitGroupMk_inv hf]
 
 /-- **The residue divides with the function**: `(f / g)(P) = f(P) / g(P)`, at a place where both
 are units. -/
 theorem residueUnit_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
-    P.residueUnit (f / g) (ord_units_div_eq_zero hf hg) =
+    P.residueUnit (f / g) (ord_div_eq_zero hf hg) =
       P.residueUnit f hf / P.residueUnit g hg := by
   rw [residueUnit, residueUnit, residueUnit, ← map_div, unitGroupMk_div hf hg]
 
 /-- **The norm of the residue inverts with the function**: `N(f⁻¹(P)) = N(f(P))⁻¹`. -/
 theorem normResidue_inv {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
-    P.normResidue f⁻¹ (ord_units_inv_eq_zero hf) = (P.normResidue f hf)⁻¹ := by
+    P.normResidue f⁻¹ (ord_inv_eq_zero hf) = (P.normResidue f hf)⁻¹ := by
   rw [normResidue, normResidue, residueUnit_inv hf, map_inv]
 
 /-- **The norm of the residue divides with the function**: `N((f / g)(P)) = N(f(P)) / N(g(P))`. -/
 theorem normResidue_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
-    P.normResidue (f / g) (ord_units_div_eq_zero hf hg) =
+    P.normResidue (f / g) (ord_div_eq_zero hf hg) =
       P.normResidue f hf / P.normResidue g hg := by
   rw [normResidue, normResidue, normResidue, residueUnit_div hf hg, map_div]
 
@@ -233,14 +234,14 @@ right side is `1`. -/
 theorem normResidueOrOne_mul {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
     P.normResidueOrOne (f * g) = P.normResidueOrOne f * P.normResidueOrOne g := by
-  rw [normResidueOrOne_of_ord_eq_zero (ord_units_mul_eq_zero hf hg),
+  rw [normResidueOrOne_of_ord_eq_zero (ord_mul_eq_zero hf hg),
     normResidueOrOne_of_ord_eq_zero hf, normResidueOrOne_of_ord_eq_zero hg,
     normResidue_mul hf hg]
 
 /-- The residue of the constant `1` has norm `1`. -/
 @[simp]
 theorem normResidue_one (P : Place k F) :
-    P.normResidue 1 (ord_units_one_eq_zero P) = 1 := by
+    P.normResidue 1 P.ord_one = 1 := by
   rw [normResidue, residueUnit_one, map_one]
 
 -- Not `@[simp]`: since `normResidueOrOne_of_ord_eq_zero` is `@[simp]` and `simp` can discharge
@@ -248,7 +249,7 @@ theorem normResidue_one (P : Place k F) :
 -- `normResidue_one` above is the `@[simp]` rule for that normal form.
 /-- The constant `1` has local factor `1`. -/
 theorem normResidueOrOne_one (P : Place k F) : P.normResidueOrOne (1 : Fˣ) = 1 := by
-  rw [normResidueOrOne_of_ord_eq_zero (ord_units_one_eq_zero P), normResidue_one]
+  rw [normResidueOrOne_of_ord_eq_zero P.ord_one, normResidue_one]
 
 /-- **Inversion needs no admissibility hypothesis.** `ord_P f⁻¹ = -ord_P f` vanishes exactly when
 `ord_P f` does, so the two places of `normResidueOrOne`'s case split correspond under inversion
@@ -258,10 +259,10 @@ dropped: a product can leave the subgroup `{ord_P = 0}` open on neither factor. 
 theorem normResidueOrOne_inv (P : Place k F) (f : Fˣ) :
     P.normResidueOrOne f⁻¹ = (P.normResidueOrOne f)⁻¹ := by
   by_cases hf : P.ord (f : F) = 0
-  · rw [normResidueOrOne_of_ord_eq_zero (ord_units_inv_eq_zero hf),
+  · rw [normResidueOrOne_of_ord_eq_zero (ord_inv_eq_zero hf),
       normResidueOrOne_of_ord_eq_zero hf, normResidue_inv hf]
   · have hfinv : P.ord ((f⁻¹ : Fˣ) : F) ≠ 0 :=
-      fun h ↦ hf (by simpa using ord_units_inv_eq_zero h)
+      fun h ↦ hf (by simpa using ord_inv_eq_zero h)
     rw [normResidueOrOne_of_ord_ne_zero hfinv, normResidueOrOne_of_ord_ne_zero hf, inv_one]
 
 /-- **The total local factor divides in the function**, at a place where both arguments are
@@ -270,7 +271,7 @@ dropped: a quotient can be a unit where neither argument is. -/
 theorem normResidueOrOne_div {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) :
     P.normResidueOrOne (f / g) = P.normResidueOrOne f / P.normResidueOrOne g := by
-  rw [div_eq_mul_inv, normResidueOrOne_mul hf (ord_units_inv_eq_zero hg),
+  rw [div_eq_mul_inv, normResidueOrOne_mul hf (ord_inv_eq_zero hg),
     normResidueOrOne_inv, div_eq_mul_inv]
 
 end TauCeti.Place

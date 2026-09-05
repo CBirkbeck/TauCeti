@@ -32,9 +32,9 @@ equivalence is needed and equality of places *is* equality of valuations
 * `TauCeti.Place.degree`: the degree `deg P = [F_P : k]` of a place.
 * `TauCeti.Place.ordAddMonoidHom`: `ord_P` bundled as an additive homomorphism on `Additive Fˣ`.
   Restricting to units is what makes it additive, since `ord_P 0 = 0` is a junk value.
-* `TauCeti.Place.ord_units_mul_eq_zero`, `ord_units_inv_eq_zero`, `ord_units_div_eq_zero` and
-  `ord_units_one_eq_zero`: the units of order zero form a subgroup of `Fˣ`, read off that
-  homomorphism.
+* `TauCeti.Place.ord_mul_eq_zero`, `ord_inv_eq_zero` and `ord_div_eq_zero`:
+  the units of order zero form a subgroup of `Fˣ`, read off that homomorphism. Its identity is
+  `ord_one` itself, since `((1 : Fˣ) : F)` is `1` definitionally.
 
 ## Main results
 
@@ -194,26 +194,22 @@ theorem ordAddMonoidHom_apply (P : Place k F) (z : Fˣ) :
 -- The `_root_` prefixes below only disambiguate against `Valuation.map_neg` / `Valuation.map_sub`,
 -- which this file has open.
 /-- **A product of order-zero units has order zero.** -/
-theorem ord_units_mul_eq_zero {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
+theorem ord_mul_eq_zero {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) : P.ord ((f * g : Fˣ) : F) = 0 := by
   rw [← P.ordAddMonoidHom_apply] at hf hg ⊢
   rw [ofMul_mul, map_add, hf, hg, add_zero]
 
 /-- **The inverse of an order-zero unit has order zero.** -/
-theorem ord_units_inv_eq_zero {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
+theorem ord_inv_eq_zero {P : Place k F} {f : Fˣ} (hf : P.ord (f : F) = 0) :
     P.ord ((f⁻¹ : Fˣ) : F) = 0 := by
   rw [← P.ordAddMonoidHom_apply] at hf ⊢
   rw [ofMul_inv, _root_.map_neg, hf, neg_zero]
 
 /-- **A quotient of order-zero units has order zero.** -/
-theorem ord_units_div_eq_zero {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
+theorem ord_div_eq_zero {P : Place k F} {f g : Fˣ} (hf : P.ord (f : F) = 0)
     (hg : P.ord (g : F) = 0) : P.ord ((f / g : Fˣ) : F) = 0 := by
   rw [← P.ordAddMonoidHom_apply] at hf hg ⊢
   rw [ofMul_div, _root_.map_sub, hf, hg, sub_zero]
-
-/-- **The unit `1` has order zero**, at every place. -/
-theorem ord_units_one_eq_zero (P : Place k F) : P.ord ((1 : Fˣ) : F) = 0 := by
-  rw [← P.ordAddMonoidHom_apply, ofMul_one, map_zero]
 
 @[simp]
 theorem ord_neg (f : F) : P.ord (-f) = P.ord f := Valuation.ord_neg P.valuation f
