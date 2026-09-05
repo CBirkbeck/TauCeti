@@ -58,10 +58,9 @@ exactly at the zero map, which is what `degree_eq_zero_iff` records.
 
 * [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], II.2 and III.6.
 
-This is the carrier of the hom-group named in `TauCetiRoadmap/EllipticCurves/README.md` §Layer 1,
-"The hom-group and the degree form", whose design it follows: the carrier adjoins no `WithZero`,
-the zero map is the unique non-unital element and a formal tag rather than a pullback, and
-`degree 0 = 0` is stipulated. The additive structure that layer calls for is not built here.
+The carrier's design — no `WithZero` adjunction, the zero map as the unique non-unital element,
+`degree 0 = 0` stipulated — is `TauCetiRoadmap/EllipticCurves/README.md` §Layer 1, "The hom-group
+and the degree form".
 -/
 
 public section
