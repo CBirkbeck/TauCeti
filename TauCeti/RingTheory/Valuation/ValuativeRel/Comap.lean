@@ -14,7 +14,7 @@ We define the pullback (comap) of a `ValuativeRel` along a ring homomorphism.
 
 ## Main definitions
 
-* `TauCeti.ValuativeRel.comap φ v` : Given `φ : A →+* B` and a valuative relation `v` on `B`,
+* `ValuativeRel.comap φ v` : Given `φ : A →+* B` and a valuative relation `v` on `B`,
   the induced `ValuativeRel A` defined by `a₁ ≤ᵥ a₂ ↔ φ(a₁) ≤ᵥ φ(a₂)`.
 
 ## References
