@@ -11,7 +11,10 @@ public import Mathlib.RingTheory.IntegralClosure.IsIntegralClosure.Basic
 
 -- Public because `IsDedekindDomain` appears in the STATEMENTS of `finite_of_fraction_model` and
 -- `finite_of_separable_model`, which are public; a plain import cannot carry a public statement.
-public import Mathlib.RingTheory.DedekindDomain.IntegralClosure
+public import Mathlib.RingTheory.DedekindDomain.Basic
+-- Proof-only: the integral-closure-over-a-Dedekind-domain machinery is used in the proofs; the
+-- public statements mention only `IsDedekindDomain`, which comes from `DedekindDomain.Basic`.
+import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 -- Proof-only, and NOT redundant with the TauCeti Dedekind module below: that import is plain, so
 -- it re-exports nothing. This supplies the `IsFractionRing` instance on a subalgebra of the
 -- fraction field, which `finite_of_fraction_model` needs; removing it fails to synthesize.
@@ -48,7 +51,7 @@ statement subsumes the other.
 
 Adapted from D. K. Angdinata's `NormalizationFinite.lean`, Apache-2.0, supplied by the author on
 2026-09-07, declarations `Subalgebra.isIntegrallyClosed_overring`,
-`TauCeti.isIntegral_trans_common`, `TauCeti.algebraMap_mem_adjoin_image`,
+`TauCeti.isIntegral_trans_common`, `Finset.algebraMap_mem_adjoin_image`,
 `IsIntegralClosure.finite_of_fraction_model`, `IsIntegralClosure.finite_of_separable_model` and
 `IsIntegralClosure.finite_of_polynomial_model`.
 -/
@@ -87,7 +90,7 @@ theorem finite_of_fraction_model
     { carrier := B
       mul_mem' := B.mul_mem
       add_mem' := B.add_mem
-      algebraMap_mem' := TauCeti.algebraMap_mem_adjoin_image s hs }
+      algebraMap_mem' := s.algebraMap_mem_adjoin_image hs }
   let integrallyClosedB : IsIntegrallyClosed B := Subalgebra.isIntegrallyClosed_overring D
   let fractionRingB : IsFractionRing B K := inferInstanceAs (IsFractionRing D K)
   let isIntegralClosure : IsIntegralClosure B R K := IsIntegralClosure.of_isIntegrallyClosed B R K
