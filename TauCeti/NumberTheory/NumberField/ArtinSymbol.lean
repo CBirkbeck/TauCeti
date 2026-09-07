@@ -242,41 +242,30 @@ tower and takes no power; this one raises the base field and takes the power `f(
 -- which asks for closed transport lemmas derived from `artinSymbol_map_restrictNormalHom` and
 -- `exists_isArithFrobAt_pow_inertiaDeg`. This is the second of the two.
 
-omit [NumberField K] in
-/-- Unramifiedness over `𝓞 M` above `𝔓` is inherited from unramifiedness over `𝓞 K` above `𝔭`:
-a prime of `𝓞 L` above `𝔓` lies above `𝔭`, and `Algebra.IsUnramifiedAt.of_restrictScalars` drops
-the base from `𝓞 K` to `𝓞 M`. So the transport law below asks only for the `𝓞 K` witness. -/
-theorem unramifiedAt_of_liesOver_of_unramifiedAt {M L : Type*} [Field M] [Field L]
-    [Algebra K M] [Algebra M L] [Algebra K L] [IsScalarTower K M L]
-    (𝔓 : Ideal (𝓞 M)) (𝔭 : Ideal (𝓞 K)) [𝔓.LiesOver 𝔭]
-    (hurK : ∀ (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver 𝔭], Algebra.IsUnramifiedAt (𝓞 K) Q)
-    (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver 𝔓] : Algebra.IsUnramifiedAt (𝓞 M) Q := by
-  have : Q.LiesOver 𝔭 := Ideal.LiesOver.trans Q 𝔓 𝔭
-  have := hurK Q
-  exact Algebra.IsUnramifiedAt.of_restrictScalars (𝓞 K) Q
-
 /-- **Raising the base field raises the Artin symbol to the residue degree.** For number fields
 `K ⊆ M ⊆ L` with `L / K` and `L / M` Galois and `𝔓` a prime of `𝓞 M` over `𝔭` unramified in `L`,
 the Artin symbol of `𝔓` for `L / M`, read inside `Gal(L/K)` along `AlgEquiv.restrictScalarsHom`,
 is the `f(𝔓/𝔭)`-th power of the Artin symbol of `𝔭` for `L / K`.
 
 This is the conjugacy-class form of `NumberField.restrictScalars_arithFrobAt_eq_pow_inertiaDeg`.
-The gain over that element-level statement is that both choices it makes disappear: it is an
-identity between *particular* Frobenius elements at a *particular* prime `Q` of `𝓞 L`, and it can
-fail for another representative of the same class, since a conjugate of `σ` need not stabilize `Q`.
-Passing to conjugacy classes quotients by exactly those choices, leaving an identity with no
-chosen prime and no chosen representative in it — the form a Frobenius-class argument can use,
-having neither in hand. -/
+The gain over that element-level statement is that the choice it makes disappears. It is an
+identity at a *particular* prime `Q` of `𝓞 L`; there is only one choice there, since at a fixed
+unramified prime the Frobenius is uniquely determined, but the identity does fail for a conjugate
+of `σ`, which need not stabilize `Q`. Passing to conjugacy classes quotients by that choice and
+so never has to name the Frobenius it determines — which is the form a Frobenius-class argument
+can use, having no prime in hand. -/
 theorem artinSymbol_map_restrictScalarsHom_eq_pow_inertiaDeg {M L : Type*} [Field M]
     [NumberField M] [Field L] [NumberField L] [Algebra K M] [Algebra M L] [Algebra K L]
-    [IsScalarTower K M L] [IsGalois K L] [IsGalois M L]
+    [IsScalarTower K M L] [IsGalois K L]
     (𝔓 : Ideal (𝓞 M)) [𝔓.IsMaximal] (𝔭 : Ideal (𝓞 K)) [𝔭.IsMaximal] [𝔓.LiesOver 𝔭]
     (hurK : ∀ (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver 𝔭],
       Algebra.IsUnramifiedAt (𝓞 K) Q) :
+    letI := IsGalois.tower_top_of_isGalois K M L
     ConjClasses.map (AlgEquiv.restrictScalarsHom K)
-        (artinSymbol 𝔓 (unramifiedAt_of_liesOver_of_unramifiedAt 𝔓 𝔭 hurK)) =
+        (artinSymbol 𝔓 (isUnramifiedAt_of_liesOver_of_isUnramifiedAt 𝔓 𝔭 hurK)) =
       artinSymbol 𝔭 hurK ^ 𝔓.inertiaDeg (𝓞 K) := by
-  set hurM := unramifiedAt_of_liesOver_of_unramifiedAt (L := L) 𝔓 𝔭 hurK with _
+  let := IsGalois.tower_top_of_isGalois K M L
+  set hurM := isUnramifiedAt_of_liesOver_of_isUnramifiedAt (L := L) 𝔓 𝔭 hurK with _
   obtain ⟨Q, _, _⟩ := (inferInstance : Nonempty (𝔓.primesOver (𝓞 L)))
   have : Q.LiesOver 𝔭 := Ideal.LiesOver.trans Q 𝔓 𝔭
   have hQM : Q.under (𝓞 M) = 𝔓 := (Ideal.LiesOver.over (A := 𝓞 M)).symm

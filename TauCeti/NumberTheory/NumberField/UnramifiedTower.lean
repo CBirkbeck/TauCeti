@@ -77,4 +77,21 @@ theorem isUnramifiedAway_of_intermediateField (M : Type*) [Field M] [NumberField
       ∀ (Q : Ideal (𝓞 M)) [Q.IsPrime] [Q.LiesOver v.asIdeal], Algebra.IsUnramifiedAt (𝓞 K) Q :=
   fun v hv ↦ isUnramifiedAt_of_intermediateExtension (M := M) (L := L) v.asIdeal (hur v hv)
 
+omit [NumberField K] in
+/-- **Unramifiedness over the base descends to the intermediate base.** A prime `Q` of `𝓞 L`
+above `𝔓`, where `𝔓` lies over `𝔭`, lies over `𝔭` as well; if every such prime is unramified over
+`𝓞 K` then `Q` is unramified over the larger ring `𝓞 M`.
+
+The companion to `isUnramifiedAt_of_intermediateExtension`, which moves the *prime* down the tower
+and keeps the base. This one keeps the prime and moves the *base* up, which is what a statement
+indexed by a prime of `𝓞 M` needs in order to ask for only the `𝓞 K` hypothesis. -/
+theorem isUnramifiedAt_of_liesOver_of_isUnramifiedAt {M L : Type*} [Field M] [Field L]
+    [Algebra K M] [Algebra M L] [Algebra K L] [IsScalarTower K M L]
+    (𝔓 : Ideal (𝓞 M)) (𝔭 : Ideal (𝓞 K)) [𝔓.LiesOver 𝔭]
+    (hurK : ∀ (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver 𝔭], Algebra.IsUnramifiedAt (𝓞 K) Q)
+    (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver 𝔓] : Algebra.IsUnramifiedAt (𝓞 M) Q := by
+  have : Q.LiesOver 𝔭 := Ideal.LiesOver.trans Q 𝔓 𝔭
+  have := hurK Q
+  exact Algebra.IsUnramifiedAt.of_restrictScalars (𝓞 K) Q
+
 end NumberField
