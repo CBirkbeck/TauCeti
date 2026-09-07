@@ -420,25 +420,31 @@ theorem summable_idealTerm_one_iff {K : Type*} [Field K] [NumberField K] {s : �
   exact summable_idealTerm_of_nonneg K 1 (fun _ ↦ zero_le_one)
     ((LSeriesSummable_normCoeff_one_iff K).mpr h)
 
-/-- **A weight bounded by one converges wherever the trivial weight does.** If every value of `f`
-on a nonzero integral ideal has modulus at most `1`, its ideal-indexed Dirichlet series converges
-absolutely on `Re s > 1`.
+/-- **A uniformly bounded weight converges wherever the trivial weight does.** If every value of
+`f` on a nonzero integral ideal has modulus at most `C`, its ideal-indexed Dirichlet series
+converges absolutely on `Re s > 1`.
 
-This is the comparison every unitary weight needs — a Dirichlet or Galois character has values of
-modulus `1` at the good primes and `0` at the bad ones, so it is bounded by `1` everywhere — and it
-is stated for the bound rather than for unitarity so that the vanishing at the bad primes needs no
-special case. The converse of `summable_idealTerm_one_iff` fails here: a weight that vanishes
-identically converges everywhere. -/
-theorem summable_idealTerm_of_norm_le_one {K : Type*} [Field K] [NumberField K]
-    {f : IdealArithmeticFunction K} (hf : ∀ I : (Ideal (𝓞 K))⁰, ‖f I‖ ≤ 1) {s : ℂ}
+The bound may be any real: the comparison is against `C` times the trivial weight's series, and no
+`C = 1` normalisation is wanted, since a weight is often bounded by something other than `1`
+without being rescaled. The unitary case — a Dirichlet or Galois character, of modulus `1` at the
+good primes and `0` at the bad ones — is `C = 1`, and stating the hypothesis as a bound rather than
+as unitarity is what lets the vanishing at the bad primes pass without a special case.
+
+Only one direction holds, unlike `summable_idealTerm_one_iff`: a weight that vanishes identically
+is bounded by every `C` and converges everywhere. -/
+theorem summable_idealTerm_of_norm_le_of_one_lt_re {K : Type*} [Field K] [NumberField K]
+    {f : IdealArithmeticFunction K} {C : ℝ} (hf : ∀ I : (Ideal (𝓞 K))⁰, ‖f I‖ ≤ C) {s : ℂ}
     (hs : 1 < s.re) : Summable (idealTerm K f s) := by
-  refine Summable.of_norm_bounded (g := fun I ↦ ‖idealTerm K (1 : IdealArithmeticFunction K) s I‖)
-    ((summable_idealTerm_one_iff.mpr hs).norm) fun I ↦ ?_
+  refine Summable.of_norm_bounded
+    (g := fun I ↦ C * ‖idealTerm K (1 : IdealArithmeticFunction K) s I‖)
+    (((summable_idealTerm_one_iff.mpr hs).norm).mul_left C) fun I ↦ ?_
   rw [norm_idealTerm, norm_idealTerm]
   have hpos : (0 : ℝ) < (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ^ s.re :=
     Real.rpow_pos_of_pos (by exact_mod_cast Ideal.absNorm_pos_of_nonZeroDivisors I) _
+  have hone : ‖(1 : IdealArithmeticFunction K) I‖ = 1 := by simp
+  rw [hone, mul_one_div]
   gcongr
-  exact (hf I).trans_eq (by simp)
+  exact hf I
 
 /-- **The Dedekind zeta series has abscissa of absolute convergence `1`.** -/
 @[simp]
