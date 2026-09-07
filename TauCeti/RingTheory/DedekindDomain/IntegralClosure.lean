@@ -7,6 +7,8 @@ module
 
 -- Proof-only: Krull–Akizuki supplies the Noetherian half, and is not named in any statement.
 import TauCeti.RingTheory.IntegralClosure.NormalizationFinite
+-- Proof-only, and load-bearing despite no textual use: supplies `IsIntegrallyClosed` on a
+-- `ValuationSubring`, which the overring argument closes with.
 import Mathlib.RingTheory.Valuation.LocalSubring
 import Mathlib.RingTheory.DedekindDomain.AdicValuation
 public import Mathlib.RingTheory.DedekindDomain.Basic
@@ -36,6 +38,9 @@ unchanged.
   the fraction field chosen by the caller.
 * `TauCeti.integralClosure.isDedekindDomain_fractionRing`: the instance form, with
   `K := FractionRing A`.
+* `Subalgebra.isIntegrallyClosed_overring`: every overring of a Dedekind domain inside its own
+  fraction field is integrally closed — it is a valuation subring at each maximal ideal, and those
+  are integrally closed.
 
 ## Design
 

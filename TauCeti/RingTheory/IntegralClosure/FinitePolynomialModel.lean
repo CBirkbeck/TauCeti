@@ -9,12 +9,14 @@ public import Mathlib.FieldTheory.Separable
 public import Mathlib.RingTheory.Algebraic.Basic
 public import Mathlib.RingTheory.IntegralClosure.IsIntegralClosure.Basic
 
+-- Public because `IsDedekindDomain` appears in the STATEMENTS of `finite_of_fraction_model` and
+-- `finite_of_separable_model`, which are public; a plain import cannot carry a public statement.
 public import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 -- Proof-only, and load-bearing despite no textual use: it supplies the `IsFractionRing` instance
 -- on a subalgebra of the fraction field, which `finite_of_fraction_model` needs.
 import Mathlib.RingTheory.DedekindDomain.AdicValuation
-public import TauCeti.RingTheory.DedekindDomain.IntegralClosure
-public import TauCeti.RingTheory.IntegralClosure.Transfer
+import TauCeti.RingTheory.DedekindDomain.IntegralClosure
+import TauCeti.RingTheory.IntegralClosure.Transfer
 
 /-!
 # A finite normalization from a separating polynomial model
