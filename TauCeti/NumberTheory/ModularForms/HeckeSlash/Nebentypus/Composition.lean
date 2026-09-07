@@ -223,7 +223,7 @@ theorem twistedHeckeSlashSum_twistedHeckeSlashSum_eq_sum_nsmul
           (D₁.out : GL (Fin 2) ℚ)⁻¹ (D.out : GL (Fin 2) ℚ)⁻¹ •
             twistedHeckeSlashSum k χ D f := by
   rw [twistedHeckeSlashSum_twistedHeckeSlashSum, ← Fintype.sum_prod_type',
-    sum_eq_sum_pairCoset_fiber D₁ D₂ fun q ↦ (delta0NebentypusChar N χ
+    TauCeti.sum_eq_sum_image_fiber (pairCoset D₁ D₂) fun q ↦ (delta0NebentypusChar N χ
       ⟨rightCosetRep D₁ q.1 * rightCosetRep D₂ q.2,
         mul_mem (rightCosetRep_mem_Delta0 D₁ q.1) (rightCosetRep_mem_Delta0 D₂ q.2)⟩ : ℂ) •
           (f ∣[k] (rightCosetRep D₁ q.1 * rightCosetRep D₂ q.2))]

@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.Algebra.BigOperators.Finset.Fiber
 public import TauCeti.NumberTheory.HeckeRing.Multiplicity.Handedness
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.CuspRing
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Ring
@@ -338,31 +339,6 @@ lemma card_pairs_pairCoset_rightCoset_eq_multiplicity {x : GL (Fin 2) ℚ}
 variable (D₁ D₂)
 
 open Classical in
-/-- **A sum over pairs of right cosets is the sum over the double cosets they land in.** The
-pairs `(v, w)` are partitioned by `pairCoset D₁ D₂`, so summing any `F` over all of them is
-summing, over each double coset `D` met, the contribution of the pairs landing in `D`.
-
-A composite of two slash sums is naturally indexed by pairs of right cosets, while the
-multiplicity-weighted form of the composition law is indexed by double cosets. This is the
-identity between those two index sets, before any weight is attached: `F` is arbitrary, so no
-slash, weight or character enters.
-
-Only the double cosets actually met are summed over, which is why the outer index is the image
-of `pairCoset D₁ D₂` rather than all of `HeckeCoset Δ Γ₁ Γ₃`. Mathlib's `Fintype.sum_fiberwise`
-is the same regrouping over the whole codomain, but it needs that codomain finite, and no
-finiteness of `HeckeCoset Δ Γ₁ Γ₃` is assumed here. -/
-lemma sum_eq_sum_pairCoset_fiber {M : Type*} [AddCommMonoid M]
-    (F : DecompQuotient Γ₂ Γ₁ (D₁.out : GL (Fin 2) ℚ)⁻¹ ×
-      DecompQuotient Γ₃ Γ₂ (D₂.out : GL (Fin 2) ℚ)⁻¹ → M) :
-    ∑ p, F p = ∑ D ∈ Finset.univ.image (pairCoset D₁ D₂),
-      ∑ q : {q // pairCoset D₁ D₂ q = D}, F q := by
-  rw [← Finset.sum_fiberwise_of_maps_to (g := pairCoset D₁ D₂)
-    (fun p _ ↦ Finset.mem_image_of_mem _ (Finset.mem_univ p))]
-  exact Finset.sum_congr rfl fun D _ ↦
-    Finset.sum_subtype (p := fun q ↦ pairCoset D₁ D₂ q = D)
-      (Finset.univ.filter fun q ↦ pairCoset D₁ D₂ q = D) (fun q ↦ by simp) F
-
-open Classical in
 /-- **The multiplicity-weighted composite**, and with it the general form of the composition law.
 For a `Γ₁`-invariant `f`, the composite of the two slash sums is the sum, over the double cosets
 met by the products `aᵥ b_w`, of Shimura's multiplicity times the slash sum of that coset:
@@ -393,7 +369,8 @@ theorem heckeSlashSum_heckeSlashSum_eq_sum_nsmul
   -- points rather than found by synthesis
   let _ : IsHeckeTriple Δ Γ₁ Γ₃ := IsHeckeTriple.trans (H₂ := Γ₂)
   rw [heckeSlashSum_heckeSlashSum, ← Fintype.sum_prod_type',
-    sum_eq_sum_pairCoset_fiber D₁ D₂ fun q ↦ f ∣[k] (rightCosetRep D₁ q.1 * rightCosetRep D₂ q.2)]
+    TauCeti.sum_eq_sum_image_fiber (pairCoset D₁ D₂)
+      fun q ↦ f ∣[k] (rightCosetRep D₁ q.1 * rightCosetRep D₂ q.2)]
   refine Finset.sum_congr rfl fun D _ ↦ ?_
   exact sum_slash_eq_nsmul_heckeSlashSum k D _ _ (fun i ↦ pairCoset_eq_iff.mp i.2)
     (fun _ hx ↦ card_pairs_pairCoset_rightCoset_eq_multiplicity hx) f hf
