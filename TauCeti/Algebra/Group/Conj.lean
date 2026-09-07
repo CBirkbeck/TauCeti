@@ -229,6 +229,12 @@ These extend the centralizer-index description of the class size just above; the
 
 namespace ConjClasses
 
+-- Source. Both statements are specified by the Chebotarev roadmap. The divisibility is the
+-- declaration pinned at `TauCetiRoadmap/Chebotarev/Suggested.lean` lines 377-382, there stated
+-- with `[Finite G]`. The quotient identity is `TauCetiRoadmap/Chebotarev/README.md` §8.2, which
+-- writes it `#G / (#C * f) = #Centralizer_G(σ) / f` for `f = orderOf σ` and asks for
+-- `#C * f ∣ #G` as a separate statement.
+
 /-- **The size of a conjugacy class times the order of a member divides the order of the group.**
 
 For a *finite* group this is what makes `Nat.card G / (Nat.card C.carrier * orderOf σ)` an exact
