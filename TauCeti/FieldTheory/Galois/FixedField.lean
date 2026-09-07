@@ -40,12 +40,6 @@ Galois group of its fixed points, and that fixed-point subfield is the one under
 * `Subgroup.zpowers_toAlgAutMulEquiv_eq_top`
 * `AlgEquiv.isCyclic_fixedField_zpowers`
 * `AlgEquiv.zpowers_toAlgAutMulEquiv_self_eq_top`
-
-## References
-
-* `TauCetiRoadmap/Chebotarev/README.md`, Layer 8.2 — asks for `M` cyclic over the field fixed
-  by `⟨σ⟩`, with generator the restriction of `σ`.
-* `TauCetiRoadmap/Chebotarev/Suggested.lean`, lines 283-291 — names that fixed field.
 -/
 
 public section
@@ -166,9 +160,7 @@ theorem isCyclic_fixedField_zpowers (σ : M ≃ₐ[K] M) [Finite (Subgroup.zpowe
 /-- **And `σ` is a generator.** Its image under Mathlib's identification of `⟨σ⟩` with
 `Gal(M / M ^ ⟨σ⟩)` generates that Galois group; that image acts on `M` as `σ` does.
 
-A fibre count needs a named generator, which `IsCyclic` alone does not give. Not `@[simp]`: since
-`Subgroup.zpowers_toAlgAutMulEquiv_eq_top` gained that attribute, `simp` derives this from it and
-`Subgroup.zpowers_mk_self_eq_top`, so tagging it too is a simp-NF violation. -/
+A fibre count needs a named generator, which `IsCyclic` alone does not give. -/
 theorem zpowers_toAlgAutMulEquiv_self_eq_top (σ : M ≃ₐ[K] M)
     [Finite (Subgroup.zpowers σ)] :
     Subgroup.zpowers (FixedPoints.toAlgAutMulEquiv (Subgroup.zpowers σ) M
