@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+-- `Module.Basis` occurs in the statement of `basis_repr_mul_tmul_one` below.
 public import Mathlib.LinearAlgebra.Basis.Defs
 public import Mathlib.RingTheory.TensorProduct.Basic
 public import Mathlib.RingTheory.TensorProduct.Free
@@ -48,7 +49,7 @@ theorem _root_.Algebra.TensorProduct.tmul_one_mul_eq_smul (a : A) (x : A ⊗[K] 
   rw [← smul_one_mul a x, Algebra.TensorProduct.one_def, TensorProduct.smul_tmul', smul_eq_mul,
     mul_one]
 
-variable (𝓑 : Basis ι K B)
+variable (𝓑 : Module.Basis ι K B)
 
 /-- Multiplying by `a ⊗ₜ 1` on the right multiplies each coordinate of `x` by `a` on the right.
 
