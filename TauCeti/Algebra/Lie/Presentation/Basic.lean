@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Algebra.Lie.Free
-public import TauCeti.Algebra.Lie.OfAssociative
+public import TauCeti.Algebra.Lie.Basic
 
 /-!
 # Presenting a Lie algebra by generators and relations
@@ -20,7 +20,7 @@ of images satisfying the relations. The quotient universal property is provided 
 `TauCeti/Algebra/Lie/Quotient.lean`; this file supplies two further facts needed to apply it.
 
 First, a homomorphism transports an iterated adjoint action,
-`LieHom.map_ad_pow` (in `TauCeti.Algebra.Lie.OfAssociative`). Relations of a presentation are
+`LieHom.map_ad_pow` (in `TauCeti.Algebra.Lie.Basic`). Relations of a presentation are
 frequently written as the vanishing of
 `(ad x) ^ n y` — Serre's relations for a Cartan matrix are the standard example — and such a
 relation says nothing about the presented algebra until it is known to be carried along by the map

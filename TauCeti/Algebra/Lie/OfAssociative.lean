@@ -43,7 +43,6 @@ instance: a consumer installs the associated `LieRingModule` where it wants it, 
 * `LieHom.leftRegularRep_mem_of_mem`: every left ideal of `A` is invariant.
 * `LieHom.ad_apply_eq_leftRegularRep_sub_mulRight`: the inner derivation action is the difference
   of the left-regular action and right multiplication.
-* `LieHom.map_ad_pow`: a Lie homomorphism carries `(ad x) ^ n y` to `(ad (f x)) ^ n (f y)`.
 
 ## References
 
@@ -113,18 +112,5 @@ left-regular one is built here. -/
 theorem ad_apply_eq_leftRegularRep_sub_mulRight (q : L →ₗ⁅R⁆ A) (x : L) :
     LieAlgebra.ad R A (q x) = leftRegularRep q x - LinearMap.mulRight R (q x) := by
   rw [leftRegularRep_eq_mulLeft, LieAlgebra.ad_eq_lmul_left_sub_lmul_right, Pi.sub_apply]
-
-/-- **A Lie homomorphism carries the iterated adjoint action.** `f ((ad x) ^ n y)` is
-`(ad (f x)) ^ n (f y)`; relations of the form `(ad x) ^ n y = 0`, such as
-Serre's, are transported along a homomorphism by this. -/
-@[simp]
-theorem map_ad_pow {L' : Type*} [LieRing L'] [LieAlgebra R L']
-    (f : L →ₗ⁅R⁆ L') (x : L) (n : ℕ) (y : L) :
-    f ((LieAlgebra.ad R L x ^ n) y) = (LieAlgebra.ad R L' (f x) ^ n) (f y) := by
-  induction n generalizing y with
-  | zero => simp
-  | succ n ih =>
-    simp only [pow_succ, Module.End.mul_apply, LieAlgebra.ad_apply] at ih ⊢
-    rw [ih, f.map_lie]
 
 end LieHom
