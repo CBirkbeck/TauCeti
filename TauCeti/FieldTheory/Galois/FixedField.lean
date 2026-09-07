@@ -25,7 +25,7 @@ subgroup of the automorphism group of an infinite extension is recovered from th
 out; the fixing subgroup of a subfield of finite degree is finite for the same reason.
 
 The last results specialise the correspondence to a *cyclic* subgroup: the field fixed by a finite
-cyclic `H` has `M` cyclic over it, and for `H = ⟨σ⟩` the generator is named:
+cyclic group of automorphisms has `M` cyclic over it, and for `⟨σ⟩` the generator is named:
 `AlgEquiv.toFixedFieldAlgEquiv σ` acts on `M` as `σ` does and, for finite `⟨σ⟩`, generates.
 Neither `M / K` Galois nor
 `M / K` finite is needed — only that `H` be finite, which is what Mathlib's
@@ -39,8 +39,7 @@ Galois group of its fixed points, and that fixed-point subfield is the one under
 * `IntermediateField.fixingSubgroup_fixedField_of_finite`
 * `IntermediateField.finite_of_finiteDimensional_fixedField`
 * `IntermediateField.card_fixingSubgroup_le`
-* `Subgroup.isCyclic_fixedField`
-* `FixedPoints.isCyclic_algEquiv`, of which `Subgroup.isCyclic_fixedField` is the subgroup case
+* `FixedPoints.isCyclic_algEquiv`
 * `AlgEquiv.toFixedFieldAlgEquiv`, with `AlgEquiv.zpowers_toFixedFieldAlgEquiv_eq_top`
 -/
 
@@ -133,24 +132,6 @@ theorem isCyclic_algEquiv (G F : Type*) [Group G] [Field F] [MulSemiringAction G
 
 end FixedPoints
 
-namespace Subgroup
-
-variable {K M : Type*} [Field K] [Field M] [Algebra K M]
-
-/-- **The field fixed by a finite cyclic group of automorphisms has cyclic Galois group.**
-
-Both `[Finite H]` and `[IsCyclic H]` are needed: cyclicity of the Galois group is inherited from
-`H`, not produced by finiteness alone. What is *not* needed is any hypothesis on `M / K`, which may
-be infinite and need not be Galois.
-
-This is `FixedPoints.isCyclic_algEquiv` for the action of `H` on `M`; the fixed field of `H` as an
-intermediate field is the subfield of `H`-fixed points. -/
-theorem isCyclic_fixedField (H : Subgroup (M ≃ₐ[K] M)) [Finite H] [IsCyclic H] :
-    IsCyclic (M ≃ₐ[IntermediateField.fixedField H] M) :=
-  FixedPoints.isCyclic_algEquiv H M
-
-end Subgroup
-
 namespace AlgEquiv
 
 variable {K M : Type*} [Field K] [Field M] [Algebra K M]
@@ -195,8 +176,9 @@ theorem restrictScalars_toFixedFieldAlgEquiv (σ : M ≃ₐ[K] M) :
 /-- **And, for finite `⟨σ⟩`, it generates.** The automorphisms of `M` fixing `M ^ ⟨σ⟩` are exactly
 the powers of `σ.toFixedFieldAlgEquiv`.
 
-Together with `Subgroup.isCyclic_fixedField` this is the cyclic picture of `M / M ^ ⟨σ⟩` with a
-named generator, and neither statement asks `M / K` to be finite or Galois. -/
+Together with `FixedPoints.isCyclic_algEquiv`, applied to the action of `⟨σ⟩` on `M`, this is the
+cyclic picture of `M / M ^ ⟨σ⟩` with a named generator; neither statement asks `M / K` to be
+finite or Galois. -/
 @[simp]
 theorem zpowers_toFixedFieldAlgEquiv_eq_top (σ : M ≃ₐ[K] M) [Finite (Subgroup.zpowers σ)] :
     Subgroup.zpowers (toFixedFieldAlgEquiv σ) = ⊤ := by
