@@ -79,19 +79,19 @@ private lemma windingNumber_fdBoundary_eq_zero_of_mem_preconnected {S : Set ℂ}
   rw [Metric.mem_closedBall, dist_zero_right] at this
   linarith
 
-/-- **The escape witness.** Every lemma below feeds `hunb` a point of the form
-`-(max R 0 + 1)`, on the real axis or rotated onto the imaginary axis; in both cases it is the
-norm that has to exceed `R`, and `max R 0` makes that work for negative `R` too. -/
+/-- The negative real `-(max R 0 + 1)` has norm exceeding `R`; `max R 0` is what makes this
+hold for negative `R` as well. Multiplying by `I` does not change the norm, so the same bound
+serves the witnesses on either axis. -/
 private lemma lt_norm_neg_max_add_one (R : ℝ) : R < ‖((-(max R 0 + 1) : ℝ) : ℂ)‖ := by
   rw [Complex.norm_real, Real.norm_of_nonpos (by nlinarith [le_max_right R 0])]
   nlinarith [le_max_left R 0]
 
-/-- The escape witness rotated onto the imaginary axis sits below the contour's height, so it
-lies in the half-space the `im`-lemmas transport through. -/
-private lemma neg_max_add_one_mul_I_im_lt (R : ℝ) :
-    (((-(max R 0 + 1) : ℝ) : ℂ) * Complex.I).im < Real.sqrt 3 / 2 := by
+/-- Rotated onto the imaginary axis, that witness has negative imaginary part — so it lies
+below any non-negative height, the contour's included. -/
+private lemma neg_max_add_one_mul_I_im_neg (R : ℝ) :
+    (((-(max R 0 + 1) : ℝ) : ℂ) * Complex.I).im < 0 := by
   rw [Complex.mul_I_im, Complex.ofReal_re]
-  nlinarith [le_max_right R 0, Real.sqrt_nonneg 3]
+  nlinarith [le_max_right R 0]
 
 /-- Every point strictly below the contour's height winds zero. -/
 @[simp]
@@ -104,7 +104,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : Real.sqrt 3 / 2 ≤ H) {
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
     exact absurd hz (not_lt.mpr (sqrt_three_div_two_le_im_fdBoundary hH ht))
   · rw [Set.mem_ofPred_eq]
-    exact neg_max_add_one_mul_I_im_lt R
+    exact (neg_max_add_one_mul_I_im_neg R).trans_le (by positivity)
   · rw [norm_mul, Complex.norm_I, mul_one]
     exact lt_norm_neg_max_add_one R
 
@@ -185,7 +185,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_norm_lt_one (hH : 1 ≤ H) {w : ℂ}
       exact absurd hz (not_lt.mpr (one_le_norm_fdBoundary hH ht))
     · exact absurd hz (not_lt.mpr (sqrt_three_div_two_le_im_fdBoundary (h32.trans hH) ht))
   · rw [Set.mem_ofPred_eq]
-    exact neg_max_add_one_mul_I_im_lt R
+    exact (neg_max_add_one_mul_I_im_neg R).trans_le (by positivity)
   · rw [norm_mul, Complex.norm_I, mul_one]
     exact lt_norm_neg_max_add_one R
 
