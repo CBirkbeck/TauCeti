@@ -158,19 +158,22 @@ theorem isIntegrallyClosed_overring (C : Subalgebra A K) : IsIntegrallyClosed C 
     refine ⟨algebraMap A C a, algebraMap A C s, ?_, ?_⟩
     · simpa [p] using hs
     · rfl
-  have hS : ∀ x : K, x ∈ S ∨ x⁻¹ ∈ S := by
-    intro x
-    by_cases hp : p = ⊥
-    · left
-      apply hTS
+  -- `S` is a valuation subring: above a nonzero prime it contains the valuation subring at that
+  -- prime, and above `⊥` it is all of `K`. Either way `IsIntegrallyClosed` transfers to the
+  -- localization along `IsLocalization.algEquiv`.
+  have key : ∀ V : ValuationSubring K, V.toSubring = S.toSubring → IsIntegrallyClosed S := by
+    intro V hV
+    have : IsIntegrallyClosed V := inferInstance
+    exact this.of_equiv (RingEquiv.subringCongr hV)
+  by_cases hp : p = ⊥
+  · have hall : ∀ x : K, x ∈ S := fun x ↦ hTS <| by
       obtain ⟨a, b, hb, hab⟩ := IsFractionRing.div_surjective A x
-      refine ⟨a, b, ?_, ?_⟩
-      · simpa [p, hp, Ideal.primeCompl_bot] using nonZeroDivisors.ne_zero hb
-      · simpa [div_eq_mul_inv] using hab.symm
-    · exact ((valuationSubringAtPrime K ⟨p, p_prime, hp⟩).mem_or_inv_mem x).imp
-        (fun hx ↦ hTS hx) fun hx ↦ hTS hx
-  let V : ValuationSubring K := ValuationSubring.ofSubring S.toSubring hS
-  exact (inferInstance : IsIntegrallyClosed V).of_equiv
-    (IsLocalization.algEquiv q.primeCompl S (Localization.AtPrime q)).toRingEquiv
+      exact ⟨a, b, by simpa [p, hp, Ideal.primeCompl_bot] using nonZeroDivisors.ne_zero hb,
+        by simpa [div_eq_mul_inv] using hab.symm⟩
+    exact (key ⊤ (by ext x; simpa using hall x)).of_equiv
+      (IsLocalization.algEquiv q.primeCompl S (Localization.AtPrime q)).toRingEquiv
+  · exact (key (ValuationSubring.ofLE (valuationSubringAtPrime K ⟨p, p_prime, hp⟩)
+      S.toSubring hTS) rfl).of_equiv
+      (IsLocalization.algEquiv q.primeCompl S (Localization.AtPrime q)).toRingEquiv
 
 end Subalgebra
