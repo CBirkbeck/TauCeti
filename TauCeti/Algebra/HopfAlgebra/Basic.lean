@@ -144,7 +144,7 @@ theorem _root_.BialgHom.map_antipode (φ : A →ₐc[R] B) (a : A) :
 
 end
 
-namespace BialgHomClass
+section
 
 variable {R A B F : Type*} [CommSemiring R]
 variable [Semiring A] [Semiring B] [_root_.HopfAlgebra R A] [_root_.HopfAlgebra R B]
@@ -152,10 +152,10 @@ variable [FunLike F A B] [BialgHomClass F R A B]
 
 /-- A bialgebra-hom-like map between Hopf algebras commutes with the antipodes, pointwise. -/
 @[simp]
-theorem map_antipode (φ : F) (a : A) :
+theorem _root_.BialgHomClass.map_antipode (φ : F) (a : A) :
     φ (HopfAlgebra.antipode R a) = HopfAlgebra.antipode R (φ a) :=
   BialgHom.map_antipode (φ : A →ₐc[R] B) a
 
-end BialgHomClass
+end
 
 end TauCeti
