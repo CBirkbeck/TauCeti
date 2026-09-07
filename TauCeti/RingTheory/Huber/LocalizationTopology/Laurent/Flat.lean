@@ -494,8 +494,8 @@ theorem flat_restrictionRingHomOfSubset_of_isStronglyNoetherian_base
     (restrictionRingHomOfSubset P T s S hden T' S' hden' hTT').Flat :=
   flat_restrictionRingHomOfSubset_of_forall_isStronglyNoetherian P T s S hden T' S' hden' hTT'
     hnil fun U hU hUlt ↦
-      isStronglyNoetherian_completion_of_subset P T s S hden
-        (hnil (lt_of_le_of_lt hU hUlt)) hSN U hU
+      isStronglyNoetherian_completion_of_subset P T s S hden U hU
+        (fun _ ↦ hnil (lt_of_le_of_lt hU hUlt)) hSN
 
 
 end PairOfDefinition
