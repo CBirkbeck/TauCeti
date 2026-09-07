@@ -613,6 +613,17 @@ theorem norm_eq_one (χ : UnitaryIdealWeight K) {I : Ideal (𝓞 K)} (hI : χ.1.
   refine hI.induction_on (by simp) fun 𝔭 J h𝔭 _ ih ↦ ?_
   rw [map_mul, norm_mul, χ.2 𝔭 h𝔭, ih, one_mul]
 
+/-- **A unitary weight is bounded by one on every ideal.** On a good ideal the modulus is exactly
+`1`; on a bad one the weight vanishes, by `apply_eq_zero_iff_not_isGood`. So a unitary weight is
+bounded everywhere without any goodness hypothesis, which is the form a convergence comparison
+wants — `summable_idealTerm_of_norm_le_of_one_lt_re` asks for a bound on all of `(Ideal (𝓞 K))⁰`
+and cannot be handed one that holds only away from the bad primes. -/
+theorem norm_le_one (χ : UnitaryIdealWeight K) (I : Ideal (𝓞 K)) : ‖χ.1 I‖ ≤ 1 := by
+  by_cases hI : χ.1.IsGood I
+  · exact (norm_eq_one χ hI).le
+  · rw [(MultiplicativeIdealWeight.apply_eq_zero_iff_not_isGood χ.1 I).mpr hI, norm_zero]
+    exact zero_le_one
+
 /-- The trivial weight is unitary. -/
 noncomputable instance : One (UnitaryIdealWeight K) :=
   ⟨1, fun 𝔭 _ ↦ by simp [MultiplicativeIdealWeight.one_apply, 𝔭.ne_bot]⟩
