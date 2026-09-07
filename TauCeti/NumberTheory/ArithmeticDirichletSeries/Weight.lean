@@ -616,8 +616,9 @@ theorem norm_eq_one (χ : UnitaryIdealWeight K) {I : Ideal (𝓞 K)} (hI : χ.1.
 /-- **A unitary weight is bounded by one on every ideal.** On a good ideal the modulus is exactly
 `1`; on a bad one the weight vanishes, by `apply_eq_zero_iff_not_isGood`. So a unitary weight is
 bounded everywhere without any goodness hypothesis, which is the form a convergence comparison
-wants — `summable_idealTerm_of_norm_le_of_one_lt_re` asks for a bound on all of `(Ideal (𝓞 K))⁰`
-and cannot be handed one that holds only away from the bad primes. -/
+wants: such a comparison is indexed by all of `(Ideal (𝓞 K))⁰` and cannot use a bound that holds
+only away from the bad primes, since splitting the sum there would mean redoing the
+finite-exceptional-set argument at every call site. -/
 theorem norm_le_one (χ : UnitaryIdealWeight K) (I : Ideal (𝓞 K)) : ‖χ.1 I‖ ≤ 1 := by
   by_cases hI : χ.1.IsGood I
   · exact (norm_eq_one χ hI).le
