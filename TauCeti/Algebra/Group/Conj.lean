@@ -83,10 +83,6 @@ division is exact — `#C` is the index of the centralizer of `σ`, and `orderOf
 centralizer's order, so their product divides `#G` — and the second evaluates the quotient as the
 centralizer's order over `orderOf σ`. Neither asserts that either side counts anything; a caller
 wanting a cardinality interpretation must supply it.
-
-`card_carrier_mul_orderOf_dvd` follows `TauCetiRoadmap/Chebotarev/Suggested.lean` lines 377-382 in
-name, argument structure and conclusion, and the closed form below is the identity
-`#G / (#C * f) = #Centralizer_G(σ) / f` specified in `TauCetiRoadmap/Chebotarev/README.md` §8.2.
 -/
 
 public section
