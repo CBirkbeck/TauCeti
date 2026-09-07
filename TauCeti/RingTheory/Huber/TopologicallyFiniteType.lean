@@ -233,10 +233,6 @@ variable {A B : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] [
 strongly noetherian Huber ring `A`, a complete Hausdorff nonarchimedean ring `B` admitting a map
 `φ : A →+* B` strictly topologically of finite type is again strongly noetherian.
 
-Only the existence of a presentation is used, never which map it presents: `B` is strongly
-noetherian as soon as *some* open quotient `A⟨X₁,…,Xₖ⟩ ↠ B` exists, whatever that quotient does on
-constants. The hypothesis is stated on `φ` because that is the form a caller holds.
-
 The intended use is Wedhorn's §8.2, where
 `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_of_forall_isStronglyNoetherian`
 asks that every rational localisation in a cover be strongly noetherian. Combined with a strict
