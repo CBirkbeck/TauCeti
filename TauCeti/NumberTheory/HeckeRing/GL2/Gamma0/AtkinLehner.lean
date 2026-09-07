@@ -749,8 +749,7 @@ theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset [NeZero N] (x : GL (Fin 2)
     rw [hx₀_val, ← Int.cast_det]
     exact_mod_cast hA₀_det_pos
   have hx₀ : x₀ ∈ Delta0 N := (mem_Delta0_iff N).mpr ⟨A₀, hx₀_val, hx₀_det, hA₀N,
-    (ZMod.coe_int_isUnit_iff_isCoprime _ _).mpr
-      (isCoprime_comm.mp (Int.isCoprime_iff_gcd_eq_one.mpr hA₀co))⟩
+    Int.isUnit_intCast_iff_gcd_eq_one.mpr hA₀co⟩
   have hsmul : (x : Matrix (Fin 2) (Fin 2) ℚ) = (d : ℚ) • (x₀ : Matrix (Fin 2) (Fin 2) ℚ) := by
     rw [hA, hx₀_val]
     ext i j
