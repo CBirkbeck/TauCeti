@@ -80,7 +80,8 @@ variable (W : WeierstrassCurve O)
 /-- **A formal-group parameter gives a point of the curve**: the pair `(t / w(t), -1 / w(t))`
 satisfies the Weierstrass equation over `K`. The hypothesis is `w(t) ≠ 0` rather than `t ≠ 0`,
 because that is what the two denominators need; `algebraMap_formalWEval_ne_zero` supplies it
-from `t ≠ 0` in the adic setting. -/
+from a nonzero image `algebraMap O K t ≠ 0`, which `FaithfulSMul O K` below derives from
+`t ≠ 0`. -/
 theorem equation_formalPoint {t : O} (ht : PowerSeries.HasEval t)
     (hw : algebraMap O K (W.formalWEval t) ≠ 0) : (W.baseChange K).toAffine.Equation
       (algebraMap O K t / algebraMap O K (W.formalWEval t))
