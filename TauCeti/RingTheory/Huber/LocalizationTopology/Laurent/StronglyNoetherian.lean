@@ -8,6 +8,7 @@ module
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.Identification
 public import TauCeti.RingTheory.Huber.StronglyNoetherian
 
+import TauCeti.RingTheory.Huber.LocalizationTopology.Presentation
 import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.FirstCountable
 import TauCeti.Topology.Algebra.GroupCompletion
 
@@ -117,10 +118,16 @@ theorem isStronglyNoetherian_completion_of_isClosed (ht : t ∈ T')
         (restrictedMvPowerSeriesCompletionEquiv 1 (UniformSpace.Completion S)).toRingHom))
     (h₂.comp ((QuotientRing.isOpenQuotientMap_mk _).comp h₁))
 
--- Two presentations with the same numerator set, carried by different localisations, have
--- isomorphic completions: the restriction maps in both directions compose to the identity. Strong
--- noetherianness therefore transfers with nothing assumed -- no nilpotence, no noetherianity.
-private theorem isStronglyNoetherian_completion_self (P : PairOfDefinition A) (T : Finset A)
+/-- **Strong noetherianness does not depend on which localisation carries a presentation.** Two
+presentations with the same numerator set and denominator, carried by different localisations of
+`A` at `s`, have isomorphic completions, so one is strongly noetherian exactly when the other is.
+Nothing else is assumed: no nilpotence, no noetherianity.
+
+The isomorphism is `TauCeti.Huber.PairOfDefinition.presentationRingEquiv` applied to the two
+enlargement restriction maps, which are mutually inverse because each fixes the structure map
+from `A`. This is the invariance a caller needs to change carriers without redoing that
+argument. -/
+theorem isStronglyNoetherian_completion_self (P : PairOfDefinition A) (T : Finset A)
     (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     (hden : HasDenominatorPower P T s S)
     (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s S']
@@ -144,17 +151,16 @@ private theorem isStronglyNoetherian_completion_self (P : PairOfDefinition A) (T
   have _ := isUniformAddGroup_locUniformSpace P T s S' hden'
   have _ := isTopologicalRing_locUniformSpace P T s S' hden'
   have _ := isHuberRing_locUniformSpace P T s S' hden'
-  have h : (restrictionRingHomOfSubset P T s S' hden' T S hden fun _ hu ↦ hu).comp
-      (restrictionRingHomOfSubset P T s S hden T S' hden' fun _ hu ↦ hu) = RingHom.id _ := by
-    simp
-  have h' : (restrictionRingHomOfSubset P T s S hden T S' hden' fun _ hu ↦ hu).comp
-      (restrictionRingHomOfSubset P T s S' hden' T S hden fun _ hu ↦ hu) = RingHom.id _ := by
-    simp
   exact (isStronglyNoetherian_congr
-    (RingEquiv.ofRingHom (restrictionRingHomOfSubset P T s S hden T S' hden' fun _ hu ↦ hu)
-      (restrictionRingHomOfSubset P T s S' hden' T S hden fun _ hu ↦ hu) h' h)
-    (continuous_restrictionRingHomOfSubset P T s S hden T S' hden' fun _ hu ↦ hu)
-    (continuous_restrictionRingHomOfSubset P T s S' hden' T S hden fun _ hu ↦ hu)).mp hSN
+    (presentationRingEquiv P T s S hden T s S' hden'
+      (restrictionRingHomOfSubset P T s S hden T S' hden' fun _ hu ↦ hu)
+      (restrictionRingHomOfSubset P T s S' hden' T S hden fun _ hu ↦ hu)
+      (continuous_restrictionRingHomOfSubset P T s S hden T S' hden' fun _ hu ↦ hu)
+      (continuous_restrictionRingHomOfSubset P T s S' hden' T S hden fun _ hu ↦ hu)
+      (restrictionRingHomOfSubset_comp_toCompletionLoc P T s S hden T S' hden' fun _ hu ↦ hu)
+      (restrictionRingHomOfSubset_comp_toCompletionLoc P T s S' hden' T S hden fun _ hu ↦ hu))
+    (continuous_presentationRingEquiv P T s S hden T s S' hden' _ _ _ _ _ _)
+    (continuous_presentationRingEquiv_symm P T s S hden T s S' hden' _ _ _ _ _ _)).mp hSN
 
 include hTT' in
 /-- **The Laurent step preserves strong noetherianness, for a topologically nilpotent
