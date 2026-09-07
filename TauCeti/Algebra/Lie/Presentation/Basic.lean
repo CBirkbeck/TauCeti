@@ -19,7 +19,7 @@ of images satisfying the relations. The quotient universal property is provided 
 `TauCeti/Algebra/Lie/Quotient.lean`; this file supplies two further facts needed to apply it.
 
 First, a homomorphism transports an iterated adjoint action,
-`TauCeti.LieHom.map_ad_pow`. Relations of a presentation are frequently written as the vanishing of
+`LieHom.map_ad_pow`. Relations of a presentation are frequently written as the vanishing of
 `(ad x) ^ n y` — Serre's relations for a Cartan matrix are the standard example — and such a
 relation says nothing about the presented algebra until it is known to be carried along by the map
 that checks it. The companion `TauCeti.ad_neg_pow_apply_eq_zero` transports such a vanishing result
@@ -31,7 +31,7 @@ generate the presented algebra, rather than merely determine maps out of it.
 
 ## Main results
 
-* `TauCeti.LieHom.map_ad_pow`: a homomorphism carries `(ad x) ^ n y` to `(ad (f x)) ^ n (f y)`.
+* `LieHom.map_ad_pow`: a homomorphism carries `(ad x) ^ n y` to `(ad (f x)) ^ n (f y)`.
 * `TauCeti.ad_neg_pow_apply_eq_zero`: negating the element acting by `ad` preserves the vanishing of
   an iterated adjoint action.
 * `TauCeti.FreeLieAlgebra.lieSpan_range_of_eq_top`: the generators of a free Lie algebra generate it
@@ -49,7 +49,7 @@ public section
 
 namespace TauCeti
 
-namespace LieHom
+section
 
 variable {R L L' : Type*} [CommRing R] [LieRing L] [LieAlgebra R L] [LieRing L'] [LieAlgebra R L']
 
@@ -57,7 +57,7 @@ variable {R L L' : Type*} [CommRing R] [LieRing L] [LieAlgebra R L] [LieRing L']
 action of the image. Relations of the form `(ad x) ^ n y = 0`, such as Serre's, are transported
 along a homomorphism by this. -/
 @[simp]
-theorem map_ad_pow (f : L →ₗ⁅R⁆ L') (x : L) (n : ℕ) (y : L) :
+theorem _root_.LieHom.map_ad_pow (f : L →ₗ⁅R⁆ L') (x : L) (n : ℕ) (y : L) :
     f ((LieAlgebra.ad R L x ^ n) y) = (LieAlgebra.ad R L' (f x) ^ n) (f y) := by
   induction n generalizing y with
   | zero => simp
@@ -65,7 +65,7 @@ theorem map_ad_pow (f : L →ₗ⁅R⁆ L') (x : L) (n : ℕ) (y : L) :
     simp only [pow_succ, Module.End.mul_apply, LieAlgebra.ad_apply] at ih ⊢
     rw [ih, f.map_lie]
 
-end LieHom
+end
 
 variable {R L : Type*} [CommRing R] [LieRing L] [LieAlgebra R L]
 
