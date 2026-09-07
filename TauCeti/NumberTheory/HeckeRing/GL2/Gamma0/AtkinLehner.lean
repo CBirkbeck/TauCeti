@@ -485,7 +485,7 @@ theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_coprimeDet [NeZero N]
   have hA_det_pos : 0 < A.det := by
     rw [← Int.cast_pos (R := ℚ), Int.cast_det, ← hA]
     exact hdet
-  have hAco : Int.gcd (A 0 0) N = 1 := Int.gcd_eq_one_of_isUnit_intCast hAunit
+  have hAco : Int.gcd (A 0 0) N = 1 := Int.isUnit_intCast_iff_gcd_eq_one.mp hAunit
   obtain ⟨P, Q, hPQ⟩ :=
     exists_sl2_mul_mul_eq_atkinLehnerEntries N A hA_det_pos c hc hAco
   have hb_cop : CoprimeDet N b := by
@@ -557,7 +557,7 @@ theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_dvd_pow [NeZero N] (m k
   have hmN : (m : ℤ) ∣ (N : ℤ) ^ k := by exact_mod_cast Int.natCast_dvd_natCast.mpr hm_dvd
   exact Int.isCoprime_iff_gcd_eq_one.mp
     ((Int.isCoprime_iff_gcd_eq_one.mpr
-      (Int.gcd_eq_one_of_isUnit_intCast hAunit)).pow_right.of_isCoprime_of_dvd_right hmN)
+      (Int.isUnit_intCast_iff_gcd_eq_one.mp hAunit)).pow_right.of_isCoprime_of_dvd_right hmN)
 
 /-- **Dividing out the shared part leaves a cofactor coprime to the level.** For `m ≠ 0`, the
 quotient of `m` by `gcd (m, N ^ m)` is coprime to `N`.
@@ -689,7 +689,7 @@ theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_primitive [NeZero N]
   -- unit conditions carried by membership are conditions on `A` itself
   obtain ⟨A₀, hA₀, hxdet, hAN, hAunit⟩ := (mem_Delta0_iff N).mp hx
   obtain rfl : A = A₀ := Matrix.map_injective Int.cast_injective (hA.symm.trans hA₀)
-  have hAco : Int.gcd (A 0 0) N = 1 := Int.gcd_eq_one_of_isUnit_intCast hAunit
+  have hAco : Int.gcd (A 0 0) N = 1 := Int.isUnit_intCast_iff_gcd_eq_one.mp hAunit
   have hA_det_pos : 0 < A.det := by rw [← Int.cast_pos (R := ℚ), Int.cast_det, ← hA]; exact hxdet
   obtain ⟨m, hm⟩ : ∃ m : ℕ, A.det = (m : ℤ) :=
     ⟨A.det.natAbs, (Int.natAbs_of_nonneg hA_det_pos.le).symm⟩
@@ -731,7 +731,7 @@ theorem atkinLehnerAntiInvolution_bar_mem_doubleCoset [NeZero N] (x : GL (Fin 2)
     (hx : x ∈ Delta0 N) : (atkinLehnerAntiInvolution N).bar x hx ∈
       DoubleCoset.doubleCoset x ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) := by
   obtain ⟨A, hA, hxdet, hAN, hAunit⟩ := (mem_Delta0_iff N).mp hx
-  have hAco : Int.gcd (A 0 0) N = 1 := Int.gcd_eq_one_of_isUnit_intCast hAunit
+  have hAco : Int.gcd (A 0 0) N = 1 := Int.isUnit_intCast_iff_gcd_eq_one.mp hAunit
   have hA_det_pos : 0 < A.det := by
     rw [← Int.cast_pos (R := ℚ), Int.cast_det, ← hA]
     exact hxdet

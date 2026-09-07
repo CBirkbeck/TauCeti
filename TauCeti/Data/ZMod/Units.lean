@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Chris Birkbeck. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Chris Birkbeck
+Authors: Chris Birkbeck, Claude
 -/
 module
 
@@ -15,10 +15,11 @@ import Mathlib.Data.ZMod.Units
 
 Two results connecting unit and coprimality data over `ZMod d`, independent of one another:
 
-* `Int.gcd_eq_one_of_isUnit_intCast` — an integer that is a *unit* mod `d` is coprime to `d`.
-  Its consumers are the Atkin-Lehner and bad-prime double-coset arguments in
-  `TauCeti/NumberTheory/HeckeRing/GL2/Gamma0/`, which need the `Int.gcd` form of the
-  unit condition carried by membership of `Δ₀(N)`.
+* `Int.isUnit_intCast_iff_gcd_eq_one` — an integer is a *unit* mod `d` exactly when it is
+  coprime to `d`. Its consumers are the Atkin-Lehner and bad-prime double-coset arguments in
+  `TauCeti/NumberTheory/HeckeRing/GL2/Gamma0/`, which need the `Int.gcd` form of the unit
+  condition carried by membership of `Δ₀(N)`, and `Int.exists_nonneg_lt_and_dvd_mul_sub` in
+  `TauCeti/Data/Int/LinearCongruence.lean`, which needs the other direction.
 * `IsCoprime.exists_int_lifts` — a *pair* of coprime residues mod `d` lifts to a coprime pair
   of integers. Ported from the AINTLIB `LeanModularForms` project
   (`LeanModularForms/HeckeRIngs/GLn/SL2Surjection.lean`, Chris Birkbeck); its consumer is the
@@ -30,13 +31,13 @@ public section
 
 variable {d : ℕ}
 
-/-- **An integer that is a unit mod `d` is coprime to `d`.** The `Int.gcd` form is what
-consumers of `Nat.Coprime` want; `ZMod.coe_int_isUnit_iff_isCoprime` states the same fact as
-`IsCoprime` over `ℤ`. -/
-theorem Int.gcd_eq_one_of_isUnit_intCast {a : ℤ} (h : IsUnit ((a : ℤ) : ZMod d)) :
-    Int.gcd a d = 1 :=
-  Int.isCoprime_iff_gcd_eq_one.mp
-    (isCoprime_comm.mp ((ZMod.coe_int_isUnit_iff_isCoprime _ _).mp h))
+/-- **An integer is a unit mod `d` exactly when it is coprime to `d`.** The `Int.gcd` form is
+what consumers of `Nat.Coprime` want; `ZMod.coe_int_isUnit_iff_isCoprime` states the same
+equivalence with `IsCoprime` over `ℤ` on the right, in the opposite argument order. -/
+theorem Int.isUnit_intCast_iff_gcd_eq_one {a : ℤ} :
+    IsUnit ((a : ℤ) : ZMod d) ↔ Int.gcd a d = 1 :=
+  (ZMod.coe_int_isUnit_iff_isCoprime _ _).trans
+    (isCoprime_comm.trans Int.isCoprime_iff_gcd_eq_one)
 
 private lemma isCoprime_emod {a₁ c₁ : ℤ}
     (hac : IsCoprime (a₁ : ZMod d) (c₁ : ZMod d)) :

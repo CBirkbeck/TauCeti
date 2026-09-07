@@ -246,7 +246,7 @@ theorem mem_doubleCoset_natDiagGL_of_dvd_pow (N m : ℕ) (k : ℕ) (hm_dvd : m �
     β ∈ DoubleCoset.doubleCoset (natDiagGL 2 ![1, m])
       ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) := by
   obtain ⟨A, hA, -, hAN, hAunit⟩ := (mem_Delta0_iff N).mp hβ
-  have hAcop : Int.gcd (A 0 0) N = 1 := Int.gcd_eq_one_of_isUnit_intCast hAunit
+  have hAcop : Int.gcd (A 0 0) N = 1 := Int.isUnit_intCast_iff_gcd_eq_one.mp hAunit
   exact mem_doubleCoset_natDiagGL_of_intWitness N m β A hA hAN hdet
     (Nat.Coprime.coprime_dvd_right hm_dvd (Nat.Coprime.pow_right k hAcop))
 
