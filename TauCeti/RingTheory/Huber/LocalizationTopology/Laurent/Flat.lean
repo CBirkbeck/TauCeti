@@ -11,11 +11,12 @@ public import TauCeti.RingTheory.Huber.Restricted.Laurent
 public import TauCeti.RingTheory.Huber.StronglyNoetherian
 
 import TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.Identification
+import TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.StronglyNoetherian
 
 /-!
 # Flatness of the Laurent quotient, and of a numerator enlargement
 
-Restriction maps between the rings of a Laurent presentation are flat, at the ring level. Three
+Restriction maps between the rings of a Laurent presentation are flat, at the ring level. Four
 statements, in increasing generality:
 
 * the Laurent quotient `A⟨T/s⟩⟨X⟩ ⧸ (t/s - X)` is a flat `A⟨T/s⟩`-module when that base is a
@@ -24,9 +25,11 @@ statements, in increasing generality:
   when `T'` is `T` with one numerator `t` adjoined. It asks the hypotheses above of `A⟨T/s⟩`,
   together with closedness of the Laurent relation ideal, **only when `t ∉ T`**;
 * the restriction map of an arbitrary enlargement `T ⊆ T'` is flat, assuming `s` topologically
-  nilpotent and `A⟨U/s⟩` strongly noetherian for every `U` with `T ⊆ U ⊂ T'`. This is **not**
-  Wedhorn's Proposition 8.30, which assumes strong noetherianity of `A` alone; see
-  *What this is not*.
+  nilpotent and `A⟨U/s⟩` strongly noetherian for every `U` with `T ⊆ U ⊂ T'`. On its own this is
+  **not** Wedhorn's Proposition 8.30, which assumes strong noetherianity of the base alone; see
+  *What this is not*;
+* **Wedhorn's Proposition 8.30**: the same conclusion asking strong noetherianity only at `T`,
+  the per-intermediate hypothesis being derived rather than assumed.
 
 Changing the localisation that carries a presentation is flat with no hypotheses at all.
 
@@ -53,6 +56,9 @@ in: `s` topologically nilpotent over a strongly noetherian base.
   `A⟨U/s⟩` strongly noetherian for every `U` with `T ⊆ U ⊂ T'`**. That family hypothesis is what
   separates this from Wedhorn's Proposition 8.30, which assumes it of `A` alone; see *What this is
   not*.
+* `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_of_isStronglyNoetherian_base` :
+  **Wedhorn's Proposition 8.30** — the same conclusion asking strong noetherianity only at `T`,
+  the family hypothesis above being derived from it rather than assumed.
 
 ## What this is not
 
@@ -423,6 +429,10 @@ separates the two is the standing hypothesis of his §8.2 — that rational loca
 strongly noetherian ring are again strongly noetherian — which `hSN` assumes case by case rather
 than deriving.
 
+`TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_of_isStronglyNoetherian_base`
+supplies that derivation and is Wedhorn's statement; this form remains the one to use when strong
+noetherianity is known only at the intermediate presentations.
+
 The enlargement is arbitrary and so is the localisation `S'` carrying the target, matching
 `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset` and the rest of the restriction
 API.
@@ -457,6 +467,35 @@ theorem flat_restrictionRingHomOfSubset_of_forall_isStronglyNoetherian
     (flat_restrictionRingHomOfSubset_union P T s S hden T' hTT' hnil hSN (T' \ T) T'
       (Finset.union_sdiff_of_subset hTT').symm le_rfl hTT')
     (flat_restrictionRingHomOfSubset_self P T' s S (hden.mono hTT') S' hden')
+
+
+/-- **Wedhorn's Proposition 8.30 at the ring level**: if the completed localisation carrying the
+`T`-topology is strongly noetherian, the restriction map of any numerator enlargement is flat.
+
+This is `TauCeti.Huber.PairOfDefinition`
+`.flat_restrictionRingHomOfSubset_of_forall_isStronglyNoetherian` with its per-intermediate
+hypothesis discharged. Strong noetherianness is asked at `T` alone and propagates to every `U`
+with `T ⊆ U` by `TauCeti.Huber.PairOfDefinition.isStronglyNoetherian_completion_of_subset`, which
+is the standing hypothesis of Wedhorn's §8.2 that the `forall` form assumes case by case. -/
+theorem flat_restrictionRingHomOfSubset_of_isStronglyNoetherian_base
+    (hnil : T ⊂ T' → IsTopologicallyNilpotent s)
+    (hSN :
+      letI := locUniformSpace P T s S hden
+      letI := isUniformAddGroup_locUniformSpace P T s S hden
+      letI := isTopologicalRing_locUniformSpace P T s S hden
+      letI := isHuberRing_locUniformSpace P T s S hden
+      IsStronglyNoetherian (UniformSpace.Completion S)) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s S' hden'
+    (restrictionRingHomOfSubset P T s S hden T' S' hden' hTT').Flat :=
+  flat_restrictionRingHomOfSubset_of_forall_isStronglyNoetherian P T s S hden T' S' hden' hTT'
+    hnil fun U hU hUlt ↦
+      isStronglyNoetherian_completion_of_subset P T s S hden
+        (hnil (lt_of_le_of_lt hU hUlt)) hSN U hU
 
 
 end PairOfDefinition
