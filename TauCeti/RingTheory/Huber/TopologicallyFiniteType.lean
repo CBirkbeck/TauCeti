@@ -229,16 +229,23 @@ variable {A B : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] [
   [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [NonarchimedeanRing B] [CompleteSpace B]
   [T0Space B]
 
-/-- **Strong noetherianness passes to an algebra strictly topologically of finite type.**
+/-- **Strong noetherianness passes to an algebra strictly topologically of finite type.** Over a
+strongly noetherian Huber ring `A`, a complete Hausdorff nonarchimedean ring `B` admitting a map
+`φ : A →+* B` strictly topologically of finite type is again strongly noetherian.
 
-The presentation `π : A⟨X₁,…,Xₖ⟩ → B` is an open quotient map, and `A⟨X₁,…,Xₖ⟩` is strongly
-noetherian over a strongly noetherian Huber ring by
-`TauCeti.Huber.IsStronglyNoetherian.restrictedMvPowerSeriesCompletion`, so this is
-`IsOpenQuotientMap.isStronglyNoetherian` applied to that presentation. The presenting equation
-is not used: any open quotient out of `A⟨X₁,…,Xₖ⟩` suffices, whatever it does on constants. -/
+Only the existence of a presentation is used, never which map it presents: `B` is strongly
+noetherian as soon as *some* open quotient `A⟨X₁,…,Xₖ⟩ ↠ B` exists, whatever that quotient does on
+constants. The hypothesis is stated on `φ` because that is the form a caller holds.
+
+This is the standing hypothesis of Wedhorn's §8.2 in the form the flatness results consume.
+`TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_of_forall_isStronglyNoetherian`
+asks that every rational localisation in a cover be strongly noetherian, and each of those is
+presented as a quotient of a restricted series algebra — strictly of finite type by
+`TauCeti.Huber.isStrictlyTopologicallyFiniteType_quotientMk_algebraMap` — so this is what turns
+that hypothesis into one about the base alone. -/
 theorem IsStrictlyTopologicallyFiniteType.isStronglyNoetherian {φ : A →+* B}
     (hφ : IsStrictlyTopologicallyFiniteType φ) : IsStronglyNoetherian B := by
-  obtain ⟨k, π, hπ, -⟩ := hφ
+  obtain ⟨k, π, hπ, -⟩ := isStrictlyTopologicallyFiniteType_iff.mp hφ
   exact hπ.isStronglyNoetherian
 
 end StronglyNoetherian
