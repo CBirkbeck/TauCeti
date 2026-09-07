@@ -424,14 +424,15 @@ theorem summable_idealTerm_one_iff {K : Type*} [Field K] [NumberField K] {s : �
 `f` on a nonzero integral ideal has modulus at most `C`, its ideal-indexed Dirichlet series
 converges absolutely on `Re s > 1`.
 
-The bound may be any real: the comparison is against `C` times the trivial weight's series, and no
-`C = 1` normalisation is wanted, since a weight is often bounded by something other than `1`
-without being rescaled. The unitary case — a Dirichlet or Galois character, of modulus `1` at the
-good primes and `0` at the bad ones — is `C = 1`, and stating the hypothesis as a bound rather than
-as unitarity is what lets the vanishing at the bad primes pass without a special case.
+The bound may be any nonnegative real — a negative `C` makes the hypothesis unsatisfiable, since
+`‖f I‖` is a norm — and no `C = 1` normalisation is wanted, since a weight is often bounded by
+something other than `1` without being rescaled. The unitary case — a Dirichlet or Galois
+character, of modulus `1` at the good primes and `0` at the bad ones — is `C = 1`, and stating the
+hypothesis as a bound rather than as unitarity is what lets the vanishing at the bad primes pass
+without a special case.
 
 Only one direction holds, unlike `summable_idealTerm_one_iff`: a weight that vanishes identically
-is bounded by every `C` and converges everywhere. -/
+is bounded by every nonnegative `C` and converges everywhere. -/
 theorem summable_idealTerm_of_norm_le_of_one_lt_re {K : Type*} [Field K] [NumberField K]
     {f : IdealArithmeticFunction K} {C : ℝ} (hf : ∀ I : (Ideal (𝓞 K))⁰, ‖f I‖ ≤ C) {s : ℂ}
     (hs : 1 < s.re) : Summable (idealTerm K f s) := by
