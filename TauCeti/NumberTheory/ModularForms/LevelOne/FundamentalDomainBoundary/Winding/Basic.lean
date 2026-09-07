@@ -79,6 +79,20 @@ private lemma windingNumber_fdBoundary_eq_zero_of_mem_preconnected {S : Set ℂ}
   rw [Metric.mem_closedBall, dist_zero_right] at this
   linarith
 
+/-- **The escape witness.** Every lemma below feeds `hunb` a point of the form
+`-(max R 0 + 1)`, on the real axis or rotated onto the imaginary axis; in both cases it is the
+norm that has to exceed `R`, and `max R 0` makes that work for negative `R` too. -/
+private lemma lt_norm_neg_max_add_one (R : ℝ) : R < ‖((-(max R 0 + 1) : ℝ) : ℂ)‖ := by
+  rw [Complex.norm_real, Real.norm_of_nonpos (by nlinarith [le_max_right R 0])]
+  nlinarith [le_max_left R 0]
+
+/-- The escape witness rotated onto the imaginary axis sits below the contour's height, so it
+lies in the half-space the `im`-lemmas transport through. -/
+private lemma neg_max_add_one_mul_I_im_lt (R : ℝ) :
+    (((-(max R 0 + 1) : ℝ) : ℂ) * Complex.I).im < Real.sqrt 3 / 2 := by
+  rw [Complex.mul_I_im, Complex.ofReal_re]
+  nlinarith [le_max_right R 0, Real.sqrt_nonneg 3]
+
 /-- Every point strictly below the contour's height winds zero. -/
 @[simp]
 theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : Real.sqrt 3 / 2 ≤ H) {w : ℂ}
@@ -89,11 +103,10 @@ theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : Real.sqrt 3 / 2 ≤ H) {
   · rintro z hz ⟨t, ht, rfl⟩
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
     exact absurd hz (not_lt.mpr (sqrt_three_div_two_le_im_fdBoundary hH ht))
-  · rw [Set.mem_ofPred_eq, Complex.mul_I_im, Complex.ofReal_re]
-    nlinarith [le_max_right R 0, Real.sqrt_nonneg 3]
-  · rw [norm_mul, Complex.norm_I, mul_one, Complex.norm_real,
-      Real.norm_of_nonpos (by nlinarith [le_max_right R 0])]
-    nlinarith [le_max_left R 0]
+  · rw [Set.mem_ofPred_eq]
+    exact neg_max_add_one_mul_I_im_lt R
+  · rw [norm_mul, Complex.norm_I, mul_one]
+    exact lt_norm_neg_max_add_one R
 
 /-- Every point strictly right of the fundamental strip winds zero. The bound is stated
 in simp-normal form so the lemma can participate in simplification. -/
@@ -127,8 +140,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_re_lt_neg_half {w : ℂ}
     linarith
   · rw [Set.mem_ofPred_eq, Complex.ofReal_re]
     nlinarith [le_max_right R 0]
-  · rw [Complex.norm_real, Real.norm_of_nonpos (by nlinarith [le_max_right R 0])]
-    nlinarith [le_max_left R 0]
+  · exact lt_norm_neg_max_add_one R
 
 /-- Every point strictly above the contour's height winds zero. -/
 @[simp]
@@ -172,11 +184,10 @@ theorem windingNumber_fdBoundary_eq_zero_of_norm_lt_one (hH : 1 ≤ H) {w : ℂ}
     · rw [Metric.mem_ball, dist_zero_right] at hz
       exact absurd hz (not_lt.mpr (one_le_norm_fdBoundary hH ht))
     · exact absurd hz (not_lt.mpr (sqrt_three_div_two_le_im_fdBoundary (h32.trans hH) ht))
-  · rw [Set.mem_ofPred_eq, Complex.mul_I_im, Complex.ofReal_re]
-    nlinarith [le_max_right R 0, Real.sqrt_nonneg 3]
-  · rw [norm_mul, Complex.norm_I, mul_one, Complex.norm_real,
-      Real.norm_of_nonpos (by nlinarith [le_max_right R 0])]
-    nlinarith [le_max_left R 0]
+  · rw [Set.mem_ofPred_eq]
+    exact neg_max_add_one_mul_I_im_lt R
+  · rw [norm_mul, Complex.norm_I, mul_one]
+    exact lt_norm_neg_max_add_one R
 
 /-- The boundary contour is null-homologous in the truncated fundamental domain: every
 point off the closed truncated domain lies in one of the five exterior regions, where the
