@@ -7,10 +7,11 @@ module
 
 public import Mathlib.NumberTheory.RamificationInertia.Galois
 public import Mathlib.RingTheory.Frobenius
+public import TauCeti.Algebra.Group.Conj
 public import TauCeti.NumberTheory.NumberField.Frobenius.Restriction
 public import TauCeti.NumberTheory.NumberField.UnramifiedTower
-import TauCeti.Algebra.Group.Conj
 import TauCeti.NumberTheory.NumberField.Frobenius.DecompositionGroup
+import TauCeti.NumberTheory.NumberField.Frobenius.Tower
 import TauCeti.NumberTheory.NumberField.SplitsCompletely
 
 /-!
@@ -27,6 +28,12 @@ Exercise 2.
 The same reference gives functoriality in a normal tower: restriction maps the Artin symbol of
 `L/K` to the Artin symbol of `M/K`. Unramifiedness in the intermediate extension is derived from
 unramifiedness in the top extension, rather than assumed separately.
+
+Raising the base field is the companion law, and it takes a power: for `K ⊆ M ⊆ L`, the symbol
+of a prime of `𝒪 M` above `𝔭`, read inside `Gal(L/K)`, is the `f(𝔓/𝔭)`-th power of the symbol of
+`𝔭`. Stated on conjugacy classes it needs no normality hypothesis on `M / K` and names no prime
+of `𝒪 L`, both of which the element-level form in
+`TauCeti.NumberTheory.NumberField.Frobenius.Tower` does need.
 
 Finally, the symbol detects complete splitting: it is the identity class exactly when the
 residue degree is one, equivalently when `𝓞 L` has `[L : K]` primes above `𝔭`.
@@ -222,5 +229,52 @@ theorem artinSymbol_eq_one_iff_ncard_primesOver_eq_finrank (𝔭 : Ideal (𝓞 K
   exact (and_iff_right rfl).symm
 
 end SplitsCompletely
+
+section BaseChange
+
+/-!
+### Raising the base field
+
+The companion to `artinSymbol_map_restrictNormalHom`. That law shrinks the top field of a normal
+tower and takes no power; this one raises the base field and takes the power `f(𝔓/𝔭)`.
+-/
+
+/-- **Raising the base field raises the Artin symbol to the residue degree.** For number fields
+`K ⊆ M ⊆ L` with `L / K` and `L / M` Galois and `𝔓` a prime of `𝓞 M` over `𝔭` unramified in `L`,
+the Artin symbol of `𝔓` for `L / M`, read inside `Gal(L/K)` along `AlgEquiv.restrictScalarsHom`,
+is the `f(𝔓/𝔭)`-th power of the Artin symbol of `𝔭` for `L / K`.
+
+This is the conjugacy-class form of `NumberField.restrictScalars_arithFrobAt_eq_pow_inertiaDeg`,
+and unlike that element-level statement it needs no hypothesis of normality on `M / K` and fixes
+no prime of `𝓞 L`. Both are genuine gains, and they are the same gain: the element identity holds
+only for a Frobenius *at a chosen `Q`*, and fails for an arbitrary conjugate when `M / K` is not
+normal, because a conjugate need not stabilize `Q`. Passing to classes quotients exactly by that
+choice, so what is left is an identity of classes with no chosen prime in it. -/
+theorem artinSymbol_map_restrictScalarsHom {M L : Type*} [Field M] [NumberField M]
+    [Field L] [NumberField L] [Algebra K M] [Algebra M L] [Algebra K L]
+    [IsScalarTower K M L] [IsGalois K L] [IsGalois M L]
+    (𝔓 : Ideal (𝓞 M)) [𝔓.IsMaximal] (𝔭 : Ideal (𝓞 K)) [𝔭.IsMaximal] [𝔓.LiesOver 𝔭]
+    (hurM : ∀ (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver 𝔓],
+      Algebra.IsUnramifiedAt (𝓞 M) Q)
+    (hurK : ∀ (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver 𝔭],
+      Algebra.IsUnramifiedAt (𝓞 K) Q) :
+    ConjClasses.map (AlgEquiv.restrictScalarsHom K) (artinSymbol 𝔓 hurM) =
+      artinSymbol 𝔭 hurK ^ 𝔓.inertiaDeg (𝓞 K) := by
+  obtain ⟨Q, _, _⟩ := (inferInstance : Nonempty (𝔓.primesOver (𝓞 L)))
+  have : Q.LiesOver 𝔭 := Ideal.LiesOver.trans Q 𝔓 𝔭
+  have hQM : Q.under (𝓞 M) = 𝔓 := (Ideal.LiesOver.over (A := 𝓞 M)).symm
+  have hQK : Q.under (𝓞 K) = 𝔭 := (Ideal.LiesOver.over (A := 𝓞 K)).symm
+  obtain ⟨σ, hσ⟩ := exists_isArithFrobAt K Q
+    (Ideal.ne_bot_of_liesOver_of_ne_bot (NeZero.ne 𝔭) Q)
+  -- The element-level tower law supplies a Frobenius `τ` for `L / M` at this same `Q` whose
+  -- restriction is `σ ^ f(𝔓/𝔭)`; both symbols are then read off at `Q` by
+  -- `artinSymbol_eq_mk_of_isArithFrobAt`, and the class statement is what survives.
+  obtain ⟨τ, hτ, hrel⟩ :=
+    exists_isArithFrobAt_pow_inertiaDeg M Q 𝔓 𝔭 hQM hQK hurK σ hσ
+  rw [artinSymbol_eq_mk_of_isArithFrobAt 𝔓 hurM Q τ hτ,
+    artinSymbol_eq_mk_of_isArithFrobAt 𝔭 hurK Q σ hσ,
+    ConjClasses.map_mk, ConjClasses.mk_pow, AlgEquiv.restrictScalarsHom_apply, hrel]
+
+end BaseChange
 
 end NumberField
