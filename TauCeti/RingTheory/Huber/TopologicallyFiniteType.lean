@@ -237,12 +237,14 @@ Only the existence of a presentation is used, never which map it presents: `B` i
 noetherian as soon as *some* open quotient `A⟨X₁,…,Xₖ⟩ ↠ B` exists, whatever that quotient does on
 constants. The hypothesis is stated on `φ` because that is the form a caller holds.
 
-This is the standing hypothesis of Wedhorn's §8.2 in the form the flatness results consume.
+The intended use is Wedhorn's §8.2, where
 `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_of_forall_isStronglyNoetherian`
-asks that every rational localisation in a cover be strongly noetherian, and each of those is
-presented as a quotient of a restricted series algebra — strictly of finite type by
-`TauCeti.Huber.isStrictlyTopologicallyFiniteType_quotientMk_algebraMap` — so this is what turns
-that hypothesis into one about the base alone. -/
+asks that every rational localisation in a cover be strongly noetherian. That application is not
+yet available here: no result in this repository presents a rational localisation as strictly
+topologically of finite type over its base. Once one does — the presentations of Wedhorn's
+Examples 6.38 and 6.39 take the shape of
+`TauCeti.Huber.isStrictlyTopologicallyFiniteType_quotientMk_algebraMap` — this theorem is what
+will reduce that hypothesis to strong noetherianness of the base alone. -/
 theorem IsStrictlyTopologicallyFiniteType.isStronglyNoetherian {φ : A →+* B}
     (hφ : IsStrictlyTopologicallyFiniteType φ) : IsStronglyNoetherian B := by
   obtain ⟨k, π, hπ, -⟩ := isStrictlyTopologicallyFiniteType_iff.mp hφ
