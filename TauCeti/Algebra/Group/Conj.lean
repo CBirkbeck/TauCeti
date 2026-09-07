@@ -43,7 +43,7 @@ conjugation action.
   point.
 * `ConjClasses.card_carrier_mul_orderOf_dvd`: the class size times the order of a member
   divides the order of the group, so the quotient below is an exact ratio.
-* `ConjClasses.card_div_mul_card_carrier_orderOf_eq_card_centralizer_div_orderOf`: that
+* `ConjClasses.card_div_card_carrier_mul_orderOf_eq_card_centralizer_div_orderOf`: that
   quotient equals the order of the centralizer divided by the order of the member.
 * `TauCeti.ConjClasses.card_carrier_dvd_card`: the size of a conjugacy class divides the order of
   the group, with `TauCeti.ConjClasses.card_carrier_cast_ne_zero` the consequence that the size of
@@ -233,7 +233,7 @@ namespace ConjClasses
 
 For a *finite* group this is what makes `Nat.card G / (Nat.card C.carrier * orderOf σ)` an exact
 ratio rather than a truncated division, which
-`card_div_mul_card_carrier_orderOf_eq_card_centralizer_div_orderOf` then evaluates. No finiteness
+`card_div_card_carrier_mul_orderOf_eq_card_centralizer_div_orderOf` then evaluates. No finiteness
 is assumed here: for an infinite group `Nat.card G` is `0`, and every natural number divides `0`. -/
 theorem card_carrier_mul_orderOf_dvd {G : Type*} [Group G] (C : ConjClasses G) (σ : G)
     (hσ : σ ∈ C.carrier) :
@@ -252,7 +252,7 @@ order of a member leaves the order of the centralizer divided by that same order
 divisions are exact and it reads as an equality of ratios, but `hindex` alone does not give that.
 An infinite abelian group with an element of infinite order satisfies `hindex` while `Nat.card G`,
 the centralizer's cardinality and `orderOf σ` are all `0`, and the identity is then `0 / 0`. -/
-theorem card_div_mul_card_carrier_orderOf_eq_card_centralizer_div_orderOf {G : Type*} [Group G]
+theorem card_div_card_carrier_mul_orderOf_eq_card_centralizer_div_orderOf {G : Type*} [Group G]
     (C : ConjClasses G) (σ : G) (hσ : σ ∈ C.carrier)
     (hindex : (Subgroup.centralizer {σ}).index ≠ 0) :
     Nat.card G / (Nat.card C.carrier * orderOf σ)
