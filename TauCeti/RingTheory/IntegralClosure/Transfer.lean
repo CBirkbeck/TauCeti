@@ -106,10 +106,12 @@ theorem isIntegral_trans_common {R P L : Type*} [CommRing R] [CommRing P]
   let pToS : P →+* S := RingHom.codRestrict (algebraMap P L) S fun z ↦
     Algebra.subset_adjoin ⟨z, rfl⟩
   let pAlgebra : Algebra P S := pToS.toAlgebra
-  -- BRITTLE: this `rfl` reduces through `RingHom.codRestrict`, `RingHom.toAlgebra` and the
-  -- subalgebra inclusion; if any of those unfoldings changes it needs an explicit
-  -- extensionality proof instead.
-  let scalarTower : IsScalarTower P S L := IsScalarTower.of_algebraMap_eq' rfl
+  -- the tower equality holds pointwise: `pToS` restricts `algebraMap P L` to `S`, so composing
+  -- with the inclusion `S.val` returns the original map. Stated by extensionality rather than by
+  -- `rfl`, so it does not depend on how `codRestrict` and `toAlgebra` unfold.
+  let scalarTower : IsScalarTower P S L := IsScalarTower.of_algebraMap_eq' <| by
+    ext z
+    simp [pAlgebra, RingHom.algebraMap_toAlgebra, pToS]
   exact isIntegral_trans (R := R) (A := S) x (hx.tower_top (A := S))
 
 variable {F R A K : Type*} [CommRing F] [CommRing R] [CommRing A] [CommRing K]

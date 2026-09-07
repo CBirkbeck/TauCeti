@@ -157,9 +157,9 @@ theorem isIntegrallyClosed_overring (C : Subalgebra A K) : IsIntegrallyClosed C 
     rintro x ⟨a, s, hs, rfl⟩
     refine ⟨algebraMap A C a, algebraMap A C s, ?_, ?_⟩
     · simpa [p] using hs
-    -- BRITTLE: this `rfl` reduces through the `Subalgebra A K` coercion and the induced
-    -- algebra map `A → C`; an explicit scalar-tower rewrite would be needed if those change.
-    · rfl
+    -- both images in `K` agree because the routes `A → K` and `A → C → K` coincide by the
+    -- scalar tower, so this is a rewrite rather than a reliance on how the coercion unfolds.
+    · rw [IsScalarTower.algebraMap_apply A C K, IsScalarTower.algebraMap_apply A C K]
   -- `S` is a valuation subring: above a nonzero prime it contains the valuation subring at that
   -- prime, and above `⊥` it is all of `K`. Either way `IsIntegrallyClosed` transfers to the
   -- localization along `IsLocalization.algEquiv`.
