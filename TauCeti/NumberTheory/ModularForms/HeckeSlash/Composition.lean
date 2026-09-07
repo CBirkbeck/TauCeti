@@ -338,6 +338,32 @@ lemma card_pairs_pairCoset_rightCoset_eq_multiplicity {x : GL (Fin 2) ℚ}
 variable (D₁ D₂)
 
 open Classical in
+/-- **A sum over pairs of right cosets is the sum over the double cosets they land in.** The
+pairs `(v, w)` are partitioned by `pairCoset D₁ D₂`, so summing any `F` over all of them is
+summing, over each double coset `D` met, the contribution of the pairs landing in `D`.
+
+This is pure index bookkeeping — no slash, no weight and no character appears — and it is the
+regrouping step shared by `heckeSlashSum_heckeSlashSum_eq_sum_nsmul` below and its
+nebentypus-weighted counterpart `twistedHeckeSlashSum_twistedHeckeSlashSum_eq_sum_nsmul` in
+`HeckeSlash/Nebentypus/Composition.lean`, which differ only in the `F` they supply and in the
+collapse lemma they then apply to each fibre.
+
+Only the double cosets actually met are summed over, which is why the outer index is the image
+of `pairCoset D₁ D₂` rather than all of `HeckeCoset Δ Γ₁ Γ₃`. Mathlib's `Fintype.sum_fiberwise`
+is the same regrouping over the whole codomain, but it needs that codomain finite, and no
+finiteness of `HeckeCoset Δ Γ₁ Γ₃` is assumed here. -/
+lemma sum_eq_sum_pairCoset_fiber {M : Type*} [AddCommMonoid M]
+    (F : DecompQuotient Γ₂ Γ₁ (D₁.out : GL (Fin 2) ℚ)⁻¹ ×
+      DecompQuotient Γ₃ Γ₂ (D₂.out : GL (Fin 2) ℚ)⁻¹ → M) :
+    ∑ p, F p = ∑ D ∈ Finset.univ.image (pairCoset D₁ D₂),
+      ∑ q : {q // pairCoset D₁ D₂ q = D}, F q := by
+  rw [← Finset.sum_fiberwise_of_maps_to (g := pairCoset D₁ D₂)
+    (fun p _ ↦ Finset.mem_image_of_mem _ (Finset.mem_univ p))]
+  exact Finset.sum_congr rfl fun D _ ↦
+    Finset.sum_subtype (p := fun q ↦ pairCoset D₁ D₂ q = D)
+      (Finset.univ.filter fun q ↦ pairCoset D₁ D₂ q = D) (fun q ↦ by simp) F
+
+open Classical in
 /-- **The multiplicity-weighted composite**, and with it the general form of the composition law.
 For a `Γ₁`-invariant `f`, the composite of the two slash sums is the sum, over the double cosets
 met by the products `aᵥ b_w`, of Shimura's multiplicity times the slash sum of that coset:
@@ -368,12 +394,8 @@ theorem heckeSlashSum_heckeSlashSum_eq_sum_nsmul
   -- points rather than found by synthesis
   let _ : IsHeckeTriple Δ Γ₁ Γ₃ := IsHeckeTriple.trans (H₂ := Γ₂)
   rw [heckeSlashSum_heckeSlashSum, ← Fintype.sum_prod_type',
-    ← Finset.sum_fiberwise_of_maps_to (g := pairCoset D₁ D₂)
-      (fun p _ ↦ Finset.mem_image_of_mem _ (Finset.mem_univ p))]
+    sum_eq_sum_pairCoset_fiber D₁ D₂ fun q ↦ f ∣[k] (rightCosetRep D₁ q.1 * rightCosetRep D₂ q.2)]
   refine Finset.sum_congr rfl fun D _ ↦ ?_
-  rw [Finset.sum_subtype (p := fun q ↦ pairCoset D₁ D₂ q = D)
-    (Finset.univ.filter fun q ↦ pairCoset D₁ D₂ q = D) (fun q ↦ by simp)
-    fun q ↦ f ∣[k] (rightCosetRep D₁ q.1 * rightCosetRep D₂ q.2)]
   exact sum_slash_eq_nsmul_heckeSlashSum k D _ _ (fun i ↦ pairCoset_eq_iff.mp i.2)
     (fun _ hx ↦ card_pairs_pairCoset_rightCoset_eq_multiplicity hx) f hf
 
