@@ -19,8 +19,9 @@ import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 -- it re-exports nothing. This supplies the `IsFractionRing` instance on a subalgebra of the
 -- fraction field, which `finite_of_fraction_model` needs; removing it fails to synthesize.
 import Mathlib.RingTheory.DedekindDomain.AdicValuation
+import TauCeti.RingTheory.Adjoin.Tower
 import TauCeti.RingTheory.DedekindDomain.IntegralClosure
-import TauCeti.RingTheory.IntegralClosure.Transfer
+import TauCeti.RingTheory.IntegralClosure.IsIntegral.Basic
 
 /-!
 # A finite normalization from a separating polynomial model
@@ -64,9 +65,9 @@ open Polynomial
 
 open scoped nonZeroDivisors
 
-
 namespace IsIntegralClosure
 
+section
 
 variable {F R A K : Type*} [CommRing F] [CommRing R] [CommRing A] [Field K]
   [Algebra F R] [Algebra F A] [Algebra F K] [Algebra R K] [Algebra A K]
@@ -96,9 +97,9 @@ theorem finite_of_fraction_model
   let isIntegralClosure : IsIntegralClosure B R K := IsIntegralClosure.of_isIntegrallyClosed B R K
   exact Module.Finite.equiv (IsIntegralClosure.equiv R B K C).toLinearEquiv
 
-end IsIntegralClosure
+end
 
-namespace IsIntegralClosure
+section
 
 variable {F R A K L C : Type*} [CommRing F] [CommRing R] [CommRing A]
   [Field K] [Field L] [CommRing C]
@@ -123,10 +124,9 @@ theorem finite_of_separable_model
   exact finite_of_fraction_model (F := F) (A := D) (K := L)
     fun x ↦ TauCeti.isIntegral_trans_common hint x.property
 
-end IsIntegralClosure
+end
 
-
-namespace IsIntegralClosure
+section
 
 variable {F R A K L C : Type*} [Field F] [CommRing R] [CommRing A]
   [Field K] [Field L] [CommRing C]
@@ -150,5 +150,7 @@ theorem finite_of_polynomial_model (e : F[X] ≃ₐ[F] A)
   let finiteType : Algebra.FiniteType F A :=
     Algebra.FiniteType.of_surjective e.toAlgHom e.surjective
   exact finite_of_separable_model (F := F) (R := R) (A := A) (K := K) (L := L) (C := C) hint
+
+end
 
 end IsIntegralClosure

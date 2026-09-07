@@ -131,9 +131,6 @@ instance integralClosure.isDedekindDomain_fractionRing {A : Type*} [CommRing A]
     IsDedekindDomain (integralClosure A L) :=
   integralClosure.isDedekindDomain A (FractionRing A) L
 
-
-
-
 end TauCeti
 
 namespace Subalgebra
