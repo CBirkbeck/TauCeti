@@ -224,12 +224,13 @@ namespace SlashInvariantFormClass
 
 /-- **A slash-invariant form is invariant under the rational image of its level.** This is
 `ModularForm.slash_eq_of_mem_map_mapGL` with the real-invariance hypothesis discharged from the
-`SlashInvariantFormClass` instance — the common case of a bundled form, whose level is declared
-as a subgroup of `SL(2, ℤ)`, while the Hecke triples of `HeckeRing/GL2/` ask for invariance
-under the image in `GL(2, ℚ)`. Consumers carrying an arbitrary invariance hypothesis instead
-use `ModularForm.slash_eq_of_mem_map_mapGL` directly. -/
+`SlashInvariantFormClass` instance — the common case of a bundled form. The class is indexed by
+a subgroup of `GL(2, ℝ)`, so a form of integral level `G` carries invariance at `G.map (mapGL ℝ)`;
+this transports it to `G.map (mapGL ℚ)`, the way the Hecke triples of `HeckeRing/GL2/` are
+spelled. Consumers carrying an arbitrary invariance hypothesis instead use
+`ModularForm.slash_eq_of_mem_map_mapGL` directly. -/
 lemma slash_eq_of_mem_map_mapGL {F : Type*} {k : ℤ} {G : Subgroup SL(2, ℤ)}
-    [FunLike F ℍ ℂ] [SlashInvariantFormClass F G k] (f : F) {δ : GL (Fin 2) ℚ}
+    [FunLike F ℍ ℂ] [SlashInvariantFormClass F (G.map (mapGL ℝ)) k] (f : F) {δ : GL (Fin 2) ℚ}
     (hδ : δ ∈ G.map (mapGL ℚ)) : ⇑f ∣[k] δ = ⇑f :=
   ModularForm.slash_eq_of_mem_map_mapGL
     (fun γ' hγ' ↦ SlashInvariantFormClass.slash_action_eq f γ' hγ') hδ
