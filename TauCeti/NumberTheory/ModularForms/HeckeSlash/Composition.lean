@@ -342,11 +342,10 @@ open Classical in
 pairs `(v, w)` are partitioned by `pairCoset D₁ D₂`, so summing any `F` over all of them is
 summing, over each double coset `D` met, the contribution of the pairs landing in `D`.
 
-This is pure index bookkeeping — no slash, no weight and no character appears — and it is the
-regrouping step shared by `heckeSlashSum_heckeSlashSum_eq_sum_nsmul` below and its
-nebentypus-weighted counterpart `twistedHeckeSlashSum_twistedHeckeSlashSum_eq_sum_nsmul` in
-`HeckeSlash/Nebentypus/Composition.lean`, which differ only in the `F` they supply and in the
-collapse lemma they then apply to each fibre.
+A composite of two slash sums is naturally indexed by pairs of right cosets, while the
+multiplicity-weighted form of the composition law is indexed by double cosets. This is the
+identity between those two index sets, before any weight is attached: `F` is arbitrary, so no
+slash, weight or character enters.
 
 Only the double cosets actually met are summed over, which is why the outer index is the image
 of `pairCoset D₁ D₂` rather than all of `HeckeCoset Δ Γ₁ Γ₃`. Mathlib's `Fintype.sum_fiberwise`
