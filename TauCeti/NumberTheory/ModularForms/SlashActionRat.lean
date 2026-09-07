@@ -201,17 +201,6 @@ lemma slash_eq_of_mem_map_mapGL {k : ℤ} {G : Subgroup SL(2, ℤ)} {f : ℍ →
   rw [rat_slash_mapGL]
   exact hf _ (Subgroup.mem_map_of_mem _ hσ)
 
-/-- **A slash-invariant form is invariant under the rational image of its level.** This is
-`slash_eq_of_mem_map_mapGL` with the real-invariance hypothesis discharged from the
-`SlashInvariantFormClass` instance, which is how every consumer supplies it: a form's level is
-declared as a subgroup of `SL(2, ℤ)`, while the Hecke triples of `HeckeRing/GL2/` ask for
-invariance under the image in `GL(2, ℚ)`. -/
-lemma coe_slash_eq_of_mem_map_mapGL {F : Type*} {k : ℤ} {G : Subgroup SL(2, ℤ)}
-    [FunLike F ℍ ℂ] [SlashInvariantFormClass F G k] (f : F) {δ : GL (Fin 2) ℚ}
-    (hδ : δ ∈ G.map (mapGL ℚ)) : ⇑f ∣[k] δ = ⇑f :=
-  slash_eq_of_mem_map_mapGL
-    (fun γ' hγ' ↦ SlashInvariantFormClass.slash_action_eq f γ' hγ') hδ
-
 /-- The converse of `slash_eq_of_mem_map_mapGL`: rational slash-invariance under the image of
 `G ≤ SL₂(ℤ)` in `GL(2, ℚ)` gives real slash-invariance under its image in `GL(2, ℝ)`. This is
 the direction that discharges the `slash_action_eq'` field of a `SlashInvariantForm`. -/
@@ -230,6 +219,22 @@ lemma map_mapGL_le_glpos (G : Subgroup SL(2, ℤ)) :
   exact SLnZ_le_glpos 2 ((mem_SLnZ_iff 2).mpr ⟨σ, rfl⟩)
 
 end ModularForm
+
+namespace SlashInvariantFormClass
+
+/-- **A slash-invariant form is invariant under the rational image of its level.** This is
+`ModularForm.slash_eq_of_mem_map_mapGL` with the real-invariance hypothesis discharged from the
+`SlashInvariantFormClass` instance — the common case of a bundled form, whose level is declared
+as a subgroup of `SL(2, ℤ)`, while the Hecke triples of `HeckeRing/GL2/` ask for invariance
+under the image in `GL(2, ℚ)`. Consumers carrying an arbitrary invariance hypothesis instead
+use `ModularForm.slash_eq_of_mem_map_mapGL` directly. -/
+lemma slash_eq_of_mem_map_mapGL {F : Type*} {k : ℤ} {G : Subgroup SL(2, ℤ)}
+    [FunLike F ℍ ℂ] [SlashInvariantFormClass F G k] (f : F) {δ : GL (Fin 2) ℚ}
+    (hδ : δ ∈ G.map (mapGL ℚ)) : ⇑f ∣[k] δ = ⇑f :=
+  ModularForm.slash_eq_of_mem_map_mapGL
+    (fun γ' hγ' ↦ SlashInvariantFormClass.slash_action_eq f γ' hγ') hδ
+
+end SlashInvariantFormClass
 
 namespace UpperHalfPlane
 
