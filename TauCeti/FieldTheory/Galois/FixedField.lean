@@ -40,11 +40,6 @@ Galois group of its fixed points, and that fixed-point subfield is the one under
 * `Subgroup.zpowers_toAlgAutMulEquiv_eq_top`
 * `AlgEquiv.isCyclic_fixedField_zpowers`
 * `AlgEquiv.zpowers_toAlgAutMulEquiv_self_eq_top`
-
-## References
-
-The cyclic results follow the constructions `cyclicFixedField` and `fixedFieldGenerator` of the
-Chebotarev roadmap's `Suggested.lean`, which name the fixed field of `⟨σ⟩` and its generator.
 -/
 
 public section
