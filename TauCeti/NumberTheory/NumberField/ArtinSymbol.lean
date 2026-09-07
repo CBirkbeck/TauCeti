@@ -246,8 +246,8 @@ omit [NumberField K] in
 /-- Unramifiedness over `𝓞 M` above `𝔓` is inherited from unramifiedness over `𝓞 K` above `𝔭`:
 a prime of `𝓞 L` above `𝔓` lies above `𝔭`, and `Algebra.IsUnramifiedAt.of_restrictScalars` drops
 the base from `𝓞 K` to `𝓞 M`. So the transport law below asks only for the `𝓞 K` witness. -/
-theorem unramifiedAt_of_liesOver_of_unramifiedAt {M L : Type*} [Field M] [NumberField M]
-    [Field L] [NumberField L] [Algebra K M] [Algebra M L] [Algebra K L] [IsScalarTower K M L]
+theorem unramifiedAt_of_liesOver_of_unramifiedAt {M L : Type*} [Field M] [Field L]
+    [Algebra K M] [Algebra M L] [Algebra K L] [IsScalarTower K M L]
     (𝔓 : Ideal (𝓞 M)) (𝔭 : Ideal (𝓞 K)) [𝔓.LiesOver 𝔭]
     (hurK : ∀ (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver 𝔭], Algebra.IsUnramifiedAt (𝓞 K) Q)
     (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver 𝔓] : Algebra.IsUnramifiedAt (𝓞 M) Q := by
