@@ -17,17 +17,17 @@ construction — the free Lie algebra with its universal property, and the `LieR
 structure on a quotient by a Lie ideal — but not the bridge between them, which is what a
 presentation is used for: a homomorphism out of the presented algebra is the same thing as a family
 of images satisfying the relations. The quotient universal property is provided by
-`TauCeti/Algebra/Lie/Quotient.lean`; this file supplies two further facts needed to apply it.
+`TauCeti/Algebra/Lie/Quotient.lean`; this file supplies two further facts needed to apply it, and
+leans on a third imported from `TauCeti/Algebra/Lie/Basic.lean`.
 
-First, a homomorphism transports an iterated adjoint action,
-`LieHom.map_ad_pow` (in `TauCeti.Algebra.Lie.Basic`). Relations of a presentation are
-frequently written as the vanishing of
-`(ad x) ^ n y` — Serre's relations for a Cartan matrix are the standard example — and such a
-relation says nothing about the presented algebra until it is known to be carried along by the map
-that checks it. The companion `TauCeti.ad_neg_pow_apply_eq_zero` transports such a vanishing result
-from `x` to `-x`.
+Relations of a presentation are frequently written as the vanishing of `(ad x) ^ n y` — Serre's
+relations for a Cartan matrix are the standard example — and such a relation says nothing about the
+presented algebra until it is known to be carried along by the map that checks it. That transport
+is `LieHom.map_ad_pow`, which lives in `TauCeti/Algebra/Lie/Basic.lean` and is imported here. The
+first fact supplied by this file is its companion `TauCeti.ad_neg_pow_apply_eq_zero`, which carries
+such a vanishing result from `x` to `-x`.
 
-Second, a free Lie algebra is generated, as a Lie subalgebra, by its generators:
+The second is that a free Lie algebra is generated, as a Lie subalgebra, by its generators:
 `TauCeti.FreeLieAlgebra.lieSpan_range_of_eq_top`. This is what makes the images of the generators
 generate the presented algebra, rather than merely determine maps out of it.
 
