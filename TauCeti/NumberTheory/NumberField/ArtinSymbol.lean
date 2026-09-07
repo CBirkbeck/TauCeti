@@ -243,9 +243,13 @@ tower and takes no power; this one raises the base field and takes the power `f(
 -- `exists_isArithFrobAt_pow_inertiaDeg`. This is the second of the two.
 
 /-- **Raising the base field raises the Artin symbol to the residue degree.** For number fields
-`K ⊆ M ⊆ L` with `L / K` and `L / M` Galois and `𝔓` a prime of `𝓞 M` over `𝔭` unramified in `L`,
-the Artin symbol of `𝔓` for `L / M`, read inside `Gal(L/K)` along `AlgEquiv.restrictScalarsHom`,
-is the `f(𝔓/𝔭)`-th power of the Artin symbol of `𝔭` for `L / K`.
+`K ⊆ M ⊆ L` with `L / K` Galois, `𝔭` a prime of `𝓞 K` unramified in `L / K`, and `𝔓` a prime of
+`𝓞 M` over it: the Artin symbol of `𝔓` for `L / M`, read inside `Gal(L/K)` along
+`AlgEquiv.restrictScalarsHom`, is the `f(𝔓/𝔭)`-th power of the Artin symbol of `𝔭` for `L / K`.
+
+Only the `L / K` hypothesis is asked for. Unramifiedness of `𝔓` in `L / M` follows from it: a
+prime of `𝓞 L` above `𝔓` lies above `𝔭`, so it is unramified over `𝓞 K`, and
+`Algebra.IsUnramifiedAt.of_restrictScalars` drops the base to `𝓞 M`.
 
 This is the conjugacy-class form of `NumberField.restrictScalars_arithFrobAt_eq_pow_inertiaDeg`.
 The gain over that element-level statement is that the choice it makes disappears. It is an
@@ -262,10 +266,17 @@ theorem artinSymbol_map_restrictScalarsHom_eq_pow_inertiaDeg {M L : Type*} [Fiel
       Algebra.IsUnramifiedAt (𝓞 K) Q) :
     letI := IsGalois.tower_top_of_isGalois K M L
     ConjClasses.map (AlgEquiv.restrictScalarsHom K)
-        (artinSymbol 𝔓 (isUnramifiedAt_of_liesOver_of_isUnramifiedAt 𝔓 𝔭 hurK)) =
+        (artinSymbol 𝔓 (fun Q _ _ ↦
+          have : Q.LiesOver 𝔭 := Ideal.LiesOver.trans Q 𝔓 𝔭
+          have := hurK Q
+          Algebra.IsUnramifiedAt.of_restrictScalars (𝓞 K) Q)) =
       artinSymbol 𝔭 hurK ^ 𝔓.inertiaDeg (𝓞 K) := by
   let := IsGalois.tower_top_of_isGalois K M L
-  set hurM := isUnramifiedAt_of_liesOver_of_isUnramifiedAt (L := L) 𝔓 𝔭 hurK with _
+  set hurM : ∀ (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver 𝔓], Algebra.IsUnramifiedAt (𝓞 M) Q :=
+    fun Q _ _ ↦
+      have : Q.LiesOver 𝔭 := Ideal.LiesOver.trans Q 𝔓 𝔭
+      have := hurK Q
+      Algebra.IsUnramifiedAt.of_restrictScalars (𝓞 K) Q with _
   obtain ⟨Q, _, _⟩ := (inferInstance : Nonempty (𝔓.primesOver (𝓞 L)))
   have : Q.LiesOver 𝔭 := Ideal.LiesOver.trans Q 𝔓 𝔭
   have hQM : Q.under (𝓞 M) = 𝔓 := (Ideal.LiesOver.over (A := 𝓞 M)).symm
