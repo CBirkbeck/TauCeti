@@ -7,6 +7,8 @@ module
 
 -- Proof-only: Krull–Akizuki supplies the Noetherian half, and is not named in any statement.
 import TauCeti.RingTheory.IntegralClosure.NormalizationFinite
+public import Mathlib.RingTheory.Valuation.LocalSubring
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation
 public import Mathlib.RingTheory.DedekindDomain.Basic
 public import Mathlib.RingTheory.Localization.Integral
 
@@ -123,5 +125,45 @@ instance integralClosure.isDedekindDomain_fractionRing {A : Type*} [CommRing A]
     [IsScalarTower A (FractionRing A) L] [Module.Finite (FractionRing A) L] :
     IsDedekindDomain (integralClosure A L) :=
   integralClosure.isDedekindDomain A (FractionRing A) L
+
+
+namespace Subalgebra
+
+open IsDedekindDomain IsDedekindDomain.HeightOneSpectrum
+
+variable {A K : Type*} [CommRing A] [IsDedekindDomain A] [Field K]
+  [Algebra A K] [IsFractionRing A K]
+
+/-- Every overring of a Dedekind domain in its fraction field is integrally closed. -/
+theorem isIntegrallyClosed_overring (C : Subalgebra A K) : IsIntegrallyClosed C := by
+  apply IsIntegrallyClosed.of_localization_maximal
+  intro q _ hq
+  let p : Ideal A := q.comap (algebraMap A C)
+  have p_prime : p.IsPrime := hq.isPrime.comap (algebraMap A C)
+  let S : Subalgebra C K := Localization.subalgebra.ofField K q.primeCompl
+    q.primeCompl_le_nonZeroDivisors
+  let T : Subalgebra A K := Localization.subalgebra.ofField K p.primeCompl
+    p.primeCompl_le_nonZeroDivisors
+  have hTS : T.toSubring ≤ S.toSubring := by
+    rintro x ⟨a, s, hs, rfl⟩
+    refine ⟨algebraMap A C a, algebraMap A C s, ?_, ?_⟩
+    · simpa [p] using hs
+    · rfl
+  have hS : ∀ x : K, x ∈ S ∨ x⁻¹ ∈ S := by
+    intro x
+    by_cases hp : p = ⊥
+    · left
+      apply hTS
+      obtain ⟨a, b, hb, hab⟩ := IsFractionRing.div_surjective A x
+      refine ⟨a, b, ?_, ?_⟩
+      · simpa [p, hp, Ideal.primeCompl_bot] using nonZeroDivisors.ne_zero hb
+      · simpa [div_eq_mul_inv] using hab.symm
+    · exact ((valuationSubringAtPrime K ⟨p, p_prime, hp⟩).mem_or_inv_mem x).imp
+        (fun hx ↦ hTS hx) fun hx ↦ hTS hx
+  let V : ValuationSubring K := ValuationSubring.ofSubring S.toSubring hS
+  exact (inferInstance : IsIntegrallyClosed V).of_equiv
+    (IsLocalization.algEquiv q.primeCompl S (Localization.AtPrime q)).toRingEquiv
+
+end Subalgebra
 
 end TauCeti
