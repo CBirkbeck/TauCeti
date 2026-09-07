@@ -11,8 +11,9 @@ public import TauCeti.Algebra.Group.Subgroup.ZPowers
 /-!
 # Fixed fields and fixing subgroups
 
-Complements to Mathlib's Galois correspondence. A count is deliberately not given here: the file
-has grown, and a number in this sentence goes stale the next time it does.
+Complements to Mathlib's Galois correspondence: when a fixed field and an intermediate field
+generate the whole extension, when the correspondence survives dropping finiteness of `M / K` for
+a finite subgroup, and what the correspondence gives for a cyclic subgroup.
 
 For a finite Galois extension `M / K`, a subgroup `H ≤ Gal(M/K)` and an intermediate field `E`,
 the fixed field of `H` and `E` generate `M` exactly when `H` meets the fixers of `E` trivially.
@@ -139,40 +140,40 @@ variable {K M : Type*} [Field K] [Field M] [Algebra K M]
 -- `fixedFieldGenerator`. The definition below keeps the second name; the first is spelled
 -- `IntermediateField.fixedField (Subgroup.zpowers σ)` throughout rather than abbreviated.
 
-/-- **The generator of `Gal(M / M ^ ⟨σ⟩)` determined by `σ`.** Mathlib's
-`FixedPoints.toAlgAutMulEquiv` identifies `⟨σ⟩` with that Galois group; this is where `σ` itself
-goes, and it acts on `M` exactly as `σ` does.
+/-- **The automorphism of `M` over `M ^ ⟨σ⟩` given by `σ`.** Acting through `⟨σ⟩` fixes
+`M ^ ⟨σ⟩` pointwise, so `σ` is an automorphism over that field; this is that automorphism.
 
 Named rather than inlined so that consumers have a term to talk about: a fibre count needs the
 relative Frobenius exhibited as a specific power of a specific generator, and `IsCyclic` supplies
 only an anonymous one. Use `fixedFieldGenerator_apply` to compute with it and
-`zpowers_fixedFieldGenerator_eq_top` for the fact that it generates.
-
-`@[expose]` only because `fixedFieldGenerator_apply` is a bare `rfl` in an exported theorem, which
-requires the body to be visible; consumers should still go through that lemma rather than unfold. -/
-@[expose]
-noncomputable def fixedFieldGenerator (σ : M ≃ₐ[K] M) [Finite (Subgroup.zpowers σ)] :
+`zpowers_fixedFieldGenerator_eq_top` for the fact that it generates, the latter being where
+finiteness of `⟨σ⟩` is actually needed. -/
+def fixedFieldGenerator (σ : M ≃ₐ[K] M) :
     M ≃ₐ[IntermediateField.fixedField (Subgroup.zpowers σ)] M :=
-  FixedPoints.toAlgAutMulEquiv (Subgroup.zpowers σ) M ⟨σ, Subgroup.mem_zpowers σ⟩
+  MulSemiringAction.toAlgAut (Subgroup.zpowers σ)
+    (FixedPoints.subfield (Subgroup.zpowers σ) M) M ⟨σ, Subgroup.mem_zpowers σ⟩
 
 /-- **The generator acts as `σ`.** This is what makes `fixedFieldGenerator σ` usable: it is a
 different bundling of the same underlying map, over the fixed field rather than over `K`. -/
 @[simp]
-theorem fixedFieldGenerator_apply (σ : M ≃ₐ[K] M) [Finite (Subgroup.zpowers σ)] (x : M) :
+theorem fixedFieldGenerator_apply (σ : M ≃ₐ[K] M) (x : M) :
     fixedFieldGenerator σ x = σ x :=
-  rfl
+  (rfl)
 
 /-- **And it generates.** The automorphisms of `M` fixing `M ^ ⟨σ⟩` are exactly the powers of
 `fixedFieldGenerator σ`.
 
 Together with `Subgroup.isCyclic_fixedField` this is the cyclic picture of `M / M ^ ⟨σ⟩` with a
 named generator, and neither statement asks `M / K` to be finite or Galois. -/
+@[simp]
 theorem zpowers_fixedFieldGenerator_eq_top (σ : M ≃ₐ[K] M) [Finite (Subgroup.zpowers σ)] :
     Subgroup.zpowers (fixedFieldGenerator σ) = ⊤ := by
-  -- The generation fact is proved for the underlying `toAlgAutMulEquiv` term and then transported
-  -- by `exact`. It cannot be proved by rewriting with `fixedFieldGenerator`: that term lives over
-  -- `FixedPoints.subfield`, which is defeq to `IntermediateField.fixedField` but not syntactically
-  -- equal, so `rw` produces a type-incorrect goal.
+  -- Generation is a statement about the `MulEquiv`, so it is proved for `toAlgAutMulEquiv` and
+  -- then transported to `fixedFieldGenerator` by `exact`, which works up to definitional equality:
+  -- `toAlgAutMulEquiv` is `MulEquiv.ofBijective` of the very `toAlgAut` the definition uses. It
+  -- cannot be done by rewriting with `fixedFieldGenerator` instead, because that term lives over
+  -- `FixedPoints.subfield`, defeq to `IntermediateField.fixedField` but not syntactically equal,
+  -- so `rw` produces a type-incorrect goal.
   --
   -- Within the `have`, `MonoidHom.map_zpowers` is about a `MonoidHom`, so the `MulEquiv`
   -- application is restated through `MulEquiv.coe_toMonoidHom` rather than by unfolding the
