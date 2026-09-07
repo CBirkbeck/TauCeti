@@ -7,10 +7,6 @@ module
 
 -- Proof-only: Krull–Akizuki supplies the Noetherian half, and is not named in any statement.
 import TauCeti.RingTheory.IntegralClosure.NormalizationFinite
--- Proof-only, and load-bearing despite no textual use: supplies `IsIntegrallyClosed` on a
--- `ValuationSubring`, which the overring argument closes with.
-import Mathlib.RingTheory.Valuation.LocalSubring
-import Mathlib.RingTheory.DedekindDomain.AdicValuation
 public import Mathlib.RingTheory.DedekindDomain.Basic
 public import Mathlib.RingTheory.Localization.Integral
 
@@ -38,9 +34,6 @@ unchanged.
   the fraction field chosen by the caller.
 * `TauCeti.integralClosure.isDedekindDomain_fractionRing`: the instance form, with
   `K := FractionRing A`.
-* `Subalgebra.isIntegrallyClosed_overring`: every overring of a Dedekind domain inside its own
-  fraction field is integrally closed — it is a valuation subring at each maximal ideal, and those
-  are integrally closed.
 
 ## Design
 
@@ -132,47 +125,3 @@ instance integralClosure.isDedekindDomain_fractionRing {A : Type*} [CommRing A]
   integralClosure.isDedekindDomain A (FractionRing A) L
 
 end TauCeti
-
-namespace Subalgebra
-
-open IsDedekindDomain IsDedekindDomain.HeightOneSpectrum
-
-variable {A K : Type*} [CommRing A] [IsDedekindDomain A] [Field K]
-  [Algebra A K] [IsFractionRing A K]
-
-/-- Every overring of a Dedekind domain in its fraction field is integrally closed. -/
-theorem isIntegrallyClosed_overring (C : Subalgebra A K) : IsIntegrallyClosed C := by
-  apply IsIntegrallyClosed.of_localization_maximal
-  intro q _ hq
-  let p : Ideal A := q.comap (algebraMap A C)
-  have p_prime : p.IsPrime := hq.isPrime.comap (algebraMap A C)
-  let S : Subalgebra C K := Localization.subalgebra.ofField K q.primeCompl
-    q.primeCompl_le_nonZeroDivisors
-  let T : Subalgebra A K := Localization.subalgebra.ofField K p.primeCompl
-    p.primeCompl_le_nonZeroDivisors
-  have hTS : T.toSubring ≤ S.toSubring := by
-    rintro x ⟨a, s, hs, rfl⟩
-    refine ⟨algebraMap A C a, algebraMap A C s, ?_, ?_⟩
-    · simpa [p] using hs
-    -- both images in `K` agree because the routes `A → K` and `A → C → K` coincide by the
-    -- scalar tower, so this is a rewrite rather than a reliance on how the coercion unfolds.
-    · rw [IsScalarTower.algebraMap_apply A C K, IsScalarTower.algebraMap_apply A C K]
-  -- `S` is a valuation subring: above a nonzero prime it contains the valuation subring at that
-  -- prime, and above `⊥` it is all of `K`. Either way `IsIntegrallyClosed` transfers to the
-  -- localization along `IsLocalization.algEquiv`.
-  have key : ∀ V : ValuationSubring K, V.toSubring = S.toSubring → IsIntegrallyClosed S := by
-    intro V hV
-    have : IsIntegrallyClosed V := inferInstance
-    exact this.of_equiv (RingEquiv.subringCongr hV)
-  by_cases hp : p = ⊥
-  · have hall : ∀ x : K, x ∈ S := fun x ↦ hTS <| by
-      obtain ⟨a, b, hb, hab⟩ := IsFractionRing.div_surjective A x
-      exact ⟨a, b, by simpa [p, hp, Ideal.primeCompl_bot] using nonZeroDivisors.ne_zero hb,
-        by simpa [div_eq_mul_inv] using hab.symm⟩
-    exact (key ⊤ (by ext x; simpa using hall x)).of_equiv
-      (IsLocalization.algEquiv q.primeCompl S (Localization.AtPrime q)).toRingEquiv
-  · exact (key (ValuationSubring.ofLE (valuationSubringAtPrime K ⟨p, p_prime, hp⟩)
-      S.toSubring hTS) rfl).of_equiv
-      (IsLocalization.algEquiv q.primeCompl S (Localization.AtPrime q)).toRingEquiv
-
-end Subalgebra
