@@ -40,6 +40,7 @@ Galois group of its fixed points, and that fixed-point subfield is the one under
 * `IntermediateField.finite_of_finiteDimensional_fixedField`
 * `IntermediateField.card_fixingSubgroup_le`
 * `Subgroup.isCyclic_fixedField`
+* `FixedPoints.isCyclic_algEquiv`, of which `Subgroup.isCyclic_fixedField` is the subgroup case
 * `AlgEquiv.toFixedFieldAlgEquiv`, with `AlgEquiv.zpowers_toFixedFieldAlgEquiv_eq_top`
 -/
 
@@ -117,6 +118,21 @@ theorem card_fixingSubgroup_le (E : IntermediateField K M) [FiniteDimensional E 
 
 end IntermediateField
 
+namespace FixedPoints
+
+/-- **The fixed subfield of a finite cyclic group action has cyclic Galois group.** For a finite
+cyclic group `G` acting on a field `F` by ring automorphisms, `F` is cyclic over its subfield of
+`G`-fixed points.
+
+No faithfulness is asked of the action: `FixedPoints.toAlgAut_surjective` needs only finiteness,
+and cyclicity passes along any surjection. A non-faithful action simply presents the Galois group
+as a proper quotient of `G`, which is cyclic all the same. -/
+theorem isCyclic_algEquiv (G F : Type*) [Group G] [Field F] [MulSemiringAction G F] [Finite G]
+    [IsCyclic G] : IsCyclic (F ≃ₐ[FixedPoints.subfield G F] F) :=
+  isCyclic_of_surjective _ (FixedPoints.toAlgAut_surjective G F)
+
+end FixedPoints
+
 namespace Subgroup
 
 variable {K M : Type*} [Field K] [Field M] [Algebra K M]
@@ -125,10 +141,13 @@ variable {K M : Type*} [Field K] [Field M] [Algebra K M]
 
 Both `[Finite H]` and `[IsCyclic H]` are needed: cyclicity of the Galois group is inherited from
 `H`, not produced by finiteness alone. What is *not* needed is any hypothesis on `M / K`, which may
-be infinite and need not be Galois. -/
+be infinite and need not be Galois.
+
+This is `FixedPoints.isCyclic_algEquiv` for the action of `H` on `M`; the fixed field of `H` as an
+intermediate field is the subfield of `H`-fixed points. -/
 theorem isCyclic_fixedField (H : Subgroup (M ≃ₐ[K] M)) [Finite H] [IsCyclic H] :
     IsCyclic (M ≃ₐ[IntermediateField.fixedField H] M) :=
-  isCyclic_of_surjective _ (FixedPoints.toAlgAutMulEquiv H M).surjective
+  FixedPoints.isCyclic_algEquiv H M
 
 end Subgroup
 
@@ -163,6 +182,15 @@ different bundling of the same underlying map, over the fixed field rather than 
 theorem toFixedFieldAlgEquiv_apply (σ : M ≃ₐ[K] M) (x : M) :
     toFixedFieldAlgEquiv σ x = σ x :=
   (rfl)
+
+/-- **Restricting scalars undoes the rebundling.** Read back over `K`, `σ.toFixedFieldAlgEquiv`
+is `σ` itself — the elimination rule matching `toFixedFieldAlgEquiv_apply`, in bundled form, which
+is what a tower argument needs when it must produce an equation between automorphisms rather than
+between their values. -/
+@[simp]
+theorem restrictScalars_toFixedFieldAlgEquiv (σ : M ≃ₐ[K] M) :
+    AlgEquiv.restrictScalars K σ.toFixedFieldAlgEquiv = σ :=
+  AlgEquiv.ext fun x ↦ toFixedFieldAlgEquiv_apply σ x
 
 /-- **And, for finite `⟨σ⟩`, it generates.** The automorphisms of `M` fixing `M ^ ⟨σ⟩` are exactly
 the powers of `σ.toFixedFieldAlgEquiv`.
