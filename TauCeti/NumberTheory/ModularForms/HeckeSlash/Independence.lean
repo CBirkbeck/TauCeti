@@ -110,11 +110,10 @@ If the cosets `Γ₁ aᵢ` are pairwise distinct and cover `Γ₁ D.out Γ₂`, 
 matched with `DecompQuotient Γ₂ Γ₁ (D.out)⁻¹` — the index `heckeSlashSum` sums over — by a
 bijection `φ` carrying each `Γ₁ aᵢ` to `Γ₁ (rightCosetRep D (φ i))`.
 
-This is pure coset bookkeeping: no slash, no weight and no character appears, and it is what makes
-a sum over one family equal to the sum over the other. Both the unweighted
-`heckeSlashSum_eq_sum_of_rightCosets` below and the nebentypus-weighted
-`twistedHeckeSlashSum_eq_sum_of_rightCosets` of `HeckeSlash/Nebentypus/Independence.lean` consume
-it, and differ only in the per-summand lemma they then supply. -/
+This is pure coset bookkeeping: no slash, no weight and no character appears. It is the
+choice-freeness of the slash sum at the level of indices alone — two enumerations of the same
+right cosets are one enumeration reindexed — so whatever is summed over them, the two sums
+agree term by term once the matching is known. -/
 theorem exists_bijective_rightCosetRep_smul_eq {ι : Type*} (a : ι → GL (Fin 2) ℚ)
     (hcover : doubleCoset (D.out : GL (Fin 2) ℚ) Γ₁ Γ₂ =
       ⋃ i, MulOpposite.op (a i) • (Γ₁ : Set (GL (Fin 2) ℚ)))
@@ -198,11 +197,9 @@ image under `g`; the two agree because `rightCosetRep` names distinct cosets by 
 elements (`op_rightCosetRep_smul_injective`).
 
 Like `exists_bijective_rightCosetRep_smul_eq` this is pure coset bookkeeping — no slash, no
-weight and no character appears. It is the counting step of the multiplicity-weighted
-`sum_slash_eq_nsmul_heckeSlashSum` below and of the nebentypus-weighted
-`sum_nebentypus_smul_slash_eq_nsmul_twistedHeckeSlashSum` in
-`HeckeSlash/Nebentypus/Independence.lean`, which differ only in the per-summand lemma they then
-supply. -/
+weight and no character appears. It is the counting content of the multiplicity-weighted
+collapse: a family that names each right coset `m` times has fibres of size `m`, which is what
+turns a sum over the repeating family into `m` copies of a single sum over the cosets. -/
 theorem card_filter_eq_of_rightCosetRep_smul_eq {ι : Type*} [Fintype ι] {a : ι → GL (Fin 2) ℚ}
     {m : ℕ} (hcard : ∀ x ∈ doubleCoset (D.out : GL (Fin 2) ℚ) Γ₁ Γ₂,
       Nat.card {i // MulOpposite.op (a i) • (Γ₁ : Set (GL (Fin 2) ℚ)) =
