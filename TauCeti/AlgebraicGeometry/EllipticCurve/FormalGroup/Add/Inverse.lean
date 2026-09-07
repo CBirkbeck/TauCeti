@@ -81,7 +81,7 @@ variable {O : Type*} [CommRing O] (W : WeierstrassCurve O)
 
 /-- Substituting `z` for the first parameter and `ι(z)` for the second is a legitimate
 substitution: both series have vanishing constant coefficient. -/
-private theorem hasSubst_invPair :
+theorem hasSubst_invPair :
     HasSubst (Sum.elim X (fun _ ↦ formalInverse W) : Unit ⊕ Unit → MvPowerSeries Unit O) :=
   hasSubst_pair (constantCoeff_X ()) (constantCoeff_formalInverse W)
 

@@ -275,9 +275,6 @@ is the additive inverse of `t` under the group law read at parameters. -/
 theorem formalAddEval_formalInverseEval {t : O} (ht : PowerSeries.HasEval t)
     (hι : PowerSeries.HasEval (W.formalInverseEval t)) :
     W.formalAddEval t (W.formalInverseEval t) = 0 := by
-  have hsub : MvPowerSeries.HasSubst (Sum.elim MvPowerSeries.X (fun _ ↦ formalInverse W) :
-      Unit ⊕ Unit → MvPowerSeries Unit O) :=
-    MvPowerSeries.hasSubst_pair (MvPowerSeries.constantCoeff_X ()) (constantCoeff_formalInverse W)
   have hid : (algebraMap O O) = RingHom.id O := rfl
   -- Evaluating the substituted pair at `t` is evaluating at the pair `(t, ι(t))`.
   have hfam : (fun s : Unit ⊕ Unit ↦ MvPowerSeries.eval₂ (RingHom.id O) (fun _ : Unit ↦ t)
@@ -290,7 +287,7 @@ theorem formalAddEval_formalInverseEval {t : O} (ht : PowerSeries.HasEval t)
         (Sum.elim MvPowerSeries.X (fun _ ↦ formalInverse W) s)) := by
     simp only [MvPowerSeries.coe_aeval, hid, hfam]
     exact hasEval_pair ht hι
-  have h := MvPowerSeries.aeval_subst hsub
+  have h := MvPowerSeries.aeval_subst W.hasSubst_invPair
     (MvPowerSeries.continuous_aeval (PowerSeries.hasEval ht)) hpair W.formalAdd
   rw [W.subst_invPair_formalAdd] at h
   simpa [formalAddEval, MvPowerSeries.coe_aeval, hid, hfam, map_zero] using h.symm
