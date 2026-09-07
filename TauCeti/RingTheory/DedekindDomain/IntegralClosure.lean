@@ -7,8 +7,8 @@ module
 
 -- Proof-only: Krull–Akizuki supplies the Noetherian half, and is not named in any statement.
 import TauCeti.RingTheory.IntegralClosure.NormalizationFinite
-public import Mathlib.RingTheory.Valuation.LocalSubring
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+import Mathlib.RingTheory.Valuation.LocalSubring
+import Mathlib.RingTheory.DedekindDomain.AdicValuation
 public import Mathlib.RingTheory.DedekindDomain.Basic
 public import Mathlib.RingTheory.Localization.Integral
 
@@ -127,6 +127,10 @@ instance integralClosure.isDedekindDomain_fractionRing {A : Type*} [CommRing A]
   integralClosure.isDedekindDomain A (FractionRing A) L
 
 
+
+
+end TauCeti
+
 namespace Subalgebra
 
 open IsDedekindDomain IsDedekindDomain.HeightOneSpectrum
@@ -165,5 +169,3 @@ theorem isIntegrallyClosed_overring (C : Subalgebra A K) : IsIntegrallyClosed C 
     (IsLocalization.algEquiv q.primeCompl S (Localization.AtPrime q)).toRingEquiv
 
 end Subalgebra
-
-end TauCeti

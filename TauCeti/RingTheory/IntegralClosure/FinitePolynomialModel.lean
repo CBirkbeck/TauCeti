@@ -9,11 +9,12 @@ public import Mathlib.FieldTheory.Separable
 public import Mathlib.RingTheory.Algebraic.Basic
 public import Mathlib.RingTheory.IntegralClosure.IsIntegralClosure.Basic
 
-import Mathlib.RingTheory.DedekindDomain.AdicValuation
 public import Mathlib.RingTheory.DedekindDomain.IntegralClosure
+-- Proof-only, and load-bearing despite no textual use: it supplies the `IsFractionRing` instance
+-- on a subalgebra of the fraction field, which `finite_of_fraction_model` needs.
+import Mathlib.RingTheory.DedekindDomain.AdicValuation
 public import TauCeti.RingTheory.DedekindDomain.IntegralClosure
 public import TauCeti.RingTheory.IntegralClosure.Transfer
-import Mathlib.RingTheory.Valuation.LocalSubring
 
 /-!
 # A finite normalization from a separating polynomial model
@@ -44,7 +45,7 @@ statement subsumes the other.
 
 Adapted from D. K. Angdinata's `NormalizationFinite.lean`, Apache-2.0, supplied by the author on
 2026-09-07, declarations `Subalgebra.isIntegrallyClosed_overring`,
-`IsIntegralClosure.isIntegral_trans_common`, `IsIntegralClosure.algebraMap_mem_adjoin_image`,
+`TauCeti.isIntegral_trans_common`, `TauCeti.algebraMap_mem_adjoin_image`,
 `IsIntegralClosure.finite_of_fraction_model`, `IsIntegralClosure.finite_of_separable_model` and
 `IsIntegralClosure.finite_of_polynomial_model`.
 -/
@@ -84,7 +85,7 @@ theorem finite_of_fraction_model
       mul_mem' := B.mul_mem
       add_mem' := B.add_mem
       algebraMap_mem' := TauCeti.algebraMap_mem_adjoin_image s hs }
-  let integrallyClosedB : IsIntegrallyClosed B := TauCeti.Subalgebra.isIntegrallyClosed_overring D
+  let integrallyClosedB : IsIntegrallyClosed B := Subalgebra.isIntegrallyClosed_overring D
   let fractionRingB : IsFractionRing B K := inferInstanceAs (IsFractionRing D K)
   let isIntegralClosure : IsIntegralClosure B R K := IsIntegralClosure.of_isIntegrallyClosed B R K
   exact Module.Finite.equiv (IsIntegralClosure.equiv R B K C).toLinearEquiv
