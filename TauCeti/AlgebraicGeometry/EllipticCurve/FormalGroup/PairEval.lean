@@ -66,7 +66,7 @@ Adapted from Michael Stoll's `EllipticCurves` project
 `thirdRootEval_mem`, `thirdRootEval_relation`, `addEval_eq`, `addEval_sub_add_mem` and
 `addEval_iotaEval`.
 
-Three things are spelled differently here.
+Four things are spelled differently here.
 
 * The source's `eval_pair_rename` transports along `MvPowerSeries.rename`; this repository builds
   the one-variable series into two variables with `PowerSeries.toMvPowerSeries` instead, so the
@@ -271,6 +271,7 @@ theorem formalAddEval_eq {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
 
 /-- **The inverse law at parameters**: `F(t, ι(t)) = 0`, so the value of the inverse series at `t`
 is the additive inverse of `t` under the group law read at parameters. -/
+@[simp]
 theorem formalAddEval_formalInverseEval {t : O} (ht : PowerSeries.HasEval t)
     (hι : PowerSeries.HasEval (W.formalInverseEval t)) :
     W.formalAddEval t (W.formalInverseEval t) = 0 := by
