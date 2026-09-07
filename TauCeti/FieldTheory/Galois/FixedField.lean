@@ -25,12 +25,13 @@ subgroup of the automorphism group of an infinite extension is recovered from th
 out; the fixing subgroup of a subfield of finite degree is finite for the same reason.
 
 The last results specialise the correspondence to a *cyclic* subgroup: the field fixed by a finite
-cyclic group of automorphisms has `M` cyclic over it, and for `⟨σ⟩` the generator is named:
-`AlgEquiv.toFixedFieldAlgEquiv σ` acts on `M` as `σ` does and, for finite `⟨σ⟩`, generates.
-Neither `M / K` Galois nor
-`M / K` finite is needed — only that `H` be finite, which is what Mathlib's
-`FixedPoints.toAlgAutMulEquiv` asks for; it identifies a finite group of automorphisms with the
-Galois group of its fixed points, and that fixed-point subfield is the one underlying
+cyclic group of automorphisms has `M` cyclic over it, and for `⟨σ⟩` there is a named automorphism
+over the fixed field — `AlgEquiv.toFixedFieldAlgEquiv σ` acts on `M` as `σ` does, and generates
+once `⟨σ⟩` is finite.
+
+Neither `M / K` Galois nor `M / K` finite is needed, and neither is faithfulness of the action:
+`FixedPoints.toAlgAut_surjective` asks only that the group be finite, and cyclicity passes along
+its surjection. The fixed-point subfield it produces is the one underlying
 `IntermediateField.fixedField`.
 
 ## Main results
@@ -157,8 +158,10 @@ def toFixedFieldAlgEquiv (σ : M ≃ₐ[K] M) :
   MulSemiringAction.toAlgAut (Subgroup.zpowers σ)
     (FixedPoints.subfield (Subgroup.zpowers σ) M) M ⟨σ, Subgroup.mem_zpowers σ⟩
 
-/-- **The generator acts as `σ`.** This is what makes `toFixedFieldAlgEquiv σ` usable: it is a
-different bundling of the same underlying map, over the fixed field rather than over `K`. -/
+/-- **The rebundled automorphism acts as `σ`.** This is what makes `toFixedFieldAlgEquiv σ`
+usable: it is a different bundling of the same underlying map, over the fixed field rather than
+over `K`. It says nothing about generation, which needs `⟨σ⟩` finite and is
+`zpowers_toFixedFieldAlgEquiv_eq_top`. -/
 @[simp]
 theorem toFixedFieldAlgEquiv_apply (σ : M ≃ₐ[K] M) (x : M) :
     toFixedFieldAlgEquiv σ x = σ x :=
