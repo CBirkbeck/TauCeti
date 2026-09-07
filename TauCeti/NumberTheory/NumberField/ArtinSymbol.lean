@@ -30,9 +30,9 @@ The same reference gives functoriality in a normal tower: restriction maps the A
 unramifiedness in the top extension, rather than assumed separately.
 
 Raising the base field is the companion law, and it takes a power: for `K ⊆ M ⊆ L`, the symbol
-of a prime of `𝒪 M` above `𝔭`, read inside `Gal(L/K)`, is the `f(𝔓/𝔭)`-th power of the symbol of
+of a prime of `𝓞 M` above `𝔭`, read inside `Gal(L/K)`, is the `f(𝔓/𝔭)`-th power of the symbol of
 `𝔭`. Stated on conjugacy classes it needs no normality hypothesis on `M / K` and names no prime
-of `𝒪 L`, both of which the element-level form in
+of `𝓞 L`, both of which the element-level form in
 `TauCeti.NumberTheory.NumberField.Frobenius.Tower` does need.
 
 Finally, the symbol detects complete splitting: it is the identity class exactly when the
