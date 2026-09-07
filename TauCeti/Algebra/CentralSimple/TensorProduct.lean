@@ -115,7 +115,7 @@ open scoped TensorProduct
 
 namespace TauCeti
 
-namespace Algebra.TensorProduct
+section
 
 section Coordinates
 
@@ -134,7 +134,8 @@ makes `A ⊗[K] B` a scalar tower over `A`; all this adds is the identification 
 coordinates of `(a ⊗ₜ 1) * x` are already normalized by the generic scalar-action lemmas
 (`map_smul`, `Finsupp.smul_apply`, `smul_eq_mul`), so no left-handed coordinate lemma is needed. -/
 @[simp]
-private theorem tmul_one_mul_eq_smul (a : A) (x : A ⊗[K] B) : (a ⊗ₜ[K] (1 : B)) * x = a • x := by
+private theorem _root_.Algebra.TensorProduct.tmul_one_mul_eq_smul (a : A) (x : A ⊗[K] B) :
+    (a ⊗ₜ[K] (1 : B)) * x = a • x := by
   rw [← smul_one_mul a x, Algebra.TensorProduct.one_def, TensorProduct.smul_tmul', smul_eq_mul,
     mul_one]
 
@@ -146,7 +147,8 @@ variable (𝓑 : Basis ι K B)
 left-handed statement it is not an instance of the generic scalar-action API, since right
 multiplication is not the module action `Algebra.TensorProduct.basis` is a basis for. -/
 @[simp]
-private theorem basis_repr_mul_tmul_one (a : A) (x : A ⊗[K] B) (j : ι) :
+private theorem _root_.Algebra.TensorProduct.basis_repr_mul_tmul_one (a : A) (x : A ⊗[K] B)
+    (j : ι) :
     (Algebra.TensorProduct.basis A 𝓑).repr (x * (a ⊗ₜ[K] (1 : B))) j =
       (Algebra.TensorProduct.basis A 𝓑).repr x j * a := by
   induction x using TensorProduct.induction_on with
@@ -161,7 +163,7 @@ private theorem basis_repr_mul_tmul_one (a : A) (x : A ⊗[K] B) (j : ι) :
 
 end Coordinates
 
-end Algebra.TensorProduct
+end
 
 namespace IsSimpleRing
 
