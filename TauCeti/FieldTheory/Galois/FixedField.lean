@@ -11,7 +11,8 @@ public import TauCeti.Algebra.Group.Subgroup.ZPowers
 /-!
 # Fixed fields and fixing subgroups
 
-Two complements to Mathlib's Galois correspondence.
+Complements to Mathlib's Galois correspondence. A count is deliberately not given here: the file
+has grown, and a number in this sentence goes stale the next time it does.
 
 For a finite Galois extension `M / K`, a subgroup `H ≤ Gal(M/K)` and an intermediate field `E`,
 the fixed field of `H` and `E` generate `M` exactly when `H` meets the fixers of `E` trivially.
@@ -25,10 +26,10 @@ out; the fixing subgroup of a subfield of finite degree is finite for the same r
 The last results specialise the correspondence to a *cyclic* subgroup: the field fixed by a finite
 cyclic `H` has `M` cyclic over it, and for `H = ⟨σ⟩` the generator is named:
 `AlgEquiv.fixedFieldGenerator σ` acts on `M` as `σ` does and generates. Neither `M / K` Galois nor
-`M / K` finite is needed — only that `H` be finite,
-which is what Mathlib's `FixedPoints.toAlgAutMulEquiv` asks for; it identifies a finite group of
-automorphisms with the Galois group of its fixed points, and that fixed-point subfield is the one
-underlying `IntermediateField.fixedField`.
+`M / K` finite is needed — only that `H` be finite, which is what Mathlib's
+`FixedPoints.toAlgAutMulEquiv` asks for; it identifies a finite group of automorphisms with the
+Galois group of its fixed points, and that fixed-point subfield is the one underlying
+`IntermediateField.fixedField`.
 
 ## Main results
 
