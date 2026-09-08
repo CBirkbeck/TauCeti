@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.Analysis.SpecialFunctions.Complex.LogBounds
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Analytic
 
 import Mathlib.Analysis.SpecialFunctions.Complex.LogBounds
@@ -74,36 +75,6 @@ theorem exp_tsum_neg_log_one_sub_eq_LSeries
     (χ.summable_div_of_summable_idealTerm hs)).neg.hasSum.cexp.tprod_eq
   simp only [Function.comp_apply, exp_neg, exp_log (hne _)] at H
   exact H.symm.trans (χ.hasProd_eulerFactor hs).tprod_eq
-
-/-- **The Taylor family of `-log (1 - rᵢ)` is summable over index and exponent together.**  For a
-summable family `r` of complex numbers all of modulus less than one, the double family
-`(i, e) ↦ rᵢ ^ (e + 1) / (e + 1)` is absolutely summable, so its sum may be taken fibrewise.
-
-Only `Summable r` and `∀ i, ‖r i‖ < 1` are used; nothing here is arithmetic. -/
-private theorem summable_taylorSeries_neg_log {ι : Type*} {r : ι → ℂ} (hr : Summable r)
-    (h1 : ∀ i, ‖r i‖ < 1) :
-    Summable fun ie : ι × ℕ ↦ r ie.1 ^ (ie.2 + 1) / ((ie.2 : ℂ) + 1) := by
-  have hhalf : ∀ᶠ i in Filter.cofinite, ‖r i‖ ≤ 1 / 2 :=
-    hr.tendsto_cofinite_zero.norm.eventually_le_const (by norm_num)
-  have hmaj : Summable fun ie : ι × ℕ ↦ ‖r ie.1‖ ^ (ie.2 + 1) := by
-    have hfib : ∀ i, Summable fun e : ℕ ↦ ‖r i‖ ^ (e + 1) := fun i ↦
-      ((summable_geometric_of_lt_one (norm_nonneg _) (h1 i)).mul_left ‖r i‖).congr fun e ↦ by ring
-    have hval : ∀ i, ∑' e : ℕ, ‖r i‖ ^ (e + 1) = ‖r i‖ / (1 - ‖r i‖) := fun i ↦ by
-      rw [tsum_congr fun e ↦ pow_succ' ‖r i‖ e, tsum_mul_left,
-        tsum_geometric_of_lt_one (norm_nonneg _) (h1 i), div_eq_mul_inv]
-    have houter : Summable fun i ↦ ∑' e : ℕ, ‖r i‖ ^ (e + 1) := by
-      refine Summable.of_norm_bounded_eventually (g := fun i ↦ 2 * ‖r i‖) (hr.norm.mul_left 2) ?_
-      filter_upwards [hhalf] with i hi
-      rw [Real.norm_of_nonneg (by positivity), hval i, div_le_iff₀ (by linarith [h1 i])]
-      nlinarith [norm_nonneg (r i)]
-    exact (summable_prod_of_nonneg fun ie ↦ pow_nonneg (norm_nonneg _) _).mpr ⟨hfib, houter⟩
-  refine hmaj.of_norm_bounded ?_
-  rintro ⟨i, e⟩
-  rw [norm_div, norm_pow]
-  refine div_le_self (by positivity) ?_
-  have hcast : ((e : ℂ) + 1) = ((e + 1 : ℕ) : ℂ) := by push_cast; ring
-  rw [hcast, Complex.norm_natCast]
-  exact_mod_cast Nat.succ_le_succ (Nat.zero_le e)
 
 /-- **The prime-power family is absolutely summable.**  Under absolute convergence of the
 ideal-indexed series, the double family indexed by a prime `P` and an exponent `e` is summable, so
