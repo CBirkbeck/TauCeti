@@ -17,21 +17,21 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.ThirdPoint
 the case where the chord through the two points is not vertical: the point of the parameter
 `F(t₁, t₂)` is the sum of the points of `t₁` and `t₂`.
 
-That is the direction of travel for the whole formal-group layer. Associativity, the unit laws and
-the inverse law are already available *at parameters*, and `Point.lean` already knows the
-parametrisation is injective; what was missing is that it is a homomorphism, which is what makes
-the parameters a subgroup of the points rather than merely an indexed family of them.
+Together with the injectivity of `formalPoint`, this is what makes the parameters of an adic ideal
+a subgroup of the points of `W⁄K` rather than merely an indexed family of them: the group laws
+`formalAdd` satisfies at parameters are then the group laws of `W⁄K`, transported.
 
-## The hypotheses, and which are essential
+## The hypotheses
 
 `t₁ * w(t₂) ≠ t₂ * w(t₁)` is the chord condition: over a field, where a nonzero parameter `t`
 carries the coordinates `x = t / w(t)` and `y = -1 / w(t)`, it says the two points have distinct
 `x`-coordinates, so the line through them is not vertical. It is what excludes the doubling and
 inverse cases, which need a different argument and are not treated here.
 
-The two parameters and the sum are required nonzero because the zero parameter is the point at
-infinity, which has no affine coordinates; `hF` is the membership `formalPoint` needs of its
-argument and is what `formalAddEval_mem` supplies.
+The two parameters are required nonzero because the zero parameter is the point at infinity, which
+has no affine coordinates. The sum is nonzero automatically: `formalAddEval_ne_zero` derives that
+from the chord condition. `hF` is the membership `formalPoint` needs of its argument, and is what
+`formalAddEval_mem` supplies.
 
 ## Main results
 
@@ -64,8 +64,10 @@ variable {K : Type*} [Field K] [Algebra O K]
 
 /-! ### The scalar inputs, read in `K`
 
-These three ask nothing of the curve beyond its coefficients and nothing of `K` beyond being a
-field over `O`; the point-level statements below need more. -/
+The identities of the `Eval` and `PairEval` layers hold in `O`, while the chord computation happens
+in `K`; these are their images under `algebraMap O K`, in the shape `chord_point_add` consumes.
+They ask nothing of the curve beyond its coefficients and nothing of `K` beyond being a field over
+`O`; the point-level statements below need more. -/
 
 /-- The `w`-equation of the `(z, w)`-chart, read at a parameter in `K`. This is the shape
 `chord_point_nonsingular` and `chord_point_add` ask of each of their three points. -/
@@ -222,9 +224,8 @@ private theorem algebraMap_mul_formalWEval_sub_ne_zero {t₁ t₂ : O}
     (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁) :
     algebraMap O K t₁ * algebraMap O K (W.formalWEval t₂) -
       algebraMap O K t₂ * algebraMap O K (W.formalWEval t₁) ≠ 0 := by
-  rw [← map_mul, ← map_mul, ← map_sub]
-  exact fun h ↦ sub_ne_zero.mpr hx
-    (FaithfulSMul.algebraMap_injective O K (by rw [h, map_zero]))
+  rw [← map_mul, ← map_mul, ← map_sub, ne_eq, FaithfulSMul.algebraMap_eq_zero_iff, sub_eq_zero]
+  exact hx
 
 /-- **The parametrisation carries the group law**, for two nonzero parameters whose points have
 distinct `x`-coordinates: the point of `F(t₁, t₂)` is the sum of the points of `t₁` and `t₂`.
@@ -235,12 +236,10 @@ two points computes `F(t₁, t₂)`. -/
 theorem formalPoint_formalAddEval_of_x_ne {I : Ideal O} (hI : IsAdic I) {t₁ t₂ : O}
     (h₁ : t₁ ∈ I) (h₂ : t₂ ∈ I) (h₁0 : t₁ ≠ 0) (h₂0 : t₂ ≠ 0)
     (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁)
-    (hF : W.formalAddEval t₁ t₂ ∈ I) (hF0 : W.formalAddEval t₁ t₂ ≠ 0) :
+    (hF : W.formalAddEval t₁ t₂ ∈ I) :
     W.formalPoint (K := K) hI h₁ + W.formalPoint (K := K) hI h₂ =
       W.formalPoint (K := K) hI hF := by
-  classical
-  have hne : ∀ {s : O}, s ≠ 0 → algebraMap O K s ≠ 0 := fun hs0 h ↦
-    hs0 (FaithfulSMul.algebraMap_injective O K (by rw [h, map_zero]))
+  have hne : ∀ {s : O}, s ≠ 0 → algebraMap O K s ≠ 0 := fun hs0 ↦ by simpa using hs0
   have hE₁ : PowerSeries.HasEval t₁ := hI.isTopologicallyNilpotent_of_mem h₁
   have hE₂ : PowerSeries.HasEval t₂ := hI.isTopologicallyNilpotent_of_mem h₂
   have hEF : PowerSeries.HasEval (W.formalAddEval t₁ t₂) := hI.isTopologicallyNilpotent_of_mem hF
@@ -250,9 +249,13 @@ theorem formalPoint_formalAddEval_of_x_ne {I : Ideal O} (hI : IsAdic I) {t₁ t�
   have hw₂0 := W.algebraMap_formalWEval_ne_zero (S := K) hI h₂ (hne h₂0)
   have hwT0 := W.algebraMap_formalWEval_ne_zero (S := K) hI hTmem
     (hne (W.formalThirdRootEval_ne_zero hE₁ hE₂ hx))
-  have hwF0 := W.algebraMap_formalWEval_ne_zero (S := K) hI hF (hne hF0)
+  have hwF0 := W.algebraMap_formalWEval_ne_zero (S := K) hI hF
+    (hne (W.formalAddEval_ne_zero hE₁ hE₂ hx))
   have hDelta : (W.baseChange K).Δ ≠ 0 :=
     (W.baseChange K).coe_Δ' ▸ (W.baseChange K).Δ'.ne_zero
+  have hn₁ := chord_point_nonsingular _ (W.algebraMap_formalWEval_wEquation hE₁) hw₁0 hDelta
+  have hn₂ := chord_point_nonsingular _ (W.algebraMap_formalWEval_wEquation hE₂) hw₂0 hDelta
+  have hnF := chord_point_nonsingular _ (W.algebraMap_formalWEval_wEquation hEF) hwF0 hDelta
   have hu := W.algebraMap_formalInverseDenomEval_mul_inv (K := K) hE₁ hE₂
   have hsp0 := W.algebraMap_formalInverseDenomInvEval_ne_zero (K := K) hE₁ hE₂
   -- the group law of `W⁄K`, applied to the two parametrised points
@@ -262,17 +265,11 @@ theorem formalPoint_formalAddEval_of_x_ne {I : Ideal O} (hI : IsAdic I) {t₁ t�
     (W.algebraMap_formalThirdRootEval_relation hE₁ hE₂)
     (W.algebraMap_formalWEval_formalThirdRootEval hE₁ hE₂)
     (W.algebraMap_thirdRootDenom_ne_zero hI h₁ h₂) hw₁0 hw₂0 hwT0
-    (W.algebraMap_mul_formalWEval_sub_ne_zero hx)
-    (chord_point_nonsingular _ (W.algebraMap_formalWEval_wEquation hE₁) hw₁0 hDelta)
-    (chord_point_nonsingular _ (W.algebraMap_formalWEval_wEquation hE₂) hw₂0 hDelta)
+    (W.algebraMap_mul_formalWEval_sub_ne_zero hx) hn₁ hn₂
   -- the third point's coordinates are those of the parameter `F(t₁, t₂)`, the formal inverse of
   -- the third root
-  rw [W.formalPoint_eq_some hI h₁ h₁0
-      (chord_point_nonsingular _ (W.algebraMap_formalWEval_wEquation hE₁) hw₁0 hDelta),
-    W.formalPoint_eq_some hI h₂ h₂0
-      (chord_point_nonsingular _ (W.algebraMap_formalWEval_wEquation hE₂) hw₂0 hDelta), hadd,
-    W.formalPoint_eq_some hI hF hF0
-      (chord_point_nonsingular _ (W.algebraMap_formalWEval_wEquation hEF) hwF0 hDelta)]
+  rw [W.formalPoint_eq_some hI h₁ h₁0 hn₁, W.formalPoint_eq_some hI h₂ h₂0 hn₂, hadd,
+    W.formalPoint_eq_some hI hF (W.formalAddEval_ne_zero hE₁ hE₂ hx) hnF]
   simp only [Affine.Point.some.injEq]
   refine ⟨?_, ?_⟩
   · rw [W.algebraMap_formalAddEval_eq (K := K) hE₁ hE₂,
