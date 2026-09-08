@@ -216,7 +216,9 @@ theorem awayLift_divBy {V W : Type*} [CommSemiring V] [CommSemiring W] [Algebra 
 /-! ### The fractions generate
 
 A localisation away from `s` is generated over `A` by `1/s` alone; and as soon as the numerators
-generate the unit ideal, already by the fractions `t/s` themselves. Nothing topological enters —
+together with `s` generate the unit ideal, already by the fractions `t/s` themselves. Including `s`
+among the generators is what makes the second statement usable: `s` is invertible downstairs, so
+it contributes `1` rather than a further fraction. Nothing topological enters —
 this is the algebraic half of the statement that a rational localisation is a quotient of a
 polynomial ring, one variable per numerator.
 
