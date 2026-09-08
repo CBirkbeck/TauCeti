@@ -8,10 +8,9 @@ module
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.InfinityPlace.Basic
 -- Proof-only: Mathlib's evaluation of a valuation of `F(x)` with `v X > 1` is used inside
 -- `val_algebraMap_eq_zpow_intDegree`; no statement here mentions Ostrowski's theorem.
--- Proof-only: `CoordinateRing.mk_C_eq_algebraMap`, used in one rewrite below. NOT `public` — a
--- public import would re-export `TauCeti.WeierstrassCurve.Affine` to downstream files, and any of
--- them that `open WeierstrassCurve.Affine` inside `namespace TauCeti` would then resolve the open
--- ambiguously and silently lose `_root_.WeierstrassCurve.Affine`.
+-- Proof-only: `CoordinateRing.mk_C_eq_algebraMap`, used in one rewrite below. NOT `public` — the
+-- import is needed for a proof, not for anything this file states, so it stays out of the
+-- public surface.
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.CoordinateRing
 -- Proof-only: the generic point's equation, and the general two-to-three pole ratio it feeds.
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.GenericPoint
