@@ -58,6 +58,14 @@ commit `2baa76f742bdb4fb8ee323fabba41203bd390e08`,
 `projects/LeanModularForms/LeanModularForms/Eigenforms/AtkinLehner.lean` — the case split of
 `qSupportedOnDvd_mem_cuspFormsOld_of_char` (lines 169-192).
 
+`TauCeti.exists_factorsThrough_levelRaise_eq_or_eq_zero` states, at the same commit, the witness
+of `miyake_4_6_4_dichotomy_strong`
+(`projects/LeanModularForms/LeanModularForms/StrongMultiplicityOne/DescentCosets.lean`, line 73).
+The source states it from `qSupportedOnDvdSubmodule` membership and obtains the descent inside the
+proof; here it is stated at the `slash_T_eq` level this file already works at, so it follows from
+`TauCeti.exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero` by rewriting both disjuncts through
+`CuspForm.coe_levelRaise`.
+
 ## References
 
 * [F. Diamond and J. Shurman, *A first course in modular forms*][diamondshurman2005],
