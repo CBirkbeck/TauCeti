@@ -235,7 +235,12 @@ theorem formalPoint_injective {I : Ideal O} (hI : IsAdic I) :
 open scoped Classical in
 /-- **The parametrisation respects negation.** The formal inverse `ι` on parameters becomes the
 group inverse on points — on a generalised Weierstrass curve the `negY` transformation
-`y ↦ -y - a₁x - a₃`, not plain negation — so `formalPoint` carries the inverse law across. -/
+`y ↦ -y - a₁x - a₃`, not plain negation — so `formalPoint` carries the inverse law across.
+
+Tagged `@[simp]` in the reducing orientation, towards point negation. Note that `simp` reaches it
+only where the parameter is syntactically `formalInverseEval t`: the parameter sits in the
+membership proof's type, so matching it otherwise would need higher-order unification. -/
+@[simp]
 theorem formalPoint_formalInverseEval {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
     W.formalPoint (K := K) hI (pow_one I ▸ W.formalInverseEval_mem
         (hI.isTopologicallyNilpotent_of_mem ht) (k := 1) ((pow_one I).symm ▸ ht)) =
