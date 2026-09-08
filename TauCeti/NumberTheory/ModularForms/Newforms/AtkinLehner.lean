@@ -28,6 +28,11 @@ identically zero. Both horns say the same thing about `f`. On the first it is th
 argument needs of `l` is exactly that `N / l` be a proper divisor of `N` — that is, `l ≠ 1`, which
 together with `l ∣ N` and `N ≠ 0` gives `N / l < N`. Neither result asks `l` to be prime.
 
+That hypothesis belongs to the *conclusion*, not to the descent.
+`TauCeti.exists_factorsThrough_levelRaise_eq_or_eq_zero` produces the witness itself and needs no
+`l ≠ 1`; the divisor condition enters only where the witness is converted into oldness, which is
+the one step that requires `N / l` to be a proper divisor level.
+
 The two entry points differ in where the descent comes from.
 `mem_cuspFormsOld_of_slash_T_eq` takes `φ` from the caller, so no hypothesis on the
 `q`-expansion of `f` appears in it at all; `mem_cuspFormsOld_of_qExpansionSupportedOnDvd`
@@ -35,8 +40,13 @@ instead assumes `QExpansionSupportedOnDvd l f` and obtains `φ` from it.
 
 ## Main results
 
+* `TauCeti.exists_factorsThrough_levelRaise_eq_or_eq_zero`: the descent **witness** — either
+  `f = 0`, or `χ` factors through `N / l` and `f` is the level-raise of a cusp form of level
+  `Γ₁(N / l)` lying in the lowered character space. This is the form an iterated descent needs,
+  since the next step down is taken in the nebentypus this one produces.
 * `TauCeti.mem_cuspFormsOld_of_slash_T_eq`: a cusp form of level `Γ₁(N)` with a nebentypus, whose
-  level-`l` descent is invariant under the weight-`k` slash action of `T`, is old.
+  level-`l` descent is invariant under the weight-`k` slash action of `T`, is old — the witness
+  read for its common conclusion.
 * `TauCeti.mem_cuspFormsOld_of_qExpansionSupportedOnDvd`: **the Atkin–Lehner step at one
   divisor** — the same conclusion from the `q`-expansion support condition alone, the descent
   being supplied by `Newforms/Descent.lean`.
@@ -65,6 +75,38 @@ namespace TauCeti
 
 variable {N : ℕ} [NeZero N] {k : ℤ}
 
+/-- **The level-`l` descent witness, with its nebentypus.** Under the hypotheses of
+`TauCeti.mem_cuspFormsOld_of_slash_T_eq`, either `f = 0`, or `χ` factors through `N / l` and the
+descent `φ` is a cusp form `F` of level `Γ₁(N / l)` **in the lowered character space**, with `f`
+its level-raise.
+
+This keeps what `TauCeti.mem_cuspFormsOld_of_slash_T_eq` discards. That statement reads the
+level-lowering dichotomy for its common conclusion, `f ∈ S_k(Γ₁(N))ᵒˡᵈ`, which forgets both the
+level of the witness and the character it carries; iterating a descent needs both, since the next
+step down must be taken in the nebentypus the previous one produced. The divisor hypothesis
+`l ≠ 1` is not needed here either — it is what turns the witness into *oldness*, by making
+`N / l` a proper divisor level, and nothing before that point uses it. -/
+theorem exists_factorsThrough_levelRaise_eq_or_eq_zero {l : ℕ} (hlN : l ∣ N)
+    (χ : DirichletCharacter ℂ N) (φ : ℍ → ℂ) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
+    (hfχ : f ∈ cuspFormCharSpace k χ.toUnitHom)
+    (hf : haveI : NeZero l := NeZero.of_dvd hlN
+      ⇑f = (l : ℂ) ^ (1 - k) • (φ ∣[k] scaleGL l))
+    (hT : φ ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) = φ) :
+    haveI : NeZero l := NeZero.of_dvd hlN
+    (∃ hfac : χ.FactorsThrough (N / l),
+      ∃ F : CuspForm ((Gamma1 (N / l)).map (mapGL ℝ)) k,
+        F ∈ cuspFormCharSpace k hfac.χ₀.toUnitHom ∧
+          CuspForm.levelRaise l
+            (Gamma1_map_le_conjAct_scaleGL_of_dvd (Nat.mul_div_cancel' hlN).dvd) F = f) ∨
+      f = 0 := by
+  have : NeZero l := NeZero.of_dvd hlN
+  rcases exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero hlN k χ φ f hfχ hf hT with
+    ⟨hfac, F, hFχ, hF⟩ | hφ
+  · exact .inl ⟨hfac, F, hFχ,
+      DFunLike.coe_injective (by rw [CuspForm.coe_levelRaise, hF, hf])⟩
+  · exact .inr (DFunLike.coe_injective (by
+      rw [hf, hφ, SlashAction.zero_slash, smul_zero, FunLike.coe_zero]))
+
 /-- **A cusp form with a `T`-periodic level-`l` descent is old.** If `f ∈ S_k(N, χ)` is the
 level-raise `l ^ (1 - k) • (φ ∣[k] diag(l, 1))` of a function `φ : ℍ → ℂ` invariant under the
 weight-`k` slash action of `T`, and `l` is a divisor of `N` other than `1`, then `f` lies in the
@@ -81,19 +123,14 @@ theorem mem_cuspFormsOld_of_slash_T_eq {l : ℕ} (hl : l ≠ 1) (hlN : l ∣ N)
     (hT : φ ∣[k] (mapGL ℝ ModularGroup.T : GL (Fin 2) ℝ) = φ) :
     f ∈ cuspFormsOld N k := by
   have : NeZero l := NeZero.of_dvd hlN
-  have hdvd : l * (N / l) ∣ N := (Nat.mul_div_cancel' hlN).dvd
   have hM : N / l ≠ N :=
     Nat.ne_of_lt (Nat.div_lt_self (NeZero.pos N) (by have := NeZero.ne l; omega))
-  rcases exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero hlN k χ φ f hfχ hf hT with
-    ⟨_, F, _, hF⟩ | hφ
-  · -- `f` and the level-raise of `F` have the same underlying function, and coercion is injective
-    have hcoe : ⇑f = ⇑(CuspForm.levelRaise l (Gamma1_map_le_conjAct_scaleGL_of_dvd hdvd) F) := by
-      rw [CuspForm.coe_levelRaise, hF, hf]
-    rw [DFunLike.coe_injective hcoe]
-    exact levelRaise_mem_cuspFormsOld hdvd hM k F
-  · have hf0 : f = 0 := DFunLike.coe_injective <| by
-      rw [hf, hφ, SlashAction.zero_slash, smul_zero, FunLike.coe_zero]
-    exact hf0 ▸ (cuspFormsOld N k).zero_mem
+  -- `l ≠ 1` enters only here, as `N / l ≠ N`: it is what makes the witness's level a *proper*
+  -- divisor, and so its level-raise old.
+  rcases exists_factorsThrough_levelRaise_eq_or_eq_zero hlN χ φ hfχ hf hT with
+    ⟨_, F, _, hF⟩ | hf0
+  · exact hF ▸ levelRaise_mem_cuspFormsOld (Nat.mul_div_cancel' hlN).dvd hM k F
+  · exact hf0 ▸ (cuspFormsOld N k).zero_mem
 
 /-- **The Atkin–Lehner step at one divisor.** A cusp form of level `Γ₁(N)` with a nebentypus,
 whose period-one `q`-expansion is supported on the multiples of a divisor `l ≠ 1` of `N`, is old.
