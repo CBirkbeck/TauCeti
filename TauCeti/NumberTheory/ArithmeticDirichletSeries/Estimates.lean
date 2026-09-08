@@ -167,12 +167,13 @@ private theorem exists_le_card_and_card_le_of_le :
 
 /-- **Below the threshold the unit ideal alone carries the lower bound.**  For `1 ≤ x ≤ X` the
 multiple `X⁻¹ * x` is at most `1`, and the count is at least `1` because the unit ideal is always
-counted.  No asymptotic input is needed here. -/
-private theorem inv_mul_le_card_of_le_of_le {X x : ℝ} (hXpos : 0 < X) (hx : 1 ≤ x) (hxX : x ≤ X) :
+counted.  No asymptotic input is needed here, and no positivity hypothesis either: `1 ≤ x ≤ X`
+already puts `X` above `1`. -/
+private theorem inv_mul_le_card_of_le_of_le {X x : ℝ} (hx : 1 ≤ x) (hxX : x ≤ X) :
     X⁻¹ * x ≤ Nat.card {I : (Ideal (𝓞 K))⁰ // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} := by
-  have h1 : X⁻¹ * x ≤ 1 :=
-    calc X⁻¹ * x ≤ X⁻¹ * X := mul_le_mul_of_nonneg_left hxX (inv_nonneg.mpr hXpos.le)
-      _ = 1 := inv_mul_cancel₀ hXpos.ne'
+  have hXpos : 0 < X := zero_lt_one.trans_le (hx.trans hxX)
+  have h1 : X⁻¹ * x ≤ 1 := by
+    simpa [div_eq_mul_inv, mul_comm] using (div_le_one hXpos).2 hxX
   exact le_trans h1 (by exact_mod_cast one_le_card_absNorm_real_le K hx)
 
 /-- **Two-sided linear ideal counts.** The number of nonzero integral ideals of absolute norm at
@@ -201,7 +202,7 @@ theorem idealCount_linearBounds : Nonempty (IdealCountingLinearBounds K) := by
     rcases le_or_gt X x with hxX | hxX
     · exact le_trans (mul_le_mul_of_nonneg_right (min_le_left _ _) hxpos.le) (hmain x hxX).1
     · exact le_trans (mul_le_mul_of_nonneg_right (min_le_right _ _) hxpos.le)
-        (inv_mul_le_card_of_le_of_le K hXpos hx hxX.le)
+        (inv_mul_le_card_of_le_of_le K hx hxX.le)
   · intro x hx
     have hxpos : 0 < x := lt_of_lt_of_le zero_lt_one hx
     rcases le_or_gt X x with hxX | hxX
