@@ -8,6 +8,9 @@ module
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.Dedekind
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.Finite
 public import TauCeti.RingTheory.ClassGroup.ExtendedRelNorm
+-- Public: `isDedekindDomain_coordinateRing_of_isIntegrallyClosed` turns the normality hypotheses
+-- into the Dedekind instances, and `pushClassMonoidHom_mk0` needs them inside its statement.
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.CoordinateRing
 
 /-!
 # The class-group map induced by an isogeny
@@ -57,10 +60,13 @@ rather than vacuous: it holds by construction when the ambient structure is the 
 **Every other hypothesis is discharged internally**, from suppliers that live with the object they
 describe, in the one-property-per-file `IntermediateRing/` series:
 
+* both coordinate rings' Dedekind property —
+  `WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed`, which is why
+  normality is what the maps ask of the curves and the Dedekind property is not assumed;
 * `IsDedekindDomain φ.intermediateRing` — `Isogeny.isDedekindDomain_intermediateRing`, which asks
   nothing of the function-field extension and so covers inseparable isogenies;
 * `Module.Finite W₂.CoordinateRing φ.intermediateRing` —
-  `Isogeny.moduleFinite_intermediateRing_of_isElliptic`, which asks nothing of the extension
+  `Isogeny.moduleFinite_intermediateRing_of_isDedekindDomain`, which asks nothing of the extension
   either. Its sibling `Isogeny.moduleFinite_intermediateRing` would need
   `[Algebra.IsSeparable W₂.FunctionField W₁.FunctionField]`, and that is the hypothesis that
   would exclude Frobenius from everything below;
@@ -107,7 +113,7 @@ variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F}
 section PushClass
 
 variable (φ : Isogeny W₁ W₂)
-  [IsDedekindDomain W₁.CoordinateRing] [IsDedekindDomain W₂.CoordinateRing]
+  [IsIntegrallyClosed W₁.CoordinateRing] [IsIntegrallyClosed W₂.CoordinateRing]
   [Algebra W₂.CoordinateRing W₁.FunctionField]
   [Algebra W₂.FunctionField W₁.FunctionField]
   [IsScalarTower W₂.CoordinateRing W₂.FunctionField W₁.FunctionField]
@@ -121,6 +127,8 @@ them, receiving `W₁.CoordinateRing` by inclusion and lying module-finite over
 noncomputable def pushClassMonoidHom
     (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x) :
     ClassGroup W₁.CoordinateRing →* ClassGroup W₂.CoordinateRing :=
+  haveI := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₁
+  haveI := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₂
   letI : Algebra W₁.CoordinateRing φ.intermediateRing := φ.toIntermediateRing.toAlgebra
   letI : Algebra W₂.CoordinateRing φ.intermediateRing := φ.pullbackToIntermediateRing.toAlgebra
   haveI : IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField :=
@@ -142,6 +150,8 @@ unfolding it. -/
 theorem pushClassMonoidHom_mk0
     (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x)
     (I : (Ideal W₁.CoordinateRing)⁰) :
+    haveI := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₁
+    haveI := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₂
     letI : Algebra W₁.CoordinateRing φ.intermediateRing := φ.toIntermediateRing.toAlgebra
     letI : Algebra W₂.CoordinateRing φ.intermediateRing := φ.pullbackToIntermediateRing.toAlgebra
     haveI : IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField :=
@@ -158,6 +168,8 @@ theorem pushClassMonoidHom_mk0
         (ClassGroup.extendedIdeal W₁.CoordinateRing φ.intermediateRing I)) := by
   -- the `letI`s above bind inside the statement only, so the same instances are re-introduced
   -- here to bring them into scope for the proof term
+  have := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₁
+  have := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₂
   let _ : Algebra W₁.CoordinateRing φ.intermediateRing := φ.toIntermediateRing.toAlgebra
   let _ : Algebra W₂.CoordinateRing φ.intermediateRing := φ.pullbackToIntermediateRing.toAlgebra
   have : IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField :=
