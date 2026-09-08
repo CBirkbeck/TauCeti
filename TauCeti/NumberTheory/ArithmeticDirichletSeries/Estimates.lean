@@ -136,14 +136,12 @@ structure IdealCountingLinearBounds where
   card_le (x : ℝ) (hx : 1 ≤ x) :
     (Nat.card {I : (Ideal (𝓞 K))⁰ // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} : ℝ) ≤ upper * x
 
-/-- **Beyond a threshold the count already lies between two multiples of `x`.**  Mathlib's
-asymptotic `NumberField.Ideal.tendsto_norm_le_div_atTop₀` says the ratio tends to the residue `r`,
-which `NumberField.dedekindZeta_residue_pos` makes positive; taking `r / 2` and `r + 1` as strict
-bounds on the limit turns that into an eventual two-sided estimate, and `1 ≤ X` is folded in so the
-threshold is usable as a cutoff.
+/-- **Beyond a threshold the count lies between two multiples of `x`.**  There is a cutoff
+`X ≥ 1` such that every `x ≥ X` has at least `r / 2 * x` and at most `(r + 1) * x` nonzero integral
+ideals of absolute norm at most `x`, where `r` is `NumberField.dedekindZeta_residue K`.
 
-The constants are not optimal and are not meant to be: what matters downstream is only that some
-positive multiples of `x` sandwich the count. -/
+The constants are not optimal and are not meant to be: `idealCount_linearBounds` needs only that
+some positive multiples of `x` sandwich the count above the cutoff. -/
 private theorem exists_le_card_and_card_le_of_le :
     ∃ X : ℝ, 1 ≤ X ∧ ∀ x : ℝ, X ≤ x →
       NumberField.dedekindZeta_residue K / 2 * x ≤
@@ -165,16 +163,14 @@ private theorem exists_le_card_and_card_le_of_le :
   have hxpos : 0 < x := lt_of_lt_of_le zero_lt_one h₃
   exact ⟨(le_div_iff₀ hxpos).mp h₁.le, (div_le_iff₀ hxpos).mp h₂.le⟩
 
-/-- **Below the threshold the unit ideal alone carries the lower bound.**  For `1 ≤ x ≤ X` the
-multiple `X⁻¹ * x` is at most `1`, and the count is at least `1` because the unit ideal is always
-counted.  No asymptotic input is needed here, and no positivity hypothesis either: `1 ≤ x ≤ X`
-already puts `X` above `1`. -/
+/-- **Below the threshold, `X⁻¹` serves as the lower constant.**  For `1 ≤ x ≤ X` there are at
+least `X⁻¹ * x` nonzero integral ideals of absolute norm at most `x`.  This is the half of
+`idealCount_linearBounds`'s lower bound that the asymptotic does not reach, and it asks for nothing
+beyond `1 ≤ x ≤ X`. -/
 private theorem inv_mul_le_card_of_le_of_le {X x : ℝ} (hx : 1 ≤ x) (hxX : x ≤ X) :
-    X⁻¹ * x ≤ Nat.card {I : (Ideal (𝓞 K))⁰ // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} := by
-  have hXpos : 0 < X := zero_lt_one.trans_le (hx.trans hxX)
-  have h1 : X⁻¹ * x ≤ 1 := by
-    simpa [div_eq_mul_inv, mul_comm] using (div_le_one hXpos).2 hxX
-  exact le_trans h1 (by exact_mod_cast one_le_card_absNorm_real_le K hx)
+    X⁻¹ * x ≤ Nat.card {I : (Ideal (𝓞 K))⁰ // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} :=
+  le_trans (inv_mul_le_one_of_le₀ hxX (zero_le_one.trans (hx.trans hxX)))
+    (by exact_mod_cast one_le_card_absNorm_real_le K hx)
 
 /-- **Two-sided linear ideal counts.** The number of nonzero integral ideals of absolute norm at
 most `x` is bounded above and below by positive multiples of `x`, for every cutoff `x ≥ 1`.
