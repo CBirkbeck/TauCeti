@@ -15,7 +15,8 @@ import TauCeti.Data.ZMod.Units
 # Special linear groups: reduction, centers, and coordinate descriptions
 
 The natural reduction map `SL₂(ℤ) → SL₂(ℤ/dℤ)` is surjective (strong approximation for
-`SL₂`; Shimura §1.6, Serre Ch. VII), and the base-change map `SL(n, R) → GL(n, S)` sends
+`SL₂`; Shimura §1.6, Serre Ch. VII) — jointly so at two coprime moduli, by the Chinese
+remainder theorem — and the base-change map `SL(n, R) → GL(n, S)` sends
 `-I` to `-I`. Basic coordinate descriptions for `SL₂` and its image under `mapGL` are also
 recorded here for downstream matrix computations, together with what the determinant says about
 a matrix with a prescribed bottom row `(N, p)`: it is the Bézout relation `m p - n N = 1`.
@@ -35,7 +36,9 @@ diamond operators of the ModularForms roadmap (Layer 0), where it realizes every
 
 ## Main results
 
-* `Matrix.SpecialLinearGroup.map_intCast_zmod_surjective`: strong approximation for `SL₂`.
+* `Matrix.SpecialLinearGroup.map_intCast_zmod_surjective`: strong approximation for `SL₂`,
+  with `Matrix.SpecialLinearGroup.map_intCast_zmod_prod_surjective` its two-modulus form:
+  reductions prescribed at coprime `d` and `d'` are realized by one integral matrix.
 * `Matrix.SpecialLinearGroup.mapGL_neg_one`: `mapGL S (-1) = -1`.
 * `Matrix.SpecialLinearGroup.fin_two_mul_sub_mul_eq_one`: the determinant-one identity in
   coordinates.
@@ -404,5 +407,42 @@ theorem map_intCast_zmod_surjective :
   obtain ⟨τ, hτ⟩ := exists_map_eq_of_col_eq (M⁻¹ * g)
     (inv_mul_zero_zero_eq_one M g hcol0 hcol1) (inv_mul_one_zero_eq_zero M g hcol0 hcol1)
   exact ⟨σ * τ, by rw [map_mul, ← hMdef, hτ, mul_inv_cancel_left]⟩
+
+
+/-- **Strong approximation for `SL₂` at two coprime moduli**: for coprime `d` and `d'`, the joint
+reduction `SL₂(ℤ) → SL₂(ℤ/dℤ) × SL₂(ℤ/d'ℤ)` is surjective. So a prescribed reduction modulo `d`
+and a prescribed reduction modulo `d'` are realized simultaneously by a single integral matrix.
+
+`map_intCast_zmod_surjective` is the one-modulus statement, applied here at `d * d'`: the Chinese
+remainder theorem glues the pair of targets into one matrix over `ZMod (d * d')`, whose
+determinant is `1` because it is `1` in each factor separately. -/
+theorem map_intCast_zmod_prod_surjective {d d' : ℕ} (hcop : d.Coprime d') :
+    Function.Surjective
+      ((map (Int.castRingHom (ZMod d))).prod (map (Int.castRingHom (ZMod d'))) :
+        SL(2, ℤ) →* SL(2, ZMod d) × SL(2, ZMod d')) := by
+  rintro ⟨A, B⟩
+  set e := ZMod.chineseRemainder hcop
+  -- The two targets, glued entrywise into a single matrix over `ZMod (d * d')`.
+  set C : Matrix (Fin 2) (Fin 2) (ZMod (d * d')) :=
+    .of fun i j => e.symm (A i j, B i j) with hC
+  have hdet : C.det = 1 := by
+    rw [Matrix.det_fin_two]
+    refine e.injective ?_
+    rw [map_one, map_sub, map_mul, map_mul]
+    simp only [hC, Matrix.of_apply, RingEquiv.apply_symm_apply]
+    rw [Prod.ext_iff]
+    exact ⟨fin_two_mul_sub_mul_eq_one A, fin_two_mul_sub_mul_eq_one B⟩
+  obtain ⟨γ, hγ⟩ := map_intCast_zmod_surjective (d := d * d') ⟨C, hdet⟩
+  -- Reading the glued matrix back off in each factor is applying a ring hom to an integer cast.
+  have hentry : ∀ i j, ((γ i j : ℤ) : ZMod (d * d')) = e.symm (A i j, B i j) := fun i j => by
+    have := congrArg (fun M : SL(2, ZMod (d * d')) => M i j) hγ
+    simpa [map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply, hC] using this
+  refine ⟨γ, Prod.ext ?_ ?_⟩
+  · ext i j
+    simpa using congrArg
+      ((RingHom.fst (ZMod d) (ZMod d')).comp (e : ZMod (d * d') →+* _)) (hentry i j)
+  · ext i j
+    simpa using congrArg
+      ((RingHom.snd (ZMod d) (ZMod d')).comp (e : ZMod (d * d') →+* _)) (hentry i j)
 
 end Matrix.SpecialLinearGroup
