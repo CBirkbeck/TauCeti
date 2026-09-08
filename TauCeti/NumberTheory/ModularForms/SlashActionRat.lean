@@ -263,7 +263,8 @@ end UpperHalfPlane
 theorem _root_.SlashInvariantFormClass.slash_eq_of_mem_SLnZ {F : Type*} [FunLike F ℍ ℂ]
     {k : ℤ} [SlashInvariantFormClass F 𝒮ℒ k] (f : F) (γ : GL (Fin 2) ℚ)
     (hγ : γ ∈ SLnZ 2) : ⇑f ∣[k] γ = ⇑f := by
+  have hinst : SlashInvariantFormClass F ((⊤ : Subgroup SL(2, ℤ)).map (mapGL ℝ)) k := by
+    rwa [← MonoidHom.range_eq_map]
   obtain ⟨σ, rfl⟩ := (mem_SLnZ_iff 2).mp hγ
-  have h_mem : mapGL ℝ σ ∈ 𝒮ℒ := MonoidHom.mem_range.mpr ⟨σ, rfl⟩
-  rw [ModularForm.rat_slash, map_mapGL]
-  exact SlashInvariantFormClass.slash_action_eq f (mapGL ℝ σ) h_mem
+  exact SlashInvariantFormClass.slash_eq_of_mem_map_mapGL f
+    (Subgroup.mem_map_of_mem _ (Subgroup.mem_top σ))
