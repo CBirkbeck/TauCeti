@@ -172,6 +172,10 @@ variable {A R S : Type*} [CommRing A] [CommRing R] [IsDedekindDomain R] [CommRin
   [Algebra A R] [Algebra A S] [Algebra R S] [IsScalarTower A R S] [Algebra.IsIntegral R S]
   [Module.IsTorsionFree R S] [Algebra.EssFiniteType A R] [Algebra.EssFiniteType A S]
 
+-- Source. The descent is specified by the Chebotarev roadmap:
+-- `TauCetiRoadmap/Chebotarev/README.md` §7.2 argues that `K ∩ ℚ(ζ_q) = ℚ` "because a subfield of
+-- `K` ramified at `q` would force `q` to ramify in `K`", which is this statement's contrapositive.
+
 /-- **Unramifiedness descends to a subring.** If every prime of `S` lying over an ideal `I` of the
 base `A` is unramified over `A`, then so is every prime of `R` lying over `I`. The direction is
 descent, not ascent: the hypothesis is upstairs and the conclusion downstairs.
