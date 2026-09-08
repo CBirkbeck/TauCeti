@@ -63,9 +63,14 @@ the coordinate ring rests.
 
 ## Provenance
 
-Not ported; this is a direct proof. Mathlib knows the coordinate ring, its `R[X]`-basis `{1, Y}`
+Not ported; these are direct proofs. Mathlib knows the coordinate ring, its `R[X]`-basis `{1, Y}`
 and the norm of `p • 1 + q • Y` (`WeierstrassCurve.Affine.CoordinateRing.norm_smul_basis`), all of
 which are used here, but has no normality or Dedekind statement about it.
+
+`isDedekindDomain_coordinateRing_of_isIntegrallyClosed` is this repository's own
+`isDedekindDomain_coordinateRing` with `isIntegrallyClosed_coordinateRing W` lifted out of the
+proof and into a hypothesis: the argument, that module-finiteness over `F[X]` carries
+Noetherianity and dimension at most one across, is that theorem's unchanged.
 -/
 
 public section
