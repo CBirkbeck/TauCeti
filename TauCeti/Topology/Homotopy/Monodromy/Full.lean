@@ -176,7 +176,7 @@ functors of two covering maps is induced by a continuous map over the base. -/
 theorem _root_.IsCoveringMap.exists_map_of_monodromyNatTrans [LocallyPathConnectedSpace X]
     (hp : _root_.IsCoveringMap p) (hq : _root_.IsCoveringMap q)
     (α : hp.monodromyFunctor ⟶ hq.monodromyFunctor) :
-    ∃ (f : C(E, F)) (hf : q ∘ f = p), monodromyNatTrans hp hq f hf = α := by
+    ∃ (f : C(E, F)) (hf : q ∘ f = p), IsCoveringMap.monodromyNatTrans hp hq f hf = α := by
   let f : C(E, F) := ⟨IsCoveringMap.mapOfNatTrans hp hq α, IsCoveringMap.continuous_mapOfNatTrans
       hp hq α⟩
   have hf : q ∘ f = p := by
@@ -187,13 +187,13 @@ theorem _root_.IsCoveringMap.exists_map_of_monodromyNatTrans [LocallyPathConnect
   obtain ⟨e, he⟩ := e
   simp only [Set.mem_preimage, Set.mem_singleton_iff] at he
   subst x
-  rw [monodromyNatTrans_app]
+  rw [IsCoveringMap.monodromyNatTrans_app]
   have he' : (⟨e, he⟩ : p ⁻¹' {p e}) = ⟨e, rfl⟩ := Subtype.ext rfl
   rw [he']
-  have hfiber : fiberMap f hf (p e) ⟨e, rfl⟩ =
+  have hfiber : IsCoveringMap.fiberMap f hf (p e) ⟨e, rfl⟩ =
       ⟨IsCoveringMap.mapOfNatTrans hp hq α e, IsCoveringMap.proj_mapOfNatTrans hp hq α e⟩ := by
     apply Subtype.ext
-    exact fiberMap_apply_coe f hf (p e) ⟨e, rfl⟩
+    exact IsCoveringMap.fiberMap_apply_coe f hf (p e) ⟨e, rfl⟩
   exact hfiber.trans (IsCoveringMap.mapOfNatTrans_apply hp hq α e).symm
 
 end
