@@ -122,7 +122,8 @@ private noncomputable def _root_.WeierstrassCurve.Affine.CoordinateRing.conjHom
 
 @[simp]
 private lemma _root_.WeierstrassCurve.Affine.CoordinateRing.conjHom_mk_Y
-    : WeierstrassCurve.conjHom W (AdjoinRoot.root W.polynomial) = mk W W.negPolynomial :=
+    : WeierstrassCurve.Affine.CoordinateRing.conjHom W (AdjoinRoot.root W.polynomial) =
+      mk W W.negPolynomial :=
   AdjoinRoot.liftAlgHom_root ..
 
 @[simp]
@@ -133,7 +134,9 @@ private lemma _root_.WeierstrassCurve.Affine.CoordinateRing.conjHom_mk_C (r : R[
       (WeierstrassCurve.Affine.CoordinateRing.conjHom W).commutes r
 
 private lemma _root_.WeierstrassCurve.Affine.CoordinateRing.conjHom_conjHom
-    (x : W.CoordinateRing) : WeierstrassCurve.conjHom W (WeierstrassCurve.conjHom W x) = x := by
+    (x : W.CoordinateRing) :
+      WeierstrassCurve.Affine.CoordinateRing.conjHom W
+        (WeierstrassCurve.Affine.CoordinateRing.conjHom W x) = x := by
   have h : (WeierstrassCurve.Affine.CoordinateRing.conjHom W).comp
       (WeierstrassCurve.Affine.CoordinateRing.conjHom W) = AlgHom.id R[X] W.CoordinateRing := by
     refine AdjoinRoot.algHom_ext ?_
@@ -156,27 +159,34 @@ noncomputable def _root_.WeierstrassCurve.Affine.CoordinateRing.conj
     (by ext; exact WeierstrassCurve.Affine.CoordinateRing.conjHom_conjHom W _)
 
 private lemma _root_.WeierstrassCurve.Affine.CoordinateRing.conj_apply
-    (x : W.CoordinateRing) : WeierstrassCurve.conj W x = WeierstrassCurve.conjHom W x := by
+    (x : W.CoordinateRing) :
+      WeierstrassCurve.Affine.CoordinateRing.conj W x =
+        WeierstrassCurve.Affine.CoordinateRing.conjHom W x := by
   simp [WeierstrassCurve.Affine.CoordinateRing.conj]
 
 /-- Conjugation sends the coordinate `y` to `-y - (a₁X + a₃)`. -/
 @[simp]
 lemma _root_.WeierstrassCurve.Affine.CoordinateRing.conj_mk_Y
-    : WeierstrassCurve.conj W (AdjoinRoot.root W.polynomial) = mk W W.negPolynomial := by
+    : WeierstrassCurve.Affine.CoordinateRing.conj W (AdjoinRoot.root W.polynomial) =
+      mk W W.negPolynomial := by
   rw [WeierstrassCurve.Affine.CoordinateRing.conj_apply,
       WeierstrassCurve.Affine.CoordinateRing.conjHom_mk_Y]
 
 /-- Conjugation fixes the coefficient ring `R[X]`. -/
 @[simp]
 lemma _root_.WeierstrassCurve.Affine.CoordinateRing.conj_mk_C
-    (r : R[X]) : WeierstrassCurve.conj W (AdjoinRoot.of W.polynomial r) = mk W (C r) := by
+    (r : R[X]) :
+      WeierstrassCurve.Affine.CoordinateRing.conj W (AdjoinRoot.of W.polynomial r) =
+        mk W (C r) := by
   rw [WeierstrassCurve.Affine.CoordinateRing.conj_apply,
       WeierstrassCurve.Affine.CoordinateRing.conjHom_mk_C]
 
 /-- Conjugation is an involution. -/
 @[simp]
 lemma _root_.WeierstrassCurve.Affine.CoordinateRing.conj_conj
-    (x : W.CoordinateRing) : WeierstrassCurve.conj W (WeierstrassCurve.conj W x) = x :=
+    (x : W.CoordinateRing) :
+      WeierstrassCurve.Affine.CoordinateRing.conj W
+        (WeierstrassCurve.Affine.CoordinateRing.conj W x) = x :=
   by simpa only [WeierstrassCurve.Affine.CoordinateRing.conj_apply] using
       WeierstrassCurve.Affine.CoordinateRing.conjHom_conjHom W x
 

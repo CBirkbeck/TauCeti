@@ -89,7 +89,7 @@ noncomputable def _root_.WeierstrassCurve.Affine.Point.mapAlong
 /-- The point map sends the point at infinity to the point at infinity. -/
 @[simp]
 lemma _root_.WeierstrassCurve.Affine.Point.mapAlong_zero
-    : WeierstrassCurve.mapAlong f hf (0 : W.toAffine.Point) = 0 := by
+    : WeierstrassCurve.Affine.Point.mapAlong f hf (0 : W.toAffine.Point) = 0 := by
   rfl
 
 /-- The point map sends an affine point to the point with image coordinates. -/
@@ -130,7 +130,7 @@ lemma _root_.WeierstrassCurve.Affine.Point.mapAlong_mapAlong
 
 /-- **The point map is injective.** -/
 lemma _root_.WeierstrassCurve.Affine.Point.mapAlong_injective
-    : Function.Injective (WeierstrassCurve.mapAlong f hf (W := W)) := by
+    : Function.Injective (WeierstrassCurve.Affine.Point.mapAlong f hf (W := W)) := by
   rintro (_ | ⟨x₁, y₁, h₁⟩) (_ | ⟨x₂, y₂, h₂⟩) hP <;> simp only
       [WeierstrassCurve.Affine.Point.mapAlong] at hP
   · rfl
