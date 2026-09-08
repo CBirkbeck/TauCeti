@@ -8,7 +8,6 @@ module
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.Identification
 public import TauCeti.RingTheory.Huber.LocalizationTopology.StronglyNoetherian
 
-import TauCeti.RingTheory.Huber.LocalizationTopology.Presentation
 import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.FirstCountable
 import TauCeti.Topology.Algebra.GroupCompletion
 
