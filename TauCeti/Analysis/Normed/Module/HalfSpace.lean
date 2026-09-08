@@ -20,7 +20,8 @@ than open here.
 
 * `TauCeti.exists_apply_lt_and_lt_norm` and `TauCeti.exists_lt_apply_and_lt_norm` — either side
   of a nonzero linear functional holds points of arbitrarily large norm.
-* `TauCeti.not_isBounded_halfSpace_lt` — a strict half-space is unbounded.
+* `TauCeti.not_isBounded_halfSpace_lt` and `TauCeti.not_isBounded_halfSpace_gt` — either strict
+  half-space is unbounded.
 -/
 
 public section
@@ -64,6 +65,15 @@ theorem not_isBounded_halfSpace_lt {φ : E →ₗ[ℝ] ℝ} (hφ : φ ≠ 0) (u 
   intro hbdd
   obtain ⟨R, hR⟩ := isBounded_iff_forall_norm_le.mp hbdd
   obtain ⟨y, hy, hn⟩ := exists_apply_lt_and_lt_norm hφ u R
+  exact absurd (hR y (by simpa using hy)) (not_le.mpr hn)
+
+/-- **The half-space on the other side of a nonzero linear functional is unbounded.** No radius
+bounds `{y | u < φ y}` either. Linearity suffices; `φ` need not be continuous. -/
+theorem not_isBounded_halfSpace_gt {φ : E →ₗ[ℝ] ℝ} (hφ : φ ≠ 0) (u : ℝ) :
+    ¬ IsBounded {y | u < φ y} := by
+  intro hbdd
+  obtain ⟨R, hR⟩ := isBounded_iff_forall_norm_le.mp hbdd
+  obtain ⟨y, hy, hn⟩ := exists_lt_apply_and_lt_norm hφ u R
   exact absurd (hR y (by simpa using hy)) (not_le.mpr hn)
 
 end TauCeti
