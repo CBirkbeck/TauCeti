@@ -411,15 +411,14 @@ theorem map_intCast_zmod_surjective :
 
 /-- **Strong approximation for `SL₂` at two coprime moduli**: for coprime `d` and `d'`, the joint
 reduction `SL₂(ℤ) → SL₂(ℤ/dℤ) × SL₂(ℤ/d'ℤ)` is surjective. So a prescribed reduction modulo `d`
-and a prescribed reduction modulo `d'` are realized simultaneously by a single integral matrix.
-
-`map_intCast_zmod_surjective` is the one-modulus statement, applied here at `d * d'`: the Chinese
-remainder theorem glues the pair of targets into one matrix over `ZMod (d * d')`, whose
-determinant is `1` because it is `1` in each factor separately. -/
+and a prescribed reduction modulo `d'` are realized simultaneously by a single integral matrix. -/
 theorem map_intCast_zmod_prod_surjective {d d' : ℕ} (hcop : d.Coprime d') :
     Function.Surjective
       ((map (Int.castRingHom (ZMod d))).prod (map (Int.castRingHom (ZMod d'))) :
         SL(2, ℤ) →* SL(2, ZMod d) × SL(2, ZMod d')) := by
+  -- `map_intCast_zmod_surjective` is the one-modulus statement, applied here at `d * d'`: the
+  -- Chinese remainder theorem glues the pair of targets into one matrix over `ZMod (d * d')`,
+  -- whose determinant is `1` because it is `1` in each factor separately.
   rintro ⟨A, B⟩
   set e := ZMod.chineseRemainder hcop
   -- The two targets, glued entrywise into a single matrix over `ZMod (d * d')`.
