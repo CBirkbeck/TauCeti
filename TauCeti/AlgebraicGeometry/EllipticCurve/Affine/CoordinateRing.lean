@@ -66,10 +66,10 @@ Not ported; these are direct proofs. Mathlib knows the coordinate ring, its `R[X
 and the norm of `p • 1 + q • Y` (`WeierstrassCurve.Affine.CoordinateRing.norm_smul_basis`), all of
 which are used here, but has no normality or Dedekind statement about it.
 
-`isDedekindDomain_coordinateRing_of_isIntegrallyClosed` is this repository's own
-`isDedekindDomain_coordinateRing` with `isIntegrallyClosed_coordinateRing W` lifted out of the
-proof and into a hypothesis: the argument, that module-finiteness over `F[X]` carries
-Noetherianity and dimension at most one across, is that theorem's unchanged.
+`isDedekindDomain_coordinateRing_of_isIntegrallyClosed` asks normality and nothing else because
+the coordinate ring is module-finite over `F[X]`, which carries Noetherianity and dimension at
+most one across; for an elliptic curve `isIntegrallyClosed_coordinateRing` then supplies the
+normality.
 -/
 
 public section
