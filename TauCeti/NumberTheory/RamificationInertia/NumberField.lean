@@ -21,7 +21,8 @@ the rank of `𝓞 F` over `𝓞 K`.
 * `Ideal.ramificationIdx_le_finrank_numberField`: for a prime `𝔔` of `𝓞 F` in an extension
   `F / K` of number fields, `e(𝔔 / 𝓞 K) ≤ [F : K]`.
 * `Ideal.finrank_eq_one_of_ramificationIdx_eq_finrank`: in a tower `K ≤ E ≤ B`, a
-  prime of `𝓞 B` as ramified over `𝓞 E` as `[B : K]` allows forces `[E : K] = 1`.
+  prime of `𝓞 B` with `e(𝔔 / 𝓞 E) = [B : K]` — the full tower degree, not merely `[B : E]` —
+  forces `[E : K] = 1`.
 -/
 
 public section
@@ -45,12 +46,13 @@ theorem _root_.Ideal.ramificationIdx_le_finrank_numberField {F : Type*} [Field F
   (TauCeti.RamificationInertia.ramificationIdx_le_finrank (𝔔.under (𝓞 K)) 𝔔).trans_eq
     (IsFractionRing.finrank_eq (𝓞 K) K (𝓞 F) F).symm
 
-/-- **A totally ramified prime leaves no room for an intermediate field.** In a tower `K ≤ E ≤ B`
-of number fields, if a prime of `𝓞 B` is already as ramified over `𝓞 E` as the whole degree
-`[B : K]` allows, then `[E : K] = 1`.
+/-- **A relative ramification index equal to the full tower degree leaves no room for an
+intermediate field.** In a tower `K ≤ E ≤ B` of number fields, a prime `𝔔` of `𝓞 B` with
+`e(𝔔 / 𝓞 E) = [B : K]` forces `[E : K] = 1`.
 
-This is the form a "no proper intermediate field" argument consumes: total ramification of a
-prime of the top field over the intermediate one collapses the bottom step of the tower. -/
+The hypothesis is stronger than total ramification of `B / E`, which asks only
+`e(𝔔 / 𝓞 E) = [B : E]`; here the index must reach the degree of the *whole* tower. That is what a
+"no proper intermediate field" argument supplies, and what collapses the bottom step. -/
 theorem _root_.Ideal.finrank_eq_one_of_ramificationIdx_eq_finrank
     {E B : Type*} [Field E] [NumberField E]
     [Field B] [NumberField B] [Algebra K E] [Algebra K B] [Algebra E B] [IsScalarTower K E B]
