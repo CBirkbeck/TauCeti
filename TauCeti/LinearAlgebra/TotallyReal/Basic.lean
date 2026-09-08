@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.LinearAlgebra.Submodule.Compl
-public import Mathlib.LinearAlgebra.Prod
 public import Mathlib.LinearAlgebra.Projection
 
 /-!
