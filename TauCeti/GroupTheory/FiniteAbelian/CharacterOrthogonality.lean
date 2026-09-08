@@ -99,4 +99,19 @@ theorem sum_monoidHom_apply_eq_ite [DecidableEq G] (g : G) :
     simp [hcard]
   · next hg => exact sum_monoidHom_apply_eq_zero_of_ne_one hg
 
+/-- **Tagged column orthogonality.** Summing `(χ σ)⁻¹ * χ g` over all characters isolates the
+single element `σ`: the sum is `Nat.card G` when `g = σ` and `0` otherwise. This is the form a
+fibre-selecting argument uses, `sum_monoidHom_apply_eq_ite` being the case `σ = 1`.
+
+The inverse sits on the tag `σ`, not on the argument `g`. Without it the sum is
+`∑ χ, χ (σ * g)`, which is the indicator of `g = σ⁻¹` — a different fibre, and one that genuinely
+differs whenever `σ` is not an involution. -/
+@[simp]
+theorem sum_inv_mul_monoidHom_apply_eq_ite [DecidableEq G] (σ g : G) :
+    ∑ χ : G →* Mˣ, (((χ σ)⁻¹ : Mˣ) : M) * ((χ g : Mˣ) : M) =
+      if g = σ then (Nat.card G : M) else 0 := by
+  have key : ∀ χ : G →* Mˣ, (((χ σ)⁻¹ : Mˣ) : M) * ((χ g : Mˣ) : M) = ((χ (σ⁻¹ * g) : Mˣ) : M) :=
+    fun χ ↦ by rw [map_mul, map_inv, Units.val_mul]
+  simp only [key, sum_monoidHom_apply_eq_ite, inv_mul_eq_one, eq_comm]
+
 end CommGroup
