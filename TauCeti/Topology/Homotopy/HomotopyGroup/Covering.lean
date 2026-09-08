@@ -135,7 +135,7 @@ end GenLoop
 namespace HomotopyGroup
 
 /-- A covering map is injective on homotopy groups in every positive dimension. -/
-theorem IsCoveringMap.map_injective [Nonempty N] (hp : IsCoveringMap p) :
+theorem map_injective [Nonempty N] (hp : IsCoveringMap p) :
     Function.Injective (map (N := N) (⟨p, hp.continuous⟩ : C(E, X)) (rfl : p e = p e)) := by
   intro a b
   refine Quotient.inductionOn₂ a b fun F G h => ?_
