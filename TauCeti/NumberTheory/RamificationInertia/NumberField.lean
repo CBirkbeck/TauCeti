@@ -32,10 +32,6 @@ namespace TauCeti.NumberField
 
 variable {K : Type*} [Field K] [NumberField K]
 
--- Source. Recovered from the branch of the retired pull request #5538, commit
--- `70421db267d9bd6252256f873d27e99e739a931c`, where these were written for the Chebotarev
--- roadmap's Layer 7.2.
-
 /-- **A relative ramification index is at most the degree of the extension.** For a prime `𝔔` of
 `𝓞 F` in an extension `F / K` of number fields, `e(𝔔 / 𝓞 K) ≤ [F : K]`.
 
