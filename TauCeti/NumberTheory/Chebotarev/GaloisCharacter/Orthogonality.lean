@@ -5,9 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
 public import TauCeti.GroupTheory.FiniteAbelian.CharacterOrthogonality
 public import TauCeti.NumberTheory.Chebotarev.GaloisCharacter.Weight
+import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
 
 /-!
 # Character orthogonality for the ideal weight of a Galois character
@@ -25,8 +25,8 @@ completely multiplicative, and so is open to Euler-product and Dirichlet-series 
 
 * `AlgEquiv.sum_inv_mul_galoisCharacterWeight_apply_of_unramified`: the orthogonality identity at
   an unramified height-one prime, selecting the fibre of a chosen `σ`.
-* `AlgEquiv.sum_inv_mul_galoisCharacterWeight_apply_of_mem_ramifiedPrimes`: the sum vanishes at a
-  ramified prime, for the trivial reason that every summand does.
+* `AlgEquiv.sum_inv_mul_galoisCharacterWeight_apply_eq_zero_of_mem_ramifiedPrimes`: the sum
+  vanishes at a ramified prime, for the trivial reason that every summand does.
 
 ## Implementation notes
 
@@ -74,7 +74,7 @@ variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Alge
 
 /-- **Orthogonality at a ramified prime.** Every character's weight vanishes there, so any
 character sum against it does too. No commutativity is needed. -/
-theorem sum_inv_mul_galoisCharacterWeight_apply_of_mem_ramifiedPrimes (σ : L ≃ₐ[K] L)
+theorem sum_inv_mul_galoisCharacterWeight_apply_eq_zero_of_mem_ramifiedPrimes (σ : L ≃ₐ[K] L)
     (𝔭 : HeightOneSpectrum (𝓞 K)) (h𝔭 : 𝔭 ∈ ramifiedPrimes K L) :
     ∑ χ : (L ≃ₐ[K] L) →* ℂˣ,
         (((χ σ)⁻¹ : ℂˣ) : ℂ) * MonoidHom.galoisCharacterWeight (L := L) χ 𝔭.asIdeal = 0 :=
