@@ -6,72 +6,60 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Analysis.Complex.Basic
-public import TauCeti.Analysis.Normed.Module.FilledHull
+import TauCeti.Analysis.Normed.Module.FilledHull
 
 /-!
-# Points of large norm in an open half-space
+# Points of large norm in a coordinate half-plane of `ℂ`
 
-`TauCeti.not_isBounded_halfSpace_lt` says an open half-space `{y | φ y < u}` is unbounded.
-`TauCeti.exists_lt_and_lt_norm` restates that in the form its consumers want: for every radius
-there is a point of the half-space outside that radius. `TauCeti.exists_lt_and_lt_norm'` is the
-other side, `u < φ y`, obtained from `-φ`.
+Each of the four inequalities `z.im < c`, `c < z.im`, `z.re < c` and `c < z.re` cuts out an open
+half-plane of `ℂ` — two horizontal, two vertical — and each holds points of arbitrarily large
+norm. These are the specialisations of `TauCeti.exists_apply_lt_and_lt_norm` and
+`TauCeti.exists_lt_apply_and_lt_norm` to `Complex.reLm` and `Complex.imLm`.
 
-Specialising to `Complex.reCLM` and `Complex.imCLM` gives the four open half-planes of `ℂ`. This
-is what a winding-number vanishing argument needs: to transport a winding number through an
+This is what a winding-number vanishing argument needs: to transport a winding number through an
 unbounded connected region one must exhibit, for each radius, a point of the region beyond it.
 
 ## Main results
 
-* `TauCeti.exists_lt_and_lt_norm`, `TauCeti.exists_lt_and_lt_norm'` — the two directions for a
-  nonzero continuous functional on a real normed space.
+* `Complex.reLm_ne_zero`, `Complex.imLm_ne_zero` — the two coordinate functionals of `ℂ` are
+  nonzero.
 * `TauCeti.exists_im_lt_and_lt_norm`, `TauCeti.exists_lt_im_and_lt_norm`,
-  `TauCeti.exists_re_lt_and_lt_norm`, `TauCeti.exists_lt_re_and_lt_norm` — the four half-planes.
+  `TauCeti.exists_re_lt_and_lt_norm`, `TauCeti.exists_lt_re_and_lt_norm` — the four coordinate
+  half-planes.
 -/
 
 public section
 
-open Bornology
+namespace Complex
 
-namespace TauCeti
-
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-
-/-- An open half-space contains points of arbitrarily large norm. -/
-theorem exists_lt_and_lt_norm {φ : E →L[ℝ] ℝ} (hφ : φ ≠ 0) (u R : ℝ) :
-    ∃ y : E, φ y < u ∧ R < ‖y‖ := by
-  by_contra h
-  push Not at h
-  exact not_isBounded_halfSpace_lt hφ u
-    (isBounded_iff_forall_norm_le.mpr ⟨R, fun y hy => h y hy⟩)
-
-/-- The half-space on the other side of the functional, via `-φ`. -/
-theorem exists_lt_and_lt_norm' {φ : E →L[ℝ] ℝ} (hφ : φ ≠ 0) (u R : ℝ) :
-    ∃ y : E, u < φ y ∧ R < ‖y‖ := by
-  obtain ⟨y, hy, hn⟩ := exists_lt_and_lt_norm (φ := -φ) (neg_ne_zero.mpr hφ) (-u) R
-  exact ⟨y, by simpa using hy, hn⟩
-
-private lemma imCLM_ne_zero : (Complex.imCLM : ℂ →L[ℝ] ℝ) ≠ 0 := by
+/-- The imaginary part is not the zero functional. -/
+@[simp] theorem imLm_ne_zero : (imLm : ℂ →ₗ[ℝ] ℝ) ≠ 0 := by
   intro h
   simpa using congrArg (fun ψ => ψ Complex.I) h
 
-private lemma reCLM_ne_zero : (Complex.reCLM : ℂ →L[ℝ] ℝ) ≠ 0 := by
+/-- The real part is not the zero functional. -/
+@[simp] theorem reLm_ne_zero : (reLm : ℂ →ₗ[ℝ] ℝ) ≠ 0 := by
   intro h
   simpa using congrArg (fun ψ => ψ 1) h
 
+end Complex
+
+namespace TauCeti
+
 /-- The open lower half-plane `{z | z.im < c}` contains points of arbitrarily large norm. -/
 theorem exists_im_lt_and_lt_norm (c R : ℝ) : ∃ z : ℂ, z.im < c ∧ R < ‖z‖ :=
-  exists_lt_and_lt_norm imCLM_ne_zero c R
+  exists_apply_lt_and_lt_norm Complex.imLm_ne_zero c R
 
 /-- The open upper half-plane `{z | c < z.im}` contains points of arbitrarily large norm. -/
 theorem exists_lt_im_and_lt_norm (c R : ℝ) : ∃ z : ℂ, c < z.im ∧ R < ‖z‖ :=
-  exists_lt_and_lt_norm' imCLM_ne_zero c R
+  exists_lt_apply_and_lt_norm Complex.imLm_ne_zero c R
 
 /-- The open left half-plane `{z | z.re < c}` contains points of arbitrarily large norm. -/
 theorem exists_re_lt_and_lt_norm (c R : ℝ) : ∃ z : ℂ, z.re < c ∧ R < ‖z‖ :=
-  exists_lt_and_lt_norm reCLM_ne_zero c R
+  exists_apply_lt_and_lt_norm Complex.reLm_ne_zero c R
 
 /-- The open right half-plane `{z | c < z.re}` contains points of arbitrarily large norm. -/
 theorem exists_lt_re_and_lt_norm (c R : ℝ) : ∃ z : ℂ, c < z.re ∧ R < ‖z‖ :=
-  exists_lt_and_lt_norm' reCLM_ne_zero c R
+  exists_lt_apply_and_lt_norm Complex.reLm_ne_zero c R
 
 end TauCeti

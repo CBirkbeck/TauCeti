@@ -70,6 +70,8 @@ used, and the separation argument is the general Hahn–Banach one.
 * `TauCeti.diam_le_diam_of_subset_filledHull` and
   `IsPreconnected.diam_le_diam_of_disjoint` — a set inside the filled hull of a bounded `K`,
   in particular a preconnected set that `K` cuts off from infinity, is no wider than `K`.
+* `TauCeti.exists_apply_lt_and_lt_norm` and `TauCeti.exists_lt_apply_and_lt_norm` — either open
+  half-space of a nonzero linear functional holds points of arbitrarily large norm, whence
 * `TauCeti.not_isBounded_halfSpace_lt` — an open half-space cut out by a nonzero continuous
   functional is unbounded, and `TauCeti.isBounded_closedConvexHull`,
   `TauCeti.diam_closedConvexHull` — the closed forms of the two convex-hull facts the width
@@ -100,28 +102,42 @@ the closure adding nothing by `Metric.diam_closure`. -/
 theorem diam_closedConvexHull : diam (closedConvexHull ℝ K) = diam K := by
   rw [closedConvexHull_eq_closure_convexHull, diam_closure, convexHull_diam]
 
-/-- **An open half-space cut out by a nonzero continuous functional is unbounded.** Along a
-direction `v` with `φ v = 1` the value of `φ` decreases without bound as one walks towards `-v`,
-while the norm grows without bound, so the half-space contains points of arbitrarily large norm. -/
-theorem not_isBounded_halfSpace_lt {φ : E →L[ℝ] ℝ} (hφ : φ ≠ 0) (u : ℝ) :
-    ¬ IsBounded {y | φ y < u} := by
+/-- **An open half-space contains points of arbitrarily large norm.** For a nonzero linear
+functional `φ`, every bound `u` and every radius `R` admit a `y` with `φ y < u` and `R < ‖y‖`.
+Continuity plays no part: the witness is a multiple of a single vector on which `φ` is nonzero. -/
+theorem exists_apply_lt_and_lt_norm {φ : E →ₗ[ℝ] ℝ} (hφ : φ ≠ 0) (u R : ℝ) :
+    ∃ y : E, φ y < u ∧ R < ‖y‖ := by
   obtain ⟨w, hw⟩ : ∃ w, φ w ≠ 0 := by simpa using DFunLike.ne_iff.mp hφ
   obtain ⟨v, hφv⟩ : ∃ v : E, φ v = 1 :=
     ⟨(φ w)⁻¹ • w, by rw [map_smul, smul_eq_mul, inv_mul_cancel₀ hw]⟩
   have hvnorm : 0 < ‖v‖ := norm_pos_iff.mpr fun h => by simp [h] at hφv
-  intro hbdd
-  obtain ⟨R, hR⟩ := isBounded_iff_forall_norm_le.mp hbdd
-  -- Walk to `-t • v` for a `t` large enough to break both the bound `u` on `φ` and the bound `R`.
+  -- Walk to `-t • v` for a `t` large enough to break both the bound `u` and the radius `R`.
   obtain ⟨t, ht1, ht2⟩ : ∃ t : ℝ, (R + 1) / ‖v‖ ≤ t ∧ |u| + 1 ≤ t :=
     ⟨_, le_max_left _ _, le_max_right _ _⟩
   have ht0 : 0 ≤ t := le_trans (by positivity) ht2
-  have hmem : (-t) • v ∈ {y | φ y < u} := by
-    have hval : φ ((-t) • v) = -t := by rw [map_smul, hφv, smul_eq_mul, mul_one]
-    simp only [mem_ofPred_eq, hval]
+  refine ⟨(-t) • v, ?_, ?_⟩
+  · rw [map_smul, hφv, smul_eq_mul, mul_one]
     linarith [neg_abs_le u]
-  have hnorm := hR _ hmem
-  rw [norm_smul, norm_neg, Real.norm_eq_abs, abs_of_nonneg ht0] at hnorm
-  linarith [(div_le_iff₀ hvnorm).mp ht1]
+  · rw [norm_smul, norm_neg, Real.norm_eq_abs, abs_of_nonneg ht0]
+    linarith [(div_le_iff₀ hvnorm).mp ht1]
+
+/-- **The other side of a nonzero linear functional also contains points of arbitrarily large
+norm**: every bound `u` and radius `R` admit a `y` with `u < φ y` and `R < ‖y‖`. -/
+theorem exists_lt_apply_and_lt_norm {φ : E →ₗ[ℝ] ℝ} (hφ : φ ≠ 0) (u R : ℝ) :
+    ∃ y : E, u < φ y ∧ R < ‖y‖ := by
+  obtain ⟨y, hy, hn⟩ := exists_apply_lt_and_lt_norm (φ := -φ) (neg_ne_zero.mpr hφ) (-u) R
+  exact ⟨y, by simpa using hy, hn⟩
+
+/-- **An open half-space cut out by a nonzero continuous functional is unbounded.** No radius
+bounds it, because by `TauCeti.exists_apply_lt_and_lt_norm` it holds points of every norm. -/
+theorem not_isBounded_halfSpace_lt {φ : E →L[ℝ] ℝ} (hφ : φ ≠ 0) (u : ℝ) :
+    ¬ IsBounded {y | φ y < u} := by
+  have hlin : (φ : E →ₗ[ℝ] ℝ) ≠ 0 := fun h =>
+    hφ (ContinuousLinearMap.coe_injective (by simpa using h))
+  intro hbdd
+  obtain ⟨R, hR⟩ := isBounded_iff_forall_norm_le.mp hbdd
+  obtain ⟨y, hy, hn⟩ := exists_apply_lt_and_lt_norm hlin u R
+  exact absurd (hR y (by simpa using hy)) (not_le.mpr hn)
 
 /-- **The filled hull lies in the closed convex hull.** A point outside the closed convex hull of a
 nonempty `K` is separated from it by a continuous linear functional; the open half-space this
