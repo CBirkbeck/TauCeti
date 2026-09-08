@@ -37,8 +37,9 @@ Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
   `TauCeti.Localization.divBy_mul_cancel_right`: `(s · t)/s = t` and `(t · s)/s = t`.
 * `TauCeti.Localization.divBy_self`: `s/s = 1`.
 * `TauCeti.Localization.adjoin_invSelf_eq_top`: `S` is generated over `A` by `1/s`.
-* `TauCeti.Localization.adjoin_divBy_eq_top`: as soon as the numerators `T` generate the unit
-  ideal, the fractions `t/s` alone already generate `S` over `A`.
+* `TauCeti.Localization.adjoin_divBy_eq_top`: as soon as the numerators `T` together with the
+  denominator `s` generate the unit ideal, the fractions `t/s` alone already generate `S` over
+  `A`.
 * `TauCeti.Localization.divBy_mul_divBy_of_eq_mul`: for `s = u * r`, the fraction `(a · b)/s`
   splits as `(a · r)/s · (b · u)/s`, each half carrying one factor of the denominator.
 * `TauCeti.Localization.awayLift_divBy`: the comparison map to a localisation at a multiple
@@ -239,24 +240,30 @@ theorem adjoin_invSelf_eq_top :
   refine mul_mem (Subalgebra.algebraMap_mem _ a) (pow_mem ?_ n)
   exact Algebra.subset_adjoin rfl
 
-/-- **Numerators generating the unit ideal make their fractions generate the localisation.** If
-`T` spans `A` as an ideal then `S` is already `A[t/s : t ∈ T]` — no separate `1/s` is needed.
+/-- **Numerators generating the unit ideal together with `s` make their fractions generate the
+localisation.** If `T ∪ {s}` spans `A` as an ideal then `S` is already `A[t/s : t ∈ T]` — no
+separate `1/s` is needed.
 
-Writing `1 = ∑ cₜ · t` and dividing by `s` exhibits `1/s` as `∑ cₜ · (t/s)`, after which
-`adjoin_invSelf_eq_top` finishes. The hypothesis cannot be dropped: over `A = ℤ` with `s = p` and
-`T = {p}` the fractions generate only `ℤ`, not `ℤ[1/p]`.
+Including `s` among the generators costs nothing and is what the intended application supplies:
+writing `1 = c · s + ∑ cₜ · t` and dividing by `s` exhibits `1/s` as `c + ∑ cₜ · (t/s)`, after
+which `adjoin_invSelf_eq_top` finishes. The `c · s` term contributes `1`, which is why `s` may be
+one of the generators without being one of the numerators. The hypothesis cannot be dropped: over
+`A = ℤ` with `s = p` and `T = ∅` the fractions generate only `ℤ`, not `ℤ[1/p]`.
 
 The hypothesis is exactly what Wedhorn's rational subsets supply: there `T · A` is required to be
 *open*, and an open ideal of a Tate ring is `⊤` by
 `TauCeti.Huber.IsTateRing.eq_top_of_isOpen`. -/
-theorem adjoin_divBy_eq_top {T : Set A} (hT : Ideal.span T = ⊤) :
+theorem adjoin_divBy_eq_top {T : Set A} (hT : Ideal.span (insert s T) = ⊤) :
     Algebra.adjoin A (Set.range fun t : T ↦ (divBy (t : A) s : S)) = ⊤ := by
   set E := Algebra.adjoin A (Set.range fun t : T ↦ (divBy (t : A) s : S))
-  have key : ∀ a ∈ Ideal.span T, algebraMap A S a * (IsLocalization.Away.invSelf s : S) ∈ E := by
+  have key : ∀ a ∈ Ideal.span (insert s T),
+      algebraMap A S a * (IsLocalization.Away.invSelf s : S) ∈ E := by
     intro a ha
     induction ha using Submodule.span_induction with
     | mem y hy =>
-        exact algebraMap_mul_invSelf (S := S) y s ▸ Algebra.subset_adjoin ⟨⟨y, hy⟩, rfl⟩
+        rcases hy with rfl | hy
+        · simp [IsLocalization.Away.mul_invSelf]
+        · exact algebraMap_mul_invSelf (S := S) y s ▸ Algebra.subset_adjoin ⟨⟨y, hy⟩, rfl⟩
     | zero => simp
     | add y z _ _ hy hz => rw [map_add, add_mul]; exact add_mem hy hz
     | smul c y _ hy =>
