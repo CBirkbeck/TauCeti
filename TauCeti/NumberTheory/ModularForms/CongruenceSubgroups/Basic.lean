@@ -64,6 +64,11 @@ infrastructure independent of the diamond operators.
   normalizer membership and — over `ℝ` — as a pointwise conjugation.
 * `CongruenceSubgroup.Gamma0Map_toHomUnits_surjective`: every unit of `ZMod N` is the
   lower-right entry of a matrix in `Γ₀(N)` (via strong approximation for `SL₂`).
+* `CongruenceSubgroup.exists_mem_Gamma_map_intCast_zmod_eq`: **strong approximation along a
+  coprime level** — for coprime `d` and `d'`, `Γ(d')` still surjects onto `SL₂(ℤ/dℤ)`.
+* `CongruenceSubgroup.exists_mem_Gamma0_map_intCast_zmod_eq_S`: **Miyake's Lemma 4.5.11** — for a
+  prime `p` exactly dividing `N`, a `Γ₀(N / p)` element reducing to `S` modulo `p` and to the
+  identity modulo `N / p`, the extra representative of the level-descent coset system.
 * `CongruenceSubgroup.gamma0Twist`: an explicit `Γ₀(N)` element whose lower-right entry is any
   natural number coprime to `N`.
 * `CongruenceSubgroup.gamma0TwistOfUnit` and
@@ -696,5 +701,37 @@ theorem Gamma_gcd_eq_sup (a b : ℕ) : Gamma (Nat.gcd a b) = Gamma a ⊔ Gamma b
   obtain ⟨hβ_a, hβ_b⟩ :=
     mem_Gamma_and_inv_mul_mem_Gamma_of_map_eq (congr_arg Subtype.val hβ) hMa hMb
   exact ⟨β, hβ_a, β⁻¹ * γ, hβ_b, by group⟩
+
+/-- **Strong approximation along a coprime level.** For coprime `d` and `d'`, the principal
+congruence subgroup `Γ(d')` still surjects onto `SL₂(ℤ/dℤ)`: imposing a congruence condition at
+`d'` costs nothing at `d`. -/
+theorem exists_mem_Gamma_map_intCast_zmod_eq {d d' : ℕ} (hcop : Nat.Coprime d d')
+    (A : Matrix.SpecialLinearGroup (Fin 2) (ZMod d)) :
+    ∃ γ ∈ Gamma d', Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod d)) γ = A := by
+  -- the two-modulus lift at `(A, 1)`: the second component says exactly `γ ∈ Γ(d')`
+  obtain ⟨γ, hγ⟩ := Matrix.SpecialLinearGroup.map_intCast_zmod_prod_surjective hcop (A, 1)
+  rw [MonoidHom.prod_apply, Prod.mk.injEq] at hγ
+  exact ⟨γ, Gamma_mem'.mpr hγ.2, hγ.1⟩
+
+/-- **The extra coset representative of Miyake's Lemma 4.5.11.** For a prime `p` with `p ∣ N` but
+`p² ∤ N`, there is a `γ ∈ Γ₀(N / p)` reducing to `S = [[0, -1], [1, 0]]` modulo `p` and to the
+identity modulo `N / p`.
+
+`p² ∤ N` is exactly what makes `p` coprime to `N / p`; the target modulo `p` is `S`, and membership
+in `Γ₀(N / p)` comes from the stronger `Γ(N / p)` the previous theorem already delivers. This `γ`
+completes the `p + 1` coset representatives for the level-descent operator when `p` exactly divides
+`N`. -/
+theorem exists_mem_Gamma0_map_intCast_zmod_eq_S {p N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
+    (hpsq : ¬ p ^ 2 ∣ N) :
+    ∃ γ ∈ Gamma0 (N / p),
+      Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod p)) γ =
+          Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod p)) ModularGroup.S ∧
+        Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod (N / p))) γ = 1 := by
+  have hcop : Nat.Coprime p (N / p) := hp.coprime_iff_not_dvd.mpr fun h ↦ hpsq <| by
+    have hmul := Nat.mul_dvd_mul_left p h
+    rwa [Nat.mul_div_cancel' hpN, ← sq] at hmul
+  obtain ⟨γ, hγ, hγp⟩ := exists_mem_Gamma_map_intCast_zmod_eq hcop
+    (Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod p)) ModularGroup.S)
+  exact ⟨γ, Gamma_le_Gamma0 _ hγ, hγp, Gamma_mem'.mp hγ⟩
 
 end CongruenceSubgroup
