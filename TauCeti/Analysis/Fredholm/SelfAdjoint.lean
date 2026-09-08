@@ -80,7 +80,7 @@ theorem _root_.ContinuousLinearMap.index_eq_zero_of_isSymmetric {T : E →L[𝕜
     (hT : ContinuousLinearMap.IsFredholm T)
     (hsymm : T.IsSymmetric) : ContinuousLinearMap.index T = 0 :=
   ContinuousLinearMap.index_eq_zero_of_isSelfAdjoint hT
-    (TypeVec.Arrow.mpr hsymm)
+    (ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric.mpr hsymm)
 
 
 end TauCeti
