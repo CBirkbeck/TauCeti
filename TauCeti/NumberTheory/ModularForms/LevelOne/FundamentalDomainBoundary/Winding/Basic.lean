@@ -6,11 +6,11 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.NumberTheory.Modular
-public import TauCeti.Analysis.Complex.HalfPlaneUnbounded
 public import TauCeti.Analysis.Contour.Winding.Number.Basic
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Containment
 
 import Mathlib.Analysis.Complex.Convex
+import TauCeti.Analysis.Complex.HalfPlaneUnbounded
 import TauCeti.Analysis.Contour.Winding.UnboundedComponent
 
 /-!

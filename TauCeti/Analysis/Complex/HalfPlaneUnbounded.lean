@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Analysis.Complex.Basic
-import TauCeti.Analysis.Normed.Module.FilledHull
+import TauCeti.Analysis.Normed.Module.HalfSpace
 
 /-!
 # Points of large norm in a coordinate half-plane of `ℂ`
