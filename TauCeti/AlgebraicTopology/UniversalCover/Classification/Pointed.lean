@@ -90,7 +90,7 @@ in the subgroup recovered by the covering `(q, f₀)`, then there is a unique co
 Only continuity is required of `p`; the covering hypothesis is needed for the target `q`. -/
 theorem _root_.IsCoveringMap.existsUnique_continuousMap_comp_eq_of_range_le
     [PathConnectedSpace E] [LocallyPathConnectedSpace E]
-    (hp : Continuous p) (hq : _root_.IsCoveringMap q) (hpe : p e₀ = x) (hqf : q f₀ = x)
+    (hq : _root_.IsCoveringMap q) (hp : Continuous p) (hpe : p e₀ = x) (hqf : q f₀ = x)
     (hle : (mapOfEq ⟨p, hp⟩ hpe).range ≤ (mapOfEq ⟨q, hq.continuous⟩ hqf).range) :
     ∃! g : C(E, F), g e₀ = f₀ ∧ q ∘ g = p := by
   subst hpe
@@ -104,7 +104,7 @@ The forward implication is functoriality of `π₁` and needs no hypothesis on `
 continuity; the reverse implication is the lifting criterion. -/
 theorem _root_.IsCoveringMap.exists_continuousMap_comp_eq_iff_range_le
     [PathConnectedSpace E] [LocallyPathConnectedSpace E]
-    (hp : Continuous p) (hq : _root_.IsCoveringMap q) (hpe : p e₀ = x) (hqf : q f₀ = x) :
+    (hq : _root_.IsCoveringMap q) (hp : Continuous p) (hpe : p e₀ = x) (hqf : q f₀ = x) :
     (∃ g : C(E, F), g e₀ = f₀ ∧ q ∘ g = p) ↔
       (mapOfEq ⟨p, hp⟩ hpe).range ≤ (mapOfEq ⟨q, hq.continuous⟩ hqf).range := by
   constructor
@@ -117,7 +117,7 @@ theorem _root_.IsCoveringMap.exists_continuousMap_comp_eq_iff_range_le
     rw [TauCeti.FundamentalGroup.mapOfEq_comp ⟨q, hq.continuous⟩ g hg hqf]
     exact TauCeti.FundamentalGroup.mapOfEq_congr hfg _ _ γ
   · intro hle
-    exact (IsCoveringMap.existsUnique_continuousMap_comp_eq_of_range_le hp hq hpe hqf hle).exists
+    exact (IsCoveringMap.existsUnique_continuousMap_comp_eq_of_range_le hq hp hpe hqf hle).exists
 
 /-- Two pointed covers of `(X, x)` with path-connected, locally path-connected total spaces which
 recover the *same* subgroup of `π₁(X, x)` are isomorphic over `X`, by a homeomorphism matching the
@@ -129,9 +129,9 @@ theorem _root_.IsCoveringMap.exists_homeomorph_comp_eq_of_range_eq
     (hrange : (mapOfEq ⟨p, hp.continuous⟩ hpe).range = (mapOfEq ⟨q, hq.continuous⟩ hqf).range) :
     ∃ h : E ≃ₜ F, h e₀ = f₀ ∧ q ∘ h = p := by
   obtain ⟨g, ⟨hg₀, hgc⟩, -⟩ :=
-    IsCoveringMap.existsUnique_continuousMap_comp_eq_of_range_le hp.continuous hq hpe hqf hrange.le
+    IsCoveringMap.existsUnique_continuousMap_comp_eq_of_range_le hq hp.continuous hpe hqf hrange.le
   obtain ⟨k, ⟨hk₀, hkc⟩, -⟩ :=
-    IsCoveringMap.existsUnique_continuousMap_comp_eq_of_range_le hq.continuous hp hqf hpe hrange.ge
+    IsCoveringMap.existsUnique_continuousMap_comp_eq_of_range_le hp hq.continuous hqf hpe hrange.ge
   have hkg : ∀ e, k (g e) = e := by
     have hcomp : (p ∘ fun e => k (g e)) = p ∘ id := by
       funext e
@@ -162,9 +162,9 @@ theorem _root_.IsCoveringMap.exists_homeomorph_comp_eq_iff_range_eq
       (mapOfEq ⟨p, hp.continuous⟩ hpe).range = (mapOfEq ⟨q, hq.continuous⟩ hqf).range := by
   refine ⟨fun ⟨h, hh₀, hhc⟩ => le_antisymm ?_ ?_, fun hrange =>
     IsCoveringMap.exists_homeomorph_comp_eq_of_range_eq hp hq hpe hqf hrange⟩
-  · exact (IsCoveringMap.exists_continuousMap_comp_eq_iff_range_le hp.continuous hq hpe hqf).mp
+  · exact (IsCoveringMap.exists_continuousMap_comp_eq_iff_range_le hq hp.continuous hpe hqf).mp
       ⟨(h : C(E, F)), hh₀, hhc⟩
-  · refine (IsCoveringMap.exists_continuousMap_comp_eq_iff_range_le hq.continuous hp hqf hpe).mp
+  · refine (IsCoveringMap.exists_continuousMap_comp_eq_iff_range_le hp hq.continuous hqf hpe).mp
       ⟨(h.symm : C(F, E)), h.symm_apply_eq.mpr hh₀.symm, ?_⟩
     funext f
     simpa only [Function.comp_apply, ContinuousMap.coe_coe, Homeomorph.apply_symm_apply]
@@ -215,7 +215,7 @@ theorem _root_.IsCoveringMap.eq_totalSpaceHomeomorphOfRangeEq {g : C(E, F)} (hg�
     (hgc : q ∘ g = p) :
     g = (IsCoveringMap.totalSpaceHomeomorphOfRangeEq hp hq hpe hqf hrange : C(E, F)) := by
   obtain ⟨g₁, -, huniq⟩ := IsCoveringMap.existsUnique_continuousMap_comp_eq_of_range_le
-    hp.continuous hq hpe hqf hrange.le
+    hq hp.continuous hpe hqf hrange.le
   refine (huniq g ⟨hg₀, hgc⟩).trans (huniq _ ⟨?_, ?_⟩).symm
   · exact IsCoveringMap.totalSpaceHomeomorphOfRangeEq_apply_basepoint hp hq hpe hqf hrange
   · exact IsCoveringMap.comp_totalSpaceHomeomorphOfRangeEq hp hq hpe hqf hrange

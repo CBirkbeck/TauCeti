@@ -72,10 +72,10 @@ theorem _root_.IsCoveringMap.exists_isCoveringMap_comp_eq_iff_range_le [LocallyC
       (mapOfEq ⟨p, hp.continuous⟩ hpe).range ≤ (mapOfEq ⟨q, hq.continuous⟩ hqf).range := by
   refine ⟨fun hg => ?_, fun hle => ?_⟩
   · obtain ⟨g, -, hg₀, hgc⟩ := hg
-    exact (IsCoveringMap.exists_continuousMap_comp_eq_iff_range_le hp.continuous hq hpe
+    exact (IsCoveringMap.exists_continuousMap_comp_eq_iff_range_le hq hp.continuous hpe
       hqf).mp ⟨g, hg₀, hgc⟩
   · obtain ⟨g, ⟨hg₀, hgc⟩, -⟩ :=
-      IsCoveringMap.existsUnique_continuousMap_comp_eq_of_range_le hp.continuous hq hpe
+      IsCoveringMap.existsUnique_continuousMap_comp_eq_of_range_le hq hp.continuous hpe
         hqf hle
     exact ⟨g, hp.of_comp_eq hq g.continuous hgc, hg₀, hgc⟩
 
