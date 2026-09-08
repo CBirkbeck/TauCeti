@@ -284,8 +284,8 @@ theorem _root_.IsCoveringMap.monodromyHomeomorphCompNatIso_hom_app
       (IsCoveringMap.homeomorphCompFiberEquiv (p := p) h y).toIso.hom :=
   (rfl)
 
-end
+end BaseHomeomorph
 
-end IsCoveringMap
+end
 
 end TauCeti
