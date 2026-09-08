@@ -553,10 +553,11 @@ private theorem arctan_rectangle_residue (hc : 0 < c) (hB0 : 0 < B) (hT : 0 < T)
   linear_combination (2 * I) * hA + (2 * I) * hB
 
 /-- Each horizontal side of the rectangle contributes at most `x ^ c / (T * |log x|)`. -/
-private theorem norm_integral_perronFn_horizontal_le_bound (hx1 : 1 < x) (hT : 0 < T)
-    {B : ℝ} (hab : (-B : ℝ) ≤ c) {u : ℝ} (hu : u ≠ 0) (habs : |u| = T) :
+private theorem norm_integral_perronFn_horizontal_le_of_one_lt (hx1 : 1 < x) (hT : 0 < T)
+    {B : ℝ} (hab : (-B : ℝ) ≤ c) {u : ℝ} (habs : |u| = T) :
     ‖∫ σ in (-B)..c, perronFn x ((σ : ℂ) + u * I)‖ ≤ x ^ c / (T * |Real.log x|) := by
   have hx : 0 < x := lt_trans zero_lt_one hx1
+  have hu : u ≠ 0 := fun h ↦ hT.ne' (by rw [← habs, h, abs_zero])
   have hL : |Real.log x| = Real.log x := abs_of_pos (Real.log_pos hx1)
   refine (norm_integral_perronFn_horizontal_le hx hu hab).trans ?_
   rw [habs, hL, integral_rpow_const_base hx hx1.ne']
@@ -567,7 +568,9 @@ private theorem norm_integral_perronFn_horizontal_le_bound (hx1 : 1 < x) (hT : 0
         linarith
     _ = x ^ c / (T * Real.log x) := by ring
 
-/-- The far vertical side's contribution vanishes as the rectangle extends leftwards. -/
+/-- **The far-side error term vanishes as the rectangle extends leftwards.** For `1 < x` the
+quantity `x ^ (-B) / c * (2 * T)`, which bounds the contribution of the vertical side at `-B`,
+tends to zero, so the combined bound tends to its horizontal part `2 * (x ^ c / (T * |log x|))`. -/
 private theorem tendsto_perron_farSide_bound (hx1 : 1 < x) (c T : ℝ) :
     Filter.Tendsto (fun B : ℝ => 2 * (x ^ c / (T * |Real.log x|)) + x ^ (-B) / c * (2 * T))
       atTop (𝓝 (2 * (x ^ c / (T * |Real.log x|)))) := by
@@ -611,7 +614,7 @@ private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc
       linear_combination hcauchy + e₁ + I * e₂ - I * e₃ + hres
     have hhoriz : ∀ u : ℝ, u ≠ 0 → |u| = T →
         ‖∫ σ in (-B)..c, perronFn x ((σ : ℂ) + u * I)‖ ≤ x ^ c / (T * |Real.log x|) :=
-      fun u hu habs ↦ norm_integral_perronFn_horizontal_le_bound hx1 hT hab hu habs
+      fun _ _ habs ↦ norm_integral_perronFn_horizontal_le_of_one_lt hx1 hT hab habs
     have hfar : ‖∫ t in (-T)..T, perronFn x (((-B : ℝ) : ℂ) + t * I)‖
         ≤ x ^ (-B) / c * (2 * T) :=
       norm_integral_perronFn_vertical_le_of_le_abs hx hc hT.le (by rwa [abs_neg, abs_of_pos hB0])
