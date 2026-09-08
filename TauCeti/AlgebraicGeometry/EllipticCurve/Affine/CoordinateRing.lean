@@ -7,6 +7,9 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finrank
+-- Proof-only: `IsDedekindDomain.of_moduleFinite` supplies the Dedekind property, and is named
+-- in no statement here.
+import TauCeti.RingTheory.DedekindDomain.Finite
 
 /-!
 # The coordinate ring of an elliptic curve is a Dedekind domain
@@ -480,13 +483,12 @@ theorem isIntegrallyClosed_coordinateRing [W.IsElliptic] : IsIntegrallyClosed W.
       fun hx => exists_algebraMap_eq W (isIntegral_trans _ hx)⟩
   exact IsIntegrallyClosed.of_isIntegrallyClosedIn W.CoordinateRing W.FunctionField
 
-/-- **A normal coordinate ring is a Dedekind domain.** Dimension at most one is free: the
-coordinate ring is module-finite over `F[X]`, hence integral over it, and `F[X]` has dimension
-one. So normality is the whole of the content, and ellipticity enters only through it. -/
+/-- **A normal coordinate ring is a Dedekind domain.** The coordinate ring is module-finite over
+the Dedekind domain `F[X]`, so `TauCeti.IsDedekindDomain.of_moduleFinite` leaves normality as the
+whole of the content — and ellipticity enters only through it. -/
 theorem isDedekindDomain_coordinateRing_of_isIntegrallyClosed
-    [IsIntegrallyClosed W.CoordinateRing] : IsDedekindDomain W.CoordinateRing := by
-  have : Algebra.IsIntegral F[X] W.CoordinateRing := Algebra.IsIntegral.of_finite _ _
-  exact { __ := Ring.DimensionLEOne.of_isIntegral F[X] W.CoordinateRing }
+    [IsIntegrallyClosed W.CoordinateRing] : IsDedekindDomain W.CoordinateRing :=
+  TauCeti.IsDedekindDomain.of_moduleFinite F[X] W.CoordinateRing
 
 /-- **The coordinate ring of an elliptic curve is a Dedekind domain.** -/
 theorem isDedekindDomain_coordinateRing [W.IsElliptic] : IsDedekindDomain W.CoordinateRing :=
