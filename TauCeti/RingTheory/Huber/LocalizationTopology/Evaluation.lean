@@ -235,6 +235,153 @@ theorem denseRange_rationalEvalHom {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i 
   UniformSpace.Completion.denseRange_coe.mono
     (by rintro _ ⟨x, rfl⟩; exact coe_mem_range_rationalEvalHom P T s S hden t ht hspan x)
 
+/-! ### The polynomial evaluation downstairs -/
+
+/-- **The evaluation of polynomials at the fractions**, `Xᵢ ↦ tᵢ/s`, read on the subring of
+polynomials inside `A⟨X₁, …, Xₖ⟩`.
+
+Unlike `TauCeti.Huber.PairOfDefinition.rationalEvalHom` this lands in `Aₛ` itself, not its
+completion: a *polynomial* in the fractions is a finite sum, so no convergence is involved. That
+is what makes it a map to which the completion functor can be applied. -/
+noncomputable def polyEvalHom {k : ℕ} (t : Fin k → A) :
+    weightedPolynomials (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight →+* S :=
+  (MvPolynomial.aeval fun i ↦ (divBy (t i) s : S)).toRingHom.comp
+    (weightedPolynomialsEquiv isWeightFamily_one_weight).symm.toRingHom
+
+/-- **The polynomial evaluation is onto `Aₛ`** when the numerators generate the unit ideal: its
+range is the `A`-subalgebra the fractions generate, which is everything by
+`TauCeti.Localization.adjoin_divBy_eq_top`. -/
+theorem surjective_polyEvalHom {k : ℕ} (t : Fin k → A)
+    (hspan : Ideal.span (Set.range t) = ⊤) : Function.Surjective (polyEvalHom s (S := S) t) := by
+  have hrange : (Set.range fun x : (Set.range t) ↦ (divBy (x : A) s : S))
+      = Set.range fun i ↦ (divBy (t i) s : S) := by
+    ext y
+    constructor
+    · rintro ⟨⟨_, i, rfl⟩, rfl⟩; exact ⟨i, rfl⟩
+    · rintro ⟨i, rfl⟩; exact ⟨⟨t i, i, rfl⟩, rfl⟩
+  have haeval : Function.Surjective
+      (MvPolynomial.aeval (R := A) fun i ↦ (divBy (t i) s : S)) := by
+    rw [← AlgHom.range_eq_top, ← Algebra.adjoin_range_eq_range_aeval, ← hrange]
+    exact adjoin_divBy_eq_top s hspan
+  exact haeval.comp (weightedPolynomialsEquiv isWeightFamily_one_weight).symm.surjective
+
+omit [NonarchimedeanRing A] hden in
+/-- Every element of `D` is the value of a polynomial over `A₀` at the fractions. -/
+private theorem exists_aeval_eq_of_mem_locSubring {d : S} (hd : d ∈ locSubring P T s S) :
+    ∃ q : MvPolynomial ↥T ↥P.ringOfDefinition,
+      MvPolynomial.aeval (fun y : T ↦ (divBy (y : A) s : S)) q = d := by
+  rw [locSubring_eq_adjoin, Subalgebra.mem_toSubring,
+    Algebra.adjoin_range_eq_range_aeval] at hd
+  exact hd
+
+omit [NonarchimedeanRing A] in
+/-- **The `n`-th neighbourhood of `Aₛ` consists of values of polynomials with coefficients in
+`Iⁿ`.** This is what makes the polynomial evaluation an open map. -/
+theorem exists_aeval_eq_of_mem_locIdealImage (n : ℕ) {x : S}
+    (hx : x ∈ locIdealImage P T s S n) :
+    ∃ q ∈ Ideal.map (MvPolynomial.C (σ := ↥T)) (P.idealOfDefinition ^ n),
+      MvPolynomial.aeval (fun y : T ↦ (divBy (y : A) s : S)) q = x := by
+  classical
+  rw [mem_locIdealImage_iff] at hx
+  obtain ⟨d, hd, rfl⟩ := hx
+  -- the elements of `D` with the stated property form an ideal
+  set Q : Ideal (locSubring P T s S) :=
+    { carrier := {d | ∃ q ∈ Ideal.map (MvPolynomial.C (σ := ↥T)) (P.idealOfDefinition ^ n),
+        MvPolynomial.aeval (fun y : T ↦ (divBy (y : A) s : S)) q = (d : S)}
+      zero_mem' := ⟨0, Submodule.zero_mem _, by simp⟩
+      add_mem' := by
+        rintro a b ⟨qa, hqa, ha⟩ ⟨qb, hqb, hb⟩
+        exact ⟨qa + qb, Submodule.add_mem _ hqa hqb, by
+          rw [map_add, ha, hb]; push_cast; ring⟩
+      smul_mem' := by
+        rintro c a ⟨qa, hqa, ha⟩
+        obtain ⟨qc, hqc⟩ := exists_aeval_eq_of_mem_locSubring P T s S c.2
+        refine ⟨qc * qa, Ideal.mul_mem_left _ _ hqa, ?_⟩
+        rw [map_mul, hqc, ha, smul_eq_mul]
+        norm_cast } with hQ
+  have hQle : locIdeal P T s S ^ n ≤ Q := by
+    rw [locIdeal_def, ← Ideal.map_pow, Ideal.map_le_iff_le_comap]
+    intro c hc
+    refine ⟨MvPolynomial.C c, Ideal.mem_map_of_mem _ hc, ?_⟩
+    rw [MvPolynomial.aeval_C, toLocSubring_apply]
+    rfl
+  exact hQle hd
+
+/-! ### The polynomial evaluation is open -/
+
+omit [NonarchimedeanRing A] in
+/-- **Every element of the `n`-th neighbourhood of `Aₛ` is the value at the fractions of a
+polynomial over `A` whose coefficients all lie in the image of `Iⁿ`.**
+
+This is `TauCeti.Huber.PairOfDefinition.exists_aeval_eq_of_mem_locIdealImage` carried across the
+two boundaries that separate it from `TauCeti.Huber.PairOfDefinition.polyEvalHom`: the
+coefficients are pushed from `A₀` down to `A`, and the variables are reindexed from `T` to
+`Fin k`. The reindexing is what `hTt` is for — it names, for each element of `T`, a numerator
+equal to it. -/
+private theorem exists_polynomial_coeff_mem_idealImage {k : ℕ} (t : Fin k → A)
+    (hTt : ↑T ⊆ Set.range t) (n : ℕ) {x : S} (hx : x ∈ locIdealImage P T s S n) :
+    ∃ p : MvPolynomial (Fin k) A, (∀ m, p.coeff m ∈ P.idealImage n) ∧
+      MvPolynomial.aeval (fun i ↦ (divBy (t i) s : S)) p = x := by
+  classical
+  obtain ⟨q, hq, hqx⟩ := exists_aeval_eq_of_mem_locIdealImage P T s S n hx
+  choose σ hσ using fun y : ↥T ↦ hTt (Finset.mem_coe.mpr y.2)
+  have hC : (MvPolynomial.rename σ (R := ↥P.ringOfDefinition)).toRingHom.comp MvPolynomial.C
+      = MvPolynomial.C := RingHom.ext fun a ↦ by simp
+  have hren : MvPolynomial.rename σ q ∈
+      Ideal.map (MvPolynomial.C (σ := Fin k)) (P.idealOfDefinition ^ n) := by
+    rw [← hC, ← Ideal.map_map]
+    exact Ideal.mem_map_of_mem _ hq
+  refine ⟨MvPolynomial.map (algebraMap ↥P.ringOfDefinition A) (MvPolynomial.rename σ q),
+    fun m ↦ ?_, ?_⟩
+  · rw [MvPolynomial.coeff_map]
+    exact (P.mem_idealImage n).mpr ⟨_, MvPolynomial.mem_map_C_iff.mp hren m, rfl⟩
+  · rw [MvPolynomial.aeval_def, MvPolynomial.eval₂_map, ← IsScalarTower.algebraMap_eq,
+      ← MvPolynomial.aeval_def, MvPolynomial.aeval_rename,
+      show (fun i ↦ (divBy (t i) s : S)) ∘ σ = fun y : ↥T ↦ (divBy (y : A) s : S) from
+        funext fun y ↦ by rw [Function.comp_apply, hσ y]]
+    exact hqx
+
+/-- **The polynomial evaluation is an open map.** The image of a neighbourhood of zero in the
+polynomials is a neighbourhood of zero in `Aₛ`, so `Xᵢ ↦ tᵢ/s` carries open sets to open sets.
+
+Openness is the half of Wedhorn's Proposition 8.30 that does not come for free. Surjectivity is
+`TauCeti.Huber.PairOfDefinition.surjective_polyEvalHom`; together they present `Aₛ` as an open
+quotient of a polynomial ring, which is what
+`TauCeti.AddMonoidHom.surjective_completion` needs in order to conclude the same for the
+completions.
+
+The two subgroup bases are matched against each other: upstairs the polynomials with every
+coefficient in `Iⁿ`, downstairs the `n`-th neighbourhood `locIdealImage`, which
+`exists_polynomial_coeff_mem_idealImage` shows is covered.
+
+`hTt` asks the numerators to exhaust `T`, which is what the reindexing consumes. It is the same
+demand surjectivity makes, in a different form. -/
+theorem isOpenMap_polyEvalHom {k : ℕ} (t : Fin k → A)
+    (hTt : ↑T ⊆ Set.range t) :
+    letI := locTopology P T s S hden
+    IsOpenMap (polyEvalHom s (S := S) t) := by
+  let _ := locTopology P T s S hden
+  have _ := isTopologicalRing_locTopology P T s S hden
+  rw [IsTopologicalAddGroup.isOpenMap_iff_nhds_zero, Filter.le_map_iff]
+  intro V hV
+  obtain ⟨W, hW, hWV⟩ := mem_nhds_subtype _ _ _ |>.mp hV
+  obtain ⟨U, -, hUW⟩ :=
+    (hasBasis_nhds_zero_weightedTopology isWeightFamily_one_weight).mem_iff.mp hW
+  obtain ⟨n, -, hn⟩ := P.hasBasis_nhds_zero.mem_iff.mp (U.isOpen.mem_nhds U.zero_mem)
+  refine Filter.mem_of_superset
+    ((isOpen_locIdealImage P T s S hden n).mem_nhds (locIdealImage P T s S n).zero_mem)
+    fun x hx ↦ ?_
+  obtain ⟨p, hp, hpx⟩ := exists_polynomial_coeff_mem_idealImage P T s S t hTt n hx
+  refine ⟨weightedPolynomialsEquiv isWeightFamily_one_weight p, hWV (hUW ?_), ?_⟩
+  · rw [SetLike.mem_coe, mem_weightedNhd]
+    intro ν
+    rw [weightMul_one_weight, coe_weightedPolynomialsEquiv, coe_weightedPolynomialHom,
+      MvPolynomial.coeff_coe]
+    exact hn (hp ν)
+  · simpa only [polyEvalHom, RingHom.coe_comp, Function.comp_apply, AlgHom.toRingHom_eq_coe,
+      RingHom.coe_coe, RingEquiv.toRingHom_eq_coe, RingEquiv.coe_toRingHom,
+      RingEquiv.symm_apply_apply] using hpx
+
 end PairOfDefinition
 
 end TauCeti.Huber
