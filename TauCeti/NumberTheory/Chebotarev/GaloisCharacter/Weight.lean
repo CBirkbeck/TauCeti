@@ -60,11 +60,9 @@ the bad primes of `χ.galoisCharacterWeight` are exactly `ramifiedPrimes K L`.
 `TauCeti.UnitaryIdealWeight K` is the subtype of those multiplicative weights whose values have
 modulus `1` away from the bad primes, so the unitary packaging records strictly more than the
 multiplicative one and is not a replacement for it: `galoisCharacterWeight` remains the definition
-everything else is stated about, and `val_galoisCharacterUnitaryWeight` is the bridge. The unitary
-property is supplied by `TauCeti.UnitaryIdealWeight.ofPowEqOne` with `n = Nat.card (L ≃ₐ[K] L)`,
-which asks only that `galoisCharacterWeight (L := L) χ 𝔭.asIdeal ^ n = 1` at every height-one
-prime `𝔭` outside `badPrimes` — a condition on the *weight*, not on `χ`, which is why no hypothesis
-constrains `χ` itself to the unit circle.
+everything else is stated about, and `val_galoisCharacterUnitaryWeight` is the bridge. Unitarity is
+a property of the weight rather than of `χ`, so no hypothesis constrains `χ` itself to the unit
+circle.
 
 ## References
 
@@ -233,9 +231,9 @@ theorem badPrimes_galoisCharacterWeight (χ : (L ≃ₐ[K] L) →* ℂˣ) :
 unramified prime, and `0` at the ramified ones — which is exactly the `UnitaryIdealWeight`
 contract, `badPrimes` being the ramified set by `badPrimes_galoisCharacterWeight`.
 
-The reason is that `Gal(L/K)` is finite, so every value `χ(Frob 𝔭)` is a root of unity of order
-dividing `#Gal(L/K)`. Nothing about `χ` beyond multiplicativity is used; in particular `χ` is not
-assumed to take values in the unit circle, because for a finite group it cannot do otherwise. -/
+The underlying weight is `galoisCharacterWeight χ` itself, by
+`val_galoisCharacterUnitaryWeight`. No hypothesis beyond multiplicativity is placed on `χ`; in
+particular it is not assumed to take values in the unit circle. -/
 noncomputable def galoisCharacterUnitaryWeight (χ : (L ≃ₐ[K] L) →* ℂˣ) :
     TauCeti.UnitaryIdealWeight K :=
   TauCeti.UnitaryIdealWeight.ofPowEqOne (galoisCharacterWeight (L := L) χ)
