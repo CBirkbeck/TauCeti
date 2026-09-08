@@ -10,7 +10,6 @@ public import Mathlib.RingTheory.RingHom.Flat
 public import TauCeti.RingTheory.Huber.Restricted.Laurent
 public import TauCeti.RingTheory.Huber.StronglyNoetherian
 
-import TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.Identification
 import TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.StronglyNoetherian
 
 /-!
@@ -477,13 +476,7 @@ theorem flat_restrictionRingHomOfSubset_of_forall_isStronglyNoetherian
 completed localisation carrying the `T`-topology is strongly noetherian, the restriction map of
 any numerator enlargement is flat.
 
-This is `TauCeti.Huber.PairOfDefinition`
-`.flat_restrictionRingHomOfSubset_of_forall_isStronglyNoetherian` with its per-intermediate
-hypothesis discharged: strong noetherianness at `T` propagates to every `U` with `T ⊆ U` by
-`TauCeti.Huber.PairOfDefinition.isStronglyNoetherian_completion_of_subset`, which is the standing
-hypothesis of Wedhorn's §8.2 that the `forall` form assumes case by case.
-
-**It is still not Wedhorn's Proposition 8.30 as he states it.** He assumes strong noetherianity
+**It is not Wedhorn's Proposition 8.30 as he states it.** He assumes strong noetherianity
 of `A`; this asks it of `A⟨T/s⟩`. Closing that last gap needs the passage from `A` to `A⟨T/s⟩`,
 which is not proved here. Both hypotheses are asked only of a *proper* enlargement: for `T' = T`
 the map is flat outright, by

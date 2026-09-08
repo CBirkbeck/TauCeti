@@ -6,7 +6,6 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.Identification
-public import TauCeti.RingTheory.Huber.StronglyNoetherian
 
 import TauCeti.RingTheory.Huber.LocalizationTopology.Presentation
 import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.FirstCountable
@@ -69,7 +68,9 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
   (hden' : HasDenominatorPower P T' s S') (hTT' : ∀ u ∈ T, u ∈ T')
 
 include hTT' in
-/-- Adjoining one numerator preserves strong noetherianness of the completed localisation. -/
+/-- **Adjoining one numerator preserves strong noetherianness of the completed localisation**,
+given that the Laurent relation ideal is closed and that the smaller completed localisation is
+strongly noetherian. `T'` is `T` with `t` adjoined, in the splitting form `hsplit`. -/
 theorem isStronglyNoetherian_completion_of_isClosed (ht : t ∈ T')
     (hsplit : ∀ u ∈ T', u ∈ T ∨ u = t)
     (hcl :
@@ -123,10 +124,7 @@ presentations with the same numerator set and denominator, carried by different 
 `A` at `s`, have isomorphic completions, so one is strongly noetherian exactly when the other is.
 Nothing else is assumed: no nilpotence, no noetherianity.
 
-The isomorphism is `TauCeti.Huber.PairOfDefinition.presentationRingEquiv` applied to the two
-enlargement restriction maps, which are mutually inverse because each fixes the structure map
-from `A`. This is the invariance a caller needs to change carriers without redoing that
-argument. -/
+This is the invariance a caller needs in order to change carriers. -/
 theorem isStronglyNoetherian_completion_self (P : PairOfDefinition A) (T : Finset A)
     (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     (hden : HasDenominatorPower P T s S)
@@ -163,12 +161,11 @@ theorem isStronglyNoetherian_completion_self (P : PairOfDefinition A) (T : Finse
     (continuous_presentationRingEquiv_symm P T s S hden T s S' hden' _ _ _ _ _ _)).mp hSN
 
 include hTT' in
-/-- **The Laurent step preserves strong noetherianness, for a topologically nilpotent
-denominator.** The closedness hypothesis of
-`TauCeti.Huber.PairOfDefinition.isStronglyNoetherian_completion_of_isClosed` is then discharged
-by the base's own strong noetherianness, so the two uses of `hSN` are the whole content: it
-closes the relation ideal, and it feeds the open quotient. This is the form the induction over
-the numerators consumes. -/
+/-- **Adjoining one numerator preserves strong noetherianness, for a topologically nilpotent
+denominator.** No closedness hypothesis: over a strongly noetherian base the Laurent relation
+ideal is closed of its own accord. Nilpotence is asked only when `t` is a genuinely new
+numerator; if `t ∈ T` then `T' = T` and the statement is the invariance above. This is the form
+the induction over the numerators consumes. -/
 theorem isStronglyNoetherian_completion_of_isTopologicallyNilpotent
     (hnil : t ∉ T → IsTopologicallyNilpotent s) (ht : t ∈ T')
     (hsplit : ∀ u ∈ T', u ∈ T ∨ u = t)
@@ -242,10 +239,10 @@ the `T'`-topology of any `T' ⊇ T`. Topological nilpotence of the denominator i
 *proper* enlargement: for `T' = T` the conclusion is the hypothesis.
 
 This is the auxiliary preservation result that Wedhorn's Proposition 8.30 is proved from, not the
-proposition itself, whose conclusion is flatness. It is what
-`TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_union` assumes: that lemma asks
-for strong noetherianness at every proper intermediate presentation, and this supplies it from
-strong noetherianness at `T` alone. -/
+proposition itself, whose conclusion is flatness. It is what supplies strong noetherianness at
+the intermediate enlargements that
+`TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_of_isStronglyNoetherian_base`
+needs, from strong noetherianness at `T` alone. -/
 theorem isStronglyNoetherian_completion_of_subset (P : PairOfDefinition A) (T : Finset A)
     (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     (hden : HasDenominatorPower P T s S) (T' : Finset A) (hTT' : T ⊆ T')
