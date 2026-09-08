@@ -8,17 +8,19 @@ module
 public import Mathlib.Analysis.Normed.Module.Basic
 
 /-!
-# Open half-spaces of a real normed space are unbounded
+# Strict half-spaces of a real normed space are unbounded
 
-An open half-space `{y | φ y < u}` cut out by a nonzero linear functional holds points of
+A strict half-space `{y | φ y < u}` cut out by a nonzero linear functional holds points of
 arbitrarily large norm, and is therefore unbounded. Linearity alone suffices: `φ` need not be
 continuous, so the results apply to a discontinuous functional on an infinite-dimensional space.
+For such a `φ` the set need not be topologically open, which is why it is called strict rather
+than open here.
 
 ## Main results
 
 * `TauCeti.exists_apply_lt_and_lt_norm` and `TauCeti.exists_lt_apply_and_lt_norm` — either side
   of a nonzero linear functional holds points of arbitrarily large norm.
-* `TauCeti.not_isBounded_halfSpace_lt` — an open half-space is unbounded.
+* `TauCeti.not_isBounded_halfSpace_lt` — a strict half-space is unbounded.
 -/
 
 public section
@@ -29,7 +31,7 @@ open Bornology
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
-/-- **An open half-space contains points of arbitrarily large norm.** For a nonzero linear
+/-- **A strict half-space contains points of arbitrarily large norm.** For a nonzero linear
 functional `φ`, every bound `u` and every radius `R` admit a `y` with `φ y < u` and `R < ‖y‖`.
 Linearity suffices; `φ` need not be continuous. -/
 theorem exists_apply_lt_and_lt_norm {φ : E →ₗ[ℝ] ℝ} (hφ : φ ≠ 0) (u R : ℝ) :
@@ -55,7 +57,7 @@ theorem exists_lt_apply_and_lt_norm {φ : E →ₗ[ℝ] ℝ} (hφ : φ ≠ 0) (u
   obtain ⟨y, hy, hn⟩ := exists_apply_lt_and_lt_norm (φ := -φ) (neg_ne_zero.mpr hφ) (-u) R
   exact ⟨y, by simpa using hy, hn⟩
 
-/-- **An open half-space cut out by a nonzero linear functional is unbounded.** No radius bounds
+/-- **A strict half-space cut out by a nonzero linear functional is unbounded.** No radius bounds
 `{y | φ y < u}`. Linearity suffices; `φ` need not be continuous. -/
 theorem not_isBounded_halfSpace_lt {φ : E →ₗ[ℝ] ℝ} (hφ : φ ≠ 0) (u : ℝ) :
     ¬ IsBounded {y | φ y < u} := by
