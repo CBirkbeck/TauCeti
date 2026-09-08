@@ -34,6 +34,14 @@ The surjectivity is ported from the AINTLIB `LeanModularForms` project
 diamond operators of the ModularForms roadmap (Layer 0), where it realizes every unit of
 `ZMod N` as the lower-right entry of a matrix in `Γ₀(N)`.
 
+The two-modulus form generalizes an ad-hoc instance from the same project at commit
+`2baa76f742bdb4fb8ee323fabba41203bd390e08` (Apache-2.0):
+`LeanModularForms/StrongMultiplicityOne/DescentCosets.lean` proves `descendExtraGamma_exists`
+for the single coprime pair `(p, N / p)`, building an explicit Bézout matrix and checking its
+reductions entrywise. Here the statement is the general coprime pair and the proof is different —
+the Chinese remainder theorem glues the two targets and the one-modulus surjectivity lifts the
+result.
+
 ## Main results
 
 * `Matrix.SpecialLinearGroup.map_intCast_zmod_surjective`: strong approximation for `SL₂`,
@@ -424,13 +432,22 @@ theorem map_intCast_zmod_prod_surjective {d d' : ℕ} (hcop : d.Coprime d') :
   -- The two targets, glued entrywise into a single matrix over `ZMod (d * d')`.
   set C : Matrix (Fin 2) (Fin 2) (ZMod (d * d')) :=
     .of fun i j => e.symm (A i j, B i j) with hC
+  -- `e` carries `C.det` to the determinant of the glued matrix, and each coordinate ring hom
+  -- carries that to the determinant of the corresponding target, which is `1`.
+  have hfst : (RingHom.fst (ZMod d) (ZMod d')).mapMatrix (e.mapMatrix C) =
+      (A : Matrix (Fin 2) (Fin 2) (ZMod d)) := by ext i j; simp [hC]
+  have hsnd : (RingHom.snd (ZMod d) (ZMod d')).mapMatrix (e.mapMatrix C) =
+      (B : Matrix (Fin 2) (Fin 2) (ZMod d')) := by ext i j; simp [hC]
   have hdet : C.det = 1 := by
-    rw [Matrix.det_fin_two]
     refine e.injective ?_
-    rw [map_one, map_sub, map_mul, map_mul]
-    simp only [hC, Matrix.of_apply, RingEquiv.apply_symm_apply]
-    rw [Prod.ext_iff]
-    exact ⟨fin_two_mul_sub_mul_eq_one A, fin_two_mul_sub_mul_eq_one B⟩
+    rw [map_one, e.map_det]
+    refine Prod.ext ?_ ?_
+    · rw [show ((e.mapMatrix C).det).1 = RingHom.fst (ZMod d) (ZMod d') (e.mapMatrix C).det from
+        rfl, RingHom.map_det, hfst, A.det_coe]
+      rfl
+    · rw [show ((e.mapMatrix C).det).2 = RingHom.snd (ZMod d) (ZMod d') (e.mapMatrix C).det from
+        rfl, RingHom.map_det, hsnd, B.det_coe]
+      rfl
   obtain ⟨γ, hγ⟩ := map_intCast_zmod_surjective (d := d * d') ⟨C, hdet⟩
   -- Reading the glued matrix back off in each factor is applying a ring hom to an integer cast.
   have hentry : ∀ i j, ((γ i j : ℤ) : ZMod (d * d')) = e.symm (A i j, B i j) := fun i j => by
