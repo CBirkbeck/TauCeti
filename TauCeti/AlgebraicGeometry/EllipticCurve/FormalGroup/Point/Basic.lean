@@ -41,9 +41,8 @@ into pole orders, but no order or valuation hypothesis is assumed here.
   `WeierstrassCurve.formalPoint_injective`.
 * `WeierstrassCurve.formalPoint_of_param_eq_zero` and
   `WeierstrassCurve.formalPoint_of_param_ne_zero`: the two branches of the definition.
-* `WeierstrassCurve.nonsingular_formalPoint` and `WeierstrassCurve.formalPoint_eq_some`: the
-  nonsingularity of the parametrized coordinates as a term, and with it the point in
-  `Affine.Point.some` form.
+* `WeierstrassCurve.nonsingular_formalPoint`: the nonsingularity of the parametrized coordinates
+  as a term, in the `-1 / w(t)` form the chord lemmas take.
 * `WeierstrassCurve.xCoord_formalPoint` and `WeierstrassCurve.yCoord_formalPoint`: the point's
   coordinates, through which the closed forms
   `WeierstrassCurve.xCoord_formalPoint_mul_eq_one` and
@@ -137,34 +136,21 @@ theorem formalPoint_of_param_ne_zero {I : Ideal O} (hI : IsAdic I) {t : O} (ht :
           ((map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective O K)).mpr h0))) := by
   simp [formalPoint, h0]
 
-/-- **The coordinates carried by a nonzero parameter are those of a nonsingular point**, with the
-`y`-coordinate written `-1 / w(t)` where `equation_formalPoint` writes `-(w(t))⁻¹`; that is the
-form in which the chord lemmas take their nonsingularity hypotheses. A consumer comparing
-parametrized points through `Affine.Point.some` needs the nonsingularity as a term of its own,
-which `formalPoint` keeps inside `Affine.Point.mk`.
-
-The hypotheses are those of `formalPoint`, not the weaker pair of `equation_formalPoint`: every
-consumer forms a point and so carries the ideal data anyway, and the weaker pair would move the
-derivation of `w(t) ≠ 0` from them into the statement of `formalPoint_eq_some`. -/
-theorem nonsingular_formalPoint {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) (h0 : t ≠ 0) :
+omit [FaithfulSMul O K] in
+/-- **The coordinates carried by an evaluable parameter are those of a nonsingular point**, the
+`y`-coordinate written `-1 / w(t)` where `equation_formalPoint` writes `-(w(t))⁻¹`; that is the form
+in which the chord lemmas take their nonsingularity hypotheses. `formalPoint` keeps the
+equation-to-nonsingularity step inside `Affine.Point.mk`, so a consumer comparing parametrized
+points through `Affine.Point.some` needs it as a term of its own. The hypotheses are those of
+`equation_formalPoint`; `algebraMap_formalWEval_ne_zero` supplies the second from a nonzero
+parameter of an adic ideal. -/
+theorem nonsingular_formalPoint {t : O} (ht : PowerSeries.HasEval t)
+    (hw : algebraMap O K (W.formalWEval t) ≠ 0) :
     (W.baseChange K).toAffine.Nonsingular (algebraMap O K t / algebraMap O K (W.formalWEval t))
       (-1 / algebraMap O K (W.formalWEval t)) := by
   -- `equation_iff_nonsingular` states the `y`-coordinate as `-(w(t))⁻¹`
-  simpa only [neg_div, one_div] using Affine.equation_iff_nonsingular.mp (W.equation_formalPoint
-    (hI.isTopologicallyNilpotent_of_mem ht) (W.algebraMap_formalWEval_ne_zero hI ht
-      ((map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective O K)).mpr h0)))
-
-/-- **The parametrized point at a nonzero parameter, as `Affine.Point.some`.** The point of
-`formalPoint_of_param_ne_zero`, presented at the coordinates of `nonsingular_formalPoint` and with
-that nonsingularity as its witness rather than one built by `Affine.Point.mk`, so that two such
-points may be compared through `Affine.Point.some.injEq`. -/
-theorem formalPoint_eq_some {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) (h0 : t ≠ 0) :
-    W.formalPoint (K := K) hI ht = .some _ _ (W.nonsingular_formalPoint (K := K) hI ht h0) := by
-  rw [W.formalPoint_of_param_ne_zero hI ht h0]
-  -- once the coordinates are in a common form the two `Affine.Point.some` terms differ only in
-  -- their nonsingularity proofs, and `Affine.Point.mk` is definitionally one of them
-  simp only [neg_div, one_div]
-  (rfl)
+  simpa only [neg_div, one_div] using
+    WeierstrassCurve.Affine.equation_iff_nonsingular.mp (W.equation_formalPoint ht hw)
 
 open scoped Classical in
 /-- **The `x`-coordinate of the parametrized point** is `t / w(t)`. -/

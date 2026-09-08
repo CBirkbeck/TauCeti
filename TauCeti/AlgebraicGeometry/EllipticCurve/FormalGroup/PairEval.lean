@@ -55,8 +55,6 @@ variables, so `MvPowerSeries.hasEval_of_finite_of_isTopologicallyNilpotent` appl
 * `WeierstrassCurve.hasEval_formalThirdRootEval` : the third root admits evaluation as soon as
   the two parameters do, the ideal-free counterpart of `formalThirdRootEval_mem`.
 * `WeierstrassCurve.formalAddEval_eq` : `F(t₁, t₂) = ι(t₃(t₁, t₂))`.
-* `WeierstrassCurve.formalAddEval_ne_zero` : the addition series is nonzero once
-  `t₁ * w(t₂) ≠ t₂ * w(t₁)`, so over a field the sum of the two points is not the point at infinity.
 * `WeierstrassCurve.formalAddEval_formalInverseEval` : `F(t, ι(t)) = 0`, the inverse law.
 * `WeierstrassCurve.formalAddEval_zero_right` and
   `WeierstrassCurve.formalAddEval_zero_left` : the unit laws `F(t, 0) = t` and `F(0, t) = t`.
@@ -66,8 +64,8 @@ variables, so `MvPowerSeries.hasEval_of_finite_of_isTopologicallyNilpotent` appl
   `t₂` do — the ideal-free closure law.
 * `WeierstrassCurve.formalAddEval_sub_add_mem` : `F(t₁, t₂) - (t₁ + t₂) ∈ I ^ (2 * k)` for
   parameters in `I ^ k`, so the group law is `t₁ + t₂` to first order, and
-  `WeierstrassCurve.formalAddEval_mem_pow` : each level `I ^ k` is therefore closed under
-  the addition series, of which `WeierstrassCurve.formalAddEval_mem` is the case `k = 1`.
+  `WeierstrassCurve.formalAddEval_mem` : each level `I ^ k` is therefore closed under the
+  addition series.
 
 ## Implementation notes
 
@@ -226,7 +224,7 @@ theorem formalAddEval_def (t₁ t₂ : O) :
 
 open MvPowerSeries.WithPiTopology in
 /-- **The group law is closed on evaluable parameters**: `F(t₁, t₂)` admits evaluation as soon as
-`t₁` and `t₂` do. This is the ideal-free counterpart of `formalAddEval_mem_pow`, and it is what lets
+`t₁` and `t₂` do. This is the ideal-free counterpart of `formalAddEval_mem`, and it is what lets
 the associativity statement take only its three parameters. -/
 theorem hasEval_formalAddEval {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
     (h₂ : PowerSeries.HasEval t₂) : PowerSeries.HasEval (W.formalAddEval t₁ t₂) := by
@@ -396,16 +394,6 @@ theorem formalAddEval_eq {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
   simpa [formalAddEval, W.formalInverseEval_def, MvPowerSeries.coe_aeval, PowerSeries.eval₂,
     ← W.formalThirdRootEval_def] using h
 
-/-- **The addition series does not vanish once `t₁ * w(t₂) ≠ t₂ * w(t₁)`.** The hypothesis is
-that of `formalThirdRootEval_ne_zero`, with the non-vanishing read at the sum `F(t₁, t₂)`
-rather than at the third root `t₃(t₁, t₂)`. Over a field the hypothesis says the two points
-have distinct `x`-coordinates, so the statement is that their sum is not the point at infinity. -/
-theorem formalAddEval_ne_zero {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
-    (h₂ : PowerSeries.HasEval t₂) (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁) :
-    W.formalAddEval t₁ t₂ ≠ 0 :=
-  (W.formalAddEval_eq h₁ h₂).trans_ne <| W.formalInverseEval_ne_zero
-    (W.hasEval_formalThirdRootEval h₁ h₂) (W.formalThirdRootEval_ne_zero h₁ h₂ hx)
-
 /-- **The inverse law at parameters**: `F(t, ι(t)) = 0`, so the value of the inverse series at `t`
 is the additive inverse of `t` under the group law read at parameters. -/
 @[simp]
@@ -452,18 +440,12 @@ theorem formalAddEval_sub_add_mem {I : Ideal O} (hI : IsAdic I) {k : ℕ} {t₁ 
 /-- **The levels of the filtration are closed under the group law**: the addition series carries
 a pair of parameters of `I ^ k` back into `I ^ k`, because it deviates from their sum by an
 element of `I ^ (2 * k)`. -/
-theorem formalAddEval_mem_pow {I : Ideal O} (hI : IsAdic I) {k : ℕ} {t₁ t₂ : O}
+theorem formalAddEval_mem {I : Ideal O} (hI : IsAdic I) {k : ℕ} {t₁ t₂ : O}
     (hk₁ : t₁ ∈ I ^ k) (hk₂ : t₂ ∈ I ^ k) : W.formalAddEval t₁ t₂ ∈ I ^ k := by
   have hle : I ^ (2 * k) ≤ I ^ k := Ideal.pow_le_pow_right (by omega)
   have := Ideal.add_mem _ (hle (W.formalAddEval_sub_add_mem hI hk₁ hk₂))
     (Ideal.add_mem _ hk₁ hk₂)
   simpa using this
-
-/-- **An adic ideal is closed under the group law at parameters.** This is `formalAddEval_mem_pow`
-at `k = 1`, in the form `formalPoint` asks of its argument. -/
-theorem formalAddEval_mem {I : Ideal O} (hI : IsAdic I) {t₁ t₂ : O} (h₁ : t₁ ∈ I) (h₂ : t₂ ∈ I) :
-    W.formalAddEval t₁ t₂ ∈ I := by
-  simpa using W.formalAddEval_mem_pow hI (k := 1) (by simpa using h₁) (by simpa using h₂)
 /-- **Associativity of the group law at parameters**: `F(F(t₁, t₂), t₃) = F(t₁, F(t₂, t₃))`. -/
 theorem formalAddEval_assoc {t₁ t₂ t₃ : O} (h₁ : PowerSeries.HasEval t₁)
     (h₂ : PowerSeries.HasEval t₂) (h₃ : PowerSeries.HasEval t₃) :
