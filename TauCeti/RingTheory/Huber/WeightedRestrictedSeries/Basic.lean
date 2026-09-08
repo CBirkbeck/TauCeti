@@ -1156,8 +1156,7 @@ noncomputable def weightedPolynomialEquiv [NonarchimedeanRing A] [DiscreteTopolo
     (T : Fin k → Set A) (hT : IsWeightFamily T) :
     MvPolynomial (Fin k) A ≃+* weightedRestrictedSubring T hT :=
   RingEquiv.ofBijective (weightedPolynomialHom T hT)
-    ⟨fun p q hpq ↦ MvPolynomial.coe_injective _ _ (by
-        simpa only [coe_weightedPolynomialHom] using congrArg Subtype.val hpq),
+    ⟨weightedPolynomialHom_injective hT,
       fun f ↦ by
         have hmem : f ∈ weightedPolynomials T hT := by
           rw [weightedPolynomials_eq_top (hT := hT)]
