@@ -41,6 +41,8 @@ into pole orders, but no order or valuation hypothesis is assumed here.
   `WeierstrassCurve.formalPoint_injective`.
 * `WeierstrassCurve.formalPoint_of_param_eq_zero` and
   `WeierstrassCurve.formalPoint_of_param_ne_zero`: the two branches of the definition.
+* `WeierstrassCurve.formalPoint_formalInverseEval`: **the parametrisation respects negation** —
+  the formal inverse on parameters becomes the group inverse on points.
 * `WeierstrassCurve.xCoord_formalPoint` and `WeierstrassCurve.yCoord_formalPoint`: the point's
   coordinates, through which the closed forms
   `WeierstrassCurve.xCoord_formalPoint_mul_eq_one` and
@@ -222,5 +224,41 @@ theorem formalPoint_injective {I : Ideal O} (hI : IsAdic I) :
   rw [← W.neg_xCoord_div_yCoord_formalPoint (K := K) hI t₁.property,
     ← W.neg_xCoord_div_yCoord_formalPoint (K := K) hI t₂.property]
   exact congrArg (fun P ↦ -P.xCoord / P.yCoord) h
+
+open scoped Classical in
+/-- **The parametrisation respects negation.** The formal inverse `ι` on parameters becomes the
+group inverse on points, so `formalPoint` carries the inverse law across. -/
+theorem formalPoint_formalInverseEval {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
+    W.formalPoint (K := K) hI (pow_one I ▸ W.formalInverseEval_mem
+        (hI.isTopologicallyNilpotent_of_mem ht) (k := 1) ((pow_one I).symm ▸ ht)) =
+      -W.formalPoint (K := K) hI ht := by
+  have hE : PowerSeries.HasEval t := hI.isTopologicallyNilpotent_of_mem ht
+  by_cases h0 : t = 0
+  · subst h0
+    rw [W.formalPoint_of_param_eq_zero hI ht rfl, neg_zero,
+      W.formalPoint_of_param_eq_zero hI _ (by simp [W.formalInverseEval_eq hE])]
+  rw [W.formalPoint_of_param_ne_zero hI _ (W.formalInverseEval_ne_zero hE h0),
+    W.formalPoint_of_param_ne_zero hI ht h0]
+  simp only [Affine.Point.mk, Affine.Point.neg_some]
+  -- the two coordinate identities, read in `K`: `ι(t) = -(t · u)` and `w(ι t) = -(w(t) · u)` share
+  -- the unit `u`, so the `x`-coordinates agree, and `u` inverts `1 - a₁t - a₃w(t)`, which is what
+  -- turns the `y`-coordinate into `negY`
+  have hWt : algebraMap O K (W.formalWEval t) ≠ 0 := W.algebraMap_formalWEval_ne_zero hI ht
+    ((map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective O K)).mpr h0)
+  have hU0 : algebraMap O K (W.formalInverseDenomInvEval t) ≠ 0 :=
+    ((W.isUnit_formalInverseDenomInvEval hE).map (algebraMap O K)).ne_zero
+  have hiota := congrArg (algebraMap O K) (W.formalInverseEval_eq hE)
+  have hwiota := congrArg (algebraMap O K) (W.formalWEval_formalInverseEval hE
+    (W.hasEval_formalInverseEval hI ht))
+  have hDU := congrArg (algebraMap O K) (W.formalInverseDenomEval_mul_inv hE)
+  have hD := congrArg (algebraMap O K) (W.formalInverseDenomEval_eq hE)
+  simp only [map_neg, map_mul, map_sub, map_one] at hiota hwiota hDU hD
+  rw [Affine.Point.some.injEq, hiota, hwiota, Affine.negY]
+  refine ⟨by field_simp, ?_⟩
+  field_simp
+  have ha₁ : (W.baseChange K).toAffine.a₁ = algebraMap O K W.a₁ := rfl
+  have ha₃ : (W.baseChange K).toAffine.a₃ = algebraMap O K W.a₃ := rfl
+  rw [ha₁, ha₃]
+  linear_combination algebraMap O K (W.formalInverseDenomInvEval t) * hD - hDU
 
 end WeierstrassCurve
