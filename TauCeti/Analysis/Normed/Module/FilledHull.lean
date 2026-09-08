@@ -122,13 +122,14 @@ theorem filledHull_subset_closedConvexHull (hK : K.Nonempty) :
       hφx hHK
   -- It is unbounded, because a nonempty `K` forces `φ` to be nonzero.
   obtain ⟨b, hb⟩ := hK
-  have hφne : φ ≠ 0 := by
-    rintro rfl
+  have hφne : (φ : E →ₗ[ℝ] ℝ) ≠ 0 := by
+    intro h
+    have hzero : ∀ y : E, φ y = 0 := fun y =>
+      (LinearMap.congr_fun h y).trans (LinearMap.zero_apply y)
     have hb' := hφC b (subset_closedConvexHull hb)
-    simp only [zero_apply] at hφx hb'
+    rw [hzero] at hφx hb'
     linarith
-  exact not_isBounded_halfSpace_lt (φ := (φ : E →ₗ[ℝ] ℝ))
-    (fun h => hφne (ContinuousLinearMap.coe_injective (by simpa using h))) u (hx.subset hsub)
+  exact not_isBounded_halfSpace_lt (φ := (φ : E →ₗ[ℝ] ℝ)) hφne u (hx.subset hsub)
 
 /-- **The filled hull of the empty set is empty** in a nontrivial space: the whole space is
 connected and unbounded, so every component of `∅ᶜ = univ` is unbounded. -/

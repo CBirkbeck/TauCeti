@@ -7,6 +7,8 @@ module
 
 public import Mathlib.Analysis.Normed.Module.Basic
 
+import Mathlib.Algebra.Module.LinearMap.DivisionRing
+
 /-!
 # Strict half-spaces of a real normed space are unbounded
 
@@ -37,9 +39,7 @@ functional `φ`, every bound `u` and every radius `R` admit a `y` with `φ y < u
 Linearity suffices; `φ` need not be continuous. -/
 theorem exists_apply_lt_and_lt_norm {φ : E →ₗ[ℝ] ℝ} (hφ : φ ≠ 0) (u R : ℝ) :
     ∃ y : E, φ y < u ∧ R < ‖y‖ := by
-  obtain ⟨w, hw⟩ : ∃ w, φ w ≠ 0 := by simpa using DFunLike.ne_iff.mp hφ
-  obtain ⟨v, hφv⟩ : ∃ v : E, φ v = 1 :=
-    ⟨(φ w)⁻¹ • w, by rw [map_smul, smul_eq_mul, inv_mul_cancel₀ hw]⟩
+  obtain ⟨v, hφv⟩ := LinearMap.surjective_iff_ne_zero.mpr hφ 1
   have hvnorm : 0 < ‖v‖ := norm_pos_iff.mpr fun h => by simp [h] at hφv
   -- Walk to `-t • v` for a `t` large enough to break both the bound `u` and the radius `R`.
   obtain ⟨t, ht1, ht2⟩ : ∃ t : ℝ, (R + 1) / ‖v‖ ≤ t ∧ |u| + 1 ≤ t :=
