@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.NumberTheory.Cyclotomic.Gal
+public import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
 
 /-!
 # Irreducibility of the cyclotomic polynomial from the degree of a cyclotomic extension
@@ -16,7 +16,6 @@ of `L / K` is always at most `φ n`, and as soon as it is at least `φ n` the po
 irreducible over `K`. That converse and Mathlib's forward direction give the equivalence
 `IsCyclotomicExtension.irreducible_cyclotomic_iff_finrank_eq_totient`.
 
-
 ## Main results
 
 * `IsCyclotomicExtension.finrank_le_totient`: `[L : K] ≤ φ n`.
@@ -24,8 +23,6 @@ irreducible over `K`. That converse and Mathlib's forward direction give the equ
   `Φ_n` is irreducible over `K`.
 * `IsCyclotomicExtension.irreducible_cyclotomic_iff_finrank_eq_totient`: `Φ_n` is irreducible over
   `K` if and only if `[L : K] = φ n`.
-* `IsCyclotomicExtension.card_aut_eq_sub_one`: a `q`-th cyclotomic extension with `Φ_q`
-  irreducible has exactly `q - 1` automorphisms, for `q` prime.
 
 ## References
 
@@ -96,19 +93,5 @@ Source: as for the two lemmas it combines. -/
 theorem irreducible_cyclotomic_iff_finrank_eq_totient :
     Irreducible (cyclotomic n K) ↔ Module.finrank K L = n.totient :=
   ⟨IsCyclotomicExtension.finrank L, fun h ↦ irreducible_cyclotomic_of_totient_le_finrank K L h.ge⟩
-
-/-- **A `q`-th cyclotomic extension has exactly `q - 1` automorphisms**, for `q` prime with `Φ_q`
-irreducible over `K`. The `q - 1` is truncated `ℕ` subtraction, which agrees with `φ q` because `q`
-is prime.
-
-`hirr` is explicit rather than derived, so a caller cannot reach the count `q - 1` without
-supplying the irreducibility that justifies it. `NeZero q` is obtained from `hq`, so callers need
-not carry that instance. -/
-theorem card_aut_eq_sub_one (q : ℕ) (F : Type*) [CommRing F] [IsDomain F] [Algebra K F]
-    (hq : q.Prime) [IsCyclotomicExtension {q} K F] (hirr : Irreducible (cyclotomic q K)) :
-    Nat.card (F ≃ₐ[K] F) = q - 1 := by
-  have : NeZero q := ⟨hq.ne_zero⟩
-  rw [Nat.card_congr (autEquivPow F hirr).toEquiv, Nat.card_eq_fintype_card,
-    ZMod.card_units_eq_totient, Nat.totient_prime hq]
 
 end IsCyclotomicExtension
