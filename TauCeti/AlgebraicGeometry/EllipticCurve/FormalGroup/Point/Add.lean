@@ -209,22 +209,26 @@ private theorem algebraMap_mul_formalWEval_sub_ne_zero {t₁ t₂ : O}
   rw [← map_mul, ← map_mul, ← map_sub, ne_eq, FaithfulSMul.algebraMap_eq_zero_iff, sub_eq_zero]
   exact hx
 
+omit [(W.baseChange K).IsElliptic] in
 open scoped Classical in
-/-- The group law of `W⁄K` at the two parametrised points, with each of the three points written
-as an `Affine.Point.some` at the coordinates of `nonsingular_formalPoint`. -/
+/-- The group law of `W⁄K` at the two parametrised points, each written as an `Affine.Point.some`
+at the coordinates `x = t / w(t)` and `y = -1 / w(t)`. The three nonsingularity proofs are taken
+rather than built, so the statement says exactly which witnesses the dependent equality is
+between. -/
 private theorem some_add_some_formalAddEval_of_X_ne {I : Ideal O} (hI : IsAdic I) {t₁ t₂ : O}
     (h₁ : t₁ ∈ I) (h₂ : t₂ ∈ I) (h₁0 : t₁ ≠ 0) (h₂0 : t₂ ≠ 0)
-    (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁) (hF : W.formalAddEval t₁ t₂ ∈ I)
-    (hw₁ : algebraMap O K (W.formalWEval t₁) ≠ 0)
-    (hw₂ : algebraMap O K (W.formalWEval t₂) ≠ 0)
-    (hwF : algebraMap O K (W.formalWEval (W.formalAddEval t₁ t₂)) ≠ 0) :
-    Affine.Point.some _ _ (W.nonsingular_formalPoint (K := K)
-          (hI.isTopologicallyNilpotent_of_mem h₁) hw₁) +
-        Affine.Point.some _ _ (W.nonsingular_formalPoint (K := K)
-          (hI.isTopologicallyNilpotent_of_mem h₂) hw₂) =
-      Affine.Point.some _ _ (W.nonsingular_formalPoint (K := K)
-        (hI.isTopologicallyNilpotent_of_mem hF) hwF) := by
-  -- the same terms the conclusion names, bound for reuse below
+    (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁)
+    (hn₁ : (W.baseChange K).toAffine.Nonsingular
+      (algebraMap O K t₁ / algebraMap O K (W.formalWEval t₁))
+      (-1 / algebraMap O K (W.formalWEval t₁)))
+    (hn₂ : (W.baseChange K).toAffine.Nonsingular
+      (algebraMap O K t₂ / algebraMap O K (W.formalWEval t₂))
+      (-1 / algebraMap O K (W.formalWEval t₂)))
+    (hnF : (W.baseChange K).toAffine.Nonsingular
+      (algebraMap O K (W.formalAddEval t₁ t₂) /
+        algebraMap O K (W.formalWEval (W.formalAddEval t₁ t₂)))
+      (-1 / algebraMap O K (W.formalWEval (W.formalAddEval t₁ t₂)))) :
+    Affine.Point.some _ _ hn₁ + Affine.Point.some _ _ hn₂ = Affine.Point.some _ _ hnF := by
   have hE₁ : PowerSeries.HasEval t₁ := hI.isTopologicallyNilpotent_of_mem h₁
   have hE₂ : PowerSeries.HasEval t₂ := hI.isTopologicallyNilpotent_of_mem h₂
   have hne : ∀ {s : O}, s ≠ 0 → algebraMap O K s ≠ 0 := fun hs0 ↦ by simpa using hs0
@@ -242,8 +246,7 @@ private theorem some_add_some_formalAddEval_of_X_ne {I : Ideal O} (hI : IsAdic I
     (W.algebraMap_thirdRootDenom_ne_zero hI h₁ h₂)
     (W.algebraMap_formalWEval_ne_zero hI h₁ (hne h₁0))
     (W.algebraMap_formalWEval_ne_zero hI h₂ (hne h₂0)) hwT0
-    (W.algebraMap_mul_formalWEval_sub_ne_zero hx) (W.nonsingular_formalPoint hE₁ hw₁)
-    (W.nonsingular_formalPoint hE₂ hw₂)
+    (W.algebraMap_mul_formalWEval_sub_ne_zero hx) hn₁ hn₂
   -- the third point's coordinates are those of the parameter `F(t₁, t₂)`, the formal inverse of
   -- the third root
   grind [W.algebraMap_formalAddEval_eq, W.algebraMap_formalWEval_formalAddEval,
@@ -274,15 +277,18 @@ theorem add_eq_formalPoint_formalAddEval_of_X_ne {I : Ideal O} (hI : IsAdic I) {
   have hF : W.formalAddEval t₁ t₂ ∈ I :=
     pow_one I ▸ W.formalAddEval_mem hI (k := 1) ((pow_one I).symm ▸ h₁) ((pow_one I).symm ▸ h₂)
   have hne : ∀ {s : O}, s ≠ 0 → algebraMap O K s ≠ 0 := fun hs0 ↦ by simpa using hs0
+  -- `equation_iff_nonsingular` states the `y`-coordinate as `-(w(t))⁻¹`, the chord lemmas as
+  -- `-1 / w(t)`; `neg_div` and `one_div` bridge the two
+  have hn : ∀ {s : O} (hs : s ∈ I), s ≠ 0 → (W.baseChange K).toAffine.Nonsingular
+      (algebraMap O K s / algebraMap O K (W.formalWEval s))
+      (-1 / algebraMap O K (W.formalWEval s)) := fun hs hs0 ↦ by
+    simpa only [neg_div, one_div] using Affine.equation_iff_nonsingular.mp
+      (W.equation_formalPoint (hI.isTopologicallyNilpotent_of_mem hs)
+        (W.algebraMap_formalWEval_ne_zero hI hs (hne hs0)))
   rw [W.formalPoint_of_param_ne_zero hI h₁ h₁0, W.formalPoint_of_param_ne_zero hI h₂ h₂0,
     W.formalPoint_of_param_ne_zero hI _ hF0]
-  -- `Affine.Point.mk` is the `some` constructor at `-(w(t))⁻¹`, while the chord lemmas state the
-  -- `y`-coordinate as `-1 / w(t)`; `neg_div` and `one_div` bridge the two
+  -- `Affine.Point.mk` is the `some` constructor at `-(w(t))⁻¹`
   simpa only [Affine.Point.mk, neg_div, one_div] using
-    (W.some_add_some_formalAddEval_of_X_ne hI h₁ h₂ h₁0 h₂0 hx hF
-      (W.algebraMap_formalWEval_ne_zero hI h₁ (hne h₁0))
-      (W.algebraMap_formalWEval_ne_zero hI h₂ (hne h₂0))
-      (W.algebraMap_formalWEval_ne_zero hI hF (hne hF0)))
-
+    W.some_add_some_formalAddEval_of_X_ne hI h₁ h₂ h₁0 h₂0 hx (hn h₁ h₁0) (hn h₂ h₂0) (hn hF hF0)
 
 end WeierstrassCurve

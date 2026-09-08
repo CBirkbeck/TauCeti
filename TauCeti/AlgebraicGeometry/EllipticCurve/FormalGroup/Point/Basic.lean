@@ -41,8 +41,6 @@ into pole orders, but no order or valuation hypothesis is assumed here.
   `WeierstrassCurve.formalPoint_injective`.
 * `WeierstrassCurve.formalPoint_of_param_eq_zero` and
   `WeierstrassCurve.formalPoint_of_param_ne_zero`: the two branches of the definition.
-* `WeierstrassCurve.nonsingular_formalPoint`: the nonsingularity of the parametrized coordinates
-  as a term, in the `-1 / w(t)` form the chord lemmas take.
 * `WeierstrassCurve.xCoord_formalPoint` and `WeierstrassCurve.yCoord_formalPoint`: the point's
   coordinates, through which the closed forms
   `WeierstrassCurve.xCoord_formalPoint_mul_eq_one` and
@@ -57,16 +55,14 @@ into pole orders, but no order or valuation hypothesis is assumed here.
 The same parametrization is formalised in Michael Stoll's elliptic-curve development
 (`github.com/MichaelStollBayreuth/EllipticCurves` @ `66889eada51a`, Apache-2.0), file
 `EllipticCurves/WeierstrassFormalGroup/Filtration.lean`, declarations `formalPoint`,
-`formalPoint_of_param_eq_zero`, `formalPoint_of_param_ne_zero` and `formalPoint_nonsingular`, all
-of which keep their source names except `formalPoint_nonsingular`, which is
-`nonsingular_formalPoint` here so that the head symbol comes first.
+`formalPoint_of_param_eq_zero`, `formalPoint_of_param_ne_zero` and `formalPoint_nonsingular`. The
+first three keep their source names; the fourth is not restated, `Affine.Point.mk` carrying the
+equation-to-nonsingularity step itself.
 
 That development states them over `v.adicCompletion K` for a height-one prime of a Dedekind domain
 and builds nonsingularity from a chord lemma of its own. The declarations below are stated over an
 arbitrary complete adic ring mapping injectively to a field, and read the nonsingularity off
-Mathlib's `equation_iff_nonsingular`, which `Affine.Point.mk` also uses; `Affine.Point.mk` keeps
-that step inside the definition, so `nonsingular_formalPoint` states it separately for consumers
-that need the nonsingularity as a term.
+Mathlib's `equation_iff_nonsingular`, which `Affine.Point.mk` also uses.
 -/
 
 public section
@@ -135,22 +131,6 @@ theorem formalPoint_of_param_ne_zero {I : Ideal O} (hI : IsAdic I) {t : O} (ht :
         (W.algebraMap_formalWEval_ne_zero hI ht
           ((map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective O K)).mpr h0))) := by
   simp [formalPoint, h0]
-
-omit [FaithfulSMul O K] in
-/-- **The coordinates carried by an evaluable parameter are those of a nonsingular point**, the
-`y`-coordinate written `-1 / w(t)` where `equation_formalPoint` writes `-(w(t))⁻¹`; that is the form
-in which the chord lemmas take their nonsingularity hypotheses. `formalPoint` keeps the
-equation-to-nonsingularity step inside `Affine.Point.mk`, so a consumer comparing parametrized
-points through `Affine.Point.some` needs it as a term of its own. The hypotheses are those of
-`equation_formalPoint`; `algebraMap_formalWEval_ne_zero` supplies the second from a nonzero
-parameter of an adic ideal. -/
-theorem nonsingular_formalPoint {t : O} (ht : PowerSeries.HasEval t)
-    (hw : algebraMap O K (W.formalWEval t) ≠ 0) :
-    (W.baseChange K).toAffine.Nonsingular (algebraMap O K t / algebraMap O K (W.formalWEval t))
-      (-1 / algebraMap O K (W.formalWEval t)) := by
-  -- `equation_iff_nonsingular` states the `y`-coordinate as `-(w(t))⁻¹`
-  simpa only [neg_div, one_div] using
-    WeierstrassCurve.Affine.equation_iff_nonsingular.mp (W.equation_formalPoint ht hw)
 
 open scoped Classical in
 /-- **The `x`-coordinate of the parametrized point** is `t / w(t)`. -/
