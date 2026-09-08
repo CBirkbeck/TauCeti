@@ -149,7 +149,7 @@ theorem coe_normCoeff_supportedPart_empty (hf : f 1 = 1) :
 /-- **The prime terms are a subseries of the ideal terms.** Each height-one prime contributes its
 own ideal as the `e = 1` member of its power series, and distinct primes give distinct ideals, so
 absolute convergence over ideals restricts to the primes. Multiplicativity plays no part. -/
-theorem summable_idealTerm_comp_primeIdealPow (hs : Summable (idealTerm K f s)) :
+theorem summable_idealTerm_primeIdealPow_one (hs : Summable (idealTerm K f s)) :
     Summable fun P : HeightOneSpectrum (𝓞 K) ↦ idealTerm K f s (P.primeIdealPow 1) :=
   hs.comp_injective fun P Q h ↦ HeightOneSpectrum.asIdeal_injective
     (by simpa only [HeightOneSpectrum.coe_primeIdealPow, pow_one] using congrArg Subtype.val h)
@@ -296,12 +296,13 @@ theorem norm_div_lt_one_of_summable_idealTerm
     idealTerm_toIdealArithmeticFunction_primeIdealPow χ P e s
 
 /-- **The local ratios are summable over the primes.** The multiplicative specialisation of
-`IdealArithmeticFunction.summable_idealTerm_comp_primeIdealPow`: at a prime the ideal term *is* the
+`IdealArithmeticFunction.summable_idealTerm_primeIdealPow_one`: at a prime the ideal term *is* the
 ratio `χ(P) N(P)⁻ˢ`. -/
-theorem summable_localRatio (hs : Summable (idealTerm K χ.toIdealArithmeticFunction s)) :
+theorem summable_div_of_summable_idealTerm
+    (hs : Summable (idealTerm K χ.toIdealArithmeticFunction s)) :
     Summable fun P : HeightOneSpectrum (𝓞 K) ↦
       χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s :=
-  (IdealArithmeticFunction.summable_idealTerm_comp_primeIdealPow hs).congr fun P ↦ by
+  (IdealArithmeticFunction.summable_idealTerm_primeIdealPow_one hs).congr fun P ↦ by
     simp [idealTerm_toIdealArithmeticFunction_primeIdealPow χ P 1 s]
 
 /-- The local Euler factor of a completely multiplicative weight is the geometric closed form

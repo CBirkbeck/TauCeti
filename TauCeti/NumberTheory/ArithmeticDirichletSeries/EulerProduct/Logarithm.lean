@@ -65,7 +65,8 @@ theorem exp_tsum_neg_log_one_sub_eq_LSeries
     rw [sub_eq_zero] at h
     rw [← h] at hlt
     simp at hlt
-  have H := (Summable.clog_one_sub (χ.summable_localRatio hs)).neg.hasSum.cexp.tprod_eq
+  have H := (Summable.clog_one_sub
+    (χ.summable_div_of_summable_idealTerm hs)).neg.hasSum.cexp.tprod_eq
   simp only [Function.comp_apply, exp_neg, exp_log (hne _)] at H
   exact H.symm.trans (χ.hasProd_eulerFactor hs).tprod_eq
 
