@@ -18,7 +18,7 @@ endomorphisms.
 ## Main declarations
 
 * `IsNilpotent.prodMap`: a product of nilpotent endomorphisms is nilpotent.
-* `TauCeti.Module.End.IsSemisimple.prodMap`: a product of semisimple endomorphisms is semisimple.
+* `Module.End.IsSemisimple.prodMap`: a product of semisimple endomorphisms is semisimple.
 -/
 
 public section
@@ -27,7 +27,7 @@ namespace TauCeti
 
 open LinearMap Polynomial
 
-namespace Module.End
+section
 
 universe u v w
 
@@ -37,14 +37,14 @@ variable {K : Type u} {V : Type v} {W : Type w}
 variable [Semiring K] [AddCommMonoid V] [Module K V] [AddCommMonoid W] [Module K W]
 
 @[simp]
-private theorem prodMap_pow (f : Module.End K V) (g : Module.End K W) (n : ℕ) :
+private theorem _root_.Module.End.prodMap_pow (f : Module.End K V) (g : Module.End K W) (n : ℕ) :
     (f.prodMap g) ^ n = (f ^ n).prodMap (g ^ n) := by
   induction n with
   | zero => exact LinearMap.prodMap_one.symm
   | succ n hn => rw [pow_succ, pow_succ, pow_succ, hn, LinearMap.prodMap_mul]
 
 /-- The componentwise product of two nilpotent endomorphisms is nilpotent. -/
-theorem _root_.IsNilpotent.prodMap {f : Module.End K V} {g : Module.End K W}
+theorem _root_.Module.End._root_.IsNilpotent.prodMap {f : Module.End K V} {g : Module.End K W}
     (hf : IsNilpotent f) (hg : IsNilpotent g) : IsNilpotent (f.prodMap g) := by
   obtain ⟨m, hm⟩ := hf
   obtain ⟨n, hn⟩ := hg
@@ -59,7 +59,8 @@ section CommRing
 variable {K : Type u} {V : Type v} {W : Type w}
 variable [CommRing K] [AddCommGroup V] [Module K V] [AddCommGroup W] [Module K W]
 
-private theorem aeval_prodMap (f : Module.End K V) (g : Module.End K W) (p : K[X]) :
+private theorem _root_.Module.End.aeval_prodMap (f : Module.End K V) (g : Module.End K W)
+    (p : K[X]) :
     aeval (f.prodMap g) p = (aeval f p).prodMap (aeval g p) := by
   have h : aeval (f.prodMap g) =
       (LinearMap.prodMapAlgHom K V W).comp ((aeval f).prod (aeval g)) := by
@@ -67,7 +68,7 @@ private theorem aeval_prodMap (f : Module.End K V) (g : Module.End K W) (p : K[X
   exact DFunLike.congr_fun h p
 
 /-- The componentwise product of two semisimple endomorphisms is semisimple. -/
-theorem IsSemisimple.prodMap {f : Module.End K V} {g : Module.End K W}
+theorem _root_.Module.End.IsSemisimple.prodMap {f : Module.End K V} {g : Module.End K W}
     (hf : f.IsSemisimple) (hg : g.IsSemisimple) :
     Module.End.IsSemisimple (f.prodMap g) := by
   rw [Module.End.IsSemisimple] at hf hg ⊢
@@ -96,6 +97,6 @@ theorem IsSemisimple.prodMap {f : Module.End K V} {g : Module.End K W}
 
 end CommRing
 
-end Module.End
+end
 
 end TauCeti

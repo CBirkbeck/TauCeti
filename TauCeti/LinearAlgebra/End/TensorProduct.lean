@@ -22,11 +22,11 @@ one-sided tensor endomorphism acts componentwise.
 
 ## Main declarations
 
-* `TauCeti.Module.End.IsSemisimple.rTensor`: `f ⊗ 1` is semisimple when `f` is.
-* `TauCeti.Module.End.IsSemisimple.lTensor`: `1 ⊗ f` is semisimple when `f` is.
-* `TauCeti.Module.End.commute_rTensor_lTensor`: one-sided tensor endomorphisms on different factors
+* `Module.End.IsSemisimple.rTensor`: `f ⊗ 1` is semisimple when `f` is.
+* `Module.End.IsSemisimple.lTensor`: `1 ⊗ f` is semisimple when `f` is.
+* `Module.End.commute_rTensor_lTensor`: one-sided tensor endomorphisms on different factors
   commute.
-* `TauCeti.Module.End.IsSemisimple.tensorProduct`: tensor products of semisimple endomorphisms are
+* `Module.End.IsSemisimple.tensorProduct`: tensor products of semisimple endomorphisms are
   semisimple.
 * `IsNilpotent.tensorProduct_map_sub_one`: `TensorProduct.map f g - 1` is nilpotent when
   `f - 1` and `g - 1` are nilpotent.
@@ -39,28 +39,28 @@ namespace TauCeti
 open Polynomial
 open scoped TensorProduct
 
-namespace Module.End
+section
 
 universe u v w
 
 variable {K : Type u} {V : Type v} {W : Type w}
 
 /-- The right-tensor algebra homomorphism sends `f` to `f.rTensor W`. -/
-theorem rTensorAlgHom_apply [CommSemiring K] [AddCommMonoid V] [Module K V]
+theorem _root_.Module.End.rTensorAlgHom_apply [CommSemiring K] [AddCommMonoid V] [Module K V]
     [AddCommMonoid W] [Module K W] (f : _root_.Module.End K V) :
     (_root_.Module.End.rTensorAlgHom K V W) f = f.rTensor W := by
   apply LinearMap.ext
   exact _root_.Module.End.rTensorAlgHom_apply_apply K V W f
 
 /-- The left-tensor algebra homomorphism sends `f` to `f.lTensor V`. -/
-theorem lTensorAlgHom_apply [CommSemiring K] [AddCommMonoid V] [Module K V]
+theorem _root_.Module.End.lTensorAlgHom_apply [CommSemiring K] [AddCommMonoid V] [Module K V]
     [AddCommMonoid W] [Module K W] (f : _root_.Module.End K W) :
     (_root_.Module.End.lTensorAlgHom K W V) f = f.lTensor V := by
   apply LinearMap.ext
   exact _root_.Module.End.lTensorAlgHom_apply_apply K W V f
 
 /-- One-sided tensor endomorphisms acting on different factors commute. -/
-theorem commute_rTensor_lTensor [CommSemiring K] [AddCommMonoid V] [Module K V]
+theorem _root_.Module.End.commute_rTensor_lTensor [CommSemiring K] [AddCommMonoid V] [Module K V]
     [AddCommMonoid W] [Module K W] (f : _root_.Module.End K V)
     (g : _root_.Module.End K W) : Commute (f.rTensor W) (g.lTensor V) := by
   rw [commute_iff_eq, _root_.Module.End.mul_eq_comp, _root_.Module.End.mul_eq_comp]
@@ -77,7 +77,8 @@ variable [Module.Projective K W]
 
 /-- Tensoring a semisimple endomorphism on the right with the identity of a *free* module
 preserves semisimplicity. -/
-private theorem isSemisimple_rTensor_of_free {N : Type*} [AddCommGroup N] [Module K N]
+private theorem _root_.Module.End.isSemisimple_rTensor_of_free {N : Type*} [AddCommGroup N]
+    [Module K N]
     [Module.Free K N] {f : _root_.Module.End K V} (hf : f.IsSemisimple) :
     _root_.Module.End.IsSemisimple (f.rTensor N) := by
   classical
@@ -106,7 +107,7 @@ private theorem isSemisimple_rTensor_of_free {N : Type*} [AddCommGroup N] [Modul
 
 /-- Tensoring a semisimple endomorphism on the right with an identity endomorphism preserves
 semisimplicity. -/
-theorem IsSemisimple.rTensor {f : _root_.Module.End K V} (hf : f.IsSemisimple) :
+theorem _root_.Module.End.IsSemisimple.rTensor {f : _root_.Module.End K V} (hf : f.IsSemisimple) :
     _root_.Module.End.IsSemisimple (f.rTensor W) := by
   -- Split `W` off a free module `M`; the free case then transfers back along `i.lTensor V`.
   obtain ⟨M, _, _, _, i, s, his⟩ :=
@@ -128,7 +129,7 @@ variable [Module.Projective K V]
 
 /-- Tensoring a semisimple endomorphism on the left with an identity endomorphism preserves
 semisimplicity. -/
-theorem IsSemisimple.lTensor {f : _root_.Module.End K W} (hf : f.IsSemisimple) :
+theorem _root_.Module.End.IsSemisimple.lTensor {f : _root_.Module.End K W} (hf : f.IsSemisimple) :
     _root_.Module.End.IsSemisimple (f.lTensor V) := by
   exact ((TensorProduct.comm K V W).isSemisimple_iff (f.lTensor V) (f.rTensor V)
     (LinearMap.rTensor_comp_comm f).symm).mpr
@@ -143,7 +144,7 @@ section CommSemiring
 variable [CommSemiring K] [AddCommGroup V] [Module K V] [AddCommGroup W] [Module K W]
 
 /-- If `f - 1` and `g - 1` are nilpotent, then `TensorProduct.map f g - 1` is nilpotent. -/
-theorem _root_.IsNilpotent.tensorProduct_map_sub_one {f : _root_.Module.End K V}
+theorem _root_.Module.End._root_.IsNilpotent.tensorProduct_map_sub_one {f : _root_.Module.End K V}
     {g : _root_.Module.End K W} (hf : IsNilpotent (f - 1)) (hg : IsNilpotent (g - 1)) :
     IsNilpotent (TensorProduct.map f g - 1) := by
   let n : _root_.Module.End K (V ⊗[K] W) := f.rTensor W - 1
@@ -179,7 +180,8 @@ variable [Field K] [AddCommGroup V] [Module K V] [AddCommGroup W] [Module K W]
 variable [PerfectField K] [FiniteDimensional K V] [FiniteDimensional K W]
 
 /-- The tensor product of two semisimple endomorphisms is semisimple. -/
-theorem IsSemisimple.tensorProduct {f : _root_.Module.End K V} {g : _root_.Module.End K W}
+theorem _root_.Module.End.IsSemisimple.tensorProduct {f : _root_.Module.End K V}
+    {g : _root_.Module.End K W}
     (hf : f.IsSemisimple) (hg : g.IsSemisimple) :
     _root_.Module.End.IsSemisimple (TensorProduct.map f g) := by
   rw [← LinearMap.lTensor_comp_rTensor, ← _root_.Module.End.mul_eq_comp]
@@ -188,6 +190,6 @@ theorem IsSemisimple.tensorProduct {f : _root_.Module.End K V} {g : _root_.Modul
 
 end PerfectField
 
-end Module.End
+end
 
 end TauCeti
