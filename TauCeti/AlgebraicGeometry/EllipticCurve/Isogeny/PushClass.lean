@@ -51,10 +51,13 @@ rather than vacuous: it holds by construction when the ambient structure is the 
 **Every other hypothesis is discharged internally**, from suppliers that live with the object they
 describe, in the one-property-per-file `IntermediateRing/` series:
 
-* `IsDedekindDomain φ.intermediateRing` — `Isogeny.isDedekindDomain_intermediateRing`. That lemma is
-  where separability of the function-field extension is consumed, so the inseparable case is
-  excluded there rather than silently here;
-* `Module.Finite W₂.CoordinateRing φ.intermediateRing` — `Isogeny.moduleFinite_intermediateRing`;
+* `IsDedekindDomain φ.intermediateRing` — `Isogeny.isDedekindDomain_intermediateRing`, which asks
+  nothing of the function-field extension and so covers inseparable isogenies;
+* `Module.Finite W₂.CoordinateRing φ.intermediateRing` —
+  `Isogeny.moduleFinite_intermediateRing_of_isElliptic`, which asks nothing of the extension
+  either. Its sibling `Isogeny.moduleFinite_intermediateRing` would need
+  `[Algebra.IsSeparable W₂.FunctionField W₁.FunctionField]`, and that is the hypothesis that
+  would exclude Frobenius from everything below;
 * both `Module.IsTorsionFree` instances — Mathlib's `Module.isTorsionFree_iff_algebraMap_injective`
   applied to `Isogeny.toIntermediateRing_injective` and
   `Isogeny.pullbackToIntermediateRing_injective`. These are what make
@@ -123,7 +126,7 @@ variable (φ : Isogeny W₁ W₂)
   [Algebra W₂.CoordinateRing W₁.FunctionField]
   [Algebra W₂.FunctionField W₁.FunctionField]
   [IsScalarTower W₂.CoordinateRing W₂.FunctionField W₁.FunctionField]
-  [Algebra.IsSeparable W₂.FunctionField W₁.FunctionField]
+  [W₁.IsElliptic]
 
 /-- **The class-group map induced by an isogeny**, multiplicatively: extend a class of
 `W₁.CoordinateRing` into the intermediate ring, then norm it down to `W₂.CoordinateRing`.
@@ -139,7 +142,8 @@ noncomputable def pushClassMonoidHom
   haveI : IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField :=
     φ.isScalarTower_intermediateRing rfl h
   haveI := φ.isDedekindDomain_intermediateRing h
-  haveI := φ.moduleFinite_intermediateRing h
+  have : Module.Finite W₂.CoordinateRing φ.intermediateRing :=
+    φ.moduleFinite_intermediateRing_of_isElliptic h
   haveI : Module.IsTorsionFree W₁.CoordinateRing φ.intermediateRing :=
     Module.isTorsionFree_iff_algebraMap_injective.mpr φ.toIntermediateRing_injective
   haveI : Module.IsTorsionFree W₂.CoordinateRing φ.intermediateRing :=
