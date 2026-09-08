@@ -50,18 +50,25 @@ theorem _root_.Ideal.ramificationIdx_le_finrank_numberField {F : Type*} [Field F
     (IsFractionRing.finrank_eq (𝓞 K) K (𝓞 F) F).symm
 
 /-- **A relative ramification index equal to the full tower degree leaves no room for an
-intermediate field.** In a tower `K ≤ E ≤ B` of number fields, a prime `𝔔` of `𝓞 B` with
+intermediate field.** In a tower `K ≤ E ≤ B`, a prime `𝔔` of `𝓞 B` with
 `e(𝔔 / 𝓞 E) = [B : K]` forces `[E : K] = 1`.
+
+Only `E` and `B` need be number fields; the base `K` is an arbitrary field.
 
 The hypothesis is stronger than total ramification of `B / E`, which asks only
 `e(𝔔 / 𝓞 E) = [B : E]`; here the index must reach the degree of the *whole* tower. That is what a
 "no proper intermediate field" argument supplies, and what collapses the bottom step. -/
-theorem _root_.Ideal.finrank_eq_one_of_ramificationIdx_eq_finrank
+theorem _root_.Ideal.finrank_eq_one_of_ramificationIdx_eq_finrank {K : Type*} [Field K]
     {E B : Type*} [Field E] [NumberField E]
     [Field B] [NumberField B] [Algebra K E] [Algebra K B] [Algebra E B] [IsScalarTower K E B]
     (𝔔 : Ideal (𝓞 B)) [𝔔.IsPrime]
     (he : 𝔔.ramificationIdx (𝓞 E) = Module.finrank K B) :
     Module.finrank K E = 1 := by
+  -- `K` embeds in the number field `E`, so it has characteristic zero and `E` stays finite over it.
+  have : CharZero K := charZero_of_inj_zero fun n hn ↦ by
+    have : (n : E) = 0 := by rw [← map_natCast (algebraMap K E), hn, map_zero]
+    exact_mod_cast this
+  have : Module.Finite K E := Module.Finite.of_restrictScalars_finite ℚ K E
   have hb := Ideal.ramificationIdx_le_finrank_numberField (K := E) (F := B) 𝔔
   have hle : Module.finrank K E * Module.finrank E B ≤ 1 * Module.finrank E B := by
     rw [one_mul, Module.finrank_mul_finrank K E B, ← he]; exact hb
