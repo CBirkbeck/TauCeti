@@ -6,20 +6,22 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.PairEval
-public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Point
+public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Point.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.ThirdPoint
 
 /-!
 # The parametrisation carries the group law: the chord case
 
-`FormalGroup/Point.lean` sends a parameter `t` of an adic ideal to a point of `W⁄K`, and
+`FormalGroup/Point/Basic.lean` sends a parameter `t` of an adic ideal to a point of `W⁄K`, and
 `FormalGroup/PairEval.lean` gives the group law `F(t₁, t₂)` on parameters. This file joins them in
 the case where the chord through the two points is not vertical: the point of the parameter
 `F(t₁, t₂)` is the sum of the points of `t₁` and `t₂`.
 
-Together with the injectivity of `formalPoint`, this is what makes the parameters of an adic ideal
-a subgroup of the points of `W⁄K` rather than merely an indexed family of them: the group laws
-`formalAdd` satisfies at parameters are then the group laws of `W⁄K`, transported.
+This is one case of the additivity of `formalPoint`, not the whole of it. The zero parameter, the
+doubling case `t₁ = t₂`, and the inverse case, where the two points share an `x`-coordinate, each
+need a different argument and are not treated here. Only with all of them does `formalPoint` become
+a homomorphism, and only then are the parameters of an adic ideal a subgroup of the points of `W⁄K`
+rather than an indexed family of them.
 
 ## The hypotheses
 
@@ -28,10 +30,10 @@ carries the coordinates `x = t / w(t)` and `y = -1 / w(t)`, it says the two poin
 `x`-coordinates, so the line through them is not vertical. It is what excludes the doubling and
 inverse cases, which need a different argument and are not treated here.
 
-The two parameters are required nonzero because the zero parameter is the point at infinity, which
-has no affine coordinates. The sum is nonzero automatically: `formalAddEval_ne_zero` derives that
-from the chord condition. `hF` is the membership `formalPoint` needs of its argument, and is what
-`formalAddEval_mem` supplies.
+Nothing further is asked of the parameters. `w` vanishes at `0`, so the chord condition already
+excludes the zero parameter on either side; `formalAddEval_ne_zero` derives the sum's nonvanishing
+from the same condition; and `formalAddEval_mem` supplies the membership `formalPoint` needs of its
+argument, which is why the conclusion names that term rather than a hypothesis.
 
 ## Main results
 
@@ -245,14 +247,17 @@ The chord through the two points meets the curve again at the parameter `t₃(t�
 addition series is the formal inverse of that third root, so the group law of `W⁄K` applied to the
 two points computes `F(t₁, t₂)`. -/
 theorem formalPoint_formalAddEval_of_x_ne {I : Ideal O} (hI : IsAdic I) {t₁ t₂ : O}
-    (h₁ : t₁ ∈ I) (h₂ : t₂ ∈ I) (h₁0 : t₁ ≠ 0) (h₂0 : t₂ ≠ 0)
-    (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁) (hF : W.formalAddEval t₁ t₂ ∈ I) :
-    W.formalPoint (K := K) hI h₁ + W.formalPoint (K := K) hI h₂ = W.formalPoint (K := K) hI hF := by
+    (h₁ : t₁ ∈ I) (h₂ : t₂ ∈ I) (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁) :
+    W.formalPoint (K := K) hI h₁ + W.formalPoint (K := K) hI h₂ =
+      W.formalPoint (K := K) hI (W.formalAddEval_mem hI h₁ h₂) := by
+  -- the chord condition already excludes the zero parameter, `w` vanishing there
+  have h₁0 : t₁ ≠ 0 := by rintro rfl; simp at hx
+  have h₂0 : t₂ ≠ 0 := by rintro rfl; simp at hx
   have hF0 := W.formalAddEval_ne_zero (hI.isTopologicallyNilpotent_of_mem h₁)
     (hI.isTopologicallyNilpotent_of_mem h₂) hx
-  rw [W.formalPoint_eq_some hI h₁ h₁0,
-    W.formalPoint_eq_some hI h₂ h₂0,
-    W.formalPoint_eq_some hI hF hF0]
-  exact W.some_add_some_formalAddEval_of_x_ne hI h₁ h₂ h₁0 h₂0 hx hF hF0
+  rw [W.formalPoint_eq_some hI h₁ h₁0, W.formalPoint_eq_some hI h₂ h₂0,
+    W.formalPoint_eq_some hI (W.formalAddEval_mem hI h₁ h₂) hF0]
+  exact W.some_add_some_formalAddEval_of_x_ne hI h₁ h₂ h₁0 h₂0 hx
+    (W.formalAddEval_mem hI h₁ h₂) hF0
 
 end WeierstrassCurve

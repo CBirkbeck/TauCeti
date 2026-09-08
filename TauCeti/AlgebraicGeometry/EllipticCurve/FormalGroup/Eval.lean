@@ -48,6 +48,8 @@ docstring says where its conclusion comes from.
 ## Main results
 
 * `WeierstrassCurve.formalWEval_eq_pow_mul_formalUEval` : the factorisation `w(t) = t ^ 3 * u(t)`.
+* `WeierstrassCurve.formalWEval_zero` : `w(0) = 0`, an immediate consequence of that
+  factorisation and the reason the zero parameter carries no affine coordinates.
 * `WeierstrassCurve.formalWEval_mem`, `WeierstrassCurve.formalInverseEval_mem` : a parameter in
   `I ^ k` has `w(t)` and `ι(t)` in `I ^ k`.
 * `WeierstrassCurve.formalUEval_sub_one_mem` : `u(t)` is congruent to `1` modulo `I ^ k`.
@@ -171,6 +173,13 @@ theorem formalWEval_eq_pow_mul_formalUEval {t : O} (ht : PowerSeries.HasEval t) 
   have h := congrArg (evalAt ht) W.formalW_eq_X_pow_mul_formalU
   rw [map_mul, map_pow] at h
   simpa [formalWEval, formalUEval, coe_evalAt, PowerSeries.eval₂_X] using h
+
+/-- **The `w`-expansion vanishes at the zero parameter**, `w` being a multiple of `z ^ 3`. This is
+why the zero parameter is the point at infinity: the coordinates `t / w(t)` and `-1 / w(t)` have no
+value there. -/
+@[simp]
+theorem formalWEval_zero : W.formalWEval 0 = 0 := by
+  simp [W.formalWEval_eq_pow_mul_formalUEval PowerSeries.HasEval.zero]
 
 /-- The value of the `w`-expansion at a parameter of `I ^ k` again lies in `I ^ k`: it is
 `t ^ 3` times the value of the unit part. -/
