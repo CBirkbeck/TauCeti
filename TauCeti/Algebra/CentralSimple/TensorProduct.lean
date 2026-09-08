@@ -15,18 +15,18 @@ module
 public import TauCeti.Algebra.Central.TensorProduct
 public import Mathlib.RingTheory.SimpleRing.Basic
 -- Non-public: none of these appears in the type of an exported declaration. `Basis.ofVectorSpace`,
--- the `A`-basis `Algebra.TensorProduct.basis` of `A ⊗[K] B`, flatness, `TwoSidedIdeal.comap`,
--- `Algebra.TensorProduct.comm`, the transport of simplicity along a ring isomorphism and the two
--- `a ⊗ₜ 1` multiplication formulas of `TauCeti.Algebra.TensorProduct.Mul` are used only inside
--- proofs, and the matrix algebras only by the worked examples at the end of the file, so
--- downstream importers of this module do not pay for any of them.
+-- flatness, `TwoSidedIdeal.comap`, `Algebra.TensorProduct.comm`, the transport of simplicity along
+-- a ring isomorphism and the two `a ⊗ₜ 1` multiplication formulas of
+-- `TauCeti.Algebra.TensorProduct.Mul` are used only inside proofs, and the matrix algebras only by
+-- the worked examples at the end of the file, so downstream importers of this module do not pay
+-- for any of them. The `A`-basis `Algebra.TensorProduct.basis` of `A ⊗[K] B` now arrives with
+-- `Mul`, which publicly imports `Mathlib.RingTheory.TensorProduct.Free`.
 import TauCeti.Algebra.TensorProduct.Mul
 import Mathlib.Algebra.Central.Matrix
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 import Mathlib.RingTheory.Flat.Basic
 import Mathlib.RingTheory.SimpleRing.Congr
 import Mathlib.RingTheory.SimpleRing.Matrix
-import Mathlib.RingTheory.TensorProduct.Free
 import Mathlib.RingTheory.TensorProduct.Maps
 import Mathlib.RingTheory.TwoSidedIdeal.Operations
 

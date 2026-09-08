@@ -5,8 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
--- `Module.Basis` occurs in the statement of `basis_repr_mul_tmul_one` below.
-public import Mathlib.LinearAlgebra.Basis.Defs
 public import Mathlib.RingTheory.TensorProduct.Basic
 public import Mathlib.RingTheory.TensorProduct.Free
 
