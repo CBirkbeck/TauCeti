@@ -15,12 +15,13 @@ representatives, one further coset representative: an element of `Γ₀(N / p)` 
 `S = [[0, -1], [1, 0]]` modulo `p` and to the identity modulo `N / p`. This file records that
 matrix's **existence**, which is what strong approximation supplies.
 
-The general statement it specializes is congruence-subgroup infrastructure and stays there:
-`CongruenceSubgroup.exists_mem_Gamma_map_intCast_zmod_eq` in
-`TauCeti/NumberTheory/ModularForms/CongruenceSubgroups/Basic.lean` says that for coprime `d` and
-`d'` the principal congruence subgroup `Γ(d')` still surjects onto `SL₂(ℤ/dℤ)`. Only the
-descent-specific reading of it — with `d = p`, `d' = N / p` and the target `S` — is here, because
-it is roadmap-specific rather than foundational.
+The matrix comes from strong approximation at a coprime pair of levels,
+`CongruenceSubgroup.exists_mem_Gamma_map_intCast_zmod_eq`: for coprime `d` and `d'` the principal
+congruence subgroup `Γ(d')` still surjects onto `SL₂(ℤ/dℤ)`. The descent is that statement at
+`d = p` and `d' = N / p` — a coprime pair exactly because `p` divides `N` while `p²` does not —
+with `S` as the prescribed reduction modulo `p`. Approximation returns membership in `Γ(N / p)`,
+which is stronger than the `Γ₀(N / p)` the descent asks for, so the second reduction is the
+identity rather than merely lower-triangular.
 
 ## Main results
 
