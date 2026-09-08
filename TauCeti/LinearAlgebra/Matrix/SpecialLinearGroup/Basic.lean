@@ -415,6 +415,13 @@ theorem map_intCast_zmod_surjective :
   exact ⟨σ * τ, by rw [map_mul, ← hMdef, hτ, mul_inv_cancel_left]⟩
 
 
+/-- **The Chinese-remainder isomorphism commutes with integer casts.** For coprime `d` and `d'`,
+the class of an integer modulo `d * d'` goes to the pair of its classes modulo `d` and `d'`. -/
+private lemma chineseRemainder_intCast {d d' : ℕ} (hcop : d.Coprime d') (n : ℤ) :
+    ZMod.chineseRemainder hcop (n : ZMod (d * d')) = ((n : ZMod d), (n : ZMod d')) := by
+  rw [map_intCast]
+  rfl
+
 /-- **Strong approximation for `SL₂` at two coprime moduli**: for coprime `d` and `d'`, the joint
 reduction `SL₂(ℤ) → SL₂(ℤ/dℤ) × SL₂(ℤ/d'ℤ)` is surjective. So a prescribed reduction modulo `d`
 and a prescribed reduction modulo `d'` are realized simultaneously by a single integral matrix. -/
@@ -426,7 +433,7 @@ theorem map_intCast_zmod_prod_surjective {d d' : ℕ} (hcop : d.Coprime d') :
   -- Chinese remainder theorem glues the pair of targets into one matrix over `ZMod (d * d')`,
   -- whose determinant is `1` because it is `1` in each factor separately.
   rintro ⟨A, B⟩
-  set e := ZMod.chineseRemainder hcop
+  set e := ZMod.chineseRemainder hcop with hE
   -- The two targets, glued entrywise into a single matrix over `ZMod (d * d')`.
   set C : Matrix (Fin 2) (Fin 2) (ZMod (d * d')) :=
     .of fun i j => e.symm (A i j, B i j) with hC
@@ -454,13 +461,20 @@ theorem map_intCast_zmod_prod_surjective {d d' : ℕ} (hcop : d.Coprime d') :
   -- Reading the glued matrix back off in each factor is applying a ring hom to an integer cast.
   have hentry : ∀ i j, ((γ i j : ℤ) : ZMod (d * d')) = e.symm (A i j, B i j) := fun i j => by
     have := congrArg (fun M : SL(2, ZMod (d * d')) => M i j) hγ
-    simpa [map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply, hC] using this
+    simpa only [map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply, hC, Matrix.of_apply,
+      Int.coe_castRingHom] using this
+  -- the two prescribed reductions, read off together: `e` carries the class of an integer
+  -- modulo `d * d'` to the pair of its classes, so cancelling `e` against `e.symm` in `hentry`
+  -- gives both components at once
+  have hpair : ∀ i j, ((((γ i j : ℤ) : ZMod d)), (((γ i j : ℤ) : ZMod d'))) = (A i j, B i j) :=
+    fun i j => by
+      rw [← chineseRemainder_intCast hcop, ← hE, hentry i j, RingEquiv.apply_symm_apply]
   refine ⟨γ, Prod.ext ?_ ?_⟩
   · ext i j
-    simpa using congrArg
-      ((RingHom.fst (ZMod d) (ZMod d')).comp (e : ZMod (d * d') →+* _)) (hentry i j)
+    simpa only [MonoidHom.prod_apply, map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply,
+      Int.coe_castRingHom] using congrArg Prod.fst (hpair i j)
   · ext i j
-    simpa using congrArg
-      ((RingHom.snd (ZMod d) (ZMod d')).comp (e : ZMod (d * d') →+* _)) (hentry i j)
+    simpa only [MonoidHom.prod_apply, map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply,
+      Int.coe_castRingHom] using congrArg Prod.snd (hpair i j)
 
 end Matrix.SpecialLinearGroup

@@ -7,7 +7,7 @@ module
 
 public import TauCeti.NumberTheory.ModularForms.ConductorDichotomy
 public import TauCeti.NumberTheory.ModularForms.Newforms.Basic
-public import TauCeti.NumberTheory.ModularForms.Newforms.Descent
+public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Basic
 
 /-!
 # A form with a periodic level-`l` descent is old
@@ -39,7 +39,7 @@ instead assumes `QExpansionSupportedOnDvd l f` and obtains `φ` from it.
   level-`l` descent is invariant under the weight-`k` slash action of `T`, is old.
 * `TauCeti.mem_cuspFormsOld_of_qExpansionSupportedOnDvd`: **the Atkin–Lehner step at one
   divisor** — the same conclusion from the `q`-expansion support condition alone, the descent
-  being supplied by `Newforms/Descent.lean`.
+  being supplied by `Newforms/Descent/Basic.lean`.
 
 ## Provenance
 
