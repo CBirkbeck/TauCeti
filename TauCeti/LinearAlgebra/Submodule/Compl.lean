@@ -8,13 +8,20 @@ module
 public import Mathlib.LinearAlgebra.Prod
 
 /-!
-# Complementary submodules induced on a subspace
+# Complementary submodules under restriction and products
 
-Mathlib's `Submodule.isCompl_comap_subtype_of_isCompl_of_le` restricts a complementary pair to a
-subspace that contains one of the two. This file records the variant that applies when neither
-member of the pair lies in the subspace: a disjoint pair cuts a subspace `U` into a complementary
-pair as soon as the two intersections with `U` span `U` — for a general `U` a genuine hypothesis,
-not a consequence of spanning the ambient module.
+Two ways complementarity of a pair of submodules survives a construction.
+
+**Restriction to a subspace.** Mathlib's `Submodule.isCompl_comap_subtype_of_isCompl_of_le`
+restricts a complementary pair to a subspace that contains one of the two. This file records the
+variant that applies when neither member of the pair lies in the subspace: a disjoint pair cuts a
+subspace `U` into a complementary pair as soon as the two intersections with `U` span `U` — for a
+general `U` a genuine hypothesis, not a consequence of spanning the ambient module.
+
+**Products.** Complementarity is also preserved by products: a complementary pair in `E` and one in
+`F` give a complementary pair in `E × F`. This is what lets a direct-sum decomposition be built
+factor by factor, and it is used that way for the doubled totally real modules in
+`TauCeti/LinearAlgebra/TotallyReal/Basic.lean`.
 
 ## Main results
 
