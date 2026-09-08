@@ -53,8 +53,9 @@ and what is **not** proved here.
 * `TauCeti.Huber.PairOfDefinition.polyEvalHom`: the evaluation of *polynomials* at the fractions,
   landing in `Aₛ` itself rather than in its completion, and
   `TauCeti.Huber.PairOfDefinition.isOpenQuotientMap_polyEvalHom` presenting it as an open quotient
-  map — its three components being
-  `TauCeti.Huber.PairOfDefinition.surjective_polyEvalHom`,
+  map, with `TauCeti.Huber.PairOfDefinition.polyEvalHom_weightedPolynomialsEquiv` as its
+  characteristic equation — the three components of the presentation being
+  `TauCeti.Huber.PairOfDefinition.polyEvalHom_surjective`,
   `TauCeti.Huber.PairOfDefinition.continuous_polyEvalHom` and
   `TauCeti.Huber.PairOfDefinition.isOpenMap_polyEvalHom`.
 * `TauCeti.Huber.PairOfDefinition.exists_aeval_eq_of_mem_locIdealImage`: the `n`-th neighbourhood
@@ -78,6 +79,9 @@ completions is a separate step.
 
 * [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), Proposition 5.50 for the
   universal property, and Examples 6.38 and 6.39 for the intended use.
+* `TauCetiRoadmap/AdicSpaces/README.md`, Layer 4.1, which prescribes this open-quotient route —
+  "use Layer 0's open mapping theorem to show that the relevant images are closed" — in place of
+  noetherian adic-completion flatness.
 -/
 
 public section
@@ -275,7 +279,7 @@ noncomputable def polyEvalHom {k : ℕ} (t : Fin k → A) :
 /-- **The polynomial evaluation is onto `Aₛ`** when the numerators generate the unit ideal: its
 range is the `A`-subalgebra the fractions generate, which is everything by
 `TauCeti.Localization.adjoin_divBy_eq_top`. -/
-theorem surjective_polyEvalHom {k : ℕ} (t : Fin k → A)
+theorem polyEvalHom_surjective {k : ℕ} (t : Fin k → A)
     (hspan : Ideal.span (Set.range t) = ⊤) : Function.Surjective (polyEvalHom s (S := S) t) := by
   have hrange : (Set.range fun x : (Set.range t) ↦ (divBy (x : A) s : S))
       = Set.range fun i ↦ (divBy (t i) s : S) := by
@@ -288,6 +292,17 @@ theorem surjective_polyEvalHom {k : ℕ} (t : Fin k → A)
     rw [← AlgHom.range_eq_top, ← Algebra.adjoin_range_eq_range_aeval, ← hrange]
     exact adjoin_divBy_eq_top s hspan
   exact haeval.comp (weightedPolynomialsEquiv isWeightFamily_one_weight).symm.surjective
+
+omit hden in
+/-- **How `TauCeti.Huber.PairOfDefinition.polyEvalHom` acts**: on the copy of a polynomial inside
+`A⟨X⟩` it is evaluation of that polynomial at the fractions. This is the characteristic equation;
+consumers should use it rather than unfolding the definition. -/
+@[simp]
+theorem polyEvalHom_weightedPolynomialsEquiv {k : ℕ} (t : Fin k → A)
+    (p : MvPolynomial (Fin k) A) :
+    polyEvalHom s (S := S) t (weightedPolynomialsEquiv isWeightFamily_one_weight p)
+      = MvPolynomial.aeval (fun i ↦ (divBy (t i) s : S)) p := by
+  simp [polyEvalHom]
 
 omit [NonarchimedeanRing A] hden in
 /-- Every element of `D` is the value of a polynomial over `A₀` at the fractions. -/
@@ -357,16 +372,22 @@ private theorem exists_polynomial_coeff_mem_idealImage {k : ℕ} (t : Fin k → 
     fun m ↦ ?_, ?_⟩
   · rw [MvPolynomial.coeff_map]
     exact (P.mem_idealImage n).mpr ⟨_, MvPolynomial.mem_map_C_iff.mp hren m, rfl⟩
-  · rw [MvPolynomial.aeval_def, MvPolynomial.eval₂_map, ← IsScalarTower.algebraMap_eq,
-      ← MvPolynomial.aeval_def, MvPolynomial.aeval_rename,
-      show (fun i ↦ (divBy (t i) s : S)) ∘ σ = fun y : ↥T ↦ (divBy (y : A) s : S) from
-        funext fun y ↦ by rw [Function.comp_apply, hσ y]]
+  · -- `aeval_rename` leaves the composite `(fun i ↦ tᵢ/s) ∘ σ`; `hσ` says `σ` picks a numerator
+    -- equal to each element of `T`, so the composite is the `T`-indexed family. The equality is
+    -- named rather than inlined because `funext` is what supplies it, not elaboration.
+    have hcomp : (fun i ↦ (divBy (t i) s : S)) ∘ σ = fun y : ↥T ↦ (divBy (y : A) s : S) :=
+      funext fun y ↦ by rw [Function.comp_apply, hσ y]
+    rw [MvPolynomial.aeval_def, MvPolynomial.eval₂_map, ← IsScalarTower.algebraMap_eq,
+      ← MvPolynomial.aeval_def, MvPolynomial.aeval_rename, hcomp]
     exact hqx
 
-/-- **The polynomial evaluation `Xᵢ ↦ tᵢ/s` is an open map onto `Aₛ`**, for numerators
-exhausting `T`.
+/-- **The polynomial evaluation `Xᵢ ↦ tᵢ/s` is an open map**, for numerators exhausting `T`.
 
-Together with `TauCeti.Huber.PairOfDefinition.surjective_polyEvalHom` this presents `Aₛ` as an
+This asserts openness only. Surjectivity is a separate statement with a separate hypothesis —
+`TauCeti.Huber.PairOfDefinition.polyEvalHom_surjective`, which asks the numerators to generate
+the unit ideal.
+
+Together with `TauCeti.Huber.PairOfDefinition.polyEvalHom_surjective` this presents `Aₛ` as an
 open quotient of a polynomial ring. That is exactly the input `AddMonoidHom.surjective_completion`
 and `AddMonoidHom.isOpenMap_completion` take, so it is what carries the presentation to the
 completions `A⟨X₁, …, Xₖ⟩ → A⟨T/s⟩` — Wedhorn's Proposition 8.30, and through it the strong
@@ -376,7 +397,8 @@ Openness is the half of 8.30 that does not come for free. Surjectivity is a stat
 generation, whereas openness compares two topologies that were defined independently: `Aₛ` carries
 the localisation topology, not a quotient topology transported from the polynomials.
 
-`hTt` asks the numerators to exhaust `T`. It is the same demand surjectivity makes. -/
+`hTt` asks the numerators to exhaust `T`, which is what the reindexing in the proof consumes;
+it neither implies nor is implied by the unit-ideal condition surjectivity needs. -/
 theorem isOpenMap_polyEvalHom {k : ℕ} (t : Fin k → A)
     (hTt : ↑T ⊆ Set.range t) :
     letI := locTopology P T s S hden
@@ -399,9 +421,7 @@ theorem isOpenMap_polyEvalHom {k : ℕ} (t : Fin k → A)
     rw [weightMul_one_weight, coe_weightedPolynomialsEquiv, coe_weightedPolynomialHom,
       MvPolynomial.coeff_coe]
     exact hn (hp ν)
-  · simpa only [polyEvalHom, RingHom.coe_comp, Function.comp_apply, AlgHom.toRingHom_eq_coe,
-      RingHom.coe_coe, RingEquiv.toRingHom_eq_coe, RingEquiv.coe_toRingHom,
-      RingEquiv.symm_apply_apply] using hpx
+  · simpa only [polyEvalHom_weightedPolynomialsEquiv] using hpx
 
 /-! ### The polynomial evaluation is continuous -/
 
@@ -448,9 +468,7 @@ theorem continuous_polyEvalHom {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i ∈ 
     have hx' := (mem_weightedNhd).mp hx m
     rwa [weightMul_one_weight, coe_weightedPolynomialsEquiv, coe_weightedPolynomialHom,
       MvPolynomial.coeff_coe] at hx'
-  simpa only [polyEvalHom, RingHom.coe_comp, Function.comp_apply, AlgHom.toRingHom_eq_coe,
-    RingHom.coe_coe, RingEquiv.toRingHom_eq_coe, RingEquiv.coe_toRingHom,
-    RingEquiv.symm_apply_apply, SetLike.mem_coe] using
+  simpa only [polyEvalHom_weightedPolynomialsEquiv, SetLike.mem_coe] using
     aeval_mem_locIdealImage_of_coeff_mem P T s S t ht n hcoeff
 
 /-- **The polynomial evaluation is an open quotient map onto `Aₛ`.** It is continuous, open and
@@ -465,7 +483,7 @@ theorem isOpenQuotientMap_polyEvalHom {k : ℕ} (t : Fin k → A) (ht : ∀ i, t
     letI := locTopology P T s S hden
     IsOpenQuotientMap (polyEvalHom s (S := S) t) :=
   letI := locTopology P T s S hden
-  ⟨surjective_polyEvalHom s S t hspan, continuous_polyEvalHom P T s S hden t ht,
+  ⟨polyEvalHom_surjective s S t hspan, continuous_polyEvalHom P T s S hden t ht,
     isOpenMap_polyEvalHom P T s S hden t hTt⟩
 
 end PairOfDefinition
