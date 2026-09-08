@@ -190,8 +190,8 @@ theorem mk_Y_mul_add_eq :
       + algebraMap F[X] W.CoordinateRing (Polynomial.C W.a₁ * Polynomial.X + Polynomial.C W.a₃))
       = algebraMap F[X] W.CoordinateRing (Polynomial.X ^ 3 + Polynomial.C W.a₂ * Polynomial.X ^ 2
           + Polynomial.C W.a₄ * Polynomial.X + Polynomial.C W.a₆) := by
-    rw [← TauCeti.WeierstrassCurve.Affine.CoordinateRing.mk_C_eq_algebraMap,
-      ← TauCeti.WeierstrassCurve.Affine.CoordinateRing.mk_C_eq_algebraMap, ← map_add, ← map_mul]
+    rw [← WeierstrassCurve.Affine.CoordinateRing.mk_C_eq_algebraMap,
+      ← WeierstrassCurve.Affine.CoordinateRing.mk_C_eq_algebraMap, ← map_add, ← map_mul]
     exact AdjoinRoot.mk_eq_mk.mpr ⟨1, by rw [polynomial]; ring1⟩
   rw [IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField,
     IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField, ← map_add, ← map_mul, hY]
