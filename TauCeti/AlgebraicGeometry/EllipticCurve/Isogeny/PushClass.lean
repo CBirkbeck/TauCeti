@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.Dedekind
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.Finite
 public import TauCeti.RingTheory.ClassGroup.ExtendedRelNorm
@@ -122,11 +121,10 @@ variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F}
 section PushClass
 
 variable (φ : Isogeny W₁ W₂)
-  [IsDomain W₁.CoordinateRing] [IsDedekindDomain W₂.CoordinateRing]
+  [IsDedekindDomain W₁.CoordinateRing] [IsDedekindDomain W₂.CoordinateRing]
   [Algebra W₂.CoordinateRing W₁.FunctionField]
   [Algebra W₂.FunctionField W₁.FunctionField]
   [IsScalarTower W₂.CoordinateRing W₂.FunctionField W₁.FunctionField]
-  [W₁.IsElliptic]
 
 /-- **The class-group map induced by an isogeny**, multiplicatively: extend a class of
 `W₁.CoordinateRing` into the intermediate ring, then norm it down to `W₂.CoordinateRing`.
@@ -143,7 +141,7 @@ noncomputable def pushClassMonoidHom
     φ.isScalarTower_intermediateRing rfl h
   haveI := φ.isDedekindDomain_intermediateRing h
   have : Module.Finite W₂.CoordinateRing φ.intermediateRing :=
-    φ.moduleFinite_intermediateRing_of_isElliptic h
+    φ.moduleFinite_intermediateRing_of_isDedekindDomain h
   haveI : Module.IsTorsionFree W₁.CoordinateRing φ.intermediateRing :=
     Module.isTorsionFree_iff_algebraMap_injective.mpr φ.toIntermediateRing_injective
   haveI : Module.IsTorsionFree W₂.CoordinateRing φ.intermediateRing :=
