@@ -27,8 +27,10 @@ be complete, Hausdorff and nonarchimedean. That instance is Mathlib's, and is av
 because this module imports it.
 
 This module fixes the notation and records what instance search does not supply: continuity of the
-structure map, and — at `k = 0`, where the construction degenerates to the separated completion of
-`A` — the identification of `A⟨⟩` with `Â` together with its topological API.
+structure map, joint continuity of the `A`-scalar action — so that `A⟨X₁,…,Xₖ⟩` is a topological
+`A`-algebra and results about topological `A`-modules apply to it — and, at `k = 0`, where the
+construction degenerates to the separated completion of `A`, the identification of `A⟨⟩` with `Â`
+together with its topological API.
 
 The predicate that every `A⟨X₁,…,Xₖ⟩` is noetherian is
 `TauCeti.Huber.IsStronglyNoetherian`, in `TauCeti.RingTheory.Huber.StronglyNoetherian`; the
