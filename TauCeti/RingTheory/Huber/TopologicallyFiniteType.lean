@@ -8,8 +8,8 @@ module
 public import Mathlib.Topology.Algebra.Ring.Ideal
 public import TauCeti.RingTheory.Huber.StronglyNoetherian
 public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Completion
-public import TauCeti.RingTheory.Huber.OpenMapping
 
+import TauCeti.RingTheory.Huber.OpenMapping
 import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.FirstCountable
 import TauCeti.Topology.Algebra.GroupCompletion
 
@@ -88,10 +88,8 @@ it.
   noetherian Huber ring, an algebra strictly topologically of finite type is again strongly
   noetherian.
 * `TauCeti.Huber.isStrictlyTopologicallyFiniteType_of_surjective`: **over a Tate ring, a
-  continuous surjection out of `A⟨X₁, …, Xₖ⟩` is already a strict presentation** — openness is
-  supplied by the open mapping theorem rather than assumed.
-* `TauCeti.Huber.isStronglyNoetherian_of_surjective`: consequently such a surjection transfers
-  strong noetherianness from the base, with no openness obligation.
+  surjection out of `A⟨X₁, …, Xₖ⟩` that is continuous at zero is already a strict
+  presentation** — openness is supplied by the open mapping theorem rather than assumed.
 
 ## References
 
@@ -259,9 +257,9 @@ end StronglyNoetherian
 /-! ### Presentations supplied by the open mapping theorem
 
 Over a Tate ring a strict presentation need not be exhibited as an *open* map: **openness is
-automatic**. A continuous surjection out of `A⟨X₁, …, Xₖ⟩` onto a complete Hausdorff first
-countable algebra is open by `TauCeti.Huber.IsTateRing.isOpenMap`, so surjectivity and continuity
-alone already make it a strict presentation.
+automatic**. A surjection out of `A⟨X₁, …, Xₖ⟩` onto a complete Hausdorff first countable algebra
+that is continuous at zero is open by `TauCeti.Huber.IsTateRing.isOpenMap`, so continuity and
+surjectivity together already make it a strict presentation.
 -/
 
 section OpenMappingPresentation
@@ -273,10 +271,14 @@ variable {A : Type*} [CommRing A] [UniformSpace A] [NonarchimedeanRing A] [IsTat
   {B : Type*} [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [CompleteSpace B]
   [(𝓤 B).IsCountablyGenerated] [T0Space B] [Algebra A B] [ContinuousConstSMul A B]
 
-/-- **Over a Tate ring, a continuous surjection out of `A⟨X₁, …, Xₖ⟩` is a strict
-presentation.** No openness has to be checked: `TauCeti.Huber.IsTateRing.isOpenMap` supplies it
-from surjectivity and continuity alone, so the analytic half of Wedhorn Definition 6.28 is free
-and only the algebraic half — that `π` is onto — has to be established.
+/-- **Over a Tate ring, a surjection out of `A⟨X₁, …, Xₖ⟩` that is continuous at zero is a strict
+presentation.** Openness is not a third obligation: once continuity at zero and surjectivity are
+in hand, `TauCeti.Huber.IsTateRing.isOpenMap` supplies it, so Wedhorn Definition 6.28 asks for
+nothing beyond the two hypotheses here.
+
+Continuity is asked at zero only, which is what the open mapping theorem consumes; a caller
+holding `Continuous π` passes its `.continuousAt`. The global continuity that `IsOpenQuotientMap`
+records is recovered from it by `continuous_of_continuousAt_zero`.
 
 The hypotheses on the target are the ones that open mapping theorem asks for, and they are
 exactly the standing hypotheses of Wedhorn's §8.2: complete, Hausdorff, and first countable in
@@ -290,30 +292,18 @@ ring receiving a surjection, which is what a consumer actually holds: a complete
 localisation is not a quotient type, and identifying it with one is precisely the work this
 avoids.
 
-**This constructs no surjection.** Exhibiting a continuous surjection onto a given `B` is the
-work; what this theorem does is guarantee that having done it, nothing analytic remains. -/
+**This constructs no surjection.** Exhibiting one onto a given `B` is the work; what this theorem
+does is remove openness from the list of things that then have to be checked. -/
 theorem isStrictlyTopologicallyFiniteType_of_surjective {k : ℕ}
     (π : restrictedMvPowerSeriesCompletion k A →ₐ[A] B)
-    (hπ : Continuous π) (hs : Function.Surjective π) :
+    (hπ : ContinuousAt (π : restrictedMvPowerSeriesCompletion k A → B) 0)
+    (hs : Function.Surjective π) :
     IsStrictlyTopologicallyFiniteType (algebraMap A B) := by
   let _ : (𝓤 (restrictedMvPowerSeriesCompletion k A)).IsCountablyGenerated :=
     IsUniformAddGroup.uniformity_countably_generated
   exact isStrictlyTopologicallyFiniteType_iff.mpr
-    ⟨k, π.toRingHom, ⟨hs, hπ, IsTateRing.isOpenMap π.toLinearMap hs hπ.continuousAt⟩,
-      π.comp_algebraMap⟩
-
-/-- **Strong noetherianity transfers along a continuous surjection out of `A⟨X₁, …, Xₖ⟩`.**
-
-Composing the previous theorem with
-`TauCeti.Huber.IsStrictlyTopologicallyFiniteType.isStronglyNoetherian`. It is the form Wedhorn's
-§8.2 consumes: presenting a rational localisation as a *continuous surjective* image of
-`A⟨X₁, …, Xₖ⟩` is enough to inherit strong noetherianness from the base, with no openness
-obligation of its own. -/
-theorem isStronglyNoetherian_of_surjective [IsStronglyNoetherian A] [NonarchimedeanRing B] {k : ℕ}
-    (π : restrictedMvPowerSeriesCompletion k A →ₐ[A] B)
-    (hπ : Continuous π) (hs : Function.Surjective π) :
-    IsStronglyNoetherian B :=
-  (isStrictlyTopologicallyFiniteType_of_surjective π hπ hs).isStronglyNoetherian
+    ⟨k, π.toRingHom, ⟨hs, continuous_of_continuousAt_zero π.toLinearMap hπ,
+      IsTateRing.isOpenMap π.toLinearMap hs hπ⟩, π.comp_algebraMap⟩
 
 end OpenMappingPresentation
 
