@@ -44,7 +44,7 @@ private theorem _root_.Module.End.prodMap_pow (f : Module.End K V) (g : Module.E
   | succ n hn => rw [pow_succ, pow_succ, pow_succ, hn, LinearMap.prodMap_mul]
 
 /-- The componentwise product of two nilpotent endomorphisms is nilpotent. -/
-theorem _root_.Module.End._root_.IsNilpotent.prodMap {f : Module.End K V} {g : Module.End K W}
+theorem _root_.IsNilpotent.prodMap {f : Module.End K V} {g : Module.End K W}
     (hf : IsNilpotent f) (hg : IsNilpotent g) : IsNilpotent (f.prodMap g) := by
   obtain ⟨m, hm⟩ := hf
   obtain ⟨n, hn⟩ := hg

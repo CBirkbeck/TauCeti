@@ -144,7 +144,7 @@ section CommSemiring
 variable [CommSemiring K] [AddCommGroup V] [Module K V] [AddCommGroup W] [Module K W]
 
 /-- If `f - 1` and `g - 1` are nilpotent, then `TensorProduct.map f g - 1` is nilpotent. -/
-theorem _root_.Module.End._root_.IsNilpotent.tensorProduct_map_sub_one {f : _root_.Module.End K V}
+theorem _root_.IsNilpotent.tensorProduct_map_sub_one {f : _root_.Module.End K V}
     {g : _root_.Module.End K W} (hf : IsNilpotent (f - 1)) (hg : IsNilpotent (g - 1)) :
     IsNilpotent (TensorProduct.map f g - 1) := by
   let n : _root_.Module.End K (V ⊗[K] W) := f.rTensor W - 1
