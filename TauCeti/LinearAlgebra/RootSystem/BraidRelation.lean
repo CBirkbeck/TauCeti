@@ -146,7 +146,7 @@ theorem _root_.RootPairing.weylGroup.pow_three_ofIdx_mul_ofIdx_eq_one
     (h : P.pairing i j * P.pairing j i = 1) :
     (_root_.RootPairing.weylGroup.ofIdx P i *
       _root_.RootPairing.weylGroup.ofIdx P j) ^ 3 = 1 := by
-  refine eq_one_of_smul_eq_self fun x ↦ ?_
+  refine RootPairing.weylGroup.eq_one_of_smul_eq_self fun x ↦ ?_
   -- At `t = -1` the coefficients of the two displacement terms are `S₀(t)(S₁(t) + S₀(t)) = 0`
   -- and `S₁(t)(S₁(t) + S₀(t)) = 0`.
   rw [RootPairing.weylGroup.pow_ofIdx_mul_ofIdx_smul P i j 3 x (-1) (by rw [h]; ring)]
@@ -159,7 +159,7 @@ theorem _root_.RootPairing.weylGroup.pow_four_ofIdx_mul_ofIdx_eq_one
     (h : P.pairing i j * P.pairing j i = 2) :
     (_root_.RootPairing.weylGroup.ofIdx P i *
       _root_.RootPairing.weylGroup.ofIdx P j) ^ 4 = 1 := by
-  refine eq_one_of_smul_eq_self fun x ↦ ?_
+  refine RootPairing.weylGroup.eq_one_of_smul_eq_self fun x ↦ ?_
   -- At `t = 0` both coefficients carry the factor `S₁(t) = t = 0`.
   rw [RootPairing.weylGroup.pow_ofIdx_mul_ofIdx_smul P i j 4 x 0 (by rw [h]; ring)]
   norm_num [S_zero, S_one]
@@ -171,7 +171,7 @@ theorem _root_.RootPairing.weylGroup.pow_six_ofIdx_mul_ofIdx_eq_one
     (h : P.pairing i j * P.pairing j i = 3) :
     (_root_.RootPairing.weylGroup.ofIdx P i *
       _root_.RootPairing.weylGroup.ofIdx P j) ^ 6 = 1 := by
-  refine eq_one_of_smul_eq_self fun x ↦ ?_
+  refine RootPairing.weylGroup.eq_one_of_smul_eq_self fun x ↦ ?_
   -- At `t = 1` both coefficients carry the factor `S₂(t) = t² - 1 = 0`.
   rw [RootPairing.weylGroup.pow_ofIdx_mul_ofIdx_smul P i j 6 x 1 (by rw [h]; ring)]
   norm_num [S_two]
@@ -299,7 +299,7 @@ theorem _root_.RootPairing.weylGroup.orderOf_ofIdx_mul_ofIdx_eq_coxeterMatrixOfB
     orderOf (_root_.RootPairing.weylGroup.ofIdx P (k : ι) *
       _root_.RootPairing.weylGroup.ofIdx P (l : ι)) = coxeterMatrixOfBase P b k l := by
   rcases eq_or_ne k l with rfl | hkl
-  · rw [ofIdx_mul_self, orderOf_one]
+  · rw [RootPairing.weylGroup.ofIdx_mul_self, orderOf_one]
     simp
   have hmem := cartanMatrix_mul_cartanMatrix_mem_of_ne P b hkl
   have hcast := RootPairing.weylGroup.pairing_mul_pairing_eq_cast P b k l
@@ -308,7 +308,7 @@ theorem _root_.RootPairing.weylGroup.orderOf_ofIdx_mul_ofIdx_eq_coxeterMatrixOfB
   · have h₂ : coxeterMatrixOfBase P b k l = 2 := by
       rw [coxeterMatrixOfBase_apply, hc, coxeterOrder_zero]
     rw [h₂]
-    exact orderOf_ofIdx_mul_ofIdx_eq_two_of_coxeterMatrixOfBase_eq_two P b h₂
+    exact RootPairing.weylGroup.orderOf_ofIdx_mul_ofIdx_eq_two_of_coxeterMatrixOfBase_eq_two P b h₂
   · rw [coxeterMatrixOfBase_apply, hc, coxeterOrder_one]
     exact RootPairing.weylGroup.orderOf_ofIdx_mul_ofIdx_eq_three P _ _ hcast
   · rw [coxeterMatrixOfBase_apply, hc, coxeterOrder_two]

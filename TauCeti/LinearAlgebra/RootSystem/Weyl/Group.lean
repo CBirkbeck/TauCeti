@@ -129,12 +129,12 @@ lemma _root_.RootPairing.coroot'_weylGroupToPerm_smul (w : P.weylGroup) (i : ι)
 theorem _root_.RootPairing.weylGroupToPerm_injective_of_span_eq_top
     (hspan : Submodule.span R (range P.root) = ⊤) :
     Function.Injective P.weylGroupToPerm :=
-  (Equiv.indexHom_injective_of_span_eq_top P hspan).comp Subtype.val_injective
+  (RootPairing.Equiv.indexHom_injective_of_span_eq_top P hspan).comp Subtype.val_injective
 
 /-- The action of the Weyl group on root indices is faithful. -/
 theorem _root_.RootPairing.weylGroupToPerm_injective
     [P.IsRootSystem] : Function.Injective P.weylGroupToPerm :=
-  (Equiv.indexHom_injective P).comp Subtype.val_injective
+  (RootPairing.Equiv.indexHom_injective P).comp Subtype.val_injective
 
 /-- The Weyl-group permutation of a simple reflection is the corresponding root-index
 reflection. -/
@@ -210,7 +210,7 @@ theorem _root_.RootPairing.weylGroup.eq_one_of_smul_eq_self
 
 variable {P} in
 /-- Two Weyl-group elements agreeing on the weight space are equal. -/
-@[RootPairing.weylGroup.ext]
+@[ext]
 theorem _root_.RootPairing.weylGroup.ext
     {v w : P.weylGroup} (h : ∀ x : M, v • x = w • x) : v = w := by
   rw [← mul_inv_eq_one]
@@ -256,7 +256,7 @@ variable [Finite ι]
 theorem _root_.RootPairing.finite_aut_of_span_eq_top
     (hspan : Submodule.span R (range P.root) = ⊤) : Finite P.Aut :=
   Finite.of_injective (_root_.RootPairing.Equiv.indexHom P)
-    (Equiv.indexHom_injective_of_span_eq_top P hspan)
+    (RootPairing.Equiv.indexHom_injective_of_span_eq_top P hspan)
 
 /-- The automorphism group of a finite root system is finite. -/
 theorem _root_.RootPairing.finite_aut [P.IsRootSystem] : Finite P.Aut :=
@@ -284,7 +284,7 @@ theorem _root_.RootPairing.card_aut_le_factorial_of_span_eq_top
   calc
     Nat.card P.Aut ≤ Nat.card (ι ≃ ι) := Nat.card_le_card_of_injective
       (_root_.RootPairing.Equiv.indexHom P)
-        (Equiv.indexHom_injective_of_span_eq_top P hspan)
+        (RootPairing.Equiv.indexHom_injective_of_span_eq_top P hspan)
     _ = Nat.factorial (Nat.card ι) := Nat.card_perm
 
 /-- The automorphism group of a finite root system has order at most the factorial of the number

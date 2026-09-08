@@ -396,11 +396,14 @@ theorem _root_.RootPairing.weylGroup.orderOf_ofIdx_mul_ofIdx_eq_two_of_coxeterMa
       _root_.RootPairing.weylGroup.ofIdx P (j : ι)) = 2 := by
   have hij : i ≠ j := by rintro rfl; simp at h
   have hij' : (i : ι) ≠ (j : ι) := fun h ↦ hij (Subtype.ext h)
-  have hcomm := commute_ofIdx_of_isOrthogonal P ((coxeterMatrixOfBase_eq_two_iff P b i j).mp h)
+  have hcomm := RootPairing.weylGroup.commute_ofIdx_of_isOrthogonal P
+    ((coxeterMatrixOfBase_eq_two_iff P b i j).mp h)
   refine orderOf_eq_prime ?_ ?_
-  · rw [hcomm.mul_pow, sq, sq, ofIdx_mul_self, ofIdx_mul_self, mul_one]
-  · rw [Ne, mul_eq_one_iff_eq_inv, inv_eq_of_mul_eq_one_right (ofIdx_mul_self P (j : ι))]
-    exact ofIdx_ne_ofIdx_of_ne P b i.property j.property hij'
+  · rw [hcomm.mul_pow, sq, sq, RootPairing.weylGroup.ofIdx_mul_self,
+      RootPairing.weylGroup.ofIdx_mul_self, mul_one]
+  · rw [Ne, mul_eq_one_iff_eq_inv,
+      inv_eq_of_mul_eq_one_right (RootPairing.weylGroup.ofIdx_mul_self P (j : ι))]
+    exact RootPairing.weylGroup.ofIdx_ne_ofIdx_of_ne P b i.property j.property hij'
 
 end
 

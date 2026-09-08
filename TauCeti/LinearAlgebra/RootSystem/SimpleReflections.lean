@@ -170,7 +170,8 @@ theorem _root_.RootPairing.weylGroup.ofIdx_ne_ofIdx_of_ne
   have hindep : LinearIndependent R ![P.root i, P.root j] :=
     b.linearIndependent_pair_of_ne (i := ⟨i, hi⟩) (j := ⟨j, hj⟩) (by simpa using hij)
   have happ : P.root (P.reflectionPerm i j) = P.root (P.reflectionPerm j j) := by
-    rw [← weylGroupToPerm_ofIdx_apply P i j, ← weylGroupToPerm_ofIdx_apply P j j, hEq]
+    rw [← RootPairing.weylGroupToPerm_ofIdx_apply P i j,
+      ← RootPairing.weylGroupToPerm_ofIdx_apply P j j, hEq]
   rw [P.root_reflectionPerm, P.root_reflectionPerm, P.reflection_apply_root,
     P.reflection_apply_self] at happ
   -- `happ` now reads `αⱼ - ⟨αⱼ, αᵢ^∨⟩ • αᵢ = -αⱼ`, so `2 • αⱼ` is a multiple of `αᵢ`.
