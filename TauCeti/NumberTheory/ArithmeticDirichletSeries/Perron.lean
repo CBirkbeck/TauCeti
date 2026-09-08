@@ -530,6 +530,53 @@ private theorem integral_perronFn_one_horizontal_diff (hT : T ≠ 0) (a b : ℝ)
     (((hcont _ (neg_ne_zero.2 hT)).sub (hcont _ hT)))]
   ring
 
+-- Three self-contained steps of `norm_integral_perronFn_sub_two_pi_le_of_one_lt`, extracted
+-- because each is a fact in its own right rather than a stage of one estimate.
+
+/-- The four arctan contributions of the rectangle's sides to the residue sum to `2 π i`. -/
+private theorem arctan_rectangle_residue (hc : 0 < c) (hB0 : 0 < B) (hT : 0 < T) :
+    2 * I * ((Real.arctan (c / T) : ℂ) - (Real.arctan (-B / T) : ℂ))
+      + I * (2 * (Real.arctan (T / c) : ℂ)) - I * (2 * (Real.arctan (T / -B) : ℂ))
+      = 2 * π * I := by
+  have hA : ((Real.arctan (c / T) : ℝ) : ℂ) + ((Real.arctan (T / c) : ℝ) : ℂ)
+      = (π : ℂ) / 2 := by
+    rw [← Complex.ofReal_add, arctan_div_add_arctan_div hc hT]
+    push_cast
+    ring
+  have hB : ((Real.arctan (B / T) : ℝ) : ℂ) + ((Real.arctan (T / B) : ℝ) : ℂ)
+      = (π : ℂ) / 2 := by
+    rw [← Complex.ofReal_add, arctan_div_add_arctan_div hB0 hT]
+    push_cast
+    ring
+  rw [neg_div, Real.arctan_neg, div_neg, Real.arctan_neg]
+  push_cast
+  linear_combination (2 * I) * hA + (2 * I) * hB
+
+/-- Each horizontal side of the rectangle contributes at most `x ^ c / (T * |log x|)`. -/
+private theorem norm_integral_perronFn_horizontal_le_bound (hx1 : 1 < x) (hT : 0 < T)
+    {B : ℝ} (hab : (-B : ℝ) ≤ c) {u : ℝ} (hu : u ≠ 0) (habs : |u| = T) :
+    ‖∫ σ in (-B)..c, perronFn x ((σ : ℂ) + u * I)‖ ≤ x ^ c / (T * |Real.log x|) := by
+  have hx : 0 < x := lt_trans zero_lt_one hx1
+  have hL : |Real.log x| = Real.log x := abs_of_pos (Real.log_pos hx1)
+  refine (norm_integral_perronFn_horizontal_le hx hu hab).trans ?_
+  rw [habs, hL, integral_rpow_const_base hx hx1.ne']
+  have hxB : 0 < x ^ (-B) := Real.rpow_pos_of_pos hx _
+  have hlog : 0 < Real.log x := Real.log_pos hx1
+  calc (x ^ c - x ^ (-B)) / Real.log x / T ≤ x ^ c / Real.log x / T := by
+        gcongr
+        linarith
+    _ = x ^ c / (T * Real.log x) := by ring
+
+/-- The far vertical side's contribution vanishes as the rectangle extends leftwards. -/
+private theorem tendsto_perron_farSide_bound (hx1 : 1 < x) (c T : ℝ) :
+    Filter.Tendsto (fun B : ℝ => 2 * (x ^ c / (T * |Real.log x|)) + x ^ (-B) / c * (2 * T))
+      atTop (𝓝 (2 * (x ^ c / (T * |Real.log x|)))) := by
+  have hx : 0 < x := lt_trans zero_lt_one hx1
+  have h0 : Tendsto (fun B : ℝ => x ^ (-B)) atTop (𝓝 0) := by
+    refine (tendsto_rpow_atTop_of_base_gt_one x hx1).inv_tendsto_atTop.congr fun B => ?_
+    rw [Pi.inv_apply, ← Real.rpow_neg hx.le]
+  simpa using tendsto_const_nhds.add ((h0.div_const c).mul tendsto_const_nhds)
+
 private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc : 0 < c)
     (hT : 0 < T) :
     ‖(∫ t in (-T)..T, perronFn x ((c : ℂ) + t * I)) - 2 * π‖
@@ -556,38 +603,15 @@ private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc
     have e₁ := integral_perronFn_one_horizontal_diff hT.ne' (-B) c
     have e₂ := integral_perronFn_one_vertical hc.ne' T
     have e₃ := integral_perronFn_one_vertical (neg_ne_zero.2 hB0.ne') T
-    have hres : 2 * I * ((Real.arctan (c / T) : ℂ) - (Real.arctan (-B / T) : ℂ))
-        + I * (2 * (Real.arctan (T / c) : ℂ)) - I * (2 * (Real.arctan (T / -B) : ℂ))
-        = 2 * π * I := by
-      have hA : ((Real.arctan (c / T) : ℝ) : ℂ) + ((Real.arctan (T / c) : ℝ) : ℂ)
-          = (π : ℂ) / 2 := by
-        rw [← Complex.ofReal_add, arctan_div_add_arctan_div hc hT]
-        push_cast
-        ring
-      have hB : ((Real.arctan (B / T) : ℝ) : ℂ) + ((Real.arctan (T / B) : ℝ) : ℂ)
-          = (π : ℂ) / 2 := by
-        rw [← Complex.ofReal_add, arctan_div_add_arctan_div hB0 hT]
-        push_cast
-        ring
-      rw [neg_div, Real.arctan_neg, div_neg, Real.arctan_neg]
-      push_cast
-      linear_combination (2 * I) * hA + (2 * I) * hB
+    have hres := arctan_rectangle_residue hc hB0 hT
     have hmain : I * ((∫ t in (-T)..T, perronFn x ((c : ℂ) + t * I)) - 2 * π)
         = (∫ σ in (-B)..c, perronFn x ((σ : ℂ) + (T : ℝ) * I))
           - (∫ σ in (-B)..c, perronFn x ((σ : ℂ) + (-T : ℝ) * I))
           + I * ∫ t in (-T)..T, perronFn x (((-B : ℝ) : ℂ) + t * I) := by
       linear_combination hcauchy + e₁ + I * e₂ - I * e₃ + hres
     have hhoriz : ∀ u : ℝ, u ≠ 0 → |u| = T →
-        ‖∫ σ in (-B)..c, perronFn x ((σ : ℂ) + u * I)‖ ≤ x ^ c / (T * |Real.log x|) := by
-      intro u hu habs
-      refine (norm_integral_perronFn_horizontal_le hx hu hab).trans ?_
-      rw [habs, hL, integral_rpow_const_base hx hx1.ne']
-      have hxB : 0 < x ^ (-B) := Real.rpow_pos_of_pos hx _
-      have hlog : 0 < Real.log x := Real.log_pos hx1
-      calc (x ^ c - x ^ (-B)) / Real.log x / T ≤ x ^ c / Real.log x / T := by
-            gcongr
-            linarith
-        _ = x ^ c / (T * Real.log x) := by ring
+        ‖∫ σ in (-B)..c, perronFn x ((σ : ℂ) + u * I)‖ ≤ x ^ c / (T * |Real.log x|) :=
+      fun u hu habs ↦ norm_integral_perronFn_horizontal_le_bound hx1 hT hab hu habs
     have hfar : ‖∫ t in (-T)..T, perronFn x (((-B : ℝ) : ℂ) + t * I)‖
         ≤ x ^ (-B) / c * (2 * T) :=
       norm_integral_perronFn_vertical_le_of_le_abs hx hc hT.le (by rwa [abs_neg, abs_of_pos hB0])
@@ -596,12 +620,7 @@ private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc
     have h₁ := hhoriz (-T) (neg_ne_zero.2 hT.ne') (by rw [abs_neg, abs_of_pos hT])
     have h₂ := hhoriz T hT.ne' (abs_of_pos hT)
     linarith
-  have hlim : Tendsto (fun B : ℝ => 2 * (x ^ c / (T * |Real.log x|)) + x ^ (-B) / c * (2 * T))
-      atTop (𝓝 (2 * (x ^ c / (T * |Real.log x|)))) := by
-    have h0 : Tendsto (fun B : ℝ => x ^ (-B)) atTop (𝓝 0) := by
-      refine (tendsto_rpow_atTop_of_base_gt_one x hx1).inv_tendsto_atTop.congr fun B => ?_
-      rw [Pi.inv_apply, ← Real.rpow_neg hx.le]
-    simpa using tendsto_const_nhds.add ((h0.div_const c).mul tendsto_const_nhds)
+  have hlim := tendsto_perron_farSide_bound hx1 c T
   exact ge_of_tendsto hlim (eventually_atTop.2 ⟨c, key⟩)
 
 /-- **Above the endpoint the truncated Perron kernel is close to one.**  For `1 < x` it differs
