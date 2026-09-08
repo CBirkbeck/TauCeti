@@ -124,7 +124,7 @@ theorem _root_.WeierstrassCurve.isInteger_x_of_equation_of_is_root_of_squarefree
     (h : (W.baseChange K).toAffine.Equation x y) {f : R[X]} (hroot : aeval x f = 0)
     (hsf : Squarefree f.leadingCoeff) : IsLocalization.IsInteger R x :=
   isInteger_of_isUnit_den <|
-    isUnit_den_of_dvd_squarefree W h hsf (den_dvd_of_is_root hroot)
+    WeierstrassCurve.isUnit_den_of_dvd_squarefree W h hsf (den_dvd_of_is_root hroot)
 
 end
 

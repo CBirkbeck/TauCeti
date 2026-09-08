@@ -72,12 +72,14 @@ equation, through `XYIdeal_isMaximal`, so it is installed in the statement rathe
 theorem _root_.WeierstrassCurve.Affine.CoordinateRing.isDiscreteValuationRing_localizationAtPrime
     [IsIntegrallyClosed W.CoordinateRing]
     {y : F[X]} (h : (W.polynomial.eval y).eval x = 0) :
-    haveI : (CoordinateRing.XYIdeal W x y).IsPrime := (XYIdeal_isMaximal h).isPrime
+    haveI : (CoordinateRing.XYIdeal W x y).IsPrime :=
+      (WeierstrassCurve.Affine.CoordinateRing.XYIdeal_isMaximal h).isPrime
     IsDiscreteValuationRing (Localization.AtPrime (CoordinateRing.XYIdeal W x y)) :=
-  haveI : (CoordinateRing.XYIdeal W x y).IsPrime := (XYIdeal_isMaximal h).isPrime
+  haveI : (CoordinateRing.XYIdeal W x y).IsPrime :=
+    (WeierstrassCurve.Affine.CoordinateRing.XYIdeal_isMaximal h).isPrime
   have := W.isDedekindDomain_coordinateRing_of_isIntegrallyClosed
   IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain W.CoordinateRing
-    (XYIdeal_ne_bot x y) _
+    (WeierstrassCurve.Affine.CoordinateRing.XYIdeal_ne_bot x y) _
 
 end
 

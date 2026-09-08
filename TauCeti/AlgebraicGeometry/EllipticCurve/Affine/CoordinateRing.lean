@@ -413,14 +413,15 @@ variable {F : Type*} [Field F] (W : _root_.WeierstrassCurve.Affine F)
 /-- The conjugation involution of the function field `F(W)` over `F(X)`. -/
 private noncomputable def _root_.WeierstrassCurve.Affine.conjFunctionField :
     W.FunctionField ≃ₐ[F[X]] W.FunctionField :=
-  IsFractionRing.algEquivOfAlgEquiv (CoordinateRing.conj W)
+  IsFractionRing.algEquivOfAlgEquiv (WeierstrassCurve.Affine.CoordinateRing.conj W)
 
 /-- Conjugation moves only the numerator of `b / d`, because it fixes `F[X]`. -/
 private theorem _root_.WeierstrassCurve.Affine.conjFunctionField_apply_div
     (b : W.CoordinateRing) (d : F[X]) :
     WeierstrassCurve.Affine.conjFunctionField W (algebraMap W.CoordinateRing W.FunctionField b /
         algebraMap F[X] W.FunctionField d) =
-      algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.conj W b) /
+      algebraMap W.CoordinateRing W.FunctionField
+          (WeierstrassCurve.Affine.CoordinateRing.conj W b) /
         algebraMap F[X] W.FunctionField d := by
   rw [map_div₀, WeierstrassCurve.Affine.conjFunctionField,
       IsFractionRing.algEquivOfAlgEquiv_algebraMap, AlgEquiv.commutes]
@@ -439,10 +440,11 @@ private theorem _root_.WeierstrassCurve.Affine.dvd_trace_of_isIntegral_div
     d ∣ 2 * p - q * (C W.a₁ * X + C W.a₃) := by
   refine WeierstrassCurve.Affine.dvd_of_isIntegral_div (L := W.FunctionField) hd0 ?_
   have hadd : p • (1 : W.CoordinateRing) + q • mk W Y +
-      CoordinateRing.conj W (p • 1 + q • mk W Y) =
+      WeierstrassCurve.Affine.CoordinateRing.conj W (p • 1 + q • mk W Y) =
       algebraMap F[X] W.CoordinateRing (2 * p - q * (C W.a₁ * X + C W.a₃)) := by
-    simpa only [AdjoinRoot.mk_X, map_add, map_smul, map_one, CoordinateRing.conj_mk_Y,
-      AdjoinRoot.smul_mk] using CoordinateRing.add_negPolynomial_smul_basis W p q
+    simpa only [AdjoinRoot.mk_X, map_add, map_smul, map_one,
+      WeierstrassCurve.Affine.CoordinateRing.conj_mk_Y, AdjoinRoot.smul_mk] using
+      WeierstrassCurve.Affine.CoordinateRing.add_negPolynomial_smul_basis W p q
   have hsum : algebraMap F[X] W.FunctionField (2 * p - q * (C W.a₁ * X + C W.a₃)) /
       algebraMap F[X] W.FunctionField d =
       algebraMap W.CoordinateRing W.FunctionField b / algebraMap F[X] W.FunctionField d +
@@ -478,7 +480,7 @@ private theorem _root_.WeierstrassCurve.Affine.sq_dvd_norm_of_isIntegral_div
         WeierstrassCurve.Affine.conjFunctionField W (algebraMap W.CoordinateRing W.FunctionField b /
           algebraMap F[X] W.FunctionField d) := by
     rw [WeierstrassCurve.Affine.conjFunctionField_apply_div, div_mul_div_comm, ← map_mul, ← hnorm,
-      CoordinateRing.mul_conj,
+      WeierstrassCurve.Affine.CoordinateRing.mul_conj,
       ← IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField, map_pow, pow_two]
   rw [hprod]
   exact hz.mul (hz.map (WeierstrassCurve.Affine.conjFunctionField W : W.FunctionField →ₐ[F[X]]
@@ -514,7 +516,7 @@ private theorem _root_.WeierstrassCurve.Affine.exists_algebraMap_eq
   rw [eq_div_iff hdK, IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField,
     ← map_mul, ← hpq]
   congr 1
-  simp only [smul, ← CoordinateRing.mk_C_eq_algebraMap, map_mul]
+  simp only [smul, ← WeierstrassCurve.Affine.CoordinateRing.mk_C_eq_algebraMap, map_mul]
   ring1
 
 /-- **The coordinate ring of an elliptic curve is integrally closed.** This is the normality half

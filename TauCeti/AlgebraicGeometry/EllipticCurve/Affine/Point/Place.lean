@@ -120,7 +120,8 @@ noncomputable def _root_.WeierstrassCurve.Affine.CoordinateRing.pointPlace
     {y : F} (h : W.Equation x y) :
     HeightOneSpectrum W.CoordinateRing :=
   HeightOneSpectrum.ofPrime
-    (Ideal.prime_of_isPrime (XYIdeal_ne_bot x (C y)) (XYIdeal_isMaximal_of_equation h).isPrime)
+    (Ideal.prime_of_isPrime (WeierstrassCurve.Affine.CoordinateRing.XYIdeal_ne_bot x (C y))
+      (WeierstrassCurve.Affine.CoordinateRing.XYIdeal_isMaximal_of_equation h).isPrime)
 
 /-- The ideal underlying the place of a point is `⟨X - x, Y - y⟩`. -/
 @[simp]
@@ -140,7 +141,7 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.pointPlace_eq_iff
   -- both directions go through the underlying ideals, `HeightOneSpectrum` being determined by them
   rw [HeightOneSpectrum.ext_iff, WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal,
       WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal]
-  exact XYIdeal_eq_iff h₁
+  exact WeierstrassCurve.Affine.CoordinateRing.XYIdeal_eq_iff h₁
 
 /-- **The place of a point has degree one.** The degree of a place is the rank of its residue field
 over the base, and here that rank is one — which is the sense in which the point–place dictionary
@@ -159,7 +160,7 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.exists_pointPlace_eq
     {v : HeightOneSpectrum W.CoordinateRing}
     (hv : Module.finrank F (W.CoordinateRing ⧸ v.asIdeal) = 1) :
     ∃ (x y : F) (h : W.Equation x y), WeierstrassCurve.Affine.CoordinateRing.pointPlace h = v := by
-  obtain ⟨x, y, h, hI⟩ := finrank_quotient_eq_one_iff.mp hv
+  obtain ⟨x, y, h, hI⟩ := WeierstrassCurve.Affine.CoordinateRing.finrank_quotient_eq_one_iff.mp hv
   exact ⟨x, y, h, by rw [HeightOneSpectrum.ext_iff,
       WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal, hI]⟩
 
