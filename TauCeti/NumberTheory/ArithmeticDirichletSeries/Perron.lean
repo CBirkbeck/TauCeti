@@ -530,9 +530,6 @@ private theorem integral_perronFn_one_horizontal_diff (hT : T ≠ 0) (a b : ℝ)
     (((hcont _ (neg_ne_zero.2 hT)).sub (hcont _ hT)))]
   ring
 
--- Three self-contained steps of `norm_integral_perronFn_sub_two_pi_le_of_one_lt`, extracted
--- because each is a fact in its own right rather than a stage of one estimate.
-
 /-- The four arctan contributions of the rectangle's sides to the residue sum to `2 π i`. -/
 private theorem arctan_rectangle_residue (hc : 0 < c) (hB0 : 0 < B) (hT : 0 < T) :
     2 * I * ((Real.arctan (c / T) : ℂ) - (Real.arctan (-B / T) : ℂ))
@@ -568,16 +565,14 @@ private theorem norm_integral_perronFn_horizontal_le_of_one_lt (hx1 : 1 < x) (hT
         linarith
     _ = x ^ c / (T * Real.log x) := by ring
 
-/-- **The far-side error term vanishes as the rectangle extends leftwards.** For `1 < x` the
-quantity `x ^ (-B) / c * (2 * T)`, which bounds the contribution of the vertical side at `-B`,
-tends to zero, so the combined bound tends to its horizontal part `2 * (x ^ c / (T * |log x|))`. -/
+/-- **The `B`-dependent summand tends to zero.** For `1 < x` the term `x ^ (-B) / c * (2 * T)`
+vanishes as `B → ∞`, so the sum tends to its constant part. No sign condition on `c` or `T` is
+needed or asserted: this is convergence, not an estimate. -/
 private theorem tendsto_perron_farSide_bound (hx1 : 1 < x) (c T : ℝ) :
     Filter.Tendsto (fun B : ℝ => 2 * (x ^ c / (T * |Real.log x|)) + x ^ (-B) / c * (2 * T))
       atTop (𝓝 (2 * (x ^ c / (T * |Real.log x|)))) := by
-  have hx : 0 < x := lt_trans zero_lt_one hx1
-  have h0 : Tendsto (fun B : ℝ => x ^ (-B)) atTop (𝓝 0) := by
-    refine (tendsto_rpow_atTop_of_base_gt_one x hx1).inv_tendsto_atTop.congr fun B => ?_
-    rw [Pi.inv_apply, ← Real.rpow_neg hx.le]
+  have h0 : Tendsto (fun B : ℝ => x ^ (-B)) atTop (𝓝 0) :=
+    (tendsto_rpow_atBot_of_base_gt_one x hx1).comp tendsto_neg_atTop_atBot
   simpa using tendsto_const_nhds.add ((h0.div_const c).mul tendsto_const_nhds)
 
 private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc : 0 < c)
@@ -585,7 +580,6 @@ private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc
     ‖(∫ t in (-T)..T, perronFn x ((c : ℂ) + t * I)) - 2 * π‖
       ≤ 2 * (x ^ c / (T * |Real.log x|)) := by
   have hx : 0 < x := lt_trans zero_lt_one hx1
-  have hL : |Real.log x| = Real.log x := abs_of_pos (Real.log_pos hx1)
   have key : ∀ B, c ≤ B → ‖(∫ t in (-T)..T, perronFn x ((c : ℂ) + t * I)) - 2 * π‖
       ≤ 2 * (x ^ c / (T * |Real.log x|)) + x ^ (-B) / c * (2 * T) := by
     intro B hcB
@@ -612,16 +606,16 @@ private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc
           - (∫ σ in (-B)..c, perronFn x ((σ : ℂ) + (-T : ℝ) * I))
           + I * ∫ t in (-T)..T, perronFn x (((-B : ℝ) : ℂ) + t * I) := by
       linear_combination hcauchy + e₁ + I * e₂ - I * e₃ + hres
-    have hhoriz : ∀ u : ℝ, u ≠ 0 → |u| = T →
+    have hhoriz : ∀ u : ℝ, |u| = T →
         ‖∫ σ in (-B)..c, perronFn x ((σ : ℂ) + u * I)‖ ≤ x ^ c / (T * |Real.log x|) :=
-      fun _ _ habs ↦ norm_integral_perronFn_horizontal_le_of_one_lt hx1 hT hab habs
+      fun _ habs ↦ norm_integral_perronFn_horizontal_le_of_one_lt hx1 hT hab habs
     have hfar : ‖∫ t in (-T)..T, perronFn x (((-B : ℝ) : ℂ) + t * I)‖
         ≤ x ^ (-B) / c * (2 * T) :=
       norm_integral_perronFn_vertical_le_of_le_abs hx hc hT.le (by rwa [abs_neg, abs_of_pos hB0])
     rw [← norm_I_mul ((∫ t in (-T)..T, perronFn x ((c : ℂ) + t * I)) - 2 * π), hmain]
     refine (norm_sub_add_I_mul_le _ _ _).trans ?_
-    have h₁ := hhoriz (-T) (neg_ne_zero.2 hT.ne') (by rw [abs_neg, abs_of_pos hT])
-    have h₂ := hhoriz T hT.ne' (abs_of_pos hT)
+    have h₁ := hhoriz (-T) (by rw [abs_neg, abs_of_pos hT])
+    have h₂ := hhoriz T (abs_of_pos hT)
     linarith
   have hlim := tendsto_perron_farSide_bound hx1 c T
   exact ge_of_tendsto hlim (eventually_atTop.2 ⟨c, key⟩)
