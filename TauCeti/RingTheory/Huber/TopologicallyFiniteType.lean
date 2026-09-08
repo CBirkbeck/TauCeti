@@ -258,8 +258,8 @@ end StronglyNoetherian
 
 Over a Tate ring a strict presentation need not be exhibited as an *open* map: **openness is
 automatic**. A surjection out of `A⟨X₁, …, Xₖ⟩` onto a complete Hausdorff first countable algebra
-that is continuous at zero is open by `TauCeti.Huber.IsTateRing.isOpenMap`, so continuity and
-surjectivity together already make it a strict presentation.
+that is continuous at zero is open, so continuity and surjectivity together already make it a
+strict presentation.
 -/
 
 section OpenMappingPresentation
@@ -267,33 +267,26 @@ section OpenMappingPresentation
 open Filter
 open scoped Uniformity
 
-variable {A : Type*} [CommRing A] [UniformSpace A] [NonarchimedeanRing A] [IsTateRing A]
+variable {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
+  [IsTateRing A]
   {B : Type*} [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [CompleteSpace B]
   [(𝓤 B).IsCountablyGenerated] [T0Space B] [Algebra A B] [ContinuousConstSMul A B]
 
 /-- **Over a Tate ring, a surjection out of `A⟨X₁, …, Xₖ⟩` that is continuous at zero is a strict
-presentation.** Openness is not a third obligation: once continuity at zero and surjectivity are
-in hand, `TauCeti.Huber.IsTateRing.isOpenMap` supplies it, so Wedhorn Definition 6.28 asks for
-nothing beyond the two hypotheses here.
+presentation.** Openness is not a third obligation: with continuity at zero and surjectivity in
+hand, Wedhorn Definition 6.28 asks for nothing more.
 
-Continuity is asked at zero only, which is what the open mapping theorem consumes; a caller
-holding `Continuous π` passes its `.continuousAt`. The global continuity that `IsOpenQuotientMap`
-records is recovered from it by `continuous_of_continuousAt_zero`.
+The hypotheses on the target are the standing hypotheses of Wedhorn's §8.2: complete, Hausdorff,
+and first countable in the form of a countably generated uniformity. The source needs nothing
+beyond what `A⟨X₁, …, Xₖ⟩` already carries.
 
-The hypotheses on the target are the ones that open mapping theorem asks for, and they are
-exactly the standing hypotheses of Wedhorn's §8.2: complete, Hausdorff, and first countable in
-the form of a countably generated uniformity. The source needs nothing extra — completeness,
-nonarchimedean-ness, a countably generated uniformity and `ContinuousSMul` all hold for
-`A⟨X₁, …, Xₖ⟩` and are found by instance resolution.
+The target is an arbitrary ring receiving a surjection, not the literal quotient type
+`A⟨X₁, …, Xₖ⟩ ⧸ I` that
+`TauCeti.Huber.isStrictlyTopologicallyFiniteType_quotientMk_algebraMap` covers. That is what a
+consumer holds: a completed rational localisation is not a quotient type.
 
-This is not covered by `TauCeti.Huber.isStrictlyTopologicallyFiniteType_quotientMk_algebraMap`,
-which presents the *literal* quotient type `A⟨X₁, …, Xₖ⟩ ⧸ I`. The target here is an arbitrary
-ring receiving a surjection, which is what a consumer actually holds: a completed rational
-localisation is not a quotient type, and identifying it with one is precisely the work this
-avoids.
-
-**This constructs no surjection.** Exhibiting one onto a given `B` is the work; what this theorem
-does is remove openness from the list of things that then have to be checked. -/
+**This constructs no surjection.** Exhibiting one onto a given `B` is the work; this theorem
+removes openness from the list of things that then have to be checked. -/
 theorem isStrictlyTopologicallyFiniteType_of_surjective {k : ℕ}
     (π : restrictedMvPowerSeriesCompletion k A →ₐ[A] B)
     (hπ : ContinuousAt (π : restrictedMvPowerSeriesCompletion k A → B) 0)
