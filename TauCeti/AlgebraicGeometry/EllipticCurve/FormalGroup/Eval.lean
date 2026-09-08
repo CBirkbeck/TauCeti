@@ -26,10 +26,11 @@ Three hypotheses appear here, and they do different work. `PowerSeries.HasEval t
 evaluation itself requires, and most results ask for it directly. Others ask instead for an ideal
 `I` whose adic topology is the ambient one, together with a membership `t ∈ I` that supplies the
 convergence: `isUnit_formalUEval`, `formalWEval_ne_zero`, `algebraMap_formalWEval_ne_zero` and
-`hasEval_formalInverseEval`. `formalUEval_sub_one_mem` is the one result asking for both. And
+`hasEval_formalInverseEval`. `formalUEval_sub_one_mem` is the one result asking for both.
 `isUnit_thirdRootDenom` asks for neither: it is a statement about the curve's coefficients and a
 topologically nilpotent element, so it takes `IsTopologicallyNilpotent` directly, and
-`[NonarchimedeanRing O]` in place of the ambient `[IsTopologicalRing O]`.
+`[NonarchimedeanRing O]` in place of the ambient `[IsTopologicalRing O]`. `formalWEval_zero` asks
+for neither either, being an evaluation at a parameter that needs no convergence hypothesis.
 
 Only two of the five values are confined to `I ^ k`: `w(t)` and `ι(t)`. Of the four unit
 statements, only `u(t)`'s needs the ideal; the denominator `d(t) = 1 - a₁ t - a₃ w(t)` and its
