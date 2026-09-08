@@ -118,6 +118,84 @@ private theorem algebraMap_thirdRootDenom_ne_zero {I : Ideal O} (hI : IsAdic I) 
   rw [← heq]
   exact ((W.isUnit_thirdRootDenom hnil).map (algebraMap O K)).ne_zero
 
+/-- The evaluated slope's defining property, read in `K`. -/
+private theorem algebraMap_formalSlopeEval_mul_sub {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
+    (h₂ : PowerSeries.HasEval t₂) :
+    algebraMap O K (W.formalSlopeEval t₁ t₂) * (algebraMap O K t₂ - algebraMap O K t₁) =
+      algebraMap O K (W.formalWEval t₂) - algebraMap O K (W.formalWEval t₁) := by
+  rw [← map_sub, ← map_sub, ← map_mul]
+  exact congrArg (algebraMap O K) (W.formalSlopeEval_mul_sub h₁ h₂)
+
+/-- The evaluated intercept identity, read in `K`. -/
+private theorem algebraMap_formalInterceptEval_eq {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
+    (h₂ : PowerSeries.HasEval t₂) :
+    algebraMap O K (W.formalInterceptEval t₁ t₂) = algebraMap O K (W.formalWEval t₁) -
+      algebraMap O K (W.formalSlopeEval t₁ t₂) * algebraMap O K t₁ := by
+  rw [← map_mul, ← map_sub]
+  exact congrArg (algebraMap O K) (W.formalInterceptEval_eq h₁ h₂)
+
+/-- The on-line identity, read in `K`: the third root lies on the chord. -/
+private theorem algebraMap_formalWEval_formalThirdRootEval {t₁ t₂ : O}
+    (h₁ : PowerSeries.HasEval t₁) (h₂ : PowerSeries.HasEval t₂) :
+    algebraMap O K (W.formalWEval (W.formalThirdRootEval t₁ t₂)) =
+      algebraMap O K (W.formalSlopeEval t₁ t₂) *
+        algebraMap O K (W.formalThirdRootEval t₁ t₂) +
+        algebraMap O K (W.formalInterceptEval t₁ t₂) := by
+  rw [← map_mul, ← map_add]
+  exact congrArg (algebraMap O K) (W.formalWEval_formalThirdRootEval h₁ h₂)
+
+/-- The sum's parameter, in terms of the third root and the inverse denominator, read in `K`. -/
+private theorem algebraMap_formalAddEval_eq {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
+    (h₂ : PowerSeries.HasEval t₂) :
+    algebraMap O K (W.formalAddEval t₁ t₂) =
+      -(algebraMap O K (W.formalThirdRootEval t₁ t₂) *
+        algebraMap O K (W.formalInverseDenomInvEval (W.formalThirdRootEval t₁ t₂))) := by
+  rw [W.formalAddEval_eq h₁ h₂, W.formalInverseEval_eq (W.hasEval_formalThirdRootEval h₁ h₂)]
+  simp [map_neg, map_mul]
+
+/-- The `w`-value at the sum's parameter, likewise. -/
+private theorem algebraMap_formalWEval_formalAddEval {I : Ideal O} (hI : IsAdic I) {t₁ t₂ : O}
+    (h₁ : t₁ ∈ I) (h₂ : t₂ ∈ I) :
+    algebraMap O K (W.formalWEval (W.formalAddEval t₁ t₂)) =
+      -(algebraMap O K (W.formalWEval (W.formalThirdRootEval t₁ t₂)) *
+        algebraMap O K (W.formalInverseDenomInvEval (W.formalThirdRootEval t₁ t₂))) := by
+  have hE₁ : PowerSeries.HasEval t₁ := hI.isTopologicallyNilpotent_of_mem h₁
+  have hE₂ : PowerSeries.HasEval t₂ := hI.isTopologicallyNilpotent_of_mem h₂
+  have hTmem : W.formalThirdRootEval t₁ t₂ ∈ I := by
+    simpa using W.formalThirdRootEval_mem hI (k := 1) (by simpa using h₁) (by simpa using h₂)
+  rw [W.formalAddEval_eq hE₁ hE₂, W.formalWEval_formalInverseEval
+    (W.hasEval_formalThirdRootEval hE₁ hE₂) (W.hasEval_formalInverseEval hI hTmem)]
+  simp [map_neg, map_mul]
+
+/-- The inverse denominator at the third root is invertible, read in `K`. -/
+private theorem algebraMap_formalInverseDenomEval_mul_inv {t₁ t₂ : O}
+    (h₁ : PowerSeries.HasEval t₁) (h₂ : PowerSeries.HasEval t₂) :
+    algebraMap O K (W.formalInverseDenomEval (W.formalThirdRootEval t₁ t₂)) *
+      algebraMap O K (W.formalInverseDenomInvEval (W.formalThirdRootEval t₁ t₂)) = 1 := by
+  rw [← map_mul, ← map_one (algebraMap O K)]
+  exact congrArg (algebraMap O K)
+    (W.formalInverseDenomEval_mul_inv (W.hasEval_formalThirdRootEval h₁ h₂))
+
+/-- The inverse denominator at the third root, written out, read in `K`. -/
+private theorem algebraMap_formalInverseDenomEval_eq {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
+    (h₂ : PowerSeries.HasEval t₂) :
+    algebraMap O K (W.formalInverseDenomEval (W.formalThirdRootEval t₁ t₂)) =
+      1 - (W.baseChange K).a₁ * algebraMap O K (W.formalThirdRootEval t₁ t₂) -
+        (W.baseChange K).a₃ *
+          algebraMap O K (W.formalWEval (W.formalThirdRootEval t₁ t₂)) := by
+  have h := congrArg (algebraMap O K)
+    (W.formalInverseDenomEval_eq (W.hasEval_formalThirdRootEval h₁ h₂))
+  simpa [baseChange, map_sub, map_mul, map_one, map_a₁, map_a₃] using h
+
+/-- The inverse denominator's inverse at the third root is nonzero. -/
+private theorem algebraMap_formalInverseDenomInvEval_ne_zero {t₁ t₂ : O}
+    (h₁ : PowerSeries.HasEval t₁) (h₂ : PowerSeries.HasEval t₂) :
+    algebraMap O K (W.formalInverseDenomInvEval (W.formalThirdRootEval t₁ t₂)) ≠ 0 := by
+  intro h
+  have hu := W.algebraMap_formalInverseDenomEval_mul_inv (K := K) h₁ h₂
+  rw [h, mul_zero] at hu
+  exact one_ne_zero hu.symm
+
 /-! ### The points
 
 `formalPoint` needs the base-changed curve to be elliptic and the structure map to be injective,
@@ -137,6 +215,17 @@ private theorem formalPoint_eq_some {I : Ideal O} (hI : IsAdic I) {s : O} (hs : 
   rw [W.formalPoint_of_param_ne_zero hI hs hs0]
   simp only [Affine.Point.mk, neg_div, one_div]
 
+omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
+  [IsLinearTopology O O] [DecidableEq K] [(W.baseChange K).IsElliptic] in
+/-- The numerator of the difference of the two `x`-coordinates is nonzero. -/
+private theorem algebraMap_mul_formalWEval_sub_ne_zero {t₁ t₂ : O}
+    (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁) :
+    algebraMap O K t₁ * algebraMap O K (W.formalWEval t₂) -
+      algebraMap O K t₂ * algebraMap O K (W.formalWEval t₁) ≠ 0 := by
+  rw [← map_mul, ← map_mul, ← map_sub]
+  exact fun h ↦ sub_ne_zero.mpr hx
+    (FaithfulSMul.algebraMap_injective O K (by rw [h, map_zero]))
+
 /-- **The parametrisation carries the group law**, for two nonzero parameters whose points have
 distinct `x`-coordinates: the point of `F(t₁, t₂)` is the sum of the points of `t₁` and `t₂`.
 
@@ -150,32 +239,13 @@ theorem formalPoint_formalAddEval_of_x_ne {I : Ideal O} (hI : IsAdic I) {t₁ t�
     W.formalPoint (K := K) hI h₁ + W.formalPoint (K := K) hI h₂ =
       W.formalPoint (K := K) hI hF := by
   classical
-  have hinj : Function.Injective (algebraMap O K) := FaithfulSMul.algebraMap_injective O K
+  have hne : ∀ {s : O}, s ≠ 0 → algebraMap O K s ≠ 0 := fun hs0 h ↦
+    hs0 (FaithfulSMul.algebraMap_injective O K (by rw [h, map_zero]))
   have hE₁ : PowerSeries.HasEval t₁ := hI.isTopologicallyNilpotent_of_mem h₁
   have hE₂ : PowerSeries.HasEval t₂ := hI.isTopologicallyNilpotent_of_mem h₂
-  have hET : PowerSeries.HasEval (W.formalThirdRootEval t₁ t₂) :=
-    W.hasEval_formalThirdRootEval hE₁ hE₂
   have hEF : PowerSeries.HasEval (W.formalAddEval t₁ t₂) := hI.isTopologicallyNilpotent_of_mem hF
   have hTmem : W.formalThirdRootEval t₁ t₂ ∈ I := by
     simpa using W.formalThirdRootEval_mem hI (k := 1) (by simpa using h₁) (by simpa using h₂)
-  -- the chord identities and the nonvanishing they need, read in `K`
-  have hslope : algebraMap O K (W.formalSlopeEval t₁ t₂) *
-      (algebraMap O K t₂ - algebraMap O K t₁) =
-      algebraMap O K (W.formalWEval t₂) - algebraMap O K (W.formalWEval t₁) := by
-    rw [← map_sub, ← map_sub, ← map_mul]
-    exact congrArg (algebraMap O K) (W.formalSlopeEval_mul_sub hE₁ hE₂)
-  have hNint : algebraMap O K (W.formalInterceptEval t₁ t₂) =
-      algebraMap O K (W.formalWEval t₁) -
-        algebraMap O K (W.formalSlopeEval t₁ t₂) * algebraMap O K t₁ := by
-    rw [← map_mul, ← map_sub]; exact congrArg (algebraMap O K) (W.formalInterceptEval_eq hE₁ hE₂)
-  have hwTeq : algebraMap O K (W.formalWEval (W.formalThirdRootEval t₁ t₂)) =
-      algebraMap O K (W.formalSlopeEval t₁ t₂) *
-        algebraMap O K (W.formalThirdRootEval t₁ t₂) +
-        algebraMap O K (W.formalInterceptEval t₁ t₂) := by
-    rw [← map_mul, ← map_add]
-    exact congrArg (algebraMap O K) (W.formalWEval_formalThirdRootEval hE₁ hE₂)
-  have hne : ∀ {s : O}, s ≠ 0 → algebraMap O K s ≠ 0 :=
-    fun hs0 h ↦ hs0 (hinj (by rw [h, map_zero]))
   have hw₁0 := W.algebraMap_formalWEval_ne_zero (S := K) hI h₁ (hne h₁0)
   have hw₂0 := W.algebraMap_formalWEval_ne_zero (S := K) hI h₂ (hne h₂0)
   have hwT0 := W.algebraMap_formalWEval_ne_zero (S := K) hI hTmem
@@ -183,39 +253,20 @@ theorem formalPoint_formalAddEval_of_x_ne {I : Ideal O} (hI : IsAdic I) {t₁ t�
   have hwF0 := W.algebraMap_formalWEval_ne_zero (S := K) hI hF (hne hF0)
   have hDelta : (W.baseChange K).Δ ≠ 0 :=
     (W.baseChange K).coe_Δ' ▸ (W.baseChange K).Δ'.ne_zero
-  have hxK : algebraMap O K t₁ * algebraMap O K (W.formalWEval t₂) -
-      algebraMap O K t₂ * algebraMap O K (W.formalWEval t₁) ≠ 0 := by
-    rw [← map_mul, ← map_mul, ← map_sub]; exact hne (sub_ne_zero.mpr hx)
+  have hu := W.algebraMap_formalInverseDenomEval_mul_inv (K := K) hE₁ hE₂
+  have hsp0 := W.algebraMap_formalInverseDenomInvEval_ne_zero (K := K) hE₁ hE₂
   -- the group law of `W⁄K`, applied to the two parametrised points
   obtain ⟨h₃, hadd⟩ := chord_point_add (W.baseChange K) (W.algebraMap_formalWEval_wEquation hE₁)
-    (W.algebraMap_formalWEval_wEquation hE₂) hslope hNint
-    (W.algebraMap_formalThirdRootEval_relation hE₁ hE₂) hwTeq
-    (W.algebraMap_thirdRootDenom_ne_zero hI h₁ h₂) hw₁0 hw₂0 hwT0 hxK
+    (W.algebraMap_formalWEval_wEquation hE₂) (W.algebraMap_formalSlopeEval_mul_sub hE₁ hE₂)
+    (W.algebraMap_formalInterceptEval_eq hE₁ hE₂)
+    (W.algebraMap_formalThirdRootEval_relation hE₁ hE₂)
+    (W.algebraMap_formalWEval_formalThirdRootEval hE₁ hE₂)
+    (W.algebraMap_thirdRootDenom_ne_zero hI h₁ h₂) hw₁0 hw₂0 hwT0
+    (W.algebraMap_mul_formalWEval_sub_ne_zero hx)
     (chord_point_nonsingular _ (W.algebraMap_formalWEval_wEquation hE₁) hw₁0 hDelta)
     (chord_point_nonsingular _ (W.algebraMap_formalWEval_wEquation hE₂) hw₂0 hDelta)
-  -- the sum's parameter is the formal inverse of the third root, so its coordinates are the
-  -- reflected ones the chord produced
-  set sp := W.formalInverseDenomInvEval (W.formalThirdRootEval t₁ t₂) with hsp'
-  have hFeq : algebraMap O K (W.formalAddEval t₁ t₂) =
-      -(algebraMap O K (W.formalThirdRootEval t₁ t₂) * algebraMap O K sp) := by
-    rw [W.formalAddEval_eq hE₁ hE₂, W.formalInverseEval_eq hET, hsp']; simp [map_neg, map_mul]
-  have hwFeq : algebraMap O K (W.formalWEval (W.formalAddEval t₁ t₂)) =
-      -(algebraMap O K (W.formalWEval (W.formalThirdRootEval t₁ t₂)) * algebraMap O K sp) := by
-    rw [W.formalAddEval_eq hE₁ hE₂,
-      W.formalWEval_formalInverseEval hET (W.hasEval_formalInverseEval hI hTmem), hsp']
-    simp [map_neg, map_mul]
-  have hu : algebraMap O K (W.formalInverseDenomEval (W.formalThirdRootEval t₁ t₂)) *
-      algebraMap O K sp = 1 := by
-    rw [← map_mul, hsp', ← map_one (algebraMap O K)]
-    exact congrArg (algebraMap O K) (W.formalInverseDenomEval_mul_inv hET)
-  have hsp0 : algebraMap O K sp ≠ 0 := fun h ↦ by
-    rw [h, mul_zero] at hu; exact one_ne_zero hu.symm
-  have hueq : algebraMap O K (W.formalInverseDenomEval (W.formalThirdRootEval t₁ t₂)) =
-      1 - (W.baseChange K).a₁ * algebraMap O K (W.formalThirdRootEval t₁ t₂) -
-        (W.baseChange K).a₃ *
-          algebraMap O K (W.formalWEval (W.formalThirdRootEval t₁ t₂)) := by
-    have h := congrArg (algebraMap O K) (W.formalInverseDenomEval_eq hET)
-    simpa [baseChange, map_sub, map_mul, map_one, map_a₁, map_a₃] using h
+  -- the third point's coordinates are those of the parameter `F(t₁, t₂)`, the formal inverse of
+  -- the third root
   rw [W.formalPoint_eq_some hI h₁ h₁0
       (chord_point_nonsingular _ (W.algebraMap_formalWEval_wEquation hE₁) hw₁0 hDelta),
     W.formalPoint_eq_some hI h₂ h₂0
@@ -224,11 +275,15 @@ theorem formalPoint_formalAddEval_of_x_ne {I : Ideal O} (hI : IsAdic I) {t₁ t�
       (chord_point_nonsingular _ (W.algebraMap_formalWEval_wEquation hEF) hwF0 hDelta)]
   simp only [Affine.Point.some.injEq]
   refine ⟨?_, ?_⟩
-  · rw [hFeq, hwFeq]; field_simp
-  · rw [hwFeq, div_eq_div_iff hwT0 (neg_ne_zero.mpr (mul_ne_zero hwT0 hsp0))]
+  · rw [W.algebraMap_formalAddEval_eq (K := K) hE₁ hE₂,
+      W.algebraMap_formalWEval_formalAddEval hI h₁ h₂]
+    field_simp
+  · rw [W.algebraMap_formalWEval_formalAddEval hI h₁ h₂,
+      div_eq_div_iff hwT0 (neg_ne_zero.mpr (mul_ne_zero hwT0 hsp0))]
     linear_combination
       (-(algebraMap O K (W.formalWEval (W.formalThirdRootEval t₁ t₂)))) * hu +
         (algebraMap O K (W.formalWEval (W.formalThirdRootEval t₁ t₂)) *
-          algebraMap O K sp) * hueq
+          algebraMap O K (W.formalInverseDenomInvEval (W.formalThirdRootEval t₁ t₂))) *
+          W.algebraMap_formalInverseDenomEval_eq (K := K) hE₁ hE₂
 
 end WeierstrassCurve
