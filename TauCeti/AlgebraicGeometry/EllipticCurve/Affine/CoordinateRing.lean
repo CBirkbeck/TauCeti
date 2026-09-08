@@ -52,8 +52,7 @@ characteristic two that polynomial is the square `(a₁X + a₃)²`.
   elliptic curve over a field is integrally closed.
 * `WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed`: an integrally
   closed coordinate ring is a Dedekind domain — so an elliptic curve's is, by
-  `isIntegrallyClosed_coordinateRing`. It extends Mathlib's `WeierstrassCurve.Affine`, so it takes
-  that namespace and `W.isDedekindDomain_coordinateRing_of_isIntegrallyClosed` resolves.
+  `isIntegrallyClosed_coordinateRing`.
 
 The integral closedness is the seeded milestone `isIntegrallyClosed_coordinateRing` of
 `TauCetiRoadmap/EllipticCurves/README.md`, Layer 1, where it is named as the normality input to

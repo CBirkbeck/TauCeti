@@ -115,7 +115,7 @@ prime of the coordinate ring, for a solution `(x, y)` of `W.Equation`. The Dedek
 instance argument, discharged by
 `WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed` once the coordinate
 ring is known integrally closed — which for an elliptic curve is
-`WeierstrassCurve.Affine.isIntegrallyClosed_coordinateRing`. -/
+`TauCeti.WeierstrassCurve.Affine.isIntegrallyClosed_coordinateRing`. -/
 noncomputable def pointPlace {y : F} (h : W.Equation x y) :
     HeightOneSpectrum W.CoordinateRing :=
   HeightOneSpectrum.ofPrime
