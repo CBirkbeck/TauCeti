@@ -353,6 +353,17 @@ private theorem norm_sub_add_I_mul_le (u v w : ℂ) : ‖u - v + I * w‖ ≤ �
   gcongr
   exact norm_sub_le u v
 
+/-- **The far side contributes nothing in the limit.** Whatever vanishing factor `g` the far side
+carries, the bound `2 * A + g B / c * (2 * T)` tends to its constant part `2 * A`.
+
+Only `g B → 0` is used, so the base `x` does not enter and the rpow limit itself stays in Mathlib,
+supplied by the caller: `tendsto_rpow_atTop_of_base_lt_one` below the endpoint and
+`tendsto_rpow_atBot_of_base_gt_one` above it. No sign condition on `A`, `c` or `T` is needed or
+asserted: this is convergence, not an estimate. -/
+private theorem tendsto_perron_farSide_bound {g : ℝ → ℝ} (hg : Tendsto g atTop (𝓝 0)) (A c T : ℝ) :
+    Tendsto (fun B : ℝ => 2 * A + g B / c * (2 * T)) atTop (𝓝 (2 * A)) := by
+  simpa using tendsto_const_nhds.add ((hg.div_const c).mul tendsto_const_nhds)
+
 /-!
 ### Below the endpoint
 
@@ -417,11 +428,9 @@ private theorem norm_integral_perronFn_le_of_lt_one (hx : 0 < x) (hx1 : x < 1) (
     have h₁ := hhoriz (-T) (by rw [abs_neg, abs_of_pos hT])
     have h₂ := hhoriz T (abs_of_pos hT)
     linarith
-  have hlim : Tendsto (fun B : ℝ => 2 * (x ^ c / (T * |Real.log x|)) + x ^ B / c * (2 * T)) atTop
-      (𝓝 (2 * (x ^ c / (T * |Real.log x|)))) := by
-    have h0 : Tendsto (fun B : ℝ => x ^ B) atTop (𝓝 0) :=
-      tendsto_rpow_atTop_of_base_lt_one x (by linarith) hx1
-    simpa using tendsto_const_nhds.add ((h0.div_const c).mul tendsto_const_nhds)
+  have hlim := tendsto_perron_farSide_bound
+    (tendsto_rpow_atTop_of_base_lt_one x (by linarith) hx1)
+    (x ^ c / (T * |Real.log x|)) c T
   exact ge_of_tendsto hlim (eventually_atTop.2 ⟨c, key⟩)
 
 /-- **Below the endpoint the truncated Perron kernel is small.**  For `0 < x < 1` it differs from
@@ -560,17 +569,6 @@ private theorem norm_integral_perronFn_horizontal_le_of_one_lt (hx1 : 1 < x) (hT
         gcongr
         linarith
     _ = x ^ c / (T * Real.log x) := by ring
-
-/-- **The far side contributes nothing in the limit.** Whatever vanishing factor `g` the far side
-carries, the bound `2 * A + g B / c * (2 * T)` tends to its constant part `2 * A`.
-
-Only `g B → 0` is used. The base `x` does not enter, so the rpow limit itself stays where it
-belongs — Mathlib's `tendsto_rpow_atBot_of_base_gt_one`, supplied by the caller — and what remains
-here is the arithmetic of the bound. No sign condition on `A`, `c` or `T` is needed or asserted:
-this is convergence, not an estimate. -/
-private theorem tendsto_perron_farSide_bound {g : ℝ → ℝ} (hg : Tendsto g atTop (𝓝 0)) (A c T : ℝ) :
-    Tendsto (fun B : ℝ => 2 * A + g B / c * (2 * T)) atTop (𝓝 (2 * A)) := by
-  simpa using tendsto_const_nhds.add ((hg.div_const c).mul tendsto_const_nhds)
 
 private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc : 0 < c)
     (hT : 0 < T) :
