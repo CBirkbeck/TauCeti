@@ -10,7 +10,6 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.ArctanDeriv
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
-public import TauCeti.Analysis.SpecialFunctions.Arctan
 import Mathlib.Analysis.Complex.RemovableSingularity
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
@@ -540,14 +539,15 @@ private theorem arctan_rectangle_residue (hc : 0 < c) (hB0 : 0 < B) (hT : 0 < T)
     2 * I * ((Real.arctan (c / T) : ℂ) - (Real.arctan (-B / T) : ℂ))
       + I * (2 * (Real.arctan (T / c) : ℂ)) - I * (2 * (Real.arctan (T / -B) : ℂ))
       = 2 * π * I := by
+  -- Each corner's two angles are complementary: `T / u` is the reciprocal of `u / T`.
   have hA : ((Real.arctan (c / T) : ℝ) : ℂ) + ((Real.arctan (T / c) : ℝ) : ℂ)
       = (π : ℂ) / 2 := by
-    rw [← Complex.ofReal_add, Real.arctan_div_add_arctan_div hc hT]
+    rw [← Complex.ofReal_add, ← inv_div c T, Real.arctan_inv_of_pos (by positivity)]
     push_cast
     ring
   have hB : ((Real.arctan (B / T) : ℝ) : ℂ) + ((Real.arctan (T / B) : ℝ) : ℂ)
       = (π : ℂ) / 2 := by
-    rw [← Complex.ofReal_add, Real.arctan_div_add_arctan_div hB0 hT]
+    rw [← Complex.ofReal_add, ← inv_div B T, Real.arctan_inv_of_pos (by positivity)]
     push_cast
     ring
   rw [neg_div, Real.arctan_neg, div_neg, Real.arctan_neg]
