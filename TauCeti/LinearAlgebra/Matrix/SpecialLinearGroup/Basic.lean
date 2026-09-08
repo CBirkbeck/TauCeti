@@ -37,10 +37,8 @@ diamond operators of the ModularForms roadmap (Layer 0), where it realizes every
 The two-modulus form generalizes an ad-hoc instance from the same project at commit
 `2baa76f742bdb4fb8ee323fabba41203bd390e08` (Apache-2.0):
 `LeanModularForms/StrongMultiplicityOne/DescentCosets.lean` proves `descendExtraGamma_exists`
-for the single coprime pair `(p, N / p)`, building an explicit Bézout matrix and checking its
-reductions entrywise. Here the statement is the general coprime pair and the proof is different —
-the Chinese remainder theorem glues the two targets and the one-modulus surjectivity lifts the
-result.
+for the single coprime pair `(p, N / p)`. The statement here is the general coprime pair, and the
+proof is independent of the source's.
 
 ## Main results
 
@@ -441,13 +439,17 @@ theorem map_intCast_zmod_prod_surjective {d d' : ℕ} (hcop : d.Coprime d') :
   have hdet : C.det = 1 := by
     refine e.injective ?_
     rw [map_one, e.map_det]
-    refine Prod.ext ?_ ?_
-    · rw [show ((e.mapMatrix C).det).1 = RingHom.fst (ZMod d) (ZMod d') (e.mapMatrix C).det from
-        rfl, RingHom.map_det, hfst, A.det_coe]
-      rfl
-    · rw [show ((e.mapMatrix C).det).2 = RingHom.snd (ZMod d) (ZMod d') (e.mapMatrix C).det from
-        rfl, RingHom.map_det, hsnd, B.det_coe]
-      rfl
+    -- each coordinate projection is a ring hom (`RingHom.coe_fst`/`coe_snd` name the identity
+    -- with `Prod.fst`/`Prod.snd`), so `RingHom.map_det` applies to it
+    have hp1 : ∀ x : ZMod d × ZMod d', x.1 = RingHom.fst (ZMod d) (ZMod d') x :=
+      fun x => congrFun RingHom.coe_fst.symm x
+    have hp2 : ∀ x : ZMod d × ZMod d', x.2 = RingHom.snd (ZMod d) (ZMod d') x :=
+      fun x => congrFun RingHom.coe_snd.symm x
+    have h1 : ((e.mapMatrix C).det).1 = 1 := by
+      rw [hp1, RingHom.map_det, hfst, A.det_coe]
+    have h2 : ((e.mapMatrix C).det).2 = 1 := by
+      rw [hp2, RingHom.map_det, hsnd, B.det_coe]
+    exact Prod.ext h1 h2
   obtain ⟨γ, hγ⟩ := map_intCast_zmod_surjective (d := d * d') ⟨C, hdet⟩
   -- Reading the glued matrix back off in each factor is applying a ring hom to an integer cast.
   have hentry : ∀ i j, ((γ i j : ℤ) : ZMod (d * d')) = e.symm (A i j, B i j) := fun i j => by

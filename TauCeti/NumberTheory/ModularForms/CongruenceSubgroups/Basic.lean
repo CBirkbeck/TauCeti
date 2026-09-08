@@ -66,9 +66,10 @@ infrastructure independent of the diamond operators.
   lower-right entry of a matrix in `Γ₀(N)` (via strong approximation for `SL₂`).
 * `CongruenceSubgroup.exists_mem_Gamma_map_intCast_zmod_eq`: **strong approximation along a
   coprime level** — for coprime `d` and `d'`, `Γ(d')` still surjects onto `SL₂(ℤ/dℤ)`.
-* `CongruenceSubgroup.exists_mem_Gamma0_map_intCast_zmod_eq_S`: **Miyake's Lemma 4.5.11** — for a
-  prime `p` exactly dividing `N`, a `Γ₀(N / p)` element reducing to `S` modulo `p` and to the
-  identity modulo `N / p`, the extra representative of the level-descent coset system.
+* `CongruenceSubgroup.exists_mem_Gamma0_map_intCast_zmod_eq_S`: for a prime `p` exactly dividing
+  `N`, **existence** of a `Γ₀(N / p)` element reducing to `S` modulo `p` and to the identity modulo
+  `N / p` — the matrix Miyake's Lemma 4.5.11 takes as its extra coset representative. The coset
+  system itself is not formalized here, so no enumeration or completeness is claimed.
 * `CongruenceSubgroup.gamma0Twist`: an explicit `Γ₀(N)` element whose lower-right entry is any
   natural number coprime to `N`.
 * `CongruenceSubgroup.gamma0TwistOfUnit` and
@@ -713,14 +714,16 @@ theorem exists_mem_Gamma_map_intCast_zmod_eq {d d' : ℕ} (hcop : Nat.Coprime d 
   rw [MonoidHom.prod_apply, Prod.mk.injEq] at hγ
   exact ⟨γ, Gamma_mem'.mpr hγ.2, hγ.1⟩
 
-/-- **The extra coset representative of Miyake's Lemma 4.5.11.** For a prime `p` with `p ∣ N` but
+/-- **A matrix with prescribed reductions at `p` and at `N / p`.** For a prime `p` with `p ∣ N` but
 `p² ∤ N`, there is a `γ ∈ Γ₀(N / p)` reducing to `S = [[0, -1], [1, 0]]` modulo `p` and to the
 identity modulo `N / p`.
 
 `p² ∤ N` is exactly what makes `p` coprime to `N / p`; the target modulo `p` is `S`, and membership
-in `Γ₀(N / p)` comes from the stronger `Γ(N / p)` the previous theorem already delivers. This `γ`
-completes the `p + 1` coset representatives for the level-descent operator when `p` exactly divides
-`N`. -/
+in `Γ₀(N / p)` comes from the stronger `Γ(N / p)` the previous theorem already delivers.
+
+This is the matrix Miyake's Lemma 4.5.11 takes as its extra coset representative for the level
+descent when `p` exactly divides `N`. Only existence and the two reductions are proved here: the
+coset system is not formalized, so nothing is claimed about enumerating or completing it. -/
 theorem exists_mem_Gamma0_map_intCast_zmod_eq_S {p N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
     (hpsq : ¬ p ^ 2 ∣ N) :
     ∃ γ ∈ Gamma0 (N / p),
