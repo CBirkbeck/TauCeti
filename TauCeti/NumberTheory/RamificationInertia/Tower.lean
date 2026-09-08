@@ -39,8 +39,10 @@ the compositum is unramified over the quadratic base.
   every absolute ramification index upstairs by the intermediate absolute ramification index.
 * `TauCeti.RamificationInertia.isUnramifiedIn_of_finrank_le_of_under_ramificationIdx_eq_one`: a
   transverse unramified subextension of sufficiently small relative degree supplies that bound.
-* `TauCeti.RamificationInertia.isUnramifiedAt_of_forall_isUnramifiedAt`: unramifiedness descends
-  from an integral extension to the subring below it, over any base ring and any ideal of it.
+* `TauCeti.RamificationInertia.isUnramifiedAt_of_forall_isUnramifiedAt`: unramifiedness over the
+  base descends from an integral extension to the subring below it, for `S` integral and
+  torsion-free over the Dedekind domain `R`, with `R` and `S` both essentially of finite type over
+  the base `A` and `A ≤ R ≤ S` a scalar tower. The base ring and the ideal are arbitrary.
 -/
 
 public section
@@ -170,18 +172,18 @@ variable {A R S : Type*} [CommRing A] [CommRing R] [IsDedekindDomain R] [CommRin
   [Algebra A R] [Algebra A S] [Algebra R S] [IsScalarTower A R S] [Algebra.IsIntegral R S]
   [Module.IsTorsionFree R S] [Algebra.EssFiniteType A R] [Algebra.EssFiniteType A S]
 
+-- Source. Recovered from the branch of the retired pull request #5538, commit
+-- `70421db267d9bd6252256f873d27e99e739a931c`, where it was written for the Chebotarev roadmap's
+-- Layer 7.2; the descent step it performs is the one that roadmap prescribes, through Mathlib's
+-- `Algebra.IsUnramifiedAt.of_liesOver`.
+
 /-- **Unramifiedness descends to a subring.** If every prime of `S` lying over an ideal `I` of the
-base `A` is unramified over `A`, then so is every prime of `R` lying over `I`, for `S` integral and
-torsion-free over the Dedekind domain `R`.
+base `A` is unramified over `A`, then so is every prime of `R` lying over `I`. The direction is
+descent, not ascent: the hypothesis is upstairs and the conclusion downstairs.
 
-The direction is descent, not ascent: the hypothesis is upstairs and the conclusion downstairs.
-Every prime of `R` has some prime of `S` above it, that prime lies over the same `I`, and
-`Algebra.IsUnramifiedAt.of_liesOver` passes unramifiedness back down the relation.
-
-Nothing in the argument inspects `A` or `I`, which is why both are left arbitrary. What does the
-work is the ambient hypothesis block: it is there that `Nonempty (𝔮.primesOver S)` is synthesized,
-supplying the prime of `S` above `𝔮`. The number-field use is the case `A := ℤ`,
-`I := Ideal.span {(p : ℤ)}`. -/
+`A` and `I` are arbitrary; the hypotheses that carry the argument are the ambient ones on `R` and
+`S`. Its number-field instance is `NumberField.isUnramifiedAway_of_intermediateField`, which
+quantifies it over the places outside a finite set. -/
 theorem isUnramifiedAt_of_forall_isUnramifiedAt {I : Ideal A}
     (hur : ∀ (P : Ideal S) [P.IsPrime] [P.LiesOver I], Algebra.IsUnramifiedAt A P)
     (𝔮 : Ideal R) [𝔮.IsPrime] [𝔮.LiesOver I] :
