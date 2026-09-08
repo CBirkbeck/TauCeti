@@ -63,11 +63,20 @@ in: `s` topologically nilpotent over a strongly noetherian base.
 
 ## What this is not
 
-The chain result is **not** Wedhorn's Proposition 8.30 as he states it. His standing hypothesis is
-that `A` is strongly noetherian; the hypothesis here is that `A⟨U/s⟩` is, for every `U` with
-`T ⊆ U ⊂ T'`. What separates the two is the standing hypothesis of Wedhorn's §8.2 — that rational
-localisations of a strongly noetherian ring are again strongly noetherian. The family hypothesis
-is carried rather than derived from that, and the theorem is named for what it assumes.
+**Neither chain result is Wedhorn's Proposition 8.30 as he states it**, and they fall short in
+different amounts. His standing hypothesis is that `A` is strongly noetherian.
+
+`TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_of_forall_isStronglyNoetherian`
+asks it of `A⟨U/s⟩` for *every* `U` with `T ⊆ U ⊂ T'` — a family of hypotheses, carried rather
+than derived, and the theorem is named for what it assumes. It is the one to use when strong
+noetherianity is known only at the intermediate presentations.
+
+`TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_of_isStronglyNoetherian_base`
+asks it only at `T`, deriving the rest by
+`TauCeti.Huber.PairOfDefinition.isStronglyNoetherian_completion_of_subset`. That removes the
+family, but not the last step: it still asks strong noetherianity of `A⟨T/s⟩` rather than of `A`,
+and **nothing here derives the one from the other**. That derivation is what Wedhorn's §8.2
+supplies and what this module still lacks.
 
 The elementary case is unaffected: it needs strong noetherianity only at its own base, which is
 where Lemma 8.31 needs it too.
