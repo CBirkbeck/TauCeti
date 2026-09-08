@@ -203,11 +203,12 @@ private theorem eq_of_toFinset_normalizedFactors_eq {A : (Ideal (𝓞 K))⁰}
   rw [mem_divisorsAntidiagonal.mp hp, ← mem_divisorsAntidiagonal.mp hq, h1]
 
 private theorem exists_mem_divisorsAntidiagonal_toFinset_eq {A : (Ideal (𝓞 K))⁰}
-    (hA0 : (A : Ideal (𝓞 K)) ≠ 0) {S : Finset (Ideal (𝓞 K))}
+    {S : Finset (Ideal (𝓞 K))}
     (hS : S ∈ (normalizedFactors (A : Ideal (𝓞 K))).toFinset.powerset) :
     ∃ p : (Ideal (𝓞 K))⁰ × (Ideal (𝓞 K))⁰, p ∈ divisorsAntidiagonal A ∧
       Squarefree ((p.1 : Ideal (𝓞 K))) ∧
       (normalizedFactors ((p.1 : Ideal (𝓞 K)))).toFinset = S := by
+  have hA0 : (A : Ideal (𝓞 K)) ≠ 0 := nonZeroDivisors.coe_ne_zero A
   rw [Finset.mem_powerset] at hS
   have hsub : (S.val : Multiset (Ideal (𝓞 K))) ⊆ normalizedFactors (A : Ideal (𝓞 K)) :=
     fun _ hx ↦ Multiset.mem_toFinset.mp (hS (Finset.mem_val.mp hx))
@@ -265,7 +266,7 @@ theorem sum_moebius_divisorsAntidiagonal_of_ne_one {A : (Ideal (𝓞 K))⁰} (hA
     · rw [Finset.mem_coe, Finset.mem_filter] at hp hq
       exact eq_of_toFinset_normalizedFactors_eq hp.1 hq.1 hp.2 hq.2 hpq
     · obtain ⟨p, hpA, hps, hpS⟩ :=
-        exists_mem_divisorsAntidiagonal_toFinset_eq hA0 (Finset.mem_coe.mp hS)
+        exists_mem_divisorsAntidiagonal_toFinset_eq (Finset.mem_coe.mp hS)
       exact ⟨p, Finset.mem_coe.mpr (Finset.mem_filter.mpr ⟨hpA, hps⟩), hpS⟩
   rw [hreindex]
   exact Finset.sum_powerset_neg_one_pow_card_of_nonempty hPne
