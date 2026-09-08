@@ -214,15 +214,17 @@ open scoped Classical in
 as an `Affine.Point.some` at the coordinates of `nonsingular_formalPoint`. -/
 private theorem some_add_some_formalAddEval_of_X_ne {I : Ideal O} (hI : IsAdic I) {t₁ t₂ : O}
     (h₁ : t₁ ∈ I) (h₂ : t₂ ∈ I) (h₁0 : t₁ ≠ 0) (h₂0 : t₂ ≠ 0)
-    (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁)
-    (hE₁ : PowerSeries.HasEval t₁) (hE₂ : PowerSeries.HasEval t₂)
-    (hEF : PowerSeries.HasEval (W.formalAddEval t₁ t₂))
+    (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁) (hF : W.formalAddEval t₁ t₂ ∈ I)
     (hw₁ : algebraMap O K (W.formalWEval t₁) ≠ 0)
     (hw₂ : algebraMap O K (W.formalWEval t₂) ≠ 0)
     (hwF : algebraMap O K (W.formalWEval (W.formalAddEval t₁ t₂)) ≠ 0) :
-    Affine.Point.some _ _ (W.nonsingular_formalPoint (K := K) hE₁ hw₁) +
-        Affine.Point.some _ _ (W.nonsingular_formalPoint (K := K) hE₂ hw₂) =
-      Affine.Point.some _ _ (W.nonsingular_formalPoint (K := K) hEF hwF) := by
+    Affine.Point.some _ _ (W.nonsingular_formalPoint (K := K)
+          (hI.isTopologicallyNilpotent_of_mem h₁) hw₁) +
+        Affine.Point.some _ _ (W.nonsingular_formalPoint (K := K)
+          (hI.isTopologicallyNilpotent_of_mem h₂) hw₂) =
+      Affine.Point.some _ _ (W.nonsingular_formalPoint (K := K)
+        (hI.isTopologicallyNilpotent_of_mem hF) hwF) := by
+  -- the same terms the conclusion names, bound for reuse below
   have hE₁ : PowerSeries.HasEval t₁ := hI.isTopologicallyNilpotent_of_mem h₁
   have hE₂ : PowerSeries.HasEval t₂ := hI.isTopologicallyNilpotent_of_mem h₂
   have hne : ∀ {s : O}, s ≠ 0 → algebraMap O K s ≠ 0 := fun hs0 ↦ by simpa using hs0
@@ -278,7 +280,7 @@ theorem add_eq_formalPoint_formalAddEval_of_X_ne {I : Ideal O} (hI : IsAdic I) {
   -- `Affine.Point.mk` is the `some` constructor at `-(w(t))⁻¹`, while the chord lemmas state the
   -- `y`-coordinate as `-1 / w(t)`; `neg_div` and `one_div` bridge the two
   simpa only [Affine.Point.mk, neg_div, one_div] using
-    (W.some_add_some_formalAddEval_of_X_ne hI h₁ h₂ h₁0 h₂0 hx hE₁ hE₂ hEF
+    (W.some_add_some_formalAddEval_of_X_ne hI h₁ h₂ h₁0 h₂0 hx hF
       (W.algebraMap_formalWEval_ne_zero hI h₁ (hne h₁0))
       (W.algebraMap_formalWEval_ne_zero hI h₂ (hne h₂0))
       (W.algebraMap_formalWEval_ne_zero hI hF (hne hF0)))
