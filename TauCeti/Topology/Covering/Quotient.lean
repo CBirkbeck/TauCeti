@@ -29,6 +29,7 @@ application is `TauCeti.UniversalCover.isCoveringMap_subgroupQuotientProj`.
 
 ## Main results
 
+* `IsCoveringMap.isOpenQuotientMap`: a surjective covering map is an open quotient map.
 * `TauCeti.IsQuotientCoveringMap.isCoveringMap_of_comp`: the map from the quotient by a subgroup
   down to the quotient by the whole group is a covering map.
 
@@ -63,6 +64,11 @@ open Pointwise Topology
 variable {E X Y : Type*} [TopologicalSpace E] [TopologicalSpace X] [TopologicalSpace Y]
   {G : Type*} [Group G] [MulAction G E] {H : Subgroup G}
   {q : E → X} {qH : E → Y} {r : Y → X}
+
+/-- A surjective covering map is an open quotient map. -/
+theorem _root_.IsCoveringMap.isOpenQuotientMap {p : E → X} (hp : IsCoveringMap p)
+    (hsurj : Function.Surjective p) : IsOpenQuotientMap p :=
+  .of_isOpenMap_isQuotientMap hp.isOpenMap (hp.isQuotientMap hsurj)
 
 namespace IsQuotientCoveringMap
 
