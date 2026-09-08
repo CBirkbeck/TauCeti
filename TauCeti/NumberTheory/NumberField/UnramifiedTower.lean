@@ -8,14 +8,15 @@ module
 public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.NumberTheory.RamificationInertia.Unramified
 public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
-public import TauCeti.NumberTheory.RamificationInertia.Tower
+
+import TauCeti.NumberTheory.RamificationInertia.Tower
 
 /-!
 # Unramifiedness descends along a tower of number fields
 
 For a tower `L / M / K` of number fields, unramifiedness over `K` of every prime of `𝓞 L` above a
 place of `𝓞 K` descends to the primes of `𝓞 M` above it. The prime-by-prime statement is
-`TauCeti.RamificationInertia.isUnramifiedAt_of_forall_isUnramifiedAt`, proved there for an
+`TauCeti.RamificationInertia.isUnramifiedAt_of_isUnramifiedIn`, proved there for an
 arbitrary base ring; what this file adds is the version quantified over the places outside a finite
 set, which is the shape the unramified-away hypotheses take.
 
@@ -57,6 +58,6 @@ theorem isUnramifiedAway_of_intermediateField (M : Type*) [Field M] [NumberField
     ∀ v : HeightOneSpectrum (𝓞 K), v ∉ S →
       ∀ (Q : Ideal (𝓞 M)) [Q.IsPrime] [Q.LiesOver v.asIdeal], Algebra.IsUnramifiedAt (𝓞 K) Q :=
   fun v hv P _ _ ↦
-    TauCeti.RamificationInertia.isUnramifiedAt_of_forall_isUnramifiedAt (S := 𝓞 L) (hur v hv) P
+    TauCeti.RamificationInertia.isUnramifiedAt_of_isUnramifiedIn (S := 𝓞 L) (hur v hv) P
 
 end NumberField
