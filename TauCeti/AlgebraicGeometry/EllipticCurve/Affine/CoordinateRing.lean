@@ -51,10 +51,9 @@ characteristic two that polynomial is the square `(a₁X + a₃)²`.
 * `TauCeti.WeierstrassCurve.Affine.isIntegrallyClosed_coordinateRing`: the coordinate ring of an
   elliptic curve over a field is integrally closed.
 * `WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed`: an integrally
-  closed coordinate ring is a Dedekind domain. It extends Mathlib's `WeierstrassCurve.Affine`, so
-  it takes that namespace and `W.isDedekindDomain_coordinateRing_of_isIntegrallyClosed` resolves.
-* `TauCeti.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing`: so the coordinate ring of an
-  elliptic curve is a Dedekind domain.
+  closed coordinate ring is a Dedekind domain — so an elliptic curve's is, by
+  `isIntegrallyClosed_coordinateRing`. It extends Mathlib's `WeierstrassCurve.Affine`, so it takes
+  that namespace and `W.isDedekindDomain_coordinateRing_of_isIntegrallyClosed` resolves.
 
 The integral closedness is the seeded milestone `isIntegrallyClosed_coordinateRing` of
 `TauCetiRoadmap/EllipticCurves/README.md`, Layer 1, where it is named as the normality input to
@@ -488,11 +487,6 @@ theorem _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isInte
   -- ring is module-finite and hence integral, so normality is all that is assumed
   have : Algebra.IsIntegral F[X] W.CoordinateRing := Algebra.IsIntegral.of_finite _ _
   exact { __ := Ring.DimensionLEOne.of_isIntegral F[X] W.CoordinateRing }
-
-/-- **The coordinate ring of an elliptic curve is a Dedekind domain.** -/
-theorem isDedekindDomain_coordinateRing [W.IsElliptic] : IsDedekindDomain W.CoordinateRing :=
-  have := isIntegrallyClosed_coordinateRing W
-  W.isDedekindDomain_coordinateRing_of_isIntegrallyClosed
 
 end IntegrallyClosed
 

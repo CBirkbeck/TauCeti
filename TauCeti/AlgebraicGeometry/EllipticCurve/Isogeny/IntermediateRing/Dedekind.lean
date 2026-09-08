@@ -57,7 +57,8 @@ conclusion either: `IsIntegralClosure.finite_of_fraction_model` supplies module-
 a trace form, and `Isogeny.moduleFinite_intermediateRing_of_isDedekindDomain` is what uses it.
 
 `IsDedekindDomain W₂.CoordinateRing` is taken as a hypothesis rather than derived. For an elliptic
-curve it is supplied by `WeierstrassCurve.Affine.isDedekindDomain_coordinateRing`, which needs
+curve it is supplied by
+`WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed`, which needs
 `[W₂.IsElliptic]`; taking the Dedekind property directly keeps that ellipticity out of this file,
 exactly as the sibling takes `[IsIntegrallyClosed W₂.CoordinateRing]` rather than assuming a curve.
 

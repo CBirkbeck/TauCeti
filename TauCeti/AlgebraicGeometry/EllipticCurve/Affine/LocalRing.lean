@@ -13,7 +13,8 @@ public import Mathlib.RingTheory.DedekindDomain.Dvr
 # The local ring of an elliptic curve at an affine point is a discrete valuation ring
 
 The coordinate ring of an elliptic curve is a Dedekind domain
-(`TauCeti.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing`), and the ideal of a point is
+(`WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed`), and the
+ideal of a point is
 maximal and nonzero (`XYIdeal_isMaximal_of_equation`, `XYIdeal_ne_bot`). Localising at that ideal
 therefore gives a discrete valuation ring.
 
@@ -72,7 +73,8 @@ theorem isDiscreteValuationRing_localizationAtPrime [W.IsElliptic] {y : F[X]}
     haveI : (CoordinateRing.XYIdeal W x y).IsPrime := (XYIdeal_isMaximal h).isPrime
     IsDiscreteValuationRing (Localization.AtPrime (CoordinateRing.XYIdeal W x y)) :=
   haveI : (CoordinateRing.XYIdeal W x y).IsPrime := (XYIdeal_isMaximal h).isPrime
-  have := isDedekindDomain_coordinateRing W
+  have := isIntegrallyClosed_coordinateRing W
+  have := W.isDedekindDomain_coordinateRing_of_isIntegrallyClosed
   IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain W.CoordinateRing
     (XYIdeal_ne_bot x y) _
 
