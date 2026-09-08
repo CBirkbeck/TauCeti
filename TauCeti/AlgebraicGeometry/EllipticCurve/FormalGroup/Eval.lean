@@ -50,9 +50,10 @@ docstring says where its conclusion comes from.
 
 * `WeierstrassCurve.formalWEval_eq_pow_mul_formalUEval` : the factorisation `w(t) = t ^ 3 * u(t)`.
 * `WeierstrassCurve.algebraMap_formalInverseEval_div_algebraMap_formalWEval_formalInverseEval` and
-  `WeierstrassCurve.neg_one_div_algebraMap_formalWEval_formalInverseEval` : the inverse law on
-  coordinates — over a field, `ι` fixes `t / w(t)` and sends `-1 / w(t)` to the curve's `negY` of
-  it, `y ↦ -y - a₁x - a₃`. Neither needs `w(t)` to be nonzero.
+  `WeierstrassCurve.neg_one_div_algebraMap_formalWEval_formalInverseEval` : the two division
+  identities the inverse law rests on, over a field and with no nonvanishing hypothesis. Where
+  `w(t) ≠ 0` they say `ι` fixes the `x`-coordinate `t / w(t)` and sends `-1 / w(t)` to the curve's
+  `negY` of it, `y ↦ -y - a₁x - a₃`.
 * `WeierstrassCurve.formalWEval_zero` : `w(0) = 0`, an immediate consequence of that
   factorisation and the reason the zero parameter carries no affine coordinates.
 * `WeierstrassCurve.formalWEval_mem`, `WeierstrassCurve.formalInverseEval_mem` : a parameter in
@@ -425,9 +426,14 @@ theorem algebraMap_formalInverseEval_div_algebraMap_formalWEval_formalInverseEva
   rw [hiota, hwiota]
   field_simp
 
-/-- **The formal inverse applies the curve's `negY` to the `y`-coordinate**, `y ↦ -y - a₁x - a₃`
-rather than plain negation: `d(t)⁻¹` inverts `d(t) = 1 - a₁t - a₃w(t)`, which turns `-1 / w(ι t)`
-into `negY` at the coordinates `t / w(t)` and `-1 / w(t)`. As above, no nonvanishing is needed. -/
+/-- **The formal inverse's `y`-value in closed form**: `d(t)⁻¹` inverts `d(t) = 1 - a₁t - a₃w(t)`,
+which is what turns `-1 / w(ι t)` into the displayed ratio. The identity holds with no nonvanishing
+hypothesis, both sides being zero when `w(t) = 0`.
+
+**When `w(t) ≠ 0` the right-hand side is the curve's `negY`** at the coordinates `t / w(t)` and
+`-1 / w(t)`, so the formal inverse applies `y ↦ -y - a₁x - a₃` rather than plain negation. That
+reading needs the hypothesis: at `w(t) = 0` both ratios are zero by field division, while
+`negY 0 0 = -a₃`. -/
 theorem neg_one_div_algebraMap_formalWEval_formalInverseEval {K : Type*} [Field K] [Algebra O K]
     {t : O} (hE : PowerSeries.HasEval t)
     (hEV : PowerSeries.HasEval (W.formalInverseEval t)) :
