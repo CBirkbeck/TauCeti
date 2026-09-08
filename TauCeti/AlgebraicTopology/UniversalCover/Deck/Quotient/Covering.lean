@@ -31,7 +31,7 @@ for the deck group and regularity of the deck action.
   action, whatever the acting group.
 * `TauCeti.Deck.isQuotientCoveringMap_iff_isRegular`: for a preconnected covering map, being a
   quotient covering map for the deck group is equivalent to regularity of the deck action.
-* `TauCeti.IsCoveringMap.isOpenQuotientMap`: a surjective covering map is an open quotient map.
+* `IsCoveringMap.isOpenQuotientMap`: a surjective covering map is an open quotient map.
 * `TauCeti.Deck.IsRegular.isOpenQuotientMap`: a regular covering map is an open quotient map.
 
 ## References
@@ -48,7 +48,7 @@ namespace TauCeti
 variable {E B : Type*} [TopologicalSpace E] [TopologicalSpace B] {p : E → B}
 
 /-- A surjective covering map is an open quotient map. -/
-theorem IsCoveringMap.isOpenQuotientMap (hp : IsCoveringMap p)
+theorem _root_.IsCoveringMap.isOpenQuotientMap (hp : IsCoveringMap p)
     (hsurj : Function.Surjective p) : IsOpenQuotientMap p :=
   .of_isOpenMap_isQuotientMap hp.isOpenMap (hp.isQuotientMap hsurj)
 
@@ -80,7 +80,7 @@ theorem isQuotientCoveringMap_iff_isRegular [PreconnectedSpace E] (hp : IsCoveri
 /-- A regular covering map is an open quotient map. -/
 theorem IsRegular.isOpenQuotientMap (hreg : IsRegular p) (hp : IsCoveringMap p) :
     IsOpenQuotientMap p :=
-  TauCeti.IsCoveringMap.isOpenQuotientMap hp hreg.1
+  IsCoveringMap.isOpenQuotientMap hp hreg.1
 
 end Deck
 

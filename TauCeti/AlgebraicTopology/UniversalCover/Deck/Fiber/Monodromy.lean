@@ -19,7 +19,7 @@ Deck transformations commute with transport between fibres by covering-space mon
 
 ## References
 
-The proof specializes `TauCeti.IsCoveringMap.fiberMap_monodromy` to the continuous map underlying
+The proof specializes `IsCoveringMap.fiberMap_monodromy` to the continuous map underlying
 a deck transformation. It supplies the fibre-transport step needed for the regular-cover criterion
 in `TauCetiRoadmap/UniversalCovers/README.md`, Stage 2, item 8.
 -/
