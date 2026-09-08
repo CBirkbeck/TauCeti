@@ -10,6 +10,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.ArctanDeriv
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import TauCeti.Analysis.SpecialFunctions.Arctan
 import Mathlib.Analysis.Complex.RemovableSingularity
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
@@ -452,11 +453,6 @@ origin as `dslope`, so Cauchy's theorem applies to it verbatim, and the second i
 closed form, its four sides contributing the four arctangents that add up to `2 π i`.
 -/
 
-private theorem arctan_div_add_arctan_div (ha : 0 < a) (hb : 0 < b) :
-    Real.arctan (a / b) + Real.arctan (b / a) = π / 2 := by
-  rw [← inv_div a b, Real.arctan_inv_of_pos (by positivity)]
-  ring
-
 /-- The Perron integrand with its pole removed: `s ↦ (x ^ s - 1) / s`, given the value `log x` at
 the origin.  Off the origin it is the difference of the integrands at `x` and at `1`. -/
 private noncomputable def perronDslope (x : ℝ) : ℂ → ℂ := dslope (fun s : ℂ => (x : ℂ) ^ s) 0
@@ -537,12 +533,12 @@ private theorem arctan_rectangle_residue (hc : 0 < c) (hB0 : 0 < B) (hT : 0 < T)
       = 2 * π * I := by
   have hA : ((Real.arctan (c / T) : ℝ) : ℂ) + ((Real.arctan (T / c) : ℝ) : ℂ)
       = (π : ℂ) / 2 := by
-    rw [← Complex.ofReal_add, arctan_div_add_arctan_div hc hT]
+    rw [← Complex.ofReal_add, Real.arctan_div_add_arctan_div hc hT]
     push_cast
     ring
   have hB : ((Real.arctan (B / T) : ℝ) : ℂ) + ((Real.arctan (T / B) : ℝ) : ℂ)
       = (π : ℂ) / 2 := by
-    rw [← Complex.ofReal_add, arctan_div_add_arctan_div hB0 hT]
+    rw [← Complex.ofReal_add, Real.arctan_div_add_arctan_div hB0 hT]
     push_cast
     ring
   rw [neg_div, Real.arctan_neg, div_neg, Real.arctan_neg]
@@ -565,15 +561,16 @@ private theorem norm_integral_perronFn_horizontal_le_of_one_lt (hx1 : 1 < x) (hT
         linarith
     _ = x ^ c / (T * Real.log x) := by ring
 
-/-- **The `B`-dependent summand tends to zero.** For `1 < x` the term `x ^ (-B) / c * (2 * T)`
-vanishes as `B → ∞`, so the sum tends to its constant part. No sign condition on `c` or `T` is
-needed or asserted: this is convergence, not an estimate. -/
-private theorem tendsto_perron_farSide_bound (hx1 : 1 < x) (c T : ℝ) :
-    Filter.Tendsto (fun B : ℝ => 2 * (x ^ c / (T * |Real.log x|)) + x ^ (-B) / c * (2 * T))
-      atTop (𝓝 (2 * (x ^ c / (T * |Real.log x|)))) := by
-  have h0 : Tendsto (fun B : ℝ => x ^ (-B)) atTop (𝓝 0) :=
-    (tendsto_rpow_atBot_of_base_gt_one x hx1).comp tendsto_neg_atTop_atBot
-  simpa using tendsto_const_nhds.add ((h0.div_const c).mul tendsto_const_nhds)
+/-- **The far side contributes nothing in the limit.** Whatever vanishing factor `g` the far side
+carries, the bound `2 * A + g B / c * (2 * T)` tends to its constant part `2 * A`.
+
+Only `g B → 0` is used. The base `x` does not enter, so the rpow limit itself stays where it
+belongs — Mathlib's `tendsto_rpow_atBot_of_base_gt_one`, supplied by the caller — and what remains
+here is the arithmetic of the bound. No sign condition on `A`, `c` or `T` is needed or asserted:
+this is convergence, not an estimate. -/
+private theorem tendsto_perron_farSide_bound {g : ℝ → ℝ} (hg : Tendsto g atTop (𝓝 0)) (A c T : ℝ) :
+    Tendsto (fun B : ℝ => 2 * A + g B / c * (2 * T)) atTop (𝓝 (2 * A)) := by
+  simpa using tendsto_const_nhds.add ((hg.div_const c).mul tendsto_const_nhds)
 
 private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc : 0 < c)
     (hT : 0 < T) :
@@ -617,7 +614,9 @@ private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc
     have h₁ := hhoriz (-T) (by rw [abs_neg, abs_of_pos hT])
     have h₂ := hhoriz T (abs_of_pos hT)
     linarith
-  have hlim := tendsto_perron_farSide_bound hx1 c T
+  have hlim := tendsto_perron_farSide_bound
+    ((tendsto_rpow_atBot_of_base_gt_one x hx1).comp tendsto_neg_atTop_atBot)
+    (x ^ c / (T * |Real.log x|)) c T
   exact ge_of_tendsto hlim (eventually_atTop.2 ⟨c, key⟩)
 
 /-- **Above the endpoint the truncated Perron kernel is close to one.**  For `1 < x` it differs
