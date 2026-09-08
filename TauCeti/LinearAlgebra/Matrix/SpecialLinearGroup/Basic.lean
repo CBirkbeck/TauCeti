@@ -74,6 +74,12 @@ variable {d : ℕ}
 
 namespace Matrix.SpecialLinearGroup
 
+/-- **Functoriality of the induced map on special linear groups.** Reducing along `f` and then
+along `g` is reducing along `g ∘ f`. -/
+theorem map_comp {R S T : Type*} [CommRing R] [CommRing S] [CommRing T] {n : Type*} [Fintype n]
+    [DecidableEq n] (f : R →+* S) (g : S →+* T) :
+    (map (n := n) g).comp (map f) = map (g.comp f) := rfl
+
 /-- The determinant-one identity for an element of `SL₂(R)`, written in coordinates. -/
 lemma fin_two_mul_sub_mul_eq_one {R : Type*} [CommRing R] (g : SL(2, R)) :
     g 0 0 * g 1 1 - g 0 1 * g 1 0 = 1 := by

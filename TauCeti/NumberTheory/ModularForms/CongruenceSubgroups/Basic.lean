@@ -114,15 +114,12 @@ theorem Gamma1_le_Gamma1_of_dvd {M N : ℕ} (h : M ∣ N) : Gamma1 N ≤ Gamma1 
 
 /-- `Γ` is antitone in the level: if `M ∣ N` then `Γ(N) ≤ Γ(M)`, by reducing the four
 congruences along `ZMod N → ZMod M`. The `Γ₀`/`Γ₁` cases are below and above. -/
-theorem Gamma_le_Gamma_of_dvd {M N : ℕ} (h : M ∣ N) : Gamma N ≤ Gamma M := by
-  intro A hA
-  rw [Gamma_mem] at hA ⊢
-  exact ⟨by simpa [map_intCast, map_one, map_zero] using congr_arg (ZMod.castHom h (ZMod M)) hA.1,
-    by simpa [map_intCast, map_one, map_zero] using congr_arg (ZMod.castHom h (ZMod M)) hA.2.1,
-    by simpa [map_intCast, map_one, map_zero] using
-      congr_arg (ZMod.castHom h (ZMod M)) hA.2.2.1,
-    by simpa [map_intCast, map_one, map_zero] using
-      congr_arg (ZMod.castHom h (ZMod M)) hA.2.2.2⟩
+theorem Gamma_le_Gamma_of_dvd {M N : ℕ} (h : M ∣ N) : Gamma N ≤ Gamma M := fun A hA ↦
+  Gamma_mem'.mpr <| by
+    -- `ℤ` is initial, so reduction mod `M` *is* reduction mod `N` followed by `ZMod N → ZMod M`
+    rw [show (Int.castRingHom (ZMod M) : ℤ →+* ZMod M) =
+        (ZMod.castHom h (ZMod M)).comp (Int.castRingHom (ZMod N)) from Subsingleton.elim _ _,
+      ← Matrix.SpecialLinearGroup.map_comp, MonoidHom.comp_apply, Gamma_mem'.mp hA, map_one]
 
 /-- `Γ(N) ≤ Γ₁(N)`: the principal congruence subgroup sits inside `Γ₁(N)`, since the three
 congruences `a ≡ 1`, `d ≡ 1`, `c ≡ 0` that `Γ₁(N)` imposes are three of the four that `Γ(N)`
