@@ -8,6 +8,7 @@ module
 import Mathlib.Data.Nat.Squarefree
 public import TauCeti.NumberTheory.ModularForms.Degeneracy
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.LevelSupported
+public import TauCeti.NumberTheory.ModularForms.Newforms.QSupport
 
 /-!
 # Coprime-index filters on `S_k(Γ₁(N), χ)`
@@ -37,6 +38,9 @@ The construction never lowers a level.
 * `TauCeti.exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_of_squarefree`:
   Miyake's Lemma 4.6.5 as stated, for a squarefree `L` whose primes divide `N`, at level
   `L * N`.
+* `TauCeti.exists_mem_cuspFormCharSpace_qExpansionSupportedOnDvd_of_squarefree`: the filter at a
+  squarefree `L`, for an `f` vanishing at every index coprime to `p * L`, is additionally
+  **supported on the multiples of `p`** — the hypothesis the Atkin–Lehner descent consumes.
 * `TauCeti.exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero`: the complementary
   filter, under the filter's own hypothesis and at its own level — a nonzero `L` whose primes
   divide `N`, at level `∏ L.primeFactors * N`.
@@ -353,5 +357,40 @@ theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero_mul_sq
     rwa [MonoidHom.comp_assoc, ZMod.unitsMap_comp] at this
   · rw [CuspForm.coe_ofLe]
     exact hhq n
+
+/-- **The filter of a form vanishing off `p · L` is supported on the multiples of `p`.** If
+`f ∈ S_k(Γ₁(N), χ)` has `aₙ(f) = 0` at every `n` coprime to `p · L`, then its coprime-to-`L`
+filter `g` — the same cusp form of level `L * N` that
+`TauCeti.exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_of_squarefree` produces —
+satisfies `QExpansionSupportedOnDvd p g`.
+
+The two hypotheses meet on a single index. At an `n` not divisible by `p`, primality of `p` makes
+`n` coprime to `p`; if `n` is also coprime to `L` then it is coprime to `p · L`, so the vanishing
+hypothesis kills `aₙ(f)`, which is what the filter put at `aₙ(g)`. At every other `n` the filter
+already put `0` there. So `g` is left with nothing off the multiples of `p`.
+
+This is the form the Atkin–Lehner descent consumes: `QExpansionSupportedOnDvd p g` is exactly the
+hypothesis of `TauCeti.mem_cuspFormsOld_of_qExpansionSupportedOnDvd`. Squarefreeness of `L` and
+`L.primeFactors ⊆ N.primeFactors` are inherited unchanged from the filter; `p` is not required to
+divide `N`, and no relation between `p` and `L` is assumed. -/
+theorem exists_mem_cuspFormCharSpace_qExpansionSupportedOnDvd_of_squarefree
+    (χ : (ZMod N)ˣ →* ℂˣ) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
+    (hf : f ∈ cuspFormCharSpace k χ) {p L : ℕ} (hp : p.Prime) (hL : Squarefree L)
+    (hLN : L.primeFactors ⊆ N.primeFactors)
+    (hvan : ∀ n, Nat.Coprime n (p * L) → (qExpansion 1 f).coeff n = 0) :
+    ∃ g : CuspForm ((Gamma1 (L * N)).map (mapGL ℝ)) k,
+      g ∈ cuspFormCharSpace k (χ.comp (ZMod.unitsMap (Nat.dvd_mul_left N L))) ∧
+        QExpansionSupportedOnDvd p g ∧
+        ∀ n, (qExpansion 1 g).coeff n =
+          if Nat.Coprime n L then (qExpansion 1 f).coeff n else 0 := by
+  obtain ⟨g, hgχ, hgq⟩ :=
+    exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_of_squarefree χ hf hL hLN
+  refine ⟨g, hgχ, ?_, hgq⟩
+  rw [qExpansionSupportedOnDvd_iff, PowerSeries.isSupportedOnDvd_iff]
+  intro n hn
+  rw [hgq n]
+  split_ifs with hcop
+  · exact hvan n (Nat.Coprime.mul_right (hp.coprime_iff_not_dvd.mpr hn).symm hcop)
+  · rfl
 
 end TauCeti
