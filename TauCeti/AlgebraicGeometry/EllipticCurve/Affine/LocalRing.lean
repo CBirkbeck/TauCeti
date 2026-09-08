@@ -65,10 +65,10 @@ namespace WeierstrassCurve.Affine.CoordinateRing
 
 variable {F : Type*} [Field F] {W : _root_.WeierstrassCurve.Affine F} {x : F}
 
-/-- **The local ring of an elliptic curve at `⟨X - x, Y - y(X)⟩` is a discrete valuation ring**,
-whenever `y` solves the Weierstrass equation at `x`. The primality of the ideal is a consequence of
-that hypothesis, through `XYIdeal_isMaximal`, so it is installed in the statement rather than
-assumed. -/
+/-- **The local ring of a normal coordinate ring at `⟨X - x, Y - y(X)⟩` is a discrete valuation
+ring**, whenever `y` solves the Weierstrass equation at `x`. The curve is not assumed elliptic,
+only its coordinate ring integrally closed. The primality of the ideal is a consequence of the
+equation, through `XYIdeal_isMaximal`, so it is installed in the statement rather than assumed. -/
 theorem isDiscreteValuationRing_localizationAtPrime [IsIntegrallyClosed W.CoordinateRing]
     {y : F[X]} (h : (W.polynomial.eval y).eval x = 0) :
     haveI : (CoordinateRing.XYIdeal W x y).IsPrime := (XYIdeal_isMaximal h).isPrime
