@@ -114,7 +114,7 @@ theorem _root_.Module.End.IsSemisimple.rTensor {f : _root_.Module.End K V} (hf :
     (Module.Projective.iff_split (R := K) (P := W)).mp inferInstance
   -- `iff_split` only supplies `AddCommMonoid M`; over a ring the module structure promotes it.
   let _ : AddCommGroup M := Module.addCommMonoidToAddCommGroup K
-  refine IsSemisimple.of_injective (isSemisimple_rTensor_of_free (N := M) hf)
+  refine Module.End.IsSemisimple.of_injective (Module.End.isSemisimple_rTensor_of_free (N := M) hf)
     (i.lTensor V) ?_ ?_
   · apply LinearMap.injective_of_comp_eq_id (i.lTensor V) (s.lTensor V)
     rw [← LinearMap.lTensor_comp, his, LinearMap.lTensor_id]
@@ -133,7 +133,7 @@ theorem _root_.Module.End.IsSemisimple.lTensor {f : _root_.Module.End K W} (hf :
     _root_.Module.End.IsSemisimple (f.lTensor V) := by
   exact ((TensorProduct.comm K V W).isSemisimple_iff (f.lTensor V) (f.rTensor V)
     (LinearMap.rTensor_comp_comm f).symm).mpr
-      (IsSemisimple.rTensor (W := V) hf)
+      (Module.End.IsSemisimple.rTensor (W := V) hf)
 
 end Left
 
@@ -151,13 +151,13 @@ theorem _root_.Module.End._root_.IsNilpotent.tensorProduct_map_sub_one {f : _roo
   let m : _root_.Module.End K (V ⊗[K] W) := g.lTensor V - 1
   have hn : IsNilpotent n := by
     have hn' := hf.map (_root_.Module.End.rTensorAlgHom K V W)
-    rw [map_sub, map_one, rTensorAlgHom_apply] at hn'
+    rw [map_sub, map_one, Module.End.rTensorAlgHom_apply] at hn'
     exact hn'
   have hm : IsNilpotent m := by
     have hm' := hg.map (_root_.Module.End.lTensorAlgHom K W V)
-    rw [map_sub, map_one, lTensorAlgHom_apply] at hm'
+    rw [map_sub, map_one, Module.End.lTensorAlgHom_apply] at hm'
     exact hm'
-  have hab := commute_rTensor_lTensor f g
+  have hab := Module.End.commute_rTensor_lTensor f g
   have hnm : Commute n m := by
     dsimp only [n, m]
     exact (hab.sub_right (Commute.one_right _)).sub_left (Commute.one_left _)
@@ -185,8 +185,8 @@ theorem _root_.Module.End.IsSemisimple.tensorProduct {f : _root_.Module.End K V}
     (hf : f.IsSemisimple) (hg : g.IsSemisimple) :
     _root_.Module.End.IsSemisimple (TensorProduct.map f g) := by
   rw [← LinearMap.lTensor_comp_rTensor, ← _root_.Module.End.mul_eq_comp]
-  exact _root_.Module.End.IsSemisimple.mul_of_commute (commute_rTensor_lTensor f g).symm
-    (IsSemisimple.lTensor hg) (IsSemisimple.rTensor hf)
+  exact _root_.Module.End.IsSemisimple.mul_of_commute (Module.End.commute_rTensor_lTensor f g).symm
+    (Module.End.IsSemisimple.lTensor hg) (Module.End.IsSemisimple.rTensor hf)
 
 end PerfectField
 

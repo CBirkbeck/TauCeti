@@ -49,7 +49,7 @@ theorem _root_.Module.End._root_.IsNilpotent.prodMap {f : Module.End K V} {g : M
   obtain ⟨m, hm⟩ := hf
   obtain ⟨n, hn⟩ := hg
   refine ⟨m + n, ?_⟩
-  rw [prodMap_pow, pow_add, hm, zero_mul, pow_add, hn, mul_zero,
+  rw [Module.End.prodMap_pow, pow_add, hm, zero_mul, pow_add, hn, mul_zero,
     LinearMap.prodMap_zero]
 
 end Semiring
@@ -86,10 +86,10 @@ theorem _root_.Module.End.IsSemisimple.prodMap {f : Module.End K V} {g : Module.
       -- Unfold the two `AEval` scalar actions to compare their underlying endomorphisms.
       apply Prod.ext
       · change ((aeval (f.prodMap g) p) x).1 = (aeval f p) x.1
-        rw [aeval_prodMap]
+        rw [Module.End.aeval_prodMap]
         rfl
       · change ((aeval (f.prodMap g) p) x).2 = (aeval g p) x.2
-        rw [aeval_prodMap]
+        rw [Module.End.aeval_prodMap]
         rfl
   }
   let _ := hprod
