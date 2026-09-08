@@ -172,11 +172,6 @@ variable {A R S : Type*} [CommRing A] [CommRing R] [IsDedekindDomain R] [CommRin
   [Algebra A R] [Algebra A S] [Algebra R S] [IsScalarTower A R S] [Algebra.IsIntegral R S]
   [Module.IsTorsionFree R S] [Algebra.EssFiniteType A R] [Algebra.EssFiniteType A S]
 
--- Source. Recovered from the branch of the retired pull request #5538, commit
--- `70421db267d9bd6252256f873d27e99e739a931c`, where it was written for the Chebotarev roadmap's
--- Layer 7.2; the descent step it performs is the one that roadmap prescribes, through Mathlib's
--- `Algebra.IsUnramifiedAt.of_liesOver`.
-
 /-- **Unramifiedness descends to a subring.** If every prime of `S` lying over an ideal `I` of the
 base `A` is unramified over `A`, then so is every prime of `R` lying over `I`. The direction is
 descent, not ascent: the hypothesis is upstairs and the conclusion downstairs.
