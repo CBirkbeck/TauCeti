@@ -151,10 +151,10 @@ private theorem actionCoverFiberTransport_apply_monodromy (g : FundamentalGroup 
     (actionCoverTotalSpaceHomeomorph x₀ A)
     (funext (actionCoverProj_actionCoverTotalSpaceHomeomorph x₀ A)) g e
   have hfiberMap (e' : ⇑(actionCoveringSpace x₀ A).proj ⁻¹' {x₀}) :
-      IsCoveringMap.fiberMap (actionCoverTotalSpaceHomeomorph x₀ A)
+      ContinuousMap.fiberMap (actionCoverTotalSpaceHomeomorph x₀ A)
           (funext (actionCoverProj_actionCoverTotalSpaceHomeomorph x₀ A)) x₀ e' =
         actionCoverFiberTransport x₀ A e' :=
-    Subtype.ext (IsCoveringMap.fiberMap_apply_coe _ _ x₀ e')
+    Subtype.ext (ContinuousMap.fiberMap_apply_coe _ _ x₀ e')
   simpa only [hfiberMap] using hmonodromy
 
 omit [TopologicalSpace A] [DiscreteTopology A] in
@@ -186,12 +186,12 @@ theorem monodromy_actionCoverFiberEquiv (g : FundamentalGroup X x₀) (a : A) :
   have key := IsCoveringMap.fiberMap_monodromy (isCoveringMap x₀)
     (isCoveringMap_actionCoverProj x₀ A) ι hcomp g (basepointLift x₀)
   have hbase : actionCoverFiberEquiv x₀ A a =
-      IsCoveringMap.fiberMap ι hcomp x₀ (basepointLift x₀) :=
+      ContinuousMap.fiberMap ι hcomp x₀ (basepointLift x₀) :=
     Subtype.ext ((actionCoverFiberEquiv_apply_coe x₀ A a).trans
-      (IsCoveringMap.fiberMap_apply_coe ι hcomp x₀ (basepointLift x₀)).symm)
+      (ContinuousMap.fiberMap_apply_coe ι hcomp x₀ (basepointLift x₀)).symm)
   rw [hbase, ← key]
   refine Subtype.ext ?_
-  rw [IsCoveringMap.fiberMap_apply_coe, actionCoverFiberEquiv_apply_coe]
+  rw [ContinuousMap.fiberMap_apply_coe, actionCoverFiberEquiv_apply_coe]
   -- The application lemmas expose the maps, but leave coercions from the two fibre subtypes.
   -- This reduction records exactly their underlying points before rewriting quotient classes.
   change BalancedProduct.mk (FundamentalGroup X x₀)

@@ -160,11 +160,11 @@ theorem subgroupCoverFiberEquivSubgroupQuotient_apply_monodromy
     (subgroupCoverTotalSpaceHomeomorph x₀ H)
     (funext (subgroupQuotientProj_subgroupCoverTotalSpaceHomeomorph x₀ H)) g e
   have hfiberMap (e' : ⇑(subgroupCover x₀ H).proj ⁻¹' {x₀}) :
-      IsCoveringMap.fiberMap (subgroupCoverTotalSpaceHomeomorph x₀ H)
+      ContinuousMap.fiberMap (subgroupCoverTotalSpaceHomeomorph x₀ H)
           (funext (subgroupQuotientProj_subgroupCoverTotalSpaceHomeomorph x₀ H)) x₀ e' =
         subgroupCoverFiberEquivSubgroupQuotient x₀ H e' := by
     apply Subtype.ext
-    rw [IsCoveringMap.fiberMap_apply_coe]
+    rw [ContinuousMap.fiberMap_apply_coe]
     exact (subgroupCoverFiberEquivSubgroupQuotient_apply_coe x₀ H e').symm
   simpa only [hfiberMap] using hmonodromy
 
