@@ -613,11 +613,10 @@ theorem norm_eq_one (χ : UnitaryIdealWeight K) {I : Ideal (𝓞 K)} (hI : χ.1.
   refine hI.induction_on (by simp) fun 𝔭 J h𝔭 _ ih ↦ ?_
   rw [map_mul, norm_mul, χ.2 𝔭 h𝔭, ih, one_mul]
 
-/-- **A unitary weight is bounded by one on every ideal.** On a good ideal the modulus is exactly
-`1`; on a bad one the weight vanishes, by `apply_eq_zero_iff_not_isGood`. The bound therefore
-carries no goodness hypothesis, which is the form a convergence comparison wants: such a
-comparison is indexed by all of `(Ideal (𝓞 K))⁰`, so it can apply this bound termwise, where
-`norm_eq_one` would oblige every call site to split that index type first. -/
+/-- **A unitary weight is bounded by one on every ideal.** The bound is unconditional: it carries
+no goodness hypothesis, so a comparison indexed by all of `(Ideal (𝓞 K))⁰` can apply it termwise.
+`norm_eq_one` is sharper where it applies, but obliges the caller to split that index type first;
+this is the form a convergence estimate wants. -/
 theorem norm_le_one (χ : UnitaryIdealWeight K) (I : Ideal (𝓞 K)) : ‖χ.1 I‖ ≤ 1 := by
   by_cases hI : χ.1.IsGood I
   · exact (norm_eq_one χ hI).le
