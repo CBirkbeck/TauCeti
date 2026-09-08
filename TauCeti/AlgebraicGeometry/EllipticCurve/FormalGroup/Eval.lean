@@ -49,10 +49,10 @@ docstring says where its conclusion comes from.
 ## Main results
 
 * `WeierstrassCurve.formalWEval_eq_pow_mul_formalUEval` : the factorisation `w(t) = t ^ 3 * u(t)`.
-* `WeierstrassCurve.algebraMap_formalInverseEval_div_formalWEval` and
+* `WeierstrassCurve.algebraMap_formalInverseEval_div_algebraMap_formalWEval_formalInverseEval` and
   `WeierstrassCurve.neg_one_div_algebraMap_formalWEval_formalInverseEval` : the inverse law on
   coordinates — over a field, `ι` fixes `t / w(t)` and sends `-1 / w(t)` to the curve's `negY` of
-  it, `y ↦ -y - a₁x - a₃`.
+  it, `y ↦ -y - a₁x - a₃`. Neither needs `w(t)` to be nonzero.
 * `WeierstrassCurve.formalWEval_zero` : `w(0) = 0`, an immediate consequence of that
   factorisation and the reason the zero parameter carries no affine coordinates.
 * `WeierstrassCurve.formalWEval_mem`, `WeierstrassCurve.formalInverseEval_mem` : a parameter in
@@ -405,11 +405,13 @@ theorem formalWEval_formalInverseEval {t : O} (hE : PowerSeries.HasEval t)
     congrFun (PowerSeries.coe_aeval hV') W.formalW, hsub] at h
   simpa [hcoe, formalWEval, formalInverseEval, formalInverseDenomInvEval] using h.symm
 
-/-- **The formal inverse fixes the `x`-coordinate.** `ι(t) = -(t · u(t))` and
-`w(ι t) = -(w(t) · u(t))` share the unit `u(t)`, so the sign and the unit cancel in the ratio.
-No nonvanishing is needed: if `w(t) = 0` then `w(ι t) = 0` too and both sides are zero. -/
-theorem algebraMap_formalInverseEval_div_formalWEval {K : Type*} [Field K] [Algebra O K] {t : O}
-    (hE : PowerSeries.HasEval t) (hEV : PowerSeries.HasEval (W.formalInverseEval t)) :
+/-- **The formal inverse fixes the `x`-coordinate.** `ι(t) = -(t · d(t)⁻¹)` and
+`w(ι t) = -(w(t) · d(t)⁻¹)` share the unit `d(t)⁻¹ = formalInverseDenomInvEval t`, so the sign and
+that unit cancel in the ratio. No nonvanishing is needed: if `w(t) = 0` then `w(ι t) = 0` too and
+both sides are zero. -/
+theorem algebraMap_formalInverseEval_div_algebraMap_formalWEval_formalInverseEval
+    {K : Type*} [Field K] [Algebra O K] {t : O} (hE : PowerSeries.HasEval t)
+    (hEV : PowerSeries.HasEval (W.formalInverseEval t)) :
     algebraMap O K (W.formalInverseEval t) /
         algebraMap O K (W.formalWEval (W.formalInverseEval t)) =
       algebraMap O K t / algebraMap O K (W.formalWEval t) := by
@@ -424,8 +426,8 @@ theorem algebraMap_formalInverseEval_div_formalWEval {K : Type*} [Field K] [Alge
   field_simp
 
 /-- **The formal inverse applies the curve's `negY` to the `y`-coordinate**, `y ↦ -y - a₁x - a₃`
-rather than plain negation: `u(t)` inverts `1 - a₁t - a₃w(t)`, which turns `-1 / w(ι t)` into
-`negY` at the coordinates `t / w(t)` and `-1 / w(t)`. As above, no nonvanishing is needed. -/
+rather than plain negation: `d(t)⁻¹` inverts `d(t) = 1 - a₁t - a₃w(t)`, which turns `-1 / w(ι t)`
+into `negY` at the coordinates `t / w(t)` and `-1 / w(t)`. As above, no nonvanishing is needed. -/
 theorem neg_one_div_algebraMap_formalWEval_formalInverseEval {K : Type*} [Field K] [Algebra O K]
     {t : O} (hE : PowerSeries.HasEval t)
     (hEV : PowerSeries.HasEval (W.formalInverseEval t)) :
@@ -442,7 +444,7 @@ theorem neg_one_div_algebraMap_formalWEval_formalInverseEval {K : Type*} [Field 
   have hDU := congrArg (algebraMap O K) (W.formalInverseDenomEval_mul_inv hE)
   have hD := congrArg (algebraMap O K) (W.formalInverseDenomEval_eq hE)
   simp only [map_mul, map_sub, map_one] at hDU hD
-  -- the unit inverts the closed form of the inverse denominator; cross-multiplying leaves that
+  -- `d(t)⁻¹` inverts the closed form of `d(t)`; cross-multiplying leaves exactly that
   have hUD : algebraMap O K (W.formalInverseDenomInvEval t) *
       (1 - algebraMap O K W.a₁ * algebraMap O K t -
         algebraMap O K W.a₃ * algebraMap O K (W.formalWEval t)) = 1 := by

@@ -106,7 +106,7 @@ private theorem some_formalThirdRootEval_eq_some_formalAddEval {I : Ideal O} (hI
   -- the addition series is the formal inverse of the third root, so the two coordinate identities
   -- of the inverse law are exactly what distinguishes the two points
   rw [Affine.Point.some.injEq, W.formalAddEval_eq hE₁ hE₂]
-  exact ⟨(W.algebraMap_formalInverseEval_div_formalWEval hET
+  exact ⟨(W.algebraMap_formalInverseEval_div_algebraMap_formalWEval_formalInverseEval hET
       (W.hasEval_formalInverseEval hI hTmem)).symm,
     (W.neg_one_div_algebraMap_formalWEval_formalInverseEval hET
       (W.hasEval_formalInverseEval hI hTmem)).symm⟩

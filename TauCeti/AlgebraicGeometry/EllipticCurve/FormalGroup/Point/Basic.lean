@@ -255,7 +255,7 @@ theorem formalPoint_formalInverseEval {I : Ideal O} (hI : IsAdic I) {t : O} (ht 
   -- `Point.mk` is the `some` constructor, and `negY` at the original point is the negated
   -- `y`-coordinate the second lemma computes
   simp only [Affine.Point.mk, Affine.Point.neg_some, Affine.Point.some.injEq, Affine.negY]
-  refine ⟨W.algebraMap_formalInverseEval_div_formalWEval hE
+  refine ⟨W.algebraMap_formalInverseEval_div_algebraMap_formalWEval_formalInverseEval hE
       (W.hasEval_formalInverseEval hI ht), ?_⟩
   have hy := W.neg_one_div_algebraMap_formalWEval_formalInverseEval (K := K) hE
     (W.hasEval_formalInverseEval hI ht)
