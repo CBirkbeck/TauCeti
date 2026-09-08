@@ -106,7 +106,7 @@ theorem _root_.IsCoveringMap.existsUnique_continuousMap_lifts_of_subsingleton_fu
 
 /-- Choosing a basepoint lift `e` in the fibre over `x` identifies the fundamental group of
 the base with that fibre, via `γ ↦ monodromy γ e`. -/
-@[expose] noncomputable def _root_.IsCoveringMap.fundamentalGroupEquivFiber [SimplyConnectedSpace E]
+noncomputable def _root_.IsCoveringMap.fundamentalGroupEquivFiber [SimplyConnectedSpace E]
     (hp : IsCoveringMap p) (e : p ⁻¹' {x}) :
     FundamentalGroup X x ≃ p ⁻¹' {x} :=
   { toFun γ := hp.monodromy γ e
