@@ -86,7 +86,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : Real.sqrt 3 / 2 ≤ H) {
     (hw : w.im < Real.sqrt 3 / 2) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
     (convex_halfSpace_im_lt _).isPreconnected
-    ?_ (fun R ↦ (Complex.exists_im_lt_and_lt_norm (Real.sqrt 3 / 2) R).imp
+    ?_ (fun R ↦ (TauCeti.exists_im_lt_and_lt_norm (Real.sqrt 3 / 2) R).imp
       fun _ h ↦ ⟨h.1, h.2⟩) hw
   · rintro z hz ⟨t, ht, rfl⟩
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
@@ -99,7 +99,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_half_lt_re {w : ℂ}
     (hw : 2⁻¹ < w.re) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
     (convex_halfSpace_re_gt _).isPreconnected
-    ?_ (fun R ↦ (Complex.exists_lt_re_and_lt_norm 2⁻¹ R).imp
+    ?_ (fun R ↦ (TauCeti.exists_lt_re_and_lt_norm 2⁻¹ R).imp
       fun _ h ↦ ⟨h.1, h.2⟩) hw
   · rintro z hz ⟨t, ht, rfl⟩
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
@@ -114,7 +114,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_re_lt_neg_half {w : ℂ}
     (hw : w.re < -2⁻¹) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
     (convex_halfSpace_re_lt _).isPreconnected
-    ?_ (fun R ↦ (Complex.exists_re_lt_and_lt_norm (-2⁻¹) R).imp
+    ?_ (fun R ↦ (TauCeti.exists_re_lt_and_lt_norm (-2⁻¹) R).imp
       fun _ h ↦ ⟨h.1, h.2⟩) hw
   · rintro z hz ⟨t, ht, rfl⟩
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
@@ -129,7 +129,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_lt_im (hH : 1 ≤ H) {w : ℂ}
     (hw : H < w.im) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
     (convex_halfSpace_im_gt _).isPreconnected
-    ?_ (fun R ↦ (Complex.exists_lt_im_and_lt_norm H R).imp
+    ?_ (fun R ↦ (TauCeti.exists_lt_im_and_lt_norm H R).imp
       fun _ h ↦ ⟨h.1, h.2⟩) hw
   · rintro z hz ⟨t, ht, rfl⟩
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
@@ -152,7 +152,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_norm_lt_one (hH : 1 ≤ H) {w : ℂ}
     positivity
   have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_lt_one.le
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected hconn ?_
-    (fun R ↦ (Complex.exists_im_lt_and_lt_norm (Real.sqrt 3 / 2) R).imp
+    (fun R ↦ (TauCeti.exists_im_lt_and_lt_norm (Real.sqrt 3 / 2) R).imp
       fun _ h ↦ ⟨Or.inr h.1, h.2⟩)
     (Or.inl (by rwa [Metric.mem_ball, dist_zero_right]))
   · rintro z (hz | hz) ⟨t, ht, rfl⟩ <;>

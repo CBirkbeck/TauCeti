@@ -6,62 +6,72 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Analysis.Complex.Basic
+public import TauCeti.Analysis.Normed.Module.FilledHull
 
 /-!
-# Open half-planes of `ℂ` are unbounded
+# Points of large norm in an open half-space
 
-Each of the four open half-planes cut out by a bound on `re` or `im` contains points of
-arbitrarily large norm. The witnesses are real or purely imaginary, so the norm is read off by
-`Complex.norm_real`.
+`TauCeti.not_isBounded_halfSpace_lt` says an open half-space `{y | φ y < u}` is unbounded.
+`TauCeti.exists_lt_and_lt_norm` restates that in the form its consumers want: for every radius
+there is a point of the half-space outside that radius. `TauCeti.exists_lt_and_lt_norm'` is the
+other side, `u < φ y`, obtained from `-φ`.
 
-These are the hypotheses that winding-number vanishing arguments need: transporting a winding
-number through an unbounded connected region requires exhibiting, for each radius, a point of
-the region outside that radius.
+Specialising to `Complex.reCLM` and `Complex.imCLM` gives the four open half-planes of `ℂ`. This
+is what a winding-number vanishing argument needs: to transport a winding number through an
+unbounded connected region one must exhibit, for each radius, a point of the region beyond it.
 
 ## Main results
 
-* `Complex.exists_im_lt_and_lt_norm`, `Complex.exists_lt_im_and_lt_norm`
-* `Complex.exists_re_lt_and_lt_norm`, `Complex.exists_lt_re_and_lt_norm`
+* `TauCeti.exists_lt_and_lt_norm`, `TauCeti.exists_lt_and_lt_norm'` — the two directions for a
+  nonzero continuous functional on a real normed space.
+* `TauCeti.exists_im_lt_and_lt_norm`, `TauCeti.exists_lt_im_and_lt_norm`,
+  `TauCeti.exists_re_lt_and_lt_norm`, `TauCeti.exists_lt_re_and_lt_norm` — the four half-planes.
 -/
 
 public section
 
-namespace Complex
+open Bornology
 
-/-- The open lower half-plane `{z | z.im < c}` is unbounded. -/
-theorem exists_im_lt_and_lt_norm (c R : ℝ) : ∃ z : ℂ, z.im < c ∧ R < ‖z‖ := by
-  refine ⟨((min c 0 - max R 0 - 1 : ℝ) : ℂ) * Complex.I, ?_, ?_⟩
-  · rw [Complex.mul_I_im, Complex.ofReal_re]
-    nlinarith [min_le_left c 0, min_le_right c 0, le_max_right R 0]
-  · rw [norm_mul, Complex.norm_I, mul_one, Complex.norm_real,
-      Real.norm_of_nonpos (by nlinarith [min_le_right c 0, le_max_right R 0])]
-    nlinarith [min_le_right c 0, le_max_left R 0]
+namespace TauCeti
 
-/-- The open upper half-plane `{z | c < z.im}` is unbounded. -/
-theorem exists_lt_im_and_lt_norm (c R : ℝ) : ∃ z : ℂ, c < z.im ∧ R < ‖z‖ := by
-  refine ⟨((max c 0 + max R 0 + 1 : ℝ) : ℂ) * Complex.I, ?_, ?_⟩
-  · rw [Complex.mul_I_im, Complex.ofReal_re]
-    nlinarith [le_max_left c 0, le_max_right R 0]
-  · rw [norm_mul, Complex.norm_I, mul_one, Complex.norm_real,
-      Real.norm_of_nonneg (by nlinarith [le_max_right c 0, le_max_right R 0])]
-    nlinarith [le_max_right c 0, le_max_left R 0]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
-/-- The open left half-plane `{z | z.re < c}` is unbounded. -/
-theorem exists_re_lt_and_lt_norm (c R : ℝ) : ∃ z : ℂ, z.re < c ∧ R < ‖z‖ := by
-  refine ⟨((min c 0 - max R 0 - 1 : ℝ) : ℂ), ?_, ?_⟩
-  · rw [Complex.ofReal_re]
-    nlinarith [min_le_left c 0, min_le_right c 0, le_max_right R 0]
-  · rw [Complex.norm_real,
-      Real.norm_of_nonpos (by nlinarith [min_le_right c 0, le_max_right R 0])]
-    nlinarith [min_le_right c 0, le_max_left R 0]
+/-- An open half-space contains points of arbitrarily large norm. -/
+theorem exists_lt_and_lt_norm {φ : E →L[ℝ] ℝ} (hφ : φ ≠ 0) (u R : ℝ) :
+    ∃ y : E, φ y < u ∧ R < ‖y‖ := by
+  by_contra h
+  push Not at h
+  exact not_isBounded_halfSpace_lt hφ u
+    (isBounded_iff_forall_norm_le.mpr ⟨R, fun y hy => h y hy⟩)
 
-/-- The open right half-plane `{z | c < z.re}` is unbounded. -/
-theorem exists_lt_re_and_lt_norm (c R : ℝ) : ∃ z : ℂ, c < z.re ∧ R < ‖z‖ := by
-  refine ⟨((max c 0 + max R 0 + 1 : ℝ) : ℂ), ?_, ?_⟩
-  · rw [Complex.ofReal_re]
-    nlinarith [le_max_left c 0, le_max_right R 0]
-  · rw [Complex.norm_real,
-      Real.norm_of_nonneg (by nlinarith [le_max_right c 0, le_max_right R 0])]
-    nlinarith [le_max_right c 0, le_max_left R 0]
+/-- The half-space on the other side of the functional, via `-φ`. -/
+theorem exists_lt_and_lt_norm' {φ : E →L[ℝ] ℝ} (hφ : φ ≠ 0) (u R : ℝ) :
+    ∃ y : E, u < φ y ∧ R < ‖y‖ := by
+  obtain ⟨y, hy, hn⟩ := exists_lt_and_lt_norm (φ := -φ) (neg_ne_zero.mpr hφ) (-u) R
+  exact ⟨y, by simpa using hy, hn⟩
 
-end Complex
+private lemma imCLM_ne_zero : (Complex.imCLM : ℂ →L[ℝ] ℝ) ≠ 0 := by
+  intro h
+  simpa using congrArg (fun ψ => ψ Complex.I) h
+
+private lemma reCLM_ne_zero : (Complex.reCLM : ℂ →L[ℝ] ℝ) ≠ 0 := by
+  intro h
+  simpa using congrArg (fun ψ => ψ 1) h
+
+/-- The open lower half-plane `{z | z.im < c}` contains points of arbitrarily large norm. -/
+theorem exists_im_lt_and_lt_norm (c R : ℝ) : ∃ z : ℂ, z.im < c ∧ R < ‖z‖ :=
+  exists_lt_and_lt_norm imCLM_ne_zero c R
+
+/-- The open upper half-plane `{z | c < z.im}` contains points of arbitrarily large norm. -/
+theorem exists_lt_im_and_lt_norm (c R : ℝ) : ∃ z : ℂ, c < z.im ∧ R < ‖z‖ :=
+  exists_lt_and_lt_norm' imCLM_ne_zero c R
+
+/-- The open left half-plane `{z | z.re < c}` contains points of arbitrarily large norm. -/
+theorem exists_re_lt_and_lt_norm (c R : ℝ) : ∃ z : ℂ, z.re < c ∧ R < ‖z‖ :=
+  exists_lt_and_lt_norm reCLM_ne_zero c R
+
+/-- The open right half-plane `{z | c < z.re}` contains points of arbitrarily large norm. -/
+theorem exists_lt_re_and_lt_norm (c R : ℝ) : ∃ z : ℂ, c < z.re ∧ R < ‖z‖ :=
+  exists_lt_and_lt_norm' reCLM_ne_zero c R
+
+end TauCeti
