@@ -23,19 +23,26 @@ of class groups.
 * `TauCeti.Isogeny.pushClass`: the same map written additively, which is the form the point
   group consumes.
 
+## Main results
+
+* `TauCeti.Isogeny.pushClassMonoidHom_mk0`: the map on the class of an integral ideal is the
+  relative norm of its extension, so a consumer can compute with it rather than unfold it.
+* `TauCeti.Isogeny.pushClass_apply`: the additive form is the multiplicative one transported
+  along `Additive`.
+
 ## Design
 
 **The intermediate ring's algebra structures are built here, not accepted.**
 `Isogeny.intermediateRing` is a `Subring W₁.FunctionField` carrying no `Algebra` instance over
 either coordinate ring — `IntermediateRing/Basic.lean` records that an instance would reintroduce a
 diamond — so the two structures have to come from somewhere. Taking them as arguments would leave
-the exported map a *family indexed by the caller's choice*: nothing would force them to be
-`toIntermediateRing` and `pullbackToIntermediateRing`. For `φ = Isogeny.id W`, precomposing either
-with a nontrivial `F`-automorphism of `W.CoordinateRing` satisfies every hypothesis — injectivity,
-finiteness and Dedekindness are all automorphism-stable — while yielding a different map, so
-`(Isogeny.id W).pushClass` would not need to be the identity. The definitions below therefore build
-both structures internally from the corestricted embeddings, which is what makes them *the* maps
-induced by `φ`, and what a functoriality statement and `toPointHom` need.
+the exported map a *family indexed by the caller's choice*: the hypotheses do not force them to be
+`toIntermediateRing` and `pullbackToIntermediateRing`, since injectivity, finiteness and
+Dedekindness are all stable under precomposing with an `F`-automorphism of the coordinate ring. So
+nothing in the signature would pin the map to the one `φ` induces, nor even make
+`(Isogeny.id W).pushClass` the identity. The definitions below therefore build both structures
+internally from the corestricted embeddings, which is what makes them *the* maps induced by `φ`,
+and what a functoriality statement and `toPointHom` need.
 
 **What `h` is for.** The one thing that cannot be built is the agreement between the ambient
 `Algebra W₂.CoordinateRing W₁.FunctionField` and `φ.pullback`:
@@ -62,11 +69,6 @@ describe, in the one-property-per-file `IntermediateRing/` series:
   `Isogeny.pullbackToIntermediateRing_injective`. These are what make
   `ClassGroup.extendedRelNormHom` applicable at all: its variable block requires them.
 
-  **There is deliberately no `Isogeny.isTorsionFree_intermediateRing` to cite.** Named lemmas of
-  that shape were written alongside the embeddings and removed there as one-step wrappers of the
-  `iff` above: a `theorem` carrying an explicit pointwise hypothesis can never be selected by
-  instance search, so it saves a consumer nothing over the one-liner.
-
 The instance arguments that remain are ambient facts about the curves and their function fields,
 not about the intermediate ring, so they stay arguments.
 
@@ -78,12 +80,10 @@ instantiation is `A := W₁.CoordinateRing`, `M := φ.intermediateRing`, `R := W
 ⚠ *mathlib-track*. Adapted from D. Angdinata's shared isogeny development, `Isogeny.lean`, by
 David Kurniadi Angdinata, declarations `pushClassMonoidHom` and `pushClass`, which builds
 `pushClass` by ideal extension and relative norm (`ClassGroup.extendedRelNormHom`) on the way to
-`toPointHom`. No revision is cited because there is none to cite: that source is shared with its
-authors ahead of their Mathlib PRs, so the shared files are the contract, and it should be pinned
-to the PR numbers once those exist. For the same reason no licence is asserted here.
+`toPointHom`. That source is shared with its authors ahead of their Mathlib PRs and carries no
+revision to cite, so no revision or licence is asserted here.
 
-Two adaptations are forced by how this
-repository states the surrounding API:
+Two adaptations are forced by how this repository states the surrounding API:
 
 * the source writes `ClassGroup.extendedRelNormHom W₂.CoordinateRing W₁.CoordinateRing
   f.IntermediateRing`, ordering the rings target-source-middle; `TauCeti.ClassGroup`'s own
@@ -92,20 +92,6 @@ repository states the surrounding API:
   inside each proof; `intermediateRing` here carries no such instance by design, so the same is
   done from the corestricted embeddings, but inside the definition rather than inside a proof —
   which is what lets the exported map be canonical.
-
-The source's `pushFractionalIdeal` and `pushClassMonoidHom_mk` are **not** ported. They are
-stated through `ClassGroup.normIntegralUnitIdeal` and `ClassGroup.integralUnitIdealRep`, an
-integral-representative API for fractional-ideal units that this repository does not have;
-`ExtendedRelNorm.lean` instead characterises the composite by `extendedRelNormHom_apply` and, on
-integral ideals, `extendedRelNormHom_mk0`.
-
-**No transported characterisation is offered here, deliberately.** The algebra structures are built
-inside the definitions below rather than accepted from the caller, which is what makes them *the*
-isogeny's maps; but it also means a characterisation lemma cannot name those structures — a `letI`
-in a statement builds different terms, and `ClassGroup.relNorm` and `ClassGroup.extendedRelNormHom`
-are
-unexposed, so nothing reconciles them. The first real consumer (`toPointHom`) should decide what
-characterisation it needs and in what form, rather than this file guessing.
 -/
 
 public section
@@ -148,12 +134,57 @@ noncomputable def pushClassMonoidHom
     Module.isTorsionFree_iff_algebraMap_injective.mpr φ.pullbackToIntermediateRing_injective
   ClassGroup.extendedRelNormHom W₁.CoordinateRing φ.intermediateRing W₂.CoordinateRing
 
+/-- **The induced map on an integral ideal's class**: extend the ideal into the intermediate ring,
+then take its relative norm down to `W₂.CoordinateRing`. The definition builds the two algebra
+structures itself rather than accepting them, so they are restated here — verbatim, so that the
+two elaborate to the same terms — and this is what lets a consumer compute with the map instead of
+unfolding it. -/
+theorem pushClassMonoidHom_mk0
+    (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x)
+    (I : (Ideal W₁.CoordinateRing)⁰) :
+    letI : Algebra W₁.CoordinateRing φ.intermediateRing := φ.toIntermediateRing.toAlgebra
+    letI : Algebra W₂.CoordinateRing φ.intermediateRing := φ.pullbackToIntermediateRing.toAlgebra
+    haveI : IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField :=
+      φ.isScalarTower_intermediateRing rfl h
+    haveI := φ.isDedekindDomain_intermediateRing h
+    haveI : Module.Finite W₂.CoordinateRing φ.intermediateRing :=
+      φ.moduleFinite_intermediateRing_of_isDedekindDomain h
+    haveI : Module.IsTorsionFree W₁.CoordinateRing φ.intermediateRing :=
+      Module.isTorsionFree_iff_algebraMap_injective.mpr φ.toIntermediateRing_injective
+    haveI : Module.IsTorsionFree W₂.CoordinateRing φ.intermediateRing :=
+      Module.isTorsionFree_iff_algebraMap_injective.mpr φ.pullbackToIntermediateRing_injective
+    φ.pushClassMonoidHom h (ClassGroup.mk0 I) =
+      ClassGroup.mk0 (Ideal.relNorm0 W₂.CoordinateRing
+        (ClassGroup.extendedIdeal W₁.CoordinateRing φ.intermediateRing I)) := by
+  -- the `letI`s above bind inside the statement only, so the same instances are re-introduced
+  -- here to bring them into scope for the proof term
+  let _ : Algebra W₁.CoordinateRing φ.intermediateRing := φ.toIntermediateRing.toAlgebra
+  let _ : Algebra W₂.CoordinateRing φ.intermediateRing := φ.pullbackToIntermediateRing.toAlgebra
+  have : IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField :=
+    φ.isScalarTower_intermediateRing rfl h
+  have := φ.isDedekindDomain_intermediateRing h
+  have : Module.Finite W₂.CoordinateRing φ.intermediateRing :=
+    φ.moduleFinite_intermediateRing_of_isDedekindDomain h
+  have : Module.IsTorsionFree W₁.CoordinateRing φ.intermediateRing :=
+    Module.isTorsionFree_iff_algebraMap_injective.mpr φ.toIntermediateRing_injective
+  have : Module.IsTorsionFree W₂.CoordinateRing φ.intermediateRing :=
+    Module.isTorsionFree_iff_algebraMap_injective.mpr φ.pullbackToIntermediateRing_injective
+  exact ClassGroup.extendedRelNormHom_mk0 _ _ _ I
+
 /-- **The additive form of `Isogeny.pushClassMonoidHom`.** The point group is described additively
 by its class group, so this is the shape the induced map on points is built from. -/
 noncomputable def pushClass
     (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x) :
     Additive (ClassGroup W₁.CoordinateRing) →+ Additive (ClassGroup W₂.CoordinateRing) :=
   MonoidHom.toAdditive (φ.pushClassMonoidHom h)
+
+/-- **The additive form is the multiplicative one**, transported along `Additive`. -/
+@[simp]
+theorem pushClass_apply
+    (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x)
+    (x : Additive (ClassGroup W₁.CoordinateRing)) :
+    φ.pushClass h x = Additive.ofMul (φ.pushClassMonoidHom h x.toMul) :=
+  (rfl)
 
 end PushClass
 
