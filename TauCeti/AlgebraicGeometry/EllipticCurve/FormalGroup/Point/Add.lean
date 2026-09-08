@@ -86,7 +86,6 @@ step read off on coordinates. Both nonsingularity proofs are taken rather than b
 statement says exactly which witnesses the dependent equality is between. -/
 private theorem some_formalThirdRootEval_eq_some_formalAddEval {I : Ideal O} (hI : IsAdic I)
     {t₁ t₂ : O} (h₁ : t₁ ∈ I) (h₂ : t₂ ∈ I)
-    (hwT : algebraMap O K (W.formalWEval (W.formalThirdRootEval t₁ t₂)) ≠ 0)
     (h₃ : (W.baseChange K).toAffine.Nonsingular
       (algebraMap O K (W.formalThirdRootEval t₁ t₂) /
         algebraMap O K (W.formalWEval (W.formalThirdRootEval t₁ t₂)))
@@ -108,9 +107,9 @@ private theorem some_formalThirdRootEval_eq_some_formalAddEval {I : Ideal O} (hI
   -- of the inverse law are exactly what distinguishes the two points
   rw [Affine.Point.some.injEq, W.formalAddEval_eq hE₁ hE₂]
   exact ⟨(W.algebraMap_formalInverseEval_div_formalWEval hET
-      (W.hasEval_formalInverseEval hI hTmem) hwT).symm,
+      (W.hasEval_formalInverseEval hI hTmem)).symm,
     (W.neg_one_div_algebraMap_formalWEval_formalInverseEval hET
-      (W.hasEval_formalInverseEval hI hTmem) hwT).symm⟩
+      (W.hasEval_formalInverseEval hI hTmem)).symm⟩
 
 omit [(W.baseChange K).IsElliptic] in
 open scoped Classical in
@@ -166,7 +165,7 @@ private theorem some_add_some_formalAddEval_of_X_ne {I : Ideal O} (hI : IsAdic I
   obtain ⟨h₃, hadd⟩ := chord_point_add (W.baseChange K) hq₁ hq₂ hslope hint hrel hwT hA
     (W.algebraMap_formalWEval_ne_zero hI h₁ (hne h₁0))
     (W.algebraMap_formalWEval_ne_zero hI h₂ (hne h₂0)) hwT0 hxK hn₁ hn₂
-  exact hadd.trans (W.some_formalThirdRootEval_eq_some_formalAddEval hI h₁ h₂ hwT0 h₃ hnF)
+  exact hadd.trans (W.some_formalThirdRootEval_eq_some_formalAddEval hI h₁ h₂ h₃ hnF)
 
 open scoped Classical in
 /-- **The parametrisation carries the group law**, for two nonzero parameters whose points have

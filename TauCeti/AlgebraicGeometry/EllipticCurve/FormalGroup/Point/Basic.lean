@@ -41,13 +41,9 @@ into pole orders, but no order or valuation hypothesis is assumed here.
   `WeierstrassCurve.formalPoint_injective`.
 * `WeierstrassCurve.formalPoint_of_param_eq_zero` and
   `WeierstrassCurve.formalPoint_of_param_ne_zero`: the two branches of the definition.
-* `WeierstrassCurve.algebraMap_formalInverseEval_div_formalWEval` and
-  `WeierstrassCurve.neg_one_div_algebraMap_formalWEval_formalInverseEval`: the inverse law on
-  coordinates — the formal inverse fixes `x` and negates `y`. Stated at evaluability, so they are
-  available without an adic ideal, an injective structure map or an elliptic base change, which is
-  what lets the chord case in `Point/Add.lean` use them too.
 * `WeierstrassCurve.formalPoint_formalInverseEval`: **the parametrisation respects negation** —
-  the formal inverse on parameters becomes the group inverse on points.
+  the formal inverse on parameters becomes the group inverse on points, which on a generalised
+  Weierstrass curve sends `y` to `-y - a₁x - a₃` rather than to `-y`.
 * `WeierstrassCurve.xCoord_formalPoint` and `WeierstrassCurve.yCoord_formalPoint`: the point's
   coordinates, through which the closed forms
   `WeierstrassCurve.xCoord_formalPoint_mul_eq_one` and
@@ -236,53 +232,10 @@ theorem formalPoint_injective {I : Ideal O} (hI : IsAdic I) :
     ← W.neg_xCoord_div_yCoord_formalPoint (K := K) hI t₂.property]
   exact congrArg (fun P ↦ -P.xCoord / P.yCoord) h
 
-omit [FaithfulSMul O K] [(W.baseChange K).IsElliptic] in
-/-- **The formal inverse does not move the `x`-coordinate.** `ι(t) = -(t · u(t))` and
-`w(ι t) = -(w(t) · u(t))` share the unit `u(t)`, so the sign and the unit cancel in the ratio. -/
-theorem algebraMap_formalInverseEval_div_formalWEval {t : O} (hE : PowerSeries.HasEval t)
-    (hEV : PowerSeries.HasEval (W.formalInverseEval t))
-    (hWt : algebraMap O K (W.formalWEval t) ≠ 0) :
-    algebraMap O K (W.formalInverseEval t) /
-        algebraMap O K (W.formalWEval (W.formalInverseEval t)) =
-      algebraMap O K t / algebraMap O K (W.formalWEval t) := by
-  have hU0 : algebraMap O K (W.formalInverseDenomInvEval t) ≠ 0 :=
-    ((W.isUnit_formalInverseDenomInvEval hE).map (algebraMap O K)).ne_zero
-  have hiota := congrArg (algebraMap O K) (W.formalInverseEval_eq hE)
-  have hwiota := congrArg (algebraMap O K) (W.formalWEval_formalInverseEval hE hEV)
-  simp only [map_neg, map_mul] at hiota hwiota
-  rw [hiota, hwiota]
-  field_simp
-
-omit [FaithfulSMul O K] [(W.baseChange K).IsElliptic] in
-/-- **The formal inverse negates the `y`-coordinate.** `u(t)` inverts `1 - a₁t - a₃w(t)`, which is
-what turns `-1 / w(ι t)` into the negated `y`-coordinate as the chord construction writes it. -/
-theorem neg_one_div_algebraMap_formalWEval_formalInverseEval {t : O}
-    (hE : PowerSeries.HasEval t) (hEV : PowerSeries.HasEval (W.formalInverseEval t))
-    (hWt : algebraMap O K (W.formalWEval t) ≠ 0) :
-    -1 / algebraMap O K (W.formalWEval (W.formalInverseEval t)) =
-      (1 - (W.baseChange K).a₁ * algebraMap O K t -
-          (W.baseChange K).a₃ * algebraMap O K (W.formalWEval t)) /
-        algebraMap O K (W.formalWEval t) := by
-  have hU0 : algebraMap O K (W.formalInverseDenomInvEval t) ≠ 0 :=
-    ((W.isUnit_formalInverseDenomInvEval hE).map (algebraMap O K)).ne_zero
-  have hwiota := congrArg (algebraMap O K) (W.formalWEval_formalInverseEval hE hEV)
-  have hDU := congrArg (algebraMap O K) (W.formalInverseDenomEval_mul_inv hE)
-  have hD := congrArg (algebraMap O K) (W.formalInverseDenomEval_eq hE)
-  simp only [map_neg, map_mul, map_sub, map_one] at hwiota hDU hD
-  -- the unit inverts the closed form of the inverse denominator; that single identity is what
-  -- the `y`-coordinate needs
-  have hUD : algebraMap O K (W.formalInverseDenomInvEval t) *
-      (1 - algebraMap O K W.a₁ * algebraMap O K t -
-        algebraMap O K W.a₃ * algebraMap O K (W.formalWEval t)) = 1 := by
-    rw [← hD, mul_comm]; exact hDU
-  simp only [baseChange, map_a₁, map_a₃]
-  -- `-1 / -(w(t) · u(t))` is `1 / (w(t) · u(t))`, and cross-multiplying leaves exactly `hUD`
-  rw [hwiota, div_neg, neg_div, neg_neg, div_eq_div_iff (mul_ne_zero hWt hU0) hWt]
-  linear_combination -algebraMap O K (W.formalWEval t) * hUD
-
 open scoped Classical in
 /-- **The parametrisation respects negation.** The formal inverse `ι` on parameters becomes the
-group inverse on points, so `formalPoint` carries the inverse law across. -/
+group inverse on points — on a generalised Weierstrass curve the `negY` transformation
+`y ↦ -y - a₁x - a₃`, not plain negation — so `formalPoint` carries the inverse law across. -/
 theorem formalPoint_formalInverseEval {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) :
     W.formalPoint (K := K) hI (pow_one I ▸ W.formalInverseEval_mem
         (hI.isTopologicallyNilpotent_of_mem ht) (k := 1) ((pow_one I).symm ▸ ht)) =
@@ -303,9 +256,9 @@ theorem formalPoint_formalInverseEval {I : Ideal O} (hI : IsAdic I) {t : O} (ht 
   -- `y`-coordinate the second lemma computes
   simp only [Affine.Point.mk, Affine.Point.neg_some, Affine.Point.some.injEq, Affine.negY]
   refine ⟨W.algebraMap_formalInverseEval_div_formalWEval hE
-      (W.hasEval_formalInverseEval hI ht) hWt, ?_⟩
+      (W.hasEval_formalInverseEval hI ht), ?_⟩
   have hy := W.neg_one_div_algebraMap_formalWEval_formalInverseEval (K := K) hE
-    (W.hasEval_formalInverseEval hI ht) hWt
+    (W.hasEval_formalInverseEval hI ht)
   rw [neg_div, one_div] at hy
   rw [hy]
   field_simp
