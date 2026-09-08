@@ -32,9 +32,12 @@ carries the coordinates `x = t / w(t)` and `y = -1 / w(t)`, it says the two poin
 inverse cases, which need a different argument and are not treated here.
 
 Nothing further is asked of the parameters. `w` vanishes at `0`, so the chord condition already
-excludes the zero parameter on either side; `formalAddEval_ne_zero` derives the sum's nonvanishing
-from the same condition; and `formalAddEval_mem` supplies the membership `formalPoint` needs of its
-argument, which is why the conclusion names that term rather than a hypothesis.
+excludes the zero parameter on either side; the sum is nonzero for the same reason, since
+`formalAddEval_eq` writes it as the formal inverse of the third root,
+`formalThirdRootEval_ne_zero` gives the third root's nonvanishing from the chord condition, and
+`formalInverseEval_ne_zero` carries it across; and `formalAddEval_mem` supplies the membership
+`formalPoint` needs of its argument, which is why the conclusion names that term rather than a
+hypothesis.
 
 ## Main results
 
