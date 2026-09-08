@@ -21,6 +21,9 @@ relation — the one summed over the character group — in both its punctured a
 * `CommGroup.sum_monoidHom_apply_eq_ite`: the same sum in normal form, `Nat.card G` at `g = 1`
   and `0` elsewhere. This is the shape an indicator-formula consumer wants, and it is the `simp`
   normal form for such a sum.
+* `CommGroup.sum_monoidHom_apply_eq_ite`'s tagged form,
+  `CommGroup.sum_inv_mul_monoidHom_apply_eq_ite`: summing `(χ σ)⁻¹ * χ g` isolates the single
+  element `σ`, giving `Nat.card G` when `g = σ` and `0` otherwise.
 
 The file also registers `Fintype (G →* Mˣ)`, which Mathlib leaves at `Finite`; without it a
 consumer's own character sum does not elaborate, and two ad-hoc `Fintype.ofFinite` introductions
@@ -50,10 +53,20 @@ or over `ZMod n`.
 
 ## References
 
-Only `CommGroup.sum_monoidHom_apply_eq_zero_of_ne_one` is adapted from elsewhere: it comes from
-`sum_char_apply_eq_zero_of_ne_one` in `CebotarevDensity/ForMathlib/CharacterOrthogonality.lean`
-of [CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0,
-Birkbeck--Brasca) at commit `8575c9df1ae0a61120ab5c964c7911414254bec7`.
+Two of the results are adapted from
+[CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0,
+Birkbeck--Brasca).
+
+* `CommGroup.sum_monoidHom_apply_eq_zero_of_ne_one` comes from `sum_char_apply_eq_zero_of_ne_one`
+  in `CebotarevDensity/ForMathlib/CharacterOrthogonality.lean`, at commit
+  `8575c9df1ae0a61120ab5c964c7911414254bec7`.
+* `CommGroup.sum_inv_mul_monoidHom_apply_eq_ite` comes from the private
+  `sum_galoisCharacter_mul_inv_eq` in `CebotarevDensity/Cyclotomic.lean`, at commit
+  `55a89985d47a3befcf6069aca1da250ff088b5c7`, where the argument is attributed to Sharifi,
+  *Algebraic Number Theory*, 7.2.1 step (iii), p. 142. The source writes the sum as
+  `∑ χ, χ σ * (χ τ)⁻¹` with the inverse on the second argument and concludes `σ * τ⁻¹ = 1`; the
+  statement here carries the inverse on the tag and concludes `g = σ`, which is the same identity
+  read in the other orientation.
 -/
 
 public section
