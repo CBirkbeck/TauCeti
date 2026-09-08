@@ -234,15 +234,16 @@ theorem formalPoint_injective {I : Ideal O} (hI : IsAdic I) :
     ← W.neg_xCoord_div_yCoord_formalPoint (K := K) hI t₂.property]
   exact congrArg (fun P ↦ -P.xCoord / P.yCoord) h
 
-omit [(W.baseChange K).IsElliptic] in
+omit [FaithfulSMul O K] [(W.baseChange K).IsElliptic] in
 open scoped Classical in
 /-- **The point at the formal inverse's parameter is the negation of the point at the parameter**,
-with both nonsingularity proofs taken rather than built, so the statement says which witnesses the
-equality is between. This is the coordinate content of the inverse law, shared with the chord case
-in `Point/Add.lean`, which cannot use `formalPoint` because it does not assume the base-changed
-curve elliptic. -/
-theorem some_formalInverseEval_eq_neg_some {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I)
-    (h0 : t ≠ 0)
+with the nonvanishing of `w(t)` and both nonsingularity proofs taken rather than built. Stated at
+evaluability rather than at membership in an adic ideal, and asking neither that the base-changed
+curve be elliptic nor that the structure map be injective, so that the chord case in
+`Point/Add.lean` — which assumes none of those — can use it. -/
+theorem some_formalInverseEval_eq_neg_some {t : O} (hE : PowerSeries.HasEval t)
+    (hEV : PowerSeries.HasEval (W.formalInverseEval t))
+    (hWt : algebraMap O K (W.formalWEval t) ≠ 0)
     (hV : (W.baseChange K).toAffine.Nonsingular
       (algebraMap O K (W.formalInverseEval t) /
         algebraMap O K (W.formalWEval (W.formalInverseEval t)))
@@ -251,24 +252,19 @@ theorem some_formalInverseEval_eq_neg_some {I : Ideal O} (hI : IsAdic I) {t : O}
       (algebraMap O K t / algebraMap O K (W.formalWEval t))
       (-1 / algebraMap O K (W.formalWEval t))) :
     Affine.Point.some _ _ hV = -Affine.Point.some _ _ hT := by
-  have hE : PowerSeries.HasEval t := hI.isTopologicallyNilpotent_of_mem ht
   -- `ι(t) = -(t · u)` and `w(ι t) = -(w(t) · u)` share the unit `u`, so the `x`-coordinates agree,
   -- and `u` inverts `1 - a₁t - a₃w(t)`, which is what turns the `y`-coordinate into `negY`
-  have hWt : algebraMap O K (W.formalWEval t) ≠ 0 := W.algebraMap_formalWEval_ne_zero hI ht
-    ((map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective O K)).mpr h0)
   have hU0 : algebraMap O K (W.formalInverseDenomInvEval t) ≠ 0 :=
     ((W.isUnit_formalInverseDenomInvEval hE).map (algebraMap O K)).ne_zero
   have hiota := congrArg (algebraMap O K) (W.formalInverseEval_eq hE)
-  have hwiota := congrArg (algebraMap O K) (W.formalWEval_formalInverseEval hE
-    (W.hasEval_formalInverseEval hI ht))
+  have hwiota := congrArg (algebraMap O K) (W.formalWEval_formalInverseEval hE hEV)
   have hDU := congrArg (algebraMap O K) (W.formalInverseDenomEval_mul_inv hE)
   have hD := congrArg (algebraMap O K) (W.formalInverseDenomEval_eq hE)
   simp only [map_neg, map_mul, map_sub, map_one] at hiota hwiota hDU hD
   rw [Affine.Point.neg_some, Affine.Point.some.injEq, hiota, hwiota, Affine.negY]
   refine ⟨by field_simp, ?_⟩
   field_simp
-  rw [show (W.baseChange K).toAffine.a₁ = algebraMap O K W.a₁ by rw [baseChange, map_a₁],
-    show (W.baseChange K).toAffine.a₃ = algebraMap O K W.a₃ by rw [baseChange, map_a₃]]
+  simp only [baseChange, map_a₁, map_a₃]
   linear_combination algebraMap O K (W.formalInverseDenomInvEval t) * hD - hDU
 
 open scoped Classical in
@@ -298,6 +294,9 @@ theorem formalPoint_formalInverseEval {I : Ideal O} (hI : IsAdic I) {t : O} (ht 
   rw [W.formalPoint_of_param_ne_zero hI hVmem hV0,
     W.formalPoint_of_param_ne_zero hI ht h0]
   simpa only [Affine.Point.mk, neg_div, one_div] using
-    W.some_formalInverseEval_eq_neg_some (K := K) hI ht h0 (hn hVmem hV0) (hn ht h0)
+    W.some_formalInverseEval_eq_neg_some (K := K) hE (W.hasEval_formalInverseEval hI ht)
+      (W.algebraMap_formalWEval_ne_zero hI ht
+        ((map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective O K)).mpr h0))
+      (hn hVmem hV0) (hn ht h0)
 
 end WeierstrassCurve
