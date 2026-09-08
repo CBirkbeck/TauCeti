@@ -67,58 +67,6 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
   (T' : Finset A) (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s S']
   (hden' : HasDenominatorPower P T' s S') (hTT' : ∀ u ∈ T, u ∈ T')
 
-include hTT' in
-/-- **Adjoining one numerator preserves strong noetherianness of the completed localisation**,
-given that the Laurent relation ideal is closed and that the smaller completed localisation is
-strongly noetherian. `T'` is `T` with `t` adjoined, in the splitting form `hsplit`. -/
-theorem isStronglyNoetherian_completion_of_isClosed (ht : t ∈ T')
-    (hsplit : ∀ u ∈ T', u ∈ T ∨ u = t)
-    (hcl :
-      letI := locUniformSpace P T s S hden
-      letI := isUniformAddGroup_locUniformSpace P T s S hden
-      letI := isTopologicalRing_locUniformSpace P T s S hden
-      letI := isHuberRing_locUniformSpace P T s S hden
-      IsClosed (laurentRelationIdeal P T s t S hden : Set (weightedRestrictedSubring
-        (fun _ : Fin 1 ↦ ({1} : Set (UniformSpace.Completion S))) isWeightFamily_one_weight)))
-    (hSN :
-      letI := locUniformSpace P T s S hden
-      letI := isUniformAddGroup_locUniformSpace P T s S hden
-      letI := isTopologicalRing_locUniformSpace P T s S hden
-      letI := isHuberRing_locUniformSpace P T s S hden
-      IsStronglyNoetherian (UniformSpace.Completion S)) :
-    letI := locUniformSpace P T' s S' hden'
-    letI := isUniformAddGroup_locUniformSpace P T' s S' hden'
-    letI := isTopologicalRing_locUniformSpace P T' s S' hden'
-    letI := isHuberRing_locUniformSpace P T' s S' hden'
-    IsStronglyNoetherian (UniformSpace.Completion S') := by
-  let := locUniformSpace P T s S hden
-  let := isUniformAddGroup_locUniformSpace P T s S hden
-  let := isTopologicalRing_locUniformSpace P T s S hden
-  let := isHuberRing_locUniformSpace P T s S hden
-  let := locUniformSpace P T' s S' hden'
-  let := isUniformAddGroup_locUniformSpace P T' s S' hden'
-  let := isTopologicalRing_locUniformSpace P T' s S' hden'
-  let := isHuberRing_locUniformSpace P T' s S' hden'
-  have : IsStronglyNoetherian (UniformSpace.Completion S) := hSN
-  have h₁ : IsOpenQuotientMap
-      ⇑(restrictedMvPowerSeriesCompletionEquiv 1 (UniformSpace.Completion S)) :=
-    (Homeomorph.mk (restrictedMvPowerSeriesCompletionEquiv 1 (UniformSpace.Completion S)).toEquiv
-      (uniformContinuous_restrictedMvPowerSeriesCompletionEquiv
-        (k := 1) (A := UniformSpace.Completion S)).continuous
-      (uniformContinuous_restrictedMvPowerSeriesCompletionEquiv_symm
-        (k := 1) (A := UniformSpace.Completion S)).continuous).isOpenQuotientMap
-  have h₂ : IsOpenQuotientMap
-      ⇑(laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit hcl) :=
-    (Homeomorph.mk (laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit hcl).toEquiv
-      (continuous_laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit hcl)
-      (continuous_laurentQuotientRingEquiv_symm P T s t S hden T' S' hden' hTT' ht hsplit
-        hcl)).isOpenQuotientMap
-  exact IsOpenQuotientMap.isStronglyNoetherian
-    (π := (laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit hcl).toRingHom.comp
-      ((Ideal.Quotient.mk (laurentRelationIdeal P T s t S hden)).comp
-        (restrictedMvPowerSeriesCompletionEquiv 1 (UniformSpace.Completion S)).toRingHom))
-    (h₂.comp ((QuotientRing.isOpenQuotientMap_mk _).comp h₁))
-
 /-- **Strong noetherianness does not depend on which localisation carries a presentation.** Two
 presentations with the same numerator set and denominator, carried by different localisations of
 `A` at `s`, have isomorphic completions, so one is strongly noetherian exactly when the other is.
@@ -161,6 +109,67 @@ theorem isStronglyNoetherian_completion_self (P : PairOfDefinition A) (T : Finse
     (continuous_presentationRingEquiv_symm P T s S hden T s S' hden' _ _ _ _ _ _)).mp hSN
 
 include hTT' in
+/-- **Adjoining one numerator preserves strong noetherianness of the completed localisation**,
+given that the smaller completed localisation is strongly noetherian and that the Laurent
+relation ideal is closed. `T'` is `T` with `t` adjoined, in the splitting form `hsplit`, so
+closedness is asked only when `t` is a genuinely new numerator: if `t ∈ T` then `T' = T` and this
+is invariance under changing the localisation carrier. -/
+theorem isStronglyNoetherian_completion_of_isClosed (ht : t ∈ T')
+    (hsplit : ∀ u ∈ T', u ∈ T ∨ u = t)
+    (hcl : t ∉ T →
+      letI := locUniformSpace P T s S hden
+      letI := isUniformAddGroup_locUniformSpace P T s S hden
+      letI := isTopologicalRing_locUniformSpace P T s S hden
+      letI := isHuberRing_locUniformSpace P T s S hden
+      IsClosed (laurentRelationIdeal P T s t S hden : Set (weightedRestrictedSubring
+        (fun _ : Fin 1 ↦ ({1} : Set (UniformSpace.Completion S))) isWeightFamily_one_weight)))
+    (hSN :
+      letI := locUniformSpace P T s S hden
+      letI := isUniformAddGroup_locUniformSpace P T s S hden
+      letI := isTopologicalRing_locUniformSpace P T s S hden
+      letI := isHuberRing_locUniformSpace P T s S hden
+      IsStronglyNoetherian (UniformSpace.Completion S)) :
+    letI := locUniformSpace P T' s S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s S' hden'
+    letI := isHuberRing_locUniformSpace P T' s S' hden'
+    IsStronglyNoetherian (UniformSpace.Completion S') := by
+  let := locUniformSpace P T s S hden
+  let := isUniformAddGroup_locUniformSpace P T s S hden
+  let := isTopologicalRing_locUniformSpace P T s S hden
+  let := isHuberRing_locUniformSpace P T s S hden
+  let := locUniformSpace P T' s S' hden'
+  let := isUniformAddGroup_locUniformSpace P T' s S' hden'
+  let := isTopologicalRing_locUniformSpace P T' s S' hden'
+  let := isHuberRing_locUniformSpace P T' s S' hden'
+  have : IsStronglyNoetherian (UniformSpace.Completion S) := hSN
+  by_cases htT : t ∈ T
+  · -- `t` was already a numerator, so `T' = T` and closedness is not needed
+    have hT'T : T' = T :=
+      Finset.Subset.antisymm (fun u hu ↦ (hsplit u hu).elim id fun h ↦ h ▸ htT) hTT'
+    subst hT'T
+    exact isStronglyNoetherian_completion_self P T' s S hden S' hden' hSN
+  have h₁ : IsOpenQuotientMap
+      ⇑(restrictedMvPowerSeriesCompletionEquiv 1 (UniformSpace.Completion S)) :=
+    (Homeomorph.mk (restrictedMvPowerSeriesCompletionEquiv 1 (UniformSpace.Completion S)).toEquiv
+      (uniformContinuous_restrictedMvPowerSeriesCompletionEquiv
+        (k := 1) (A := UniformSpace.Completion S)).continuous
+      (uniformContinuous_restrictedMvPowerSeriesCompletionEquiv_symm
+        (k := 1) (A := UniformSpace.Completion S)).continuous).isOpenQuotientMap
+  set e := laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit (hcl htT) with he
+  have h₂ : IsOpenQuotientMap ⇑e :=
+    (Homeomorph.mk e.toEquiv
+      (he ▸ continuous_laurentQuotientRingEquiv P T s t S hden T' S' hden' hTT' ht hsplit
+        (hcl htT))
+      (he ▸ continuous_laurentQuotientRingEquiv_symm P T s t S hden T' S' hden' hTT' ht hsplit
+        (hcl htT))).isOpenQuotientMap
+  exact IsOpenQuotientMap.isStronglyNoetherian
+    (π := e.toRingHom.comp
+      ((Ideal.Quotient.mk (laurentRelationIdeal P T s t S hden)).comp
+        (restrictedMvPowerSeriesCompletionEquiv 1 (UniformSpace.Completion S)).toRingHom))
+    (h₂.comp ((QuotientRing.isOpenQuotientMap_mk _).comp h₁))
+
+include hTT' in
 /-- **Adjoining one numerator preserves strong noetherianness, for a topologically nilpotent
 denominator.** No closedness hypothesis: over a strongly noetherian base the Laurent relation
 ideal is closed of its own accord. Nilpotence is asked only when `t` is a genuinely new
@@ -179,15 +188,10 @@ theorem isStronglyNoetherian_completion_of_isTopologicallyNilpotent
     letI := isUniformAddGroup_locUniformSpace P T' s S' hden'
     letI := isTopologicalRing_locUniformSpace P T' s S' hden'
     letI := isHuberRing_locUniformSpace P T' s S' hden'
-    IsStronglyNoetherian (UniformSpace.Completion S') := by
-  by_cases htT : t ∈ T
-  · -- `t` was already a numerator, so `T' = T` and this is the identity enlargement
-    have hT'T : T' = T :=
-      Finset.Subset.antisymm (fun u hu ↦ (hsplit u hu).elim id fun h ↦ h ▸ htT) hTT'
-    subst hT'T
-    exact isStronglyNoetherian_completion_self P T' s S hden S' hden' hSN
-  · exact isStronglyNoetherian_completion_of_isClosed P T s t S hden T' S' hden' hTT' ht hsplit
-      (isClosed_laurentRelationIdeal_of_isStronglyNoetherian P T s t S hden (hnil htT) hSN) hSN
+    IsStronglyNoetherian (UniformSpace.Completion S') :=
+  isStronglyNoetherian_completion_of_isClosed P T s t S hden T' S' hden' hTT' ht hsplit
+    (fun htT ↦ isClosed_laurentRelationIdeal_of_isStronglyNoetherian P T s t S hden
+      (hnil htT) hSN) hSN
 
 
 -- The induction behind Proposition 8.30: strong noetherianness propagates from `T` to `T ∪ W`
