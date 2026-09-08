@@ -45,6 +45,9 @@ of a convergent series of nonnegative terms must become arbitrarily small.
   `NumberField.dedekindZeta` is the `LSeries` of.  That system counts *all* integral ideals, so it
   differs from the trivial norm coefficients at `n = 0` and the two statements are related only
   through the `n ≠ 0` congruence `LSeries.abscissaOfAbsConv_congr`.
+* `TauCeti.summable_idealTerm_of_norm_le_of_one_lt_re`: a uniformly bounded weight has an
+  absolutely convergent ideal-indexed Dirichlet series on `Re s > 1`, and
+  `TauCeti.summable_idealTerm_of_unitary_of_one_lt_re` is its unitary specialization.
 
 ## Implementation notes
 
@@ -427,9 +430,9 @@ converges absolutely on `Re s > 1`.
 The bound may be any nonnegative real — a negative `C` makes the hypothesis unsatisfiable, since
 `‖f I‖` is a norm — and no `C = 1` normalisation is wanted, since a weight is often bounded by
 something other than `1` without being rescaled. The unitary case — a Dirichlet or Galois
-character, of modulus `1` at the good primes and `0` at the bad ones — is `C = 1`, and stating the
-hypothesis as a bound rather than as unitarity is what lets the vanishing at the bad primes pass
-without a special case.
+character, of modulus `1` at the good primes and `0` at the bad ones — is `C = 1`, and is packaged
+as `summable_idealTerm_of_unitary_of_one_lt_re`. Stating the hypothesis here as a bound rather than
+as unitarity is what lets the vanishing at the bad primes pass without a special case.
 
 Only one direction holds, unlike `summable_idealTerm_one_iff`: a weight that vanishes identically
 is bounded by every nonnegative `C` and converges everywhere. -/
@@ -446,6 +449,20 @@ theorem summable_idealTerm_of_norm_le_of_one_lt_re {K : Type*} [Field K] [Number
   rw [hone, mul_one_div]
   gcongr
   exact hf I
+
+/-- **A unitary weight converges on `Re s > 1`.** The specialization of
+`summable_idealTerm_of_norm_le_of_one_lt_re` at `C = 1`, through
+`TauCeti.UnitaryIdealWeight.norm_le_one`: a unitary weight has modulus `1` on the good ideals and
+vanishes on the rest, so it is bounded by `1` on all of them and the caller is left no case split.
+
+This is the form the Euler-product code consumes, its `hasProd_eulerFactor` asking for exactly a
+`Summable (idealTerm K · s)` hypothesis on the weight's passage to `IdealArithmeticFunction`. -/
+theorem summable_idealTerm_of_unitary_of_one_lt_re {K : Type*} [Field K] [NumberField K]
+    (χ : UnitaryIdealWeight K) {s : ℂ} (hs : 1 < s.re) :
+    Summable (idealTerm K χ.toIdealArithmeticFunction s) := by
+  refine summable_idealTerm_of_norm_le_of_one_lt_re (C := 1) (fun I ↦ ?_) hs
+  rw [UnitaryIdealWeight.toIdealArithmeticFunction_apply]
+  exact χ.norm_le_one _
 
 /-- **The Dedekind zeta series has abscissa of absolute convergence `1`.** -/
 @[simp]
