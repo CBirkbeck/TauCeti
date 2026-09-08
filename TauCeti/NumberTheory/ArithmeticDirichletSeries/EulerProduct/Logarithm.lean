@@ -29,8 +29,6 @@ series to be nonvanishing there first, which
 
 ## Main results
 
-* `TauCeti.MultiplicativeIdealWeight.summable_localRatio`: the local ratios `χ(P) N(P)⁻ˢ` are
-  summable over the height-one primes.
 * `TauCeti.MultiplicativeIdealWeight.exp_tsum_neg_log_one_sub_eq_LSeries`: the `L`-series as the
   exponential of a sum of principal logarithms over the primes.
 -/
@@ -48,20 +46,6 @@ namespace MultiplicativeIdealWeight
 open IdealArithmeticFunction
 
 variable {K : Type*} [Field K] [NumberField K] (χ : MultiplicativeIdealWeight K) {s : ℂ}
-
-/-- **The local ratios are summable over the primes.** Each prime contributes its ratio as the
-`e = 1` term of the geometric subseries along its own powers, and distinct primes give distinct
-ideals, so this is a subseries of the ideal-indexed one. -/
-theorem summable_localRatio (hs : Summable (idealTerm K χ.toIdealArithmeticFunction s)) :
-    Summable fun P : HeightOneSpectrum (𝓞 K) ↦
-      χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s := by
-  have hinj : Function.Injective fun P : HeightOneSpectrum (𝓞 K) ↦ P.primeIdealPow 1 := by
-    intro P Q h
-    have hpow : P.asIdeal ^ 1 = Q.asIdeal ^ 1 := by
-      simpa only [HeightOneSpectrum.coe_primeIdealPow] using congrArg Subtype.val h
-    exact HeightOneSpectrum.ext (by simpa using hpow)
-  refine (hs.comp_injective hinj).congr fun P ↦ ?_
-  simp [idealTerm_toIdealArithmeticFunction_primeIdealPow χ P 1 s]
 
 /-- **The Euler product in exponential form.** For a completely multiplicative ideal weight whose
 ideal-indexed series converges absolutely at `s`, the `L`-series is the exponential of the sum of
