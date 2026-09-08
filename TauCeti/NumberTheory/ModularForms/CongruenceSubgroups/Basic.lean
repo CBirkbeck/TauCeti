@@ -112,8 +112,11 @@ theorem Gamma1_le_Gamma1_of_dvd {M N : ℕ} (h : M ∣ N) : Gamma1 N ≤ Gamma1 
     by simpa [map_intCast, map_one, map_zero] using congr_arg (ZMod.castHom h (ZMod M)) hA.2.1,
     by simpa [map_intCast, map_one, map_zero] using congr_arg (ZMod.castHom h (ZMod M)) hA.2.2⟩
 
-/-- `Γ` is antitone in the level: if `M ∣ N` then `Γ(N) ≤ Γ(M)`, by reducing the four
-congruences along `ZMod N → ZMod M`. The `Γ₀`/`Γ₁` cases are below and above. -/
+/-- `Γ` is antitone in the level: if `M ∣ N` then `Γ(N) ≤ Γ(M)`. Reduction modulo `M` factors
+through reduction modulo `N`, so a matrix congruent to the identity modulo `N` is congruent to
+the identity modulo `M`. `CongruenceSubgroup.Gamma1_le_Gamma1_of_dvd` and
+`CongruenceSubgroup.Gamma0_le_Gamma0_of_dvd` are the corresponding statements for the other
+two families. -/
 theorem Gamma_le_Gamma_of_dvd {M N : ℕ} (h : M ∣ N) : Gamma N ≤ Gamma M := fun A hA ↦
   Gamma_mem'.mpr <| by
     -- `ℤ` is initial, so reduction mod `M` *is* reduction mod `N` followed by `ZMod N → ZMod M`

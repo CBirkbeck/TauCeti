@@ -16,7 +16,10 @@ import TauCeti.Data.ZMod.Units
 
 The natural reduction map `SL₂(ℤ) → SL₂(ℤ/dℤ)` is surjective (strong approximation for
 `SL₂`; Shimura §1.6, Serre Ch. VII), and the base-change map `SL(n, R) → GL(n, S)` sends
-`-I` to `-I`. Basic coordinate descriptions for `SL₂` and its image under `mapGL` are also
+`-I` to `-I`. Base change is functorial: `SL(n, -)` carries a composite of ring homs to the
+composite of the induced group homs, and the identity to the identity, which is what lets a
+congruence on a whole matrix be reduced along a further ring map in one step rather than entry
+by entry. Basic coordinate descriptions for `SL₂` and its image under `mapGL` are also
 recorded here for downstream matrix computations, together with what the determinant says about
 a matrix with a prescribed bottom row `(N, p)`: it is the Bézout relation `m p - n N = 1`.
 
@@ -36,6 +39,9 @@ diamond operators of the ModularForms roadmap (Layer 0), where it realizes every
 ## Main results
 
 * `Matrix.SpecialLinearGroup.map_intCast_zmod_surjective`: strong approximation for `SL₂`.
+* `Matrix.SpecialLinearGroup.map_comp` and `Matrix.SpecialLinearGroup.map_id`: the two functor
+  laws for base change, which support whole-matrix reduction arguments such as the level
+  antitonicity of the principal congruence subgroups.
 * `Matrix.SpecialLinearGroup.mapGL_neg_one`: `mapGL S (-1) = -1`.
 * `Matrix.SpecialLinearGroup.fin_two_mul_sub_mul_eq_one`: the determinant-one identity in
   coordinates.
@@ -74,8 +80,16 @@ variable {d : ℕ}
 
 namespace Matrix.SpecialLinearGroup
 
-/-- **Functoriality of the induced map on special linear groups.** Reducing along `f` and then
-along `g` is reducing along `g ∘ f`. -/
+/-- **Functoriality of the induced map on special linear groups, identity law.** Base change
+along the identity ring hom is the identity. -/
+@[simp]
+theorem map_id {R : Type*} [CommRing R] {n : Type*} [Fintype n] [DecidableEq n] :
+    map (n := n) (RingHom.id R) = MonoidHom.id (SpecialLinearGroup n R) := rfl
+
+/-- **Functoriality of the induced map on special linear groups, composition law.** Base change
+along `f` and then along `g` is base change along `g ∘ f`, so a composite of induced maps is
+again a single induced map. -/
+@[simp]
 theorem map_comp {R S T : Type*} [CommRing R] [CommRing S] [CommRing T] {n : Type*} [Fintype n]
     [DecidableEq n] (f : R →+* S) (g : S →+* T) :
     (map (n := n) g).comp (map f) = map (g.comp f) := rfl
