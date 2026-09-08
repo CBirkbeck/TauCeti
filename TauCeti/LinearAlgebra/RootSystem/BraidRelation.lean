@@ -272,7 +272,7 @@ theorem _root_.RootPairing.weylGroup.orderOf_ofIdx_mul_ofIdx_eq_six
   · exact hne₃
   · exact hne₂
 
-end
+end LowerBound
 
 /-! ## The entries of the Coxeter matrix of a base -/
 
@@ -330,6 +330,6 @@ theorem _root_.RootPairing.weylGroup.pow_coxeterMatrixOfBase_ofIdx_mul_ofIdx_eq_
 
 end Base
 
-end RootPairing.weylGroup
+end
 
 end TauCeti
