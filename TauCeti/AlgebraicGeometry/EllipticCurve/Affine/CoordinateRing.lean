@@ -50,7 +50,10 @@ characteristic two that polynomial is the square `(a₁X + a₃)²`.
   conjugation formula computes the trace on the basis `{1, Y}`.
 * `TauCeti.WeierstrassCurve.Affine.isIntegrallyClosed_coordinateRing`: the coordinate ring of an
   elliptic curve over a field is integrally closed.
-* `TauCeti.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing`: it is a Dedekind domain.
+* `TauCeti.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed`: a
+  normal coordinate ring is a Dedekind domain, dimension at most one being automatic.
+* `TauCeti.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing`: so the coordinate ring of an
+  elliptic curve is a Dedekind domain.
 
 The integral closedness is the seeded milestone `isIntegrallyClosed_coordinateRing` of
 `TauCetiRoadmap/EllipticCurves/README.md`, Layer 1, where it is named as the normality input to
@@ -477,11 +480,18 @@ theorem isIntegrallyClosed_coordinateRing [W.IsElliptic] : IsIntegrallyClosed W.
       fun hx => exists_algebraMap_eq W (isIntegral_trans _ hx)⟩
   exact IsIntegrallyClosed.of_isIntegrallyClosedIn W.CoordinateRing W.FunctionField
 
-/-- **The coordinate ring of an elliptic curve is a Dedekind domain.** -/
-theorem isDedekindDomain_coordinateRing [W.IsElliptic] : IsDedekindDomain W.CoordinateRing := by
+/-- **A normal coordinate ring is a Dedekind domain.** Dimension at most one is free: the
+coordinate ring is module-finite over `F[X]`, hence integral over it, and `F[X]` has dimension
+one. So normality is the whole of the content, and ellipticity enters only through it. -/
+theorem isDedekindDomain_coordinateRing_of_isIntegrallyClosed
+    [IsIntegrallyClosed W.CoordinateRing] : IsDedekindDomain W.CoordinateRing := by
   have : Algebra.IsIntegral F[X] W.CoordinateRing := Algebra.IsIntegral.of_finite _ _
-  have := isIntegrallyClosed_coordinateRing W
   exact { __ := Ring.DimensionLEOne.of_isIntegral F[X] W.CoordinateRing }
+
+/-- **The coordinate ring of an elliptic curve is a Dedekind domain.** -/
+theorem isDedekindDomain_coordinateRing [W.IsElliptic] : IsDedekindDomain W.CoordinateRing :=
+  have := isIntegrallyClosed_coordinateRing W
+  isDedekindDomain_coordinateRing_of_isIntegrallyClosed W
 
 end IntegrallyClosed
 
