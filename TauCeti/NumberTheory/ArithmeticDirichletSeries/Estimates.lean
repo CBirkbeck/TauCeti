@@ -45,7 +45,7 @@ of a convergent series of nonnegative terms must become arbitrarily small.
   `NumberField.dedekindZeta` is the `LSeries` of.  That system counts *all* integral ideals, so it
   differs from the trivial norm coefficients at `n = 0` and the two statements are related only
   through the `n ≠ 0` congruence `LSeries.abscissaOfAbsConv_congr`.
-* `TauCeti.summable_idealTerm_of_norm_le_of_one_lt_re`: a uniformly bounded weight has an
+* `TauCeti.summable_idealTerm_of_bounded_of_one_lt_re`: a uniformly bounded weight has an
   absolutely convergent ideal-indexed Dirichlet series on `Re s > 1`, and
   `TauCeti.summable_idealTerm_of_unitary_of_one_lt_re` is its unitary specialization.
 
@@ -436,7 +436,7 @@ as unitarity is what lets the vanishing at the bad primes pass without a special
 
 Only one direction holds, unlike `summable_idealTerm_one_iff`: a weight that vanishes identically
 is bounded by every nonnegative `C` and converges everywhere. -/
-theorem summable_idealTerm_of_norm_le_of_one_lt_re {K : Type*} [Field K] [NumberField K]
+theorem summable_idealTerm_of_bounded_of_one_lt_re {K : Type*} [Field K] [NumberField K]
     {f : IdealArithmeticFunction K} {C : ℝ} (hf : ∀ I : (Ideal (𝓞 K))⁰, ‖f I‖ ≤ C) {s : ℂ}
     (hs : 1 < s.re) : Summable (idealTerm K f s) := by
   refine Summable.of_norm_bounded
@@ -451,7 +451,7 @@ theorem summable_idealTerm_of_norm_le_of_one_lt_re {K : Type*} [Field K] [Number
   exact hf I
 
 /-- **A unitary weight converges on `Re s > 1`.** The specialization of
-`summable_idealTerm_of_norm_le_of_one_lt_re` at `C = 1`, through
+`summable_idealTerm_of_bounded_of_one_lt_re` at `C = 1`, through
 `TauCeti.UnitaryIdealWeight.norm_le_one`: a unitary weight has modulus `1` on the good ideals and
 vanishes on the rest, so it is bounded by `1` on all of them and the caller is left no case split.
 
@@ -460,7 +460,7 @@ This is the form the Euler-product code consumes, its `hasProd_eulerFactor` aski
 theorem summable_idealTerm_of_unitary_of_one_lt_re {K : Type*} [Field K] [NumberField K]
     (χ : UnitaryIdealWeight K) {s : ℂ} (hs : 1 < s.re) :
     Summable (idealTerm K χ.toIdealArithmeticFunction s) := by
-  refine summable_idealTerm_of_norm_le_of_one_lt_re (C := 1) (fun I ↦ ?_) hs
+  refine summable_idealTerm_of_bounded_of_one_lt_re (C := 1) (fun I ↦ ?_) hs
   rw [UnitaryIdealWeight.toIdealArithmeticFunction_apply]
   exact χ.norm_le_one _
 
