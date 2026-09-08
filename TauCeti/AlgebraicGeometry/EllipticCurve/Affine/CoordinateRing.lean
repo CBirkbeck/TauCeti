@@ -7,9 +7,6 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finrank
--- Proof-only: `IsDedekindDomain.of_finite` supplies the Dedekind property, and is named
--- in no statement here.
-import TauCeti.RingTheory.DedekindDomain.Finite
 
 /-!
 # The coordinate ring of an elliptic curve is a Dedekind domain
@@ -53,8 +50,8 @@ characteristic two that polynomial is the square `(a₁X + a₃)²`.
   conjugation formula computes the trace on the basis `{1, Y}`.
 * `TauCeti.WeierstrassCurve.Affine.isIntegrallyClosed_coordinateRing`: the coordinate ring of an
   elliptic curve over a field is integrally closed.
-* `TauCeti.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed`: a
-  normal coordinate ring is a Dedekind domain, dimension at most one being automatic.
+* `TauCeti.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed`: an
+  integrally closed coordinate ring is a Dedekind domain.
 * `TauCeti.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing`: so the coordinate ring of an
   elliptic curve is a Dedekind domain.
 
@@ -483,12 +480,13 @@ theorem isIntegrallyClosed_coordinateRing [W.IsElliptic] : IsIntegrallyClosed W.
       fun hx => exists_algebraMap_eq W (isIntegral_trans _ hx)⟩
   exact IsIntegrallyClosed.of_isIntegrallyClosedIn W.CoordinateRing W.FunctionField
 
-/-- **A normal coordinate ring is a Dedekind domain.** The coordinate ring is module-finite over
-`F[X]`, which is Noetherian of dimension one, so `TauCeti.IsDedekindDomain.of_finite` leaves
-normality as the whole of the content — and ellipticity enters only through it. -/
+/-- **An integrally closed coordinate ring is a Dedekind domain.** -/
 theorem isDedekindDomain_coordinateRing_of_isIntegrallyClosed
-    [IsIntegrallyClosed W.CoordinateRing] : IsDedekindDomain W.CoordinateRing :=
-  TauCeti.IsDedekindDomain.of_finite F[X] W.CoordinateRing
+    [IsIntegrallyClosed W.CoordinateRing] : IsDedekindDomain W.CoordinateRing := by
+  -- Noetherianity and dimension at most one are inherited from `F[X]`, over which the coordinate
+  -- ring is module-finite and hence integral, so normality is all that is assumed
+  have : Algebra.IsIntegral F[X] W.CoordinateRing := Algebra.IsIntegral.of_finite _ _
+  exact { __ := Ring.DimensionLEOne.of_isIntegral F[X] W.CoordinateRing }
 
 /-- **The coordinate ring of an elliptic curve is a Dedekind domain.** -/
 theorem isDedekindDomain_coordinateRing [W.IsElliptic] : IsDedekindDomain W.CoordinateRing :=
