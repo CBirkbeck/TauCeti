@@ -313,11 +313,9 @@ omit [NonarchimedeanRing A] in
 /-- **Every element of the `n`-th neighbourhood of `Aₛ` is the value at the fractions of a
 polynomial over `A` whose coefficients all lie in the image of `Iⁿ`.**
 
-This is `TauCeti.Huber.PairOfDefinition.exists_aeval_eq_of_mem_locIdealImage` carried across the
-two boundaries that separate it from `TauCeti.Huber.PairOfDefinition.polyEvalHom`: the
-coefficients are pushed from `A₀` down to `A`, and the variables are reindexed from `T` to
-`Fin k`. The reindexing is what `hTt` is for — it names, for each element of `T`, a numerator
-equal to it. -/
+This is the `Fin k`-indexed form over `A` of
+`TauCeti.Huber.PairOfDefinition.exists_aeval_eq_of_mem_locIdealImage`, which is indexed by `T`
+and has coefficients in `A₀`. -/
 private theorem exists_polynomial_coeff_mem_idealImage {k : ℕ} (t : Fin k → A)
     (hTt : ↑T ⊆ Set.range t) (n : ℕ) {x : S} (hx : x ∈ locIdealImage P T s S n) :
     ∃ p : MvPolynomial (Fin k) A, (∀ m, p.coeff m ∈ P.idealImage n) ∧
@@ -341,21 +339,20 @@ private theorem exists_polynomial_coeff_mem_idealImage {k : ℕ} (t : Fin k → 
         funext fun y ↦ by rw [Function.comp_apply, hσ y]]
     exact hqx
 
-/-- **The polynomial evaluation is an open map.** The image of a neighbourhood of zero in the
-polynomials is a neighbourhood of zero in `Aₛ`, so `Xᵢ ↦ tᵢ/s` carries open sets to open sets.
+/-- **The polynomial evaluation `Xᵢ ↦ tᵢ/s` is an open map onto `Aₛ`**, for numerators
+exhausting `T`.
 
-Openness is the half of Wedhorn's Proposition 8.30 that does not come for free. Surjectivity is
-`TauCeti.Huber.PairOfDefinition.surjective_polyEvalHom`; together they present `Aₛ` as an open
-quotient of a polynomial ring, which is what
-`TauCeti.AddMonoidHom.surjective_completion` needs in order to conclude the same for the
-completions.
+Together with `TauCeti.Huber.PairOfDefinition.surjective_polyEvalHom` this presents `Aₛ` as an
+open quotient of a polynomial ring. That is exactly the input `AddMonoidHom.surjective_completion`
+and `AddMonoidHom.isOpenMap_completion` take, so it is what carries the presentation to the
+completions `A⟨X₁, …, Xₖ⟩ → A⟨T/s⟩` — Wedhorn's Proposition 8.30, and through it the strong
+noetherianity of a rational localisation.
 
-The two subgroup bases are matched against each other: upstairs the polynomials with every
-coefficient in `Iⁿ`, downstairs the `n`-th neighbourhood `locIdealImage`, which
-`exists_polynomial_coeff_mem_idealImage` shows is covered.
+Openness is the half of 8.30 that does not come for free. Surjectivity is a statement about
+generation, whereas openness compares two topologies that were defined independently: `Aₛ` carries
+the localisation topology, not a quotient topology transported from the polynomials.
 
-`hTt` asks the numerators to exhaust `T`, which is what the reindexing consumes. It is the same
-demand surjectivity makes, in a different form. -/
+`hTt` asks the numerators to exhaust `T`. It is the same demand surjectivity makes. -/
 theorem isOpenMap_polyEvalHom {k : ℕ} (t : Fin k → A)
     (hTt : ↑T ⊆ Set.range t) :
     letI := locTopology P T s S hden
@@ -364,7 +361,7 @@ theorem isOpenMap_polyEvalHom {k : ℕ} (t : Fin k → A)
   have _ := isTopologicalRing_locTopology P T s S hden
   rw [IsTopologicalAddGroup.isOpenMap_iff_nhds_zero, Filter.le_map_iff]
   intro V hV
-  obtain ⟨W, hW, hWV⟩ := mem_nhds_subtype _ _ _ |>.mp hV
+  obtain ⟨W, hW, hWV⟩ := (mem_nhds_subtype _ _ _).mp hV
   obtain ⟨U, -, hUW⟩ :=
     (hasBasis_nhds_zero_weightedTopology isWeightFamily_one_weight).mem_iff.mp hW
   obtain ⟨n, -, hn⟩ := P.hasBasis_nhds_zero.mem_iff.mp (U.isOpen.mem_nhds U.zero_mem)
