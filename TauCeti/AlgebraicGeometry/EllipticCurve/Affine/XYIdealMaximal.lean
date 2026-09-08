@@ -100,7 +100,7 @@ lemma _root_.WeierstrassCurve.Affine.CoordinateRing.XYIdeal_ne_bot
   rw [hbot, Ideal.mem_bot] at hmem
   exact CoordinateRing.XClass_ne_zero x hmem
 
-end
+end CommRing
 
 variable {F : Type*} [Field F] {W : _root_.WeierstrassCurve.Affine F} {x : F}
 
@@ -271,7 +271,7 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.finrank_quotient_eq_one_if
   · rintro ⟨x, y, h, rfl⟩
     rw [(CoordinateRing.quotientXYIdealEquiv h).toLinearEquiv.finrank_eq, Module.finrank_self]
 
-end WeierstrassCurve.Affine.CoordinateRing
+end
 
 end TauCeti
 

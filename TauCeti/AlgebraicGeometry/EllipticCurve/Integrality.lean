@@ -126,7 +126,7 @@ theorem _root_.WeierstrassCurve.isInteger_x_of_equation_of_is_root_of_squarefree
   isInteger_of_isUnit_den <|
     WeierstrassCurve.isUnit_den_of_dvd_squarefree W h hsf (den_dvd_of_is_root hroot)
 
-end
+end UniqueFactorization
 
 end FractionField
 
@@ -152,7 +152,7 @@ theorem _root_.WeierstrassCurve.isInteger_y_of_equation_of_isInteger_x
 
 end IntegrallyClosedIn
 
-end WeierstrassCurve
+end
 
 end TauCeti
 

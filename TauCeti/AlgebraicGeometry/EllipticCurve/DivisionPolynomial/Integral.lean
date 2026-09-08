@@ -119,8 +119,8 @@ theorem _root_.WeierstrassCurve.isInteger_of_mul_eval_ΨSq_eq_eval_Φ
     ⟨_, WeierstrassCurve.monic_Φ_sub_C_mul_ΨSq W n c,
         WeierstrassCurve.aeval_Φ_sub_C_mul_ΨSq_eq_zero W (hc ▸ hid)⟩)
 
-end
+end Root
 
-end WeierstrassCurve
+end
 
 end TauCeti

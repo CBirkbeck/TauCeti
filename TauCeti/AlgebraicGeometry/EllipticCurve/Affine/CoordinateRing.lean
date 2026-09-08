@@ -250,7 +250,7 @@ private theorem _root_.WeierstrassCurve.Affine.dvd_a₁_mul_add_of_dvd_two_mul_s
     simpa using Polynomial.pow_sub_one_dvd_derivative_of_pow_dvd hsq
   simpa using dvd_sub (hs.mul_left (derivative g)) hd'
 
-end
+end CommRing
 
 section Field
 
@@ -540,6 +540,6 @@ theorem _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isInte
 
 end IntegrallyClosed
 
-end WeierstrassCurve.Affine
+end
 
 end TauCeti

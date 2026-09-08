@@ -107,7 +107,7 @@ private lemma _root_.WeierstrassCurve.not_isRelPrime_of_cleared_equation
       by linear_combination h₃⟩).resolve_right fun hd ↦ hu (hq.dvd_of_dvd_pow hd)
   exact fun hrel ↦ hq.not_isUnit (hrel hγ ⟨q * e₂, by rw [he₁, he₂]⟩)
 
-end
+end Descent
 
 variable {R : Type*} [CommRing R] [IsDomain R] [UniqueFactorizationMonoid R]
 variable {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
@@ -201,6 +201,6 @@ theorem _root_.WeierstrassCurve.den_eq_one_of_dvd_squarefree
   rw [← Rat.isFractionRingDen x]
   exact Int.isUnit_iff_natAbs_eq.mp hunit
 
-end WeierstrassCurve
+end
 
 end TauCeti

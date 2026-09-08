@@ -160,7 +160,7 @@ lemma _root_.WeierstrassCurve.Affine.Point.mapAlong_eq_map (P : W.toAffine.Point
   · rw [WeierstrassCurve.Affine.Point.mapAlong_some]
     exact (Affine.Point.map_some (W' := W) (F := F) (K := K) (Algebra.ofId F K) h).symm
 
-end
+end Field
 
 section IterateFrobenius
 
@@ -181,7 +181,7 @@ theorem _root_.WeierstrassCurve.Affine.Point.mapAlong_iterateFrobenius_some (n :
 
 end IterateFrobenius
 
-end WeierstrassCurve.Affine.Point
+end
 
 end TauCeti
 
