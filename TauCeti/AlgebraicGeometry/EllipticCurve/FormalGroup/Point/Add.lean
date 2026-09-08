@@ -273,7 +273,6 @@ theorem add_eq_formalPoint_formalAddEval_of_X_ne {I : Ideal O} (hI : IsAdic I) {
       (W.hasEval_formalThirdRootEval hE₁ hE₂) (W.formalThirdRootEval_ne_zero hE₁ hE₂ hx)
   have hF : W.formalAddEval t₁ t₂ ∈ I :=
     pow_one I ▸ W.formalAddEval_mem hI (k := 1) ((pow_one I).symm ▸ h₁) ((pow_one I).symm ▸ h₂)
-  have hEF : PowerSeries.HasEval (W.formalAddEval t₁ t₂) := hI.isTopologicallyNilpotent_of_mem hF
   have hne : ∀ {s : O}, s ≠ 0 → algebraMap O K s ≠ 0 := fun hs0 ↦ by simpa using hs0
   rw [W.formalPoint_of_param_ne_zero hI h₁ h₁0, W.formalPoint_of_param_ne_zero hI h₂ h₂0,
     W.formalPoint_of_param_ne_zero hI _ hF0]
