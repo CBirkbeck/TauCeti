@@ -55,8 +55,8 @@ variables, so `MvPowerSeries.hasEval_of_finite_of_isTopologicallyNilpotent` appl
 * `WeierstrassCurve.hasEval_formalThirdRootEval` : the third root admits evaluation as soon as
   the two parameters do, the ideal-free counterpart of `formalThirdRootEval_mem`.
 * `WeierstrassCurve.formalAddEval_eq` : `F(t₁, t₂) = ι(t₃(t₁, t₂))`.
-* `WeierstrassCurve.formalAddEval_ne_zero` : the addition series is nonzero under the same
-  hypothesis, so over a field the sum of the two points is not the point at infinity.
+* `WeierstrassCurve.formalAddEval_ne_zero` : the addition series is nonzero once
+  `t₁ * w(t₂) ≠ t₂ * w(t₁)`, so over a field the sum of the two points is not the point at infinity.
 * `WeierstrassCurve.formalAddEval_formalInverseEval` : `F(t, ι(t)) = 0`, the inverse law.
 * `WeierstrassCurve.formalAddEval_zero_right` and
   `WeierstrassCurve.formalAddEval_zero_left` : the unit laws `F(t, 0) = t` and `F(0, t) = t`.
@@ -396,18 +396,16 @@ theorem formalAddEval_eq {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
   simpa [formalAddEval, W.formalInverseEval_def, MvPowerSeries.coe_aeval, PowerSeries.eval₂,
     ← W.formalThirdRootEval_def] using h
 
-
-/-- **The addition series does not vanish once `t₁ * w(t₂) ≠ t₂ * w(t₁)`.** The formal inverse of
-a nonzero parameter is nonzero, so this is `formalThirdRootEval_ne_zero` read through
-`formalAddEval_eq`. Over a field the hypothesis says the two points have distinct
-`x`-coordinates, so the conclusion is that their sum is not the point at infinity. -/
+/-- **The addition series does not vanish once `t₁ * w(t₂) ≠ t₂ * w(t₁)`.** The hypothesis is
+that of `formalThirdRootEval_ne_zero`, with the non-vanishing read at the sum `F(t₁, t₂)`
+rather than at the third root `t₃(t₁, t₂)`. Over a field the hypothesis says the two points
+have distinct `x`-coordinates, so the statement is that their sum is not the point at infinity. -/
 theorem formalAddEval_ne_zero {t₁ t₂ : O} (h₁ : PowerSeries.HasEval t₁)
-    (h₂ : PowerSeries.HasEval t₂)
-    (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁) :
-    W.formalAddEval t₁ t₂ ≠ 0 := by
-  rw [W.formalAddEval_eq h₁ h₂]
-  exact W.formalInverseEval_ne_zero (W.hasEval_formalThirdRootEval h₁ h₂)
-    (W.formalThirdRootEval_ne_zero h₁ h₂ hx)
+    (h₂ : PowerSeries.HasEval t₂) (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁) :
+    W.formalAddEval t₁ t₂ ≠ 0 :=
+  (W.formalAddEval_eq h₁ h₂).trans_ne <| W.formalInverseEval_ne_zero
+    (W.hasEval_formalThirdRootEval h₁ h₂) (W.formalThirdRootEval_ne_zero h₁ h₂ hx)
+
 /-- **The inverse law at parameters**: `F(t, ι(t)) = 0`, so the value of the inverse series at `t`
 is the additive inverse of `t` under the group law read at parameters. -/
 @[simp]
