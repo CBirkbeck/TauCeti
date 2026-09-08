@@ -222,6 +222,8 @@ theorem IsPwC1ImmersionOn.mem_toFinset_finite_crossings (h : IsPwC1ImmersionOn �
 `IsPwC1ImmersionOn.mem_toFinset_finite_crossings` for `a ≤ b`, where the crossing parameters
 range over `Icc a b` rather than `uIcc a b`. Every multi-crossing principal-value argument
 indexes its windows this way. -/
+-- Not `@[simp]`: the `simpNF` linter rejects it, because `Set.Finite.mem_toFinset` is itself
+-- `@[simp]`, so the left-hand side is simplified away before this rewrite could fire.
 theorem IsPwC1ImmersionOn.mem_toFinset_finite_crossings_of_le (h : IsPwC1ImmersionOn γ a b)
     (hab : a ≤ b) {t : ℝ} :
     t ∈ (h.finite_crossings (z₀ := z₀)).toFinset ↔ t ∈ Icc a b ∧ γ t = z₀ := by
