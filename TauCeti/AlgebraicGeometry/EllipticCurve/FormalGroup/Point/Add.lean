@@ -37,8 +37,8 @@ argument, which is why the conclusion names that term rather than a hypothesis.
 
 ## Main results
 
-* `WeierstrassCurve.formalPoint_formalAddEval_of_x_ne`: the parametrisation carries the group law
-  at a pair of parameters whose points have distinct `x`-coordinates.
+* `WeierstrassCurve.formalPoint_formalAddEval_eq_add_of_x_ne`: the point of `F(t₁, t₂)` is the
+  sum of the points of `t₁` and `t₂`, for parameters whose points have distinct `x`-coordinates.
 
 ## Provenance
 
@@ -195,10 +195,10 @@ private theorem algebraMap_formalInverseDenomEval_eq {t₁ t₂ : O} (h₁ : Pow
 `formalPoint` needs the base-changed curve to be elliptic and the structure map to be injective,
 and the group law on points needs decidable equality on `K`. -/
 
-variable [DecidableEq K] [(W.baseChange K).IsElliptic] [FaithfulSMul O K]
+variable [(W.baseChange K).IsElliptic] [FaithfulSMul O K]
 
 omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
-  [IsLinearTopology O O] [DecidableEq K] [(W.baseChange K).IsElliptic] in
+  [IsLinearTopology O O] [(W.baseChange K).IsElliptic] in
 /-- The numerator of the difference of the two `x`-coordinates is nonzero. -/
 private theorem algebraMap_mul_formalWEval_sub_ne_zero {t₁ t₂ : O}
     (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁) :
@@ -207,6 +207,7 @@ private theorem algebraMap_mul_formalWEval_sub_ne_zero {t₁ t₂ : O}
   rw [← map_mul, ← map_mul, ← map_sub, ne_eq, FaithfulSMul.algebraMap_eq_zero_iff, sub_eq_zero]
   exact hx
 
+open scoped Classical in
 /-- The group law of `W⁄K` at the two parametrised points, with each of the three points written
 as the `Affine.Point.some` term of `formalPoint_eq_some`. -/
 private theorem some_add_some_formalAddEval_of_x_ne {I : Ideal O} (hI : IsAdic I) {t₁ t₂ : O}
@@ -240,16 +241,17 @@ private theorem some_add_some_formalAddEval_of_x_ne {I : Ideal O} (hI : IsAdic I
   grind [W.algebraMap_formalAddEval_eq, W.algebraMap_formalWEval_formalAddEval,
     W.algebraMap_formalInverseDenomEval_eq]
 
+open scoped Classical in
 /-- **The parametrisation carries the group law**, for two nonzero parameters whose points have
 distinct `x`-coordinates: the point of `F(t₁, t₂)` is the sum of the points of `t₁` and `t₂`.
 
 The chord through the two points meets the curve again at the parameter `t₃(t₁, t₂)`, and the
 addition series is the formal inverse of that third root, so the group law of `W⁄K` applied to the
 two points computes `F(t₁, t₂)`. -/
-theorem formalPoint_formalAddEval_of_x_ne {I : Ideal O} (hI : IsAdic I) {t₁ t₂ : O}
+theorem formalPoint_formalAddEval_eq_add_of_x_ne {I : Ideal O} (hI : IsAdic I) {t₁ t₂ : O}
     (h₁ : t₁ ∈ I) (h₂ : t₂ ∈ I) (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁) :
-    W.formalPoint (K := K) hI h₁ + W.formalPoint (K := K) hI h₂ =
-      W.formalPoint (K := K) hI (W.formalAddEval_mem hI h₁ h₂) := by
+    W.formalPoint (K := K) hI (W.formalAddEval_mem hI h₁ h₂) =
+      W.formalPoint (K := K) hI h₁ + W.formalPoint (K := K) hI h₂ := by
   -- the chord condition already excludes the zero parameter, `w` vanishing there
   have h₁0 : t₁ ≠ 0 := by rintro rfl; simp at hx
   have h₂0 : t₂ ≠ 0 := by rintro rfl; simp at hx
@@ -257,7 +259,7 @@ theorem formalPoint_formalAddEval_of_x_ne {I : Ideal O} (hI : IsAdic I) {t₁ t�
     (hI.isTopologicallyNilpotent_of_mem h₂) hx
   rw [W.formalPoint_eq_some hI h₁ h₁0, W.formalPoint_eq_some hI h₂ h₂0,
     W.formalPoint_eq_some hI (W.formalAddEval_mem hI h₁ h₂) hF0]
-  exact W.some_add_some_formalAddEval_of_x_ne hI h₁ h₂ h₁0 h₂0 hx
-    (W.formalAddEval_mem hI h₁ h₂) hF0
+  exact (W.some_add_some_formalAddEval_of_x_ne hI h₁ h₂ h₁0 h₂0 hx
+    (W.formalAddEval_mem hI h₁ h₂) hF0).symm
 
 end WeierstrassCurve
