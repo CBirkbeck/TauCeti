@@ -117,6 +117,7 @@ one-variable polynomial `W(X, p)` splits into the two partials of `W`, the `Y`-o
 /-- **`W_Y = 2Y + a₁X + a₃` vanishes exactly when `2 = 0` and `a₁ = a₃ = 0`.** So `W_Y` is a
 nonzero polynomial wherever `2 ≠ 0`, and where `2 = 0` it is nonzero exactly when `a₁ ≠ 0` or
 `a₃ ≠ 0`; `polynomialY_ne_zero` draws the latter from `Δ ≠ 0`. -/
+@[simp]
 theorem polynomialY_eq_zero_iff : W.polynomialY = 0 ↔ (2 : R) = 0 ∧ W.a₁ = 0 ∧ W.a₃ = 0 := by
   refine ⟨fun h ↦ ?_, fun ⟨h2, ha₁, ha₃⟩ ↦ by simp [polynomialY, h2, ha₁, ha₃]⟩
   -- Read `W_Y` as a polynomial in `Y` over `R[X]`: its coefficients are `2` and `a₁X + a₃`, whose
