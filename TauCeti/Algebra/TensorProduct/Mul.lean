@@ -22,8 +22,10 @@ or `B` to be central, simple, or even a ring.
 * `Algebra.TensorProduct.basis_repr_mul_tmul_one`: multiplying on the right by `a ⊗ₜ 1` multiplies
   each coordinate against `Algebra.TensorProduct.basis` by `a` on the right.
 
-Both are declared into Mathlib's root `Algebra.TensorProduct` namespace, where the type they
-describe lives, so dot notation on it elaborates.
+Both are declared into Mathlib's root `Algebra.TensorProduct` namespace, which houses the algebra
+tensor product's multiplicative API, rather than into a `TauCeti.`-prefixed copy of it. (The
+underlying type is the root `TensorProduct`; `Algebra.TensorProduct` is where its algebra
+structure and the lemmas about it live.)
 -/
 
 public section
