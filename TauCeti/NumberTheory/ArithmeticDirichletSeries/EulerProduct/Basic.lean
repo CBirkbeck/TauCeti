@@ -377,7 +377,7 @@ private theorem supportedPart_mul_eq_zero_of_ne {P : HeightOneSpectrum (𝓞 K)}
 /-- **A nonvanishing summand forces the support.**  If any pair in the antidiagonal of `A`
 contributes to the convolution, then `A` itself is prime to `(insert P S)ᶜ`: its left factor is
 prime to `Sᶜ` and its right factor is a power of `P`. -/
-private theorem isPrimeTo_insert_compl_of_supportedPart_mul_ne_zero
+private theorem isPrimeTo_compl_insert_of_supportedPart_mul_ne_zero
     {P : HeightOneSpectrum (𝓞 K)} {A : (Ideal (𝓞 K))⁰} {p : (Ideal (𝓞 K))⁰ × (Ideal (𝓞 K))⁰}
     (hp : p ∈ Ideal.divisorsAntidiagonal A)
     (hp0 : supportedPart f S p.1 * supportedPart f {P} p.2 ≠ 0) :
@@ -419,7 +419,7 @@ theorem supportedPart_insert (hf : f.IsMultiplicative) {P : HeightOneSpectrum (�
         ((hJ.mono (Set.singleton_subset_iff.mpr hPS)).isRelPrime hCP), hBC]
   · rw [supportedPart_apply_of_not_isPrimeTo_compl hA]
     exact (Finset.sum_eq_zero fun p hp ↦ not_not.mp fun hp0 ↦
-      hA (isPrimeTo_insert_compl_of_supportedPart_mul_ne_zero hp hp0)).symm
+      hA (isPrimeTo_compl_insert_of_supportedPart_mul_ne_zero hp hp0)).symm
 
 /-- The norm coefficients of the restriction to the powers of a single prime `P` are exactly its
 canonical local arithmetic factor. -/
