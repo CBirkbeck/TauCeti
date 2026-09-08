@@ -57,9 +57,16 @@ into pole orders, but no order or valuation hypothesis is assumed here.
 The same parametrization is formalised in Michael Stoll's elliptic-curve development
 (`github.com/MichaelStollBayreuth/EllipticCurves` @ `66889eada51a`, Apache-2.0), file
 `EllipticCurves/WeierstrassFormalGroup/Filtration.lean`, declarations `formalPoint`,
-`formalPoint_of_param_eq_zero`, `formalPoint_of_param_ne_zero` and `formalPoint_nonsingular`. The
-first three keep their source names; the fourth is not restated, `Affine.Point.mk` carrying the
-equation-to-nonsingularity step itself.
+`formalPoint_of_param_eq_zero`, `formalPoint_of_param_ne_zero`, `formalPoint_nonsingular` and
+`formalPoint_negPoint`. The first three keep their source names; the fourth is not restated,
+`Affine.Point.mk` carrying the equation-to-nonsingularity step itself.
+
+`formalPoint_formalInverseEval` is that source's `formalPoint_negPoint`, whose argument it
+follows: the same split on whether the parameter vanishes, the same reduction through
+`Affine.Point.neg_some` and `Affine.Point.some.injEq`, and on the `y`-coordinate the same
+certificate — the unit relation `d(t) · u(t) = 1` against the closed form of `d(t)`. Its name
+takes this repository's vocabulary, `formalInverseEval` rather than the source's `negPoint`,
+since the object being applied is the evaluated formal inverse.
 
 That development states them over `v.adicCompletion K` for a height-one prime of a Dedekind domain
 and builds nonsingularity from a chord lemma of its own. The declarations below are stated over an
