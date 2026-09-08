@@ -61,10 +61,9 @@ The same parametrization is formalised in Michael Stoll's elliptic-curve develop
 `formalPoint_negPoint`. The first three keep their source names; the fourth is not restated,
 `Affine.Point.mk` carrying the equation-to-nonsingularity step itself.
 
-`formalPoint_formalInverseEval` is that source's `formalPoint_negPoint`, whose argument it
-follows: the same split on whether the parameter vanishes, the same reduction through
-`Affine.Point.neg_some` and `Affine.Point.some.injEq`, and on the `y`-coordinate the same
-certificate — the unit relation `d(t) · u(t) = 1` against the closed form of `d(t)`. Its name
+`formalPoint_formalInverseEval` is that source's `formalPoint_negPoint`. It is what makes the
+parameters of an adic ideal closed under inverses as *points*, so that the chord case of
+additivity in `Point/Add.lean` can read the addition series as a negated third root. Its name
 takes this repository's vocabulary, `formalInverseEval` rather than the source's `negPoint`,
 since the object being applied is the evaluated formal inverse.
 
@@ -263,9 +262,10 @@ theorem formalPoint_formalInverseEval {I : Ideal O} (hI : IsAdic I) {t : O} (ht 
   rw [Affine.Point.some.injEq, hiota, hwiota, Affine.negY]
   refine ⟨by field_simp, ?_⟩
   field_simp
-  have ha₁ : (W.baseChange K).toAffine.a₁ = algebraMap O K W.a₁ := rfl
-  have ha₃ : (W.baseChange K).toAffine.a₃ = algebraMap O K W.a₃ := rfl
-  rw [ha₁, ha₃]
+  rw [show (W.baseChange K).toAffine.a₁ = algebraMap O K W.a₁ by
+        rw [baseChange, map_a₁],
+    show (W.baseChange K).toAffine.a₃ = algebraMap O K W.a₃ by
+        rw [baseChange, map_a₃]]
   linear_combination algebraMap O K (W.formalInverseDenomInvEval t) * hD - hDU
 
 end WeierstrassCurve
