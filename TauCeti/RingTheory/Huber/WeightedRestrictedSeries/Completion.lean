@@ -57,6 +57,9 @@ Hausdorff — over a complete Hausdorff base, and over a discrete one — is
   `A → A⟨X⟩_T` into the completion is continuous, for an arbitrary weight family;
   `TauCeti.Huber.continuous_algebraMap_restrictedMvPowerSeriesCompletion` is the trivial-weight
   case, the structure map `A → A⟨X₁,…,Xₖ⟩`.
+* `TauCeti.Huber.continuousSMul_completion_weightedRestrictedSubring`: the completion is a
+  topological `A`-algebra. An instance, because it is a hypothesis of the Tate-ring open mapping
+  theorem and so is asked for by typeclass resolution.
 * `TauCeti.Huber.weightedMapCompletion_coe` and
   `TauCeti.Huber.continuous_weightedMapCompletion`: the induced map on the image of `A⟨X⟩_T`,
   and its continuity.
@@ -124,6 +127,18 @@ theorem algebraMap_completion_weightedRestrictedSubring_apply {T : Fin k → Set
         UniformSpace.Completion (weightedRestrictedSubring T hT)) := by
   rw [UniformSpace.Completion.algebraMap_def]
   exact congrArg _ (Subtype.ext (by rw [coe_algebraMap_weightedRestrictedSubring, coe_weightedC]))
+
+/-- **The completion of a weighted restricted power-series ring is a topological `A`-algebra.**
+Scalar multiplication is multiplication by the image of the structure map, which is continuous, so
+this follows from `continuous_algebraMap_completion_weightedRestrictedSubring`.
+
+Registered as an instance because it is a hypothesis of the Tate-ring open mapping theorem, which
+is applied to `A⟨X₁,…,Xₖ⟩` as the source of a presentation. -/
+instance continuousSMul_completion_weightedRestrictedSubring {T : Fin k → Set A}
+    {hT : IsWeightFamily T} :
+    ContinuousSMul A (UniformSpace.Completion (weightedRestrictedSubring T hT)) :=
+  continuousSMul_of_algebraMap _ _
+    (continuous_algebraMap_completion_weightedRestrictedSubring k A hT)
 
 /-- The structure map `A → A⟨X₁,…,Xₖ⟩` is continuous. -/
 theorem continuous_algebraMap_restrictedMvPowerSeriesCompletion :
