@@ -41,6 +41,9 @@ into pole orders, but no order or valuation hypothesis is assumed here.
   `WeierstrassCurve.formalPoint_injective`.
 * `WeierstrassCurve.formalPoint_of_param_eq_zero` and
   `WeierstrassCurve.formalPoint_of_param_ne_zero`: the two branches of the definition.
+* `WeierstrassCurve.nonsingular_formalPoint` and `WeierstrassCurve.formalPoint_eq_some`: the
+  nonsingularity of the parametrized coordinates as a term, and with it the point in
+  `Affine.Point.some` form.
 * `WeierstrassCurve.xCoord_formalPoint` and `WeierstrassCurve.yCoord_formalPoint`: the point's
   coordinates, through which the closed forms
   `WeierstrassCurve.xCoord_formalPoint_mul_eq_one` and
@@ -61,8 +64,9 @@ That
 development states them over `v.adicCompletion K` for a height-one prime of a Dedekind domain
 and builds nonsingularity from its own chord lemma; the declarations below are stated over an
 arbitrary complete adic ring mapping injectively to a field, and build the point with Mathlib's
-`Affine.Point.mk`, which carries the equation-to-nonsingularity step itself, so no nonsingularity
-lemma is restated here.
+`Affine.Point.mk`, which carries the equation-to-nonsingularity step itself. `Affine.Point.mk`
+keeps that step inside the definition, so `nonsingular_formalPoint` states it separately for
+consumers that need the nonsingularity as a term.
 -/
 
 public section
@@ -131,6 +135,28 @@ theorem formalPoint_of_param_ne_zero {I : Ideal O} (hI : IsAdic I) {t : O} (ht :
         (W.algebraMap_formalWEval_ne_zero hI ht
           ((map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective O K)).mpr h0))) := by
   simp [formalPoint, h0]
+
+/-- **The coordinates carried by a nonzero parameter are those of a nonsingular point.** This is
+`equation_formalPoint` read through Mathlib's `equation_iff_nonsingular`, with the `y`-coordinate
+in the form `-1 / w(t)` rather than `-(w(t))⁻¹`. A consumer that compares parametrized points
+through `Affine.Point.some` needs the nonsingularity as a term of its own, which the definition
+keeps inside `Affine.Point.mk`. -/
+theorem nonsingular_formalPoint {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) (h0 : t ≠ 0) :
+    (W.baseChange K).toAffine.Nonsingular (algebraMap O K t / algebraMap O K (W.formalWEval t))
+      (-1 / algebraMap O K (W.formalWEval t)) := by
+  rw [neg_div, one_div]
+  exact WeierstrassCurve.Affine.equation_iff_nonsingular.mp
+    (W.equation_formalPoint (hI.isTopologicallyNilpotent_of_mem ht)
+      (W.algebraMap_formalWEval_ne_zero hI ht
+        ((map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective O K)).mpr h0)))
+
+/-- **The parametrized point at a nonzero parameter, as `Affine.Point.some`.** This is
+`formalPoint_of_param_ne_zero` with `Affine.Point.mk` unfolded and the coordinates normalised, so
+that two such points may be compared through `Affine.Point.some.injEq`. -/
+theorem formalPoint_eq_some {I : Ideal O} (hI : IsAdic I) {t : O} (ht : t ∈ I) (h0 : t ≠ 0) :
+    W.formalPoint (K := K) hI ht = .some _ _ (W.nonsingular_formalPoint (K := K) hI ht h0) := by
+  rw [W.formalPoint_of_param_ne_zero hI ht h0]
+  simp only [Affine.Point.mk, neg_div, one_div]
 
 open scoped Classical in
 /-- **The `x`-coordinate of the parametrized point** is `t / w(t)`. -/

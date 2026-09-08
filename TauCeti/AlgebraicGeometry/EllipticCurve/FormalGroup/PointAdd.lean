@@ -41,8 +41,7 @@ from the chord condition. `hF` is the membership `formalPoint` needs of its argu
 ## Provenance
 
 Adapted from Michael Stoll's `EllipticCurves` project
-(`github.com/MichaelStollBayreuth/EllipticCurves`, Apache-2.0, pinned by
-`TauCetiRoadmap/EllipticCurves/README.md` at `66889eada51a`),
+(`github.com/MichaelStollBayreuth/EllipticCurves` @ `66889eada51a`, Apache-2.0),
 `EllipticCurves/WeierstrassFormalGroup/Filtration.lean`, declaration `paramPoint_add`.
 
 The argument here is a transposition of this repository's own `FormalGroup/Add/Assoc.lean`, whose
@@ -70,7 +69,7 @@ They ask nothing of the curve beyond its coefficients and nothing of `K` beyond 
 `O`; the point-level statements below need more. -/
 
 /-- The `w`-equation of the `(z, w)`-chart, read at a parameter in `K`. This is the shape
-`chord_point_nonsingular` and `chord_point_add` ask of each of their three points. -/
+`chord_point_add` asks of each of its three points. -/
 private theorem algebraMap_formalWEval_wEquation {s : O} (hs : PowerSeries.HasEval s) :
     algebraMap O K (W.formalWEval s) = algebraMap O K s ^ 3 +
       (W.baseChange K).a₁ * algebraMap O K s * algebraMap O K (W.formalWEval s) +
@@ -189,33 +188,12 @@ private theorem algebraMap_formalInverseDenomEval_eq {t₁ t₂ : O} (h₁ : Pow
     (W.formalInverseDenomEval_eq (W.hasEval_formalThirdRootEval h₁ h₂))
   simpa [baseChange, map_sub, map_mul, map_one, map_a₁, map_a₃] using h
 
-/-- The inverse denominator's inverse at the third root is nonzero. -/
-private theorem algebraMap_formalInverseDenomInvEval_ne_zero {t₁ t₂ : O}
-    (h₁ : PowerSeries.HasEval t₁) (h₂ : PowerSeries.HasEval t₂) :
-    algebraMap O K (W.formalInverseDenomInvEval (W.formalThirdRootEval t₁ t₂)) ≠ 0 := by
-  intro h
-  have hu := W.algebraMap_formalInverseDenomEval_mul_inv (K := K) h₁ h₂
-  rw [h, mul_zero] at hu
-  exact one_ne_zero hu.symm
-
 /-! ### The points
 
 `formalPoint` needs the base-changed curve to be elliptic and the structure map to be injective,
 and the group law on points needs decidable equality on `K`. -/
 
 variable [DecidableEq K] [(W.baseChange K).IsElliptic] [FaithfulSMul O K]
-
-omit [DecidableEq K] in
-/-- The parametrised point of a nonzero parameter, written as the `Affine.Point.some` term that
-`chord_point_add` speaks of. The `x`-coordinates agree on the nose; the `y`-coordinates differ
-only in the spelling `-(w)⁻¹` against `-1 / w`. -/
-private theorem formalPoint_eq_some {I : Ideal O} (hI : IsAdic I) {s : O} (hs : s ∈ I)
-    (hs0 : s ≠ 0) (hn : (W.baseChange K).toAffine.Nonsingular
-      (algebraMap O K s / algebraMap O K (W.formalWEval s))
-      (-1 / algebraMap O K (W.formalWEval s))) :
-    W.formalPoint (K := K) hI hs = Affine.Point.some _ _ hn := by
-  rw [W.formalPoint_of_param_ne_zero hI hs hs0]
-  simp only [Affine.Point.mk, neg_div, one_div]
 
 omit [IsUniformAddGroup O] [CompleteSpace O] [T2Space O] [IsTopologicalRing O]
   [IsLinearTopology O O] [DecidableEq K] [(W.baseChange K).IsElliptic] in
@@ -227,6 +205,39 @@ private theorem algebraMap_mul_formalWEval_sub_ne_zero {t₁ t₂ : O}
   rw [← map_mul, ← map_mul, ← map_sub, ne_eq, FaithfulSMul.algebraMap_eq_zero_iff, sub_eq_zero]
   exact hx
 
+/-- The group law of `W⁄K` at the two parametrised points, with each of the three points written
+as the `Affine.Point.some` term of `formalPoint_eq_some`. -/
+private theorem some_add_some_formalAddEval_of_x_ne {I : Ideal O} (hI : IsAdic I) {t₁ t₂ : O}
+    (h₁ : t₁ ∈ I) (h₂ : t₂ ∈ I) (h₁0 : t₁ ≠ 0) (h₂0 : t₂ ≠ 0)
+    (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁) (hF : W.formalAddEval t₁ t₂ ∈ I)
+    (hF0 : W.formalAddEval t₁ t₂ ≠ 0) :
+    Affine.Point.some _ _ (W.nonsingular_formalPoint (K := K) hI h₁ h₁0) +
+        Affine.Point.some _ _ (W.nonsingular_formalPoint (K := K) hI h₂ h₂0) =
+      Affine.Point.some _ _ (W.nonsingular_formalPoint (K := K) hI hF hF0) := by
+  have hE₁ : PowerSeries.HasEval t₁ := hI.isTopologicallyNilpotent_of_mem h₁
+  have hE₂ : PowerSeries.HasEval t₂ := hI.isTopologicallyNilpotent_of_mem h₂
+  have hne : ∀ {s : O}, s ≠ 0 → algebraMap O K s ≠ 0 := fun hs0 ↦ by simpa using hs0
+  have hTmem : W.formalThirdRootEval t₁ t₂ ∈ I := by
+    simpa using W.formalThirdRootEval_mem hI (k := 1) (by simpa using h₁) (by simpa using h₂)
+  have hwT0 := W.algebraMap_formalWEval_ne_zero (S := K) hI hTmem
+    (hne (W.formalThirdRootEval_ne_zero hE₁ hE₂ hx))
+  have hu := W.algebraMap_formalInverseDenomEval_mul_inv (K := K) hE₁ hE₂
+  -- the group law of `W⁄K`, applied to the two parametrised points
+  obtain ⟨h₃, hadd⟩ := chord_point_add (W.baseChange K) (W.algebraMap_formalWEval_wEquation hE₁)
+    (W.algebraMap_formalWEval_wEquation hE₂) (W.algebraMap_formalSlopeEval_mul_sub hE₁ hE₂)
+    (W.algebraMap_formalInterceptEval_eq hE₁ hE₂)
+    (W.algebraMap_formalThirdRootEval_relation hE₁ hE₂)
+    (W.algebraMap_formalWEval_formalThirdRootEval hE₁ hE₂)
+    (W.algebraMap_thirdRootDenom_ne_zero hI h₁ h₂)
+    (W.algebraMap_formalWEval_ne_zero hI h₁ (hne h₁0))
+    (W.algebraMap_formalWEval_ne_zero hI h₂ (hne h₂0)) hwT0
+    (W.algebraMap_mul_formalWEval_sub_ne_zero hx) (W.nonsingular_formalPoint hI h₁ h₁0)
+    (W.nonsingular_formalPoint hI h₂ h₂0)
+  -- the third point's coordinates are those of the parameter `F(t₁, t₂)`, the formal inverse of
+  -- the third root
+  grind [W.algebraMap_formalAddEval_eq, W.algebraMap_formalWEval_formalAddEval,
+    W.algebraMap_formalInverseDenomEval_eq]
+
 /-- **The parametrisation carries the group law**, for two nonzero parameters whose points have
 distinct `x`-coordinates: the point of `F(t₁, t₂)` is the sum of the points of `t₁` and `t₂`.
 
@@ -235,52 +246,13 @@ addition series is the formal inverse of that third root, so the group law of `W
 two points computes `F(t₁, t₂)`. -/
 theorem formalPoint_formalAddEval_of_x_ne {I : Ideal O} (hI : IsAdic I) {t₁ t₂ : O}
     (h₁ : t₁ ∈ I) (h₂ : t₂ ∈ I) (h₁0 : t₁ ≠ 0) (h₂0 : t₂ ≠ 0)
-    (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁)
-    (hF : W.formalAddEval t₁ t₂ ∈ I) :
-    W.formalPoint (K := K) hI h₁ + W.formalPoint (K := K) hI h₂ =
-      W.formalPoint (K := K) hI hF := by
-  have hne : ∀ {s : O}, s ≠ 0 → algebraMap O K s ≠ 0 := fun hs0 ↦ by simpa using hs0
-  have hE₁ : PowerSeries.HasEval t₁ := hI.isTopologicallyNilpotent_of_mem h₁
-  have hE₂ : PowerSeries.HasEval t₂ := hI.isTopologicallyNilpotent_of_mem h₂
-  have hEF : PowerSeries.HasEval (W.formalAddEval t₁ t₂) := hI.isTopologicallyNilpotent_of_mem hF
-  have hTmem : W.formalThirdRootEval t₁ t₂ ∈ I := by
-    simpa using W.formalThirdRootEval_mem hI (k := 1) (by simpa using h₁) (by simpa using h₂)
-  have hw₁0 := W.algebraMap_formalWEval_ne_zero (S := K) hI h₁ (hne h₁0)
-  have hw₂0 := W.algebraMap_formalWEval_ne_zero (S := K) hI h₂ (hne h₂0)
-  have hwT0 := W.algebraMap_formalWEval_ne_zero (S := K) hI hTmem
-    (hne (W.formalThirdRootEval_ne_zero hE₁ hE₂ hx))
-  have hwF0 := W.algebraMap_formalWEval_ne_zero (S := K) hI hF
-    (hne (W.formalAddEval_ne_zero hE₁ hE₂ hx))
-  have hDelta : (W.baseChange K).Δ ≠ 0 :=
-    (W.baseChange K).coe_Δ' ▸ (W.baseChange K).Δ'.ne_zero
-  have hn₁ := chord_point_nonsingular _ (W.algebraMap_formalWEval_wEquation hE₁) hw₁0 hDelta
-  have hn₂ := chord_point_nonsingular _ (W.algebraMap_formalWEval_wEquation hE₂) hw₂0 hDelta
-  have hnF := chord_point_nonsingular _ (W.algebraMap_formalWEval_wEquation hEF) hwF0 hDelta
-  have hu := W.algebraMap_formalInverseDenomEval_mul_inv (K := K) hE₁ hE₂
-  have hsp0 := W.algebraMap_formalInverseDenomInvEval_ne_zero (K := K) hE₁ hE₂
-  -- the group law of `W⁄K`, applied to the two parametrised points
-  obtain ⟨h₃, hadd⟩ := chord_point_add (W.baseChange K) (W.algebraMap_formalWEval_wEquation hE₁)
-    (W.algebraMap_formalWEval_wEquation hE₂) (W.algebraMap_formalSlopeEval_mul_sub hE₁ hE₂)
-    (W.algebraMap_formalInterceptEval_eq hE₁ hE₂)
-    (W.algebraMap_formalThirdRootEval_relation hE₁ hE₂)
-    (W.algebraMap_formalWEval_formalThirdRootEval hE₁ hE₂)
-    (W.algebraMap_thirdRootDenom_ne_zero hI h₁ h₂) hw₁0 hw₂0 hwT0
-    (W.algebraMap_mul_formalWEval_sub_ne_zero hx) hn₁ hn₂
-  -- the third point's coordinates are those of the parameter `F(t₁, t₂)`, the formal inverse of
-  -- the third root
-  rw [W.formalPoint_eq_some hI h₁ h₁0 hn₁, W.formalPoint_eq_some hI h₂ h₂0 hn₂, hadd,
-    W.formalPoint_eq_some hI hF (W.formalAddEval_ne_zero hE₁ hE₂ hx) hnF]
-  simp only [Affine.Point.some.injEq]
-  refine ⟨?_, ?_⟩
-  · rw [W.algebraMap_formalAddEval_eq (K := K) hE₁ hE₂,
-      W.algebraMap_formalWEval_formalAddEval hI h₁ h₂]
-    field_simp
-  · rw [W.algebraMap_formalWEval_formalAddEval hI h₁ h₂,
-      div_eq_div_iff hwT0 (neg_ne_zero.mpr (mul_ne_zero hwT0 hsp0))]
-    linear_combination
-      (-(algebraMap O K (W.formalWEval (W.formalThirdRootEval t₁ t₂)))) * hu +
-        (algebraMap O K (W.formalWEval (W.formalThirdRootEval t₁ t₂)) *
-          algebraMap O K (W.formalInverseDenomInvEval (W.formalThirdRootEval t₁ t₂))) *
-          W.algebraMap_formalInverseDenomEval_eq (K := K) hE₁ hE₂
+    (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁) (hF : W.formalAddEval t₁ t₂ ∈ I) :
+    W.formalPoint (K := K) hI h₁ + W.formalPoint (K := K) hI h₂ = W.formalPoint (K := K) hI hF := by
+  have hF0 := W.formalAddEval_ne_zero (hI.isTopologicallyNilpotent_of_mem h₁)
+    (hI.isTopologicallyNilpotent_of_mem h₂) hx
+  rw [W.formalPoint_eq_some hI h₁ h₁0,
+    W.formalPoint_eq_some hI h₂ h₂0,
+    W.formalPoint_eq_some hI hF hF0]
+  exact W.some_add_some_formalAddEval_of_x_ne hI h₁ h₂ h₁0 h₂0 hx hF hF0
 
 end WeierstrassCurve
