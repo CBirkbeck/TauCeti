@@ -18,7 +18,7 @@ the rank of `𝓞 F` over `𝓞 K`.
 
 ## Main results
 
-* `Ideal.ramificationIdx_le_finrank_numberField`: for a prime `𝔔` of `𝓞 F` in an extension
+* `Ideal.ramificationIdx_le_finrank_of_numberField`: for a prime `𝔔` of `𝓞 F` in an extension
   `F / K` of number fields, `e(𝔔 / 𝓞 K) ≤ [F : K]`.
 * `Ideal.finrank_eq_one_of_ramificationIdx_eq_finrank`: in a tower `K ≤ E ≤ B`, a
   prime of `𝓞 B` with `e(𝔔 / 𝓞 E) = [B : K]` — the full tower degree, not merely `[B : E]` —
@@ -38,7 +38,7 @@ variable {K : Type*} [Field K] [NumberField K]
 -- `TauCetiRoadmap/Chebotarev/README.md` §7.2 step 1 asks that `ℚ(ζ_q)/ℚ`, being totally ramified
 -- at `q`, have "every subfield of `ℚ(ζ_q)` other than `ℚ` ramified at `q`" — which is
 -- `Ideal.finrank_eq_one_of_ramificationIdx_eq_finrank` with `E` that subfield, and the bound
--- `Ideal.ramificationIdx_le_finrank_numberField` is what makes the ramification index reach the
+-- `Ideal.ramificationIdx_le_finrank_of_numberField` is what makes the ramification index reach the
 -- degree there.
 
 /-- **A relative ramification index is at most the degree of the extension.** For a prime `𝔔` of
@@ -47,7 +47,7 @@ variable {K : Type*} [Field K] [NumberField K]
 It is the number-field form of `TauCeti.RamificationInertia.ramificationIdx_le_finrank`, whose
 bound is the rank of `𝓞 F` over `𝓞 K`; the two agree, and this is the one a caller holding a field
 extension can use directly. -/
-theorem _root_.Ideal.ramificationIdx_le_finrank_numberField {F : Type*} [Field F]
+theorem _root_.Ideal.ramificationIdx_le_finrank_of_numberField {F : Type*} [Field F]
     [NumberField F] [Algebra K F] (𝔔 : Ideal (𝓞 F)) [𝔔.IsPrime] :
     𝔔.ramificationIdx (𝓞 K) ≤ Module.finrank K F :=
   -- The fundamental identity `∑ eᵢ fᵢ = [F : K]` bounds each `eᵢ`, and `[𝓞 F : 𝓞 K] = [F : K]`.
@@ -69,12 +69,10 @@ theorem _root_.Ideal.finrank_eq_one_of_ramificationIdx_eq_finrank {K : Type*} [F
     (𝔔 : Ideal (𝓞 B)) [𝔔.IsPrime]
     (he : 𝔔.ramificationIdx (𝓞 E) = Module.finrank K B) :
     Module.finrank K E = 1 := by
-  -- `K` embeds in the number field `E`, so it has characteristic zero and `E` stays finite over it.
-  have : CharZero K := charZero_of_inj_zero fun n hn ↦ by
-    have : (n : E) = 0 := by rw [← map_natCast (algebraMap K E), hn, map_zero]
-    exact_mod_cast this
+  -- `K` maps into the number field `E`, so it has characteristic zero and `E` stays finite over it.
+  have : CharZero K := RingHom.charZero (algebraMap K E)
   have : Module.Finite K E := Module.Finite.of_restrictScalars_finite ℚ K E
-  have hb := Ideal.ramificationIdx_le_finrank_numberField (K := E) (F := B) 𝔔
+  have hb := Ideal.ramificationIdx_le_finrank_of_numberField (K := E) (F := B) 𝔔
   have hle : Module.finrank K E * Module.finrank E B ≤ 1 * Module.finrank E B := by
     rw [one_mul, Module.finrank_mul_finrank K E B, ← he]; exact hb
   exact le_antisymm (Nat.le_of_mul_le_mul_right hle Module.finrank_pos) Module.finrank_pos
