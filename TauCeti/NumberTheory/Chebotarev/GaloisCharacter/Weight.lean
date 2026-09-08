@@ -62,8 +62,9 @@ modulus `1` away from the bad primes, so the unitary packaging records strictly 
 multiplicative one and is not a replacement for it: `galoisCharacterWeight` remains the definition
 everything else is stated about, and `val_galoisCharacterUnitaryWeight` is the bridge. The unitary
 property is supplied by `TauCeti.UnitaryIdealWeight.ofPowEqOne` with `n = Nat.card (L ≃ₐ[K] L)`,
-which asks only that `χ 𝔭.asIdeal ^ n = 1` at every height-one prime `𝔭` outside `badPrimes`;
-that is why no hypothesis constrains `χ` to the unit circle.
+which asks only that `galoisCharacterWeight (L := L) χ 𝔭.asIdeal ^ n = 1` at every height-one
+prime `𝔭` outside `badPrimes` — a condition on the *weight*, not on `χ`, which is why no hypothesis
+constrains `χ` itself to the unit circle.
 
 ## References
 
