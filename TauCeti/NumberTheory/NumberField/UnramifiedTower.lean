@@ -9,7 +9,6 @@ public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.NumberTheory.RamificationInertia.Unramified
 public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 public import TauCeti.NumberTheory.RamificationInertia.Tower
-import Mathlib.RingTheory.Ideal.GoingUp
 
 /-!
 # Unramifiedness descends along a tower of number fields
