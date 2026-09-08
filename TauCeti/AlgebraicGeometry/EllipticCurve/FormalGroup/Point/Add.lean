@@ -38,7 +38,7 @@ argument, which is why the conclusion names that term rather than a hypothesis.
 
 ## Main results
 
-* `WeierstrassCurve.formalPoint_formalAddEval_eq_add_of_X_ne`: the point of `F(t₁, t₂)` is the
+* `WeierstrassCurve.add_eq_formalPoint_formalAddEval_of_X_ne`: the point of `F(t₁, t₂)` is the
   sum of the points of `t₁` and `t₂`, for parameters whose points have distinct `x`-coordinates.
 
 ## Provenance
@@ -255,11 +255,11 @@ The chord through the two points meets the curve again at the parameter `t₃(t�
 addition series is the formal inverse of that third root, so the group law of `W⁄K` applied to the
 two points computes `F(t₁, t₂)`. -/
 @[simp]
-theorem formalPoint_formalAddEval_eq_add_of_X_ne {I : Ideal O} (hI : IsAdic I) {t₁ t₂ : O}
+theorem add_eq_formalPoint_formalAddEval_of_X_ne {I : Ideal O} (hI : IsAdic I) {t₁ t₂ : O}
     (h₁ : t₁ ∈ I) (h₂ : t₂ ∈ I) (hx : t₁ * W.formalWEval t₂ ≠ t₂ * W.formalWEval t₁) :
-    W.formalPoint (K := K) hI (pow_one I ▸ W.formalAddEval_mem hI (k := 1)
-        ((pow_one I).symm ▸ h₁) ((pow_one I).symm ▸ h₂)) =
-      W.formalPoint (K := K) hI h₁ + W.formalPoint (K := K) hI h₂ := by
+    W.formalPoint (K := K) hI h₁ + W.formalPoint (K := K) hI h₂ =
+      W.formalPoint (K := K) hI (pow_one I ▸ W.formalAddEval_mem hI (k := 1)
+        ((pow_one I).symm ▸ h₁) ((pow_one I).symm ▸ h₂)) := by
   -- the chord condition already excludes the zero parameter, `w` vanishing there
   have h₁0 : t₁ ≠ 0 := by rintro rfl; simp at hx
   have h₂0 : t₂ ≠ 0 := by rintro rfl; simp at hx
@@ -281,6 +281,7 @@ theorem formalPoint_formalAddEval_eq_add_of_X_ne {I : Ideal O} (hI : IsAdic I) {
     (W.some_add_some_formalAddEval_of_X_ne hI h₁ h₂ h₁0 h₂0 hx hE₁ hE₂ hEF
       (W.algebraMap_formalWEval_ne_zero hI h₁ (hne h₁0))
       (W.algebraMap_formalWEval_ne_zero hI h₂ (hne h₂0))
-      (W.algebraMap_formalWEval_ne_zero hI hF (hne hF0))).symm
+      (W.algebraMap_formalWEval_ne_zero hI hF (hne hF0)))
+
 
 end WeierstrassCurve
