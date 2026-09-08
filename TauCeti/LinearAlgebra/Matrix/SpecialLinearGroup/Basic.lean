@@ -435,13 +435,6 @@ theorem map_intCast_zmod_surjective :
   exact ⟨σ * τ, by rw [map_mul, ← hMdef, hτ, mul_inv_cancel_left]⟩
 
 
-/-- **The Chinese-remainder isomorphism commutes with integer casts.** For coprime `d` and `d'`,
-the class of an integer modulo `d * d'` goes to the pair of its classes modulo `d` and `d'`. -/
-private lemma chineseRemainder_intCast {d d' : ℕ} (hcop : d.Coprime d') (n : ℤ) :
-    ZMod.chineseRemainder hcop (n : ZMod (d * d')) = ((n : ZMod d), (n : ZMod d')) := by
-  rw [map_intCast]
-  rfl
-
 /-- **Strong approximation for `SL₂` at two coprime moduli**: for coprime `d` and `d'`, the joint
 reduction `SL₂(ℤ) → SL₂(ℤ/dℤ) × SL₂(ℤ/d'ℤ)` is surjective. So a prescribed reduction modulo `d`
 and a prescribed reduction modulo `d'` are realized simultaneously by a single integral matrix. -/
@@ -483,12 +476,14 @@ theorem map_intCast_zmod_prod_surjective {d d' : ℕ} (hcop : d.Coprime d') :
     have := congrArg (fun M : SL(2, ZMod (d * d')) => M i j) hγ
     simpa only [map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply, hC, Matrix.of_apply,
       Int.coe_castRingHom] using this
-  -- the two prescribed reductions, read off together: `e` carries the class of an integer
-  -- modulo `d * d'` to the pair of its classes, so cancelling `e` against `e.symm` in `hentry`
-  -- gives both components at once
+  -- the two prescribed reductions, read off together: `e` is a ring hom, so `map_intCast`
+  -- carries the class of an integer modulo `d * d'` to the pair of its classes, and cancelling
+  -- `e` against `e.symm` in `hentry` then gives both components at once
   have hpair : ∀ i j, ((((γ i j : ℤ) : ZMod d)), (((γ i j : ℤ) : ZMod d'))) = (A i j, B i j) :=
     fun i j => by
-      rw [← chineseRemainder_intCast hcop, ← hE, hentry i j, RingEquiv.apply_symm_apply]
+      rw [show ((((γ i j : ℤ) : ZMod d)), (((γ i j : ℤ) : ZMod d'))) =
+          e (((γ i j : ℤ) : ZMod (d * d'))) from by rw [hE, map_intCast]; rfl,
+        hentry i j, RingEquiv.apply_symm_apply]
   refine ⟨γ, Prod.ext ?_ ?_⟩
   · ext i j
     simpa only [MonoidHom.prod_apply, map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply,

@@ -115,7 +115,8 @@ theorem mem_cuspFormsOld_of_qExpansionSupportedOnDvd {l : ℕ} (hl : l ≠ 1) (h
     (hf : haveI : NeZero l := NeZero.of_dvd hlN
       QExpansionSupportedOnDvd l f) :
     f ∈ cuspFormsOld N k := by
-  -- The support condition is spent entirely on manufacturing the descent: `Descent.lean` turns
+  -- The support condition is spent entirely on manufacturing the descent:
+  -- `Newforms/Descent/Basic.lean` turns
   -- it into a `T`-invariant `φ` with `f = l ^ (1 - k) • (φ ∣[k] diag(l, 1))`, and
   -- `mem_cuspFormsOld_of_slash_T_eq` reads the level-lowering dichotomy off that.
   have : NeZero l := NeZero.of_dvd hlN
