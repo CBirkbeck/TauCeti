@@ -28,8 +28,7 @@ minimal hypotheses use the first.
 
 The file also records the *sub*object direction, which is the opposite transport and needs no
 openness at all: a subgroup or subring carries the subspace topology, and an open subgroup of the
-ambient group meets it in an open subgroup. Mathlib has neither — its only nonarchimedean
-instances are for products and for the adic topology — and its
+ambient group meets it in an open subgroup. Mathlib has neither of these two instances, and its
 `NonarchimedeanGroup.nonarchimedean_of_emb` does not give them, since it asks the inclusion to be
 an *open* embedding, which a subgroup's need not be.
 
