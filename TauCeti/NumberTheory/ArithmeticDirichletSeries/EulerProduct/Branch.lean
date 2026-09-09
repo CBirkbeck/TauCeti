@@ -7,6 +7,8 @@ module
 
 public import TauCeti.Analysis.Complex.BranchLogRoot
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Analytic
+import Mathlib.NumberTheory.LSeries.Deriv
+import TauCeti.NumberTheory.ArithmeticDirichletSeries.Regroup
 
 /-!
 # A holomorphic logarithm of an ideal `L`-series
@@ -42,19 +44,32 @@ open IdealArithmeticFunction
 variable {K : Type*} [Field K] [NumberField K] (χ : MultiplicativeIdealWeight K)
 
 /-- **A holomorphic logarithm of the `L`-series on a simply connected zero-free region.**  Let `U`
-be a simply connected open set on which the `L`-series of the norm coefficients is holomorphic and
-at every point of which the ideal-indexed series converges absolutely.  Then there is a holomorphic
-`L` on `U` with `exp ∘ L` the `L`-series, and `deriv L` is its logarithmic derivative.
+be a simply connected open set at every point of which the ideal-indexed series converges
+absolutely.  Then there is a holomorphic `L` on `U` with `exp ∘ L` the `L`-series, and `deriv L` is
+its logarithmic derivative.
 
-Absolute convergence enters only through the Euler product, which is what makes the `L`-series
-zero-free on `U`; simple connectedness is what turns pointwise nonvanishing into a single branch. -/
+Absolute convergence does two jobs: through the Euler product it makes the `L`-series zero-free on
+`U`, and through a point of `U` slightly to the left of each `s` it puts `s` strictly right of the
+abscissa of absolute convergence, which is what makes the `L`-series holomorphic there.  Simple
+connectedness is what turns pointwise nonvanishing into a single branch. -/
 theorem exists_differentiableOn_exp_eq_LSeries {U : Set ℂ} (hUc : IsSimplyConnected U)
     (hUo : IsOpen U)
-    (hdiff : DifferentiableOn ℂ (LSeries (normCoeff K χ.toIdealArithmeticFunction)) U)
     (hconv : ∀ s ∈ U, Summable (idealTerm K χ.toIdealArithmeticFunction s)) :
     ∃ L : ℂ → ℂ, DifferentiableOn ℂ L U ∧
       EqOn (Complex.exp ∘ L) (LSeries (normCoeff K χ.toIdealArithmeticFunction)) U ∧
       ∀ s ∈ U, deriv L s = logDeriv (LSeries (normCoeff K χ.toIdealArithmeticFunction)) s := by
+  have hdiff : DifferentiableOn ℂ (LSeries (normCoeff K χ.toIdealArithmeticFunction)) U := by
+    intro s hs
+    obtain ⟨ε, hε, hball⟩ := Metric.isOpen_iff.1 hUo s hs
+    have hmem : s - ((ε / 2 : ℝ) : ℂ) ∈ U := by
+      refine hball ?_
+      simp only [Metric.mem_ball, dist_eq_norm, sub_sub_cancel_left, norm_neg,
+        Complex.norm_real, Real.norm_eq_abs, abs_of_pos (by linarith : (0 : ℝ) < ε / 2)]
+      linarith
+    refine (LSeries_hasDerivAt ?_).differentiableAt.differentiableWithinAt
+    refine ((LSeriesSummable_normCoeff K (hconv _ hmem)).abscissaOfAbsConv_le).trans_lt ?_
+    rw [Complex.sub_re, Complex.ofReal_re, EReal.coe_lt_coe_iff]
+    linarith
   have h₀ : 0 ∉ LSeries (normCoeff K χ.toIdealArithmeticFunction) '' U := by
     rintro ⟨s, hs, hs0⟩
     exact χ.LSeries_ne_zero_of_summable_idealTerm (hconv s hs) hs0

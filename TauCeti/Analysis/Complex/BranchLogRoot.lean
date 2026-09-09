@@ -10,6 +10,7 @@ public import Mathlib.Analysis.Calculus.FDeriv.Defs
 public import Mathlib.Analysis.Analytic.Order
 public import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 import Mathlib.Analysis.Normed.Module.Connected
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Analysis.Complex.CauchyIntegral
 
 /-!
@@ -242,12 +243,10 @@ theorem deriv_eq_logDeriv_of_eqOn_exp_comp {U : Set ℂ} (hUo : IsOpen U) {f g :
     (hf : DifferentiableOn ℂ f U) (h : EqOn (Complex.exp ∘ f) g U) {z : ℂ} (hz : z ∈ U) :
     deriv f z = logDeriv g z := by
   have hfz : DifferentiableAt ℂ f z := (hf z hz).differentiableAt (hUo.mem_nhds hz)
-  have hgz : g =ᶠ[nhds z] Complex.exp ∘ f :=
-    Filter.eventuallyEq_of_mem (hUo.mem_nhds hz) fun w hw ↦ (h hw).symm
-  have hderiv : deriv g z = Complex.exp (f z) * deriv f z := by
-    rw [hgz.deriv_eq]
-    simpa using (Complex.hasDerivAt_exp (f z)).comp z hfz.hasDerivAt |>.deriv
-  rw [logDeriv_apply, hderiv, ← h hz]
-  exact (mul_div_cancel_left₀ _ (Complex.exp_ne_zero (f z))).symm
+  have heq : (Complex.exp ∘ f) =ᶠ[nhds z] g :=
+    Filter.eventuallyEq_of_mem (hUo.mem_nhds hz) fun w hw ↦ h hw
+  rw [← (logDeriv_congr_nhds heq).eq_of_nhds, logDeriv_comp Complex.differentiableAt_exp hfz,
+    Complex.logDeriv_exp]
+  simp
 
 end TauCeti
