@@ -5,8 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.NumberTheory.NumberField.Basic
 public import TauCeti.FieldTheory.Galois.FixedField
-public import TauCeti.NumberTheory.NumberField.AutomorphismAction
+import TauCeti.NumberTheory.NumberField.AutomorphismAction
 
 /-!
 # The stabilizer of an ideal over the field fixed by an automorphism
@@ -21,7 +22,6 @@ hypothesis is only that `σ` fixes `Q`.  A Frobenius at an unramified prime supp
 
 ## Main results
 
-* `NumberField.toFixedFieldAlgEquiv_smul_ideal`: the two bundlings of `σ` act alike on ideals.
 * `NumberField.stabilizer_fixedField_zpowers_eq_top`: over `L ^ ⟨σ⟩`, every automorphism fixes `Q`.
 
 ## References
@@ -44,16 +44,6 @@ namespace NumberField
 
 variable {K L : Type*} [Field K] [Field L] [Algebra K L]
 
-/-- **The rebundled automorphism acts as `σ` on ideals.**  `AlgEquiv.toFixedFieldAlgEquiv σ` is
-`σ` with its base field changed, so it induces the same action on the ideals of `𝓞 L`. -/
-@[simp]
-theorem toFixedFieldAlgEquiv_smul_ideal (σ : L ≃ₐ[K] L) (Q : Ideal (𝓞 L)) :
-    (AlgEquiv.toFixedFieldAlgEquiv σ) • Q = σ • Q := by
-  rw [Ideal.pointwise_smul_def, Ideal.pointwise_smul_def]
-  refine congrArg (Ideal.map · Q) (RingHom.ext fun x ↦ RingOfIntegers.ext ?_)
-  simp only [MulSemiringAction.toRingHom_apply, algebraMap_smul_eq_apply,
-    AlgEquiv.toFixedFieldAlgEquiv_apply]
-
 /-- **Over the fixed field, every automorphism fixes `Q`.**  If `σ` has finite order and fixes the
 ideal `Q`, the stabilizer of `Q` in `Gal(L / L ^ ⟨σ⟩)` is the whole group.
 
@@ -63,7 +53,7 @@ theorem stabilizer_fixedField_zpowers_eq_top {σ : L ≃ₐ[K] L} [Finite (Subgr
     MulAction.stabilizer (L ≃ₐ[↥(fixedField (Subgroup.zpowers σ))] L) Q = ⊤ := by
   have hmem : AlgEquiv.toFixedFieldAlgEquiv σ ∈
       MulAction.stabilizer (L ≃ₐ[↥(fixedField (Subgroup.zpowers σ))] L) Q := by
-    rw [MulAction.mem_stabilizer_iff, toFixedFieldAlgEquiv_smul_ideal]
+    rw [MulAction.mem_stabilizer_iff, AlgEquiv.toFixedFieldAlgEquiv_smul_ideal]
     exact hQ
   refine top_le_iff.1 ?_
   rw [← AlgEquiv.zpowers_toFixedFieldAlgEquiv_eq_top σ]
