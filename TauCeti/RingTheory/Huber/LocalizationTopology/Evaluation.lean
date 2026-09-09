@@ -42,7 +42,7 @@ power-bounded, which is the hypothesis that universal property needs.
 
 The corresponding statements for *polynomials*, which need no completion theory, live one level
 down in `TauCeti.RingTheory.Huber.LocalizationTopology.PolynomialEvaluation` and are re-exported
-by this module — chiefly `TauCeti.Huber.PairOfDefinition.polyEvalHom` and
+by this module — chiefly `TauCeti.Huber.polyEvalHom` and
 `TauCeti.Huber.PairOfDefinition.isOpenQuotientMap_polyEvalHom`.
 
 ## What this is not
@@ -65,9 +65,10 @@ here says that map is surjective**. Surjectivity for a suitably exhaustive famil
 Wedhorn's Examples 6.38 and 6.39 assert, and it is not proved here.
 
 What *is* proved, in the `PolynomialEvaluation` module below this one, is the corresponding
-statement about `TauCeti.Huber.PairOfDefinition.polyEvalHom`: for numerators that generate the
-unit ideal and exhaust `T`, evaluation of polynomials is an open quotient map onto `Aₛ`. Carrying
-that up to the completions is a separate step.
+statement about `TauCeti.Huber.polyEvalHom`: for numerators that generate the
+unit ideal, exhaust `T`, and whose fractions lie in the ring of definition, evaluation of
+polynomials is an open quotient map onto `Aₛ` — those three hypotheses buying surjectivity,
+openness and continuity respectively. Carrying that up to the completions is a separate step.
 
 ## References
 

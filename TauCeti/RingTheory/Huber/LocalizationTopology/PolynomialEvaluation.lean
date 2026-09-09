@@ -24,12 +24,17 @@ different hypotheses, and the distinction matters:
 * surjectivity asks the numerators to generate the unit ideal, which is what makes the fractions
   generate `Aₛ` over `A`;
 * openness asks them to exhaust `T`, which is what the reindexing in its proof consumes;
-* continuity asks neither.
+* continuity asks that each fraction `tᵢ/s` lie in the ring of definition `D` of `Aₛ`. That is
+  weaker than either of the others and is implied by `tᵢ ∈ T`, via
+  `TauCeti.Huber.PairOfDefinition.divBy_mem_locSubring`; it is stated in the weaker form because
+  it is all the proof uses.
+
+None of the three implies another, so the bundled result carries all three hypotheses.
 
 ## Main results
 
-* `TauCeti.Huber.PairOfDefinition.polyEvalHom`, with
-  `TauCeti.Huber.PairOfDefinition.polyEvalHom_weightedPolynomialsEquiv` as its characteristic
+* `TauCeti.Huber.polyEvalHom`, with
+  `TauCeti.Huber.polyEvalHom_weightedPolynomialsEquiv` as its characteristic
   equation, and `TauCeti.Huber.PairOfDefinition.isOpenQuotientMap_polyEvalHom` bundling the three
   properties above.
 * `TauCeti.Huber.PairOfDefinition.exists_aeval_eq_of_mem_locIdealImage`: the `n`-th neighbourhood
@@ -50,10 +55,9 @@ open UniformSpace TauCeti.Localization
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
 
-namespace PairOfDefinition
+section PolynomialEvaluation
 
-variable (P : PairOfDefinition A) (T : Finset A) (s : A) (S : Type*)
-  [CommRing S] [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S)
+variable (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
 
 /-- **The evaluation of polynomials at the fractions**, `Xᵢ ↦ tᵢ/s`, read on the subring of
 polynomials inside `A⟨X₁, …, Xₖ⟩`.
@@ -83,8 +87,7 @@ theorem polyEvalHom_surjective {k : ℕ} (t : Fin k → A)
     exact adjoin_divBy_eq_top s hspan
   exact haeval.comp (weightedPolynomialsEquiv isWeightFamily_one_weight).symm.surjective
 
-omit hden in
-/-- **How `TauCeti.Huber.PairOfDefinition.polyEvalHom` acts**: on the copy of a polynomial inside
+/-- **How `TauCeti.Huber.polyEvalHom` acts**: on the copy of a polynomial inside
 `A⟨X⟩` it is evaluation of that polynomial at the fractions. This is the characteristic equation;
 consumers should use it rather than unfolding the definition. -/
 @[simp]
@@ -93,6 +96,13 @@ theorem polyEvalHom_weightedPolynomialsEquiv {k : ℕ} (t : Fin k → A)
     polyEvalHom s (S := S) t (weightedPolynomialsEquiv isWeightFamily_one_weight p)
       = MvPolynomial.aeval (fun i ↦ (divBy (t i) s : S)) p := by
   simp [polyEvalHom]
+
+end PolynomialEvaluation
+
+namespace PairOfDefinition
+
+variable (P : PairOfDefinition A) (T : Finset A) (s : A) (S : Type*)
+  [CommRing S] [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S)
 
 omit [NonarchimedeanRing A] hden in
 /-- Every element of `D` is the value of a polynomial over `A₀` at the fractions. -/
@@ -174,10 +184,10 @@ private theorem exists_polynomial_coeff_mem_idealImage {k : ℕ} (t : Fin k → 
 /-- **The polynomial evaluation `Xᵢ ↦ tᵢ/s` is an open map**, for numerators exhausting `T`.
 
 This asserts openness only. Surjectivity is a separate statement with a separate hypothesis —
-`TauCeti.Huber.PairOfDefinition.polyEvalHom_surjective`, which asks the numerators to generate
+`TauCeti.Huber.polyEvalHom_surjective`, which asks the numerators to generate
 the unit ideal.
 
-Together with `TauCeti.Huber.PairOfDefinition.polyEvalHom_surjective` this presents `Aₛ` as an
+Together with `TauCeti.Huber.polyEvalHom_surjective` this presents `Aₛ` as an
 open quotient of a polynomial ring. That is exactly the input `AddMonoidHom.surjective_completion`
 and `AddMonoidHom.isOpenMap_completion` take, so it is what carries the presentation to the
 completions `A⟨X₁, …, Xₖ⟩ → A⟨T/s⟩` — Wedhorn's Proposition 8.30, and through it the strong
@@ -222,7 +232,8 @@ inside the `n`-th neighbourhood of `Aₛ`.**
 This is the converse direction to
 `TauCeti.Huber.PairOfDefinition.exists_polynomial_coeff_mem_idealImage`, and it is what makes the
 polynomial evaluation continuous. -/
-private theorem aeval_mem_locIdealImage_of_coeff_mem {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i ∈ T)
+private theorem aeval_mem_locIdealImage_of_coeff_mem {k : ℕ} (t : Fin k → A)
+    (hmem : ∀ i, (divBy (t i) s : S) ∈ locSubring P T s S)
     (n : ℕ) {p : MvPolynomial (Fin k) A} (hp : ∀ m, p.coeff m ∈ P.idealImage n) :
     MvPolynomial.aeval (fun i ↦ (divBy (t i) s : S)) p ∈ locIdealImage P T s S n := by
   classical
@@ -231,10 +242,11 @@ private theorem aeval_mem_locIdealImage_of_coeff_mem {k : ℕ} (t : Fin k → A)
   obtain ⟨y, hy, hyd⟩ := (P.mem_idealImage n).mp (hp d)
   refine locIdealImage_mul_locSubring_subset P T s S n (Set.mul_mem_mul ?_ ?_)
   · exact hyd ▸ algebraMap_mem_locIdealImage P T s S hy
-  · exact prod_mem fun i _ ↦ pow_mem (divBy_mem_locSubring P T s S (ht i)) _
+  · exact prod_mem fun i _ ↦ pow_mem (hmem i) _
 
 /-- **The polynomial evaluation is continuous.** -/
-theorem continuous_polyEvalHom {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i ∈ T) :
+theorem continuous_polyEvalHom {k : ℕ} (t : Fin k → A)
+    (hmem : ∀ i, (divBy (t i) s : S) ∈ locSubring P T s S) :
     letI := locTopology P T s S hden
     Continuous (polyEvalHom s (S := S) t) := by
   let _ := locTopology P T s S hden
@@ -259,21 +271,24 @@ theorem continuous_polyEvalHom {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i ∈ 
     rwa [weightMul_one_weight, coe_weightedPolynomialsEquiv, coe_weightedPolynomialHom,
       MvPolynomial.coeff_coe] at hx'
   simpa only [polyEvalHom_weightedPolynomialsEquiv, SetLike.mem_coe] using
-    aeval_mem_locIdealImage_of_coeff_mem P T s S t ht n hcoeff
+    aeval_mem_locIdealImage_of_coeff_mem P T s S t hmem n hcoeff
 
 /-- **The polynomial evaluation is an open quotient map onto `Aₛ`.** It is continuous, open and
 surjective, which is the bundled form a consumer of the completion needs: this is what
 `AddMonoidHom.surjective_completion` and `AddMonoidHom.isOpenMap_completion` take in order to
 conclude the same for `A⟨X₁, …, Xₖ⟩ → A⟨T/s⟩`.
 
-Surjectivity needs the numerators to generate the unit ideal and openness needs them to exhaust
-`T`; continuity needs neither. -/
-theorem isOpenQuotientMap_polyEvalHom {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i ∈ T)
+The three hypotheses are independent: surjectivity needs the numerators to generate the unit
+ideal, openness needs them to exhaust `T`, and continuity needs each fraction `tᵢ/s` to lie in the
+ring of definition. A caller holding `tᵢ ∈ T` gets the last from
+`TauCeti.Huber.PairOfDefinition.divBy_mem_locSubring`. -/
+theorem isOpenQuotientMap_polyEvalHom {k : ℕ} (t : Fin k → A)
+    (hmem : ∀ i, (divBy (t i) s : S) ∈ locSubring P T s S)
     (hspan : Ideal.span (Set.range t) = ⊤) (hTt : ↑T ⊆ Set.range t) :
     letI := locTopology P T s S hden
     IsOpenQuotientMap (polyEvalHom s (S := S) t) :=
   letI := locTopology P T s S hden
-  ⟨polyEvalHom_surjective s S t hspan, continuous_polyEvalHom P T s S hden t ht,
+  ⟨polyEvalHom_surjective s S t hspan, continuous_polyEvalHom P T s S hden t hmem,
     isOpenMap_polyEvalHom P T s S hden t hTt⟩
 
 end PairOfDefinition
