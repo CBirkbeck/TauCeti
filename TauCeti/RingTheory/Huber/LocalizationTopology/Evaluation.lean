@@ -9,6 +9,11 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Completion
 public import TauCeti.RingTheory.Huber.WeightedEval.Completion
 public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Completion
 public import TauCeti.RingTheory.Huber.LocalizationTopology.PolynomialEvaluation
+public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.FirstCountable
+public import TauCeti.Topology.Algebra.Nonarchimedean.Basic
+public import TauCeti.Topology.Algebra.Nonarchimedean.Completion.Surjective
+public import TauCeti.Topology.Algebra.IsUniformGroup.Submodule
+public import TauCeti.RingTheory.Huber.TopologicallyFiniteType
 
 /-!
 # Evaluating `A⟨X₁, …, Xₖ⟩` at the fractions of a rational localisation
@@ -247,6 +252,225 @@ theorem denseRange_rationalEvalHom {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i 
   letI := isTopologicalRing_locUniformSpace P T s S hden
   UniformSpace.Completion.denseRange_coe.mono
     (by rintro _ ⟨x, rfl⟩; exact coe_mem_range_rationalEvalHom P T s S hden t ht hspan x)
+/-! ### The two evaluations agree on polynomials -/
+
+/-- **On a polynomial the two evaluations agree**: evaluating it in `A⟨X₁, …, Xₖ⟩` by
+`TauCeti.Huber.PairOfDefinition.rationalEvalHom` gives the image in the completion of its value
+at the fractions.
+
+This is the square that carries surjectivity of the completed polynomial evaluation over to
+`rationalEvalHom`. -/
+theorem rationalEvalHom_coe_weightedPolynomialHom {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i ∈ T)
+    (p : MvPolynomial (Fin k) A) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    rationalEvalHom P T s S hden t ht
+        ((weightedPolynomialHom (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight p :
+          weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight) :
+            restrictedMvPowerSeriesCompletion k A)
+      = ((MvPolynomial.aeval (fun i ↦ (divBy (t i) s : S)) p : S) : Completion S) := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  have _ := isHuberRing_locUniformSpace P T s S hden
+  induction p using MvPolynomial.induction_on with
+  | C a => simp [toCompletionLoc_apply]
+  | add q r hq hr =>
+      simp only [map_add, UniformSpace.Completion.coe_add, hq, hr]
+  | mul_X q i hq =>
+      simp only [map_mul, weightedPolynomialHom_X, UniformSpace.Completion.coe_mul, hq,
+        rationalEvalHom_coe_weightedX, MvPolynomial.aeval_X]
+
+/-! ### Surjectivity on the completions -/
+
+/-- `TauCeti.Huber.PairOfDefinition.continuous_polyEvalHom` read at the packaged uniformity.
+`locTopology` and `locUniformSpace` have unexposed bodies, so the two statements are not
+interchangeable by unfolding; `locUniformSpace_toTopologicalSpace` is what relates them. -/
+theorem continuous_polyEvalHom_uniform {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i ∈ T) :
+    letI := locUniformSpace P T s S hden
+    Continuous (polyEvalHom s (S := S) t) := by
+  have h := continuous_polyEvalHom P T s S hden t (fun i ↦ divBy_mem_locSubring P T s S (ht i))
+  rwa [← locUniformSpace_toTopologicalSpace P T s S hden] at h
+
+/-- `TauCeti.Huber.PairOfDefinition.isOpenMap_polyEvalHom` read at the packaged uniformity. -/
+theorem isOpenMap_polyEvalHom_uniform {k : ℕ} (t : Fin k → A)
+    (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
+      ⊆ Set.range fun i ↦ (divBy (t i) s : S)) :
+    letI := locUniformSpace P T s S hden
+    IsOpenMap (polyEvalHom s (S := S) t) := by
+  have h := isOpenMap_polyEvalHom P T s S hden t hTt
+  rwa [← locUniformSpace_toTopologicalSpace P T s S hden] at h
+
+/-- **The completed polynomial evaluation is surjective**: the completion of `A[X₁,…,Xₖ]` maps
+onto the completion of `Aₛ`.
+
+This is `AddMonoidHom.surjective_completion` applied to the open quotient map
+`TauCeti.Huber.PairOfDefinition.polyEvalHom`, whose three components are
+`TauCeti.Huber.PairOfDefinition.polyEvalHom_surjective`,
+`TauCeti.Huber.PairOfDefinition.continuous_polyEvalHom_uniform` and
+`TauCeti.Huber.PairOfDefinition.isOpenMap_polyEvalHom_uniform`. -/
+theorem surjective_completion_polyEvalHom [(nhds (0 : A)).IsCountablyGenerated] {k : ℕ}
+    (t : Fin k → A) (ht : ∀ i, t i ∈ T) (hspan : Ideal.span (insert s (Set.range t)) = ⊤)
+    (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
+      ⊆ Set.range fun i ↦ (divBy (t i) s : S)) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    Function.Surjective ((polyEvalHom s (S := S) t).toAddMonoidHom.completion
+      (continuous_polyEvalHom_uniform P T s S hden t ht)) := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  have _ : (nhds (0 : weightedPolynomials (fun _ : Fin k ↦ ({1} : Set A))
+      isWeightFamily_one_weight)).IsCountablyGenerated := by
+    rw [nhds_induced, ZeroMemClass.coe_zero]; infer_instance
+  exact AddMonoidHom.surjective_completion _ _ (polyEvalHom_surjective s S t hspan)
+    (isOpenMap_polyEvalHom_uniform P T s S hden t hTt)
+
+/-- **The comparison square on the completions.** Evaluating in `A⟨X₁, …, Xₖ⟩` after the map
+induced by the inclusion of the polynomials is the completion of the polynomial evaluation.
+
+Both sides are continuous, so `UniformSpace.Completion.ext` reduces the claim to polynomials,
+where it is
+`TauCeti.Huber.PairOfDefinition.rationalEvalHom_coe_weightedPolynomialHom`. -/
+theorem rationalEvalHom_comp_completionMap {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i ∈ T) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    (fun w ↦ rationalEvalHom P T s S hden t ht
+        (UniformSpace.Completion.map
+          (fun x : weightedPolynomials (fun _ : Fin k ↦ ({1} : Set A))
+            isWeightFamily_one_weight ↦
+            (x : weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))
+              isWeightFamily_one_weight)) w))
+      = fun w ↦ (polyEvalHom s (S := S) t).toAddMonoidHom.completion
+        (continuous_polyEvalHom_uniform P T s S hden t ht) w := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  have _ := isHuberRing_locUniformSpace P T s S hden
+  refine UniformSpace.Completion.ext
+    ((continuous_rationalEvalHom P T s S hden t ht).comp
+      UniformSpace.Completion.continuous_map)
+    (AddMonoidHom.continuous_completion _ _) (fun a ↦ ?_)
+  obtain ⟨p, rfl⟩ : ∃ p, weightedPolynomialsEquiv isWeightFamily_one_weight p = a :=
+    ⟨(weightedPolynomialsEquiv isWeightFamily_one_weight).symm a,
+      (weightedPolynomialsEquiv isWeightFamily_one_weight).apply_symm_apply a⟩
+  rw [UniformSpace.Completion.map_coe uniformContinuous_subtype_val,
+    AddMonoidHom.completion_coe, coe_weightedPolynomialsEquiv]
+  have hpe : (polyEvalHom s (S := S) t).toAddMonoidHom
+      (weightedPolynomialsEquiv isWeightFamily_one_weight p)
+      = MvPolynomial.aeval (fun i ↦ (divBy (t i) s : S)) p :=
+    polyEvalHom_weightedPolynomialsEquiv_apply s S t p
+  rw [hpe]
+  exact rationalEvalHom_coe_weightedPolynomialHom P T s S hden t ht p
+
+/-- **The evaluation map `A⟨X₁, …, Xₖ⟩ → A⟨T/s⟩` is surjective**, for numerators which together
+with the denominator `s` generate the unit ideal, and whose fractions cover those of `T`.
+
+Surjectivity is transported from
+`TauCeti.Huber.PairOfDefinition.surjective_completion_polyEvalHom` along the comparison map
+induced by the inclusion of the polynomials, using
+`TauCeti.Huber.PairOfDefinition.rationalEvalHom_comp_completionMap`. -/
+theorem surjective_rationalEvalHom [(nhds (0 : A)).IsCountablyGenerated] {k : ℕ}
+    (t : Fin k → A) (ht : ∀ i, t i ∈ T) (hspan : Ideal.span (insert s (Set.range t)) = ⊤)
+    (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
+      ⊆ Set.range fun i ↦ (divBy (t i) s : S)) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    Function.Surjective (rationalEvalHom P T s S hden t ht) := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  have _ := isHuberRing_locUniformSpace P T s S hden
+  intro y
+  obtain ⟨z, hz⟩ := surjective_completion_polyEvalHom P T s S hden t ht hspan hTt y
+  refine ⟨UniformSpace.Completion.map
+    (fun x : weightedPolynomials (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight ↦
+      (x : weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))
+        isWeightFamily_one_weight)) z, ?_⟩
+  rw [← hz]
+  exact congrFun (rationalEvalHom_comp_completionMap P T s S hden t ht) z
+
+/-- **A rational localisation is strictly topologically of finite type over `A`**, for numerators
+which together with the denominator `s` generate the unit ideal, and whose fractions cover those
+of `T`.
+
+This is Wedhorn's Definition 6.28 at Example 6.38:
+`TauCeti.Huber.PairOfDefinition.surjective_rationalEvalHom` supplies the surjection out of
+`A⟨X₁, …, Xₖ⟩`, and `TauCeti.Huber.isStrictlyTopologicallyFiniteType_of_surjective` supplies
+openness for free from the Tate hypothesis.
+
+Example 6.38 is what Proposition 8.30 cites by name. This is therefore upstream of that
+proposition, whose own conclusion is flatness of restriction maps. -/
+theorem isStrictlyTopologicallyFiniteType_toCompletionLoc [IsTateRing A]
+    [(nhds (0 : A)).IsCountablyGenerated] {k : ℕ}
+    (t : Fin k → A) (ht : ∀ i, t i ∈ T) (hspan : Ideal.span (insert s (Set.range t)) = ⊤)
+    (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
+      ⊆ Set.range fun i ↦ (divBy (t i) s : S)) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI : UniformContinuousConstSMul A S :=
+      uniformContinuousConstSMul_of_continuousConstSMul A S
+    IsStrictlyTopologicallyFiniteType (algebraMap A (Completion S)) := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  have _ := isHuberRing_locUniformSpace P T s S hden
+  let _ : UniformContinuousConstSMul A S :=
+    uniformContinuousConstSMul_of_continuousConstSMul A S
+  have _ : (nhds (0 : S)).IsCountablyGenerated := by
+    have h := (hasBasis_nhds_zero_locTopology P T s S hden).isCountablyGenerated
+    rwa [← locUniformSpace_toTopologicalSpace P T s S hden] at h
+  have _ : (uniformity (Completion S)).IsCountablyGenerated :=
+    IsUniformAddGroup.uniformity_countably_generated
+  exact isStrictlyTopologicallyFiniteType_of_surjective
+    { rationalEvalHom P T s S hden t ht with
+      commutes' := fun a ↦ by
+        have h := congrArg (fun f ↦ f a) (rationalEvalHom_comp_algebraMap P T s S hden t ht)
+        rw [toCompletionLoc_apply] at h
+        exact h }
+    (continuous_rationalEvalHom P T s S hden t ht).continuousAt
+    (surjective_rationalEvalHom P T s S hden t ht hspan hTt)
+
+/-- **A rational localisation of a strongly noetherian Tate ring is strongly noetherian**, for
+numerators which together with the denominator `s` generate the unit ideal, and whose fractions
+cover those of `T`.
+
+This is the strong noetherianity that Wedhorn's Proposition 8.30 consumes, not that
+proposition's own conclusion, which is flatness of restriction maps.
+`Laurent/Flat.lean` records the gap it closes: the flatness results there ask strong
+noetherianity of `A⟨T/s⟩` rather than of `A`, and nothing derived the one from the other. Now
+`A` strongly noetherian suffices. -/
+theorem isStronglyNoetherian_completion [IsTateRing A] [IsStronglyNoetherian A]
+    [(nhds (0 : A)).IsCountablyGenerated] {k : ℕ}
+    (t : Fin k → A) (ht : ∀ i, t i ∈ T) (hspan : Ideal.span (insert s (Set.range t)) = ⊤)
+    (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
+      ⊆ Set.range fun i ↦ (divBy (t i) s : S)) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI : UniformContinuousConstSMul A S :=
+      uniformContinuousConstSMul_of_continuousConstSMul A S
+    letI : NonarchimedeanRing S := by
+      have h := nonarchimedeanRing_locTopology P T s S hden
+      rwa [← locUniformSpace_toTopologicalSpace P T s S hden] at h
+    IsStronglyNoetherian (Completion S) := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  have _ := isHuberRing_locUniformSpace P T s S hden
+  let _ : UniformContinuousConstSMul A S :=
+    uniformContinuousConstSMul_of_continuousConstSMul A S
+  have _ : NonarchimedeanRing S := by
+    have h := nonarchimedeanRing_locTopology P T s S hden
+    rwa [← locUniformSpace_toTopologicalSpace P T s S hden] at h
+  exact (isStrictlyTopologicallyFiniteType_toCompletionLoc P T s S hden t ht hspan
+    hTt).isStronglyNoetherian
+
 end PairOfDefinition
 
 end TauCeti.Huber

@@ -88,3 +88,24 @@ theorem nonarchimedean_of_isOpenMap {G H : Type*} [Group G] [TopologicalSpace G]
   is_nonarchimedean _ hU := exists_openSubgroup_subset_of_isOpenMap f hf hopen hU
 
 end NonarchimedeanGroup
+
+/-- **A subgroup of a nonarchimedean group is nonarchimedean** in the subspace topology: the
+traces of the ambient open subgroups are open subgroups of it, and they remain a basis. -/
+@[to_additive /-- **A subgroup of a nonarchimedean additive group is nonarchimedean** in the
+subspace topology: the traces of the ambient open subgroups are open subgroups of it, and they
+remain a basis. -/]
+instance Subgroup.instNonarchimedeanGroup {G : Type*} [Group G] [TopologicalSpace G]
+    [NonarchimedeanGroup G] (H : Subgroup G) : NonarchimedeanGroup H where
+  is_nonarchimedean U hU := by
+    obtain ⟨W, hW, hWU⟩ := (mem_nhds_subtype _ _ _).mp (by simpa using hU)
+    obtain ⟨V, hV⟩ := NonarchimedeanGroup.is_nonarchimedean W hW
+    exact ⟨V.comap H.subtype continuous_subtype_val, fun _ hx ↦ hWU (hV hx)⟩
+
+/-- **A subring of a nonarchimedean ring is nonarchimedean** in the subspace topology. -/
+instance Subring.instNonarchimedeanRing {R : Type*} [Ring R] [TopologicalSpace R]
+    [NonarchimedeanRing R] (S : Subring R) : NonarchimedeanRing S where
+  is_nonarchimedean U hU := by
+    obtain ⟨W, hW, hWU⟩ := (mem_nhds_subtype _ _ _).mp (by simpa using hU)
+    obtain ⟨V, hV⟩ := NonarchimedeanRing.is_nonarchimedean W hW
+    exact ⟨V.comap (S.subtype : S →+* R).toAddMonoidHom continuous_subtype_val,
+      fun _ hx ↦ hWU (hV hx)⟩
