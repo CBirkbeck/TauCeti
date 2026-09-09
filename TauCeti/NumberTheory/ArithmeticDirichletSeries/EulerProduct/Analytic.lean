@@ -9,6 +9,7 @@ public import Mathlib.Analysis.Normed.Group.Tannery
 public import Mathlib.NumberTheory.LSeries.Convolution
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Estimates
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Data
+import Mathlib.Analysis.SpecialFunctions.Log.Summable
 
 /-!
 # The analytic Euler product of an ideal arithmetic function
@@ -35,12 +36,14 @@ product of the Dedekind zeta function.
   ideal-indexed Dirichlet series converges absolutely at `s`.
 * `TauCeti.MultiplicativeIdealWeight.hasProd_eulerFactor`: the same product, with the local factors
   in the closed geometric form available for a completely multiplicative weight.
+* `TauCeti.MultiplicativeIdealWeight.LSeries_ne_zero_of_summable_idealTerm`: the `L`-series is
+  **nonzero** wherever the ideal-indexed series converges absolutely.
 * `TauCeti.dedekindZeta_eulerProduct_hasProd`: the **Euler product of the Dedekind zeta
   function**, valid on `Re s > 1`.
 
-No nonvanishing statement is made here. An unconditionally convergent product of nonzero factors
-may still vanish, so nonvanishing requires additional hypotheses such as convergence of the
-reciprocal product.
+The nonvanishing is not formal: an unconditionally convergent product of nonzero factors may still
+vanish. It comes from the reciprocal product converging as well, so that the two products multiply
+to `1`. Nothing is claimed off the region of absolute convergence.
 
 ## References
 
@@ -305,6 +308,16 @@ theorem summable_div_of_summable_idealTerm
   (IdealArithmeticFunction.summable_idealTerm_primeIdealPow_one hs).congr fun P ↦ by
     simp [idealTerm_toIdealArithmeticFunction_primeIdealPow χ P 1 s]
 
+/-- Absolute convergence puts every local ratio `χ(P) N(P)⁻ˢ` strictly inside the unit disc, so no
+local Euler factor has a vanishing denominator. -/
+theorem one_sub_div_ne_zero_of_summable_idealTerm
+    (hs : Summable (idealTerm K χ.toIdealArithmeticFunction s)) (P : HeightOneSpectrum (𝓞 K)) :
+    1 - χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s ≠ 0 := fun h ↦ by
+  have hlt := norm_div_lt_one_of_summable_idealTerm χ hs P
+  rw [sub_eq_zero] at h
+  rw [← h] at hlt
+  simp at hlt
+
 /-- The local Euler factor of a completely multiplicative weight is the geometric closed form
 `(1 - χ(P) N(P)⁻ˢ)⁻¹`. -/
 theorem eulerFactor_ofMultiplicativeIdealWeight
@@ -332,6 +345,25 @@ theorem hasProd_eulerFactor (hs : Summable (idealTerm K χ.toIdealArithmeticFunc
     (s := s) (by
       simpa only [EulerProductData.toIdealArithmeticFunction_ofMultiplicativeIdealWeight] using hs)
   simpa only [EulerProductData.toIdealArithmeticFunction_ofMultiplicativeIdealWeight] using hprod
+
+/-- **The Euler product does not vanish.** Where the ideal-indexed Dirichlet series converges
+absolutely, the `L`-series of the norm coefficients is nonzero.
+
+This is the nonvanishing that convergence of the reciprocal product supplies, and no more: it says
+nothing about `s` where the series does not converge absolutely. -/
+theorem LSeries_ne_zero_of_summable_idealTerm
+    (hs : Summable (idealTerm K χ.toIdealArithmeticFunction s)) :
+    LSeries (normCoeff K χ.toIdealArithmeticFunction) s ≠ 0 := by
+  have hsum : Summable fun P : HeightOneSpectrum (𝓞 K) ↦
+      ‖χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s‖ :=
+    summable_norm_iff.2 (summable_div_of_summable_idealTerm χ hs)
+  have hmul := (hasProd_eulerFactor χ hs).mul (multipliable_one_sub_of_summable hsum).hasProd
+  have hone : (fun P : HeightOneSpectrum (𝓞 K) ↦
+      (1 - χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s)⁻¹ *
+        (1 - χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s)) = fun _ ↦ 1 :=
+    funext fun P ↦ inv_mul_cancel₀ (one_sub_div_ne_zero_of_summable_idealTerm χ hs P)
+  rw [hone] at hmul
+  exact left_ne_zero_of_mul_eq_one (hmul.unique hasProd_one)
 
 end MultiplicativeIdealWeight
 
