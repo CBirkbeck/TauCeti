@@ -836,8 +836,8 @@ def toIdealArithmeticFunction (χ : UnitaryIdealWeight K) : IdealArithmeticFunct
 theorem toIdealArithmeticFunction_apply (χ : UnitaryIdealWeight K) (I : (Ideal (𝓞 K))⁰) :
     χ.toIdealArithmeticFunction I = χ.1 I := (rfl)
 
-/-- **Regrouping absorbs an imaginary norm twist.** The unitary twist is the multiplicative one, so
-this reads `MultiplicativeIdealWeight.normCoeff_normTwist` through the unitary carrier. -/
+/-- **Regrouping absorbs an imaginary norm twist.** For `z.re = 0`, twisting a unitary weight by
+`N(I) ^ (-z)` multiplies its `n`-th norm coefficient by `n ^ (-z)`. -/
 @[simp]
 theorem normCoeff_normTwist (z : ℂ) (hz : z.re = 0) (χ : UnitaryIdealWeight K) (n : ℕ) :
     normCoeff K (normTwist z hz χ).toIdealArithmeticFunction n =
