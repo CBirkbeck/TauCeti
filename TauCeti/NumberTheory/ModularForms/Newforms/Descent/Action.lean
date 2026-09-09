@@ -35,7 +35,7 @@ representative, `descendExtraGamma`, and the argument is different; that case is
 
 ## Main results
 
-* `TauCeti.finCongr_descendShift`: transported to `Fin p`, it is `upperTriShift`.
+* `TauCeti.cast_descendShift`: transported to `Fin p`, it is `upperTriShift`.
 * `TauCeti.descendShift_bijective`: it is a bijection of the index set.
 * `TauCeti.exists_mem_Gamma0_descendMatrix_mul`:
   `descendMatrix p N v * γ = α * descendMatrix p N (shift v)` for some `α ∈ Γ₀(N)`.
@@ -73,18 +73,19 @@ def descendShift (p N : ℕ) [NeZero p] (hpsq : p ^ 2 ∣ N) (γ : SL(2, ℤ))
 
 /-- **The defining property of `descendShift`**: transported to `Fin p`, it is
 `HeckeRing.GL2.upperTriShift`. Read the map off this rather than off the definition, whose
-`finCongr` plumbing carries a proof argument. -/
-@[simp] theorem finCongr_descendShift [NeZero p] (hpsq : p ^ 2 ∣ N) (γ : SL(2, ℤ))
+`finCongr` plumbing carries a proof argument. Stated with `Fin.cast` because that, not
+`finCongr`, is the `simp` normal form. -/
+@[simp] theorem cast_descendShift [NeZero p] (hpsq : p ^ 2 ∣ N) (γ : SL(2, ℤ))
     (v : Fin (descendMatrixCount p N)) :
-    finCongr (descendMatrixCount_of_sq_dvd hpsq) (descendShift p N hpsq γ v)
-      = upperTriShift p γ (finCongr (descendMatrixCount_of_sq_dvd hpsq) v) :=
-  Equiv.apply_symm_apply _ _
+    Fin.cast (descendMatrixCount_of_sq_dvd hpsq) (descendShift p N hpsq γ v)
+      = upperTriShift p γ (Fin.cast (descendMatrixCount_of_sq_dvd hpsq) v) :=
+  Equiv.apply_symm_apply (finCongr (descendMatrixCount_of_sq_dvd hpsq)) _
 
 /-- The same, on underlying naturals, which is the form the `descendMatrix` branches read. -/
 theorem descendShift_val [NeZero p] (hpsq : p ^ 2 ∣ N) (γ : SL(2, ℤ))
     {v : Fin (descendMatrixCount p N)} (hv : v.val < p) :
     (descendShift p N hpsq γ v : ℕ) = (upperTriShift p γ ⟨v.val, hv⟩ : ℕ) :=
-  congrArg Fin.val (finCongr_descendShift hpsq γ v)
+  congrArg Fin.val (cast_descendShift hpsq γ v)
 
 -- `p² ∣ N` says exactly that `p` divides `N / p`, which is what places `Γ₀(N / p)` inside `Γ₀(p)`.
 -- Not in mathlib: `exact?` finds no single-lemma proof.
