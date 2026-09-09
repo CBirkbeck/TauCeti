@@ -73,9 +73,6 @@ that up to the completions is a separate step.
 
 * [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), Proposition 5.50 for the
   universal property, and Examples 6.38 and 6.39 for the intended use.
-* `TauCetiRoadmap/AdicSpaces/README.md`, Layer 4.1, which prescribes this open-quotient route —
-  "use Layer 0's open mapping theorem to show that the relevant images are closed" — in place of
-  noetherian adic-completion flatness.
 -/
 
 public section
