@@ -160,6 +160,34 @@ theorem tsum_mul_perronStep_div (hoff : ∀ n : ℕ, x ≠ n) (f : ℕ → ℂ) 
   have hcast : (0 : ℝ) < n := Nat.cast_pos.2 hn.1
   rw [perronStep_of_one_lt ((one_lt_div hcast).2 (Nat.lt_ceil.1 hn.2)), mul_one]
 
+/-- Beyond `2 x` the ratio `x / n` is at most `1 / 2`, so `|log (x / n)|` is bounded below by
+`log 2` and the Layer 6.3 error at index `n` is a fixed multiple of `‖LSeries.term f c n‖`.
+Absolute convergence of the `L`-series on the line therefore makes the error series summable. -/
+private theorem summable_norm_mul_kernelError (hx : 0 < x) (hT : 0 < T)
+    (h : LSeriesSummable f (c : ℂ)) :
+    Summable fun n : ℕ ↦ ‖f n‖ * ((x / n) ^ c / (π * T * |Real.log (x / n)|)) := by
+  have hlog2 : (0 : ℝ) < Real.log 2 := Real.log_pos one_lt_two
+  have hg : Summable fun n : ℕ ↦ x ^ c / (π * T * Real.log 2) * ‖LSeries.term f (c : ℂ) n‖ :=
+    (summable_norm_iff.2 h).mul_left _
+  refine Summable.of_norm_bounded_eventually_nat hg ?_
+  filter_upwards [Filter.eventually_ge_atTop ⌈2 * x⌉₊, Filter.eventually_gt_atTop 0] with n hn hn0
+  have hcast : (0 : ℝ) < n := Nat.cast_pos.2 hn0
+  have hle : 2 * x ≤ n := Nat.ceil_le.1 hn
+  have hxn : 0 < x / n := div_pos hx hcast
+  have hhalf : x / n ≤ 1 / 2 := by rw [div_le_iff₀ hcast]; linarith
+  have hlog : Real.log 2 ≤ |Real.log (x / n)| := by
+    have hmono : Real.log (x / n) ≤ Real.log (1 / 2) := Real.log_le_log hxn hhalf
+    rw [Real.log_div one_ne_zero two_ne_zero, Real.log_one, zero_sub] at hmono
+    rw [abs_of_nonpos (by linarith)]
+    linarith
+  have hnorm : ‖LSeries.term f (c : ℂ) n‖ = ‖f n‖ / n ^ c := by
+    simp [hn0.ne']
+  rw [Real.norm_of_nonneg (by positivity), hnorm, Real.div_rpow hx.le hcast.le]
+  have hbound : ‖f n‖ * (x ^ c / n ^ c / (π * T * |Real.log (x / n)|))
+      ≤ ‖f n‖ * (x ^ c / n ^ c / (π * T * Real.log 2)) := by
+    gcongr
+  exact hbound.trans_eq (by ring)
+
 /-- At each index the `n`-th term of the truncated Perron series differs from its sharp step by at
 most `‖f n‖` times the Layer 6.3 kernel error at the ratio `x / n`.  The index `0` contributes
 nothing on either side. -/
@@ -179,13 +207,13 @@ private theorem norm_mul_truncatedPerronKernel_sub_step_le (hx : 0 < x) (hc : 0 
 
 /-- **The off-norm arithmetic Perron formula.**  When `x` is not a natural number the truncated
 integral differs from the sharp partial sum `∑_{n < x} f n` by at most the series of the
-Layer 6.3 kernel errors.  The summability hypothesis is on that error series. -/
+Layer 6.3 kernel errors, a series that absolute convergence on the line makes summable. -/
 theorem norm_truncatedPerron_LSeries_sub_sum_le (hx : 0 < x) (hc : 0 < c) (hT : 0 < T)
-    (hoff : ∀ n : ℕ, x ≠ n) (h : LSeriesSummable f (c : ℂ))
-    (herr : Summable fun n : ℕ ↦ ‖f n‖ * ((x / n) ^ c / (π * T * |Real.log (x / n)|))) :
+    (hoff : ∀ n : ℕ, x ≠ n) (h : LSeriesSummable f (c : ℂ)) :
     ‖(((2 * π : ℝ) : ℂ)⁻¹ * ∫ t in -T..T, LSeries f ((c : ℂ) + t * I) * perronIntegrand x c t)
         - ∑ n ∈ Finset.Ico 1 ⌈x⌉₊, f n‖
       ≤ ∑' n : ℕ, ‖f n‖ * ((x / n) ^ c / (π * T * |Real.log (x / n)|)) := by
+  have herr := summable_norm_mul_kernelError hx hT h
   have hstep := norm_mul_truncatedPerronKernel_sub_step_le hx hc hT hoff f
   have hDnorm : Summable fun n : ℕ ↦
       ‖f n * truncatedPerronKernel (x / n) c T - f n * perronStep (x / n)‖ :=
@@ -201,15 +229,72 @@ theorem norm_truncatedPerron_LSeries_sub_sum_le (hx : 0 < x) (hc : 0 < c) (hT : 
     ← hA.tsum_sub hB]
   exact (norm_tsum_le_tsum_norm hDnorm).trans (Summable.tsum_le_tsum hstep hDnorm herr)
 
+/-- At the endpoint the kernel is `π⁻¹ arctan (T / c)`, so it never exceeds one in modulus,
+uniformly in the height.  This is the index the smoothed-step estimate excludes. -/
+private theorem norm_truncatedPerronKernel_one_le (hc : c ≠ 0) (T : ℝ) :
+    ‖truncatedPerronKernel 1 c T‖ ≤ 1 := by
+  rw [truncatedPerronKernel_one hc, Complex.norm_real, Real.norm_eq_abs, abs_mul, abs_inv,
+    abs_of_pos Real.pi_pos]
+  have harc : |Real.arctan (T / c)| ≤ π / 2 :=
+    abs_le.2 ⟨(Real.neg_pi_div_two_lt_arctan _).le, (Real.arctan_lt_pi_div_two _).le⟩
+  have hpi : (0 : ℝ) < π := Real.pi_pos
+  rw [inv_mul_le_iff₀ hpi]
+  linarith
+
+/-- The sharp step never exceeds one in modulus. -/
+private theorem norm_perronStep_le_one (y : ℝ) : ‖perronStep y‖ ≤ 1 := by
+  rcases lt_trichotomy y 1 with hy | rfl | hy
+  · rw [perronStep_of_lt_one hy]; simp
+  · rw [perronStep_one]; norm_num
+  · rw [perronStep_of_one_lt hy]; simp
+
+/-- Uniformly in heights `T ≥ 1`, the truncated Perron kernel at a positive ratio `y` is bounded by
+the Layer 6.3 error at `y`, together with `1` once `y` exceeds `1 / 2`.  Above `1 / 2` the sharp
+step may be nonzero and contributes that `1`; below it the step vanishes and the error alone
+suffices, and at the excluded ratio `y = 1` the kernel is `π⁻¹ arctan (T / c)`. -/
+private theorem norm_truncatedPerronKernel_le_bound (hy : 0 < y) (hc : 0 < c) (hT : 1 ≤ T) :
+    ‖truncatedPerronKernel y c T‖
+      ≤ y ^ c / (π * 1 * |Real.log y|) + (if 1 / 2 < y then 1 else 0) := by
+  rcases eq_or_ne y 1 with rfl | hne
+  · have hif : (if (1 : ℝ) / 2 < (1 : ℝ) then (1 : ℝ) else 0) = 1 := by norm_num
+    rw [hif]
+    have : (0 : ℝ) ≤ (1 : ℝ) ^ c / (π * 1 * |Real.log 1|) := by positivity
+    linarith [norm_truncatedPerronKernel_one_le (c := c) hc.ne' T]
+  have hlog : 0 < |Real.log y| := abs_pos.2 (Real.log_ne_zero_of_pos_of_ne_one hy hne)
+  have herr : ‖truncatedPerronKernel y c T - perronStep y‖ ≤ y ^ c / (π * 1 * |Real.log y|) := by
+    refine (norm_truncatedPerronKernel_sub_step_le hy hne hc (by linarith)).trans ?_
+    gcongr
+  split_ifs with hhalf
+  · have htri := norm_add_le (truncatedPerronKernel y c T - perronStep y) (perronStep y)
+    rw [sub_add_cancel] at htri
+    exact htri.trans (by gcongr; exact norm_perronStep_le_one _)
+  · push Not at hhalf
+    rw [add_zero, ← sub_zero (truncatedPerronKernel y c T),
+      ← perronStep_of_lt_one (show y < 1 by linarith)]
+    exact herr
+
+/-- Only the indices below `2 x` have ratio `x / n` above `1 / 2`, so a term supported there is a
+finite sum and trivially summable. -/
+private theorem summable_indicator_norm_of_half_lt (hx : 0 < x) (f : ℕ → ℂ) :
+    Summable fun n : ℕ ↦ (if 1 / 2 < x / n then ‖f n‖ else 0) :=
+  summable_of_ne_finset_zero (s := Finset.range ⌈2 * x⌉₊) fun n hn ↦ by
+    simp only [Finset.mem_range, not_lt] at hn
+    have hcast : (0 : ℝ) < n := lt_of_lt_of_le (by positivity) (Nat.ceil_le.1 hn)
+    have hle : x / n ≤ 1 / 2 := by rw [div_le_iff₀ hcast]; linarith [Nat.ceil_le.1 hn]
+    exact ite_eq_right_iff.2 fun hc ↦ absurd hc (not_lt.2 hle)
+
 /-- **The limiting arithmetic Perron formula.**  As the truncation height grows the integral tends
-to the series of sharp steps, at every positive `x`.  The domination hypothesis is what licenses
-the interchange of the limit with the series. -/
-theorem tendsto_truncatedPerron_LSeries (hx : 0 < x) (hc : 0 < c) (h : LSeriesSummable f (c : ℂ))
-    {bound : ℕ → ℝ} (hb : Summable bound)
-    (hdom : ∀ᶠ T : ℝ in atTop, ∀ n : ℕ, ‖f n * truncatedPerronKernel (x / n) c T‖ ≤ bound n) :
+to the series of sharp steps, at every positive `x` off the norms.
+
+The interchange of the limit with the series is dominated: beyond `2 x` the step vanishes and the
+Layer 6.3 error alone bounds each term uniformly in `T ≥ 1`, while the finitely many indices below
+`2 x` contribute a further `‖f n‖` each. -/
+theorem tendsto_truncatedPerron_LSeries (hx : 0 < x) (hc : 0 < c)
+    (h : LSeriesSummable f (c : ℂ)) :
     Tendsto (fun T : ℝ ↦ ((2 * π : ℝ) : ℂ)⁻¹ *
         ∫ t in -T..T, LSeries f ((c : ℂ) + t * I) * perronIntegrand x c t) atTop
       (𝓝 (∑' n : ℕ, f n * perronStep (x / n))) := by
+  have hfin := summable_indicator_norm_of_half_lt hx f
   have hpt : ∀ n : ℕ, Tendsto (fun T : ℝ ↦ f n * truncatedPerronKernel (x / n) c T) atTop
       (𝓝 (f n * perronStep (x / n))) := by
     intro n
@@ -218,7 +303,22 @@ theorem tendsto_truncatedPerron_LSeries (hx : 0 < x) (hc : 0 < c) (h : LSeriesSu
         perronStep_of_lt_one zero_lt_one]
       exact tendsto_const_nhds
     · exact ((tendsto_truncatedPerronKernel (div_pos hx (Nat.cast_pos.2 hn0)) hc).const_mul _)
-  refine Tendsto.congr' ?_ (tendsto_tsum_of_dominated_convergence hb hpt hdom)
+  have hdom : ∀ᶠ T : ℝ in atTop, ∀ n : ℕ,
+      ‖f n * truncatedPerronKernel (x / n) c T‖ ≤
+        ‖f n‖ * ((x / n) ^ c / (π * 1 * |Real.log (x / n)|)) +
+          (if 1 / 2 < x / n then ‖f n‖ else 0) := by
+    filter_upwards [eventually_ge_atTop (1 : ℝ)] with T hT n
+    rcases Nat.eq_zero_or_pos n with rfl | hn0
+    · rw [Nat.cast_zero, div_zero, truncatedPerronKernel_zero hc.ne', mul_zero, norm_zero]
+      split_ifs <;> positivity
+    · rw [norm_mul]
+      have hbd := norm_truncatedPerronKernel_le_bound (div_pos hx (Nat.cast_pos.2 hn0)) hc hT
+      split_ifs at hbd ⊢ with hhalf
+      · nlinarith [norm_nonneg (f n), norm_nonneg (truncatedPerronKernel (x / n) c T)]
+      · nlinarith [norm_nonneg (f n), norm_nonneg (truncatedPerronKernel (x / n) c T)]
+  refine Tendsto.congr' ?_
+    (tendsto_tsum_of_dominated_convergence
+      ((summable_norm_mul_kernelError hx one_pos h).add hfin) hpt hdom)
   filter_upwards [eventually_ge_atTop (0 : ℝ)] with T hT
   exact (truncatedPerron_LSeries hx hc hT h).symm
 
