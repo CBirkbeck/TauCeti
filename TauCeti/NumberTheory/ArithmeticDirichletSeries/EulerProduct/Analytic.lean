@@ -371,6 +371,12 @@ end MultiplicativeIdealWeight
 
 /-! ### The Dedekind zeta function -/
 
+/-- The trivial weight's ideal-indexed series converges absolutely on `Re s > 1`. -/
+private theorem summable_idealTerm_one_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
+    Summable (idealTerm K (1 : MultiplicativeIdealWeight K).toIdealArithmeticFunction s) := by
+  rw [MultiplicativeIdealWeight.toIdealArithmeticFunction_one]
+  exact summable_idealTerm_one_iff.mpr hs
+
 /-- **The Euler product of the Dedekind zeta function.** For `Re s > 1` the Dedekind zeta function
 of `K` is the unrestricted product over the height-one primes of `𝓞 K` of the local factors
 `(1 - N(𝔭) ^ (-s))⁻¹`.
@@ -378,11 +384,6 @@ of `K` is the unrestricted product over the height-one primes of `𝓞 K` of the
 This is the ideal-theoretic counterpart of Mathlib's `riemannZeta_eulerProduct_hasProd`, and it
 is not obtained from it: the product is indexed by the primes of `𝓞 K`, whose norms repeat and
 whose count above a rational prime is the splitting behaviour of `K`. -/
-private theorem summable_idealTerm_one_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
-    Summable (idealTerm K (1 : MultiplicativeIdealWeight K).toIdealArithmeticFunction s) := by
-  rw [MultiplicativeIdealWeight.toIdealArithmeticFunction_one]
-  exact summable_idealTerm_one_iff.mpr hs
-
 theorem dedekindZeta_eulerProduct_hasProd {s : ℂ} (hs : 1 < s.re) :
     HasProd (fun P : HeightOneSpectrum (𝓞 K) ↦ (1 - (Ideal.absNorm P.asIdeal : ℂ) ^ (-s))⁻¹)
       (NumberField.dedekindZeta K s) := by
