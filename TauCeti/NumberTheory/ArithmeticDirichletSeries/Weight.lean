@@ -9,6 +9,7 @@ public import Mathlib.Algebra.CharZero.Infinite
 public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Basic
+public import TauCeti.NumberTheory.ArithmeticDirichletSeries.NormCoeff
 public import TauCeti.RingTheory.DedekindDomain.Ideal
 public import TauCeti.RingTheory.Ideal.Norm.AbsNorm
 
@@ -405,6 +406,17 @@ def toIdealArithmeticFunction (χ : MultiplicativeIdealWeight K) : IdealArithmet
 @[simp]
 theorem toIdealArithmeticFunction_apply (χ : MultiplicativeIdealWeight K) (I : (Ideal (𝓞 K))⁰) :
     χ.toIdealArithmeticFunction I = χ I := (rfl)
+
+/-- **Regrouping absorbs a norm twist.** Twisting a weight by `N(I) ^ (-z)` twists its `n`-th norm
+coefficient by `n ^ (-z)`. -/
+@[simp]
+theorem normCoeff_normTwist (z : ℂ) (χ : MultiplicativeIdealWeight K) (n : ℕ) :
+    normCoeff K (normTwist z χ).toIdealArithmeticFunction n =
+      normCoeff K χ.toIdealArithmeticFunction n * (n : ℂ) ^ (-z) := by
+  have h : (normTwist z χ).toIdealArithmeticFunction =
+      fun I ↦ χ.toIdealArithmeticFunction I * (Ideal.absNorm (I : Ideal (𝓞 K)) : ℂ) ^ (-z) :=
+    funext fun I ↦ by simp [normTwist_apply]
+  rw [h, normCoeff_mul_absNorm_cpow]
 
 /-- The ideal arithmetic function underlying a completely multiplicative ideal weight is
 multiplicative on relatively prime ideals. -/
@@ -816,6 +828,15 @@ def toIdealArithmeticFunction (χ : UnitaryIdealWeight K) : IdealArithmeticFunct
 @[simp]
 theorem toIdealArithmeticFunction_apply (χ : UnitaryIdealWeight K) (I : (Ideal (𝓞 K))⁰) :
     χ.toIdealArithmeticFunction I = χ.1 I := (rfl)
+
+/-- **Regrouping absorbs an imaginary norm twist.** For `z.re = 0`, twisting a unitary weight by
+`N(I) ^ (-z)` multiplies its `n`-th norm coefficient by `n ^ (-z)`. -/
+@[simp]
+theorem normCoeff_normTwist (z : ℂ) (hz : z.re = 0) (χ : UnitaryIdealWeight K) (n : ℕ) :
+    normCoeff K (normTwist z hz χ).toIdealArithmeticFunction n =
+      normCoeff K χ.toIdealArithmeticFunction n * (n : ℂ) ^ (-z) := by
+  simpa only [toIdealArithmeticFunction, val_normTwist] using
+    MultiplicativeIdealWeight.normCoeff_normTwist z χ.1 n
 
 /-- The ideal arithmetic function underlying a unitary ideal weight is multiplicative on
 relatively prime ideals. -/
