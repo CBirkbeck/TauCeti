@@ -24,6 +24,8 @@ and summability of `r` is what supplies that uniformity.
 * `Complex.summable_taylorSeries_neg_log`: for a summable `r : ι → ℂ` with every `‖r i‖ < 1`, the
   family `(i, e) ↦ r i ^ (e + 1) / (e + 1)` is summable over `ι × ℕ`.
 * `Complex.tsum_taylorSeries_neg_log`: its sum over `ι × ℕ` is `∑' i, -log (1 - r i)`.
+* `Complex.summable_mul_norm_pow_succ`: the same family with the `1 / (e + 1)` replaced by a
+  nonnegative weight `w i` is summable, given that `w · * ‖r ·‖` is.
 -/
 
 public section
@@ -71,5 +73,41 @@ theorem tsum_taylorSeries_neg_log {ι : Type*} {r : ι → ℂ} (hr : Summable r
   have hfib : ∀ i, HasSum (fun e : ℕ ↦ r i ^ (e + 1) / ((e : ℂ) + 1))
       (-Complex.log (1 - r i)) := fun i ↦ hasSum_taylorSeries_neg_log' (h1 i)
   exact ((summable_taylorSeries_neg_log hr h1).hasSum.prod_fiberwise hfib).tsum_eq.symm
+
+/-- **A weighted geometric family is summable over index and exponent together.**  For a summable
+family `r` of complex numbers, all of modulus less than one, and nonnegative weights `w` with
+`i ↦ w i * ‖r i‖` summable, the double family `(i, e) ↦ w i * ‖r i‖ ^ (e + 1)` is summable over
+`ι × ℕ`.
+
+Compare `summable_taylorSeries_neg_log`: dropping the `1 / (e + 1)` costs nothing, because the
+fibre at `i` is still geometric, but the weight has to be paid for by its own hypothesis. This is
+the shape a majorant takes when the Taylor family is differentiated in a parameter, since
+differentiating `rᵢ ^ (e + 1) / (e + 1)` cancels the `e + 1` and leaves a factor depending only on
+`i`. -/
+theorem summable_mul_norm_pow_succ {ι : Type*} {r : ι → ℂ} {w : ι → ℝ} (hr : Summable r)
+    (hw : ∀ i, 0 ≤ w i) (hwr : Summable fun i ↦ w i * ‖r i‖) (h1 : ∀ i, ‖r i‖ < 1) :
+    Summable fun ie : ι × ℕ ↦ w ie.1 * ‖r ie.1‖ ^ (ie.2 + 1) := by
+  have hhalf : ∀ᶠ i in Filter.cofinite, ‖r i‖ ≤ 1 / 2 :=
+    hr.tendsto_cofinite_zero.norm.eventually_le_const (by norm_num)
+  have hfib : ∀ i, Summable fun e : ℕ ↦ w i * ‖r i‖ ^ (e + 1) := fun i ↦
+    (((summable_geometric_of_lt_one (norm_nonneg _) (h1 i)).mul_left ‖r i‖).congr
+      fun e ↦ by ring).mul_left (w i)
+  have hval : ∀ i, ∑' e : ℕ, w i * ‖r i‖ ^ (e + 1) = w i * (‖r i‖ / (1 - ‖r i‖)) := fun i ↦ by
+    rw [tsum_mul_left, tsum_congr fun e ↦ pow_succ' ‖r i‖ e, tsum_mul_left,
+      tsum_geometric_of_lt_one (norm_nonneg _) (h1 i), div_eq_mul_inv]
+  have houter : Summable fun i ↦ ∑' e : ℕ, w i * ‖r i‖ ^ (e + 1) := by
+    refine Summable.of_norm_bounded_eventually (g := fun i ↦ 2 * (w i * ‖r i‖))
+      (hwr.mul_left 2) ?_
+    filter_upwards [hhalf] with i hi
+    rw [Real.norm_of_nonneg (tsum_nonneg fun e ↦ mul_nonneg (hw i) (by positivity)), hval i]
+    -- Below `1 / 2` the fibre sum `‖r i‖ / (1 - ‖r i‖)` is at most `2 ‖r i‖`.
+    have hd : ‖r i‖ / (1 - ‖r i‖) ≤ 2 * ‖r i‖ := by
+      rw [div_le_iff₀ (by linarith)]
+      nlinarith [norm_nonneg (r i)]
+    calc w i * (‖r i‖ / (1 - ‖r i‖)) ≤ w i * (2 * ‖r i‖) :=
+          mul_le_mul_of_nonneg_left hd (hw i)
+      _ = 2 * (w i * ‖r i‖) := by ring
+  exact (summable_prod_of_nonneg fun ie ↦
+    mul_nonneg (hw ie.1) (by positivity)).mpr ⟨hfib, houter⟩
 
 end Complex
