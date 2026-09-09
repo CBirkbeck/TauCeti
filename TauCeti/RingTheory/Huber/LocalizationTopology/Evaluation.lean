@@ -190,8 +190,8 @@ theorem coe_mem_range_rationalEvalHom_of_mem_adjoin {k : ℕ} (t : Fin k → A) 
 together with the denominator `s` generate the unit ideal.
 
 Including `s` among the generators is the weaker hypothesis, and the one a rational subset
-supplies: `s` is invertible downstairs, so the `s` term of `1 = c · s + ∑ cₜ · t` contributes `1`
-rather than a new fraction.
+supplies: dividing `1 = c · s + ∑ cₜ · t` through by `s` makes the `s` term contribute the
+coefficient `c`, which lies in `A`, rather than a new fraction.
 
 This is the sharp form of the statement: not merely that the range is dense, but that it contains
 the image of the whole localisation. -/

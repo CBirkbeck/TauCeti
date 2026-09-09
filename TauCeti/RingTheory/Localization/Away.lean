@@ -217,8 +217,9 @@ theorem awayLift_divBy {V W : Type*} [CommSemiring V] [CommSemiring W] [Algebra 
 
 A localisation away from `s` is generated over `A` by `1/s` alone; and as soon as the numerators
 together with `s` generate the unit ideal, already by the fractions `t/s` themselves. Including `s`
-among the generators is what makes the second statement usable: `s` is invertible downstairs, so
-it contributes `1` rather than a further fraction. Nothing topological enters —
+among the generators is what makes the second statement usable: its own fraction `s/s` is `1`, so
+the term it contributes after dividing through is a constant, not a further fraction. Nothing
+topological enters —
 this is the algebraic half of the statement that a rational localisation is a quotient of a
 polynomial ring, one variable per numerator.
 
@@ -248,8 +249,9 @@ separate `1/s` is needed.
 
 Including `s` among the generators costs nothing and is what the intended application supplies:
 writing `1 = c · s + ∑ cₜ · t` and dividing by `s` exhibits `1/s` as `c + ∑ cₜ · (t/s)`, after
-which `adjoin_invSelf_eq_top` finishes. The `c · s` term contributes `1`, which is why `s` may be
-one of the generators without being one of the numerators. The hypothesis cannot be dropped: over
+which `adjoin_invSelf_eq_top` finishes. The `c · s` term contributes the coefficient `c`, which
+lies in `A` and so is already in the subalgebra; that is why `s` may be one of the generators
+without being one of the numerators. The hypothesis cannot be dropped: over
 `A = ℤ` with `s = p` and `T = ∅` the fractions generate only `ℤ`, not `ℤ[1/p]`.
 
 The hypothesis is exactly what Wedhorn's rational subsets supply: there `T · A` is required to be
