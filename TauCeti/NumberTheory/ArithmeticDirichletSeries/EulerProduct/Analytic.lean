@@ -40,6 +40,8 @@ product of the Dedekind zeta function.
   **nonzero** wherever the ideal-indexed series converges absolutely.
 * `TauCeti.dedekindZeta_eulerProduct_hasProd`: the **Euler product of the Dedekind zeta
   function**, valid on `Re s > 1`.
+* `TauCeti.dedekindZeta_ne_zero_of_one_lt_re`: the Dedekind zeta function is **nonzero** on
+  `Re s > 1`.
 
 The nonvanishing is pointwise, at each `s` where the ideal-indexed series converges absolutely, and
 nothing is claimed off that region. It is not a formality: an unconditionally convergent product of
@@ -376,14 +378,16 @@ of `K` is the unrestricted product over the height-one primes of `𝓞 K` of the
 This is the ideal-theoretic counterpart of Mathlib's `riemannZeta_eulerProduct_hasProd`, and it
 is not obtained from it: the product is indexed by the primes of `𝓞 K`, whose norms repeat and
 whose count above a rational prime is the splitting behaviour of `K`. -/
+private theorem summable_idealTerm_one_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
+    Summable (idealTerm K (1 : MultiplicativeIdealWeight K).toIdealArithmeticFunction s) := by
+  rw [MultiplicativeIdealWeight.toIdealArithmeticFunction_one]
+  exact summable_idealTerm_one_iff.mpr hs
+
 theorem dedekindZeta_eulerProduct_hasProd {s : ℂ} (hs : 1 < s.re) :
     HasProd (fun P : HeightOneSpectrum (𝓞 K) ↦ (1 - (Ideal.absNorm P.asIdeal : ℂ) ^ (-s))⁻¹)
       (NumberField.dedekindZeta K s) := by
-  have hsum : Summable (idealTerm K
-      (1 : MultiplicativeIdealWeight K).toIdealArithmeticFunction s) := by
-    rw [MultiplicativeIdealWeight.toIdealArithmeticFunction_one]
-    exact summable_idealTerm_one_iff.mpr hs
-  have hprod := MultiplicativeIdealWeight.hasProd_eulerFactor (1 : MultiplicativeIdealWeight K) hsum
+  have hprod := MultiplicativeIdealWeight.hasProd_eulerFactor (1 : MultiplicativeIdealWeight K)
+    (summable_idealTerm_one_of_one_lt_re hs)
   rw [MultiplicativeIdealWeight.toIdealArithmeticFunction_one,
     ← dedekindZeta_eq_LSeries_normCoeff_one K s] at hprod
   have hfun : (fun P : HeightOneSpectrum (𝓞 K) ↦
@@ -395,5 +399,18 @@ theorem dedekindZeta_eulerProduct_hasProd {s : ℂ} (hs : 1 < s.re) :
     rw [MultiplicativeIdealWeight.one_apply, ite_eq_right P.ne_bot, Complex.cpow_neg, one_div]
   rw [hfun]
   exact hprod
+
+/-- **The Dedekind zeta function does not vanish on `Re s > 1`.** This is the trivial-weight case
+of `MultiplicativeIdealWeight.LSeries_ne_zero_of_summable_idealTerm`, read through the
+identification of `dedekindZeta` with the `L`-series of the trivial weight's norm coefficients.
+
+Nothing is claimed on `Re s ≤ 1`; in particular this says nothing about the line
+`Re s = 1`. -/
+theorem dedekindZeta_ne_zero_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
+    NumberField.dedekindZeta K s ≠ 0 := by
+  have h := MultiplicativeIdealWeight.LSeries_ne_zero_of_summable_idealTerm
+    (1 : MultiplicativeIdealWeight K) (summable_idealTerm_one_of_one_lt_re hs)
+  rwa [MultiplicativeIdealWeight.toIdealArithmeticFunction_one,
+    ← dedekindZeta_eq_LSeries_normCoeff_one K s] at h
 
 end TauCeti
