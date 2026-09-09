@@ -96,13 +96,10 @@ theorem tsum_prime_pow_eq_tsum_neg_log_one_sub
     ∑' pe : HeightOneSpectrum (𝓞 K) × ℕ,
         (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ s) ^ (pe.2 + 1) / ((pe.2 : ℂ) + 1) =
       ∑' P : HeightOneSpectrum (𝓞 K),
-        -log (1 - χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s) := by
-  have hfib : ∀ P : HeightOneSpectrum (𝓞 K),
-      HasSum (fun e : ℕ ↦
-          (χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s) ^ (e + 1) / ((e : ℂ) + 1))
-        (-log (1 - χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s)) :=
-    fun P ↦ hasSum_taylorSeries_neg_log' (χ.norm_div_lt_one_of_summable_idealTerm hs P)
-  exact ((χ.summable_div_pow_div_of_summable_idealTerm hs).hasSum.prod_fiberwise hfib).tsum_eq.symm
+        -log (1 - χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s) :=
+  tsum_taylorSeries_neg_log
+    (r := fun P : HeightOneSpectrum (𝓞 K) ↦ χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s)
+    (χ.summable_div_of_summable_idealTerm hs) (χ.norm_div_lt_one_of_summable_idealTerm hs)
 
 /-- **The Euler product expanded over prime powers.**  The `L`-series is the exponential of the
 sum over pairs `(P, e)` of a prime and an exponent.  The caveat above applies unchanged: `exp` is
