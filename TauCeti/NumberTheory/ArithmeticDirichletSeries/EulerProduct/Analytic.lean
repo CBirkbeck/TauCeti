@@ -400,9 +400,8 @@ theorem dedekindZeta_eulerProduct_hasProd {s : ℂ} (hs : 1 < s.re) :
   rw [hfun]
   exact hprod
 
-/-- **The Dedekind zeta function does not vanish on `Re s > 1`.** This is the trivial-weight case
-of `MultiplicativeIdealWeight.LSeries_ne_zero_of_summable_idealTerm`, read through the
-identification of `dedekindZeta` with the `L`-series of the trivial weight's norm coefficients.
+/-- **The Dedekind zeta function does not vanish on `Re s > 1`.** For every `s` with `1 < s.re`,
+`NumberField.dedekindZeta K s ≠ 0`.
 
 Nothing is claimed on `Re s ≤ 1`; in particular this says nothing about the line
 `Re s = 1`. -/
