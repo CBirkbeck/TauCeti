@@ -27,21 +27,23 @@ identity rather than merely lower-triangular.
 
 ## Main definitions
 
-* `TauCeti.descendCosetCount`: the size of the family, `p` when `p² ∣ N` and `p + 1` otherwise.
+* `TauCeti.descendMatrixCount`: the size of the family, `p` when `p² ∣ N` and `p + 1` otherwise.
 * `TauCeti.descendExtraGamma`: the extra matrix, with the junk value `1` outside the hypotheses
   that make the choice.
-* `TauCeti.descendCosetRep`: the family itself, indexed by `Fin (descendCosetCount p N)`.
+* `TauCeti.descendMatrix`: the family itself, indexed by `Fin (descendMatrixCount p N)`.
 
 ## Main results
 
 * `TauCeti.exists_mem_Gamma0_map_intCast_zmod_eq_S`: for a prime `p` with `p ∣ N` and `p² ∤ N`,
   some `γ ∈ Γ₀(N / p)` reduces to `S` modulo `p` and to the identity modulo `N / p`.
-* `TauCeti.descendExtraGamma_spec`: those three properties, read back off the chosen matrix.
-* `TauCeti.descendCosetCount_of_sq_dvd` and `TauCeti.descendCosetCount_of_not_sq_dvd`: the two
+* `TauCeti.descendExtraGamma_mem_Gamma0`, `TauCeti.descendExtraGamma_map_intCast_zmod_eq_S` and
+  `TauCeti.descendExtraGamma_map_intCast_zmod_div_eq_one`: those three properties, read back off
+  the chosen matrix.
+* `TauCeti.descendMatrixCount_of_sq_dvd` and `TauCeti.descendMatrixCount_of_not_sq_dvd`: the two
   values of the count.
-* `TauCeti.descendCosetRep_of_lt` and `TauCeti.descendCosetRep_of_le`: the two branches of the
+* `TauCeti.descendMatrix_of_lt` and `TauCeti.descendMatrix_of_le`: the two branches of the
   family, as equations in `GL₂(ℝ)`.
-* `TauCeti.descendCosetRep_det`: every member of the family has determinant `p`.
+* `TauCeti.descendMatrix_det`: every member of the family has determinant `p`.
 
 ## Scope
 
@@ -51,7 +53,8 @@ about the double coset `Γ₀(N) diag(1, p) Γ₀(N)`; neither is proved here. U
 family is the intended list of representatives rather than a formalized one.
 
 Follows the AINTLIB `LeanModularForms` project, whose `descendExtraGamma`, `descendCosetCount`,
-`descendCosetList` and `descendCosetList_det` are the counterparts of the declarations here, and
+`descendCosetList` and `descendCosetList_det` are the counterparts of the declarations here — the
+names differ because nothing here proves these matrices are coset representatives — and
 specializes its `descendExtraGamma_exists`
 (`LeanModularForms/StrongMultiplicityOne/DescentCosets.lean`, Chris Birkbeck, commit
 `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0,
@@ -93,56 +96,74 @@ theorem exists_mem_Gamma0_map_intCast_zmod_eq_S {p N : ℕ} (hp : p.Prime) (hpN 
 
 /-- **The size of the descent family at `p`.** Miyake's count: `p` when `p²` divides `N`, and
 `p + 1` when it does not, the extra member being the one `descendExtraGamma` supplies. -/
-def descendCosetCount (p N : ℕ) : ℕ := if p ^ 2 ∣ N then p else p + 1
+def descendMatrixCount (p N : ℕ) : ℕ := if p ^ 2 ∣ N then p else p + 1
 
 /-- The descent family has `p` members when `p²` divides `N`. -/
 @[simp]
-theorem descendCosetCount_of_sq_dvd {p N : ℕ} (h : p ^ 2 ∣ N) : descendCosetCount p N = p := by
-  simp [descendCosetCount, h]
+theorem descendMatrixCount_of_sq_dvd {p N : ℕ} (h : p ^ 2 ∣ N) : descendMatrixCount p N = p := by
+  simp [descendMatrixCount, h]
 
 /-- The descent family has `p + 1` members when `p²` does not divide `N`. -/
 @[simp]
-theorem descendCosetCount_of_not_sq_dvd {p N : ℕ} (h : ¬ p ^ 2 ∣ N) :
-    descendCosetCount p N = p + 1 := by
-  simp [descendCosetCount, h]
+theorem descendMatrixCount_of_not_sq_dvd {p N : ℕ} (h : ¬ p ^ 2 ∣ N) :
+    descendMatrixCount p N = p + 1 := by
+  simp [descendMatrixCount, h]
 
 /-- **The extra descent matrix.** For a prime `p` exactly dividing `N`, an element of `Γ₀(N / p)`
 reducing to `S` modulo `p` and to the identity modulo `N / p`; the junk value `1` when those
 hypotheses fail, so that the definition is total. Its three defining properties are
-`descendExtraGamma_spec`. -/
+`descendExtraGamma_mem_Gamma0`, `descendExtraGamma_map_intCast_zmod_eq_S` and
+`descendExtraGamma_map_intCast_zmod_div_eq_one`. -/
 noncomputable def descendExtraGamma (p N : ℕ) : Matrix.SpecialLinearGroup (Fin 2) ℤ :=
   if h : p.Prime ∧ p ∣ N ∧ ¬ p ^ 2 ∣ N then
     (exists_mem_Gamma0_map_intCast_zmod_eq_S h.1 h.2.1 h.2.2).choose
   else 1
 
-/-- **The defining property of `descendExtraGamma`.** Under the hypotheses that make the choice,
-it lies in `Γ₀(N / p)`, reduces to `S` modulo `p`, and reduces to the identity modulo `N / p`. -/
-theorem descendExtraGamma_spec {p N : ℕ} (hp : p.Prime) (hpN : p ∣ N) (hpsq : ¬ p ^ 2 ∣ N) :
-    descendExtraGamma p N ∈ Gamma0 (N / p) ∧
-      Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod p)) (descendExtraGamma p N) =
-          Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod p)) ModularGroup.S ∧
-        Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod (N / p)))
-          (descendExtraGamma p N) = 1 := by
+/-- Under the hypotheses that make the choice, `descendExtraGamma` *is* the chosen matrix. -/
+private theorem descendExtraGamma_eq_choose {p N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
+    (hpsq : ¬ p ^ 2 ∣ N) :
+    descendExtraGamma p N = (exists_mem_Gamma0_map_intCast_zmod_eq_S hp hpN hpsq).choose :=
   -- `dif_pos` is deprecated on the current pin, so the guard is discharged the way
   -- `TauCeti.diamondOpNat_of_coprime` does it
-  have h : descendExtraGamma p N =
-      (exists_mem_Gamma0_map_intCast_zmod_eq_S hp hpN hpsq).choose :=
-    dite_eq_left_of_eq_true (by simp [hp, hpN, hpsq])
-  rw [h]
-  exact (exists_mem_Gamma0_map_intCast_zmod_eq_S hp hpN hpsq).choose_spec
+  dite_eq_left_of_eq_true (by simp [hp, hpN, hpsq])
+
+/-- **The extra descent matrix lies in `Γ₀(N / p)`.** -/
+theorem descendExtraGamma_mem_Gamma0 {p N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
+    (hpsq : ¬ p ^ 2 ∣ N) : descendExtraGamma p N ∈ Gamma0 (N / p) := by
+  rw [descendExtraGamma_eq_choose hp hpN hpsq]
+  exact (exists_mem_Gamma0_map_intCast_zmod_eq_S hp hpN hpsq).choose_spec.1
+
+/-- **The extra descent matrix reduces to `S` modulo `p`.** -/
+@[simp]
+theorem descendExtraGamma_map_intCast_zmod_eq_S {p N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
+    (hpsq : ¬ p ^ 2 ∣ N) :
+    Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod p)) (descendExtraGamma p N) =
+      Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod p)) ModularGroup.S := by
+  rw [descendExtraGamma_eq_choose hp hpN hpsq]
+  exact (exists_mem_Gamma0_map_intCast_zmod_eq_S hp hpN hpsq).choose_spec.2.1
+
+/-- **The extra descent matrix reduces to the identity modulo `N / p`.** -/
+@[simp]
+theorem descendExtraGamma_map_intCast_zmod_div_eq_one {p N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
+    (hpsq : ¬ p ^ 2 ∣ N) :
+    Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod (N / p))) (descendExtraGamma p N) = 1 := by
+  rw [descendExtraGamma_eq_choose hp hpN hpsq]
+  exact (exists_mem_Gamma0_map_intCast_zmod_eq_S hp hpN hpsq).choose_spec.2.2
 
 /-- **The descent family at `p`** (Miyake, Lemma 4.5.11). The `p` upper-triangular matrices
 `[1, v; 0, p]` for `v < p`, together with — when `p²` does not divide `N`, so that
-`descendCosetCount` is `p + 1` — the further matrix `[1, 0; 0, p] * descendExtraGamma p N`.
+`descendMatrixCount` is `p + 1` — the further matrix `[1, 0; 0, p] * descendExtraGamma p N`.
 
 Over `ℚ` the upper-triangular part is `HeckeRing.GL2.upperTriRep`, this repository's `T_p`
 representative family; the descent family is its image in `GL₂(ℝ)`, where the slash action of a
 modular form lives.
 
-`p ∣ N` belongs to the interface rather than to the construction: without it the extra matrix
-degenerates to `[1, 0; 0, p]`, which the first branch already lists at `v = 0`. -/
-noncomputable def descendCosetRep (p N : ℕ) (hp : p.Prime) (_hpN : p ∣ N) :
-    Fin (descendCosetCount p N) → GL (Fin 2) ℝ := fun v ↦
+`p ∣ N` is not required: the construction never uses it. It is exactly the hypothesis that makes
+the family the *descent* family — without it `descendExtraGamma p N` is `1` and the extra matrix
+degenerates to `[1, 0; 0, p]`, which the first branch already lists at `v = 0` — so it belongs on
+the later results that establish descent, not on the family itself. -/
+noncomputable def descendMatrix (p N : ℕ) (hp : p.Prime) :
+    Fin (descendMatrixCount p N) → GL (Fin 2) ℝ := fun v ↦
   if h : v.val < p then
     Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨v.val, h⟩)
   else
@@ -152,23 +173,23 @@ noncomputable def descendCosetRep (p N : ℕ) (hp : p.Prime) (_hpN : p ∣ N) :
 /-- The members of the descent family below index `p` are the upper-triangular matrices
 `[1, v; 0, p]`. -/
 @[simp]
-theorem descendCosetRep_of_lt {p N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
-    {v : Fin (descendCosetCount p N)} (h : v.val < p) :
-    descendCosetRep p N hp hpN v =
+theorem descendMatrix_of_lt {p N : ℕ} (hp : p.Prime)
+    {v : Fin (descendMatrixCount p N)} (h : v.val < p) :
+    descendMatrix p N hp v =
       Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨v.val, h⟩) := by
-  rw [descendCosetRep]
+  rw [descendMatrix]
   split_ifs
   rfl
 
 /-- The member of the descent family at index `p`, present exactly when `p²` does not divide `N`,
 is `[1, 0; 0, p]` times the extra matrix. -/
 @[simp]
-theorem descendCosetRep_of_le {p N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
-    {v : Fin (descendCosetCount p N)} (h : p ≤ v.val) :
-    descendCosetRep p N hp hpN v =
+theorem descendMatrix_of_le {p N : ℕ} (hp : p.Prime)
+    {v : Fin (descendMatrixCount p N)} (h : p ≤ v.val) :
+    descendMatrix p N hp v =
       Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, hp.pos⟩) *
         Matrix.SpecialLinearGroup.mapGL ℝ (descendExtraGamma p N) := by
-  rw [descendCosetRep]
+  rw [descendMatrix]
   split_ifs with h'
   · exact absurd h' (Nat.not_lt.mpr h)
   · rfl
@@ -178,14 +199,14 @@ theorem descendCosetRep_of_le {p N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
 necessary condition for lying in it, not a characterisation of it; that these matrices lie in the
 double coset is not proved here. -/
 @[simp]
-theorem descendCosetRep_det (p N : ℕ) (hp : p.Prime) (hpN : p ∣ N)
-    (v : Fin (descendCosetCount p N)) :
-    (descendCosetRep p N hp hpN v : Matrix (Fin 2) (Fin 2) ℝ).det = (p : ℝ) := by
+theorem descendMatrix_det (p N : ℕ) (hp : p.Prime)
+    (v : Fin (descendMatrixCount p N)) :
+    (descendMatrix p N hp v : Matrix (Fin 2) (Fin 2) ℝ).det = (p : ℝ) := by
   have hγ : (Matrix.SpecialLinearGroup.mapGL ℝ (descendExtraGamma p N) :
       Matrix (Fin 2) (Fin 2) ℝ).det = 1 := by
     rw [← Matrix.GeneralLinearGroup.val_det_apply, Matrix.SpecialLinearGroup.det_mapGL,
       Units.val_one]
-  rw [descendCosetRep]
+  rw [descendMatrix]
   split_ifs
   · simp [Matrix.det_fin_two]
   · rw [Matrix.GeneralLinearGroup.coe_mul, Matrix.det_mul, hγ, mul_one]
