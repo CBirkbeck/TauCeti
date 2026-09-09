@@ -42,6 +42,11 @@ None of the three implies another, so the bundled result carries all three hypot
 * `TauCeti.Huber.PairOfDefinition.exists_aeval_eq_of_mem_locIdealImage`: the `n`-th neighbourhood
   of `Aₛ` consists of the values of polynomials whose coefficients lie in `Iⁿ`. This is what makes
   the evaluation open.
+* the two directions of that characterisation in the `Fin k` indexing the evaluation uses,
+  `TauCeti.Huber.PairOfDefinition.exists_polynomial_coeff_mem_idealImage` and
+  `TauCeti.Huber.PairOfDefinition.aeval_mem_locIdealImage_of_coeff_mem`. Openness is proved from
+  the first and continuity from the second, and a consumer wanting either half of the
+  correspondence between neighbourhoods and coefficient conditions should use these.
 
 ## References
 
@@ -163,7 +168,7 @@ polynomial over `A` whose coefficients all lie in the image of `Iⁿ`.**
 This is the `Fin k`-indexed form over `A` of
 `TauCeti.Huber.PairOfDefinition.exists_aeval_eq_of_mem_locIdealImage`, which is indexed by `T`
 and has coefficients in `A₀`. -/
-private theorem exists_polynomial_coeff_mem_idealImage {k : ℕ} (t : Fin k → A)
+theorem exists_polynomial_coeff_mem_idealImage {k : ℕ} (t : Fin k → A)
     (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
       ⊆ Set.range fun i ↦ (divBy (t i) s : S)) (n : ℕ) {x : S} (hx : x ∈ locIdealImage P T s S n) :
     ∃ p : MvPolynomial (Fin k) A, (∀ m, p.coeff m ∈ P.idealImage n) ∧
@@ -250,7 +255,7 @@ inside the `n`-th neighbourhood of `Aₛ`.**
 This is the converse direction to
 `TauCeti.Huber.PairOfDefinition.exists_polynomial_coeff_mem_idealImage`, and it is what makes the
 polynomial evaluation continuous. -/
-private theorem aeval_mem_locIdealImage_of_coeff_mem {k : ℕ} (t : Fin k → A)
+theorem aeval_mem_locIdealImage_of_coeff_mem {k : ℕ} (t : Fin k → A)
     (hmem : ∀ i, (divBy (t i) s : S) ∈ locSubring P T s S)
     (n : ℕ) {p : MvPolynomial (Fin k) A} (hp : ∀ m, p.coeff m ∈ P.idealImage n) :
     MvPolynomial.aeval (fun i ↦ (divBy (t i) s : S)) p ∈ locIdealImage P T s S n := by
