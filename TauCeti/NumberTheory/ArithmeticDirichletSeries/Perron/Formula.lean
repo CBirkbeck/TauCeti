@@ -5,16 +5,16 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Perron
+public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Perron.Basic
 public import Mathlib.NumberTheory.LSeries.Basic
 import Mathlib.Analysis.Normed.Group.Tannery
 
 /-!
 # The arithmetic Perron formula
 
-Layer 6.3 gives the truncated Perron kernel of a single ratio `x`.  This file applies it to an
-absolutely convergent `L`-series: the integral over the truncated segment of the series against the
-Perron integrand is the series of the individual kernels, one for each `x / n`.
+`TauCeti.truncatedPerronKernel` is the Perron kernel of a single ratio `x`.  This file applies it
+to an absolutely convergent `L`-series: the integral over the truncated segment of the series
+against the Perron integrand is the series of the individual kernels, one for each `x / n`.
 
 ## Main results
 
@@ -26,6 +26,13 @@ Perron integrand is the series of the individual kernels, one for each `x / n`.
 * `TauCeti.tendsto_truncatedPerron_LSeries`: the limiting form, at every positive `x`.
 * `TauCeti.tsum_mul_perronStep_natCast`: the limit at an integer endpoint, where the endpoint
   enters with the customary half weight `f N / 2`.
+* `TauCeti.tendsto_truncatedPerron_LSeries_natCast`: that limit read off directly, as the finite
+  sum below `N` together with `f N / 2`.
+
+## References
+
+* H. Davenport, *Multiplicative Number Theory*, chapter 17, for Perron's formula and the
+  half weight at an integer endpoint.
 -/
 
 public section
@@ -43,15 +50,12 @@ private theorem norm_term_mul_perronIntegrand_le (hx : 0 < x) (hc : 0 < c) (n : 
       ‖LSeries.term f (c : ℂ) n‖ * (x ^ c / Real.sqrt (c ^ 2 + t ^ 2)) := by
   rw [norm_mul, norm_perronIntegrand hx]
   gcongr
-  rcases n with _ | m
-  · simp [LSeries.term]
-  · rw [LSeries.term_of_ne_zero (Nat.succ_ne_zero m), LSeries.term_of_ne_zero (Nat.succ_ne_zero m),
-      norm_div, norm_div, Complex.norm_natCast_cpow_of_pos (Nat.succ_pos m),
-      Complex.norm_natCast_cpow_of_pos (Nat.succ_pos m)]
-    simp
+  exact LSeries.norm_term_le_of_re_le_re f (by simp) n
 
-/-- The `L¹` bound `integral_tsum` needs.  `√(c² + t²) ≥ c` avoids the arctangent. -/
-theorem lintegral_norm_term_mul_perronIntegrand_ne_top (hx : 0 < x) (hc : 0 < c)
+/-- The termwise lower integrals of `‖term f (c + i t) n * perronIntegrand x c t‖` over the
+truncated segment have finite total sum, where the `L`-series converges absolutely on the line
+`Re s = c`.  This is the `L¹` hypothesis of `MeasureTheory.integral_tsum`. -/
+private theorem lintegral_norm_term_mul_perronIntegrand_ne_top (hx : 0 < x) (hc : 0 < c)
     (h : LSeriesSummable f (c : ℂ)) :
     ∑' n : ℕ, ∫⁻ t in Set.Ioc (-T) T,
         ‖LSeries.term f ((c : ℂ) + t * I) n * perronIntegrand x c t‖ₑ ≠ ∞ := by
@@ -72,7 +76,8 @@ theorem lintegral_norm_term_mul_perronIntegrand_ne_top (hx : 0 < x) (hc : 0 < c)
         ≤ ∫⁻ _ in Set.Ioc (-T) T,
             ENNReal.ofReal (‖LSeries.term f (c : ℂ) n‖ * (x ^ c / c)) := lintegral_mono hbd
       _ = ENNReal.ofReal (‖LSeries.term f (c : ℂ) n‖ * (x ^ c / c)) * ENNReal.ofReal (2 * T) := by
-          rw [setLIntegral_const, Real.volume_Ioc, show T - -T = 2 * T by ring]
+          have hlen : T - -T = 2 * T := by ring
+          rw [setLIntegral_const, Real.volume_Ioc, hlen]
   refine ne_of_lt (lt_of_le_of_lt (ENNReal.tsum_le_tsum hstep) ?_)
   rw [ENNReal.tsum_mul_right]
   refine ENNReal.mul_lt_top ?_ ENNReal.ofReal_lt_top
@@ -107,15 +112,15 @@ theorem integral_LSeries_mul_perronIntegrand (hx : 0 < x) (hc : 0 < c)
 
 /-- **Collecting a term into the integrand.**  The `n`-th `L`-series term against the Perron
 integrand at `x` is the coefficient `f n` against the Perron integrand at the ratio `x / n`. -/
-theorem term_mul_perronIntegrand (hx : 0 < x) (hc : c ≠ 0) (n : ℕ) (t : ℝ) :
+theorem term_mul_perronIntegrand (hx : 0 ≤ x) (hc : c ≠ 0) (n : ℕ) (t : ℝ) :
     LSeries.term f ((c : ℂ) + t * I) n * perronIntegrand x c t =
       f n * perronIntegrand (x / n) c t := by
   have hline : (c : ℂ) + t * I ≠ 0 := fun h ↦ hc (by simpa using congrArg Complex.re h)
   rcases eq_or_ne n 0 with rfl | hn
-  · rw [LSeries.term_zero, zero_mul, Nat.cast_zero, div_zero, perronIntegrand_apply,
+  · rw [LSeries.term_zero, zero_mul, Nat.cast_zero, div_zero, perronIntegrand_def,
       Complex.ofReal_zero, Complex.zero_cpow hline, zero_div, mul_zero]
-  · rw [LSeries.term_of_ne_zero hn, perronIntegrand_apply, perronIntegrand_apply,
-      Complex.ofReal_div, Complex.div_cpow_ofReal_nonneg hx.le (Nat.cast_nonneg n),
+  · rw [LSeries.term_of_ne_zero hn, perronIntegrand_def, perronIntegrand_def,
+      Complex.ofReal_div, Complex.div_cpow_ofReal_nonneg hx (Nat.cast_nonneg n),
       Complex.ofReal_natCast]
     ring
 
@@ -127,13 +132,16 @@ theorem truncatedPerron_LSeries (hx : 0 < x) (hc : 0 < c) (hT : 0 ≤ T)
     ((2 * π : ℝ) : ℂ)⁻¹ * ∫ t in -T..T, LSeries f ((c : ℂ) + t * I) * perronIntegrand x c t
       = ∑' n : ℕ, f n * truncatedPerronKernel (x / n) c T := by
   have hle : -T ≤ T := by linarith
-  rw [intervalIntegral.integral_of_le hle,
-    show (fun t : ℝ ↦ LSeries f ((c : ℂ) + t * I) * perronIntegrand x c t) =
-      fun t : ℝ ↦ (∑' n : ℕ, LSeries.term f ((c : ℂ) + t * I) n) * perronIntegrand x c t from rfl,
-    integral_LSeries_mul_perronIntegrand hx hc h, ← tsum_mul_left]
+  -- Mathlib exports no equation lemma for `LSeries`, so its defining equation is named here
+  -- rather than left to unfold silently inside the rewrite below.
+  have hLSeries : ∀ t : ℝ,
+      LSeries f ((c : ℂ) + t * I) = ∑' n : ℕ, LSeries.term f ((c : ℂ) + t * I) n := fun _ ↦ rfl
+  rw [intervalIntegral.integral_of_le hle]
+  simp only [hLSeries]
+  rw [integral_LSeries_mul_perronIntegrand hx hc h, ← tsum_mul_left]
   refine tsum_congr fun n ↦ ?_
-  rw [truncatedPerronKernel_apply, intervalIntegral.integral_of_le hle,
-    integral_congr_ae (.of_forall fun t ↦ term_mul_perronIntegrand hx hc.ne' n t),
+  rw [truncatedPerronKernel_def, intervalIntegral.integral_of_le hle,
+    integral_congr_ae (.of_forall fun t ↦ term_mul_perronIntegrand hx.le hc.ne' n t),
     MeasureTheory.integral_const_mul]
   ring
 
@@ -161,7 +169,7 @@ theorem tsum_mul_perronStep_div (hoff : ∀ n : ℕ, x ≠ n) (f : ℕ → ℂ) 
   rw [perronStep_of_one_lt ((one_lt_div hcast).2 (Nat.lt_ceil.1 hn.2)), mul_one]
 
 /-- Beyond `2 x` the ratio `x / n` is at most `1 / 2`, so `|log (x / n)|` is bounded below by
-`log 2` and the Layer 6.3 error at index `n` is a fixed multiple of `‖LSeries.term f c n‖`.
+`log 2` and the smoothed-step error at index `n` is a fixed multiple of `‖LSeries.term f c n‖`.
 Absolute convergence of the `L`-series on the line therefore makes the error series summable. -/
 private theorem summable_norm_mul_kernelError (hx : 0 < x) (hT : 0 < T)
     (h : LSeriesSummable f (c : ℂ)) :
@@ -181,6 +189,7 @@ private theorem summable_norm_mul_kernelError (hx : 0 < x) (hT : 0 < T)
     rw [abs_of_nonpos (by linarith)]
     linarith
   have hnorm : ‖LSeries.term f (c : ℂ) n‖ = ‖f n‖ / n ^ c := by
+    rw [LSeries.norm_term_eq]
     simp [hn0.ne']
   rw [Real.norm_of_nonneg (by positivity), hnorm, Real.div_rpow hx.le hcast.le]
   have hbound : ‖f n‖ * (x ^ c / n ^ c / (π * T * |Real.log (x / n)|))
@@ -189,7 +198,8 @@ private theorem summable_norm_mul_kernelError (hx : 0 < x) (hT : 0 < T)
   exact hbound.trans_eq (by ring)
 
 /-- At each index the `n`-th term of the truncated Perron series differs from its sharp step by at
-most `‖f n‖` times the Layer 6.3 kernel error at the ratio `x / n`.  The index `0` contributes
+most `‖f n‖` times the smoothed-step kernel error at the ratio `x / n`.  The index `0`
+contributes
 nothing on either side. -/
 private theorem norm_mul_truncatedPerronKernel_sub_step_le (hx : 0 < x) (hc : 0 < c) (hT : 0 < T)
     (hoff : ∀ n : ℕ, x ≠ n) (f : ℕ → ℂ) (n : ℕ) :
@@ -207,7 +217,7 @@ private theorem norm_mul_truncatedPerronKernel_sub_step_le (hx : 0 < x) (hc : 0 
 
 /-- **The off-norm arithmetic Perron formula.**  When `x` is not a natural number the truncated
 integral differs from the sharp partial sum `∑_{n < x} f n` by at most the series of the
-Layer 6.3 kernel errors, a series that absolute convergence on the line makes summable. -/
+smoothed-step kernel errors, a series that absolute convergence on the line makes summable. -/
 theorem norm_truncatedPerron_LSeries_sub_sum_le (hx : 0 < x) (hc : 0 < c) (hT : 0 < T)
     (hoff : ∀ n : ℕ, x ≠ n) (h : LSeriesSummable f (c : ℂ)) :
     ‖(((2 * π : ℝ) : ℂ)⁻¹ * ∫ t in -T..T, LSeries f ((c : ℂ) + t * I) * perronIntegrand x c t)
@@ -249,7 +259,7 @@ private theorem norm_perronStep_le_one (y : ℝ) : ‖perronStep y‖ ≤ 1 := b
   · rw [perronStep_of_one_lt hy]; simp
 
 /-- Uniformly in heights `T ≥ 1`, the truncated Perron kernel at a positive ratio `y` is bounded by
-the Layer 6.3 error at `y`, together with `1` once `y` exceeds `1 / 2`.  Above `1 / 2` the sharp
+the smoothed-step error at `y`, together with `1` once `y` exceeds `1 / 2`.  Above `1 / 2` the sharp
 step may be nonzero and contributes that `1`; below it the step vanishes and the error alone
 suffices, and at the excluded ratio `y = 1` the kernel is `π⁻¹ arctan (T / c)`. -/
 private theorem norm_truncatedPerronKernel_le_bound (hy : 0 < y) (hc : 0 < c) (hT : 1 ≤ T) :
@@ -269,8 +279,9 @@ private theorem norm_truncatedPerronKernel_le_bound (hy : 0 < y) (hc : 0 < c) (h
     rw [sub_add_cancel] at htri
     exact htri.trans (by gcongr; exact norm_perronStep_le_one _)
   · push Not at hhalf
+    have hy1 : y < 1 := by linarith
     rw [add_zero, ← sub_zero (truncatedPerronKernel y c T),
-      ← perronStep_of_lt_one (show y < 1 by linarith)]
+      ← perronStep_of_lt_one hy1]
     exact herr
 
 /-- Only the indices below `2 x` have ratio `x / n` above `1 / 2`, so a term supported there is a
@@ -287,8 +298,8 @@ private theorem summable_indicator_norm_of_half_lt (hx : 0 < x) (f : ℕ → ℂ
 to the series of sharp steps, at every positive `x` off the norms.
 
 The interchange of the limit with the series is dominated: beyond `2 x` the step vanishes and the
-Layer 6.3 error alone bounds each term uniformly in `T ≥ 1`, while the finitely many indices below
-`2 x` contribute a further `‖f n‖` each. -/
+smoothed-step error alone bounds each term uniformly in `T ≥ 1`, while the finitely many
+indices below `2 x` contribute a further `‖f n‖` each. -/
 theorem tendsto_truncatedPerron_LSeries (hx : 0 < x) (hc : 0 < c)
     (h : LSeriesSummable f (c : ℂ)) :
     Tendsto (fun T : ℝ ↦ ((2 * π : ℝ) : ℂ)⁻¹ *
@@ -343,5 +354,16 @@ theorem tsum_mul_perronStep_natCast {N : ℕ} (hN : 0 < N) (f : ℕ → ℂ) :
   simp only [Finset.mem_Ico] at hn
   have hcast : (0 : ℝ) < n := Nat.cast_pos.2 hn.1
   rw [perronStep_of_one_lt ((one_lt_div hcast).2 (Nat.cast_lt.2 hn.2)), mul_one]
+
+/-- **The arithmetic Perron formula at an integer endpoint.**  At `x = N` the truncated integral
+tends to the sum of `f` below `N` together with half of the endpoint term. -/
+theorem tendsto_truncatedPerron_LSeries_natCast {N : ℕ} (hN : 0 < N) (hc : 0 < c)
+    (h : LSeriesSummable f (c : ℂ)) :
+    Tendsto (fun T : ℝ ↦ ((2 * π : ℝ) : ℂ)⁻¹ *
+        ∫ t in -T..T, LSeries f ((c : ℂ) + t * I) * perronIntegrand N c t) atTop
+      (𝓝 ((∑ n ∈ Finset.Ico 1 N, f n) + f N / 2)) := by
+  have hx : (0 : ℝ) < N := Nat.cast_pos.2 hN
+  rw [← tsum_mul_perronStep_natCast hN f]
+  exact tendsto_truncatedPerron_LSeries hx hc h
 
 end TauCeti

@@ -92,14 +92,15 @@ theorem perronIntegrand_one (c t : ℝ) : perronIntegrand 1 c t = ((c : ℂ) + t
 
 /-- **Defining equation of the Perron integrand.**  Its value at height `t` is `x ^ s / s` for
 `s = c + i t`.  Use this rather than unfolding the definition. -/
-theorem perronIntegrand_apply (x c t : ℝ) :
+theorem perronIntegrand_def (x c t : ℝ) :
     perronIntegrand x c t = (x : ℂ) ^ ((c : ℂ) + t * I) / ((c : ℂ) + t * I) := (rfl)
 
 /-- The Perron integrand vanishes at the ratio `0`, at every height, whenever the line `Re s = c`
 misses the origin.  This is the value the `n = 0` term of an arithmetic Perron sum takes. -/
+@[simp]
 theorem perronIntegrand_zero (hc : c ≠ 0) (t : ℝ) : perronIntegrand 0 c t = 0 := by
   have hline : (c : ℂ) + t * I ≠ 0 := fun h ↦ hc (by simpa using congrArg Complex.re h)
-  rw [perronIntegrand_apply, Complex.ofReal_zero, Complex.zero_cpow hline, zero_div]
+  rw [perronIntegrand_def, Complex.ofReal_zero, Complex.zero_cpow hline, zero_div]
 
 /-- The modulus of the Perron integrand: the numerator contributes `x ^ c`, independently of the
 height, and the denominator the distance from the origin to `c + i t`. -/
@@ -146,7 +147,7 @@ noncomputable def truncatedPerronKernel (x c T : ℝ) : ℂ :=
 
 /-- **Defining equation of the truncated Perron kernel.**  Use this rather than unfolding the
 definition. -/
-theorem truncatedPerronKernel_apply (x c T : ℝ) :
+theorem truncatedPerronKernel_def (x c T : ℝ) :
     truncatedPerronKernel x c T = ((2 * π : ℝ) : ℂ)⁻¹ * ∫ t in -T..T, perronIntegrand x c t :=
   (rfl)
 
@@ -157,8 +158,9 @@ theorem truncatedPerronKernel_height_zero (x c : ℝ) : truncatedPerronKernel x 
 
 /-- The truncated Perron kernel vanishes at the ratio `0`, at every truncation height, whenever the
 line `Re s = c` misses the origin. -/
+@[simp]
 theorem truncatedPerronKernel_zero (hc : c ≠ 0) (T : ℝ) : truncatedPerronKernel 0 c T = 0 := by
-  simp [truncatedPerronKernel_apply, perronIntegrand_zero hc]
+  simp [truncatedPerronKernel_def, perronIntegrand_zero hc]
 
 /-- The truncated Perron kernel is real: the two halves of the segment contribute conjugate
 values. -/
