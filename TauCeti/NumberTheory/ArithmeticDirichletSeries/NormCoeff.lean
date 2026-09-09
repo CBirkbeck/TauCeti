@@ -146,7 +146,8 @@ theorem normCoeff_star_apply (f : IdealArithmeticFunction K) (n : ℕ) :
 
 /-- **A factor depending on the ideal only through its norm pulls out of the regrouping.** The
 fibre summed over is exactly the ideals of absolute norm `n`, so such a factor is constant on it. -/
-theorem normCoeff_mul_of_apply_absNorm (f : IdealArithmeticFunction K) (g : ℕ → ℂ) (n : ℕ) :
+@[simp]
+theorem normCoeff_fun_mul_comp_absNorm (f : IdealArithmeticFunction K) (g : ℕ → ℂ) (n : ℕ) :
     normCoeff K (fun I ↦ f I * g (Ideal.absNorm (I : Ideal (𝓞 K)))) n = normCoeff K f n * g n := by
   rw [normCoeff_eq_sum_normFiber, normCoeff_eq_sum_normFiber, Finset.sum_mul]
   exact Finset.sum_congr rfl fun I hI ↦ by rw [(mem_normFiber K).1 hI]
@@ -159,7 +160,7 @@ multiplicative one. -/
 theorem normCoeff_mul_absNorm_cpow (f : IdealArithmeticFunction K) (z : ℂ) (n : ℕ) :
     normCoeff K (fun I ↦ f I * (Ideal.absNorm (I : Ideal (𝓞 K)) : ℂ) ^ (-z)) n =
       normCoeff K f n * (n : ℂ) ^ (-z) :=
-  normCoeff_mul_of_apply_absNorm K f (fun m ↦ (m : ℂ) ^ (-z)) n
+  normCoeff_fun_mul_comp_absNorm K f (fun m ↦ (m : ℂ) ^ (-z)) n
 
 /-- **Absence of cancellation inside norm fibres**, for a nonnegative ideal arithmetic function:
 the absolute value of a norm coefficient is the sum of the absolute values over the fibre. -/
