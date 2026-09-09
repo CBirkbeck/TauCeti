@@ -45,7 +45,7 @@ closed-subgroup inclusion assumes the source Hopf algebra `H` is commutative.
 This is a Layer 3 prerequisite for `TauCetiRoadmap/ReductiveGroups/README.md`, "Hopf ideals
 ↔ closed subgroup schemes", specifically the kernels part of the Hopf-ideal dictionary. It
 uses the first isomorphism theorem `TauCeti.HopfIdeal.kerLiftBialgEquiv` and the
-contravariant points functoriality `TauCeti.AlgHom.mapDomainMulEquiv`.
+contravariant points functoriality `AlgHom.mapDomainMulEquiv`.
 -/
 
 public section

@@ -35,7 +35,7 @@ then equips `R[x] / (xᵖ)` with its Hopf structure through the bridge instances
 
 The functor of points is recovered by pre-composing points of `αₚ` with the quotient map
 `R[x] → R[x] / (xᵖ)` (a bialgebra morphism, hence a convolution homomorphism through
-`TauCeti.AlgHom.mapDomain`) and reading the resulting `𝔾ₐ`-point off with
+`AlgHom.mapDomain`) and reading the resulting `𝔾ₐ`-point off with
 `TauCeti.AdditiveGroup.gaPointsMulEquiv`. The image consists of exactly the `p`-nilpotent
 elements, and the pre-composition map is injective because the quotient map is surjective, so
 `αₚ(A)` is the additive group of `p`-nilpotent elements of `A` (those `a` with `aᵖ = 0`). This

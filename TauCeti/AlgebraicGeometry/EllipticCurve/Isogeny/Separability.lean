@@ -127,14 +127,14 @@ theorem separableDegree_eq_finSepDegree (φ : Isogeny W₁ W₂)
     [Algebra W₂.FunctionField W₁.FunctionField]
     (h : ∀ z, algebraMap W₂.FunctionField W₁.FunctionField z = φ.fieldPullback z) :
     φ.separableDegree = Field.finSepDegree W₂.FunctionField W₁.FunctionField :=
-  (φ.separableDegree_def).trans (TauCeti.AlgHom.finSepDegree_fieldRange φ.fieldPullback h)
+  (φ.separableDegree_def).trans (AlgHom.finSepDegree_fieldRange φ.fieldPullback h)
 
 /-- **The inseparable degree read off any algebra structure induced by the pullback.** -/
 theorem inseparableDegree_eq_finInsepDegree (φ : Isogeny W₁ W₂)
     [Algebra W₂.FunctionField W₁.FunctionField]
     (h : ∀ z, algebraMap W₂.FunctionField W₁.FunctionField z = φ.fieldPullback z) :
     φ.inseparableDegree = Field.finInsepDegree W₂.FunctionField W₁.FunctionField :=
-  (φ.inseparableDegree_def).trans (TauCeti.AlgHom.finInsepDegree_fieldRange φ.fieldPullback h)
+  (φ.inseparableDegree_def).trans (AlgHom.finInsepDegree_fieldRange φ.fieldPullback h)
 
 /-- **The degree factors as separable times inseparable.** This is the field-theoretic
 factorisation transported to isogenies; it is what makes "the inseparable part is a Frobenius
@@ -247,7 +247,7 @@ theorem separableDegree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
   have hc : ∀ z, algebraMap _ _ z = (ψ.comp φ).fieldPullback z :=
     (ψ.comp φ).fieldPullback.algebraMap_toAlgebra_apply
   -- discharges the tower law's `[Algebra.IsAlgebraic E K]` side condition
-  have _ := TauCeti.AlgHom.finiteDimensional_of_fieldRange φ.fieldPullback hφ
+  have _ := AlgHom.finiteDimensional_of_fieldRange φ.fieldPullback hφ
   rw [(ψ.comp φ).separableDegree_eq_finSepDegree hc, ψ.separableDegree_eq_finSepDegree hψ,
     φ.separableDegree_eq_finSepDegree hφ]
   exact (Field.finSepDegree_mul_finSepDegree_of_isAlgebraic W₃.FunctionField W₂.FunctionField
@@ -272,7 +272,7 @@ theorem inseparableDegree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂)
     (ψ.comp φ).fieldPullback.algebraMap_toAlgebra_apply
   -- the inseparable tower law needs `[Algebra.IsAlgebraic F E]`, the *lower* extension — so the
   -- finiteness required here is `ψ`'s, unlike `separableDegree_comp`, which needs `φ`'s
-  have _ := TauCeti.AlgHom.finiteDimensional_of_fieldRange ψ.fieldPullback hψ
+  have _ := AlgHom.finiteDimensional_of_fieldRange ψ.fieldPullback hψ
   rw [(ψ.comp φ).inseparableDegree_eq_finInsepDegree hc,
     ψ.inseparableDegree_eq_finInsepDegree hψ, φ.inseparableDegree_eq_finInsepDegree hφ]
   exact (Field.finInsepDegree_mul_finInsepDegree_of_isAlgebraic W₃.FunctionField

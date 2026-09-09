@@ -35,7 +35,7 @@ derivations is in `TauCeti/Algebra/AlgebraicGroup/Tangent/Basic.lean`.
   after post-composing with an arbitrary algebra map out of the tensor square.
 * `TauCeti.LinearMap.mulTensor`: the exterior convolution product, with its
   normalization rules and `TauCeti.LinearMap.mulTensor_convMul`.
-* `TauCeti.AlgHom.toConv_toLinearMap_comp_mul'`: an algebra map composed with
+* `AlgHom.toConv_toLinearMap_comp_mul'`: an algebra map composed with
   multiplication is its own exterior square.
 -/
 
@@ -214,7 +214,7 @@ lemma mulTensor_smul_right (r : R) (s : WithConv (M →ₗ[R] S)) (t : WithConv 
 
 end LinearMap
 
-namespace AlgHom
+section
 
 variable {A : Type*} [Semiring A] [Algebra R A]
 
@@ -222,14 +222,14 @@ open TauCeti.LinearMap in
 /-- An algebra-map point composed with multiplication is its own exterior square:
 the multiplicativity of the point, in convolution form. -/
 @[simp]
-lemma toConv_toLinearMap_comp_mul' (g : A →ₐ[R] S) :
+lemma _root_.AlgHom.toConv_toLinearMap_comp_mul' (g : A →ₐ[R] S) :
     toConv (g.toLinearMap ∘ₗ LinearMap.mul' R A) =
       mulTensor (toConv g.toLinearMap) (toConv g.toLinearMap) := by
   -- Not a re-derivation: this is Mathlib's `AlgHom.comp_mul'` transported into the file's
   -- own `mulTensor` vocabulary, which is what consumers rewrite with.
   exact congrArg toConv (AlgHom.comp_mul' g)
 
-end AlgHom
+end
 
 end ExteriorProduct
 

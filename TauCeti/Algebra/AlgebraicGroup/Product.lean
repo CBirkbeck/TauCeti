@@ -26,7 +26,7 @@ The equivalence sends a point `f : (H₁ ⊗[R] H₂) →ₐ[R] A` to its two re
 `Algebra.TensorProduct.productMap f₁ f₂ : x ⊗ₜ y ↦ f₁ x * f₂ y`. Both restrictions are
 instances of pre-composition with the bialgebra morphisms from
 `TauCeti.Algebra.Bialgebra.TensorProduct`, so the restriction map is a monoid homomorphism by
-`TauCeti.AlgHom.mapDomain`; Mathlib's product map is its inverse by the universal property.
+`AlgHom.mapDomain`; Mathlib's product map is its inverse by the universal property.
 
 ## Main definitions
 
@@ -50,7 +50,7 @@ synchronized models). The tensor-product bialgebra structure and its unit and id
 isomorphisms are from Mathlib's `Mathlib.RingTheory.Bialgebra.TensorProduct`; the universal
 property `Algebra.TensorProduct.lift` is from Mathlib's
 `Mathlib.RingTheory.TensorProduct.Maps`. The convolution monoid and its contravariant
-functoriality `TauCeti.AlgHom.mapDomain` are Tau Ceti's existing functor-of-points
+functoriality `AlgHom.mapDomain` are Tau Ceti's existing functor-of-points
 infrastructure, built on the Mathlib convolution monoid of Yaël Dillies, Michał Mrugała and
 Yunzhou Xie.
 -/
@@ -99,7 +99,7 @@ theorem productMap_restrict (g : (H₁ ⊗[R] H₂) →ₐ[R] A) :
 
 /-- Restriction of a point of `Spec (H₁ ⊗[R] H₂)` to its two factors, as a monoid homomorphism
 of convolution monoids: it pre-composes with the two inclusions `includeLeft` and
-`includeRight`. Each component is `TauCeti.AlgHom.mapDomain` of a bialgebra morphism, hence a
+`includeRight`. Each component is `AlgHom.mapDomain` of a bialgebra morphism, hence a
 monoid homomorphism, so their pairing is too. -/
 @[expose] noncomputable def restrictHom :
     WithConv ((H₁ ⊗[R] H₂) →ₐ[R] A) →*
@@ -116,7 +116,7 @@ bialgebras `H₁ ⊗[R] H₂` is the product of the convolution monoids out of `
 On the functor of points this is the direct product of the affine group schemes `Spec H₁` and
 `Spec H₂`: Mathlib's product map sends `x ⊗ₜ y` to `f₁ x * f₂ y`, and convolution is computed
 componentwise. When `H₁` and `H₂` are Hopf algebras these convolution monoids are groups
-(`TauCeti.AlgHom.instGroup`), so this is automatically an isomorphism of groups. -/
+(`AlgHom.instGroup`), so this is automatically an isomorphism of groups. -/
 @[expose] noncomputable def pointsMulEquiv :
     WithConv ((H₁ ⊗[R] H₂) →ₐ[R] A) ≃* WithConv (H₁ →ₐ[R] A) × WithConv (H₂ →ₐ[R] A) where
   toFun := restrictHom

@@ -27,10 +27,10 @@ different embeddings `f` induce different structures, so none can be registered 
 
 ## Main results
 
-* `TauCeti.AlgHom.finrank_fieldRange`: `[L : f.fieldRange] = [L : K]`.
-* `TauCeti.AlgHom.finiteDimensional_of_fieldRange`: finiteness over the range transfers to the
+* `AlgHom.finrank_fieldRange`: `[L : f.fieldRange] = [L : K]`.
+* `AlgHom.finiteDimensional_of_fieldRange`: finiteness over the range transfers to the
   source — the same identification read for the property rather than the number.
-* `TauCeti.AlgHom.finSepDegree_fieldRange` and `TauCeti.AlgHom.finInsepDegree_fieldRange`: the
+* `AlgHom.finSepDegree_fieldRange` and `AlgHom.finInsepDegree_fieldRange`: the
   same for the separable and inseparable degrees. These are the `f.fieldRange` cases of the
   general transports in `TauCeti.FieldTheory.SeparableDegree`, which is where a caller holding
   some other surjectively-presented intermediate field should look.
@@ -38,14 +38,15 @@ different embeddings `f` induce different structures, so none can be registered 
 
 public section
 
-namespace TauCeti.AlgHom
+section
 
 variable {F K L : Type*} [Field F] [Field K] [Field L] [Algebra F K] [Algebra F L]
 
 /-- **The degree above the range of a field embedding equals the degree above its source.**
 Stated for an arbitrary `K`-algebra structure on `L` whose structure map is `f`, rather than for
 `f.toRingHom.toAlgebra`, so that it applies to a structure the caller already has. -/
-theorem finrank_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, algebraMap K L z = f z) :
+theorem _root_.AlgHom.finrank_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z,
+    algebraMap K L z = f z) :
     Module.finrank f.fieldRange L = Module.finrank K L := by
   -- transport along `f.equivFieldRange`, the range restriction of `f`, which is the identity
   -- on `L`; both squares commute because `h` says the structure map is `f`
@@ -64,7 +65,7 @@ The counterpart of `finrank_fieldRange` for the property rather than the number:
 knows only that `L` is finite over the *range* — which is the form an intermediate field usually
 arrives in — gets finiteness over `K` itself, and with it the `Algebra.IsAlgebraic` side condition
 the separable and inseparable tower laws take. -/
-theorem finiteDimensional_of_fieldRange (f : K →ₐ[F] L) [Algebra K L]
+theorem _root_.AlgHom.finiteDimensional_of_fieldRange (f : K →ₐ[F] L) [Algebra K L]
     (h : ∀ z, algebraMap K L z = f z) [FiniteDimensional f.fieldRange L] :
     FiniteDimensional K L :=
   Module.Finite.of_equiv_equiv f.equivFieldRange.toRingEquiv.symm (RingEquiv.refl L) <| by
@@ -73,7 +74,8 @@ theorem finiteDimensional_of_fieldRange (f : K →ₐ[F] L) [Algebra K L]
 
 /-- **The separable degree above the range of a field embedding equals the one above its
 source.** The `f.fieldRange` case of `Field.finSepDegree_eq_of_surjective`. -/
-theorem finSepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, algebraMap K L z = f z) :
+theorem _root_.AlgHom.finSepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z,
+    algebraMap K L z = f z) :
     Field.finSepDegree f.fieldRange L = Field.finSepDegree K L := by
   let _ : Algebra K f.fieldRange := (f.equivFieldRange).toAlgHom.toRingHom.toAlgebra
   have : IsScalarTower K f.fieldRange L :=
@@ -86,7 +88,8 @@ theorem finSepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, al
 
 /-- **The inseparable degree above the range of a field embedding equals the one above its
 source.** The `f.fieldRange` case of `Field.finInsepDegree_eq_of_surjective`. -/
-theorem finInsepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, algebraMap K L z = f z) :
+theorem _root_.AlgHom.finInsepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z,
+    algebraMap K L z = f z) :
     Field.finInsepDegree f.fieldRange L = Field.finInsepDegree K L := by
   let _ : Algebra K f.fieldRange := (f.equivFieldRange).toAlgHom.toRingHom.toAlgebra
   have : IsScalarTower K f.fieldRange L :=
@@ -97,4 +100,4 @@ theorem finInsepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, 
     ⟨f.equivFieldRange.symm r, by
       rw [RingHom.algebraMap_toAlgebra]; exact f.equivFieldRange.apply_symm_apply r⟩
 
-end TauCeti.AlgHom
+end

@@ -46,7 +46,7 @@ where `R` has prime characteristic `p`.
 ## References
 
 The additive-group points dictionary `TauCeti.AdditiveGroup.gaPointsMulEquiv` and the
-coordinate-bialgebra functoriality `TauCeti.AlgHom.mapDomain` are Tau Ceti's. The freshman's
+coordinate-bialgebra functoriality `AlgHom.mapDomain` are Tau Ceti's. The freshman's
 dream `add_pow_expChar`, the symmetric-algebra bialgebra structure, and the bialgebra-hom
 constructor `BialgHom.ofAlgHom` are Mathlib's.
 -/

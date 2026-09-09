@@ -54,7 +54,7 @@ The group-algebra Hopf structure and `MonoidAlgebra.mapDomainBialgHom` are Mathl
 `Mathlib.RingTheory.HopfAlgebra.MonoidAlgebra` and
 `Mathlib.RingTheory.Bialgebra.MonoidAlgebra`. The base-change equivalence and the
 diagonalizable-group points calculation are Tau Ceti's
-`TauCeti.AlgHom.baseChangePointsMulEquiv` and
+`AlgHom.baseChangePointsMulEquiv` and
 `TauCeti.DiagonalizableGroup.pointsMulEquiv`.
 -/
 

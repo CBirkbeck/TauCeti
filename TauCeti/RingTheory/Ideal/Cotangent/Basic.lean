@@ -15,9 +15,9 @@ For an augmentation `f : A →ₐ[R] R`, if the augmentation ideal is finitely g
 
 ## Main declarations
 
-* `TauCeti.AlgHom.finite_cotangent_ker_of_fg`: finite generation of the augmentation ideal gives
+* `AlgHom.finite_cotangent_ker_of_fg`: finite generation of the augmentation ideal gives
   finiteness of its cotangent space over the base.
-* `TauCeti.AlgHom.finite_cotangent_ker`: the noetherian specialization.
+* `AlgHom.finite_cotangent_ker`: the noetherian specialization.
 
 ## References
 
@@ -29,13 +29,13 @@ public section
 
 namespace TauCeti
 
-namespace AlgHom
+section
 
 variable {R A : Type*} [CommRing R] [CommRing A] [Algebra R A]
 
 /-- The cotangent space of an augmentation with finitely generated kernel is finite over the
 base. -/
-theorem finite_cotangent_ker_of_fg (f : A →ₐ[R] R)
+theorem _root_.AlgHom.finite_cotangent_ker_of_fg (f : A →ₐ[R] R)
     (h : (RingHom.ker f.toRingHom).FG) :
     Module.Finite R (RingHom.ker f.toRingHom).Cotangent := by
   let P : Algebra.Extension R R :=
@@ -57,10 +57,10 @@ theorem finite_cotangent_ker_of_fg (f : A →ₐ[R] R)
 
 The augmentation hypothesis is encoded by the codomain of `f`: because `f` is an `R`-algebra
 homomorphism, it is a retraction of `algebraMap R A`. -/
-theorem finite_cotangent_ker (f : A →ₐ[R] R) [IsNoetherianRing A] :
+theorem _root_.AlgHom.finite_cotangent_ker (f : A →ₐ[R] R) [IsNoetherianRing A] :
     Module.Finite R (RingHom.ker f.toRingHom).Cotangent :=
-  finite_cotangent_ker_of_fg f (RingHom.ker f.toRingHom).fg_of_isNoetherianRing
+  AlgHom.finite_cotangent_ker_of_fg f (RingHom.ker f.toRingHom).fg_of_isNoetherianRing
 
-end AlgHom
+end
 
 end TauCeti

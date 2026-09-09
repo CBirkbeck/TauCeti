@@ -14,7 +14,7 @@ public import TauCeti.Algebra.AlgebraicGroup.Representation.SemisimplePoint
 
 A bialgebra morphism `φ : H₁ →ₐc[k] H₂` between coordinate Hopf algebras represents a
 homomorphism in the opposite direction between the corresponding affine groups. On points this
-homomorphism is precomposition, `TauCeti.AlgHom.mapDomain φ`.
+homomorphism is precomposition, `AlgHom.mapDomain φ`.
 
 This file proves that point-level Jordan decomposition is natural under these homomorphisms. The
 key compatibility is representation-theoretic: acting by the precomposed point on an

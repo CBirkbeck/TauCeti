@@ -25,7 +25,7 @@ On points this composes with `TauCeti.AffineGroup.Product.pointsMulEquiv`, the t
 points calculation, through the equiv-version `AlgHom.mapDomainMulEquiv` of the contravariant
 functoriality `AlgHom.mapDomain`. When `G` and `H` are commutative groups the group algebras
 are Hopf algebras and these convolution monoids are the convolution groups of points
-(`TauCeti.AlgHom.instGroup`), so the points equivalence is automatically an isomorphism of
+(`AlgHom.instGroup`), so the points equivalence is automatically an isomorphism of
 groups: `D(G × H)(A) ≅ D(G)(A) × D(H)(A)`.
 
 This advances the reductive-groups roadmap (`ReductiveGroups/README.md` in TauCetiRoadmap,
@@ -44,7 +44,7 @@ calculation of split tori as iterated products of `𝔾ₘ`.
 
 The tensor-product points calculation `TauCeti.AffineGroup.Product.pointsMulEquiv`, the generic
 monoid-algebra bialgebra product `TauCeti.MonoidAlgebra.prodTensorBialgEquiv`, and the
-contravariant functoriality `TauCeti.AlgHom.mapDomain` are Tau Ceti's existing
+contravariant functoriality `AlgHom.mapDomain` are Tau Ceti's existing
 functor-of-points infrastructure, built on Mathlib's tensor-product and monoid-algebra
 bialgebra structures and the Mathlib convolution monoid of Yaël Dillies, Michał Mrugała and
 Yunzhou Xie.

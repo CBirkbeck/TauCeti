@@ -20,7 +20,7 @@ groups: a group homomorphism `φ : G →* G'` induces a homomorphism of group fu
 `χ ↦ χ ∘ φ` of characters.
 
 Concretely `φ` induces, by `MonoidAlgebra.mapDomainBialgHom`, the bialgebra map
-`R[G] →ₐc[R] R[G']`, which `TauCeti.AlgHom.mapDomain` turns into a monoid homomorphism
+`R[G] →ₐc[R] R[G']`, which `AlgHom.mapDomain` turns into a monoid homomorphism
 `WithConv (R[G'] →ₐ[R] A) →* WithConv (R[G] →ₐ[R] A)` of convolution groups. The headline
 calculation `pointsMulEquiv_pointsMap` says this monoid homomorphism is intertwined by
 `pointsMulEquiv` with precomposition by `φ` on character groups, so the contravariant functor
@@ -48,7 +48,7 @@ worked example and the coordinate-Hopf-algebra functoriality `AlgHom.mapDomain`.
 
 The group-algebra bialgebra functoriality `MonoidAlgebra.mapDomainBialgHom` is Mathlib's
 (`Mathlib.RingTheory.Bialgebra.MonoidAlgebra`). The convolution-group functoriality in the
-coordinate Hopf algebra is Tau Ceti's `TauCeti.AlgHom.mapDomain`
+coordinate Hopf algebra is Tau Ceti's `AlgHom.mapDomain`
 (`TauCeti.Algebra.AlgebraicGroup.Hopf.Map`). This realizes the diagonalizable-group
 functoriality of the Tau Ceti reductive-groups roadmap (Layer 4).
 -/

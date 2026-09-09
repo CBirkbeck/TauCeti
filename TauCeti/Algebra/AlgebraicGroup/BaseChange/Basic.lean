@@ -24,11 +24,11 @@ instance, Mathlib's tensor-product Hopf algebra antipode formula, and `AlgHom.li
 
 ## Main definitions
 
-* `TauCeti.AlgHom.baseChangePointsMulEquiv`: the convolution monoid isomorphism between
+* `AlgHom.baseChangePointsMulEquiv`: the convolution monoid isomorphism between
   `A →ₐ[k] R` and `K ⊗[k] A →ₐ[K] R`. When `A` is a Hopf algebra these are convolution
   groups, so this is automatically an isomorphism of groups.
-* `TauCeti.AlgHom.baseChangePointsMulEquiv_inv_apply_tmul` and
-  `TauCeti.AlgHom.baseChangePointsMulEquiv_symm_inv_apply`: pointwise formulas for
+* `AlgHom.baseChangePointsMulEquiv_inv_apply_tmul` and
+  `AlgHom.baseChangePointsMulEquiv_symm_inv_apply`: pointwise formulas for
   convolution inverses of base-changed points.
 
 ## References
@@ -44,13 +44,13 @@ open _root_.Coalgebra HopfAlgebra TensorProduct WithConv
 
 namespace TauCeti
 
-namespace AlgHom
+section
 
 variable {k K A R : Type*} [CommSemiring k] [CommSemiring K] [Semiring A]
   [CommSemiring R] [Algebra k K] [_root_.Bialgebra k A] [Algebra K R] [Algebra k R]
   [IsScalarTower k K R]
 
-private lemma liftEquiv_map_mul
+private lemma _root_.AlgHom.liftEquiv_map_mul
     (f g : WithConv (A →ₐ[k] R)) :
     AlgHom.liftEquiv k K A R
       (WithConv.ofConv (f * g)) =
@@ -81,47 +81,47 @@ private lemma liftEquiv_map_mul
 
 The forward direction sends `f : A →ₐ[k] R` to `s ⊗ a ↦ s • f a`; the inverse restricts a
 `K`-algebra map `K ⊗[k] A →ₐ[K] R` along `a ↦ 1 ⊗ a`. -/
-@[expose] noncomputable def baseChangePointsMulEquiv :
+@[expose] noncomputable def _root_.AlgHom.baseChangePointsMulEquiv :
     WithConv (A →ₐ[k] R) ≃* WithConv (K ⊗[k] A →ₐ[K] R) :=
   { WithConv.congr (AlgHom.liftEquiv k K A R) with
   map_mul' f g := by
     apply WithConv.ext
     ext a
-    simp [liftEquiv_map_mul] }
+    simp [AlgHom.liftEquiv_map_mul] }
 
 /-- The base-change convolution-monoid isomorphism sends `f` to `s ⊗ a ↦ s • f a`. -/
 @[simp]
-lemma baseChangePointsMulEquiv_apply_ofConv (f : WithConv (A →ₐ[k] R)) :
-    (baseChangePointsMulEquiv (k := k) (K := K) (A := A) (R := R) f).ofConv =
+lemma _root_.AlgHom.baseChangePointsMulEquiv_apply_ofConv (f : WithConv (A →ₐ[k] R)) :
+    (AlgHom.baseChangePointsMulEquiv (k := k) (K := K) (A := A) (R := R) f).ofConv =
       AlgHom.liftEquiv k K A R f.ofConv :=
   rfl
 
 /-- The inverse base-change convolution-monoid isomorphism is restriction along
 `A → K ⊗[k] A`. -/
 @[simp]
-lemma baseChangePointsMulEquiv_symm_ofConv (f : WithConv (K ⊗[k] A →ₐ[K] R)) :
-    ((baseChangePointsMulEquiv (k := k) (K := K) (A := A) (R := R)).symm f).ofConv =
+lemma _root_.AlgHom.baseChangePointsMulEquiv_symm_ofConv (f : WithConv (K ⊗[k] A →ₐ[K] R)) :
+    ((AlgHom.baseChangePointsMulEquiv (k := k) (K := K) (A := A) (R := R)).symm f).ofConv =
       (AlgHom.liftEquiv k K A R).symm f.ofConv :=
   rfl
 
 /-- The base-change convolution-monoid isomorphism sends `f` to `s ⊗ a ↦ s • f a`. -/
 @[simp]
-lemma baseChangePointsMulEquiv_apply_tmul (f : WithConv (A →ₐ[k] R)) (s : K) (a : A) :
-    baseChangePointsMulEquiv (k := k) (K := K) (A := A) (R := R) f (s ⊗ₜ[k] a) =
+lemma _root_.AlgHom.baseChangePointsMulEquiv_apply_tmul (f : WithConv (A →ₐ[k] R)) (s : K) (a : A) :
+    AlgHom.baseChangePointsMulEquiv (k := k) (K := K) (A := A) (R := R) f (s ⊗ₜ[k] a) =
       s • f.ofConv a :=
   rfl
 
 /-- The inverse of the base-change convolution-monoid isomorphism restricts along
 `a ↦ 1 ⊗ a`. -/
 @[simp]
-lemma baseChangePointsMulEquiv_symm_apply (f : WithConv (K ⊗[k] A →ₐ[K] R)) (a : A) :
-    ((baseChangePointsMulEquiv (k := k) (K := K) (A := A) (R := R)).symm f).ofConv a =
+lemma _root_.AlgHom.baseChangePointsMulEquiv_symm_apply (f : WithConv (K ⊗[k] A →ₐ[K] R)) (a : A) :
+    ((AlgHom.baseChangePointsMulEquiv (k := k) (K := K) (A := A) (R := R)).symm f).ofConv a =
       f.ofConv (1 ⊗ₜ[k] a) :=
   rfl
 
-end AlgHom
+end
 
-namespace AlgHom
+section
 
 variable {k K A R : Type*} [CommSemiring k] [CommSemiring K] [Semiring A]
   [CommSemiring R] [Algebra k K] [_root_.HopfAlgebra k A] [Algebra K R] [Algebra k R]
@@ -133,20 +133,22 @@ inverse of a base-changed point has value `s • f (S a)`.
 The `≃*` `AlgHom.baseChangePointsMulEquiv` is automatically a group isomorphism here, since
 `A` is a Hopf algebra; this records the value of an inverse point on pure tensors. -/
 @[simp]
-lemma baseChangePointsMulEquiv_inv_apply_tmul (f : WithConv (A →ₐ[k] R)) (s : K) (a : A) :
-    (baseChangePointsMulEquiv (k := k) (K := K) (A := A) (R := R) f)⁻¹ (s ⊗ₜ[k] a) =
+lemma _root_.AlgHom.baseChangePointsMulEquiv_inv_apply_tmul (f : WithConv (A →ₐ[k] R)) (s : K)
+    (a : A) :
+    (AlgHom.baseChangePointsMulEquiv (k := k) (K := K) (A := A) (R := R) f)⁻¹ (s ⊗ₜ[k] a) =
       s • f.ofConv (antipode k a) := by
-  rw [convInv_apply]
+  rw [AlgHom.convInv_apply]
   simp
 
 /-- Pointwise inverse formula after restricting a base-changed point along `a ↦ 1 ⊗ a`:
 the inverse of `(e.symm f)` has value `f (1 ⊗ S a)` at `a`. -/
 @[simp]
-lemma baseChangePointsMulEquiv_symm_inv_apply (f : WithConv (K ⊗[k] A →ₐ[K] R)) (a : A) :
-    (((baseChangePointsMulEquiv (k := k) (K := K) (A := A) (R := R)).symm f)⁻¹).ofConv a =
+lemma _root_.AlgHom.baseChangePointsMulEquiv_symm_inv_apply (f : WithConv (K ⊗[k] A →ₐ[K] R))
+    (a : A) :
+    (((AlgHom.baseChangePointsMulEquiv (k := k) (K := K) (A := A) (R := R)).symm f)⁻¹).ofConv a =
       f.ofConv (1 ⊗ₜ[k] antipode k a) := by
-  rw [convInv_apply, baseChangePointsMulEquiv_symm_apply]
+  rw [AlgHom.convInv_apply, AlgHom.baseChangePointsMulEquiv_symm_apply]
 
-end AlgHom
+end
 
 end TauCeti

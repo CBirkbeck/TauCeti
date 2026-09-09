@@ -15,8 +15,8 @@ of the algebra's prime spectrum. This file records that point and its underlying
 
 ## Main declarations
 
-* `TauCeti.AlgHom.kernelPoint`: the point cut out by the kernel of an augmentation.
-* `TauCeti.AlgHom.comap_kernelPoint`: contraction of a kernel point is the kernel point of the
+* `AlgHom.kernelPoint`: the point cut out by the kernel of an augmentation.
+* `AlgHom.comap_kernelPoint`: contraction of a kernel point is the kernel point of the
   composite algebra homomorphism.
 -/
 
@@ -24,7 +24,7 @@ public section
 
 open AlgebraicGeometry IsLocalRing
 
-namespace TauCeti.AlgHom
+section
 
 universe u v w
 
@@ -34,14 +34,14 @@ variable (f : H →ₐ[k] k)
 
 /-- The point of `Spec H` defined by an augmentation `f : H →ₐ[k] k`. Its prime ideal is
 `ker f`. -/
-def kernelPoint : Spec (CommRingCat.of H) :=
+def _root_.AlgHom.kernelPoint : Spec (CommRingCat.of H) :=
   PrimeSpectrum.comap (f : H →+* k) (closedPoint k)
 
 /-- The prime ideal of an augmentation point is the kernel of the augmentation. -/
 @[simp]
-theorem kernelPoint_asIdeal :
-    (kernelPoint f).asIdeal = RingHom.ker (f : H →+* k) := by
-  rw [kernelPoint, PrimeSpectrum.comap_asIdeal]
+theorem _root_.AlgHom.kernelPoint_asIdeal :
+    (AlgHom.kernelPoint f).asIdeal = RingHom.ker (f : H →+* k) := by
+  rw [AlgHom.kernelPoint, PrimeSpectrum.comap_asIdeal]
   dsimp only [closedPoint]
   rw [IsLocalRing.maximalIdeal_eq_bot]
   rfl
@@ -49,8 +49,8 @@ theorem kernelPoint_asIdeal :
 /-- Contracting a kernel point along an algebra homomorphism gives the kernel point of the
 composite algebra homomorphism. -/
 @[simp]
-theorem comap_kernelPoint {A : Type w} [CommRing A] [Algebra k A] (g : A →ₐ[k] H) :
-    PrimeSpectrum.comap (g : A →+* H) (kernelPoint f) = kernelPoint (f.comp g) :=
+theorem _root_.AlgHom.comap_kernelPoint {A : Type w} [CommRing A] [Algebra k A] (g : A →ₐ[k] H) :
+    PrimeSpectrum.comap (g : A →+* H) (AlgHom.kernelPoint f) = AlgHom.kernelPoint (f.comp g) :=
   PrimeSpectrum.comap_comp_apply (g : A →+* H) (f : H →+* k) (closedPoint k)
 
-end TauCeti.AlgHom
+end
