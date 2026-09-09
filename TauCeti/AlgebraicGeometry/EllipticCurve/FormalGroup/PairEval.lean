@@ -481,18 +481,15 @@ theorem formalAddEval_assoc {t₁ t₂ t₃ : O} (h₁ : PowerSeries.HasEval t�
       (hv : MvPowerSeries.eval₂ (RingHom.id O) T q₂ = v)
       (hu' : PowerSeries.HasEval u) (hv' : PowerSeries.HasEval v) :
       MvPowerSeries.eval₂ (RingHom.id O) T (MvPowerSeries.subst
-        (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-          Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O) W.formalAdd) =
+        (pairSubstitution q₁ q₂) W.formalAdd) =
         W.formalAddEval u v := by
     have hfam : (fun s : Unit ⊕ Unit ↦ MvPowerSeries.eval₂ (RingHom.id O) T
-          ((Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-            Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O) s)) =
+          ((pairSubstitution q₁ q₂) s)) =
         Sum.elim (fun _ ↦ u) fun _ ↦ v := by
       funext s
       rcases s with _ | _ <;> simp [hu, hv]
     have hev : MvPowerSeries.HasEval fun s : Unit ⊕ Unit ↦ MvPowerSeries.aeval ht
-        ((Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-          Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O) s) := by
+        ((pairSubstitution q₁ q₂) s) := by
       simp only [MvPowerSeries.coe_aeval, Algebra.algebraMap_self, hfam]
       exact hasEval_pair hu' hv'
     have h := MvPowerSeries.aeval_subst (MvPowerSeries.hasSubst_pair hq₁ hq₂)
