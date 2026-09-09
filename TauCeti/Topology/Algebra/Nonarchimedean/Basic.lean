@@ -112,11 +112,14 @@ instance Subgroup.instNonarchimedeanGroup {G : Type*} [Group G] [TopologicalSpac
     obtain ⟨V, hV⟩ := NonarchimedeanGroup.is_nonarchimedean W hW
     exact ⟨V.comap H.subtype continuous_subtype_val, fun _ hx ↦ hWU (hV hx)⟩
 
-/-- **A subring of a nonarchimedean ring is nonarchimedean** in the subspace topology. -/
+/-- **A subring of a nonarchimedean ring is nonarchimedean** in the subspace topology.
+
+Nothing is proved here that `AddSubgroup.instNonarchimedeanAddGroup` does not already prove at
+`S.toAddSubgroup`: a nonarchimedean ring is a nonarchimedean additive group, the two carriers
+agree, and the neighbourhood condition is the additive one verbatim. What the instance adds is
+the keying — typeclass search reaching for `NonarchimedeanRing ↥S` does not unfold `Subring` to
+`AddSubgroup` on its own. -/
 instance Subring.instNonarchimedeanRing {R : Type*} [Ring R] [TopologicalSpace R]
     [NonarchimedeanRing R] (S : Subring R) : NonarchimedeanRing S where
-  is_nonarchimedean U hU := by
-    obtain ⟨W, hW, hWU⟩ := (mem_nhds_subtype _ _ _).mp (by simpa using hU)
-    obtain ⟨V, hV⟩ := NonarchimedeanRing.is_nonarchimedean W hW
-    exact ⟨V.comap (S.subtype : S →+* R).toAddMonoidHom continuous_subtype_val,
-      fun _ hx ↦ hWU (hV hx)⟩
+  is_nonarchimedean :=
+    (inferInstance : NonarchimedeanAddGroup ↥S.toAddSubgroup).is_nonarchimedean

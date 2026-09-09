@@ -12,11 +12,22 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Evaluation
 import TauCeti.RingTheory.Huber.LocalizationTopology.Presentation
 
 /-!
-# Strong noetherianness of a completed localisation is carrier-independent
+# Strong noetherianness of a completed rational localisation
 
-A presentation `(T, s)` of a rational localisation is carried by *some* localisation `S` of `A`
-at `s`, and the choice is immaterial: two carriers of the same presentation have isomorphic
-completions. Strong noetherianness therefore depends on the presentation alone.
+Two results, one about the carrier and one about the ring.
+
+**Carrier-independence.** A presentation `(T, s)` of a rational localisation is carried by *some*
+localisation `S` of `A` at `s`, and the choice is immaterial: two carriers of the same
+presentation have isomorphic completions. Strong noetherianness therefore depends on the
+presentation alone.
+
+**Strong noetherianity itself.** When `A` is a strongly noetherian Tate ring and the numerators
+generate the unit ideal together with `s`, the completion `A⟨T/s⟩` is again strongly noetherian.
+The route is the presentation: `A⟨T/s⟩` is strictly topologically of finite type over `A`
+(`TauCeti.Huber.PairOfDefinition.isStrictlyTopologicallyFiniteType_toCompletionLoc`), and strong
+noetherianity travels along such a presentation. This is what a caller needs in order to iterate
+the construction, and hence what the sheaf condition for a strongly noetherian Huber pair rests
+on.
 
 Nothing here is specific to Laurent presentations or to enlarging the numerator set; those live
 in `TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.StronglyNoetherian`, which consumes
@@ -24,7 +35,10 @@ this.
 
 ## Main results
 
-* `TauCeti.Huber.PairOfDefinition.isStronglyNoetherian_completion_self`.
+* `TauCeti.Huber.PairOfDefinition.isStronglyNoetherian_completion_self`: the carrier does not
+  matter.
+* `TauCeti.Huber.PairOfDefinition.isStronglyNoetherian_completion`: a rational localisation of a
+  strongly noetherian Tate ring is strongly noetherian.
 -/
 
 public section

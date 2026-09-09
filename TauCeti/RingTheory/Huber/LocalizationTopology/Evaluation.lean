@@ -16,6 +16,9 @@ public import TauCeti.Topology.Algebra.IsUniformGroup.Submodule
 public import TauCeti.Topology.Algebra.IsUniformGroup.Subring
 public import TauCeti.RingTheory.Huber.TopologicallyFiniteType
 
+import TauCeti.RingTheory.Huber.OpenMapping
+import TauCeti.Topology.Algebra.GroupCompletion
+
 /-!
 # Evaluating `A⟨X₁, …, Xₖ⟩` at the fractions of a rational localisation
 
@@ -54,10 +57,14 @@ by this module — chiefly `TauCeti.Huber.polyEvalHom` and
 * `TauCeti.Huber.PairOfDefinition.rationalEvalHom_comp_completionMap`, the comparison square
   identifying the completed polynomial evaluation with `rationalEvalHom` after the map induced by
   the polynomial inclusion, and
-  `TauCeti.Huber.PairOfDefinition.surjective_rationalEvalHom`: for numerators which together with
+  `TauCeti.Huber.PairOfDefinition.rationalEvalHom_surjective`: for numerators which together with
   `s` generate the unit ideal and whose fractions cover those of `T`, evaluation
   `A⟨X₁, …, Xₖ⟩ → A⟨T/s⟩` is **onto**. Density is not what gives this; the open quotient carried up
   to the completions is.
+* `TauCeti.Huber.PairOfDefinition.isOpenMap_rationalEvalHom` and
+  `TauCeti.Huber.PairOfDefinition.isOpenQuotientMap_rationalEvalHom`: under the same hypotheses
+  that evaluation is also open, hence an open quotient map. Over a Tate ring openness is a
+  consequence of the surjectivity, not a further hypothesis.
 * `TauCeti.Huber.PairOfDefinition.isStrictlyTopologicallyFiniteType_toCompletionLoc`: consequently
   `A → A⟨T/s⟩` is strictly topologically of finite type — Wedhorn's Definition 6.28 at
   Example 6.38.
@@ -325,7 +332,7 @@ the three that make `TauCeti.Huber.PairOfDefinition.polyEvalHom` one:
 `TauCeti.Huber.PairOfDefinition.polyEvalHom_surjective`,
 `TauCeti.Huber.PairOfDefinition.continuous_polyEvalHom_locUniformSpace` and
 `TauCeti.Huber.PairOfDefinition.isOpenMap_polyEvalHom_locUniformSpace`. -/
-theorem surjective_completion_polyEvalHom [(nhds (0 : A)).IsCountablyGenerated] {k : ℕ}
+theorem completion_polyEvalHom_surjective [(nhds (0 : A)).IsCountablyGenerated] {k : ℕ}
     (t : Fin k → A) (ht : ∀ i, t i ∈ T) (hspan : Ideal.span (insert s (Set.range t)) = ⊤)
     (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
       ⊆ Set.range fun i ↦ (divBy (t i) s : S)) :
@@ -386,8 +393,9 @@ with the denominator `s` generate the unit ideal, and whose fractions cover thos
 
 Every element of `A⟨T/s⟩` is thus the value of a restricted power series in the fractions
 `tᵢ/s`. This is the surjectivity half of exhibiting `A⟨T/s⟩` as a quotient of `A⟨X₁, …, Xₖ⟩`;
-openness is the other half. -/
-theorem surjective_rationalEvalHom [(nhds (0 : A)).IsCountablyGenerated] {k : ℕ}
+openness is the other half, and
+`TauCeti.Huber.PairOfDefinition.isOpenMap_rationalEvalHom` supplies it. -/
+theorem rationalEvalHom_surjective [(nhds (0 : A)).IsCountablyGenerated] {k : ℕ}
     (t : Fin k → A) (ht : ∀ i, t i ∈ T) (hspan : Ideal.span (insert s (Set.range t)) = ⊤)
     (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
       ⊆ Set.range fun i ↦ (divBy (t i) s : S)) :
@@ -400,7 +408,7 @@ theorem surjective_rationalEvalHom [(nhds (0 : A)).IsCountablyGenerated] {k : �
   have _ := isTopologicalRing_locUniformSpace P T s S hden
   have _ := isHuberRing_locUniformSpace P T s S hden
   intro y
-  obtain ⟨z, hz⟩ := surjective_completion_polyEvalHom P T s S hden t ht hspan hTt y
+  obtain ⟨z, hz⟩ := completion_polyEvalHom_surjective P T s S hden t ht hspan hTt y
   refine ⟨UniformSpace.Completion.map
     (fun x : weightedPolynomials (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight ↦
       (x : weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))
@@ -408,14 +416,84 @@ theorem surjective_rationalEvalHom [(nhds (0 : A)).IsCountablyGenerated] {k : �
   rw [← hz]
   exact congrFun (rationalEvalHom_comp_completionMap P T s S hden t ht) z
 
+/-- **The evaluation map `A⟨X₁, …, Xₖ⟩ → A⟨T/s⟩` is open**, under the hypotheses that make it
+surjective.
+
+Openness is not proved by hand: over a Tate ring it is a consequence of surjectivity and
+continuity, by `TauCeti.Huber.IsTateRing.isOpenMap`. The evaluation is a ring map between
+`A`-algebras commuting with the structure maps
+(`TauCeti.Huber.PairOfDefinition.rationalEvalHom_comp_algebraMap`), hence `A`-linear, which is
+the form the open mapping theorem takes it in. -/
+theorem isOpenMap_rationalEvalHom [IsTateRing A] [(nhds (0 : A)).IsCountablyGenerated] {k : ℕ}
+    (t : Fin k → A) (ht : ∀ i, t i ∈ T) (hspan : Ideal.span (insert s (Set.range t)) = ⊤)
+    (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
+      ⊆ Set.range fun i ↦ (divBy (t i) s : S)) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI : UniformContinuousConstSMul A S :=
+      uniformContinuousConstSMul_of_continuousConstSMul A S
+    IsOpenMap (rationalEvalHom P T s S hden t ht) := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  have _ := isHuberRing_locUniformSpace P T s S hden
+  let _ : UniformContinuousConstSMul A S :=
+    uniformContinuousConstSMul_of_continuousConstSMul A S
+  have _ : (nhds (0 : S)).IsCountablyGenerated := by
+    have h := (hasBasis_nhds_zero_locTopology P T s S hden).isCountablyGenerated
+    rwa [← locUniformSpace_toTopologicalSpace P T s S hden] at h
+  have _ : (uniformity (Completion S)).IsCountablyGenerated :=
+    IsUniformAddGroup.uniformity_countably_generated
+  have _ : (uniformity (restrictedMvPowerSeriesCompletion k A)).IsCountablyGenerated :=
+    IsUniformAddGroup.uniformity_countably_generated
+  exact IsTateRing.isOpenMap
+    ({ rationalEvalHom P T s S hden t ht with
+        commutes' := fun a ↦ by
+          have h := congrArg (fun f ↦ f a) (rationalEvalHom_comp_algebraMap P T s S hden t ht)
+          rw [toCompletionLoc_apply] at h
+          exact h } : restrictedMvPowerSeriesCompletion k A →ₐ[A] Completion S).toLinearMap
+    (rationalEvalHom_surjective P T s S hden t ht hspan hTt)
+    (continuous_rationalEvalHom P T s S hden t ht).continuousAt
+
+/-- **The evaluation map `A⟨X₁, …, Xₖ⟩ → A⟨T/s⟩` is an open quotient map**: it presents `A⟨T/s⟩`
+as a topological quotient of the restricted power series ring.
+
+This is the form Wedhorn's Definition 6.28 asks for, and the form
+`TauCeti.Huber.isStrictlyTopologicallyFiniteType_iff` consumes; it bundles
+`TauCeti.Huber.PairOfDefinition.rationalEvalHom_surjective`,
+`TauCeti.Huber.PairOfDefinition.continuous_rationalEvalHom` and
+`TauCeti.Huber.PairOfDefinition.isOpenMap_rationalEvalHom` with no further hypotheses. -/
+theorem isOpenQuotientMap_rationalEvalHom [IsTateRing A]
+    [(nhds (0 : A)).IsCountablyGenerated] {k : ℕ}
+    (t : Fin k → A) (ht : ∀ i, t i ∈ T) (hspan : Ideal.span (insert s (Set.range t)) = ⊤)
+    (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
+      ⊆ Set.range fun i ↦ (divBy (t i) s : S)) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI : UniformContinuousConstSMul A S :=
+      uniformContinuousConstSMul_of_continuousConstSMul A S
+    IsOpenQuotientMap (rationalEvalHom P T s S hden t ht) :=
+  letI := locUniformSpace P T s S hden
+  letI := isUniformAddGroup_locUniformSpace P T s S hden
+  letI := isTopologicalRing_locUniformSpace P T s S hden
+  letI : UniformContinuousConstSMul A S :=
+    uniformContinuousConstSMul_of_continuousConstSMul A S
+  ⟨rationalEvalHom_surjective P T s S hden t ht hspan hTt,
+    continuous_rationalEvalHom P T s S hden t ht,
+    isOpenMap_rationalEvalHom P T s S hden t ht hspan hTt⟩
+
 /-- **A rational localisation is strictly topologically of finite type over `A`**, for numerators
 which together with the denominator `s` generate the unit ideal, and whose fractions cover those
 of `T`.
 
 This is Wedhorn's Definition 6.28 at Example 6.38:
-`TauCeti.Huber.PairOfDefinition.surjective_rationalEvalHom` supplies the surjection out of
-`A⟨X₁, …, Xₖ⟩`, and `TauCeti.Huber.isStrictlyTopologicallyFiniteType_of_surjective` supplies
-openness for free from the Tate hypothesis.
+`TauCeti.Huber.PairOfDefinition.isOpenQuotientMap_rationalEvalHom` is the presentation itself,
+and `TauCeti.Huber.isStrictlyTopologicallyFiniteType_iff` says that a presentation is all the
+definition asks for. The remaining step is that the composite `A → A⟨X₁, …, Xₖ⟩ → A⟨T/s⟩` is the
+structure map, which is
+`TauCeti.Huber.PairOfDefinition.rationalEvalHom_comp_algebraMap` read at each point.
 
 The presenting algebra is the trivial-weight one, `A⟨X₁, …, Xₖ⟩`, which is what makes this
 *strict* topological finite type rather than the weaker notion of Definition 6.29. -/
@@ -436,20 +514,12 @@ theorem isStrictlyTopologicallyFiniteType_toCompletionLoc [IsTateRing A]
   have _ := isHuberRing_locUniformSpace P T s S hden
   let _ : UniformContinuousConstSMul A S :=
     uniformContinuousConstSMul_of_continuousConstSMul A S
-  have _ : (nhds (0 : S)).IsCountablyGenerated := by
-    have h := (hasBasis_nhds_zero_locTopology P T s S hden).isCountablyGenerated
-    rwa [← locUniformSpace_toTopologicalSpace P T s S hden] at h
-  have _ : (uniformity (Completion S)).IsCountablyGenerated :=
-    IsUniformAddGroup.uniformity_countably_generated
-  exact isStrictlyTopologicallyFiniteType_of_surjective
-    { rationalEvalHom P T s S hden t ht with
-      commutes' := fun a ↦ by
-        have h := congrArg (fun f ↦ f a) (rationalEvalHom_comp_algebraMap P T s S hden t ht)
-        rw [toCompletionLoc_apply] at h
-        exact h }
-    (continuous_rationalEvalHom P T s S hden t ht).continuousAt
-    (surjective_rationalEvalHom P T s S hden t ht hspan hTt)
-
+  refine isStrictlyTopologicallyFiniteType_iff.mpr
+    ⟨k, rationalEvalHom P T s S hden t ht,
+      isOpenQuotientMap_rationalEvalHom P T s S hden t ht hspan hTt, RingHom.ext fun a ↦ ?_⟩
+  have h := congrArg (fun f ↦ f a) (rationalEvalHom_comp_algebraMap P T s S hden t ht)
+  rw [toCompletionLoc_apply] at h
+  exact h
 
 end PairOfDefinition
 
