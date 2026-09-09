@@ -73,6 +73,13 @@ open scoped Real
 
 variable {x c : ℝ}
 
+/-- A bound holding up to a correction that dies away at infinity holds outright.  Both endpoint
+estimates below pass to the limit this way, so the passage is named once here rather than rebuilt
+at each of them. -/
+private theorem le_of_eventually_le_add_of_tendsto_zero {e : ℝ → ℝ} {v K : ℝ}
+    (he : Tendsto e atTop (𝓝 0)) (h : ∀ᶠ B in atTop, v ≤ K + e B) : v ≤ K :=
+  ge_of_tendsto (by simpa using tendsto_const_nhds.add he) h
+
 /-- The integrand of the truncated Perron integral: the value of `s ↦ x ^ s / s` at the point
 `s = c + i t` of the vertical line `Re s = c`. -/
 noncomputable def perronIntegrand (x c t : ℝ) : ℂ :=
@@ -418,7 +425,7 @@ private theorem norm_integral_perronFn_le_of_lt_one (hx : 0 < x) (hx1 : x < 1) (
     linarith
   have hzero : Tendsto (fun B : ℝ ↦ x ^ B * (2 * T / c)) atTop (𝓝 0) := by
     simpa using (tendsto_rpow_atTop_of_base_lt_one x (by linarith) hx1).mul_const (2 * T / c)
-  refine ge_of_tendsto (by simpa using tendsto_const_nhds.add hzero) ?_
+  refine le_of_eventually_le_add_of_tendsto_zero hzero ?_
   filter_upwards [eventually_ge_atTop c] with B hB
   simpa [div_mul_eq_mul_div, mul_div_assoc] using key B hB
 
@@ -604,7 +611,7 @@ private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc
   have hzero : Tendsto (fun B : ℝ ↦ x ^ (-B) * (2 * T / c)) atTop (𝓝 0) := by
     simpa using ((tendsto_rpow_atBot_of_base_gt_one x hx1).comp
       tendsto_neg_atTop_atBot).mul_const (2 * T / c)
-  refine ge_of_tendsto (by simpa using tendsto_const_nhds.add hzero) ?_
+  refine le_of_eventually_le_add_of_tendsto_zero hzero ?_
   filter_upwards [eventually_ge_atTop c] with B hB
   simpa [div_mul_eq_mul_div, mul_div_assoc] using key B hB
 
