@@ -357,15 +357,12 @@ private theorem thetaPoint_add (hΔ : (fracCurve W σ KK).Δ ≠ 0)
   have hu : ρ (PowerSeries.subst Tp (formalInverseDenom W)) * ρ sp = 1 := by
     rw [← map_mul, ← map_one ρ]
     exact congrArg ρ (subst_pair_formalInverseDenom_mul W h₁ h₂)
+  have hsp0 := right_ne_zero_of_mul_eq_one hu
   have hueq : ρ (PowerSeries.subst Tp (formalInverseDenom W)) =
       1 - (fracCurve W σ KK).a₁ * ρ Tp - (fracCurve W σ KK).a₃ * ρ wT := by
     have h := congrArg ρ (subst_pair_formalInverseDenom_eq W h₁ h₂)
     simp only [map_sub, map_mul, map_one, MvPowerSeries.c_eq_algebraMap] at h
     exact h
-  have hsp0 : ρ sp ≠ 0 := by
-    intro h
-    rw [h, mul_zero] at hu
-    exact one_ne_zero hu.symm
   have hFeq : ρ (subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
       Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W)) = -(ρ Tp * ρ sp) := by
     have h := congrArg ρ (subst_pair_formalAdd_eq W h₁ h₂)
@@ -397,23 +394,12 @@ private theorem thetaPoint_neg (hΔ : (fracCurve W σ KK).Δ ≠ 0)
   classical
   set ρ := algebraMap (MvPowerSeries σ O) KK with hρ
   have hs : PowerSeries.HasSubst q := PowerSeries.HasSubst.of_constantCoeff_zero hq
-  have hu : ρ (PowerSeries.subst q (formalInverseDenom W)) *
-      ρ (PowerSeries.subst q (PowerSeries.invOfUnit (formalInverseDenom W) 1)) = 1 := by
-    rw [← map_mul, ← map_one ρ]
-    exact congrArg ρ (W.subst_formalInverseDenom_mul hs)
-  have hsp0 : ρ (PowerSeries.subst q (PowerSeries.invOfUnit (formalInverseDenom W) 1)) ≠ 0 := by
-    intro h
-    rw [h, mul_zero] at hu
-    exact one_ne_zero hu.symm
-  have hIeq : ρ (PowerSeries.subst q (formalInverse W)) =
-      -(ρ q * ρ (PowerSeries.subst q (PowerSeries.invOfUnit (formalInverseDenom W) 1))) := by
-    have h := congrArg ρ (W.subst_formalInverse_eq hs)
-    simpa only [map_neg, map_mul] using h
-  have hwIeq : ρ (PowerSeries.subst (PowerSeries.subst q (formalInverse W)) (formalW W)) =
-      -(ρ (PowerSeries.subst q (formalW W)) *
-        ρ (PowerSeries.subst q (PowerSeries.invOfUnit (formalInverseDenom W) 1))) := by
-    have h := congrArg ρ (W.subst_formalW_subst_formalInverse hs)
-    simpa only [map_neg, map_mul] using h
+  -- the readings of the formal inverse at `q`, pushed into `KK`
+  have hu := congrArg ρ (W.subst_formalInverseDenom_mul hs)
+  have hIeq := congrArg ρ (W.subst_formalInverse_eq hs)
+  have hwIeq := congrArg ρ (W.subst_formalW_subst_formalInverse hs)
+  simp only [map_neg, map_mul, map_one] at hu hIeq hwIeq
+  have hsp0 := right_ne_zero_of_mul_eq_one hu
   have hueq : ρ (PowerSeries.subst q (formalInverseDenom W)) =
       1 - (fracCurve W σ KK).a₁ * ρ q -
         (fracCurve W σ KK).a₃ * ρ (PowerSeries.subst q (formalW W)) := by
@@ -493,11 +479,7 @@ private theorem pair_intercept_ne_zero_of_ne (hΔ : (fracCurve W σ KK).Δ ≠ 0
     exact hx
   have hcase := Affine.Point.eq_or_eq_neg_of_xRep_eq_xRep hxr
   -- the data carried by the inverted parameter
-  have hs0 : PowerSeries.subst q₂ (PowerSeries.invOfUnit (formalInverseDenom W) 1) ≠ 0 := by
-    intro hh
-    have hmul := W.subst_formalInverseDenom_mul hs₂
-    rw [hh, mul_zero] at hmul
-    exact one_ne_zero hmul.symm
+  have hs0 := right_ne_zero_of_mul_eq_one (W.subst_formalInverseDenom_mul hs₂)
   have hi : constantCoeff (PowerSeries.subst q₂ (formalInverse W)) = 0 :=
     PowerSeries.constantCoeff_subst_eq_zero h₂ (formalInverse W) (constantCoeff_formalInverse W)
   have hi0 : PowerSeries.subst q₂ (formalInverse W) ≠ 0 := by
