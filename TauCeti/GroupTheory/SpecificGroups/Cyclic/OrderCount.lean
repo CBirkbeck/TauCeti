@@ -64,7 +64,7 @@ The divisibility case of `IsCyclic.card_filter_orderOf_eq_sum_totient`. -/
 @[to_additive
 /-- **The elements of a finite additive cyclic group whose order is a multiple of `f`, counted by
 order.** The divisibility case of
-`AddCommGroup.card_filter_addOrderOf_eq_sum_totient`. -/]
+`IsAddCyclic.card_filter_addOrderOf_eq_sum_totient`. -/]
 theorem IsCyclic.card_filter_dvd_orderOf_eq_sum_totient (f : ℕ) :
     #{τ : α | f ∣ orderOf τ} =
       ∑ d ∈ {d ∈ (Fintype.card α).divisors | f ∣ d}, φ d :=
