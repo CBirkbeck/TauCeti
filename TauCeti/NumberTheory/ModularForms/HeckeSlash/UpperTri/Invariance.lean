@@ -113,8 +113,9 @@ variable {N p : ℕ}
 `a + j c` and `b + j d` are the top-left and top-right entries of `!![1, j; 0, p] · γ`
 before dividing by `p`, so this is the unique solution in `[0, p)` of
 `(a + j c) j' ≡ b + j d (mod p)` — whenever `a + j c` is invertible modulo `p`. Outside that case
-the value is `ZMod`'s junk inverse and means nothing, so every lemma that reads a value off the
-map carries the invertibility hypothesis. -/
+the value is `ZMod`'s junk inverse and solves nothing, so every lemma that reads the value *as a
+solution of that congruence* carries the invertibility hypothesis. Lemmas that merely evaluate the
+map, such as `upperTriShift_natCast`, hold for every `γ` and `j`. -/
 def upperTriShift (p : ℕ) [NeZero p] (γ : SL(2, ℤ)) (j : Fin p) : Fin p :=
   ⟨(((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p)⁻¹
     * ((γ 0 1 + (j : ℕ) * γ 1 1 : ℤ) : ZMod p)).val, ZMod.val_lt _⟩
