@@ -35,9 +35,10 @@ representative, `descendExtraGamma`, and the argument is different; that case is
 
 ## Main results
 
+* `TauCeti.finCongr_descendShift`: transported to `Fin p`, it is `upperTriShift`.
 * `TauCeti.descendShift_bijective`: it is a bijection of the index set.
-* `TauCeti.descendMatrix_mul_mapGL`: `descendMatrix p N v * γ = α * descendMatrix p N (shift v)`
-  for some `α ∈ Γ₀(N)`.
+* `TauCeti.exists_mem_Gamma0_descendMatrix_mul`:
+  `descendMatrix p N v * γ = α * descendMatrix p N (shift v)` for some `α ∈ Γ₀(N)`.
 
 ## Scope
 
@@ -48,11 +49,8 @@ of the slash sum are separate statements and none of them is claimed here.
 Corresponds to `descendCosetList_action_upper_tri_clean` of the AINTLIB `LeanModularForms`
 project (`LeanModularForms/StrongMultiplicityOne/DescentCosets.lean`, Chris Birkbeck, commit
 `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0,
-<https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>). The proof is not
-transcribed: the source builds the target index and the `Γ₀(N)` witness by hand from the matrix
-entries, whereas here both come from `HeckeRing.GL2.exists_mem_Gamma0_upperTriRep_mul`, which
-already supplies them over `ℚ`, and mathlib's `Matrix.SpecialLinearGroup.map_mapGL` transports
-the identity to `ℝ`.
+<https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>); the proof here is
+independent of the source's.
 -/
 
 public section
@@ -73,30 +71,48 @@ def descendShift (p N : ℕ) [NeZero p] (hpsq : p ^ 2 ∣ N) (γ : SL(2, ℤ))
   (finCongr (descendMatrixCount_of_sq_dvd hpsq)).symm
     (upperTriShift p γ (finCongr (descendMatrixCount_of_sq_dvd hpsq) v))
 
-/-- **The offset map is a bijection of the descent index set.** Transporting along an equivalence
-preserves bijectivity, and `HeckeRing.GL2.upperTriShift_bijective` supplies it on `Fin p`; the
-hypothesis is `γ ∈ Γ₀(p)`, which `p² ∣ N` gives for every `γ ∈ Γ₀(N / p)`. -/
-theorem descendShift_bijective [NeZero p] (hpsq : p ^ 2 ∣ N) {γ : SL(2, ℤ)} (hγp : γ ∈ Gamma0 p) :
-    Function.Bijective (descendShift p N hpsq γ) :=
+/-- **The defining property of `descendShift`**: transported to `Fin p`, it is
+`HeckeRing.GL2.upperTriShift`. Read the map off this rather than off the definition, whose
+`finCongr` plumbing carries a proof argument. -/
+@[simp] theorem finCongr_descendShift [NeZero p] (hpsq : p ^ 2 ∣ N) (γ : SL(2, ℤ))
+    (v : Fin (descendMatrixCount p N)) :
+    finCongr (descendMatrixCount_of_sq_dvd hpsq) (descendShift p N hpsq γ v)
+      = upperTriShift p γ (finCongr (descendMatrixCount_of_sq_dvd hpsq) v) :=
+  Equiv.apply_symm_apply _ _
+
+/-- The same, on underlying naturals, which is the form the `descendMatrix` branches read. -/
+theorem descendShift_val [NeZero p] (hpsq : p ^ 2 ∣ N) (γ : SL(2, ℤ))
+    {v : Fin (descendMatrixCount p N)} (hv : v.val < p) :
+    (descendShift p N hpsq γ v : ℕ) = (upperTriShift p γ ⟨v.val, hv⟩ : ℕ) :=
+  congrArg Fin.val (finCongr_descendShift hpsq γ v)
+
+-- `p² ∣ N` says exactly that `p` divides `N / p`, which is what places `Γ₀(N / p)` inside `Γ₀(p)`.
+-- Not in mathlib: `exact?` finds no single-lemma proof.
+private theorem dvd_div_of_sq_dvd (hpsq : p ^ 2 ∣ N) : p ∣ N / p :=
+  (Nat.dvd_div_iff_mul_dvd (dvd_trans (dvd_pow_self p two_ne_zero) hpsq)).mpr (by rwa [← sq])
+
+/-- **The offset map is a bijection of the descent index set.** For `γ` in `Γ₀(N / p)`, the group
+the descent acts by, `descendShift p N hpsq γ` permutes `Fin (descendMatrixCount p N)`. That is
+what lets the descent's slash sum be reindexed along it. -/
+theorem descendShift_bijective [NeZero p] (hpsq : p ^ 2 ∣ N) {γ : SL(2, ℤ)}
+    (hγ : γ ∈ Gamma0 (N / p)) : Function.Bijective (descendShift p N hpsq γ) :=
   (finCongr (descendMatrixCount_of_sq_dvd (N := N) hpsq)).symm.bijective.comp
-    ((upperTriShift_bijective hγp).comp
+    ((upperTriShift_bijective (Gamma0_le_Gamma0_of_dvd (dvd_div_of_sq_dvd hpsq) hγ)).comp
       (finCongr (descendMatrixCount_of_sq_dvd (N := N) hpsq)).bijective)
 
 /-- **The descent family is permuted by `Γ₀(N / p)` when `p² ∣ N`.** For `γ ∈ Γ₀(N / p)`, the
 product `descendMatrix p N v * γ` is an element of `Γ₀(N)` times the member of the family at
 `descendShift p N hpsq γ v` — and that map is a bijection, by `descendShift_bijective`.
 
-Naming the target index rather than hiding it behind an existential is what makes the statement
-usable downstream: reindexing the descent's slash sum needs the permutation itself, not merely
-the fact that some member of the family appears. -/
-theorem descendMatrix_mul_mapGL (p N : ℕ) [NeZero p] (hpN : p ∣ N) (hpsq : p ^ 2 ∣ N) {γ : SL(2, ℤ)}
-    (hγ : γ ∈ Gamma0 (N / p)) (v : Fin (descendMatrixCount p N)) : ∃ α : SL(2, ℤ), α ∈ Gamma0 N ∧
-      descendMatrix p N v * mapGL ℝ γ =
-        mapGL ℝ α * descendMatrix p N (descendShift p N hpsq γ v) := by
+The target index is named rather than existentially quantified, because reindexing the descent's
+slash sum needs the permutation itself, not merely that some member of the family appears. -/
+theorem exists_mem_Gamma0_descendMatrix_mul (p N : ℕ) [NeZero p] (hpsq : p ^ 2 ∣ N)
+    {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p)) (v : Fin (descendMatrixCount p N)) :
+    ∃ α : SL(2, ℤ), α ∈ Gamma0 N ∧ descendMatrix p N v * mapGL ℝ γ =
+      mapGL ℝ α * descendMatrix p N (descendShift p N hpsq γ v) := by
+  have hpN : p ∣ N := dvd_trans (dvd_pow_self p two_ne_zero) hpsq
   have hcount : descendMatrixCount p N = p := descendMatrixCount_of_sq_dvd hpsq
   have hv : v.val < p := lt_of_lt_of_le v.isLt hcount.le
-  -- `p ∣ N / p` is exactly `p² ∣ N`, so `Γ₀(N / p) ≤ Γ₀(p)`
-  have hpdvd : p ∣ N / p := (Nat.dvd_div_iff_mul_dvd hpN).mpr (by rwa [← sq])
   -- the second hypothesis is `N ∣ p c`, from `(N / p) ∣ c` and `p · (N / p) = N`
   have hpc : (((p : ℤ) * γ 1 0 : ℤ) : ZMod N) = 0 := by
     refine (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mpr ?_
@@ -105,12 +121,15 @@ theorem descendMatrix_mul_mapGL (p N : ℕ) [NeZero p] (hpN : p ∣ N) (hpsq : p
     rw [hpNp]
     exact mul_dvd_mul_left _ ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hγ))
   obtain ⟨α, hα, _, hmul⟩ :=
-    exists_mem_Gamma0_upperTriRep_mul (Gamma0_le_Gamma0_of_dvd hpdvd hγ) hpc ⟨v.val, hv⟩
+    exists_mem_Gamma0_upperTriRep_mul
+      (Gamma0_le_Gamma0_of_dvd (dvd_div_of_sq_dvd hpsq) hγ) hpc ⟨v.val, hv⟩
   have hv' : ((descendShift p N hpsq γ v : Fin (descendMatrixCount p N)) : ℕ) < p :=
     lt_of_lt_of_le (descendShift p N hpsq γ v).isLt hcount.le
+  -- the target index, named rather than left to definitional reduction through `finCongr`
+  have htgt : (⟨(descendShift p N hpsq γ v : ℕ), hv'⟩ : Fin p) = upperTriShift p γ ⟨v.val, hv⟩ :=
+    Fin.ext (descendShift_val hpsq γ hv)
   refine ⟨α, hα, ?_⟩
-  rw [descendMatrix_of_lt hv, descendMatrix_of_lt hv', ← map_mapGL (S := ℚ) (T := ℝ) γ,
-    ← map_mapGL (S := ℚ) (T := ℝ) α, ← map_mul, ← map_mul]
-  exact congrArg _ hmul
+  rw [descendMatrix_of_lt hv, descendMatrix_of_lt hv', htgt, ← map_mapGL (S := ℚ) (T := ℝ) γ,
+    ← map_mapGL (S := ℚ) (T := ℝ) α, ← map_mul, ← map_mul, hmul]
 
 end TauCeti
