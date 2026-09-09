@@ -252,8 +252,8 @@ theorem coe_mem_range_rationalEvalHom {k : ℕ} (t : Fin k → A) (ht : ∀ i, t
 /-- **The evaluation map has dense range when the numerators together with the denominator `s`
 generate the unit ideal.**
 
-Density is one of the two halves of surjectivity; the other, that the range is closed, is not
-proved here. -/
+Density on its own does not give surjectivity: a dense subring of a complete ring need not be
+all of it. What closes the gap is the open-quotient route, not this theorem. -/
 theorem denseRange_rationalEvalHom {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i ∈ T)
     (hspan : Ideal.span (insert s (Set.range t)) = ⊤) :
     letI := locUniformSpace P T s S hden
@@ -271,8 +271,10 @@ theorem denseRange_rationalEvalHom {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i 
 `TauCeti.Huber.PairOfDefinition.rationalEvalHom` gives the image in the completion of its value
 at the fractions.
 
-This is the square that carries surjectivity of the completed polynomial evaluation over to
-`rationalEvalHom`. -/
+On the copy of a polynomial inside `A⟨X₁, …, Xₖ⟩` the completed evaluation is therefore
+determined by the elementary one at the fractions; the two agree before any completion is
+involved. -/
+@[simp]
 theorem rationalEvalHom_coe_weightedPolynomialHom {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i ∈ T)
     (p : MvPolynomial (Fin k) A) :
     letI := locUniformSpace P T s S hden
@@ -318,8 +320,8 @@ theorem isOpenMap_polyEvalHom_locUniformSpace {k : ℕ} (t : Fin k → A)
 /-- **The completed polynomial evaluation is surjective**: the completion of `A[X₁,…,Xₖ]` maps
 onto the completion of `Aₛ`.
 
-This is `AddMonoidHom.surjective_completion` applied to the open quotient map
-`TauCeti.Huber.PairOfDefinition.polyEvalHom`, whose three components are
+Completion preserves surjectivity of an open quotient map, and the hypotheses here are exactly
+the three that make `TauCeti.Huber.PairOfDefinition.polyEvalHom` one:
 `TauCeti.Huber.PairOfDefinition.polyEvalHom_surjective`,
 `TauCeti.Huber.PairOfDefinition.continuous_polyEvalHom_locUniformSpace` and
 `TauCeti.Huber.PairOfDefinition.isOpenMap_polyEvalHom_locUniformSpace`. -/
@@ -344,9 +346,9 @@ theorem surjective_completion_polyEvalHom [(nhds (0 : A)).IsCountablyGenerated] 
 /-- **The comparison square on the completions.** Evaluating in `A⟨X₁, …, Xₖ⟩` after the map
 induced by the inclusion of the polynomials is the completion of the polynomial evaluation.
 
-Both sides are continuous, so `UniformSpace.Completion.ext` reduces the claim to polynomials,
-where it is
-`TauCeti.Huber.PairOfDefinition.rationalEvalHom_coe_weightedPolynomialHom`. -/
+Both maps out of `A⟨X₁, …, Xₖ⟩` are continuous and agree on the dense subring of polynomials,
+so they agree everywhere. This identification is what lets a statement about the elementary
+evaluation be read as one about `rationalEvalHom`. -/
 theorem rationalEvalHom_comp_completionMap {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i ∈ T) :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
@@ -382,10 +384,9 @@ theorem rationalEvalHom_comp_completionMap {k : ℕ} (t : Fin k → A) (ht : ∀
 /-- **The evaluation map `A⟨X₁, …, Xₖ⟩ → A⟨T/s⟩` is surjective**, for numerators which together
 with the denominator `s` generate the unit ideal, and whose fractions cover those of `T`.
 
-Surjectivity is transported from
-`TauCeti.Huber.PairOfDefinition.surjective_completion_polyEvalHom` along the comparison map
-induced by the inclusion of the polynomials, using
-`TauCeti.Huber.PairOfDefinition.rationalEvalHom_comp_completionMap`. -/
+Every element of `A⟨T/s⟩` is thus the value of a restricted power series in the fractions
+`tᵢ/s`. This is the surjectivity half of exhibiting `A⟨T/s⟩` as a quotient of `A⟨X₁, …, Xₖ⟩`;
+openness is the other half. -/
 theorem surjective_rationalEvalHom [(nhds (0 : A)).IsCountablyGenerated] {k : ℕ}
     (t : Fin k → A) (ht : ∀ i, t i ∈ T) (hspan : Ideal.span (insert s (Set.range t)) = ⊤)
     (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
@@ -416,8 +417,8 @@ This is Wedhorn's Definition 6.28 at Example 6.38:
 `A⟨X₁, …, Xₖ⟩`, and `TauCeti.Huber.isStrictlyTopologicallyFiniteType_of_surjective` supplies
 openness for free from the Tate hypothesis.
 
-Example 6.38 is what Proposition 8.30 cites by name. This is therefore upstream of that
-proposition, whose own conclusion is flatness of restriction maps. -/
+The presenting algebra is the trivial-weight one, `A⟨X₁, …, Xₖ⟩`, which is what makes this
+*strict* topological finite type rather than the weaker notion of Definition 6.29. -/
 theorem isStrictlyTopologicallyFiniteType_toCompletionLoc [IsTateRing A]
     [(nhds (0 : A)).IsCountablyGenerated] {k : ℕ}
     (t : Fin k → A) (ht : ∀ i, t i ∈ T) (hspan : Ideal.span (insert s (Set.range t)) = ⊤)

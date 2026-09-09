@@ -82,11 +82,13 @@ theorem isStronglyNoetherian_completion_self (P : PairOfDefinition A) (T : Finse
 numerators which together with the denominator `s` generate the unit ideal, and whose fractions
 cover those of `T`.
 
-This is the strong noetherianity that Wedhorn's Proposition 8.30 consumes, not that
-proposition's own conclusion, which is flatness of restriction maps.
-`Laurent/Flat.lean` records the gap it closes: the flatness results there ask strong
-noetherianity of `A⟨T/s⟩` rather than of `A`, and nothing derived the one from the other. Now
-`A` strongly noetherian suffices. -/
+Strong noetherianity does not pass to arbitrary algebras, so it has to be propagated along a
+map with enough structure. Here that map is the presentation: under these hypotheses `A⟨T/s⟩` is
+strictly topologically of finite type over `A`
+(`TauCeti.Huber.PairOfDefinition.isStrictlyTopologicallyFiniteType_toCompletionLoc`), and
+`TauCeti.Huber.IsStrictlyTopologicallyFiniteType.isStronglyNoetherian` carries the property
+across such a presentation. Strong noetherianity of `A` alone therefore suffices — nothing is
+assumed of the localisation itself. -/
 theorem isStronglyNoetherian_completion [IsTateRing A]
     [IsStronglyNoetherian A] [(nhds (0 : A)).IsCountablyGenerated]
     (P : PairOfDefinition A) (T : Finset A) (s : A)
