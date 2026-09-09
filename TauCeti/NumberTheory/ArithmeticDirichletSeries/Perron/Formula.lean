@@ -239,25 +239,6 @@ theorem norm_truncatedPerron_LSeries_sub_sum_le (hx : 0 < x) (hc : 0 < c) (hT : 
     ← hA.tsum_sub hB]
   exact (norm_tsum_le_tsum_norm hDnorm).trans (Summable.tsum_le_tsum hstep hDnorm herr)
 
-/-- At the endpoint the kernel is `π⁻¹ arctan (T / c)`, so it never exceeds one in modulus,
-uniformly in the height.  This is the index the smoothed-step estimate excludes. -/
-private theorem norm_truncatedPerronKernel_one_le (hc : c ≠ 0) (T : ℝ) :
-    ‖truncatedPerronKernel 1 c T‖ ≤ 1 := by
-  rw [truncatedPerronKernel_one hc, Complex.norm_real, Real.norm_eq_abs, abs_mul, abs_inv,
-    abs_of_pos Real.pi_pos]
-  have harc : |Real.arctan (T / c)| ≤ π / 2 :=
-    abs_le.2 ⟨(Real.neg_pi_div_two_lt_arctan _).le, (Real.arctan_lt_pi_div_two _).le⟩
-  have hpi : (0 : ℝ) < π := Real.pi_pos
-  rw [inv_mul_le_iff₀ hpi]
-  linarith
-
-/-- The sharp step never exceeds one in modulus. -/
-private theorem norm_perronStep_le_one (y : ℝ) : ‖perronStep y‖ ≤ 1 := by
-  rcases lt_trichotomy y 1 with hy | rfl | hy
-  · rw [perronStep_of_lt_one hy]; simp
-  · rw [perronStep_one]; norm_num
-  · rw [perronStep_of_one_lt hy]; simp
-
 /-- Uniformly in heights `T ≥ 1`, the truncated Perron kernel at a positive ratio `y` is bounded by
 the smoothed-step error at `y`, together with `1` once `y` exceeds `1 / 2`.  Above `1 / 2` the sharp
 step may be nonzero and contributes that `1`; below it the step vanishes and the error alone
