@@ -174,11 +174,13 @@ theorem normCoeff_map {L : Type*} [Field L] [NumberField L] (e : K ≃+* L)
   refine Finset.sum_nbij'
     (fun J ↦ ⟨Ideal.comap (RingOfIntegers.mapRingEquiv e) (J : Ideal (𝓞 L)),
       mem_nonZeroDivisors_of_ne_zero (by
-        simpa [IdealArithmeticFunction.comap_mapRingEquiv_eq_bot_iff] using
+        simpa [← Ideal.map_symm, Ideal.map_eq_bot_iff_of_injective
+          (RingOfIntegers.mapRingEquiv e).symm.injective] using
           nonZeroDivisors.coe_ne_zero J)⟩)
     (fun I ↦ ⟨Ideal.comap (RingOfIntegers.mapRingEquiv e.symm) (I : Ideal (𝓞 K)),
       mem_nonZeroDivisors_of_ne_zero (by
-        simpa [IdealArithmeticFunction.comap_mapRingEquiv_eq_bot_iff] using
+        simpa [← Ideal.map_symm, Ideal.map_eq_bot_iff_of_injective
+          (RingOfIntegers.mapRingEquiv e.symm).symm.injective] using
           nonZeroDivisors.coe_ne_zero I)⟩)
     ?_ ?_ ?_ ?_ ?_ <;> intro a ha
   · simpa [mem_normFiber, Ideal.absNorm_comap_of_ringEquiv] using (mem_normFiber L).1 ha
