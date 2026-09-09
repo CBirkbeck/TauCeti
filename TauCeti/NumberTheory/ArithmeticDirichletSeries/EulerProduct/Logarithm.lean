@@ -8,7 +8,6 @@ module
 public import TauCeti.Analysis.SpecialFunctions.Complex.LogBounds
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Analytic
 
-import Mathlib.Analysis.SpecialFunctions.Complex.LogBounds
 import Mathlib.NumberTheory.EulerProduct.ExpLog
 
 /-!
