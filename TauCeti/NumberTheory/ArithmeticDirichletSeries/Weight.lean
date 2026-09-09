@@ -8,9 +8,9 @@ module
 public import Mathlib.Algebra.CharZero.Infinite
 public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Basic
 public import TauCeti.RingTheory.DedekindDomain.Ideal
+public import TauCeti.RingTheory.Ideal.Norm.AbsNorm
 
 /-!
 # Completely multiplicative ideal weights
@@ -465,13 +465,6 @@ private theorem asIdeal_equivOfRingEquiv_symm (e : K ≃+* L) (𝔮 : HeightOneS
     ((HeightOneSpectrum.equivOfRingEquiv (RingOfIntegers.mapRingEquiv e)).symm 𝔮).asIdeal =
       Ideal.comap (RingOfIntegers.mapRingEquiv e) 𝔮.asIdeal := rfl
 
-private theorem absNorm_comap_mapRingEquiv (e : K ≃+* L) (I : Ideal (𝓞 L)) :
-    Ideal.absNorm (Ideal.comap (RingOfIntegers.mapRingEquiv e) I) = Ideal.absNorm I := by
-  rw [Ideal.absNorm_apply, Ideal.absNorm_apply, Submodule.cardQuot_apply,
-    Submodule.cardQuot_apply]
-  exact Nat.card_congr (Ideal.quotientEquiv _ _ (RingOfIntegers.mapRingEquiv e)
-    (Ideal.map_comap_eq_self_of_equiv (RingOfIntegers.mapRingEquiv e) I).symm)
-
 /-- **Transport along an isomorphism of fields.** An isomorphism `e : K ≃+* L` carries a
 multiplicative ideal weight on `K` to one on `L`, by pulling ideals of `𝓞 L` back to `𝓞 K`
 along `NumberField.RingOfIntegers.mapRingEquiv e`. -/
@@ -585,7 +578,7 @@ theorem map_normTwist (e : K ≃+* L) (z : ℂ) (χ : MultiplicativeIdealWeight 
     map e (normTwist z χ) = normTwist z (map e χ) := by
   ext I
   rw [map_apply, normTwist_apply, normTwist_apply, map_apply,
-    absNorm_comap_mapRingEquiv]
+    Ideal.absNorm_comap_of_ringEquiv]
 
 end Transport
 
