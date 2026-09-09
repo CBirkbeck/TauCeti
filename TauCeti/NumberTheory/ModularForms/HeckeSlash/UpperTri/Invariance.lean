@@ -170,12 +170,21 @@ theorem exists_mem_Gamma0_upperTriRep_mul [NeZero p] {γ : SL(2, ℤ)} (hγp : �
     linear_combination (-((γ 0 1 : ℤ) : ZMod p)
       - ((j : ℕ) : ZMod p) * ((γ 1 1 : ℤ) : ZMod p)) * had
   obtain ⟨b', hb'⟩ := hdvd
+  set j' := upperTriShift p γ j with hj'
   have hdet' : (!![γ 0 0 + (j : ℕ) * γ 1 0, b';
-      (p : ℤ) * γ 1 0, γ 1 1 - γ 1 0 * ((upperTriShift p γ j : ℕ) : ℤ)]).det = 1 := by
+      (p : ℤ) * γ 1 0, γ 1 1 - γ 1 0 * ((j' : ℕ) : ℤ)]).det = 1 := by
     rw [Matrix.det_fin_two_of]
     linear_combination hdet + (γ 1 0 : ℤ) * hb'
-  exact ⟨⟨_, hdet'⟩, Gamma0_mem.mpr hpc, rfl,
-    upperTriRep_mul_mapGL_eq _ _ _ _ rfl hb'.symm rfl rfl⟩
+  -- the witness, with its four entries read off once, so that nothing below depends on how the
+  -- `SL(2, ℤ)` subtype and the matrix literal reduce
+  set γ' : SL(2, ℤ) := ⟨_, hdet'⟩ with hγ'
+  have e00 : γ' 0 0 = γ 0 0 + (j : ℕ) * γ 1 0 := by simp [hγ']
+  have e01 : γ' 0 1 = b' := by simp [hγ']
+  have e10 : γ' 1 0 = (p : ℤ) * γ 1 0 := by simp [hγ']
+  have e11 : γ' 1 1 = γ 1 1 - γ 1 0 * ((j' : ℕ) : ℤ) := by simp [hγ']
+  refine ⟨γ', Gamma0_mem.mpr ?_, e11, upperTriRep_mul_mapGL_eq _ _ _ _ e00 ?_ e10 e11⟩
+  · rw [e10]; exact hpc
+  · rw [e01]; exact hb'.symm
 
 /-- **The upper-triangular sum is `Γ₀(N)`-equivariant at `p ∣ N`.** The hypothesis is imposed
 only at matrices of `Γ₀(N)` with the same lower-right entry modulo `N` as `γ`, which is all the
