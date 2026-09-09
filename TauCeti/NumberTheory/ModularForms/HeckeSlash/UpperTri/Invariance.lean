@@ -63,6 +63,7 @@ alone is *not* invariant.
 
 * `HeckeRing.GL2.mul_upperTriShift_natCast`: it solves `(a + jc) j' ≡ b + jd (mod p)` whenever
   `a + jc` is invertible.
+* `HeckeRing.GL2.upperTriShift_eq_iff`: and it is the only solution in `[0, p)`.
 * `HeckeRing.GL2.upperTriShift_natCast_of_mem_Gamma0`: on `Γ₀(p)` it is `j ↦ d b + j d² mod p`.
 * `HeckeRing.GL2.upperTriShift_bijective`: on `Γ₀(p)` it is a bijection of `Fin p`.
 * `HeckeRing.GL2.exists_mem_Gamma0_upperTriRep_mul_of_isUnit`: the factorisation
@@ -135,6 +136,22 @@ lemma mul_upperTriShift_natCast [NeZero p] {γ : SL(2, ℤ)} {j : Fin p}
     ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p) * ((upperTriShift p γ j : ℕ) : ZMod p)
       = ((γ 0 1 + (j : ℕ) * γ 1 1 : ℤ) : ZMod p) := by
   rw [upperTriShift_natCast, ← mul_assoc, ZMod.mul_inv_of_unit _ hA, one_mul]
+
+/-- **The offset map is the *only* solution.** Under invertibility of `a + j c`, an offset `j'`
+in `[0, p)` solves `(a + j c) j' ≡ b + j d (mod p)` exactly when it is `upperTriShift p γ j`.
+This is the elimination half of the characteristic API: `mul_upperTriShift_natCast` says the map
+solves the congruence, and this says nothing else does. -/
+lemma upperTriShift_eq_iff [NeZero p] {γ : SL(2, ℤ)} {j j' : Fin p}
+    (hA : IsUnit (((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p))) :
+    upperTriShift p γ j = j' ↔
+      ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p) * ((j' : ℕ) : ZMod p)
+        = ((γ 0 1 + (j : ℕ) * γ 1 1 : ℤ) : ZMod p) := by
+  refine ⟨fun h ↦ h ▸ mul_upperTriShift_natCast hA, fun h ↦ ?_⟩
+  have hcancel : ((upperTriShift p γ j : ℕ) : ZMod p) = ((j' : ℕ) : ZMod p) :=
+    hA.mul_left_cancel ((mul_upperTriShift_natCast hA).trans h.symm)
+  exact Fin.val_injective (by
+    simpa [ZMod.val_natCast_of_lt (upperTriShift p γ j).isLt, ZMod.val_natCast_of_lt j'.isLt]
+      using congrArg ZMod.val hcancel)
 
 /-- On `Γ₀(p)` the entry `a + j c` collapses to `a`, because `c ≡ 0`. Stated with the casts
 already distributed, since that — not the cast of the sum — is the `simp` normal form. -/
