@@ -48,8 +48,6 @@ of a convergent series of nonnegative terms must become arbitrarily small.
 * `TauCeti.summable_idealTerm_of_bounded_of_one_lt_re`: a uniformly bounded weight has an
   absolutely convergent ideal-indexed Dirichlet series on `Re s > 1`, and
   `TauCeti.summable_idealTerm_of_unitary_of_one_lt_re` is its unitary specialization.
-* `TauCeti.summable_log_mul_norm_idealTerm_of_re_lt_re`: weighting the ideal terms by
-  `log N(I)` keeps them summable strictly to the right of a point of absolute convergence.
 
 ## Implementation notes
 
@@ -496,40 +494,5 @@ theorem LSeriesSummable_dedekindZetaCoeff_iff {s : ℂ} :
     LSeriesSummable (fun n ↦ (dedekindZetaCoeff K n : ℂ)) s ↔ 1 < s.re := by
   rw [← LSeriesSummable_normCoeff_one_iff K]
   exact LSeriesSummable_congr s fun {n} hn ↦ by rw [normCoeff_one_apply, ite_eq_right hn]
-
-/-- **Log-weighted ideal terms stay summable strictly to the right.** If the ideal-indexed
-Dirichlet series of `f` converges absolutely at `s`, then weighting each term by `log N(I)` leaves
-it summable at every `s'` with `Re s < Re s'`.
-
-This is the ideal-indexed counterpart of Mathlib's `LSeriesSummable_logMul_of_lt_re`. The
-logarithmic weight is what appears when the terms of such a series are differentiated in `s`, so
-this is the dominating bound a termwise differentiation argument runs on; the strict inequality is
-needed, since at `Re s' = Re s` the weight can destroy summability. -/
-theorem summable_log_mul_norm_idealTerm_of_re_lt_re {K : Type*} [Field K] [NumberField K]
-    {f : IdealArithmeticFunction K} {s s' : ℂ} (h : s.re < s'.re)
-    (hs : Summable (idealTerm K f s)) :
-    Summable fun I : (Ideal (𝓞 K))⁰ ↦
-      Real.log (Ideal.absNorm (I : Ideal (𝓞 K))) * ‖idealTerm K f s' I‖ := by
-  have hδ : 0 < s'.re - s.re := sub_pos.2 h
-  refine Summable.of_nonneg_of_le (fun I ↦ ?_) (fun I ↦ ?_)
-    ((summable_norm_iff.2 hs).mul_left (s'.re - s.re)⁻¹)
-  · have h1 : (1:ℝ) ≤ (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) := by
-      exact_mod_cast Ideal.absNorm_pos_of_nonZeroDivisors I
-    exact mul_nonneg (Real.log_nonneg h1) (norm_nonneg _)
-  · have hN : (0:ℝ) < (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) := by
-      exact_mod_cast Ideal.absNorm_pos_of_nonZeroDivisors I
-    rw [norm_idealTerm, norm_idealTerm]
-    -- `log x ≤ x ^ δ / δ` with `δ = Re s' - Re s`; the extra `N(I) ^ δ` is exactly what turns the
-    -- term at `s'` into the term at `s`.
-    have hlog := Real.log_le_rpow_div hN.le hδ
-    rw [Real.rpow_sub hN] at hlog
-    calc Real.log (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ)
-            * (‖f I‖ / (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ^ s'.re)
-        ≤ ((Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ^ s'.re
-            / (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ^ s.re / (s'.re - s.re))
-            * (‖f I‖ / (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ^ s'.re) := by
-          gcongr
-      _ = (s'.re - s.re)⁻¹ * (‖f I‖ / (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ^ s.re) := by
-          field_simp
 
 end TauCeti
