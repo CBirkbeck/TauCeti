@@ -12,6 +12,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Analysis.Complex.Order
 public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 public import TauCeti.RingTheory.Ideal.Norm.AbsNorm
+import TauCeti.NumberTheory.NumberField.RingOfIntegers.Transport
 
 /-!
 # Regrouping ideal arithmetic functions by absolute norm
@@ -25,7 +26,9 @@ is available from `ArithmeticFunction.map_zero`.
 The construction is bundled as a complex-linear map.  The basic API exposes the finite norm fibre
 `TauCeti.normFiber` and its finiteness, records the value at one, proves compatibility with
 complex conjugation, and records in `TauCeti.norm_normCoeff_eq_sum_norm_of_nonneg` that no
-cancellation occurs inside a fibre when the values of `f` are nonnegative.
+cancellation occurs inside a fibre when the values of `f` are nonnegative.  Regrouping is
+compatible with transporting along an isomorphism of number fields: `TauCeti.normCoeff_map` says
+that an isomorphism `e : K ≃+* L` leaves every norm coefficient unchanged.
 
 Regrouping loses information as soon as a norm fibre has more than one element:
 `TauCeti.exists_forall_normCoeff_nonneg_not_forall_nonneg` produces a nonzero ideal arithmetic
@@ -174,23 +177,19 @@ theorem normCoeff_map {L : Type*} [Field L] [NumberField L] (e : K ≃+* L)
   refine Finset.sum_nbij'
     (fun J ↦ ⟨Ideal.comap (RingOfIntegers.mapRingEquiv e) (J : Ideal (𝓞 L)),
       mem_nonZeroDivisors_of_ne_zero (by
-        simpa [← Ideal.map_symm, Ideal.map_eq_bot_iff_of_injective
-          (RingOfIntegers.mapRingEquiv e).symm.injective] using
-          nonZeroDivisors.coe_ne_zero J)⟩)
+        simpa [Ideal.comap_mapRingEquiv_eq_bot_iff] using nonZeroDivisors.coe_ne_zero J)⟩)
     (fun I ↦ ⟨Ideal.comap (RingOfIntegers.mapRingEquiv e.symm) (I : Ideal (𝓞 K)),
       mem_nonZeroDivisors_of_ne_zero (by
-        simpa [← Ideal.map_symm, Ideal.map_eq_bot_iff_of_injective
-          (RingOfIntegers.mapRingEquiv e.symm).symm.injective] using
-          nonZeroDivisors.coe_ne_zero I)⟩)
+        simpa [Ideal.comap_mapRingEquiv_eq_bot_iff] using nonZeroDivisors.coe_ne_zero I)⟩)
     ?_ ?_ ?_ ?_ ?_ <;> intro a ha
   · simpa [mem_normFiber, Ideal.absNorm_comap_of_ringEquiv] using (mem_normFiber L).1 ha
   · simpa [mem_normFiber, Ideal.absNorm_comap_of_ringEquiv] using (mem_normFiber K).1 ha
   · ext
-    simp [IdealArithmeticFunction.comap_mapRingEquiv_trans, RingEquiv.symm_trans_self,
-      IdealArithmeticFunction.comap_mapRingEquiv_refl]
+    simp [Ideal.comap_mapRingEquiv_trans, RingEquiv.symm_trans_self,
+      Ideal.comap_mapRingEquiv_refl]
   · ext
-    simp [IdealArithmeticFunction.comap_mapRingEquiv_trans, RingEquiv.self_trans_symm,
-      IdealArithmeticFunction.comap_mapRingEquiv_refl]
+    simp [Ideal.comap_mapRingEquiv_trans, RingEquiv.self_trans_symm,
+      Ideal.comap_mapRingEquiv_refl]
   · rw [IdealArithmeticFunction.map_apply, ← IdealArithmeticFunction.zeroExtend_coe f]
 
 /-- **Absence of cancellation inside norm fibres**, for a nonnegative ideal arithmetic function:
