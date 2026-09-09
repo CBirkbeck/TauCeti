@@ -8,6 +8,8 @@ module
 public import Mathlib.Data.Nat.Choose.Multinomial
 public import Mathlib.Geometry.Convex.ConvexSpace.Defs
 public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 
 /-!
 # The multinomial distribution
@@ -33,6 +35,8 @@ numbers summing to one.
 * `TauCeti.Probability.multinomialMeasure_singleton`: the exact singleton mass.
 * `TauCeti.Probability.multinomialMeasure_singleton_ne_zero_iff`: the exact support.
 * `TauCeti.Probability.integral_multinomialMeasure`: integration as a finite weighted sum.
+* `TauCeti.Probability.multinomialToEuclidean`: the cast of count vectors into Euclidean space,
+  the carrier of the law's mean, covariance and transforms.
 
 ## References
 
@@ -59,6 +63,13 @@ It is indexed by cell weights `w` and a count vector `k`.  The weights need not 
 the multinomial measure specializes them to the weights of a probability vector. -/
 def multinomialWeightReal (w : ι → NNReal) (k : ι → ℕ) : ℝ :=
   (Nat.multinomial Finset.univ k : ℝ) * ∏ i, (w i : ℝ) ^ k i
+
+-- The parentheses in `(rfl)` opt out of the exported-theorem exposure check, so that the
+-- defining formula can be stated without exposing the body of `multinomialWeightReal`.
+/-- The defining formula of the real multinomial weight, for use across module boundaries. -/
+theorem multinomialWeightReal_def (w : ι → NNReal) (k : ι → ℕ) :
+    multinomialWeightReal w k = (Nat.multinomial Finset.univ k : ℝ) * ∏ i, (w i : ℝ) ^ k i :=
+  (rfl)
 
 /-- Every real multinomial weight is nonnegative. -/
 theorem multinomialWeightReal_nonneg (w : ι → NNReal) (k : ι → ℕ) :
@@ -259,6 +270,24 @@ theorem integral_multinomialMeasure {E : Type*} [NormedAddCommGroup E] [NormedSp
   · simp
   · exact fun k _ ↦
       (integrable_dirac (by simp)).smul_measure (multinomialWeight_ne_top p.weights k)
+
+/-- The count vector cast into Euclidean space. -/
+def multinomialToEuclidean (k : ι → ℕ) : EuclideanSpace ℝ ι :=
+  (EuclideanSpace.equiv ι ℝ).symm fun i => (k i : ℝ)
+
+omit [Fintype ι] in
+/-- The coordinates of the cast are the counts, as reals. -/
+@[simp]
+theorem multinomialToEuclidean_apply (k : ι → ℕ) (i : ι) :
+    multinomialToEuclidean k i = (k i : ℝ) := (rfl)
+
+omit [Fintype ι] in
+/-- The cast of count vectors into Euclidean space is measurable. -/
+theorem measurable_multinomialToEuclidean [Finite ι] :
+    Measurable (multinomialToEuclidean (ι := ι)) := by
+  have := Fintype.ofFinite ι
+  refine (EuclideanSpace.equiv ι ℝ).symm.continuous.measurable.comp ?_
+  exact Measurable.of_eval fun i => measurable_from_nat.comp (measurable_pi_apply i)
 
 end Probability
 
