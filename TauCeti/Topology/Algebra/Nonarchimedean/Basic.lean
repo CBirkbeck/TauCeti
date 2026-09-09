@@ -8,7 +8,7 @@ module
 public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
 
 /-!
-# Transporting a nonarchimedean topology along an open homomorphism
+# Transporting a nonarchimedean topology to a quotient or a subobject
 
 `NonarchimedeanGroup G` asks that every neighbourhood of `1` contain an *open subgroup*. That
 property passes to the target of any open homomorphism that is continuous at `1`: the image of an
@@ -26,10 +26,21 @@ which additionally requires `[IsTopologicalGroup H]` — not for the argument, b
 conclusion. Consumers wanting the instance use the second; consumers wanting the property under
 minimal hypotheses use the first.
 
+The file also records the *sub*object direction, which is the opposite transport and needs no
+openness at all: a subgroup or subring carries the subspace topology, and an open subgroup of the
+ambient group meets it in an open subgroup. Mathlib has neither — its only nonarchimedean
+instances are for products and for the adic topology — and its
+`NonarchimedeanGroup.nonarchimedean_of_emb` does not give them, since it asks the inclusion to be
+an *open* embedding, which a subgroup's need not be.
+
 ## Main results
 
 * `NonarchimedeanGroup.exists_openSubgroup_subset_of_isOpenMap`, and its additive form
   `NonarchimedeanAddGroup.exists_openAddSubgroup_subset_of_isOpenMap`.
+* `Subgroup.instNonarchimedeanGroup` and `Subring.instNonarchimedeanRing`: a subgroup of a
+  nonarchimedean group, and a subring of a nonarchimedean ring, are nonarchimedean in the subspace
+  topology. These are what put a nonarchimedean structure on the ring of definition of a rational
+  localisation.
 * `NonarchimedeanGroup.nonarchimedean_of_isOpenMap`, and its additive form
   `NonarchimedeanAddGroup.nonarchimedean_of_isOpenMap`.
 -/

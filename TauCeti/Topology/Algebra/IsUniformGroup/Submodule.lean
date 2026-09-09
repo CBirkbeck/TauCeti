@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Algebra.Module.Submodule.Defs
-public import Mathlib.Algebra.Ring.Subring.Defs
 public import Mathlib.Topology.Algebra.IsUniformGroup.Basic
 
 /-!
@@ -70,19 +69,4 @@ instance isCountablyGenerated_uniformity {A M : Type*} [Semiring A] [AddCommMono
 
 end Submodule
 
-namespace Subring
 
-/-- **A subring of a uniform additive group is a uniform additive group.** This is Mathlib's
-`AddSubgroup.isUniformAddGroup` at `S.toAddSubgroup`, which typeclass search does not reach from a
-`Subring` — the same keying gap `Submodule.isUniformAddGroup` above fills for submodules. -/
-instance isUniformAddGroup {R : Type*} [Ring R] [UniformSpace R] [IsUniformAddGroup R]
-    (S : Subring R) : IsUniformAddGroup S :=
-  inferInstanceAs (IsUniformAddGroup S.toAddSubgroup)
-
-/-- **A subring inherits a countably generated uniformity**, its uniformity being the one comapped
-along the inclusion. -/
-instance isCountablyGenerated_uniformity {R : Type*} [Ring R] [UniformSpace R]
-    [(𝓤 R).IsCountablyGenerated] (S : Subring R) : (𝓤 S).IsCountablyGenerated :=
-  inferInstanceAs ((𝓤 (S : Set R)).IsCountablyGenerated)
-
-end Subring

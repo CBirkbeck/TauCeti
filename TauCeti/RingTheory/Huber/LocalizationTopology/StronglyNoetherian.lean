@@ -7,6 +7,7 @@ module
 
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Restriction
 public import TauCeti.RingTheory.Huber.StronglyNoetherian
+public import TauCeti.RingTheory.Huber.LocalizationTopology.Evaluation
 
 import TauCeti.RingTheory.Huber.LocalizationTopology.Presentation
 
@@ -76,6 +77,44 @@ theorem isStronglyNoetherian_completion_self (P : PairOfDefinition A) (T : Finse
       (restrictionRingHomOfSubset_comp_toCompletionLoc P T s S' hden' T S hden fun _ hu ↦ hu))
     (continuous_presentationRingEquiv P T s S hden T s S' hden' _ _ _ _ _ _)
     (continuous_presentationRingEquiv_symm P T s S hden T s S' hden' _ _ _ _ _ _)).mp hSN
+
+/-- **A rational localisation of a strongly noetherian Tate ring is strongly noetherian**, for
+numerators which together with the denominator `s` generate the unit ideal, and whose fractions
+cover those of `T`.
+
+This is the strong noetherianity that Wedhorn's Proposition 8.30 consumes, not that
+proposition's own conclusion, which is flatness of restriction maps.
+`Laurent/Flat.lean` records the gap it closes: the flatness results there ask strong
+noetherianity of `A⟨T/s⟩` rather than of `A`, and nothing derived the one from the other. Now
+`A` strongly noetherian suffices. -/
+theorem isStronglyNoetherian_completion [IsTateRing A]
+    [IsStronglyNoetherian A] [(nhds (0 : A)).IsCountablyGenerated]
+    (P : PairOfDefinition A) (T : Finset A) (s : A)
+    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) {k : ℕ}
+    (t : Fin k → A) (ht : ∀ i, t i ∈ T) (hspan : Ideal.span (insert s (Set.range t)) = ⊤)
+    (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
+      ⊆ Set.range fun i ↦ (divBy (t i) s : S)) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI : UniformContinuousConstSMul A S :=
+      uniformContinuousConstSMul_of_continuousConstSMul A S
+    letI : NonarchimedeanRing S := by
+      have h := nonarchimedeanRing_locTopology P T s S hden
+      rwa [← locUniformSpace_toTopologicalSpace P T s S hden] at h
+    IsStronglyNoetherian (UniformSpace.Completion S) := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  have _ := isHuberRing_locUniformSpace P T s S hden
+  let _ : UniformContinuousConstSMul A S :=
+    uniformContinuousConstSMul_of_continuousConstSMul A S
+  have _ : NonarchimedeanRing S := by
+    have h := nonarchimedeanRing_locTopology P T s S hden
+    rwa [← locUniformSpace_toTopologicalSpace P T s S hden] at h
+  exact (isStrictlyTopologicallyFiniteType_toCompletionLoc P T s S hden t ht hspan
+    hTt).isStronglyNoetherian
 
 end PairOfDefinition
 
