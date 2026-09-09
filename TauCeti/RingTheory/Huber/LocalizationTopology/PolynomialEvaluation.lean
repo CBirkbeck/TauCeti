@@ -39,9 +39,10 @@ None of the three implies another, so the bundled result carries all three hypot
   `TauCeti.Huber.polyEvalHom_weightedPolynomialsEquiv_apply` as its characteristic
   equation, and `TauCeti.Huber.PairOfDefinition.isOpenQuotientMap_polyEvalHom` bundling the three
   properties above.
-* `TauCeti.Huber.PairOfDefinition.exists_aeval_eq_of_mem_locIdealImage`: the `n`-th neighbourhood
-  of `Aₛ` consists of the values of polynomials whose coefficients lie in `Iⁿ`. This is what makes
-  the evaluation open.
+* `TauCeti.Huber.PairOfDefinition.exists_aeval_eq_of_mem_locIdealImage`: every element of the
+  `n`-th neighbourhood of `Aₛ` is the value of a polynomial whose coefficients lie in `Iⁿ`. This
+  direction is what makes the evaluation open; it is an existence statement, not a
+  characterisation.
 * the two directions of that characterisation in the `Fin k` indexing the evaluation uses,
   `TauCeti.Huber.PairOfDefinition.exists_polynomial_coeff_mem_idealImage` and
   `TauCeti.Huber.PairOfDefinition.aeval_mem_locIdealImage_of_coeff_mem`. Openness is proved from
@@ -127,8 +128,10 @@ private theorem exists_aeval_eq_of_mem_locSubring {d : S} (hd : d ∈ locSubring
   exact hd
 
 omit [NonarchimedeanRing A] in
-/-- **The `n`-th neighbourhood of `Aₛ` consists of values of polynomials with coefficients in
-`Iⁿ`.** This is what makes the polynomial evaluation an open map. -/
+/-- **Every element of the `n`-th neighbourhood of `Aₛ` is the value of a polynomial with
+coefficients in `Iⁿ`.** Only this direction is proved here; the converse, that every such value
+lies in the neighbourhood, is `TauCeti.Huber.PairOfDefinition.aeval_mem_locIdealImage_of_coeff_mem`
+in the `Fin k` indexing. This direction is what makes the polynomial evaluation an open map. -/
 theorem exists_aeval_eq_of_mem_locIdealImage (n : ℕ) {x : S}
     (hx : x ∈ locIdealImage P T s S n) :
     ∃ q ∈ Ideal.map (MvPolynomial.C (σ := ↥T)) (P.idealOfDefinition ^ n),
