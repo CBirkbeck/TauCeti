@@ -11,7 +11,8 @@ public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Analysis.Complex.Order
 public import Mathlib.NumberTheory.ArithmeticFunction.Defs
-public import TauCeti.RingTheory.Ideal.Norm.AbsNorm
+public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
+import TauCeti.RingTheory.Ideal.Norm.AbsNorm
 
 /-!
 # Regrouping ideal arithmetic functions by absolute norm
