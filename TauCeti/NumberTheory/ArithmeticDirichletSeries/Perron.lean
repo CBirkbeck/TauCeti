@@ -542,7 +542,8 @@ private theorem arctan_rectangle_sum_eq_two_mul_pi_mul_I (hc : 0 < c) (hB0 : 0 <
   push_cast
   linear_combination (2 * I) * hA + (2 * I) * hB
 
-/-- Each horizontal side of the rectangle contributes at most `x ^ c / (T * |log x|)`. -/
+/-- The horizontal side running from `a` to `c` at height `u ≠ 0` contributes at most
+`x ^ c / (|u| * |log x|)`, provided `1 < x` and `a ≤ c`. -/
 private theorem norm_integral_perronFn_horizontal_le_of_one_lt (hx1 : 1 < x) {a : ℝ}
     (hac : a ≤ c) {u : ℝ} (hu : u ≠ 0) :
     ‖∫ σ in a..c, perronFn x ((σ : ℂ) + u * I)‖ ≤ x ^ c / (|u| * |Real.log x|) := by

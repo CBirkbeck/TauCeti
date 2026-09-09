@@ -5,7 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.Topology.Algebra.Monoid
+public import Mathlib.Topology.Order.OrderClosed
 
 /-!
 # Bounds that hold up to a vanishing correction
@@ -27,6 +28,7 @@ open Filter Topology
 along `l`, and `e` tends to `0` along `l`, then `v ≤ K`.
 
 No sign condition on `v`, `K` or `e` is required. -/
-theorem Filter.Tendsto.le_of_eventually_le_add {ι : Type*} {l : Filter ι} [l.NeBot] {e : ι → ℝ}
-    (he : Tendsto e l (𝓝 0)) {v K : ℝ} (h : ∀ᶠ i in l, v ≤ K + e i) : v ≤ K :=
+theorem Filter.Tendsto.le_of_eventually_le_add {ι α : Type*} [TopologicalSpace α] [Preorder α]
+    [ClosedIciTopology α] [AddZeroClass α] [ContinuousAdd α] {l : Filter ι} [l.NeBot] {e : ι → α}
+    (he : Tendsto e l (𝓝 0)) {v K : α} (h : ∀ᶠ i in l, v ≤ K + e i) : v ≤ K :=
   ge_of_tendsto (by simpa using tendsto_const_nhds.add he) h
