@@ -54,7 +54,10 @@ alone is *not* invariant.
 
 * `HeckeRing.GL2.upperTriShift_bijective`: it is a bijection of `Fin p`.
 * `HeckeRing.GL2.exists_mem_Gamma0_upperTriRep_mul`: the factorisation
-  `!![1, j; 0, p] · γ = γ' · !![1, j'; 0, p]` with `γ' ∈ Γ₀(N)` of the same `Gamma0Map` value.
+  `!![1, j; 0, p] · γ = γ' · !![1, j'; 0, p]` with `γ' ∈ Γ₀(N)`, from the two memberships the
+  argument consumes — `γ ∈ Γ₀(p)` and `γ ∈ Γ₀(N / p)`.
+* `HeckeRing.GL2.exists_mem_Gamma0_upperTriRep_mul_of_mem_Gamma0`: its specialisation to
+  `γ ∈ Γ₀(N)`, where `γ'` has the same `Gamma0Map` value.
 * `HeckeRing.GL2.heckeSlashUpperTri_slash_mapGL_of_mem_Gamma0`: the equivariance, stated with an
   arbitrary scalar so that both corollaries below are instances of it.
 * `HeckeRing.GL2.heckeSlashUpperTri_slash_mapGL_of_mem_Gamma1`: the sum of a `Γ₁(N)`-invariant
@@ -135,19 +138,35 @@ private lemma upperTriRep_mul_mapGL_eq {p : ℕ} (j j' : Fin p) (γ γ' : SL(2, 
     [linear_combination -c00; linear_combination -c01 - ((j' : ℕ) : ℚ) * c00;
       linear_combination -c10; linear_combination -((j' : ℕ) : ℚ) * c10 - (p : ℚ) * c11]
 
-/-- **The coset factorisation.** For `p ∣ N` and `γ ∈ Γ₀(N)`, the product
-`!![1, j; 0, p] · γ` factors as `γ' · !![1, j'; 0, p]` with `γ' ∈ Γ₀(N)` and `j'` the shifted
-offset. The new lower-right entry is congruent to the old one modulo `N`, so `γ'` has the same
-`Gamma0Map` value as `γ`: this is what makes the equivariance below carry a fixed character. -/
+/-- **The coset factorisation.** The product `!![1, j; 0, p] · γ` factors as
+`γ' · !![1, j'; 0, p]` with `γ' ∈ Γ₀(N)` and `j'` the shifted offset, and the new lower-right
+entry is `d - c j'`.
+
+The two hypotheses are what the factorisation actually consumes, and they are weaker than
+`γ ∈ Γ₀(N)`: `γ ∈ Γ₀(p)` makes `d` a unit modulo `p`, so the offset map is defined and
+bijective, while `γ ∈ Γ₀(N / p)` is exactly `N ∣ p c`, which is what puts the lower-left entry
+`p c` of `γ'` back in `Γ₀(N)`. A `γ ∈ Γ₀(N)` satisfies both (`Γ₀(N) ≤ Γ₀(p)` and
+`Γ₀(N) ≤ Γ₀(N / p)`), and so does a `γ ∈ Γ₀(N / p)` once `p² ∣ N` — the level-descent case,
+where `γ` ranges over the *larger* group at the lowered level.
+
+The lower-right entry is given as an equation rather than as a congruence because the modulus
+at which it is useful varies with the caller;
+`exists_mem_Gamma0_upperTriRep_mul_of_mem_Gamma0` reads off the congruence modulo `N` that the
+equivariance below needs. -/
 theorem exists_mem_Gamma0_upperTriRep_mul [NeZero p] (hpN : p ∣ N) {γ : SL(2, ℤ)}
-    (hγ : γ ∈ Gamma0 N) (j : Fin p) :
-    ∃ γ' : SL(2, ℤ), γ' ∈ Gamma0 N ∧ ((γ' 1 1 : ℤ) : ZMod N) = ((γ 1 1 : ℤ) : ZMod N) ∧
+    (hγp : γ ∈ Gamma0 p) (hγd : γ ∈ Gamma0 (N / p)) (j : Fin p) : ∃ γ' : SL(2, ℤ), γ' ∈ Gamma0 N ∧
+      (γ' 1 1 : ℤ) = γ 1 1 - γ 1 0 * ((upperTriShift p γ j : ℕ) : ℤ) ∧
       upperTriRep p j * mapGL ℚ γ = mapGL ℚ γ' * upperTriRep p (upperTriShift p γ j) := by
   have hdet : γ 0 0 * γ 1 1 - γ 0 1 * γ 1 0 = 1 :=
     Matrix.SpecialLinearGroup.fin_two_mul_sub_mul_eq_one γ
-  have hcN : ((γ 1 0 : ℤ) : ZMod N) = 0 := Gamma0_mem.mp hγ
-  have hγp : γ ∈ Gamma0 p := Gamma0_le_Gamma0_of_dvd hpN hγ
   have had := intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0 hγp
+  -- `N ∣ p c`, from `(N / p) ∣ c` and `p · (N / p) = N`
+  have hpc : (((p : ℤ) * γ 1 0 : ℤ) : ZMod N) = 0 := by
+    refine (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mpr ?_
+    have hpNp : (N : ℤ) = (p : ℤ) * ((N / p : ℕ) : ℤ) := by
+      exact_mod_cast (Nat.mul_div_cancel' hpN).symm
+    rw [hpNp]
+    exact mul_dvd_mul_left _ ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hγd))
   -- the entry `b'` is an integer: the congruence `a j' ≡ b + j d (mod p)` is exactly `p ∣ …`
   have hdvd : (p : ℤ) ∣ γ 0 1 + (j : ℕ) * γ 1 1
       - (γ 0 0 + (j : ℕ) * γ 1 0) * ((upperTriShift p γ j : ℕ) : ℤ) := by
@@ -162,15 +181,23 @@ theorem exists_mem_Gamma0_upperTriRep_mul [NeZero p] (hpN : p ∣ N) {γ : SL(2,
       (p : ℤ) * γ 1 0, γ 1 1 - γ 1 0 * ((upperTriShift p γ j : ℕ) : ℤ)]).det = 1 := by
     rw [Matrix.det_fin_two_of]
     linear_combination hdet + (γ 1 0 : ℤ) * hb'
-  refine ⟨⟨_, hdet'⟩, Gamma0_mem.mpr ?_, ?_,
+  exact ⟨⟨_, hdet'⟩, Gamma0_mem.mpr hpc, rfl,
     upperTriRep_mul_mapGL_eq _ _ _ _ rfl hb'.symm rfl rfl⟩
-  -- Unfold the two relevant projections of the explicitly displayed `SL(2, ℤ)` witness.
-  · change (((p : ℤ) * γ 1 0 : ℤ) : ZMod N) = 0
-    rw [Int.cast_mul, hcN, mul_zero]
-  · change (((γ 1 1 - γ 1 0 * ((upperTriShift p γ j : ℕ) : ℤ) : ℤ)) : ZMod N) = _
-    push_cast
-    rw [hcN]
-    ring
+
+/-- **The coset factorisation at `γ ∈ Γ₀(N)`**, with the lower-right entry read as a congruence
+modulo `N`: `γ'` then has the same `Gamma0Map` value as `γ`, which is what makes the
+equivariance below carry a fixed character. -/
+theorem exists_mem_Gamma0_upperTriRep_mul_of_mem_Gamma0 [NeZero p] (hpN : p ∣ N) {γ : SL(2, ℤ)}
+    (hγ : γ ∈ Gamma0 N) (j : Fin p) :
+    ∃ γ' : SL(2, ℤ), γ' ∈ Gamma0 N ∧ ((γ' 1 1 : ℤ) : ZMod N) = ((γ 1 1 : ℤ) : ZMod N) ∧
+      upperTriRep p j * mapGL ℚ γ = mapGL ℚ γ' * upperTriRep p (upperTriShift p γ j) := by
+  obtain ⟨γ', hγ', hdd, hmul⟩ := exists_mem_Gamma0_upperTriRep_mul hpN
+    (Gamma0_le_Gamma0_of_dvd hpN hγ) (Gamma0_le_Gamma0_of_dvd (Nat.div_dvd_of_dvd hpN) hγ) j
+  refine ⟨γ', hγ', ?_, hmul⟩
+  rw [hdd]
+  push_cast
+  rw [Gamma0_mem.mp hγ]
+  ring
 
 /-- **The upper-triangular sum is `Γ₀(N)`-equivariant at `p ∣ N`.** The hypothesis is imposed
 only at matrices of `Γ₀(N)` with the same lower-right entry modulo `N` as `γ`, which is all the
@@ -186,7 +213,7 @@ theorem heckeSlashUpperTri_slash_mapGL_of_mem_Gamma0 (k : ℤ) [NeZero p] (hpN :
   have key : ∀ j : Fin p,
       (f ∣[k] (upperTriRep p j : GL (Fin 2) ℚ)) ∣[k] (mapGL ℚ γ : GL (Fin 2) ℚ)
         = u • (f ∣[k] (upperTriRep p (upperTriShift p γ j) : GL (Fin 2) ℚ)) := fun j ↦ by
-    obtain ⟨γ', hγ', hdd, hmul⟩ := exists_mem_Gamma0_upperTriRep_mul hpN hγ j
+    obtain ⟨γ', hγ', hdd, hmul⟩ := exists_mem_Gamma0_upperTriRep_mul_of_mem_Gamma0 hpN hγ j
     rw [← SlashAction.slash_mul, hmul, SlashAction.slash_mul, hf γ' hγ' hdd,
       ModularForm.rat_smul_slash_of_det_pos k (det_upperTriRep_pos p _) f u]
   rw [Finset.sum_congr rfl fun j _ ↦ key j]
