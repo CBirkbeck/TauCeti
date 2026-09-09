@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Data.Nat.DvdDiv
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Cosets
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Invariance
 
@@ -83,16 +82,16 @@ def descendShift (p N : ℕ) [NeZero p] (hpsq : p ^ 2 ∣ N) (γ : SL(2, ℤ))
   Equiv.apply_symm_apply (finCongr (descendMatrixCount_of_sq_dvd hpsq)) _
 
 /-- The same, on underlying naturals, which is the form the `descendMatrix` branches read. -/
-theorem descendShift_val [NeZero p] (hpsq : p ^ 2 ∣ N) (γ : SL(2, ℤ))
+@[simp] theorem descendShift_val [NeZero p] (hpsq : p ^ 2 ∣ N) (γ : SL(2, ℤ))
     {v : Fin (descendMatrixCount p N)} (hv : v.val < p) :
     (descendShift p N hpsq γ v : ℕ) = (upperTriShift p γ ⟨v.val, hv⟩ : ℕ) :=
   congrArg Fin.val (cast_descendShift hpsq γ v)
 
 /-- **The offset map is a bijection of the descent index set.** The hypothesis is `γ ∈ Γ₀(p)`,
 which is all bijectivity needs. The descent acts by `γ ∈ Γ₀(N / p)`, and `p² ∣ N` puts that group
-inside `Γ₀(p)`, so a descent caller writes
-`descendShift_bijective hpsq (Gamma0_le_Gamma0_of_dvd (Nat.dvd_div_of_sq_dvd hpsq) hγ)`. Reindexing
-the descent's slash sum along this map is what the bijection is for. -/
+inside `Γ₀(p)`: a descent caller turns `p² ∣ N` into `p ∣ N / p` with
+`Nat.dvd_div_of_mul_dvd` and feeds that to `Gamma0_le_Gamma0_of_dvd`. Reindexing the descent's
+slash sum along this map is what the bijection is for. -/
 theorem descendShift_bijective [NeZero p] (hpsq : p ^ 2 ∣ N) {γ : SL(2, ℤ)}
     (hγp : γ ∈ Gamma0 p) : Function.Bijective (descendShift p N hpsq γ) :=
   (finCongr (descendMatrixCount_of_sq_dvd (N := N) hpsq)).symm.bijective.comp
@@ -121,7 +120,7 @@ theorem exists_mem_Gamma0_descendMatrix_mul (p N : ℕ) [NeZero p] (hpsq : p ^ 2
     exact mul_dvd_mul_left _ ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hγ))
   obtain ⟨α, hα, _, hmul⟩ :=
     exists_mem_Gamma0_upperTriRep_mul
-      (Gamma0_le_Gamma0_of_dvd (Nat.dvd_div_of_sq_dvd hpsq) hγ) hpc ⟨v.val, hv⟩
+      (Gamma0_le_Gamma0_of_dvd (Nat.dvd_div_of_mul_dvd (by rwa [← pow_two])) hγ) hpc ⟨v.val, hv⟩
   have hv' : ((descendShift p N hpsq γ v : Fin (descendMatrixCount p N)) : ℕ) < p :=
     lt_of_lt_of_le (descendShift p N hpsq γ v).isLt hcount.le
   -- the target index, named rather than left to definitional reduction through `finCongr`
