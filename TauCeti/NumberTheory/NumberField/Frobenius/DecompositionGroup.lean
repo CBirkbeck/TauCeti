@@ -41,12 +41,16 @@ prime `τ • Q` gives the other.
 
 * `Ideal.isUnramifiedAt_iff_inertia_eq_bot`: unramifiedness at `Q` is triviality of the
   inertia subgroup of `Q` in `Gal(L/K)`.
+* `Ideal.isUnramifiedAt_of_tower_top`: unramifiedness at `Q` passes from the base `𝓞 K` to
+  `𝓞 E` for any intermediate field `E`.
 * `Ideal.stabilizerHom_eq_frobeniusAlgEquivOfAlgebraic`: a Frobenius element at `Q` acts on
   the residue field `𝓞 L ⧸ Q` as the residue Frobenius.
 * `Ideal.orderOf_eq_inertiaDeg_of_isArithFrobAt`: a Frobenius element at an unramified `Q`
   has order the inertia degree of `Q` over `𝓞 K`.
 * `Ideal.zpowers_eq_stabilizer_of_isArithFrobAt`: a Frobenius element at an unramified `Q`
   generates the decomposition group of `Q`.
+* `Ideal.card_stabilizer_eq_inertiaDeg_of_isUnramifiedAt`: the decomposition group of an
+  unramified `Q` has order the inertia degree of `Q` over `𝓞 K`.
 * `Ideal.stabilizerEquivResidueAut`: the decomposition group of an unramified prime is
   isomorphic to the automorphism group of the residue extension.
 * `Ideal.isCyclic_stabilizer_of_isUnramifiedAt`: the decomposition group of an unramified
@@ -90,6 +94,30 @@ theorem isUnramifiedAt_iff_inertia_eq_bot (Q : Ideal (𝓞 L)) [Q.IsPrime] :
   rw [← Ideal.ramificationIdx_eq_one_iff (R := 𝓞 K) (q := Q),
     ← Ideal.card_inertia_eq_ramificationIdx (𝓞 K) (L ≃ₐ[K] L) Q]
   exact ⟨Subgroup.eq_bot_of_card_eq _, fun h ↦ by rw [h]; simp⟩
+
+section Tower
+
+variable {E : Type*} [Field E] [NumberField E] [Algebra K E] [Algebra E L]
+  [IsScalarTower K E L] [IsGalois E L]
+
+/-- **Unramifiedness passes to a larger base.** A prime `Q` of `𝓞 L` unramified over `𝓞 K` is
+unramified over `𝓞 E` for any intermediate field `E`.
+
+Mathlib's `Algebra.IsUnramifiedAt.of_liesOver` is the other tower statement: it moves the *ideal*
+down, from `Q` to `Q ∩ 𝓞 E`, keeping the base. This one keeps the ideal and moves the *base* up. -/
+theorem isUnramifiedAt_of_tower_top (Q : Ideal (𝓞 L)) [Q.IsPrime]
+    [Algebra.IsUnramifiedAt (𝓞 K) Q] : Algebra.IsUnramifiedAt (𝓞 E) Q := by
+  rw [isUnramifiedAt_iff_inertia_eq_bot, eq_bot_iff]
+  intro τ hτ
+  rw [Ideal.mem_inertia] at hτ
+  -- Membership in the inertia subgroup says `τ • x - x ∈ Q` for every `x`, a condition that does
+  -- not mention the base, so `τ` and its restriction of scalars satisfy it together.
+  have hK : τ.restrictScalars K ∈ Q.inertia (L ≃ₐ[K] L) := Ideal.mem_inertia.2 hτ
+  rw [(isUnramifiedAt_iff_inertia_eq_bot Q).mp ‹_›, Subgroup.mem_bot] at hK
+  rw [Subgroup.mem_bot]
+  exact AlgEquiv.restrictScalars_injective K hK
+
+end Tower
 
 /-! ### The decomposition group at an unramified prime -/
 
@@ -187,7 +215,7 @@ theorem orderOf_eq_inertiaDeg_of_isArithFrobAt (Q : Ideal (𝓞 L)) [Q.IsPrime]
     MulAction.stabilizer (L ≃ₐ[K] L) Q)).trans key
 
 /-- **The decomposition group of an unramified prime has order the inertia degree.** -/
-private theorem card_stabilizer_eq_inertiaDeg_of_isUnramifiedAt (Q : Ideal (𝓞 L))
+theorem card_stabilizer_eq_inertiaDeg_of_isUnramifiedAt (Q : Ideal (𝓞 L))
     [Q.IsPrime] (hQ : Q ≠ ⊥) [Algebra.IsUnramifiedAt (𝓞 K) Q] :
     Nat.card (MulAction.stabilizer (L ≃ₐ[K] L) Q) = Q.inertiaDeg (𝓞 K) := by
   let _ : Q.IsMaximal := (inferInstance : Q.IsPrime).isMaximal hQ
