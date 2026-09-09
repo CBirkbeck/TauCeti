@@ -70,7 +70,7 @@ that the map `v ↦ v'` is that permutation is read off `upperTriShift` directly
 `p² ∣ N` enters twice: it collapses `descendMatrixCount p N` to `p`, so every index is that of an
 upper-triangular member, and it gives `p ∣ N / p`, so `Γ₀(N / p) ≤ Γ₀(p)` and the offset map is
 available. -/
-theorem exists_mem_Gamma0_descendMatrix_mul (p N : ℕ) [NeZero p] [NeZero N] (hpN : p ∣ N)
+theorem exists_mem_Gamma0_descendMatrix_mul (p N : ℕ) [NeZero p] (hpN : p ∣ N)
     (hpsq : p ^ 2 ∣ N) {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p))
     (v : Fin (descendMatrixCount p N)) :
     ∃ (v' : Fin (descendMatrixCount p N)) (α : SL(2, ℤ)), α ∈ Gamma0 N ∧
