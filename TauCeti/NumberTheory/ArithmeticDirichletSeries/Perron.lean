@@ -73,9 +73,8 @@ open scoped Real
 
 variable {x c : ℝ}
 
-/-- A bound holding up to a correction that dies away at infinity holds outright.  Both endpoint
-estimates below pass to the limit this way, so the passage is named once here rather than rebuilt
-at each of them. -/
+/-- **A bound holding up to a vanishing correction holds outright.**  If `v ≤ K + e B` for all
+large `B` and `e B → 0`, then `v ≤ K`.  No sign condition on `v`, `K` or `e` is needed. -/
 private theorem le_of_eventually_le_add_of_tendsto_zero {e : ℝ → ℝ} {v K : ℝ}
     (he : Tendsto e atTop (𝓝 0)) (h : ∀ᶠ B in atTop, v ≤ K + e B) : v ≤ K :=
   ge_of_tendsto (by simpa using tendsto_const_nhds.add he) h
