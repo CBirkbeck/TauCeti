@@ -54,8 +54,10 @@ alone is *not* invariant.
 
 * `HeckeRing.GL2.upperTriShift_bijective`: it is a bijection of `Fin p`.
 * `HeckeRing.GL2.exists_mem_Gamma0_upperTriRep_mul`: the factorisation
-  `!![1, j; 0, p] · γ = γ' · !![1, j'; 0, p]` with `γ' ∈ Γ₀(N)`, from the two memberships the
-  argument consumes — `γ ∈ Γ₀(p)` and `γ ∈ Γ₀(N / p)`.
+  `!![1, j; 0, p] · γ = γ' · !![1, j'; 0, p]` with `γ' ∈ Γ₀(N)`, from the two facts the argument
+  consumes — `γ ∈ Γ₀(p)` and `N ∣ p c`. A `γ ∈ Γ₀(N / p)` gives the second only in the presence
+  of `p ∣ N`, and gives the first only when `p² ∣ N`; that is the level-descent case, not the
+  hypothesis.
 * `HeckeRing.GL2.heckeSlashUpperTri_slash_mapGL_of_mem_Gamma0`: the equivariance, stated with an
   arbitrary scalar so that both corollaries below are instances of it.
 * `HeckeRing.GL2.heckeSlashUpperTri_slash_mapGL_of_mem_Gamma1`: the sum of a `Γ₁(N)`-invariant
