@@ -75,18 +75,6 @@ theorem exp_tsum_neg_log_one_sub_eq_LSeries
   simp only [Function.comp_apply, exp_neg, exp_log (hne _)] at H
   exact H.symm.trans (χ.hasProd_eulerFactor hs).tprod_eq
 
-/-- **The prime-power family is absolutely summable.**  Under absolute convergence of the
-ideal-indexed series, the double family indexed by a prime `P` and an exponent `e` is summable, so
-the sum over `(P, e)` may be regrouped fibrewise over `P`.  This is what licenses the re-indexing
-in `tsum_prime_pow_eq_tsum_neg_log_one_sub`. -/
-theorem summable_div_pow_div_of_summable_idealTerm
-    (hs : Summable (idealTerm K χ.toIdealArithmeticFunction s)) :
-    Summable fun pe : HeightOneSpectrum (𝓞 K) × ℕ ↦
-      (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ s) ^ (pe.2 + 1) / ((pe.2 : ℂ) + 1) :=
-  summable_taylorSeries_neg_log
-    (r := fun P : HeightOneSpectrum (𝓞 K) ↦ χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s)
-    (χ.summable_div_of_summable_idealTerm hs) (χ.norm_div_lt_one_of_summable_idealTerm hs)
-
 /-- **The prime-power sum is the prime-indexed logarithm sum.**  Substituting the Taylor series of
 `-log (1 - ·)` at each prime and regrouping over the primes identifies the two sums *as complex
 numbers*, before any exponential is taken.  This is the statement a consumer needs in order to
