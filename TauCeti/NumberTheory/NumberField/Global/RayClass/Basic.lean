@@ -32,6 +32,8 @@ class group (`oneEquivClassGroup`).
 
 * `TauCeti.GlobalNumberFields.rayHom`, `TauCeti.GlobalNumberFields.ray`: the principal ideals of
   the elements congruent to one, and the subgroup they form.
+* `TauCeti.GlobalNumberFields.idealsPrimeToClassGroup`: the ordinary ideal class of an invertible
+  fractional ideal prime to a modulus.
 * `TauCeti.GlobalNumberFields.RayClassGroup`: the quotient of `idealsPrimeTo 𝔪` by the ray, with
   `TauCeti.GlobalNumberFields.rayClassMk` and the universal property
   `TauCeti.GlobalNumberFields.rayClassLift`.
@@ -42,8 +44,10 @@ class group (`oneEquivClassGroup`).
 
 ## Main results
 
-* `TauCeti.GlobalNumberFields.IsCongrOne.toPrincipalIdeal_mem_idealsPrimeTo`: the principal ideal
-  of an element congruent to one is prime to the modulus.
+* `TauCeti.GlobalNumberFields.toPrincipalIdeal_mem_idealsPrimeTo_iff`: a principal fractional ideal
+  is prime to the modulus exactly when its generator is a unit at every prime dividing the finite
+  part, with `TauCeti.GlobalNumberFields.IsCongrOne.toPrincipalIdeal_mem_idealsPrimeTo` the
+  consequence for an element congruent to one.
 * `TauCeti.GlobalNumberFields.idealsPrimeTo_eq_top`: every invertible fractional ideal is prime
   to a modulus whose support is empty, so `TauCeti.GlobalNumberFields.idealsPrimeToEquiv`
   identifies the two carriers there.
@@ -78,14 +82,26 @@ namespace TauCeti.GlobalNumberFields
 
 variable {K : Type*} [Field K] [NumberField K]
 
+/-- **A principal fractional ideal is prime to the modulus exactly when its generator is a unit at
+every prime dividing the finite part.** -/
+theorem toPrincipalIdeal_mem_idealsPrimeTo_iff {𝔪 : Modulus K} {x : Kˣ} :
+    toPrincipalIdeal (𝓞 K) K x ∈ idealsPrimeTo 𝔪 ↔ x ∈ primeToSubgroup 𝔪 := by
+  rw [NumberFieldArithmetic.mem_idealsAway_iff, mem_primeToSubgroup]
+  refine ⟨fun h v hv ↦ ?_, fun h v hv ↦ ?_⟩
+  · have hcount := h v ((Modulus.mem_support_iff _ _).mpr hv)
+    rw [FractionalIdeal.count_toPrincipalIdeal_eq_neg_log_valuation K v x, neg_eq_zero] at hcount
+    have hne : v.valuation K (x : K) ≠ 0 := (Valuation.ne_zero_iff _).mpr x.ne_zero
+    rw [← WithZero.exp_log hne, hcount, WithZero.exp_zero]
+  · rw [FractionalIdeal.count_toPrincipalIdeal_eq_neg_log_valuation K v x,
+      h v ((Modulus.mem_support_iff _ _).mp hv), WithZero.log_one, neg_zero]
+
 /-- **The principal ideal of an element congruent to one is prime to the modulus.**  At a prime
 dividing the finite part such an element is a unit, so the multiplicity of its principal ideal
 vanishes there. -/
 theorem IsCongrOne.toPrincipalIdeal_mem_idealsPrimeTo {𝔪 : Modulus K} {x : Kˣ}
-    (hx : IsCongrOne 𝔪 x) : toPrincipalIdeal (𝓞 K) K x ∈ idealsPrimeTo 𝔪 := by
-  refine NumberFieldArithmetic.mem_idealsAway_iff.mpr fun v hv ↦ ?_
-  rw [FractionalIdeal.count_toPrincipalIdeal_eq_neg_log_valuation K v x,
-    hx.valuation_eq_one ((Modulus.mem_support_iff _ _).mp hv), WithZero.log_one, neg_zero]
+    (hx : IsCongrOne 𝔪 x) : toPrincipalIdeal (𝓞 K) K x ∈ idealsPrimeTo 𝔪 :=
+  toPrincipalIdeal_mem_idealsPrimeTo_iff.mpr
+    (congruenceSubgroup_le_primeToSubgroup 𝔪 (mem_congruenceSubgroup.mpr hx))
 
 /-- The homomorphism sending an element of `Kˣ` congruent to one modulo `𝔪` to its principal
 fractional ideal, viewed inside the ideals prime to `𝔪`. -/
@@ -110,6 +126,18 @@ noncomputable def ray (𝔪 : Modulus K) : Subgroup (idealsPrimeTo 𝔪) :=
   refine ⟨fun ⟨x, hx⟩ ↦ ⟨x, mem_congruenceSubgroup.mp x.2, ?_⟩, fun ⟨x, hx, hxI⟩ ↦ ?_⟩
   · rw [← coe_rayHom 𝔪 x, hx]
   · exact ⟨⟨x, mem_congruenceSubgroup.mpr hx⟩, Subtype.ext (Units.ext (by rw [coe_rayHom, hxI]))⟩
+
+/-- **The ordinary ideal class of an invertible fractional ideal prime to a modulus.** This is the
+canonical map from `idealsPrimeTo 𝔪` to the ordinary class group; it descends to the right-hand
+transition in the ray-class exact sequence. -/
+noncomputable def idealsPrimeToClassGroup (𝔪 : Modulus K) :
+    idealsPrimeTo 𝔪 →* ClassGroup (𝓞 K) :=
+  (ClassGroup.mk K).comp (idealsPrimeTo 𝔪).subtype
+
+@[simp] theorem idealsPrimeToClassGroup_apply (𝔪 : Modulus K) (I : idealsPrimeTo 𝔪) :
+    idealsPrimeToClassGroup 𝔪 I =
+      ClassGroup.mk K (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) :=
+  by simp only [idealsPrimeToClassGroup, MonoidHom.comp_apply, Subgroup.subtype_apply]
 
 /-- **The ray class group of a modulus**: the invertible fractional ideals prime to the finite part
 of `𝔪`, modulo the principal ideals of the elements congruent to one modulo `𝔪`. -/
