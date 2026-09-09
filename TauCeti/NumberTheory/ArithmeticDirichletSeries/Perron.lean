@@ -11,7 +11,6 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.ArctanDeriv
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Analysis.Complex.RemovableSingularity
-import TauCeti.Topology.Order.OrderClosed
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
@@ -417,8 +416,9 @@ private theorem norm_integral_perronFn_le_of_lt_one (hx : 0 < x) (hx1 : x < 1) (
     have h₁ := hhoriz (-T) (by rw [abs_neg, abs_of_pos hT])
     have h₂ := hhoriz T (abs_of_pos hT)
     linarith
-  refine Tendsto.le_of_eventually_le_add (by simpa using
-    (tendsto_rpow_atTop_of_base_lt_one x (by linarith) hx1).mul_const (2 * T / c)) ?_
+  have hzero : Tendsto (fun B : ℝ ↦ x ^ B * (2 * T / c)) atTop (𝓝 0) := by
+    simpa using (tendsto_rpow_atTop_of_base_lt_one x (by linarith) hx1).mul_const (2 * T / c)
+  refine ge_of_tendsto (by simpa using tendsto_const_nhds.add hzero) ?_
   filter_upwards [eventually_ge_atTop c] with B hB
   simpa [div_mul_eq_mul_div, mul_div_assoc] using key B hB
 
@@ -601,8 +601,10 @@ private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc
     rw [abs_neg, abs_of_pos hT] at h₁
     rw [abs_of_pos hT] at h₂
     linarith
-  refine Tendsto.le_of_eventually_le_add (by simpa using ((tendsto_rpow_atBot_of_base_gt_one x
-    hx1).comp tendsto_neg_atTop_atBot).mul_const (2 * T / c)) ?_
+  have hzero : Tendsto (fun B : ℝ ↦ x ^ (-B) * (2 * T / c)) atTop (𝓝 0) := by
+    simpa using ((tendsto_rpow_atBot_of_base_gt_one x hx1).comp
+      tendsto_neg_atTop_atBot).mul_const (2 * T / c)
+  refine ge_of_tendsto (by simpa using tendsto_const_nhds.add hzero) ?_
   filter_upwards [eventually_ge_atTop c] with B hB
   simpa [div_mul_eq_mul_div, mul_div_assoc] using key B hB
 
