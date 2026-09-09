@@ -130,7 +130,7 @@ lemma upperTriShift_mul_natCast [NeZero p] {γ : SL(2, ℤ)} {j : Fin p}
   rw [upperTriShift_natCast, ← mul_assoc, ZMod.mul_inv_of_unit _ hA, one_mul]
 
 /-- On `Γ₀(p)` the entry `a + j c` collapses to `a`, because `c ≡ 0`. -/
-lemma intCast_apply_zero_zero_add_of_mem_Gamma0 [NeZero p] {γ : SL(2, ℤ)} (hγp : γ ∈ Gamma0 p)
+lemma intCast_apply_zero_zero_add_of_mem_Gamma0 {γ : SL(2, ℤ)} (hγp : γ ∈ Gamma0 p)
     (j : Fin p) : ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p) = ((γ 0 0 : ℤ) : ZMod p) := by
   push_cast
   rw [Gamma0_mem.mp hγp, mul_zero, add_zero]
@@ -138,8 +138,8 @@ lemma intCast_apply_zero_zero_add_of_mem_Gamma0 [NeZero p] {γ : SL(2, ℤ)} (h�
 /-- **`a + j c` is invertible on `Γ₀(p)`**, for every offset: it is `a` there, and the determinant
 identity `ad - bc = 1` exhibits `d` as its inverse. This is what makes the whole of `Fin p` an
 admissible index set in the `Γ₀(p)` case, with no offset left out. -/
-lemma isUnit_intCast_apply_zero_zero_add_of_mem_Gamma0 [NeZero p] {γ : SL(2, ℤ)}
-    (hγp : γ ∈ Gamma0 p) (j : Fin p) : IsUnit (((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p)) := by
+lemma isUnit_intCast_apply_zero_zero_add_of_mem_Gamma0 {γ : SL(2, ℤ)} (hγp : γ ∈ Gamma0 p)
+    (j : Fin p) : IsUnit (((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p)) := by
   rw [intCast_apply_zero_zero_add_of_mem_Gamma0 hγp]
   exact IsUnit.of_mul_eq_one _ (intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0 hγp)
 
