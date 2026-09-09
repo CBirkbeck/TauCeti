@@ -466,6 +466,30 @@ theorem exists_pow_mul_mem [IsTopologicalRing A] (P : PairOfDefinition A) {s : A
 
 end PairOfDefinition
 
+/-- **A pseudouniformiser rescales any element to a topologically nilpotent one.** For `s : A`
+in a Tate ring there are a pseudouniformiser `ϖ` and an exponent `i` with `ϖ ^ i * s`
+topologically nilpotent.
+
+`ϖ ^ i` is a unit, so `s` and `ϖ ^ i * s` are associated. Any construction depending on an
+element only up to associates is therefore unchanged by the rescaling, while hypotheses asking
+topological nilpotence of that element become available; `IsLocalization.Away` is the case that
+matters, by `IsLocalization.Away.of_associated`.
+
+Rescaling a *denominator* alone is not such a construction: the fractions `t / s` are not the
+fractions `t / (ϖ ^ i * s)`, so a rational localisation `A⟨T/s⟩` is preserved only if the
+numerators are rescaled by the same unit. -/
+theorem IsTateRing.exists_isTopologicallyNilpotent_pow_mul {A : Type*} [CommRing A]
+    [TopologicalSpace A] [NonarchimedeanRing A] [IsTateRing A] (s : A) :
+    ∃ (ϖ : A) (i : ℕ), IsPseudoUniformizer ϖ ∧ IsTopologicallyNilpotent (ϖ ^ i * s) := by
+  obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := A)
+  obtain ⟨ϖ, hϖ⟩ := IsTateRing.exists_isPseudoUniformizer (A := A)
+  obtain ⟨-, hnil⟩ := isPseudoUniformizer_iff.mp hϖ
+  obtain ⟨i, hi⟩ := P.exists_pow_mul_mem hnil s
+  have hpb : IsPowerBounded (ϖ ^ i * s) :=
+    mem_powerBoundedSubring.mp (P.le_powerBoundedSubring hi)
+  exact ⟨ϖ, i + 1, hϖ, by simpa [pow_succ, mul_assoc, mul_comm, mul_left_comm] using
+    hpb.isTopologicallyNilpotent_mul hnil⟩
+
 /-- Quotients of Huber rings, with the quotient topology, are Huber rings. -/
 instance IsHuberRing.quotient {A : Type*} [CommRing A] [TopologicalSpace A]
     [IsTopologicalRing A] [IsHuberRing A] (J : Ideal A) : IsHuberRing (A ⧸ J) :=
