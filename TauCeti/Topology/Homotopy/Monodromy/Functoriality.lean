@@ -205,8 +205,8 @@ section BaseHomeomorph
 variable {Y : Type v} [TopologicalSpace Y]
 
 omit [TopologicalSpace E] in
-/-- The fibre of a covering map after composing its projection with a base homeomorphism is the
-original fibre over the inverse image of the basepoint. -/
+/-- Postcomposing a map with a homeomorphism of the base relabels its fibres: the fibre of
+`h ∘ p` over `y` is the fibre of `p` over `h.symm y`. No covering hypothesis is used. -/
 def _root_.Homeomorph.compFiberEquiv (h : X ≃ₜ Y) (y : Y) :
     (h ∘ p) ⁻¹' {y} ≃ p ⁻¹' {h.symm y} :=
   Set.equivOfEq <| Set.ext fun _ ↦ by
