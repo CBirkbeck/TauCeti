@@ -95,13 +95,12 @@ theorem isStronglyNoetherian_completion_self (P : PairOfDefinition A) (T : Finse
 /-- **A rational localisation of a strongly noetherian Tate ring is strongly noetherian**,
 whenever the numerators together with the denominator `s` generate the unit ideal.
 
-Strong noetherianity does not pass to arbitrary algebras, so it has to be propagated along a
-map with enough structure. Here that map is the presentation: under this hypothesis `A⟨T/s⟩` is
-strictly topologically of finite type over `A`
-(`TauCeti.Huber.PairOfDefinition.isStrictlyTopologicallyFiniteType_toCompletionLoc`), and
-`TauCeti.Huber.IsStrictlyTopologicallyFiniteType.isStronglyNoetherian` carries the property
-across such a presentation. Strong noetherianity of `A` alone therefore suffices — nothing is
-assumed of the localisation itself. -/
+Strong noetherianity of `A` alone suffices: nothing is assumed of the localisation, and the
+hypothesis on the numerators is the rational-subset condition, which holds by definition wherever
+`A⟨T/s⟩` is the ring of a rational subset.
+
+This is the form Wedhorn's §8.2 needs in order to iterate: it makes strong noetherianity stable
+under passing to a rational localisation, so the argument may be repeated inside `A⟨T/s⟩`. -/
 theorem isStronglyNoetherian_completion [IsTateRing A]
     [IsStronglyNoetherian A] [(nhds (0 : A)).IsCountablyGenerated]
     (P : PairOfDefinition A) (T : Finset A) (s : A)

@@ -329,11 +329,10 @@ theorem isOpenMap_polyEvalHom_locUniformSpace {k : ℕ} (t : Fin k → A)
 /-- **The completed polynomial evaluation is surjective**: the completion of `A[X₁,…,Xₖ]` maps
 onto the completion of `Aₛ`.
 
-Completion preserves surjectivity of an open quotient map, and the hypotheses here are exactly
-the three that make `TauCeti.Huber.PairOfDefinition.polyEvalHom` one:
-`TauCeti.Huber.PairOfDefinition.polyEvalHom_surjective`,
-`TauCeti.Huber.PairOfDefinition.continuous_polyEvalHom_locUniformSpace` and
-`TauCeti.Huber.PairOfDefinition.isOpenMap_polyEvalHom_locUniformSpace`. -/
+The hypotheses are those under which the polynomial evaluation is an open quotient map: the
+numerators generate the unit ideal with `s`, and their fractions cover those of `T`. Countable
+generation of `𝓝 (0 : A)` is what makes the completions metrisable, and is a hypothesis rather
+than a background assumption. -/
 theorem completion_polyEvalHom_surjective [(nhds (0 : A)).IsCountablyGenerated] {k : ℕ}
     (t : Fin k → A) (ht : ∀ i, t i ∈ T) (hspan : Ideal.span (insert s (Set.range t)) = ⊤)
     (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
@@ -355,9 +354,9 @@ theorem completion_polyEvalHom_surjective [(nhds (0 : A)).IsCountablyGenerated] 
 /-- **The comparison square on the completions.** Evaluating in `A⟨X₁, …, Xₖ⟩` after the map
 induced by the inclusion of the polynomials is the completion of the polynomial evaluation.
 
-Both maps out of `A⟨X₁, …, Xₖ⟩` are continuous and agree on the dense subring of polynomials,
-so they agree everywhere. This identification is what lets a statement about the elementary
-evaluation be read as one about `rationalEvalHom`. -/
+The identification transports statements between the two: anything known of the elementary
+evaluation on `A[X₁, …, Xₖ]` may be read off `rationalEvalHom`, and conversely. Surjectivity is
+the case that matters here. -/
 theorem rationalEvalHom_comp_completionMap {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i ∈ T) :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
@@ -421,11 +420,9 @@ theorem rationalEvalHom_surjective [(nhds (0 : A)).IsCountablyGenerated] {k : �
 /-- **The evaluation map `A⟨X₁, …, Xₖ⟩ → A⟨T/s⟩` is open**, under the hypotheses that make it
 surjective.
 
-Openness is not proved by hand: over a Tate ring it is a consequence of surjectivity and
-continuity, by `TauCeti.Huber.IsTateRing.isOpenMap`. The evaluation is a ring map between
-`A`-algebras commuting with the structure maps
-(`TauCeti.Huber.PairOfDefinition.rationalEvalHom_comp_algebraMap`), hence `A`-linear, which is
-the form the open mapping theorem takes it in. -/
+Over a Tate ring openness is not an independent hypothesis: it already follows from the
+surjectivity and continuity of the same map. The hypotheses are therefore exactly those of
+`TauCeti.Huber.PairOfDefinition.rationalEvalHom_surjective`, with `A` additionally Tate. -/
 theorem isOpenMap_rationalEvalHom [IsTateRing A] [(nhds (0 : A)).IsCountablyGenerated] {k : ℕ}
     (t : Fin k → A) (ht : ∀ i, t i ∈ T) (hspan : Ideal.span (insert s (Set.range t)) = ⊤)
     (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
@@ -490,19 +487,14 @@ theorem isOpenQuotientMap_rationalEvalHom [IsTateRing A]
 numerators together with the denominator `s` generate the unit ideal.
 
 That is the rational-subset condition itself, and it is all this asks: no auxiliary family and
-no choice of covering fractions. `T` is finite, so the proof enumerates it as a family indexed by
-`Fin #T` and applies the evaluation API to that; a family whose range is all of `T` covers the
-fractions of `T` for free.
+no choice of covering fractions.
 
-This is Wedhorn's Definition 6.28 at Example 6.38:
-`TauCeti.Huber.PairOfDefinition.isOpenQuotientMap_rationalEvalHom` is the presentation itself,
-and `TauCeti.Huber.isStrictlyTopologicallyFiniteType_iff` says that a presentation is all the
-definition asks for. The remaining step is that the composite `A → A⟨X₁, …, Xₖ⟩ → A⟨T/s⟩` is the
-structure map, which is
-`TauCeti.Huber.PairOfDefinition.rationalEvalHom_comp_algebraMap` read at each point.
+This is Wedhorn's Definition 6.28 at Example 6.38. The presenting algebra is the trivial-weight
+one, `A⟨X₁, …, Xₖ⟩`, which is what makes this *strict* topological finite type rather than the
+weaker notion of Definition 6.29.
 
-The presenting algebra is the trivial-weight one, `A⟨X₁, …, Xₖ⟩`, which is what makes this
-*strict* topological finite type rather than the weaker notion of Definition 6.29. -/
+Strict finite type is the hypothesis under which strong noetherianity descends from `A` to
+`A⟨T/s⟩`; `TauCeti.Huber.PairOfDefinition.isStronglyNoetherian_completion` is that consequence. -/
 theorem isStrictlyTopologicallyFiniteType_toCompletionLoc [IsTateRing A]
     [(nhds (0 : A)).IsCountablyGenerated]
     (hspan : Ideal.span (insert s (T : Set A)) = ⊤) :
