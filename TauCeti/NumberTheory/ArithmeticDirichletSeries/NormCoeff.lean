@@ -12,7 +12,6 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Analysis.Complex.Order
 public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 public import TauCeti.RingTheory.Ideal.Norm.AbsNorm
-import TauCeti.NumberTheory.NumberField.RingOfIntegers.Transport
 
 /-!
 # Regrouping ideal arithmetic functions by absolute norm
@@ -169,6 +168,7 @@ open NumberField in
 /-- **Regrouping is transported by an isomorphism of fields.** An isomorphism `e : K ≃+* L` matches
 the nonzero ideals of `𝓞 L` with those of `𝓞 K` preserving absolute norms, so it matches the norm
 fibres and leaves every norm coefficient unchanged. -/
+@[simp]
 theorem normCoeff_map {L : Type*} [Field L] [NumberField L] (e : K ≃+* L)
     (f : IdealArithmeticFunction K) (n : ℕ) :
     normCoeff L (IdealArithmeticFunction.map e f) n = normCoeff K f n := by
