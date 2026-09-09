@@ -43,8 +43,10 @@ None of the three implies another, so the bundled result carries all three hypot
 
 ## References
 
-* [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), Proposition 8.30, for which this
-  is the downstairs half.
+* [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), Definition 6.28 and
+  Example 6.38, for which this is the downstairs half. Example 6.38 is what Proposition 8.30
+  cites by name; the proposition's own conclusion is flatness of restriction maps, so this file
+  is upstream of it and is not part of its statement.
 -/
 
 public section
@@ -190,12 +192,15 @@ the unit ideal.
 Together with `TauCeti.Huber.polyEvalHom_surjective` this presents `Aₛ` as an
 open quotient of a polynomial ring. That is exactly the input `AddMonoidHom.surjective_completion`
 and `AddMonoidHom.isOpenMap_completion` take, so it is what carries the presentation to the
-completions `A⟨X₁, …, Xₖ⟩ → A⟨T/s⟩` — Wedhorn's Proposition 8.30, and through it the strong
-noetherianity of a rational localisation.
+completions `A⟨X₁, …, Xₖ⟩ → A⟨T/s⟩`, exhibiting `A⟨T/s⟩` as strictly topologically of finite
+type over `A` — Wedhorn's Definition 6.28 at Example 6.38 — and through it the strong
+noetherianity of a rational localisation. That strong noetherianity is what Proposition 8.30
+consumes; the proposition itself concludes flatness of restriction maps and is not proved here.
 
-Openness is the half of 8.30 that does not come for free. Surjectivity is a statement about
-generation, whereas openness compares two topologies that were defined independently: `Aₛ` carries
-the localisation topology, not a quotient topology transported from the polynomials.
+Openness is the half of the presentation that does not come for free. Surjectivity is a
+statement about generation, whereas openness compares two topologies that were defined
+independently: `Aₛ` carries the localisation topology, not a quotient topology transported
+from the polynomials.
 
 `hTt` asks the numerators to exhaust `T`, which is what the reindexing in the proof consumes;
 it neither implies nor is implied by the unit-ideal condition surjectivity needs. -/
