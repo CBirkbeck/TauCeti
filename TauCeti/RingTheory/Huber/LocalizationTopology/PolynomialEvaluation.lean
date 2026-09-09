@@ -81,16 +81,10 @@ supplies. -/
 theorem polyEvalHom_surjective {k : ℕ} (t : Fin k → A)
     (hspan : Ideal.span (insert s (Set.range t)) = ⊤) :
     Function.Surjective (polyEvalHom s (S := S) t) := by
-  have hrange : (Set.range fun x : (Set.range t) ↦ (divBy (x : A) s : S))
-      = Set.range fun i ↦ (divBy (t i) s : S) := by
-    ext y
-    constructor
-    · rintro ⟨⟨_, i, rfl⟩, rfl⟩; exact ⟨i, rfl⟩
-    · rintro ⟨i, rfl⟩; exact ⟨⟨t i, i, rfl⟩, rfl⟩
   have haeval : Function.Surjective
       (MvPolynomial.aeval (R := A) fun i ↦ (divBy (t i) s : S)) := by
-    rw [← AlgHom.range_eq_top, ← Algebra.adjoin_range_eq_range_aeval, ← hrange]
-    exact adjoin_divBy_eq_top s hspan
+    rw [← AlgHom.range_eq_top, ← Algebra.adjoin_range_eq_range_aeval]
+    exact adjoin_divBy_range_eq_top s hspan
   exact haeval.comp (weightedPolynomialsEquiv isWeightFamily_one_weight).symm.surjective
 
 /-- **How `TauCeti.Huber.polyEvalHom` acts**: on the copy of a polynomial inside

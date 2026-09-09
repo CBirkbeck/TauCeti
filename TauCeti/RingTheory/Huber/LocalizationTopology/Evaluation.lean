@@ -225,17 +225,8 @@ theorem coe_mem_range_rationalEvalHom {k : ℕ} (t : Fin k → A) (ht : ∀ i, t
   have _ := isUniformAddGroup_locUniformSpace P T s S hden
   have _ := isTopologicalRing_locUniformSpace P T s S hden
   have _ := isHuberRing_locUniformSpace P T s S hden
-  -- Both sides are the image of `Set.range t` under `a ↦ a / s`. Writing each function as a
-  -- composite is an eta-equality, named here rather than left inline, so that `Set.range_comp`
-  -- and `Subtype.range_coe` can do the actual work.
-  have hcoe : (fun y : (Set.range t) ↦ (divBy (y : A) s : S))
-      = (fun a ↦ (divBy a s : S)) ∘ ((↑) : (Set.range t) → A) := rfl
-  have hcomp : (fun i ↦ (divBy (t i) s : S)) = (fun a ↦ (divBy a s : S)) ∘ t := rfl
-  have hrange : (Set.range fun y : (Set.range t) ↦ (divBy (y : A) s : S))
-      = Set.range fun i ↦ (divBy (t i) s : S) := by
-    rw [hcoe, hcomp, Set.range_comp, Set.range_comp, Subtype.range_coe]
   refine coe_mem_range_rationalEvalHom_of_mem_adjoin P T s S hden t ht ?_
-  rw [← hrange, adjoin_divBy_eq_top (S := S) s hspan]
+  rw [adjoin_divBy_range_eq_top (S := S) s hspan]
   trivial
 
 /-- **The evaluation map has dense range when the numerators together with the denominator `s`

@@ -277,6 +277,25 @@ theorem adjoin_divBy_eq_top {T : Set A} (hT : Ideal.span (insert s T) = ⊤) :
     Set.singleton_subset_iff]
   simpa using key 1 ((Ideal.eq_top_iff_one _).mp hT)
 
+/-- **The indexed form of `TauCeti.Localization.adjoin_divBy_eq_top`**, for numerators presented
+as a family `t : ι → A` rather than as a set.
+
+This is the form consumers actually hold: a rational subset is given by a finite family of
+numerators, and the fractions are indexed by it. Passing through the set version means rewriting
+`Set.range (fun i ↦ t i / s)` as the range over the subtype `Set.range t`, which is an
+eta-equality but not a definitional one, so it is done here once rather than at each call site. -/
+theorem adjoin_divBy_range_eq_top {ι : Type*} {t : ι → A}
+    (hT : Ideal.span (insert s (Set.range t)) = ⊤) :
+    Algebra.adjoin A (Set.range fun i ↦ (divBy (t i) s : S)) = ⊤ := by
+  have hcoe : (fun y : (Set.range t) ↦ (divBy (y : A) s : S))
+      = (fun a ↦ (divBy a s : S)) ∘ ((↑) : (Set.range t) → A) := rfl
+  have hcomp : (fun i ↦ (divBy (t i) s : S)) = (fun a ↦ (divBy a s : S)) ∘ t := rfl
+  have hrange : (Set.range fun y : (Set.range t) ↦ (divBy (y : A) s : S))
+      = Set.range fun i ↦ (divBy (t i) s : S) := by
+    rw [hcoe, hcomp, Set.range_comp, Set.range_comp, Subtype.range_coe]
+  rw [← hrange]
+  exact adjoin_divBy_eq_top s hT
+
 /-! ### The trivial denominator
 
 A ring is its own localisation away from `1`, and there the fraction `t/1` is `t`. This is the
