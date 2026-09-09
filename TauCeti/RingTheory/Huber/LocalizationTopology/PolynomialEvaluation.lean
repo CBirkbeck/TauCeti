@@ -21,8 +21,8 @@ evaluation defined there — nothing here needs completion theory.
 The three properties together present `Aₛ` as an open quotient of a polynomial ring. They need
 different hypotheses, and the distinction matters:
 
-* surjectivity asks the numerators to generate the unit ideal, which is what makes the fractions
-  generate `Aₛ` over `A`;
+* surjectivity asks the numerators *together with `s`* to generate the unit ideal, which is what
+  makes the fractions generate `Aₛ` over `A`;
 * openness asks them to exhaust `T`, which is what the reindexing in its proof consumes;
 * continuity asks that each fraction `tᵢ/s` lie in the ring of definition `D` of `Aₛ`. That is
   weaker than either of the others and is implied by `tᵢ ∈ T`, via
@@ -72,11 +72,15 @@ noncomputable def polyEvalHom {k : ℕ} (t : Fin k → A) :
   (MvPolynomial.aeval fun i ↦ (divBy (t i) s : S)).toRingHom.comp
     (weightedPolynomialsEquiv isWeightFamily_one_weight).symm.toRingHom
 
-/-- **The polynomial evaluation is onto `Aₛ`** when the numerators generate the unit ideal: its
-range is the `A`-subalgebra the fractions generate, which is everything by
-`TauCeti.Localization.adjoin_divBy_eq_top`. -/
+/-- **The polynomial evaluation is onto `Aₛ`** when the numerators together with the denominator
+`s` generate the unit ideal: its range is the `A`-subalgebra the fractions generate, which is
+everything by `TauCeti.Localization.adjoin_divBy_eq_top`.
+
+Including `s` among the generators is the weaker hypothesis, and the one a rational subset
+supplies. -/
 theorem polyEvalHom_surjective {k : ℕ} (t : Fin k → A)
-    (hspan : Ideal.span (Set.range t) = ⊤) : Function.Surjective (polyEvalHom s (S := S) t) := by
+    (hspan : Ideal.span (insert s (Set.range t)) = ⊤) :
+    Function.Surjective (polyEvalHom s (S := S) t) := by
   have hrange : (Set.range fun x : (Set.range t) ↦ (divBy (x : A) s : S))
       = Set.range fun i ↦ (divBy (t i) s : S) := by
     ext y
@@ -186,8 +190,8 @@ private theorem exists_polynomial_coeff_mem_idealImage {k : ℕ} (t : Fin k → 
 /-- **The polynomial evaluation `Xᵢ ↦ tᵢ/s` is an open map**, for numerators exhausting `T`.
 
 This asserts openness only. Surjectivity is a separate statement with a separate hypothesis —
-`TauCeti.Huber.polyEvalHom_surjective`, which asks the numerators to generate
-the unit ideal.
+`TauCeti.Huber.polyEvalHom_surjective`, which asks the numerators together with `s`
+to generate the unit ideal.
 
 Together with `TauCeti.Huber.polyEvalHom_surjective` this presents `Aₛ` as an
 open quotient of a polynomial ring. That is exactly the input `AddMonoidHom.surjective_completion`
@@ -283,13 +287,13 @@ surjective, which is the bundled form a consumer of the completion needs: this i
 `AddMonoidHom.surjective_completion` and `AddMonoidHom.isOpenMap_completion` take in order to
 conclude the same for `A⟨X₁, …, Xₖ⟩ → A⟨T/s⟩`.
 
-The three hypotheses are independent: surjectivity needs the numerators to generate the unit
-ideal, openness needs them to exhaust `T`, and continuity needs each fraction `tᵢ/s` to lie in the
-ring of definition. A caller holding `tᵢ ∈ T` gets the last from
+The three hypotheses are independent: surjectivity needs the numerators together with `s` to
+generate the unit ideal, openness needs them to exhaust `T`, and continuity needs each fraction
+`tᵢ/s` to lie in the ring of definition. A caller holding `tᵢ ∈ T` gets the last from
 `TauCeti.Huber.PairOfDefinition.divBy_mem_locSubring`. -/
 theorem isOpenQuotientMap_polyEvalHom {k : ℕ} (t : Fin k → A)
     (hmem : ∀ i, (divBy (t i) s : S) ∈ locSubring P T s S)
-    (hspan : Ideal.span (Set.range t) = ⊤) (hTt : ↑T ⊆ Set.range t) :
+    (hspan : Ideal.span (insert s (Set.range t)) = ⊤) (hTt : ↑T ⊆ Set.range t) :
     letI := locTopology P T s S hden
     IsOpenQuotientMap (polyEvalHom s (S := S) t) :=
   letI := locTopology P T s S hden
