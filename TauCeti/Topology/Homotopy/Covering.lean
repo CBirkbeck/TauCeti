@@ -104,19 +104,12 @@ theorem _root_.IsCoveringMap.existsUnique_continuousMap_lifts_of_subsingleton_fu
     rw [FundamentalGroup.map_range_eq_bot_of_subsingleton f]
     exact bot_le
 
-/-- The forward map of `IsCoveringMap.fundamentalGroupEquivFiber`: monodromy transport of the
-chosen lift `e` along a loop class. Exposed so the equivalence's application lemmas hold
-definitionally without the whole `Equiv` construction entering the public interface. -/
-@[expose] noncomputable def _root_.IsCoveringMap.fundamentalGroupFiberMap [SimplyConnectedSpace E]
-    (hp : IsCoveringMap p) (e : p ⁻¹' {x}) (γ : FundamentalGroup X x) : p ⁻¹' {x} :=
-  hp.monodromy γ e
-
 /-- Choosing a basepoint lift `e` in the fibre over `x` identifies the fundamental group of
 the base with that fibre, via `γ ↦ monodromy γ e`. -/
-noncomputable def _root_.IsCoveringMap.fundamentalGroupEquivFiber [SimplyConnectedSpace E]
+@[expose] noncomputable def _root_.IsCoveringMap.fundamentalGroupEquivFiber [SimplyConnectedSpace E]
     (hp : IsCoveringMap p) (e : p ⁻¹' {x}) :
     FundamentalGroup X x ≃ p ⁻¹' {x} :=
-  { toFun := hp.fundamentalGroupFiberMap e
+  { toFun γ := hp.monodromy γ e
     invFun e' :=
       FundamentalGroup.fromPath <|
         ((Path.Homotopic.Quotient.mk (PathConnectedSpace.somePath (e : E) (e' : E))).map
@@ -129,7 +122,7 @@ noncomputable def _root_.IsCoveringMap.fundamentalGroupEquivFiber [SimplyConnect
           Path.Homotopic.Quotient.mk
               (PathConnectedSpace.somePath (e : E) (hp.monodromy γ e : E)) = Γ :=
         Subsingleton.elim _ _
-      dsimp only [IsCoveringMap.fundamentalGroupFiberMap]
+      dsimp only
       rw [hpath, hp.map_liftPathQuotient]
       erw [Path.Homotopic.Quotient.cast_cast]
       exact eq_of_heq (Path.Homotopic.Quotient.cast_heq _ _)
@@ -139,7 +132,7 @@ noncomputable def _root_.IsCoveringMap.fundamentalGroupEquivFiber [SimplyConnect
       simp only [Set.mem_preimage, Set.mem_singleton_iff] at he₀ he₁
       set Γ : Path.Homotopic.Quotient e₀ e₁ :=
         Path.Homotopic.Quotient.mk (PathConnectedSpace.somePath e₀ e₁)
-      dsimp only [IsCoveringMap.fundamentalGroupFiberMap]
+      dsimp only
       simpa [Γ] using
         hp.monodromy_eq_of_map_eq Γ (by
           dsimp only [Γ]
