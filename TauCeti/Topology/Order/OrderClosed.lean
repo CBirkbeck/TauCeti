@@ -11,22 +11,22 @@ public import Mathlib.Analysis.SpecificLimits.Basic
 # Bounds that hold up to a vanishing correction
 
 Mathlib's `ge_of_tendsto` passes an eventual bound to a limit.  A common way to meet its hypothesis
-is to prove the bound only up to a correction that dies away, which this file packages.
+is to prove the bound only up to a correction that dies away along the filter.
 
 ## Main results
 
-* `le_of_eventually_le_add_mul_of_tendsto_zero`: if `v ≤ K + g B * m` eventually and `g B → 0`,
-  then `v ≤ K`.
+* `Filter.Tendsto.le_of_eventually_le_add`: if `v ≤ K + e i` eventually and `e i → 0`, then
+  `v ≤ K`.
 -/
 
 public section
 
 open Filter Topology
 
-/-- **A bound holding up to a vanishing correction holds outright.**  If `v ≤ K + g B * m` for all
-large `B`, and `g B` tends to `0`, then `v ≤ K`.
+/-- **A bound holding up to a vanishing correction holds outright.**  If `v ≤ K + e i` eventually
+along `l`, and `e` tends to `0` along `l`, then `v ≤ K`.
 
-No sign condition on `v`, `K` or `m` is required. -/
-theorem le_of_eventually_le_add_mul_of_tendsto_zero {v K m : ℝ} {g : ℝ → ℝ}
-    (hg : Tendsto g atTop (𝓝 0)) (h : ∀ᶠ B in atTop, v ≤ K + g B * m) : v ≤ K :=
-  ge_of_tendsto (by simpa using tendsto_const_nhds.add (hg.mul_const m)) h
+No sign condition on `v`, `K` or `e` is required. -/
+theorem Filter.Tendsto.le_of_eventually_le_add {ι : Type*} {l : Filter ι} [l.NeBot] {e : ι → ℝ}
+    (he : Tendsto e l (𝓝 0)) {v K : ℝ} (h : ∀ᶠ i in l, v ≤ K + e i) : v ≤ K :=
+  ge_of_tendsto (by simpa using tendsto_const_nhds.add he) h
