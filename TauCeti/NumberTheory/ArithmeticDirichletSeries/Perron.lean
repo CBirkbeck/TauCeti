@@ -11,6 +11,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.ArctanDeriv
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Analysis.Complex.RemovableSingularity
+import TauCeti.Analysis.SpecialFunctions.Trigonometric.Arctan
+import TauCeti.Topology.Order.OrderClosed
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
@@ -72,12 +74,6 @@ open Complex Filter MeasureTheory Topology
 open scoped Real
 
 variable {x c : ℝ}
-
-/-- **A bound holding up to a vanishing correction holds outright.**  If `v ≤ K + e B` for all
-large `B` and `e B → 0`, then `v ≤ K`.  No sign condition on `v`, `K` or `e` is needed. -/
-private theorem le_of_eventually_le_add_of_tendsto_zero {e : ℝ → ℝ} {v K : ℝ}
-    (he : Tendsto e atTop (𝓝 0)) (h : ∀ᶠ B in atTop, v ≤ K + e B) : v ≤ K :=
-  ge_of_tendsto (by simpa using tendsto_const_nhds.add he) h
 
 /-- The integrand of the truncated Perron integral: the value of `s ↦ x ^ s / s` at the point
 `s = c + i t` of the vertical line `Re s = c`. -/
@@ -424,7 +420,7 @@ private theorem norm_integral_perronFn_le_of_lt_one (hx : 0 < x) (hx1 : x < 1) (
     linarith
   have hzero : Tendsto (fun B : ℝ ↦ x ^ B * (2 * T / c)) atTop (𝓝 0) := by
     simpa using (tendsto_rpow_atTop_of_base_lt_one x (by linarith) hx1).mul_const (2 * T / c)
-  refine le_of_eventually_le_add_of_tendsto_zero hzero ?_
+  refine Tendsto.le_of_eventually_le_add hzero ?_
   filter_upwards [eventually_ge_atTop c] with B hB
   simpa [div_mul_eq_mul_div, mul_div_assoc] using key B hB
 
@@ -530,24 +526,6 @@ private theorem integral_perronFn_one_horizontal_diff (hT : T ≠ 0) (a b : ℝ)
     (((hcont _ (neg_ne_zero.2 hT)).sub (hcont _ hT)))]
   ring
 
-/-- The four arctan contributions of the rectangle's sides to the residue sum to `2 π i`. -/
-private theorem arctan_rectangle_sum_eq_two_mul_pi_mul_I (hc : 0 < c) (hB0 : 0 < B) (hT : 0 < T) :
-    2 * I * ((Real.arctan (c / T) : ℂ) - (Real.arctan (-B / T) : ℂ))
-      + I * (2 * (Real.arctan (T / c) : ℂ)) - I * (2 * (Real.arctan (T / -B) : ℂ))
-      = 2 * π * I := by
-  -- Each corner's two angles are complementary: `T / u` is the reciprocal of `u / T`.
-  have corner : ∀ u : ℝ, 0 < u →
-      ((Real.arctan (u / T) : ℝ) : ℂ) + ((Real.arctan (T / u) : ℝ) : ℂ) = (π : ℂ) / 2 := by
-    intro u hu
-    rw [← Complex.ofReal_add, ← inv_div u T, Real.arctan_inv_of_pos (by positivity)]
-    push_cast
-    ring
-  have hA := corner c hc
-  have hB := corner B hB0
-  rw [neg_div, Real.arctan_neg, div_neg, Real.arctan_neg]
-  push_cast
-  linear_combination (2 * I) * hA + (2 * I) * hB
-
 /-- The horizontal side running from `a` to `c` at height `u ≠ 0` contributes at most
 `x ^ c / (|u| * |log x|)`, provided `1 < x` and `a ≤ c`. -/
 private theorem norm_integral_perronFn_horizontal_le_of_one_lt (hx1 : 1 < x) {a : ℝ}
@@ -590,7 +568,7 @@ private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc
     have e₁ := integral_perronFn_one_horizontal_diff hT.ne' (-B) c
     have e₂ := integral_perronFn_one_vertical hc.ne' T
     have e₃ := integral_perronFn_one_vertical (neg_ne_zero.2 hB0.ne') T
-    have hres := arctan_rectangle_sum_eq_two_mul_pi_mul_I hc hB0 hT
+    have hres := Complex.arctan_corner_sum_eq_two_mul_pi_mul_I hc hB0 hT
     have hmain : I * ((∫ t in (-T)..T, perronFn x ((c : ℂ) + t * I)) - 2 * π)
         = (∫ σ in (-B)..c, perronFn x ((σ : ℂ) + (T : ℝ) * I))
           - (∫ σ in (-B)..c, perronFn x ((σ : ℂ) + (-T : ℝ) * I))
@@ -610,7 +588,7 @@ private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc
   have hzero : Tendsto (fun B : ℝ ↦ x ^ (-B) * (2 * T / c)) atTop (𝓝 0) := by
     simpa using ((tendsto_rpow_atBot_of_base_gt_one x hx1).comp
       tendsto_neg_atTop_atBot).mul_const (2 * T / c)
-  refine le_of_eventually_le_add_of_tendsto_zero hzero ?_
+  refine Tendsto.le_of_eventually_le_add hzero ?_
   filter_upwards [eventually_ge_atTop c] with B hB
   simpa [div_mul_eq_mul_div, mul_div_assoc] using key B hB
 
