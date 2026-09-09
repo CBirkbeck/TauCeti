@@ -135,11 +135,12 @@ lemma mul_upperTriShift_natCast [NeZero p] {γ : SL(2, ℤ)} {j : Fin p}
       = ((γ 0 1 + (j : ℕ) * γ 1 1 : ℤ) : ZMod p) := by
   rw [upperTriShift_natCast, ← mul_assoc, ZMod.mul_inv_of_unit _ hA, one_mul]
 
-/-- On `Γ₀(p)` the entry `a + j c` collapses to `a`, because `c ≡ 0`. -/
+/-- On `Γ₀(p)` the entry `a + j c` collapses to `a`, because `c ≡ 0`. Stated with the casts
+already distributed, since that — not the cast of the sum — is the `simp` normal form. -/
 @[simp] lemma intCast_apply_zero_zero_add_natCast_mul_apply_one_zero_of_mem_Gamma0
     {γ : SL(2, ℤ)} (hγp : γ ∈ Gamma0 p) (j : Fin p) :
-    ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p) = ((γ 0 0 : ℤ) : ZMod p) := by
-  push_cast
+    ((γ 0 0 : ℤ) : ZMod p) + ((j : ℕ) : ZMod p) * ((γ 1 0 : ℤ) : ZMod p)
+      = ((γ 0 0 : ℤ) : ZMod p) := by
   rw [Gamma0_mem.mp hγp, mul_zero, add_zero]
 
 /-- **`a + j c` is invertible on `Γ₀(p)`**, for every offset: it is `a` there, which
@@ -148,7 +149,10 @@ This is what makes the whole of `Fin p` an admissible index set, with no offset 
 lemma isUnit_intCast_apply_zero_zero_add_natCast_mul_apply_one_zero_of_mem_Gamma0
     {γ : SL(2, ℤ)} (hγp : γ ∈ Gamma0 p) (j : Fin p) :
     IsUnit (((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p)) := by
-  rw [intCast_apply_zero_zero_add_natCast_mul_apply_one_zero_of_mem_Gamma0 hγp]
+  have hA : ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p) = ((γ 0 0 : ℤ) : ZMod p) := by
+    push_cast
+    exact intCast_apply_zero_zero_add_natCast_mul_apply_one_zero_of_mem_Gamma0 hγp j
+  rw [hA]
   exact isUnit_intCast_apply_zero_zero_of_mem_Gamma0 hγp
 
 /-- **On `Γ₀(p)` the offset map is `j ↦ d b + j d²`.** The closed form the equivariance argument
@@ -157,8 +161,10 @@ again a unit. -/
 @[simp] lemma upperTriShift_natCast_of_mem_Gamma0 [NeZero p] {γ : SL(2, ℤ)} (hγp : γ ∈ Gamma0 p)
     (j : Fin p) : ((upperTriShift p γ j : ℕ) : ZMod p)
       = ((γ 1 1 * γ 0 1 + (j : ℕ) * (γ 1 1 * γ 1 1) : ℤ) : ZMod p) := by
-  rw [upperTriShift_natCast,
-    intCast_apply_zero_zero_add_natCast_mul_apply_one_zero_of_mem_Gamma0 hγp,
+  have hA : ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p) = ((γ 0 0 : ℤ) : ZMod p) := by
+    push_cast
+    exact intCast_apply_zero_zero_add_natCast_mul_apply_one_zero_of_mem_Gamma0 hγp j
+  rw [upperTriShift_natCast, hA,
     ZMod.inv_eq_of_mul_eq_one _ _ ((γ 1 1 : ℤ) : ZMod p)
       (intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0 hγp)]
   push_cast
