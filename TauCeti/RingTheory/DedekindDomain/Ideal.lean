@@ -7,7 +7,6 @@ module
 
 public import Mathlib.RingTheory.Valuation.Discrete.IsDiscreteValuationRing
 public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
-public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
 import Mathlib.RingTheory.DedekindDomain.Factorization
 
 /-!
@@ -139,13 +138,6 @@ theorem count_factors_map_of_ringEquiv (e : R ≃+* R') {p I : Ideal R} (hp : Pr
       Associates.mk_le_mk_iff_dvd]
     exact map_pow_dvd_map_iff_of_ringEquiv e p I n
   exact le_antisymm ((key _).mp le_rfl) ((key _).mpr le_rfl)
-
-/-- **The absolute norm is unchanged by pulling back along a ring isomorphism.** The isomorphism
-descends to an isomorphism of the quotients, which have the same cardinality. -/
-theorem absNorm_comap_of_ringEquiv [Infinite R] [Infinite R'] (e : R ≃+* R') (I : Ideal R') :
-    absNorm (Ideal.comap e I) = absNorm I := by
-  rw [absNorm_apply, absNorm_apply, Submodule.cardQuot_apply, Submodule.cardQuot_apply]
-  exact Nat.card_congr (Ideal.quotientEquiv _ _ e (Ideal.map_comap_eq_self_of_equiv e I).symm)
 
 end RingEquivDedekind
 
