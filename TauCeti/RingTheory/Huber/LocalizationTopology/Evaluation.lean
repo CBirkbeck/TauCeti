@@ -354,9 +354,10 @@ theorem completion_polyEvalHom_surjective [(nhds (0 : A)).IsCountablyGenerated] 
 /-- **The comparison square on the completions.** Evaluating in `A⟨X₁, …, Xₖ⟩` after the map
 induced by the inclusion of the polynomials is the completion of the polynomial evaluation.
 
-The identification transports statements between the two: anything known of the elementary
-evaluation on `A[X₁, …, Xₖ]` may be read off `rationalEvalHom`, and conversely. Surjectivity is
-the case that matters here. -/
+What the equality transports is surjectivity, in one direction: the left-hand side is
+`rationalEvalHom` precomposed with the map induced by the polynomial inclusion, so if the
+completed polynomial evaluation is onto then so is `rationalEvalHom`. That is the use made of it
+in `TauCeti.Huber.PairOfDefinition.rationalEvalHom_surjective`. -/
 theorem rationalEvalHom_comp_completionMap {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i ∈ T) :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
