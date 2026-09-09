@@ -47,16 +47,11 @@ residue is what produces the step.
   `‖K x c T - perronStep x‖ ≤ x ^ c / (π * T * |log x|)` for `x ≠ 1`, together with its two halves
   `TauCeti.norm_truncatedPerronKernel_le_of_lt_one` and
   `TauCeti.norm_truncatedPerronKernel_sub_one_le_of_one_lt`.
+* `TauCeti.norm_truncatedPerronKernel_one_le` and `TauCeti.norm_perronStep_le_one`: the kernel at
+  the endpoint and the sharp step are each bounded by one in modulus, uniformly in the height.
 * `TauCeti.tendsto_truncatedPerronKernel`: consequently the kernel tends to the sharp step
   `TauCeti.perronStep`, which carries the customary half-weight at the endpoint, as the height
   tends to infinity, at every positive `x`.
-
-## Roadmap role
-
-This is Layer **6.3** of `TauCetiRoadmap/ArithmeticDirichletSeries/README.md`: the finite-height
-kernel, the endpoint computation the roadmap lists as its fourth rejection test, and the
-smoothed-step estimate with a proved universal constant.  The arithmetic summatory form of Layer
-6.4, which interchanges this integral with an absolutely convergent `LSeries`, is not proved here.
 
 ## References
 
@@ -89,6 +84,18 @@ private theorem ofReal_add_mul_I_ne_zero_of_re (hc : c ≠ 0) (t : ℝ) : (c : �
 @[simp]
 theorem perronIntegrand_one (c t : ℝ) : perronIntegrand 1 c t = ((c : ℂ) + t * I)⁻¹ := by
   rw [perronIntegrand, Complex.ofReal_one, Complex.one_cpow, inv_eq_one_div]
+
+/-- **Defining equation of the Perron integrand.**  Its value at height `t` is `x ^ s / s` for
+`s = c + i t`.  Use this rather than unfolding the definition. -/
+theorem perronIntegrand_def (x c t : ℝ) :
+    perronIntegrand x c t = (x : ℂ) ^ ((c : ℂ) + t * I) / ((c : ℂ) + t * I) := (rfl)
+
+/-- The Perron integrand vanishes at the ratio `0`, at every height, whenever the line `Re s = c`
+misses the origin.  This is the value the `n = 0` term of an arithmetic Perron sum takes. -/
+@[simp]
+theorem perronIntegrand_zero (hc : c ≠ 0) (t : ℝ) : perronIntegrand 0 c t = 0 := by
+  have hline : (c : ℂ) + t * I ≠ 0 := fun h ↦ hc (by simpa using congrArg Complex.re h)
+  rw [perronIntegrand_def, Complex.ofReal_zero, Complex.zero_cpow hline, zero_div]
 
 /-- The modulus of the Perron integrand: the numerator contributes `x ^ c`, independently of the
 height, and the denominator the distance from the origin to `c + i t`. -/
@@ -133,10 +140,22 @@ visible prefactor is `(2π)⁻¹` rather than `(2πi)⁻¹`. -/
 noncomputable def truncatedPerronKernel (x c T : ℝ) : ℂ :=
   ((2 * π : ℝ) : ℂ)⁻¹ * ∫ t in -T..T, perronIntegrand x c t
 
+/-- **Defining equation of the truncated Perron kernel.**  Use this rather than unfolding the
+definition. -/
+theorem truncatedPerronKernel_def (x c T : ℝ) :
+    truncatedPerronKernel x c T = ((2 * π : ℝ) : ℂ)⁻¹ * ∫ t in -T..T, perronIntegrand x c t :=
+  (rfl)
+
 /-- At zero height the truncated Perron kernel vanishes: the segment of integration is a point. -/
 @[simp]
 theorem truncatedPerronKernel_height_zero (x c : ℝ) : truncatedPerronKernel x c 0 = 0 := by
   simp [truncatedPerronKernel]
+
+/-- The truncated Perron kernel vanishes at the ratio `0`, at every truncation height, whenever the
+line `Re s = c` misses the origin. -/
+@[simp]
+theorem truncatedPerronKernel_zero (hc : c ≠ 0) (T : ℝ) : truncatedPerronKernel 0 c T = 0 := by
+  simp [truncatedPerronKernel_def, perronIntegrand_zero hc]
 
 /-- The truncated Perron kernel is real: the two halves of the segment contribute conjugate
 values. -/
@@ -666,5 +685,24 @@ theorem tendsto_truncatedPerronKernel (hx : 0 < x) (hc : 0 < c) :
   have hbig : Tendsto (fun T : ℝ => π * T * |Real.log x|) atTop atTop :=
     Filter.Tendsto.atTop_mul_const hL (Filter.Tendsto.const_mul_atTop Real.pi_pos tendsto_id)
   simpa [div_eq_mul_inv] using hbig.inv_tendsto_atTop.const_mul (x ^ c)
+
+/-- At the endpoint the kernel is `π⁻¹ arctan (T / c)`, so it never exceeds one in modulus,
+uniformly in the height.  This is the index the smoothed-step estimate excludes. -/
+theorem norm_truncatedPerronKernel_one_le (hc : c ≠ 0) (T : ℝ) :
+    ‖truncatedPerronKernel 1 c T‖ ≤ 1 := by
+  rw [truncatedPerronKernel_one hc, Complex.norm_real, Real.norm_eq_abs, abs_mul, abs_inv,
+    abs_of_pos Real.pi_pos]
+  have harc : |Real.arctan (T / c)| ≤ π / 2 :=
+    abs_le.2 ⟨(Real.neg_pi_div_two_lt_arctan _).le, (Real.arctan_lt_pi_div_two _).le⟩
+  have hpi : (0 : ℝ) < π := Real.pi_pos
+  rw [inv_mul_le_iff₀ hpi]
+  linarith
+
+/-- The sharp step never exceeds one in modulus. -/
+theorem norm_perronStep_le_one (y : ℝ) : ‖perronStep y‖ ≤ 1 := by
+  rcases lt_trichotomy y 1 with hy | rfl | hy
+  · rw [perronStep_of_lt_one hy]; simp
+  · rw [perronStep_one]; norm_num
+  · rw [perronStep_of_one_lt hy]; simp
 
 end TauCeti
