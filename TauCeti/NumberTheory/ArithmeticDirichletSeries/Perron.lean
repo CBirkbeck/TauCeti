@@ -320,7 +320,8 @@ private theorem norm_integral_perronFn_vertical_le (hx : 0 < x) (hc : c ≠ 0) (
 near abscissa `c`, the vertical side is at most `x ^ b / c * (2 * T)`.  Stating the hypothesis as
 `c ≤ |b|` covers both endpoint estimates at once: the far side sits at `b = B` below the endpoint
 and at `b = -B` above it. -/
-private theorem norm_integral_perronFn_farSide_le (hx : 0 < x) (hc : 0 < c) (hT : 0 ≤ T) {b : ℝ}
+private theorem norm_integral_perronFn_vertical_le_of_le_abs (hx : 0 < x) (hc : 0 < c)
+    (hT : 0 ≤ T) {b : ℝ}
     (hb : c ≤ |b|) : ‖∫ t in (-T)..T, perronFn x ((b : ℂ) + t * I)‖ ≤ x ^ b / c * (2 * T) := by
   have hb0 : b ≠ 0 := by
     rintro rfl
@@ -369,7 +370,7 @@ private theorem differentiableOn_perronFn_rectangle (hx : x ≠ 0) (hc : 0 < c) 
   have hre : s.re ∈ Set.uIcc c B := hs.1
   rw [Set.uIcc_of_le hcB] at hre
   have hpos : 0 < s.re := lt_of_lt_of_le hc hre.1
-  exact fun h0 => by simp [h0] at hpos
+  exact Complex.ne_zero_of_re_pos hpos
 
 /-- Each horizontal side of the rectangle contributes at most `x ^ c / (T * |log x|)`.  Below the
 endpoint `log x` is negative, so passing from `log x` to `|log x|` also swaps the two powers, and
@@ -409,7 +410,7 @@ private theorem norm_integral_perronFn_le_of_lt_one (hx : 0 < x) (hx1 : x < 1) (
         ‖∫ σ in c..B, perronFn x ((σ : ℂ) + u * I)‖ ≤ x ^ c / (T * |Real.log x|) :=
       fun _ habs ↦ norm_integral_perronFn_horizontal_le_of_lt_one hx hx1 hT hcB habs
     have hfar : ‖∫ t in (-T)..T, perronFn x ((B : ℂ) + t * I)‖ ≤ x ^ B / c * (2 * T) :=
-      norm_integral_perronFn_farSide_le hx hc hT.le (by rwa [abs_of_pos hB0])
+      norm_integral_perronFn_vertical_le_of_le_abs hx hc hT.le (by rwa [abs_of_pos hB0])
     rw [← norm_I_mul (∫ t in (-T)..T, perronFn x ((c : ℂ) + t * I)), hsplit]
     refine (norm_sub_add_I_mul_le _ _ _).trans ?_
     have h₁ := hhoriz (-T) (by rw [abs_neg, abs_of_pos hT])
@@ -589,7 +590,7 @@ private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc
         _ = x ^ c / (T * Real.log x) := by ring
     have hfar : ‖∫ t in (-T)..T, perronFn x (((-B : ℝ) : ℂ) + t * I)‖
         ≤ x ^ (-B) / c * (2 * T) :=
-      norm_integral_perronFn_farSide_le hx hc hT.le (by rwa [abs_neg, abs_of_pos hB0])
+      norm_integral_perronFn_vertical_le_of_le_abs hx hc hT.le (by rwa [abs_neg, abs_of_pos hB0])
     rw [← norm_I_mul ((∫ t in (-T)..T, perronFn x ((c : ℂ) + t * I)) - 2 * π), hmain]
     refine (norm_sub_add_I_mul_le _ _ _).trans ?_
     have h₁ := hhoriz (-T) (neg_ne_zero.2 hT.ne') (by rw [abs_neg, abs_of_pos hT])
