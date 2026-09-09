@@ -11,7 +11,7 @@ public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Analysis.Complex.Order
 public import Mathlib.NumberTheory.ArithmeticFunction.Defs
-public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
+public import TauCeti.RingTheory.Ideal.Norm.AbsNorm
 
 /-!
 # Regrouping ideal arithmetic functions by absolute norm
@@ -161,6 +161,35 @@ theorem normCoeff_mul_absNorm_cpow (f : IdealArithmeticFunction K) (z : ℂ) (n 
     normCoeff K (fun I ↦ f I * (Ideal.absNorm (I : Ideal (𝓞 K)) : ℂ) ^ (-z)) n =
       normCoeff K f n * (n : ℂ) ^ (-z) :=
   normCoeff_fun_mul_comp_absNorm K f (fun m ↦ (m : ℂ) ^ (-z)) n
+
+open NumberField in
+/-- **Regrouping is transported by an isomorphism of fields.** An isomorphism `e : K ≃+* L` matches
+the nonzero ideals of `𝓞 L` with those of `𝓞 K` preserving absolute norms, so it matches the norm
+fibres and leaves every norm coefficient unchanged. -/
+theorem normCoeff_map {L : Type*} [Field L] [NumberField L] (e : K ≃+* L)
+    (f : IdealArithmeticFunction K) (n : ℕ) :
+    normCoeff L (IdealArithmeticFunction.map e f) n = normCoeff K f n := by
+  classical
+  rw [normCoeff_eq_sum_normFiber, normCoeff_eq_sum_normFiber]
+  refine Finset.sum_nbij'
+    (fun J ↦ ⟨Ideal.comap (RingOfIntegers.mapRingEquiv e) (J : Ideal (𝓞 L)),
+      mem_nonZeroDivisors_of_ne_zero (by
+        simpa [IdealArithmeticFunction.comap_mapRingEquiv_eq_bot_iff] using
+          nonZeroDivisors.coe_ne_zero J)⟩)
+    (fun I ↦ ⟨Ideal.comap (RingOfIntegers.mapRingEquiv e.symm) (I : Ideal (𝓞 K)),
+      mem_nonZeroDivisors_of_ne_zero (by
+        simpa [IdealArithmeticFunction.comap_mapRingEquiv_eq_bot_iff] using
+          nonZeroDivisors.coe_ne_zero I)⟩)
+    ?_ ?_ ?_ ?_ ?_ <;> intro a ha
+  · simpa [mem_normFiber, Ideal.absNorm_comap_of_ringEquiv] using (mem_normFiber L).1 ha
+  · simpa [mem_normFiber, Ideal.absNorm_comap_of_ringEquiv] using (mem_normFiber K).1 ha
+  · ext
+    simp [IdealArithmeticFunction.comap_mapRingEquiv_trans, RingEquiv.symm_trans_self,
+      IdealArithmeticFunction.comap_mapRingEquiv_refl]
+  · ext
+    simp [IdealArithmeticFunction.comap_mapRingEquiv_trans, RingEquiv.self_trans_symm,
+      IdealArithmeticFunction.comap_mapRingEquiv_refl]
+  · rw [IdealArithmeticFunction.map_apply, ← IdealArithmeticFunction.zeroExtend_coe f]
 
 /-- **Absence of cancellation inside norm fibres**, for a nonnegative ideal arithmetic function:
 the absolute value of a norm coefficient is the sum of the absolute values over the fibre. -/

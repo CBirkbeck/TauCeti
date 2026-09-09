@@ -334,12 +334,14 @@ private theorem mapRingEquiv_trans_apply (e : K ≃+* L) (e' : L ≃+* M) (x : �
       RingOfIntegers.mapRingEquiv (e.trans e') x :=
   RingOfIntegers.ext rfl
 
-private theorem comap_mapRingEquiv_refl (I : Ideal (𝓞 K)) :
+/-- Pulling back along the identity isomorphism is the identity on ideals. -/
+theorem comap_mapRingEquiv_refl (I : Ideal (𝓞 K)) :
     Ideal.comap (RingOfIntegers.mapRingEquiv (RingEquiv.refl K)) I = I := by
   ext x
   rw [Ideal.mem_comap, mapRingEquiv_refl_apply]
 
-private theorem comap_mapRingEquiv_trans (e : K ≃+* L) (e' : L ≃+* M) (I : Ideal (𝓞 M)) :
+/-- Pulling back along `e` and then `e'` is pulling back along `e.trans e'`. -/
+theorem comap_mapRingEquiv_trans (e : K ≃+* L) (e' : L ≃+* M) (I : Ideal (𝓞 M)) :
     Ideal.comap (RingOfIntegers.mapRingEquiv e)
         (Ideal.comap (RingOfIntegers.mapRingEquiv e') I) =
       Ideal.comap (RingOfIntegers.mapRingEquiv (e.trans e')) I :=
@@ -347,7 +349,9 @@ private theorem comap_mapRingEquiv_trans (e : K ≃+* L) (e' : L ≃+* M) (I : I
     (RingOfIntegers.mapRingEquiv e' : 𝓞 L →+* 𝓞 M)).trans
     (congrArg (Ideal.comap · I) (RingHom.ext (mapRingEquiv_trans_apply e e')))
 
-private theorem comap_mapRingEquiv_eq_bot_iff (e : K ≃+* L) {I : Ideal (𝓞 L)} :
+/-- Pulling back along an isomorphism of fields detects the zero ideal: the preimage of `I` is `⊥`
+exactly when `I` is. -/
+theorem comap_mapRingEquiv_eq_bot_iff (e : K ≃+* L) {I : Ideal (𝓞 L)} :
     Ideal.comap (RingOfIntegers.mapRingEquiv e) I = ⊥ ↔ I = ⊥ := by
   rw [← Ideal.map_symm]
   exact Ideal.map_eq_bot_iff_of_injective (RingOfIntegers.mapRingEquiv e).symm.injective
