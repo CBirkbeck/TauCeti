@@ -23,9 +23,10 @@ is defined without choosing anything.
 
 **What this does not give.** `exp` is not injective, so an identity of the form `exp t = L`
 determines `t` only modulo `2πi ℤ`; these theorems therefore do not exhibit a logarithm *of* the
-`L`-series, and in particular are not a holomorphic branch on a region. Obtaining one needs the
-series to be nonvanishing there first, which
-`TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Analytic` states it does not supply.
+`L`-series, and in particular are not a holomorphic branch on a region.
+`TauCeti.MultiplicativeIdealWeight.LSeries_ne_zero_of_summable_idealTerm` supplies nonvanishing
+pointwise, wherever the ideal-indexed series converges absolutely; a branch needs more than that —
+a simply connected zero-free region on which to choose one — and is not constructed here.
 
 ## Main results
 

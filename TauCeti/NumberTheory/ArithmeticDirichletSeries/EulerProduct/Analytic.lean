@@ -41,9 +41,9 @@ product of the Dedekind zeta function.
 * `TauCeti.dedekindZeta_eulerProduct_hasProd`: the **Euler product of the Dedekind zeta
   function**, valid on `Re s > 1`.
 
-The nonvanishing is not formal: an unconditionally convergent product of nonzero factors may still
-vanish. It comes from the reciprocal product converging as well, so that the two products multiply
-to `1`. Nothing is claimed off the region of absolute convergence.
+The nonvanishing is pointwise, at each `s` where the ideal-indexed series converges absolutely, and
+nothing is claimed off that region. It is not a formality: an unconditionally convergent product of
+nonzero factors may still vanish.
 
 ## References
 
@@ -349,21 +349,21 @@ theorem hasProd_eulerFactor (hs : Summable (idealTerm K χ.toIdealArithmeticFunc
 /-- **The Euler product does not vanish.** Where the ideal-indexed Dirichlet series converges
 absolutely, the `L`-series of the norm coefficients is nonzero.
 
-This is the nonvanishing that convergence of the reciprocal product supplies, and no more: it says
-nothing about `s` where the series does not converge absolutely. -/
+This is pointwise nonvanishing at such an `s` and no more: it says nothing where the series does not
+converge absolutely, and does not by itself furnish a holomorphic logarithm on a region. -/
 theorem LSeries_ne_zero_of_summable_idealTerm
     (hs : Summable (idealTerm K χ.toIdealArithmeticFunction s)) :
     LSeries (normCoeff K χ.toIdealArithmeticFunction) s ≠ 0 := by
   have hsum : Summable fun P : HeightOneSpectrum (𝓞 K) ↦
       ‖χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s‖ :=
     summable_norm_iff.2 (summable_div_of_summable_idealTerm χ hs)
-  have hmul := (hasProd_eulerFactor χ hs).mul (multipliable_one_sub_of_summable hsum).hasProd
-  have hone : (fun P : HeightOneSpectrum (𝓞 K) ↦
-      (1 - χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s)⁻¹ *
-        (1 - χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s)) = fun _ ↦ 1 :=
-    funext fun P ↦ inv_mul_cancel₀ (one_sub_div_ne_zero_of_summable_idealTerm χ hs P)
-  rw [hone] at hmul
-  exact left_ne_zero_of_mul_eq_one (hmul.unique hasProd_one)
+  have h0 : ∏' P : HeightOneSpectrum (𝓞 K),
+      (1 - χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s) ≠ 0 := by
+    refine tprod_one_add_ne_zero_of_summable (f := fun P : HeightOneSpectrum (𝓞 K) ↦
+      -(χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s)) (fun P ↦ ?_) (by simpa using hsum)
+    simpa [sub_eq_add_neg] using one_sub_div_ne_zero_of_summable_idealTerm χ hs P
+  rw [(hasProd_eulerFactor χ hs).unique ((multipliable_one_sub_of_summable hsum).hasProd.inv₀ h0)]
+  exact inv_ne_zero h0
 
 end MultiplicativeIdealWeight
 
