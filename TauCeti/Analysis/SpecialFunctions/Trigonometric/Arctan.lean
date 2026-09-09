@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
-public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 
 /-!
 # Complementary arctangents at the corners of a rectangle
