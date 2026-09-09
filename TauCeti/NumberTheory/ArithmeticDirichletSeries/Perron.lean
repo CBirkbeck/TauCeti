@@ -90,6 +90,11 @@ private theorem ofReal_add_mul_I_ne_zero_of_re (hc : c ≠ 0) (t : ℝ) : (c : �
 theorem perronIntegrand_one (c t : ℝ) : perronIntegrand 1 c t = ((c : ℂ) + t * I)⁻¹ := by
   rw [perronIntegrand, Complex.ofReal_one, Complex.one_cpow, inv_eq_one_div]
 
+/-- **Defining equation of the Perron integrand.**  Its value at height `t` is `x ^ s / s` for
+`s = c + i t`.  Use this rather than unfolding the definition. -/
+theorem perronIntegrand_apply (x c t : ℝ) :
+    perronIntegrand x c t = (x : ℂ) ^ ((c : ℂ) + t * I) / ((c : ℂ) + t * I) := (rfl)
+
 /-- The modulus of the Perron integrand: the numerator contributes `x ^ c`, independently of the
 height, and the denominator the distance from the origin to `c + i t`. -/
 theorem norm_perronIntegrand (hx : 0 < x) (c t : ℝ) :
@@ -132,6 +137,12 @@ The segment is parameterized by `s = c + i t` for `t` in `[-T, T]`, so `ds = i d
 visible prefactor is `(2π)⁻¹` rather than `(2πi)⁻¹`. -/
 noncomputable def truncatedPerronKernel (x c T : ℝ) : ℂ :=
   ((2 * π : ℝ) : ℂ)⁻¹ * ∫ t in -T..T, perronIntegrand x c t
+
+/-- **Defining equation of the truncated Perron kernel.**  Use this rather than unfolding the
+definition. -/
+theorem truncatedPerronKernel_apply (x c T : ℝ) :
+    truncatedPerronKernel x c T = ((2 * π : ℝ) : ℂ)⁻¹ * ∫ t in -T..T, perronIntegrand x c t :=
+  (rfl)
 
 /-- At zero height the truncated Perron kernel vanishes: the segment of integration is a point. -/
 @[simp]
