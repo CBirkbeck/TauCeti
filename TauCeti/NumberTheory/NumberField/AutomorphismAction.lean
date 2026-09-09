@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.NumberTheory.NumberField.Basic
-public import TauCeti.FieldTheory.Galois.FixedField
 
 /-!
 # Automorphisms acting on the ring of integers
@@ -42,13 +41,11 @@ recorded once here rather than reconstructed at each use site.
   `𝓞 K`-action.
 * `AlgEquiv.mapAlgEquiv_symm_autCongr_smul`: restriction to rings of integers intertwines
   conjugation of automorphisms along an algebra equivalence.
-* `AlgEquiv.toFixedFieldAlgEquiv_smul_ideal`: rebundling `σ` over the field it fixes does not
-  change how it moves the ideals of `𝓞 L`.
 -/
 
 public section
 
-open scoped NumberField Pointwise
+open scoped NumberField
 
 namespace NumberField
 
@@ -122,21 +119,5 @@ theorem mapAlgEquiv_symm_autCongr_smul (e : K ≃ₐ[R] L) (σ : K ≃ₐ[R] K)
   -- to the ambient fields, where `autCongr` is visibly conjugation by `e`.
   change e.symm ((autCongr e σ • x : 𝓞 L) : L) = σ (e.symm (x : L))
   simp
-
-section FixedField
-
-variable {K L : Type*} [Field K] [Field L] [Algebra K L]
-
-/-- **The rebundled automorphism acts as `σ` on ideals.**  `AlgEquiv.toFixedFieldAlgEquiv σ` is
-`σ` with its base field changed, so it induces the same action on the ideals of `𝓞 L`. -/
-@[simp]
-theorem toFixedFieldAlgEquiv_smul_ideal (σ : L ≃ₐ[K] L) (Q : Ideal (𝓞 L)) :
-    (toFixedFieldAlgEquiv σ) • Q = σ • Q := by
-  rw [Ideal.pointwise_smul_def, Ideal.pointwise_smul_def]
-  refine congrArg (Ideal.map · Q) (RingHom.ext fun x ↦ NumberField.RingOfIntegers.ext ?_)
-  simp only [MulSemiringAction.toRingHom_apply, NumberField.algebraMap_smul_eq_apply,
-    toFixedFieldAlgEquiv_apply]
-
-end FixedField
 
 end AlgEquiv

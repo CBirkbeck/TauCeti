@@ -22,6 +22,7 @@ hypothesis is only that `σ` fixes `Q`.  A Frobenius at an unramified prime supp
 
 ## Main results
 
+* `AlgEquiv.toFixedFieldAlgEquiv_smul_ideal`: the two bundlings of `σ` act alike on ideals.
 * `NumberField.stabilizer_fixedField_zpowers_eq_top`: over `L ^ ⟨σ⟩`, every automorphism fixes `Q`.
 
 ## References
@@ -39,6 +40,22 @@ public section
 open IntermediateField
 
 open scoped NumberField Pointwise
+
+namespace AlgEquiv
+
+variable {K L : Type*} [Field K] [Field L] [Algebra K L]
+
+/-- **The rebundled automorphism acts as `σ` on ideals.**  `AlgEquiv.toFixedFieldAlgEquiv σ` is
+`σ` with its base field changed, so it induces the same action on the ideals of `𝓞 L`. -/
+@[simp]
+theorem toFixedFieldAlgEquiv_smul_ideal (σ : L ≃ₐ[K] L) (Q : Ideal (𝓞 L)) :
+    (toFixedFieldAlgEquiv σ) • Q = σ • Q := by
+  rw [Ideal.pointwise_smul_def, Ideal.pointwise_smul_def]
+  refine congrArg (Ideal.map · Q) (RingHom.ext fun x ↦ NumberField.RingOfIntegers.ext ?_)
+  simp only [MulSemiringAction.toRingHom_apply, NumberField.algebraMap_smul_eq_apply,
+    toFixedFieldAlgEquiv_apply]
+
+end AlgEquiv
 
 namespace NumberField
 
