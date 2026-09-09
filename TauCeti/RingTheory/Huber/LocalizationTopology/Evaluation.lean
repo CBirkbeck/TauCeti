@@ -12,7 +12,6 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.PolynomialEvaluation
 public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.FirstCountable
 public import TauCeti.Topology.Algebra.Nonarchimedean.Basic
 public import TauCeti.Topology.Algebra.Nonarchimedean.Completion.Surjective
-public import TauCeti.Topology.Algebra.IsUniformGroup.Submodule
 public import TauCeti.Topology.Algebra.IsUniformGroup.Subring
 public import TauCeti.RingTheory.Huber.TopologicallyFiniteType
 
@@ -67,7 +66,9 @@ by this module — chiefly `TauCeti.Huber.polyEvalHom` and
   consequence of the surjectivity, not a further hypothesis.
 * `TauCeti.Huber.PairOfDefinition.isStrictlyTopologicallyFiniteType_toCompletionLoc`: consequently
   `A → A⟨T/s⟩` is strictly topologically of finite type — Wedhorn's Definition 6.28 at
-  Example 6.38.
+  Example 6.38. Its only hypothesis is the rational-subset condition, that `T` together with `s`
+  generates the unit ideal: the conclusion does not mention a family, so neither does the
+  statement, and `T` is enumerated inside the proof.
 
 ## What this is not
 
@@ -279,8 +280,9 @@ theorem denseRange_rationalEvalHom {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i 
 at the fractions.
 
 On the copy of a polynomial inside `A⟨X₁, …, Xₖ⟩` the completed evaluation is therefore
-determined by the elementary one at the fractions; the two agree before any completion is
-involved. -/
+determined by the elementary one at the fractions: the two agree once both are carried into the
+completions, the polynomial along `A[X₁, …, Xₖ] → A⟨X₁, …, Xₖ⟩` and its value along
+`Aₛ → A⟨T/s⟩`. -/
 @[simp]
 theorem rationalEvalHom_coe_weightedPolynomialHom {k : ℕ} (t : Fin k → A) (ht : ∀ i, t i ∈ T)
     (p : MvPolynomial (Fin k) A) :
@@ -484,9 +486,13 @@ theorem isOpenQuotientMap_rationalEvalHom [IsTateRing A]
     continuous_rationalEvalHom P T s S hden t ht,
     isOpenMap_rationalEvalHom P T s S hden t ht hspan hTt⟩
 
-/-- **A rational localisation is strictly topologically of finite type over `A`**, for numerators
-which together with the denominator `s` generate the unit ideal, and whose fractions cover those
-of `T`.
+/-- **A rational localisation is strictly topologically of finite type over `A`**, whenever the
+numerators together with the denominator `s` generate the unit ideal.
+
+That is the rational-subset condition itself, and it is all this asks: no auxiliary family and
+no choice of covering fractions. `T` is finite, so the proof enumerates it as a family indexed by
+`Fin #T` and applies the evaluation API to that; a family whose range is all of `T` covers the
+fractions of `T` for free.
 
 This is Wedhorn's Definition 6.28 at Example 6.38:
 `TauCeti.Huber.PairOfDefinition.isOpenQuotientMap_rationalEvalHom` is the presentation itself,
@@ -498,10 +504,8 @@ structure map, which is
 The presenting algebra is the trivial-weight one, `A⟨X₁, …, Xₖ⟩`, which is what makes this
 *strict* topological finite type rather than the weaker notion of Definition 6.29. -/
 theorem isStrictlyTopologicallyFiniteType_toCompletionLoc [IsTateRing A]
-    [(nhds (0 : A)).IsCountablyGenerated] {k : ℕ}
-    (t : Fin k → A) (ht : ∀ i, t i ∈ T) (hspan : Ideal.span (insert s (Set.range t)) = ⊤)
-    (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
-      ⊆ Set.range fun i ↦ (divBy (t i) s : S)) :
+    [(nhds (0 : A)).IsCountablyGenerated]
+    (hspan : Ideal.span (insert s (T : Set A)) = ⊤) :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
     letI := isTopologicalRing_locUniformSpace P T s S hden
@@ -514,9 +518,20 @@ theorem isStrictlyTopologicallyFiniteType_toCompletionLoc [IsTateRing A]
   have _ := isHuberRing_locUniformSpace P T s S hden
   let _ : UniformContinuousConstSMul A S :=
     uniformContinuousConstSMul_of_continuousConstSMul A S
+  let t : Fin T.card → A := fun i ↦ ((T.equivFin.symm i : ↥T) : A)
+  have ht : ∀ i, t i ∈ T := fun i ↦ (T.equivFin.symm i).2
+  have happ : ∀ y : ↥T, t (T.equivFin y) = (y : A) := fun y ↦ by simp [t]
+  have hrange : Set.range t = (T : Set A) := by
+    ext a
+    simp only [Set.mem_range, Finset.mem_coe]
+    exact ⟨fun ⟨i, hi⟩ ↦ hi ▸ ht i, fun ha ↦ ⟨T.equivFin ⟨a, ha⟩, happ ⟨a, ha⟩⟩⟩
+  have hspan' : Ideal.span (insert s (Set.range t)) = ⊤ := by rwa [hrange]
+  have hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
+      ⊆ Set.range fun i ↦ (divBy (t i) s : S) := fun _ ⟨y, hy⟩ ↦
+    ⟨T.equivFin y, hy ▸ congrArg (fun a ↦ (divBy a s : S)) (happ y)⟩
   refine isStrictlyTopologicallyFiniteType_iff.mpr
-    ⟨k, rationalEvalHom P T s S hden t ht,
-      isOpenQuotientMap_rationalEvalHom P T s S hden t ht hspan hTt, RingHom.ext fun a ↦ ?_⟩
+    ⟨T.card, rationalEvalHom P T s S hden t ht,
+      isOpenQuotientMap_rationalEvalHom P T s S hden t ht hspan' hTt, RingHom.ext fun a ↦ ?_⟩
   have h := congrArg (fun f ↦ f a) (rationalEvalHom_comp_algebraMap P T s S hden t ht)
   rw [toCompletionLoc_apply] at h
   exact h

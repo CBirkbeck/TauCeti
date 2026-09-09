@@ -68,5 +68,3 @@ instance isCountablyGenerated_uniformity {A M : Type*} [Semiring A] [AddCommMono
   inferInstanceAs ((𝓤 (p : Set M)).IsCountablyGenerated)
 
 end Submodule
-
-

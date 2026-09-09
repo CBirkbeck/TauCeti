@@ -92,12 +92,11 @@ theorem isStronglyNoetherian_completion_self (P : PairOfDefinition A) (T : Finse
     (continuous_presentationRingEquiv P T s S hden T s S' hden' _ _ _ _ _ _)
     (continuous_presentationRingEquiv_symm P T s S hden T s S' hden' _ _ _ _ _ _)).mp hSN
 
-/-- **A rational localisation of a strongly noetherian Tate ring is strongly noetherian**, for
-numerators which together with the denominator `s` generate the unit ideal, and whose fractions
-cover those of `T`.
+/-- **A rational localisation of a strongly noetherian Tate ring is strongly noetherian**,
+whenever the numerators together with the denominator `s` generate the unit ideal.
 
 Strong noetherianity does not pass to arbitrary algebras, so it has to be propagated along a
-map with enough structure. Here that map is the presentation: under these hypotheses `A⟨T/s⟩` is
+map with enough structure. Here that map is the presentation: under this hypothesis `A⟨T/s⟩` is
 strictly topologically of finite type over `A`
 (`TauCeti.Huber.PairOfDefinition.isStrictlyTopologicallyFiniteType_toCompletionLoc`), and
 `TauCeti.Huber.IsStrictlyTopologicallyFiniteType.isStronglyNoetherian` carries the property
@@ -107,10 +106,8 @@ theorem isStronglyNoetherian_completion [IsTateRing A]
     [IsStronglyNoetherian A] [(nhds (0 : A)).IsCountablyGenerated]
     (P : PairOfDefinition A) (T : Finset A) (s : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
-    (hden : HasDenominatorPower P T s S) {k : ℕ}
-    (t : Fin k → A) (ht : ∀ i, t i ∈ T) (hspan : Ideal.span (insert s (Set.range t)) = ⊤)
-    (hTt : Set.range (fun y : ↥T ↦ (divBy (y : A) s : S))
-      ⊆ Set.range fun i ↦ (divBy (t i) s : S)) :
+    (hden : HasDenominatorPower P T s S)
+    (hspan : Ideal.span (insert s (T : Set A)) = ⊤) :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
     letI := isTopologicalRing_locUniformSpace P T s S hden
@@ -129,8 +126,8 @@ theorem isStronglyNoetherian_completion [IsTateRing A]
   have _ : NonarchimedeanRing S := by
     have h := nonarchimedeanRing_locTopology P T s S hden
     rwa [← locUniformSpace_toTopologicalSpace P T s S hden] at h
-  exact (isStrictlyTopologicallyFiniteType_toCompletionLoc P T s S hden t ht hspan
-    hTt).isStronglyNoetherian
+  exact (isStrictlyTopologicallyFiniteType_toCompletionLoc P T s S hden
+    hspan).isStronglyNoetherian
 
 end PairOfDefinition
 
