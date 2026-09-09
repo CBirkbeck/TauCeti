@@ -56,10 +56,10 @@ theorem _root_.IsNilpotent.prodMap {f : Module.End K V} {g : Module.End K W}
 
 end Semiring
 
-section CommRing
+section CommSemiring
 
 variable {K : Type u} {V : Type v} {W : Type w}
-variable [CommRing K] [AddCommGroup V] [Module K V] [AddCommGroup W] [Module K W]
+variable [CommSemiring K] [AddCommMonoid V] [Module K V] [AddCommMonoid W] [Module K W]
 
 /-- Evaluating a polynomial at a componentwise product of endomorphisms is the componentwise
 product of the evaluations. -/
@@ -71,6 +71,13 @@ theorem _root_.Module.End.aeval_prodMap (f : Module.End K V) (g : Module.End K W
       (LinearMap.prodMapAlgHom K V W).comp ((aeval f).prod (aeval g)) := by
     ext <;> simp
   exact DFunLike.congr_fun h p
+
+end CommSemiring
+
+section CommRing
+
+variable {K : Type u} {V : Type v} {W : Type w}
+variable [CommRing K] [AddCommGroup V] [Module K V] [AddCommGroup W] [Module K W]
 
 /-- The componentwise product of two semisimple endomorphisms is semisimple. -/
 theorem _root_.Module.End.IsSemisimple.prodMap {f : Module.End K V} {g : Module.End K W}
