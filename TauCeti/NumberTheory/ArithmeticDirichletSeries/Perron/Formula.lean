@@ -295,11 +295,8 @@ private theorem summable_indicator_norm_of_half_lt (hx : 0 < x) (f : ℕ → ℂ
     exact ite_eq_right_iff.2 fun hc ↦ absurd hc (not_lt.2 hle)
 
 /-- **The limiting arithmetic Perron formula.**  As the truncation height grows the integral tends
-to the series of sharp steps, at every positive `x` off the norms.
-
-The interchange of the limit with the series is dominated: beyond `2 x` the step vanishes and the
-smoothed-step error alone bounds each term uniformly in `T ≥ 1`, while the finitely many
-indices below `2 x` contribute a further `‖f n‖` each. -/
+to the series of sharp steps `∑' n, f n * perronStep (x / n)`.  This holds at every positive `x`,
+integer endpoints included; `TauCeti.tsum_mul_perronStep_natCast` evaluates the limit there. -/
 theorem tendsto_truncatedPerron_LSeries (hx : 0 < x) (hc : 0 < c)
     (h : LSeriesSummable f (c : ℂ)) :
     Tendsto (fun T : ℝ ↦ ((2 * π : ℝ) : ℂ)⁻¹ *
