@@ -8,19 +8,21 @@ module
 public import Mathlib.GroupTheory.SpecificGroups.Cyclic
 
 /-!
-# Counting the elements of a cyclic group whose order is a multiple of `f`
+# Counting the elements of a cyclic group by a condition on their order
 
-In a finite cyclic group, the number of elements whose order is divisible by `f` is the sum of
-`φ d` over the divisors `d` of the group order that `f` divides.
+In a finite cyclic group, the number of elements whose order satisfies a predicate `p` is the sum
+of `φ d` over the divisors `d` of the group order that satisfy `p`.
 
 Mathlib counts elements of an *exact* order: `IsCyclic.card_orderOf_eq_totient` says there are
 `φ d` of them for each `d` dividing the group order. Summing that over the divisors selected by
-`f` is the whole content here.
+`p` is the whole content here.
 
 ## Main results
 
-* `IsCyclic.card_filter_dvd_orderOf`, and its additive counterpart: the count is `∑ φ d`
-  over the divisors `d` of the group order with `f ∣ d`.
+* `IsCyclic.card_filter_orderOf_eq_sum_totient`, and its additive counterpart: the count of
+  elements whose order satisfies `p` is `∑ φ d` over the divisors `d` of the group order with
+  `p d`.
+* `IsCyclic.card_filter_dvd_orderOf_eq_sum_totient`: the case `p = (f ∣ ·)`.
 -/
 
 public section
@@ -29,24 +31,24 @@ open Finset Nat
 
 variable {α : Type*} [Group α] [Fintype α] [IsCyclic α]
 
-/-- **The elements of a cyclic group whose order is a multiple of `f`, counted by order.**
+/-- **The elements of a cyclic group whose order satisfies `p`, counted by order.**
 Each divisor `d` of the group order contributes its `φ d` elements of order exactly `d`, and the
-condition `f ∣ orderOf τ` keeps precisely the divisors that `f` divides. -/
+condition `p (orderOf τ)` keeps precisely the divisors satisfying `p`. -/
 @[to_additive
-/-- **The elements of a finite additive cyclic group whose order is a multiple of `f`, counted by
+/-- **The elements of a finite additive cyclic group whose order satisfies `p`, counted by
 order.** Each divisor `d` of the group order contributes its `φ d` elements of `addOrderOf`
-exactly `d`, and the condition `f ∣ addOrderOf τ` keeps precisely the divisors that `f`
-divides. -/]
-theorem IsCyclic.card_filter_dvd_orderOf (f : ℕ) :
-    #{τ : α | f ∣ orderOf τ} =
-      ∑ d ∈ {d ∈ (Fintype.card α).divisors | f ∣ d}, φ d := by
+exactly `d`, and the condition `p (addOrderOf τ)` keeps precisely the divisors satisfying
+`p`. -/]
+theorem IsCyclic.card_filter_orderOf_eq_sum_totient (p : ℕ → Prop) [DecidablePred p] :
+    #{τ : α | p (orderOf τ)} =
+      ∑ d ∈ {d ∈ (Fintype.card α).divisors | p d}, φ d := by
   classical
   rw [card_eq_sum_card_fiberwise (f := fun τ : α ↦ orderOf τ)
-    (t := {d ∈ (Fintype.card α).divisors | f ∣ d})]
+    (t := {d ∈ (Fintype.card α).divisors | p d})]
   · refine sum_congr rfl fun d hd ↦ ?_
     rw [mem_filter, Nat.mem_divisors] at hd
     have hfib : Finset.filter (fun a : α ↦ orderOf a = d)
-          (Finset.filter (fun τ : α ↦ f ∣ orderOf τ) Finset.univ)
+          (Finset.filter (fun τ : α ↦ p (orderOf τ)) Finset.univ)
         = Finset.filter (fun a : α ↦ orderOf a = d) Finset.univ := by
       ext τ
       simp only [Finset.mem_filter, Finset.mem_univ, true_and]
@@ -56,3 +58,14 @@ theorem IsCyclic.card_filter_dvd_orderOf (f : ℕ) :
     rw [mem_coe, mem_filter] at hτ
     rw [mem_coe, mem_filter, Nat.mem_divisors]
     exact ⟨⟨orderOf_dvd_card, Fintype.card_ne_zero⟩, hτ.2⟩
+
+/-- **The elements of a cyclic group whose order is a multiple of `f`, counted by order.**
+The divisibility case of `IsCyclic.card_filter_orderOf_eq_sum_totient`. -/
+@[to_additive
+/-- **The elements of a finite additive cyclic group whose order is a multiple of `f`, counted by
+order.** The divisibility case of
+`AddCommGroup.card_filter_addOrderOf_eq_sum_totient`. -/]
+theorem IsCyclic.card_filter_dvd_orderOf_eq_sum_totient (f : ℕ) :
+    #{τ : α | f ∣ orderOf τ} =
+      ∑ d ∈ {d ∈ (Fintype.card α).divisors | f ∣ d}, φ d :=
+  IsCyclic.card_filter_orderOf_eq_sum_totient (f ∣ ·)
