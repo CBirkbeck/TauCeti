@@ -185,7 +185,8 @@ theorem cuspFormsOld_le_of_prime [NeZero N]
     obtain ⟨q, hq, e, rfl⟩ := Nat.exists_prime_and_dvd hd1
     obtain ⟨s, hs⟩ := id hdvd
     have hqL : q * (e * M * s) = N := by rw [hs]; ring
-    have : NeZero e := NeZero.of_dvd (show e ∣ N from ⟨q * M * s, by rw [← hqL]; ring⟩)
+    have heN : e ∣ N := ⟨q * M * s, by rw [← hqL]; ring⟩
+    have : NeZero e := NeZero.of_dvd heN
     have : NeZero (e * M * s) := NeZero.of_dvd (Dvd.intro_left q hqL)
     have heM : e * M ∣ e * M * s := ⟨s, rfl⟩
     have hmem := hV q (e * M * s) hq hqL q (Or.inr rfl)
