@@ -568,7 +568,7 @@ private theorem norm_integral_perronFn_sub_two_pi_le_of_one_lt (hx1 : 1 < x) (hc
     have e₁ := integral_perronFn_one_horizontal_diff hT.ne' (-B) c
     have e₂ := integral_perronFn_one_vertical hc.ne' T
     have e₃ := integral_perronFn_one_vertical (neg_ne_zero.2 hB0.ne') T
-    have hres := Complex.arctan_corner_sum_eq_two_mul_pi_mul_I hc hB0 hT
+    have hres := TauCeti.arctan_corner_sum_eq_two_mul_pi_mul_I hc hB0 hT
     have hmain : I * ((∫ t in (-T)..T, perronFn x ((c : ℂ) + t * I)) - 2 * π)
         = (∫ σ in (-B)..c, perronFn x ((σ : ℂ) + (T : ℝ) * I))
           - (∫ σ in (-B)..c, perronFn x ((σ : ℂ) + (-T : ℝ) * I))

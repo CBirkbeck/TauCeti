@@ -11,6 +11,12 @@ public import Mathlib.Topology.Order.OrderClosed
 /-!
 # Bounds that hold up to a vanishing correction
 
+An estimate proved by a limiting argument typically arrives with an error term attached: one shows
+`v ≤ K + e i` for every `i` far enough along a filter, where `e i` vanishes in the limit.  The
+result below discharges that error term in one step, turning the eventual approximate bound into
+the exact bound `v ≤ K`, so that a proof need not repeat the limit argument at each estimate it
+establishes.
+
 ## Main results
 
 * `Filter.Tendsto.le_of_eventually_le_add`: if `v ≤ K + e i` eventually along `l` and `e` tends to

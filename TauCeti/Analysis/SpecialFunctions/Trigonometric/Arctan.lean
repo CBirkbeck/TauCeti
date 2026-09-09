@@ -17,7 +17,7 @@ separately is not stated there.
 ## Main results
 
 * `Real.arctan_div_add_arctan_div`: the quotient form of the complementary-angle law.
-* `Complex.arctan_corner_sum_eq_two_mul_pi_mul_I`: the four corner angles of a rectangle straddling
+* `TauCeti.arctan_corner_sum_eq_two_mul_pi_mul_I`: the four corner angles of a rectangle straddling
   the imaginary axis sum to a full turn.
 -/
 
@@ -38,7 +38,7 @@ theorem arctan_div_add_arctan_div {u v : ℝ} (hu : 0 < u) (hv : 0 < v) :
 
 end Real
 
-namespace Complex
+namespace TauCeti
 
 /-- **The corner angles of a rectangle sum to a full turn.**  For a rectangle with vertical sides at
 `-B < 0 < c` and horizontal sides at heights `±T`, the four angles subtended at the origin combine
@@ -60,4 +60,4 @@ theorem arctan_corner_sum_eq_two_mul_pi_mul_I {c B T : ℝ} (hc : 0 < c) (hB : 0
   push_cast
   linear_combination (2 * I) * hA + (2 * I) * hB'
 
-end Complex
+end TauCeti
