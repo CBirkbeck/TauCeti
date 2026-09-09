@@ -39,6 +39,8 @@ identity rather than merely lower-triangular.
 * `TauCeti.descendExtraGamma_mem_Gamma0`, `TauCeti.descendExtraGamma_map_intCast_zmod_eq_S` and
   `TauCeti.descendExtraGamma_map_intCast_zmod_div_eq_one`: those three properties, read back off
   the chosen matrix.
+* `TauCeti.descendExtraGamma_eq_one_of_not`: outside the hypotheses that make the choice, the
+  extra matrix is the identity.
 * `TauCeti.descendMatrixCount_of_sq_dvd` and `TauCeti.descendMatrixCount_of_not_sq_dvd`: the two
   values of the count.
 * `TauCeti.descendMatrix_of_lt` and `TauCeti.descendMatrix_of_le`: the two branches of the
@@ -150,6 +152,14 @@ theorem descendExtraGamma_map_intCast_zmod_div_eq_one {p N : ℕ} (hp : p.Prime)
   rw [descendExtraGamma_eq_choose hp hpN hpsq]
   exact (exists_mem_Gamma0_map_intCast_zmod_eq_S hp hpN hpsq).choose_spec.2.2
 
+/-- **Outside its guard the extra matrix is the identity.** For `p` not prime, or not dividing
+`N`, or with `p²` dividing `N`, the choice is not available and `descendExtraGamma` takes its
+junk value. -/
+@[simp]
+theorem descendExtraGamma_eq_one_of_not {p N : ℕ} (h : ¬ (p.Prime ∧ p ∣ N ∧ ¬ p ^ 2 ∣ N)) :
+    descendExtraGamma p N = 1 := by
+  simp [descendExtraGamma, h]
+
 /-- **The descent family at `p`** (Miyake, Lemma 4.5.11). The `p` upper-triangular matrices
 `[1, v; 0, p]` for `v < p`, together with — when `p²` does not divide `N`, so that
 `descendMatrixCount` is `p + 1` — the further matrix `[1, 0; 0, p] * descendExtraGamma p N`.
@@ -158,24 +168,25 @@ Over `ℚ` the upper-triangular part is `HeckeRing.GL2.upperTriRep`, this reposi
 representative family; the descent family is its image in `GL₂(ℝ)`, where the slash action of a
 modular form lives.
 
-`p ∣ N` is not required: the construction never uses it. It is exactly the hypothesis that makes
-the family the *descent* family — without it `descendExtraGamma p N` is `1` and the extra matrix
-degenerates to `[1, 0; 0, p]`, which the first branch already lists at `v = 0` — so it belongs on
-the later results that establish descent, not on the family itself. -/
-noncomputable def descendMatrix (p N : ℕ) (hp : p.Prime) :
+Neither `p ∣ N` nor primality of `p` is required: the construction uses only `p ≠ 0`, to name the
+zero index of `Fin p`. Those two hypotheses are what make the family the *descent* family at a
+prime — without `p ∣ N` the matrix `descendExtraGamma p N` is `1` and the extra member degenerates
+to `[1, 0; 0, p]`, which the first branch already lists at `v = 0` — so they belong on the later
+results that establish descent, not on the family itself. -/
+noncomputable def descendMatrix (p N : ℕ) [NeZero p] :
     Fin (descendMatrixCount p N) → GL (Fin 2) ℝ := fun v ↦
   if h : v.val < p then
     Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨v.val, h⟩)
   else
-    Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, hp.pos⟩) *
+    Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, NeZero.pos p⟩) *
       Matrix.SpecialLinearGroup.mapGL ℝ (descendExtraGamma p N)
 
 /-- The members of the descent family below index `p` are the upper-triangular matrices
 `[1, v; 0, p]`. -/
 @[simp]
-theorem descendMatrix_of_lt {p N : ℕ} (hp : p.Prime)
+theorem descendMatrix_of_lt {p N : ℕ} [NeZero p]
     {v : Fin (descendMatrixCount p N)} (h : v.val < p) :
-    descendMatrix p N hp v =
+    descendMatrix p N v =
       Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨v.val, h⟩) := by
   rw [descendMatrix]
   split_ifs
@@ -184,10 +195,10 @@ theorem descendMatrix_of_lt {p N : ℕ} (hp : p.Prime)
 /-- The member of the descent family at index `p`, present exactly when `p²` does not divide `N`,
 is `[1, 0; 0, p]` times the extra matrix. -/
 @[simp]
-theorem descendMatrix_of_le {p N : ℕ} (hp : p.Prime)
+theorem descendMatrix_of_le {p N : ℕ} [NeZero p]
     {v : Fin (descendMatrixCount p N)} (h : p ≤ v.val) :
-    descendMatrix p N hp v =
-      Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, hp.pos⟩) *
+    descendMatrix p N v =
+      Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, NeZero.pos p⟩) *
         Matrix.SpecialLinearGroup.mapGL ℝ (descendExtraGamma p N) := by
   rw [descendMatrix]
   split_ifs with h'
@@ -199,9 +210,9 @@ theorem descendMatrix_of_le {p N : ℕ} (hp : p.Prime)
 necessary condition for lying in it, not a characterisation of it; that these matrices lie in the
 double coset is not proved here. -/
 @[simp]
-theorem descendMatrix_det (p N : ℕ) (hp : p.Prime)
+theorem descendMatrix_det (p N : ℕ) [NeZero p]
     (v : Fin (descendMatrixCount p N)) :
-    (descendMatrix p N hp v : Matrix (Fin 2) (Fin 2) ℝ).det = (p : ℝ) := by
+    (descendMatrix p N v : Matrix (Fin 2) (Fin 2) ℝ).det = (p : ℝ) := by
   have hγ : (Matrix.SpecialLinearGroup.mapGL ℝ (descendExtraGamma p N) :
       Matrix (Fin 2) (Fin 2) ℝ).det = 1 := by
     rw [← Matrix.GeneralLinearGroup.val_det_apply, Matrix.SpecialLinearGroup.det_mapGL,
