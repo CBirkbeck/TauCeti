@@ -151,6 +151,7 @@ noncomputable def descendCosetRep (p N : ℕ) (hp : p.Prime) (_hpN : p ∣ N) :
 
 /-- The members of the descent family below index `p` are the upper-triangular matrices
 `[1, v; 0, p]`. -/
+@[simp]
 theorem descendCosetRep_of_lt {p N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
     {v : Fin (descendCosetCount p N)} (h : v.val < p) :
     descendCosetRep p N hp hpN v =
@@ -161,6 +162,7 @@ theorem descendCosetRep_of_lt {p N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
 
 /-- The member of the descent family at index `p`, present exactly when `p²` does not divide `N`,
 is `[1, 0; 0, p]` times the extra matrix. -/
+@[simp]
 theorem descendCosetRep_of_le {p N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
     {v : Fin (descendCosetCount p N)} (h : p ≤ v.val) :
     descendCosetRep p N hp hpN v =
@@ -171,8 +173,11 @@ theorem descendCosetRep_of_le {p N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
   · exact absurd h' (Nat.not_lt.mpr h)
   · rfl
 
-/-- **Every member of the descent family has determinant `p`.** This is the determinant condition
-cutting out the double coset `Γ₀(N) diag(1, p) Γ₀(N)` that the descent sum runs over. -/
+/-- **Every member of the descent family has determinant `p`.** Every element of the double coset
+`Γ₀(N) diag(1, p) Γ₀(N)` that the descent sum runs over has determinant `p`, so this is a
+necessary condition for lying in it, not a characterisation of it; that these matrices lie in the
+double coset is not proved here. -/
+@[simp]
 theorem descendCosetRep_det (p N : ℕ) (hp : p.Prime) (hpN : p ∣ N)
     (v : Fin (descendCosetCount p N)) :
     (descendCosetRep p N hp hpN v : Matrix (Fin 2) (Fin 2) ℝ).det = (p : ℝ) := by
