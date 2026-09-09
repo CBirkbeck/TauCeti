@@ -23,9 +23,10 @@ is defined without choosing anything.
 
 **What this does not give.** `exp` is not injective, so an identity of the form `exp t = L`
 determines `t` only modulo `2πi ℤ`; these theorems therefore do not exhibit a logarithm *of* the
-`L`-series, and in particular are not a holomorphic branch on a region. Obtaining one needs the
-series to be nonvanishing there first, which
-`TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Analytic` states it does not supply.
+`L`-series, and in particular are not a holomorphic branch on a region.
+`TauCeti.MultiplicativeIdealWeight.LSeries_ne_zero_of_summable_idealTerm` supplies nonvanishing
+pointwise, wherever the ideal-indexed series converges absolutely; a branch needs more than that —
+a simply connected zero-free region on which to choose one — and is not constructed here.
 
 ## Main results
 
@@ -59,12 +60,7 @@ theorem exp_tsum_neg_log_one_sub_eq_LSeries
     exp (∑' P : HeightOneSpectrum (𝓞 K),
         -log (1 - χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s)) =
       LSeries (normCoeff K χ.toIdealArithmeticFunction) s := by
-  have hne (P : HeightOneSpectrum (𝓞 K)) :
-      1 - χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s ≠ 0 := fun h ↦ by
-    have hlt := χ.norm_div_lt_one_of_summable_idealTerm hs P
-    rw [sub_eq_zero] at h
-    rw [← h] at hlt
-    simp at hlt
+  have hne := χ.one_sub_div_ne_zero_of_summable_idealTerm hs
   have H := (Summable.clog_one_sub
     (χ.summable_div_of_summable_idealTerm hs)).neg.hasSum.cexp.tprod_eq
   simp only [Function.comp_apply, exp_neg, exp_log (hne _)] at H
