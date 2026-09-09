@@ -8,7 +8,6 @@ module
 public import Mathlib.Algebra.CharZero.Infinite
 public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Basic
 public import TauCeti.RingTheory.DedekindDomain.Ideal
 public import TauCeti.RingTheory.Ideal.Norm.AbsNorm

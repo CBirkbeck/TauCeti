@@ -39,8 +39,8 @@ Dedekind domains.  This is the form to use when the ideal is given on the source
 @[simp]
 theorem absNorm_map_of_ringEquiv [Infinite R] [Infinite R'] (e : R ≃+* R') (I : Ideal R) :
     absNorm (I.map e) = absNorm I := by
-  rw [absNorm_apply, absNorm_apply, Submodule.cardQuot_apply, Submodule.cardQuot_apply]
-  exact Nat.card_congr (Ideal.quotientEquiv I (I.map e) e rfl).symm
+  rw [← Ideal.comap_symm]
+  exact absNorm_comap_of_ringEquiv e.symm I
 
 end Ideal
 
