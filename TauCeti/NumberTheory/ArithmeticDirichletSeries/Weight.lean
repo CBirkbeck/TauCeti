@@ -841,8 +841,9 @@ theorem toIdealArithmeticFunction_apply (χ : UnitaryIdealWeight K) (I : (Ideal 
 @[simp]
 theorem normCoeff_normTwist (z : ℂ) (hz : z.re = 0) (χ : UnitaryIdealWeight K) (n : ℕ) :
     normCoeff K (normTwist z hz χ).toIdealArithmeticFunction n =
-      normCoeff K χ.toIdealArithmeticFunction n * (n : ℂ) ^ (-z) :=
-  MultiplicativeIdealWeight.normCoeff_normTwist z χ.1 n
+      normCoeff K χ.toIdealArithmeticFunction n * (n : ℂ) ^ (-z) := by
+  simpa only [toIdealArithmeticFunction, val_normTwist] using
+    MultiplicativeIdealWeight.normCoeff_normTwist z χ.1 n
 
 /-- The ideal arithmetic function underlying a unitary ideal weight is multiplicative on
 relatively prime ideals. -/
