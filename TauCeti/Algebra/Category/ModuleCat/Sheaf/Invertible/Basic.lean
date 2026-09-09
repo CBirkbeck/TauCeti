@@ -18,11 +18,11 @@ arbitrary site.
 
 ## Main declarations
 
-* `TauCeti.SheafOfModules.LocalGeneratorsData.IsInvertible q` says that every presentation
+* `SheafOfModules.LocalGeneratorsData.IsInvertible q` says that every presentation
   `free (q.generators i).I ⟶ M.over (q.X i)` is an isomorphism and that each indexing type is
   nonempty and a subsingleton;
 * `TauCeti.SheafOfModules.IsInvertible M` says that such data exists for the sheaf of modules `M`;
-* `TauCeti.SheafOfModules.LocalGeneratorsData.ofIso` transports local generator data along an
+* `SheafOfModules.LocalGeneratorsData.ofIso` transports local generator data along an
   isomorphism of sheaves of modules, and `TauCeti.SheafOfModules.IsInvertible.of_iso` transports
   invertibility along one.
 
@@ -56,7 +56,8 @@ variable {C : Type u₁} [Category.{v₁} C] {J : GrothendieckTopology C} {R : S
 
 /-- Local generators exhibit a sheaf of modules as invertible when they freely generate it
 on a cover and every local generating type has exactly one element. -/
-structure LocalGeneratorsData.IsInvertible (q : SheafOfModules.LocalGeneratorsData M) : Prop where
+structure _root_.SheafOfModules.LocalGeneratorsData.IsInvertible
+    (q : SheafOfModules.LocalGeneratorsData M) : Prop where
   /-- The local generators freely generate the restricted sheaf. -/
   isLocallyFreeData : q.IsLocallyFreeData
   /-- Every local free basis has at least one element. -/
@@ -83,7 +84,8 @@ instance IsInvertible.isLocallyFree (M : SheafOfModules.{u} R) [h : IsInvertible
 /-- Transport local generator data along an isomorphism of sheaves of modules: the same cover, with
 each family of local generators pushed forward along the restricted isomorphism. -/
 @[expose, simps]
-def LocalGeneratorsData.ofIso (q : SheafOfModules.LocalGeneratorsData M) (e : M ≅ N) :
+def _root_.SheafOfModules.LocalGeneratorsData.ofIso (q : SheafOfModules.LocalGeneratorsData M)
+    (e : M ≅ N) :
     SheafOfModules.LocalGeneratorsData N where
   I := q.I
   X := q.X
@@ -91,7 +93,8 @@ def LocalGeneratorsData.ofIso (q : SheafOfModules.LocalGeneratorsData M) (e : M 
   generators i := (q.generators i).ofEpi ((SheafOfModules.overFunctor R (q.X i)).mapIso e).hom
 
 /-- Rank-one local generator data stays rank one after transport along an isomorphism. -/
-theorem LocalGeneratorsData.IsInvertible.ofIso {q : SheafOfModules.LocalGeneratorsData M}
+theorem _root_.SheafOfModules.LocalGeneratorsData.IsInvertible.ofIso
+    {q : SheafOfModules.LocalGeneratorsData M}
     (hq : LocalGeneratorsData.IsInvertible q) (e : M ≅ N) :
     LocalGeneratorsData.IsInvertible (LocalGeneratorsData.ofIso q e) where
   isLocallyFreeData :=
