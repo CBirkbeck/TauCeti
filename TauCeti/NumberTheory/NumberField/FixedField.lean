@@ -65,6 +65,7 @@ variable {K L : Type*} [Field K] [Field L] [Algebra K L]
 ideal `Q`, the stabilizer of `Q` in `Gal(L / L ^ ⟨σ⟩)` is the whole group.
 
 This says the stabilizer is everything, not that `L ^ ⟨σ⟩` is the largest such field. -/
+@[simp]
 theorem stabilizer_fixedField_zpowers_eq_top {σ : L ≃ₐ[K] L} [Finite (Subgroup.zpowers σ)]
     {Q : Ideal (𝓞 L)} (hQ : σ • Q = Q) :
     MulAction.stabilizer (L ≃ₐ[↥(fixedField (Subgroup.zpowers σ))] L) Q = ⊤ := by
