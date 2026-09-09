@@ -46,6 +46,7 @@ universe u v w
 variable {K : Type u} {V : Type v} {W : Type w}
 
 /-- The right-tensor algebra homomorphism sends `f` to `f.rTensor W`. -/
+@[simp]
 theorem _root_.Module.End.rTensorAlgHom_apply [CommSemiring K] [AddCommMonoid V] [Module K V]
     [AddCommMonoid W] [Module K W] (f : _root_.Module.End K V) :
     (_root_.Module.End.rTensorAlgHom K V W) f = f.rTensor W := by
@@ -53,6 +54,7 @@ theorem _root_.Module.End.rTensorAlgHom_apply [CommSemiring K] [AddCommMonoid V]
   exact _root_.Module.End.rTensorAlgHom_apply_apply K V W f
 
 /-- The left-tensor algebra homomorphism sends `f` to `f.lTensor V`. -/
+@[simp]
 theorem _root_.Module.End.lTensorAlgHom_apply [CommSemiring K] [AddCommMonoid V] [Module K V]
     [AddCommMonoid W] [Module K W] (f : _root_.Module.End K W) :
     (_root_.Module.End.lTensorAlgHom K W V) f = f.lTensor V := by

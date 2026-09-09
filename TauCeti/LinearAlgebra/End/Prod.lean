@@ -36,8 +36,10 @@ section Semiring
 variable {K : Type u} {V : Type v} {W : Type w}
 variable [Semiring K] [AddCommMonoid V] [Module K V] [AddCommMonoid W] [Module K W]
 
+/-- A power of a componentwise product of endomorphisms is the componentwise product of the
+powers. -/
 @[simp]
-private theorem _root_.Module.End.prodMap_pow (f : Module.End K V) (g : Module.End K W) (n : ℕ) :
+theorem _root_.Module.End.prodMap_pow (f : Module.End K V) (g : Module.End K W) (n : ℕ) :
     (f.prodMap g) ^ n = (f ^ n).prodMap (g ^ n) := by
   induction n with
   | zero => exact LinearMap.prodMap_one.symm
@@ -59,7 +61,10 @@ section CommRing
 variable {K : Type u} {V : Type v} {W : Type w}
 variable [CommRing K] [AddCommGroup V] [Module K V] [AddCommGroup W] [Module K W]
 
-private theorem _root_.Module.End.aeval_prodMap (f : Module.End K V) (g : Module.End K W)
+/-- Evaluating a polynomial at a componentwise product of endomorphisms is the componentwise
+product of the evaluations. -/
+@[simp]
+theorem _root_.Module.End.aeval_prodMap (f : Module.End K V) (g : Module.End K W)
     (p : K[X]) :
     aeval (f.prodMap g) p = (aeval f p).prodMap (aeval g p) := by
   have h : aeval (f.prodMap g) =
