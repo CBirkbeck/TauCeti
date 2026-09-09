@@ -140,30 +140,24 @@ private lemma upperTriRep_mul_mapGL_eq {p : ℕ} (j j' : Fin p) (γ γ' : SL(2, 
 `γ' · !![1, j'; 0, p]` with `γ' ∈ Γ₀(N)` and `j'` the shifted offset, and the new lower-right
 entry is `d - c j'`.
 
-The two hypotheses are what the factorisation actually consumes, and they are weaker than
-`γ ∈ Γ₀(N)`: `γ ∈ Γ₀(p)` makes `d` a unit modulo `p`, which is what makes the offset map — defined
-for every `γ` — a bijection, while `γ ∈ Γ₀(N / p)` is exactly `N ∣ p c`, which is what puts the
-lower-left entry `p c` of `γ'` back in `Γ₀(N)`. A `γ ∈ Γ₀(N)` satisfies both (`Γ₀(N) ≤ Γ₀(p)` and
-`Γ₀(N) ≤ Γ₀(N / p)`), and so does a `γ ∈ Γ₀(N / p)` once `p² ∣ N` — the level-descent case,
-where `γ` ranges over the *larger* group at the lowered level.
+The two hypotheses are exactly what the factorisation consumes, and neither mentions how `p` and
+`N` are related: `γ ∈ Γ₀(p)` makes `d` a unit modulo `p`, which is what makes the offset map —
+defined for every `γ` — a bijection, and `N ∣ p c` is what puts the lower-left entry `p c` of `γ'`
+back in `Γ₀(N)`. Both hold for `γ ∈ Γ₀(N)` when `p ∣ N`, and both hold for `γ ∈ Γ₀(N / p)` when
+`p² ∣ N` — the level-descent case, where `γ` ranges over the *larger* group at the lowered level.
+Neither `p ∣ N` nor either membership at a level built from `N` is assumed, so `p ∤ N` is not
+excluded.
 
 The lower-right entry is given as an equation rather than as a congruence because the modulus
 at which it is useful varies with the caller; the equivariance below reads off the congruence
 modulo `N` it needs from that equation and `Γ₀(N)`-membership. -/
-theorem exists_mem_Gamma0_upperTriRep_mul [NeZero p] (hpN : p ∣ N) {γ : SL(2, ℤ)}
-    (hγp : γ ∈ Gamma0 p) (hγd : γ ∈ Gamma0 (N / p)) (j : Fin p) : ∃ γ' : SL(2, ℤ), γ' ∈ Gamma0 N ∧
+theorem exists_mem_Gamma0_upperTriRep_mul [NeZero p] {γ : SL(2, ℤ)} (hγp : γ ∈ Gamma0 p)
+    (hpc : (((p : ℤ) * γ 1 0 : ℤ) : ZMod N) = 0) (j : Fin p) : ∃ γ' : SL(2, ℤ), γ' ∈ Gamma0 N ∧
       (γ' 1 1 : ℤ) = γ 1 1 - γ 1 0 * ((upperTriShift p γ j : ℕ) : ℤ) ∧
       upperTriRep p j * mapGL ℚ γ = mapGL ℚ γ' * upperTriRep p (upperTriShift p γ j) := by
   have hdet : γ 0 0 * γ 1 1 - γ 0 1 * γ 1 0 = 1 :=
     Matrix.SpecialLinearGroup.fin_two_mul_sub_mul_eq_one γ
   have had := intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0 hγp
-  -- `N ∣ p c`, from `(N / p) ∣ c` and `p · (N / p) = N`
-  have hpc : (((p : ℤ) * γ 1 0 : ℤ) : ZMod N) = 0 := by
-    refine (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mpr ?_
-    have hpNp : (N : ℤ) = (p : ℤ) * ((N / p : ℕ) : ℤ) := by
-      exact_mod_cast (Nat.mul_div_cancel' hpN).symm
-    rw [hpNp]
-    exact mul_dvd_mul_left _ ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hγd))
   -- the entry `b'` is an integer: the congruence `a j' ≡ b + j d (mod p)` is exactly `p ∣ …`
   have hdvd : (p : ℤ) ∣ γ 0 1 + (j : ℕ) * γ 1 1
       - (γ 0 0 + (j : ℕ) * γ 1 0) * ((upperTriShift p γ j : ℕ) : ℤ) := by
@@ -195,8 +189,8 @@ theorem heckeSlashUpperTri_slash_mapGL_of_mem_Gamma0 (k : ℤ) [NeZero p] (hpN :
   have key : ∀ j : Fin p,
       (f ∣[k] (upperTriRep p j : GL (Fin 2) ℚ)) ∣[k] (mapGL ℚ γ : GL (Fin 2) ℚ)
         = u • (f ∣[k] (upperTriRep p (upperTriShift p γ j) : GL (Fin 2) ℚ)) := fun j ↦ by
-    obtain ⟨γ', hγ', hdd, hmul⟩ := exists_mem_Gamma0_upperTriRep_mul hpN
-      (Gamma0_le_Gamma0_of_dvd hpN hγ) (Gamma0_le_Gamma0_of_dvd (Nat.div_dvd_of_dvd hpN) hγ) j
+    obtain ⟨γ', hγ', hdd, hmul⟩ := exists_mem_Gamma0_upperTriRep_mul
+      (Gamma0_le_Gamma0_of_dvd hpN hγ) (by rw [Int.cast_mul, Gamma0_mem.mp hγ, mul_zero]) j
     -- `N ∣ c` turns the entry equation `d' = d - c j'` into the congruence `d' ≡ d (mod N)`
     have hdd' : ((γ' 1 1 : ℤ) : ZMod N) = ((γ 1 1 : ℤ) : ZMod N) := by
       rw [hdd]; push_cast; rw [Gamma0_mem.mp hγ]; ring
