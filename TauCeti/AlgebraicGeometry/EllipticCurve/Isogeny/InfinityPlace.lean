@@ -8,7 +8,6 @@ module
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finrank
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.InfinityPlace.Unique
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.FunctionField
-import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.GenericPoint
 import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MapsInfinity
 import TauCeti.FieldTheory.FunctionField.Place.OfValuationSubring
 import TauCeti.RingTheory.IntegralClosure.IsIntegral.Basic
