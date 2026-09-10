@@ -60,16 +60,6 @@ Neither direction uses ellipticity, separability, or the degree of an isogeny.
 * `TauCeti.CoordinatePullback.mapsInfinity_iff_isEquiv_comap_infinityPlace`: **the pointedness
   criterion**, `MapsInfinity σ ↔ σ_*(O₁) = O₂`, for an embedding `σ` of function fields.
 
-## Roadmap
-
-`TauCetiRoadmap/EllipticCurves/README.md`, **Layer 1**, whose dual-isogeny milestone asks for "an
-unpointed induced-place map for finite function-field embeddings, with the named criterion
-`MapsInfinity λ ↔ λ_*(O₂) = O₃`, and functoriality of induced places along `λ ∘ φ = ψ` — which
-yields `λ_*(O₂) = λ_*(φ_*(O₁)) = ψ_*(O₁) = O₃` at the level of places, *then* `λ` is packaged".
-This file supplies both the named criterion and the direction it applies to `φ` and to `ψ`: an
-isogeny pushes the place at infinity forward to the place at infinity. It is also the Layer-0
-`inducedPlace` of `W₁.infinityPlace` along an isogeny, computed.
-
 ## References
 
 * [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], II.2, III.4.
