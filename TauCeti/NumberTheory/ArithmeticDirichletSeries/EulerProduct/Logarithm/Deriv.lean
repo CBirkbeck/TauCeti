@@ -181,10 +181,12 @@ right of a point of absolute convergence,
 
 strictly to the right of the abscissa of absolute convergence.
 
-This is the identification Layer 3.4 asks for.  The prime-power expansion is a branch of the
-logarithm of the `L`-series there — its exponential is the `L`-series, by
-`exp_tsum_prime_pow_eq_LSeries` — and the derivative of any such branch is the logarithmic
-derivative, the branch ambiguity being locally constant. -/
+The prime-power expansion is a branch of the logarithm of the `L`-series there — its exponential
+is the `L`-series, by `exp_tsum_prime_pow_eq_LSeries` — and the derivative of any such branch is
+the logarithmic derivative, the branch ambiguity being locally constant.
+
+This is what lets a density argument work with the logarithmic derivative termwise over prime
+powers, rather than with the `L`-series itself. -/
 theorem logDeriv_LSeries_eq_tsum_prime_pow {s : ℂ}
     (hs : idealAbscissaOfAbsConv K χ.toIdealArithmeticFunction < s.re) :
     logDeriv (LSeries (normCoeff K χ.toIdealArithmeticFunction)) s
