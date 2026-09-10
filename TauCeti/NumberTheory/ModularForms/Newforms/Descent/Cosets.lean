@@ -30,7 +30,10 @@ identity rather than merely lower-triangular.
 * `TauCeti.descendMatrixCount`: the size of the family, `p` when `p² ∣ N` and `p + 1` otherwise.
 * `TauCeti.descendExtraGamma`: the extra matrix, with the junk value `1` outside the hypotheses
   that make the choice.
-* `TauCeti.descendMatrix`: the family itself, indexed by `Fin (descendMatrixCount p N)`.
+* `TauCeti.descendMatrixRat`: the family before the embedding into `GL₂(ℝ)`, indexed by
+  `Fin (descendMatrixCount p N)`.
+* `TauCeti.descendMatrix`: the family itself, the image of `descendMatrixRat` in `GL₂(ℝ)`
+  (`descendMatrix_eq_map`).
 
 ## Main results
 
@@ -175,13 +178,21 @@ zero index of `Fin p`. Those two hypotheses are what make the family the *descen
 prime — without `p ∣ N` the matrix `descendExtraGamma p N` is `1` and the extra member degenerates
 to `[1, 0; 0, p]`, which the first branch already lists at `v = 0` — so they belong on the later
 results that establish descent, not on the family itself. -/
+noncomputable def descendMatrixRat (p N : ℕ) [NeZero p] :
+    Fin (descendMatrixCount p N) → GL (Fin 2) ℚ := fun v ↦
+  if h : v.val < p then upperTriRep p ⟨v.val, h⟩
+  else upperTriRep p ⟨0, NeZero.pos p⟩ * Matrix.SpecialLinearGroup.mapGL ℚ (descendExtraGamma p N)
+
+/-- **The descent family**, the image of `descendMatrixRat p N` in `GL₂(ℝ)`, where the slash
+action of a modular form lives. -/
 noncomputable def descendMatrix (p N : ℕ) [NeZero p] :
     Fin (descendMatrixCount p N) → GL (Fin 2) ℝ := fun v ↦
-  if h : v.val < p then
-    Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨v.val, h⟩)
-  else
-    Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, NeZero.pos p⟩) *
-      Matrix.SpecialLinearGroup.mapGL ℝ (descendExtraGamma p N)
+  Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (descendMatrixRat p N v)
+
+/-- The descent family is the image of the rational descent family. -/
+theorem descendMatrix_eq_map (p N : ℕ) [NeZero p] (v : Fin (descendMatrixCount p N)) :
+    descendMatrix p N v = Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (descendMatrixRat p N v) :=
+  (rfl)
 
 /-- The members of the descent family below index `p` are the upper-triangular matrices
 `[1, v; 0, p]`. -/
@@ -190,7 +201,7 @@ theorem descendMatrix_of_lt {p N : ℕ} [NeZero p]
     {v : Fin (descendMatrixCount p N)} (h : v.val < p) :
     descendMatrix p N v =
       Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨v.val, h⟩) := by
-  rw [descendMatrix]
+  rw [descendMatrix_eq_map, descendMatrixRat]
   split_ifs
   rfl
 
@@ -202,10 +213,10 @@ theorem descendMatrix_of_le {p N : ℕ} [NeZero p]
     descendMatrix p N v =
       Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, NeZero.pos p⟩) *
         Matrix.SpecialLinearGroup.mapGL ℝ (descendExtraGamma p N) := by
-  rw [descendMatrix]
+  rw [descendMatrix_eq_map, descendMatrixRat]
   split_ifs with h'
   · exact absurd h' (Nat.not_lt.mpr h)
-  · rfl
+  · rw [map_mul, Matrix.SpecialLinearGroup.map_mapGL]
 
 /-- **Every member of the descent family has determinant `p`.** Every element of the double coset
 `Γ₀(N) diag(1, p) Γ₀(N)` that the descent sum runs over has determinant `p`, so this is a
@@ -219,10 +230,11 @@ theorem descendMatrix_det (p N : ℕ) [NeZero p]
       Matrix (Fin 2) (Fin 2) ℝ).det = 1 := by
     rw [← Matrix.GeneralLinearGroup.val_det_apply, Matrix.SpecialLinearGroup.det_mapGL,
       Units.val_one]
-  rw [descendMatrix]
+  rw [descendMatrix_eq_map, descendMatrixRat]
   split_ifs
   · simp [Matrix.det_fin_two]
-  · rw [Matrix.GeneralLinearGroup.coe_mul, Matrix.det_mul, hγ, mul_one]
+  · rw [map_mul, Matrix.SpecialLinearGroup.map_mapGL, Matrix.GeneralLinearGroup.coe_mul,
+      Matrix.det_mul, hγ, mul_one]
     simp [Matrix.det_fin_two]
 
 /-- Every member of the descent family has positive determinant, namely `p`. -/
