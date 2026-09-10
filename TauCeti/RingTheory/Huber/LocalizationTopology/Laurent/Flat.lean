@@ -16,8 +16,8 @@ import TauCeti.RingTheory.Huber.LocalizationTopology.StronglyNoetherian
 /-!
 # Flatness of the Laurent quotient, and of a numerator enlargement
 
-Restriction maps between the rings of a Laurent presentation are flat, at the ring level. Four
-statements, in increasing generality:
+Restriction maps between the rings of a Laurent presentation are flat, at the ring level. The
+statements below run in increasing generality:
 
 * the Laurent quotient `A⟨T/s⟩⟨X⟩ ⧸ (t/s - X)` is a flat `A⟨T/s⟩`-module when that base is a
   complete noetherian Tate ring;
