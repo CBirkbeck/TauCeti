@@ -49,8 +49,7 @@ of the slash sum are separate statements and none of them is claimed here.
 Corresponds to `descendCosetList_action_upper_tri_clean` of the AINTLIB `LeanModularForms`
 project (`LeanModularForms/StrongMultiplicityOne/DescentCosets.lean`, Chris Birkbeck, commit
 `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0,
-<https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>); the proof here is
-independent of the source's.
+<https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>).
 -/
 
 public section
