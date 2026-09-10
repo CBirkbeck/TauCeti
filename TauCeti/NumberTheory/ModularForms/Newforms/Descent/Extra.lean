@@ -55,7 +55,6 @@ the lower-right entry of `γ` modulo `N / p`, which is what transporting a neben
 * `TauCeti.descendIndexShift_val_of_isUnit`, `TauCeti.descendIndexShift_val_of_eq_zero`,
   `TauCeti.descendIndexShift_val_of_le_of_ne_zero` and
   `TauCeti.descendIndexShift_val_of_le_of_eq_zero`: the value of the index map in each case.
-* `TauCeti.descendExtraGamma_apply_intCast_zmod`: the residues of the extra matrix modulo `p`.
 
 ## Scope
 
@@ -268,35 +267,38 @@ theorem descendIndexShift_val_of_isUnit [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N)
 
 /-! ## The residues of the extra matrix and of its twists -/
 
-/-- The residues of the extra matrix modulo `p` are those of `S = [0, -1; 1, 0]`. -/
-theorem descendExtraGamma_apply_intCast_zmod (hp : p.Prime) (hpN : p ∣ N) (hpsq : ¬ p ^ 2 ∣ N) :
-    ((descendExtraGamma p N 0 0 : ℤ) : ZMod p) = 0 ∧
-      ((descendExtraGamma p N 0 1 : ℤ) : ZMod p) = -1 ∧
-      ((descendExtraGamma p N 1 0 : ℤ) : ZMod p) = 1 ∧
-      ((descendExtraGamma p N 1 1 : ℤ) : ZMod p) = 0 := by
-  have hS : ∀ i k, ((descendExtraGamma p N i k : ℤ) : ZMod p)
-      = ((ModularGroup.S i k : ℤ) : ZMod p) := fun i k ↦ by
-    simpa [Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply]
-      using congrArg (fun M : SL(2, ZMod p) => (M : Matrix (Fin 2) (Fin 2) (ZMod p)) i k)
-        (descendExtraGamma_map_intCast_zmod_eq_S hp hpN hpsq)
-  exact ⟨by simpa [ModularGroup.coe_S] using hS 0 0, by simpa [ModularGroup.coe_S] using hS 0 1,
-    by simpa [ModularGroup.coe_S] using hS 1 0, by simpa [ModularGroup.coe_S] using hS 1 1⟩
+/-- Reading an equality of reductions in `SL(2, ZMod n)` entry by entry. -/
+private theorem intCast_apply_zmod_eq_of_map_eq {n : ℕ} {δ γ : SL(2, ℤ)}
+    (h : Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod n)) δ
+      = Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod n)) γ) (i j : Fin 2) :
+    ((δ i j : ℤ) : ZMod n) = ((γ i j : ℤ) : ZMod n) := by
+  have := congrArg (fun M : SL(2, ZMod n) => (M : Matrix (Fin 2) (Fin 2) (ZMod n)) i j) h
+  simpa only [Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply,
+    eq_intCast] using this
 
-/-- `γ δ⁻¹` entrywise, in the shape `Matrix.mul_fin_two` produces. -/
-private theorem coe_mul_inv_fin_two (γ δ : SL(2, ℤ)) :
-    ((γ * δ⁻¹ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)
-      = !![γ 0 0 * δ 1 1 + γ 0 1 * -δ 1 0, γ 0 0 * -δ 0 1 + γ 0 1 * δ 0 0;
-          γ 1 0 * δ 1 1 + γ 1 1 * -δ 1 0, γ 1 0 * -δ 0 1 + γ 1 1 * δ 0 0] := by
-  conv_lhs => rw [coe_mul, coe_inv, adjugate_fin_two,
-    Matrix.eta_fin_two (γ : Matrix (Fin 2) (Fin 2) ℤ), Matrix.mul_fin_two]
+/-- Modulo `p`, `γ γ_p⁻¹` reduces as `γ S⁻¹` does. -/
+private theorem map_mul_inv_descendExtraGamma (hp : p.Prime) (hpN : p ∣ N) (hpsq : ¬ p ^ 2 ∣ N)
+    (γ : SL(2, ℤ)) :
+    Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod p)) (γ * (descendExtraGamma p N)⁻¹)
+      = Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod p)) (γ * ModularGroup.S⁻¹) := by
+  rw [map_mul, map_inv, descendExtraGamma_map_intCast_zmod_eq_S hp hpN hpsq, ← map_inv, ← map_mul]
 
-/-- `δ γ` entrywise, in the shape `Matrix.mul_fin_two` produces. -/
-private theorem coe_mul_fin_two (δ γ : SL(2, ℤ)) :
-    ((δ * γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)
-      = !![δ 0 0 * γ 0 0 + δ 0 1 * γ 1 0, δ 0 0 * γ 0 1 + δ 0 1 * γ 1 1;
-          δ 1 0 * γ 0 0 + δ 1 1 * γ 1 0, δ 1 0 * γ 0 1 + δ 1 1 * γ 1 1] := by
-  conv_lhs => rw [coe_mul, Matrix.eta_fin_two (δ : Matrix (Fin 2) (Fin 2) ℤ),
-    Matrix.eta_fin_two (γ : Matrix (Fin 2) (Fin 2) ℤ), Matrix.mul_fin_two]
+/-- Modulo `p`, `γ_p γ` reduces as `S γ` does. -/
+private theorem map_descendExtraGamma_mul (hp : p.Prime) (hpN : p ∣ N) (hpsq : ¬ p ^ 2 ∣ N)
+    (γ : SL(2, ℤ)) :
+    Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod p)) (descendExtraGamma p N * γ)
+      = Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod p)) (ModularGroup.S * γ) := by
+  rw [map_mul, descendExtraGamma_map_intCast_zmod_eq_S hp hpN hpsq, ← map_mul]
+
+/-- Modulo `p`, `γ_p γ γ_p⁻¹` reduces as `S γ S⁻¹` does. -/
+private theorem map_descendExtraGamma_mul_mul_inv (hp : p.Prime) (hpN : p ∣ N)
+    (hpsq : ¬ p ^ 2 ∣ N) (γ : SL(2, ℤ)) :
+    Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod p))
+        (descendExtraGamma p N * γ * (descendExtraGamma p N)⁻¹)
+      = Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod p))
+          (ModularGroup.S * γ * ModularGroup.S⁻¹) := by
+  rw [map_mul, map_mul, map_inv, descendExtraGamma_map_intCast_zmod_eq_S hp hpN hpsq, ← map_inv,
+    ← map_mul, ← map_mul]
 
 /-- The residues of `γ γ_p⁻¹` modulo `p`: those of `γ S⁻¹ = [-b, a; -d, c]`. -/
 private theorem mul_inv_descendExtraGamma_apply_intCast_zmod (hp : p.Prime) (hpN : p ∣ N)
@@ -305,25 +307,10 @@ private theorem mul_inv_descendExtraGamma_apply_intCast_zmod (hp : p.Prime) (hpN
       (((γ * (descendExtraGamma p N)⁻¹) 0 1 : ℤ) : ZMod p) = ((γ 0 0 : ℤ) : ZMod p) ∧
       (((γ * (descendExtraGamma p N)⁻¹) 1 0 : ℤ) : ZMod p) = -((γ 1 1 : ℤ) : ZMod p) ∧
       (((γ * (descendExtraGamma p N)⁻¹) 1 1 : ℤ) : ZMod p) = ((γ 1 0 : ℤ) : ZMod p) := by
-  obtain ⟨h00, h01, h10, h11⟩ := descendExtraGamma_apply_intCast_zmod hp hpN hpsq
-  rw [coe_mul_inv_fin_two]
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero]
-    push_cast
-    rw [h11, h10]
-    ring
-  · simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one]
-    push_cast
-    rw [h01, h00]
-    ring
-  · simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one]
-    push_cast
-    rw [h11, h10]
-    ring
-  · simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one]
-    push_cast
-    rw [h01, h00]
-    ring
+  have h := intCast_apply_zmod_eq_of_map_eq (map_mul_inv_descendExtraGamma hp hpN hpsq γ)
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> [rw [h 0 0]; rw [h 0 1]; rw [h 1 0]; rw [h 1 1]] <;>
+    simp [coe_mul, coe_inv, adjugate_fin_two, ModularGroup.coe_S, Matrix.mul_apply,
+      Fin.sum_univ_two]
 
 /-- The residues of `γ_p γ` modulo `p`: those of `S γ = [-c, -d; a, b]`. -/
 private theorem descendExtraGamma_mul_apply_intCast_zmod (hp : p.Prime) (hpN : p ∣ N)
@@ -332,25 +319,9 @@ private theorem descendExtraGamma_mul_apply_intCast_zmod (hp : p.Prime) (hpN : p
       (((descendExtraGamma p N * γ) 0 1 : ℤ) : ZMod p) = -((γ 1 1 : ℤ) : ZMod p) ∧
       (((descendExtraGamma p N * γ) 1 0 : ℤ) : ZMod p) = ((γ 0 0 : ℤ) : ZMod p) ∧
       (((descendExtraGamma p N * γ) 1 1 : ℤ) : ZMod p) = ((γ 0 1 : ℤ) : ZMod p) := by
-  obtain ⟨h00, h01, h10, h11⟩ := descendExtraGamma_apply_intCast_zmod hp hpN hpsq
-  rw [coe_mul_fin_two]
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero]
-    push_cast
-    rw [h00, h01]
-    ring
-  · simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one]
-    push_cast
-    rw [h00, h01]
-    ring
-  · simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one]
-    push_cast
-    rw [h10, h11]
-    ring
-  · simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one]
-    push_cast
-    rw [h10, h11]
-    ring
+  have h := intCast_apply_zmod_eq_of_map_eq (map_descendExtraGamma_mul hp hpN hpsq γ)
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> [rw [h 0 0]; rw [h 0 1]; rw [h 1 0]; rw [h 1 1]] <;>
+    simp [coe_mul, ModularGroup.coe_S, Matrix.mul_apply, Fin.sum_univ_two]
 
 /-- The residues of `γ_p γ γ_p⁻¹` modulo `p`: those of `S γ S⁻¹ = [d, -c; -b, a]`. -/
 private theorem descendExtraGamma_mul_mul_inv_apply_intCast_zmod (hp : p.Prime) (hpN : p ∣ N)
@@ -359,29 +330,10 @@ private theorem descendExtraGamma_mul_mul_inv_apply_intCast_zmod (hp : p.Prime) 
         = ((γ 1 1 : ℤ) : ZMod p) ∧
       (((descendExtraGamma p N * γ * (descendExtraGamma p N)⁻¹) 0 1 : ℤ) : ZMod p)
         = -((γ 1 0 : ℤ) : ZMod p) := by
-  obtain ⟨h00, h01, h10, h11⟩ := descendExtraGamma_apply_intCast_zmod hp hpN hpsq
-  obtain ⟨e00, e01, -, -⟩ := descendExtraGamma_mul_apply_intCast_zmod hp hpN hpsq γ
-  rw [coe_mul_inv_fin_two]
-  refine ⟨?_, ?_⟩
-  · simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero]
-    push_cast
-    rw [e00, e01, h11, h10]
-    ring
-  · simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one]
-    push_cast
-    rw [e00, e01, h01, h00]
-    ring
-
-/-- Modulo `N / p` the extra matrix is the identity, so any twist by it has the lower-right entry
-of `γ`. Stated for a matrix `δ` whose reduction agrees with that of `γ`. -/
-private theorem intCast_apply_one_one_zmod_div_eq_of_map_eq {δ γ : SL(2, ℤ)}
-    (h : Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod (N / p))) δ
-      = Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod (N / p))) γ) :
-    ((δ 1 1 : ℤ) : ZMod (N / p)) = ((γ 1 1 : ℤ) : ZMod (N / p)) := by
-  have := congrArg
-    (fun M : SL(2, ZMod (N / p)) => (M : Matrix (Fin 2) (Fin 2) (ZMod (N / p))) 1 1) h
-  simpa only [Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply,
-    eq_intCast] using this
+  have h := intCast_apply_zmod_eq_of_map_eq (map_descendExtraGamma_mul_mul_inv hp hpN hpsq γ)
+  refine ⟨?_, ?_⟩ <;> [rw [h 0 0]; rw [h 0 1]] <;>
+    simp [coe_mul, coe_inv, adjugate_fin_two, ModularGroup.coe_S, Matrix.mul_apply,
+      Matrix.vecMul, dotProduct, Fin.sum_univ_two]
 
 /-! ## The four cases of the factorisation -/
 
@@ -506,7 +458,7 @@ private theorem exists_mem_Gamma0_descendMatrix_mul_of_eq_zero [Fact p.Prime] (h
     (intCast_mul_apply_one_zero_eq_zero_of_mem_Gamma0_div hpN hδ)
   have hidx := descendIndexShift_val_of_eq_zero hpsq hv h0
   refine ⟨α, hα, (intCast_apply_one_one_eq_of_mem_Gamma0_of_eq hδ hd).trans ?_, ?_⟩
-  · refine intCast_apply_one_one_zmod_div_eq_of_map_eq ?_
+  · refine intCast_apply_zmod_eq_of_map_eq ?_ 1 1
     rw [map_mul, map_inv, descendExtraGamma_map_intCast_zmod_div_eq_one hp hpN hpsq, inv_one,
       mul_one]
   · have h := congrArg (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)) hmul
@@ -535,7 +487,7 @@ private theorem exists_mem_Gamma0_descendMatrix_mul_of_le_of_ne_zero [Fact p.Pri
   have htgt : (⟨(descendIndexShift p N hpsq γ v : ℕ), hv'⟩ : Fin p)
       = upperTriShift p (descendExtraGamma p N * γ) ⟨0, NeZero.pos p⟩ := Fin.ext hidx
   refine ⟨α, hα, (intCast_apply_one_one_eq_of_mem_Gamma0_of_eq hδ hd).trans ?_, ?_⟩
-  · refine intCast_apply_one_one_zmod_div_eq_of_map_eq ?_
+  · refine intCast_apply_zmod_eq_of_map_eq ?_ 1 1
     rw [map_mul, descendExtraGamma_map_intCast_zmod_div_eq_one hp hpN hpsq, one_mul]
   · rw [descendMatrix_of_le hv, descendMatrix_of_lt hv', htgt, mul_assoc, ← map_mul]
     simpa only [map_mul, map_mapGL]
@@ -559,7 +511,7 @@ private theorem exists_mem_Gamma0_descendMatrix_mul_of_le_of_eq_zero [Fact p.Pri
     (intCast_mul_apply_one_zero_eq_zero_of_mem_Gamma0_div hpN hδ)
   have hidx := descendIndexShift_val_of_le_of_eq_zero hpsq hv hc
   refine ⟨α, hα, (intCast_apply_one_one_eq_of_mem_Gamma0_of_eq hδ hd).trans ?_, ?_⟩
-  · refine intCast_apply_one_one_zmod_div_eq_of_map_eq ?_
+  · refine intCast_apply_zmod_eq_of_map_eq ?_ 1 1
     rw [map_mul, map_mul, map_inv, descendExtraGamma_map_intCast_zmod_div_eq_one hp hpN hpsq,
       inv_one, one_mul, mul_one]
   · have h := congrArg (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)) hmul
