@@ -27,7 +27,7 @@ statements, in increasing generality:
 * the restriction map of an arbitrary enlargement `T ⊆ T'` is flat, assuming `s` topologically
   nilpotent and `A⟨U/s⟩` strongly noetherian for every `U` with `T ⊆ U ⊂ T'`. On its own this is
   **not** Wedhorn's Proposition 8.30, which assumes strong noetherianity of the base alone; see
-  *What this is not*;
+  *The three chain results, and which to use*;
 * the same conclusion asking strong noetherianity only at `T`, the per-intermediate hypothesis
   being derived rather than assumed;
 * the same conclusion asking strong noetherianity of `A` alone, for a presentation whose
@@ -57,12 +57,13 @@ in: `s` topologically nilpotent over a strongly noetherian base.
 * `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_of_forall_isStronglyNoetherian`
   : the chain form — the restriction map of an arbitrary enlargement `T ⊆ T'` is flat, **assuming
   `A⟨U/s⟩` strongly noetherian for every `U` with `T ⊆ U ⊂ T'`**. That family hypothesis is what
-  separates this from Wedhorn's Proposition 8.30, which assumes it of `A` alone; see *What this is
-  not*.
+  separates this from Wedhorn's Proposition 8.30, which assumes it of `A` alone; see *The three
+  chain results, and which to use*.
 * `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_of_isStronglyNoetherian_base` :
   the same conclusion asking strong noetherianity only at `T`, the family hypothesis above being
   derived from it rather than assumed.
-* `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_of_span_eq_top` : strong
+* `PairOfDefinition.flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_top` :
+  strong
   noetherianity asked of `A`, as Wedhorn asks it, the passage to `A⟨T/s⟩` being supplied by
   `TauCeti.Huber.PairOfDefinition.isStronglyNoetherian_completion`. Its explicit hypotheses are
   the rational-subset condition on `(T, s)` and topological nilpotence of the denominator. The
@@ -84,11 +85,11 @@ asks it only at `T`, deriving the rest by
 when the localisation is known to be strongly noetherian but `A` is not, or when `(T, s)` is not
 known to cut out a rational subset.
 
-`TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_of_span_eq_top` asks it of `A`,
-which is Wedhorn's own hypothesis, at the cost of the rational-subset condition on `(T, s)`. In
-the intended use — restriction between rational subsets of `Spa(A, A⁺)` — that condition holds by
-definition. It still asks topological nilpotence of the denominator, so it is Proposition 8.30
-only for such a denominator.
+`PairOfDefinition.flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_top`
+asks it of `A`, which is Wedhorn's own hypothesis, at the cost of the rational-subset condition on
+`(T, s)`. In the intended use — restriction between rational subsets of `Spa(A, A⁺)` — that
+condition holds by definition. It still asks topological nilpotence of the denominator, so it is
+Proposition 8.30 only for such a denominator.
 
 The elementary case is unaffected: it needs strong noetherianity only at its own base, which is
 where Lemma 8.31 needs it too.
@@ -453,9 +454,11 @@ than deriving.
 
 `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_of_isStronglyNoetherian_base`
 supplies that derivation, reducing the family hypothesis to strong noetherianity of `A⟨T/s⟩`
-alone. That is still one step short of Wedhorn, who asks it of `A`: the passage from `A` to
-`A⟨T/s⟩` is not proved here. This form remains the one to use when strong noetherianity is known
-only at the intermediate presentations.
+alone. The passage from `A` to `A⟨T/s⟩` is supplied in turn by
+`flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_top`,
+which reaches Wedhorn's own hypothesis at the cost of the rational-subset condition on `(T, s)`
+and topological nilpotence of the denominator. This form remains the one to use when strong
+noetherianity is known only at the intermediate presentations.
 
 The enlargement is arbitrary and so is the localisation `S'` carrying the target, matching
 `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset` and the rest of the restriction
@@ -498,9 +501,11 @@ completed localisation carrying the `T`-topology is strongly noetherian, the res
 any numerator enlargement is flat.
 
 **It is not Wedhorn's Proposition 8.30 as he states it.** He assumes strong noetherianity
-of `A`; this asks it of `A⟨T/s⟩`. Closing that last gap needs the passage from `A` to `A⟨T/s⟩`,
-which is not proved here. Both hypotheses are asked only of a *proper* enlargement: for `T' = T`
-the map is flat outright, by
+of `A`; this asks it of `A⟨T/s⟩`. The passage between the two is
+`TauCeti.Huber.PairOfDefinition.isStronglyNoetherian_completion`, applied in
+`flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_top`
+below, which asks `A` alone but adds the rational-subset condition on `(T, s)`. Both hypotheses
+here are asked only of a *proper* enlargement: for `T' = T` the map is flat outright, by
 `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_self`. -/
 theorem flat_restrictionRingHomOfSubset_of_isStronglyNoetherian_base
     (hnil : T ⊂ T' → IsTopologicallyNilpotent s)
@@ -545,13 +550,12 @@ denominator generates the unit ideal. It is not an extra assumption in the inten
 what makes `R(T/s)` a rational subset — but it is not implied by
 `TauCeti.Huber.PairOfDefinition.HasDenominatorPower`, so it has to be asked for.
 
-Topological nilpotence of `s` is asked only of a *proper* enlargement; for `T' = T` the map is
-flat outright, by
-`TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_self`. -/
-theorem flat_restrictionRingHomOfSubset_of_span_eq_top [IsTateRing A]
+Both hypotheses are asked only of a *proper* enlargement; for `T' = T` the map is flat outright,
+by `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_self`. -/
+theorem flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_top [IsTateRing A]
     [IsStronglyNoetherian A] [(nhds (0 : A)).IsCountablyGenerated]
     (hnil : T ⊂ T' → IsTopologicallyNilpotent s)
-    (hspan : Ideal.span (insert s (T : Set A)) = ⊤) :
+    (hspan : T ⊂ T' → Ideal.span (insert s (T : Set A)) = ⊤) :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
     letI := isTopologicalRing_locUniformSpace P T s S hden
@@ -560,7 +564,7 @@ theorem flat_restrictionRingHomOfSubset_of_span_eq_top [IsTateRing A]
     letI := isTopologicalRing_locUniformSpace P T' s S' hden'
     (restrictionRingHomOfSubset P T s S hden T' S' hden' hTT').Flat :=
   flat_restrictionRingHomOfSubset_of_isStronglyNoetherian_base P T s S hden T' S' hden' hTT'
-    hnil fun _ ↦ isStronglyNoetherian_completion P T s S hden hspan
+    hnil fun hproper ↦ isStronglyNoetherian_completion P T s S hden (hspan hproper)
 
 end PairOfDefinition
 
