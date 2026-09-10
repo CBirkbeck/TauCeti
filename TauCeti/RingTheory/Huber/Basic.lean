@@ -51,6 +51,11 @@ Huber ring is nonarchimedean, which is exactly the hypothesis under which
   mapping theorem asks of the underlying group, so both are instances.
 * `TauCeti.Huber.PairOfDefinition.exists_pow_mul_mem`: a power of a topologically nilpotent `s`
   carries any `c : A` into the ring of definition.
+* `TauCeti.Huber.IsHuberRing.exists_isTopologicallyNilpotent_pow_mul` and
+  `TauCeti.Huber.IsTateRing.exists_isTopologicallyNilpotent_pow_mul`: a power of a topologically
+  nilpotent element — a pseudouniformiser, in the Tate case — rescales any element of `A` to a
+  topologically nilpotent one. The multiplier is a unit in the Tate case, so the rescaled element
+  is an associate of the original.
 * `TauCeti.Huber.IsHuberRing.quotient`: a quotient of a Huber ring is a Huber ring.
 * `TauCeti.Huber.PairOfDefinition.isBounded_ringOfDefinition`: a ring of definition is bounded,
   hence `A₀ ≤ A°` (`TauCeti.Huber.PairOfDefinition.le_powerBoundedSubring`). This is the
@@ -466,6 +471,23 @@ theorem exists_pow_mul_mem [IsTopologicalRing A] (P : PairOfDefinition A) {s : A
 
 end PairOfDefinition
 
+/-- **A topologically nilpotent element rescales any element to a topologically nilpotent one.**
+In a Huber ring, for topologically nilpotent `ϖ` and any `s`, some `ϖ ^ i * s` is topologically
+nilpotent.
+
+Some power of `ϖ` carries `s` into a ring of definition, whose elements are power-bounded, and a
+power-bounded element times a topologically nilpotent one is topologically nilpotent. -/
+theorem IsHuberRing.exists_isTopologicallyNilpotent_pow_mul {A : Type*} [CommRing A]
+    [TopologicalSpace A] [IsTopologicalRing A] [IsHuberRing A] {ϖ : A}
+    (hϖ : IsTopologicallyNilpotent ϖ) (s : A) : ∃ i : ℕ, IsTopologicallyNilpotent (ϖ ^ i * s) := by
+  obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := A)
+  have := P.toNonarchimedeanRing
+  obtain ⟨i, hi⟩ := P.exists_pow_mul_mem hϖ s
+  have hpb : IsPowerBounded (ϖ ^ i * s) :=
+    mem_powerBoundedSubring.mp (P.le_powerBoundedSubring hi)
+  exact ⟨i + 1, by simpa [pow_succ, mul_assoc, mul_comm, mul_left_comm] using
+    hpb.isTopologicallyNilpotent_mul hϖ⟩
+
 /-- **A pseudouniformiser rescales any element to a topologically nilpotent one.** For `s : A`
 in a Tate ring there are a pseudouniformiser `ϖ` and an exponent `i` with `ϖ ^ i * s`
 topologically nilpotent.
@@ -477,18 +499,18 @@ matters, by `IsLocalization.Away.of_associated`.
 
 Rescaling a *denominator* alone is not such a construction: the fractions `t / s` are not the
 fractions `t / (ϖ ^ i * s)`, so a rational localisation `A⟨T/s⟩` is preserved only if the
-numerators are rescaled by the same unit. -/
+numerators are rescaled by the same unit.
+
+A caller who already holds a topologically nilpotent element should use
+`TauCeti.Huber.IsHuberRing.exists_isTopologicallyNilpotent_pow_mul`, which neither asks for a Tate
+ring nor chooses the multiplier. -/
 theorem IsTateRing.exists_isTopologicallyNilpotent_pow_mul {A : Type*} [CommRing A]
-    [TopologicalSpace A] [NonarchimedeanRing A] [IsTateRing A] (s : A) :
+    [TopologicalSpace A] [IsTopologicalRing A] [IsTateRing A] (s : A) :
     ∃ (ϖ : A) (i : ℕ), IsPseudoUniformizer ϖ ∧ IsTopologicallyNilpotent (ϖ ^ i * s) := by
-  obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := A)
   obtain ⟨ϖ, hϖ⟩ := IsTateRing.exists_isPseudoUniformizer (A := A)
   obtain ⟨-, hnil⟩ := isPseudoUniformizer_iff.mp hϖ
-  obtain ⟨i, hi⟩ := P.exists_pow_mul_mem hnil s
-  have hpb : IsPowerBounded (ϖ ^ i * s) :=
-    mem_powerBoundedSubring.mp (P.le_powerBoundedSubring hi)
-  exact ⟨ϖ, i + 1, hϖ, by simpa [pow_succ, mul_assoc, mul_comm, mul_left_comm] using
-    hpb.isTopologicallyNilpotent_mul hnil⟩
+  obtain ⟨i, hi⟩ := IsHuberRing.exists_isTopologicallyNilpotent_pow_mul hnil s
+  exact ⟨ϖ, i, hϖ, hi⟩
 
 /-- Quotients of Huber rings, with the quotient topology, are Huber rings. -/
 instance IsHuberRing.quotient {A : Type*} [CommRing A] [TopologicalSpace A]
