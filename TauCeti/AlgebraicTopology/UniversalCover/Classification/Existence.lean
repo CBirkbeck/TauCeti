@@ -21,7 +21,7 @@ covering map.
 
 The two inputs are that `UniversalCover.proj` and `UniversalCover.subgroupQuotientMap` are
 quotient covering maps, for `π₁(X, x₀)` and for `H` respectively, and that the first factors
-through the second. `TauCeti.IsQuotientCoveringMap.isCoveringMap_of_comp` turns exactly that
+through the second. `IsQuotientCoveringMap.isCoveringMap_of_comp` turns exactly that
 data into a covering map: the sheets of the descended projection over the image of a locally
 disjoint set `U` are the images of the translates of `U`. Nothing about good neighbourhoods of
 the base, their path-connectedness, or the transport of a sheet of `proj` along the

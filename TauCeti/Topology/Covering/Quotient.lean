@@ -29,7 +29,7 @@ application is `TauCeti.UniversalCover.isCoveringMap_subgroupQuotientProj`.
 
 ## Main results
 
-* `TauCeti.IsQuotientCoveringMap.isCoveringMap_of_comp`: the map from the quotient by a subgroup
+* `IsQuotientCoveringMap.isCoveringMap_of_comp`: the map from the quotient by a subgroup
   down to the quotient by the whole group is a covering map.
 
 ## Implementation notes
@@ -90,7 +90,8 @@ private theorem image_smul_eq_image_smul_of_inter_nonempty
 
 /-- The evenly covered neighbourhood of `q e` cut out by a set `U` around `e` whose `G`-translates
 are pairwise disjoint. Its sheets are the images in `Y` of the translates `g • U`. -/
-private theorem isEvenlyCovered_of_smul_disjoint (hq : IsQuotientCoveringMap q G)
+private theorem _root_.IsQuotientCoveringMap.isEvenlyCovered_of_smul_disjoint
+    (hq : IsQuotientCoveringMap q G)
     (hqH : IsQuotientCoveringMap qH H) (hr : r ∘ qH = q) {U : Set E} (hUo : IsOpen U)
     (hdisj : ∀ g : G, (g • U ∩ U).Nonempty → g = 1) {e : E} (heU : e ∈ U) :
     IsEvenlyCovered r (q e) (r ⁻¹' {q e}) := by
@@ -172,12 +173,13 @@ private theorem isEvenlyCovered_of_smul_disjoint (hq : IsQuotientCoveringMap q G
 If `q : E → X` presents `X` as the quotient of `E` by a group `G` in the sense of
 `IsQuotientCoveringMap`, and `qH : E → Y` presents `Y` as the quotient of `E` by a subgroup `H`
 of `G`, then the map `r : Y → X` through which `q` factors is a covering map. -/
-theorem isCoveringMap_of_comp (hq : IsQuotientCoveringMap q G)
+theorem _root_.IsQuotientCoveringMap.isCoveringMap_of_comp (hq : IsQuotientCoveringMap q G)
     (hqH : IsQuotientCoveringMap qH H) (hr : r ∘ qH = q) : IsCoveringMap r := by
   intro x
   obtain ⟨e, rfl⟩ := hq.surjective x
   obtain ⟨U, hU, hdisj⟩ := hq.disjoint e
-  refine isEvenlyCovered_of_smul_disjoint hq hqH hr isOpen_interior (fun g hg => hdisj g ?_)
+  refine IsQuotientCoveringMap.isEvenlyCovered_of_smul_disjoint hq hqH hr isOpen_interior
+    (fun g hg => hdisj g ?_)
     (mem_interior_iff_mem_nhds.mpr hU)
   rw [← Set.image_smul] at hg
   exact Set.Nonempty.mono
