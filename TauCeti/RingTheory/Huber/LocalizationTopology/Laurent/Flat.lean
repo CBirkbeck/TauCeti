@@ -70,8 +70,10 @@ in: `s` topologically nilpotent over a strongly noetherian base.
 
 ## The three chain results, and which to use
 
-They differ only in where strong noetherianity is assumed, and each is the right one for a
-different caller.
+Where strong noetherianity is assumed is the primary distinction, and each is the right one for a
+different caller. It is not the only one: the third additionally asks `[IsTateRing A]`, the
+rational-subset condition on `(T, s)`, and topological nilpotence of the denominator — the last two
+only of a proper enlargement.
 
 `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_of_forall_isStronglyNoetherian`
 asks it of `A⟨U/s⟩` for *every* `U` with `T ⊆ U ⊂ T'` — a family of hypotheses, carried rather
@@ -85,10 +87,11 @@ when the localisation is known to be strongly noetherian but `A` is not, or when
 known to cut out a rational subset.
 
 `PairOfDefinition.flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_top`
-asks it of `A`, which is Wedhorn's own hypothesis, at the cost of the rational-subset condition on
-`(T, s)`. In the intended use — restriction between rational subsets of `Spa(A, A⁺)` — that
-condition holds by definition. It still asks topological nilpotence of the denominator, so it is
-Proposition 8.30 only for such a denominator.
+asks it of `A`, which is Wedhorn's own hypothesis, at the cost of `[IsTateRing A]` and the
+rational-subset condition on `(T, s)`. Neither is a burden in the intended use — restriction
+between rational subsets of `Spa(A, A⁺)` of a Tate ring — where both hold by definition. It still
+asks topological nilpotence of the denominator, so it is Proposition 8.30 only for such a
+denominator.
 
 The elementary case is unaffected: it needs strong noetherianity only at its own base, which is
 where Lemma 8.31 needs it too.
