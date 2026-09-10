@@ -200,17 +200,14 @@ theorem mapsInfinity_of_one_lt_infinityPlace (p : CoordinatePullback W₁ W₂) 
   rw [mapsInfinity_iff_isIntegralElem_genericX, genericX_eq_algebraMap]
   -- `p.IsIntegralElem` is integrality for the algebra structure `p` induces, whose structure map
   -- is `p` itself. The pole makes the affine coordinate of `W₁` integral over the image ring of
-  -- `p`, and each element of that ring is the image of some `r`, hence integral over
-  -- `W₂.CoordinateRing`.
+  -- `p`, which is integral over `W₂.CoordinateRing` because `p` maps onto it.
   let _ := p.toRingHom.toAlgebra
-  have hp : ∀ r : W₂.CoordinateRing,
-      algebraMap W₂.CoordinateRing W₁.FunctionField r = p.toRingHom r :=
-    RingHom.congr_fun (RingHom.algebraMap_toAlgebra p.toRingHom)
-  refine isIntegral_trans_common (fun x ↦ ?_)
-    (isIntegral_X_over_range_of_one_lt_infinityPlace p a h)
-  obtain ⟨r, hr⟩ := RingHom.mem_range.1 x.2
-  rw [RingHom.congr_fun (Algebra.algebraMap_ofSubring _) x, Subring.coe_subtype, ← hr, ← hp]
-  exact isIntegral_algebraMap
+  let _ := p.toRingHom.rangeRestrict.toAlgebra
+  have : IsScalarTower W₂.CoordinateRing p.toRingHom.range W₁.FunctionField :=
+    IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
+  have : Algebra.IsIntegral W₂.CoordinateRing p.toRingHom.range :=
+    ⟨RingHom.isIntegral_of_surjective _ p.toRingHom.rangeRestrict_surjective⟩
+  exact isIntegral_trans _ (isIntegral_X_over_range_of_one_lt_infinityPlace p a h)
 
 /-- **Pointedness is exactly a pole of `x` at infinity.** A coordinate pullback maps infinity to
 infinity precisely when it sends the target's coordinate `x` to a function with a pole at the
