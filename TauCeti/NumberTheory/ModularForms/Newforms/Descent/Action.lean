@@ -127,7 +127,8 @@ theorem exists_mem_Gamma0_descendMatrix_mul (p N : ℕ) [NeZero p] (hpsq : p ^ 2
   have htgt : (⟨(descendShift p N hpsq γ v : ℕ), hv'⟩ : Fin p) = upperTriShift p γ ⟨v.val, hv⟩ :=
     Fin.ext (descendShift_val hpsq γ v)
   refine ⟨α, hα, ?_⟩
-  rw [descendMatrix_of_lt hv, descendMatrix_of_lt hv', htgt, ← map_mapGL (S := ℚ) (T := ℝ) γ,
-    ← map_mapGL (S := ℚ) (T := ℝ) α, ← map_mul, ← map_mul, hmul]
+  -- the real identity is the image of the rational one under `GL₂(ℚ) → GL₂(ℝ)`
+  simpa only [descendMatrix_of_lt hv, descendMatrix_of_lt hv', htgt, map_mul, map_mapGL]
+    using congrArg (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)) hmul
 
 end TauCeti
