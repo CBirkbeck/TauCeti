@@ -31,8 +31,8 @@ sum.
 * `TauCeti.regroupByNorm`: if the ideal-indexed series has sum `L` at `s`, then so does the
   `LSeries` of `TauCeti.normCoeff f`; `TauCeti.LSeriesSummable_normCoeff` and
   `TauCeti.LSeries_normCoeff` are the summability and value statements it packages.
-* `TauCeti.summable_log_mul_norm_idealTerm_of_re_lt_re`: weighting the ideal terms by `log N(I)`
-  keeps them summable strictly to the right of a point of absolute convergence.
+* `TauCeti.summable_log_absNorm_mul_norm_idealTerm_of_re_lt_re`: weighting the ideal terms
+  by `log N(I)` keeps them summable strictly to the right of a point of absolute convergence.
 * `TauCeti.abscissaOfAbsConv_normCoeff_le`: consequently the grouped abscissa of absolute
   convergence is at most the ideal-indexed one.
 * `TauCeti.summable_idealTerm_of_norm_normCoeff_eq_sum_norm`: the converse holds whenever no
@@ -131,7 +131,8 @@ propagates unweighted convergence along `Re s ≤ Re s'`: the logarithmic weight
 summability at `Re s' = Re s`.  This is the ideal-indexed counterpart of Mathlib's
 `LSeriesSummable_logMul_of_lt_re`, and the logarithmic weight is what appears when the terms are
 differentiated in `s`. -/
-theorem summable_log_mul_norm_idealTerm_of_re_lt_re {f : IdealArithmeticFunction K} {s s' : ℂ}
+theorem summable_log_absNorm_mul_norm_idealTerm_of_re_lt_re
+    {f : IdealArithmeticFunction K} {s s' : ℂ}
     (h : s.re < s'.re) (hs : Summable (idealTerm K f s)) :
     Summable fun I : (Ideal (𝓞 K))⁰ ↦
       Real.log (Ideal.absNorm (I : Ideal (𝓞 K))) * ‖idealTerm K f s' I‖ := by
