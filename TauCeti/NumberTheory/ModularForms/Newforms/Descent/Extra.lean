@@ -241,14 +241,14 @@ theorem descendIndexShift_bijective [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N)
   exact Equiv.bijective _
 
 /-- **The value of the index map at an affine index whose denominator is a unit**: the offset map's
-value. -/
+value. The hypothesis is stated with the casts distributed, the form `simp` normalises to. -/
 @[simp] theorem descendIndexShift_val_of_isUnit [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N)
     {γ : SL(2, ℤ)} {v : Fin (descendMatrixCount p N)} (hv : v.val < p)
-    (hA : IsUnit (((γ 0 0 + (v : ℕ) * γ 1 0 : ℤ) : ZMod p))) :
+    (hA : IsUnit (((γ 0 0 : ℤ) : ZMod p) + ((v : ℕ) : ZMod p) * ((γ 1 0 : ℤ) : ZMod p))) :
     (descendIndexShift p N hpsq γ v : ℕ) = (upperTriShift p γ ⟨v.val, hv⟩ : ℕ) := by
   rw [descendIndexShift_apply, descendIndexEquiv_apply_of_lt hpsq hv,
-    descendIndexGL_smul_coe_of_isUnit (j := ⟨v.val, hv⟩) hA, descendIndexEquiv_symm_coe_val,
-    ZMod.val_natCast_of_lt (upperTriShift p γ ⟨v.val, hv⟩).isLt]
+    descendIndexGL_smul_coe_of_isUnit (j := ⟨v.val, hv⟩) (by push_cast; exact hA),
+    descendIndexEquiv_symm_coe_val, ZMod.val_natCast_of_lt (upperTriShift p γ ⟨v.val, hv⟩).isLt]
 
 /-- **The value of the index map at the degenerate affine index**: the extra index `p`. -/
 @[simp] theorem descendIndexShift_val_of_eq_zero [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N)
@@ -395,7 +395,7 @@ private theorem exists_mem_Gamma0_descendMatrix_mul_of_isUnit [Fact p.Prime] (hp
         = mapGL ℝ α * descendMatrix p N (descendIndexShift p N hpsq γ v) := by
   obtain ⟨α, hα, hd, hmul⟩ := exists_mem_Gamma0_upperTriRep_mul_of_isUnit (j := ⟨v.val, hv⟩) hA
     (intCast_mul_apply_one_zero_eq_zero_of_mem_Gamma0_div hpN hγ)
-  have hidx := descendIndexShift_val_of_isUnit hpsq hv hA
+  have hidx := descendIndexShift_val_of_isUnit hpsq hv (by push_cast at hA; exact hA)
   have hv' : (descendIndexShift p N hpsq γ v : ℕ) < p :=
     hidx ▸ (upperTriShift p γ ⟨v.val, hv⟩).isLt
   have htgt : (⟨(descendIndexShift p N hpsq γ v : ℕ), hv'⟩ : Fin p)
