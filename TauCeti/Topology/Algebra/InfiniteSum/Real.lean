@@ -26,9 +26,9 @@ public section
 namespace TauCeti
 
 /-- **A weighted geometric family is summable over index and exponent together.**  For a family
-`r` in a seminormed group, all of norm less than one and eventually of norm at most `1 - ε`, and real
-weights `w` with `i ↦ w i * ‖r i‖` summable, the double family `(i, e) ↦ w i * ‖r i‖ ^ (e + 1)` is
-summable over `ι × ℕ`.
+`r` in a seminormed group, all of norm less than one and eventually of norm at most `1 - ε`,
+and real weights `w` with `i ↦ w i * ‖r i‖` summable, the double family
+`(i, e) ↦ w i * ‖r i‖ ^ (e + 1)` is summable over `ι × ℕ`.
 
 The weights are unrestricted in sign: only `|w i|` enters the majorant. Both hypotheses on `r` are
 imposed only on the support of `w`, since a fibre with `w i = 0` is identically zero whatever
