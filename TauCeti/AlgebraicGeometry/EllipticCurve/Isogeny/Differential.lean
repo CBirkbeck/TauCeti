@@ -183,8 +183,7 @@ theorem isSeparable_iff_pullbackDifferential_ne_zero [W₁.IsElliptic] [W₂.IsE
   -- A finite extension is separable exactly when its module of differentials vanishes.
   have hunr : Algebra.IsSeparable W₂.FunctionField W₁.FunctionField ↔
       Subsingleton (KaehlerDifferential W₂.FunctionField W₁.FunctionField) := by
-    rw [← Algebra.FormallyUnramified.iff_isSeparable]
-    exact ⟨fun h ↦ h.subsingleton_kaehlerDifferential, fun h ↦ ⟨h⟩⟩
+    rw [← Algebra.FormallyUnramified.iff_isSeparable, Algebra.formallyUnramified_iff]
   -- By the exact sequence `K₁ ⊗ Ω[K₂/F] → Ω[K₁/F] → Ω[K₁/K₂] → 0`, that is the surjectivity of the
   -- first map.
   have hmap : Subsingleton (KaehlerDifferential W₂.FunctionField W₁.FunctionField) ↔
