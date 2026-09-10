@@ -29,7 +29,7 @@ that the character, the eigenvalue system and the analytic invariants travel wit
   notion (and is not a claim about `U_n`).
 * A good eigenform is determined by its underlying cusp form: the character by
   `eq_of_mem_cuspFormCharSpace_of_ne_zero`, the eigenvalues by cancelling the nonzero form in
-  the eigenvector equations (`EigenformAwayFromLevel.ext_of_toCuspForm`).
+  the eigenvector equations (`EigenformAwayFromLevel.ext`).
 * That a newform is an eigenvector of every `T_n` is a theorem (Atkin–Lehner–Li; Miyake
   Theorem 4.6.13), not a field, and so is the comparison of the ring eigenvalues with the
   classical operator `heckeTCuspNat`; neither is proved here.
@@ -42,9 +42,8 @@ that the character, the eigenvalue system and the analytic invariants travel wit
 
 ## Main results
 
-* `HeckeRing.GL2.EigenformAwayFromLevel.ext_of_toCuspForm`,
-  `HeckeRing.GL2.Newform.ext_of_toCuspForm`: the bundled data is determined by the underlying
-  cusp form.
+* `HeckeRing.GL2.EigenformAwayFromLevel.ext`, `HeckeRing.GL2.Newform.ext`: the bundled data is
+  determined by the underlying cusp form.
 
 ## Provenance
 
@@ -107,10 +106,11 @@ structure Newform (N : ℕ) [NeZero N] (k : ℤ) extends EigenformAwayFromLevel 
 
 namespace EigenformAwayFromLevel
 
-/-- Two good Hecke eigenforms with the same underlying cusp form are equal: the form determines
-its nebentypus, and the eigenvalues at good indices are read off the eigenvector equations. -/
-theorem ext_of_toCuspForm {f g : EigenformAwayFromLevel N k} (h : f.toCuspForm = g.toCuspForm) :
-    f = g := by
+/-- **Extensionality**: two good Hecke eigenforms with the same underlying cusp form are equal.
+The form determines its nebentypus, and the eigenvalues at good indices are read off the
+eigenvector equations. -/
+@[ext]
+theorem ext {f g : EigenformAwayFromLevel N k} (h : f.toCuspForm = g.toCuspForm) : f = g := by
   obtain ⟨F, χf, memf, af, eigf, nzf⟩ := f
   obtain ⟨G, χg, memg, ag, eigg, nzg⟩ := g
   simp only at h
@@ -126,11 +126,12 @@ end EigenformAwayFromLevel
 
 namespace Newform
 
-/-- Two newforms with the same underlying cusp form are equal. -/
-theorem ext_of_toCuspForm {f g : Newform N k} (h : f.toCuspForm = g.toCuspForm) : f = g := by
+/-- **Extensionality**: two newforms with the same underlying cusp form are equal. -/
+@[ext]
+theorem ext {f g : Newform N k} (h : f.toCuspForm = g.toCuspForm) : f = g := by
   obtain ⟨f, hfn, hf1⟩ := f
   obtain ⟨g, hgn, hg1⟩ := g
-  have : f = g := EigenformAwayFromLevel.ext_of_toCuspForm h
+  have : f = g := EigenformAwayFromLevel.ext h
   subst this
   rfl
 
