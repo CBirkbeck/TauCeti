@@ -210,7 +210,7 @@ theorem exists_mem_Gamma0_upperTriRep_mul_of_isUnit [NeZero p] {γ : SL(2, ℤ)}
     push_cast at hmul ⊢
     linear_combination -hmul
   obtain ⟨b', hb'⟩ := hdvd
-  set j' := upperTriShift p γ j with hj'
+  set j' := upperTriShift p γ j
   have hdet' : (!![γ 0 0 + (j : ℕ) * γ 1 0, b';
       (p : ℤ) * γ 1 0, γ 1 1 - γ 1 0 * ((j' : ℕ) : ℤ)]).det = 1 := by
     rw [Matrix.det_fin_two_of]
