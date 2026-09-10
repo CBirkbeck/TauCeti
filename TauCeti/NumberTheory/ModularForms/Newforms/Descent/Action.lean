@@ -12,9 +12,10 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Invariance
 # The level-descent matrices are permuted by `Γ₀(N / p)`
 
 `Newforms/Descent/Cosets.lean` defines the family `descendMatrix p N` that Miyake's level
-descent at a prime `p` runs over. This file proves the first of the two facts that file
-explicitly leaves open: at a prime with `p² ∣ N`, right multiplication by an element of
-`Γ₀(N / p)` permutes the family, up to left multiplication by an element of `Γ₀(N)`.
+descent at a prime `p` runs over, and leaves open both that the family is a set of coset
+representatives and that the associated slash sum descends the level. This file proves neither of
+those; it supplies a prerequisite for both: at a prime with `p² ∣ N`, right multiplication by an
+element of `Γ₀(N / p)` permutes the family, up to left multiplication by an element of `Γ₀(N)`.
 
 The permutation is named rather than left existential, because that is what the descent
 consumes: a slash by `γ ∈ Γ₀(N / p)` sends the summand at `v` to the summand at
