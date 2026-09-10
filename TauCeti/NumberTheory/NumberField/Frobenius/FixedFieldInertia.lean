@@ -67,7 +67,8 @@ theorem inertiaDeg_under_fixedField_eq_one_of_isArithFrobAt (Q : Ideal (𝓞 L))
       = (Q.under (𝓞 ↥E)).inertiaDeg (𝓞 K) * Q.inertiaDeg (𝓞 ↥E) :=
     inertiaDeg_tower (Q.under (𝓞 ↥E)) Q
   have hE' : Q.inertiaDeg (𝓞 ↥E) = orderOf σ := by
-    have : Algebra.IsUnramifiedAt (𝓞 ↥E) Q := isUnramifiedAt_of_tower_top (K := K) Q
+    have : Algebra.IsUnramifiedAt (𝓞 ↥E) Q :=
+      Algebra.IsUnramifiedAt.of_restrictScalars (𝓞 K) Q
     rw [← card_stabilizer_eq_inertiaDeg_of_isUnramifiedAt Q hQ,
       NumberField.stabilizer_fixedField_zpowers_eq_top hσ.mem_stabilizer, Subgroup.card_top,
       IsGalois.card_aut_eq_finrank, finrank_fixedField_eq_card, Nat.card_zpowers]
