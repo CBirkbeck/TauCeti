@@ -11,7 +11,6 @@ public import TauCeti.RingTheory.Huber.Restricted.Laurent
 public import TauCeti.RingTheory.Huber.StronglyNoetherian
 
 import TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.StronglyNoetherian
-import TauCeti.RingTheory.Huber.LocalizationTopology.StronglyNoetherian
 
 /-!
 # Flatness of the Laurent quotient, and of a numerator enlargement
@@ -553,7 +552,7 @@ what makes `R(T/s)` a rational subset — but it is not implied by
 Both hypotheses are asked only of a *proper* enlargement; for `T' = T` the map is flat outright,
 by `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_self`. -/
 theorem flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_top [IsTateRing A]
-    [IsStronglyNoetherian A] [(nhds (0 : A)).IsCountablyGenerated]
+    [IsStronglyNoetherian A]
     (hnil : T ⊂ T' → IsTopologicallyNilpotent s)
     (hspan : T ⊂ T' → Ideal.span (insert s (T : Set A)) = ⊤) :
     letI := locUniformSpace P T s S hden
