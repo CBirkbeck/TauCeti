@@ -39,9 +39,7 @@ variable {R M M₁ M₂ : Type*} [Semiring R] [AddCommMonoid M] [Module R M] [Ad
 
 Mathlib records how `generalLinearEquiv` computes on coercions (`coeFn_generalLinearEquiv`,
 `coe_toLinearEquiv`) rather than at the level of `M ≃ₗ[R] M`, so both evaluation lemmas for
-`congrAut` below need this bridge; it is stated once here. `simp` cannot cross that coercion
-boundary on its own — substituting `MulEquiv.apply_symm_apply` for this lemma leaves both proofs
-with unsolved goals and reports the argument unused. -/
+`congrAut` below need this bridge; it is stated once here. -/
 private theorem _root_.LinearEquiv.toLinearEquiv_generalLinearEquiv_symm (f : M ≃ₗ[R] M) :
     ((generalLinearEquiv R M).symm f).toLinearEquiv = f := by
   ext m
