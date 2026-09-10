@@ -244,19 +244,23 @@ claimed targets by default.
 
 ### Pacing, so you don't burn your whole quota
 
-By default the worker paces itself against your subscription quota with the rule *used% must stay
-below elapsed%* — that is, it spreads usage evenly across the window rather than spending it all
-at once. You can shape that curve with `--pace`, given as `time%:budget%` control points:
+By default the worker paces itself against your subscription quota along the curve `60:40`: it
+may spend 40% of the quota by the time 60% of the window has elapsed, then ramps to the full quota
+by the reset, which holds back a reserve for work that arrives late in a window. You can shape
+that curve with `--pace`, given as `time%:budget%` control points:
 
 ```bash
 # stay under 10% until the window is half gone, then allow up to 70%
 tauceti work --loop --pace 0:10,50:70,90:90
+
+# spend at clock rate: the plain "used% must stay below elapsed%" rule
+tauceti work --loop --pace 0:0,100:100
 ```
 
 Points are linearly interpolated; an unspecified time 0 defaults to budget 0 and time 100 to
-budget 100. So a conservative curve keeps a reserve for your own interactive use, while a
-flatter one lets the worker work harder early. `$TAUCETI_PACE` sets a default, and the flag
-overrides it for one run.
+budget 100, and usage must stay strictly below the interpolated budget. So a conservative curve
+keeps a reserve for your own interactive use, while the clock-rate curve spreads usage evenly
+across the window. `$TAUCETI_PACE` sets a default, and the flag overrides it for one run.
 
 Two related notes. `--ignore-quota` skips the *pacer* but not the hard blocks — a window at 100%,
 or unreadable usage, still backs off. And if you want several workers on one machine, give each a
