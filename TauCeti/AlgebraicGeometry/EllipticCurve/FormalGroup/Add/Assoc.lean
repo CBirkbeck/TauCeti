@@ -183,7 +183,7 @@ private theorem subst_subst_pair_formalAdd_eq_X {σ' : Type*}
     {g : σ' → MvPowerSeries Unit O} (hg : HasSubst g) {a b : MvPowerSeries σ' O}
     (ha : constantCoeff a = 0) (hb : constantCoeff b = 0)
     (hga : subst g a = PowerSeries.X) (hgb : subst g b = 0) :
-    subst g (subst (Sum.elim (fun _ ↦ a) (fun _ ↦ b) : Unit ⊕ Unit → MvPowerSeries σ' O)
+    subst g (subst (pairSubstitution a b)
       (formalAdd W)) = PowerSeries.X := by
   -- The composite family is pointwise `X` and `0`, but only pointwise: the reshape below is
   -- `funext`, not a definitional equality, and it is needed because `subst_unitR_formalAdd` is
@@ -200,7 +200,7 @@ private theorem subst_subst_pair_formalAdd_eq_zero {σ' : Type*}
     {g : σ' → MvPowerSeries Unit O} (hg : HasSubst g) {a b : MvPowerSeries σ' O}
     (ha : constantCoeff a = 0) (hb : constantCoeff b = 0)
     (hga : subst g a = 0) (hgb : subst g b = 0) :
-    subst g (subst (Sum.elim (fun _ ↦ a) (fun _ ↦ b) : Unit ⊕ Unit → MvPowerSeries σ' O)
+    subst g (subst (pairSubstitution a b)
       (formalAdd W)) = 0 := by
   -- As above, the reshape is `funext` rather than defeq: `g` kills both components pointwise,
   -- and the zero family is what `subst_zero_of_constantCoeff_zero` is stated against.
@@ -280,23 +280,19 @@ group law of an honest Weierstrass curve, applied to the two points, computes `F
 private theorem thetaPoint_add (hΔ : (fracCurve W σ KK).Δ ≠ 0)
     {q₁ q₂ : MvPowerSeries σ O} (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0)
     (hq₁0 : q₁ ≠ 0) (hq₂0 : q₂ ≠ 0)
-    (hN : subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+    (hN : subst (pairSubstitution q₁ q₂)
       (formalIntercept W) ≠ 0)
     (hx : q₁ * PowerSeries.subst q₂ (formalW W) - q₂ * PowerSeries.subst q₁ (formalW W) ≠ 0)
-    (hF : constantCoeff (subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-      Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W)) = 0)
-    (hF0 : subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+    (hF : constantCoeff (subst (pairSubstitution q₁ q₂) (formalAdd W)) = 0)
+    (hF0 : subst (pairSubstitution q₁ q₂)
       (formalAdd W) ≠ 0) :
     W.thetaPoint hΔ h₁ hq₁0 + W.thetaPoint hΔ h₂ hq₂0 = W.thetaPoint hΔ hF hF0 := by
   classical
   set ρ := algebraMap (MvPowerSeries σ O) KK with hρ
   have hinj : Function.Injective ρ := IsFractionRing.injective (MvPowerSeries σ O) KK
-  set Λp := subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-    Unit ⊕ Unit → MvPowerSeries σ O) (formalSlope W) with hΛp
-  set Np := subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-    Unit ⊕ Unit → MvPowerSeries σ O) (formalIntercept W) with hNp
-  set Tp := subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-    Unit ⊕ Unit → MvPowerSeries σ O) (formalThirdRoot W) with hTp
+  set Λp := subst (pairSubstitution q₁ q₂) (formalSlope W) with hΛp
+  set Np := subst (pairSubstitution q₁ q₂) (formalIntercept W) with hNp
+  set Tp := subst (pairSubstitution q₁ q₂) (formalThirdRoot W) with hTp
   set w₁ := PowerSeries.subst q₁ (formalW W) with hw₁'
   set w₂ := PowerSeries.subst q₂ (formalW W) with hw₂'
   set wT := PowerSeries.subst Tp (formalW W) with hwT'
@@ -363,13 +359,12 @@ private theorem thetaPoint_add (hΔ : (fracCurve W σ KK).Δ ≠ 0)
     have h := congrArg ρ (subst_pair_formalInverseDenom_eq W h₁ h₂)
     simp only [map_sub, map_mul, map_one, MvPowerSeries.c_eq_algebraMap] at h
     exact h
-  have hFeq : ρ (subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-      Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W)) = -(ρ Tp * ρ sp) := by
+  have hFeq : ρ (subst (pairSubstitution q₁ q₂) (formalAdd W)) = -(ρ Tp * ρ sp) := by
     have h := congrArg ρ (subst_pair_formalAdd_eq W h₁ h₂)
     simp only [map_neg, map_mul] at h
     exact h
-  have hwFeq : ρ (PowerSeries.subst (subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-      Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W)) (formalW W)) = -(ρ wT * ρ sp) := by
+  have hwFeq : ρ (PowerSeries.subst (subst (pairSubstitution q₁ q₂) (formalAdd W)) (formalW W))
+      = -(ρ wT * ρ sp) := by
     have h := congrArg ρ (subst_pair_formalW_formalAdd W h₁ h₂)
     simp only [map_neg, map_mul] at h
     exact h
@@ -454,7 +449,7 @@ private theorem pair_intercept_ne_zero_of_ne (hΔ : (fracCurve W σ KK).Δ ≠ 0
     {q₁ q₂ : MvPowerSeries σ O} (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0)
     (hq₁0 : q₁ ≠ 0) (hq₂0 : q₂ ≠ 0) (hne₁ : q₁ ≠ q₂)
     (hne₂ : q₁ ≠ PowerSeries.subst q₂ (formalInverse W)) :
-    subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+    subst (pairSubstitution q₁ q₂)
       (formalIntercept W) ≠ 0 := by
   classical
   intro h0
@@ -502,9 +497,8 @@ private theorem thetaPoint_add_of_ne (hΔ : (fracCurve W σ KK).Δ ≠ 0)
     {q₁ q₂ : MvPowerSeries σ O} (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0)
     (hq₁0 : q₁ ≠ 0) (hq₂0 : q₂ ≠ 0) (hne₁ : q₁ ≠ q₂)
     (hne₂ : q₁ ≠ PowerSeries.subst q₂ (formalInverse W))
-    (hF : constantCoeff (subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-      Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W)) = 0)
-    (hF0 : subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+    (hF : constantCoeff (subst (pairSubstitution q₁ q₂) (formalAdd W)) = 0)
+    (hF0 : subst (pairSubstitution q₁ q₂)
       (formalAdd W) ≠ 0) :
     W.thetaPoint hΔ h₁ hq₁0 + W.thetaPoint hΔ h₂ hq₂0 = W.thetaPoint hΔ hF hF0 := by
   have hN := W.pair_intercept_ne_zero_of_ne hΔ h₁ h₂ hq₁0 hq₂0 hne₁ hne₂
@@ -525,9 +519,8 @@ private theorem thetaPoint_add_of_subst_separates (hΔ : (fracCurve W σ KK).Δ 
     {q₁ q₂ : MvPowerSeries σ O} (h₁ : constantCoeff q₁ = 0) (h₂ : constantCoeff q₂ = 0)
     (hq₁0 : q₁ ≠ 0) (hq₂0 : q₂ ≠ 0)
     (hg₁ : subst g q₁ = PowerSeries.X) (hg₂ : subst g q₂ = 0)
-    (hF : constantCoeff (subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) :
-      Unit ⊕ Unit → MvPowerSeries σ O) (formalAdd W)) = 0)
-    (hF0 : subst (Sum.elim (fun _ ↦ q₁) (fun _ ↦ q₂) : Unit ⊕ Unit → MvPowerSeries σ O)
+    (hF : constantCoeff (subst (pairSubstitution q₁ q₂) (formalAdd W)) = 0)
+    (hF0 : subst (pairSubstitution q₁ q₂)
       (formalAdd W) ≠ 0) :
     W.thetaPoint hΔ h₁ hq₁0 + W.thetaPoint hΔ h₂ hq₂0 = W.thetaPoint hΔ hF hF0 :=
   W.thetaPoint_add_of_ne hΔ h₁ h₂ hq₁0 hq₂0 (ne_of_subst_eq_X_of_subst_eq_zero hg₁ hg₂)
