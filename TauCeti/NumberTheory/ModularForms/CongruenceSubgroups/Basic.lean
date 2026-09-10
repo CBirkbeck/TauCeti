@@ -757,9 +757,9 @@ theorem intCast_mul_apply_one_zero_eq_zero_of_mem_Gamma0_div {p N : ℕ} (hpN : 
   rw [hpNp]
   exact mul_dvd_mul_left _ ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hδ))
 
-/-- **The entry equation reads as a congruence at any level where `c` vanishes.** The
-factorisations above return the lower-right entry of the witness as
-`δ 1 1 - δ 1 0 * k`; modulo a level `M` with `δ ∈ Γ₀(M)`, that is the entry of `δ`. -/
+/-- **The entry equation reads as a congruence at any level where `c` vanishes.** If a
+factorisation gives `α 1 1 = δ 1 1 - δ 1 0 * k`, then modulo a level `M` with `δ ∈ Γ₀(M)` the
+lower-right entry of `α` is that of `δ`. -/
 theorem intCast_apply_one_one_eq_of_mem_Gamma0_of_eq {M : ℕ} {δ α : SL(2, ℤ)} (hδ : δ ∈ Gamma0 M)
     {k : ℤ} (h : (α 1 1 : ℤ) = δ 1 1 - δ 1 0 * k) :
     ((α 1 1 : ℤ) : ZMod M) = ((δ 1 1 : ℤ) : ZMod M) := by
