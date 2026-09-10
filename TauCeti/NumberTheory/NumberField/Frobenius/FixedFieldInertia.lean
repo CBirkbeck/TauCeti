@@ -6,10 +6,12 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.NumberField.FixedField
+public import TauCeti.NumberTheory.RamificationInertia.Galois
 public import TauCeti.NumberTheory.NumberField.Frobenius.DecompositionGroup
+public import TauCeti.NumberTheory.NumberField.Frobenius.Tower
 
 /-!
-# The fixed-field prime of a Frobenius has residue degree one over the base
+# The prime below an unramified prime in the fixed field of its Frobenius
 
 Let `σ` be an arithmetic Frobenius at a nonzero prime `Q` of `𝓞 L` unramified over `𝓞 K`, and let
 `E = L ^ ⟨σ⟩`.  Then `Q ∩ 𝓞 E` has residue degree one over `𝓞 K`.
@@ -19,14 +21,21 @@ Frobenius element has order the inertia degree, and over `𝓞 E` because `Gal(L
 `σ` and fixes `Q`, so the whole group is the decomposition group. Multiplicativity of the inertia
 degree in a tower then leaves the factor one for the intermediate prime.
 
-This is the hypothesis of `NumberField.restrictScalars_eq_of_inertiaDeg_eq_one`, and so the step a
-fixed-field fibre count runs through: at residue degree one the relative Frobenius over `E` is the
-absolute one over `K`, with no power taken.
+Two consequences follow, and together the three are what a fixed-field fibre count needs at each
+prime: `Q` is the *only* prime of `𝓞 L` above `Q ∩ 𝓞 E`, because `Gal(L/E)` acts transitively on
+those primes and fixes `Q`; and the arithmetic Frobenius over `E` at `Q` restricts to `σ` itself,
+with no power taken, which is `NumberField.restrictScalars_eq_of_inertiaDeg_eq_one` at residue
+degree one.
+
+The inertness needs only that `σ` fixes `Q`, not that it is a Frobenius, and is stated that way.
 
 ## Main results
 
 * `Ideal.inertiaDeg_under_fixedField_eq_one_of_isArithFrobAt`: the prime below `Q` in the field
   fixed by a Frobenius at `Q` has residue degree one over `𝓞 K`.
+* `Ideal.eq_of_liesOver_under_fixedField`: `Q` is the only prime of `𝓞 L` above it.
+* `Ideal.restrictScalars_eq_of_isArithFrobAt_fixedField`: an arithmetic Frobenius over the fixed
+  field at `Q` restricts to `σ` itself.
 
 ## References
 
@@ -74,5 +83,46 @@ theorem inertiaDeg_under_fixedField_eq_one_of_isArithFrobAt (Q : Ideal (𝓞 L))
       IsGalois.card_aut_eq_finrank, finrank_fixedField_eq_card, Nat.card_zpowers]
   rw [hK, hE'] at htower
   exact (Nat.eq_of_mul_eq_mul_right (orderOf_pos σ) (by rw [one_mul]; exact htower)).symm
+
+/-- **The prime is inert over the fixed field.**  If `σ` fixes the prime `Q` of `𝓞 L`, then `Q` is
+the only prime of `𝓞 L` above `Q ∩ 𝓞 (L ^ ⟨σ⟩)`.
+
+`Gal(L / L ^ ⟨σ⟩)` acts transitively on the primes above a prime of the fixed field, and it fixes
+`Q`, so the orbit is a single point.  Nothing here needs `σ` to be a Frobenius. -/
+theorem eq_of_liesOver_under_fixedField {σ : L ≃ₐ[K] L} {Q : Ideal (𝓞 L)} [Q.IsPrime]
+    (hQ : σ • Q = Q) (Q' : Ideal (𝓞 L)) [Q'.IsPrime]
+    [Q'.LiesOver (Q.under (𝓞 ↥(fixedField (Subgroup.zpowers σ))))] :
+    Q' = Q := by
+  have : IsScalarTower K ↥(fixedField (Subgroup.zpowers σ)) L :=
+    (fixedField (Subgroup.zpowers σ)).isScalarTower_mid'
+  have : IsGalois ↥(fixedField (Subgroup.zpowers σ)) L :=
+    IsGalois.tower_top_intermediateField _
+  have : IsGaloisGroup (L ≃ₐ[↥(fixedField (Subgroup.zpowers σ))] L)
+      ↥(fixedField (Subgroup.zpowers σ)) L := IsGaloisGroup.of_isGalois _ L
+  have : Q.LiesOver (Q.under (𝓞 ↥(fixedField (Subgroup.zpowers σ)))) :=
+    Ideal.over_under (A := 𝓞 ↥(fixedField (Subgroup.zpowers σ))) (P := Q)
+  obtain ⟨τ, hτ⟩ := Ideal.exists_smul_eq_of_isGaloisGroup
+    (Q.under (𝓞 ↥(fixedField (Subgroup.zpowers σ)))) Q Q'
+    (L ≃ₐ[↥(fixedField (Subgroup.zpowers σ))] L)
+  rw [← hτ]
+  exact MulAction.mem_stabilizer_iff.mp
+    (NumberField.stabilizer_fixedField_zpowers_eq_top hQ ▸ Subgroup.mem_top τ)
+
+/-- **Over the fixed field the Frobenius does not move.**  An arithmetic Frobenius over
+`E = L ^ ⟨σ⟩` at `Q` restricts to `σ` itself, with no power taken.
+
+This is `NumberField.restrictScalars_eq_of_inertiaDeg_eq_one` supplied with the residue degree
+computed above; a fixed-field fibre count is what needs it. -/
+theorem restrictScalars_eq_of_isArithFrobAt_fixedField (Q : Ideal (𝓞 L)) [Q.IsPrime] (hQ : Q ≠ ⊥)
+    [Algebra.IsUnramifiedAt (𝓞 K) Q] {σ : L ≃ₐ[K] L} (hσ : IsArithFrobAt (𝓞 K) σ Q)
+    {τ : L ≃ₐ[↥(fixedField (Subgroup.zpowers σ))] L}
+    (hτ : IsArithFrobAt (𝓞 ↥(fixedField (Subgroup.zpowers σ))) τ Q) :
+    AlgEquiv.restrictScalars K τ = σ := by
+  have : IsScalarTower K ↥(fixedField (Subgroup.zpowers σ)) L :=
+    (fixedField (Subgroup.zpowers σ)).isScalarTower_mid'
+  have : IsGalois ↥(fixedField (Subgroup.zpowers σ)) L :=
+    IsGalois.tower_top_intermediateField _
+  exact NumberField.restrictScalars_eq_of_inertiaDeg_eq_one hσ hτ
+    (inertiaDeg_under_fixedField_eq_one_of_isArithFrobAt Q hQ hσ)
 
 end Ideal
