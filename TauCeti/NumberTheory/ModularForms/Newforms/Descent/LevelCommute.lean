@@ -5,9 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.UpperTriFactorization
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Sum
-
-import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 
 /-!
 # The descent slash sum does not see the level away from `p`
@@ -64,27 +63,6 @@ theorem descendMatrixCount_mul_left_of_coprime (hpl : Nat.Coprime p l) (N : ℕ)
   · rw [descendMatrixCount_of_not_sq_dvd h, descendMatrixCount_of_not_sq_dvd
       (mt (Nat.Coprime.pow_left 2 hpl).dvd_mul_left.mp h)]
 
-/-- The Chinese remainder theorem for a single integer residue. -/
-private theorem intCast_zmod_mul_eq_of_coprime {a b : ℕ} (hab : Nat.Coprime a b) {x y : ℤ}
-    (ha : (x : ZMod a) = y) (hb : (x : ZMod b) = y) : (x : ZMod (a * b)) = y := by
-  rw [ZMod.intCast_eq_intCast_iff] at ha hb ⊢
-  push_cast
-  exact (Int.modEq_and_modEq_iff_modEq_mul (by simpa using hab)).mp ⟨ha, hb⟩
-
-/-- `Γ(a) ⊓ Γ(b) ≤ Γ(a b)` for coprime `a` and `b`. -/
-private theorem mem_Gamma_mul_of_coprime {a b : ℕ} (hab : Nat.Coprime a b) {γ : SL(2, ℤ)}
-    (ha : γ ∈ Gamma a) (hb : γ ∈ Gamma b) : γ ∈ Gamma (a * b) := by
-  rw [Gamma_mem] at ha hb ⊢
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · simpa using intCast_zmod_mul_eq_of_coprime hab (y := 1) (by simpa using ha.1)
-      (by simpa using hb.1)
-  · simpa using intCast_zmod_mul_eq_of_coprime hab (y := 0) (by simpa using ha.2.1)
-      (by simpa using hb.2.1)
-  · simpa using intCast_zmod_mul_eq_of_coprime hab (y := 0) (by simpa using ha.2.2.1)
-      (by simpa using hb.2.2.1)
-  · simpa using intCast_zmod_mul_eq_of_coprime hab (y := 1) (by simpa using ha.2.2.2)
-      (by simpa using hb.2.2.2)
-
 /-- The extra matrices at levels `l N` and `N` differ by an element of `Γ(N)`. -/
 private theorem descendExtraGamma_mul_inv_mem_Gamma (hp : p.Prime) (hpN : p ∣ N)
     (hpsq : ¬ p ^ 2 ∣ N) (hpl : Nat.Coprime p l) :
@@ -107,42 +85,14 @@ private theorem descendExtraGamma_mul_inv_mem_Gamma (hp : p.Prime) (hpN : p ∣ 
   have := mem_Gamma_mul_of_coprime hcop hδp hδq
   rwa [Nat.mul_div_cancel' hpN] at this
 
-/-- The matrix `[a, b; p c, d]` built from `δ = [a, p b; c, d]`: the conjugate of `δ` through
-`[1, 0; 0, p]`, which is again integral of determinant one. -/
-private def upperTriConj (p : ℕ) (δ : SL(2, ℤ)) (b : ℤ) (hb : δ 0 1 = p * b) : SL(2, ℤ) :=
-  ⟨!![δ 0 0, b; (p : ℤ) * δ 1 0, δ 1 1], by
-    rw [Matrix.det_fin_two_of]
-    linear_combination fin_two_mul_sub_mul_eq_one δ + δ 1 0 * hb⟩
-
-private theorem coe_upperTriConj (p : ℕ) (δ : SL(2, ℤ)) (b : ℤ) (hb : δ 0 1 = p * b) :
-    (↑(upperTriConj p δ b hb) : Matrix (Fin 2) (Fin 2) ℤ) = !![δ 0 0, b; (p : ℤ) * δ 1 0, δ 1 1] :=
-  rfl
-
-/-- Conjugating an element of `Γ(N)` through `[1, 0; 0, p]`, for `p ∣ N`, lands in `Γ₁(N)`:
-`[1, 0; 0, p] · δ = ε · [1, 0; 0, p]` with `ε = [a, b / p; p c, d]`. -/
-private theorem exists_mem_Gamma1_upperTriRep_mul_mapGL [NeZero p] (hpN : p ∣ N)
-    {δ : SL(2, ℤ)} (hδ : δ ∈ Gamma N) :
-    ∃ ε ∈ Gamma1 N, upperTriRep p ⟨0, NeZero.pos p⟩ * mapGL ℚ δ =
-      mapGL ℚ ε * upperTriRep p ⟨0, NeZero.pos p⟩ := by
-  rw [Gamma_mem] at hδ
-  obtain ⟨h00, h01, h10, h11⟩ := hδ
-  obtain ⟨b, hb⟩ : (p : ℤ) ∣ δ 0 1 :=
-    (Int.natCast_dvd_natCast.mpr hpN).trans ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp h01)
-  refine ⟨upperTriConj p δ b hb, ?_, ?_⟩
-  · rw [Gamma1_mem]
-    refine ⟨?_, ?_, ?_⟩ <;> simp [coe_upperTriConj, h00, h10, h11]
-  · apply Units.ext
-    rw [Units.val_mul, Units.val_mul, coe_upperTriRep, coe_mapGL_int_rat_fin_two,
-      coe_mapGL_int_rat_fin_two, coe_upperTriConj]
-    ext i j
-    fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two, hb] <;> ring
-
 /-- **The extra representatives at levels `l N` and `N` differ on the left by `Γ₁(N)`.** -/
-theorem exists_mem_Gamma1_descendMatrix_mul_left_eq [NeZero p] (hp : p.Prime) (hpN : p ∣ N)
+theorem exists_mem_Gamma1_descendMatrix_mul_left_eq (hp : p.Prime) (hpN : p ∣ N)
     (hpsq : ¬ p ^ 2 ∣ N) (hpl : Nat.Coprime p l) {v : Fin (descendMatrixCount p N)}
     (hv : p ≤ v.val) {w : Fin (descendMatrixCount p (l * N))} (hw : p ≤ w.val) :
+    haveI : NeZero p := ⟨hp.ne_zero⟩
     ∃ ε ∈ Gamma1 N, descendMatrix p (l * N) w = mapGL ℝ ε * descendMatrix p N v := by
-  obtain ⟨ε, hε, hεmul⟩ := exists_mem_Gamma1_upperTriRep_mul_mapGL (p := p) hpN
+  have : NeZero p := ⟨hp.ne_zero⟩
+  obtain ⟨ε, hε, hεmul⟩ := exists_mem_Gamma1_upperTriRep_mul_of_mem_Gamma (p := p) hpN
     (descendExtraGamma_mul_inv_mem_Gamma hp hpN hpsq hpl)
   refine ⟨ε, hε, ?_⟩
   have hQ : upperTriRep p ⟨0, NeZero.pos p⟩ * mapGL ℚ (descendExtraGamma p (l * N)) =
@@ -154,16 +104,21 @@ theorem exists_mem_Gamma1_descendMatrix_mul_left_eq [NeZero p] (hp : p.Prime) (h
 /-- **Miyake, Lemma 4.6.6 — the descent slash sum does not see the level away from `p`.** For
 `l` coprime to `p` and `f` invariant under `Γ₁(N)`, the descent slash sums of `f` at levels `l N`
 and `N` coincide. -/
-theorem descendSlash_mul_left_of_coprime (k : ℤ) [NeZero p] (hp : p.Prime) (hpN : p ∣ N)
+theorem descendSlash_mul_left_of_coprime (k : ℤ) (hp : p.Prime) (hpN : p ∣ N)
     (hpl : Nat.Coprime p l) {f : ℍ → ℂ}
     (hf : ∀ ε ∈ Gamma1 N, f ∣[k] (mapGL ℝ ε : GL (Fin 2) ℝ) = f) :
+    haveI : NeZero p := ⟨hp.ne_zero⟩
     descendSlash k p (l * N) f = descendSlash k p N f := by
+  have : NeZero p := ⟨hp.ne_zero⟩
   rw [descendSlash_def, descendSlash_def]
   refine Fintype.sum_equiv (finCongr (descendMatrixCount_mul_left_of_coprime hpl N)) _ _
     fun w ↦ ?_
   by_cases hw : w.val < p
-  · rw [descendMatrix_of_lt hw, descendMatrix_of_lt (v := finCongr _ w) (by simpa using hw)]
-    rfl
+  · have hw' : (finCongr (descendMatrixCount_mul_left_of_coprime hpl N) w).val < p := by
+      simpa using hw
+    have hidx : (⟨(finCongr (descendMatrixCount_mul_left_of_coprime hpl N) w).val, hw'⟩ : Fin p)
+        = ⟨w.val, hw⟩ := Fin.ext (by simp)
+    rw [descendMatrix_of_lt hw, descendMatrix_of_lt hw', hidx]
   · have hpsq : ¬ p ^ 2 ∣ N := fun h ↦ by
       have h1 := w.isLt
       have h2 := descendMatrixCount_mul_left_of_coprime hpl N

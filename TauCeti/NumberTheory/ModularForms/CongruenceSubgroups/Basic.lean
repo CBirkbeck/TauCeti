@@ -92,6 +92,7 @@ infrastructure independent of the diamond operators.
   prime `p` and `k ≥ 1`.
 * `CongruenceSubgroup.Gamma_gcd_eq_sup`: `Γ(gcd a b) = Γ(a) ⊔ Γ(b)` — Shimura's Lemma 3.28,
   the Chinese remainder theorem for `SL₂`.
+* `CongruenceSubgroup.mem_Gamma_mul_of_coprime`: `Γ(a) ⊓ Γ(b) ≤ Γ(a b)` for coprime `a`, `b`.
 
 ## References
 
@@ -741,5 +742,20 @@ theorem exists_mem_Gamma_map_intCast_zmod_eq {d d' : ℕ} (hcop : Nat.Coprime d 
   obtain ⟨γ, hγ⟩ := Matrix.SpecialLinearGroup.map_intCast_zmod_prod_surjective hcop (A, 1)
   rw [MonoidHom.prod_apply, Prod.mk.injEq] at hγ
   exact ⟨γ, Gamma_mem'.mpr hγ.2, hγ.1⟩
+
+/-- **`Γ(a) ⊓ Γ(b) ≤ Γ(a b)` for coprime `a` and `b`**: a matrix congruent to the identity modulo
+two coprime levels is congruent to it modulo their product. -/
+theorem mem_Gamma_mul_of_coprime {a b : ℕ} (hab : Nat.Coprime a b) {γ : SL(2, ℤ)}
+    (ha : γ ∈ Gamma a) (hb : γ ∈ Gamma b) : γ ∈ Gamma (a * b) := by
+  rw [Gamma_mem] at ha hb ⊢
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · simpa using ZMod.intCast_eq_intCast_of_coprime hab (y := 1) (by simpa using ha.1)
+      (by simpa using hb.1)
+  · simpa using ZMod.intCast_eq_intCast_of_coprime hab (y := 0) (by simpa using ha.2.1)
+      (by simpa using hb.2.1)
+  · simpa using ZMod.intCast_eq_intCast_of_coprime hab (y := 0) (by simpa using ha.2.2.1)
+      (by simpa using hb.2.2.1)
+  · simpa using ZMod.intCast_eq_intCast_of_coprime hab (y := 1) (by simpa using ha.2.2.2)
+      (by simpa using hb.2.2.2)
 
 end CongruenceSubgroup

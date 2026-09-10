@@ -37,6 +37,7 @@ proof uses, and the name places the divisibility in Mathlib's operand order.
   whenever `b` is a unit modulo `n`.
 * `ZMod.natCast_dvd_val_sub_of_unitsMap_eq`: two units with the same image under `ZMod.unitsMap`
   along `d ∣ N` have representatives congruent modulo `d`, as integers.
+* `ZMod.intCast_eq_intCast_of_coprime`: the Chinese remainder theorem for a single residue.
 -/
 
 public section
@@ -69,5 +70,13 @@ theorem natCast_dvd_val_sub_of_unitsMap_eq {N : ℕ} [NeZero N] {d : ℕ} (hd : 
   push_cast
   rw [natCast_val (u' : ZMod N), natCast_val (u : ZMod N),
     ← castHom_apply (h := hd) (u' : ZMod N), ← castHom_apply (h := hd) (u : ZMod N), h_cast]
+
+/-- **The Chinese remainder theorem for one residue**: an integer congruent to `y` modulo two
+coprime moduli is congruent to `y` modulo their product. -/
+theorem intCast_eq_intCast_of_coprime {a b : ℕ} (hab : Nat.Coprime a b) {x y : ℤ}
+    (ha : (x : ZMod a) = y) (hb : (x : ZMod b) = y) : (x : ZMod (a * b)) = y := by
+  rw [ZMod.intCast_eq_intCast_iff] at ha hb ⊢
+  push_cast
+  exact (Int.modEq_and_modEq_iff_modEq_mul (by simpa using hab)).mp ⟨ha, hb⟩
 
 end ZMod
