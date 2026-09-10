@@ -44,6 +44,7 @@ that the character, the eigenvalue system and the analytic invariants travel wit
 
 * `HeckeRing.GL2.EigenformAwayFromLevel.ext`, `HeckeRing.GL2.Newform.ext`: the bundled data is
   determined by the underlying cusp form.
+* `HeckeRing.GL2.Newform.qExpansion_coeff_one`: the normalisation `a₁ = 1` as a simp lemma.
 
 ## Provenance
 
@@ -125,6 +126,12 @@ theorem ext {f g : EigenformAwayFromLevel N k} (h : f.toCuspForm = g.toCuspForm)
 end EigenformAwayFromLevel
 
 namespace Newform
+
+/-- The normalisation `a₁ = 1`, as a simp lemma. The eigenvector equation `isEigen` has no simp
+form: its right-hand side depends on the coprimality proof, so no rewrite rule can produce it. -/
+@[simp]
+theorem qExpansion_coeff_one (f : Newform N k) : (qExpansion 1 f.toCuspForm).coeff 1 = 1 :=
+  f.isNorm
 
 /-- **Extensionality**: two newforms with the same underlying cusp form are equal. -/
 @[ext]
