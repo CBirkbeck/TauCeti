@@ -6,11 +6,10 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Deriv
-public import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm
-public import TauCeti.Topology.Algebra.InfiniteSum.Real
+public import TauCeti.Analysis.Complex.BranchLogRoot
+public import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.Basic
 
 import Mathlib.Analysis.Calculus.SmoothSeries
-import TauCeti.NumberTheory.ArithmeticDirichletSeries.Regroup
 
 /-!
 # The derivative of the prime-power logarithmic expansion
@@ -32,8 +31,10 @@ prime-power series the derivative is equal to.
 
 ## Main results
 
-* `TauCeti.MultiplicativeIdealWeight.hasDerivAt_tsum_primePow`: the prime-power expansion
-  differentiates termwise on the half-plane of absolute convergence.
+* `TauCeti.MultiplicativeIdealWeight.hasDerivAt_tsum_prime_pow`: the prime-power expansion
+  differentiates termwise, strictly right of a point of absolute convergence.
+* `TauCeti.MultiplicativeIdealWeight.logDeriv_LSeries_eq_tsum_prime_pow`: that derivative **is**
+  the logarithmic derivative of the `L`-series.
 -/
 
 public section
@@ -52,7 +53,7 @@ variable {K : Type*} [Field K] [NumberField K] (χ : MultiplicativeIdealWeight K
 
 /-- **The Taylor term at `(P, e)` differentiates to `-log N(P)` times the undivided power.**  The
 division by `e + 1` is what makes the derivative the plain power rather than a multiple of it. -/
-theorem hasDerivAt_primePowTaylorTerm (P : HeightOneSpectrum (𝓞 K)) (e : ℕ) (s : ℂ) :
+theorem hasDerivAt_prime_pow_taylor_term (P : HeightOneSpectrum (𝓞 K)) (e : ℕ) (s : ℂ) :
     HasDerivAt (fun z : ℂ ↦ (χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ z) ^ (e + 1)
         / ((e : ℂ) + 1))
       (-(Complex.log (Ideal.absNorm P.asIdeal : ℂ)
@@ -85,7 +86,7 @@ theorem hasDerivAt_primePowTaylorTerm (P : HeightOneSpectrum (𝓞 K)) (e : ℕ)
 
 /-- **The differentiated term is dominated by its value at the edge of the half-plane.**  The bound
 is uniform in `z` across `σ₀ ≤ z.re`, which is what termwise differentiation of a sum requires. -/
-theorem norm_log_mul_primePow_le (P : HeightOneSpectrum (𝓞 K)) (e : ℕ) {σ₀ : ℝ} {z : ℂ}
+theorem norm_log_mul_prime_pow_le (P : HeightOneSpectrum (𝓞 K)) (e : ℕ) {σ₀ : ℝ} {z : ℂ}
     (hz : σ₀ ≤ z.re) :
     ‖-(Complex.log (Ideal.absNorm P.asIdeal : ℂ)
         * (χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ z) ^ (e + 1))‖
@@ -107,12 +108,13 @@ theorem norm_log_mul_primePow_le (P : HeightOneSpectrum (𝓞 K)) (e : ℕ) {σ�
 /-- **The log-weighted majorant is summable over primes and exponents together.**  Strictly to the
 right of a point of absolute convergence the weight `log N(P)` is absorbed, and the exponent
 direction is geometric. -/
-theorem summable_log_absNorm_mul_norm_primePow {s s' : ℂ} (h : s.re < s'.re)
-    (hs : Summable (idealTerm K χ.toIdealArithmeticFunction s))
-    (hs' : Summable (idealTerm K χ.toIdealArithmeticFunction s')) :
+theorem summable_log_absNorm_mul_norm_prime_pow {s s' : ℂ} (h : s.re < s'.re)
+    (hs : Summable (idealTerm K χ.toIdealArithmeticFunction s)) :
     Summable fun pe : HeightOneSpectrum (𝓞 K) × ℕ ↦
       Real.log (Ideal.absNorm pe.1.asIdeal)
         * ‖χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ s'‖ ^ (pe.2 + 1) := by
+  have hs' : Summable (idealTerm K χ.toIdealArithmeticFunction s') :=
+    summable_idealTerm_of_re_le_re K h.le hs
   have hwr : Summable fun P : HeightOneSpectrum (𝓞 K) ↦
       Real.log (Ideal.absNorm P.asIdeal)
         * ‖χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s'‖ := by
@@ -131,47 +133,74 @@ theorem summable_log_absNorm_mul_norm_primePow {s s' : ℂ} (h : s.re < s'.re)
   · exact ⟨1 / 2, by norm_num, by filter_upwards [hhalf] with P hP _; linarith⟩
   · exact fun P _ ↦ χ.norm_div_lt_one_of_summable_idealTerm hs' P
 
-/-- **The prime-power expansion differentiates termwise.**  On the open half-plane `σ₁ < re z`,
-where the ideal-indexed series converges absolutely at every point, the sum over prime powers is
-differentiable and its derivative is the termwise one: the same family weighted by `-log N(P)`,
-with the division by `e + 1` gone. -/
-theorem hasDerivAt_tsum_primePow {σ₁ : ℝ}
-    (habs : ∀ z : ℂ, σ₁ < z.re → Summable (idealTerm K χ.toIdealArithmeticFunction z))
-    {s : ℂ} (hs : σ₁ < s.re) :
+/-- **The prime-power expansion differentiates termwise.**  Strictly to the right of any single
+point of absolute convergence, the sum over prime powers is differentiable and its derivative is
+the termwise one: the same family weighted by `-log N(P)`, with the division by `e + 1` gone.
+
+One point of convergence is enough: absolute convergence propagates rightward, which is what
+supplies the majorant on a neighbourhood of `s`. -/
+theorem hasDerivAt_tsum_prime_pow {s₀ s : ℂ}
+    (hs₀ : Summable (idealTerm K χ.toIdealArithmeticFunction s₀)) (hs : s₀.re < s.re) :
     HasDerivAt (fun z : ℂ ↦ ∑' pe : HeightOneSpectrum (𝓞 K) × ℕ,
         (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ z) ^ (pe.2 + 1) / ((pe.2 : ℂ) + 1))
       (∑' pe : HeightOneSpectrum (𝓞 K) × ℕ,
         -(Complex.log (Ideal.absNorm pe.1.asIdeal : ℂ)
           * (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ s) ^ (pe.2 + 1))) s := by
   obtain ⟨σ₀, hσ₁₀, hσ₀s⟩ := exists_between hs
-  obtain ⟨σ₂, hσ₁₂, hσ₂₀⟩ := exists_between hσ₁₀
   have hu : Summable fun pe : HeightOneSpectrum (𝓞 K) × ℕ ↦
       Real.log (Ideal.absNorm pe.1.asIdeal)
         * ‖χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ (σ₀ : ℂ)‖ ^ (pe.2 + 1) :=
-    χ.summable_log_absNorm_mul_norm_primePow
-      (s := (σ₂ : ℂ)) (s' := (σ₀ : ℂ)) (by simpa using hσ₂₀)
-      (habs (σ₂ : ℂ) (by simpa using hσ₁₂)) (habs (σ₀ : ℂ) (by simpa using hσ₁₀))
-  have hmem : σ₁ < ((σ₀ + 1 : ℝ) : ℂ).re := by simp; linarith
+    χ.summable_log_absNorm_mul_norm_prime_pow (s' := (σ₀ : ℂ)) (by simpa using hσ₁₀) hs₀
+  have hsum : Summable (idealTerm K χ.toIdealArithmeticFunction s) :=
+    summable_idealTerm_of_re_le_re K hs.le hs₀
   have hy₀ := Complex.summable_taylorSeries_neg_log
     (r := fun P : HeightOneSpectrum (𝓞 K) ↦
-      χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ ((σ₀ + 1 : ℝ) : ℂ))
-    (χ.summable_div_of_summable_idealTerm (habs _ hmem))
-    (χ.norm_div_lt_one_of_summable_idealTerm (habs _ hmem))
+      χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s)
+    (χ.summable_div_of_summable_idealTerm hsum)
+    (χ.norm_div_lt_one_of_summable_idealTerm hsum)
   exact hasDerivAt_tsum_of_isPreconnected
-    (u := fun pe : HeightOneSpectrum (𝓞 K) × ℕ ↦
-      Real.log (Ideal.absNorm pe.1.asIdeal)
-        * ‖χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ (σ₀ : ℂ)‖ ^ (pe.2 + 1))
     (g := fun (pe : HeightOneSpectrum (𝓞 K) × ℕ) (z : ℂ) ↦
       (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ z) ^ (pe.2 + 1) / ((pe.2 : ℂ) + 1))
     (g' := fun (pe : HeightOneSpectrum (𝓞 K) × ℕ) (z : ℂ) ↦
       -(Complex.log (Ideal.absNorm pe.1.asIdeal : ℂ)
         * (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ z) ^ (pe.2 + 1)))
-    (t := {z : ℂ | σ₀ < z.re}) (y₀ := ((σ₀ + 1 : ℝ) : ℂ))
+    (t := {z : ℂ | σ₀ < z.re}) (y₀ := s)
     hu (isOpen_lt continuous_const continuous_re)
     (convex_halfSpace_re_gt σ₀).isPreconnected
-    (fun pe z _ ↦ χ.hasDerivAt_primePowTaylorTerm pe.1 pe.2 z)
-    (fun pe z hz ↦ χ.norm_log_mul_primePow_le pe.1 pe.2 (le_of_lt hz))
-    (by simp) hy₀ hσ₀s
+    (fun pe z _ ↦ χ.hasDerivAt_prime_pow_taylor_term pe.1 pe.2 z)
+    (fun pe z hz ↦ χ.norm_log_mul_prime_pow_le pe.1 pe.2 (le_of_lt hz))
+    hσ₀s hy₀ hσ₀s
+
+/-- **The logarithmic derivative of the `L`-series, as a prime-power series.**  Strictly to the
+right of a point of absolute convergence,
+
+`logDeriv L(s) = ∑' (P, e), -log N(P) · (χ(P) N(P)⁻ˢ) ^ (e+1)`.
+
+This is the identification Layer 3.4 asks for.  The prime-power expansion is a branch of the
+logarithm of the `L`-series there — its exponential is the `L`-series, by
+`exp_tsum_prime_pow_eq_LSeries` — and the derivative of any such branch is the logarithmic
+derivative, the branch ambiguity being locally constant. -/
+theorem logDeriv_LSeries_eq_tsum_prime_pow {s₀ s : ℂ}
+    (hs₀ : Summable (idealTerm K χ.toIdealArithmeticFunction s₀)) (hs : s₀.re < s.re) :
+    logDeriv (LSeries (normCoeff K χ.toIdealArithmeticFunction)) s
+      = ∑' pe : HeightOneSpectrum (𝓞 K) × ℕ,
+        -(Complex.log (Ideal.absNorm pe.1.asIdeal : ℂ)
+          * (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ s) ^ (pe.2 + 1)) := by
+  set U : Set ℂ := {z : ℂ | s₀.re < z.re} with hU
+  have hUo : IsOpen U := isOpen_lt continuous_const continuous_re
+  set f : ℂ → ℂ := fun z ↦ ∑' pe : HeightOneSpectrum (𝓞 K) × ℕ,
+    (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ z) ^ (pe.2 + 1) / ((pe.2 : ℂ) + 1) with hf
+  have hderiv : ∀ z ∈ U, HasDerivAt f
+      (∑' pe : HeightOneSpectrum (𝓞 K) × ℕ,
+        -(Complex.log (Ideal.absNorm pe.1.asIdeal : ℂ)
+          * (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ z) ^ (pe.2 + 1))) z :=
+    fun z hz ↦ χ.hasDerivAt_tsum_prime_pow hs₀ hz
+  have hdiff : DifferentiableOn ℂ f U := fun z hz ↦
+    (hderiv z hz).differentiableAt.differentiableWithinAt
+  have heq : Set.EqOn (Complex.exp ∘ f) (LSeries (normCoeff K χ.toIdealArithmeticFunction)) U :=
+    fun z hz ↦ χ.exp_tsum_prime_pow_eq_LSeries
+      (summable_idealTerm_of_re_le_re K (le_of_lt hz) hs₀)
+  rw [← deriv_eq_logDeriv_of_eqOn_exp_comp hUo hdiff heq hs, (hderiv s hs).deriv]
 
 end MultiplicativeIdealWeight
 
