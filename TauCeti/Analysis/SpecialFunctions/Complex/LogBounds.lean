@@ -19,8 +19,8 @@ prime-power-style sum over pairs equals the sum of local logarithms.
 Both hypotheses are needed.  `∀ i, ‖r i‖ < 1` alone does not suffice: the fibre at `i` sums to
 `‖r i‖ / (1 - ‖r i‖)`, which is dominated by `‖r i‖` only when `‖r i‖` is bounded away from `1`,
 and summability of `r` is what supplies that uniformity.  That fibrewise argument is not carried out
-here: it is `TauCeti.summable_mul_norm_pow_succ`, stated for a normed group and an arbitrary real
-weight, and this file uses it at weight `1`.
+here: it is `TauCeti.summable_mul_norm_pow_succ`, stated for a seminormed additive group and an
+arbitrary real weight, and this file uses it at weight `1`.
 
 ## Main results
 

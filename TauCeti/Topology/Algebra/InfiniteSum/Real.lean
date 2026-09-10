@@ -5,14 +5,16 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Analysis.SpecificLimits.Normed
+public import Mathlib.Analysis.Normed.Group.InfiniteSum
+public import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
 # Weighted geometric majorants over an index and an exponent
 
-For a family `r : ι → E` in a seminormed group whose norms are less than one, and eventually at most
-`1 - ε`, wherever the weight `w` is nonzero, the double family `(i, e) ↦ w i * ‖r i‖ ^ (e + 1)` is
-summable over `ι × ℕ` as soon as `i ↦ w i * ‖r i‖` is summable. Each fibre is geometric, so it
+For a family `r : ι → E` in a seminormed additive group whose norms are less than one, and
+eventually at most `1 - ε`, wherever the weight `w` is nonzero, the double family
+`(i, e) ↦ w i * ‖r i‖ ^ (e + 1)` is summable over `ι × ℕ` as soon as `i ↦ w i * ‖r i‖` is
+summable. Each fibre is geometric, so it
 sums to `w i * ‖r i‖ / (1 - ‖r i‖)`, and the eventual bound keeps `1 / (1 - ‖r i‖)` under `ε⁻¹`
 off a finite set; a fibre where the weight vanishes is zero and needs no bound at all.
 
@@ -25,14 +27,14 @@ public section
 
 namespace TauCeti
 
-/-- **A weighted geometric family is summable over index and exponent together.**  For a family
-`r` in a seminormed group, all of norm less than one and eventually of norm at most `1 - ε`,
-and real weights `w` with `i ↦ w i * ‖r i‖` summable, the double family
-`(i, e) ↦ w i * ‖r i‖ ^ (e + 1)` is summable over `ι × ℕ`.
+/-- **A weighted geometric family is summable over index and exponent together.**  Let `w : ι → ℝ`
+be weights with `i ↦ w i * ‖r i‖` summable, and let `r` be a family in a seminormed additive group
+which, *at every index where `w` is nonzero*, has norm less than one and eventually norm at most
+`1 - ε`.  Then the double family `(i, e) ↦ w i * ‖r i‖ ^ (e + 1)` is summable over `ι × ℕ`.
 
-The weights are unrestricted in sign: only `|w i|` enters the majorant. Both hypotheses on `r` are
-imposed only on the support of `w`, since a fibre with `w i = 0` is identically zero whatever
-`r i` is.
+Both conditions on `r` are restricted to the support of `w`, and off that support nothing is asked
+of `r` at all: a fibre with `w i = 0` is identically zero whatever `r i` is.  The weights are
+unrestricted in sign, since only `|w i|` enters the majorant.
 
 The eventual bound is what the fibres need — the fibre at `i` sums to `w i * ‖r i‖ / (1 - ‖r i‖)`,
 which is comparable to `w i * ‖r i‖` only where `‖r i‖` stays away from `1`. Summability of `r`
