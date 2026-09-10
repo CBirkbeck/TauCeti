@@ -21,6 +21,14 @@ lands in `K` at all, and both readings agree through the convention `index = 0`.
 * `Subgroup.zpow_mem_iff_index_dvd`: `g ^ n ∈ K ↔ (K.index : ℤ) ∣ n` for `n : ℤ`, with `g` a
   generator.
 * `Subgroup.pow_mem_iff_index_dvd`: the same for a natural exponent.
+* `Subgroup.isLeast_pow_mem_relIndex_zpowers`: for `g` in a finite group, the relative index of
+  `H` in `⟨g⟩` **is** that least positive exponent.
+
+## References
+
+The least-exponent reading is the phrasing `TauCetiRoadmap/Chebotarev/README.md` Layer 8.2 uses for
+a residue degree: *the least `n ≥ 1` with `Frob(Q)^n ∈ ⟨σ⟩`*.  It is recorded here, with no number
+theory attached, because the divisibility above already determines it.
 -/
 
 public section
@@ -65,5 +73,23 @@ theorem zpow_mem_iff_index_dvd (K : Subgroup G) (hg : zpowers g = ⊤) (n : ℤ)
 theorem pow_mem_iff_index_dvd (K : Subgroup G) (hg : zpowers g = ⊤) (n : ℕ) :
     g ^ n ∈ K ↔ K.index ∣ n := by
   rw [← zpow_natCast, zpow_mem_iff_index_dvd K hg, Int.natCast_dvd_natCast]
+
+/-- **The relative index in a cyclic subgroup is the least exponent that lands in `H`.**  For `g`
+in a finite group, `H.relIndex ⟨g⟩` is the smallest `n ≥ 1` with `g ^ n ∈ H`.
+
+This is the finite-index reading of `pow_mem_iff_index_dvd` above, transported into `⟨g⟩`: there
+the canonical generator generates, so the exponents landing in `H` are exactly the multiples of
+the relative index. -/
+theorem isLeast_pow_mem_relIndex_zpowers [Finite G] (g : G) (H : Subgroup G) :
+    IsLeast {n : ℕ | 0 < n ∧ g ^ n ∈ H} (H.relIndex (zpowers g)) := by
+  have hself : zpowers (⟨g, mem_zpowers g⟩ : ↥(zpowers g)) = ⊤ := by
+    rw [eq_top_iff']
+    rintro ⟨x, k, rfl⟩
+    exact ⟨k, by ext; simp⟩
+  have key : ∀ n : ℕ, g ^ n ∈ H ↔ H.relIndex (zpowers g) ∣ n := fun n ↦ by
+    have h := (H.subgroupOf (zpowers g)).pow_mem_iff_index_dvd hself n
+    rwa [Subgroup.mem_subgroupOf, SubmonoidClass.coe_pow] at h
+  refine ⟨⟨?_, (key _).2 dvd_rfl⟩, fun n hn ↦ Nat.le_of_dvd hn.1 ((key n).1 hn.2)⟩
+  exact Nat.pos_of_ne_zero (Subgroup.index_ne_zero_of_finite)
 
 end Subgroup
