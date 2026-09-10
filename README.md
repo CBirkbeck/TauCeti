@@ -179,7 +179,8 @@ don't collide with others; see [Coordinating work: intentions and claims](https:
 ## Contributing with the worker CLI
 
 The reviews above can be run one PR at a time, but most contribution here happens through a
-*worker*: a loop that picks one piece of work, does it, and stops. The exemplar is
+*worker*. A single round picks one piece of work, does it, and stops; `--loop` runs rounds
+repeatedly until you interrupt it. The exemplar is
 [`kim-em/TauCetiWorker`](https://github.com/kim-em/TauCetiWorker). With
 [uv](https://docs.astral.sh/uv/):
 
@@ -263,8 +264,10 @@ keeps a reserve for your own interactive use, while the clock-rate curve spreads
 across the window. `$TAUCETI_PACE` sets a default, and the flag overrides it for one run.
 
 Two related notes. `--ignore-quota` skips the *pacer* but not the hard blocks — a window at 100%,
-or unreadable usage, still backs off. And if you want several workers on one machine, give each a
-distinct identity, which namespaces its state, checkout, review store and logs:
+or unreadable usage, still backs off; it also needs an explicit agent, since `auto` cannot choose
+without the pacer, as in `tauceti work --agent codex --ignore-quota`. And if you want several
+workers on one machine, give each a distinct identity, which namespaces its state, checkout,
+review store and logs:
 
 ```bash
 tauceti work --loop --worker-id alice --only review
