@@ -44,12 +44,13 @@ theorem summable_taylorSeries_neg_log {ι : Type*} {r : ι → ℂ} (hr : Summab
     Summable fun ie : ι × ℕ ↦ r ie.1 ^ (ie.2 + 1) / ((ie.2 : ℂ) + 1) := by
   -- The majorant is the weighted geometric bound at weight `1`; summability of `r` supplies its
   -- eventual bound with `ε = 1 / 2`.
-  have hbd : ∃ ε > 0, ∀ᶠ i in Filter.cofinite, ‖r i‖ ≤ 1 - ε :=
-    ⟨1 / 2, by norm_num, by
-      simpa using hr.tendsto_cofinite_zero.norm.eventually_le_const (by norm_num)⟩
+  have hhalf : ∀ᶠ i in Filter.cofinite, ‖r i‖ ≤ 1 / 2 :=
+    hr.tendsto_cofinite_zero.norm.eventually_le_const (by norm_num)
+  have hbd : ∃ ε > 0, ∀ᶠ i in Filter.cofinite, (1 : ℝ) ≠ 0 → ‖r i‖ ≤ 1 - ε :=
+    ⟨1 / 2, by norm_num, by filter_upwards [hhalf] with i hi _; linarith⟩
   have hmaj : Summable fun ie : ι × ℕ ↦ ‖r ie.1‖ ^ (ie.2 + 1) := by
     simpa using TauCeti.summable_mul_norm_pow_succ (w := fun _ ↦ (1 : ℝ)) hbd
-      (by simpa using hr.norm) h1
+      (by simpa using hr.norm) (fun i _ ↦ h1 i)
   refine hmaj.of_norm_bounded ?_
   rintro ⟨i, e⟩
   rw [norm_div, norm_pow]
