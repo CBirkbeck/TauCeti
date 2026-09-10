@@ -475,8 +475,11 @@ end PairOfDefinition
 In a Huber ring, for topologically nilpotent `ϖ` and any `s`, some `ϖ ^ i * s` is topologically
 nilpotent.
 
-Some power of `ϖ` carries `s` into a ring of definition, whose elements are power-bounded, and a
-power-bounded element times a topologically nilpotent one is topologically nilpotent. -/
+Use it to make a hypothesis of topological nilpotence available for an element that need not have
+it: replace `s` by `ϖ ^ i * s`, which differs from it by a factor drawn from the topology rather
+than an arbitrary one. When `ϖ` is a pseudouniformiser that factor is a unit, so the replacement
+is an associate of `s`; `TauCeti.Huber.IsTateRing.exists_isTopologicallyNilpotent_pow_mul` is the
+form that records this. -/
 theorem IsHuberRing.exists_isTopologicallyNilpotent_pow_mul {A : Type*} [CommRing A]
     [TopologicalSpace A] [IsTopologicalRing A] [IsHuberRing A] {ϖ : A}
     (hϖ : IsTopologicallyNilpotent ϖ) (s : A) : ∃ i : ℕ, IsTopologicallyNilpotent (ϖ ^ i * s) := by
