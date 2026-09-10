@@ -36,8 +36,9 @@ coset of `σ · diag(p, 1)` because `σ ∈ Γ₀(N)`.
   `p ∤ N`, the union of the `p + 1` right cosets named by `primeRep σ p`.
 * `HeckeRing.GL2.doubleCoset_natDiagGL_Gamma0_eq_iUnion_rightCosets_of_dvd`: at `p ∣ N`, the
   union of the `p` upper-triangular right cosets.
-* `HeckeRing.GL2.doubleCoset_out_diagCosetGamma0_eq_doubleCoset_natDiagGL` and
-  `HeckeRing.GL2.doubleCoset_out_diagCosetGamma0_eq_iUnion_rightCosets_of_prime`: the same at the
+* `HeckeRing.GL2.doubleCoset_out_diagCosetGamma0_eq_doubleCoset_natDiagGL`,
+  `HeckeRing.GL2.doubleCoset_out_diagCosetGamma0_eq_iUnion_rightCosets_of_prime` and
+  `HeckeRing.GL2.doubleCoset_out_diagCosetGamma0_eq_iUnion_rightCosets_of_dvd`: the same at the
   chosen representative of `diagCosetGamma0 N ![1, p]`, the shape the twisted slash-sum machinery
   of `HeckeSlash/Nebentypus/Independence.lean` consumes.
 
@@ -184,5 +185,15 @@ theorem doubleCoset_natDiagGL_Gamma0_eq_iUnion_rightCosets_of_dvd (hp : 0 < p) (
     exact ⟨mapGL ℚ (ModularGroup.T ^ (j : ℤ)),
       Subgroup.mem_map_of_mem _ (Gamma1_in_Gamma0 N (T_zpow_mem_Gamma1 N _)),
       natDiagGL_mul_mapGL_T_zpow hp j⟩
+
+/-- The decomposition of `doubleCoset_natDiagGL_Gamma0_eq_iUnion_rightCosets_of_dvd`, read at the
+chosen representative of `diagCosetGamma0 N ![1, p]`. -/
+theorem doubleCoset_out_diagCosetGamma0_eq_iUnion_rightCosets_of_dvd (hp : 0 < p) (hpN : p ∣ N) :
+    doubleCoset ((diagCosetGamma0 N ![1, p] fun _ ↦ Nat.coprime_one_left N).out : GL (Fin 2) ℚ)
+        ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) =
+      ⋃ j : Fin p, MulOpposite.op (upperTriRep p j) •
+        ((Gamma0 N).map (mapGL ℚ) : Set (GL (Fin 2) ℚ)) :=
+  (doubleCoset_out_diagCosetGamma0_eq_doubleCoset_natDiagGL ![1, p] _).trans
+    (doubleCoset_natDiagGL_Gamma0_eq_iUnion_rightCosets_of_dvd hp hpN)
 
 end HeckeRing.GL2
