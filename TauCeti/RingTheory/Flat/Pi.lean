@@ -21,7 +21,7 @@ upgrades it to faithful flatness.
 
 Mathlib defines `Module.FaithfullyFlat` as flatness plus `m • ⊤ ≠ ⊤` for every maximal ideal `m`,
 so the criterion is about locating a single component that keeps `m` proper — the factorwise half
-of that is `TauCeti.Ideal.smul_top_eq_top_of_pi`, a general ideal-action fact with no flatness or
+of that is `Ideal.smul_top_eq_top_of_pi`, a general ideal-action fact with no flatness or
 finiteness in it, which lives in `TauCeti/RingTheory/Ideal/Operations.lean`: a product is
 faithfully flat as soon as each factor is flat and **no maximal ideal expands in every factor at
 once**. Individually the factors may all fail to be faithfully flat.
