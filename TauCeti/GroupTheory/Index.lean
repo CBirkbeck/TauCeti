@@ -7,6 +7,8 @@ module
 
 public import Mathlib.GroupTheory.Index
 
+import Mathlib.GroupTheory.SpecificGroups.Cyclic.Basic
+
 /-!
 # Consequences of the index formula
 
@@ -32,6 +34,8 @@ centre gives the `Γ.withCenter` readings.
   and the index doubling, for an `N` normalised by `Γ` whose elements are `1` and `a ∉ Γ`.
 * `Subgroup.relIndex_withCenter_eq_two`, `Subgroup.index_eq_two_mul_index_withCenter`: the same
   two facts on `Γ.withCenter`, when the centre is `{1, a}`.
+* `Subgroup.isLeast_pow_mem_relIndex_zpowers`: the relative index of `H` in `⟨g⟩` is the least
+  positive exponent `n` with `g ^ n ∈ H`.
 -/
 
 public section
@@ -160,7 +164,6 @@ theorem index_eq_two_mul_index_withCenter (ha : a ∈ Subgroup.center G) (haΓ :
   Subgroup.withCenter_def Γ ▸
     index_eq_two_mul_index_sup _ Subgroup.le_normalizer_of_normal ha haΓ hcenter
 
-end Subgroup
 
 namespace TauCeti
 
@@ -173,3 +176,35 @@ theorem isUnit_natCard_subgroup {k : Type*} {G : Type*} [Semiring k] [Group G]
   exact ((Nat.cast_commute _ _).isUnit_mul_iff.mp h).1
 
 end TauCeti
+
+/-- **The relative index in a cyclic subgroup is the least exponent that lands in `H`.**  For `g`
+in a finite group, `H.relIndex ⟨g⟩` is the smallest `n ≥ 1` with `g ^ n ∈ H`.
+
+Both readings are useful: the index is what multiplies against `Nat.card (⟨g⟩ ⊓ H)`, while the
+least exponent is how such a quantity is usually specified. -/
+theorem isLeast_pow_mem_relIndex_zpowers {G : Type*} [Group G] [Finite G] (g : G)
+    (H : Subgroup G) :
+    IsLeast {n : ℕ | 0 < n ∧ g ^ n ∈ H} (H.relIndex (zpowers g)) := by
+  -- the canonical generator generates `⟨g⟩`, so its image generates the quotient by `H ⊓ ⟨g⟩`,
+  -- whose cardinality is the relative index
+  have hself : zpowers (⟨g, mem_zpowers g⟩ : ↥(zpowers g)) = ⊤ := by
+    rw [eq_top_iff']
+    rintro ⟨x, k, rfl⟩
+    exact ⟨k, by ext; simp⟩
+  have hord : orderOf ((QuotientGroup.mk' (H.subgroupOf (zpowers g)))
+      (⟨g, mem_zpowers g⟩ : ↥(zpowers g))) = H.relIndex (zpowers g) := by
+    have hgen : zpowers ((QuotientGroup.mk' (H.subgroupOf (zpowers g)))
+        (⟨g, mem_zpowers g⟩ : ↥(zpowers g))) = ⊤ := by
+      rw [← MonoidHom.map_zpowers, hself,
+        Subgroup.map_top_of_surjective _ (QuotientGroup.mk'_surjective _)]
+    rw [orderOf_eq_card_of_zpowers_eq_top hgen]
+    rfl
+  have key : ∀ n : ℕ, g ^ n ∈ H ↔ H.relIndex (zpowers g) ∣ n := fun n ↦ by
+    rw [← hord, orderOf_dvd_iff_pow_eq_one, ← map_pow, QuotientGroup.mk'_apply,
+      QuotientGroup.eq_one_iff, Subgroup.mem_subgroupOf]
+    simp
+  refine ⟨⟨?_, (key _).2 dvd_rfl⟩, fun n hn ↦ Nat.le_of_dvd hn.1 ((key n).1 hn.2)⟩
+  rw [← hord]
+  exact orderOf_pos _
+
+end Subgroup
