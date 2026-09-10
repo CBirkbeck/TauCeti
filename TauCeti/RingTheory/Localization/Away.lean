@@ -144,9 +144,9 @@ theorem divBy_mul_algebraMap :
 
 That extra instance is what the hypothesis really is: for a unit `u` it comes for free, since
 `u * s` and `s` are then associated and `IsLocalization.Away.of_associated` transports the
-localisation. Rescaling a denominator *alone* need not preserve the fraction, so a construction
-indexed by a presentation is preserved only when the numerators are rescaled by the same
-factor. -/
+localisation. Rescaling a denominator *alone* need not preserve the fraction; rescaling numerator
+and denominator together always does, which is what a construction indexed by a presentation
+needs. -/
 @[simp]
 theorem divBy_mul_mul_left {u : A} [IsLocalization.Away (u * s) S] :
     (divBy (u * t) (u * s) : S) = divBy t s := by
