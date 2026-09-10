@@ -364,14 +364,9 @@ theorem exists_pow_idealOfDefinition_mul_mem [IsTopologicalRing A] (P : PairOfDe
 /-- **A unit multiple of one level of the filtration contains a deeper level**: for a unit `u` of
 `A` and any `N`, some `Iᴺ'` lands inside `u · Iᴺ`.
 
-Multiplying by `u` is invertible on `A`, so `u · Iᴺ` is the preimage of the open `Iᴺ` under the
-continuous map `y ↦ u⁻¹ · y`; it is therefore an open neighbourhood of `0`, and the images of the
-powers of `I` are a neighbourhood basis there
-(`TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero`).
-
 This is what lets a denominator be rescaled by a unit: the standing hypotheses of a presentation
 are stated at some level of the filtration, and rescaling moves that level by a unit. -/
-theorem exists_idealImage_subset_smul [IsTopologicalRing A] (P : PairOfDefinition A) {u : A}
+theorem exists_idealImage_subset_mul [IsTopologicalRing A] (P : PairOfDefinition A) {u : A}
     (hu : IsUnit u) (N : ℕ) :
     ∃ N' : ℕ, (P.idealImage N' : Set A) ⊆ (u * ·) '' (P.idealImage N : Set A) := by
   have himg : (u * ·) '' (P.idealImage N : Set A)
