@@ -9,7 +9,7 @@ public import TauCeti.NumberTheory.NumberField.FixedField
 public import TauCeti.NumberTheory.NumberField.Frobenius.DecompositionGroup
 
 /-!
-# The prime below an unramified prime has degree one over the fixed field of its Frobenius
+# The fixed-field prime of a Frobenius has residue degree one over the base
 
 Let `σ` be an arithmetic Frobenius at a nonzero prime `Q` of `𝓞 L` unramified over `𝓞 K`, and let
 `E = L ^ ⟨σ⟩`.  Then `Q ∩ 𝓞 E` has residue degree one over `𝓞 K`.
