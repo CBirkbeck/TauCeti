@@ -231,7 +231,8 @@ theorem exists_mem_Gamma0_upperTriRep_mul [NeZero p] {γ : SL(2, ℤ)} (hγp : �
 `exists_mem_Gamma0_upperTriRep_mul` that `p ∣ N` and `γ ∈ Γ₀(N)` afford: both hypotheses of the
 general statement follow, and the lower-right entry `d - c j'` becomes a congruence modulo `N`,
 so `γ'` has the same `Gamma0Map` value as `γ`. That congruence is what lets the equivariance
-below carry a fixed character, and it is the form every `Γ₀(N)` caller wants. -/
+results in `TauCeti/NumberTheory/ModularForms/HeckeSlash/UpperTri/Invariance.lean` carry a fixed
+character, and it is the form every `Γ₀(N)` caller wants. -/
 theorem exists_mem_Gamma0_upperTriRep_mul_of_mem_Gamma0 [NeZero p] (hpN : p ∣ N) {γ : SL(2, ℤ)}
     (hγ : γ ∈ Gamma0 N) (j : Fin p) :
     ∃ γ' : SL(2, ℤ), γ' ∈ Gamma0 N ∧ ((γ' 1 1 : ℤ) : ZMod N) = ((γ 1 1 : ℤ) : ZMod N) ∧
