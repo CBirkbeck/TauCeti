@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.UpperTriFactorisation
-public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Sum
 
 /-!
