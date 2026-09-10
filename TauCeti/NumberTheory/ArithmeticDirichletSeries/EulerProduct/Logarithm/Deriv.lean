@@ -195,23 +195,30 @@ theorem logDeriv_LSeries_eq_tsum_prime_pow {s : ℂ}
           * (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ s) ^ (pe.2 + 1)) := by
   obtain ⟨y, hy, hys⟩ : ∃ y : ℝ, Summable (idealTerm K χ.toIdealArithmeticFunction y)
       ∧ y < s.re := by simpa [idealAbscissaOfAbsConv_def, sInf_lt_iff] using hs
-  have hmem : ∀ z : ℂ, y < z.re → idealAbscissaOfAbsConv K χ.toIdealArithmeticFunction < z.re :=
-    fun z hz ↦ lt_of_le_of_lt (by simpa using idealAbscissaOfAbsConv_le K hy) (by exact_mod_cast hz)
   set U : Set ℂ := {z : ℂ | y < z.re} with hU
-  have hUo : IsOpen U := isOpen_lt continuous_const continuous_re
   set f : ℂ → ℂ := fun z ↦ ∑' pe : HeightOneSpectrum (𝓞 K) × ℕ,
     (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ z) ^ (pe.2 + 1) / ((pe.2 : ℂ) + 1) with hf
+  have hmem : ∀ z ∈ U, idealAbscissaOfAbsConv K χ.toIdealArithmeticFunction < z.re := by
+    intro z hz
+    rw [hU, Set.mem_ofPred_eq] at hz
+    exact lt_of_le_of_lt (by simpa using idealAbscissaOfAbsConv_le K hy) (by exact_mod_cast hz)
+  have hsU : s ∈ U := by rw [hU, Set.mem_ofPred_eq]; exact hys
+  have hUo : IsOpen U := by rw [hU]; exact isOpen_lt continuous_const continuous_re
   have hderiv : ∀ z ∈ U, HasDerivAt f
       (∑' pe : HeightOneSpectrum (𝓞 K) × ℕ,
         -(Complex.log (Ideal.absNorm pe.1.asIdeal : ℂ)
-          * (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ z) ^ (pe.2 + 1))) z :=
-    fun z hz ↦ χ.hasDerivAt_tsum_prime_pow (hmem z hz)
+          * (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ z) ^ (pe.2 + 1))) z := by
+    intro z hz
+    rw [hf]
+    exact χ.hasDerivAt_tsum_prime_pow (hmem z hz)
   have hdiff : DifferentiableOn ℂ f U := fun z hz ↦
     (hderiv z hz).differentiableAt.differentiableWithinAt
-  have heq : Set.EqOn (Complex.exp ∘ f) (LSeries (normCoeff K χ.toIdealArithmeticFunction)) U :=
-    fun z hz ↦ χ.exp_tsum_prime_pow_eq_LSeries
+  have heq : Set.EqOn (Complex.exp ∘ f) (LSeries (normCoeff K χ.toIdealArithmeticFunction)) U := by
+    intro z hz
+    rw [Function.comp_apply, hf]
+    exact χ.exp_tsum_prime_pow_eq_LSeries
       (summable_idealTerm_of_idealAbscissaOfAbsConv_lt_re K (hmem z hz))
-  rw [← deriv_eq_logDeriv_of_eqOn_exp_comp hUo hdiff heq hys, (hderiv s hys).deriv]
+  rw [← deriv_eq_logDeriv_of_eqOn_exp_comp hUo hdiff heq hsU, (hderiv s hsU).deriv]
 
 end MultiplicativeIdealWeight
 
