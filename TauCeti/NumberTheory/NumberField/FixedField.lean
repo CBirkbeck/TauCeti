@@ -22,8 +22,9 @@ Galois: its hypothesis is only that `σ` fixes `Q`.  A Frobenius at an unramifie
 that through `IsArithFrobAt.mem_stabilizer`, which is how a fixed-field fibre count uses this.
 
 Transitivity of the Galois action then turns a full stabilizer into uniqueness of the prime above,
-which is the second result; that one does ask for `Q` prime and `L / K` Galois.  Uniqueness is not
-inertness — it excludes splitting, not ramification.
+which is the second result.  That one does ask for `Q` prime, but still not for `L / K` to be
+Galois: `L / L ^ ⟨σ⟩` is Galois on its own, being the fixed field of a finite group acting on `L`.
+Uniqueness is not inertness — it excludes splitting, not ramification.
 
 ## Main results
 
@@ -92,7 +93,6 @@ end NumberField
 namespace Ideal
 
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
-  [IsGalois K L]
 
 /-- **A prime is the only one above its contraction to the fixed field.**  If `σ` fixes the prime
 `Q` of `𝓞 L`, then `Q` is the only prime of `𝓞 L` lying over `Q ∩ 𝓞 (L ^ ⟨σ⟩)`.
@@ -107,7 +107,7 @@ theorem eq_of_smul_eq_of_liesOver_under_fixedField {σ : L ≃ₐ[K] L} {Q : Ide
   have : IsScalarTower K ↥(fixedField (Subgroup.zpowers σ)) L :=
     (fixedField (Subgroup.zpowers σ)).isScalarTower_mid'
   have : IsGalois ↥(fixedField (Subgroup.zpowers σ)) L :=
-    IsGalois.tower_top_intermediateField _
+    IsGalois.of_fixed_field L (Subgroup.zpowers σ)
   have : IsGaloisGroup (L ≃ₐ[↥(fixedField (Subgroup.zpowers σ))] L)
       ↥(fixedField (Subgroup.zpowers σ)) L := IsGaloisGroup.of_isGalois _ L
   have : Q.LiesOver (Q.under (𝓞 ↥(fixedField (Subgroup.zpowers σ)))) :=
