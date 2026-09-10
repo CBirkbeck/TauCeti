@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Series
+public import TauCeti.RingTheory.MvPowerSeries.Substitution
 import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.PairSubst
 import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Unit
 import TauCeti.AlgebraicGeometry.EllipticCurve.Universal
@@ -165,10 +166,9 @@ private theorem subst_formalW_subst_formalInverse {q : MvPowerSeries σ O}
 are fixed by `MvPowerSeries.map`, so only `map_formalAdd` is doing any work. -/
 private theorem map_subst_pair_X_formalAdd {σ' S : Type*} [CommRing S] (φ : O →+* S)
     (s₁ s₂ : σ') :
-    MvPowerSeries.map φ (subst (Sum.elim (fun _ ↦ (X s₁ : MvPowerSeries σ' O)) (fun _ ↦ X s₂) :
-        Unit ⊕ Unit → MvPowerSeries σ' O) (formalAdd W)) =
-      subst (Sum.elim (fun _ ↦ (X s₁ : MvPowerSeries σ' S)) (fun _ ↦ X s₂) :
-        Unit ⊕ Unit → MvPowerSeries σ' S) (formalAdd (W.map φ)) := by
+    MvPowerSeries.map φ (subst (pairSubstitution (X s₁ : MvPowerSeries σ' O) (X s₂))
+        (formalAdd W)) =
+      subst (pairSubstitution (X s₁ : MvPowerSeries σ' S) (X s₂)) (formalAdd (W.map φ)) := by
   rw [MvPowerSeries.map_subst (hasSubst_pair (constantCoeff_X _) (constantCoeff_X _)),
     map_formalAdd]
   congr 1
@@ -563,26 +563,16 @@ honest elliptic curve `fracCurve Universal.curve` over that ring's fraction fiel
 bracketing into a sum of three points, `thetaPoint_add_of_ne` computes both, associativity of the
 curve's group law identifies them, and `thetaPoint_inj` brings the equality back to the series. -/
 private theorem assoc_formalAdd_universal :
-    subst (Sum.elim
-        (fun _ ↦ subst (Sum.elim
-            (fun _ ↦ (X (Sum.inl ()) :
-              MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ)))
-            (fun _ ↦ X (Sum.inr (Sum.inl ()))) :
-              Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ))
-          (formalAdd Universal.curve))
-        (fun _ ↦ X (Sum.inr (Sum.inr ()))) :
-          Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ))
+    subst (pairSubstitution
+        (subst (pairSubstitution (X (Sum.inl ()) :
+            MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ))
+          (X (Sum.inr (Sum.inl ())))) (formalAdd Universal.curve))
+        (X (Sum.inr (Sum.inr ()))))
       (formalAdd Universal.curve) =
-    subst (Sum.elim
-        (fun _ ↦ (X (Sum.inl ()) :
-          MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ)))
-        (fun _ ↦ subst (Sum.elim
-            (fun _ ↦ (X (Sum.inr (Sum.inl ())) :
-              MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ)))
-            (fun _ ↦ X (Sum.inr (Sum.inr ()))) :
-              Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ))
-          (formalAdd Universal.curve)) :
-          Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ))
+    subst (pairSubstitution (X (Sum.inl ()) :
+        MvPowerSeries (Unit ⊕ Unit ⊕ Unit) (MvPolynomial Coeff ℤ))
+        (subst (pairSubstitution (X (Sum.inr (Sum.inl ()))) (X (Sum.inr (Sum.inr ()))))
+          (formalAdd Universal.curve)))
       (formalAdd Universal.curve) := by
   classical
   set R := MvPolynomial Coeff ℤ with hR
@@ -615,13 +605,11 @@ private theorem assoc_formalAdd_universal :
   have hχ'3 := subst_coordSpecialize_X_of_ne (O := R)
     (i := (Sum.inr (Sum.inl ()) : Unit ⊕ Unit ⊕ Unit)) (j := Sum.inr (Sum.inr ())) (by simp)
   -- the two inner sums
-  set F₁₂ := subst (Sum.elim (fun _ ↦ (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R))
-    (fun _ ↦ X (Sum.inr (Sum.inl ()))) : Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R)
-    (formalAdd Universal.curve) with hF₁₂def
-  set F₂₃ := subst (Sum.elim
-    (fun _ ↦ (X (Sum.inr (Sum.inl ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R))
-    (fun _ ↦ X (Sum.inr (Sum.inr ()))) : Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R)
-    (formalAdd Universal.curve) with hF₂₃def
+  set F₁₂ := subst (pairSubstitution (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R)
+    (X (Sum.inr (Sum.inl ())))) (formalAdd Universal.curve) with hF₁₂def
+  set F₂₃ := subst (pairSubstitution
+    (X (Sum.inr (Sum.inl ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) R)
+    (X (Sum.inr (Sum.inr ())))) (formalAdd Universal.curve) with hF₂₃def
   have hF₁₂c : constantCoeff F₁₂ = 0 :=
     constantCoeff_subst_pair_formalAdd Universal.curve (constantCoeff_X _)
         (constantCoeff_X _)
@@ -667,23 +655,14 @@ series ring therefore has a fraction field — and `map_specialize` carries it t
 The three variables are indexed by `Unit ⊕ Unit ⊕ Unit`, with the two bracketings written as
 nested substitutions of `formalAdd` into itself. -/
 theorem formalAdd_assoc :
-    subst (Sum.elim
-        (fun _ ↦ subst (Sum.elim
-            (fun _ ↦ (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O))
-            (fun _ ↦ X (Sum.inr (Sum.inl ()))) :
-              Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O)
-          (formalAdd W))
-        (fun _ ↦ X (Sum.inr (Sum.inr ()))) :
-          Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O)
+    subst (pairSubstitution
+        (subst (pairSubstitution (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O)
+          (X (Sum.inr (Sum.inl ())))) (formalAdd W))
+        (X (Sum.inr (Sum.inr ()))))
       (formalAdd W) =
-    subst (Sum.elim
-        (fun _ ↦ (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O))
-        (fun _ ↦ subst (Sum.elim
-            (fun _ ↦ (X (Sum.inr (Sum.inl ())) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O))
-            (fun _ ↦ X (Sum.inr (Sum.inr ()))) :
-              Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O)
-          (formalAdd W)) :
-          Unit ⊕ Unit → MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O)
+    subst (pairSubstitution (X (Sum.inl ()) : MvPowerSeries (Unit ⊕ Unit ⊕ Unit) O)
+        (subst (pairSubstitution (X (Sum.inr (Sum.inl ()))) (X (Sum.inr (Sum.inr ()))))
+          (formalAdd W)))
       (formalAdd W) := by
   have h := congrArg (MvPowerSeries.map W.specialize) assoc_formalAdd_universal
   rw [MvPowerSeries.map_subst (hasSubst_pair
