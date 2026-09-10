@@ -9,34 +9,32 @@ public import TauCeti.NumberTheory.NumberField.FixedField
 public import TauCeti.NumberTheory.NumberField.Frobenius.DecompositionGroup
 
 /-!
-# The residue degree of a prime below the fixed field of an automorphism
+# The residue degree of a prime below a fixed field
 
-Let `σ` be any automorphism of `L` over `K`, let `E = L ^ ⟨σ⟩`, and let `Q` be a nonzero prime of
-`𝓞 L` unramified over `𝓞 K` with Frobenius `φ`.  Then the residue degree of `Q ∩ 𝓞 E` over `𝓞 K`
-is `orderOf φ` divided by the number of elements of `⟨φ⟩ ⊓ ⟨σ⟩`.
+Let `H` be a subgroup of `Gal(L/K)`, let `E = L ^ H`, and let `Q` be a nonzero prime of `𝓞 L`
+unramified over `𝓞 K`.  The residue degree of `Q ∩ 𝓞 E` over `𝓞 K`, times the number of elements
+`H` shares with the decomposition group of `Q`, is the residue degree of `Q` itself.
 
-Both factors are decomposition groups.  In the tower `K ⊆ E ⊆ L` the inertia degree at `Q` over
-`𝓞 K` is `orderOf φ`, because a Frobenius element generates the decomposition group; over `𝓞 E` it
-is the size of the decomposition group inside `Gal(L/E)`, and the Galois correspondence identifies
-`Gal(L/E)` with `⟨σ⟩` acting exactly as it does over `K`, so that group is `⟨φ⟩ ⊓ ⟨σ⟩`.
-Multiplicativity of the inertia degree in a tower gives the quotient, stated here as a product so
-that no natural-number division is truncated.
+Nothing in that needs `H` cyclic or a Frobenius in sight: the Galois correspondence identifies
+`Gal(L/E)` with `H` acting on ideals exactly as it does over `K`, so the decomposition group of `Q`
+over `E` is `H ⊓ D(Q)`, and multiplicativity of the inertia degree in the tower `K ⊆ E ⊆ L` does
+the rest.  It is stated as a product so that no natural-number division is truncated.
 
-Taking `σ` to be the Frobenius itself makes the intersection all of `⟨σ⟩` and the residue degree
-one; that special case is the hypothesis of
-`NumberField.restrictScalars_eq_of_inertiaDeg_eq_one`, and so the step a fixed-field fibre count
-runs through, since at residue degree one the relative Frobenius over `E` is the absolute one over
-`K` with no power taken.
+A Frobenius `φ` at `Q` generates `D(Q)`, so for `H = ⟨σ⟩` the count becomes `Subgroup.relIndex`,
+and the residue degree is one exactly when `φ ∈ ⟨σ⟩`.  Taking `σ = φ` recovers degree one, which is
+the hypothesis of `NumberField.restrictScalars_eq_of_inertiaDeg_eq_one` and so the step a
+fixed-field fibre count runs through.
 
 ## Main results
 
-* `Ideal.card_stabilizer_fixedField_eq_card_inf`: the decomposition group of `Q` over `E` has as
-  many elements as `⟨φ⟩ ⊓ ⟨σ⟩`.
-* `Ideal.inertiaDeg_under_fixedField_mul_card_inf`: that residue degree times the size of the
-  intersection is `orderOf φ`.
-* `Ideal.inertiaDeg_under_fixedField_eq_relIndex`: that residue degree is `Subgroup.relIndex`.
-* `Ideal.inertiaDeg_under_fixedField_eq_one_of_isArithFrobAt`: at `σ = φ` the residue degree is
-  one.
+* `Ideal.card_stabilizer_fixedField_eq_card_inf`: the decomposition group of `Q` over `L ^ H` has
+  as many elements as `D(Q) ⊓ H`.
+* `Ideal.inertiaDeg_under_fixedField_mul_card_inf`: that count times the residue degree below
+  `L ^ H` is the residue degree of `Q`.
+* `Ideal.inertiaDeg_under_fixedField_eq_relIndex`: for `H = ⟨σ⟩`, the residue degree is
+  `Subgroup.relIndex`.
+* `Ideal.inertiaDeg_under_fixedField_eq_one_iff`: it is one exactly when a Frobenius lies in `⟨σ⟩`.
+* `Ideal.inertiaDeg_under_fixedField_eq_one_of_isArithFrobAt`: at `σ = φ`, it is one.
 
 ## References
 
@@ -62,90 +60,92 @@ namespace Ideal
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L]
   [Algebra K L] [IsGalois K L]
 
-/-- **The decomposition group over the fixed field is the intersection.**  For `E = L ^ ⟨σ⟩` and
-`φ` a Frobenius at an unramified `Q`, the stabilizer of `Q` in `Gal(L/E)` has as many elements as
-`⟨φ⟩ ⊓ ⟨σ⟩`. -/
-theorem card_stabilizer_fixedField_eq_card_inf (σ : L ≃ₐ[K] L) (Q : Ideal (𝓞 L)) [Q.IsPrime]
-    (hQ : Q ≠ ⊥) [Algebra.IsUnramifiedAt (𝓞 K) Q] {φ : L ≃ₐ[K] L}
-    (hφ : IsArithFrobAt (𝓞 K) φ Q) :
-    Nat.card (MulAction.stabilizer (L ≃ₐ[↥(fixedField (Subgroup.zpowers σ))] L) Q)
-      = Nat.card ((Subgroup.zpowers φ ⊓ Subgroup.zpowers σ : Subgroup (L ≃ₐ[K] L))) := by
-  set Z := Subgroup.zpowers σ with hZ
-  set e := subgroupEquivAlgEquiv Z with he
+omit [IsGalois K L] in
+/-- **The decomposition group over a fixed field is the intersection.**  For any subgroup `H` of
+`Gal(L/K)` and `E = L ^ H`, the stabilizer of `Q` in `Gal(L/E)` has as many elements as the
+intersection of `H` with the stabilizer of `Q` in `Gal(L/K)`. -/
+theorem card_stabilizer_fixedField_eq_card_inf (Q : Ideal (𝓞 L)) (H : Subgroup (L ≃ₐ[K] L)) :
+    Nat.card (MulAction.stabilizer (L ≃ₐ[↥(fixedField H)] L) Q)
+      = Nat.card ((MulAction.stabilizer (L ≃ₐ[K] L) Q ⊓ H : Subgroup (L ≃ₐ[K] L))) := by
+  set e := subgroupEquivAlgEquiv H with he
   -- the Galois correspondence does not move points, so it does not move ideals either
-  have hsmul : ∀ τ : ↥Z, (e τ) • Q = (τ : L ≃ₐ[K] L) • Q := fun τ ↦ by
+  have hsmul : ∀ τ : ↥H, (e τ) • Q = (τ : L ≃ₐ[K] L) • Q := fun τ ↦ by
     rw [Ideal.pointwise_smul_def, Ideal.pointwise_smul_def]
     exact congrArg (Ideal.map · Q) (RingHom.ext fun y ↦ NumberField.RingOfIntegers.ext rfl)
-  have hcomap : (MulAction.stabilizer (L ≃ₐ[↥(fixedField Z)] L) Q).comap (e : ↥Z →* _)
-      = (MulAction.stabilizer (L ≃ₐ[K] L) Q).subgroupOf Z := by
+  have hcomap : (MulAction.stabilizer (L ≃ₐ[↥(fixedField H)] L) Q).comap (e : ↥H →* _)
+      = (MulAction.stabilizer (L ≃ₐ[K] L) Q).subgroupOf H := by
     ext τ
     simp only [Subgroup.mem_comap, MulAction.mem_stabilizer_iff, Subgroup.mem_subgroupOf]
     exact Eq.congr_left (hsmul τ)
-  have h1 : Nat.card ((MulAction.stabilizer (L ≃ₐ[↥(fixedField Z)] L) Q).comap (e : ↥Z →* _))
-      = Nat.card (MulAction.stabilizer (L ≃ₐ[↥(fixedField Z)] L) Q) := by
+  have h1 : Nat.card ((MulAction.stabilizer (L ≃ₐ[↥(fixedField H)] L) Q).comap (e : ↥H →* _))
+      = Nat.card (MulAction.stabilizer (L ≃ₐ[↥(fixedField H)] L) Q) := by
     rw [Subgroup.comap_equiv_eq_map_symm]
     exact Nat.card_congr (Subgroup.equivMapOfInjective _ _ e.symm.injective).symm.toEquiv
-  have h2 : Nat.card ((MulAction.stabilizer (L ≃ₐ[K] L) Q).subgroupOf Z)
-      = Nat.card ((MulAction.stabilizer (L ≃ₐ[K] L) Q ⊓ Z : Subgroup (L ≃ₐ[K] L))) := by
-    rw [← Subgroup.subgroupOf_map_subtype]
-    exact Nat.card_congr (Subgroup.equivMapOfInjective _ _ Subtype.val_injective).toEquiv
-  rw [← h1, hcomap, h2, zpowers_eq_stabilizer_of_isArithFrobAt Q hQ hφ]
+  have h2 : Nat.card ((MulAction.stabilizer (L ≃ₐ[K] L) Q).subgroupOf H)
+      = Nat.card ((MulAction.stabilizer (L ≃ₐ[K] L) Q ⊓ H : Subgroup (L ≃ₐ[K] L))) := by
+    rw [← Subgroup.inf_subgroupOf_right]
+    exact Nat.card_congr (Subgroup.subgroupOfEquivOfLe inf_le_right).toEquiv
+  rw [← h1, hcomap, h2]
 
-/-- **The residue degree over the base, in the fixed field of any automorphism.**  For `E = L ^ ⟨σ⟩`
-and `φ` a Frobenius at an unramified `Q`, the residue degree of `Q ∩ 𝓞 E` over `𝓞 K` is
-`orderOf φ` divided by the size of `⟨φ⟩ ⊓ ⟨σ⟩`.  Stated as a product, so no natural-number division
-is truncated.
-
-`σ` is arbitrary here: it need not be a Frobenius at `Q`, nor fix `Q`. -/
-theorem inertiaDeg_under_fixedField_mul_card_inf (σ : L ≃ₐ[K] L) (Q : Ideal (𝓞 L)) [Q.IsPrime]
-    (hQ : Q ≠ ⊥) [Algebra.IsUnramifiedAt (𝓞 K) Q] {φ : L ≃ₐ[K] L}
-    (hφ : IsArithFrobAt (𝓞 K) φ Q) :
-    (Q.under (𝓞 ↥(fixedField (Subgroup.zpowers σ)))).inertiaDeg (𝓞 K)
-        * Nat.card ((Subgroup.zpowers φ ⊓ Subgroup.zpowers σ : Subgroup (L ≃ₐ[K] L)))
-      = orderOf φ := by
-  set E := fixedField (Subgroup.zpowers σ) with hE
+/-- **The residue degree below a fixed field.**  For any subgroup `H` and `E = L ^ H`, the residue
+degree of `Q ∩ 𝓞 E` over `𝓞 K` times the size of the intersection of `H` with the decomposition
+group is the residue degree of `Q` itself.  Stated as a product, so no natural-number division is
+truncated. -/
+theorem inertiaDeg_under_fixedField_mul_card_inf (Q : Ideal (𝓞 L)) [Q.IsPrime] (hQ : Q ≠ ⊥)
+    [Algebra.IsUnramifiedAt (𝓞 K) Q] (H : Subgroup (L ≃ₐ[K] L)) :
+    (Q.under (𝓞 ↥(fixedField H))).inertiaDeg (𝓞 K)
+        * Nat.card ((MulAction.stabilizer (L ≃ₐ[K] L) Q ⊓ H : Subgroup (L ≃ₐ[K] L)))
+      = Q.inertiaDeg (𝓞 K) := by
+  set E := fixedField H with hE
   have : IsScalarTower K ↥E L := E.isScalarTower_mid'
   have : IsGalois ↥E L := IsGalois.tower_top_intermediateField _
   have : Algebra.IsUnramifiedAt (𝓞 ↥E) Q := Algebra.IsUnramifiedAt.of_restrictScalars (𝓞 K) Q
   have htower : Q.inertiaDeg (𝓞 K)
       = (Q.under (𝓞 ↥E)).inertiaDeg (𝓞 K) * Q.inertiaDeg (𝓞 ↥E) :=
     inertiaDeg_tower (Q.under (𝓞 ↥E)) Q
-  have hE' : Q.inertiaDeg (𝓞 ↥E)
-      = Nat.card ((Subgroup.zpowers φ ⊓ Subgroup.zpowers σ : Subgroup (L ≃ₐ[K] L))) := by
-    rw [← card_stabilizer_eq_inertiaDeg_of_isUnramifiedAt Q hQ]
-    exact card_stabilizer_fixedField_eq_card_inf σ Q hQ hφ
-  rw [(orderOf_eq_inertiaDeg_of_isArithFrobAt Q hQ hφ).symm, hE'] at htower
-  exact htower.symm
+  rw [htower, ← card_stabilizer_eq_inertiaDeg_of_isUnramifiedAt Q hQ,
+    card_stabilizer_fixedField_eq_card_inf Q H]
 
-/-- **The residue degree is the relative index.**  `Subgroup.relIndex` is Mathlib's name for the
-index of `⟨σ⟩ ⊓ ⟨φ⟩` in `⟨φ⟩`, which is exactly the residue degree above. -/
-theorem inertiaDeg_under_fixedField_eq_relIndex (σ : L ≃ₐ[K] L) (Q : Ideal (𝓞 L)) [Q.IsPrime]
-    (hQ : Q ≠ ⊥) [Algebra.IsUnramifiedAt (𝓞 K) Q] {φ : L ≃ₐ[K] L}
+/-- **The residue degree is a relative index.**  For `σ` arbitrary and `φ` a Frobenius at an
+unramified `Q`, the residue degree below `L ^ ⟨σ⟩` is `Subgroup.relIndex`, Mathlib's name for the
+index of `⟨σ⟩ ⊓ ⟨φ⟩` in `⟨φ⟩`. -/
+theorem inertiaDeg_under_fixedField_eq_relIndex (Q : Ideal (𝓞 L)) [Q.IsPrime] (hQ : Q ≠ ⊥)
+    [Algebra.IsUnramifiedAt (𝓞 K) Q] (σ : L ≃ₐ[K] L) {φ : L ≃ₐ[K] L}
     (hφ : IsArithFrobAt (𝓞 K) φ Q) :
     (Q.under (𝓞 ↥(fixedField (Subgroup.zpowers σ)))).inertiaDeg (𝓞 K)
       = (Subgroup.zpowers σ).relIndex (Subgroup.zpowers φ) := by
+  have hmul := inertiaDeg_under_fixedField_mul_card_inf Q hQ (Subgroup.zpowers σ)
+  rw [← zpowers_eq_stabilizer_of_isArithFrobAt Q hQ hφ,
+    ← orderOf_eq_inertiaDeg_of_isArithFrobAt Q hQ hφ] at hmul
   have hidx : (Subgroup.zpowers σ).relIndex (Subgroup.zpowers φ)
       * Nat.card ((Subgroup.zpowers φ ⊓ Subgroup.zpowers σ : Subgroup (L ≃ₐ[K] L)))
       = orderOf φ := by
     rw [Subgroup.relIndex, ← Nat.card_zpowers φ,
       ← Subgroup.index_mul_card ((Subgroup.zpowers σ).subgroupOf (Subgroup.zpowers φ))]
     congr 1
-    rw [inf_comm, ← Subgroup.subgroupOf_map_subtype]
-    exact (Nat.card_congr (Subgroup.equivMapOfInjective
-      ((Subgroup.zpowers σ).subgroupOf (Subgroup.zpowers φ)) (Subgroup.zpowers φ).subtype
-      (Subgroup.subtype_injective _)).toEquiv).symm
-  exact Nat.eq_of_mul_eq_mul_right Nat.card_pos
-    ((inertiaDeg_under_fixedField_mul_card_inf σ Q hQ hφ).trans hidx.symm)
+    rw [inf_comm, ← Subgroup.inf_subgroupOf_right]
+    exact (Nat.card_congr (Subgroup.subgroupOfEquivOfLe
+      (H := Subgroup.zpowers σ ⊓ Subgroup.zpowers φ) (K := Subgroup.zpowers φ)
+      inf_le_right).toEquiv).symm
+  have hpos : 0 < Nat.card ((Subgroup.zpowers φ ⊓ Subgroup.zpowers σ : Subgroup (L ≃ₐ[K] L))) :=
+    Nat.card_pos
+  exact Nat.eq_of_mul_eq_mul_right hpos (hmul.trans hidx.symm)
 
-/-- **The prime below `Q` in the fixed field of a Frobenius at `Q` has degree one.**  If `σ` is an
-arithmetic Frobenius at a nonzero prime `Q` of `𝓞 L` unramified over `𝓞 K`, then `Q ∩ 𝓞 (L ^ ⟨σ⟩)`
-has residue degree one over `𝓞 K`. -/
+/-- **Residue degree one is membership.**  The prime below `Q` in `L ^ ⟨σ⟩` has residue degree one
+over `𝓞 K` exactly when a Frobenius at `Q` lies in `⟨σ⟩`. -/
+theorem inertiaDeg_under_fixedField_eq_one_iff (Q : Ideal (𝓞 L)) [Q.IsPrime] (hQ : Q ≠ ⊥)
+    [Algebra.IsUnramifiedAt (𝓞 K) Q] (σ : L ≃ₐ[K] L) {φ : L ≃ₐ[K] L}
+    (hφ : IsArithFrobAt (𝓞 K) φ Q) :
+    (Q.under (𝓞 ↥(fixedField (Subgroup.zpowers σ)))).inertiaDeg (𝓞 K) = 1
+      ↔ φ ∈ Subgroup.zpowers σ := by
+  rw [inertiaDeg_under_fixedField_eq_relIndex Q hQ σ hφ, Subgroup.relIndex_eq_one,
+    Subgroup.zpowers_le]
+
+/-- **The prime below `Q` in the fixed field of a Frobenius at `Q` has degree one.** -/
 theorem inertiaDeg_under_fixedField_eq_one_of_isArithFrobAt (Q : Ideal (𝓞 L)) [Q.IsPrime]
     (hQ : Q ≠ ⊥) [Algebra.IsUnramifiedAt (𝓞 K) Q] {σ : L ≃ₐ[K] L}
     (hσ : IsArithFrobAt (𝓞 K) σ Q) :
-    (Q.under (𝓞 ↥(fixedField (Subgroup.zpowers σ)))).inertiaDeg (𝓞 K) = 1 := by
-  have h := inertiaDeg_under_fixedField_mul_card_inf σ Q hQ hσ
-  rw [inf_idem, Nat.card_zpowers] at h
-  exact Nat.eq_of_mul_eq_mul_right (orderOf_pos σ) (by rw [one_mul]; exact h)
+    (Q.under (𝓞 ↥(fixedField (Subgroup.zpowers σ)))).inertiaDeg (𝓞 K) = 1 :=
+  (inertiaDeg_under_fixedField_eq_one_iff Q hQ σ hσ).2 (Subgroup.mem_zpowers σ)
 
 end Ideal
