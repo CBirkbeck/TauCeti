@@ -241,8 +241,9 @@ theorem descendIndexShift_bijective [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N)
   exact Equiv.bijective _
 
 /-- **The value of the index map at an affine index whose denominator is a unit**: the offset map's
-value. The hypothesis is stated with the casts distributed, the form `simp` normalises to. -/
-@[simp] theorem descendIndexShift_val_of_isUnit [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N)
+value. Not a `simp` lemma, unlike its three companions: the right-hand side mentions the proof
+`hv`, which `simp` cannot supply as a side condition. -/
+theorem descendIndexShift_val_of_isUnit [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N)
     {γ : SL(2, ℤ)} {v : Fin (descendMatrixCount p N)} (hv : v.val < p)
     (hA : IsUnit (((γ 0 0 : ℤ) : ZMod p) + ((v : ℕ) : ZMod p) * ((γ 1 0 : ℤ) : ZMod p))) :
     (descendIndexShift p N hpsq γ v : ℕ) = (upperTriShift p γ ⟨v.val, hv⟩ : ℕ) := by
