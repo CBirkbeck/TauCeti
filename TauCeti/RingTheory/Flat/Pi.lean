@@ -5,10 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Algebra.DirectSum.Module
 public import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
-public import Mathlib.RingTheory.Ideal.Operations
 
+import Mathlib.Algebra.DirectSum.Module
 import TauCeti.RingTheory.Ideal.Operations
 
 /-!
