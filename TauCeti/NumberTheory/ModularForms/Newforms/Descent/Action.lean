@@ -83,8 +83,8 @@ def descendShift (p N : ℕ) [NeZero p] (hpsq : p ^ 2 ∣ N) (γ : SL(2, ℤ))
 
 /-- The same, on underlying naturals, which is the form the `descendMatrix` branches read. -/
 @[simp] theorem descendShift_val [NeZero p] (hpsq : p ^ 2 ∣ N) (γ : SL(2, ℤ))
-    {v : Fin (descendMatrixCount p N)} (hv : v.val < p) :
-    (descendShift p N hpsq γ v : ℕ) = (upperTriShift p γ ⟨v.val, hv⟩ : ℕ) :=
+    (v : Fin (descendMatrixCount p N)) : (descendShift p N hpsq γ v : ℕ)
+      = (upperTriShift p γ (Fin.cast (descendMatrixCount_of_sq_dvd hpsq) v) : ℕ) :=
   congrArg Fin.val (cast_descendShift hpsq γ v)
 
 /-- **The offset map is a bijection of the descent index set.** The hypothesis is `γ ∈ Γ₀(p)`,
@@ -125,7 +125,7 @@ theorem exists_mem_Gamma0_descendMatrix_mul (p N : ℕ) [NeZero p] (hpsq : p ^ 2
     lt_of_lt_of_le (descendShift p N hpsq γ v).isLt hcount.le
   -- the target index, named rather than left to definitional reduction through `finCongr`
   have htgt : (⟨(descendShift p N hpsq γ v : ℕ), hv'⟩ : Fin p) = upperTriShift p γ ⟨v.val, hv⟩ :=
-    Fin.ext (descendShift_val hpsq γ hv)
+    Fin.ext (descendShift_val hpsq γ v)
   refine ⟨α, hα, ?_⟩
   rw [descendMatrix_of_lt hv, descendMatrix_of_lt hv', htgt, ← map_mapGL (S := ℚ) (T := ℝ) γ,
     ← map_mapGL (S := ℚ) (T := ℝ) α, ← map_mul, ← map_mul, hmul]
