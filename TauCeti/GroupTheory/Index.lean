@@ -165,18 +165,6 @@ theorem index_eq_two_mul_index_withCenter (ha : a ∈ Subgroup.center G) (haΓ :
     index_eq_two_mul_index_sup _ Subgroup.le_normalizer_of_normal ha haΓ hcenter
 
 
-namespace TauCeti
-
-/-- If the order of a finite group is invertible in `k`, then so is the order of any subgroup,
-because the two differ by the index. -/
-theorem isUnit_natCard_subgroup {k : Type*} {G : Type*} [Semiring k] [Group G]
-    (S : Subgroup G) (hG : IsUnit (Nat.card G : k)) : IsUnit (Nat.card S : k) := by
-  have h : IsUnit ((Nat.card S : k) * (S.index : k)) := by
-    rwa [← Nat.cast_mul, S.card_mul_index]
-  exact ((Nat.cast_commute _ _).isUnit_mul_iff.mp h).1
-
-end TauCeti
-
 /-- **The relative index in a cyclic subgroup is the least exponent that lands in `H`.**  For `g`
 in a finite group, `H.relIndex ⟨g⟩` is the smallest `n ≥ 1` with `g ^ n ∈ H`.
 
@@ -208,3 +196,15 @@ theorem isLeast_pow_mem_relIndex_zpowers {G : Type*} [Group G] [Finite G] (g : G
   exact orderOf_pos _
 
 end Subgroup
+
+namespace TauCeti
+
+/-- If the order of a finite group is invertible in `k`, then so is the order of any subgroup,
+because the two differ by the index. -/
+theorem isUnit_natCard_subgroup {k : Type*} {G : Type*} [Semiring k] [Group G]
+    (S : Subgroup G) (hG : IsUnit (Nat.card G : k)) : IsUnit (Nat.card S : k) := by
+  have h : IsUnit ((Nat.card S : k) * (S.index : k)) := by
+    rwa [← Nat.cast_mul, S.card_mul_index]
+  exact ((Nat.cast_commute _ _).isUnit_mul_iff.mp h).1
+
+end TauCeti
