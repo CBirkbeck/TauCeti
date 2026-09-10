@@ -34,14 +34,9 @@ so `MapsInfinity` puts `x₁` in it as well, contradicting the double pole `v_�
 `WeierstrassCurve.Affine.isEquiv_infinityPlace_of_one_lt` identifies the restricted valuation.
 
 Conversely, a coordinate pullback is pointed as soon as the pullback of some function of the target
-acquires a pole at the source's infinity — the coordinate `x₂` being the usual witness — with no
-injectivity assumed. The proof uses
-`TauCeti.isIntegral_of_forall_valuation_le_one`: a valuation bounded on the image of the target
-coordinate ring is either trivial, or its proper valuation subring is the ring of a place. If the
-source coordinate had a pole there, uniqueness would identify that place with infinity,
-contradicting boundedness of the pulled-back target coordinate. This makes the source coordinate
-integral over the image ring, which is in turn integral over `W₂.CoordinateRing` as a quotient of
-it; pointedness is then the `x`-coordinate criterion of `Isogeny/MapsInfinity.lean`.
+acquires a pole at the source's infinity, with no injectivity assumed; the coordinate `x₂` is the
+usual witness, so pointedness of an arbitrary coordinate pullback is exactly a pole of the
+pulled-back `x₂`.
 
 Neither direction uses ellipticity, separability, or the degree of an isogeny.
 
