@@ -51,7 +51,7 @@ Huber ring is nonarchimedean, which is exactly the hypothesis under which
   mapping theorem asks of the underlying group, so both are instances.
 * `TauCeti.Huber.PairOfDefinition.exists_pow_mul_mem`: a power of a topologically nilpotent `s`
   carries any `c : A` into the ring of definition.
-* `TauCeti.Huber.IsHuberRing.exists_isTopologicallyNilpotent_pow_mul` and
+* `IsTopologicallyNilpotent.exists_pow_mul` and
   `TauCeti.Huber.IsTateRing.exists_isTopologicallyNilpotent_pow_mul`: a power of a topologically
   nilpotent element — a pseudouniformiser, in the Tate case — rescales any element of `A` to a
   topologically nilpotent one. The multiplier is a unit in the Tate case, so the rescaled element
@@ -480,7 +480,7 @@ it: replace `s` by `ϖ ^ i * s`, which differs from it by a factor drawn from th
 than an arbitrary one. When `ϖ` is a pseudouniformiser that factor is a unit, so the replacement
 is an associate of `s`; `TauCeti.Huber.IsTateRing.exists_isTopologicallyNilpotent_pow_mul` is the
 form that records this. -/
-theorem IsHuberRing.exists_isTopologicallyNilpotent_pow_mul {A : Type*} [CommRing A]
+theorem _root_.IsTopologicallyNilpotent.exists_pow_mul {A : Type*} [CommRing A]
     [TopologicalSpace A] [IsTopologicalRing A] [IsHuberRing A] {ϖ : A}
     (hϖ : IsTopologicallyNilpotent ϖ) (s : A) : ∃ i : ℕ, IsTopologicallyNilpotent (ϖ ^ i * s) := by
   obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := A)
@@ -505,14 +505,14 @@ fractions `t / (ϖ ^ i * s)`, so a rational localisation `A⟨T/s⟩` is preserv
 numerators are rescaled by the same unit.
 
 A caller who already holds a topologically nilpotent element should use
-`TauCeti.Huber.IsHuberRing.exists_isTopologicallyNilpotent_pow_mul`, which neither asks for a Tate
-ring nor chooses the multiplier. -/
+`IsTopologicallyNilpotent.exists_pow_mul`, which neither asks for a Tate ring nor chooses the
+multiplier. -/
 theorem IsTateRing.exists_isTopologicallyNilpotent_pow_mul {A : Type*} [CommRing A]
     [TopologicalSpace A] [IsTopologicalRing A] [IsTateRing A] (s : A) :
     ∃ (ϖ : A) (i : ℕ), IsPseudoUniformizer ϖ ∧ IsTopologicallyNilpotent (ϖ ^ i * s) := by
   obtain ⟨ϖ, hϖ⟩ := IsTateRing.exists_isPseudoUniformizer (A := A)
   obtain ⟨-, hnil⟩ := isPseudoUniformizer_iff.mp hϖ
-  obtain ⟨i, hi⟩ := IsHuberRing.exists_isTopologicallyNilpotent_pow_mul hnil s
+  obtain ⟨i, hi⟩ := hnil.exists_pow_mul s
   exact ⟨ϖ, i, hϖ, hi⟩
 
 /-- Quotients of Huber rings, with the quotient topology, are Huber rings. -/
