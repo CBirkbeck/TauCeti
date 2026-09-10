@@ -38,9 +38,6 @@ product of the Dedekind zeta function.
   in the closed geometric form available for a completely multiplicative weight.
 * `TauCeti.MultiplicativeIdealWeight.LSeries_ne_zero_of_summable_idealTerm`: the `L`-series is
   **nonzero** wherever the ideal-indexed series converges absolutely.
-* `TauCeti.MultiplicativeIdealWeight.summable_log_absNorm_mul_norm_div_of_re_lt_re`: the local
-  ratios weighted by `log N(P)` are summable over the primes, strictly to the right of a point of
-  absolute convergence.
 * `TauCeti.dedekindZeta_eulerProduct_hasProd`: the **Euler product of the Dedekind zeta
   function**, valid on `Re s > 1`.
 * `TauCeti.dedekindZeta_ne_zero_of_one_lt_re`: the Dedekind zeta function is **nonzero** on
@@ -311,25 +308,6 @@ theorem summable_div_of_summable_idealTerm
       χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s :=
   (IdealArithmeticFunction.summable_idealTerm_primeIdealPow_one hs).congr fun P ↦ by
     simp [idealTerm_toIdealArithmeticFunction_primeIdealPow χ P 1 s]
-
-/-- **The log-weighted local ratios are summable over the primes.**  Weighting each local ratio by
-`log N(P)` keeps it summable strictly to the right of a point of absolute convergence.
-
-This is `TauCeti.summable_log_absNorm_mul_norm_idealTerm_of_re_lt_re` restricted to the primes,
-just as `summable_div_of_summable_idealTerm` restricts the unweighted statement; the restriction is
-`HeightOneSpectrum.primeIdealPow_one_injective` in both cases. -/
-theorem summable_log_absNorm_mul_norm_div_of_re_lt_re {s' : ℂ} (h : s.re < s'.re)
-    (hs : Summable (idealTerm K χ.toIdealArithmeticFunction s)) :
-    Summable fun P : HeightOneSpectrum (𝓞 K) ↦
-      Real.log (Ideal.absNorm P.asIdeal)
-        * ‖χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s'‖ := by
-  refine ((summable_log_absNorm_mul_norm_idealTerm_of_re_lt_re K h hs).comp_injective
-    HeightOneSpectrum.primeIdealPow_one_injective).congr fun P ↦ ?_
-  have hP : 0 < Ideal.absNorm P.asIdeal := by
-    have := NumberField.HeightOneSpectrum.one_lt_absNorm P
-    omega
-  simp only [Function.comp_apply, norm_idealTerm, HeightOneSpectrum.coe_primeIdealPow, pow_one,
-    toIdealArithmeticFunction_apply, norm_div, Complex.norm_natCast_cpow_of_pos hP]
 
 /-- Absolute convergence puts every local ratio `χ(P) N(P)⁻ˢ` strictly inside the unit disc, so no
 local Euler factor has a vanishing denominator. -/
