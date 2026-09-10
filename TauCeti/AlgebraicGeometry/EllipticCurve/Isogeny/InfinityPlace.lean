@@ -33,8 +33,9 @@ so `MapsInfinity` puts `x₁` in it as well, contradicting the double pole `v_�
 `φ x₂` has a pole at `O₁`, and
 `WeierstrassCurve.Affine.isEquiv_infinityPlace_of_one_lt` identifies the restricted valuation.
 
-Conversely, a coordinate pullback is pointed as soon as the target's coordinate `x₂` acquires a
-pole at the source's infinity, with no injectivity assumed. The proof uses
+Conversely, a coordinate pullback is pointed as soon as the pullback of some function of the target
+acquires a pole at the source's infinity — the coordinate `x₂` being the usual witness — with no
+injectivity assumed. The proof uses
 `TauCeti.isIntegral_of_forall_valuation_le_one`: a valuation bounded on the image of the target
 coordinate ring is either trivial, or its proper valuation subring is the ring of a place. If the
 source coordinate had a pole there, uniqueness would identify that place with infinity,
@@ -194,18 +195,20 @@ private theorem isIntegral_X_over_range_of_one_lt_infinityPlace {A : Type*} [Com
       refine absurd ((Valuation.isEquiv_iff_val_le_one.1 hequiv).1 ?_) (not_le.2 h)
       exact P.mem_integers_iff.1 (hPint ▸ hmemV _)
 
-/-- **A coordinate pullback under which `x` acquires a pole at infinity maps infinity to
-infinity.** Injectivity of `p` is not assumed, in contrast with the criterion for embeddings of
-function fields, `mapsInfinity_iff_isEquiv_comap_infinityPlace`. -/
-theorem mapsInfinity_of_one_lt_infinityPlace (p : CoordinatePullback W₁ W₂)
-    (h : 1 < infinityPlace W₁ (p (algebraMap F[X] W₂.CoordinateRing X))) : p.MapsInfinity := by
+/-- **A coordinate pullback under which some function acquires a pole at infinity maps infinity
+to infinity.** Any one function of `W₂` whose pullback has a pole at the source's point at infinity
+suffices; the coordinate `x` is the usual witness (`mapsInfinity_iff_one_lt_infinityPlace`).
+Injectivity of `p` is not assumed, in contrast with the criterion for embeddings of function
+fields, `mapsInfinity_iff_isEquiv_comap_infinityPlace`. -/
+theorem mapsInfinity_of_one_lt_infinityPlace (p : CoordinatePullback W₁ W₂) (a : W₂.CoordinateRing)
+    (h : 1 < infinityPlace W₁ (p a)) : p.MapsInfinity := by
   rw [mapsInfinity_iff_isIntegralElem_genericX, genericX_eq_algebraMap]
   -- `p.IsIntegralElem` is integrality for the algebra structure `p` induces. The pole makes the
   -- affine coordinate of `W₁` integral over the image ring of `p`, whose elements are in turn
   -- integral over `W₂.CoordinateRing`, being its images.
   let _ := p.toRingHom.toAlgebra
   exact isIntegral_trans_common (fun ⟨_, r, rfl⟩ ↦ isIntegral_algebraMap)
-    (isIntegral_X_over_range_of_one_lt_infinityPlace p _ h)
+    (isIntegral_X_over_range_of_one_lt_infinityPlace p a h)
 
 /-- **Pointedness is exactly a pole of `x` at infinity.** A coordinate pullback maps infinity to
 infinity precisely when it sends the target's coordinate `x` to a function with a pole at the
@@ -214,7 +217,7 @@ computation. -/
 theorem mapsInfinity_iff_one_lt_infinityPlace (p : CoordinatePullback W₁ W₂) :
     p.MapsInfinity ↔ 1 < infinityPlace W₁ (p (algebraMap F[X] W₂.CoordinateRing X)) :=
   ⟨fun hp ↦ Isogeny.one_lt_infinityPlace_pullback_X ⟨p, hp⟩,
-    mapsInfinity_of_one_lt_infinityPlace p⟩
+    mapsInfinity_of_one_lt_infinityPlace p _⟩
 
 /-- **The pointedness criterion.** An embedding `σ : F(W₂) → F(W₁)` restricts to a coordinate
 pullback which maps infinity to infinity exactly when the source's place at infinity restricts
@@ -229,7 +232,8 @@ theorem mapsInfinity_iff_isEquiv_comap_infinityPlace (σ : W₂.FunctionField �
       (Isogeny.fieldPullback_unique _ σ fun _ ↦ rfl).symm
     exact hfield ▸ Isogeny.isEquiv_comap_infinityPlace ⟨_, hσ⟩
   · intro hσ
-    refine mapsInfinity_of_one_lt_infinityPlace _ (not_le.1 fun hle ↦ ?_)
+    refine mapsInfinity_of_one_lt_infinityPlace _ (algebraMap F[X] W₂.CoordinateRing X)
+      (not_le.1 fun hle ↦ ?_)
     rw [AlgHom.comp_apply, IsScalarTower.toAlgHom_apply, ← IsScalarTower.algebraMap_apply] at hle
     exact absurd ((Valuation.isEquiv_iff_val_le_one.1 hσ).1 hle)
       (not_le.2 (one_lt_infinityPlace_X W₂))
