@@ -19,8 +19,8 @@ prime-power-style sum over pairs equals the sum of local logarithms.
 Both hypotheses are needed.  `∀ i, ‖r i‖ < 1` alone does not suffice: the fibre at `i` sums to
 `‖r i‖ / (1 - ‖r i‖)`, which is dominated by `‖r i‖` only when `‖r i‖` is bounded away from `1`,
 and summability of `r` is what supplies that uniformity.  That fibrewise argument is not carried out
-here: it is `summable_mul_norm_pow_succ`, stated for a normed group and an arbitrary real weight,
-and this file uses it at weight `1`.
+here: it is `TauCeti.summable_mul_norm_pow_succ`, stated for a normed group and an arbitrary real
+weight, and this file uses it at weight `1`.
 
 ## Main results
 
@@ -42,9 +42,14 @@ Both hypotheses are needed, and neither is arithmetic: see the module docstring 
 theorem summable_taylorSeries_neg_log {ι : Type*} {r : ι → ℂ} (hr : Summable r)
     (h1 : ∀ i, ‖r i‖ < 1) :
     Summable fun ie : ι × ℕ ↦ r ie.1 ^ (ie.2 + 1) / ((ie.2 : ℂ) + 1) := by
-  -- The majorant is the weighted geometric bound at weight `1`.
+  -- The majorant is the weighted geometric bound at weight `1`; summability of `r` supplies its
+  -- eventual bound with `ε = 1 / 2`.
+  have hbd : ∃ ε > 0, ∀ᶠ i in Filter.cofinite, ‖r i‖ ≤ 1 - ε :=
+    ⟨1 / 2, by norm_num, by
+      simpa using hr.tendsto_cofinite_zero.norm.eventually_le_const (by norm_num)⟩
   have hmaj : Summable fun ie : ι × ℕ ↦ ‖r ie.1‖ ^ (ie.2 + 1) := by
-    simpa using summable_mul_norm_pow_succ (w := fun _ ↦ (1 : ℝ)) hr (by simpa using hr.norm) h1
+    simpa using TauCeti.summable_mul_norm_pow_succ (w := fun _ ↦ (1 : ℝ)) hbd
+      (by simpa using hr.norm) h1
   refine hmaj.of_norm_bounded ?_
   rintro ⟨i, e⟩
   rw [norm_div, norm_pow]
