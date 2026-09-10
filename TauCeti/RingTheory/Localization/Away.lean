@@ -38,8 +38,6 @@ Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
 * `TauCeti.Localization.divBy_mul_mul_left` and
   `TauCeti.Localization.divBy_mul_mul_right`: `(u · t)/(u · s) = t/s` and `(t · u)/(s · u) = t/s`,
   given that `S` is a localisation away from the rescaled denominator as well.
-* `TauCeti.Localization.divBy_mul_left_of_isUnit`: `t/(u · s) = (u⁻¹ · t)/s` for a unit `u` — what
-  rescaling the denominator *alone* does, when the factor is invertible.
 * `TauCeti.Localization.divBy_self`: `s/s = 1`.
 * `TauCeti.Localization.adjoin_invSelf_eq_top`: `S` is generated over `A` by `1/s`.
 * `TauCeti.Localization.adjoin_divBy_eq_top`: as soon as the numerators `T` together with the
@@ -163,21 +161,6 @@ theorem divBy_mul_mul_right {u : A} [IsLocalization.Away (s * u) S] :
   rw [divBy_def (t * u) (s * u)]
   refine (IsLocalization.eq_mk'_iff_mul_eq.mpr ?_).symm
   rw [map_mul, ← mul_assoc, divBy_mul_algebraMap, ← map_mul]
-
-/-- **Rescaling the denominator by a unit moves its inverse to the numerator**:
-`t/(u · s) = (u⁻¹ · t)/s` whenever `u` is a unit of `A`.
-
-This is the companion of `divBy_mul_mul_left`, which needs numerator *and* denominator rescaled
-by the same factor. Rescaling the denominator alone does not preserve the fraction in general, but
-when the factor is a unit its inverse is again an element of `A`, so the fraction is preserved by
-paying that inverse into the numerator. -/
-theorem divBy_mul_left_of_isUnit {u : A} (hu : IsUnit u) [IsLocalization.Away (u * s) S] :
-    (divBy t (u * s) : S) = divBy ((hu.unit⁻¹ : Aˣ) * t) s := by
-  rw [divBy_def t (u * s)]
-  refine (IsLocalization.eq_mk'_iff_mul_eq.mpr ?_).symm
-  have hcancel : ((hu.unit⁻¹ : Aˣ) : A) * t * u = t := by
-    rw [mul_right_comm, hu.val_inv_mul, one_mul]
-  rw [map_mul, ← mul_assoc, mul_right_comm, divBy_mul_algebraMap, ← map_mul, hcancel]
 
 /-- The mirror of `invSelf_mul_algebraMap`, for the same reason. -/
 @[simp]
