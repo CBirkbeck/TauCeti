@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.UpperTriFactorisation
+public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.UpperTriFactorization
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Sum
 
 /-!
@@ -43,7 +43,7 @@ The map is defined by the general formula rather than the closed one because the
 false off `Γ₀(p)`: when `p ∤ c` the entry `a + jc` varies with `j` and can vanish, and then the
 congruence has no solution at all. The definition and the general factorisation
 `HeckeRing.GL2.exists_mem_Gamma0_upperTriRep_mul_of_isUnit`, both imported from
-`TauCeti/NumberTheory/HeckeRing/GL2/Gamma0/UpperTriFactorisation.lean`, are stated at exactly the
+`TauCeti/NumberTheory/HeckeRing/GL2/Gamma0/UpperTriFactorization.lean`, are stated at exactly the
 offsets where it does — those with `a + jc` invertible.
 
 Two facts make that scalar behave. The new lower-right entry is `d - c j' ≡ d (mod N)`, so `γ'`
@@ -62,7 +62,7 @@ alone is *not* invariant.
 The offset map `HeckeRing.GL2.upperTriShift` and the coset factorisation it feeds —
 `exists_mem_Gamma0_upperTriRep_mul` and its two variants — are statements about matrices and
 congruence subgroups, with no slash action in them, and live in
-`NumberTheory/HeckeRing/GL2/Gamma0/UpperTriFactorisation.lean`. This file imports them and
+`NumberTheory/HeckeRing/GL2/Gamma0/UpperTriFactorization.lean`. This file imports them and
 supplies the analytic half.
 
 ## Main results

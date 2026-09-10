@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Data.ZMod.FinEquiv
+import TauCeti.Data.ZMod.FinEquiv
 public import TauCeti.NumberTheory.HeckeRing.GL2.CosetDecomposition
 public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
 
@@ -80,22 +80,30 @@ lemma upperTriShift_natCast (p : ℕ) [NeZero p] (γ : SL(2, ℤ)) (j : Fin p) :
   exact ZMod.natCast_rightInverse _
 
 /-- **The defining congruence.** For `a + j c` invertible modulo `p`, `upperTriShift p γ j` solves
-`(a + j c) j' ≡ b + j d (mod p)`, and lying in `[0, p)` it is the only solution. -/
-lemma mul_upperTriShift_natCast [NeZero p] {γ : SL(2, ℤ)} {j : Fin p}
-    (hA : IsUnit (((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p))) :
-    ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p) * ((upperTriShift p γ j : ℕ) : ZMod p)
+`(a + j c) j' ≡ b + j d (mod p)`. That it is the *only* solution in `[0, p)` is
+`upperTriShift_eq_iff`. -/
+@[simp] lemma mul_upperTriShift_natCast [NeZero p] {γ : SL(2, ℤ)} {j : Fin p}
+    (hA : IsUnit (((γ 0 0 : ℤ) : ZMod p) + ((j : ℕ) : ZMod p) * ((γ 1 0 : ℤ) : ZMod p))) :
+    (((γ 0 0 : ℤ) : ZMod p) + ((j : ℕ) : ZMod p) * ((γ 1 0 : ℤ) : ZMod p))
+        * ((upperTriShift p γ j : ℕ) : ZMod p)
+      = ((γ 0 1 : ℤ) : ZMod p) + ((j : ℕ) : ZMod p) * ((γ 1 1 : ℤ) : ZMod p) := by
+  have hA' : IsUnit (((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p)) := by push_cast; exact hA
+  have h : ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p) * ((upperTriShift p γ j : ℕ) : ZMod p)
       = ((γ 0 1 + (j : ℕ) * γ 1 1 : ℤ) : ZMod p) := by
-  rw [upperTriShift_natCast, ← mul_assoc, ZMod.mul_inv_of_unit _ hA, one_mul]
+    rw [upperTriShift_natCast, ← mul_assoc, ZMod.mul_inv_of_unit _ hA', one_mul]
+  push_cast at h
+  exact h
 
 /-- **The offset map is the *only* solution.** Under invertibility of `a + j c`, an offset `j'`
 in `[0, p)` solves `(a + j c) j' ≡ b + j d (mod p)` exactly when it is `upperTriShift p γ j`.
 This is the elimination half of the characteristic API: `mul_upperTriShift_natCast` says the map
 solves the congruence, and this says nothing else does. -/
-lemma upperTriShift_eq_iff [NeZero p] {γ : SL(2, ℤ)} {j j' : Fin p}
-    (hA : IsUnit (((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p))) :
+@[simp] lemma upperTriShift_eq_iff [NeZero p] {γ : SL(2, ℤ)} {j j' : Fin p}
+    (hA : IsUnit (((γ 0 0 : ℤ) : ZMod p) + ((j : ℕ) : ZMod p) * ((γ 1 0 : ℤ) : ZMod p))) :
     upperTriShift p γ j = j' ↔
-      ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p) * ((j' : ℕ) : ZMod p)
-        = ((γ 0 1 + (j : ℕ) * γ 1 1 : ℤ) : ZMod p) := by
+      (((γ 0 0 : ℤ) : ZMod p) + ((j : ℕ) : ZMod p) * ((γ 1 0 : ℤ) : ZMod p))
+          * ((j' : ℕ) : ZMod p)
+        = ((γ 0 1 : ℤ) : ZMod p) + ((j : ℕ) : ZMod p) * ((γ 1 1 : ℤ) : ZMod p) := by
   refine ⟨fun h ↦ h ▸ mul_upperTriShift_natCast hA, fun h ↦ ?_⟩
   have hcancel : ((upperTriShift p γ j : ℕ) : ZMod p) = ((j' : ℕ) : ZMod p) :=
     hA.mul_left_cancel ((mul_upperTriShift_natCast hA).trans h.symm)
@@ -110,7 +118,8 @@ results in `TauCeti/NumberTheory/ModularForms/HeckeSlash/UpperTri/Invariance.lea
     (j : Fin p) : ((upperTriShift p γ j : ℕ) : ZMod p)
       = ((γ 1 1 * γ 0 1 + (j : ℕ) * (γ 1 1 * γ 1 1) : ℤ) : ZMod p) := by
   have hA : ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p) = ((γ 0 0 : ℤ) : ZMod p) := by
-    simp [Gamma0_mem.mp hγp]
+    push_cast
+    exact intCast_apply_zero_zero_add_natCast_mul_apply_one_zero_of_mem_Gamma0 hγp j
   rw [upperTriShift_natCast, hA,
     ZMod.inv_eq_of_mul_eq_one _ _ ((γ 1 1 : ℤ) : ZMod p)
       (intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0 hγp)]
@@ -194,7 +203,10 @@ theorem exists_mem_Gamma0_upperTriRep_mul_of_isUnit [NeZero p] {γ : SL(2, ℤ)}
   have hdvd : (p : ℤ) ∣ γ 0 1 + (j : ℕ) * γ 1 1
       - (γ 0 0 + (j : ℕ) * γ 1 0) * ((upperTriShift p γ j : ℕ) : ℤ) := by
     rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
-    have hmul := mul_upperTriShift_natCast hA
+    have hA' : IsUnit (((γ 0 0 : ℤ) : ZMod p) + ((j : ℕ) : ZMod p) * ((γ 1 0 : ℤ) : ZMod p)) := by
+      push_cast at hA
+      exact hA
+    have hmul := mul_upperTriShift_natCast hA'
     push_cast at hmul ⊢
     linear_combination -hmul
   obtain ⟨b', hb'⟩ := hdvd
@@ -220,12 +232,9 @@ statement applies uniformly and the offset map is the closed form `j ↦ d b + j
 theorem exists_mem_Gamma0_upperTriRep_mul [NeZero p] {γ : SL(2, ℤ)} (hγp : γ ∈ Gamma0 p)
     (hpc : (((p : ℤ) * γ 1 0 : ℤ) : ZMod N) = 0) (j : Fin p) : ∃ γ' : SL(2, ℤ), γ' ∈ Gamma0 N ∧
       (γ' 1 1 : ℤ) = γ 1 1 - γ 1 0 * ((upperTriShift p γ j : ℕ) : ℤ) ∧
-      upperTriRep p j * mapGL ℚ γ = mapGL ℚ γ' * upperTriRep p (upperTriShift p γ j) := by
-  refine exists_mem_Gamma0_upperTriRep_mul_of_isUnit ?_ hpc
-  have hA : ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p) = ((γ 0 0 : ℤ) : ZMod p) := by
-    simp [Gamma0_mem.mp hγp]
-  rw [hA]
-  exact isUnit_intCast_apply_zero_zero_of_mem_Gamma0 hγp
+      upperTriRep p j * mapGL ℚ γ = mapGL ℚ γ' * upperTriRep p (upperTriShift p γ j) :=
+  exists_mem_Gamma0_upperTriRep_mul_of_isUnit
+    (isUnit_intCast_apply_zero_zero_add_natCast_mul_apply_one_zero_of_mem_Gamma0 hγp j) hpc
 
 /-- **The coset factorisation at `γ ∈ Γ₀(N)`.** The specialisation of
 `exists_mem_Gamma0_upperTriRep_mul` that `p ∣ N` and `γ ∈ Γ₀(N)` afford: both hypotheses of the
