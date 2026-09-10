@@ -369,18 +369,12 @@ are stated at some level of the filtration, and rescaling moves that level by a 
 theorem exists_idealImage_subset_mul [IsTopologicalRing A] (P : PairOfDefinition A) {u : A}
     (hu : IsUnit u) (N : ℕ) :
     ∃ N' : ℕ, (P.idealImage N' : Set A) ⊆ (u * ·) '' (P.idealImage N : Set A) := by
-  have himg : (u * ·) '' (P.idealImage N : Set A)
-      = (fun y ↦ ((hu.unit⁻¹ : Aˣ) : A) * y) ⁻¹' (P.idealImage N : Set A) := by
-    ext y
-    constructor
-    · rintro ⟨x, hx, rfl⟩
-      simpa [← mul_assoc, hu.val_inv_mul] using hx
-    · intro hy
-      exact ⟨((hu.unit⁻¹ : Aˣ) : A) * y, hy, by simp [← mul_assoc, hu.mul_val_inv]⟩
-  have h0 : (0 : A) ∈ (fun y ↦ ((hu.unit⁻¹ : Aˣ) : A) * y) ⁻¹' (P.idealImage N : Set A) := by simp
-  obtain ⟨N', -, hN'⟩ := P.hasBasis_nhds_zero.mem_iff.mp
-    (((P.isOpen_idealImage N).preimage (continuous_const_mul _)).mem_nhds h0)
-  exact ⟨N', himg ▸ hN'⟩
+  have hmem : (u * ·) '' (P.idealImage N : Set A) ∈ 𝓝 (0 : A) := by
+    have h := smul_mem_nhds_smul (α := A) hu.unit
+      ((P.isOpen_idealImage N).mem_nhds (P.idealImage N).zero_mem)
+    simpa [← Set.image_smul, Units.smul_def] using h
+  obtain ⟨N', -, hN'⟩ := P.hasBasis_nhds_zero.mem_iff.mp hmem
+  exact ⟨N', hN'⟩
 
 /-- **An element of the ideal of definition is topologically nilpotent.** Its powers lie in the
 successive `Iⁿ`, whose images are a neighbourhood basis of zero
