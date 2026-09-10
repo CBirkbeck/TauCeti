@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.Data.ZMod.FinEquiv
 public import TauCeti.NumberTheory.HeckeRing.GL2.CosetDecomposition
 public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
 
@@ -66,16 +67,17 @@ the value is `ZMod`'s junk inverse and solves nothing, so every lemma that reads
 solution of that congruence* carries the invertibility hypothesis. Lemmas that merely evaluate the
 map, such as `upperTriShift_natCast`, hold for every `γ` and `j`. -/
 def upperTriShift (p : ℕ) [NeZero p] (γ : SL(2, ℤ)) (j : Fin p) : Fin p :=
-  ⟨(((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p)⁻¹
-    * ((γ 0 1 + (j : ℕ) * γ 1 1 : ℤ) : ZMod p)).val, ZMod.val_lt _⟩
+  (ZMod.finEquiv p).symm (((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p)⁻¹
+    * ((γ 0 1 + (j : ℕ) * γ 1 1 : ℤ) : ZMod p))
 
 /-- The value of `upperTriShift` in `ZMod p`. Deliberately not a `simp` lemma: the junk inverse on
 the right is not a normal form, and the two facts callers want are `mul_upperTriShift_natCast` and
 `upperTriShift_natCast_of_mem_Gamma0`. -/
 lemma upperTriShift_natCast (p : ℕ) [NeZero p] (γ : SL(2, ℤ)) (j : Fin p) :
     ((upperTriShift p γ j : ℕ) : ZMod p)
-      = ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p)⁻¹ * ((γ 0 1 + (j : ℕ) * γ 1 1 : ℤ) : ZMod p) :=
-  ZMod.natCast_rightInverse _
+      = ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p)⁻¹ * ((γ 0 1 + (j : ℕ) * γ 1 1 : ℤ) : ZMod p) := by
+  simp only [upperTriShift, ZMod.finEquiv_symm_apply_val]
+  exact ZMod.natCast_rightInverse _
 
 /-- **The defining congruence.** For `a + j c` invertible modulo `p`, `upperTriShift p γ j` solves
 `(a + j c) j' ≡ b + j d (mod p)`, and lying in `[0, p)` it is the only solution. -/
@@ -101,62 +103,47 @@ lemma upperTriShift_eq_iff [NeZero p] {γ : SL(2, ℤ)} {j j' : Fin p}
     simpa [ZMod.val_natCast_of_lt (upperTriShift p γ j).isLt, ZMod.val_natCast_of_lt j'.isLt]
       using congrArg ZMod.val hcancel)
 
-/-- On `Γ₀(p)` the entry `a + j c` collapses to `a`, because `c ≡ 0`. Stated with the casts
-already distributed, since that — not the cast of the sum — is the `simp` normal form. -/
-@[simp] lemma intCast_apply_zero_zero_add_natCast_mul_apply_one_zero_of_mem_Gamma0
-    {γ : SL(2, ℤ)} (hγp : γ ∈ Gamma0 p) (j : Fin p) :
-    ((γ 0 0 : ℤ) : ZMod p) + ((j : ℕ) : ZMod p) * ((γ 1 0 : ℤ) : ZMod p)
-      = ((γ 0 0 : ℤ) : ZMod p) := by
-  rw [Gamma0_mem.mp hγp, mul_zero, add_zero]
-
-/-- **`a + j c` is invertible on `Γ₀(p)`**, for every offset: it is `a` there, which
-`CongruenceSubgroup.isUnit_intCast_apply_zero_zero_of_mem_Gamma0` already knows to be a unit.
-This is what makes the whole of `Fin p` an admissible index set, with no offset left out. -/
-lemma isUnit_intCast_apply_zero_zero_add_natCast_mul_apply_one_zero_of_mem_Gamma0
-    {γ : SL(2, ℤ)} (hγp : γ ∈ Gamma0 p) (j : Fin p) :
-    IsUnit (((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p)) := by
-  have hA : ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p) = ((γ 0 0 : ℤ) : ZMod p) := by
-    push_cast
-    exact intCast_apply_zero_zero_add_natCast_mul_apply_one_zero_of_mem_Gamma0 hγp j
-  rw [hA]
-  exact isUnit_intCast_apply_zero_zero_of_mem_Gamma0 hγp
-
-/-- **On `Γ₀(p)` the offset map is `j ↦ d b + j d²`.** The closed form the equivariance argument
-below uses, and the reason the map is a bijection there: `d` is the inverse of `a`, and `d²` is
-again a unit. -/
+/-- **On `Γ₀(p)` the offset map is `j ↦ d b + j d²`.** The closed form used by the equivariance
+results in `TauCeti/NumberTheory/ModularForms/HeckeSlash/UpperTri/Invariance.lean`, and the reason
+`upperTriShift_bijective` holds: `d` is the inverse of `a`, and `d²` is again a unit. -/
 @[simp] lemma upperTriShift_natCast_of_mem_Gamma0 [NeZero p] {γ : SL(2, ℤ)} (hγp : γ ∈ Gamma0 p)
     (j : Fin p) : ((upperTriShift p γ j : ℕ) : ZMod p)
       = ((γ 1 1 * γ 0 1 + (j : ℕ) * (γ 1 1 * γ 1 1) : ℤ) : ZMod p) := by
   have hA : ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p) = ((γ 0 0 : ℤ) : ZMod p) := by
-    push_cast
-    exact intCast_apply_zero_zero_add_natCast_mul_apply_one_zero_of_mem_Gamma0 hγp j
+    simp [Gamma0_mem.mp hγp]
   rw [upperTriShift_natCast, hA,
     ZMod.inv_eq_of_mul_eq_one _ _ ((γ 1 1 : ℤ) : ZMod p)
       (intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0 hγp)]
   push_cast
   ring
 
-/-- **The offset map is a bijection.** For `γ ∈ Γ₀(p)`, `d` is the inverse of `a` modulo `p`,
-so the map gives the unique solution in `[0, p)` of `a j' ≡ b + j d (mod p)`.
-Two offsets with the same shift differ by an element killed by the unit `d²`. -/
+/-- **The offset map is a bijection.** For `γ ∈ Γ₀(p)` it is the affine permutation
+`x ↦ d² x + d b` of `ZMod p`, read through `ZMod.finEquiv`: `d` is the inverse of `a` modulo `p`,
+so `d²` is a unit and multiplication by it is a permutation. -/
 lemma upperTriShift_bijective [NeZero p] {γ : SL(2, ℤ)} (hγp : γ ∈ Gamma0 p) :
     Function.Bijective (upperTriShift p γ) := by
-  refine Finite.injective_iff_bijective.mp fun j j' hjj ↦ ?_
-  have had := intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0 hγp
-  have h := congrArg (fun m : Fin p ↦ ((m : ℕ) : ZMod p)) hjj
-  simp only [upperTriShift_natCast_of_mem_Gamma0 hγp] at h
-  push_cast at h
   have hud : IsUnit ((γ 1 1 : ℤ) : ZMod p) :=
-    IsUnit.of_mul_eq_one _ (by simpa [mul_comm] using had)
-  have hcancel : ((j : ℕ) : ZMod p) = ((j' : ℕ) : ZMod p) :=
-    (hud.mul hud).mul_left_inj.mp (by linear_combination h)
-  exact Fin.val_injective (by
-    simpa [ZMod.val_natCast_of_lt j.isLt, ZMod.val_natCast_of_lt j'.isLt] using
-      congrArg ZMod.val hcancel)
+    IsUnit.of_mul_eq_one _ (by
+      simpa [mul_comm] using intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0 hγp)
+  have haffine : upperTriShift p γ =
+      (ZMod.finEquiv p).toEquiv.trans
+        ((Units.mulLeft (hud.mul hud).unit).trans
+          ((Equiv.addRight (((γ 1 1 * γ 0 1 : ℤ) : ZMod p))).trans
+            (ZMod.finEquiv p).toEquiv.symm)) := by
+    funext j
+    symm
+    have hfe : ∀ x : Fin p, (ZMod.finEquiv p).toEquiv x = ((x : ℕ) : ZMod p) :=
+      fun x ↦ ZMod.finEquiv_apply x
+    simp only [Equiv.trans_apply, Units.mulLeft_apply, Equiv.coe_addRight]
+    rw [Equiv.symm_apply_eq]
+    simp only [hfe, IsUnit.unit_spec, upperTriShift_natCast_of_mem_Gamma0 hγp]
+    push_cast
+    ring
+  rw [haffine]
+  exact Equiv.bijective _
 
 /-- The matrix identity behind the coset factorisation, with the four entries of the second
-factor given by hypothesis. Stated separately so that the computation runs on atoms: the
-entries of `γ` and `γ'` never have to be unfolded inside it. -/
+factor given by hypothesis. -/
 private lemma upperTriRep_mul_mapGL_eq {p : ℕ} (j j' : Fin p) (γ γ' : SL(2, ℤ))
     (h00 : γ' 0 0 = γ 0 0 + (j : ℕ) * γ 1 0)
     (h01 : (p : ℤ) * γ' 0 1
@@ -188,12 +175,14 @@ The two hypotheses are exactly what the factorisation consumes, and neither ment
 `N` are related. `a + j c` invertible modulo `p` — for the single offset `j` at hand, not
 uniformly — is what makes the offset `j'` exist; `N ∣ p c` is what puts the lower-left entry
 `p c` of `γ'` back in `Γ₀(N)`. Neither `p ∣ N` nor any membership at a level built from `N` is
-assumed, so `p ∤ N` is not excluded. The `Γ₀(p)` specialisation below, where invertibility holds
-for every offset at once and the map is a bijection, is the form callers usually want.
+assumed, so `p ∤ N` is not excluded. The `Γ₀(p)` specialisation `exists_mem_Gamma0_upperTriRep_mul`,
+where invertibility holds for every offset at once and the map is a bijection, is the form callers
+usually want.
 
 The lower-right entry is given as an equation rather than as a congruence because the modulus
-at which it is useful varies with the caller; the equivariance below reads off the congruence
-modulo `N` it needs from that equation and `Γ₀(N)`-membership. -/
+at which it is useful varies with the caller; the equivariance results in
+`TauCeti/NumberTheory/ModularForms/HeckeSlash/UpperTri/Invariance.lean` read off the congruence
+modulo `N` they need from that equation and `Γ₀(N)`-membership. -/
 theorem exists_mem_Gamma0_upperTriRep_mul_of_isUnit [NeZero p] {γ : SL(2, ℤ)} {j : Fin p}
     (hA : IsUnit (((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p)))
     (hpc : (((p : ℤ) * γ 1 0 : ℤ) : ZMod N) = 0) : ∃ γ' : SL(2, ℤ), γ' ∈ Gamma0 N ∧
@@ -231,9 +220,12 @@ statement applies uniformly and the offset map is the closed form `j ↦ d b + j
 theorem exists_mem_Gamma0_upperTriRep_mul [NeZero p] {γ : SL(2, ℤ)} (hγp : γ ∈ Gamma0 p)
     (hpc : (((p : ℤ) * γ 1 0 : ℤ) : ZMod N) = 0) (j : Fin p) : ∃ γ' : SL(2, ℤ), γ' ∈ Gamma0 N ∧
       (γ' 1 1 : ℤ) = γ 1 1 - γ 1 0 * ((upperTriShift p γ j : ℕ) : ℤ) ∧
-      upperTriRep p j * mapGL ℚ γ = mapGL ℚ γ' * upperTriRep p (upperTriShift p γ j) :=
-  exists_mem_Gamma0_upperTriRep_mul_of_isUnit
-    (isUnit_intCast_apply_zero_zero_add_natCast_mul_apply_one_zero_of_mem_Gamma0 hγp j) hpc
+      upperTriRep p j * mapGL ℚ γ = mapGL ℚ γ' * upperTriRep p (upperTriShift p γ j) := by
+  refine exists_mem_Gamma0_upperTriRep_mul_of_isUnit ?_ hpc
+  have hA : ((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p) = ((γ 0 0 : ℤ) : ZMod p) := by
+    simp [Gamma0_mem.mp hγp]
+  rw [hA]
+  exact isUnit_intCast_apply_zero_zero_of_mem_Gamma0 hγp
 
 /-- **The coset factorisation at `γ ∈ Γ₀(N)`.** The specialisation of
 `exists_mem_Gamma0_upperTriRep_mul` that `p ∣ N` and `γ ∈ Γ₀(N)` afford: both hypotheses of the

@@ -41,8 +41,10 @@ on `f`.
 
 The map is defined by the general formula rather than the closed one because the closed form is
 false off `Γ₀(p)`: when `p ∤ c` the entry `a + jc` varies with `j` and can vanish, and then the
-congruence has no solution at all. The definition and the general factorisation below are stated
-at exactly the offsets where it does — those with `a + jc` invertible.
+congruence has no solution at all. The definition and the general factorisation
+`HeckeRing.GL2.exists_mem_Gamma0_upperTriRep_mul_of_isUnit`, both imported from
+`TauCeti/NumberTheory/HeckeRing/GL2/Gamma0/UpperTriFactorisation.lean`, are stated at exactly the
+offsets where it does — those with `a + jc` invertible.
 
 Two facts make that scalar behave. The new lower-right entry is `d - c j' ≡ d (mod N)`, so `γ'`
 has the *same* `Gamma0Map` value as `γ`; and if `γ ∈ Γ₁(N)` then `γ' ∈ Γ₁(N)`. So the hypothesis
