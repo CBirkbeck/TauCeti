@@ -139,17 +139,29 @@ theorem pullbackDifferential_invariantDifferential [W₂.IsElliptic] (φ : Isoge
 
 /-- **Negation pulls the invariant differential back to its negative.** -/
 @[simp]
-theorem pullbackDifferential_negIsogeny_invariantDifferential (W : WeierstrassCurve.Affine F)
-    [W.IsElliptic] :
+theorem pullbackDifferential_negIsogeny_invariantDifferential (W : WeierstrassCurve.Affine F) :
     (negIsogeny W).pullbackDifferential (invariantDifferential W) = -invariantDifferential W := by
-  have hg : W.genericPoint ≠ 0 := by
-    rw [genericPoint_eq_some]; exact Point.some_ne_zero _
-  rw [pullbackDifferential_invariantDifferential]
-  simp only [negIsogeny_pullback, tautologicalPoint_negPullback, Point.xCoord_neg,
-    Point.yCoord_neg hg, xCoord_genericPoint, yCoord_genericPoint, invariantDifferential_def,
-    invariantDifferentialDenom_eq_evalEval_polynomialY, evalEval_polynomialY, negY]
-  rw [← neg_smul, neg_inv]
+  -- Negation fixes `x` and sends `y` to `negY x y`.
+  have hx : (negIsogeny W).fieldPullback (genericX W) = genericX W := by
+    have : (negIsogeny W).fieldPullback (genericX W) = algebraMap W.CoordinateRing W.FunctionField
+        (CoordinateRing.conj W (AdjoinRoot.of W.polynomial Polynomial.X)) := by
+      rw [genericX_def, fieldPullback_algebraMap, negIsogeny_pullback, negPullback_apply,
+        AdjoinRoot.mk_C]
+    rw [this, CoordinateRing.conj_mk_C, ← genericX_def]
+  have hy : (negIsogeny W).fieldPullback (genericY W) =
+      (W⁄W.FunctionField).toAffine.negY (genericX W) (genericY W) := by
+    have : (negIsogeny W).fieldPullback (genericY W) = algebraMap W.CoordinateRing W.FunctionField
+        (CoordinateRing.conj W (AdjoinRoot.root W.polynomial)) := by
+      rw [genericY_def, fieldPullback_algebraMap, negIsogeny_pullback, negPullback_apply,
+        AdjoinRoot.mk_X]
+    rw [this, CoordinateRing.conj_mk_Y, ← evalEval_genericX_genericY, ← map_negPolynomial,
+      evalEval_negPolynomial]
+    simp only [WeierstrassCurve.baseChange]
+  rw [invariantDifferential_def, pullbackDifferential_smul, pullbackDifferential_D, map_inv₀, hx,
+    ← neg_smul, neg_inv]
   congr 2
+  simp only [invariantDifferentialDenom_def, map_add, map_mul, map_ofNat, AlgHom.commutes, hx, hy,
+    negY, WeierstrassCurve.baseChange, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₃]
   ring
 
 /-- **An isogeny is separable exactly when it pulls the invariant differential back to a nonzero
