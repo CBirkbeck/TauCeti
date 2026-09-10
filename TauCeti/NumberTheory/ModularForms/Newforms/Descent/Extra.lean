@@ -24,7 +24,7 @@ With `p + 1` members the natural index set is the projective line over `ZMod p`:
 upper-triangular member `[1, j; 0, p]` sits at the affine point `j`, the extra member at `∞`
 (`descendIndexEquiv`). On that line the descent's index map `j ↦ (b + j d) / (a + j c)` is the
 Möbius action of `moebiusGL` (`LinearAlgebra/Matrix/GeneralLinearGroup/MoebiusZMod.lean`) at
-`γ` reduced modulo `p`, so it is a bijection for free (`descendIndexPerm_bijective`): the affine
+`γ` reduced modulo `p`, so it is a bijection for free (`descendIndexShift_bijective`): the affine
 index with `a + j c ≡ 0` — which exists exactly when `p ∤ c` — goes to `∞`, and `∞` comes back to
 `d / c`.
 
@@ -43,15 +43,18 @@ the lower-right entry of `γ` modulo `N / p`, which is what transporting a neben
 * `TauCeti.descendIndexEquiv`: `Fin (descendMatrixCount p N) ≃ OnePoint (ZMod p)` at `p ∥ N`.
 * `TauCeti.descendIndexGL`: `moebiusGL` of `γ` modulo `p`, the element whose action is the
   descent's index map.
-* `TauCeti.descendIndexPerm`: that action read back on the index set.
+* `TauCeti.descendIndexShift`: that action read back on the index set.
 
 ## Main results
 
-* `TauCeti.descendIndexPerm_bijective`: the index map is a bijection.
+* `TauCeti.descendIndexShift_bijective`: the index map is a bijection.
 * `TauCeti.exists_mem_Gamma0_descendMatrix_mul_of_not_sq_dvd`: for `p ∥ N` and
-  `γ ∈ Γ₀(N / p)`, `descendMatrix p N v * γ = α * descendMatrix p N (descendIndexPerm … v)` for
-  some `α ∈ Γ₀(N)` with `α 1 1 ≡ γ 1 1 (mod N / p)`; assembled from the four cases
-  `…_of_isUnit`, `…_of_eq_zero`, `…_of_le_of_ne_zero` and `…_of_le_of_eq_zero`.
+  `γ ∈ Γ₀(N / p)`, `descendMatrix p N v * γ = α * descendMatrix p N (descendIndexShift … v)` for
+  some `α ∈ Γ₀(N)` with `α 1 1 ≡ γ 1 1 (mod N / p)`; assembled from four private cases, one per
+  value of the index map.
+* `TauCeti.descendIndexShift_val_of_isUnit`, `TauCeti.descendIndexShift_val_of_eq_zero`,
+  `TauCeti.descendIndexShift_val_of_le_of_ne_zero` and
+  `TauCeti.descendIndexShift_val_of_le_of_eq_zero`: the value of the index map in each case.
 * `TauCeti.descendExtraGamma_apply_intCast_zmod`: the residues of the extra matrix modulo `p`.
 
 ## Scope
@@ -80,8 +83,12 @@ namespace TauCeti
 
 variable {p N : ℕ}
 
-/-- **At a prime exactly dividing `N`, the descent's index set is the projective line over
-`ZMod p`.** `descendMatrixCount p N` is `p + 1` there, and `Fin (p + 1) ≃ Option (Fin p) ≃
+/-- A prime is nonzero. Primality is what the projective line over `ZMod p` needs, and it supplies
+the `NeZero p` that the descent family and the offset map need throughout this file. -/
+local instance neZero_of_fact_prime [Fact p.Prime] : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
+
+/-- **When `p²` does not divide `N`, the descent's index set is the projective line over
+`ZMod p`.** `descendMatrixCount p N` is `p + 1` then, and `Fin (p + 1) ≃ Option (Fin p) ≃
 Option (ZMod p)`, which is `OnePoint (ZMod p)`: the upper-triangular members are the affine
 points and the extra representative is `∞`. -/
 def descendIndexEquiv (p N : ℕ) [NeZero p] (hpsq : ¬ p ^ 2 ∣ N) :
@@ -96,6 +103,9 @@ def descendIndexEquiv (p N : ℕ) [NeZero p] (hpsq : ¬ p ^ 2 ∣ N) :
   have hcast : Fin.cast (descendMatrixCount_of_not_sq_dvd hpsq) v = Fin.castSucc ⟨v.val, hv⟩ :=
     Fin.ext rfl
   rw [descendIndexEquiv]
+  -- `OnePoint (ZMod p)` is `Option (ZMod p)` by definition and the composite is typed at the
+  -- former, so `Equiv.trans_apply` does not fire on its outer composition; `change` restates the
+  -- value at `Option`, where the evaluation lemmas of the three factors apply.
   change (ZMod.finEquiv p).toEquiv.optionCongr
     (finSuccEquivLast (Fin.cast (descendMatrixCount_of_not_sq_dvd hpsq) v)) = _
   rw [hcast, finSuccEquivLast_castSucc, Equiv.optionCongr_apply, Option.map_some]
@@ -110,6 +120,7 @@ def descendIndexEquiv (p N : ℕ) [NeZero p] (hpsq : ¬ p ^ 2 ∣ N) :
     have hcount := descendMatrixCount_of_not_sq_dvd (p := p) hpsq
     exact Fin.ext (by rw [Fin.val_cast, Fin.val_last]; omega)
   rw [descendIndexEquiv]
+  -- as in `descendIndexEquiv_apply_of_lt`: restate at `Option` so that the factors evaluate
   change (ZMod.finEquiv p).toEquiv.optionCongr
     (finSuccEquivLast (Fin.cast (descendMatrixCount_of_not_sq_dvd hpsq) v)) = _
   rw [hcast, finSuccEquivLast_last, Equiv.optionCongr_apply, Option.map_none]
@@ -161,7 +172,7 @@ theorem descendIndexGL_smul_infty [Fact p.Prime] (γ : SL(2, ℤ)) :
   simp only [Matrix.map_apply, eq_intCast]
 
 /-- **An affine index with `a + j c` a unit goes to the offset map's value.** -/
-theorem descendIndexGL_smul_coe_of_isUnit [NeZero p] [Fact p.Prime] {γ : SL(2, ℤ)} {j : Fin p}
+theorem descendIndexGL_smul_coe_of_isUnit [Fact p.Prime] {γ : SL(2, ℤ)} {j : Fin p}
     (hA : IsUnit (((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p))) :
     descendIndexGL p γ • (((j : ℕ) : ZMod p) : OnePoint (ZMod p))
       = (((upperTriShift p γ j : ℕ) : ZMod p) : OnePoint (ZMod p)) := by
@@ -206,36 +217,53 @@ theorem descendIndexGL_smul_infty_of_eq_zero [Fact p.Prime] {γ : SL(2, ℤ)}
   split_ifs
   rfl
 
-/-- **The index permutation at a prime exactly dividing `N`**: the Möbius action of
-`descendIndexGL p γ` on the projective line, read through `descendIndexEquiv`. -/
-noncomputable def descendIndexPerm (p N : ℕ) [NeZero p] [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N)
+/-- **The index map when `p²` does not divide `N`**: the Möbius action of `descendIndexGL p γ` on
+the projective line, read through `descendIndexEquiv`. It is a bijection
+(`descendIndexShift_bijective`), and the descent's factorisation sends the member of the family
+at `v` to the member at `descendIndexShift p N hpsq γ v`. -/
+noncomputable def descendIndexShift (p N : ℕ) [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N)
     (γ : SL(2, ℤ)) (v : Fin (descendMatrixCount p N)) : Fin (descendMatrixCount p N) :=
   (descendIndexEquiv p N hpsq).symm (descendIndexGL p γ • descendIndexEquiv p N hpsq v)
 
-/-- The defining equation of `descendIndexPerm`, for rewriting across the module boundary. -/
-theorem descendIndexPerm_apply [NeZero p] [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N) (γ : SL(2, ℤ))
-    (v : Fin (descendMatrixCount p N)) : descendIndexPerm p N hpsq γ v
+/-- The defining equation of `descendIndexShift`. -/
+theorem descendIndexShift_apply [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N) (γ : SL(2, ℤ))
+    (v : Fin (descendMatrixCount p N)) : descendIndexShift p N hpsq γ v
       = (descendIndexEquiv p N hpsq).symm (descendIndexGL p γ • descendIndexEquiv p N hpsq v) :=
   (rfl)
 
-/-- **The index permutation is a bijection**, because a group action is. -/
-theorem descendIndexPerm_bijective [NeZero p] [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N)
-    (γ : SL(2, ℤ)) : Function.Bijective (descendIndexPerm p N hpsq γ) := by
-  have h : descendIndexPerm p N hpsq γ = ((descendIndexEquiv p N hpsq).trans
+/-- **The index map is a bijection**, because a group action is. -/
+theorem descendIndexShift_bijective [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N)
+    (γ : SL(2, ℤ)) : Function.Bijective (descendIndexShift p N hpsq γ) := by
+  have h : descendIndexShift p N hpsq γ = ((descendIndexEquiv p N hpsq).trans
       ((MulAction.toPerm (descendIndexGL p γ)).trans (descendIndexEquiv p N hpsq).symm)) :=
-    funext fun v ↦ descendIndexPerm_apply hpsq γ v
+    funext fun v ↦ descendIndexShift_apply hpsq γ v
   rw [h]
   exact Equiv.bijective _
 
-/-- **The level hypothesis of the factorisation, for any element of `Γ₀(N / p)`.** `N = p (N / p)`
-divides `p c` because `N / p ∣ c`. -/
-theorem intCast_mul_apply_one_zero_eq_zero_of_mem_Gamma0_div (hpN : p ∣ N) {δ : SL(2, ℤ)}
-    (hδ : δ ∈ Gamma0 (N / p)) : (((p : ℤ) * δ 1 0 : ℤ) : ZMod N) = 0 := by
-  refine (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mpr ?_
-  have hpNp : (N : ℤ) = (p : ℤ) * ((N / p : ℕ) : ℤ) := by
-    exact_mod_cast (Nat.mul_div_cancel' hpN).symm
-  rw [hpNp]
-  exact mul_dvd_mul_left _ ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hδ))
+/-- **The value of the index map at an affine index whose denominator is a unit**: the offset map's
+value. -/
+@[simp] theorem descendIndexShift_val_of_isUnit [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N)
+    {γ : SL(2, ℤ)} {v : Fin (descendMatrixCount p N)} (hv : v.val < p)
+    (hA : IsUnit (((γ 0 0 + (v : ℕ) * γ 1 0 : ℤ) : ZMod p))) :
+    (descendIndexShift p N hpsq γ v : ℕ) = (upperTriShift p γ ⟨v.val, hv⟩ : ℕ) := by
+  rw [descendIndexShift_apply, descendIndexEquiv_apply_of_lt hpsq hv,
+    descendIndexGL_smul_coe_of_isUnit (j := ⟨v.val, hv⟩) hA, descendIndexEquiv_symm_coe_val,
+    ZMod.val_natCast_of_lt (upperTriShift p γ ⟨v.val, hv⟩).isLt]
+
+/-- **The value of the index map at the degenerate affine index**: the extra index `p`. -/
+@[simp] theorem descendIndexShift_val_of_eq_zero [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N)
+    {γ : SL(2, ℤ)} {v : Fin (descendMatrixCount p N)} (hv : v.val < p)
+    (h0 : (((γ 0 0 + (v : ℕ) * γ 1 0 : ℤ) : ZMod p)) = 0) :
+    (descendIndexShift p N hpsq γ v : ℕ) = p := by
+  rw [descendIndexShift_apply, descendIndexEquiv_apply_of_lt hpsq hv,
+    descendIndexGL_smul_coe_of_eq_zero (j := ⟨v.val, hv⟩) h0, descendIndexEquiv_symm_infty_val]
+
+/-- **The value of the index map at the extra index when `p ∣ c`**: the extra index itself. -/
+@[simp] theorem descendIndexShift_val_of_le_of_eq_zero [Fact p.Prime] (hpsq : ¬ p ^ 2 ∣ N)
+    {γ : SL(2, ℤ)} {v : Fin (descendMatrixCount p N)} (hv : p ≤ v.val)
+    (hc : ((γ 1 0 : ℤ) : ZMod p) = 0) : (descendIndexShift p N hpsq γ v : ℕ) = p := by
+  rw [descendIndexShift_apply, descendIndexEquiv_apply_of_le hpsq hv,
+    descendIndexGL_smul_infty_of_eq_zero hc, descendIndexEquiv_symm_infty_val]
 
 /-! ## The residues of the extra matrix and of its twists -/
 
@@ -354,36 +382,23 @@ private theorem intCast_apply_one_one_zmod_div_eq_of_map_eq {δ γ : SL(2, ℤ)}
   simpa only [Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply,
     eq_intCast] using this
 
-/-- The entry equation of the factorisation reads as a congruence at any level where `c`
-vanishes. -/
-theorem intCast_apply_one_one_eq_of_mem_Gamma0_of_eq {M : ℕ} {δ α : SL(2, ℤ)} (hδ : δ ∈ Gamma0 M)
-    {k : ℤ} (h : (α 1 1 : ℤ) = δ 1 1 - δ 1 0 * k) :
-    ((α 1 1 : ℤ) : ZMod M) = ((δ 1 1 : ℤ) : ZMod M) := by
-  rw [h]
-  push_cast
-  rw [Gamma0_mem.mp hδ]
-  ring
-
 /-! ## The four cases of the factorisation -/
 
 /-- **An affine index with `a + j c` a unit stays affine**, at the offset map's value: the
 factorisation is the upper-triangular one, unchanged. -/
-theorem exists_mem_Gamma0_descendMatrix_mul_of_isUnit [NeZero p] [Fact p.Prime] (hpN : p ∣ N)
+private theorem exists_mem_Gamma0_descendMatrix_mul_of_isUnit [Fact p.Prime] (hpN : p ∣ N)
     (hpsq : ¬ p ^ 2 ∣ N) {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p))
     {v : Fin (descendMatrixCount p N)} (hv : v.val < p)
     (hA : IsUnit (((γ 0 0 + (v : ℕ) * γ 1 0 : ℤ) : ZMod p))) :
     ∃ α : SL(2, ℤ), α ∈ Gamma0 N ∧ ((α 1 1 : ℤ) : ZMod (N / p)) = ((γ 1 1 : ℤ) : ZMod (N / p)) ∧
       descendMatrix p N v * mapGL ℝ γ
-        = mapGL ℝ α * descendMatrix p N (descendIndexPerm p N hpsq γ v) := by
+        = mapGL ℝ α * descendMatrix p N (descendIndexShift p N hpsq γ v) := by
   obtain ⟨α, hα, hd, hmul⟩ := exists_mem_Gamma0_upperTriRep_mul_of_isUnit (j := ⟨v.val, hv⟩) hA
     (intCast_mul_apply_one_zero_eq_zero_of_mem_Gamma0_div hpN hγ)
-  have hidx : (descendIndexPerm p N hpsq γ v : ℕ) = (upperTriShift p γ ⟨v.val, hv⟩ : ℕ) := by
-    rw [descendIndexPerm_apply, descendIndexEquiv_apply_of_lt hpsq hv,
-      descendIndexGL_smul_coe_of_isUnit (j := ⟨v.val, hv⟩) hA, descendIndexEquiv_symm_coe_val,
-      ZMod.val_natCast_of_lt (upperTriShift p γ ⟨v.val, hv⟩).isLt]
-  have hv' : (descendIndexPerm p N hpsq γ v : ℕ) < p :=
+  have hidx := descendIndexShift_val_of_isUnit hpsq hv hA
+  have hv' : (descendIndexShift p N hpsq γ v : ℕ) < p :=
     hidx ▸ (upperTriShift p γ ⟨v.val, hv⟩).isLt
-  have htgt : (⟨(descendIndexPerm p N hpsq γ v : ℕ), hv'⟩ : Fin p)
+  have htgt : (⟨(descendIndexShift p N hpsq γ v : ℕ), hv'⟩ : Fin p)
       = upperTriShift p γ ⟨v.val, hv⟩ := Fin.ext hidx
   refine ⟨α, hα, intCast_apply_one_one_eq_of_mem_Gamma0_of_eq hγ hd, ?_⟩
   simpa only [descendMatrix_of_lt hv, descendMatrix_of_lt hv', htgt, map_mul, map_mapGL]
@@ -392,7 +407,7 @@ theorem exists_mem_Gamma0_descendMatrix_mul_of_isUnit [NeZero p] [Fact p.Prime] 
 /-- At the degenerate affine index the twist `γ γ_p⁻¹ ≡ γ S⁻¹` has unit denominator
 `-(b + j d)` — both `a + j c` and `b + j d` cannot vanish, by `a d - b c = 1` — and its offset map
 sends `j` to `0`. -/
-private theorem mul_inv_descendExtraGamma_isUnit_and_upperTriShift_eq [NeZero p] [Fact p.Prime]
+private theorem mul_inv_descendExtraGamma_isUnit_and_upperTriShift_eq [Fact p.Prime]
     (hpN : p ∣ N) (hpsq : ¬ p ^ 2 ∣ N) {γ : SL(2, ℤ)} {j : Fin p}
     (h0 : (((γ 0 0 + (j : ℕ) * γ 1 0 : ℤ) : ZMod p)) = 0) :
     IsUnit ((((γ * (descendExtraGamma p N)⁻¹) 0 0
@@ -416,7 +431,7 @@ private theorem mul_inv_descendExtraGamma_isUnit_and_upperTriShift_eq [NeZero p]
 
 /-- At `∞` with `p ∤ c` the twist `γ_p γ ≡ S γ` has unit denominator `-c` at `0`, and its offset
 map sends `0` to `d / c`. -/
-private theorem descendExtraGamma_mul_isUnit_and_upperTriShift_eq [NeZero p] [Fact p.Prime]
+private theorem descendExtraGamma_mul_isUnit_and_upperTriShift_eq [Fact p.Prime]
     (hpN : p ∣ N) (hpsq : ¬ p ^ 2 ∣ N) {γ : SL(2, ℤ)} (hc : ((γ 1 0 : ℤ) : ZMod p) ≠ 0) :
     IsUnit ((((descendExtraGamma p N * γ) 0 0
         + ((⟨0, NeZero.pos p⟩ : Fin p) : ℕ) * (descendExtraGamma p N * γ) 1 0 : ℤ) : ZMod p)) ∧
@@ -435,11 +450,22 @@ private theorem descendExtraGamma_mul_isUnit_and_upperTriShift_eq [NeZero p] [Fa
   rw [eq_div_iff hc]
   linear_combination -h
 
+/-- **The value of the index map at the extra index when `p ∤ c`**: the offset map of the twist
+`γ_p γ` at `0`, that is `d / c`. -/
+@[simp] theorem descendIndexShift_val_of_le_of_ne_zero [Fact p.Prime] (hpN : p ∣ N)
+    (hpsq : ¬ p ^ 2 ∣ N) {γ : SL(2, ℤ)} {v : Fin (descendMatrixCount p N)} (hv : p ≤ v.val)
+    (hc : ((γ 1 0 : ℤ) : ZMod p) ≠ 0) : (descendIndexShift p N hpsq γ v : ℕ)
+      = (upperTriShift p (descendExtraGamma p N * γ) ⟨0, NeZero.pos p⟩ : ℕ) := by
+  obtain ⟨-, hshift⟩ := descendExtraGamma_mul_isUnit_and_upperTriShift_eq hpN hpsq hc
+  rw [descendIndexShift_apply, descendIndexEquiv_apply_of_le hpsq hv,
+    descendIndexGL_smul_infty_of_ne_zero hc, descendIndexEquiv_symm_coe_val, ← hshift,
+    ZMod.val_natCast_of_lt
+      (upperTriShift p (descendExtraGamma p N * γ) ⟨0, NeZero.pos p⟩).isLt]
+
 /-- At `∞` with `p ∣ c` the twist `γ_p γ γ_p⁻¹ ≡ S γ S⁻¹` has unit denominator `d` at `0` — as
 `a d ≡ 1` — and its offset map sends `0` to `-c / d ≡ 0`. -/
-private theorem descendExtraGamma_mul_mul_inv_isUnit_and_upperTriShift_eq [NeZero p]
-    [Fact p.Prime] (hpN : p ∣ N) (hpsq : ¬ p ^ 2 ∣ N) {γ : SL(2, ℤ)}
-    (hc : ((γ 1 0 : ℤ) : ZMod p) = 0) :
+private theorem descendExtraGamma_mul_mul_inv_isUnit_and_upperTriShift_eq [Fact p.Prime]
+    (hpN : p ∣ N) (hpsq : ¬ p ^ 2 ∣ N) {γ : SL(2, ℤ)} (hc : ((γ 1 0 : ℤ) : ZMod p) = 0) :
     IsUnit ((((descendExtraGamma p N * γ * (descendExtraGamma p N)⁻¹) 0 0
         + ((⟨0, NeZero.pos p⟩ : Fin p) : ℕ)
           * (descendExtraGamma p N * γ * (descendExtraGamma p N)⁻¹) 1 0 : ℤ) : ZMod p)) ∧
@@ -463,13 +489,13 @@ private theorem descendExtraGamma_mul_mul_inv_isUnit_and_upperTriShift_eq [NeZer
 /-- **The degenerate affine index goes to the extra representative.** The factorisation of the
 twist `γ γ_p⁻¹` at `j` lands on `[1, 0; 0, p]`; multiplying it back by `γ_p` lands on the extra
 member `[1, 0; 0, p] γ_p`. -/
-theorem exists_mem_Gamma0_descendMatrix_mul_of_eq_zero [NeZero p] [Fact p.Prime] (hpN : p ∣ N)
+private theorem exists_mem_Gamma0_descendMatrix_mul_of_eq_zero [Fact p.Prime] (hpN : p ∣ N)
     (hpsq : ¬ p ^ 2 ∣ N) {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p))
     {v : Fin (descendMatrixCount p N)} (hv : v.val < p)
     (h0 : (((γ 0 0 + (v : ℕ) * γ 1 0 : ℤ) : ZMod p)) = 0) :
     ∃ α : SL(2, ℤ), α ∈ Gamma0 N ∧ ((α 1 1 : ℤ) : ZMod (N / p)) = ((γ 1 1 : ℤ) : ZMod (N / p)) ∧
       descendMatrix p N v * mapGL ℝ γ
-        = mapGL ℝ α * descendMatrix p N (descendIndexPerm p N hpsq γ v) := by
+        = mapGL ℝ α * descendMatrix p N (descendIndexShift p N hpsq γ v) := by
   have hp : p.Prime := Fact.out
   have hδ : γ * (descendExtraGamma p N)⁻¹ ∈ Gamma0 (N / p) :=
     Subgroup.mul_mem _ hγ (Subgroup.inv_mem _ (descendExtraGamma_mem_Gamma0 hp hpN hpsq))
@@ -477,9 +503,7 @@ theorem exists_mem_Gamma0_descendMatrix_mul_of_eq_zero [NeZero p] [Fact p.Prime]
     mul_inv_descendExtraGamma_isUnit_and_upperTriShift_eq (j := ⟨v.val, hv⟩) hpN hpsq h0
   obtain ⟨α, hα, hd, hmul⟩ := exists_mem_Gamma0_upperTriRep_mul_of_isUnit hA
     (intCast_mul_apply_one_zero_eq_zero_of_mem_Gamma0_div hpN hδ)
-  have hidx : (descendIndexPerm p N hpsq γ v : ℕ) = p := by
-    rw [descendIndexPerm_apply, descendIndexEquiv_apply_of_lt hpsq hv,
-      descendIndexGL_smul_coe_of_eq_zero (j := ⟨v.val, hv⟩) h0, descendIndexEquiv_symm_infty_val]
+  have hidx := descendIndexShift_val_of_eq_zero hpsq hv h0
   refine ⟨α, hα, (intCast_apply_one_one_eq_of_mem_Gamma0_of_eq hδ hd).trans ?_, ?_⟩
   · refine intCast_apply_one_one_zmod_div_eq_of_map_eq ?_
     rw [map_mul, map_inv, descendExtraGamma_map_intCast_zmod_div_eq_one hp hpN hpsq, inv_one,
@@ -492,26 +516,22 @@ theorem exists_mem_Gamma0_descendMatrix_mul_of_eq_zero [NeZero p] [Fact p.Prime]
 
 /-- **The extra representative moves into the affine line when `p ∤ c`**, landing at `d / c`:
 the factorisation of the twist `γ_p γ` at `0`. -/
-theorem exists_mem_Gamma0_descendMatrix_mul_of_le_of_ne_zero [NeZero p] [Fact p.Prime]
+private theorem exists_mem_Gamma0_descendMatrix_mul_of_le_of_ne_zero [Fact p.Prime]
     (hpN : p ∣ N) (hpsq : ¬ p ^ 2 ∣ N) {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p))
     {v : Fin (descendMatrixCount p N)} (hv : p ≤ v.val) (hc : ((γ 1 0 : ℤ) : ZMod p) ≠ 0) :
     ∃ α : SL(2, ℤ), α ∈ Gamma0 N ∧ ((α 1 1 : ℤ) : ZMod (N / p)) = ((γ 1 1 : ℤ) : ZMod (N / p)) ∧
       descendMatrix p N v * mapGL ℝ γ
-        = mapGL ℝ α * descendMatrix p N (descendIndexPerm p N hpsq γ v) := by
+        = mapGL ℝ α * descendMatrix p N (descendIndexShift p N hpsq γ v) := by
   have hp : p.Prime := Fact.out
   have hδ : descendExtraGamma p N * γ ∈ Gamma0 (N / p) :=
     Subgroup.mul_mem _ (descendExtraGamma_mem_Gamma0 hp hpN hpsq) hγ
-  obtain ⟨hA, hshift⟩ := descendExtraGamma_mul_isUnit_and_upperTriShift_eq hpN hpsq hc
+  obtain ⟨hA, -⟩ := descendExtraGamma_mul_isUnit_and_upperTriShift_eq hpN hpsq hc
   obtain ⟨α, hα, hd, hmul⟩ := exists_mem_Gamma0_upperTriRep_mul_of_isUnit hA
     (intCast_mul_apply_one_zero_eq_zero_of_mem_Gamma0_div hpN hδ)
-  have hidx : (descendIndexPerm p N hpsq γ v : ℕ)
-      = (upperTriShift p (descendExtraGamma p N * γ) ⟨0, NeZero.pos p⟩ : ℕ) := by
-    rw [descendIndexPerm_apply, descendIndexEquiv_apply_of_le hpsq hv,
-      descendIndexGL_smul_infty_of_ne_zero hc, descendIndexEquiv_symm_coe_val, ← hshift,
-      ZMod.val_natCast_of_lt (upperTriShift p (descendExtraGamma p N * γ) ⟨0, NeZero.pos p⟩).isLt]
-  have hv' : (descendIndexPerm p N hpsq γ v : ℕ) < p :=
+  have hidx := descendIndexShift_val_of_le_of_ne_zero hpN hpsq hv hc
+  have hv' : (descendIndexShift p N hpsq γ v : ℕ) < p :=
     hidx ▸ (upperTriShift p (descendExtraGamma p N * γ) ⟨0, NeZero.pos p⟩).isLt
-  have htgt : (⟨(descendIndexPerm p N hpsq γ v : ℕ), hv'⟩ : Fin p)
+  have htgt : (⟨(descendIndexShift p N hpsq γ v : ℕ), hv'⟩ : Fin p)
       = upperTriShift p (descendExtraGamma p N * γ) ⟨0, NeZero.pos p⟩ := Fin.ext hidx
   refine ⟨α, hα, (intCast_apply_one_one_eq_of_mem_Gamma0_of_eq hδ hd).trans ?_, ?_⟩
   · refine intCast_apply_one_one_zmod_div_eq_of_map_eq ?_
@@ -523,12 +543,12 @@ theorem exists_mem_Gamma0_descendMatrix_mul_of_le_of_ne_zero [NeZero p] [Fact p.
 /-- **The extra representative is fixed when `p ∣ c`**: the factorisation of the twist
 `γ_p γ γ_p⁻¹` at `0` lands on `[1, 0; 0, p]`, and multiplying back by `γ_p` returns to the extra
 member. -/
-theorem exists_mem_Gamma0_descendMatrix_mul_of_le_of_eq_zero [NeZero p] [Fact p.Prime]
+private theorem exists_mem_Gamma0_descendMatrix_mul_of_le_of_eq_zero [Fact p.Prime]
     (hpN : p ∣ N) (hpsq : ¬ p ^ 2 ∣ N) {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p))
     {v : Fin (descendMatrixCount p N)} (hv : p ≤ v.val) (hc : ((γ 1 0 : ℤ) : ZMod p) = 0) :
     ∃ α : SL(2, ℤ), α ∈ Gamma0 N ∧ ((α 1 1 : ℤ) : ZMod (N / p)) = ((γ 1 1 : ℤ) : ZMod (N / p)) ∧
       descendMatrix p N v * mapGL ℝ γ
-        = mapGL ℝ α * descendMatrix p N (descendIndexPerm p N hpsq γ v) := by
+        = mapGL ℝ α * descendMatrix p N (descendIndexShift p N hpsq γ v) := by
   have hp : p.Prime := Fact.out
   have hγp : descendExtraGamma p N ∈ Gamma0 (N / p) := descendExtraGamma_mem_Gamma0 hp hpN hpsq
   have hδ : descendExtraGamma p N * γ * (descendExtraGamma p N)⁻¹ ∈ Gamma0 (N / p) :=
@@ -536,9 +556,7 @@ theorem exists_mem_Gamma0_descendMatrix_mul_of_le_of_eq_zero [NeZero p] [Fact p.
   obtain ⟨hA, hshift⟩ := descendExtraGamma_mul_mul_inv_isUnit_and_upperTriShift_eq hpN hpsq hc
   obtain ⟨α, hα, hd, hmul⟩ := exists_mem_Gamma0_upperTriRep_mul_of_isUnit hA
     (intCast_mul_apply_one_zero_eq_zero_of_mem_Gamma0_div hpN hδ)
-  have hidx : (descendIndexPerm p N hpsq γ v : ℕ) = p := by
-    rw [descendIndexPerm_apply, descendIndexEquiv_apply_of_le hpsq hv,
-      descendIndexGL_smul_infty_of_eq_zero hc, descendIndexEquiv_symm_infty_val]
+  have hidx := descendIndexShift_val_of_le_of_eq_zero hpsq hv hc
   refine ⟨α, hα, (intCast_apply_one_one_eq_of_mem_Gamma0_of_eq hδ hd).trans ?_, ?_⟩
   · refine intCast_apply_one_one_zmod_div_eq_of_map_eq ?_
     rw [map_mul, map_mul, map_inv, descendExtraGamma_map_intCast_zmod_div_eq_one hp hpN hpsq,
@@ -551,15 +569,15 @@ theorem exists_mem_Gamma0_descendMatrix_mul_of_le_of_eq_zero [NeZero p] [Fact p.
 
 /-- **The descent family is permuted by `Γ₀(N / p)` when `p` exactly divides `N`.** For
 `γ ∈ Γ₀(N / p)`, the product `descendMatrix p N v * γ` is an element of `Γ₀(N)` times the member
-of the family at `descendIndexPerm p N hpsq γ v`, a bijection of the index set by
-`descendIndexPerm_bijective`; and the `Γ₀(N)` witness has the lower-right entry of `γ` modulo
+of the family at `descendIndexShift p N hpsq γ v`, a bijection of the index set by
+`descendIndexShift_bijective`; and the `Γ₀(N)` witness has the lower-right entry of `γ` modulo
 `N / p`. -/
-theorem exists_mem_Gamma0_descendMatrix_mul_of_not_sq_dvd [NeZero p] [Fact p.Prime] (hpN : p ∣ N)
+theorem exists_mem_Gamma0_descendMatrix_mul_of_not_sq_dvd [Fact p.Prime] (hpN : p ∣ N)
     (hpsq : ¬ p ^ 2 ∣ N) {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p))
     (v : Fin (descendMatrixCount p N)) :
     ∃ α : SL(2, ℤ), α ∈ Gamma0 N ∧ ((α 1 1 : ℤ) : ZMod (N / p)) = ((γ 1 1 : ℤ) : ZMod (N / p)) ∧
       descendMatrix p N v * mapGL ℝ γ
-        = mapGL ℝ α * descendMatrix p N (descendIndexPerm p N hpsq γ v) := by
+        = mapGL ℝ α * descendMatrix p N (descendIndexShift p N hpsq γ v) := by
   rcases lt_or_ge v.val p with hv | hv
   · by_cases h0 : (((γ 0 0 + (v : ℕ) * γ 1 0 : ℤ) : ZMod p)) = 0
     · exact exists_mem_Gamma0_descendMatrix_mul_of_eq_zero hpN hpsq hγ hv h0

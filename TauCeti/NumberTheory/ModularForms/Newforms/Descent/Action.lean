@@ -111,13 +111,7 @@ theorem exists_mem_Gamma0_descendMatrix_mul (p N : ℕ) [NeZero p] (hpsq : p ^ 2
   have hpN : p ∣ N := dvd_trans (dvd_pow_self p two_ne_zero) hpsq
   have hcount : descendMatrixCount p N = p := descendMatrixCount_of_sq_dvd hpsq
   have hv : v.val < p := lt_of_lt_of_le v.isLt hcount.le
-  -- the second hypothesis is `N ∣ p c`, from `(N / p) ∣ c` and `p · (N / p) = N`
-  have hpc : (((p : ℤ) * γ 1 0 : ℤ) : ZMod N) = 0 := by
-    refine (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mpr ?_
-    have hpNp : (N : ℤ) = (p : ℤ) * ((N / p : ℕ) : ℤ) := by
-      exact_mod_cast (Nat.mul_div_cancel' hpN).symm
-    rw [hpNp]
-    exact mul_dvd_mul_left _ ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hγ))
+  have hpc := intCast_mul_apply_one_zero_eq_zero_of_mem_Gamma0_div hpN hγ
   obtain ⟨α, hα, _, hmul⟩ :=
     exists_mem_Gamma0_upperTriRep_mul
       (Gamma0_le_Gamma0_of_dvd (Nat.dvd_div_of_mul_dvd (by rwa [← pow_two])) hγ) hpc ⟨v.val, hv⟩

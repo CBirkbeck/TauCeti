@@ -46,6 +46,10 @@ results, lives in `ModularForms/HeckeSlash/UpperTri/Invariance.lean`.
   hypothesis holds for every offset at once.
 * `HeckeRing.GL2.exists_mem_Gamma0_upperTriRep_mul_of_mem_Gamma0`: its specialisation to `p ∣ N`
   and `γ ∈ Γ₀(N)`, whose conclusion is the modulo-`N` congruence of the lower-right entry.
+* `HeckeRing.GL2.intCast_mul_apply_one_zero_eq_zero_of_mem_Gamma0_div`: the level hypothesis
+  `N ∣ p c` holds for every element of `Γ₀(N / p)` when `p ∣ N`.
+* `HeckeRing.GL2.intCast_apply_one_one_eq_of_mem_Gamma0_of_eq`: the entry equation of a
+  factorisation reads as a congruence at any level where `c` vanishes.
 -/
 
 public section
@@ -252,6 +256,27 @@ theorem exists_mem_Gamma0_upperTriRep_mul_of_mem_Gamma0 [NeZero p] (hpN : p ∣ 
   rw [hdd]
   push_cast
   rw [Gamma0_mem.mp hγ]
+  ring
+
+/-- **The level hypothesis of the factorisation at a divided level.** For `δ ∈ Γ₀(N / p)` with
+`p ∣ N`, `N = p (N / p)` divides `p δ₁₀`, because `N / p ∣ δ₁₀`. -/
+theorem intCast_mul_apply_one_zero_eq_zero_of_mem_Gamma0_div (hpN : p ∣ N) {δ : SL(2, ℤ)}
+    (hδ : δ ∈ Gamma0 (N / p)) : (((p : ℤ) * δ 1 0 : ℤ) : ZMod N) = 0 := by
+  refine (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mpr ?_
+  have hpNp : (N : ℤ) = (p : ℤ) * ((N / p : ℕ) : ℤ) := by
+    exact_mod_cast (Nat.mul_div_cancel' hpN).symm
+  rw [hpNp]
+  exact mul_dvd_mul_left _ ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hδ))
+
+/-- **The entry equation reads as a congruence at any level where `c` vanishes.** The
+factorisations above return the lower-right entry of the witness as
+`δ 1 1 - δ 1 0 * k`; modulo a level `M` with `δ ∈ Γ₀(M)`, that is the entry of `δ`. -/
+theorem intCast_apply_one_one_eq_of_mem_Gamma0_of_eq {M : ℕ} {δ α : SL(2, ℤ)} (hδ : δ ∈ Gamma0 M)
+    {k : ℤ} (h : (α 1 1 : ℤ) = δ 1 1 - δ 1 0 * k) :
+    ((α 1 1 : ℤ) : ZMod M) = ((δ 1 1 : ℤ) : ZMod M) := by
+  rw [h]
+  push_cast
+  rw [Gamma0_mem.mp hδ]
   ring
 
 end HeckeRing.GL2
