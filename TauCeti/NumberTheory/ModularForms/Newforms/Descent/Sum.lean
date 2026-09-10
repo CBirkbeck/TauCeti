@@ -8,6 +8,8 @@ module
 public import Mathlib.Data.ZMod.Units
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Action
 
+import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Units
+
 /-!
 # The descent slash sum is `Γ₀(N / p)`-invariant
 
@@ -26,8 +28,9 @@ the sum is `Γ₀(N / p)`-invariant whenever `f` is `Γ₀(N)`-invariant.
 * `TauCeti.descendSlash_zero`, `TauCeti.descendSlash_add`, `TauCeti.descendSlash_smul`:
   `f ↦ descendSlash k p N f` is linear.
 * `TauCeti.descendSlash_slash_mapGL_of_mem_Gamma0`: for `p² ∣ N` and `γ ∈ Γ₀(N / p)`, if
-  `f ∣[k] α = u • f` for every `α ∈ Γ₀(N)` with the lower-right entry of `γ` modulo `N / p`, then
-  `descendSlash k p N f ∣[k] γ = u • descendSlash k p N f`.
+  `f ∣[k] δ = u • f` for every `δ ∈ Γ₀(N)` with the lower-right entry of `γ` modulo `N / p`, then
+  `descendSlash k p N f ∣[k] γ = u • descendSlash k p N f`, for a scalar `u` from any `α` acting
+  compatibly on `ℂ`.
 * `TauCeti.descendSlash_slash_mapGL_of_nebentypus`: if `f` transforms under `Γ₀(N)` by `χ`, and
   `χ` is the pull-back of `χ₀` modulo `N / p`, then `descendSlash k p N f` transforms under
   `Γ₀(N / p)` by `χ₀` — the descent lowers the level of the nebentypus.
@@ -89,16 +92,17 @@ positive determinant (`descendMatrix_det_pos`). -/
   exact Finset.sum_congr rfl fun v _ ↦
     ModularForm.smul_slash_of_det_pos k (descendMatrix_det_pos p N v) f c
 
-/-- **The descent slash sum is `Γ₀(N / p)`-equivariant at `p² ∣ N`.** If `f ∣[k] α = u • f` for
-every `α ∈ Γ₀(N)` with the same lower-right entry modulo `N / p` as `γ ∈ Γ₀(N / p)`, then
-`descendSlash k p N f ∣[k] γ = u • descendSlash k p N f`. The hypothesis is imposed only at those
-matrices, which are all the factorisation ever produces; the scalar `u` is left free so that
-invariance and the nebentypus transport `descendSlash_slash_mapGL_of_nebentypus` are both
-instances. -/
+/-- **The descent slash sum is `Γ₀(N / p)`-equivariant at `p² ∣ N`.** If `f ∣[k] δ = u • f` for
+every `δ ∈ Γ₀(N)` with the same lower-right entry modulo `N / p` as `γ ∈ Γ₀(N / p)`, then
+`descendSlash k p N f ∣[k] γ = u • descendSlash k p N f`. With `u = 1` this is the
+`Γ₀(N / p)`-invariance of the descent sum of a `Γ₀(N)`-invariant function; with `u` a character
+value it is the nebentypus transport `descendSlash_slash_mapGL_of_nebentypus`. The scalar may
+come from any `α` acting compatibly on `ℂ`, as in `descendSlash_smul`. -/
 theorem descendSlash_slash_mapGL_of_mem_Gamma0 (k : ℤ) [NeZero p] (hpsq : p ^ 2 ∣ N)
-    {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p)) {f : ℍ → ℂ} {u : ℂ}
-    (hf : ∀ α ∈ Gamma0 N, ((α 1 1 : ℤ) : ZMod (N / p)) = ((γ 1 1 : ℤ) : ZMod (N / p)) →
-      f ∣[k] (mapGL ℝ α : GL (Fin 2) ℝ) = u • f) :
+    {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p)) {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ]
+    {f : ℍ → ℂ} {u : α}
+    (hf : ∀ δ ∈ Gamma0 N, ((δ 1 1 : ℤ) : ZMod (N / p)) = ((γ 1 1 : ℤ) : ZMod (N / p)) →
+      f ∣[k] (mapGL ℝ δ : GL (Fin 2) ℝ) = u • f) :
     descendSlash k p N f ∣[k] (mapGL ℝ γ : GL (Fin 2) ℝ) = u • descendSlash k p N f := by
   rw [descendSlash_def, SlashAction.sum_slash, Finset.smul_sum]
   have key : ∀ v : Fin (descendMatrixCount p N),
@@ -134,13 +138,11 @@ theorem descendSlash_slash_mapGL_of_nebentypus (k : ℤ) [NeZero p] (hpsq : p ^ 
       = (↑(χ₀ ((Gamma0Map (N / p)).toHomUnits γ)) : ℂ) • descendSlash k p N f := by
   apply descendSlash_slash_mapGL_of_mem_Gamma0 k hpsq γ.2
   intro δ hδ hd
-  have hmap : ZMod.unitsMap (Nat.div_dvd_of_dvd ((dvd_pow_self p two_ne_zero).trans hpsq))
-      ((Gamma0Map N).toHomUnits ⟨δ, hδ⟩) = (Gamma0Map (N / p)).toHomUnits γ := by
-    ext
-    rw [ZMod.unitsMap_val, MonoidHom.coe_toHomUnits, MonoidHom.coe_toHomUnits, Gamma0Map_apply,
-      Gamma0Map_apply,
-      ZMod.cast_intCast (Nat.div_dvd_of_dvd ((dvd_pow_self p two_ne_zero).trans hpsq))]
-    exact hd
+  have hdvd : N / p ∣ N := Nat.div_dvd_of_dvd ((dvd_pow_self p two_ne_zero).trans hpsq)
+  have hmap : ZMod.unitsMap hdvd ((Gamma0Map N).toHomUnits ⟨δ, hδ⟩) =
+      (Gamma0Map (N / p)).toHomUnits γ := by
+    rw [← Gamma0Map_toHomUnits_of_dvd hdvd ⟨δ, hδ⟩ (Gamma0_le_Gamma0_of_dvd hdvd hδ)]
+    exact Units.ext hd
   rw [hf ⟨δ, hδ⟩, hcomp, MonoidHom.comp_apply, hmap]
 
 end TauCeti
