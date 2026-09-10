@@ -34,6 +34,7 @@ runs through, since at residue degree one the relative Frobenius over `E` is the
   many elements as `⟨φ⟩ ⊓ ⟨σ⟩`.
 * `Ideal.inertiaDeg_under_fixedField_mul_card_inf`: that residue degree times the size of the
   intersection is `orderOf φ`.
+* `Ideal.inertiaDeg_under_fixedField_eq_relIndex`: that residue degree is `Subgroup.relIndex`.
 * `Ideal.inertiaDeg_under_fixedField_eq_one_of_isArithFrobAt`: at `σ = φ` the residue degree is
   one.
 
@@ -115,6 +116,26 @@ theorem inertiaDeg_under_fixedField_mul_card_inf (σ : L ≃ₐ[K] L) (Q : Ideal
     exact card_stabilizer_fixedField_eq_card_inf σ Q hQ hφ
   rw [(orderOf_eq_inertiaDeg_of_isArithFrobAt Q hQ hφ).symm, hE'] at htower
   exact htower.symm
+
+/-- **The residue degree is the relative index.**  `Subgroup.relIndex` is Mathlib's name for the
+index of `⟨σ⟩ ⊓ ⟨φ⟩` in `⟨φ⟩`, which is exactly the residue degree above. -/
+theorem inertiaDeg_under_fixedField_eq_relIndex (σ : L ≃ₐ[K] L) (Q : Ideal (𝓞 L)) [Q.IsPrime]
+    (hQ : Q ≠ ⊥) [Algebra.IsUnramifiedAt (𝓞 K) Q] {φ : L ≃ₐ[K] L}
+    (hφ : IsArithFrobAt (𝓞 K) φ Q) :
+    (Q.under (𝓞 ↥(fixedField (Subgroup.zpowers σ)))).inertiaDeg (𝓞 K)
+      = (Subgroup.zpowers σ).relIndex (Subgroup.zpowers φ) := by
+  have hidx : (Subgroup.zpowers σ).relIndex (Subgroup.zpowers φ)
+      * Nat.card ((Subgroup.zpowers φ ⊓ Subgroup.zpowers σ : Subgroup (L ≃ₐ[K] L)))
+      = orderOf φ := by
+    rw [Subgroup.relIndex, ← Nat.card_zpowers φ,
+      ← Subgroup.index_mul_card ((Subgroup.zpowers σ).subgroupOf (Subgroup.zpowers φ))]
+    congr 1
+    rw [inf_comm, ← Subgroup.subgroupOf_map_subtype]
+    exact (Nat.card_congr (Subgroup.equivMapOfInjective
+      ((Subgroup.zpowers σ).subgroupOf (Subgroup.zpowers φ)) (Subgroup.zpowers φ).subtype
+      (Subgroup.subtype_injective _)).toEquiv).symm
+  exact Nat.eq_of_mul_eq_mul_right Nat.card_pos
+    ((inertiaDeg_under_fixedField_mul_card_inf σ Q hQ hφ).trans hidx.symm)
 
 /-- **The prime below `Q` in the fixed field of a Frobenius at `Q` has degree one.**  If `σ` is an
 arithmetic Frobenius at a nonzero prime `Q` of `𝓞 L` unramified over `𝓞 K`, then `Q ∩ 𝓞 (L ^ ⟨σ⟩)`
