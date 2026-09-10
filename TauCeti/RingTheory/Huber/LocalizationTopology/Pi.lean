@@ -5,7 +5,10 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.RingTheory.RingHom.Flat
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Completion
+
+import TauCeti.RingTheory.Flat.Pi
 
 /-!
 # The structure map into a family of rational localisations
@@ -22,8 +25,10 @@ The family `(R(T/t))_{t ∈ T}` is a cover of `Spa(A,A⁺)` — a *standard rati
 `A`. For a complete Hausdorff Huber pair the converse holds as well
 (`TauCeti.ValuationSpectrum.span_eq_top_iff_spa_eq_biUnion_rationalSubset`, Corollary 7.53).
 Under the spanning hypothesis this map is the comparison whose faithful flatness and injectivity
-Wedhorn's Corollary 8.32 asserts. Neither the hypothesis nor those conclusions appear below; this
-is the map they are about.
+Wedhorn's Corollary 8.32 asserts. That spanning hypothesis is still not imposed anywhere below,
+and neither conclusion of Corollary 8.32 is proved here in full: what is proved is that the map
+is *flat* whenever each of its components is, which needs no relation between the members of `T`
+at all.
 
 ## Implementation notes
 
@@ -40,6 +45,8 @@ all.
 * `TauCeti.Huber.PairOfDefinition.rationalLocalizationPiHom`, with
   `TauCeti.Huber.PairOfDefinition.rationalLocalizationPiHom_apply` its computation rule and
   `TauCeti.Huber.PairOfDefinition.continuous_rationalLocalizationPiHom` its continuity.
+* `TauCeti.Huber.PairOfDefinition.flat_rationalLocalizationPiHom`: the map is flat as soon as
+  each of its components is — the flatness half of Corollary 8.32.
 
 ## References
 
@@ -95,6 +102,37 @@ theorem continuous_rationalLocalizationPiHom :
       isTopologicalRing_locUniformSpace P T (t : A) (S t) (hden t)
     Continuous (rationalLocalizationPiHom P T S hden) :=
   continuous_pi fun t ↦ continuous_toCompletionLoc P T (t : A) (S t) (hden t)
+
+/-- **The structure map into a family of rational localisations is flat as soon as each of its
+components is.** The numerators are a `Finset`, so the product is finite, and a finite product of
+flat modules is flat.
+
+This is the flatness half of Wedhorn's Corollary 8.32. The faithfulness half is a strictly
+stronger statement and is not proved here: it needs `Ideal.span (T : Set A) = ⊤`, which is what
+makes the family a cover of `Spa(A, A⁺)` rather than an arbitrary finite family. -/
+theorem flat_rationalLocalizationPiHom
+    (hflat : ∀ t : T,
+      letI : UniformSpace (S t) := locUniformSpace P T (t : A) (S t) (hden t)
+      letI : IsUniformAddGroup (S t) :=
+        isUniformAddGroup_locUniformSpace P T (t : A) (S t) (hden t)
+      letI : IsTopologicalRing (S t) :=
+        isTopologicalRing_locUniformSpace P T (t : A) (S t) (hden t)
+      (toCompletionLoc P T (t : A) (S t) (hden t)).Flat) :
+    letI : ∀ t : T, UniformSpace (S t) := fun t ↦ locUniformSpace P T (t : A) (S t) (hden t)
+    letI : ∀ t : T, IsUniformAddGroup (S t) := fun t ↦
+      isUniformAddGroup_locUniformSpace P T (t : A) (S t) (hden t)
+    letI : ∀ t : T, IsTopologicalRing (S t) := fun t ↦
+      isTopologicalRing_locUniformSpace P T (t : A) (S t) (hden t)
+    (rationalLocalizationPiHom P T S hden).Flat := by
+  let : ∀ t : T, UniformSpace (S t) := fun t ↦ locUniformSpace P T (t : A) (S t) (hden t)
+  let : ∀ t : T, IsUniformAddGroup (S t) := fun t ↦
+    isUniformAddGroup_locUniformSpace P T (t : A) (S t) (hden t)
+  let : ∀ t : T, IsTopologicalRing (S t) := fun t ↦
+    isTopologicalRing_locUniformSpace P T (t : A) (S t) (hden t)
+  let : ∀ t : T, Algebra A (UniformSpace.Completion (S t)) := fun t ↦
+    (toCompletionLoc P T (t : A) (S t) (hden t)).toAlgebra
+  have : ∀ t : T, Module.Flat A (UniformSpace.Completion (S t)) := hflat
+  exact Module.Flat.pi
 
 end TauCeti.Huber.PairOfDefinition
 
