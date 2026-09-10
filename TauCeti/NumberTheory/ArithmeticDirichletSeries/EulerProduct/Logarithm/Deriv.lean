@@ -6,10 +6,10 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Deriv
-public import TauCeti.Analysis.Complex.BranchLogRoot
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.Basic
 
 import Mathlib.Analysis.Calculus.SmoothSeries
+import TauCeti.Analysis.Complex.BranchLogRoot
 
 /-!
 # The derivative of the prime-power logarithmic expansion
@@ -32,7 +32,7 @@ prime-power series the derivative is equal to.
 ## Main results
 
 * `TauCeti.MultiplicativeIdealWeight.hasDerivAt_tsum_prime_pow`: the prime-power expansion
-  differentiates termwise, strictly right of a point of absolute convergence.
+  differentiates termwise, strictly right of the abscissa of absolute convergence.
 * `TauCeti.MultiplicativeIdealWeight.logDeriv_LSeries_eq_tsum_prime_pow`: that derivative **is**
   the logarithmic derivative of the `L`-series.
 -/
@@ -133,26 +133,29 @@ theorem summable_log_absNorm_mul_norm_prime_pow {s s' : ℂ} (h : s.re < s'.re)
   · exact ⟨1 / 2, by norm_num, by filter_upwards [hhalf] with P hP _; linarith⟩
   · exact fun P _ ↦ χ.norm_div_lt_one_of_summable_idealTerm hs' P
 
-/-- **The prime-power expansion differentiates termwise.**  Strictly to the right of any single
-point of absolute convergence, the sum over prime powers is differentiable and its derivative is
-the termwise one: the same family weighted by `-log N(P)`, with the division by `e + 1` gone.
+/-- **The prime-power expansion differentiates termwise.**  Strictly to the right of the abscissa
+of absolute convergence, the sum over prime powers is differentiable and its derivative is the
+termwise one: the same family weighted by `-log N(P)`, with the division by `e + 1` gone.
 
-One point of convergence is enough: absolute convergence propagates rightward, which is what
-supplies the majorant on a neighbourhood of `s`. -/
-theorem hasDerivAt_tsum_prime_pow {s₀ s : ℂ}
-    (hs₀ : Summable (idealTerm K χ.toIdealArithmeticFunction s₀)) (hs : s₀.re < s.re) :
+The abscissa is all that is needed: convergence propagates rightward from any point to its left,
+which is what supplies the majorant on a neighbourhood of `s`. -/
+theorem hasDerivAt_tsum_prime_pow {s : ℂ}
+    (hs : idealAbscissaOfAbsConv K χ.toIdealArithmeticFunction < s.re) :
     HasDerivAt (fun z : ℂ ↦ ∑' pe : HeightOneSpectrum (𝓞 K) × ℕ,
         (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ z) ^ (pe.2 + 1) / ((pe.2 : ℂ) + 1))
       (∑' pe : HeightOneSpectrum (𝓞 K) × ℕ,
         -(Complex.log (Ideal.absNorm pe.1.asIdeal : ℂ)
           * (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ s) ^ (pe.2 + 1))) s := by
-  obtain ⟨σ₀, hσ₁₀, hσ₀s⟩ := exists_between hs
+  obtain ⟨s₀, hs₀, hs₀s⟩ : ∃ y : ℝ, Summable (idealTerm K χ.toIdealArithmeticFunction y)
+      ∧ y < s.re := by simpa [idealAbscissaOfAbsConv_def, sInf_lt_iff] using hs
+  obtain ⟨σ₀, hσ₁₀, hσ₀s⟩ := exists_between hs₀s
   have hu : Summable fun pe : HeightOneSpectrum (𝓞 K) × ℕ ↦
       Real.log (Ideal.absNorm pe.1.asIdeal)
         * ‖χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ (σ₀ : ℂ)‖ ^ (pe.2 + 1) :=
-    χ.summable_log_absNorm_mul_norm_prime_pow (s' := (σ₀ : ℂ)) (by simpa using hσ₁₀) hs₀
+    χ.summable_log_absNorm_mul_norm_prime_pow (s := (s₀ : ℂ)) (s' := (σ₀ : ℂ))
+      (by simpa using hσ₁₀) hs₀
   have hsum : Summable (idealTerm K χ.toIdealArithmeticFunction s) :=
-    summable_idealTerm_of_re_le_re K hs.le hs₀
+    summable_idealTerm_of_idealAbscissaOfAbsConv_lt_re K hs
   have hy₀ := Complex.summable_taylorSeries_neg_log
     (r := fun P : HeightOneSpectrum (𝓞 K) ↦
       χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s)
@@ -174,19 +177,25 @@ theorem hasDerivAt_tsum_prime_pow {s₀ s : ℂ}
 /-- **The logarithmic derivative of the `L`-series, as a prime-power series.**  Strictly to the
 right of a point of absolute convergence,
 
-`logDeriv L(s) = ∑' (P, e), -log N(P) · (χ(P) N(P)⁻ˢ) ^ (e+1)`.
+`logDeriv L(s) = ∑' (P, e), -log N(P) · (χ(P) N(P)⁻ˢ) ^ (e+1)`
+
+strictly to the right of the abscissa of absolute convergence.
 
 This is the identification Layer 3.4 asks for.  The prime-power expansion is a branch of the
 logarithm of the `L`-series there — its exponential is the `L`-series, by
 `exp_tsum_prime_pow_eq_LSeries` — and the derivative of any such branch is the logarithmic
 derivative, the branch ambiguity being locally constant. -/
-theorem logDeriv_LSeries_eq_tsum_prime_pow {s₀ s : ℂ}
-    (hs₀ : Summable (idealTerm K χ.toIdealArithmeticFunction s₀)) (hs : s₀.re < s.re) :
+theorem logDeriv_LSeries_eq_tsum_prime_pow {s : ℂ}
+    (hs : idealAbscissaOfAbsConv K χ.toIdealArithmeticFunction < s.re) :
     logDeriv (LSeries (normCoeff K χ.toIdealArithmeticFunction)) s
       = ∑' pe : HeightOneSpectrum (𝓞 K) × ℕ,
         -(Complex.log (Ideal.absNorm pe.1.asIdeal : ℂ)
           * (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ s) ^ (pe.2 + 1)) := by
-  set U : Set ℂ := {z : ℂ | s₀.re < z.re} with hU
+  obtain ⟨y, hy, hys⟩ : ∃ y : ℝ, Summable (idealTerm K χ.toIdealArithmeticFunction y)
+      ∧ y < s.re := by simpa [idealAbscissaOfAbsConv_def, sInf_lt_iff] using hs
+  have hmem : ∀ z : ℂ, y < z.re → idealAbscissaOfAbsConv K χ.toIdealArithmeticFunction < z.re :=
+    fun z hz ↦ lt_of_le_of_lt (by simpa using idealAbscissaOfAbsConv_le K hy) (by exact_mod_cast hz)
+  set U : Set ℂ := {z : ℂ | y < z.re} with hU
   have hUo : IsOpen U := isOpen_lt continuous_const continuous_re
   set f : ℂ → ℂ := fun z ↦ ∑' pe : HeightOneSpectrum (𝓞 K) × ℕ,
     (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ z) ^ (pe.2 + 1) / ((pe.2 : ℂ) + 1) with hf
@@ -194,13 +203,13 @@ theorem logDeriv_LSeries_eq_tsum_prime_pow {s₀ s : ℂ}
       (∑' pe : HeightOneSpectrum (𝓞 K) × ℕ,
         -(Complex.log (Ideal.absNorm pe.1.asIdeal : ℂ)
           * (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ z) ^ (pe.2 + 1))) z :=
-    fun z hz ↦ χ.hasDerivAt_tsum_prime_pow hs₀ hz
+    fun z hz ↦ χ.hasDerivAt_tsum_prime_pow (hmem z hz)
   have hdiff : DifferentiableOn ℂ f U := fun z hz ↦
     (hderiv z hz).differentiableAt.differentiableWithinAt
   have heq : Set.EqOn (Complex.exp ∘ f) (LSeries (normCoeff K χ.toIdealArithmeticFunction)) U :=
     fun z hz ↦ χ.exp_tsum_prime_pow_eq_LSeries
-      (summable_idealTerm_of_re_le_re K (le_of_lt hz) hs₀)
-  rw [← deriv_eq_logDeriv_of_eqOn_exp_comp hUo hdiff heq hs, (hderiv s hs).deriv]
+      (summable_idealTerm_of_idealAbscissaOfAbsConv_lt_re K (hmem z hz))
+  rw [← deriv_eq_logDeriv_of_eqOn_exp_comp hUo hdiff heq hys, (hderiv s hys).deriv]
 
 end MultiplicativeIdealWeight
 
