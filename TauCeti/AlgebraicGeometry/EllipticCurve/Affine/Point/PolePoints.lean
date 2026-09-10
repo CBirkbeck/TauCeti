@@ -22,6 +22,11 @@ lying in the kernel `E₁(K_P)` of reduction at `P` on the completion `K_P` (Sil
 reduction map is constructed here, the subgroup being cut out by the valuation of the
 `x`-coordinate alone.
 
+The group law on the points of an affine Weierstrass curve depends definitionally on the chosen
+`DecidableEq K`, so that instance is a parameter of every declaration here rather than being fixed
+classically: the statements apply to the point operations of whatever instance is in context, in
+particular to the function field of a curve with its own.
+
 ## Main definitions
 
 * `WeierstrassCurve.Affine.polePoints`: the subgroup of `W(K)` of points whose `x`-coordinate has
