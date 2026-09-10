@@ -13,7 +13,7 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Action
 `Newforms/Descent/Action.lean` shows that, at a prime `p` with `p² ∣ N`, right multiplication by
 `γ ∈ Γ₀(N / p)` permutes the family `descendMatrix p N` up to `Γ₀(N)`. This file draws the
 consequence that the descent consumes: the sum of the slashes of `f` along the family is
-`Γ₀(N / p)`-invariant whenever `f` is `Γ₀(N)`-invariant, with the same scalar.
+`Γ₀(N / p)`-invariant whenever `f` is `Γ₀(N)`-invariant.
 
 ## Main definitions
 
