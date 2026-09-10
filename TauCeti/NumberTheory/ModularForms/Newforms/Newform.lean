@@ -30,8 +30,7 @@ that the character, the eigenvalue system and the analytic invariants travel wit
   `Nat.Coprime n N`; the total `ringEigenvalue` is a representation detail.
 * That a newform is an eigenvector of every `T_n` is a theorem (Atkin–Lehner–Li; Miyake
   Theorem 4.6.13), not a field. The comparison of the ring eigenvalue with the classical
-  operator `heckeTCuspNat` — through the diamond factor `χ(n)` — is likewise a theorem, and is
-  not proved here.
+  operator `heckeTCuspNat` is likewise a theorem, and is not proved here.
 
 ## Main definitions
 
@@ -54,8 +53,9 @@ Chris Birkbeck, commit `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0,
 <https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>), with the porting
 decisions the roadmap pins: the structure is named for the qualified notion, the nonzeroness
 field is added, the character space is the cusp-form one, and the bad-index slots are
-normalised to `0`. The source's `Eigenform.eigenvalue`/`isEigen` (the classical eigenvalue) rest
-on its `heckeT_n_cusp_eq_heckeRingHom`, which has no counterpart here yet.
+normalised to `0`. The source's `Eigenform.eigenvalue`/`isEigen` (the classical eigenvalue,
+which in its convention carries a diamond factor `χ(n)`) rest on its
+`heckeT_n_cusp_eq_heckeRingHom`, which has no counterpart here yet.
 
 ## References
 
