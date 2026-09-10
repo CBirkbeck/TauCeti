@@ -32,8 +32,6 @@ prime-power series the derivative is equal to.
 
 ## Main results
 
-* `TauCeti.MultiplicativeIdealWeight.summable_primePowTaylor`: the prime-power Taylor family is
-  summable wherever the ideal-indexed series converges absolutely.
 * `TauCeti.MultiplicativeIdealWeight.hasDerivAt_tsum_primePow`: the prime-power expansion
   differentiates termwise on the half-plane of absolute convergence.
 -/
@@ -133,17 +131,6 @@ theorem summable_log_absNorm_mul_norm_primePow {s s' : ℂ} (h : s.re < s'.re)
   · exact ⟨1 / 2, by norm_num, by filter_upwards [hhalf] with P hP _; linarith⟩
   · exact fun P _ ↦ χ.norm_div_lt_one_of_summable_idealTerm hs' P
 
-/-- **The prime-power Taylor family is summable wherever the ideal-indexed series converges
-absolutely.**  This is the side condition under which the expansion
-`tsum_prime_pow_eq_tsum_neg_log_one_sub` may be regrouped, in the index the expansion uses. -/
-theorem summable_primePowTaylor {s : ℂ}
-    (hs : Summable (idealTerm K χ.toIdealArithmeticFunction s)) :
-    Summable fun pe : HeightOneSpectrum (𝓞 K) × ℕ ↦
-      (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ s) ^ (pe.2 + 1) / ((pe.2 : ℂ) + 1) :=
-  Complex.summable_taylorSeries_neg_log
-    (r := fun P : HeightOneSpectrum (𝓞 K) ↦ χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s)
-    (χ.summable_div_of_summable_idealTerm hs) (χ.norm_div_lt_one_of_summable_idealTerm hs)
-
 /-- **The prime-power expansion differentiates termwise.**  On the open half-plane `σ₁ < re z`,
 where the ideal-indexed series converges absolutely at every point, the sum over prime powers is
 differentiable and its derivative is the termwise one: the same family weighted by `-log N(P)`,
@@ -156,20 +143,20 @@ theorem hasDerivAt_tsum_primePow {σ₁ : ℝ}
       (∑' pe : HeightOneSpectrum (𝓞 K) × ℕ,
         -(Complex.log (Ideal.absNorm pe.1.asIdeal : ℂ)
           * (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ s) ^ (pe.2 + 1))) s := by
-  set σ₀ : ℝ := (σ₁ + s.re) / 2 with hσ₀
-  have hσ₁₀ : σ₁ < σ₀ := by simp only [hσ₀]; linarith
-  have hσ₀s : σ₀ < s.re := by simp only [hσ₀]; linarith
-  set σ₂ : ℝ := (σ₁ + σ₀) / 2 with hσ₂
-  have hσ₁₂ : σ₁ < σ₂ := by simp only [hσ₂]; linarith
-  have hσ₂₀ : σ₂ < σ₀ := by simp only [hσ₂]; linarith
+  obtain ⟨σ₀, hσ₁₀, hσ₀s⟩ := exists_between hs
+  obtain ⟨σ₂, hσ₁₂, hσ₂₀⟩ := exists_between hσ₁₀
   have hu : Summable fun pe : HeightOneSpectrum (𝓞 K) × ℕ ↦
       Real.log (Ideal.absNorm pe.1.asIdeal)
         * ‖χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ (σ₀ : ℂ)‖ ^ (pe.2 + 1) :=
     χ.summable_log_absNorm_mul_norm_primePow
       (s := (σ₂ : ℂ)) (s' := (σ₀ : ℂ)) (by simpa using hσ₂₀)
       (habs (σ₂ : ℂ) (by simpa using hσ₁₂)) (habs (σ₀ : ℂ) (by simpa using hσ₁₀))
-  have hy₀ := χ.summable_primePowTaylor
-    (habs ((σ₀ + 1 : ℝ) : ℂ) (by simp; linarith))
+  have hmem : σ₁ < ((σ₀ + 1 : ℝ) : ℂ).re := by simp; linarith
+  have hy₀ := Complex.summable_taylorSeries_neg_log
+    (r := fun P : HeightOneSpectrum (𝓞 K) ↦
+      χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ ((σ₀ + 1 : ℝ) : ℂ))
+    (χ.summable_div_of_summable_idealTerm (habs _ hmem))
+    (χ.norm_div_lt_one_of_summable_idealTerm (habs _ hmem))
   exact hasDerivAt_tsum_of_isPreconnected
     (u := fun pe : HeightOneSpectrum (𝓞 K) × ℕ ↦
       Real.log (Ideal.absNorm pe.1.asIdeal)
