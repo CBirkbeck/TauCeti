@@ -8,6 +8,7 @@ module
 public import Mathlib.Topology.Algebra.InfiniteSum.DiscreteConvolution
 public import Mathlib.Topology.Algebra.InfiniteSum.Nonarchimedean
 public import TauCeti.RingTheory.Huber.Restricted.TwoSided.Series
+public import TauCeti.Topology.Algebra.InfiniteSum.DiscreteConvolution
 
 /-!
 # The ring of two-sided restricted series `A⟨X, X⁻¹⟩`
@@ -60,7 +61,9 @@ carry none, so the `Finset`-indexed Cauchy-product lemmas do not apply here at a
 
 ## Main results
 
-* `TauCeti.Huber.addConvolution_mul_apply`: the coefficient formula `(fg)ₙ = ∑' k, aₖ b_{n-k}`.
+* `DiscreteConvolution.addConvolution_mul_apply` (in
+  `TauCeti.Topology.Algebra.InfiniteSum.DiscreteConvolution`, which this module imports): the
+  coefficient formula `(fg)ₙ = ∑' k, aₖ b_{n-k}`.
 * `TauCeti.Huber.addConvolution_mem_twoSidedRestrictedSubmodule`: **the closure result** — a
   convolution of restricted families is restricted.
 * `TauCeti.Huber.mem_twoSidedRestrictedSubmodule_iff_summable`: over a complete group,
@@ -118,24 +121,6 @@ namespace TauCeti.Huber
 section Convolution
 
 variable {A : Type*} [Ring A] [TopologicalSpace A] [NonarchimedeanRing A]
-
--- The antidiagonal `{(i, j) | i + j = n}` in `ℤ × ℤ`, parametrised by its first coordinate. This
--- is where the `ℤ`-indexed picture and Mathlib's fibre picture meet, and it is an `Equiv` rather
--- than a `Finset` precisely because the antidiagonal is infinite.
-private def addFiberEquivInt (n : ℤ) : ℤ ≃ (addFiber n : Set (ℤ × ℤ)) where
-  toFun k := ⟨(k, n - k), by grind⟩
-  invFun ab := ab.1.1
-  left_inv _ := rfl
-  right_inv ab := by grind
-
-omit [NonarchimedeanRing A] in
-/-- **The coefficient formula for the two-sided product**: `(fg)ₙ = ∑' k, aₖ b_{n-k}`, the familiar
-Laurent convolution. -/
-theorem addConvolution_mul_apply (f g : ℤ → A) (n : ℤ) :
-    addConvolution (LinearMap.mul ℤ A) f g n = ∑' k : ℤ, f k * g (n - k) :=
-  -- Reindexing Mathlib's sum over `addFiber n` by the first coordinate is exactly
-  -- `addFiberEquivInt`.
-  ((addFiberEquivInt n).tsum_eq fun ab ↦ f ab.1.1 * g ab.1.2).symm
 
 /-- **The product of two restricted families is restricted**, so `A⟨X, X⁻¹⟩` is closed under the
 convolution. This is what makes it a ring rather than merely a module, and it needs neither
