@@ -97,7 +97,7 @@ theorem descendSlash_slash_mapGL_of_mem_Gamma0 (k : ℤ) [NeZero p] (hpsq : p ^ 
   have key : ∀ v : Fin (descendMatrixCount p N),
       (f ∣[k] descendMatrix p N v) ∣[k] (mapGL ℝ γ : GL (Fin 2) ℝ)
         = f ∣[k] descendMatrix p N (descendShift p N hpsq γ v) := fun v ↦ by
-    obtain ⟨α, hα, hmul⟩ := exists_mem_Gamma0_descendMatrix_mul p N hpsq hγ v
+    obtain ⟨α, hα, -, hmul⟩ := exists_mem_Gamma0_descendMatrix_mul p N hpsq hγ v
     rw [← SlashAction.slash_mul, hmul, SlashAction.slash_mul, hf α hα]
   rw [Finset.sum_congr rfl fun v _ ↦ key v]
   exact Fintype.sum_bijective (descendShift p N hpsq γ)
