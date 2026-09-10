@@ -9,6 +9,8 @@ public import Mathlib.Algebra.DirectSum.Module
 public import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
 public import Mathlib.RingTheory.Ideal.Operations
 
+import TauCeti.RingTheory.Ideal.Operations
+
 /-!
 # A finite product of flat modules is flat, and when it is faithfully flat
 
@@ -18,14 +20,14 @@ the two agree, and this file records the resulting instance together with the cr
 upgrades it to faithful flatness.
 
 Mathlib defines `Module.FaithfullyFlat` as flatness plus `m • ⊤ ≠ ⊤` for every maximal ideal `m`,
-so the criterion is about locating a single component that keeps `m` proper: a product is
+so the criterion is about locating a single component that keeps `m` proper — the factorwise half
+of that is `TauCeti.Ideal.smul_top_eq_top_of_pi`, a general ideal-action fact with no flatness or
+finiteness in it, which lives in `TauCeti/RingTheory/Ideal/Operations.lean`: a product is
 faithfully flat as soon as each factor is flat and **no maximal ideal expands in every factor at
 once**. Individually the factors may all fail to be faithfully flat.
 
 ## Main results
 
-* `Ideal.smul_top_eq_top_of_pi`: `I • ⊤ = ⊤` in a product passes to every factor. No finiteness
-  is needed for this direction.
 * `Module.Flat.pi`: a finite product of flat modules is flat.
 * `Module.FaithfullyFlat.pi_of_exists_submodule_ne_top`: a finite product of flat modules is
   faithfully flat as soon as every maximal ideal stays proper in *some* factor.
@@ -50,27 +52,14 @@ public section
 
 variable {R : Type*} {ι : Type*} {M : ι → Type*}
 
-namespace Ideal
-
-variable [Semiring R] [∀ i, AddCommMonoid (M i)] [∀ i, Module R (M i)]
-
-/-- If an ideal expands the whole of a product, it expands the whole of every factor. The
-projections are surjective, so this is `Submodule.map_smul''` read along one of them. -/
-theorem smul_top_eq_top_of_pi (I : Ideal R) (h : I • (⊤ : Submodule R (∀ i, M i)) = ⊤) (i : ι) :
-    I • (⊤ : Submodule R (M i)) = ⊤ := by
-  have := congrArg (Submodule.map (LinearMap.proj (R := R) (φ := M) i)) h
-  rwa [Submodule.map_smul'', Submodule.map_top,
-    LinearMap.range_eq_top.mpr (Function.surjective_eval i)] at this
-
-end Ideal
-
 namespace Module
 
 section Flat
 
 variable [CommSemiring R] [∀ i, AddCommMonoid (M i)] [∀ i, Module R (M i)]
 
-/-- **A finite product of flat modules is flat**, by comparison with the direct sum. -/
+/-- **A finite product of flat modules is flat.** The finiteness is essential; see the module
+docstring. -/
 instance Flat.pi [Finite ι] [∀ i, Flat R (M i)] : Flat R (∀ i, M i) := by
   have := Fintype.ofFinite ι
   exact Flat.of_linearEquiv (DirectSum.linearEquivFunOnFintype R ι M).symm
