@@ -56,11 +56,12 @@ carry none, so the `Finset`-indexed Cauchy-product lemmas do not apply here at a
   structure**, and the `A`-algebra structure of Example 6.39 when `A` is commutative.
 * `TauCeti.Huber.twoSidedMonomial`: the monomial `a Xⁿ`. The Laurent variable Wedhorn writes `ζ`
   is `twoSidedMonomial 1 1` and its inverse is `twoSidedMonomial (-1) 1`; neither gets a
-  separate definition, so the only body this file exposes is the monomial's.
+  separate definition. `TauCeti.Huber.coe_twoSidedMonomial` is the coefficient-level API through
+  which a monomial is read outside this module.
 
 ## Main results
 
-* `DiscreteConvolution.addConvolution_mul_apply` (in
+* `DiscreteConvolution.addConvolution_mul_apply_sub` (in
   `TauCeti.Topology.Algebra.InfiniteSum.DiscreteConvolution`, which this module imports): the
   coefficient formula `(fg)ₙ = ∑' k, aₖ b_{n-k}`.
 * `TauCeti.Huber.addConvolution_mem_twoSidedRestrictedSubmodule`: **the closure result** — a
@@ -171,7 +172,7 @@ wants, and it needs no completeness — where the series fails to converge both 
 theorem coe_mul_apply (f g : twoSidedRestrictedSubmodule A A) (n : ℤ) :
     ((f * g : twoSidedRestrictedSubmodule A A) : ℤ → A) n
       = ∑' k : ℤ, (f : ℤ → A) k * (g : ℤ → A) (n - k) := by
-  rw [coe_mul_twoSidedRestrictedSubmodule, addConvolution_mul_apply]
+  rw [coe_mul_twoSidedRestrictedSubmodule, addConvolution_mul_apply_sub]
 
 /-- **The monomial `a Xⁿ`** of `A⟨X, X⁻¹⟩`: the family supported at degree `n` with value `a`.
 Restrictedness is `single_mem_twoSidedRestrictedSubmodule`. -/
@@ -197,9 +198,9 @@ variable {A : Type*} [Ring A] [TopologicalSpace A] [NonarchimedeanRing A]
 
 /-- **Monomials multiply by adding degrees**: `(a Xᵐ)(b Xⁿ) = ab X^{m+n}`.
 
-Only one term of the coefficient series is nonzero, so this needs neither completeness,
-summability, nor a separation axiom — unlike the ring axioms themselves. It is the computation rule
-for the Laurent expressions Wedhorn's §8.2.1 is written in. -/
+This is the computation rule for the Laurent expressions Wedhorn's §8.2.1 is written in. It asks
+neither completeness, nor summability, nor a separation axiom — unlike the ring axioms
+themselves. -/
 @[simp]
 theorem twoSidedMonomial_mul_twoSidedMonomial (m n : ℤ) (a b : A) :
     twoSidedMonomial m a * twoSidedMonomial n b = twoSidedMonomial (m + n) (a * b) := by
@@ -273,7 +274,7 @@ noncomputable instance instRing : Ring (twoSidedRestrictedSubmodule A A) where
   -- exactly the standard `mul_assoc`.
   mul_assoc f g h := by
     ext n
-    simp only [coe_mul_twoSidedRestrictedSubmodule, addConvolution_mul_apply]
+    simp only [coe_mul_twoSidedRestrictedSubmodule, addConvolution_mul_apply_sub]
     -- Index that fibre by `(m, k) ↦ (k, m - k, n - m)`, with `m` the degree of the partial product
     -- `fg`. It is a subfamily of `(i, j, l) ↦ aᵢbⱼcₗ`, which is summable on all of `ℤ × ℤ × ℤ`.
     have hF : Summable fun p : ℤ × ℤ ↦

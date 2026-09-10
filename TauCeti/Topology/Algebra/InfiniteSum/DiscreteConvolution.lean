@@ -27,21 +27,33 @@ public section
 
 namespace DiscreteConvolution
 
-/-- **The antidiagonal `{(i, j) | i + j = n}` in `ℤ × ℤ`, parametrised by its first
-coordinate.** This is where the `ℤ`-indexed picture and Mathlib's fibre picture meet, and it is
-an `Equiv` rather than a `Finset` precisely because the antidiagonal is infinite. -/
-def intEquivAddFiber (n : ℤ) : ℤ ≃ (addFiber n : Set (ℤ × ℤ)) where
-  toFun k := ⟨(k, n - k), by grind⟩
+/-- **The antidiagonal `{(a, b) | a + b = n}`, parametrised by its first coordinate.** This is
+where an index-set picture and Mathlib's fibre picture meet, and it is an `Equiv` rather than a
+`Finset` because the antidiagonal need not be finite. -/
+def equivAddFiber {G : Type*} [AddGroup G] (n : G) : G ≃ (addFiber n : Set (G × G)) where
+  toFun k := ⟨(k, -k + n), by simp [mem_addFiber]⟩
   invFun ab := ab.1.1
   left_inv _ := rfl
-  right_inv ab := by grind
+  right_inv ab := by
+    obtain ⟨⟨a, b⟩, hab⟩ := ab
+    rw [mem_addFiber] at hab
+    subst hab
+    simp
 
-/-- **The integer convolution is a single sum**: `(f ⋆ g) n = ∑' k, f k * g (n - k)`, the
-familiar Laurent convolution. Reindexing Mathlib's sum over `addFiber n` by the first coordinate
-is exactly `DiscreteConvolution.intEquivAddFiber`. -/
-theorem addConvolution_mul_apply {A : Type*} [Ring A] [TopologicalSpace A] (f g : ℤ → A)
-    (n : ℤ) : addConvolution (LinearMap.mul ℤ A) f g n = ∑' k : ℤ, f k * g (n - k) :=
-  ((intEquivAddFiber n).tsum_eq fun ab ↦ f ab.1.1 * g ab.1.2).symm
+/-- **The convolution over an additive group is a single sum**:
+`(f ⋆ g) n = ∑' k, f k * g (-k + n)`. Reindexing Mathlib's sum over `addFiber n` by the
+first coordinate is exactly `DiscreteConvolution.equivAddFiber`. -/
+theorem addConvolution_mul_apply {G : Type*} [AddGroup G] {A : Type*} [Ring A]
+    [TopologicalSpace A] (f g : G → A) (n : G) :
+    addConvolution (LinearMap.mul ℤ A) f g n = ∑' k : G, f k * g (-k + n) :=
+  ((equivAddFiber n).tsum_eq fun ab ↦ f ab.1.1 * g ab.1.2).symm
+
+/-- **The commutative form**: `(f ⋆ g) n = ∑' k, f k * g (n - k)`, the familiar Laurent
+convolution when the index group is `ℤ`. -/
+theorem addConvolution_mul_apply_sub {G : Type*} [AddCommGroup G] {A : Type*} [Ring A]
+    [TopologicalSpace A] (f g : G → A) (n : G) :
+    addConvolution (LinearMap.mul ℤ A) f g n = ∑' k : G, f k * g (n - k) :=
+  (addConvolution_mul_apply f g n).trans (tsum_congr fun k ↦ by rw [neg_add_eq_sub])
 
 end DiscreteConvolution
 
