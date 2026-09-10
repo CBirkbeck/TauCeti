@@ -7,8 +7,6 @@ module
 
 public import TauCeti.NumberTheory.NumberField.Frobenius.DecompositionGroup
 
-import TauCeti.RingTheory.Frobenius
-
 /-!
 # How many primes carry a given Frobenius element
 
@@ -108,8 +106,8 @@ theorem frobenius_fiber_card_mul_orderOf_eq_card_centralizer (𝔭 : Ideal (𝓞
   have hstab : MulAction.stabilizer (Subgroup.centralizer {σ}) Q
       = (Subgroup.zpowers σ).subgroupOf (Subgroup.centralizer {σ}) := by
     ext τ
-    rw [Subgroup.mem_subgroupOf, Q.zpowers_eq_stabilizer_of_isArithFrobAt hσ.ne_bot hσ]
-    exact Iff.rfl
+    rw [Subgroup.mem_subgroupOf, Q.zpowers_eq_stabilizer_of_isArithFrobAt hσ.ne_bot hσ,
+      MulAction.mem_stabilizer_iff, MulAction.mem_stabilizer_iff, Subgroup.smul_def]
   have key := Nat.card_congr
     (MulAction.orbitProdStabilizerEquivGroup (Subgroup.centralizer {σ}) Q)
   rw [Nat.card_prod, hstab, Nat.card_congr (Subgroup.subgroupOfEquivOfLe hle).toEquiv,
