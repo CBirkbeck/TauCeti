@@ -33,7 +33,8 @@ identity rather than merely lower-triangular.
 * `TauCeti.descendMatrixRat`: the family before the embedding into `GL₂(ℝ)`, indexed by
   `Fin (descendMatrixCount p N)`.
 * `TauCeti.descendMatrix`: the family itself, the image of `descendMatrixRat` in `GL₂(ℝ)`
-  (`descendMatrix_eq_map`).
+  (`descendMatrix_eq_map`); `descendMatrixRat_of_lt`/`descendMatrixRat_of_le` and
+  `descendMatrix_of_lt`/`descendMatrix_of_le` describe the members.
 
 ## Main results
 
@@ -165,13 +166,11 @@ theorem descendExtraGamma_eq_one_of_not {p N : ℕ} (h : ¬ (p.Prime ∧ p ∣ N
     descendExtraGamma p N = 1 := by
   simp [descendExtraGamma, h]
 
-/-- **The descent family at `p`** (Miyake, Lemma 4.5.11). The `p` upper-triangular matrices
-`[1, v; 0, p]` for `v < p`, together with — when `p²` does not divide `N`, so that
-`descendMatrixCount` is `p + 1` — the further matrix `[1, 0; 0, p] * descendExtraGamma p N`.
-
-Over `ℚ` the upper-triangular part is `HeckeRing.GL2.upperTriRep`, this repository's `T_p`
-representative family; the descent family is its image in `GL₂(ℝ)`, where the slash action of a
-modular form lives.
+/-- **The descent family at `p`, over `ℚ`** (Miyake, Lemma 4.5.11): a family in `GL₂(ℚ)` made of
+the `p` upper-triangular matrices `upperTriRep p v = [1, v; 0, p]` for `v < p` — this
+repository's `T_p` representative family — together with, when `p²` does not divide `N`, so
+that `descendMatrixCount` is `p + 1`, the further matrix `[1, 0; 0, p] * mapGL ℚ γ_p`, where
+`γ_p = descendExtraGamma p N` is embedded into `GL₂(ℚ)` by `mapGL ℚ`.
 
 Neither `p ∣ N` nor primality of `p` is required: the construction uses only `p ≠ 0`, to name the
 zero index of `Fin p`. Those two hypotheses are what make the family the *descent* family at a
@@ -194,6 +193,28 @@ theorem descendMatrix_eq_map (p N : ℕ) [NeZero p] (v : Fin (descendMatrixCount
     descendMatrix p N v = Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (descendMatrixRat p N v) :=
   (rfl)
 
+/-- The members of the rational descent family below index `p` are the upper-triangular
+matrices `[1, v; 0, p]`. -/
+@[simp]
+theorem descendMatrixRat_of_lt {p N : ℕ} [NeZero p]
+    {v : Fin (descendMatrixCount p N)} (h : v.val < p) :
+    descendMatrixRat p N v = upperTriRep p ⟨v.val, h⟩ := by
+  rw [descendMatrixRat]
+  split_ifs
+  rfl
+
+/-- The member of the rational descent family at index `p`, present exactly when `p²` does not
+divide `N`, is `[1, 0; 0, p]` times the extra matrix. -/
+@[simp]
+theorem descendMatrixRat_of_le {p N : ℕ} [NeZero p]
+    {v : Fin (descendMatrixCount p N)} (h : p ≤ v.val) :
+    descendMatrixRat p N v = upperTriRep p ⟨0, NeZero.pos p⟩ *
+      Matrix.SpecialLinearGroup.mapGL ℚ (descendExtraGamma p N) := by
+  rw [descendMatrixRat]
+  split_ifs with h'
+  · exact absurd h' (Nat.not_lt.mpr h)
+  · rfl
+
 /-- The members of the descent family below index `p` are the upper-triangular matrices
 `[1, v; 0, p]`. -/
 @[simp]
@@ -201,9 +222,7 @@ theorem descendMatrix_of_lt {p N : ℕ} [NeZero p]
     {v : Fin (descendMatrixCount p N)} (h : v.val < p) :
     descendMatrix p N v =
       Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨v.val, h⟩) := by
-  rw [descendMatrix_eq_map, descendMatrixRat]
-  split_ifs
-  rfl
+  rw [descendMatrix_eq_map, descendMatrixRat_of_lt h]
 
 /-- The member of the descent family at index `p`, present exactly when `p²` does not divide `N`,
 is `[1, 0; 0, p]` times the extra matrix. -/
@@ -213,10 +232,7 @@ theorem descendMatrix_of_le {p N : ℕ} [NeZero p]
     descendMatrix p N v =
       Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, NeZero.pos p⟩) *
         Matrix.SpecialLinearGroup.mapGL ℝ (descendExtraGamma p N) := by
-  rw [descendMatrix_eq_map, descendMatrixRat]
-  split_ifs with h'
-  · exact absurd h' (Nat.not_lt.mpr h)
-  · rw [map_mul, Matrix.SpecialLinearGroup.map_mapGL]
+  rw [descendMatrix_eq_map, descendMatrixRat_of_le h, map_mul, Matrix.SpecialLinearGroup.map_mapGL]
 
 /-- **Every member of the descent family has determinant `p`.** Every element of the double coset
 `Γ₀(N) diag(1, p) Γ₀(N)` that the descent sum runs over has determinant `p`, so this is a
