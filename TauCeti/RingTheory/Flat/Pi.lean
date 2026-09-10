@@ -24,13 +24,13 @@ once**. Individually the factors may all fail to be faithfully flat.
 
 ## Main results
 
-* `Submodule.smul_top_eq_top_of_pi`: `I • ⊤ = ⊤` in a product passes to every factor. No
-  finiteness is needed for this direction.
+* `Ideal.smul_top_eq_top_of_pi`: `I • ⊤ = ⊤` in a product passes to every factor. No finiteness
+  is needed for this direction.
 * `Module.Flat.pi`: a finite product of flat modules is flat.
 * `Module.FaithfullyFlat.pi_of_exists_submodule_ne_top`: a finite product of flat modules is
   faithfully flat as soon as every maximal ideal stays proper in *some* factor.
-* `Module.FaithfullyFlat.pi_of_faithfullyFlat`: the common case — one faithfully flat factor
-  carries the whole product.
+* `Module.FaithfullyFlat.pi_of_faithfullyFlat`: the special case of one distinguished faithfully
+  flat factor.
 * `Module.FaithfullyFlat.pi`: a finite *nonempty* product of faithfully flat modules.
 
 ## Implementation notes
@@ -46,14 +46,13 @@ statement fails outright for a large enough index. Nothing is lost over a noethe
 hypothesis cannot simply be dropped.
 -/
 
-@[expose] public section
+public section
 
-open Module
+variable {R : Type*} {ι : Type*} {M : ι → Type*}
 
-namespace Submodule
+namespace Ideal
 
-variable {R : Type*} [CommRing R] {ι : Type*} {M : ι → Type*} [∀ i, AddCommGroup (M i)]
-    [∀ i, Module R (M i)]
+variable [Semiring R] [∀ i, AddCommMonoid (M i)] [∀ i, Module R (M i)]
 
 /-- If an ideal expands the whole of a product, it expands the whole of every factor. The
 projections are surjective, so this is `Submodule.map_smul''` read along one of them. -/
@@ -63,17 +62,24 @@ theorem smul_top_eq_top_of_pi (I : Ideal R) (h : I • (⊤ : Submodule R (∀ i
   rwa [Submodule.map_smul'', Submodule.map_top,
     LinearMap.range_eq_top.mpr (Function.surjective_eval i)] at this
 
-end Submodule
+end Ideal
 
 namespace Module
 
-variable {R : Type*} [CommRing R] {ι : Type*} {M : ι → Type*} [∀ i, AddCommGroup (M i)]
-    [∀ i, Module R (M i)]
+section Flat
+
+variable [CommSemiring R] [∀ i, AddCommMonoid (M i)] [∀ i, Module R (M i)]
 
 /-- **A finite product of flat modules is flat**, by comparison with the direct sum. -/
 instance Flat.pi [Finite ι] [∀ i, Flat R (M i)] : Flat R (∀ i, M i) := by
   have := Fintype.ofFinite ι
   exact Flat.of_linearEquiv (DirectSum.linearEquivFunOnFintype R ι M).symm
+
+end Flat
+
+section FaithfullyFlat
+
+variable [CommRing R] [∀ i, AddCommGroup (M i)] [∀ i, Module R (M i)]
 
 /-- **A finite product of flat modules is faithfully flat as soon as no maximal ideal expands
 every factor at once.** Each individual factor may fail to be faithfully flat; what is needed is
@@ -81,12 +87,11 @@ that the failures are not simultaneous. -/
 theorem FaithfullyFlat.pi_of_exists_submodule_ne_top [Finite ι] [∀ i, Flat R (M i)]
     (h : ∀ m : Ideal R, m.IsMaximal → ∃ i, m • (⊤ : Submodule R (M i)) ≠ ⊤) :
     FaithfullyFlat R (∀ i, M i) where
-  submodule_ne_top m hm htop :=
-    (h m hm).elim fun i hi ↦ hi (Submodule.smul_top_eq_top_of_pi m htop i)
+  submodule_ne_top m hm htop := (h m hm).elim fun i hi ↦ hi (m.smul_top_eq_top_of_pi htop i)
 
-/-- **One faithfully flat factor carries a finite product of flat modules.** This is how the
-criterion is usually met: a rational cover contributes one distinguished piece, and the rest need
-only be flat. -/
+/-- **One faithfully flat factor carries a finite product of flat modules.** This is the special
+case of `FaithfullyFlat.pi_of_exists_submodule_ne_top` where one fixed index works for every
+maximal ideal; when no single factor does, that criterion is the one to use. -/
 theorem FaithfullyFlat.pi_of_faithfullyFlat [Finite ι] [∀ i, Flat R (M i)] (j : ι)
     [FaithfullyFlat R (M j)] : FaithfullyFlat R (∀ i, M i) :=
   FaithfullyFlat.pi_of_exists_submodule_ne_top fun _ hm ↦
@@ -98,4 +103,8 @@ instance FaithfullyFlat.pi [Nonempty ι] [Finite ι] [∀ i, FaithfullyFlat R (M
     FaithfullyFlat R (∀ i, M i) :=
   FaithfullyFlat.pi_of_faithfullyFlat (Classical.arbitrary ι)
 
+end FaithfullyFlat
+
 end Module
+
+end
