@@ -71,9 +71,10 @@ in: `s` topologically nilpotent over a strongly noetherian base.
 ## The three chain results, and which to use
 
 Where strong noetherianity is assumed is the primary distinction, and each is the right one for a
-different caller. It is not the only one: the third additionally asks `[IsTateRing A]`, the
-rational-subset condition on `(T, s)`, and topological nilpotence of the denominator — the last two
-only of a proper enlargement.
+different caller. It is not the only one: the third asks the Tate condition, strong noetherianity,
+the rational-subset condition on `(T, s)` and topological nilpotence of the denominator — all four
+**only of a proper enlargement**, as explicit hypotheses rather than instances. Its one
+unconditional assumption is `[IsHuberRing A]`.
 
 `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_of_forall_isStronglyNoetherian`
 asks it of `A⟨U/s⟩` for *every* `U` with `T ⊆ U ⊂ T'` — a family of hypotheses, carried rather
@@ -87,12 +88,16 @@ when the localisation is known to be strongly noetherian but `A` is not, or when
 known to cut out a rational subset.
 
 `PairOfDefinition.flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_top`
-asks it of `A`, which is Wedhorn's own hypothesis, at the cost of three others: `[IsTateRing A]`,
-the rational-subset condition on `(T, s)`, and topological nilpotence of the denominator. The first
-two are free in the intended use — restriction between rational subsets of `Spa(A, A⁺)` of a Tate
-ring — where both hold by definition. **The third is not**: a rational-subset presentation may have
-`s = 1`, and `1` is not topologically nilpotent in a nonzero Tate ring. That is what leaves this
-short of Proposition 8.30 in general.
+asks it of `A`, which is Wedhorn's own hypothesis. It costs four explicit hypotheses, each asked
+only when `T ⊂ T'`: `IsTateRing A`, `IsStronglyNoetherian A`, the rational-subset condition on
+`(T, s)`, and topological nilpotence of the denominator. The first three are free in the intended
+use — restriction between rational subsets of `Spa(A, A⁺)` of a strongly noetherian Tate ring —
+where each holds by hypothesis or by definition, and a caller there passes `fun _ ↦ inferInstance`.
+**The fourth is not**: a rational-subset presentation may have `s = 1`, and `1` is not topologically
+nilpotent in a nonzero Tate ring. That is what leaves this short of Proposition 8.30 in general.
+
+Only `[IsHuberRing A]` remains an instance binder, because stating `IsStronglyNoetherian A` needs
+the nonarchimedean structure it carries.
 
 The elementary case is unaffected: it needs strong noetherianity only at its own base, which is
 where Lemma 8.31 needs it too.
