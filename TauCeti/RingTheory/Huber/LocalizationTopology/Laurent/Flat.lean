@@ -553,10 +553,17 @@ denominator generates the unit ideal. It is not an extra assumption in the inten
 what makes `R(T/s)` a rational subset — but it is not implied by
 `TauCeti.Huber.PairOfDefinition.HasDenominatorPower`, so it has to be asked for.
 
-Both hypotheses are asked only of a *proper* enlargement; for `T' = T` the map is flat outright,
-by `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_self`. -/
-theorem flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_top [IsTateRing A]
-    [IsStronglyNoetherian A]
+**Every** hypothesis is asked only of a *proper* enlargement — the Tate and strong-noetherian
+conditions on `A` included, which is why they are conditional hypotheses rather than instance
+binders. What stays unconditional is only `[IsHuberRing A]`, and only because stating
+`IsStronglyNoetherian A` needs the nonarchimedean structure it carries; `IsTateRing` would have
+done, but is strictly stronger. For `T' = T` the map is flat outright and none of the four
+hypotheses is used, by
+`TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_self`. A caller in the intended
+setting, where `A` really is a strongly noetherian Tate ring, supplies each as
+`fun _ ↦ inferInstance`. -/
+theorem flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_top [IsHuberRing A]
+    (hTate : T ⊂ T' → IsTateRing A) (hSN : T ⊂ T' → IsStronglyNoetherian A)
     (hnil : T ⊂ T' → IsTopologicallyNilpotent s)
     (hspan : T ⊂ T' → Ideal.span (insert s (T : Set A)) = ⊤) :
     letI := locUniformSpace P T s S hden
@@ -567,7 +574,10 @@ theorem flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_t
     letI := isTopologicalRing_locUniformSpace P T' s S' hden'
     (restrictionRingHomOfSubset P T s S hden T' S' hden' hTT').Flat :=
   flat_restrictionRingHomOfSubset_of_isStronglyNoetherian_base P T s S hden T' S' hden' hTT'
-    hnil fun hproper ↦ isStronglyNoetherian_completion P T s S hden (hspan hproper)
+    hnil fun hproper ↦
+      have : IsTateRing A := hTate hproper
+      have : IsStronglyNoetherian A := hSN hproper
+      isStronglyNoetherian_completion P T s S hden (hspan hproper)
 
 end PairOfDefinition
 
