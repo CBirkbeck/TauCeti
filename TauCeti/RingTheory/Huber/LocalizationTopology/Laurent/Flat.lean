@@ -89,7 +89,7 @@ known to cut out a rational subset.
 
 `PairOfDefinition.flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_top`
 asks it of `A`, which is Wedhorn's own hypothesis. It costs four explicit hypotheses, each asked
-only when `T ⊂ T'`: `IsTateRing A`, `IsStronglyNoetherian A`, the rational-subset condition on
+only when `T ⊂ T'`: `IsTateRing A`, `IsStronglyNoetherian A`, the unit-ideal condition on
 `(T, s)`, and topological nilpotence of the denominator. The first three are free in the intended
 use — restriction between rational subsets of `Spa(A, A⁺)` of a strongly noetherian Tate ring —
 where the first two hold by hypothesis and the third follows from rationality, since an open ideal
