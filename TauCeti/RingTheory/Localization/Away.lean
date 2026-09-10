@@ -136,6 +136,20 @@ theorem divBy_mul_algebraMap :
   rw [divBy_def]
   exact IsLocalization.mk'_spec S t (⟨s, Submonoid.mem_powers s⟩ : Submonoid.powers s)
 
+/-- **Scaling numerator and denominator by the same element leaves the fraction alone**:
+`(u · t)/(u · s) = t/s`, whenever `S` is also a localisation away from `u · s`.
+
+That extra instance is what the hypothesis really is: for a unit `u` it comes for free, since
+`u * s` and `s` are then associated and `IsLocalization.Away.of_associated` transports the
+localisation. Rescaling a denominator *alone* is not such a move — `t/s` and `t/(u · s)` are
+different fractions — so a construction indexed by a presentation is preserved only when the
+numerators are rescaled by the same factor. -/
+theorem divBy_mul_mul_left {u : A} [IsLocalization.Away (u * s) S] :
+    (divBy (u * t) (u * s) : S) = divBy t s := by
+  rw [divBy_def (u * t) (u * s)]
+  refine (IsLocalization.eq_mk'_iff_mul_eq.mpr ?_).symm
+  rw [map_mul, ← mul_assoc, mul_right_comm, divBy_mul_algebraMap, ← map_mul, mul_comm t u]
+
 /-- The mirror of `invSelf_mul_algebraMap`, for the same reason. -/
 @[simp]
 theorem algebraMap_mul_invSelf :
