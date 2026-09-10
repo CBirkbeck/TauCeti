@@ -10,7 +10,7 @@ public import Mathlib.Analysis.SpecificLimits.Normed
 /-!
 # Weighted geometric majorants over an index and an exponent
 
-For a family `r : ι → E` in a normed group whose norms are less than one, and eventually at most
+For a family `r : ι → E` in a seminormed group whose norms are less than one, and eventually at most
 `1 - ε`, wherever the weight `w` is nonzero, the double family `(i, e) ↦ w i * ‖r i‖ ^ (e + 1)` is
 summable over `ι × ℕ` as soon as `i ↦ w i * ‖r i‖` is summable. Each fibre is geometric, so it
 sums to `w i * ‖r i‖ / (1 - ‖r i‖)`, and the eventual bound keeps `1 / (1 - ‖r i‖)` under `ε⁻¹`
@@ -26,7 +26,7 @@ public section
 namespace TauCeti
 
 /-- **A weighted geometric family is summable over index and exponent together.**  For a family
-`r` in a normed group, all of norm less than one and eventually of norm at most `1 - ε`, and real
+`r` in a seminormed group, all of norm less than one and eventually of norm at most `1 - ε`, and real
 weights `w` with `i ↦ w i * ‖r i‖` summable, the double family `(i, e) ↦ w i * ‖r i‖ ^ (e + 1)` is
 summable over `ι × ℕ`.
 
@@ -42,7 +42,7 @@ weights.
 This is the bound a termwise differentiation argument runs on whenever the differentiated terms are
 an index-only weight times a norm power; it says nothing on its own about which families have that
 form. -/
-theorem summable_mul_norm_pow_succ {ι E : Type*} [NormedAddCommGroup E] {r : ι → E} {w : ι → ℝ}
+theorem summable_mul_norm_pow_succ {ι E : Type*} [SeminormedAddGroup E] {r : ι → E} {w : ι → ℝ}
     (hbd : ∃ ε > 0, ∀ᶠ i in Filter.cofinite, w i ≠ 0 → ‖r i‖ ≤ 1 - ε)
     (hwr : Summable fun i ↦ w i * ‖r i‖) (h1 : ∀ i, w i ≠ 0 → ‖r i‖ < 1) :
     Summable fun ie : ι × ℕ ↦ w ie.1 * ‖r ie.1‖ ^ (ie.2 + 1) := by
