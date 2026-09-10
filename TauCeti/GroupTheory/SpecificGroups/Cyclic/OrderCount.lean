@@ -17,6 +17,11 @@ Mathlib counts elements of an *exact* order: `IsCyclic.card_orderOf_eq_totient` 
 `φ d` of them for each `d` dividing the group order. Summing that over the divisors selected by
 `p` is the whole content here.
 
+The point of stating it for a predicate is that it turns a count defined by a condition on orders
+into an arithmetic sum over divisors, where the group has disappeared. Whatever `p` is, the answer
+is a totient sum over `{d ∣ #α | p d}`, so it can then be evaluated or estimated by number theory
+alone.
+
 ## Main results
 
 * `IsCyclic.card_filter_orderOf_eq_sum_totient`, and its additive counterpart: the count of
@@ -43,21 +48,20 @@ theorem IsCyclic.card_filter_orderOf_eq_sum_totient (p : ℕ → Prop) [Decidabl
     #{τ : α | p (orderOf τ)} =
       ∑ d ∈ {d ∈ (Fintype.card α).divisors | p d}, φ d := by
   classical
-  rw [card_eq_sum_card_fiberwise (f := fun τ : α ↦ orderOf τ)
-    (t := {d ∈ (Fintype.card α).divisors | p d})]
-  · refine sum_congr rfl fun d hd ↦ ?_
-    rw [mem_filter, Nat.mem_divisors] at hd
-    have hfib : Finset.filter (fun a : α ↦ orderOf a = d)
-          (Finset.filter (fun τ : α ↦ p (orderOf τ)) Finset.univ)
-        = Finset.filter (fun a : α ↦ orderOf a = d) Finset.univ := by
-      ext τ
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-      exact ⟨fun h ↦ h.2, fun h ↦ ⟨h ▸ hd.2, h⟩⟩
-    rw [hfib, IsCyclic.card_orderOf_eq_totient hd.1.1]
-  · intro τ hτ
-    rw [mem_coe, mem_filter] at hτ
-    rw [mem_coe, mem_filter, Nat.mem_divisors]
-    exact ⟨⟨orderOf_dvd_card, Fintype.card_ne_zero⟩, hτ.2⟩
+  calc #{τ : α | p (orderOf τ)}
+      -- Every element's order divides the group order, so selecting by `p` and selecting by
+      -- membership in the `p`-divisors keep the same elements.
+      = #{τ ∈ (Finset.univ : Finset α) | orderOf τ ∈ {d ∈ (Fintype.card α).divisors | p d}} := by
+        refine congrArg Finset.card (filter_congr fun τ _ ↦ ?_)
+        simp only [mem_filter, Nat.mem_divisors]
+        exact ⟨fun h ↦ ⟨⟨orderOf_dvd_card, Fintype.card_ne_zero⟩, h⟩, fun h ↦ h.2⟩
+    _ = ∑ d ∈ {d ∈ (Fintype.card α).divisors | p d},
+          #{τ ∈ (Finset.univ : Finset α) | orderOf τ = d} :=
+        (Finset.sum_card_fiberwise_eq_card_filter _ _ _).symm
+    _ = ∑ d ∈ {d ∈ (Fintype.card α).divisors | p d}, φ d := by
+        refine sum_congr rfl fun d hd ↦ ?_
+        rw [mem_filter, Nat.mem_divisors] at hd
+        exact IsCyclic.card_orderOf_eq_totient hd.1.1
 
 /-- **The elements of a cyclic group whose order is a multiple of `f`, counted by order.**
 The divisibility case of `IsCyclic.card_filter_orderOf_eq_sum_totient`. -/
