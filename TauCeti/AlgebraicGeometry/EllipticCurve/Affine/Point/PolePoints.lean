@@ -76,28 +76,27 @@ theorem one_lt_valuation_xCoord_add (P : TauCeti.Place F K) {Q₁ Q₂ : (W⁄K)
     1 < P.valuation (Q₁ + Q₂).xCoord := by
   classical
   -- The place is the adic place of the maximal ideal of its own valuation ring.
-  set u : HeightOneSpectrum P.integers := P.center (R := P.integers) fun r ↦ r.2 with hu_def
+  set u : HeightOneSpectrum P.integers := P.center (R := P.integers) fun r ↦ r.2
   have hu : u.valuation K = P.valuation := P.valuation_center _
   have hval : ∀ x : K, Valued.v (algebraMap K (u.adicCompletion K) x) = P.valuation x := fun x ↦
-    (u.valuedAdicCompletion_eq_valuation' x).trans (congrFun (congrArg DFunLike.coe hu) x)
+    (u.valuedAdicCompletion_eq_valuation' x).trans (by rw [hu])
   -- Constants are integral in the completion, so the curve has a model over its integers.
   have hF : ∀ c : F, algebraMap F (u.adicCompletion K) c ∈ u.adicCompletionIntegers K := fun c ↦ by
     rw [HeightOneSpectrum.mem_adicCompletionIntegers,
-      show algebraMap F (u.adicCompletion K) c = algebraMap K _ (algebraMap F K c) from rfl, hval]
+      IsScalarTower.algebraMap_apply F K (u.adicCompletion K), hval]
     exact Valuation.IsTrivialOn.valuation_algebraMap_le_one _ _
   let _ : Algebra F (u.adicCompletionIntegers K) :=
     ((algebraMap F (u.adicCompletion K)).codRestrict _ hF).toAlgebra
-  have : IsScalarTower F (u.adicCompletionIntegers K) (u.adicCompletion K) :=
-    IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
   have : IsLinearTopology (u.adicCompletionIntegers K) (u.adicCompletionIntegers K) :=
     u.isAdic_maximalIdeal_adicCompletionIntegers (K := K) ▸ Ideal.isLinearTopology _
   have : Fact (IsAdic (IsLocalRing.maximalIdeal (u.adicCompletionIntegers K))) :=
     ⟨u.isAdic_maximalIdeal_adicCompletionIntegers (K := K)⟩
+  -- The model of `W` over the integers of the completion; its base change back to the completion
+  -- is `W` over the completion, definitionally.
   let C : WeierstrassCurve (u.adicCompletionIntegers K) := W.map (algebraMap F _)
-  have hC : C.baseChange (u.adicCompletion K) = W⁄(u.adicCompletion K) := rfl
-  have : (C.baseChange (u.adicCompletion K)).IsElliptic := by rw [hC]; infer_instance
+  have : (C.baseChange (u.adicCompletion K)).IsElliptic :=
+    inferInstanceAs (W⁄(u.adicCompletion K)).toAffine.IsElliptic
   let ι : K →ₐ[F] u.adicCompletion K := IsScalarTower.toAlgHom F K _
-  have hι : ∀ x : K, ι x = algebraMap K (u.adicCompletion K) x := fun _ ↦ rfl
   -- The range of the formal parametrisation, read on the points of `W` over the completion.
   have hrange : ∀ Q' : (W⁄(u.adicCompletion K)).toAffine.Point,
       Q' ∈ Set.range (C.formalPointHomAdicCompletion u) ↔ Q' = 0 ∨ 1 < Valued.v Q'.xCoord :=
@@ -106,7 +105,7 @@ theorem one_lt_valuation_xCoord_add (P : TauCeti.Place F K) {Q₁ Q₂ : (W⁄K)
   have hmem : ∀ Q : (W⁄K).toAffine.Point, 1 < P.valuation Q.xCoord →
       Point.map ι Q ∈ Set.range (C.formalPointHomAdicCompletion u) := fun Q hQ ↦ by
     refine (hrange _).mpr (Or.inr ?_)
-    rwa [Point.xCoord_map, hι, hval]
+    rwa [Point.xCoord_map, IsScalarTower.coe_toAlgHom', hval]
   -- The range of an additive homomorphism is closed under addition.
   have hsum : Point.map ι (Q₁ + Q₂) ∈ Set.range (C.formalPointHomAdicCompletion u) := by
     obtain ⟨a, ha⟩ := hmem Q₁ h₁
@@ -114,7 +113,7 @@ theorem one_lt_valuation_xCoord_add (P : TauCeti.Place F K) {Q₁ Q₂ : (W⁄K)
     exact ⟨a + b, by rw [map_add, map_add, ha, hb]; exact rfl⟩
   rcases (hrange _).mp hsum with h0 | hlt
   · exact absurd ((Point.map_injective ι) (h0.trans (map_zero _).symm)) h
-  · rwa [Point.xCoord_map, hι, hval] at hlt
+  · rwa [Point.xCoord_map, IsScalarTower.coe_toAlgHom', hval] at hlt
 
 /-- **The points with a pole at `P`**, together with the point at infinity, as a subgroup of
 `W(K)`. Classically this is the kernel `E₁(K_P)` of reduction at `P`. -/
