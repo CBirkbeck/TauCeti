@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Topology.Algebra.InfiniteSum.DiscreteConvolution
 public import Mathlib.Topology.Algebra.InfiniteSum.Nonarchimedean
 public import TauCeti.RingTheory.Huber.Restricted.TwoSided.Series
 public import TauCeti.Topology.Algebra.InfiniteSum.DiscreteConvolution
@@ -75,10 +74,10 @@ carry none, so the `Finset`-indexed Cauchy-product lemmas do not apply here at a
   `(a Xᵐ)(b Xⁿ) = ab X^{m+n}`. It holds with no completeness, summability or separation hypothesis,
   since only one term of the coefficient series survives, so it is stated well above the ring
   axioms.
-* `TauCeti.Huber.isUnit_twoSidedMonomial_one`: **the Laurent variable is a unit**, with inverse the
-  degree-`(-1)` monomial — the content of Example 6.39. Both inverse identities are instances of the
-  degree-addition rule, so they get no separate lemmas; `IsUnit` itself needs the monoid that
-  arrives with the ring structure.
+* `TauCeti.Huber.isUnit_twoSidedMonomial_one_one`: **the Laurent variable is a unit**, its
+  inverse being the degree-`(-1)` monomial — the content of Example 6.39. Both inverse identities
+  are instances of the degree-addition rule, so they get no separate lemmas; `IsUnit` needs the
+  monoid that arrives with the ring structure.
 * `TauCeti.Huber.coe_mul_apply`: the coefficient of a product read off an element of the submodule,
   `(fg)ₙ = ∑' k, aₖ b_{n-k}`.
 * `TauCeti.Huber.coe_mul_twoSidedRestrictedSubmodule`,
@@ -320,7 +319,7 @@ end twoSidedRestrictedSubmodule
 Wedhorn's Example 6.39 is used in — `A⟨X, X⁻¹⟩` is the ring in which `X` becomes invertible — and it
 is stated here rather than beside the two multiplication identities because `IsUnit` needs a monoid,
 which arrives only with `twoSidedRestrictedSubmodule.instRing`. -/
-theorem isUnit_twoSidedMonomial_one : IsUnit (twoSidedMonomial 1 (1 : A)) :=
+theorem isUnit_twoSidedMonomial_one_one : IsUnit (twoSidedMonomial 1 (1 : A)) :=
   -- both inverse identities are `twoSidedMonomial_mul_twoSidedMonomial` at `(1, -1)` and `(-1, 1)`,
   -- finished by `twoSidedMonomial_zero_one`
   ⟨⟨twoSidedMonomial 1 1, twoSidedMonomial (-1) 1, by simp, by simp⟩, rfl⟩

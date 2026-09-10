@@ -14,7 +14,7 @@ Mathlib's `DiscreteConvolution.addConvolution` sums over the fibre `addFiber n`,
 antidiagonal `{(i, j) | i + j = n}`. Over `ℤ` that fibre is parametrised by its first
 coordinate, which turns the convolution into a single sum:
 
-* `DiscreteConvolution.addFiberEquivInt`: the parametrisation `k ↦ (k, n - k)`;
+* `DiscreteConvolution.intEquivAddFiber`: the parametrisation `k ↦ (k, n - k)`;
 * `DiscreteConvolution.addConvolution_mul_apply`: `(f ⋆ g) n = ∑' k, f k * g (n - k)`, the
   familiar Laurent convolution.
 
@@ -23,14 +23,14 @@ infinite. Nothing here is specific to any ring of interest; it is the bridge bet
 fibre picture and the `ℤ`-indexed one.
 -/
 
-@[expose] public section
+public section
 
 namespace DiscreteConvolution
 
 /-- **The antidiagonal `{(i, j) | i + j = n}` in `ℤ × ℤ`, parametrised by its first
 coordinate.** This is where the `ℤ`-indexed picture and Mathlib's fibre picture meet, and it is
 an `Equiv` rather than a `Finset` precisely because the antidiagonal is infinite. -/
-def addFiberEquivInt (n : ℤ) : ℤ ≃ (addFiber n : Set (ℤ × ℤ)) where
+def intEquivAddFiber (n : ℤ) : ℤ ≃ (addFiber n : Set (ℤ × ℤ)) where
   toFun k := ⟨(k, n - k), by grind⟩
   invFun ab := ab.1.1
   left_inv _ := rfl
@@ -38,10 +38,10 @@ def addFiberEquivInt (n : ℤ) : ℤ ≃ (addFiber n : Set (ℤ × ℤ)) where
 
 /-- **The integer convolution is a single sum**: `(f ⋆ g) n = ∑' k, f k * g (n - k)`, the
 familiar Laurent convolution. Reindexing Mathlib's sum over `addFiber n` by the first coordinate
-is exactly `DiscreteConvolution.addFiberEquivInt`. -/
+is exactly `DiscreteConvolution.intEquivAddFiber`. -/
 theorem addConvolution_mul_apply {A : Type*} [Ring A] [TopologicalSpace A] (f g : ℤ → A)
     (n : ℤ) : addConvolution (LinearMap.mul ℤ A) f g n = ∑' k : ℤ, f k * g (n - k) :=
-  ((addFiberEquivInt n).tsum_eq fun ab ↦ f ab.1.1 * g ab.1.2).symm
+  ((intEquivAddFiber n).tsum_eq fun ab ↦ f ab.1.1 * g ab.1.2).symm
 
 end DiscreteConvolution
 
