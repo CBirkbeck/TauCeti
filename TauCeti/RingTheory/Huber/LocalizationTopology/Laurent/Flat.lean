@@ -65,14 +65,14 @@ in: `s` topologically nilpotent over a strongly noetherian base.
   strong
   noetherianity asked of `A`, as Wedhorn asks it, the passage to `A⟨T/s⟩` being supplied by
   `TauCeti.Huber.PairOfDefinition.isStronglyNoetherian_completion`. Its explicit hypotheses are
-  the rational-subset condition on `(T, s)` and topological nilpotence of the denominator. The
+  the unit-ideal condition on `(T, s)` and topological nilpotence of the denominator. The
   latter is what still separates it from Proposition 8.30 in full.
 
 ## The three chain results, and which to use
 
 Where strong noetherianity is assumed is the primary distinction, and each is the right one for a
 different caller. It is not the only one: the third asks the Tate condition, strong noetherianity,
-the rational-subset condition on `(T, s)` and topological nilpotence of the denominator — all four
+the unit-ideal condition on `(T, s)` and topological nilpotence of the denominator — all four
 **only of a proper enlargement**, as explicit hypotheses rather than instances. Its one
 unconditional assumption is `[IsHuberRing A]`.
 
@@ -92,7 +92,9 @@ asks it of `A`, which is Wedhorn's own hypothesis. It costs four explicit hypoth
 only when `T ⊂ T'`: `IsTateRing A`, `IsStronglyNoetherian A`, the rational-subset condition on
 `(T, s)`, and topological nilpotence of the denominator. The first three are free in the intended
 use — restriction between rational subsets of `Spa(A, A⁺)` of a strongly noetherian Tate ring —
-where each holds by hypothesis or by definition, and a caller there passes `fun _ ↦ inferInstance`.
+where the first two hold by hypothesis and the third follows from rationality, since an open ideal
+of a Tate ring is `⊤` (`TauCeti.Huber.IsTateRing.isOpen_iff_eq_top`). A caller there passes
+`fun _ ↦ inferInstance` for the first two.
 **The fourth is not**: a rational-subset presentation may have `s = 1`, and `1` is not topologically
 nilpotent in a nonzero Tate ring. That is what leaves this short of Proposition 8.30 in general.
 
@@ -464,7 +466,7 @@ than deriving.
 supplies that derivation, reducing the family hypothesis to strong noetherianity of `A⟨T/s⟩`
 alone. The passage from `A` to `A⟨T/s⟩` is supplied in turn by
 `flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_top`,
-which reaches Wedhorn's own hypothesis at the cost of the rational-subset condition on `(T, s)`
+which reaches Wedhorn's own hypothesis at the cost of the unit-ideal condition on `(T, s)`
 and topological nilpotence of the denominator. This form remains the one to use when strong
 noetherianity is known only at the intermediate presentations.
 
@@ -512,7 +514,7 @@ any numerator enlargement is flat.
 of `A`; this asks it of `A⟨T/s⟩`. The passage between the two is
 `TauCeti.Huber.PairOfDefinition.isStronglyNoetherian_completion`, applied in
 `flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_top`
-below, which asks `A` alone but adds the rational-subset condition on `(T, s)`. Both hypotheses
+below, which asks `A` alone but adds the unit-ideal condition on `(T, s)`. Both hypotheses
 here are asked only of a *proper* enlargement: for `T' = T` the map is flat outright, by
 `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset_self`. -/
 theorem flat_restrictionRingHomOfSubset_of_isStronglyNoetherian_base
@@ -553,9 +555,12 @@ step that closes that gap is
 noetherianity from `A` to `A⟨T/s⟩` along the finite-type presentation; the base form above then
 propagates it along the chain of intermediate enlargements.
 
-`hspan` is the rational-subset condition on the smaller presentation: `T` together with the
-denominator generates the unit ideal. It is not an extra assumption in the intended use — it is
-what makes `R(T/s)` a rational subset — but it is not implied by
+`hspan` says that `T` together with the denominator generates the **unit** ideal. That is not the
+definition of a rational subset, which asks only that the ideal be *open*, and over a general Huber
+ring the unit-ideal condition is strictly stronger. The two coincide exactly when `A` is Tate, by
+`TauCeti.Huber.IsTateRing.isOpen_iff_eq_top` — an open ideal of a Tate ring is `⊤` — and `hspan` is
+asked only when `hTate` is, both being conditional on `T ⊂ T'`, so the equivalence is available
+wherever `hspan` bites. It is not implied by
 `TauCeti.Huber.PairOfDefinition.HasDenominatorPower`, so it has to be asked for.
 
 **Every** hypothesis is asked only of a *proper* enlargement — the Tate and strong-noetherian
