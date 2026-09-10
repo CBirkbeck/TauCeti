@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+public import Mathlib.NumberTheory.LSeries.Deriv
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Regroup
 
 /-!
@@ -15,6 +15,9 @@ Mathlib's `LSeries.hasDerivAt_term` differentiates the term `f n / n ^ s` of an 
 Dirichlet series, producing the same term weighted by `-log n`.  This file records the
 ideal-indexed counterpart: `idealTerm K f s I` is `f I / N(I) ^ s`, and differentiating it in `s`
 weights it by `-log N(I)`.
+
+No new calculus is done here.  An ideal term is an `L`-series term of a constant coefficient at
+the index `N(I)`, so the statement is a specialization rather than a parallel development.
 
 ## Main results
 
@@ -35,27 +38,18 @@ variable (K : Type*) [Field K] [NumberField K]
 /-- **The derivative of an ideal term.**  Differentiating `f I / N(I) ^ s` in `s` returns the same
 term weighted by `-log N(I)`.
 
-This is the ideal-indexed counterpart of Mathlib's `LSeries.hasDerivAt_term`.  The logarithm is the
-complex one, of a positive real argument: `N(I) ≥ 1` for a nonzero ideal, so it agrees with
-`Real.log N(I)` and is real and nonnegative. -/
+This is Mathlib's `LSeries.hasDerivAt_term` at the constant coefficient `fun _ ↦ f I` and the
+index `N(I)`: an ideal term *is* an `L`-series term, once the ideal is replaced by its norm.  The
+logarithm is the complex one, of a positive real argument: `N(I) ≥ 1` for a nonzero ideal, so it
+agrees with `Real.log N(I)` and is real and nonnegative. -/
 theorem hasDerivAt_idealTerm (f : IdealArithmeticFunction K) (I : (Ideal (𝓞 K))⁰) (s : ℂ) :
     HasDerivAt (fun z ↦ idealTerm K f z I)
       (-(Complex.log (Ideal.absNorm (I : Ideal (𝓞 K)) : ℂ) * idealTerm K f s I)) s := by
-  have hne : ((Ideal.absNorm (I : Ideal (𝓞 K)) : ℂ)) ≠ 0 := by
-    exact_mod_cast (Ideal.absNorm_pos_of_nonZeroDivisors I).ne'
-  have hfun : (fun z : ℂ ↦ idealTerm K f z I)
-      = fun z : ℂ ↦ f I * ((Ideal.absNorm (I : Ideal (𝓞 K)) : ℂ) ^ (-z)) := by
-    funext z
-    rw [idealTerm_def, cpow_neg, div_eq_mul_inv]
-  rw [hfun]
-  have hbase := (hasDerivAt_neg' s).const_cpow
-    (c := ((Ideal.absNorm (I : Ideal (𝓞 K)) : ℂ))) (Or.inl hne)
-  have heq : -(Complex.log (Ideal.absNorm (I : Ideal (𝓞 K)) : ℂ) * idealTerm K f s I)
-      = f I * ((Ideal.absNorm (I : Ideal (𝓞 K)) : ℂ) ^ (-s)
-          * Complex.log (Ideal.absNorm (I : Ideal (𝓞 K)) : ℂ) * -1) := by
-    rw [idealTerm_def, cpow_neg, div_eq_mul_inv]
-    ring
-  rw [heq]
-  exact hbase.const_mul (f I)
+  have hn : Ideal.absNorm (I : Ideal (𝓞 K)) ≠ 0 :=
+    (Ideal.absNorm_pos_of_nonZeroDivisors I).ne'
+  -- An ideal term is the `L`-series term of the constant coefficient `f I` at `N(I)`.
+  have h := LSeries.hasDerivAt_term (fun _ ↦ f I) (Ideal.absNorm (I : Ideal (𝓞 K))) s
+  simp only [LSeries.term_of_ne_zero hn, LSeries.logMul] at h
+  simpa [idealTerm_def, mul_div_assoc] using h
 
 end TauCeti
