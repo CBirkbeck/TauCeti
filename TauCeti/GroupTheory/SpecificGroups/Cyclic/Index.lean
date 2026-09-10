@@ -6,8 +6,9 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.GroupTheory.Index
-public import TauCeti.Algebra.Group.Subgroup.ZPowers
 public import Mathlib.GroupTheory.SpecificGroups.Cyclic
+
+import TauCeti.Algebra.Group.Subgroup.ZPowers
 
 /-!
 # Membership in a subgroup of a cyclic group, by index
@@ -22,10 +23,12 @@ lands in `K` at all, and both readings agree through the convention `index = 0`.
 * `Subgroup.zpow_mem_iff_index_dvd`: `g ^ n ∈ K ↔ (K.index : ℤ) ∣ n` for `n : ℤ`, with `g` a
   generator.
 * `Subgroup.pow_mem_iff_index_dvd`: the same for a natural exponent.
-* `Subgroup.isLeast_pow_mem_index`: for a generator `g`, a finite-index `K.index` **is** the least
-  positive exponent with `g ^ n ∈ K`, with `AddSubgroup.isLeast_nsmul_mem_index` its additive form.
-* `Subgroup.isLeast_pow_mem_relIndex_zpowers`: the relative index of `H` in `⟨g⟩` is that least
-  exponent, with `AddSubgroup.isLeast_nsmul_mem_relIndex_zmultiples` its additive form.
+* `Subgroup.isLeast_pow_mem_index`: when `K` has finite index, `K.index` **is** the least positive
+  exponent with `g ^ n ∈ K`, with `AddSubgroup.isLeast_nsmul_mem_index` its additive form.
+* `Subgroup.isLeast_pow_mem_relIndex_zpowers`: when `H` has finite relative index in `⟨g⟩`, that
+  relative index is the least positive exponent with `g ^ n ∈ H`. No generator hypothesis is needed
+  here, `g` generating `⟨g⟩`; `AddSubgroup.isLeast_nsmul_mem_relIndex_zmultiples` is the additive
+  form.
 -/
 
 public section
@@ -94,13 +97,12 @@ has finite relative index in `⟨g⟩`, that index is the smallest `n ≥ 1` wit
 theorem isLeast_pow_mem_relIndex_zpowers (g : G) (H : Subgroup G)
     [H.IsFiniteRelIndex (zpowers g)] :
     IsLeast {n : ℕ | 0 < n ∧ g ^ n ∈ H} (H.relIndex (zpowers g)) := by
-  have : (H.subgroupOf (zpowers g)).FiniteIndex := ⟨H.relIndex_ne_zero⟩
   have hset : {n : ℕ | 0 < n ∧ g ^ n ∈ H}
       = {n : ℕ | 0 < n ∧ (⟨g, mem_zpowers g⟩ : ↥(zpowers g)) ^ n
           ∈ H.subgroupOf (zpowers g)} := by
     ext n
     simp [Subgroup.mem_subgroupOf]
-  rw [hset]
+  rw [hset, relIndex]
   exact isLeast_pow_mem_index (H.subgroupOf (zpowers g)) (zpowers_mk_self_eq_top g)
 
 end Subgroup
