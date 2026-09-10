@@ -87,11 +87,12 @@ when the localisation is known to be strongly noetherian but `A` is not, or when
 known to cut out a rational subset.
 
 `PairOfDefinition.flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_top`
-asks it of `A`, which is Wedhorn's own hypothesis, at the cost of `[IsTateRing A]` and the
-rational-subset condition on `(T, s)`. Neither is a burden in the intended use — restriction
-between rational subsets of `Spa(A, A⁺)` of a Tate ring — where both hold by definition. It still
-asks topological nilpotence of the denominator, so it is Proposition 8.30 only for such a
-denominator.
+asks it of `A`, which is Wedhorn's own hypothesis, at the cost of three others: `[IsTateRing A]`,
+the rational-subset condition on `(T, s)`, and topological nilpotence of the denominator. The first
+two are free in the intended use — restriction between rational subsets of `Spa(A, A⁺)` of a Tate
+ring — where both hold by definition. **The third is not**: a rational-subset presentation may have
+`s = 1`, and `1` is not topologically nilpotent in a nonzero Tate ring. That is what leaves this
+short of Proposition 8.30 in general.
 
 The elementary case is unaffected: it needs strong noetherianity only at its own base, which is
 where Lemma 8.31 needs it too.
