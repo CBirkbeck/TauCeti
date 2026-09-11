@@ -21,7 +21,7 @@ This is the upper-triangular part of the descent of a level-raise
 
 * `TauCeti.smul_slash_scaleGL_slash_upperTriRep`: for `g` slash-invariant of level `Γ₁(M)`,
   `(p^(1-k) • (g ∣[k] scaleGL p)) ∣[k] !![1, b; 0, p] = p⁻¹ • g`.
-* `TauCeti.ModularForm.coe_levelRaise_slash_upperTriRep`: the same for the bundled level-raise
+* `TauCeti.coe_levelRaise_slash_upperTriRep`: the same for the bundled level-raise
   `ModularForm.levelRaise`.
 
 ## Provenance
@@ -66,7 +66,7 @@ theorem smul_slash_scaleGL_slash_upperTriRep {F : Type*} [FunLike F ℍ ℂ]
 
 /-- **An upper-triangular matrix slashes the level-raise of a modular form back to the form**:
 `(V_p g) ∣[k] !![1, b; 0, p] = p⁻¹ • g`. -/
-theorem ModularForm.coe_levelRaise_slash_upperTriRep {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.HasDetOne]
+theorem coe_levelRaise_slash_upperTriRep {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.HasDetOne]
     (hle : 𝒢 ≤ ConjAct.toConjAct (scaleGL p)⁻¹ • (Gamma1 M).map (mapGL ℝ))
     (g : ModularForm ((Gamma1 M).map (mapGL ℝ)) k) (b : Fin p) :
     ⇑(ModularForm.levelRaise p hle g) ∣[k] (upperTriRep p b : GL (Fin 2) ℚ) = (p : ℂ)⁻¹ • ⇑g := by
