@@ -33,6 +33,8 @@ where `ω₂` is the invariant differential of `W₂` (Silverman II.4.2(c)).
 * `TauCeti.Isogeny.pullbackDifferential_invariantDifferential`: `φ^*ω₂` is `dx / W_Y` read at the
   tautological point of `φ`, and `pullbackDifferential_negIsogeny_invariantDifferential`: negation
   pulls `ω` back to `-ω`.
+* `TauCeti.Isogeny.evalEval_polynomialY_tautologicalPoint_ne_zero`: the denominator `W_Y` does not
+  vanish at the tautological point of an isogeny.
 * `TauCeti.Isogeny.isSeparable_iff_pullbackDifferential_ne_zero`: **the differential criterion for
   separability** — the isogeny is separable if and only if it pulls the invariant differential back
   to a nonzero differential.
@@ -123,6 +125,14 @@ theorem fieldPullback_invariantDifferentialDenom [W₂.IsElliptic] (φ : Isogeny
     CoordinatePullback.yCoord_tautologicalPoint, genericX_def, genericY_def,
     fieldPullback_algebraMap, AdjoinRoot.mk_C, AdjoinRoot.mk_X]
   rfl
+
+/-- **`W_Y` does not vanish at the tautological point of an isogeny**: it is the pullback of the
+nonzero denominator of the invariant differential along an injective map. -/
+theorem evalEval_polynomialY_tautologicalPoint_ne_zero [W₂.IsElliptic] (φ : Isogeny W₁ W₂) :
+    (W₂⁄W₁.FunctionField).toAffine.polynomialY.evalEval (Point.xCoord φ.pullback.tautologicalPoint)
+      (Point.yCoord φ.pullback.tautologicalPoint) ≠ 0 := by
+  rw [← fieldPullback_invariantDifferentialDenom]
+  exact (map_ne_zero φ.fieldPullback).2 (invariantDifferentialDenom_ne_zero W₂)
 
 /-- **The pullback of the invariant differential is `dx / W_Y` at the tautological point**: the
 formula `ω₂ = dx / (2y + a₁x + a₃)` pulled back coordinate by coordinate. The target is elliptic so
