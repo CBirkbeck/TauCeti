@@ -108,8 +108,8 @@ theorem map_comp {R S T : Type*} [CommRing R] [CommRing S] [CommRing T] {n : Typ
 /-- **An equality of reductions is an equality entry by entry**: if `map f δ = map f γ` in
 `SpecialLinearGroup n S`, then `f (δ i j) = f (γ i j)` for all `i j`. -/
 theorem apply_eq_of_map_eq {n : Type*} [DecidableEq n] [Fintype n] {R S : Type*} [CommRing R]
-    [CommRing S] (f : R →+* S) {δ γ : SpecialLinearGroup n R} (h : map f δ = map f γ)
-    (i j : n) : f (δ i j) = f (γ i j) := by
+    [CommRing S] (δ : SpecialLinearGroup n R) {γ : SpecialLinearGroup n R} {f : R →+* S}
+    (h : map f δ = map f γ) (i j : n) : f (δ i j) = f (γ i j) := by
   have := congrArg (fun M : SpecialLinearGroup n S ↦ (M : Matrix n n S) i j) h
   simpa only [map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply] using this
 
