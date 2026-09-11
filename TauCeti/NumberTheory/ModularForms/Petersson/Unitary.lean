@@ -7,7 +7,7 @@ module
 
 public import TauCeti.NumberTheory.ModularForms.DiamondOperators
 public import TauCeti.NumberTheory.ModularForms.Petersson.Orthogonal
-import TauCeti.Analysis.Normed.Ring.Finite
+import Mathlib.Analysis.Normed.Ring.Finite
 
 /-!
 # The Petersson product is unitary under a normalising slash
@@ -187,9 +187,12 @@ theorem peterssonInnerCosets_eq_zero_of_mem_cuspFormCharSpace_of_ne {k : ℤ}
   obtain ⟨d, hd⟩ : ∃ d, χ d ≠ ψ d := by
     by_contra hcon
     exact hne (MonoidHom.ext fun d ↦ not_not.mp fun h ↦ hcon ⟨d, h⟩)
-  -- the value `χ d` is unimodular, so `conj (χ d) * ψ d = 1` would force `χ d = ψ d`
+  -- the value `χ d` is unimodular — it has finite order, `(ZMod N)ˣ` being finite — so
+  -- `conj (χ d) * ψ d = 1` would force `χ d = ψ d`
+  have hnorm : ‖(χ d : ℂ)‖ = 1 :=
+    (((Units.coeHom ℂ).comp χ).isOfFinOrder (isOfFinOrder_of_finite d)).norm_eq_one
   have hunit : conj (χ d : ℂ) * (χ d : ℂ) = 1 := by
-    rw [RCLike.conj_mul, MonoidHom.norm_coe_apply]
+    rw [RCLike.conj_mul, hnorm]
     norm_num
   have hscal : conj (χ d : ℂ) * (ψ d : ℂ) ≠ 1 := fun h ↦ hd <| Units.ext <| by
     have h2 : (χ d : ℂ) * (conj (χ d : ℂ) * (ψ d : ℂ)) = (χ d : ℂ) * 1 := by rw [h]
