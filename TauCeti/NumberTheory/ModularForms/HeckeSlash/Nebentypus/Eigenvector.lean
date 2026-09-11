@@ -22,21 +22,23 @@ coefficients of `F` alone:
 
 `a_{pm}(F) = c · a_m(F) − χ(p) p^{k−1} a_{m/p}(F)`, the last term present only when `p ∣ m`.
 
-Running it along the least prime factor shows that a cusp form which is an eigenvector at every
+Running it along the least prime factor shows that a form which is an eigenvector at every
 prime outside an auxiliary level `L` (a multiple of `N`) and has `a₁ = 0` has `a_n = 0` at every
-index `n` coprime to `L`. This is the form in which strong multiplicity one consumes eigen-ness
-(Miyake's Theorem 4.6.12 assumes agreement at the indices prime to such an `L`): the difference
-of two newforms whose eigenvalues agree outside `L` has `a₁ = 1 − 1 = 0`, so its coefficients at
-the indices prime to `L` all vanish, and the descent argument then places it in the old
-subspace.
+nonzero index `n` coprime to `L` — at `n = 0` as well when it is a cusp form. This is the form
+in which strong multiplicity one consumes eigen-ness (Miyake's Theorem 4.6.12 assumes agreement
+at the indices prime to such an `L`): the difference of two newforms whose eigenvalues agree
+outside `L` has `a₁ = 1 − 1 = 0`, so its coefficients at the indices prime to `L` all vanish,
+and the descent argument then places it in the old subspace.
 
 ## Main results
 
 * `HeckeRing.GL2.qExpansion_coeff_mul_of_heckeRingHomCharSpace_eq_smul`,
   `HeckeRing.GL2.qExpansion_coeff_mul_of_heckeRingHomCuspCharSpace_eq_smul`: the coefficient
   recurrence of an eigenvector, on `M_k(N, χ)` and on `S_k(N, χ)`.
-* `HeckeRing.GL2.qExpansion_coeff_eq_zero_of_coprime_of_forall_prime`: a cusp form that is an
-  eigenvector at every prime `p ∤ L` and has `a₁ = 0` has `a_n = 0` at every `n` coprime to `L`.
+* `HeckeRing.GL2.qExpansion_coeff_eq_zero_of_coprime_of_forall_prime_of_ne_zero`,
+  `HeckeRing.GL2.qExpansion_coeff_eq_zero_of_coprime_of_forall_prime`: a form in `M_k(N, χ)`
+  (respectively `S_k(N, χ)`) that is an eigenvector at every prime `p ∤ L` and has `a₁ = 0` has
+  `a_n = 0` at every `n ≠ 0` (respectively every `n`) coprime to `L`.
 
 ## References
 
@@ -55,14 +57,6 @@ namespace HeckeRing.GL2
 
 variable {N p : ℕ} [NeZero N] {k : ℤ} {χ : (ZMod N)ˣ →* ℂˣ}
 
-omit [NeZero N] in
-/-- The transport of a scalar through the `m`-th Fourier coefficient. -/
-private theorem qExpansion_coeff_smul {F : Type*} [FunLike F ℍ ℂ]
-    [ModularFormClass F ((Gamma1 N).map (mapGL ℝ)) k] (c : ℂ) (f : F) (m : ℕ) :
-    (qExpansion 1 (c • ⇑f)).coeff m = c * (qExpansion 1 f).coeff m := by
-  rw [ModularForm.qExpansion_smul one_pos (TauCeti.one_mem_strictPeriods_Gamma1_map _), map_smul,
-    smul_eq_mul]
-
 /-- **The coefficient recurrence of an eigenvector at a good prime, on `M_k(N, χ)`.** If the ring
 generator at `p ∤ N` acts on `F ∈ M_k(N, χ)` by the scalar `c`, then
 `a_{pm}(F) = c · a_m(F) − χ(p) p^{k−1} a_{m/p}(F)`, the last term present only when `p ∣ m`. -/
@@ -80,7 +74,9 @@ theorem qExpansion_coeff_mul_of_heckeRingHomCharSpace_eq_smul (hp : p.Prime)
       using congrArg Subtype.val hF
   have h := qExpansion_coeff_heckeSlashGamma1ModularFormEnd_diagCosetGamma1_of_mem_modFormCharSpace
     k hp hpN χ F.2 m
-  rw [← heckeTNat_def, hT, FunLike.coe_smul, qExpansion_coeff_smul] at h
+  rw [← heckeTNat_def, hT, FunLike.coe_smul,
+    ModularForm.qExpansion_smul one_pos (TauCeti.one_mem_strictPeriods_Gamma1_map _), map_smul,
+    smul_eq_mul] at h
   linear_combination -h
 
 /-- **The coefficient recurrence of an eigenvector at a good prime, on `S_k(N, χ)`.** If the ring
@@ -100,45 +96,79 @@ theorem qExpansion_coeff_mul_of_heckeRingHomCuspCharSpace_eq_smul (hp : p.Prime)
       heckeRingHomCuspCharSpace_heckeTGeneratorGamma0 k χ hp] using congrArg Subtype.val hF
   have h := qExpansion_coeff_heckeSlashGamma1CuspFormEnd_diagCosetGamma1_of_mem_cuspFormCharSpace
     k hp hpN χ F.2 m
-  rw [← heckeTCuspNat_def, hT, FunLike.coe_smul, qExpansion_coeff_smul] at h
+  rw [← heckeTCuspNat_def, hT, FunLike.coe_smul,
+    ModularForm.qExpansion_smul one_pos (TauCeti.one_mem_strictPeriods_Gamma1_map _), map_smul,
+    smul_eq_mul] at h
   linear_combination -h
 
-/-- **Coefficient vanishing from the prime eigenvalues.** Let `L` be a multiple of `N`. A cusp
-form `F ∈ S_k(N, χ)` that is an eigenvector of the ring generator at every prime `p ∤ L` and has
-`a₁(F) = 0` has `a_n(F) = 0` at every `n` coprime to `L`: the recurrence
-`qExpansion_coeff_mul_of_heckeRingHomCuspCharSpace_eq_smul` along the least prime factor of `n`
-expresses `a_n` through coefficients at smaller indices coprime to `L`. The auxiliary level `L`
-is the finite slack of strong multiplicity one: eigen-ness is assumed only away from finitely
-many primes beyond those dividing `N`. -/
+omit [NeZero N] in
+/-- The induction behind coefficient vanishing, on a bare sequence: if `a₁ = 0` and, at every
+prime `p ∤ L`, `a_{pm} = c · a_m − d · a_{m/p}` (the last term only when `p ∣ m`) for some scalars
+`c`, `d`, then `a_n = 0` at every `n ≠ 0` coprime to `L`: the recurrence along the least prime
+factor of `n` expresses `a_n` through coefficients at smaller indices coprime to `L`. -/
+private theorem eq_zero_of_coprime_of_forall_prime_mul_eq {a : ℕ → ℂ} {L : ℕ}
+    (ha : ∀ p : ℕ, p.Prime → Nat.Coprime p L → ∃ c d : ℂ, ∀ m : ℕ,
+      a (p * m) = c * a m - if p ∣ m then d * a (m / p) else 0)
+    (h1 : a 1 = 0) (n : ℕ) (hn0 : n ≠ 0) (hn : Nat.Coprime n L) : a n = 0 := by
+  induction n using Nat.strong_induction_on with
+  | _ n ih =>
+  rcases Nat.lt_or_ge n 2 with hn2 | hn2
+  · interval_cases n
+    · exact absurd rfl hn0
+    · exact h1
+  have hp : n.minFac.Prime := Nat.minFac_prime (by omega)
+  obtain ⟨m, hm⟩ := Nat.minFac_dvd n
+  have hpL : Nat.Coprime n.minFac L := Nat.Coprime.coprime_dvd_left (Nat.minFac_dvd n) hn
+  have hmL : Nat.Coprime m L := Nat.Coprime.coprime_dvd_left (Dvd.intro_left _ hm.symm) hn
+  have hm0 : m ≠ 0 := fun h0 ↦ hn0 (by rw [hm, h0, mul_zero])
+  have hmn : m < n :=
+    hm ▸ (Nat.lt_mul_iff_one_lt_left (Nat.pos_of_ne_zero hm0)).mpr hp.one_lt
+  obtain ⟨c, d, hcd⟩ := ha _ hp hpL
+  rw [hm, hcd m, ih m hmn hm0 hmL, mul_zero, zero_sub]
+  split_ifs with hpm
+  · rw [ih (m / n.minFac) ((Nat.div_le_self m _).trans_lt hmn)
+      (Nat.div_ne_zero_iff_of_dvd hpm |>.mpr ⟨hm0, hp.ne_zero⟩)
+      (Nat.Coprime.coprime_div_left hmL hpm), mul_zero, neg_zero]
+  · exact neg_zero
+
+/-- **Coefficient vanishing from the prime eigenvalues, on `M_k(N, χ)`.** Let `L` be a multiple of
+`N`. A form `F ∈ M_k(N, χ)` that is an eigenvector of the ring generator at every prime `p ∤ L`
+and has `a₁(F) = 0` has `a_n(F) = 0` at every `n ≠ 0` coprime to `L`, by the recurrence
+`qExpansion_coeff_mul_of_heckeRingHomCharSpace_eq_smul` along the least prime factor of `n`.
+The auxiliary level `L` is the finite slack of strong multiplicity one: eigen-ness is assumed
+only away from finitely many primes beyond those dividing `N`. -/
+theorem qExpansion_coeff_eq_zero_of_coprime_of_forall_prime_of_ne_zero {F : modFormCharSpace k χ}
+    {L : ℕ} (hNL : N ∣ L) (ha : ∀ p : ℕ, p.Prime → Nat.Coprime p L →
+      ∃ c : ℂ, heckeRingHomCharSpace k χ (heckeTCompositeGamma0 N p) F = c • F)
+    (h1 : (qExpansion 1 (F : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff 1 = 0) (n : ℕ)
+    (hn0 : n ≠ 0) (hn : Nat.Coprime n L) :
+    (qExpansion 1 (F : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff n = 0 :=
+  eq_zero_of_coprime_of_forall_prime_mul_eq
+    (a := fun n ↦ (qExpansion 1 (F : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff n)
+    (fun p hp hpL ↦ by
+    obtain ⟨c, hc⟩ := ha p hp hpL
+    exact ⟨c, _, qExpansion_coeff_mul_of_heckeRingHomCharSpace_eq_smul hp
+      (hpL.coprime_dvd_right hNL) hc⟩) h1 n hn0 hn
+
+/-- **Coefficient vanishing from the prime eigenvalues, on `S_k(N, χ)`.** Let `L` be a multiple of
+`N`. A cusp form `F ∈ S_k(N, χ)` that is an eigenvector of the ring generator at every prime
+`p ∤ L` and has `a₁(F) = 0` has `a_n(F) = 0` at every `n` coprime to `L`: at `n = 0` by
+cuspidality, otherwise by the recurrence
+`qExpansion_coeff_mul_of_heckeRingHomCuspCharSpace_eq_smul` along the least prime factor of `n`.
+This is the form strong multiplicity one consumes. -/
 theorem qExpansion_coeff_eq_zero_of_coprime_of_forall_prime {F : cuspFormCharSpace k χ} {L : ℕ}
     (hNL : N ∣ L) (ha : ∀ p : ℕ, p.Prime → Nat.Coprime p L →
       ∃ c : ℂ, heckeRingHomCuspCharSpace k χ (heckeTCompositeGamma0 N p) F = c • F)
     (h1 : (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff 1 = 0) (n : ℕ)
     (hn : Nat.Coprime n L) :
     (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff n = 0 := by
-  induction n using Nat.strong_induction_on with
-  | _ n ih =>
-  rcases Nat.lt_or_ge n 2 with hn2 | hn2
-  · interval_cases n
-    · exact CuspFormClass.qExpansion_coeff_zero _ one_pos
-        (TauCeti.one_mem_strictPeriods_Gamma1_map N)
-    · exact h1
-  have hp : n.minFac.Prime := Nat.minFac_prime (by omega)
-  obtain ⟨m, hm⟩ := Nat.minFac_dvd n
-  have hpL : Nat.Coprime n.minFac L := Nat.Coprime.coprime_dvd_left (Nat.minFac_dvd n) hn
-  have hmL : Nat.Coprime m L := Nat.Coprime.coprime_dvd_left (Dvd.intro_left _ hm.symm) hn
-  have hmn : m < n := by
-    rcases Nat.eq_zero_or_pos m with h0 | h0
-    · rw [h0, mul_zero] at hm
-      omega
-    · calc m < n.minFac * m := (Nat.lt_mul_iff_one_lt_left h0).mpr hp.one_lt
-        _ = n := hm.symm
-  obtain ⟨c, hc⟩ := ha _ hp hpL
-  rw [hm, qExpansion_coeff_mul_of_heckeRingHomCuspCharSpace_eq_smul hp
-    (hpL.coprime_dvd_right hNL) hc m, ih m hmn hmL, mul_zero, zero_sub]
-  split_ifs with hpm
-  · rw [ih (m / n.minFac) ((Nat.div_le_self m _).trans_lt hmn)
-      (Nat.Coprime.coprime_div_left hmL hpm), mul_zero, neg_zero]
-  · exact neg_zero
+  rcases eq_or_ne n 0 with rfl | hn0
+  · exact CuspFormClass.qExpansion_coeff_zero _ one_pos (TauCeti.one_mem_strictPeriods_Gamma1_map N)
+  exact eq_zero_of_coprime_of_forall_prime_mul_eq
+    (a := fun n ↦ (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff n)
+    (fun p hp hpL ↦ by
+    obtain ⟨c, hc⟩ := ha p hp hpL
+    exact ⟨c, _, qExpansion_coeff_mul_of_heckeRingHomCuspCharSpace_eq_smul hp
+      (hpL.coprime_dvd_right hNL) hc⟩) h1 n hn0 hn
 
 end HeckeRing.GL2
