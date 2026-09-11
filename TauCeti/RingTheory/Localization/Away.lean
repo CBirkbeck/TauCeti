@@ -24,9 +24,12 @@ manipulating it needs: scaling `1/s` by `t`, and clearing the denominator on eit
 
 The second is about a *family* of away localisations, one for each member of a set `T` generating
 the unit ideal. Such a family cannot make a proper ideal of `A` improper everywhere at once. The
-intended use is the criterion of `Module.FaithfullyFlat.pi_of_exists_submodule_ne_top`, where a
-rational cover supplies the family; the statement here asks nothing of `T` beyond the span
-condition, and in particular does not ask it to be finite.
+statement asks nothing of `T` beyond the span condition, and in particular does not ask it to be
+finite.
+
+It is a statement about the localisations themselves, not about any completion of them: a proper
+ideal staying proper in `A_t` says nothing on its own about `A_t`'s completion, which is what an
+adic-geometry consumer would be holding.
 
 Nothing here is topological or Huber-specific — it is `IsLocalization` algebra over an arbitrary
 commutative semiring — so it is stated outside the Huber namespace, alongside
@@ -338,9 +341,8 @@ instance isLocalizationAwayOne (R : Type*) [CommSemiring R] : IsLocalization.Awa
 generates the unit ideal of `A`, then for every proper ideal `J` there is a `t ∈ T` with
 `J · A_t ≠ A_t`.
 
-`T` need not be finite. This is the hypothesis of
-`Module.FaithfullyFlat.pi_of_exists_submodule_ne_top` for such a family, which is how a rational
-cover contributes to Wedhorn's Corollary 8.32. -/
+`T` need not be finite. The conclusion is about the localisations `A_t` themselves; passing to a
+completion of them is a separate question and is not addressed here. -/
 theorem exists_smul_top_ne_top_of_ne_top {A : Type*} [CommSemiring A] {T : Set A}
     (hT : Ideal.span T = ⊤) (S : ∀ _ : T, Type*) [∀ t : T, CommSemiring (S t)]
     [∀ t : T, Algebra A (S t)] [∀ t : T, IsLocalization.Away ((t : A)) (S t)]
