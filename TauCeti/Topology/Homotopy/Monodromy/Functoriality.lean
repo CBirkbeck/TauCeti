@@ -79,9 +79,8 @@ theorem _root_.IsCoveringMap.fiberMap_monodromy (hp : _root_.IsCoveringMap p)
   -- `convert` nor `congr!` descends through that (both stop at an `Iff` between the two
   -- equations), and `rw` cannot build the motive, so transport along `hcomp` directly.
   first
-    | exact hcomp ▸ hp.map_liftPathQuotient a e
-    | exact hcomp.symm ▸ hp.map_liftPathQuotient a e
-    | simpa only [hcomp] using hp.map_liftPathQuotient a e
+    | simpa [hf] using hp.map_liftPathQuotient a e
+    | simpa only [← hcomp] using hp.map_liftPathQuotient a e
 
 /-- A continuous map of covering spaces over `X` induces a natural transformation between
 their monodromy functors. Its component over `x` is the restriction of `f` to the fibre over
