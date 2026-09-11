@@ -263,8 +263,8 @@ extra matrix `descendExtraGamma p (l N)` back to level `N` by `diag(l, 1)`, then
 The quotient `δ` of the two candidates is `1` modulo `N / p` and diagonal modulo `p`, so
 `!![1, 0; 0, p] δ = β !![1, 0; 0, p]` with `β ∈ Γ₀(N)` of lower-right entry `1` modulo `N / p`, on
 which the nebentypus is trivial. -/
-private theorem slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq {N : ℕ} [NeZero N]
-    (hp : p.Prime) (hpN : p ∣ N) (hpsq : ¬ p ^ 2 ∣ N) [NeZero l] (hpl : Nat.Coprime p l)
+private theorem slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq {N : ℕ} (hp : p.Prime)
+    (hpN : p ∣ N) (hpsq : ¬ p ^ 2 ∣ N) [NeZero l] (hpl : Nat.Coprime p l)
     {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / p))ˣ →* ℂˣ}
     (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)))
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {c : ℤ}
