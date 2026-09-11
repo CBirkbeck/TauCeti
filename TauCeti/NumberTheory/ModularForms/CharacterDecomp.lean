@@ -26,12 +26,11 @@ together with its cusp-form analogues and the refinement to diamond-invariant
 submodules, by simultaneous diagonalization of the commuting finite-order diamond
 operators (`TauCeti/LinearAlgebra/Eigenspace/JointEigenvector/Basic.lean`).
 
-Beyond the standing `N ≠ 0` hypothesis (`[NeZero N]`, a section variable that most
-declarations here need, the independence statements being the exception), the statements are
-unconditional: the diamond group `(ZMod N)ˣ` is finite and
-commutative, so the classical character projectors decompose every vector
-(`iSup_iInf_eigenspace_unitHom_eq_top_of_commGroup`), with no finite-dimensionality
-hypotheses anywhere — matching the roadmap's canonical statement.
+The statements are unconditional, at every level `N` (including `N = 0`, where the diamond
+group is `ℤˣ`): the diamond group `(ZMod N)ˣ` is finite (`instFiniteZModUnits`, from
+`Mathlib.Data.ZMod.Units`) and commutative, so the classical character projectors decompose
+every vector (`iSup_iInf_eigenspace_unitHom_eq_top_of_commGroup`), with no
+finite-dimensionality hypotheses anywhere — matching the roadmap's canonical statement.
 
 Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/HeckeRIngs/GL2/CharacterDecomp.lean`, Chris Birkbeck,
