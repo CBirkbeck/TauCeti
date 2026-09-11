@@ -10,21 +10,21 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.RingEigenvalue
 /-!
 # Eigenvalues agreeing outside a finite set agree at every good prime
 
-Strong multiplicity one, in the form migrated from AINTLIB (the statement the roadmap adopts),
-assumes that two eigenforms have the same eigenvalue at every index coprime to the level outside
-a finite exceptional set. Miyake's own hypothesis (Theorem 4.6.12) is agreement at every index
-prime to an auxiliary level `L`; the finite-set formulation is AINTLIB's variant, and this file
-is the step that reduces it to agreement at every good prime: for a good prime `p`, pick a prime
-`q` beyond the exceptional set, the level and `p`; the two forms agree at `p q` and at `q`, or
-at `p q²` and at `q²`, and multiplicativity cancels the factor at `q` or `q²` — one of `λ_q`,
-`λ_{q²}` is nonzero, since `λ_q = 0` forces `λ_{q²} = −χ(q) q^{k−1} ≠ 0`. Nothing compares the
-weights of the two forms, so they may differ.
+Strong multiplicity one, in the form proved in AINTLIB, assumes that two eigenforms have the
+same eigenvalue at every index coprime to the level outside a finite exceptional set; Miyake's
+own hypothesis (Theorem 4.6.12) is agreement at every index prime to an auxiliary level `L`.
+This file is the step that reduces the finite-exceptional-set hypothesis to agreement at every
+index coprime to the level: for such an index `n`, pick a prime `q` beyond the exceptional set,
+the level and `n`; the two forms agree at `n q` and at `q`, or at `n q²` and at `q²`, and
+multiplicativity cancels the factor at `q` or `q²` — one of `λ_q`, `λ_{q²}` is nonzero, since
+`λ_q = 0` forces `λ_{q²} = −χ(q) q^{k−1} ≠ 0`. Nothing compares the weights of the two forms, so
+they may differ, and nothing uses primality of `n`.
 
 ## Main results
 
-* `HeckeRing.GL2.EigenformAwayFromLevel.eigenvalue_prime_eq_of_forall_notMem`: two good Hecke
+* `HeckeRing.GL2.EigenformAwayFromLevel.eigenvalue_eq_of_forall_notMem`: two good Hecke
   eigenforms of level `N` (of any two weights) whose eigenvalues agree at every index coprime to
-  `N` outside a finite set agree at every prime coprime to `N`.
+  `N` outside a finite set agree at every index coprime to `N`.
 
 ## Provenance
 
@@ -54,16 +54,15 @@ private theorem eigenvalue_prime_sq_ne_zero_of_eq_zero {p : ℕ+} (hp : (p : ℕ
   rw [f.eigenvalue_prime_sq hp hpN, h0, sq, zero_mul, zero_sub, neg_ne_zero]
   exact mul_ne_zero (Units.ne_zero _) (zpow_ne_zero _ (Nat.cast_ne_zero.mpr hp.ne_zero))
 
-/-- **Agreement outside a finite set forces agreement at every good prime.** If two good Hecke
+/-- **Agreement outside a finite set forces agreement at every good index.** If two good Hecke
 eigenforms of level `N`, of any weights, have the same eigenvalue at every index coprime to `N`
-outside a finite set `S`, they have the same eigenvalue at every prime `p` coprime to `N`:
+outside a finite set `S`, they have the same eigenvalue at every index `p` coprime to `N`:
 compare at `p q` or at `p q²` for a prime `q` beyond `S`, `N` and `p`, whichever of `λ_q(f)`,
 `λ_{q²}(f)` is nonzero. -/
-theorem eigenvalue_prime_eq_of_forall_notMem {k₁ k₂ : ℤ} {f : EigenformAwayFromLevel N k₁}
+theorem eigenvalue_eq_of_forall_notMem {k₁ k₂ : ℤ} {f : EigenformAwayFromLevel N k₁}
     {g : EigenformAwayFromLevel N k₂} {S : Finset ℕ}
     (h : ∀ (n : ℕ+) (hn : Nat.Coprime n N), (n : ℕ) ∉ S → f.eigenvalue n hn = g.eigenvalue n hn)
-    {p : ℕ+} (hp : (p : ℕ).Prime) (hpN : Nat.Coprime p N) :
-    f.eigenvalue p hpN = g.eigenvalue p hpN := by
+    {p : ℕ+} (hpN : Nat.Coprime p N) : f.eigenvalue p hpN = g.eigenvalue p hpN := by
   obtain ⟨q, hqB, hq⟩ := Nat.exists_infinite_primes (max (S.sup id) (max N p) + 1)
   have hqS : ∀ m : ℕ, q ≤ m → m ∉ S := fun m hm hmS ↦ by
     have := Finset.le_sup (f := id) hmS
@@ -72,7 +71,8 @@ theorem eigenvalue_prime_eq_of_forall_notMem {k₁ k₂ : ℤ} {f : EigenformAwa
   have hqN : Nat.Coprime q N := (Nat.Prime.coprime_iff_not_dvd hq).mpr fun hd ↦ by
     have := Nat.le_of_dvd (NeZero.pos N) hd
     omega
-  have hqp : Nat.Coprime p q := (Nat.coprime_primes hp hq).mpr (by omega)
+  have hqp : Nat.Coprime p q :=
+    ((Nat.Prime.coprime_iff_not_dvd hq).mpr (Nat.not_dvd_of_pos_of_lt p.pos (by omega))).symm
   set Q : ℕ+ := ⟨q, hq.pos⟩
   have hQN (v : ℕ) : Nat.Coprime ((Q ^ v : ℕ+) : ℕ) N := PNat.pow_coe Q v ▸ hqN.pow_left v
   have hpQ (v : ℕ) : Nat.Coprime p ((Q ^ v : ℕ+) : ℕ) := PNat.pow_coe Q v ▸ hqp.pow_right v
