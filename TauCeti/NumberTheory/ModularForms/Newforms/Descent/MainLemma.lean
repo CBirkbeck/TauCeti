@@ -107,6 +107,27 @@ private theorem sum_ite_eq_add_sum_erase {M : Type*} [AddCommMonoid M] {S : Fins
   congr 1
   exact Finset.sum_congr rfl fun q hq ↦ ite_eq_right (Finset.ne_of_mem_erase hq)
 
+omit [NeZero N] in
+/-- Extending a decomposition over `S.erase p` by a piece at `p`. -/
+private theorem exists_eq_sum_of_sub_eq_sum_erase {χ : (ZMod N)ˣ →* ℂˣ} {S : Finset ℕ} {p : ℕ}
+    (hpS : p ∈ S) {f gp : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
+    (hgp_supp : gp ∈ qSupportedOnDvdSubmodule N k p) (hgp_char : gp ∈ cuspFormCharSpace k χ)
+    {g : ℕ → CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hsum : f - gp = ∑ q ∈ S.erase p, g q)
+    (hsupp : ∀ q ∈ S.erase p, g q ∈ qSupportedOnDvdSubmodule N k q)
+    (hchar : ∀ q ∈ S.erase p, g q ∈ cuspFormCharSpace k χ) :
+    ∃ g : ℕ → CuspForm ((Gamma1 N).map (mapGL ℝ)) k, f = ∑ p ∈ S, g p ∧
+      (∀ p ∈ S, g p ∈ qSupportedOnDvdSubmodule N k p) ∧ ∀ p ∈ S, g p ∈ cuspFormCharSpace k χ := by
+  refine ⟨fun q ↦ if q = p then gp else g q, ?_, fun q hq ↦ ?_, fun q hq ↦ ?_⟩
+  · rw [sum_ite_eq_add_sum_erase hpS, ← hsum, add_sub_cancel]
+  · by_cases hqp : q = p
+    · simp only [hqp, ite_true]; exact hgp_supp
+    · simp only [hqp, ite_false]
+      exact hsupp q (Finset.mem_erase.mpr ⟨hqp, hq⟩)
+  · by_cases hqp : q = p
+    · simp only [hqp, ite_true]; exact hgp_char
+    · simp only [hqp, ite_false]
+      exact hchar q (Finset.mem_erase.mpr ⟨hqp, hq⟩)
+
 /-- **The coprime sieve decomposes along the primes** (Miyake, Lemma 4.6.8, the induction). For
 `S ⊆ N.primeFactors` and `f ∈ S_k(Γ₁(N), χ)` vanishing at every index coprime to the product of
 `S`, `f = ∑_{p ∈ S} f_p` with each `f_p ∈ S_k(Γ₁(N), χ)` supported on the multiples of `p`. -/
@@ -139,31 +160,14 @@ theorem exists_eq_sum_of_forall_coprime_prod_qExpansion_coeff_eq_zero {χ : (ZMo
       hvan' with hvan'' | ⟨χ₀, hcomp⟩
     · -- `p` needs no descent: `f` already vanishes off the remaining primes
       obtain ⟨g, hsum, hsupp, hchar⟩ := ih hS' hf hvan'' hcard'
-      refine ⟨fun q ↦ if q = p then 0 else g q, ?_, fun q hq ↦ ?_, fun q hq ↦ ?_⟩
-      · rw [sum_ite_eq_add_sum_erase hpS, zero_add, hsum]
-      · by_cases hqp : q = p
-        · simp only [hqp, ite_true, Submodule.zero_mem]
-        · simp only [hqp, ite_false]
-          exact hsupp q (Finset.mem_erase.mpr ⟨hqp, hq⟩)
-      · by_cases hqp : q = p
-        · simp only [hqp, ite_true, Submodule.zero_mem]
-        · simp only [hqp, ite_false]
-          exact hchar q (Finset.mem_erase.mpr ⟨hqp, hq⟩)
+      exact exists_eq_sum_of_sub_eq_sum_erase hpS (Submodule.zero_mem _) (Submodule.zero_mem _)
+        (by rw [sub_zero, hsum]) hsupp hchar
     · -- descend along `p`, then recurse on the remainder
       obtain ⟨gp, hgp_supp, hgp_char, hdiff⟩ :=
         exists_mem_qSupportedOnDvdSubmodule_and_qExpansion_coeff_sub_eq_zero hp hpN hsq hLN hpL
           hcomp hf hvan'
       obtain ⟨g, hsum, hsupp, hchar⟩ := ih hS' (Submodule.sub_mem _ hf hgp_char) hdiff hcard'
-      refine ⟨fun q ↦ if q = p then gp else g q, ?_, fun q hq ↦ ?_, fun q hq ↦ ?_⟩
-      · rw [sum_ite_eq_add_sum_erase hpS, ← hsum, add_sub_cancel]
-      · by_cases hqp : q = p
-        · simp only [hqp, ite_true]; exact hgp_supp
-        · simp only [hqp, ite_false]
-          exact hsupp q (Finset.mem_erase.mpr ⟨hqp, hq⟩)
-      · by_cases hqp : q = p
-        · simp only [hqp, ite_true]; exact hgp_char
-        · simp only [hqp, ite_false]
-          exact hchar q (Finset.mem_erase.mpr ⟨hqp, hq⟩)
+      exact exists_eq_sum_of_sub_eq_sum_erase hpS hgp_supp hgp_char hsum hsupp hchar
 
 
 /-! ### The Main Lemma -/
