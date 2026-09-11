@@ -88,7 +88,11 @@ attribute [local instance] TopRep.distribMulAction TopRep.smulCommClass
 
 /-- A **refinement** of finite normal layers: `new` is `old` with its top field enlarged. In field
 notation, `F ⊆ K ⊆ L` takes the layer `K/F` to the layer `L/F`, so the ground subgroup is
-unchanged and the top subgroup shrinks. -/
+unchanged and the top subgroup shrinks. Compare `LayerRestriction`, which instead raises the ground
+field and keeps the top field. Refinements compose via `LayerRefinement.trans` and induce inflation
+on layer cohomology (`LayerRefinement.cohomologyInfl`). Shrinking an open normal subgroup gives the
+basic examples (`NormalLayer.refinement_ofOpenNormal`), and two refinements of one layer always
+have a common refinement, the compositum (`LayerRefinement.exists_commonRefinement`). -/
 structure LayerRefinement (old new : NormalLayer G) : Prop where
   /-- a refinement does not move the ground subgroup -/
   same_ground : old.ground = new.ground
@@ -99,7 +103,9 @@ namespace LayerRefinement
 
 variable {old new : NormalLayer G}
 
-/-- The ground subgroups of a refinement, compared as subgroups of the ambient group. -/
+/-- The ground subgroups of a refinement agree as subgroups of the ambient group: the field
+`same_ground` in the form the `Subgroup` API takes. `T.same_ground_toSubgroup.ge` is the inclusion
+`new.ground ≤ old.ground` of subgroups that `galHom` and `ker_galHom` consume. -/
 theorem same_ground_toSubgroup (T : LayerRefinement old new) :
     old.ground.toSubgroup = new.ground.toSubgroup :=
   congrArg OpenSubgroup.toSubgroup T.same_ground
