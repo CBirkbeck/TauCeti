@@ -22,10 +22,11 @@ proof of Lemma 4.6.14.
 
 ## Main results
 
-* `TauCeti.descendSlash_smul_slash_scaleGL`: for `g` slash-invariant of level `Γ₁(N / p)`,
+* `TauCeti.smul_slash_scaleGL_slash_descendMatrix`: every member of the family slashes
+  `V_p g = p^(1-k) • (g ∣[k] scaleGL p)` to `p⁻¹ • g`, for `g` slash-invariant of level
+  `Γ₁(N / p)`.
+* `TauCeti.descendSlash_smul_slash_scaleGL`: hence
   `descendSlash k p N (p^(1-k) • (g ∣[k] scaleGL p)) = (|family| / p) • g`.
-* `TauCeti.descendSlash_coe_levelRaise`: `descendSlash k p N (V_p g) = (|family| / p) • g` for
-  the bundled level-raise `ModularForm.levelRaise`.
 
 ## Provenance
 
@@ -52,44 +53,44 @@ namespace TauCeti
 
 variable {p N : ℕ} (k : ℤ)
 
+/-- **Every member of the descent family slashes a level-raise back to the form.** For `p ∣ N`
+prime and `g` slash-invariant of level `Γ₁(N / p)`, with `V_p g = p^(1-k) • (g ∣[k] scaleGL p)`,
+`(V_p g) ∣[k] descendMatrix p N v = p⁻¹ • g` for every `v`: the upper-triangular members by
+`smul_slash_scaleGL_slash_upperTriRep`, the extra member because its `Γ₀(N / p)` factor lies in
+`Γ(N / p) ≤ Γ₁(N / p)`. -/
+theorem smul_slash_scaleGL_slash_descendMatrix (hp : p.Prime) (hpN : p ∣ N) {F : Type*}
+    [FunLike F ℍ ℂ] [SlashInvariantFormClass F ((Gamma1 (N / p)).map (mapGL ℝ)) k] (g : F)
+    (v : Fin (descendMatrixCount p N)) :
+    haveI : NeZero p := ⟨hp.ne_zero⟩
+    ((p : ℂ) ^ (1 - k) • (⇑g ∣[k] scaleGL p)) ∣[k] descendMatrix p N v = (p : ℂ)⁻¹ • ⇑g := by
+  have : NeZero p := ⟨hp.ne_zero⟩
+  rcases lt_or_ge v.val p with hv | hv
+  · rw [descendMatrix_of_lt hv, ← ModularForm.rat_slash,
+      smul_slash_scaleGL_slash_upperTriRep k (one_mem_strictPeriods_Gamma1_map _)]
+  · have hpsq : ¬ p ^ 2 ∣ N := fun h ↦ by
+      have h1 := descendMatrixCount_of_sq_dvd h
+      have h2 := v.isLt
+      omega
+    have hmem : descendExtraGamma p N ∈ Gamma1 (N / p) :=
+      Gamma_le_Gamma1 (N / p)
+        (Gamma_mem'.mpr (descendExtraGamma_map_intCast_zmod_div_eq_one hp hpN hpsq))
+    rw [descendMatrix_of_le hv, SlashAction.slash_mul, ← ModularForm.rat_slash,
+      smul_slash_scaleGL_slash_upperTriRep k (one_mem_strictPeriods_Gamma1_map _),
+      _root_.ModularForm.smul_slash, σ_mapGL_real_eq_refl, ContinuousAlgEquiv.refl_apply,
+      SlashInvariantFormClass.slash_action_eq g _ (Subgroup.mem_map_of_mem _ hmem)]
+
 /-- **The descent of a level-raise is a multiple of the form.** For `p ∣ N` prime and `g`
 slash-invariant of level `Γ₁(N / p)`, with `V_p g = p^(1-k) • (g ∣[k] scaleGL p)`,
-`descendSlash k p N (V_p g) = (|family| / p) • g`: every member of the descent family slashes
-`V_p g` to `p⁻¹ • g`. -/
+`descendSlash k p N (V_p g) = (|family| / p) • g`, summing
+`smul_slash_scaleGL_slash_descendMatrix` over the family. -/
 theorem descendSlash_smul_slash_scaleGL (hp : p.Prime) (hpN : p ∣ N) {F : Type*} [FunLike F ℍ ℂ]
     [SlashInvariantFormClass F ((Gamma1 (N / p)).map (mapGL ℝ)) k] (g : F) :
     haveI : NeZero p := ⟨hp.ne_zero⟩
     descendSlash k p N ((p : ℂ) ^ (1 - k) • (⇑g ∣[k] scaleGL p)) =
       ((descendMatrixCount p N : ℂ) / p) • ⇑g := by
   have : NeZero p := ⟨hp.ne_zero⟩
-  have hterm (v : Fin (descendMatrixCount p N)) :
-      ((p : ℂ) ^ (1 - k) • (⇑g ∣[k] scaleGL p)) ∣[k] descendMatrix p N v = (p : ℂ)⁻¹ • ⇑g := by
-    rcases lt_or_ge v.val p with hv | hv
-    · rw [descendMatrix_of_lt hv, ← ModularForm.rat_slash, smul_slash_scaleGL_slash_upperTriRep]
-    · have hpsq : ¬ p ^ 2 ∣ N := fun h ↦ by
-        have h1 := descendMatrixCount_of_sq_dvd h
-        have h2 := v.isLt
-        omega
-      have hmem : descendExtraGamma p N ∈ Gamma1 (N / p) :=
-        Gamma_le_Gamma1 (N / p)
-          (Gamma_mem'.mpr (descendExtraGamma_map_intCast_zmod_div_eq_one hp hpN hpsq))
-      rw [descendMatrix_of_le hv, SlashAction.slash_mul, ← ModularForm.rat_slash,
-        smul_slash_scaleGL_slash_upperTriRep, _root_.ModularForm.smul_slash, σ_mapGL_real_eq_refl,
-        ContinuousAlgEquiv.refl_apply,
-        SlashInvariantFormClass.slash_action_eq g _ (Subgroup.mem_map_of_mem _ hmem)]
-  rw [descendSlash_def, Finset.sum_congr rfl fun v _ ↦ hterm v, Finset.sum_const,
-    Finset.card_univ, Fintype.card_fin, ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, div_eq_mul_inv]
-
-/-- **The descent of the level-raise of a modular form**:
-`descendSlash k p N (V_p g) = (|family| / p) • g`. -/
-theorem descendSlash_coe_levelRaise (hp : p.Prime) (hpN : p ∣ N)
-    (g : ModularForm ((Gamma1 (N / p)).map (mapGL ℝ)) k) :
-    haveI : NeZero p := ⟨hp.ne_zero⟩
-    descendSlash k p N ⇑(ModularForm.levelRaise p
-        (Gamma1_map_le_conjAct_scaleGL_of_dvd (dvd_of_eq (Nat.mul_div_cancel' hpN))) g) =
-      ((descendMatrixCount p N : ℂ) / p) • ⇑g := by
-  have : NeZero p := ⟨hp.ne_zero⟩
-  rw [ModularForm.coe_levelRaise]
-  exact descendSlash_smul_slash_scaleGL k hp hpN g
+  rw [descendSlash_def, Finset.sum_congr rfl fun v _ ↦ smul_slash_scaleGL_slash_descendMatrix k hp
+    hpN g v, Finset.sum_const, Finset.card_univ, Fintype.card_fin, ← Nat.cast_smul_eq_nsmul ℂ,
+    smul_smul, div_eq_mul_inv]
 
 end TauCeti
