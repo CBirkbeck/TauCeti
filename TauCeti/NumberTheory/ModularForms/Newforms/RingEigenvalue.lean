@@ -17,9 +17,11 @@ The eigenvalues of a good Hecke eigenform `f` (`EigenformAwayFromLevel`) inherit
 multiplication table of the `Γ₀(N)` Hecke ring: they are multiplicative on coprime indices, and
 along the powers of a good prime `p` they satisfy the Diamond–Shurman recurrence
 `λ_{p^{r+2}} = λ_p λ_{p^{r+1}} − χ(p) p^{k−1} λ_{p^r}`, because the scalar coset `T(p, p)` acts on
-the character space by `χ(p) p^{k−2}`. Nothing here touches Fourier coefficients: every identity
-is the image of a relation in the ring under `heckeRingHomCuspCharSpace`, evaluated on the
-(nonzero) form.
+the character space by `χ(p) p^{k−2}`. Nothing here touches Fourier coefficients: the three
+identities `eigenvalue_one`, `eigenvalue_mul` and `eigenvalue_prime_pow_add_two` are images of
+relations in the ring under `heckeRingHomCuspCharSpace`, evaluated on the (nonzero) form; the
+remaining statements are consequences (a congruence in the index, the prime-square instance, and
+the cancellation argument below).
 
 The payoff is the **finite-exceptional-set upgrade** behind strong multiplicity one: if two good
 Hecke eigenforms have the same eigenvalue at every good index outside a finite set, they have the
@@ -40,7 +42,8 @@ at `p` agree once `λ_q(f) ≠ 0`. If instead `λ_q(f) = 0`, the recurrence give
   a finite set of good indices forces agreement at every good prime.
 
 The coprimality proofs guarding `eigenvalue` are implicit arguments of these statements, so that
-they apply to whichever proof a consumer holds.
+they apply to whichever proof a consumer holds; `eigenvalue_congr` moves between spellings of an
+index.
 
 ## Provenance
 
@@ -85,20 +88,11 @@ theorem eigenvalue_congr {m n : ℕ+} (hmn : m = n) {hm : Nat.Coprime m N} {hn :
   rfl
 
 /-- The eigenvalue at `1` is `1`: the ring element at index `1` is the identity. -/
+@[simp]
 theorem eigenvalue_one {h : Nat.Coprime ((1 : ℕ+) : ℕ) N} : f.eigenvalue 1 h = 1 := by
   refine f.eq_of_smul_eq ?_
   rw [← f.isEigen 1 h, PNat.one_coe, heckeTCompositeGamma0_one, map_one, Module.End.one_apply,
     one_smul]
-
-/-- The eigenvalue at `p ^ 0`, in the form the prime-power recurrence produces. -/
-theorem eigenvalue_pow_zero {p : ℕ+} {h : Nat.Coprime ((p ^ 0 : ℕ+) : ℕ) N} :
-    f.eigenvalue (p ^ 0) h = 1 :=
-  (f.eigenvalue_congr (pow_zero p) (hn := Nat.coprime_one_left N)).trans f.eigenvalue_one
-
-/-- The eigenvalue at `p ^ 1`, in the form the prime-power recurrence produces. -/
-theorem eigenvalue_pow_one {p : ℕ+} {h : Nat.Coprime ((p ^ 1 : ℕ+) : ℕ) N}
-    {h' : Nat.Coprime p N} : f.eigenvalue (p ^ 1) h = f.eigenvalue p h' :=
-  f.eigenvalue_congr (pow_one p)
 
 /-- **Multiplicativity on coprime good indices**: `λ_{mn} = λ_m λ_n`, the image of the coprime
 multiplication rule `heckeTCompositeGamma0_mul_of_coprime` of the Hecke ring. -/
@@ -127,20 +121,38 @@ theorem eigenvalue_prime_pow_add_two {p : ℕ+} (hp : (p : ℕ).Prime) (hpN : Na
     {h₂ : Nat.Coprime ((p ^ (r + 2) : ℕ+) : ℕ) N} :
     f.eigenvalue (p ^ (r + 2)) h₂ = f.eigenvalue p hpN * f.eigenvalue (p ^ (r + 1)) h₁ -
       (f.χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1) * f.eigenvalue (p ^ r) h₀ := by
-  have hp0 : (p : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hp.ne_zero
-  have hpow : (p : ℂ) ^ (k - 1) = (p : ℂ) ^ (k - 2) * p := by
-    rw [show k - 1 = k - 2 + 1 by ring, zpow_add_one₀ hp0]
   have hp1 : Nat.Coprime ((p ^ 1 : ℕ+) : ℕ) N := by rwa [pow_one]
-  have h := f.heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0 hp h₂
-  rw [heckeTGeneratorRecGamma0_succ_succ, map_sub, map_mul, map_mul, LinearMap.sub_apply,
-    Module.End.mul_apply, Module.End.mul_apply,
+  -- the ring recurrence, transported along the ring homomorphism
+  have hrec : heckeRingHomCuspCharSpace k f.χ (heckeTGeneratorRecGamma0 N p (r + 2)) =
+      heckeRingHomCuspCharSpace k f.χ (heckeTGeneratorGamma0 N p) *
+          heckeRingHomCuspCharSpace k f.χ (heckeTGeneratorRecGamma0 N p (r + 1)) -
+        (p : ℤ) • heckeRingHomCuspCharSpace k f.χ (heckeTScalarGamma0 N p) *
+          heckeRingHomCuspCharSpace k f.χ (heckeTGeneratorRecGamma0 N p r) := by
+    rw [heckeTGeneratorRecGamma0_succ_succ, map_sub, map_mul, map_mul, map_zsmul]
+  -- the generator and the scalar coset evaluated on the form
+  have eₚ : heckeRingHomCuspCharSpace k f.χ (heckeTGeneratorGamma0 N p)
+      ⟨f.toCuspForm, f.mem_charSpace⟩ =
+      f.eigenvalue p hpN • (⟨f.toCuspForm, f.mem_charSpace⟩ : cuspFormCharSpace k f.χ) := by
+    have := f.heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0 hp hp1
+    rwa [heckeTGeneratorRecGamma0_one, f.eigenvalue_congr (pow_one p) (hn := hpN)] at this
+  have eₛ : heckeRingHomCuspCharSpace k f.χ (heckeTScalarGamma0 N p)
+      ⟨f.toCuspForm, f.mem_charSpace⟩ =
+      ((f.χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 2)) •
+        (⟨f.toCuspForm, f.mem_charSpace⟩ : cuspFormCharSpace k f.χ) := by
+    rw [heckeRingHomCuspCharSpace_heckeTScalarGamma0 k f.χ p hp.pos hpN, LinearMap.smul_apply,
+      Module.End.one_apply]
+  -- evaluate the recurrence on the form and read off the scalars
+  have h := congrArg (fun T : Module.End ℂ (cuspFormCharSpace k f.χ) ↦
+    T ⟨f.toCuspForm, f.mem_charSpace⟩) hrec
+  simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.smul_apply,
     f.heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0 hp h₀,
-    f.heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0 hp h₁, map_smul, map_smul,
-    ← heckeTGeneratorRecGamma0_one, f.heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0 hp hp1,
-    map_zsmul, heckeRingHomCuspCharSpace_heckeTScalarGamma0 k f.χ p hp.pos hpN,
-    LinearMap.smul_apply, LinearMap.smul_apply, Module.End.one_apply,
-    ← Int.cast_smul_eq_zsmul ℂ, smul_smul, smul_smul, smul_smul, ← sub_smul] at h
-  rw [f.eq_of_smul_eq h.symm, hpow, f.eigenvalue_pow_one (h' := hpN)]
+    f.heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0 hp h₁,
+    f.heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0 hp h₂, map_smul, eₚ, eₛ, smul_smul,
+    ← Int.cast_smul_eq_zsmul ℂ, ← sub_smul] at h
+  have hp0 : (p : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hp.ne_zero
+  have hk : k - 1 = k - 2 + 1 := by ring
+  have hpow : (p : ℂ) ^ (k - 1) = (p : ℂ) ^ (k - 2) * p := by rw [hk, zpow_add_one₀ hp0]
+  rw [f.eq_of_smul_eq h, hpow]
   push_cast
   ring
 
@@ -149,8 +161,12 @@ theorem eigenvalue_prime_sq {p : ℕ+} (hp : (p : ℕ).Prime) (hpN : Nat.Coprime
     {h : Nat.Coprime ((p ^ 2 : ℕ+) : ℕ) N} :
     f.eigenvalue (p ^ 2) h =
       f.eigenvalue p hpN ^ 2 - (f.χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1) := by
-  rw [f.eigenvalue_prime_pow_add_two hp hpN (r := 0) (h₀ := by simp) (h₁ := by rwa [pow_one]),
-    f.eigenvalue_pow_zero, f.eigenvalue_pow_one (h' := hpN), mul_one, sq]
+  have e₀ : f.eigenvalue (p ^ 0) (by simp) = 1 :=
+    (f.eigenvalue_congr (pow_zero p) (hn := by simp)).trans f.eigenvalue_one
+  have e₁ : f.eigenvalue (p ^ (0 + 1)) (by simpa using hpN) = f.eigenvalue p hpN :=
+    f.eigenvalue_congr (by rw [zero_add, pow_one])
+  rw [f.eigenvalue_prime_pow_add_two hp hpN (r := 0) (h₀ := by simp) (h₁ := by simpa using hpN),
+    e₀, e₁, mul_one, sq]
 
 /-- At a good prime `p` with `λ_p = 0`, the eigenvalue at `p²` is `−χ(p) p^{k−1}`, which is
 nonzero. -/
@@ -200,6 +216,6 @@ theorem eigenvalue_prime_eq_of_forall_notMem {f g : EigenformAwayFromLevel N k} 
     exact mul_right_cancel₀ hv e1
   by_cases h0 : f.eigenvalue Q hqN = 0
   · exact key 2 two_ne_zero (f.eigenvalue_prime_sq_ne_zero_of_eq_zero (p := Q) hq hqN h0)
-  · exact key 1 one_ne_zero (by rwa [f.eigenvalue_pow_one (p := Q) (h' := hqN)])
+  · exact key 1 one_ne_zero (by rwa [f.eigenvalue_congr (pow_one Q) (hn := hqN)])
 
 end HeckeRing.GL2.EigenformAwayFromLevel
