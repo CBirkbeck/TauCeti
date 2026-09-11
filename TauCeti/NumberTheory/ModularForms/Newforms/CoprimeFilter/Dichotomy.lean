@@ -8,22 +8,26 @@ module
 public import TauCeti.NumberTheory.ModularForms.ConductorDichotomy
 public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Basic
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Basic
+import TauCeti.NumberTheory.DirichletCharacter.Basic
 
 /-!
 # The factor dichotomy of the coprime sieve
 
 Let `f ∈ S_k(Γ₁(N), χ)` vanish at every index coprime to `p L`, for a prime `p ∣ N` and a
-squarefree `L` coprime to `p` whose primes divide `N`. Either `f` already vanishes at every index
+nonzero `L` coprime to `p` whose primes divide `N`. Either `f` already vanishes at every index
 coprime to `L`, or the nebentypus `χ` is the pull-back of a character modulo `N / p`. This is
 the case split of Miyake's proof of Lemma 4.6.8 (the Main Lemma of Diamond–Shurman §5.7, per
-character): in the second case the descent along `p` produces a form of level `N / p`, and in
-the first the prime `p` needs no descent at all.
+character): the second case is what a later descent along `p` needs, and in the first the prime
+`p` needs no descent at all.
 
-The coprime filter of `f` (`Newforms/CoprimeFilter/Basic.lean`) is a form `G` of level `L N`
-carrying the coefficients of `f` at the indices coprime to `L` and supported on the multiples of
-`p`; the level-lowering dichotomy (`ConductorDichotomy.lean`) either finds `G` to be a
-level-raise from `L N / p`, so that the pulled-back character factors through `L N / p` and, by
-the conductor, `χ` factors through `N / p`, or forces `G = 0`, which is the vanishing of `f`.
+The coprime filter of `f` (`Newforms/CoprimeFilter/Basic.lean`) is a form `G` of level `L' N`,
+`L'` the product of the primes of `L`, carrying the coefficients of `f` at the indices coprime
+to `L` and supported on the multiples of `p`; the level-lowering dichotomy
+(`ConductorDichotomy.lean`) either finds `G` to be a level-raise from `L' N / p`, so that the
+pulled-back character factors through `L' N / p` and, by the conductor
+(`DirichletCharacter.factorsThrough_div_of_changeLevel_factorsThrough`), `χ` factors through
+`N / p`, or forces `G = 0`, which is the required vanishing of the coefficients of `f` at the
+indices coprime to `L`.
 
 ## Main results
 
@@ -37,7 +41,8 @@ Adapted from the AINTLIB `LeanModularForms` project (Chris Birkbeck, Apache-2.0,
 `miyake_4_6_8_factor_dichotomy`. The source's private conductor lemmas
 (`conductor_dvd_of_factorsThrough`, `factorsThrough_of_conductor_dvd`, `conductor_changeLevel`)
 are Mathlib's `DirichletCharacter.conductor_dvd_of_mem_conductorSet`,
-`mem_conductorSet_iff_conductor_dvd` and `conductor_changeLevel`.
+`mem_conductorSet_iff_conductor_dvd` and `conductor_changeLevel`; the source assumes `L`
+squarefree, which the filter at the radical of `L` makes unnecessary.
 
 ## References
 
@@ -54,38 +59,24 @@ namespace TauCeti
 
 variable {N : ℕ} [NeZero N] {k : ℤ}
 
-/-- A character modulo `N` whose lift to level `L N` factors through `L N / p`, for `p ∣ N`
-prime and `L` coprime to `p`, factors through `N / p`: `changeLevel` preserves the conductor,
-which then divides `gcd (N, L N / p) = N / p`. -/
-private theorem factorsThrough_div_of_changeLevel_factorsThrough {p L : ℕ} [NeZero (L * N)]
-    (hpN : p ∣ N) (hpL : Nat.Coprime p L) {ψ : DirichletCharacter ℂ N}
-    (hfac : (DirichletCharacter.changeLevel (Nat.dvd_mul_left N L) ψ).FactorsThrough
-      (L * N / p)) :
-    ψ.FactorsThrough (N / p) := by
-  have hN : N = p * (N / p) := (Nat.mul_div_cancel' hpN).symm
-  have hc : ψ.conductor ∣ L * (N / p) := by
-    have := DirichletCharacter.conductor_dvd_of_mem_conductorSet _ hfac
-    rwa [DirichletCharacter.conductor_changeLevel, Nat.mul_div_assoc L hpN] at this
-  have hgcd : Nat.gcd (p * (N / p)) (L * (N / p)) = N / p := by
-    rw [Nat.gcd_mul_right, hpL.gcd_eq_one, one_mul]
-  exact (DirichletCharacter.mem_conductorSet_iff_conductor_dvd _ (Nat.div_dvd_of_dvd hpN)).mpr
-    (hgcd ▸ Nat.dvd_gcd (hN ▸ ψ.conductor_dvd_level) hc)
-
 /-- **The factor dichotomy.** For `f ∈ S_k(Γ₁(N), χ)` vanishing at every index coprime to `p L`,
-with `p ∣ N` prime and `L` squarefree, coprime to `p`, with primes dividing `N`: either `f`
-vanishes at every index coprime to `L`, or `χ` is the pull-back of a character modulo `N / p`. -/
+with `p ∣ N` prime and `L ≠ 0` coprime to `p` with primes dividing `N`: either `f` vanishes at
+every index coprime to `L`, or `χ` is the pull-back of a character modulo `N / p`. -/
 theorem qExpansion_coeff_eq_zero_of_coprime_or_exists_eq_comp_unitsMap (χ : (ZMod N)ˣ →* ℂˣ)
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {p L : ℕ}
-    (hp : p.Prime) (hpN : p ∣ N) (hL : Squarefree L) (hLN : L.primeFactors ⊆ N.primeFactors)
+    [NeZero L] (hp : p.Prime) (hpN : p ∣ N) (hLN : L.primeFactors ⊆ N.primeFactors)
     (hpL : Nat.Coprime p L) (hvan : ∀ n, Nat.Coprime n (p * L) → (qExpansion 1 f).coeff n = 0) :
     (∀ n, Nat.Coprime n L → (qExpansion 1 f).coeff n = 0) ∨
       ∃ χ₀ : (ZMod (N / p))ˣ →* ℂˣ, χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)) := by
   have : NeZero p := ⟨hp.ne_zero⟩
-  have : NeZero (L * N) := ⟨Nat.mul_ne_zero hL.ne_zero (NeZero.ne N)⟩
-  have hpLN : p ∣ L * N := dvd_mul_of_dvd_right hpN L
-  have hNLN : N ∣ L * N := Nat.dvd_mul_left N L
+  -- the filter lives at the level `L' N`, `L'` the radical of `L`
   obtain ⟨G, hGχ, hGsupp, hGcoeff⟩ :=
-    exists_mem_cuspFormCharSpace_qExpansionSupportedOnDvd_of_squarefree χ hf hp hL hLN hvan
+    exists_mem_cuspFormCharSpace_qExpansionSupportedOnDvd χ hf hp hLN hvan
+  have hL'L : L.primeFactors.prod id ∣ L := Nat.prod_primeFactors_dvd L
+  have : NeZero (L.primeFactors.prod id) := ⟨ne_zero_of_dvd_ne_zero (NeZero.ne L) hL'L⟩
+  have hpL' : Nat.Coprime p (L.primeFactors.prod id) := hpL.coprime_dvd_right hL'L
+  have hpLN : p ∣ L.primeFactors.prod id * N := dvd_mul_of_dvd_right hpN _
+  have hNLN : N ∣ L.primeFactors.prod id * N := Nat.dvd_mul_left N _
   obtain ⟨φ, hGφ, hφT⟩ :=
     CuspForm.exists_eq_smul_slash_scaleGL_and_slash_T_eq_of_qExpansionSupportedOnDvd G hGsupp
   -- the nebentypus of `G` is the level-`L N` lift of `χ`, as a Dirichlet character
@@ -97,7 +88,7 @@ theorem qExpansion_coeff_eq_zero_of_coprime_or_exists_eq_comp_unitsMap (χ : (ZM
     ⟨hfac, -, -, -⟩ | hφ0
   · -- `χ` lifted to level `L N` factors through `L N / p`, so `χ` factors through `N / p`
     right
-    have hfac' := factorsThrough_div_of_changeLevel_factorsThrough hpN hpL hfac
+    have hfac' := DirichletCharacter.factorsThrough_div_of_changeLevel_factorsThrough hpN hpL' hfac
     refine ⟨hfac'.χ₀.toUnitHom, ?_⟩
     rw [← hψχ]
     conv_lhs => rw [hfac'.eq_changeLevel]
