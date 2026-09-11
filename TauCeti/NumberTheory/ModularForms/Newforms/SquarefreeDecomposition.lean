@@ -5,7 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Descent
+public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Basic
+public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.CharacterSpace
 
 /-!
 # The squarefree decomposition of a form with vanishing coprime coefficients
@@ -15,7 +16,7 @@ coprime to a squarefree `l` is, coefficient by coefficient, a sum `∑_{q ∣ l}
 level-raises of forms `F_q` of level `N l² / q` with nebentypus lowered along `N l² / q ∣ N l²`.
 The coefficients of the sum are read through the restrictions `g_q` of the `F_q` to the common
 level `N l²`: `a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(g_q)`. The prime peeled at each step is the one of
-`Newforms/CoprimeFilter/Descent.lean`
+`Newforms/Descent/CharacterSpace.lean`
 (`exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_qExpansionSupportedOnDvd`).
 
 ## Main results

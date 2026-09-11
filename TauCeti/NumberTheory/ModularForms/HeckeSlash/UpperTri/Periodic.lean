@@ -166,7 +166,7 @@ variable {d : ℕ}
 /-- **The commutation of `scaleRep d = diag(d, 1)` past an upper-triangular representative.**
 Both sides are `!![d, d b; 0, p]`: on the right, `d b = q p + r` is split so that the
 representative index `r` is again in range, at the cost of the shift `T ^ q`. -/
-private lemma scaleRep_mul_upperTriRep (hd : 0 < d) (b : Fin p) {q r : ℕ} (hr : r < p)
+lemma scaleRep_mul_upperTriRep (hd : 0 < d) (b : Fin p) {q r : ℕ} (hr : r < p)
     (hqr : d * (b : ℕ) = q * p + r) :
     scaleRep d * upperTriRep p b =
       mapGL ℚ (ModularGroup.T ^ q) * (upperTriRep p ⟨r, hr⟩ * scaleRep d) := by

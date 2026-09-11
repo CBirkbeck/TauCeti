@@ -58,9 +58,17 @@ namespace TauCeti
 
 variable {p l : ℕ} (k : ℤ)
 
+/-- The real scale matrix `diag(l, 1)` is the image of the rational one. -/
+private theorem map_scaleRep_eq_scaleGL [NeZero l] :
+    Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (scaleRep l) = scaleGL l := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [Matrix.GeneralLinearGroup.map, coe_scaleRep l (NeZero.pos l), coe_scaleGL]
+
 /-- **An upper-triangular member of the family, after the level-raise.** For `f` of level `Γ₁(M)`,
-`(V_l f) ∣[k] !![1, b; 0, p]` is `V_l` of `f ∣[k] !![1, l b mod p; 0, p]`, because the points
-`l (τ + b) / p` and `(l τ + (l b mod p)) / p` differ by the integer `l b div p`. -/
+`(V_l f) ∣[k] !![1, b; 0, p]` is `V_l` of `f ∣[k] !![1, l b mod p; 0, p]`: `diag(l, 1)` moves past
+`!![1, b; 0, p]` at the cost of the shift `T ^ (l b div p)` (`scaleRep_mul_upperTriRep`), which
+`f` absorbs. -/
 private theorem coe_levelRaise_slash_upperTriRep_eq_smul_slash {M : ℕ} (hp : p.Prime)
     [NeZero l] (f : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) (b : Fin p) :
     ⇑(CuspForm.levelRaise l (Gamma1_map_le_conjAct_scaleGL M l) f) ∣[k]
@@ -69,25 +77,15 @@ private theorem coe_levelRaise_slash_upperTriRep_eq_smul_slash {M : ℕ} (hp : p
         ((⇑f ∣[k] (upperTriRep p ⟨l * b % p, Nat.mod_lt _ hp.pos⟩ : GL (Fin 2) ℚ)) ∣[k]
           scaleGL l) := by
   have : NeZero p := ⟨hp.ne_zero⟩
-  have hl0 : (l : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr (NeZero.ne l)
-  have hp0 : (p : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hp.ne_zero
-  funext τ
-  rw [slash_upperTriRep_apply, CuspForm.levelRaise_apply, Pi.smul_apply, slash_scaleGL_apply,
-    slash_upperTriRep_apply, smul_eq_mul]
-  have hpt : scaleGL l • (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p b) • τ) =
-      ((l * b / p : ℕ) : ℝ) +ᵥ (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)
-        (upperTriRep p ⟨l * b % p, Nat.mod_lt _ hp.pos⟩) • (scaleGL l • τ)) := by
-    ext1
-    rw [coe_scaleGL_smul, coe_upperTriRep_smul, UpperHalfPlane.coe_vadd, coe_upperTriRep_smul,
-      coe_scaleGL_smul]
-    have hC : (l : ℂ) * b = p * (l * b / p : ℕ) + (l * b % p : ℕ) := by
-      exact_mod_cast (Nat.div_add_mod (l * b) p).symm
-    push_cast
-    field_simp
-    linear_combination hC
-  rw [hpt, SlashInvariantForm.vAdd_apply_of_mem_strictPeriods f _
-    (by simpa using AddSubgroup.nsmul_mem _ (one_mem_strictPeriods_Gamma1_map M) (l * b / p)),
-    ← mul_assoc, ← zpow_add₀ hl0, sub_add_sub_cancel, sub_self, zpow_zero, one_mul]
+  have hqr : l * (b : ℕ) = l * b / p * p + l * b % p := (Nat.div_add_mod' (l * b) p).symm
+  have hT : ⇑f ∣[k] mapGL ℝ (ModularGroup.T ^ (l * b / p)) = ⇑f :=
+    SlashInvariantFormClass.slash_action_eq f _ (Subgroup.mem_map_of_mem _
+      (zpow_natCast ModularGroup.T (l * b / p) ▸ T_zpow_mem_Gamma1 M (l * b / p)))
+  rw [CuspForm.coe_levelRaise, ModularForm.rat_smul_slash_of_det_pos k (det_upperTriRep_pos p b),
+    ModularForm.rat_slash, ModularForm.rat_slash, ← SlashAction.slash_mul,
+    ← map_scaleRep_eq_scaleGL, ← map_mul,
+    scaleRep_mul_upperTriRep p (NeZero.pos l) b (Nat.mod_lt _ hp.pos) hqr, map_mul, map_mul,
+    Matrix.SpecialLinearGroup.map_mapGL, SlashAction.slash_mul, hT, SlashAction.slash_mul]
 
 /-- `diag(l, 1)` and `!![1, 0; 0, p]` commute. -/
 private theorem scaleGL_mul_map_upperTriRep_zero [NeZero p] [NeZero l] :
