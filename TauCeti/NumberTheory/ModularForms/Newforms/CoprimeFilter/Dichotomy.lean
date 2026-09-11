@@ -64,10 +64,18 @@ with `p ∣ N` prime and `L` coprime to `p` with primes dividing `N`: either `f`
 every index coprime to `L`, or the nebentypus factors through `N / p`.
 
 The second branch is stated with Mathlib's `DirichletCharacter.FactorsThrough`, whose `χ₀` and
-`eq_changeLevel` give back the lowered unit homomorphism `χ₀` and the factorisation
-`χ = χ₀ ∘ unitsMap` that the descent lemmas consume:
-`⟨hfac.χ₀.toUnitHom, by rw [← MulChar.equivToUnitHom.apply_symm_apply χ];
-conv_lhs => rw [hfac.eq_changeLevel]; rw [DirichletCharacter.changeLevel_toUnitHom]⟩`. -/
+`eq_changeLevel` give back the lowered unit homomorphism and the factorisation
+`χ = χ₀ ∘ unitsMap` that the descent lemmas consume. Note that `hfac.χ₀` mentions `χ` through
+the type of `hfac`, so the conversion goes forwards, by applying `MulChar.toUnitHom` to
+`eq_changeLevel` rather than by rewriting `χ` in the goal:
+
+```text
+have hψχ : (MulChar.ofUnitHom χ).toUnitHom = χ := MulChar.equivToUnitHom.apply_symm_apply χ
+have hcomp : χ = (hfac.χ₀).toUnitHom.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)) := by
+  have h := congrArg MulChar.toUnitHom hfac.eq_changeLevel
+  rwa [DirichletCharacter.changeLevel_toUnitHom, hψχ] at h
+```
+-/
 theorem qExpansion_coeff_eq_zero_of_coprime_or_factorsThrough (χ : (ZMod N)ˣ →* ℂˣ)
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {p L : ℕ}
     (hp : p.Prime) (hpN : p ∣ N) (hLN : L.primeFactors ⊆ N.primeFactors)
