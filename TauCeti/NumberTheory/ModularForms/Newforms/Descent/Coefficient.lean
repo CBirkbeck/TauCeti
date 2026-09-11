@@ -191,7 +191,7 @@ private theorem exists_coe_eq_sum_coe_levelRaise_of_squarefree [NeZero M] {l : �
           (Nat.mul_div_cancel' (dvd_mul_of_dvd_right
             ((Nat.dvd_of_mem_primeFactors q.2).trans (dvd_pow_self l two_ne_zero)) M))))
           (F q.1 q.2)) := by
-  obtain ⟨g, F, χ', -, hF, hFg, hχ', hcoeff⟩ :=
+  obtain ⟨F, χ', hF, hχ', hcoeff⟩ :=
     exists_qExpansion_coeff_eq_sum_primeFactors_of_squarefree χ hΔ hsq hvan
   refine ⟨F, χ', hF, hχ', ?_⟩
   have hM : M ∣ M * l ^ 2 := Nat.dvd_mul_right M _
@@ -209,10 +209,7 @@ private theorem exists_coe_eq_sum_coe_levelRaise_of_squarefree [NeZero M] {l : �
     ext n
     rw [hDdef, FunLike.coe_sub,
       ModularForm.qExpansion_sub one_pos (one_mem_strictPeriods_Gamma1_map _), map_sub,
-      _root_.CuspForm.coe_ofLe, qExpansion_coeff_sum_levelRaise, hcoeff n, map_zero,
-      ← Finset.sum_attach l.primeFactors fun q ↦ if q ∣ n then (qExpansion 1 (g q)).coeff (n / q)
-        else 0, sub_eq_zero]
-    exact Finset.sum_congr rfl fun q _ ↦ by rw [hFg q.1 q.2]
+      _root_.CuspForm.coe_ofLe, qExpansion_coeff_sum_levelRaise, hcoeff n, map_zero, sub_self]
   -- so the difference is zero
   have : Fact (IsCusp OnePoint.infty ((Gamma1 (M * l ^ 2)).map (mapGL ℝ))) :=
     ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos (one_mem_strictPeriods_Gamma1_map _)⟩
