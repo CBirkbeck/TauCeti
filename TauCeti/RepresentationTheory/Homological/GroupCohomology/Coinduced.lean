@@ -50,10 +50,10 @@ The constructions follow `ClassFieldTheory/Cohomology/IndCoind/Finite.lean` and
   `Hⁿ⁺¹(S, Coind_⊥^G X) = 0` for every subgroup `S ≤ G`.
 * `groupHomology.isZero_indBot_succ`: `Hₙ₊₁(G, Ind_⊥^G X) = 0`.
 * `TauCeti.TateCohomology.isZero_coindBot`, `TauCeti.TateCohomology.isZero_res_coindBot`:
-  for a finite group, `Ĥⁿ(S, Coind_⊥^G X) = 0` for all `n : ℤ` (Milne II 3.1).
+  for a finite group, `Ĥⁿ(S, Coind_⊥^G X) = 0` for all `n : ℤ` (Milne II 3.1).
 * `TauCeti.TateCohomology.isZero_indBot`, `TauCeti.TateCohomology.isZero_res_indBot`: the same
   for `Ind_⊥^G X`.
-* `TauCeti.TateCohomology.isZero_res_leftRegular`: for a finite group, `Ĥⁿ(S, k[G]) = 0`.
+* `TauCeti.TateCohomology.isZero_res_leftRegular`: for a finite group, `Ĥⁿ(S, k[G]) = 0`.
 
 ## References
 
