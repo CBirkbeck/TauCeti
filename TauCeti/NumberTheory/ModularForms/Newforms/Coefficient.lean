@@ -28,7 +28,10 @@ Diamond–Shurman's Proposition 5.8.5.
 
 * `HeckeRing.GL2.EigenformAwayFromLevel.qExpansion_coeff_eq_eigenvalue_mul_coeff_one`:
   `a_n(f) = λ_n a_1(f)` at a good index.
-* `HeckeRing.GL2.Newform.qExpansion_coeff_eq_eigenvalue`: `a_n(f) = λ_n` for a newform.
+* `HeckeRing.GL2.Newform.qExpansion_coeff_eq_eigenvalue`: `a_n(f) = λ_n` for a newform, and with
+  it the two classical coefficient identities of a normalised eigenform at the good indices,
+  `HeckeRing.GL2.Newform.qExpansion_coeff_mul` and
+  `HeckeRing.GL2.Newform.qExpansion_coeff_prime_pow_add_two`.
 
 ## References
 
@@ -76,6 +79,34 @@ theorem qExpansion_coeff_eq_eigenvalue (n : ℕ+) (hn : Nat.Coprime (n : ℕ) N)
     (qExpansion 1 f.toCuspForm).coeff (n : ℕ) = f.eigenvalue n hn := by
   rw [f.toEigenformAwayFromLevel.qExpansion_coeff_eq_eigenvalue_mul_coeff_one n hn, f.isNorm,
     mul_one]
+
+/-- **Multiplicativity of the coefficients at coprime good indices**: `a_{mn} = a_m a_n`
+(Diamond–Shurman Proposition 5.8.5 (3)), the image of `eigenvalue_mul`. -/
+theorem qExpansion_coeff_mul {m n : ℕ+} (hmn : Nat.Coprime (m : ℕ) (n : ℕ))
+    (hm : Nat.Coprime (m : ℕ) N) (hn : Nat.Coprime (n : ℕ) N) :
+    (qExpansion 1 f.toCuspForm).coeff ((m : ℕ) * (n : ℕ)) =
+      (qExpansion 1 f.toCuspForm).coeff (m : ℕ) * (qExpansion 1 f.toCuspForm).coeff (n : ℕ) := by
+  rw [← PNat.mul_coe, f.qExpansion_coeff_eq_eigenvalue (m * n)
+      (PNat.mul_coe m n ▸ Nat.coprime_mul_iff_left.mpr ⟨hm, hn⟩),
+    f.qExpansion_coeff_eq_eigenvalue m hm, f.qExpansion_coeff_eq_eigenvalue n hn,
+    f.toEigenformAwayFromLevel.eigenvalue_mul hmn hm hn]
+
+/-- **The recurrence along the powers of a good prime**:
+`a_{p^{r+2}} = a_p a_{p^{r+1}} − χ(p) p^{k−1} a_{p^r}` (Diamond–Shurman
+Proposition 5.8.5 (2)), the image of `eigenvalue_prime_pow_add_two`. -/
+theorem qExpansion_coeff_prime_pow_add_two {p : ℕ+} (hp : (p : ℕ).Prime)
+    (hpN : Nat.Coprime (p : ℕ) N) (r : ℕ) :
+    (qExpansion 1 f.toCuspForm).coeff ((p : ℕ) ^ (r + 2)) =
+      (qExpansion 1 f.toCuspForm).coeff (p : ℕ) *
+          (qExpansion 1 f.toCuspForm).coeff ((p : ℕ) ^ (r + 1)) -
+        (f.χ (ZMod.unitOfCoprime (p : ℕ) hpN) : ℂ) * (p : ℂ) ^ (k - 1) *
+          (qExpansion 1 f.toCuspForm).coeff ((p : ℕ) ^ r) := by
+  have hc (v : ℕ) : Nat.Coprime ((p ^ v : ℕ+) : ℕ) N := PNat.pow_coe p v ▸ hpN.pow_left v
+  rw [← PNat.pow_coe p (r + 2), ← PNat.pow_coe p (r + 1), ← PNat.pow_coe p r,
+    f.qExpansion_coeff_eq_eigenvalue (p ^ (r + 2)) (hc (r + 2)),
+    f.qExpansion_coeff_eq_eigenvalue (p ^ (r + 1)) (hc (r + 1)),
+    f.qExpansion_coeff_eq_eigenvalue (p ^ r) (hc r), f.qExpansion_coeff_eq_eigenvalue p hpN,
+    f.toEigenformAwayFromLevel.eigenvalue_prime_pow_add_two hp hpN r]
 
 end Newform
 
