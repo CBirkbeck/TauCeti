@@ -54,8 +54,9 @@ namespace TauCeti
 
 variable {p l N : ℕ}
 
-/-- The descent family has the same size at `l N` as at `N` when `l` is coprime to `p`. -/
-@[simp]
+/-- The descent family has the same size at `l N` as at `N` when `l` is coprime to `p`. Not a
+simp lemma: the coprimality hypothesis is not something `simp` can discharge, so the `simpNF`
+linter rejects it. -/
 theorem descendMatrixCount_mul_left_of_coprime (hpl : Nat.Coprime p l) (N : ℕ) :
     descendMatrixCount p (l * N) = descendMatrixCount p N := by
   by_cases h : p ^ 2 ∣ N
