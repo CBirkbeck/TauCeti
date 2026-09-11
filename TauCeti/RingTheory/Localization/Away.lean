@@ -8,32 +8,17 @@ module
 public import Mathlib.Algebra.Algebra.Subalgebra.Lattice
 public import Mathlib.RingTheory.Localization.Away.Basic
 
-import Mathlib.RingTheory.Ideal.Maps
-import Mathlib.RingTheory.Ideal.Maximal
-import Mathlib.RingTheory.Localization.Ideal
-
 /-!
-# Away localisations: the fraction `t/s`, and families away from a generating set
+# The fraction `t/s` in an away localisation
 
-Two independent pieces of `IsLocalization.Away` algebra.
-
-The first is about a single localisation `S` of `A` away from `s`, which inverts `s` and so
-contains `t/s` for every `t : A`. Mathlib names the inverse itself — `IsLocalization.Away.invSelf
-s` is `1/s` — but not the general fraction; this file names it and gives the identities that
-manipulating it needs: scaling `1/s` by `t`, and clearing the denominator on either side.
-
-The second is about a *family* of away localisations, one for each member of a set `T` generating
-the unit ideal. Such a family cannot make a proper ideal of `A` improper everywhere at once. The
-statement asks nothing of `T` beyond the span condition, and in particular does not ask it to be
-finite.
-
-It is a statement about the localisations themselves, not about any completion of them: a proper
-ideal staying proper in `A_t` says nothing on its own about `A_t`'s completion, which is what an
-adic-geometry consumer would be holding.
+A localisation `S` of `A` away from `s` inverts `s`, so it contains `t/s` for every `t : A`.
+Mathlib names the inverse itself — `IsLocalization.Away.invSelf s` is `1/s` — but not the general
+fraction; this file names it and gives the identities that manipulating it needs: scaling `1/s`
+by `t`, and clearing the denominator on either side.
 
 Nothing here is topological or Huber-specific — it is `IsLocalization` algebra over an arbitrary
-commutative semiring — so it is stated outside the Huber namespace, alongside
-`TauCeti/RingTheory/Localization/DenIdeal.lean`.
+commutative semiring, for an arbitrary localisation away from `s` — so it is stated outside the
+Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
 
 ## Main definitions
 
@@ -41,8 +26,6 @@ commutative semiring — so it is stated outside the Huber namespace, alongside
 
 ## Main results
 
-* `TauCeti.Localization.exists_smul_top_ne_top_of_ne_top`: a proper ideal stays proper in some
-  member of a family of localisations away from a set generating the unit ideal.
 * `TauCeti.Localization.divBy_one`: `1/s` is Mathlib's `IsLocalization.Away.invSelf`.
 * `TauCeti.Localization.invSelf_mul_algebraMap`: scaling `1/s` by `t` gives `t/s`.
 * `TauCeti.Localization.algebraMap_mul_divBy` and
@@ -330,24 +313,5 @@ adic spectrum. -/
 bijective. -/
 instance isLocalizationAwayOne (R : Type*) [CommSemiring R] : IsLocalization.Away (1 : R) R :=
   IsLocalization.away_of_isUnit_of_bijective _ isUnit_one (Equiv.refl _).bijective
-
-/-! ### A family of localisations away from a unit-generating set -/
-
-/-- **A proper ideal stays proper in some localisation of a unit-generating family.** If `T`
-generates the unit ideal of `A`, then for every proper ideal `J` there is a `t ∈ T` with
-`J · A_t ≠ A_t`.
-
-`T` need not be finite. The conclusion is about the localisations `A_t` themselves; passing to a
-completion of them is a separate question and is not addressed here. -/
-theorem exists_smul_top_ne_top_of_ne_top {A : Type*} [CommSemiring A] {T : Set A}
-    (hT : Ideal.span T = ⊤) (S : ∀ _ : T, Type*) [∀ t : T, CommSemiring (S t)]
-    [∀ t : T, Algebra A (S t)] [∀ t : T, IsLocalization.Away ((t : A)) (S t)]
-    {J : Ideal A} (hJ : J ≠ ⊤) :
-    ∃ t : T, J • (⊤ : Submodule A (S t)) ≠ ⊤ := by
-  obtain ⟨r, hrT, hdisj⟩ := Ideal.exists_disjoint_powers_of_span_eq_top T hT J hJ
-  refine ⟨⟨r, hrT⟩, ?_⟩
-  rw [Ideal.smul_top_eq_map, ne_eq, Submodule.restrictScalars_eq_top_iff (S := A), ← ne_eq]
-  exact (IsLocalization.map_algebraMap_ne_top_iff_disjoint
-    (Submonoid.powers ((⟨r, hrT⟩ : T) : A)) (S ⟨r, hrT⟩) J).mpr hdisj.symm
 
 end TauCeti.Localization
