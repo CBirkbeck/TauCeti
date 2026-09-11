@@ -177,7 +177,7 @@ private theorem descendExtraGamma_mul_left_mod_div {N : ℕ} (hp : p.Prime) (hpN
 
 /-- The entries of the quotient of the conjugated level-`l N` extra matrix by the level-`N` one
 that the residue computations read. -/
-private theorem conjScale_descendExtraGamma_mul_inv_apply {N : ℕ} [NeZero l] {c : ℤ}
+private theorem conjScale_descendExtraGamma_mul_inv_apply {N : ℕ} {c : ℤ}
     (hc : descendExtraGamma p (l * N) 1 0 = l * c) :
     (conjScale l (descendExtraGamma p (l * N)) c hc * (descendExtraGamma p N)⁻¹) 0 1 =
         descendExtraGamma p (l * N) 0 0 * (-descendExtraGamma p N 0 1) +
@@ -240,7 +240,7 @@ private theorem conjScale_descendExtraGamma_mul_inv_mod {N : ℕ} (hp : p.Prime)
 
 /-- A matrix of `Γ₀(N)` whose lower-right entry is `1` modulo `N / p` acts trivially on
 `f ∈ S_k(Γ₁(N), χ)` when `χ` is pulled back from a character modulo `N / p`. -/
-private theorem slash_mapGL_eq_self_of_mem_Gamma0_of_mod_div {N : ℕ} [NeZero N] (hpN : p ∣ N)
+private theorem slash_mapGL_eq_self_of_mem_Gamma0_of_mod_div {N : ℕ} (hpN : p ∣ N)
     {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / p))ˣ →* ℂˣ}
     (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)))
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {β : SL(2, ℤ)}
