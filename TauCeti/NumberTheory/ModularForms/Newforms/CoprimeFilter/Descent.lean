@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.ModularForms.ConductorDichotomy
-public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter
+public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Basic
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Basic
 
 /-!
@@ -14,14 +14,14 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Basic
 
 Let `f ∈ S_k(Γ₁(N), χ)` vanish at every index coprime to `p * L`, for a prime `p ∣ N` and a
 squarefree `L` coprime to `p` whose primes divide `N`. The coprime filter of `f`
-(`Newforms/CoprimeFilter.lean`) is a form `G` of level `L * N` supported on the multiples of `p`,
-so it is a level-raise `V_p` of a period-one function (`Newforms/Descent/Basic.lean`), and the
-level-lowering dichotomy (`ConductorDichotomy.lean`) either finds that function as a cusp form of
-level `L * N / p` with a lowered nebentypus, or forces `G = 0`. Either way the descended form
-`g` has `q`-expansion coefficients `a_m(g) = a_{pm}(f)` at the indices `m` coprime to `L`, and
-`0` elsewhere: the coefficients of `f` along the multiples of `p` are those of a form of lower
-level. This is Miyake's "`V_p`-descent identity" in the proof of Lemma 4.6.7, and the strong
-multiplicity one argument descends along it one prime at a time.
+(`Newforms/CoprimeFilter/Basic.lean`) is a form `G` of level `L * N` supported on the multiples
+of `p`, so it is a level-raise `V_p` of a period-one function (`Newforms/Descent/Basic.lean`),
+and the level-lowering dichotomy (`ConductorDichotomy.lean`) either finds that function as a
+cusp form of level `L * N / p` with a lowered nebentypus, or forces `G = 0`. Either way the
+descended form `g` has `q`-expansion coefficients `a_m(g) = a_{pm}(f)` at the indices `m`
+coprime to `L`, and `0` elsewhere: the coefficients of `f` along the multiples of `p` are those
+of a form of lower level. This is Miyake's "`V_p`-descent identity" in the proof of Lemma 4.6.7,
+and the strong multiplicity one argument descends along it one prime at a time.
 
 ## Main results
 
@@ -72,20 +72,6 @@ private theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_coe
     · exact (hf m h).symm
     · rfl⟩
 
-/-- The coefficients of a level-raise, read backwards: if `G = p ^ (1 - k) • (g ∣[k] diag(p, 1))`
-as functions on `ℍ`, that is `G = V_p g`, then `a_m(g) = a_{pm}(G)`. -/
-private theorem qExpansion_coeff_eq_qExpansion_coeff_mul_of_coe_eq {M p : ℕ} [NeZero p]
-    (hpM : p ∣ M) {G : CuspForm ((Gamma1 M).map (mapGL ℝ)) k}
-    {g : CuspForm ((Gamma1 (M / p)).map (mapGL ℝ)) k}
-    (h : ⇑G = (p : ℂ) ^ (1 - k) • (⇑g ∣[k] scaleGL p)) (m : ℕ) :
-    (qExpansion 1 g).coeff m = (qExpansion 1 G).coeff (p * m) := by
-  have hG : G = CuspForm.levelRaise p
-      (Gamma1_map_le_conjAct_scaleGL_of_dvd (dvd_of_eq (Nat.mul_div_cancel' hpM))) g :=
-    DFunLike.coe_injective (by rw [CuspForm.coe_levelRaise, h])
-  rw [hG, CuspForm.qExpansion_levelRaise_coeff (one_mem_strictPeriods_Gamma1_map _)
-    (one_mem_strictPeriods_Gamma1_map _)]
-  simp only [dvd_mul_right, ↓reduceIte, Nat.mul_div_cancel_left m (NeZero.pos p)]
-
 /-- **The coprime filter descends one prime.** For `f ∈ S_k(Γ₁(N), χ)` vanishing at every index
 coprime to `p * L`, with `p ∣ N` prime and `L` squarefree, coprime to `p`, with primes dividing
 `N`, there is a form `g ∈ S_k(Γ₁(L * N / p), χ')` whose `q`-expansion is that of `f` along the
@@ -118,7 +104,8 @@ theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_coeff_mul
     ⟨hfac, g, hgχ, hgφ⟩ | hφ0
   · -- the dichotomy found `g` with `V_p g = G`
     refine ⟨hfac.χ₀.toUnitHom, g, hgχ, fun m ↦ ?_⟩
-    rw [qExpansion_coeff_eq_qExpansion_coeff_mul_of_coe_eq hpLN (hgφ ▸ hGφ), hGcoeff]
+    rw [CuspForm.qExpansion_coeff_eq_qExpansion_coeff_mul_of_coe_eq_smul_slash_scaleGL hpLN
+      (hgφ ▸ hGφ), hGcoeff]
     simp only [hcop]
   · -- `φ = 0` forces `G = 0`, so `f` already vanishes along the multiples of `p`
     have hG0 : (⇑G : ℍ → ℂ) = 0 := by rw [hGφ, hφ0, SlashAction.zero_slash, smul_zero]
