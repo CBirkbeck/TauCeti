@@ -5,16 +5,15 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.ModularForms.ConductorDichotomy
 public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Basic
-public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Basic
-import TauCeti.NumberTheory.DirichletCharacter.Basic
+import TauCeti.NumberTheory.ModularForms.ConductorDichotomy
+import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Basic
 
 /-!
 # The factor dichotomy of the coprime sieve
 
-Let `f ∈ S_k(Γ₁(N), χ)` vanish at every index coprime to `p L`, for a prime `p ∣ N` and a
-nonzero `L` coprime to `p` whose primes divide `N`. Either `f` already vanishes at every index
+Let `f ∈ S_k(Γ₁(N), χ)` vanish at every index coprime to `p L`, for a prime `p ∣ N` and an
+`L` coprime to `p` (so `L ≠ 0`) whose primes divide `N`. Either `f` already vanishes at every index
 coprime to `L`, or the nebentypus `χ` is the pull-back of a character modulo `N / p`. This is
 the case split of Miyake's proof of Lemma 4.6.8 (the Main Lemma of Diamond–Shurman §5.7, per
 character): the second case is what a later descent along `p` needs, and in the first the prime
@@ -60,15 +59,17 @@ namespace TauCeti
 variable {N : ℕ} [NeZero N] {k : ℤ}
 
 /-- **The factor dichotomy.** For `f ∈ S_k(Γ₁(N), χ)` vanishing at every index coprime to `p L`,
-with `p ∣ N` prime and `L ≠ 0` coprime to `p` with primes dividing `N`: either `f` vanishes at
+with `p ∣ N` prime and `L` coprime to `p` with primes dividing `N`: either `f` vanishes at
 every index coprime to `L`, or `χ` is the pull-back of a character modulo `N / p`. -/
 theorem qExpansion_coeff_eq_zero_of_coprime_or_exists_eq_comp_unitsMap (χ : (ZMod N)ˣ →* ℂˣ)
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {p L : ℕ}
-    [NeZero L] (hp : p.Prime) (hpN : p ∣ N) (hLN : L.primeFactors ⊆ N.primeFactors)
+    (hp : p.Prime) (hpN : p ∣ N) (hLN : L.primeFactors ⊆ N.primeFactors)
     (hpL : Nat.Coprime p L) (hvan : ∀ n, Nat.Coprime n (p * L) → (qExpansion 1 f).coeff n = 0) :
     (∀ n, Nat.Coprime n L → (qExpansion 1 f).coeff n = 0) ∨
       ∃ χ₀ : (ZMod (N / p))ˣ →* ℂˣ, χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)) := by
   have : NeZero p := ⟨hp.ne_zero⟩
+  -- `L ≠ 0`: a prime is not coprime to `0`
+  have : NeZero L := ⟨by rintro rfl; exact hp.ne_one ((Nat.coprime_zero_right p).mp hpL)⟩
   -- the filter lives at the level `L' N`, `L'` the radical of `L`
   obtain ⟨G, hGχ, hGsupp, hGcoeff⟩ :=
     exists_mem_cuspFormCharSpace_qExpansionSupportedOnDvd χ hf hp hLN hvan
