@@ -54,9 +54,7 @@ namespace TauCeti
 
 variable {p l N : ℕ}
 
-/-- The descent family has the same size at `l N` as at `N` when `l` is coprime to `p`. Not a
-simp lemma: the coprimality hypothesis is not something `simp` can discharge, so the `simpNF`
-linter rejects it. -/
+/-- The descent family has the same size at `l N` as at `N` when `l` is coprime to `p`. -/
 theorem descendMatrixCount_mul_left_of_coprime (hpl : Nat.Coprime p l) (N : ℕ) :
     descendMatrixCount p (l * N) = descendMatrixCount p N := by
   by_cases h : p ^ 2 ∣ N
@@ -83,16 +81,22 @@ private theorem descendExtraGamma_mul_inv_mem_Gamma (hp : p.Prime) (hpN : p ∣ 
     have h2 : descendExtraGamma p N ∈ Gamma (N / p) :=
       Gamma_mem'.mpr (descendExtraGamma_map_intCast_zmod_div_eq_one hp hpN hpsq)
     exact (Gamma (N / p)).mul_mem h1 ((Gamma (N / p)).inv_mem h2)
-  have := mem_Gamma_mul_of_coprime hcop hδp hδq
+  have : descendExtraGamma p (l * N) * (descendExtraGamma p N)⁻¹ ∈ Gamma (p * (N / p)) := by
+    rw [Gamma_mul_eq_inf_of_coprime hcop]
+    exact Subgroup.mem_inf.mpr ⟨hδp, hδq⟩
   rwa [Nat.mul_div_cancel' hpN] at this
 
 /-- **The extra representatives at levels `l N` and `N` differ on the left by `Γ₁(N)`.** -/
 theorem exists_mem_Gamma1_descendMatrix_mul_left_eq (hp : p.Prime) (hpN : p ∣ N)
-    (hpsq : ¬ p ^ 2 ∣ N) (hpl : Nat.Coprime p l) {v : Fin (descendMatrixCount p N)}
-    (hv : p ≤ v.val) {w : Fin (descendMatrixCount p (l * N))} (hw : p ≤ w.val) :
+    (hpl : Nat.Coprime p l) {v : Fin (descendMatrixCount p N)} (hv : p ≤ v.val)
+    {w : Fin (descendMatrixCount p (l * N))} (hw : p ≤ w.val) :
     haveI : NeZero p := ⟨hp.ne_zero⟩
     ∃ ε ∈ Gamma1 N, descendMatrix p (l * N) w = mapGL ℝ ε * descendMatrix p N v := by
   have : NeZero p := ⟨hp.ne_zero⟩
+  have hpsq : ¬ p ^ 2 ∣ N := fun h ↦ by
+    have h1 := v.isLt
+    have h2 := descendMatrixCount_of_sq_dvd h
+    omega
   obtain ⟨ε, hε, hεmul⟩ := exists_mem_Gamma1_upperTriRep_mul_of_mem_Gamma (p := p) hpN
     (descendExtraGamma_mul_inv_mem_Gamma hp hpN hpsq hpl)
   refine ⟨ε, hε, ?_⟩
@@ -120,12 +124,7 @@ theorem descendSlash_mul_left_of_coprime (k : ℤ) (hp : p.Prime) (hpN : p ∣ N
     have hidx : (⟨(finCongr (descendMatrixCount_mul_left_of_coprime hpl N) w).val, hw'⟩ : Fin p)
         = ⟨w.val, hw⟩ := Fin.ext (by simp)
     rw [descendMatrix_of_lt hw, descendMatrix_of_lt hw', hidx]
-  · have hpsq : ¬ p ^ 2 ∣ N := fun h ↦ by
-      have h1 := w.isLt
-      have h2 := descendMatrixCount_mul_left_of_coprime hpl N
-      have h3 := descendMatrixCount_of_sq_dvd h
-      omega
-    obtain ⟨ε, hε, hεeq⟩ := exists_mem_Gamma1_descendMatrix_mul_left_eq hp hpN hpsq hpl
+  · obtain ⟨ε, hε, hεeq⟩ := exists_mem_Gamma1_descendMatrix_mul_left_eq hp hpN hpl
       (v := finCongr (descendMatrixCount_mul_left_of_coprime hpl N) w) (by simpa using hw)
       (Nat.not_lt.mp hw)
     rw [hεeq, SlashAction.slash_mul, hf ε hε]

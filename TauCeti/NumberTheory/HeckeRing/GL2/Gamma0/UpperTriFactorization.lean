@@ -255,10 +255,9 @@ theorem exists_mem_Gamma0_upperTriRep_mul_of_mem_Gamma0 [NeZero p] (hpN : p ∣ 
   ring
 
 /-- **Conjugating an element of `Γ(N)` through `[1, 0; 0, p]` lands in `Γ₁(N)`**, for `p ∣ N`:
-`[1, 0; 0, p] · δ = ε · [1, 0; 0, p]` with `ε ∈ Γ₁(N)`. This is the factorisation
-`exists_mem_Gamma0_upperTriRep_mul_of_mem_Gamma0` at offset `0`, where the offset map fixes `0`
-because `δ ≡ 1 (mod p)`, and the witness lies in `Γ₁(N)` because its lower-right entry is that
-of `δ`. -/
+`[1, 0; 0, p] · δ = ε · [1, 0; 0, p]` with `ε ∈ Γ₁(N)`. This is what lets a `Γ₁(N)`-invariant
+function absorb a change of the extra representative of the descent family
+(`Newforms/Descent/LevelCommute.lean`). -/
 theorem exists_mem_Gamma1_upperTriRep_mul_of_mem_Gamma [NeZero p] (hpN : p ∣ N) {δ : SL(2, ℤ)}
     (hδ : δ ∈ Gamma N) :
     ∃ ε ∈ Gamma1 N, upperTriRep p ⟨0, NeZero.pos p⟩ * mapGL ℚ δ =
