@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.Surjective
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Support
 
 /-!
@@ -32,6 +33,8 @@ spanning statement. Completeness enters only through that criterion.
 * `TauCeti.ValuationSpectrum.span_eq_top_of_spa_eq_biUnion_rationalSubset` : the `←` direction.
 * `TauCeti.ValuationSpectrum.span_eq_top_iff_spa_eq_biUnion_rationalSubset` : **Wedhorn Corollary
   7.53**, the two directions together.
+* `TauCeti.ValuationSpectrum.exists_smul_top_ne_top_of_isMaximal` : no maximal ideal of `A`
+  expands every member of a rational cover.
 
 ## References
 
@@ -46,7 +49,7 @@ public section
 
 namespace TauCeti.ValuationSpectrum
 
-open TauCeti.Huber
+open TauCeti.Huber TauCeti.Huber.PairOfDefinition
 
 variable {A : Type*} [CommRing A] [UniformSpace A] [T2Space A] [CompleteSpace A]
   [IsTopologicalRing A] [IsUniformAddGroup A] [IsHuberRing A]
@@ -70,6 +73,31 @@ theorem span_eq_top_iff_spa_eq_biUnion_rationalSubset (Aplus : Subring A)
     Ideal.span (T : Set A) = ⊤ ↔ spa Aplus = ⋃ t ∈ T, rationalSubset Aplus T t :=
   ⟨spa_eq_biUnion_rationalSubset_of_span_eq_top Aplus,
     span_eq_top_of_spa_eq_biUnion_rationalSubset Aplus hplus⟩
+
+/-- **No maximal ideal expands every piece of a rational cover.** For a cover
+`(R(T/t))_{t ∈ T}` — that is, `T` generating the unit ideal — and a maximal ideal `𝔪` of `A`,
+some member of the cover has `𝔪 · A_t ≠ A_t`.
+
+The maximal ideal is the support of a point of `Spa (A, A⁺)`
+(`exists_mem_spa_supp_eq_of_isMaximal`), that point lies in some member of the cover
+(`spa_eq_biUnion_rationalSubset_of_span_eq_top`), and a point's support does not expand the
+piece containing it (`smul_top_ne_top_of_supp_eq_of_mem_rationalSubset`).
+
+This is exactly the hypothesis of `Module.FaithfullyFlat.pi_of_exists_submodule_ne_top`, so it
+is what a rational cover contributes to the faithful flatness in Wedhorn's Corollary 8.32. The
+flatness of each `A → A_t`, which that criterion also needs, is a separate matter. -/
+theorem exists_smul_top_ne_top_of_isMaximal (P : PairOfDefinition A) (Aplus : Subring A)
+    (hplus : IsRingOfIntegralElements Aplus) (hP : P.ringOfDefinition ≤ Aplus) {T : Finset A}
+    (hT : Ideal.span (T : Set A) = ⊤) (S : ∀ _ : T, Type*) [∀ t : T, CommRing (S t)]
+    [∀ t : T, Algebra A (S t)] [∀ t : T, IsLocalization.Away (t : A) (S t)]
+    (hden : ∀ t : T, HasDenominatorPower P T (t : A) (S t)) (𝔪 : Ideal A) [𝔪.IsMaximal] :
+    ∃ t : T, 𝔪 • (⊤ : Submodule A (S t)) ≠ ⊤ := by
+  obtain ⟨v, hv, hsupp⟩ := exists_mem_spa_supp_eq_of_isMaximal Aplus hplus 𝔪
+  rw [spa_eq_biUnion_rationalSubset_of_span_eq_top Aplus hT] at hv
+  obtain ⟨t, ht, hvt⟩ := Set.mem_iUnion₂.mp hv
+  refine ⟨⟨t, ht⟩, ?_⟩
+  exact smul_top_ne_top_of_supp_eq_of_mem_rationalSubset P Aplus hP T ((⟨t, ht⟩ : T) : A)
+    (S ⟨t, ht⟩) (hden ⟨t, ht⟩) hsupp hvt
 
 end TauCeti.ValuationSpectrum
 
