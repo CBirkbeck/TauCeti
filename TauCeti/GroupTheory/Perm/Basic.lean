@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.Dynamics.PeriodicPts.Defs
 public import Mathlib.GroupTheory.Perm.Cycle.Basic
 import Mathlib.GroupTheory.Perm.ViaEmbedding
 
@@ -13,8 +14,9 @@ import Mathlib.GroupTheory.Perm.ViaEmbedding
 
 This file records general-purpose facts about permutations: an identity between transpositions,
 a characterization of permutations with a unique fixed point, functions constant on a permutation
-orbit, the orbit relation of an involution, a permutation transported along an injection, and the
-combination of two permutations transported along injections with disjoint ranges.
+orbit, the orbit relation of an involution, a positive-power representative of a relation inside a
+periodic orbit, a permutation transported along an injection, and the combination of two
+permutations transported along injections with disjoint ranges.
 -/
 
 public section
@@ -51,6 +53,25 @@ theorem map (hσ : σ.SameCycle x y) (hg : ∀ z, g (σ z) = τ (g z)) :
     τ.SameCycle (g x) (g y) := by
   obtain ⟨k, rfl⟩ := hσ
   exact ⟨k, (map_zpow_apply hg k x).symm⟩
+
+/-- If a periodic point `x` of `σ` shares its orbit with `y`, some positive natural power of `σ`
+carries `x` to `y`. -/
+theorem exists_pos_pow_eq_of_mem_periodicPts (h : σ.SameCycle x y)
+    (hx : x ∈ Function.periodicPts (σ : α → α)) : ∃ j : ℕ, 0 < j ∧ (σ ^ j) x = y := by
+  obtain ⟨k, hk⟩ := h
+  have hperiod : MulAction.period σ x = Function.minimalPeriod (σ : α → α) x :=
+    MulAction.period_eq_minimalPeriod
+  have hpos : 0 < MulAction.period σ x :=
+    hperiod ▸ Function.minimalPeriod_pos_of_mem_periodicPts hx
+  have hnonneg : 0 ≤ k % (MulAction.period σ x : ℤ) :=
+    Int.emod_nonneg k (by exact_mod_cast hpos.ne')
+  refine ⟨(k % (MulAction.period σ x : ℤ)).toNat + MulAction.period σ x, by omega, ?_⟩
+  have hred : σ ^ (k % (MulAction.period σ x : ℤ) + (MulAction.period σ x : ℤ)) • x = y := by
+    rw [MulAction.zpow_add_period_smul, MulAction.zpow_mod_period_smul]
+    exact hk
+  rw [Equiv.Perm.smul_def] at hred
+  rw [← zpow_natCast, Nat.cast_add, Int.toNat_of_nonneg hnonneg]
+  exact hred
 
 end Equiv.Perm.SameCycle
 
