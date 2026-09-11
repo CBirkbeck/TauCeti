@@ -13,16 +13,24 @@ import Mathlib.RingTheory.Ideal.Maximal
 import Mathlib.RingTheory.Localization.Ideal
 
 /-!
-# The fraction `t/s` in an away localisation
+# Away localisations: the fraction `t/s`, and families away from a generating set
 
-A localisation `S` of `A` away from `s` inverts `s`, so it contains `t/s` for every `t : A`.
-Mathlib names the inverse itself — `IsLocalization.Away.invSelf s` is `1/s` — but not the general
-fraction; this file names it and gives the identities that manipulating it needs: scaling `1/s`
-by `t`, and clearing the denominator on either side.
+Two independent pieces of `IsLocalization.Away` algebra.
+
+The first is about a single localisation `S` of `A` away from `s`, which inverts `s` and so
+contains `t/s` for every `t : A`. Mathlib names the inverse itself — `IsLocalization.Away.invSelf
+s` is `1/s` — but not the general fraction; this file names it and gives the identities that
+manipulating it needs: scaling `1/s` by `t`, and clearing the denominator on either side.
+
+The second is about a *family* of away localisations, one for each member of a set `T` generating
+the unit ideal. Such a family cannot make a proper ideal of `A` improper everywhere at once. The
+intended use is the criterion of `Module.FaithfullyFlat.pi_of_exists_submodule_ne_top`, where a
+rational cover supplies the family; the statement here asks nothing of `T` beyond the span
+condition, and in particular does not ask it to be finite.
 
 Nothing here is topological or Huber-specific — it is `IsLocalization` algebra over an arbitrary
-commutative semiring, for an arbitrary localisation away from `s` — so it is stated outside the
-Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
+commutative semiring — so it is stated outside the Huber namespace, alongside
+`TauCeti/RingTheory/Localization/DenIdeal.lean`.
 
 ## Main definitions
 
@@ -31,7 +39,7 @@ Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
 ## Main results
 
 * `TauCeti.Localization.exists_smul_top_ne_top_of_ne_top`: a proper ideal stays proper in some
-  member of a family of localisations away from a unit-generating set.
+  member of a family of localisations away from a set generating the unit ideal.
 * `TauCeti.Localization.divBy_one`: `1/s` is Mathlib's `IsLocalization.Away.invSelf`.
 * `TauCeti.Localization.invSelf_mul_algebraMap`: scaling `1/s` by `t` gives `t/s`.
 * `TauCeti.Localization.algebraMap_mul_divBy` and
@@ -322,41 +330,25 @@ instance isLocalizationAwayOne (R : Type*) [CommSemiring R] : IsLocalization.Awa
 
 /-! ### A family of localisations away from a unit-generating set -/
 
-/-- **A proper ideal stays proper in some localisation of a unit-generating family.** If a finite
-set `T` generates the unit ideal of `A`, then for every proper ideal `J` there is a `t ∈ T` with
+/-- **A proper ideal stays proper in some localisation of a unit-generating family.** If `T`
+generates the unit ideal of `A`, then for every proper ideal `J` there is a `t ∈ T` with
 `J · A_t ≠ A_t`.
 
-The family cannot expand `J` everywhere at once: `J` lies in a maximal ideal `m`, the generators
-cannot all lie in `m`, and at a generator outside `m` the extension of `m` — hence of `J` — stays
-prime.
+`T` need not be finite. This is the hypothesis of
+`Module.FaithfullyFlat.pi_of_exists_submodule_ne_top` for such a family, which is how a rational
+cover contributes to Wedhorn's Corollary 8.32.
 
-This is the hypothesis of `Module.FaithfullyFlat.pi_of_exists_submodule_ne_top` for such a
-family; nothing topological is involved. -/
-theorem exists_smul_top_ne_top_of_ne_top {A : Type*} [CommRing A] {T : Finset A}
-    (hT : Ideal.span (T : Set A) = ⊤) (S : ∀ _ : T, Type*) [∀ t : T, CommRing (S t)]
+The general statement, and the observation that it is localisation algebra rather than adic
+geometry, are due to the `generality` review on TauCetiProject/TauCeti#6324. -/
+theorem exists_smul_top_ne_top_of_ne_top {A : Type*} [CommSemiring A] {T : Set A}
+    (hT : Ideal.span T = ⊤) (S : ∀ _ : T, Type*) [∀ t : T, CommSemiring (S t)]
     [∀ t : T, Algebra A (S t)] [∀ t : T, IsLocalization.Away ((t : A)) (S t)]
     {J : Ideal A} (hJ : J ≠ ⊤) :
     ∃ t : T, J • (⊤ : Submodule A (S t)) ≠ ⊤ := by
-  obtain ⟨m, hm, hJm⟩ := Ideal.exists_le_maximal J hJ
-  have hex : ∃ t ∈ T, t ∉ m := by
-    by_contra h
-    push Not at h
-    exact hm.ne_top (top_le_iff.mp (hT ▸ Ideal.span_le.mpr h))
-  obtain ⟨t, ht, htm⟩ := hex
-  refine ⟨⟨t, ht⟩, ?_⟩
-  have hdisj : Disjoint (Submonoid.powers ((⟨t, ht⟩ : T) : A) : Set A) (m : Set A) := by
-    rw [Set.disjoint_left]
-    rintro x ⟨n, rfl⟩ hx
-    exact htm (hm.isPrime.mem_of_pow_mem n hx)
-  have hprime : (m.map (algebraMap A (S ⟨t, ht⟩))).IsPrime :=
-    IsLocalization.isPrime_of_isPrime_disjoint (Submonoid.powers ((⟨t, ht⟩ : T) : A)) _ m
-      hm.isPrime hdisj
-  rw [Ideal.smul_top_eq_map]
-  intro htop
-  have hone : (1 : S ⟨t, ht⟩) ∈ J.map (algebraMap A (S ⟨t, ht⟩)) := by
-    have h : (1 : S ⟨t, ht⟩) ∈ (J.map (algebraMap A (S ⟨t, ht⟩))).restrictScalars A := by
-      rw [htop]; exact Submodule.mem_top
-    exact h
-  exact hprime.ne_top ((Ideal.eq_top_iff_one _).mpr (Ideal.map_mono hJm hone))
+  obtain ⟨r, hrT, hdisj⟩ := Ideal.exists_disjoint_powers_of_span_eq_top T hT J hJ
+  refine ⟨⟨r, hrT⟩, ?_⟩
+  rw [Ideal.smul_top_eq_map, ne_eq, Submodule.restrictScalars_eq_top_iff (S := A), ← ne_eq]
+  exact (IsLocalization.map_algebraMap_ne_top_iff_disjoint
+    (Submonoid.powers ((⟨r, hrT⟩ : T) : A)) (S ⟨r, hrT⟩) J).mpr hdisj.symm
 
 end TauCeti.Localization
