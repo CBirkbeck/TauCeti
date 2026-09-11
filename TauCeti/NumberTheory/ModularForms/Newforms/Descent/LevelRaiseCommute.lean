@@ -6,9 +6,9 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.ModularForms.Degeneracy
-public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.QExpansion
-public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelCommute
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Sum
+import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.QExpansion
+import TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelCommute
 
 /-!
 # The descent commutes with the level-raise
@@ -20,6 +20,11 @@ upper-triangular members `!![1, b; 0, p]` of the two families are
 matched by the permutation `b ↦ l b mod p` of the residues, and the extra members (present when
 `p² ∤ N`) by conjugating the level-`l N` one back to level `N`, where the nebentypus shows the
 two candidates give the same slash.
+
+The identity is what lets the descent be computed piece by piece on the squarefree decomposition
+(`Newforms/SquarefreeDecomposition.lean`): the pieces are level-raises `V_q F_q`, and the descent
+of each is `V_q` of the descent of `F_q`, a form supported on the multiples of `q`. That is how
+the coefficient formula of the descent, the core of Miyake's Lemma 4.6.14, is proved.
 
 ## Main results
 
@@ -34,7 +39,9 @@ Adapted from the AINTLIB `LeanModularForms` project (Chris Birkbeck, Apache-2.0,
 (`level_commute_delta` and its `delta_*` helpers, `descendCosetList_slash_sum_rep_invariance`,
 `extra_rep_levelRaise_bridge`). The source's `modularFormLevelRaise` is this repository's
 `CuspForm.levelRaise`, its `levelRaiseConjOfDvd` is `conjScale`, and its explicit coset list is
-the family `descendMatrix`; the statements are re-proved on those.
+the family `descendMatrix`; the statements are re-proved on those. The source's
+`level_commute_delta` also assumes `l ∣ N / p`, which the argument does not use, so it is
+dropped here.
 
 ## References
 
@@ -50,22 +57,6 @@ open scoped MatrixGroups ModularForm Pointwise
 namespace TauCeti
 
 variable {p l : ℕ} (k : ℤ)
-
-/-- Multiplication by `l` coprime to the prime `p` permutes the residues modulo `p`. -/
-private theorem bijective_mulMod (hp : p.Prime) (hpl : Nat.Coprime p l) :
-    Function.Bijective fun b : Fin p ↦ (⟨l * b % p, Nat.mod_lt _ hp.pos⟩ : Fin p) := by
-  have : Fact p.Prime := ⟨hp⟩
-  refine Finite.injective_iff_bijective.mp fun a b hab ↦ ?_
-  have hl : (l : ZMod p) ≠ 0 := by
-    rw [Ne, ZMod.natCast_eq_zero_iff]
-    exact hp.coprime_iff_not_dvd.mp hpl
-  have h : ((l * a % p : ℕ) : ZMod p) = ((l * b % p : ℕ) : ZMod p) :=
-    congrArg (fun x : Fin p ↦ ((x : ℕ) : ZMod p)) hab
-  rw [ZMod.natCast_mod, ZMod.natCast_mod] at h
-  push_cast at h
-  exact Fin.ext (by
-    rw [← ZMod.val_natCast_of_lt a.isLt, ← ZMod.val_natCast_of_lt b.isLt,
-      mul_left_cancel₀ hl h])
 
 /-- **An upper-triangular member of the family, after the level-raise.** For `f` of level `Γ₁(M)`,
 `(V_l f) ∣[k] !![1, b; 0, p]` is `V_l` of `f ∣[k] !![1, l b mod p; 0, p]`, because the points
@@ -96,7 +87,7 @@ private theorem coe_levelRaise_slash_upperTriRep_eq_smul_slash {M : ℕ} (hp : p
     linear_combination hC
   rw [hpt, SlashInvariantForm.vAdd_apply_of_mem_strictPeriods f _
     (by simpa using AddSubgroup.nsmul_mem _ (one_mem_strictPeriods_Gamma1_map M) (l * b / p)),
-    ← mul_assoc, ← zpow_add₀ hl0, show 1 - k + (k - 1) = 0 by ring, zpow_zero, one_mul]
+    ← mul_assoc, ← zpow_add₀ hl0, sub_add_sub_cancel, sub_self, zpow_zero, one_mul]
 
 /-- `diag(l, 1)` and `!![1, 0; 0, p]` commute. -/
 private theorem scaleGL_mul_map_upperTriRep_zero [NeZero p] [NeZero l] :
@@ -238,24 +229,6 @@ private theorem conjScale_descendExtraGamma_mul_inv_mod {N : ℕ} (hp : p.Prime)
     rw [hcN, h11, m₂ 0 0, Matrix.one_apply_eq]
     ring
 
-/-- A matrix of `Γ₀(N)` whose lower-right entry is `1` modulo `N / p` acts trivially on
-`f ∈ S_k(Γ₁(N), χ)` when `χ` is pulled back from a character modulo `N / p`. -/
-private theorem slash_mapGL_eq_self_of_mem_Gamma0_of_mod_div {N : ℕ} (hpN : p ∣ N)
-    {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / p))ˣ →* ℂˣ}
-    (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)))
-    {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {β : SL(2, ℤ)}
-    (hβ : β ∈ Gamma0 N) (hβ11 : ((β 1 1 : ℤ) : ZMod (N / p)) = 1) :
-    ⇑f ∣[k] mapGL ℝ β = ⇑f := by
-  rw [(mem_cuspFormCharSpace_iff_nebentypus k χ f).mp hf ⟨β, hβ⟩, hcomp, MonoidHom.comp_apply,
-    ← Gamma0Map_toHomUnits_of_dvd (Nat.div_dvd_of_dvd hpN) ⟨β, hβ⟩
-      (Gamma0_le_Gamma0_of_dvd (Nat.div_dvd_of_dvd hpN) hβ)]
-  have h1 : (Gamma0Map (N / p)).toHomUnits
-      ⟨β, Gamma0_le_Gamma0_of_dvd (Nat.div_dvd_of_dvd hpN) hβ⟩ = 1 := by
-    refine Units.ext ?_
-    rw [MonoidHom.coe_toHomUnits, Gamma0Map_apply]
-    exact hβ11
-  rw [h1, map_one, Units.val_one, one_smul]
-
 /-- **The two extra members give the same slash.** For `p ∥ N`, `l` coprime to `p`, and
 `f ∈ S_k(Γ₁(N), χ)` with `χ` pulled back from `χ₀` modulo `N / p`: conjugating the level-`l N`
 extra matrix `descendExtraGamma p (l N)` back to level `N` by `diag(l, 1)`, then slashing `f` by
@@ -280,17 +253,18 @@ private theorem slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq {N : ℕ} (hp 
   obtain ⟨hδ01, hδ10, hδ11⟩ := conjScale_descendExtraGamma_mul_inv_mod hp hpN hpsq hpl hc
   obtain ⟨b, hb⟩ := (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp hδ01
   -- the conjugate `β` lies in `Γ₀(N)` with lower-right entry `1` modulo `N / p`
+  have h10 : (conjUpper δ b hb) 1 0 = p * δ 1 0 := by simp [coe_conjUpper]
   have hβ : conjUpper δ b hb ∈ Gamma0 N := by
-    rw [Gamma0_mem, show (conjUpper δ b hb) 1 0 = p * δ 1 0 by simp [coe_conjUpper]]
+    rw [Gamma0_mem, h10]
     obtain ⟨t, ht⟩ := (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp hδ10
     have hpN' : ((p : ℤ) * ((N / p : ℕ) : ℤ)) = (N : ℤ) := by
       exact_mod_cast Nat.mul_div_cancel' hpN
     rw [ht, ← mul_assoc, hpN']
     simp
+  have h11 : (conjUpper δ b hb) 1 1 = δ 1 1 := by simp [coe_conjUpper]
   have hfβ : ⇑f ∣[k] mapGL ℝ (conjUpper δ b hb) = ⇑f :=
-    slash_mapGL_eq_self_of_mem_Gamma0_of_mod_div k hpN hcomp hf hβ (by
-      rw [show (conjUpper δ b hb) 1 1 = δ 1 1 by simp [coe_conjUpper]]
-      exact hδ11)
+    slash_mapGL_eq_self_of_mem_cuspFormCharSpace_of_comp (Nat.div_dvd_of_dvd hpN) k hcomp hf hβ
+      (h11 ▸ hδ11)
   have hδγ : conjScale l (descendExtraGamma p (l * N)) c hc = δ * descendExtraGamma p N := by
     rw [hδ, inv_mul_cancel_right]
   rw [hδγ, map_mul, ← mul_assoc, map_upperTriRep_zero_mul_mapGL δ hb, mul_assoc,
@@ -325,7 +299,8 @@ private theorem descendIndexMul_bijective (hp : p.Prime) (hpl : Nat.Coprime p l)
   have hvw' := congrArg Fin.val hvw
   rcases lt_or_ge v.val p with hv | hv <;> rcases lt_or_ge w.val p with hw | hw
   · rw [descendIndexMul_of_lt hp hpl N hv, descendIndexMul_of_lt hp hpl N hw] at hvw'
-    have := (bijective_mulMod hp hpl).1 (a₁ := ⟨v.val, hv⟩) (a₂ := ⟨w.val, hw⟩) (Fin.ext hvw')
+    have := (mulModEquiv p hp.pos hpl.symm).injective (a₁ := ⟨v.val, hv⟩) (a₂ := ⟨w.val, hw⟩)
+      (Fin.ext (by rw [coe_mulModEquiv, coe_mulModEquiv]; exact hvw'))
     exact Fin.ext (Fin.mk.inj_iff.mp this)
   · rw [descendIndexMul_of_lt hp hpl N hv, descendIndexMul_of_le hp hpl N hw] at hvw'
     exact absurd (hvw' ▸ Nat.mod_lt (l * v.val) hp.pos) (not_lt.mpr hw)
@@ -390,16 +365,17 @@ private theorem coe_levelRaise_slash_descendMatrix_of_le {N : ℕ} (hp : p.Prime
 /-- **The descent commutes with the level-raise** (Miyake, Lemma 4.6.6 (2)). For a prime `p ∣ N`,
 `l` coprime to `p`, and `f ∈ S_k(Γ₁(N), χ)` with `χ` the pull-back of a character modulo `N / p`,
 the descent slash sum at level `l N` of `V_l f` is `V_l` of the descent slash sum of `f` at level
-`N`: `descendSlash k p (l N) (V_l f) = l ^ (1 - k) • (descendSlash k p N f ∣[k] diag(l, 1))`.
-The source needs `l ∣ N / p` as well; here it is not used. -/
+`N`: `descendSlash k p (l N) (V_l f) = l ^ (1 - k) • (descendSlash k p N f ∣[k] diag(l, 1))`. -/
 theorem descendSlash_coe_levelRaise_mul_left {N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
-    [NeZero l] (hpl : Nat.Coprime p l) {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / p))ˣ →* ℂˣ}
+    (hpl : Nat.Coprime p l) {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / p))ˣ →* ℂˣ}
     (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)))
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) :
     haveI : NeZero p := ⟨hp.ne_zero⟩
+    haveI : NeZero l := ⟨fun h ↦ hp.coprime_iff_not_dvd.mp hpl (h ▸ dvd_zero p)⟩
     descendSlash k p (l * N) ⇑(CuspForm.levelRaise l (Gamma1_map_le_conjAct_scaleGL N l) f) =
       (l : ℂ) ^ (1 - k) • (descendSlash k p N ⇑f ∣[k] scaleGL l) := by
   have : NeZero p := ⟨hp.ne_zero⟩
+  have : NeZero l := ⟨fun h ↦ hp.coprime_iff_not_dvd.mp hpl (h ▸ dvd_zero p)⟩
   rw [descendSlash_def, descendSlash_def, SlashAction.sum_slash, Finset.smul_sum]
   refine Fintype.sum_bijective _ (descendIndexMul_bijective hp hpl N) _ _ fun v ↦ ?_
   rcases lt_or_ge v.val p with hv | hv

@@ -8,6 +8,7 @@ module
 public import Mathlib.LinearAlgebra.Eigenspace.Basic
 public import TauCeti.NumberTheory.ModularForms.Basic
 public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
+public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Units
 public import TauCeti.NumberTheory.ModularForms.SlashActionRat
 
 /-!
@@ -362,6 +363,21 @@ theorem mem_cuspFormCharSpace_iff_nebentypus (k : ℤ) (χ₀ : (ZMod N)ˣ →* 
   · obtain ⟨g, hg⟩ := Gamma0Map_toHomUnits_surjective (N := N) d
     rw [diamondOpCuspHom_apply, diamondOpCusp_eq_diamondOpCuspAux k d g hg, ← hg]
     exact CuspForm.ext (congr_fun (h g))
+
+/-- **A matrix of `Γ₀(N)` whose lower-right entry is `1` modulo a divisor `M` acts trivially on
+`S_k(Γ₁(N), χ)` when `χ` is pulled back from a character modulo `M`**: its nebentypus value is
+`χ₀` of the lower-right entry modulo `M`, which is `χ₀ 1 = 1`. -/
+theorem slash_mapGL_eq_self_of_mem_cuspFormCharSpace_of_comp {M : ℕ} (hMN : M ∣ N) (k : ℤ)
+    {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod M)ˣ →* ℂˣ} (hcomp : χ = χ₀.comp (ZMod.unitsMap hMN))
+    {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {β : SL(2, ℤ)}
+    (hβ : β ∈ Gamma0 N) (hβ11 : ((β 1 1 : ℤ) : ZMod M) = 1) : ⇑f ∣[k] mapGL ℝ β = ⇑f := by
+  rw [(mem_cuspFormCharSpace_iff_nebentypus k χ f).mp hf ⟨β, hβ⟩, hcomp, MonoidHom.comp_apply,
+    ← Gamma0Map_toHomUnits_of_dvd hMN ⟨β, hβ⟩ (Gamma0_le_Gamma0_of_dvd hMN hβ)]
+  have h1 : (Gamma0Map M).toHomUnits ⟨β, Gamma0_le_Gamma0_of_dvd hMN hβ⟩ = 1 := by
+    refine Units.ext ?_
+    rw [MonoidHom.coe_toHomUnits, Gamma0Map_apply]
+    exact hβ11
+  rw [h1, map_one, Units.val_one, one_smul]
 
 /-- The diamond operator indexed by a natural number: `⟨n⟩` is `diamondOp` at the unit `n mod N`
 when `n` is coprime to `N`, and `0` otherwise.
