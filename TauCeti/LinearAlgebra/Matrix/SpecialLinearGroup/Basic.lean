@@ -52,8 +52,6 @@ proof is independent of the source's.
   laws for base change, which support whole-matrix reduction arguments such as the level
   antitonicity of the principal congruence subgroups.
 * `Matrix.SpecialLinearGroup.mapGL_neg_one`: `mapGL S (-1) = -1`.
-* `Matrix.SpecialLinearGroup.apply_eq_of_map_eq`: an equality of reductions under `map f` is an
-  equality entry by entry.
 * `Matrix.SpecialLinearGroup.fin_two_mul_sub_mul_eq_one`: the determinant-one identity in
   coordinates.
 * `Matrix.SpecialLinearGroup.coe_mapGL_fin_two`: the entrywise matrix of `mapGL S` on `SL₂(R)`,
@@ -104,14 +102,6 @@ again a single induced map. -/
 theorem map_comp {R S T : Type*} [CommRing R] [CommRing S] [CommRing T] {n : Type*} [Fintype n]
     [DecidableEq n] (f : R →+* S) (g : S →+* T) :
     (map (n := n) g).comp (map f) = map (g.comp f) := rfl
-
-/-- **An equality of reductions is an equality entry by entry**: if `map f δ = map f γ` in
-`SpecialLinearGroup n S`, then `f (δ i j) = f (γ i j)` for all `i j`. -/
-theorem apply_eq_of_map_eq {n : Type*} [DecidableEq n] [Fintype n] {R S : Type*} [CommRing R]
-    [CommRing S] (δ : SpecialLinearGroup n R) {γ : SpecialLinearGroup n R} {f : R →+* S}
-    (h : map f δ = map f γ) (i j : n) : f (δ i j) = f (γ i j) := by
-  have := congrArg (fun M : SpecialLinearGroup n S ↦ (M : Matrix n n S) i j) h
-  simpa only [map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply] using this
 
 /-- The determinant-one identity for an element of `SL₂(R)`, written in coordinates. -/
 lemma fin_two_mul_sub_mul_eq_one {R : Type*} [CommRing R] (g : SL(2, R)) :
