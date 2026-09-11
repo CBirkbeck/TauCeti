@@ -258,11 +258,8 @@ of `descendMatrixRat_det`. -/
 theorem descendMatrix_det (p N : ℕ) [NeZero p]
     (v : Fin (descendMatrixCount p N)) :
     (descendMatrix p N v : Matrix (Fin 2) (Fin 2) ℝ).det = (p : ℝ) := by
-  have hmap : ((Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (descendMatrixRat p N v) :
-      GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) =
-      (algebraMap ℚ ℝ).mapMatrix (descendMatrixRat p N v : Matrix (Fin 2) (Fin 2) ℚ) :=
-    Matrix.ext fun i j ↦ Matrix.GeneralLinearGroup.map_apply _ i j _
-  rw [descendMatrix_eq_map, hmap, ← RingHom.map_det, descendMatrixRat_det, map_natCast]
+  rw [descendMatrix_eq_map, Matrix.GeneralLinearGroup.val_map_apply, ← RingHom.mapMatrix_apply,
+    ← RingHom.map_det, descendMatrixRat_det, map_natCast]
 
 /-- Every member of the descent family has positive determinant, namely `p`. -/
 theorem descendMatrix_det_pos (p N : ℕ) [NeZero p] (v : Fin (descendMatrixCount p N)) :
