@@ -183,7 +183,7 @@ private lemma scaleRep_mul_upperTriRep (hd : 0 < d) (b : Fin p) {q r : ℕ} (hr 
 /-- Multiplication by `d` modulo `p` permutes `Fin p` when `d` and `p` are coprime. It *is*
 multiplication by the unit `ZMod.unitOfCoprime d hdp` of `ZMod p`, read through
 `ZMod.finEquiv`, so the permutation property is the unit's and nothing is proved here. -/
-private noncomputable def mulModEquiv (hp : 0 < p) (hdp : Nat.Coprime d p) : Fin p ≃ Fin p :=
+noncomputable def mulModEquiv (hp : 0 < p) (hdp : Nat.Coprime d p) : Fin p ≃ Fin p :=
   haveI : NeZero p := ⟨hp.ne'⟩
   (ZMod.finEquiv p).toEquiv.trans <|
     (Units.mulLeft (ZMod.unitOfCoprime d hdp)).trans (ZMod.finEquiv p).toEquiv.symm
@@ -192,7 +192,7 @@ private noncomputable def mulModEquiv (hp : 0 < p) (hdp : Nat.Coprime d p) : Fin
 `ZMod.finEquiv_symm_apply_val` is for: the `Fin p` representative of a residue has that
 residue's `val`. -/
 @[simp]
-private lemma coe_mulModEquiv (hp : 0 < p) (hdp : Nat.Coprime d p) (b : Fin p) :
+lemma coe_mulModEquiv (hp : 0 < p) (hdp : Nat.Coprime d p) (b : Fin p) :
     (mulModEquiv p hp hdp b : ℕ) = d * (b : ℕ) % p := by
   have : NeZero p := ⟨hp.ne'⟩
   simp [mulModEquiv, ZMod.coe_unitOfCoprime, ← Nat.cast_mul, ZMod.val_natCast]
