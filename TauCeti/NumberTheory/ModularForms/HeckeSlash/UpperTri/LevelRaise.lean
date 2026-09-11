@@ -44,7 +44,7 @@ variable {p : ℕ} [NeZero p] (k : ℤ)
 
 /-- **An upper-triangular matrix slashes a level-raise back to the form**: for `g` slash-invariant
 under a group `Γ` with `1` as a strict period and `V_p g = p^(1-k) • (g ∣[k] scaleGL p)`,
-`(V_p g) ∣[k] !![1, b; 0, p] = p⁻¹ • g`, because `(V_p g) ((τ + b) / p) = g (τ + b) = g τ`. -/
+`(V_p g) ∣[k] !![1, b; 0, p] = p⁻¹ • g`. -/
 theorem smul_slash_scaleGL_slash_upperTriRep {Γ : Subgroup (GL (Fin 2) ℝ)}
     (hper : (1 : ℝ) ∈ Γ.strictPeriods) {F : Type*} [FunLike F ℍ ℂ]
     [SlashInvariantFormClass F Γ k] (g : F) (b : Fin p) :
