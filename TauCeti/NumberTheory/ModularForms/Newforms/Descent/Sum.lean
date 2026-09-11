@@ -167,12 +167,14 @@ theorem descendSlash_slash_mapGL_of_nebentypus (k : ℤ) [NeZero p] (hpsq : p ^ 
 /-- **The descent slash sum is `Γ₀(N / p)`-equivariant at `p ∥ N`**: the counterpart of
 `descendSlash_slash_mapGL_of_mem_Gamma0` when `p` exactly divides `N`, with the family permuted
 by `descendIndexShift` (`exists_mem_Gamma0_descendMatrix_mul_of_not_sq_dvd`). -/
-theorem descendSlash_slash_mapGL_of_mem_Gamma0_of_not_sq_dvd (k : ℤ) [NeZero p] (hp : p.Prime)
-    (hpN : p ∣ N) (hpsq : ¬ p ^ 2 ∣ N) {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p)) {α : Type*}
-    [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ] {f : ℍ → ℂ} {u : α}
+theorem descendSlash_slash_mapGL_of_mem_Gamma0_of_not_sq_dvd (k : ℤ) (hp : p.Prime) (hpN : p ∣ N)
+    (hpsq : ¬ p ^ 2 ∣ N) {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p)) {α : Type*} [DistribSMul α ℂ]
+    [IsScalarTower α ℂ ℂ] {f : ℍ → ℂ} {u : α}
     (hf : ∀ δ ∈ Gamma0 N, ((δ 1 1 : ℤ) : ZMod (N / p)) = ((γ 1 1 : ℤ) : ZMod (N / p)) →
       f ∣[k] (mapGL ℝ δ : GL (Fin 2) ℝ) = u • f) :
+    haveI : NeZero p := ⟨hp.ne_zero⟩
     descendSlash k p N f ∣[k] (mapGL ℝ γ : GL (Fin 2) ℝ) = u • descendSlash k p N f := by
+  have : NeZero p := ⟨hp.ne_zero⟩
   have : Fact p.Prime := ⟨hp⟩
   rw [descendSlash_def, SlashAction.sum_slash, Finset.smul_sum]
   have key : ∀ v : Fin (descendMatrixCount p N),
@@ -189,35 +191,41 @@ theorem descendSlash_slash_mapGL_of_mem_Gamma0_of_not_sq_dvd (k : ℤ) [NeZero p
 /-- **The descent slash sum is `Γ₀(N / p)`-equivariant at every prime `p ∣ N`**: the two cases
 `p² ∣ N` (`descendSlash_slash_mapGL_of_mem_Gamma0`) and `p ∥ N`
 (`descendSlash_slash_mapGL_of_mem_Gamma0_of_not_sq_dvd`) together. -/
-theorem descendSlash_slash_mapGL_of_mem_Gamma0_of_prime (k : ℤ) [NeZero p] (hp : p.Prime)
-    (hpN : p ∣ N) {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p)) {α : Type*} [DistribSMul α ℂ]
-    [IsScalarTower α ℂ ℂ] {f : ℍ → ℂ} {u : α}
+theorem descendSlash_slash_mapGL_of_mem_Gamma0_of_prime (k : ℤ) (hp : p.Prime) (hpN : p ∣ N)
+    {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p)) {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ]
+    {f : ℍ → ℂ} {u : α}
     (hf : ∀ δ ∈ Gamma0 N, ((δ 1 1 : ℤ) : ZMod (N / p)) = ((γ 1 1 : ℤ) : ZMod (N / p)) →
       f ∣[k] (mapGL ℝ δ : GL (Fin 2) ℝ) = u • f) :
+    haveI : NeZero p := ⟨hp.ne_zero⟩
     descendSlash k p N f ∣[k] (mapGL ℝ γ : GL (Fin 2) ℝ) = u • descendSlash k p N f := by
+  have : NeZero p := ⟨hp.ne_zero⟩
   by_cases hpsq : p ^ 2 ∣ N
   · exact descendSlash_slash_mapGL_of_mem_Gamma0 k hpsq hγ hf
   · exact descendSlash_slash_mapGL_of_mem_Gamma0_of_not_sq_dvd k hp hpN hpsq hγ hf
 
 /-- **The descent slash sum is `Γ₀(N / p)`-invariant at every prime `p ∣ N`**: the case `u = 1`
 of `descendSlash_slash_mapGL_of_mem_Gamma0_of_prime`. -/
-theorem descendSlash_slash_mapGL_eq_self_of_mem_Gamma0_of_prime (k : ℤ) [NeZero p]
-    (hp : p.Prime) (hpN : p ∣ N) {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p)) {f : ℍ → ℂ}
+theorem descendSlash_slash_mapGL_eq_self_of_mem_Gamma0_of_prime (k : ℤ) (hp : p.Prime)
+    (hpN : p ∣ N) {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p)) {f : ℍ → ℂ}
     (hf : ∀ δ ∈ Gamma0 N, f ∣[k] (mapGL ℝ δ : GL (Fin 2) ℝ) = f) :
+    haveI : NeZero p := ⟨hp.ne_zero⟩
     descendSlash k p N f ∣[k] (mapGL ℝ γ : GL (Fin 2) ℝ) = descendSlash k p N f := by
+  have : NeZero p := ⟨hp.ne_zero⟩
   simpa using descendSlash_slash_mapGL_of_mem_Gamma0_of_prime k hp hpN hγ (u := (1 : ℂ))
     fun δ hδ _ ↦ by rw [hf δ hδ, one_smul]
 
 /-- **The descent sum lowers the level of the nebentypus at every prime `p ∣ N`**: the every-prime
 form of `descendSlash_slash_mapGL_of_nebentypus`. -/
-theorem descendSlash_slash_mapGL_of_nebentypus_of_prime (k : ℤ) [NeZero p] (hp : p.Prime)
-    (hpN : p ∣ N) {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / p))ˣ →* ℂˣ}
+theorem descendSlash_slash_mapGL_of_nebentypus_of_prime (k : ℤ) (hp : p.Prime) (hpN : p ∣ N)
+    {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / p))ˣ →* ℂˣ}
     (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN))) (γ : ↥(Gamma0 (N / p)))
     {f : ℍ → ℂ}
     (hf : ∀ δ : ↥(Gamma0 N), f ∣[k] (mapGL ℝ (δ : SL(2, ℤ)) : GL (Fin 2) ℝ)
       = (↑(χ ((Gamma0Map N).toHomUnits δ)) : ℂ) • f) :
+    haveI : NeZero p := ⟨hp.ne_zero⟩
     descendSlash k p N f ∣[k] (mapGL ℝ (γ : SL(2, ℤ)) : GL (Fin 2) ℝ)
       = (↑(χ₀ ((Gamma0Map (N / p)).toHomUnits γ)) : ℂ) • descendSlash k p N f := by
+  have : NeZero p := ⟨hp.ne_zero⟩
   apply descendSlash_slash_mapGL_of_mem_Gamma0_of_prime k hp hpN γ.2
   intro δ hδ hd
   have hdvd : N / p ∣ N := Nat.div_dvd_of_dvd hpN
