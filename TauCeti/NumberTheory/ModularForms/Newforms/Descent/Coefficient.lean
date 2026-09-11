@@ -270,4 +270,63 @@ theorem qExpansion_coeff_descendSlash_eq_zero_of_coprime [NeZero M] (hp : p.Prim
 
 end Core
 
+/-! ### The coefficient formula of the descent -/
+
+/-- **The coefficients of the descent** (Miyake, Lemma 4.6.14). Let `f ∈ S_k(Γ₁(N), χ)` with `χ`
+pulled back from `χ₀` modulo `N / p`, vanishing at every index coprime to `p L` for a squarefree
+`L` coprime to `p`, and let `g` of level `L N / p` carry the coefficients of `f` along the
+multiples of `p`: `a_m(g) = a_{pm}(f)` for `m` coprime to `L`, and `a_m(g) = 0` otherwise. Then
+at every `m` coprime to `L`, `a_m(descendSlash k p N f) = (|family| / p) · a_m(g)`. -/
+theorem qExpansion_coeff_descendSlash_eq_of_coprime [NeZero N] (hp : p.Prime) (hpN : p ∣ N)
+    {L : ℕ} (hL : Squarefree L) (hpL : Nat.Coprime p L) {χ : (ZMod N)ˣ →* ℂˣ}
+    {χ₀ : (ZMod (N / p))ˣ →* ℂˣ} (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)))
+    {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ)
+    (hvan : ∀ n, Nat.Coprime n (p * L) → (qExpansion 1 f).coeff n = 0)
+    {g : CuspForm ((Gamma1 (L * N / p)).map (mapGL ℝ)) k}
+    (hg : g ∈ cuspFormCharSpace k
+      (χ₀.comp (ZMod.unitsMap (Nat.mul_div_assoc L hpN ▸ dvd_mul_left (N / p) L))))
+    (hgcoeff : ∀ m, (qExpansion 1 g).coeff m =
+      if Nat.Coprime m L then (qExpansion 1 f).coeff (p * m) else 0)
+    (m : ℕ) (hm : Nat.Coprime m L) :
+    haveI : NeZero p := ⟨hp.ne_zero⟩
+    (qExpansion 1 (descendSlash k p N ⇑f)).coeff m =
+      (descendMatrixCount p N : ℂ) / p * (qExpansion 1 g).coeff m := by
+  have : NeZero p := ⟨hp.ne_zero⟩
+  have : NeZero L := ⟨hL.ne_zero⟩
+  have : NeZero (L * N) := ⟨Nat.mul_ne_zero hL.ne_zero (NeZero.ne N)⟩
+  have hpM : p ∣ L * N := dvd_mul_of_dvd_right hpN L
+  -- the descent at level `N` is the descent at level `L N`
+  have h08a := descendSlash_mul_left_of_coprime k hp hpN hpL (f := ⇑f)
+    fun ε hε ↦ SlashInvariantFormClass.slash_action_eq f _ (Subgroup.mem_map_of_mem _ hε)
+  -- `f = Δ + V_p g` at level `L N`
+  set Vg := CuspForm.levelRaise p (Gamma1_map_le_conjAct_scaleGL_of_dvd
+    (dvd_of_eq (Nat.mul_div_cancel' hpM))) g with hVg
+  set Δ := _root_.CuspForm.ofLe (Gamma1_map_le_Gamma1_map_of_dvd (dvd_mul_left N L)) f - Vg
+    with hΔ
+  have hfΔ : ⇑f = ⇑Δ + ⇑Vg := by
+    rw [hΔ, FunLike.coe_sub, _root_.CuspForm.coe_ofLe, sub_add_cancel]
+  -- the level-raise descends to a multiple of `g`
+  have hVg' : descendSlash k p (L * N) ⇑Vg = ((descendMatrixCount p N : ℂ) / p) • ⇑g := by
+    rw [hVg, CuspForm.coe_levelRaise, descendSlash_smul_slash_scaleGL k hp hpM g,
+      descendMatrixCount_mul_left_of_coprime hpL N]
+  -- the difference descends to a form vanishing at `m`
+  have hχM : χ.comp (ZMod.unitsMap (dvd_mul_left N L)) =
+      (χ₀.comp (ZMod.unitsMap (Nat.mul_div_assoc L hpN ▸ dvd_mul_left (N / p) L))).comp
+        (ZMod.unitsMap (Nat.div_dvd_of_dvd hpM)) := by
+    rw [hcomp, MonoidHom.comp_assoc, ZMod.unitsMap_comp, MonoidHom.comp_assoc, ZMod.unitsMap_comp]
+  have hΔχ : Δ ∈ cuspFormCharSpace k (χ.comp (ZMod.unitsMap (dvd_mul_left N L))) :=
+    ofLe_sub_levelRaise_mem_cuspFormCharSpace hp hpN hcomp hf hg
+  have hΔvan : ∀ n, Nat.Coprime n L → (qExpansion 1 Δ).coeff n = 0 :=
+    qExpansion_coeff_ofLe_sub_levelRaise_eq_zero hp hpN hvan hgcoeff
+  have hD0 : (qExpansion 1 (descendSlash k p (L * N) ⇑Δ)).coeff m = 0 :=
+    qExpansion_coeff_descendSlash_eq_zero_of_coprime hp hpM hL hpL hχM hΔχ hΔvan m hm
+  -- add the two `q`-expansions through the bundled descent
+  rw [← h08a, hfΔ, descendSlash_add, hVg', ← coe_descendCuspForm k hp hpM hχM hΔχ,
+    ← FunLike.coe_smul, ← FunLike.coe_add, FunLike.coe_add,
+    ModularForm.qExpansion_add one_pos (one_mem_strictPeriods_Gamma1_map _), map_add,
+    coe_descendCuspForm, hD0, zero_add, FunLike.coe_smul,
+    ModularForm.qExpansion_smul one_pos (one_mem_strictPeriods_Gamma1_map _), map_smul,
+    smul_eq_mul]
+
+
 end TauCeti
