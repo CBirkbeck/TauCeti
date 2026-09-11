@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.Surjective
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Support
 
 /-!
@@ -33,8 +32,6 @@ spanning statement. Completeness enters only through that criterion.
 * `TauCeti.ValuationSpectrum.span_eq_top_of_spa_eq_biUnion_rationalSubset` : the `←` direction.
 * `TauCeti.ValuationSpectrum.span_eq_top_iff_spa_eq_biUnion_rationalSubset` : **Wedhorn Corollary
   7.53**, the two directions together.
-* `TauCeti.ValuationSpectrum.exists_smul_top_ne_top_of_ne_top` : no proper ideal of `A` expands
-  every member of a rational cover.
 
 ## References
 
@@ -49,7 +46,7 @@ public section
 
 namespace TauCeti.ValuationSpectrum
 
-open TauCeti.Huber TauCeti.Huber.PairOfDefinition
+open TauCeti.Huber
 
 variable {A : Type*} [CommRing A] [UniformSpace A] [T2Space A] [CompleteSpace A]
   [IsTopologicalRing A] [IsUniformAddGroup A] [IsHuberRing A]
@@ -73,25 +70,6 @@ theorem span_eq_top_iff_spa_eq_biUnion_rationalSubset (Aplus : Subring A)
     Ideal.span (T : Set A) = ⊤ ↔ spa Aplus = ⋃ t ∈ T, rationalSubset Aplus T t :=
   ⟨spa_eq_biUnion_rationalSubset_of_span_eq_top Aplus,
     span_eq_top_of_spa_eq_biUnion_rationalSubset Aplus hplus⟩
-
-/-- **No proper ideal expands every piece of a rational cover.** For `T` generating the unit
-ideal and `J` a proper ideal of `A`, some `t ∈ T` has `J · A_t ≠ A_t`.
-
-This is the hypothesis of `Module.FaithfullyFlat.pi_of_exists_submodule_ne_top`, so it is what a
-rational cover contributes to the faithful flatness of Wedhorn's Corollary 8.32; flatness of each
-`A → A_t` is separate and is not proved here. -/
-theorem exists_smul_top_ne_top_of_ne_top (P : PairOfDefinition A) (Aplus : Subring A)
-    (hplus : IsRingOfIntegralElements Aplus) (hP : P.ringOfDefinition ≤ Aplus) {T : Finset A}
-    (hT : Ideal.span (T : Set A) = ⊤) (S : ∀ _ : T, Type*) [∀ t : T, CommRing (S t)]
-    [∀ t : T, Algebra A (S t)] [∀ t : T, IsLocalization.Away (t : A) (S t)]
-    (hden : ∀ t : T, HasDenominatorPower P T (t : A) (S t)) {J : Ideal A} (hJ : J ≠ ⊤) :
-    ∃ t : T, J • (⊤ : Submodule A (S t)) ≠ ⊤ := by
-  obtain ⟨v, hv, hle⟩ := exists_mem_spa_le_supp_of_ne_top Aplus hplus hJ
-  rw [spa_eq_biUnion_rationalSubset_of_span_eq_top Aplus hT] at hv
-  obtain ⟨t, ht, hvt⟩ := Set.mem_iUnion₂.mp hv
-  refine ⟨⟨t, ht⟩, ?_⟩
-  exact smul_top_ne_top_of_le_supp_of_mem_rationalSubset P Aplus hP T ((⟨t, ht⟩ : T) : A)
-    (S ⟨t, ht⟩) (hden ⟨t, ht⟩) hle hvt
 
 end TauCeti.ValuationSpectrum
 

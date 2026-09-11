@@ -8,6 +8,10 @@ module
 public import Mathlib.Algebra.Algebra.Subalgebra.Lattice
 public import Mathlib.RingTheory.Localization.Away.Basic
 
+import Mathlib.RingTheory.Ideal.Maps
+import Mathlib.RingTheory.Ideal.Maximal
+import Mathlib.RingTheory.Localization.Ideal
+
 /-!
 # The fraction `t/s` in an away localisation
 
@@ -26,6 +30,8 @@ Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
 
 ## Main results
 
+* `TauCeti.Localization.exists_smul_top_ne_top_of_ne_top`: a proper ideal stays proper in some
+  member of a family of localisations away from a unit-generating set.
 * `TauCeti.Localization.divBy_one`: `1/s` is Mathlib's `IsLocalization.Away.invSelf`.
 * `TauCeti.Localization.invSelf_mul_algebraMap`: scaling `1/s` by `t` gives `t/s`.
 * `TauCeti.Localization.algebraMap_mul_divBy` and
@@ -313,5 +319,44 @@ adic spectrum. -/
 bijective. -/
 instance isLocalizationAwayOne (R : Type*) [CommSemiring R] : IsLocalization.Away (1 : R) R :=
   IsLocalization.away_of_isUnit_of_bijective _ isUnit_one (Equiv.refl _).bijective
+
+/-! ### A family of localisations away from a unit-generating set -/
+
+/-- **A proper ideal stays proper in some localisation of a unit-generating family.** If a finite
+set `T` generates the unit ideal of `A`, then for every proper ideal `J` there is a `t ∈ T` with
+`J · A_t ≠ A_t`.
+
+The family cannot expand `J` everywhere at once: `J` lies in a maximal ideal `m`, the generators
+cannot all lie in `m`, and at a generator outside `m` the extension of `m` — hence of `J` — stays
+prime.
+
+This is the hypothesis of `Module.FaithfullyFlat.pi_of_exists_submodule_ne_top` for such a
+family; nothing topological is involved. -/
+theorem exists_smul_top_ne_top_of_ne_top {A : Type*} [CommRing A] {T : Finset A}
+    (hT : Ideal.span (T : Set A) = ⊤) (S : ∀ _ : T, Type*) [∀ t : T, CommRing (S t)]
+    [∀ t : T, Algebra A (S t)] [∀ t : T, IsLocalization.Away ((t : A)) (S t)]
+    {J : Ideal A} (hJ : J ≠ ⊤) :
+    ∃ t : T, J • (⊤ : Submodule A (S t)) ≠ ⊤ := by
+  obtain ⟨m, hm, hJm⟩ := Ideal.exists_le_maximal J hJ
+  have hex : ∃ t ∈ T, t ∉ m := by
+    by_contra h
+    push Not at h
+    exact hm.ne_top (top_le_iff.mp (hT ▸ Ideal.span_le.mpr h))
+  obtain ⟨t, ht, htm⟩ := hex
+  refine ⟨⟨t, ht⟩, ?_⟩
+  have hdisj : Disjoint (Submonoid.powers ((⟨t, ht⟩ : T) : A) : Set A) (m : Set A) := by
+    rw [Set.disjoint_left]
+    rintro x ⟨n, rfl⟩ hx
+    exact htm (hm.isPrime.mem_of_pow_mem n hx)
+  have hprime : (m.map (algebraMap A (S ⟨t, ht⟩))).IsPrime :=
+    IsLocalization.isPrime_of_isPrime_disjoint (Submonoid.powers ((⟨t, ht⟩ : T) : A)) _ m
+      hm.isPrime hdisj
+  rw [Ideal.smul_top_eq_map]
+  intro htop
+  have hone : (1 : S ⟨t, ht⟩) ∈ J.map (algebraMap A (S ⟨t, ht⟩)) := by
+    have h : (1 : S ⟨t, ht⟩) ∈ (J.map (algebraMap A (S ⟨t, ht⟩))).restrictScalars A := by
+      rw [htop]; exact Submodule.mem_top
+    exact h
+  exact hprime.ne_top ((Ideal.eq_top_iff_one _).mpr (Ideal.map_mono hJm hone))
 
 end TauCeti.Localization

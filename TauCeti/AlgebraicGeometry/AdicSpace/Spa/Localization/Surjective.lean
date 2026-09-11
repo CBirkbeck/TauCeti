@@ -36,8 +36,6 @@ structure map.
   every point of `Spa (Aₛ, Aₛ⁺)` into `R(T/s)`.
 * `TauCeti.ValuationSpectrum.image_comap_algebraMap_spa_eq_rationalSubset`: the image of
   `Spa (Aₛ, Aₛ⁺)` in `Spa (A, A⁺)` **is** `R(T/s)`.
-* `TauCeti.ValuationSpectrum.smul_top_ne_top_of_le_supp_of_mem_rationalSubset`: an ideal below
-  the support of some point of `R(T/s)` does not expand `Aₛ` to everything.
 
 ## Scope: the uncompleted localisation
 
@@ -165,34 +163,6 @@ theorem image_comap_algebraMap_spa_eq_rationalSubset (P : PairOfDefinition A) (A
     (image_comap_algebraMap_spa_subset_rationalSubset P Aplus T s S hden) fun v hv ↦ ?_
   obtain ⟨w, hw, rfl⟩ := exists_mem_spa_comap_algebraMap_eq P Aplus hP T s S hden hv
   exact ⟨w, hw, rfl⟩
-
-/-- **An ideal contained in the support of a point of `R(T/s)` does not expand `Aₛ`.**
-For `v ∈ R(T/s)` and `J ≤ supp v`, the extension `J · Aₛ` is a proper ideal of `Aₛ`.
-
-Nothing is asked of `J` beyond that containment; in particular it need not be maximal, and
-`TauCeti.ValuationSpectrum.exists_smul_top_ne_top_of_ne_top` applies it to an arbitrary proper
-ideal. It is the per-piece half of the criterion that
-`Module.FaithfullyFlat.pi_of_exists_submodule_ne_top` asks of a rational cover. -/
-theorem smul_top_ne_top_of_le_supp_of_mem_rationalSubset (P : PairOfDefinition A)
-    (Aplus : Subring A) (hP : P.ringOfDefinition ≤ Aplus) (T : Finset A) (s : A)
-    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
-    (hden : HasDenominatorPower P T s S) {v : Spv A} {J : Ideal A} (hJ : J ≤ supp v)
-    (hv : v ∈ rationalSubset Aplus T s) :
-    J • (⊤ : Submodule A S) ≠ ⊤ := by
-  let _ := locTopology P T s S hden
-  obtain ⟨w, -, hcomap⟩ := exists_mem_spa_comap_algebraMap_eq P Aplus hP T s S hden hv
-  have hcs : Ideal.comap (algebraMap A S) (supp w) = supp (comap (algebraMap A S) w) := by
-    ext a; simp [mem_supp_iff, comap_vle]
-  have hle : J.map (algebraMap A S) ≤ supp w :=
-    Ideal.map_le_iff_le_comap.mpr (by rw [hcs, hcomap]; exact hJ)
-  intro htop
-  rw [Ideal.smul_top_eq_map] at htop
-  have hone : (1 : S) ∈ J.map (algebraMap A S) := by
-    have h : (1 : S) ∈ (J.map (algebraMap A S)).restrictScalars A := by
-      rw [htop]; exact Submodule.mem_top
-    exact h
-  exact Ideal.IsPrime.ne_top (inferInstance : (supp w).IsPrime)
-    ((Ideal.eq_top_iff_one _).mpr (hle hone))
 
 end TauCeti.ValuationSpectrum
 
