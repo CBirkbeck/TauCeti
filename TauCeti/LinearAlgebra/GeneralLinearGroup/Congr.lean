@@ -64,23 +64,22 @@ theorem _root_.LinearEquiv.congrAut_eq (e : M₁ ≃ₗ[R] M₂) (f : M₁ ≃�
     LinearEquiv.congrAut e f = (e.symm.trans f).trans e :=
   LinearEquiv.ext fun m => LinearEquiv.congrAut_apply e f m
 
+/-- Inverse conjugation by `e`, as an equality of linear equivalences.
+
+Proved by characterising the inverse rather than by unfolding `congrAut` a second time: applying
+`congrAut e` to both sides reduces this to `congrAut_eq`, so the coercion transport across
+`toLinearEquiv` is performed once, in `congrAut_apply`, and not again here. -/
+theorem _root_.LinearEquiv.congrAut_symm_eq (e : M₁ ≃ₗ[R] M₂) (g : M₂ ≃ₗ[R] M₂) :
+    (LinearEquiv.congrAut e).symm g = (e.trans g).trans e.symm := by
+  rw [MulEquiv.symm_apply_eq, LinearEquiv.congrAut_eq]
+  exact LinearEquiv.ext fun m => by simp
+
 /-- Inverse conjugation by `e` sends `m` to `e.symm (g (e m))`. -/
 @[simp]
 theorem _root_.LinearEquiv.congrAut_symm_apply (e : M₁ ≃ₗ[R] M₂) (g : M₂ ≃ₗ[R] M₂) (m : M₁) :
     (LinearEquiv.congrAut e).symm g m = e.symm (g (e m)) := by
-  rw [LinearEquiv.congrAut, MulEquiv.symm_trans_apply, MulEquiv.symm_trans_apply,
-    congrLinearEquiv_symm]
-  have h : ((generalLinearEquiv R M₂).symm g).toLinearEquiv = g := by
-    ext x
-    rw [coe_toLinearEquiv, ← coeFn_generalLinearEquiv]
-    exact DFunLike.congr_fun ((generalLinearEquiv R M₂).apply_symm_apply g) x
-  simp only [congrLinearEquiv_apply, MulEquiv.symm_symm, coeFn_generalLinearEquiv,
-    coe_ofLinearEquiv, LinearEquiv.symm_symm, LinearEquiv.trans_apply, h]
-
-/-- Inverse conjugation by `e`, as an equality of linear equivalences. -/
-theorem _root_.LinearEquiv.congrAut_symm_eq (e : M₁ ≃ₗ[R] M₂) (g : M₂ ≃ₗ[R] M₂) :
-    (LinearEquiv.congrAut e).symm g = (e.trans g).trans e.symm :=
-  LinearEquiv.ext fun m => LinearEquiv.congrAut_symm_apply e g m
+  rw [LinearEquiv.congrAut_symm_eq]
+  simp
 
 end
 
