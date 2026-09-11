@@ -5,8 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.ModularForms.Newforms.AtkinLehner
-public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Basic
+public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Descent
 
 /-!
 # The squarefree decomposition of a form with vanishing coprime coefficients
@@ -16,7 +15,7 @@ coprime to a squarefree `l > 1` is, coefficient by coefficient, a sum `∑_{q �
 level-raises of forms `F_q` of level `N l² / q` with nebentypus lowered along `N l² / q ∣ N l²`.
 The coefficients of the sum are read through the restrictions `g_q` of the `F_q` to the common
 level `N l²`: `a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(g_q)`. The prime peeled at each step is the one of
-`Newforms/AtkinLehner.lean`
+`Newforms/CoprimeFilter/Descent.lean`
 (`exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_qExpansionSupportedOnDvd`).
 
 ## Main results
@@ -166,12 +165,13 @@ private theorem exists_qExpansion_coeff_eq_ite_coprime_zero_and_ite_dvd {χ : (Z
   have : NeZero q := ⟨hqp.ne_zero⟩
   obtain ⟨h, hhχ, hhcoeff⟩ :=
     exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero_mul_sq χ hf (L := q)
-  have hNM : N ∣ N * q ^ 2 := Nat.dvd_mul_right N _
   have hNq2q : N * q ^ 2 / q = N * q := by rw [sq, ← mul_assoc, Nat.mul_div_cancel _ hqp.pos]
-  obtain ⟨χ₁, F, hF, hχ₁, hFcoeff⟩ :=
-    exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_qExpansionSupportedOnDvd χ hqp
-      (dvd_mul_of_dvd_right (dvd_pow_self q two_ne_zero) N)
-      (by rw [hNq2q]; exact Nat.dvd_mul_right N q) hhχ (by
+  have hqM : q ∣ N * q ^ 2 := dvd_mul_of_dvd_right (dvd_pow_self q two_ne_zero) N
+  have hNMq : N ∣ N * q ^ 2 / q := by rw [hNq2q]; exact Nat.dvd_mul_right N q
+  obtain ⟨F, hF, hFcoeff⟩ :=
+    exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_qExpansionSupportedOnDvd hqM
+      (χ.comp (ZMod.unitsMap hNMq))
+      (by simpa only [MonoidHom.comp_assoc, ZMod.unitsMap_comp] using hhχ) (by
         rw [qExpansionSupportedOnDvd_iff, PowerSeries.isSupportedOnDvd_iff]
         intro n hn
         rw [hhcoeff n]
@@ -186,12 +186,10 @@ private theorem exists_qExpansion_coeff_eq_ite_coprime_zero_and_ite_dvd {χ : (Z
     rw [hNq2q, hNql]
     exact dvd_mul_right _ _
   refine ⟨h, _root_.CuspForm.ofLe (Gamma1_map_le_Gamma1_map_of_dvd hdiv) F,
-    χ₁.comp (ZMod.unitsMap hdiv), hhχ, CuspForm.ofLe_mem_cuspFormCharSpace χ₁ hdiv hF, ?_, hhcoeff,
+    (χ.comp (ZMod.unitsMap hNMq)).comp (ZMod.unitsMap hdiv), hhχ,
+    CuspForm.ofLe_mem_cuspFormCharSpace _ hdiv hF, ?_, hhcoeff,
     fun n ↦ by rw [hFcoeff n, CuspForm.coe_ofLe]⟩
-  have hNq2 : N * q ^ 2 ∣ N * (q * l') ^ 2 := ⟨l' ^ 2, by ring⟩
-  have := congrArg (fun ψ ↦ ψ.comp (ZMod.unitsMap hNq2)) hχ₁
-  simp only [MonoidHom.comp_assoc, ZMod.unitsMap_comp] at this ⊢
-  exact this
+  simp only [MonoidHom.comp_assoc, ZMod.unitsMap_comp]
 
 omit [NeZero N] in
 /-- **The rest after peeling.** For the multiples-of-`q` part `h` of `f`, the difference
