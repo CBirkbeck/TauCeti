@@ -80,9 +80,8 @@ theorem ofLe_sub_levelRaise_mem_cuspFormCharSpace (hp : p.Prime) (hpN : p ∣ N)
 
 section Core
 
-variable {M : ℕ} [NeZero M]
+variable {M : ℕ}
 
-omit [NeZero M] in
 /-- The `m`-th coefficient of a finite sum of cusp forms of level `Γ₁(M)`. -/
 private theorem qExpansion_coeff_finset_sum {ι : Type*} (s : Finset ι)
     (F : ι → CuspForm ((Gamma1 M).map (mapGL ℝ)) k) (m : ℕ) :
@@ -95,7 +94,6 @@ private theorem qExpansion_coeff_finset_sum {ι : Type*} (s : Finset ι)
     rw [Finset.sum_insert ha, Finset.sum_insert ha, FunLike.coe_add,
       ModularForm.qExpansion_add one_pos (one_mem_strictPeriods_Gamma1_map _), map_add, ih]
 
-omit [NeZero M] in
 /-- **A character over a lowered character is lowered.** If `χ'` modulo `N'` and `χ₀ ∘ π` modulo
 `M` have the same pull-back to a common multiple `M'`, where `χ₀` has level `M / p` and
 `M ∣ N'`, then `χ'` is the pull-back of `χ₀ ∘ π` modulo `N' / p`: the pull-back to `M'` is
@@ -113,6 +111,39 @@ private theorem eq_comp_unitsMap_of_comp_unitsMap_eq {M' N' : ℕ} [NeZero M'] (
   simp only [MonoidHom.comp_apply] at hv ⊢
   rw [hv, ← MonoidHom.comp_apply (ZMod.unitsMap _) (ZMod.unitsMap _), ZMod.unitsMap_comp,
     ← MonoidHom.comp_apply (ZMod.unitsMap _) (ZMod.unitsMap _), ZMod.unitsMap_comp]
+
+/-- **A peeled summand descends to a level-raise of a bundled descent.** For `F` of level
+`Γ₁(M l² / q)` with a nebentypus lying over the lowered one, the descent at level `M l²` of the
+function `V_q F` is `V_q` of the descent of `F`, bundled at level `Γ₁(M l² / p)`:
+`descendSlash_coe_levelRaise_mul_left` read through `descendCuspForm`. -/
+private theorem descendSlash_smul_slash_scaleGL_eq_coe_levelRaise (hp : p.Prime) {l q : ℕ}
+    (hpM : p ∣ M) (hq : q.Prime) (hql : q ∣ l) (hpl : Nat.Coprime p l)
+    [NeZero (M * l ^ 2 / q)] (hpN' : p ∣ M * l ^ 2 / q) (hMN' : M ∣ M * l ^ 2 / q)
+    (hle : q * (M * l ^ 2 / q / p) ∣ M * l ^ 2 / p)
+    {χM : (ZMod M)ˣ →* ℂˣ} {χ₀ : (ZMod (M / p))ˣ →* ℂˣ}
+    (hcomp : χM = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpM)))
+    {χ' : (ZMod (M * l ^ 2 / q))ˣ →* ℂˣ}
+    (hχ' : χ'.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd
+        (dvd_mul_of_dvd_right (hql.trans (dvd_pow_self l two_ne_zero)) M))) =
+      χM.comp (ZMod.unitsMap (Nat.dvd_mul_right M (l ^ 2))))
+    {F : CuspForm ((Gamma1 (M * l ^ 2 / q)).map (mapGL ℝ)) k} (hF : F ∈ cuspFormCharSpace k χ') :
+    haveI : NeZero p := ⟨hp.ne_zero⟩
+    haveI : NeZero q := ⟨hq.ne_zero⟩
+    ∃ hcomp' : χ' = (χ₀.comp (ZMod.unitsMap ((Nat.div_dvd_div_iff_right hpM hpN').mpr
+        hMN'))).comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN')),
+      descendSlash k p (M * l ^ 2) ((q : ℂ) ^ (1 - k) • (⇑F ∣[k] scaleGL q)) =
+        ⇑(CuspForm.levelRaise q (Gamma1_map_le_conjAct_scaleGL_of_dvd hle)
+          (descendCuspForm k hp hpN' hcomp' hF)) := by
+  have : NeZero p := ⟨hp.ne_zero⟩
+  have : NeZero q := ⟨hq.ne_zero⟩
+  have hqMl : q ∣ M * l ^ 2 := dvd_mul_of_dvd_right (hql.trans (dvd_pow_self l two_ne_zero)) M
+  have : NeZero (M * l ^ 2) := ⟨fun h ↦ NeZero.ne (M * l ^ 2 / q) (by rw [h, Nat.zero_div])⟩
+  have hcomp' := eq_comp_unitsMap_of_comp_unitsMap_eq hpM hpN'
+    ((Nat.div_dvd_div_iff_right hpM hpN').mpr hMN') hMN' (Nat.div_dvd_of_dvd hqMl) hcomp hχ'
+  refine ⟨hcomp', ?_⟩
+  have h := descendSlash_coe_levelRaise_mul_left k hp hpN' (hpl.coprime_dvd_right hql) hcomp' hF
+  rw [CuspForm.coe_levelRaise, Nat.mul_div_cancel' hqMl] at h
+  rw [h, CuspForm.coe_levelRaise, coe_descendCuspForm]
 
 end Core
 
