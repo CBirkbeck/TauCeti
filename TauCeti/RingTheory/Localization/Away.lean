@@ -89,6 +89,10 @@ source never states.
 
 * [C. Birkbeck, *AINTLIB*](https://github.com/CBirkbeck/AINTLIB), branch `dev/adic-spaces`,
   commit `d9f2fbbb`, `projects/AdicSpaces/Adic spaces/LocalizationTopology.lean`
+* `TauCeti.Localization.exists_smul_top_ne_top_of_ne_top` is stated here for an arbitrary
+  commutative semiring and a generating set that need not be finite, and placed in this file
+  rather than among the adic-space material, at the suggestion of review on
+  TauCetiProject/TauCeti#6324.
 -/
 
 public section
@@ -336,10 +340,7 @@ generates the unit ideal of `A`, then for every proper ideal `J` there is a `t �
 
 `T` need not be finite. This is the hypothesis of
 `Module.FaithfullyFlat.pi_of_exists_submodule_ne_top` for such a family, which is how a rational
-cover contributes to Wedhorn's Corollary 8.32.
-
-The general statement, and the observation that it is localisation algebra rather than adic
-geometry, are due to the `generality` review on TauCetiProject/TauCeti#6324. -/
+cover contributes to Wedhorn's Corollary 8.32. -/
 theorem exists_smul_top_ne_top_of_ne_top {A : Type*} [CommSemiring A] {T : Set A}
     (hT : Ideal.span T = ⊤) (S : ∀ _ : T, Type*) [∀ t : T, CommSemiring (S t)]
     [∀ t : T, Algebra A (S t)] [∀ t : T, IsLocalization.Away ((t : A)) (S t)]
