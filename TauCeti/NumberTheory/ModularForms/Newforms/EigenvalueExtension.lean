@@ -8,7 +8,7 @@ module
 public import TauCeti.NumberTheory.ModularForms.Newforms.RingEigenvalue
 
 /-!
-# Eigenvalues agreeing outside a finite set agree at every good prime
+# Eigenvalues agreeing outside a finite set agree at every good index
 
 Strong multiplicity one, in the form proved in AINTLIB, assumes that two eigenforms have the
 same eigenvalue at every index coprime to the level outside a finite exceptional set; Miyake's
@@ -56,9 +56,9 @@ private theorem eigenvalue_prime_sq_ne_zero_of_eq_zero {p : ℕ+} (hp : (p : ℕ
 
 /-- **Agreement outside a finite set forces agreement at every good index.** If two good Hecke
 eigenforms of level `N`, of any weights, have the same eigenvalue at every index coprime to `N`
-outside a finite set `S`, they have the same eigenvalue at every index `p` coprime to `N`:
-compare at `p q` or at `p q²` for a prime `q` beyond `S`, `N` and `p`, whichever of `λ_q(f)`,
-`λ_{q²}(f)` is nonzero. -/
+outside a finite set `S`, they have the same eigenvalue at every index `p` coprime to `N`. This
+is the first step of strong multiplicity one: the finite exceptional set is removed before the
+descent argument runs. -/
 theorem eigenvalue_eq_of_forall_notMem {k₁ k₂ : ℤ} {f : EigenformAwayFromLevel N k₁}
     {g : EigenformAwayFromLevel N k₂} {S : Finset ℕ}
     (h : ∀ (n : ℕ+) (hn : Nat.Coprime n N), (n : ℕ) ∉ S → f.eigenvalue n hn = g.eigenvalue n hn)
