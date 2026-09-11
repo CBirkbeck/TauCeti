@@ -56,7 +56,7 @@ section GroundLevels
 
 /-- The cosets of one open subgroup of a compact group in another are finite. The norm along a
 restriction sums over representatives of the cosets `U/U'`. -/
-instance OpenSubgroup.finite_quotient_subgroupOf (U U' : OpenSubgroup G) :
+instance (U U' : OpenSubgroup G) :
     Finite (U ⧸ U'.toSubgroup.subgroupOf U.toSubgroup) :=
   Subgroup.quotient_finite_of_isOpen' _ _ U.isOpen (U.toSubgroup.subgroupOf_isOpen _ U'.isOpen)
 
