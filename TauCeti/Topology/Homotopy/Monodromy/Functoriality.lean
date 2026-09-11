@@ -74,10 +74,12 @@ theorem _root_.IsCoveringMap.fiberMap_monodromy (hp : _root_.IsCoveringMap p)
   -- Expose the mapped lifted path so the commuting triangle can rewrite its composite map.
   change (Γ.map f).map q' = _
   rw [← Path.Homotopic.Quotient.map_comp]
-  convert hp.map_liftPathQuotient a e using 2
-  · exact congrFun hf _
-  · exact congrFun hf _
-  · exact (Path.Homotopic.Quotient.cast_heq _ _).trans (Path.Homotopic.Quotient.cast_heq _ _).symm
+  convert hp.map_liftPathQuotient a e using 3 <;>
+    first
+      | rfl
+      | exact congrFun hf _
+      | exact (Path.Homotopic.Quotient.cast_heq _ _).trans
+          (Path.Homotopic.Quotient.cast_heq _ _).symm
 
 /-- A continuous map of covering spaces over `X` induces a natural transformation between
 their monodromy functors. Its component over `x` is the restriction of `f` to the fibre over
@@ -143,12 +145,10 @@ noncomputable def _root_.IsCoveringMap.monodromyNatIso
       p).2 hh.symm)
   hom_inv_id := by
     ext x e
-    exact Subtype.ext <| (Function.fiberMap_apply_coe _ _ _ _).trans <|
-      (congrArg h.symm (Function.fiberMap_apply_coe _ _ _ _)).trans (h.symm_apply_apply _)
+    exact Subtype.ext (by simp)
   inv_hom_id := by
     ext x f
-    exact Subtype.ext <| (Function.fiberMap_apply_coe _ _ _ _).trans <|
-      (congrArg h (Function.fiberMap_apply_coe _ _ _ _)).trans (h.apply_symm_apply _)
+    exact Subtype.ext (by simp)
 
 /-- The forward natural transformation of the monodromy isomorphism is the canonical
 transformation induced by the homeomorphism. -/
