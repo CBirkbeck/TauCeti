@@ -34,7 +34,8 @@ identity rather than merely lower-triangular.
   `Fin (descendMatrixCount p N)`.
 * `TauCeti.descendMatrix`: the family itself, the image of `descendMatrixRat` in `GL₂(ℝ)`
   (`descendMatrix_eq_map`); `descendMatrixRat_of_lt`/`descendMatrixRat_of_le` and
-  `descendMatrix_of_lt`/`descendMatrix_of_le` describe the members.
+  `descendMatrix_of_lt`/`descendMatrix_of_le` describe the members, and `descendMatrixRat_det`/
+  `descendMatrix_det` their determinant.
 
 ## Main results
 
@@ -234,24 +235,34 @@ theorem descendMatrix_of_le {p N : ℕ} [NeZero p]
         Matrix.SpecialLinearGroup.mapGL ℝ (descendExtraGamma p N) := by
   rw [descendMatrix_eq_map, descendMatrixRat_of_le h, map_mul, Matrix.SpecialLinearGroup.map_mapGL]
 
-/-- **Every member of the descent family has determinant `p`.** Every element of the double coset
-`Γ₀(N) diag(1, p) Γ₀(N)` that the descent sum runs over has determinant `p`, so this is a
-necessary condition for lying in it, not a characterisation of it; that these matrices lie in the
-double coset is not proved here. -/
+/-- **Every member of the rational descent family has determinant `p`.** Every element of the
+double coset `Γ₀(N) diag(1, p) Γ₀(N)` that the descent sum runs over has determinant `p`, so this
+is a necessary condition for lying in it, not a characterisation of it; that these matrices lie
+in the double coset is not proved here. -/
+@[simp]
+theorem descendMatrixRat_det (p N : ℕ) [NeZero p] (v : Fin (descendMatrixCount p N)) :
+    (descendMatrixRat p N v : Matrix (Fin 2) (Fin 2) ℚ).det = (p : ℚ) := by
+  have hγ : (Matrix.SpecialLinearGroup.mapGL ℚ (descendExtraGamma p N) :
+      Matrix (Fin 2) (Fin 2) ℚ).det = 1 := by
+    rw [← Matrix.GeneralLinearGroup.val_det_apply, Matrix.SpecialLinearGroup.det_mapGL,
+      Units.val_one]
+  rw [descendMatrixRat]
+  split_ifs
+  · simp [Matrix.det_fin_two]
+  · rw [Matrix.GeneralLinearGroup.coe_mul, Matrix.det_mul, hγ, mul_one]
+    simp [Matrix.det_fin_two]
+
+/-- **Every member of the descent family has determinant `p`**: the image under `algebraMap ℚ ℝ`
+of `descendMatrixRat_det`. -/
 @[simp]
 theorem descendMatrix_det (p N : ℕ) [NeZero p]
     (v : Fin (descendMatrixCount p N)) :
     (descendMatrix p N v : Matrix (Fin 2) (Fin 2) ℝ).det = (p : ℝ) := by
-  have hγ : (Matrix.SpecialLinearGroup.mapGL ℝ (descendExtraGamma p N) :
-      Matrix (Fin 2) (Fin 2) ℝ).det = 1 := by
-    rw [← Matrix.GeneralLinearGroup.val_det_apply, Matrix.SpecialLinearGroup.det_mapGL,
-      Units.val_one]
-  rw [descendMatrix_eq_map, descendMatrixRat]
-  split_ifs
-  · simp [Matrix.det_fin_two]
-  · rw [map_mul, Matrix.SpecialLinearGroup.map_mapGL, Matrix.GeneralLinearGroup.coe_mul,
-      Matrix.det_mul, hγ, mul_one]
-    simp [Matrix.det_fin_two]
+  have h := descendMatrixRat_det p N v
+  rw [Matrix.det_fin_two] at h ⊢
+  rw [descendMatrix_eq_map]
+  simp only [Matrix.GeneralLinearGroup.map_apply]
+  rw [← map_mul, ← map_mul, ← map_sub, h, map_natCast]
 
 /-- Every member of the descent family has positive determinant, namely `p`. -/
 theorem descendMatrix_det_pos (p N : ℕ) [NeZero p] (v : Fin (descendMatrixCount p N)) :
