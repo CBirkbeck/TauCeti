@@ -95,6 +95,8 @@ infrastructure independent of the diamond operators.
 * `CongruenceSubgroup.intCast_mul_apply_one_zero_eq_zero_of_mem_Gamma0_div` and
   `CongruenceSubgroup.intCast_apply_one_one_eq_of_mem_Gamma0_of_eq`: entry congruences for
   elements of `Γ₀`, the shapes the descent factorisations produce.
+* `CongruenceSubgroup.Gamma_lcm_eq_inf`: `Γ(lcm a b) = Γ(a) ⊓ Γ(b)`, with the coprime case
+  `CongruenceSubgroup.Gamma_mul_eq_inf_of_coprime`.
 
 ## References
 
@@ -767,5 +769,25 @@ theorem intCast_apply_one_one_eq_of_mem_Gamma0_of_eq {M : ℕ} {δ α : SL(2, �
   push_cast
   rw [Gamma0_mem.mp hδ]
   ring
+/-- **`Γ(lcm a b) = Γ(a) ⊓ Γ(b)`**: a matrix is congruent to the identity modulo two levels
+exactly when it is modulo their least common multiple. -/
+theorem Gamma_lcm_eq_inf (a b : ℕ) : Gamma (Nat.lcm a b) = Gamma a ⊓ Gamma b := by
+  refine le_antisymm (le_inf (Gamma_le_Gamma_of_dvd (Nat.dvd_lcm_left a b))
+    (Gamma_le_Gamma_of_dvd (Nat.dvd_lcm_right a b))) fun γ hγ ↦ ?_
+  obtain ⟨ha, hb⟩ := Subgroup.mem_inf.mp hγ
+  rw [Gamma_mem] at ha hb ⊢
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · simpa using ZMod.intCast_lcm_eq_of_eq_of_eq (y := 1) (by simpa using ha.1) (by simpa using hb.1)
+  · simpa using ZMod.intCast_lcm_eq_of_eq_of_eq (y := 0) (by simpa using ha.2.1)
+      (by simpa using hb.2.1)
+  · simpa using ZMod.intCast_lcm_eq_of_eq_of_eq (y := 0) (by simpa using ha.2.2.1)
+      (by simpa using hb.2.2.1)
+  · simpa using ZMod.intCast_lcm_eq_of_eq_of_eq (y := 1) (by simpa using ha.2.2.2)
+      (by simpa using hb.2.2.2)
+
+/-- **`Γ(a b) = Γ(a) ⊓ Γ(b)` for coprime `a` and `b`**: `Gamma_lcm_eq_inf` at coprime levels. -/
+theorem Gamma_mul_eq_inf_of_coprime {a b : ℕ} (hab : Nat.Coprime a b) :
+    Gamma (a * b) = Gamma a ⊓ Gamma b := by
+  rw [← hab.lcm_eq_mul, Gamma_lcm_eq_inf]
 
 end CongruenceSubgroup
