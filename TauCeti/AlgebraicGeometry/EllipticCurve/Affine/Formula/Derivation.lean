@@ -18,11 +18,11 @@ a derivation on `K` over `R`. Writing `W_X` and `W_Y` for the partial derivative
 
 ## Main statements
 
-* `WeierstrassCurve.Affine.Equation.polynomialX_smul_add_polynomialY_smul_eq_zero`: at a point
-  `(x, y)` of `W⁄K`, `W_X(x, y) • D x + W_Y(x, y) • D y = 0`, the differential of the Weierstrass
-  equation, over any commutative ring `K`.
-* `WeierstrassCurve.Affine.derivation_polynomialX_evalEval`,
-  `WeierstrassCurve.Affine.derivation_polynomialY_evalEval` and
+* `Equation.evalEval_polynomialX_smul_add_evalEval_polynomialY_smul_eq_zero` (in the namespace
+  `WeierstrassCurve.Affine`): at a point `(x, y)` of `W⁄K`, `W_X(x, y) • D x + W_Y(x, y) • D y = 0`,
+  the differential of the Weierstrass equation, over any commutative ring `K`.
+* `WeierstrassCurve.Affine.derivation_evalEval_polynomialX`,
+  `WeierstrassCurve.Affine.derivation_evalEval_polynomialY` and
   `WeierstrassCurve.Affine.derivation_addX`: the chain rule for `W_X`, `W_Y` and `addX`.
 * `WeierstrassCurve.Affine.Equation.derivation_Y_eq_smul_derivation_X`: over a field, at a point
   where `W_Y` does not vanish, `D y = (-W_X(x, y) / W_Y(x, y)) • D x`.
@@ -30,7 +30,7 @@ a derivation on `K` over `R`. Writing `W_X` and `W_Y` for the partial derivative
   `WeierstrassCurve.Affine.derivation_slope_self_of_Y_ne`: the chain rule for the chord and the
   tangent slope.
 * `WeierstrassCurve.Affine.derivation_addX_slope`: if `(x₃, y₃)` is the sum of two points
-  `(x₁, y₁)` and `(x₂, y₂)` of `W⁄K` at which `W_Y` does not vanish, then
+  `(x₁, y₁)` and `(x₂, y₂)` of `W⁄K` at which `W_Y` does not vanish (when `x₁ ≠ x₂`), then
   `D x₃ = W_Y(x₃, y₃) • (W_Y(x₁, y₁)⁻¹ • D x₁ + W_Y(x₂, y₂)⁻¹ • D x₂)`; when `W_Y(x₃, y₃)` is
   nonzero as well, `WeierstrassCurve.Affine.inv_smul_derivation_addX_slope` divides by it:
   `W_Y(x₃, y₃)⁻¹ • D x₃ = W_Y(x₁, y₁)⁻¹ • D x₁ + W_Y(x₂, y₂)⁻¹ • D x₂`.
@@ -73,7 +73,7 @@ theorem sub_negY (x y : K) : y - W.negY x y = W.polynomialY.evalEval x y := by
   ring
 
 /-- **`W_Y` does not vanish at a point which is not its own negative.** -/
-theorem polynomialY_evalEval_ne_zero_of_Y_ne {x y : K} (hy : y ≠ W.negY x y) :
+theorem evalEval_polynomialY_ne_zero_of_Y_ne {x y : K} (hy : y ≠ W.negY x y) :
     W.polynomialY.evalEval x y ≠ 0 :=
   fun h ↦ hy (sub_eq_zero.1 ((W.sub_negY x y).trans h))
 
@@ -145,7 +145,7 @@ variable {R K M : Type*} [CommRing R] [CommRing K] [Algebra R K] [AddCommGroup M
 
 /-- **The differential of the Weierstrass equation.** At a point `(x, y)` of `W⁄K`, every
 derivation `D` on `K` over `R` satisfies `W_X(x, y) • D x + W_Y(x, y) • D y = 0`. -/
-theorem Equation.polynomialX_smul_add_polynomialY_smul_eq_zero {x y : K}
+theorem Equation.evalEval_polynomialX_smul_add_evalEval_polynomialY_smul_eq_zero {x y : K}
     (h : (W⁄K).toAffine.Equation x y) :
     (W⁄K).toAffine.polynomialX.evalEval x y • D x +
       (W⁄K).toAffine.polynomialY.evalEval x y • D y = 0 := by
@@ -159,7 +159,8 @@ theorem Equation.polynomialX_smul_add_polynomialY_smul_eq_zero {x y : K}
   linear_combination (norm := module) h0
 
 /-- **The chain rule for `W_X`**: `D (W_X(x, y)) = a₁ • D y - (6x + 2a₂) • D x`. -/
-theorem derivation_polynomialX_evalEval (x y : K) :
+@[simp]
+theorem derivation_evalEval_polynomialX (x y : K) :
     D ((W⁄K).toAffine.polynomialX.evalEval x y) =
       (W⁄K).toAffine.a₁ • D y - (6 * x + 2 * (W⁄K).toAffine.a₂) • D x := by
   have h2 : D (2 : K) = 0 := by simpa using D.map_natCast 2
@@ -169,7 +170,8 @@ theorem derivation_polynomialX_evalEval (x y : K) :
   module
 
 /-- **The chain rule for `W_Y`**: `D (W_Y(x, y)) = 2 • D y + a₁ • D x`. -/
-theorem derivation_polynomialY_evalEval (x y : K) :
+@[simp]
+theorem derivation_evalEval_polynomialY (x y : K) :
     D ((W⁄K).toAffine.polynomialY.evalEval x y) = 2 • D y + (W⁄K).toAffine.a₁ • D x := by
   have h2 : D (2 : K) = 0 := by simpa using D.map_natCast 2
   simp only [evalEval_polynomialY, WeierstrassCurve.baseChange, map_a₁, map_a₃, map_add,
@@ -199,7 +201,8 @@ theorem Equation.derivation_Y_eq_smul_derivation_X {x y : K} (h : (W⁄K).toAffi
       D x := by
   have e : (W⁄K).toAffine.polynomialY.evalEval x y • D y =
       -((W⁄K).toAffine.polynomialX.evalEval x y • D x) :=
-    eq_neg_of_add_eq_zero_right (h.polynomialX_smul_add_polynomialY_smul_eq_zero D)
+    eq_neg_of_add_eq_zero_right
+      (h.evalEval_polynomialX_smul_add_evalEval_polynomialY_smul_eq_zero D)
   rw [neg_div, neg_smul, div_eq_inv_mul, mul_smul, ← smul_neg, ← e, smul_smul, inv_mul_cancel₀ hu,
     one_smul]
 
@@ -245,25 +248,26 @@ private theorem derivation_addX_slope_of_Y_ne [DecidableEq K] {x y : K}
           ((W⁄K).toAffine.addY x x y ((W⁄K).toAffine.slope x x y y)) •
         (((W⁄K).toAffine.polynomialY.evalEval x y)⁻¹ • D x +
           ((W⁄K).toAffine.polynomialY.evalEval x y)⁻¹ • D x) := by
-  have hu := (W⁄K).toAffine.polynomialY_evalEval_ne_zero_of_Y_ne hy
+  have hu := (W⁄K).toAffine.evalEval_polynomialY_ne_zero_of_Y_ne hy
   have c := (W⁄K).toAffine.tangent_coeff (x := x) (y := y)
     (N := -(W⁄K).toAffine.polynomialX.evalEval x y) (u := (W⁄K).toAffine.polynomialY.evalEval x y)
     (by rw [evalEval_polynomialX]; ring) (evalEval_polynomialY x y) hu
   rw [derivation_addX W D, derivation_slope_self_of_Y_ne D hy, map_neg,
-    derivation_polynomialX_evalEval, derivation_polynomialY_evalEval,
+    derivation_evalEval_polynomialX, derivation_evalEval_polynomialY,
     h.derivation_Y_eq_smul_derivation_X D hu, slope_of_Y_ne_eq_evalEval rfl hy,
     evalEval_polynomialY ((W⁄K).toAffine.addX _ _ _)]
   linear_combination (norm := module) c • D x
 
 /-- **The derivation of the `x`-coordinate of a sum of points.** Let `(x₁, y₁)` and `(x₂, y₂)` be
 points of `W⁄K` whose sum `(x₃, y₃)` is affine, at both of which `W_Y = 2Y + a₁X + a₃` does not
-vanish. Then every derivation `D` on `K` over `R` satisfies
+vanish when `x₁ ≠ x₂` (in the tangent case `x₁ = x₂` it cannot vanish). Then every derivation `D`
+on `K` over `R` satisfies
 `D x₃ = W_Y(x₃, y₃) • (W_Y(x₁, y₁)⁻¹ • D x₁ + W_Y(x₂, y₂)⁻¹ • D x₂)`, the additivity of the
 differential `dx / W_Y` with the denominator at the sum cleared. -/
 theorem derivation_addX_slope [DecidableEq K] {x₁ x₂ y₁ y₂ : K} (h₁ : (W⁄K).toAffine.Equation x₁ y₁)
     (h₂ : (W⁄K).toAffine.Equation x₂ y₂) (hxy : ¬(x₁ = x₂ ∧ y₁ = (W⁄K).toAffine.negY x₂ y₂))
-    (hu₁ : (W⁄K).toAffine.polynomialY.evalEval x₁ y₁ ≠ 0)
-    (hu₂ : (W⁄K).toAffine.polynomialY.evalEval x₂ y₂ ≠ 0) :
+    (hu₁ : x₁ ≠ x₂ → (W⁄K).toAffine.polynomialY.evalEval x₁ y₁ ≠ 0)
+    (hu₂ : x₁ ≠ x₂ → (W⁄K).toAffine.polynomialY.evalEval x₂ y₂ ≠ 0) :
     D ((W⁄K).toAffine.addX x₁ x₂ ((W⁄K).toAffine.slope x₁ x₂ y₁ y₂)) =
       (W⁄K).toAffine.polynomialY.evalEval
           ((W⁄K).toAffine.addX x₁ x₂ ((W⁄K).toAffine.slope x₁ x₂ y₁ y₂))
@@ -273,7 +277,7 @@ theorem derivation_addX_slope [DecidableEq K] {x₁ x₂ y₁ y₂ : K} (h₁ : 
   rcases eq_or_ne x₁ x₂ with rfl | hx
   · obtain rfl : y₁ = y₂ := (W⁄K).toAffine.Y_eq_of_Y_ne h₁ h₂ rfl fun hy ↦ hxy ⟨rfl, hy⟩
     exact derivation_addX_slope_of_Y_ne D h₁ fun hy ↦ hxy ⟨rfl, hy⟩
-  · exact derivation_addX_slope_of_X_ne D h₁ h₂ hx hu₁ hu₂
+  · exact derivation_addX_slope_of_X_ne D h₁ h₂ hx (hu₁ hx) (hu₂ hx)
 
 /-- **The differential `dx / W_Y` is additive**: under the hypotheses of `derivation_addX_slope`,
 if `W_Y` does not vanish at the sum either, then
@@ -281,8 +285,8 @@ if `W_Y` does not vanish at the sum either, then
 theorem inv_smul_derivation_addX_slope [DecidableEq K] {x₁ x₂ y₁ y₂ : K}
     (h₁ : (W⁄K).toAffine.Equation x₁ y₁) (h₂ : (W⁄K).toAffine.Equation x₂ y₂)
     (hxy : ¬(x₁ = x₂ ∧ y₁ = (W⁄K).toAffine.negY x₂ y₂))
-    (hu₁ : (W⁄K).toAffine.polynomialY.evalEval x₁ y₁ ≠ 0)
-    (hu₂ : (W⁄K).toAffine.polynomialY.evalEval x₂ y₂ ≠ 0)
+    (hu₁ : x₁ ≠ x₂ → (W⁄K).toAffine.polynomialY.evalEval x₁ y₁ ≠ 0)
+    (hu₂ : x₁ ≠ x₂ → (W⁄K).toAffine.polynomialY.evalEval x₂ y₂ ≠ 0)
     (hu₃ : (W⁄K).toAffine.polynomialY.evalEval
       ((W⁄K).toAffine.addX x₁ x₂ ((W⁄K).toAffine.slope x₁ x₂ y₁ y₂))
       ((W⁄K).toAffine.addY x₁ x₂ y₁ ((W⁄K).toAffine.slope x₁ x₂ y₁ y₂)) ≠ 0) :

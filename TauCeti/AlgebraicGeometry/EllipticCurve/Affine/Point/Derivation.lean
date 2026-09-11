@@ -20,9 +20,11 @@ identity for the coordinates of the addition law, read on the points through `Po
 ## Main statements
 
 * `WeierstrassCurve.Affine.Point.derivation_xCoord_add`: if `W_Y = 2Y + a₁X + a₃` does not vanish
-  at `P` and `Q`, then `D x(P + Q) = W_Y(P + Q) • (W_Y(P)⁻¹ • D x(P) + W_Y(Q)⁻¹ • D x(Q))`.
+  at `P` and `Q` (when their `x`-coordinates differ), then
+  `D x(P + Q) = W_Y(P + Q) • (W_Y(P)⁻¹ • D x(P) + W_Y(Q)⁻¹ • D x(Q))`.
 * `WeierstrassCurve.Affine.Point.inv_smul_derivation_xCoord_add`: for nonzero `P`, `Q` with
-  `P + Q ≠ 0`, if `W_Y` does not vanish at `P`, `Q` and `P + Q`, then
+  `P + Q ≠ 0`, if `W_Y` does not vanish at `P + Q`, nor at `P` and `Q` when their `x`-coordinates
+differ, then
   `W_Y(P + Q)⁻¹ • D x(P + Q) = W_Y(P)⁻¹ • D x(P) + W_Y(Q)⁻¹ • D x(Q)`.
 -/
 
@@ -37,11 +39,11 @@ variable {R K M : Type*} [CommRing R] [Field K] [Algebra R K] [AddCommGroup M] [
   {P Q : (W⁄K).toAffine.Point}
 
 /-- **The derivation of the `x`-coordinate of a sum of points.** For nonzero points `P`, `Q` of
-`W⁄K` with `P + Q ≠ 0`, at both of which `W_Y = 2Y + a₁X + a₃` does not vanish,
-`D x(P + Q) = W_Y(P + Q) • (W_Y(P)⁻¹ • D x(P) + W_Y(Q)⁻¹ • D x(Q))`. -/
+`W⁄K` with `P + Q ≠ 0`, at both of which `W_Y = 2Y + a₁X + a₃` does not vanish when their
+`x`-coordinates differ, `D x(P + Q) = W_Y(P + Q) • (W_Y(P)⁻¹ • D x(P) + W_Y(Q)⁻¹ • D x(Q))`. -/
 theorem derivation_xCoord_add (hP : P ≠ 0) (hQ : Q ≠ 0) (h : P + Q ≠ 0)
-    (huP : (W⁄K).toAffine.polynomialY.evalEval (xCoord P) (yCoord P) ≠ 0)
-    (huQ : (W⁄K).toAffine.polynomialY.evalEval (xCoord Q) (yCoord Q) ≠ 0) :
+    (huP : xCoord P ≠ xCoord Q → (W⁄K).toAffine.polynomialY.evalEval (xCoord P) (yCoord P) ≠ 0)
+    (huQ : xCoord P ≠ xCoord Q → (W⁄K).toAffine.polynomialY.evalEval (xCoord Q) (yCoord Q) ≠ 0) :
     D (xCoord (P + Q)) =
       (W⁄K).toAffine.polynomialY.evalEval (xCoord (P + Q)) (yCoord (P + Q)) •
         (((W⁄K).toAffine.polynomialY.evalEval (xCoord P) (yCoord P))⁻¹ • D (xCoord P) +
@@ -55,11 +57,12 @@ theorem derivation_xCoord_add (hP : P ≠ 0) (hQ : Q ≠ 0) (h : P + Q ≠ 0)
   exact derivation_addX_slope D h₁.left h₂.left hxy huP huQ
 
 /-- **The differential `dx / W_Y` is additive on points**: for nonzero points `P`, `Q` of `W⁄K` with
-`P + Q ≠ 0`, if `W_Y` does not vanish at `P`, `Q` and `P + Q`, then
+`P + Q ≠ 0`, if `W_Y` does not vanish at `P + Q`, nor at `P` and `Q` when their `x`-coordinates
+differ, then
 `W_Y(P + Q)⁻¹ • D x(P + Q) = W_Y(P)⁻¹ • D x(P) + W_Y(Q)⁻¹ • D x(Q)`. -/
 theorem inv_smul_derivation_xCoord_add (hP : P ≠ 0) (hQ : Q ≠ 0) (h : P + Q ≠ 0)
-    (huP : (W⁄K).toAffine.polynomialY.evalEval (xCoord P) (yCoord P) ≠ 0)
-    (huQ : (W⁄K).toAffine.polynomialY.evalEval (xCoord Q) (yCoord Q) ≠ 0)
+    (huP : xCoord P ≠ xCoord Q → (W⁄K).toAffine.polynomialY.evalEval (xCoord P) (yCoord P) ≠ 0)
+    (huQ : xCoord P ≠ xCoord Q → (W⁄K).toAffine.polynomialY.evalEval (xCoord Q) (yCoord Q) ≠ 0)
     (hu : (W⁄K).toAffine.polynomialY.evalEval (xCoord (P + Q)) (yCoord (P + Q)) ≠ 0) :
     ((W⁄K).toAffine.polynomialY.evalEval (xCoord (P + Q)) (yCoord (P + Q)))⁻¹ •
         D (xCoord (P + Q)) =
