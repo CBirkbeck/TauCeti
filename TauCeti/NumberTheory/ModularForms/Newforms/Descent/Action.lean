@@ -7,7 +7,6 @@ module
 
 public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.MoebiusZMod
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.UpperTriFactorization
-public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Invariance
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Cosets
 
 /-!

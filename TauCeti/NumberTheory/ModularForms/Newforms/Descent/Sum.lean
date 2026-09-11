@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Data.ZMod.Units
+public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Invariance
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Action
 
 import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Units
