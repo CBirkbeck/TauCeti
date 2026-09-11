@@ -28,9 +28,9 @@ complete Hausdorff targets.
 ## Main results
 
 * `locUniformSpace_toTopologicalSpace`: the topology `locUniformSpace` induces is `locTopology`.
-* `locUniformSpace_congr`: presentations sharing a ring of definition share the uniformity, so a
-  rescaled presentation gives the same `A⟨T/s⟩` and the same maps out of it.
   This is what a proof rewrites against, so no body in this file needs exposing.
+* `locUniformSpace_congr`: presentations sharing a ring of definition share the uniformity. So
+  `A⟨T/s⟩` and the restriction maps out of it do not depend on which such presentation is used.
 * `isUniformAddGroup_locUniformSpace` and `isTopologicalRing_locUniformSpace`: the two companions
   of `locUniformSpace`. Since `locTopology` is not an instance, a statement about `A⟨T/s⟩` has to
   name its structures; these three declarations are what it names.
@@ -118,22 +118,6 @@ theorem locUniformSpace_toTopologicalSpace [IsTopologicalRing A] (P : PairOfDefi
     (hden : HasDenominatorPower P T s S) :
     (locUniformSpace P T s S hden).toTopologicalSpace = locTopology P T s S hden := (rfl)
 
-/-- **A change of presentation with the same ring of definition leaves `locUniformSpace` alone.**
-`locUniformSpace` is the right uniformity of `locTopology`, so it moves with it.
-
-This is the form Wedhorn's Proposition 8.30 needs: `restrictionRingHomOfSubset` is stated under
-`locUniformSpace`, so without this a rescaled presentation would give a map between different
-objects. -/
-theorem locUniformSpace_congr [IsTopologicalRing A] (P : PairOfDefinition A) (T T' : Finset A)
-    (s s' : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
-    [IsLocalization.Away s' S] (hden : HasDenominatorPower P T s S)
-    (hden' : HasDenominatorPower P T' s' S) (h : locSubring P T' s' S = locSubring P T s S) :
-    locUniformSpace P T' s' S hden' = locUniformSpace P T s S hden := by
-  unfold locUniformSpace
-  congr 1
-  · exact locTopology_congr P T T' s s' S hden hden' h
-  · exact proof_irrel_heq _ _
-
 /-- `Aₛ` is a uniform additive group for `locUniformSpace`. The companion of `locUniformSpace`:
 the two together are what `UniformSpace.Completion S` needs. -/
 theorem isUniformAddGroup_locUniformSpace [IsTopologicalRing A] (P : PairOfDefinition A)
@@ -152,6 +136,26 @@ theorem isTopologicalRing_locUniformSpace [IsTopologicalRing A] (P : PairOfDefin
     letI := locUniformSpace P T s S hden
     IsTopologicalRing S :=
   isTopologicalRing_locTopology P T s S hden
+
+/-- **A change of presentation with the same ring of definition leaves `locUniformSpace` alone.**
+`restrictionRingHomOfSubset` is stated under `locUniformSpace`, so this is what makes a rescaled
+presentation give a map between the same objects as the original — the form Wedhorn's
+Proposition 8.30 needs. -/
+theorem locUniformSpace_congr [IsTopologicalRing A] (P : PairOfDefinition A) (T T' : Finset A)
+    (s s' : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    [IsLocalization.Away s' S] (hden : HasDenominatorPower P T s S)
+    (hden' : HasDenominatorPower P T' s' S) (h : locSubring P T' s' S = locSubring P T s S) :
+    locUniformSpace P T' s' S hden' = locUniformSpace P T s S hden := by
+  have htop : (locUniformSpace P T' s' S hden').toTopologicalSpace
+      = (locUniformSpace P T s S hden).toTopologicalSpace := by
+    rw [locUniformSpace_toTopologicalSpace, locUniformSpace_toTopologicalSpace]
+    exact locTopology_congr P T T' s s' S hden hden' h
+  rw [← @IsUniformAddGroup.rightUniformSpace_eq S (locUniformSpace P T' s' S hden') _
+      (isUniformAddGroup_locUniformSpace P T' s' S hden'),
+    ← @IsUniformAddGroup.rightUniformSpace_eq S (locUniformSpace P T s S hden) _
+      (isUniformAddGroup_locUniformSpace P T s S hden)]
+  congr 1
+  exact proof_irrel_heq _ _
 
 /-- `Aₛ` is a Huber ring for the topology `locUniformSpace` induces. The third companion of
 `locUniformSpace`, alongside the two above. A consumer working at the uniformity can reach the

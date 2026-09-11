@@ -835,14 +835,11 @@ theorem isTopologicalRing_locTopology [IsTopologicalRing A] (P : PairOfDefinitio
 
 /-- **Presentations with the same ring of definition have the same neighbourhood filtration.**
 `locIdealImage` depends on `(T, s)` only through `locSubring P T s S`, so two presentations
-sharing that subring give the same subgroups of `Aₛ` at every level.
-
-The transport is along `RingEquiv.subringCongr`, which is the identity on carriers; stating the
-conclusion as an equality of subsets of `Aₛ` keeps the two `Ideal` types from meeting. -/
+sharing that subring give the same subgroup of `Aₛ` at every level. -/
 theorem locIdealImage_congr (P : PairOfDefinition A) (T T' : Finset A) (s s' : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S] [IsLocalization.Away s' S]
     (h : locSubring P T' s' S = locSubring P T s S) (n : ℕ) :
-    (locIdealImage P T' s' S n : Set S) = (locIdealImage P T s S n : Set S) := by
+    locIdealImage P T' s' S n = locIdealImage P T s S n := by
   have hc : ((RingEquiv.subringCongr h : _ →+* _).comp (toLocSubring P T' s' S))
       = toLocSubring P T s S := RingHom.ext fun _ ↦ Subtype.ext rfl
   have hc' : (((RingEquiv.subringCongr h).symm : _ →+* _).comp (toLocSubring P T s S))
@@ -854,7 +851,7 @@ theorem locIdealImage_congr (P : PairOfDefinition A) (T T' : Finset A) (s s' : A
       = locIdeal P T' s' S := by
     rw [locIdeal_def, locIdeal_def, Ideal.map_map, hc']
   ext x
-  simp only [SetLike.mem_coe, mem_locIdealImage_iff]
+  simp only [mem_locIdealImage_iff]
   constructor
   · rintro ⟨d, hd, rfl⟩
     refine ⟨RingEquiv.subringCongr h d, ?_, RingEquiv.coe_subringCongr_apply h d⟩
