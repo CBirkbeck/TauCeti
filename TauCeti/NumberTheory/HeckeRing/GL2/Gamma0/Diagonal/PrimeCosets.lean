@@ -168,7 +168,7 @@ theorem doubleCoset_natDiagGL_Gamma0_eq_iUnion_rightCosets_of_dvd (hp : p.Prime)
 /-! ### The upper-left units of the representatives -/
 
 /-- **The upper-left unit of an upper-triangular representative is `1`.** -/
-@[simp] theorem Delta0UpperUnit_upperTriRep [NeZero p] (j : Fin p)
+@[simp] theorem Delta0UpperUnit_upperTriRep (j : Fin p)
     (hmem : upperTriRep p j ∈ Delta0 N) : Delta0UpperUnit N ⟨upperTriRep p j, hmem⟩ = 1 := by
   have h : (Delta0UpperUnit N ⟨upperTriRep p j, hmem⟩ : ZMod N)
       = ((!![1, (j : ℕ); 0, (p : ℕ)] : Matrix (Fin 2) (Fin 2) ℤ) 0 0 : ZMod N) := by
