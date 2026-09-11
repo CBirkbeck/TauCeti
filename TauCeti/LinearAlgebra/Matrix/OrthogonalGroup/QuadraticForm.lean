@@ -34,6 +34,23 @@ open Matrix
 
 universe u v
 
+variable {R : Type u} [CommRing R] {n : Type v} [Fintype n] [DecidableEq n]
+
+/-- The quadratic form of the identity matrix sends a vector to its dot product with itself.
+
+This is not a `simp` lemma: `TauCeti.PDE.toQuadraticForm'_one` already normalises the same
+left-hand side to `‖ξ‖ ^ 2` on `EuclideanSpace ℝ n`, and the two cannot both be simp-normal. -/
+theorem toQuadraticForm'_one_apply (x : n → R) :
+    Matrix.toQuadraticForm' (1 : Matrix n n R) x = x ⬝ᵥ x := by
+  simp [Matrix.toQuadraticForm', Matrix.toLinearMap₂'_apply']
+
+/-- The polar form of the standard quadratic form is twice the dot product. -/
+@[simp]
+theorem polar_toQuadraticForm'_one (x y : n → R) :
+    QuadraticMap.polar (Matrix.toQuadraticForm' (1 : Matrix n n R)) x y = 2 * (x ⬝ᵥ y) := by
+  simp only [Matrix.toQuadraticForm', LinearMap.BilinMap.polar_toQuadraticMap,
+    Matrix.toLinearMap₂'_apply', Matrix.one_mulVec, two_mul, dotProduct_comm y x]
+
 /-- The coordinate matrix of a linear automorphism is orthogonal exactly when the
 automorphism preserves the standard quadratic form. -/
 @[simp]
@@ -54,9 +71,8 @@ theorem toMatrix_mem_orthogonalGroup_iff (R : Type u) [CommRing R]
   have hpolar (x y : n → R) :
       QuadraticMap.polar (Matrix.toQuadraticForm' (1 : Matrix n n R)) x y =
         (2 : R) • B x y := by
-    simp only [Matrix.toQuadraticForm', LinearMap.BilinMap.polar_toQuadraticMap,
-      Matrix.toLinearMap₂'_apply', Matrix.one_mulVec, B, two_smul,
-      dotProduct_comm y x]
+    simp only [polar_toQuadraticForm'_one, B, Matrix.toLinearMap₂'_apply', Matrix.one_mulVec,
+      smul_eq_mul]
   simp only [hpolar, h2.eq_iff, BilinForm.isIsometry_iff, LinearEquiv.coe_coe]
 
 /-- The coordinate matrix is special orthogonal exactly when the linear automorphism is
