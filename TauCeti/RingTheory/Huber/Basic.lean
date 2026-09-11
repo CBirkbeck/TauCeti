@@ -366,8 +366,8 @@ theorem exists_pow_idealOfDefinition_mul_mem [IsTopologicalRing A] (P : PairOfDe
 
 This is what lets a denominator be rescaled by a unit: the standing hypotheses of a presentation
 are stated at some level of the filtration, and rescaling moves that level by a unit. -/
-theorem exists_idealImage_subset_mul [IsTopologicalRing A] (P : PairOfDefinition A) {u : A}
-    (hu : IsUnit u) (N : ℕ) :
+theorem exists_idealImage_subset_image_mul_left [IsTopologicalRing A] (P : PairOfDefinition A)
+    {u : A} (hu : IsUnit u) (N : ℕ) :
     ∃ N' : ℕ, (P.idealImage N' : Set A) ⊆ (u * ·) '' (P.idealImage N : Set A) := by
   have hmem : (u * ·) '' (P.idealImage N : Set A) ∈ 𝓝 (0 : A) := by
     have h := smul_mem_nhds_smul (α := A) hu.unit
