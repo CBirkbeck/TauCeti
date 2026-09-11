@@ -33,8 +33,8 @@ spanning statement. Completeness enters only through that criterion.
 * `TauCeti.ValuationSpectrum.span_eq_top_of_spa_eq_biUnion_rationalSubset` : the `←` direction.
 * `TauCeti.ValuationSpectrum.span_eq_top_iff_spa_eq_biUnion_rationalSubset` : **Wedhorn Corollary
   7.53**, the two directions together.
-* `TauCeti.ValuationSpectrum.exists_smul_top_ne_top_of_isMaximal` : no maximal ideal of `A`
-  expands every member of a rational cover.
+* `TauCeti.ValuationSpectrum.exists_smul_top_ne_top_of_ne_top` : no proper ideal of `A` expands
+  every member of a rational cover.
 
 ## References
 
@@ -74,30 +74,24 @@ theorem span_eq_top_iff_spa_eq_biUnion_rationalSubset (Aplus : Subring A)
   ⟨spa_eq_biUnion_rationalSubset_of_span_eq_top Aplus,
     span_eq_top_of_spa_eq_biUnion_rationalSubset Aplus hplus⟩
 
-/-- **No maximal ideal expands every piece of a rational cover.** For a cover
-`(R(T/t))_{t ∈ T}` — that is, `T` generating the unit ideal — and a maximal ideal `𝔪` of `A`,
-some member of the cover has `𝔪 · A_t ≠ A_t`.
+/-- **No proper ideal expands every piece of a rational cover.** For `T` generating the unit
+ideal and `J` a proper ideal of `A`, some `t ∈ T` has `J · A_t ≠ A_t`.
 
-The maximal ideal is the support of a point of `Spa (A, A⁺)`
-(`exists_mem_spa_supp_eq_of_isMaximal`), that point lies in some member of the cover
-(`spa_eq_biUnion_rationalSubset_of_span_eq_top`), and a point's support does not expand the
-piece containing it (`smul_top_ne_top_of_supp_eq_of_mem_rationalSubset`).
-
-This is exactly the hypothesis of `Module.FaithfullyFlat.pi_of_exists_submodule_ne_top`, so it
-is what a rational cover contributes to the faithful flatness in Wedhorn's Corollary 8.32. The
-flatness of each `A → A_t`, which that criterion also needs, is a separate matter. -/
-theorem exists_smul_top_ne_top_of_isMaximal (P : PairOfDefinition A) (Aplus : Subring A)
+This is the hypothesis of `Module.FaithfullyFlat.pi_of_exists_submodule_ne_top`, so it is what a
+rational cover contributes to the faithful flatness of Wedhorn's Corollary 8.32; flatness of each
+`A → A_t` is separate and is not proved here. -/
+theorem exists_smul_top_ne_top_of_ne_top (P : PairOfDefinition A) (Aplus : Subring A)
     (hplus : IsRingOfIntegralElements Aplus) (hP : P.ringOfDefinition ≤ Aplus) {T : Finset A}
     (hT : Ideal.span (T : Set A) = ⊤) (S : ∀ _ : T, Type*) [∀ t : T, CommRing (S t)]
     [∀ t : T, Algebra A (S t)] [∀ t : T, IsLocalization.Away (t : A) (S t)]
-    (hden : ∀ t : T, HasDenominatorPower P T (t : A) (S t)) (𝔪 : Ideal A) [𝔪.IsMaximal] :
-    ∃ t : T, 𝔪 • (⊤ : Submodule A (S t)) ≠ ⊤ := by
-  obtain ⟨v, hv, hsupp⟩ := exists_mem_spa_supp_eq_of_isMaximal Aplus hplus 𝔪
+    (hden : ∀ t : T, HasDenominatorPower P T (t : A) (S t)) {J : Ideal A} (hJ : J ≠ ⊤) :
+    ∃ t : T, J • (⊤ : Submodule A (S t)) ≠ ⊤ := by
+  obtain ⟨v, hv, hle⟩ := exists_mem_spa_le_supp_of_ne_top Aplus hplus hJ
   rw [spa_eq_biUnion_rationalSubset_of_span_eq_top Aplus hT] at hv
   obtain ⟨t, ht, hvt⟩ := Set.mem_iUnion₂.mp hv
   refine ⟨⟨t, ht⟩, ?_⟩
-  exact smul_top_ne_top_of_supp_eq_of_mem_rationalSubset P Aplus hP T ((⟨t, ht⟩ : T) : A)
-    (S ⟨t, ht⟩) (hden ⟨t, ht⟩) hsupp hvt
+  exact smul_top_ne_top_of_le_supp_of_mem_rationalSubset P Aplus hP T ((⟨t, ht⟩ : T) : A)
+    (S ⟨t, ht⟩) (hden ⟨t, ht⟩) hle hvt
 
 end TauCeti.ValuationSpectrum
 
