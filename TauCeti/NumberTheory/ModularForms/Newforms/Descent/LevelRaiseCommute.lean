@@ -175,6 +175,23 @@ private theorem descendExtraGamma_mul_left_mod_div {N : ℕ} (hp : p.Prime) (hpN
   exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mpr
     ((mul_dvd_mul_iff_left (Nat.cast_ne_zero.mpr (NeZero.ne l))).mp h10)
 
+/-- The entries of the quotient of the conjugated level-`l N` extra matrix by the level-`N` one
+that the residue computations read. -/
+private theorem conjScale_descendExtraGamma_mul_inv_apply {N : ℕ} [NeZero l] {c : ℤ}
+    (hc : descendExtraGamma p (l * N) 1 0 = l * c) :
+    (conjScale l (descendExtraGamma p (l * N)) c hc * (descendExtraGamma p N)⁻¹) 0 1 =
+        descendExtraGamma p (l * N) 0 0 * (-descendExtraGamma p N 0 1) +
+          (l : ℤ) * descendExtraGamma p (l * N) 0 1 * descendExtraGamma p N 0 0 ∧
+      (conjScale l (descendExtraGamma p (l * N)) c hc * (descendExtraGamma p N)⁻¹) 1 0 =
+        c * descendExtraGamma p N 1 1 +
+          descendExtraGamma p (l * N) 1 1 * (-descendExtraGamma p N 1 0) ∧
+      (conjScale l (descendExtraGamma p (l * N)) c hc * (descendExtraGamma p N)⁻¹) 1 1 =
+        c * (-descendExtraGamma p N 0 1) +
+          descendExtraGamma p (l * N) 1 1 * descendExtraGamma p N 0 0 := by
+  refine ⟨?_, ?_, ?_⟩ <;>
+    simp [Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_inv,
+      Matrix.adjugate_fin_two, coe_conjScale, Matrix.mul_apply, Fin.sum_univ_two]
+
 /-- The quotient of the conjugated level-`l N` extra matrix by the level-`N` one is diagonal
 modulo `p` (its upper-right entry vanishes) and is `1` modulo `N / p`. -/
 private theorem conjScale_descendExtraGamma_mul_inv_mod {N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
@@ -206,20 +223,7 @@ private theorem conjScale_descendExtraGamma_mul_inv_mod {N : ℕ} (hp : p.Prime)
       Matrix.SpecialLinearGroup.coe_one] using
       congr_fun₂ (congrArg Subtype.val (descendExtraGamma_map_intCast_zmod_div_eq_one hp hpN hpsq))
         i j
-  set δ : SL(2, ℤ) := conjScale l (descendExtraGamma p (l * N)) c hc * (descendExtraGamma p N)⁻¹
-    with hδ
-  have d01 : δ 0 1 = descendExtraGamma p (l * N) 0 0 * (-descendExtraGamma p N 0 1) +
-      (l : ℤ) * descendExtraGamma p (l * N) 0 1 * descendExtraGamma p N 0 0 := by
-    simp [hδ, Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_inv,
-      Matrix.adjugate_fin_two, coe_conjScale, Matrix.mul_apply, Fin.sum_univ_two]
-  have d10 : δ 1 0 = c * descendExtraGamma p N 1 1 +
-      descendExtraGamma p (l * N) 1 1 * (-descendExtraGamma p N 1 0) := by
-    simp [hδ, Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_inv,
-      Matrix.adjugate_fin_two, coe_conjScale, Matrix.mul_apply, Fin.sum_univ_two]
-  have d11 : δ 1 1 = c * (-descendExtraGamma p N 0 1) +
-      descendExtraGamma p (l * N) 1 1 * descendExtraGamma p N 0 0 := by
-    simp [hδ, Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_inv,
-      Matrix.adjugate_fin_two, coe_conjScale, Matrix.mul_apply, Fin.sum_univ_two]
+  obtain ⟨d01, d10, d11⟩ := conjScale_descendExtraGamma_mul_inv_apply (N := N) hc
   refine ⟨?_, ?_, ?_⟩
   · rw [d01]
     push_cast
@@ -292,6 +296,97 @@ private theorem slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq {N : ℕ} [NeZ
   rw [hδγ, map_mul, ← mul_assoc, map_upperTriRep_zero_mul_mapGL δ hb, mul_assoc,
     SlashAction.slash_mul, hfβ]
 
+/-- The index map between the two descent families: multiplication by `l` on the residues modulo
+`p`, the identity on the extra index. -/
+private def descendIndexMul (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
+    (v : Fin (descendMatrixCount p (l * N))) : Fin (descendMatrixCount p N) :=
+  if h : v.val < p then
+    ⟨l * v % p, lt_of_lt_of_le (Nat.mod_lt _ hp.pos) (by
+      by_cases h' : p ^ 2 ∣ N
+      · rw [descendMatrixCount_of_sq_dvd h']
+      · rw [descendMatrixCount_of_not_sq_dvd h']
+        exact Nat.le_succ p)⟩
+  else ⟨v.val, lt_of_lt_of_eq v.isLt (descendMatrixCount_mul_left_of_coprime hpl N)⟩
+
+private theorem descendIndexMul_of_lt (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
+    {v : Fin (descendMatrixCount p (l * N))} (hv : v.val < p) :
+    (descendIndexMul hp hpl N v).val = l * v % p := by
+  simp [descendIndexMul, hv]
+
+private theorem descendIndexMul_of_le (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
+    {v : Fin (descendMatrixCount p (l * N))} (hv : p ≤ v.val) :
+    (descendIndexMul hp hpl N v).val = v.val := by
+  simp [descendIndexMul, not_lt.mpr hv]
+
+private theorem descendIndexMul_bijective (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ) :
+    Function.Bijective (descendIndexMul hp hpl N) := by
+  refine (Fintype.bijective_iff_injective_and_card _).mpr ⟨fun v w hvw ↦ ?_,
+    by simp [descendMatrixCount_mul_left_of_coprime hpl N]⟩
+  have hvw' := congrArg Fin.val hvw
+  rcases lt_or_ge v.val p with hv | hv <;> rcases lt_or_ge w.val p with hw | hw
+  · rw [descendIndexMul_of_lt hp hpl N hv, descendIndexMul_of_lt hp hpl N hw] at hvw'
+    have := (bijective_mulMod hp hpl).1 (a₁ := ⟨v.val, hv⟩) (a₂ := ⟨w.val, hw⟩) (Fin.ext hvw')
+    exact Fin.ext (Fin.mk.inj_iff.mp this)
+  · rw [descendIndexMul_of_lt hp hpl N hv, descendIndexMul_of_le hp hpl N hw] at hvw'
+    exact absurd (hvw' ▸ Nat.mod_lt (l * v.val) hp.pos) (not_lt.mpr hw)
+  · rw [descendIndexMul_of_le hp hpl N hv, descendIndexMul_of_lt hp hpl N hw] at hvw'
+    exact absurd (hvw' ▸ Nat.mod_lt (l * w.val) hp.pos) (not_lt.mpr hv)
+  · rw [descendIndexMul_of_le hp hpl N hv, descendIndexMul_of_le hp hpl N hw] at hvw'
+    exact Fin.ext hvw'
+
+/-- An upper-triangular member of the level-`l N` family, on `V_l f`, is `V_l` of the matching
+member of the level-`N` family on `f`. -/
+private theorem coe_levelRaise_slash_descendMatrix_of_lt {N : ℕ} (hp : p.Prime)
+    (hpl : Nat.Coprime p l) [NeZero l] (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)
+    {v : Fin (descendMatrixCount p (l * N))} (hv : v.val < p) :
+    haveI : NeZero p := ⟨hp.ne_zero⟩
+    ⇑(CuspForm.levelRaise l (Gamma1_map_le_conjAct_scaleGL N l) f) ∣[k]
+        descendMatrix p (l * N) v =
+      (l : ℂ) ^ (1 - k) •
+        ((⇑f ∣[k] descendMatrix p N (descendIndexMul hp hpl N v)) ∣[k] scaleGL l) := by
+  have : NeZero p := ⟨hp.ne_zero⟩
+  have hσ : (descendIndexMul hp hpl N v).val < p :=
+    (descendIndexMul_of_lt hp hpl N hv).symm ▸ Nat.mod_lt _ hp.pos
+  rw [descendMatrix_of_lt hv, descendMatrix_of_lt hσ, ← ModularForm.rat_slash,
+    ← ModularForm.rat_slash, coe_levelRaise_slash_upperTriRep_eq_smul_slash k hp f ⟨v.val, hv⟩]
+  congr 4
+  exact Fin.ext (descendIndexMul_of_lt hp hpl N hv).symm
+
+/-- The extra member of the level-`l N` family, on `V_l f`, is `V_l` of the extra member of the
+level-`N` family on `f`. -/
+private theorem coe_levelRaise_slash_descendMatrix_of_le {N : ℕ} [NeZero N] (hp : p.Prime)
+    (hpN : p ∣ N) [NeZero l] (hpl : Nat.Coprime p l) {χ : (ZMod N)ˣ →* ℂˣ}
+    {χ₀ : (ZMod (N / p))ˣ →* ℂˣ} (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)))
+    {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ)
+    {v : Fin (descendMatrixCount p (l * N))} (hv : p ≤ v.val) :
+    haveI : NeZero p := ⟨hp.ne_zero⟩
+    ⇑(CuspForm.levelRaise l (Gamma1_map_le_conjAct_scaleGL N l) f) ∣[k]
+        descendMatrix p (l * N) v =
+      (l : ℂ) ^ (1 - k) •
+        ((⇑f ∣[k] descendMatrix p N (descendIndexMul hp hpl N v)) ∣[k] scaleGL l) := by
+  have : NeZero p := ⟨hp.ne_zero⟩
+  have hpsq : ¬ p ^ 2 ∣ N := fun h ↦ by
+    have h1 := descendMatrixCount_of_sq_dvd h
+    have h2 := lt_of_lt_of_eq v.isLt (descendMatrixCount_mul_left_of_coprime hpl N)
+    omega
+  have hplN : p ∣ l * N := dvd_mul_of_dvd_right hpN l
+  have hpsq' : ¬ p ^ 2 ∣ l * N := fun h ↦
+    hpsq ((Nat.Coprime.pow_left 2 hpl).dvd_of_dvd_mul_left h)
+  obtain ⟨c, hc⟩ : (l : ℤ) ∣ descendExtraGamma p (l * N) 1 0 := by
+    refine (Int.natCast_dvd_natCast.mpr ?_ : (l : ℤ) ∣ ((l * N / p : ℕ) : ℤ)).trans
+      ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp
+        (Gamma0_mem.mp (descendExtraGamma_mem_Gamma0 hp hplN hpsq')))
+    rw [Nat.mul_div_assoc l hpN]
+    exact dvd_mul_right l _
+  rw [CuspForm.coe_levelRaise,
+    ModularForm.smul_slash_of_det_pos k (descendMatrix_det_pos p (l * N) v),
+    descendMatrix_eq_map, descendMatrixRat_of_le hv, descendMatrix_eq_map,
+    descendMatrixRat_of_le ((descendIndexMul_of_le hp hpl N hv).symm ▸ hv), map_mul, map_mul,
+    map_mapGL, map_mapGL, ← SlashAction.slash_mul, ← mul_assoc, scaleGL_mul_map_upperTriRep_zero,
+    mul_assoc, mul_inv_eq_iff_eq_mul.mp (mapGL_conjScale (descendExtraGamma p (l * N)) c hc),
+    ← mul_assoc, SlashAction.slash_mul,
+    slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq k hp hpN hpsq hpl hcomp hf hc]
+
 /-- **The descent commutes with the level-raise** (Miyake, Lemma 4.6.6 (2)). For a prime `p ∣ N`,
 `l` coprime to `p`, and `f ∈ S_k(Γ₁(N), χ)` with `χ` the pull-back of a character modulo `N / p`,
 the descent slash sum at level `l N` of `V_l f` is `V_l` of the descent slash sum of `f` at level
@@ -305,63 +400,10 @@ theorem descendSlash_coe_levelRaise_mul_left {N : ℕ} [NeZero N] (hp : p.Prime)
     descendSlash k p (l * N) ⇑(CuspForm.levelRaise l (Gamma1_map_le_conjAct_scaleGL N l) f) =
       (l : ℂ) ^ (1 - k) • (descendSlash k p N ⇑f ∣[k] scaleGL l) := by
   have : NeZero p := ⟨hp.ne_zero⟩
-  have hcount : descendMatrixCount p (l * N) = descendMatrixCount p N :=
-    descendMatrixCount_mul_left_of_coprime hpl N
-  have hple : p ≤ descendMatrixCount p N := by
-    by_cases h : p ^ 2 ∣ N
-    · rw [descendMatrixCount_of_sq_dvd h]
-    · rw [descendMatrixCount_of_not_sq_dvd h]
-      exact Nat.le_succ p
-  -- the index map: multiplication by `l` on the residues, the identity on the extra index
-  let σ : Fin (descendMatrixCount p (l * N)) → Fin (descendMatrixCount p N) := fun v ↦
-    if h : v.val < p then ⟨l * v % p, lt_of_lt_of_le (Nat.mod_lt _ hp.pos) hple⟩
-    else ⟨v.val, lt_of_lt_of_eq v.isLt hcount⟩
-  have hσ : Function.Bijective σ := by
-    refine (Fintype.bijective_iff_injective_and_card σ).mpr ⟨fun v w hvw ↦ ?_, by simp [hcount]⟩
-    simp only [σ] at hvw
-    split_ifs at hvw with hv hw hw
-    · have h : l * v.val % p = l * w.val % p := Fin.mk.inj_iff.mp hvw
-      have := (bijective_mulMod hp hpl).1 (a₁ := ⟨v.val, hv⟩) (a₂ := ⟨w.val, hw⟩) (Fin.ext h)
-      exact Fin.ext (Fin.mk.inj_iff.mp this)
-    · have h : l * v.val % p = w.val := Fin.mk.inj_iff.mp hvw
-      exact absurd (h ▸ Nat.mod_lt (l * v.val) hp.pos) hw
-    · have h : v.val = l * w.val % p := Fin.mk.inj_iff.mp hvw
-      exact absurd (h ▸ Nat.mod_lt (l * w.val) hp.pos) hv
-    · exact Fin.ext (Fin.mk.inj_iff.mp hvw)
   rw [descendSlash_def, descendSlash_def, SlashAction.sum_slash, Finset.smul_sum]
-  refine Fintype.sum_bijective σ hσ _ _ fun v ↦ ?_
+  refine Fintype.sum_bijective _ (descendIndexMul_bijective hp hpl N) _ _ fun v ↦ ?_
   rcases lt_or_ge v.val p with hv | hv
-  · -- an upper-triangular member
-    have hσv : σ v = ⟨l * v % p, lt_of_lt_of_le (Nat.mod_lt _ hp.pos) hple⟩ := by
-      simp [σ, hv]
-    rw [descendMatrix_of_lt hv, hσv, descendMatrix_of_lt (Nat.mod_lt _ hp.pos),
-      ← ModularForm.rat_slash, ← ModularForm.rat_slash,
-      coe_levelRaise_slash_upperTriRep_eq_smul_slash k hp f ⟨v.val, hv⟩]
-  · -- the extra member
-    have hσv : σ v = ⟨v.val, lt_of_lt_of_eq v.isLt hcount⟩ := by
-      simp [σ, not_lt.mpr hv]
-    have hpsq : ¬ p ^ 2 ∣ N := fun h ↦ by
-      have h1 := descendMatrixCount_of_sq_dvd h
-      have h2 := v.isLt
-      omega
-    have hplN : p ∣ l * N := dvd_mul_of_dvd_right hpN l
-    have hpsq' : ¬ p ^ 2 ∣ l * N := fun h ↦
-      hpsq ((Nat.Coprime.pow_left 2 hpl).dvd_of_dvd_mul_left h)
-    obtain ⟨c, hc⟩ : (l : ℤ) ∣ descendExtraGamma p (l * N) 1 0 := by
-      refine (Int.natCast_dvd_natCast.mpr ?_ : (l : ℤ) ∣ ((l * N / p : ℕ) : ℤ)).trans
-        ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp
-          (Gamma0_mem.mp (descendExtraGamma_mem_Gamma0 hp hplN hpsq')))
-      rw [Nat.mul_div_assoc l hpN]
-      exact dvd_mul_right l _
-    rw [hσv, CuspForm.coe_levelRaise,
-      ModularForm.smul_slash_of_det_pos k (descendMatrix_det_pos p (l * N) v),
-      descendMatrix_eq_map, descendMatrixRat_of_le hv, descendMatrix_eq_map,
-      descendMatrixRat_of_le
-        (show p ≤ (⟨v.val, lt_of_lt_of_eq v.isLt hcount⟩ : Fin _).val from hv),
-      map_mul, map_mul, map_mapGL, map_mapGL,
-      ← SlashAction.slash_mul, ← mul_assoc, scaleGL_mul_map_upperTriRep_zero, mul_assoc,
-      mul_inv_eq_iff_eq_mul.mp (mapGL_conjScale (descendExtraGamma p (l * N)) c hc), ← mul_assoc,
-      SlashAction.slash_mul,
-      slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq k hp hpN hpsq hpl hcomp hf hc]
+  · exact coe_levelRaise_slash_descendMatrix_of_lt k hp hpl f hv
+  · exact coe_levelRaise_slash_descendMatrix_of_le k hp hpN hpl hcomp hf hv
 
 end TauCeti
