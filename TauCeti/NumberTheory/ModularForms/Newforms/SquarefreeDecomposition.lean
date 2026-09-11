@@ -65,12 +65,6 @@ private def SquarefreeDecomposition (χ : (ZMod N)ˣ →* ℂˣ) (l : ℕ)
     ∀ n, (qExpansion 1 f).coeff n = ∑ q ∈ l.primeFactors.attach,
       if q.1 ∣ n then (qExpansion 1 (F q.1 q.2)).coeff (n / q.1) else 0
 
-/-- A sum over `s.attach` of a summand depending on the membership proof, as a sum over `s`. -/
-private theorem sum_attach_dite {ι M : Type*} [AddCommMonoid M] [DecidableEq ι] (s : Finset ι)
-    (G : ∀ i ∈ s, M) :
-    ∑ i ∈ s.attach, G i.1 i.2 = ∑ i ∈ s, if h : i ∈ s then G i h else 0 := by
-  rw [Finset.sum_dite_of_true fun _ hi ↦ hi, Finset.univ_eq_attach]
-
 omit [NeZero N] in
 /-- Assembling the decomposition at `l = q * l'` from the data at the prime `q` and the families
 over the primes of `l'`, all already read at the levels `N * l ^ 2` and `N * l ^ 2 / q'`. -/
@@ -117,13 +111,14 @@ private theorem squarefreeDecomposition_of_insert {χ : (ZMod N)ˣ →* ℂˣ} {
   · intro n
     rw [hcoeff n]
     symm
-    rw [sum_attach_dite l.primeFactors fun q' hq' ↦ if q' ∣ n then
-        (qExpansion 1
+    -- both sums over `attach` become sums over the sets, the summand guarded by membership
+    rw [← Finset.univ_eq_attach, ← Finset.sum_dite_of_true (fun _ hi ↦ hi) (fun q' hq' ↦
+        if q' ∣ n then (qExpansion 1
           ((fun q' hq' ↦ if h : q' = q then h ▸ F else F' q' (hmem hq' h)) q' hq')).coeff (n / q')
-        else 0,
-      Finset.sum_congr hpf fun _ _ ↦ rfl, Finset.sum_insert hql',
-      sum_attach_dite l'.primeFactors fun q' hq' ↦ if q' ∣ n then
-        (qExpansion 1 (F' q' hq')).coeff (n / q') else 0]
+        else 0) fun _ _ ↦ 0,
+      Finset.sum_congr hpf fun _ _ ↦ rfl, Finset.sum_insert hql', ← Finset.univ_eq_attach,
+      ← Finset.sum_dite_of_true (fun _ hi ↦ hi) (fun q' hq' ↦ if q' ∣ n then
+        (qExpansion 1 (F' q' hq')).coeff (n / q') else 0) fun _ _ ↦ 0]
     have hqpf : q ∈ l.primeFactors := hpf ▸ Finset.mem_insert_self q _
     congr 1
     · rw [dite_eq_left hqpf]
