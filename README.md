@@ -195,6 +195,10 @@ missing. You need `gh`, `git`, `uv/uvx`, `jq`, an authenticated `gh`, and `lake`
 credentials for whichever agent you run (Codex or Claude). The `bubble`, `incus`, `pi` and
 `kiro` rows can stay missing unless you want the sandbox or an alternative agent.
 
+By default, agents run with unrestricted host access; see
+[sandboxing with `--bubble`](https://github.com/kim-em/TauCetiWorker/blob/main/docs/sandbox.md)
+for isolation.
+
 Then survey before you act:
 
 ```bash
