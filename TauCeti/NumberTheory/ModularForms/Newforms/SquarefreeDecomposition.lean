@@ -11,7 +11,7 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Descent
 # The squarefree decomposition of a form with vanishing coprime coefficients
 
 Miyake's Lemma 4.6.7: a cusp form `f ∈ S_k(Γ₁(N), χ)` whose `q`-expansion vanishes at every index
-coprime to a squarefree `l > 1` is, coefficient by coefficient, a sum `∑_{q ∣ l} V_q F_q` of
+coprime to a squarefree `l` is, coefficient by coefficient, a sum `∑_{q ∣ l} V_q F_q` of
 level-raises of forms `F_q` of level `N l² / q` with nebentypus lowered along `N l² / q ∣ N l²`.
 The coefficients of the sum are read through the restrictions `g_q` of the `F_q` to the common
 level `N l²`: `a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(g_q)`. The prime peeled at each step is the one of
@@ -245,7 +245,7 @@ private theorem squarefreeDecomposition_prime {χ : (ZMod N)ˣ →* ℂˣ}
 to the rest at level `N q²` and modulus `l'` (or, when `l' = 1`, nothing remains), and assemble. -/
 private theorem squarefreeDecomposition_mul {m : ℕ}
     (ih : ∀ (l : ℕ), l.primeFactors.card = m → ∀ (N : ℕ) [NeZero N] (χ : (ZMod N)ˣ →* ℂˣ)
-      (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k), f ∈ cuspFormCharSpace k χ → 1 < l →
+      (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k), f ∈ cuspFormCharSpace k χ →
       Squarefree l → (∀ n, Nat.Coprime n l → (qExpansion 1 f).coeff n = 0) →
       SquarefreeDecomposition χ l f)
     {χ : (ZMod N)ˣ →* ℂˣ} {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
@@ -269,10 +269,9 @@ private theorem squarefreeDecomposition_mul {m : ℕ}
     exact squarefreeDecomposition_prime hqp hF hχ₁ fun n ↦ by
       rw [hsplit n, hFcoeff n, hf'van n (Nat.coprime_one_right n), add_zero]
   · -- `l' > 1`: the induction hypothesis applies to `f'` at level `N q²`
-    have hl' : 1 < l' := lt_of_le_of_ne (Nat.one_le_iff_ne_zero.mpr hl'0) (Ne.symm hl'1)
     obtain ⟨g', F', χ'', hg', hF', hF'g', hχ'', hcoeff'⟩ :=
-      ih l' hcard (N * q ^ 2) (χ.comp (ZMod.unitsMap (Nat.dvd_mul_right N (q ^ 2)))) f' hf'χ hl'
-        hsq hf'van
+      ih l' hcard (N * q ^ 2) (χ.comp (ZMod.unitsMap (Nat.dvd_mul_right N (q ^ 2)))) f' hf'χ hsq
+        hf'van
     have hlev : N * q ^ 2 * l' ^ 2 = N * (q * l') ^ 2 := by ring
     have hlevq (q' : ℕ) : N * q ^ 2 * l' ^ 2 / q' = N * (q * l') ^ 2 / q' := by rw [hlev]
     refine squarefreeDecomposition_of_insert hqp rfl hql' hl'0
@@ -299,12 +298,12 @@ private theorem squarefreeDecomposition_mul {m : ℕ}
       exact Finset.sum_congr rfl fun q' _ ↦ by rw [CuspForm.coe_ofLe]
 
 /-- **Miyake's Lemma 4.6.7: the squarefree decomposition.** If `f ∈ S_k(Γ₁(N), χ)` vanishes at
-every index coprime to a squarefree `l > 1`, then `a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(g q)` for
+every index coprime to a squarefree `l`, then `a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(g q)` for
 forms `g q ∈ S_k(Γ₁(N l²), χ)`, each the restriction of a form `F q ∈ S_k(Γ₁(N l² / q), χ' q)`
 with `χ' q` lying over `χ`: coefficient by coefficient, `f = ∑_{q ∣ l} V_q (F q)`. -/
 theorem exists_qExpansion_coeff_eq_sum_primeFactors_of_squarefree (χ : (ZMod N)ˣ →* ℂˣ)
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {l : ℕ}
-    (hl : 1 < l) (hsq : Squarefree l)
+    (hsq : Squarefree l)
     (hvan : ∀ n, Nat.Coprime n l → (qExpansion 1 f).coeff n = 0) :
     ∃ (g : ℕ → CuspForm ((Gamma1 (N * l ^ 2)).map (mapGL ℝ)) k)
       (F : ∀ q ∈ l.primeFactors, CuspForm ((Gamma1 (N * l ^ 2 / q)).map (mapGL ℝ)) k)
@@ -322,16 +321,23 @@ theorem exists_qExpansion_coeff_eq_sum_primeFactors_of_squarefree (χ : (ZMod N)
         ∑ q ∈ l.primeFactors, if q ∣ n then (qExpansion 1 (g q)).coeff (n / q) else 0 := by
   suffices key : ∀ (m l : ℕ), l.primeFactors.card = m → ∀ (N : ℕ) [NeZero N]
       (χ : (ZMod N)ˣ →* ℂˣ) (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k),
-      f ∈ cuspFormCharSpace k χ → 1 < l → Squarefree l →
+      f ∈ cuspFormCharSpace k χ → Squarefree l →
       (∀ n, Nat.Coprime n l → (qExpansion 1 f).coeff n = 0) → SquarefreeDecomposition χ l f from
-    key _ l rfl N χ f hf hl hsq hvan
+    key _ l rfl N χ f hf hsq hvan
   intro m
   induction m with
   | zero =>
-    intro l hcard N _ χ f _ hl _ _
-    rcases Nat.primeFactors_eq_empty.mp (Finset.card_eq_zero.mp hcard) with rfl | rfl <;> omega
+    -- no prime factors: `l = 1` (as `l ≠ 0`), every coefficient vanishes, the families are empty
+    intro l hcard N _ χ f _ hsq hvan
+    rcases Nat.primeFactors_eq_empty.mp (Finset.card_eq_zero.mp hcard) with rfl | rfl
+    · exact absurd rfl hsq.ne_zero
+    · exact ⟨fun _ ↦ 0, fun q hq ↦ absurd hq (by simp), fun q hq ↦ absurd hq (by simp),
+        fun q hq ↦ absurd hq (by simp), fun q hq ↦ absurd hq (by simp),
+        fun q hq ↦ absurd hq (by simp), fun q hq ↦ absurd hq (by simp), fun n ↦ by
+          rw [Nat.primeFactors_one, Finset.sum_empty]
+          exact hvan n (Nat.coprime_one_right n)⟩
   | succ m ih =>
-    intro l hcard N _ χ f hf _ hsq hvan
+    intro l hcard N _ χ f hf hsq hvan
     obtain ⟨q, hq⟩ : l.primeFactors.Nonempty := Finset.card_pos.mp (hcard ▸ Nat.succ_pos m)
     have hqp : q.Prime := Nat.prime_of_mem_primeFactors hq
     obtain ⟨l', rfl⟩ : ∃ l', l = q * l' := Nat.dvd_of_mem_primeFactors hq
