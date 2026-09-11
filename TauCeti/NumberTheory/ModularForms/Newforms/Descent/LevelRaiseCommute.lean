@@ -263,7 +263,7 @@ private theorem slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq {N : ℕ} (hp 
     simp
   have h11 : (conjUpper δ b hb) 1 1 = δ 1 1 := by simp [coe_conjUpper]
   have hfβ : ⇑f ∣[k] mapGL ℝ (conjUpper δ b hb) = ⇑f :=
-    slash_mapGL_eq_self_of_mem_cuspFormCharSpace_of_comp (Nat.div_dvd_of_dvd hpN) k hcomp hf hβ
+    slash_mapGL_eq_self_of_mem_cuspFormCharSpace_of_comp (Nat.div_dvd_of_dvd hpN) hcomp hf hβ
       (h11 ▸ hδ11)
   have hδγ : conjScale l (descendExtraGamma p (l * N)) c hc = δ * descendExtraGamma p N := by
     rw [hδ, inv_mul_cancel_right]
