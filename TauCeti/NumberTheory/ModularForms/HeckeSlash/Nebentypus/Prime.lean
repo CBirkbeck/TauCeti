@@ -41,18 +41,22 @@ statements read it through the coercions to functions.
 * `HeckeRing.GL2.twistedHeckeSlashSum_diagCosetGamma0_of_prime`,
   `HeckeRing.GL2.twistedHeckeSlashSum_diagCosetGamma0_of_dvd`: on a function with nebentypus
   `χ`, the twisted slash sum of `diag(1, p)` is the classical `Tₚ` formula.
-* `HeckeRing.GL2.coe_twistedHeckeSlashModularFormCharEnd_diagCosetGamma0_of_prime`,
-  `…_of_dvd`, and `HeckeRing.GL2.coe_twistedHeckeSlashCuspFormCharEnd_diagCosetGamma0_of_prime`,
-  `…_of_dvd`: the twisted operator of `diagCosetGamma0 N ![1, p]` is `heckeTNat k p`, resp.
-  `heckeTCuspNat k p`, as functions on `ℍ`.
-* `HeckeRing.GL2.heckeRingHomCharSpace_heckeTGeneratorGamma0_of_prime`, `…_of_dvd`, and
-  `HeckeRing.GL2.heckeRingHomCuspCharSpace_heckeTGeneratorGamma0_of_prime`, `…_of_dvd`: **the
-  Hecke-ring action of the generator `heckeTGeneratorGamma0 N p` on `M_k(N, χ)`, resp.
-  `S_k(N, χ)`, is the classical operator**, as an equality of forms.
+* `HeckeRing.GL2.coe_twistedHeckeSlashModularFormCharEnd_diagCosetGamma0` and
+  `HeckeRing.GL2.coe_twistedHeckeSlashCuspFormCharEnd_diagCosetGamma0`: at every prime `p`, the
+  twisted operator of `diagCosetGamma0 N ![1, p]` is `heckeTNat k p`, resp. `heckeTCuspNat k p`,
+  as functions on `ℍ`.
+* `HeckeRing.GL2.heckeTNat_mem_modFormCharSpace` and
+  `HeckeRing.GL2.heckeTCuspNat_mem_cuspFormCharSpace`: the classical `Tₚ` preserves the nebentypus
+  spaces.
+* `HeckeRing.GL2.heckeRingHomCharSpace_heckeTGeneratorGamma0` and
+  `HeckeRing.GL2.heckeRingHomCuspCharSpace_heckeTGeneratorGamma0`: **the Hecke-ring action of the
+  generator `heckeTGeneratorGamma0 N p` on `M_k(N, χ)`, resp. `S_k(N, χ)`, is the classical
+  operator restricted to the space**, as an equality of endomorphisms; the `coe_…` companions
+  read the same identity on a single form.
 
 ## Scope
 
-Prime indices only; prime powers and multiplicativity are follow-ups.
+This file treats prime indices only.
 
 ## Provenance
 
@@ -127,36 +131,28 @@ theorem twistedHeckeSlashSum_diagCosetGamma0_of_dvd [NeZero N] (hp : p.Prime) (h
   simp only [delta0NebentypusChar_apply, Delta0UpperUnit_upperTriRep, map_one, Units.val_one,
     one_smul]
 
-/-- **At a prime not dividing the level, the twisted operator of `diag(1, p)` on `M_k(N, χ)` is
-the classical `Tₚ`**, as functions on `ℍ`. -/
-theorem coe_twistedHeckeSlashModularFormCharEnd_diagCosetGamma0_of_prime [NeZero N]
-    (hp : p.Prime) (h : Nat.Coprime p N) (f : modFormCharSpace k χ) :
+/-- **At every prime, the twisted operator of `diag(1, p)` on `M_k(N, χ)` is the classical `Tₚ`**,
+as functions on `ℍ`: `Uₚ f + χ(p) • (f ∣[k] diag(p, 1))` when `p ∤ N`, and `Uₚ f` when `p ∣ N`. -/
+theorem coe_twistedHeckeSlashModularFormCharEnd_diagCosetGamma0 [NeZero N] (hp : p.Prime)
+    (f : modFormCharSpace k χ) :
     ⇑((twistedHeckeSlashModularFormCharEnd k χ
         (diagCosetGamma0 N ![1, p] fun _ ↦ Nat.coprime_one_left N) f :
           ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) =
       ⇑(heckeTNat k p (_hn := ⟨hp.ne_zero⟩) (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) := by
   have : NeZero p := ⟨hp.ne_zero⟩
-  rw [coe_twistedHeckeSlashModularFormCharEnd, twistedHeckeSlashSum_diagCosetGamma0_of_prime k χ
-    hp h ((coe_mem_functionCharSpace_iff k χ _).mpr f.2), heckeTNat_def,
-    coe_heckeSlashGamma1ModularFormEnd_diagCosetGamma1_of_mem_modFormCharSpace k hp h χ f.2]
+  have hF := (coe_mem_functionCharSpace_iff k χ _).mpr f.2
+  rw [coe_twistedHeckeSlashModularFormCharEnd]
+  by_cases hpN : p ∣ N
+  · rw [twistedHeckeSlashSum_diagCosetGamma0_of_dvd k χ hp hpN hF, heckeTNat_eq_upperTri k hpN,
+      coe_heckeSlashUpperTriModularFormEnd]
+  · have h := hp.coprime_iff_not_dvd.mpr hpN
+    rw [twistedHeckeSlashSum_diagCosetGamma0_of_prime k χ hp h hF, heckeTNat_def,
+      coe_heckeSlashGamma1ModularFormEnd_diagCosetGamma1_of_mem_modFormCharSpace k hp h χ f.2]
 
-/-- **At a prime dividing the level, the twisted operator of `diag(1, p)` on `M_k(N, χ)` is
-`Uₚ`**, as functions on `ℍ`. -/
-theorem coe_twistedHeckeSlashModularFormCharEnd_diagCosetGamma0_of_dvd [NeZero N]
-    (hp : p.Prime) (hpN : p ∣ N) (f : modFormCharSpace k χ) :
-    ⇑((twistedHeckeSlashModularFormCharEnd k χ
-        (diagCosetGamma0 N ![1, p] fun _ ↦ Nat.coprime_one_left N) f :
-          ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) =
-      ⇑(heckeTNat k p (_hn := ⟨hp.ne_zero⟩) (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) := by
-  have : NeZero p := ⟨hp.ne_zero⟩
-  rw [coe_twistedHeckeSlashModularFormCharEnd, twistedHeckeSlashSum_diagCosetGamma0_of_dvd k χ
-    hp hpN ((coe_mem_functionCharSpace_iff k χ _).mpr f.2), heckeTNat_eq_upperTri k hpN,
-    coe_heckeSlashUpperTriModularFormEnd]
-
-/-- **At a prime not dividing the level, the twisted operator of `diag(1, p)` on `S_k(N, χ)` is
-the classical `Tₚ`**, as functions on `ℍ`. -/
-theorem coe_twistedHeckeSlashCuspFormCharEnd_diagCosetGamma0_of_prime [NeZero N] (hp : p.Prime)
-    (h : Nat.Coprime p N) (f : cuspFormCharSpace k χ) :
+/-- **At every prime, the twisted operator of `diag(1, p)` on `S_k(N, χ)` is the classical `Tₚ`**,
+as functions on `ℍ`: `Uₚ f + χ(p) • (f ∣[k] diag(p, 1))` when `p ∤ N`, and `Uₚ f` when `p ∣ N`. -/
+theorem coe_twistedHeckeSlashCuspFormCharEnd_diagCosetGamma0 [NeZero N] (hp : p.Prime)
+    (f : cuspFormCharSpace k χ) :
     ⇑((twistedHeckeSlashCuspFormCharEnd k χ
         (diagCosetGamma0 N ![1, p] fun _ ↦ Nat.coprime_one_left N) f :
           CuspForm ((Gamma1 N).map (mapGL ℝ)) k)) =
@@ -164,66 +160,67 @@ theorem coe_twistedHeckeSlashCuspFormCharEnd_diagCosetGamma0_of_prime [NeZero N]
   have : NeZero p := ⟨hp.ne_zero⟩
   have hF : ⇑(f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) ∈ functionCharSpace k χ :=
     (mem_functionCharSpace_iff k χ _).mpr ((mem_cuspFormCharSpace_iff_nebentypus k χ _).mp f.2)
-  rw [coe_twistedHeckeSlashCuspFormCharEnd, twistedHeckeSlashSum_diagCosetGamma0_of_prime k χ
-    hp h hF, heckeTCuspNat_def,
-    coe_heckeSlashGamma1CuspFormEnd_diagCosetGamma1_of_mem_cuspFormCharSpace k hp h χ f.2]
+  rw [coe_twistedHeckeSlashCuspFormCharEnd]
+  by_cases hpN : p ∣ N
+  · rw [twistedHeckeSlashSum_diagCosetGamma0_of_dvd k χ hp hpN hF, heckeTCuspNat_eq_upperTri k hpN,
+      coe_heckeSlashUpperTriCuspFormEnd]
+  · have h := hp.coprime_iff_not_dvd.mpr hpN
+    rw [twistedHeckeSlashSum_diagCosetGamma0_of_prime k χ hp h hF, heckeTCuspNat_def,
+      coe_heckeSlashGamma1CuspFormEnd_diagCosetGamma1_of_mem_cuspFormCharSpace k hp h χ f.2]
 
-/-- **At a prime dividing the level, the twisted operator of `diag(1, p)` on `S_k(N, χ)` is
-`Uₚ`**, as functions on `ℍ`. -/
-theorem coe_twistedHeckeSlashCuspFormCharEnd_diagCosetGamma0_of_dvd [NeZero N] (hp : p.Prime)
-    (hpN : p ∣ N) (f : cuspFormCharSpace k χ) :
-    ⇑((twistedHeckeSlashCuspFormCharEnd k χ
-        (diagCosetGamma0 N ![1, p] fun _ ↦ Nat.coprime_one_left N) f :
-          CuspForm ((Gamma1 N).map (mapGL ℝ)) k)) =
-      ⇑(heckeTCuspNat k p (_hn := ⟨hp.ne_zero⟩) (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)) := by
-  have : NeZero p := ⟨hp.ne_zero⟩
-  have hF : ⇑(f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) ∈ functionCharSpace k χ :=
-    (mem_functionCharSpace_iff k χ _).mpr ((mem_cuspFormCharSpace_iff_nebentypus k χ _).mp f.2)
-  rw [coe_twistedHeckeSlashCuspFormCharEnd, twistedHeckeSlashSum_diagCosetGamma0_of_dvd k χ
-    hp hpN hF, heckeTCuspNat_eq_upperTri k hpN, coe_heckeSlashUpperTriCuspFormEnd]
-
-/-- **The Hecke-ring generator at a prime `p ∤ N` acts on `M_k(N, χ)` as the classical `Tₚ`.** -/
-theorem heckeRingHomCharSpace_heckeTGeneratorGamma0_of_prime [NeZero N] (hp : p.Prime)
-    (h : Nat.Coprime p N) (f : modFormCharSpace k χ) :
+/-- **The Hecke-ring generator at a prime acts on `M_k(N, χ)` as the classical `Tₚ`**, on each
+form. -/
+theorem coe_heckeRingHomCharSpace_heckeTGeneratorGamma0 [NeZero N] (hp : p.Prime)
+    (f : modFormCharSpace k χ) :
     (heckeRingHomCharSpace k χ (heckeTGeneratorGamma0 N p) f :
         ModularForm ((Gamma1 N).map (mapGL ℝ)) k) =
       heckeTNat k p (_hn := ⟨hp.ne_zero⟩) (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) := by
   rw [heckeTGeneratorGamma0_eq_single N hp.pos, heckeRingHomCharSpace_apply,
     twistedHeckeSlashModularFormCharLinearMap_single, one_smul]
   exact DFunLike.coe_injective
-    (coe_twistedHeckeSlashModularFormCharEnd_diagCosetGamma0_of_prime k χ hp h f)
+    (coe_twistedHeckeSlashModularFormCharEnd_diagCosetGamma0 k χ hp f)
 
-/-- **The Hecke-ring generator at a prime `p ∣ N` acts on `M_k(N, χ)` as `Uₚ = Tₚ`.** -/
-theorem heckeRingHomCharSpace_heckeTGeneratorGamma0_of_dvd [NeZero N] (hp : p.Prime)
-    (hpN : p ∣ N) (f : modFormCharSpace k χ) :
-    (heckeRingHomCharSpace k χ (heckeTGeneratorGamma0 N p) f :
-        ModularForm ((Gamma1 N).map (mapGL ℝ)) k) =
-      heckeTNat k p (_hn := ⟨hp.ne_zero⟩) (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) := by
-  rw [heckeTGeneratorGamma0_eq_single N hp.pos, heckeRingHomCharSpace_apply,
-    twistedHeckeSlashModularFormCharLinearMap_single, one_smul]
-  exact DFunLike.coe_injective
-    (coe_twistedHeckeSlashModularFormCharEnd_diagCosetGamma0_of_dvd k χ hp hpN f)
-
-/-- **The Hecke-ring generator at a prime `p ∤ N` acts on `S_k(N, χ)` as the classical `Tₚ`.** -/
-theorem heckeRingHomCuspCharSpace_heckeTGeneratorGamma0_of_prime [NeZero N] (hp : p.Prime)
-    (h : Nat.Coprime p N) (f : cuspFormCharSpace k χ) :
+/-- **The Hecke-ring generator at a prime acts on `S_k(N, χ)` as the classical `Tₚ`**, on each
+form. -/
+theorem coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0 [NeZero N] (hp : p.Prime)
+    (f : cuspFormCharSpace k χ) :
     (heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p) f :
         CuspForm ((Gamma1 N).map (mapGL ℝ)) k) =
       heckeTCuspNat k p (_hn := ⟨hp.ne_zero⟩) (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) := by
   rw [heckeTGeneratorGamma0_eq_single N hp.pos, heckeRingHomCuspCharSpace_apply,
     twistedHeckeSlashCuspFormCharLinearMap_single, one_smul]
   exact DFunLike.coe_injective
-    (coe_twistedHeckeSlashCuspFormCharEnd_diagCosetGamma0_of_prime k χ hp h f)
+    (coe_twistedHeckeSlashCuspFormCharEnd_diagCosetGamma0 k χ hp f)
 
-/-- **The Hecke-ring generator at a prime `p ∣ N` acts on `S_k(N, χ)` as `Uₚ = Tₚ`.** -/
-theorem heckeRingHomCuspCharSpace_heckeTGeneratorGamma0_of_dvd [NeZero N] (hp : p.Prime)
-    (hpN : p ∣ N) (f : cuspFormCharSpace k χ) :
-    (heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p) f :
-        CuspForm ((Gamma1 N).map (mapGL ℝ)) k) =
-      heckeTCuspNat k p (_hn := ⟨hp.ne_zero⟩) (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) := by
-  rw [heckeTGeneratorGamma0_eq_single N hp.pos, heckeRingHomCuspCharSpace_apply,
-    twistedHeckeSlashCuspFormCharLinearMap_single, one_smul]
-  exact DFunLike.coe_injective
-    (coe_twistedHeckeSlashCuspFormCharEnd_diagCosetGamma0_of_dvd k χ hp hpN f)
+/-- **The classical `Tₚ` preserves `M_k(N, χ)`**: it agrees there with the Hecke-ring action. -/
+theorem heckeTNat_mem_modFormCharSpace [NeZero N] (hp : p.Prime)
+    {f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ modFormCharSpace k χ) :
+    heckeTNat k p (_hn := ⟨hp.ne_zero⟩) f ∈ modFormCharSpace k χ :=
+  coe_heckeRingHomCharSpace_heckeTGeneratorGamma0 k χ hp ⟨f, hf⟩ ▸
+    (heckeRingHomCharSpace k χ (heckeTGeneratorGamma0 N p) ⟨f, hf⟩).2
+
+/-- **The classical `Tₚ` preserves `S_k(N, χ)`**: it agrees there with the Hecke-ring action. -/
+theorem heckeTCuspNat_mem_cuspFormCharSpace [NeZero N] (hp : p.Prime)
+    {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) :
+    heckeTCuspNat k p (_hn := ⟨hp.ne_zero⟩) f ∈ cuspFormCharSpace k χ :=
+  coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0 k χ hp ⟨f, hf⟩ ▸
+    (heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p) ⟨f, hf⟩).2
+
+/-- **The Hecke-ring generator at a prime acts on `M_k(N, χ)` as the classical `Tₚ`**, as an
+equality of endomorphisms of the space. -/
+theorem heckeRingHomCharSpace_heckeTGeneratorGamma0 [NeZero N] (hp : p.Prime) :
+    heckeRingHomCharSpace k χ (heckeTGeneratorGamma0 N p) =
+      (heckeTNat k p (_hn := ⟨hp.ne_zero⟩)).restrict
+        fun _ hf ↦ heckeTNat_mem_modFormCharSpace k χ hp hf :=
+  LinearMap.ext fun f ↦ Subtype.ext (coe_heckeRingHomCharSpace_heckeTGeneratorGamma0 k χ hp f)
+
+/-- **The Hecke-ring generator at a prime acts on `S_k(N, χ)` as the classical `Tₚ`**, as an
+equality of endomorphisms of the space. -/
+theorem heckeRingHomCuspCharSpace_heckeTGeneratorGamma0 [NeZero N] (hp : p.Prime) :
+    heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p) =
+      (heckeTCuspNat k p (_hn := ⟨hp.ne_zero⟩)).restrict
+        fun _ hf ↦ heckeTCuspNat_mem_cuspFormCharSpace k χ hp hf :=
+  LinearMap.ext fun f ↦
+    Subtype.ext (coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0 k χ hp f)
 
 end HeckeRing.GL2
