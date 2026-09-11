@@ -92,7 +92,9 @@ infrastructure independent of the diamond operators.
   prime `p` and `k ≥ 1`.
 * `CongruenceSubgroup.Gamma_gcd_eq_sup`: `Γ(gcd a b) = Γ(a) ⊔ Γ(b)` — Shimura's Lemma 3.28,
   the Chinese remainder theorem for `SL₂`.
-* `CongruenceSubgroup.mem_Gamma_mul_of_coprime`: `Γ(a) ⊓ Γ(b) ≤ Γ(a b)` for coprime `a`, `b`.
+* `CongruenceSubgroup.Gamma_lcm_eq_inf`: `Γ(lcm a b) = Γ(a) ⊓ Γ(b)`, with the coprime case
+  `CongruenceSubgroup.Gamma_mul_eq_inf_of_coprime` and its element form
+  `CongruenceSubgroup.mem_Gamma_mul_of_coprime`.
 
 ## References
 
@@ -743,19 +745,40 @@ theorem exists_mem_Gamma_map_intCast_zmod_eq {d d' : ℕ} (hcop : Nat.Coprime d 
   rw [MonoidHom.prod_apply, Prod.mk.injEq] at hγ
   exact ⟨γ, Gamma_mem'.mpr hγ.2, hγ.1⟩
 
-/-- **`Γ(a) ⊓ Γ(b) ≤ Γ(a b)` for coprime `a` and `b`**: a matrix congruent to the identity modulo
-two coprime levels is congruent to it modulo their product. -/
-theorem mem_Gamma_mul_of_coprime {a b : ℕ} (hab : Nat.Coprime a b) {γ : SL(2, ℤ)}
-    (ha : γ ∈ Gamma a) (hb : γ ∈ Gamma b) : γ ∈ Gamma (a * b) := by
+/-- One integer residue modulo the least common multiple, from the residues modulo the two
+levels: the Chinese remainder theorem in the form `Int.modEq_and_modEq_iff_modEq_lcm`. -/
+private lemma intCast_zmod_lcm_eq_of_eq {a b : ℕ} {x y : ℤ} (ha : (x : ZMod a) = y)
+    (hb : (x : ZMod b) = y) : (x : ZMod (Nat.lcm a b)) = y := by
+  rw [ZMod.intCast_eq_intCast_iff] at ha hb ⊢
+  have hlcm : (↑(Nat.lcm a b) : ℤ) = ↑(Int.lcm (a : ℤ) (b : ℤ)) := by simp [Int.lcm, Nat.lcm]
+  rw [hlcm, ← Int.modEq_and_modEq_iff_modEq_lcm]
+  exact ⟨ha, hb⟩
+
+/-- **`Γ(lcm a b) = Γ(a) ⊓ Γ(b)`**: a matrix is congruent to the identity modulo two levels
+exactly when it is modulo their least common multiple. -/
+theorem Gamma_lcm_eq_inf (a b : ℕ) : Gamma (Nat.lcm a b) = Gamma a ⊓ Gamma b := by
+  refine le_antisymm (le_inf (Gamma_le_Gamma_of_dvd (Nat.dvd_lcm_left a b))
+    (Gamma_le_Gamma_of_dvd (Nat.dvd_lcm_right a b))) fun γ hγ ↦ ?_
+  obtain ⟨ha, hb⟩ := Subgroup.mem_inf.mp hγ
   rw [Gamma_mem] at ha hb ⊢
   refine ⟨?_, ?_, ?_, ?_⟩
-  · simpa using ZMod.intCast_eq_intCast_of_coprime hab (y := 1) (by simpa using ha.1)
-      (by simpa using hb.1)
-  · simpa using ZMod.intCast_eq_intCast_of_coprime hab (y := 0) (by simpa using ha.2.1)
+  · simpa using intCast_zmod_lcm_eq_of_eq (y := 1) (by simpa using ha.1) (by simpa using hb.1)
+  · simpa using intCast_zmod_lcm_eq_of_eq (y := 0) (by simpa using ha.2.1)
       (by simpa using hb.2.1)
-  · simpa using ZMod.intCast_eq_intCast_of_coprime hab (y := 0) (by simpa using ha.2.2.1)
+  · simpa using intCast_zmod_lcm_eq_of_eq (y := 0) (by simpa using ha.2.2.1)
       (by simpa using hb.2.2.1)
-  · simpa using ZMod.intCast_eq_intCast_of_coprime hab (y := 1) (by simpa using ha.2.2.2)
+  · simpa using intCast_zmod_lcm_eq_of_eq (y := 1) (by simpa using ha.2.2.2)
       (by simpa using hb.2.2.2)
+
+/-- **`Γ(a b) = Γ(a) ⊓ Γ(b)` for coprime `a` and `b`**: `Gamma_lcm_eq_inf` at coprime levels. -/
+theorem Gamma_mul_eq_inf_of_coprime {a b : ℕ} (hab : Nat.Coprime a b) :
+    Gamma (a * b) = Gamma a ⊓ Gamma b := by
+  rw [← hab.lcm_eq_mul, Gamma_lcm_eq_inf]
+
+/-- The element form of `Gamma_mul_eq_inf_of_coprime`. -/
+theorem mem_Gamma_mul_of_coprime {a b : ℕ} (hab : Nat.Coprime a b) {γ : SL(2, ℤ)}
+    (ha : γ ∈ Gamma a) (hb : γ ∈ Gamma b) : γ ∈ Gamma (a * b) := by
+  rw [Gamma_mul_eq_inf_of_coprime hab]
+  exact Subgroup.mem_inf.mpr ⟨ha, hb⟩
 
 end CongruenceSubgroup

@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.UpperTriFactorization
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Sum
 
 /-!
@@ -56,6 +55,7 @@ namespace TauCeti
 variable {p l N : ℕ}
 
 /-- The descent family has the same size at `l N` as at `N` when `l` is coprime to `p`. -/
+@[simp]
 theorem descendMatrixCount_mul_left_of_coprime (hpl : Nat.Coprime p l) (N : ℕ) :
     descendMatrixCount p (l * N) = descendMatrixCount p N := by
   by_cases h : p ^ 2 ∣ N
