@@ -5,7 +5,11 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MapsInfinity
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.TautologicalPoint
+import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.PointPlace
+import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.PolePoints
+import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.InfinityPlace
 
 /-!
 # Adding coordinate pullbacks
@@ -122,6 +126,20 @@ theorem add_assoc (p q r : CoordinatePullback W₁ W₂)
   tautologicalPoint_injective (by
     rw [tautologicalPoint_add, tautologicalPoint_add, tautologicalPoint_add,
       tautologicalPoint_add, _root_.add_assoc])
+
+/-- **The sum of two pointed coordinate pullbacks whose tautological points do not cancel is
+pointed.** -/
+theorem mapsInfinity_add (p q : CoordinatePullback W₁ W₂) (hp : p.MapsInfinity)
+    (hq : q.MapsInfinity) (h : p.tautologicalPoint + q.tautologicalPoint ≠ 0) :
+    (p.add q h).MapsInfinity := by
+  -- The pole of `x` at infinity is preserved by addition of points (`one_lt_valuation_xCoord_add`).
+  have key : ∀ r : CoordinatePullback W₁ W₂, r.MapsInfinity →
+      1 < (Place.infinity W₁).valuation (Point.xCoord r.tautologicalPoint) := fun r hr ↦ by
+    rw [xCoord_tautologicalPoint, Place.valuation_infinity, ← AdjoinRoot.algebraMap_eq]
+    exact (mapsInfinity_iff_one_lt_infinityPlace r).1 hr
+  rw [mapsInfinity_iff_one_lt_infinityPlace, AdjoinRoot.algebraMap_eq, add_of_X,
+    ← Place.valuation_infinity]
+  exact one_lt_valuation_xCoord_add W₂ (Place.infinity W₁) (key p hp) (key q hq) h
 
 end CoordinatePullback
 

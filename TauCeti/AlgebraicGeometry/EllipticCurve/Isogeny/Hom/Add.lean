@@ -37,8 +37,6 @@ this bijection additive; the zero and the negation are those the carrier already
 
 * `TauCeti.Isogeny.Hom.ofIsogeny_add_ofIsogeny`: the sum of two isogenies whose tautological
   points do not cancel is the isogeny with pullback `CoordinatePullback.add`.
-* `TauCeti.CoordinatePullback.mapsInfinity_add`: the sum of two pointed coordinate pullbacks whose
-  tautological points do not cancel is pointed.
 * `TauCeti.Isogeny.Hom.add_comp`: composition is additive in the outer morphism.
 
 ## Provenance
@@ -256,34 +254,8 @@ theorem ofIsogeny_add_ofIsogeny_eq_zero {φ ψ : Isogeny W₁ W₂}
     rw [tautologicalPoint_add, tautologicalPoint_ofIsogeny, tautologicalPoint_ofIsogeny, h,
       tautologicalPoint_zero])
 
-end Hom
-
-end Isogeny
-
-namespace CoordinatePullback
-
-variable [W₂.IsElliptic]
-
-/-- **The sum of two pointed coordinate pullbacks whose tautological points do not cancel is
-pointed.** -/
-theorem mapsInfinity_add (p q : CoordinatePullback W₁ W₂) (hp : p.MapsInfinity)
-    (hq : q.MapsInfinity) (h : p.tautologicalPoint + q.tautologicalPoint ≠ 0) :
-    (p.add q h).MapsInfinity := by
-  -- The pole of `x` at infinity is preserved by addition of points (`one_lt_valuation_xCoord_add`).
-  have key : ∀ r : CoordinatePullback W₁ W₂, r.MapsInfinity →
-      1 < (Place.infinity W₁).valuation (Point.xCoord r.tautologicalPoint) := fun r hr ↦ by
-    rw [xCoord_tautologicalPoint, Place.valuation_infinity, ← AdjoinRoot.algebraMap_eq]
-    exact (mapsInfinity_iff_one_lt_infinityPlace r).1 hr
-  rw [mapsInfinity_iff_one_lt_infinityPlace, AdjoinRoot.algebraMap_eq, add_of_X,
-    ← Place.valuation_infinity]
-  exact one_lt_valuation_xCoord_add W₂ (Place.infinity W₁) (key p hp) (key q hq) h
-
-end CoordinatePullback
-
-namespace Isogeny.Hom
-
 /-- **Addition of morphisms is the sum of coordinate pullbacks** where the latter is defined. -/
-theorem ofIsogeny_add_ofIsogeny [W₂.IsElliptic] (φ ψ : Isogeny W₁ W₂)
+theorem ofIsogeny_add_ofIsogeny (φ ψ : Isogeny W₁ W₂)
     (h : φ.pullback.tautologicalPoint + ψ.pullback.tautologicalPoint ≠ 0) :
     ofIsogeny φ + ofIsogeny ψ = ofIsogeny ⟨φ.pullback.add ψ.pullback h,
       CoordinatePullback.mapsInfinity_add _ _ φ.mapsInfinity ψ.mapsInfinity h⟩ :=
@@ -291,6 +263,7 @@ theorem ofIsogeny_add_ofIsogeny [W₂.IsElliptic] (φ ψ : Isogeny W₁ W₂)
     rw [tautologicalPoint_add, tautologicalPoint_ofIsogeny, tautologicalPoint_ofIsogeny,
       tautologicalPoint_ofIsogeny, CoordinatePullback.tautologicalPoint_add])
 
+omit [W₂.IsElliptic] in
 /-- The tautological point of a composite with an isogeny is the image of the outer morphism's
 tautological point under the isogeny's function-field pullback. -/
 @[simp]
@@ -301,6 +274,7 @@ theorem tautologicalPoint_comp_ofIsogeny [W₃.IsElliptic] (g : Hom W₂ W₃) (
   · simp only [ofIsogeny_comp_ofIsogeny, tautologicalPoint_ofIsogeny,
       Isogeny.tautologicalPoint_comp]
 
+omit [W₂.IsElliptic] in
 /-- **Composition is additive in the outer morphism.** -/
 @[simp]
 theorem add_comp [W₃.IsElliptic] (g g' : Hom W₂ W₃) (f : Hom W₁ W₂) :
@@ -310,13 +284,16 @@ theorem add_comp [W₃.IsElliptic] (g g' : Hom W₂ W₃) (f : Hom W₁ W₂) :
   · exact tautologicalPoint_injective (by
       simp only [tautologicalPoint_add, tautologicalPoint_comp_ofIsogeny, map_add])
 
+omit [W₂.IsElliptic] in
 /-- **Composition respects subtraction in the outer morphism.** -/
 @[simp]
 theorem sub_comp [W₃.IsElliptic] (g g' : Hom W₂ W₃) (f : Hom W₁ W₂) :
     (g - g').comp f = g.comp f - g'.comp f := by
   rw [sub_eq_add_neg, add_comp, neg_comp, sub_eq_add_neg]
 
-end Isogeny.Hom
+end Hom
+
+end Isogeny
 
 end TauCeti
 
