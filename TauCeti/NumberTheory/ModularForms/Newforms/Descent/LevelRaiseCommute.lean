@@ -7,7 +7,7 @@ module
 
 public import TauCeti.NumberTheory.ModularForms.Degeneracy
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Sum
-import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.QExpansion
+import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Periodic
 import TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelCommute
 
 /-!
@@ -86,44 +86,6 @@ private theorem coe_levelRaise_slash_upperTriRep_eq_smul_slash {M : ℕ} (hp : p
     ← map_scaleRep_eq_scaleGL, ← map_mul,
     scaleRep_mul_upperTriRep p (NeZero.pos l) b (Nat.mod_lt _ hp.pos) hqr, map_mul, map_mul,
     Matrix.SpecialLinearGroup.map_mapGL, SlashAction.slash_mul, hT, SlashAction.slash_mul]
-
-/-- `diag(l, 1)` and `!![1, 0; 0, p]` commute. -/
-private theorem scaleGL_mul_map_upperTriRep_zero [NeZero p] [NeZero l] :
-    scaleGL l * Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, NeZero.pos p⟩) =
-      Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, NeZero.pos p⟩) *
-        scaleGL l := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two, coe_scaleGL]
-
-/-- The integral matrix conjugate to `δ` across `!![1, 0; 0, p]`, when `p` divides the upper-right
-entry `δ 0 1 = p * b`: the upper-right entry divided by `p`, the lower-left one multiplied by
-`p`. -/
-private def conjUpper (δ : SL(2, ℤ)) (b : ℤ) (hb : δ 0 1 = p * b) : SL(2, ℤ) :=
-  ⟨!![δ 0 0, b; (p : ℤ) * δ 1 0, δ 1 1], by
-    have hdet : δ 0 0 * δ 1 1 - δ 0 1 * δ 1 0 = 1 :=
-      Matrix.SpecialLinearGroup.fin_two_mul_sub_mul_eq_one δ
-    rw [Matrix.det_fin_two_of]
-    rw [hb] at hdet
-    linear_combination hdet⟩
-
-private lemma coe_conjUpper (δ : SL(2, ℤ)) (b : ℤ) (hb : δ 0 1 = p * b) :
-    ((conjUpper δ b hb : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) =
-      !![δ 0 0, b; (p : ℤ) * δ 1 0, δ 1 1] :=
-  rfl
-
-/-- **Conjugating across `!![1, 0; 0, p]`**: `!![1, 0; 0, p] · δ = conjUpper δ b · !![1, 0; 0, p]`
-when `δ 0 1 = p * b`. -/
-private theorem map_upperTriRep_zero_mul_mapGL [NeZero p] (δ : SL(2, ℤ)) {b : ℤ}
-    (hb : δ 0 1 = p * b) :
-    Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, NeZero.pos p⟩) *
-        mapGL ℝ δ =
-      mapGL ℝ (conjUpper δ b hb) *
-        Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, NeZero.pos p⟩) := by
-  have hbR : ((δ 0 1 : ℤ) : ℝ) = p * (b : ℝ) := by exact_mod_cast hb
-  ext i j
-  fin_cases i <;> fin_cases j <;>
-    simp [Matrix.SpecialLinearGroup.mapGL_coe_matrix, Matrix.map_apply, Matrix.mul_apply,
-      Fin.sum_univ_two, coe_conjUpper, hbR, mul_comm]
 
 /-- The level-`l N` extra matrix modulo `N / p`: its diagonal entries are `1`, and `c`, the
 lower-left entry divided by `l`, is `0`. -/
@@ -246,27 +208,37 @@ private theorem slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq {N : ℕ} (hp 
       ⇑f ∣[k] (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, NeZero.pos p⟩) *
         mapGL ℝ (descendExtraGamma p N)) := by
   have : NeZero p := ⟨hp.ne_zero⟩
+  obtain ⟨hδ01, hδ10, hδ11⟩ := conjScale_descendExtraGamma_mul_inv_mod hp hpN hpsq hpl hc
   set δ : SL(2, ℤ) := conjScale l (descendExtraGamma p (l * N)) c hc * (descendExtraGamma p N)⁻¹
     with hδ
-  obtain ⟨hδ01, hδ10, hδ11⟩ := conjScale_descendExtraGamma_mul_inv_mod hp hpN hpsq hpl hc
-  obtain ⟨b, hb⟩ := (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp hδ01
-  -- the conjugate `β` lies in `Γ₀(N)` with lower-right entry `1` modulo `N / p`
-  have h10 : (conjUpper δ b hb) 1 0 = p * δ 1 0 := by simp [coe_conjUpper]
-  have hβ : conjUpper δ b hb ∈ Gamma0 N := by
-    rw [Gamma0_mem, h10]
+  clear_value δ
+  -- `δ 0 0` is a unit modulo `p`, since `det δ = 1` and `δ 0 1 ≡ 0`
+  have hA : IsUnit ((δ 0 0 : ℤ) : ZMod p) := by
+    have hdet := congrArg (Int.cast : ℤ → ZMod p)
+      (Matrix.SpecialLinearGroup.fin_two_mul_sub_mul_eq_one δ)
+    push_cast at hdet
+    rw [hδ01, zero_mul, sub_zero] at hdet
+    exact IsUnit.of_mul_eq_one _ hdet
+  have hpc : (((p : ℤ) * δ 1 0 : ℤ) : ZMod N) = 0 := by
     obtain ⟨t, ht⟩ := (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp hδ10
     have hpN' : ((p : ℤ) * ((N / p : ℕ) : ℤ)) = (N : ℤ) := by
       exact_mod_cast Nat.mul_div_cancel' hpN
-    rw [ht, ← mul_assoc, hpN']
-    simp
-  have h11 : (conjUpper δ b hb) 1 1 = δ 1 1 := by simp [coe_conjUpper]
-  have hfβ : ⇑f ∣[k] mapGL ℝ (conjUpper δ b hb) = ⇑f :=
+    rw [ZMod.intCast_zmod_eq_zero_iff_dvd, ht, ← mul_assoc, hpN']
+    exact dvd_mul_right _ _
+  -- `!![1, 0; 0, p] δ = β !![1, 0; 0, p]` with `β ∈ Γ₀(N)`: the offset stays `0` as `p ∣ δ 0 1`
+  obtain ⟨β, hβ, hβ11, hfac⟩ :=
+    exists_mem_Gamma0_upperTriRep_mul_of_isUnit (j := ⟨0, NeZero.pos p⟩) (by simpa using hA) hpc
+  have hshift : upperTriShift p δ ⟨0, NeZero.pos p⟩ = ⟨0, NeZero.pos p⟩ :=
+    (upperTriShift_eq_iff (by simpa using hA)).mpr (by simp [hδ01])
+  rw [hshift] at hβ11 hfac
+  have hfβ : ⇑f ∣[k] mapGL ℝ β = ⇑f :=
     slash_mapGL_eq_self_of_mem_cuspFormCharSpace_of_comp (Nat.div_dvd_of_dvd hpN) hcomp hf hβ
-      (h11 ▸ hδ11)
+      (by rw [hβ11]; simpa using hδ11)
+  have hfacR := congrArg (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)) hfac
+  rw [map_mul, map_mul, map_mapGL, map_mapGL] at hfacR
   have hδγ : conjScale l (descendExtraGamma p (l * N)) c hc = δ * descendExtraGamma p N := by
     rw [hδ, inv_mul_cancel_right]
-  rw [hδγ, map_mul, ← mul_assoc, map_upperTriRep_zero_mul_mapGL δ hb, mul_assoc,
-    SlashAction.slash_mul, hfβ]
+  rw [hδγ, map_mul, ← mul_assoc, hfacR, mul_assoc, SlashAction.slash_mul, hfβ]
 
 /-- The index map between the two descent families: multiplication by `l` on the residues modulo
 `p`, the identity on the extra index. -/
@@ -297,8 +269,8 @@ private theorem descendIndexMul_bijective (hp : p.Prime) (hpl : Nat.Coprime p l)
   have hvw' := congrArg Fin.val hvw
   rcases lt_or_ge v.val p with hv | hv <;> rcases lt_or_ge w.val p with hw | hw
   · rw [descendIndexMul_of_lt hp hpl N hv, descendIndexMul_of_lt hp hpl N hw] at hvw'
-    have := (mulModEquiv p hp.pos hpl.symm).injective (a₁ := ⟨v.val, hv⟩) (a₂ := ⟨w.val, hw⟩)
-      (Fin.ext (by rw [coe_mulModEquiv, coe_mulModEquiv]; exact hvw'))
+    have := (ZMod.mulModEquiv p hp.pos hpl.symm).injective (a₁ := ⟨v.val, hv⟩)
+      (a₂ := ⟨w.val, hw⟩) (Fin.ext (by rw [ZMod.coe_mulModEquiv, ZMod.coe_mulModEquiv]; exact hvw'))
     exact Fin.ext (Fin.mk.inj_iff.mp this)
   · rw [descendIndexMul_of_lt hp hpl N hv, descendIndexMul_of_le hp hpl N hw] at hvw'
     exact absurd (hvw' ▸ Nat.mod_lt (l * v.val) hp.pos) (not_lt.mpr hw)
@@ -345,6 +317,15 @@ private theorem coe_levelRaise_slash_descendMatrix_of_le {N : ℕ} (hp : p.Prime
   have hplN : p ∣ l * N := dvd_mul_of_dvd_right hpN l
   have hpsq' : ¬ p ^ 2 ∣ l * N := fun h ↦
     hpsq ((Nat.Coprime.pow_left 2 hpl).dvd_of_dvd_mul_left h)
+  -- `diag(l, 1)` and `!![1, 0; 0, p]` commute: the index-`0` case of `scaleRep_mul_upperTriRep`
+  have hcomm : scaleGL l *
+      Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, NeZero.pos p⟩) =
+      Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, NeZero.pos p⟩) *
+        scaleGL l := by
+    rw [← map_scaleRep_eq_scaleGL, ← map_mul, ← map_mul,
+      scaleRep_mul_upperTriRep p (NeZero.pos l) _ (NeZero.pos p)
+        (by simp : l * ((⟨0, NeZero.pos p⟩ : Fin p) : ℕ) = 0 * p + 0),
+      pow_zero, map_one, one_mul]
   obtain ⟨c, hc⟩ : (l : ℤ) ∣ descendExtraGamma p (l * N) 1 0 := by
     refine (Int.natCast_dvd_natCast.mpr ?_ : (l : ℤ) ∣ ((l * N / p : ℕ) : ℤ)).trans
       ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp
@@ -355,7 +336,7 @@ private theorem coe_levelRaise_slash_descendMatrix_of_le {N : ℕ} (hp : p.Prime
     ModularForm.smul_slash_of_det_pos k (descendMatrix_det_pos p (l * N) v),
     descendMatrix_eq_map, descendMatrixRat_of_le hv, descendMatrix_eq_map,
     descendMatrixRat_of_le ((descendIndexMul_of_le hp hpl N hv).symm ▸ hv), map_mul, map_mul,
-    map_mapGL, map_mapGL, ← SlashAction.slash_mul, ← mul_assoc, scaleGL_mul_map_upperTriRep_zero,
+    map_mapGL, map_mapGL, ← SlashAction.slash_mul, ← mul_assoc, hcomm,
     mul_assoc, mul_inv_eq_iff_eq_mul.mp (mapGL_conjScale (descendExtraGamma p (l * N)) c hc),
     ← mul_assoc, SlashAction.slash_mul,
     slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq k hp hpN hpsq hpl hcomp hf hc]
