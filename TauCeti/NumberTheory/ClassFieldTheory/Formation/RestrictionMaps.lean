@@ -5,6 +5,7 @@ Authors: Claude
 -/
 module
 
+public import Mathlib.GroupTheory.Transfer
 public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Restriction
 
 /-!
@@ -15,16 +16,16 @@ restricted to `K/E` for an intermediate field `F ⊆ E ⊆ K`, with ground subgr
 the restriction `LayerRestriction.cohomologyRes` on cohomology, a restriction induces four more
 maps that the Artin–Tate functoriality diagrams are stated against:
 
-* on ground levels, the **inclusion** `A^U ⊆ A^{U'}` (`groundInclusion`) and the **norm**
-  `A^{U'} → A^U` (`groundNorm`), the sum of the translates by representatives of the cosets
-  `U/U'`, with `groundNorm ∘ groundInclusion = [U : U'] • id` (`groundNorm_groundInclusion`);
+* on ground levels, the **norm** `A^{U'} → A^U` (`groundNorm`), the sum of the translates by
+  representatives of the cosets `U/U'`, with `groundNorm ∘ groundInclusion = [U : U'] • id`
+  (`groundNorm_groundInclusion`), building on the inclusion `groundInclusion` of #6221;
 * on abelianized Galois groups, the group-theoretic **transfer** `(U/V)^ab → (U'/V)^ab`
   (`transferHom`) and the map induced by the inclusion `U' ≤ U` (`inclusionHom`).
 
 ## Main definitions
 
-* `TauCeti.ClassFieldTheory.LayerRestriction.groundInclusion`, `groundNorm`: the inclusion and the
-  norm between the ground levels of a restriction.
+* `TauCeti.ClassFieldTheory.LayerRestriction.groundNorm`: the norm `A^{U'} → A^U` between
+  the ground levels of a restriction, and its interaction with the inclusion.
 * `TauCeti.ClassFieldTheory.LayerRestriction.transferHom`, `inclusionHom`: the transfer and the
   inclusion on abelianized Galois groups.
 
@@ -52,18 +53,6 @@ namespace LayerRestriction
 variable {small big : NormalLayer G}
 
 section GroundLevels
-
-/-- The inclusion `A^U ⊆ A^{U'}` of ground levels along a restriction `U' ≤ U`. -/
-def groundInclusion (T : LayerRestriction small big) (F : Formation G) :
-    F.level big.ground →+ F.level small.ground :=
-  (Submodule.inclusion (F.level_antitone T.ground_le)).toAddMonoidHom
-
-/-- The inclusion of ground levels moves no element of the ambient module. -/
-@[simp]
-theorem groundInclusion_apply_coe (T : LayerRestriction small big) (F : Formation G)
-    (x : F.level big.ground) :
-    ((T.groundInclusion F x : F.level small.ground) : F.toRep.V) = (x : F.toRep.V) :=
-  Submodule.coe_inclusion (F.level_antitone T.ground_le) x
 
 /-- The cosets of one open subgroup of a compact group in another are finite. The norm along a
 restriction sums over representatives of the cosets `U/U'`. -/
