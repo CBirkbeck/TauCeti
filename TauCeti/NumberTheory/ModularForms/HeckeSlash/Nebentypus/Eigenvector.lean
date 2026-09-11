@@ -119,8 +119,8 @@ theorem qExpansion_coeff_eq_zero_of_coprime_of_forall_prime_of_ne_zero {F : modF
     (a := fun n ↦ (qExpansion 1 (F : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff n)
     (fun p hp hpL ↦ by
     obtain ⟨c, hc⟩ := ha p hp hpL
-    exact ⟨c, _, qExpansion_coeff_prime_mul_of_heckeRingHomCharSpace_eq_smul hp
-      (hpL.coprime_dvd_right hNL) hc⟩) h1 n hn0 hn
+    exact ⟨c, _, fun m _ ↦ qExpansion_coeff_prime_mul_of_heckeRingHomCharSpace_eq_smul hp
+      (hpL.coprime_dvd_right hNL) hc m⟩) h1 n hn0 hn
 
 /-- **Coefficient vanishing from the prime eigenvalues, on `S_k(N, χ)`.** Let `L` be a multiple of
 `N`. A cusp form `F ∈ S_k(N, χ)` that is an eigenvector of the ring generator at every prime
@@ -140,7 +140,7 @@ theorem qExpansion_coeff_eq_zero_of_coprime_of_forall_prime {F : cuspFormCharSpa
     (a := fun n ↦ (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff n)
     (fun p hp hpL ↦ by
     obtain ⟨c, hc⟩ := ha p hp hpL
-    exact ⟨c, _, qExpansion_coeff_prime_mul_of_heckeRingHomCuspCharSpace_eq_smul hp
-      (hpL.coprime_dvd_right hNL) hc⟩) h1 n hn0 hn
+    exact ⟨c, _, fun m _ ↦ qExpansion_coeff_prime_mul_of_heckeRingHomCuspCharSpace_eq_smul hp
+      (hpL.coprime_dvd_right hNL) hc m⟩) h1 n hn0 hn
 
 end HeckeRing.GL2
