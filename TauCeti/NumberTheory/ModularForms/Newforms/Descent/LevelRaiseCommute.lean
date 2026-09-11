@@ -354,7 +354,7 @@ private theorem coe_levelRaise_slash_descendMatrix_of_lt {N : ℕ} (hp : p.Prime
 
 /-- The extra member of the level-`l N` family, on `V_l f`, is `V_l` of the extra member of the
 level-`N` family on `f`. -/
-private theorem coe_levelRaise_slash_descendMatrix_of_le {N : ℕ} [NeZero N] (hp : p.Prime)
+private theorem coe_levelRaise_slash_descendMatrix_of_le {N : ℕ} (hp : p.Prime)
     (hpN : p ∣ N) [NeZero l] (hpl : Nat.Coprime p l) {χ : (ZMod N)ˣ →* ℂˣ}
     {χ₀ : (ZMod (N / p))ˣ →* ℂˣ} (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)))
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ)
@@ -392,7 +392,7 @@ private theorem coe_levelRaise_slash_descendMatrix_of_le {N : ℕ} [NeZero N] (h
 the descent slash sum at level `l N` of `V_l f` is `V_l` of the descent slash sum of `f` at level
 `N`: `descendSlash k p (l N) (V_l f) = l ^ (1 - k) • (descendSlash k p N f ∣[k] diag(l, 1))`.
 The source needs `l ∣ N / p` as well; here it is not used. -/
-theorem descendSlash_coe_levelRaise_mul_left {N : ℕ} [NeZero N] (hp : p.Prime) (hpN : p ∣ N)
+theorem descendSlash_coe_levelRaise_mul_left {N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
     [NeZero l] (hpl : Nat.Coprime p l) {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / p))ˣ →* ℂˣ}
     (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)))
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) :

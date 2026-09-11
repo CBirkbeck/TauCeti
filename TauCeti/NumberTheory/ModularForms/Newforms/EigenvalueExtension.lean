@@ -10,18 +10,21 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.RingEigenvalue
 /-!
 # Eigenvalues agreeing outside a finite set agree at every good prime
 
-Strong multiplicity one (Miyake, Theorem 4.6.12) assumes that two eigenforms have the same
-eigenvalue at every index coprime to the level outside a finite exceptional set. The first step
-of its proof removes the exceptional set at the primes: for a good prime `p`, pick a prime `q`
-beyond the exceptional set, the level and `p`; the two forms agree at `p q` and at `q`, or at
-`p q²` and at `q²`, and multiplicativity cancels the factor at `q` or `q²` — one of
-`λ_q`, `λ_{q²}` is nonzero, since `λ_q = 0` forces `λ_{q²} = −χ(q) q^{k−1} ≠ 0`.
+Strong multiplicity one, in the form migrated from AINTLIB (the statement the roadmap adopts),
+assumes that two eigenforms have the same eigenvalue at every index coprime to the level outside
+a finite exceptional set. Miyake's own hypothesis (Theorem 4.6.12) is agreement at every index
+prime to an auxiliary level `L`; the finite-set formulation is AINTLIB's variant, and this file
+is the step that reduces it to agreement at every good prime: for a good prime `p`, pick a prime
+`q` beyond the exceptional set, the level and `p`; the two forms agree at `p q` and at `q`, or
+at `p q²` and at `q²`, and multiplicativity cancels the factor at `q` or `q²` — one of `λ_q`,
+`λ_{q²}` is nonzero, since `λ_q = 0` forces `λ_{q²} = −χ(q) q^{k−1} ≠ 0`. Nothing compares the
+weights of the two forms, so they may differ.
 
 ## Main results
 
 * `HeckeRing.GL2.EigenformAwayFromLevel.eigenvalue_prime_eq_of_forall_notMem`: two good Hecke
-  eigenforms whose eigenvalues agree at every index coprime to `N` outside a finite set agree at
-  every prime coprime to `N`.
+  eigenforms of level `N` (of any two weights) whose eigenvalues agree at every index coprime to
+  `N` outside a finite set agree at every prime coprime to `N`.
 
 ## Provenance
 
@@ -52,10 +55,12 @@ private theorem eigenvalue_prime_sq_ne_zero_of_eq_zero {p : ℕ+} (hp : (p : ℕ
   exact mul_ne_zero (Units.ne_zero _) (zpow_ne_zero _ (Nat.cast_ne_zero.mpr hp.ne_zero))
 
 /-- **Agreement outside a finite set forces agreement at every good prime.** If two good Hecke
-eigenforms have the same eigenvalue at every index coprime to `N` outside a finite set `S`, they
-have the same eigenvalue at every prime `p` coprime to `N`: compare at `p q` or at `p q²` for a
-prime `q` beyond `S`, `N` and `p`, whichever of `λ_q(f)`, `λ_{q²}(f)` is nonzero. -/
-theorem eigenvalue_prime_eq_of_forall_notMem {f g : EigenformAwayFromLevel N k} {S : Finset ℕ}
+eigenforms of level `N`, of any weights, have the same eigenvalue at every index coprime to `N`
+outside a finite set `S`, they have the same eigenvalue at every prime `p` coprime to `N`:
+compare at `p q` or at `p q²` for a prime `q` beyond `S`, `N` and `p`, whichever of `λ_q(f)`,
+`λ_{q²}(f)` is nonzero. -/
+theorem eigenvalue_prime_eq_of_forall_notMem {k₁ k₂ : ℤ} {f : EigenformAwayFromLevel N k₁}
+    {g : EigenformAwayFromLevel N k₂} {S : Finset ℕ}
     (h : ∀ (n : ℕ+) (hn : Nat.Coprime n N), (n : ℕ) ∉ S → f.eigenvalue n hn = g.eigenvalue n hn)
     {p : ℕ+} (hp : (p : ℕ).Prime) (hpN : Nat.Coprime p N) :
     f.eigenvalue p hpN = g.eigenvalue p hpN := by
