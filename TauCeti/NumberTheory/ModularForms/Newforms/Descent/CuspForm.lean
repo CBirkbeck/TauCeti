@@ -7,7 +7,6 @@ module
 
 public import TauCeti.NumberTheory.ModularForms.DiamondOperators
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Cusps
-public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Sum
 
 /-!
 # The descent of a cusp form to the lower level
@@ -33,9 +32,7 @@ slashes of `f`, and vanishes at the cusps (`Newforms/Descent/Cusps.lean`). This 
 Adapted from the AINTLIB `LeanModularForms` project (Chris Birkbeck, Apache-2.0,
 <https://github.com/CBirkbeck/AINTLIB> @ `eb9621e7bcb0ce220ad53983ec45d987cb5b9002`),
 `projects/LeanModularForms/LeanModularForms/StrongMultiplicityOne/DescentCharSpace.lean`,
-`descendSlashSumCuspForm` and `descendSlashSumCuspForm_mem_charSpace`. The source proves the
-three cusp-form fields from scratch (`miyake_hecke_descend_Gamma1_inv`, `_cusp`, `_char`); here
-they are the merged invariance, cusp and nebentypus results about `descendSlash`.
+`descendSlashSumCuspForm` and `descendSlashSumCuspForm_mem_charSpace`.
 
 ## References
 
@@ -71,14 +68,12 @@ noncomputable def descendCuspForm (hp : p.Prime) (hpN : p ∣ N) {χ : (ZMod N)�
           rw [MonoidHom.coe_toHomUnits, Gamma0Map_apply]
           exact (mem_Gamma1_iff.mp hδ).2)
       rw [h1, map_one, Units.val_one, one_smul]
-    holo' := by
-      change MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (descendSlash k p N f)
-      rw [descendSlash_def]
-      exact MDifferentiable.sum fun v _ ↦ (ModularFormClass.holo f).slash k _
+    holo' := mdifferentiable_descendSlash k p N (ModularFormClass.holo f)
     zero_at_cusps' := fun hc ↦ isZeroAt_descendSlash k
       (fun c hc ↦ f.zero_at_cusps' (Subgroup.IsArithmetic.isCusp_of_isCusp c hc)) hc }
 
 /-- The underlying function of the descent is the descent slash sum. -/
+@[simp]
 lemma coe_descendCuspForm (hp : p.Prime) (hpN : p ∣ N) {χ : (ZMod N)ˣ →* ℂˣ}
     {χ₀ : (ZMod (N / p))ˣ →* ℂˣ} (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)))
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) :
