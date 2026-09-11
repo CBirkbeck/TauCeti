@@ -6,7 +6,6 @@ Authors: Claude
 module
 
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Functoriality
-public import Mathlib.RepresentationTheory.Rep.Res
 public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Basic
 
 /-!
@@ -67,6 +66,8 @@ notation `T.relativeDegree`.
 
 * E. Artin and J. Tate, *Class Field Theory*, Chapter XIV, §§1–2.
 * J. Neukirch, *Class Field Theory*, Chapter III, §1.
+* J. Neukirch, A. Schmidt, K. Wingberg, *Cohomology of Number Fields*, Chapter I, §5 (inflation
+  and the change-of-group maps).
 -/
 
 -- The signatures of `LayerRefinement`, `relativeDegree`, `galHom`, `quotientHom`, `groundEquiv`,
@@ -189,7 +190,12 @@ theorem ker_galHom (T : LayerRefinement old new) :
   refine (QuotientGroup.ker_map new.relativeTop old.relativeTop
     (Subgroup.inclusion T.same_ground_toSubgroup.ge)
     (Subgroup.comap_mono T.new_top_toSubgroup_le)).trans ?_
-  congr 1
+  -- `ker_map` gives the kernel as a `mk'`-image; the subgroup mapped is `old.relativeTop` pulled
+  -- back along the ground inclusion, which is `old.top` viewed inside `new.ground` because that
+  -- inclusion composed with the old ground's inclusion is the new ground's inclusion.
+  refine congrArg (Subgroup.map (QuotientGroup.mk' new.relativeTop)) ?_
+  rw [NormalLayer.relativeTop, ← Subgroup.comap_subtype, ← Subgroup.comap_subtype,
+    Subgroup.comap_comap, Subgroup.subtype_comp_inclusion]
 
 /-- The quotient maps of Galois groups compose along a tower of top fields. -/
 theorem galHom_trans {newer : NormalLayer G} (S : LayerRefinement old new)
@@ -202,6 +208,13 @@ theorem galHom_trans {newer : NormalLayer G} (S : LayerRefinement old new)
 def quotientHom (T : LayerRefinement old new) :
     Additive (Abelianization new.Gal) →+ Additive (Abelianization old.Gal) :=
   MonoidHom.toAdditive (Abelianization.map T.galHom)
+
+/-- The map of abelianized Galois groups sends the class of `γ` to the class of `galHom γ`. -/
+@[simp]
+theorem quotientHom_ofMul_of (T : LayerRefinement old new) (γ : new.Gal) :
+    T.quotientHom (Additive.ofMul (Abelianization.of γ)) =
+      Additive.ofMul (Abelianization.of (T.galHom γ)) := by
+  rw [quotientHom, MonoidHom.toAdditive_apply_apply, toMul_ofMul, Abelianization.map_of]
 
 /-! ### The coefficient modules of a refinement -/
 
@@ -263,9 +276,16 @@ section Inflation
 /-- **Inflation on ordinary finite-layer cohomology**, `H^n(U/V, A^V) → H^n(U/V', A^{V'})`: the
 map of cohomology induced by the quotient map `galHom` of Galois groups and the inclusion `repHom`
 of coefficient modules. -/
-def cohomologyInfl (T : LayerRefinement old new) (F : Formation G) (n : ℕ) :
+@[expose] def cohomologyInfl (T : LayerRefinement old new) (F : Formation G) (n : ℕ) :
     old.H F n →+ new.H F n :=
   (groupCohomology.map T.galHom (T.repHom F) n).hom.toAddMonoidHom
+
+/-- Inflation on cohomology is the underlying map of `groupCohomology.map`. -/
+@[simp]
+theorem cohomologyInfl_apply (T : LayerRefinement old new) (F : Formation G) (n : ℕ)
+    (x : old.H F n) :
+    T.cohomologyInfl F n x = (groupCohomology.map T.galHom (T.repHom F) n).hom x :=
+  rfl
 
 /-- Inflation is functorial in a tower of top fields. -/
 theorem cohomologyInfl_trans {newer : NormalLayer G} (S : LayerRefinement old new)
@@ -282,20 +302,30 @@ theorem cohomologyInfl_trans {newer : NormalLayer G} (S : LayerRefinement old ne
       Representation.IntertwiningMap.comp_toLinearMap, Rep.resMap_hom_toLinearMap,
       LinearMap.coe_comp, Function.comp_apply]
     exact Subtype.ext (by rw [repHom_hom_apply_coe, repHom_hom_apply_coe, repHom_hom_apply_coe])
-  change (groupCohomology.map (S.trans T).galHom ((S.trans T).repHom F) n).hom x =
-    (groupCohomology.map T.galHom (T.repHom F) n).hom
-      ((groupCohomology.map S.galHom (S.repHom F) n).hom x)
+  simp only [cohomologyInfl_apply]
   rw [key, ModuleCat.hom_comp, LinearMap.comp_apply]
 
 /-- **Inflation on the finite-layer Tate groups**, in positive degrees only: in positive degree
 the Tate groups are the ordinary cohomology groups, and inflation is `cohomologyInfl` read through
 that identification. -/
-def tateInfl (T : LayerRefinement old new) (F : Formation G) (r : ℕ) (hr : 0 < r) :
+@[expose] def tateInfl (T : LayerRefinement old new) (F : Formation G) (r : ℕ) (hr : 0 < r) :
     old.TateH F r →+ new.TateH F r :=
   haveI : NeZero r := ⟨hr.ne'⟩
   (((TateCohomology.isoGroupCohomology r).app (old.rep F)).hom ≫
     groupCohomology.map T.galHom (T.repHom F) r ≫
     ((TateCohomology.isoGroupCohomology r).app (new.rep F)).inv).hom.toAddMonoidHom
+
+/-- **Tate inflation is ordinary inflation read through the degree-`r` comparison isomorphisms**:
+for positive `r`, `tateInfl` is `cohomologyInfl` conjugated by the isomorphisms
+`TateCohomology.isoGroupCohomology r` at the old and new layers. This is the commuting square that
+characterizes `tateInfl`. -/
+theorem tateInfl_eq (T : LayerRefinement old new) (F : Formation G) (r : ℕ) [NeZero r]
+    (x : old.TateH F r) :
+    T.tateInfl F r (Nat.pos_of_ne_zero (NeZero.ne r)) x =
+      ((TateCohomology.isoGroupCohomology r).app (new.rep F)).inv.hom
+        (T.cohomologyInfl F r
+          (((TateCohomology.isoGroupCohomology r).app (old.rep F)).hom.hom x)) :=
+  rfl
 
 end Inflation
 
