@@ -841,9 +841,15 @@ theorem locIdealImage_congr (P : PairOfDefinition A) (T T' : Finset A) (s s' : A
     (h : locSubring P T' s' S = locSubring P T s S) (n : ℕ) :
     locIdealImage P T' s' S n = locIdealImage P T s S n := by
   have hc : ((RingEquiv.subringCongr h : _ →+* _).comp (toLocSubring P T' s' S))
-      = toLocSubring P T s S := RingHom.ext fun _ ↦ Subtype.ext rfl
+      = toLocSubring P T s S :=
+    RingHom.ext fun a ↦ Subtype.ext <| by
+      rw [RingHom.comp_apply, RingEquiv.coe_toRingHom, RingEquiv.coe_subringCongr_apply,
+        toLocSubring_apply, toLocSubring_apply]
   have hc' : (((RingEquiv.subringCongr h).symm : _ →+* _).comp (toLocSubring P T s S))
-      = toLocSubring P T' s' S := RingHom.ext fun _ ↦ Subtype.ext rfl
+      = toLocSubring P T' s' S :=
+    RingHom.ext fun a ↦ Subtype.ext <| by
+      rw [RingHom.comp_apply, RingEquiv.coe_toRingHom, RingEquiv.subringCongr_symm,
+        RingEquiv.coe_subringCongr_apply, toLocSubring_apply, toLocSubring_apply]
   have hmap : Ideal.map (RingEquiv.subringCongr h : _ →+* _) (locIdeal P T' s' S)
       = locIdeal P T s S := by
     rw [locIdeal_def, locIdeal_def, Ideal.map_map, hc]

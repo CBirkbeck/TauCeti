@@ -29,8 +29,9 @@ complete Hausdorff targets.
 
 * `locUniformSpace_toTopologicalSpace`: the topology `locUniformSpace` induces is `locTopology`.
   This is what a proof rewrites against, so no body in this file needs exposing.
-* `locUniformSpace_congr`: presentations sharing a ring of definition share the uniformity. So
-  `A⟨T/s⟩` and the restriction maps out of it do not depend on which such presentation is used.
+* `locUniformSpace_congr`: presentations sharing a ring of definition share the uniformity, so
+  the two completions `A⟨T/s⟩` are the same object. Whether the restriction maps out of them
+  agree is a further question, and is not settled here.
 * `isUniformAddGroup_locUniformSpace` and `isTopologicalRing_locUniformSpace`: the two companions
   of `locUniformSpace`. Since `locTopology` is not an instance, a statement about `A⟨T/s⟩` has to
   name its structures; these three declarations are what it names.
@@ -138,9 +139,8 @@ theorem isTopologicalRing_locUniformSpace [IsTopologicalRing A] (P : PairOfDefin
   isTopologicalRing_locTopology P T s S hden
 
 /-- **A change of presentation with the same ring of definition leaves `locUniformSpace` alone.**
-`restrictionRingHomOfSubset` is stated under `locUniformSpace`, so this is what makes a rescaled
-presentation give a map between the same objects as the original — the form Wedhorn's
-Proposition 8.30 needs. -/
+`restrictionRingHomOfSubset` is stated under `locUniformSpace`, so this identifies the rings such
+a map runs between. Identifying the maps themselves needs more than this. -/
 theorem locUniformSpace_congr [IsTopologicalRing A] (P : PairOfDefinition A) (T T' : Finset A)
     (s s' : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     [IsLocalization.Away s' S] (hden : HasDenominatorPower P T s S)
