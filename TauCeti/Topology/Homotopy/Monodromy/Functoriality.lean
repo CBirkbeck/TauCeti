@@ -74,10 +74,12 @@ theorem _root_.IsCoveringMap.fiberMap_monodromy (hp : _root_.IsCoveringMap p)
   -- Expose the mapped lifted path so the commuting triangle can rewrite its composite map.
   change (Γ.map f).map q' = _
   rw [← Path.Homotopic.Quotient.map_comp]
-  -- One level deeper than before the generalisation: `Γ.map` is applied to a map whose type the
-  -- result depends on, so `rw [hcomp]` is not available here (the motive is ill-typed), and the
-  -- extra `⇑f` coercion puts the pointwise goals one congruence step further down.
-  convert hp.map_liftPathQuotient a e using 3
+  -- `convert` bottoms out here whatever depth it is given: `Γ.map` applied to `q'.comp f` and to
+  -- `p'` lands in types that differ by `hcomp`, so it offers the `Iff` instead of descending, and
+  -- `rw [hcomp]` cannot help either (abstracting the map makes the motive ill-typed). `congr!` is
+  -- the dependent-congruence tactic, and yields the two endpoint equalities plus the `HEq`.
+  convert hp.map_liftPathQuotient a e using 2
+  congr! 1
   · exact congrFun hf _
   · exact congrFun hf _
   · exact (Path.Homotopic.Quotient.cast_heq _ _).trans (Path.Homotopic.Quotient.cast_heq _ _).symm
