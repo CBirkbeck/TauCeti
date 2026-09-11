@@ -38,6 +38,10 @@ namespace Function
 variable {E F G X : Type*} {p : E → X} {q : F → X} {r : G → X}
 
 /-- The restriction of a map over `X` to the fibre over `x`. -/
+-- `@[expose]`, like the sibling `TauCeti.Deck.fiberMap`: the whole content of this definition is
+-- that the underlying point of `fiberMap f hf x e` is `f e`, and consumers in other modules rely on
+-- that reduction to line up path-lifting statements, which a non-exposed body cannot supply.
+@[expose]
 def fiberMap (f : E → F) (hf : q ∘ f = p) (x : X) : p ⁻¹' {x} → q ⁻¹' {x} :=
   fun e ↦ ⟨f e, by
     rw [Set.mem_preimage, Set.mem_singleton_iff]
