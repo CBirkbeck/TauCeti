@@ -92,10 +92,6 @@ source never states.
 
 * [C. Birkbeck, *AINTLIB*](https://github.com/CBirkbeck/AINTLIB), branch `dev/adic-spaces`,
   commit `d9f2fbbb`, `projects/AdicSpaces/Adic spaces/LocalizationTopology.lean`
-* `TauCeti.Localization.exists_smul_top_ne_top_of_ne_top` is stated here for an arbitrary
-  commutative semiring and a generating set that need not be finite, and placed in this file
-  rather than among the adic-space material, at the suggestion of review on
-  TauCetiProject/TauCeti#6324.
 -/
 
 public section
