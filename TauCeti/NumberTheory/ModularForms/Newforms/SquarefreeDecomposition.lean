@@ -13,9 +13,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.CharacterSpace
 
 Miyake's Lemma 4.6.7: a cusp form `f ∈ S_k(Γ₁(N), χ)` whose `q`-expansion vanishes at every index
 coprime to a squarefree `l` is, coefficient by coefficient, a sum `∑_{q ∣ l} V_q F_q` of
-level-raises of forms `F_q` of level `N l² / q` with nebentypus lowered along `N l² / q ∣ N l²`.
-The coefficients of the sum are read through the restrictions `g_q` of the `F_q` to the common
-level `N l²`: `a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(g_q)`. The prime peeled at each step is the one of
+level-raises of forms `F_q` of level `N l² / q` with nebentypus lowered along `N l² / q ∣ N l²`:
+`a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(F_q)`. The prime peeled at each step is the one of
 `Newforms/Descent/CharacterSpace.lean`
 (`exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_qExpansionSupportedOnDvd`).
 
@@ -50,26 +49,27 @@ variable {k : ℤ}
 
 variable {N : ℕ} [NeZero N]
 
-/-- The conclusion of Lemma 4.6.7 at level `N * l ^ 2`, as a predicate on `f`: families `g`, `F`
-and `χ'` indexed by the primes of `l`, with `g q` of level `N * l ^ 2` in the space of `χ`, `F q`
-of level `N * l ^ 2 / q` in the space of `χ' q` lying over `χ`, `F q` and `g q` the same function,
-and `a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(g q)`. Only used to state the induction. -/
+/-- The conclusion of Lemma 4.6.7 at level `N * l ^ 2`, as a predicate on `f`: families `F` and
+`χ'` indexed by the primes of `l`, with `F q` of level `N * l ^ 2 / q` in the space of `χ' q`
+lying over `χ`, and `a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(F q)`. Only used to state the induction. -/
 private def SquarefreeDecomposition (χ : (ZMod N)ˣ →* ℂˣ) (l : ℕ)
     (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) : Prop :=
-  ∃ (g : ℕ → CuspForm ((Gamma1 (N * l ^ 2)).map (mapGL ℝ)) k)
-    (F : ∀ q ∈ l.primeFactors, CuspForm ((Gamma1 (N * l ^ 2 / q)).map (mapGL ℝ)) k)
+  ∃ (F : ∀ q ∈ l.primeFactors, CuspForm ((Gamma1 (N * l ^ 2 / q)).map (mapGL ℝ)) k)
     (χ' : ∀ q ∈ l.primeFactors, (ZMod (N * l ^ 2 / q))ˣ →* ℂˣ),
-    (∀ q ∈ l.primeFactors,
-      g q ∈ cuspFormCharSpace k (χ.comp (ZMod.unitsMap (Nat.dvd_mul_right N (l ^ 2))))) ∧
     (∀ q (hq : q ∈ l.primeFactors), F q hq ∈ cuspFormCharSpace k (χ' q hq)) ∧
-    (∀ q (hq : q ∈ l.primeFactors), ⇑(F q hq) = ⇑(g q)) ∧
     (∀ q (hq : q ∈ l.primeFactors),
       (χ' q hq).comp (ZMod.unitsMap (Nat.div_dvd_of_dvd
         (dvd_mul_of_dvd_right ((Nat.dvd_of_mem_primeFactors hq).trans (dvd_pow_self l two_ne_zero))
           N))) =
         χ.comp (ZMod.unitsMap (Nat.dvd_mul_right N (l ^ 2)))) ∧
-    ∀ n, (qExpansion 1 f).coeff n =
-      ∑ q ∈ l.primeFactors, if q ∣ n then (qExpansion 1 (g q)).coeff (n / q) else 0
+    ∀ n, (qExpansion 1 f).coeff n = ∑ q ∈ l.primeFactors.attach,
+      if q.1 ∣ n then (qExpansion 1 (F q.1 q.2)).coeff (n / q.1) else 0
+
+/-- A sum over `s.attach` of a summand depending on the membership proof, as a sum over `s`. -/
+private theorem sum_attach_dite {ι M : Type*} [AddCommMonoid M] [DecidableEq ι] (s : Finset ι)
+    (G : ∀ i ∈ s, M) :
+    ∑ i ∈ s.attach, G i.1 i.2 = ∑ i ∈ s, if h : i ∈ s then G i h else 0 := by
+  rw [Finset.sum_dite_of_true fun _ hi ↦ hi, Finset.univ_eq_attach]
 
 omit [NeZero N] in
 /-- Assembling the decomposition at `l = q * l'` from the data at the prime `q` and the families
@@ -77,13 +77,9 @@ over the primes of `l'`, all already read at the levels `N * l ^ 2` and `N * l ^
 private theorem squarefreeDecomposition_of_insert {χ : (ZMod N)ˣ →* ℂˣ} {l q l' : ℕ}
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hq : q.Prime) (hl : l = q * l')
     (hql' : q ∉ l'.primeFactors) (hl' : l' ≠ 0)
-    (g' : ℕ → CuspForm ((Gamma1 (N * l ^ 2)).map (mapGL ℝ)) k)
     (F' : ∀ q' ∈ l'.primeFactors, CuspForm ((Gamma1 (N * l ^ 2 / q')).map (mapGL ℝ)) k)
     (χ'' : ∀ q' ∈ l'.primeFactors, (ZMod (N * l ^ 2 / q'))ˣ →* ℂˣ)
-    (hg' : ∀ q' ∈ l'.primeFactors,
-      g' q' ∈ cuspFormCharSpace k (χ.comp (ZMod.unitsMap (Nat.dvd_mul_right N (l ^ 2)))))
     (hF' : ∀ q' (hq' : q' ∈ l'.primeFactors), F' q' hq' ∈ cuspFormCharSpace k (χ'' q' hq'))
-    (hF'g' : ∀ q' (hq' : q' ∈ l'.primeFactors), ⇑(F' q' hq') = ⇑(g' q'))
     (hχ'' : ∀ q' (hq' : q' ∈ l'.primeFactors),
       (χ'' q' hq').comp (ZMod.unitsMap (Nat.div_dvd_of_dvd (dvd_mul_of_dvd_right
         ((Nat.dvd_of_mem_primeFactors hq').trans (dvd_pow_self l' two_ne_zero) |>.trans
@@ -96,28 +92,16 @@ private theorem squarefreeDecomposition_of_insert {χ : (ZMod N)ˣ →* ℂˣ} {
       χ.comp (ZMod.unitsMap (Nat.dvd_mul_right N (l ^ 2))))
     (hcoeff : ∀ n, (qExpansion 1 f).coeff n =
       (if q ∣ n then (qExpansion 1 F).coeff (n / q) else 0) +
-        ∑ q' ∈ l'.primeFactors, if q' ∣ n then (qExpansion 1 (g' q')).coeff (n / q') else 0) :
+        ∑ q' ∈ l'.primeFactors.attach,
+          if q'.1 ∣ n then (qExpansion 1 (F' q'.1 q'.2)).coeff (n / q'.1) else 0) :
     SquarefreeDecomposition χ l f := by
-  have hql : q ∣ l := hl ▸ dvd_mul_right q l'
-  have hqN : N * l ^ 2 / q ∣ N * l ^ 2 :=
-    Nat.div_dvd_of_dvd (dvd_mul_of_dvd_right (hql.trans (dvd_pow_self l two_ne_zero)) N)
   have hpf : l.primeFactors = insert q l'.primeFactors := by
     rw [hl, Nat.primeFactors_mul hq.ne_zero hl', hq.primeFactors, Finset.singleton_union]
   have hmem : ∀ {q'}, q' ∈ l.primeFactors → q' ≠ q → q' ∈ l'.primeFactors := fun h hne ↦ by
     rw [hpf, Finset.mem_insert] at h
     exact h.resolve_left hne
-  refine ⟨fun q' ↦ if q' = q then _root_.CuspForm.ofLe (Gamma1_map_le_Gamma1_map_of_dvd hqN) F
-      else g' q',
-    fun q' hq' ↦ if h : q' = q then h ▸ F else F' q' (hmem hq' h),
-    fun q' hq' ↦ if h : q' = q then h ▸ χ₁ else χ'' q' (hmem hq' h), ?_, ?_, ?_, ?_, ?_⟩
-  · intro q' hq'
-    by_cases h : q' = q
-    · subst h
-      simp only [↓reduceIte]
-      rw [← hχ₁]
-      exact CuspForm.ofLe_mem_cuspFormCharSpace χ₁ hqN hF
-    · simp only [h, ↓reduceIte]
-      exact hg' q' (hmem hq' h)
+  refine ⟨fun q' hq' ↦ if h : q' = q then h ▸ F else F' q' (hmem hq' h),
+    fun q' hq' ↦ if h : q' = q then h ▸ χ₁ else χ'' q' (hmem hq' h), ?_, ?_, ?_⟩
   · intro q' hq'
     by_cases h : q' = q
     · subst h
@@ -127,24 +111,28 @@ private theorem squarefreeDecomposition_of_insert {χ : (ZMod N)ˣ →* ℂˣ} {
   · intro q' hq'
     by_cases h : q' = q
     · subst h
-      simp only [↓reduceDIte, ↓reduceIte]
-      exact (CuspForm.coe_ofLe _ F).symm
-    · simp only [h, ↓reduceDIte, ↓reduceIte]
-      exact hF'g' q' (hmem hq' h)
-  · intro q' hq'
-    by_cases h : q' = q
-    · subst h
       simpa using hχ₁
     · simp only [h, ↓reduceDIte]
       exact hχ'' q' (hmem hq' h)
   · intro n
-    rw [hcoeff n, hpf, Finset.sum_insert hql']
-    simp only [↓reduceIte]
+    rw [hcoeff n]
+    symm
+    rw [sum_attach_dite l.primeFactors fun q' hq' ↦ if q' ∣ n then
+        (qExpansion 1
+          ((fun q' hq' ↦ if h : q' = q then h ▸ F else F' q' (hmem hq' h)) q' hq')).coeff (n / q')
+        else 0,
+      Finset.sum_congr hpf fun _ _ ↦ rfl, Finset.sum_insert hql',
+      sum_attach_dite l'.primeFactors fun q' hq' ↦ if q' ∣ n then
+        (qExpansion 1 (F' q' hq')).coeff (n / q') else 0]
+    have hqpf : q ∈ l.primeFactors := hpf ▸ Finset.mem_insert_self q _
     congr 1
-    · rw [CuspForm.coe_ofLe]
+    · rw [dite_eq_left hqpf]
+      simp
     · refine Finset.sum_congr rfl fun q' hq' ↦ ?_
       have hne : q' ≠ q := fun h ↦ hql' (h ▸ hq')
-      simp only [hne, ↓reduceIte]
+      have hq'pf : q' ∈ l.primeFactors := hpf ▸ Finset.mem_insert_of_mem hq'
+      rw [dite_eq_left hq'pf, dite_eq_left hq']
+      simp [hne]
 
 /-- **Peeling a prime off `f`.** The multiples-of-`q` part `h` of `f`, read at level `N q²`
 (`exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_coprime_zero_mul_sq`), is `V_q F` on
@@ -236,11 +224,10 @@ private theorem squarefreeDecomposition_prime {χ : (ZMod N)ˣ →* ℂˣ}
   have hempty : ∀ q', q' ∈ Nat.primeFactors 1 → False := fun q' hq' ↦ by
     rw [Nat.primeFactors_one] at hq'
     exact Finset.notMem_empty q' hq'
-  refine squarefreeDecomposition_of_insert hqp rfl (fun h ↦ hempty q h) one_ne_zero (fun _ ↦ 0)
-    (fun q' hq' ↦ (hempty q' hq').elim) (fun q' hq' ↦ (hempty q' hq').elim)
+  refine squarefreeDecomposition_of_insert hqp rfl (fun h ↦ hempty q h) one_ne_zero
     (fun q' hq' ↦ (hempty q' hq').elim) (fun q' hq' ↦ (hempty q' hq').elim)
     (fun q' hq' ↦ (hempty q' hq').elim) (fun q' hq' ↦ (hempty q' hq').elim) F χ₁ hF hχ₁ fun n ↦ ?_
-  rw [hcoeff n, Nat.primeFactors_one, Finset.sum_empty, add_zero]
+  rw [hcoeff n, Finset.sum_eq_zero fun x _ ↦ (hempty x.1 x.2).elim, add_zero]
 
 /-- The inductive step of Lemma 4.6.7 at `l = q * l'`: peel `q`, apply the induction hypothesis
 to the rest at level `N q²` and modulus `l'` (or, when `l' = 1`, nothing remains), and assemble. -/
@@ -270,26 +257,18 @@ private theorem squarefreeDecomposition_mul {m : ℕ}
     exact squarefreeDecomposition_prime hqp hF hχ₁ fun n ↦ by
       rw [hsplit n, hFcoeff n, hf'van n (Nat.coprime_one_right n), add_zero]
   · -- `l' > 1`: the induction hypothesis applies to `f'` at level `N q²`
-    obtain ⟨g', F', χ'', hg', hF', hF'g', hχ'', hcoeff'⟩ :=
+    obtain ⟨F', χ'', hF', hχ'', hcoeff'⟩ :=
       ih l' hcard (N * q ^ 2) (χ.comp (ZMod.unitsMap (Nat.dvd_mul_right N (q ^ 2)))) f' hf'χ hsq
         hf'van
     have hlev : N * q ^ 2 * l' ^ 2 = N * (q * l') ^ 2 := by ring
     have hlevq (q' : ℕ) : N * q ^ 2 * l' ^ 2 / q' = N * (q * l') ^ 2 / q' := by rw [hlev]
     refine squarefreeDecomposition_of_insert hqp rfl hql' hl'0
-      (fun q' ↦ _root_.CuspForm.ofLe (Gamma1_map_le_Gamma1_map_of_dvd (dvd_of_eq hlev)) (g' q'))
       (fun q' hq' ↦ _root_.CuspForm.ofLe (Gamma1_map_le_Gamma1_map_of_dvd (dvd_of_eq (hlevq q')))
         (F' q' hq'))
-      (fun q' hq' ↦ (χ'' q' hq').comp (ZMod.unitsMap (dvd_of_eq (hlevq q')))) ?_ ?_ ?_ ?_ F χ₁ hF
-      hχ₁ fun n ↦ ?_
-    · intro q' hq'
-      have := CuspForm.ofLe_mem_cuspFormCharSpace _ (dvd_of_eq hlev) (hg' q' hq')
-      rwa [MonoidHom.comp_assoc, ZMod.unitsMap_comp, MonoidHom.comp_assoc, ZMod.unitsMap_comp]
-        at this
+      (fun q' hq' ↦ (χ'' q' hq').comp (ZMod.unitsMap (dvd_of_eq (hlevq q')))) ?_ ?_ F χ₁ hF hχ₁
+      fun n ↦ ?_
     · intro q' hq'
       exact CuspForm.ofLe_mem_cuspFormCharSpace _ _ (hF' q' hq')
-    · intro q' hq'
-      rw [CuspForm.coe_ofLe, CuspForm.coe_ofLe]
-      exact hF'g' q' hq'
     · intro q' hq'
       have := congrArg (fun ψ ↦ ψ.comp (ZMod.unitsMap (dvd_of_eq hlev))) (hχ'' q' hq')
       simp only [MonoidHom.comp_assoc, ZMod.unitsMap_comp] at this ⊢
@@ -299,27 +278,23 @@ private theorem squarefreeDecomposition_mul {m : ℕ}
       exact Finset.sum_congr rfl fun q' _ ↦ by rw [CuspForm.coe_ofLe]
 
 /-- **Miyake's Lemma 4.6.7: the squarefree decomposition.** If `f ∈ S_k(Γ₁(N), χ)` vanishes at
-every index coprime to a squarefree `l`, then `a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(g q)` for
-forms `g q ∈ S_k(Γ₁(N l²), χ)`, each the restriction of a form `F q ∈ S_k(Γ₁(N l² / q), χ' q)`
-with `χ' q` lying over `χ`: coefficient by coefficient, `f = ∑_{q ∣ l} V_q (F q)`. -/
+every index coprime to a squarefree `l`, then `a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(F q)` for forms
+`F q ∈ S_k(Γ₁(N l² / q), χ' q)` with `χ' q` lying over `χ`: coefficient by coefficient,
+`f = ∑_{q ∣ l} V_q (F q)`. -/
 theorem exists_qExpansion_coeff_eq_sum_primeFactors_of_squarefree (χ : (ZMod N)ˣ →* ℂˣ)
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {l : ℕ}
     (hsq : Squarefree l)
     (hvan : ∀ n, Nat.Coprime n l → (qExpansion 1 f).coeff n = 0) :
-    ∃ (g : ℕ → CuspForm ((Gamma1 (N * l ^ 2)).map (mapGL ℝ)) k)
-      (F : ∀ q ∈ l.primeFactors, CuspForm ((Gamma1 (N * l ^ 2 / q)).map (mapGL ℝ)) k)
+    ∃ (F : ∀ q ∈ l.primeFactors, CuspForm ((Gamma1 (N * l ^ 2 / q)).map (mapGL ℝ)) k)
       (χ' : ∀ q ∈ l.primeFactors, (ZMod (N * l ^ 2 / q))ˣ →* ℂˣ),
-      (∀ q ∈ l.primeFactors,
-        g q ∈ cuspFormCharSpace k (χ.comp (ZMod.unitsMap (Nat.dvd_mul_right N (l ^ 2))))) ∧
       (∀ q (hq : q ∈ l.primeFactors), F q hq ∈ cuspFormCharSpace k (χ' q hq)) ∧
-      (∀ q (hq : q ∈ l.primeFactors), ⇑(F q hq) = ⇑(g q)) ∧
       (∀ q (hq : q ∈ l.primeFactors),
         (χ' q hq).comp (ZMod.unitsMap (Nat.div_dvd_of_dvd
           (dvd_mul_of_dvd_right
             ((Nat.dvd_of_mem_primeFactors hq).trans (dvd_pow_self l two_ne_zero)) N))) =
           χ.comp (ZMod.unitsMap (Nat.dvd_mul_right N (l ^ 2)))) ∧
-      ∀ n, (qExpansion 1 f).coeff n =
-        ∑ q ∈ l.primeFactors, if q ∣ n then (qExpansion 1 (g q)).coeff (n / q) else 0 := by
+      ∀ n, (qExpansion 1 f).coeff n = ∑ q ∈ l.primeFactors.attach,
+        if q.1 ∣ n then (qExpansion 1 (F q.1 q.2)).coeff (n / q.1) else 0 := by
   suffices key : ∀ (m l : ℕ), l.primeFactors.card = m → ∀ (N : ℕ) [NeZero N]
       (χ : (ZMod N)ˣ →* ℂˣ) (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k),
       f ∈ cuspFormCharSpace k χ → Squarefree l →
@@ -332,10 +307,9 @@ theorem exists_qExpansion_coeff_eq_sum_primeFactors_of_squarefree (χ : (ZMod N)
     intro l hcard N _ χ f _ hsq hvan
     rcases Nat.primeFactors_eq_empty.mp (Finset.card_eq_zero.mp hcard) with rfl | rfl
     · exact absurd rfl hsq.ne_zero
-    · exact ⟨fun _ ↦ 0, fun q hq ↦ absurd hq (by simp), fun q hq ↦ absurd hq (by simp),
-        fun q hq ↦ absurd hq (by simp), fun q hq ↦ absurd hq (by simp),
+    · exact ⟨fun q hq ↦ absurd hq (by simp), fun q hq ↦ absurd hq (by simp),
         fun q hq ↦ absurd hq (by simp), fun q hq ↦ absurd hq (by simp), fun n ↦ by
-          rw [Nat.primeFactors_one, Finset.sum_empty]
+          rw [Finset.sum_eq_zero fun x _ ↦ absurd x.2 (by simp)]
           exact hvan n (Nat.coprime_one_right n)⟩
   | succ m ih =>
     intro l hcard N _ χ f hf hsq hvan
