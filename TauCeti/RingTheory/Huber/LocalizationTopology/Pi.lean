@@ -25,10 +25,10 @@ The family `(R(T/t))_{t ∈ T}` is a cover of `Spa(A,A⁺)` — a *standard rati
 `A`. For a complete Hausdorff Huber pair the converse holds as well
 (`TauCeti.ValuationSpectrum.span_eq_top_iff_spa_eq_biUnion_rationalSubset`, Corollary 7.53).
 Under the spanning hypothesis this map is the comparison whose faithful flatness and injectivity
-Wedhorn's Corollary 8.32 asserts. That spanning hypothesis is still not imposed anywhere below,
-and neither conclusion of Corollary 8.32 is proved here in full: what is proved is that the map
-is *flat* whenever each of its components is, which needs no relation between the members of `T`
-at all.
+Wedhorn's Corollary 8.32 asserts. **No part of Corollary 8.32 is proved here**, and the spanning
+hypothesis is not imposed anywhere below. What is proved is the assembly step alone: the bundled
+map is flat once each component is. Component flatness — that `A → A⟨T/t⟩` is itself flat — is
+the substantive content, and it is not proved here or anywhere on `main` yet.
 
 ## Implementation notes
 
@@ -45,8 +45,8 @@ all.
 * `TauCeti.Huber.PairOfDefinition.rationalLocalizationPiHom`, with
   `TauCeti.Huber.PairOfDefinition.rationalLocalizationPiHom_apply` its computation rule and
   `TauCeti.Huber.PairOfDefinition.continuous_rationalLocalizationPiHom` its continuity.
-* `TauCeti.Huber.PairOfDefinition.flat_rationalLocalizationPiHom`: the map is flat as soon as
-  each of its components is — the flatness half of Corollary 8.32.
+* `TauCeti.Huber.PairOfDefinition.flat_rationalLocalizationPiHom`: the map is flat once each of
+  its components is. This is the finite-product assembly step, not a result about `A⟨T/t⟩`.
 
 ## References
 
@@ -103,13 +103,15 @@ theorem continuous_rationalLocalizationPiHom :
     Continuous (rationalLocalizationPiHom P T S hden) :=
   continuous_pi fun t ↦ continuous_toCompletionLoc P T (t : A) (S t) (hden t)
 
-/-- **The structure map into a family of rational localisations is flat as soon as each of its
+/-- **The structure map into a family of rational localisations is flat once each of its
 components is.** The numerators are a `Finset`, so the product is finite, and a finite product of
 flat modules is flat.
 
-This is the flatness half of Wedhorn's Corollary 8.32. The faithfulness half is a strictly
-stronger statement and is not proved here: it needs `Ideal.span (T : Set A) = ⊤`, which is what
-makes the family a cover of `Spa(A, A⁺)` rather than an arbitrary finite family. -/
+This is an assembly step, not a statement about rational localisations: every hypothesis about
+`A⟨T/t⟩` is carried by `hflat`, and nothing here derives it. In particular this is **not** the
+flatness half of Wedhorn's Corollary 8.32 — that would additionally have to prove component
+flatness, for which `main` currently has only the restriction maps between rational localisations
+(`flat_restrictionRingHomOfSubset` and its strengthenings), not the structure map out of `A`. -/
 theorem flat_rationalLocalizationPiHom
     (hflat : ∀ t : T,
       letI : UniformSpace (S t) := locUniformSpace P T (t : A) (S t) (hden t)
