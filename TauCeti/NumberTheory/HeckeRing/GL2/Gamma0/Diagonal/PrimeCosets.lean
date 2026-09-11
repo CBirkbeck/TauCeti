@@ -187,7 +187,6 @@ entry is `σ₀₀ p ≡ 1 (mod N)`, by the determinant of `σ`. -/
 @[simp] theorem Delta0UpperUnit_mapGL_mul_scaleRep (hp : 0 < p) (hσ10 : σ 1 0 = (N : ℤ))
     (hσ11 : σ 1 1 = (p : ℤ)) (hmem : mapGL ℚ σ * scaleRep p ∈ Delta0 N) :
     Delta0UpperUnit N ⟨mapGL ℚ σ * scaleRep p, hmem⟩ = 1 := by
-  have hdet := Matrix.SpecialLinearGroup.fin_two_mul_sub_mul_eq_one σ
   have h : (Delta0UpperUnit N ⟨mapGL ℚ σ * scaleRep p, hmem⟩ : ZMod N)
       = ((!![σ 0 0 * (p : ℤ), σ 0 1; σ 1 0 * (p : ℤ), σ 1 1] : Matrix (Fin 2) (Fin 2) ℤ) 0 0
           : ZMod N) := by
@@ -200,8 +199,7 @@ entry is `σ₀₀ p ≡ 1 (mod N)`, by the determinant of `σ`. -/
     fin_cases i <;> fin_cases l <;> simp [Matrix.mul_apply, Fin.sum_univ_two]
   have h1 : ((σ 0 0 * (p : ℤ) : ℤ) : ZMod N) = 1 := by
     have : σ 0 0 * (p : ℤ) = 1 + σ 0 1 * (N : ℤ) := by
-      rw [← hσ10]
-      linear_combination hdet - σ 0 0 * hσ11
+      linear_combination mul_sub_mul_eq_one_of_lowerRow hσ10 hσ11
     rw [this]
     push_cast
     simp

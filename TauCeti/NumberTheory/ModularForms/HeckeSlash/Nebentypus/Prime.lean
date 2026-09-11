@@ -8,7 +8,6 @@ module
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.PrimeCosets
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.PrimePower
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Action
-public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.ModularForm
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Operators
 
 /-!
