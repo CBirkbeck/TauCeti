@@ -56,6 +56,14 @@ theorem _root_.LinearEquiv.congrAut_apply (e : M₁ ≃ₗ[R] M₂) (f : M₁ �
   simp only [congrLinearEquiv_apply, coeFn_generalLinearEquiv, coe_ofLinearEquiv,
     LinearEquiv.trans_apply, h]
 
+/-- Conjugation by `e`, as an equality of linear equivalences: `congrAut e f` is `f` pre-composed
+with `e.symm` and post-composed with `e`. This is the structural form; the pointwise
+`congrAut_apply` is the same fact read at a point, and structural consumers (determinants, traces)
+want this one. -/
+theorem _root_.LinearEquiv.congrAut_eq (e : M₁ ≃ₗ[R] M₂) (f : M₁ ≃ₗ[R] M₁) :
+    LinearEquiv.congrAut e f = (e.symm.trans f).trans e :=
+  LinearEquiv.ext fun m => LinearEquiv.congrAut_apply e f m
+
 /-- Inverse conjugation by `e` sends `m` to `e.symm (g (e m))`. -/
 @[simp]
 theorem _root_.LinearEquiv.congrAut_symm_apply (e : M₁ ≃ₗ[R] M₂) (g : M₂ ≃ₗ[R] M₂) (m : M₁) :
@@ -68,6 +76,11 @@ theorem _root_.LinearEquiv.congrAut_symm_apply (e : M₁ ≃ₗ[R] M₂) (g : M�
     exact DFunLike.congr_fun ((generalLinearEquiv R M₂).apply_symm_apply g) x
   simp only [congrLinearEquiv_apply, MulEquiv.symm_symm, coeFn_generalLinearEquiv,
     coe_ofLinearEquiv, LinearEquiv.symm_symm, LinearEquiv.trans_apply, h]
+
+/-- Inverse conjugation by `e`, as an equality of linear equivalences. -/
+theorem _root_.LinearEquiv.congrAut_symm_eq (e : M₁ ≃ₗ[R] M₂) (g : M₂ ≃ₗ[R] M₂) :
+    (LinearEquiv.congrAut e).symm g = (e.trans g).trans e.symm :=
+  LinearEquiv.ext fun m => LinearEquiv.congrAut_symm_apply e g m
 
 end
 
