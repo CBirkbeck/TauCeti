@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.NumberTheory.ModularForms.Newforms.AtkinLehner
 public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Dichotomy
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Coefficient
 public import TauCeti.NumberTheory.ModularForms.Newforms.QSupport
@@ -163,6 +164,28 @@ theorem exists_eq_sum_of_forall_coprime_prod_qExpansion_coeff_eq_zero {χ : (ZMo
         · simp only [hqp, ite_true]; exact hgp_char
         · simp only [hqp, ite_false]
           exact hchar q (Finset.mem_erase.mpr ⟨hqp, hq⟩)
+
+
+/-! ### The Main Lemma -/
+
+/-- **The Main Lemma, per character** (Miyake, Lemma 4.6.8; Diamond–Shurman, Theorem 5.7.1): a
+cusp form in `S_k(Γ₁(N), χ)` whose Fourier coefficients vanish at every index coprime to `N`
+lies in the old subspace. It is a sum, over the primes `p ∣ N`, of forms of the same nebentypus
+supported on the multiples of `p`, and each of those is old. -/
+theorem mem_cuspFormsOld_of_forall_coprime_qExpansion_coeff_eq_zero {χ : (ZMod N)ˣ →* ℂˣ}
+    {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ)
+    (hvan : ∀ n, Nat.Coprime n N → (qExpansion 1 f).coeff n = 0) : f ∈ cuspFormsOld N k := by
+  obtain ⟨g, hsum, hsupp, hchar⟩ :=
+    exists_eq_sum_of_forall_coprime_prod_qExpansion_coeff_eq_zero (Finset.Subset.refl _) hf
+      fun n hn ↦ hvan n (Nat.coprime_of_dvd fun q hq hqn hqN ↦ hq.one_lt.ne'
+        (Nat.Coprime.eq_one_of_dvd (Nat.Coprime.coprime_dvd_left hqn hn)
+          (Finset.dvd_prod_of_mem id (Nat.mem_primeFactors.mpr ⟨hq, hqN, NeZero.ne N⟩))))
+  have hunit : (MulChar.ofUnitHom χ).toUnitHom = χ := MulChar.equivToUnitHom.apply_symm_apply χ
+  rw [hsum]
+  refine Submodule.sum_mem _ fun p hp ↦
+    mem_cuspFormsOld_of_qExpansionSupportedOnDvd (Nat.prime_of_mem_primeFactors hp).ne_one
+      (Nat.dvd_of_mem_primeFactors hp) (MulChar.ofUnitHom χ) (by rw [hunit]; exact hchar p hp)
+      (mem_qSupportedOnDvdSubmodule.mp (hsupp p hp))
 
 
 end TauCeti
