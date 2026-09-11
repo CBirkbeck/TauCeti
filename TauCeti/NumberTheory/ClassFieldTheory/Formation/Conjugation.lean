@@ -7,6 +7,7 @@ module
 
 import Mathlib.RepresentationTheory.Homological.GroupCohomology.Functoriality
 public import Mathlib.RepresentationTheory.Rep.Res
+public import TauCeti.Algebra.Group.Subgroup.Map
 public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Basic
 
 /-!
@@ -118,9 +119,10 @@ def conjugateLayer (g : G) (L : NormalLayer G) : NormalLayer G where
       have hu : g⁻¹ * (u : G) * g ∈ L.ground := u.2
       have hv' : g⁻¹ * (v : G) * g ∈ L.top := Subgroup.mem_subgroupOf.1 hv
       have h := L.conj_mem_top hu hv'
-      change g⁻¹ * ((u : G) * v * (u : G)⁻¹) * g ∈ L.top
-      rw [show g⁻¹ * ((u : G) * v * (u : G)⁻¹) * g =
-        (g⁻¹ * u * g) * (g⁻¹ * v * g) * (g⁻¹ * u * g)⁻¹ by group]
+      rw [OpenSubgroup.mem_toSubgroup, mem_conjOpenSubgroup, Subgroup.coe_mul, Subgroup.coe_mul,
+        Subgroup.coe_inv,
+        show g⁻¹ * (↑u * ↑v * (↑u)⁻¹) * g =
+          g⁻¹ * ↑u * g * (g⁻¹ * ↑v * g) * (g⁻¹ * ↑u * g)⁻¹ by group]
       exact h⟩
 
 /-- The ground subgroup of the conjugate layer is the conjugate of the ground subgroup. -/
@@ -162,21 +164,23 @@ theorem conjugateLayer_mul (g h : G) (L : NormalLayer G) :
 /-- Conjugation by `g` identifies the ground subgroup `U` of a layer with the ground subgroup
 `gUg⁻¹` of its conjugate. -/
 def conjGroundEquiv (g : G) (L : NormalLayer G) : L.ground ≃* (conjugateLayer g L).ground :=
-  ((MulAut.conj g).subgroupMap L.ground.toSubgroup).trans
-    (MulEquiv.subgroupCongr (toSubgroup_conjOpenSubgroup g L.ground).symm)
+  Subgroup.congrOfMapEq (MulAut.conj g) (toSubgroup_conjOpenSubgroup g L.ground).symm
 
 /-- Conjugation on the ground subgroup, read in the ambient group. -/
 @[simp]
 theorem conjGroundEquiv_apply_coe (g : G) (L : NormalLayer G) (u : L.ground) :
-    ((conjGroundEquiv g L u : (conjugateLayer g L).ground) : G) = g * u * g⁻¹ :=
-  (rfl)
+    ((conjGroundEquiv g L u : (conjugateLayer g L).ground) : G) = g * u * g⁻¹ := by
+  rw [conjGroundEquiv]
+  exact (Subgroup.coe_congrOfMapEq_apply (MulAut.conj g) _ u).trans (MulAut.conj_apply g _)
 
 /-- The inverse of conjugation on the ground subgroup, read in the ambient group. -/
 @[simp]
 theorem conjGroundEquiv_symm_apply_coe (g : G) (L : NormalLayer G)
     (x : (conjugateLayer g L).ground) :
-    (((conjGroundEquiv g L).symm x : L.ground) : G) = g⁻¹ * x * g :=
-  (rfl)
+    (((conjGroundEquiv g L).symm x : L.ground) : G) = g⁻¹ * x * g := by
+  rw [conjGroundEquiv]
+  exact (Subgroup.coe_congrOfMapEq_symm_apply (MulAut.conj g) _ x).trans
+    (MulAut.conj_symm_apply g _)
 
 /-- Conjugation carries the top subgroup of a layer onto the top subgroup of its conjugate. -/
 theorem map_relativeTop_conjGroundEquiv (g : G) (L : NormalLayer G) :
@@ -185,13 +189,15 @@ theorem map_relativeTop_conjGroundEquiv (g : G) (L : NormalLayer G) :
   rw [Subgroup.mem_map]
   constructor
   · rintro ⟨u, hu, rfl⟩
-    refine Subgroup.mem_subgroupOf.2 ?_
-    change g⁻¹ * (g * u * g⁻¹) * g ∈ L.top
-    rw [show g⁻¹ * (g * u * g⁻¹) * g = u by group]
+    rw [Subgroup.mem_subgroupOf, MulEquiv.coe_toMonoidHom, conjGroundEquiv_apply_coe,
+      OpenSubgroup.mem_toSubgroup, mem_top_conjugateLayer,
+      show g⁻¹ * (g * (u : G) * g⁻¹) * g = (u : G) by group]
     exact Subgroup.mem_subgroupOf.1 hu
   · intro hx
-    exact ⟨(conjGroundEquiv g L).symm x, Subgroup.mem_subgroupOf.2 (Subgroup.mem_subgroupOf.1 hx),
+    refine ⟨(conjGroundEquiv g L).symm x, Subgroup.mem_subgroupOf.2 ?_,
       (conjGroundEquiv g L).apply_symm_apply x⟩
+    rw [conjGroundEquiv_symm_apply_coe]
+    exact mem_top_conjugateLayer.1 (Subgroup.mem_subgroupOf.1 hx)
 
 /-- **Conjugation on Galois groups:** `U/V ≃ gUg⁻¹/gVg⁻¹`, induced by `conjGroundEquiv`. -/
 def conjGalEquiv (g : G) (L : NormalLayer G) : L.Gal ≃* (conjugateLayer g L).Gal :=
@@ -316,10 +322,43 @@ def layerGroundConj (g : G) (L : NormalLayer G) :
     F.level L.ground →+ F.level (conjugateLayer g L).ground :=
   (levelConj F g L.ground).toLinearMap.toAddMonoidHom
 
+/-- Conjugation on ground levels is the action of `g`, read in the ambient module. -/
+@[simp]
+theorem layerGroundConj_apply_coe (g : G) (L : NormalLayer G) (x : F.level L.ground) :
+    ((layerGroundConj F g L x : F.level (conjugateLayer g L).ground) : F.toRep.V) =
+      F.toRep.ρ g x := by
+  rw [layerGroundConj]
+  exact levelConj_apply_coe F g L.ground x
+
 /-- **Conjugation on abelianized Galois groups**, written additively. -/
 def layerGalConj (g : G) (L : NormalLayer G) :
     Additive (Abelianization L.Gal) →+ Additive (Abelianization (conjugateLayer g L).Gal) :=
   MonoidHom.toAdditive (Abelianization.map (conjGalEquiv g L).toMonoidHom)
+
+/-- Conjugation on abelianized Galois groups sends the class of `γ` to the class of
+`conjGalEquiv g L γ`. -/
+@[simp]
+theorem layerGalConj_of (g : G) (L : NormalLayer G) (γ : L.Gal) :
+    layerGalConj g L (Additive.ofMul (Abelianization.of γ)) =
+      Additive.ofMul (Abelianization.of (conjGalEquiv g L γ)) := by
+  rw [layerGalConj, MonoidHom.toAdditive_apply_apply, toMul_ofMul, Abelianization.map_of,
+    MulEquiv.coe_toMonoidHom]
+
+/-- **In degree zero, conjugation of cohomology is conjugation of ground levels.** Read through the
+identification of `H⁰(U/V, A^V)` with the ground level `A^U`, conjugating a class by `g` is the
+action of `g` on the ground level, `layerGroundConj`. -/
+theorem groundLevelEquiv_layerCohomologyConj_zero_apply (g : G) (L : NormalLayer G) (x : L.H F 0) :
+    (conjugateLayer g L).groundLevelEquiv F
+        ((groupCohomology.H0Iso ((conjugateLayer g L).rep F)).hom.hom
+          (layerCohomologyConj F g L 0 x)) =
+      layerGroundConj F g L
+        (L.groundLevelEquiv F ((groupCohomology.H0Iso (L.rep F)).hom.hom x)) := by
+  refine Subtype.ext ?_
+  rw [NormalLayer.groundLevelEquiv_apply_coe, layerGroundConj_apply_coe,
+    NormalLayer.groundLevelEquiv_apply_coe, layerCohomologyConj]
+  have h := groupCohomology.map_H0Iso_hom_f_apply (conjGalEquiv g L).symm.toMonoidHom
+    (conjRepIso F g L).hom x
+  exact (congrArg Subtype.val h).trans (conjRepIso_hom_apply_coe F g L _)
 
 end Maps
 
