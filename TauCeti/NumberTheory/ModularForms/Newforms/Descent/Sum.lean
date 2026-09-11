@@ -31,6 +31,8 @@ the sum is `Γ₀(N / p)`-invariant whenever `f` is `Γ₀(N)`-invariant.
   `f ∣[k] δ = u • f` for every `δ ∈ Γ₀(N)` with the lower-right entry of `γ` modulo `N / p`, then
   `descendSlash k p N f ∣[k] γ = u • descendSlash k p N f`, for a scalar `u` from any `α` acting
   compatibly on `ℂ`.
+* `TauCeti.descendSlash_slash_mapGL_eq_self_of_mem_Gamma0`: its case `u = 1` — the descent sum
+  of a `Γ₀(N)`-invariant function is `Γ₀(N / p)`-invariant.
 * `TauCeti.descendSlash_slash_mapGL_of_nebentypus`: if `f` transforms under `Γ₀(N)` by `χ`, and
   `χ` is the pull-back of `χ₀` modulo `N / p`, then `descendSlash k p N f` transforms under
   `Γ₀(N / p)` by `χ₀` — the descent lowers the level of the nebentypus.
@@ -122,6 +124,16 @@ theorem descendSlash_slash_mapGL_of_mem_Gamma0 (k : ℤ) [NeZero p] (hpsq : p ^ 
       (Gamma0_le_Gamma0_of_dvd (Nat.dvd_div_of_mul_dvd (by rwa [← pow_two])) hγ))
     (fun v ↦ u • (f ∣[k] descendMatrix p N (descendShift p N hpsq γ v)))
     (fun v ↦ u • (f ∣[k] descendMatrix p N v)) fun _ ↦ rfl
+
+/-- **The descent slash sum is `Γ₀(N / p)`-invariant at `p² ∣ N`**: if `f` is invariant under
+`Γ₀(N)`, then `descendSlash k p N f` is invariant under the larger group `Γ₀(N / p)` — the
+descent lowers the level. The case `u = 1` of `descendSlash_slash_mapGL_of_mem_Gamma0`. -/
+theorem descendSlash_slash_mapGL_eq_self_of_mem_Gamma0 (k : ℤ) [NeZero p] (hpsq : p ^ 2 ∣ N)
+    {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p)) {f : ℍ → ℂ}
+    (hf : ∀ δ ∈ Gamma0 N, f ∣[k] (mapGL ℝ δ : GL (Fin 2) ℝ) = f) :
+    descendSlash k p N f ∣[k] (mapGL ℝ γ : GL (Fin 2) ℝ) = descendSlash k p N f := by
+  simpa using descendSlash_slash_mapGL_of_mem_Gamma0 k hpsq hγ (u := (1 : ℂ))
+    fun δ hδ _ ↦ by rw [hf δ hδ, one_smul]
 
 /-- **The descent sum lowers the level of the nebentypus at `p² ∣ N`.** If `f` transforms under
 `Γ₀(N)` by `χ`, and `χ` is the pull-back of a character `χ₀` modulo `N / p` (the hypothesis
