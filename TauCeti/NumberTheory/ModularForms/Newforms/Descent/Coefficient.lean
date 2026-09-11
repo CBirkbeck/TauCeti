@@ -82,6 +82,12 @@ section Core
 
 variable {M : ℕ}
 
+/-- The function underlying a finite sum of cusp forms is the sum of the functions. -/
+private theorem coe_finset_sum {ι : Type*} (s : Finset ι)
+    (F : ι → CuspForm ((Gamma1 M).map (mapGL ℝ)) k) :
+    ⇑(∑ i ∈ s, F i : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) = ∑ i ∈ s, ⇑(F i) :=
+  map_sum (FunLike.coeAddMonoidHom (CuspForm ((Gamma1 M).map (mapGL ℝ)) k) ℍ ℂ) F s
+
 /-- The `m`-th coefficient of a finite sum of cusp forms of level `Γ₁(M)`. -/
 private theorem qExpansion_coeff_finset_sum {ι : Type*} (s : Finset ι)
     (F : ι → CuspForm ((Gamma1 M).map (mapGL ℝ)) k) (m : ℕ) :
@@ -144,6 +150,61 @@ private theorem descendSlash_smul_slash_scaleGL_eq_coe_levelRaise (hp : p.Prime)
   have h := descendSlash_coe_levelRaise_mul_left k hp hpN' (hpl.coprime_dvd_right hql) hcomp' hF
   rw [CuspForm.coe_levelRaise, Nat.mul_div_cancel' hqMl] at h
   rw [h, CuspForm.coe_levelRaise, coe_descendCuspForm]
+
+/-- **The squarefree decomposition, as an identity of functions.** For `Δ ∈ S_k(Γ₁(M), χ)` with
+`a_n(Δ) = 0` at the indices coprime to a squarefree `l`, the peeled pieces `F_q` of level
+`M l² / q` (Lemma 4.6.7) satisfy `Δ = ∑_{q ∣ l} V_q F_q` as functions on `ℍ`: both sides are
+cusp forms of level `Γ₁(M l²)` with the same `q`-expansion. -/
+private theorem exists_coe_eq_sum_coe_levelRaise_of_squarefree [NeZero M] {l : ℕ}
+    (hsq : Squarefree l) {χ : (ZMod M)ˣ →* ℂˣ} {Δ : CuspForm ((Gamma1 M).map (mapGL ℝ)) k}
+    (hΔ : Δ ∈ cuspFormCharSpace k χ)
+    (hvan : ∀ n, Nat.Coprime n l → (qExpansion 1 Δ).coeff n = 0) :
+    ∃ (F : ∀ q ∈ l.primeFactors, CuspForm ((Gamma1 (M * l ^ 2 / q)).map (mapGL ℝ)) k)
+      (χ' : ∀ q ∈ l.primeFactors, (ZMod (M * l ^ 2 / q))ˣ →* ℂˣ),
+      (∀ q (hq : q ∈ l.primeFactors), F q hq ∈ cuspFormCharSpace k (χ' q hq)) ∧
+      (∀ q (hq : q ∈ l.primeFactors),
+        (χ' q hq).comp (ZMod.unitsMap (Nat.div_dvd_of_dvd (dvd_mul_of_dvd_right
+          ((Nat.dvd_of_mem_primeFactors hq).trans (dvd_pow_self l two_ne_zero)) M))) =
+          χ.comp (ZMod.unitsMap (Nat.dvd_mul_right M (l ^ 2)))) ∧
+      ⇑Δ = ∑ q ∈ l.primeFactors.attach,
+        haveI : NeZero q.1 := ⟨(Nat.prime_of_mem_primeFactors q.2).ne_zero⟩
+        ⇑(CuspForm.levelRaise q.1 (Gamma1_map_le_conjAct_scaleGL_of_dvd (dvd_of_eq
+          (Nat.mul_div_cancel' (dvd_mul_of_dvd_right
+            ((Nat.dvd_of_mem_primeFactors q.2).trans (dvd_pow_self l two_ne_zero)) M))))
+          (F q.1 q.2)) := by
+  obtain ⟨g, F, χ', -, hF, hFg, hχ', hcoeff⟩ :=
+    exists_qExpansion_coeff_eq_sum_primeFactors_of_squarefree χ hΔ hsq hvan
+  refine ⟨F, χ', hF, hχ', ?_⟩
+  have hM : M ∣ M * l ^ 2 := Nat.dvd_mul_right M _
+  -- the difference of the two sides, as a cusp form of level `Γ₁(M l²)`
+  set D : CuspForm ((Gamma1 (M * l ^ 2)).map (mapGL ℝ)) k :=
+    _root_.CuspForm.ofLe (Gamma1_map_le_Gamma1_map_of_dvd hM) Δ -
+      ∑ q ∈ l.primeFactors.attach,
+        haveI : NeZero q.1 := ⟨(Nat.prime_of_mem_primeFactors q.2).ne_zero⟩
+        CuspForm.levelRaise q.1 (Gamma1_map_le_conjAct_scaleGL_of_dvd (dvd_of_eq
+          (Nat.mul_div_cancel' (dvd_mul_of_dvd_right
+            ((Nat.dvd_of_mem_primeFactors q.2).trans (dvd_pow_self l two_ne_zero)) M))))
+          (F q.1 q.2) with hDdef
+  -- its `q`-expansion vanishes: the coefficient identity of the decomposition
+  have hD : qExpansion 1 D = 0 := by
+    ext n
+    rw [hDdef, FunLike.coe_sub,
+      ModularForm.qExpansion_sub one_pos (one_mem_strictPeriods_Gamma1_map _), map_sub,
+      _root_.CuspForm.coe_ofLe, qExpansion_coeff_finset_sum, hcoeff n, map_zero,
+      ← Finset.sum_attach l.primeFactors fun q ↦ if q ∣ n then (qExpansion 1 (g q)).coeff (n / q)
+        else 0, sub_eq_zero]
+    refine Finset.sum_congr rfl fun q _ ↦ ?_
+    have : NeZero q.1 := ⟨(Nat.prime_of_mem_primeFactors q.2).ne_zero⟩
+    rw [CuspForm.qExpansion_levelRaise_coeff (one_mem_strictPeriods_Gamma1_map _)
+      (one_mem_strictPeriods_Gamma1_map _), hFg q.1 q.2]
+  -- so the difference is zero
+  have : Fact (IsCusp OnePoint.infty ((Gamma1 (M * l ^ 2)).map (mapGL ℝ))) :=
+    ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos (one_mem_strictPeriods_Gamma1_map _)⟩
+  have hfun : ⇑D = 0 := (qExpansion_eq_zero_iff one_pos
+    (SlashInvariantFormClass.periodic_comp_ofComplex D (one_mem_strictPeriods_Gamma1_map _))
+    (ModularFormClass.holo D) (ModularFormClass.bdd_at_infty D)).mp hD
+  rw [hDdef, FunLike.coe_sub, _root_.CuspForm.coe_ofLe, coe_finset_sum] at hfun
+  exact sub_eq_zero.mp hfun
 
 end Core
 
