@@ -5,10 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.RingTheory.RingHom.Flat
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Completion
-
-import TauCeti.RingTheory.Flat.Pi
 
 /-!
 # The structure map into a family of rational localisations
@@ -25,10 +22,8 @@ The family `(R(T/t))_{t ∈ T}` is a cover of `Spa(A,A⁺)` — a *standard rati
 `A`. For a complete Hausdorff Huber pair the converse holds as well
 (`TauCeti.ValuationSpectrum.span_eq_top_iff_spa_eq_biUnion_rationalSubset`, Corollary 7.53).
 Under the spanning hypothesis this map is the comparison whose faithful flatness and injectivity
-Wedhorn's Corollary 8.32 asserts. **No part of Corollary 8.32 is proved here**, and the spanning
-hypothesis is not imposed anywhere below. What is proved is the assembly step alone: the bundled
-map is flat once each component is. Component flatness — that `A → A⟨T/t⟩` is itself flat — is
-the substantive content, and it is not proved here or anywhere on `main` yet.
+Wedhorn's Corollary 8.32 asserts. Neither the hypothesis nor those conclusions appear below; this
+is the map they are about.
 
 ## Implementation notes
 
@@ -45,8 +40,6 @@ all.
 * `TauCeti.Huber.PairOfDefinition.rationalLocalizationPiHom`, with
   `TauCeti.Huber.PairOfDefinition.rationalLocalizationPiHom_apply` its computation rule and
   `TauCeti.Huber.PairOfDefinition.continuous_rationalLocalizationPiHom` its continuity.
-* `TauCeti.Huber.PairOfDefinition.flat_rationalLocalizationPiHom`: the map is flat once each of
-  its components is. This is the finite-product assembly step, not a result about `A⟨T/t⟩`.
 
 ## References
 
@@ -102,39 +95,6 @@ theorem continuous_rationalLocalizationPiHom :
       isTopologicalRing_locUniformSpace P T (t : A) (S t) (hden t)
     Continuous (rationalLocalizationPiHom P T S hden) :=
   continuous_pi fun t ↦ continuous_toCompletionLoc P T (t : A) (S t) (hden t)
-
-/-- **The structure map into a family of rational localisations is flat once each of its
-components is.** The numerators are a `Finset`, so the product is finite, and a finite product of
-flat modules is flat.
-
-This is an assembly step, not a statement about rational localisations: every hypothesis about
-`A⟨T/t⟩` is carried by `hflat`, and nothing here derives it. In particular this is **not** the
-flatness half of Wedhorn's Corollary 8.32 — that would additionally have to prove component
-flatness, for which `main` currently has only the restriction maps between rational localisations
-(`flat_restrictionRingHomOfSubset` and its strengthenings), not the structure map out of `A`. -/
-theorem flat_rationalLocalizationPiHom
-    (hflat : ∀ t : T,
-      letI : UniformSpace (S t) := locUniformSpace P T (t : A) (S t) (hden t)
-      letI : IsUniformAddGroup (S t) :=
-        isUniformAddGroup_locUniformSpace P T (t : A) (S t) (hden t)
-      letI : IsTopologicalRing (S t) :=
-        isTopologicalRing_locUniformSpace P T (t : A) (S t) (hden t)
-      (toCompletionLoc P T (t : A) (S t) (hden t)).Flat) :
-    letI : ∀ t : T, UniformSpace (S t) := fun t ↦ locUniformSpace P T (t : A) (S t) (hden t)
-    letI : ∀ t : T, IsUniformAddGroup (S t) := fun t ↦
-      isUniformAddGroup_locUniformSpace P T (t : A) (S t) (hden t)
-    letI : ∀ t : T, IsTopologicalRing (S t) := fun t ↦
-      isTopologicalRing_locUniformSpace P T (t : A) (S t) (hden t)
-    (rationalLocalizationPiHom P T S hden).Flat := by
-  let : ∀ t : T, UniformSpace (S t) := fun t ↦ locUniformSpace P T (t : A) (S t) (hden t)
-  let : ∀ t : T, IsUniformAddGroup (S t) := fun t ↦
-    isUniformAddGroup_locUniformSpace P T (t : A) (S t) (hden t)
-  let : ∀ t : T, IsTopologicalRing (S t) := fun t ↦
-    isTopologicalRing_locUniformSpace P T (t : A) (S t) (hden t)
-  let : ∀ t : T, Algebra A (UniformSpace.Completion (S t)) := fun t ↦
-    (toCompletionLoc P T (t : A) (S t) (hden t)).toAlgebra
-  have : ∀ t : T, Module.Flat A (UniformSpace.Completion (S t)) := hflat
-  exact Module.Flat.pi
 
 end TauCeti.Huber.PairOfDefinition
 
