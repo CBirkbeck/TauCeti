@@ -156,13 +156,19 @@ theorem exists_eq_sum_of_forall_coprime_prod_qExpansion_coeff_eq_zero {χ : (ZMo
       rw [← Finset.mul_prod_erase S id hpS]; rfl
     have hvan' : ∀ n, Nat.Coprime n (p * (S.erase p).prod id) → (qExpansion 1 f).coeff n = 0 :=
       fun n hn ↦ hvan n (hprod ▸ hn)
-    rcases qExpansion_coeff_eq_zero_of_coprime_or_exists_eq_comp_unitsMap χ hf hp hpN hLN hpL
-      hvan' with hvan'' | ⟨χ₀, hcomp⟩
+    rcases qExpansion_coeff_eq_zero_of_coprime_or_factorsThrough χ hf hp hpN hLN hpL
+      hvan' with hvan'' | hfac
     · -- `p` needs no descent: `f` already vanishes off the remaining primes
       obtain ⟨g, hsum, hsupp, hchar⟩ := ih hS' hf hvan'' hcard'
       exact exists_eq_sum_of_sub_eq_sum_erase hpS (Submodule.zero_mem _) (Submodule.zero_mem _)
         (by rw [sub_zero, hsum]) hsupp hchar
     · -- descend along `p`, then recurse on the remainder
+      -- the lowered unit homomorphism, and the factorisation the descent lemmas take
+      have hψχ : (MulChar.ofUnitHom χ).toUnitHom = χ := MulChar.equivToUnitHom.apply_symm_apply χ
+      have hcomp : χ = (hfac.χ₀).toUnitHom.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)) := by
+        have h := congrArg MulChar.toUnitHom hfac.eq_changeLevel
+        rwa [DirichletCharacter.changeLevel_toUnitHom, hψχ] at h
+      set χ₀ := (hfac.χ₀).toUnitHom with hχ₀
       obtain ⟨gp, hgp_supp, hgp_char, hdiff⟩ :=
         exists_mem_qSupportedOnDvdSubmodule_and_qExpansion_coeff_sub_eq_zero hp hpN hsq hLN hpL
           hcomp hf hvan'
