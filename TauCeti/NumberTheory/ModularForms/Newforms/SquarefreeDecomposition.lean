@@ -5,23 +5,22 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.ModularForms.ConductorDichotomy
-public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter
-public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Basic
+public import TauCeti.NumberTheory.ModularForms.Newforms.AtkinLehner
+public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Basic
 
 /-!
 # The squarefree decomposition of a form with vanishing coprime coefficients
 
 Miyake's Lemma 4.6.7: a cusp form `f ∈ S_k(Γ₁(N), χ)` whose `q`-expansion vanishes at every index
-coprime to a squarefree `l > 1` is, coefficient by coefficient, a sum `∑_{q ∣ l} V_q g_q` of
-level-raises of forms `g_q` of level `N l²`, each `g_q` the restriction of a form `F_q` of level
-`N l² / q` with a nebentypus lowered along `N l² / q ∣ N l²`.
+coprime to a squarefree `l > 1` is, coefficient by coefficient, a sum `∑_{q ∣ l} V_q F_q` of
+level-raises of forms `F_q` of level `N l² / q` with nebentypus lowered along `N l² / q ∣ N l²`.
+The coefficients of the sum are read through the restrictions `g_q` of the `F_q` to the common
+level `N l²`: `a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(g_q)`. The prime peeled at each step is the one of
+`Newforms/AtkinLehner.lean`
+(`exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_qExpansionSupportedOnDvd`).
 
 ## Main results
 
-* `TauCeti.exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_qExpansionSupportedOnDvd`:
-  the peeling step — a form of level `M` supported on the multiples of a prime `p ∣ M` is, on
-  coefficients, the level-raise `V_p` of a form of level `M / p` with a lowered nebentypus.
 * `TauCeti.exists_qExpansion_coeff_eq_sum_primeFactors_of_squarefree`: Lemma 4.6.7.
 
 ## Provenance
@@ -31,9 +30,8 @@ Adapted from the AINTLIB `LeanModularForms` project (Chris Birkbeck, Apache-2.0,
 `projects/LeanModularForms/LeanModularForms/StrongMultiplicityOne/SquarefreeDecomp.lean`,
 theorem `squarefree_decomp_with_lower_level` and its `Miyake467Decomp_*` helpers. The source
 states the decomposition through a bundled `Prop`-valued definition and transports forms across
-equalities of levels; here the conclusion is stated directly, levels are related by divisibility
-(`CuspForm.ofLe`), and the per-prime peeling is one public lemma instead of two dichotomy
-branches repeated in the base case and the inductive step.
+equalities of levels; here the conclusion is stated directly and levels are related by
+divisibility (`CuspForm.ofLe`).
 
 ## References
 
@@ -49,59 +47,6 @@ open scoped MatrixGroups ModularForm
 namespace TauCeti
 
 variable {k : ℤ}
-
-/-- The coefficients of a level-raise, read backwards: if `G = p ^ (1 - k) • (g ∣[k] diag(p, 1))`
-as functions on `ℍ`, that is `G = V_p g`, then `a_m(g) = a_{pm}(G)`. (Public in `Degeneracy.lean`
-once #6319 lands; this copy goes then.) -/
-private theorem qExpansion_coeff_eq_qExpansion_coeff_mul_of_coe_eq {M p : ℕ} [NeZero p]
-    (hpM : p ∣ M) {G : CuspForm ((Gamma1 M).map (mapGL ℝ)) k}
-    {g : CuspForm ((Gamma1 (M / p)).map (mapGL ℝ)) k}
-    (h : ⇑G = (p : ℂ) ^ (1 - k) • (⇑g ∣[k] scaleGL p)) (m : ℕ) :
-    (qExpansion 1 g).coeff m = (qExpansion 1 G).coeff (p * m) := by
-  have hG : G = CuspForm.levelRaise p
-      (Gamma1_map_le_conjAct_scaleGL_of_dvd (dvd_of_eq (Nat.mul_div_cancel' hpM))) g :=
-    DFunLike.coe_injective (by rw [CuspForm.coe_levelRaise, h])
-  rw [hG, CuspForm.qExpansion_levelRaise_coeff (one_mem_strictPeriods_Gamma1_map _)
-    (one_mem_strictPeriods_Gamma1_map _)]
-  simp only [dvd_mul_right, ↓reduceIte, Nat.mul_div_cancel_left m (NeZero.pos p)]
-
-/-- **Peeling a prime off a form supported on its multiples.** If `G ∈ S_k(Γ₁(M), χ ∘ π)` is
-supported on the multiples of a prime `p ∣ M`, where `χ` has level `N ∣ M / p`, then there is a
-form `F ∈ S_k(Γ₁(M / p), χ')` with `χ'` lying over `χ ∘ π` and `a_n(G) = a_{n/p}(F)` for `p ∣ n`,
-`a_n(G) = 0` otherwise: `G` is `V_p F` on coefficients. The level-lowering dichotomy provides `F`
-with the lowered nebentypus, or forces `G = 0`, in which case `F = 0` does. -/
-theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_qExpansionSupportedOnDvd
-    {M N : ℕ} [NeZero M] (χ : (ZMod N)ˣ →* ℂˣ) (hNM : N ∣ M) {p : ℕ} (hp : p.Prime) (hpM : p ∣ M)
-    (hNMp : N ∣ M / p) {G : CuspForm ((Gamma1 M).map (mapGL ℝ)) k}
-    (hG : G ∈ cuspFormCharSpace k (χ.comp (ZMod.unitsMap hNM)))
-    (hsupp : QExpansionSupportedOnDvd p G) :
-    ∃ (χ' : (ZMod (M / p))ˣ →* ℂˣ) (F : CuspForm ((Gamma1 (M / p)).map (mapGL ℝ)) k),
-      F ∈ cuspFormCharSpace k χ' ∧
-        χ'.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpM)) = χ.comp (ZMod.unitsMap hNM) ∧
-        ∀ n, (qExpansion 1 G).coeff n = if p ∣ n then (qExpansion 1 F).coeff (n / p) else 0 := by
-  have : NeZero p := ⟨hp.ne_zero⟩
-  obtain ⟨φ, hGφ, hφT⟩ :=
-    CuspForm.exists_eq_smul_slash_scaleGL_and_slash_T_eq_of_qExpansionSupportedOnDvd G hsupp
-  have hGχ : G ∈
-      cuspFormCharSpace k (MulChar.ofUnitHom (χ.comp (ZMod.unitsMap hNM))).toUnitHom := by
-    rwa [show (MulChar.ofUnitHom (χ.comp (ZMod.unitsMap hNM))).toUnitHom =
-      χ.comp (ZMod.unitsMap hNM) from MulChar.equivToUnitHom.apply_symm_apply _]
-  rcases exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero hpM k _ φ G hGχ hGφ hφT with
-    ⟨hfac, F, hFχ, hFφ⟩ | hφ0
-  · refine ⟨hfac.χ₀.toUnitHom, F, hFχ, ?_, fun n ↦ ?_⟩
-    · rw [← DirichletCharacter.changeLevel_toUnitHom, ← hfac.eq_changeLevel]
-      exact MulChar.equivToUnitHom.apply_symm_apply _
-    · by_cases hn : p ∣ n
-      · obtain ⟨m, rfl⟩ := hn
-        simp only [dvd_mul_right, ↓reduceIte, Nat.mul_div_cancel_left m hp.pos]
-        exact (qExpansion_coeff_eq_qExpansion_coeff_mul_of_coe_eq hpM (hFφ ▸ hGφ) m).symm
-      · simp only [hn, ↓reduceIte]
-        exact PowerSeries.isSupportedOnDvd_iff.mp (qExpansionSupportedOnDvd_iff.mp hsupp) n hn
-  · have hG0 : (⇑G : ℍ → ℂ) = 0 := by rw [hGφ, hφ0, SlashAction.zero_slash, smul_zero]
-    refine ⟨χ.comp (ZMod.unitsMap hNMp), 0, Submodule.zero_mem _, ?_, fun n ↦ ?_⟩
-    · rw [MonoidHom.comp_assoc, ZMod.unitsMap_comp]
-    · rw [hG0, qExpansion_zero, map_zero, FunLike.coe_zero, qExpansion_zero]
-      simp only [map_zero, ite_self]
 
 variable {N : ℕ} [NeZero N]
 
@@ -224,8 +169,8 @@ private theorem exists_qExpansion_coeff_eq_ite_coprime_zero_and_ite_dvd {χ : (Z
   have hNM : N ∣ N * q ^ 2 := Nat.dvd_mul_right N _
   have hNq2q : N * q ^ 2 / q = N * q := by rw [sq, ← mul_assoc, Nat.mul_div_cancel _ hqp.pos]
   obtain ⟨χ₁, F, hF, hχ₁, hFcoeff⟩ :=
-    exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_qExpansionSupportedOnDvd χ hNM
-      hqp (dvd_mul_of_dvd_right (dvd_pow_self q two_ne_zero) N)
+    exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_qExpansionSupportedOnDvd χ hqp
+      (dvd_mul_of_dvd_right (dvd_pow_self q two_ne_zero) N)
       (by rw [hNq2q]; exact Nat.dvd_mul_right N q) hhχ (by
         rw [qExpansionSupportedOnDvd_iff, PowerSeries.isSupportedOnDvd_iff]
         intro n hn
@@ -234,9 +179,11 @@ private theorem exists_qExpansion_coeff_eq_ite_coprime_zero_and_ite_dvd {χ : (Z
         · rfl
         · exact absurd (hqp.coprime_iff_not_dvd.mpr hn).symm hc)
   -- `F` read at the level `N (q l')² / q`
+  have hNql : N * (q * l') ^ 2 / q = N * q * l' ^ 2 := by
+    have h : N * (q * l') ^ 2 = N * q * l' ^ 2 * q := by ring
+    rw [h, Nat.mul_div_cancel _ hqp.pos]
   have hdiv : N * q ^ 2 / q ∣ N * (q * l') ^ 2 / q := by
-    rw [hNq2q, show N * (q * l') ^ 2 / q = N * q * l' ^ 2 by
-      rw [show N * (q * l') ^ 2 = N * q * l' ^ 2 * q by ring, Nat.mul_div_cancel _ hqp.pos]]
+    rw [hNq2q, hNql]
     exact dvd_mul_right _ _
   refine ⟨h, _root_.CuspForm.ofLe (Gamma1_map_le_Gamma1_map_of_dvd hdiv) F,
     χ₁.comp (ZMod.unitsMap hdiv), hhχ, CuspForm.ofLe_mem_cuspFormCharSpace χ₁ hdiv hF, ?_, hhcoeff,
@@ -356,10 +303,7 @@ private theorem squarefreeDecomposition_mul {m : ℕ}
 /-- **Miyake's Lemma 4.6.7: the squarefree decomposition.** If `f ∈ S_k(Γ₁(N), χ)` vanishes at
 every index coprime to a squarefree `l > 1`, then `a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(g q)` for
 forms `g q ∈ S_k(Γ₁(N l²), χ)`, each the restriction of a form `F q ∈ S_k(Γ₁(N l² / q), χ' q)`
-with `χ' q` lying over `χ`: coefficient by coefficient, `f = ∑_{q ∣ l} V_q (F q)`. The proof peels
-one prime `q` at a time: the multiples-of-`q` part of `f` is `V_q` of a form of lower level by
-`exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_qExpansionSupportedOnDvd`, and the
-rest vanishes at every index coprime to `l / q`, so induction on the number of primes applies. -/
+with `χ' q` lying over `χ`: coefficient by coefficient, `f = ∑_{q ∣ l} V_q (F q)`. -/
 theorem exists_qExpansion_coeff_eq_sum_primeFactors_of_squarefree (χ : (ZMod N)ˣ →* ℂˣ)
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {l : ℕ}
     (hl : 1 < l) (hsq : Squarefree l)

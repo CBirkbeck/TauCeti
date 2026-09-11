@@ -40,6 +40,10 @@ instead assumes `QExpansionSupportedOnDvd l f` and obtains `φ` from it.
 * `TauCeti.mem_cuspFormsOld_of_qExpansionSupportedOnDvd`: **the Atkin–Lehner step at one
   divisor** — the same conclusion from the `q`-expansion support condition alone, the descent
   being supplied by `Newforms/Descent/Basic.lean`.
+* `TauCeti.exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_qExpansionSupportedOnDvd`:
+  **peeling a prime** — a form of level `M` supported on the multiples of a prime `p ∣ M`, with a
+  nebentypus pulled back from level `N ∣ M / p`, is on coefficients the level-raise `V_p` of a form
+  of level `M / p` with a lowered nebentypus.
 
 ## Provenance
 
@@ -123,6 +127,48 @@ theorem mem_cuspFormsOld_of_qExpansionSupportedOnDvd {l : ℕ} (hl : l ≠ 1) (h
   obtain ⟨φ, hφ, hT⟩ :=
     CuspForm.exists_eq_smul_slash_scaleGL_and_slash_T_eq_of_qExpansionSupportedOnDvd f hf
   exact mem_cuspFormsOld_of_slash_T_eq hl hlN χ φ hfχ hφ hT
+
+/-- **Peeling a prime off a form supported on its multiples.** If `G ∈ S_k(Γ₁(M), χ ∘ π)` is
+supported on the multiples of a prime `p ∣ M`, where `χ` has level `N ∣ M / p`, then there is a
+form `F ∈ S_k(Γ₁(M / p), χ')` with `χ'` lying over `χ ∘ π` and `a_n(G) = a_{n/p}(F)` for `p ∣ n`,
+`a_n(G) = 0` otherwise: `G` is `V_p F` on coefficients. -/
+theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_qExpansionSupportedOnDvd
+    {M N : ℕ} [NeZero M] (χ : (ZMod N)ˣ →* ℂˣ) {p : ℕ} (hp : p.Prime) (hpM : p ∣ M)
+    (hNMp : N ∣ M / p) {G : CuspForm ((Gamma1 M).map (mapGL ℝ)) k}
+    (hG : G ∈ cuspFormCharSpace k (χ.comp (ZMod.unitsMap (hNMp.trans (Nat.div_dvd_of_dvd hpM)))))
+    (hsupp : QExpansionSupportedOnDvd p G) :
+    ∃ (χ' : (ZMod (M / p))ˣ →* ℂˣ) (F : CuspForm ((Gamma1 (M / p)).map (mapGL ℝ)) k),
+      F ∈ cuspFormCharSpace k χ' ∧
+        χ'.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpM)) =
+          χ.comp (ZMod.unitsMap (hNMp.trans (Nat.div_dvd_of_dvd hpM))) ∧
+        ∀ n, (qExpansion 1 G).coeff n = if p ∣ n then (qExpansion 1 F).coeff (n / p) else 0 := by
+  have : NeZero p := ⟨hp.ne_zero⟩
+  have hNM : N ∣ M := hNMp.trans (Nat.div_dvd_of_dvd hpM)
+  obtain ⟨φ, hGφ, hφT⟩ :=
+    CuspForm.exists_eq_smul_slash_scaleGL_and_slash_T_eq_of_qExpansionSupportedOnDvd G hsupp
+  -- the nebentypus of `G`, as a Dirichlet character
+  have hunit : (MulChar.ofUnitHom (χ.comp (ZMod.unitsMap hNM))).toUnitHom =
+      χ.comp (ZMod.unitsMap hNM) := MulChar.equivToUnitHom.apply_symm_apply _
+  have hGχ : G ∈
+      cuspFormCharSpace k (MulChar.ofUnitHom (χ.comp (ZMod.unitsMap hNM))).toUnitHom := by
+    rwa [hunit]
+  rcases exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero hpM k _ φ G hGχ hGφ hφT with
+    ⟨hfac, F, hFχ, hFφ⟩ | hφ0
+  · refine ⟨hfac.χ₀.toUnitHom, F, hFχ, ?_, fun n ↦ ?_⟩
+    · rw [← DirichletCharacter.changeLevel_toUnitHom, ← hfac.eq_changeLevel]
+      exact MulChar.equivToUnitHom.apply_symm_apply _
+    · by_cases hn : p ∣ n
+      · obtain ⟨m, rfl⟩ := hn
+        simp only [dvd_mul_right, ↓reduceIte, Nat.mul_div_cancel_left m hp.pos]
+        exact (CuspForm.qExpansion_coeff_eq_qExpansion_coeff_mul_of_coe_eq_smul_slash_scaleGL hpM
+          (hFφ ▸ hGφ) m).symm
+      · simp only [hn, ↓reduceIte]
+        exact PowerSeries.isSupportedOnDvd_iff.mp (qExpansionSupportedOnDvd_iff.mp hsupp) n hn
+  · have hG0 : (⇑G : ℍ → ℂ) = 0 := by rw [hGφ, hφ0, SlashAction.zero_slash, smul_zero]
+    refine ⟨χ.comp (ZMod.unitsMap hNMp), 0, Submodule.zero_mem _, ?_, fun n ↦ ?_⟩
+    · rw [MonoidHom.comp_assoc, ZMod.unitsMap_comp]
+    · rw [hG0, qExpansion_zero, map_zero, FunLike.coe_zero, qExpansion_zero]
+      simp only [map_zero, ite_self]
 
 end TauCeti
 
