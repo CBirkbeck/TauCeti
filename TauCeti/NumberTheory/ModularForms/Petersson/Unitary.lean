@@ -7,6 +7,7 @@ module
 
 public import TauCeti.NumberTheory.ModularForms.DiamondOperators
 public import TauCeti.NumberTheory.ModularForms.Petersson.Orthogonal
+import Mathlib.Data.ZMod.Units
 
 /-!
 # The Petersson product is unitary under a normalising slash
@@ -174,6 +175,7 @@ theorem diamondOpCusp_mem_peterssonOrthogonal {k : ℤ}
 
 /-! ### Distinct nebentypus characters are orthogonal -/
 
+omit [NeZero N] in
 /-- A character of the finite group `(ZMod N)ˣ` takes unimodular values. -/
 private lemma conj_mul_char_eq_one (χ : (ZMod N)ˣ →* ℂˣ) (d : (ZMod N)ˣ) :
     conj (χ d : ℂ) * (χ d : ℂ) = 1 := by
