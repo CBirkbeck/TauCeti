@@ -66,4 +66,103 @@ theorem exists_mem_qSupportedOnDvdSubmodule_and_qExpansion_coeff_sub_eq_zero (hp
     · rw [ite_eq_right hpn, sub_zero]
       exact hvan n (Nat.Coprime.mul_right (hp.coprime_iff_not_dvd.mpr hpn).symm hn)
 
+/-! ### The induction over the primes -/
+
+/-- The product of the primes of `S ⊆ N.primeFactors` other than `p` is squarefree, coprime to
+`p`, and has its primes among those of `N`. -/
+private theorem squarefree_prod_erase_and_coprime_and_primeFactors_subset {S : Finset ℕ}
+    (hS : S ⊆ N.primeFactors) {p : ℕ} (hp : p.Prime) :
+    Squarefree ((S.erase p).prod id) ∧ Nat.Coprime p ((S.erase p).prod id) ∧
+      ((S.erase p).prod id).primeFactors ⊆ N.primeFactors := by
+  have hprime : ∀ q ∈ S.erase p, q.Prime := fun q hq ↦
+    Nat.prime_of_mem_primeFactors (hS (Finset.mem_of_mem_erase hq))
+  refine ⟨?_, ?_, ?_⟩
+  · refine Finset.squarefree_prod_of_pairwise_isCoprime (fun q₁ hq₁ q₂ hq₂ hne ↦ ?_)
+      fun q hq ↦ (hprime q hq).squarefree
+    exact Nat.coprime_iff_isRelPrime.mp
+      ((Nat.coprime_primes (hprime q₁ hq₁) (hprime q₂ hq₂)).mpr hne)
+  · exact Nat.Coprime.prod_right fun q hq ↦
+      (Nat.coprime_primes hp (hprime q hq)).mpr (Finset.ne_of_mem_erase hq).symm
+  · exact Nat.primeFactors_mono (Finset.prod_primes_dvd N (fun q hq ↦ (hprime q hq).prime)
+      fun q hq ↦ Nat.dvd_of_mem_primeFactors (hS (Finset.mem_of_mem_erase hq))) (NeZero.ne N)
+
+omit [NeZero N] in
+/-- A cusp form all of whose `q`-expansion coefficients vanish is zero. -/
+private theorem eq_zero_of_forall_qExpansion_coeff_eq_zero
+    {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (h : ∀ n, (qExpansion 1 f).coeff n = 0) :
+    f = 0 := by
+  have : Fact (IsCusp OnePoint.infty ((Gamma1 N).map (mapGL ℝ))) :=
+    ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos (one_mem_strictPeriods_Gamma1_map _)⟩
+  exact DFunLike.coe_injective ((qExpansion_eq_zero_iff one_pos
+    (SlashInvariantFormClass.periodic_comp_ofComplex f (one_mem_strictPeriods_Gamma1_map _))
+    (ModularFormClass.holo f) (ModularFormClass.bdd_at_infty f)).mp (PowerSeries.ext fun n ↦ by
+      rw [map_zero]; exact h n))
+
+/-- Splitting a sum over `S` at `p ∈ S`, when the summand at `p` is given separately. -/
+private theorem sum_ite_eq_add_sum_erase {M : Type*} [AddCommMonoid M] {S : Finset ℕ} {p : ℕ}
+    (hp : p ∈ S) (a : M) (g : ℕ → M) :
+    ∑ q ∈ S, (if q = p then a else g q) = a + ∑ q ∈ S.erase p, g q := by
+  rw [← Finset.sum_erase_add _ _ hp, add_comm, ite_eq_left rfl]
+  congr 1
+  exact Finset.sum_congr rfl fun q hq ↦ ite_eq_right (Finset.ne_of_mem_erase hq)
+
+/-- **The coprime sieve decomposes along the primes** (Miyake, Lemma 4.6.8, the induction). For
+`S ⊆ N.primeFactors` and `f ∈ S_k(Γ₁(N), χ)` vanishing at every index coprime to the product of
+`S`, `f = ∑_{p ∈ S} f_p` with each `f_p ∈ S_k(Γ₁(N), χ)` supported on the multiples of `p`. -/
+theorem exists_eq_sum_of_forall_coprime_prod_qExpansion_coeff_eq_zero {χ : (ZMod N)ˣ →* ℂˣ}
+    {S : Finset ℕ} (hS : S ⊆ N.primeFactors) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
+    (hf : f ∈ cuspFormCharSpace k χ)
+    (hvan : ∀ n, Nat.Coprime n (S.prod id) → (qExpansion 1 f).coeff n = 0) :
+    ∃ g : ℕ → CuspForm ((Gamma1 N).map (mapGL ℝ)) k, f = ∑ p ∈ S, g p ∧
+      (∀ p ∈ S, g p ∈ qSupportedOnDvdSubmodule N k p) ∧ ∀ p ∈ S, g p ∈ cuspFormCharSpace k χ := by
+  induction hcard : S.card generalizing S f with
+  | zero =>
+    obtain rfl : S = ∅ := Finset.card_eq_zero.mp hcard
+    refine ⟨fun _ ↦ 0, ?_, fun p hp ↦ absurd hp (Finset.notMem_empty p),
+      fun p hp ↦ absurd hp (Finset.notMem_empty p)⟩
+    rw [Finset.sum_empty]
+    exact eq_zero_of_forall_qExpansion_coeff_eq_zero fun n ↦
+      hvan n (by rw [Finset.prod_empty]; exact Nat.coprime_one_right n)
+  | succ m ih =>
+    obtain ⟨p, hpS⟩ : S.Nonempty := Finset.card_pos.mp (hcard ▸ Nat.succ_pos m)
+    have hp : p.Prime := Nat.prime_of_mem_primeFactors (hS hpS)
+    have hpN : p ∣ N := Nat.dvd_of_mem_primeFactors (hS hpS)
+    have hS' : S.erase p ⊆ N.primeFactors := fun q hq ↦ hS (Finset.mem_of_mem_erase hq)
+    have hcard' : (S.erase p).card = m := by rw [Finset.card_erase_of_mem hpS, hcard]; rfl
+    obtain ⟨hsq, hpL, hLN⟩ := squarefree_prod_erase_and_coprime_and_primeFactors_subset hS hp
+    have hprod : S.prod id = p * (S.erase p).prod id := by
+      rw [← Finset.mul_prod_erase S id hpS]; rfl
+    have hvan' : ∀ n, Nat.Coprime n (p * (S.erase p).prod id) → (qExpansion 1 f).coeff n = 0 :=
+      fun n hn ↦ hvan n (hprod ▸ hn)
+    rcases qExpansion_coeff_eq_zero_of_coprime_or_exists_eq_comp_unitsMap χ hf hp hpN hsq hLN hpL
+      hvan' with hvan'' | ⟨χ₀, hcomp⟩
+    · -- `p` needs no descent: `f` already vanishes off the remaining primes
+      obtain ⟨g, hsum, hsupp, hchar⟩ := ih hS' hf hvan'' hcard'
+      refine ⟨fun q ↦ if q = p then 0 else g q, ?_, fun q hq ↦ ?_, fun q hq ↦ ?_⟩
+      · rw [sum_ite_eq_add_sum_erase hpS, zero_add, hsum]
+      · by_cases hqp : q = p
+        · simp only [hqp, ite_true, Submodule.zero_mem]
+        · simp only [hqp, ite_false]
+          exact hsupp q (Finset.mem_erase.mpr ⟨hqp, hq⟩)
+      · by_cases hqp : q = p
+        · simp only [hqp, ite_true, Submodule.zero_mem]
+        · simp only [hqp, ite_false]
+          exact hchar q (Finset.mem_erase.mpr ⟨hqp, hq⟩)
+    · -- descend along `p`, then recurse on the remainder
+      obtain ⟨gp, hgp_supp, hgp_char, hdiff⟩ :=
+        exists_mem_qSupportedOnDvdSubmodule_and_qExpansion_coeff_sub_eq_zero hp hpN hsq hLN hpL
+          hcomp hf hvan'
+      obtain ⟨g, hsum, hsupp, hchar⟩ := ih hS' (Submodule.sub_mem _ hf hgp_char) hdiff hcard'
+      refine ⟨fun q ↦ if q = p then gp else g q, ?_, fun q hq ↦ ?_, fun q hq ↦ ?_⟩
+      · rw [sum_ite_eq_add_sum_erase hpS, ← hsum, add_sub_cancel]
+      · by_cases hqp : q = p
+        · simp only [hqp, ite_true]; exact hgp_supp
+        · simp only [hqp, ite_false]
+          exact hsupp q (Finset.mem_erase.mpr ⟨hqp, hq⟩)
+      · by_cases hqp : q = p
+        · simp only [hqp, ite_true]; exact hgp_char
+        · simp only [hqp, ite_false]
+          exact hchar q (Finset.mem_erase.mpr ⟨hqp, hq⟩)
+
+
 end TauCeti
