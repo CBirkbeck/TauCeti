@@ -38,11 +38,11 @@ that the descent consumes: if `f` transforms under `Γ₀(N)` by a scalar, the s
 * `TauCeti.descendSlash_slash_mapGL_of_nebentypus`: if `f` transforms under `Γ₀(N)` by `χ`, and
   `χ` is the pull-back of `χ₀` modulo `N / p`, then `descendSlash k p N f` transforms under
   `Γ₀(N / p)` by `χ₀` — the descent lowers the level of the nebentypus.
-* `TauCeti.descendSlash_slash_mapGL_of_mem_Gamma0_of_not_sq_dvd`: the equivariance when `p`
-  exactly divides `N`, and `TauCeti.descendSlash_slash_mapGL_of_mem_Gamma0_of_prime`,
+* `TauCeti.descendSlash_slash_mapGL_of_mem_Gamma0_of_prime`,
   `TauCeti.descendSlash_slash_mapGL_eq_self_of_mem_Gamma0_of_prime`,
   `TauCeti.descendSlash_slash_mapGL_of_nebentypus_of_prime`: the three statements at every prime
-  `p ∣ N`, the two cases combined.
+  `p ∣ N`, the `p² ∣ N` case above and the `p ∥ N` case (a private lemma, with the family
+  permuted by `descendIndexShift`) combined.
 
 ## Scope
 
@@ -164,12 +164,11 @@ theorem descendSlash_slash_mapGL_of_nebentypus (k : ℤ) [NeZero p] (hpsq : p ^ 
     exact Units.ext hd
   rw [hf ⟨δ, hδ⟩, hcomp, MonoidHom.comp_apply, hmap]
 
-/-- **The descent slash sum is `Γ₀(N / p)`-equivariant at `p ∥ N`**: the counterpart of
-`descendSlash_slash_mapGL_of_mem_Gamma0` when `p` exactly divides `N`, with the family permuted
-by `descendIndexShift` (`exists_mem_Gamma0_descendMatrix_mul_of_not_sq_dvd`). -/
-theorem descendSlash_slash_mapGL_of_mem_Gamma0_of_not_sq_dvd (k : ℤ) (hp : p.Prime) (hpN : p ∣ N)
-    (hpsq : ¬ p ^ 2 ∣ N) {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p)) {α : Type*} [DistribSMul α ℂ]
-    [IsScalarTower α ℂ ℂ] {f : ℍ → ℂ} {u : α}
+/-- The `p ∥ N` case of `descendSlash_slash_mapGL_of_mem_Gamma0_of_prime`, with the family
+permuted by `descendIndexShift` (`exists_mem_Gamma0_descendMatrix_mul_of_not_sq_dvd`). -/
+private theorem descendSlash_slash_mapGL_of_mem_Gamma0_of_not_sq_dvd (k : ℤ) (hp : p.Prime)
+    (hpN : p ∣ N) (hpsq : ¬ p ^ 2 ∣ N) {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p)) {α : Type*}
+    [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ] {f : ℍ → ℂ} {u : α}
     (hf : ∀ δ ∈ Gamma0 N, ((δ 1 1 : ℤ) : ZMod (N / p)) = ((γ 1 1 : ℤ) : ZMod (N / p)) →
       f ∣[k] (mapGL ℝ δ : GL (Fin 2) ℝ) = u • f) :
     haveI : NeZero p := ⟨hp.ne_zero⟩
@@ -188,9 +187,9 @@ theorem descendSlash_slash_mapGL_of_mem_Gamma0_of_not_sq_dvd (k : ℤ) (hp : p.P
     (fun v ↦ u • (f ∣[k] descendMatrix p N (descendIndexShift p N hpsq γ v)))
     (fun v ↦ u • (f ∣[k] descendMatrix p N v)) fun _ ↦ rfl
 
-/-- **The descent slash sum is `Γ₀(N / p)`-equivariant at every prime `p ∣ N`**: the two cases
-`p² ∣ N` (`descendSlash_slash_mapGL_of_mem_Gamma0`) and `p ∥ N`
-(`descendSlash_slash_mapGL_of_mem_Gamma0_of_not_sq_dvd`) together. -/
+/-- **The descent slash sum is `Γ₀(N / p)`-equivariant at every prime `p ∣ N`**: the case
+`p² ∣ N` is `descendSlash_slash_mapGL_of_mem_Gamma0`; when `p` exactly divides `N` the family is
+permuted by `descendIndexShift` instead. -/
 theorem descendSlash_slash_mapGL_of_mem_Gamma0_of_prime (k : ℤ) (hp : p.Prime) (hpN : p ∣ N)
     {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 (N / p)) {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ]
     {f : ℍ → ℂ} {u : α}
