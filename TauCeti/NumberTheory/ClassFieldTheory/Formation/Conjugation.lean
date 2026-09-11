@@ -161,21 +161,9 @@ theorem conjugateLayer_mul (g h : G) (L : NormalLayer G) :
 
 /-- Conjugation by `g` identifies the ground subgroup `U` of a layer with the ground subgroup
 `gUg⁻¹` of its conjugate. -/
-def conjGroundEquiv (g : G) (L : NormalLayer G) : L.ground ≃* (conjugateLayer g L).ground where
-  toFun u := ⟨g * u * g⁻¹, by
-    change g⁻¹ * (g * u * g⁻¹) * g ∈ L.ground
-    rw [show g⁻¹ * (g * u * g⁻¹) * g = u by group]
-    exact u.2⟩
-  invFun x := ⟨g⁻¹ * x * g, x.2⟩
-  left_inv u := Subtype.ext (by
-    change g⁻¹ * (g * u * g⁻¹) * g = u
-    group)
-  right_inv x := Subtype.ext (by
-    change g * (g⁻¹ * x * g) * g⁻¹ = x
-    group)
-  map_mul' u v := Subtype.ext (by
-    change g * (u * v) * g⁻¹ = (g * u * g⁻¹) * (g * v * g⁻¹)
-    group)
+def conjGroundEquiv (g : G) (L : NormalLayer G) : L.ground ≃* (conjugateLayer g L).ground :=
+  ((MulAut.conj g).subgroupMap L.ground.toSubgroup).trans
+    (MulEquiv.subgroupCongr (toSubgroup_conjOpenSubgroup g L.ground).symm)
 
 /-- Conjugation on the ground subgroup, read in the ambient group. -/
 @[simp]
@@ -224,12 +212,6 @@ attribute [local instance] TopRep.distribMulAction TopRep.smulCommClass
 
 variable (F : Formation G)
 
-/-- The action of `g` on the coefficient module of a formation, as a linear automorphism. -/
-def Formation.actionEquiv (g : G) : F.toRep.V ≃ₗ[ℤ] F.toRep.V :=
-  LinearEquiv.ofLinearMap (F.toRep.ρ g) (F.toRep.ρ g⁻¹)
-    (by rw [← Module.End.mul_eq_comp, ← map_mul, mul_inv_cancel, map_one]; rfl)
-    (by rw [← Module.End.mul_eq_comp, ← map_mul, inv_mul_cancel, map_one]; rfl)
-
 /-- **The action of `g` carries the level `A^U` onto the level `A^{gUg⁻¹}`.** -/
 theorem map_level_conjOpenSubgroup (g : G) (U : OpenSubgroup G) :
     (F.level U).map (F.toRep.ρ g) = F.level (conjOpenSubgroup g U) := by
@@ -255,7 +237,8 @@ theorem map_level_conjOpenSubgroup (g : G) (U : OpenSubgroup G) :
 
 /-- **Conjugation on levels:** the action of `g` identifies `A^U` with `A^{gUg⁻¹}`. -/
 def levelConj (g : G) (U : OpenSubgroup G) : F.level U ≃ₗ[ℤ] F.level (conjOpenSubgroup g U) :=
-  LinearEquiv.ofSubmodules (F.actionEquiv g) _ _ (map_level_conjOpenSubgroup F g U)
+  LinearEquiv.ofSubmodules (DistribMulAction.toLinearEquiv ℤ F.toRep.V g) _ _
+    (map_level_conjOpenSubgroup F g U)
 
 /-- Conjugation on levels is the action of `g`, read in the ambient module. -/
 @[simp]
