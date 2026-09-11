@@ -30,7 +30,7 @@ The statements are unconditional, at every level `N` (including `N = 0`, where t
 group is `ℤˣ`): the diamond group `(ZMod N)ˣ` is finite (`instFiniteZModUnits`, from
 `Mathlib.Data.ZMod.Units`) and commutative, so the classical character projectors decompose
 every vector (`iSup_iInf_eigenspace_unitHom_eq_top_of_commGroup`), with no
-finite-dimensionality hypotheses anywhere — matching the roadmap's canonical statement.
+finite-dimensionality hypotheses anywhere.
 
 Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/HeckeRIngs/GL2/CharacterDecomp.lean`, Chris Birkbeck,
