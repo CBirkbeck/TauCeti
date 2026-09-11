@@ -9,6 +9,7 @@ public import Mathlib.LinearAlgebra.QuadraticForm.TensorProduct
 public import Mathlib.LinearAlgebra.TensorProduct.Tower
 public import TauCeti.LinearAlgebra.QuadraticForm.Representation
 import Mathlib.LinearAlgebra.TensorProduct.Prod
+public import Mathlib.RingTheory.Flat.Basic
 import TauCeti.LinearAlgebra.BilinearForm.BaseChange
 
 /-!
@@ -21,8 +22,9 @@ through a scalar tower, and proves that finite-dimensional nondegenerate forms r
 nondegenerate over a field extension.
 
 These results complement Mathlib's construction `QuadraticForm.baseChange` and its pure-tensor
-evaluation theorem.  They allow localizations of a quadratic space to inherit maps and regularity
-from the original space without choosing bases in each completion.
+evaluation theorem.  They allow localizations of a quadratic space to inherit maps, injective
+representations, isotropy, and regularity from the original space without choosing bases in each
+completion.
 -/
 
 public section
@@ -267,7 +269,35 @@ theorem baseChange_smul (r : R) (Q : _root_.QuadraticForm R M) :
   apply _root_.baseChange_ext
   simp [Algebra.smul_def, mul_comm]
 
+/-- Isotropy is preserved by a faithful scalar extension when the underlying module is flat. -/
+theorem not_anisotropic_baseChange [FaithfulSMul R A] [Module.Flat R M]
+    {Q : _root_.QuadraticForm R M} (hQ : ¬ Q.Anisotropic) :
+    ¬ (Q.baseChange A).Anisotropic := by
+  rw [QuadraticMap.not_anisotropic_iff_exists] at hQ ⊢
+  obtain ⟨x, hx, hQx⟩ := hQ
+  refine ⟨1 ⊗ₜ x, ?_, by simp [hQx]⟩
+  intro hzero
+  apply hx
+  apply Module.Flat.tensorProduct_mk_injective R M A
+  simpa using hzero
+
 end QuadraticForm
+
+/-- Representation of one quadratic form by another is preserved by flat base change. -/
+theorem QuadraticMap.IsRepresentedBy.baseChange [Module.Flat R A]
+    {Q : _root_.QuadraticForm R M} {Q' : _root_.QuadraticForm R N}
+    (h : Q.IsRepresentedBy Q') :
+    (Q.baseChange A).IsRepresentedBy (Q'.baseChange A) := by
+  rw [QuadraticMap.isRepresentedBy_iff] at h ⊢
+  obtain ⟨f, hf, hQ⟩ := h
+  let g : Q →qᵢ Q' := ⟨f, hQ⟩
+  refine ⟨(g.baseChange A).toLinearMap, ?_, g.baseChange A |>.map_app⟩
+  have hinjective : Function.Injective (f.lTensor A) :=
+    Module.Flat.lTensor_preserves_injective_linearMap f hf
+  intro x y hxy
+  apply hinjective
+  simpa only [QuadraticMap.Isometry.baseChange_toLinearMap,
+    LinearMap.baseChange_eq_ltensor] using hxy
 
 end CommRing
 
