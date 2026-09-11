@@ -21,9 +21,10 @@ Weierstrass addition law read on function fields, taken from Mathlib's group str
 rather than from the rational formulas directly.
 
 The sum of two points may be the point at infinity, which is not the tautological point of
-anything, so `add` takes that exclusion as a hypothesis. On the hom carrier, where a zero element
-is available, that case is the zero map; making the sum an *isogeny* rather than a bare pullback
-needs pointedness of the result, and neither is established here.
+anything, so `add` takes that exclusion as a hypothesis; on the hom carrier, where a zero element
+is available, that case is the zero map (`Isogeny/Hom/Add.lean`). The sum of two *pointed*
+pullbacks whose tautological points do not cancel is pointed again (`mapsInfinity_add`), so the
+sum of two isogenies is an isogeny.
 
 ## Main definitions
 
@@ -38,6 +39,8 @@ needs pointedness of the result, and neither is established here.
   point of the sum is the sum of the tautological points.
 * `TauCeti.CoordinatePullback.eq_add_of_tautologicalPoint_eq`: that property characterises the
   sum.
+* `TauCeti.CoordinatePullback.mapsInfinity_add`: the sum of two pointed pullbacks whose tautological
+  points do not cancel is pointed.
 * `TauCeti.CoordinatePullback.add_comm` and `TauCeti.CoordinatePullback.add_assoc`: addition is
   commutative and associative where it is defined.
 
