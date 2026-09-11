@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
-public import Mathlib.RingTheory.RingHom.Flat
 
 import Mathlib.Algebra.DirectSum.Module
 import TauCeti.RingTheory.Ideal.Operations
@@ -34,8 +33,6 @@ once**. Individually the factors may all fail to be faithfully flat.
 * `Module.FaithfullyFlat.pi_of_faithfullyFlat`: the special case of one distinguished faithfully
   flat factor.
 * `Module.FaithfullyFlat.pi`: a finite *nonempty* product of faithfully flat modules.
-* `RingHom.Flat.pi`: the ring-homomorphism form — `RingHom.pi` of componentwise flat maps is
-  flat. This is where the two `R`-actions on a product ring are identified explicitly.
 
 ## Implementation notes
 
@@ -97,24 +94,5 @@ instance FaithfullyFlat.pi [Nonempty ι] [Finite ι] [∀ i, FaithfullyFlat R (M
 end FaithfullyFlat
 
 end Module
-
-
-namespace RingHom.Flat
-
-/-- **A finite product of flat ring homomorphisms is flat.** The bundled map `R →+* ∀ i, S i`
-built from componentwise flat `f i : R →+* S i` is flat.
-
-The `R`-action that `(RingHom.pi f).toAlgebra` puts on `∀ i, S i` is multiplication by
-`RingHom.pi f r`. Since multiplication in a product ring is pointwise, that is the pointwise
-action `fun i ↦ f i r * x i` assembled from the individual `(f i).toAlgebra`. -/
-theorem pi {ι : Type*} [_root_.Finite ι] {R : Type*} [CommRing R] {S : ι → Type*}
-    [∀ i, CommRing (S i)] (f : ∀ i, R →+* S i) (hf : ∀ i, (f i).Flat) :
-    (RingHom.pi f).Flat := by
-  let _ : ∀ i, Algebra R (S i) := fun i ↦ (f i).toAlgebra
-  have : ∀ i, Module.Flat R (S i) := hf
-  change @Module.Flat R (∀ i, S i) _ _ (Pi.module ι S R)
-  exact Module.Flat.pi
-
-end RingHom.Flat
 
 end
