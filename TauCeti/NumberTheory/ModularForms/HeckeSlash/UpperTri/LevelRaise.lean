@@ -59,9 +59,11 @@ theorem smul_slash_scaleGL_slash_upperTriRep {Γ : Subgroup (GL (Fin 2) ℝ)}
     push_cast
     field_simp
     ring
-  rw [slash_upperTriRep_apply, smul_slash_scaleGL_eq, Pi.smul_apply, smul_eq_mul]
-  dsimp only
-  rw [hτ, SlashInvariantForm.vAdd_apply_of_mem_strictPeriods g τ
-    (by simpa using AddSubgroup.nsmul_mem _ hper b.val)]
+  have hp0 : (p : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr (NeZero.ne p)
+  rw [slash_upperTriRep_apply, Pi.smul_apply, smul_eq_mul, slash_scaleGL_apply, Pi.smul_apply,
+    smul_eq_mul, hτ, SlashInvariantForm.vAdd_apply_of_mem_strictPeriods g τ
+      (by simpa using AddSubgroup.nsmul_mem _ hper b.val),
+    ← mul_assoc ((p : ℂ) ^ (1 - k)), ← zpow_add₀ hp0, sub_add_sub_cancel, sub_self, zpow_zero,
+    one_mul]
 
 end TauCeti
