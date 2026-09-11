@@ -29,7 +29,7 @@ public section
 
 namespace TauCeti
 
-variable {R : Type*} [CommRing R]
+variable {R : Type*} [NonUnitalNonAssocRing R]
 
 /-- **A sequence with a Hecke-type prime recurrence and `a₁ = 0` vanishes at the indices
 coprime to `L`.** If at every prime `p` coprime to `L` there are scalars `c`, `d` with
