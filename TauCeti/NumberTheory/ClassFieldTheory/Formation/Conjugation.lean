@@ -5,7 +5,7 @@ Authors: Claude
 -/
 module
 
-public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Functoriality
+import Mathlib.RepresentationTheory.Homological.GroupCohomology.Functoriality
 public import Mathlib.RepresentationTheory.Rep.Res
 public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Basic
 
@@ -70,10 +70,11 @@ variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 /-! ### Conjugates of open subgroups -/
 
 /-- The conjugate `gUg⁻¹` of an open subgroup, as the preimage of `U` under the continuous
-conjugation `x ↦ g⁻¹xg`: `x ∈ gUg⁻¹ ↔ g⁻¹xg ∈ U`. -/
+conjugation `x ↦ g⁻¹xg`, so that `x ∈ gUg⁻¹ ↔ g⁻¹xg ∈ U` holds by definition
+(`mem_conjOpenSubgroup`); its underlying subgroup is the image of `U` under conjugation by `g`
+(`toSubgroup_conjOpenSubgroup`). -/
 def conjOpenSubgroup (g : G) (U : OpenSubgroup G) : OpenSubgroup G :=
-  U.comap (MulAut.conj g).symm.toMonoidHom
-    ((continuous_const.mul continuous_id).mul continuous_const)
+  U.comap (MulAut.conj g).symm.toMonoidHom ((continuous_const_mul g⁻¹).mul_const g)
 
 /-- Membership in a conjugate open subgroup. -/
 @[simp]
@@ -326,7 +327,6 @@ def layerCohomologyConj (g : G) (L : NormalLayer G) (n : ℕ) :
     L.H F n →+ (conjugateLayer g L).H F n :=
   (groupCohomology.map (conjGalEquiv g L).symm.toMonoidHom (conjRepIso F g L).hom n).hom
     |>.toAddMonoidHom
-
 
 /-- **Conjugation on ground levels:** the action of `g` carries `A^U` onto `A^{gUg⁻¹}`. -/
 def layerGroundConj (g : G) (L : NormalLayer G) :
