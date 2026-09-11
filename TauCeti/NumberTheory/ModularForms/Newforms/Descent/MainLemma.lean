@@ -156,7 +156,7 @@ theorem exists_eq_sum_of_forall_coprime_prod_qExpansion_coeff_eq_zero {χ : (ZMo
       rw [← Finset.mul_prod_erase S id hpS]; rfl
     have hvan' : ∀ n, Nat.Coprime n (p * (S.erase p).prod id) → (qExpansion 1 f).coeff n = 0 :=
       fun n hn ↦ hvan n (hprod ▸ hn)
-    rcases qExpansion_coeff_eq_zero_of_coprime_or_exists_eq_comp_unitsMap χ hf hp hpN hsq hLN hpL
+    rcases qExpansion_coeff_eq_zero_of_coprime_or_exists_eq_comp_unitsMap χ hf hp hpN hLN hpL
       hvan' with hvan'' | ⟨χ₀, hcomp⟩
     · -- `p` needs no descent: `f` already vanishes off the remaining primes
       obtain ⟨g, hsum, hsupp, hchar⟩ := ih hS' hf hvan'' hcard'
