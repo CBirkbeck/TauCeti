@@ -54,6 +54,23 @@ namespace TauCeti
 
 variable {N : ℕ} [NeZero N] {k : ℤ}
 
+/-- A character modulo `N` whose lift to level `L N` factors through `L N / p`, for `p ∣ N`
+prime and `L` coprime to `p`, factors through `N / p`: `changeLevel` preserves the conductor,
+which then divides `gcd (N, L N / p) = N / p`. -/
+private theorem factorsThrough_div_of_changeLevel_factorsThrough {p L : ℕ} [NeZero (L * N)]
+    (hpN : p ∣ N) (hpL : Nat.Coprime p L) {ψ : DirichletCharacter ℂ N}
+    (hfac : (DirichletCharacter.changeLevel (Nat.dvd_mul_left N L) ψ).FactorsThrough
+      (L * N / p)) :
+    ψ.FactorsThrough (N / p) := by
+  have hN : N = p * (N / p) := (Nat.mul_div_cancel' hpN).symm
+  have hc : ψ.conductor ∣ L * (N / p) := by
+    have := DirichletCharacter.conductor_dvd_of_mem_conductorSet _ hfac
+    rwa [DirichletCharacter.conductor_changeLevel, Nat.mul_div_assoc L hpN] at this
+  have hgcd : Nat.gcd (p * (N / p)) (L * (N / p)) = N / p := by
+    rw [Nat.gcd_mul_right, hpL.gcd_eq_one, one_mul]
+  exact (DirichletCharacter.mem_conductorSet_iff_conductor_dvd _ (Nat.div_dvd_of_dvd hpN)).mpr
+    (hgcd ▸ Nat.dvd_gcd (hN ▸ ψ.conductor_dvd_level) hc)
+
 /-- **The factor dichotomy.** For `f ∈ S_k(Γ₁(N), χ)` vanishing at every index coprime to `p L`,
 with `p ∣ N` prime and `L` squarefree, coprime to `p`, with primes dividing `N`: either `f`
 vanishes at every index coprime to `L`, or `χ` is the pull-back of a character modulo `N / p`. -/
@@ -78,17 +95,9 @@ theorem qExpansion_coeff_eq_zero_of_coprime_or_exists_eq_comp_unitsMap (χ : (ZM
     rwa [DirichletCharacter.changeLevel_toUnitHom, hψχ]
   rcases exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero hpLN k _ φ G hGψ hGφ hφT with
     ⟨hfac, -, -, -⟩ | hφ0
-  · -- `χ` lifted to level `L N` factors through `L N / p`, so its conductor divides `N / p`
+  · -- `χ` lifted to level `L N` factors through `L N / p`, so `χ` factors through `N / p`
     right
-    have hN : N = p * (N / p) := (Nat.mul_div_cancel' hpN).symm
-    have hc : ψ.conductor ∣ L * (N / p) := by
-      have := DirichletCharacter.conductor_dvd_of_mem_conductorSet _ hfac
-      rwa [DirichletCharacter.conductor_changeLevel, Nat.mul_div_assoc L hpN] at this
-    have hgcd : Nat.gcd (p * (N / p)) (L * (N / p)) = N / p := by
-      rw [Nat.gcd_mul_right, hpL.gcd_eq_one, one_mul]
-    have hfac' : ψ.FactorsThrough (N / p) :=
-      (DirichletCharacter.mem_conductorSet_iff_conductor_dvd _ (Nat.div_dvd_of_dvd hpN)).mpr
-        (hgcd ▸ Nat.dvd_gcd (hN ▸ ψ.conductor_dvd_level) hc)
+    have hfac' := factorsThrough_div_of_changeLevel_factorsThrough hpN hpL hfac
     refine ⟨hfac'.χ₀.toUnitHom, ?_⟩
     rw [← hψχ]
     conv_lhs => rw [hfac'.eq_changeLevel]
