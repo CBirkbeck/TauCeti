@@ -12,6 +12,8 @@ public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Shapiro
 public import Mathlib.RepresentationTheory.Homological.GroupHomology.Shapiro
 public import Mathlib.RepresentationTheory.Homological.TateCohomology.Basic
 public import TauCeti.RepresentationTheory.Homological.TateCohomology.LowDegree
+public import TauCeti.RepresentationTheory.Induction.Permutation
+public import TauCeti.RepresentationTheory.Rep.OfMulAction
 
 /-!
 # Coinduction and induction from the trivial subgroup
@@ -188,7 +190,10 @@ theorem coindBotEquivPi_symm_apply_coe (X : Type u) [AddCommGroup X] [Module k X
 variable (S : Subgroup G)
 
 /-- The bijection `S × G ⧸ S ≃ G` sending `(s, y)` to `y.out * s`, for a fixed choice of left
-coset representatives. -/
+coset representatives. It is the factor-swap of Mathlib's `Subgroup.groupEquivQuotientProdSubgroup`,
+but that equivalence carries no `apply`/`symm_apply` lemma and is built from a `cast`-laden calc, so
+we spell out this variant to expose the defeq action `(s, y) ↦ y.out * s` that `resCoindBotIso`
+needs. -/
 def prodQuotientEquiv : S × (G ⧸ S) ≃ G :=
   Equiv.ofBijective (fun p ↦ p.2.out * p.1) ⟨fun ⟨s₁, y₁⟩ ⟨s₂, y₂⟩ h ↦ by
     obtain rfl : y₁ = y₂ := by
@@ -217,17 +222,12 @@ def resCoindBotIso (X : Type u) [AddCommGroup X] [Module k X] :
 end Restriction
 
 /-- For a finite group, the left regular representation `k[G]` is coinduced from the trivial
-subgroup: `k[G] ≅ (G → k)`, sending `single g r` to `r` times the indicator of `g⁻¹` (the
-inversion converts the left translation action on `k[G]` into the right translation action on
-functions). -/
+subgroup. It is the representation induced from the trivial subgroup, via `k[G] ≅ k[G ⧸ ⊥]`
+(`quotientBotIsoLeftRegular`) and `Ind_⊥^G k ≅ k[G ⧸ ⊥]` (`indTrivialIso`), and for a finite group
+induction and coinduction from the trivial subgroup agree (`indBotIsoCoindBot`). -/
 def leftRegularIsoCoindBot [Finite G] : leftRegular k G ≅ coindBot k G k :=
-  mkIso <| .mk (MonoidAlgebra.coeffLinearEquiv k ≪≫ₗ Finsupp.linearEquivFunOnFinite k k G ≪≫ₗ
-    LinearEquiv.funCongrLeft k k (Equiv.inv G) ≪≫ₗ (coindBotEquivPi k G k).symm) fun g ↦ by
-    ext h x
-    change (Representation.ofMulAction k G G g (MonoidAlgebra.single h 1)).coeff x⁻¹ =
-      (MonoidAlgebra.single h (1 : k)).coeff (x * g)⁻¹
-    classical
-    simp [Finsupp.single_apply, mul_inv_rev, eq_inv_mul_iff_mul_eq]
+  (TauCeti.indTrivialIso k (⊥ : Subgroup G) ≪≫ TauCeti.quotientBotIsoLeftRegular k).symm ≪≫
+    indBotIsoCoindBot k
 
 end Rep
 
