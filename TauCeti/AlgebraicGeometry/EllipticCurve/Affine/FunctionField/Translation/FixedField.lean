@@ -59,6 +59,10 @@ arbitrary finite subgroup of points, no isogeny being needed to state or prove t
 * `WeierstrassCurve.Affine.card_translationFixingSubgroup_le` and
   `WeierstrassCurve.Affine.finite_of_finiteDimensional_translationFixedField`: a degree bounds the
   translations that fix it.
+* `WeierstrassCurve.Affine.card_translationFixingSubgroup_dvd_finSepDegree`: the order of the
+  subgroup fixing an intermediate field of finite degree divides the separable degree above it.
+* `WeierstrassCurve.Affine.card_translationFixingSubgroup_eq_finrank_iff`: that order is the full
+  degree exactly when the subgroup cuts the field back out.
 
 ## References
 
@@ -258,5 +262,44 @@ theorem eq_of_translationFixedField_eq [Finite Φ]
   have : Finite Ψ := finite_of_finiteDimensional_translationFixedField W Ψ
   rw [← translationFixingSubgroup_translationFixedField W Φ, h,
     translationFixingSubgroup_translationFixedField W Ψ]
+
+/-- **The order of the fixing subgroup of `L` divides the separable degree of `K(W)` over `L`.**
+The field the subgroup cuts out is Galois over `L`, hence separable, so its degree — the order of
+the subgroup — is one factor of the separable degree of the whole extension. -/
+theorem card_translationFixingSubgroup_dvd_finSepDegree (L : IntermediateField F W.FunctionField)
+    [FiniteDimensional L W.FunctionField] :
+    Nat.card (translationFixingSubgroup W L) ∣ Field.finSepDegree L W.FunctionField := by
+  have hle := le_translationFixedField_translationFixingSubgroup W L
+  -- `extendScalars hle` is `translationFixedField W (translationFixingSubgroup W L)` with its base
+  -- enlarged from `F` to `L`. It is the same subfield of `K(W)`, so it sits under `K(W)` in the
+  -- same way; the `change`s name that identification where it is used
+  have hsep : Algebra.IsSeparable (IntermediateField.extendScalars hle) W.FunctionField := by
+    change Algebra.IsSeparable (translationFixedField W (translationFixingSubgroup W L))
+      W.FunctionField
+    infer_instance
+  have hrk : Module.finrank (IntermediateField.extendScalars hle) W.FunctionField =
+      Nat.card (translationFixingSubgroup W L) := by
+    change Module.finrank (translationFixedField W (translationFixingSubgroup W L))
+      W.FunctionField = _
+    exact finrank_translationFixedField W _
+  have htop : Field.finSepDegree (IntermediateField.extendScalars hle) W.FunctionField =
+      Nat.card (translationFixingSubgroup W L) := by
+    rw [Field.finSepDegree_eq_finrank_of_isSeparable, hrk]
+  rw [← Field.finSepDegree_mul_finSepDegree_of_isAlgebraic L
+    (IntermediateField.extendScalars hle) W.FunctionField, htop]
+  exact Dvd.intro_left _ rfl
+
+/-- **The fixing subgroup of `L` has order the degree of `K(W)` over `L` exactly when it cuts `L`
+back out.** One inclusion holds for every `L`, so the cardinality statement and the reverse
+inclusion are two names for the same thing: a single field-theoretic statement to aim at in place
+of a cardinality one. -/
+theorem card_translationFixingSubgroup_eq_finrank_iff (L : IntermediateField F W.FunctionField)
+    [FiniteDimensional L W.FunctionField] :
+    Nat.card (translationFixingSubgroup W L) = Module.finrank L W.FunctionField ↔
+      translationFixedField W (translationFixingSubgroup W L) ≤ L := by
+  have hle := le_translationFixedField_translationFixingSubgroup W L
+  rw [← finrank_translationFixedField W (translationFixingSubgroup W L), eq_comm,
+    ← IntermediateField.eq_iff_finrank_eq_of_le' hle]
+  exact ⟨fun h ↦ h.ge, le_antisymm hle⟩
 
 end WeierstrassCurve.Affine

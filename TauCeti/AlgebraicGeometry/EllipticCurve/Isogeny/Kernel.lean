@@ -31,6 +31,8 @@ is proved here.
 
 ## Main results
 
+* `TauCeti.Isogeny.fieldPullback_fieldRange_le_translationFixedField_ker`: the pulled-back field is
+  fixed by the kernel.
 * `TauCeti.Isogeny.card_ker_le_degree`: the kernel has at most `deg φ` elements.
 * `TauCeti.Isogeny.ker_le_ker_comp`: postcomposition can only enlarge the kernel.
 * `TauCeti.Isogeny.ker_eq_bot_of_separableDegree_eq_one`: separable degree one forces this kernel
@@ -39,8 +41,6 @@ is proved here.
   reverse fixed-field inclusion.
 * `TauCeti.Isogeny.card_ker_dvd_separableDegree` and `card_ker_le_separableDegree`: the kernel
   order divides, so is bounded by, the separable degree.
-* `TauCeti.Isogeny.fieldPullback_fieldRange_le_translationFixedField_ker`: the pulled-back field is
-  fixed by the kernel.
 
 ## Provenance
 
@@ -92,36 +92,20 @@ theorem ker_le_ker_comp {W₃ : WeierstrassCurve.Affine F} (ψ : Isogeny W₂ W�
   rintro _ ⟨z, rfl⟩
   exact AlgHom.mem_fieldRange.2 ⟨ψ.fieldPullback z, by rw [comp_fieldPullback]; rfl⟩
 
-/-- **The pulled-back field is fixed by the kernel.** The kernel's interaction with the fixed-field
-operation, so that a consumer can use `ker` without unfolding it to a fixing subgroup. This is the
-inclusion that holds for every isogeny; the reverse one is the content of
+/-- **The pulled-back field is fixed by the kernel**, the kernel's interaction with the fixed-field
+operation. This is the inclusion that holds for every isogeny; the reverse one is the content of
 `card_ker_eq_degree_iff`. -/
 theorem fieldPullback_fieldRange_le_translationFixedField_ker (φ : Isogeny W₁ W₂) :
     φ.fieldPullback.fieldRange ≤ translationFixedField W₁ φ.ker := by
   rw [ker_def]; exact le_translationFixedField_translationFixingSubgroup W₁ _
 
-/-- **The kernel order divides the separable degree.** The extension cut out by the kernel is
-Galois, hence separable, so its degree — the order of the kernel — is one factor of the separable
-degree of the whole extension.
-
-This is the general form of the identity a point count needs: the separable degree is what the
-kernel can see, and the missing factor is the separable degree of the pulled-back field inside the
-field the kernel cuts out. -/
+/-- **The kernel order divides the separable degree**, the kernel being the subgroup of
+translations fixing the pulled-back field and that field having finite degree. -/
 theorem card_ker_dvd_separableDegree (φ : Isogeny W₁ W₂) :
     Nat.card φ.ker ∣ φ.separableDegree := by
-  have hle := φ.fieldPullback_fieldRange_le_translationFixedField_ker
-  -- `extendScalars hle` is the same subfield seen over `φ^*K(W₂)`; the two share a carrier, so
-  -- these transport definitionally, which instance search does not see through
-  have hsep : Algebra.IsSeparable (IntermediateField.extendScalars hle) W₁.FunctionField :=
-    inferInstanceAs (Algebra.IsSeparable (translationFixedField W₁ φ.ker) W₁.FunctionField)
-  have hrk : Module.finrank (IntermediateField.extendScalars hle) W₁.FunctionField =
-      Nat.card φ.ker := finrank_translationFixedField W₁ φ.ker
-  have htop : Field.finSepDegree (IntermediateField.extendScalars hle) W₁.FunctionField =
-      Nat.card φ.ker := by
-    rw [Field.finSepDegree_eq_finrank_of_isSeparable, hrk]
-  rw [separableDegree_def, ← Field.finSepDegree_mul_finSepDegree_of_isAlgebraic
-    φ.fieldPullback.fieldRange (IntermediateField.extendScalars hle) W₁.FunctionField, htop]
-  exact Dvd.intro_left _ rfl
+  have := φ.finiteDimensional
+  rw [ker_def, separableDegree_def]
+  exact card_translationFixingSubgroup_dvd_finSepDegree W₁ _
 
 /-- **The separable degree bounds the kernel**, sharpening the bound by the degree. -/
 theorem card_ker_le_separableDegree (φ : Isogeny W₁ W₂) :
@@ -149,8 +133,7 @@ theorem ker_eq_bot_of_degree_eq_one {φ : Isogeny W₁ W₂} (h : φ.degree = 1)
 
 /-- **The kernel counts the degree exactly when it cuts out the pulled-back field.** This is a
 *reduction*, not the separable-locus theorem: one inclusion holds for free, so the cardinality
-statement and the reverse inclusion are two names for the same thing. What it buys is a single
-field-theoretic statement to aim at in place of a cardinality one.
+statement and the reverse inclusion are two names for the same thing.
 
 That inclusion is where separability enters, and over a base field that is not separably closed it
 can fail: the kernel here consists of the rational points, while the extension is cut out by the
@@ -159,15 +142,9 @@ here. -/
 theorem card_ker_eq_degree_iff (φ : Isogeny W₁ W₂) :
     Nat.card φ.ker = φ.degree ↔
       translationFixedField W₁ φ.ker ≤ φ.fieldPullback.fieldRange := by
-  have hle := φ.fieldPullback_fieldRange_le_translationFixedField_ker
-  have htower := IntermediateField.relfinrank_mul_finrank_top hle
-  rw [finrank_translationFixedField W₁ φ.ker, ← degree_def] at htower
-  refine ⟨fun hcard ↦ ?_, fun h ↦ ?_⟩
-  · refine IntermediateField.relfinrank_eq_one_iff.1 ?_
-    rw [hcard] at htower
-    exact Nat.eq_of_mul_eq_mul_right φ.degree_pos (htower.trans (one_mul _).symm)
-  · have hfield : translationFixedField W₁ φ.ker = φ.fieldPullback.fieldRange := le_antisymm h hle
-    rw [← finrank_translationFixedField W₁ φ.ker, hfield, ← degree_def]
+  have := φ.finiteDimensional
+  rw [ker_def, degree_def]
+  exact card_translationFixingSubgroup_eq_finrank_iff W₁ _
 
 /-- **The identity isogeny has trivial kernel.** -/
 @[simp]
