@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Frobenius
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Frobenius.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Hom.Add
 
 /-!

@@ -23,9 +23,9 @@ invariant differential in particular is pulled back to `0`.
 
 The AINTLIB `HasseWeil` project (Chris Birkbeck, Apache 2.0, commit
 `513e83879e2f8cbc626eb9e04d660e92be16ccba`) has the corresponding statements for the invariant
-differential, `omegaPullbackCoeff_frobenius` and `frobenius_pullbackKaehler_invariantDifferential`
-in `BridgeFrobenius.lean`, through its formal-isogeny-series machinery; the statement here is for
-every differential and is proved from the characteristic.
+differential only, `omegaPullbackCoeff_frobenius` and
+`frobenius_pullbackKaehler_invariantDifferential` in `BridgeFrobenius.lean`; the statement here is
+for every differential of the function field.
 
 ## References
 
