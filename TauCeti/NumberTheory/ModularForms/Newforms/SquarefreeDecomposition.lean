@@ -12,9 +12,10 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.CharacterSpace
 # The squarefree decomposition of a form with vanishing coprime coefficients
 
 Miyake's Lemma 4.6.7: a cusp form `f ∈ S_k(Γ₁(N), χ)` whose `q`-expansion vanishes at every index
-coprime to a squarefree `l` is, coefficient by coefficient, a sum `∑_{q ∣ l} V_q F_q` of
+coprime to a squarefree `l` is, coefficient by coefficient, a sum `∑_{q ∈ l.primeFactors} V_q F_q`
+over the **primes** `q` dividing `l`, of
 level-raises of forms `F_q` of level `N l² / q` with nebentypus lowered along `N l² / q ∣ N l²`:
-`a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(F_q)`. The prime peeled at each step is the one of
+`a_n(f) = ∑_{q ∈ l.primeFactors, q ∣ n} a_{n/q}(F_q)`. The prime peeled at each step is the one of
 `Newforms/Descent/CharacterSpace.lean`
 (`exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_ite_dvd_of_qExpansionSupportedOnDvd`).
 
@@ -51,7 +52,8 @@ variable {N : ℕ} [NeZero N]
 
 /-- The conclusion of Lemma 4.6.7 at level `N * l ^ 2`, as a predicate on `f`: families `F` and
 `χ'` indexed by the primes of `l`, with `F q` of level `N * l ^ 2 / q` in the space of `χ' q`
-lying over `χ`, and `a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(F q)`. Only used to state the induction. -/
+lying over `χ`, and `a_n(f) = ∑_{q ∈ l.primeFactors, q ∣ n} a_{n/q}(F q)`, the sum over the primes
+`q` dividing `l`. Only used to state the induction. -/
 private def SquarefreeDecomposition (χ : (ZMod N)ˣ →* ℂˣ) (l : ℕ)
     (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) : Prop :=
   ∃ (F : ∀ q ∈ l.primeFactors, CuspForm ((Gamma1 (N * l ^ 2 / q)).map (mapGL ℝ)) k)
@@ -273,9 +275,10 @@ private theorem squarefreeDecomposition_mul {m : ℕ}
       exact Finset.sum_congr rfl fun q' _ ↦ by rw [CuspForm.coe_ofLe]
 
 /-- **Miyake's Lemma 4.6.7: the squarefree decomposition.** If `f ∈ S_k(Γ₁(N), χ)` vanishes at
-every index coprime to a squarefree `l`, then `a_n(f) = ∑_{q ∣ l, q ∣ n} a_{n/q}(F q)` for forms
+every index coprime to a squarefree `l`, then `a_n(f) = ∑_{q ∈ l.primeFactors, q ∣ n} a_{n/q}(F q)`,
+the sum over the primes `q` dividing `l`, for forms
 `F q ∈ S_k(Γ₁(N l² / q), χ' q)` with `χ' q` lying over `χ`: coefficient by coefficient,
-`f = ∑_{q ∣ l} V_q (F q)`. -/
+`f = ∑_{q ∈ l.primeFactors} V_q (F q)`. -/
 theorem exists_qExpansion_coeff_eq_sum_primeFactors_of_squarefree (χ : (ZMod N)ˣ →* ℂˣ)
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {l : ℕ}
     (hsq : Squarefree l)
