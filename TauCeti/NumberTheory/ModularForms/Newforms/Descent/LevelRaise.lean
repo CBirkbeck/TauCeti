@@ -24,10 +24,8 @@ proof of Lemma 4.6.14.
 
 * `TauCeti.descendSlash_smul_slash_scaleGL`: for `g` slash-invariant of level `Γ₁(N / p)`,
   `descendSlash k p N (p^(1-k) • (g ∣[k] scaleGL p)) = (|family| / p) • g`.
-* `TauCeti.ModularForm.descendSlash_coe_levelRaise`,
-  `TauCeti.CuspForm.descendSlash_coe_levelRaise`: `descendSlash k p N (V_p g) = (|family| / p) • g`
-  for the bundled level-raises; the cusp-form case is the one the descent main lemma applies to
-  the lower-level form.
+* `TauCeti.descendSlash_coe_levelRaise`: `descendSlash k p N (V_p g) = (|family| / p) • g` for
+  the bundled level-raise `ModularForm.levelRaise`.
 
 ## Provenance
 
@@ -84,7 +82,7 @@ theorem descendSlash_smul_slash_scaleGL (hp : p.Prime) (hpN : p ∣ N) {F : Type
 
 /-- **The descent of the level-raise of a modular form**:
 `descendSlash k p N (V_p g) = (|family| / p) • g`. -/
-theorem ModularForm.descendSlash_coe_levelRaise (hp : p.Prime) (hpN : p ∣ N)
+theorem descendSlash_coe_levelRaise (hp : p.Prime) (hpN : p ∣ N)
     (g : ModularForm ((Gamma1 (N / p)).map (mapGL ℝ)) k) :
     haveI : NeZero p := ⟨hp.ne_zero⟩
     descendSlash k p N ⇑(ModularForm.levelRaise p
@@ -92,18 +90,6 @@ theorem ModularForm.descendSlash_coe_levelRaise (hp : p.Prime) (hpN : p ∣ N)
       ((descendMatrixCount p N : ℂ) / p) • ⇑g := by
   have : NeZero p := ⟨hp.ne_zero⟩
   rw [ModularForm.coe_levelRaise]
-  exact descendSlash_smul_slash_scaleGL k hp hpN g
-
-/-- **The descent of the level-raise of a cusp form**:
-`descendSlash k p N (V_p g) = (|family| / p) • g`. -/
-theorem CuspForm.descendSlash_coe_levelRaise (hp : p.Prime) (hpN : p ∣ N)
-    (g : CuspForm ((Gamma1 (N / p)).map (mapGL ℝ)) k) :
-    haveI : NeZero p := ⟨hp.ne_zero⟩
-    descendSlash k p N ⇑(CuspForm.levelRaise p
-        (Gamma1_map_le_conjAct_scaleGL_of_dvd (dvd_of_eq (Nat.mul_div_cancel' hpN))) g) =
-      ((descendMatrixCount p N : ℂ) / p) • ⇑g := by
-  have : NeZero p := ⟨hp.ne_zero⟩
-  rw [CuspForm.coe_levelRaise]
   exact descendSlash_smul_slash_scaleGL k hp hpN g
 
 end TauCeti
