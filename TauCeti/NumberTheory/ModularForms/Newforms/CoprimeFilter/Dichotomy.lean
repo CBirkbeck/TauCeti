@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.NumberTheory.DirichletCharacter.Basic
 public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Basic
 import TauCeti.NumberTheory.ModularForms.ConductorDichotomy
 import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Basic
@@ -14,7 +15,7 @@ import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Basic
 
 Let `f ∈ S_k(Γ₁(N), χ)` vanish at every index coprime to `p L`, for a prime `p ∣ N` and an
 `L` coprime to `p` (so `L ≠ 0`) whose primes divide `N`. Either `f` already vanishes at every index
-coprime to `L`, or the nebentypus `χ` is the pull-back of a character modulo `N / p`. This is
+coprime to `L`, or the nebentypus `χ` factors through `N / p`. This is
 the case split of Miyake's proof of Lemma 4.6.8 (the Main Lemma of Diamond–Shurman §5.7, per
 character): the second case is what a later descent along `p` needs, and in the first the prime
 `p` needs no descent at all.
@@ -30,7 +31,7 @@ indices coprime to `L`.
 
 ## Main results
 
-* `TauCeti.qExpansion_coeff_eq_zero_of_coprime_or_exists_eq_comp_unitsMap`: the dichotomy.
+* `TauCeti.qExpansion_coeff_eq_zero_of_coprime_or_factorsThrough`: the dichotomy.
 
 ## Provenance
 
@@ -60,13 +61,19 @@ variable {N : ℕ} [NeZero N] {k : ℤ}
 
 /-- **The factor dichotomy.** For `f ∈ S_k(Γ₁(N), χ)` vanishing at every index coprime to `p L`,
 with `p ∣ N` prime and `L` coprime to `p` with primes dividing `N`: either `f` vanishes at
-every index coprime to `L`, or `χ` is the pull-back of a character modulo `N / p`. -/
-theorem qExpansion_coeff_eq_zero_of_coprime_or_exists_eq_comp_unitsMap (χ : (ZMod N)ˣ →* ℂˣ)
+every index coprime to `L`, or the nebentypus factors through `N / p`.
+
+The second branch is stated with Mathlib's `DirichletCharacter.FactorsThrough`, whose `χ₀` and
+`eq_changeLevel` give back the lowered unit homomorphism `χ₀` and the factorisation
+`χ = χ₀ ∘ unitsMap` that the descent lemmas consume:
+`⟨hfac.χ₀.toUnitHom, by rw [← MulChar.equivToUnitHom.apply_symm_apply χ];
+conv_lhs => rw [hfac.eq_changeLevel]; rw [DirichletCharacter.changeLevel_toUnitHom]⟩`. -/
+theorem qExpansion_coeff_eq_zero_of_coprime_or_factorsThrough (χ : (ZMod N)ˣ →* ℂˣ)
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {p L : ℕ}
     (hp : p.Prime) (hpN : p ∣ N) (hLN : L.primeFactors ⊆ N.primeFactors)
     (hpL : Nat.Coprime p L) (hvan : ∀ n, Nat.Coprime n (p * L) → (qExpansion 1 f).coeff n = 0) :
     (∀ n, Nat.Coprime n L → (qExpansion 1 f).coeff n = 0) ∨
-      ∃ χ₀ : (ZMod (N / p))ˣ →* ℂˣ, χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)) := by
+      DirichletCharacter.FactorsThrough (MulChar.ofUnitHom χ) (N / p) := by
   have : NeZero p := ⟨hp.ne_zero⟩
   -- `L ≠ 0`: a prime is not coprime to `0`
   have : NeZero L := ⟨by rintro rfl; exact hp.ne_one ((Nat.coprime_zero_right p).mp hpL)⟩
@@ -81,22 +88,17 @@ theorem qExpansion_coeff_eq_zero_of_coprime_or_exists_eq_comp_unitsMap (χ : (ZM
   obtain ⟨φ, hGφ, hφT⟩ :=
     CuspForm.exists_eq_smul_slash_scaleGL_and_slash_T_eq_of_qExpansionSupportedOnDvd G hGsupp
   -- the nebentypus of `G` is the level-`L N` lift of `χ`, as a Dirichlet character
-  set ψ : DirichletCharacter ℂ N := MulChar.ofUnitHom χ with hψ
-  have hψχ : ψ.toUnitHom = χ := MulChar.equivToUnitHom.apply_symm_apply χ
-  have hGψ : G ∈ cuspFormCharSpace k (DirichletCharacter.changeLevel hNLN ψ).toUnitHom := by
+  have hψχ : (MulChar.ofUnitHom χ).toUnitHom = χ := MulChar.equivToUnitHom.apply_symm_apply χ
+  have hGψ : G ∈ cuspFormCharSpace k
+      (DirichletCharacter.changeLevel hNLN (MulChar.ofUnitHom χ)).toUnitHom := by
     rwa [DirichletCharacter.changeLevel_toUnitHom, hψχ]
   rcases exists_cuspForm_mem_cuspFormCharSpace_or_eq_zero hpLN k _ φ G hGψ hGφ hφT with
     ⟨hfac, -, -, -⟩ | hφ0
   · -- `χ` lifted to level `L N` factors through `L N / p`, so `χ` factors through `N / p`
-    right
-    have hfac' := DirichletCharacter.factorsThrough_div_of_changeLevel_factorsThrough hpN hpL' hfac
-    refine ⟨hfac'.χ₀.toUnitHom, ?_⟩
-    rw [← hψχ]
-    conv_lhs => rw [hfac'.eq_changeLevel]
-    rw [DirichletCharacter.changeLevel_toUnitHom]
+    exact Or.inr
+      (DirichletCharacter.factorsThrough_div_of_changeLevel_factorsThrough hpN hpL' hfac)
   · -- `G = 0`: the coefficients of `f` at the indices coprime to `L` are those of `G`
-    left
-    intro n hn
+    refine Or.inl fun n hn ↦ ?_
     have hG0 : (⇑G : ℍ → ℂ) = 0 := by rw [hGφ, hφ0, SlashAction.zero_slash, smul_zero]
     have h := hGcoeff n
     rw [hG0, qExpansion_zero, map_zero, ite_eq_left hn] at h

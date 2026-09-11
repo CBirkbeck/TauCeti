@@ -19,17 +19,19 @@ determine its character value: every unit has a partner in the same fibre of `ZM
 which `χ` takes a different value. This is the form the level-lowering argument for the
 conductor theorem consumes.
 
-If the lift of `χ` to a level `L N` factors through `L N / p` for some `p ∣ N` coprime to `L`,
-then `χ` itself factors through `N / p`: `changeLevel` preserves the conductor, which then
-divides `gcd (N, L N / p) = N / p`. This is how a factorisation found at an auxiliary level is
-brought back to the level of `χ`.
+If the lift of `χ` to a multiple level factors through `d`, then `χ` itself factors through
+`gcd (N, d)`: `changeLevel` preserves the conductor, which then divides both. This is how a
+factorisation found at an auxiliary level is brought back to the level of `χ`; the arithmetic
+case the descent uses is `d = L N / p` with `p ∣ N` coprime to `L`, where the gcd is `N / p`.
 
 ## Main results
 
 * `DirichletCharacter.exists_alt_unit_in_coset_with_char_separation`: character separation within
   a fibre of the reduction map.
-* `DirichletCharacter.factorsThrough_div_of_changeLevel_factorsThrough`: a factorisation of the
-  lift through `L N / p` descends to a factorisation of `χ` through `N / p`.
+* `DirichletCharacter.factorsThrough_gcd_of_changeLevel_factorsThrough`: a factorisation of the
+  lift to a multiple level through `d` descends to a factorisation of `χ` through `gcd (N, d)`,
+  and `DirichletCharacter.factorsThrough_div_of_changeLevel_factorsThrough`: its arithmetic
+  specialisation, from `L N / p` to `N / p`.
 
 ## Provenance
 
@@ -72,22 +74,35 @@ theorem exists_alt_unit_in_coset_with_char_separation {R : Type*} [CommMonoidWit
   exact ⟨u * v, by rw [map_mul, hv_ker', mul_one],
     by rw [map_mul, Ne, mul_eq_left]; exact hv_chi'⟩
 
+/-- **A factorisation found at a multiple level descends to the gcd.** If the lift of `ψ` mod `N`
+to a multiple level `M` factors through `d`, then `ψ` factors through `gcd (N, d)`:
+`changeLevel` preserves the conductor, which then divides both the level `N` and `d`. -/
+theorem factorsThrough_gcd_of_changeLevel_factorsThrough {R : Type*} [CommMonoidWithZero R]
+    {N M d : ℕ} [NeZero N] [NeZero M] (hNM : N ∣ M) {ψ : DirichletCharacter R N}
+    (hfac : (changeLevel hNM ψ).FactorsThrough d) : ψ.FactorsThrough (Nat.gcd N d) := by
+  have hc : ψ.conductor ∣ d := by
+    have := conductor_dvd_of_mem_conductorSet _ hfac
+    rwa [conductor_changeLevel] at this
+  exact (mem_conductorSet_iff_conductor_dvd _ (Nat.gcd_dvd_left N d)).mpr
+    (Nat.dvd_gcd ψ.conductor_dvd_level hc)
+
 /-- **A factorisation found at an auxiliary level descends.** If the lift of `ψ` mod `N` to level
-`L N` factors through `L N / p`, for `p ∣ N` coprime to `L`, then `ψ` factors through `N / p`:
-`changeLevel` preserves the conductor, which then divides `gcd (N, L N / p) = N / p`. -/
+`L N` factors through `L N / p`, for `p ∣ N` coprime to `L`, then `ψ` factors through `N / p`.
+This is `factorsThrough_gcd_of_changeLevel_factorsThrough` at the gcd
+`gcd (N, L N / p) = gcd (p, L) · (N / p) = N / p`. -/
 theorem factorsThrough_div_of_changeLevel_factorsThrough {R : Type*} [CommMonoidWithZero R]
     {N p L : ℕ} [NeZero N] [NeZero L] (hpN : p ∣ N) (hpL : Nat.Coprime p L)
     {ψ : DirichletCharacter R N}
     (hfac : (changeLevel (Nat.dvd_mul_left N L) ψ).FactorsThrough (L * N / p)) :
     ψ.FactorsThrough (N / p) := by
   have : NeZero (L * N) := ⟨mul_ne_zero (NeZero.ne L) (NeZero.ne N)⟩
-  have hN : N = p * (N / p) := (Nat.mul_div_cancel' hpN).symm
-  have hc : ψ.conductor ∣ L * (N / p) := by
-    have := conductor_dvd_of_mem_conductorSet _ hfac
-    rwa [conductor_changeLevel, Nat.mul_div_assoc L hpN] at this
-  have hgcd : Nat.gcd (p * (N / p)) (L * (N / p)) = N / p := by
-    rw [Nat.gcd_mul_right, hpL.gcd_eq_one, one_mul]
-  exact (mem_conductorSet_iff_conductor_dvd _ (Nat.div_dvd_of_dvd hpN)).mpr
-    (hgcd ▸ Nat.dvd_gcd (hN ▸ ψ.conductor_dvd_level) hc)
+  have hgcd : Nat.gcd N (L * N / p) = N / p := by
+    rw [Nat.mul_div_assoc L hpN]
+    calc Nat.gcd N (L * (N / p)) = Nat.gcd (p * (N / p)) (L * (N / p)) := by
+          rw [Nat.mul_div_cancel' hpN]
+      _ = Nat.gcd p L * (N / p) := Nat.gcd_mul_right p (N / p) L
+      _ = N / p := by rw [hpL.gcd_eq_one, one_mul]
+  rw [← hgcd]
+  exact factorsThrough_gcd_of_changeLevel_factorsThrough _ hfac
 
 end DirichletCharacter
