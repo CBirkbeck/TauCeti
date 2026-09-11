@@ -8,6 +8,7 @@ module
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Eigenvector
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.MainLemma
 public import TauCeti.NumberTheory.ModularForms.Newforms.EigenvalueExtension
+public import TauCeti.NumberTheory.ModularForms.Newforms.Coefficient
 public import TauCeti.NumberTheory.ModularForms.Newforms.Newform
 
 /-!
@@ -18,6 +19,10 @@ index coprime to `N` outside a finite set are equal (Miyake, Theorem 4.6.12): th
 extends to every good index, the difference is a good Hecke eigenvector with `a₁ = 0`, so its
 coefficients vanish at every index coprime to `N`, so it is old by the Main Lemma; being also
 new, it is zero.
+
+Miyake states the theorem on the Fourier coefficients rather than the eigenvalues; for a
+normalised newform the two agree (`Newform.qExpansion_coeff_eq_eigenvalue`), so that form is a
+corollary here.
 -/
 
 public section
@@ -66,5 +71,19 @@ theorem Newform.eq_of_forall_notMem_eigenvalue_eq {f g : Newform N k} (hχ : f.�
     (mem_cuspFormsOld_of_forall_coprime_qExpansion_coeff_eq_zero hdχ hvan)
     (Submodule.sub_mem _ f.isNew g.isNew)
   exact Newform.ext (sub_eq_zero.mp hd0)
+
+/-- **Strong multiplicity one, on Fourier coefficients** (Miyake's own form of Theorem 4.6.12):
+two newforms of level `N`, weight `k` and the same nebentypus whose `q`-expansion coefficients
+agree at every index coprime to `N` outside a finite set are equal. For a normalised newform the
+coefficient at a good index *is* the eigenvalue there
+(`HeckeRing.GL2.Newform.qExpansion_coeff_eq_eigenvalue`), so this is the eigenvalue form. -/
+theorem Newform.eq_of_forall_notMem_qExpansion_coeff_eq {f g : Newform N k} (hχ : f.χ = g.χ)
+    {S : Finset ℕ}
+    (h : ∀ (n : ℕ+), Nat.Coprime (n : ℕ) N → (n : ℕ) ∉ S →
+      (qExpansion 1 f.toCuspForm).coeff (n : ℕ) = (qExpansion 1 g.toCuspForm).coeff (n : ℕ)) :
+    f = g :=
+  Newform.eq_of_forall_notMem_eigenvalue_eq hχ fun n hn hnS ↦ by
+    rw [← f.qExpansion_coeff_eq_eigenvalue n hn, ← g.qExpansion_coeff_eq_eigenvalue n hn]
+    exact h n hn hnS
 
 end TauCeti
