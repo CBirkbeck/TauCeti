@@ -21,7 +21,7 @@ covering map.
 
 The two inputs are that `UniversalCover.proj` and `UniversalCover.subgroupQuotientMap` are
 quotient covering maps, for `π₁(X, x₀)` and for `H` respectively, and that the first factors
-through the second. `TauCeti.IsQuotientCoveringMap.isCoveringMap_of_comp` turns exactly that
+through the second. `IsQuotientCoveringMap.isCoveringMap_of_comp` turns exactly that
 data into a covering map: the sheets of the descended projection over the image of a locally
 disjoint set `U` are the images of the translates of `U`. Nothing about good neighbourhoods of
 the base, their path-connectedness, or the transport of a sheet of `proj` along the
@@ -160,11 +160,11 @@ theorem subgroupCoverFiberEquivSubgroupQuotient_apply_monodromy
     (subgroupCoverTotalSpaceHomeomorph x₀ H)
     (funext (subgroupQuotientProj_subgroupCoverTotalSpaceHomeomorph x₀ H)) g e
   have hfiberMap (e' : ⇑(subgroupCover x₀ H).proj ⁻¹' {x₀}) :
-      ContinuousMap.fiberMap (subgroupCoverTotalSpaceHomeomorph x₀ H)
+      Function.fiberMap (subgroupCoverTotalSpaceHomeomorph x₀ H : C(_, _))
           (funext (subgroupQuotientProj_subgroupCoverTotalSpaceHomeomorph x₀ H)) x₀ e' =
         subgroupCoverFiberEquivSubgroupQuotient x₀ H e' := by
     apply Subtype.ext
-    rw [ContinuousMap.fiberMap_apply_coe]
+    rw [Function.fiberMap_apply_coe]
     exact (subgroupCoverFiberEquivSubgroupQuotient_apply_coe x₀ H e').symm
   simpa only [hfiberMap] using hmonodromy
 

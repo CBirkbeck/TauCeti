@@ -34,8 +34,8 @@ separately identifies `H` as a subgroup of the image of `p_*`.
   covering map is injective on fundamental groups.
 * `IsCoveringMap.existsUnique_continuousMap_lifts_of_range_le_subgroup`: lift when
   `f_* π₁(A, a₀) ≤ H ≤ p_* π₁(E, e₀)`.
-* `existsUnique_continuousMap_lifts_of_subsingleton_fundamentalGroup`: lift when the source
-  fundamental group is subsingleton.
+* `IsCoveringMap.existsUnique_continuousMap_lifts_of_subsingleton_fundamentalGroup`: lift when
+  the source fundamental group is subsingleton.
 * `IsCoveringMap.fundamentalGroupEquivFiber`: the monodromy bijection
   `FundamentalGroup X x ≃ p ⁻¹' {x}`, `γ ↦ monodromy γ e`.
 * `IsCoveringMap.fundamentalGroupEquivFiber_apply_symm_apply`: the inverse sends a
@@ -106,7 +106,7 @@ theorem _root_.IsCoveringMap.existsUnique_continuousMap_lifts_of_subsingleton_fu
 
 /-- Choosing a basepoint lift `e` in the fibre over `x` identifies the fundamental group of
 the base with that fibre, via `γ ↦ monodromy γ e`. -/
-@[expose] noncomputable def _root_.IsCoveringMap.fundamentalGroupEquivFiber [SimplyConnectedSpace E]
+noncomputable def _root_.IsCoveringMap.fundamentalGroupEquivFiber [SimplyConnectedSpace E]
     (hp : IsCoveringMap p) (e : p ⁻¹' {x}) :
     FundamentalGroup X x ≃ p ⁻¹' {x} :=
   { toFun γ := hp.monodromy γ e
@@ -145,7 +145,7 @@ lift, as an equality in the total space `E`. -/
 lemma _root_.IsCoveringMap.fundamentalGroupEquivFiber_apply_coe [SimplyConnectedSpace E]
     (hp : IsCoveringMap p) (e : p ⁻¹' {x}) (γ : FundamentalGroup X x) :
     (IsCoveringMap.fundamentalGroupEquivFiber hp e γ : E) = (hp.monodromy γ e : E) :=
-  rfl
+  (rfl)
 
 /-- The general fibre equivalence sends a loop class to the monodromy translate of the chosen
 lift, as an equality in the fibre subtype. -/
@@ -153,7 +153,7 @@ lift, as an equality in the fibre subtype. -/
 lemma _root_.IsCoveringMap.fundamentalGroupEquivFiber_apply [SimplyConnectedSpace E]
     (hp : IsCoveringMap p) (e : p ⁻¹' {x}) (γ : FundamentalGroup X x) :
     IsCoveringMap.fundamentalGroupEquivFiber hp e γ = hp.monodromy γ e :=
-  rfl
+  (rfl)
 
 /-- The inverse of the general fibre equivalence is characterized by the loop class whose
 monodromy sends the chosen lift to the requested fibre point. -/

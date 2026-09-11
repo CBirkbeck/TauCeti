@@ -190,10 +190,10 @@ theorem _root_.IsCoveringMap.exists_map_of_monodromyNatTrans [LocallyPathConnect
   rw [IsCoveringMap.monodromyNatTrans_app]
   have he' : (⟨e, he⟩ : p ⁻¹' {p e}) = ⟨e, rfl⟩ := Subtype.ext rfl
   rw [he']
-  have hfiber : ContinuousMap.fiberMap f hf (p e) ⟨e, rfl⟩ =
+  have hfiber : Function.fiberMap f hf (p e) ⟨e, rfl⟩ =
       ⟨IsCoveringMap.mapOfNatTrans hp hq α e, IsCoveringMap.proj_mapOfNatTrans hp hq α e⟩ := by
     apply Subtype.ext
-    exact ContinuousMap.fiberMap_apply_coe f hf (p e) ⟨e, rfl⟩
+    exact Function.fiberMap_apply_coe f hf (p e) ⟨e, rfl⟩
   exact hfiber.trans (IsCoveringMap.mapOfNatTrans_apply hp hq α e).symm
 
 end

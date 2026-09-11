@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Topology.Homotopy.Lifting
+public import TauCeti.Logic.Function.Fiber
 
 /-!
 # Functoriality of covering-space monodromy
@@ -13,7 +14,10 @@ public import Mathlib.Topology.Homotopy.Lifting
 A continuous map between two covering spaces over the same base carries lifts of a path to
 lifts of that path. Consequently it intertwines transport between fibres and induces a natural
 transformation between the two monodromy functors. An isomorphism of covers induces a natural
-isomorphism.
+isomorphism. The underlying set-level operations on fibres — the restriction `Function.fiberMap`
+of a map over the base to a fibre and the relabelling `Equiv.compFiberEquiv` of fibres under a
+bijection of bases — come from `TauCeti.Logic.Function.Fiber`; this file adds their
+compatibility with monodromy.
 
 These constructions are the morphism-level input for the alternative classification of covers
 as functors from the fundamental groupoid in `TauCetiRoadmap/UniversalCovers/README.md`, Stage 2,
@@ -49,51 +53,16 @@ section
 universe u v
 
 variable {E F G : Type u} {X : Type v}
-  [TopologicalSpace E] [TopologicalSpace F] [TopologicalSpace G]
+  [TopologicalSpace E] [TopologicalSpace F] [TopologicalSpace G] [TopologicalSpace X]
   {p : E → X} {q : F → X} {r : G → X}
-
-/-- The restriction of a map over `X` to the fibre over `x`. -/
-def _root_.ContinuousMap.fiberMap (f : C(E, F)) (hf : q ∘ f = p) (x : X) :
-    p ⁻¹' {x} → q ⁻¹' {x} :=
-  fun e ↦ ⟨f e, by
-    rw [Set.mem_preimage, Set.mem_singleton_iff]
-    have he : p e = x := by
-      simpa only [Set.mem_preimage, Set.mem_singleton_iff] using e.2
-    simpa only [Function.comp_apply] using (congrFun hf e).trans he⟩
-
-/-- On underlying points, restriction to a fibre applies the original map. -/
-@[simp]
-theorem _root_.ContinuousMap.fiberMap_apply_coe
-    (f : C(E, F)) (hf : q ∘ f = p) (x : X) (e : p ⁻¹' {x}) :
-    (ContinuousMap.fiberMap f hf x e : F) = f e :=
-  (rfl)
-
-/-- Restricting the identity map to a fibre gives the identity. -/
-@[simp]
-theorem _root_.ContinuousMap.fiberMap_id_apply (x : X) (e : p ⁻¹' {x}) :
-    ContinuousMap.fiberMap (p := p) (q := p) (ContinuousMap.id E) rfl x e = e := by
-  apply Subtype.ext
-  rfl
-
-/-- Restriction to a fibre respects composition of maps over the base. -/
-theorem _root_.ContinuousMap.fiberMap_comp_apply (f : C(E, F)) (g : C(F, G))
-    (hf : q ∘ f = p) (hg : r ∘ g = q) (x : X) (e : p ⁻¹' {x}) :
-    ContinuousMap.fiberMap (g.comp f) (by
-      funext z
-      exact (congrFun hg (f z)).trans (congrFun hf z)) x e =
-      ContinuousMap.fiberMap g hg x (ContinuousMap.fiberMap f hf x e) := by
-  apply Subtype.ext
-  rfl
-
-variable [TopologicalSpace X]
 
 /-- A map between covering spaces over the same base intertwines monodromy along every path. -/
 @[simp]
 theorem _root_.IsCoveringMap.fiberMap_monodromy (hp : _root_.IsCoveringMap p)
     (hq : _root_.IsCoveringMap q) (f : C(E, F)) (hf : q ∘ f = p)
     {x y : X} (a : Path.Homotopic.Quotient x y) (e : p ⁻¹' {x}) :
-    ContinuousMap.fiberMap f hf y (hp.monodromy a e) = hq.monodromy a (ContinuousMap.fiberMap f hf
-        x e) := by
+    Function.fiberMap f hf y (hp.monodromy a e) =
+      hq.monodromy a (Function.fiberMap f hf x e) := by
   symm
   let Γ := hp.liftPathQuotient a e
   let q' : C(F, X) := ⟨q, hq.continuous⟩
@@ -106,7 +75,9 @@ theorem _root_.IsCoveringMap.fiberMap_monodromy (hp : _root_.IsCoveringMap p)
   change (Γ.map f).map q' = _
   rw [← Path.Homotopic.Quotient.map_comp]
   convert hp.map_liftPathQuotient a e using 2
-  all_goals grind
+  · exact congrFun hf _
+  · exact congrFun hf _
+  · exact (Path.Homotopic.Quotient.cast_heq _ _).trans (Path.Homotopic.Quotient.cast_heq _ _).symm
 
 /-- A continuous map of covering spaces over `X` induces a natural transformation between
 their monodromy functors. Its component over `x` is the restriction of `f` to the fibre over
@@ -114,12 +85,12 @@ their monodromy functors. Its component over `x` is the restriction of `f` to th
 def _root_.IsCoveringMap.monodromyNatTrans
     (hp : _root_.IsCoveringMap p) (hq : _root_.IsCoveringMap q)
     (f : C(E, F)) (hf : q ∘ f = p) : hp.monodromyFunctor ⟶ hq.monodromyFunctor where
-  app x := ↾(ContinuousMap.fiberMap f hf x.as)
+  app x := ↾(Function.fiberMap f hf x.as)
   naturality {x y} a := by
     ext e
     -- The naturality square in `Type` unfolds pointwise to monodromy equivariance.
-    change ContinuousMap.fiberMap f hf y.as (hp.monodromy a e) =
-      hq.monodromy a (ContinuousMap.fiberMap f hf x.as e)
+    change Function.fiberMap f hf y.as (hp.monodromy a e) =
+      hq.monodromy a (Function.fiberMap f hf x.as e)
     exact IsCoveringMap.fiberMap_monodromy hp hq f hf a e
 
 /-- On a fibre, the natural transformation induced by a map of covers applies that map to the
@@ -129,7 +100,7 @@ theorem _root_.IsCoveringMap.monodromyNatTrans_app (hp : _root_.IsCoveringMap p)
     (hq : _root_.IsCoveringMap q) (f : C(E, F)) (hf : q ∘ f = p)
     (x : X) :
     (IsCoveringMap.monodromyNatTrans hp hq f hf).app (FundamentalGroupoid.mk x) =
-      ↾(ContinuousMap.fiberMap f hf x) :=
+      ↾(Function.fiberMap f hf x) :=
   (rfl)
 
 /-- The natural transformation induced by a map over the base depends only on that map, not on
@@ -146,8 +117,7 @@ theorem _root_.IsCoveringMap.monodromyNatTrans_congr (hp : _root_.IsCoveringMap 
 theorem _root_.IsCoveringMap.monodromyNatTrans_id (hp : _root_.IsCoveringMap p) :
     IsCoveringMap.monodromyNatTrans hp hp (ContinuousMap.id E) rfl = 𝟙 hp.monodromyFunctor := by
   ext x e
-  apply Subtype.ext
-  rfl
+  exact Function.fiberMap_id_apply x.as e
 
 /-- Composition of maps of covers induces vertical composition of their monodromy natural
 transformations. -/
@@ -159,8 +129,7 @@ theorem _root_.IsCoveringMap.monodromyNatTrans_comp (hp : _root_.IsCoveringMap p
       exact (congrFun hg (f z)).trans (congrFun hf z)) =
       IsCoveringMap.monodromyNatTrans hp hq f hf ≫ IsCoveringMap.monodromyNatTrans hq hr g hg := by
   ext x e
-  apply Subtype.ext
-  rfl
+  exact Function.fiberMap_comp_apply f g hf hg x.as e
 
 /-- An isomorphism of covering spaces over `X` induces a natural isomorphism between their
 monodromy functors. Its forward and inverse transformations are the ones induced by the
@@ -174,12 +143,12 @@ noncomputable def _root_.IsCoveringMap.monodromyNatIso
       p).2 hh.symm)
   hom_inv_id := by
     ext x e
-    apply Subtype.ext
-    exact h.symm_apply_apply _
+    exact Subtype.ext <| (Function.fiberMap_apply_coe _ _ _ _).trans <|
+      (congrArg h.symm (Function.fiberMap_apply_coe _ _ _ _)).trans (h.symm_apply_apply _)
   inv_hom_id := by
     ext x f
-    apply Subtype.ext
-    exact h.apply_symm_apply _
+    exact Subtype.ext <| (Function.fiberMap_apply_coe _ _ _ _).trans <|
+      (congrArg h (Function.fiberMap_apply_coe _ _ _ _)).trans (h.apply_symm_apply _)
 
 /-- The forward natural transformation of the monodromy isomorphism is the canonical
 transformation induced by the homeomorphism. -/
@@ -204,49 +173,24 @@ section BaseHomeomorph
 
 variable {Y : Type v} [TopologicalSpace Y]
 
-omit [TopologicalSpace E] in
-/-- Postcomposing a map with a homeomorphism of the base relabels its fibres: the fibre of
-`h ∘ p` over `y` is the fibre of `p` over `h.symm y`. No covering hypothesis is used. -/
-def _root_.Homeomorph.compFiberEquiv (h : X ≃ₜ Y) (y : Y) :
-    (h ∘ p) ⁻¹' {y} ≃ p ⁻¹' {h.symm y} :=
-  Set.equivOfEq <| Set.ext fun _ ↦ by
-    simp only [Set.mem_preimage, Set.mem_singleton_iff, Function.comp_apply]
-    exact h.eq_symm_apply.symm
-
-omit [TopologicalSpace E] in
-/-- On underlying points, the fibre equivalence for a homeomorphism of bases is the identity. -/
-@[simp]
-theorem _root_.Homeomorph.compFiberEquiv_apply_coe (h : X ≃ₜ Y) (y : Y)
-    (e : (h ∘ p) ⁻¹' {y}) :
-    (Homeomorph.compFiberEquiv (p := p) h y e : E) = e :=
-  (rfl)
-
-omit [TopologicalSpace E] in
-/-- On underlying points, the inverse fibre equivalence for a homeomorphism of bases is the
-identity. -/
-@[simp]
-theorem _root_.Homeomorph.compFiberEquiv_symm_apply_coe (h : X ≃ₜ Y) (y : Y)
-    (e : p ⁻¹' {h.symm y}) :
-    ((Homeomorph.compFiberEquiv (p := p) h y).symm e : E) = e :=
-  (rfl)
-
 /-- Fibre transport after changing the base by a homeomorphism agrees with transport along the
-inverse image of the path. -/
-@[simp]
+inverse image of the path.
+
+This is not a `simp` lemma: `simp` normalises the coercion `⇑h.toEquiv` inside the type of the
+fibre equivalence to `⇑h`, so the left-hand side is not in simp normal form. -/
 theorem _root_.IsCoveringMap.compFiberEquiv_monodromy
     (hp : _root_.IsCoveringMap p)
     (h : X ≃ₜ Y) {x y : Y} (a : Path.Homotopic.Quotient x y)
     (e : (h ∘ p) ⁻¹' {x}) :
-    Homeomorph.compFiberEquiv (p := p) h y ((hp.homeomorph_comp h).monodromy a e) =
+    Equiv.compFiberEquiv (p := p) h.toEquiv y ((hp.homeomorph_comp h).monodromy a e) =
       hp.monodromy (a.map (h.symm : C(Y, X)))
-        (Homeomorph.compFiberEquiv (p := p) h x e) := by
+        (Equiv.compFiberEquiv (p := p) h.toEquiv x e) := by
   obtain ⟨γ⟩ := a
   apply Subtype.ext
-  let ex := Homeomorph.compFiberEquiv (p := p) h x e
-  let Γ : C(I, E) := hp.liftPath (γ.map h.symm.continuous) e (by
-    have hex : (ex : E) = e := Homeomorph.compFiberEquiv_apply_coe h x e
-    rw [← hex]
-    simpa using ex.2.symm)
+  rw [Equiv.compFiberEquiv_apply_coe]
+  set ex := Equiv.compFiberEquiv (p := p) h.toEquiv x e
+  have hex : (ex : E) = e := Equiv.compFiberEquiv_apply_coe h.toEquiv x e
+  let Γ : C(I, E) := hp.liftPath (γ.map h.symm.continuous) ex (by simpa using ex.2.symm)
   have hΓ : Γ = (hp.homeomorph_comp h).liftPath γ e (by
       simpa using e.2.symm) := by
     refine ((hp.homeomorph_comp h).eq_liftPath_iff' (γ_0 := by
@@ -255,9 +199,9 @@ theorem _root_.IsCoveringMap.compFiberEquiv_monodromy
       -- Expose the composite projection so the lift equation for `Γ` can be applied pointwise.
       change h (p (Γ t)) = γ t
       have hΓt : p (Γ t) = h.symm (γ t) :=
-        congrFun (hp.liftPath_lifts (γ.map h.symm.continuous) e _) t
+        congrFun (hp.liftPath_lifts (γ.map h.symm.continuous) ex _) t
       rw [hΓt, h.apply_symm_apply]
-    · exact hp.liftPath_zero (γ.map h.symm.continuous) e _
+    · exact (hp.liftPath_zero (γ.map h.symm.continuous) ex _).trans hex
   exact congrArg (fun q : C(I, E) ↦ q 1) hΓ.symm
 
 /-- **Changing the base of a covering map by a homeomorphism transports monodromy along the
@@ -268,7 +212,7 @@ noncomputable def _root_.IsCoveringMap.monodromyHomeomorphCompNatIso
     (hp.homeomorph_comp h).monodromyFunctor ≅
       FundamentalGroupoid.map (h.symm : C(Y, X)) ⋙ hp.monodromyFunctor :=
   NatIso.ofComponents
-    (fun y ↦ (Homeomorph.compFiberEquiv (p := p) h y.as).toIso)
+    (fun y ↦ (Equiv.compFiberEquiv (p := p) h.toEquiv y.as).toIso)
     (by
       intro x y a
       ext e
@@ -281,7 +225,7 @@ theorem _root_.IsCoveringMap.monodromyHomeomorphCompNatIso_hom_app
     (hp : _root_.IsCoveringMap p)
     (h : X ≃ₜ Y) (y : Y) :
     (hp.monodromyHomeomorphCompNatIso h).hom.app (FundamentalGroupoid.mk y) =
-      (Homeomorph.compFiberEquiv (p := p) h y).toIso.hom :=
+      (Equiv.compFiberEquiv (p := p) h.toEquiv y).toIso.hom :=
   (rfl)
 
 end BaseHomeomorph

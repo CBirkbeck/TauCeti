@@ -28,8 +28,8 @@ for the deck group and regularity of the deck action.
 
 * `TauCeti.Deck.IsRegular.isQuotientCoveringMap`: a regular, preconnected covering map is a
   quotient covering map for its deck group.
-* `TauCeti.Deck.IsQuotientCoveringMap.isRegular`: quotient covering maps have regular deck
-  action, whatever the acting group.
+* `IsQuotientCoveringMap.isRegular`: quotient covering maps have regular deck action, whatever
+  the acting group.
 * `TauCeti.Deck.isQuotientCoveringMap_iff_isRegular`: for a preconnected covering map, being a
   quotient covering map for the deck group is equivalent to regularity of the deck action.
 * `TauCeti.Deck.IsRegular.isOpenQuotientMap`: a regular covering map is an open quotient map.
@@ -59,7 +59,7 @@ theorem IsRegular.isQuotientCoveringMap [PreconnectedSpace E] (hreg : IsRegular 
 
 /-- A quotient covering map for any acting group has regular deck action: its fibres are the
 orbits of the acting group, and each group element translates by a deck transformation. -/
-theorem IsQuotientCoveringMap.isRegular {G : Type*} [Group G] [MulAction G E]
+theorem _root_.IsQuotientCoveringMap.isRegular {G : Type*} [Group G] [MulAction G E]
     (h : IsQuotientCoveringMap p G) : IsRegular p := by
   refine isRegular_iff_exists_apply_eq.mpr ⟨h.surjective, fun {e e'} hee => ?_⟩
   obtain ⟨g, hg⟩ := h.apply_eq_iff_mem_orbit.mp hee.symm
@@ -70,7 +70,7 @@ theorem IsQuotientCoveringMap.isRegular {G : Type*} [Group G] [MulAction G E]
 deck transformation group is equivalent to regularity of the deck action. -/
 theorem isQuotientCoveringMap_iff_isRegular [PreconnectedSpace E] (hp : IsCoveringMap p) :
     IsQuotientCoveringMap p (Deck p) ↔ IsRegular p := by
-  exact ⟨fun h => IsQuotientCoveringMap.isRegular h, fun hreg => hreg.isQuotientCoveringMap hp⟩
+  exact ⟨fun h => h.isRegular, fun hreg => hreg.isQuotientCoveringMap hp⟩
 
 /-- A regular covering map is an open quotient map. -/
 theorem IsRegular.isOpenQuotientMap (hreg : IsRegular p) (hp : IsCoveringMap p) :

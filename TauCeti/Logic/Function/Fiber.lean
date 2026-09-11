@@ -1,0 +1,97 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
+-/
+module
+
+public import Mathlib.Logic.Equiv.Set
+
+/-!
+# Fibres of a map over a base
+
+For `p : E → X`, the fibre of `p` over `x` is the set `p ⁻¹' {x}`. This file collects the two
+elementary constructions on such fibres that the covering-space development uses, each stated at
+the level where it is actually true: a bare function for the first, a bare equivalence for the
+second.
+
+* `Function.fiberMap`: a map `f : E → F` commuting with the projections to `X` restricts to the
+  fibres over each point.
+* `Equiv.compFiberEquiv`: relabelling the base along `h : X ≃ Y` identifies the fibre of `h ∘ p`
+  over `y` with the fibre of `p` over `h.symm y`.
+
+Neither construction uses a topology, so neither is stated for a `ContinuousMap` or a
+`Homeomorph`; the covering-space API applies them to the underlying function and the underlying
+equivalence. Keeping them here rather than in the monodromy files also keeps them out of the
+import cone of `Mathlib.Topology.Homotopy.Lifting`, so lower-level fibre API can use them.
+
+## Main declarations
+
+* `Function.fiberMap`: the restriction of a map over `X` to the fibre over `x`.
+* `Equiv.compFiberEquiv`: the relabelling of fibres under an equivalence of bases.
+-/
+
+public section
+
+namespace Function
+
+variable {E F G X : Type*} {p : E → X} {q : F → X} {r : G → X}
+
+/-- The restriction of a map over `X` to the fibre over `x`. -/
+def fiberMap (f : E → F) (hf : q ∘ f = p) (x : X) : p ⁻¹' {x} → q ⁻¹' {x} :=
+  fun e ↦ ⟨f e, by
+    rw [Set.mem_preimage, Set.mem_singleton_iff]
+    have he : p e = x := by
+      simpa only [Set.mem_preimage, Set.mem_singleton_iff] using e.2
+    simpa only [Function.comp_apply] using (congrFun hf e).trans he⟩
+
+/-- On underlying points, restriction to a fibre applies the original map. -/
+@[simp]
+theorem fiberMap_apply_coe (f : E → F) (hf : q ∘ f = p) (x : X) (e : p ⁻¹' {x}) :
+    (fiberMap f hf x e : F) = f e :=
+  (rfl)
+
+/-- Restricting the identity map to a fibre gives the identity. -/
+@[simp]
+theorem fiberMap_id_apply (x : X) (e : p ⁻¹' {x}) :
+    fiberMap (p := p) (q := p) id rfl x e = e := by
+  apply Subtype.ext
+  rfl
+
+/-- Restriction to a fibre respects composition of maps over the base. -/
+theorem fiberMap_comp_apply (f : E → F) (g : F → G) (hf : q ∘ f = p) (hg : r ∘ g = q) (x : X)
+    (e : p ⁻¹' {x}) :
+    fiberMap (g ∘ f) (by
+      funext z
+      exact (congrFun hg (f z)).trans (congrFun hf z)) x e =
+      fiberMap g hg x (fiberMap f hf x e) := by
+  apply Subtype.ext
+  rfl
+
+end Function
+
+namespace Equiv
+
+variable {E X Y : Type*} {p : E → X}
+
+/-- Postcomposing a map with an equivalence of the base relabels its fibres: the fibre of `h ∘ p`
+over `y` is the fibre of `p` over `h.symm y`. -/
+def compFiberEquiv (h : X ≃ Y) (y : Y) : (h ∘ p) ⁻¹' {y} ≃ p ⁻¹' {h.symm y} :=
+  _root_.Set.equivOfEq <| Set.ext fun _ ↦ by
+    simp only [Set.mem_preimage, Set.mem_singleton_iff, Function.comp_apply]
+    exact h.eq_symm_apply.symm
+
+/-- On underlying points, the fibre equivalence for an equivalence of bases is the identity. -/
+@[simp]
+theorem compFiberEquiv_apply_coe (h : X ≃ Y) (y : Y) (e : (h ∘ p) ⁻¹' {y}) :
+    (compFiberEquiv (p := p) h y e : E) = e :=
+  (rfl)
+
+/-- On underlying points, the inverse fibre equivalence for an equivalence of bases is the
+identity. -/
+@[simp]
+theorem compFiberEquiv_symm_apply_coe (h : X ≃ Y) (y : Y) (e : p ⁻¹' {h.symm y}) :
+    ((compFiberEquiv (p := p) h y).symm e : E) = e :=
+  (rfl)
+
+end Equiv
