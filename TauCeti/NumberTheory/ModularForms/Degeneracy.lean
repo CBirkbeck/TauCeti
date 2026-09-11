@@ -800,19 +800,29 @@ theorem CuspForm.levelRaise_mem_cuspFormCharSpace_of_dvd {M d N : ℕ} [NeZero d
   exact slash_levelRaise_eq_smul _ f γ hc (hf ⟨_, hm⟩)
 
 /-- **A matrix of `Γ₀(N)` whose lower-right entry is `1` modulo a divisor `M` acts trivially on
-`S_k(Γ₁(N), χ)` when `χ` is pulled back from a character modulo `M`**: its nebentypus value is
+`M_k(Γ₁(N), χ)` when `χ` is pulled back from a character modulo `M`**: its nebentypus value is
 `χ₀` of the lower-right entry modulo `M`, which is `χ₀ 1 = 1`. -/
-theorem slash_mapGL_eq_self_of_mem_cuspFormCharSpace_of_comp {M N : ℕ} (hMN : M ∣ N)
+theorem slash_mapGL_eq_self_of_mem_modFormCharSpace_of_comp {M N : ℕ} (hMN : M ∣ N)
     {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod M)ˣ →* ℂˣ} (hcomp : χ = χ₀.comp (ZMod.unitsMap hMN))
-    {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {β : SL(2, ℤ)}
-    (hβ : β ∈ Gamma0 N) (hβ11 : ((β 1 1 : ℤ) : ZMod M) = 1) : ⇑f ∣[k] mapGL ℝ β = ⇑f := by
-  rw [(mem_cuspFormCharSpace_iff_nebentypus k χ f).mp hf ⟨β, hβ⟩, hcomp, MonoidHom.comp_apply,
+    {f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ modFormCharSpace k χ)
+    {β : SL(2, ℤ)} (hβ : β ∈ Gamma0 N) (hβ11 : ((β 1 1 : ℤ) : ZMod M) = 1) :
+    ⇑f ∣[k] mapGL ℝ β = ⇑f := by
+  rw [(mem_modFormCharSpace_iff_nebentypus k χ f).mp hf ⟨β, hβ⟩, hcomp, MonoidHom.comp_apply,
     ← Gamma0Map_toHomUnits_of_dvd hMN ⟨β, hβ⟩ (Gamma0_le_Gamma0_of_dvd hMN hβ)]
   have h1 : (Gamma0Map M).toHomUnits ⟨β, Gamma0_le_Gamma0_of_dvd hMN hβ⟩ = 1 := by
     refine Units.ext ?_
     rw [MonoidHom.coe_toHomUnits, Gamma0Map_apply]
     exact hβ11
   rw [h1, map_one, Units.val_one, one_smul]
+
+/-- **The cusp-form case of `slash_mapGL_eq_self_of_mem_modFormCharSpace_of_comp`**, through
+the coercion to modular forms. -/
+theorem slash_mapGL_eq_self_of_mem_cuspFormCharSpace_of_comp {M N : ℕ} (hMN : M ∣ N)
+    {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod M)ˣ →* ℂˣ} (hcomp : χ = χ₀.comp (ZMod.unitsMap hMN))
+    {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {β : SL(2, ℤ)}
+    (hβ : β ∈ Gamma0 N) (hβ11 : ((β 1 1 : ℤ) : ZMod M) = 1) : ⇑f ∣[k] mapGL ℝ β = ⇑f :=
+  slash_mapGL_eq_self_of_mem_modFormCharSpace_of_comp hMN hcomp
+    ((coe_mem_modFormCharSpace_iff k χ f).mpr hf) hβ hβ11
 
 /-- **The nebentypus of a level-raise at the exact level (cusp forms).** The `N = d * M` case of
 `TauCeti.CuspForm.levelRaise_mem_cuspFormCharSpace_of_dvd`. -/

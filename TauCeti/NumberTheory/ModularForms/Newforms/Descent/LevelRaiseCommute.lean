@@ -7,7 +7,7 @@ module
 
 public import TauCeti.NumberTheory.ModularForms.Degeneracy
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Sum
-import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.QExpansion
+import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Periodic
 import TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelCommute
 
 /-!
@@ -297,8 +297,8 @@ private theorem descendIndexMul_bijective (hp : p.Prime) (hpl : Nat.Coprime p l)
   have hvw' := congrArg Fin.val hvw
   rcases lt_or_ge v.val p with hv | hv <;> rcases lt_or_ge w.val p with hw | hw
   · rw [descendIndexMul_of_lt hp hpl N hv, descendIndexMul_of_lt hp hpl N hw] at hvw'
-    have := (mulModEquiv p hp.pos hpl.symm).injective (a₁ := ⟨v.val, hv⟩) (a₂ := ⟨w.val, hw⟩)
-      (Fin.ext (by rw [coe_mulModEquiv, coe_mulModEquiv]; exact hvw'))
+    have := (ZMod.mulModEquiv p hp.pos hpl.symm).injective (a₁ := ⟨v.val, hv⟩)
+      (a₂ := ⟨w.val, hw⟩) (Fin.ext (by rw [ZMod.coe_mulModEquiv, ZMod.coe_mulModEquiv]; exact hvw'))
     exact Fin.ext (Fin.mk.inj_iff.mp this)
   · rw [descendIndexMul_of_lt hp hpl N hv, descendIndexMul_of_le hp hpl N hw] at hvw'
     exact absurd (hvw' ▸ Nat.mod_lt (l * v.val) hp.pos) (not_lt.mpr hw)
