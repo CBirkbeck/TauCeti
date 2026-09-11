@@ -76,4 +76,44 @@ theorem ofLe_sub_levelRaise_mem_cuspFormCharSpace (hp : p.Prime) (hpN : p ∣ N)
   rw [MonoidHom.comp_assoc, ZMod.unitsMap_comp] at h
   rwa [hcomp, MonoidHom.comp_assoc, ZMod.unitsMap_comp]
 
+/-! ### The descent of the difference vanishes at the indices coprime to `L` -/
+
+section Core
+
+variable {M : ℕ} [NeZero M]
+
+omit [NeZero M] in
+/-- The `m`-th coefficient of a finite sum of cusp forms of level `Γ₁(M)`. -/
+private theorem qExpansion_coeff_finset_sum {ι : Type*} (s : Finset ι)
+    (F : ι → CuspForm ((Gamma1 M).map (mapGL ℝ)) k) (m : ℕ) :
+    (qExpansion 1 ⇑(∑ i ∈ s, F i : CuspForm ((Gamma1 M).map (mapGL ℝ)) k)).coeff m =
+      ∑ i ∈ s, (qExpansion 1 (F i)).coeff m := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simp only [Finset.sum_empty, FunLike.coe_zero, qExpansion_zero, map_zero]
+  | insert a s ha ih =>
+    rw [Finset.sum_insert ha, Finset.sum_insert ha, FunLike.coe_add,
+      ModularForm.qExpansion_add one_pos (one_mem_strictPeriods_Gamma1_map _), map_add, ih]
+
+omit [NeZero M] in
+/-- **A character over a lowered character is lowered.** If `χ'` modulo `N'` and `χ₀ ∘ π` modulo
+`M` have the same pull-back to a common multiple `M'`, where `χ₀` has level `M / p` and
+`M ∣ N'`, then `χ'` is the pull-back of `χ₀ ∘ π` modulo `N' / p`: the pull-back to `M'` is
+injective on characters, by the surjectivity of `ZMod.unitsMap`. -/
+private theorem eq_comp_unitsMap_of_comp_unitsMap_eq {M' N' : ℕ} [NeZero M'] (hpM : p ∣ M)
+    (hpN' : p ∣ N') (hMpN'p : M / p ∣ N' / p) (hMN' : M ∣ N') (hN'M' : N' ∣ M')
+    {χM : (ZMod M)ˣ →* ℂˣ} {χ₀ : (ZMod (M / p))ˣ →* ℂˣ}
+    (hcomp : χM = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpM))) {χ' : (ZMod N')ˣ →* ℂˣ}
+    (h : χ'.comp (ZMod.unitsMap hN'M') = χM.comp (ZMod.unitsMap (hMN'.trans hN'M'))) :
+    χ' = (χ₀.comp (ZMod.unitsMap hMpN'p)).comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN')) := by
+  rw [hcomp, MonoidHom.comp_assoc, ZMod.unitsMap_comp] at h
+  refine MonoidHom.ext fun u ↦ ?_
+  obtain ⟨v, rfl⟩ := ZMod.unitsMap_surjective hN'M' u
+  have hv := congrArg (fun ψ ↦ ψ v) h
+  simp only [MonoidHom.comp_apply] at hv ⊢
+  rw [hv, ← MonoidHom.comp_apply (ZMod.unitsMap _) (ZMod.unitsMap _), ZMod.unitsMap_comp,
+    ← MonoidHom.comp_apply (ZMod.unitsMap _) (ZMod.unitsMap _), ZMod.unitsMap_comp]
+
+end Core
+
 end TauCeti
