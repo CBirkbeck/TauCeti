@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Data.Nat.Prime.Infinite
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.PrimePower
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Scalar
 public import TauCeti.NumberTheory.ModularForms.Newforms.Newform
@@ -23,12 +22,8 @@ relations in the ring under `heckeRingHomCuspCharSpace`, evaluated on the (nonze
 remaining statements are consequences (a congruence in the index, the prime-square instance, and
 the cancellation argument below).
 
-The payoff is the **finite-exceptional-set upgrade** behind strong multiplicity one: if two good
-Hecke eigenforms have the same eigenvalue at every good index outside a finite set, they have the
-same eigenvalue at every good prime. Given a good prime `p`, pick a prime `q` beyond the
-exceptional set and beyond `N` and `p`; then `λ_{pq} = λ_p λ_q` on both sides, so the eigenvalues
-at `p` agree once `λ_q(f) ≠ 0`. If instead `λ_q(f) = 0`, the recurrence gives
-`λ_{q²}(f) = −χ(q) q^{k−1} ≠ 0`, and the same cancellation runs at `p q²`.
+These identities are what the strong-multiplicity-one argument consumes: they let the eigenvalues
+at composite good indices be read off the eigenvalues at good primes and the character.
 
 ## Main results
 
@@ -38,8 +33,6 @@ at `p` agree once `λ_q(f) ≠ 0`. If instead `λ_q(f) = 0`, the recurrence give
 * `HeckeRing.GL2.EigenformAwayFromLevel.eigenvalue_prime_pow_add_two`: the recurrence along the
   powers of a good prime, and its first instance
   `HeckeRing.GL2.EigenformAwayFromLevel.eigenvalue_prime_sq`.
-* `HeckeRing.GL2.EigenformAwayFromLevel.eigenvalue_prime_eq_of_forall_notMem`: agreement outside
-  a finite set of good indices forces agreement at every good prime.
 
 The coprimality proofs guarding `eigenvalue` are implicit arguments of these statements, so that
 they apply to whichever proof a consumer holds; `eigenvalue_congr` moves between spellings of an
@@ -47,14 +40,14 @@ index.
 
 ## Provenance
 
-The cancellation argument is that of `eigenvalue_cross_agree_of_cofactor_ne_zero` and
-`eigenvalue_at_prime_sq_of_coeff_one_ne_zero` in the AINTLIB `LeanModularForms` project
+The multiplicativity and the prime-square identity appear as
+`Eigenform.coeff_eq_coeff_one_mul_eigenvalue` and `eigenvalue_at_prime_sq_of_coeff_one_ne_zero`
+in the AINTLIB `LeanModularForms` project
 (`LeanModularForms/StrongMultiplicityOne/ConstantMultiple.lean`, Chris Birkbeck, commit
 `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0,
-<https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>), which derives the
-multiplicativity and the prime-square identity from the Fourier coefficients of a normalised
-eigenform. Here both are read off the Hecke ring instead, so no normalisation and no coefficient
-formula is needed.
+<https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>), derived there from
+the Fourier coefficients of a normalised eigenform. Here both are read off the Hecke ring
+instead, so no normalisation and no coefficient formula is needed.
 
 ## References
 
@@ -167,55 +160,5 @@ theorem eigenvalue_prime_sq {p : ℕ+} (hp : (p : ℕ).Prime) (hpN : Nat.Coprime
     f.eigenvalue_congr (by rw [zero_add, pow_one])
   rw [f.eigenvalue_prime_pow_add_two hp hpN (r := 0) (h₀ := by simp) (h₁ := by simpa using hpN),
     e₀, e₁, mul_one, sq]
-
-/-- At a good prime `p` with `λ_p = 0`, the eigenvalue at `p²` is `−χ(p) p^{k−1}`, which is
-nonzero. -/
-private theorem eigenvalue_prime_sq_ne_zero_of_eq_zero {p : ℕ+} (hp : (p : ℕ).Prime)
-    (hpN : Nat.Coprime p N) {h : Nat.Coprime ((p ^ 2 : ℕ+) : ℕ) N}
-    (h0 : f.eigenvalue p hpN = 0) : f.eigenvalue (p ^ 2) h ≠ 0 := by
-  rw [f.eigenvalue_prime_sq hp hpN, h0, sq, zero_mul, zero_sub, neg_ne_zero]
-  exact mul_ne_zero (Units.ne_zero _) (zpow_ne_zero _ (Nat.cast_ne_zero.mpr hp.ne_zero))
-
-/-- **Agreement outside a finite set forces agreement at every good prime.** If two good Hecke
-eigenforms have the same eigenvalue at every index coprime to `N` outside a finite set `S`, they
-have the same eigenvalue at every prime `p` coprime to `N`: compare at `p q` or at `p q²` for a
-prime `q` beyond `S`, `N` and `p`, whichever of `λ_q(f)`, `λ_{q²}(f)` is nonzero. -/
-theorem eigenvalue_prime_eq_of_forall_notMem {f g : EigenformAwayFromLevel N k} {S : Finset ℕ}
-    (h : ∀ (n : ℕ+) (hn : Nat.Coprime n N), (n : ℕ) ∉ S → f.eigenvalue n hn = g.eigenvalue n hn)
-    {p : ℕ+} (hp : (p : ℕ).Prime) (hpN : Nat.Coprime p N) :
-    f.eigenvalue p hpN = g.eigenvalue p hpN := by
-  obtain ⟨q, hqB, hq⟩ := Nat.exists_infinite_primes (max (S.sup id) (max N p) + 1)
-  have hqS : ∀ m : ℕ, q ≤ m → m ∉ S := fun m hm hmS ↦ by
-    have := Finset.le_sup (f := id) hmS
-    simp only [id] at this
-    omega
-  have hqN : Nat.Coprime q N := (Nat.Prime.coprime_iff_not_dvd hq).mpr fun hd ↦ by
-    have := Nat.le_of_dvd (NeZero.pos N) hd
-    omega
-  have hqp : Nat.Coprime p q := (Nat.coprime_primes hp hq).mpr (by omega)
-  set Q : ℕ+ := ⟨q, hq.pos⟩
-  have hQN : ∀ v : ℕ, Nat.Coprime ((Q ^ v : ℕ+) : ℕ) N := fun v ↦ by
-    rw [PNat.pow_coe]
-    exact Nat.Coprime.pow_left v hqN
-  have hpQ : ∀ v : ℕ, Nat.Coprime p ((Q ^ v : ℕ+) : ℕ) := fun v ↦ by
-    rw [PNat.pow_coe]
-    exact Nat.Coprime.pow_right v hqp
-  have key : ∀ v : ℕ, v ≠ 0 → f.eigenvalue (Q ^ v) (hQN v) ≠ 0 →
-      f.eigenvalue p hpN = g.eigenvalue p hpN := fun v hv0 hv ↦ by
-    have hle : q ≤ ((Q ^ v : ℕ+) : ℕ) := by
-      rw [PNat.pow_coe]
-      exact Nat.le_self_pow hv0 q
-    have hpQv : Nat.Coprime ((p * Q ^ v : ℕ+) : ℕ) N := by
-      rw [PNat.mul_coe]
-      exact Nat.Coprime.mul_left hpN (hQN v)
-    have e1 := h (p * Q ^ v) hpQv
-      (hqS _ (by rw [PNat.mul_coe]; exact hle.trans (Nat.le_mul_of_pos_left _ p.pos)))
-    have e2 := h (Q ^ v) (hQN v) (hqS _ hle)
-    rw [f.eigenvalue_mul (hpQ v) (hm := hpN) (hn := hQN v),
-      g.eigenvalue_mul (hpQ v) (hm := hpN) (hn := hQN v), ← e2] at e1
-    exact mul_right_cancel₀ hv e1
-  by_cases h0 : f.eigenvalue Q hqN = 0
-  · exact key 2 two_ne_zero (f.eigenvalue_prime_sq_ne_zero_of_eq_zero (p := Q) hq hqN h0)
-  · exact key 1 one_ne_zero (by rwa [f.eigenvalue_congr (pow_one Q) (hn := hqN)])
 
 end HeckeRing.GL2.EigenformAwayFromLevel
