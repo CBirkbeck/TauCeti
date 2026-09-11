@@ -8,8 +8,8 @@ module
 public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Descent
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.CuspForm
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelCommute
-public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelRaise
-public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelRaiseCommute
+public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelRaise.Basic
+public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelRaise.Commute
 public import TauCeti.NumberTheory.ModularForms.Newforms.SquarefreeDecomposition
 
 /-!
