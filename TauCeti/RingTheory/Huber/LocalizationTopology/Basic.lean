@@ -292,11 +292,8 @@ theorem HasDenominatorPower.mono {P : PairOfDefinition A} {T U : Finset A} {s : 
 numerators and the denominator by a unit `u` carries `HasDenominatorPower` from `(T, s)` to
 `(u · T, u · s)`.
 
-This is what makes the rescaling of a presentation usable: `locSubring` is unchanged by the
-rescaling (`locSubring_eq_of_coe_eq_image_mul_left`), the fractions are unchanged
-(`TauCeti.Localization.divBy_mul_mul_left`), and a deep enough level of the filtration lands
-inside `u · Iᴺ` (`exists_idealImage_subset_image_mul_left`), which is what supplies the new
-exponent. -/
+Of the data a presentation carries, this is the part whose invariance under rescaling is not
+immediate, so it is what a rescaled presentation needs in order to stand in for the original. -/
 theorem HasDenominatorPower.of_coe_eq_image_mul_left [IsTopologicalRing A]
     {P : PairOfDefinition A} {T T' : Finset A} {u s : A} (hu : IsUnit u)
     {S : Type*} [CommRing S] [Algebra A S] [IsLocalization.Away s S]
