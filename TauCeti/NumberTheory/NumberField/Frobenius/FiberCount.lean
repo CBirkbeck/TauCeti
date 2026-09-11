@@ -79,8 +79,11 @@ theorem frobenius_fiber_eq_orbit_centralizer (𝔭 : Ideal (𝓞 K)) {σ : L ≃
   · rintro ⟨_, _, -, hfrob⟩
     obtain ⟨τ, rfl⟩ := Ideal.exists_smul_eq_of_isGaloisGroup 𝔭 Q P (L ≃ₐ[K] L)
     have h := (Q.isArithFrobAt_pointwise_smul_iff_eq_conj hσ τ σ).mp hfrob
-    exact ⟨⟨τ, Subgroup.mem_centralizer_singleton_iff.mpr (eq_mul_inv_iff_mul_eq.mp h).symm⟩, rfl⟩
-  · rintro ⟨⟨τ, hτ⟩, rfl⟩
+    exact ⟨⟨τ, Subgroup.mem_centralizer_singleton_iff.mpr (eq_mul_inv_iff_mul_eq.mp h).symm⟩,
+      Subgroup.smul_def _ Q⟩
+  · rintro ⟨⟨τ, hτ⟩, hP⟩
+    rw [Subgroup.smul_def] at hP
+    subst hP
     have hconj : τ * σ * τ⁻¹ = σ := by
       rw [mul_inv_eq_iff_eq_mul, Subgroup.mem_centralizer_singleton_iff.mp hτ]
     exact ⟨inferInstance, inferInstance, by simpa using (MulAction.injective τ).ne hσ.ne_bot,
