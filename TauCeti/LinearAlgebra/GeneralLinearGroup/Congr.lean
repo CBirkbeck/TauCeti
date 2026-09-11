@@ -34,18 +34,6 @@ open LinearMap.GeneralLinearGroup
 variable {R M M₁ M₂ : Type*} [Semiring R] [AddCommMonoid M] [Module R M] [AddCommMonoid M₁]
   [Module R M₁] [AddCommMonoid M₂] [Module R M₂]
 
-/-- The linear automorphism underlying the general linear group element
-`(generalLinearEquiv R M).symm f` is `f` itself.
-
-Mathlib records how `generalLinearEquiv` computes on coercions (`coeFn_generalLinearEquiv`,
-`coe_toLinearEquiv`) rather than at the level of `M ≃ₗ[R] M`, so both evaluation lemmas for
-`congrAut` below need this bridge; it is stated once here. -/
-private theorem _root_.LinearEquiv.toLinearEquiv_generalLinearEquiv_symm (f : M ≃ₗ[R] M) :
-    ((generalLinearEquiv R M).symm f).toLinearEquiv = f := by
-  ext m
-  rw [coe_toLinearEquiv, ← coeFn_generalLinearEquiv]
-  exact DFunLike.congr_fun ((generalLinearEquiv R M).apply_symm_apply f) m
-
 /-- Conjugation by a linear equivalence `e : M₁ ≃ₗ[R] M₂`, as an isomorphism of automorphism
 groups: Mathlib's `LinearMap.GeneralLinearGroup.congrLinearEquiv` read through
 `LinearMap.GeneralLinearGroup.generalLinearEquiv`.
@@ -59,8 +47,14 @@ def _root_.LinearEquiv.congrAut (e : M₁ ≃ₗ[R] M₂) : (M₁ ≃ₗ[R] M₁
 theorem _root_.LinearEquiv.congrAut_apply (e : M₁ ≃ₗ[R] M₂) (f : M₁ ≃ₗ[R] M₁) (m : M₂) :
     LinearEquiv.congrAut e f m = e (f (e.symm m)) := by
   rw [LinearEquiv.congrAut, MulEquiv.trans_apply, MulEquiv.trans_apply]
+  -- `generalLinearEquiv` computes on coercions, not at the level of `M₁ ≃ₗ[R] M₁`, so its inverse
+  -- law has to be transported across `toLinearEquiv` before `simp` can use it.
+  have h : ((generalLinearEquiv R M₁).symm f).toLinearEquiv = f := by
+    ext x
+    rw [coe_toLinearEquiv, ← coeFn_generalLinearEquiv]
+    exact DFunLike.congr_fun ((generalLinearEquiv R M₁).apply_symm_apply f) x
   simp only [congrLinearEquiv_apply, coeFn_generalLinearEquiv, coe_ofLinearEquiv,
-    LinearEquiv.trans_apply, LinearEquiv.toLinearEquiv_generalLinearEquiv_symm]
+    LinearEquiv.trans_apply, h]
 
 /-- Inverse conjugation by `e` sends `m` to `e.symm (g (e m))`. -/
 @[simp]
@@ -68,9 +62,12 @@ theorem _root_.LinearEquiv.congrAut_symm_apply (e : M₁ ≃ₗ[R] M₂) (g : M�
     (LinearEquiv.congrAut e).symm g m = e.symm (g (e m)) := by
   rw [LinearEquiv.congrAut, MulEquiv.symm_trans_apply, MulEquiv.symm_trans_apply,
     congrLinearEquiv_symm]
+  have h : ((generalLinearEquiv R M₂).symm g).toLinearEquiv = g := by
+    ext x
+    rw [coe_toLinearEquiv, ← coeFn_generalLinearEquiv]
+    exact DFunLike.congr_fun ((generalLinearEquiv R M₂).apply_symm_apply g) x
   simp only [congrLinearEquiv_apply, MulEquiv.symm_symm, coeFn_generalLinearEquiv,
-    coe_ofLinearEquiv, LinearEquiv.symm_symm, LinearEquiv.trans_apply,
-    LinearEquiv.toLinearEquiv_generalLinearEquiv_symm]
+    coe_ofLinearEquiv, LinearEquiv.symm_symm, LinearEquiv.trans_apply, h]
 
 end
 
