@@ -55,9 +55,7 @@ variable {p N : ℕ} (k : ℤ)
 
 /-- **Every member of the descent family slashes a level-raise back to the form.** For `p ∣ N`
 prime and `g` slash-invariant of level `Γ₁(N / p)`, with `V_p g = p^(1-k) • (g ∣[k] scaleGL p)`,
-`(V_p g) ∣[k] descendMatrix p N v = p⁻¹ • g` for every `v`: the upper-triangular members by
-`smul_slash_scaleGL_slash_upperTriRep`, the extra member because its `Γ₀(N / p)` factor lies in
-`Γ(N / p) ≤ Γ₁(N / p)`. -/
+`(V_p g) ∣[k] descendMatrix p N v = p⁻¹ • g` for every `v`. -/
 theorem smul_slash_scaleGL_slash_descendMatrix (hp : p.Prime) (hpN : p ∣ N) {F : Type*}
     [FunLike F ℍ ℂ] [SlashInvariantFormClass F ((Gamma1 (N / p)).map (mapGL ℝ)) k] (g : F)
     (v : Fin (descendMatrixCount p N)) :
@@ -81,8 +79,8 @@ theorem smul_slash_scaleGL_slash_descendMatrix (hp : p.Prime) (hpN : p ∣ N) {F
 
 /-- **The descent of a level-raise is a multiple of the form.** For `p ∣ N` prime and `g`
 slash-invariant of level `Γ₁(N / p)`, with `V_p g = p^(1-k) • (g ∣[k] scaleGL p)`,
-`descendSlash k p N (V_p g) = (|family| / p) • g`, summing
-`smul_slash_scaleGL_slash_descendMatrix` over the family. -/
+`descendSlash k p N (V_p g) = (|family| / p) • g`. This is the coefficient formula of the
+descent on a level-raise, the input to Miyake's Lemma 4.6.14. -/
 theorem descendSlash_smul_slash_scaleGL (hp : p.Prime) (hpN : p ∣ N) {F : Type*} [FunLike F ℍ ℂ]
     [SlashInvariantFormClass F ((Gamma1 (N / p)).map (mapGL ℝ)) k] (g : F) :
     haveI : NeZero p := ⟨hp.ne_zero⟩
