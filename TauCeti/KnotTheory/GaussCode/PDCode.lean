@@ -41,6 +41,7 @@ Diagram Codes*, Definitions 2--3, and the oriented crossing convention of W. B. 
   visits.
 * `TauCeti.BasedOrientedGaussCode.toOrientedPDCode` converts a based oriented Gauss code to an
   oriented PD-code.
+* `TauCeti.FramedBasedOrientedGaussCode.toFramedOrientedPDCode` is the framed refinement.
 
 ## Main results
 
@@ -50,6 +51,11 @@ Diagram Codes*, Definitions 2--3, and the oriented crossing convention of W. B. 
   with the over visit of the Gauss code.
 * `TauCeti.BasedOrientedGaussCode.toOrientedPDCode_crossingSign` proves preservation of crossing
   signs.
+* `TauCeti.BasedOrientedGaussCode.toOrientedPDCode_writhe` proves agreement of the two writhes.
+* `TauCeti.BasedOrientedGaussCode.toOrientedPDCode_injective` proves that the conversion loses no
+  Gauss-code data.
+* `TauCeti.FramedBasedOrientedGaussCode.toFramedOrientedPDCode_injective` proves the same for the
+  framed conversion.
 -/
 
 public section
@@ -400,6 +406,85 @@ theorem toOrientedPDCode_crossingSign (D : BasedOrientedGaussCode n) (c : Fin n)
     simp only [crossingOutgoing, hne, ↓reduceIte]
     decide
 
+/-- The two writhes agree. -/
+@[simp]
+theorem toOrientedPDCode_writhe (D : BasedOrientedGaussCode n) :
+    D.toOrientedPDCode.writhe = D.writhe := by
+  simp [OrientedPDCode.writhe_def, writhe_def]
+
+/-- The conversion to oriented PD-codes is injective: the crossing-incidence data remembers the
+visit sequence, the over/under data, and the crossing signs of the Gauss code. -/
+theorem toOrientedPDCode_injective : Function.Injective (toOrientedPDCode (n := n)) := by
+  intro D E h
+  have hvisit (c : Fin n) (slot : Fin 4) : D.crossingVisit c slot = E.crossingVisit c slot := by
+    have hhalf := congrArg
+      (fun C : OrientedPDCode n => C.halfEdge (PDCode.crossingSlotEquiv n (c, slot))) h
+    simp only [toOrientedPDCode_crossing] at hhalf
+    exact congrArg Prod.fst ((visitHalfEdgeEquiv n).injective hhalf)
+  have hsymm : D.visitDataEquiv.symm = E.visitDataEquiv.symm := by
+    refine Equiv.ext fun ⟨c, over⟩ => ?_
+    cases over
+    · simpa [crossingVisit] using hvisit c 1
+    · simpa [crossingVisit] using hvisit c 0
+  have hequiv : D.visitDataEquiv = E.visitDataEquiv := by
+    simpa using congrArg Equiv.symm hsymm
+  apply BasedOrientedGaussCode.ext
+  · funext i
+    simpa using congrArg (fun e => (e i).1) hequiv
+  · funext i
+    simpa using congrArg (fun e => (e i).2) hequiv
+  · funext c
+    apply Units.ext
+    simpa using congrArg (fun C : OrientedPDCode n => C.crossingSign c) h
+
 end BasedOrientedGaussCode
 
+namespace FramedBasedOrientedGaussCode
+
+variable {n : ℕ}
+
+/-- The framed oriented PD-code of a framed based oriented Gauss code. A Gauss code traverses a
+single component, so its one framing coefficient is the framing of every crossing visit. -/
+noncomputable def toFramedOrientedPDCode (D : FramedBasedOrientedGaussCode n) :
+    FramedOrientedPDCode n where
+  toOrientedPDCode := D.forgetFraming.toOrientedPDCode
+  framing _ := D.framing
+  framing_edgePair _ := (rfl)
+  framing_oppositeCrossingSlot _ _ := (rfl)
+  crossinglessFramings := if n = 0 then {(true, D.framing)} else 0
+  crossinglessFramings_map_fst := by
+    by_cases h : n = 0 <;>
+      simp [h, BasedOrientedGaussCode.toOrientedPDCode]
+
+/-- Forgetting the framing commutes with passing to PD-codes. -/
+@[simp] theorem toFramedOrientedPDCode_toOrientedPDCode (D : FramedBasedOrientedGaussCode n) :
+    D.toFramedOrientedPDCode.toOrientedPDCode = D.forgetFraming.toOrientedPDCode := (rfl)
+
+/-- Every crossing visit of a framed code carries the single framing coefficient. -/
+@[simp] theorem toFramedOrientedPDCode_framing (D : FramedBasedOrientedGaussCode n)
+    (h : Fin (4 * n)) : D.toFramedOrientedPDCode.framing h = D.framing := (rfl)
+
+/-- A crossing-free framed code carries the Gauss code's framing on its unique component, while
+a code with crossings has no crossing-free components. -/
+@[simp] theorem toFramedOrientedPDCode_crossinglessFramings
+    (D : FramedBasedOrientedGaussCode n) :
+    D.toFramedOrientedPDCode.crossinglessFramings =
+      if n = 0 then {(true, D.framing)} else 0 := (rfl)
+
+/-- The framed conversion is injective: the underlying PD-code recovers the Gauss code, and the
+framing is recovered from a crossing visit, or from the crossing-free component when `n = 0`. -/
+theorem toFramedOrientedPDCode_injective :
+    Function.Injective (toFramedOrientedPDCode (n := n)) := by
+  rintro ⟨D, a⟩ ⟨E, b⟩ h
+  obtain rfl : D = E := BasedOrientedGaussCode.toOrientedPDCode_injective
+    (congrArg FramedOrientedPDCode.toOrientedPDCode h)
+  obtain rfl : a = b := by
+    rcases Nat.eq_zero_or_pos n with rfl | hn
+    · simpa using congrArg FramedOrientedPDCode.crossinglessFramings h
+    · simpa using congrArg (fun C : FramedOrientedPDCode n => C.framing ⟨0, by omega⟩) h
+  rfl
+
+end FramedBasedOrientedGaussCode
+
 end TauCeti
+
