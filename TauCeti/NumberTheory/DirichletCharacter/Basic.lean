@@ -40,6 +40,17 @@ Adapted from the AINTLIB `LeanModularForms` project (Chris Birkbeck,
 intermediate shift form (`exists_kernel_unit_with_char_shift`, :646) and a separate
 non-factorisation witness (`exists_unit_of_not_factorsThrough`, :542); each is a one-line
 consequence of the other, so only this form is ported and the extraction is done inline.
+
+`factorsThrough_div_of_changeLevel_factorsThrough` is extracted from the same project at commit
+`eb9621e7bcb0ce220ad53983ec45d987cb5b9002`, file
+`projects/LeanModularForms/LeanModularForms/StrongMultiplicityOne/InductiveStep.lean`: the
+conductor step inside the proof of `miyake_4_6_8_factor_dichotomy`, which the source carries as
+the private lemmas `conductor_dvd_of_factorsThrough`, `factorsThrough_of_conductor_dvd` and
+`conductor_changeLevel` specialised to `L N / p`. Here those three are Mathlib's
+`conductor_dvd_of_mem_conductorSet`, `mem_conductorSet_iff_conductor_dvd` and
+`conductor_changeLevel`, so what is ported is the arithmetic of the descent — the conductor
+divides `gcd (N, L N / p) = N / p` — stated once for characters valued in any
+`CommMonoidWithZero`.
 -/
 
 public section
