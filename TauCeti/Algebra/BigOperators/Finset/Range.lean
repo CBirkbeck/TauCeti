@@ -27,8 +27,7 @@ square and enlarge a vanishing-off-the-block range.
   a rectangle.
 * `sum_range_add_add`: splitting a `range n` sum into a prefix, a block, and a suffix.
 * `sum_range_min_add_two`: the two-step recurrence satisfied by the sums
-  `∑_{i ≤ min j r} c^i a (j + r − 2i)`, and `sum_range_min_zero`: the boundary identity beside it,
-  where the recurrence has only two terms.
+  `∑_{i ≤ min j r} c^i a (j + r − 2i)`.
 -/
 
 public section
@@ -148,24 +147,5 @@ theorem sum_range_min_add_two {R : Type*} [Semiring R] (a : ℕ → R) (c : R) (
   -- after which the two sides differ only by the order of the summands
   rw [← h₁, ← h₂]
   abel
-
-/-- **The boundary identity beside `sum_range_min_add_two`**: `S 1 (r+1) − c · S 0 r = S 0 (r+2)`,
-both sides being `a (r + 2)`. It is not an instance of that recurrence — substituting `j = 0`
-there gives a different identity — but the companion needed where the recurrence has only two
-terms, at the smallest index. -/
-theorem sum_range_min_zero {R : Type*} [Ring R] (a : ℕ → R) (c : R) (r : ℕ) :
-    (∑ i ∈ range (min 1 (r + 1) + 1), c ^ i * a (1 + (r + 1) - 2 * i)) -
-        c * ∑ i ∈ range (min 0 r + 1), c ^ i * a (0 + r - 2 * i) =
-      ∑ i ∈ range (min 0 (r + 2) + 1), c ^ i * a (0 + (r + 2) - 2 * i) := by
-  have hmin₁ : min 1 (r + 1) + 1 = 2 := by omega
-  have hmin₂ : min 0 (r + 2) + 1 = 1 := by omega
-  have hmin₃ : min 0 r + 1 = 1 := by omega
-  have hidx₁ : 1 + (r + 1) - 2 * 0 = r + 2 := by omega
-  have hidx₂ : 1 + (r + 1) - 2 * 1 = r := by omega
-  have hidx₃ : 0 + (r + 2) - 2 * 0 = r + 2 := by omega
-  have hidx₄ : 0 + r - 2 * 0 = r := by omega
-  rw [hmin₁, hmin₂, hmin₃, Finset.sum_range_succ, Finset.sum_range_one, Finset.sum_range_one,
-    Finset.sum_range_one, hidx₁, hidx₂, hidx₃, hidx₄, pow_zero, pow_one, one_mul, one_mul,
-    add_sub_cancel_right]
 
 end TauCeti
