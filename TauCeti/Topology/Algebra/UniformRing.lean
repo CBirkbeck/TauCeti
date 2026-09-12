@@ -42,6 +42,11 @@ what `UniformSpace.Completion.algebra` requires.
 The declarations live in the root `UniformSpace.Completion` namespace they extend, following
 this repository's convention for lemmas about external types.
 
+`UniformSpace.Completion.coeRingHom_comp_heq` compares the coercion for two *equal* uniformities
+on the same ring: following a fixed map by the coercion gives heterogeneously equal composites.
+It is stated here rather than where it is consumed because nothing in it is specific to any
+particular ring being completed.
+
 ## Main definitions
 
 * `UniformSpace.Completion.completeRingEquivSelf`: the ring isomorphism
@@ -65,6 +70,26 @@ this repository's convention for lemmas about external types.
 public section
 
 namespace UniformSpace.Completion
+
+section Congr
+
+/-- **Following a fixed map by the coercion into a completion depends on the uniformity only
+through the instance.** For two equal uniformities on `S`, the composites
+`R →+* S → UniformSpace.Completion S` agree.
+
+The conclusion is `HEq` rather than `=` because the type `UniformSpace.Completion S` mentions the
+uniformity on `S`, so the two composites do not share a codomain. A caller holding an equation
+between uniformities — rather than a defeq — is the intended consumer. -/
+theorem coeRingHom_comp_heq {R S : Type*} [CommRing R] [CommRing S] (f : R →+* S)
+    {u₁ u₂ : UniformSpace S} (hu : u₁ = u₂)
+    (t₁ : @IsTopologicalRing S u₁.toTopologicalSpace _)
+    (t₂ : @IsTopologicalRing S u₂.toTopologicalSpace _)
+    (g₁ : @IsUniformAddGroup S u₁ _) (g₂ : @IsUniformAddGroup S u₂ _) :
+    HEq ((@coeRingHom S _ u₁ t₁ g₁).comp f) ((@coeRingHom S _ u₂ t₂ g₂).comp f) := by
+  subst hu
+  rfl
+
+end Congr
 
 section Ext
 

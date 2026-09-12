@@ -8,6 +8,7 @@ module
 public import TauCeti.RingTheory.Huber.LocalizationTopology.UniversalProperty
 public import TauCeti.RingTheory.Huber.Completion
 public import TauCeti.RingTheory.Localization.Completion
+public import TauCeti.Topology.Algebra.UniformRing
 
 /-!
 # The completion `A⟨T/s⟩`
@@ -221,20 +222,6 @@ theorem toCompletionLoc_apply [IsTopologicalRing A] (P : PairOfDefinition A) (T 
     letI := isTopologicalRing_locUniformSpace P T s S hden
     toCompletionLoc P T s S hden a = (algebraMap A S a : UniformSpace.Completion S) := (rfl)
 
-/-- `UniformSpace.Completion.coeRingHom` composed with a fixed map depends on the uniformity only
-through the instance, so equal uniformities give heterogeneously equal composites. Substituting
-the equation is what makes this provable: the two sides are then the same term, the remaining
-`IsTopologicalRing` and `IsUniformAddGroup` arguments being proofs. -/
-private theorem coeRingHom_comp_heq {R S : Type*} [CommRing R] [CommRing S] (f : R →+* S)
-    {u₁ u₂ : UniformSpace S} (hu : u₁ = u₂)
-    (t₁ : @IsTopologicalRing S u₁.toTopologicalSpace _)
-    (t₂ : @IsTopologicalRing S u₂.toTopologicalSpace _)
-    (g₁ : @IsUniformAddGroup S u₁ _) (g₂ : @IsUniformAddGroup S u₂ _) :
-    HEq ((@UniformSpace.Completion.coeRingHom S _ u₁ t₁ g₁).comp f)
-      ((@UniformSpace.Completion.coeRingHom S _ u₂ t₂ g₂).comp f) := by
-  subst hu
-  rfl
-
 /-- **A change of presentation with the same ring of definition leaves the structure map alone.**
 `locUniformSpace_congr` identifies the two completions; this identifies the two structure maps
 `A → A⟨T/s⟩` into them, which is what a statement about maps out of `A⟨T/s⟩` needs before it can
@@ -248,7 +235,8 @@ theorem toCompletionLoc_heq [IsTopologicalRing A] (P : PairOfDefinition A) (T T'
     [IsLocalization.Away s' S] (hden : HasDenominatorPower P T s S)
     (hden' : HasDenominatorPower P T' s' S) (h : locSubring P T' s' S = locSubring P T s S) :
     HEq (toCompletionLoc P T' s' S hden') (toCompletionLoc P T s S hden) :=
-  coeRingHom_comp_heq (algebraMap A S) (locUniformSpace_congr P T T' s s' S hden hden' h) _ _ _ _
+  UniformSpace.Completion.coeRingHom_comp_heq (algebraMap A S)
+    (locUniformSpace_congr P T T' s s' S hden hden' h) _ _ _ _
 
 
 /-- The localisation pair `localization`, transported along `locUniformSpace_toTopologicalSpace`
