@@ -65,7 +65,7 @@ arbitrary finite subgroup of points, no isogeny being needed to state or prove t
   degree exactly when the subgroup cuts the field back out.
 * `card_translationFixingSubgroup_eq_finrank_iff_isGalois_and_forall_exists_translation`:
   equivalently, the extension is Galois and every automorphism over the field is a translation, so
-  neither condition can be weakened.
+  the two conditions together are necessary as well as sufficient.
 
 ## References
 
@@ -267,8 +267,8 @@ theorem eq_of_translationFixedField_eq [Finite Φ]
     translationFixingSubgroup_translationFixedField W Ψ]
 
 /-- **The order of the fixing subgroup of `L` divides the separable degree of `K(W)` over `L`.**
-The field the subgroup cuts out is Galois over `L`, hence separable, so its degree — the order of
-the subgroup — is one factor of the separable degree of the whole extension. -/
+`K(W)` is Galois, hence separable, over the field the subgroup cuts out, and that relative degree is
+the order of the subgroup; it is therefore one factor of the separable degree over `L`. -/
 theorem card_translationFixingSubgroup_dvd_finSepDegree (L : IntermediateField F W.FunctionField)
     [FiniteDimensional L W.FunctionField] :
     Nat.card (translationFixingSubgroup W L) ∣ Field.finSepDegree L W.FunctionField := by
@@ -328,9 +328,9 @@ theorem card_translationFixingSubgroup_eq_finrank_of_forall_exists_translation
     IsGalois.card_aut_eq_finrank]
 
 /-- **The fixing subgroup of `L` has order the degree exactly when `K(W)` is Galois over `L` and
-every automorphism over `L` is a translation.** Both hypotheses of
-`card_translationFixingSubgroup_eq_finrank_of_forall_exists_translation` are therefore necessary as
-well as sufficient, so nothing weaker will do. -/
+every automorphism over `L` is a translation.** The two hypotheses of
+`card_translationFixingSubgroup_eq_finrank_of_forall_exists_translation` are therefore jointly
+necessary as well as sufficient. -/
 theorem card_translationFixingSubgroup_eq_finrank_iff_isGalois_and_forall_exists_translation
     (L : IntermediateField F W.FunctionField) [FiniteDimensional L W.FunctionField] :
     Nat.card (translationFixingSubgroup W L) = Module.finrank L W.FunctionField ↔
