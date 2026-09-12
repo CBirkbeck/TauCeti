@@ -287,14 +287,9 @@ private theorem val_descendIndexMulPerm_of_lt (hp : p.Prime) (hpl : Nat.Coprime 
   · simp
   · rename_i h
     rw [Equiv.permCongr_apply, Equiv.symm_symm, descendIndexEquiv_apply_of_lt h hw,
-      onePointMulPerm_coe]
-    have hsymm : (descendIndexEquiv p N h).symm
-        ((((l : ZMod p) * ((w : ℕ) : ZMod p) : ZMod p)) : OnePoint (ZMod p)) =
-          ⟨l * (w : ℕ) % p, hmod⟩ := by
-      rw [Equiv.symm_apply_eq,
-        descendIndexEquiv_apply_of_lt h (v := ⟨l * (w : ℕ) % p, hmod⟩) (Nat.mod_lt _ hp.pos)]
-      exact congrArg _ (by push_cast [ZMod.natCast_mod]; ring)
-    rw [hsymm]
+      onePointMulPerm_coe, descendIndexEquiv_symm_coe_val]
+    rw [show ((l : ZMod p) * ((w : ℕ) : ZMod p)) = ((l * (w : ℕ) : ℕ) : ZMod p) by push_cast; ring,
+      ZMod.val_natCast]
 
 private theorem val_descendIndexMulPerm_of_le (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
     {w : Fin (descendMatrixCount p N)} (hw : p ≤ w.val) :
@@ -307,17 +302,12 @@ private theorem val_descendIndexMulPerm_of_le (hp : p.Prime) (hpl : Nat.Coprime 
     omega
   have hcntN := descendMatrixCount_of_not_sq_dvd (p := p) (N := N) h
   have hwp : (w : ℕ) = p := by omega
-  have hp' : p < descendMatrixCount p N := by omega
   rw [descendIndexMulPerm]
   split
   · rename_i hsq
     exact absurd hsq h
   · rw [Equiv.permCongr_apply, Equiv.symm_symm, descendIndexEquiv_apply_of_le h hw,
-      onePointMulPerm_infty]
-    have hsymm : (descendIndexEquiv p N h).symm (OnePoint.infty : OnePoint (ZMod p)) =
-        ⟨p, hp'⟩ := by
-      rw [Equiv.symm_apply_eq, descendIndexEquiv_apply_of_le h (v := ⟨p, hp'⟩) (le_refl p)]
-    rw [hsymm, hwp]
+      onePointMulPerm_infty, descendIndexEquiv_symm_infty_val, hwp]
 
 private theorem val_descendIndexMulEquiv_of_lt (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
     {v : Fin (descendMatrixCount p (l * N))} (hv : v.val < p) :
