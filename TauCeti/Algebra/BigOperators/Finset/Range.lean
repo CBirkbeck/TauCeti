@@ -8,7 +8,7 @@ module
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Abel
 
 /-!
 # Range reindexing for finite sums
@@ -113,7 +113,7 @@ This is the identity the Fourier coefficients of the Hecke operators at a prime 
 (`TauCeti/NumberTheory/ModularForms/HeckeSlash/Nebentypus/PrimePower.lean`), with `a t` the
 coefficient at `p^t m` and `c = χ(p) p^{k−1}`; the `min` is what makes it hold with no relation
 between `j` and `r`. -/
-theorem sum_range_min_add_two {R : Type*} [CommSemiring R] (a : ℕ → R) (c : R) (j r : ℕ) :
+theorem sum_range_min_add_two {R : Type*} [Semiring R] (a : ℕ → R) (c : R) (j r : ℕ) :
     (∑ i ∈ range (min (j + 2) (r + 1) + 1), c ^ i * a (j + 2 + (r + 1) - 2 * i)) +
         c * ∑ i ∈ range (min j (r + 1) + 1), c ^ i * a (j + (r + 1) - 2 * i) =
       (∑ i ∈ range (min (j + 1) (r + 2) + 1), c ^ i * a (j + 1 + (r + 2) - 2 * i)) +
@@ -145,14 +145,15 @@ theorem sum_range_min_add_two {R : Type*} [CommSemiring R] (a : ℕ → R) (c : 
   have h₂ := hsh (min (j + 1) r + 1)
   rw [hmin₁] at h₁
   rw [hmin₂] at h₂
-  -- no cancellation is needed: each unshifted sum is rewritten back into a shifted one plus `A 0`
+  -- no cancellation is needed: each unshifted sum is rewritten back into a shifted one plus `A 0`,
+  -- after which the two sides differ only by the order of the summands
   rw [← h₁, ← h₂]
-  ring
+  abel
 
 /-- **The `j = 0` case of `sum_range_min_add_two`**: `S 1 (r+1) − c · S 0 r = S 0 (r+2)`, both
 sides being `a (r + 2)`. The two-step recurrence degenerates there, the `0 − 1` index not
 arising. -/
-theorem sum_range_min_zero {R : Type*} [CommRing R] (a : ℕ → R) (c : R) (r : ℕ) :
+theorem sum_range_min_zero {R : Type*} [Ring R] (a : ℕ → R) (c : R) (r : ℕ) :
     (∑ i ∈ range (min 1 (r + 1) + 1), c ^ i * a (1 + (r + 1) - 2 * i)) -
         c * ∑ i ∈ range (min 0 r + 1), c ^ i * a (0 + r - 2 * i) =
       ∑ i ∈ range (min 0 (r + 2) + 1), c ^ i * a (0 + (r + 2) - 2 * i) := by
@@ -164,7 +165,7 @@ theorem sum_range_min_zero {R : Type*} [CommRing R] (a : ℕ → R) (c : R) (r :
   have hidx₃ : 0 + (r + 2) - 2 * 0 = r + 2 := by omega
   have hidx₄ : 0 + r - 2 * 0 = r := by omega
   rw [hmin₁, hmin₂, hmin₃, Finset.sum_range_succ, Finset.sum_range_one, Finset.sum_range_one,
-    Finset.sum_range_one, hidx₁, hidx₂, hidx₃, hidx₄]
-  ring
+    Finset.sum_range_one, hidx₁, hidx₂, hidx₃, hidx₄, pow_zero, pow_one, one_mul, one_mul,
+    add_sub_cancel_right]
 
 end TauCeti
