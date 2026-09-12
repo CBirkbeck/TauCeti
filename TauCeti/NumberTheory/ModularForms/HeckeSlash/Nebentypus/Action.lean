@@ -34,6 +34,12 @@ and cusp-form character spaces.
 * `HeckeRing.GL2.heckeRingHomCharSpace`: the action on modular forms of nebentypus `χ`.
 * `HeckeRing.GL2.heckeRingHomCuspCharSpace`: its restriction to cusp forms.
 
+## Main results
+
+* `HeckeRing.GL2.cuspToModFormCharSpace_heckeRingHomCuspCharSpace`: the inclusion of character
+  spaces intertwines the two actions, so a statement about `modFormCharSpace` specialises to
+  `cuspFormCharSpace`.
+
 ## Provenance
 
 The final ring-homomorphism packaging is adapted from AINTLIB's
@@ -394,6 +400,20 @@ noncomputable def heckeRingHomCuspCharSpace :
 @[simp] lemma heckeRingHomCuspCharSpace_apply (T : 𝕋 (Delta0 N) (Γ₀Q(N)) ℤ) :
     heckeRingHomCuspCharSpace k χ T = twistedHeckeSlashCuspFormCharLinearMap k χ T :=
   (rfl)
+
+/-- **The two Hecke actions agree on a cusp form.** The action on `S_k(N, χ)` and the action on
+`M_k(N, χ)` are built from the same twisted slash sums on functions, so the inclusion of
+character spaces `cuspToModFormCharSpace` intertwines them. This is what lets a statement about
+`modFormCharSpace` be specialised to `cuspFormCharSpace`. -/
+theorem cuspToModFormCharSpace_heckeRingHomCuspCharSpace (T : 𝕋 (Delta0 N) (Γ₀Q(N)) ℤ)
+    (f : cuspFormCharSpace k χ) :
+    cuspToModFormCharSpace k χ (heckeRingHomCuspCharSpace k χ T f) =
+      heckeRingHomCharSpace k χ T (cuspToModFormCharSpace k χ f) := by
+  refine Subtype.ext (DFunLike.coe_injective ?_)
+  rw [coe_cuspToModFormCharSpace, ModularFormClass.coe_modularForm,
+    heckeRingHomCharSpace_apply, coe_twistedHeckeSlashModularFormCharLinearMap,
+    heckeRingHomCuspCharSpace_apply]
+  exact coe_twistedHeckeSlashCuspFormCharLinearMap k χ T f
 
 end HeckeRing.GL2
 
