@@ -1,23 +1,26 @@
 # Last round — r680 (2026-09-12 19:58Z)
 
-## FIRST THING NEXT ROUND: is `sandboxed-build` green on #6093's `2231e763e`?
+## #6093 is GREEN — `sandboxed-build: success` on `2231e763e` (20:02Z)
 
-It was still running when this round closed (started 19:44:26Z; the previous build on this branch
-took ~15 min). Everything else about #6093 is settled, so this one bit decides the next move:
+The r679 chain closed end to end: ejected → 354 behind → merged main (clean) → **red** at
+`FiberFunctor.lean:87`, a file the PR never touched → one identifier fixed → **green**. The ejection
+had a real cause and the refresh was right; r678 was also right to decline it while the failure was
+uncertain. **The ordering is the rule: refresh a green PR only once `queuepos.py` says `EJECTED`.**
 
-* **Green** → nothing owed. The pipeline re-reviews, relabels `ready-to-merge`, and the label
-  transition re-enqueues it. Expect the board to return **10/10** — it was 10/10 before the refresh.
-  The PR now carries a **26th file**, `FiberFunctor.lean`, which is a **required call-site update for
-  the rename**, not scope creep. Say exactly that if `scope` asks.
-* **Red** → read the log before assuming anything. The r679 break (`FiberFunctor.lean:87`) is fixed
-  and `ghostref` confirms no second one of that shape. A new failure is a new cause.
+**Nothing is owed on it.** The pipeline re-reviews, relabels `ready-to-merge`, and *that label
+transition* re-enqueues it — at the **back** of the queue, behind #6432 and #6188. That is the price
+of the ejection and there is nothing to shortcut.
+
+Expect the board to return **10/10** — it was 10/10 before the refresh. The PR now carries a **26th
+file**, `FiberFunctor.lean`, which is a **required call-site update for the rename**, not scope
+creep. Say exactly that if `scope` asks.
 
 ## Board (19:58Z)
 
 | PR | head | CI | label | queue | whose move |
 |---|---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **NEVER-QUEUED** | **Chris** — human-owned `web/examples/Examples.lean`; the bot cannot enqueue it. **Do not refresh it.** |
-| **#6093** | `2231e763e` | **building** | `awaiting-CI` | — | nobody — board `370dad05e` is BEHIND **by construction**, the fix is already pushed. **Do not re-fix.** |
+| **#6093** | `2231e763e` | **green** | `awaiting-CI` | back of queue when relabelled | nobody — board `370dad05e` is BEHIND **by construction**, the fix is already pushed. **Do not re-fix.** |
 | **#6188** | `ec1a68d965` | green | `ready-to-merge` | **pos 16** | nobody — 10/10, waiting its turn |
 | **#6432** | `98bb7e78f4` | green | `ready-to-merge` | **pos 8** | nobody — 10/10, waiting its turn |
 

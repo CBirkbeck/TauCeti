@@ -35448,3 +35448,25 @@ moves — so both were checked against current main:
 ```
 
 Clean. Worth doing precisely because a queued PR is one that nobody is going to look at again.
+
+### #6093 is GREEN on the refreshed head
+
+`sandboxed-build: success` on `2231e763e` at 20:02Z (started 19:44:26Z). Every check on the head is
+green or skipped; label still `awaiting-CI` while the bot catches up.
+
+That closes the r679 chain end to end:
+
+```
+ejected from the queue   ->  354 commits behind  ->  merged main (clean, 0 conflicts)
+                         ->  sandboxed-build RED at FiberFunctor.lean:87  (a file the PR never touched)
+                         ->  one identifier fixed
+                         ->  sandboxed-build GREEN
+```
+
+The ejection had a real cause and the refresh was the right call. r678 was also right to decline it
+while the failure was still uncertain — the ordering of those two judgements is the rule, not either
+one alone: **refresh a green PR only once `queuepos.py` says `EJECTED`.**
+
+Next: the pipeline re-reviews and relabels `ready-to-merge`, and *that label transition* re-enqueues
+it. #6093 will then enter the queue at the back — behind #6432 (pos 8) and #6188 (pos 16) — which is
+the price of the ejection, and nothing this role can or should shortcut.
