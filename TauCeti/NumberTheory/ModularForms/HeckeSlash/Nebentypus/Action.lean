@@ -426,6 +426,16 @@ this one. -/
     coe_twistedHeckeSlashModularFormCharLinearMap]
   exact coe_twistedHeckeSlashCuspFormCharLinearMap k χ T f
 
+/-- **The two Hecke actions agree on a cusp form**, stated on the ring-level operators. This is
+`cuspToModFormCharSpace_twistedHeckeSlashCuspFormCharLinearMap` read through
+`heckeRingHomCuspCharSpace_apply` and `heckeRingHomCharSpace_apply`, which are definitional; it is
+the form in which the descent and recurrence proofs consume the intertwining. -/
+theorem cuspToModFormCharSpace_heckeRingHomCuspCharSpace (T : 𝕋 (Delta0 N) (Γ₀Q(N)) ℤ)
+    (f : cuspFormCharSpace k χ) :
+    cuspToModFormCharSpace k χ (heckeRingHomCuspCharSpace k χ T f) =
+      heckeRingHomCharSpace k χ T (cuspToModFormCharSpace k χ f) :=
+  cuspToModFormCharSpace_twistedHeckeSlashCuspFormCharLinearMap k χ T f
+
 end HeckeRing.GL2
 
 end
