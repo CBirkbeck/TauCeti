@@ -524,9 +524,6 @@ noncomputable def cuspToModFormCharSpace (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) 
     (CuspForm.toModularFormₗ.comp (cuspFormCharSpace k χ).subtype)
     fun f ↦ (coe_mem_modFormCharSpace_iff k χ _).mpr f.2
 
-/-- **`cuspToModFormCharSpace` is the coercion.** The modular form underlying the image of a
-cusp form is the modular form underlying that cusp form; the inclusion changes nothing but the
-space the element is regarded as living in. -/
 @[simp]
 theorem coe_cuspToModFormCharSpace (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) (f : cuspFormCharSpace k χ) :
     (cuspToModFormCharSpace k χ f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) =
