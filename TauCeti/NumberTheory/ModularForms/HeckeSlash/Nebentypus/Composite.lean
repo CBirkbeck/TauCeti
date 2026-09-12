@@ -120,7 +120,8 @@ theorem qExpansion_coeff_heckeRingHomCuspCharSpace_heckeTCompositeGamma0_of_copr
       (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (m * n) := by
   have h := qExpansion_coeff_heckeRingHomCharSpace_heckeTCompositeGamma0_of_coprime hn hnN
     (cuspToModFormCharSpace k χ F) hmn
-  rw [← cuspToModFormCharSpace_heckeRingHomCuspCharSpace] at h
+  rw [heckeRingHomCharSpace_apply, ← cuspToModFormCharSpace_twistedHeckeSlashCuspFormCharLinearMap,
+    ← heckeRingHomCuspCharSpace_apply] at h
   simp only [coe_cuspToModFormCharSpace, ModularFormClass.coe_modularForm] at h
   exact h
 
