@@ -30,7 +30,8 @@ underlying function or equivalence, and fibre identifications compose in either 
 ## Main declarations
 
 * `Function.fiberMap`: the restriction of a map over `X` to the fibre over `x`.
-* `Equiv.compFiberEquiv`: the relabelling of fibres under an equivalence of bases.
+* `Equiv.compFiberEquiv`: the relabelling of fibres under an equivalence of bases, with its
+  identity and composition laws `Equiv.compFiberEquiv_refl` and `Equiv.compFiberEquiv_trans`.
 -/
 
 public section
@@ -79,7 +80,7 @@ end Function
 
 namespace Equiv
 
-variable {E X Y : Type*} {p : E → X}
+variable {E X Y Z : Type*} {p : E → X}
 
 /-- Postcomposing a map with an equivalence of the base relabels its fibres: the fibre of `h ∘ p`
 over `y` is the fibre of `p` over `h.symm y`. -/
@@ -100,5 +101,20 @@ identity. -/
 theorem compFiberEquiv_symm_apply_coe (h : X ≃ Y) (y : Y) (e : p ⁻¹' {h.symm y}) :
     ((compFiberEquiv (p := p) h y).symm e : E) = e :=
   (rfl)
+
+/-- Relabelling the base along the identity leaves the fibres as they are. -/
+@[simp]
+theorem compFiberEquiv_refl (y : X) :
+    compFiberEquiv (p := p) (Equiv.refl X) y = Equiv.refl (p ⁻¹' {y}) :=
+  Equiv.ext fun _ ↦ Subtype.ext rfl
+
+/-- Relabelling the base along a composite is relabelling twice, first along `k` and then along
+`h`. -/
+-- Not `@[simp]`: the left-hand side is the composite form a caller writes, so rewriting towards
+-- the right would drive `simp` away from it rather than towards a normal form.
+theorem compFiberEquiv_trans (h : X ≃ Y) (k : Y ≃ Z) (z : Z) :
+    compFiberEquiv (p := p) (h.trans k) z =
+      (compFiberEquiv (p := h ∘ p) k z).trans (compFiberEquiv (p := p) h (k.symm z)) :=
+  Equiv.ext fun _ ↦ Subtype.ext rfl
 
 end Equiv
