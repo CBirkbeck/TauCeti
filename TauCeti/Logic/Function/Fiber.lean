@@ -114,7 +114,7 @@ theorem compFiberEquiv_symm_apply_coe (h : X ≃ Y) (y : Y) (e : p ⁻¹' {h.sym
 @[simp]
 theorem compFiberEquiv_refl (y : X) :
     compFiberEquiv (p := p) (Equiv.refl X) y = Equiv.refl (p ⁻¹' {y}) :=
-  Equiv.ext fun _ ↦ Subtype.ext (by simp)
+  Equiv.ext fun e ↦ Subtype.ext (compFiberEquiv_apply_coe (p := p) (Equiv.refl X) y e)
 
 /-- Relabelling the base along a composite is relabelling twice, first along `k` and then along
 `h`. -/
@@ -123,6 +123,6 @@ theorem compFiberEquiv_refl (y : X) :
 theorem compFiberEquiv_trans (h : X ≃ Y) (k : Y ≃ Z) (z : Z) :
     compFiberEquiv (p := p) (h.trans k) z =
       (compFiberEquiv (p := h ∘ p) k z).trans (compFiberEquiv (p := p) h (k.symm z)) :=
-  Equiv.ext fun _ ↦ Subtype.ext (by simp)
+  Equiv.ext fun e ↦ Subtype.ext (compFiberEquiv_apply_coe (p := p) (h.trans k) z e)
 
 end Equiv
