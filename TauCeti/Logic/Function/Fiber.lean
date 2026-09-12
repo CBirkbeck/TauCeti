@@ -29,6 +29,7 @@ underlying function or equivalence, and fibre identifications compose in either 
 
 ## Main declarations
 
+* `Function.mapsTo_fiber`: a map over `X` sends each fibre into the corresponding fibre.
 * `Function.fiberMap`: the restriction of a map over `X` to the fibre over `x`.
 * `Equiv.compFiberEquiv`: the relabelling of fibres under an equivalence of bases, with its
   identity and composition laws `Equiv.compFiberEquiv_refl` and `Equiv.compFiberEquiv_trans`.
@@ -40,29 +41,33 @@ namespace Function
 
 variable {E F G X : Type*} {p : E → X} {q : F → X} {r : G → X}
 
+/-- A map over `X` sends the fibre over `x` into the fibre over `x`. -/
+theorem mapsTo_fiber (f : E → F) (hf : q ∘ f = p) (x : X) :
+    Set.MapsTo f (p ⁻¹' {x}) (q ⁻¹' {x}) := fun e he ↦ by
+  rw [Set.mem_preimage, Set.mem_singleton_iff]
+  have hpe : p e = x := by
+    simpa only [Set.mem_preimage, Set.mem_singleton_iff] using he
+  simpa only [Function.comp_apply] using (congrFun hf e).trans hpe
+
 /-- The restriction of a map over `X` to the fibre over `x`. -/
 -- `@[expose]`, like the sibling `TauCeti.Deck.fiberMap`: the whole content of this definition is
 -- that the underlying point of `fiberMap f hf x e` is `f e`, and consumers in other modules rely on
 -- that reduction to line up path-lifting statements, which a non-exposed body cannot supply.
 @[expose]
 def fiberMap (f : E → F) (hf : q ∘ f = p) (x : X) : p ⁻¹' {x} → q ⁻¹' {x} :=
-  Set.MapsTo.restrict f (p ⁻¹' {x}) (q ⁻¹' {x}) fun e he ↦ by
-    rw [Set.mem_preimage, Set.mem_singleton_iff]
-    have hpe : p e = x := by
-      simpa only [Set.mem_preimage, Set.mem_singleton_iff] using he
-    simpa only [Function.comp_apply] using (congrFun hf e).trans hpe
+  (mapsTo_fiber f hf x).restrict f (p ⁻¹' {x}) (q ⁻¹' {x})
 
 /-- On underlying points, restriction to a fibre applies the original map. -/
 @[simp]
 theorem fiberMap_apply_coe (f : E → F) (hf : q ∘ f = p) (x : X) (e : p ⁻¹' {x}) :
     (fiberMap f hf x e : F) = f e :=
-  Set.MapsTo.val_restrict_apply _ e
+  (mapsTo_fiber f hf x).val_restrict_apply e
 
 /-- Restricting the identity map to a fibre gives the identity. -/
 @[simp]
 theorem fiberMap_id_apply (x : X) (e : p ⁻¹' {x}) :
     fiberMap (p := p) (q := p) id rfl x e = e :=
-  congrFun Subtype.map_id e
+  congrFun (Subtype.map_id (h := mapsTo_fiber (q := p) id rfl x)) e
 
 /-- Restriction to a fibre respects composition of maps over the base. -/
 -- Not `@[simp]`: the left-hand side applies `fiberMap` to a compatibility proof built inline from
@@ -74,7 +79,7 @@ theorem fiberMap_comp_apply (f : E → F) (g : F → G) (hf : q ∘ f = p) (hg :
       funext z
       exact (congrFun hg (f z)).trans (congrFun hf z)) x e =
       fiberMap g hg x (fiberMap f hf x e) :=
-  (Subtype.map_comp f _ g _).symm
+  (Subtype.map_comp f (mapsTo_fiber f hf x) g (mapsTo_fiber g hg x)).symm
 
 end Function
 
