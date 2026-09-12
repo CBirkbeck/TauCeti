@@ -34326,3 +34326,72 @@ Merged this watch: **#6426**.
 ### Note for the round prompt
 It still says *"expect 129 passed, 0 failed"*. r661 took the suite to **131**. The number in the
 prompt is stale, not the suite.
+
+---
+
+## r663 — 2026-09-12 — #6412 MERGED; a "settled" note that was right for the wrong reason
+
+### #6412 merged 15:11:20Z — the contest was load-bearing
+
+Second landing of this watch, by `app/tauceti-review-bot`. Its last blocker was the `api-design`
+finding pointing at `TauCetiRoadmap`, contested in r653 on the ground that the fix lay in a
+human-controlled repo no `TauCeti/`-only branch can reach. That contest was accepted in r655 and
+took the PR to 10/10. **A correct finding can still be the wrong PR's problem, and saying so
+precisely is what landed this.**
+
+### Both builds green, and both risky proofs held
+
+* **#6093 on `370dad05e`** — `Subtype.ext (compFiberEquiv_apply_coe …)` compiled. 10833 jobs,
+  docstrings 8441/8441, `LINT-ENV: PASS`.
+* **#6188 on `09242e46b`** — the ported `autCongr_symm_apply`, written against the deferred branch's
+  *semilinear* signature and ending in a `by simp`, compiled. 11202 jobs, docstrings 9009/9009,
+  `LINT-ENV: PASS`. The two new non-simp lemmas did not trip `simpNF`.
+
+### #6432: the rejection was not of sequencing, it was of deferring
+
+Re-read rather than remembered, and the `naming` fix says:
+
+> *"Rebase onto #6188 **or** move all three declarations to root `LinearEquiv` here"* … *"The
+> proposed sequencing through #6188 does not fix the API in this PR's current head; rebase onto that
+> relocation **before merging**."*
+
+So the reviewer offers the rebase itself as an acceptable fix and objects only to the head being
+left unfixed. Its second bullet asks for exactly #6188's names.
+
+Did the rename here — `autCongr`, `autCongr_apply_apply`, `autCongr_symm_apply_apply`, 36
+occurrences, three files — plus a clean merge of `origin/main` (25 behind). Gate: **10 ok, 0 failed**
+(the five rooting-presupposing checks are n/a on a non-rooting PR).
+
+**Renaming makes the two branches converge rather than diverge**: whichever lands second now sees
+the rename as already applied instead of as a conflict. The namespace bullet is still #6188's topic,
+and the reply says so while offering to do it here if the reviewer prefers the duplication — the
+concrete cost being that `scope` currently reads ✅ on this PR and its own history is a `scope` ⛔ for
+carrying a generalisation and a relocation at once.
+
+### The `@[simp]` that is settled — but not for the reason my own note gave
+
+#6093's new `api-design` asks to restore `@[simp]` on
+`IsCoveringMap.fundamentalGroupEquivFiber_apply_coe`, "lost … during the namespace move". My
+standing note said only *"must NOT be `@[simp]`"*, which is right but hid the condition. Checking
+instead of citing the note:
+
+* `origin/main` carries **both** `@[expose]` on the definition (line 108) and `@[simp]` on
+  `_apply_coe` (line 143), and is green.
+* This branch has **no `@[expose]` in the file at all** — its removal is what an earlier
+  `api-design` finding demanded, and that finding now reads ✅.
+* Commit `31512e3e` dropped the `@[simp]` after a red build: *"with `@[expose]` gone … the coercion
+  lemma is provable by `simp only` from `fundamentalGroupEquivFiber_apply`, so marking it `@[simp]`
+  makes it a duplicate rule that never fires."*
+
+Three consistent states exist — expose+simp (main), neither (this PR), and simp-without-expose
+(CI-proven red). The request is the third. Contested with all of it, and with the offer to reinstate
+both if `api-design` withdraws its earlier finding in the same breath.
+
+**A "settled" note that records the conclusion but not the condition is a trap for its own author.**
+Had I answered from the note alone I would have said "settled, do not re-litigate" — true, but
+unable to show why, and unable to notice that `main` carries the opposite annotation.
+
+### Board
+Five open. #6418 10/10 `ready-to-merge`. #6093 green, board ON-HEAD, one contested rubric.
+#6188 green, board BEHIND. #6432 pushed `4e9891cab`, board BEHIND. #5950 Chris's.
+Merged this watch: **#6426, #6412**.
