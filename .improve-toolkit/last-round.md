@@ -1,81 +1,71 @@
-# Last round — r661 (2026-09-12 15:05Z)
+# Last round — r662 (2026-09-12 15:10Z)
 
-## The gate had a false positive, and reasoning past it twice was the real error
+## Check a cited precedent before implementing on its authority
 
-`xsibling`'s `specialOrthogonalToGeneralLinear` rows were explained away in r656 ("main moved") and
-correctly doubted in r660. The cause, found by running the tool's own `gone` computation on the real
-file instead of theorising:
+#6188's `naming` wants `toLinearEquiv_ofLinearEquiv` moved to root `LinearEquiv` on the receiver
+rule, citing `AlgEquiv.toLinearEquiv_ofLinearEquiv` as precedent. That precedent says the opposite:
 
-A declaration written `_root_.TauCeti.Foo.bar` gives `ns = 'TauCeti.Foo'`, so the guard asked
-`'TauCeti.TauCeti' not in h` — **vacuously true for every file**. `TauCeti` entered `wrappers`, and
-every bare use of any `TauCeti.*` name in that file became a BREAK.
-
-Fixed by skipping `ns == 'TauCeti'` / `ns.startswith('TauCeti.')`: rooting *into* TauCeti lands a
-declaration exactly where the enclosing wrapper already puts it. The legitimate path
-(`_root_.QuadraticMap.IsometryEquiv.*` → tests `'TauCeti.QuadraticMap' in h`) was never broken.
-
-**Controls 129 → 131**, mutation-tested:
-
-```
-MUTATION (original guard restored):
-  FAIL  xsibling: rooting INTO TauCeti is not a lost wrapper (r661)
-  PASS  xsibling: still finds the real breakage with that case present
-  130 passed, 1 failed
+```lean
+namespace AlgEquiv
+section OfLinearEquiv
+variable (l : A₁ ≃ₗ[R] A₂) (map_one : …) (map_mul : …)
+theorem toLinearEquiv_ofLinearEquiv : toLinearEquiv (ofLinearEquiv l map_one map_mul) = l := rfl
 ```
 
-The paired positive is the point — it proves the fix **narrows** the check rather than blinding it.
-#6188's gate went **11 ok / 4 failed → 12 ok / 3 failed**.
+`l` is an **explicit** `variable`, so a `LinearEquiv` *is* the first explicit argument — and Mathlib
+still puts the lemma in `AlgEquiv`, the namespace of `ofLinearEquiv`/`toLinearEquiv`. Contested with
+that, plus the standing tension that `api-design` on this same PR is what asked for the declaration
+to live in `LinearMap.GeneralLinearGroup`. The reply says what I will do if the conclusion stands.
 
-**A check that cries wolf is a check the operator learns to skim.**
+**The cheapest verification available, and it inverted the conclusion.**
 
-## A goal printed unchanged means the lemma never fired
+## Waiting a round to keep a failure attributable cost nothing
 
-#6093 went red on r660's `Subtype.ext (by simp)`:
+r661 refused to stack work on #6188 until the `origin/main` merge built. It came back **fully
+green** — 11202 jobs, docstrings 9009/9009, `LINT-ENV: PASS` — so the #6426 conflict resolution is
+confirmed on its own, and the structural lemmas went on top of a known-good base.
 
-```
-Fiber.lean:117:33: unsolved goals
-⊢ ↑(((Equiv.refl X).compFiberEquiv y) x✝) = ↑((Equiv.refl ↑(p ⁻¹' {y})) x✝)
-```
+## The deferred branch is discharged — and the handover was one step too cautious
 
-`simp` made **no progress**; the `@[simp]` characteristic lemma never matched. Naming it
-(`Subtype.ext (compFiberEquiv_apply_coe (p := p) … e)`) removes the question and is what
-`proof-quality` asked for. **"`simp` closes it" is a guess until CI says so.**
+`autCongr_apply` / `autCongr_symm_apply` are in, ported from
+`handover/congraut-structural-deferred` and adapted from its semilinear signature to this PR's
+linear one. The handover said they could open "only after #6188 lands", because a new declaration
+whose first explicit argument is a `LinearEquiv` is a fresh `lint-dot-notation` violation in an
+un-rooted namespace. **But #6188 *is* the rooting, so inside it the namespace is already root and
+the lemmas are legal.** #6188's own `api-design` asking for exactly them is what made that visible.
 
-## Board (15:05Z) — six open
+Neither is `@[simp]`: the pointwise `*_apply_apply` forms are the simp normal form and both
+call-site files name them in their `simp` sets.
+
+## Board (15:10Z) — six open
 
 | PR | head | CI | label | whose move |
 |---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **Chris** — human-owned `web/examples/Examples.lean` |
-| **#6093** | `370dad05e` | building | `ci-failed`¹ | reviewer — 9/10, last blocker re-fixed r661 |
-| **#6188** | `3e027a657` | building | `awaiting-CI` | reviewer — main merged r660, board BEHIND |
-| **#6412** | `360cdfc5b9` | green | `ready-to-merge` | nobody — 10/10 |
+| **#6093** | `370dad05e` | building | `awaiting-CI` | reviewer — 9/10, board BEHIND |
+| **#6188** | `09242e46b` | building | `awaiting-review` | reviewer — structural lemmas + merge, board BEHIND |
+| **#6412** | `360cdfc5b9` | green | `ready-to-merge` | nobody — 10/10, waiting ~2h on the bot |
 | **#6418** | `5c73d4c54` | green | `ready-to-merge` | nobody — 10/10 |
-| **#6432** | `f9bdb0a8b4` | green | `awaiting-author` | **me — contests rejected** |
+| **#6432** | `f9bdb0a8b4` | green | `awaiting-author` | gated on #6188 |
 
-¹ stale label, describes the superseded head. **Read CI from the check-runs API for the CURRENT head.**
+**Boards on #6093 and #6188 are BEHIND. Do NOT re-fix.**
 
 ## Next
 
-1. **Watch #6093 on `370dad05e`.** If `Subtype.ext (compFiberEquiv_apply_coe …)` still fails, the
-   defeq on the RHS (`Equiv.refl`/`Equiv.trans` application) is the suspect — fall back to
+1. **Watch #6093 on `370dad05e`** (the `Subtype.ext (compFiberEquiv_apply_coe …)` form). If it still
+   fails, the RHS defeq (`Equiv.refl`/`Equiv.trans` application) is the suspect — fall back to
    `Equiv.ext fun e ↦ Subtype.ext <| by rw [compFiberEquiv_apply_coe]` and report the CI output.
-2. **Watch #6188 on the merge `3e027a657`** — it validates the #6426 conflict resolution. Do not
-   push on top until it lands, or a failure cannot be attributed to the merge.
-3. **Then #6188's three blockers**, in this order:
-   * `api-design` bullet 2 — add structural `autCongr_apply` / `autCongr_symm_apply` (equalities to
-     the composites). These exist on `handover/congraut-structural-deferred`, already
-     `_root_`-anchored **and already semilinear**; #6188 *is* the rooting, so they are unblocked
-     here. Verified verbatim in r657.
-   * `naming` — wants `toLinearEquiv_ofLinearEquiv` under root `LinearEquiv`. **Check the precedent
-     first:** Mathlib's `AlgEquiv.toLinearEquiv_ofLinearEquiv`, which the finding itself cites, sits
-     in `AlgEquiv` — the namespace of `ofLinearEquiv`/`toLinearEquiv` — *not* in `LinearEquiv`,
-     despite its first explicit argument being a `LinearEquiv`. Likely a contest with evidence.
-   * `api-design` bullet 1 — `@[simp]` on `toLinearEquiv_ofLinearEquiv`. r656 proved via CI this
-     breaks `simpNF` on `UpperUnitriangular.congrLinearEquiv_pointsAction_eq_toLin`; the reviewer now
-     asks to restate *that* lemma first, in a file this PR does not touch. Weigh scope.
-4. **#6432**: prefer landing #6188 first (rooting + rename come free on rebase). Only if both stall,
-   root in #6432 too and accept the duplication.
-5. Six PRs open, so step 5 does **not** trigger. When it does: `ContRepresentation` 141/184,
+2. **Watch #6188 on `09242e46b`.** The risky part is `autCongr_symm_apply`'s proof
+   (`rw [MulEquiv.symm_apply_eq, autCongr_apply]; exact LinearEquiv.ext fun m ↦ by simp`) — ported
+   from the deferred branch, where it was written against the *semilinear* signature. If it fails,
+   the `by simp` is the first suspect (r661: a goal printed unchanged means nothing fired).
+3. **#6188's remaining `api-design` bullet 1** — `@[simp]` on `toLinearEquiv_ofLinearEquiv`. r656
+   proved via CI that it breaks `simpNF` on
+   `UpperUnitriangular.congrLinearEquiv_pointsAction_eq_toLin`; the reviewer asks to restate *that*
+   lemma first, in a file this PR does not touch. Already reported once with the CI output; if it
+   re-fires, weigh a scope contest rather than repeating the report.
+4. **#6432** stays gated on #6188 landing (rooting + rename come free on rebase).
+5. Six open, so step 5 does **not** trigger. When it does: `ContRepresentation` 141/184,
    `Representation` 134/189, `AbelianVariety.Hom` 41/54, `WeierstrassCurve` 26/27; avoid
    `IsCoveringMap` / `Deck.IsQuotientCoveringMap`. Measure against a **freshly fetched** `origin/main`.
 
@@ -85,7 +75,8 @@ Fiber.lean:117:33: unsolved goals
   `fundamentalGroupEquivFiber_apply_coe`, `fiberMap_comp_apply`, `compFiberEquiv_trans` must NOT be
   `@[simp]`. `movedopens` clean. Conjugacy helper assumes **no connectedness**.
 * **#6188** — transport is `LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv`, `rfl`, via
-  `ofLinearEquiv`, **NOT `@[simp]`**. `congrAut` → `autCongr`. Main merged; 0 behind.
+  `ofLinearEquiv`, **NOT `@[simp]`**. `congrAut` → `autCongr`. Structural `autCongr_apply` /
+  `autCongr_symm_apply` added, also **not** `@[simp]`. Main merged; 0 behind.
 * **#6418** — `isIntegral_char` deleted as an exact Mathlib duplicate; `intCharacter_eq_iff` rooted
   on cohesion. **10/10.**
 * **#6412** — roadmap line is in TauCetiRoadmap, out of reach. Contest accepted. **10/10.**
@@ -99,8 +90,7 @@ Fiber.lean:117:33: unsolved goals
 
 Never merge/close a PR. Push to `fork`, never `origin` (403). One worktree: `improver-1`.
 Never touch `scripts/`, `.github/`, the lakefile (incl. `lint-baseline.txt` and the nolint
-allowlist — the RATCHET message asking to delete 7 stale baseline lines is **not** mine to action).
-No bare `git stash`. Never #5481. Never open a PR from `handover/improve-toolkit`.
+allowlist). No bare `git stash`. Never #5481. Never open a PR from `handover/improve-toolkit`.
 Every PR body needs a standalone `Roadmap: none`.
 `gh pr edit` silently no-ops here — use `gh api -X PATCH … -F body=@file`.
 A fresh worktree needs `.lake` symlinked or `lint-dot-notation` errors on both sides.
@@ -108,4 +98,5 @@ A fresh worktree needs `.lake` symlinked or `lint-dot-notation` errors on both s
 Before believing a gate FAIL is yours, re-run it on the **pristine head**.
 A rubric that went green can go 🟡 again — re-read the board, never a remembered verdict.
 The gate is pure Python: it cannot see docstring attachment, elaboration, or simp normal form.
-**131 controls, 0 failed.** Run them after any toolkit edit, and mutation-test every new control.
+**131 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
+Run them after any toolkit edit, and mutation-test every new control.

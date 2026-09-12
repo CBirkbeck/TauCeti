@@ -34258,3 +34258,71 @@ fired — not that it fired and fell short.**
 Six open. #6412 and #6418 both 10/10 `ready-to-merge`, awaiting the bot. #6093 pushed `370dad05e`.
 #6188 building on the merge `3e027a657`, board BEHIND. #6432 two blockers, contests rejected.
 #5950 Chris's. Merged this watch: **#6426**.
+
+---
+
+## r662 — 2026-09-12 — the deferred lemmas finally land, and a contest built on the finding's own citation
+
+### The merge validated first, then built on
+
+#6188's merge of `origin/main` (the #6426 conflict resolution) came back **fully green** — 11202
+jobs, axioms clean, docstrings 9009/9009, `LINT-ENV: PASS`. r661 deliberately did not stack work on
+it until that landed, so the resolution is confirmed on its own. Only then were the structural
+lemmas added.
+
+**Waiting one round to keep a failure attributable cost nothing and bought a clean signal.**
+
+### `handover/congraut-structural-deferred` is discharged
+
+`autCongr_apply` and `autCongr_symm_apply` are in, ported from the deferred branch and adapted from
+its semilinear signature to this PR's linear one:
+
+```lean
+autCongr_apply      : autCongr e f = (e.symm.trans f).trans e
+autCongr_symm_apply : (autCongr e).symm g = (e.trans g).trans e.symm
+```
+
+The handover recorded these as openable "only after #6188 lands", because their first explicit
+argument is a `LinearEquiv` and a new declaration in an un-rooted namespace is a fresh
+`lint-dot-notation` violation. **That framing was one step too conservative: #6188 *is* the rooting,
+so inside it the namespace is already root and the lemmas are legal.** #6188's own `api-design` then
+asked for exactly them, which is what made the point visible.
+
+Neither is `@[simp]`: the pointwise `*_apply_apply` forms are the simp normal form, and both
+call-site files name them in their `simp` sets, so rewriting `autCongr e f` to the composite first
+would leave those lemmas unable to fire. (r656's lesson applied before the fact.)
+
+### `naming` contested on the precedent it cites itself
+
+The finding wants `toLinearEquiv_ofLinearEquiv` moved from `LinearMap.GeneralLinearGroup` to root
+`LinearEquiv`, on the receiver rule, "the cited precedent is likewise
+`AlgEquiv.toLinearEquiv_ofLinearEquiv`". Checked that precedent rather than accepting it:
+
+```lean
+namespace AlgEquiv
+section OfLinearEquiv
+variable (l : A₁ ≃ₗ[R] A₂) (map_one : …) (map_mul : …)
+theorem toLinearEquiv_ofLinearEquiv : toLinearEquiv (ofLinearEquiv l map_one map_mul) = l := rfl
+```
+
+`l` is an **explicit** `variable`, so a `LinearEquiv` is the first explicit argument — and Mathlib
+still puts the lemma in `AlgEquiv`, the namespace of `ofLinearEquiv`/`toLinearEquiv`. The finding's
+own citation resolves the case the other way.
+
+Contested with that, plus the standing tension: `api-design` on this same PR is what asked for the
+declaration to be "a public lemma in the `LinearMap.GeneralLinearGroup` namespace", so moving it
+satisfies `naming` by reversing `api-design` on the same declaration. The reply says explicitly what
+I will do if the conclusion stands.
+
+**Check a cited precedent before implementing on its authority.** It is the cheapest possible
+verification and it inverted the conclusion here.
+
+### Board
+Six open. #6093 building on `370dad05e`, #6188 building on `09242e46b`, both boards BEHIND.
+#6412 and #6418 both 10/10 `ready-to-merge` — #6412 has been waiting ~2h, which is the bot's
+cadence and never mine to force. #6432 two blockers, still gated on #6188. #5950 Chris's.
+Merged this watch: **#6426**.
+
+### Note for the round prompt
+It still says *"expect 129 passed, 0 failed"*. r661 took the suite to **131**. The number in the
+prompt is stale, not the suite.
