@@ -272,6 +272,26 @@ theorem evalEval_polynomialY_genericX_genericY_ne_zero [W.IsElliptic] :
     ((IsFractionRing.injective W.CoordinateRing W.FunctionField).eq_iff.mp
       (hz.trans (map_zero _).symm))
 
+/-- **An `F`-embedding of the function field into a field extension is determined by the image of
+the generic point.** The generic point's two coordinates generate the function field over `F`, so
+an embedding is recoverable from the point it induces. -/
+theorem map_genericPoint_injective [W.IsElliptic] {Ω : Type*} [Field Ω] [Algebra F Ω]
+    [DecidableEq Ω] :
+    Function.Injective fun σ : W.FunctionField →ₐ[F] Ω ↦ Point.map σ (genericPoint W) := by
+  intro σ τ h
+  have hx : σ (genericX W) = τ (genericX W) := by
+    simpa only [Point.xCoord_map, xCoord_genericPoint] using congrArg Point.xCoord h
+  have hy : σ (genericY W) = τ (genericY W) := by
+    simpa only [Point.yCoord_map, yCoord_genericPoint] using congrArg Point.yCoord h
+  have key : σ.comp (IsScalarTower.toAlgHom F W.CoordinateRing W.FunctionField) =
+      τ.comp (IsScalarTower.toAlgHom F W.CoordinateRing W.FunctionField) := by
+    refine CoordinateRing.algHom_ext ?_ ?_
+    · simpa [genericX_def] using hx
+    · simpa [genericY_def] using hy
+  refine AlgHom.coe_ringHom_injective
+    (IsFractionRing.ringHom_ext (A := W.CoordinateRing) fun a ↦ ?_)
+  exact congrArg (fun f : W.CoordinateRing →ₐ[F] Ω ↦ f a) key
+
 end Field
 
 end WeierstrassCurve.Affine
