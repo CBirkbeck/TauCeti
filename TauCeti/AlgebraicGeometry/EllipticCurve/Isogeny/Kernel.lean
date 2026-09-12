@@ -127,10 +127,6 @@ theorem ker_eq_bot_of_separableDegree_eq_one {φ : Isogeny W₁ W₂} (h : φ.se
     φ.ker = ⊥ :=
   φ.ker.eq_bot_of_card_le (h ▸ φ.card_ker_le_separableDegree)
 
-/-- **An isogeny of degree one has trivial kernel.** -/
-theorem ker_eq_bot_of_degree_eq_one {φ : Isogeny W₁ W₂} (h : φ.degree = 1) : φ.ker = ⊥ :=
-  φ.ker.eq_bot_of_card_le (h ▸ φ.card_ker_le_degree)
-
 /-- **The kernel counts the degree exactly when it cuts out the pulled-back field.** This is a
 *reduction*, not the separable-locus theorem: one inclusion holds for free, so the cardinality
 statement and the reverse inclusion are two names for the same thing.
@@ -149,7 +145,7 @@ theorem card_ker_eq_degree_iff (φ : Isogeny W₁ W₂) :
 /-- **The identity isogeny has trivial kernel.** -/
 @[simp]
 theorem ker_id (W : WeierstrassCurve.Affine F) [W.IsElliptic] : (id W).ker = ⊥ :=
-  ker_eq_bot_of_degree_eq_one (degree_id W)
+  ker_eq_bot_of_separableDegree_eq_one (separableDegree_id W)
 
 end TauCeti.Isogeny
 
