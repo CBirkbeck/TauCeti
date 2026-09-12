@@ -275,6 +275,25 @@ if [ -z "$ML" ]; then unrun "deadpath (no Mathlib checkout found)"; else
   esac
 fi
 
+# 3e2. Does main still SHORT-spell a name this PR removed? (r679, from #6093's red build)
+# `stalequal` matches the FULL dead path and prefilters on `TauCeti`, so a reference spelled `A.b`
+# -- which the r389 rule resolves from inside `namespace TauCeti.*` -- never reaches its regex.
+# `deadpath` resolves properly but only inside the files THIS PR changed. #6093's caller was in
+# `FiberFunctor.lean`, untouched by the PR and newly arrived on main, and because `IsCoveringMap`
+# is itself a TERM the dead reference became generalized field notation rather than an error.
+if [ -z "$ML" ]; then unrun "ghostref (no Mathlib checkout found)"; else
+  gr=$(python3 "$T/ghostref.py" --base "$(git merge-base "$BASE" HEAD)" . "$ML" $CHANGED 2>/dev/null)
+  case "$?" in
+    0) ok "ghostref: nothing still short-spells a name this PR removed" ;;
+    1) bad "ghostref: a file this PR does not touch still names a removed declaration"
+       echo "$gr" | sed 's/^/        /'
+       echo "        (r679: it may not say 'unknown identifier' -- if the namespace is also a term"
+       echo "         the reference re-reads as field notation and fails elsewhere. Update the"
+       echo "         call site; that is part of the rename, not a scope expansion.)" ;;
+    *) unrun "ghostref on $CHANGED" ;;
+  esac
+fi
+
 # 3f. Did a fixer move a REFERENCE to an unrelated namespace? (r622, from #6188)
 # `xqualify`/`deadfix` pick a candidate by matching the TAIL of a name (r556). On #6188 that turned
 # `Submodule.rationalizationEquiv` into `LieSubalgebra.rationalizationEquiv` and

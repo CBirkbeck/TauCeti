@@ -815,6 +815,24 @@ sweepv | chk "sweep: a real failure, a pending run and a live cancel still read 
               "realfail: RED:sandboxed-build" "pending: PENDING:sandboxed-build" \
               "lastcancelled: RED:cancelled:sandboxed-build" "noruns: NO-RUNS"
 
+# ---- r679: ghostref -- short references in files the PR does not touch ----------------------
+# #6093's red build. `TauCeti.IsCoveringMap.fiberMap` was removed; `FiberFunctor.lean`, untouched
+# by the PR and newly arrived on main, still said `IsCoveringMap.fiberMap` inside
+# `namespace TauCeti.CoveringSpace`. stalequal prefilters on `TauCeti` and never saw the short
+# spelling; deadpath only reads the PR's own files. The NEGATIVE matters as much: a removed name
+# whose short form still resolves at root is not a ghost, or this fires on every move.
+GRD="$(mktemp -d)"; cp -R "$SP/r679-ghostref/." "$GRD/"; GRML="$(mktemp -d)"
+( cd "$GRD" && git init -q . && git add -A && git -c user.email=c@x -c user.name=c commit -qm base )
+GRREV="$(cd "$GRD" && git rev-parse HEAD)"
+# HEAD: both declarations leave Src.lean -- one has a root-level home, one does not.
+grep -v '^theorem fiberMap\|^theorem keptElsewhere' "$GRD/TauCeti/Src.lean" > "$GRD/TauCeti/Src.new" \
+  && mv "$GRD/TauCeti/Src.new" "$GRD/TauCeti/Src.lean"
+grf() { ( cd "$GRD" && python3 "$T/ghostref.py" --base "$GRREV" . "$GRML" TauCeti/Src.lean 2>/dev/null ); }
+grf | chk "ghostref: a short reference in an UNTOUCHED file to a removed name is a ghost (r679)" \
+          "GHOST  IsCoveringMap.fiberMap" "TauCeti/Consumer.lean:6"
+grf | neg "ghostref: a removed name whose short form still resolves at root is not a ghost" \
+          "Shadowed.keptElsewhere"
+
 # ---- r679: queuepos -- the fifth field, merge-queue membership -------------------------------
 # #6093 read label=ready-to-merge / CI=GREEN / board=ON-HEAD / isDraft=false for 27 minutes after
 # github-merge-queue[bot] had silently ejected it.  Only queue membership told them apart -- and

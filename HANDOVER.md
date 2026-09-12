@@ -523,3 +523,69 @@ body-answerable kind. Without this comparison the post-merge gate looks like fou
 The cost is a certain re-review of a green PR. r678 declined to pay it against an *uncertain*
 failure and was right to; r679 paid it once the failure was certain. **That ordering is the rule:
 refresh a green PR only once `queuepos.py` says `EJECTED`.**
+
+## 13. Addendum — r679, what merging `main` into a stale branch actually surfaces
+
+#6093 was 354 commits behind, was ejected from the merge queue, and was refreshed against `main`.
+The merge was **textually clean, zero conflicts** — and `sandboxed-build` went **red**:
+
+```
+TauCeti/AlgebraicTopology/UniversalCover/Classification/FiberFunctor.lean:87
+  Application type mismatch:  Function.fiberMap ?m.35 ⋯
+  expected  Function.comp ?m.20 ?m.35 = IsCoveringMap
+```
+
+`FiberFunctor.lean` is **not one of the PR's files**. It arrived on main in **#6023**, inside the 354
+commits, and calls `IsCoveringMap.fiberMap` — which the PR generalises to `Function.fiberMap`.
+
+**So the branch genuinely did not build against current main.** Refreshing was not a precaution; it
+was the only way to find this. Two lessons, both costly:
+
+### 1. A removed declaration whose namespace is also a TERM does not announce its absence
+
+`IsCoveringMap` is a term of function type. Once `TauCeti.IsCoveringMap.fiberMap` was gone, the
+reference did **not** fail as `unknown identifier` — it silently re-read as **generalized field
+notation**, `Function.fiberMap IsCoveringMap ..`, and surfaced as an application type mismatch far
+from its cause. Whenever you remove `NS.foo` and `NS` is also a term, expect the error to appear
+somewhere else, in a form that does not name what you deleted.
+
+### 2. Identical gate counts across a merge do not make standing findings safe
+
+Both heads gated `11 ok, 4 failed, 1 UNRUN`, the same four checks. That correctly proves *the merge
+introduced nothing*. It was then read as "pre-existing, therefore harmless" — and two of the four
+were:
+
+```
+NS-JUMP  `IsCoveringMap.fiberMap` became `Function.fiberMap` -- the namespaces are unrelated (r556)
+```
+
+`nsjump` was pointing straight at the defect. It had not bitten because on the old base **no caller
+existed**. **A latent finding is one waiting for a caller, and merging `main` is exactly the
+operation that supplies callers.** After a refresh, re-read every standing `nsjump`/`decldiff`
+finding against the *newly arrived* files — grep the tree for each VANISHED name, qualified, before
+trusting a green gate.
+
+### The check: `tools/ghostref.py` (new, check 3e2 in `prepush.sh` — 16 checks; 139 controls, 0 failed)
+
+Two neighbouring screens each miss this shape structurally, not by oversight:
+
+* **`stalequal`** walks the whole repo but matches the **full** dead path `TauCeti.A.b`, prefiltering
+  on `TauCeti`. The reference was spelled **short** (`A.b`, resolved by the r389 rule from inside
+  `namespace TauCeti.*`), so no `TauCeti` appeared on the line.
+* **`deadpath`** resolves qualified names properly but only inside the files **the PR changed**.
+
+The uncovered shape is therefore **short references, in unchanged files, to names this PR removed** —
+which can only appear once `main` moves.
+
+```
+python3 tools/ghostref.py --base "$(git merge-base origin/main HEAD)" . "$MATHLIB" $CHANGED
+```
+
+It derives each removed name's short form, **suppresses those that still resolve** (root-level in the
+repo, or in Mathlib — `TauCeti.Set.foo` going away is fine when Mathlib's `Set.foo` is what was
+meant), and scans every `.lean` under a `namespace TauCeti`. On #6093: 70 removed, 69 with a short
+form, **61 suppressed**, 8 chased, **1 ghost**, 2.3 s across 5078 files. Validated on real history —
+red head 1 ghost, fixed head 0, unrelated green PR #6432 0.
+
+**The fix for a ghost is to update the call site.** That is part of the rename, not scope creep; say
+so in the PR body if `scope` asks.

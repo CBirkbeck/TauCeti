@@ -35285,3 +35285,106 @@ bug) — the control fires. **137 passed, 0 failed.** Live run now reads `#6432 
 Worth recording as a pattern: **a new check's first live run is part of writing it.** Both fixture
 controls passed while the verdict was still wrong, because I had only encoded the case I had just
 lived through. The second shape was sitting in the same four-PR board.
+
+### The merge was vindicated, and my reading of the gate was not
+
+`sandboxed-build` failed on the merged head `45812c5f8`:
+
+```
+TauCeti/AlgebraicTopology/UniversalCover/Classification/FiberFunctor.lean:87
+  Application type mismatch:  Function.fiberMap ?m.35 ⋯
+  expected  Function.comp ?m.20 ?m.35 = IsCoveringMap
+```
+
+`FiberFunctor.lean` is **not one of this PR's files**. It arrived on main in **#6023**, inside the
+354 commits the branch was behind, and it calls `IsCoveringMap.fiberMap` — which this PR generalises
+to `Function.fiberMap` in the new `Logic/Function/Fiber.lean`.
+
+**So #6093 genuinely did not build against current main.** That is almost certainly why the queue
+ejected it, and it settles r678's open question: merging `main` was not a precaution, it was the only
+way to find this. A textual merge cannot see it — there is no conflict, because the two changes touch
+different files.
+
+### Why it did not error as an unknown identifier
+
+`IsCoveringMap` is itself a **term of function type**. So when `TauCeti.IsCoveringMap.fiberMap`
+stopped existing, `IsCoveringMap.fiberMap f ...` did not fail to resolve — it silently re-read as
+**generalized field notation**, `Function.fiberMap IsCoveringMap ...`, and failed much later as an
+application type mismatch. A removed declaration whose namespace is also a term does not announce its
+absence.
+
+### Where my judgement was wrong
+
+Earlier this round I gated both heads, got `11 ok / 4 failed` on each, and concluded the four were
+"pre-existing on a branch the pipeline already carried to 10/10 — body-answerable, not new breakage."
+Pre-existing was right. **Harmless was wrong.** Two of those findings were:
+
+```
+NS-JUMP  `IsCoveringMap.fiberMap` became `Function.fiberMap` -- the namespaces are unrelated (r556)
+```
+
+`nsjump` was pointing straight at the defect. It had simply not bitten yet, because on the old base
+**no caller existed**. Main added one. *Identical gate counts before and after a merge prove the
+merge introduced nothing; they do not make the standing findings safe.* A latent finding is one that
+needs a caller, and merging `main` is exactly the operation that supplies callers.
+
+### Fixed
+
+One identifier, `FiberFunctor.lean:87`, `IsCoveringMap.fiberMap` → `Function.fiberMap`. Argument
+shape already matched (`f`, `hf : q ∘ f = p`, `x`), and `Function.fiberMap` was already in scope —
+proven by the error being a *type mismatch* rather than unknown-identifier.
+
+Then swept the whole tree for the same trap on **every** name this PR removed, since each could
+silently become field notation now that `Function.*` and `Equiv.*` siblings exist:
+
+```
+IsCoveringMap.fiberMap{,_apply_coe,_id_apply,_comp_apply}                 0 stale refs
+IsCoveringMap.homeomorphCompFiberEquiv{,_apply_coe,_symm_apply_coe,_monodromy}  0
+Deck.IsQuotientCoveringMap.isRegular                                      0
+```
+
+FiberFunctor.lean:87 was the only one. Re-gated (`11 ok / 4 failed`, `deadpath` ok — every qualified
+name resolves), pushed `45812c5f8 → 2231e763e`. PR now **26 files / +442 / −329**.
+
+### Rule
+
+**After merging `main` into a stale branch, re-read the standing `nsjump`/`decldiff` findings against
+the newly arrived files — not just against each other.** The question is never "did the gate counts
+change", it is "did main bring a caller for something I removed". Grep the tree for every VANISHED
+name, qualified, before trusting a green gate.
+
+### `tools/ghostref.py` — the check that would have caught it
+
+The gap was precise and worth closing, because two neighbouring screens each miss it for a
+*structural* reason rather than an oversight:
+
+* **`stalequal`** walks the whole repository, but matches the **full** dead path `TauCeti.A.b`, and
+  its substring prefilter keys on `TauCeti`. The reference was spelled **short** — `A.b`, resolved
+  by the r389 rule from inside `namespace TauCeti.*` — so no `TauCeti` appeared on the line and the
+  prefilter dropped it before any regex ran.
+* **`deadpath`** resolves qualified names properly, but only in the files **this PR changed**. The
+  stale caller was in a file the PR never touches.
+
+So the uncovered shape is exactly: **short references, in unchanged files, to names this PR removed.**
+It can only appear after `main` moves, because main is what supplies the caller.
+
+`ghostref.py` computes the removed set from `--base`, derives each name's short form, **suppresses
+any that still resolve** (root-level in the repo, or in Mathlib — `TauCeti.Set.foo` going away is no
+problem when Mathlib's own `Set.foo` is what the reference meant), and scans every `.lean` file that
+sits under a `namespace TauCeti`.
+
+Validated against the actual history rather than only a fixture:
+
+```
+45812c5f8 (the head that went red)   1 ghost   FiberFunctor.lean:87   exit 1   2.3s / 5078 files
+2231e763e (after the one-line fix)   0 ghosts                          exit 0
+#6432, an unrelated green PR         0 ghosts (3 removed, 3 chased)    exit 0
+```
+
+70 declarations removed, 69 with a short form, **61 correctly suppressed as still-resolving**, 8
+chased, 1 hit. The suppression is doing most of the work — without it the check would be noise.
+
+Wired into `prepush.sh` as check 3e2 (**16 checks now**), with a fixture reproducing the #6093 shape
+plus the suppression case. Both controls mutation-tested: dropping the suppression breaks the
+negative, matching full names only (i.e. reverting to `stalequal`'s blind spot) breaks the positive.
+**139 passed, 0 failed.**

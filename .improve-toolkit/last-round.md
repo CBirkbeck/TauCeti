@@ -49,7 +49,43 @@ relabelled `ready-to-merge` → **`awaiting-CI`** in 20 s. It is back in the pip
 `ready-to-merge` transition re-enqueues it. This cost a re-review of a 10/10 PR — the price r678
 declined on an *uncertain* failure. It stopped being uncertain.
 
-## New in the toolkit — `tools/queuepos.py` (137 controls, 0 failed)
+## The merge was vindicated — `sandboxed-build` went RED, and the cause was real
+
+`FiberFunctor.lean:87` — **a file this PR does not touch**, which arrived on main in #6023 inside the
+354 commits the branch was behind — still called `IsCoveringMap.fiberMap`, which this PR generalises
+to `Function.fiberMap`. **So #6093 genuinely did not build against current main**, which is almost
+certainly why the queue ejected it. A textual merge cannot see this: different files, no conflict.
+
+**It did not error as `unknown identifier`.** `IsCoveringMap` is itself a *term of function type*, so
+the dead reference silently re-read as generalized field notation — `Function.fiberMap IsCoveringMap …`
+— and surfaced as an application type mismatch far from its cause.
+
+**Where I was wrong earlier in this round.** I gated both heads, got `11 ok / 4 failed` on each, and
+called the four "pre-existing, therefore body-answerable, not new breakage". Pre-existing was right;
+**harmless was wrong.** Two of them were `NS-JUMP  IsCoveringMap.fiberMap became Function.fiberMap`,
+pointing straight at the defect. It had simply not bitten, because on the old base no caller existed.
+**Identical gate counts prove the merge introduced nothing; they do not make standing findings safe.**
+A latent finding is one waiting for a caller, and merging `main` is what supplies callers.
+
+Fixed with one identifier at `FiberFunctor.lean:87`, then swept the tree for the same trap on *every*
+name this PR removes (`fiberMap{,_apply_coe,_id_apply,_comp_apply}`,
+`homeomorphCompFiberEquiv{,_apply_coe,_symm_apply_coe,_monodromy}`, `Deck.IsQuotientCoveringMap.isRegular`)
+— **0 other stale refs**. Pushed `45812c5f8 → 2231e763e`; PR now **26 files / +442 / −329**.
+
+## New in the toolkit — `tools/ghostref.py` and `tools/queuepos.py` (139 controls, 0 failed)
+
+**`ghostref.py`** closes the gap that let the above through. `stalequal` matches the **full** dead
+path and prefilters on `TauCeti`, so a **short** reference never reaches its regex; `deadpath`
+resolves properly but only inside the PR's **own** files. The uncovered shape is *short references,
+in unchanged files, to names this PR removed* — visible only once main supplies a caller.
+
+```
+python3 tools/ghostref.py --base <merge-base> . <mathlib> <changed files>
+```
+
+It suppresses short forms that still resolve (repo root or Mathlib). Validated on real history:
+`45812c5f8` → 1 ghost at `FiberFunctor.lean:87`; `2231e763e` → 0; `#6432` → 0. Now **check 3e2 in
+`prepush.sh` (16 checks)**.
 
 The fifth field `sweep.py` cannot see. `queue_verdict()` is pure and control-covered; both new
 controls were mutation-tested and each bites on exactly its own mutation.
@@ -78,7 +114,7 @@ had just lived through. **A new check's first live run is part of writing it.**
 | PR | head | CI | label | queue | whose move |
 |---|---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **NEVER-QUEUED** | **Chris** — human-owned `web/examples/Examples.lean`; the bot cannot enqueue it. **Do not refresh it.** |
-| **#6093** | `45812c5f8` | building | `awaiting-CI` | re-entering | nobody — **refreshed this round** |
+| **#6093** | `2231e763e` | building | `awaiting-CI` | re-entering | nobody — refreshed **and a real break fixed** |
 | **#6188** | `ec1a68d96` | green | `ready-to-merge` | **pos 17** | nobody — **10/10**, waiting its turn |
 | **#6432** | `98bb7e78f` | green | `ready-to-merge` | **pos 9** | nobody — **10/10**, waiting its turn |
 
@@ -89,10 +125,13 @@ had just lived through. **A new check's first live run is part of writing it.**
    `NEVER-QUEUED` (#5950) is not this role's to fix.
 2. **Do not re-diagnose the merge wait a third time.** A deep queue position is the whole
    explanation.
-3. **#6093 will draw a fresh board** (~32–67 min after CI green). It was 10/10 before the merge and
-   the merge changed no gate finding, so **expect it to return 10/10** — if a rubric fires, read it
-   fresh rather than assuming the merge caused it. If `generality` re-raises `rootsurplus`/`slice`,
-   those four gate findings are pre-existing and were already accepted; answer in the body.
+3. **#6093: confirm `sandboxed-build` is green on `2231e763e` before anything else.** It went red on
+   the merge (`FiberFunctor.lean:87`) and the fix is one identifier. If it is red again, read the
+   log — do not assume it is the same cause.
+   It was 10/10 before the merge, so **expect the board to return 10/10**; the PR now carries a 26th
+   file, `FiberFunctor.lean`, which is a **required call-site update for the rename**, not scope
+   creep. Say so in the body if `scope` asks. If `generality` re-raises `rootsurplus`/`slice`, those
+   findings are pre-existing and were already accepted once.
 4. **Do not touch #6188 or #6432.** Both 10/10 and queued. An unrequested edit costs a re-review and
    its queue position.
 5. **When step 5 triggers** — open `improve/submonoid-constsmul-root`, **already pushed and
@@ -101,7 +140,7 @@ had just lived through. **A new check's first live run is part of writing it.**
    Mark ready when CI is green. Full evidence in HANDOVER §11.
 6. **Re-run `nscand.py` after each merge** — main moved 759 → 735 → **678** across this watch, and the
    whole list moves with it.
-7. **Read the tools list before writing a script.** `tools/` has 48: `sweep.py`, **`queuepos.py`**,
+7. **Read the tools list before writing a script.** `tools/` has 49: `sweep.py`, **`queuepos.py`**, **`ghostref.py`**,
    `threadread.py` (current findings per rubric — **use this, not jq**), `nscand.py` + `mathlibns.py`
    (prospecting), `prepush.sh` (the gate), `minecount.py`.
 
@@ -133,6 +172,11 @@ A fresh worktree needs `.lake` symlinked or `lint-dot-notation` errors on both s
 **`prepush.sh` takes a base argument.** To tell "my change broke it" from "main moved", re-gate the
 pristine head against its **own** merge-base: `prepush.sh $(git merge-base <head> origin/main)`.
 Before believing a gate FAIL is yours, re-run it on the **pristine head**.
+**Identical gate counts across a `main` merge prove the merge introduced nothing — they do NOT make
+the standing findings safe.** A latent `nsjump`/`decldiff` finding is one waiting for a caller, and
+merging `main` is exactly what supplies callers. Re-read them against the newly arrived files.
+**A removed declaration whose namespace is also a TERM does not announce its absence** — the
+reference re-reads as generalized field notation and fails somewhere else entirely (#6093).
 A rubric that went green can go 🟡 again; clearing a ⛔ reveals rubrics that never ran; and
 **a 🟡 behind a ⛔ may not survive the next board — do not chase it**.
 **When rubrics contradict each other across rounds, suspect the PR boundary before the rubrics.**
@@ -143,5 +187,5 @@ work lands somewhere, and you say where.
 four sweep fields say.
 Verify a rooting target with `mathlibns.py`, never a grep; then **gate it**.
 The gate is pure Python: it cannot see docstring attachment, elaboration, or simp normal form.
-**137 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
+**139 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
 **HANDOVER.md §11 carries this watch's rules** — read it before re-deriving one.
