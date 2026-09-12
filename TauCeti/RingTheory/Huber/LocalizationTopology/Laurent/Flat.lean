@@ -597,6 +597,81 @@ theorem flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_t
       have : IsStronglyNoetherian A := hSN hproper
       isStronglyNoetherian_completion P T s S hden (hspan hproper)
 
+/-! ### Proposition 8.30 in full -/
+
+/-- **Flatness transports across a change of presentation.** For equal uniformities at each end,
+heterogeneously equal ring homomorphisms between completions are flat together. -/
+theorem flat_of_heq {S S' : Type*} [CommRing S] [CommRing S']
+    {u₁ u₂ : UniformSpace S} (hu : u₁ = u₂) {v₁ v₂ : UniformSpace S'} (hv : v₁ = v₂)
+    (t₁ : @IsTopologicalRing S u₁.toTopologicalSpace _) (q₁ : @IsUniformAddGroup S u₁ _)
+    (t₂ : @IsTopologicalRing S u₂.toTopologicalSpace _) (q₂ : @IsUniformAddGroup S u₂ _)
+    (w₁ : @IsTopologicalRing S' v₁.toTopologicalSpace _) (p₁ : @IsUniformAddGroup S' v₁ _)
+    (w₂ : @IsTopologicalRing S' v₂.toTopologicalSpace _) (p₂ : @IsUniformAddGroup S' v₂ _)
+    {f : @UniformSpace.Completion S u₁ →+* @UniformSpace.Completion S' v₁}
+    {g : @UniformSpace.Completion S u₂ →+* @UniformSpace.Completion S' v₂}
+    (hfg : HEq f g) (hf : f.Flat) : g.Flat := by
+  subst hu; subst hv; obtain rfl := eq_of_heq hfg; exact hf
+
+open Pointwise in
+/-- **Wedhorn's Proposition 8.30.** Over a strongly noetherian Tate ring the restriction map
+`A⟨T/s⟩ → A⟨T'/s⟩` of a numerator enlargement is flat. Nothing is asked of the denominator beyond
+the unit-ideal condition: each hypothesis is required only of a proper enlargement, and for
+`T' = T` the map is flat outright.
+
+The `hnil` variant above is applied to the presentation rescaled by a power of a pseudouniformiser,
+whose denominator is topologically nilpotent and which has the same ring of definition; the
+conclusion is carried back along `restrictionRingHomOfSubset_heq`. -/
+theorem flat_restrictionRingHomOfSubset_of_isStronglyNoetherian_of_span_eq_top [IsHuberRing A]
+    (hTate : T ⊂ T' → IsTateRing A) (hSN : T ⊂ T' → IsStronglyNoetherian A)
+    (hspan : T ⊂ T' → Ideal.span (insert s (T : Set A)) = ⊤) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s S' hden'
+    (restrictionRingHomOfSubset P T s S hden T' S' hden' hTT').Flat := by
+  classical
+  by_cases hproper : T ⊂ T'
+  · have hTateA : IsTateRing A := hTate hproper
+    obtain ⟨q, i, hq, hnil⟩ := IsTateRing.exists_isTopologicallyNilpotent_pow_mul (A := A) s
+    set u := q ^ i with hu_def
+    have hu : IsUnit u := hq.isUnit.pow i
+    have hassoc : Associated s (u * s) := ⟨hu.unit, by simp [mul_comm]⟩
+    have hawayS : IsLocalization.Away (u * s) S := IsLocalization.Away.of_associated hassoc
+    have hawayS' : IsLocalization.Away (u * s) S' := IsLocalization.Away.of_associated hassoc
+    have hT₂ : ((T.image (u * ·) : Finset A) : Set A) = (u * ·) '' (T : Set A) := Finset.coe_image
+    have hT₂' : ((T'.image (u * ·) : Finset A) : Set A) = (u * ·) '' (T' : Set A) :=
+      Finset.coe_image
+    have hden₂ : HasDenominatorPower P (T.image (u * ·)) (u * s) S :=
+      hden.of_coe_eq_image_mul_left hu hT₂
+    have hden₂' : HasDenominatorPower P (T'.image (u * ·)) (u * s) S' :=
+      hden'.of_coe_eq_image_mul_left hu hT₂'
+    have hsub : locSubring P (T.image (u * ·)) (u * s) S = locSubring P T s S :=
+      locSubring_eq_of_coe_eq_image_mul_left P T _ u s S hT₂
+    have hsub' : locSubring P (T'.image (u * ·)) (u * s) S' = locSubring P T' s S' :=
+      locSubring_eq_of_coe_eq_image_mul_left P T' _ u s S' hT₂'
+    have hTT₂' : ∀ x ∈ T.image (u * ·), x ∈ T'.image (u * ·) := by
+      intro x hx
+      obtain ⟨a, ha, rfl⟩ := Finset.mem_image.mp hx
+      exact Finset.mem_image.mpr ⟨a, hTT' a ha, rfl⟩
+    have hflat := flat_restrictionRingHomOfSubset_of_isTopologicallyNilpotent_of_span_eq_top
+      P (T.image (u * ·)) (u * s) S hden₂ (T'.image (u * ·)) S' hden₂' hTT₂'
+      (fun _ ↦ hTateA) (fun _ ↦ hSN hproper) (fun _ ↦ hnil)
+      (fun _ ↦ by
+        rw [hT₂, ← Set.image_insert_eq,
+          show (u * ·) '' (insert s (T : Set A)) = u • (insert s (T : Set A)) from rfl]
+        exact (Submodule.span_smul_eq_of_isUnit _ u hu).trans (hspan hproper))
+    exact flat_of_heq (locUniformSpace_congr P T _ s (u * s) S hden hden₂ hsub)
+      (locUniformSpace_congr P T' _ s (u * s) S' hden' hden₂' hsub') _ _ _ _ _ _ _ _
+      (restrictionRingHomOfSubset_heq P T s S hden T' S' hden' hTT' _ (u * s) hden₂ _ hden₂'
+        hTT₂' hsub hsub') hflat
+  · obtain rfl : T = T' := by
+      by_contra hne
+      exact hproper (Finset.ssubset_iff_subset_ne.mpr ⟨fun x hx ↦ hTT' x hx, hne⟩)
+    exact flat_restrictionRingHomOfSubset_self P T s S hden S' hden'
+
+
 end PairOfDefinition
 
 end TauCeti.Huber
