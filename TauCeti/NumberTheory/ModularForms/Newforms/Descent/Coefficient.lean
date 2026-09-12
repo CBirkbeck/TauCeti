@@ -118,13 +118,36 @@ section Core
 
 variable {M : ℕ}
 
-/-- The function underlying a finite sum of cusp forms is the sum of the functions. -/
+/-- **The `m`-th coefficient of `f + g`**, for cusp forms of level `Γ₁(M)`: the `q`-expansion is
+additive where the cusp functions are analytic at `0`, which a bundled form supplies. -/
+private theorem qExpansion_coeff_add (f g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) (m : ℕ) :
+    (qExpansion 1 ⇑(f + g)).coeff m =
+      (qExpansion 1 ⇑f).coeff m + (qExpansion 1 ⇑g).coeff m := by
+  rw [FunLike.coe_add, ModularForm.qExpansion_add one_pos (one_mem_strictPeriods_Gamma1_map _),
+    map_add]
+
+/-- **The `m`-th coefficient of `c • f`**, for a cusp form of level `Γ₁(M)`. -/
+private theorem qExpansion_coeff_smul (c : ℂ) (f : CuspForm ((Gamma1 M).map (mapGL ℝ)) k)
+    (m : ℕ) :
+    (qExpansion 1 ⇑(c • f)).coeff m = c * (qExpansion 1 ⇑f).coeff m := by
+  rw [FunLike.coe_smul, ModularForm.qExpansion_smul one_pos (one_mem_strictPeriods_Gamma1_map _),
+    map_smul, smul_eq_mul]
+
+/-- The function underlying a finite sum of cusp forms is the sum of the functions.
+
+This is `map_sum` for `FunLike.coeAddMonoidHom`, restated with the coercion written as `⇑`: that
+is the form the goals below are in, and `rw` matches syntactically. -/
 private theorem coe_finset_sum {ι : Type*} (s : Finset ι)
     (F : ι → CuspForm ((Gamma1 M).map (mapGL ℝ)) k) :
     ⇑(∑ i ∈ s, F i : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) = ∑ i ∈ s, ⇑(F i) :=
   map_sum (FunLike.coeAddMonoidHom (CuspForm ((Gamma1 M).map (mapGL ℝ)) k) ℍ ℂ) F s
 
-/-- The `m`-th coefficient of a finite sum of cusp forms of level `Γ₁(M)`. -/
+/-- The `m`-th coefficient of a finite sum of cusp forms of level `Γ₁(M)`.
+
+Not an instance of `map_sum` for `ModularForm.qExpansionAddHom`: that hom is stated for the
+bundled type `ModularForm Γ k`, while the summands here are cusp forms read as functions on `ℍ`,
+for which the additivity of `qExpansion` is the class-polymorphic `ModularForm.qExpansion_add`
+used at each step below. -/
 private theorem qExpansion_coeff_finset_sum {ι : Type*} (s : Finset ι)
     (F : ι → CuspForm ((Gamma1 M).map (mapGL ℝ)) k) (m : ℕ) :
     (qExpansion 1 ⇑(∑ i ∈ s, F i : CuspForm ((Gamma1 M).map (mapGL ℝ)) k)).coeff m =
@@ -133,8 +156,7 @@ private theorem qExpansion_coeff_finset_sum {ι : Type*} (s : Finset ι)
   induction s using Finset.induction_on with
   | empty => simp only [Finset.sum_empty, FunLike.coe_zero, qExpansion_zero, map_zero]
   | insert a s ha ih =>
-    rw [Finset.sum_insert ha, Finset.sum_insert ha, FunLike.coe_add,
-      ModularForm.qExpansion_add one_pos (one_mem_strictPeriods_Gamma1_map _), map_add, ih]
+    rw [Finset.sum_insert ha, Finset.sum_insert ha, qExpansion_coeff_add, ih]
 
 /-- **A character over a lowered character is lowered.** If `χ'` modulo `N'` and `χ₀ ∘ π` modulo
 `M` have the same pull-back to a common multiple `M'`, where `χ₀` has level `M / p` and
@@ -157,7 +179,8 @@ private theorem eq_comp_unitsMap_of_comp_unitsMap_eq {M' N' : ℕ} [NeZero M'] (
 /-- **A peeled summand descends to a level-raise of a bundled descent.** For `F` of level
 `Γ₁(M l² / q)` with a nebentypus lying over the lowered one, the descent at level `M l²` of the
 function `V_q F` is `V_q` of the descent of `F`, bundled at level `Γ₁(M l² / p)`:
-`descendSlash_coe_levelRaise_mul_left_of_mem_cuspFormCharSpace` read through `descendCuspForm`. -/
+`descendSlash_coe_levelRaise_mul_left_of_comp_of_mem_cuspFormCharSpace`, read through
+`descendCuspForm`. -/
 private theorem descendSlash_smul_slash_scaleGL_eq_coe_levelRaise (hp : p.Prime) {l q : ℕ}
     (hpM : p ∣ M) (hq : q.Prime) (hql : q ∣ l) (hpl : Nat.Coprime p l)
     [NeZero (M * l ^ 2 / q)] (hpN' : p ∣ M * l ^ 2 / q) (hMN' : M ∣ M * l ^ 2 / q)
@@ -183,7 +206,7 @@ private theorem descendSlash_smul_slash_scaleGL_eq_coe_levelRaise (hp : p.Prime)
   have hcomp' := eq_comp_unitsMap_of_comp_unitsMap_eq hpM hpN'
     ((Nat.div_dvd_div_iff_right hpM hpN').mpr hMN') hMN' (Nat.div_dvd_of_dvd hqMl) hcomp hχ'
   refine ⟨hcomp', ?_⟩
-  have h := descendSlash_coe_levelRaise_mul_left_of_mem_cuspFormCharSpace k hp hpN'
+  have h := descendSlash_coe_levelRaise_mul_left_of_comp_of_mem_cuspFormCharSpace k hp hpN'
     (hpl.coprime_dvd_right hql) hcomp' hF
   rw [CuspForm.coe_levelRaise, Nat.mul_div_cancel' hqMl] at h
   rw [h, CuspForm.coe_levelRaise, coe_descendCuspForm]
@@ -395,11 +418,8 @@ theorem qExpansion_coeff_descendSlash_eq_of_coprime [NeZero N] (hp : p.Prime) (h
       (qExpansion_coeff_ofLe_sub_levelRaise_eq_zero hp hpN hvan hgcoeff) m hm
   -- add the two `q`-expansions through the bundled descent
   rw [← h08a, hfΔ, descendSlash_add, hVg', ← coe_descendCuspForm k hp hpM hχM hΔχ,
-    ← FunLike.coe_smul, ← FunLike.coe_add, FunLike.coe_add,
-    ModularForm.qExpansion_add one_pos (one_mem_strictPeriods_Gamma1_map _), map_add,
-    coe_descendCuspForm, hD0, zero_add, FunLike.coe_smul,
-    ModularForm.qExpansion_smul one_pos (one_mem_strictPeriods_Gamma1_map _), map_smul,
-    smul_eq_mul]
+    ← FunLike.coe_smul, ← FunLike.coe_add, qExpansion_coeff_add, coe_descendCuspForm, hD0,
+    zero_add, qExpansion_coeff_smul]
 
 
 /-! ### The descent witness -/
@@ -431,8 +451,7 @@ theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_coeff_mul_of_coprime [N
   refine ⟨((p : ℂ) / descendMatrixCount p N) • descendCuspForm k hp hpN hcomp hf,
     Submodule.smul_mem _ _ (descendCuspForm_mem_cuspFormCharSpace k hp hpN hcomp hf),
     fun m hm ↦ ?_⟩
-  rw [FunLike.coe_smul, ModularForm.qExpansion_smul one_pos (one_mem_strictPeriods_Gamma1_map _),
-    map_smul, smul_eq_mul, coe_descendCuspForm,
+  rw [qExpansion_coeff_smul, coe_descendCuspForm,
     qExpansion_coeff_descendSlash_eq_of_coprime hp hpN hL hpL hcomp hf hvan hg hgcoeff m hm,
     hgcoeff m, ite_eq_left hm]
   field_simp
