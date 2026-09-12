@@ -28,12 +28,6 @@ those two, which this file records as `LinearEquiv.autCongr`.
   as equalities of linear equivalences, for consumers that read the conjugate as a map rather than
   at a point. The pointwise `autCongr_apply_apply` and `autCongr_symm_apply_apply` are the same
   facts evaluated at `m`.
-
-## Main statements
-
-* `LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv`: `toLinearEquiv` undoes
-  `ofLinearEquiv`, which is what carries the inverse law of `generalLinearEquiv` across to
-  `M ≃ₗ[R] M`.
 -/
 
 public section
@@ -46,6 +40,18 @@ open LinearMap.GeneralLinearGroup
 
 variable {R M₁ M₂ : Type*} [Semiring R] [AddCommMonoid M₁] [Module R M₁]
   [AddCommMonoid M₂] [Module R M₂]
+
+/-- The linear automorphism underlying the general linear group element
+`(generalLinearEquiv R M).symm f` is `f` itself.
+
+Mathlib records how `generalLinearEquiv` computes on coercions (`coeFn_generalLinearEquiv`,
+`coe_toLinearEquiv`) rather than at the level of `M ≃ₗ[R] M`, so both evaluation lemmas for
+`autCongr` below need this bridge; it is stated once here. -/
+private theorem toLinearEquiv_generalLinearEquiv_symm {M : Type*} [AddCommMonoid M] [Module R M]
+    (f : M ≃ₗ[R] M) : ((generalLinearEquiv R M).symm f).toLinearEquiv = f := by
+  ext m
+  rw [coe_toLinearEquiv, ← coeFn_generalLinearEquiv]
+  exact DFunLike.congr_fun ((generalLinearEquiv R M).apply_symm_apply f) m
 
 /-- Conjugation by a linear equivalence `e : M₁ ≃ₗ[R] M₂`, as an isomorphism of automorphism
 groups: Mathlib's `LinearMap.GeneralLinearGroup.congrLinearEquiv` read through
@@ -60,14 +66,8 @@ def _root_.LinearEquiv.autCongr (e : M₁ ≃ₗ[R] M₂) : (M₁ ≃ₗ[R] M₁
 theorem _root_.LinearEquiv.autCongr_apply_apply (e : M₁ ≃ₗ[R] M₂) (f : M₁ ≃ₗ[R] M₁) (m : M₂) :
     LinearEquiv.autCongr e f m = e (f (e.symm m)) := by
   rw [LinearEquiv.autCongr, MulEquiv.trans_apply, MulEquiv.trans_apply]
-  -- `generalLinearEquiv` computes on coercions, not at the level of `M₁ ≃ₗ[R] M₁`, so its
-  -- inverse law has to be transported across `toLinearEquiv` before `simp` can use it. The
-  -- transport is definitional — `generalLinearEquiv`'s `invFun` is `ofLinearEquiv` — so Mathlib's
-  -- law proves it as stated, with no restating declaration in between.
-  have h : ((generalLinearEquiv R M₁).symm f).toLinearEquiv = f :=
-    (generalLinearEquiv R M₁).apply_symm_apply f
   simp only [congrLinearEquiv_apply, coeFn_generalLinearEquiv, coe_ofLinearEquiv,
-    LinearEquiv.trans_apply, h]
+    LinearEquiv.trans_apply, toLinearEquiv_generalLinearEquiv_symm]
 
 /-- Inverse conjugation by `e` sends `m` to `e.symm (g (e m))`. -/
 @[simp]
@@ -75,14 +75,9 @@ theorem _root_.LinearEquiv.autCongr_symm_apply_apply (e : M₁ ≃ₗ[R] M₂) (
     (LinearEquiv.autCongr e).symm g m = e.symm (g (e m)) := by
   rw [LinearEquiv.autCongr, MulEquiv.symm_trans_apply, MulEquiv.symm_trans_apply,
     congrLinearEquiv_symm]
-  -- `generalLinearEquiv` computes on coercions, not at the level of `M₂ ≃ₗ[R] M₂`, so its
-  -- inverse law has to be transported across `toLinearEquiv` before `simp` can use it. The
-  -- transport is definitional — `generalLinearEquiv`'s `invFun` is `ofLinearEquiv` — so Mathlib's
-  -- law proves it as stated, with no restating declaration in between.
-  have h : ((generalLinearEquiv R M₂).symm g).toLinearEquiv = g :=
-    (generalLinearEquiv R M₂).apply_symm_apply g
   simp only [congrLinearEquiv_apply, MulEquiv.symm_symm, coeFn_generalLinearEquiv,
-    coe_ofLinearEquiv, LinearEquiv.symm_symm, LinearEquiv.trans_apply, h]
+    coe_ofLinearEquiv, LinearEquiv.symm_symm, LinearEquiv.trans_apply,
+    toLinearEquiv_generalLinearEquiv_symm]
 
 /-- Conjugation by `e`, as an equality of linear equivalences: `autCongr e f` is `f` precomposed
 with `e.symm` and postcomposed with `e`. Structural consumers — determinants, traces, anything
@@ -93,11 +88,11 @@ theorem _root_.LinearEquiv.autCongr_apply (e : M₁ ≃ₗ[R] M₂) (f : M₁ �
     LinearEquiv.autCongr e f = (e.symm.trans f).trans e :=
   LinearEquiv.ext fun m ↦ LinearEquiv.autCongr_apply_apply e f m
 
-/-- Inverse conjugation by `e`, as an equality of linear equivalences.
-
-Proved by characterising the inverse rather than by unfolding `autCongr` a second time: applying
-`autCongr e` to both sides reduces it to `autCongr_apply`, so the coercion transport across
-`toLinearEquiv` happens once, in `autCongr_apply_apply`, and not again here. -/
+/-- Inverse conjugation by `e`, as an equality of linear equivalences: `(autCongr e).symm g` is `g`
+precomposed with `e` and postcomposed with `e.symm`. -/
+-- Proved by characterising the inverse rather than unfolding `autCongr` a second time: applying
+-- `autCongr e` to both sides reduces it to `autCongr_apply`, so the coercion transport across
+-- `toLinearEquiv` happens once, in `autCongr_apply_apply`, and not again here.
 theorem _root_.LinearEquiv.autCongr_symm_apply (e : M₁ ≃ₗ[R] M₂) (g : M₂ ≃ₗ[R] M₂) :
     (LinearEquiv.autCongr e).symm g = (e.trans g).trans e.symm := by
   rw [MulEquiv.symm_apply_eq, LinearEquiv.autCongr_apply]
