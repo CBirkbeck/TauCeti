@@ -141,7 +141,6 @@ noncomputable def _root_.IsCoveringMap.fundamentalGroupEquivFiber [SimplyConnect
 
 /-- The general fibre equivalence sends a loop class to the monodromy translate of the chosen
 lift, as an equality in the total space `E`. -/
-@[simp]
 lemma _root_.IsCoveringMap.fundamentalGroupEquivFiber_apply_coe [SimplyConnectedSpace E]
     (hp : IsCoveringMap p) (e : p ⁻¹' {x}) (γ : FundamentalGroup X x) :
     (IsCoveringMap.fundamentalGroupEquivFiber hp e γ : E) = (hp.monodromy γ e : E) :=
