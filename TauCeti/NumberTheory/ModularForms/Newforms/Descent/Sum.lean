@@ -28,7 +28,7 @@ that the descent consumes: if `f` transforms under `Γ₀(N)` by a scalar, the s
 ## Main results
 
 * `TauCeti.descendSlash_zero`, `TauCeti.descendSlash_add`, `TauCeti.descendSlash_smul`,
-  `TauCeti.descendSlash_finset_sum`:
+  `TauCeti.descendSlash_finsetSum`:
   `f ↦ descendSlash k p N f` is linear.
 * `TauCeti.descendSlash_slash_mapGL_of_mem_Gamma0`: for `p² ∣ N` and `γ ∈ Γ₀(N / p)`, if
   `f ∣[k] δ = u • f` for every `δ ∈ Γ₀(N)` with the lower-right entry of `γ` modulo `N / p`, then
@@ -110,7 +110,7 @@ positive determinant (`descendMatrix_det_pos`). -/
 
 /-- **The descent slash sum commutes with a finite sum**, the `Finset.sum` form of
 `descendSlash_add` and `descendSlash_zero`. -/
-lemma descendSlash_finset_sum (k : ℤ) (p N : ℕ) [NeZero p] {ι : Type*} (s : Finset ι)
+@[simp] lemma descendSlash_finsetSum (k : ℤ) (p N : ℕ) [NeZero p] {ι : Type*} (s : Finset ι)
     (f : ι → ℍ → ℂ) :
     descendSlash k p N (∑ i ∈ s, f i) = ∑ i ∈ s, descendSlash k p N (f i) := by
   classical
