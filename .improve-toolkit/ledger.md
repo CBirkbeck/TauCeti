@@ -33728,3 +33728,20 @@ Seven open. #6426 ten-of-ten green and auto-merge eligible. #6418 and #6188 buil
 boards BEHIND on both, so the next round must **not** re-fix either. #6093 `reuse`/`api-design` on
 `Function.fiberMap` still open; `documentation` contested r653. #6432 awaiting first board. #5950
 Chris's.
+
+### Late in r654: the #6093 contest was answered, and it worked
+
+Board moved 12:58:12Z. The roadmap-narration bullet is **gone and was not re-asserted** —
+`api-design`, `generality` and `placement` all now read ✅, including the long-running
+`@[expose]`-on-`Function.fiberMap` objection. The `Set.MapsTo.restrict` restructure planned for the
+next round is therefore **stale work; do not start it.**
+
+`documentation` remains 🟡, but with a *different* and genuinely in-scope finding: the conjugacy
+helper `exists_range_eq_map_conj_of_homeomorph_comp_eq` still documents the former connected-cover
+scope and omits the `Joined` hypothesis **this PR gave it** (r652 replaced `[PathConnectedSpace F]`
+with `(hj : Joined (h e₀) f₀)`). A docstring stale against its own new statement is exactly what a
+scope contest does *not* cover. Fix it; do not contest it.
+
+**A successful contest can return a harder finding than the one it displaced, and that is the system
+working.** The r653 reply argued the PR should be judged on what it changes — this finding is
+precisely that.

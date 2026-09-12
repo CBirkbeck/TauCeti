@@ -57,11 +57,11 @@ judging whether a drive is overdue.
 | PR | head | CI | label | whose move |
 |---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **Chris** — human-owned `web/examples/Examples.lean` |
-| **#6093** | `34ac589376` | green | `awaiting-author` | **me** — `reuse` + `api-design` on `Function.fiberMap` |
+| **#6093** | `34ac589376` | green | `awaiting-author` | **me** — one 🟡 left: `documentation` on the conjugacy helper's stale docstring |
 | **#6188** | `2aaf5e818c` | building | `awaiting-author` | reviewer — **4 rubrics fixed r654**, board BEHIND |
 | **#6412** | `360cdfc5b9` | green | `awaiting-author` | reviewer — `api-design` contested r653 |
-| **#6418** | `d20b665467` | building | `awaiting-author` | reviewer — ⛔ `reuse` fixed r653, board BEHIND |
-| **#6426** | `54f8eb82b5` | green | `awaiting-review` | **nobody — 10/10 green, 0 files outside `TauCeti/`** |
+| **#6418** | `d20b665467` | **green** | `awaiting-review` | reviewer — ⛔ `reuse` fixed r653 and **it built**, board BEHIND |
+| **#6426** | `54f8eb82b5` | green | **`ready-to-merge`** | **nobody — 10/10 green, 0 files outside `TauCeti/`** |
 | **#6432** | `f9bdb0a8b4` | green | `awaiting-CI` | reviewer — awaiting first board |
 
 **Boards on #6188 and #6418 are BEHIND their heads. The fixes are already pushed — do NOT re-fix.**
@@ -75,19 +75,26 @@ judging whether a drive is overdue.
   `simp` matches syntactically.
 * **#6093** — keep `@[expose]` on `Function.fiberMap`; `Equiv.compFiberEquiv` must NOT have it;
   `fundamentalGroupEquivFiber_apply_coe` and `fiberMap_comp_apply` must NOT be `@[simp]`.
-  `naming` and `placement` cleared on scope; `documentation` contested r653 (0 roadmap lines touched).
+  `naming`, `placement`, `api-design` and `generality` are all cleared. The r653 `documentation`
+  contest succeeded — the roadmap-narration bullet is gone and was **not** re-asserted.
 * **#6412** — the roadmap line is in **TauCetiRoadmap**, human-controlled and out of reach.
 * **#6418** — `FDRep.isIntegral_char` deleted, not rooted: it duplicates Mathlib's
   `FDRep.isIntegral_character` exactly.
 
 ## Next
 
-1. **#6093** `reuse` + `api-design`, both on `TauCeti/Logic/Function/Fiber.lean`, which this PR
-   creates — in scope, so implement. `reuse` wants `fiberMap` via `Set.MapsTo.restrict` with the
-   laws through `Subtype.map_id`/`Subtype.map_comp`; `api-design` wants `@[expose]` gone and
-   `fiberMap_monodromy` rewritten through `fiberMap_apply_coe`/`Subtype.ext`. §6 says removing
-   `@[expose]` breaks it across a module boundary — **do `reuse` first, then re-measure**, since the
-   restructure may remove the need for the body.
+1. **#6093 — board moved at 12:58Z, after the r653 contest. `api-design`, `generality` and
+   `placement` are now ✅ APPROVED; the `@[expose]`-on-`Function.fiberMap` blocker is GONE.** Do not
+   start the `Set.MapsTo.restrict` restructure — that plan is stale.
+   The contest worked: the roadmap-narration finding was dropped. It was replaced by a **real,
+   in-scope** one, the single remaining 🟡:
+   > `documentation` — "The generalized conjugacy helper's documentation still describes the former
+   > connected-cover scope and omits its new explicit joinedness requirement."
+
+   That is `exists_range_eq_map_conj_of_homeomorph_comp_eq`, whose hypotheses *this PR* changed
+   (r652: `[PathConnectedSpace F]` → `(hj : Joined (h e₀) f₀)`). Its docstring is stale against its
+   own new statement. **Fix it — do not contest.** Everything else on that board is ♻️ stale/re-run
+   pending, not blocking.
 2. Watch #6188 and #6418 CI; their boards are behind, so wait rather than re-fix.
 3. `handover/congraut-structural-deferred` opens only **after #6188 lands** — and its
    `congrAut_eq`/`congrAut_symm_eq` must be **renamed to `autCongr_eq`/`autCongr_symm_eq`** first.
