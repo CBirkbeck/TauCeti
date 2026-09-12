@@ -7,6 +7,7 @@ module
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime.Basic
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Scalar
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Recurrence
+import TauCeti.NumberTheory.ModularForms.QExpansion.Basic
 import TauCeti.Algebra.BigOperators.Finset.Range
 
 /-!
@@ -106,19 +107,6 @@ theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two_apply (hp : 0
   rw [heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two hp hpN r]
   rfl
 
-omit [NeZero N] in
-/-- The coefficients of a difference `x − c • y` in the character space. -/
-private theorem qExpansion_coeff_coe_sub_smul (x y : cuspFormCharSpace k χ) (c : ℂ) (n : ℕ) :
-    (qExpansion 1 ((x - c • y : cuspFormCharSpace k χ) :
-        CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff n =
-      (qExpansion 1 (x : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff n -
-        c * (qExpansion 1 (y : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff n := by
-  rw [Submodule.coe_sub, Submodule.coe_smul, FunLike.coe_sub,
-    ModularForm.qExpansion_sub one_pos (TauCeti.one_mem_strictPeriods_Gamma1_map _),
-    FunLike.coe_smul,
-    ModularForm.qExpansion_smul one_pos (TauCeti.one_mem_strictPeriods_Gamma1_map _), map_sub,
-    map_smul, smul_eq_mul]
-
 /-- **`Tₚ` at an index prime to `p`** reads the coefficient at `p m`: the `p ∣ m` term of the
 recurrence is absent. -/
 theorem qExpansion_coeff_heckeTGeneratorGamma0_of_not_dvd (hp : p.Prime)
@@ -192,7 +180,12 @@ theorem qExpansion_coeff_prime_pow_mul_heckeTGeneratorRecGamma0 (hp : p.Prime)
     exact qExpansion_coeff_prime_pow_mul_heckeTGeneratorGamma0 hp hpN F hpm j
   | more r ih1 ih2 =>
     rw [heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two_apply hp.pos hpN F r,
-      qExpansion_coeff_coe_sub_smul]
+      Submodule.coe_sub, Submodule.coe_smul, FunLike.coe_sub, FunLike.coe_smul,
+      TauCeti.qExpansion_coeff_sub_smul
+        (ModularFormClass.analyticAt_cuspFunction_zero _ one_pos
+          (TauCeti.one_mem_strictPeriods_Gamma1_map _))
+        (ModularFormClass.analyticAt_cuspFunction_zero _ one_pos
+          (TauCeti.one_mem_strictPeriods_Gamma1_map _))]
     rcases j with _ | j
     · -- `p ∤ m`: the recurrence reads the coefficient at `p m`, which is the `j = 1` instance
       have h1 := ih1 0
