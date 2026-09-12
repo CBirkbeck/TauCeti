@@ -78,6 +78,18 @@ theorem map_frobeniusAlgHom_sub_map_genericPoint {Ω : Type*} [Field Ω] [Decida
   rw [← key]
   abel
 
+/-- **That difference descends to a rational point.** A point over an extension fixed by the
+`q`-power map comes from the base field, so two homomorphisms agreeing on the pulled-back field
+move the generic point by a rational point. -/
+theorem exists_baseChange_eq_sub_map_genericPoint {Ω : Type*} [Field Ω] [DecidableEq Ω]
+    [Algebra F Ω] [DecidableEq F] (σ τ : W.FunctionField →ₐ[F] Ω)
+    (h : ∀ z ∈ (oneSubFrobeniusIsogeny W).fieldPullback.fieldRange, σ z = τ z) :
+    ∃ P : (W⁄F).toAffine.Point, Point.baseChange F Ω P =
+      Point.map σ (genericPoint W) - Point.map τ (genericPoint W) := by
+  let _ := Fintype.ofFinite F
+  exact (WeierstrassCurve.Affine.Point.map_frobeniusAlgHom_eq_self_iff_mem_range_baseChange
+    W _).1 (map_frobeniusAlgHom_sub_map_genericPoint W σ τ h)
+
 end TauCeti.Isogeny
 
 end
