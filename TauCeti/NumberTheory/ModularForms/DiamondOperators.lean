@@ -511,6 +511,8 @@ theorem slash_mapGL_eq_self_of_comp_of_mem_cuspFormCharSpace {M N : ℕ} (hMN : 
   slash_mapGL_eq_self_of_comp_of_mem_modFormCharSpace hMN hcomp
     ((coe_mem_modFormCharSpace_iff k χ f).mpr hf) hβ hβ11
 
+
+
 /-- **The inclusion of character spaces along `S_k(Γ₁(N)) → M_k(Γ₁(N))`.** A cusp form lies in
 `S_k(N, χ)` exactly when the modular form underlying it lies in `M_k(N, χ)`
 (`coe_mem_modFormCharSpace_iff`), so Mathlib's `CuspForm.toModularFormₗ` restricts to a map
