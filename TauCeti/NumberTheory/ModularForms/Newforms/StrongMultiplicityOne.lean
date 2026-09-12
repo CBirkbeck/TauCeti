@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Eigenvector
-public import TauCeti.NumberTheory.ModularForms.Newforms.MainLemma
+public import TauCeti.NumberTheory.ModularForms.Newforms.EigenvectorVanishing
 public import TauCeti.NumberTheory.ModularForms.Newforms.EigenvalueExtension
 public import TauCeti.NumberTheory.ModularForms.Newforms.Coefficient
 public import TauCeti.NumberTheory.ModularForms.Newforms.Newform
@@ -104,12 +104,9 @@ theorem Newform.eq_of_forall_notMem_eigenvalue_eq {f g : Newform N k} (hχ : f.�
       ModularForm.qExpansion_sub one_pos (one_mem_strictPeriods_Gamma1_map _), map_sub, f.isNorm,
       g.isNorm, sub_self]
   -- so its coefficients vanish off `N`, and it is old; it is also new, hence zero
-  have hvan : ∀ n, Nat.Coprime n N → (qExpansion 1 d).coeff n = 0 := fun n hn ↦
-    qExpansion_coeff_eq_zero_of_forall_prime_heckeRingHomCusp_of_one_eq_zero_of_coprime
-      (F := ⟨d, hdχ⟩) dvd_rfl heig h1 n hn
-  have hd0 : d = 0 := (Submodule.disjoint_def.mp (disjoint_cuspFormsOld_cuspFormsNew N k)) d
-    (mem_cuspFormsOld_of_forall_coprime_qExpansion_coeff_eq_zero hdχ hvan)
-    (Submodule.sub_mem _ f.isNew g.isNew)
+  have hd0 : d = 0 :=
+    eq_zero_of_forall_prime_heckeRingHomCusp_of_one_eq_zero_of_mem_cuspFormsNew
+      (F := ⟨d, hdχ⟩) heig h1 (Submodule.sub_mem _ f.isNew g.isNew)
   exact Newform.ext (sub_eq_zero.mp hd0)
 
 /-- **Strong multiplicity one, on Fourier coefficients** (Miyake's own form of Theorem 4.6.12):
