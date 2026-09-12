@@ -137,6 +137,9 @@ Never merge/close a PR. Push to `fork`, never `origin` (403). One worktree: `imp
 Never touch `scripts/`, `.github/`, the lakefile — **including the dot-notation baseline**, which is
 why renaming a flagged declaration is red unless it is rooted in the same commit.
 No bare `git stash`. Never #5481. Never open a PR from `handover/improve-toolkit`.
+**Backticks inside `-m "…"` are COMMAND SUBSTITUTION** — `git commit -m "…\`stale\`…"` silently
+drops the word. Escape them (`\\\``) or pass the message with `-F file` (r687 lost one word this
+way; every PR-branch commit survived only because they were escaped).
 Every PR body needs a standalone `Roadmap: none`.
 **PRs here are CROSS-REPO** — head on `CBirkbeck/TauCeti`, base `TauCetiProject/TauCeti`. Always
 `gh pr create --repo TauCetiProject/TauCeti --base main --head CBirkbeck:<branch>`.
