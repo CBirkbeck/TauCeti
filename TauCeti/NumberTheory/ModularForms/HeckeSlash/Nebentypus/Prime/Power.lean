@@ -187,12 +187,12 @@ theorem qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorRecG
     exact qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorGamma0 hp hpN F hpm j
   | more r ih1 ih2 =>
     rw [heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two_apply hp.pos hpN F r,
-      Submodule.coe_sub, Submodule.coe_smul, FunLike.coe_sub, FunLike.coe_smul,
-      TauCeti.qExpansion_coeff_sub_smul
-        (ModularFormClass.analyticAt_cuspFunction_zero _ one_pos
-          (TauCeti.one_mem_strictPeriods_Gamma1_map _))
-        (ModularFormClass.analyticAt_cuspFunction_zero _ one_pos
-          (TauCeti.one_mem_strictPeriods_Gamma1_map _))]
+      Submodule.coe_sub, Submodule.coe_smul,
+      ← TauCeti.ModularForm.qExpansionLinearMap_apply one_pos
+        (TauCeti.one_mem_strictPeriods_Gamma1_map _), map_sub, map_smul,
+      TauCeti.ModularForm.qExpansionLinearMap_apply,
+      TauCeti.ModularForm.qExpansionLinearMap_apply]
+    simp only [map_sub, map_smul, smul_eq_mul]
     rcases j with _ | j
     · -- `p ∤ m`: the recurrence reads the coefficient at `p m`, which is the `j = 1` instance
       have h1 := ih1 0
