@@ -1,190 +1,85 @@
-# Last round — r685 (2026-09-12 20:57Z)
+# Last round — r686 (2026-09-12 21:07Z)
 
-## #6432 is MERGING — step 5 fires when it lands, and the staged command was wrong
+## #6432 MERGED · step 5 fired · #6482 opened as a draft
 
-`queuepos.py` reports #6432 as **`MERGING:pos=2`**: its merge group is building. A watch is running on
-that merge, because **it is what fires step 5**.
+**#6432 merged at 21:06:37Z** — the fifth `improve/*` merge of this watch (#6406, #6426, #6412,
+#6418, #6432). `lint-dot-notation` on main: **739 → 736**.
 
-**The step-5 command r684 staged would have failed.** Checked against a real PR before trusting it —
-#6432 has `head.repo=CBirkbeck/TauCeti`, `base.repo=TauCetiProject/TauCeti`. These PRs are
-**cross-repo**: the branch lives on the fork, the PR opens against upstream. A bare
-`--head improve/…` does not name a fork branch, and `gh` infers the base from `origin`. Corrected
-below. r684's whole contribution was staging that command, and it was not verified against anything —
-staging only helps if the artefact is checked against something real, or it turns a problem you would
-have met while paying attention into one you meet while assuming it was solved.
+Step 5 fired (my open `improve/*` PRs dropped to two) and r685's corrected recipe ran in order:
+refresh **6 behind → 0**, gate **14 ok / 2** (`parallelns`, `slice` — exactly the two the body
+answers), push `595ce95af → a220f533d`, create.
 
-#6093 went `awaiting-CI` → **`awaiting-review`** at 20:46Z: CI is green on `36f3a07b9` and the
-pipeline is judging it. Its board still reads `2231e763ee` — BEHIND **by construction**, since that
-is the pre-fix head. Expect the new board ~21:24–21:42Z (the 46–64 min band from CI-green at 20:38Z).
-**Do not drive it**; step 4's clock has run eight minutes.
+**PR #6482** — draft, base `main`, `TauCeti/Topology/Algebra/ConstMulAction.lean` only, **+5/−9**,
+standalone `Roadmap: none`. Bot labelled it `roadmap/none,awaiting-CI` within the minute.
 
-## #6093 is GREEN on the scope fix — `sandboxed-build: success` on `36f3a07b9`
-
-Removing the two `compFiberEquiv` laws, the docstring lines advertising them and the now-unused `Z`
-variable left the tree building. The pipeline re-reviews from here, and the six
-rubrics deferred behind the `scope` block — `naming`, `api-design`, `generality`, `placement`,
-`documentation`, `proof-quality` — get judged on this head for the **first time**. A fresh 🟡 from any
-of them is a first verdict, not a regression. Run `threadread.py` and answer **LIVE** only.
-
-## Step 5 is now one command
-
-The branch was never the missing piece — `improve/submonoid-constsmul-root` has been pushed,
-refreshed against main and gate-clean (14 ok / 2 questions) since r681. The **body** was, since it has
-to answer both gate questions or draw them straight back as findings. It is written and staged at
-`pending/submonoid-constsmul-body.md`. When step 5 fires:
-
-**Refresh it first** — it drifts ~4 commits an hour and #6093 proved what a stale scout costs:
+## ⚠️ FIRST ACTION: mark #6482 ready as soon as CI is green
 
 ```
-git checkout improve/submonoid-constsmul-root && git merge origin/main --no-edit
-bash tools/prepush.sh origin/main        # expect 14 ok / 2 (parallelns, slice) — both answered
-git push fork improve/submonoid-constsmul-root
-
-gh pr create --repo TauCetiProject/TauCeti --draft --base main \
-  --head CBirkbeck:improve/submonoid-constsmul-root \
-  --title 'refactor(Topology): root the `TauCeti.Submonoid` continuity instance' \
-  --body-file .mathlib-quality/improve/pending/submonoid-constsmul-body.md
+gh pr ready 6482
 ```
 
-then mark ready when CI is green. Do **not** refresh it on rounds where step 5 has not fired — that
-is churn, since it falls behind again within the hour.
+A draft draws **no review**, whatever its label says — r650 lost 64 minutes to exactly this on #6412.
+A CI watch on `a220f533d` was running when this round closed. If it went red, read the log: this
+branch has never had a CI run, only the gate.
 
-**The `--head` must be fork-qualified.** These PRs are cross-repo — verified on #6432:
-`head.repo=CBirkbeck/TauCeti`, `base=TauCetiProject/TauCeti`. A bare `--head improve/…` does not
-address the fork branch, so spell it `CBirkbeck:improve/…` and pass `--repo`/`--base` explicitly
-rather than letting `gh` infer them from `origin`.
-
-**A claim in my own notes was wrong and is corrected there.** I had recorded that `Subgroup` stays
-nested because rooting it would invent a namespace. **Mathlib's `Subgroup` is root with 1186
-declarations.** The real reason is `TauCeti.Subgroup` being **39 flagged of 62**, across 4 files and a
-6-file subtree — rooting one of those 39 is the arbitrary cut that blocked #5905. Same conclusion,
-sound reason. `naming` on #6093 blocked on exactly this species of error, so the false version would
-not have survived review.
-
-## r682 carried over: `threadread.py` no longer shows dead verdicts as live work
-
-A block **halts the whole run**, so every rubric behind it returns `absent` — *not judged on this
-head* — while its thread still carries text from an older revision. The old test was
-`unresolved = (state != "green")`, which lumped those in with the live block under one heading.
-#6093's `naming` thread is dated **2026-09-09**, seven revisions back; in r681 I only established it
-was dead by reading the `states` map out of the `tauceti-meta:v1` payload by hand.
-
-Now it is code — `LIVE` / `NOT-RUN` / `GREEN`, a banner over every `NOT-RUN` body, and the firing
-control ends with the line that matters:
-
-```
-LIVE (answer these): scope.
-NOT-RUN (deferred behind the block; their text is from an older head -- do NOT act):
-  naming, api-design, generality, placement, documentation, proof-quality.
-```
-
-`absent` **does** block the merge, but it gives you nothing to do: clear what halted the run and let
-it run. Two controls on a new fixture, both mutation-tested. **142 controls, 0 failed.**
-
-**Footgun found while writing them:** `chk`/`neg` feed expected rows to plain `grep`, so `[NOT-RUN]`
-is a **character class**, not a literal. The positive failed for that reason and the matching
-negative **passed for the wrong reason** — a pattern that can never match trivially satisfies a
-negative. **Keep expected rows bracket-free.** No other control does this.
-
-## r681 carried over: #6093's `scope` ⛔ cleared by removing the subject
-
-The board came back on the refreshed head `2231e763e` and halted at **one** blocker:
-
-```
-✅ correctness   ✅ reuse   ⛔ scope   ▫️ everything else deferred (not yet run)
-```
-
-> `Equiv.compFiberEquiv_refl` and `Equiv.compFiberEquiv_trans` are genuinely new mathematical API
-> bundled into a namespace/relocation refactor; the description explicitly claims "Roadmap: none."
-
-Right, and the **same shape `scope` ⛔'d on #6188 in r675** — where removing the added lemmas is what
-took the PR to 10/10. Implemented rather than argued: both theorems gone, plus the `Main declarations`
-bullet, the overview sentence claiming a functoriality the file no longer states, and the `Z` variable
-only `compFiberEquiv_trans` used. Nothing else referenced them; `stalequal`/`deadpath`/`ghostref` all
-clean afterwards.
-
-**Preserved on `handover/fiber-compfiberequiv-laws-deferred`**, and the PR body says so with a link —
-*removing the subject is an answer provided the work lands somewhere, and you say where.* Pushed
-`2231e763e → 36f3a07b9`, now **26 files / +423 / −329**. Gate unchanged at `12 ok / 4 failed`.
-
-### Do NOT fix the `naming` finding yet
-
-`threadread.py` still shows a `naming` thread asking to root two `IsQuotientCoveringMap` declarations.
-It is dated **2026-09-09** and reads `absent` in the current board's states — it re-runs once `scope`
-clears, against a tree seven revisions newer. Wait for the fresh verdict.
-
-## Board (20:57Z)
+## Board (21:07Z)
 
 | PR | head | CI | label | queue | whose move |
 |---|---|---|---|---|---|
+| **#6482** | `a220f533d` | building | `awaiting-CI` | — | **me — `gh pr ready` when green** |
+| **#6093** | `36f3a07b9` | green | `awaiting-review` | — | nobody — being judged; board `2231e763ee` is BEHIND **by construction** |
+| **#6188** | `ec1a68d965` | green | `ready-to-merge` | **pos 7** | nobody — 10/10, waiting its turn |
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **NEVER-QUEUED** | **Chris** — human-owned file; the bot cannot enqueue it. **Do not refresh it.** |
-| **#6093** | `36f3a07b9` | green | **`awaiting-review`** | — | nobody — being judged now; board `2231e763ee` is BEHIND by construction |
-| **#6188** | `ec1a68d965` | green | `ready-to-merge` | **pos 9** | nobody — 10/10, waiting its turn |
-| **#6432** | `98bb7e78f4` | green | `ready-to-merge` | **MERGING pos 2** | nobody — merge group building |
 
-#6432 **3 → MERGING**, #6188 **10 → 9**. No `improve/*` merge since #6418 — pure position.
-**#6432 landing is what fires step 5.**
+#6093's CI has been green since 20:38Z. Board band 46–64 min → ~21:24–21:42Z. **Do not drive**; step
+4's clock has not run an hour.
 
-**Step 4 was correctly a no-op.** #6093's CI had been green four minutes at sweep time; the pipeline
-posted its own board nine minutes later, inside the 32–67 min band. Driving would have burned ~$16 to
-reproduce a board already in flight.
+## What r686 confirmed about staging work ahead
 
-## `improve/submonoid-constsmul-root` is now ready to open
+r685's catch was real and load-bearing. The fork-qualified `--head CBirkbeck:…` with explicit
+`--repo`/`--base` is what opened #6482; the bare `--head improve/…` staged in r684 would have failed
+at the one moment in the watch when step 5 was live. **Verify a staged artefact against something
+real** — here, #6432's actual `head.repo`/`base.repo`.
 
-It was scouted against much older main and sat **11 behind**. No PR on it, so refreshing cost no
-review cycle: merged `origin/main` (clean, 0 behind), re-gated **14 ok / 2 failed** — the two being
-the documented `parallelns` and `slice` questions — `ghostref` clean. Pushed `98d76ecb6 → 595ce95af`.
-
-**When step 5 fires, open it as a DRAFT** with `--body-file pending/submonoid-constsmul-body.md`.
-Mark ready when CI is green.
-
-## Verified candidate list for the target after that
-
-Refreshed on current main and **checked against Mathlib with `mathlibns.py`** — never a grep (r511 was
-wrong on five of six):
-
-```
-ROOT   517  Submonoid                      1/1   <- the prepared branch
-ROOT     6  Representation.IsIrreducible   1/1   <- next target (1/5 of its file: slice question)
-ROOT    14  Basis                          1/1   (1/12 of its file)
-ROOT    27  FDRep                          1/1   (1/12 of its file)
-ABSENT   0  Probability.Kernel · PDE.Continuous · PDE.ContinuousOn
-ABSENT   0  Probability.AEStronglyMeasurable · Probability.MeasurableSet · BilinForm.IsAlt
-```
-
-**Five of the twelve WHOLE candidates are traps** — Mathlib has no such namespace, so rooting would
-invent one. `Probability.Kernel` ranks 3/3 WHOLE on `nscand` *and* is named in `mathlibns.py`'s own
-firing control as known-bad (`ProbabilityTheory.Kernel`). **Ratio does not settle a target.**
+Equally, refreshing *at* the moment beat refreshing speculatively: the branch had drifted **6 behind**
+in the ~50 minutes since r681. Refreshing every intervening round would have been churn.
 
 ## Next
 
-1. **#6093: wait for CI, then the board.** `scope` is answered. Expect the deferred rubrics to run for
-   the first time — several have never been judged on this head, so a fresh 🟡 is normal, not a
-   regression. **`threadread.py` now says which are LIVE**; answer only those. The PR's 26th file,
-   `FiberFunctor.lean`, is a **required call-site update for the rename**, not scope creep; say so if
-   `scope` asks again.
-2. **Run `tools/queuepos.py` beside the sweep.** Act only on **`EJECTED`**; `NEVER-QUEUED` (#5950) is
-   not this role's to fix.
-3. **Do not re-diagnose the merge wait.** One serialised FIFO worker, ~25–30 min/merge, 30+ deep;
-   2.5–3.5 h label→merge is normal. I got this wrong twice (r676, r679) by reasoning over run lists
-   instead of querying the queue.
-4. **Do not touch #6188 or #6432.** Both 10/10 and queued; an edit costs a re-review and the position.
-5. **`lint-dot-notation` on main is 739**, not 678 — 678 is #6093's head figure, i.e. what main reads
-   after it merges. (r680's note had this wrong.)
+1. **`gh pr ready 6482`** once `sandboxed-build` is green. Then it draws a board in ~46–64 min.
+2. **#6093**: wait for the board. `scope` is answered and six rubrics get judged on this head for the
+   **first time** — a fresh 🟡 is a first verdict, not a regression. Run `threadread.py` and answer
+   **LIVE** only; `NOT-RUN` text is from an older head.
+3. **Do not touch #6188.** 10/10 and queued at pos 7; an edit costs a re-review and the position.
+4. **Do not re-diagnose the merge wait.** One serialised FIFO worker, ~25–30 min/merge; position is
+   the whole explanation. I got this wrong twice (r676, r679) by reasoning over run lists instead of
+   querying the queue.
+5. **Next prospecting target when step 5 fires again** — verified ROOT in Mathlib with `mathlibns.py`:
+   ```
+   ROOT     6  Representation.IsIrreducible   1/1 WHOLE  (1/5 of its file -> slice question)
+   ROOT    14  Basis                          1/1 WHOLE  (1/12 of its file)
+   ROOT    27  FDRep                          1/1 WHOLE  (1/12 of its file)
+   ```
+   **Five of the twelve WHOLE candidates are traps** — `Probability.Kernel`, `PDE.Continuous`,
+   `PDE.ContinuousOn`, `Probability.AEStronglyMeasurable`, `Probability.MeasurableSet`,
+   `BilinForm.IsAlt` name namespaces Mathlib does not have. **A WHOLE ratio does not settle a
+   target.** Re-run `nscand.py` first — main moved again with #6432.
 6. **Read the tools list before writing a script.** `tools/` has 49: `sweep.py`, `queuepos.py`,
    `ghostref.py`, `threadread.py` (**use this, not jq**), `nscand.py` + `mathlibns.py`, `prepush.sh`
    (the gate, **16 checks**), `minecount.py`.
 
 ## Settled
 
-* **#6418, #6412, #6426, #6406** — **MERGED.**
-* **#6093** — refreshed against main, a real break fixed (`FiberFunctor.lean:87`), and `scope`
-  answered by removing the two new laws. Deferred on
+* **#6432, #6418, #6412, #6426, #6406** — **MERGED.** main 759 → **736** across this watch.
+* **#6482** — new, draft, awaiting CI. Body answers `parallelns` (the `Subgroup` instance stays
+  nested: `TauCeti.Subgroup` is **39 flagged of 62** across a 6-file subtree, so rooting one here is
+  the arbitrary cut that blocked #5905 — **not** because Mathlib lacks `Subgroup`, which is root with
+  1186 declarations) and `slice` (1 of the file's 2 flagged, same boundary).
+* **#6093** — refreshed against main, a real break fixed (`FiberFunctor.lean:87`), `scope` answered by
+  removing the two `compFiberEquiv` laws. Deferred on
   `handover/fiber-compfiberequiv-laws-deferred`.
 * **#6188** — the `Lattice.lean` rooting **only**. Do not re-add the conjugation API: `scope` ⛔'d
   exactly that, and removing it is what made the PR green.
-* **#6432** — semilinear, rooted, renamed, owns the structural lemmas and call-site rewrites.
-* **`improve/submonoid-constsmul-root`** — pushed, refreshed, gate-clean, body written, **no PR**.
 
 ## Still needs Chris
 
@@ -198,8 +93,11 @@ Never touch `scripts/`, `.github/`, the lakefile — **including the dot-notatio
 why renaming a flagged declaration is red unless it is rooted in the same commit.
 No bare `git stash`. Never #5481. Never open a PR from `handover/improve-toolkit`.
 Every PR body needs a standalone `Roadmap: none`.
+**PRs here are CROSS-REPO** — head on `CBirkbeck/TauCeti`, base `TauCetiProject/TauCeti`. Always
+`gh pr create --repo TauCetiProject/TauCeti --base main --head CBirkbeck:<branch>`.
 `gh pr edit` silently no-ops here — use `gh api -X PATCH … -F body=@file`, then **re-read to verify**.
 **Pass an explicit `--limit` to every `gh` listing** — the defaults are 30 rows and truncate silently.
+**A draft draws no review** however its label reads — `gh pr ready` the moment CI is green (r650).
 A fresh worktree needs `.lake` symlinked or `lint-dot-notation` errors on both sides.
 `uvx` is at `~/.local/bin/uvx`; measured board latency band is **32–67 min**.
 **COMMIT BEFORE GATING** — prepush reads HEAD and refuses a dirty tree.
@@ -207,25 +105,28 @@ A fresh worktree needs `.lake` symlinked or `lint-dot-notation` errors on both s
 pristine head against its **own** merge-base: `prepush.sh $(git merge-base <head> origin/main)`.
 **Identical gate counts across a `main` merge prove the merge introduced nothing — they do NOT make
 the standing findings safe.** A latent `nsjump`/`decldiff` finding is one waiting for a caller, and
-merging `main` is what supplies callers. Re-read them against the newly arrived files.
+merging `main` is what supplies callers.
 **A removed declaration whose namespace is also a TERM does not announce its absence** — it re-reads
 as generalized field notation and fails somewhere else entirely (#6093).
 **A board finding dated before the current head may be `absent`, not live.** `threadread.py` now
-classifies this for you: answer **LIVE** only; **NOT-RUN** is deferred behind the block and its text
-is from an older head.
+classifies this: answer **LIVE** only; **NOT-RUN** is deferred behind the block.
 **Control rows go to plain `grep`** — a bracketed pattern is a character class, and a negative
 control asserting one passes for the wrong reason.
+**Refresh a scouted branch AT the moment it is opened, not speculatively** — it drifts ~4–6 commits
+an hour, so an early refresh is churn and a stale open is #6093's failure mode.
+**Verify a staged artefact against something real before trusting it** (r685: the staged
+`gh pr create` was wrong and only a real PR's `head.repo` showed it).
 A rubric that went green can go 🟡 again; clearing a ⛔ reveals rubrics that never ran; and
 **a 🟡 behind a ⛔ may not survive the next board — do not chase it**.
-**When rubrics contradict each other across rounds, suspect the PR boundary before the rubrics.**
 **When a rubric has no satisfiable head, removing the subject is an answer** — provided the work
-lands somewhere, and you say where. Twice now: #6188 (r675) and #6093 (r681).
+lands somewhere, and you say where. Twice: #6188 (r675) and #6093 (r681).
 **Deleting a declaration means deleting what advertises it** — docstring bullets, overview prose, and
-any `variable` only it used (`stalequal` catches the first, nothing catches the last).
+any `variable` only it used.
 **A green PR is not a place to apply a lesson** — but an *ejected* one is not green, whatever its
-four sweep fields say.
+four sweep fields say. Act only on `queuepos.py` saying **`EJECTED`**; `NEVER-QUEUED` (#5950) is not
+this role's to fix.
 Verify a rooting target with `mathlibns.py`, never a grep; then **gate it**. **A WHOLE ratio does not
-settle a target** — five of twelve WHOLE candidates name a namespace Mathlib does not have.
+settle a target.**
 The gate is pure Python: it cannot see docstring attachment, elaboration, or simp normal form.
 **142 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
 **HANDOVER.md §11–13 carry this watch's rules** — read them before re-deriving one.

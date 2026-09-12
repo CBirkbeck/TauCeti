@@ -35778,3 +35778,59 @@ failed.
 
 No `improve/*` merge since #6418 — pure position, and #6432 is mid-merge. Three `improve/*` PRs still
 open, so step 5 has not fired yet.
+
+---
+
+## r686 — 2026-09-12 21:07Z — #6432 MERGED, and step 5 fired
+
+### #6432 merged at 21:06:37Z
+
+The fifth `improve/*` merge of this watch — **#6406, #6426, #6412, #6418, #6432**. `lint-dot-notation`
+on main: **739 → 736**.
+
+The sweep and `queuepos.py` both still showed it open/`MERGING:pos=1` in the same breath the merge
+poll caught it at 21:06:37Z. Not a defect — a seconds-wide race between three separate API views. The
+merge poll is the authority on "merged"; the queue view lags.
+
+### Step 5 fired, and the corrected command worked
+
+Open `improve/*` PRs of mine dropped to two (#6093, #6188), below the threshold of three. (#5950 is
+Chris's and blocked on a human-owned file — counting it would keep the count at three forever and
+prospecting would never happen, which is not what step 5 is for.)
+
+Executed r685's corrected recipe in order:
+
+```
+refresh    6 behind -> 0 behind, clean merge
+gate       14 ok / 2 failed  (parallelns, slice -- exactly the two the body answers)
+push       595ce95af -> a220f533d
+create     gh pr create --repo TauCetiProject/TauCeti --draft --base main \
+                        --head CBirkbeck:improve/submonoid-constsmul-root ...
+```
+
+**PR #6482**, draft, base `main`, one file, **+5/−9**, standalone `Roadmap: none` at line 48. The bot
+labelled it `roadmap/none,awaiting-CI` within the minute.
+
+**r685's catch was real.** The fork-qualified `--head CBirkbeck:…` with explicit `--repo`/`--base` is
+what opened it; the bare `--head improve/…` r684 staged would have failed here, at the one moment in
+the whole watch when step 5 was live. Verifying a staged artefact against something real — #6432's
+actual `head.repo`/`base.repo` — is what saved it.
+
+And refreshing *at* the moment rather than speculatively was right: the branch had drifted **6 behind**
+in the ~50 minutes since r681 refreshed it. Refreshing on every intervening round would have been
+churn; refreshing at open time cost one merge and left it at 0 behind.
+
+### Board
+
+```
+#6482  awaiting-CI     NEW DRAFT   a220f533d -- CI watch running, mark ready when green
+#6188  ready-to-merge  QUEUED pos=7  (was 8)
+#6093  awaiting-review board 2231e763ee BEHIND (head 36f3a07b9) -- still being judged
+#5950  ready-to-merge  NEVER-QUEUED  Chris's
+```
+
+#6093's CI has been green since 20:38Z — 29 minutes. The board band is 46–64 min, so ~21:24–21:42Z.
+Step 4's clock has **not** run an hour; do not drive.
+
+**#6482 must be marked ready as soon as CI is green** — a draft draws no review however its label
+reads (r650 lost 64 minutes to exactly that on #6412).
