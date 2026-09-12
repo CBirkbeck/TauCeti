@@ -545,8 +545,15 @@ the denominator is topologically nilpotent whenever the enlargement is proper.
 rational-subset condition. `hnil` does not follow from that condition, nor from the Tate and
 strong-noetherian hypotheses: `s = 1` makes `hspan` automatic, and `1` is not topologically
 nilpotent in a nonzero Tate ring. Removing it needs a change of presentation — scaling `(T, s)`
-by a power of a topologically nilpotent unit leaves the rational subset and the localisation
-alone while making the denominator topologically nilpotent — and that is not proved here.
+by a power of a topologically nilpotent unit leaves the localisation alone while making the
+denominator topologically nilpotent.
+
+That rescaled presentation is now available, as
+`TauCeti.Huber.PairOfDefinition.exists_isTopologicallyNilpotent_rescaled`: it produces `(T', u * s)`
+with `u * s` topologically nilpotent, the same `D`, and the same standing hypothesis. What is still
+missing is the step *back*: flatness proved for the rescaled presentation has to be carried to
+`(T, s)`, which needs the two completed rings and the restriction map between them identified, and
+that is not proved here.
 
 What this *does* remove is the hypothesis on the localisation. Its predecessors ask strong
 noetherianity of `A⟨T/s⟩`; this asks it of `A`, which is Wedhorn's own standing hypothesis. The
