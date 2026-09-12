@@ -31,7 +31,8 @@ subgroup, not to compare two covers which already exist.
 ## Main declarations
 
 * `IsCoveringMap.exists_range_eq_map_conj_of_homeomorph_comp_eq`: an isomorphism of
-  unpointed covers makes their recovered subgroups conjugate.
+  unpointed covers makes their recovered subgroups conjugate, as soon as `h e₀` and `f₀`
+  are joined by a path.
 * `IsCoveringMap.exists_homeomorph_comp_eq_of_range_eq_map_conj`: conjugate recovered
   subgroups give an isomorphism of unpointed covers.
 * `IsCoveringMap.exists_homeomorph_comp_eq_iff_exists_range_eq_map_conj`: the
@@ -61,11 +62,16 @@ variable {E F X : Type*} [TopologicalSpace E] [TopologicalSpace F] [TopologicalS
 
 section
 
-/-- An isomorphism of unpointed connected covers carries the subgroup recovered from the
-source basepoint to a conjugate of the subgroup recovered from the target basepoint.
+/-- An isomorphism of unpointed covers carries the subgroup recovered from the source
+basepoint to a conjugate of the subgroup recovered from the target basepoint, provided
+`h e₀` and `f₀` are joined by a path.
 
 The homeomorphism need not carry `e₀` to `f₀`: its image of `e₀` is another point of the
-target fibre, and changing from that point to `f₀` accounts for the conjugation. -/
+target fibre, and a path from there to `f₀` is what accounts for the conjugation.
+
+Neither cover is assumed connected. Path-connectedness of `F` is one way to supply `hj`,
+and is how `IsCoveringMap.exists_homeomorph_comp_eq_iff_exists_range_eq_map_conj` below
+discharges it. -/
 theorem _root_.IsCoveringMap.exists_range_eq_map_conj_of_homeomorph_comp_eq
     (hq : _root_.IsCoveringMap q)
     (hpe : p e₀ = x) (hqf : q f₀ = x) (h : E ≃ₜ F) (hcomp : q ∘ h = p)
