@@ -73,7 +73,8 @@ read on the first coefficient: the Hecke element multiplies `a_1` by `λ_n` and 
 theorem qExpansion_coeff_eq_eigenvalue_mul_coeff_one (n : ℕ+) (hn : Nat.Coprime (n : ℕ) N) :
     (qExpansion 1 f.toCuspForm).coeff (n : ℕ) =
       f.eigenvalue n hn * (qExpansion 1 f.toCuspForm).coeff 1 := by
-  have h := qExpansion_coeff_heckeTCompositeGamma0_of_coprime (N := N) (k := k) (χ := f.χ)
+  have h := qExpansion_coeff_heckeRingHomCuspCharSpace_heckeTCompositeGamma0_of_coprime
+    (N := N) (k := k) (χ := f.χ)
     n.pos.ne' hn ⟨f.toCuspForm, f.mem_charSpace⟩ (m := 1) (Nat.coprime_one_left _)
   rw [f.isEigen n hn, one_mul, Submodule.coe_smul, FunLike.coe_smul,
     ModularForm.qExpansion_smul one_pos (TauCeti.one_mem_strictPeriods_Gamma1_map _), map_smul,
