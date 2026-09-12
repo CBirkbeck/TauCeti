@@ -26,8 +26,9 @@ square and enlarge a vanishing-off-the-block range.
 * `sum_sum_range_eq_of_eq_zero_right`: enlarging both ranges of a double sum that vanishes outside
   a rectangle.
 * `sum_range_add_add`: splitting a `range n` sum into a prefix, a block, and a suffix.
-* `sum_range_min_add_two`, `sum_range_min_zero`: the two-step recurrence satisfied by the sums
-  `∑_{i ≤ min j r} c^i a (j + r − 2i)`, and its degenerate case at `j = 0`.
+* `sum_range_min_add_two`: the two-step recurrence satisfied by the sums
+  `∑_{i ≤ min j r} c^i a (j + r − 2i)`, and `sum_range_min_zero`: the boundary identity beside it,
+  where the recurrence has only two terms.
 -/
 
 public section
@@ -148,9 +149,10 @@ theorem sum_range_min_add_two {R : Type*} [Semiring R] (a : ℕ → R) (c : R) (
   rw [← h₁, ← h₂]
   abel
 
-/-- **The `j = 0` case of `sum_range_min_add_two`**: `S 1 (r+1) − c · S 0 r = S 0 (r+2)`, both
-sides being `a (r + 2)`. The two-step recurrence degenerates there, the `0 − 1` index not
-arising. -/
+/-- **The boundary identity beside `sum_range_min_add_two`**: `S 1 (r+1) − c · S 0 r = S 0 (r+2)`,
+both sides being `a (r + 2)`. It is not an instance of that recurrence — substituting `j = 0`
+there gives a different identity — but the companion needed where the recurrence has only two
+terms, at the smallest index. -/
 theorem sum_range_min_zero {R : Type*} [Ring R] (a : ℕ → R) (c : R) (r : ℕ) :
     (∑ i ∈ range (min 1 (r + 1) + 1), c ^ i * a (1 + (r + 1) - 2 * i)) -
         c * ∑ i ∈ range (min 0 r + 1), c ^ i * a (0 + r - 2 * i) =
