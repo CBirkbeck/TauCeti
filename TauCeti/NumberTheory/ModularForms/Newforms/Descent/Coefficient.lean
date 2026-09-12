@@ -122,7 +122,7 @@ private theorem eq_comp_unitsMap_of_comp_unitsMap_eq {M' N' : ℕ} [NeZero M'] (
 /-- **A peeled summand descends to a level-raise of a bundled descent.** For `F` of level
 `Γ₁(M l² / q)` with a nebentypus lying over the lowered one, the descent at level `M l²` of the
 function `V_q F` is `V_q` of the descent of `F`, bundled at level `Γ₁(M l² / p)`:
-`descendSlash_coe_levelRaise_mul_left` read through `descendCuspForm`. -/
+`descendSlash_coe_levelRaise_mul_left_of_mem_cuspFormCharSpace` read through `descendCuspForm`. -/
 private theorem descendSlash_smul_slash_scaleGL_eq_coe_levelRaise (hp : p.Prime) {l q : ℕ}
     (hpM : p ∣ M) (hq : q.Prime) (hql : q ∣ l) (hpl : Nat.Coprime p l)
     [NeZero (M * l ^ 2 / q)] (hpN' : p ∣ M * l ^ 2 / q) (hMN' : M ∣ M * l ^ 2 / q)
@@ -148,7 +148,8 @@ private theorem descendSlash_smul_slash_scaleGL_eq_coe_levelRaise (hp : p.Prime)
   have hcomp' := eq_comp_unitsMap_of_comp_unitsMap_eq hpM hpN'
     ((Nat.div_dvd_div_iff_right hpM hpN').mpr hMN') hMN' (Nat.div_dvd_of_dvd hqMl) hcomp hχ'
   refine ⟨hcomp', ?_⟩
-  have h := descendSlash_coe_levelRaise_mul_left k hp hpN' (hpl.coprime_dvd_right hql) hcomp' hF
+  have h := descendSlash_coe_levelRaise_mul_left_of_mem_cuspFormCharSpace k hp hpN'
+    (hpl.coprime_dvd_right hql) hcomp' hF
   rw [CuspForm.coe_levelRaise, Nat.mul_div_cancel' hqMl] at h
   rw [h, CuspForm.coe_levelRaise, coe_descendCuspForm]
 
