@@ -35,11 +35,10 @@ variable {R M₁ M₂ : Type*} [Semiring R] [AddCommMonoid M₁] [Module R M₁]
   [AddCommMonoid M₂] [Module R M₂]
 
 /-- The linear automorphism underlying the general linear group element
-`(generalLinearEquiv R M).symm f` is `f` itself.
-
-Mathlib records how `generalLinearEquiv` computes on coercions (`coeFn_generalLinearEquiv`,
-`coe_toLinearEquiv`) rather than at the level of `M ≃ₗ[R] M`, so both evaluation lemmas for
-`autCongr` below need this bridge; it is stated once here. -/
+`(generalLinearEquiv R M).symm f` is `f` itself. -/
+-- Mathlib records how `generalLinearEquiv` computes on coercions (`coeFn_generalLinearEquiv`,
+-- `coe_toLinearEquiv`) rather than at the level of `M ≃ₗ[R] M`, so both evaluation lemmas for
+-- `autCongr` below need this bridge; it is stated once here.
 private theorem toLinearEquiv_generalLinearEquiv_symm {M : Type*} [AddCommMonoid M] [Module R M]
     (f : M ≃ₗ[R] M) : ((generalLinearEquiv R M).symm f).toLinearEquiv = f := by
   ext m
