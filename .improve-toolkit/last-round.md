@@ -1,76 +1,105 @@
-# Last round — r678 (2026-09-12 19:10Z)
+# Last round — r679 (2026-09-12 19:30Z)
 
-## Nothing owed — fourth round running, and this one found no durable work either
+## The contingency fired, and I had the merge wait wrong twice
 
-Steps 3, 4 and 5 are all no-ops: no `awaiting-author`/`ci-failed` PR, every board ON-HEAD, four open
-against a step-5 threshold of fewer than three. The merge wait is r676's queue jam on **#6431**,
-not ours, and it was not re-diagnosed.
+**Read this before forming any theory about why a PR has not merged.**
 
-The previous three wait rounds each found durable work (HANDOVER §11, `sweep.py` into the toolkit,
-the merge-queue diagnosis, `threadread.py`). This one did not, and manufacturing some would be worse
-than saying so. **The loop is blocked on infrastructure outside this role; the correct output of a
-blocked round is an accurate report.**
+r676 called the merge queue "jammed" on #6431. It was not — #6431 merged at **19:18:04Z**, mid-round.
+Then, mid-r679, I reached for a second theory: seven non-`improve/*` PRs had merged while all four of
+mine sat, so something must discriminate against `improve/*`. Also wrong — `roadmap/none` is on my
+merged PRs too (#6406, #6412, #6418, #6426).
 
-## The one check worth making: do they still merge?
-
-They have sat for hours while `main` moved, and a PR that merges textually can still fail a
-merge-group build. Against `origin/main` at `8b5587ae4`:
+**What is actually true.** `tauceti-review-bot` enqueues on the `ready-to-merge` **label transition**;
+the queue then merges strictly **FIFO by enqueue time**, one serialised worker at **~25–30 min per
+merge**, **30+ deep**. Eight consecutive PRs confirm it, #6418 included. A label→merge latency of
+**2.5–3.5 h is normal**. Position alone explains every wait:
 
 ```
-#6093  behind=352  conflict-markers=0
-#6188  behind=3    conflict-markers=0
-#6432  behind=18   conflict-markers=0
+pos=10  QUEUED  #6432     ~4–5 h out
+pos=18  QUEUED  #6188     ~8–9 h out
 ```
 
-All clean. **#6093 is 352 commits behind** — open since 2026-09-08, 10/10 since 15:43Z, so its board
-judged a five-day-old tree.
+**Both wrong theories came from reasoning over run lists and merge timestamps. The queue's own state
+was one API call away. Query the queue; do not model it** — `tools/queuepos.py`, new this round.
 
-**Deliberately not acted on.** Merging `main` in would cost a certain full re-review of a 10/10 PR to
-avoid an uncertain failure, and the merge queue tests merged-with-main anyway.
+## #6093 was silently ejected — and every field the sweep reads said "healthy"
 
-**Contingency:** if #6093 is ejected from the queue by a failed merge-group build, **staleness is the
-first suspect and merging `main` is the fix** — r660 is the precedent, where merging `main` into
-#6188 surfaced a real `Lattice.lean` conflict and cleared a `generality` finding at once.
+```
+15:43:28  added_to_merge_queue      tauceti-review-bot[bot]
+18:54:20  removed_from_merge_queue  github-merge-queue[bot]    <- the instant #6422 merged
+```
 
-## Board (19:10Z) — four open, all green, all `ready-to-merge`, none owing anything
+3h11m enqueued, **never one `merge_group` run**, no comment. Afterwards it still read
+`label=ready-to-merge · CI=GREEN · board=ON-HEAD · isDraft=false · mergeable=MERGEABLE`. And because
+the bot enqueues on the **label transition**, which had already fired at 15:43:18, **nothing was ever
+going to put it back**.
 
-| PR | head | CI | label | whose move |
-|---|---|---|---|---|
-| **#5950** | `a64ba63667` | green | `ready-to-merge` | **Chris** — human-owned `web/examples/Examples.lean` |
-| **#6093** | `370dad05e` | green | `ready-to-merge` | nobody — **10/10**, ~3h on the bot |
-| **#6188** | `ec1a68d96` | green | `ready-to-merge` | nobody — **10/10** |
-| **#6432** | `98bb7e78f` | green | `ready-to-merge` | nobody — **10/10** |
+**Acted** (r678 named staleness first suspect at **354 behind**): merged `origin/main` — **clean, zero
+conflicts**, 354 → 0, PR diff unchanged at **25 files / +441 / −328**. Gated both heads against their
+own bases to separate cause from history:
+
+```
+370dad05e vs c8637b9ae (pre-merge, old base) :  11 ok, 4 failed, 1 UNRUN
+45812c5f8 vs origin/main  (post-merge)       :  11 ok, 4 failed, 1 UNRUN   <- same four
+```
+
+`decldiff`, `nsjump`, `rootsurplus`, `slice` are **pre-existing on a branch that already reached a
+green 10/10 board** — body-answerable, not new breakage. Pushed `370dad05e → 45812c5f8`; the bot
+relabelled `ready-to-merge` → **`awaiting-CI`** in 20 s. It is back in the pipeline and the next
+`ready-to-merge` transition re-enqueues it. This cost a re-review of a 10/10 PR — the price r678
+declined on an *uncertain* failure. It stopped being uncertain.
+
+## New in the toolkit — `tools/queuepos.py` (137 controls, 0 failed)
+
+The fifth field `sweep.py` cannot see. `queue_verdict()` is pure and control-covered; both new
+controls were mutation-tested and each bites on exactly its own mutation.
+
+```
+python3 tools/queuepos.py            # all open improve/* PRs
+python3 tools/queuepos.py 6093 6188  # named
+```
+
+**`STRANDED` is the only actionable verdict** — `ready-to-merge` **and absent from the queue**.
+`QUEUED:pos=30` is not a problem however long it has sat. Exit 1 on any stranded PR.
+
+## Board (19:30Z)
+
+| PR | head | CI | label | queue | whose move |
+|---|---|---|---|---|---|
+| **#5950** | `a64ba63667` | green | `ready-to-merge` | — | **Chris** — human-owned `web/examples/Examples.lean` |
+| **#6093** | `45812c5f8` | building | `awaiting-CI` | re-entering | nobody — **refreshed this round** |
+| **#6188** | `ec1a68d96` | green | `ready-to-merge` | **pos 18** | nobody — **10/10**, waiting its turn |
+| **#6432** | `98bb7e78f` | green | `ready-to-merge` | **pos 10** | nobody — **10/10**, waiting its turn |
 
 ## Next
 
-1. **Do not touch any of the three 10/10 PRs.** An unrequested edit costs a re-review and risks a
-   green rubric. If a board re-fires on one, read it fresh — but the expected event is a merge.
-   **Exception:** if one is ejected from the merge queue by a failed merge-group build, merge
-   `origin/main` into it and re-gate — #6093 is **352 commits behind** and is the likely candidate.
-2. **When step 5 triggers** — three merges would leave only #5950 — open
-   `improve/submonoid-constsmul-root`, **already pushed and gate-clean** (13 ok / 2 questions), as a
-   **DRAFT**. Body must answer `parallelns` (the `Subgroup` instance stays nested — a different
-   namespace at 39/62) and `slice` (1 of 2 flagged, same reason). Mark ready when CI is green.
-   Full evidence in HANDOVER §11.
-3. **Re-run `nscand.py` after each merge** — main moved 759 → 735 across this watch, and the WHOLE
-   list moves with it.
-3a. **Read the tools list before writing a script.** `tools/` has 47 of them:
-   `sweep.py` (board sweep), `threadread.py` (current findings per rubric — **use this, not jq**),
-   `nscand.py` + `mathlibns.py` (prospecting), `prepush.sh` (the gate), `minecount.py` (merge count).
-4. **Do not re-diagnose the merge wait.** It is a serialised merge queue whose current group failed
-   on **#6431**, a roadmap PR that is not ours. Check `gh run list --limit 300 --json event,...`
-   filtered to `merge_group` if you want the current state; otherwise leave it. Nothing about it is
-   actionable by this role.
+1. **Run `tools/queuepos.py` every round, beside the sweep.** It is the only check that separates
+   "waiting its turn" from "ejected and never coming back".
+2. **Do not re-diagnose the merge wait a third time.** A deep queue position is the whole
+   explanation. Act only on `STRANDED`.
+3. **#6093 will draw a fresh board** (~32–67 min after CI green). It was 10/10 before the merge and
+   the merge changed no gate finding, so **expect it to return 10/10** — if a rubric fires, read it
+   fresh rather than assuming the merge caused it. If `generality` re-raises `rootsurplus`/`slice`,
+   those four gate findings are pre-existing and were already accepted; answer in the body.
+4. **Do not touch #6188 or #6432.** Both 10/10 and queued. An unrequested edit costs a re-review and
+   its queue position.
+5. **When step 5 triggers** — open `improve/submonoid-constsmul-root`, **already pushed and
+   gate-clean** (13 ok / 2 questions), as a **DRAFT**. Body must answer `parallelns` (the `Subgroup`
+   instance stays nested — different namespace at 39/62) and `slice` (1 of 2 flagged, same reason).
+   Mark ready when CI is green. Full evidence in HANDOVER §11.
+6. **Re-run `nscand.py` after each merge** — main moved 759 → 735 → **678** across this watch, and the
+   whole list moves with it.
+7. **Read the tools list before writing a script.** `tools/` has 48: `sweep.py`, **`queuepos.py`**,
+   `threadread.py` (current findings per rubric — **use this, not jq**), `nscand.py` + `mathlibns.py`
+   (prospecting), `prepush.sh` (the gate), `minecount.py`.
 
-## Settled — with the conditions attached
+## Settled
 
-* **#6093** — **10/10.** `@[expose]` on `fundamentalGroupEquivFiber` removed, **and that is why**
-  `_apply_coe` is not `@[simp]`.
-* **#6418** — **MERGED.**
-* **#6188** — **10/10**, and it is the `Lattice.lean` rooting **only**. Do not re-add the conjugation
-  API: `scope` ⛔'d exactly that, and removing it is what made the PR green.
-* **#6432** — **10/10**: semilinear, rooted, renamed, owns the structural lemmas and call-site
-  rewrites.
+* **#6418, #6412, #6426, #6406** — **MERGED.**
+* **#6093** — 10/10 before the refresh; now re-reviewing on a current tree.
+* **#6188** — the `Lattice.lean` rooting **only**. Do not re-add the conjugation API: `scope` ⛔'d
+  exactly that, and removing it is what made the PR green.
+* **#6432** — semilinear, rooted, renamed, owns the structural lemmas and call-site rewrites.
 * **`improve/submonoid-constsmul-root`** — pushed, gate-clean, **no PR**.
 
 ## Still needs Chris
@@ -89,17 +118,18 @@ Every PR body needs a standalone `Roadmap: none`.
 A fresh worktree needs `.lake` symlinked or `lint-dot-notation` errors on both sides.
 `uvx` is at `~/.local/bin/uvx`; measured board latency band is **32–67 min**.
 **COMMIT BEFORE GATING** — prepush reads HEAD and now refuses a dirty tree.
+**`prepush.sh` takes a base argument.** To tell "my change broke it" from "main moved", re-gate the
+pristine head against its **own** merge-base: `prepush.sh $(git merge-base <head> origin/main)`.
 Before believing a gate FAIL is yours, re-run it on the **pristine head**.
 A rubric that went green can go 🟡 again; clearing a ⛔ reveals rubrics that never ran; and
 **a 🟡 behind a ⛔ may not survive the next board — do not chase it**.
-**When rubrics contradict each other across rounds, suspect the PR boundary before the rubrics** —
-two PRs editing one file keep drawing each other's findings until they stop overlapping.
+**When rubrics contradict each other across rounds, suspect the PR boundary before the rubrics.**
 **When three rubrics have no satisfiable head, removing the subject is an answer** — provided the
 work lands somewhere, and you say where.
-**Deleting a declaration means deleting what advertises it**; a rooting destroys the old path
-everywhere, docstrings included (`stalequal` catches it).
-**A green PR is not a place to apply a lesson.**
+**Deleting a declaration means deleting what advertises it** (`stalequal` catches it).
+**A green PR is not a place to apply a lesson** — but an *ejected* one is not green, whatever its
+four sweep fields say.
 Verify a rooting target with `mathlibns.py`, never a grep; then **gate it**.
 The gate is pure Python: it cannot see docstring attachment, elaboration, or simp normal form.
-**135 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
+**137 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
 **HANDOVER.md §11 carries this watch's rules** — read it before re-deriving one.

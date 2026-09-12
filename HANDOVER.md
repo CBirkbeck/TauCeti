@@ -433,3 +433,79 @@ Everything here is evidenced in the ledger at the round named.
 * Measured board latency, reviewable → first board: **32–67 min** across five samples. Count step 4's
   hour from `max(CI-green, ready_for_review)`, and expect the pipeline to beat you to it.
 * `uv`/`uvx` are installed at `~/.local/bin`. A drive was never actually needed in this watch.
+
+## 12. Addendum — r679, the merge queue: what it actually does
+
+Two rounds in this watch produced a wrong theory about why green PRs were not merging. Both came
+from reasoning over `gh run list` output and merge timestamps instead of querying the queue. **Read
+this section before forming a third.**
+
+### The mechanism
+
+1. `tauceti-review-bot` posts a green board and applies **`ready-to-merge`**.
+2. On that **label transition** — not on the label's presence — the bot calls `added_to_merge_queue`.
+3. GitHub's merge queue merges **strictly FIFO by enqueue time**, one serialised worker at
+   **~25–30 min per merge**, and it ran **30+ deep** through r679.
+
+So **label → merge latency of 2.5–3.5 h is normal and is not a fault.** Eight consecutive PRs
+confirmed the ordering exactly, including this role's own #6418 (`ready-to-merge` 14:36:32Z, merged
+16:58:30Z, with four unrelated PRs interleaved in label order). A PR at position 18 is ~8–9 h out for
+no reason other than its position.
+
+Wrong theories this replaces:
+* **r676: "the queue is jammed on #6431."** It was not; #6431 merged at 19:18:04Z.
+* **r679, mid-round: "something discriminates against `improve/*`."** It does not; `roadmap/none`
+  sits on the merged ones too (#6406, #6412, #6418, #6426).
+
+### The one real failure mode: silent ejection
+
+`github-merge-queue[bot]` can drop an entry with **no comment and no `merge_group` run**. #6093 was
+enqueued 15:43:28Z, sat **3h11m** without a single merge-group build, and was removed at 18:54:20Z —
+the instant the PR ahead of it merged. Afterwards it still read:
+
+```
+label=ready-to-merge   CI=GREEN   board=ON-HEAD   isDraft=false   mergeable=MERGEABLE   state=CLEAN
+```
+
+**Every field `sweep.py` reads said healthy.** And since the bot enqueues on the *label transition*,
+which had already fired, **nothing was ever going to re-enqueue it**. A PR can strand indefinitely in
+a state indistinguishable from a PR that is merely waiting its turn.
+
+### The check
+
+`tools/queuepos.py` (added r679, two mutation-tested controls, suite now **137 passed / 0 failed**):
+
+```
+python3 tools/queuepos.py            # all open improve/* PRs
+python3 tools/queuepos.py 6093 6188  # named; exit 1 if any is stranded
+```
+
+`STRANDED` — `ready-to-merge` **and** absent from the queue — **is the only actionable verdict.**
+`QUEUED:pos=30` is fine however long it has sat. **Run it beside the sweep every round.**
+
+### The fix for a stranded PR
+
+Refresh the branch so the bot re-reviews and re-labels; the new label transition re-enqueues it.
+Staleness is also the first suspect for the ejection itself — #6093 was **354 commits behind**.
+
+```
+git merge origin/main --no-edit          # #6093: clean, 0 conflicts, PR diff unchanged
+bash tools/prepush.sh                    # gate the merged head
+git push fork <branch>
+```
+
+**Separate what the merge caused from what main's movement revealed.** `prepush.sh` takes a base
+argument, so re-gate the *pristine* head against its *own* merge-base and compare:
+
+```
+bash tools/prepush.sh "$(git merge-base <pre-merge-head> origin/main)"   # 11 ok, 4 failed, 1 UNRUN
+bash tools/prepush.sh                                                     # 11 ok, 4 failed, 1 UNRUN
+```
+
+Identical counts mean the merge introduced nothing, and the failures are pre-existing on a branch the
+pipeline had already carried to 10/10 — `decldiff`/`nsjump`/`rootsurplus`/`slice` are the
+body-answerable kind. Without this comparison the post-merge gate looks like four fresh breakages.
+
+The cost is a certain re-review of a green PR. r678 declined to pay it against an *uncertain*
+failure and was right to; r679 paid it once the failure was certain. **That ordering is the rule:
+refresh a green PR only once `queuepos.py` says `STRANDED`.**

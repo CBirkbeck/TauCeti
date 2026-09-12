@@ -35153,3 +35153,107 @@ outside this role, and the correct output of a blocked round is an accurate repo
 ### Board
 Four open, all green, all `ready-to-merge`, none owing anything.
 `improve/submonoid-constsmul-root` pushed and gate-clean, **no PR**.
+
+---
+
+## r679 — 2026-09-12 19:25Z — the contingency fired, and two diagnoses of mine were wrong
+
+### What I got wrong, twice
+
+**r676 said the merge queue was "jammed" on #6431.** It was not. #6431 merged at **19:18:04Z**,
+while I was mid-round. Nothing was jammed; the queue was draining the whole time.
+
+**Then, mid-round, I reached for a second wrong theory.** Seven non-`improve/*` PRs had merged since
+#6418 at 16:58 while all four of mine sat, and I framed that asymmetry as "the discriminator is
+something specific to the `improve/*` PRs". It is not. `roadmap/none` sits on my merged PRs too
+(#6406, #6412, #6418, #6426), and the merge order is explained without reference to `improve/*` at
+all.
+
+I very nearly wrote the asymmetry up as a finding. It would have been the second wrong merge
+diagnosis in four rounds, layered on the first.
+
+### What is actually true
+
+`tauceti-review-bot` enqueues a PR on the **`ready-to-merge` label transition**, and the GitHub merge
+queue then merges strictly **FIFO by enqueue time**. Eight consecutive PRs confirm it, mine included:
+
+| `ready-to-merge` | merged | PR |
+|---|---|---|
+| 14:36:32 | 16:58:30 | **#6418 (mine)** |
+| 14:40:25 | 17:20:00 | #6397 |
+| 14:56:24 | 17:21:25 | #6438 |
+| 15:07:15 | 17:44:05 | #6429 |
+| 15:19:40 | 18:02:59 | #6417 |
+| 15:38:26 | 18:26:15 | #6447 |
+| 15:38:45 | 18:30:39 | #6393 |
+| 15:43:10 | 18:54:20 | #6422 |
+| **15:43:18** | **— skipped —** | **#6093** |
+| 15:53:15 | 19:18:04 | #6431 |
+
+There is no `improve/*` discrimination and no jam. There is **one serialised worker at ~25–30 min per
+merge** against a queue that is **30 deep**. That alone explains every wait I have been staring at:
+
+```
+pos=10  QUEUED  #6432   enqueued 17:23:59Z
+pos=18  QUEUED  #6188   enqueued 18:38:41Z
+        NOT IN QUEUE    #6093
+```
+
+`#6432` is ~4–5 h out and `#6188` ~8–9 h out **purely by position**. Label→merge latency of 2.5–3.5 h
+is the system working, not a fault.
+
+### #6093 was ejected — the r678 contingency, one round later
+
+```
+15:43:28  added_to_merge_queue      tauceti-review-bot[bot]
+18:54:20  removed_from_merge_queue  github-merge-queue[bot]     <- the instant #6422 merged
+```
+
+It sat enqueued for **3h11m and never received a single `merge_group` run**, then was dropped. No
+comment explains it. It kept `ready-to-merge`, `mergeable=MERGEABLE`, `state=CLEAN` — so **every field
+the sweep reads said "fine"**, and only the queue membership said otherwise.
+
+And the bot enqueues on the **label transition**, which had already happened at 15:43:18. So nothing
+was ever going to put #6093 back. It was stranded, silently, in a state indistinguishable from
+healthy. 27 minutes of no re-enqueue confirmed it before I acted.
+
+r678 named staleness as the first suspect: **354 commits behind**.
+
+### Acted
+
+Merged `origin/main` into `improve/iscoveringmap-subtree-root`: **clean, zero conflicts**,
+354 behind → 0, PR diff unchanged at **25 files / +441 / −328**.
+
+Gated it, then gated the **pre-merge head against its own original base** to separate what the merge
+caused from what was already there:
+
+```
+370dad05e vs c8637b9ae (old base):  11 ok, 4 failed, 1 UNRUN
+45812c5f8 vs origin/main         :  11 ok, 4 failed, 1 UNRUN   <- same four checks
+```
+
+Identical. `decldiff`, `nsjump`, `rootsurplus`, `slice` are **pre-existing on a branch the pipeline
+already carried to a green 10/10 board** — they are the body-answerable kind, not new breakage. The
+merge introduced nothing the gate can see, so it was safe to push.
+
+Pushed `370dad05e → 45812c5f8`. The bot relabelled `ready-to-merge` → **`awaiting-CI`** within 20 s:
+back in the pipeline, and the next `ready-to-merge` transition will re-enqueue it.
+
+This cost a re-review of a 10/10 PR — exactly the price r678 declined to pay on an *uncertain*
+failure. The failure stopped being uncertain.
+
+### Steps 3, 4, 5
+
+No-ops. Three `improve/*` PRs open (#6432, #6188, #6093) against a step-5 threshold of fewer than
+three, so `improve/submonoid-constsmul-root` stays unopened.
+
+### The lesson worth keeping
+
+**The sweep's four fields cannot see the merge queue.** Label, CI, board head, draft were all green
+on #6093 for 27 minutes after it had been silently ejected. A PR labelled `ready-to-merge` that is
+absent from the queue is the failure mode, and only the GraphQL `mergeQueue` entries query sees it.
+
+And: **I diagnosed this merge wait twice and was wrong twice, both times by reasoning from a sample
+instead of querying the queue.** The queue's own state was one API call away on both occasions. The
+r676 "jam" came from reading run lists; the asymmetry theory came from reading merge timestamps.
+Neither needed a theory at all.
