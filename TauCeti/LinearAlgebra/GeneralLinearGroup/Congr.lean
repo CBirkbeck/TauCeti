@@ -24,6 +24,13 @@ those two, which this file records as `LinearEquiv.autCongr`.
 
 ## Main statements
 
+* `LinearEquiv.autCongr_apply` and `LinearEquiv.autCongr_symm_apply`: conjugation and its inverse
+  as equalities of linear equivalences, for consumers that read the conjugate as a map rather than
+  at a point. The pointwise `autCongr_apply_apply` and `autCongr_symm_apply_apply` are the same
+  facts evaluated at `m`.
+
+## Main statements
+
 * `LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv`: `toLinearEquiv` undoes
   `ofLinearEquiv`, which is what carries the inverse law of `generalLinearEquiv` across to
   `M ≃ₗ[R] M`.
@@ -82,6 +89,25 @@ theorem _root_.LinearEquiv.autCongr_symm_apply_apply (e : M₁ ≃ₗ[R] M₂) (
     LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv g
   simp only [congrLinearEquiv_apply, MulEquiv.symm_symm, coeFn_generalLinearEquiv,
     coe_ofLinearEquiv, LinearEquiv.symm_symm, LinearEquiv.trans_apply, h]
+
+/-- Conjugation by `e`, as an equality of linear equivalences: `autCongr e f` is `f` precomposed
+with `e.symm` and postcomposed with `e`. Structural consumers — determinants, traces, anything
+reading the conjugate as a map rather than at a point — want this form. -/
+-- Not `@[simp]`: the pointwise `autCongr_apply_apply` is the simp normal form here, and rewriting
+-- `autCongr e f` to the composite first would leave that lemma unable to fire.
+theorem _root_.LinearEquiv.autCongr_apply (e : M₁ ≃ₗ[R] M₂) (f : M₁ ≃ₗ[R] M₁) :
+    LinearEquiv.autCongr e f = (e.symm.trans f).trans e :=
+  LinearEquiv.ext fun m ↦ LinearEquiv.autCongr_apply_apply e f m
+
+/-- Inverse conjugation by `e`, as an equality of linear equivalences.
+
+Proved by characterising the inverse rather than by unfolding `autCongr` a second time: applying
+`autCongr e` to both sides reduces it to `autCongr_apply`, so the coercion transport across
+`toLinearEquiv` happens once, in `autCongr_apply_apply`, and not again here. -/
+theorem _root_.LinearEquiv.autCongr_symm_apply (e : M₁ ≃ₗ[R] M₂) (g : M₂ ≃ₗ[R] M₂) :
+    (LinearEquiv.autCongr e).symm g = (e.trans g).trans e.symm := by
+  rw [MulEquiv.symm_apply_eq, LinearEquiv.autCongr_apply]
+  exact LinearEquiv.ext fun m ↦ by simp
 
 end
 
