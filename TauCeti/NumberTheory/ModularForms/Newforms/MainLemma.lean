@@ -11,7 +11,7 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Coefficient
 public import TauCeti.NumberTheory.ModularForms.Newforms.QSupport
 
 /-!
-# The Main Lemma per character (work in progress)
+# The Main Lemma, per character
 
 Miyake's Lemma 4.6.8: a cusp form `f ∈ S_k(Γ₁(N), χ)` whose Fourier coefficients vanish at every
 index coprime to `N` is a sum, over the primes `p ∣ N`, of forms in `S_k(Γ₁(N), χ)` supported on
@@ -19,6 +19,33 @@ the multiples of `p`; each such summand is old. This file assembles the descent 
 (`Newforms/Descent/Coefficient.lean`) and the factor dichotomy
 (`Newforms/CoprimeFilter/Dichotomy.lean`) into the inductive step and the induction over the
 primes.
+
+## Main results
+
+* `TauCeti.mem_cuspFormsOld_of_forall_coprime_qExpansion_coeff_eq_zero`: the per-character Main
+  Lemma — a cusp form in `S_k(Γ₁(N), χ)` whose coefficients vanish at every index coprime to `N`
+  lies in the old subspace.
+* `TauCeti.exists_eq_sum_of_forall_coprime_prod_qExpansion_coeff_eq_zero`: the induction over a
+  set of primes that proves it.
+* `TauCeti.exists_mem_qSupportedOnDvdSubmodule_and_qExpansion_coeff_sub_eq_zero`: its inductive
+  step, one prime peeled.
+
+## Provenance
+
+Adapted from the AINTLIB `LeanModularForms` project (Chris Birkbeck, Apache-2.0,
+<https://github.com/CBirkbeck/AINTLIB> @ `eb9621e7bcb0ce220ad53983ec45d987cb5b9002`),
+`projects/LeanModularForms/LeanModularForms/StrongMultiplicityOne/InductiveStep.lean` and
+`MainLemma.lean` — declarations `miyake_4_6_8_inductive_step`, `miyake_4_6_8_induction` and
+`mainLemma_charSpace`. The source inducts on the cardinality of the set of remaining primes with
+the decomposition carried as a list; here the induction is on `Finset.card` with the pieces
+produced as a function `ℕ → CuspForm`, and the dichotomy's second branch is consumed through
+`DirichletCharacter.FactorsThrough`.
+
+## References
+
+* [T. Miyake, *Modular forms*][miyake1989], Lemma 4.6.8.
+* [F. Diamond and J. Shurman, *A first course in modular forms*][diamondshurman2005],
+  Theorem 5.7.1.
 -/
 
 public section
@@ -68,24 +95,6 @@ theorem exists_mem_qSupportedOnDvdSubmodule_and_qExpansion_coeff_sub_eq_zero (hp
       exact hvan n (Nat.Coprime.mul_right (hp.coprime_iff_not_dvd.mpr hpn).symm hn)
 
 /-! ### The induction over the primes -/
-
-omit [NeZero N] in
-/-- **A factorisation, read on unit homomorphisms.** If the Dirichlet character
-`MulChar.ofUnitHom χ` factors through `d ∣ N`, the unit homomorphism `χ` is a composition
-`χ₀ ∘ ZMod.unitsMap` with a unit homomorphism modulo `d` — the form in which the descent lemmas
-take a lowered nebentypus.
-
-Proved forwards, by applying `MulChar.toUnitHom` to `eq_changeLevel`: `hfac.χ₀` mentions `χ`
-through the type of `hfac`, so rewriting `χ` in the goal would break the motive. -/
-private theorem exists_eq_comp_unitsMap_of_factorsThrough {d : ℕ} (hd : d ∣ N)
-    {χ : (ZMod N)ˣ →* ℂˣ}
-    (hfac : DirichletCharacter.FactorsThrough (MulChar.ofUnitHom χ : DirichletCharacter ℂ N) d) :
-    ∃ χ₀ : (ZMod d)ˣ →* ℂˣ, χ = χ₀.comp (ZMod.unitsMap hd) := by
-  refine ⟨hfac.χ₀.toUnitHom, ?_⟩
-  have hχ : MulChar.toUnitHom (MulChar.ofUnitHom χ : DirichletCharacter ℂ N) = χ :=
-    MulChar.equivToUnitHom.apply_symm_apply χ
-  have h := congrArg MulChar.toUnitHom hfac.eq_changeLevel
-  rwa [DirichletCharacter.changeLevel_toUnitHom, hχ] at h
 
 /-- The product of the primes of `S ⊆ N.primeFactors` other than `p` is squarefree, coprime to
 `p`, and has its primes among those of `N`. -/
@@ -183,7 +192,7 @@ theorem exists_eq_sum_of_forall_coprime_prod_qExpansion_coeff_eq_zero {χ : (ZMo
     · -- descend along `p`, then recurse on the remainder
       -- the lowered unit homomorphism, and the factorisation the descent lemmas take
       obtain ⟨χ₀, hcomp⟩ :=
-        exists_eq_comp_unitsMap_of_factorsThrough (Nat.div_dvd_of_dvd hpN) hfac
+        DirichletCharacter.exists_eq_comp_unitsMap_of_factorsThrough (Nat.div_dvd_of_dvd hpN) hfac
       obtain ⟨gp, hgp_supp, hgp_char, hdiff⟩ :=
         exists_mem_qSupportedOnDvdSubmodule_and_qExpansion_coeff_sub_eq_zero hp hpN hsq hLN hpL
           hcomp hf hvan'
