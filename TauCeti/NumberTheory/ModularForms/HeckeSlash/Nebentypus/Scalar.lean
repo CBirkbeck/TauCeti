@@ -27,6 +27,16 @@ The factor is `χ(c)`, not `χ(c)⁻¹`: the twisted slash sum is written using 
 representatives in `Δ₀(N)` and weights them by `delta0NebentypusChar`, whose value on the
 scalar representative is its upper-left unit `c`.
 
+That scalar is what turns the Hecke ring's prime-power recurrence into a recurrence of
+operators on the character spaces. For `p` coprime to `N` the ring satisfies
+`T_{p^{r+2}} = Tₚ T_{p^{r+1}} − p S_p T_{p^r}` (`heckeTGeneratorRecGamma0_succ_succ`); since
+`S_p` acts by `χ(p) p^{k−2}`, the element `p • S_p` acts by `χ(p) p^{k−1}`. Transporting along
+the ring homomorphism therefore gives
+`T_{p^{r+2}} = Tₚ ∘ T_{p^{r+1}} − χ(p) p^{k−1} • T_{p^r}` on `M_k(N, χ)` and on `S_k(N, χ)`,
+each in an operator form and a pointwise `_apply` form.
+`Prime/Power.lean` uses the pointwise forms to compute Fourier coefficients of `T_{p^r}`, and
+`Newforms/RingEigenvalue.lean` to derive the recurrence for the eigenvalues of a newform.
+
 ## Main results
 
 * `HeckeRing.GL2.twistedHeckeSlashSumCharEnd_diagCosetGamma0_const`: the scalar double coset
@@ -40,6 +50,10 @@ scalar representative is its upper-left unit `c`.
 * `HeckeRing.GL2.heckeRingHomCharSpace_heckeTScalarGamma0`: the scalar generator under the
   modular-form Hecke-ring action.
 * `HeckeRing.GL2.heckeRingHomCuspCharSpace_heckeTScalarGamma0`: the cusp-form counterpart.
+* `HeckeRing.GL2.heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ` and its pointwise
+  form `..._succ_succ_apply`: the two-step prime-power recurrence on `M_k(N, χ)`.
+* `HeckeRing.GL2.heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_succ_succ` and its
+  pointwise form `..._succ_succ_apply`: the same recurrence on `S_k(N, χ)`.
 
 ## Provenance
 
@@ -200,8 +214,8 @@ theorem heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ (hp : 0 < p)
   ring
 
 /-- **The recurrence at a form**: `heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ`
-evaluated. This is the pointwise interface — the shape the coefficient formula below and the
-eigenvalue recurrence of `Newforms/RingEigenvalue.lean` consume. -/
+evaluated. This is the pointwise interface — the shape the coefficient formula of
+`Prime/Power.lean` and the eigenvalue recurrence of `Newforms/RingEigenvalue.lean` consume. -/
 theorem heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ_apply (hp : 0 < p)
     (hpN : Nat.Coprime p N) (F : modFormCharSpace k χ) (r : ℕ) :
     heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) F =
@@ -231,8 +245,8 @@ theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_succ_succ (hp : 0 < p
 
 /-- **The recurrence at a cusp form**:
 `heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_succ_succ` evaluated. This is the pointwise
-interface, the shape the coefficient formulas below and `Newforms/RingEigenvalue.lean`
-consume. -/
+interface, the shape the coefficient formulas of `Prime/Power.lean` and
+`Newforms/RingEigenvalue.lean` consume. -/
 theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_succ_succ_apply (hp : 0 < p)
     (hpN : Nat.Coprime p N) (F : cuspFormCharSpace k χ) (r : ℕ) :
     heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) F =
