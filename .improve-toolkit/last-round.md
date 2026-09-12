@@ -62,7 +62,7 @@ compiled, and the two new non-simp lemmas did not trip `simpNF`.
 1. **Watch #6432's CI on `4e9891cab`** — a 36-occurrence rename plus a 25-commit merge, neither
    built locally.
 2. **#6093** — everything but the contested `api-design` is ♻️ stale/re-run pending, so the next
-   board should be близко to green. If `api-design` re-fires on the same bullet, do **not** restore
+   board should be close to green. If `api-design` re-fires on the same bullet, do **not** restore
    `@[simp]` alone; the CI-proven red is the answer, and the only implementable alternative is
    reinstating `@[expose]` too, which reverses a green finding.
 3. **#6188** — remaining: `api-design` bullet 1 (`@[simp]` on `toLinearEquiv_ofLinearEquiv`, same
