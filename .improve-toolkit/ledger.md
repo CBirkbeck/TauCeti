@@ -34046,3 +34046,83 @@ Seven open. #6412 and #6426 both 10/10 and `ready-to-merge` (#6426 ~70 min, `mer
 which is GitHub computing lazily rather than a block — the pipeline's call either way, never mine).
 #6093 pushed `c450a5a1e`, #6188 `94921c53a`, #6418 `5c73d4c54` — **all three boards BEHIND**.
 #6432 contested on both threads r657, awaiting re-review. #5950 Chris's. No new merges since #6406.
+
+---
+
+## r659 — 2026-09-12 — an anonymous proof is an unusable argument
+
+### #6093 went red on r658's work, and the errors were exactly where the risk was
+
+`sandboxed-build` failed on `c450a5a1e9`. Per r656's rule the log was read for the actual
+`##[error]` rather than assumed — this time it *was* the build, six elaboration errors, all in the
+two law proofs r658 wrote and none in the definition or in `fiberMap_apply_coe`:
+
+```
+Fiber.lean:65:11: don't know how to synthesize implicit argument `h`
+  @Subtype.map_id E (fun x_1 => x_1 ∈ p ⁻¹' {x}) (?m.22 …)
+  ⊢ ∀ (a : E), a ∈ p ⁻¹' {x} → id a ∈ p ⁻¹' {x}
+Fiber.lean:77:22: don't know how to synthesize placeholder for argument `h`
+```
+
+**The error message contains its own fix.** Lean prints `Subtype.map id (?m.22 …)` — so it *did*
+unfold `fiberMap` all the way to `Subtype.map`; the restructure was fine. What it could not do was
+produce the `MapsTo` proof, because that proof was an **anonymous term inside the definition's
+body**. `Subtype.map_id` and `Subtype.map_comp` take it as an argument; nothing could supply it, and
+the goal Lean printed (`⊢ ∀ (a : E), a ∈ p ⁻¹' {x} → id a ∈ p ⁻¹' {x}`) is literally that argument.
+
+Naming it dissolves the problem and is better code anyway:
+
+```lean
+theorem mapsTo_fiber (f : E → F) (hf : q ∘ f = p) (x : X) :
+    Set.MapsTo f (p ⁻¹' {x}) (q ⁻¹' {x})
+```
+
+All three laws now cite the generic results with the proof passed explicitly, which is what `reuse`
+asked for and what r658 could not deliver. `@[expose]` is unaffected: `Subtype.map f h x` projects to
+`f x.1` without consulting `h`, so the reduction consumers depend on never goes through it.
+
+**A proof that only exists anonymously inside a definition cannot be handed to a lemma about that
+definition.** If a generic law takes the side condition as an argument, the side condition has to be
+a declaration.
+
+### The gate cannot see docstring attachment
+
+Inserting `mapsTo_fiber` on the anchor `@[expose]\ndef fiberMap` put it *between* `fiberMap`'s
+docstring and `fiberMap` itself — two docstrings in a row, and `fiberMap` left undocumented. The
+15-check gate passed that unchanged, because docstring attachment is a Lean-level fact and every
+gate check is pure Python. Caught by a throwaway script walking back from each declaration over
+attribute and comment lines to check for a preceding `-/`.
+
+`lint-env`'s docstring scan (8738/8738 on main) would have failed it in CI. **When inserting a
+declaration, anchor on the docstring, not on the `def`.**
+
+### `movedopens` discharged by hand after many rounds
+
+The gate has reported `UNRUN movedopens for the NEW file …/Fiber.lean` on every #6093 run, with
+instructions to rerun it naming the source file and line range. Done, against the merge-base copy of
+`Monodromy/Functoriality.lean` (opens: `CategoryTheory`, `unitInterval`) for both moved blocks —
+`fiberMap` 56–89 and `homeomorphCompFiberEquiv` 204–230:
+
+```
+0 resolve ONLY through one of those opens          (both blocks)
+```
+
+So the r498 defect — a name that resolved only via an `open` which did not travel — does not apply
+to this move. **An UNRUN row is not a passing row; it is a question nobody asked yet.**
+
+### #6188 is fully green
+`LINT-ENV: PASS — no new violations (63 grandfathered, 7 ratchetable)`, build 10981 jobs, every check
+success or skipped. r656's `simpNF` fix landed, and the violation count went 64 → 63.
+
+### Board
+Seven open. #6412 and #6426 10/10 `ready-to-merge`. #6188 green, board BEHIND. #6093 pushed
+`606c70e0c`. #6418 building, board BEHIND. #6432 contested r657, awaiting rubric re-runs.
+#5950 Chris's. No new merges since #6406.
+
+### #6426 MERGED 14:07:54Z — first landing of this watch
+
+`refactor(Algebra): state extendOfIsLattice over a domain and its fraction field`, merged by
+`app/tauceti-review-bot`. It had been 10/10 green and `ready-to-merge` for ~108 minutes, and r658
+recorded it as "the pipeline's call, never mine" while resisting the urge to read the delay as a
+block. It was cadence. **`mergeable: UNKNOWN` is GitHub computing lazily, and a long green wait is
+not evidence of a stuck PR.** Six `improve/*` PRs remain open.
