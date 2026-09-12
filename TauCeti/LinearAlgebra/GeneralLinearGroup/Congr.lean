@@ -19,8 +19,9 @@ those two, which this file records as `LinearEquiv.congrAut`.
 
 Conjugation needs no more than a semilinear equivalence, which is the generality
 `congrLinearEquiv` already supplies: `e : M₁ ≃ₛₗ[σ₁₂] M₂` carries `R₁`-automorphisms of `M₁` to
-`R₂`-automorphisms of `M₂`, the scalars travelling along `σ₁₂`. The round trip `σ₂₁ ∘ σ₁₂` is the
-identity on `R₂`, so the conjugate really is `R₂`-linear.
+`R₂`-automorphisms of `M₂`, the scalars travelling along `σ₁₂`. The two inverse-pair assumptions
+give a round trip on each scalar ring — `σ₂₁ ∘ σ₁₂` is the identity on `R₁` and `σ₁₂ ∘ σ₂₁` the
+identity on `R₂` — and it is the latter that makes the conjugate `R₂`-linear.
 
 ## Main definitions
 
