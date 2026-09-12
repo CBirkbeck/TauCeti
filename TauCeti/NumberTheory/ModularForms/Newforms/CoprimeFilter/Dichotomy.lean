@@ -63,11 +63,11 @@ variable {N : ℕ} [NeZero N] {k : ℤ}
 with `p ∣ N` prime and `L` coprime to `p` with primes dividing `N`: either `f` vanishes at
 every index coprime to `L`, or the nebentypus factors through `N / p`.
 
-The second branch is stated with Mathlib's `DirichletCharacter.FactorsThrough`, whose `χ₀` and
-`eq_changeLevel` give back the lowered unit homomorphism `χ₀` and the factorisation
-`χ = χ₀ ∘ unitsMap` that the descent lemmas consume:
-`⟨hfac.χ₀.toUnitHom, by rw [← MulChar.equivToUnitHom.apply_symm_apply χ];
-conv_lhs => rw [hfac.eq_changeLevel]; rw [DirichletCharacter.changeLevel_toUnitHom]⟩`. -/
+The second branch is stated with Mathlib's `DirichletCharacter.FactorsThrough`: its `χ₀`, `dvd`
+and `eq_changeLevel` give a consumer the lowered character modulo `N / p` and the factorisation
+of `χ` through it, which is what the descent lemmas take —
+`DirichletCharacter.exists_comp_unitsMap_of_factorsThrough` packages that conversion.
+-/
 theorem qExpansion_coeff_eq_zero_of_coprime_or_factorsThrough (χ : (ZMod N)ˣ →* ℂˣ)
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {p L : ℕ}
     (hp : p.Prime) (hpN : p ∣ N) (hLN : L.primeFactors ⊆ N.primeFactors)
