@@ -183,7 +183,18 @@ private theorem qExpansion_coeff_sum_levelRaise {l : ℕ}
           (F q.1 q.2) : CuspForm ((Gamma1 (M * l ^ 2)).map (mapGL ℝ)) k)).coeff n =
       ∑ q ∈ l.primeFactors.attach,
         if q.1 ∣ n then (qExpansion 1 (F q.1 q.2)).coeff (n / q.1) else 0 := by
-  rw [CuspForm.qExpansion_coeff_finset_sum one_pos (one_mem_strictPeriods_Gamma1_map _)]
+  have hsum := map_sum ((PowerSeries.coeff n).comp
+    ((ModularForm.qExpansionLinearMap (h := 1) one_pos (one_mem_strictPeriods_Gamma1_map _)
+      k).comp CuspForm.toModularFormₗ))
+    (fun q : {x // x ∈ l.primeFactors} ↦
+      haveI : NeZero q.1 := ⟨(Nat.prime_of_mem_primeFactors q.2).ne_zero⟩
+      CuspForm.levelRaise q.1 (Gamma1_map_le_conjAct_scaleGL_of_dvd (dvd_of_eq
+        (Nat.mul_div_cancel' (dvd_mul_of_dvd_right
+          ((Nat.dvd_of_mem_primeFactors q.2).trans (dvd_pow_self l two_ne_zero)) M))))
+        (F q.1 q.2)) l.primeFactors.attach
+  simp only [LinearMap.comp_apply, ModularForm.qExpansionLinearMap_apply,
+    CuspForm.toModularFormₗ_eq_coe, ModularFormClass.coe_modularForm] at hsum
+  rw [hsum]
   refine Finset.sum_congr rfl fun q _ ↦ ?_
   have : NeZero q.1 := ⟨(Nat.prime_of_mem_primeFactors q.2).ne_zero⟩
   exact CuspForm.qExpansion_levelRaise_coeff (one_mem_strictPeriods_Gamma1_map _)
@@ -235,7 +246,7 @@ private theorem exists_coe_eq_sum_coe_levelRaise_of_squarefree [NeZero M] {l : �
   have hfun : ⇑D = 0 := (qExpansion_eq_zero_iff one_pos
     (SlashInvariantFormClass.periodic_comp_ofComplex D (one_mem_strictPeriods_Gamma1_map _))
     (ModularFormClass.holo D) (ModularFormClass.bdd_at_infty D)).mp hD
-  rw [hDdef, FunLike.coe_sub, _root_.CuspForm.coe_ofLe, CuspForm.coe_finset_sum] at hfun
+  rw [hDdef, FunLike.coe_sub, _root_.CuspForm.coe_ofLe, FunLike.coe_sum] at hfun
   exact sub_eq_zero.mp hfun
 
 /-- The descent slash sum of a finite sum of functions is the sum of the descents. -/
@@ -316,8 +327,12 @@ theorem qExpansion_coeff_descendSlash_eq_zero_of_coprime [NeZero M] (hp : p.Prim
   have hterm := exists_descendSlash_coe_levelRaise_eq_coe_and_coeff_eq_zero hp hpM hsq.ne_zero
     hpl hcomp hF hχ' hm
   choose W hW hW0 using hterm
-  rw [Finset.sum_congr rfl fun q _ ↦ hW q, ← CuspForm.coe_finset_sum,
-    CuspForm.qExpansion_coeff_finset_sum one_pos (one_mem_strictPeriods_Gamma1_map _)]
+  have hsum := map_sum ((PowerSeries.coeff m).comp
+    ((ModularForm.qExpansionLinearMap (h := 1) one_pos (one_mem_strictPeriods_Gamma1_map _)
+      k).comp CuspForm.toModularFormₗ)) W l.primeFactors.attach
+  simp only [LinearMap.comp_apply, ModularForm.qExpansionLinearMap_apply,
+    CuspForm.toModularFormₗ_eq_coe, ModularFormClass.coe_modularForm] at hsum
+  rw [Finset.sum_congr rfl fun q _ ↦ hW q, ← FunLike.coe_sum, hsum]
   exact Finset.sum_eq_zero fun q _ ↦ hW0 q
 
 end Core
@@ -380,9 +395,10 @@ theorem qExpansion_coeff_descendSlash_eq_of_coprime [NeZero N] (hp : p.Prime) (h
   -- add the two `q`-expansions through the bundled descent
   rw [← h08a, hfΔ, descendSlash_add, hVg', ← coe_descendCuspForm k hp hpM hχM hΔχ,
     ← FunLike.coe_smul, ← FunLike.coe_add,
-    CuspForm.qExpansion_coeff_add one_pos (one_mem_strictPeriods_Gamma1_map _),
-    coe_descendCuspForm, hD0, zero_add,
-    CuspForm.qExpansion_coeff_smul one_pos (one_mem_strictPeriods_Gamma1_map _)]
+    FunLike.coe_add, ModularForm.qExpansion_add one_pos (one_mem_strictPeriods_Gamma1_map _),
+    map_add, coe_descendCuspForm, hD0, zero_add, FunLike.coe_smul,
+    ModularForm.qExpansion_smul one_pos (one_mem_strictPeriods_Gamma1_map _), map_smul,
+    smul_eq_mul]
 
 
 /-! ### The descent witness -/
@@ -414,8 +430,9 @@ theorem exists_mem_cuspFormCharSpace_qExpansion_coeff_eq_coeff_mul_of_coprime [N
   refine ⟨((p : ℂ) / descendMatrixCount p N) • descendCuspForm k hp hpN hcomp hf,
     Submodule.smul_mem _ _ (descendCuspForm_mem_cuspFormCharSpace k hp hpN hcomp hf),
     fun m hm ↦ ?_⟩
-  rw [CuspForm.qExpansion_coeff_smul one_pos (one_mem_strictPeriods_Gamma1_map _),
-    coe_descendCuspForm,
+  rw [FunLike.coe_smul,
+    ModularForm.qExpansion_smul one_pos (one_mem_strictPeriods_Gamma1_map _), map_smul,
+    smul_eq_mul, coe_descendCuspForm,
     qExpansion_coeff_descendSlash_eq_of_coprime hp hpN hL hpL hcomp hf hvan hg hgcoeff m hm,
     hgcoeff m, ite_eq_left hm]
   field_simp

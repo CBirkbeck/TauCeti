@@ -31,9 +31,7 @@ stated here rather than at the descent because it mentions only coefficients, di
 
 ## Main declarations
 
-* `TauCeti.ModularForm.qExpansionLinearMap`, `CuspForm.qExpansionLinearMap`, and the
-  coefficient readings `CuspForm.qExpansion_coeff_add`, `CuspForm.qExpansion_coeff_smul`,
-  `CuspForm.qExpansion_coeff_finset_sum` and `CuspForm.coe_finset_sum`.
+* `TauCeti.ModularForm.qExpansionLinearMap`.
 * `TauCeti.UpperHalfPlane.qExpansion_coeff_unique`.
 * `TauCeti.smul_qParam_pow_shift_eq`: a shift by `1 / d` fixes every `q`-power that a
   `d`-supported coefficient function leaves alive.
@@ -66,62 +64,6 @@ lemma ModularForm.qExpansionLinearMap_apply {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ
     ModularForm.qExpansionLinearMap hh hΓ k f = qExpansion h f := by
   unfold ModularForm.qExpansionLinearMap
   rfl
-
-/-- The `q`-expansion map on cusp forms as a `ℂ`-linear map to power series over `ℂ`, the
-cusp-form counterpart of `ModularForm.qExpansionLinearMap`. Mathlib's additivity and
-homogeneity of `qExpansion` are stated for any `ModularFormClass`, so they apply to cusp forms
-directly; this packages them, so that a statement about the coefficients of a sum or of a
-scalar multiple of cusp forms is `map_sum`, `map_add` or `map_smul` rather than an induction. -/
-def _root_.CuspForm.qExpansionLinearMap {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.HasDetOne]
-    (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) (k : ℤ) :
-    CuspForm Γ k →ₗ[ℂ] PowerSeries ℂ where
-  toFun f := qExpansion h f
-  map_add' f g := by
-    simpa only [FunLike.coe_add] using
-      _root_.ModularForm.qExpansion_add (F := CuspForm Γ k) (G := CuspForm Γ k) hh hΓ f g
-  map_smul' a f := by
-    simpa only [FunLike.coe_smul, RingHom.id_apply] using
-      _root_.ModularForm.qExpansion_smul (F := CuspForm Γ k) hh hΓ a f
-
-@[simp]
-lemma _root_.CuspForm.qExpansionLinearMap_apply {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.HasDetOne]
-    (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) {k : ℤ} (f : CuspForm Γ k) :
-    _root_.CuspForm.qExpansionLinearMap hh hΓ k f = qExpansion h f := by
-  unfold _root_.CuspForm.qExpansionLinearMap
-  rfl
-
-/-- The function underlying a finite sum of cusp forms is the sum of the functions: `map_sum`
-for `FunLike.coeAddMonoidHom`, in the shape a rewrite matches. -/
-theorem _root_.CuspForm.coe_finset_sum {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} {ι : Type*}
-    (s : Finset ι) (F : ι → CuspForm Γ k) :
-    ⇑(∑ i ∈ s, F i : CuspForm Γ k) = ∑ i ∈ s, ⇑(F i) :=
-  map_sum (FunLike.coeAddMonoidHom (CuspForm Γ k) ℍ ℂ) F s
-
-/-- One coefficient of a sum of cusp forms: `map_add` for `CuspForm.qExpansionLinearMap`, read
-through `PowerSeries.coeff`. -/
-theorem _root_.CuspForm.qExpansion_coeff_add {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.HasDetOne] {k : ℤ}
-    (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) (f g : CuspForm Γ k) (m : ℕ) :
-    (qExpansion h ⇑(f + g)).coeff m = (qExpansion h ⇑f).coeff m + (qExpansion h ⇑g).coeff m := by
-  rw [← CuspForm.qExpansionLinearMap_apply hh hΓ (f + g), map_add,
-    CuspForm.qExpansionLinearMap_apply, CuspForm.qExpansionLinearMap_apply, map_add]
-
-/-- One coefficient of a scalar multiple of a cusp form: `map_smul` for
-`CuspForm.qExpansionLinearMap`, read through `PowerSeries.coeff`. -/
-theorem _root_.CuspForm.qExpansion_coeff_smul {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.HasDetOne] {k : ℤ}
-    (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) (c : ℂ) (f : CuspForm Γ k) (m : ℕ) :
-    (qExpansion h ⇑(c • f)).coeff m = c * (qExpansion h ⇑f).coeff m := by
-  rw [← CuspForm.qExpansionLinearMap_apply hh hΓ (c • f), map_smul,
-    CuspForm.qExpansionLinearMap_apply, map_smul, smul_eq_mul]
-
-/-- One coefficient of a finite sum of cusp forms: `map_sum` for
-`CuspForm.qExpansionLinearMap`, read through `PowerSeries.coeff`. -/
-theorem _root_.CuspForm.qExpansion_coeff_finset_sum {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.HasDetOne]
-    {k : ℤ} {ι : Type*} (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) (s : Finset ι)
-    (F : ι → CuspForm Γ k) (m : ℕ) :
-    (qExpansion h ⇑(∑ i ∈ s, F i : CuspForm Γ k)).coeff m =
-      ∑ i ∈ s, (qExpansion h ⇑(F i)).coeff m := by
-  rw [← CuspForm.qExpansionLinearMap_apply hh hΓ (∑ i ∈ s, F i), map_sum, map_sum]
-  exact Finset.sum_congr rfl fun i _ ↦ by rw [CuspForm.qExpansionLinearMap_apply]
 
 /-- **Uniqueness of `q`-expansion coefficients, for a raw function on `ℍ`.** If `f` is given by
 a convergent expansion `f τ = ∑' m, c m * 𝕢 h τ ^ m` and its cusp function is analytic at `0`,
