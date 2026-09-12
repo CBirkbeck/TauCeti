@@ -35,7 +35,7 @@ of class groups.
 
 ## Design
 
-**The intermediate ring's algebra structures are built here, not accepted.**
+**Every algebra structure is built here, not accepted.**
 `Isogeny.intermediateRing` is a `Subring W₁.FunctionField` carrying no `Algebra` instance over
 either coordinate ring — `IntermediateRing/Basic.lean` records that an instance would reintroduce a
 diamond — so the two structures have to come from somewhere. Taking them as arguments would leave
@@ -47,15 +47,12 @@ nothing in the signature would pin the map to the one `φ` induces, nor even mak
 internally from the corestricted embeddings, which is what makes them *the* maps induced by `φ`,
 and what a functoriality statement and `toPointHom` need.
 
-**What `h` is for.** The one thing that cannot be built is the agreement between the ambient
-`Algebra W₂.CoordinateRing W₁.FunctionField` and `φ.pullback`:
-
-`h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x`
-
-That structure is a `variable`, so it need not be the pullback's; `h` pins it, and it is what
-`Isogeny.isScalarTower_intermediateRing` consumes to place `φ.intermediateRing` between
-`W₂.CoordinateRing` and `W₁.FunctionField`. The `example` below witnesses that `h` is satisfiable
-rather than vacuous: it holds by construction when the ambient structure is the pullback's own.
+The same applies to the ambient structures the intermediate-ring suppliers ask for,
+`Algebra W₂.CoordinateRing W₁.FunctionField` and `Algebra W₂.FunctionField W₁.FunctionField`:
+they are `φ.pullback` and `φ.fieldPullback` read as algebra structures, and their tower is
+`Isogeny.fieldPullback_algebraMap`. Taking them as arguments would need a hypothesis pinning the
+first to the pullback for `Isogeny.isScalarTower_intermediateRing` to consume; building them makes
+that hypothesis `rfl` and removes it from the signature.
 
 **Every other hypothesis is discharged internally**, from suppliers that live with the object they
 describe, in the one-property-per-file `IntermediateRing/` series:
@@ -75,8 +72,8 @@ describe, in the one-property-per-file `IntermediateRing/` series:
   `Isogeny.pullbackToIntermediateRing_injective`. These are what make
   `ClassGroup.extendedRelNormHom` applicable at all: its variable block requires them.
 
-The instance arguments that remain are ambient facts about the curves and their function fields,
-not about the intermediate ring, so they stay arguments.
+What remains in the signature is normality of the two coordinate rings, which is a fact about the
+curves and cannot come from `φ`.
 
 `ClassGroup.extendedRelNormHom` orders its rings `A M R` — source, middle, target — so the
 instantiation is `A := W₁.CoordinateRing`, `M := φ.intermediateRing`, `R := W₂.CoordinateRing`.
@@ -86,8 +83,8 @@ instantiation is `A := W₁.CoordinateRing`, `M := φ.intermediateRing`, `R := W
 ⚠ *mathlib-track*. Adapted from D. Angdinata's shared isogeny development, `Isogeny.lean`, by
 David Kurniadi Angdinata, declarations `pushClassMonoidHom` and `pushClass`, which builds
 `pushClass` by ideal extension and relative norm (`ClassGroup.extendedRelNormHom`) on the way to
-`toPointHom`. That source is shared with its authors ahead of their Mathlib PRs and carries no
-revision to cite, so no revision or licence is asserted here.
+`toPointHom`. No revision or licence is asserted: the source has no public
+revision to pin.
 
 Two adaptations are forced by how this repository states the surrounding API:
 
@@ -114,9 +111,6 @@ section PushClass
 
 variable (φ : Isogeny W₁ W₂)
   [IsIntegrallyClosed W₁.CoordinateRing] [IsIntegrallyClosed W₂.CoordinateRing]
-  [Algebra W₂.CoordinateRing W₁.FunctionField]
-  [Algebra W₂.FunctionField W₁.FunctionField]
-  [IsScalarTower W₂.CoordinateRing W₂.FunctionField W₁.FunctionField]
 
 /-- **The class-group map induced by an isogeny**, multiplicatively: extend a class of
 `W₁.CoordinateRing` into the intermediate ring, then norm it down to `W₂.CoordinateRing`.
@@ -124,59 +118,68 @@ variable (φ : Isogeny W₁ W₂)
 The two coordinate rings carry no map between them; the intermediate ring is what connects
 them, receiving `W₁.CoordinateRing` by inclusion and lying module-finite over
 `W₂.CoordinateRing`. -/
-noncomputable def pushClassMonoidHom
-    (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x) :
+noncomputable def pushClassMonoidHom :
     ClassGroup W₁.CoordinateRing →* ClassGroup W₂.CoordinateRing :=
   haveI := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₁
   haveI := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₂
+  letI : Algebra W₂.CoordinateRing W₁.FunctionField := φ.pullback.toRingHom.toAlgebra
+  letI : Algebra W₂.FunctionField W₁.FunctionField := φ.fieldPullback.toRingHom.toAlgebra
+  haveI : IsScalarTower W₂.CoordinateRing W₂.FunctionField W₁.FunctionField :=
+    .of_algebraMap_eq fun x ↦ (φ.fieldPullback_algebraMap x).symm
   letI : Algebra W₁.CoordinateRing φ.intermediateRing := φ.toIntermediateRing.toAlgebra
   letI : Algebra W₂.CoordinateRing φ.intermediateRing := φ.pullbackToIntermediateRing.toAlgebra
   haveI : IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField :=
-    φ.isScalarTower_intermediateRing rfl h
-  haveI := φ.isDedekindDomain_intermediateRing h
+    φ.isScalarTower_intermediateRing rfl fun _ ↦ rfl
+  haveI := φ.isDedekindDomain_intermediateRing fun _ ↦ rfl
   have : Module.Finite W₂.CoordinateRing φ.intermediateRing :=
-    φ.moduleFinite_intermediateRing_of_isDedekindDomain h
+    φ.moduleFinite_intermediateRing_of_isDedekindDomain fun _ ↦ rfl
   haveI : Module.IsTorsionFree W₁.CoordinateRing φ.intermediateRing :=
     Module.isTorsionFree_iff_algebraMap_injective.mpr φ.toIntermediateRing_injective
   haveI : Module.IsTorsionFree W₂.CoordinateRing φ.intermediateRing :=
     Module.isTorsionFree_iff_algebraMap_injective.mpr φ.pullbackToIntermediateRing_injective
   ClassGroup.extendedRelNormHom W₁.CoordinateRing φ.intermediateRing W₂.CoordinateRing
 
-/-- **The induced map on an integral ideal's class**: extend the ideal into the intermediate ring,
-then take its relative norm down to `W₂.CoordinateRing`. The definition builds the two algebra
-structures itself rather than accepting them, so they are restated here — verbatim, so that the
-two elaborate to the same terms — and this is what lets a consumer compute with the map instead of
-unfolding it. -/
-theorem pushClassMonoidHom_mk0
-    (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x)
-    (I : (Ideal W₁.CoordinateRing)⁰) :
+/-- **The induced map on an integral ideal's class** is the relative norm, down to
+`W₂.CoordinateRing`, of the ideal extended into the intermediate ring. -/
+-- The algebra structures are built by the definition rather than taken from the caller, so the
+-- statement restates them — verbatim, so that the two elaborate to the same terms.
+@[simp]
+theorem pushClassMonoidHom_mk0 (I : (Ideal W₁.CoordinateRing)⁰) :
     haveI := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₁
     haveI := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₂
+    letI : Algebra W₂.CoordinateRing W₁.FunctionField := φ.pullback.toRingHom.toAlgebra
+    letI : Algebra W₂.FunctionField W₁.FunctionField := φ.fieldPullback.toRingHom.toAlgebra
+    haveI : IsScalarTower W₂.CoordinateRing W₂.FunctionField W₁.FunctionField :=
+      .of_algebraMap_eq fun x ↦ (φ.fieldPullback_algebraMap x).symm
     letI : Algebra W₁.CoordinateRing φ.intermediateRing := φ.toIntermediateRing.toAlgebra
     letI : Algebra W₂.CoordinateRing φ.intermediateRing := φ.pullbackToIntermediateRing.toAlgebra
     haveI : IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField :=
-      φ.isScalarTower_intermediateRing rfl h
-    haveI := φ.isDedekindDomain_intermediateRing h
+      φ.isScalarTower_intermediateRing rfl fun _ ↦ rfl
+    haveI := φ.isDedekindDomain_intermediateRing fun _ ↦ rfl
     haveI : Module.Finite W₂.CoordinateRing φ.intermediateRing :=
-      φ.moduleFinite_intermediateRing_of_isDedekindDomain h
+      φ.moduleFinite_intermediateRing_of_isDedekindDomain fun _ ↦ rfl
     haveI : Module.IsTorsionFree W₁.CoordinateRing φ.intermediateRing :=
       Module.isTorsionFree_iff_algebraMap_injective.mpr φ.toIntermediateRing_injective
     haveI : Module.IsTorsionFree W₂.CoordinateRing φ.intermediateRing :=
       Module.isTorsionFree_iff_algebraMap_injective.mpr φ.pullbackToIntermediateRing_injective
-    φ.pushClassMonoidHom h (ClassGroup.mk0 I) =
+    φ.pushClassMonoidHom (ClassGroup.mk0 I) =
       ClassGroup.mk0 (Ideal.relNorm0 W₂.CoordinateRing
         (ClassGroup.extendedIdeal W₁.CoordinateRing φ.intermediateRing I)) := by
   -- the `letI`s above bind inside the statement only, so the same instances are re-introduced
   -- here to bring them into scope for the proof term
   have := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₁
   have := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₂
+  let _ : Algebra W₂.CoordinateRing W₁.FunctionField := φ.pullback.toRingHom.toAlgebra
+  let _ : Algebra W₂.FunctionField W₁.FunctionField := φ.fieldPullback.toRingHom.toAlgebra
+  have : IsScalarTower W₂.CoordinateRing W₂.FunctionField W₁.FunctionField :=
+    .of_algebraMap_eq fun x ↦ (φ.fieldPullback_algebraMap x).symm
   let _ : Algebra W₁.CoordinateRing φ.intermediateRing := φ.toIntermediateRing.toAlgebra
   let _ : Algebra W₂.CoordinateRing φ.intermediateRing := φ.pullbackToIntermediateRing.toAlgebra
   have : IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField :=
-    φ.isScalarTower_intermediateRing rfl h
-  have := φ.isDedekindDomain_intermediateRing h
+    φ.isScalarTower_intermediateRing rfl fun _ ↦ rfl
+  have := φ.isDedekindDomain_intermediateRing fun _ ↦ rfl
   have : Module.Finite W₂.CoordinateRing φ.intermediateRing :=
-    φ.moduleFinite_intermediateRing_of_isDedekindDomain h
+    φ.moduleFinite_intermediateRing_of_isDedekindDomain fun _ ↦ rfl
   have : Module.IsTorsionFree W₁.CoordinateRing φ.intermediateRing :=
     Module.isTorsionFree_iff_algebraMap_injective.mpr φ.toIntermediateRing_injective
   have : Module.IsTorsionFree W₂.CoordinateRing φ.intermediateRing :=
@@ -185,39 +188,17 @@ theorem pushClassMonoidHom_mk0
 
 /-- **The additive form of `Isogeny.pushClassMonoidHom`.** The point group is described additively
 by its class group, so this is the shape the induced map on points is built from. -/
-noncomputable def pushClass
-    (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x) :
+noncomputable def pushClass :
     Additive (ClassGroup W₁.CoordinateRing) →+ Additive (ClassGroup W₂.CoordinateRing) :=
-  MonoidHom.toAdditive (φ.pushClassMonoidHom h)
+  MonoidHom.toAdditive φ.pushClassMonoidHom
 
 /-- **The additive form is the multiplicative one**, transported along `Additive`. -/
 @[simp]
-theorem pushClass_apply
-    (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x)
-    (x : Additive (ClassGroup W₁.CoordinateRing)) :
-    φ.pushClass h x = Additive.ofMul (φ.pushClassMonoidHom h x.toMul) :=
+theorem pushClass_apply (x : Additive (ClassGroup W₁.CoordinateRing)) :
+    φ.pushClass x = Additive.ofMul (φ.pushClassMonoidHom x.toMul) :=
   (rfl)
 
 end PushClass
-
-section Instantiable
-
-/- **The definitions' hypotheses are satisfiable** (documentation, not public API). The algebra
-structures are no longer a caller's choice — `pushClassMonoidHom` builds them from `φ` — so what
-remains to witness is that the pinning hypothesis `h` can be met at all. It is met by construction
-whenever the ambient `W₂.CoordinateRing`-algebra structure on `W₁.FunctionField` is the pullback's
-own. Without this the definitions could be unusable, satisfied by nothing.
-
-Kept as an `example`, and behind a plain block comment rather than a docstring: it is a one-off
-sanity check with no downstream consumer, and an unnamed declaration's doc comment reaches no
-generated documentation. This follows the non-vacuity check in
-`Analysis/Complex/Conformal/DiscInjection.lean`. -/
-example (φ : Isogeny W₁ W₂) :
-    letI : Algebra W₂.CoordinateRing W₁.FunctionField := φ.pullback.toRingHom.toAlgebra
-    ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x :=
-  fun x ↦ RingHom.congr_fun (RingHom.algebraMap_toAlgebra _) x
-
-end Instantiable
 
 end Isogeny
 
