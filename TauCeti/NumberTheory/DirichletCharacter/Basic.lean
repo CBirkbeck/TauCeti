@@ -111,14 +111,13 @@ theorem factorsThrough_div_of_changeLevel_factorsThrough {R : Type*} [CommMonoid
 `MulChar.ofUnitHom χ` factors through `d ∣ N`, the unit homomorphism `χ` is itself a composition
 `χ₀ ∘ ZMod.unitsMap` with a unit homomorphism modulo `d` — the form in which a lowered
 nebentypus is consumed, by the descent lemmas of `Newforms/Descent` and by the Main Lemma's
-induction.
-
-Proved forwards, by applying `MulChar.toUnitHom` to `eq_changeLevel`: `hfac.χ₀` mentions `χ`
-through the type of `hfac`, so rewriting `χ` in the goal would break the motive. -/
+induction. -/
 theorem exists_eq_comp_unitsMap_of_factorsThrough {R : Type*} [CommMonoidWithZero R] {N d : ℕ}
     (hd : d ∣ N) {χ : (ZMod N)ˣ →* Rˣ}
     (hfac : FactorsThrough (MulChar.ofUnitHom χ : DirichletCharacter R N) d) :
     ∃ χ₀ : (ZMod d)ˣ →* Rˣ, χ = χ₀.comp (ZMod.unitsMap hd) := by
+  -- Proved forwards, by applying `MulChar.toUnitHom` to `eq_changeLevel`: `hfac.χ₀` mentions `χ`
+  -- through the type of `hfac`, so rewriting `χ` in the goal would break the motive.
   refine ⟨hfac.χ₀.toUnitHom, ?_⟩
   have hχ : MulChar.toUnitHom (MulChar.ofUnitHom χ : DirichletCharacter R N) = χ :=
     MulChar.equivToUnitHom.apply_symm_apply χ
