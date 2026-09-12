@@ -214,7 +214,8 @@ theorem qExpansion_coeff_prime_pow_mul_heckeRingHomCuspCharSpace_heckeTGenerator
             (p ^ (j + r - 2 * i) * m) := by
   have h := qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorRecGamma0 hp hpN
     (cuspToModFormCharSpace k χ F) hpm r j
-  rw [← cuspToModFormCharSpace_heckeRingHomCuspCharSpace] at h
+  rw [heckeRingHomCharSpace_apply, ← cuspToModFormCharSpace_twistedHeckeSlashCuspFormCharLinearMap,
+    ← heckeRingHomCuspCharSpace_apply] at h
   simp only [coe_cuspToModFormCharSpace, ModularFormClass.coe_modularForm] at h
   exact h
 

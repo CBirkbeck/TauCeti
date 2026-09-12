@@ -229,7 +229,7 @@ theorem heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ_apply (hp : 0 <
 /-- **The recurrence on `S_k(N, χ)`**, as an equality of endomorphisms:
 `T_{p^{r+2}} = Tₚ ∘ T_{p^{r+1}} − χ(p) p^{k−1} • T_{p^r}` on the cusp-form character space. The
 modular statement transported along the inclusion of character spaces
-(`cuspToModFormCharSpace_heckeRingHomCuspCharSpace`), which is injective. -/
+(`cuspToModFormCharSpace_twistedHeckeSlashCuspFormCharLinearMap`), which is injective. -/
 theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_succ_succ (hp : 0 < p)
     (hpN : Nat.Coprime p N) (r : ℕ) :
     heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) =
@@ -239,9 +239,10 @@ theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_succ_succ (hp : 0 < p
           heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p r) := by
   refine LinearMap.ext fun F ↦ ?_
   refine cuspToModFormCharSpace_injective k χ ?_
-  simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.smul_apply, map_sub, map_smul,
-    cuspToModFormCharSpace_heckeRingHomCuspCharSpace]
-  exact heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ_apply k χ hp hpN _ r
+  simpa only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.smul_apply, map_sub, map_smul,
+    heckeRingHomCuspCharSpace_apply, heckeRingHomCharSpace_apply,
+    cuspToModFormCharSpace_twistedHeckeSlashCuspFormCharLinearMap]
+    using heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ_apply k χ hp hpN _ r
 
 /-- **The recurrence at a cusp form**:
 `heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_succ_succ` evaluated. This is the pointwise
