@@ -12,26 +12,55 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Coefficient
 public import TauCeti.NumberTheory.ModularForms.Newforms.Newform
 
 /-!
-# Strong multiplicity one (work in progress)
+# Strong multiplicity one, at fixed level and nebentypus
 
 Two newforms of level `N`, weight `k` and the same nebentypus whose eigenvalues agree at every
-index coprime to `N` outside a finite set are equal (Miyake, Theorem 4.6.12): the agreement
-extends to every good index, the difference is a good Hecke eigenvector with `a₁ = 0`, so its
-coefficients vanish at every index coprime to `N`, so it is old by the Main Lemma; being also
-new, it is zero.
+index coprime to `N` outside a finite set are equal (Miyake, Theorem 4.6.12). The finite slack is
+what makes the statement *strong*: nothing at all is assumed at the indices dividing the level.
+
+The agreement extends from the complement of the finite set to every good index
+(`EigenformAwayFromLevel.eigenvalue_eq_of_forall_notMem`), so the difference of the two underlying
+cusp forms is a good Hecke eigenvector with `a₁ = 0`; its coefficients therefore vanish at every
+index coprime to `N`, so it is old by the Main Lemma
+(`TauCeti.mem_cuspFormsOld_of_forall_coprime_qExpansion_coeff_eq_zero`). Being a difference of
+newforms it is also new, and old and new are disjoint, so it is zero.
 
 Miyake states the theorem on the Fourier coefficients rather than the eigenvalues; for a
-normalised newform the two agree (`Newform.qExpansion_coeff_eq_eigenvalue`), so that form is a
-corollary here.
+normalised newform the coefficient at a good index *is* the eigenvalue there
+(`Newform.qExpansion_coeff_eq_eigenvalue`), so that form is a corollary.
+
+## Main results
+
+* `HeckeRing.GL2.Newform.eq_of_forall_notMem_eigenvalue_eq`: strong multiplicity one, on the
+  eigenvalues.
+* `HeckeRing.GL2.Newform.eq_of_forall_notMem_qExpansion_coeff_eq`: Miyake's own form, on the
+  `q`-expansion coefficients.
+
+## Provenance
+
+Adapted from the AINTLIB `LeanModularForms` project (Chris Birkbeck, Apache-2.0,
+<https://github.com/CBirkbeck/AINTLIB> @ `2baa76f742bd`),
+`projects/LeanModularForms/LeanModularForms/StrongMultiplicityOne/ConstantMultiple.lean` —
+declaration `strongMultiplicityOne`. The source routes through
+`strongMultiplicityOne_constMul` (a newform and an eigenform sharing eigenvalues are
+proportional, with `a₁ = 1` pinning the constant); here the difference is shown to be zero
+directly from the Main Lemma and the disjointness of the old and new subspaces, so the
+proportionality step is not needed.
+
+## References
+
+* [T. Miyake, *Modular forms*][miyake1989], Theorem 4.6.12.
+* [F. Diamond and J. Shurman, *A first course in modular forms*][diamondshurman2005],
+  Theorem 5.8.2 (the `∀ n` coprime version; the strong form is deferred to Miyake).
 -/
 
 public section
 
-open Matrix.SpecialLinearGroup UpperHalfPlane CongruenceSubgroup HeckeRing.GL2
+open Matrix.SpecialLinearGroup UpperHalfPlane CongruenceSubgroup TauCeti
 
 open scoped MatrixGroups
 
-namespace TauCeti
+namespace HeckeRing.GL2
 
 variable {N : ℕ} [NeZero N] {k : ℤ}
 
@@ -97,4 +126,4 @@ theorem Newform.eq_of_forall_notMem_qExpansion_coeff_eq {f g : Newform N k} (hχ
     rw [← f.qExpansion_coeff_eq_eigenvalue n hn, ← g.qExpansion_coeff_eq_eigenvalue n hn]
     exact h n hn hnS
 
-end TauCeti
+end HeckeRing.GL2
