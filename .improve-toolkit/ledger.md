@@ -34456,3 +34456,58 @@ generalisation from a relocation.
 Five open. #6418 10/10 `ready-to-merge`. #6093 green, board ON-HEAD, one contested `api-design`.
 #6188 green, board BEHIND on `09242e46b`. #6432 green again on `ba59a9318`. #5950 Chris's.
 Merged this watch: **#6426, #6412**.
+
+---
+
+## r665 — 2026-09-12 — #6093 GREEN; the ⛔ on #6188 was right, and about a distinction I had missed
+
+### #6093 is 10/10 — the coupled-annotation contest was accepted
+
+All ten rubrics approved on `370dad05e`, `ready-to-merge`. The last blocker was `api-design` asking
+to restore `@[simp]` on `fundamentalGroupEquivFiber_apply_coe`; r663 contested it by showing that
+`main` carries `@[expose]` **and** `@[simp]` together, this PR removes `@[expose]` at `api-design`'s
+own earlier request, and the third combination is CI-proven red. Accepted.
+
+**The contest worked because it enumerated the states, not because it argued.** Three configurations
+exist, two are green, the request was the third.
+
+### #6188: a ⛔ `reuse` block, and it was right
+
+> `toLinearEquiv_ofLinearEquiv` directly restates the existing inverse law for `generalLinearEquiv`.
+> *Fix:* Delete it and prove each local `h` with `(generalLinearEquiv R M₁).apply_symm_apply f`,
+> allowing definitional reduction of `generalLinearEquiv`'s `invFun`.
+
+I had reasoned in r654 that this could work and did not test it, taking `api-design`'s reconciliation
+instead. The PR body carried, from an earlier CI cycle, that `MulEquiv.apply_symm_apply` "does not
+work" — but **that failure was about putting it in the `simp only` set**, where it never fires
+because `simp` matches syntactically. As the *proof of the `have`* it needs no matching at all, only
+definitional reduction of `invFun`. Different position, different question.
+
+**"Tried and failed" is scoped to the form it was tried in.** A term that cannot be a simp lemma may
+still be a proof, and the body's own sentence hid that by recording the verdict without the position.
+
+Deleting the declaration retires two further findings at once: `naming` wanted it moved to root
+`LinearEquiv` (contested r662 on Mathlib's `AlgEquiv` precedent) and `api-design` wanted it `@[simp]`
+(r656, CI-proven red). Neither applies to a declaration that no longer exists — **the cheapest way
+to settle a disputed declaration can be not to have it.**
+
+`reuse` has in fact been consistent across every round: no shared declaration, prove the transport
+where it is needed. r654 read its "keep the `have`s inline" as irreconcilable with `api-design` and
+reached for a third option. The reconciliation existed; it was one line.
+
+### The second bullet is the case for the structural lemmas
+
+`OrthogonalGroup.lean` was re-proving `autCongr_apply` and `autCongr_symm_apply` inline, as
+`show … by ext m; exact autCongr_apply_apply …` blocks. Those are now
+`rw [LinearEquiv.autCongr_apply]` and `rw [LinearEquiv.autCongr_symm_apply]`, eight lines shorter.
+**The reviewer found the consumers that justify the lemmas I added last round** — the call sites were
+there all along, written the long way.
+
+Gate after committing (r664's guard in force): 12 ok, 3 failed — the known rename/rooting rows,
+answered in the body. `lint-dot-notation` 759 → 751, 0 new.
+
+### Board
+Five open. **#6093 `ready-to-merge` 10/10**, #6418 `ready-to-merge` 10/10, both awaiting the bot.
+#6188 rebuilding on `587afa02f`, board BEHIND. #6432 rebuilding on `ba59a9318`, board BEHIND,
+question outstanding on its `naming` thread. #5950 Chris's.
+Merged this watch: **#6426, #6412**.
