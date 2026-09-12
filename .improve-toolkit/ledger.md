@@ -35559,3 +35559,71 @@ as a known-bad example, and it ranked 3/3 WHOLE on the nscand list. Ratio does n
 I wrote "main moved 759 → 735 → **678**". Wrong: **main is at 739**. 678 is #6093's *head* figure —
 what main will read once it merges. r679's gate printed both (`base: 739`, `head: 678`) and I carried
 the head number across as if it were main's.
+
+---
+
+## r682 — 2026-09-12 20:26Z — closing the trap that nearly cost r681
+
+### Board — nothing owed
+
+```
+#6432  ready-to-merge  GREEN    QUEUED pos=5   (was 6)
+#6188  ready-to-merge  GREEN    QUEUED pos=12  (was 14)
+#6093  awaiting-CI     PENDING  board 2231e763ee BEHIND (head 36f3a07b9) -- the scope fix is building
+#5950  ready-to-merge  GREEN    NEVER-QUEUED   Chris's
+```
+
+Steps 3, 4 and 5 all no-ops. #6093's board is BEHIND by construction — r681's fix is pushed and the
+build has not landed yet. No `improve/*` merge since #6418; pure position. Three `improve/*` PRs open
+against a step-5 threshold of fewer than three.
+
+### `threadread.py` was showing dead verdicts as live work
+
+r681 halted at a `scope` block, and a block **halts the whole run** — every rubric behind it comes
+back `absent`, *not judged on this head*. Their threads still carry text, from an older revision. The
+old test was:
+
+```python
+unresolved = (state != "green")
+```
+
+so `absent` was lumped in with the live block under one "unresolved" heading. #6093's `naming` thread
+is dated **2026-09-09**, seven revisions back, and asks for two `IsQuotientCoveringMap` declarations
+to be rooted. I only established it was dead by reading the `states` map out of the
+`tauceti-meta:v1` payload by hand — and *"read the states map yourself"* is exactly the kind of step
+that gets skipped on the round where it matters. Acting on it would have been work against a dead
+verdict, and any edit to a PR mid-review risks drawing new findings.
+
+`absent` **does** block the merge; the board says so. But it gives you nothing to do — the way to
+clear it is to clear whatever halted the run and let it run. That distinction is now code:
+
+```
+LIVE      judged non-green on THIS head      -> answer it
+NOT-RUN   absent: deferred behind the block  -> its text is from an older head; do NOT act
+GREEN     hidden unless --all
+```
+
+Each `NOT-RUN` thread prints a banner above its stale text, and the firing control ends with the one
+line I had to derive by hand last round:
+
+```
+LIVE (answer these): scope.
+NOT-RUN (deferred behind the block; their text is from an older head -- do NOT act):
+  naming, api-design, generality, placement, documentation, proof-quality.
+```
+
+New fixture `r681-threadread-deferred-ctl`, two controls, both mutation-tested — collapsing `absent`
+back into a finding fails **both** of them, including the negative that catches `tn_deferred` being
+listed as live work. **142 passed, 0 failed.**
+
+### A footgun found while writing the controls
+
+`chk`/`neg` feed their expected rows to plain `grep`, so a bracketed pattern like `[NOT-RUN]` is a
+**character class**, not a literal. My first positive control failed for that reason — and the
+matching negative **passed for the wrong reason**, since a pattern that can never match trivially
+satisfies a negative. A negative control asserting a bracketed string is worthless and silent about
+it.
+
+Checked the rest of the suite: no other control passes a bracketed pattern. Left a comment at the
+site rather than changing `chk`, since quoting the rows is the caller's job and 140 existing controls
+depend on the current matching.

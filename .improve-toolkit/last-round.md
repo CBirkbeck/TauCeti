@@ -1,6 +1,31 @@
-# Last round — r681 (2026-09-12 20:21Z)
+# Last round — r682 (2026-09-12 20:26Z)
 
-## #6093: `scope` ⛔ cleared by removing the subject — the #6188 move, again
+## `threadread.py` no longer shows dead verdicts as live work
+
+A block **halts the whole run**, so every rubric behind it returns `absent` — *not judged on this
+head* — while its thread still carries text from an older revision. The old test was
+`unresolved = (state != "green")`, which lumped those in with the live block under one heading.
+#6093's `naming` thread is dated **2026-09-09**, seven revisions back; in r681 I only established it
+was dead by reading the `states` map out of the `tauceti-meta:v1` payload by hand.
+
+Now it is code — `LIVE` / `NOT-RUN` / `GREEN`, a banner over every `NOT-RUN` body, and the firing
+control ends with the line that matters:
+
+```
+LIVE (answer these): scope.
+NOT-RUN (deferred behind the block; their text is from an older head -- do NOT act):
+  naming, api-design, generality, placement, documentation, proof-quality.
+```
+
+`absent` **does** block the merge, but it gives you nothing to do: clear what halted the run and let
+it run. Two controls on a new fixture, both mutation-tested. **142 controls, 0 failed.**
+
+**Footgun found while writing them:** `chk`/`neg` feed expected rows to plain `grep`, so `[NOT-RUN]`
+is a **character class**, not a literal. The positive failed for that reason and the matching
+negative **passed for the wrong reason** — a pattern that can never match trivially satisfies a
+negative. **Keep expected rows bracket-free.** No other control does this.
+
+## r681 carried over: #6093's `scope` ⛔ cleared by removing the subject
 
 The board came back on the refreshed head `2231e763e` and halted at **one** blocker:
 
@@ -27,16 +52,16 @@ clean afterwards.
 It is dated **2026-09-09** and reads `absent` in the current board's states — it re-runs once `scope`
 clears, against a tree seven revisions newer. Wait for the fresh verdict.
 
-## Board (20:21Z)
+## Board (20:26Z)
 
 | PR | head | CI | label | queue | whose move |
 |---|---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **NEVER-QUEUED** | **Chris** — human-owned file; the bot cannot enqueue it. **Do not refresh it.** |
-| **#6093** | `36f3a07b9` | building | `awaiting-CI` | — | nobody — `scope` answered, awaiting the next board |
-| **#6188** | `ec1a68d965` | green | `ready-to-merge` | **pos 14** | nobody — 10/10, waiting its turn |
-| **#6432** | `98bb7e78f4` | green | `ready-to-merge` | **pos 6** | nobody — 10/10, waiting its turn |
+| **#6093** | `36f3a07b9` | **building** | `awaiting-CI` | — | nobody — `scope` answered, board BEHIND **by construction** |
+| **#6188** | `ec1a68d965` | green | `ready-to-merge` | **pos 12** | nobody — 10/10, waiting its turn |
+| **#6432** | `98bb7e78f4` | green | `ready-to-merge` | **pos 5** | nobody — 10/10, waiting its turn |
 
-#6432 **7 → 6**, #6188 **15 → 14**. No `improve/*` merge since #6418 — pure position.
+#6432 **6 → 5**, #6188 **14 → 12**. No `improve/*` merge since #6418 — pure position.
 
 **Step 4 was correctly a no-op.** #6093's CI had been green four minutes at sweep time; the pipeline
 posted its own board nine minutes later, inside the 32–67 min band. Driving would have burned ~$16 to
@@ -74,8 +99,9 @@ firing control as known-bad (`ProbabilityTheory.Kernel`). **Ratio does not settl
 
 1. **#6093: wait for CI, then the board.** `scope` is answered. Expect the deferred rubrics to run for
    the first time — several have never been judged on this head, so a fresh 🟡 is normal, not a
-   regression. The PR's 26th file, `FiberFunctor.lean`, is a **required call-site update for the
-   rename**, not scope creep; say so if `scope` asks again.
+   regression. **`threadread.py` now says which are LIVE**; answer only those. The PR's 26th file,
+   `FiberFunctor.lean`, is a **required call-site update for the rename**, not scope creep; say so if
+   `scope` asks again.
 2. **Run `tools/queuepos.py` beside the sweep.** Act only on **`EJECTED`**; `NEVER-QUEUED` (#5950) is
    not this role's to fix.
 3. **Do not re-diagnose the merge wait.** One serialised FIFO worker, ~25–30 min/merge, 30+ deep;
@@ -123,8 +149,11 @@ the standing findings safe.** A latent `nsjump`/`decldiff` finding is one waitin
 merging `main` is what supplies callers. Re-read them against the newly arrived files.
 **A removed declaration whose namespace is also a TERM does not announce its absence** — it re-reads
 as generalized field notation and fails somewhere else entirely (#6093).
-**A board finding dated before the current head may be `absent`, not live** — check the `states` map
-in the `tauceti-meta:v1` payload before fixing it.
+**A board finding dated before the current head may be `absent`, not live.** `threadread.py` now
+classifies this for you: answer **LIVE** only; **NOT-RUN** is deferred behind the block and its text
+is from an older head.
+**Control rows go to plain `grep`** — a bracketed pattern is a character class, and a negative
+control asserting one passes for the wrong reason.
 A rubric that went green can go 🟡 again; clearing a ⛔ reveals rubrics that never ran; and
 **a 🟡 behind a ⛔ may not survive the next board — do not chase it**.
 **When rubrics contradict each other across rounds, suspect the PR boundary before the rubrics.**
@@ -137,5 +166,5 @@ four sweep fields say.
 Verify a rooting target with `mathlibns.py`, never a grep; then **gate it**. **A WHOLE ratio does not
 settle a target** — five of twelve WHOLE candidates name a namespace Mathlib does not have.
 The gate is pure Python: it cannot see docstring attachment, elaboration, or simp normal form.
-**140 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
+**142 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
 **HANDOVER.md §11–13 carry this watch's rules** — read them before re-deriving one.

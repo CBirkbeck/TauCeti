@@ -25,6 +25,29 @@ def sh(*a):
     r = subprocess.run(a, capture_output=True, text=True)
     return r.stdout
 
+def actionability(state):
+    """LIVE / NOT-RUN / GREEN / NO-BOARD -- is this thread's text a finding to answer NOW?
+
+    r681 nearly cost a round.  #6093's board halted at a `scope` block, which defers every rubric
+    behind it: those come back `absent` -- *not judged on this head*.  Their THREADS still carry
+    text, from an older head, and the old `state != "green"` test lumped them in with the live
+    block under one "unresolved" heading.  #6093's `naming` thread was dated seven revisions back
+    and asked for changes that the current tree may not even need; acting on it would have been
+    work against a stale verdict, and any edit risks drawing new findings on a PR mid-review.
+
+    `absent` DOES block the merge -- the board says so -- but it gives you nothing to do: the way
+    to clear it is to clear whatever halted the run, then let it run.  So it is reported, and
+    reported as NOT-RUN, never as a finding.
+    """
+    if state is None:
+        return "NO-BOARD"
+    if state == "green":
+        return "GREEN"
+    if state == "absent":
+        return "NOT-RUN"
+    return "LIVE"
+
+
 def main():
     argv = sys.argv[1:]
     if not argv:
@@ -86,26 +109,36 @@ def main():
         if rub not in latest or c["updated_at"] > latest[rub]["updated_at"]:
             latest[rub] = c
 
-    shown = 0
+    shown, live, notrun = 0, [], []
     for rub, c in sorted(latest.items(), key=lambda kv: kv[1]["updated_at"]):
         body = re.sub(r"<!--.*?-->", "", c["body"], flags=re.S)
         body = re.sub(r"<sub>.*?</sub>", "", body, flags=re.S)
         body = re.sub(r"Reply in this thread to contest.*?\)", "", body, flags=re.S)
-        state = states.get(rub)
-        # No board yet -> fall back to the thread text, and say so.
-        unresolved = (state != "green") if states else ("request_changes" in body)
-        if not unresolved and not show_all:
+        state = states.get(rub) if states else None
+        act = actionability(state) if states else (
+            "LIVE" if "request_changes" in body else "GREEN")
+        if act == "GREEN" and not show_all:
             continue
         shown += 1
+        if act == "LIVE":
+            live.append(rub)
+        elif act == "NOT-RUN":
+            notrun.append(rub)
         edited = c["updated_at"] != c["created_at"]
-        print(f"=== {rub}  [{states.get(rub, 'no board')}]  updated={c['updated_at']}"
+        print(f"=== {rub}  [{act}]  state={state or 'no board'}  updated={c['updated_at']}"
               + (f"  (EDITED IN PLACE; created={c['created_at']})" if edited else "") + " ===")
+        if act == "NOT-RUN":
+            print("  >> NOT JUDGED ON THIS HEAD. The text below is from an earlier revision and"
+                  " re-runs\n  >> once the live block clears. Do NOT act on it (r681).")
         print("\n".join("  " + l for l in body.strip().split("\n") if l.strip()))
         print()
     print(f"# FIRING CONTROL: {len(comments)} review comments, {len(latest)} rubric threads, "
-          f"{shown} shown ({'all' if show_all else 'unresolved only'}); "
+          f"{shown} shown ({'all' if show_all else 'non-green only'}); "
           f"state from board at {board_head or 'NO BOARD -- fell back to thread text'} "
-          f"({len(states)} rubric states).", file=sys.stderr)
+          f"({len(states)} rubric states). "
+          f"LIVE (answer these): {', '.join(live) or 'none'}. "
+          f"NOT-RUN (deferred behind the block; their text is from an older head -- do NOT act): "
+          f"{', '.join(notrun) or 'none'}.", file=sys.stderr)
     return 0
 
 if __name__ == "__main__":

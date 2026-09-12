@@ -1,0 +1,6 @@
+[
+ {
+  "updated_at": "2026-09-07T03:00:00Z",
+  "body": "<!--tauceti-scoreboard-->\n<!--tauceti-meta:v1 {\"kind\": \"scoreboard\", \"head_sha\": \"abcdef0123456789\", \"pr\": 1, \"states\": {\"tp_blocking\": \"blocking_request\", \"tn_greenThread\": \"green\", \"tn_deferred\": \"absent\"}}-->"
+ }
+]

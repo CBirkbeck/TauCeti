@@ -221,6 +221,20 @@ TR="$SP/r451-threadread-ctl"
 tr_() { python3 "$T/threadread.py" 1 --fixture "$TR" 2>/dev/null; }
 tr_ | chk "threadread: current text, flagged as edited in place" "CURRENT finding text" "EDITED IN PLACE"
 tr_ | neg "threadread: no superseded text, no board-green rubric" "SUPERSEDED older text" "tn_greenThread"
+# r681: a block HALTS the run, so every rubric behind it comes back `absent` -- not judged on this
+# head. Their threads still carry text from an older revision, and the old `state != green` test
+# showed that text alongside the live block under one "unresolved" heading. #6093's `naming` thread
+# was seven revisions stale; acting on it is work against a dead verdict, and any edit to a PR
+# mid-review risks drawing new findings.
+TRD="$SP/r681-threadread-deferred-ctl"
+trd() { python3 "$T/threadread.py" 1 --fixture "$TRD" 2>&1; }
+# NB: chk/neg feed these to plain `grep`, so `[...]` is a CHARACTER CLASS, not a literal -- keep
+# expected rows bracket-free or they match nothing and the neg passes for the wrong reason.
+trd | chk "threadread: a rubric deferred behind a block reads NOT-RUN, not a finding (r681)" \
+          "NOT JUDGED ON THIS HEAD" "do NOT act): tn_deferred" \
+          "LIVE (answer these): tp_blocking"
+trd | neg "threadread: the deferred rubric is not listed as live work" \
+          "LIVE (answer these): tn_deferred" "LIVE (answer these): tp_blocking, tn_deferred"
 
 # docghost -- three-way, and only the NARROWED bucket is the #5579 defect:
 #   advertised + declared in a file this one does NOT import  -> the defect

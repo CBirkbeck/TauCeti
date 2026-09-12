@@ -1,0 +1,22 @@
+[
+ {
+  "created_at": "2026-09-07T01:00:00Z",
+  "updated_at": "2026-09-07T01:00:00Z",
+  "body": "<!--tauceti-rubric:tn_greenThread-->\n### \ud83d\udfe1 tn_greenThread \u2014 request_changes\nStale text kept after the rubric went green."
+ },
+ {
+  "created_at": "2026-09-07T01:00:00Z",
+  "updated_at": "2026-09-07T02:30:00Z",
+  "body": "<!--tauceti-rubric:tp_blocking-->\n### \ud83d\udfe1 tp_blocking \u2014 request_changes\nCURRENT finding text."
+ },
+ {
+  "created_at": "2026-09-07T02:00:00Z",
+  "updated_at": "2026-09-07T02:00:00Z",
+  "body": "<!--tauceti-rubric:tp_blocking-->\n### \ud83d\udfe1 tp_blocking \u2014 request_changes\nSUPERSEDED older text."
+ },
+ {
+  "created_at": "2026-09-05T00:00:00Z",
+  "updated_at": "2026-09-05T00:00:00Z",
+  "body": "<!--tauceti-rubric:tn_deferred-->\n### \ud83d\udfe1 tn_deferred \u2014 request_changes  `judge`\nSTALE TEXT FROM AN OLDER HEAD that must not be acted on.\n"
+ }
+]
