@@ -327,6 +327,12 @@ assembling them goes: that instance is not automatic, and is recovered from `IsU
 `IsLocalization.Away.of_associated`. It is bound existentially so that a caller can `haveI` it
 before stating anything about the rescaled presentation.
 
+The rescaled numerators are returned together with the equation `(T' : Set A) = (u * ·) '' T`
+rather than only with their consequences. A consumer comparing *two* presentations — which is what
+Proposition 8.30 does, for `T ⊆ T'` — has to rescale both by the same `u` and then know that the
+containment survives; the two conclusions about `locSubring` and `HasDenominatorPower` do not
+give that, and without the equation the package cannot be used for the case it exists for.
+
 The intended use is Proposition 8.30, whose current form asks the denominator to be topologically
 nilpotent. This supplies a presentation meeting that hypothesis; transporting a conclusion back
 to `(T, s)` is a separate step, and needs the completed rings and the restriction maps between
@@ -335,8 +341,8 @@ theorem exists_isTopologicallyNilpotent_rescaled [IsTopologicalRing A] [IsTateRi
     (P : PairOfDefinition A) (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S]
     [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S) :
     ∃ (u : A) (T' : Finset A) (_ : IsLocalization.Away (u * s) S), IsUnit u ∧
-      IsTopologicallyNilpotent (u * s) ∧ locSubring P T' (u * s) S = locSubring P T s S ∧
-      HasDenominatorPower P T' (u * s) S := by
+      IsTopologicallyNilpotent (u * s) ∧ (T' : Set A) = (u * ·) '' (T : Set A) ∧
+      locSubring P T' (u * s) S = locSubring P T s S ∧ HasDenominatorPower P T' (u * s) S := by
   classical
   obtain ⟨q, i, hq, hnil⟩ := IsTateRing.exists_isTopologicallyNilpotent_pow_mul (A := A) s
   have hu : IsUnit (q ^ i) := hq.isUnit.pow i
@@ -344,7 +350,7 @@ theorem exists_isTopologicallyNilpotent_rescaled [IsTopologicalRing A] [IsTateRi
   have hawayl : IsLocalization.Away (q ^ i * s) S := IsLocalization.Away.of_associated hassoc
   have hT' : ((T.image (q ^ i * ·) : Finset A) : Set A) = (q ^ i * ·) '' (T : Set A) :=
     Finset.coe_image
-  exact ⟨q ^ i, T.image (q ^ i * ·), hawayl, hu, hnil,
+  exact ⟨q ^ i, T.image (q ^ i * ·), hawayl, hu, hnil, hT',
     locSubring_eq_of_coe_eq_image_mul_left P T _ (q ^ i) s S hT',
     hden.of_coe_eq_image_mul_left hu hT'⟩
 
