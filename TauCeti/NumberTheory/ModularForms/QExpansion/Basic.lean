@@ -35,8 +35,6 @@ stated here rather than at the descent because it mentions only coefficients, di
 * `TauCeti.UpperHalfPlane.qExpansion_coeff_unique`.
 * `TauCeti.smul_qParam_pow_shift_eq`: a shift by `1 / d` fixes every `q`-power that a
   `d`-supported coefficient function leaves alive.
-* `TauCeti.eq_zero_of_forall_qExpansion_coeff_eq_zero`: a cusp form whose `q`-expansion
-  coefficients all vanish is zero.
 
 ## References
 
@@ -116,19 +114,6 @@ theorem smul_qParam_pow_shift_eq {d : ℕ} [NeZero d] {c : ℕ → ℂ}
     rw [hqP, mul_pow, pow_mul (Complex.exp _) d m,
       (Complex.isPrimitiveRoot_exp d (NeZero.ne d)).pow_eq_one, one_pow, mul_one]
   · rw [hc n hdn, zero_smul, zero_smul]
-
-/-- **A cusp form whose `q`-expansion vanishes identically is zero.** When `1` is a strict period
-of `Γ`, the `q`-expansion at width `1` determines a cusp form, so a form all of whose coefficients
-vanish is zero. This is Mathlib's `qExpansion_eq_zero_iff` packaged for a bundled `CuspForm`, with
-the cusp instance supplied by the period rather than assumed. -/
-theorem eq_zero_of_forall_qExpansion_coeff_eq_zero {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
-    (hΓ : (1 : ℝ) ∈ Γ.strictPeriods) {f : CuspForm Γ k}
-    (h : ∀ n, (qExpansion 1 f).coeff n = 0) : f = 0 := by
-  have : Fact (IsCusp OnePoint.infty Γ) := ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos hΓ⟩
-  exact DFunLike.coe_injective ((qExpansion_eq_zero_iff one_pos
-    (SlashInvariantFormClass.periodic_comp_ofComplex f hΓ)
-    (ModularFormClass.holo f) (ModularFormClass.bdd_at_infty f)).mp (PowerSeries.ext fun n ↦ by
-      rw [map_zero]; exact h n))
 
 end TauCeti
 

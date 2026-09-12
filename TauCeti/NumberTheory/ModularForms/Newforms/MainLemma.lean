@@ -151,8 +151,12 @@ theorem exists_eq_sum_of_forall_coprime_prod_qExpansion_coeff_eq_zero {χ : (ZMo
     refine ⟨fun _ ↦ 0, ?_, fun p hp ↦ absurd hp (Finset.notMem_empty p),
       fun p hp ↦ absurd hp (Finset.notMem_empty p)⟩
     rw [Finset.sum_empty]
-    exact eq_zero_of_forall_qExpansion_coeff_eq_zero (one_mem_strictPeriods_Gamma1_map _) fun n ↦
-      hvan n (by rw [Finset.prod_empty]; exact Nat.coprime_one_right n)
+    have hq : qExpansion 1 (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) = 0 :=
+      PowerSeries.ext fun n ↦ by
+        simpa using hvan n (by rw [Finset.prod_empty]; exact Nat.coprime_one_right n)
+    refine CuspForm.toModularFormₗ_injective ?_
+    rw [CuspForm.toModularFormₗ_eq_coe, map_zero]
+    exact (ModularForm.qExpansion_eq_zero_iff one_pos (one_mem_strictPeriods_Gamma1_map _) _).mp hq
   | succ m ih =>
     obtain ⟨p, hpS⟩ : S.Nonempty := Finset.card_pos.mp (hcard ▸ Nat.succ_pos m)
     have hp : p.Prime := Nat.prime_of_mem_primeFactors (hS hpS)
