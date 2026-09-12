@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.Data.Nat.PrimeFactorsProd
 public import TauCeti.NumberTheory.ModularForms.Newforms.AtkinLehner
 public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Dichotomy
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Coefficient
@@ -96,24 +97,6 @@ theorem exists_mem_qSupportedOnDvdSubmodule_and_qExpansion_coeff_sub_eq_zero (hp
 
 /-! ### The induction over the primes -/
 
-/-- The product of the primes of `S ⊆ N.primeFactors` other than `p` is squarefree, coprime to
-`p`, and has its primes among those of `N`. -/
-private theorem squarefree_prod_erase_and_coprime_and_primeFactors_subset {S : Finset ℕ}
-    (hS : S ⊆ N.primeFactors) {p : ℕ} (hp : p.Prime) :
-    Squarefree ((S.erase p).prod id) ∧ Nat.Coprime p ((S.erase p).prod id) ∧
-      ((S.erase p).prod id).primeFactors ⊆ N.primeFactors := by
-  have hprime : ∀ q ∈ S.erase p, q.Prime := fun q hq ↦
-    Nat.prime_of_mem_primeFactors (hS (Finset.mem_of_mem_erase hq))
-  refine ⟨?_, ?_, ?_⟩
-  · refine Finset.squarefree_prod_of_pairwise_isCoprime (fun q₁ hq₁ q₂ hq₂ hne ↦ ?_)
-      fun q hq ↦ (hprime q hq).squarefree
-    exact Nat.coprime_iff_isRelPrime.mp
-      ((Nat.coprime_primes (hprime q₁ hq₁) (hprime q₂ hq₂)).mpr hne)
-  · exact Nat.Coprime.prod_right fun q hq ↦
-      (Nat.coprime_primes hp (hprime q hq)).mpr (Finset.ne_of_mem_erase hq).symm
-  · exact Nat.primeFactors_mono (Finset.prod_primes_dvd N (fun q hq ↦ (hprime q hq).prime)
-      fun q hq ↦ Nat.dvd_of_mem_primeFactors (hS (Finset.mem_of_mem_erase hq))) (NeZero.ne N)
-
 omit [NeZero N] in
 omit [NeZero N] in
 /-- Extending a decomposition over `S.erase p` by a piece at `p`. -/
@@ -163,7 +146,8 @@ theorem exists_eq_sum_of_forall_coprime_prod_qExpansion_coeff_eq_zero {χ : (ZMo
     have hpN : p ∣ N := Nat.dvd_of_mem_primeFactors (hS hpS)
     have hS' : S.erase p ⊆ N.primeFactors := fun q hq ↦ hS (Finset.mem_of_mem_erase hq)
     have hcard' : (S.erase p).card = m := by rw [Finset.card_erase_of_mem hpS, hcard]; rfl
-    obtain ⟨hsq, hpL, hLN⟩ := squarefree_prod_erase_and_coprime_and_primeFactors_subset hS hp
+    obtain ⟨hsq, hpL, hLN⟩ := squarefree_prod_and_coprime_of_subset_primeFactors
+      ((Finset.erase_subset _ _).trans hS) hp (Finset.notMem_erase p S)
     have hprod : S.prod id = p * (S.erase p).prod id := by
       rw [← Finset.mul_prod_erase S id hpS]; rfl
     have hvan' : ∀ n, Nat.Coprime n (p * (S.erase p).prod id) → (qExpansion 1 f).coeff n = 0 :=
