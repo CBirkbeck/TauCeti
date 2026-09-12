@@ -1,15 +1,36 @@
-# Last round — r673 (2026-09-12 18:30Z)
+# Last round — r674 (2026-09-12 18:30Z)
 
-## The restructure is verified on CI, and the PR is sixteen lines
+## The sweep is a toolkit tool now, not a habit
 
-#6188 on `ec1a68d96`: build 11230 jobs, docstrings 9036/9036, `LINT-ENV: PASS`, and the PR is now
-**16 additions / 16 deletions / 1 file**. A PR that spent five rounds cross-firing with its sibling
-is, once the overlap is removed, sixteen lines. **The rounds went on the overlap, not the work.**
+It had run every round of this watch from a **scratchpad path under `/tmp`** — session-local, gone
+when this session ends — while encoding two rules each learned from a wrong answer:
+
+* **a superseded run is not a red build** (r653: it called #6188 `RED:label` on a cancelled duplicate
+  while `sandboxed-build` was green and nothing had conclusion `failure`), and
+* **the pipeline edits its scoreboard comment in place**, so sort by `updated_at` and compare
+  `head_sha` to the PR head; BEHIND means the fix is already pushed.
+
+Now `tools/sweep.py`, with those incidents in its docstring and the CI verdict factored into a pure
+`ci_verdict(runs)` so it is testable without the network. **Controls 133 → 135**, mutation-tested:
+
+```
+MUTATION (latest-per-name collapsed to any-run):
+  FAIL  sweep: a superseded cancelled run is not a red build (r653)
+  PASS  sweep: a real failure, a pending run and a live cancel still read red/pending
+  134 passed, 1 failed
+```
+
+Verified against the live board: identical verdicts to the scratchpad copy on all four PRs.
+**The round prompt still calls the `/tmp` path — that copy still works; `tools/sweep.py` is the one
+that survives the session.**
 
 ## Nothing else owed this round
 
 All four open PRs are green. #6093 and #6432 at **10/10 `ready-to-merge`**; #6188 awaiting a board on
 the restructured head; #5950 Chris's. Step 5 needs fewer than three open; there are four.
+
+#6188's `ec1a68d96` went green at **18:25:45Z**, so its board is due 18:57–19:33 — step 4 checked
+against the clock, not eyeballed.
 
 Checked the two 10/10 PRs for a cause rather than assuming one: both read `mergeable: UNKNOWN` with
 **zero files outside `TauCeti/`** and the `ready-to-merge` label — the identical state #6426, #6412
