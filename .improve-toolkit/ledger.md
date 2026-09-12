@@ -34126,3 +34126,68 @@ Seven open. #6412 and #6426 10/10 `ready-to-merge`. #6188 green, board BEHIND. #
 recorded it as "the pipeline's call, never mine" while resisting the urge to read the delay as a
 block. It was cadence. **`mergeable: UNKNOWN` is GitHub computing lazily, and a long green wait is
 not evidence of a stuck PR.** Six `improve/*` PRs remain open.
+
+---
+
+## r660 — 2026-09-12 — the split-out PR came back and closed its own finding
+
+### #6418 reached 10/10; #6093 reached 9/10
+
+**#6418 `ready-to-merge`, every rubric green.** The r653 duplicate deletion and the r657
+`intCharacter` pair (stale docstring + rooting `intCharacter_eq_iff` on cohesion) carried it.
+
+**#6093: `reuse` and `api-design` both ✅** on `606c70e0c` — *"The refactor reuses Mathlib's
+`Set.MapsTo.restrict`, `Subtype…`"*. The r658 restructure and the r659 `mapsTo_fiber` naming landed
+together. Nine of ten green; the one new blocker was `proof-quality` on the laws r658 added:
+
+> `compFiberEquiv_refl` and `compFiberEquiv_trans` close with `Subtype.ext rfl`, relying on
+> unfolding `compFiberEquiv`, `Set.equivOfEq`, and equivalence composition.
+
+Fair, and fixed the way it asked: `Equiv.ext fun _ ↦ Subtype.ext (by simp)`, so both laws go through
+`compFiberEquiv_apply_coe` — the lemma where that definitional equality already lives — and survive a
+change of representation. **A `rfl` that works is not automatically a `rfl` that should be there.**
+
+### #6188: `generality` was answered by a PR that had already landed
+
+Its finding — *"`extendOfIsLattice` … hard-code `Submodule ℤ` and `LinearEquiv` over ℚ … state all
+four for a domain `R`, fraction field `K`"* — is **exactly #6426**, which merged at 14:07:54Z. The
+branch was **209 commits behind**, so it simply did not have it.
+
+Merged `origin/main` in. **One conflict**, and it was precisely the predictable one:
+`Algebra/Module/Lattice.lean`, the four declarations #6426 generalised and #6188 roots. Resolved by
+taking #6426's signatures (`R`, `K`, `[Module.Free R S]`) and applying the rooting on top. Branch is
+now **0 behind main** and `MERGEABLE`; `lint-dot-notation` 759 → 751, 0 new.
+
+Also corrected the main-declarations bullet, which still read *"an integral linear equivalence …
+rational ambient spaces"* — **stale on `main` itself**, since #6426 generalised the declarations and
+left the prose. This PR already edits that line to drop the `TauCeti.` prefix, so fixing the wording
+costs nothing and pre-empts the finding r655 fixed on #6093.
+
+**A finding on one PR can be discharged by a different PR landing.** The `scope` block that split
+this work out is what produced the fix; re-implementing it here would have duplicated merged code.
+
+### `xsibling` has a real defect, and it is not "main moved"
+
+r656 diagnosed `xsibling`'s `specialOrthogonalToGeneralLinear` rows as a false positive caused by the
+branch being 204 commits behind. That explanation is now **dead**: the branch is level with main and
+the rows persist, at main's own line numbers (392, 399). `origin/main` itself declares
+`_root_.TauCeti.QuadraticMap.specialOrthogonalToGeneralLinear` and references it bare a few lines
+later, and main is green by construction.
+
+So `xsibling` reports a breakage for a declaration whose wrapper **this PR does not remove** — it is
+in the diff only because the `congrAut → autCongr` rename touched call sites in that file. A standing
+false positive trains the operator to skim the gate, which is the failure mode the whole toolkit
+exists to prevent. **Toolkit task for a future round: restrict `xsibling` to wrappers the PR actually
+removes, with a control built from this exact case.**
+
+### #6432: both contests rejected
+`naming` still reports the noncanonical namespace and `api-design` still reports the missing
+structural lemmas, on `f9bdb0a8b4`. The sequencing argument did not land. Next round: either
+implement the rooting there (accepting the duplication with #6188) or contest again with the
+conflict spelled out — note #6188's `api-design` now asks for the *same* structural lemmas, so the
+two PRs are being asked for the same work from both ends.
+
+### Board
+Six open. **#6418 `ready-to-merge` 10/10**, #6412 `ready-to-merge` 10/10, both awaiting the bot.
+#6093 9/10, pushed `02175efe6`. #6188 building on the merge `3e027a657`. #6432 two blockers.
+#5950 Chris's. Merged this watch: **#6426**.
