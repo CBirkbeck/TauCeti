@@ -404,7 +404,12 @@ noncomputable def heckeRingHomCuspCharSpace :
 /-- **The two Hecke actions agree on a cusp form.** The action on `S_k(N, χ)` and the action on
 `M_k(N, χ)` are built from the same twisted slash sums on functions, so the inclusion of
 character spaces `cuspToModFormCharSpace` intertwines them. This is what lets a statement about
-`modFormCharSpace` be specialised to `cuspFormCharSpace`. -/
+`modFormCharSpace` be specialised to `cuspFormCharSpace`.
+
+Not `@[simp]`: `heckeRingHomCuspCharSpace_apply` is itself a simp lemma, so the left-hand side
+here is not in simp-normal form — `simp` rewrites it to the underlying
+`twistedHeckeSlashCuspFormCharLinearMap` first — and tagging this makes the `simpNF` linter
+fail. Use it explicitly, as `Prime/Power.lean` does. -/
 theorem cuspToModFormCharSpace_heckeRingHomCuspCharSpace (T : 𝕋 (Delta0 N) (Γ₀Q(N)) ℤ)
     (f : cuspFormCharSpace k χ) :
     cuspToModFormCharSpace k χ (heckeRingHomCuspCharSpace k χ T f) =
