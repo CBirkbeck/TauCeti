@@ -80,7 +80,7 @@ through the instance.** For two equal uniformities on `S`, the composites
 The conclusion is `HEq` rather than `=` because the type `UniformSpace.Completion S` mentions the
 uniformity on `S`, so the two composites do not share a codomain. A caller holding an equation
 between uniformities — rather than a defeq — is the intended consumer. -/
-theorem coeRingHom_comp_heq {R S : Type*} [CommRing R] [CommRing S] (f : R →+* S)
+theorem coeRingHom_comp_heq {R S : Type*} [Ring R] [Ring S] (f : R →+* S)
     {u₁ u₂ : UniformSpace S} (hu : u₁ = u₂)
     (t₁ : @IsTopologicalRing S u₁.toTopologicalSpace _)
     (t₂ : @IsTopologicalRing S u₂.toTopologicalSpace _)
