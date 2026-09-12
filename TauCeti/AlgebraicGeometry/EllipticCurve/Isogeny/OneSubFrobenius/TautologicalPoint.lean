@@ -53,6 +53,31 @@ theorem map_tautologicalPoint_oneSubFrobeniusIsogeny {Ω : Type*} [Field Ω] [De
   rw [tautologicalPoint_oneSubFrobeniusIsogeny, map_sub, tautologicalPoint_eq_map_genericPoint,
     fieldPullback_frobeniusIsogeny, WeierstrassCurve.Affine.Point.map_frobeniusAlgHom_comm]
 
+/-- **Two homomorphisms that agree on the pulled-back field move the generic point to points whose
+difference is `q`-power fixed.** Their images of the tautological point of `1 − π_q` agree, and that
+image is `Q − Q^q`, so the two `Q`'s differ by a Frobenius-fixed point. -/
+theorem map_frobeniusAlgHom_sub_map_genericPoint {Ω : Type*} [Field Ω] [DecidableEq Ω]
+    [Algebra F Ω] (σ τ : W.FunctionField →ₐ[F] Ω)
+    (h : ∀ z ∈ (oneSubFrobeniusIsogeny W).fieldPullback.fieldRange, σ z = τ z) :
+    letI := Fintype.ofFinite F
+    Point.map (_root_.FiniteField.frobeniusAlgHom F Ω)
+        (Point.map σ (genericPoint W) - Point.map τ (genericPoint W)) =
+      Point.map σ (genericPoint W) - Point.map τ (genericPoint W) := by
+  let _ := Fintype.ofFinite F
+  have hmem : ∀ x : W.CoordinateRing,
+      (oneSubFrobeniusIsogeny W).pullback x ∈
+        (oneSubFrobeniusIsogeny W).fieldPullback.fieldRange := fun x ↦
+    AlgHom.mem_fieldRange.2 ⟨algebraMap W.CoordinateRing W.FunctionField x,
+      (oneSubFrobeniusIsogeny W).fieldPullback_algebraMap x⟩
+  have key := CoordinatePullback.map_tautologicalPoint_eq_of_apply_eq
+    (oneSubFrobeniusIsogeny W).pullback σ τ (h _ (hmem _)) (h _ (hmem _))
+  rw [map_tautologicalPoint_oneSubFrobeniusIsogeny,
+    map_tautologicalPoint_oneSubFrobeniusIsogeny] at key
+  rw [map_sub, eq_comm, ← sub_eq_zero]
+  rw [← sub_eq_zero] at key
+  rw [← key]
+  abel
+
 end TauCeti.Isogeny
 
 end
