@@ -499,8 +499,9 @@ theorem coe_mem_modFormCharSpace_iff (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
     ⟨fun h ↦ DFunLike.ext _ _ fun τ ↦ DFunLike.congr_fun h τ,
       fun h ↦ DFunLike.ext _ _ fun τ ↦ DFunLike.congr_fun h τ⟩
 
-/-- **The cusp-form case of `slash_mapGL_eq_self_of_mem_modFormCharSpace_of_comp`**, through
-the coercion to modular forms. -/
+/-- **A matrix of `Γ₀(N)` whose lower-right entry is `1` modulo a divisor `M` acts trivially on
+`S_k(Γ₁(N), χ)` when `χ` is pulled back from a character modulo `M`**: its nebentypus value is
+`χ₀` of the lower-right entry modulo `M`, which is `χ₀ 1 = 1`. -/
 theorem slash_mapGL_eq_self_of_mem_cuspFormCharSpace_of_comp {M N : ℕ} (hMN : M ∣ N)
     {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod M)ˣ →* ℂˣ} (hcomp : χ = χ₀.comp (ZMod.unitsMap hMN))
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {β : SL(2, ℤ)}

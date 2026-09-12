@@ -56,22 +56,18 @@ lemma finEquiv_symm_apply_val {n : ℕ} [NeZero n] (z : ZMod n) :
   conv_rhs => rw [← (ZMod.finEquiv n).apply_symm_apply z, finEquiv_apply]
   exact (ZMod.val_natCast_of_lt ((ZMod.finEquiv n).symm z).isLt).symm
 
-/-- Multiplication by `d` modulo `p` permutes `Fin p` when `d` and `p` are coprime. It *is*
-multiplication by the unit `ZMod.unitOfCoprime d hdp` of `ZMod p`, read through
-`ZMod.finEquiv`, so the permutation property is the unit's and nothing is proved here. -/
-noncomputable def mulModEquiv (p : ℕ) {d : ℕ} (hp : 0 < p) (hdp : Nat.Coprime d p) :
+/-- **Multiplication by a unit permutes the residues**: for `d` coprime to `p`, the map
+`b ↦ d b mod p` is a permutation of `Fin p`. It is multiplication by the unit
+`ZMod.unitOfCoprime d hdp` of `ZMod p`, read through `ZMod.finEquiv`. -/
+noncomputable def mulModEquiv (p : ℕ) {d : ℕ} [NeZero p] (hdp : Nat.Coprime d p) :
     Fin p ≃ Fin p :=
-  haveI : NeZero p := ⟨hp.ne'⟩
   (ZMod.finEquiv p).toEquiv.trans <|
     (Units.mulLeft (ZMod.unitOfCoprime d hdp)).trans (ZMod.finEquiv p).toEquiv.symm
 
-/-- The index the permutation sends `b` to, as a natural number. This is what
-`ZMod.finEquiv_symm_apply_val` is for: the `Fin p` representative of a residue has that
-residue's `val`. -/
+/-- **The value of `ZMod.mulModEquiv`**: it sends `b` to the residue `d b mod p`. -/
 @[simp]
-lemma coe_mulModEquiv (p : ℕ) {d : ℕ} (hp : 0 < p) (hdp : Nat.Coprime d p) (b : Fin p) :
-    (mulModEquiv p hp hdp b : ℕ) = d * (b : ℕ) % p := by
-  have : NeZero p := ⟨hp.ne'⟩
+lemma coe_mulModEquiv (p : ℕ) {d : ℕ} [NeZero p] (hdp : Nat.Coprime d p) (b : Fin p) :
+    (mulModEquiv p hdp b : ℕ) = d * (b : ℕ) % p := by
   simp [mulModEquiv, ZMod.coe_unitOfCoprime, ← Nat.cast_mul, ZMod.val_natCast]
 
 end ZMod

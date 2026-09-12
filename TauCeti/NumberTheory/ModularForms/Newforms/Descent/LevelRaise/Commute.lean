@@ -7,6 +7,7 @@ module
 
 public import TauCeti.NumberTheory.ModularForms.Degeneracy
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Sum
+import TauCeti.NumberTheory.ModularForms.HeckeSlash.Diagonal.QExpansion
 import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Periodic
 import TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelCommute
 
@@ -60,13 +61,6 @@ namespace TauCeti
 
 variable {p l : ℕ} (k : ℤ)
 
-/-- The real scale matrix `diag(l, 1)` is the image of the rational one. -/
-private theorem map_scaleRep_eq_scaleGL [NeZero l] :
-    Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (scaleRep l) = scaleGL l := by
-  ext i j
-  fin_cases i <;> fin_cases j <;>
-    simp [Matrix.GeneralLinearGroup.map, coe_scaleRep l (NeZero.pos l), coe_scaleGL]
-
 /-- **An upper-triangular member of the family, after the level-raise.** For `f` of level `Γ₁(M)`,
 `(V_l f) ∣[k] !![1, b; 0, p]` is `V_l` of `f ∣[k] !![1, l b mod p; 0, p]`: `diag(l, 1)` moves past
 `!![1, b; 0, p]` at the cost of the shift `T ^ (l b div p)` (`scaleRep_mul_upperTriRep`), which
@@ -85,7 +79,7 @@ private theorem coe_levelRaise_slash_upperTriRep_eq_smul_slash {M : ℕ} (hp : p
       (zpow_natCast ModularGroup.T (l * b / p) ▸ T_zpow_mem_Gamma1 M (l * b / p)))
   rw [ModularForm.coe_levelRaise, ModularForm.rat_smul_slash_of_det_pos k (det_upperTriRep_pos p b),
     ModularForm.rat_slash, ModularForm.rat_slash, ← SlashAction.slash_mul,
-    ← map_scaleRep_eq_scaleGL, ← map_mul,
+    ← map_natDiagGL_d_one_eq_scaleGL, ← scaleRep_def, ← map_mul,
     scaleRep_mul_upperTriRep p (NeZero.pos l) b (Nat.mod_lt _ hp.pos) hqr, map_mul, map_mul,
     Matrix.SpecialLinearGroup.map_mapGL, SlashAction.slash_mul, hT, SlashAction.slash_mul]
 
@@ -269,9 +263,10 @@ private theorem descendIndexMul_bijective (hp : p.Prime) (hpl : Nat.Coprime p l)
   refine (Fintype.bijective_iff_injective_and_card _).mpr ⟨fun v w hvw ↦ ?_,
     by simp [descendMatrixCount_mul_left_of_coprime hpl N]⟩
   have hvw' := congrArg Fin.val hvw
+  have : NeZero p := ⟨hp.ne_zero⟩
   rcases lt_or_ge v.val p with hv | hv <;> rcases lt_or_ge w.val p with hw | hw
   · rw [descendIndexMul_of_lt hp hpl N hv, descendIndexMul_of_lt hp hpl N hw] at hvw'
-    have := (ZMod.mulModEquiv p hp.pos hpl.symm).injective (a₁ := ⟨v.val, hv⟩)
+    have := (ZMod.mulModEquiv p hpl.symm).injective (a₁ := ⟨v.val, hv⟩)
       (a₂ := ⟨w.val, hw⟩) (Fin.ext (by rw [ZMod.coe_mulModEquiv, ZMod.coe_mulModEquiv]; exact hvw'))
     exact Fin.ext (Fin.mk.inj_iff.mp this)
   · rw [descendIndexMul_of_lt hp hpl N hv, descendIndexMul_of_le hp hpl N hw] at hvw'
@@ -324,7 +319,7 @@ private theorem coe_levelRaise_slash_descendMatrix_of_le {N : ℕ} (hp : p.Prime
       Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, NeZero.pos p⟩) =
       Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (upperTriRep p ⟨0, NeZero.pos p⟩) *
         scaleGL l := by
-    rw [← map_scaleRep_eq_scaleGL, ← map_mul, ← map_mul,
+    rw [← map_natDiagGL_d_one_eq_scaleGL, ← scaleRep_def, ← map_mul, ← map_mul,
       scaleRep_mul_upperTriRep p (NeZero.pos l) _ (NeZero.pos p)
         (by simp : l * ((⟨0, NeZero.pos p⟩ : Fin p) : ℕ) = 0 * p + 0),
       pow_zero, map_one, one_mul]
@@ -344,7 +339,7 @@ private theorem coe_levelRaise_slash_descendMatrix_of_le {N : ℕ} (hp : p.Prime
     slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq k hp hpN hpsq hpl hcomp hf hc]
 
 /-- **The descent commutes with the level-raise** (Miyake, Lemma 4.6.6 (2)). For a prime `p ∣ N`,
-`l` coprime to `p`, and `f ∈ S_k(Γ₁(N), χ)` with `χ` the pull-back of a character modulo `N / p`,
+`l` coprime to `p`, and `f ∈ M_k(Γ₁(N), χ)` with `χ` the pull-back of a character modulo `N / p`,
 the descent slash sum at level `l N` of `V_l f` is `V_l` of the descent slash sum of `f` at level
 `N`: `descendSlash k p (l N) (V_l f) = l ^ (1 - k) • (descendSlash k p N f ∣[k] diag(l, 1))`. -/
 theorem descendSlash_coe_levelRaise_mul_left_of_mem_modFormCharSpace {N : ℕ} (hp : p.Prime)
@@ -364,9 +359,9 @@ theorem descendSlash_coe_levelRaise_mul_left_of_mem_modFormCharSpace {N : ℕ} (
   · exact coe_levelRaise_slash_descendMatrix_of_lt k hp hpl f hv
   · exact coe_levelRaise_slash_descendMatrix_of_le k hp hpN hpl hcomp hf hv
 
-/-- **The descent commutes with the level-raise, on cusp forms**: the case of
-`descendSlash_coe_levelRaise_mul_left_of_mem_modFormCharSpace` the descent tower consumes, read
-through the coercion to modular forms. -/
+/-- **The descent commutes with the level-raise, on cusp forms.** For a prime `p ∣ N`, `l`
+coprime to `p`, and `f ∈ S_k(Γ₁(N), χ)` with `χ` the pull-back of a character modulo `N / p`,
+`descendSlash k p (l N) (V_l f) = l ^ (1 - k) • (descendSlash k p N f ∣[k] diag(l, 1))`. -/
 theorem descendSlash_coe_levelRaise_mul_left_of_mem_cuspFormCharSpace {N : ℕ} (hp : p.Prime)
     (hpN : p ∣ N) (hpl : Nat.Coprime p l) {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / p))ˣ →* ℂˣ}
     (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)))
