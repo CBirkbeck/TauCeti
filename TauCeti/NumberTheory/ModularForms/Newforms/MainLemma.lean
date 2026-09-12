@@ -115,25 +115,6 @@ private theorem squarefree_prod_erase_and_coprime_and_primeFactors_subset {S : F
       fun q hq ↦ Nat.dvd_of_mem_primeFactors (hS (Finset.mem_of_mem_erase hq))) (NeZero.ne N)
 
 omit [NeZero N] in
-/-- A cusp form all of whose `q`-expansion coefficients vanish is zero. -/
-private theorem eq_zero_of_forall_qExpansion_coeff_eq_zero
-    {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (h : ∀ n, (qExpansion 1 f).coeff n = 0) :
-    f = 0 := by
-  have : Fact (IsCusp OnePoint.infty ((Gamma1 N).map (mapGL ℝ))) :=
-    ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos (one_mem_strictPeriods_Gamma1_map _)⟩
-  exact DFunLike.coe_injective ((qExpansion_eq_zero_iff one_pos
-    (SlashInvariantFormClass.periodic_comp_ofComplex f (one_mem_strictPeriods_Gamma1_map _))
-    (ModularFormClass.holo f) (ModularFormClass.bdd_at_infty f)).mp (PowerSeries.ext fun n ↦ by
-      rw [map_zero]; exact h n))
-
-/-- Splitting a sum over `S` at `p ∈ S`, when the summand at `p` is given separately. -/
-private theorem sum_ite_eq_add_sum_erase {M : Type*} [AddCommMonoid M] {S : Finset ℕ} {p : ℕ}
-    (hp : p ∈ S) (a : M) (g : ℕ → M) :
-    ∑ q ∈ S, (if q = p then a else g q) = a + ∑ q ∈ S.erase p, g q := by
-  rw [← Finset.sum_erase_add _ _ hp, add_comm, ite_eq_left rfl]
-  congr 1
-  exact Finset.sum_congr rfl fun q hq ↦ ite_eq_right (Finset.ne_of_mem_erase hq)
-
 omit [NeZero N] in
 /-- Extending a decomposition over `S.erase p` by a piece at `p`. -/
 private theorem exists_eq_sum_of_sub_eq_sum_erase {χ : (ZMod N)ˣ →* ℂˣ} {S : Finset ℕ} {p : ℕ}
@@ -144,15 +125,15 @@ private theorem exists_eq_sum_of_sub_eq_sum_erase {χ : (ZMod N)ˣ →* ℂˣ} {
     (hchar : ∀ q ∈ S.erase p, g q ∈ cuspFormCharSpace k χ) :
     ∃ g : ℕ → CuspForm ((Gamma1 N).map (mapGL ℝ)) k, f = ∑ p ∈ S, g p ∧
       (∀ p ∈ S, g p ∈ qSupportedOnDvdSubmodule N k p) ∧ ∀ p ∈ S, g p ∈ cuspFormCharSpace k χ := by
-  refine ⟨fun q ↦ if q = p then gp else g q, ?_, fun q hq ↦ ?_, fun q hq ↦ ?_⟩
-  · rw [sum_ite_eq_add_sum_erase hpS, ← hsum, add_sub_cancel]
+  refine ⟨Function.update g p gp, ?_, fun q hq ↦ ?_, fun q hq ↦ ?_⟩
+  · rw [Finset.sum_update_of_mem hpS, Finset.sdiff_singleton_eq_erase, ← hsum, add_sub_cancel]
   · by_cases hqp : q = p
-    · simp only [hqp, ite_true]; exact hgp_supp
-    · simp only [hqp, ite_false]
+    · simp only [hqp, Function.update_self]; exact hgp_supp
+    · simp only [Function.update_of_ne hqp]
       exact hsupp q (Finset.mem_erase.mpr ⟨hqp, hq⟩)
   · by_cases hqp : q = p
-    · simp only [hqp, ite_true]; exact hgp_char
-    · simp only [hqp, ite_false]
+    · simp only [hqp, Function.update_self]; exact hgp_char
+    · simp only [Function.update_of_ne hqp]
       exact hchar q (Finset.mem_erase.mpr ⟨hqp, hq⟩)
 
 /-- **The coprime sieve decomposes along the primes** (Miyake, Lemma 4.6.8, the induction). For
@@ -170,7 +151,7 @@ theorem exists_eq_sum_of_forall_coprime_prod_qExpansion_coeff_eq_zero {χ : (ZMo
     refine ⟨fun _ ↦ 0, ?_, fun p hp ↦ absurd hp (Finset.notMem_empty p),
       fun p hp ↦ absurd hp (Finset.notMem_empty p)⟩
     rw [Finset.sum_empty]
-    exact eq_zero_of_forall_qExpansion_coeff_eq_zero fun n ↦
+    exact eq_zero_of_forall_qExpansion_coeff_eq_zero (one_mem_strictPeriods_Gamma1_map _) fun n ↦
       hvan n (by rw [Finset.prod_empty]; exact Nat.coprime_one_right n)
   | succ m ih =>
     obtain ⟨p, hpS⟩ : S.Nonempty := Finset.card_pos.mp (hcard ▸ Nat.succ_pos m)
