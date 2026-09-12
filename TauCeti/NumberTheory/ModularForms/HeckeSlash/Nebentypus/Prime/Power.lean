@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: The Tau Ceti contributors
 -/
 module
-public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime
+public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime.Basic
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Scalar
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Recurrence
 import TauCeti.Algebra.BigOperators.Finset.Range
@@ -13,7 +13,7 @@ import TauCeti.Algebra.BigOperators.Finset.Range
 # Fourier coefficients of the Hecke operators at a prime power on `S_k(N, χ)`
 
 The `Γ₀(N)` Hecke ring acts on `S_k(N, χ)` through `heckeRingHomCuspCharSpace`; at a prime `p`
-the generator acts as the classical `Tₚ` (`HeckeSlash/Nebentypus/Prime.lean`), whose Fourier
+the generator acts as the classical `Tₚ` (`HeckeSlash/Nebentypus/Prime/Basic.lean`), whose Fourier
 coefficients are `a_m(Tₚ F) = a_{pm}(F) + χ(p) p^{k−1} a_{m/p}(F)`
 (`HeckeSlash/Recurrence.lean`). Along the powers of a good prime `p ∤ N` the ring elements
 `T_{p^r}` are the recurrence family `heckeTGeneratorRecGamma0`, with
@@ -34,6 +34,8 @@ coprime to the level.
 
 ## Main results
 
+* `HeckeRing.GL2.heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two` and its pointwise
+  form `..._add_two_apply`: the ring's two-step recurrence on the character space.
 * `HeckeRing.GL2.qExpansion_coeff_prime_pow_mul_heckeTGeneratorRecGamma0`: the formula above.
 * `HeckeRing.GL2.qExpansion_coeff_heckeTGeneratorRecGamma0_of_not_dvd`:
   `a_m(T_{p^r} F) = a_{p^r m}(F)` at an index `m` prime to `p`.
@@ -90,6 +92,19 @@ theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two (hp : 0 < p)
   rw [hk, zpow_add_one₀ hp0]
   push_cast
   ring
+
+/-- **The recurrence at a form**: `heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two`
+evaluated. This is the pointwise interface — the shape the coefficient formula below and the
+eigenvalue recurrence of `Newforms/RingEigenvalue.lean` consume. -/
+theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two_apply (hp : 0 < p)
+    (hpN : Nat.Coprime p N) (F : cuspFormCharSpace k χ) (r : ℕ) :
+    heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) F =
+      heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p)
+          (heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 1)) F) -
+        ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) •
+          heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p r) F := by
+  rw [heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two hp hpN r]
+  rfl
 
 omit [NeZero N] in
 /-- The coefficients of a difference `x − c • y` in the character space. -/
@@ -176,9 +191,7 @@ theorem qExpansion_coeff_prime_pow_mul_heckeTGeneratorRecGamma0 (hp : p.Prime)
     rw [heckeTGeneratorRecGamma0_one]
     exact qExpansion_coeff_prime_pow_mul_heckeTGeneratorGamma0 hp hpN F hpm j
   | more r ih1 ih2 =>
-    rw [LinearMap.congr_fun
-        (heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two hp.pos hpN r) F,
-      LinearMap.sub_apply, Module.End.mul_apply, LinearMap.smul_apply,
+    rw [heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two_apply hp.pos hpN F r,
       qExpansion_coeff_coe_sub_smul]
     rcases j with _ | j
     · -- `p ∤ m`: the recurrence reads the coefficient at `p m`, which is the `j = 1` instance
