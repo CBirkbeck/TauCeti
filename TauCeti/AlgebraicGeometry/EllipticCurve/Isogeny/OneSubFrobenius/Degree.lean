@@ -28,8 +28,8 @@ separable, so the degree is at most the point count.
 
 ## Main results
 
-* `TauCeti.Isogeny.card_emb_le_pointCount`: the embeddings of `K(W)` over the pulled-back field
-  are at most as many as the rational points.
+* `TauCeti.Isogeny.card_emb_oneSubFrobeniusIsogeny_le_pointCount`: the embeddings of `K(W)` over
+  the pulled-back field are at most as many as the rational points.
 * `TauCeti.Isogeny.degree_oneSubFrobeniusIsogeny_le_pointCount`: hence `deg (1 − π_q)` is at most
   the point count.
 * `TauCeti.Isogeny.degree_oneSubFrobeniusIsogeny_eq_pointCount`: with the reverse bound,
@@ -62,7 +62,7 @@ variable {F : Type*} [Field F] [Finite F] (W : WeierstrassCurve.Affine F) [W.IsE
 /-- **There are at most as many embeddings of the function field over the pulled-back field as
 there are rational points.** Each embedding is sent to the rational point by which it moves the
 generic point away from a fixed base embedding. -/
-theorem card_emb_le_pointCount :
+theorem card_emb_oneSubFrobeniusIsogeny_le_pointCount :
     Nat.card (Field.Emb (oneSubFrobeniusIsogeny W).fieldPullback.fieldRange W.FunctionField) ≤
       W.pointCount := by
   classical
@@ -94,7 +94,7 @@ theorem degree_oneSubFrobeniusIsogeny_le_pointCount :
     (oneSubFrobeniusIsogeny W).degree ≤ W.pointCount := by
   have := isSeparable_oneSubFrobeniusIsogeny W
   rw [← separableDegree_eq_degree_of_isSeparable, separableDegree_def]
-  exact card_emb_le_pointCount W
+  exact card_emb_oneSubFrobeniusIsogeny_le_pointCount W
 
 /-- **`deg (1 − π_q) = #E(𝔽_q)`**, the first input of the Hasse bound. -/
 @[simp]
