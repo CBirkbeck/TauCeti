@@ -8,7 +8,10 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Composite
 public import TauCeti.NumberTheory.ModularForms.Newforms.RingEigenvalue
 
 /-!
-# The Fourier coefficients of a good Hecke eigenform are its eigenvalues
+# The Fourier coefficients of a good Hecke eigenform, and of a newform
+
+For an `EigenformAwayFromLevel` the coefficients are the eigenvalues *scaled by* `a₁`, and only
+for a normalised `Newform`, where `a₁ = 1`, are they the eigenvalues themselves.
 
 `Newforms/RingEigenvalue.lean` reads the eigenvalue system `λ` of an `EigenformAwayFromLevel` off
 the multiplication table of the `Γ₀(N)` Hecke ring, touching no Fourier coefficient. This file

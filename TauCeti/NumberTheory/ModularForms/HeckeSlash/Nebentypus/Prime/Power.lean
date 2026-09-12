@@ -74,43 +74,6 @@ namespace HeckeRing.GL2
 
 variable {N p : ℕ} [NeZero N] {k : ℤ} {χ : (ZMod N)ˣ →* ℂˣ}
 
-/-- **The recurrence, transported to the character space.** For `p` coprime to `N`,
-`T_{p^{r+2}} = Tₚ ∘ T_{p^{r+1}} − χ(p) p^{k−1} • T_{p^r}` as endomorphisms of `M_k(N, χ)`: the
-image of `heckeTGeneratorRecGamma0_succ_succ` under the ring homomorphism, with the scalar coset
-acting by `χ(p) p^{k−2}` (`heckeRingHomCharSpace_heckeTScalarGamma0`), so that `p • S_p` acts
-by `χ(p) p^{k−1}`. Only positivity of `p` is used. -/
-theorem heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two (hp : 0 < p)
-    (hpN : Nat.Coprime p N) (r : ℕ) :
-    heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) =
-      heckeRingHomCharSpace k χ (heckeTGeneratorGamma0 N p) *
-          heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 1)) -
-        ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) •
-          heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p r) := by
-  refine LinearMap.ext fun F ↦ ?_
-  rw [heckeTGeneratorRecGamma0_succ_succ, map_sub, map_mul, map_mul, map_zsmul,
-    heckeRingHomCharSpace_heckeTScalarGamma0 k χ p hp hpN]
-  simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.smul_apply,
-    Module.End.one_apply, ← Int.cast_smul_eq_zsmul ℂ, smul_smul]
-  congr 2
-  have hp0 : (p : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hp.ne'
-  have hk : k - 1 = k - 2 + 1 := by ring
-  rw [hk, zpow_add_one₀ hp0]
-  push_cast
-  ring
-
-/-- **The recurrence at a form**: `heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two`
-evaluated. This is the pointwise interface — the shape the coefficient formula below and the
-eigenvalue recurrence of `Newforms/RingEigenvalue.lean` consume. -/
-theorem heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two_apply (hp : 0 < p)
-    (hpN : Nat.Coprime p N) (F : modFormCharSpace k χ) (r : ℕ) :
-    heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) F =
-      heckeRingHomCharSpace k χ (heckeTGeneratorGamma0 N p)
-          (heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 1)) F) -
-        ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) •
-          heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p r) F := by
-  rw [heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two hp hpN r]
-  rfl
-
 /-- **`Tₚ` at an index prime to `p`** reads the coefficient at `p m`: the `p ∣ m` term of the
 recurrence is absent. -/
 theorem qExpansion_coeff_heckeRingHomCharSpace_heckeTGeneratorGamma0_of_not_dvd (hp : p.Prime)
@@ -186,7 +149,7 @@ theorem qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorRecG
     rw [heckeTGeneratorRecGamma0_one]
     exact qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorGamma0 hp hpN F hpm j
   | more r ih1 ih2 =>
-    rw [heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two_apply hp.pos hpN F r,
+    rw [heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two_apply k χ hp.pos hpN F r,
       Submodule.coe_sub, Submodule.coe_smul,
       ← TauCeti.ModularForm.qExpansionLinearMap_apply one_pos
         (TauCeti.one_mem_strictPeriods_Gamma1_map _), map_sub, map_smul,
@@ -202,9 +165,17 @@ theorem qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorRecG
       rw [pow_zero, one_mul,
         qExpansion_coeff_heckeRingHomCharSpace_heckeTGeneratorGamma0_of_not_dvd hp hpN _ hpm, h2,
         h1]
-      exact TauCeti.sum_range_min_zero
-        (fun t ↦ (qExpansion 1 (F : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ t * m))
-        ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) r
+      -- at `j = 0` the two sums have one and two terms, and recombine directly
+      have hmin₁ : min 1 (r + 1) + 1 = 2 := by omega
+      have hmin₂ : min 0 (r + 2) + 1 = 1 := by omega
+      have hmin₃ : min 0 r + 1 = 1 := by omega
+      have hidx₁ : 1 + (r + 1) - 2 * 0 = r + 2 := by omega
+      have hidx₂ : 1 + (r + 1) - 2 * 1 = r := by omega
+      have hidx₃ : 0 + (r + 2) - 2 * 0 = r + 2 := by omega
+      have hidx₄ : 0 + r - 2 * 0 = r := by omega
+      rw [hmin₁, hmin₂, hmin₃, Finset.sum_range_succ, Finset.sum_range_one, Finset.sum_range_one,
+        Finset.sum_range_one, hidx₁, hidx₂, hidx₃, hidx₄, pow_zero, pow_one, one_mul, one_mul,
+        add_sub_cancel_right]
     · -- both terms of the recurrence are present, and the four sums recombine by
       -- `TauCeti.sum_range_min_add_two`
       rw [qExpansion_coeff_prime_pow_succ_mul_heckeRingHomCharSpace_heckeTGeneratorGamma0 hp hpN _
@@ -228,20 +199,6 @@ theorem qExpansion_coeff_heckeRingHomCharSpace_heckeTGeneratorRecGamma0_of_not_d
 
 
 /-! ### The cusp-form specialisations -/
-
-/-- **The recurrence on `S_k(N, χ)`**: the case of
-`heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two_apply` at a cusp form, transported
-along the inclusion of character spaces (`cuspToModFormCharSpace_heckeRingHomCuspCharSpace`). -/
-theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two_apply (hp : 0 < p)
-    (hpN : Nat.Coprime p N) (F : cuspFormCharSpace k χ) (r : ℕ) :
-    heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) F =
-      heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p)
-          (heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 1)) F) -
-        ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) •
-          heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p r) F := by
-  refine cuspToModFormCharSpace_injective k χ ?_
-  simp only [map_sub, map_smul, cuspToModFormCharSpace_heckeRingHomCuspCharSpace]
-  exact heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two_apply hp hpN _ r
 
 /-- **The prime-power coefficient formula on `S_k(N, χ)`**: the case of
 `qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorRecGamma0` at a cusp form,

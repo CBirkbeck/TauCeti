@@ -405,6 +405,8 @@ noncomputable def heckeRingHomCuspCharSpace :
 `M_k(N, χ)` are built from the same twisted slash sums on functions, so the inclusion of
 character spaces `cuspToModFormCharSpace` intertwines them. This is what lets a statement about
 `modFormCharSpace` be specialised to `cuspFormCharSpace`. -/
+-- Not `@[simp]`: `heckeRingHomCuspCharSpace_apply` is itself a simp lemma, so this left-hand
+-- side is not in simp-normal form and `simpNF` rejects the annotation.
 theorem cuspToModFormCharSpace_heckeRingHomCuspCharSpace (T : 𝕋 (Delta0 N) (Γ₀Q(N)) ℤ)
     (f : cuspFormCharSpace k χ) :
     cuspToModFormCharSpace k χ (heckeRingHomCuspCharSpace k χ T f) =
