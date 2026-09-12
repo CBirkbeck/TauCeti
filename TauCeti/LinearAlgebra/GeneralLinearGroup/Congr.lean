@@ -15,11 +15,11 @@ Mathlib conjugates general linear groups with
 the automorphisms `M ≃ₗ[R] M` through `LinearMap.GeneralLinearGroup.generalLinearEquiv`. Groups of
 linear automorphisms cut out by a structure they preserve — an orthogonal group, an isometry
 group — are subgroups of `M ≃ₗ[R] M` rather than of `GL R M`, so what they need is the composite of
-those two, which this file records as `LinearEquiv.congrAut`.
+those two, which this file records as `LinearEquiv.autCongr`.
 
 ## Main definitions
 
-* `LinearEquiv.congrAut`: conjugation by `e : M₁ ≃ₗ[R] M₂`, as an isomorphism
+* `LinearEquiv.autCongr`: conjugation by `e : M₁ ≃ₗ[R] M₂`, as an isomorphism
   `(M₁ ≃ₗ[R] M₁) ≃* (M₂ ≃ₗ[R] M₂)`.
 
 ## Main statements
@@ -52,14 +52,14 @@ groups: Mathlib's `LinearMap.GeneralLinearGroup.congrLinearEquiv` read through
 `LinearMap.GeneralLinearGroup.generalLinearEquiv`.
 
 The two evaluation lemmas below are its characteristic API. -/
-def _root_.LinearEquiv.congrAut (e : M₁ ≃ₗ[R] M₂) : (M₁ ≃ₗ[R] M₁) ≃* (M₂ ≃ₗ[R] M₂) :=
+def _root_.LinearEquiv.autCongr (e : M₁ ≃ₗ[R] M₂) : (M₁ ≃ₗ[R] M₁) ≃* (M₂ ≃ₗ[R] M₂) :=
   ((generalLinearEquiv R M₁).symm.trans (congrLinearEquiv e)).trans (generalLinearEquiv R M₂)
 
 /-- Conjugating `f` by `e` sends `m` to `e (f (e.symm m))`. -/
 @[simp]
-theorem _root_.LinearEquiv.congrAut_apply (e : M₁ ≃ₗ[R] M₂) (f : M₁ ≃ₗ[R] M₁) (m : M₂) :
-    LinearEquiv.congrAut e f m = e (f (e.symm m)) := by
-  rw [LinearEquiv.congrAut, MulEquiv.trans_apply, MulEquiv.trans_apply]
+theorem _root_.LinearEquiv.autCongr_apply_apply (e : M₁ ≃ₗ[R] M₂) (f : M₁ ≃ₗ[R] M₁) (m : M₂) :
+    LinearEquiv.autCongr e f m = e (f (e.symm m)) := by
+  rw [LinearEquiv.autCongr, MulEquiv.trans_apply, MulEquiv.trans_apply]
   -- `generalLinearEquiv` computes on coercions, not at the level of `M₁ ≃ₗ[R] M₁`, so its inverse
   -- law has to be transported across `toLinearEquiv` before `simp` can use it.
   have h : ((generalLinearEquiv R M₁).symm f).toLinearEquiv = f :=
@@ -69,9 +69,9 @@ theorem _root_.LinearEquiv.congrAut_apply (e : M₁ ≃ₗ[R] M₂) (f : M₁ �
 
 /-- Inverse conjugation by `e` sends `m` to `e.symm (g (e m))`. -/
 @[simp]
-theorem _root_.LinearEquiv.congrAut_symm_apply (e : M₁ ≃ₗ[R] M₂) (g : M₂ ≃ₗ[R] M₂) (m : M₁) :
-    (LinearEquiv.congrAut e).symm g m = e.symm (g (e m)) := by
-  rw [LinearEquiv.congrAut, MulEquiv.symm_trans_apply, MulEquiv.symm_trans_apply,
+theorem _root_.LinearEquiv.autCongr_symm_apply_apply (e : M₁ ≃ₗ[R] M₂) (g : M₂ ≃ₗ[R] M₂) (m : M₁) :
+    (LinearEquiv.autCongr e).symm g m = e.symm (g (e m)) := by
+  rw [LinearEquiv.autCongr, MulEquiv.symm_trans_apply, MulEquiv.symm_trans_apply,
     congrLinearEquiv_symm]
   -- `generalLinearEquiv` computes on coercions, not at the level of `M₂ ≃ₗ[R] M₂`, so its inverse
   -- law has to be transported across `toLinearEquiv` before `simp` can use it.
