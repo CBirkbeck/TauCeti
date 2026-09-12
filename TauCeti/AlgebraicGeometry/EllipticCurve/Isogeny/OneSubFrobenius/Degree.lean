@@ -5,10 +5,12 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FinitePoint
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.Kernel
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.TautologicalPoint
+import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FinitePoint
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.Basic
+import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.Kernel
 import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.Separable
+import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.TautologicalPoint
+public import TauCeti.AlgebraicGeometry.EllipticCurve.PointCount
 
 /-!
 # The degree of `1 − π_q` is the number of rational points
