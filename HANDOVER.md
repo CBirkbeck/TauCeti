@@ -279,3 +279,49 @@ Then:
 2. `bash tools/controls.sh` — **129 passed, 0 failed**. If not, fix the toolkit before touching a PR.
 3. Sweep the board (§4). **#6432 needs marking ready** if its CI has gone green.
 4. Set the 10-minute cron (§3).
+
+---
+
+## 10. Addendum — 2026-09-12, first round actually run on AI-DOOM (r653)
+
+The setup in §9 is right, but three things bite on a machine change. All three are fixed on this
+branch; this section records *why*, because each one reads green or reads like a defect elsewhere.
+
+* **The controls will read `125 passed, 4 failed` until you take this branch's fixture.**
+  `fixtures/r440-lintcand-ctl/base.tsv` used to carry absolute paths from the authoring machine.
+  `lintcand.py` honours an absolute path as-is, so every row resolved to nothing and the firing
+  control printed *"4 baseline rows, 4 single-finding files, **0 declarations located**"*. The rows
+  are now relative to the fixture root. **The tool was never wrong — the fixture was not portable.**
+  Two of those five controls had also been passing *vacuously on empty output*, which is r649's own
+  trap. If you ever port these fixtures again, re-run the mutation test: and note that a mutation
+  matching the short name's **last component** leaves all five green, because the flagged
+  declaration precedes the decoy in the file. Only the faithful r439 defect — the header must *be*
+  the bare short name — fails them.
+
+* **A fresh worktree has no `.lake`, and `lint-dot-notation` then errors on BOTH sides.** The gate
+  renders that as `FAIL lint-dot-notation: NEW violations` and `rootsurplus UNRUN`, neither of which
+  is true. Symlink it — no `lake` is invoked, so the prohibition is untouched:
+
+  ```bash
+  ln -sfn ~/GitHub/TauCeti/.lake .claude/worktrees/improver-1/.lake
+  echo .lake >> "$(git rev-parse --git-common-dir)/info/exclude"   # /.lake/ in .gitignore is dir-only
+  ```
+
+  With it, the check reads base **761** → head **741**, 0 new. **A check that errors on both sides is
+  not a comparison — it is two errors.**
+
+* **`gh pr edit` is broken against this repo.** It fails on the projects-classic GraphQL deprecation
+  (`repository.pullRequest.projectCards`) and **leaves the body unchanged without saying so** — it
+  exits printing only the deprecation notice. Use
+  `gh api -X PATCH repos/TauCetiProject/TauCeti/pulls/<n> -F body=@file` and re-read the body after.
+
+**Sweeping CI:** judge each check by its **latest run per name**. A commit's check-runs list carries
+every run ever created for that SHA, so a re-dispatch leaves `cancelled` duplicates behind. #6188
+read RED on a superseded `label` job while `sandboxed-build` was green and nothing had conclusion
+`failure`. **A superseded run is not a red build.**
+
+**One more finding shape to expect:** a rubric can be *correct* and still not be yours. #6412's
+`api-design` asks for an edit to `TauCetiRoadmap/Exchangeability/README.md` — a separate,
+human-controlled repo this role may not open a PR or issue in, and which no `TauCeti/`-only branch
+can reach. Contest it, name the constraint, and say what survives (there, the canonical declaration
+under its own name). Do not re-add a deleted duplicate to satisfy a downstream document.

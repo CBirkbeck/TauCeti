@@ -1,72 +1,89 @@
-# Last round — r650 (2026-09-12 09:16Z)
+# Last round — r653 (2026-09-12 12:45Z) — first round on **AI-DOOM**
 
-## Sweep four things, not three
+## The toolkit arrives broken on a new machine. Run the controls FIRST.
 
-`label` · `CI` · `board head_sha` · **`isDraft`**
+`tools/controls.sh` read **125 passed, 4 failed**, not 129/0. All four in `lintcand`, and the tool
+was byte-identical to the handover — the **fixture** was not portable. `base.tsv` held absolute
+paths from the old machine; `lintcand.py:79` honours absolute paths, so they resolved to nothing.
 
-r650: #6412 sat green for 64 minutes with **no scoreboard** because it was still a **draft**, while
-its label read `awaiting-review` the whole time. **A label says what is wanted, not what is
-reachable.** It was also formally step-4 drive-eligible — driving would have spent ~$16 reviewing a
-draft and left the cause untouched. *Eligibility under a rule is not the rule's purpose being served.*
+**Two inherited controls were passing vacuously on empty output.** r649's rule applies to inherited
+controls too: *a control that has never been seen to fail here is not evidence.*
 
-**Always finish step 5: open as draft → CI green → `gh pr ready <n>`.**
+### A mutation that does not reproduce the documented defect is not a mutation test
 
-### The drive clock starts at `ready_for_review`, not at CI-green (r651, measured)
+My first mutation left **all five controls green** — not because they are weak, but because the
+flagged declaration sits at `Twin.lean:11` and the decoy at `:17`, so first-match-wins is right by
+accident. Only the faithful r439 defect (header must *be* the bare short name, so a dotted header is
+skipped) fails them — reporting the decoy at width 52, exactly as the fixture's docstring predicts.
 
-The pipeline's own latency from reviewable to first board: **#6093 46 min, #6406 64 min**. So step
-4's hour must be counted from `max(CI-green, ready_for_review)` — otherwise a PR marked ready late
-looks eligible immediately and a drive just reproduces the board the pipeline was about to post.
+## Machine-change artefacts to expect anywhere
 
-```
-gh api repos/$R/issues/<n>/timeline --paginate \
-  --jq '[.[]|select(.event=="ready_for_review")]|last|.created_at'
-```
+* **No `.lake` in a fresh worktree** → `lint-dot-notation` errors on **both** sides and the gate
+  renders that as `FAIL … NEW violations` + `rootsurplus UNRUN`. Symlink `.lake` to the rig root
+  (no `lake` is invoked — the prohibition stands). Then: base **761** → head **741**, 0 new.
+  **A check that errors on both sides is not a comparison.**
+  `.gitignore` says `/.lake/` (directory-only), so the symlink shows untracked → `.git/info/exclude`.
+* **Hardcoded absolute paths** — `minecount.py` passed the old machine's worktree as `cwd=`, which
+  *raises*. Now derived from `__file__` (`TAUCETI_WT` overrides).
 
-## Board
+## A superseded run is not a red build
 
-| PR | head | CI | label | whose move |
-|---|---|---|---|---|
-| **#5950** | `a64ba63667` | — | `ready-to-merge` | **Chris** — `MERGEABLE`/`BLOCKED` on human-owned `web/examples/Examples.lean` |
-| **#6406** | `95298f1eb3` | green | `ready-to-merge` | nobody — 0 files outside `TauCeti/`, auto-merge eligible |
-| **#6093** | `277fd5ee72` | green | `awaiting-review` | reviewer (board behind → pending) |
-| **#6188** | `27465ef69e` | green | `awaiting-review` | reviewer (board behind → pending) |
-| **#6412** | `360cdfc5b9` | green | `awaiting-review` | reviewer — **marked ready in r650** |
-| **#6418** | `adcce97987` | building | — | me: **mark ready when green** |
+My sweep first read **#6188 as RED**. A commit's check-runs list carries *every* run created for that
+SHA; a re-dispatch had left a `cancelled` duplicate `label` job while `sandboxed-build` was green and
+nothing had conclusion `failure`. **Judge each check by its LATEST run per name.**
+Sweep: `python3 /tmp/claude-1001/-home-chris/0b3b2a65-fff4-42cd-a2ef-093a3324dfa3/scratchpad/sweep.py`
+
+## `gh pr edit` is broken against this repo
+
+It fails on the projects-classic GraphQL deprecation and **leaves the body unchanged without
+saying so**. Use `gh api -X PATCH repos/$R/pulls/<n> -F body=@file`, then re-read the body.
+
+## Board (12:45Z — all CI green, every board on its current head)
+
+| PR | head | label | whose move |
+|---|---|---|---|
+| **#5950** | `a64ba63667` | `ready-to-merge` | **Chris** — human-owned `web/examples/Examples.lean` |
+| **#6093** | `34ac589376` | `awaiting-author` | **me** — `reuse` + `api-design` on `Function.fiberMap` still open; `documentation` contested r653 |
+| **#6188** | `36d148a8d9` | `awaiting-author` | **me** — not yet read this session |
+| **#6412** | `360cdfc5b9` | `awaiting-author` | reviewer — `api-design` contested r653 |
+| **#6418** | `d20b665467` | `awaiting-author` | reviewer — ⛔ `reuse` **fixed** r653, re-review running |
+| **#6426** | `54f8eb82b5` | `awaiting-review` | reviewer — ready 12:15Z, inside the 46–64 min window |
+| **#6432** | `f9bdb0a8b4` | `awaiting-CI` | reviewer — **marked ready 12:25Z** (r653 first action) |
 
 ## Settled — do not re-litigate
 
-* **#6093** — five original findings all green. Keep `@[expose]` on `Function.fiberMap`; `Equiv.compFiberEquiv` must NOT have it; `fundamentalGroupEquivFiber_apply_coe` must NOT be `@[simp]`. `fiberMap_comp_apply` must NOT be `@[simp]` — `simpNF` rejects it (tested twice, r648); the bullet is contested with CI evidence.
-* **#6188** — `api-design` and `reuse` green; semilinear `congrAut` accepted. `extendOfIsLattice` generalised to a domain + fraction field; `[IsDomain R]` deliberately absent (unused).
-* **#6418** — `parallelns` and `slice` are one fact twice: `intCharacter_def` is `private` and stays. `intCharacter_eq_iff` stays because its `FDRep` args are **implicit**.
+* **#6093** — keep `@[expose]` on `Function.fiberMap`; `Equiv.compFiberEquiv` must NOT have it;
+  `fundamentalGroupEquivFiber_apply_coe` must NOT be `@[simp]`; `fiberMap_comp_apply` must NOT be
+  `@[simp]` (`simpNF` rejects it, tested twice). `naming` and `placement` cleared on scope.
+* **#6418** — `parallelns`/`slice` are one fact twice: `intCharacter_def` is `private` and stays;
+  `intCharacter_eq_iff`'s `FDRep` args are **implicit**. `FDRep.isIntegral_char` is **deleted**, not
+  rooted — it duplicates Mathlib's `FDRep.isIntegral_character` exactly. `decldiff`'s VANISHED row is
+  a true positive and is answered in the body.
+* **#6412** — the roadmap line the finding wants changed is in **TauCetiRoadmap**, a human-controlled
+  repo this role may not open a PR or issue in. Contested, not fixable here.
 
-## Gate — 15 checks, **129 controls, 0 failed**
+## Next
 
-Fixed this session: `rootedin` (all proper suffixes, r643; shadowing judged from the *reference's*
-stack, r648), `nsjump` (backticked prose is not a reference, r646; source set is `rem - add`, r649).
-
-**Every new control must be run against the bug, not only against the fix.** r649 nearly shipped one
-whose fixture mutation silently threw — it passed on empty input and read green.
-
-**A check's scope is part of its answer**: `stalequal` reported 2 stale paths; the tree had **24** —
-it only sees files whose *declarations* changed.
-
-## Prospecting
-
-Measure against a freshly fetched **`origin/main`**, never the checked-out branch (r648 ranked a
-target that was already rooted on main). WHOLE rooting lane is exhausted: every WHOLE namespace is an
-open PR, one of the 8 ABSENT traps, or a thin 1/1. Partial candidates left:
-`ContRepresentation` 141/184, `Representation` 134/189, `AbelianVariety.Hom` 41/54,
-`WeierstrassCurve` 26/27. Avoid `IsCoveringMap` 59/67 and `Deck.IsQuotientCoveringMap` 31/32 —
-both overlap #6093.
+1. **#6093** `reuse` + `api-design` — both on the new `TauCeti/Logic/Function/Fiber.lean`, which this
+   PR *does* create, so both are in scope and should be implemented, not contested. `reuse` wants
+   `fiberMap` built from `Set.MapsTo.restrict` with the laws via `Subtype.map_id`/`Subtype.map_comp`;
+   `api-design` wants `@[expose]` gone. §6 records that removing it breaks `fiberMap_monodromy`
+   across a module boundary — but the `reuse` restructure may change that, so do `reuse` first and
+   re-measure. **No local build: gate on CI.**
+2. **#6188** — not yet read this session. Five blocking rubrics per the handover; expect `api-design`
+   and `reuse` to have re-fired on the rooting alone, which is expected, not a regression.
+3. `handover/congraut-structural-deferred` opens only **after #6188 lands**.
 
 ## Still needs Chris
 
-* **No `lake build` / `cache get` / `lake update`** until he confirms the cache. Gate on CI.
-* `cft-fix-6093` holds 13 superseded files + a stray `lake-manifest.json` bump to `369aeb92f4`.
-* #5950.
+* **No `lake build` / `cache get` / `lake update`.** Gate on CI. (This machine has no toolchain at
+  all, so it enforces itself.)
+* No `uv`/`uvx` here — step 4 review drives unavailable until installed. The pipeline self-serves in
+  46–64 min, so this is rarely the bottleneck.
+* `cft-fix-6093` holds 13 superseded files + a stray `lake-manifest.json` bump. #5950.
 
 ## Standing traps
 
 Never merge/close a PR. Push to `fork`, never `origin` (403). One worktree: `improver-1`.
 Never touch `scripts/`, `.github/`, the lakefile. No bare `git stash`. Never #5481.
-Every PR body needs a standalone `Roadmap: none`.
+Never open a PR from `handover/improve-toolkit`. Every PR body needs a standalone `Roadmap: none`.

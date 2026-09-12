@@ -29,11 +29,17 @@ carries it.  Of the 102, 36 are this session's and 66 belong to other sessions.
 
 Report both numbers.  "102 merged" overclaims; "36 merged" understates the channel.
 """
-import json, re, subprocess, sys, collections
+import json, os, re, subprocess, sys, collections
 
 REPO = "TauCetiProject/TauCeti"
 MINE = "01TYwXN9WBAPasmBQXr6iQcp"
-WT   = "/Users/mcu22seu/GitHub/TauCeti/.claude/worktrees/improver-1"
+# Derived, not hardcoded: this file travels between machines on `handover/improve-toolkit`, and an
+# absolute path from the authoring machine makes `cwd=WT` raise before a single commit is read.
+# Layout: <root>/.mathlib-quality/improve/tools/minecount.py -> four dirnames up is <root>.
+_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+WT   = os.environ.get("TAUCETI_WT") or os.path.join(_ROOT, ".claude", "worktrees", "improver-1")
+if not os.path.isdir(WT):
+    WT = _ROOT
 
 def sh(*a, **k):
     return subprocess.run(a, capture_output=True, text=True, **k).stdout

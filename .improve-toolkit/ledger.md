@@ -33530,3 +33530,106 @@ hypotheses one at a time and has been right each time.
 CI then caught a real elaboration error: the target lemma takes `{e e' : p ⁻¹' {x}}` implicitly and
 states `Joined ↑e ↑e'`, so `Joined (h e₀) f₀` leaves both as metavariables — **Lean cannot invert a
 coercion to recover a subtype element from its underlying point.** Pinned `e := f₁`, `e' := f`.
+
+---
+
+## r653 — 2026-09-12 — handover taken over on **AI-DOOM**; the toolkit arrived broken and the controls said so
+
+### The controls read **125 passed, 4 failed**, not 129/0
+
+All four in `lintcand`. The tool was innocent — byte-identical to the handover branch. The **fixture**
+was not portable: `fixtures/r440-lintcand-ctl/base.tsv` carried absolute paths from the authoring
+machine (`/Users/mcu22seu/…`). `lintcand.py:79` reads
+
+```python
+fp = p if os.path.isabs(p) else os.path.join(snap, p)
+```
+
+so those rows were honoured as absolute, resolved to nothing, and the firing control said exactly
+that: *"4 baseline rows, 4 single-finding files, **0 declarations located**"*. Fixed by making the
+fixture rows relative to the fixture root, which is the form the tool already supports.
+
+**The firing control did its job and I still nearly misread it.** A screen that reports zero is not a
+screen that found nothing wrong.
+
+### The mutation test that passed, and why that was the real finding
+
+r649's rule — *every new control must be run against the bug it exists to catch* — applies to
+**inherited** controls too, and these four had never been seen to fail on this machine. Worse, the
+fifth (`neg`: "ignores the unflagged same-short-name sibling") was passing **vacuously on empty
+output** the entire time, which is r649's trap verbatim.
+
+First mutation: match on the short name's last component. **All five controls still passed.** Not
+because they are weak — because in `Twin.lean` the flagged declaration is at line 11 and the decoy at
+line 17, and first-match-wins lands on the right one anyway.
+
+The faithful r439 defect is that the naive regex requires the bare short name *immediately after the
+keyword*, so a dotted header (`lemma Sheared.tp_twinTarget`) is skipped entirely:
+
+```python
+if m and m.group(1) == want.rsplit(".", 1)[-1]:
+```
+
+That reports `Twin.lean:17` at width 52 — the decoy, "far too small", exactly as the fixture's own
+docstring predicts — and 4 of the 5 controls fail, with the `neg` firing. Restored the tool: 129/0.
+
+**A mutation that does not reproduce the documented defect is not a mutation test.** It reads like
+evidence and is an accident of line order.
+
+### Two more artefacts of the machine change
+
+* **`minecount.py`** hardcoded `/Users/mcu22seu/…/improver-1` and passed it as `cwd=`, which *raises*
+  rather than returning empty on any other machine. Now derived from `__file__`, with a
+  `TAUCETI_WT` override and a fallback to the repo root. It reports 130 merged `improve/*`.
+* **No `.lake` in a fresh worktree.** `lint-dot-notation` errored on **both** sides —
+  *"Mathlib source directory not found"* — and the gate turned that into `FAIL … NEW violations`
+  plus `rootsurplus UNRUN`. Symlinked `.lake` to the rig root (no `lake` invoked; the prohibition is
+  untouched) and the check reads base **761** → head **741**, 0 new. **A check that errors on both
+  sides is not a comparison — it is two errors.** `.gitignore` has `/.lake/`, which is
+  directory-only, so the symlink showed untracked; it is in `.git/info/exclude`, not in a tracked file.
+
+### The sweep called a green PR red
+
+My first sweep read **#6188 as `CI=RED:label`**. A commit's check-runs list carries *every* run ever
+created for that SHA, and a re-dispatch had left a `cancelled` duplicate `label` job behind while
+`sandboxed-build` was green and no run had conclusion `failure` at all. The sweep now keeps only the
+latest run per check name. **A superseded run is not a red build.**
+
+### Work
+
+* **#6432 marked ready** — CI green off the check-runs API (5 success, 5 skipped, 0 pending). This
+  was the handover's named first action and the half-step that stranded #6412 for 64 minutes.
+* **#6412 — `api-design` contested.** The finding is *correct*: the roadmap does still name the
+  deleted `tail_le_exchangeableSigma`. But it names it at
+  `TauCetiRoadmap/Exchangeability/README.md:429`, in a **separate, human-controlled repo** this role
+  may not open a PR or issue in, and which no commit on a `TauCeti/`-only branch can reach. The
+  capability the roadmap lists is intact under the canonical name; only a downstream human document
+  is stale. Re-adding the alias would contradict `correctness`, `reuse`, `generality` and `naming`,
+  all of which approved *because* the duplicate is gone.
+* **#6418 — the ⛔ `reuse` block was RIGHT, and I implemented it.** `FDRep.isIntegral_char` is an
+  exact duplicate of Mathlib's `FDRep.isIntegral_character` (`Character.lean:206`) — same statement,
+  same binders (`{k} [Field k] {G} [Group G] [Finite G]`). Nested under `TauCeti` the two coexisted;
+  **the rooting is what created the duplicate.** Deleted. Nothing referenced it in code; its only
+  mention was a module-doc bullet, now pointing at Mathlib's form. Counts corrected in the body:
+  20 → **19** rooted, `Values.lean` 13 → **12**.
+  `decldiff` then reported `VANISHED TauCeti.FDRep.isIntegral_char … no rooting explains it` — a
+  **true positive**, answered in the body rather than suppressed. Verified pre-existing vs. new by
+  re-running the gate on the pristine head: `parallelns` and `slice` fail there too; `decldiff` does
+  not.
+* **#6093 — `documentation` contested on scope.** Measured over the PR's own commits: **0 lines
+  added and 0 removed** matching `roadmap|Stage N|item N|milestone`. In `EilenbergMacLane/Covering.lean`
+  the roadmap sentence is line 44 and the PR's only docstring hunk is lines 67–68, stripping the
+  `TauCeti.` prefix. The narration is untouched in all ten files. Same ground that cleared `naming`
+  and `placement` on this PR.
+
+### Mechanics
+
+**`gh pr edit` is broken against this repo** — it fails with the projects-classic GraphQL
+deprecation (`repository.pullRequest.projectCards`) and **silently leaves the body unchanged**; I
+verified the old text was still live afterwards. Use
+`gh api -X PATCH repos/$R/pulls/<n> -F body=@file`.
+
+### Board
+Seven open, all CI green, every board on its current head. #6432 and #6426 awaiting first board
+(ready 12:25Z / 12:15Z — inside the 46–64 min window, nothing owed). #6093 and #6188 awaiting-author.
+#5950 Chris's.
