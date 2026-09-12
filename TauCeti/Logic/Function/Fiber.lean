@@ -20,10 +20,11 @@ second.
 * `Equiv.compFiberEquiv`: relabelling the base along `h : X ≃ Y` identifies the fibre of `h ∘ p`
   over `y` with the fibre of `p` over `h.symm y`.
 
-Neither construction uses a topology, so neither is stated for a `ContinuousMap` or a
-`Homeomorph`; the covering-space API applies them to the underlying function and the underlying
-equivalence. Keeping them here rather than in the monodromy files also keeps them out of the
-import cone of `Mathlib.Topology.Homotopy.Lifting`, so lower-level fibre API can use them.
+Together they express the functoriality of the fibres of a map: `Function.fiberMap` is covariant in
+the map over a fixed base, respecting identities and composition, while `Equiv.compFiberEquiv`
+transports fibres along a change of base. Neither uses a topology, so both are stated for a bare
+function and a bare equivalence; a `ContinuousMap` or a `Homeomorph` is applied through its
+underlying function or equivalence, and fibre identifications compose in either setting.
 
 ## Main declarations
 
@@ -62,12 +63,10 @@ theorem fiberMap_id_apply (x : X) (e : p ⁻¹' {x}) :
   apply Subtype.ext
   rfl
 
-/-- Restriction to a fibre respects composition of maps over the base.
-
-Deliberately NOT `@[simp]`: the left-hand side applies `fiberMap` to a compatibility proof built
-inline from the composite, which is not in simp normal form, so `simpNF` rejects the annotation as
-a rule that can never fire. Taking that proof as a parameter would satisfy `simpNF`, at the cost of
-a hypothesis derivable from `hf` and `hg`. -/
+/-- Restriction to a fibre respects composition of maps over the base. -/
+-- Not `@[simp]`: the left-hand side applies `fiberMap` to a compatibility proof built inline from
+-- the composite, which is not in simp normal form, so `simpNF` rejects the annotation as a rule
+-- that can never fire.
 theorem fiberMap_comp_apply (f : E → F) (g : F → G) (hf : q ∘ f = p) (hg : r ∘ g = q) (x : X)
     (e : p ⁻¹' {x}) :
     fiberMap (g ∘ f) (by

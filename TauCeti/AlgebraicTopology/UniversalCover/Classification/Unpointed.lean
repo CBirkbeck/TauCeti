@@ -66,9 +66,10 @@ source basepoint to a conjugate of the subgroup recovered from the target basepo
 
 The homeomorphism need not carry `e₀` to `f₀`: its image of `e₀` is another point of the
 target fibre, and changing from that point to `f₀` accounts for the conjugation. -/
-theorem _root_.IsCoveringMap.exists_range_eq_map_conj_of_homeomorph_comp_eq [PathConnectedSpace F]
+theorem _root_.IsCoveringMap.exists_range_eq_map_conj_of_homeomorph_comp_eq
     (hq : _root_.IsCoveringMap q)
-    (hpe : p e₀ = x) (hqf : q f₀ = x) (h : E ≃ₜ F) (hcomp : q ∘ h = p) :
+    (hpe : p e₀ = x) (hqf : q f₀ = x) (h : E ≃ₜ F) (hcomp : q ∘ h = p)
+    (hj : Joined (h e₀) f₀) :
     ∃ γ : FundamentalGroup X x,
       (mapOfEq ⟨q, hq.continuous⟩ hqf).range =
         (mapOfEq ⟨p, hcomp ▸ hq.continuous.comp h.continuous⟩ hpe).range.map
@@ -96,7 +97,7 @@ theorem _root_.IsCoveringMap.exists_range_eq_map_conj_of_homeomorph_comp_eq [Pat
         TauCeti.FundamentalGroup.mapOfEq_comp]
       exact (TauCeti.FundamentalGroup.mapOfEq_congr hpcomp _ _ γ).symm
   let f : q ⁻¹' {x} := ⟨f₀, Set.mem_singleton_iff.mpr hqf⟩
-  obtain ⟨γ, hγ⟩ := IsCoveringMap.exists_range_eq_map_conj hq f₁ f
+  obtain ⟨γ, hγ⟩ := IsCoveringMap.exists_range_eq_map_conj_of_joined hq hj
   refine ⟨γ, ?_⟩
   simpa only [f₁, f] using hγ.trans (congrArg
     (fun H : Subgroup (FundamentalGroup X x) => H.map (MulAut.conj γ).toMonoidHom)
@@ -145,6 +146,7 @@ theorem _root_.IsCoveringMap.exists_homeomorph_comp_eq_iff_exists_range_eq_map_c
   constructor
   · rintro ⟨h, hcomp⟩
     exact IsCoveringMap.exists_range_eq_map_conj_of_homeomorph_comp_eq hq hpe hqf h hcomp
+      (PathConnectedSpace.joined _ _)
   · rintro ⟨γ, hrange⟩
     exact IsCoveringMap.exists_homeomorph_comp_eq_of_range_eq_map_conj hp hq hpe hqf γ hrange
 

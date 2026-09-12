@@ -184,10 +184,9 @@ section BaseHomeomorph
 variable {Y : Type v} [TopologicalSpace Y]
 
 /-- Fibre transport after changing the base by a homeomorphism agrees with transport along the
-inverse image of the path.
-
-This is not a `simp` lemma: `simp` normalises the coercion `⇑h.toEquiv` inside the type of the
-fibre equivalence to `⇑h`, so the left-hand side is not in simp normal form. -/
+inverse image of the path. -/
+-- Not a `simp` lemma: `simp` normalises the coercion `⇑h.toEquiv` inside the type of the fibre
+-- equivalence to `⇑h`, so the left-hand side is not in simp normal form.
 theorem _root_.IsCoveringMap.compFiberEquiv_monodromy
     (hp : _root_.IsCoveringMap p)
     (h : X ≃ₜ Y) {x y : Y} (a : Path.Homotopic.Quotient x y)
