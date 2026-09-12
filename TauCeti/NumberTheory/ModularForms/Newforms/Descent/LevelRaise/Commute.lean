@@ -9,6 +9,7 @@ public import TauCeti.NumberTheory.ModularForms.Degeneracy
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Sum
 import TauCeti.NumberTheory.ModularForms.HeckeSlash.Diagonal.QExpansion
 import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Periodic
+import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Action
 import TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelCommute
 
 /-!
@@ -29,8 +30,8 @@ the coefficient formula of the descent, the core of Miyake's Lemma 4.6.14, is pr
 
 ## Main results
 
-* `TauCeti.descendSlash_coe_levelRaise_mul_left_of_mem_modFormCharSpace`, and its cusp-form
-  case `TauCeti.descendSlash_coe_levelRaise_mul_left_of_mem_cuspFormCharSpace`:
+* `TauCeti.descendSlash_coe_levelRaise_mul_left_of_comp_of_mem_modFormCharSpace`, and its cusp-form
+  case `TauCeti.descendSlash_coe_levelRaise_mul_left_of_comp_of_mem_cuspFormCharSpace`:
   `descendSlash k p (l N) (V_l f) =
   l ^ (1 - k) • (descendSlash k p N f ∣[k] diag(l, 1))`, that is, `V_l` of the descent.
 
@@ -228,7 +229,7 @@ private theorem slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq {N : ℕ} (hp 
     (upperTriShift_eq_iff (by simpa using hA)).mpr (by simp [hδ01])
   rw [hshift] at hβ11 hfac
   have hfβ : ⇑f ∣[k] mapGL ℝ β = ⇑f :=
-    slash_mapGL_eq_self_of_mem_modFormCharSpace_of_comp (Nat.div_dvd_of_dvd hpN) hcomp hf hβ
+    slash_mapGL_eq_self_of_comp_of_mem_modFormCharSpace (Nat.div_dvd_of_dvd hpN) hcomp hf hβ
       (by rw [hβ11]; simpa using hδ11)
   have hfacR := congrArg (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)) hfac
   rw [map_mul, map_mul, map_mapGL, map_mapGL] at hfacR
@@ -236,45 +237,97 @@ private theorem slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq {N : ℕ} (hp 
     rw [hδ, inv_mul_cancel_right]
   rw [hδγ, map_mul, ← mul_assoc, hfacR, mul_assoc, SlashAction.slash_mul, hfβ]
 
-/-- The index map between the two descent families: multiplication by `l` on the residues modulo
-`p`, the identity on the extra index. -/
-private def descendIndexMul (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
-    (v : Fin (descendMatrixCount p (l * N))) : Fin (descendMatrixCount p N) :=
-  if h : v.val < p then
-    ⟨l * v % p, lt_of_lt_of_le (Nat.mod_lt _ hp.pos) (by
-      by_cases h' : p ^ 2 ∣ N
-      · rw [descendMatrixCount_of_sq_dvd h']
-      · rw [descendMatrixCount_of_not_sq_dvd h']
-        exact Nat.le_succ p)⟩
-  else ⟨v.val, lt_of_lt_of_eq v.isLt (descendMatrixCount_mul_left_of_coprime hpl N)⟩
+/-- **Multiplication by `l` on the projective line over `ZMod p`**, fixing `∞`: the permutation
+that the index map induces on the descent's index set when `p ∥ N`. -/
+private def onePointMulPerm (hpl : Nat.Coprime p l) : Equiv.Perm (OnePoint (ZMod p)) :=
+  Equiv.optionCongr (Units.mulLeft (ZMod.unitOfCoprime l hpl.symm))
 
-private theorem descendIndexMul_of_lt (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
-    {v : Fin (descendMatrixCount p (l * N))} (hv : v.val < p) :
-    (descendIndexMul hp hpl N v).val = l * v % p := by
-  simp [descendIndexMul, hv]
+private theorem onePointMulPerm_coe (hpl : Nat.Coprime p l) (x : ZMod p) :
+    onePointMulPerm hpl ((x : ZMod p) : OnePoint (ZMod p)) =
+      (((l : ZMod p) * x : ZMod p) : OnePoint (ZMod p)) := by
+  change ((((ZMod.unitOfCoprime l hpl.symm : (ZMod p)ˣ) : ZMod p) * x : ZMod p) :
+      OnePoint (ZMod p)) = _
+  rw [ZMod.coe_unitOfCoprime]
 
-private theorem descendIndexMul_of_le (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
-    {v : Fin (descendMatrixCount p (l * N))} (hv : p ≤ v.val) :
-    (descendIndexMul hp hpl N v).val = v.val := by
-  simp [descendIndexMul, not_lt.mpr hv]
+private theorem onePointMulPerm_infty (hpl : Nat.Coprime p l) :
+    onePointMulPerm hpl (OnePoint.infty : OnePoint (ZMod p)) = OnePoint.infty := rfl
 
-private theorem descendIndexMul_bijective (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ) :
-    Function.Bijective (descendIndexMul hp hpl N) := by
-  refine (Fintype.bijective_iff_injective_and_card _).mpr ⟨fun v w hvw ↦ ?_,
-    by simp [descendMatrixCount_mul_left_of_coprime hpl N]⟩
-  have hvw' := congrArg Fin.val hvw
+/-- **Multiplication by `l` on the descent's index set.** On the `p` upper-triangular members it
+is the permutation `ZMod.mulModEquiv` of the residues modulo `p`; the extra member, when there is
+one, is fixed — read through `descendIndexEquiv`, it is the permutation of the projective line
+over `ZMod p` fixing `∞`. -/
+private noncomputable def descendIndexMulPerm (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ) :
+    Equiv.Perm (Fin (descendMatrixCount p N)) :=
+  haveI : NeZero p := ⟨hp.ne_zero⟩
+  if h : p ^ 2 ∣ N then
+    (finCongr (descendMatrixCount_of_sq_dvd h)).trans
+      ((ZMod.mulModEquiv p hpl.symm).trans (finCongr (descendMatrixCount_of_sq_dvd h).symm))
+  else
+    (descendIndexEquiv p N h).symm.permCongr (onePointMulPerm hpl)
+
+/-- **The index map between the two descent families**: the two families have the same size
+(`descendMatrixCount_mul_left_of_coprime`), and the level-`l N` member at an index is the
+level-`N` member at `l` times it. -/
+private noncomputable def descendIndexMulEquiv (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ) :
+    Fin (descendMatrixCount p (l * N)) ≃ Fin (descendMatrixCount p N) :=
+  (finCongr (descendMatrixCount_mul_left_of_coprime hpl N)).trans (descendIndexMulPerm hp hpl N)
+
+private theorem val_descendIndexMulPerm_of_lt (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
+    {w : Fin (descendMatrixCount p N)} (hw : w.val < p) :
+    (descendIndexMulPerm hp hpl N w).val = l * w % p := by
   have : NeZero p := ⟨hp.ne_zero⟩
-  rcases lt_or_ge v.val p with hv | hv <;> rcases lt_or_ge w.val p with hw | hw
-  · rw [descendIndexMul_of_lt hp hpl N hv, descendIndexMul_of_lt hp hpl N hw] at hvw'
-    have := (ZMod.mulModEquiv p hpl.symm).injective (a₁ := ⟨v.val, hv⟩)
-      (a₂ := ⟨w.val, hw⟩) (Fin.ext (by rw [ZMod.coe_mulModEquiv, ZMod.coe_mulModEquiv]; exact hvw'))
-    exact Fin.ext (Fin.mk.inj_iff.mp this)
-  · rw [descendIndexMul_of_lt hp hpl N hv, descendIndexMul_of_le hp hpl N hw] at hvw'
-    exact absurd (hvw' ▸ Nat.mod_lt (l * v.val) hp.pos) (not_lt.mpr hw)
-  · rw [descendIndexMul_of_le hp hpl N hv, descendIndexMul_of_lt hp hpl N hw] at hvw'
-    exact absurd (hvw' ▸ Nat.mod_lt (l * w.val) hp.pos) (not_lt.mpr hv)
-  · rw [descendIndexMul_of_le hp hpl N hv, descendIndexMul_of_le hp hpl N hw] at hvw'
-    exact Fin.ext hvw'
+  have hcount : p ≤ descendMatrixCount p N := by
+    by_cases h' : p ^ 2 ∣ N
+    · exact le_of_eq (descendMatrixCount_of_sq_dvd h').symm
+    · exact (descendMatrixCount_of_not_sq_dvd h') ▸ Nat.le_succ p
+  have hmod : l * (w : ℕ) % p < descendMatrixCount p N :=
+    lt_of_lt_of_le (Nat.mod_lt _ hp.pos) hcount
+  rw [descendIndexMulPerm]
+  split
+  · simp
+  · rename_i h
+    rw [Equiv.permCongr_apply, Equiv.symm_symm, descendIndexEquiv_apply_of_lt h hw,
+      onePointMulPerm_coe]
+    have hsymm : (descendIndexEquiv p N h).symm
+        ((((l : ZMod p) * ((w : ℕ) : ZMod p) : ZMod p)) : OnePoint (ZMod p)) =
+          ⟨l * (w : ℕ) % p, hmod⟩ := by
+      rw [Equiv.symm_apply_eq,
+        descendIndexEquiv_apply_of_lt h (v := ⟨l * (w : ℕ) % p, hmod⟩) (Nat.mod_lt _ hp.pos)]
+      exact congrArg _ (by push_cast [ZMod.natCast_mod]; ring)
+    rw [hsymm]
+
+private theorem val_descendIndexMulPerm_of_le (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
+    {w : Fin (descendMatrixCount p N)} (hw : p ≤ w.val) :
+    (descendIndexMulPerm hp hpl N w).val = w.val := by
+  have : NeZero p := ⟨hp.ne_zero⟩
+  have hlt := w.isLt
+  have h : ¬ p ^ 2 ∣ N := by
+    intro hd
+    have := descendMatrixCount_of_sq_dvd (p := p) (N := N) hd
+    omega
+  have hcntN := descendMatrixCount_of_not_sq_dvd (p := p) (N := N) h
+  have hwp : (w : ℕ) = p := by omega
+  have hp' : p < descendMatrixCount p N := by omega
+  rw [descendIndexMulPerm]
+  split
+  · rename_i hsq
+    exact absurd hsq h
+  · rw [Equiv.permCongr_apply, Equiv.symm_symm, descendIndexEquiv_apply_of_le h hw,
+      onePointMulPerm_infty]
+    have hsymm : (descendIndexEquiv p N h).symm (OnePoint.infty : OnePoint (ZMod p)) =
+        ⟨p, hp'⟩ := by
+      rw [Equiv.symm_apply_eq, descendIndexEquiv_apply_of_le h (v := ⟨p, hp'⟩) (le_refl p)]
+    rw [hsymm, hwp]
+
+private theorem val_descendIndexMulEquiv_of_lt (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
+    {v : Fin (descendMatrixCount p (l * N))} (hv : v.val < p) :
+    (descendIndexMulEquiv hp hpl N v).val = l * v % p :=
+  val_descendIndexMulPerm_of_lt hp hpl N (w := finCongr _ v) hv
+
+private theorem val_descendIndexMulEquiv_of_le (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
+    {v : Fin (descendMatrixCount p (l * N))} (hv : p ≤ v.val) :
+    (descendIndexMulEquiv hp hpl N v).val = v.val :=
+  val_descendIndexMulPerm_of_le hp hpl N (w := finCongr _ v) hv
 
 /-- An upper-triangular member of the level-`l N` family, on `V_l f`, is `V_l` of the matching
 member of the level-`N` family on `f`. -/
@@ -285,14 +338,14 @@ private theorem coe_levelRaise_slash_descendMatrix_of_lt {N : ℕ} (hp : p.Prime
     ⇑(ModularForm.levelRaise l (Gamma1_map_le_conjAct_scaleGL N l) f) ∣[k]
         descendMatrix p (l * N) v =
       (l : ℂ) ^ (1 - k) •
-        ((⇑f ∣[k] descendMatrix p N (descendIndexMul hp hpl N v)) ∣[k] scaleGL l) := by
+        ((⇑f ∣[k] descendMatrix p N (descendIndexMulEquiv hp hpl N v)) ∣[k] scaleGL l) := by
   have : NeZero p := ⟨hp.ne_zero⟩
-  have hσ : (descendIndexMul hp hpl N v).val < p :=
-    (descendIndexMul_of_lt hp hpl N hv).symm ▸ Nat.mod_lt _ hp.pos
+  have hσ : (descendIndexMulEquiv hp hpl N v).val < p :=
+    (val_descendIndexMulEquiv_of_lt hp hpl N hv).symm ▸ Nat.mod_lt _ hp.pos
   rw [descendMatrix_of_lt hv, descendMatrix_of_lt hσ, ← ModularForm.rat_slash,
     ← ModularForm.rat_slash, coe_levelRaise_slash_upperTriRep_eq_smul_slash k hp f ⟨v.val, hv⟩]
   congr 4
-  exact Fin.ext (descendIndexMul_of_lt hp hpl N hv).symm
+  exact Fin.ext (val_descendIndexMulEquiv_of_lt hp hpl N hv).symm
 
 /-- The extra member of the level-`l N` family, on `V_l f`, is `V_l` of the extra member of the
 level-`N` family on `f`. -/
@@ -305,7 +358,7 @@ private theorem coe_levelRaise_slash_descendMatrix_of_le {N : ℕ} (hp : p.Prime
     ⇑(ModularForm.levelRaise l (Gamma1_map_le_conjAct_scaleGL N l) f) ∣[k]
         descendMatrix p (l * N) v =
       (l : ℂ) ^ (1 - k) •
-        ((⇑f ∣[k] descendMatrix p N (descendIndexMul hp hpl N v)) ∣[k] scaleGL l) := by
+        ((⇑f ∣[k] descendMatrix p N (descendIndexMulEquiv hp hpl N v)) ∣[k] scaleGL l) := by
   have : NeZero p := ⟨hp.ne_zero⟩
   have hpsq : ¬ p ^ 2 ∣ N := fun h ↦ by
     have h1 := descendMatrixCount_of_sq_dvd h
@@ -332,7 +385,8 @@ private theorem coe_levelRaise_slash_descendMatrix_of_le {N : ℕ} (hp : p.Prime
   rw [ModularForm.coe_levelRaise,
     ModularForm.smul_slash_of_det_pos k (descendMatrix_det_pos p (l * N) v),
     descendMatrix_eq_map, descendMatrixRat_of_le hv, descendMatrix_eq_map,
-    descendMatrixRat_of_le ((descendIndexMul_of_le hp hpl N hv).symm ▸ hv), map_mul, map_mul,
+    descendMatrixRat_of_le ((val_descendIndexMulEquiv_of_le hp hpl N hv).symm ▸ hv), map_mul,
+    map_mul,
     map_mapGL, map_mapGL, ← SlashAction.slash_mul, ← mul_assoc, hcomm,
     mul_assoc, mul_inv_eq_iff_eq_mul.mp (mapGL_conjScale (descendExtraGamma p (l * N)) c hc),
     ← mul_assoc, SlashAction.slash_mul,
@@ -342,7 +396,7 @@ private theorem coe_levelRaise_slash_descendMatrix_of_le {N : ℕ} (hp : p.Prime
 `l` coprime to `p`, and `f ∈ M_k(Γ₁(N), χ)` with `χ` the pull-back of a character modulo `N / p`,
 the descent slash sum at level `l N` of `V_l f` is `V_l` of the descent slash sum of `f` at level
 `N`: `descendSlash k p (l N) (V_l f) = l ^ (1 - k) • (descendSlash k p N f ∣[k] diag(l, 1))`. -/
-theorem descendSlash_coe_levelRaise_mul_left_of_mem_modFormCharSpace {N : ℕ} (hp : p.Prime)
+theorem descendSlash_coe_levelRaise_mul_left_of_comp_of_mem_modFormCharSpace {N : ℕ} (hp : p.Prime)
     (hpN : p ∣ N)
     (hpl : Nat.Coprime p l) {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / p))ˣ →* ℂˣ}
     (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)))
@@ -354,7 +408,7 @@ theorem descendSlash_coe_levelRaise_mul_left_of_mem_modFormCharSpace {N : ℕ} (
   have : NeZero p := ⟨hp.ne_zero⟩
   have : NeZero l := ⟨fun h ↦ hp.coprime_iff_not_dvd.mp hpl (h ▸ dvd_zero p)⟩
   rw [descendSlash_def, descendSlash_def, SlashAction.sum_slash, Finset.smul_sum]
-  refine Fintype.sum_bijective _ (descendIndexMul_bijective hp hpl N) _ _ fun v ↦ ?_
+  refine Fintype.sum_bijective _ ((descendIndexMulEquiv hp hpl N).bijective) _ _ fun v ↦ ?_
   rcases lt_or_ge v.val p with hv | hv
   · exact coe_levelRaise_slash_descendMatrix_of_lt k hp hpl f hv
   · exact coe_levelRaise_slash_descendMatrix_of_le k hp hpN hpl hcomp hf hv
@@ -362,7 +416,7 @@ theorem descendSlash_coe_levelRaise_mul_left_of_mem_modFormCharSpace {N : ℕ} (
 /-- **The descent commutes with the level-raise, on cusp forms.** For a prime `p ∣ N`, `l`
 coprime to `p`, and `f ∈ S_k(Γ₁(N), χ)` with `χ` the pull-back of a character modulo `N / p`,
 `descendSlash k p (l N) (V_l f) = l ^ (1 - k) • (descendSlash k p N f ∣[k] diag(l, 1))`. -/
-theorem descendSlash_coe_levelRaise_mul_left_of_mem_cuspFormCharSpace {N : ℕ} (hp : p.Prime)
+theorem descendSlash_coe_levelRaise_mul_left_of_comp_of_mem_cuspFormCharSpace {N : ℕ} (hp : p.Prime)
     (hpN : p ∣ N) (hpl : Nat.Coprime p l) {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / p))ˣ →* ℂˣ}
     (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)))
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) :
@@ -372,7 +426,7 @@ theorem descendSlash_coe_levelRaise_mul_left_of_mem_cuspFormCharSpace {N : ℕ} 
       (l : ℂ) ^ (1 - k) • (descendSlash k p N ⇑f ∣[k] scaleGL l) := by
   have : NeZero p := ⟨hp.ne_zero⟩
   have : NeZero l := ⟨fun h ↦ hp.coprime_iff_not_dvd.mp hpl (h ▸ dvd_zero p)⟩
-  have h := descendSlash_coe_levelRaise_mul_left_of_mem_modFormCharSpace k hp hpN hpl hcomp
+  have h := descendSlash_coe_levelRaise_mul_left_of_comp_of_mem_modFormCharSpace k hp hpN hpl hcomp
     ((coe_mem_modFormCharSpace_iff k χ f).mpr hf)
   rw [ModularForm.coe_levelRaise] at h
   rw [CuspForm.coe_levelRaise]

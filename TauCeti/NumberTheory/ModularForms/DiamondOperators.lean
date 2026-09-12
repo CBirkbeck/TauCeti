@@ -59,8 +59,8 @@ re-founded slash action with built-in character) and their names. The Hecke pair
   character spaces, commute with the coercion `S_k(Γ₁(N)) → M_k(Γ₁(N))`; a cusp form is a
   `χ`-form exactly when the modular form underlying it is.
 * `eq_of_mem_cuspFormCharSpace_of_ne_zero`: a nonzero cusp form determines its nebentypus.
-* `slash_mapGL_eq_self_of_mem_modFormCharSpace_of_comp`,
-  `slash_mapGL_eq_self_of_mem_cuspFormCharSpace_of_comp`: a matrix of `Γ₀(N)` whose lower-right
+* `slash_mapGL_eq_self_of_comp_of_mem_modFormCharSpace`,
+  `slash_mapGL_eq_self_of_comp_of_mem_cuspFormCharSpace`: a matrix of `Γ₀(N)` whose lower-right
   entry is `1` modulo a divisor `M` acts trivially on a form whose character is pulled back from
   modulus `M`.
 
@@ -355,7 +355,7 @@ theorem mem_modFormCharSpace_iff_nebentypus (k : ℤ) (χ₀ : (ZMod N)ˣ →* �
 /-- **A matrix of `Γ₀(N)` whose lower-right entry is `1` modulo a divisor `M` acts trivially on
 `M_k(Γ₁(N), χ)` when `χ` is pulled back from a character modulo `M`**: its nebentypus value is
 `χ₀` of the lower-right entry modulo `M`, which is `χ₀ 1 = 1`. -/
-theorem slash_mapGL_eq_self_of_mem_modFormCharSpace_of_comp {M N : ℕ} (hMN : M ∣ N)
+theorem slash_mapGL_eq_self_of_comp_of_mem_modFormCharSpace {M N : ℕ} (hMN : M ∣ N)
     {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod M)ˣ →* ℂˣ} (hcomp : χ = χ₀.comp (ZMod.unitsMap hMN))
     {f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ modFormCharSpace k χ)
     {β : SL(2, ℤ)} (hβ : β ∈ Gamma0 N) (hβ11 : ((β 1 1 : ℤ) : ZMod M) = 1) :
@@ -502,9 +502,9 @@ theorem coe_mem_modFormCharSpace_iff (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
 /-- **A matrix of `Γ₀(N)` whose lower-right entry is `1` modulo a divisor `M` acts trivially on
 `S_k(Γ₁(N), χ)` when `χ` is pulled back from a character modulo `M`**: its nebentypus value is
 `χ₀` of the lower-right entry modulo `M`, which is `χ₀ 1 = 1`. -/
-theorem slash_mapGL_eq_self_of_mem_cuspFormCharSpace_of_comp {M N : ℕ} (hMN : M ∣ N)
+theorem slash_mapGL_eq_self_of_comp_of_mem_cuspFormCharSpace {M N : ℕ} (hMN : M ∣ N)
     {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod M)ˣ →* ℂˣ} (hcomp : χ = χ₀.comp (ZMod.unitsMap hMN))
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {β : SL(2, ℤ)}
     (hβ : β ∈ Gamma0 N) (hβ11 : ((β 1 1 : ℤ) : ZMod M) = 1) : ⇑f ∣[k] mapGL ℝ β = ⇑f :=
-  slash_mapGL_eq_self_of_mem_modFormCharSpace_of_comp hMN hcomp
+  slash_mapGL_eq_self_of_comp_of_mem_modFormCharSpace hMN hcomp
     ((coe_mem_modFormCharSpace_iff k χ f).mpr hf) hβ hβ11
