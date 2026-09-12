@@ -67,11 +67,13 @@ source basepoint to a conjugate of the subgroup recovered from the target basepo
 The homeomorphism need not carry `e₀` to `f₀`: its image of `e₀` is another point of the
 target fibre, and changing from that point to `f₀` accounts for the conjugation. -/
 theorem _root_.IsCoveringMap.exists_range_eq_map_conj_of_homeomorph_comp_eq [PathConnectedSpace F]
-    (hq : _root_.IsCoveringMap q) (hp : Continuous p)
+    (hq : _root_.IsCoveringMap q)
     (hpe : p e₀ = x) (hqf : q f₀ = x) (h : E ≃ₜ F) (hcomp : q ∘ h = p) :
     ∃ γ : FundamentalGroup X x,
       (mapOfEq ⟨q, hq.continuous⟩ hqf).range =
-        (mapOfEq ⟨p, hp⟩ hpe).range.map (MulAut.conj γ).toMonoidHom := by
+        (mapOfEq ⟨p, hcomp ▸ hq.continuous.comp h.continuous⟩ hpe).range.map
+          (MulAut.conj γ).toMonoidHom := by
+  have hp : Continuous p := hcomp ▸ hq.continuous.comp h.continuous
   have hqh : q (h e₀) = x := (congrFun hcomp e₀).trans hpe
   let f₁ : q ⁻¹' {x} := ⟨h e₀, Set.mem_singleton_iff.mpr hqh⟩
   have hrange :
@@ -142,8 +144,7 @@ theorem _root_.IsCoveringMap.exists_homeomorph_comp_eq_iff_exists_range_eq_map_c
           (mapOfEq ⟨p, hp.continuous⟩ hpe).range.map (MulAut.conj γ).toMonoidHom := by
   constructor
   · rintro ⟨h, hcomp⟩
-    exact IsCoveringMap.exists_range_eq_map_conj_of_homeomorph_comp_eq
-      hq hp.continuous hpe hqf h hcomp
+    exact IsCoveringMap.exists_range_eq_map_conj_of_homeomorph_comp_eq hq hpe hqf h hcomp
   · rintro ⟨γ, hrange⟩
     exact IsCoveringMap.exists_homeomorph_comp_eq_of_range_eq_map_conj hp hq hpe hqf γ hrange
 

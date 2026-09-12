@@ -63,6 +63,7 @@ theorem fiberMap_id_apply (x : X) (e : p ⁻¹' {x}) :
   rfl
 
 /-- Restriction to a fibre respects composition of maps over the base. -/
+@[simp]
 theorem fiberMap_comp_apply (f : E → F) (g : F → G) (hf : q ∘ f = p) (hg : r ∘ g = q) (x : X)
     (e : p ⁻¹' {x}) :
     fiberMap (g ∘ f) (by
