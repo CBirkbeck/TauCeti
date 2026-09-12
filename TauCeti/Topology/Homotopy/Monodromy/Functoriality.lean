@@ -78,9 +78,14 @@ theorem _root_.IsCoveringMap.fiberMap_monodromy (hp : _root_.IsCoveringMap p)
   -- `q'.comp f` or `p'`, which is `hcomp` — but in a position whose *type* depends on it. Neither
   -- `convert` nor `congr!` descends through that (both stop at an `Iff` between the two
   -- equations), and `rw` cannot build the motive, so transport along `hcomp` directly.
-  first
-    | simpa [hf] using hp.map_liftPathQuotient a e
-    | simpa only [← hcomp] using hp.map_liftPathQuotient a e
+  -- `q'.comp f` and `p'` differ by `hcomp`, but in a *type index*: `Γ.map u` has type
+  -- `Path.Homotopic.Quotient (u ↑e) (u ↑(hp.monodromy a e))`.  No `Eq`-rewrite can abstract that,
+  -- which is why `rw`, `simp` and `convert` all stall here.  `HEq` is heterogeneous, so its motive
+  -- stays type-correct across the change; take the step there and return to `Eq` at the end, once
+  -- both sides have the same type again.
+  refine eq_of_heq (HEq.trans (show HEq (Γ.map (q'.comp f)) (Γ.map p') by rw [hcomp]) ?_)
+  rw [hp.map_liftPathQuotient a e]
+  exact (Path.Homotopic.Quotient.cast_heq _ _).trans (Path.Homotopic.Quotient.cast_heq _ _).symm
 
 /-- A continuous map of covering spaces over `X` induces a natural transformation between
 their monodromy functors. Its component over `x` is the restriction of `f` to the fibre over
