@@ -97,7 +97,7 @@ theorem _root_.IsCoveringMap.exists_range_eq_map_conj_of_homeomorph_comp_eq
         TauCeti.FundamentalGroup.mapOfEq_comp]
       exact (TauCeti.FundamentalGroup.mapOfEq_congr hpcomp _ _ γ).symm
   let f : q ⁻¹' {x} := ⟨f₀, Set.mem_singleton_iff.mpr hqf⟩
-  obtain ⟨γ, hγ⟩ := IsCoveringMap.exists_range_eq_map_conj_of_joined hq hj
+  obtain ⟨γ, hγ⟩ := IsCoveringMap.exists_range_eq_map_conj_of_joined hq (e := f₁) (e' := f) hj
   refine ⟨γ, ?_⟩
   simpa only [f₁, f] using hγ.trans (congrArg
     (fun H : Subgroup (FundamentalGroup X x) => H.map (MulAut.conj γ).toMonoidHom)
