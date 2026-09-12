@@ -545,12 +545,14 @@ the denominator is topologically nilpotent whenever the enlargement is proper.
 **This is the topologically-nilpotent-denominator variant, and only that.** Wedhorn's
 Proposition 8.30 asks nothing of the denominator beyond the rational-subset condition, and `hnil`
 is strictly stronger: it follows neither from that condition nor from the Tate and
-strong-noetherian hypotheses — `s = 1` makes `hspan` automatic, and `1` is not topologically
-nilpotent in a nonzero Tate ring. Removing it needs a change of presentation: scaling `(T, s)` by
-a power of a topologically nilpotent unit leaves the localisation alone while making the
-denominator topologically nilpotent, which is
-`TauCeti.Huber.PairOfDefinition.exists_isTopologicallyNilpotent_rescaled`. Flatness proved at the
-rescaled presentation must then be carried back to `(T, s)`, and **this theorem performs no such
+strong-noetherian hypotheses. Taking `s = 1` makes `hspan` automatic, and in a nonzero **Hausdorff**
+Tate ring `1` is not topologically nilpotent, since `1 ^ n → 0` would force `1 = 0`. The separation
+hypothesis is doing work there: carrying the indiscrete topology, a nonzero ring is Tate and `1`
+*is* topologically nilpotent, every sequence converging to `0`.
+
+Removing `hnil` needs a change of presentation — scaling `(T, s)` by a power of a topologically
+nilpotent unit leaves the localisation alone while making the denominator topologically nilpotent
+— followed by a transport of flatness back to `(T, s)`. **This theorem performs no such
 transport**: it concludes only at the presentation it is given, so a caller without `hnil` gets
 nothing from it.
 
