@@ -46,8 +46,8 @@ representation of a group, from the eigenvalues alone, with no invariant inner p
   `(ρ g).charpoly` splits, a character value is a sum of `finrank` many `n`-th roots of unity. The
   variant `TauCeti.Representation.exists_multiset_rootsOfUnity_char_eq_sum` specializes it to an
   algebraically closed field.
-* `TauCeti.Representation.isIntegral_char` and `FDRep.isIntegral_char`: **character values
-  are algebraic integers**, over an arbitrary field.
+* `TauCeti.Representation.isIntegral_char`: **character values are algebraic integers**, over an
+  arbitrary field. The bundled `FDRep` form is Mathlib's `FDRep.isIntegral_character`.
 * `TauCeti.Representation.exists_char_eq_intCast` and `FDRep.exists_char_eq_intCast`:
   **a rational character is integer-valued**.
 * `FDRep.intCharacter`: the resulting `ℤ`-valued character of a rational representation of
@@ -241,13 +241,6 @@ end Representation
 namespace FDRep
 
 variable {G : Type v} [Group G] [Finite G]
-
-/-- **Character values are algebraic integers.** For a finite group, every value of the character
-of a finite-dimensional representation over any field is integral over `ℤ`. -/
-theorem _root_.FDRep.isIntegral_char {k : Type u} [Field k] (V : FDRep k G) (g : G) :
-    IsIntegral ℤ (V.character g) :=
-  Representation.isIntegral_char V.ρ (isOfFinOrder_of_finite g).orderOf_pos.ne'
-    (pow_orderOf_eq_one g)
 
 /-- **A rational character is integer-valued.** For a finite group, every value of the character of
 a finite-dimensional representation over `ℚ` is the cast of an integer. -/
