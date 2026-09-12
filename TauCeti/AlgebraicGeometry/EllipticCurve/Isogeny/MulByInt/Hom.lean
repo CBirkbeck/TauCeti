@@ -18,6 +18,7 @@ apply to `[n]` and results about `[n]` are available additively.
 ## Main results
 
 * `TauCeti.Isogeny.ofIsogeny_mulByIntIsogeny`: `[n] = n • id` in `Hom W W`.
+* `TauCeti.Isogeny.ofIsogeny_mulByIntIsogeny_add`: `[m + n] = [m] + [n]`.
 
 ## References
 
@@ -39,6 +40,15 @@ theorem ofIsogeny_mulByIntIsogeny [W.IsElliptic] {n : ℤ} (hn : psiFunctionFiel
     Hom.ofIsogeny (mulByIntIsogeny W hn) = n • Hom.id W := by
   refine Hom.ext_tautologicalPoint ?_
   simp [Hom.id_def, mulByIntIsogeny_pullback, tautologicalPoint_mulByIntPullback]
+
+/-- **`[m + n] = [m] + [n]`.** Composition of the two is already `[m * n]`
+(`mulByIntIsogeny_comp_mulByIntIsogeny`); this is the additive law beside it. -/
+theorem ofIsogeny_mulByIntIsogeny_add [W.IsElliptic] {m n : ℤ}
+    (hm : psiFunctionField W m ≠ 0) (hn : psiFunctionField W n ≠ 0)
+    (hmn : psiFunctionField W (m + n) ≠ 0) :
+    Hom.ofIsogeny (mulByIntIsogeny W hmn) =
+      Hom.ofIsogeny (mulByIntIsogeny W hm) + Hom.ofIsogeny (mulByIntIsogeny W hn) := by
+  rw [ofIsogeny_mulByIntIsogeny, ofIsogeny_mulByIntIsogeny, ofIsogeny_mulByIntIsogeny, add_smul]
 
 end TauCeti.Isogeny
 
