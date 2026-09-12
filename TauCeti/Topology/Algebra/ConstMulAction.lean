@@ -29,9 +29,9 @@ public section
 namespace TauCeti
 
 /-- A submonoid inherits continuity in the point from an ambient continuous action. -/
-@[to_additive _root_.AddSubmonoid.continuousConstVAdd
-/-- An additive submonoid inherits continuity in the point from an ambient continuous additive
-action. -/]
+@[to_additive
+  /-- An additive submonoid inherits continuity in the point from an ambient continuous additive
+  action. -/]
 instance _root_.Submonoid.continuousConstSMul {M X : Type*} [MulOneClass M] [TopologicalSpace X]
     [SMul M X] [ContinuousConstSMul M X] (S : Submonoid M) : ContinuousConstSMul S X :=
   ⟨fun g => by
