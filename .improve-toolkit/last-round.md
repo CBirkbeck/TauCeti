@@ -1,85 +1,101 @@
-# Last round — r653 (2026-09-12 12:45Z) — first round on **AI-DOOM**
+# Last round — r654 (2026-09-12 13:08Z)
 
-## The toolkit arrives broken on a new machine. Run the controls FIRST.
+## A pairwise contradiction is not a deadlock until the third opinion has been read
 
-`tools/controls.sh` read **125 passed, 4 failed**, not 129/0. All four in `lintcand`, and the tool
-was byte-identical to the handover — the **fixture** was not portable. `base.tsv` held absolute
-paths from the old machine; `lintcand.py:79` honours absolute paths, so they resolved to nothing.
+#6188's five blocking rubrics were not five problems. `reuse`, `api-design` and `proof-quality` all
+pointed at one duplicated four-line transport, and two of their fixes were **mutually exclusive**:
 
-**Two inherited controls were passing vacuously on empty output.** r649's rule applies to inherited
-controls too: *a control that has never been seen to fail here is not evidence.*
+* `reuse`: "keep the `have`s inline so no shared restating declaration reappears"
+* `proof-quality`: "restore the single `private theorem …`"
 
-### A mutation that does not reproduce the documented defect is not a mutation test
+Contesting looked obvious and would have been wrong. **`api-design` had already written the way
+out** — state it once, public, phrased through `ofLinearEquiv` so it mentions neither
+`generalLinearEquiv` nor `symm`, which is exactly what stops it being a restatement of
+`MulEquiv.apply_symm_apply`:
 
-My first mutation left **all five controls green** — not because they are weak, but because the
-flagged declaration sits at `Twin.lean:11` and the decoy at `:17`, so first-match-wins is right by
-accident. Only the faithful r439 defect (header must *be* the bare short name, so a dotted header is
-skipped) fails them — reporting the decoy at width 52, exactly as the fixture's docstring predicts.
+```lean
+@[simp]
+theorem LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv (f : M ≃ₗ[R] M) :
+    (ofLinearEquiv f).toLinearEquiv = f := rfl
+```
 
-## Machine-change artefacts to expect anywhere
+`generality` (dead `M` binders) dissolved on its own — the lemma is stated over `M`.
 
-* **No `.lake` in a fresh worktree** → `lint-dot-notation` errors on **both** sides and the gate
-  renders that as `FAIL … NEW violations` + `rootsurplus UNRUN`. Symlink `.lake` to the rig root
-  (no `lake` is invoked — the prohibition stands). Then: base **761** → head **741**, 0 new.
-  **A check that errors on both sides is not a comparison.**
-  `.gitignore` says `/.lake/` (directory-only), so the symlink shows untracked → `.git/info/exclude`.
-* **Hardcoded absolute paths** — `minecount.py` passed the old machine's worktree as `cwd=`, which
-  *raises*. Now derived from `__file__` (`TAUCETI_WT` overrides).
+**Read the whole set of findings before concluding one has no implementation.**
 
-## A superseded run is not a red build
+## Don't guess `rfl` — find the Mathlib precedent
 
-My sweep first read **#6188 as RED**. A commit's check-runs list carries *every* run created for that
-SHA; a re-dispatch had left a `cancelled` duplicate `label` job while `sandboxed-build` was green and
-nothing had conclusion `failure`. **Judge each check by its LATEST run per name.**
-Sweep: `python3 /tmp/claude-1001/-home-chris/0b3b2a65-fff4-42cd-a2ef-093a3324dfa3/scratchpad/sweep.py`
+`rfl` here is backed by `AlgEquiv.toLinearEquiv_ofLinearEquiv`, proved exactly that way, plus the
+fact that `generalLinearEquiv` is literally `⟨toLinearEquiv, ofLinearEquiv, …⟩`. The old CI failure
+recorded in the body ("`MulEquiv.apply_symm_apply` reported unused, unsolved goals") was always about
+**`simp` matching syntactically**, never about the fact being hard to prove.
 
-## `gh pr edit` is broken against this repo
+## An `open` does not rescue a name the file declares at root
 
-It fails on the projects-classic GraphQL deprecation and **leaves the body unchanged without
-saying so**. Use `gh api -X PATCH repos/$R/pulls/<n> -F body=@file`, then re-read the body.
+The gate caught r389 before CI did — `rootedin` *and* `xsibling` both fired on a bare reference to
+the new lemma, in a file that has `open LinearMap.GeneralLinearGroup` and already writes bare
+`coe_ofLinearEquiv`. Inside `namespace TauCeti` the lookup is `TauCeti.x`, then root `x`. Qualifying
+both sites turned three checks green at once.
 
-## Board (12:45Z — all CI green, every board on its current head)
+## Rename longest-first, then residue-check
 
-| PR | head | label | whose move |
-|---|---|---|---|
-| **#5950** | `a64ba63667` | `ready-to-merge` | **Chris** — human-owned `web/examples/Examples.lean` |
-| **#6093** | `34ac589376` | `awaiting-author` | **me** — `reuse` + `api-design` on `Function.fiberMap` still open; `documentation` contested r653 |
-| **#6188** | `36d148a8d9` | `awaiting-author` | **me** — not yet read this session |
-| **#6412** | `360cdfc5b9` | `awaiting-author` | reviewer — `api-design` contested r653 |
-| **#6418** | `d20b665467` | `awaiting-author` | reviewer — ⛔ `reuse` **fixed** r653, re-review running |
-| **#6426** | `54f8eb82b5` | `awaiting-review` | reviewer — ready 12:15Z, inside the 46–64 min window |
-| **#6432** | `f9bdb0a8b4` | `awaiting-CI` | reviewer — **marked ready 12:25Z** (r653 first action) |
+`congrAut_apply` is a prefix-collision hazard for a naive `congrAut` substitution: one pass yields
+`autCongr_apply` where `autCongr_apply_apply` was wanted. 35 sites, three files, residue 0.
+
+## Measure a "too wide" line against HEAD before believing you widened it
+
+Two lines flagged at 196 and 164 chars were pre-existing roadmap URLs, byte-identical before my
+change. `width` only judges added lines and stayed green throughout.
+
+## The board latency band is 32–64 min, not 46–64
+
+#6426's first board came **32 min** after `ready_for_review`. Do not treat 46 as a floor when
+judging whether a drive is overdue.
+
+## Board (13:08Z)
+
+| PR | head | CI | label | whose move |
+|---|---|---|---|---|
+| **#5950** | `a64ba63667` | green | `ready-to-merge` | **Chris** — human-owned `web/examples/Examples.lean` |
+| **#6093** | `34ac589376` | green | `awaiting-author` | **me** — `reuse` + `api-design` on `Function.fiberMap` |
+| **#6188** | `2aaf5e818c` | building | `awaiting-author` | reviewer — **4 rubrics fixed r654**, board BEHIND |
+| **#6412** | `360cdfc5b9` | green | `awaiting-author` | reviewer — `api-design` contested r653 |
+| **#6418** | `d20b665467` | building | `awaiting-author` | reviewer — ⛔ `reuse` fixed r653, board BEHIND |
+| **#6426** | `54f8eb82b5` | green | `awaiting-review` | **nobody — 10/10 green, 0 files outside `TauCeti/`** |
+| **#6432** | `f9bdb0a8b4` | green | `awaiting-CI` | reviewer — awaiting first board |
+
+**Boards on #6188 and #6418 are BEHIND their heads. The fixes are already pushed — do NOT re-fix.**
 
 ## Settled — do not re-litigate
 
+* **#6188** — the transport is `LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv`, public,
+  `rfl`, phrased via `ofLinearEquiv`. `congrAut` is now **`autCongr`**, with
+  `autCongr_apply_apply` / `autCongr_symm_apply_apply`, verified against `AlgEquiv.autCongr` and
+  `LinearEquiv.conj_apply`/`conj_apply_apply`. Both `have`s keep their syntactic shape because
+  `simp` matches syntactically.
 * **#6093** — keep `@[expose]` on `Function.fiberMap`; `Equiv.compFiberEquiv` must NOT have it;
-  `fundamentalGroupEquivFiber_apply_coe` must NOT be `@[simp]`; `fiberMap_comp_apply` must NOT be
-  `@[simp]` (`simpNF` rejects it, tested twice). `naming` and `placement` cleared on scope.
-* **#6418** — `parallelns`/`slice` are one fact twice: `intCharacter_def` is `private` and stays;
-  `intCharacter_eq_iff`'s `FDRep` args are **implicit**. `FDRep.isIntegral_char` is **deleted**, not
-  rooted — it duplicates Mathlib's `FDRep.isIntegral_character` exactly. `decldiff`'s VANISHED row is
-  a true positive and is answered in the body.
-* **#6412** — the roadmap line the finding wants changed is in **TauCetiRoadmap**, a human-controlled
-  repo this role may not open a PR or issue in. Contested, not fixable here.
+  `fundamentalGroupEquivFiber_apply_coe` and `fiberMap_comp_apply` must NOT be `@[simp]`.
+  `naming` and `placement` cleared on scope; `documentation` contested r653 (0 roadmap lines touched).
+* **#6412** — the roadmap line is in **TauCetiRoadmap**, human-controlled and out of reach.
+* **#6418** — `FDRep.isIntegral_char` deleted, not rooted: it duplicates Mathlib's
+  `FDRep.isIntegral_character` exactly.
 
 ## Next
 
-1. **#6093** `reuse` + `api-design` — both on the new `TauCeti/Logic/Function/Fiber.lean`, which this
-   PR *does* create, so both are in scope and should be implemented, not contested. `reuse` wants
-   `fiberMap` built from `Set.MapsTo.restrict` with the laws via `Subtype.map_id`/`Subtype.map_comp`;
-   `api-design` wants `@[expose]` gone. §6 records that removing it breaks `fiberMap_monodromy`
-   across a module boundary — but the `reuse` restructure may change that, so do `reuse` first and
-   re-measure. **No local build: gate on CI.**
-2. **#6188** — not yet read this session. Five blocking rubrics per the handover; expect `api-design`
-   and `reuse` to have re-fired on the rooting alone, which is expected, not a regression.
-3. `handover/congraut-structural-deferred` opens only **after #6188 lands**.
+1. **#6093** `reuse` + `api-design`, both on `TauCeti/Logic/Function/Fiber.lean`, which this PR
+   creates — in scope, so implement. `reuse` wants `fiberMap` via `Set.MapsTo.restrict` with the
+   laws through `Subtype.map_id`/`Subtype.map_comp`; `api-design` wants `@[expose]` gone and
+   `fiberMap_monodromy` rewritten through `fiberMap_apply_coe`/`Subtype.ext`. §6 says removing
+   `@[expose]` breaks it across a module boundary — **do `reuse` first, then re-measure**, since the
+   restructure may remove the need for the body.
+2. Watch #6188 and #6418 CI; their boards are behind, so wait rather than re-fix.
+3. `handover/congraut-structural-deferred` opens only **after #6188 lands** — and its
+   `congrAut_eq`/`congrAut_symm_eq` must be **renamed to `autCongr_eq`/`autCongr_symm_eq`** first.
 
 ## Still needs Chris
 
-* **No `lake build` / `cache get` / `lake update`.** Gate on CI. (This machine has no toolchain at
-  all, so it enforces itself.)
-* No `uv`/`uvx` here — step 4 review drives unavailable until installed. The pipeline self-serves in
-  46–64 min, so this is rarely the bottleneck.
+* **No `lake build` / `cache get` / `lake update`.** Gate on CI. (No toolchain here anyway.)
+* No `uv`/`uvx` — step-4 drives unavailable. The pipeline self-serves in 32–64 min.
 * `cft-fix-6093` holds 13 superseded files + a stray `lake-manifest.json` bump. #5950.
 
 ## Standing traps
@@ -87,3 +103,5 @@ saying so**. Use `gh api -X PATCH repos/$R/pulls/<n> -F body=@file`, then re-rea
 Never merge/close a PR. Push to `fork`, never `origin` (403). One worktree: `improver-1`.
 Never touch `scripts/`, `.github/`, the lakefile. No bare `git stash`. Never #5481.
 Never open a PR from `handover/improve-toolkit`. Every PR body needs a standalone `Roadmap: none`.
+`gh pr edit` silently no-ops here — use `gh api -X PATCH … -F body=@file`.
+A fresh worktree needs `.lake` symlinked or `lint-dot-notation` errors on both sides.

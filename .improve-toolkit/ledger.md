@@ -33633,3 +33633,98 @@ verified the old text was still live afterwards. Use
 Seven open, all CI green, every board on its current head. #6432 and #6426 awaiting first board
 (ready 12:25Z / 12:15Z — inside the 46–64 min window, nothing owed). #6093 and #6188 awaiting-author.
 #5950 Chris's.
+
+---
+
+## r654 — 2026-09-12 — #6188: four blocking rubrics answered by one lemma the reviewer had already named
+
+### #6426 landed its first board: ten of ten green
+
+Posted 12:47:46Z, **32 minutes** after `ready_for_review` (12:15:19Z). Zero files outside
+`TauCeti/`, so it is auto-merge eligible and nothing is owed. Worth recording: the measured
+reviewable→board band was **46–64 min** (r651). It is now **32–64**. Do not treat 46 as a floor when
+deciding whether a drive is overdue.
+
+### #6188: three findings that contradict each other pairwise, one implementation
+
+The five blocking rubrics were not five problems. `reuse`, `api-design` and `proof-quality` were all
+pointing at one thing — the four-line `ext`/`coe` transport of
+`((generalLinearEquiv R M).symm f).toLinearEquiv = f`, duplicated verbatim into both evaluation
+proofs — and their *fixes* were mutually exclusive:
+
+* `reuse`: replace each block's proof with the one-liner, **"keep the `have`s inline so no shared
+  restating declaration reappears"**.
+* `proof-quality`: **"Restore the single `private theorem toLinearEquiv_generalLinearEquiv_symm`"**
+  and use it in both.
+
+Those two cannot both be satisfied. Contesting was the obvious move and would have been wrong:
+**`api-design` had already written the reconciliation into its own fix note.** State it once, public,
+in the namespace where the two definitions live, and phrase it through `ofLinearEquiv` so it mentions
+neither `generalLinearEquiv` nor `symm` — at which point it is no longer a restatement of
+`MulEquiv.apply_symm_apply`, which was `reuse`'s whole objection.
+
+```lean
+@[simp]
+theorem LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv (f : M ≃ₗ[R] M) :
+    (ofLinearEquiv f).toLinearEquiv = f := rfl
+```
+
+`rfl` is not a guess: Mathlib proves the exact analogue `AlgEquiv.toLinearEquiv_ofLinearEquiv` that
+way, and `generalLinearEquiv` is literally `⟨toLinearEquiv, ofLinearEquiv, …⟩`, so
+`(generalLinearEquiv R M).symm f` *is* `ofLinearEquiv f` by projection reduction.
+
+**Read the whole set of findings before deciding one has no implementation.** Two of these three
+block each other; the third names the way out. *A pairwise contradiction is not a deadlock until the
+third opinion has been read.*
+
+Each proof keeps its `have` in the syntactic shape its `simp only` needs — the earlier body already
+recorded, from CI, that substituting `MulEquiv.apply_symm_apply` directly leaves unsolved goals.
+That failure was always about **`simp` matching syntactically**, never about the fact being hard to
+prove. Naming the fact and handing it to `simp` in the shape it wants costs one line and settles
+both.
+
+`generality`'s finding — `M` and its module instances dead since the private helper was deleted —
+dissolved on its own: the new lemma is stated over `M`.
+
+### The gate caught r389 before CI did
+
+First attempt referenced the new lemma bare. `rootedin` **and** `xsibling` both fired:
+
+```
+UNREACHABLE  bare `toLinearEquiv_ofLinearEquiv` cannot reach
+             `LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv` from inside `TauCeti`
+```
+
+The file has `open LinearMap.GeneralLinearGroup`, which is exactly why this looked safe — the same
+file already writes bare `coe_ofLinearEquiv`, `coeFn_generalLinearEquiv`. **An `open` does not
+rescue a name the file itself declares at root**: inside `namespace TauCeti` the lookup is
+`TauCeti.x` then root `x`. Qualified both sites; three checks went green together (`parallelns` too).
+
+### `naming`: verified against Mathlib rather than taken on trust
+
+Every claim in the finding checked out, so it was implemented, not argued:
+
+* `AlgEquiv.autCongr (ϕ : A₁ ≃ₐ[R] A₂) : (A₁ ≃ₐ[R] A₁) ≃* A₂ ≃ₐ[R] A₂` — the same construction one
+  structure up. `congrAut` occurs **nowhere** in Mathlib. `LinearEquiv.autCongr` is free.
+* The `_apply_apply` convention is settled by the sibling in the *same* namespace: Mathlib carries
+  both `LinearEquiv.conj_apply` and `LinearEquiv.conj_apply_apply`.
+
+35 occurrences, three files. Renamed longest-first — `congrAut_apply` is a prefix-collision hazard
+for a naive `congrAut` substitution, and a single-pass rename would silently produce `autCongr_apply`
+instead of `autCongr_apply_apply`. Residue-checked to zero.
+
+The same reviewer approved `scope` while requesting this rename, so the two call-site files it drags
+in are not scope creep — a rename must update its callers.
+
+### A width scare that was not one
+
+Post-rename width check flagged two lines at **196** and **164** characters. Neither was mine: both
+are pre-existing roadmap URLs in module docstrings, byte-identical before the rename. **Measure the
+line against `HEAD` before believing you widened it.** (`width` itself only judges added lines, and
+stayed green throughout.)
+
+### Board
+Seven open. #6426 ten-of-ten green and auto-merge eligible. #6418 and #6188 building on new heads —
+boards BEHIND on both, so the next round must **not** re-fix either. #6093 `reuse`/`api-design` on
+`Function.fiberMap` still open; `documentation` contested r653. #6432 awaiting first board. #5950
+Chris's.
