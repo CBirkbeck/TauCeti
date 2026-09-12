@@ -235,7 +235,7 @@ theorem toCompletionLoc_heq [IsTopologicalRing A] (P : PairOfDefinition A) (T T'
     [IsLocalization.Away s' S] (hden : HasDenominatorPower P T s S)
     (hden' : HasDenominatorPower P T' s' S) (h : locSubring P T' s' S = locSubring P T s S) :
     HEq (toCompletionLoc P T' s' S hden') (toCompletionLoc P T s S hden) :=
-  UniformSpace.Completion.coeRingHom_comp_heq (algebraMap A S)
+  (algebraMap A S).completionCoe_comp_heq
     (locUniformSpace_congr P T T' s s' S hden hden' h) _ _ _ _
 
 

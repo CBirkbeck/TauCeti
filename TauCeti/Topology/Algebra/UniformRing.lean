@@ -10,8 +10,10 @@ public import Mathlib.Topology.Algebra.UniformRing
 /-!
 # Ring homomorphisms out of a completion
 
-Two results about `UniformSpace.Completion` as a *ring*, both in the root
-`UniformSpace.Completion` namespace they extend.
+Results about `UniformSpace.Completion` as a *ring*. Those about the completion itself live in
+the root `UniformSpace.Completion` namespace they extend; `RingHom.completionCoe_comp_heq`, whose
+subject is the homomorphism being followed by the coercion, lives in `RingHom` so that it is
+available by dot notation on that map.
 
 `UniformSpace.Completion.ringHom_ext_of_continuous` is `UniformSpace.Completion.ext` for ring
 homomorphisms: two continuous ring homomorphisms out of `Completion R` that agree after composing
@@ -42,10 +44,10 @@ what `UniformSpace.Completion.algebra` requires.
 The declarations live in the root `UniformSpace.Completion` namespace they extend, following
 this repository's convention for lemmas about external types.
 
-`UniformSpace.Completion.coeRingHom_comp_heq` compares the coercion for two *equal* uniformities
-on the same ring: following a fixed map by the coercion gives heterogeneously equal composites.
-It is stated here rather than where it is consumed because nothing in it is specific to any
-particular ring being completed.
+`RingHom.completionCoe_comp_heq` compares the coercion for two *equal* uniformities on the same
+ring: following a fixed map by the coercion gives heterogeneously equal composites. It is stated
+here rather than where it is consumed because nothing in it is specific to any particular ring
+being completed.
 
 ## Main definitions
 
@@ -56,6 +58,9 @@ particular ring being completed.
   uniformly continuous (`UniformContinuousConstSMul R S`).
 
 ## Main results
+
+* `RingHom.completionCoe_comp_heq`: equal uniformities on the codomain give heterogeneously equal
+  composites with the coercion into the completion.
 
 * `UniformSpace.Completion.ringHom_ext_of_continuous`: two continuous ring homomorphisms out of
   a completion that agree on the image of the coercion are equal.
@@ -80,7 +85,8 @@ through the instance.** For two equal uniformities on `S`, the composites
 The conclusion is `HEq` rather than `=` because the type `UniformSpace.Completion S` mentions the
 uniformity on `S`, so the two composites do not share a codomain. A caller holding an equation
 between uniformities — rather than a defeq — is the intended consumer. -/
-theorem coeRingHom_comp_heq {R S : Type*} [Ring R] [Ring S] (f : R →+* S)
+theorem _root_.RingHom.completionCoe_comp_heq {R S : Type*} [NonAssocSemiring R] [Ring S]
+    (f : R →+* S)
     {u₁ u₂ : UniformSpace S} (hu : u₁ = u₂)
     (t₁ : @IsTopologicalRing S u₁.toTopologicalSpace _)
     (t₂ : @IsTopologicalRing S u₂.toTopologicalSpace _)
