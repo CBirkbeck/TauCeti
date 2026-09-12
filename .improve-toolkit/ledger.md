@@ -33890,3 +33890,91 @@ Seven open. #6412 and #6426 both 10/10 green (#6426 `ready-to-merge` 81 min, not
 pipeline's call, not mine). #6188 rebuilding on `94921c53a`. #6093 building on `9d13f9587`, board
 BEHIND. #6418 `awaiting-review`, board BEHIND. #6432 now has two blockers, both #6188's. #5950
 Chris's. No new merges since #6406.
+
+---
+
+## r657 — 2026-09-12 — the ⛔ on #6418 lifted, and four rubrics arrived at once
+
+### Clearing a block does not clear a PR — it starts the rest of the review
+
+#6418's ⛔ `reuse` went **✅ approved** on `d20b665467`: deleting `FDRep.isIntegral_char` as an exact
+Mathlib duplicate was accepted. The handover records that *a ⛔ block halts the review — other
+rubrics then read "absent"/"not yet run", not lost*. They ran now, and four came back 🟡:
+`api-design`, `placement`, `naming`, `documentation`.
+
+**Expect a cleared block to be followed by more findings, not by green.** Four rubrics seeing a PR
+for the first time is the block being lifted, not a regression.
+
+### All four were two facts in one file
+
+* **The `FDRep.intCharacter` docstring closed by contradicting the PR that wrote it** — it stated the
+  definition sits in `TauCeti.FDRep`, is unavailable through dot notation, and is written
+  `intCharacter V g`. The rooting falsified all three *in the same commit*. All four rubrics cite it.
+  Now describes the rooted API: `V.intCharacter g`.
+* **`intCharacter_eq_iff` stayed behind.** The PR body had argued it should, and the argument was
+  sound as far as it went: its `FDRep` arguments are **implicit**, so rooting enables no
+  `V.intCharacter_eq_iff`, and `lint-dot-notation` does not flag it.
+
+  `api-design` and `placement` both answered on different ground — it is the **elimination principle
+  for `FDRep.intCharacter`**, named in that definition's own docstring, so leaving it in
+  `TauCeti.FDRep` splits one characteristic API across two namespace paths. That is about what a
+  reader navigates, not what a linter can see, and the earlier argument never addressed it.
+
+  Rooted, with its single call site qualified (r389 again — a bare sibling reference dies the moment
+  its target leaves the wrapper). `rootsurplus` duly reports it as rooted-but-unflagged; answered in
+  the body, since the rooting is the reviewers' call and not the linter's.
+
+**An argument that is correct can still be answering the wrong question.** The dot-notation case for
+leaving it nested was true and irrelevant to the cohesion case against it.
+
+Only `private intCharacter_def` now remains in `TauCeti.FDRep`. Body updated from "two declarations
+remain" to one.
+
+### #6432 contested on sequencing, with the receipts checked first
+
+Both of its blockers ask for work that exists elsewhere and is gated on #6188:
+
+* `naming` wants the three declarations rooted — **#6188 does that**, and additionally renames them
+  to `autCongr`. Rooting them here would produce a second, differently-named copy of the same move
+  and turn a textual overlap into a conflict resolvable only by discarding one side.
+* `api-design` wants semilinear `congrAut_eq`/`congrAut_symm_eq` — **`handover/congraut-structural-deferred`
+  already holds them**, and I verified the branch before quoting it rather than trusting the
+  handover's summary:
+
+  ```lean
+  theorem _root_.LinearEquiv.congrAut_eq (e : M₁ ≃ₛₗ[σ₁₂] M₂) (f : M₁ ≃ₗ[R₁] M₁) :
+      LinearEquiv.congrAut e f = (e.symm.trans f).trans e
+  theorem _root_.LinearEquiv.congrAut_symm_eq (e : M₁ ≃ₛₗ[σ₁₂] M₂) (g : M₂ ≃ₗ[R₂] M₂) :
+      (LinearEquiv.congrAut e).symm g = (e.trans g).trans e.symm
+  ```
+
+  Already `_root_`-anchored **and already semilinear** — exactly the generality the finding asks for.
+  They cannot be added on #6432 at all: their first explicit argument is a `LinearEquiv`, so inside
+  the surviving `namespace TauCeti.LinearEquiv` each is a **new** `lint-dot-notation` violation and
+  the gate fails on new findings.
+
+The reviewer's own *"rebasing on the namespace relocation first if necessary"* is the same ordering,
+so both contests make it explicit rather than dispute it, and each says what happens if #6188 stalls.
+
+**Verify a handover claim before quoting it in a PR comment.** The branch matched, but the cost of
+checking was one command and the cost of being wrong is a contest built on a false premise.
+
+### Board
+Seven open. #6412 and #6426 both 10/10 (#6426 `ready-to-merge` 83 min, unmerged — pipeline's call).
+#6093 and #6188 building, boards BEHIND. #6418 pushed `5c73d4c54`, board now BEHIND. #6432 contested
+on both threads. #5950 Chris's. No new merges since #6406.
+
+### Late in r657: #6093's `documentation` cleared — and `reuse` came back
+
+Board moved to `9d13f95872` at 13:42:34Z. `documentation` ✅ **approved** — the conjugacy-helper
+docstring fix landed. Six rubrics are ♻️ stale/re-run pending. Two are 🟡 again:
+
+* `reuse` — *"The new fibre API reimplements Mathlib's generic subtype-restriction machinery"*. This
+  is the `Set.MapsTo.restrict` finding that r655 recorded as **gone**. It is not gone; it re-fired.
+* `api-design` — a **new** finding: *"The generalized base-relabeling equivalence lacks the identity
+  and composition lemmas"*. Not the old `@[expose]` objection, which stays cleared.
+
+**A rubric that went green can go 🟡 again on the next round.** r655's note that the restructure was
+"stale work; do not start it" was true of the board it was written against and false two rounds
+later. Record a rubric's state *with the head it was judged on*, and re-read the board before acting
+on any remembered verdict — the same discipline the edited-comment trap already forced.
