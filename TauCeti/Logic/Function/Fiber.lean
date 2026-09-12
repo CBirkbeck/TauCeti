@@ -108,10 +108,13 @@ theorem compFiberEquiv_symm_apply_coe (h : X ≃ Y) (y : Y) (e : p ⁻¹' {h.sym
   (rfl)
 
 /-- Relabelling the base along the identity leaves the fibres as they are. -/
+-- Proved through `compFiberEquiv_apply_coe` rather than by unfolding: that lemma is where the
+-- definitional equality of `Set.equivOfEq` is isolated, so this law survives a change of
+-- representation in `compFiberEquiv`.
 @[simp]
 theorem compFiberEquiv_refl (y : X) :
     compFiberEquiv (p := p) (Equiv.refl X) y = Equiv.refl (p ⁻¹' {y}) :=
-  Equiv.ext fun _ ↦ Subtype.ext rfl
+  Equiv.ext fun _ ↦ Subtype.ext (by simp)
 
 /-- Relabelling the base along a composite is relabelling twice, first along `k` and then along
 `h`. -/
@@ -120,6 +123,6 @@ theorem compFiberEquiv_refl (y : X) :
 theorem compFiberEquiv_trans (h : X ≃ Y) (k : Y ≃ Z) (z : Z) :
     compFiberEquiv (p := p) (h.trans k) z =
       (compFiberEquiv (p := h ∘ p) k z).trans (compFiberEquiv (p := p) h (k.symm z)) :=
-  Equiv.ext fun _ ↦ Subtype.ext rfl
+  Equiv.ext fun _ ↦ Subtype.ext (by simp)
 
 end Equiv
