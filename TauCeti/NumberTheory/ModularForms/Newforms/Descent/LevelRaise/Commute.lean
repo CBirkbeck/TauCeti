@@ -245,6 +245,10 @@ private def onePointMulPerm (hpl : Nat.Coprime p l) : Equiv.Perm (OnePoint (ZMod
 private theorem onePointMulPerm_coe (hpl : Nat.Coprime p l) (x : ZMod p) :
     onePointMulPerm hpl ((x : ZMod p) : OnePoint (ZMod p)) =
       (((l : ZMod p) * x : ZMod p) : OnePoint (ZMod p)) := by
+  -- `OnePoint (ZMod p)` is `Option (ZMod p)` by definition but is a plain `def`, so it does not
+  -- unfold at reducible transparency: `Equiv.optionCongr_apply` does not match an application
+  -- typed at `OnePoint`, and neither `simp [onePointMulPerm]` nor a rewrite with it closes the
+  -- goal. `change` restates the value at the definitional unfolding, where `mulLeft` evaluates.
   change ((((ZMod.unitOfCoprime l hpl.symm : (ZMod p)ˣ) : ZMod p) * x : ZMod p) :
       OnePoint (ZMod p)) = _
   rw [ZMod.coe_unitOfCoprime]
