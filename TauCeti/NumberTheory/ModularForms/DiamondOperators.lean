@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.LinearAlgebra.Eigenspace.Basic
+public import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
 public import TauCeti.NumberTheory.ModularForms.Basic
 public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Units
 public import TauCeti.NumberTheory.ModularForms.SlashActionRat
@@ -512,32 +513,23 @@ theorem slash_mapGL_eq_self_of_comp_of_mem_cuspFormCharSpace {M N : ℕ} (hMN : 
 
 /-- **The inclusion of character spaces along `S_k(Γ₁(N)) → M_k(Γ₁(N))`.** A cusp form lies in
 `S_k(N, χ)` exactly when the modular form underlying it lies in `M_k(N, χ)`
-(`coe_mem_modFormCharSpace_iff`), and the coercion is pointwise, hence linear. This is the map
-along which a statement about `modFormCharSpace` specialises to `cuspFormCharSpace`. -/
+(`coe_mem_modFormCharSpace_iff`), so Mathlib's `CuspForm.toModularFormₗ` restricts to a map
+between the character spaces. This is the map along which a statement about `modFormCharSpace`
+specialises to `cuspFormCharSpace`. -/
 noncomputable def cuspToModFormCharSpace (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) :
-    cuspFormCharSpace k χ →ₗ[ℂ] modFormCharSpace k χ where
-  toFun f := ⟨(f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k),
-    (coe_mem_modFormCharSpace_iff k χ _).mpr f.2⟩
-  map_add' _ _ := Subtype.ext (DFunLike.coe_injective rfl)
-  map_smul' _ _ := Subtype.ext (DFunLike.coe_injective rfl)
+    cuspFormCharSpace k χ →ₗ[ℂ] modFormCharSpace k χ :=
+  LinearMap.codRestrict (modFormCharSpace k χ)
+    (CuspForm.toModularFormₗ.comp (cuspFormCharSpace k χ).subtype)
+    fun f ↦ (coe_mem_modFormCharSpace_iff k χ _).mpr f.2
 
-/-- **`cuspToModFormCharSpace` is the coercion.** The modular form underlying the image of a
-cusp form is the modular form underlying that cusp form; the inclusion changes nothing but the
-space the element is regarded as living in. -/
 @[simp]
 theorem coe_cuspToModFormCharSpace (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) (f : cuspFormCharSpace k χ) :
     (cuspToModFormCharSpace k χ f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) =
       ((f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
         ModularForm ((Gamma1 N).map (mapGL ℝ)) k) := (rfl)
 
-/-- The inclusion of character spaces is injective: it is the coercion of cusp forms to modular
-forms, which does not change the underlying function. -/
+/-- The inclusion of character spaces is injective: it restricts Mathlib's injective
+`CuspForm.toModularFormₗ`. -/
 theorem cuspToModFormCharSpace_injective (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) :
-    Function.Injective (cuspToModFormCharSpace k χ) := by
-  intro f g h
-  have h' : ((f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
-      ModularForm ((Gamma1 N).map (mapGL ℝ)) k) = (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) := by
-    simpa using congrArg (fun F : modFormCharSpace k χ ↦
-      (F : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) h
-  exact Subtype.ext (DFunLike.coe_injective
-    (by simpa only [ModularFormClass.coe_modularForm] using congrArg DFunLike.coe h'))
+    Function.Injective (cuspToModFormCharSpace k χ) := fun _ _ h ↦
+  Subtype.ext (CuspForm.toModularFormₗ_injective (congrArg Subtype.val h))
