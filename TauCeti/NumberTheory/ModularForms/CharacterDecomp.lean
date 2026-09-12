@@ -10,7 +10,6 @@ import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
 public import TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Basic
 public import TauCeti.NumberTheory.ModularForms.DiamondOperators
-import Mathlib.Data.ZMod.Units
 
 /-!
 # Character decomposition of modular forms for `Γ₁(N)`
