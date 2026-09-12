@@ -35257,3 +35257,31 @@ And: **I diagnosed this merge wait twice and was wrong twice, both times by reas
 instead of querying the queue.** The queue's own state was one API call away on both occasions. The
 r676 "jam" came from reading run lists; the asymmetry theory came from reading merge timestamps.
 Neither needed a theory at all.
+
+### The tool found its own bug on first live run
+
+`queuepos.py`'s first run flagged **#5950 as STRANDED alongside #6093**. Wrong — and wrong in the
+direction that matters, because the advice it printed was "merge `origin/main` into each, re-gate,
+push" for a PR this role is told never to touch.
+
+The two are not the same shape:
+
+```
+#6093   added_to_merge_queue 15:43:28Z  ->  removed_from_merge_queue 18:54:20Z   EJECTED
+#5950   no merge_queue timeline events at all                                    NEVER-QUEUED
+```
+
+The bot never got #5950 into the queue — it needs a human review on a human-owned file. Refreshing
+its branch would achieve nothing. **Queue membership alone is not the signal; the enqueue history
+is.** `queue_verdict` now takes `ever_enqueued` and splits:
+
+* **EJECTED** — enqueued, then dropped. Mine: refresh against `main`, re-gate, push.
+* **NEVER-QUEUED** — no queue events ever. Not mine: the branch is not what is wrong.
+
+Controls updated to cover both, mutation-tested by collapsing them back into one verdict (the exact
+bug) — the control fires. **137 passed, 0 failed.** Live run now reads `#6432 QUEUED:pos=9`,
+`#6188 QUEUED:pos=17`, `#6093 NOT-READY`, `#5950 NEVER-QUEUED`, exit 0.
+
+Worth recording as a pattern: **a new check's first live run is part of writing it.** Both fixture
+controls passed while the verdict was still wrong, because I had only encoded the case I had just
+lived through. The second shape was sitting in the same four-PR board.

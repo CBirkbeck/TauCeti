@@ -59,24 +59,36 @@ python3 tools/queuepos.py            # all open improve/* PRs
 python3 tools/queuepos.py 6093 6188  # named
 ```
 
-**`STRANDED` is the only actionable verdict** — `ready-to-merge` **and absent from the queue**.
-`QUEUED:pos=30` is not a problem however long it has sat. Exit 1 on any stranded PR.
+**`EJECTED` is the only actionable verdict** — it was in the queue and is no longer. `QUEUED:pos=30`
+is not a problem however long it has sat. Exit 1 on any ejected PR.
+
+**Its first live run caught its own bug**, worth keeping: it flagged **#5950** beside #6093, and told
+me to refresh a PR this role must never touch. The two differ in enqueue history, not membership —
+#6093 was `added_to_merge_queue` then `removed_from_merge_queue`; **#5950 has no queue events at
+all**, because the bot could never enqueue it (human review on a human-owned file). So:
+
+* **`EJECTED`** — enqueued, then dropped. **Mine:** refresh against `main`, re-gate, push.
+* **`NEVER-QUEUED`** — no queue events ever. **Not mine:** the branch is not what is wrong.
+
+Both fixture controls passed while the verdict was still wrong, because I had encoded only the case I
+had just lived through. **A new check's first live run is part of writing it.**
 
 ## Board (19:30Z)
 
 | PR | head | CI | label | queue | whose move |
 |---|---|---|---|---|---|
-| **#5950** | `a64ba63667` | green | `ready-to-merge` | — | **Chris** — human-owned `web/examples/Examples.lean` |
+| **#5950** | `a64ba63667` | green | `ready-to-merge` | **NEVER-QUEUED** | **Chris** — human-owned `web/examples/Examples.lean`; the bot cannot enqueue it. **Do not refresh it.** |
 | **#6093** | `45812c5f8` | building | `awaiting-CI` | re-entering | nobody — **refreshed this round** |
-| **#6188** | `ec1a68d96` | green | `ready-to-merge` | **pos 18** | nobody — **10/10**, waiting its turn |
-| **#6432** | `98bb7e78f` | green | `ready-to-merge` | **pos 10** | nobody — **10/10**, waiting its turn |
+| **#6188** | `ec1a68d96` | green | `ready-to-merge` | **pos 17** | nobody — **10/10**, waiting its turn |
+| **#6432** | `98bb7e78f` | green | `ready-to-merge` | **pos 9** | nobody — **10/10**, waiting its turn |
 
 ## Next
 
 1. **Run `tools/queuepos.py` every round, beside the sweep.** It is the only check that separates
-   "waiting its turn" from "ejected and never coming back".
+   "waiting its turn" from "ejected and never coming back". **Act only on `EJECTED`** —
+   `NEVER-QUEUED` (#5950) is not this role's to fix.
 2. **Do not re-diagnose the merge wait a third time.** A deep queue position is the whole
-   explanation. Act only on `STRANDED`.
+   explanation.
 3. **#6093 will draw a fresh board** (~32–67 min after CI green). It was 10/10 before the merge and
    the merge changed no gate finding, so **expect it to return 10/10** — if a rubric fires, read it
    fresh rather than assuming the merge caused it. If `generality` re-raises `rootsurplus`/`slice`,

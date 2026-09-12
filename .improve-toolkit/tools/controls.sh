@@ -817,19 +817,22 @@ sweepv | chk "sweep: a real failure, a pending run and a live cancel still read 
 
 # ---- r679: queuepos -- the fifth field, merge-queue membership -------------------------------
 # #6093 read label=ready-to-merge / CI=GREEN / board=ON-HEAD / isDraft=false for 27 minutes after
-# github-merge-queue[bot] had silently ejected it.  Only queue membership told them apart.
+# github-merge-queue[bot] had silently ejected it.  Only queue membership told them apart -- and
+# only the ENQUEUE HISTORY tells an ejection (mine to fix) from a PR the bot never enqueued at all
+# (#5950, blocked on a human review; refreshing it would achieve nothing).
 qpos() { python3 -c "
 import importlib.util as u
 s=u.spec_from_file_location('q','$T/queuepos.py'); m=u.module_from_spec(s); s.loader.exec_module(m)
-print('stranded:', m.queue_verdict('ready-to-merge', False))
+print('ejected:', m.queue_verdict('ready-to-merge', False, ever_enqueued=True))
+print('neverq:', m.queue_verdict('ready-to-merge', False, ever_enqueued=False))
 print('queued:', m.queue_verdict('ready-to-merge', True, 18, 'QUEUED'))
 print('merging:', m.queue_verdict('ready-to-merge', True, 1, 'AWAITING_CHECKS'))
-print('notready:', m.queue_verdict('awaiting-CI', False))
+print('notready:', m.queue_verdict('awaiting-CI', False, ever_enqueued=True))
 print('deep:', m.queue_verdict('ready-to-merge', True, 30, 'QUEUED'))
 "; }
-qpos | chk "queuepos: ready-to-merge and absent from the queue is STRANDED (r679)" \
-            "stranded: STRANDED"
-qpos | chk "queuepos: a deep queue position is not a fault, and an unready label is not stranded" \
+qpos | chk "queuepos: enqueued-then-absent is EJECTED, never-enqueued is not (r679)" \
+            "ejected: EJECTED" "neverq: NEVER-QUEUED"
+qpos | chk "queuepos: a deep queue position is not a fault, and an unready label is neither" \
             "queued: QUEUED:pos=18" "merging: MERGING:pos=1" "notready: NOT-READY" \
             "deep: QUEUED:pos=30"
 

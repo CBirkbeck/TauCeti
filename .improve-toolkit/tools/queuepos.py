@@ -18,7 +18,16 @@ NORMAL.  r676 read that wait as a "jam" on an unrelated PR and was wrong; r679 t
 and merge timestamps.  The queue's own state was one API call away.  *Query the queue; do not
 model it.*
 
-So the only actionable signal is STRANDED: labelled `ready-to-merge` and absent from the queue.
+TWO WAYS TO BE OUT OF THE QUEUE, AND ONLY ONE IS MINE (found by running this tool, r679).  Its
+first run flagged #5950 alongside #6093.  But #5950 has **no `merge_queue` timeline events at all**
+-- the bot never managed to enqueue it, because it needs a human review on a human-owned file.
+#6093 had `added_to_merge_queue` and then `removed_from_merge_queue`.  Same "labelled but absent",
+opposite causes, and refreshing the branch is the fix for exactly one of them:
+
+    EJECTED       enqueued, then dropped   -> mine: refresh against main and re-gate
+    NEVER-QUEUED  no queue events ever     -> NOT mine: the bot could not enqueue it at all
+
+So the enqueue history, not queue membership alone, is what makes the verdict actionable.
 QUEUED at position 18 is not a problem, however long it has been there.
 """
 import json, subprocess, sys
@@ -29,20 +38,24 @@ _Q = """{repository(owner:"%s",name:"%s"){mergeQueue(branch:"%s"){entries(first:
   totalCount nodes{position state enqueuedAt pullRequest{number}}}}}}"""
 
 
-def queue_verdict(label, in_queue, position=None, state=None):
-    """STRANDED / QUEUED:… / NOT-READY / MERGING, from label plus queue membership.
+def queue_verdict(label, in_queue, position=None, state=None, ever_enqueued=False):
+    """EJECTED / NEVER-QUEUED / QUEUED:… / MERGING:… / NOT-READY.
 
     Pure so the controls can exercise it on fixture data without touching the network.
 
-    STRANDED is the ONLY actionable verdict: the bot enqueues on the label transition, so a PR
-    that is `ready-to-merge` and out of the queue will never be re-enqueued on its own.  The fix
-    is to refresh the branch against `main` and re-gate (r679), which makes the bot re-review and
-    re-label, and the new transition re-enqueues it.
+    EJECTED is the ONLY verdict this role acts on: the bot enqueues on the label transition, so a
+    PR that WAS enqueued and is now out will never be re-enqueued on its own.  The fix is to
+    refresh the branch against `main` and re-gate (r679) -- the bot re-reviews, re-labels, and the
+    new transition re-enqueues it.
+
+    NEVER-QUEUED is the other shape and is NOT actionable here: the bot never got it into the
+    queue, so the branch is not what is wrong.  #5950 is the standing example -- it needs a human
+    review on a human-owned file, and refreshing it would achieve nothing.
     """
     if label != "ready-to-merge":
         return "NOT-READY"
     if not in_queue:
-        return "STRANDED"
+        return "EJECTED" if ever_enqueued else "NEVER-QUEUED"
     if state in ("AWAITING_CHECKS", "MERGEABLE"):
         return "MERGING:pos=%s" % position
     return "QUEUED:pos=%s" % position
@@ -63,6 +76,15 @@ def fetch(owner_repo=REPO, branch="main"):
     return e.get("totalCount"), {n["pullRequest"]["number"]: n for n in e["nodes"]}
 
 
+def ever_enqueued(n, owner_repo=REPO):
+    """Did this PR ever reach the queue?  EJECTED vs NEVER-QUEUED turns on this."""
+    out = subprocess.run(
+        ["gh", "api", "repos/%s/issues/%d/timeline" % (owner_repo, n), "--paginate",
+         "-q", '.[]|select(.event=="added_to_merge_queue")|.created_at'],
+        capture_output=True, text=True).stdout
+    return bool(out.strip())
+
+
 def main(argv):
     prs = [int(a.lstrip("#")) for a in argv[1:]]
     if not prs:
@@ -72,7 +94,7 @@ def main(argv):
                if p["headRefName"].startswith("improve/")]
     depth, entries = fetch()
     print("merge queue depth: %s" % (depth if depth is not None else "unavailable"))
-    stranded = []
+    ejected = []
     for n in prs:
         out = subprocess.run(["gh", "pr", "view", str(n), "--json", "labels"],
                              capture_output=True, text=True).stdout
@@ -80,12 +102,13 @@ def main(argv):
         label = "ready-to-merge" if "ready-to-merge" in labels else ",".join(labels)
         e = entries.get(n)
         v = queue_verdict(label, e is not None,
-                          e["position"] if e else None, e["state"] if e else None)
-        if v == "STRANDED":
-            stranded.append(n)
+                          e["position"] if e else None, e["state"] if e else None,
+                          ever_enqueued(n) if e is None else True)
+        if v == "EJECTED":
+            ejected.append(n)
         print("  #%-6s %-22s %s" % (n, label, v))
-    if stranded:
-        print("\nSTRANDED: %s" % ", ".join("#%d" % n for n in stranded))
+    if ejected:
+        print("\nEJECTED: %s" % ", ".join("#%d" % n for n in ejected))
         print("  The bot enqueues on the label transition, so these will NOT return on their own.")
         print("  Merge origin/main into each, re-gate, push (r679).")
         return 1

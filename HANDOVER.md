@@ -480,8 +480,22 @@ python3 tools/queuepos.py            # all open improve/* PRs
 python3 tools/queuepos.py 6093 6188  # named; exit 1 if any is stranded
 ```
 
-`STRANDED` — `ready-to-merge` **and** absent from the queue — **is the only actionable verdict.**
 `QUEUED:pos=30` is fine however long it has sat. **Run it beside the sweep every round.**
+
+**Two ways to be out of the queue, and only one is this role's.** The tool's first live run flagged
+#5950 beside #6093 and told me to refresh a PR the rules say never to touch. They differ in enqueue
+history, not membership:
+
+```
+#6093   added_to_merge_queue 15:43:28Z -> removed_from_merge_queue 18:54:20Z   EJECTED
+#5950   no merge_queue timeline events at all                                  NEVER-QUEUED
+```
+
+* **`EJECTED`** — enqueued, then dropped. **Yours:** refresh against `main`, re-gate, push.
+* **`NEVER-QUEUED`** — never reached the queue, so the branch is not what is wrong. **Not yours.**
+  #5950 is the standing example: it needs a human review on a human-owned file.
+
+Only `EJECTED` sets exit 1.
 
 ### The fix for a stranded PR
 
@@ -508,4 +522,4 @@ body-answerable kind. Without this comparison the post-merge gate looks like fou
 
 The cost is a certain re-review of a green PR. r678 declined to pay it against an *uncertain*
 failure and was right to; r679 paid it once the failure was certain. **That ordering is the rule:
-refresh a green PR only once `queuepos.py` says `STRANDED`.**
+refresh a green PR only once `queuepos.py` says `EJECTED`.**
