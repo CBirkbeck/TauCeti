@@ -316,27 +316,22 @@ theorem HasDenominatorPower.of_coe_eq_image_mul_left [IsTopologicalRing A]
   exact hN c₀ hc₀
 
 /-- **Over a Tate ring every presentation can be rescaled to one with a topologically nilpotent
-denominator**, carrying its data along. `(T', u * s)` has the same `D` as `(T, s)` and satisfies
-the same standing hypothesis, so it stands in for it wherever only those two are used.
+denominator**, carrying its data along: for `(T, s)` there are a unit `u` and numerators `T'`
+with `u * s` topologically nilpotent, `T'` the `u`-multiples of `T`, the same ring of definition
+`D` as `(T, s)`, and the same standing denominator-power hypothesis.
 
-This packages the three rescaling transports — `locSubring_eq_of_coe_eq_image_mul_left`,
-`HasDenominatorPower.of_coe_eq_image_mul_left` and
-`IsTateRing.exists_isTopologicallyNilpotent_pow_mul` — together with the
-`IsLocalization.Away (u * s) S` instance each of them assumes, which is where the work of
-assembling them goes: that instance is not automatic, and is recovered from `IsUnit u` through
-`IsLocalization.Away.of_associated`. It is bound existentially so that a caller can `haveI` it
-before stating anything about the rescaled presentation.
+`IsLocalization.Away (u * s) S` is part of the conclusion rather than a hypothesis because no
+statement about the rescaled presentation typechecks without it; a caller takes it from the
+existential and `haveI`s it before using the rest.
 
-The rescaled numerators are returned together with the equation `(T' : Set A) = (u * ·) '' T`
-rather than only with their consequences. A consumer comparing *two* presentations — which is what
-Proposition 8.30 does, for `T ⊆ T'` — has to rescale both by the same `u` and then know that the
-containment survives; the two conclusions about `locSubring` and `HasDenominatorPower` do not
-give that, and without the equation the package cannot be used for the case it exists for.
+The numerator equation is stated, not only its consequences, because a comparison of *two*
+presentations needs it: rescaling a pair `T ⊆ T'` over a common denominator by one `u` preserves
+the containment by that equation, and by nothing else in the conclusion.
 
-The intended use is Proposition 8.30, whose current form asks the denominator to be topologically
-nilpotent. This supplies a presentation meeting that hypothesis; transporting a conclusion back
-to `(T, s)` is a separate step, and needs the completed rings and the restriction maps between
-them identified, which is not done here. -/
+The intended use is Proposition 8.30, which asks the denominator to be topologically nilpotent.
+This supplies a presentation meeting that hypothesis; carrying a conclusion back to `(T, s)`
+additionally requires the completed rings and the restriction maps between them to be identified,
+which this theorem does not do. -/
 theorem exists_isTopologicallyNilpotent_rescaled [IsTopologicalRing A] [IsTateRing A]
     (P : PairOfDefinition A) (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S]
     [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S) :
