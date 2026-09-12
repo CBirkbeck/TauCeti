@@ -497,6 +497,20 @@ history, not membership:
 
 Only `EJECTED` sets exit 1.
 
+### Pass an explicit `--limit` to every `gh` listing
+
+r680: the bare `queuepos.py` reported on **2 of 4** PRs. `gh pr list` returns **30 rows by default**
+and this repo carries 30+ open PRs across `elliptic/`, `modular/`, `cft/`, `chebotarev/`, `adic/` —
+so #6093 and #5950, the two oldest, fell off the end as two rows of plausible output with no error.
+
+For this tool that is the worst possible failure: **a stranded PR is by definition an old one**, so
+it sits low in a default listing. The check written to find silently-dropped PRs was itself silently
+dropping the PRs most likely to be stranded. `pr_list_cmd()` now carries `--limit 200` and warns if a
+listing ever reaches it.
+
+Two rounds running, a wrong answer came from a default never chosen — `gh run list` sampling in r676
+and r679, `gh pr list` paging in r680. **Query completely, not just correctly.**
+
 ### The fix for a stranded PR
 
 Refresh the branch so the bot re-reviews and re-labels; the new label transition re-enqueues it.

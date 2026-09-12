@@ -853,6 +853,19 @@ qpos | chk "queuepos: enqueued-then-absent is EJECTED, never-enqueued is not (r6
 qpos | chk "queuepos: a deep queue position is not a fault, and an unready label is neither" \
             "queued: QUEUED:pos=18" "merging: MERGING:pos=1" "notready: NOT-READY" \
             "deep: QUEUED:pos=30"
+# r679 again: `gh pr list` returns 30 rows by default and this repo has 30+ open PRs from other
+# lanes, so the bare call reported on 2 of 4 improve/* PRs -- #6093 and #5950 fell off the end. A
+# stranded PR is by definition an OLD one, i.e. exactly the row a default limit drops.
+qlim() { python3 -c "
+import importlib.util as u
+s=u.spec_from_file_location('q','$T/queuepos.py'); m=u.module_from_spec(s); s.loader.exec_module(m)
+c=m.pr_list_cmd()
+print('haslimit:', '--limit' in c)
+print('limit:', c[c.index('--limit')+1] if '--limit' in c else 'NONE')
+print('big:', int(c[c.index('--limit')+1]) >= 100 if '--limit' in c else False)
+"; }
+qlim | chk "queuepos: the PR listing carries an explicit, generous limit (r679)" \
+            "haslimit: True" "big: True"
 
 p=$(grep -c P "$RES" || true); f=$(grep -c F "$RES" || true)
 printf '\n  %d passed, %d failed\n' "$p" "$f"

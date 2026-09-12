@@ -85,13 +85,28 @@ def ever_enqueued(n, owner_repo=REPO):
     return bool(out.strip())
 
 
+def pr_list_cmd(author="CBirkbeck", limit=200):
+    """The listing command, with an EXPLICIT limit.
+
+    r679, second time in one round a default hid something: `gh pr list` returns **30** rows by
+    default, and this repo carries 30+ open PRs from other lanes (elliptic/, modular/, cft/, ...).
+    The bare call silently reported on 2 of 4 `improve/*` PRs -- #6093 and #5950 fell off the end.
+    For a tool whose whole job is spotting a SILENTLY stranded PR, silently dropping PRs is the
+    one failure it must not have: the older a PR gets, the further down the list it sits, and a
+    stranded PR is by definition an old one.
+    """
+    return ["gh", "pr", "list", "--author", author, "--state", "open",
+            "--limit", str(limit), "--json", "number,headRefName"]
+
+
 def main(argv):
     prs = [int(a.lstrip("#")) for a in argv[1:]]
     if not prs:
-        out = subprocess.run(["gh", "pr", "list", "--author", "CBirkbeck", "--state", "open",
-                              "--json", "number,headRefName"], capture_output=True, text=True).stdout
-        prs = [p["number"] for p in json.loads(out or "[]")
-               if p["headRefName"].startswith("improve/")]
+        out = subprocess.run(pr_list_cmd(), capture_output=True, text=True).stdout
+        rows = json.loads(out or "[]")
+        prs = [p["number"] for p in rows if p["headRefName"].startswith("improve/")]
+        if len(rows) >= 200:
+            print("  (warning: listing hit the 200-PR limit; raise it)", file=sys.stderr)
     depth, entries = fetch()
     print("merge queue depth: %s" % (depth if depth is not None else "unavailable"))
     ejected = []

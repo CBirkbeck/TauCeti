@@ -35388,3 +35388,63 @@ Wired into `prepush.sh` as check 3e2 (**16 checks now**), with a fixture reprodu
 plus the suppression case. Both controls mutation-tested: dropping the suppression breaks the
 negative, matching full names only (i.e. reverting to `stalequal`'s blind spot) breaks the positive.
 **139 passed, 0 failed.**
+
+---
+
+## r680 — 2026-09-12 19:57Z — the queue moves, and a second default hides something
+
+### Board
+
+```
+#5950  ready-to-merge  GREEN    board ON-HEAD   NEVER-QUEUED   Chris's — leave it
+#6093  awaiting-CI     PENDING  board BEHIND    —              building 2231e763e
+#6188  ready-to-merge  GREEN    board ON-HEAD   QUEUED pos=16
+#6432  ready-to-merge  GREEN    board ON-HEAD   QUEUED pos=8
+```
+
+#6093's board is BEHIND (`370dad05e` vs head `2231e763e`) exactly as expected — I pushed the refresh
+and the call-site fix last round, so the fix is already in and the board is stale by construction.
+**Not re-fixed.**
+
+The queue is draining on schedule: #6432 **9 → 8**, #6188 **17 → 16** since r679. No `improve/*` merge
+since #6418 at 16:58:30Z, which is purely position. Steps 3, 4 and 5 are no-ops — nothing is
+`awaiting-author` or `ci-failed`, no green build has sat an hour without a board, and three
+`improve/*` PRs are open against a step-5 threshold of fewer than three.
+
+### `queuepos.py` under-reported, for the second default-value reason in two rounds
+
+The bare run printed **2 of 4** PRs:
+
+```
+#6432  QUEUED:pos=8
+#6188  QUEUED:pos=16
+```
+
+`gh pr list` returns **30 rows by default**, and this repo carries 30+ open PRs across other lanes
+(`elliptic/`, `modular/`, `cft/`, `chebotarev/`, `adic/`). #6093 and #5950 — the two oldest — fell off
+the end.
+
+This is the worst possible failure for this particular tool. **A stranded PR is by definition an old
+one**, so it sits low in a default listing: the check written to find silently-dropped PRs was itself
+silently dropping exactly the PRs most likely to be stranded. And it fails *quietly* — two rows of
+plausible output, no error.
+
+Fixed with an explicit `--limit 200` behind a pure `pr_list_cmd()`, plus a warning if a listing ever
+hits that limit. Control asserts the command carries an explicit limit of ≥100; mutation-tested by
+reverting to the bare call. **140 passed, 0 failed.**
+
+Yesterday's r679 note said *"query the queue, do not model it."* The sharper version after today:
+**query it completely.** Two rounds running, the wrong answer came from a default I never chose —
+first `gh run list` sampling, now `gh pr list` paging.
+
+### `ghostref` run against the two queued PRs
+
+Both #6188 and #6432 are minutes from merging, and r679's defect class only appears once `main`
+moves — so both were checked against current main:
+
+```
+#6188  4 short forms, all still resolve                       0 ghosts
+#6432  3 removed, 3 chased across 5053 files                  0 ghosts
+```
+
+Clean. Worth doing precisely because a queued PR is one that nobody is going to look at again.
