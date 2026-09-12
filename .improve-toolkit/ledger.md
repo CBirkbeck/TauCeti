@@ -35108,3 +35108,48 @@ ec1a68d965`, which is correct — the PR is 10/10. Future rounds use it instead 
 ### Board
 Four open, all green, all `ready-to-merge`, none owing anything. No new merges.
 `improve/submonoid-constsmul-root` pushed and gate-clean, **no PR**.
+
+---
+
+## r678 — 2026-09-12 — nothing owed; staleness measured, not acted on
+
+### Third round unchanged
+
+Four open, all green, all `ready-to-merge`, no merges since #6418 at 16:58Z. Steps 3, 4 and 5 are
+all no-ops: no `awaiting-author`/`ci-failed` PR, every board ON-HEAD, four open against a step-5
+threshold of fewer than three. The merge wait is r676's queue jam on **#6431**, not ours, and per
+r676's own instruction it was not re-diagnosed.
+
+### The one check worth making: do they still merge?
+
+These have sat for hours while `main` moved, and a PR that merges textually can still fail a
+merge-group build. Measured against `origin/main` at `8b5587ae4`:
+
+```
+#6093  behind=352  conflict-markers=0
+#6188  behind=3    conflict-markers=0
+#6432  behind=18   conflict-markers=0
+```
+
+All three merge cleanly. **#6093 is 352 commits behind** — it has been open since 2026-09-08 and
+10/10 since 15:43Z, so its board judged a tree five days old.
+
+**Not acted on.** Merging `main` into it would cost a certain full re-review of a 10/10 PR to avoid
+an uncertain merge-group failure, and the merge queue tests merged-with-main anyway. The standing
+rule holds: *a green PR is not a place to apply a lesson.*
+
+**Recorded as a contingency instead:** if #6093 is ejected from the merge queue by a failed
+merge-group build, staleness is the first suspect and merging `main` is the fix. r660 is the
+precedent — merging `main` into #6188 surfaced a real conflict in `Lattice.lean` and cleared a
+`generality` finding at the same time.
+
+### On wait rounds
+
+This is the fourth consecutive round with nothing owed. The previous three each found durable work —
+HANDOVER §11, `sweep.py` into the toolkit, the merge-queue diagnosis, `threadread.py`. This one did
+not, and manufacturing some would be worse than saying so. **The loop is blocked on infrastructure
+outside this role, and the correct output of a blocked round is an accurate report.**
+
+### Board
+Four open, all green, all `ready-to-merge`, none owing anything.
+`improve/submonoid-constsmul-root` pushed and gate-clean, **no PR**.

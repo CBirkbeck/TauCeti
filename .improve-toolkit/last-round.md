@@ -1,30 +1,38 @@
-# Last round — r677 (2026-09-12 19:00Z)
+# Last round — r678 (2026-09-12 19:10Z)
 
-## Check what the toolkit already has before writing a script
+## Nothing owed — fourth round running, and this one found no durable work either
 
-Every round of this watch read blocking findings with a scratchpad `board.py` plus ad-hoc
-`gh api … | jq` per rubric. The toolkit ships **`tools/threadread.py`**, with a fixture and two
-controls, and it does the job properly:
+Steps 3, 4 and 5 are all no-ops: no `awaiting-author`/`ci-failed` PR, every board ON-HEAD, four open
+against a step-5 threshold of fewer than three. The merge wait is r676's queue jam on **#6431**,
+not ours, and it was not re-diagnosed.
+
+The previous three wait rounds each found durable work (HANDOVER §11, `sweep.py` into the toolkit,
+the merge-queue diagnosis, `threadread.py`). This one did not, and manufacturing some would be worse
+than saying so. **The loop is blocked on infrastructure outside this role; the correct output of a
+blocked round is an accurate report.**
+
+## The one check worth making: do they still merge?
+
+They have sat for hours while `main` moved, and a PR that merges textually can still fail a
+merge-group build. Against `origin/main` at `8b5587ae4`:
 
 ```
-threadread.py <pr>         # only UNRESOLVED rubrics, with the current finding text
-threadread.py <pr> --all   # every rubric, state taken from the board
+#6093  behind=352  conflict-markers=0
+#6188  behind=3    conflict-markers=0
+#6432  behind=18   conflict-markers=0
 ```
 
-It prints each rubric's **current** text with the `updated_at` that actually dates it, and flags
-`(EDITED IN PLACE; created=…)` where they differ. Its docstring records the incident that produced
-it — **r450** — which is the *same trap* I hit in r655 and wrote up as a fresh lesson. It was already
-written down, in code, with controls.
+All clean. **#6093 is 352 commits behind** — open since 2026-09-08, 10/10 since 15:43Z, so its board
+judged a five-day-old tree.
 
-**Use `threadread.py` from now on, not the jq.** Verified live: `threadread.py 6188` →
-`0 shown (unresolved only); state from board at ec1a68d965`, correct for a 10/10 PR.
+**Deliberately not acted on.** Merging `main` in would cost a certain full re-review of a 10/10 PR to
+avoid an uncertain failure, and the merge queue tests merged-with-main anyway.
 
-## Nothing owed
+**Contingency:** if #6093 is ejected from the queue by a failed merge-group build, **staleness is the
+first suspect and merging `main` is the fix** — r660 is the precedent, where merging `main` into
+#6188 surfaced a real `Lattice.lean` conflict and cleared a `generality` finding at once.
 
-Four open, all green, all `ready-to-merge`, no new merges. Step 5 needs fewer than three. The merge
-wait is r676's queue jam on **#6431**, a roadmap PR that is not ours — **do not re-diagnose it.**
-
-## Board (19:00Z) — four open, all green, all `ready-to-merge`, none owing anything
+## Board (19:10Z) — four open, all green, all `ready-to-merge`, none owing anything
 
 | PR | head | CI | label | whose move |
 |---|---|---|---|---|
@@ -37,6 +45,8 @@ wait is r676's queue jam on **#6431**, a roadmap PR that is not ours — **do no
 
 1. **Do not touch any of the three 10/10 PRs.** An unrequested edit costs a re-review and risks a
    green rubric. If a board re-fires on one, read it fresh — but the expected event is a merge.
+   **Exception:** if one is ejected from the merge queue by a failed merge-group build, merge
+   `origin/main` into it and re-gate — #6093 is **352 commits behind** and is the likely candidate.
 2. **When step 5 triggers** — three merges would leave only #5950 — open
    `improve/submonoid-constsmul-root`, **already pushed and gate-clean** (13 ok / 2 questions), as a
    **DRAFT**. Body must answer `parallelns` (the `Subgroup` instance stays nested — a different
