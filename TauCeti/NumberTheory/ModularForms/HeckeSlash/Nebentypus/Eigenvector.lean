@@ -37,13 +37,13 @@ and the descent argument then places it in the old subspace.
 * `qExpansion_coeff_prime_mul_of_heckeRingHomCharSpace_heckeTCompositeGamma0_eq_smul` and its
   cusp-form counterpart `…_of_heckeRingHomCuspCharSpace_…`: the coefficient recurrence of an
   eigenvector, on `M_k(N, χ)` and on `S_k(N, χ)`.
-* `qExpansion_coeff_eq_zero_of_coprime_of_forall_prime_heckeRingHomCharSpace_of_ne_zero` and
+* `qExpansion_coeff_eq_zero_of_forall_prime_heckeRingHomCharSpace_of_ne_zero_of_coprime` and
   `…_heckeRingHomCuspCharSpace`: a form eigen at every prime away from a multiple `L` of `N`,
   with `a₁ = 0`, has `a_n = 0` at every `n` coprime to `L` (and `n ≠ 0` in the modular-form
   case).
 * `heckeTNat_eq_smul_of_heckeRingHomCharSpace_heckeTCompositeGamma0_eq_smul` and its cusp-form
   counterpart: a Hecke-ring eigenvector at a good prime is an eigenvector of the classical
-  operator, the comparison `Newforms/Newform.lean` records as not proved there.
+  operator `heckeTNat` (resp. `heckeTCuspNat`).
 
 ## References
 
@@ -66,7 +66,7 @@ variable {N p : ℕ} [NeZero N] {k : ℤ} {χ : (ZMod N)ˣ →* ℂˣ}
 `M_k(N, χ)`. The Hecke ring's composite element at a prime is its generator
 (`heckeTCompositeGamma0_prime`), which acts as the classical operator
 (`heckeRingHomCharSpace_heckeTGeneratorGamma0`); so an eigen-equation for the ring action is one
-for `heckeTNat`. This is the comparison `Newforms/Newform.lean` records as not proved there. -/
+for `heckeTNat`. -/
 theorem heckeTNat_eq_smul_of_heckeRingHomCharSpace_heckeTCompositeGamma0_eq_smul [NeZero p]
     (hp : p.Prime) {F : modFormCharSpace k χ} {c : ℂ}
     (hF : heckeRingHomCharSpace k χ (heckeTCompositeGamma0 N p) F = c • F) :
@@ -131,13 +131,13 @@ and has `a₁(F) = 0` has `a_n(F) = 0` at every `n ≠ 0` coprime to `L`, by the
   prime factor of `n`.
 For `L ≠ 0`, the auxiliary level is the finite slack of strong multiplicity one: eigen-ness is
 assumed only away from finitely many primes beyond those dividing `N`. -/
-theorem qExpansion_coeff_eq_zero_of_coprime_of_forall_prime_heckeRingHomCharSpace_of_ne_zero
+theorem qExpansion_coeff_eq_zero_of_forall_prime_heckeRingHomCharSpace_of_ne_zero_of_coprime
     {F : modFormCharSpace k χ} {L : ℕ} (hNL : N ∣ L) (ha : ∀ p : ℕ, p.Prime → Nat.Coprime p L →
       ∃ c : ℂ, heckeRingHomCharSpace k χ (heckeTCompositeGamma0 N p) F = c • F)
     (h1 : (qExpansion 1 (F : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff 1 = 0) (n : ℕ)
     (hn0 : n ≠ 0) (hn : Nat.Coprime n L) :
     (qExpansion 1 (F : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff n = 0 :=
-  TauCeti.eq_zero_of_coprime_of_forall_prime_mul_eq
+  TauCeti.eq_zero_of_forall_prime_mul_eq_of_coprime
     (a := fun n ↦ (qExpansion 1 (F : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff n)
     (fun p hp hpL ↦ by
     obtain ⟨c, hc⟩ := ha p hp hpL
@@ -152,7 +152,7 @@ cuspidality, otherwise by the recurrence
 `qExpansion_coeff_prime_mul_of_heckeRingHomCuspCharSpace_heckeTCompositeGamma0_eq_smul` along the
   least prime factor
 of `n`. This is the form strong multiplicity one consumes. -/
-theorem qExpansion_coeff_eq_zero_of_coprime_of_forall_prime_heckeRingHomCuspCharSpace
+theorem qExpansion_coeff_eq_zero_of_forall_prime_heckeRingHomCuspCharSpace_of_coprime
     {F : cuspFormCharSpace k χ} {L : ℕ} (hNL : N ∣ L) (ha : ∀ p : ℕ, p.Prime → Nat.Coprime p L →
       ∃ c : ℂ, heckeRingHomCuspCharSpace k χ (heckeTCompositeGamma0 N p) F = c • F)
     (h1 : (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff 1 = 0) (n : ℕ)
@@ -160,7 +160,7 @@ theorem qExpansion_coeff_eq_zero_of_coprime_of_forall_prime_heckeRingHomCuspChar
     (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff n = 0 := by
   rcases eq_or_ne n 0 with rfl | hn0
   · exact CuspFormClass.qExpansion_coeff_zero _ one_pos (TauCeti.one_mem_strictPeriods_Gamma1_map N)
-  exact TauCeti.eq_zero_of_coprime_of_forall_prime_mul_eq
+  exact TauCeti.eq_zero_of_forall_prime_mul_eq_of_coprime
     (a := fun n ↦ (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff n)
     (fun p hp hpL ↦ by
     obtain ⟨c, hc⟩ := ha p hp hpL
