@@ -95,6 +95,41 @@ theorem _root_.RingHom.completionCoe_comp_heq {R S : Type*} [NonAssocSemiring R]
   subst hu
   rfl
 
+/-- **A map between completions is pinned down by continuity and a compatibility over a base
+ring.** For equal uniformities at each end, two such maps are heterogeneously equal as soon as the
+second is the unique continuous map compatible with its structure map.
+
+The conclusion is `HEq` rather than `=` because both `UniformSpace.Completion S` and
+`UniformSpace.Completion S'` mention their uniformities, so the two maps share neither domain nor
+codomain. -/
+theorem heq_of_uniqueness {R S S' : Type*} [Ring R] [Ring S] [Ring S']
+    {u₁ u₂ : UniformSpace S} (hu : u₁ = u₂) {v₁ v₂ : UniformSpace S'} (hv : v₁ = v₂)
+    (t₁ : @IsTopologicalRing S u₁.toTopologicalSpace _) (q₁ : @IsUniformAddGroup S u₁ _)
+    (t₂ : @IsTopologicalRing S u₂.toTopologicalSpace _) (q₂ : @IsUniformAddGroup S u₂ _)
+    (w₁ : @IsTopologicalRing S' v₁.toTopologicalSpace _) (p₁ : @IsUniformAddGroup S' v₁ _)
+    (w₂ : @IsTopologicalRing S' v₂.toTopologicalSpace _) (p₂ : @IsUniformAddGroup S' v₂ _)
+    {g₁ : @UniformSpace.Completion S u₁ →+* @UniformSpace.Completion S' v₁}
+    {g₂ : @UniformSpace.Completion S u₂ →+* @UniformSpace.Completion S' v₂}
+    {φ₁ : R →+* @UniformSpace.Completion S u₁} {φ₂ : R →+* @UniformSpace.Completion S u₂}
+    {ψ₁ : R →+* @UniformSpace.Completion S' v₁} {ψ₂ : R →+* @UniformSpace.Completion S' v₂}
+    (hφ : HEq φ₁ φ₂) (hψ : HEq ψ₁ ψ₂)
+    (hc₁ : @Continuous _ _
+      (@UniformSpace.toTopologicalSpace _ (@UniformSpace.Completion.uniformSpace S u₁))
+      (@UniformSpace.toTopologicalSpace _ (@UniformSpace.Completion.uniformSpace S' v₁)) g₁)
+    (hcomp₁ : g₁.comp φ₁ = ψ₁)
+    (huniq : ∀ g : @UniformSpace.Completion S u₂ →+* @UniformSpace.Completion S' v₂,
+      @Continuous _ _
+        (@UniformSpace.toTopologicalSpace _ (@UniformSpace.Completion.uniformSpace S u₂))
+        (@UniformSpace.toTopologicalSpace _ (@UniformSpace.Completion.uniformSpace S' v₂)) g →
+      g.comp φ₂ = ψ₂ → g = g₂) :
+    HEq g₁ g₂ := by
+  subst hu
+  subst hv
+  obtain rfl := eq_of_heq hφ
+  obtain rfl := eq_of_heq hψ
+  exact heq_of_eq (huniq g₁ hc₁ hcomp₁)
+
+
 end Congr
 
 section Ext

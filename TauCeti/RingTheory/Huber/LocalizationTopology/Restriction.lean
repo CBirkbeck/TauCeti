@@ -549,6 +549,51 @@ theorem map_divBy_of_comp_toCompletionLoc_eq (t : A) {B : Type*} [Semiring B] :
   rw [← toCompletionLoc_mul_unit_inv_eq_divBy P T' s S' hden' t hu', map_mul, hginv, hgt,
     IsUnit.unit_inv_map φ hu, ← map_mul, toCompletionLoc_mul_unit_inv_eq_divBy P T s S hden t hu]
 
+/-! ### Independence of the presentation -/
+
+/-- **A change of presentation with the same rings of definition leaves the restriction map
+alone.** `locUniformSpace_congr` identifies the two completions at each end and
+`toCompletionLoc_heq` identifies the structure maps into them; the restriction map is pinned down
+by continuity together with those structure maps, so it is identified too.
+
+The conclusion is `HEq` and not `=` for the same reason as `toCompletionLoc_heq`: the types
+`UniformSpace.Completion S` and `UniformSpace.Completion S'` mention the uniformities, so the two
+maps share neither domain nor codomain until the congruences are applied. -/
+theorem restrictionRingHomOfSubset_heq (T₂ : Finset A) (s₂ : A) [IsLocalization.Away s₂ S]
+    [IsLocalization.Away s₂ S'] (hden₂ : HasDenominatorPower P T₂ s₂ S)
+    (T₂' : Finset A) (hden₂' : HasDenominatorPower P T₂' s₂ S') (hTT₂' : ∀ u ∈ T₂, u ∈ T₂')
+    (h : locSubring P T₂ s₂ S = locSubring P T s S)
+    (h' : locSubring P T₂' s₂ S' = locSubring P T' s S') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s S' hden'
+    letI := locUniformSpace P T₂ s₂ S hden₂
+    letI := isUniformAddGroup_locUniformSpace P T₂ s₂ S hden₂
+    letI := isTopologicalRing_locUniformSpace P T₂ s₂ S hden₂
+    letI := locUniformSpace P T₂' s₂ S' hden₂'
+    letI := isUniformAddGroup_locUniformSpace P T₂' s₂ S' hden₂'
+    letI := isTopologicalRing_locUniformSpace P T₂' s₂ S' hden₂'
+    HEq (restrictionRingHomOfSubset P T₂ s₂ S hden₂ T₂' S' hden₂' hTT₂')
+      (restrictionRingHomOfSubset P T s S hden T' S' hden' hTT') :=
+  UniformSpace.Completion.heq_of_uniqueness (locUniformSpace_congr P T T₂ s s₂ S hden hden₂ h)
+    (locUniformSpace_congr P T' T₂' s s₂ S' hden' hden₂' h')
+    (isTopologicalRing_locUniformSpace P T₂ s₂ S hden₂)
+    (isUniformAddGroup_locUniformSpace P T₂ s₂ S hden₂)
+    (isTopologicalRing_locUniformSpace P T s S hden)
+    (isUniformAddGroup_locUniformSpace P T s S hden)
+    (isTopologicalRing_locUniformSpace P T₂' s₂ S' hden₂')
+    (isUniformAddGroup_locUniformSpace P T₂' s₂ S' hden₂')
+    (isTopologicalRing_locUniformSpace P T' s S' hden')
+    (isUniformAddGroup_locUniformSpace P T' s S' hden')
+    (toCompletionLoc_heq P T T₂ s s₂ S hden hden₂ h)
+    (toCompletionLoc_heq P T' T₂' s s₂ S' hden' hden₂' h')
+    (continuous_restrictionRingHomOfSubset P T₂ s₂ S hden₂ T₂' S' hden₂' hTT₂')
+    (restrictionRingHomOfSubset_comp_toCompletionLoc P T₂ s₂ S hden₂ T₂' S' hden₂' hTT₂')
+    (eq_restrictionRingHomOfSubset P T s S hden T' S' hden' hTT')
+
 end Subset
 
 end PairOfDefinition
