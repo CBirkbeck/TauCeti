@@ -785,6 +785,36 @@ printf 'theorem tp_b : True := trivial\n' >> "$PPD/TauCeti/A.lean"
   | chk "prepush: refuses to gate an uncommitted .lean change (r664)" "UNCOMMITTED"
 rm -rf "$PPD"
 
+# sweep's CI verdict -- r653, from a sweep that called a green PR red.  A commit's check-runs list
+# carries EVERY run created for that SHA, so a re-dispatch leaves cancelled duplicates behind.
+# #6188 read `RED:label` on a superseded `label` job while `sandboxed-build` was green and nothing
+# had conclusion `failure`.  Judge each check by its LATEST run per name.  `ci_verdict` is pure so
+# this runs without touching the network.
+sweepv() { python3 -c "
+import importlib.util, json, sys
+spec = importlib.util.spec_from_file_location('sweep', '$T/sweep.py')
+m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+print('superseded:', m.ci_verdict([
+  {'name':'label','started_at':'2026-01-01T00:00:00Z','status':'completed','conclusion':'cancelled'},
+  {'name':'label','started_at':'2026-01-01T01:00:00Z','status':'completed','conclusion':'success'},
+  {'name':'sandboxed-build','started_at':'2026-01-01T01:00:00Z','status':'completed','conclusion':'success'},
+]))
+print('realfail:', m.ci_verdict([
+  {'name':'sandboxed-build','started_at':'2026-01-01T01:00:00Z','status':'completed','conclusion':'failure'},
+]))
+print('pending:', m.ci_verdict([
+  {'name':'sandboxed-build','started_at':'2026-01-01T01:00:00Z','status':'in_progress','conclusion':None},
+]))
+print('lastcancelled:', m.ci_verdict([
+  {'name':'sandboxed-build','started_at':'2026-01-01T01:00:00Z','status':'completed','conclusion':'cancelled'},
+]))
+print('noruns:', m.ci_verdict([]))
+"; }
+sweepv | chk "sweep: a superseded cancelled run is not a red build (r653)" "superseded: GREEN"
+sweepv | chk "sweep: a real failure, a pending run and a live cancel still read red/pending" \
+              "realfail: RED:sandboxed-build" "pending: PENDING:sandboxed-build" \
+              "lastcancelled: RED:cancelled:sandboxed-build" "noruns: NO-RUNS"
+
 p=$(grep -c P "$RES" || true); f=$(grep -c F "$RES" || true)
 printf '\n  %d passed, %d failed\n' "$p" "$f"
 [ "$f" -eq 0 ] && [ "$p" -gt 0 ]

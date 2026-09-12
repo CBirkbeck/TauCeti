@@ -34941,3 +34941,48 @@ computing lazily, not a block. #6093 has now waited ~3h against an observed cade
 ### Board
 Four open, all green. #6093 and #6432 **10/10**. #6188 green on the restructure, board BEHIND.
 #5950 Chris's. No new merges. `improve/submonoid-constsmul-root` pushed and gate-clean, **no PR**.
+
+---
+
+## r674 — 2026-09-12 — the sweep becomes a toolkit tool with controls
+
+### Nothing owed, and the clock says so
+
+No new merges. #6188's `ec1a68d96` went green at **18:25:45Z**; its board is due 32–67 min later
+(18:57–19:33), so step 4 does not apply — checked against the clock rather than eyeballed. Step 5
+needs fewer than three open and there are four. #6093 and #6432 remain 10/10 on the bot.
+
+### `sweep.py` moved into the toolkit, with a pure verdict and controls
+
+The board sweep has run every round of this watch from a **scratchpad path under `/tmp`** — session
+local, and gone the moment this session ends. It encodes two rules that were each learned from a
+wrong answer:
+
+* **a superseded run is not a red build** (r653 — the sweep called #6188 `RED:label` on a cancelled
+  duplicate while `sandboxed-build` was green and nothing had conclusion `failure`), and
+* **the pipeline edits its scoreboard comment in place**, so sort by `updated_at` and compare
+  `head_sha` to the PR head; BEHIND means the fix is already pushed.
+
+Both now live in `tools/sweep.py` with the incidents in its docstring. The CI verdict is factored
+into a **pure `ci_verdict(runs)`** so it is testable without the network, and **controls 133 → 135**,
+mutation-tested:
+
+```
+MUTATION (latest-per-name collapsed to any-run):
+  FAIL  sweep: a superseded cancelled run is not a red build (r653)
+  PASS  sweep: a real failure, a pending run and a live cancel still read red/pending
+  134 passed, 1 failed
+```
+
+The paired positive is the point again: it shows the rule *narrows* the verdict rather than blinding
+it — a real `failure`, an `in_progress`, and a cancelled **latest** run all still read red or
+pending. Verified against the live board: identical verdicts to the scratchpad copy on all four PRs.
+
+**A tool that has run every round for twenty rounds and lives in `/tmp` is not part of the toolkit —
+it is a habit.** The two rules it encodes were paid for in wrong answers; losing them with the
+session would mean paying again.
+
+### Board
+Four open, all green. #6093 and #6432 **10/10 `ready-to-merge`** (#6093 ~2h45m). #6188 green on the
+restructure, board BEHIND. #5950 Chris's. `improve/submonoid-constsmul-root` pushed and gate-clean,
+**no PR**.
