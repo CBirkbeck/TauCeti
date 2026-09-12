@@ -1,78 +1,80 @@
-# Last round — r658 (2026-09-12 13:50Z)
+# Last round — r658 (2026-09-12 14:02Z)
 
-## Clearing a ⛔ starts the rest of the review; it does not end it
+## `@[expose]` is a claim about a reduction *path*, not one declaration
 
-#6418's ⛔ `reuse` went ✅ — the `FDRep.isIntegral_char` deletion was accepted. The other rubrics,
-which a block had held at "not yet run", then ran and returned **four** 🟡 at once. That is the block
-lifting, not a regression. **Expect a cleared block to be followed by more findings.**
+`reuse` wanted `Function.fiberMap` built from `Set.MapsTo.restrict`. §6 says keep `@[expose]` on it —
+but the real hazard was subtler than removing the attribute: `IsCoveringMap.fiberMap_monodromy` needs
+`(fiberMap f hf x e : F)` to reduce to `f e` across a module boundary, and exposing *our* definition
+helps only if every def its body routes through is exposed too. A non-exposed link stops the
+reduction in the same place, with the attribute still sitting there looking correct.
 
-All four were two facts in one file, and both are now fixed (`5c73d4c54`):
+Checked before touching it: `Mathlib/Data/Set/Operations.lean` and `Mathlib/Data/Subtype.lean` both
+open `@[expose] public section`. Import closure (1438 modules) also confirmed no new import was
+needed.
 
-* The `FDRep.intCharacter` docstring closed by saying the definition sits in `TauCeti.FDRep`, has no
-  dot notation, and is written `intCharacter V g`. **The rooting falsified all three in the commit
-  that wrote them.** Cited by all four rubrics.
-* `intCharacter_eq_iff` stayed nested. The body's argument was sound *and beside the point*: its
-  `FDRep` args are implicit, so rooting enables no dot notation — but `api-design` and `placement`
-  objected on **cohesion**, since it is the elimination principle for the rooted
-  `FDRep.intCharacter`. Rooted, call site qualified (r389), `rootsurplus` answered in the body.
+## A *definitional* index mismatch is not the `HEq` trap
 
-**An argument can be correct and still answer the wrong question.**
+`api-design` wanted identity and composition laws for `Equiv.compFiberEquiv`, and the two sides of
+the composition law visibly have different types. That reads like §7's *"`HEq` is the only way
+through a type-index mismatch"* — but here the differences are **definitional**: `⇑(h.trans k) ∘ p`
+and `⇑k ∘ (⇑h ∘ p)` both reduce to `fun e ↦ k (h (p e))`, `(h.trans k).symm z` reduces to
+`h.symm (k.symm z)`, and `⇑(Equiv.refl X) ∘ p` is `p` by eta.
 
-## A rubric that went green can go 🟡 again
+**§7's rule is about indices differing *propositionally*.** When they differ only by unfolding, the
+equation states and `Equiv.ext` + `Subtype.ext rfl` closes it. Reading "not syntactically equal" as
+"needs `HEq`" would have contested two perfectly implementable lemmas.
 
-#6093's `documentation` cleared on `9d13f95872` — but `reuse` **re-fired** with the
-`Set.MapsTo.restrict` finding that r655 recorded as gone, and `api-design` returned with a *new*
-one. r655's "stale work; do not start it" was true of the board it was written against and false two
-rounds later. **Record a verdict with the head it was judged on, and re-read the board before acting
-on a remembered one.**
+## Re-read a PR body when the PR changes under it
 
-## Board (13:50Z)
+#6093's body carried a section headed **"Build status: one proof outstanding"** saying the PR did not
+compile. `sandboxed-build` is `success` on both recent heads — the proof was fixed rounds ago and the
+body was never updated. It had been telling every reviewer the PR was broken. Two further stale
+claims in the same body (`fiberMap`'s body, the lemma count) corrected.
+
+**A PR body outlives the state it describes, exactly as a docstring outlives its review (§8).**
+
+## Board (14:02Z)
 
 | PR | head | CI | label | whose move |
 |---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **Chris** — human-owned `web/examples/Examples.lean` |
-| **#6093** | `9d13f95872` | building | `awaiting-CI` | **me — 2 blockers, board ON-HEAD. Next unit.** |
-| **#6188** | `94921c53a` | building | `awaiting-CI` | reviewer — board BEHIND, do NOT re-fix |
+| **#6093** | `c450a5a1e` | building | `awaiting-author` | reviewer — **both blockers fixed r658**, board BEHIND |
+| **#6188** | `94921c53a` | building | `awaiting-CI` | reviewer — board BEHIND |
 | **#6412** | `360cdfc5b9` | green | `ready-to-merge` | nobody — 10/10 |
-| **#6418** | `5c73d4c54` | building | `review-in-progress` | reviewer — 4 rubrics fixed r657, board BEHIND |
-| **#6426** | `54f8eb82b5` | green | `ready-to-merge` | nobody — 10/10, unmerged 83 min; **pipeline's call, never mine** |
+| **#6418** | `5c73d4c54` | building | `awaiting-CI` | reviewer — board BEHIND |
+| **#6426** | `54f8eb82b5` | green | `ready-to-merge` | nobody — 10/10, ~70 min unmerged; **pipeline's call, never mine** |
 | **#6432** | `f9bdb0a8b4` | green | `awaiting-author` | reviewer — both blockers contested r657 |
 
-**Boards on #6188 and #6418 are BEHIND. Do NOT re-fix.**
+**Boards on #6093, #6188 and #6418 are ALL BEHIND their heads. Do NOT re-fix any of them.**
 
-## Next unit: #6093's two live blockers (board ON-HEAD `9d13f95872`)
+## Next
 
-* `reuse` — *"The new fibre API reimplements Mathlib's generic subtype-restriction machinery."*
-  `Function.fiberMap` rebuilds `Set.MapsTo.restrict`/`Subtype.map`; wants it defined through
-  `Set.MapsTo.restrict`, the coercion lemma via `Set.MapsTo.val_restrict_apply`, and the laws via
-  `Subtype.map_id`/`Subtype.map_comp`.
-* `api-design` — **new**: *"The generalized base-relabeling equivalence lacks the identity and
-  composition lemmas."* That is `Homeomorph.compFiberEquiv`. Read the thread before acting.
-
-`Fiber.lean` is created by this PR, so both are in scope — implement, don't contest. **Keep
-`@[expose]` on `Function.fiberMap`** (§6, CI-tested) — the old `@[expose]` objection is cleared and
-must not be reopened by the restructure. No local build: gate on CI.
+1. **Nothing is owed.** Every PR is either 10/10, awaiting re-review on a head its board has not
+   seen, or contested. The correct move on a round that finds this is to **wait, or prospect** —
+   not to re-open settled findings.
+2. Watch #6093 and #6188 CI: r658 and r654 both pushed proof-level changes written without a local
+   toolchain (`Set.MapsTo.restrict` restructure; `Equiv.ext`/`Subtype.ext rfl` laws). If either goes
+   red, **read the log for the `##[error]`** — r656's failure was `lint-env`, not the build.
+3. If a round finds all boards current and nothing blocking, **prospect** (step 5). Partial
+   candidates: `ContRepresentation` 141/184, `Representation` 134/189, `AbelianVariety.Hom` 41/54,
+   `WeierstrassCurve` 26/27. Avoid `IsCoveringMap` and `Deck.IsQuotientCoveringMap` — both overlap
+   #6093. Measure against a **freshly fetched** `origin/main`.
+4. Sequencing that is load-bearing: **#6188 lands → #6432 rebases (rooting + rename come free) →
+   `handover/congraut-structural-deferred` opens as `autCongr_eq` / `autCongr_symm_eq`.**
 
 ## Settled — do not re-litigate
 
-* **#6093** — keep `@[expose]` on `Function.fiberMap`; `compFiberEquiv` must NOT have it;
-  `fundamentalGroupEquivFiber_apply_coe` and `fiberMap_comp_apply` must NOT be `@[simp]`. The
-  conjugacy helper assumes **no connectedness**, only `hj : Joined (h e₀) f₀`. `documentation` ✅.
+* **#6093** — keep `@[expose]` on `Function.fiberMap` (and its reduction path is exposed all the way
+  down); `compFiberEquiv` must NOT be exposed; `fundamentalGroupEquivFiber_apply_coe` and
+  `fiberMap_comp_apply` must NOT be `@[simp]`; `compFiberEquiv_trans` is deliberately not `@[simp]`.
+  The conjugacy helper assumes **no connectedness**, only `hj : Joined (h e₀) f₀`.
 * **#6188** — transport is `LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv`, public,
   `rfl`, via `ofLinearEquiv`, **deliberately NOT `@[simp]`** (simpNF, CI-confirmed).
   `congrAut` → `autCongr`.
-* **#6418** — `isIntegral_char` deleted as an exact Mathlib duplicate (⛔ cleared).
-  `intCharacter_eq_iff` **is** rooted, on cohesion not dot notation. Only `private intCharacter_def`
-  stays nested.
-* **#6432** — both blockers are #6188's work; contested on sequencing, with the deferred branch
-  verified to hold `congrAut_eq`/`congrAut_symm_eq` `_root_`-anchored and already semilinear.
-
-## Sequencing that is now load-bearing
-
-**#6188 lands → #6432 rebases (rooting + rename come free, keeping only the semilinear generality)
-→ `handover/congraut-structural-deferred` opens as `autCongr_eq` / `autCongr_symm_eq`.**
-The deferred lemmas cannot be added before the rooting: their first explicit argument is a
-`LinearEquiv`, so nested they are new `lint-dot-notation` violations and the gate fails.
+* **#6418** — `isIntegral_char` deleted as an exact Mathlib duplicate; `intCharacter_eq_iff` rooted
+  on cohesion grounds; only `private intCharacter_def` stays nested.
+* **#6412** — roadmap line is in TauCetiRoadmap, out of reach. Contest accepted, 10/10.
+* **#6432** — both blockers are #6188's work; contested on sequencing.
 
 ## Still needs Chris
 
@@ -89,5 +91,6 @@ No bare `git stash`. Never #5481. Never open a PR from `handover/improve-toolkit
 Every PR body needs a standalone `Roadmap: none`.
 `gh pr edit` silently no-ops here — use `gh api -X PATCH … -F body=@file`.
 A fresh worktree needs `.lake` symlinked or `lint-dot-notation` errors on both sides.
-`uvx` is installed at `~/.local/bin/uvx`; measured board latency band is **32–67 min**.
+`uvx` is at `~/.local/bin/uvx`; measured board latency band is **32–67 min**.
 Before believing a gate FAIL is yours, re-run it on the **pristine head**.
+A rubric that went green can go 🟡 again — re-read the board, never a remembered verdict.

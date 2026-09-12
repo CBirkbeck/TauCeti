@@ -33978,3 +33978,71 @@ docstring fix landed. Six rubrics are ♻️ stale/re-run pending. Two are 🟡 
 "stale work; do not start it" was true of the board it was written against and false two rounds
 later. Record a rubric's state *with the head it was judged on*, and re-read the board before acting
 on any remembered verdict — the same discipline the edited-comment trap already forced.
+
+---
+
+## r658 — 2026-09-12 — #6093's two blockers, and a definitional mismatch that only looked like the HEq trap
+
+### Before rerouting an `@[expose]`d body, check the *link* is exposed too
+
+`reuse` wanted `Function.fiberMap` built from `Set.MapsTo.restrict` instead of rebuilding
+`Subtype.map` by hand. §6's standing rule is *keep `@[expose]` on `fiberMap`* — but the real hazard
+here was subtler than removing the attribute. `IsCoveringMap.fiberMap_monodromy` needs
+`(fiberMap f hf x e : F)` to reduce to `f e` **across a module boundary**. Exposing our definition
+only helps if every def its body routes through is exposed as well; a non-exposed link would stop
+the reduction at exactly the same place, with the attribute still sitting there looking correct.
+
+Checked first: `Mathlib/Data/Set/Operations.lean` and `Mathlib/Data/Subtype.lean` both open
+`@[expose] public section`, so `MapsTo.restrict` and `Subtype.map` have their bodies available
+downstream and the chain survives. **`@[expose]` on a definition is a claim about a whole reduction
+path, not about one declaration.**
+
+Also verified by import closure (1438 modules from `Mathlib.Logic.Equiv.Set`) that
+`Data.Set.Operations`, `Data.Set.Restrict` and `Data.Subtype` are all already reachable — no new
+import, so `importcover` stays quiet. The three lemmas are now the generic ones:
+`Set.MapsTo.val_restrict_apply`, `congrFun Subtype.map_id`, `(Subtype.map_comp f _ g _).symm`.
+
+### A definitional index mismatch is not the `HEq` trap
+
+`api-design` wanted identity and composition laws for `Equiv.compFiberEquiv`. The first read was that
+this is §7's *"`HEq` is the only way through a type-index mismatch"* — the two sides of the
+composition law visibly have different types:
+
+```
+compFiberEquiv (h.trans k) z      : (⇑(h.trans k) ∘ p) ⁻¹' {z} ≃ p ⁻¹' {(h.trans k).symm z}
+(compFiberEquiv k z).trans (…)    : (⇑k ∘ (⇑h ∘ p)) ⁻¹' {z}    ≃ p ⁻¹' {h.symm (k.symm z)}
+```
+
+But those differences are **definitional**, not propositional: `⇑(h.trans k) ∘ p` and
+`⇑k ∘ (⇑h ∘ p)` both reduce to `fun e ↦ k (h (p e))`, and `(h.trans k).symm z` reduces to
+`h.symm (k.symm z)`. Likewise `⇑(Equiv.refl X) ∘ p` is `p` by eta. Nothing has to *abstract* an
+index, so the equations state and `Equiv.ext` + `Subtype.ext rfl` closes them.
+
+**§7's rule is about indices that differ propositionally.** When the indices differ only by
+unfolding, the equation typechecks and ordinary extensionality works. Reading "the types are not
+syntactically equal" as "this needs `HEq`" would have produced a contest against two implementable
+lemmas.
+
+`compFiberEquiv_refl` is `@[simp]`; `compFiberEquiv_trans` is not — its left-hand side is the form a
+caller writes, so rewriting towards the composite leads `simp` away from a normal form. (r656's
+`simpNF` lesson applied before the fact this time, rather than after.)
+
+### The PR body claimed the PR did not compile
+
+#6093's body carried a section headed **"Build status: one proof outstanding"**, stating that
+everything compiles *except* `IsCoveringMap.fiberMap_monodromy`. `sandboxed-build` is `success` on
+both `34ac589376` (09:59Z) and `9d13f95872` (13:38Z). The proof was fixed rounds ago and the body was
+never updated; it was telling every reviewer that the PR was broken.
+
+Two more stale claims in the same body: `fiberMap`'s body described as `fun e ↦ ⟨f e, _⟩`, and the
+relabelling family counted at "+ 2 lemmas". All three corrected.
+
+**A PR body outlives the state it describes, exactly as a docstring outlives the review that
+provoked it (§8).** Re-read the body when the PR changes under it — a reviewer takes it as a
+statement of fact about the diff in front of them.
+
+### Board
+Seven open. #6412 and #6426 both 10/10 and `ready-to-merge` (#6426 ~70 min, `mergeable: UNKNOWN`,
+which is GitHub computing lazily rather than a block — the pipeline's call either way, never mine).
+#6093 pushed `c450a5a1e`, #6188 `94921c53a`, #6418 `5c73d4c54` — **all three boards BEHIND**.
+#6432 contested on both threads r657, awaiting re-review. #5950 Chris's. No new merges since #6406.
