@@ -33,6 +33,19 @@ Diamond–Shurman's Proposition 5.8.5.
   `HeckeRing.GL2.Newform.qExpansion_coeff_mul` and
   `HeckeRing.GL2.Newform.qExpansion_coeff_prime_pow_add_two`.
 
+## Provenance
+
+Adapted from the AINTLIB `LeanModularForms` project (Chris Birkbeck, Apache-2.0,
+<https://github.com/CBirkbeck/AINTLIB> @ `2baa76f742bdb4fb8ee323fabba41203bd390e08`),
+`projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/FourierHecke.lean` —
+`eigenvalue_eq_fourierCoeff_one` (`λ_n = a_n` for a normalised eigenform) and
+`eigenform_coeff_multiplicative_one` (the divisor-sum form of the coefficient identities). The
+source states them for its `IsNormalisedEigenform_one` predicate and derives them from the
+divisor-sum coefficient formula; here they are statements about `EigenformAwayFromLevel` and
+`Newform`, read off the eigenvector equation through the coprime-index formula of
+`HeckeSlash/Nebentypus/Composite.lean` and the eigenvalue identities of
+`Newforms/RingEigenvalue.lean`.
+
 ## References
 
 * [F. Diamond and J. Shurman, *A first course in modular forms*][diamondshurman2005],
