@@ -31,7 +31,8 @@ statements below run in increasing generality:
   being derived rather than assumed;
 * the same conclusion asking strong noetherianity of `A` alone, for a presentation whose
   numerators generate the unit ideal together with `s` — Proposition 8.30 for a topologically
-  nilpotent denominator, which is not yet the proposition in full.
+  nilpotent denominator — the variant of the proposition that asks `hnil`, rather than the
+  proposition itself.
 
 Changing the localisation that carries a presentation is flat with no hypotheses at all.
 
@@ -541,9 +542,10 @@ theorem flat_restrictionRingHomOfSubset_of_isStronglyNoetherian_base
 Tate ring, the restriction map `A⟨T/s⟩ → A⟨T'/s⟩` of a numerator enlargement is flat, provided
 the denominator is topologically nilpotent whenever the enlargement is proper.
 
-**This is not yet Wedhorn's Proposition 8.30**, which asks nothing of the denominator beyond the
-rational-subset condition. `hnil` does not follow from that condition, nor from the Tate and
-strong-noetherian hypotheses: `s = 1` makes `hspan` automatic, and `1` is not topologically
+**This is the topologically-nilpotent-denominator variant, and only that.** Wedhorn's
+Proposition 8.30 asks nothing of the denominator beyond the rational-subset condition, and `hnil`
+is strictly stronger: it follows neither from that condition nor from the Tate and
+strong-noetherian hypotheses — `s = 1` makes `hspan` automatic, and `1` is not topologically
 nilpotent in a nonzero Tate ring. Removing it needs a change of presentation: scaling `(T, s)` by
 a power of a topologically nilpotent unit leaves the localisation alone while making the
 denominator topologically nilpotent, which is
