@@ -521,6 +521,9 @@ along which a statement about `modFormCharSpace` specialises to `cuspFormCharSpa
   map_add' _ _ := Subtype.ext (DFunLike.coe_injective rfl)
   map_smul' _ _ := Subtype.ext (DFunLike.coe_injective rfl)
 
+/-- **`cuspToModFormCharSpace` is the coercion.** The modular form underlying the image of a
+cusp form is the modular form underlying that cusp form; the inclusion changes nothing but the
+space the element is regarded as living in. -/
 @[simp]
 theorem coe_cuspToModFormCharSpace (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) (f : cuspFormCharSpace k χ) :
     (cuspToModFormCharSpace k χ f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) =
