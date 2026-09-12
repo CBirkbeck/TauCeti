@@ -34690,3 +34690,73 @@ private bridge with `reuse` ✅, which is the evidence to quote if it does retur
 Four open. #6093 10/10 `ready-to-merge`. #6188 rebuilding on `da705df62`, scope-split. #6432
 rebuilding on `98bb7e78f`, three fixes ported. #5950 Chris's.
 Merged this watch: **#6426, #6412, #6418**.
+
+---
+
+## r669 — 2026-09-12 — #6432 reaches 10/10; the prospect lane re-measured and one target verified
+
+### Not chasing the 🟡 behind the ⛔ was right
+
+r668 declined to act on `reuse`'s "delete the private bridge", on the grounds that a 🟡 sitting
+behind a ⛔ may not survive the next board. It did not: `scope` cleared to ♻️, `reuse` went ♻️ with
+it, and **`proof-quality` approved the bridge outright**. Acting would have deleted a declaration
+the next board accepted — and re-opened a loop that has now run private → public → inline → private.
+
+**A 🟡 behind a ⛔ is a prediction about a PR that no longer exists once the ⛔ clears.**
+
+### #6432 is 10/10
+
+All ten approved on `98bb7e78f`. The three fixes ported from #6188 in r668 cleared `reuse`,
+`documentation` and `proof-quality` together, and `api-design` approved **without** asking for the
+functorial lemmas — so that item was never owed there.
+
+### #6188: two findings answered by quoting the block that created them
+
+`api-design` wants `autCongr_refl`/`_symm`/`_trans`; `generality` wants the semilinear statement.
+Both were answered on their threads rather than implemented, citing #6188's own `scope` ⛔:
+
+> *"Keep this PR to rooting and renaming the existing declarations; move both structural lemmas and
+> the corresponding call-site rewrites to a follow-up PR."*
+
+Three new bundled equalities are the same category of change the block refused, and the semilinear
+statement is #6432's topic — now **10/10 green** and carrying both. Each reply says plainly what I
+will do if the reviewer wants it here anyway, since either would reverse the block.
+
+The `api-design` reply also records a technical fact for whoever writes the functorial lemmas:
+Mathlib's `AlgEquiv` versions are `rfl` because `AlgEquiv.autCongr` is a structure literal; ours is a
+composite through `generalLinearEquiv` and `congrLinearEquiv`, so `rfl` will not transfer.
+
+`documentation` fixed: the private bridge's docstring stated coercion mechanics; it now states the
+equality, with the rest as a source comment. **Third application of the same rule on this PR.**
+#6432 carries the same docstring but is 10/10 with `documentation` ✅ — **not touched, because a
+green PR is not a place to apply a lesson.**
+
+### The prospect lane, re-measured against fresh `origin/main`
+
+Main is at **739 flagged**, down from 759. `nscand.py` over the live tree: 52 flagged namespaces, 12
+WHOLE. Ten of the twelve are accounted for — `BialgHom` 8/8 is #5950, `LinearEquiv` 8/8 is
+#6188/#6432, six are the handover's ABSENT traps (`PDE.Continuous`, `PDE.ContinuousOn`,
+`Probability.Kernel`, `Probability.AEStronglyMeasurable`, `Probability.MeasurableSet`,
+`BilinForm.IsAlt`, `Representation.IsIrreducible`), `FDRep` 1/1 is the `private intCharacter_def`
+#6418 deliberately left, and `Basis` is Mathlib's `Module.Basis`.
+
+**The twelfth is new: `TauCeti.Submonoid` 1/1**, and it is verified rather than guessed:
+
+* `mathlibns.py`: `ROOT 517 Submonoid` — a real root namespace, not a grep.
+* Mathlib has **no** `Submonoid.continuousConstSMul` and no `AddSubmonoid.continuousConstVAdd`, so
+  this is not the #6418 duplicate trap.
+* Mathlib's own `Topology/Algebra/ConstMulAction.lean` carries the identical sibling pattern —
+  `Units.continuousConstSMul`, `Prod.continuousConstSMul`, `MulOpposite.continuousConstSMul` — so
+  the rooted name matches its convention exactly.
+
+The declaration is `TauCeti/Topology/Algebra/ConstMulAction.lean:37`, an `instance` with
+`@[to_additive AddSubmonoid.continuousConstVAdd]`, referenced once by
+`TauCeti.Subgroup.continuousConstSMul` in the same file. Being an instance, rooting it enables no dot
+notation — the value is emptying the namespace and matching Mathlib's placement. It is flagged, so
+`rootsurplus` will not fire.
+
+**Not opened: four `improve/*` PRs are open and step 5 needs fewer than three.** Scouted, not started.
+
+### Board
+Four open. #6093 and **#6432 both 10/10 `ready-to-merge`**. #6188 green, two findings contested, one
+fixed. #5950 Chris's. Merged this watch: **#6426, #6412, #6418**.

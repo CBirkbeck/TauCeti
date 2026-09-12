@@ -1,82 +1,85 @@
-# Last round — r668 (2026-09-12 17:05Z)
+# Last round — r669 (2026-09-12 17:35Z)
 
-## 🎉 #6418 MERGED 16:58:30Z — third landing of this watch
+## A 🟡 behind a ⛔ is a prediction about a PR that will not exist
 
-`root the TauCeti.FDRep character API`. Its path: ⛔ `reuse` (an exact Mathlib duplicate) → four
-rubrics arriving when the block lifted → 10/10 → the bot. **Every finding on it was implemented,
-none contested.**
+r668 declined to act on #6188's `reuse` "delete the private bridge", because it sat behind a ⛔.
+It did not survive: `scope` cleared to ♻️, `reuse` went ♻️ with it, and **`proof-quality` approved
+the bridge outright**. Acting would have deleted a declaration the next board accepted and reopened a
+loop that has already run private → public → inline → private.
 
-## An answer can arrive as a finding rather than as a reply
+## #6432 is 10/10 `ready-to-merge`
 
-r667 asked, on #6188's `generality` thread, which of two converged PRs should own
-`GeneralLinearGroup/Congr.lean`. No reply came — a **⛔ `scope` block** answered instead:
+The three fixes ported from #6188 in r668 cleared `reuse`, `documentation` and `proof-quality`
+together. `api-design` approved **without** asking for the functorial lemmas — that item was never
+owed there.
 
-> *"Keep this PR to rooting and renaming the existing declarations; move both structural lemmas
-> **and the corresponding call-site rewrites** to a follow-up PR."*
+## #6188: two findings answered by quoting the block that created them
 
-The follow-up already exists: **#6432 carries both lemmas at the semilinear generality with
-`api-design` ✅**. So #6188 is now the relocation alone, and the structural lemmas plus their
-call-site rewrites are removed (the `Main statements` section went with them).
+`api-design` wants `autCongr_refl`/`_symm`/`_trans`; `generality` wants the semilinear statement.
+Both answered on their threads, citing #6188's own `scope` ⛔ — *"Keep this PR to rooting and renaming
+… move both structural lemmas and the corresponding call-site rewrites to a follow-up PR."* Three new
+bundled equalities are the same category the block refused; the semilinear statement is #6432's
+topic, now 10/10 and carrying both. **Each reply says plainly what I will do if the reviewer wants it
+here anyway**, since either reverses the block.
 
-**Asking was still right.** The question named the two options precisely and the block picked one. Had
-r667 chosen unilaterally and generalised #6188, this ⛔ would have landed on a PR carrying even more
-of #6432's topic.
+`documentation` fixed (`cc5b861ca`): the private bridge's docstring stated coercion mechanics; it now
+states the equality, rest as a source comment. #6432 has the same docstring but is 10/10 with
+`documentation` ✅ — **not touched: a green PR is not a place to apply a lesson.**
 
-`api-design` asked for those lemmas here; `scope` removed them. Both were satisfiable — just not in
-the same PR, which is what `scope` is for.
+## Prospect lane re-measured — one verified target, not yet opened
 
-## Port a fix the moment it is accepted anywhere
+Main is at **739 flagged** (was 759). `nscand.py`: 52 flagged namespaces, **12 WHOLE**. Ten are
+accounted for — `BialgHom` = #5950, `LinearEquiv` = #6188/#6432, six ABSENT traps, `FDRep` 1/1 is the
+`private intCharacter_def` #6418 left, `Basis` is Mathlib's `Module.Basis`.
 
-#6432 came back 7/10 (`naming`, `api-design`, `generality`, `scope` all ✅ — the r666 work landed).
-Its three remaining findings were **verbatim the ones #6188 had already taken**: the two `show`/`ext`
-blocks in `map_specialOrthogonalGroup` (`reuse` + `proof-quality`, same site) and
-`autCongr_symm_apply`'s proof-narrative docstring (`documentation`). Ported in one commit.
+**The twelfth is new and verified: `TauCeti.Submonoid` 1/1.**
 
-## Do not chase a 🟡 that sits behind a ⛔
+* `mathlibns.py`: `ROOT 517 Submonoid` — real root namespace, not a grep (r511).
+* Mathlib has **no** `Submonoid.continuousConstSMul` / `AddSubmonoid.continuousConstVAdd` — not the
+  #6418 duplicate trap.
+* Mathlib's own `Topology/Algebra/ConstMulAction.lean` has the identical sibling pattern
+  (`Units.`, `Prod.`, `MulOpposite.continuousConstSMul`), so the rooted name matches convention.
 
-#6188's `reuse` now wants the private bridge deleted again — position **three of three** on the same
-fact (private bridge → public lemma → inline → private bridge → delete). Not acted on: `scope` is a
-⛔, the rest of the board is *not yet run*, and the next board judges a PR that no longer contains
-the structural lemmas. If it returns, the evidence to quote is that **#6432 holds the identical
-private bridge with `reuse` ✅**.
+Target: `TauCeti/Topology/Algebra/ConstMulAction.lean:37`, an `instance` with
+`@[to_additive AddSubmonoid.continuousConstVAdd]`, referenced once by
+`TauCeti.Subgroup.continuousConstSMul` in the same file. Rooting it enables no dot notation (it is an
+instance) — the value is emptying the namespace and matching Mathlib's placement. It is flagged, so
+`rootsurplus` will not fire. Removing the wrapper leaves `namespace Submonoid` empty: delete it.
 
-## Board (17:05Z) — four open
+**Not opened — four PRs are open and step 5 needs fewer than three.** Note the arithmetic: #6093 and
+#6432 merging leaves #5950 + #6188 = two, and step 5 then triggers.
+
+## Board (17:35Z) — four open
 
 | PR | head | CI | label | whose move |
 |---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **Chris** — human-owned `web/examples/Examples.lean` |
 | **#6093** | `370dad05e` | green | `ready-to-merge` | nobody — **10/10** |
-| **#6188** | `da705df62` | building | `awaiting-author` | reviewer — scope-split r668, board BEHIND |
-| **#6432** | `98bb7e78f` | building | `awaiting-author` | reviewer — three fixes ported r668, board BEHIND |
-
-**Both live boards are BEHIND. Do NOT re-fix.**
+| **#6188** | `cc5b861ca` | building | `awaiting-author` | reviewer — 1 fixed, 2 contested, board BEHIND |
+| **#6432** | `98bb7e78f` | green | `ready-to-merge` | nobody — **10/10** |
 
 ## Next
 
-1. **Watch both builds.** #6188 `da705df62` (removal only, low risk); #6432 `98bb7e78f` (two `rw`s
-   replacing `show` blocks — the same edit #6188 built green, so also low risk).
-2. **#6188's next board judges a smaller PR.** Expect the rubrics that were *not yet run* behind the
-   ⛔ to appear fresh. `generality` may re-fire asking for semilinearity — the answer is now on the
-   record: **#6432 is the PR that does that**, and `scope` said so. Quote the block.
-3. **#6432 is the one to push toward green** — it now owns the structural lemmas, the semilinear
-   generality, and the call-site rewrites. It is 7/10 with three fixes just pushed.
-4. **`api-design`'s functorial API** (`autCongr_refl`/`symm`/`trans`) belongs in **#6432**, not
-   #6188. Mathlib's `AlgEquiv` versions are `rfl` on a structure literal; ours is a composite through
-   `generalLinearEquiv` and `congrLinearEquiv`, so expect `MulEquiv.ext` plus the pointwise lemmas.
-5. **Four open** — one more merge and step 5 triggers. Prospect candidates:
-   `ContRepresentation` 141/184, `Representation` 134/189, `AbelianVariety.Hom` 41/54,
-   `WeierstrassCurve` 26/27; avoid `IsCoveringMap` / `Deck.IsQuotientCoveringMap` (they overlapped
-   #6093, now merged-adjacent — re-check against a **freshly fetched** `origin/main` before ranking).
+1. **Watch #6188 on `cc5b861ca`** (docstring only, low risk) and its next board — the two contests
+   are the live question.
+2. If `generality` or `api-design` re-fires on #6188 **with the reviewer explicitly asking for it
+   there despite the block**, implement it: both replies committed to that. Otherwise hold.
+3. **When step 5 triggers, `TauCeti.Submonoid` is scouted and verified** — see above. Branch
+   `improve/submonoid-constsmul-root` from a freshly fetched `origin/main`, root the instance, drop
+   the empty wrapper, update the one reference, gate, open as a DRAFT, mark ready when CI is green.
+4. Re-run `nscand.py` after each merge: main moved 759 → 739 during this watch and the WHOLE list
+   changes with it.
 
 ## Settled — with the conditions attached
 
 * **#6093** — **10/10.** `@[expose]` on `fundamentalGroupEquivFiber` removed, **and that is why**
   `_apply_coe` is not `@[simp]`.
 * **#6418** — **MERGED.**
-* **#6188** — the relocation alone: `TauCeti.LinearEquiv` → root, four `extendOfIsLattice` plus three
-  conjugation declarations, and the rename. **No structural lemmas** (`scope` ⛔). Transport is the
-  `private` bridge; `reuse` disputes it but sits behind the ⛔.
-* **#6432** — semilinear, rooted, renamed, **owns** the structural lemmas and the call-site rewrites.
+* **#6188** — the relocation alone. Transport is the **`private` extensional bridge**, now
+  `proof-quality` ✅. No structural lemmas, no functorial lemmas, not semilinear — all of that is
+  #6432's, per the `scope` ⛔.
+* **#6432** — **10/10**: semilinear, rooted, renamed, owns the structural lemmas and call-site
+  rewrites.
 
 ## Still needs Chris
 
@@ -95,8 +98,11 @@ A fresh worktree needs `.lake` symlinked or `lint-dot-notation` errors on both s
 `uvx` is at `~/.local/bin/uvx`; measured board latency band is **32–67 min**.
 **COMMIT BEFORE GATING** — prepush reads HEAD and now refuses a dirty tree.
 Before believing a gate FAIL is yours, re-run it on the **pristine head**.
-A rubric that went green can go 🟡 again; **clearing a ⛔ reveals rubrics that never ran**; and
+A rubric that went green can go 🟡 again; clearing a ⛔ reveals rubrics that never ran; and
 **a 🟡 behind a ⛔ may not survive the next board — do not chase it**.
 **Deleting a declaration means deleting what advertises it.**
+**A green PR is not a place to apply a lesson** — port fixes to PRs that asked for them.
+Verify a rooting target against Mathlib with `mathlibns.py`, never a grep, and check the name is not
+already there.
 The gate is pure Python: it cannot see docstring attachment, elaboration, or simp normal form.
 **133 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
