@@ -25,7 +25,7 @@ Results connecting unit and coprimality data over `ZMod d`, independent of one a
   (`LeanModularForms/HeckeRIngs/GLn/SL2Surjection.lean`, Chris Birkbeck); its consumer is the
   strong approximation theorem `Matrix.SpecialLinearGroup.map_intCast_zmod_surjective` in
   `TauCeti/LinearAlgebra/Matrix/SpecialLinearGroup/Basic.lean`.
-* `ZMod.eq_comp_unitsMap_of_comp_unitsMap_eq` — a unit homomorphism that agrees with a lowered
+* `TauCeti.eq_comp_unitsMap_of_comp_unitsMap_eq` — a unit homomorphism that agrees with a lowered
   one after restriction along `ZMod.unitsMap` is itself that lowered one, read at the smaller
   modulus. Its consumers are the descent arguments of
   `TauCeti/NumberTheory/ModularForms/Newforms/Descent/`, which carry a nebentypus lowered modulo
@@ -56,12 +56,14 @@ private lemma isCoprime_emod {a₁ c₁ : ℤ}
 from `χ₀` modulo `M / p`, and `χ'` modulo `N'` agrees with `χM` after restriction to the units
 modulo a common multiple `M'`, then `χ'` is itself pulled back from `χ₀`, along `N' / p`.
 `ZMod.unitsMap` is surjective onto the units of a divisor, so the restriction can be cancelled. -/
-theorem ZMod.eq_comp_unitsMap_of_comp_unitsMap_eq {G : Type*} [Monoid G] {p M M' N' : ℕ}
-    [NeZero M'] (hpM : p ∣ M) (hpN' : p ∣ N') (hMpN'p : M / p ∣ N' / p) (hMN' : M ∣ N')
-    (hN'M' : N' ∣ M') {χM : (ZMod M)ˣ →* G} {χ₀ : (ZMod (M / p))ˣ →* G}
+theorem TauCeti.eq_comp_unitsMap_of_comp_unitsMap_eq {G : Type*} [Monoid G] {p M M' N' : ℕ}
+    [NeZero M'] (hpM : p ∣ M) (hMN' : M ∣ N') (hN'M' : N' ∣ M')
+    {χM : (ZMod M)ˣ →* G} {χ₀ : (ZMod (M / p))ˣ →* G}
     (hcomp : χM = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpM))) {χ' : (ZMod N')ˣ →* G}
     (h : χ'.comp (ZMod.unitsMap hN'M') = χM.comp (ZMod.unitsMap (hMN'.trans hN'M'))) :
-    χ' = (χ₀.comp (ZMod.unitsMap hMpN'p)).comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN')) := by
+    χ' = (χ₀.comp (ZMod.unitsMap
+        ((Nat.div_dvd_div_iff_right hpM (hpM.trans hMN')).mpr hMN'))).comp
+      (ZMod.unitsMap (Nat.div_dvd_of_dvd (hpM.trans hMN'))) := by
   rw [hcomp, MonoidHom.comp_assoc, ZMod.unitsMap_comp] at h
   refine (MonoidHom.cancel_right (ZMod.unitsMap_surjective hN'M')).mp (h.trans ?_)
   rw [MonoidHom.comp_assoc, MonoidHom.comp_assoc, ZMod.unitsMap_comp, ZMod.unitsMap_comp]

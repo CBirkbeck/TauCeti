@@ -141,8 +141,7 @@ private theorem descendSlash_smul_slash_scaleGL_eq_coe_levelRaise (hp : p.Prime)
   have : NeZero q := ⟨hq.ne_zero⟩
   have hqMl : q ∣ M * l ^ 2 := dvd_mul_of_dvd_right (hql.trans (dvd_pow_self l two_ne_zero)) M
   have : NeZero (M * l ^ 2) := ⟨fun h ↦ NeZero.ne (M * l ^ 2 / q) (by rw [h, Nat.zero_div])⟩
-  have hcomp' := ZMod.eq_comp_unitsMap_of_comp_unitsMap_eq hpM hpN'
-    ((Nat.div_dvd_div_iff_right hpM hpN').mpr hMN') hMN' (Nat.div_dvd_of_dvd hqMl) hcomp hχ'
+  have hcomp' := eq_comp_unitsMap_of_comp_unitsMap_eq hpM hMN' (Nat.div_dvd_of_dvd hqMl) hcomp hχ'
   refine ⟨hcomp', ?_⟩
   have h := descendSlash_coe_levelRaise_mul_left_of_comp_of_mem_cuspFormCharSpace k hp hpN'
     (hpl.coprime_dvd_right hql) hcomp' hF
