@@ -43,6 +43,10 @@ recurrence into a recurrence of operators on the character spaces.
 * `HeckeRing.GL2.heckeRingHomCharSpace_heckeTScalarGamma0`: the scalar generator under the
   modular-form Hecke-ring action.
 * `HeckeRing.GL2.heckeRingHomCuspCharSpace_heckeTScalarGamma0`: the cusp-form counterpart.
+* `HeckeRing.GL2.heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ` and its pointwise
+  form `..._succ_succ_apply`: the two-step prime-power recurrence on `M_k(N, χ)`.
+* `HeckeRing.GL2.heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_succ_succ` and its
+  pointwise form `..._succ_succ_apply`: the same recurrence on `S_k(N, χ)`.
 
 ## Provenance
 
@@ -203,8 +207,8 @@ theorem heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ (hp : 0 < p)
   ring
 
 /-- **The recurrence at a form**: `heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ`
-evaluated. This is the pointwise interface — the shape the coefficient formula below and the
-eigenvalue recurrence of `Newforms/RingEigenvalue.lean` consume. -/
+evaluated. This is the pointwise interface — the shape the coefficient formula of
+`Prime/Power.lean` and the eigenvalue recurrence of `Newforms/RingEigenvalue.lean` consume. -/
 theorem heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ_apply (hp : 0 < p)
     (hpN : Nat.Coprime p N) (F : modFormCharSpace k χ) (r : ℕ) :
     heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) F =
@@ -234,8 +238,8 @@ theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_succ_succ (hp : 0 < p
 
 /-- **The recurrence at a cusp form**:
 `heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_succ_succ` evaluated. This is the pointwise
-interface, the shape the coefficient formulas below and `Newforms/RingEigenvalue.lean`
-consume. -/
+interface, the shape the coefficient formulas of `Prime/Power.lean` and
+`Newforms/RingEigenvalue.lean` consume. -/
 theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_succ_succ_apply (hp : 0 < p)
     (hpN : Nat.Coprime p N) (F : cuspFormCharSpace k χ) (r : ℕ) :
     heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) F =
