@@ -35,4 +35,11 @@ theorem _root_.Wrap.tn_tactic : True := by
   ext
   trivial
 
+-- r661: a declaration written `_root_.TauCeti.X.y` is rooted INTO TauCeti, not out of it. It
+-- lands exactly where the enclosing `namespace TauCeti` would put it, so no wrapper is lost and a
+-- bare sibling reference still resolves. Reporting it flagged `origin/main`'s own code on #6188.
+theorem _root_.TauCeti.Sig.tn_into_tauceti : True := trivial
+
+theorem _root_.Wrap.uses_into_tauceti : True := Sig.tn_into_tauceti
+
 end TauCeti

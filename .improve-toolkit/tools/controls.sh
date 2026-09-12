@@ -373,6 +373,14 @@ python3 "$T/xsibling.py" "$XS/TauCeti" HEAD "$XS/TauCeti/Use.lean" 2>/dev/null |
   | neg "xsibling: spares prose, attributes and tactics" "tn_docmask_target" '`ext`' "tn_header_name"
 python3 "$T/xsibling.py" "$XS/TauCeti" HEAD "$XS/TauCeti/Use.lean" 2>/dev/null \
   | chk "xsibling: classifies the non-blocking shapes" "ATTRIBUTE" "TACTIC"
+# r661: `_root_.TauCeti.Foo.bar` is rooted INTO TauCeti, so no wrapper is lost. The old guard read
+# `'TauCeti.TauCeti' not in h` -- vacuously true -- and reported `TauCeti` itself as lost, turning
+# every bare use of a `TauCeti.*` name into a BREAK. It fired on #6188 against code `origin/main`
+# carries verbatim and builds.
+python3 "$T/xsibling.py" "$XS/TauCeti" HEAD "$XS/TauCeti/Use.lean" 2>/dev/null | grep '^BREAKS' \
+  | neg "xsibling: rooting INTO TauCeti is not a lost wrapper (r661)" "tn_into_tauceti"
+python3 "$T/xsibling.py" "$XS/TauCeti" HEAD "$XS/TauCeti/Use.lean" 2>/dev/null | grep '^BREAKS' \
+  | chk "xsibling: still finds the real breakage with that case present" "tp_crossfile" "Inner.tp_nested"
 python3 "$T/siblingscan.py" "$XS/TauCeti/Use.lean" Wrap 2>/dev/null \
   | chk "siblingscan: nested suffix, not just the last component" "Sib.tp_samefile_nested"
 python3 "$T/siblingscan.py" "$XS/TauCeti/Use.lean" Wrap 2>/dev/null \

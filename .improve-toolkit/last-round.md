@@ -1,90 +1,93 @@
-# Last round — r660 (2026-09-12 14:50Z)
+# Last round — r661 (2026-09-12 15:05Z)
 
-## A finding on one PR can be discharged by a different PR landing
+## The gate had a false positive, and reasoning past it twice was the real error
 
-#6188's `generality` asked for `extendOfIsLattice` over a domain `R` and fraction field `K`. That is
-**exactly #6426**, which merged at 14:07:54Z — the PR the `scope` block split this work into. The
-branch was **209 commits behind**, so it simply did not have it.
+`xsibling`'s `specialOrthogonalToGeneralLinear` rows were explained away in r656 ("main moved") and
+correctly doubted in r660. The cause, found by running the tool's own `gone` computation on the real
+file instead of theorising:
 
-Merged `origin/main` in. **One conflict**, the predictable one: `Algebra/Module/Lattice.lean`, the
-four declarations #6426 generalised and #6188 roots. Resolved by taking #6426's signatures
-(`R`, `K`, `[Module.Free R S]`) and applying the rooting on top. Branch is **0 behind main**,
-`MERGEABLE`, `lint-dot-notation` 759 → 751, 0 new.
+A declaration written `_root_.TauCeti.Foo.bar` gives `ns = 'TauCeti.Foo'`, so the guard asked
+`'TauCeti.TauCeti' not in h` — **vacuously true for every file**. `TauCeti` entered `wrappers`, and
+every bare use of any `TauCeti.*` name in that file became a BREAK.
 
-**Before implementing a `generality` or `reuse` finding, check whether a sibling PR already landed
-it.** Re-implementing would have duplicated merged code.
+Fixed by skipping `ns == 'TauCeti'` / `ns.startswith('TauCeti.')`: rooting *into* TauCeti lands a
+declaration exactly where the enclosing wrapper already puts it. The legitimate path
+(`_root_.QuadraticMap.IsometryEquiv.*` → tests `'TauCeti.QuadraticMap' in h`) was never broken.
 
-Also corrected a main-declarations bullet that still said *"integral … rational ambient spaces"* —
-**stale on `main` itself**: #6426 generalised the declarations and left the prose.
+**Controls 129 → 131**, mutation-tested:
 
-## A `rfl` that works is not automatically a `rfl` that belongs
+```
+MUTATION (original guard restored):
+  FAIL  xsibling: rooting INTO TauCeti is not a lost wrapper (r661)
+  PASS  xsibling: still finds the real breakage with that case present
+  130 passed, 1 failed
+```
 
-#6093 hit 9/10 (`reuse` ✅, `api-design` ✅ — the r658 restructure and r659 `mapsTo_fiber` naming
-landed). The one new blocker, `proof-quality`, was fair: r658's `compFiberEquiv_refl`/`_trans` closed
-with `Subtype.ext rfl`, unfolding `compFiberEquiv`, `Set.equivOfEq` and equivalence composition at
-once. Both now read `Equiv.ext fun _ ↦ Subtype.ext (by simp)`, routing through
-`compFiberEquiv_apply_coe` where that definitional equality already lives.
+The paired positive is the point — it proves the fix **narrows** the check rather than blinding it.
+#6188's gate went **11 ok / 4 failed → 12 ok / 3 failed**.
 
-## ⚠ `xsibling` has a real defect — the r656 explanation is dead
+**A check that cries wolf is a check the operator learns to skim.**
 
-r656 blamed its `specialOrthogonalToGeneralLinear` rows on the branch being 204 commits behind. The
-branch is now **level with main and the rows persist**, at main's own line numbers (392, 399).
-`origin/main` itself declares `_root_.TauCeti.QuadraticMap.specialOrthogonalToGeneralLinear` and
-references it bare a few lines later, and main is green by construction.
+## A goal printed unchanged means the lemma never fired
 
-`xsibling` reports a breakage for a wrapper **the PR does not remove** — the file is in the diff only
-because the `congrAut → autCongr` rename touched call sites in it. **A standing false positive trains
-the operator to skim the gate.** Toolkit task: restrict `xsibling` to wrappers the PR actually
-removes, with a control built from this case. Run `tools/controls.sh` after (expect 129 → more).
+#6093 went red on r660's `Subtype.ext (by simp)`:
 
-## Board (14:50Z) — six open
+```
+Fiber.lean:117:33: unsolved goals
+⊢ ↑(((Equiv.refl X).compFiberEquiv y) x✝) = ↑((Equiv.refl ↑(p ⁻¹' {y})) x✝)
+```
+
+`simp` made **no progress**; the `@[simp]` characteristic lemma never matched. Naming it
+(`Subtype.ext (compFiberEquiv_apply_coe (p := p) … e)`) removes the question and is what
+`proof-quality` asked for. **"`simp` closes it" is a guess until CI says so.**
+
+## Board (15:05Z) — six open
 
 | PR | head | CI | label | whose move |
 |---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **Chris** — human-owned `web/examples/Examples.lean` |
-| **#6093** | `02175efe6` | building | `awaiting-author` | reviewer — **9/10**, last blocker fixed r660, board BEHIND |
+| **#6093** | `370dad05e` | building | `ci-failed`¹ | reviewer — 9/10, last blocker re-fixed r661 |
 | **#6188** | `3e027a657` | building | `awaiting-CI` | reviewer — main merged r660, board BEHIND |
 | **#6412** | `360cdfc5b9` | green | `ready-to-merge` | nobody — 10/10 |
-| **#6418** | `5c73d4c54` | green | `ready-to-merge` | nobody — **10/10** |
-| **#6432** | `f9bdb0a8b4` | green | `awaiting-author` | **me — both contests rejected, see below** |
+| **#6418** | `5c73d4c54` | green | `ready-to-merge` | nobody — 10/10 |
+| **#6432** | `f9bdb0a8b4` | green | `awaiting-author` | **me — contests rejected** |
 
-**Boards on #6093 and #6188 are BEHIND. Do NOT re-fix.**
+¹ stale label, describes the superseded head. **Read CI from the check-runs API for the CURRENT head.**
 
-## Next unit: #6432, whose contests were rejected
+## Next
 
-Both r657 contests failed: `naming` still reports the noncanonical namespace, `api-design` still
-reports the missing structural lemmas, on `f9bdb0a8b4`. The sequencing argument did not land.
-
-**New information that changes the picture:** #6188's own `api-design` now asks for the *same*
-structural lemmas (`autCongr_apply` / `autCongr_symm_apply` as equalities to the composites — the
-`handover/congraut-structural-deferred` content). So the two PRs are being asked for the same work
-from both ends, and #6188 *is* the rooting, so the lemmas can finally be added there.
-
-Options, in preference order:
-1. **Add the structural lemmas to #6188** (where they are now unblocked and explicitly requested),
-   then contest #6432 again citing that they exist on the rooting PR.
-2. If #6188 lands first, rebase #6432 — rooting and rename come free.
-3. Only if both stall: root the declarations in #6432 too, accepting the duplication.
-
-#6188's other two blockers: `api-design` also wants `@[simp]` on `toLinearEquiv_ofLinearEquiv`
-(r656 proved via CI that this breaks `simpNF` on
-`UpperUnitriangular.congrLinearEquiv_pointsAction_eq_toLin`; the reviewer now explicitly asks to
-restate *that* lemma first — an unrelated file, so weigh scope against it), and `naming` wants
-`toLinearEquiv_ofLinearEquiv` moved to root `LinearEquiv`. **Check the precedent before implementing
-the latter:** Mathlib's own `AlgEquiv.toLinearEquiv_ofLinearEquiv` — the finding's cited precedent —
-sits in `AlgEquiv`, the namespace of `ofLinearEquiv`/`toLinearEquiv`, *not* in `LinearEquiv`, despite
-its first explicit argument being a `LinearEquiv`. That may be a contest with evidence.
+1. **Watch #6093 on `370dad05e`.** If `Subtype.ext (compFiberEquiv_apply_coe …)` still fails, the
+   defeq on the RHS (`Equiv.refl`/`Equiv.trans` application) is the suspect — fall back to
+   `Equiv.ext fun e ↦ Subtype.ext <| by rw [compFiberEquiv_apply_coe]` and report the CI output.
+2. **Watch #6188 on the merge `3e027a657`** — it validates the #6426 conflict resolution. Do not
+   push on top until it lands, or a failure cannot be attributed to the merge.
+3. **Then #6188's three blockers**, in this order:
+   * `api-design` bullet 2 — add structural `autCongr_apply` / `autCongr_symm_apply` (equalities to
+     the composites). These exist on `handover/congraut-structural-deferred`, already
+     `_root_`-anchored **and already semilinear**; #6188 *is* the rooting, so they are unblocked
+     here. Verified verbatim in r657.
+   * `naming` — wants `toLinearEquiv_ofLinearEquiv` under root `LinearEquiv`. **Check the precedent
+     first:** Mathlib's `AlgEquiv.toLinearEquiv_ofLinearEquiv`, which the finding itself cites, sits
+     in `AlgEquiv` — the namespace of `ofLinearEquiv`/`toLinearEquiv` — *not* in `LinearEquiv`,
+     despite its first explicit argument being a `LinearEquiv`. Likely a contest with evidence.
+   * `api-design` bullet 1 — `@[simp]` on `toLinearEquiv_ofLinearEquiv`. r656 proved via CI this
+     breaks `simpNF` on `UpperUnitriangular.congrLinearEquiv_pointsAction_eq_toLin`; the reviewer now
+     asks to restate *that* lemma first, in a file this PR does not touch. Weigh scope.
+4. **#6432**: prefer landing #6188 first (rooting + rename come free on rebase). Only if both stall,
+   root in #6432 too and accept the duplication.
+5. Six PRs open, so step 5 does **not** trigger. When it does: `ContRepresentation` 141/184,
+   `Representation` 134/189, `AbelianVariety.Hom` 41/54, `WeierstrassCurve` 26/27; avoid
+   `IsCoveringMap` / `Deck.IsQuotientCoveringMap`. Measure against a **freshly fetched** `origin/main`.
 
 ## Settled — do not re-litigate
 
-* **#6093** — keep `@[expose]` on `Function.fiberMap` (reduction path exposed all the way down);
-  `compFiberEquiv` must NOT be exposed; `fundamentalGroupEquivFiber_apply_coe`, `fiberMap_comp_apply`
-  and `compFiberEquiv_trans` must NOT be `@[simp]`. `movedopens` clean. The conjugacy helper assumes
-  **no connectedness**, only `hj : Joined (h e₀) f₀`.
+* **#6093** — keep `@[expose]` on `Function.fiberMap`; `compFiberEquiv` must NOT be exposed;
+  `fundamentalGroupEquivFiber_apply_coe`, `fiberMap_comp_apply`, `compFiberEquiv_trans` must NOT be
+  `@[simp]`. `movedopens` clean. Conjugacy helper assumes **no connectedness**.
 * **#6188** — transport is `LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv`, `rfl`, via
-  `ofLinearEquiv`, **NOT `@[simp]`** (simpNF, CI-confirmed). `congrAut` → `autCongr`.
+  `ofLinearEquiv`, **NOT `@[simp]`**. `congrAut` → `autCongr`. Main merged; 0 behind.
 * **#6418** — `isIntegral_char` deleted as an exact Mathlib duplicate; `intCharacter_eq_iff` rooted
-  on cohesion; only `private intCharacter_def` stays nested. **10/10.**
+  on cohesion. **10/10.**
 * **#6412** — roadmap line is in TauCetiRoadmap, out of reach. Contest accepted. **10/10.**
 
 ## Still needs Chris
@@ -102,7 +105,7 @@ Every PR body needs a standalone `Roadmap: none`.
 `gh pr edit` silently no-ops here — use `gh api -X PATCH … -F body=@file`.
 A fresh worktree needs `.lake` symlinked or `lint-dot-notation` errors on both sides.
 `uvx` is at `~/.local/bin/uvx`; measured board latency band is **32–67 min**.
-Before believing a gate FAIL is yours, re-run it on the **pristine head** — and remember `xsibling`
-currently has a standing false positive on `OrthogonalGroup.lean`.
+Before believing a gate FAIL is yours, re-run it on the **pristine head**.
 A rubric that went green can go 🟡 again — re-read the board, never a remembered verdict.
 The gate is pure Python: it cannot see docstring attachment, elaboration, or simp normal form.
+**131 controls, 0 failed.** Run them after any toolkit edit, and mutation-test every new control.

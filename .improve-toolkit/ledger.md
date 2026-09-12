@@ -34191,3 +34191,70 @@ two PRs are being asked for the same work from both ends.
 Six open. **#6418 `ready-to-merge` 10/10**, #6412 `ready-to-merge` 10/10, both awaiting the bot.
 #6093 9/10, pushed `02175efe6`. #6188 building on the merge `3e027a657`. #6432 two blockers.
 #5950 Chris's. Merged this watch: **#6426**.
+
+---
+
+## r661 — 2026-09-12 — the gate's own false positive, found and fixed
+
+### `xsibling` reported `TauCeti` itself as a lost wrapper
+
+r660 established the rows were not "main moved". The cause, confirmed by running the tool's own
+`gone` computation on `OrthogonalGroup.lean` before touching anything:
+
+```
+file is inside namespaces: ['TauCeti', 'TauCeti.QuadraticMap']   is 'TauCeti' in h?  True
+rooted decls: [('QuadraticMap.IsometryEquiv', …), ('TauCeti.QuadraticMap', 'specialOrthogonalToGeneralLinear')]
+=> gone (what xsibling thinks was LOST): ['TauCeti']
+```
+
+A declaration written `_root_.TauCeti.Foo.bar` gives `ns = 'TauCeti.Foo'`, so the guard asked
+`'TauCeti.' + ns.split('.')[0] not in h`, i.e. **`'TauCeti.TauCeti' not in h` — vacuously true for
+every file**. `TauCeti` then entered `wrappers`, and every bare use of any `TauCeti.*` name in the
+file became a BREAK.
+
+The legitimate path was never broken: the same file's `_root_.QuadraticMap.IsometryEquiv.*`
+correctly tests `'TauCeti.QuadraticMap' in h` and is skipped. Fixed by skipping `ns == 'TauCeti'`
+and `ns.startswith('TauCeti.')` — rooting *into* TauCeti lands a declaration exactly where the
+enclosing wrapper already puts it, so nothing is stranded.
+
+**Controls 129 → 131**, and the new one was run against the bug:
+
+```
+MUTATION (original guard restored):
+  FAIL  xsibling: rooting INTO TauCeti is not a lost wrapper (r661) -- wrongly reported: tn_into_tauceti
+  PASS  xsibling: still finds the real breakage with that case present
+  130 passed, 1 failed
+```
+
+The paired positive control is the point: it proves the fix **narrows** the check rather than
+blinding it. r661's fixture case sits in `r550-xsibling-ctl/TauCeti/Use.lean` beside the r550 cases.
+
+#6188's gate went **11 ok / 4 failed → 12 ok / 3 failed**, with `xsibling` now passing on real code.
+
+**A check that cries wolf is a check the operator learns to skim**, which is the failure the whole
+toolkit exists to prevent. r656 and r660 both reasoned past this row with a plausible story; only
+running the tool's internals against the actual file found it.
+
+### #6093 red again, and `simp` was the problem
+
+r660's `Subtype.ext (by simp)` failed:
+
+```
+Fiber.lean:117:33: unsolved goals
+⊢ ↑(((Equiv.refl X).compFiberEquiv y) x✝) = ↑((Equiv.refl ↑(p ⁻¹' {y})) x✝)
+```
+
+`simp` made **no progress at all** — the `@[simp]` characteristic lemma never matched, and the goal
+came back untouched. Naming it removes the question:
+`Equiv.ext fun e ↦ Subtype.ext (compFiberEquiv_apply_coe (p := p) … e)`. That is what
+`proof-quality` asked for (route the laws through the public lemma); the residual definitional step
+is only that `Equiv.refl`/`Equiv.trans` apply as expected, which is Mathlib's business rather than
+this construction's representation.
+
+**"`simp` closes it" is a guess until CI says so, and a goal printed unchanged means the lemma never
+fired — not that it fired and fell short.**
+
+### Board
+Six open. #6412 and #6418 both 10/10 `ready-to-merge`, awaiting the bot. #6093 pushed `370dad05e`.
+#6188 building on the merge `3e027a657`, board BEHIND. #6432 two blockers, contests rejected.
+#5950 Chris's. Merged this watch: **#6426**.

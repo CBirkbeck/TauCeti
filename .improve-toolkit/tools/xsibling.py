@@ -136,7 +136,18 @@ def main():
         # a file that declares into root `X` while not being inside `namespace X` is exposed too,
         # even when the base had no wrapper at all
         for ns, _s, is_root in nss.walk(t):
-            if is_root and ns and ('TauCeti.' + ns.split('.')[0]) not in h:
+            if not (is_root and ns):
+                continue
+            # r661: `_root_.TauCeti.Foo.bar` is rooted INTO TauCeti, not out of it. It lands
+            # exactly where the enclosing `namespace TauCeti` puts it, so no wrapper is lost and
+            # every bare sibling reference still resolves. Without this the guard below read
+            # `'TauCeti.TauCeti' not in h`, which is vacuously true for every file, so ANY such
+            # declaration reported `TauCeti` itself as a lost wrapper -- and then every bare use of
+            # any `TauCeti.*` name in the file became a BREAK. That fired on #6188 against code
+            # `origin/main` carries verbatim and builds.
+            if ns == 'TauCeti' or ns.startswith('TauCeti.'):
+                continue
+            if ('TauCeti.' + ns.split('.')[0]) not in h:
                 gone.add(ns.split('.')[0])
         gone -= opened(hl)
         if gone: lost[t] = gone
