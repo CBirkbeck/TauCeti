@@ -104,13 +104,8 @@ theorem sum_range_add_add {N : Type*} [AddCommMonoid N] (g : ℕ → N) {p d n :
 /-- **A two-step recurrence for the sums `S j r = ∑_{i ≤ min j r} c^i a (j + r − 2i)`**:
 `S (j+2) (r+1) + c · S j (r+1) = S (j+1) (r+2) + c · S (j+1) r`.
 
-Every one of the four sums is a sum of `A i = c^i a (j + r + 3 − 2i)`, the two scalar multiples
-with the index shifted by one, and the upper limits pair up,
-`min j (r+1) + 1 = min (j+1) (r+2)` and `min (j+1) r + 1 = min (j+2) (r+1)`, so both sides are
-the same pair of sums with the `i = 0` term of one of them removed.
-
 This is the identity the Fourier coefficients of the Hecke operators at a prime power satisfy
-(`TauCeti/NumberTheory/ModularForms/HeckeSlash/Nebentypus/PrimePower.lean`), with `a t` the
+(`TauCeti/NumberTheory/ModularForms/HeckeSlash/Nebentypus/Prime/Power.lean`), with `a t` the
 coefficient at `p^t m` and `c = χ(p) p^{k−1}`; the `min` is what makes it hold with no relation
 between `j` and `r`. -/
 theorem sum_range_min_add_two {R : Type*} [Semiring R] (a : ℕ → R) (c : R) (j r : ℕ) :
@@ -118,6 +113,9 @@ theorem sum_range_min_add_two {R : Type*} [Semiring R] (a : ℕ → R) (c : R) (
         c * ∑ i ∈ range (min j (r + 1) + 1), c ^ i * a (j + (r + 1) - 2 * i) =
       (∑ i ∈ range (min (j + 1) (r + 2) + 1), c ^ i * a (j + 1 + (r + 2) - 2 * i)) +
         c * ∑ i ∈ range (min (j + 1) r + 1), c ^ i * a (j + 1 + r - 2 * i) := by
+  -- every one of the four sums is a sum of `A i = c^i a (j + r + 3 − 2i)`, the two scalar
+  -- multiples with the index shifted by one, and the upper limits pair up, so both sides are the
+  -- same pair of sums with the `i = 0` term of one of them removed
   set A : ℕ → R := fun i ↦ c ^ i * a (j + r + 3 - 2 * i) with hA
   -- a sum whose index reads `t - 2 i` with `t = j + r + 3` is a sum of `A`
   have eA : ∀ t n : ℕ, t = j + r + 3 →
