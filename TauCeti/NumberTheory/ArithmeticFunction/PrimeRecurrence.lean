@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Nat.Prime.Basic
-public import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.IntervalCases
 
 /-!
 # Sequences with a Hecke-type recurrence at the primes
@@ -23,6 +23,12 @@ eigenform with `a₁ = 0` at the good indices, where `c` is the eigenvalue at `p
 
 * `TauCeti.eq_zero_of_coprime_of_forall_prime_mul_eq`: the vanishing, by strong induction along
   the least prime factor.
+
+## References
+
+* [T. Miyake, *Modular forms*][miyake1989], §4.6 — the vanishing induction this lemma is the
+  arithmetic core of.
+* [F. Diamond and J. Shurman, *A first course in modular forms*][diamondshurman2005], §5.8.
 -/
 
 public section
