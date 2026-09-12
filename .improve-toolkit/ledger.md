@@ -35470,3 +35470,92 @@ one alone: **refresh a green PR only once `queuepos.py` says `EJECTED`.**
 Next: the pipeline re-reviews and relabels `ready-to-merge`, and *that label transition* re-enqueues
 it. #6093 will then enter the queue at the back — behind #6432 (pos 8) and #6188 (pos 16) — which is
 the price of the ejection, and nothing this role can or should shortcut.
+
+---
+
+## r681 — 2026-09-12 20:21Z — the board came back, and `scope` blocked the same shape as #6188
+
+### The round opened as a wait and turned into work
+
+Sweep at 20:06Z had #6093 `awaiting-review`, CI green, board BEHIND — the pipeline re-reviewing the
+refreshed head. By 20:15Z it was **`awaiting-author`**: board on `2231e763e`, round 1, halted.
+
+```
+✅ correctness   ✅ reuse   ⛔ scope   ▫️ everything else deferred
+```
+
+Only **one live blocker**. The `naming` finding `threadread.py` still shows is from 2026-09-09 and is
+`absent` in the current board's states — it re-runs once `scope` clears. **Do not fix it now**; it was
+written against a tree seven revisions old.
+
+### `scope` ⛔ — and it is right
+
+> `Equiv.compFiberEquiv_refl` and `Equiv.compFiberEquiv_trans` are genuinely new mathematical API
+> bundled into a namespace/relocation refactor; the description explicitly claims "Roadmap: none."
+
+That is exactly what they are. This is the **same shape `scope` ⛔'d on #6188 in r675**, where removing
+the added structural lemmas is what took the PR to 10/10. The proposal is implementable, so per step 3
+it gets implemented — argument does not clear rubrics.
+
+Removed both, with everything that advertised them:
+
+* the two theorems and their explanatory comments,
+* the `Main declarations` bullet promising "its identity and composition laws",
+* the overview sentence claiming "functoriality ... respecting identities and composition", which the
+  file no longer states — *deleting a declaration means deleting what advertises it*,
+* the `Z` universe variable, which only `compFiberEquiv_trans` used.
+
+Nothing else referenced them (checked tree-wide first). `stalequal`, `deadpath` and `ghostref` all ok
+afterwards, so the removal left nothing dangling.
+
+**Preserved on `handover/fiber-compfiberequiv-laws-deferred`** so the proofs are not lost, and the PR
+body now says so with a link — *removing the subject is an answer provided the work lands somewhere,
+and you say where.* Body section rewritten from "gains its identity and composition laws" to why they
+went and where they are; `Roadmap: none` still standalone. Patched with `gh api -X PATCH` and verified
+by re-reading, since `gh pr edit` silently no-ops here.
+
+Gate `12 ok / 4 failed / 1 UNRUN` — the same four documented questions, unchanged. Pushed
+`2231e763e → 36f3a07b9`; PR now **26 files / +423 / −329**.
+
+### Rest of the board
+
+```
+#6432  ready-to-merge  QUEUED pos=6   (was 7)
+#6188  ready-to-merge  QUEUED pos=14  (was 15)
+#5950  ready-to-merge  NEVER-QUEUED   Chris's
+```
+
+No `improve/*` merge since #6418; pure position. Step 4 no-op — #6093's CI had been green four
+minutes at sweep time, and the pipeline posted its own board nine minutes later, well inside the
+32–67 min band. **Driving would have burned ~$16 to reproduce a board already in flight.**
+
+### Prospecting groundwork, since step 5 will fire soon
+
+`improve/submonoid-constsmul-root` was scouted against much older main and was **11 behind**. There is
+no PR on it, so refreshing costs no review cycle — merged `origin/main` (clean, 0 behind), re-gated
+**14 ok / 2 failed**, the two being the documented `parallelns` and `slice` questions, and `ghostref`
+clean. Pushed `98d76ecb6 → 595ce95af`. It is now ready to open the moment step 5 triggers, instead of
+repeating #6093's "scouted against a stale main" failure.
+
+Refreshed the candidate ranking on current main and **verified each against Mathlib with
+`mathlibns.py`** — the check that exists because r511 got five of six wrong by grep:
+
+```
+ROOT   517  Submonoid                       1/1  <- the prepared branch
+ROOT     6  Representation.IsIrreducible    1/1  <- next target
+ROOT    14  Basis                           1/1
+ROOT    27  FDRep                           1/1
+ABSENT   0  Probability.Kernel        (Mathlib says ProbabilityTheory.Kernel)
+ABSENT   0  PDE.Continuous / PDE.ContinuousOn
+ABSENT   0  Probability.AEStronglyMeasurable / Probability.MeasurableSet / BilinForm.IsAlt
+```
+
+**Five of the twelve WHOLE candidates are traps** — the namespace does not exist in Mathlib, so
+rooting into it would invent one. `Probability.Kernel` is named in `mathlibns.py`'s own firing control
+as a known-bad example, and it ranked 3/3 WHOLE on the nscand list. Ratio does not settle a target.
+
+### Correction to r680's note
+
+I wrote "main moved 759 → 735 → **678**". Wrong: **main is at 739**. 678 is #6093's *head* figure —
+what main will read once it merges. r679's gate printed both (`base: 739`, `head: 678`) and I carried
+the head number across as if it were main's.
