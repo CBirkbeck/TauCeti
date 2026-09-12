@@ -91,18 +91,6 @@ theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two (hp : 0 < p)
   push_cast
   ring
 
-/-- The recurrence at a form: `heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two`
-evaluated, in the shape the coefficient induction below consumes. -/
-theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two_apply (hp : 0 < p)
-    (hpN : Nat.Coprime p N) (F : cuspFormCharSpace k χ) (r : ℕ) :
-    heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) F =
-      heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p)
-          (heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 1)) F) -
-        ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) •
-          heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p r) F := by
-  rw [heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two hp hpN r]
-  rfl
-
 omit [NeZero N] in
 /-- The coefficients of a difference `x − c • y` in the character space. -/
 private theorem qExpansion_coeff_coe_sub_smul (x y : cuspFormCharSpace k χ) (c : ℂ) (n : ℕ) :
@@ -188,7 +176,9 @@ theorem qExpansion_coeff_prime_pow_mul_heckeTGeneratorRecGamma0 (hp : p.Prime)
     rw [heckeTGeneratorRecGamma0_one]
     exact qExpansion_coeff_prime_pow_mul_heckeTGeneratorGamma0 hp hpN F hpm j
   | more r ih1 ih2 =>
-    rw [heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two_apply hp.pos hpN F r,
+    rw [LinearMap.congr_fun
+        (heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two hp.pos hpN r) F,
+      LinearMap.sub_apply, Module.End.mul_apply, LinearMap.smul_apply,
       qExpansion_coeff_coe_sub_smul]
     rcases j with _ | j
     · -- `p ∤ m`: the recurrence reads the coefficient at `p m`, which is the `j = 1` instance
