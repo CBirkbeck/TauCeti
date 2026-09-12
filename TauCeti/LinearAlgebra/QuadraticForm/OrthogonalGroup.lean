@@ -319,10 +319,7 @@ private theorem map_specialOrthogonalGroup (e : Q₁.IsometryEquiv Q₂) :
     constructor
     · exact (orthogonalGroupCongr e ⟨f, hf.1⟩).2
     · -- Restate `autCongr` through Mathlib's special-linear congruence.
-      rw [show (LinearEquiv.autCongr e.toLinearEquiv) f =
-          (e.toLinearEquiv.symm.trans f).trans e.toLinearEquiv by
-        ext m
-        exact LinearEquiv.autCongr_apply_apply e.toLinearEquiv f m]
+      rw [LinearEquiv.autCongr_apply]
       exact (SpecialLinearGroup.congr_linearEquiv e.toLinearEquiv ⟨f, hf.2⟩).prop
   · intro hg
     refine ⟨(LinearEquiv.autCongr e.toLinearEquiv).symm g, ?_,
@@ -330,10 +327,7 @@ private theorem map_specialOrthogonalGroup (e : Q₁.IsometryEquiv Q₂) :
     constructor
     · exact ((orthogonalGroupCongr e).symm ⟨g, hg.1⟩).2
     · -- Restate inverse `autCongr` through Mathlib's special-linear congruence.
-      rw [show (LinearEquiv.autCongr e.toLinearEquiv).symm g =
-          (e.toLinearEquiv.trans g).trans e.toLinearEquiv.symm by
-        ext m
-        exact LinearEquiv.autCongr_symm_apply_apply e.toLinearEquiv g m]
+      rw [LinearEquiv.autCongr_symm_apply]
       exact (SpecialLinearGroup.congr_linearEquiv e.toLinearEquiv.symm ⟨g, hg.2⟩).prop
 
 /-- Isometric quadratic maps have isomorphic special orthogonal groups: conjugation by an

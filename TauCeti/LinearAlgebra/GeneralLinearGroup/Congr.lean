@@ -44,18 +44,8 @@ section
 
 open LinearMap.GeneralLinearGroup
 
-variable {R M M₁ M₂ : Type*} [Semiring R] [AddCommMonoid M] [Module R M] [AddCommMonoid M₁]
-  [Module R M₁] [AddCommMonoid M₂] [Module R M₂]
-
-/-- `toLinearEquiv` undoes `ofLinearEquiv`: the automorphism underlying the invertible map built
-from `f` is `f` itself. The mirror of Mathlib's `AlgEquiv.toLinearEquiv_ofLinearEquiv`. -/
--- Not `@[simp]`: as a simp lemma it rewrites inside the left-hand side of
--- `TauCeti.UpperUnitriangular.congrLinearEquiv_pointsAction_eq_toLin`, which is itself `@[simp]`
--- and states its subject as `(ofLinearEquiv _).toLinearEquiv`. `simpNF` then reports that lemma as
--- no longer in normal form. Both users below cite this one by name, so simp never needs it.
-theorem _root_.LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv (f : M ≃ₗ[R] M) :
-    (ofLinearEquiv f).toLinearEquiv = f :=
-  rfl
+variable {R M₁ M₂ : Type*} [Semiring R] [AddCommMonoid M₁] [Module R M₁]
+  [AddCommMonoid M₂] [Module R M₂]
 
 /-- Conjugation by a linear equivalence `e : M₁ ≃ₗ[R] M₂`, as an isomorphism of automorphism
 groups: Mathlib's `LinearMap.GeneralLinearGroup.congrLinearEquiv` read through
@@ -70,10 +60,12 @@ def _root_.LinearEquiv.autCongr (e : M₁ ≃ₗ[R] M₂) : (M₁ ≃ₗ[R] M₁
 theorem _root_.LinearEquiv.autCongr_apply_apply (e : M₁ ≃ₗ[R] M₂) (f : M₁ ≃ₗ[R] M₁) (m : M₂) :
     LinearEquiv.autCongr e f m = e (f (e.symm m)) := by
   rw [LinearEquiv.autCongr, MulEquiv.trans_apply, MulEquiv.trans_apply]
-  -- `generalLinearEquiv` computes on coercions, not at the level of `M₁ ≃ₗ[R] M₁`, so its inverse
-  -- law has to be transported across `toLinearEquiv` before `simp` can use it.
+  -- `generalLinearEquiv` computes on coercions, not at the level of `M₁ ≃ₗ[R] M₁`, so its
+  -- inverse law has to be transported across `toLinearEquiv` before `simp` can use it. The
+  -- transport is definitional — `generalLinearEquiv`'s `invFun` is `ofLinearEquiv` — so Mathlib's
+  -- law proves it as stated, with no restating declaration in between.
   have h : ((generalLinearEquiv R M₁).symm f).toLinearEquiv = f :=
-    LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv f
+    (generalLinearEquiv R M₁).apply_symm_apply f
   simp only [congrLinearEquiv_apply, coeFn_generalLinearEquiv, coe_ofLinearEquiv,
     LinearEquiv.trans_apply, h]
 
@@ -83,10 +75,12 @@ theorem _root_.LinearEquiv.autCongr_symm_apply_apply (e : M₁ ≃ₗ[R] M₂) (
     (LinearEquiv.autCongr e).symm g m = e.symm (g (e m)) := by
   rw [LinearEquiv.autCongr, MulEquiv.symm_trans_apply, MulEquiv.symm_trans_apply,
     congrLinearEquiv_symm]
-  -- `generalLinearEquiv` computes on coercions, not at the level of `M₂ ≃ₗ[R] M₂`, so its inverse
-  -- law has to be transported across `toLinearEquiv` before `simp` can use it.
+  -- `generalLinearEquiv` computes on coercions, not at the level of `M₂ ≃ₗ[R] M₂`, so its
+  -- inverse law has to be transported across `toLinearEquiv` before `simp` can use it. The
+  -- transport is definitional — `generalLinearEquiv`'s `invFun` is `ofLinearEquiv` — so Mathlib's
+  -- law proves it as stated, with no restating declaration in between.
   have h : ((generalLinearEquiv R M₂).symm g).toLinearEquiv = g :=
-    LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv g
+    (generalLinearEquiv R M₂).apply_symm_apply g
   simp only [congrLinearEquiv_apply, MulEquiv.symm_symm, coeFn_generalLinearEquiv,
     coe_ofLinearEquiv, LinearEquiv.symm_symm, LinearEquiv.trans_apply, h]
 
