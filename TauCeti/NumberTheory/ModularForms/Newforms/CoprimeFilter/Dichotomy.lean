@@ -65,8 +65,7 @@ every index coprime to `L`, or the nebentypus factors through `N / p`.
 
 The second branch is stated with Mathlib's `DirichletCharacter.FactorsThrough`: its `χ₀`, `dvd`
 and `eq_changeLevel` give a consumer the lowered character modulo `N / p` and the factorisation
-of `χ` through it, which is what the descent lemmas take —
-`DirichletCharacter.exists_comp_unitsMap_of_factorsThrough` packages that conversion.
+of `χ` through it, which is what the descent lemmas take.
 -/
 theorem qExpansion_coeff_eq_zero_of_coprime_or_factorsThrough (χ : (ZMod N)ˣ →* ℂˣ)
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) {p L : ℕ}
