@@ -21,8 +21,8 @@ eigenform with `a₁ = 0` at the good indices, where `c` is the eigenvalue at `p
 
 ## Main results
 
-* `TauCeti.eq_zero_of_forall_prime_mul_eq_of_one_eq_zero_of_ne_zero_of_coprime`: the vanishing,
-  by strong induction along the least prime factor.
+* `TauCeti.eq_zero_of_forall_prime_mul_eq_of_one_eq_zero_of_ne_zero_of_coprime`: the vanishing
+  at the indices coprime to `L`.
 
 ## References
 
@@ -40,12 +40,13 @@ variable {R : Type*} [NonUnitalNonAssocRing R]
 /-- **A sequence with a Hecke-type prime recurrence and `a₁ = 0` vanishes at the indices
 coprime to `L`.** If at every prime `p` coprime to `L` there are scalars `c`, `d` with
 `a_{pm} = c · a_m − d · a_{m/p}` (the last term only when `p ∣ m`) for every `m` coprime to `L`,
-and `a₁ = 0`, then `a_n = 0` for every `n ≠ 0` coprime to `L`: the recurrence along the least
-prime factor of `n` expresses `a_n` through terms at smaller indices coprime to `L`. -/
+and `a₁ = 0`, then `a_n = 0` for every `n ≠ 0` coprime to `L`. -/
 theorem eq_zero_of_forall_prime_mul_eq_of_one_eq_zero_of_ne_zero_of_coprime {a : ℕ → R} {L : ℕ}
     (ha : ∀ p : ℕ, p.Prime → Nat.Coprime p L → ∃ c d : R, ∀ m : ℕ, Nat.Coprime m L →
       a (p * m) = c * a m - if p ∣ m then d * a (m / p) else 0)
     (h1 : a 1 = 0) (n : ℕ) (hn0 : n ≠ 0) (hn : Nat.Coprime n L) : a n = 0 := by
+  -- Strong induction on `n`: the recurrence at the least prime factor of `n` expresses `a n`
+  -- through terms at smaller indices, which remain coprime to `L`.
   induction n using Nat.strong_induction_on with
   | _ n ih =>
   rcases Nat.lt_or_ge n 2 with hn2 | hn2

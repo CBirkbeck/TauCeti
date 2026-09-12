@@ -63,10 +63,8 @@ namespace HeckeRing.GL2
 variable {N p : ℕ} [NeZero N] {k : ℤ} {χ : (ZMod N)ˣ →* ℂˣ}
 
 /-- **A ring eigenvector at a good prime is an eigenvector of the classical `T_p`**, on
-`M_k(N, χ)`. The Hecke ring's composite element at a prime is its generator
-(`heckeTCompositeGamma0_prime`), which acts as the classical operator
-(`heckeRingHomCharSpace_heckeTGeneratorGamma0`); so an eigen-equation for the ring action is one
-for `heckeTNat`. -/
+`M_k(N, χ)`: at a prime the Hecke ring's action and `heckeTNat` are the same operator, so the two
+eigen-equations are the same statement. -/
 theorem heckeTNat_eq_smul_of_heckeRingHomCharSpace_heckeTCompositeGamma0_eq_smul [NeZero p]
     (hp : p.Prime) {F : modFormCharSpace k χ} {c : ℂ}
     (hF : heckeRingHomCharSpace k χ (heckeTCompositeGamma0 N p) F = c • F) :
@@ -126,9 +124,7 @@ theorem qExpansion_coeff_prime_mul_of_heckeRingHomCuspCharSpace_heckeTCompositeG
 
 /-- **Coefficient vanishing from the prime eigenvalues, on `M_k(N, χ)`.** Let `L` be a multiple of
 `N`. A form `F ∈ M_k(N, χ)` that is an eigenvector of the ring generator at every prime `p ∤ L`
-and has `a₁(F) = 0` has `a_n(F) = 0` at every `n ≠ 0` coprime to `L`, by the recurrence
-`qExpansion_coeff_prime_mul_of_heckeRingHomCharSpace_heckeTCompositeGamma0_eq_smul` along the least
-  prime factor of `n`.
+and has `a₁(F) = 0` has `a_n(F) = 0` at every `n ≠ 0` coprime to `L`.
 For `L ≠ 0`, the auxiliary level is the finite slack of strong multiplicity one: eigen-ness is
 assumed only away from finitely many primes beyond those dividing `N`. -/
 theorem qExpansion_coeff_eq_zero_of_forall_prime_heckeRingHomCharSpace_of_one_eq_zero_of_coprime
@@ -147,11 +143,9 @@ theorem qExpansion_coeff_eq_zero_of_forall_prime_heckeRingHomCharSpace_of_one_eq
 
 /-- **Coefficient vanishing from the prime eigenvalues, on `S_k(N, χ)`.** Let `L` be a multiple of
 `N`. A cusp form `F ∈ S_k(N, χ)` that is an eigenvector of the ring generator at every prime
-`p ∤ L` and has `a₁(F) = 0` has `a_n(F) = 0` at every `n` coprime to `L`: at `n = 0` by
-cuspidality, otherwise by the recurrence
-`qExpansion_coeff_prime_mul_of_heckeRingHomCuspCharSpace_heckeTCompositeGamma0_eq_smul` along the
-  least prime factor
-of `n`. This is the form strong multiplicity one consumes. -/
+`p ∤ L` and has `a₁(F) = 0` has `a_n(F) = 0` at every `n` coprime to `L` — with no `n ≠ 0`
+hypothesis, unlike the modular-form version, since a cusp form already has `a₀ = 0`. This is the
+form strong multiplicity one consumes. -/
 theorem qExpansion_coeff_eq_zero_of_forall_prime_heckeRingHomCuspCharSpace_of_one_eq_zero_of_coprime
     {F : cuspFormCharSpace k χ} {L : ℕ} (hNL : N ∣ L) (ha : ∀ p : ℕ, p.Prime → Nat.Coprime p L →
       ∃ c : ℂ, heckeRingHomCuspCharSpace k χ (heckeTCompositeGamma0 N p) F = c • F)
