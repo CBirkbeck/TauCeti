@@ -25,11 +25,14 @@ This mirrors the diamond half, `diamondOpCusp_mem_cuspFormsOld`, which is proved
 from `CuspForm.diamondOpCusp_levelRaise`. Together they say the old subspace is stable under the
 operators that act on `S_k(Γ₁(N))` away from the level.
 
-The same stability holds for the `Γ₀(N)` Hecke *ring* acting on a character space, which is the
-form eigenform arguments need: eigen-ness of an `EigenformAwayFromLevel` is stated for
-`heckeRingHomCuspCharSpace`, not for `heckeTCuspNat`. No separate argument is required — at a
-prime the two operators agree on `S_k(N, χ)`
-(`HeckeRing.GL2.coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0`).
+The same stability holds for the Hecke-ring *generator* `heckeTGeneratorGamma0 N p` at a good
+prime, acting on a character space — the form eigenform arguments need, since eigen-ness of an
+`EigenformAwayFromLevel` is stated for `heckeRingHomCuspCharSpace` rather than for
+`heckeTCuspNat`. No separate argument is required: at a prime the two operators agree on
+`S_k(N, χ)` (`HeckeRing.GL2.coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0`). Nothing here
+is claimed for a general element of the ring; the generators at good primes are what the
+eigenform arguments use, and stability for the subring they generate would need the products
+handled too.
 
 ## Main results
 
@@ -37,7 +40,7 @@ prime the two operators agree on `S_k(N, χ)`
   and coprime to `N`.
 * `TauCeti.cuspFormsOld_map_heckeTCuspNat_le`: the same in `Submodule.map` form.
 * `TauCeti.coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0_mem_cuspFormsOld`: the same
-  stability, for the Hecke *ring* generator acting on the character space `S_k(N, χ)`, and
+  stability, for the Hecke-ring generator at a good prime acting on `S_k(N, χ)`, and
   `TauCeti.cuspFormsOld_comap_map_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0_le` in
   `Submodule.map` form.
 
@@ -75,9 +78,9 @@ theorem heckeTCuspNat_mem_cuspFormsOld [NeZero N] (hp : p.Prime)
     HeckeRing.GL2.heckeTCuspNat_levelRaise (k := k) (d := d) (M := M) (p := p) hdvd hp hpN]
   exact levelRaise_mem_cuspFormsOld hdvd hM k _
 
-/-- **The old subspace is stable under the Hecke ring at a good prime**, in the form eigenform
-arguments need it: the generator `heckeTGeneratorGamma0 N p` acting on the character space
-`S_k(N, χ)` carries an old form to an old form. At a prime that action *is* the classical `Tₚ`
+/-- **The old part of `S_k(N, χ)` is stable under the Hecke-ring generator at a good prime**, in
+the form eigenform arguments need it: `heckeTGeneratorGamma0 N p` acting on the character space
+carries an old form to an old form. At a prime that action *is* the classical `Tₚ`
 (`HeckeRing.GL2.coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0`), so this is
 `heckeTCuspNat_mem_cuspFormsOld` read through that identification. -/
 theorem coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0_mem_cuspFormsOld [NeZero N]
@@ -89,11 +92,10 @@ theorem coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0_mem_cuspFormsOld [Ne
   rw [HeckeRing.GL2.coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0 k χ hp]
   exact heckeTCuspNat_mem_cuspFormsOld hp hpN hF
 
-/-- **The old part of `S_k(N, χ)` is stable under the Hecke ring**, in the `Submodule.map` form:
-the ring generator at a good prime carries the preimage of `cuspFormsOld` in the character space
-into itself. The ring counterpart of `cuspFormsOld_map_heckeTCuspNat_le`; the old subspace is
-pulled back along the inclusion because the ring acts on `cuspFormCharSpace`, not on all of
-`S_k(Γ₁(N))`. -/
+/-- **The same stability in `Submodule.map` form**: the Hecke-ring generator at a good prime
+carries the preimage of `cuspFormsOld` in the character space into itself. The counterpart of
+`cuspFormsOld_map_heckeTCuspNat_le` for that generator; the old subspace is pulled back along the
+inclusion because the action is on `cuspFormCharSpace`, not on all of `S_k(Γ₁(N))`. -/
 theorem cuspFormsOld_comap_map_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0_le [NeZero N]
     (χ : (ZMod N)ˣ →* ℂˣ) (hp : p.Prime) (hpN : Nat.Coprime p N) (k : ℤ) :
     ((cuspFormsOld N k).comap (cuspFormCharSpace k χ).subtype).map
