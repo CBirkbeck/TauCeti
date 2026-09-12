@@ -39,6 +39,8 @@ coprime to the level.
   the formula above.
 * `HeckeRing.GL2.qExpansion_coeff_heckeRingHomCharSpace_heckeTGeneratorRecGamma0_of_not_dvd`:
   `a_m(T_{p^r} F) = a_{p^r m}(F)` at an index `m` prime to `p`.
+* `qExpansion_coeff_prime_pow_succ_mul_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0`: the
+  divisible-index `Tₚ` recurrence on `S_k(N, χ)`, with no hypothesis on the index.
 * their cusp-form specialisations, named after the modular statements with
   `heckeRingHomCharSpace` replaced by `heckeRingHomCuspCharSpace`, transported along the
   inclusion of character spaces `cuspToModFormCharSpace`.
@@ -206,6 +208,24 @@ theorem qExpansion_coeff_prime_pow_mul_heckeRingHomCuspCharSpace_heckeTGenerator
             (p ^ (j + r - 2 * i) * m) := by
   have h := qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorRecGamma0 hp hpN
     (cuspToModFormCharSpace k χ F) hpm r j
+  rw [heckeRingHomCharSpace_apply, ← cuspToModFormCharSpace_twistedHeckeSlashCuspFormCharLinearMap,
+    ← heckeRingHomCuspCharSpace_apply] at h
+  simp only [coe_cuspToModFormCharSpace, ModularFormClass.coe_modularForm] at h
+  exact h
+
+/-- **The divisible-index recurrence for `Tₚ` on `S_k(N, χ)`**: the cusp-form counterpart of
+`qExpansion_coeff_prime_pow_succ_mul_heckeRingHomCharSpace_heckeTGeneratorGamma0`, with no
+hypothesis on `m`. Stated so that consumers on `cuspFormCharSpace` need neither a coercion nor
+the full prime-power theorem's `¬ p ∣ m`. -/
+theorem qExpansion_coeff_prime_pow_succ_mul_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0
+    (hp : p.Prime) (hpN : Nat.Coprime p N) (F : cuspFormCharSpace k χ) (m j : ℕ) :
+    (qExpansion 1 (heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p) F :
+        CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ (j + 1) * m) =
+      (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ (j + 2) * m) +
+        (χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1) *
+          (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ j * m) := by
+  have h := qExpansion_coeff_prime_pow_succ_mul_heckeRingHomCharSpace_heckeTGeneratorGamma0 hp hpN
+    (cuspToModFormCharSpace k χ F) m j
   rw [heckeRingHomCharSpace_apply, ← cuspToModFormCharSpace_twistedHeckeSlashCuspFormCharLinearMap,
     ← heckeRingHomCuspCharSpace_apply] at h
   simp only [coe_cuspToModFormCharSpace, ModularFormClass.coe_modularForm] at h
