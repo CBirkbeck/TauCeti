@@ -34912,3 +34912,32 @@ observed bot cadence (108 min, 2h, 2h20m), but merging is never ours. #6188 rebu
 `ec1a68d96`, restructured. #5950 Chris's. No new merges.
 `improve/submonoid-constsmul-root` stays pushed and gate-clean with **no PR** — four open, step 5
 needs fewer than three.
+
+---
+
+## r673 — 2026-09-12 — the restructure verified; a wait round
+
+### #6188 builds green as a one-file PR
+
+`ec1a68d96`: build 11230 jobs, docstrings 9036/9036, `LINT-ENV: PASS`. The PR is now
+**16 additions / 16 deletions / 1 file** — down from four files and two competing topics. r672's
+restructure is confirmed on CI, not just on the gate.
+
+Worth recording the size as evidence: a PR that spent five rounds cross-firing with its sibling is,
+once the overlap is removed, sixteen lines. **The rounds were spent on the overlap, not on the work.**
+
+### Nothing else owed
+
+All four open PRs are green. #6093 and #6432 sit at **10/10 `ready-to-merge`**; #6188 awaits a board
+on its restructured head; #5950 is Chris's. Step 5 needs fewer than three open and there are four.
+Step 4's clock has not run out.
+
+Checked #6093's and #6432's merge state for a cause rather than assuming one: both read
+`mergeable: UNKNOWN` with **zero files outside `TauCeti/`** and the `ready-to-merge` label — the
+identical state #6426, #6412 and #6418 were in before the bot took them. `UNKNOWN` is GitHub
+computing lazily, not a block. #6093 has now waited ~3h against an observed cadence of 108 min / 2h /
+2h20m, which is worth noting and is **still not ours to act on**.
+
+### Board
+Four open, all green. #6093 and #6432 **10/10**. #6188 green on the restructure, board BEHIND.
+#5950 Chris's. No new merges. `improve/submonoid-constsmul-root` pushed and gate-clean, **no PR**.
