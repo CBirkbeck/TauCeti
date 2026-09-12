@@ -7,7 +7,6 @@ module
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime.Basic
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime.Recurrence
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Recurrence
-import TauCeti.NumberTheory.ModularForms.QExpansion.Basic
 import TauCeti.Algebra.BigOperators.Finset.Range
 
 /-!
