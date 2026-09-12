@@ -325,3 +325,111 @@ read RED on a superseded `label` job while `sandboxed-build` was green and nothi
 human-controlled repo this role may not open a PR or issue in, and which no `TauCeti/`-only branch
 can reach. Contest it, name the constraint, and say what survives (there, the canonical declaration
 under its own name). Do not re-add a deleted duplicate to satisfy a downstream document.
+
+---
+
+## 11. Addendum — rounds r654–r669, one long watch on AI-DOOM
+
+Four PRs merged during it (#6406, #6426, #6412, #6418) and `lint-dot-notation` on main went
+**759 → 739**. What follows is only what cost a cycle, or came within one command of costing one.
+Everything here is evidenced in the ledger at the round named.
+
+### The gate, and how to not be lied to by it
+
+* **COMMIT BEFORE GATING.** Every screen in `prepush.sh` reads `HEAD` — `git diff BASE...HEAD`,
+  `git archive HEAD`. Gating uncommitted work reports on the *previous commit* and calls it green.
+  That is how #6432 went red on a rename the gate had just passed: `lint-dot-notation` archived HEAD,
+  saw the old names, said `0 new`; CI saw the new ones and said `3 new`. **The gate now refuses a
+  dirty tree** (r664, controls 131 → 133, mutation-tested). The script's header used to claim it ran
+  "against the working tree"; it never did.
+* **The gate is pure Python.** It cannot see docstring attachment, elaboration, or simp normal form.
+  A `@[simp]` that `simpNF` will reject, a proof that will not elaborate, and a declaration whose
+  docstring attached to the wrong thing all pass it (r656, r659).
+* **Before believing a gate FAIL is yours, re-run it on the pristine head.** One command; it
+  separates "pre-existing" from "I broke it" on a nineteen-file PR (r655 onwards, used every round).
+* **`xsibling` had a false positive** and two rounds reasoned past it with plausible stories before
+  the tool's own internals were run against the real file. `_root_.TauCeti.Foo.bar` made its
+  lost-wrapper guard read `'TauCeti.TauCeti' not in h` — vacuously true — so `TauCeti` itself was
+  reported lost. Fixed with a paired positive/negative control (r661). **A check that cries wolf is
+  a check you learn to skim**, which defeats the whole toolkit.
+
+### The dot-notation ratchet
+
+* **`scripts/lint-dot-notation-baseline.txt` grandfathers by DECLARATION NAME.** A *stale* entry is
+  harmless — removing a violation is fine. **Adding a name is not the same as removing one:**
+  renaming a flagged declaration in place un-grandfathers it, and the rename is red unless the
+  declaration is **rooted in the same commit**, where it is not flagged at all (r664, #6432).
+  The baseline is human-owned; regenerating it is not available.
+
+### Reading the review
+
+* **Clearing a ⛔ starts the rest of the review, not the merge.** Rubrics behind a block read
+  "not yet run", and they all arrive at once when it lifts. Happened three times (r657, r666, r668).
+  Plan for it rather than reading it as a regression.
+* **A 🟡 sitting behind a ⛔ may not survive the next board — do not chase it.** #6188's `reuse`
+  demanded a deletion that, once the ⛔ cleared, vanished while `proof-quality` approved the very
+  thing it wanted deleted (r668 → r669).
+* **Re-read a finding's text, not your summary of it.** A rejection I had recorded as "sequencing
+  refused" actually offered the fix — *"Rebase onto #6188 **or** move all three here"* (r663).
+  And the pipeline **edits** a rubric's comment in place: same id, same `created_at`, different
+  finding (r655). Never cache a finding by comment id.
+* **"Tried and failed" is scoped to the position it was tried in.** `MulEquiv.apply_symm_apply` was
+  recorded as not working; that failure was in a `simp only` set, where it never fires because simp
+  matches syntactically. As the *proof of a `have`* it works, needing only definitional reduction
+  (r665). Record the position with the verdict, or the note misleads its own author.
+* **Verify a cited precedent before implementing on its authority.** A `naming` finding cited
+  `AlgEquiv.toLinearEquiv_ofLinearEquiv`; that lemma sits in `AlgEquiv`, not `LinearEquiv`, despite
+  taking a `LinearEquiv` as its first explicit argument — the citation inverted the finding (r662).
+* **When a rubric loop returns to a position it once rejected, look for a sibling PR where that
+  position is currently approved.** The `toLinearEquiv` transport went private → public → inline →
+  private across four rounds; what settled it was that #6432 carried the identical private bridge
+  with `reuse` ✅ (r667).
+* **An answer can arrive as a finding rather than as a reply.** A question left on a thread about
+  which of two converged PRs should own a file was answered by a `scope` ⛔ on one of them (r668).
+  Asking was still right: it named the options, and the block picked one.
+
+### Lean facts worth keeping
+
+* **`@[expose]` is a claim about a whole reduction path, not one declaration.** Rerouting an exposed
+  body through a non-exposed def stops the reduction in the same place with the attribute still
+  sitting there. Check every def the body routes through — Mathlib's are usually in
+  `@[expose] public section`, but check (r658).
+* **A *definitional* index mismatch is not §7's `HEq` trap.** §7 is about indices differing
+  *propositionally*. When they differ only by unfolding — eta, `∘` associativity, `Equiv.trans`
+  reduction — the equation states and `ext` + `rfl` closes it (r658).
+* **A goal printed unchanged means the lemma never fired**, not that it fired and fell short (r661).
+* **Deleting a declaration means deleting what advertises it** — the module docstring included.
+  Twice flagged for exactly this (r667).
+
+### Working two PRs over the same code
+
+* **Port a fix the moment it is accepted anywhere.** #6188 and #6432 drew the same findings on the
+  same code; three fixes moved across in one commit (r668).
+* **But a green PR is not a place to apply a lesson.** #6432 carried a docstring #6188 was told to
+  change, while its own `documentation` read ✅. Left alone (r669).
+
+### Prospecting
+
+* `nscand.py <snapshot> <findings>` ranks namespaces by flagged/total; **`mathlibns.py` decides
+  whether the namespace is real, never a grep** (r511 had a grep wrong on five of six).
+* **Then check Mathlib does not already have the name.** #6418's ⛔ was an exact duplicate of
+  `FDRep.isIntegral_character`; the rooting is what created the clash, since nested the two
+  coexisted (r653).
+* Re-run the ranking after every merge — main moved 759 → 739 inside one watch.
+* **Scouted and ready, not opened** (four PRs were open; step 5 needs fewer than three):
+  `TauCeti.Submonoid` 1/1 — `TauCeti/Topology/Algebra/ConstMulAction.lean:37`,
+  `instance continuousConstSMul` with `@[to_additive AddSubmonoid.continuousConstVAdd]`, referenced
+  once in the same file by `TauCeti.Subgroup.continuousConstSMul`. `Submonoid` is ROOT in Mathlib
+  (517 declarations), Mathlib has neither name, and its own `ConstMulAction.lean` uses the identical
+  `Units.`/`Prod.`/`MulOpposite.continuousConstSMul` pattern. Being an instance, rooting enables no
+  dot notation — the value is emptying the namespace and matching Mathlib's placement.
+
+### Mechanics
+
+* **`gh pr edit` is broken against this repo** — it fails on the projects-classic GraphQL deprecation
+  and **leaves the body unchanged without saying so**. Use
+  `gh api -X PATCH repos/$R/pulls/<n> -F body=@file`, then re-read the body.
+* Judge CI by the **latest run per check name**; a `cancelled` superseded duplicate is not red.
+* Measured board latency, reviewable → first board: **32–67 min** across five samples. Count step 4's
+  hour from `max(CI-green, ready_for_review)`, and expect the pipeline to beat you to it.
+* `uv`/`uvx` are installed at `~/.local/bin`. A drive was never actually needed in this watch.
