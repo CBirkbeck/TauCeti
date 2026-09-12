@@ -34,6 +34,9 @@ equality. Every statement here holds in any characteristic, including two and th
 * `WeierstrassCurve.Affine.isSingular_zero`: singularity at the origin is `a₃ = a₄ = a₆ = 0`.
 * `WeierstrassCurve.Affine.isSingular_iff_variableChange`: singularity at a point is singularity at
   the origin of the model translated there.
+* `WeierstrassCurve.Affine.IsSingular.Δ_eq_zero` and
+  `WeierstrassCurve.Affine.not_isSingular_of_Δ_ne_zero`: a singular point forces `Δ = 0`, so a
+  model of nonzero discriminant has none.
 * `WeierstrassCurve.Affine.isSingular_iff_equation_and_not_nonsingular`: the comparison with
   Mathlib's `Nonsingular`.
 * `WeierstrassCurve.Affine.IsSingular.map`, `map_isSingular`, `IsSingular.baseChange` and
@@ -130,6 +133,16 @@ theorem baseChange_isSingular {A B : Type*} [CommRing A] [Algebra R A] [CommRing
     (W : WeierstrassCurve.Affine R) (x y : A) :
     (W⁄B).IsSingular (f x) (f y) ↔ (W⁄A).IsSingular x y := by
   rw [← map_isSingular hf, AlgHom.toRingHom_eq_coe, map_baseChange, RingHom.coe_coe]
+
+/-- **A singular point forces the discriminant to vanish.** -/
+theorem IsSingular.Δ_eq_zero {x y : R} (h : W.IsSingular x y) : W.Δ = 0 := by
+  by_contra hΔ
+  exact (isSingular_iff_equation_and_not_nonsingular.1 h).2
+    ((W.equation_iff_nonsingular_of_Δ_ne_zero hΔ).1 h.1)
+
+/-- **A model of nonzero discriminant has an empty singular locus.** -/
+theorem not_isSingular_of_Δ_ne_zero (hΔ : W.Δ ≠ 0) (x y : R) : ¬ W.IsSingular x y :=
+  fun h ↦ hΔ h.Δ_eq_zero
 
 /-- **Two singular points of a Weierstrass model have `(x₂ - x₁) ^ 3 = 0` and
 `(y₂ - y₁) ^ 4 = 0`.** The nilpotence and equality forms below follow from these. -/
