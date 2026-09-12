@@ -1,87 +1,79 @@
-# Last round — r666 (2026-09-12 16:30Z)
+# Last round — r667 (2026-09-12 16:37Z)
 
-## The reviewer answered the r664 question, and the answer was "fix the head"
+## When a rubric loop returns to a rejected position, look for a sibling PR where it is approved
 
-> *"A promised future rebase does not correct the API presented by this PR."*
+#6188's `proof-quality` asked, verbatim, for *"a shared private bridge … using `coe_toLinearEquiv`,
+`coeFn_generalLinearEquiv`, and `apply_symm_apply`"* — which is the `private theorem
+toLinearEquiv_generalLinearEquiv_symm` this PR **opened with**.
 
-Third time of asking, unambiguous. r664 had put both routes to the reviewer and said the choice was
-theirs; this is the choice. **Asking was not wasted** — it turned a guess into an instruction, and
-the instruction is on the record for `scope` to read.
+The full circuit: private bridge → (`reuse`) public lemma via `ofLinearEquiv` → (`reuse` ⛔) inline
+proof from `apply_symm_apply` → (`proof-quality`) private bridge. Four positions, three rubric
+demands, one fact.
 
-## #6432 took the relocation, in one commit with the rename
+Restored it on evidence rather than as a fourth guess: **#6432 carries the identical bridge and its
+`reuse` reads ✅**. The same reviewer approving the same declaration on a sibling PR beats any
+reading of the rubric text.
 
-r664 proved the halves are coupled — the rename alone adds three `lint-dot-notation` findings
-because the baseline grandfathers **by declaration name**, while rooted the declarations are not
-flagged at all. So both land together. `lint-dot-notation`: **759 → 756, 0 new.**
+Two of my own omissions fixed with it:
+* a **second** `## Main statements` section still advertising `toLinearEquiv_ofLinearEquiv`, deleted
+  in r665 — **deleting a declaration means deleting what advertises it**;
+* `autCongr_symm_apply`'s docstring described its proof; §8 — narrative to a source comment.
 
-Plus the structural `autCongr_apply` / `autCongr_symm_apply` at the **semilinear** generality — what
-`handover/congraut-structural-deferred` held all along, legal here now that root `LinearEquiv` (the
-"lint-clean canonical namespace" the finding named) arrives in the same commit.
+## `generality` exposed a convergence; I asked rather than chose
 
-Both branches now carry identical names and statements, so whichever merges second sees its own work
-already applied rather than a conflict.
+It asks #6188 to state the API semilinearly — **#6432's entire topic**, mirroring #6432 being told
+to take #6188's relocation. After r666 both PRs share the relocation, the names and the structural
+lemmas, so doing it here makes `GeneralLinearGroup/Congr.lean` **identical in both** and leaves
+#6432 with nothing of its own — the arrangement the original `scope` ⛔ existed to prevent.
 
-## #6188's ⛔ cleared and the r665 gamble held
+Genuinely unshared: this PR also roots the four `extendOfIsLattice` declarations in
+`Algebra/Module/Lattice.lean` — the half of `TauCeti.LinearEquiv` that #6432's `nsslice` row reports
+as still nested.
 
-`(generalLinearEquiv R M₁).apply_symm_apply f` typechecks as the proof of the `have`, exactly as the
-reviewer's *"allowing definitional reduction of `generalLinearEquiv`'s `invFun`"* predicted.
-`reuse` ✅, `naming` ✅ (the disputed declaration no longer exists), `scope` ✅.
+The thread now carries two options, either implementable immediately: this PR generalises too, or
+#6432 keeps the file and this one stands as the `Lattice.lean` rooting. **This is not the deferral
+the reviewer twice refused** — that was "another PR will fix this later"; this is which of two open,
+green, converged PRs owns a file.
 
-**Clearing a ⛔ starts the rest of the review, not the merge** — third time this watch, now reliable
-enough to plan around.
-
-## Board (16:30Z) — five open
+## Board (16:37Z) — five open
 
 | PR | head | CI | label | whose move |
 |---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **Chris** — human-owned `web/examples/Examples.lean` |
 | **#6093** | `370dad05e` | green | `ready-to-merge` | nobody — **10/10** |
-| **#6188** | `587afa02f` | green | `awaiting-author` | **me — four blockers, board ON-HEAD** |
+| **#6188** | `1e9fddb17` | building | `awaiting-CI` | reviewer — 3 of 4 blockers fixed, board BEHIND |
 | **#6418** | `5c73d4c54` | green | `ready-to-merge` | nobody — **10/10** |
-| **#6432** | `3d4b240ee` | building | `awaiting-CI` | reviewer — rooted+renamed r666, board BEHIND |
+| **#6432** | `3d4b240ee` | building | `awaiting-CI` | reviewer — rooted+renamed+semilinear, board BEHIND |
 
-**#6432's board is BEHIND. Do NOT re-fix.**
+**Both live boards are BEHIND. Do NOT re-fix.**
 
-## Next unit: #6188's four blockers — read them together, they point at each other
+## Next
 
-1. **`proof-quality`** — *"The two pointwise conjugation proofs rely on an implementation-level
-   definitional equality across `generalLinearEquiv` and `toLinearEquiv`."* That is **precisely the
-   proof `reuse` demanded** in the ⛔ one round earlier, and the third lap of this loop
-   (private bridge → public lemma → inline definitional proof). Do **not** simply move to a fourth
-   spelling. The shared reading across all three rounds is *state the transport once, somewhere
-   legitimate*; read `reuse`'s ✅ text and `proof-quality`'s full finding side by side before
-   touching it, and if no single form satisfies both, that is the contest — with all three CI
-   results quoted.
-2. **`generality`** — *"the conjugation API remains unnecessarily restricted to linear equivalences
-   over one semiring"*: that is **#6432's entire topic**, now asked of #6188, mirroring #6432 being
-   asked for #6188's relocation. Both branches now share names and statements, so whichever lands
-   first leaves the other very little. Say so rather than duplicating a third time.
-3. **`api-design`** — lacks the functorial API (`refl`/`trans`/`symm` laws), and *"the module
-   documentation advertises a nonexistent declaration"*. Check the module docstring in
-   `GeneralLinearGroup/Congr.lean` against what survived r665's deletion of
-   `toLinearEquiv_ofLinearEquiv`.
-4. **`documentation`** — stale and proof-oriented text in the congruence module. Likely the same
-   docstring; §8 applies (review argument belongs in the PR body, not the file).
-
-Also: watch #6432's CI on `3d4b240ee` — a rooting plus rename plus two new lemmas, none built
-locally.
-
-Five open, so step 5 does **not** trigger. When it does: `ContRepresentation` 141/184,
-`Representation` 134/189, `AbelianVariety.Hom` 41/54, `WeierstrassCurve` 26/27; avoid
-`IsCoveringMap` / `Deck.IsQuotientCoveringMap`. Measure against a **freshly fetched** `origin/main`.
+1. **Watch #6432 on `3d4b240ee`** — rooting + rename + two new lemmas, none built locally. The
+   riskiest piece is `autCongr_symm_apply`'s `rw [MulEquiv.symm_apply_eq, autCongr_apply]; exact
+   LinearEquiv.ext fun m ↦ by simp` at the **semilinear** generality.
+2. **Watch #6188 on `1e9fddb17`** — the restored bridge is the file's original proof, so low risk;
+   the `simp only` sets now cite `toLinearEquiv_generalLinearEquiv_symm` again.
+3. **#6188's `generality` thread** — answer pending. Do **not** implement either option until it
+   replies; both are written out there and either is a single push.
+4. **#6188's `api-design` bullet 1** is still open: no `autCongr_refl` / `autCongr_symm` /
+   `autCongr_trans`. Mathlib's `AlgEquiv` versions are all `rfl`, but ours is a composite through
+   `generalLinearEquiv` and `congrLinearEquiv`, so `rfl` is unlikely to transfer — expect to need
+   `MulEquiv.ext` plus the pointwise lemmas. **Do this in whichever PR ends up owning the file.**
+5. Five open, so step 5 does **not** trigger. When it does: `ContRepresentation` 141/184,
+   `Representation` 134/189, `AbelianVariety.Hom` 41/54, `WeierstrassCurve` 26/27; avoid
+   `IsCoveringMap` / `Deck.IsQuotientCoveringMap`. Measure against a **freshly fetched** `origin/main`.
 
 ## Settled — with the conditions attached
 
-* **#6093** — **10/10.** `@[expose]` on `fundamentalGroupEquivFiber` is removed, **and that is why**
-  `_apply_coe` is not `@[simp]` — coupled, accepted as such.
-* **#6418** — **10/10.** `isIntegral_char` deleted as an exact Mathlib duplicate;
-  `intCharacter_eq_iff` rooted on cohesion.
-* **#6188** — no `toLinearEquiv_ofLinearEquiv`; transport proved inline from
-  `(generalLinearEquiv R M).apply_symm_apply`, which works as a **proof term** though not as a simp
-  lemma. Structural lemmas present, not `@[simp]`. Main merged.
-* **#6432** — rooted **and** renamed together, because the name-keyed baseline couples them.
-  Structural lemmas added at the semilinear generality. `nsslice`'s remaining four are the
-  `extendOfIsLattice` family, which #6188 roots.
+* **#6093** — **10/10.** `@[expose]` on `fundamentalGroupEquivFiber` removed, **and that is why**
+  `_apply_coe` is not `@[simp]`.
+* **#6418** — **10/10.** `isIntegral_char` deleted as an exact Mathlib duplicate.
+* **#6188** — the transport is a **`private` bridge proved extensionally**, which is where the file
+  began and what `proof-quality` asked for; `reuse` accepts it (✅ on #6432's identical copy).
+  Structural lemmas present, not `@[simp]`. Main merged.
+* **#6432** — rooted **and** renamed together (name-keyed baseline couples them), semilinear,
+  structural lemmas at that generality.
 
 ## Still needs Chris
 
@@ -101,6 +93,6 @@ A fresh worktree needs `.lake` symlinked or `lint-dot-notation` errors on both s
 **COMMIT BEFORE GATING** — prepush reads HEAD and now refuses a dirty tree.
 Before believing a gate FAIL is yours, re-run it on the **pristine head**.
 A rubric that went green can go 🟡 again, and **clearing a ⛔ reveals rubrics that never ran**.
-Re-read a finding's text, and **record the position a failed attempt was tried in**.
+**Deleting a declaration means deleting what advertises it** — module docstring included.
 The gate is pure Python: it cannot see docstring attachment, elaboration, or simp normal form.
 **133 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.

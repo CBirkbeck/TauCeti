@@ -34576,3 +34576,57 @@ The four that appeared are worth reading closely, because two of them point at e
 Five open. **#6093 and #6418 both 10/10 `ready-to-merge`**, awaiting the bot. #6188 green, board
 ON-HEAD, four blockers. #6432 rebuilding on `3d4b240ee`. #5950 Chris's.
 Merged this watch: **#6426, #6412**.
+
+---
+
+## r667 — 2026-09-12 — the loop closed where it began, and the two PRs converged
+
+### `proof-quality` asked for the bridge the file started with
+
+Its fix, verbatim: *"Prove a shared private bridge extensionally using `coe_toLinearEquiv`,
+`coeFn_generalLinearEquiv`, and `apply_symm_apply`, then use it in both evaluation lemmas."* That is
+`private theorem toLinearEquiv_generalLinearEquiv_symm` — word for word the declaration this PR
+opened with, and the proof it carried.
+
+The full circuit: private bridge → (`reuse`) public lemma via `ofLinearEquiv` → (`reuse` ⛔) inline
+proof from `apply_symm_apply` → (`proof-quality`) private bridge. Four positions, three rubric
+demands, one fact.
+
+Restored it — not as a fourth guess, but on evidence: **#6432 carries the identical bridge and its
+`reuse` reads ✅.** The same reviewer approving the same declaration on a sibling PR is stronger than
+any reading of the rubric text. *When a rubric loop returns to a position it once rejected, look for
+a sibling PR where that position is currently approved.*
+
+Also fixed, both my own omissions from the previous commit:
+* a **second** `## Main statements` section advertising `toLinearEquiv_ofLinearEquiv` — I deleted the
+  declaration in r665 and left its docstring entry. Flagged by `api-design` and `documentation`.
+  **Deleting a declaration means deleting what advertises it.**
+* `autCongr_symm_apply`'s docstring described its proof strategy. §8 again: the narrative is now an
+  ordinary source comment and the docstring states the result.
+
+Gate 12 ok / 3 failed (the known rename-and-rooting rows), `lint-dot-notation` 0 new.
+
+### `generality` exposed a convergence, and I asked instead of choosing
+
+It asks #6188 to state the conjugation API semilinearly — **#6432's entire topic**, mirroring #6432
+being told to take #6188's relocation. After r666 the two PRs share the same relocation, the same
+names and the same structural lemmas, so implementing this here would make
+`GeneralLinearGroup/Congr.lean` **textually identical in both**, leaving #6432 with nothing of its
+own: the exact arrangement the original `scope` ⛔ existed to prevent.
+
+What remains genuinely unshared is elsewhere — this PR also roots the four `extendOfIsLattice`
+declarations in `Algebra/Module/Lattice.lean`, which is the half of `TauCeti.LinearEquiv` that
+#6432's own `nsslice` row reports as still nested.
+
+So the thread now carries two concrete options — this PR generalises too, or #6432 keeps the file and
+this one stands as the `Lattice.lean` rooting — with an offer to implement either immediately.
+
+**This is not the deferral the reviewer has twice refused.** It refused "another PR will fix this
+later"; the question here is which of two open, green, converged PRs should own a file, and that
+question exists only because the findings pushed each PR toward the other's topic. Choosing
+unilaterally would decide whether #6432 still has a reason to exist.
+
+### Board
+Five open. #6093 and #6418 both **10/10 `ready-to-merge`**, awaiting the bot. #6188 rebuilding on
+`1e9fddb17`, three of four blockers addressed. #6432 rebuilding on `3d4b240ee`. #5950 Chris's.
+Merged this watch: **#6426, #6412**.
