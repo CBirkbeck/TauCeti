@@ -21,9 +21,9 @@ second.
 * `Equiv.compFiberEquiv`: relabelling the base along `h : X ≃ Y` identifies the fibre of `h ∘ p`
   over `y` with the fibre of `p` over `h.symm y`.
 
-Together they express the functoriality of the fibres of a map: `Function.fiberMap` is covariant in
-the map over a fixed base, respecting identities and composition, while `Equiv.compFiberEquiv`
-transports fibres along a change of base. Neither uses a topology, so both are stated for a bare
+Together they cover the two ways the fibres of a map vary: `Function.fiberMap` moves along a map
+over a fixed base, while `Equiv.compFiberEquiv` transports fibres along a change of base. Neither
+uses a topology, so both are stated for a bare
 function and a bare equivalence; a `ContinuousMap` or a `Homeomorph` is applied through its
 underlying function or equivalence, and fibre identifications compose in either setting.
 
@@ -31,8 +31,7 @@ underlying function or equivalence, and fibre identifications compose in either 
 
 * `Function.mapsTo_fiber`: a map over `X` sends each fibre into the corresponding fibre.
 * `Function.fiberMap`: the restriction of a map over `X` to the fibre over `x`.
-* `Equiv.compFiberEquiv`: the relabelling of fibres under an equivalence of bases, with its
-  identity and composition laws `Equiv.compFiberEquiv_refl` and `Equiv.compFiberEquiv_trans`.
+* `Equiv.compFiberEquiv`: the relabelling of fibres under an equivalence of bases.
 -/
 
 public section
@@ -85,7 +84,7 @@ end Function
 
 namespace Equiv
 
-variable {E X Y Z : Type*} {p : E → X}
+variable {E X Y : Type*} {p : E → X}
 
 /-- Postcomposing a map with an equivalence of the base relabels its fibres: the fibre of `h ∘ p`
 over `y` is the fibre of `p` over `h.symm y`. -/
@@ -106,23 +105,5 @@ identity. -/
 theorem compFiberEquiv_symm_apply_coe (h : X ≃ Y) (y : Y) (e : p ⁻¹' {h.symm y}) :
     ((compFiberEquiv (p := p) h y).symm e : E) = e :=
   (rfl)
-
-/-- Relabelling the base along the identity leaves the fibres as they are. -/
--- Proved through `compFiberEquiv_apply_coe` rather than by unfolding: that lemma is where the
--- definitional equality of `Set.equivOfEq` is isolated, so this law survives a change of
--- representation in `compFiberEquiv`.
-@[simp]
-theorem compFiberEquiv_refl (y : X) :
-    compFiberEquiv (p := p) (Equiv.refl X) y = Equiv.refl (p ⁻¹' {y}) :=
-  Equiv.ext fun e ↦ Subtype.ext (compFiberEquiv_apply_coe (p := p) (Equiv.refl X) y e)
-
-/-- Relabelling the base along a composite is relabelling twice, first along `k` and then along
-`h`. -/
--- Not `@[simp]`: the left-hand side is the composite form a caller writes, so rewriting towards
--- the right would drive `simp` away from it rather than towards a normal form.
-theorem compFiberEquiv_trans (h : X ≃ Y) (k : Y ≃ Z) (z : Z) :
-    compFiberEquiv (p := p) (h.trans k) z =
-      (compFiberEquiv (p := h ∘ p) k z).trans (compFiberEquiv (p := p) h (k.symm z)) :=
-  Equiv.ext fun e ↦ Subtype.ext (compFiberEquiv_apply_coe (p := p) (h.trans k) z e)
 
 end Equiv
