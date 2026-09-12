@@ -409,6 +409,11 @@ theorem cuspToModFormCharSpace_heckeRingHomCuspCharSpace (T : 𝕋 (Delta0 N) (�
     (f : cuspFormCharSpace k χ) :
     cuspToModFormCharSpace k χ (heckeRingHomCuspCharSpace k χ T f) =
       heckeRingHomCharSpace k χ T (cuspToModFormCharSpace k χ f) := by
+  have hι : cuspToModFormCharSpace k χ f =
+      (⟨(f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k),
+        (coe_mem_modFormCharSpace_iff k χ _).mpr f.2⟩ : modFormCharSpace k χ) :=
+    Subtype.ext (coe_cuspToModFormCharSpace k χ f)
+  rw [hι]
   refine Subtype.ext (DFunLike.coe_injective ?_)
   rw [coe_cuspToModFormCharSpace, ModularFormClass.coe_modularForm,
     heckeRingHomCharSpace_apply, coe_twistedHeckeSlashModularFormCharLinearMap,
