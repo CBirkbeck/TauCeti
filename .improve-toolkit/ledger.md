@@ -35067,3 +35067,44 @@ labelled `ready-to-merge` and `roadmap/RepresentationTheory` — a roadmap PR, a
 Four open, all green, all `ready-to-merge`, none owing anything. No new merges.
 `improve/submonoid-constsmul-root` pushed and gate-clean, **no PR** — step 5 needs fewer than three
 open, and the queue jam is what is keeping the count at four.
+
+---
+
+## r677 — 2026-09-12 — the toolkit already had the tool I had been reinventing
+
+### Nothing owed, again
+
+Four open, all green, all `ready-to-merge`, no new merges. Step 5 needs fewer than three. The merge
+wait is the queue jam on #6431 diagnosed in r676 and is not ours — r676's note said not to
+re-diagnose it, and it was not re-diagnosed.
+
+### `threadread.py` exists, and I have not used it once this watch
+
+Every round of this watch has read blocking findings with a scratchpad `board.py` (dump the whole
+scoreboard comment) plus ad-hoc `gh api … | jq` per rubric. The toolkit ships **`tools/threadread.py`**,
+with a fixture and two controls, and it does the job properly:
+
+```
+threadread.py 6188        -> only UNRESOLVED rubrics, with the current finding text
+threadread.py 6188 --all  -> every rubric, its state taken from the board
+```
+
+It prints each rubric's **current** text with the `updated_at` that actually dates it, and flags
+`(EDITED IN PLACE; created=…)` where the two differ. Its docstring records the incident that
+produced it — **r450**, `#5905`'s `documentation` comment carrying new text under a pre-push
+`created_at`.
+
+That is the same trap I hit in **r655** and wrote up as a fresh lesson: *the pipeline edits a
+rubric's comment in place; never cache a finding by comment id.* It was already written down, in
+code, with controls. I rediscovered it by hand because I never read the tools list.
+
+**Check what the toolkit already has before writing a script.** The handover's own framing is that a
+check inside one lane's tool is not a check the other lane has — the failure mode here is smaller
+and sillier: the tool was in my lane, and I had not looked.
+
+Verified live: `threadread.py 6188` reports `0 shown (unresolved only); state from board at
+ec1a68d965`, which is correct — the PR is 10/10. Future rounds use it instead of the jq.
+
+### Board
+Four open, all green, all `ready-to-merge`, none owing anything. No new merges.
+`improve/submonoid-constsmul-root` pushed and gate-clean, **no PR**.

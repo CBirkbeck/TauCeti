@@ -1,33 +1,30 @@
-# Last round — r676 (2026-09-12 18:50Z)
+# Last round — r677 (2026-09-12 19:00Z)
 
-## The "slow bot" is a merge queue, and it is jammed by a PR that is not mine
+## Check what the toolkit already has before writing a script
 
-All four PRs are now `ready-to-merge` and **nothing is owed on any of them**. None has merged since
-#6418 at 16:58:30Z. r673 and r675 wrote that off as the bot running past its cadence; chasing it
-properly this round gave the mechanism:
+Every round of this watch read blocking findings with a scratchpad `board.py` plus ad-hoc
+`gh api … | jq` per rubric. The toolkit ships **`tools/threadread.py`**, with a fixture and two
+controls, and it does the job properly:
 
-* `main` is behind a GitHub **merge queue** (`merge-queue-main` ruleset) — which is what
-  `finalize-merge-group-build` / `publish-merge-group-cache` in every PR's check-runs have been
-  saying since the first sweep.
-* Merges are **serialised**, each needing its own full merge-group build (~20 min). The "cadence" of
-  108 min / 2h / 2h20m was queue latency, not a decision.
-* `Auto-merge` is healthy — 200 runs over 39 min: **69 success**, 54 concurrency-cancelled, 2 failure.
-* **The queue is jammed**: merge-group run `34711765109`, head
-  `gh-readonly-queue/main/pr-6431-…`, 18:37:33Z, `sandboxed-build` **failure**.
+```
+threadread.py <pr>         # only UNRESOLVED rubrics, with the current finding text
+threadread.py <pr> --all   # every rubric, state taken from the board
+```
 
-**#6431 is not mine** — `roadmap/pathalgebra-acyclic-iff-worker1`, author `chrisromanmiller`, a
-roadmap PR. Standing rule: *not yours: anything not under `improve/`*. Recorded, not touched.
+It prints each rubric's **current** text with the `updated_at` that actually dates it, and flags
+`(EDITED IN PLACE; created=…)` where they differ. Its docstring records the incident that produced
+it — **r450** — which is the *same trap* I hit in r655 and wrote up as a fresh lesson. It was already
+written down, in code, with controls.
 
-### Two corrections worth keeping
+**Use `threadread.py` from now on, not the jq.** Verified live: `threadread.py 6188` →
+`0 shown (unresolved only); state from board at ec1a68d965`, correct for a 10/10 PR.
 
-* I nearly reported *"Auto-merge is broken, zero successes"* from a 40-run sample that landed
-  entirely inside a burst of queued and cancelled runs. Widening to 200 showed 69 successes.
-  **A sample of the last N of a high-rate stream is a sample of the last few seconds.**
-* **"The bot is slow" was never a mechanism.** Three rounds recorded a number without asking what
-  produced it, while the check-runs named the merge queue on every PR. **A number you cannot explain
-  is an observation, not a finding.**
+## Nothing owed
 
-## Board (18:50Z) — four open, all green, all `ready-to-merge`, none owing anything
+Four open, all green, all `ready-to-merge`, no new merges. Step 5 needs fewer than three. The merge
+wait is r676's queue jam on **#6431**, a roadmap PR that is not ours — **do not re-diagnose it.**
+
+## Board (19:00Z) — four open, all green, all `ready-to-merge`, none owing anything
 
 | PR | head | CI | label | whose move |
 |---|---|---|---|---|
@@ -46,7 +43,10 @@ roadmap PR. Standing rule: *not yours: anything not under `improve/`*. Recorded,
    namespace at 39/62) and `slice` (1 of 2 flagged, same reason). Mark ready when CI is green.
    Full evidence in HANDOVER §11.
 3. **Re-run `nscand.py` after each merge** — main moved 759 → 735 across this watch, and the WHOLE
-   list moves with it. `tools/sweep.py` and `tools/nscand.py` are both in the toolkit now.
+   list moves with it.
+3a. **Read the tools list before writing a script.** `tools/` has 47 of them:
+   `sweep.py` (board sweep), `threadread.py` (current findings per rubric — **use this, not jq**),
+   `nscand.py` + `mathlibns.py` (prospecting), `prepush.sh` (the gate), `minecount.py` (merge count).
 4. **Do not re-diagnose the merge wait.** It is a serialised merge queue whose current group failed
    on **#6431**, a roadmap PR that is not ours. Check `gh run list --limit 300 --json event,...`
    filtered to `merge_group` if you want the current state; otherwise leave it. Nothing about it is
