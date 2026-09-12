@@ -231,10 +231,20 @@ trd() { python3 "$T/threadread.py" 1 --fixture "$TRD" 2>&1; }
 # NB: chk/neg feed these to plain `grep`, so `[...]` is a CHARACTER CLASS, not a literal -- keep
 # expected rows bracket-free or they match nothing and the neg passes for the wrong reason.
 trd | chk "threadread: a rubric deferred behind a block reads NOT-RUN, not a finding (r681)" \
-          "NOT JUDGED ON THIS HEAD" "do NOT act): tn_deferred" \
+          "NOT JUDGED ON THIS HEAD" "tn_deferred(not-run)" \
           "LIVE (answer these): tp_blocking"
 trd | neg "threadread: the deferred rubric is not listed as live work" \
           "LIVE (answer these): tn_deferred" "LIVE (answer these): tp_blocking, tn_deferred"
+# r687: `stale (re-run pending)` is the board's "approved on an EARLIER commit, re-run before
+# merge". #6093's `reuse` thread read "now passing on 370dad0" while this classified it LIVE -- the
+# opposite of what it means. It still blocks the merge; it just gives you nothing to answer.
+TRS="$SP/r687-threadread-stale-ctl"
+trs() { python3 "$T/threadread.py" 1 --fixture "$TRS" 2>&1; }
+trs | chk "threadread: a stale re-run-pending approval is not live work (r687)" \
+          "APPROVED ON AN EARLIER COMMIT" "tn_rerun(re-run)" \
+          "LIVE (answer these): tp_blocking"
+trs | neg "threadread: the re-run rubric is not listed as live work" \
+          "LIVE (answer these): tn_rerun" "tp_blocking, tn_rerun"
 
 # docghost -- three-way, and only the NARROWED bucket is the #5579 defect:
 #   advertised + declared in a file this one does NOT import  -> the defect
@@ -828,6 +838,19 @@ sweepv | chk "sweep: a superseded cancelled run is not a red build (r653)" "supe
 sweepv | chk "sweep: a real failure, a pending run and a live cancel still read red/pending" \
               "realfail: RED:sandboxed-build" "pending: PENDING:sandboxed-build" \
               "lastcancelled: RED:cancelled:sandboxed-build" "noruns: NO-RUNS"
+
+# ---- r687: toaddname -- a rooting can make a `to_additive` target redundant ------------------
+# #6482 went red on a line whose text the PR never touched: rooting the instance let `to_additive`
+# derive `AddSubmonoid.continuousConstVAdd` itself, and naming a target it can autogenerate is an
+# ERROR. The screen asks the question; only the elaborator knows Mathlib's translation dictionary.
+# The three negatives matter as much as the positive: no target, attr-only, and a NESTED
+# declaration must all stay silent, or this fires on ordinary `to_additive` code.
+TAN="$SP/r687-toaddname-ctl"
+tan() { ( cd "$TAN" && python3 "$T/toaddname.py" TauCeti/A.lean 2>&1 ); }
+tan | chk "toaddname: a rooted declaration naming a to_additive target is asked about (r687)" \
+          "TO-ADDITIVE" "Submonoid.continuousConstSMul" "AddSubmonoid.continuousConstVAdd"
+tan | neg "toaddname: silent on a bare target, an attr-only config, and a nested declaration" \
+          "tn_noTarget" "tn_attrOnly" "tn_nested"
 
 # ---- r679: ghostref -- short references in files the PR does not touch ----------------------
 # #6093's red build. `TauCeti.IsCoveringMap.fiberMap` was removed; `FiberFunctor.lean`, untouched

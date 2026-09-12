@@ -294,6 +294,17 @@ if [ -z "$ML" ]; then unrun "ghostref (no Mathlib checkout found)"; else
   esac
 fi
 
+# 3e3. Did the rooting make a `to_additive` target redundant? (r687, from #6482's red build)
+# Nested, the attribute needed the explicit name; at root `to_additive` derives it, and naming a
+# target it can autogenerate is an ERROR. A rooting can break an attribute it never touched.
+ta=$(python3 "$T/toaddname.py" --base "$(git merge-base "$BASE" HEAD)" $CHANGED 2>/dev/null)
+case "$?" in
+  0) ok "toaddname: no rooted declaration names a \`to_additive\` target" ;;
+  1) bad "toaddname: a rooted declaration still names a \`to_additive\` target"
+     echo "$ta" | sed 's/^/        /' ;;
+  *) unrun "toaddname on $CHANGED" ;;
+esac
+
 # 3f. Did a fixer move a REFERENCE to an unrelated namespace? (r622, from #6188)
 # `xqualify`/`deadfix` pick a candidate by matching the TAIL of a name (r556). On #6188 that turned
 # `Submodule.rationalizationEquiv` into `LieSubalgebra.rationalizationEquiv` and

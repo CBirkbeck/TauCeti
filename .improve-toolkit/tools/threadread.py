@@ -26,7 +26,7 @@ def sh(*a):
     return r.stdout
 
 def actionability(state):
-    """LIVE / NOT-RUN / GREEN / NO-BOARD -- is this thread's text a finding to answer NOW?
+    """LIVE / NOT-RUN / RE-RUN / GREEN / NO-BOARD -- is this thread's text a finding to answer NOW?
 
     r681 nearly cost a round.  #6093's board halted at a `scope` block, which defers every rubric
     behind it: those come back `absent` -- *not judged on this head*.  Their THREADS still carry
@@ -45,6 +45,12 @@ def actionability(state):
         return "GREEN"
     if state == "absent":
         return "NOT-RUN"
+    if state == "stale":
+        # r687: `stale (re-run pending)` is the board's "approved on an EARLIER commit, re-run
+        # before merge" (its legend's ...). The thread text under it is an APPROVAL -- #6093's
+        # `reuse` read "now passing on `370dad0`" while classified LIVE, which is the opposite of
+        # what it means. Not green yet, so it still blocks the merge; nothing to answer.
+        return "RE-RUN"
     return "LIVE"
 
 
@@ -122,14 +128,17 @@ def main():
         shown += 1
         if act == "LIVE":
             live.append(rub)
-        elif act == "NOT-RUN":
-            notrun.append(rub)
+        elif act in ("NOT-RUN", "RE-RUN"):
+            notrun.append(f"{rub}({act.lower()})")
         edited = c["updated_at"] != c["created_at"]
         print(f"=== {rub}  [{act}]  state={state or 'no board'}  updated={c['updated_at']}"
               + (f"  (EDITED IN PLACE; created={c['created_at']})" if edited else "") + " ===")
         if act == "NOT-RUN":
             print("  >> NOT JUDGED ON THIS HEAD. The text below is from an earlier revision and"
                   " re-runs\n  >> once the live block clears. Do NOT act on it (r681).")
+        elif act == "RE-RUN":
+            print("  >> APPROVED ON AN EARLIER COMMIT, re-run pending before merge. The text below"
+                  " is\n  >> that approval. Nothing to answer (r687).")
         print("\n".join("  " + l for l in body.strip().split("\n") if l.strip()))
         print()
     print(f"# FIRING CONTROL: {len(comments)} review comments, {len(latest)} rubric threads, "
@@ -137,8 +146,8 @@ def main():
           f"state from board at {board_head or 'NO BOARD -- fell back to thread text'} "
           f"({len(states)} rubric states). "
           f"LIVE (answer these): {', '.join(live) or 'none'}. "
-          f"NOT-RUN (deferred behind the block; their text is from an older head -- do NOT act): "
-          f"{', '.join(notrun) or 'none'}.", file=sys.stderr)
+          f"NOT ACTIONABLE (not-run = deferred behind a block; re-run = approved on an earlier "
+          f"commit): {', '.join(notrun) or 'none'}.", file=sys.stderr)
     return 0
 
 if __name__ == "__main__":
