@@ -129,12 +129,8 @@ private theorem eq_comp_unitsMap_of_comp_unitsMap_eq {M' N' : ℕ} [NeZero M'] (
     (h : χ'.comp (ZMod.unitsMap hN'M') = χM.comp (ZMod.unitsMap (hMN'.trans hN'M'))) :
     χ' = (χ₀.comp (ZMod.unitsMap hMpN'p)).comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN')) := by
   rw [hcomp, MonoidHom.comp_assoc, ZMod.unitsMap_comp] at h
-  refine MonoidHom.ext fun u ↦ ?_
-  obtain ⟨v, rfl⟩ := ZMod.unitsMap_surjective hN'M' u
-  have hv := congrArg (fun ψ ↦ ψ v) h
-  simp only [MonoidHom.comp_apply] at hv ⊢
-  rw [hv, ← MonoidHom.comp_apply (ZMod.unitsMap _) (ZMod.unitsMap _), ZMod.unitsMap_comp,
-    ← MonoidHom.comp_apply (ZMod.unitsMap _) (ZMod.unitsMap _), ZMod.unitsMap_comp]
+  refine (MonoidHom.cancel_right (ZMod.unitsMap_surjective hN'M')).mp (h.trans ?_)
+  rw [MonoidHom.comp_assoc, MonoidHom.comp_assoc, ZMod.unitsMap_comp, ZMod.unitsMap_comp]
 
 /-- **A peeled summand descends to a level-raise of a bundled descent.** For `F` of level
 `Γ₁(M l² / q)` with a nebentypus lying over the lowered one, the descent at level `M l²` of the
@@ -248,14 +244,6 @@ private theorem exists_coe_eq_sum_coe_levelRaise_of_squarefree [NeZero M] {l : �
     (ModularFormClass.holo D) (ModularFormClass.bdd_at_infty D)).mp hD
   rw [hDdef, FunLike.coe_sub, _root_.CuspForm.coe_ofLe, FunLike.coe_sum] at hfun
   exact sub_eq_zero.mp hfun
-
-/-- The descent slash sum of a finite sum of functions is the sum of the descents. -/
-private theorem descendSlash_finset_sum [NeZero p] {ι : Type*} (s : Finset ι) (f : ι → ℍ → ℂ) :
-    descendSlash k p M (∑ i ∈ s, f i) = ∑ i ∈ s, descendSlash k p M (f i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp only [Finset.sum_empty, descendSlash_zero]
-  | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, descendSlash_add, ih]
 
 /-- **Each peeled piece descends to a form supported on the multiples of its prime.** The
 descent at level `M l²` of the level-raise `V_q F_q` is `V_q` of the bundled descent of `F_q`
