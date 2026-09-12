@@ -104,11 +104,11 @@ theorem _root_.LinearEquiv.autCongr_apply (e : M₁ ≃ₛₗ[σ₁₂] M₂) (f
     LinearEquiv.autCongr e f = (e.symm.trans f).trans e :=
   LinearEquiv.ext fun m ↦ LinearEquiv.autCongr_apply_apply e f m
 
-/-- Inverse conjugation by `e`, as an equality of linear equivalences.
-
-Proved by characterising the inverse rather than by unfolding `autCongr` a second time: applying
-`autCongr e` to both sides reduces it to `autCongr_apply`, so the coercion transport across
-`toLinearEquiv` happens once, in `autCongr_apply_apply`, and not again here. -/
+/-- Inverse conjugation by `e`, as an equality of linear equivalences: `(autCongr e).symm g` is `g`
+precomposed with `e` and postcomposed with `e.symm`. -/
+-- Proved by characterising the inverse rather than unfolding `autCongr` a second time: applying
+-- `autCongr e` to both sides reduces it to `autCongr_apply`, so the coercion transport across
+-- `toLinearEquiv` happens once, in `autCongr_apply_apply`, and not again here.
 theorem _root_.LinearEquiv.autCongr_symm_apply (e : M₁ ≃ₛₗ[σ₁₂] M₂) (g : M₂ ≃ₗ[R₂] M₂) :
     (LinearEquiv.autCongr e).symm g = (e.trans g).trans e.symm := by
   rw [MulEquiv.symm_apply_eq, LinearEquiv.autCongr_apply]
