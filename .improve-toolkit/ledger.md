@@ -34986,3 +34986,39 @@ session would mean paying again.
 Four open, all green. #6093 and #6432 **10/10 `ready-to-merge`** (#6093 ~2h45m). #6188 green on the
 restructure, board BEHIND. #5950 Chris's. `improve/submonoid-constsmul-root` pushed and gate-clean,
 **no PR**.
+
+---
+
+## r675 — 2026-09-12 — #6188 reaches 10/10: the restructure was the answer
+
+### Every PR in the queue is now 10/10
+
+`ec1a68d965` came back **ten of ten approved**, including the two rubrics that had no satisfiable
+head one round earlier. `api-design` and `generality` did not "clear" so much as lose their subject:
+with the conjugation API gone from the diff, there is no `autCongr` for them to ask about, and what
+remains reads as what it is — *"a single namespace-rooting refactor of four already-merged
+declarations"* (`scope`), *"the four declarations retain the same hypotheses, statements"*
+(`correctness`).
+
+So the queue stands at: **#6093 10/10, #6188 10/10, #6432 10/10**, plus #5950 (Chris's, also
+`ready-to-merge`). Nothing is owed on any of them.
+
+### What the deadlock actually was
+
+Five rounds of cross-firing findings between #6188 and #6432 — `scope` ⛔ removing what `api-design`
+asked for, `generality` on each PR asking for the other's topic, `reuse` taking three positions on
+one transport — and the resolution was not an argument on any thread. It was noticing that **two
+PRs editing one file will keep drawing each other's findings until they stop overlapping**, and
+r672's removal of `Congr.lean` from #6188.
+
+The evidence that it was structural rather than rhetorical: #6188 went from four files and two
+topics to **one file, sixteen lines**, and from three irreconcilable rubrics to ten green, with no
+new argument posted. The findings were right every time; the PR boundary was wrong.
+
+**When rubrics contradict each other across rounds, suspect the boundary before the rubrics.**
+
+### Board
+Four open, all green, none owing anything. #6093 (~3h at 10/10), #6432 (~1h25m), #6188 (label still
+catching up to its 10/10 board), #5950 Chris's. No new merges this round.
+`improve/submonoid-constsmul-root` stays pushed and gate-clean with **no PR** — step 5 needs fewer
+than three open.
