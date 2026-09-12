@@ -110,16 +110,14 @@ theorem factorsThrough_div_of_changeLevel_factorsThrough {R : Type*} [CommMonoid
 /-- **A factorisation, read on unit homomorphisms.** If the Dirichlet character `MulChar.ofUnitHom
 χ` factors through `d ∣ N`, then the unit homomorphism `χ` itself is a composition
 `χ₀ ∘ ZMod.unitsMap` with a unit homomorphism modulo `d` — the form in which a lowered nebentypus
-is consumed.
-
-The conversion is the forward one, applying `MulChar.toUnitHom` to
-`DirichletCharacter.FactorsThrough.eq_changeLevel`: the lowered character `hfac.χ₀` mentions `χ`
-through the type of `hfac`, so rewriting `χ` in the goal would break the motive. -/
+is consumed. -/
 theorem exists_comp_unitsMap_of_factorsThrough {R : Type*} [CommMonoidWithZero R] {N d : ℕ}
     (hd : d ∣ N) {χ : (ZMod N)ˣ →* Rˣ}
     (hfac : FactorsThrough (MulChar.ofUnitHom χ : DirichletCharacter R N) d) :
     ∃ χ₀ : (ZMod d)ˣ →* Rˣ, χ = χ₀.comp (ZMod.unitsMap hd) := by
   refine ⟨hfac.χ₀.toUnitHom, ?_⟩
+  -- forwards, by applying `toUnitHom` to `eq_changeLevel`: `hfac.χ₀` mentions `χ` through the
+  -- type of `hfac`, so rewriting `χ` in the goal would break the motive
   have hχ : MulChar.toUnitHom (MulChar.ofUnitHom χ : DirichletCharacter R N) = χ :=
     MulChar.equivToUnitHom.apply_symm_apply χ
   have h := congrArg MulChar.toUnitHom hfac.eq_changeLevel
