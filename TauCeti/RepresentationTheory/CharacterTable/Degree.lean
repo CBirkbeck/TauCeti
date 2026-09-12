@@ -30,7 +30,7 @@ rational algebraic integer is an integer, so `χ(1)` divides `|G|`.
 
 * `TauCeti.Representation.finrank_mul_sum_centralCharacter_eq_card`: the division-free identity
   `χ(1) · ∑_C ωᵪ(K_C) χ(g_C⁻¹) = |G|`.
-* `TauCeti.Representation.finrank_dvd_card` and `TauCeti.FDRep.finrank_dvd_card`: the degree of an
+* `TauCeti.Representation.finrank_dvd_card` and `FDRep.finrank_dvd_card`: the degree of an
   irreducible representation divides the order of the group.
 
 ## Implementation notes

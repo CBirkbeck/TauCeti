@@ -50,11 +50,11 @@ consumes once such a `σ` is in hand.
 * `TauCeti.Representation.map_ofCharacter_eq_powMap`: on a group of exponent dividing `n` the
   Galois twist `σ ∘ χ` is the power-map twist `TauCeti.ClassFunction.powMap j` of the class
   function of `χ`, so the twist is an operation on `ClassFunction k G`.
-* `TauCeti.FDRep.map_character_eq_character_pow_of_isPrimitiveRoot`: over `ℂ`, a field
+* `FDRep.map_character_eq_character_pow_of_isPrimitiveRoot`: over `ℂ`, a field
   automorphism `f` of `ℂ` sends `χ(g)` to `χ(g ^ j)`, with `j` the cyclotomic exponent
   `IsPrimitiveRoot.autToPow` attaches to `f`.
-* `TauCeti.FDRep.isConjRoot_character_pow`: `χ(g)` and `χ(g ^ j)` are conjugate over `ℚ`.
-* `TauCeti.FDRep.character_pow_eq_character_of_mem_range`: a rational character value is unchanged
+* `FDRep.isConjRoot_character_pow`: `χ(g)` and `χ(g ^ j)` are conjugate over `ℚ`.
+* `FDRep.character_pow_eq_character_of_mem_range`: a rational character value is unchanged
   by the power maps that automorphisms of `ℂ` realize.
 
 ## References

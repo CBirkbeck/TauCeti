@@ -46,23 +46,23 @@ representation of a group, from the eigenvalues alone, with no invariant inner p
   `(ρ g).charpoly` splits, a character value is a sum of `finrank` many `n`-th roots of unity. The
   variant `TauCeti.Representation.exists_multiset_rootsOfUnity_char_eq_sum` specializes it to an
   algebraically closed field.
-* `TauCeti.Representation.isIntegral_char` and `TauCeti.FDRep.isIntegral_char`: **character values
+* `TauCeti.Representation.isIntegral_char` and `FDRep.isIntegral_char`: **character values
   are algebraic integers**, over an arbitrary field.
-* `TauCeti.Representation.exists_char_eq_intCast` and `TauCeti.FDRep.exists_char_eq_intCast`:
+* `TauCeti.Representation.exists_char_eq_intCast` and `FDRep.exists_char_eq_intCast`:
   **a rational character is integer-valued**.
-* `TauCeti.FDRep.intCharacter`: the resulting `ℤ`-valued character of a rational representation of
-  a finite group, taking the degree at the identity, and `TauCeti.FDRep.intClassFunction`: the same
+* `FDRep.intCharacter`: the resulting `ℤ`-valued character of a rational representation of
+  a finite group, taking the degree at the identity, and `FDRep.intClassFunction`: the same
   character read as an element of `TauCeti.ClassFunction ℤ G`.
-* `TauCeti.FDRep.char_mem_adjoin_of_isPrimitiveRoot`: over `ℂ` they lie in `ℤ[ζ_e]`, for `ζ_e`
+* `FDRep.char_mem_adjoin_of_isPrimitiveRoot`: over `ℂ` they lie in `ℤ[ζ_e]`, for `ζ_e`
   a primitive root of unity of order the exponent of the group.
-* `TauCeti.FDRep.norm_char_le_finrank`: over `ℂ`, `‖χ(g)‖ ≤ χ(1)`.
+* `FDRep.norm_char_le_finrank`: over `ℂ`, `‖χ(g)‖ ≤ χ(1)`.
 * `Representation.exists_apply_eq_smul_of_norm_char_eq_finrank` and its bundled form
   `FDRep.exists_apply_eq_smul_of_norm_char_eq_finrank`: the equality case of that bound,
   `‖χ(g)‖ = χ(1)`, which forces `ρ g` to be a root of unity times the identity.
-* `TauCeti.FDRep.conj_char`: over `ℂ`, **inversion conjugates character values**,
+* `FDRep.conj_char`: over `ℂ`, **inversion conjugates character values**,
   `conj (χ g) = χ g⁻¹`. This is what makes the character pairing agree with the Hermitian inner
   product on complex class functions.
-* `TauCeti.Representation.isSemisimple_apply` and `TauCeti.FDRep.isSemisimple_ρ`: if the
+* `TauCeti.Representation.isSemisimple_apply` and `FDRep.isSemisimple_ρ`: if the
   characteristic of `k` does not divide `|G|`, then `ρ g` is a semisimple endomorphism; over `ℂ`
   the hypothesis is found by instance search.
 
@@ -257,9 +257,9 @@ theorem _root_.FDRep.exists_char_eq_intCast (V : FDRep ℚ G) (g : G) :
     (pow_orderOf_eq_one g)
 
 /-- **The integer character** of a rational representation of a finite group: the character value
-`V.character g` is the cast of an integer (`TauCeti.FDRep.exists_char_eq_intCast`), and this is
+`V.character g` is the cast of an integer (`FDRep.exists_char_eq_intCast`), and this is
 that integer, extracted as the numerator of the rational value. Read it only through
-`TauCeti.FDRep.intCharacter_cast`, which is what pins it down; the numerator is a way of naming the
+`FDRep.intCharacter_cast`, which is what pins it down; the numerator is a way of naming the
 integer, not extra information.
 
 Being in the `TauCeti.FDRep` namespace rather than the root one, it is not available through dot
@@ -278,7 +278,7 @@ theorem _root_.FDRep.intCharacter_cast (V : FDRep ℚ G) (g : G) :
   rw [intCharacter_def, hm, Rat.num_intCast]
 
 /-- **The integer character carries exactly the information of the rational one**: this is the
-elimination principle for `TauCeti.FDRep.intCharacter`, an integer equation between its values
+elimination principle for `FDRep.intCharacter`, an integer equation between its values
 being the corresponding equation between character values. -/
 theorem intCharacter_eq_iff {V W : FDRep ℚ G} {g h : G} :
     FDRep.intCharacter V g = FDRep.intCharacter W h ↔ V.character g = W.character h := by
@@ -325,7 +325,7 @@ theorem _root_.FDRep.norm_char_le_finrank (V : FDRep ℂ G) (g : G) : ‖V.chara
 
 /-- **The equality case of the bound on a character value**, for a finite group: if `‖χ(g)‖`
 attains the degree, then `V.ρ g` is a scalar, the scalar being a root of unity of order dividing
-that of `g`. The bound itself is `TauCeti.FDRep.norm_char_le_finrank`. -/
+that of `g`. The bound itself is `FDRep.norm_char_le_finrank`. -/
 theorem _root_.FDRep.exists_apply_eq_smul_of_norm_char_eq_finrank (V : FDRep ℂ G) {g : G}
     (h : ‖V.character g‖ = (finrank ℂ V : ℝ)) :
     ∃ μ : ℂ, μ ^ orderOf g = 1 ∧ V.ρ g = μ • 1 :=
