@@ -7,7 +7,7 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Frobenius.Translation
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Kernel
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.Separable
+import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.Separable
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.TautologicalPoint
 public import TauCeti.AlgebraicGeometry.EllipticCurve.PointCount
 
