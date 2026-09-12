@@ -62,8 +62,12 @@ theorem fiberMap_id_apply (x : X) (e : p ⁻¹' {x}) :
   apply Subtype.ext
   rfl
 
-/-- Restriction to a fibre respects composition of maps over the base. -/
-@[simp]
+/-- Restriction to a fibre respects composition of maps over the base.
+
+Deliberately NOT `@[simp]`: the left-hand side applies `fiberMap` to a compatibility proof built
+inline from the composite, which is not in simp normal form, so `simpNF` rejects the annotation as
+a rule that can never fire. Taking that proof as a parameter would satisfy `simpNF`, at the cost of
+a hypothesis derivable from `hf` and `hg`. -/
 theorem fiberMap_comp_apply (f : E → F) (g : F → G) (hf : q ∘ f = p) (hg : r ∘ g = q) (x : X)
     (e : p ⁻¹' {x}) :
     fiberMap (g ∘ f) (by
