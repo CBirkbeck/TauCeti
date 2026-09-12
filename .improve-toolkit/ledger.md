@@ -34807,3 +34807,61 @@ there, with their evidence, before the watch ends.
 ### Board
 Four open, all green. #6093 and #6432 **10/10**; #6188 awaiting its board on `cc5b861ca`; #5950
 Chris's. No new merges. Merged this watch: **#6426, #6412, #6418**.
+
+---
+
+## r671 — 2026-09-12 — the scouted target gate-tested, and it was not clean
+
+### Gate-verifying a scouted target found a real defect before it cost anything
+
+Step 5 still does not trigger (four open), so `TauCeti.Submonoid` was built and gated but **not
+opened**. The gate's first answer was **12 ok / 3 failed**, and one was a genuine defect:
+
+```
+FAIL  stalequal: a dead path survives
+      STALE  TauCeti.Submonoid.continuousConstSMul
+             TauCeti/Topology/Algebra/ConstMulAction.lean:21
+```
+
+The module docstring still named the path the rooting destroyed — **r491's exact defect class**, the
+one that blocked three rubrics on #5953. Fixed; the gate now reads **13 ok / 2 failed**, and both
+remaining rows are the documented *questions* (`parallelns` rooted-beside-nested, `slice` 1 of 2
+flagged — the other is `TauCeti.Subgroup.continuousConstSMul`, a different namespace at 39/62).
+`lint-dot-notation` 739 → 738, 0 new; `decldiff` and `rootsurplus` both clean, which is what a pure
+rooting should look like.
+
+**A scouted target is not a verified one.** Last round's scouting checked the namespace was real and
+the name was free; it could not have found a stale docstring, because that needs the change made and
+the gate run. Branch `improve/submonoid-constsmul-root` is pushed and gate-clean; **no PR opened**,
+and the open count is still 4.
+
+### #6188: both r669 contests rejected, and the knot is now explicit
+
+* `documentation` ✅ (fixed r669), `reuse` ✅ — *"the private bridge …"* — and `scope` ✅ on the
+  split diff, plus `proof-quality`, `naming`, `placement`, `attribution`. Seven green.
+* `api-design` still wants `autCongr_apply` / `autCongr_symm_apply`.
+* `generality` still wants the semilinear statement — its subject moved from `extendOfIsLattice`
+  (now approved at fraction-ring generality) to the conjugation API.
+
+So two rubrics demand exactly the content `scope` ⛔'d out of this PR one round ago, and `scope` now
+reads ✅ *because* it is out. Putting it back is the diff `scope` blocked; leaving it out is what
+`api-design` and `generality` block. **Each rubric is judged against the current head, and no head
+satisfies all three at once.**
+
+The resolution is structural rather than argumentative, and #6432 — 10/10, semilinear, owning the
+structural lemmas — is the reason: **#6188 should stop touching `Congr.lean` altogether** and stand
+as the `Algebra/Module/Lattice.lean` rooting. Then `api-design` and `generality` have no subject in
+it, `scope` stays single-topic, and #6432 owns the conjugation API outright. That was option 2 of the
+question r667 put on the `generality` thread and the reviewer never picked explicitly; the findings
+have since picked it by elimination.
+
+Cheapest route to the same place: **#6432 merges first**, and #6188 rebases — its `Congr.lean` hunks
+become no-ops because the same rooting, rename and lemmas are already on main. #6432 is
+`ready-to-merge` at 10/10, so this may need no edit at all.
+
+**Not acted on this round.** Restructuring a PR on the strength of a deadlock reading deserves a
+round of its own, and the cheaper route may arrive on its own.
+
+### Board
+Four open. #6093 and #6432 **10/10 `ready-to-merge`**. #6188 7/10, two blockers, board ON-HEAD.
+#5950 Chris's. No new merges. Merged this watch: **#6426, #6412, #6418**.

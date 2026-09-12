@@ -1,76 +1,86 @@
-# Last round — r670 (2026-09-12 18:05Z)
+# Last round — r671 (2026-09-12 18:05Z)
 
-## Nothing was owed — and with two PRs at 10/10, that is the finding
+## A scouted target is not a verified one
 
-All four open PRs are green. #6093 and #6432 sit at **10/10 `ready-to-merge`** waiting on the bot;
-#6188 went green on `cc5b861ca` (11202 jobs, `LINT-ENV: PASS`) with its board still on the previous
-head; #5950 is Chris's. Step 5 needs fewer than three open; there are four. Step 4's clock has not
-run out.
+Step 5 still does not trigger (four open), so `TauCeti.Submonoid` was built and gated but **not
+opened**. The gate's first answer was 12 ok / 3 failed, and one was real:
 
-**Two PRs at 10/10 are exactly the state where an unrequested edit costs a re-review and risks a
-green rubric.** The round's work went to the handover instead.
+```
+FAIL  stalequal: a dead path survives
+      STALE  TauCeti.Submonoid.continuousConstSMul
+             TauCeti/Topology/Algebra/ConstMulAction.lean:21
+```
 
-## HANDOVER.md §11 — what r654–r669 cost
+The module docstring still named the path the rooting destroyed — **r491's exact defect class**.
+r670's scouting checked the namespace was real and the name free; it could not have found this,
+because that needs the change made and the gate run.
 
-Everything learned this watch lived only in `last-round.md`, which is rewritten every round, and in a
-34 800-line ledger. **A rule that lives only in `last-round.md` survives one round.** §11 now carries
-it, each rule pointing at the round that bought it:
+Fixed: **13 ok / 2 failed**, both remaining being the documented *questions* (`parallelns`
+rooted-beside-nested; `slice` 1 of 2 flagged — the other is `TauCeti.Subgroup.continuousConstSMul`,
+a different namespace at 39/62). `lint-dot-notation` 739 → 738, 0 new; `decldiff` and `rootsurplus`
+clean, which is what a pure rooting should look like.
 
-* **the gate** — commit before gating (it reads HEAD); it is pure Python and cannot see docstring
-  attachment, elaboration or simp-NF; re-run on the pristine head before believing a FAIL;
-  `xsibling`'s false positive and why a crying-wolf check is worse than none;
-* **the ratchet** — the baseline grandfathers by *declaration name*, so renaming a flagged
-  declaration is red unless it is rooted in the same commit;
-* **reading the review** — a ⛔ hides rubrics that never ran; a 🟡 behind a ⛔ may not survive; the
-  pipeline *edits* findings in place; "tried and failed" is scoped to the position tried; verify a
-  cited precedent; when a loop returns to a rejected position look for a sibling PR where it is
-  approved; an answer can arrive as a finding rather than a reply;
-* **Lean facts** — `@[expose]` is a claim about a reduction *path*; a definitional index mismatch is
-  not the `HEq` trap; a goal printed unchanged means nothing fired; deleting a declaration means
-  deleting what advertises it;
-* **two PRs over one file** — port a fix the moment it is accepted anywhere, but a green PR is not a
-  place to apply a lesson;
-* **prospecting** — `nscand.py` ranks, `mathlibns.py` decides, then check Mathlib does not already
-  have the name; re-rank after every merge. The scouted `TauCeti.Submonoid` target is written out in
-  full so the next taker opens it without repeating the measurement.
+**Branch `improve/submonoid-constsmul-root` is pushed and gate-clean. No PR opened**; open count
+still 4. When step 5 triggers it is `gh pr create --draft` and a body answering the two questions.
+
+## #6188: both r669 contests rejected, and the knot is explicit
+
+Seven green — `reuse` ✅ (the private bridge, settled), `scope` ✅ **on the split diff**,
+`documentation` ✅ (r669's fix), plus `proof-quality`, `naming`, `placement`, `attribution`.
+
+Two 🟡, and they want back exactly what `scope` ⛔'d out one round ago:
+
+* `api-design` — add `autCongr_apply` / `autCongr_symm_apply`.
+* `generality` — state the conjugation API semilinearly. (Its subject *moved*:
+  `extendOfIsLattice` is now approved at fraction-ring generality.)
+
+**No head satisfies all three at once.** Put the content back and it is the diff `scope` blocked;
+leave it out and `api-design`/`generality` block. Each rubric judges the current head, and the
+reviewer has three times refused "another PR does it".
+
+## Next — the structural move, deliberately deferred one round
+
+The resolution is not another contest. **#6188 should stop touching `Congr.lean` entirely** and stand
+as the `Algebra/Module/Lattice.lean` rooting; then `api-design` and `generality` have no subject in
+it, `scope` stays single-topic, and **#6432 — 10/10, semilinear, owning the structural lemmas —**
+owns the conjugation API outright. That was option 2 of the question r667 put on the `generality`
+thread; the findings have since picked it by elimination.
+
+**Cheapest route to the same place: let #6432 merge first, then rebase #6188** — its `Congr.lean`
+hunks become no-ops because the same rooting, rename and lemmas are already on main. #6432 is
+`ready-to-merge` at 10/10, so this may need no edit at all.
+
+So, in order:
+1. **Check whether #6432 merged.** If yes: rebase #6188 onto fresh `origin/main`, confirm its
+   `Congr.lean` changes have evaporated, re-gate, push. That is the whole fix.
+2. **If #6432 is still unmerged and #6188's board re-fires the same two**, do it by hand: drop the
+   `Congr.lean` hunks from #6188, retitle/rebody it as the `Lattice.lean` rooting, and say on both
+   threads that the conjugation API is #6432's — citing `scope`'s block and #6432's 10/10.
+3. **When step 5 triggers** (two more merges): open `improve/submonoid-constsmul-root` as a **DRAFT**
+   — already pushed and gate-clean. Body must answer `parallelns` (the `Subgroup` instance stays
+   nested; it is a different namespace, 39/62 partial) and `slice` (1 of 2 flagged, same reason).
+   Mark ready when CI is green.
+4. **Re-run `nscand.py` after each merge** — main moved 759 → 738 across this watch.
 
 ## Board (18:05Z) — four open, all green
 
 | PR | head | CI | label | whose move |
 |---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **Chris** — human-owned `web/examples/Examples.lean` |
-| **#6093** | `370dad05e` | green | `ready-to-merge` | nobody — **10/10**, ~2h20m on the bot |
-| **#6188** | `cc5b861ca` | green | `awaiting-CI` | reviewer — board BEHIND |
+| **#6093** | `370dad05e` | green | `ready-to-merge` | nobody — **10/10** |
+| **#6188** | `cc5b861ca` | green | `awaiting-author` | **me — 7/10, see Next** |
 | **#6432** | `98bb7e78f` | green | `ready-to-merge` | nobody — **10/10** |
-
-**#6188's board is BEHIND. Do NOT re-fix.**
-
-## Next
-
-1. **#6188's board on `cc5b861ca`.** `documentation` was fixed; `api-design` (functorial lemmas) and
-   `generality` (semilinear) were **contested r669 by quoting its own `scope` ⛔**. If either re-fires
-   *with the reviewer explicitly asking for it there despite the block*, implement it — both replies
-   committed to that in writing. Otherwise hold.
-2. **When step 5 triggers** (#6093 and #6432 merging leaves #5950 + #6188 = two):
-   `TauCeti.Submonoid` is scouted and verified — branch `improve/submonoid-constsmul-root` from a
-   freshly fetched `origin/main`, root `instance continuousConstSMul` at
-   `TauCeti/Topology/Algebra/ConstMulAction.lean:37` to `_root_.Submonoid.`, delete the then-empty
-   `namespace Submonoid` wrapper, qualify the one reference in
-   `TauCeti.Subgroup.continuousConstSMul`, keep `@[to_additive AddSubmonoid.continuousConstVAdd]`.
-   Gate, open as a **DRAFT**, mark ready when CI is green. Full evidence in HANDOVER §11.
-3. **Re-run `nscand.py` after each merge** — main moved 759 → 739 this watch and the WHOLE list moves
-   with it.
 
 ## Settled — with the conditions attached
 
 * **#6093** — **10/10.** `@[expose]` on `fundamentalGroupEquivFiber` removed, **and that is why**
   `_apply_coe` is not `@[simp]`.
 * **#6418** — **MERGED.**
-* **#6188** — the relocation alone. Transport is the **`private` extensional bridge**
-  (`proof-quality` ✅). No structural lemmas, no functorial lemmas, not semilinear — all #6432's, per
-  the `scope` ⛔.
+* **#6188** — transport is the **`private` extensional bridge**, `reuse` ✅ and `proof-quality` ✅;
+  do not touch it again. `scope` ✅ **only while `Congr.lean`'s API expansion stays out.**
 * **#6432** — **10/10**: semilinear, rooted, renamed, owns the structural lemmas and call-site
-  rewrites.
+  rewrites. **Do not edit it** — it is green and waiting on the bot.
+* **`improve/submonoid-constsmul-root`** — pushed, gate-clean at 13 ok / 2 questions, **no PR**.
 
 ## Still needs Chris
 
@@ -91,9 +101,11 @@ A fresh worktree needs `.lake` symlinked or `lint-dot-notation` errors on both s
 Before believing a gate FAIL is yours, re-run it on the **pristine head**.
 A rubric that went green can go 🟡 again; clearing a ⛔ reveals rubrics that never ran; and
 **a 🟡 behind a ⛔ may not survive the next board — do not chase it**.
-**Deleting a declaration means deleting what advertises it.**
+**Deleting a declaration means deleting what advertises it** — and a rooting destroys the old path
+everywhere, docstrings included (`stalequal` is the check that catches it).
 **A green PR is not a place to apply a lesson.**
-Verify a rooting target with `mathlibns.py`, never a grep, and check the name is not already there.
+Verify a rooting target with `mathlibns.py`, never a grep; then **gate it**, because scouting cannot
+see a stale docstring.
 The gate is pure Python: it cannot see docstring attachment, elaboration, or simp normal form.
 **133 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
-**HANDOVER.md §11 now carries this watch's rules** — read it before re-deriving one.
+**HANDOVER.md §11 carries this watch's rules** — read it before re-deriving one.
