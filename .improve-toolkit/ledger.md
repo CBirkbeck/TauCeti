@@ -33745,3 +33745,64 @@ scope contest does *not* cover. Fix it; do not contest it.
 **A successful contest can return a harder finding than the one it displaced, and that is the system
 working.** The r653 reply argued the PR should be judged on what it changes — this finding is
 precisely that.
+
+---
+
+## r655 — 2026-09-12 — #6412 cleared by contest; #6093 down to its last rubric
+
+### Both contests landed
+
+* **#6412: all ten rubrics green.** `api-design` re-reviewed on `360cdfc` and answered
+  *"this clears the finding ✅"*. The finding was **factually correct** — the roadmap really did
+  still name the deleted theorem — and it cleared anyway, on the ground that the fix lay in
+  `TauCetiProject/TauCetiRoadmap`, a human-controlled repo no `TauCeti/`-only branch can reach and
+  this role may not open a PR in. *A correct finding can still be the wrong PR's problem, and saying
+  exactly why — with what survives under the canonical name — is enough.*
+* **#6093:** the r653 scope contest held; the roadmap-narration bullet stayed dropped.
+
+### The pipeline edits a rubric comment in place — the id and timestamp are not the finding
+
+Comment `3996026629` on #6093 still reports `created_at 2026-09-12T11:07:15Z`, and in r653 its body
+was the ten-file roadmap-narration finding. It now carries something else entirely: the conjugacy
+helper's stale docstring. Same id, same `created_at`, different finding.
+
+The handover's rule — *read the board sorted by `updated_at`, because the pipeline edits* — is
+usually stated about the scoreboard. **It applies to the per-rubric threads too.** A finding you
+answered is not the finding sitting at that id now. Re-read the body before acting on a remembered
+one; never cache a finding by its comment id.
+
+### #6093: the last blocking rubric, and it was ours
+
+`documentation` on `exists_range_eq_map_conj_of_homeomorph_comp_eq`. The theorem's hypotheses were
+changed **by this PR** (r652: `[PathConnectedSpace F]` → explicit `hj : Joined (h e₀) f₀`), but both
+descriptions still called it a theorem about *connected* covers — a word the statement no longer
+contains. Verified against the source before writing: the theorem carries no connectedness
+hypothesis at all, and the comparison theorem
+`exists_homeomorph_comp_eq_iff_exists_range_eq_map_conj` supplies `hj` through
+`PathConnectedSpace.joined _ _`. So path-connectedness is exactly what the finding said it was — a
+*sufficient condition used by the later theorem*, not a hypothesis of this one. Both the
+`Main declarations` entry and the declaration docstring now say so. Pushed `9d13f9587`.
+
+Gate: the four `FAIL`s and one `UNRUN` on this PR are **byte-identical on the pristine head**, so
+none is mine. Checking that took one command and is the only thing separating "pre-existing" from
+"I broke it" on a 19-file PR.
+
+### A collision I created, recorded before it bites
+
+**#6432 is `refactor(LinearAlgebra): state `congrAut` at the semilinear generality`** — and r654
+renamed `congrAut` → `autCongr` on #6188. Both PRs touch **only**
+`TauCeti/LinearAlgebra/GeneralLinearGroup/Congr.lean`; #6432 is branched from a `main` that has
+neither the rooting nor the rename, so its diff still says `def congrAut` nested in
+`TauCeti.LinearEquiv`.
+
+Whichever lands second needs a rebase. #6432 is the smaller and is already green, so the likely
+order is #6432 first, leaving **#6188 to be rebased onto a semilinear `congrAut` and the rename
+re-applied** — three declarations plus 35 call sites across three files. Neither is broken today,
+and a conflict cannot merge silently; this is a note so the rebase is expected rather than
+discovered.
+
+### Board
+Seven open, none draft. **#6412 10/10** (label still catching up). **#6426 10/10, CI green,
+`ready-to-merge`.** #6093 building on `9d13f9587` — board BEHIND. #6188 building on `2aaf5e818c` —
+board BEHIND. #6418 `awaiting-review`, CI green, board BEHIND. #6432 green, **no board at 57 min**.
+#5950 Chris's. No new merges since #6406.
