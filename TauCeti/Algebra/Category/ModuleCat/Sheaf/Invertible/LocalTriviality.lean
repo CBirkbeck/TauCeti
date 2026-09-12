@@ -18,8 +18,8 @@ on `PUnit`.
 The structure `SheafOfModules.LocalTrivializations M` records such a cover and its
 trivializing isomorphisms. The two formulations are equivalent:
 
-* `LocalGeneratorsData.IsInvertible.trivializationIso` standardizes each rank-one free
-  presentation;
+* `SheafOfModules.LocalGeneratorsData.IsInvertible.trivializationIso` standardizes each
+  rank-one free presentation;
 * `LocalTrivializations.ofIso` transports a local trivialization atlas along an isomorphism;
 * `LocalTrivializations.isInvertible` recovers the local-generator formulation;
 * `LocalTrivializations.ofIsInvertible` constructs local trivializations from an invertible
@@ -72,7 +72,7 @@ structure LocalTrivializations (M : SheafOfModules.{u} R) where
 the free sheaf on `PUnit`. -/
 def _root_.SheafOfModules.LocalGeneratorsData.IsInvertible.trivializationIso
     {q : SheafOfModules.LocalGeneratorsData M}
-    (hq : LocalGeneratorsData.IsInvertible q) (i : q.I) :
+    (hq : SheafOfModules.LocalGeneratorsData.IsInvertible q) (i : q.I) :
     _root_.SheafOfModules.free (R := R.over (q.X i)) PUnit ≅ M.over (q.X i) := by
   letI : Nonempty (q.generators i).I := hq.basisNonempty i
   letI : Subsingleton (q.generators i).I := hq.basisSubsingleton i
@@ -86,7 +86,8 @@ followed by the original local free presentation. -/
 @[simp]
 lemma _root_.SheafOfModules.LocalGeneratorsData.IsInvertible.trivializationIso_hom
     {q : SheafOfModules.LocalGeneratorsData M}
-    (hq : LocalGeneratorsData.IsInvertible q) (i : q.I) : (hq.trivializationIso i).hom =
+    (hq : SheafOfModules.LocalGeneratorsData.IsInvertible q) (i : q.I) :
+    (hq.trivializationIso i).hom =
       (_root_.SheafOfModules.freeFunctor (R := R.over (q.X i))).map
         (@Equiv.punitOfNonemptyOfSubsingleton (q.generators i).I
           (hq.basisNonempty i) (hq.basisSubsingleton i)).symm.toIso.hom ≫

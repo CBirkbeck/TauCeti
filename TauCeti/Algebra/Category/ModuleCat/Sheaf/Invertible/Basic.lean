@@ -72,7 +72,8 @@ exactly one element. -/
 class IsInvertible : Prop where
   /-- A rank-one local trivialization of the sheaf. -/
   exists_isInvertible :
-    ∃ q : SheafOfModules.LocalGeneratorsData.{u₁} M, LocalGeneratorsData.IsInvertible q
+    ∃ q : SheafOfModules.LocalGeneratorsData.{u₁} M,
+      SheafOfModules.LocalGeneratorsData.IsInvertible q
 
 /-- An invertible sheaf is locally free. -/
 instance IsInvertible.isLocallyFree (M : SheafOfModules.{u} R) [h : IsInvertible M] :
@@ -95,8 +96,9 @@ def _root_.SheafOfModules.LocalGeneratorsData.ofIso (q : SheafOfModules.LocalGen
 /-- Rank-one local generator data stays rank one after transport along an isomorphism. -/
 theorem _root_.SheafOfModules.LocalGeneratorsData.IsInvertible.ofIso
     {q : SheafOfModules.LocalGeneratorsData M}
-    (hq : LocalGeneratorsData.IsInvertible q) (e : M ≅ N) :
-    LocalGeneratorsData.IsInvertible (LocalGeneratorsData.ofIso q e) where
+    (hq : SheafOfModules.LocalGeneratorsData.IsInvertible q) (e : M ≅ N) :
+    SheafOfModules.LocalGeneratorsData.IsInvertible
+      (SheafOfModules.LocalGeneratorsData.ofIso q e) where
   isLocallyFreeData :=
     { isIso := by
         -- `ofIso` leaves the index type of the cover untouched, so the index may be taken in
@@ -118,7 +120,7 @@ theorem _root_.SheafOfModules.LocalGeneratorsData.IsInvertible.ofIso
 /-- Invertibility transports along an isomorphism of sheaves of modules. -/
 theorem IsInvertible.of_iso (e : M ≅ N) [h : IsInvertible M] : IsInvertible N := by
   obtain ⟨q, hq⟩ := h.exists_isInvertible
-  exact ⟨LocalGeneratorsData.ofIso q e, hq.ofIso e⟩
+  exact ⟨SheafOfModules.LocalGeneratorsData.ofIso q e, hq.ofIso e⟩
 
 section
 
