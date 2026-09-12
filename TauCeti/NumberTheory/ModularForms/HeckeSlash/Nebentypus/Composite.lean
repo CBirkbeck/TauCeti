@@ -121,6 +121,7 @@ theorem qExpansion_coeff_heckeRingHomCuspCharSpace_heckeTCompositeGamma0_of_copr
   have h := qExpansion_coeff_heckeRingHomCharSpace_heckeTCompositeGamma0_of_coprime hn hnN
     (cuspToModFormCharSpace k χ F) hmn
   rw [← cuspToModFormCharSpace_heckeRingHomCuspCharSpace] at h
-  simpa using h
+  simp only [coe_cuspToModFormCharSpace, ModularFormClass.coe_modularForm] at h
+  exact h
 
 end HeckeRing.GL2
