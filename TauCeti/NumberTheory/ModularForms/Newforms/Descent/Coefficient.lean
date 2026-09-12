@@ -230,15 +230,6 @@ end Core
 
 /-! ### The coefficient formula of the descent -/
 
-/-- The nebentypus of `f` read at level `L N` is the pull-back of `χ₀` read at level `L N / p`. -/
-private theorem comp_unitsMap_eq_comp_unitsMap_of_comp {L : ℕ} (hpN : p ∣ N)
-    {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / p))ˣ →* ℂˣ}
-    (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN))) :
-    χ.comp (ZMod.unitsMap (dvd_mul_left N L)) =
-      (χ₀.comp (ZMod.unitsMap (Nat.mul_div_assoc L hpN ▸ dvd_mul_left (N / p) L))).comp
-        (ZMod.unitsMap (Nat.div_dvd_of_dvd (dvd_mul_of_dvd_right hpN L))) := by
-  rw [hcomp, MonoidHom.comp_assoc, ZMod.unitsMap_comp, MonoidHom.comp_assoc, ZMod.unitsMap_comp]
-
 
 /-- **The coefficients of the descent** (Miyake, Lemma 4.6.14). Let `f ∈ S_k(Γ₁(N), χ)` with `χ`
 pulled back from `χ₀` modulo `N / p`, vanishing at every index coprime to `p L` for a squarefree
@@ -277,7 +268,7 @@ theorem qExpansion_coeff_descendSlash_eq_of_coprime [NeZero N] (hp : p.Prime) (h
     rw [hVg, CuspForm.coe_levelRaise, descendSlash_smul_slash_scaleGL k hp hpM g,
       descendMatrixCount_mul_left_of_coprime hpL N]
   -- the difference descends to a form vanishing at `m`
-  have hχM := comp_unitsMap_eq_comp_unitsMap_of_comp hpN (L := L) hcomp
+  have hχM := comp_unitsMap_eq_comp_unitsMap_of_comp_mul_left hpN (L := L) hcomp
   have hΔχ : Δ ∈ cuspFormCharSpace k (χ.comp (ZMod.unitsMap (dvd_mul_left N L))) :=
     ofLe_sub_levelRaise_mem_cuspFormCharSpace hp hpN hcomp hf hg
   have hD0 : (qExpansion 1 (descendSlash k p (L * N) ⇑Δ)).coeff m = 0 :=
