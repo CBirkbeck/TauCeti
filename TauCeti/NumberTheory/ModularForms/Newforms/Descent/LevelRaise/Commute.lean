@@ -8,8 +8,8 @@ module
 public import TauCeti.NumberTheory.ModularForms.Degeneracy
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Sum
 import TauCeti.NumberTheory.ModularForms.HeckeSlash.Diagonal.QExpansion
+import TauCeti.Data.ZMod.OnePoint
 import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Periodic
-import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Action
 import TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelCommute
 
 /-!
@@ -140,8 +140,8 @@ private theorem conjScale_descendExtraGamma_mul_inv_apply {N : ℕ} {c : ℤ}
     simp [Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_inv,
       Matrix.adjugate_fin_two, coe_conjScale, Matrix.mul_apply, Fin.sum_univ_two]
 
-/-- The quotient of the conjugated level-`l N` extra matrix by the level-`N` one is diagonal
-modulo `p` (its upper-right entry vanishes) and is `1` modulo `N / p`. -/
+/-- The quotient of the conjugated level-`l N` extra matrix by the level-`N` one has upper-right
+entry `0` modulo `p`, and lower row `(0, 1)` modulo `N / p`. -/
 private theorem conjScale_descendExtraGamma_mul_inv_mod {N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
     (hpsq : ¬ p ^ 2 ∣ N) [NeZero l] (hpl : Nat.Coprime p l) {c : ℤ}
     (hc : descendExtraGamma p (l * N) 1 0 = l * c) :
@@ -190,7 +190,8 @@ private theorem conjScale_descendExtraGamma_mul_inv_mod {N : ℕ} (hp : p.Prime)
 `f ∈ S_k(Γ₁(N), χ)` with `χ` pulled back from `χ₀` modulo `N / p`: conjugating the level-`l N`
 extra matrix `descendExtraGamma p (l N)` back to level `N` by `diag(l, 1)`, then slashing `f` by
 `!![1, 0; 0, p]` times it, is the same as with the level-`N` extra matrix `descendExtraGamma p N`.
-The quotient `δ` of the two candidates is `1` modulo `N / p` and diagonal modulo `p`, so
+The quotient `δ` of the two candidates has upper-right entry `0` modulo `p` and lower row
+`(0, 1)` modulo `N / p` (`conjScale_descendExtraGamma_mul_inv_mod`), so
 `!![1, 0; 0, p] δ = β !![1, 0; 0, p]` with `β ∈ Γ₀(N)` of lower-right entry `1` modulo `N / p`, on
 which the nebentypus is trivial. -/
 private theorem slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq {N : ℕ} (hp : p.Prime)
@@ -237,29 +238,10 @@ private theorem slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq {N : ℕ} (hp 
     rw [hδ, inv_mul_cancel_right]
   rw [hδγ, map_mul, ← mul_assoc, hfacR, mul_assoc, SlashAction.slash_mul, hfβ]
 
-/-- **Multiplication by `l` on the projective line over `ZMod p`**, fixing `∞`: the permutation
-that the index map induces on the descent's index set when `p ∥ N`. -/
-private def onePointMulPerm (hpl : Nat.Coprime p l) : Equiv.Perm (OnePoint (ZMod p)) :=
-  Equiv.optionCongr (Units.mulLeft (ZMod.unitOfCoprime l hpl.symm))
-
-private theorem onePointMulPerm_coe (hpl : Nat.Coprime p l) (x : ZMod p) :
-    onePointMulPerm hpl ((x : ZMod p) : OnePoint (ZMod p)) =
-      (((l : ZMod p) * x : ZMod p) : OnePoint (ZMod p)) := by
-  -- `OnePoint (ZMod p)` is `Option (ZMod p)` by definition but is a plain `def`, so it does not
-  -- unfold at reducible transparency: `Equiv.optionCongr_apply` does not match an application
-  -- typed at `OnePoint`, and neither `simp [onePointMulPerm]` nor a rewrite with it closes the
-  -- goal. `change` restates the value at the definitional unfolding, where `mulLeft` evaluates.
-  change ((((ZMod.unitOfCoprime l hpl.symm : (ZMod p)ˣ) : ZMod p) * x : ZMod p) :
-      OnePoint (ZMod p)) = _
-  rw [ZMod.coe_unitOfCoprime]
-
-private theorem onePointMulPerm_infty (hpl : Nat.Coprime p l) :
-    onePointMulPerm hpl (OnePoint.infty : OnePoint (ZMod p)) = OnePoint.infty := rfl
-
 /-- **Multiplication by `l` on the descent's index set.** On the `p` upper-triangular members it
 is the permutation `ZMod.mulModEquiv` of the residues modulo `p`; the extra member, when there is
-one, is fixed — read through `descendIndexEquiv`, it is the permutation of the projective line
-over `ZMod p` fixing `∞`. -/
+one, is fixed — read through `descendIndexEquiv`, it is the permutation of `OnePoint (ZMod p)`
+fixing `∞`, which for the prime `p` here is the projective line over `ZMod p`. -/
 private noncomputable def descendIndexMulPerm (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ) :
     Equiv.Perm (Fin (descendMatrixCount p N)) :=
   haveI : NeZero p := ⟨hp.ne_zero⟩
@@ -267,7 +249,7 @@ private noncomputable def descendIndexMulPerm (hp : p.Prime) (hpl : Nat.Coprime 
     (finCongr (descendMatrixCount_of_sq_dvd h)).trans
       ((ZMod.mulModEquiv p hpl.symm).trans (finCongr (descendMatrixCount_of_sq_dvd h).symm))
   else
-    (descendIndexEquiv p N h).symm.permCongr (onePointMulPerm hpl)
+    (descendIndexEquiv p N h).symm.permCongr (ZMod.onePointMulPerm p hpl.symm)
 
 /-- **The index map between the two descent families**: the two families have the same size
 (`descendMatrixCount_mul_left_of_coprime`), and the level-`l N` member at an index is the
@@ -291,9 +273,8 @@ private theorem val_descendIndexMulPerm_of_lt (hp : p.Prime) (hpl : Nat.Coprime 
   · simp
   · rename_i h
     rw [Equiv.permCongr_apply, Equiv.symm_symm, descendIndexEquiv_apply_of_lt h hw,
-      onePointMulPerm_coe, descendIndexEquiv_symm_coe_val]
-    rw [show ((l : ZMod p) * ((w : ℕ) : ZMod p)) = ((l * (w : ℕ) : ℕ) : ZMod p) by push_cast; ring,
-      ZMod.val_natCast]
+      ZMod.onePointMulPerm_coe, descendIndexEquiv_symm_coe_val]
+    rw [← Nat.cast_mul, ZMod.val_natCast]
 
 private theorem val_descendIndexMulPerm_of_le (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
     {w : Fin (descendMatrixCount p N)} (hw : p ≤ w.val) :
@@ -311,7 +292,7 @@ private theorem val_descendIndexMulPerm_of_le (hp : p.Prime) (hpl : Nat.Coprime 
   · rename_i hsq
     exact absurd hsq h
   · rw [Equiv.permCongr_apply, Equiv.symm_symm, descendIndexEquiv_apply_of_le h hw,
-      onePointMulPerm_infty, descendIndexEquiv_symm_infty_val, hwp]
+      ZMod.onePointMulPerm_infty, descendIndexEquiv_symm_infty_val, hwp]
 
 private theorem val_descendIndexMulEquiv_of_lt (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
     {v : Fin (descendMatrixCount p (l * N))} (hv : v.val < p) :

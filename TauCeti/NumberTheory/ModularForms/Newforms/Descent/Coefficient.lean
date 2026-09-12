@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.Data.ZMod.Units
 public import TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Descent
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.CuspForm
 public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelCommute
@@ -118,29 +119,6 @@ section Core
 
 variable {M : ℕ}
 
-/-- **A character over a lowered character is lowered.** If `χ'` modulo `N'` and `χ₀ ∘ π` modulo
-`M` have the same pull-back to a common multiple `M'`, where `χ₀` has level `M / p` and
-`M ∣ N'`, then `χ'` is the pull-back of `χ₀ ∘ π` modulo `N' / p`: the pull-back to `M'` is
-injective on characters, by the surjectivity of `ZMod.unitsMap`. -/
-private theorem eq_comp_unitsMap_of_comp_unitsMap_eq {M' N' : ℕ} [NeZero M'] (hpM : p ∣ M)
-    (hpN' : p ∣ N') (hMpN'p : M / p ∣ N' / p) (hMN' : M ∣ N') (hN'M' : N' ∣ M')
-    {χM : (ZMod M)ˣ →* ℂˣ} {χ₀ : (ZMod (M / p))ˣ →* ℂˣ}
-    (hcomp : χM = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpM))) {χ' : (ZMod N')ˣ →* ℂˣ}
-    (h : χ'.comp (ZMod.unitsMap hN'M') = χM.comp (ZMod.unitsMap (hMN'.trans hN'M'))) :
-    χ' = (χ₀.comp (ZMod.unitsMap hMpN'p)).comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN')) := by
-  rw [hcomp, MonoidHom.comp_assoc, ZMod.unitsMap_comp] at h
-  refine MonoidHom.ext fun u ↦ ?_
-  obtain ⟨v, rfl⟩ := ZMod.unitsMap_surjective hN'M' u
-  have hv := congrArg (fun ψ ↦ ψ v) h
-  simp only [MonoidHom.comp_apply] at hv ⊢
-  rw [hv, ← MonoidHom.comp_apply (ZMod.unitsMap _) (ZMod.unitsMap _), ZMod.unitsMap_comp,
-    ← MonoidHom.comp_apply (ZMod.unitsMap _) (ZMod.unitsMap _), ZMod.unitsMap_comp]
-
-/-- **A peeled summand descends to a level-raise of a bundled descent.** For `F` of level
-`Γ₁(M l² / q)` with a nebentypus lying over the lowered one, the descent at level `M l²` of the
-function `V_q F` is `V_q` of the descent of `F`, bundled at level `Γ₁(M l² / p)`:
-`descendSlash_coe_levelRaise_mul_left_of_comp_of_mem_cuspFormCharSpace`, read through
-`descendCuspForm`. -/
 private theorem descendSlash_smul_slash_scaleGL_eq_coe_levelRaise (hp : p.Prime) {l q : ℕ}
     (hpM : p ∣ M) (hq : q.Prime) (hql : q ∣ l) (hpl : Nat.Coprime p l)
     [NeZero (M * l ^ 2 / q)] (hpN' : p ∣ M * l ^ 2 / q) (hMN' : M ∣ M * l ^ 2 / q)
@@ -163,7 +141,7 @@ private theorem descendSlash_smul_slash_scaleGL_eq_coe_levelRaise (hp : p.Prime)
   have : NeZero q := ⟨hq.ne_zero⟩
   have hqMl : q ∣ M * l ^ 2 := dvd_mul_of_dvd_right (hql.trans (dvd_pow_self l two_ne_zero)) M
   have : NeZero (M * l ^ 2) := ⟨fun h ↦ NeZero.ne (M * l ^ 2 / q) (by rw [h, Nat.zero_div])⟩
-  have hcomp' := eq_comp_unitsMap_of_comp_unitsMap_eq hpM hpN'
+  have hcomp' := ZMod.eq_comp_unitsMap_of_comp_unitsMap_eq hpM hpN'
     ((Nat.div_dvd_div_iff_right hpM hpN').mpr hMN') hMN' (Nat.div_dvd_of_dvd hqMl) hcomp hχ'
   refine ⟨hcomp', ?_⟩
   have h := descendSlash_coe_levelRaise_mul_left_of_comp_of_mem_cuspFormCharSpace k hp hpN'
@@ -240,22 +218,13 @@ private theorem exists_coe_eq_sum_coe_levelRaise_of_squarefree [NeZero M] {l : �
     rw [hDdef, FunLike.coe_sub,
       ModularForm.qExpansion_sub one_pos (one_mem_strictPeriods_Gamma1_map _), map_sub,
       _root_.CuspForm.coe_ofLe, qExpansion_coeff_sum_levelRaise, hcoeff n, map_zero, sub_self]
-  -- so the difference is zero
-  have : Fact (IsCusp OnePoint.infty ((Gamma1 (M * l ^ 2)).map (mapGL ℝ))) :=
-    ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos (one_mem_strictPeriods_Gamma1_map _)⟩
-  have hfun : ⇑D = 0 := (qExpansion_eq_zero_iff one_pos
-    (SlashInvariantFormClass.periodic_comp_ofComplex D (one_mem_strictPeriods_Gamma1_map _))
-    (ModularFormClass.holo D) (ModularFormClass.bdd_at_infty D)).mp hD
+  -- so the difference is zero, by q-expansion injectivity on the underlying modular form
+  have hfun : ⇑D = 0 := by
+    have hD0 : (D : ModularForm ((Gamma1 (M * l ^ 2)).map (mapGL ℝ)) k) = 0 :=
+      (ModularForm.qExpansion_eq_zero_iff one_pos (one_mem_strictPeriods_Gamma1_map _) _).mp hD
+    simpa using congrArg (fun f : ModularForm ((Gamma1 (M * l ^ 2)).map (mapGL ℝ)) k ↦ ⇑f) hD0
   rw [hDdef, FunLike.coe_sub, _root_.CuspForm.coe_ofLe, FunLike.coe_sum] at hfun
   exact sub_eq_zero.mp hfun
-
-/-- The descent slash sum of a finite sum of functions is the sum of the descents. -/
-private theorem descendSlash_finset_sum [NeZero p] {ι : Type*} (s : Finset ι) (f : ι → ℍ → ℂ) :
-    descendSlash k p M (∑ i ∈ s, f i) = ∑ i ∈ s, descendSlash k p M (f i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp only [Finset.sum_empty, descendSlash_zero]
-  | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, descendSlash_add, ih]
 
 /-- **Each peeled piece descends to a form supported on the multiples of its prime.** The
 descent at level `M l²` of the level-raise `V_q F_q` is `V_q` of the bundled descent of `F_q`
@@ -322,7 +291,7 @@ theorem qExpansion_coeff_descendSlash_eq_zero_of_coprime [NeZero M] (hp : p.Prim
   have h08a := descendSlash_mul_left_of_coprime k hp hpM (hpl.pow_right 2) (f := ⇑Δ)
     fun ε hε ↦ SlashInvariantFormClass.slash_action_eq Δ _ (Subgroup.mem_map_of_mem _ hε)
   rw [Nat.mul_comm] at h08a
-  rw [← h08a, hΔsum, descendSlash_finset_sum]
+  rw [← h08a, hΔsum, descendSlash_finsetSum]
   -- each summand descends to `V_q` of a bundled descent, supported on the multiples of `q`
   have hterm := exists_descendSlash_coe_levelRaise_eq_coe_and_coeff_eq_zero hp hpM hsq.ne_zero
     hpl hcomp hF hχ' hm
