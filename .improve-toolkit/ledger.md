@@ -34630,3 +34630,63 @@ unilaterally would decide whether #6432 still has a reason to exist.
 Five open. #6093 and #6418 both **10/10 `ready-to-merge`**, awaiting the bot. #6188 rebuilding on
 `1e9fddb17`, three of four blockers addressed. #6432 rebuilding on `3d4b240ee`. #5950 Chris's.
 Merged this watch: **#6426, #6412**.
+
+---
+
+## r668 — 2026-09-12 — **#6418 MERGED**; a ⛔ answered the question a thread could not
+
+### #6418 merged 16:58:30Z — third landing of this watch
+
+`refactor(RepresentationTheory): root the TauCeti.FDRep character API`. Its path: a ⛔ `reuse` block
+(r653, the exact Mathlib duplicate `FDRep.isIntegral_char`), then four rubrics arriving at once when
+the block lifted (r657: the stale `intCharacter` docstring and `intCharacter_eq_iff`'s cohesion
+rooting), then 10/10 and the bot. **Every finding on it was implemented, none contested.**
+
+### #6432: the same three findings I had already solved on #6188
+
+Its board came back 7/10 — `naming`, `api-design`, `generality` and `scope` all ✅, so the r666
+rooting-plus-rename-plus-semilinear landed. The three left were, verbatim, fixes #6188 had already
+taken: the two `show`/`ext` blocks in `map_specialOrthogonalGroup` re-proving the structural lemmas
+(`reuse` and `proof-quality`, same site), and `autCongr_symm_apply`'s docstring describing its proof
+(`documentation`). Ported in one commit.
+
+**Two PRs over the same code converge on the same findings, so a fix is worth porting the moment it
+is accepted anywhere.**
+
+### #6188: `scope` ⛔ — and it decided the ownership question
+
+> *"Keep this PR to rooting and renaming the existing declarations; move both structural lemmas
+> **and the corresponding call-site rewrites** to a follow-up PR."*
+
+r667 had put a question on the `generality` thread: #6188 and #6432 had converged on
+`GeneralLinearGroup/Congr.lean`, and which should own it was not mine to decide. No thread reply
+came — **the ⛔ answered it instead.** The follow-up `scope` asks for already exists: #6432 carries
+both structural lemmas at the semilinear generality with `api-design` ✅.
+
+So #6188 is now the relocation alone — `TauCeti.LinearEquiv` → root `LinearEquiv` for the four
+`extendOfIsLattice` declarations and the three conjugation ones, plus the rename. The structural
+lemmas and their call-site rewrites are gone, and the `Main statements` section went with them.
+
+**An answer can arrive as a finding rather than as a reply.** Asking was still right: the question
+named the two options precisely, and the block picked one of them. Had I chosen unilaterally in r667
+and generalised #6188, this ⛔ would have landed on a PR carrying even more of #6432's topic.
+
+`api-design` asked for those lemmas here; `scope` removed them. Both were satisfiable — just not in
+the same PR, which is exactly what `scope` is for.
+
+### `reuse` has now taken all three positions on the same fact
+
+On the private bridge restored in r667 at `proof-quality`'s request, `reuse` says: *"Delete the
+private theorem and use `apply_symm_apply` directly … exposing the definitional equality with
+`change`/`simpa` if required."* That is position three of three, and the same rubric blocked the
+inline form two rounds ago.
+
+Not acted on: `scope` is a ⛔ and halts the review, so the rest of the board is *not yet run* and
+will be re-judged on a PR that no longer contains the structural lemmas. **Do not chase a 🟡 that
+sits behind a ⛔** — the next board may not carry it at all. Note too that #6432 holds the identical
+private bridge with `reuse` ✅, which is the evidence to quote if it does return.
+
+### Board
+Four open. #6093 10/10 `ready-to-merge`. #6188 rebuilding on `da705df62`, scope-split. #6432
+rebuilding on `98bb7e78f`, three fixes ported. #5950 Chris's.
+Merged this watch: **#6426, #6412, #6418**.
