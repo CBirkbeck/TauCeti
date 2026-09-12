@@ -255,8 +255,8 @@ that integer, extracted as the numerator of the rational value. Read it only thr
 `FDRep.intCharacter_cast`, which is what pins it down; the numerator is a way of naming the
 integer, not extra information.
 
-Being in the `TauCeti.FDRep` namespace rather than the root one, it is not available through dot
-notation on an `FDRep ℚ G`, and is written `intCharacter V g` throughout. -/
+It lives in the root `FDRep` namespace, so dot notation on an `FDRep ℚ G` reaches it: write
+`V.intCharacter g`. -/
 noncomputable def _root_.FDRep.intCharacter (V : FDRep ℚ G) (g : G) : ℤ := (V.character g).num
 
 omit [Finite G] in
@@ -273,7 +273,7 @@ theorem _root_.FDRep.intCharacter_cast (V : FDRep ℚ G) (g : G) :
 /-- **The integer character carries exactly the information of the rational one**: this is the
 elimination principle for `FDRep.intCharacter`, an integer equation between its values
 being the corresponding equation between character values. -/
-theorem intCharacter_eq_iff {V W : FDRep ℚ G} {g h : G} :
+theorem _root_.FDRep.intCharacter_eq_iff {V W : FDRep ℚ G} {g h : G} :
     FDRep.intCharacter V g = FDRep.intCharacter W h ↔ V.character g = W.character h := by
   rw [← Int.cast_inj (α := ℚ), FDRep.intCharacter_cast, FDRep.intCharacter_cast]
 
@@ -281,7 +281,7 @@ theorem intCharacter_eq_iff {V W : FDRep ℚ G} {g h : G} :
 @[simp]
 theorem _root_.FDRep.intCharacter_conj (V : FDRep ℚ G) (g h : G) :
     FDRep.intCharacter V (h * g * h⁻¹) = FDRep.intCharacter V g :=
-  intCharacter_eq_iff.2 (_root_.FDRep.char_conj V g h)
+  _root_.FDRep.intCharacter_eq_iff.2 (_root_.FDRep.char_conj V g h)
 
 /-- **The integer character of a rational representation, as a class function.** -/
 noncomputable def _root_.FDRep.intClassFunction (V : FDRep ℚ G) : ClassFunction ℤ G :=
