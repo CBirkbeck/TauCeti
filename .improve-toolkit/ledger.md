@@ -35022,3 +35022,48 @@ Four open, all green, none owing anything. #6093 (~3h at 10/10), #6432 (~1h25m),
 catching up to its 10/10 board), #5950 Chris's. No new merges this round.
 `improve/submonoid-constsmul-root` stays pushed and gate-clean with **no PR** — step 5 needs fewer
 than three open.
+
+---
+
+## r676 — 2026-09-12 — the "slow bot" was a merge queue, and it is jammed by someone else's PR
+
+### All four PRs are `ready-to-merge`; none has merged since 16:58
+
+#6188's label caught up, so the queue is #5950, #6093, #6188, #6432 — **four green, all
+`ready-to-merge`, nothing owed on any of them.** The last merge was #6418 at 16:58:30Z, ~1h50m ago.
+
+r673 and r675 recorded this as the bot running "past its observed cadence". That framing was wrong,
+and chasing it properly this round produced the actual mechanism.
+
+### What is really happening
+
+* `main` is behind a GitHub **merge queue** (`merge-queue-main` ruleset — which is what
+  `finalize-merge-group-build` and `publish-merge-group-cache` in every PR's check-runs have been
+  telling me all along).
+* Merges are therefore **serialised**, and each one needs its own full **merge-group build**, the
+  same ~20-minute `sandboxed-build` a PR head gets. The "cadence" of 108 min / 2h / 2h20m I had been
+  measuring is queue latency, not a bot deciding when to act.
+* The `Auto-merge` workflow is healthy: 200 runs over 39 minutes, **69 successes**, 54 cancelled by
+  concurrency, 2 failures. It is firing constantly and doing its job.
+* **The queue is jammed on a failed merge-group build.** Run `34711765109`, head branch
+  `gh-readonly-queue/main/pr-6431-…`, created 18:37:33Z, `sandboxed-build` **failure** and
+  `finalize-merge-group-build` **failure**. A fresh merge group started at 18:48:38Z.
+
+**#6431 is not mine.** `roadmap/pathalgebra-acyclic-iff-worker1`, author `chrisromanmiller`,
+labelled `ready-to-merge` and `roadmap/RepresentationTheory` — a roadmap PR, and the standing rule is
+*not yours: anything not under `improve/`*. Nothing to do but record it.
+
+### Two corrections worth keeping
+
+* **I nearly reported "Auto-merge is broken, zero successes."** That read came from a 40-run sample
+  that happened to land entirely inside a burst of queued and concurrency-cancelled runs. Widening
+  to 200 showed 69 successes. *A sample drawn from the last N of a high-rate event stream is a
+  sample of the last few seconds, not of behaviour.*
+* **"The bot is slow" was never a mechanism.** Three rounds recorded a cadence without asking what
+  produced it. The check-runs had named the merge queue on every single PR since the first sweep.
+  *A number you cannot explain is an observation, not a finding.*
+
+### Board
+Four open, all green, all `ready-to-merge`, none owing anything. No new merges.
+`improve/submonoid-constsmul-root` pushed and gate-clean, **no PR** — step 5 needs fewer than three
+open, and the queue jam is what is keeping the count at four.

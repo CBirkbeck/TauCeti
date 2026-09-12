@@ -1,32 +1,39 @@
-# Last round — r675 (2026-09-12 18:40Z)
+# Last round — r676 (2026-09-12 18:50Z)
 
-## 🎉 #6188 is 10/10 — and the whole queue is green
+## The "slow bot" is a merge queue, and it is jammed by a PR that is not mine
 
-`ec1a68d965` came back ten of ten, including the two rubrics that had no satisfiable head one round
-earlier. They did not "clear" so much as **lose their subject**: with the conjugation API gone from
-the diff there is no `autCongr` for `api-design` or `generality` to ask about, and what remains reads
-as what it is — *"a single namespace-rooting refactor of four already-merged declarations"*.
+All four PRs are now `ready-to-merge` and **nothing is owed on any of them**. None has merged since
+#6418 at 16:58:30Z. r673 and r675 wrote that off as the bot running past its cadence; chasing it
+properly this round gave the mechanism:
 
-**#6093 10/10 · #6188 10/10 · #6432 10/10**, plus #5950 (Chris's). **Nothing is owed on any PR.**
+* `main` is behind a GitHub **merge queue** (`merge-queue-main` ruleset) — which is what
+  `finalize-merge-group-build` / `publish-merge-group-cache` in every PR's check-runs have been
+  saying since the first sweep.
+* Merges are **serialised**, each needing its own full merge-group build (~20 min). The "cadence" of
+  108 min / 2h / 2h20m was queue latency, not a decision.
+* `Auto-merge` is healthy — 200 runs over 39 min: **69 success**, 54 concurrency-cancelled, 2 failure.
+* **The queue is jammed**: merge-group run `34711765109`, head
+  `gh-readonly-queue/main/pr-6431-…`, 18:37:33Z, `sandboxed-build` **failure**.
 
-## When rubrics contradict each other across rounds, suspect the boundary
+**#6431 is not mine** — `roadmap/pathalgebra-acyclic-iff-worker1`, author `chrisromanmiller`, a
+roadmap PR. Standing rule: *not yours: anything not under `improve/`*. Recorded, not touched.
 
-Five rounds of cross-firing between #6188 and #6432 — `scope` ⛔ removing what `api-design` asked
-for, `generality` on each asking for the other's topic, `reuse` taking three positions on one
-transport — and the resolution was not an argument on any thread. It was r672 removing `Congr.lean`
-from #6188 so the two PRs stopped overlapping.
+### Two corrections worth keeping
 
-The evidence it was structural: #6188 went from four files and two topics to **one file, sixteen
-lines**, and from three irreconcilable rubrics to ten green, **with no new argument posted**. The
-findings were right every time; the PR boundary was wrong.
+* I nearly reported *"Auto-merge is broken, zero successes"* from a 40-run sample that landed
+  entirely inside a burst of queued and cancelled runs. Widening to 200 showed 69 successes.
+  **A sample of the last N of a high-rate stream is a sample of the last few seconds.**
+* **"The bot is slow" was never a mechanism.** Three rounds recorded a number without asking what
+  produced it, while the check-runs named the merge queue on every PR. **A number you cannot explain
+  is an observation, not a finding.**
 
-## Board (18:40Z) — four open, all green, none owing anything
+## Board (18:50Z) — four open, all green, all `ready-to-merge`, none owing anything
 
 | PR | head | CI | label | whose move |
 |---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **Chris** — human-owned `web/examples/Examples.lean` |
 | **#6093** | `370dad05e` | green | `ready-to-merge` | nobody — **10/10**, ~3h on the bot |
-| **#6188** | `ec1a68d96` | green | (label lagging) | nobody — **10/10** |
+| **#6188** | `ec1a68d96` | green | `ready-to-merge` | nobody — **10/10** |
 | **#6432** | `98bb7e78f` | green | `ready-to-merge` | nobody — **10/10** |
 
 ## Next
@@ -40,9 +47,10 @@ findings were right every time; the PR boundary was wrong.
    Full evidence in HANDOVER §11.
 3. **Re-run `nscand.py` after each merge** — main moved 759 → 735 across this watch, and the WHOLE
    list moves with it. `tools/sweep.py` and `tools/nscand.py` are both in the toolkit now.
-4. #6093 has been 10/10 for ~3h against an observed cadence of 108 min / 2h / 2h20m. Nothing visible
-   blocks it — `mergeable: UNKNOWN` is GitHub's lazy computation and it has zero files outside
-   `TauCeti/`. **Note it; never merge it.**
+4. **Do not re-diagnose the merge wait.** It is a serialised merge queue whose current group failed
+   on **#6431**, a roadmap PR that is not ours. Check `gh run list --limit 300 --json event,...`
+   filtered to `merge_group` if you want the current state; otherwise leave it. Nothing about it is
+   actionable by this role.
 
 ## Settled — with the conditions attached
 
