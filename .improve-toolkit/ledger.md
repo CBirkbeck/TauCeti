@@ -34395,3 +34395,64 @@ unable to show why, and unable to notice that `main` carries the opposite annota
 Five open. #6418 10/10 `ready-to-merge`. #6093 green, board ON-HEAD, one contested rubric.
 #6188 green, board BEHIND. #6432 pushed `4e9891cab`, board BEHIND. #5950 Chris's.
 Merged this watch: **#6426, #6412**.
+
+---
+
+## r664 — 2026-09-12 — the gate reads HEAD, and I gated uncommitted work
+
+### #6432 went red on a rename the gate had just passed
+
+CI: `lint-dot-notation: 759 total, 1293 grandfathered, 3 new` —
+`TauCeti.LinearEquiv.autCongr`, `autCongr_apply_apply`, `autCongr_symm_apply_apply`, plus
+*"baseline entries no longer found"*. Local gate at push time: **`0 new`**.
+
+Two separate defects, and the second is mine.
+
+**1. The baseline keys on declaration NAME.** All three declarations are grandfathered in
+`scripts/lint-dot-notation-baseline.txt` under their old names, so renaming them *in place*
+un-grandfathers all three at once. r653 established that a *stale* baseline entry is harmless —
+removing a violation is fine — and I generalised that too far: **adding a name is not the same as
+removing one.** Rooted, the declarations are not flagged at all and the rename is free; nested, the
+rename is red however it is spelled. So `naming`'s two bullets are coupled, which is a fact about
+the ratchet rather than a preference about ordering.
+
+**2. `prepush.sh` reads `HEAD`, not the working tree.** Every screen is driven by
+`git diff "$BASE"...HEAD` or `git archive HEAD`. In r663 I ran the gate *before committing*, so
+`lint-dot-notation` archived the previous commit — still holding the OLD names — and reported `0
+new` about work that was not in it. The file's own header even claimed it ran "against the working
+tree".
+
+Fixed: prepush now refuses outright on uncommitted `.lean` changes, the same rule as UNRUN — a stale
+pass is worse than no pass. Header corrected to "against HEAD".
+
+**Controls 131 → 133**, built as a throwaway git repo because the defect is about git state rather
+than file content, and mutation-tested:
+
+```
+MUTATION (guard removed):
+  PASS  prepush: a clean tree is not refused (r664)
+  FAIL  prepush: refuses to gate an uncommitted .lean change (r664) -- missing: UNCOMMITTED
+  132 passed, 1 failed
+```
+
+The paired negative matters as much as the positive: it shows the guard does not simply refuse
+everything.
+
+**Every green this session before r664 was taken on a tree I had usually, but not provably,
+committed first.** The guard converts a habit into a precondition.
+
+### #6432 reverted to green, and the coupling reported
+
+The rename is reverted (`ba59a9318`); the `origin/main` merge is kept. Reported on the `naming`
+thread with the CI output — implement, then report the failure — and offered both routes explicitly:
+rebase onto #6188 when it lands, or root-and-rename here in one commit if the reviewer prefers that
+to waiting. The cost of the second is named rather than hidden: `scope` currently reads ✅ on this
+PR as a single-topic generalisation, and this PR exists *because* a `scope` ⛔ separated a
+generalisation from a relocation.
+
+**A PR must not be left red while a question is outstanding.** Revert first, ask second.
+
+### Board
+Five open. #6418 10/10 `ready-to-merge`. #6093 green, board ON-HEAD, one contested `api-design`.
+#6188 green, board BEHIND on `09242e46b`. #6432 green again on `ba59a9318`. #5950 Chris's.
+Merged this watch: **#6426, #6412**.

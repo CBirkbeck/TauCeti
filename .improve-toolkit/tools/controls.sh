@@ -767,6 +767,24 @@ PYEOF
   | neg 'nsjump: a name present on both sides is not a jump source (r649)' \
         "\`Keep.widget\` became"
 
+# prepush's own premise -- r664, from a red #6432.  Every screen in prepush.sh reads HEAD
+# (`git diff BASE...HEAD`, `git archive HEAD`), so uncommitted work is invisible to all of them and
+# the run reports on the PREVIOUS commit.  The rename that broke #6432 was gated while unstaged:
+# `lint-dot-notation` archived HEAD, saw the OLD declaration names, and said `0 new`; CI saw the new
+# names, un-grandfathered by a baseline that keys on name, and said `3 new`.
+# A stale pass is worse than no pass, so the gate must refuse. Built as a throwaway git repo,
+# because the defect is about git state rather than file content.
+PPD=$(mktemp -d)
+( cd "$PPD" && git init -q . && git config user.email c@e.invalid && git config user.name ctl \
+    && mkdir -p TauCeti && printf 'theorem tp_a : True := trivial\n' > TauCeti/A.lean \
+    && git add -A && git commit -qm base ) >/dev/null 2>&1
+( cd "$PPD" && bash "$T/prepush.sh" HEAD 2>&1 ) \
+  | neg "prepush: a clean tree is not refused (r664)" "UNCOMMITTED"
+printf 'theorem tp_b : True := trivial\n' >> "$PPD/TauCeti/A.lean"
+( cd "$PPD" && bash "$T/prepush.sh" HEAD 2>&1 ) \
+  | chk "prepush: refuses to gate an uncommitted .lean change (r664)" "UNCOMMITTED"
+rm -rf "$PPD"
+
 p=$(grep -c P "$RES" || true); f=$(grep -c F "$RES" || true)
 printf '\n  %d passed, %d failed\n' "$p" "$f"
 [ "$f" -eq 0 ] && [ "$p" -gt 0 ]

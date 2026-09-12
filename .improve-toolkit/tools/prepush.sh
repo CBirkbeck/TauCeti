@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# prepush.sh [base-ref] -- run every applicable pre-push screen against the working tree.
+# prepush.sh [base-ref] -- run every applicable pre-push screen against HEAD.
 #
 # WHY THIS EXISTS.  Every blocking finding this session came from a check that EXISTED and was not
 # RUN, or was run with the wrong root:
@@ -23,6 +23,24 @@ ROOT="$(git rev-parse --show-toplevel)"
 BASE="${1:-origin/main}"
 cd "$ROOT" || exit 2
 [ -d TauCeti ] || { echo "prepush: no TauCeti/ here -- run from the worktree root, not a subtree." >&2; exit 2; }
+
+# THE GATE READS `HEAD`, NOT THE WORKING TREE (r664).  Every screen below is driven by
+# `git diff "$BASE"...HEAD` or `git archive HEAD`, so uncommitted work is INVISIBLE to all of them:
+# the run describes the previous commit and calls it green.  That is exactly how #6432 went red on
+# a rename this gate had just passed -- `lint-dot-notation` measured the archived HEAD, which still
+# held the OLD names, while the new ones sat unstaged.  The renamed declarations were no longer
+# grandfathered by `scripts/lint-dot-notation-baseline.txt`, which keys on declaration name, so CI
+# reported `3 new` against a local `0 new`.
+# A stale pass is worse than no pass, so refuse rather than report (the same rule as UNRUN).
+DIRTY=$(git status --porcelain -- '*.lean' 2>/dev/null | grep -v '^??' || true)
+if [ -n "$DIRTY" ]; then
+  {
+    echo "prepush: UNCOMMITTED .lean changes -- every screen here reads HEAD, so this run would"
+    echo "         describe the previous commit, not your work.  Commit (or amend) first."
+    echo "$DIRTY" | sed 's/^/         /'
+  } >&2
+  exit 2
+fi
 
 RES="$(mktemp)"; trap 'rm -f "$RES"' EXIT
 ok()   { printf '  ok    %s\n' "$1"; echo P >> "$RES"; }
