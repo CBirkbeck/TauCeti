@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.GenericPoint
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.FrobeniusFixed
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.Basic
 
 /-!
@@ -37,6 +38,20 @@ theorem tautologicalPoint_oneSubFrobeniusIsogeny :
       genericPoint W - (frobeniusIsogeny W).pullback.tautologicalPoint := by
   rw [← Hom.tautologicalPoint_ofIsogeny, ofIsogeny_oneSubFrobeniusIsogeny]
   simp [Hom.one_def, Hom.id_def]
+
+/-- **The tautological point of `1 − π_q`, transported into any extension, is `Q − Q^q`** for `Q`
+the image there of the generic point. This is the form the embedding count needs: the left side
+depends on the homomorphism only through the pulled-back field, while the right side is visibly a
+difference of a point and its `q`-power image. -/
+theorem map_tautologicalPoint_oneSubFrobeniusIsogeny {Ω : Type*} [Field Ω] [DecidableEq Ω]
+    [Algebra F Ω] (σ : W.FunctionField →ₐ[F] Ω) :
+    letI := Fintype.ofFinite F
+    Point.map σ (oneSubFrobeniusIsogeny W).pullback.tautologicalPoint =
+      Point.map σ (genericPoint W) -
+        Point.map (_root_.FiniteField.frobeniusAlgHom F Ω) (Point.map σ (genericPoint W)) := by
+  let _ := Fintype.ofFinite F
+  rw [tautologicalPoint_oneSubFrobeniusIsogeny, map_sub, tautologicalPoint_eq_map_genericPoint,
+    fieldPullback_frobeniusIsogeny, WeierstrassCurve.Affine.Point.map_frobeniusAlgHom_comm]
 
 end TauCeti.Isogeny
 
