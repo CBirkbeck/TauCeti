@@ -37,6 +37,10 @@ is proved here.
   to be trivial, as for Frobenius.
 * `TauCeti.Isogeny.card_ker_eq_degree_iff`: the cardinality statement is *equivalent* to the
   reverse fixed-field inclusion.
+* `TauCeti.Isogeny.card_ker_eq_degree_of_forall_exists_translation` and
+  `card_ker_eq_degree_iff_isGalois_and_forall_exists_translation`: it holds exactly when the
+  function field is Galois over the pulled-back field and every automorphism over that field is a
+  translation, so those two conditions are what remains of the identity.
 * `TauCeti.Isogeny.card_ker_dvd_separableDegree` and `card_ker_le_separableDegree`: the kernel
   order divides, so is bounded by, the separable degree.
 
@@ -132,6 +136,33 @@ theorem card_ker_eq_degree_iff (φ : Isogeny W₁ W₂) :
   have := φ.finiteDimensional
   rw [ker_def, degree_def]
   exact card_translationFixingSubgroup_eq_finrank_iff W₁ _
+
+/-- **The kernel counts the degree as soon as `K(W₁)` is Galois over the pulled-back field and
+every automorphism over that field is a translation.** This is the shape the point count needs:
+given the Galois hypothesis, what is left of `deg φ = #ker φ` is a statement about automorphisms,
+not about fields — are there automorphisms of `K(W₁)` over `φ^*K(W₂)` beyond the translations by
+kernel points? -/
+theorem card_ker_eq_degree_of_forall_exists_translation (φ : Isogeny W₁ W₂)
+    [IsGalois φ.fieldPullback.fieldRange W₁.FunctionField]
+    (h : ∀ σ ∈ φ.fieldPullback.fieldRange.fixingSubgroup,
+      ∃ P : (W₁⁄F).toAffine.Point, translation W₁ P = σ) :
+    Nat.card φ.ker = φ.degree := by
+  have := φ.finiteDimensional
+  rw [ker_def, degree_def]
+  exact card_translationFixingSubgroup_eq_finrank_of_forall_exists_translation W₁ _ h
+
+/-- **The kernel counts the degree exactly when `K(W₁)` is Galois over the pulled-back field and
+every automorphism over it is a translation.** So the two hypotheses of
+`card_ker_eq_degree_of_forall_exists_translation` are necessary as well as sufficient: this is the
+whole of what is left of `deg φ = #ker φ`, and nothing weaker will give it. -/
+theorem card_ker_eq_degree_iff_isGalois_and_forall_exists_translation (φ : Isogeny W₁ W₂) :
+    Nat.card φ.ker = φ.degree ↔
+      IsGalois φ.fieldPullback.fieldRange W₁.FunctionField ∧
+        ∀ σ ∈ φ.fieldPullback.fieldRange.fixingSubgroup,
+          ∃ P : (W₁⁄F).toAffine.Point, translation W₁ P = σ := by
+  have := φ.finiteDimensional
+  rw [ker_def, degree_def]
+  exact card_translationFixingSubgroup_eq_finrank_iff_isGalois_and_forall_exists_translation W₁ _
 
 /-- **The identity isogeny has trivial kernel.** -/
 @[simp]

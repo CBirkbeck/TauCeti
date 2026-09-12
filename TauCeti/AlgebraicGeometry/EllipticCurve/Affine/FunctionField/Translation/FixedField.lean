@@ -63,6 +63,9 @@ arbitrary finite subgroup of points, no isogeny being needed to state or prove t
   subgroup fixing an intermediate field of finite degree divides the separable degree above it.
 * `WeierstrassCurve.Affine.card_translationFixingSubgroup_eq_finrank_iff`: that order is the full
   degree exactly when the subgroup cuts the field back out.
+* `card_translationFixingSubgroup_eq_finrank_iff_isGalois_and_forall_exists_translation`:
+  equivalently, the extension is Galois and every automorphism over the field is a translation, so
+  neither condition can be weakened.
 
 ## References
 
@@ -301,5 +304,49 @@ theorem card_translationFixingSubgroup_eq_finrank_iff (L : IntermediateField F W
   rw [← finrank_translationFixedField W (translationFixingSubgroup W L), eq_comm,
     ← IntermediateField.eq_iff_finrank_eq_of_le' hle]
   exact ⟨fun h ↦ h.ge, le_antisymm hle⟩
+
+/-- **If `K(W)` is finite Galois over `L` and every automorphism fixing `L` is a translation, then
+`L` is cut out by exactly as many translations as its degree.** With
+`card_translationFixingSubgroup_eq_finrank_iff` this is the reverse inclusion, so it reduces a
+field-theoretic question to a group-theoretic one: given that the extension is Galois, are there
+automorphisms over `L` beyond the translations? -/
+theorem card_translationFixingSubgroup_eq_finrank_of_forall_exists_translation
+    (L : IntermediateField F W.FunctionField) [FiniteDimensional L W.FunctionField]
+    [IsGalois L W.FunctionField]
+    (h : ∀ σ ∈ L.fixingSubgroup, ∃ P : (W⁄F).toAffine.Point, translation W P = σ) :
+    Nat.card (translationFixingSubgroup W L) = Module.finrank L W.FunctionField := by
+  have hsurj : Function.Surjective (toFixingSubgroup W L) := fun σ ↦ by
+    obtain ⟨P, hP⟩ := h σ σ.2
+    exact ⟨⟨P, (mem_translationFixingSubgroup_iff W).2 fun z hz ↦ by
+      rw [hP]; exact (IntermediateField.mem_fixingSubgroup_iff L _).1 σ.2 z hz⟩,
+      Subtype.ext hP⟩
+  -- `IsGalois.card_fixingSubgroup_eq_finrank` counts a fixing subgroup inside a Galois extension
+  -- of the *base*; here `K(W)` is transcendental over `F` and only `K(W)/L` is Galois, so the count
+  -- goes through the automorphism group over `L`
+  rw [Nat.card_congr (Equiv.ofBijective _ ⟨toFixingSubgroup_injective W L, hsurj⟩),
+    Nat.card_congr (IntermediateField.fixingSubgroupEquiv L).toEquiv,
+    IsGalois.card_aut_eq_finrank]
+
+/-- **The fixing subgroup of `L` has order the degree exactly when `K(W)` is Galois over `L` and
+every automorphism over `L` is a translation.** Both hypotheses of
+`card_translationFixingSubgroup_eq_finrank_of_forall_exists_translation` are therefore necessary as
+well as sufficient, so nothing weaker will do. -/
+theorem card_translationFixingSubgroup_eq_finrank_iff_isGalois_and_forall_exists_translation
+    (L : IntermediateField F W.FunctionField) [FiniteDimensional L W.FunctionField] :
+    Nat.card (translationFixingSubgroup W L) = Module.finrank L W.FunctionField ↔
+      IsGalois L W.FunctionField ∧
+        ∀ σ ∈ L.fixingSubgroup, ∃ P : (W⁄F).toAffine.Point, translation W P = σ := by
+  refine ⟨fun h ↦ ?_, fun ⟨hgal, h⟩ ↦
+    card_translationFixingSubgroup_eq_finrank_of_forall_exists_translation W L h⟩
+  -- the count forces the subgroup to cut `L` back out, and then both halves are the Galois
+  -- correspondence for the translation action, which the file already has for a finite subgroup
+  have hfix : translationFixedField W (translationFixingSubgroup W L) = L :=
+    le_antisymm ((card_translationFixingSubgroup_eq_finrank_iff W L).1 h)
+      (le_translationFixedField_translationFixingSubgroup W L)
+  refine ⟨hfix ▸ isGalois_translationFixedField W (translationFixingSubgroup W L), fun σ hσ ↦ ?_⟩
+  rw [← hfix, fixingSubgroup_translationFixedField W (translationFixingSubgroup W L),
+    mem_translationSubgroup_iff] at hσ
+  obtain ⟨P, _, hP⟩ := hσ
+  exact ⟨P, hP⟩
 
 end WeierstrassCurve.Affine
