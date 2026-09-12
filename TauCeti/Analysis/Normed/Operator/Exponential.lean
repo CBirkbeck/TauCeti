@@ -130,6 +130,40 @@ theorem _root_.ContinuousLinearMap.exp_smul_apply_sub_eq_intervalIntegral [Compl
     (hcont.intervalIntegrable 0 t)]
   simp
 
+section RCLike
+
+variable {𝕜 : Type*} [RCLike 𝕜] {Y : Type*} [NormedAddCommGroup Y] [NormedSpace 𝕜 Y]
+  [CompleteSpace Y]
+
+/-- **The exponential of an operator acts exponentially on an eigenvector.** If `B x = μ • x`,
+then `exp (t B) x = exp (t μ) • x`. The statement also covers `x = 0`, without requiring a
+bundled `Module.End.HasEigenvector` witness. -/
+theorem _root_.ContinuousLinearMap.exp_smul_apply_of_apply_eq_smul
+    (B : Y →L[𝕜] Y) {x : Y} {μ : 𝕜} (hx : B x = μ • x) (t : 𝕜) :
+    exp (t • B) x = exp (t * μ) • x := by
+  have hpow : ∀ n : ℕ, ((t • B) ^ n) x = (t * μ) ^ n • x := by
+    intro n
+    induction n with
+    | zero => simp
+    | succ n hn =>
+        calc ((t • B) ^ (n + 1)) x
+            = ((t • B) ^ n) ((t * μ) • x) := by
+              simp [pow_succ, mul_apply_eq_comp, hx, smul_smul]
+          _ = (t * μ) • ((t * μ) ^ n • x) := by rw [map_smul, hn]
+          _ = (t * μ) ^ (n + 1) • x := by rw [smul_smul, ← pow_succ']
+  have hop := (NormedSpace.exp_series_hasSum_exp' (𝕂 := 𝕜) (𝔸 := Y →L[𝕜] Y)
+    (t • B)).mapL (ContinuousLinearMap.apply 𝕜 Y x)
+  have hscalar := (NormedSpace.exp_series_hasSum_exp' (𝕂 := 𝕜) (𝔸 := 𝕜) (t * μ)).smul_const x
+  have hterms :
+      (fun n : ℕ => ContinuousLinearMap.apply 𝕜 Y x
+        ((n.factorial : 𝕜)⁻¹ • (t • B) ^ n)) =
+        fun n : ℕ => ((n.factorial : 𝕜)⁻¹ • (t * μ) ^ n) • x := by
+    funext n
+    simp only [ContinuousLinearMap.apply_apply, smul_apply, hpow, smul_smul, smul_eq_mul]
+  rw [hterms] at hop
+  exact HasSum.unique hop hscalar
+
+end RCLike
 
 end TauCeti
 
