@@ -22,10 +22,11 @@ second.
   over `y` with the fibre of `p` over `h.symm y`.
 
 Together they cover the two ways the fibres of a map vary: `Function.fiberMap` moves along a map
-over a fixed base, while `Equiv.compFiberEquiv` transports fibres along a change of base. Neither
-uses a topology, so both are stated for a bare
-function and a bare equivalence; a `ContinuousMap` or a `Homeomorph` is applied through its
-underlying function or equivalence, and fibre identifications compose in either setting.
+over a fixed base and carries the identity and composition laws it inherits from `Subtype.map`,
+while `Equiv.compFiberEquiv` transports fibres along a change of base and is pinned down on points
+by its coercion lemmas. Neither uses a topology, so both are stated for a bare function and a bare
+equivalence; a `ContinuousMap` or a `Homeomorph` is applied through its underlying function or
+equivalence.
 
 ## Main declarations
 
