@@ -156,6 +156,6 @@ theorem map_frobeniusAlgHom_comm {Ω : Type*} [Field Ω] [DecidableEq Ω] [Algeb
         (Affine.Point.map (W' := W) (FiniteField.frobeniusAlgHom K L) P) =
       Affine.Point.map (W' := W) (FiniteField.frobeniusAlgHom K Ω)
         (Affine.Point.map (W' := W) σ P) := by
-  rw [Affine.Point.map_map, Affine.Point.map_map, TauCeti.FiniteField.comp_frobeniusAlgHom]
+  rw [Affine.Point.map_map, Affine.Point.map_map, AlgHom.comp_frobeniusAlgHom]
 
 end WeierstrassCurve.Affine.Point

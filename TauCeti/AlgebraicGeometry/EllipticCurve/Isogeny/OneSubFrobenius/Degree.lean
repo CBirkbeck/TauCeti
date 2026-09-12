@@ -97,6 +97,7 @@ theorem degree_oneSubFrobeniusIsogeny_le_pointCount :
   exact card_emb_le_pointCount W
 
 /-- **`deg (1 − π_q) = #E(𝔽_q)`**, the first input of the Hasse bound. -/
+@[simp]
 theorem degree_oneSubFrobeniusIsogeny_eq_pointCount :
     (oneSubFrobeniusIsogeny W).degree = W.pointCount :=
   le_antisymm (degree_oneSubFrobeniusIsogeny_le_pointCount W)
