@@ -20,13 +20,25 @@ at a time therefore gives, for `n ≠ 0` coprime to the level and `m` coprime to
 
 Coprimality of `m` and `n` is what makes the formula this simple: each block meets an index
 prime to its own prime, so only the leading term of the prime-power formula survives. At `m = 1`
-this says `a_n(T_n F) `— read on a Hecke eigenvector — is `λ_n a_1(F)`, the coefficient form of
-the eigenvalue system.
+it says `a_1(T_n F) = a_n(F)`; read on a Hecke eigenvector, where `T_n F = λ_n F`, that is
+`a_n(F) = λ_n a_1(F)` — the coefficient form of the eigenvalue system
+(`Newforms/Coefficient.lean`).
 
 ## Main results
 
 * `HeckeRing.GL2.qExpansion_coeff_heckeTCompositeGamma0_of_coprime`: `a_m(T_n F) = a_{m n}(F)`
   for `n ≠ 0` coprime to `N` and `m` coprime to `n`.
+
+## Provenance
+
+Adapted from the AINTLIB `LeanModularForms` project (Chris Birkbeck, Apache-2.0,
+<https://github.com/CBirkbeck/AINTLIB> @ `2baa76f742bdb4fb8ee323fabba41203bd390e08`),
+`projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/FourierHecke.lean` —
+`fourierCoeff_heckeT_n_period_one`, the divisor-sum formula at a general index for the source's
+concretely-defined `heckeT_n`, which at indices coprime to `n` collapses to the single
+coefficient below. Here the operator is the Hecke ring's composite element
+`heckeTCompositeGamma0` acting through `heckeRingHomCuspCharSpace`, so the proof peels its
+prime-power blocks instead of summing over divisors.
 
 ## References
 
