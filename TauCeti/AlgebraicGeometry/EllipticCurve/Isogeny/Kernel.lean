@@ -153,8 +153,8 @@ theorem card_ker_eq_degree_of_forall_exists_translation (φ : Isogeny W₁ W₂)
 
 /-- **The kernel counts the degree exactly when `K(W₁)` is Galois over the pulled-back field and
 every automorphism over it is a translation.** So the two hypotheses of
-`card_ker_eq_degree_of_forall_exists_translation` are necessary as well as sufficient: this is the
-whole of what is left of `deg φ = #ker φ`, and nothing weaker will give it. -/
+`card_ker_eq_degree_of_forall_exists_translation` are jointly necessary as well as sufficient: this
+is what is left of `deg φ = #ker φ`. -/
 theorem card_ker_eq_degree_iff_isGalois_and_forall_exists_translation (φ : Isogeny W₁ W₂) :
     Nat.card φ.ker = φ.degree ↔
       IsGalois φ.fieldPullback.fieldRange W₁.FunctionField ∧
