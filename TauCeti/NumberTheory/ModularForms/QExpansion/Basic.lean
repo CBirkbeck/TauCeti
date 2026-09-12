@@ -35,8 +35,6 @@ stated here rather than at the descent because it mentions only coefficients, di
 * `TauCeti.UpperHalfPlane.qExpansion_coeff_unique`.
 * `TauCeti.smul_qParam_pow_shift_eq`: a shift by `1 / d` fixes every `q`-power that a
   `d`-supported coefficient function leaves alive.
-* `TauCeti.qExpansion_coeff_sub_smul`: one coefficient of `f − c • g`, the linearity of the
-  `q`-expansion read on a single coefficient.
 
 ## References
 
@@ -66,22 +64,6 @@ lemma ModularForm.qExpansionLinearMap_apply {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ
     ModularForm.qExpansionLinearMap hh hΓ k f = qExpansion h f := by
   unfold ModularForm.qExpansionLinearMap
   rfl
-
-/-- **One coefficient of `f − c • g`.** The `q`-expansion is additive and homogeneous where the
-cusp functions are analytic at `0` (`ModularForm.qExpansion_sub`, `ModularForm.qExpansion_smul`);
-this is that linearity read on a single coefficient, the shape in which a recurrence between
-coefficients consumes it. Stated for raw functions, so that it applies to a bundled form through
-`ModularFormClass.analyticAt_cuspFunction_zero` and to a slash sum before it is packaged. -/
-lemma qExpansion_coeff_sub_smul {f g : ℍ → ℂ}
-    (hf : AnalyticAt ℂ (UpperHalfPlane.cuspFunction h f) 0)
-    (hg : AnalyticAt ℂ (UpperHalfPlane.cuspFunction h g) 0) (c : ℂ) (n : ℕ) :
-    (UpperHalfPlane.qExpansion h (f - c • g)).coeff n =
-      (UpperHalfPlane.qExpansion h f).coeff n - c * (UpperHalfPlane.qExpansion h g).coeff n := by
-  have hcg : AnalyticAt ℂ (UpperHalfPlane.cuspFunction h (c • g)) 0 := by
-    simpa [UpperHalfPlane.cuspFunction_smul hg.continuousAt] using
-      AnalyticAt.const_smul (c := c) hg
-  rw [UpperHalfPlane.qExpansion_sub hf hcg, UpperHalfPlane.qExpansion_smul hg, map_sub, map_smul,
-    smul_eq_mul]
 
 /-- **Uniqueness of `q`-expansion coefficients, for a raw function on `ℍ`.** If `f` is given by
 a convergent expansion `f τ = ∑' m, c m * 𝕢 h τ ^ m` and its cusp function is analytic at `0`,
