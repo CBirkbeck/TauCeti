@@ -37,7 +37,9 @@ prime the two operators agree on `S_k(N, χ)`
   and coprime to `N`.
 * `TauCeti.cuspFormsOld_map_heckeTCuspNat_le`: the same in `Submodule.map` form.
 * `TauCeti.coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0_mem_cuspFormsOld`: the same
-  stability, for the Hecke *ring* generator acting on the character space `S_k(N, χ)`.
+  stability, for the Hecke *ring* generator acting on the character space `S_k(N, χ)`, and
+  `TauCeti.cuspFormsOld_comap_map_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0_le` in
+  `Submodule.map` form.
 
 ## Why the coprimality hypothesis
 
@@ -86,6 +88,21 @@ theorem coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0_mem_cuspFormsOld [Ne
         CuspForm ((Gamma1 N).map (mapGL ℝ)) k) ∈ cuspFormsOld N k := by
   rw [HeckeRing.GL2.coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0 k χ hp]
   exact heckeTCuspNat_mem_cuspFormsOld hp hpN hF
+
+/-- **The old part of `S_k(N, χ)` is stable under the Hecke ring**, in the `Submodule.map` form:
+the ring generator at a good prime carries the preimage of `cuspFormsOld` in the character space
+into itself. The ring counterpart of `cuspFormsOld_map_heckeTCuspNat_le`; the old subspace is
+pulled back along the inclusion because the ring acts on `cuspFormCharSpace`, not on all of
+`S_k(Γ₁(N))`. -/
+theorem cuspFormsOld_comap_map_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0_le [NeZero N]
+    (χ : (ZMod N)ˣ →* ℂˣ) (hp : p.Prime) (hpN : Nat.Coprime p N) (k : ℤ) :
+    ((cuspFormsOld N k).comap (cuspFormCharSpace k χ).subtype).map
+        (HeckeRing.GL2.heckeRingHomCuspCharSpace k χ
+          (HeckeRing.GL2.heckeTGeneratorGamma0 N p)) ≤
+      (cuspFormsOld N k).comap (cuspFormCharSpace k χ).subtype := by
+  rw [Submodule.map_le_iff_le_comap]
+  exact fun F hF ↦
+    coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0_mem_cuspFormsOld hp hpN hF
 
 /-- The old subspace is Hecke-stable, in the `Submodule.map` form. -/
 theorem cuspFormsOld_map_heckeTCuspNat_le [NeZero N] (hp : p.Prime)
