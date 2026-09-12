@@ -214,15 +214,15 @@ variable [Field k] [Group G] [Fintype G]
 
 /-- **The Frobenius-Schur indicator** of a finite-dimensional representation presented as an
 object of `FDRep k G`: the indicator `|G|⁻¹ ∑_g χ(g²)` of the underlying representation `V.ρ`. -/
-noncomputable def frobeniusSchurIndicator (V : FDRep k G) : k :=
+noncomputable def _root_.FDRep.frobeniusSchurIndicator (V : FDRep k G) : k :=
   Representation.frobeniusSchurIndicator V.ρ
 
 /-- The two forms of the indicator agree: the `FDRep`-level indicator of `V` is the indicator of
 the underlying representation `V.ρ`. It is a `simp` lemma, so results proved on the module spine
 apply to the `FDRep`-level indicator automatically. -/
 @[simp]
-theorem frobeniusSchurIndicator_def (V : FDRep k G) :
-    frobeniusSchurIndicator V = Representation.frobeniusSchurIndicator V.ρ :=
+theorem _root_.FDRep.frobeniusSchurIndicator_def (V : FDRep k G) :
+    FDRep.frobeniusSchurIndicator V = Representation.frobeniusSchurIndicator V.ρ :=
   (rfl)
 
 end FDRep

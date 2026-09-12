@@ -140,7 +140,7 @@ variable {k G : Type*} [Field k] [IsAlgClosed k] [CharZero k] [Group G] [Finite 
 
 /-- **The degree of an irreducible character divides the order of the group**, for a bundled
 finite-dimensional representation. -/
-theorem finrank_dvd_card (X : FDRep k G) [_root_.Representation.IsIrreducible X.ρ] :
+theorem _root_.FDRep.finrank_dvd_card (X : FDRep k G) [_root_.Representation.IsIrreducible X.ρ] :
     finrank k X ∣ Nat.card G :=
   Representation.finrank_dvd_card X.ρ
 
