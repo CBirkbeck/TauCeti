@@ -35932,3 +35932,52 @@ wording. **146 passed, 0 failed.**
 **Twice now this tool's gap was found by running it, not by reading it** — r682's `NOT-RUN` and
 r687's `RE-RUN`. A classifier over an enum nobody wrote down is wrong until each value has actually
 turned up.
+
+---
+
+## r688 — 2026-09-12 21:35Z — both PRs mid-build; the round's one action is gated on CI
+
+### Board
+
+```
+#6482  awaiting-CI  DRAFT  d955354c5  sandboxed-build in_progress (started 21:20:52Z)
+#6093  awaiting-CI         862770ffa  sandboxed-build in_progress (started 21:30:57Z), board 36f3a07b93 BEHIND
+#6188  ready-to-merge      QUEUED pos=5  (was 7)
+#5950  ready-to-merge      NEVER-QUEUED  Chris's
+```
+
+Both of my active PRs are building the fixes pushed in r687 — #6482's `to_additive` target removal,
+#6093's docstring narrowing. Their boards are BEHIND **by construction**: each names the pre-fix head.
+Steps 3, 4 and 5 are no-ops — nothing is `awaiting-author` or `ci-failed`, no green build has sat an
+hour, and three `improve/*` PRs are open.
+
+#6188 has moved 7 → 5 while untouched. It is in the queue, not ejected: `queuepos.py` reads
+`QUEUED:pos=5`, which is the distinction that matters (#6093 was `EJECTED` at 18:54 and needed
+intervention; this does not).
+
+### The pending action
+
+**`gh pr ready 6482` the moment its build is green.** It is still a DRAFT and a draft draws no review
+however its label reads (r650 lost 64 minutes to exactly that). This is the whole of what this round
+owes, and it is gated on a build that was 14 minutes into a 15–19 minute window at sweep time.
+
+### On the r687 contest
+
+`api-design` on #6093 was answered in-thread rather than by code, because its proposal re-creates what
+`scope` ⛔'d one revision earlier. The board's `tauceti-meta:v1` payload carries `replies_through`,
+so the pipeline does track thread replies — the contest should be read on the next board rather than
+ignored. Worth confirming next round: if the new board still shows `api-design` 🟡 with no
+acknowledgement of the reply, the contest route does not work here and the disagreement needs
+escalating rather than repeating.
+
+### Done: #6482 is green and out of draft
+
+`sandboxed-build: success` on `d955354c5` at 21:37Z — the `to_additive` fix holds, so the branch's
+first-ever CI run needed exactly one correction and the rooting is otherwise clean.
+
+`gh pr ready 6482` → **draft=false**. That matters more than it looks: the review clock is
+`max(CI-green, ready_for_review)` (r651), and until this moment the second term did not exist. The PR
+had been sitting green-ish and invisible. Expect its first board ~32–67 min from 21:37Z, i.e.
+~22:09–22:44Z. **Do not drive it before then.**
+
+#6093's build on `862770ffa` was still running at round end.

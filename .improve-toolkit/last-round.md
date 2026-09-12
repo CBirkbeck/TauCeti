@@ -1,6 +1,24 @@
-# Last round — r687 (2026-09-12 21:31Z)
+# Last round — r688 (2026-09-12 21:38Z)
 
-## #6093 is 8 green / 2 live · #6482 went red on a line it never changed
+## #6482 is GREEN and OUT OF DRAFT · #6093 rebuilding
+
+`sandboxed-build: success` on `d955354c5`, then **`gh pr ready 6482`** — the `to_additive` fix holds
+and the branch's first-ever CI run needed exactly one correction.
+
+**The review clock only starts now.** It is `max(CI-green, ready_for_review)` (r651), and until
+21:37Z the second term did not exist — a draft draws no review however its label reads. First board
+expected **~22:09–22:44Z**. Do not drive before then.
+
+#6093 is rebuilding on `862770ffa` (the `documentation` narrowing). Its board names `36f3a07b93` and
+is BEHIND **by construction** — do not re-fix.
+
+**Next round: confirm the r687 contest was read.** `api-design` on #6093 was answered in-thread, not
+by code, because its proposal re-creates what `scope` ⛔'d one revision earlier. The board payload
+carries `replies_through`, so the pipeline does track replies. If the next board still shows
+`api-design` 🟡 with no sign of the reply, the contest route does not work here and the disagreement
+needs escalating rather than repeating.
+
+## r687 carried over: #6093 was 8 green / 2 live · #6482 went red on a line it never changed
 
 ### #6482 — the rooting broke an attribute it did not touch
 
@@ -57,7 +75,7 @@ answers), push `595ce95af → a220f533d`, create.
 **PR #6482** — draft, base `main`, `TauCeti/Topology/Algebra/ConstMulAction.lean` only, **+5/−9**,
 standalone `Roadmap: none`. Bot labelled it `roadmap/none,awaiting-CI` within the minute.
 
-## ⚠️ FIRST ACTION: mark #6482 ready as soon as CI is green (on `d955354c5`)
+## ~~FIRST ACTION: mark #6482 ready~~ — DONE at 21:37Z
 
 ```
 gh pr ready 6482
@@ -67,13 +85,13 @@ A draft draws **no review**, whatever its label says — r650 lost 64 minutes to
 A CI watch on `a220f533d` was running when this round closed. If it went red, read the log: this
 branch has never had a CI run, only the gate.
 
-## Board (21:31Z)
+## Board (21:38Z)
 
 | PR | head | CI | label | queue | whose move |
 |---|---|---|---|---|---|
-| **#6482** | `d955354c5` | building | `awaiting-CI` | — | **me — `gh pr ready` when green** |
-| **#6093** | `862770ffa` | building | `awaiting-author` | — | nobody — `documentation` fixed, `api-design` contested; board `36f3a07b93` BEHIND **by construction** |
-| **#6188** | `ec1a68d965` | green | `ready-to-merge` | **pos 7** | nobody — 10/10, waiting its turn |
+| **#6482** | `d955354c5` | **green** | `awaiting-CI` | — | nobody — **ready for review since 21:37Z**; first board ~22:09–22:44Z |
+| **#6093** | `862770ffa` | building | `awaiting-CI` | — | nobody — `documentation` fixed, `api-design` contested; board `36f3a07b93` BEHIND **by construction** |
+| **#6188** | `ec1a68d965` | green | `ready-to-merge` | **pos 5** | nobody — 10/10, waiting its turn |
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **NEVER-QUEUED** | **Chris** — human-owned file; the bot cannot enqueue it. **Do not refresh it.** |
 
 #6093's CI has been green since 20:38Z. Board band 46–64 min → ~21:24–21:42Z. **Do not drive**; step
