@@ -36,9 +36,11 @@ and cusp-form character spaces.
 
 ## Main results
 
-* `HeckeRing.GL2.cuspToModFormCharSpace_heckeRingHomCuspCharSpace`: the inclusion of character
-  spaces intertwines the two actions, so a statement about `modFormCharSpace` specialises to
-  `cuspFormCharSpace`.
+* `HeckeRing.GL2.cuspToModFormCharSpace_twistedHeckeSlashCuspFormCharLinearMap`: the inclusion
+  of character spaces intertwines the two actions, so a statement about `modFormCharSpace`
+  specialises to `cuspFormCharSpace`. This is the simp-normal form, and carries `@[simp]`;
+  `HeckeRing.GL2.cuspToModFormCharSpace_heckeRingHomCuspCharSpace` is the same statement on the
+  ring-level operators, for proofs that hold them in that shape.
 
 ## Provenance
 
@@ -404,13 +406,16 @@ noncomputable def heckeRingHomCuspCharSpace :
 /-- **The two Hecke actions agree on a cusp form.** The action on `S_k(N, χ)` and the action on
 `M_k(N, χ)` are built from the same twisted slash sums on functions, so the inclusion of
 character spaces `cuspToModFormCharSpace` intertwines them. This is what lets a statement about
-`modFormCharSpace` be specialised to `cuspFormCharSpace`. -/
--- Not `@[simp]`: `heckeRingHomCuspCharSpace_apply` is itself a simp lemma, so this left-hand
--- side is not in simp-normal form and `simpNF` rejects the annotation.
-theorem cuspToModFormCharSpace_heckeRingHomCuspCharSpace (T : 𝕋 (Delta0 N) (Γ₀Q(N)) ℤ)
-    (f : cuspFormCharSpace k χ) :
-    cuspToModFormCharSpace k χ (heckeRingHomCuspCharSpace k χ T f) =
-      heckeRingHomCharSpace k χ T (cuspToModFormCharSpace k χ f) := by
+`modFormCharSpace` be specialised to `cuspFormCharSpace`.
+
+Stated on the linear extensions rather than on `heckeRingHom{,Cusp}CharSpace`, because
+`heckeRingHomCuspCharSpace_apply` and `heckeRingHomCharSpace_apply` are themselves simp lemmas:
+this is the simp-normal form of the intertwining, and the ring-level statement is definitionally
+this one. -/
+@[simp] theorem cuspToModFormCharSpace_twistedHeckeSlashCuspFormCharLinearMap
+    (T : 𝕋 (Delta0 N) (Γ₀Q(N)) ℤ) (f : cuspFormCharSpace k χ) :
+    cuspToModFormCharSpace k χ (twistedHeckeSlashCuspFormCharLinearMap k χ T f) =
+      twistedHeckeSlashModularFormCharLinearMap k χ T (cuspToModFormCharSpace k χ f) := by
   have hι : cuspToModFormCharSpace k χ f =
       (⟨(f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k),
         (coe_mem_modFormCharSpace_iff k χ _).mpr f.2⟩ : modFormCharSpace k χ) :=
@@ -418,9 +423,18 @@ theorem cuspToModFormCharSpace_heckeRingHomCuspCharSpace (T : 𝕋 (Delta0 N) (�
   rw [hι]
   refine Subtype.ext (DFunLike.coe_injective ?_)
   rw [coe_cuspToModFormCharSpace, ModularFormClass.coe_modularForm,
-    heckeRingHomCharSpace_apply, coe_twistedHeckeSlashModularFormCharLinearMap,
-    heckeRingHomCuspCharSpace_apply]
+    coe_twistedHeckeSlashModularFormCharLinearMap]
   exact coe_twistedHeckeSlashCuspFormCharLinearMap k χ T f
+
+/-- **The two Hecke actions agree on a cusp form**, stated on the ring-level operators. This is
+`cuspToModFormCharSpace_twistedHeckeSlashCuspFormCharLinearMap` read through
+`heckeRingHomCuspCharSpace_apply` and `heckeRingHomCharSpace_apply`, which are definitional; it is
+the form in which the descent and recurrence proofs consume the intertwining. -/
+theorem cuspToModFormCharSpace_heckeRingHomCuspCharSpace (T : 𝕋 (Delta0 N) (Γ₀Q(N)) ℤ)
+    (f : cuspFormCharSpace k χ) :
+    cuspToModFormCharSpace k χ (heckeRingHomCuspCharSpace k χ T f) =
+      heckeRingHomCharSpace k χ T (cuspToModFormCharSpace k χ f) :=
+  cuspToModFormCharSpace_twistedHeckeSlashCuspFormCharLinearMap k χ T f
 
 end HeckeRing.GL2
 
