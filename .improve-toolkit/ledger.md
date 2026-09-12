@@ -34865,3 +34865,50 @@ round of its own, and the cheaper route may arrive on its own.
 ### Board
 Four open. #6093 and #6432 **10/10 `ready-to-merge`**. #6188 7/10, two blockers, board ON-HEAD.
 #5950 Chris's. No new merges. Merged this watch: **#6426, #6412, #6418**.
+
+---
+
+## r672 — 2026-09-12 — #6188 restructured: the deadlock resolved by removing the subject
+
+### Three rubrics, no satisfiable head
+
+`scope` ⛔'d #6188 for bundling an API expansion into a rooting, and reads ✅ **only while that
+expansion is out**. `api-design` then asked for the structural lemmas back; `generality` asked for
+the conjugation API to be stated semilinearly. Both are the diff `scope` refused. Each rubric judges
+the current head, and the reviewer has three times declined "another PR does it".
+
+r671 deferred this one round in case #6432 merged first — it would have made #6188's `Congr.lean`
+hunks evaporate on rebase at no cost. It did not merge (10/10, waiting on the bot ~55 min), and
+#6188's board re-fired the same two, so the deferred move came due.
+
+### The move: stop touching the file
+
+#6188 now changes **one file** — `Algebra/Module/Lattice.lean`, rooting the four `extendOfIsLattice`
+declarations. `GeneralLinearGroup/Congr.lean`, `QuadraticForm/OrthogonalGroup.lean` and
+`BilinearForm/Isometry.lean` are restored to `origin/main` exactly; the diff carries no `congrAut` or
+`autCongr` line at all. Retitled `refactor(Algebra): root the LinearEquiv.extendOfIsLattice API`.
+
+The gate says this is the right shape: **`decldiff` ok — "every declaration change is a rooting" —
+and `rootsurplus` ok**, where both had been failing for rounds on the rename pairs and the new
+lemmas. 13 ok / 2 questions; `lint-dot-notation` 739 → 735, 0 new.
+
+**Removing the subject is a legitimate answer to a finding.** It is not a contest and not a
+capitulation: the work is not dropped, it is in #6432 — 10/10, semilinear, carrying the structural
+lemmas and the call-site rewrites. Both threads were answered saying so.
+
+### The two PRs are now disjoint
+
+Between them they empty `TauCeti.LinearEquiv`: #6188 takes `Lattice.lean`'s four, #6432 takes the
+three conjugation declarations. Neither depends on the other's merge order, and the overlap that
+generated four rounds of cross-firing findings is gone. Each now carries an `nsslice` HALF-ROOTED
+row naming the other's half — a gate question, not a rubric, and answered in both bodies.
+
+**Two PRs over one file will keep drawing each other's findings until they stop overlapping.**
+Porting fixes between them (r668) treated the symptom; this removes the cause.
+
+### Board
+Four open. #6093 and #6432 **10/10 `ready-to-merge`** — #6093 has now waited ~2h35m, past the
+observed bot cadence (108 min, 2h, 2h20m), but merging is never ours. #6188 rebuilding on
+`ec1a68d96`, restructured. #5950 Chris's. No new merges.
+`improve/submonoid-constsmul-root` stays pushed and gate-clean with **no PR** — four open, step 5
+needs fewer than three.
