@@ -180,7 +180,7 @@ theorem heckeRingHomCuspCharSpace_heckeTScalarGamma0 (c : ℕ) (hc : 0 < c)
 image of `heckeTGeneratorRecGamma0_succ_succ` under the ring homomorphism, with the scalar coset
 acting by `χ(p) p^{k−2}` (`heckeRingHomCharSpace_heckeTScalarGamma0`), so that `p • S_p` acts
 by `χ(p) p^{k−1}`. Only positivity of `p` is used. -/
-theorem heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two (hp : 0 < p)
+theorem heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ (hp : 0 < p)
     (hpN : Nat.Coprime p N) (r : ℕ) :
     heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) =
       heckeRingHomCharSpace k χ (heckeTGeneratorGamma0 N p) *
@@ -199,24 +199,24 @@ theorem heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two (hp : 0 < p)
   push_cast
   ring
 
-/-- **The recurrence at a form**: `heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two`
+/-- **The recurrence at a form**: `heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ`
 evaluated. This is the pointwise interface — the shape the coefficient formula below and the
 eigenvalue recurrence of `Newforms/RingEigenvalue.lean` consume. -/
-theorem heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two_apply (hp : 0 < p)
+theorem heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ_apply (hp : 0 < p)
     (hpN : Nat.Coprime p N) (F : modFormCharSpace k χ) (r : ℕ) :
     heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) F =
       heckeRingHomCharSpace k χ (heckeTGeneratorGamma0 N p)
           (heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 1)) F) -
         ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) •
           heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p r) F := by
-  rw [heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two k χ hp hpN r]
+  rw [heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ k χ hp hpN r]
   rfl
 
 /-- **The recurrence on `S_k(N, χ)`**, as an equality of endomorphisms:
 `T_{p^{r+2}} = Tₚ ∘ T_{p^{r+1}} − χ(p) p^{k−1} • T_{p^r}` on the cusp-form character space. The
 modular statement transported along the inclusion of character spaces
 (`cuspToModFormCharSpace_heckeRingHomCuspCharSpace`), which is injective. -/
-theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two (hp : 0 < p)
+theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_succ_succ (hp : 0 < p)
     (hpN : Nat.Coprime p N) (r : ℕ) :
     heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) =
       heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p) *
@@ -227,20 +227,20 @@ theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two (hp : 0 < p)
   refine cuspToModFormCharSpace_injective k χ ?_
   simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.smul_apply, map_sub, map_smul,
     cuspToModFormCharSpace_heckeRingHomCuspCharSpace]
-  exact heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two_apply k χ hp hpN _ r
+  exact heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ_apply k χ hp hpN _ r
 
 /-- **The recurrence at a cusp form**:
-`heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two` evaluated. This is the pointwise
+`heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_succ_succ` evaluated. This is the pointwise
 interface, the shape the coefficient formulas below and `Newforms/RingEigenvalue.lean`
 consume. -/
-theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two_apply (hp : 0 < p)
+theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_succ_succ_apply (hp : 0 < p)
     (hpN : Nat.Coprime p N) (F : cuspFormCharSpace k χ) (r : ℕ) :
     heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) F =
       heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p)
           (heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 1)) F) -
         ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) •
           heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p r) F := by
-  have h := heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two k χ hp hpN r
+  have h := heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_succ_succ k χ hp hpN r
   exact congrArg (fun T : Module.End ℂ (cuspFormCharSpace k χ) ↦ T F) h
 
 end HeckeRing.GL2
