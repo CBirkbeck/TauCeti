@@ -1,0 +1,235 @@
+#!/usr/bin/env python3
+"""parallelns.py <root> [--mathlib <dir>] [--base <ref>] -- files that root one namespace and
+leave a NESTED sibling behind.
+
+The r499 finding, from `api-design` on #5950:
+
+    The refactor leaves the parallel hom-class API in the obsolete project namespace,
+    producing an inconsistent canonical interface.
+
+#5950 rooted all eight `TauCeti.BialgHom` declarations.  One file over, `namespace BialgHomClass`
+still held `map_antipode` -- the generic counterpart of a theorem that had just moved to root.
+Consumers then face `BialgHom.map_antipode` at the root and `TauCeti.BialgHomClass.map_antipode`
+nested: one interface, two namespaces.
+
+NEITHER THE GATE NOR THE RATIO FILTER CAN SEE THIS.  `lint-dot-notation` never flagged
+`map_antipode`, and cannot: its receiver is the instance binder `[BialgHomClass F R A B]`, which
+the gate excludes by design (999 -> 991 across #5950 is exactly the eight BUNDLED theorems).  And
+r490's flagged/TOTAL filter asks about ONE namespace; `BialgHomClass` is a different one, so 8/8
+was true and still incomplete.  The reviewer read the file and saw it in seconds.
+
+Reported only when the file has BOTH: at least one `_root_.`-anchored declaration AND a nested
+namespace block that declares into itself.  A file that roots nothing is not inconsistent, and
+`namespace TauCeti` itself is never the finding (r389/vacuousns: every file opens it).
+
+A row is a QUESTION, not a defect -- the nested namespace may be Tau Ceti's own type, which
+belongs nested.  Judge it; do not root on sight.
+
+WITH `--mathlib <root>` THE TOOL ANSWERS HALF THE QUESTION ITSELF (r529).  That caveat was written
+before `mathlibns.py` existed; now the "is this Tau Ceti's own?" half is decidable.  Given a Mathlib
+checkout, a nested namespace Mathlib declares NOTHING into is dropped: it is Tau Ceti's own notion
+and belongs nested.  #6022 reported three nested namespaces and two -- `IsTotallyReal`,
+`IsMaximalTotallyReal` -- are absent from Mathlib; only `Submodule` was a real question.
+`BialgHomClass` (the #5950 defect) IS in Mathlib, so that row survives, which is the point.
+
+TWO DISTINCTIONS DECIDE WHETHER A ROW IS WORTH ANYTHING (r500).
+  * `_root_.TauCeti.foo` is a TauCeti-INTERNAL rooting -- an escape from a nested block into the
+    project namespace, not a move into Mathlib's.  Ranking without this on top puts
+    `QuiverRep (43)` first, and it is not a candidate at all.
+  * SAME NAME on both sides is necessary but NOT sufficient -- DIRECTION decides.  #5950 was
+    8 rooted against 1 nested: root-dominant, so completing the rooting is obvious.
+    `SymmetricPower.lean` is **1 rooted against 36 nested**, which is the same shape read
+    backwards: there the single rooted declaration is the outlier, and "root the other 36" is a
+    large arguable change, not a consistency fix.  Ranking on the nested count alone put it
+    FIRST and it is the worst row on the list.  So rows print `rooted N / nested M` and sort by
+    root-dominance; #5944's argument -- *"the file already roots its `IsCompact` theorems"*,
+    10/10 with no blocks -- only applies when N is the larger side.
+
+THE ROW IS A PROPERTY OF THE FILE, SO IT BLAMES WHOEVER TOUCHES THE FILE (r593).  `prepush` filters
+these rows to the PR's CHANGED files, which reads as "this PR rooted beside a nested sibling" -- but
+the row is computed from the file's ABSOLUTE state, so a file that already had the shape on `main`
+indicts any PR that opens it for an unrelated reason.  **24 files on green `main` carry a row.**
+`Algebra/Module/Lattice.lean` is one, and a PR rooting `LinearEquiv` there was shown the identical
+`[SAME Submodule: rooted 1 / nested 4]` row that `main` already produces.
+
+That is r551 (`nsbalance`, 4600 false rows on green main) and r592 (`nsslice`, a namespace `main`
+had already rooted) for the THIRD time.  With `--base <ref>` each reported file is re-scanned at the
+base and its row is suppressed when UNCHANGED; a row whose counts this PR actually moved still fires.
+"""
+import sys, os, re, subprocess, tempfile
+from collections import defaultdict
+
+DECL = re.compile(r'^\s*(?:@\[[^\]]*\]\s*)?'
+                  r'(?:public\s+|private\s+|protected\s+|noncomputable\s+|nonrec\s+|scoped\s+|'
+                  r'partial\s+|unsafe\s+)*'
+                  r'(?:theorem|lemma|def|abbrev|instance|structure|class|inductive)\s+'
+                  r"(_root_\.)?([^\W\d][\w.'!?]*)")
+PRIV = re.compile(r'^\s*(?:@\[[^\]]*\]\s*)?(?:public\s+|noncomputable\s+|nonrec\s+|scoped\s+)*private\s')
+NS = re.compile(r'^namespace\s+(\S+)\s*$')
+END = re.compile(r'^end\s+(\S+)\s*$')
+
+def mathlib_namespaces(root):
+    """Namespaces Mathlib declares into, nesting- and compound-aware (via movedopens)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "mo", os.path.join(os.path.dirname(os.path.abspath(__file__)), "movedopens.py"))
+    mo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mo)
+    where, _n = mo.index(root)
+    return {ns for spaces in where.values() for ns in spaces if ns}
+
+def scan(path):
+    try:
+        lines = open(path, encoding='utf-8').read().split('\n')
+    except Exception:
+        return None
+    stack, incomment = [], 0
+    rooted, nested = defaultdict(int), defaultdict(int)
+    npriv = [0]
+    for L in lines:
+        o, c = L.count('/-'), L.count('-/')
+        was = incomment
+        incomment = max(0, incomment + o - c)
+        if was or o > c:
+            continue
+        m = NS.match(L)
+        if m:
+            stack.append(m.group(1))
+            continue
+        m = END.match(L)
+        if m and stack and stack[-1] == m.group(1):
+            stack.pop()
+            continue
+        m = DECL.match(L)
+        if not m:
+            continue
+        if m.group(1):
+            rooted[m.group(2).rsplit('.', 1)[0] if '.' in m.group(2) else m.group(2)] += 1
+        elif len(stack) >= 2:                      # nested inside `namespace TauCeti`
+            # PRIVATE nested declarations are NOT an interface inconsistency (r501): nothing
+            # outside the file can name them, so there is no consumer to confuse.  Counting them
+            # made `GlobalSections.lean` (12 rooted / 1 nested) the top candidate when its single
+            # nested declaration is `private def restrictGlobal`, and `EulerCharacteristic.lean`
+            # (11/9) second when ALL NINE are private.  Two of the three "best" rows were wrong.
+            if not PRIV.match(L):
+                nested['.'.join(stack[1:])] += 1
+            else:
+                npriv[0] += 1
+    return rooted, nested, npriv[0]
+
+def row_of(path, mlns):
+    """the (rooted, nested) signature `scan` gives one file, after --mathlib filtering."""
+    r = scan(path)
+    if r is None:
+        return None
+    rooted, nested, _priv = r
+    if mlns is not None:
+        for k in [k for k in nested if k not in mlns]:
+            del nested[k]
+    if not rooted or not nested:
+        return None
+    return (dict(rooted), sorted(nested.items()))
+
+def main():
+    root = sys.argv[1]
+    mlns = None
+    if "--mathlib" in sys.argv:
+        mlns = mathlib_namespaces(sys.argv[sys.argv.index("--mathlib") + 1])
+    base = None
+    if "--base" in sys.argv:
+        base = sys.argv[sys.argv.index("--base") + 1]
+    nfiles = nrooting = npriv = nabsent = 0
+    rows = []
+    for dp, _, fs in os.walk(root):
+        for f in fs:
+            if not f.endswith('.lean'):
+                continue
+            r = scan(os.path.join(dp, f))
+            if r is None:
+                continue
+            nfiles += 1
+            rooted, nested, priv = r
+            npriv += priv
+            if mlns is not None:
+                dropped = [k for k in nested if k not in mlns]
+                for k in dropped:
+                    del nested[k]
+                nabsent += len(dropped)
+            if not rooted:
+                continue
+            nrooting += 1
+            if nested:
+                rows.append((os.path.join(dp, f).replace(root + "/", ""), dict(rooted),
+                             sorted(nested.items())))
+    def mathlib_rooted(rooted):
+        return {r for r in rooted if r != "TauCeti" and not r.startswith("TauCeti.")}
+    def same(rooted, nested):
+        return sorted(mathlib_rooted(rooted) & {k for k, _ in nested})
+    def sig(rooted, nested):
+        """What the row ASSERTS: the rooted/nested split of the SAME-named namespaces.
+
+        Comparing whole rows is too weak.  A PR that roots `LinearEquiv` in a file whose row is
+        about `Submodule` moves the row text -- `LinearEquiv` leaves the nested list -- while the
+        `[SAME Submodule: rooted 1 / nested 4]` claim, the only thing the row makes, is untouched
+        and entirely `main`'s.  Suppress on the claim, not on the text.
+        """
+        d = dict(nested)
+        return {k: (rooted.get(k, 0), d.get(k, 0)) for k in same(rooted, nested)}
+    def balance(rooted, nested):
+        """(rooted, nested) counts summed over the SAME-named namespaces."""
+        sm = same(rooted, nested)
+        d = dict(nested)
+        return sum(rooted[k] for k in sm), sum(d[k] for k in sm)
+    nprexist = 0
+    if base:
+        keep = []
+        for rel, rooted, nested in rows:
+            g = subprocess.run(['git', 'show', f'{base}:{rel}'], capture_output=True, text=True)
+            if g.returncode:                              # absent at base: a new file owns its row
+                keep.append((rel, rooted, nested)); continue
+            with tempfile.NamedTemporaryFile('w', suffix='.lean', delete=False) as tf:
+                tf.write(g.stdout); tmp = tf.name
+            was = row_of(tmp, mlns)
+            os.unlink(tmp)
+            if was is not None and sig(*was) == sig(rooted, nested):
+                nprexist += 1                             # `main` already had this balance
+            else:
+                keep.append((rel, rooted, nested))
+        rows = keep
+    rows.sort(key=lambda r: (not same(r[1], r[2]),
+                             -(balance(r[1], r[2])[0] - balance(r[1], r[2])[1]),
+                             -balance(r[1], r[2])[0]))
+    nsame = ndom = 0
+    for p, rooted, nested in rows:
+        sm = same(rooted, nested)
+        nsame += bool(sm)
+        if sm:
+            nr, nn = balance(rooted, nested)
+            ndom += nr > nn
+            tag = f"SAME {', '.join(sm)}: rooted {nr} / nested {nn}" + (
+                "  <- root-dominant" if nr > nn else "  (nested-dominant: the ROOTED one is the outlier)")
+        else:
+            tag = "internal" if not mathlib_rooted(rooted) else "--"
+        print(f"[{tag}] {p}\n    rooted: {', '.join(f'{k} ({n})' for k, n in sorted(rooted.items()))}"
+              f"\n    still nested: {', '.join(f'{k} ({n})' for k, n in nested)}")
+    mode = (f"delta vs {base}; {nprexist} row(s) suppressed as already present at the base"
+            if base else
+            "ABSOLUTE scan -- pass --base so rows main already produces are not blamed on this PR (r593)")
+    print(f"# FIRING CONTROL: [{mode}] "
+          f"{nfiles} files, {nrooting} contain a `_root_.`-anchored declaration; "
+          f"{len(rows)} of those ALSO keep a nested namespace that declares into itself, "
+          f"{nabsent} nested namespace(s) dropped as ABSENT from Mathlib (Tau Ceti's own -- "
+          f"`--mathlib` given)" if mlns is not None else "no `--mathlib` given, so every nested "
+          f"namespace is reported including Tau Ceti's own; "
+          f"{npriv} PRIVATE nested declarations were skipped -- they cannot confuse a consumer, "
+          f"and counting them made two of three top rows wrong (r501). "
+          f"{nsame} of them under the SAME name as something the file roots, of which only "
+          f"{ndom} are ROOT-DOMINANT -- and only those carry #5944's argument. A nested-dominant "
+          f"row (SymmetricPower: 1 rooted vs 36 nested) is the same shape read backwards. Rows "
+          f"tagged `internal` root only into TauCeti itself and are NOT candidates. "
+          f"A row is a QUESTION -- the nested namespace may be Tau Ceti's own type, which belongs "
+          f"nested. `lint-dot-notation` cannot raise this: an instance-binder receiver is never "
+          f"flagged, so #5950's ninth declaration moved 999->991 by zero.", file=sys.stderr)
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,161 @@
+#!/usr/bin/env python3
+"""dupsig.py <dir> -- distinct declarations with a character-identical signature.
+
+`dupstate` (r170-r173) tried to find declarations that say the SAME THING and proved that
+needs the elaborator.  This asks a strictly weaker, decidable question: do two declarations
+have the same signature TEXT after their names, modulo whitespace?  If so one of them is
+redundant regardless of what the elaborator thinks, because they elaborate identically.
+
+Deliberately narrow, so that a hit needs no judgement to believe:
+  * the signature is taken from after the declaration NAME to the top-level `:=`, so the
+    names may differ but nothing else may;
+  * whitespace is collapsed, nothing else is normalised -- no binder renaming, no reordering.
+    Normalising more would turn this into `dupstate` and reintroduce its failure mode;
+  * `private` declarations in DIFFERENT files are not duplicates of each other in any useful
+    sense (neither can see the other), so cross-file pairs among privates are dropped.
+
+FIRING CONTROL on stderr: declarations scanned, distinct signatures, collision groups.
+"""
+import re, sys, os
+from collections import defaultdict
+
+DECL = re.compile(r'^(?:@\[[^\]]*\]\s*)?(?:private\s+|protected\s+|noncomputable\s+|nonrec\s+)*'
+                  r'(theorem|lemma)\s+([A-Za-z_Ͱ-Ͽ][^\s(){}\[\]:]*)')
+CMD = re.compile(r'^(?:@\[|/-|(?:theorem|lemma|def|abbrev|instance|structure|class|example|'
+                 r'namespace|end|section|variable|open|attribute|private|protected|'
+                 r'noncomputable|nonrec|deriving|macro|syntax|notation|import|set_option|'
+                 r'omit|include|suppress_compilation)\b)')
+
+
+BINDER_LINE = re.compile(r'^\s*(?:letI|haveI|let|have)\b')
+
+
+def top_level_assign(text):
+    """Index of the `:=` that ends the signature, at bracket depth 0.
+
+    Two ways to get this wrong, both found on live data:
+
+    * `rfind(":=")` picks up a NAMED ARGUMENT's `:=` -- `(X := X)`, `(R := ℤ)` -- which sits
+      inside parentheses, truncating the signature so unrelated declarations collide on a
+      shared prefix (r236).  Depth tracking handles that one.
+    * A `letI`/`haveI` **in the STATEMENT** carries a `:=` at depth **0**, so depth tracking
+      does not help.  `theorem foo … : letI := locTopology P T s S hden; IsOpen …` truncates
+      at the `letI`, and six Huber theorems with identical binders and the same `letI` line
+      collided while their actual conclusions differ (r263).  This shape occurs **779 times**
+      in the tree, so it is not a corner case.
+
+    Both are the r172 cheap-key family: a key that stops at the first thing that looks like a
+    terminator rather than the one that is.
+    """
+    depth = 0
+    line_start = 0
+    for i, ch in enumerate(text):
+        if ch == "\n":
+            line_start = i + 1
+        elif ch in "([{⟨":
+            depth += 1
+        elif ch in ")]}⟩":
+            depth -= 1
+        elif ch == ":" and depth == 0 and text[i:i+2] == ":=":
+            if BINDER_LINE.match(text[line_start:i]):
+                continue          # `letI := …` in the statement, not the proof
+            return i
+    return -1
+
+
+NS = re.compile(r'^namespace\s+(\S+)')
+ENDNS = re.compile(r'^end\b')
+
+
+def scan(path, sigs, stats):
+    L = open(path, encoding="utf-8").read().split("\n")
+    incomment = 0
+    nsstack = []
+    for i, line in enumerate(L):
+        o, c = line.count("/-"), line.count("-/")
+        was = incomment
+        incomment = max(0, incomment + o - c)
+        if was or o > c:
+            continue
+        # A same-FILE collision across different `namespace` blocks is not a duplicate either:
+        # `ModularForm.levelRaise_injective` and `CuspForm.levelRaise_injective` share their
+        # signature text and state it for different types.  r226 labelled only the cross-file
+        # case; this is the same defect one level down. (r236)
+        mns = NS.match(line)
+        if mns:
+            nsstack.append(mns.group(1)); continue
+        if ENDNS.match(line) and nsstack:
+            nsstack.pop(); continue
+        m = DECL.match(line)
+        if not m:
+            continue
+        stats["decls"] += 1
+        priv = line.startswith("private")
+        # gather to the top-level `:=`
+        # Read until a REAL signature terminator exists, not merely until some `:=` appears.
+        # A statement-level `letI := …` satisfies the naive test on its own line, so the gather
+        # stopped there and `top_level_assign` then found nothing -- turning the r263 false
+        # positive into a silent drop of all 779 declarations carrying that shape.
+        chunk, j = [], i
+        while j < len(L) and j < i + 200:
+            chunk.append(L[j])
+            j += 1
+            txt = "\n".join(chunk)
+            if top_level_assign(txt) != -1 and txt.count("(") <= txt.count(")"):
+                break
+        head = "\n".join(chunk)
+        cut = top_level_assign(head)
+        if cut == -1:
+            stats["dropped"] += 1
+            continue
+        name = m.group(2)
+        sig = head[head.index(name) + len(name):cut]
+        sig = " ".join(sig.split())
+        if len(sig) < 20:                      # too short to be a meaningful collision
+            stats["dropped"] += 1
+            continue
+        sigs[sig].append((path, i + 1, name, priv, ".".join(nsstack)))
+
+
+def main():
+    root = sys.argv[1]
+    sigs, stats = defaultdict(list), {"files": 0, "decls": 0, "dropped": 0}
+    for dp, _, fs in os.walk(root):
+        for f in fs:
+            if f.endswith(".lean"):
+                stats["files"] += 1
+                scan(os.path.join(dp, f), sigs, stats)
+    groups = 0
+    for sig, hits in sigs.items():
+        if len(hits) < 2:
+            continue
+        # two privates in different files cannot see each other -- not a duplication
+        if all(h[3] for h in hits) and len({h[0] for h in hits}) == len(hits):
+            continue
+        groups += 1
+        # CROSS-FILE groups are NOT findings: identical text in two files can denote different
+        # things, because the text does not carry its namespace.  Confirmed on the first delta
+        # hit (r226): `isFaithful_standardComodule` appears in `GeneralLinear/StandardComodule`
+        # and `SpecialLinear/StandardComodule` with byte-identical signatures, but
+        # `coordinateHopfAlgebra` resolves to a different Hopf algebra in each -- the second
+        # file writes `GeneralLinear.coordinateHopfAlgebra` explicitly to reach the other one.
+        # Labelled rather than dropped, so the reason travels with the row.
+        files = {h[0] for h in hits}
+        spaces = {h[4] for h in hits}
+        if len(files) > 1:
+            tag = "  [CROSS-FILE -- namespace context differs; NOT a finding]"
+        elif len(spaces) > 1:
+            tag = f"  [DIFFERENT NAMESPACES {sorted(spaces)} -- NOT a finding]"
+        else:
+            tag = ""
+        print(f"=== {len(hits)} declarations share a signature ==={tag}")
+        for p, ln, nm, pr, ns in hits:
+            print(f"    {p}:{ln}\t{'private ' if pr else ''}{ns + '.' if ns else ''}{nm}")
+        print(f"    sig: {sig[:150]}")
+    print(f"# FIRING CONTROL: {stats['files']} files, {stats['decls']} theorems scanned; "
+          f"{stats['dropped']} dropped (no top-level `:=`, or signature under 20 chars); "
+          f"{len(sigs)} distinct signatures; collision groups={groups}", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    main()

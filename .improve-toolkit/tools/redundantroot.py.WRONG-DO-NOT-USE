@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+"""DO NOT USE -- THIS TOOL RECOMMENDS WHAT CI REJECTS (r406).
+
+Its 7 findings became #5872, whose `sandboxed-build` FAILED on
+`gate/scripts/lint-dot-notation.py`: that lint flags declarations under
+`TauCeti.<Mathlib namespace>` that take an argument of the corresponding type, and
+*"explicitly rooted declarations are ignored"*.  So `_root_.TauCeti.QuadraticMap.foo` is
+NOT redundant -- the prefix is the escape hatch that silences the lint.  Stripping it
+created 7 NEW violations.
+
+The repo's endorsed direction is the OPPOSITE: move such declarations to the TYPE's root
+namespace (`_root_.QuadraticMap.foo`), as #5776 did for `Matrix`.  A future tool should
+find those, not these.  Kept only as the record of a refuted hypothesis.
+
+--- original docstring below ---
+
+redundantroot.py <root> -- `_root_.` prefixes that name the enclosing namespace.
+
+A declaration written
+
+    theorem _root_.A.B.foo
+
+from inside `namespace A` / `namespace B` declares exactly the name that a plain
+`theorem foo` declares.  The prefix is pure noise, and worse than noise: `_root_.`
+normally signals that a declaration is deliberately LEAVING its enclosing namespace,
+so a `_root_.` that lands back in the same namespace misleads the reader.
+
+Contrast with `vacuousns.py`, which asks whether a namespace BLOCK contributes any
+name.  This asks whether an individual declaration's escape is real.  The two are
+independent: a block can be vacuous while its declarations escape somewhere genuinely
+else, and a declaration can redundantly re-name its own namespace inside a block that
+is doing real work.
+
+SAFE BY CONSTRUCTION, unlike a wrapper removal.  The declared full name is identical
+before and after, so no use site changes and no reference can stop resolving -- which
+is exactly the failure that r389's red build produced when removing wrappers.  Nothing
+here touches name resolution.
+
+`section` DOES NOT change the namespace, so section boundaries must not pop the stack.
+In `OrthogonalGroup.lean` the declarations sit inside `section Coordinate`, ten
+sections deep, and the enclosing namespace is still `TauCeti.QuadraticMap`; treating a
+`section` as a namespace would have hidden three of the seven rows.
+
+Prints a firing control so a zero is interpretable (r184).
+"""
+import sys, os, re
+
+DECL = re.compile(r'^\s*(?:@\[[^\]]*\]\s*)?'
+                  r'(?:private\s+|protected\s+|noncomputable\s+|nonrec\s+|scoped\s+|partial\s+|unsafe\s+)*'
+                  r'(?:theorem|lemma|def|abbrev|instance|structure|class|inductive)\s+'
+                  r"_root_\.([A-Za-z_][A-Za-z0-9_.']*)")
+NS = re.compile(r'^namespace\s+(\S+)\s*$')
+END = re.compile(r'^end\s+(\S+)\s*$')
+
+def main():
+    root = sys.argv[1]
+    rows = []
+    files = rootdecls = 0
+    for dp, _, fs in os.walk(root):
+        for fn in fs:
+            if not fn.endswith('.lean'):
+                continue
+            files += 1
+            p = os.path.join(dp, fn)
+            try:
+                lines = open(p, encoding='utf-8').read().split('\n')
+            except Exception:
+                continue
+            stack, depth = [], 0
+            for i, x in enumerate(lines):
+                o, c = x.count('/-'), x.count('-/')
+                was = depth
+                depth = max(0, depth + o - c)
+                if was or o > c:
+                    continue
+                m = NS.match(x)
+                if m:
+                    stack.append(m.group(1))
+                    continue
+                m = END.match(x)
+                if m and stack and stack[-1] == m.group(1):
+                    stack.pop()
+                    continue
+                m = DECL.match(x)
+                if m:
+                    rootdecls += 1
+                    cur = '.'.join(stack)
+                    if cur and m.group(1).startswith(cur + '.'):
+                        rows.append((p, i + 1, cur, m.group(1)))
+    for p, ln, cur, name in rows:
+        print(f"{p}:{ln}\tinside `{cur}`\tdeclares `_root_.{name}` -> drop `_root_.{cur}.`")
+    print(f"# FIRING CONTROL: {files} files, {rootdecls} `_root_.`-anchored declarations; "
+          f"{len(rows)} name their own enclosing namespace. `section` is deliberately NOT treated "
+          f"as a namespace (it does not change one).", file=sys.stderr)
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,2 @@
+  TauCeti/Parent.lean:5: TauCeti.TpNs.TpSub.tp_flagged_one
+  TauCeti/Parent.lean:6: TauCeti.TpNs.TpSub.tp_flagged_two

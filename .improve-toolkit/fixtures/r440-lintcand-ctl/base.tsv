@@ -1,0 +1,4 @@
+/Users/mcu22seu/GitHub/TauCeti/.mathlib-quality/improve/fixtures/r440-lintcand-ctl/TauCeti/Twin.lean	["TauCeti.Sheared.tp_twinTarget"]
+/Users/mcu22seu/GitHub/TauCeti/.mathlib-quality/improve/fixtures/r440-lintcand-ctl/TauCeti/Bare.lean	["TauCeti.Wrapped.tp_bareHeader"]
+/Users/mcu22seu/GitHub/TauCeti/.mathlib-quality/improve/fixtures/r440-lintcand-ctl/TauCeti/Refs.lean	["TauCeti.Guarded.tn_dotOnly"]
+/Users/mcu22seu/GitHub/TauCeti/.mathlib-quality/improve/fixtures/r440-lintcand-ctl/TauCeti/Refs.lean	["TauCeti.Guarded.tn_bareUse"]
