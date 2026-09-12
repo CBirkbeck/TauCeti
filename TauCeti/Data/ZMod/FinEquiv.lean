@@ -20,6 +20,8 @@ indexed by `Fin n` rewrites into `ZMod n` arithmetic instead of being unfolded a
 * `ZMod.finEquiv_symm_apply_val`: it is `(ZMod.finEquiv n).symm` that produces the canonical `Fin n`
   representative of an element of `ZMod n`, and that representative's coerced natural value is
   the element's `val`.
+* `ZMod.mulModEquiv`: multiplication by `d` modulo `p` as a permutation of `Fin p`, for `d`
+  coprime to `p`, with its evaluation rule `ZMod.coe_mulModEquiv`.
 -/
 
 public section
@@ -53,5 +55,19 @@ lemma finEquiv_symm_apply_val {n : ℕ} [NeZero n] (z : ZMod n) :
   -- `finEquiv` of its representative, then evaluate with `finEquiv_apply`.
   conv_rhs => rw [← (ZMod.finEquiv n).apply_symm_apply z, finEquiv_apply]
   exact (ZMod.val_natCast_of_lt ((ZMod.finEquiv n).symm z).isLt).symm
+
+/-- **Multiplication by a unit permutes the residues**: for `d` coprime to `p`, the map
+`b ↦ d b mod p` is a permutation of `Fin p`. It is multiplication by the unit
+`ZMod.unitOfCoprime d hdp` of `ZMod p`, read through `ZMod.finEquiv`. -/
+noncomputable def mulModEquiv (p : ℕ) {d : ℕ} [NeZero p] (hdp : Nat.Coprime d p) :
+    Fin p ≃ Fin p :=
+  (ZMod.finEquiv p).toEquiv.trans <|
+    (Units.mulLeft (ZMod.unitOfCoprime d hdp)).trans (ZMod.finEquiv p).toEquiv.symm
+
+/-- **The value of `ZMod.mulModEquiv`**: it sends `b` to the residue `d b mod p`. -/
+@[simp]
+lemma coe_mulModEquiv (p : ℕ) {d : ℕ} [NeZero p] (hdp : Nat.Coprime d p) (b : Fin p) :
+    (mulModEquiv p hdp b : ℕ) = d * (b : ℕ) % p := by
+  simp [mulModEquiv, ZMod.coe_unitOfCoprime, ← Nat.cast_mul, ZMod.val_natCast]
 
 end ZMod
