@@ -9,11 +9,16 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Topology.Compactification.OnePoint.Basic
 
 /-!
-# Multiplication on the projective line over `ZMod p`
+# Multiplication on the one-point extension of `ZMod p`
 
 `ZMod.mulModEquiv` (`Data/ZMod/FinEquiv.lean`) is multiplication by a unit as a permutation of
 the residues themselves. This file is its companion on the one-point extension: multiplication by
 a `d` coprime to `p`, acting on `OnePoint (ZMod p)` and fixing `∞`.
+
+`p` is unrestricted here, so `OnePoint (ZMod p)` is only the affine line with a point adjoined.
+It is the projective line exactly when `p` is prime: for composite `p` the projective line over
+`ZMod p` is larger, carrying `p * ∏ (1 + 1 / ℓ)` points over the primes `ℓ ∣ p` rather than
+`p + 1`. Nothing below needs the identification, so nothing below assumes `p` prime.
 
 ## Main results
 
@@ -26,9 +31,9 @@ public section
 
 namespace ZMod
 
-/-- **Multiplication by `d` on the projective line over `ZMod p`**, fixing `∞`. The companion of
-`ZMod.mulModEquiv` on the one-point extension: `d` coprime to `p` is a unit, so multiplying by it
-permutes the residues, and the permutation is extended by fixing the point at infinity. -/
+/-- **Multiplication by `d` on the one-point extension of `ZMod p`**, fixing `∞`. The companion
+of `ZMod.mulModEquiv`: `d` coprime to `p` is a unit, so multiplying by it permutes the residues,
+and the permutation is extended by fixing the adjoined point. -/
 def onePointMulPerm (p : ℕ) {d : ℕ} (hdp : Nat.Coprime d p) :
     Equiv.Perm (OnePoint (ZMod p)) :=
   Equiv.optionCongr (Units.mulLeft (ZMod.unitOfCoprime d hdp))
