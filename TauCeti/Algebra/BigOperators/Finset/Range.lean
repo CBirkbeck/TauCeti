@@ -28,6 +28,7 @@ square and enlarge a vanishing-off-the-block range.
 * `sum_range_add_add`: splitting a `range n` sum into a prefix, a block, and a suffix.
 * `sum_range_min_add_two`: the two-step recurrence satisfied by the sums
   `∑_{i ≤ min j r} c^i a (j + r − 2i)`.
+* `sum_range_min_zero`: the base case `j = 0` of that recurrence, which its `j + 1` cannot state.
 -/
 
 public section
@@ -147,5 +148,21 @@ theorem sum_range_min_add_two {R : Type*} [Semiring R] (a : ℕ → R) (c : R) (
   -- after which the two sides differ only by the order of the summands
   rw [← h₁, ← h₂]
   abel
+
+/-- **The base case of the two-step recurrence, at `j = 0`.** `S 0 (r+2) + c · S 0 r = S 1 (r+1)`
+for `S j r = ∑_{i ≤ min j r} c^i a (j + r − 2i)`.
+
+`sum_range_min_add_two` states the recurrence only from `j + 1` upwards — its second index is
+`j + 1`, never `0` — so the degenerate case where the `min` pins two of the sums to a single term
+is stated separately here. Together the two cover every `j`. -/
+theorem sum_range_min_zero {R : Type*} [Semiring R] (a : ℕ → R) (c : R) (r : ℕ) :
+    (∑ i ∈ range (min 0 (r + 2) + 1), c ^ i * a (0 + (r + 2) - 2 * i)) +
+        c * ∑ i ∈ range (min 0 r + 1), c ^ i * a (0 + r - 2 * i) =
+      ∑ i ∈ range (min 1 (r + 1) + 1), c ^ i * a (1 + (r + 1) - 2 * i) := by
+  -- `min 0 _ = 0` pins the two sums on the left to their `i = 0` terms, and `min 1 (r+1) = 1`
+  -- pins the one on the right to its `i = 0` and `i = 1` terms
+  have hidx : 1 + (r + 1) = r + 2 := by omega
+  rw [show min 1 (r + 1) + 1 = 2 from by omega]
+  simp [Finset.sum_range_succ, hidx]
 
 end TauCeti
