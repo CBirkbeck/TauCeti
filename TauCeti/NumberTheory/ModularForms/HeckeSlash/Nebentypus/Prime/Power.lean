@@ -215,7 +215,8 @@ theorem qExpansion_coeff_prime_pow_mul_heckeRingHomCuspCharSpace_heckeTGenerator
   have h := qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorRecGamma0 hp hpN
     (cuspToModFormCharSpace k χ F) hpm r j
   rw [← cuspToModFormCharSpace_heckeRingHomCuspCharSpace] at h
-  simpa using h
+  simp only [coe_cuspToModFormCharSpace, ModularFormClass.coe_modularForm] at h
+  exact h
 
 /-- **At an index prime to `p`, `T_{p^r}` reads the coefficient at `p^r m`**, on `S_k(N, χ)`. -/
 theorem qExpansion_coeff_heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_of_not_dvd
@@ -227,6 +228,8 @@ theorem qExpansion_coeff_heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_of_n
   have h :=
     qExpansion_coeff_prime_pow_mul_heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0 hp hpN F hpm
       r 0
-  simpa using h
+  simpa only [heckeRingHomCuspCharSpace_apply, coe_twistedHeckeSlashCuspFormCharLinearMap,
+    pow_zero, one_mul, zero_le, inf_of_le_left, zero_add, Finset.range_one, Finset.sum_singleton,
+    mul_zero, tsub_zero] using h
 
 end HeckeRing.GL2
