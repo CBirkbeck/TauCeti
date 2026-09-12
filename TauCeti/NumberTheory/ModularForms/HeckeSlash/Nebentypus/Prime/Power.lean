@@ -11,9 +11,9 @@ import TauCeti.NumberTheory.ModularForms.QExpansion.Basic
 import TauCeti.Algebra.BigOperators.Finset.Range
 
 /-!
-# Fourier coefficients of the Hecke operators at a prime power on `S_k(N, χ)`
+# Fourier coefficients of the Hecke operators at a prime power on `M_k(N, χ)`
 
-The `Γ₀(N)` Hecke ring acts on `S_k(N, χ)` through `heckeRingHomCuspCharSpace`; at a prime `p`
+The `Γ₀(N)` Hecke ring acts on `M_k(N, χ)` through `heckeRingHomCharSpace`; at a prime `p`
 the generator acts as the classical `Tₚ` (`HeckeSlash/Nebentypus/Prime/Basic.lean`), whose Fourier
 coefficients are `a_m(Tₚ F) = a_{pm}(F) + χ(p) p^{k−1} a_{m/p}(F)`
 (`HeckeSlash/Recurrence.lean`). Along the powers of a good prime `p ∤ N` the ring elements
@@ -35,11 +35,15 @@ coprime to the level.
 
 ## Main results
 
-* `HeckeRing.GL2.heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two` and its pointwise
+* `HeckeRing.GL2.heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two` and its pointwise
   form `..._add_two_apply`: the ring's two-step recurrence on the character space.
-* `HeckeRing.GL2.qExpansion_coeff_prime_pow_mul_heckeTGeneratorRecGamma0`: the formula above.
-* `HeckeRing.GL2.qExpansion_coeff_heckeTGeneratorRecGamma0_of_not_dvd`:
+* `HeckeRing.GL2.qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorRecGamma0`:
+  the formula above.
+* `HeckeRing.GL2.qExpansion_coeff_heckeRingHomCharSpace_heckeTGeneratorRecGamma0_of_not_dvd`:
   `a_m(T_{p^r} F) = a_{p^r m}(F)` at an index `m` prime to `p`.
+* their cusp-form specialisations, named after the modular statements with
+  `heckeRingHomCharSpace` replaced by `heckeRingHomCuspCharSpace`, transported along the
+  inclusion of character spaces `cuspToModFormCharSpace`.
 
 ## Provenance
 
@@ -49,7 +53,7 @@ Adapted from the AINTLIB `LeanModularForms` project (Chris Birkbeck, Apache-2.0,
 `fourierCoeff_heckeT_ppow_period_one` and `fourierCoeff_heckeT_p_period_one`, which state the
 divisor-sum form `a_m(T_{p^v} f) = ∑_{d ∣ gcd(m, p^v)} d^{k−1} χ(d) a_{m p^v / d²}(f)` for the
 source's concretely-defined `heckeT_ppow`. Here the operator is the Hecke ring's own recurrence
-family acting through `heckeRingHomCuspCharSpace`, so the formula is proved from the ring
+family acting through `heckeRingHomCharSpace`, so the formula is proved from the ring
 recurrence and the prime case rather than from coset representatives, and it is stated at the
 indices `p^j m` with `m` prime to `p`, where the divisor sum is the `min` sum above.
 
@@ -71,20 +75,20 @@ namespace HeckeRing.GL2
 variable {N p : ℕ} [NeZero N] {k : ℤ} {χ : (ZMod N)ˣ →* ℂˣ}
 
 /-- **The recurrence, transported to the character space.** For `p` coprime to `N`,
-`T_{p^{r+2}} = Tₚ ∘ T_{p^{r+1}} − χ(p) p^{k−1} • T_{p^r}` as endomorphisms of `S_k(N, χ)`: the
+`T_{p^{r+2}} = Tₚ ∘ T_{p^{r+1}} − χ(p) p^{k−1} • T_{p^r}` as endomorphisms of `M_k(N, χ)`: the
 image of `heckeTGeneratorRecGamma0_succ_succ` under the ring homomorphism, with the scalar coset
-acting by `χ(p) p^{k−2}` (`heckeRingHomCuspCharSpace_heckeTScalarGamma0`), so that `p • S_p` acts
+acting by `χ(p) p^{k−2}` (`heckeRingHomCharSpace_heckeTScalarGamma0`), so that `p • S_p` acts
 by `χ(p) p^{k−1}`. Only positivity of `p` is used. -/
-theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two (hp : 0 < p)
+theorem heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two (hp : 0 < p)
     (hpN : Nat.Coprime p N) (r : ℕ) :
-    heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) =
-      heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p) *
-          heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 1)) -
+    heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) =
+      heckeRingHomCharSpace k χ (heckeTGeneratorGamma0 N p) *
+          heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 1)) -
         ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) •
-          heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p r) := by
+          heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p r) := by
   refine LinearMap.ext fun F ↦ ?_
   rw [heckeTGeneratorRecGamma0_succ_succ, map_sub, map_mul, map_mul, map_zsmul,
-    heckeRingHomCuspCharSpace_heckeTScalarGamma0 k χ p hp hpN]
+    heckeRingHomCharSpace_heckeTScalarGamma0 k χ p hp hpN]
   simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.smul_apply,
     Module.End.one_apply, ← Int.cast_smul_eq_zsmul ℂ, smul_smul]
   congr 2
@@ -94,82 +98,85 @@ theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two (hp : 0 < p)
   push_cast
   ring
 
-/-- **The recurrence at a form**: `heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two`
+/-- **The recurrence at a form**: `heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two`
 evaluated. This is the pointwise interface — the shape the coefficient formula below and the
 eigenvalue recurrence of `Newforms/RingEigenvalue.lean` consume. -/
-theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two_apply (hp : 0 < p)
-    (hpN : Nat.Coprime p N) (F : cuspFormCharSpace k χ) (r : ℕ) :
-    heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) F =
-      heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p)
-          (heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 1)) F) -
+theorem heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two_apply (hp : 0 < p)
+    (hpN : Nat.Coprime p N) (F : modFormCharSpace k χ) (r : ℕ) :
+    heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) F =
+      heckeRingHomCharSpace k χ (heckeTGeneratorGamma0 N p)
+          (heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 1)) F) -
         ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) •
-          heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p r) F := by
-  rw [heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two hp hpN r]
+          heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p r) F := by
+  rw [heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two hp hpN r]
   rfl
 
 /-- **`Tₚ` at an index prime to `p`** reads the coefficient at `p m`: the `p ∣ m` term of the
 recurrence is absent. -/
-theorem qExpansion_coeff_heckeTGeneratorGamma0_of_not_dvd (hp : p.Prime)
-    (hpN : Nat.Coprime p N) (G : cuspFormCharSpace k χ) {m : ℕ} (hpm : ¬ p ∣ m) :
-    (qExpansion 1 (heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p) G :
-        CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff m =
-      (qExpansion 1 (G : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p * m) := by
+theorem qExpansion_coeff_heckeRingHomCharSpace_heckeTGeneratorGamma0_of_not_dvd (hp : p.Prime)
+    (hpN : Nat.Coprime p N) (G : modFormCharSpace k χ) {m : ℕ} (hpm : ¬ p ∣ m) :
+    (qExpansion 1 (heckeRingHomCharSpace k χ (heckeTGeneratorGamma0 N p) G :
+        ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff m =
+      (qExpansion 1 (G : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p * m) := by
   have : NeZero p := ⟨hp.ne_zero⟩
-  rw [coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0 k χ hp G, heckeTCuspNat_def,
-    qExpansion_coeff_heckeSlashGamma1CuspFormEnd_diagCosetGamma1_of_mem_cuspFormCharSpace k hp
+  rw [coe_heckeRingHomCharSpace_heckeTGeneratorGamma0 k χ hp G, heckeTNat_def,
+    qExpansion_coeff_heckeSlashGamma1ModularFormEnd_diagCosetGamma1_of_mem_modFormCharSpace k hp
       hpN χ G.2, ite_eq_right hpm, add_zero]
 
 /-- **`Tₚ` at an index divisible by `p`**: `a_{p^{j+1} m}(Tₚ G) = a_{p^{j+2} m}(G) +
 χ(p) p^{k−1} a_{p^j m}(G)`, the recurrence with both terms present. -/
-theorem qExpansion_coeff_prime_pow_succ_mul_heckeTGeneratorGamma0 (hp : p.Prime)
-    (hpN : Nat.Coprime p N) (G : cuspFormCharSpace k χ) (m j : ℕ) :
-    (qExpansion 1 (heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p) G :
-        CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ (j + 1) * m) =
-      (qExpansion 1 (G : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ (j + 2) * m) +
+theorem qExpansion_coeff_prime_pow_succ_mul_heckeRingHomCharSpace_heckeTGeneratorGamma0
+    (hp : p.Prime) (hpN : Nat.Coprime p N) (G : modFormCharSpace k χ) (m j : ℕ) :
+    (qExpansion 1 (heckeRingHomCharSpace k χ (heckeTGeneratorGamma0 N p) G :
+        ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ (j + 1) * m) =
+      (qExpansion 1 (G : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ (j + 2) * m) +
         (χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1) *
-          (qExpansion 1 (G : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ j * m) := by
+          (qExpansion 1 (G : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ j * m) := by
   have : NeZero p := ⟨hp.ne_zero⟩
   have hdvd : p ∣ p ^ (j + 1) * m := dvd_mul_of_dvd_left (dvd_pow_self p j.succ_ne_zero) m
   have hdiv : p ^ (j + 1) * m / p = p ^ j * m := by
     rw [pow_succ', mul_assoc, Nat.mul_div_cancel_left _ hp.pos]
-  rw [coe_heckeRingHomCuspCharSpace_heckeTGeneratorGamma0 k χ hp G, heckeTCuspNat_def,
-    qExpansion_coeff_heckeSlashGamma1CuspFormEnd_diagCosetGamma1_of_mem_cuspFormCharSpace k hp
+  rw [coe_heckeRingHomCharSpace_heckeTGeneratorGamma0 k χ hp G, heckeTNat_def,
+    qExpansion_coeff_heckeSlashGamma1ModularFormEnd_diagCosetGamma1_of_mem_modFormCharSpace k hp
       hpN χ G.2, ite_eq_left hdvd, hdiv, ← mul_assoc, ← pow_succ']
 
 /-- The formula at `r = 1`, where the ring element is the generator `Tₚ` itself: one term at an
 index prime to `p`, two at a multiple of `p`. -/
-private theorem qExpansion_coeff_prime_pow_mul_heckeTGeneratorGamma0 (hp : p.Prime)
-    (hpN : Nat.Coprime p N) (F : cuspFormCharSpace k χ) {m : ℕ} (hpm : ¬ p ∣ m) (j : ℕ) :
-    (qExpansion 1 (heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p) F :
-        CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ j * m) =
+private theorem qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorGamma0
+    (hp : p.Prime) (hpN : Nat.Coprime p N)
+    (F : modFormCharSpace k χ) {m : ℕ} (hpm : ¬ p ∣ m) (j : ℕ) :
+    (qExpansion 1 (heckeRingHomCharSpace k χ (heckeTGeneratorGamma0 N p) F :
+        ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ j * m) =
       ∑ i ∈ Finset.range (min j 1 + 1),
         ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) ^ i *
-          (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff
+          (qExpansion 1 (F : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff
             (p ^ (j + 1 - 2 * i) * m) := by
   rcases j with _ | j
   · -- `p ∤ m`: one term, at the index `p m`
     have hidx : p * m = p ^ (0 + 1 - 2 * 0) * m := by simp
-    rw [pow_zero, one_mul, qExpansion_coeff_heckeTGeneratorGamma0_of_not_dvd hp hpN F hpm, hidx]
+    rw [pow_zero, one_mul,
+      qExpansion_coeff_heckeRingHomCharSpace_heckeTGeneratorGamma0_of_not_dvd hp hpN F hpm, hidx]
     simp
   · -- `p ∣ p^{j+1} m`: two terms, at `p^{j+2} m` and `p^j m`
     have hmin : min (j + 1) 1 + 1 = 2 := by omega
     have hidx₁ : j + 1 + 1 - 2 * 0 = j + 2 := by omega
     have hidx₂ : j + 1 + 1 - 2 * 1 = j := by omega
-    rw [qExpansion_coeff_prime_pow_succ_mul_heckeTGeneratorGamma0 hp hpN F m j, hmin,
+    rw [qExpansion_coeff_prime_pow_succ_mul_heckeRingHomCharSpace_heckeTGeneratorGamma0 hp hpN F
+        m j, hmin,
       Finset.sum_range_succ, Finset.sum_range_one, hidx₁, hidx₂]
     simp
 
-/-- **The prime-power coefficient formula on `S_k(N, χ)`.** For a good prime `p ∤ N`, an index `m`
+/-- **The prime-power coefficient formula on `M_k(N, χ)`.** For a good prime `p ∤ N`, an index `m`
 prime to `p` and all `j`, `r`, writing `c = χ(p) p^{k−1}`,
 `a_{p^j m}(T_{p^r} F) = ∑_{i ≤ min j r} c^i · a_{p^{j+r−2i} m}(F)`
 (Diamond–Shurman Proposition 5.3.1 at a prime power). -/
-theorem qExpansion_coeff_prime_pow_mul_heckeTGeneratorRecGamma0 (hp : p.Prime)
-    (hpN : Nat.Coprime p N) (F : cuspFormCharSpace k χ) {m : ℕ} (hpm : ¬ p ∣ m) (r j : ℕ) :
-    (qExpansion 1 (heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p r) F :
-        CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ j * m) =
+theorem qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorRecGamma0 (hp : p.Prime)
+    (hpN : Nat.Coprime p N) (F : modFormCharSpace k χ) {m : ℕ} (hpm : ¬ p ∣ m) (r j : ℕ) :
+    (qExpansion 1 (heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p r) F :
+        ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ j * m) =
       ∑ i ∈ Finset.range (min j r + 1),
         ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) ^ i *
-          (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff
+          (qExpansion 1 (F : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff
             (p ^ (j + r - 2 * i) * m) := by
   induction r using Nat.twoStepInduction generalizing j with
   | zero =>
@@ -177,9 +184,9 @@ theorem qExpansion_coeff_prime_pow_mul_heckeTGeneratorRecGamma0 (hp : p.Prime)
     simp
   | one =>
     rw [heckeTGeneratorRecGamma0_one]
-    exact qExpansion_coeff_prime_pow_mul_heckeTGeneratorGamma0 hp hpN F hpm j
+    exact qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorGamma0 hp hpN F hpm j
   | more r ih1 ih2 =>
-    rw [heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two_apply hp.pos hpN F r,
+    rw [heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two_apply hp.pos hpN F r,
       Submodule.coe_sub, Submodule.coe_smul, FunLike.coe_sub, FunLike.coe_smul,
       TauCeti.qExpansion_coeff_sub_smul
         (ModularFormClass.analyticAt_cuspFunction_zero _ one_pos
@@ -192,28 +199,77 @@ theorem qExpansion_coeff_prime_pow_mul_heckeTGeneratorRecGamma0 (hp : p.Prime)
       have h2 := ih2 1
       rw [pow_zero, one_mul] at h1
       rw [pow_one] at h2
-      rw [pow_zero, one_mul, qExpansion_coeff_heckeTGeneratorGamma0_of_not_dvd hp hpN _ hpm, h2,
+      rw [pow_zero, one_mul,
+        qExpansion_coeff_heckeRingHomCharSpace_heckeTGeneratorGamma0_of_not_dvd hp hpN _ hpm, h2,
         h1]
       exact TauCeti.sum_range_min_zero
-        (fun t ↦ (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ t * m))
+        (fun t ↦ (qExpansion 1 (F : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ t * m))
         ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) r
     · -- both terms of the recurrence are present, and the four sums recombine by
       -- `TauCeti.sum_range_min_add_two`
-      rw [qExpansion_coeff_prime_pow_succ_mul_heckeTGeneratorGamma0 hp hpN _ m j, ih2 (j + 2),
+      rw [qExpansion_coeff_prime_pow_succ_mul_heckeRingHomCharSpace_heckeTGeneratorGamma0 hp hpN _
+          m j, ih2 (j + 2),
         ih2 j, ih1 (j + 1)]
       have h := TauCeti.sum_range_min_add_two
-        (fun t ↦ (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ t * m))
+        (fun t ↦ (qExpansion 1 (F : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ t * m))
         ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) j r
       linear_combination h
 
 /-- **At an index prime to `p`, `T_{p^r}` reads the coefficient at `p^r m`**:
 `a_m(T_{p^r} F) = a_{p^r m}(F)`, the `j = 0` case of the prime-power formula. -/
-theorem qExpansion_coeff_heckeTGeneratorRecGamma0_of_not_dvd (hp : p.Prime)
-    (hpN : Nat.Coprime p N) (F : cuspFormCharSpace k χ) {m : ℕ} (hpm : ¬ p ∣ m) (r : ℕ) :
+theorem qExpansion_coeff_heckeRingHomCharSpace_heckeTGeneratorRecGamma0_of_not_dvd (hp : p.Prime)
+    (hpN : Nat.Coprime p N) (F : modFormCharSpace k χ) {m : ℕ} (hpm : ¬ p ∣ m) (r : ℕ) :
+    (qExpansion 1 (heckeRingHomCharSpace k χ (heckeTGeneratorRecGamma0 N p r) F :
+        ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff m =
+      (qExpansion 1 (F : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ r * m) := by
+  have h :=
+    qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorRecGamma0 hp hpN F hpm r 0
+  simpa using h
+
+
+/-! ### The cusp-form specialisations -/
+
+/-- **The recurrence on `S_k(N, χ)`**: the case of
+`heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two_apply` at a cusp form, transported
+along the inclusion of character spaces (`cuspToModFormCharSpace_heckeRingHomCuspCharSpace`). -/
+theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two_apply (hp : 0 < p)
+    (hpN : Nat.Coprime p N) (F : cuspFormCharSpace k χ) (r : ℕ) :
+    heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) F =
+      heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p)
+          (heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 1)) F) -
+        ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) •
+          heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p r) F := by
+  refine cuspToModFormCharSpace_injective k χ ?_
+  simp only [map_sub, map_smul, cuspToModFormCharSpace_heckeRingHomCuspCharSpace]
+  exact heckeRingHomCharSpace_heckeTGeneratorRecGamma0_add_two_apply hp hpN _ r
+
+/-- **The prime-power coefficient formula on `S_k(N, χ)`**: the case of
+`qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorRecGamma0` at a cusp form,
+whose `q`-expansion is that of the modular form underlying it. -/
+theorem qExpansion_coeff_prime_pow_mul_heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0
+    (hp : p.Prime) (hpN : Nat.Coprime p N) (F : cuspFormCharSpace k χ) {m : ℕ} (hpm : ¬ p ∣ m)
+    (r j : ℕ) :
+    (qExpansion 1 (heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p r) F :
+        CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ j * m) =
+      ∑ i ∈ Finset.range (min j r + 1),
+        ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) ^ i *
+          (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff
+            (p ^ (j + r - 2 * i) * m) := by
+  have h := qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorRecGamma0 hp hpN
+    (cuspToModFormCharSpace k χ F) hpm r j
+  rw [← cuspToModFormCharSpace_heckeRingHomCuspCharSpace] at h
+  simpa using h
+
+/-- **At an index prime to `p`, `T_{p^r}` reads the coefficient at `p^r m`**, on `S_k(N, χ)`. -/
+theorem qExpansion_coeff_heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_of_not_dvd
+    (hp : p.Prime) (hpN : Nat.Coprime p N) (F : cuspFormCharSpace k χ) {m : ℕ} (hpm : ¬ p ∣ m)
+    (r : ℕ) :
     (qExpansion 1 (heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p r) F :
         CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff m =
       (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ r * m) := by
-  have h := qExpansion_coeff_prime_pow_mul_heckeTGeneratorRecGamma0 hp hpN F hpm r 0
+  have h :=
+    qExpansion_coeff_prime_pow_mul_heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0 hp hpN F hpm
+      r 0
   simpa using h
 
 end HeckeRing.GL2
