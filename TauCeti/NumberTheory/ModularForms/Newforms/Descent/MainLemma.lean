@@ -164,11 +164,8 @@ theorem exists_eq_sum_of_forall_coprime_prod_qExpansion_coeff_eq_zero {χ : (ZMo
         (by rw [sub_zero, hsum]) hsupp hchar
     · -- descend along `p`, then recurse on the remainder
       -- the lowered unit homomorphism, and the factorisation the descent lemmas take
-      have hψχ : (MulChar.ofUnitHom χ).toUnitHom = χ := MulChar.equivToUnitHom.apply_symm_apply χ
-      have hcomp : χ = (hfac.χ₀).toUnitHom.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)) := by
-        have h := congrArg MulChar.toUnitHom hfac.eq_changeLevel
-        rwa [DirichletCharacter.changeLevel_toUnitHom, hψχ] at h
-      set χ₀ := (hfac.χ₀).toUnitHom with hχ₀
+      obtain ⟨χ₀, hcomp⟩ :=
+        DirichletCharacter.exists_comp_unitsMap_of_factorsThrough (Nat.div_dvd_of_dvd hpN) hfac
       obtain ⟨gp, hgp_supp, hgp_char, hdiff⟩ :=
         exists_mem_qSupportedOnDvdSubmodule_and_qExpansion_coeff_sub_eq_zero hp hpN hsq hLN hpL
           hcomp hf hvan'
