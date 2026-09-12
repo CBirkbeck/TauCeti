@@ -1,6 +1,42 @@
-# Last round — r688 (2026-09-12 21:38Z)
+# Last round — r689 (2026-09-12 21:48Z)
 
-## #6482 is GREEN and OUT OF DRAFT · #6093 rebuilding
+## Both active PRs are GREEN and waiting on boards — nothing owed
+
+```
+#6482  green, ready_for_review 21:38:15Z  -> first board ~22:09-22:44Z
+#6093  green 21:47Z (documentation fix)   -> board ~22:19-22:54Z (round 3)
+#6188  green, QUEUED pos=5
+```
+
+Neither is drivable: step 4's hour has run on neither, and both sit inside the measured 32–67 min
+band where the pipeline posts its own board. Steps 3, 4 and 5 were all no-ops.
+
+## ⚠️ NEXT ROUND: the r687 contest is now a clean test, not a guess
+
+`api-design` on #6093 was answered **in-thread** (r687), because its proposal re-creates exactly what
+`scope` ⛔'d one revision earlier. The reply threaded correctly:
+
+```
+id=3997687656  in_reply_to=3997635757 (the api-design comment)  created=21:30:27Z
+```
+
+**`replies_through` in the `tauceti-meta:v1` payload is a comment-ID WATERMARK, not a count** — I had
+this wrong in r688. It moved `0` (round 1, 20:14Z) → `3996688129` (round 2, 21:22Z), so the pipeline
+does consume replies and records how far it read. My contest is **3997687656 > 3996688129** and was
+posted *after* round 2's board, so on the next board:
+
+* `replies_through` ≥ **3997687656** → the contest **was read**; whatever `api-design` says next is a
+  considered answer to it, and should be treated as a real verdict.
+* still `3996688129` → the contest was **never seen**; repeating it is pointless and the
+  `scope`/`api-design` conflict needs raising another way.
+
+Those two cases have opposite correct responses, which is why the vaguer r688 note ("if `api-design`
+is still 🟡") was not good enough.
+
+**Do not add `compFiberEquiv_refl`/`_trans` back to #6093** in either case — `scope` is ✅ precisely
+because they went, and they are preserved on `handover/fiber-compfiberequiv-laws-deferred`.
+
+## r688 carried over: #6482 is GREEN and OUT OF DRAFT
 
 `sandboxed-build: success` on `d955354c5`, then **`gh pr ready 6482`** — the `to_additive` fix holds
 and the branch's first-ever CI run needed exactly one correction.
@@ -85,12 +121,12 @@ A draft draws **no review**, whatever its label says — r650 lost 64 minutes to
 A CI watch on `a220f533d` was running when this round closed. If it went red, read the log: this
 branch has never had a CI run, only the gate.
 
-## Board (21:38Z)
+## Board (21:48Z)
 
 | PR | head | CI | label | queue | whose move |
 |---|---|---|---|---|---|
-| **#6482** | `d955354c5` | **green** | `awaiting-CI` | — | nobody — **ready for review since 21:37Z**; first board ~22:09–22:44Z |
-| **#6093** | `862770ffa` | building | `awaiting-CI` | — | nobody — `documentation` fixed, `api-design` contested; board `36f3a07b93` BEHIND **by construction** |
+| **#6482** | `d955354c5` | **green** | `awaiting-review` | — | nobody — ready since 21:38Z; first board ~22:09–22:44Z |
+| **#6093** | `862770ffa` | **green** | `awaiting-CI` | — | nobody — `documentation` fixed, `api-design` contested; board `36f3a07b93` BEHIND **by construction** |
 | **#6188** | `ec1a68d965` | green | `ready-to-merge` | **pos 5** | nobody — 10/10, waiting its turn |
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **NEVER-QUEUED** | **Chris** — human-owned file; the bot cannot enqueue it. **Do not refresh it.** |
 

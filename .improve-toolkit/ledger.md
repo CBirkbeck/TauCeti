@@ -35981,3 +35981,63 @@ had been sitting green-ish and invisible. Expect its first board ~32–67 min fr
 ~22:09–22:44Z. **Do not drive it before then.**
 
 #6093's build on `862770ffa` was still running at round end.
+
+---
+
+## r689 — 2026-09-12 21:47Z — the contest is checkable, and I had `replies_through` wrong
+
+### Board
+
+```
+#6482  awaiting-review  d955354c5  ready_for_review 21:38:15Z (8m) -- first board ~22:09-22:44Z
+#6093  awaiting-CI      862770ffa  sandboxed-build in_progress, board 36f3a07b93 BEHIND
+#6188  ready-to-merge   QUEUED pos=5
+#5950  ready-to-merge   NEVER-QUEUED  Chris's
+```
+
+Steps 3, 4 and 5 no-ops. #6482's review clock started 8 minutes ago; #6093 is still building the
+`documentation` narrowing. Nothing to fix, nothing overdue, three `improve/*` PRs open.
+
+### The r687 contest: threaded correctly, and now falsifiable
+
+The reply posted as a genuine thread reply, not an orphan:
+
+```
+id=3997687656  in_reply_to=3997635757  path=TauCeti/Logic/Function/Fiber.lean  created=21:30:27Z
+```
+
+— `3997635757` being the `api-design` comment, and that thread now holds two comments.
+
+**And I had `replies_through` wrong in r688.** I called it a count and read "0" as "none tracked". It
+is a **comment-ID watermark**, and it has moved:
+
+```
+round 1  board 20:14Z  replies_through 0
+round 2  board 21:22Z  replies_through 3996688129
+```
+
+So the pipeline demonstrably consumes replies and records how far it got. My contest is
+**3997687656 > 3996688129**, posted at 21:30Z — *after* round 2's board. That makes the next board a
+clean test rather than a guess:
+
+* `replies_through` ≥ **3997687656** → the contest was read, and whatever `api-design` then says is a
+  considered answer to it.
+* still `3996688129` → the contest was never seen, and repeating it is pointless; the disagreement
+  needs raising another way.
+
+This is worth more than the vaguer r688 note ("if `api-design` is still 🟡 with no sign of the
+reply"), which could not have distinguished *unread* from *read and rejected* — two situations with
+opposite correct responses.
+
+### #6093 green on the documentation fix
+
+`sandboxed-build: success` on `862770ffa` at 21:47Z. The narrowed overview builds, so both active PRs
+are now green and waiting only on boards:
+
+```
+#6482  green, ready_for_review 21:38Z  -> board ~22:09-22:44Z
+#6093  green 21:47Z                    -> board ~22:19-22:54Z (round 3)
+```
+
+Neither is drivable: step 4's hour has not run on either, and both are inside the measured 32–67 min
+band where the pipeline posts its own.
