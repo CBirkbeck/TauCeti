@@ -35680,3 +35680,46 @@ rooted multiplicative one. It is written `_root_.AddSubmonoid.continuousConstVAd
 
 Nothing else was owed this round. Rather than manufacture work, the time went into the one thing that
 is genuinely on the critical path and currently blocked only on a merge landing.
+
+---
+
+## r684 — 2026-09-12 20:47Z — a wait round, reported as one
+
+### Board
+
+```
+#6432  ready-to-merge  GREEN  QUEUED pos=3   (was 4)
+#6188  ready-to-merge  GREEN  QUEUED pos=10  (was 11)
+#6093  awaiting-review GREEN  board 2231e763ee BEHIND (head 36f3a07b9) -- being judged now
+#5950  ready-to-merge  GREEN  NEVER-QUEUED   Chris's
+```
+
+#6093 moved `awaiting-CI` → **`awaiting-review`**: the pipeline picked up the green build on the scope
+fix and is judging it. Its board still reads the pre-fix head, which is BEHIND **by construction** —
+not a signal, and not a reason to re-fix. New board expected ~21:24–21:42Z, the 46–64 min band from
+CI-green at 20:38Z. **Step 4's clock has run eight minutes**; driving now would burn ~$16 to reproduce
+a board already in flight.
+
+Steps 3, 4 and 5 all no-ops. No `improve/*` merge since #6418 — pure position. At ~25–30 min per
+merge, **#6432 at position 3 should land within the hour, and that is what fires step 5.**
+
+### The one change: step 5's recipe now refreshes before it opens
+
+`improve/submonoid-constsmul-root` is **4 behind** main (tip `d8792ef1d`), and
+`TauCeti/Topology/Algebra/ConstMulAction.lean` is untouched there — still `namespace Submonoid`
+nested, still the same two instances. So the branch and the staged body both remain accurate, and the
+"1 of 2 flagged" claim in the body still holds. Neither #6432 nor #6093 touches that file, so merging
+them cannot change it either.
+
+I did **not** refresh the branch. It drifts ~4 commits an hour, so refreshing on a round where step 5
+has not fired is churn — it is stale again before it is used. The fix is to put the refresh *in the
+step-5 recipe*, which now reads merge → gate → push → `gh pr create`, rather than relying on a
+refresh done at some earlier round. That is the r679 lesson applied at the right moment instead of
+speculatively: a scout is only worth refreshing when it is about to be opened.
+
+### On wait rounds
+
+Nothing durable was found this round, and nothing was invented to fill it. The three preceding wait
+rounds each produced real work — `queuepos.py`, `ghostref.py`, the `threadread.py` LIVE/NOT-RUN split,
+the staged PR body — because each had a specific defect or gap behind it. This one did not. **The
+correct output of a round with nothing owed is an accurate report that nothing is owed.**
