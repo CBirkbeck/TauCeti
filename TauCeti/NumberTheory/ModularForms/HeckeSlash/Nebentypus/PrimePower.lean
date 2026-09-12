@@ -4,10 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: The Tau Ceti contributors
 -/
 module
-public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.PrimePower
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Scalar
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Recurrence
+import TauCeti.Algebra.BigOperators.Finset.Range
 
 /-!
 # Fourier coefficients of the Hecke operators at a prime power on `S_k(N, χ)`
@@ -24,6 +24,9 @@ to `p`,
 
 `a_{p^j m}(T_{p^r} F) = ∑_{i ≤ min j r} c^i · a_{p^{j+r−2i} m}(F)`,
 
+the two-step recurrence between such sums being
+`TauCeti.sum_range_min_add_two` (`Algebra/BigOperators/Finset/Range.lean`),
+
 the prime-power case of Diamond–Shurman Proposition 5.3.1, and in particular
 `a_m(T_{p^r} F) = a_{p^r m}(F)`. The composite operators are ordered products of these blocks
 (`heckeTCompositeGamma0`), so this is the input for the coefficient formula at a general index
@@ -34,6 +37,18 @@ coprime to the level.
 * `HeckeRing.GL2.qExpansion_coeff_prime_pow_mul_heckeTGeneratorRecGamma0`: the formula above.
 * `HeckeRing.GL2.qExpansion_coeff_heckeTGeneratorRecGamma0_of_not_dvd`:
   `a_m(T_{p^r} F) = a_{p^r m}(F)` at an index `m` prime to `p`.
+
+## Provenance
+
+Adapted from the AINTLIB `LeanModularForms` project (Chris Birkbeck, Apache-2.0,
+<https://github.com/CBirkbeck/AINTLIB> @ `2baa76f742bdb4fb8ee323fabba41203bd390e08`),
+`projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/FourierHecke.lean` —
+`fourierCoeff_heckeT_ppow_period_one` and `fourierCoeff_heckeT_p_period_one`, which state the
+divisor-sum form `a_m(T_{p^v} f) = ∑_{d ∣ gcd(m, p^v)} d^{k−1} χ(d) a_{m p^v / d²}(f)` for the
+source's concretely-defined `heckeT_ppow`. Here the operator is the Hecke ring's own recurrence
+family acting through `heckeRingHomCuspCharSpace`, so the formula is proved from the ring
+recurrence and the prime case rather than from coset representatives, and it is stated at the
+indices `p^j m` with `m` prime to `p`, where the divisor sum is the `min` sum above.
 
 ## References
 
@@ -52,27 +67,41 @@ namespace HeckeRing.GL2
 
 variable {N p : ℕ} [NeZero N] {k : ℤ} {χ : (ZMod N)ˣ →* ℂˣ}
 
-/-- **The recurrence, transported to the character space.** For `p ∤ N`,
-`T_{p^{r+2}} F = Tₚ (T_{p^{r+1}} F) − χ(p) p^{k−1} • T_{p^r} F`: the image of
-`heckeTGeneratorRecGamma0_succ_succ` under the ring homomorphism, with `p • S_p` acting by
-`χ(p) p^{k−1}`. -/
-theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two (hp : p.Prime)
+/-- **The recurrence, transported to the character space.** For `p` coprime to `N`,
+`T_{p^{r+2}} = Tₚ ∘ T_{p^{r+1}} − χ(p) p^{k−1} • T_{p^r}` as endomorphisms of `S_k(N, χ)`: the
+image of `heckeTGeneratorRecGamma0_succ_succ` under the ring homomorphism, with the scalar coset
+acting by `χ(p) p^{k−2}` (`heckeRingHomCuspCharSpace_heckeTScalarGamma0`), so that `p • S_p` acts
+by `χ(p) p^{k−1}`. Only positivity of `p` is used. -/
+theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two (hp : 0 < p)
+    (hpN : Nat.Coprime p N) (r : ℕ) :
+    heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) =
+      heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p) *
+          heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 1)) -
+        ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) •
+          heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p r) := by
+  refine LinearMap.ext fun F ↦ ?_
+  rw [heckeTGeneratorRecGamma0_succ_succ, map_sub, map_mul, map_mul, map_zsmul,
+    heckeRingHomCuspCharSpace_heckeTScalarGamma0 k χ p hp hpN]
+  simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.smul_apply,
+    Module.End.one_apply, ← Int.cast_smul_eq_zsmul ℂ, smul_smul]
+  congr 2
+  have hp0 : (p : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hp.ne'
+  have hk : k - 1 = k - 2 + 1 := by ring
+  rw [hk, zpow_add_one₀ hp0]
+  push_cast
+  ring
+
+/-- The recurrence at a form: `heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two`
+evaluated, in the shape the coefficient induction below consumes. -/
+theorem heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two_apply (hp : 0 < p)
     (hpN : Nat.Coprime p N) (F : cuspFormCharSpace k χ) (r : ℕ) :
     heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 2)) F =
       heckeRingHomCuspCharSpace k χ (heckeTGeneratorGamma0 N p)
           (heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p (r + 1)) F) -
         ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) •
           heckeRingHomCuspCharSpace k χ (heckeTGeneratorRecGamma0 N p r) F := by
-  rw [heckeTGeneratorRecGamma0_succ_succ, map_sub, map_mul, map_mul, map_zsmul,
-    heckeRingHomCuspCharSpace_heckeTScalarGamma0 k χ p hp.pos hpN]
-  simp only [LinearMap.sub_apply, Module.End.mul_apply, LinearMap.smul_apply,
-    Module.End.one_apply, ← Int.cast_smul_eq_zsmul ℂ, smul_smul]
-  congr 2
-  have hp0 : (p : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hp.ne_zero
-  have hk : k - 1 = k - 2 + 1 := by ring
-  rw [hk, zpow_add_one₀ hp0]
-  push_cast
-  ring
+  rw [heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two hp hpN r]
+  rfl
 
 omit [NeZero N] in
 /-- The coefficients of a difference `x − c • y` in the character space. -/
@@ -116,58 +145,6 @@ theorem qExpansion_coeff_prime_pow_succ_mul_heckeTGeneratorGamma0 (hp : p.Prime)
     qExpansion_coeff_heckeSlashGamma1CuspFormEnd_diagCosetGamma1_of_mem_cuspFormCharSpace k hp
       hpN χ G.2, ite_eq_left hdvd, hdiv, ← mul_assoc, ← pow_succ']
 
-/-- The index shift the two-step recurrence performs on the sums, on an abstract sequence: with
-`S j r = ∑_{i ≤ min j r} c^i a (j + r − 2i)`,
-`S (j+2) (r+1) + c · S j (r+1) = S (j+1) (r+2) + c · S (j+1) r`.
-Every one of the four sums is a sum of `A i = c^i a (j + r + 3 − 2i)`, the two scalar multiples
-with the index shifted by one, and the upper limits pair up:
-`min j (r+1) + 1 = min (j+1) (r+2)` and `min (j+1) r + 1 = min (j+2) (r+1)`. So both sides are
-the same pair of sums with the `i = 0` term of one of them removed. -/
-private theorem sum_range_min_add_two (a : ℕ → ℂ) (c : ℂ) (j r : ℕ) :
-    (∑ i ∈ Finset.range (min (j + 2) (r + 1) + 1), c ^ i * a (j + 2 + (r + 1) - 2 * i)) +
-        c * ∑ i ∈ Finset.range (min j (r + 1) + 1), c ^ i * a (j + (r + 1) - 2 * i) =
-      (∑ i ∈ Finset.range (min (j + 1) (r + 2) + 1), c ^ i * a (j + 1 + (r + 2) - 2 * i)) +
-        c * ∑ i ∈ Finset.range (min (j + 1) r + 1), c ^ i * a (j + 1 + r - 2 * i) := by
-  set A : ℕ → ℂ := fun i ↦ c ^ i * a (j + r + 3 - 2 * i) with hA
-  -- a sum whose index reads `t - 2 i` with `t = j + r + 3` is a sum of `A`
-  have eA : ∀ t n : ℕ, t = j + r + 3 →
-      ∑ i ∈ Finset.range n, c ^ i * a (t - 2 * i) = ∑ i ∈ Finset.range n, A i := by
-    rintro t n rfl
-    rfl
-  -- a scalar multiple of a sum whose index reads `t - 2 i` with `t + 2 = j + r + 3` is a sum of
-  -- `A` with the index shifted by one
-  have eshift : ∀ t n : ℕ, t + 2 = j + r + 3 →
-      c * ∑ i ∈ Finset.range n, c ^ i * a (t - 2 * i) = ∑ i ∈ Finset.range n, A (i + 1) := by
-    intro t n ht
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl fun i _ ↦ ?_
-    simp only [hA]
-    rw [show j + r + 3 - 2 * (i + 1) = t - 2 * i by omega, ← mul_assoc, ← pow_succ']
-  -- the shifted sums, as sums of `A` with the `i = 0` term removed
-  have hsh : ∀ n : ℕ, ∑ i ∈ Finset.range n, A (i + 1) =
-      (∑ i ∈ Finset.range (n + 1), A i) - A 0 := by
-    intro n
-    rw [Finset.sum_range_succ' A n]
-    ring
-  rw [eA (j + 2 + (r + 1)) _ (by omega), eA (j + 1 + (r + 2)) _ (by omega),
-    eshift (j + (r + 1)) _ (by omega), eshift (j + 1 + r) _ (by omega), hsh, hsh,
-    show min j (r + 1) + 1 + 1 = min (j + 1) (r + 2) + 1 by omega,
-    show min (j + 1) r + 1 + 1 = min (j + 2) (r + 1) + 1 by omega]
-  ring
-
-/-- The recombination at `j = 0`, where the recurrence contributes only two terms:
-`S 1 (r+1) − c · S 0 r = S 0 (r+2)`, both sides being `a (r+2)`. -/
-private theorem sum_range_min_zero (a : ℕ → ℂ) (c : ℂ) (r : ℕ) :
-    (∑ i ∈ Finset.range (min 1 (r + 1) + 1), c ^ i * a (1 + (r + 1) - 2 * i)) -
-        c * ∑ i ∈ Finset.range (min 0 r + 1), c ^ i * a (0 + r - 2 * i) =
-      ∑ i ∈ Finset.range (min 0 (r + 2) + 1), c ^ i * a (0 + (r + 2) - 2 * i) := by
-  rw [show min 1 (r + 1) + 1 = 2 by omega, show min 0 (r + 2) + 1 = 1 by omega,
-    show min 0 r + 1 = 1 by omega, Finset.sum_range_succ, Finset.sum_range_one,
-    Finset.sum_range_one, Finset.sum_range_one, show 1 + (r + 1) - 2 * 0 = r + 2 by omega,
-    show 1 + (r + 1) - 2 * 1 = r by omega, show 0 + (r + 2) - 2 * 0 = r + 2 by omega,
-    show 0 + r - 2 * 0 = r by omega]
-  ring
-
 /-- The formula at `r = 1`, where the ring element is the generator `Tₚ` itself: one term at an
 index prime to `p`, two at a multiple of `p`. -/
 private theorem qExpansion_coeff_prime_pow_mul_heckeTGeneratorGamma0 (hp : p.Prime)
@@ -179,12 +156,16 @@ private theorem qExpansion_coeff_prime_pow_mul_heckeTGeneratorGamma0 (hp : p.Pri
           (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff
             (p ^ (j + 1 - 2 * i) * m) := by
   rcases j with _ | j
-  · rw [pow_zero, one_mul, qExpansion_coeff_heckeTGeneratorGamma0_of_not_dvd hp hpN F hpm,
-      show p * m = p ^ (0 + 1 - 2 * 0) * m by simp]
+  · -- `p ∤ m`: one term, at the index `p m`
+    have hidx : p * m = p ^ (0 + 1 - 2 * 0) * m := by simp
+    rw [pow_zero, one_mul, qExpansion_coeff_heckeTGeneratorGamma0_of_not_dvd hp hpN F hpm, hidx]
     simp
-  · rw [qExpansion_coeff_prime_pow_succ_mul_heckeTGeneratorGamma0 hp hpN F m j,
-      show min (j + 1) 1 + 1 = 2 by omega, Finset.sum_range_succ, Finset.sum_range_one,
-      show j + 1 + 1 - 2 * 0 = j + 2 by omega, show j + 1 + 1 - 2 * 1 = j by omega]
+  · -- `p ∣ p^{j+1} m`: two terms, at `p^{j+2} m` and `p^j m`
+    have hmin : min (j + 1) 1 + 1 = 2 := by omega
+    have hidx₁ : j + 1 + 1 - 2 * 0 = j + 2 := by omega
+    have hidx₂ : j + 1 + 1 - 2 * 1 = j := by omega
+    rw [qExpansion_coeff_prime_pow_succ_mul_heckeTGeneratorGamma0 hp hpN F m j, hmin,
+      Finset.sum_range_succ, Finset.sum_range_one, hidx₁, hidx₂]
     simp
 
 /-- **The prime-power coefficient formula on `S_k(N, χ)`.** For a good prime `p ∤ N`, an index `m`
@@ -207,7 +188,7 @@ theorem qExpansion_coeff_prime_pow_mul_heckeTGeneratorRecGamma0 (hp : p.Prime)
     rw [heckeTGeneratorRecGamma0_one]
     exact qExpansion_coeff_prime_pow_mul_heckeTGeneratorGamma0 hp hpN F hpm j
   | more r ih1 ih2 =>
-    rw [heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two hp hpN F r,
+    rw [heckeRingHomCuspCharSpace_heckeTGeneratorRecGamma0_add_two_apply hp.pos hpN F r,
       qExpansion_coeff_coe_sub_smul]
     rcases j with _ | j
     · -- `p ∤ m`: the recurrence reads the coefficient at `p m`, which is the `j = 1` instance
@@ -217,13 +198,14 @@ theorem qExpansion_coeff_prime_pow_mul_heckeTGeneratorRecGamma0 (hp : p.Prime)
       rw [pow_one] at h2
       rw [pow_zero, one_mul, qExpansion_coeff_heckeTGeneratorGamma0_of_not_dvd hp hpN _ hpm, h2,
         h1]
-      exact sum_range_min_zero
+      exact TauCeti.sum_range_min_zero
         (fun t ↦ (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ t * m))
         ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) r
-    · -- both terms of the recurrence are present; the sums recombine by `sum_range_min_add_two`
+    · -- both terms of the recurrence are present, and the four sums recombine by
+      -- `TauCeti.sum_range_min_add_two`
       rw [qExpansion_coeff_prime_pow_succ_mul_heckeTGeneratorGamma0 hp hpN _ m j, ih2 (j + 2),
         ih2 j, ih1 (j + 1)]
-      have h := sum_range_min_add_two
+      have h := TauCeti.sum_range_min_add_two
         (fun t ↦ (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ t * m))
         ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) j r
       linear_combination h
