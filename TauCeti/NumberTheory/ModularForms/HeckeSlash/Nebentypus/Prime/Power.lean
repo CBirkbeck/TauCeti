@@ -5,9 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime.Basic
-public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Scalar
+public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime.Recurrence
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Recurrence
-import TauCeti.NumberTheory.ModularForms.QExpansion.Basic
 import TauCeti.Algebra.BigOperators.Finset.Range
 
 /-!
@@ -18,15 +17,16 @@ the generator acts as the classical `Tₚ` (`HeckeSlash/Nebentypus/Prime/Basic.l
 coefficients are `a_m(Tₚ F) = a_{pm}(F) + χ(p) p^{k−1} a_{m/p}(F)`
 (`HeckeSlash/Recurrence.lean`). Along the powers of a good prime `p ∤ N` the ring elements
 `T_{p^r}` are the recurrence family `heckeTGeneratorRecGamma0`, with
-`T_{p^{r+2}} = Tₚ T_{p^{r+1}} − p S_p T_{p^r}`, and the scalar coset `S_p` acts on the character
-space by `χ(p) p^{k−2}` (`HeckeSlash/Nebentypus/Scalar.lean`). Unwinding that recurrence on
+`T_{p^{r+2}} = Tₚ T_{p^{r+1}} − p S_p T_{p^r}`, which on the character space reads
+`T_{p^{r+2}} = Tₚ ∘ T_{p^{r+1}} − χ(p) p^{k−1} • T_{p^r}`
+(`HeckeSlash/Nebentypus/Prime/Recurrence.lean`). Unwinding that recurrence on
 coefficients gives the classical formula: writing `c = χ(p) p^{k−1}`, for every index `m` prime
 to `p`,
 
 `a_{p^j m}(T_{p^r} F) = ∑_{i ≤ min j r} c^i · a_{p^{j+r−2i} m}(F)`,
 
-the two-step recurrence between such sums being
-`TauCeti.sum_range_min_add_two` (`Algebra/BigOperators/Finset/Range.lean`),
+the two-step recurrence between such sums being `TauCeti.sum_range_min_add_two` and its base
+case `TauCeti.sum_range_min_zero` (`Algebra/BigOperators/Finset/Range.lean`),
 
 the prime-power case of Diamond–Shurman Proposition 5.3.1, and in particular
 `a_m(T_{p^r} F) = a_{p^r m}(F)`. The composite operators are ordered products of these blocks
@@ -35,8 +35,6 @@ coprime to the level.
 
 ## Main results
 
-* `HeckeRing.GL2.heckeRingHomCharSpace_heckeTGeneratorRecGamma0_succ_succ` and its pointwise
-  form `..._succ_succ_apply`: the ring's two-step recurrence on the character space.
 * `HeckeRing.GL2.qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorRecGamma0`:
   the formula above.
 * `HeckeRing.GL2.qExpansion_coeff_heckeRingHomCharSpace_heckeTGeneratorRecGamma0_of_not_dvd`:
@@ -165,17 +163,11 @@ theorem qExpansion_coeff_prime_pow_mul_heckeRingHomCharSpace_heckeTGeneratorRecG
       rw [pow_zero, one_mul,
         qExpansion_coeff_heckeRingHomCharSpace_heckeTGeneratorGamma0_of_not_dvd hp hpN _ hpm, h2,
         h1]
-      -- at `j = 0` the two sums have one and two terms, and recombine directly
-      have hmin₁ : min 1 (r + 1) + 1 = 2 := by omega
-      have hmin₂ : min 0 (r + 2) + 1 = 1 := by omega
-      have hmin₃ : min 0 r + 1 = 1 := by omega
-      have hidx₁ : 1 + (r + 1) - 2 * 0 = r + 2 := by omega
-      have hidx₂ : 1 + (r + 1) - 2 * 1 = r := by omega
-      have hidx₃ : 0 + (r + 2) - 2 * 0 = r + 2 := by omega
-      have hidx₄ : 0 + r - 2 * 0 = r := by omega
-      rw [hmin₁, hmin₂, hmin₃, Finset.sum_range_succ, Finset.sum_range_one, Finset.sum_range_one,
-        Finset.sum_range_one, hidx₁, hidx₂, hidx₃, hidx₄, pow_zero, pow_one, one_mul, one_mul,
-        add_sub_cancel_right]
+      -- at `j = 0` the sums recombine by `TauCeti.sum_range_min_zero`
+      have h := TauCeti.sum_range_min_zero
+        (fun t ↦ (qExpansion 1 (F : ModularForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p ^ t * m))
+        ((χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1)) r
+      linear_combination -h
     · -- both terms of the recurrence are present, and the four sums recombine by
       -- `TauCeti.sum_range_min_add_two`
       rw [qExpansion_coeff_prime_pow_succ_mul_heckeRingHomCharSpace_heckeTGeneratorGamma0 hp hpN _

@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Scalar
+public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime.Recurrence
 public import TauCeti.NumberTheory.ModularForms.Newforms.Newform
 
 /-!
