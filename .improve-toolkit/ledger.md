@@ -34760,3 +34760,50 @@ notation — the value is emptying the namespace and matching Mathlib's placemen
 ### Board
 Four open. #6093 and **#6432 both 10/10 `ready-to-merge`**. #6188 green, two findings contested, one
 fixed. #5950 Chris's. Merged this watch: **#6426, #6412, #6418**.
+
+---
+
+## r670 — 2026-09-12 — a wait round, spent on the handover
+
+### Nothing was owed, and that was the finding
+
+All four open PRs are green. #6093 and #6432 sit at **10/10 `ready-to-merge`** waiting on the bot;
+#6188 went green on `cc5b861ca` (11202 jobs, `LINT-ENV: PASS`) with its board still on the previous
+head; #5950 is Chris's. Step 5 needs fewer than three open and there are four. Step 4's clock has not
+run out — #6188's board is due 32–67 min from the 17:31 push.
+
+**A round with nothing owed is not a round with nothing to do, but it is a round where touching a PR
+would be the wrong move.** Two PRs at 10/10 are exactly the state where an unrequested edit costs a
+re-review and risks a green rubric.
+
+### HANDOVER.md §11 — what r654–r669 cost
+
+The branch's §7 ("Rules that cost red builds") is the outgoing improver's, and §10 is the r653
+machine-change addendum. Everything learned since sat only in `last-round.md`, which is rewritten
+every round, and in a 34 700-line ledger. Added §11: the rules of this watch, each pointing at the
+round that bought it, grouped by where they bite —
+
+* the gate (commit before gating; it is pure Python; re-run on the pristine head; `xsibling`'s
+  false positive and why a crying-wolf check is worse than none),
+* the ratchet (the baseline grandfathers by **declaration name**, so a rename is red unless rooted
+  in the same commit),
+* reading the review (a ⛔ hides rubrics that have never run; a 🟡 behind a ⛔ may not survive; the
+  pipeline **edits** findings in place; "tried and failed" is scoped to the position tried; verify a
+  cited precedent; when a loop returns to a rejected position, look for a sibling PR where it is
+  approved; an answer can arrive as a finding),
+* Lean facts (`@[expose]` is a claim about a reduction *path*; a definitional index mismatch is not
+  the `HEq` trap; a goal printed unchanged means nothing fired; deleting a declaration means deleting
+  what advertises it),
+* two PRs over one file (port a fix the moment it is accepted anywhere — but a green PR is not a
+  place to apply a lesson),
+* prospecting (`nscand.py` ranks, `mathlibns.py` decides, then check Mathlib does not already have
+  the name; re-rank after every merge), including the scouted `TauCeti.Submonoid` target in full so
+  the next taker can open it without repeating the measurement.
+
+**A rule that lives only in `last-round.md` survives one round.** The ledger holds everything but is
+34 700 lines; the handover is what a new worker actually reads. Rules earned across a watch belong
+there, with their evidence, before the watch ends.
+
+### Board
+Four open, all green. #6093 and #6432 **10/10**; #6188 awaiting its board on `cc5b861ca`; #5950
+Chris's. No new merges. Merged this watch: **#6426, #6412, #6418**.

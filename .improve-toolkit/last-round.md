@@ -1,83 +1,74 @@
-# Last round — r669 (2026-09-12 17:35Z)
+# Last round — r670 (2026-09-12 18:05Z)
 
-## A 🟡 behind a ⛔ is a prediction about a PR that will not exist
+## Nothing was owed — and with two PRs at 10/10, that is the finding
 
-r668 declined to act on #6188's `reuse` "delete the private bridge", because it sat behind a ⛔.
-It did not survive: `scope` cleared to ♻️, `reuse` went ♻️ with it, and **`proof-quality` approved
-the bridge outright**. Acting would have deleted a declaration the next board accepted and reopened a
-loop that has already run private → public → inline → private.
+All four open PRs are green. #6093 and #6432 sit at **10/10 `ready-to-merge`** waiting on the bot;
+#6188 went green on `cc5b861ca` (11202 jobs, `LINT-ENV: PASS`) with its board still on the previous
+head; #5950 is Chris's. Step 5 needs fewer than three open; there are four. Step 4's clock has not
+run out.
 
-## #6432 is 10/10 `ready-to-merge`
+**Two PRs at 10/10 are exactly the state where an unrequested edit costs a re-review and risks a
+green rubric.** The round's work went to the handover instead.
 
-The three fixes ported from #6188 in r668 cleared `reuse`, `documentation` and `proof-quality`
-together. `api-design` approved **without** asking for the functorial lemmas — that item was never
-owed there.
+## HANDOVER.md §11 — what r654–r669 cost
 
-## #6188: two findings answered by quoting the block that created them
+Everything learned this watch lived only in `last-round.md`, which is rewritten every round, and in a
+34 800-line ledger. **A rule that lives only in `last-round.md` survives one round.** §11 now carries
+it, each rule pointing at the round that bought it:
 
-`api-design` wants `autCongr_refl`/`_symm`/`_trans`; `generality` wants the semilinear statement.
-Both answered on their threads, citing #6188's own `scope` ⛔ — *"Keep this PR to rooting and renaming
-… move both structural lemmas and the corresponding call-site rewrites to a follow-up PR."* Three new
-bundled equalities are the same category the block refused; the semilinear statement is #6432's
-topic, now 10/10 and carrying both. **Each reply says plainly what I will do if the reviewer wants it
-here anyway**, since either reverses the block.
+* **the gate** — commit before gating (it reads HEAD); it is pure Python and cannot see docstring
+  attachment, elaboration or simp-NF; re-run on the pristine head before believing a FAIL;
+  `xsibling`'s false positive and why a crying-wolf check is worse than none;
+* **the ratchet** — the baseline grandfathers by *declaration name*, so renaming a flagged
+  declaration is red unless it is rooted in the same commit;
+* **reading the review** — a ⛔ hides rubrics that never ran; a 🟡 behind a ⛔ may not survive; the
+  pipeline *edits* findings in place; "tried and failed" is scoped to the position tried; verify a
+  cited precedent; when a loop returns to a rejected position look for a sibling PR where it is
+  approved; an answer can arrive as a finding rather than a reply;
+* **Lean facts** — `@[expose]` is a claim about a reduction *path*; a definitional index mismatch is
+  not the `HEq` trap; a goal printed unchanged means nothing fired; deleting a declaration means
+  deleting what advertises it;
+* **two PRs over one file** — port a fix the moment it is accepted anywhere, but a green PR is not a
+  place to apply a lesson;
+* **prospecting** — `nscand.py` ranks, `mathlibns.py` decides, then check Mathlib does not already
+  have the name; re-rank after every merge. The scouted `TauCeti.Submonoid` target is written out in
+  full so the next taker opens it without repeating the measurement.
 
-`documentation` fixed (`cc5b861ca`): the private bridge's docstring stated coercion mechanics; it now
-states the equality, rest as a source comment. #6432 has the same docstring but is 10/10 with
-`documentation` ✅ — **not touched: a green PR is not a place to apply a lesson.**
-
-## Prospect lane re-measured — one verified target, not yet opened
-
-Main is at **739 flagged** (was 759). `nscand.py`: 52 flagged namespaces, **12 WHOLE**. Ten are
-accounted for — `BialgHom` = #5950, `LinearEquiv` = #6188/#6432, six ABSENT traps, `FDRep` 1/1 is the
-`private intCharacter_def` #6418 left, `Basis` is Mathlib's `Module.Basis`.
-
-**The twelfth is new and verified: `TauCeti.Submonoid` 1/1.**
-
-* `mathlibns.py`: `ROOT 517 Submonoid` — real root namespace, not a grep (r511).
-* Mathlib has **no** `Submonoid.continuousConstSMul` / `AddSubmonoid.continuousConstVAdd` — not the
-  #6418 duplicate trap.
-* Mathlib's own `Topology/Algebra/ConstMulAction.lean` has the identical sibling pattern
-  (`Units.`, `Prod.`, `MulOpposite.continuousConstSMul`), so the rooted name matches convention.
-
-Target: `TauCeti/Topology/Algebra/ConstMulAction.lean:37`, an `instance` with
-`@[to_additive AddSubmonoid.continuousConstVAdd]`, referenced once by
-`TauCeti.Subgroup.continuousConstSMul` in the same file. Rooting it enables no dot notation (it is an
-instance) — the value is emptying the namespace and matching Mathlib's placement. It is flagged, so
-`rootsurplus` will not fire. Removing the wrapper leaves `namespace Submonoid` empty: delete it.
-
-**Not opened — four PRs are open and step 5 needs fewer than three.** Note the arithmetic: #6093 and
-#6432 merging leaves #5950 + #6188 = two, and step 5 then triggers.
-
-## Board (17:35Z) — four open
+## Board (18:05Z) — four open, all green
 
 | PR | head | CI | label | whose move |
 |---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **Chris** — human-owned `web/examples/Examples.lean` |
-| **#6093** | `370dad05e` | green | `ready-to-merge` | nobody — **10/10** |
-| **#6188** | `cc5b861ca` | building | `awaiting-author` | reviewer — 1 fixed, 2 contested, board BEHIND |
+| **#6093** | `370dad05e` | green | `ready-to-merge` | nobody — **10/10**, ~2h20m on the bot |
+| **#6188** | `cc5b861ca` | green | `awaiting-CI` | reviewer — board BEHIND |
 | **#6432** | `98bb7e78f` | green | `ready-to-merge` | nobody — **10/10** |
+
+**#6188's board is BEHIND. Do NOT re-fix.**
 
 ## Next
 
-1. **Watch #6188 on `cc5b861ca`** (docstring only, low risk) and its next board — the two contests
-   are the live question.
-2. If `generality` or `api-design` re-fires on #6188 **with the reviewer explicitly asking for it
-   there despite the block**, implement it: both replies committed to that. Otherwise hold.
-3. **When step 5 triggers, `TauCeti.Submonoid` is scouted and verified** — see above. Branch
-   `improve/submonoid-constsmul-root` from a freshly fetched `origin/main`, root the instance, drop
-   the empty wrapper, update the one reference, gate, open as a DRAFT, mark ready when CI is green.
-4. Re-run `nscand.py` after each merge: main moved 759 → 739 during this watch and the WHOLE list
-   changes with it.
+1. **#6188's board on `cc5b861ca`.** `documentation` was fixed; `api-design` (functorial lemmas) and
+   `generality` (semilinear) were **contested r669 by quoting its own `scope` ⛔**. If either re-fires
+   *with the reviewer explicitly asking for it there despite the block*, implement it — both replies
+   committed to that in writing. Otherwise hold.
+2. **When step 5 triggers** (#6093 and #6432 merging leaves #5950 + #6188 = two):
+   `TauCeti.Submonoid` is scouted and verified — branch `improve/submonoid-constsmul-root` from a
+   freshly fetched `origin/main`, root `instance continuousConstSMul` at
+   `TauCeti/Topology/Algebra/ConstMulAction.lean:37` to `_root_.Submonoid.`, delete the then-empty
+   `namespace Submonoid` wrapper, qualify the one reference in
+   `TauCeti.Subgroup.continuousConstSMul`, keep `@[to_additive AddSubmonoid.continuousConstVAdd]`.
+   Gate, open as a **DRAFT**, mark ready when CI is green. Full evidence in HANDOVER §11.
+3. **Re-run `nscand.py` after each merge** — main moved 759 → 739 this watch and the WHOLE list moves
+   with it.
 
 ## Settled — with the conditions attached
 
 * **#6093** — **10/10.** `@[expose]` on `fundamentalGroupEquivFiber` removed, **and that is why**
   `_apply_coe` is not `@[simp]`.
 * **#6418** — **MERGED.**
-* **#6188** — the relocation alone. Transport is the **`private` extensional bridge**, now
-  `proof-quality` ✅. No structural lemmas, no functorial lemmas, not semilinear — all of that is
-  #6432's, per the `scope` ⛔.
+* **#6188** — the relocation alone. Transport is the **`private` extensional bridge**
+  (`proof-quality` ✅). No structural lemmas, no functorial lemmas, not semilinear — all #6432's, per
+  the `scope` ⛔.
 * **#6432** — **10/10**: semilinear, rooted, renamed, owns the structural lemmas and call-site
   rewrites.
 
@@ -101,8 +92,8 @@ Before believing a gate FAIL is yours, re-run it on the **pristine head**.
 A rubric that went green can go 🟡 again; clearing a ⛔ reveals rubrics that never ran; and
 **a 🟡 behind a ⛔ may not survive the next board — do not chase it**.
 **Deleting a declaration means deleting what advertises it.**
-**A green PR is not a place to apply a lesson** — port fixes to PRs that asked for them.
-Verify a rooting target against Mathlib with `mathlibns.py`, never a grep, and check the name is not
-already there.
+**A green PR is not a place to apply a lesson.**
+Verify a rooting target with `mathlibns.py`, never a grep, and check the name is not already there.
 The gate is pure Python: it cannot see docstring attachment, elaboration, or simp normal form.
 **133 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
+**HANDOVER.md §11 now carries this watch's rules** — read it before re-deriving one.
