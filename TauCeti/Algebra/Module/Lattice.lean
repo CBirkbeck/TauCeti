@@ -103,7 +103,7 @@ end
 section
 
 variable {R : Type*} {K : Type*} {V : Type u} {W : Type v}
-variable [CommRing R] [IsDomain R] [Field K] [Algebra R K] [IsFractionRing R K]
+variable [CommRing R] [Field K] [Algebra R K] [IsFractionRing R K]
 variable [AddCommGroup V] [Module R V] [Module K V] [IsScalarTower R K V]
 variable [AddCommGroup W] [Module R W] [Module K W] [IsScalarTower R K W]
 
