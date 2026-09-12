@@ -62,6 +62,8 @@ consumer may rely on that.
   over the base field, so it takes no constant value.
 * `WeierstrassCurve.Affine.evalEval_polynomialY_genericX_genericY_ne_zero`: on an elliptic curve
   over a field the partial derivative `W_Y` is nonzero at the generic point.
+* `WeierstrassCurve.Affine.map_genericPoint_injective`: an `F`-algebra homomorphism from the
+  function field into a field extension is determined by the point it sends the generic point to.
 
 ## Roadmap
 
@@ -82,6 +84,13 @@ The generic coordinates and their equation are adapted from the AINTLIB `HasseWe
 `513e83879e2f8cbc626eb9e04d660e92be16ccba`, declarations `x_gen`, `y_gen`, `W_KE`, and
 `generic_equation`. Its transcendence statement is reproved here as `transcendental_genericX`.
 The bundled `genericPoint` and its coordinate-accessor API are not ported from that source.
+
+`map_genericPoint_injective` adapts the statement of that project's
+`HasseWeil/GapSpines.lean` declaration `emb_le_card_kernel`, same commit and license, which
+assigns a point to each embedding and shows the assignment injective. The proof differs: the
+source works with points over `AlgebraicClosure K(E)` and with an isogeny carrying its own point
+map, while here the point is the image of the generic point and injectivity comes from
+`CoordinateRing.algHom_ext` and `IsFractionRing.ringHom_ext`.
 -/
 
 public section
