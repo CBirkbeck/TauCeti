@@ -16,7 +16,8 @@ the level where it is actually true: a bare function for the first, a bare equiv
 second.
 
 * `Function.fiberMap`: a map `f : E → F` commuting with the projections to `X` restricts to the
-  fibres over each point.
+  fibres over each point. It is `Set.MapsTo.restrict` for the fibre inclusion, so its application,
+  identity and composition laws are the generic `Subtype.map` ones.
 * `Equiv.compFiberEquiv`: relabelling the base along `h : X ≃ Y` identifies the fibre of `h ∘ p`
   over `y` with the fibre of `p` over `h.symm y`.
 
@@ -44,24 +45,23 @@ variable {E F G X : Type*} {p : E → X} {q : F → X} {r : G → X}
 -- that reduction to line up path-lifting statements, which a non-exposed body cannot supply.
 @[expose]
 def fiberMap (f : E → F) (hf : q ∘ f = p) (x : X) : p ⁻¹' {x} → q ⁻¹' {x} :=
-  fun e ↦ ⟨f e, by
+  Set.MapsTo.restrict f (p ⁻¹' {x}) (q ⁻¹' {x}) fun e he ↦ by
     rw [Set.mem_preimage, Set.mem_singleton_iff]
-    have he : p e = x := by
-      simpa only [Set.mem_preimage, Set.mem_singleton_iff] using e.2
-    simpa only [Function.comp_apply] using (congrFun hf e).trans he⟩
+    have hpe : p e = x := by
+      simpa only [Set.mem_preimage, Set.mem_singleton_iff] using he
+    simpa only [Function.comp_apply] using (congrFun hf e).trans hpe
 
 /-- On underlying points, restriction to a fibre applies the original map. -/
 @[simp]
 theorem fiberMap_apply_coe (f : E → F) (hf : q ∘ f = p) (x : X) (e : p ⁻¹' {x}) :
     (fiberMap f hf x e : F) = f e :=
-  (rfl)
+  Set.MapsTo.val_restrict_apply _ e
 
 /-- Restricting the identity map to a fibre gives the identity. -/
 @[simp]
 theorem fiberMap_id_apply (x : X) (e : p ⁻¹' {x}) :
-    fiberMap (p := p) (q := p) id rfl x e = e := by
-  apply Subtype.ext
-  rfl
+    fiberMap (p := p) (q := p) id rfl x e = e :=
+  congrFun Subtype.map_id e
 
 /-- Restriction to a fibre respects composition of maps over the base. -/
 -- Not `@[simp]`: the left-hand side applies `fiberMap` to a compatibility proof built inline from
@@ -72,9 +72,8 @@ theorem fiberMap_comp_apply (f : E → F) (g : F → G) (hf : q ∘ f = p) (hg :
     fiberMap (g ∘ f) (by
       funext z
       exact (congrFun hg (f z)).trans (congrFun hf z)) x e =
-      fiberMap g hg x (fiberMap f hf x e) := by
-  apply Subtype.ext
-  rfl
+      fiberMap g hg x (fiberMap f hf x e) :=
+  (Subtype.map_comp f _ g _).symm
 
 end Function
 
