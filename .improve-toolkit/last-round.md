@@ -1,82 +1,87 @@
-# Last round — r665 (2026-09-12 16:00Z)
+# Last round — r666 (2026-09-12 16:30Z)
 
-## 🎉 #6093 is 10/10 `ready-to-merge`
+## The reviewer answered the r664 question, and the answer was "fix the head"
 
-The coupled-annotation contest was accepted. **It worked because it enumerated the states rather
-than arguing**: `main` carries `@[expose]` *and* `@[simp]` together; this PR removes `@[expose]` at
-`api-design`'s own earlier request; the third combination is CI-proven red. Two of three
-configurations are green and the request was the third.
+> *"A promised future rebase does not correct the API presented by this PR."*
 
-## "Tried and failed" is scoped to the form it was tried in
+Third time of asking, unambiguous. r664 had put both routes to the reviewer and said the choice was
+theirs; this is the choice. **Asking was not wasted** — it turned a guess into an instruction, and
+the instruction is on the record for `scope` to read.
 
-#6188 took a ⛔ `reuse` block, and it was right:
+## #6432 took the relocation, in one commit with the rename
 
-> Delete `toLinearEquiv_ofLinearEquiv` and prove each local `h` with
-> `(generalLinearEquiv R M₁).apply_symm_apply f`, allowing definitional reduction of
-> `generalLinearEquiv`'s `invFun`.
+r664 proved the halves are coupled — the rename alone adds three `lint-dot-notation` findings
+because the baseline grandfathers **by declaration name**, while rooted the declarations are not
+flagged at all. So both land together. `lint-dot-notation`: **759 → 756, 0 new.**
 
-r654 reasoned this *could* work and did not test it. The PR body carried, from an earlier CI cycle,
-that `MulEquiv.apply_symm_apply` "does not work" — but **that failure was about the `simp only` set**,
-where it never fires because `simp` matches syntactically. As the *proof of the `have`* it needs no
-matching at all, only definitional reduction. Different position, different question; the body
-recorded the verdict without the position and hid the distinction.
+Plus the structural `autCongr_apply` / `autCongr_symm_apply` at the **semilinear** generality — what
+`handover/congraut-structural-deferred` held all along, legal here now that root `LinearEquiv` (the
+"lint-clean canonical namespace" the finding named) arrives in the same commit.
 
-Deleting the declaration retires two further findings: `naming` wanted it moved to root
-`LinearEquiv` (contested r662), `api-design` wanted it `@[simp]` (r656, CI-proven red). **The
-cheapest way to settle a disputed declaration can be not to have it.**
+Both branches now carry identical names and statements, so whichever merges second sees its own work
+already applied rather than a conflict.
 
-`reuse` had been consistent every round — no shared declaration, prove the transport where it is
-needed. r654 read that as irreconcilable with `api-design` and reached for a third option; the
-reconciliation existed and was one line.
+## #6188's ⛔ cleared and the r665 gamble held
 
-## The reviewer found the consumers that justify last round's lemmas
+`(generalLinearEquiv R M₁).apply_symm_apply f` typechecks as the proof of the `have`, exactly as the
+reviewer's *"allowing definitional reduction of `generalLinearEquiv`'s `invFun`"* predicted.
+`reuse` ✅, `naming` ✅ (the disputed declaration no longer exists), `scope` ✅.
 
-`OrthogonalGroup.lean` was re-proving `autCongr_apply`/`autCongr_symm_apply` inline as
-`show … by ext m; exact autCongr_apply_apply …`. Now `rw [LinearEquiv.autCongr_apply]` and
-`rw [LinearEquiv.autCongr_symm_apply]`, eight lines shorter. The call sites were there all along,
-written the long way.
+**Clearing a ⛔ starts the rest of the review, not the merge** — third time this watch, now reliable
+enough to plan around.
 
-## Board (16:00Z) — five open
+## Board (16:30Z) — five open
 
 | PR | head | CI | label | whose move |
 |---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **Chris** — human-owned `web/examples/Examples.lean` |
-| **#6093** | `370dad05e` | green | **`ready-to-merge`** | nobody — **10/10** |
-| **#6188** | `587afa02f` | building | `awaiting-CI` | reviewer — ⛔ cleared r665, board BEHIND |
-| **#6418** | `5c73d4c54` | green | `ready-to-merge` | nobody — 10/10 |
-| **#6432** | `ba59a9318` | building | `awaiting-CI` | reviewer — question outstanding on `naming` |
+| **#6093** | `370dad05e` | green | `ready-to-merge` | nobody — **10/10** |
+| **#6188** | `587afa02f` | green | `awaiting-author` | **me — four blockers, board ON-HEAD** |
+| **#6418** | `5c73d4c54` | green | `ready-to-merge` | nobody — **10/10** |
+| **#6432** | `3d4b240ee` | building | `awaiting-CI` | reviewer — rooted+renamed r666, board BEHIND |
 
-**#6188's and #6432's boards are BEHIND. Do NOT re-fix.**
+**#6432's board is BEHIND. Do NOT re-fix.**
 
-## Next
+## Next unit: #6188's four blockers — read them together, they point at each other
 
-1. **Watch #6188 on `587afa02f`.** The risk is the `have` proof: `(generalLinearEquiv R M₁).apply_symm_apply f`
-   against a `have` stated as `((generalLinearEquiv R M₁).symm f).toLinearEquiv = f`. It typechecks
-   only if `invFun` reduces definitionally — which is the reviewer's own stated premise, but is
-   untested. If it fails, the error will name the mismatch; report it on the `reuse` thread and
-   restore a named lemma phrased through `ofLinearEquiv`.
-2. **Watch #6432 on `ba59a9318`** — should return to green (the revert restores `f9bdb0a8b4`'s state
-   plus a clean `main` merge).
-3. **#6432's `naming` thread has an open question**: rebase onto #6188, or root-and-rename here.
-   Both routes are on the table; the choice is the reviewer's. **Do nothing there until it answers.**
-4. With #6093 clearing the ⛔ chain, the deferred structural work is fully discharged: the
-   `handover/congraut-structural-deferred` branch content now lives on #6188 as `autCongr_apply` /
-   `autCongr_symm_apply`. That branch can be considered spent.
-5. Five open, so step 5 does **not** trigger. When it does: `ContRepresentation` 141/184,
-   `Representation` 134/189, `AbelianVariety.Hom` 41/54, `WeierstrassCurve` 26/27; avoid
-   `IsCoveringMap` / `Deck.IsQuotientCoveringMap`. Measure against a **freshly fetched** `origin/main`.
+1. **`proof-quality`** — *"The two pointwise conjugation proofs rely on an implementation-level
+   definitional equality across `generalLinearEquiv` and `toLinearEquiv`."* That is **precisely the
+   proof `reuse` demanded** in the ⛔ one round earlier, and the third lap of this loop
+   (private bridge → public lemma → inline definitional proof). Do **not** simply move to a fourth
+   spelling. The shared reading across all three rounds is *state the transport once, somewhere
+   legitimate*; read `reuse`'s ✅ text and `proof-quality`'s full finding side by side before
+   touching it, and if no single form satisfies both, that is the contest — with all three CI
+   results quoted.
+2. **`generality`** — *"the conjugation API remains unnecessarily restricted to linear equivalences
+   over one semiring"*: that is **#6432's entire topic**, now asked of #6188, mirroring #6432 being
+   asked for #6188's relocation. Both branches now share names and statements, so whichever lands
+   first leaves the other very little. Say so rather than duplicating a third time.
+3. **`api-design`** — lacks the functorial API (`refl`/`trans`/`symm` laws), and *"the module
+   documentation advertises a nonexistent declaration"*. Check the module docstring in
+   `GeneralLinearGroup/Congr.lean` against what survived r665's deletion of
+   `toLinearEquiv_ofLinearEquiv`.
+4. **`documentation`** — stale and proof-oriented text in the congruence module. Likely the same
+   docstring; §8 applies (review argument belongs in the PR body, not the file).
+
+Also: watch #6432's CI on `3d4b240ee` — a rooting plus rename plus two new lemmas, none built
+locally.
+
+Five open, so step 5 does **not** trigger. When it does: `ContRepresentation` 141/184,
+`Representation` 134/189, `AbelianVariety.Hom` 41/54, `WeierstrassCurve` 26/27; avoid
+`IsCoveringMap` / `Deck.IsQuotientCoveringMap`. Measure against a **freshly fetched** `origin/main`.
 
 ## Settled — with the conditions attached
 
-* **#6093** — **10/10.** `@[expose]` on `Function.fiberMap` stays; on `fundamentalGroupEquivFiber`
-  it is removed, **and that is why** `_apply_coe` is not `@[simp]` — coupled, and accepted as such.
-* **#6188** — there is **no** `toLinearEquiv_ofLinearEquiv`; the transport is proved inline from
-  `(generalLinearEquiv R M).apply_symm_apply`, which works as a *proof term* though not as a simp
-  lemma. `congrAut` → `autCongr`. Structural `autCongr_apply` / `autCongr_symm_apply` exist and are
-  **not** `@[simp]`; their call sites in `OrthogonalGroup.lean` use them. Main merged.
-* **#6418** — `isIntegral_char` deleted as an exact Mathlib duplicate; `intCharacter_eq_iff` rooted
-  on cohesion. **10/10.**
-* **#6432** — rename reverted; it is coupled to the relocation by the name-keyed baseline.
+* **#6093** — **10/10.** `@[expose]` on `fundamentalGroupEquivFiber` is removed, **and that is why**
+  `_apply_coe` is not `@[simp]` — coupled, accepted as such.
+* **#6418** — **10/10.** `isIntegral_char` deleted as an exact Mathlib duplicate;
+  `intCharacter_eq_iff` rooted on cohesion.
+* **#6188** — no `toLinearEquiv_ofLinearEquiv`; transport proved inline from
+  `(generalLinearEquiv R M).apply_symm_apply`, which works as a **proof term** though not as a simp
+  lemma. Structural lemmas present, not `@[simp]`. Main merged.
+* **#6432** — rooted **and** renamed together, because the name-keyed baseline couples them.
+  Structural lemmas added at the semilinear generality. `nsslice`'s remaining four are the
+  `extendOfIsLattice` family, which #6188 roots.
 
 ## Still needs Chris
 
@@ -95,8 +100,7 @@ A fresh worktree needs `.lake` symlinked or `lint-dot-notation` errors on both s
 `uvx` is at `~/.local/bin/uvx`; measured board latency band is **32–67 min**.
 **COMMIT BEFORE GATING** — prepush reads HEAD and now refuses a dirty tree.
 Before believing a gate FAIL is yours, re-run it on the **pristine head**.
-A rubric that went green can go 🟡 again — re-read the board, never a remembered verdict.
-Re-read a finding's text too, and **record the position a failed attempt was tried in** — "tried and
-failed" for a simp lemma says nothing about the same term used as a proof.
+A rubric that went green can go 🟡 again, and **clearing a ⛔ reveals rubrics that never ran**.
+Re-read a finding's text, and **record the position a failed attempt was tried in**.
 The gate is pure Python: it cannot see docstring attachment, elaboration, or simp normal form.
 **133 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.

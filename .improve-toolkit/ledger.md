@@ -34511,3 +34511,68 @@ Five open. **#6093 `ready-to-merge` 10/10**, #6418 `ready-to-merge` 10/10, both 
 #6188 rebuilding on `587afa02f`, board BEHIND. #6432 rebuilding on `ba59a9318`, board BEHIND,
 question outstanding on its `naming` thread. #5950 Chris's.
 Merged this watch: **#6426, #6412**.
+
+---
+
+## r666 — 2026-09-12 — the reviewer answered, and #6432 took the relocation
+
+### The question from r664 got a definitive answer
+
+> *"the finding stands — The current head still exposes all three declarations under a noncanonical
+> namespace … **A promised future rebase does not correct the API presented by this PR.**"*
+
+Third time of asking, and unambiguous: fix the head. r664 had put both routes to the reviewer and
+said the choice was theirs; this is the choice. **Asking was not wasted — it converted a guess into
+an instruction, and the instruction is now on the record for `scope` to read.**
+
+### #6432 rooted, renamed, and given the structural lemmas
+
+All in one commit, because r664 proved the halves are coupled: the rename alone adds three
+`lint-dot-notation` findings (the baseline grandfathers by declaration name), while rooted the
+declarations are not flagged at all. `lint-dot-notation`: **759 → 756, 0 new.**
+
+* `naming` — `congrAut → autCongr`, `congrAut_apply → autCongr_apply_apply`,
+  `congrAut_symm_apply → autCongr_symm_apply_apply`, all at root `LinearEquiv`, call sites updated.
+* `api-design` — the structural `autCongr_apply` / `autCongr_symm_apply` at the **semilinear**
+  generality, which is what `handover/congraut-structural-deferred` held all along. Root
+  `LinearEquiv` is the "lint-clean canonical namespace" the finding asked for, so they are legal
+  here now that the relocation is in the same commit.
+
+Gate rows answered in the body: `decldiff` (three renames + two new lemmas), `rootsurplus` (flagged
+under the *old* names, so nothing to have flagged), `nsslice` (`LinearEquiv` half-rooted — the other
+four are the `extendOfIsLattice` family, which **#6188 roots**), `slice` (the fourth flagged
+declaration is the `private` bridge).
+
+Both branches now carry the same names and statements, so whichever merges second sees its own work
+already applied rather than a conflict.
+
+### #6188's ⛔ cleared, and four rubrics ran for the first time
+
+`reuse` ✅ — *"the inverse … "*; `naming` ✅ (the disputed declaration no longer exists); `scope` ✅.
+The r665 gamble held: `(generalLinearEquiv R M₁).apply_symm_apply f` typechecks as the proof of the
+`have`, exactly as the reviewer's "allowing definitional reduction of `generalLinearEquiv`'s
+`invFun`" predicted. Build green, 11202 jobs, `LINT-ENV: PASS`.
+
+**Clearing a ⛔ starts the rest of the review, not the merge** — the third time this watch, and now
+reliable enough to plan around.
+
+The four that appeared are worth reading closely, because two of them point at each other:
+
+* `proof-quality` — *"The two pointwise conjugation proofs rely on an implementation-level
+  definitional equality across `generalLinearEquiv` and `toLinearEquiv`"*. That is **precisely the
+  proof `reuse` demanded** in the ⛔ one round earlier. The shared reading is presumably "state the
+  fact once, somewhere legitimate", which is where this PR started; the third time round the loop,
+  the answer is unlikely to be another inline proof or another restating lemma.
+* `generality` — *"the conjugation API remains unnecessarily restricted to linear equivalences over
+  one semiring"*. That is **#6432's entire topic**, now asked of #6188 — the mirror image of #6432
+  being asked for #6188's relocation. With both PRs carrying the same names, whichever lands first
+  makes the other's remaining work small.
+* `api-design` — lacks the functorial API (`refl`/`trans`/`symm` laws), and *"the module
+  documentation advertises a nonexistent declaration"* — check the module docstring against the
+  declarations actually present after r665's deletion.
+* `documentation` — stale and proof-oriented text in the congruence module.
+
+### Board
+Five open. **#6093 and #6418 both 10/10 `ready-to-merge`**, awaiting the bot. #6188 green, board
+ON-HEAD, four blockers. #6432 rebuilding on `3d4b240ee`. #5950 Chris's.
+Merged this watch: **#6426, #6412**.
