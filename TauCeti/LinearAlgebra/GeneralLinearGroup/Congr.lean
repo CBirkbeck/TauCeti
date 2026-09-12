@@ -42,7 +42,10 @@ variable {R M M₁ M₂ : Type*} [Semiring R] [AddCommMonoid M] [Module R M] [Ad
 
 /-- `toLinearEquiv` undoes `ofLinearEquiv`: the automorphism underlying the invertible map built
 from `f` is `f` itself. The mirror of Mathlib's `AlgEquiv.toLinearEquiv_ofLinearEquiv`. -/
-@[simp]
+-- Not `@[simp]`: as a simp lemma it rewrites inside the left-hand side of
+-- `TauCeti.UpperUnitriangular.congrLinearEquiv_pointsAction_eq_toLin`, which is itself `@[simp]`
+-- and states its subject as `(ofLinearEquiv _).toLinearEquiv`. `simpNF` then reports that lemma as
+-- no longer in normal form. Both users below cite this one by name, so simp never needs it.
 theorem _root_.LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv (f : M ≃ₗ[R] M) :
     (ofLinearEquiv f).toLinearEquiv = f :=
   rfl
