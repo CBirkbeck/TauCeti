@@ -1,4 +1,27 @@
-# Last round — r672 (2026-09-12 18:12Z)
+# Last round — r673 (2026-09-12 18:30Z)
+
+## The restructure is verified on CI, and the PR is sixteen lines
+
+#6188 on `ec1a68d96`: build 11230 jobs, docstrings 9036/9036, `LINT-ENV: PASS`, and the PR is now
+**16 additions / 16 deletions / 1 file**. A PR that spent five rounds cross-firing with its sibling
+is, once the overlap is removed, sixteen lines. **The rounds went on the overlap, not the work.**
+
+## Nothing else owed this round
+
+All four open PRs are green. #6093 and #6432 at **10/10 `ready-to-merge`**; #6188 awaiting a board on
+the restructured head; #5950 Chris's. Step 5 needs fewer than three open; there are four.
+
+Checked the two 10/10 PRs for a cause rather than assuming one: both read `mergeable: UNKNOWN` with
+**zero files outside `TauCeti/`** and the `ready-to-merge` label — the identical state #6426, #6412
+and #6418 were in before the bot took them. `UNKNOWN` is GitHub computing lazily, not a block.
+#6093 has now waited ~3h against an observed cadence of 108 min / 2h / 2h20m: **note it, do not act
+on it.**
+
+---
+
+(previous round, retained for its detail)
+
+# r672 (2026-09-12 18:12Z)
 
 ## Removing the subject is a legitimate answer to a finding
 
@@ -41,9 +64,10 @@ fixes between them (r668) treated the symptom; this removes the cause.
 
 ## Next
 
-1. **Watch #6188 on `ec1a68d96`** — it is now a pure rooting of one file, so low risk. Its next
-   board judges a PR with no conjugation API in it; `api-design` and `generality` should have no
-   subject. If either re-fires *about `extendOfIsLattice`*, that is a new finding — read it fresh.
+1. **#6188's board on `ec1a68d96`** — the head is green (verified r673). The board judges a PR with
+   no conjugation API in it, so `api-design` and `generality` should have no subject. If either
+   re-fires *about `extendOfIsLattice`*, that is a new finding — read it fresh, do not reuse the
+   old reply.
 2. **When step 5 triggers** (two more merges): `improve/submonoid-constsmul-root` is **already
    pushed and gate-clean** (13 ok / 2 questions). Open it as a **DRAFT** with a body answering
    `parallelns` (the `Subgroup` instance stays nested — different namespace, 39/62 partial) and
