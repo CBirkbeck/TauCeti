@@ -1,92 +1,106 @@
-# Last round — r655 (2026-09-12 13:25Z)
+# Last round — r656 (2026-09-12 13:40Z)
 
-## Never cache a finding by its comment id — the pipeline edits in place
+## A green build is not a green CI
 
-Comment `3996026629` on #6093 still reads `created_at 11:07:15Z`. In r653 its body was the ten-file
-roadmap-narration finding; it now carries a completely different one (the conjugacy helper's stale
-docstring). **Same id, same `created_at`, different finding.**
+#6188 went red on `sandboxed-build`, but the build **succeeded** — 10981 jobs, axioms and
+module-system audits clean, 8738/8738 docstrings. `sandboxed-build` bundles build + audits +
+`lint-env`, and the failure was one new `simpNF` violation. Reading only "did it compile" would have
+sent me hunting an elaboration error that did not exist. **Always open the log and find the actual
+`##[error]`.**
 
-The handover's "read the board sorted by `updated_at`" rule is usually quoted about the scoreboard.
-**It applies to the per-rubric threads too.** Re-read a thread's body before acting on what you
-remember it saying.
+The defect was the `@[simp]` r654 added on `api-design`'s instruction:
 
-## Both contests landed (2 for 2)
+```
+[simpNF] TauCeti.UpperUnitriangular.congrLinearEquiv_pointsAction_eq_toLin
+  Left-hand side simplifies … using
+  simp only [*, @LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv]
+```
 
-* **#6412 → 10/10 green.** `api-design` answered *"this clears the finding ✅"*. The finding was
-  **factually correct** — the roadmap really did still name the deleted theorem — and cleared anyway
-  because the fix lay in `TauCetiRoadmap`, human-controlled and unreachable from a `TauCeti/`-only
-  branch. *A correct finding can still be the wrong PR's problem; say why, and say what survives.*
-* **#6093** — the r653 scope contest held; the roadmap bullet stayed dropped.
+That lemma is `@[simp]` and states its subject as `(ofLinearEquiv _).toLinearEquiv`, so ours took it
+out of normal form. Attribute dropped, lemma kept — both proofs cite it **by name**, so `simp` never
+needed it. Reported to `api-design` **with the CI output**; the lint's own fix (restate the other
+lemma) is declined with a reason — unrelated file, statement change, the shape `scope` blocked once.
 
-## Before believing a gate FAIL is yours, run it on the pristine head
+## `rfl` and the 35-site rename both held
 
-#6093 shows 4 `FAIL` + 1 `UNRUN`. All five are **byte-identical on the pristine head** — none is
-mine. One command separates "pre-existing" from "I broke it" on a 19-file PR.
+Evidence, not assumption: r654's `rfl` for `toLinearEquiv_ofLinearEquiv` and the
+`congrAut → autCongr` rename across three files **compiled**. The Mathlib precedent
+(`AlgEquiv.toLinearEquiv_ofLinearEquiv := rfl`) was a sound basis for a proof written with no local
+toolchain.
 
-## Board (13:25Z)
+## "Red now" is not evidence about your own diff either
+
+`xsibling` reported `specialOrthogonalToGeneralLinear` breaking at `OrthogonalGroup.lean:390,397`.
+False positive, on three independent grounds: it fires identically on the **pristine** head;
+**`origin/main` carries the same shape** and is green; and **CI compiled this exact head**. The
+branch is **204 commits behind main** (merge-base `dff54ce97`), and main edited that very file.
+
+**Before believing a gate FAIL, run the gate on the pristine head — and check how far main has
+moved.**
+
+## Step 4: eligible and still the wrong call
+
+#6432 sat green with no board at **71 min**, past the hour and past the band. Installed `uv`
+(0.12.13, `~/.local/bin/uvx`) so drives are now possible — then did **not** drive. Its board arrived
+on its own at **13:32:44Z, 67 min in**; a drive would have burned ~$16 reproducing it.
+
+**Measured band is now 32–67 min** (#6426 32, #6412 65, #6432 67). Six minutes past a
+three-sample band is not a stalled PR.
+
+## Board (13:40Z)
 
 | PR | head | CI | label | whose move |
 |---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **Chris** — human-owned `web/examples/Examples.lean` |
-| **#6093** | `9d13f95872` | building | `awaiting-author` | reviewer — **last rubric fixed r655**, board BEHIND |
-| **#6188** | `2aaf5e818c` | building | `awaiting-CI` | reviewer — 4 rubrics fixed r654, board BEHIND |
-| **#6412** | `360cdfc5b9` | green | → `ready-to-merge` | **nobody — 10/10 green, contest accepted 13:21Z** |
-| **#6418** | `d20b665467` | green | `awaiting-review` | reviewer — ⛔ `reuse` fixed r653, board BEHIND |
-| **#6426** | `54f8eb82b5` | green | `ready-to-merge` | **nobody — 10/10 green, 0 files outside `TauCeti/`** |
-| **#6432** | `f9bdb0a8b4` | green | `awaiting-review` | reviewer — **no board at 57 min**; watch the 64-min edge |
+| **#6093** | `9d13f95872` | building | `awaiting-author` | reviewer — last rubric fixed r655, board BEHIND |
+| **#6188** | `94921c53a` | building | `awaiting-CI` | reviewer — simpNF fixed r656, board BEHIND |
+| **#6412** | `360cdfc5b9` | green | 10/10 ✅ | nobody |
+| **#6418** | `d20b665467` | green | `awaiting-review` | reviewer — board BEHIND |
+| **#6426** | `54f8eb82b5` | green | `ready-to-merge` | nobody — 10/10, unmerged at 81 min; **pipeline's call, never mine** |
+| **#6432** | `f9bdb0a8b4` | green | `awaiting-review`→author | **me — next unit, see below** |
 
-**Boards on #6093, #6188 and #6418 are BEHIND their heads. Those fixes are pushed — do NOT re-fix.**
+**Boards on #6093, #6188 and #6418 are BEHIND their heads. Do NOT re-fix.**
 
-## ⚠ #6432 collides with the r654 rename
+## Next unit: contest #6432 on SEQUENCING, not merit
 
-**#6432 is "state `congrAut` at the semilinear generality"** and r654 renamed `congrAut` →
-`autCongr` on #6188. Both touch **only** `GeneralLinearGroup/Congr.lean`; #6432 branches from a
-`main` with neither the rooting nor the rename, so its diff still says `def congrAut` nested in
-`TauCeti.LinearEquiv`.
+Its board (13:32Z) has two blockers, and **both are already built elsewhere**:
 
-Whichever lands second needs a rebase. #6432 is smaller and already green, so expect **#6188 to be
-rebased onto a semilinear `congrAut`, with the rename re-applied** — three declarations plus 35 call
-sites across three files. Nothing is broken now and a conflict cannot merge silently; this is so the
-rebase is expected, not discovered.
+* `naming` — *"move `congrAut`, `congrAut_apply`, `congrAut_symm_apply` to root `LinearEquiv`"*.
+  **That is #6188**, which additionally renames them to `autCongr` / `autCongr_apply_apply` /
+  `autCongr_symm_apply_apply`.
+* `api-design` — *"Add semilinear `congrAut_eq` and `congrAut_symm_eq`, rebasing on the namespace
+  relocation first if necessary"*. **That is `handover/congraut-structural-deferred`**, openable
+  only after #6188 lands.
+
+If #6432 roots the declarations itself it duplicates an open PR and turns a textual overlap into a
+hard conflict. The reviewer's own *"rebasing … first if necessary"* shows it is receptive. Contest
+with the sequence: **#6188 lands → #6432 rebases (rooting and rename come free, keeping only the
+semilinear generalisation) → deferred branch opens as `autCongr_eq` / `autCongr_symm_eq`.**
 
 ## Settled — do not re-litigate
 
-* **#6093** — keep `@[expose]` on `Function.fiberMap`; `Equiv.compFiberEquiv` must NOT have it;
-  `fundamentalGroupEquivFiber_apply_coe` and `fiberMap_comp_apply` must NOT be `@[simp]`. `naming`,
-  `placement`, `api-design`, `generality` cleared. The conjugacy helper assumes **no connectedness** —
-  only `hj : Joined (h e₀) f₀`; path-connectedness is how the comparison theorem supplies it.
-* **#6188** — transport is `LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv`, public, `rfl`,
-  phrased via `ofLinearEquiv`. `congrAut` is now `autCongr` / `autCongr_apply_apply` /
-  `autCongr_symm_apply_apply`, verified against `AlgEquiv.autCongr` and `LinearEquiv.conj_apply(_apply)`.
-* **#6412** — the roadmap line is in TauCetiRoadmap, out of reach. **Contest accepted.**
-* **#6418** — `FDRep.isIntegral_char` deleted, not rooted: an exact duplicate of Mathlib's
-  `FDRep.isIntegral_character`.
-
-## Next
-
-1. **Nothing is owed on any PR right now.** #6093, #6188, #6418 are all awaiting re-review on heads
-   the boards have not seen. Resist re-fixing.
-2. **#6432 is the one to watch** — green, no board, 57 min at 13:25Z. If it passes ~64 min with no
-   board for `f9bdb0a8b4`, it is genuinely drive-eligible (counting from `ready_for_review`
-   12:25:24Z). **`uvx` is not installed**, so a drive needs
-   `curl -LsSf https://astral.sh/uv/install.sh | sh` first. The band is 32–64 min, measured.
-3. If a round finds all boards current and nothing blocking, **prospect** (step 5): partial
-   candidates are `ContRepresentation` 141/184, `Representation` 134/189, `AbelianVariety.Hom` 41/54,
-   `WeierstrassCurve` 26/27. Avoid `IsCoveringMap` and `Deck.IsQuotientCoveringMap` — both overlap
-   #6093. Measure against a freshly fetched `origin/main`.
-4. `handover/congraut-structural-deferred` opens only **after #6188 lands**, and its
-   `congrAut_eq`/`congrAut_symm_eq` must be renamed `autCongr_eq`/`autCongr_symm_eq` first.
+* **#6188** — transport is `LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv`, public,
+  `rfl`, phrased via `ofLinearEquiv`, and **deliberately NOT `@[simp]`** (simpNF, CI-confirmed).
+  `congrAut` is now `autCongr`.
+* **#6093** — keep `@[expose]` on `Function.fiberMap`; `compFiberEquiv` must NOT have it;
+  `fundamentalGroupEquivFiber_apply_coe` and `fiberMap_comp_apply` must NOT be `@[simp]`. The
+  conjugacy helper assumes **no connectedness** — only `hj : Joined (h e₀) f₀`.
+* **#6412** — roadmap line is in TauCetiRoadmap, out of reach. Contest accepted, 10/10.
+* **#6418** — `FDRep.isIntegral_char` deleted, not rooted: exact Mathlib duplicate.
 
 ## Still needs Chris
 
 * **No `lake build` / `cache get` / `lake update`.** Gate on CI. (No toolchain here anyway.)
-* No `uv`/`uvx` — step-4 drives unavailable until installed.
 * `cft-fix-6093` holds 13 superseded files + a stray `lake-manifest.json` bump. #5950.
+* **#6188 is 204 commits behind main** — if it ever conflicts, merge main in and re-gate.
 
 ## Standing traps
 
 Never merge/close a PR. Push to `fork`, never `origin` (403). One worktree: `improver-1`.
-Never touch `scripts/`, `.github/`, the lakefile. No bare `git stash`. Never #5481.
-Never open a PR from `handover/improve-toolkit`. Every PR body needs a standalone `Roadmap: none`.
+Never touch `scripts/`, `.github/`, the lakefile (incl. `lint-baseline.txt` and the nolint
+allowlist — the RATCHET message asking to delete 7 stale baseline lines is **not** mine to action).
+No bare `git stash`. Never #5481. Never open a PR from `handover/improve-toolkit`.
+Every PR body needs a standalone `Roadmap: none`.
 `gh pr edit` silently no-ops here — use `gh api -X PATCH … -F body=@file`.
 A fresh worktree needs `.lake` symlinked or `lint-dot-notation` errors on both sides.
+`uvx` is now installed at `~/.local/bin/uvx` for step-4 drives.

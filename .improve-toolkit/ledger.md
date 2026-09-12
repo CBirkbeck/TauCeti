@@ -33806,3 +33806,87 @@ Seven open, none draft. **#6412 10/10** (label still catching up). **#6426 10/10
 `ready-to-merge`.** #6093 building on `9d13f9587` — board BEHIND. #6188 building on `2aaf5e818c` —
 board BEHIND. #6418 `awaiting-review`, CI green, board BEHIND. #6432 green, **no board at 57 min**.
 #5950 Chris's. No new merges since #6406.
+
+---
+
+## r656 — 2026-09-12 — #6188 went red: the build was fine, the **attribute** was not
+
+### The reviewer's `@[simp]` was the defect, and CI said so precisely
+
+`sandboxed-build` failed on `2aaf5e818c`. The build itself **succeeded** — 10981 jobs, axioms
+audited clean, module system clean, 8738/8738 docstrings. `lint-env` then failed with exactly one
+new violation, and it was the attribute r654 added on `api-design`'s instruction:
+
+```
+[simpNF]
+#check TauCeti.UpperUnitriangular.congrLinearEquiv_pointsAction_eq_toLin
+  /- Left-hand side simplifies … using
+     simp only [*, @LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv] -/
+```
+
+That lemma is itself `@[simp]` and states its subject as `(ofLinearEquiv _).toLinearEquiv`, so a
+simp lemma rewriting `(ofLinearEquiv f).toLinearEquiv → f` takes it out of normal form. It lives in
+`Algebra/AlgebraicGroup/UpperUnitriangular/Unipotent.lean`, a file this PR does not touch.
+
+Dropped the attribute, kept the lemma. Nothing depended on it — both proofs cite the lemma **by
+name**, so `simp` never had to find it. Reported to `api-design` with the CI output rather than
+argued, which is the move that clears rubrics. The lint's own fix (restate the other lemma's LHS) is
+declined *with a reason*: it would put an unrelated file in a namespace-rooting diff and change a
+declaration's statement, which is what `scope` blocked this PR for once already. Offered as a
+follow-up PR.
+
+**A green build is not a green CI.** `sandboxed-build` bundles build + axiom audit + module-system
+audit + `lint-env`; reading only "did it compile" would have sent me hunting a nonexistent
+elaboration error.
+
+### `rfl` and the 35-site rename both held
+
+Worth recording as evidence, not assumption: the r654 gamble on `rfl` for
+`toLinearEquiv_ofLinearEquiv`, and the `congrAut → autCongr` rename across three files, **both
+compiled**. The Mathlib precedent (`AlgEquiv.toLinearEquiv_ofLinearEquiv := rfl`) was a sound basis
+for a proof written without a local toolchain.
+
+### `xsibling` fired, and it was main moving, not me
+
+The gate reported `xsibling BREAKS specialOrthogonalToGeneralLinear` at `OrthogonalGroup.lean:390`
+and `:397`. Three pieces of evidence say it is a false positive:
+
+* it fires identically on the **pristine** branch head, so no edit of mine caused it;
+* **`origin/main` carries the same shape** — `_root_.TauCeti.QuadraticMap.specialOrthogonalToGeneralLinear`
+  declared, referenced bare a few lines later — and main is green by construction;
+* **CI compiled this exact head successfully**, which settles whether those references resolve.
+
+The branch is **204 commits behind `origin/main`** (merge-base `dff54ce97`, #6178, 2026-09-10); main
+edited that file, shifting the declaration 378 → 380. *"Green before" is not evidence about "green
+now" — and neither is "red now" evidence about your own diff, when the base has moved 204 commits.*
+
+### Step 4: eligible, and still the wrong call
+
+#6432 was green with no board at 71 minutes past `ready_for_review` — past the hour and past the
+measured band, so formally drive-eligible. Installed `uv` (0.12.13, `~/.local/bin`) so the capability
+exists, then did **not** drive. Its board arrived on its own at **13:32:44Z, 67 minutes in**. A drive
+would have spent ~$16 reproducing it.
+
+**The measured band is now 32–67 min** (#6426 32, #6412 65, #6432 67). Six minutes past a band drawn
+from three samples is not a stalled PR. *Eligibility under a rule is still not the rule's purpose
+being served.*
+
+### #6432's board arrived, and both findings belong to #6188
+
+* `naming` — *"`congrAut`, `congrAut_apply`, `congrAut_symm_apply` are nested under
+  `TauCeti.LinearEquiv` … move all three to root `LinearEquiv`"*. **That is exactly #6188.**
+* `api-design` — *"Add semilinear `congrAut_eq` and `congrAut_symm_eq` … rebasing on the namespace
+  relocation first if necessary"*. **That is exactly `handover/congraut-structural-deferred`**, which
+  the handover records as openable only after #6188 lands.
+
+So both of #6432's blockers ask for work that already exists and is gated on the same PR. If #6432
+roots the declarations itself it duplicates an open PR and turns a textual overlap into a hard
+conflict — #6188 also *renames* them to `autCongr`. The reviewer's own "rebasing … first if
+necessary" shows it is receptive to sequencing. Next round's unit: contest #6432 on sequencing, not
+on merit.
+
+### Board
+Seven open. #6412 and #6426 both 10/10 green (#6426 `ready-to-merge` 81 min, not yet merged — the
+pipeline's call, not mine). #6188 rebuilding on `94921c53a`. #6093 building on `9d13f9587`, board
+BEHIND. #6418 `awaiting-review`, board BEHIND. #6432 now has two blockers, both #6188's. #5950
+Chris's. No new merges since #6406.
