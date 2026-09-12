@@ -140,8 +140,8 @@ private theorem conjScale_descendExtraGamma_mul_inv_apply {N : ℕ} {c : ℤ}
     simp [Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_inv,
       Matrix.adjugate_fin_two, coe_conjScale, Matrix.mul_apply, Fin.sum_univ_two]
 
-/-- The quotient of the conjugated level-`l N` extra matrix by the level-`N` one is diagonal
-modulo `p` (its upper-right entry vanishes) and is `1` modulo `N / p`. -/
+/-- The quotient of the conjugated level-`l N` extra matrix by the level-`N` one has upper-right
+entry `0` modulo `p`, and lower row `(0, 1)` modulo `N / p`. -/
 private theorem conjScale_descendExtraGamma_mul_inv_mod {N : ℕ} (hp : p.Prime) (hpN : p ∣ N)
     (hpsq : ¬ p ^ 2 ∣ N) [NeZero l] (hpl : Nat.Coprime p l) {c : ℤ}
     (hc : descendExtraGamma p (l * N) 1 0 = l * c) :
@@ -190,7 +190,8 @@ private theorem conjScale_descendExtraGamma_mul_inv_mod {N : ℕ} (hp : p.Prime)
 `f ∈ S_k(Γ₁(N), χ)` with `χ` pulled back from `χ₀` modulo `N / p`: conjugating the level-`l N`
 extra matrix `descendExtraGamma p (l N)` back to level `N` by `diag(l, 1)`, then slashing `f` by
 `!![1, 0; 0, p]` times it, is the same as with the level-`N` extra matrix `descendExtraGamma p N`.
-The quotient `δ` of the two candidates is `1` modulo `N / p` and diagonal modulo `p`, so
+The quotient `δ` of the two candidates has upper-right entry `0` modulo `p` and lower row
+`(0, 1)` modulo `N / p` (`conjScale_descendExtraGamma_mul_inv_mod`), so
 `!![1, 0; 0, p] δ = β !![1, 0; 0, p]` with `β ∈ Γ₀(N)` of lower-right entry `1` modulo `N / p`, on
 which the nebentypus is trivial. -/
 private theorem slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq {N : ℕ} (hp : p.Prime)
@@ -239,8 +240,8 @@ private theorem slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq {N : ℕ} (hp 
 
 /-- **Multiplication by `l` on the descent's index set.** On the `p` upper-triangular members it
 is the permutation `ZMod.mulModEquiv` of the residues modulo `p`; the extra member, when there is
-one, is fixed — read through `descendIndexEquiv`, it is the permutation of the projective line
-over `ZMod p` fixing `∞`. -/
+one, is fixed — read through `descendIndexEquiv`, it is the permutation of `OnePoint (ZMod p)`
+fixing `∞`, which for the prime `p` here is the projective line over `ZMod p`. -/
 private noncomputable def descendIndexMulPerm (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ) :
     Equiv.Perm (Fin (descendMatrixCount p N)) :=
   haveI : NeZero p := ⟨hp.ne_zero⟩
