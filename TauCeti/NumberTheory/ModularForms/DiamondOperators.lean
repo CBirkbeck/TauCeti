@@ -484,7 +484,7 @@ theorem coe_mem_modFormCharSpace_iff (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
 `S_k(N, χ)` exactly when the modular form underlying it lies in `M_k(N, χ)`
 (`coe_mem_modFormCharSpace_iff`), and the coercion is pointwise, hence linear. This is the map
 along which a statement about `modFormCharSpace` specialises to `cuspFormCharSpace`. -/
-@[expose] noncomputable def cuspToModFormCharSpace (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) :
+noncomputable def cuspToModFormCharSpace (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) :
     cuspFormCharSpace k χ →ₗ[ℂ] modFormCharSpace k χ where
   toFun f := ⟨(f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k),
     (coe_mem_modFormCharSpace_iff k χ _).mpr f.2⟩
@@ -498,7 +498,7 @@ space the element is regarded as living in. -/
 theorem coe_cuspToModFormCharSpace (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) (f : cuspFormCharSpace k χ) :
     (cuspToModFormCharSpace k χ f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) =
       ((f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
-        ModularForm ((Gamma1 N).map (mapGL ℝ)) k) := rfl
+        ModularForm ((Gamma1 N).map (mapGL ℝ)) k) := (rfl)
 
 /-- The inclusion of character spaces is injective: it is the coercion of cusp forms to modular
 forms, which does not change the underlying function. -/
