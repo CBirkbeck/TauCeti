@@ -161,8 +161,9 @@ theorem sum_range_min_zero {R : Type*} [Semiring R] (a : ℕ → R) (c : R) (r :
       ∑ i ∈ range (min 1 (r + 1) + 1), c ^ i * a (1 + (r + 1) - 2 * i) := by
   -- `min 0 _ = 0` pins the two sums on the left to their `i = 0` terms, and `min 1 (r+1) = 1`
   -- pins the one on the right to its `i = 0` and `i = 1` terms
+  have hmin : min 1 (r + 1) + 1 = 2 := by omega
   have hidx : 1 + (r + 1) = r + 2 := by omega
-  rw [show min 1 (r + 1) + 1 = 2 from by omega]
+  rw [hmin]
   simp [Finset.sum_range_succ, hidx]
 
 end TauCeti
