@@ -1,6 +1,36 @@
-# Last round — r682 (2026-09-12 20:26Z)
+# Last round — r683 (2026-09-12 20:38Z)
 
-## `threadread.py` no longer shows dead verdicts as live work
+## #6093 is GREEN on the scope fix — `sandboxed-build: success` on `36f3a07b9`
+
+Removing the two `compFiberEquiv` laws, the docstring lines advertising them and the now-unused `Z`
+variable left the tree building. **Nothing is owed.** The pipeline re-reviews from here, and the six
+rubrics deferred behind the `scope` block — `naming`, `api-design`, `generality`, `placement`,
+`documentation`, `proof-quality` — get judged on this head for the **first time**. A fresh 🟡 from any
+of them is a first verdict, not a regression. Run `threadread.py` and answer **LIVE** only.
+
+## Step 5 is now one command
+
+The branch was never the missing piece — `improve/submonoid-constsmul-root` has been pushed,
+refreshed against main and gate-clean (14 ok / 2 questions) since r681. The **body** was, since it has
+to answer both gate questions or draw them straight back as findings. It is written and staged at
+`pending/submonoid-constsmul-body.md`. When step 5 fires:
+
+```
+gh pr create --draft --head improve/submonoid-constsmul-root \
+  --title 'refactor(Topology): root `TauCeti.Submonoid.continuousConstSMul`' \
+  --body-file .mathlib-quality/improve/pending/submonoid-constsmul-body.md
+```
+
+then mark ready when CI is green.
+
+**A claim in my own notes was wrong and is corrected there.** I had recorded that `Subgroup` stays
+nested because rooting it would invent a namespace. **Mathlib's `Subgroup` is root with 1186
+declarations.** The real reason is `TauCeti.Subgroup` being **39 flagged of 62**, across 4 files and a
+6-file subtree — rooting one of those 39 is the arbitrary cut that blocked #5905. Same conclusion,
+sound reason. `naming` on #6093 blocked on exactly this species of error, so the false version would
+not have survived review.
+
+## r682 carried over: `threadread.py` no longer shows dead verdicts as live work
 
 A block **halts the whole run**, so every rubric behind it returns `absent` — *not judged on this
 head* — while its thread still carries text from an older revision. The old test was
@@ -52,16 +82,16 @@ clean afterwards.
 It is dated **2026-09-09** and reads `absent` in the current board's states — it re-runs once `scope`
 clears, against a tree seven revisions newer. Wait for the fresh verdict.
 
-## Board (20:26Z)
+## Board (20:38Z)
 
 | PR | head | CI | label | queue | whose move |
 |---|---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **NEVER-QUEUED** | **Chris** — human-owned file; the bot cannot enqueue it. **Do not refresh it.** |
-| **#6093** | `36f3a07b9` | **building** | `awaiting-CI` | — | nobody — `scope` answered, board BEHIND **by construction** |
-| **#6188** | `ec1a68d965` | green | `ready-to-merge` | **pos 12** | nobody — 10/10, waiting its turn |
-| **#6432** | `98bb7e78f4` | green | `ready-to-merge` | **pos 5** | nobody — 10/10, waiting its turn |
+| **#6093** | `36f3a07b9` | **green** | `awaiting-CI` | — | nobody — `scope` answered, awaiting the next board |
+| **#6188** | `ec1a68d965` | green | `ready-to-merge` | **pos 11** | nobody — 10/10, waiting its turn |
+| **#6432** | `98bb7e78f4` | green | `ready-to-merge` | **pos 4** | nobody — 10/10, waiting its turn |
 
-#6432 **6 → 5**, #6188 **14 → 12**. No `improve/*` merge since #6418 — pure position.
+#6432 **5 → 4**, #6188 **12 → 11**. No `improve/*` merge since #6418 — pure position.
 
 **Step 4 was correctly a no-op.** #6093's CI had been green four minutes at sweep time; the pipeline
 posted its own board nine minutes later, inside the 32–67 min band. Driving would have burned ~$16 to
@@ -73,9 +103,8 @@ It was scouted against much older main and sat **11 behind**. No PR on it, so re
 review cycle: merged `origin/main` (clean, 0 behind), re-gated **14 ok / 2 failed** — the two being
 the documented `parallelns` and `slice` questions — `ghostref` clean. Pushed `98d76ecb6 → 595ce95af`.
 
-**When step 5 fires, open it as a DRAFT.** Body must answer `parallelns` (the `Subgroup` instance
-stays nested — a different namespace at 39/62) and `slice` (1 of 2 flagged, same reason). Mark ready
-when CI is green. Full evidence in HANDOVER §11.
+**When step 5 fires, open it as a DRAFT** with `--body-file pending/submonoid-constsmul-body.md`.
+Mark ready when CI is green.
 
 ## Verified candidate list for the target after that
 
@@ -123,7 +152,7 @@ firing control as known-bad (`ProbabilityTheory.Kernel`). **Ratio does not settl
 * **#6188** — the `Lattice.lean` rooting **only**. Do not re-add the conjugation API: `scope` ⛔'d
   exactly that, and removing it is what made the PR green.
 * **#6432** — semilinear, rooted, renamed, owns the structural lemmas and call-site rewrites.
-* **`improve/submonoid-constsmul-root`** — pushed, refreshed, gate-clean, **no PR**.
+* **`improve/submonoid-constsmul-root`** — pushed, refreshed, gate-clean, body written, **no PR**.
 
 ## Still needs Chris
 

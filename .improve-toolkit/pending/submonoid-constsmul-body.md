@@ -1,0 +1,52 @@
+`lint-dot-notation` flags both declarations in `TauCeti/Topology/Algebra/ConstMulAction.lean`:
+
+```
+ConstMulAction.lean:37: TauCeti.Submonoid.continuousConstSMul
+ConstMulAction.lean:47: TauCeti.Subgroup.continuousConstSMul
+```
+
+This roots the first. `TauCeti.Submonoid` holds exactly one declaration and it is the flagged one, so
+the namespace empties completely rather than being cut in half. `Submonoid` is a root namespace in
+Mathlib (517 declarations) and `AddSubmonoid` likewise (90); Mathlib declares neither
+`Submonoid.continuousConstSMul` nor `AddSubmonoid.continuousConstVAdd`, so nothing clashes and
+nothing is duplicated.
+
+```lean
+instance _root_.Submonoid.continuousConstSMul {M X : Type*} [MulOneClass M] [TopologicalSpace X]
+    [SMul M X] [ContinuousConstSMul M X] (S : Submonoid M) : ContinuousConstSMul S X
+```
+
+Being an instance, the rooting enables no dot notation. The value is emptying a one-declaration
+`TauCeti` namespace and putting the instance where Mathlib puts the analogous ones — its own
+`Topology/Algebra/ConstMulAction.lean` states `Units.continuousConstSMul`, `Prod.continuousConstSMul`
+and `MulOpposite.continuousConstSMul` at root in exactly this shape.
+
+**The `@[to_additive]` target is rooted in the same commit.** `@[to_additive AddSubmonoid.…]` would
+generate `TauCeti.AddSubmonoid.continuousConstVAdd` — the attribute resolves its argument in the
+ambient namespace, so leaving it bare would root the multiplicative instance and strand the additive
+one one namespace away. It is written `_root_.AddSubmonoid.continuousConstVAdd`.
+
+The single call site follows: inside `namespace TauCeti` / `namespace Subgroup`,
+`TauCeti.Submonoid.continuousConstSMul` becomes `Submonoid.continuousConstSMul`, which resolves past
+the now-absent `TauCeti.Submonoid` to the root declaration. The `Main results` bullet is updated to
+match.
+
+## Two gate questions, answered
+
+**`parallelns` — a rooted declaration beside a nested sibling in one file.** Deliberate.
+`TauCeti.Subgroup.continuousConstSMul` stays where it is, and *not* because Mathlib lacks the
+namespace — Mathlib's `Subgroup` is root with 1186 declarations. The reason is that `TauCeti.Subgroup`
+is **39 flagged of 62 declarations**, spread across 4 files and a 6-file subtree. Rooting one of those
+39 here would be exactly the arbitrary cut that blocked #5905: the namespace would be half-rooted,
+with the remaining 38 still reading `TauCeti.Subgroup.…`. `TauCeti.Subgroup` deserves its own
+namespace-at-a-time PR; this one does not start it.
+
+**`slice` — 1 of the file's 2 flagged declarations.** The same boundary, seen per-file. The cut is
+not arbitrary: it is the whole of `TauCeti.Submonoid` (1/1) and none of `TauCeti.Subgroup` (39/62).
+Splitting on the namespace rather than the file is what keeps each rooting complete.
+
+Roadmap: none
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+https://claude.ai/code/session_01Uud3dXqKRLcZcMgZYsDCmQ

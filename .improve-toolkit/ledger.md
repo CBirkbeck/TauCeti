@@ -35627,3 +35627,56 @@ it.
 Checked the rest of the suite: no other control passes a bracketed pattern. Left a comment at the
 site rather than changing `chk`, since quoting the rows is the caller's job and 140 existing controls
 depend on the current matching.
+
+---
+
+## r683 — 2026-09-12 20:38Z — #6093 green on the scope fix; step 5 pre-staged
+
+### Board
+
+```
+#6432  ready-to-merge  GREEN  QUEUED pos=4   (was 5)
+#6188  ready-to-merge  GREEN  QUEUED pos=11  (was 12)
+#6093  awaiting-CI -> GREEN   sandboxed-build success on 36f3a07b9 at 20:38Z
+#5950  ready-to-merge  GREEN  NEVER-QUEUED   Chris's
+```
+
+**`sandboxed-build: success` on `36f3a07b9`.** Removing the two `compFiberEquiv` laws, the docstring
+lines advertising them and the now-unused `Z` variable left the tree building. Nothing owed: the
+pipeline re-reviews from here, and the six rubrics deferred behind the `scope` block — `naming`,
+`api-design`, `generality`, `placement`, `documentation`, `proof-quality` — get judged on this head
+for the **first time**. A fresh 🟡 from any of them is a first verdict, not a regression.
+
+Steps 3, 4 and 5 were no-ops. No `improve/*` merge since #6418; pure position.
+
+### Step 5 is now one command
+
+The remaining work in step 5 was never the branch — `improve/submonoid-constsmul-root` has been
+pushed, refreshed against main and gate-clean since r681. It was the **body**, which has to answer
+two gate questions or draw them straight back as findings. Written and staged at
+`pending/submonoid-constsmul-body.md`, with every claim checked rather than recalled:
+
+```
+mathlibns.py   Submonoid ROOT 517 · AddSubmonoid ROOT 90 · Subgroup ROOT 1186
+lint rows      ConstMulAction.lean:37 TauCeti.Submonoid.continuousConstSMul
+               ConstMulAction.lean:47 TauCeti.Subgroup.continuousConstSMul   (so slice is 1 of 2)
+Mathlib grep   no Submonoid.continuousConstSMul / AddSubmonoid.continuousConstVAdd  (no clash)
+```
+
+**One claim I had to correct while writing it.** My standing note said `Subgroup` stays nested
+because rooting it would invent a namespace. That is wrong — **Mathlib's `Subgroup` is root with 1186
+declarations.** The real reason is `TauCeti.Subgroup` being **39 flagged of 62**, across 4 files and a
+6-file subtree: rooting one of the 39 here is precisely the arbitrary cut that blocked #5905, leaving
+38 siblings still reading `TauCeti.Subgroup.…`. Same conclusion, sound reason instead of a false one
+— and a reviewer would have caught the false one, since `naming` on #6093 blocked on exactly this
+species of error ("the PR description's reasons ... are factually wrong").
+
+The body also records the `@[to_additive]` trap: the attribute resolves its argument in the ambient
+namespace, so a bare `@[to_additive AddSubmonoid.continuousConstVAdd]` would generate
+`TauCeti.AddSubmonoid.continuousConstVAdd` and strand the additive instance one namespace from the
+rooted multiplicative one. It is written `_root_.AddSubmonoid.continuousConstVAdd`.
+
+### Note
+
+Nothing else was owed this round. Rather than manufacture work, the time went into the one thing that
+is genuinely on the critical path and currently blocked only on a merge landing.
