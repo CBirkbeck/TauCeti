@@ -5,11 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Eigenvector
 public import TauCeti.NumberTheory.ModularForms.Newforms.EigenvectorVanishing
 public import TauCeti.NumberTheory.ModularForms.Newforms.EigenvalueExtension
 public import TauCeti.NumberTheory.ModularForms.Newforms.Coefficient
-public import TauCeti.NumberTheory.ModularForms.Newforms.Newform
 
 /-!
 # Strong multiplicity one, at fixed level and nebentypus
