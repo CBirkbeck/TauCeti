@@ -29,8 +29,8 @@ the coefficient formula of the descent, the core of Miyake's Lemma 4.6.14, is pr
 
 ## Main results
 
-* `TauCeti.descendSlash_coe_levelRaise_mul_left_of_mem_modFormCharSpace`, and its cusp-form
-  case `TauCeti.descendSlash_coe_levelRaise_mul_left_of_mem_cuspFormCharSpace`:
+* `TauCeti.descendSlash_coe_levelRaise_mul_left_of_comp_of_mem_modFormCharSpace`, and its cusp-form
+  case `TauCeti.descendSlash_coe_levelRaise_mul_left_of_comp_of_mem_cuspFormCharSpace`:
   `descendSlash k p (l N) (V_l f) =
   l ^ (1 - k) • (descendSlash k p N f ∣[k] diag(l, 1))`, that is, `V_l` of the descent.
 
@@ -228,7 +228,7 @@ private theorem slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq {N : ℕ} (hp 
     (upperTriShift_eq_iff (by simpa using hA)).mpr (by simp [hδ01])
   rw [hshift] at hβ11 hfac
   have hfβ : ⇑f ∣[k] mapGL ℝ β = ⇑f :=
-    slash_mapGL_eq_self_of_mem_modFormCharSpace_of_comp (Nat.div_dvd_of_dvd hpN) hcomp hf hβ
+    slash_mapGL_eq_self_of_comp_of_mem_modFormCharSpace (Nat.div_dvd_of_dvd hpN) hcomp hf hβ
       (by rw [hβ11]; simpa using hδ11)
   have hfacR := congrArg (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)) hfac
   rw [map_mul, map_mul, map_mapGL, map_mapGL] at hfacR
@@ -342,7 +342,7 @@ private theorem coe_levelRaise_slash_descendMatrix_of_le {N : ℕ} (hp : p.Prime
 `l` coprime to `p`, and `f ∈ M_k(Γ₁(N), χ)` with `χ` the pull-back of a character modulo `N / p`,
 the descent slash sum at level `l N` of `V_l f` is `V_l` of the descent slash sum of `f` at level
 `N`: `descendSlash k p (l N) (V_l f) = l ^ (1 - k) • (descendSlash k p N f ∣[k] diag(l, 1))`. -/
-theorem descendSlash_coe_levelRaise_mul_left_of_mem_modFormCharSpace {N : ℕ} (hp : p.Prime)
+theorem descendSlash_coe_levelRaise_mul_left_of_comp_of_mem_modFormCharSpace {N : ℕ} (hp : p.Prime)
     (hpN : p ∣ N)
     (hpl : Nat.Coprime p l) {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / p))ˣ →* ℂˣ}
     (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)))
@@ -362,7 +362,7 @@ theorem descendSlash_coe_levelRaise_mul_left_of_mem_modFormCharSpace {N : ℕ} (
 /-- **The descent commutes with the level-raise, on cusp forms.** For a prime `p ∣ N`, `l`
 coprime to `p`, and `f ∈ S_k(Γ₁(N), χ)` with `χ` the pull-back of a character modulo `N / p`,
 `descendSlash k p (l N) (V_l f) = l ^ (1 - k) • (descendSlash k p N f ∣[k] diag(l, 1))`. -/
-theorem descendSlash_coe_levelRaise_mul_left_of_mem_cuspFormCharSpace {N : ℕ} (hp : p.Prime)
+theorem descendSlash_coe_levelRaise_mul_left_of_comp_of_mem_cuspFormCharSpace {N : ℕ} (hp : p.Prime)
     (hpN : p ∣ N) (hpl : Nat.Coprime p l) {χ : (ZMod N)ˣ →* ℂˣ} {χ₀ : (ZMod (N / p))ˣ →* ℂˣ}
     (hcomp : χ = χ₀.comp (ZMod.unitsMap (Nat.div_dvd_of_dvd hpN)))
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ cuspFormCharSpace k χ) :
@@ -372,7 +372,7 @@ theorem descendSlash_coe_levelRaise_mul_left_of_mem_cuspFormCharSpace {N : ℕ} 
       (l : ℂ) ^ (1 - k) • (descendSlash k p N ⇑f ∣[k] scaleGL l) := by
   have : NeZero p := ⟨hp.ne_zero⟩
   have : NeZero l := ⟨fun h ↦ hp.coprime_iff_not_dvd.mp hpl (h ▸ dvd_zero p)⟩
-  have h := descendSlash_coe_levelRaise_mul_left_of_mem_modFormCharSpace k hp hpN hpl hcomp
+  have h := descendSlash_coe_levelRaise_mul_left_of_comp_of_mem_modFormCharSpace k hp hpN hpl hcomp
     ((coe_mem_modFormCharSpace_iff k χ f).mpr hf)
   rw [ModularForm.coe_levelRaise] at h
   rw [CuspForm.coe_levelRaise]
