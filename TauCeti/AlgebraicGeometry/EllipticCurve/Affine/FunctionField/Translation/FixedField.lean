@@ -264,8 +264,8 @@ theorem eq_of_translationFixedField_eq [Finite Φ]
     translationFixingSubgroup_translationFixedField W Ψ]
 
 /-- **The order of the fixing subgroup of `L` divides the separable degree of `K(W)` over `L`.**
-The field the subgroup cuts out is Galois over `L`, hence separable, so its degree — the order of
-the subgroup — is one factor of the separable degree of the whole extension. -/
+`K(W)` is Galois, hence separable, over the field the subgroup cuts out, and that relative degree is
+the order of the subgroup; it is therefore one factor of the separable degree over `L`. -/
 theorem card_translationFixingSubgroup_dvd_finSepDegree (L : IntermediateField F W.FunctionField)
     [FiniteDimensional L W.FunctionField] :
     Nat.card (translationFixingSubgroup W L) ∣ Field.finSepDegree L W.FunctionField := by

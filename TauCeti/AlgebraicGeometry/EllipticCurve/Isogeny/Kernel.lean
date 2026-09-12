@@ -31,8 +31,6 @@ is proved here.
 
 ## Main results
 
-* `TauCeti.Isogeny.fieldPullback_fieldRange_le_translationFixedField_ker`: the pulled-back field is
-  fixed by the kernel.
 * `TauCeti.Isogeny.card_ker_le_degree`: the kernel has at most `deg φ` elements.
 * `TauCeti.Isogeny.ker_le_ker_comp`: postcomposition can only enlarge the kernel.
 * `TauCeti.Isogeny.ker_eq_bot_of_separableDegree_eq_one`: separable degree one forces this kernel
@@ -91,13 +89,6 @@ theorem ker_le_ker_comp {W₃ : WeierstrassCurve.Affine F} (ψ : Isogeny W₂ W�
   refine translationFixingSubgroup_antitone W₁ ?_
   rintro _ ⟨z, rfl⟩
   exact AlgHom.mem_fieldRange.2 ⟨ψ.fieldPullback z, by rw [comp_fieldPullback]; rfl⟩
-
-/-- **The pulled-back field is fixed by the kernel**, the kernel's interaction with the fixed-field
-operation. This is the inclusion that holds for every isogeny; the reverse one is the content of
-`card_ker_eq_degree_iff`. -/
-theorem fieldPullback_fieldRange_le_translationFixedField_ker (φ : Isogeny W₁ W₂) :
-    φ.fieldPullback.fieldRange ≤ translationFixedField W₁ φ.ker := by
-  rw [ker_def]; exact le_translationFixedField_translationFixingSubgroup W₁ _
 
 /-- **The kernel order divides the separable degree**, the kernel being the subgroup of
 translations fixing the pulled-back field and that field having finite degree. -/
