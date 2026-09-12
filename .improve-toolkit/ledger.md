@@ -35723,3 +35723,58 @@ Nothing durable was found this round, and nothing was invented to fill it. The t
 rounds each produced real work — `queuepos.py`, `ghostref.py`, the `threadread.py` LIVE/NOT-RUN split,
 the staged PR body — because each had a specific defect or gap behind it. This one did not. **The
 correct output of a round with nothing owed is an accurate report that nothing is owed.**
+
+---
+
+## r685 — 2026-09-12 20:57Z — the step-5 command would have failed
+
+### Board
+
+```
+#6432  ready-to-merge  GREEN  MERGING:pos=2   <- merge group building
+#6188  ready-to-merge  GREEN  QUEUED pos=9    (was 10)
+#6093  awaiting-review GREEN  board 2231e763ee BEHIND (head 36f3a07b9) -- still being judged
+#5950  ready-to-merge  GREEN  NEVER-QUEUED    Chris's
+```
+
+#6432 has moved from `QUEUED` to **`MERGING`** — `queuepos.py` reports `AWAITING_CHECKS`, i.e. its
+merge group is building. **That merge is what fires step 5**, so a watch is running on it.
+
+Steps 3, 4 and 5 no-ops at sweep time. #6093's CI has been green 18 minutes; the board band is
+46–64 min from 20:38Z, so ~21:24–21:42Z. Do not drive.
+
+### The catch: `gh pr create` as staged would not have worked
+
+r684 staged the step-5 command so the moment would be a single invocation. Checking it against a real
+PR before trusting it — #6432 — showed it addresses the wrong thing:
+
+```
+head.repo = CBirkbeck/TauCeti        head.label = CBirkbeck:improve/congraut-semilinear
+base.repo = TauCetiProject/TauCeti
+```
+
+**These PRs are cross-repo.** The branch lives on the fork; the PR is opened against upstream. A bare
+`--head improve/submonoid-constsmul-root` does not name a fork branch, and `gh` infers the base repo
+from `origin`, which in this worktree is `TauCetiProject/TauCeti`. Corrected to:
+
+```
+gh pr create --repo TauCetiProject/TauCeti --draft --base main \
+  --head CBirkbeck:improve/submonoid-constsmul-root \
+  --title 'refactor(Topology): root the `TauCeti.Submonoid` continuity instance' \
+  --body-file .mathlib-quality/improve/pending/submonoid-constsmul-body.md
+```
+
+Title reshaped to the house form while checking — merged `refactor(` titles read
+`refactor(<Area>): <what changed>`, e.g. #6418's *"root the `TauCeti.FDRep` character API"*.
+
+**The general point is the one worth keeping.** r684's whole contribution was staging this command so
+step 5 would be quick, and the command was wrong. Staging work ahead of the moment only helps if the
+staged artefact is *verified against something real*; otherwise it converts a problem you would have
+hit while paying attention into one you hit while assuming it was solved. The body was verified claim
+by claim in r683; the command was not verified at all, and the command is the part that would have
+failed.
+
+### Nothing else owed
+
+No `improve/*` merge since #6418 — pure position, and #6432 is mid-merge. Three `improve/*` PRs still
+open, so step 5 has not fired yet.

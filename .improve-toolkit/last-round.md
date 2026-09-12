@@ -1,10 +1,17 @@
-# Last round — r684 (2026-09-12 20:47Z)
+# Last round — r685 (2026-09-12 20:57Z)
 
-## Nothing owed — #6093 is being re-reviewed, the other two are queued
+## #6432 is MERGING — step 5 fires when it lands, and the staged command was wrong
 
-**r684 was a wait round and found no durable work.** Steps 3, 4 and 5 were all no-ops and the only
-change was tightening the step-5 recipe below. Saying so is the honest output; manufacturing work on
-a round like this is worse than reporting it.
+`queuepos.py` reports #6432 as **`MERGING:pos=2`**: its merge group is building. A watch is running on
+that merge, because **it is what fires step 5**.
+
+**The step-5 command r684 staged would have failed.** Checked against a real PR before trusting it —
+#6432 has `head.repo=CBirkbeck/TauCeti`, `base.repo=TauCetiProject/TauCeti`. These PRs are
+**cross-repo**: the branch lives on the fork, the PR opens against upstream. A bare
+`--head improve/…` does not name a fork branch, and `gh` infers the base from `origin`. Corrected
+below. r684's whole contribution was staging that command, and it was not verified against anything —
+staging only helps if the artefact is checked against something real, or it turns a problem you would
+have met while paying attention into one you meet while assuming it was solved.
 
 #6093 went `awaiting-CI` → **`awaiting-review`** at 20:46Z: CI is green on `36f3a07b9` and the
 pipeline is judging it. Its board still reads `2231e763ee` — BEHIND **by construction**, since that
@@ -33,13 +40,19 @@ git checkout improve/submonoid-constsmul-root && git merge origin/main --no-edit
 bash tools/prepush.sh origin/main        # expect 14 ok / 2 (parallelns, slice) — both answered
 git push fork improve/submonoid-constsmul-root
 
-gh pr create --draft --head improve/submonoid-constsmul-root \
-  --title 'refactor(Topology): root `TauCeti.Submonoid.continuousConstSMul`' \
+gh pr create --repo TauCetiProject/TauCeti --draft --base main \
+  --head CBirkbeck:improve/submonoid-constsmul-root \
+  --title 'refactor(Topology): root the `TauCeti.Submonoid` continuity instance' \
   --body-file .mathlib-quality/improve/pending/submonoid-constsmul-body.md
 ```
 
 then mark ready when CI is green. Do **not** refresh it on rounds where step 5 has not fired — that
 is churn, since it falls behind again within the hour.
+
+**The `--head` must be fork-qualified.** These PRs are cross-repo — verified on #6432:
+`head.repo=CBirkbeck/TauCeti`, `base=TauCetiProject/TauCeti`. A bare `--head improve/…` does not
+address the fork branch, so spell it `CBirkbeck:improve/…` and pass `--repo`/`--base` explicitly
+rather than letting `gh` infer them from `origin`.
 
 **A claim in my own notes was wrong and is corrected there.** I had recorded that `Subgroup` stays
 nested because rooting it would invent a namespace. **Mathlib's `Subgroup` is root with 1186
@@ -100,17 +113,17 @@ clean afterwards.
 It is dated **2026-09-09** and reads `absent` in the current board's states — it re-runs once `scope`
 clears, against a tree seven revisions newer. Wait for the fresh verdict.
 
-## Board (20:47Z)
+## Board (20:57Z)
 
 | PR | head | CI | label | queue | whose move |
 |---|---|---|---|---|---|
 | **#5950** | `a64ba63667` | green | `ready-to-merge` | **NEVER-QUEUED** | **Chris** — human-owned file; the bot cannot enqueue it. **Do not refresh it.** |
 | **#6093** | `36f3a07b9` | green | **`awaiting-review`** | — | nobody — being judged now; board `2231e763ee` is BEHIND by construction |
-| **#6188** | `ec1a68d965` | green | `ready-to-merge` | **pos 10** | nobody — 10/10, waiting its turn |
-| **#6432** | `98bb7e78f4` | green | `ready-to-merge` | **pos 3** | nobody — 10/10, waiting its turn |
+| **#6188** | `ec1a68d965` | green | `ready-to-merge` | **pos 9** | nobody — 10/10, waiting its turn |
+| **#6432** | `98bb7e78f4` | green | `ready-to-merge` | **MERGING pos 2** | nobody — merge group building |
 
-#6432 **4 → 3**, #6188 **11 → 10**. No `improve/*` merge since #6418 — pure position. At ~25–30 min
-per merge, **#6432 should land within the hour, which is what fires step 5.**
+#6432 **3 → MERGING**, #6188 **10 → 9**. No `improve/*` merge since #6418 — pure position.
+**#6432 landing is what fires step 5.**
 
 **Step 4 was correctly a no-op.** #6093's CI had been green four minutes at sweep time; the pipeline
 posted its own board nine minutes later, inside the 32–67 min band. Driving would have burned ~$16 to
