@@ -30,7 +30,7 @@ computed, which is why they are not imposed at this layer.
 * `TauCeti.Isogeny.nsmul_eq_zero_of_mem_ker_mulByPrimeIsogeny`: the kernel is killed by `ℓ`.
 * `TauCeti.Isogeny.ker_mulByIntIsogeny_eq_torsionBy`: **the kernel of `[n]` is the `n`-torsion
   subgroup** in Mathlib's intrinsic `A[n]` form, for every `n`, the bridge for consumers of the
-  torsion API; `TauCeti.Isogeny.ker_mulByPrimeIsogeny_eq_torsionBy` is its prime case.
+  torsion API.
 
 ## References
 
@@ -70,12 +70,6 @@ theorem ker_mulByIntIsogeny_eq_torsionBy {n : ℤ} (hn : psiFunctionField W n �
   ext P
   rw [mem_ker_mulByIntIsogeny_iff]
   exact (Submodule.mem_torsionBy_iff _ _).symm
-
-variable (l) in
-/-- The case of a prime `ℓ`, the form the rank computation below is stated through. -/
-theorem ker_mulByPrimeIsogeny_eq_torsionBy :
-    (mulByPrimeIsogeny W l).ker = AddSubgroup.torsionBy (W⁄F).toAffine.Point (l : ℤ) :=
-  ker_mulByIntIsogeny_eq_torsionBy W _
 
 variable (l) in
 /-- **The `ZMod ℓ`-module structure on `ker [ℓ]`**, from every point being killed by `ℓ`. -/
