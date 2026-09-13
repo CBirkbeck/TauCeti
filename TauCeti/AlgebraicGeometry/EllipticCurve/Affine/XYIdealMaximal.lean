@@ -122,8 +122,8 @@ section EvalKernel
 variable {R : Type*} [CommRing R] {W : _root_.WeierstrassCurve.Affine R} {x : R}
 
 /-- **The kernel of evaluation at a point is the ideal of that point.** The evaluation map
-`W.CoordinateRing →ₐ[F] F` at a solution `(x, y)` of the Weierstrass equation is surjective with
-kernel `⟨X - x, Y - y⟩`. -/
+`W.CoordinateRing →ₐ[R] R` at a solution `(x, y)` of the Weierstrass equation has kernel
+`⟨X - x, Y - y⟩`. -/
 @[simp]
 theorem _root_.WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal {y : R}
     (h : (W⁄R).toAffine.Equation x y) :
