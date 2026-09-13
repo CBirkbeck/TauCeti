@@ -30,9 +30,6 @@ computed, which is why they are not imposed at this layer.
 ## Main results
 
 * `TauCeti.Isogeny.nsmul_eq_zero_of_mem_ker_mulByPrimeIsogeny`: the kernel is killed by `ℓ`.
-* `TauCeti.Isogeny.ker_mulByIntIsogeny_eq_torsionBy`: **the kernel of `[n]` is the `n`-torsion
-  subgroup** in Mathlib's intrinsic `A[n]` form, for every `n`, the bridge for consumers of the
-  torsion API.
 
 ## References
 
@@ -62,16 +59,6 @@ theorem nsmul_eq_zero_of_mem_ker_mulByPrimeIsogeny (x : (mulByPrimeIsogeny W l).
     (mem_ker_mulByIntIsogeny_iff W _).1 x.2
   have : ((l : ℤ)) • x = 0 := Subtype.ext (by simpa using hx)
   simpa using this
-
-/-- **The kernel of `[n]` is the `n`-torsion subgroup** in Mathlib's intrinsic form `A[n]`. This is
-the bridge a consumer of the torsion API needs in order to transport results about the isogeny
-kernel to `AddSubgroup.torsionBy`. No primality is involved: it is `mem_ker_mulByIntIsogeny_iff`
-read as an equality of subgroups. -/
-theorem ker_mulByIntIsogeny_eq_torsionBy {n : ℤ} (hn : psiFunctionField W n ≠ 0) :
-    (mulByIntIsogeny W hn).ker = AddSubgroup.torsionBy (W⁄F).toAffine.Point n := by
-  ext P
-  rw [mem_ker_mulByIntIsogeny_iff]
-  exact (Submodule.mem_torsionBy_iff _ _).symm
 
 variable (l) in
 /-- **The `ZMod ℓ`-module structure on `ker [ℓ]`**, from every point being killed by `ℓ`. -/
