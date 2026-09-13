@@ -187,8 +187,11 @@ double coset. The domains `αᵢ • S` are left where the change of variables p
 them — reassembling them into one domain is a separate step, and the reason the integrability
 hypothesis is stated per summand rather than for the sum.
 
-`hint` is discharged in practice by `UpperHalfPlane.integrableOn_petersson_slash_left` and its
-relatives, for `f` a cusp form and `h` a modular form.
+`hint` has to be supplied where the family is fixed. The integrability lemmas already here —
+`UpperHalfPlane.integrableOn_petersson_slash_left` and its relatives — do **not** cover it: they
+are stated over `𝒟`, for a slash by `SL(2, ℤ)`, and with *both* arguments slashed, where `hint`
+allows an arbitrary `S`, a positive-determinant `GL(2, ℝ)` matrix, and only the left argument
+slashed.
 
 Adapted from AINTLIB (github.com/CBirkbeck/AINTLIB @ `6d87d596a5372d5b122c47b7082d4c3afa9b7c3b`,
 Apache-2.0), `projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/AdjointTheory/
