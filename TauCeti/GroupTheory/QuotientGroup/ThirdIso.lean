@@ -17,9 +17,11 @@ theorem with the normality of the upper subgroup dropped: `H` is unconstrained, 
 bijection of coset spaces. Mathlib's `QuotientGroup.quotientQuotientEquivQuotient` is the
 group isomorphism this generalises, stated for `N ≤ M` with `M` normal.
 
-The bijection is what a family or a sum indexed by cosets needs: an index equality only says
-the two index *types* have the same cardinality, not which coset of one corresponds to which
-coset of the other.
+The bijection is what a family or a sum indexed by cosets needs. The corresponding index
+equality, `Subgroup.index_map_mk'_eq_index_sup`, records only that the two coset spaces have
+equal `Nat.card` — the same finite cardinality when they are finite, and jointly `0` when they
+are infinite, whatever their cardinalities. It supplies no correspondence between the cosets
+themselves, so it cannot reindex a family.
 
 ## Main results
 

@@ -12,7 +12,7 @@ public import TauCeti.GroupTheory.QuotientGroup.ThirdIso
 # Indices in quotient groups
 
 This file records how the index of the image of a subgroup in a quotient group is computed in
-the original group. It is the cardinality shadow of the coset-space bijection
+the original group. It is the `Nat.card` shadow of the coset-space bijection
 `QuotientGroup.quotientQuotientEquivQuotientSup`, and is read off it.
 
 ## Main results
