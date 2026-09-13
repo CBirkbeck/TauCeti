@@ -23,17 +23,6 @@ constants, because an algebra map fixes them.
 
 * [T. Wedhorn, *Adic Spaces*][wedhorn_adic], for valuations, their restriction along a ring map,
   and triviality on a base ring.
-
-## Provenance
-
-No port. Mathlib defines `Valuation.IsTrivialOn` and `Valuation.comap` but carries no instance
-relating them; this supplies the missing one. Three places in this repository had previously each
-derived it inline for their own map — `FieldTheory/FunctionField/Place/Extension/Basic.lean`,
-`AlgebraicGeometry/EllipticCurve/Affine/FunctionField/InfinityPlace/Unique.lean` and
-`AlgebraicGeometry/EllipticCurve/Isogeny/FunctionField.lean` — and the last of those is replaced by
-this instance here. The first two restrict along a bare `algebraMap` rather than an `AlgHom` and so
-do not match this instance's shape; converting them is left alone rather than widened into this
-change.
 -/
 
 public section

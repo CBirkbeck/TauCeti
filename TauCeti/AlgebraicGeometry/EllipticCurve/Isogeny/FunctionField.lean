@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Basic
+public import TauCeti.RingTheory.Valuation.IsTrivialOn
 import Mathlib.RingTheory.Polynomial.IsIntegral
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Eval
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finrank
@@ -34,8 +35,8 @@ field. `TauCeti.Isogeny.comp` therefore lives here rather than beside `TauCeti.I
 * `TauCeti.Isogeny.pullback_injective`: a coordinate pullback satisfying `MapsInfinity` is
   injective.
 * `TauCeti.Isogeny.fieldPullback`: the induced embedding of function fields. Triviality on the
-  base field carries across restriction along it by `Valuation.IsTrivialOn.comap`, which is
-  general and lives in `TauCeti/RingTheory/Valuation/IsTrivialOn.lean`.
+  base field carries across restriction along it by the general `Valuation.IsTrivialOn.comap`,
+  re-exported here so that importing this module suffices to restrict a trivial valuation.
 * `TauCeti.Isogeny.comp`: composition of isogenies, with `TauCeti.Isogeny.comp_fieldPullback`
   its function-field law and `TauCeti.Isogeny.id_comp`, `TauCeti.Isogeny.comp_id`,
   `TauCeti.Isogeny.comp_assoc` the unit and associativity laws. The pointedness obligation is
