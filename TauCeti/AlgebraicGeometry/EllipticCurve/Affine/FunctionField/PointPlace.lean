@@ -150,7 +150,7 @@ theorem exists_eq_ofPrime_iff_valuation_X_le_one [IsDedekindDomain W.CoordinateR
     simpa only [IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField] using
       P.mem_integers_iff.mp (hR (algebraMap F[X] W.CoordinateRing Polynomial.X))
   · intro hx r
-    exact P.mem_integers_iff.mpr (W.val_algebraMap_coordinateRing_le_one P.valuation hx r)
+    exact P.mem_integers_iff.mpr (P.valuation.algebraMap_coordinateRing_le_one hx r)
 
 /-- If the coordinate ring is Dedekind, every normalized place of a Weierstrass function field is
 either the place at infinity or the place of a unique height-one prime of the coordinate ring. -/

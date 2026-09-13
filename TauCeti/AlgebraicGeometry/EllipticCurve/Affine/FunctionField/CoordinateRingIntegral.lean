@@ -18,9 +18,10 @@ import Mathlib.RingTheory.Valuation.Integral
 /-!
 # Valuations of a Weierstrass function field that are integral on the coordinate ring
 
-A valuation of `F(W)` which is trivial on `F` is determined on the affine chart by what it does to
-the coordinate `x`: the coordinate ring is integral over `F[x]`, so once `x` has no pole the whole
-of `W.CoordinateRing` lands in the valuation's integers.
+For a valuation of `F(W)` trivial on `F`, having no pole at the coordinate `x` forces the valuation
+to be at most `1` on the whole coordinate ring: `W.CoordinateRing` is integral over `F[x]`, and a
+valuation is at most `1` exactly on what is integral over its integers. This bounds those elements;
+it does not compute their values.
 
 This is the affine-chart half of the classification of such valuations. The other half is
 `WeierstrassCurve.Affine.isEquiv_infinityPlace_of_one_lt`, which settles the case `1 < v x`: there
@@ -30,8 +31,8 @@ stated for a bare valuation.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.val_algebraMap_coordinateRing_le_one`: a valuation trivial on `F` with
-  `v x ≤ 1` is at most `1` on the whole coordinate ring.
+* `Valuation.algebraMap_coordinateRing_le_one`: a valuation trivial on `F` with `v x ≤ 1` is at
+  most `1` on the whole coordinate ring.
 
 ## References
 
@@ -45,9 +46,9 @@ Not ported. The statement is the valuation-level content of the backward directi
 
 public section
 
-open Polynomial
+open Polynomial WeierstrassCurve.Affine
 
-namespace WeierstrassCurve.Affine
+namespace Valuation
 
 variable {F : Type*} [Field F] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
   {W : WeierstrassCurve.Affine F} (v : Valuation W.FunctionField Γ₀) [v.IsTrivialOn F]
@@ -55,7 +56,7 @@ variable {F : Type*} [Field F] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero �
 /-- **A valuation of the function field with no pole at `x` is integral on the coordinate ring.**
 For `v` trivial on `F` with `v x ≤ 1`, every element of `W.CoordinateRing` has value at most `1`
 in `F(W)`. -/
-theorem val_algebraMap_coordinateRing_le_one
+theorem algebraMap_coordinateRing_le_one
     (hx : v (algebraMap F[X] W.FunctionField Polynomial.X) ≤ 1) (r : W.CoordinateRing) :
     v (algebraMap W.CoordinateRing W.FunctionField r) ≤ 1 := by
   -- every polynomial in `x` is integral, then every element of the coordinate ring is integral
@@ -75,6 +76,6 @@ theorem val_algebraMap_coordinateRing_le_one
   exact (Valuation.Integers.isIntegral_iff_v_le_one (Valuation.integer.integers v)).1
     hint.tower_top
 
-end WeierstrassCurve.Affine
+end Valuation
 
 end
