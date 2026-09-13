@@ -33,6 +33,21 @@ is the form the degree and the trace are read off in.
 * `TauCeti.Isogeny.finrank_ker_mulByPrimeIsogeny`: it has dimension two.
 * `TauCeti.Isogeny.nonempty_linearEquiv_ker_mulByPrimeIsogeny`: hence `E[ℓ] ≅ (ZMod ℓ) ²`.
 
+## Roadmap
+
+`TauCetiRoadmap/EllipticCurves/README.md` — "**`ell-torsion-rank`**". This file is **not** that
+target and does not discharge it: the roadmap states the torsion structure for every `N`, over a
+separably closed field, as an additive equivalence on the intrinsic `Submodule.torsionBy ℤ`, and
+what is proved here is the prime case over an algebraically closed field, phrased on the kernel of
+the isogeny `[ℓ]`. It is a prerequisite of the roadmap's stated theorem rather than the theorem
+itself, in the sense of `DivisionPolynomial/Descent.lean`'s roadmap note.
+
+The prime case is nevertheless the whole of what the Hasse route consumes: the symplectic
+multiplier `Aᵀ J A = (deg A) • J` is requested one prime at a time, so no prime-power or
+Chinese-remainder structure theorem enters that route. Reaching the roadmap target itself needs the
+general-`N` statement and a descent from algebraically to separably closed, neither of which is
+attempted here.
+
 ## References
 
 * [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], III.6.4(b).
