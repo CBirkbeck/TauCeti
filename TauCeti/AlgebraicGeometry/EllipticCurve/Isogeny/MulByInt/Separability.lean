@@ -11,6 +11,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Hom.Differential
 import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Degree
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Hom
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Separability
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Differential
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.InvariantDifferential
 
 /-!
 # Separability of multiplication by `n`
@@ -40,13 +42,22 @@ open WeierstrassCurve.Affine
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
 
+/-- **`[n]` scales the invariant differential by `n`**: the pullback of `ω` along `[n]` is `n • ω`.
+This is the differential computation the separability criterion for `[n]` rests on. -/
+theorem pullbackDifferential_mulByIntIsogeny_invariantDifferential [W.IsElliptic] {n : ℤ}
+    (hn : psiFunctionField W n ≠ 0) :
+    (mulByIntIsogeny W hn).pullbackDifferential (invariantDifferential W) =
+      n • invariantDifferential W := by
+  rw [← Hom.pullbackDifferential_ofIsogeny, ofIsogeny_mulByIntIsogeny,
+    Hom.pullbackDifferential_zsmul_id_invariantDifferential]
+
 /-- **`[n]` is separable exactly when `n` is nonzero in the base field** (Silverman III.5.4). -/
 @[simp]
 theorem isSeparable_mulByIntIsogeny_iff [W.IsElliptic] {n : ℤ} (hn : psiFunctionField W n ≠ 0) :
     Algebra.IsSeparable (mulByIntIsogeny W hn).fieldPullback.fieldRange W.FunctionField ↔
       (n : F) ≠ 0 := by
-  rw [isSeparable_iff_pullbackDifferential_ne_zero, ← Hom.pullbackDifferential_ofIsogeny,
-    ofIsogeny_mulByIntIsogeny, Hom.pullbackDifferential_zsmul_id_invariantDifferential, ne_eq,
+  simp [isSeparable_iff_pullbackDifferential_ne_zero,
+    pullbackDifferential_mulByIntIsogeny_invariantDifferential W hn,
     zsmul_invariantDifferential_eq_zero_iff]
 
 /-- **A separable `[n]` has separable degree `n ²`**, its degree, since nothing is inseparable. -/
