@@ -154,6 +154,7 @@ variable [FiniteDimensional K L]
 `H` of `Gal(L/K)` and `E = L ^ H`, the Galois correspondence `H ≃* Gal(L/E)` pulls the stabilizer
 of `Q` in `Gal(L/E)` back to the intersection of `H` with the stabilizer of `Q` in `Gal(L/K)`,
 read inside `H`. -/
+@[simp]
 theorem comap_stabilizer_fixedField_eq_subgroupOf (Q : Ideal (𝓞 L)) (H : Subgroup (L ≃ₐ[K] L)) :
     (MulAction.stabilizer (L ≃ₐ[↥(fixedField H)] L) Q).comap
         (subgroupEquivAlgEquiv H : ↥H →* (L ≃ₐ[↥(fixedField H)] L))
@@ -165,6 +166,7 @@ theorem comap_stabilizer_fixedField_eq_subgroupOf (Q : Ideal (𝓞 L)) (H : Subg
 /-- **The decomposition group over a fixed field has the size of the intersection.**  For a
 subgroup `H` of `Gal(L/K)` and `E = L ^ H`, the stabilizer of `Q` in `Gal(L/E)` has as many
 elements as the intersection of `H` with the stabilizer of `Q` in `Gal(L/K)`. -/
+@[simp]
 theorem card_stabilizer_fixedField_eq_card_inf (Q : Ideal (𝓞 L)) (H : Subgroup (L ≃ₐ[K] L)) :
     Nat.card (MulAction.stabilizer (L ≃ₐ[↥(fixedField H)] L) Q)
       = Nat.card ((MulAction.stabilizer (L ≃ₐ[K] L) Q ⊓ H : Subgroup (L ≃ₐ[K] L))) := by
