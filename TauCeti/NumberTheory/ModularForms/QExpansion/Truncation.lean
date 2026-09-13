@@ -11,21 +11,23 @@ public import TauCeti.NumberTheory.ModularForms.QExpansion.Basic
 /-!
 # Finitely many `q`-coefficients determine a modular form
 
-A modular form is determined by its whole `q`-expansion. On a finite-dimensional space of forms
-it is determined by a *finite* initial segment of it, and this file says so: the kernels
+A modular form is determined by its whole `q`-expansion. Where the space of forms satisfies
+the descending chain condition it is determined by a *finite* initial segment of it, and this
+file says so: the kernels
 `qKerBelow N` of "the first `N` coefficients" decrease, meet in `⊥`, and therefore — the space
 being Artinian — reach `⊥` at some finite `N`, at which point the truncation is injective.
 
-Nothing here proves finite-dimensionality; it is a hypothesis. The point of the statement is the
-converse use: a bound on `N` turns a space of forms into a subspace of `ℂ^N`.
+Nothing here proves that condition; it is a hypothesis, and the stated form is `IsArtinian`
+rather than `FiniteDimensional` because only the chain condition is used. The point of the
+statement is the converse use: a bound on `N` turns a space of forms into a subspace of `ℂ^N`.
 
 ## Main results
 
 * `ModularForm.qCoeffTruncation`: the first `N` coefficients, as a `ℂ`-linear map to
   `Fin N → ℂ`, with `qKerBelow` its kernel.
 * `ModularForm.qKerBelow_iInf_eq_bot`: the kernels meet in `⊥`.
-* `ModularForm.exists_qCoeffTruncation_injective`: on a finite-dimensional space of
-  forms, some finite truncation is injective.
+* `ModularForm.exists_qCoeffTruncation_injective`: on an Artinian space of forms, some finite
+  truncation is injective.
 
 ## References
 
@@ -64,6 +66,7 @@ noncomputable def qKerBelow (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) (k : ℤ
     Submodule ℂ (ModularForm Γ k) :=
   LinearMap.ker (qCoeffTruncation hh hΓ k N)
 
+@[simp]
 theorem mem_qKerBelow_iff {hh : 0 < h} {hΓ : h ∈ Γ.strictPeriods} {N : ℕ}
     {f : ModularForm Γ k} :
     f ∈ qKerBelow hh hΓ k N ↔ ∀ n < N, (qExpansion h f).coeff n = 0 := by
@@ -83,9 +86,11 @@ theorem qKerBelow_iInf_eq_bot (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) :
     (_root_.ModularForm.qExpansion_eq_zero_iff hh hΓ f).1 <| PowerSeries.ext fun n ↦ ?_
   exact mem_qKerBelow_iff.1 (Submodule.mem_iInf _ |>.1 hf (n + 1)) n (Nat.lt_succ_self n)
 
-/-- **The kernel reaches `⊥` at a finite stage**, the space of forms being Artinian. -/
+/-- **The kernel reaches `⊥` at a finite stage**, the space of forms being Artinian. Only
+the descending-chain condition is used, so a finite-dimensional space qualifies through
+Mathlib's instance rather than by hypothesis. -/
 theorem exists_qKerBelow_eq_bot (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods)
-    [FiniteDimensional ℂ (ModularForm Γ k)] :
+    [IsArtinian ℂ (ModularForm Γ k)] :
     ∃ N : ℕ, qKerBelow (Γ := Γ) hh hΓ k N = ⊥ := by
   obtain ⟨N, hN⟩ := IsArtinian.monotone_stabilizes (R := ℂ) (M := ModularForm Γ k)
     { toFun := fun N ↦ OrderDual.toDual (qKerBelow (Γ := Γ) hh hΓ k N)
@@ -99,10 +104,10 @@ theorem exists_qKerBelow_eq_bot (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods)
     le_antisymm (le_iInf hle) (iInf_le _ N)
   rw [hEq, qKerBelow_iInf_eq_bot (Γ := Γ) (k := k) hh hΓ]
 
-/-- **Finitely many `q`-coefficients determine a modular form**, on a finite-dimensional space
-of them: some truncation `f ↦ (a₀ f, …, a_{N-1} f)` is injective. -/
+/-- **Finitely many `q`-coefficients determine a modular form**, on an Artinian space of them:
+some truncation `f ↦ (a₀ f, …, a_{N-1} f)` is injective. -/
 theorem exists_qCoeffTruncation_injective (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods)
-    [FiniteDimensional ℂ (ModularForm Γ k)] :
+    [IsArtinian ℂ (ModularForm Γ k)] :
     ∃ N : ℕ, Function.Injective (qCoeffTruncation (Γ := Γ) hh hΓ k N) := by
   obtain ⟨N, hN⟩ := exists_qKerBelow_eq_bot (Γ := Γ) (k := k) hh hΓ
   exact ⟨N, LinearMap.ker_eq_bot.1 hN⟩
