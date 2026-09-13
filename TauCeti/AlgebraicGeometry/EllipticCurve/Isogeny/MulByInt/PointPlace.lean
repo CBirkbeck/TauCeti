@@ -43,6 +43,9 @@ inside that centre; maximality of the point ideal then forces the two to agree.
 
 * `TauCeti.Isogeny.isEquiv_comap_pointPlace`: the place of `P` restricted along `[n]` is
   equivalent to the place of `n • P`.
+* `TauCeti.Isogeny.isEquiv_comap_pointPlace_iff`: and conversely, a place restricts to the place
+  of `T` only if its point is an `[n]`-preimage of `T`, so the fibre over a place is exactly the
+  preimage of its point.
 
 ## References
 
@@ -312,6 +315,26 @@ theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n :
     HeightOneSpectrum.ext (by rw [CoordinateRing.pointPlace_asIdeal, ← hideal])
   rw [← hQ, hval]
   exact hEq.symm
+
+/-- **The fibre of `[n]` over a place is exactly the `[n]`-preimage of its point.** For `P` off
+the kernel of `[n]`, the place of `P` restricts along `[n]` to the place of `T` precisely when
+`n • P = T`. -/
+theorem isEquiv_comap_pointPlace_iff {x y : F} (h : W.toAffine.Nonsingular x y) {n : ℤ}
+    (hn : psiFunctionField W n ≠ 0) {x' y' x'' y'' : F} (h' : W.toAffine.Nonsingular x' y')
+    (h'' : W.toAffine.Nonsingular x'' y'')
+    (hnP : n • Affine.Point.some x y h = Affine.Point.some x'' y'' h'') :
+    (((CoordinateRing.pointPlace h.left).valuation W.toAffine.FunctionField).comap
+        (mulByIntIsogeny W hn).fieldPullback.toRingHom).IsEquiv
+      ((CoordinateRing.pointPlace h'.left).valuation W.toAffine.FunctionField) ↔
+      n • Affine.Point.some x y h = Affine.Point.some x' y' h' := by
+  refine ⟨fun hab ↦ ?_, isEquiv_comap_pointPlace W h hn h'⟩
+  -- both places restrict to the same one, and a height one prime is determined by its valuation
+  have hb := isEquiv_comap_pointPlace W h hn h'' hnP
+  have hpq : CoordinateRing.pointPlace h''.left = CoordinateRing.pointPlace h'.left :=
+    HeightOneSpectrum.eq_of_valuation_isEquiv_valuation (hb.symm.trans hab)
+  obtain ⟨rfl, rfl⟩ := (CoordinateRing.pointPlace_eq_iff h''.left h'.left).mp hpq
+  rw [hnP]
+
 
 end TauCeti.Isogeny
 end
