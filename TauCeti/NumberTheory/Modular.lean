@@ -62,10 +62,6 @@ same project: `ModularGroup.isFundamentalDomain_fdo` restates `isFundamentalDoma
 is the arbitrary-subgroup form of `isFundamentalDomain_Gamma1_PSL`
 (`Modularforms/PeterssonLevelN.lean`), which states the tiling for the image of `Γ₁(N)`. Both are
 restated for Mathlib's `volume : Measure ℍ` in place of that project's own hyperbolic measure.
-The proofs are shorter here, resting on `ModularGroup.disjoint_smul_fdo`,
-`QuotientGroup.eq_one_iff` with
-`Matrix.SpecialLinearGroup.mem_center_iff_eq_one_or_eq_neg_one`, and the coset-tiling transport of
-`TauCeti/MeasureTheory/Group/FundamentalDomain.lean`, which Tau Ceti already had.
 -/
 
 public section
