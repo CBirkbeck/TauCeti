@@ -64,7 +64,9 @@ union is itself a fundamental domain for `Γ`.
 * `CuspForm.peterssonInnerCosets_eq_sum_smul_fd`: the coset pairing is a sum of integrals over
   translates of `𝒟`.
 * `CuspForm.peterssonInnerCosets_eq_peterssonInner`: that sum is the single integral of
-  `petersson k f g` over the union of the corresponding translates of `𝒟ᵒ`.
+  `petersson k f g` over the union of the corresponding translates of `𝒟ᵒ` — a union which
+  `ModularGroup.isFundamentalDomain_iUnion_out_inv_smul_fdo_withCenter` shows is a fundamental
+  domain for the image of `Γ` in `PSL(2, ℤ)`.
 
 ## References
 
@@ -202,8 +204,10 @@ theorem peterssonInnerCosets_eq_sum_smul_fd (f g : CuspForm (Γ.map (mapGL ℝ))
 /-- **The Petersson product of `S_k(Γ)` is a single integral over a union of translates.** The
 sets `q⁻¹ • 𝒟ᵒ`, one for each coset of `Γ·{±I}` in `SL(2, ℤ)`, are open and pairwise disjoint,
 and carry an integrable Petersson integrand, so the sum of integrals over them is the integral
-over their union. This theorem does not assert that the union is a fundamental domain for
-`Γ`. -/
+over their union.
+
+That union **is** a fundamental domain for the image of `Γ` in `PSL(2, ℤ)`:
+`ModularGroup.isFundamentalDomain_iUnion_out_inv_smul_fdo_withCenter`. -/
 theorem peterssonInnerCosets_eq_peterssonInner (f g : CuspForm (Γ.map (mapGL ℝ)) k) :
     peterssonInnerCosets f g =
       UpperHalfPlane.peterssonInner k
