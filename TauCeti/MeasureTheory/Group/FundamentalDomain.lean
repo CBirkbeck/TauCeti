@@ -223,17 +223,17 @@ Ported from AINTLIB (github.com/CBirkbeck/AINTLIB @ `6d87d596a5372d5b122c47b7082
 Apache-2.0), `projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/AdjointTheory/
 FDTransport.lean`, which proves this for `Γ₁(N)` and a concrete `α`. -/
 theorem IsFundamentalDomain.iUnion_mul_out_inv_smul {G α : Type*} [Group G] [MeasurableSpace α]
-    [MulAction G α] [MeasurableConstSMul G α] {μ : Measure α} [SMulInvariantMeasure G α μ]
-    {Γ₁ Γ₂ : Subgroup G} (δ : G) {s : Set α} (hs : IsFundamentalDomain Γ₂ s μ)
+    [MulAction G α] {μ : Measure α} {Γ₁ Γ₂ : Subgroup G}
+    [MeasurableConstSMul Γ₂ α] [SMulInvariantMeasure Γ₂ α μ]
+    (δ : G) {s : Set α} (hs : IsFundamentalDomain Γ₂ s μ)
+    (hδ : Measure.QuasiMeasurePreserving (fun x : α ↦ δ⁻¹ • x) μ μ)
     [Countable (Γ₂ ⧸ (ConjAct.toConjAct δ⁻¹ • Γ₁).subgroupOf Γ₂)] :
     IsFundamentalDomain (Γ₁ ⊓ ConjAct.toConjAct δ • Γ₂ : Subgroup G)
       (⋃ v : Γ₂ ⧸ (ConjAct.toConjAct δ⁻¹ • Γ₁).subgroupOf Γ₂,
         (δ * ((v.out : Γ₂) : G)⁻¹) • s) μ := by
   -- the composite of the two results above: the first tiles `s` by the cosets of
-  -- `(δ⁻¹Γ₁δ).subgroupOf Γ₂` inside `Γ₂`, the second carries the tiling along `δ`. The
-  -- translation by `δ⁻¹` is measure-preserving, the action being measurable and `μ` invariant.
-  have hδ : Measure.QuasiMeasurePreserving (fun x : α ↦ δ⁻¹ • x) μ μ :=
-    (measurePreserving_smul δ⁻¹ μ).quasiMeasurePreserving
+  -- `(δ⁻¹Γ₁δ).subgroupOf Γ₂` inside `Γ₂` — which is why only the `Γ₂`-action need be measurable
+  -- and `μ`-invariant — and the second carries the tiling along `δ`, needing `hδ` alone.
   have htile := (hs.subgroup_iUnion_out_inv_smul
     ((ConjAct.toConjAct δ⁻¹ • Γ₁).subgroupOf Γ₂)).of_subgroupOf
   have hconj := htile.smul_of_eq_conjAct_pointwise_smul (g := δ) hδ (H₂ :=
