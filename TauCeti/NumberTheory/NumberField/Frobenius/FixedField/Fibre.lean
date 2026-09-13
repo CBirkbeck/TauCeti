@@ -31,8 +31,6 @@ neither unramifiedness, nor a base prime of `𝓞 K`, nor `L / K` Galois plays a
   Frobenius forces `σ` to be the absolute Frobenius.
 * `Ideal.under_fixedField_injOn`: contraction to the fixed field is injective on the primes fixed
   by `σ`.
-* `Ideal.under_fixedField_injOn_isArithFrobAt`: in particular on the primes above a given prime of
-  `𝓞 K` that admit `σ` as an arithmetic Frobenius.
 
 ## References
 
@@ -95,16 +93,5 @@ theorem under_fixedField_injOn (σ : L ≃ₐ[K] L) :
   rintro Q₁ ⟨_, h₁⟩ Q₂ ⟨_, -⟩ hEq
   have : Q₂.LiesOver (Q₁.under (𝓞 ↥(fixedField (Subgroup.zpowers σ)))) := ⟨hEq⟩
   exact (eq_of_smul_eq_of_liesOver_under_fixedField h₁ Q₂).symm
-
-omit [IsGalois K L] in
-/-- **Contraction to the fixed field is injective on a Frobenius fibre.** Distinct primes of `𝓞 L`
-above `𝔭` admitting `σ` as an arithmetic Frobenius have distinct contractions to `𝓞 (L ^ ⟨σ⟩)`. -/
-theorem under_fixedField_injOn_isArithFrobAt (𝔭 : Ideal (𝓞 K)) (σ : L ≃ₐ[K] L) :
-    Set.InjOn (fun Q : Ideal (𝓞 L) ↦ Q.under (𝓞 ↥(fixedField (Subgroup.zpowers σ))))
-      {Q : Ideal (𝓞 L) | ∃ (_ : Q.IsPrime) (_ : Q.LiesOver 𝔭) (_ : Q ≠ ⊥),
-        IsArithFrobAt (𝓞 K) σ Q} :=
-  (under_fixedField_injOn σ).mono <| by
-    rintro Q ⟨hp, -, -, hfrob⟩
-    exact ⟨hp, hfrob.mem_stabilizer⟩
 
 end Ideal
