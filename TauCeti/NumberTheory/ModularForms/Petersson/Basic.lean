@@ -35,6 +35,10 @@ Mathlib's invariant measure `volume : Measure ℍ` (`dx dy / y²`,
 ## Main results
 
 * `UpperHalfPlane.peterssonInner_conj_symm`: Hermitian symmetry.
+* `UpperHalfPlane.petersson_smul_of_mem` and `UpperHalfPlane.petersson_psl_smul_of_mem`: the
+  integrand is invariant under `Γ`, and under the image of `Γ` in `PSL(2, ℤ)` that actually acts.
+* `UpperHalfPlane.peterssonInner_eq_of_isFundamentalDomain`: the pairing is the same over any two
+  fundamental domains for that image — "the" Petersson product does not depend on the domain.
 * `UpperHalfPlane.integrableOn_petersson_fd_left`: integrability of the Petersson integrand of a
   cusp form against a modular form over the standard fundamental domain.
 * `UpperHalfPlane.integrableOn_petersson_slash_left` and
@@ -98,6 +102,58 @@ theorem peterssonInner_congr_set {k : ℤ} {D D' : Set ℍ} (h : D =ᶠ[MeasureT
 theorem peterssonInner_fd_eq_fdo (k : ℤ) (f g : ℍ → ℂ) :
     peterssonInner k ModularGroup.fd f g = peterssonInner k ModularGroup.fdo f g :=
   peterssonInner_congr_set ModularGroup.fd_ae_eq_fdo f g
+
+/-- **The Petersson integrand is invariant under the group its arguments are modular for.**
+This is pointwise, and no change of variables is involved: `conj (f τ)` and `f' τ` each pick up
+the automorphy factor of `γ`, and their product cancels against the transformation of the weight
+`im τ ^ k`, which `UpperHalfPlane.petersson_slash_SL` records. So `petersson k f f'` is a genuine
+function on the quotient `Γ \ ℍ`.
+
+Not `@[simp]`: the left-hand side is not in simp normal form, since `ModularGroup.sl_moeb`
+rewrites `γ • τ` into the `GL(2, ℝ)` action of `γ`'s image. The `PSL(2, ℤ)` form below carries the
+attribute instead, and it is the one simp can use. -/
+theorem petersson_smul_of_mem {F F' : Type*} [FunLike F ℍ ℂ] [FunLike F' ℍ ℂ] (k : ℤ)
+    {Γ : Subgroup SL(2, ℤ)} [SlashInvariantFormClass F (Γ.map (mapGL ℝ)) k]
+    [SlashInvariantFormClass F' (Γ.map (mapGL ℝ)) k] (f : F) (f' : F') {γ : SL(2, ℤ)}
+    (hγ : γ ∈ Γ) (τ : ℍ) :
+    petersson k ⇑f ⇑f' (γ • τ) = petersson k ⇑f ⇑f' τ := by
+  -- `ModularForm.SL_slash` is `rfl`, so the `SL(2, ℤ)`-slash *is* the `GL(2, ℝ)`-slash of the
+  -- image; the two are defeq but not syntactically equal, so these are `exact`s and not `rw`s.
+  have hf : ⇑f ∣[k] γ = ⇑f :=
+    SlashInvariantFormClass.slash_action_eq f _ (Subgroup.mem_map_of_mem _ hγ)
+  have hf' : ⇑f' ∣[k] γ = ⇑f' :=
+    SlashInvariantFormClass.slash_action_eq f' _ (Subgroup.mem_map_of_mem _ hγ)
+  rw [← petersson_slash_SL k ⇑f ⇑f' γ τ, hf, hf']
+
+/-- **The Petersson integrand is invariant under the image of `Γ` in `PSL(2, ℤ)`**, which is
+the group that actually acts: `±I` acts trivially on `ℍ`. This is the hypothesis
+`MeasureTheory.IsFundamentalDomain.setIntegral_eq` asks for. -/
+@[simp]
+theorem petersson_psl_smul_of_mem {F F' : Type*} [FunLike F ℍ ℂ] [FunLike F' ℍ ℂ] (k : ℤ)
+    {Γ : Subgroup SL(2, ℤ)} [SlashInvariantFormClass F (Γ.map (mapGL ℝ)) k]
+    [SlashInvariantFormClass F' (Γ.map (mapGL ℝ)) k] (f : F) (f' : F')
+    (g : Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ)))) (τ : ℍ) :
+    petersson k ⇑f ⇑f' ((g : PSL(2, ℤ)) • τ) = petersson k ⇑f ⇑f' τ := by
+  obtain ⟨γ, hγ, hg⟩ := g.2
+  rw [← hg]
+  exact petersson_smul_of_mem k f f' hγ τ
+
+/-- **The Petersson pairing does not depend on the fundamental domain.** Any two fundamental
+domains for the image of `Γ` in `PSL(2, ℤ)` give the same pairing of two forms modular for `Γ`,
+because the integrand is constant on `Γ`-orbits (`petersson_psl_smul_of_mem`).
+
+Together with a proof that a particular set *is* a fundamental domain — for the union of
+translates of `𝒟ᵒ` that the coset sum produces, `ModularGroup.isFundamentalDomain_fdo` and its
+subgroup form — this is what makes "the" Petersson product well defined. -/
+theorem peterssonInner_eq_of_isFundamentalDomain {F F' : Type*} [FunLike F ℍ ℂ] [FunLike F' ℍ ℂ]
+    (k : ℤ) {Γ : Subgroup SL(2, ℤ)} [SlashInvariantFormClass F (Γ.map (mapGL ℝ)) k]
+    [SlashInvariantFormClass F' (Γ.map (mapGL ℝ)) k] (f : F) (f' : F') {S T : Set ℍ}
+    (hS : MeasureTheory.IsFundamentalDomain
+      (Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ)))) S volume)
+    (hT : MeasureTheory.IsFundamentalDomain
+      (Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ)))) T volume) :
+    peterssonInner k S ⇑f ⇑f' = peterssonInner k T ⇑f ⇑f' :=
+  hS.setIntegral_eq hT fun g τ ↦ petersson_psl_smul_of_mem k f f' g τ
 
 /-- Unfolding: the pairing over `D` is the integral of the Petersson integrand over `D`. -/
 theorem peterssonInner_def (k : ℤ) (D : Set ℍ) (f g : ℍ → ℂ) :
