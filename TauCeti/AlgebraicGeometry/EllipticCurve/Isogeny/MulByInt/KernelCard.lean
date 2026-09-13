@@ -6,7 +6,8 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Kernel
-public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.AlgClosed
+-- Proof-only: rationality of torsion over an algebraically closed base.
+import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.AlgClosed
 -- Proof-only: `sepDeg [n] = n ²` for `n` invertible in the base field.
 import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Separability
 
@@ -28,13 +29,10 @@ and the separable degree is the number of embeddings.
 
 ## Main results
 
-* `TauCeti.Isogeny.zsmul_map_sub_map_genericPoint_eq_zero`: two homomorphisms agreeing on the
-  pulled-back field move the generic point by an `n`-torsion difference.
-* `TauCeti.Isogeny.mem_range_baseChange_sub_map_genericPoint_mulByInt`: that difference is the
-  image of a rational point.
-* `TauCeti.Isogeny.card_emb_mulByIntIsogeny_le_card_ker`: hence there are at most as many
-  embeddings as kernel points.
 * `TauCeti.Isogeny.card_ker_mulByIntIsogeny`: **`#ker [n] = n ²`**.
+
+The three steps of the argument sketched above — the torsion difference, its rationality, and the
+resulting bound on embeddings — are `private`; nothing outside this module uses them.
 
 ## References
 

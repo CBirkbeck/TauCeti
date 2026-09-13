@@ -5,8 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.KernelCard
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.PrimeKernel
+-- Proof-only: `#ker [n] = n ²`, which the dimension is read off from.
+import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.KernelCard
 import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 import Mathlib.FieldTheory.Finite.Basic
 
