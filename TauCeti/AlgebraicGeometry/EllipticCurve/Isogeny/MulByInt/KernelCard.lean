@@ -27,13 +27,10 @@ and the separable degree is the number of embeddings.
 
 ## Main results
 
-* `TauCeti.Isogeny.zsmul_map_sub_map_genericPoint_eq_zero`: two homomorphisms agreeing on the
-  pulled-back field move the generic point by an `n`-torsion difference.
-* `TauCeti.Isogeny.mem_range_baseChange_sub_map_genericPoint_mulByInt`: that difference is the
-  image of a rational point.
-* `TauCeti.Isogeny.card_emb_mulByIntIsogeny_le_card_ker`: hence there are at most as many
-  embeddings as kernel points.
 * `TauCeti.Isogeny.card_ker_mulByIntIsogeny`: **`#ker [n] = n ²`**.
+
+The three steps of the argument sketched above — the torsion difference, its rationality, and the
+resulting bound on embeddings — are `private`; nothing outside this module uses them.
 
 ## References
 
@@ -52,7 +49,7 @@ omit [DecidableEq F] in
 /-- **Two homomorphisms agreeing on the pulled-back field move the generic point by an `n`-torsion
 difference.** Their images of the tautological point of `[n]` agree, and that point is `n` times
 the generic point. -/
-theorem zsmul_map_sub_map_genericPoint_eq_zero {Ω : Type*} [Field Ω] [DecidableEq Ω]
+private theorem zsmul_map_sub_map_genericPoint_eq_zero {Ω : Type*} [Field Ω] [DecidableEq Ω]
     [Algebra F Ω] {n : ℤ} (hn : psiFunctionField W n ≠ 0)
     (σ τ : W.FunctionField →ₐ[F] Ω)
     (h : ∀ z ∈ (mulByIntIsogeny W hn).fieldPullback.fieldRange, σ z = τ z) :
@@ -77,7 +74,7 @@ private theorem ne_zero_of_psiFunctionField_ne_zero {n : ℤ} (hn : psiFunctionF
 
 /-- **That difference is the image of a rational point**, the base field being algebraically
 closed and the difference `n`-torsion. -/
-theorem mem_range_baseChange_sub_map_genericPoint_mulByInt [IsAlgClosed F]
+private theorem mem_range_baseChange_sub_map_genericPoint_mulByInt [IsAlgClosed F]
     {Ω : Type*} [Field Ω] [DecidableEq Ω] [Algebra F Ω] {n : ℤ}
     (hn : psiFunctionField W n ≠ 0) (σ τ : W.FunctionField →ₐ[F] Ω)
     (h : ∀ z ∈ (mulByIntIsogeny W hn).fieldPullback.fieldRange, σ z = τ z) :
@@ -88,7 +85,7 @@ theorem mem_range_baseChange_sub_map_genericPoint_mulByInt [IsAlgClosed F]
 
 /-- **There are at most as many embeddings of `K(W)` over the pulled-back field as kernel
 points**, each embedding being determined by the rational point it moves the generic point by. -/
-theorem card_emb_mulByIntIsogeny_le_card_ker [IsAlgClosed F] {n : ℤ}
+private theorem card_emb_mulByIntIsogeny_le_card_ker [IsAlgClosed F] {n : ℤ}
     (hn : psiFunctionField W n ≠ 0) :
     Nat.card (Field.Emb (mulByIntIsogeny W hn).fieldPullback.fieldRange W.FunctionField) ≤
       Nat.card (mulByIntIsogeny W hn).ker := by
