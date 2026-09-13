@@ -7,6 +7,7 @@ module
 
 public import TauCeti.NumberTheory.ModularForms.Norm.Reduction
 public import TauCeti.NumberTheory.ModularForms.QExpansion.BigO
+public import TauCeti.Analysis.Asymptotics.Punctured
 
 /-!
 # Vanishing `q`-coefficients transfer to the level-one norm
@@ -20,15 +21,14 @@ The mechanism is `Norm/Reduction.lean`'s factorisation `norm f = f * restProd f`
 cusp functions turns it into a product near the puncture `q = 0`, where `restProd f` is bounded;
 so an `O(‖q‖ ^ N)` bound on the cusp function of `f` transfers to the norm. The bound holds only
 on the *punctured* neighbourhood, because `restProd` is only controlled there — extending it
-across `0` is what `isBigO_nhds_of_isBigO_punctured` does, using that the cusp function of the
-norm vanishes at `0`.
+across `0` is `TauCeti.isBigO_nhds_of_isBigO_punctured`, a general fact about punctured
+`O`-bounds kept in `TauCeti/Analysis/Asymptotics/Punctured.lean`, applied using that the cusp
+function of the norm vanishes at `0`.
 
 ## Main results
 
-* `TauCeti.isBigO_nhds_of_isBigO_punctured`: an `O`-bound on a punctured neighbourhood of `0`
-  extends across `0` for a function vanishing there. Pure analysis, no modular forms.
-* `TauCeti.ModularForm.NormReduction.τfun`: the inverse `q`-parameter, as a map to `ℍ`.
-* `TauCeti.ModularForm.NormReduction.qExpansion_coeff_eq_zero_norm_of_qExpansion_coeff_eq_zero`:
+* `ModularForm.NormReduction.τfun`: the inverse `q`-parameter, as a map to `ℍ`.
+* `ModularForm.NormReduction.qExpansion_coeff_eq_zero_norm_of_qExpansion_coeff_eq_zero`:
   the norm step.
 
 ## References
@@ -48,25 +48,6 @@ open Filter UpperHalfPlane ModularForm SlashInvariantFormClass ModularFormClass
 
 public section
 
-namespace TauCeti
-
-/-- **An `O`-bound near a puncture extends across it**, for a function that vanishes at the
-punctured point: if `f =O[𝓝[≠] 0] g` and `‖f 0‖ = 0`, then `f =O[𝓝 0] g`. The bound at `0`
-itself is free, since both sides vanish there. -/
-theorem isBigO_nhds_of_isBigO_punctured {f : ℂ → ℂ} {g : ℂ → ℝ}
-    (hO : f =O[𝓝[≠] (0 : ℂ)] g) (hf0 : ‖f 0‖ = 0) : f =O[𝓝 (0 : ℂ)] g := by
-  obtain ⟨C, hC0, hC⟩ := hO.exists_nonneg
-  refine Asymptotics.IsBigO.of_bound C ?_
-  have hC' : ∀ᶠ q : ℂ in 𝓝 (0 : ℂ), q ≠ 0 → ‖f q‖ ≤ C * ‖(g q : ℝ)‖ := by
-    simpa [eventually_nhdsWithin_iff] using hC.bound
-  filter_upwards [hC'] with q hq
-  by_cases hq0 : q = 0
-  · subst hq0
-    simpa [hf0] using mul_nonneg hC0 (norm_nonneg (g 0))
-  · exact hq hq0
-
-end TauCeti
-
 namespace ModularForm.NormReduction
 
 open TauCeti TauCeti.ModularForm.NormReduction
@@ -77,21 +58,31 @@ variable {Γ : Subgroup SL(2, ℤ)} {k : ℤ}
 /-- **The inverse `q`-parameter, landing in `ℍ`**: `q ↦ ofComplex (invQParam h q)`. It is the
 change of variables under which a cusp function is evaluated, and it carries the punctured
 neighbourhood of `0` to `Im τ → ∞` (`tendsto_τfun_atImInfty`). -/
-@[reducible] def τfun (h : ℝ) : ℂ → ℍ :=
+@[expose] def τfun (h : ℝ) : ℂ → ℍ :=
   fun q : ℂ ↦ UpperHalfPlane.ofComplex (Function.Periodic.invQParam h q)
+
+/-- **Unfolding `τfun` pointwise**: it is `ofComplex` of the inverse `q`-parameter. -/
+@[simp]
+theorem τfun_apply (h : ℝ) (q : ℂ) :
+    τfun h q = UpperHalfPlane.ofComplex (Function.Periodic.invQParam h q) := rfl
+
+/-- **Unfolding `τfun` as a function**, for rewriting under a `Tendsto` or a composition. -/
+theorem τfun_def (h : ℝ) :
+    τfun h = fun q : ℂ ↦ UpperHalfPlane.ofComplex (Function.Periodic.invQParam h q) := rfl
 
 /-- **`τfun` carries the puncture to the cusp**: `q → 0` with `q ≠ 0` sends `τfun h q` to
 `Im τ → ∞`. -/
 theorem tendsto_τfun_atImInfty {h : ℝ} (hh : 0 < h) :
     Tendsto (τfun h) (𝓝[≠] (0 : ℂ)) UpperHalfPlane.atImInfty := by
-  simpa [τfun, Function.comp_def] using
+  rw [τfun_def]
+  simpa [Function.comp_def] using
     UpperHalfPlane.tendsto_comap_im_ofComplex.comp
       (Function.Periodic.invQParam_tendsto (h := h) hh)
 
 /-- **The cusp function is the form evaluated at `τfun`**, away from the puncture. -/
 theorem cuspFunction_eq_eval_τfun_of_ne_zero {Γ' : Subgroup (GL (Fin 2) ℝ)} {k' : ℤ} {h : ℝ}
     (f : ModularForm Γ' k') {q : ℂ} (hq : q ≠ 0) : cuspFunction h f q = f (τfun h q) := by
-  simp [cuspFunction, Function.Periodic.cuspFunction, τfun, hq]
+  simp [cuspFunction, Function.Periodic.cuspFunction, τfun_apply, hq]
 
 section FiniteIndex
 
@@ -147,7 +138,7 @@ theorem norm_cuspFunction_apply_zero_eq_zero (f : ModularForm (G Γ) k)
     (hperSL : (G Γ).strictWidthInfty ∈ (𝒮ℒ : Subgroup (GL (Fin 2) ℝ)).strictPeriods)
     {N : ℕ} (hNpos : 0 < N)
     (hcoeff : ∀ m < N, (qExpansion (G Γ).strictWidthInfty f).coeff m = 0) :
-    ‖cuspFunction (G Γ).strictWidthInfty (_root_.ModularForm.norm 𝒮ℒ f) 0‖ = 0 := by
+    cuspFunction (G Γ).strictWidthInfty (_root_.ModularForm.norm 𝒮ℒ f) 0 = 0 := by
   have hval0 : valueAtInfty (f : ℍ → ℂ) = 0 := by
     have h0 := UpperHalfPlane.qExpansion_coeff_zero hh
       (_root_.ModularFormClass.analyticAt_cuspFunction_zero (f := f) hh hper)
@@ -158,7 +149,7 @@ theorem norm_cuspFunction_apply_zero_eq_zero (f : ModularForm (G Γ) k)
     (_root_.ModularFormClass.analyticAt_cuspFunction_zero
       (f := _root_.ModularForm.norm 𝒮ℒ f) hh hperSL)
     (SlashInvariantFormClass.periodic_comp_ofComplex (_root_.ModularForm.norm 𝒮ℒ f) hperSL)
-  rw [h0, hnorm0, norm_zero]
+  rw [h0, hnorm0]
 
 /-- **Vanishing of the first `N` `q`-coefficients passes to the level-one norm.** This is the
 step that makes the eventual injectivity of "the first `N` coefficients" — and with it the
