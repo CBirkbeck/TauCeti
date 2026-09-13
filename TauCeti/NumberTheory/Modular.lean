@@ -55,13 +55,13 @@ Split out of the Petersson inner-product development ported from the AINTLIB
 (<https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>,
 `Modularforms/PeterssonInnerProduct.lean`, Chris Birkbeck).
 
-The section on translates of `𝒟ᵒ` was developed in Tau Ceti and has no counterpart in that
-AINTLIB source. The two fundamental-domain statements do have counterparts there, both in the
-same project: `ModularGroup.isFundamentalDomain_fdo` restates `isFundamentalDomain_fdo_PSL`
+Two of the results correspond to statements in that project:
+`ModularGroup.isFundamentalDomain_fdo` to `isFundamentalDomain_fdo_PSL`
 (`Modularforms/PSL2Action.lean`), and `ModularGroup.isFundamentalDomain_iUnion_out_inv_smul_fdo`
-is the arbitrary-subgroup form of `isFundamentalDomain_Gamma1_PSL`
-(`Modularforms/PeterssonLevelN.lean`), which states the tiling for the image of `Γ₁(N)`. Both are
-restated for Mathlib's `volume : Measure ℍ` in place of that project's own hyperbolic measure.
+to `isFundamentalDomain_Gamma1_PSL` (`Modularforms/PeterssonLevelN.lean`), of which it is the
+arbitrary-subgroup form — that one states the tiling for the image of `Γ₁(N)`. Both are stated
+here for Mathlib's `volume : Measure ℍ` rather than that project's own hyperbolic measure. The
+results on translates of `𝒟ᵒ` have no counterpart there.
 -/
 
 public section
