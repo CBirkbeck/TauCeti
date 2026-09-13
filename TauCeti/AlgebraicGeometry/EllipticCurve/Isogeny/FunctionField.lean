@@ -10,7 +10,6 @@ import Mathlib.RingTheory.Polynomial.IsIntegral
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Eval
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finrank
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.GenericPoint
-public import Mathlib.RingTheory.Valuation.IsTrivialOn
 
 /-!
 # Function-field pullbacks of isogenies
@@ -34,9 +33,9 @@ field. `TauCeti.Isogeny.comp` therefore lives here rather than beside `TauCeti.I
   transcendental element inside the pulled-back function field.
 * `TauCeti.Isogeny.pullback_injective`: a coordinate pullback satisfying `MapsInfinity` is
   injective.
-* `TauCeti.Isogeny.fieldPullback`: the induced embedding of function fields, with
-  `TauCeti.Isogeny.instIsTrivialOnComapFieldPullback` carrying triviality on the base field
-  across the restriction of a valuation along it.
+* `TauCeti.Isogeny.fieldPullback`: the induced embedding of function fields. Triviality on the
+  base field carries across restriction along it by `Valuation.IsTrivialOn.comap`, which is
+  general and lives in `TauCeti/RingTheory/Valuation/IsTrivialOn.lean`.
 * `TauCeti.Isogeny.comp`: composition of isogenies, with `TauCeti.Isogeny.comp_fieldPullback`
   its function-field law and `TauCeti.Isogeny.id_comp`, `TauCeti.Isogeny.comp_id`,
   `TauCeti.Isogeny.comp_assoc` the unit and associativity laws. The pointedness obligation is
@@ -315,15 +314,6 @@ factorisation through a fixed `φ` determines its factor uniquely. -/
 theorem comp_right_inj {φ : Isogeny W₁ W₂} {ψ₁ ψ₂ : Isogeny W₂ W₃} :
     ψ₁.comp φ = ψ₂.comp φ ↔ ψ₁ = ψ₂ :=
   (comp_right_injective φ).eq_iff
-
-/-- **A valuation restricted along an isogeny is trivial on the base field** whenever it is, the
-pullback being an `F`-algebra map. -/
-instance instIsTrivialOnComapFieldPullback {Γ : Type*} [LinearOrderedCommGroupWithZero Γ]
-    (φ : Isogeny W₁ W₂) (v : Valuation W₁.FunctionField Γ) [v.IsTrivialOn F] :
-    (v.comap φ.fieldPullback.toRingHom).IsTrivialOn F where
-  eq_one c hc := by
-    rw [Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, AlgHom.commutes]
-    exact Valuation.IsTrivialOn.eq_one c hc
 
 end Isogeny
 
