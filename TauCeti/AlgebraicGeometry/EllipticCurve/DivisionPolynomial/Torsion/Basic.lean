@@ -92,10 +92,10 @@ splits `ψ₄ = preΨ₄ * ψ₂` and reads off `leadingCoeff preΨ₄ = 2`, and
 `leadingCoeff (preΨ n) = n / 2` runs it verbatim at every even index; the source's own index is
 kept as `isInteger_x_of_order_four_of_squarefree`), `den_dvd_of_order_two` →
 `den_dvd_four_of_order_two`, `two_nsmul_eq_zero_of_ψ₂_eq_zero` →
-`zsmul_eq_zero_of_evalEval_ψ_eq_zero` at `n = 2` (**generalised** to every index, and restated for
-the Jacobian point so that the even-index
-theorem needs no `[DecidableEq K]`); that one carries no integrality content and lives in
-`DivisionPolynomial/ZSMul.lean`, which this file consumes.
+`zsmul_eq_zero_of_evalEval_ψ_eq_zero` at `n = 2`: a vanishing `ψₙ` annihilates the point at every
+index, and two-torsion is the case `n = 2`. It is stated for the Jacobian point, so the even-index
+theorem needs no `[DecidableEq K]`, and it carries no integrality content, so it lives in
+`DivisionPolynomial/ZSMul.lean`.
 -/
 
 public section
