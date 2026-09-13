@@ -15,11 +15,6 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.CoordinateRing
 -- Proof-only: the generic point's equation, and the general two-to-three pole ratio it feeds.
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.GenericPoint
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.ValuationIntegrality
--- Proof-only: `Valuation.aeval_le_one`, that a valuation bounded on the base and at `x` is
--- bounded on every polynomial in `x`.
-import TauCeti.RingTheory.Valuation.Polynomial
--- Proof-only: `Valuation.Integers.isIntegral_iff_v_le_one`, the integrality criterion.
-import Mathlib.RingTheory.Valuation.Integral
 import Mathlib.NumberTheory.RatFunc.Ostrowski
 
 /-!
@@ -61,8 +56,6 @@ The route has three steps, and none of them needs a Riemann–Roch theorem or a 
   `WeierstrassCurve.Affine.val_algebraMap_eq_pow_natDegree`: the value of a rational function, and
   of a polynomial, in `x`, as a power of `v x`; `val_algebraMap_le_pow` is the bound that also
   covers the zero polynomial.
-* `WeierstrassCurve.Affine.val_algebraMap_coordinateRing_le_one`: the complementary case — when
-  `x` has no pole, every element of the coordinate ring is integral for `v`.
 * `WeierstrassCurve.Affine.val_X_lt_val_mk_Y` and `WeierstrassCurve.Affine.val_mk_Y_sq`:
   `v x < v y` and
   `(v y) ^ 2 = (v x) ^ 3` — the pole orders `2` and `3`, for any such `v`.
@@ -351,28 +344,6 @@ theorem isEquiv_infinityPlace_of_one_lt [v.IsTrivialOn F]
   refine Valuation.isEquiv_iff_val_le_one.mpr fun {z} ↦ ?_
   obtain ⟨A, B, rfl⟩ := exists_ratFunc_add_mul_mk_Y W z
   rw [val_add_mul_mk_Y_le_one_iff v hx, val_add_mul_mk_Y_le_one_iff _ (one_lt_infinityPlace_X W)]
-
-/-- **The other side of the dichotomy: when `x` has no pole, the whole coordinate ring is
-integral.** A valuation of `F(W)` trivial on `F` with `v x ≤ 1` satisfies `v r ≤ 1` for every `r`
-in the image of `W.CoordinateRing`. -/
-theorem val_algebraMap_coordinateRing_le_one [v.IsTrivialOn F]
-    (hx : v (algebraMap F[X] W.FunctionField Polynomial.X) ≤ 1) (r : W.CoordinateRing) :
-    v (algebraMap W.CoordinateRing W.FunctionField r) ≤ 1 := by
-  -- every polynomial in `x` is integral, then every element of the coordinate ring is integral
-  -- over those, and a valuation is `≤ 1` exactly on the elements integral over its integers
-  have hpoly : ∀ q : F[X], v (algebraMap F[X] W.FunctionField q) ≤ 1 := fun q ↦ by
-    rw [algebraMap_eq_aeval_genericX]
-    have hx' : v W.genericX ≤ 1 := by rwa [genericX_eq_algebraMap]
-    exact v.aeval_le_one (Valuation.IsTrivialOn.valuation_algebraMap_le_one v) hx' q
-  let _ : Algebra F[X] v.integer :=
-    ((algebraMap F[X] W.FunctionField).codRestrict _ fun q ↦ hpoly q).toAlgebra
-  have _ : IsScalarTower F[X] v.integer W.FunctionField :=
-    IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
-  have hint : _root_.IsIntegral F[X] (algebraMap W.CoordinateRing W.FunctionField r) :=
-    (Algebra.IsIntegral.isIntegral r).map
-      (IsScalarTower.toAlgHom F[X] W.CoordinateRing W.FunctionField)
-  exact (Valuation.Integers.isIntegral_iff_v_le_one (Valuation.integer.integers v)).1
-    hint.tower_top
 
 end Main
 

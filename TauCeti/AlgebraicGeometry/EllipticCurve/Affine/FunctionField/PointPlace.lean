@@ -8,6 +8,9 @@ module
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.InfinityPlace.Unique
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Place
 public import TauCeti.FieldTheory.FunctionField.AffineModel.Prime
+-- Proof-only: `val_algebraMap_coordinateRing_le_one`, the integrality of the coordinate ring at a
+-- valuation with no pole at `x`.
+import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.CoordinateRingIntegral
 
 /-!
 # Rational points as degree-one places of an elliptic function field
