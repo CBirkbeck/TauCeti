@@ -75,6 +75,10 @@ union is itself a fundamental domain for `Γ`.
 * [F. Diamond and J. Shurman, *A first course in modular forms*][diamondshurman2005],
   Sections 5.4 and 5.5.
 * Miyake, *Modular forms*, Section 4.5.
+* The AINTLIB `LeanModularForms` project,
+  <https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>, commit
+  `6d87d596a5372d5b122c47b7082d4c3afa9b7c3b`, Apache-2.0 — `AdjointTheory.lean` for the
+  single-slash involution form, `AdjointTheory/SummandAdjoint.lean` for the finite-family form.
 -/
 
 public section
@@ -184,7 +188,16 @@ them — reassembling them into one domain is a separate step, and the reason th
 hypothesis is stated per summand rather than for the sum.
 
 `hint` is discharged in practice by `UpperHalfPlane.integrableOn_petersson_slash_left` and its
-relatives, for `f` a cusp form and `h` a modular form. -/
+relatives, for `f` a cusp form and `h` a modular form.
+
+Adapted from AINTLIB (github.com/CBirkbeck/AINTLIB @ `6d87d596a5372d5b122c47b7082d4c3afa9b7c3b`,
+Apache-2.0), `projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/AdjointTheory/
+SummandAdjoint.lean`: `peterssonInner_T_p_family_sum_slashes_eq_aggregate_of_integrable` (:620).
+**The split is deliberate.** That statement bundles this identity with null-measurability of each
+translate, pairwise a.e.-disjointness across the family, and integrability over the union — none
+of which the identity needs. Here the domains are left where the change of variables puts them
+and reassembling them is a separate step, so the only side condition is integrability of each
+summand. The same citation covers `peterssonInner_sum_slash_right_adjugateGL` below. -/
 theorem peterssonInner_sum_slash_left_adjugateGL (k : ℤ) {ι : Type*} (s : Finset ι)
     (α : ι → GL (Fin 2) ℝ)
     (hα : ∀ i ∈ s, 0 < ((α i : Matrix (Fin 2) (Fin 2) ℝ)).det) (S : Set ℍ) (f h : ℍ → ℂ)

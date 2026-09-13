@@ -66,6 +66,14 @@ consume Mathlib's `MeasureSpace ℍ` instance instead of constructing the hyperb
 * The AINTLIB `LeanModularForms` project,
   <https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>
   (`Modularforms/PeterssonInnerProduct.lean`)
+* AINTLIB again, at commit `6d87d596a5372d5b122c47b7082d4c3afa9b7c3b`, Apache-2.0, for
+  `peterssonInner_sum_left` and `peterssonInner_sum_right`:
+  `HeckeRIngs/GL2/AdjointTheory/SummandAdjoint.lean` needs finite additivity of the pairing for
+  the Hecke adjoint, and supplies it as the binary `peterssonInner_add_left` (:222) iterated
+  inside `peterssonInner_T_p_family_sum_slashes_eq_aggregate_of_integrable` (:620). The binary
+  case is already here as `peterssonInner_add_left`; what is taken from that project is the use,
+  and the finite-family form is stated directly over `MeasureTheory.integral_finsetSum` rather
+  than by induction.
 -/
 
 public section
