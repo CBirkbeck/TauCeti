@@ -82,7 +82,7 @@ theorem frobenius_fiber_eq_orbit_centralizer (𝔭 : Ideal (𝓞 K)) {σ : L ≃
     exact ⟨⟨τ, Subgroup.mem_centralizer_singleton_iff.mpr (eq_mul_inv_iff_mul_eq.mp h).symm⟩,
       Subgroup.smul_def _ Q⟩
   · rintro ⟨⟨τ, hτ⟩, hP⟩
-    rw [Subgroup.smul_def] at hP
+    simp only [Subgroup.smul_def] at hP
     subst hP
     have hconj : τ * σ * τ⁻¹ = σ := by
       rw [mul_inv_eq_iff_eq_mul, Subgroup.mem_centralizer_singleton_iff.mp hτ]
