@@ -40,15 +40,17 @@ public section
 
 namespace Subgroup
 
-/-- **A coset space of a countable group is countable.** `Countable (Quotient s)` is found for
-a bare setoid quotient, but `G ⧸ H` reaches it only through `HasQuotient`, which instance
-synthesis does not unfold; naming the composite makes the countability of `G ⧸ H` available to
-instance search, and with it that of any further quotient. -/
-@[to_additive /-- **A coset space of a countable additive group is countable.** `Countable
-(Quotient s)` is found for a bare setoid quotient, but `G ⧸ H` reaches it only through
-`HasQuotient`, which instance synthesis does not unfold. -/]
+/-- **A coset space of a countable group is countable.** A countable group has only countably
+many cosets of any subgroup. Where a construction runs over `G ⧸ H` one coset at a time it is
+this that keeps the family countable — as in
+`ModularGroup.isFundamentalDomain_iUnion_out_inv_smul_fdo`, which tiles a fundamental domain for
+`H ≤ PSL(2, ℤ)` by one translate of `𝒟ᵒ` per coset. -/
+@[to_additive /-- **A coset space of a countable additive group is countable.** A countable
+additive group has only countably many cosets of any subgroup. -/]
 instance instCountableQuotient {G : Type*} [Group G] [Countable G] (H : Subgroup G) :
     Countable (G ⧸ H) :=
+  -- Stated as an instance because `G ⧸ H` reaches `Quotient` only through `HasQuotient`, which
+  -- instance synthesis does not unfold: without this, `Countable (G ⧸ H)` is not found.
   inferInstanceAs (Countable (Quotient (QuotientGroup.leftRel H)))
 
 /-- The preimage of a finite-index subgroup under a group homomorphism has finite index. -/

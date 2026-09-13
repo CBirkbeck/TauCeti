@@ -8,7 +8,7 @@ module
 public import Mathlib.NumberTheory.Modular
 public import TauCeti.Analysis.Complex.UpperHalfPlane.Measure
 public import TauCeti.Analysis.Complex.UpperHalfPlane.PSLAction
-public import TauCeti.GroupTheory.Index
+public import TauCeti.GroupTheory.Index.Basic
 public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 public import TauCeti.MeasureTheory.Group.FundamentalDomain
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
