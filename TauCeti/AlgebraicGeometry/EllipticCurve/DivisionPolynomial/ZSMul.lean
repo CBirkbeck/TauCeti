@@ -113,7 +113,8 @@ is the statement the Nagell–Lutz layer consumes.
   in Jacobian
   coordinates is `(φₙ(x,y) : ωₙ(x,y) : ψₙ(x,y))`, for every nonsingular `(x, y)` and every `n`.
 * `WeierstrassCurve.zsmul_eq_zero_of_evalEval_ψ_eq_zero`: **the converse** — a vanishing `ψₙ` at
-  a nonsingular point forces `n • P = 0`, for every `n`.
+  a nonsingular point forces `n • P = 0`. Unrestricted in `n`, and so an annihilation statement
+  rather than a torsion one: at `n = 0` both sides hold of every point.
 * `WeierstrassCurve.two_zsmul_eq_zero_of_evalEval_ψ₂_eq_zero`: that converse at `n = 2`, the form
   the two-torsion characterisation below is stated through.
 * `WeierstrassCurve.addOrderOf_eq_two_iff_evalEval_ψ₂_eq_zero`: those two directions packaged as
@@ -1051,8 +1052,14 @@ theorem zsmul_point_eq_smulEval {x y : F} (h : Affine.Nonsingular W x y) (n : �
     simp_rw [smulEval_neg]
     rfl
 
-/-- **A root of the division polynomial is a torsion point**, the converse of
+/-- **A root of `ψₙ` is annihilated by `n`**, the converse of
 `evalEval_ψ_eq_zero_of_zsmul_eq_zero`. If `ψₙ` vanishes at `P` then `n • P = 0`.
+
+Stated as annihilation rather than torsion, and deliberately left unrestricted in `n`. At `n = 0`
+it is tautological on both sides — `ψ₀ = 0` vanishes at every point and `0 • P = 0` for every `P` —
+so that case exhibits no torsion and the equation carries no content there. It is kept because
+every consumer wants the equation at its own `n` without first discharging `n ≠ 0`; a consumer
+that needs genuine torsion supplies that hypothesis itself.
 
 Same mechanism as the forward direction, read the other way: `zsmul_point_eq_smulEval` presents
 `n • P` as the Jacobian class of `(φₙ(x,y) : ωₙ(x,y) : ψₙ(x,y))`, and a nonsingular class whose
