@@ -31,7 +31,7 @@ value subgroup and leaves the domain alone.
 
 ## References
 
-* [A. J. Engler and A. Prestel, *Valued Fields*][engler2005], §3.2.
+* [A. J. Engler and A. Prestel, *Valued Fields*][engler2005].
 -/
 
 public section
