@@ -48,6 +48,11 @@ rests on.
 
 Only the curve equation is needed, not nonsingularity: the quotient is the base field either way.
 
+Evaluation at a point of the curve is an `F`-algebra map out of the coordinate ring whose kernel
+is that point's ideal, so a function lies in the ideal exactly when it vanishes at the point. That
+membership test is how a valuation of the function field is read off at a point, and it is what
+identifies the residue-degree-one ideals with points below.
+
 This supports `TauCetiRoadmap/EllipticCurves/README.md`, Layer 0, whose point–place dictionary
 identifies the affine places of `W` with the maximal ideals of its coordinate ring — "the affine
 places are the maximal ideals of the coordinate ring". Maximality of `XYIdeal` is the direction
@@ -81,10 +86,7 @@ of `algebraMap F (F[C] ⧸ M)`, and assumes ellipticity throughout. The classifi
 written directly against Mathlib's `XYIdeal`: its hypothesis is the residue degree and it uses no
 ellipticity or Dedekind assumption.
 
-`ker_evalAlgHom_eq_XYIdeal` and `mem_XYIdeal_iff_evalEval_eq_zero` are not ported. They read the
-maximality above backwards: the source works with the quotient isomorphism throughout and never
-names the kernel of evaluation, so the identification of that kernel with `XYIdeal`, and the
-membership test it yields, are stated here for the first time.
+`ker_evalAlgHom_eq_XYIdeal` and `mem_XYIdeal_iff_evalEval_eq_zero` are not ported.
 -/
 
 public section
@@ -267,10 +269,14 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal 
         AlgHom.commutes]
 
 /-- **A function lies in the ideal of a point exactly when it vanishes there.** -/
+@[simp]
 theorem _root_.WeierstrassCurve.Affine.CoordinateRing.mem_XYIdeal_iff_evalEval_eq_zero {y : F}
-    (h : (W⁄F).toAffine.Equation x y) (p : F[X][Y]) :
+    (h : W.Equation x y) (p : F[X][Y]) :
     CoordinateRing.mk W p ∈ CoordinateRing.XYIdeal W x (C y) ↔ p.evalEval x y = 0 := by
-  rw [← WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal h, RingHom.mem_ker]
+  have hbc : (W⁄F).toAffine.Equation x y := by
+    simpa only [_root_.WeierstrassCurve.baseChange, Algebra.algebraMap_self,
+      _root_.WeierstrassCurve.map_id] using h
+  rw [← WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal hbc, RingHom.mem_ker]
   simp [CoordinateRing.evalAlgHom_mk]
 
 /-- **The ideals of residue degree one are exactly the ideals of points.** An ideal `I` has a
