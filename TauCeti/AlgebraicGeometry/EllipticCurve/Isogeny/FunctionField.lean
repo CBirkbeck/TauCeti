@@ -323,7 +323,7 @@ the pullback of that function, for an arbitrary valuation of the source. -/
 -- Not `@[simp]`: `Valuation.comap_apply` and `fieldPullback_algebraMap` are both `@[simp]` and
 -- already carry the left-hand side to the right, so the annotation would not be in simp normal
 -- form. The theorem earns its name as the rule the places API rewrites by, in both directions.
-theorem comap_fieldPullback_apply_algebraMap {Γ : Type*} [LinearOrderedCommGroupWithZero Γ]
+theorem comap_fieldPullback_apply_algebraMap {Γ : Type*} [LinearOrderedCommMonoidWithZero Γ]
     (φ : Isogeny W₁ W₂) (v : Valuation W₁.FunctionField Γ) (c : W₂.CoordinateRing) :
     (v.comap φ.fieldPullback.toRingHom) (algebraMap W₂.CoordinateRing W₂.FunctionField c)
       = v (φ.pullback c) := by
