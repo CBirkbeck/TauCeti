@@ -17,8 +17,9 @@ unramified over `𝓞 K`.  The residue degree of `Q ∩ 𝓞 E` over `𝓞 K`, t
 
 Nothing in that needs `H` cyclic or a Frobenius in sight: the Galois correspondence identifies
 `Gal(L/E)` with `H` acting on ideals exactly as it does over `K`, so the decomposition group of `Q`
-over `E` is `H ⊓ D(Q)`, and multiplicativity of the inertia degree in the tower `K ⊆ E ⊆ L` does
-the rest.  It is stated as a product so that no natural-number division is truncated.
+over `E` corresponds to `H ⊓ D(Q)` and in particular has as many elements, and multiplicativity of
+the inertia degree in the tower `K ⊆ E ⊆ L` does the rest.  It is stated as a product so that no
+natural-number division is truncated.
 
 A Frobenius `φ` at `Q` generates `D(Q)`, so the count is `Subgroup.relIndex` — the index of
 `H ⊓ ⟨φ⟩` in `⟨φ⟩` — and the residue degree is one exactly when `φ ∈ H`.  At `H = ⟨φ⟩` membership
@@ -28,10 +29,8 @@ runs through.
 
 ## Main results
 
-* `Ideal.card_stabilizer_fixedField_eq_card_inf`: the decomposition group of `Q` over `L ^ H` has
-  as many elements as `D(Q) ⊓ H`.
-* `Ideal.inertiaDeg_under_fixedField_mul_card_inf`: that count times the residue degree below
-  `L ^ H` is the residue degree of `Q`.
+* `Ideal.inertiaDeg_under_fixedField_mul_card_inf`: the number of elements of `D(Q) ⊓ H` times the
+  residue degree below `L ^ H` is the residue degree of `Q`.
 * `Ideal.inertiaDeg_under_fixedField_eq_relIndex`: that residue degree is `Subgroup.relIndex`,
   the index of `H ⊓ ⟨φ⟩` in `⟨φ⟩`.
 * `Ideal.inertiaDeg_under_fixedField_eq_one_iff`: it is one exactly when a Frobenius lies in `H`.
@@ -60,33 +59,6 @@ namespace Ideal
 
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L]
   [Algebra K L] [IsGalois K L]
-
-omit [IsGalois K L] in
-/-- **The decomposition group over a fixed field is the intersection.**  For any subgroup `H` of
-`Gal(L/K)` and `E = L ^ H`, the stabilizer of `Q` in `Gal(L/E)` has as many elements as the
-intersection of `H` with the stabilizer of `Q` in `Gal(L/K)`. -/
-theorem card_stabilizer_fixedField_eq_card_inf (Q : Ideal (𝓞 L)) (H : Subgroup (L ≃ₐ[K] L)) :
-    Nat.card (MulAction.stabilizer (L ≃ₐ[↥(fixedField H)] L) Q)
-      = Nat.card ((MulAction.stabilizer (L ≃ₐ[K] L) Q ⊓ H : Subgroup (L ≃ₐ[K] L))) := by
-  set e := subgroupEquivAlgEquiv H with he
-  -- the Galois correspondence does not move points, so it does not move ideals either
-  have hsmul : ∀ τ : ↥H, (e τ) • Q = (τ : L ≃ₐ[K] L) • Q := fun τ ↦ by
-    rw [Ideal.pointwise_smul_def, Ideal.pointwise_smul_def]
-    exact congrArg (Ideal.map · Q) (RingHom.ext fun y ↦ NumberField.RingOfIntegers.ext rfl)
-  have hcomap : (MulAction.stabilizer (L ≃ₐ[↥(fixedField H)] L) Q).comap (e : ↥H →* _)
-      = (MulAction.stabilizer (L ≃ₐ[K] L) Q).subgroupOf H := by
-    ext τ
-    simp only [Subgroup.mem_comap, MulAction.mem_stabilizer_iff, Subgroup.mem_subgroupOf]
-    exact Eq.congr_left (hsmul τ)
-  have h1 : Nat.card ((MulAction.stabilizer (L ≃ₐ[↥(fixedField H)] L) Q).comap (e : ↥H →* _))
-      = Nat.card (MulAction.stabilizer (L ≃ₐ[↥(fixedField H)] L) Q) := by
-    rw [Subgroup.comap_equiv_eq_map_symm]
-    exact Nat.card_congr (Subgroup.equivMapOfInjective _ _ e.symm.injective).symm.toEquiv
-  have h2 : Nat.card ((MulAction.stabilizer (L ≃ₐ[K] L) Q).subgroupOf H)
-      = Nat.card ((MulAction.stabilizer (L ≃ₐ[K] L) Q ⊓ H : Subgroup (L ≃ₐ[K] L))) := by
-    rw [← Subgroup.inf_subgroupOf_right]
-    exact Nat.card_congr (Subgroup.subgroupOfEquivOfLe inf_le_right).toEquiv
-  rw [← h1, hcomap, h2]
 
 /-- **The residue degree below a fixed field.**  For any subgroup `H` and `E = L ^ H`, the residue
 degree of `Q ∩ 𝓞 E` over `𝓞 K` times the size of the intersection of `H` with the decomposition
