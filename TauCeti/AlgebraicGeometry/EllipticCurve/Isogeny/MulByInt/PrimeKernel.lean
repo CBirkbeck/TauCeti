@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Kernel
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Kernel.Basic
 public import Mathlib.Algebra.Module.ZMod
 
 /-!
