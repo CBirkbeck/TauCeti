@@ -126,7 +126,13 @@ This is the shape the classical adjoint theory uses (Diamond–Shurman §5.5, Mi
 the shape the Hecke adjoint `Tₙ* = ⟨n⟩⁻¹Tₙ` is assembled in: the main involution `α^ι` preserves
 the integral matrices, so it acts on the Hecke cosets, where `α⁻¹` does not. The determinant
 factor of `peterssonInner_slash_left_of_det_pos` has not gone away — `ModularForm.slash_adjugateGL`
-says it is exactly what the involution contributes over the inverse. -/
+says it is exactly what the involution contributes over the inverse.
+
+Ported from AINTLIB (github.com/CBirkbeck/AINTLIB @ `6d87d596a537`, Apache-2.0),
+`projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/AdjointTheory.lean`:
+`peterssonInner_slash_adjoint` (:412), stated over its `peterssonAdj` (:322) — which is
+`TauCeti.adjugateGL` specialised to `GL (Fin 2) ℝ`. The proof here is shorter: AINTLIB redoes the
+integral change of variables, this one rewrites `peterssonInner_slash_left_of_det_pos`. -/
 theorem peterssonInner_slash_left_adjugateGL (k : ℤ)
     (hg : 0 < (g : Matrix (Fin 2) (Fin 2) ℝ).det)
     (S : Set ℍ) (f h : ℍ → ℂ) :

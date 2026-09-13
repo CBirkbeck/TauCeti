@@ -34,6 +34,7 @@ which is proved where those objects live, not here.
 * `TauCeti.adjugateGL_eq_inv`: on determinant one, `adj(g) = g⁻¹`.
 * `TauCeti.adjugateGL_mapGL`: on a special-linear image, `adj(mapGL σ) = mapGL σ⁻¹`.
 * `TauCeti.adjugateGL_adjugateGL`: in size two, `adj` is an involution.
+* `Matrix.GeneralLinearGroup.adjugateGL_eq_scalar_mul_inv`: `adj(g) = (det g · I) * g⁻¹`.
 
 ## References
 
@@ -100,3 +101,25 @@ lemma adjugateGL_adjugateGL (h2 : Fintype.card n = 2) (g : GL n R) :
   simp
 
 end TauCeti
+
+namespace Matrix.GeneralLinearGroup
+
+open TauCeti
+
+/-- **The main involution is the inverse, rescaled by the determinant**: `α^ι = (det α · I) * α⁻¹`.
+This is `Matrix.inv_def` read backwards, packaged in `GL n R` so that a multiplicative action can
+be split along the involution — the weight-`k` slash is, in
+`TauCeti/NumberTheory/ModularForms/SlashAdjugate.lean`.
+
+Adapted from AINTLIB (github.com/CBirkbeck/AINTLIB @ `6d87d596a537`, Apache-2.0),
+`projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/AdjointTheory.lean`, whose
+`peterssonAdj` is `adjugateGL` at `GL (Fin 2) ℝ` and records the same identity in its docstring
+("`α† = det(α) · α⁻¹ = adjugate(α)`"). -/
+theorem adjugateGL_eq_scalar_mul_inv {n R : Type*} [DecidableEq n] [Fintype n] [CommRing R]
+    (g : GL n R) : adjugateGL g = scalar n (GeneralLinearGroup.det g) * g⁻¹ := by
+  refine Units.ext ?_
+  rw [adjugateGL_val, Units.val_mul, coe_scalar, Matrix.scalar_apply,
+    ← Matrix.smul_eq_diagonal_mul, Matrix.coe_units_inv, Matrix.inv_def, smul_smul,
+    val_det_apply, Ring.mul_inverse_cancel _ (Matrix.isUnit_det_of_invertible _), one_smul]
+
+end Matrix.GeneralLinearGroup

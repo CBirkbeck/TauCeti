@@ -31,30 +31,13 @@ slash applies on the negative-determinant branch fixes it.
 ## Main results
 
 * `ModularForm.slash_scalar`: slashing by `u · I` is multiplication by `u ^ (k - 2)`.
-* `TauCeti.adjugateGL_eq_scalar_mul_inv`: `α^ι = (det α · I) * α⁻¹`, in `GL n R`.
+* `Matrix.GeneralLinearGroup.adjugateGL_eq_scalar_mul_inv` (in `Adjugate.lean`, beside
+  `adjugateGL`): `α^ι = (det α · I) * α⁻¹`.
 * `ModularForm.slash_adjugateGL`: the slash by the main involution, in terms of the slash by
   the inverse.
 -/
 
 public section
-
-namespace TauCeti
-
-open Matrix
-
-/-- **The main involution is the inverse, rescaled by the determinant**: `α^ι = (det α · I) * α⁻¹`.
-This is `Matrix.inv_def` read backwards, packaged in `GL n R` so that the slash can be split
-along it by `SlashAction.slash_mul`. -/
-theorem adjugateGL_eq_scalar_mul_inv {n R : Type*} [DecidableEq n] [Fintype n] [CommRing R]
-    (g : GL n R) :
-    adjugateGL g = Matrix.GeneralLinearGroup.scalar n (Matrix.GeneralLinearGroup.det g) * g⁻¹ := by
-  refine Units.ext ?_
-  rw [adjugateGL_val, Units.val_mul, GeneralLinearGroup.coe_scalar, Matrix.scalar_apply,
-    ← Matrix.smul_eq_diagonal_mul, Matrix.coe_units_inv, Matrix.inv_def, smul_smul,
-    Matrix.GeneralLinearGroup.val_det_apply,
-    Ring.mul_inverse_cancel _ (Matrix.isUnit_det_of_invertible _), one_smul]
-
-end TauCeti
 
 namespace ModularForm
 
@@ -64,6 +47,7 @@ open UpperHalfPlane Matrix TauCeti
 `u · I` is `u ^ 2`, contributing `u ^ (2 * (k - 1))`, and the denominator is `u`, contributing
 `u ^ (-k)`; the two combine to `u ^ (k - 2)`. No sign condition on `u`: the determinant is a
 square, so the absolute value in the slash is inert. -/
+@[simp]
 theorem slash_scalar (k : ℤ) (u : ℝˣ) (f : ℍ → ℂ) :
     f ∣[k] (Matrix.GeneralLinearGroup.scalar (Fin 2) u) = ((u : ℝ) : ℂ) ^ (k - 2) • f := by
   have hu : ((u : ℝ) : ℂ) ≠ 0 := by exact_mod_cast u.ne_zero
@@ -92,11 +76,17 @@ involution and the inverse differ by the scalar `det α`, which slashes by `slas
 
 This is the bridge between the two ways of writing the adjoint theory — the change-of-variables
 form, which produces `α⁻¹` and a determinant factor, and the classical form, which uses `α^ι` and
-carries no factor because the involution has absorbed it. -/
+carries no factor because the involution has absorbed it.
+
+Adapted from AINTLIB (github.com/CBirkbeck/AINTLIB @ `6d87d596a537`, Apache-2.0),
+`projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/AdjointTheory.lean`, where the same
+rescaling is carried inline inside `peterssonInner_slash_adjoint` (:412) over its `peterssonAdj`
+(:322) rather than isolated as a slash lemma. -/
 theorem slash_adjugateGL (k : ℤ) (g : GL (Fin 2) ℝ) (f : ℍ → ℂ) :
     f ∣[k] adjugateGL g =
       (((g : Matrix (Fin 2) (Fin 2) ℝ).det : ℝ) : ℂ) ^ (k - 2) • (f ∣[k] g⁻¹) := by
-  rw [adjugateGL_eq_scalar_mul_inv, SlashAction.slash_mul, slash_scalar,
+  rw [Matrix.GeneralLinearGroup.adjugateGL_eq_scalar_mul_inv, SlashAction.slash_mul,
+    slash_scalar,
     Matrix.GeneralLinearGroup.val_det_apply, ← Complex.ofReal_zpow, smul_slash, σ_ofReal,
     Complex.ofReal_zpow]
 
