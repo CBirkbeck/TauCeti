@@ -34,12 +34,6 @@ computed, which is why they are not imposed at this layer.
 ## References
 
 * [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], III.6.4.
-
-## Provenance
-
-No port. This is the characteristic-free half of the `ℓ`-torsion rank argument, separated from the
-cardinality computation in `MulByInt/TorsionRank.lean` so that the module structure does not
-depend on the algebraically-closed hypothesis that only the rank needs.
 -/
 
 public section
