@@ -114,8 +114,10 @@ theorem isCoprime_Φ_ΨSq (n : ℤ) (hΔ : W.Δ ≠ 0) : IsCoprime (W.Φ n) (W.�
   have hns : W'.toAffine.Nonsingular a b :=
     (W'.toAffine.equation_iff_nonsingular_of_Δ_ne_zero hΔ').mp hb
   -- at that point both the `Z` and the `X` Jacobian coordinate of `n • (a, b)` vanish
-  have hψ : (W'.ψ n).evalEval a b = 0 :=
-    (pow_eq_zero_iff two_ne_zero).mp ((evalEval_ψ_sq_eq_eval_ΨSq W' hb n).trans hΨ)
+  have hψ : (W'.ψ n).evalEval a b = 0 := by
+    refine (pow_eq_zero_iff two_ne_zero).mp ?_
+    rw [evalEval_ψ_eq_evalEval_Ψ W' hb n, evalEval_Ψ_sq_eq_eval_ΨSq W' hb n]
+    exact hΨ
   have hφ : (W'.φ n).evalEval a b = 0 := by rwa [evalEval_φ_eq_eval_Φ W' hb n]
   have hZ : smulEval W' a b n 2 = 0 := by simp [smulEval, hψ]
   have hX : smulEval W' a b n 0 = 0 := by simp [smulEval, hφ]
@@ -130,8 +132,10 @@ theorem eval_ΨSq_ne_zero_of_zsmul_ne_zero [DecidableEq F] {x y : F}
     (hP : n • (Affine.Point.some _ _ hns) ≠ 0) : (W.ΨSq n).eval x ≠ 0 := by
   intro hsq
   refine hP ?_
-  have hψ : (W.ψ n).evalEval x y = 0 :=
-    (pow_eq_zero_iff two_ne_zero).mp ((evalEval_ψ_sq_eq_eval_ΨSq W hns.1 n).trans hsq)
+  have hψ : (W.ψ n).evalEval x y = 0 := by
+    refine (pow_eq_zero_iff two_ne_zero).mp ?_
+    rw [evalEval_ψ_eq_evalEval_Ψ W hns.1 n, evalEval_Ψ_sq_eq_eval_ΨSq W hns.1 n]
+    exact hsq
   have hjac := zsmul_eq_zero_of_evalEval_ψ_eq_zero W hns n hψ
   rw [← Jacobian.Point.toAffineAddEquiv_symm_apply, ← map_zsmul] at hjac
   exact (AddEquiv.map_eq_zero_iff _).1 hjac

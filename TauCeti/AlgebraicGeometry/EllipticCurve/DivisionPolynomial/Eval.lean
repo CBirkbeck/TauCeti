@@ -29,8 +29,6 @@ dividing `n` the degree can drop). The identities below need none of those hypot
 
 * `WeierstrassCurve.evalEval_ψ_eq_evalEval_Ψ`, `evalEval_Ψ_sq_eq_eval_ΨSq`,
   `evalEval_φ_eq_eval_Φ`: the three coordinate-ring identities, evaluated.
-* `WeierstrassCurve.evalEval_ψ_sq_eq_eval_ΨSq`: the second of those read for `ψ` rather than `Ψ`,
-  which is the form consumers meet it in, since `ψ` is what `smulEval` carries.
 * `WeierstrassCurve.evalEval_Ψ_odd`: for odd `n`, `Ψₙ` evaluates to `(preΨ n).eval x`,
   with no `y` left. Composed with the first bullet, `simp` reduces `ψₙ` the same way.
 
@@ -75,16 +73,6 @@ theorem _root_.WeierstrassCurve.evalEval_Ψ_sq_eq_eval_ΨSq (h : W.toAffine.Equa
     (W.Ψ n).evalEval x y ^ 2 = (W.ΨSq n).eval x := by
   simpa [evalEval_pow, evalEval_C] using
     evalEval_eq_of_mk_eq W.toAffine h (Affine.CoordinateRing.mk_Ψ_sq W n)
-
-/-- At a point of `W`, the square of `ψₙ` is the univariate `ΨSqₙ` evaluated at the
-`x`-coordinate. -/
--- Not `@[simp]`: both steps are already `@[simp]`, so `simp` proves this and simpNF would flag it
--- as redundant. It is stated because consumers want the square of `ψ` — the coordinate that
--- actually appears in `smulEval` — rather than of `Ψ`.
-theorem _root_.WeierstrassCurve.evalEval_ψ_sq_eq_eval_ΨSq (h : W.toAffine.Equation x y) (n : ℤ) :
-    (W.ψ n).evalEval x y ^ 2 = (W.ΨSq n).eval x := by
-  rw [_root_.WeierstrassCurve.evalEval_ψ_eq_evalEval_Ψ W h n,
-    _root_.WeierstrassCurve.evalEval_Ψ_sq_eq_eval_ΨSq W h n]
 
 /-- At a point of `W`, `φₙ` is the univariate `Φₙ` evaluated at the `x`-coordinate. -/
 @[simp]
