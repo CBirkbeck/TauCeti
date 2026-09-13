@@ -29,14 +29,12 @@ neither unramifiedness, nor a base prime of `𝓞 K`, nor `L / K` Galois plays a
   a relative Frobenius restricting to `σ`.
 * `Ideal.isArithFrobAt_of_restrictScalars_eq`: conversely, at residue degree one such a relative
   Frobenius forces `σ` to be the absolute Frobenius.
-* `Ideal.under_fixedField_injOn`: contraction to the fixed field is injective on the primes fixed
+* `AlgEquiv.under_fixedField_injOn`: contraction to the fixed field is injective on the primes fixed
   by `σ`.
 
 ## References
 
 * [J. Neukirch, *Algebraic Number Theory*][Neukirch1992], Chapter I, §9.
-* `TauCetiRoadmap/Chebotarev/README.md`, §8.2, which asks for exactly this reduction: the primes
-  of `L` carrying `σ` are matched with the primes of `L ^ ⟨σ⟩` of residue degree one over `𝓞 K`.
 -/
 
 public section
@@ -81,7 +79,12 @@ theorem isArithFrobAt_of_restrictScalars_eq (Q : Ideal (𝓞 L)) [Q.IsPrime] (hQ
     NumberField.restrictScalars_eq_of_inertiaDeg_eq_one hφ hτ hf
   rwa [← hres, hrestr]
 
-omit [IsGalois K L] in
+end Ideal
+
+namespace AlgEquiv
+
+variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
+
 /-- **Contraction to the fixed field is injective on the primes fixed by `σ`.** Distinct primes of
 `𝓞 L` that `σ` fixes have distinct contractions to `𝓞 (L ^ ⟨σ⟩)`.
 
@@ -92,6 +95,6 @@ theorem under_fixedField_injOn (σ : L ≃ₐ[K] L) :
       {Q : Ideal (𝓞 L) | ∃ _ : Q.IsPrime, σ • Q = Q} := by
   rintro Q₁ ⟨_, h₁⟩ Q₂ ⟨_, -⟩ hEq
   have : Q₂.LiesOver (Q₁.under (𝓞 ↥(fixedField (Subgroup.zpowers σ)))) := ⟨hEq⟩
-  exact (eq_of_smul_eq_of_liesOver_under_fixedField h₁ Q₂).symm
+  exact (Ideal.eq_of_smul_eq_of_liesOver_under_fixedField h₁ Q₂).symm
 
-end Ideal
+end AlgEquiv
