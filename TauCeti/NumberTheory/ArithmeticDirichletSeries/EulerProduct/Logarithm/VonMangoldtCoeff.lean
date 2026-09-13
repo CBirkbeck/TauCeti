@@ -61,13 +61,13 @@ prime-power expansion of the logarithmic derivative. -/
 private theorem idealTerm_vonMangoldtTransform_prime_pow (s : ℂ)
     (P : HeightOneSpectrum (𝓞 K)) (k : ℕ) :
     idealTerm K χ.toIdealArithmeticFunction.vonMangoldtTransform s
-        (idealPrimePowerOf P k : (Ideal (𝓞 K))⁰)
+        (P.idealPrimePowerOf k : (Ideal (𝓞 K))⁰)
       = Complex.log (Ideal.absNorm P.asIdeal : ℂ)
           * (χ P.asIdeal / (Ideal.absNorm P.asIdeal : ℂ) ^ s) ^ (k + 1) := by
   have hmem : P.asIdeal ∈ (Ideal (𝓞 K))⁰ := mem_nonZeroDivisors_of_ne_zero P.ne_bot
   have hP : Prime (((⟨P.asIdeal, hmem⟩ : (Ideal (𝓞 K))⁰)) : Ideal (𝓞 K)) :=
     Ideal.prime_of_isPrime P.ne_bot P.isPrime
-  have hpow : (idealPrimePowerOf P k : (Ideal (𝓞 K))⁰)
+  have hpow : (P.idealPrimePowerOf k : (Ideal (𝓞 K))⁰)
       = (⟨P.asIdeal, hmem⟩ : (Ideal (𝓞 K))⁰) ^ (k + 1) := Subtype.ext (by simp)
   have hlog : Complex.log (Ideal.absNorm P.asIdeal : ℂ)
       = ((Real.log (Ideal.absNorm P.asIdeal) : ℝ) : ℂ) := by
@@ -120,9 +120,15 @@ theorem logDeriv_LSeries_eq_neg_tsum_vonMangoldtTransform {s : ℂ}
     intro A hA
     rw [Function.mem_support, idealTerm_def, div_ne_zero_iff] at hA
     exact ((IdealArithmeticFunction.vonMangoldtTransform_ne_zero_iff _).mp hA.1).1
+  have hcoe : ∀ pe : HeightOneSpectrum (𝓞 K) × ℕ,
+      (pe.1.idealPrimePowerOf pe.2 : (Ideal (𝓞 K))⁰)
+        = ((idealPrimePowerEquiv pe : IdealPrimePower K) : (Ideal (𝓞 K))⁰) := by
+    rintro ⟨P, k⟩
+    rw [HeightOneSpectrum.idealPrimePowerEquiv_apply]
   have hinj : Function.Injective
-      (fun pe : HeightOneSpectrum (𝓞 K) × ℕ ↦ (idealPrimePowerOf pe.1 pe.2 : (Ideal (𝓞 K))⁰)) :=
-    Subtype.coe_injective.comp idealPrimePowerEquiv.injective
+      (fun pe : HeightOneSpectrum (𝓞 K) × ℕ ↦ (pe.1.idealPrimePowerOf pe.2 : (Ideal (𝓞 K))⁰)) :=
+    fun a b hab ↦ idealPrimePowerEquiv.injective
+      (Subtype.coe_injective ((hcoe a).symm.trans (hab.trans (hcoe b))))
   have key : ∑' pe : HeightOneSpectrum (𝓞 K) × ℕ,
       Complex.log (Ideal.absNorm pe.1.asIdeal : ℂ)
         * (χ pe.1.asIdeal / (Ideal.absNorm pe.1.asIdeal : ℂ) ^ s) ^ (pe.2 + 1)
