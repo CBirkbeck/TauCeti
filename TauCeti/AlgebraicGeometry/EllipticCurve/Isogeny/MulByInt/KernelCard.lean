@@ -14,8 +14,10 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Separability
 # The kernel of `[n]` has `n ²` points over an algebraically closed field
 
 `Isogeny.ker` counts only the base field's points, so its order equals the degree exactly when the
-geometric kernel is rational. Over an algebraically closed field it is, and `[n]` is separable as
-soon as `n` is invertible there, so the two obstructions both vanish and `#ker [n] = n ²`.
+geometric kernel is rational **and** the isogeny is separable: an inseparable isogeny has strictly
+fewer geometric kernel points than its degree even over an algebraically closed field. Over an
+algebraically closed field the first holds, and `[n]` is separable as soon as `n` is invertible
+there, so both obstructions vanish and `#ker [n] = n ²`.
 
 The count is made on embeddings, as for `1 − π_q`: an isogeny here has no map on points. Two
 embeddings of `K(W)` over the pulled-back field move the tautological point of `[n]`, which is
@@ -63,25 +65,30 @@ theorem zsmul_map_sub_map_genericPoint_eq_zero {Ω : Type*} [Field Ω] [Decidabl
   have key := CoordinatePullback.map_tautologicalPoint_eq_of_apply_eq
     (mulByIntIsogeny W hn).pullback σ τ (h _ (hmem _)) (h _ (hmem _))
   rw [mulByIntIsogeny_pullback, tautologicalPoint_mulByIntPullback, map_zsmul, map_zsmul] at key
-  have hd : n • (Point.map σ (genericPoint W) - Point.map τ (genericPoint W)) =
-      n • Point.map σ (genericPoint W) - n • Point.map τ (genericPoint W) := by module
-  rw [hd, key, sub_self]
+  rw [zsmul_sub, key, sub_self]
+
+omit [DecidableEq F] [W.IsElliptic] in
+/-- A division polynomial that does not vanish forces a nonzero index: `ψ₀ = 0`. -/
+private theorem ne_zero_of_psiFunctionField_ne_zero {n : ℤ} (hn : psiFunctionField W n ≠ 0) :
+    n ≠ 0 := by
+  rintro rfl
+  exact hn (by simp [psiFunctionField_def, WeierstrassCurve.ψ_zero])
 
 /-- **That difference is the image of a rational point**, the base field being algebraically
 closed and the difference `n`-torsion. -/
 theorem mem_range_baseChange_sub_map_genericPoint_mulByInt [IsAlgClosed F]
     {Ω : Type*} [Field Ω] [DecidableEq Ω] [Algebra F Ω] {n : ℤ}
-    (hn : psiFunctionField W n ≠ 0) (hn0 : n ≠ 0) (σ τ : W.FunctionField →ₐ[F] Ω)
+    (hn : psiFunctionField W n ≠ 0) (σ τ : W.FunctionField →ₐ[F] Ω)
     (h : ∀ z ∈ (mulByIntIsogeny W hn).fieldPullback.fieldRange, σ z = τ z) :
     Point.map σ (genericPoint W) - Point.map τ (genericPoint W) ∈
       Set.range (Point.baseChange (W' := W) F Ω) :=
-  W.mem_range_baseChange_of_zsmul_eq_zero hn0
+  W.mem_range_baseChange_of_zsmul_eq_zero (ne_zero_of_psiFunctionField_ne_zero W hn)
     (zsmul_map_sub_map_genericPoint_eq_zero W hn σ τ h)
 
 /-- **There are at most as many embeddings of `K(W)` over the pulled-back field as kernel
 points**, each embedding being determined by the rational point it moves the generic point by. -/
 theorem card_emb_mulByIntIsogeny_le_card_ker [IsAlgClosed F] {n : ℤ}
-    (hn : psiFunctionField W n ≠ 0) (hn0 : n ≠ 0) :
+    (hn : psiFunctionField W n ≠ 0) :
     Nat.card (Field.Emb (mulByIntIsogeny W hn).fieldPullback.fieldRange W.FunctionField) ≤
       Nat.card (mulByIntIsogeny W hn).ker := by
   classical
@@ -92,7 +99,7 @@ theorem card_emb_mulByIntIsogeny_le_card_ker [IsAlgClosed F] {n : ℤ}
     simpa using (σ.commutes ⟨z, hz⟩).trans (τ.commutes ⟨z, hz⟩).symm
   obtain ⟨σ₀⟩ : Nonempty (Field.Emb L W.FunctionField) := inferInstance
   choose f hf using fun σ : Field.Emb L W.FunctionField ↦
-    mem_range_baseChange_sub_map_genericPoint_mulByInt W hn hn0 (σ.restrictScalars F)
+    mem_range_baseChange_sub_map_genericPoint_mulByInt W hn (σ.restrictScalars F)
       (σ₀.restrictScalars F) (hagree σ σ₀)
   have hker : ∀ σ : Field.Emb L W.FunctionField, f σ ∈ (mulByIntIsogeny W hn).ker := by
     intro σ
@@ -112,10 +119,9 @@ theorem card_emb_mulByIntIsogeny_le_card_ker [IsAlgClosed F] {n : ℤ}
 theorem card_ker_mulByIntIsogeny [IsAlgClosed F] {n : ℤ} {hn : psiFunctionField W n ≠ 0}
     (hchar : (n : F) ≠ 0) :
     Nat.card (mulByIntIsogeny W hn).ker = n.natAbs ^ 2 := by
-  have hn0 : n ≠ 0 := fun h ↦ hchar (by rw [h]; exact Int.cast_zero)
   have hge : (mulByIntIsogeny W hn).separableDegree ≤ Nat.card (mulByIntIsogeny W hn).ker := by
     rw [separableDegree_def, Field.finSepDegree]
-    exact card_emb_mulByIntIsogeny_le_card_ker W hn hn0
+    exact card_emb_mulByIntIsogeny_le_card_ker W hn
   have hle := card_ker_le_separableDegree (mulByIntIsogeny W hn)
   have := le_antisymm hle hge
   rw [this, separableDegree_mulByIntIsogeny W hchar]

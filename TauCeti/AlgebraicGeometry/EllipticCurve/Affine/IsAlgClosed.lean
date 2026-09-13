@@ -10,6 +10,8 @@ public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.BaseChange
 -- Proof-only: an integral element of an extension of an algebraically closed field lies in it.
 import Mathlib.RingTheory.Adjoin.Field
+-- Proof-only: the canonical integrality lemma for the `y`-coordinate.
+import TauCeti.AlgebraicGeometry.EllipticCurve.Integrality
 
 /-!
 # Every `x`-coordinate of a Weierstrass curve over an algebraically closed field is attained
@@ -80,7 +82,8 @@ theorem mem_range_y_of_equation_of_mem_range_x {F : Type*} [Field F] [IsAlgClose
     (W : WeierstrassCurve F) {Ω : Type*} [Field Ω] [Algebra F Ω] {x y : Ω}
     (heq : (W.baseChange Ω).toAffine.Equation x y) {x₀ : F} (hx : algebraMap F Ω x₀ = x) :
     y ∈ Set.range (algebraMap F Ω) :=
-  (isIntegral_y_of_equation_of_mem_range_x W heq hx).mem_range_algebraMap_of_minpoly_splits
+  (WeierstrassCurve.isIntegral_y_of_equation_of_isIntegral_x W heq
+      (hx ▸ isIntegral_algebraMap)).mem_range_algebraMap_of_minpoly_splits
     (by simpa using IsAlgClosed.splits (minpoly F y))
 
 end WeierstrassCurve
