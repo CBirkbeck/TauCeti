@@ -86,7 +86,6 @@ of `algebraMap F (F[C] ⧸ M)`, and assumes ellipticity throughout. The classifi
 written directly against Mathlib's `XYIdeal`: its hypothesis is the residue degree and it uses no
 ellipticity or Dedekind assumption.
 
-`ker_evalAlgHom_eq_XYIdeal` and `mem_XYIdeal_iff_evalEval_eq_zero` are not ported.
 -/
 
 public section
