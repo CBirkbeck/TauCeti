@@ -90,7 +90,10 @@ theorem isLeast_pow_mem_index (K : Subgroup G) (hg : zpowers g = ⊤) [K.FiniteI
 /-- **The relative index in a cyclic subgroup is the least exponent that lands in `H`.**  When `H`
 has finite relative index in `⟨g⟩`, that index is the smallest `n ≥ 1` with `g ^ n ∈ H`.
 
-This is `isLeast_pow_mem_index` transported into `⟨g⟩`, where the canonical generator generates. -/
+Unlike `isLeast_pow_mem_index`, no hypothesis on `g` is needed: `g` generates `⟨g⟩`, so this
+applies to an arbitrary element of an arbitrary group, asking only that `H ⊓ ⟨g⟩` have finite
+index in `⟨g⟩`. Use it when the quantity wanted is the least power of a given element that lies
+in a given subgroup. -/
 @[to_additive
 /-- **The relative index in a cyclic subgroup is the least multiple that lands in `H`.**  When `H`
 has finite relative index in `⟨g⟩`, that index is the smallest `n ≥ 1` with `n • g ∈ H`. -/]
