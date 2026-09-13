@@ -23,7 +23,9 @@ computed, which is why they are not imposed at this layer.
 
 * `TauCeti.Isogeny.mulByPrimeIsogeny`: multiplication by a prime `ℓ`, with the division
   polynomial's non-vanishing supplied by primality rather than assumed.
-* `TauCeti.Isogeny.kerZModModule`: the `ZMod ℓ`-module structure on `ker [ℓ]`, an instance.
+* `TauCeti.Isogeny.kerZModModule`: the `ZMod ℓ`-module structure on `ker [ℓ]`. It is a global
+  instance, so typeclass synthesis supplies it and a consumer writing
+  `Module.finrank (ZMod ℓ) (mulByPrimeIsogeny W ℓ).ker` never names it.
 
 ## Main results
 
