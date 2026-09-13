@@ -244,9 +244,10 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.XYIdeal_eq_iff
 /-- **The kernel of evaluation at a point is the ideal of that point.** The evaluation map
 `W.CoordinateRing →ₐ[F] F` at a solution `(x, y)` of the Weierstrass equation is surjective with
 kernel `⟨X - x, Y - y⟩`. -/
+@[simp]
 theorem _root_.WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal {y : F}
     (h : (W⁄F).toAffine.Equation x y) :
-    RingHom.ker (CoordinateRing.evalAlgHom h : W.CoordinateRing →ₐ[F] F).toRingHom =
+    RingHom.ker (CoordinateRing.evalAlgHom h : W.CoordinateRing →+* F) =
       CoordinateRing.XYIdeal W x (C y) := by
   have h' : W.Equation x y := by
     simpa only [_root_.WeierstrassCurve.baseChange, Algebra.algebraMap_self,
@@ -255,7 +256,7 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal 
   refine (hmax.eq_of_le ?_ ?_).symm
   · intro htop
     have h1 : (1 : W.CoordinateRing) ∈
-        RingHom.ker (CoordinateRing.evalAlgHom h : W.CoordinateRing →ₐ[F] F).toRingHom :=
+        RingHom.ker (CoordinateRing.evalAlgHom h : W.CoordinateRing →+* F) :=
       htop ▸ Submodule.mem_top
     simp [RingHom.mem_ker] at h1
   · -- `AdjoinRoot.of W.polynomial (C c)` is the structure map, definitionally; unfolding
@@ -300,9 +301,8 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.finrank_quotient_eq_one_if
     have hker := WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal
       (_root_.WeierstrassCurve.Affine.CoordinateRing.equation_of_algHom ρ)
     rw [_root_.WeierstrassCurve.Affine.CoordinateRing.evalAlgHom_equation_ofAlgHom] at hker
-    have hIker : I = RingHom.ker (ρ : W.CoordinateRing →ₐ[F] F).toRingHom :=
-      Ideal.ext fun a ↦ by simpa only [RingHom.mem_ker, AlgHom.toRingHom_eq_coe,
-        RingHom.coe_coe] using (hρmem a).symm
+    have hIker : I = RingHom.ker (ρ : W.CoordinateRing →+* F) :=
+      Ideal.ext fun a ↦ by simpa only [RingHom.mem_ker, RingHom.coe_coe] using (hρmem a).symm
     have heq : W.Equation (ρ (AdjoinRoot.of W.polynomial X))
         (ρ (AdjoinRoot.root W.polynomial)) := by
       simpa only [Algebra.algebraMap_self, _root_.WeierstrassCurve.baseChange,
