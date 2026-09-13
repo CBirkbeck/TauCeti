@@ -114,9 +114,9 @@ theorem ordIndex_dvd_ord (f : F) : (ordIndex v : ℤ) ∣ ord v f := by
     (f := f / t ^ (ord v f / (ordIndex v : ℤ))) (by rw [hord]; omega)
   omega
 
-/-- **A nontrivial valuation has nonzero order index.** The witness of nontriviality has value
-different from `0` and `1`, so its order is not `0`, and an index of `0` would force every order
-to vanish. -/
+/-- **A nontrivial valuation has nonzero order index.** This is the hypothesis
+`Valuation.normalization_surjective` asks for, so it is what lets a nontrivial valuation be
+normalized. -/
 theorem ordIndex_ne_zero_of_isNontrivial [v.IsNontrivial] : ordIndex v ≠ 0 := by
   obtain ⟨x, hx0, hx1⟩ := ‹v.IsNontrivial›.exists_val_nontrivial
   have hxne : x ≠ 0 := fun h ↦ hx0 (by simp [h])
