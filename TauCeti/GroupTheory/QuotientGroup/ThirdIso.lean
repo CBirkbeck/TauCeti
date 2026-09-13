@@ -33,6 +33,18 @@ namespace QuotientGroup
 
 variable {G : Type*} [Group G]
 
+/-- The relation defining `(G ⧸ N) ⧸ H.map (mk' N)`, read on representatives: two classes modulo
+`N` are congruent modulo the image of `H` exactly when their representatives are congruent modulo
+`H ⊔ N`. Both halves of `quotientQuotientEquivQuotientSup` are this statement, in opposite
+directions, so it is stated once here rather than rewritten twice. -/
+@[to_additive /-- The relation defining `(G ⧸ N) ⧸ H.map (mk' N)`, read on representatives: two
+classes modulo `N` are congruent modulo the image of `H` exactly when their representatives are
+congruent modulo `H ⊔ N`. -/]
+private theorem mk_inv_mul_mk_mem_map_iff (H N : Subgroup G) [N.Normal] (x y : G) :
+    ((x : G ⧸ N))⁻¹ * (y : G ⧸ N) ∈ H.map (QuotientGroup.mk' N) ↔ x⁻¹ * y ∈ H ⊔ N := by
+  rw [← QuotientGroup.mk_inv, ← QuotientGroup.mk_mul, ← QuotientGroup.mk'_apply,
+    ← Subgroup.mem_comap, QuotientGroup.comap_map_mk', sup_comm]
+
 /-- **The third isomorphism theorem for coset spaces.** For a normal `N` and an *arbitrary*
 subgroup `H`, the cosets of the image of `H` in `G ⧸ N` are the cosets of `H ⊔ N` in `G`, both
 directions sending the class of `g` to the class of `g`.
@@ -48,15 +60,11 @@ def quotientQuotientEquivQuotientSup (H N : Subgroup G) [N.Normal] :
     (G ⧸ N) ⧸ H.map (QuotientGroup.mk' N) ≃ G ⧸ (H ⊔ N) where
   toFun := Quotient.lift (Subgroup.quotientMapOfLE (le_sup_right : N ≤ H ⊔ N)) <| by
     refine Quotient.ind fun x ↦ Quotient.ind fun y hxy ↦ ?_
-    have h := QuotientGroup.leftRel_apply.mp hxy
-    rw [← QuotientGroup.mk_inv, ← QuotientGroup.mk_mul, ← QuotientGroup.mk'_apply,
-      ← Subgroup.mem_comap, QuotientGroup.comap_map_mk', sup_comm] at h
-    exact QuotientGroup.eq.mpr h
+    exact QuotientGroup.eq.mpr
+      ((mk_inv_mul_mk_mem_map_iff H N x y).mp (QuotientGroup.leftRel_apply.mp hxy))
   invFun := Quotient.lift (fun g : G ↦ ((g : G ⧸ N) : (G ⧸ N) ⧸ H.map (QuotientGroup.mk' N)))
-    fun x y hxy ↦ QuotientGroup.eq.mpr <| by
-      rw [← QuotientGroup.mk_inv, ← QuotientGroup.mk_mul, ← QuotientGroup.mk'_apply,
-        ← Subgroup.mem_comap, QuotientGroup.comap_map_mk', sup_comm]
-      exact QuotientGroup.leftRel_apply.mp hxy
+    fun x y hxy ↦ QuotientGroup.eq.mpr
+      ((mk_inv_mul_mk_mem_map_iff H N x y).mpr (QuotientGroup.leftRel_apply.mp hxy))
   left_inv := Quotient.ind fun x ↦ QuotientGroup.induction_on x fun _ ↦ rfl
   right_inv := fun q ↦ QuotientGroup.induction_on q fun _ ↦ rfl
 
