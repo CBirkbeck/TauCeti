@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Kernel
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Kernel.Basic
 -- Proof-only: rationality of torsion over an algebraically closed base.
 import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.AlgClosed
 -- Proof-only: `sepDeg [n] = n ²` for `n` invertible in the base field.
