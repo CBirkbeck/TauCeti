@@ -90,7 +90,8 @@ over the fraction field of a PID at integral coordinates, but nothing in the arg
 ring, so it is stated over the point's own field and the transport across `algebraMap` happens
 here, at the call site. And it is **an equivalence**,
 `addOrderOf_eq_two_iff_evalEval_ψ₂_eq_zero`, since that file already had the converse
-(`two_zsmul_eq_zero_of_evalEval_ψ₂_eq_zero`) sitting unpaired; this file uses the `.mp` direction
+(`zsmul_eq_zero_of_evalEval_ψ_eq_zero` at `n = 2`) sitting unpaired; this file uses the `.mp`
+direction
 contrapositively.
 `curveR_equation_of_isInteger` (`:266`) is not ported at all: it is Mathlib's
 `Affine.map_equation` with the coordinates substituted, so this file applies that lemma directly.
