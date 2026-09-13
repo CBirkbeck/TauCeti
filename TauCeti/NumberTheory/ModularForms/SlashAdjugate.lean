@@ -79,9 +79,9 @@ form, which produces `α⁻¹` and a determinant factor, and the classical form,
 carries no factor because the involution has absorbed it.
 
 Adapted from AINTLIB (github.com/CBirkbeck/AINTLIB @ `6d87d596a537`, Apache-2.0),
-`projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/AdjointTheory.lean`, where the same
-rescaling is carried inline inside `peterssonInner_slash_adjoint` (:412) over its `peterssonAdj`
-(:322) rather than isolated as a slash lemma. -/
+`projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/AdjointTheory.lean`, whose
+`peterssonAdj` (:322) is this involution. -/
+@[simp]
 theorem slash_adjugateGL (k : ℤ) (g : GL (Fin 2) ℝ) (f : ℍ → ℂ) :
     f ∣[k] adjugateGL g =
       (((g : Matrix (Fin 2) (Fin 2) ℝ).det : ℝ) : ℂ) ^ (k - 2) • (f ∣[k] g⁻¹) := by

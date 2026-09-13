@@ -56,7 +56,8 @@ union is itself a fundamental domain for `Γ`.
 * `UpperHalfPlane.peterssonInner_slash_left_of_det_pos` and
   `UpperHalfPlane.peterssonInner_slash_right_of_det_pos`: the adjoint formula, moving a slash
   from one argument of the pairing to the other.
-* `UpperHalfPlane.peterssonInner_slash_left_adjugateGL`: the same adjoint formula written with
+* `UpperHalfPlane.peterssonInner_slash_left_adjugateGL` and
+  `UpperHalfPlane.peterssonInner_slash_right_adjugateGL`: the same adjoint formulas written with
   the main involution `α^ι` in place of `α⁻¹`, where no determinant factor remains.
 * `UpperHalfPlane.peterssonInner_slash_slash_SL`: the determinant-one case, where the scalar
   disappears and only the domain moves.
@@ -131,8 +132,7 @@ says it is exactly what the involution contributes over the inverse.
 Ported from AINTLIB (github.com/CBirkbeck/AINTLIB @ `6d87d596a537`, Apache-2.0),
 `projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/AdjointTheory.lean`:
 `peterssonInner_slash_adjoint` (:412), stated over its `peterssonAdj` (:322) — which is
-`TauCeti.adjugateGL` specialised to `GL (Fin 2) ℝ`. The proof here is shorter: AINTLIB redoes the
-integral change of variables, this one rewrites `peterssonInner_slash_left_of_det_pos`. -/
+`TauCeti.adjugateGL` specialised to `GL (Fin 2) ℝ`. -/
 theorem peterssonInner_slash_left_adjugateGL (k : ℤ)
     (hg : 0 < (g : Matrix (Fin 2) (Fin 2) ℝ).det)
     (S : Set ℍ) (f h : ℍ → ℂ) :
@@ -151,6 +151,17 @@ theorem peterssonInner_slash_right_of_det_pos (k : ℤ)
         peterssonInner k (g • S) (f ∣[k] g⁻¹) h := by
   have hslash := peterssonInner_slash_slash_of_det_pos k hg S (f ∣[k] g⁻¹) h
   rwa [← SlashAction.slash_mul, inv_mul_cancel, SlashAction.slash_one] at hslash
+
+/-- **The adjoint of a slash on the right, in involution form**:
+`⟪f, h ∣[k] α⟫_S = ⟪f ∣[k] α^ι, h⟫_{α • S}`. The mirror of
+`peterssonInner_slash_left_adjugateGL`, and like it free of the determinant factor. -/
+theorem peterssonInner_slash_right_adjugateGL (k : ℤ)
+    (hg : 0 < (g : Matrix (Fin 2) (Fin 2) ℝ).det)
+    (S : Set ℍ) (f h : ℍ → ℂ) :
+    peterssonInner k S f (h ∣[k] g) =
+      peterssonInner k (g • S) (f ∣[k] TauCeti.adjugateGL g) h := by
+  rw [ModularForm.slash_adjugateGL, peterssonInner_smul_left, map_zpow₀, Complex.conj_ofReal,
+    peterssonInner_slash_right_of_det_pos k hg]
 
 /-! ### Slashing by an element of `SL(2, ℤ)` -/
 
