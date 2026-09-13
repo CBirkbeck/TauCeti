@@ -207,9 +207,7 @@ and carry an integrable Petersson integrand, so the sum of integrals over them i
 over their union.
 
 That union **is** a fundamental domain for the image of `Γ` in `PSL(2, ℤ)`:
-`ModularGroup.isFundamentalDomain_iUnion_out_inv_smul_fdo_withCenter`. The two facts are proved
-independently — this one needs only disjointness and integrability, where the fundamental-domain
-property needs the coset tiling — so neither is stated in terms of the other. -/
+`ModularGroup.isFundamentalDomain_iUnion_out_inv_smul_fdo_withCenter`. -/
 theorem peterssonInnerCosets_eq_peterssonInner (f g : CuspForm (Γ.map (mapGL ℝ)) k) :
     peterssonInnerCosets f g =
       UpperHalfPlane.peterssonInner k

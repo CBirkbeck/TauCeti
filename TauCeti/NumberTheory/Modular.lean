@@ -9,7 +9,7 @@ public import Mathlib.NumberTheory.Modular
 public import TauCeti.Analysis.Complex.UpperHalfPlane.Measure
 public import TauCeti.Analysis.Complex.UpperHalfPlane.PSLAction
 public import TauCeti.GroupTheory.Index.Basic
-public import TauCeti.GroupTheory.QuotientGroup.ThirdIso
+import TauCeti.GroupTheory.QuotientGroup.ThirdIso
 public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 public import TauCeti.MeasureTheory.Group.FundamentalDomain
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
@@ -272,17 +272,18 @@ fundamental domain for the image of `Γ` in `PSL(2, ℤ)`.
 
 This is the shape the Petersson product presents: `CuspForm.peterssonInnerCosets` sums over
 `SL(2, ℤ) ⧸ Γ.withCenter`, one coset at a time, because `±I` acts trivially on `ℍ`. The
-`PSL(2, ℤ)`-indexed statement above does not apply directly — the two index sets are different
-types, and `Quotient.out` picks unrelated representatives in each — so the transversal form
-`MeasureTheory.IsFundamentalDomain.iUnion_smul_of_transversal` is used instead: what it needs is
-not that the representatives agree but that `q ↦ ⟦q.out⟧` enumerates `PSL(2, ℤ) ⧸ Γ` bijectively,
-and that is the third isomorphism theorem for coset spaces,
-`QuotientGroup.quotientQuotientEquivQuotientSup`. -/
+`PSL(2, ℤ)`-indexed statement above does not apply to it directly: the two index sets are
+different types, and `Quotient.out` picks unrelated representatives in each, so the two unions
+are different sets. -/
 theorem isFundamentalDomain_iUnion_out_inv_smul_fdo_withCenter (Γ : Subgroup SL(2, ℤ)) :
     MeasureTheory.IsFundamentalDomain
       (Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ))))
       (⋃ q : SL(2, ℤ) ⧸ Γ.withCenter, ((q.out : SL(2, ℤ)))⁻¹ • (fdo : Set ℍ)) volume := by
-  -- the transversal: the inverse in `PSL(2, ℤ)` of the class of the chosen representative
+  -- The `PSL(2, ℤ)`-indexed tiling cannot be transported here, the representatives being
+  -- unrelated; what applies is the *transversal* form, which asks only that `q ↦ ⟦q.out⟧`
+  -- enumerate `PSL(2, ℤ) ⧸ Γ` bijectively — and that is the third isomorphism theorem for coset
+  -- spaces, `QuotientGroup.quotientQuotientEquivQuotientSup`, at `N = Z(SL(2, ℤ))`.
+  -- The transversal: the inverse in `PSL(2, ℤ)` of the class of the chosen representative.
   set r : SL(2, ℤ) ⧸ Γ.withCenter → PSL(2, ℤ) :=
     fun q ↦ (((q.out : SL(2, ℤ)) : PSL(2, ℤ)))⁻¹ with hr_def
   have hset : (⋃ q : SL(2, ℤ) ⧸ Γ.withCenter, ((q.out : SL(2, ℤ)))⁻¹ • (fdo : Set ℍ)) =
