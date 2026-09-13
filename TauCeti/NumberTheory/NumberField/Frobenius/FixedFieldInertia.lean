@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.GroupTheory.SpecificGroups.Cyclic.Index
 public import TauCeti.NumberTheory.NumberField.FixedField
 public import TauCeti.NumberTheory.NumberField.Frobenius.DecompositionGroup
 
@@ -33,6 +34,8 @@ runs through.
   residue degree below `L ^ H` is the residue degree of `Q`.
 * `Ideal.inertiaDeg_under_fixedField_eq_relIndex`: that residue degree is `Subgroup.relIndex`,
   the index of `H ⊓ ⟨φ⟩` in `⟨φ⟩`.
+* `Ideal.isLeast_pow_mem_inertiaDeg_under_fixedField`: equivalently, it is the least `n ≥ 1` with
+  `φ ^ n ∈ H`.
 * `Ideal.inertiaDeg_under_fixedField_eq_one_iff`: it is one exactly when a Frobenius lies in `H`.
 * `Ideal.inertiaDeg_under_fixedField_eq_one_of_isArithFrobAt`: at `σ = φ`, it is one.
 
@@ -60,6 +63,7 @@ namespace Ideal
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L]
   [Algebra K L] [IsGalois K L]
 
+omit [IsGalois K L] in
 /-- **The residue degree below a fixed field.**  For any subgroup `H` and `E = L ^ H`, the residue
 degree of `Q ∩ 𝓞 E` over `𝓞 K` times the size of the intersection of `H` with the decomposition
 group is the residue degree of `Q` itself.  Stated as a product, so no natural-number division is
@@ -71,7 +75,7 @@ theorem inertiaDeg_under_fixedField_mul_card_inf (Q : Ideal (𝓞 L)) [Q.IsPrime
       = Q.inertiaDeg (𝓞 K) := by
   set E := fixedField H with hE
   have : IsScalarTower K ↥E L := E.isScalarTower_mid'
-  have : IsGalois ↥E L := IsGalois.tower_top_intermediateField _
+  have : IsGalois ↥E L := IsGalois.of_fixed_field L H
   have : Algebra.IsUnramifiedAt (𝓞 ↥E) Q := Algebra.IsUnramifiedAt.of_restrictScalars (𝓞 K) Q
   have htower : Q.inertiaDeg (𝓞 K)
       = (Q.under (𝓞 ↥E)).inertiaDeg (𝓞 K) * Q.inertiaDeg (𝓞 ↥E) :=
@@ -99,6 +103,20 @@ theorem inertiaDeg_under_fixedField_eq_relIndex (Q : Ideal (𝓞 L)) [Q.IsPrime]
       (H := H ⊓ Subgroup.zpowers φ) (K := Subgroup.zpowers φ) inf_le_right).toEquiv).symm
   have hpos : 0 < Nat.card ((Subgroup.zpowers φ ⊓ H : Subgroup (L ≃ₐ[K] L))) := Nat.card_pos
   exact Nat.eq_of_mul_eq_mul_right hpos (hmul.trans hidx.symm)
+
+/-- **The residue degree is the least exponent landing in `H`.**  For `φ` a Frobenius at an
+unramified `Q`, the residue degree below `L ^ H` is the smallest `n ≥ 1` with `φ ^ n ∈ H`.
+
+This is the characterization the fixed-field fibre count uses: it turns the residue degree into a
+condition on powers of the Frobenius, with no index or relative index left to unfold. -/
+theorem isLeast_pow_mem_inertiaDeg_under_fixedField (Q : Ideal (𝓞 L)) [Q.IsPrime] (hQ : Q ≠ ⊥)
+    [Algebra.IsUnramifiedAt (𝓞 K) Q] (H : Subgroup (L ≃ₐ[K] L)) {φ : L ≃ₐ[K] L}
+    (hφ : IsArithFrobAt (𝓞 K) φ Q) :
+    IsLeast {n : ℕ | 0 < n ∧ φ ^ n ∈ H}
+      ((Q.under (𝓞 ↥(fixedField H))).inertiaDeg (𝓞 K)) := by
+  have : H.IsFiniteRelIndex (Subgroup.zpowers φ) := ⟨Subgroup.index_ne_zero_of_finite⟩
+  rw [inertiaDeg_under_fixedField_eq_relIndex Q hQ H hφ]
+  exact Subgroup.isLeast_pow_mem_relIndex_zpowers φ H
 
 /-- **Residue degree one is membership.**  The prime below `Q` in `L ^ H` has residue degree one
 over `𝓞 K` exactly when a Frobenius at `Q` lies in `H`. -/

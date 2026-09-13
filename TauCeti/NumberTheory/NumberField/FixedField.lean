@@ -145,6 +145,11 @@ theorem eq_of_smul_eq_of_liesOver_under_fixedField {σ : L ≃ₐ[K] L} {Q : Ide
   exact MulAction.mem_stabilizer_iff.mp
     (NumberField.stabilizer_fixedField_zpowers_eq_top hQ ▸ Subgroup.mem_top τ)
 
+section FixedFieldStabilizer
+
+omit [NumberField K] [NumberField L]
+variable [FiniteDimensional K L]
+
 /-- **The decomposition group over a fixed field corresponds to the intersection.**  For a subgroup
 `H` of `Gal(L/K)` and `E = L ^ H`, the Galois correspondence `H ≃* Gal(L/E)` pulls the stabilizer
 of `Q` in `Gal(L/E)` back to the intersection of `H` with the stabilizer of `Q` in `Gal(L/K)`,
@@ -174,5 +179,7 @@ theorem card_stabilizer_fixedField_eq_card_inf (Q : Ideal (𝓞 L)) (H : Subgrou
     rw [← Subgroup.inf_subgroupOf_right]
     exact Nat.card_congr (Subgroup.subgroupOfEquivOfLe inf_le_right).toEquiv
   rw [← h1, comap_stabilizer_fixedField_eq_subgroupOf Q H, h2]
+
+end FixedFieldStabilizer
 
 end Ideal
