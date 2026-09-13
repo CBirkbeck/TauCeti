@@ -104,9 +104,14 @@ theorem peterssonInner_fd_eq_fdo (k : ℤ) (f g : ℍ → ℂ) :
   peterssonInner_congr_set ModularGroup.fd_ae_eq_fdo f g
 
 /-- **The Petersson integrand is invariant under the group its arguments are modular for.**
-Both arguments pick up the same automorphy factor, and `UpperHalfPlane.petersson_slash_SL`
-cancels the two against the Jacobian, leaving `petersson k f f'` a genuine function on the
-quotient `Γ \ ℍ`. -/
+This is pointwise, and no change of variables is involved: `conj (f τ)` and `f' τ` each pick up
+the automorphy factor of `γ`, and their product cancels against the transformation of the weight
+`im τ ^ k`, which `UpperHalfPlane.petersson_slash_SL` records. So `petersson k f f'` is a genuine
+function on the quotient `Γ \ ℍ`.
+
+Not `@[simp]`: the left-hand side is not in simp normal form, since `ModularGroup.sl_moeb`
+rewrites `γ • τ` into the `GL(2, ℝ)` action of `γ`'s image. The `PSL(2, ℤ)` form below carries the
+attribute instead, and it is the one simp can use. -/
 theorem petersson_smul_of_mem {F F' : Type*} [FunLike F ℍ ℂ] [FunLike F' ℍ ℂ] (k : ℤ)
     {Γ : Subgroup SL(2, ℤ)} [SlashInvariantFormClass F (Γ.map (mapGL ℝ)) k]
     [SlashInvariantFormClass F' (Γ.map (mapGL ℝ)) k] (f : F) (f' : F') {γ : SL(2, ℤ)}
@@ -123,6 +128,7 @@ theorem petersson_smul_of_mem {F F' : Type*} [FunLike F ℍ ℂ] [FunLike F' ℍ
 /-- **The Petersson integrand is invariant under the image of `Γ` in `PSL(2, ℤ)`**, which is
 the group that actually acts: `±I` acts trivially on `ℍ`. This is the hypothesis
 `MeasureTheory.IsFundamentalDomain.setIntegral_eq` asks for. -/
+@[simp]
 theorem petersson_psl_smul_of_mem {F F' : Type*} [FunLike F ℍ ℂ] [FunLike F' ℍ ℂ] (k : ℤ)
     {Γ : Subgroup SL(2, ℤ)} [SlashInvariantFormClass F (Γ.map (mapGL ℝ)) k]
     [SlashInvariantFormClass F' (Γ.map (mapGL ℝ)) k] (f : F) (f' : F')
