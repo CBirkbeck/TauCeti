@@ -22,14 +22,14 @@ of `Γ` as a strict period at level one.
 
 ## Main declarations
 
-* `TauCeti.ModularForm.NormReduction.G`, `TauCeti.ModularForm.NormReduction.Q`: a subgroup
+* `ModularForm.NormReduction.G`, `ModularForm.NormReduction.Q`: a subgroup
   `Γ ≤ SL(2, ℤ)` viewed in `GL(2, ℝ)` (arithmetic for finite index, by Mathlib's instance),
   and the coset space indexing the norm factors.
-* `TauCeti.ModularForm.NormReduction.restProd`: the product of the nontrivial slash
+* `ModularForm.NormReduction.restProd`: the product of the nontrivial slash
   translates, characterized by `restProd_apply` and bounded at `Im z → ∞`.
-* `TauCeti.ModularForm.NormReduction.strictWidthInfty_mem_strictPeriods_levelOne`: the
+* `ModularForm.NormReduction.strictWidthInfty_mem_strictPeriods_levelOne`: the
   strict cusp width of `G Γ` is a strict period of the full level-one group.
-* `TauCeti.ModularForm.NormReduction.valueAtInfty_norm_eq_zero_of_valueAtInfty_eq_zero`:
+* `ModularForm.NormReduction.valueAtInfty_norm_eq_zero_of_valueAtInfty_eq_zero`:
   vanishing at the cusp `∞` transfers from a form to its level-one norm.
 
 ## References
@@ -47,7 +47,9 @@ atop Mathlib's `ModularForm.norm` coset API and this repository's `Norm/Trace` h
 open scoped MatrixGroups
 open Filter UpperHalfPlane
 
-namespace TauCeti.ModularForm.NormReduction
+namespace ModularForm.NormReduction
+
+open TauCeti
 
 noncomputable section
 variable {Γ : Subgroup SL(2, ℤ)} {k : ℤ}
@@ -145,4 +147,4 @@ end RestProd
 
 end
 
-end TauCeti.ModularForm.NormReduction
+end ModularForm.NormReduction
