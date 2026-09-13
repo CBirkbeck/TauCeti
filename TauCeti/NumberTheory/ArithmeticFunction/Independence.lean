@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Data.Nat.Factorization.Basic
+public import Mathlib.LinearAlgebra.LinearIndependent.Defs
 public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 
 /-!
@@ -21,20 +22,28 @@ whose weight `w p` depends on the level and weight but **not** on the eigenform.
 records what that shared recurrence buys: such a function is determined by its values at the
 primes alone, so two of them that agree at every prime are equal.
 
-Distinct such functions are therefore **linearly independent** in the strong sense that a
-relation `∑ᵢ cᵢ · Gᵢ n = 0` holding for every `n ≥ 1` forces every coefficient to vanish. That is
-the arithmetic half of multiplicity one for Hecke eigenforms: eigenforms with different eigenvalue
-systems cannot cancel each other, whatever the coefficients.
+Distinct such functions are therefore **linearly independent**. That is the arithmetic half of
+multiplicity one for Hecke eigenforms: eigenforms with different eigenvalue systems cannot cancel
+each other, whatever the coefficients. It is stated twice, because the two forms suit different
+consumers: pointwise, as "a relation `∑ᵢ cᵢ · Gᵢ n = 0` holding for every `n ≥ 1` forces every
+coefficient to vanish", and as `LinearIndependent R G`. The two agree because an
+`ArithmeticFunction` vanishes at `0` by definition, so a module relation is exactly a pointwise
+relation at every `n ≥ 1`.
 
 ## Main results
 
+* `ArithmeticFunction.eq_on_prime_pow_of_eq_on_primes_of_rec`: the recurrence alone — no
+  multiplicativity — propagates agreement from the primes to the prime powers.
 * `ArithmeticFunction.IsMultiplicative.eq_of_eq_on_primes_of_rec`: two multiplicative functions
   obeying the same recurrence and agreeing at every prime are equal.
 * `ArithmeticFunction.IsMultiplicative.exists_prime_ne_of_ne_of_rec`: contrapositively, two
   distinct such functions differ at some prime.
 * `ArithmeticFunction.IsMultiplicative.sum_mul_prime_eq_zero`: multiplying a vanishing relation by
   the value at a prime leaves it vanishing.
-* `ArithmeticFunction.IsMultiplicative.eq_zero_of_sum_mul_eq_zero`: **the independence theorem**.
+* `ArithmeticFunction.IsMultiplicative.eq_zero_of_sum_mul_eq_zero`: **the independence theorem**,
+  in its finite-support form, which is the elimination engine.
+* `ArithmeticFunction.IsMultiplicative.linearIndependent_of_rec`: the same as
+  `LinearIndependent R G`.
 
 ## References
 
@@ -44,7 +53,8 @@ Ported from AINTLIB's `LeanModularForms` project
 `projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/Newforms/MainLemmaProof.lean`
 (`eq_prime_powers_of_eq_primes_of_rec`, `support_eq_empty_of_pairwise_distinct_rec`). That project
 works over a bare `ℕ → ℂ` with its own multiplicativity predicate; here the statements are over
-Mathlib's `ArithmeticFunction.IsMultiplicative` and an arbitrary domain.
+Mathlib's `ArithmeticFunction.IsMultiplicative` and an arbitrary commutative ring, with the
+independence results asking only that it have no zero divisors.
 
 * [F. Diamond and J. Shurman, *A first course in modular forms*][diamondshurman2005], Theorem 5.8.2.
 * Miyake, *Modular forms*, Theorem 4.6.12.
@@ -63,8 +73,6 @@ and weight — and that sharing is what the results here need. -/
 def HasPrimePowerRec (f : ArithmeticFunction R) (w : ℕ → R) : Prop :=
   ∀ p : ℕ, p.Prime → ∀ r : ℕ, f (p ^ (r + 2)) = f p * f (p ^ (r + 1)) - w p * f (p ^ r)
 
-namespace IsMultiplicative
-
 /-- **Prime values determine prime-power values, given a shared recurrence.** Two functions
 obeying the same recurrence, agreeing at `1` and at every prime, agree at every prime power: the
 recurrence propagates the agreement upward from `r = 0, 1`. Multiplicativity is not needed —
@@ -80,6 +88,8 @@ theorem eq_on_prime_pow_of_eq_on_primes_of_rec {f g : ArithmeticFunction R} {w :
     | 1 => simpa using hp p hprime
     | (r + 2) =>
       rw [hfr p hprime r, hgr p hprime r, hp p hprime, ih (r + 1) (by omega), ih r (by omega)]
+
+namespace IsMultiplicative
 
 /-- **Two multiplicative functions with a common recurrence agreeing at the primes are equal.**
 `ArithmeticFunction.IsMultiplicative.eq_iff_eq_on_prime_powers` reduces equality to the prime
@@ -159,7 +169,7 @@ the relation at `n = 1` reads `c r = 0`. Otherwise pick another `i₀` in it and
 `cᵢ' := cᵢ · (Gᵢ p₀ − G r p₀)` satisfies the same vanishing relation by
 `sum_mul_prime_eq_zero`, has `c' r = 0` and `c' i₀ ≠ 0`, and so has strictly smaller nonempty
 support — contradicting minimality. -/
-theorem eq_zero_of_sum_mul_eq_zero {ι : Type*} [IsDomain R] {w : ℕ → R}
+theorem eq_zero_of_sum_mul_eq_zero {ι : Type*} [NoZeroDivisors R] {w : ℕ → R}
     {s : Finset ι} {G : ι → ArithmeticFunction R} (hmul : ∀ i ∈ s, (G i).IsMultiplicative)
     (hrec : ∀ i ∈ s, HasPrimePowerRec (G i) w)
     (hdist : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → G i ≠ G j) {c : ι → R}
@@ -241,6 +251,31 @@ theorem eq_zero_of_sum_mul_eq_zero {ι : Type*} [IsDomain R] {w : ℕ → R}
       rw [hzero, zero_mul]
   rw [Finset.eq_empty_iff_forall_notMem] at hsupp
   exact hsupp i (Finset.mem_filter.2 ⟨hi, hci⟩)
+
+/-- **Distinct multiplicative functions with a common prime-power recurrence are linearly
+independent**, in Mathlib's sense: the family `G` is `LinearIndependent R`.
+
+This is `eq_zero_of_sum_mul_eq_zero` read through `linearIndependent_iff'`. The two say the same
+thing, because an `ArithmeticFunction` vanishes at `0` by definition: a module relation
+`∑ᵢ gᵢ • Gᵢ = 0` is exactly a pointwise relation at every `n ≥ 1`. Which form is convenient
+depends on the consumer — the finite-support statement is the elimination engine, this one is what
+plugs into the linear-algebra API. -/
+theorem linearIndependent_of_rec {ι : Type*} [NoZeroDivisors R] {w : ℕ → R}
+    {G : ι → ArithmeticFunction R} (hmul : ∀ i, (G i).IsMultiplicative)
+    (hrec : ∀ i, HasPrimePowerRec (G i) w) (hdist : Function.Injective G) :
+    LinearIndependent R G := by
+  classical
+  have happly : ∀ (t : Finset ι) (g : ι → R) (n : ℕ),
+      (∑ i ∈ t, g i • G i) n = ∑ i ∈ t, g i * G i n := by
+    intro t g n
+    induction t using Finset.induction with
+    | empty => simp
+    | insert a t ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, add_apply, smul_map, ih,
+        smul_eq_mul]
+  refine linearIndependent_iff'.2 fun t g hg ↦
+    eq_zero_of_sum_mul_eq_zero (fun i _ ↦ hmul i) (fun i _ ↦ hrec i)
+      (fun i _ j _ hij hGij ↦ hij (hdist hGij)) fun n _ ↦ ?_
+  rw [← happly t g n, hg, zero_apply]
 
 end IsMultiplicative
 
