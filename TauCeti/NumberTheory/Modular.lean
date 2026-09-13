@@ -9,6 +9,7 @@ public import Mathlib.NumberTheory.Modular
 public import TauCeti.Analysis.Complex.UpperHalfPlane.Measure
 public import TauCeti.Analysis.Complex.UpperHalfPlane.PSLAction
 public import TauCeti.GroupTheory.Index.Basic
+public import TauCeti.GroupTheory.QuotientGroup.ThirdIso
 public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 public import TauCeti.MeasureTheory.Group.FundamentalDomain
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
@@ -49,6 +50,8 @@ every level, which is what a Petersson product for a congruence subgroup is an i
   on `ℍ` with the invariant measure.
 * `ModularGroup.isFundamentalDomain_iUnion_out_inv_smul_fdo`: the coset tiling of `𝒟ᵒ` is a
   fundamental domain for any subgroup of `PSL(2, ℤ)`.
+* `ModularGroup.isFundamentalDomain_iUnion_out_inv_smul_fdo_withCenter`: the same tiling indexed
+  by `SL(2, ℤ) ⧸ Γ.withCenter`, which is the indexing the Petersson product uses.
 
 Split out of the Petersson inner-product development ported from the AINTLIB
 `LeanModularForms` project
@@ -262,5 +265,47 @@ theorem isFundamentalDomain_iUnion_out_inv_smul_fdo (H : Subgroup PSL(2, ℤ)) :
     MeasureTheory.IsFundamentalDomain H
       (⋃ q : PSL(2, ℤ) ⧸ H, ((q.out : PSL(2, ℤ)))⁻¹ • (fdo : Set ℍ)) volume :=
   isFundamentalDomain_fdo.subgroup_iUnion_out_inv_smul H
+
+/-- **The same tiling, indexed by the cosets of `Γ·{±I}` in `SL(2, ℤ)`.** For
+`Γ ≤ SL(2, ℤ)`, the translates `(q.out)⁻¹ • 𝒟ᵒ` taken over `q ∈ SL(2, ℤ) ⧸ Γ.withCenter` tile a
+fundamental domain for the image of `Γ` in `PSL(2, ℤ)`.
+
+This is the shape the Petersson product presents: `CuspForm.peterssonInnerCosets` sums over
+`SL(2, ℤ) ⧸ Γ.withCenter`, one coset at a time, because `±I` acts trivially on `ℍ`. The
+`PSL(2, ℤ)`-indexed statement above does not apply directly — the two index sets are different
+types, and `Quotient.out` picks unrelated representatives in each — so the transversal form
+`MeasureTheory.IsFundamentalDomain.iUnion_smul_of_transversal` is used instead: what it needs is
+not that the representatives agree but that `q ↦ ⟦q.out⟧` enumerates `PSL(2, ℤ) ⧸ Γ` bijectively,
+and that is the third isomorphism theorem for coset spaces,
+`QuotientGroup.quotientQuotientEquivQuotientSup`. -/
+theorem isFundamentalDomain_iUnion_out_inv_smul_fdo_withCenter (Γ : Subgroup SL(2, ℤ)) :
+    MeasureTheory.IsFundamentalDomain
+      (Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ))))
+      (⋃ q : SL(2, ℤ) ⧸ Γ.withCenter, ((q.out : SL(2, ℤ)))⁻¹ • (fdo : Set ℍ)) volume := by
+  -- the transversal: the inverse in `PSL(2, ℤ)` of the class of the chosen representative
+  set r : SL(2, ℤ) ⧸ Γ.withCenter → PSL(2, ℤ) :=
+    fun q ↦ (((q.out : SL(2, ℤ)) : PSL(2, ℤ)))⁻¹ with hr_def
+  have hset : (⋃ q : SL(2, ℤ) ⧸ Γ.withCenter, ((q.out : SL(2, ℤ)))⁻¹ • (fdo : Set ℍ)) =
+      ⋃ q : SL(2, ℤ) ⧸ Γ.withCenter, r q • (fdo : Set ℍ) :=
+    Set.iUnion_congr fun q ↦ (Matrix.SpecialLinearGroup.pslMk_smul_set _ _).symm
+  rw [hset]
+  refine isFundamentalDomain_fdo.iUnion_smul_of_transversal (r := r)
+    (fun q ↦ isFundamentalDomain_fdo.nullMeasurableSet_smul _) ?_
+  -- `q ↦ ⟦q.out⟧` enumerates `PSL(2, ℤ) ⧸ Γ` bijectively: that is the third isomorphism
+  -- theorem for coset spaces, at `N = Z(SL(2, ℤ))`
+  have hfun : (fun q : SL(2, ℤ) ⧸ Γ.withCenter ↦
+      (QuotientGroup.mk ((r q)⁻¹) :
+        PSL(2, ℤ) ⧸ Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ))))) =
+      ⇑((Subgroup.quotientEquivOfEq (Subgroup.withCenter_def Γ)).trans
+        (QuotientGroup.quotientQuotientEquivQuotientSup Γ (Subgroup.center SL(2, ℤ))).symm) := by
+    funext q
+    rw [hr_def, inv_inv]
+    conv_rhs => rw [← QuotientGroup.out_eq' q]
+    rw [Equiv.trans_apply, Subgroup.quotientEquivOfEq_mk,
+      QuotientGroup.quotientQuotientEquivQuotientSup_symm_mk]
+  rw [hfun]
+  exact ((Subgroup.quotientEquivOfEq (Subgroup.withCenter_def Γ)).trans
+    (QuotientGroup.quotientQuotientEquivQuotientSup Γ
+      (Subgroup.center SL(2, ℤ))).symm).bijective
 
 end ModularGroup
