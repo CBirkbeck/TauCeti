@@ -6,57 +6,51 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.RingTheory.Valuation.Basic
-public import Mathlib.RingTheory.Algebraic.Defs
+public import Mathlib.RingTheory.IntegralClosure.Algebra.Defs
 import Mathlib.RingTheory.Valuation.Integral
 import Mathlib.RingTheory.IntegralClosure.IsIntegral.Basic
 
 /-!
-# Nontriviality survives restriction along an algebraic extension
+# Nontriviality survives restriction along an integral algebra
 
 A valuation of `L` restricts along `algebraMap K L` to a valuation of `K`, and this file records
-that the restriction of a nontrivial valuation is again nontrivial as soon as `L` is algebraic
+that the restriction of a nontrivial valuation is again nontrivial as soon as `L` is integral
 over `K`.
 
-Algebraicity is what makes this true, and it is sharp: for a transcendental extension the
-restriction can collapse. The trivial valuation on `K` inside a valuation of `K(t)` that sees only
-the `t`-adic order is the standard example.
+Integrality is what makes this true, and it is sharp: without it the restriction can collapse.
+The valuation of `K(t)` reading the `t`-adic order restricts to the trivial valuation on `K`.
+
+This is restriction of the *domain*, along a ring map. It is unrelated to
+`Valuation.RankOne.isNontrivial_restrict`, which restricts the *value group* of a valuation to its
+value subgroup and leaves the domain alone.
 
 ## Main results
 
 * `Valuation.isNontrivial_comap_algebraMap`: the restriction of a nontrivial valuation along an
-  algebraic extension of fields is nontrivial.
+  integral algebra is nontrivial.
 
 ## References
 
 * [A. J. Engler and A. Prestel, *Valued Fields*][engler2005], §3.2.
-
-## Provenance
-
-Not ported. Mathlib's `Valuation.RankOne.isNontrivial_restrict` is a different statement — it
-restricts the *value group* of a valuation to its value subgroup, leaving the domain alone —
-and nothing in `Mathlib/RingTheory/Valuation/` restricts a valuation along a ring map and
-concludes nontriviality.
 -/
 
 public section
 
 namespace Valuation
 
-variable {K L Γ₀ : Type*} [Field K] [Field L] [Algebra K L]
+variable {K L Γ₀ : Type*} [CommRing K] [Field L] [Algebra K L]
   [LinearOrderedCommGroupWithZero Γ₀]
 
-/-- **The restriction of a nontrivial valuation along an algebraic extension is nontrivial.** -/
-theorem isNontrivial_comap_algebraMap [Algebra.IsAlgebraic K L] (v : Valuation L Γ₀)
+/-- **The restriction of a nontrivial valuation along an integral algebra is nontrivial.** -/
+theorem isNontrivial_comap_algebraMap [Algebra.IsIntegral K L] (v : Valuation L Γ₀)
     [v.IsNontrivial] : (v.comap (algebraMap K L)).IsNontrivial := by
   by_contra hcon
-  -- a trivial restriction puts `K` inside the valuation ring
+  -- a trivial restriction puts `K` inside the valuation ring; splitting on the *value* rather
+  -- than on `k` avoids needing `algebraMap K L` to be injective
   have htriv : ∀ k : K, v (algebraMap K L k) ≤ 1 := by
     intro k
     by_contra hk
-    exact hcon ⟨k, by
-      rcases eq_or_ne k 0 with rfl | hk0
-      · simp at hk
-      · exact ⟨by simpa using fun h ↦ hk (by simp [h]), fun h ↦ hk (le_of_eq h)⟩⟩
+    exact hcon ⟨k, fun h ↦ hk (h ▸ zero_le_one), fun h ↦ hk (le_of_eq h)⟩
   have hmem : ∀ k : K, algebraMap K L k ∈ v.integer := fun k ↦ htriv k
   let _ : Algebra K v.integer := ((algebraMap K L).codRestrict _ hmem).toAlgebra
   have _ : IsScalarTower K v.integer L := IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
