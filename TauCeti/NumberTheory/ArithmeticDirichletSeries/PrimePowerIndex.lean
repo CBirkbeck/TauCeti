@@ -11,9 +11,10 @@ public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Counting
 # Indexing the prime-power ideals by a prime and an exponent
 
 Every prime-power ideal of `𝓞 K` is `𝔭 ^ (k + 1)` for a unique height-one prime `𝔭` and a unique
-`k : ℕ`. This file records that bijection and what it does to an infinite sum: a sum over the
-prime-power ideals is the iterated sum over primes and exponents, and a sum over *all* nonzero
-ideals collapses to the same thing whenever the summand is supported on prime powers.
+`k : ℕ`. This file records that bijection and what it does to an infinite sum: a *summable* family
+on the prime-power ideals has the same sum as the iterated sum over primes and exponents, and a
+*summable* family on *all* nonzero ideals collapses to that same iterated sum whenever it is
+supported on prime powers. Both statements assume summability; neither asserts it.
 
 This is the ideal analogue of Mathlib's `Nat.Primes.prodNatEquiv` and the two summation lemmas
 built on it, `tsum_primes_pow_eq` and `tsum_eq_tsum_primes_of_support_subset_prime_powers`. Those
