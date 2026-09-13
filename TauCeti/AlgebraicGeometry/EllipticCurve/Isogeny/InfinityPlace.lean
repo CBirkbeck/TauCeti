@@ -76,9 +76,14 @@ that ring is integrally closed, so `MapsInfinity` would put the source coordinat
 against its double pole. -/
 theorem one_lt_infinityPlace_pullback_X :
     1 < infinityPlace W₁ (φ.pullback (algebraMap F[X] W₂.CoordinateRing Polynomial.X)) := by
-  rw [← fieldPullback_algebraMap,
-    ← IsScalarTower.algebraMap_apply F[X] W₂.CoordinateRing W₂.FunctionField]
   set u := (infinityPlace W₁).comap φ.fieldPullback.toRingHom with hu
+  -- The restricted valuation, evaluated on an affine function of the target, is the value of that
+  -- function's pullback. Stated once here rather than relied on definitionally at each use.
+  have hueval : ∀ c : W₂.CoordinateRing,
+      u (algebraMap W₂.CoordinateRing W₂.FunctionField c) = infinityPlace W₁ (φ.pullback c) :=
+    fun c ↦ by rw [hu, Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
+      fieldPullback_algebraMap]
+  rw [← hueval, ← IsScalarTower.algebraMap_apply F[X] W₂.CoordinateRing W₂.FunctionField]
   by_contra hle
   rw [not_lt] at hle
   -- With `x₂` in the valuation ring, so is every polynomial in it.
@@ -109,7 +114,8 @@ theorem one_lt_infinityPlace_pullback_X :
   have hmem : ∀ c : W₂.CoordinateRing, φ.pullback c ∈ (infinityPlace W₁).integer := by
     intro c
     have h := hcr c
-    simpa [hu, Valuation.mem_integer_iff] using h
+    rw [Valuation.mem_integer_iff, ← hueval c]
+    exact h
   -- `MapsInfinity` is integrality over `R(W₂)` acting through the pullback; corestricting the
   -- pullback to the valuation ring at infinity makes it integrality over that ring, which is
   -- integrally closed. So `x₁` would lie in it, against its double pole.

@@ -34,7 +34,7 @@ variable {Γ₀ : Type*} [LinearOrderedCommMonoidWithZero Γ₀]
 /-- **Restricting a valuation along an algebra map preserves triviality on the base.** An algebra
 map fixes the base, so the restricted valuation takes the same values on constants. -/
 instance IsTrivialOn.comap {A B C : Type*} [CommSemiring A] [Ring B] [Ring C] [Algebra A B]
-    [Algebra A C] (f : B →ₐ[A] C) (v : Valuation C Γ₀) [v.IsTrivialOn A] :
+    [Algebra A C] (v : Valuation C Γ₀) (f : B →ₐ[A] C) [v.IsTrivialOn A] :
     (v.comap f.toRingHom).IsTrivialOn A where
   eq_one a ha := by simpa using Valuation.IsTrivialOn.eq_one (v := v) a ha
 
