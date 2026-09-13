@@ -34,8 +34,9 @@ union.
   onto `Γ₂ ⧸ (δ⁻¹Γ₁δ ⊓ Γ₂)`, the translates `⋃ i, (δ · r i) • s` tile a fundamental domain for
   `Γ₁ ⊓ δΓ₂δ⁻¹`.
 * `MeasureTheory.IsFundamentalDomain.iUnion_mul_out_inv_smul`: the same at the canonical
-  representatives, `⋃ᵥ (δ σᵥ⁻¹) • s` over `Γ₂ ⧸ (δ⁻¹Γ₁δ ⊓ Γ₂)`. Those are the representatives a
-  Hecke operator sums over.
+  `Quotient.out` representatives, `⋃ᵥ (δ σᵥ⁻¹) • s` over `Γ₂ ⧸ (δ⁻¹Γ₁δ ⊓ Γ₂)`. A Hecke operator
+  supplies its own representatives rather than `Quotient.out`'s, so it is the transversal form
+  above that applies there.
 * `MeasureTheory.IsFundamentalDomain.aedisjoint_smul_of_inv_mul_mem`: translates `g₁ • D`,
   `g₂ • D` of an `H`-fundamental domain are a.e. disjoint whenever `g₁ ≠ g₂` and
   `g₁⁻¹ * g₂ ∈ H` (needing only quasi-measure-preservation of the one translation).
@@ -258,11 +259,11 @@ theorem IsFundamentalDomain.iUnion_mul_smul_of_transversal {G α ι : Type*} [Gr
 `(δ · σᵥ⁻¹) • s`, taken over the canonical representatives `σᵥ` of `Γ₂ ⧸ (δ⁻¹Γ₁δ ⊓ Γ₂)`, tile a
 fundamental domain for `Γ₁ ⊓ δΓ₂δ⁻¹`.
 
-Those representatives are exactly the ones a Hecke operator sums over: the index type here is
-`TauCeti.DoubleCoset.DecompQuotient Γ₂ Γ₁ δ⁻¹`, and `δ · σᵥ⁻¹` is the right-coset representative
-of `Γ₁ δ Γ₂ = ⊔ᵥ Γ₁ (δ σᵥ⁻¹)`. So this is the tiling the Petersson adjoint of a Hecke operator
-integrates over — though at representatives of its own choosing, for which
-`iUnion_mul_smul_of_transversal` is the form that applies.
+The index type is `TauCeti.DoubleCoset.DecompQuotient Γ₂ Γ₁ δ⁻¹`, the one a Hecke decomposition
+`Γ₁ δ Γ₂ = ⊔ᵥ Γ₁ (δ σᵥ⁻¹)` is indexed by — but `σᵥ` here is `Quotient.out`'s choice, and a Hecke
+operator's `σᵥ` comes from the double-coset machinery instead. **Two transversals of the same
+coset space give different translates**, so this statement does not transfer to them;
+`iUnion_mul_smul_of_transversal` is the form that does.
 
 Ported from AINTLIB (github.com/CBirkbeck/AINTLIB @ `6d87d596a5372d5b122c47b7082d4c3afa9b7c3b`,
 Apache-2.0), `projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/AdjointTheory/
