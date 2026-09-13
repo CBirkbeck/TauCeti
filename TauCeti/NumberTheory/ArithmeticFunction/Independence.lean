@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 
@@ -22,12 +21,33 @@ whose weight `w p` depends on the level and weight but **not** on the eigenform.
 records what that shared recurrence buys: such a function is determined by its values at the
 primes alone, so two of them that agree at every prime are equal.
 
+Distinct such functions are therefore **linearly independent** in the strong sense that a
+relation `∑ᵢ cᵢ · Gᵢ n = 0` holding for every `n ≥ 1` forces every coefficient to vanish. That is
+the arithmetic half of multiplicity one for Hecke eigenforms: eigenforms with different eigenvalue
+systems cannot cancel each other, whatever the coefficients.
+
 ## Main results
 
 * `ArithmeticFunction.IsMultiplicative.eq_of_eq_on_primes_of_rec`: two multiplicative functions
   obeying the same recurrence and agreeing at every prime are equal.
 * `ArithmeticFunction.IsMultiplicative.exists_prime_ne_of_ne_of_rec`: contrapositively, two
   distinct such functions differ at some prime.
+* `ArithmeticFunction.IsMultiplicative.sum_mul_prime_eq_zero`: multiplying a vanishing relation by
+  the value at a prime leaves it vanishing.
+* `ArithmeticFunction.IsMultiplicative.eq_zero_of_sum_mul_eq_zero`: **the independence theorem**.
+
+## References
+
+Ported from AINTLIB's `LeanModularForms` project
+([github.com/CBirkbeck/AINTLIB](https://github.com/CBirkbeck/AINTLIB), commit
+`6d87d596a5372d5b122c47b7082d4c3afa9b7c3b`, Apache 2.0),
+`projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/Newforms/MainLemmaProof.lean`
+(`eq_prime_powers_of_eq_primes_of_rec`, `support_eq_empty_of_pairwise_distinct_rec`). That project
+works over a bare `ℕ → ℂ` with its own multiplicativity predicate; here the statements are over
+Mathlib's `ArithmeticFunction.IsMultiplicative` and an arbitrary domain.
+
+* [F. Diamond and J. Shurman, *A first course in modular forms*][diamondshurman2005], Theorem 5.8.2.
+* Miyake, *Modular forms*, Theorem 4.6.12.
 -/
 
 public section
@@ -45,18 +65,18 @@ def HasPrimePowerRec (f : ArithmeticFunction R) (w : ℕ → R) : Prop :=
 
 namespace IsMultiplicative
 
-/-- **Prime values determine prime-power values, given a shared recurrence.** Two multiplicative
-functions obeying the same recurrence and agreeing at every prime agree at every prime power:
-the recurrence propagates the agreement upward from `r = 0, 1`. -/
+/-- **Prime values determine prime-power values, given a shared recurrence.** Two functions
+obeying the same recurrence, agreeing at `1` and at every prime, agree at every prime power: the
+recurrence propagates the agreement upward from `r = 0, 1`. Multiplicativity is not needed —
+only the value at `1`, which is where the induction starts. -/
 theorem eq_on_prime_pow_of_eq_on_primes_of_rec {f g : ArithmeticFunction R} {w : ℕ → R}
-    (hf : f.IsMultiplicative) (hg : g.IsMultiplicative)
-    (hfr : HasPrimePowerRec f w) (hgr : HasPrimePowerRec g w)
+    (h1 : f 1 = g 1) (hfr : HasPrimePowerRec f w) (hgr : HasPrimePowerRec g w)
     (hp : ∀ p : ℕ, p.Prime → f p = g p) {p : ℕ} (hprime : p.Prime) (a : ℕ) :
     f (p ^ a) = g (p ^ a) := by
   induction a using Nat.strong_induction_on with
   | _ a ih =>
     match a with
-    | 0 => rw [pow_zero, hf.1, hg.1]
+    | 0 => rw [pow_zero, h1]
     | 1 => simpa using hp p hprime
     | (r + 2) =>
       rw [hfr p hprime r, hgr p hprime r, hp p hprime, ih (r + 1) (by omega), ih r (by omega)]
@@ -69,7 +89,7 @@ theorem eq_of_eq_on_primes_of_rec {f g : ArithmeticFunction R} {w : ℕ → R}
     (hfr : HasPrimePowerRec f w) (hgr : HasPrimePowerRec g w)
     (hp : ∀ p : ℕ, p.Prime → f p = g p) : f = g :=
   (eq_iff_eq_on_prime_powers f hf g hg).2 fun _p a hprime ↦
-    eq_on_prime_pow_of_eq_on_primes_of_rec hf hg hfr hgr hp hprime a
+    eq_on_prime_pow_of_eq_on_primes_of_rec (hf.1.trans hg.1.symm) hfr hgr hp hprime a
 
 /-- **Distinct multiplicative functions with a common recurrence differ at a prime.** The
 contrapositive of `eq_of_eq_on_primes_of_rec`, and the form the independence argument uses: it
