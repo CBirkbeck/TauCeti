@@ -37,8 +37,10 @@ ideal of a point.
   Weierstrass equation.
 * `WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal`: the kernel of evaluation
   at a point is the ideal of that point.
-* `WeierstrassCurve.Affine.CoordinateRing.mem_XYIdeal_iff_evalEval_eq_zero`: a function lies in
-  the ideal of a point exactly when it vanishes there.
+* `WeierstrassCurve.Affine.CoordinateRing.mem_XYIdeal_iff_evalAlgHom_eq_zero`: an element of the
+  coordinate ring lies in the ideal of a point exactly when it evaluates to zero there.
+* `WeierstrassCurve.Affine.CoordinateRing.mem_XYIdeal_iff_evalEval_eq_zero`: the same test for the
+  class of a bivariate polynomial, read as vanishing at the point.
 
 Mathlib has the quotient isomorphism but records nothing about the ideal itself; the many `XYIdeal`
 lemmas it does state (`XYIdeal_eq₁`, `XYIdeal_eq₂`, `XYIdeal_mul_XYIdeal`, `XYIdeal_neg_mul`) are
@@ -267,6 +269,20 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal 
     rintro _ (rfl | rfl) <;>
       simp [RingHom.mem_ker, CoordinateRing.XClass, CoordinateRing.YClass, hconst,
         AlgHom.commutes]
+
+/-- **An element of the coordinate ring lies in the ideal of a point exactly when it evaluates to
+zero there.** The general membership test; `mem_XYIdeal_iff_evalEval_eq_zero` is the same test for
+an element presented as the class of a bivariate polynomial. -/
+-- Not `@[simp]`: the membership side does not mention `h`, so simp would have to discharge
+-- `(W⁄F).toAffine.Equation x y`, which `baseChange_self` rewrites to `W.Equation x y` — simpNF
+-- reports such a lemma "will never apply". The hypothesis cannot be stated in that normal form
+-- here, because `evalAlgHom h` on the right needs the base-changed equation. The polynomial
+-- restatement below carries the `@[simp]` instead, and its hypothesis is already normal.
+theorem _root_.WeierstrassCurve.Affine.CoordinateRing.mem_XYIdeal_iff_evalAlgHom_eq_zero {y : F}
+    (h : (W⁄F).toAffine.Equation x y) (f : W.CoordinateRing) :
+    f ∈ CoordinateRing.XYIdeal W x (C y) ↔ CoordinateRing.evalAlgHom h f = 0 := by
+  rw [← WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal h, RingHom.mem_ker,
+    RingHom.coe_coe]
 
 /-- **A function lies in the ideal of a point exactly when it vanishes there.** -/
 @[simp]
