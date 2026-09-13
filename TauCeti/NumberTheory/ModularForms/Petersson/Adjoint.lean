@@ -59,6 +59,10 @@ union is itself a fundamental domain for `Γ`.
 * `UpperHalfPlane.peterssonInner_slash_left_adjugateGL` and
   `UpperHalfPlane.peterssonInner_slash_right_adjugateGL`: the same adjoint formulas written with
   the main involution `α^ι` in place of `α⁻¹`, where no determinant factor remains.
+* `UpperHalfPlane.peterssonInner_sum_slash_left_adjugateGL` and
+  `UpperHalfPlane.peterssonInner_sum_slash_right_adjugateGL`: the same, for a *finite family* of
+  slashes at once — the shape a Hecke operator presents, being a slash sum over coset
+  representatives.
 * `UpperHalfPlane.peterssonInner_slash_slash_SL`: the determinant-one case, where the scalar
   disappears and only the domain moves.
 * `CuspForm.peterssonInnerCosets_eq_sum_smul_fd`: the coset pairing is a sum of integrals over
@@ -162,6 +166,53 @@ theorem peterssonInner_slash_right_adjugateGL (k : ℤ)
       peterssonInner k (g • S) (f ∣[k] TauCeti.adjugateGL g) h := by
   rw [ModularForm.slash_adjugateGL, peterssonInner_smul_left, map_zpow₀, Complex.conj_ofReal,
     peterssonInner_slash_right_of_det_pos k hg]
+
+/-! ### A finite family of slashes -/
+
+/-- **The summand-level adjoint, on the left argument**: for a finite family `αᵢ` of
+positive-determinant matrices,
+
+```text
+⟪∑ᵢ f ∣[k] αᵢ, h⟫_S = ∑ᵢ ⟪f, h ∣[k] αᵢ^ι⟫_{αᵢ • S}.
+```
+
+This is the shape in which the adjoint meets a Hecke operator, which is not a single slash but a
+*sum* of them: `HeckeRing.GL2.heckeSlashSum`, which underlies the Hecke operator
+`HeckeRing.GL2.heckeTCuspNat`, is `∑ᵥ f ∣[k] aᵥ` over representatives of the right cosets in a
+double coset. The domains `αᵢ • S` are left where the change of variables puts
+them — reassembling them into one domain is a separate step, and the reason the integrability
+hypothesis is stated per summand rather than for the sum.
+
+`hint` is discharged in practice by `UpperHalfPlane.integrableOn_petersson_slash_left` and its
+relatives, for `f` a cusp form and `h` a modular form. -/
+theorem peterssonInner_sum_slash_left_adjugateGL (k : ℤ) {ι : Type*} (s : Finset ι)
+    (α : ι → GL (Fin 2) ℝ)
+    (hα : ∀ i ∈ s, 0 < ((α i : Matrix (Fin 2) (Fin 2) ℝ)).det) (S : Set ℍ) (f h : ℍ → ℂ)
+    (hint : ∀ i ∈ s,
+      IntegrableOn (fun τ ↦ petersson k (f ∣[k] α i) h τ) S (volume : Measure ℍ)) :
+    peterssonInner k S (∑ i ∈ s, f ∣[k] α i) h =
+      ∑ i ∈ s, peterssonInner k (α i • S) f (h ∣[k] TauCeti.adjugateGL (α i)) := by
+  rw [peterssonInner_sum_left k S s (fun i ↦ f ∣[k] α i) h hint]
+  exact Finset.sum_congr rfl fun i hi ↦
+    peterssonInner_slash_left_adjugateGL k (hα i hi) S f h
+
+/-- **The summand-level adjoint, on the right argument**: the mirror of
+`peterssonInner_sum_slash_left_adjugateGL`,
+
+```text
+⟪f, ∑ᵢ h ∣[k] αᵢ⟫_S = ∑ᵢ ⟪f ∣[k] αᵢ^ι, h⟫_{αᵢ • S}.
+```
+-/
+theorem peterssonInner_sum_slash_right_adjugateGL (k : ℤ) {ι : Type*} (s : Finset ι)
+    (α : ι → GL (Fin 2) ℝ)
+    (hα : ∀ i ∈ s, 0 < ((α i : Matrix (Fin 2) (Fin 2) ℝ)).det) (S : Set ℍ) (f h : ℍ → ℂ)
+    (hint : ∀ i ∈ s,
+      IntegrableOn (fun τ ↦ petersson k f (h ∣[k] α i) τ) S (volume : Measure ℍ)) :
+    peterssonInner k S f (∑ i ∈ s, h ∣[k] α i) =
+      ∑ i ∈ s, peterssonInner k (α i • S) (f ∣[k] TauCeti.adjugateGL (α i)) h := by
+  rw [peterssonInner_sum_right k S s f (fun i ↦ h ∣[k] α i) hint]
+  exact Finset.sum_congr rfl fun i hi ↦
+    peterssonInner_slash_right_adjugateGL k (hα i hi) S f h
 
 /-! ### Slashing by an element of `SL(2, ℤ)` -/
 

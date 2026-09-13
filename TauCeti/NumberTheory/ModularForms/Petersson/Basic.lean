@@ -273,6 +273,28 @@ theorem peterssonInner_add_left (k : ℤ) (D : Set ℍ) (f₁ f₂ g : ℍ → �
     simp only [petersson, Pi.add_apply, map_add]
     ring)
 
+/-- **Additivity over a finite family in the first argument.** The `add_left` case iterated;
+the hypothesis is integrability of each summand's integrand, exactly as there. -/
+theorem peterssonInner_sum_left (k : ℤ) (D : Set ℍ) {ι : Type*} (s : Finset ι)
+    (f : ι → ℍ → ℂ) (g : ℍ → ℂ)
+    (hf : ∀ i ∈ s, IntegrableOn (fun τ ↦ petersson k (f i) g τ) D (volume : Measure ℍ)) :
+    peterssonInner k D (∑ i ∈ s, f i) g = ∑ i ∈ s, peterssonInner k D (f i) g := by
+  simp only [peterssonInner]
+  rw [← integral_finsetSum s hf]
+  exact integral_congr_ae (ae_of_all _ fun τ ↦ by
+    simp only [petersson, Finset.sum_apply, _root_.map_sum, Finset.sum_mul])
+
+/-- **Additivity over a finite family in the second argument**, the mirror of
+`peterssonInner_sum_left`. -/
+theorem peterssonInner_sum_right (k : ℤ) (D : Set ℍ) {ι : Type*} (s : Finset ι)
+    (f : ℍ → ℂ) (g : ι → ℍ → ℂ)
+    (hg : ∀ i ∈ s, IntegrableOn (fun τ ↦ petersson k f (g i) τ) D (volume : Measure ℍ)) :
+    peterssonInner k D f (∑ i ∈ s, g i) = ∑ i ∈ s, peterssonInner k D f (g i) := by
+  simp only [peterssonInner]
+  rw [← integral_finsetSum s hg]
+  exact integral_congr_ae (ae_of_all _ fun τ ↦ by
+    simp only [petersson, Finset.sum_apply, Finset.mul_sum, Finset.sum_mul])
+
 /-- Scalar multiplication in the second argument. -/
 @[simp]
 theorem peterssonInner_smul_right (k : ℤ) (D : Set ℍ) (c : ℂ) (f g : ℍ → ℂ) :
