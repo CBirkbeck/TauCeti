@@ -58,17 +58,21 @@ variable {Γ : Subgroup SL(2, ℤ)} {k : ℤ}
 /-- **The inverse `q`-parameter, landing in `ℍ`**: `q ↦ ofComplex (invQParam h q)`. It is the
 change of variables under which a cusp function is evaluated, and it carries the punctured
 neighbourhood of `0` to `Im τ → ∞` (`tendsto_τfun_atImInfty`). -/
-@[expose] def τfun (h : ℝ) : ℂ → ℍ :=
+def τfun (h : ℝ) : ℂ → ℍ :=
   fun q : ℂ ↦ UpperHalfPlane.ofComplex (Function.Periodic.invQParam h q)
 
 /-- **Unfolding `τfun` pointwise**: it is `ofComplex` of the inverse `q`-parameter. -/
 @[simp]
 theorem τfun_apply (h : ℝ) (q : ℂ) :
-    τfun h q = UpperHalfPlane.ofComplex (Function.Periodic.invQParam h q) := rfl
+    τfun h q = UpperHalfPlane.ofComplex (Function.Periodic.invQParam h q) := by
+  unfold τfun
+  rfl
 
 /-- **Unfolding `τfun` as a function**, for rewriting under a `Tendsto` or a composition. -/
 theorem τfun_def (h : ℝ) :
-    τfun h = fun q : ℂ ↦ UpperHalfPlane.ofComplex (Function.Periodic.invQParam h q) := rfl
+    τfun h = fun q : ℂ ↦ UpperHalfPlane.ofComplex (Function.Periodic.invQParam h q) := by
+  unfold τfun
+  rfl
 
 /-- **`τfun` carries the puncture to the cusp**: `q → 0` with `q ≠ 0` sends `τfun h q` to
 `Im τ → ∞`. -/

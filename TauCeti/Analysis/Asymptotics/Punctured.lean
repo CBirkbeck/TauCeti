@@ -32,7 +32,7 @@ there: if `f =O[𝓝[≠] a] g` and `f a = 0`, then `f =O[𝓝 a] g`.
 Only the value of `f` at `a` is constrained; `g a` is arbitrary, since the bound at `a` reads
 `0 ≤ C * ‖g a‖`, which holds for any nonnegative `C`. -/
 theorem isBigO_nhds_of_isBigO_punctured {α : Type*} [TopologicalSpace α] {a : α}
-    {E F : Type*} [NormedAddCommGroup E] [SeminormedAddCommGroup F] {f : α → E} {g : α → F}
+    {E F : Type*} [SeminormedAddCommGroup E] [SeminormedAddCommGroup F] {f : α → E} {g : α → F}
     (hO : f =O[𝓝[≠] a] g) (hf : f a = 0) : f =O[𝓝 a] g := by
   obtain ⟨C, hC0, hC⟩ := hO.exists_nonneg
   refine Asymptotics.IsBigO.of_bound C ?_
