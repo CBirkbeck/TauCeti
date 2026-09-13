@@ -46,8 +46,6 @@ Neither direction uses ellipticity, separability, or the degree of an isogeny.
   infinity**, `1 < v_∞ (φ x₂)`.
 * `TauCeti.Isogeny.isEquiv_comap_infinityPlace`: **the place at infinity restricts to the place at
   infinity** along an isogeny.
-(The computation rule these are stated through is general and lives with `fieldPullback`:
-`TauCeti.Isogeny.comap_fieldPullback_apply_algebraMap` in `Isogeny/FunctionField.lean`.)
 * `TauCeti.CoordinatePullback.mapsInfinity_iff_one_lt_infinityPlace`: **pointedness is exactly a
   pole of `x` at infinity**, for any coordinate pullback — the form in which a construction can
   establish it by one valuation computation.
@@ -78,7 +76,7 @@ that ring is integrally closed, so `MapsInfinity` would put the source coordinat
 against its double pole. -/
 theorem one_lt_infinityPlace_pullback_X :
     1 < infinityPlace W₁ (φ.pullback (algebraMap F[X] W₂.CoordinateRing Polynomial.X)) := by
-  rw [← comap_fieldPullback_apply_algebraMap φ _,
+  rw [← fieldPullback_algebraMap,
     ← IsScalarTower.algebraMap_apply F[X] W₂.CoordinateRing W₂.FunctionField]
   set u := (infinityPlace W₁).comap φ.fieldPullback.toRingHom with hu
   by_contra hle
@@ -111,7 +109,7 @@ theorem one_lt_infinityPlace_pullback_X :
   have hmem : ∀ c : W₂.CoordinateRing, φ.pullback c ∈ (infinityPlace W₁).integer := by
     intro c
     have h := hcr c
-    rwa [hu, comap_fieldPullback_apply_algebraMap] at h
+    simpa [hu, Valuation.mem_integer_iff] using h
   -- `MapsInfinity` is integrality over `R(W₂)` acting through the pullback; corestricting the
   -- pullback to the valuation ring at infinity makes it integrality over that ring, which is
   -- integrally closed. So `x₁` would lie in it, against its double pole.
@@ -134,9 +132,8 @@ the place-level reading of `MapsInfinity`, that is, of `φ(O₁) = O₂`. -/
 theorem isEquiv_comap_infinityPlace :
     ((infinityPlace W₁).comap φ.fieldPullback.toRingHom).IsEquiv (infinityPlace W₂) := by
   refine isEquiv_infinityPlace_of_one_lt _ ?_
-  rw [IsScalarTower.algebraMap_apply F[X] W₂.CoordinateRing W₂.FunctionField,
-    comap_fieldPullback_apply_algebraMap]
-  exact one_lt_infinityPlace_pullback_X φ
+  simpa [IsScalarTower.algebraMap_apply F[X] W₂.CoordinateRing W₂.FunctionField] using
+    one_lt_infinityPlace_pullback_X φ
 
 end Isogeny
 
