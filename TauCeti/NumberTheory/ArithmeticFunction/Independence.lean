@@ -128,6 +128,100 @@ theorem sum_mul_prime_eq_zero {ι : Type*} {w : ℕ → R} {s : Finset ι}
     rw [Finset.sum_congr rfl hstep, Finset.sum_add_distrib, ← Finset.mul_sum,
       hrel _ (harg (r + 2)), hrel _ (harg r), mul_zero, add_zero]
 
+/-- **Distinct multiplicative functions with a common prime-power recurrence are independent.**
+If `∑ᵢ cᵢ · Gᵢ n = 0` for every `n ≥ 1`, where the `Gᵢ` are pairwise distinct, multiplicative and
+share the recurrence, then every `cᵢ` vanishes.
+
+The textbook minimal-relation argument (Diamond–Shurman Theorem 5.8.2, Miyake Theorem 4.6.12).
+Take a relation whose support is as small as possible and pick `r` in it. If the support is `{r}`
+the relation at `n = 1` reads `c r = 0`. Otherwise pick another `i₀` in it and, by
+`exists_prime_ne_of_ne_of_rec`, a prime `p₀` where `G r` and `G i₀` differ; then
+`cᵢ' := cᵢ · (Gᵢ p₀ − G r p₀)` satisfies the same vanishing relation by
+`sum_mul_prime_eq_zero`, has `c' r = 0` and `c' i₀ ≠ 0`, and so has strictly smaller nonempty
+support — contradicting minimality. -/
+theorem eq_zero_of_sum_mul_eq_zero {ι : Type*} [IsDomain R] {w : ℕ → R}
+    {s : Finset ι} {G : ι → ArithmeticFunction R} (hmul : ∀ i ∈ s, (G i).IsMultiplicative)
+    (hrec : ∀ i ∈ s, HasPrimePowerRec (G i) w)
+    (hdist : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → G i ≠ G j) {c : ι → R}
+    (hrel : ∀ n : ℕ, 1 ≤ n → ∑ i ∈ s, c i * G i n = 0) :
+    ∀ i ∈ s, c i = 0 := by
+  classical
+  -- it suffices to show that a relation all of whose coefficients are nonzero has empty support
+  have key : ∀ N : ℕ, ∀ t : Finset ι, ∀ d : ι → R, t.card = N → t ⊆ s → (∀ i ∈ t, d i ≠ 0) →
+      (∀ n : ℕ, 1 ≤ n → ∑ i ∈ t, d i * G i n = 0) → t = ∅ := by
+    intro N
+    induction N using Nat.strong_induction_on with
+    | _ N ih =>
+      intro t d hcard hsub hne hrelt
+      rcases Finset.eq_empty_or_nonempty t with h | ⟨r, hr⟩
+      · exact h
+      exfalso
+      by_cases hcard1 : t.card ≤ 1
+      · -- a single term: the relation at `n = 1` says its coefficient vanishes
+        have hts : t = {r} :=
+          Finset.eq_singleton_iff_unique_mem.2
+            ⟨hr, fun x hx ↦ Finset.card_le_one.1 hcard1 x hx r hr⟩
+        have h1 := hrelt 1 le_rfl
+        rw [hts, Finset.sum_singleton, (hmul r (hsub hr)).1, mul_one] at h1
+        exact hne r hr h1
+      · -- at least two terms: cut the support down at a prime where two of them differ
+        obtain ⟨i₀, hi₀, hne₀⟩ : ∃ i₀ ∈ t, i₀ ≠ r := by
+          by_contra hcon
+          refine hcard1 (Finset.card_le_one.2 fun x hx y hy ↦ ?_)
+          have hx' : x = r := by by_contra h; exact hcon ⟨x, hx, h⟩
+          have hy' : y = r := by by_contra h; exact hcon ⟨y, hy, h⟩
+          rw [hx', hy']
+        obtain ⟨p, hp, hpne⟩ := exists_prime_ne_of_ne_of_rec (hmul i₀ (hsub hi₀))
+          (hmul r (hsub hr)) (hrec i₀ (hsub hi₀)) (hrec r (hsub hr))
+          (hdist i₀ (hsub hi₀) r (hsub hr) hne₀)
+        set d' : ι → R := fun i ↦ d i * (G i p - G r p) with hd'
+        have hrel' : ∀ n : ℕ, 1 ≤ n → ∑ i ∈ t, d' i * G i n = 0 := fun n hn ↦ by
+          have hmul' : ∀ i ∈ t, (G i).IsMultiplicative := fun i hi ↦ hmul i (hsub hi)
+          have hrec' : ∀ i ∈ t, HasPrimePowerRec (G i) w := fun i hi ↦ hrec i (hsub hi)
+          have h1 := sum_mul_prime_eq_zero hmul' hrec' hrelt hp hn
+          have h2 := hrelt n hn
+          calc ∑ i ∈ t, d' i * G i n
+              = (∑ i ∈ t, d i * (G i p * G i n)) - G r p * ∑ i ∈ t, d i * G i n := by
+                rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
+                exact Finset.sum_congr rfl fun i _ ↦ by rw [hd']; ring
+            _ = 0 := by rw [h1, h2]; ring
+        -- the new support omits `r`, keeps `i₀`, and still satisfies the relation
+        set u : Finset ι := t.filter fun i ↦ d' i ≠ 0 with hu
+        have husub : u ⊆ t := Finset.filter_subset _ _
+        have hru : r ∉ u := by simp [hu, hd']
+        have hi₀u : i₀ ∈ u := by
+          refine Finset.mem_filter.2 ⟨hi₀, ?_⟩
+          exact mul_ne_zero (hne i₀ hi₀) (sub_ne_zero.2 hpne)
+        have hcardu : u.card < N := by
+          rw [← hcard]
+          exact Finset.card_lt_card ⟨husub, fun hcon ↦ hru (hcon hr)⟩
+        have hrelu : ∀ n : ℕ, 1 ≤ n → ∑ i ∈ u, d' i * G i n = 0 := fun n hn ↦ by
+          rw [Finset.sum_subset husub fun x hx hxu ↦ ?_]
+          · exact hrel' n hn
+          · have hzero : d' x = 0 := by
+              by_contra h
+              exact hxu (Finset.mem_filter.2 ⟨hx, h⟩)
+            rw [hzero, zero_mul]
+        have hempty : u = ∅ := ih u.card hcardu u d' rfl (husub.trans hsub)
+          (fun i hi ↦ (Finset.mem_filter.1 hi).2) hrelu
+        rw [hempty] at hi₀u
+        exact absurd hi₀u (Finset.notMem_empty i₀)
+  -- apply it to the support of `c` inside `s`
+  intro i hi
+  by_contra hci
+  have hsupp : (s.filter fun j ↦ c j ≠ 0) = ∅ := by
+    refine key _ _ c rfl (Finset.filter_subset _ _)
+      (fun j hj ↦ (Finset.mem_filter.1 hj).2) ?_
+    intro n hn
+    rw [Finset.sum_subset (Finset.filter_subset _ _) fun x hx hxf ↦ ?_]
+    · exact hrel n hn
+    · have hzero : c x = 0 := by
+        by_contra h
+        exact hxf (Finset.mem_filter.2 ⟨hx, h⟩)
+      rw [hzero, zero_mul]
+  rw [Finset.eq_empty_iff_forall_notMem] at hsupp
+  exact hsupp i (Finset.mem_filter.2 ⟨hi, hci⟩)
+
 end IsMultiplicative
 
 end ArithmeticFunction
