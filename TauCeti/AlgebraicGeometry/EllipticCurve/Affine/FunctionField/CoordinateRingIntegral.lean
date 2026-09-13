@@ -67,8 +67,14 @@ theorem algebraMap_coordinateRing_le_one
     exact v.aeval_le_one (Valuation.IsTrivialOn.valuation_algebraMap_le_one v) hx' q
   let _ : Algebra F[X] v.integer :=
     ((algebraMap F[X] W.FunctionField).codRestrict _ fun q ↦ hpoly q).toAlgebra
+  -- `codRestrict` keeps the underlying function and `toAlgebra` takes that function as the algebra
+  -- map, so going `F[X] → v.integer → F(W)` and going `F[X] → F(W)` are the same map by
+  -- construction. Naming the equality keeps the tower from resting on an unstated unfolding.
+  have halgebraMap : ∀ q : F[X],
+      algebraMap v.integer W.FunctionField (algebraMap F[X] v.integer q)
+        = algebraMap F[X] W.FunctionField q := fun _ ↦ rfl
   have _ : IsScalarTower F[X] v.integer W.FunctionField :=
-    IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
+    IsScalarTower.of_algebraMap_eq halgebraMap
   have : Algebra.IsIntegral F[X] W.CoordinateRing := Algebra.IsIntegral.of_finite _ _
   have hint : _root_.IsIntegral F[X] (algebraMap W.CoordinateRing W.FunctionField r) :=
     (Algebra.IsIntegral.isIntegral r).map
