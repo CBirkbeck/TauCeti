@@ -27,7 +27,7 @@ points with that ideal class group gives the points as degree-zero divisor class
   equality of sets, which is the shape `Divisor.degreeZeroClassGroupEquiv` consumes.
 * `WeierstrassCurve.Affine.pointEquivDegreeZeroDivisorClass`: **the points of `W` are the
   degree-zero divisor classes of `F(W)`.**
-* `WeierstrassCurve.Affine.coe_pointEquivDegreeZeroDivisorClass_some`: that equivalence sends an
+* `WeierstrassCurve.Affine.val_pointEquivDegreeZeroDivisorClass_some`: that equivalence sends an
   affine point `P` to the class of `(P) - (O)`.
 
 ## References
@@ -110,7 +110,7 @@ noncomputable def pointEquivDegreeZeroDivisorClass :
 /-- **An affine point goes to the class of `(P) - (O)`.** This is the computation rule for
 `pointEquivDegreeZeroDivisorClass`, whose value is otherwise opaque. -/
 @[simp]
-theorem coe_pointEquivDegreeZeroDivisorClass_some {x y : F} (h : W.Nonsingular x y) :
+theorem val_pointEquivDegreeZeroDivisorClass_some {x y : F} (h : W.Nonsingular x y) :
     (W.pointEquivDegreeZeroDivisorClass (Point.some x y h) :
         (Place.orderSystem W.isFunctionField).ClassGroup) =
       (Place.orderSystem W.isFunctionField).divisorClass
