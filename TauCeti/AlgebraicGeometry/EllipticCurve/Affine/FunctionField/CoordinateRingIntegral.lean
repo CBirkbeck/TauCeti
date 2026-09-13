@@ -37,11 +37,6 @@ stated for a bare valuation.
 ## References
 
 * [H. Stichtenoth, *Algebraic Function Fields and Codes*][stichtenoth2009], I.1.
-
-## Provenance
-
-Not ported. The statement is the valuation-level content of the backward direction of
-`TauCeti.Place.exists_eq_ofPrime_iff_valuation_X_le_one`, which consumes it.
 -/
 
 public section
