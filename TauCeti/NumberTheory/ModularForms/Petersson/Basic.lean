@@ -70,6 +70,10 @@ consume Mathlib's `MeasureSpace ℍ` instance instead of constructing the hyperb
 * The AINTLIB `LeanModularForms` project,
   <https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>
   (`Modularforms/PeterssonInnerProduct.lean`)
+* AINTLIB again, at commit `6d87d596a5372d5b122c47b7082d4c3afa9b7c3b`, Apache-2.0, for
+  `peterssonInner_sum_left` and `peterssonInner_sum_right`:
+  `HeckeRIngs/GL2/AdjointTheory/SummandAdjoint.lean` (`peterssonInner_add_left`, :222;
+  `peterssonInner_T_p_family_sum_slashes_eq_aggregate_of_integrable`, :620).
 -/
 
 public section
@@ -328,6 +332,28 @@ theorem peterssonInner_add_left (k : ℤ) (D : Set ℍ) (f₁ f₂ g : ℍ → �
   exact integral_congr_ae (ae_of_all _ fun τ ↦ by
     simp only [petersson, Pi.add_apply, map_add]
     ring)
+
+/-- **Additivity over a finite family in the first argument.** The `add_left` case iterated;
+the hypothesis is integrability of each summand's integrand, exactly as there. -/
+theorem peterssonInner_sum_left (k : ℤ) (D : Set ℍ) {ι : Type*} (s : Finset ι)
+    (f : ι → ℍ → ℂ) (g : ℍ → ℂ)
+    (hf : ∀ i ∈ s, IntegrableOn (fun τ ↦ petersson k (f i) g τ) D (volume : Measure ℍ)) :
+    peterssonInner k D (∑ i ∈ s, f i) g = ∑ i ∈ s, peterssonInner k D (f i) g := by
+  simp only [peterssonInner]
+  rw [← integral_finsetSum s hf]
+  exact integral_congr_ae (ae_of_all _ fun τ ↦ by
+    simp only [petersson, Finset.sum_apply, _root_.map_sum, Finset.sum_mul])
+
+/-- **Additivity over a finite family in the second argument**, the mirror of
+`peterssonInner_sum_left`. -/
+theorem peterssonInner_sum_right (k : ℤ) (D : Set ℍ) {ι : Type*} (s : Finset ι)
+    (f : ℍ → ℂ) (g : ι → ℍ → ℂ)
+    (hg : ∀ i ∈ s, IntegrableOn (fun τ ↦ petersson k f (g i) τ) D (volume : Measure ℍ)) :
+    peterssonInner k D f (∑ i ∈ s, g i) = ∑ i ∈ s, peterssonInner k D f (g i) := by
+  simp only [peterssonInner]
+  rw [← integral_finsetSum s hg]
+  exact integral_congr_ae (ae_of_all _ fun τ ↦ by
+    simp only [petersson, Finset.sum_apply, Finset.mul_sum, Finset.sum_mul])
 
 /-- Scalar multiplication in the second argument. -/
 @[simp]
