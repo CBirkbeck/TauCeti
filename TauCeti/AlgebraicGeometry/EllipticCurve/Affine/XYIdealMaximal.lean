@@ -35,6 +35,10 @@ ideal of a point.
 * `WeierstrassCurve.Affine.CoordinateRing.finrank_quotient_eq_one_iff`: an ideal has a
   rank-one quotient exactly when it is `XYIdeal W x (C y)` for a solution `(x, y)` of the
   Weierstrass equation.
+* `WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal`: the kernel of evaluation
+  at a point is the ideal of that point.
+* `WeierstrassCurve.Affine.CoordinateRing.mem_XYIdeal_iff_evalEval_eq_zero`: a function lies in
+  the ideal of a point exactly when it vanishes there.
 
 Mathlib has the quotient isomorphism but records nothing about the ideal itself; the many `XYIdeal`
 lemmas it does state (`XYIdeal_eq₁`, `XYIdeal_eq₂`, `XYIdeal_mul_XYIdeal`, `XYIdeal_neg_mul`) are
@@ -76,6 +80,11 @@ about a *maximal* ideal of the coordinate ring of a `SmoothPlaneCurve`, hypothes
 of `algebraMap F (F[C] ⧸ M)`, and assumes ellipticity throughout. The classification below is
 written directly against Mathlib's `XYIdeal`: its hypothesis is the residue degree and it uses no
 ellipticity or Dedekind assumption.
+
+`ker_evalAlgHom_eq_XYIdeal` and `mem_XYIdeal_iff_evalEval_eq_zero` are not ported. They read the
+maximality above backwards: the source works with the quotient isomorphism throughout and never
+names the kernel of evaluation, so the identification of that kernel with `XYIdeal`, and the
+membership test it yields, are stated here for the first time.
 -/
 
 public section
@@ -231,6 +240,39 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.XYIdeal_eq_iff
       x₂) (y₂ := C y₂)
     (WeierstrassCurve.Affine.CoordinateRing.XYIdeal_isMaximal_of_equation h₁).ne_top
 
+/-- **The kernel of evaluation at a point is the ideal of that point.** The evaluation map
+`W.CoordinateRing →ₐ[F] F` at a solution `(x, y)` of the Weierstrass equation is surjective with
+kernel `⟨X - x, Y - y⟩`. -/
+theorem _root_.WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal {y : F}
+    (h : (W⁄F).toAffine.Equation x y) :
+    RingHom.ker (CoordinateRing.evalAlgHom h : W.CoordinateRing →ₐ[F] F).toRingHom =
+      CoordinateRing.XYIdeal W x (C y) := by
+  have h' : W.Equation x y := by
+    simpa only [_root_.WeierstrassCurve.baseChange, Algebra.algebraMap_self,
+      _root_.WeierstrassCurve.map_id] using h
+  have hmax := WeierstrassCurve.Affine.CoordinateRing.XYIdeal_isMaximal_of_equation h'
+  refine (hmax.eq_of_le ?_ ?_).symm
+  · intro htop
+    have h1 : (1 : W.CoordinateRing) ∈
+        RingHom.ker (CoordinateRing.evalAlgHom h : W.CoordinateRing →ₐ[F] F).toRingHom :=
+      htop ▸ Submodule.mem_top
+    simp [RingHom.mem_ker] at h1
+  · -- `AdjoinRoot.of W.polynomial (C c)` is the structure map, definitionally; unfolding
+    -- `AdjoinRoot.of` inside `simp` instead makes `XClass.eq_1` and `YClass.eq_1` loop.
+    have hconst : ∀ c : F, (AdjoinRoot.of W.polynomial (C c) : W.CoordinateRing)
+        = algebraMap F W.CoordinateRing c := fun _ ↦ rfl
+    rw [CoordinateRing.XYIdeal, Ideal.span_le]
+    rintro _ (rfl | rfl) <;>
+      simp [RingHom.mem_ker, CoordinateRing.XClass, CoordinateRing.YClass, hconst,
+        AlgHom.commutes]
+
+/-- **A function lies in the ideal of a point exactly when it vanishes there.** -/
+theorem _root_.WeierstrassCurve.Affine.CoordinateRing.mem_XYIdeal_iff_evalEval_eq_zero {y : F}
+    (h : (W⁄F).toAffine.Equation x y) (p : F[X][Y]) :
+    CoordinateRing.mk W p ∈ CoordinateRing.XYIdeal W x (C y) ↔ p.evalEval x y = 0 := by
+  rw [← WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal h, RingHom.mem_ker]
+  simp [CoordinateRing.evalAlgHom_mk]
+
 /-- **The ideals of residue degree one are exactly the ideals of points.** An ideal `I` has a
 rank-one quotient over `F` if and only if it is `XYIdeal W x (C y)` for some solution `(x, y)` of
 the Weierstrass equation. No ellipticity or Dedekind hypothesis is involved. -/
@@ -240,8 +282,6 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.finrank_quotient_eq_one_if
       ∃ x y : F, W.Equation x y ∧ I = CoordinateRing.XYIdeal W x (C y) := by
   constructor
   · intro hdeg
-    have hI : I ≠ ⊤ := Ideal.Quotient.nontrivial_iff.mp <|
-      Module.nontrivial_of_finrank_pos (R := F) (by rw [hdeg]; norm_num)
     have hbij : Function.Bijective (algebraMap F (W.CoordinateRing ⧸ I)) :=
       Algebra.finrank_eq_one_iff_bijective_algebraMap.mp hdeg
     let e : (W.CoordinateRing ⧸ I) ≃ₐ[F] F :=
@@ -250,24 +290,20 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.finrank_quotient_eq_one_if
     have hρmem : ∀ a, ρ a = 0 ↔ a ∈ I := fun a ↦ by
       simp only [ρ, AlgHom.comp_apply, AlgEquiv.coe_toAlgHom, Ideal.Quotient.mkₐ_eq_mk]
       rw [map_eq_zero_iff _ e.injective, Ideal.Quotient.eq_zero_iff_mem]
-    let x₀ := ρ (CoordinateRing.mk W (C X))
-    let y₀ := ρ (CoordinateRing.mk W Y)
-    have hcomp : ∀ p : F[X][Y], ρ (CoordinateRing.mk W p) = p.evalEval x₀ y₀ := fun p ↦ by
-      simpa only [x₀, y₀, AdjoinRoot.mk_C, AdjoinRoot.mk_X, Algebra.algebraMap_self,
-        mapRingHom_id, Polynomial.map_id] using
-        _root_.WeierstrassCurve.Affine.CoordinateRing.algHom_mk_eq_evalEval ρ p
-    have heq : W.Equation x₀ y₀ := by
-      simpa only [x₀, y₀, AdjoinRoot.mk_C, AdjoinRoot.mk_X, Algebra.algebraMap_self,
-        _root_.WeierstrassCurve.baseChange, _root_.WeierstrassCurve.map_id] using
+    -- `ρ` is evaluation at the images of the two coordinate functions, so its kernel is the
+    -- ideal of that point; and its kernel is `I`.
+    have hker := WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal
+      (_root_.WeierstrassCurve.Affine.CoordinateRing.equation_of_algHom ρ)
+    rw [_root_.WeierstrassCurve.Affine.CoordinateRing.evalAlgHom_equation_ofAlgHom] at hker
+    have hIker : I = RingHom.ker (ρ : W.CoordinateRing →ₐ[F] F).toRingHom :=
+      Ideal.ext fun a ↦ by simpa only [RingHom.mem_ker, AlgHom.toRingHom_eq_coe,
+        RingHom.coe_coe] using (hρmem a).symm
+    have heq : W.Equation (ρ (AdjoinRoot.of W.polynomial X))
+        (ρ (AdjoinRoot.root W.polynomial)) := by
+      simpa only [Algebra.algebraMap_self, _root_.WeierstrassCurve.baseChange,
+        _root_.WeierstrassCurve.map_id] using
         _root_.WeierstrassCurve.Affine.CoordinateRing.equation_of_algHom ρ
-    refine ⟨x₀, y₀, heq, ((WeierstrassCurve.Affine.CoordinateRing.XYIdeal_isMaximal_of_equation
-        heq).eq_of_le hI ?_).symm⟩
-    rw [CoordinateRing.XYIdeal, Ideal.span_le, Set.pair_subset_iff]
-    refine ⟨?_, ?_⟩
-    · rw [SetLike.mem_coe, ← hρmem, CoordinateRing.XClass, hcomp]
-      simp [evalEval_C]
-    · rw [SetLike.mem_coe, ← hρmem, CoordinateRing.YClass, hcomp]
-      simp
+    exact ⟨_, _, heq, hIker.trans hker⟩
   · rintro ⟨x, y, h, rfl⟩
     rw [(CoordinateRing.quotientXYIdealEquiv h).toLinearEquiv.finrank_eq, Module.finrank_self]
 
