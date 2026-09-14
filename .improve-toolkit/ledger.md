@@ -37697,3 +37697,29 @@ without a fix round, and both were opened under the no-build default. Board late
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r756 — 2026-09-14T22:47Z — main moved (#6763); both queued PRs re-simulated clean; #6854 still awaits its board
+
+**Board** (22:46Z; sweep and queuepos exited 0): #6851 and #6855 are 10/10 on head, `ready-to-merge`, QUEUED at 32 and
+30 of 32. **#6854** is `awaiting-review`, CI green, `NO BOARD` (39 min since ready; drive only after 23:07:11Z). #5950
+is Chris's. Nothing to fix, contest or drive; step 5 shut.
+
+**Main moved:** #6763 (multiplicity one in dimensional form) merged at 22:43:32Z: `9ead798b2` → **`e2773303e`**, +85/−2
+in `ModularForms/Newforms/MultiplicityOne.lean`. The firing control read 2 removed lines, 85 added, and 0 removed and 6
+added declaration headers; nothing was removed and no module renamed.
+
+**Merge-group simulation** against `e2773303e`:
+
+```
+#6851  7 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6855  5 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+#6854 (5 behind) merges clean (`git merge-tree`). Main touched none of the three PRs' files, and its new lines name
+nothing they remove.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
