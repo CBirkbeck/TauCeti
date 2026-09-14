@@ -29,7 +29,8 @@ eigenform with `a₁ = 0` at the good indices, where `c` is the eigenvalue at `p
   is multiplicative at coprime indices away from `L` and satisfies the recurrence **along the
   powers of a single prime `p`** satisfies it at every index coprime to `L`. Its hypotheses are
   the fixed-prime and `L`-restricted instances of conditions (2) and (3) of Diamond–Shurman's
-  Proposition 5.8.5, and its conclusion is the coefficient side of the eigenvector equation
+  Proposition 5.8.5, and its conclusion is the fixed-prime instance of the recurrence the first
+  lemma consumes — and, on a nebentypus space, the coefficient side of the eigen-relation
   at `p`.
 
 ## References
@@ -90,8 +91,10 @@ to `L`, the last term present only when `p ∣ m`.
 
 The hypotheses are the fixed-prime and `L`-restricted instances of conditions (3) and (2) of
 Diamond–Shurman's Proposition 5.8.5, whose own statements are global; the conclusion is the
-hypothesis of `eq_zero_of_forall_prime_mul_eq_of_one_eq_zero_of_ne_zero_of_coprime` above — and,
-on a nebentypus space, the coefficient side of the `Tₚ`-eigen-relation. -/
+**fixed-prime instance** of the recurrence hypothesis of
+`eq_zero_of_forall_prime_mul_eq_of_one_eq_zero_of_ne_zero_of_coprime` above, which asks for it at
+every prime coprime to `L` — and, on a nebentypus space, the coefficient side of the
+`Tₚ`-eigen-relation. -/
 theorem prime_mul_eq_of_prime_pow_recurrence_of_coprime_mul_eq {a : ℕ → R} {L p : ℕ} {d : R}
     (hp : p.Prime) (hpL : Nat.Coprime p L)
     (hmul : ∀ u v : ℕ, Nat.Coprime u v → Nat.Coprime u L → Nat.Coprime v L →
