@@ -11,15 +11,16 @@ public import TauCeti.Topology.Algebra.Order.Field
 /-!
 # The divergence of `log (1 / (s - 1))` as `s` decreases to `1`
 
-The divergence of `s ↦ log (1 / (s - 1))` to `+∞` on a right neighbourhood of `1`. Fed to
-`TauCeti.tendsto_div_nhds_one_of_le_add_const_of_sub_const_le`, that divergence is what makes
-any `f` agreeing with it up to a bounded additive error satisfy `f s / log (1 / (s - 1)) → 1`.
+`s ↦ log (1 / (s - 1))` diverges to `+∞` on a right neighbourhood of `1`. That single limit is
+what this file provides.
 
-This is the shape in which Dirichlet density arguments are stated. A prime sum is estimated as
-`log (1 / (s - 1)) + O(1)`, and the density is read off as the limit of the ratio of the sum to
-`log (1 / (s - 1))`: the divergence of the denominator is exactly what makes the `O(1)` error
-immaterial. Nothing here is specific to that application, and the file contains no number
-theory.
+The ratio statement it feeds is `TauCeti.tendsto_div_nhds_one_of_le_add_const_of_sub_const_le`,
+and lives there rather than here: once a denominator diverges, any numerator agreeing with it up
+to a bounded additive error gives a quotient tending to `1`. A Dirichlet density argument
+instantiates that with this limit as the denominator and a prime sum estimated as
+`log (1 / (s - 1)) + O(1)` as the numerator, then reads the density off the quotient — the
+divergence is exactly what makes the `O(1)` immaterial. Nothing here is specific to that
+application, and the file contains no number theory.
 
 ## Main results
 
