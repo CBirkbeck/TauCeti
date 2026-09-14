@@ -987,6 +987,66 @@ print('big:', int(c[c.index('--limit')+1]) >= 100 if '--limit' in c else False)
 qlim | chk "queuepos: the PR listing carries an explicit, generous limit (r679)" \
             "haslimit: True" "big: True"
 
+# ---- r722: an API error is not an empty answer ---------------------------------------------------
+# At 17:16Z on 09-14 the REST quota ran out mid-round. sweep.py iterated a `{"message": "API rate limit
+# exceeded"}` payload's KEYS as comments and died; the same payload in its check-runs read would have
+# printed CI=NO-RUNS. queuepos.py was worse by design: an unreadable merge queue made every ready PR
+# look ABSENT, and with a readable timeline that is the verdict telling this role to merge main and
+# push -- throwing away a queue position and a 10/10 board.
+sapi() { python3 -c "
+import importlib.util as u
+s=u.spec_from_file_location('s','$T/sweep.py'); m=u.module_from_spec(s); s.loader.exec_module(m)
+for label, text, fn in [
+    ('ratelimit', '{\"message\": \"API rate limit exceeded for user ID 1.\", \"documentation_url\": \"x\"}', m.api_list),
+    ('empty', '', m.api_list),
+    ('runs-error', '{\"message\": \"Not Found\"}', m.api_check_runs)]:
+    try:
+        fn(text, label); print(label + ': NO ERROR')
+    except m.ApiError:
+        print(label + ': ApiError')
+try:
+    m.api_list('{\"message\": \"API rate limit exceeded for user ID 1.\"}', 'comments')
+except m.ApiError as e:
+    print('ratelimit-msg:', e)
+print('pages:', len(m.api_list('[{\"id\": 1}]\n[{\"id\": 2}]', 'p')))
+print('runpages:', len(m.api_check_runs('{\"total_count\": 1, \"check_runs\": [{\"name\": \"a\"}]}{\"total_count\": 1, \"check_runs\": [{\"name\": \"b\"}]}', 'r')))
+" 2>&1; }
+sapi | chk "sweep: an API error payload is an error, not an empty answer (r722)" \
+            "ratelimit: ApiError" "empty: ApiError" "runs-error: ApiError"
+sapi | chk "sweep: concatenated --paginate pages are all read (r722)" "pages: 2" "runpages: 2"
+sapi | chk "sweep: an API error names its cause, not just a shape complaint (r722)" \
+            "ratelimit-msg: comments: API rate limit exceeded"
+smain() { python3 -c "
+import importlib.util as u, json
+s=u.spec_from_file_location('s','$T/sweep.py'); m=u.module_from_spec(s); s.loader.exec_module(m)
+pr=[{'number': 1, 'headRefName': 'improve/x', 'isDraft': False, 'labels': [], 'headRefOid': 'a'*40, 'title': 't'}]
+def fake(*a):
+    if a[0] == 'pr': return json.dumps(pr)
+    if 'check-runs' in a[1]: return json.dumps({'total_count': 0, 'check_runs': []})
+    return json.dumps({'message': 'API rate limit exceeded'})
+m.gh = fake
+print('exit:', m.main())
+" 2>&1; }
+smain | chk "sweep: an unreadable field is reported and the run exits non-zero (r722)" "API-ERROR" "exit: 1"
+smain | neg "sweep: an unreadable comments read never prints NO BOARD or a traceback (r722)" "NO BOARD" "Traceback"
+qapi() { python3 -c "
+import importlib.util as u, json, types
+s=u.spec_from_file_location('q','$T/queuepos.py'); m=u.module_from_spec(s); s.loader.exec_module(m)
+L=lambda t,n: {'event':'labeled','created_at':t,'label':n}
+A=lambda t: {'event':'added_to_merge_queue','created_at':t,'label':None}
+m.subprocess.run = lambda *a, **k: types.SimpleNamespace(returncode=0, stdout=json.dumps({'labels':[{'name':'ready-to-merge'}]}), stderr='')
+m.timeline_events = lambda n, **k: [L('2026-09-14T12:54:47Z','ready-to-merge'), A('2026-09-14T12:55:04Z')]
+m.fetch = lambda *a, **k: (None, {})
+print('queue-unreadable exit:', m.main(['queuepos', '6093']))
+m.fetch = lambda *a, **k: (5, {})
+m.timeline_events = lambda n, **k: None
+print('timeline-unreadable exit:', m.main(['queuepos', '6093']))
+" 2>&1; }
+qapi | chk "queuepos: an unreadable merge queue gives no verdicts and exit 2 (r722)" "UNRUN" "queue-unreadable exit: 2"
+qapi | chk "queuepos: an unreadable timeline is UNKNOWN, not a verdict (r722)" \
+            "UNKNOWN (timeline unreadable)" "timeline-unreadable exit: 0"
+qapi | neg "queuepos: an API failure never produces EJECTED (r722)" "EJECTED"
+
 p=$(grep -c P "$RES" || true); f=$(grep -c F "$RES" || true)
 printf '\n  %d passed, %d failed\n' "$p" "$f"
 [ "$f" -eq 0 ] && [ "$p" -gt 0 ]

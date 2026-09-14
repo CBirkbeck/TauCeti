@@ -36819,3 +36819,46 @@ Chris's. None of mine merged. The r720 head finished: #6736 (Euclidean fibre sum
 touched on main; all merge clean.
 
 No toolkit edits.
+
+---
+
+## r722 — 2026-09-14T17:23Z — the sweep crashed on a rate-limited API; sweep and queuepos now refuse error payloads
+
+**Board** (17:17Z, after a retry): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on
+head; #5950 is Chris's. No merges. Queue **16/17/18 of 41**, unchanged since 17:06Z. main still `2c8bdc7e9`, so r721's
+merge-group simulation and staged-branch check stand. Nothing to fix, contest or drive; step 5 shut.
+
+**What broke.** The 17:16:23Z sweep died: `AttributeError: 'str' object has no attribute 'get'` on the comments read.
+`gh api rate_limit` at 17:16:48Z showed core and graphql at 5000/5000 with the NEXT reset at 18:16:48Z, i.e. the
+window had just rolled over. At 17:16:23Z the REST quota was exhausted — most likely by other sessions sharing this
+`gh` login; this role's rounds use a few dozen calls — and the comments endpoint returned `{"message": ...}`, whose
+KEYS the sweep iterated as comments. The same round's `queuepos` quietly lost #5950's label age (its timeline read
+failed). A retry at 17:17Z worked.
+
+**The hazard was bigger than the crash.**
+
+* `sweep.py`: `gh()` returns stdout and ignores the exit code, and every read was a bare `json.loads`. The same
+  payload in the check-runs read would have printed `CI=NO-RUNS` without a word.
+* `queuepos.py`: `fetch()` turns ANY failure into `(None, {})`, and `main()` went on to give verdicts. Every ready
+  PR then reads absent, and with a readable timeline absent-after-enqueue is **EJECTED** — the one verdict that tells
+  this role to merge main and push, costing all three queued PRs their positions and their 10/10 boards. Failed
+  label and timeline reads silently became "no labels" and "no events".
+
+**Fix (r722).**
+
+* `sweep.py`: `api_pages`/`api_list`/`api_check_runs` decode every `--paginate` page (`[..][..]` included) and
+  raise `ApiError` on an empty response, unreadable JSON, a `{"message": ...}` payload, or the wrong shape. An
+  unreadable field prints `API-ERROR` (never `NO BOARD` or `NO-RUNS`), the reason goes to stderr, and the sweep
+  exits 1 ("rerun before acting"); an unreadable listing exits 2. The scratchpad copy the round prompt runs was
+  replaced too.
+* `queuepos.py`: an unreadable merge queue or PR listing prints `UNRUN` and exits 2 with **no verdicts**; an
+  unreadable timeline or label read gives that PR `UNKNOWN` — never `EJECTED` or `NEVER-QUEUED`.
+* 8 controls: pure decode cases (rate-limit payload, empty response, error in check-runs, two concatenated pages of
+  each shape, and the error naming its cause); a stubbed `sweep.main` fed an error payload (reports `API-ERROR`,
+  exits 1, no `NO BOARD`, no traceback); a stubbed `queuepos.main` with an unreadable queue but an
+  enqueue-showing timeline (`UNRUN`, exit 2, no `EJECTED`) and with an unreadable timeline (`UNKNOWN`).
+* Mutations: `NO BOARD` restored on error → 1 FAIL; verdicts on an unreadable queue → 2 FAIL (including a produced
+  `EJECTED`); unreadable timeline ignored → 1 FAIL. The first mutation (accept `{"message": ...}`) failed NOTHING —
+  the shape checks already raise, so the message clause only named the cause. That cause is what diagnosed this
+  round, so it got its own control instead of being deleted; re-run: FAIL  sweep: an API error names its cause, not just a shape complaint (r722) -- missing: ratelimit-msg: comments: API rate limit exceeded 165 passed, 1 failed 
+* **166 passed, 0 failed.** Live runs of both tools are unchanged (queue depth 41, positions 16/17/18, #5950's age back).

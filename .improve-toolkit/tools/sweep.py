@@ -76,8 +76,65 @@ def pr_list_cmd(limit=LIST_LIMIT):
             "number,headRefName,isDraft,labels,headRefOid,title"]
 
 
+class ApiError(Exception):
+    """A `gh` read that returned no usable data (r722)."""
+
+
+def api_pages(text, what):
+    """Decode `gh api [--paginate]` stdout into its JSON pages, refusing error payloads (r722).
+
+    At 17:16Z on 09-14 the REST quota was exhausted mid-round and `issues/<n>/comments` answered
+    `{"message": "API rate limit exceeded ..."}`.  The sweep iterated that dict's KEYS as if they were
+    comments and died with `'str' object has no attribute 'get'`; the check-runs read would have
+    turned the same payload into `CI=NO-RUNS` without a word.  An unreadable field must say so, never
+    look like an empty one.  `--paginate` without `--slurp` also concatenates pages (`[..][..]`), which
+    one `json.loads` cannot read, so every page is decoded.
+    """
+    dec, pages, i, text = json.JSONDecoder(), [], 0, (text or "").strip()
+    if not text:
+        raise ApiError(f"{what}: empty response")
+    while i < len(text):
+        try:
+            obj, i = dec.raw_decode(text, i)
+        except json.JSONDecodeError as err:
+            raise ApiError(f"{what}: unreadable JSON ({err.msg})")
+        pages.append(obj)
+        while i < len(text) and text[i].isspace():
+            i += 1
+    for pg in pages:
+        if isinstance(pg, dict) and "message" in pg and "check_runs" not in pg:
+            raise ApiError(f"{what}: {str(pg['message'])[:90]}")
+    return pages
+
+
+def api_list(text, what):
+    """The items of a list endpoint, across every page."""
+    out = []
+    for pg in api_pages(text, what):
+        if not isinstance(pg, list):
+            raise ApiError(f"{what}: expected a list, got {type(pg).__name__}")
+        out.extend(pg)
+    return out
+
+
+def api_check_runs(text, what):
+    """The `check_runs` of a check-runs endpoint, across every page."""
+    out = []
+    for pg in api_pages(text, what):
+        if not isinstance(pg, dict) or not isinstance(pg.get("check_runs"), list):
+            raise ApiError(f"{what}: no check_runs in the response")
+        out.extend(pg["check_runs"])
+    return out
+
+
 def main():
-    rows = json.loads(gh(*pr_list_cmd()))
+    failures = 0
+    try:
+        rows = api_list(gh(*pr_list_cmd()), "open-PR listing")
+    except ApiError as err:
+        print(f"# API ERROR: {err} -- no sweep. An unreadable listing is not an empty board.",
+              file=sys.stderr)
+        return 2
     if len(rows) >= LIST_LIMIT:
         print(f"# WARNING: the open-PR listing hit its {LIST_LIMIT}-row limit; raise it.",
               file=sys.stderr)
@@ -90,29 +147,53 @@ def main():
     for p in prs:
         n, head = p["number"], p["headRefOid"]
         lab = ",".join(x["name"] for x in p["labels"] if x["name"] != "roadmap/none") or "-"
-        cr = json.loads(gh("api", f"repos/{REPO}/commits/{head}/check-runs", "--paginate"))
-        ci = ci_verdict(cr.get("check_runs", []))
-        cm = json.loads(gh("api", f"repos/{REPO}/issues/{n}/comments", "--paginate"))
-        boards = [c for c in cm if "tauceti-meta:v1" in (c.get("body") or "")]
-        boards.sort(key=lambda c: c["updated_at"])          # the pipeline EDITS; last-updated wins
-        if boards:
-            b = boards[-1]
-            m = re.search(r'head_sha["\s:=]+([0-9a-f]{7,40})', b["body"])
-            bsha = m.group(1) if m else "?"
-            state = "ON-HEAD" if bsha and head.startswith(bsha[:10]) else "BEHIND"
-            bd = f"{bsha[:10]} {state} upd={b['updated_at']}"
+        try:
+            ci = ci_verdict(api_check_runs(
+                gh("api", f"repos/{REPO}/commits/{head}/check-runs", "--paginate"), f"#{n} check-runs"))
+        except ApiError as err:
+            ci = "API-ERROR"
+            failures += 1
+            print(f"# API ERROR: {err}", file=sys.stderr)
+        try:
+            cm = api_list(gh("api", f"repos/{REPO}/issues/{n}/comments", "--paginate"), f"#{n} comments")
+        except ApiError as err:
+            cm = None
+            failures += 1
+            print(f"# API ERROR: {err}", file=sys.stderr)
+        if cm is None:
+            bd = "API-ERROR (board unknown)"
         else:
-            bd = "NO BOARD"
-        tl = json.loads(gh("api", f"repos/{REPO}/issues/{n}/timeline", "--paginate"))
-        rfr = [e["created_at"] for e in tl if e.get("event") == "ready_for_review"]
+            boards = [c for c in cm if "tauceti-meta:v1" in (c.get("body") or "")]
+            boards.sort(key=lambda c: c["updated_at"])      # the pipeline EDITS; last-updated wins
+            if boards:
+                b = boards[-1]
+                m = re.search(r'head_sha["\s:=]+([0-9a-f]{7,40})', b["body"])
+                bsha = m.group(1) if m else "?"
+                state = "ON-HEAD" if bsha and head.startswith(bsha[:10]) else "BEHIND"
+                bd = f"{bsha[:10]} {state} upd={b['updated_at']}"
+            else:
+                bd = "NO BOARD"
+        try:
+            tl = api_list(gh("api", f"repos/{REPO}/issues/{n}/timeline", "--paginate"), f"#{n} timeline")
+            rfr = [e["created_at"] for e in tl if e.get("event") == "ready_for_review"]
+        except ApiError as err:
+            rfr = None
+            failures += 1
+            print(f"# API ERROR: {err}", file=sys.stderr)
         age = ""
         if rfr:
             t = datetime.datetime.fromisoformat(rfr[-1].replace("Z", "+00:00"))
             age = f" ({(now - t).total_seconds() / 60:.0f}m ago)"
+        shown = "API-ERROR" if rfr is None else (rfr[-1] if rfr else "-")
         print(f"#{n}  draft={str(p['isDraft']):5s} label={lab:16s} CI={ci:22s} board={bd}")
-        print(f"      head={head[:10]}  ready_for_review={rfr[-1] if rfr else '-'}{age}")
+        print(f"      head={head[:10]}  ready_for_review={shown}{age}")
         print(f"      {p['title'][:96]}")
+    if failures:
+        print(f"# {failures} field(s) unreadable -- rerun the sweep before acting on this board.",
+              file=sys.stderr)
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

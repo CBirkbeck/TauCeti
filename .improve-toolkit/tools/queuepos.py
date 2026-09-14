@@ -110,10 +110,14 @@ def latest_ready_at(events):
 
 
 def timeline_events(n, owner_repo=REPO):
-    out = subprocess.run(
+    r = subprocess.run(
         ["gh", "api", "repos/%s/issues/%d/timeline" % (owner_repo, n), "--paginate", "--jq",
          '.[]|{event, created_at, label: (.label.name // null)}'],
-        capture_output=True, text=True).stdout
+        capture_output=True, text=True)
+    # An unreadable timeline is None, NOT an empty one (r722): no events reads as never enqueued.
+    if r.returncode != 0:
+        return None
+    out = r.stdout
     evs = []
     for line in out.splitlines():
         line = line.strip()
@@ -142,23 +146,45 @@ def pr_list_cmd(author="CBirkbeck", limit=200):
 def main(argv):
     prs = [int(a.lstrip("#")) for a in argv[1:]]
     if not prs:
-        out = subprocess.run(pr_list_cmd(), capture_output=True, text=True).stdout
-        rows = json.loads(out or "[]")
+        r = subprocess.run(pr_list_cmd(), capture_output=True, text=True)
+        try:
+            rows = json.loads(r.stdout) if r.returncode == 0 else None
+        except ValueError:
+            rows = None
+        if not isinstance(rows, list):
+            print("# UNRUN: the PR listing could not be read -- no verdicts (r722).")
+            return 2
         prs = [p["number"] for p in rows if p["headRefName"].startswith("improve/")]
         if len(rows) >= 200:
             print("  (warning: listing hit the 200-PR limit; raise it)", file=sys.stderr)
     depth, entries = fetch()
     print("merge queue depth: %s" % (depth if depth is not None else "unavailable"))
+    # An unreadable queue makes every ready PR look absent, and absent-after-enqueue is the verdict
+    # that says merge main and push. So no verdicts at all (r722).
+    if depth is None:
+        print("# UNRUN: the merge queue could not be read -- no verdicts. An unreadable queue is not an"
+              " ejection (r722).")
+        return 2
     ejected = []
     for n in prs:
-        out = subprocess.run(["gh", "pr", "view", str(n), "--json", "labels"],
-                             capture_output=True, text=True).stdout
-        labels = [l["name"] for l in json.loads(out or '{"labels":[]}')["labels"]]
+        r = subprocess.run(["gh", "pr", "view", str(n), "--json", "labels"],
+                           capture_output=True, text=True)
+        try:
+            labels = [l["name"] for l in json.loads(r.stdout)["labels"]] if r.returncode == 0 else None
+        except (ValueError, KeyError, TypeError):
+            labels = None
+        if labels is None:
+            print("  #%-6s %-22s UNKNOWN (labels unreadable)" % (n, "?"))
+            continue
         label = "ready-to-merge" if "ready-to-merge" in labels else ",".join(labels)
         e = entries.get(n)
         age = ""
         if e is None and label == "ready-to-merge":
             evs = timeline_events(n)
+            # r722: without the timeline, EJECTED and NEVER-QUEUED cannot be told apart.
+            if evs is None:
+                print("  #%-6s %-22s UNKNOWN (timeline unreadable)" % (n, label))
+                continue
             enq, last = enqueued_since_ready(evs), latest_ready_at(evs)
             if last:
                 t = datetime.datetime.fromisoformat(last.replace("Z", "+00:00"))

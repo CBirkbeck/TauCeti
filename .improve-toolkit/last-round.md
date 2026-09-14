@@ -1,4 +1,4 @@
-# Last round — r721 (2026-09-14T17:07Z)
+# Last round — r722 (2026-09-14T17:23Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -24,13 +24,13 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 16/39** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 16/41** | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 17** | nobody |
 | **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 18** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-15 ahead of #6093 at 17:06Z; #6736 and #6734 merged, main is `2c8bdc7e9`).
+15 ahead of #6093, unchanged from 17:06Z to 17:17Z; main is `2c8bdc7e9`).
 
 ## What to expect next
 
@@ -90,7 +90,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r721 did
+## What r703–r722 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -113,6 +113,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r719: no-op board.
 * r720: no-op board; queue head recorded (ledger r720).
 * r721: main moved (#6736, #6734); queued merge groups and staged branches re-checked, all clean.
+* r722: sweep crashed on a rate-limited API; sweep/queuepos now refuse error payloads — 166/0.
 
 ## Candidates for a later step 5
 
@@ -194,7 +195,11 @@ The gate is pure Python: it cannot see docstring attachment, elaboration, or sim
 **A rooting can break an attribute whose own text never changed** (#6482).
 **`stale` on a board means approved-earlier/re-run-pending, not a finding**; `absent` means not yet
 judged on this head. `threadread.py` classifies both as NOT ACTIONABLE — answer **LIVE** only.
-**158 controls, 0 failed** (r704) — the round prompt still says 129; the prompt is stale, not the suite.
+**166 controls, 0 failed** (r722) — the round prompt still says 129; the prompt is stale, not the suite.
+**An API error is not an empty answer** (r722). The `gh` login is shared with other sessions, so the hourly quota
+can run out mid-round. `sweep.py` now prints `API-ERROR` and exits 1, and `queuepos.py` prints `UNRUN` (exit 2) or
+`UNKNOWN` — **rerun; never act on those rows**. Before r722 an unreadable merge queue could print `EJECTED`.
+`gh api rate_limit` shows the remaining quota and the reset time.
 **`awk length` counts BYTES** — `≤`, `σ`, `γ`, `ℝ` are multibyte. Measure line width in codepoints (Python)
 before rewrapping anything (r704: 3 of 14 reported overflows were not).
 **A PR that deletes a file** is screened since r704 (`deleted:` in the header; `--deleted` for stalequal and
