@@ -14,7 +14,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 
 `HeckeRing.GL2.heckeSlashSum` sums `f ∣[k] aᵥ` over `v : DecompQuotient Γ₂ Γ₁ δ⁻¹`, with
 `aᵥ = rightCosetRep D v = δ τᵥ⁻¹`. Everything there lives in `GL (Fin 2) ℚ`, which does **not**
-act on `ℍ`; the slash goes through `φ = Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)`.
+act on `ℍ`; the slash goes through the change of scalars
+`φ = Matrix.GeneralLinearGroup.ratToRealGL`.
 
 This file shows that the real images `φ aᵥ` of those representatives translate a fundamental
 domain for `Γ₂` into one for `Γ₁ ∩ δ Γ₂ δ⁻¹`, both read in `GL (Fin 2) ℝ`.
@@ -41,7 +42,7 @@ it, so only the assembly remains.
 
 public section
 
-open MeasureTheory ConjAct Matrix UpperHalfPlane DoubleCoset
+open MeasureTheory ConjAct Matrix Matrix.GeneralLinearGroup UpperHalfPlane DoubleCoset
 
 open scoped MatrixGroups ModularForm Pointwise
 
