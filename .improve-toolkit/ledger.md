@@ -36777,3 +36777,23 @@ simulation and staged-branch check stand. Nothing to fix, contest or drive; step
 **Board** (16:46Z): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on head; #5950 is
 Chris's. No merges. Queue **18/19/20 of 41**, unchanged since 16:26Z. main still `acaffaeb5`, so r717's merge-group
 simulation and staged-branch check stand. Nothing to fix, contest or drive; step 5 shut. No toolkit edits.
+
+---
+
+## r720 — 2026-09-14T16:57Z — no-op board; queue static 30 minutes
+
+**Board** (16:56Z): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on head; #5950 is
+Chris's. No merges. Queue **18/19/20 of 41**, unchanged since 16:26Z. main still `acaffaeb5`, so r717's merge-group
+simulation and staged-branch check stand. Nothing to fix, contest or drive; step 5 shut.
+
+Queue head (read-only):
+
+```
+pos=1 #6736 AWAITING_CHECKS enqueued=2026-09-14T09:14:17Z head=e7b984ab4
+pos=2 #6734 AWAITING_CHECKS enqueued=2026-09-14T09:33:27Z head=2c8bdc7e9
+finalize-merge-group-build: queued/null since 2026-09-14T16:55:05Z
+publish-merge-group-cache / publish: completed/success since 2026-09-14T16:53:04Z
+sandboxed-build: completed/success since 2026-09-14T16:20:23Z
+```
+
+No toolkit edits.
