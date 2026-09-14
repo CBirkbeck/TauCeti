@@ -37883,3 +37883,23 @@ nothing they remove.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r762 — 2026-09-14T23:46Z — #6854's fix is green; its re-review is pending; no merges; no-op round
+
+**Board** (23:46:21Z; sweep and queuepos exited 0):
+
+* **#6854** (kind 2): CI **green on the fix head `217fecb812`**, `sandboxed-build` success 23:25:05Z → 23:39:06Z (14 min).
+  The label still reads `awaiting-CI`; labels lag. The board, on `f18fe6fedf`, is BEHIND, so there is nothing to re-fix;
+  the automatic re-review follows. **Step 4's clock:** `max(CI-green 23:39:06Z, ready_for_review 22:07:11Z) + 1 h` =
+  **00:39:06Z**. Drive only if there is still no board for `217fecb81` after that.
+* #6851 and #6855: 10/10 on head, `ready-to-merge`, QUEUED at 28 and 26 of 32.
+* #5950 is Chris's.
+
+No merges since #6775, and main is still `85fb7a16d`, so r761's merge-group simulations and merge-tree checks stand.
+Nothing to fix, contest or drive; step 5 shut.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
