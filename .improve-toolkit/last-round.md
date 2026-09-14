@@ -1,4 +1,4 @@
-# Last round — r697 (2026-09-14T12:27Z; board unchanged since r696)
+# Last round — r698 (2026-09-14T12:37Z)
 
 ## Board
 
@@ -14,6 +14,7 @@ since r686: it cannot advance, and counting it would stall prospecting indefinit
 
 ## What to expect next
 
+**Drive path (r698): drive path verified: uvx resolves tauceti-review and its --help lists --reviewer and --post.** Put `~/.local/bin` on `PATH` first.
 **Step-4 drive times are exact** (from `sandboxed-build` `completed_at`, r696): #6093 12:41:09Z, #6796 12:45:14Z, #6800 13:12:14Z. Drive a PR only if, at or after its time, the sweep still shows NO board for its current head. Driving: `uvx --from git+https://github.com/TauCetiProject/TauCetiReview tauceti-review <PR> --reviewer codex --post`.
 
 1. **#6093's board.** 9 rubrics were green on the previous head, and `api-design` is the only one that

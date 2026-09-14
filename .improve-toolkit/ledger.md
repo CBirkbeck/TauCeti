@@ -36253,3 +36253,15 @@ At 12:16Z none may be driven. No merges, nothing queued; steps 3–5 no-ops.
 All three still green, `awaiting-review`, no board for their current heads (#6093 ready-clock 45 min, #6796
 41 min, #6800 14 min). First drive times remain 12:41:09Z / 12:45:14Z / 13:12:14Z. No merges, nothing
 queued; steps 3–5 no-ops.
+
+---
+
+## r698 — 2026-09-14T12:37Z — unchanged; drive path checked ahead of the first drive time
+
+No board yet for any of the three heads; #6093's drive time is under five minutes away (12:41:09Z),
+#6796's at 12:45:14Z, #6800's at 13:12:14Z. No merges, nothing queued; steps 3–5 no-ops.
+
+The step-4 drive command has never been exercised on this machine, and the next round is the first at
+which two PRs could qualify. Checked it now, with `--help` only (nothing posted, no review run) — the
+r685 lesson, *verify a staged command against something real before the moment it is needed*:
+**drive path verified: uvx resolves tauceti-review and its --help lists --reviewer and --post.**
