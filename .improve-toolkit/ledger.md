@@ -37222,3 +37222,22 @@ files touched on main; all merge clean; no module renamed or deleted; no new cal
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r739 — 2026-09-14T20:07Z — #6093's merge-group build in progress; no merges; no-op board
+
+**Board** (20:06Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. No merges since #6601, and main is still `6bc3780dc`, so r738's merge-group
+simulation, staged-branch checks and removed-name check stand. #6093 is still `MERGING` at pos 2 (#6796 3rd, #6800
+4th, of 35). Nothing to fix, contest or drive; step 5 shut (#6093 still `OPEN` at 20:06Z).
+
+**#6093's merge group** is `gh-readonly-queue/main/pr-6093-…` at `31e769e30`: `sandboxed-build` has been
+`in_progress` since 19:52:03Z, with no conclusion yet (about 14 minutes in). That commit's check-runs are the earliest
+sign of an ejection; `queuepos.py` only sees one after the PR has left the queue. `git ls-remote origin
+'refs/heads/gh-readonly-queue/main/*'` also lists long-dead `pr-4xxx` refs, so match `pr-<n>-`.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered. When #6093 lands, kind 1 (Levi-Civita) opens
+under the no-build default unless he answers first.
+
+No toolkit edits.

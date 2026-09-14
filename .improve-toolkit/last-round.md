@@ -1,4 +1,4 @@
-# Last round — r738 (2026-09-14T19:58Z)
+# Last round — r739 (2026-09-14T20:07Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -15,7 +15,7 @@ slot. Record each PR's kind in
 the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r738):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r739):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. **If he answers, apply it before opening.**
@@ -29,17 +29,18 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **MERGING, pos 2/35** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **MERGING, pos 2/35** (group `31e769e30`, `sandboxed-build` running since 19:52Z) | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 3** | nobody |
 | **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 4** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-#6093 MERGING at 19:56Z, so a slot likely frees by the next round; main is `6bc3780dc`).
+#6093 MERGING since 19:56Z, its group build still running at 20:06Z; main is `6bc3780dc`).
 
 ## What to expect next
 
-1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. If main moves a lot, re-run r702's
+1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. A `MERGING` PR's group build is the check-runs of
+   `git ls-remote origin 'refs/heads/gh-readonly-queue/main/pr-<n>-*'` (r739), the earliest sign of an ejection. If main moves a lot, re-run r702's
    merge-group simulation (cheap, read-only; r738: all three clean against `6bc3780dc`). Staged branches:
    `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r738: all three
    clean against `6bc3780dc`, none of their files touched on main). A merge-tree check sees conflicts, not new
@@ -98,7 +99,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r738 did
+## What r703–r739 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -138,6 +139,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r736: main moved (#6738); queued merge groups and staged branches re-checked, all clean.
 * r737: main moved (#6681); queued merge groups and staged branches re-checked, all clean.
 * r738: #6093 MERGING; main moved (#6601 deletes two lemmas, which no branch uses); all re-checked, all clean.
+* r739: no merges; #6093's merge-group build in progress (read off the queue ref's check-runs); no-op board.
 
 ## Candidates for a later step 5
 
