@@ -37241,3 +37241,25 @@ The `/cleanup` question to Chris (asked after r732) is still unanswered. When #6
 under the no-build default unless he answers first.
 
 No toolkit edits.
+
+---
+
+## r740 — 2026-09-14T20:18Z — REST quota ran out at 20:16 again; rerun clean; #6093's merge-group build PASSED
+
+**The 20:16:21Z sweep** hit the REST limit (all 12 fields `API-ERROR`, exit 1), the fourth :16 round today (r722, r728,
+r734, r740). GraphQL still answered: all three of mine `OPEN`, and `queuepos` read 2/3/4. Nothing was acted on.
+
+**Rerun at 20:17:45Z** (sweep and queuepos exit 0; a real call showed `X-RateLimit-Used: 1`, a fresh window): #6093,
+#6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on head; #5950 is Chris's. No merges since #6601,
+and main is still `6bc3780dc`, so r738's checks stand. Nothing to fix, contest or drive; step 5 shut (#6093 still
+`OPEN`).
+
+**#6093's merge group** (`31e769e30`): `sandboxed-build` **success**, 19:52:03Z → 20:14:21Z (22 min);
+`publish-merge-group-cache / publish` queued since 20:14:21Z; no `finalize-merge-group-build` run yet. It sits behind
+pos 1, so it lands once pos 1 does and its own finalize completes. This is the build #6093 was ejected from in r679;
+this time it passed.
+
+**Next round, probably:** #6093 has merged, so step 5 fires: open kind 1 (`improve/levi-civita-mathlib`) per item 2 of
+`last-round.md`, under the no-build default unless Chris has answered the `/cleanup` question.
+
+No toolkit edits.

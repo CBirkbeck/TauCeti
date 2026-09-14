@@ -1,4 +1,4 @@
-# Last round — r739 (2026-09-14T20:07Z)
+# Last round — r740 (2026-09-14T20:18Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -15,7 +15,7 @@ slot. Record each PR's kind in
 the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r739):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r740):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. **If he answers, apply it before opening.**
@@ -29,13 +29,13 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **MERGING, pos 2/35** (group `31e769e30`, `sandboxed-build` running since 19:52Z) | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **MERGING, pos 2/35** (group `31e769e30`: `sandboxed-build` **passed** 20:14Z; publish queued) | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 3** | nobody |
 | **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 4** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-#6093 MERGING since 19:56Z, its group build still running at 20:06Z; main is `6bc3780dc`).
+#6093's group build passed at 20:14Z, so a slot likely frees by the next round; main is `6bc3780dc`).
 
 ## What to expect next
 
@@ -99,7 +99,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r739 did
+## What r703–r740 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -140,6 +140,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r737: main moved (#6681); queued merge groups and staged branches re-checked, all clean.
 * r738: #6093 MERGING; main moved (#6601 deletes two lemmas, which no branch uses); all re-checked, all clean.
 * r739: no merges; #6093's merge-group build in progress (read off the queue ref's check-runs); no-op board.
+* r740: REST quota ran out at 20:16 (the fourth :16 round); rerun clean; #6093's merge-group build passed.
 
 ## Candidates for a later step 5
 
@@ -227,8 +228,8 @@ can run out mid-round. `sweep.py` now prints `API-ERROR` and exits 1, and `queue
 `UNKNOWN` — **rerun; never act on those rows**. Before r722 an unreadable merge queue could print `EJECTED`.
 **Do not trust `gh api rate_limit`** (r734: at 19:16Z it said core 4999 left, reset 19:36Z, while every REST read
 failed). Read the quota off a real call: `gh api -i <endpoint>` prints `X-RateLimit-Remaining` and `-Reset`.
-**The hourly window rolls over at about :17** (r722, r728, r734 at 19:17:29Z): all three exhaustions hit the :16
-round, so rerun that sweep after :17.
+**The hourly window rolls over at about :17** (r722, r728, r734 at 19:17:29Z, r740): all four exhaustions hit the
+:16 round, so rerun that sweep after :17 (a background until-loop to :17:45 works; foreground `sleep` is blocked).
 **`gh pr list --state merged --limit 200` is ordered by creation, not merge time** (r728): an old PR such as
 #6093 can merge without appearing in it. A merge also shows as the PR vanishing from the sweep's open-PR list.
 **`awk length` counts BYTES** — `≤`, `σ`, `γ`, `ℝ` are multibyte. Measure line width in codepoints (Python)
