@@ -30,7 +30,9 @@ The hypothesis is not a convenience. Without it the statement is false: if `-I �
 *non-identity* element of `Γ.map (mapGL ℝ)` acting *trivially* on `ℍ`, so `(-I) • S = S` and
 `MeasureTheory.IsFundamentalDomain` fails its a.e.-disjointness requirement for every `S` of
 positive measure. Passing to `PSL(2, ℤ)` is exactly what removes that element. `Γ ⊓ center = ⊥`
-holds for `Γ₁(N)` and `Γ(N)` with `N ≥ 3`, and fails for `SL(2, ℤ)`, `Γ₀(N)` and `N ≤ 2`.
+holds for `Γ₁(N)` and `Γ(N)` at every level except `N = 1` and `N = 2`, the two where `-1 ≡ 1`
+(so level `0`, where the congruence is an equation in `ℤ`, is on the good side alongside `N ≥ 3`);
+`SL(2, ℤ)` is the case `N = 1`, and `Γ₀(N)` fails at every level.
 -/
 
 public section
