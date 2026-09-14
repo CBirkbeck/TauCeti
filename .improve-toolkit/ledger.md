@@ -37750,3 +37750,23 @@ nothing they remove.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r758 — 2026-09-14T23:07Z — no merges; #6854 reaches its drive window with no board; held for one round inside the latency band
+
+**Board** (23:06:22Z; sweep and queuepos exited 0): #6851 and #6855 are 10/10 on head, `ready-to-merge`, QUEUED at 31
+and 29 of 33. **#6854** is `awaiting-review`, CI green, `NO BOARD`, 59 min after `ready_for_review` (22:07:11Z). #5950
+is Chris's. No merges since #6765, and main is still `babe56615`, so r757's merge-group simulations and checks stand.
+Nothing to fix or contest; step 5 shut.
+
+**Step 4 for #6854: not driven this round.** Its window, `max(CI-green 22:02:23Z, ready 22:07:11Z) + 1 h` =
+23:07:11Z, opens 49 s after this sweep. The rule sets that as the earliest time to drive, not a deadline. Two things
+argue for holding one round: the measured ready-to-board latency band is 32–67 min, and today's first boards came at
+57 min (#6851) and 15 min (#6855); a drive also costs money. **The 23:16 round drives** (`uvx --from
+git+https://github.com/TauCetiProject/TauCetiReview tauceti-review 6854 --reviewer codex --post`) if there is still no
+board for `f18fe6fedf`. By then it will be about 69 min, past the band.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
