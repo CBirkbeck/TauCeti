@@ -36945,3 +36945,38 @@ No toolkit edits.
 boards on head; #5950 is Chris's. No merges. Queue **12/13/14 of 39**, unchanged since 17:56Z. main still
 `c37f31f12`, so r726's merge-group simulation and staged-branch check stand. Nothing to fix, contest or drive;
 step 5 shut. No toolkit edits.
+
+---
+
+## r728 — 2026-09-14T18:18Z — the quota ran out again; r722's hardening held; main moved (#6739, #6701), all still clean
+
+**First sweep (18:16:23Z): exit 1.** REST quota exhausted again ("API rate limit exceeded for user ID 56166236"). The
+r722 sweep printed `API-ERROR` for all 12 REST fields (check-runs, comments, timeline × 4 PRs) and exited 1 — no
+crash, no `NO BOARD`, no `NO-RUNS`. `queuepos` read the queue over GraphQL and gave #5950 `UNKNOWN (timeline
+unreadable)` instead of a verdict. Nothing was acted on.
+
+**Quota pattern.** `gh api rate_limit` at 18:17:16Z: core 5000/5000, next reset 19:17:16Z. Both exhaustions (r722 at
+17:16:23Z, this one at 18:16:23Z) hit in the minute before the hourly roll-over, so the :16 round is the one at risk
+— rerun it after :17 rather than act on it.
+
+**Rerun (18:17:20Z): exit 0.** #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on head;
+#5950 is Chris's. None of mine merged. #6739 (diagonal-pairing independence over right-regular entries) and #6701
+(source reflection preserves indecomposability) merged: main `c37f31f12` → **`dc7090278`**; queue **10/11/12 of
+37**. Nothing to fix, contest or drive; step 5 shut.
+
+**Merge poll truncation.** `gh pr list --state merged --limit 200` is ordered by CREATION, not merge time: #6412
+(merged 09-12) has dropped out of the window while the older-merged #6426 is still in it. #6093 (created 09-08) can
+merge without appearing there; its merge also shows as the PR vanishing from the sweep's open-PR list.
+
+**Merge-group simulation** against `dc7090278`:
+
+```
+#6093  27 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: exit 0
+#6796  25 behind  merges clean  ghostref: all short forms still resolve    stalequal: exit 0
+#6800  25 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: exit 0
+```
+
+**Staged branches** (`git merge-tree`): levi-civita 17 behind, quadratic 15, exchangeable-dedup 14; none of their
+files touched on main; all merge clean.
+
+No toolkit edits.

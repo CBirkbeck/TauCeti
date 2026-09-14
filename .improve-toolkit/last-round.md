@@ -1,4 +1,4 @@
-# Last round — r727 (2026-09-14T18:06Z)
+# Last round — r728 (2026-09-14T18:18Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -24,20 +24,20 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 12/39** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 13** | nobody |
-| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 14** | nobody |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 10/37** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 11** | nobody |
+| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 12** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-11 ahead of #6093, unchanged from 17:56Z to 18:06Z; main is `c37f31f12`).
+9 ahead of #6093 at 18:17Z; #6739 and #6701 merged, main is `dc7090278`).
 
 ## What to expect next
 
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only; r726: all three clean against `c37f31f12`). Staged branches:
-   `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r726: all three
-   clean against `c37f31f12`, none of their files touched on main).
+   merge-group simulation (cheap, read-only; r728: all three clean against `dc7090278`). Staged branches:
+   `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r728: all three
+   clean against `dc7090278`, none of their files touched on main).
 2. **When a slot opens, open kind 1: `improve/levi-civita-mathlib`** (`4d0dfadf1` on `fork`). At that moment:
    merge `origin/main`, re-gate (expect 15 ok / 2 failed / 0 UNRUN: `decldiff` and `nsjump`, both answered in
    the body), push, then
@@ -90,7 +90,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r727 did
+## What r703–r728 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -119,6 +119,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r725: main moved (#6691); queued merge groups and staged branches re-checked, all clean.
 * r726: main moved (#6742); queued merge groups and staged branches re-checked, all clean.
 * r727: no-op board.
+* r728: quota exhausted again at :16 (API-ERROR rows, nothing acted on); rerun clean; main moved, all still clean.
 
 ## Candidates for a later step 5
 
@@ -204,7 +205,10 @@ judged on this head. `threadread.py` classifies both as NOT ACTIONABLE — answe
 **An API error is not an empty answer** (r722). The `gh` login is shared with other sessions, so the hourly quota
 can run out mid-round. `sweep.py` now prints `API-ERROR` and exits 1, and `queuepos.py` prints `UNRUN` (exit 2) or
 `UNKNOWN` — **rerun; never act on those rows**. Before r722 an unreadable merge queue could print `EJECTED`.
-`gh api rate_limit` shows the remaining quota and the reset time.
+`gh api rate_limit` shows the remaining quota and the reset time. **The hourly window rolls over at about :17**
+(r722, r728): both exhaustions hit the :16 round, so rerun that sweep after :17.
+**`gh pr list --state merged --limit 200` is ordered by creation, not merge time** (r728): an old PR such as
+#6093 can merge without appearing in it. A merge also shows as the PR vanishing from the sweep's open-PR list.
 **`awk length` counts BYTES** — `≤`, `σ`, `γ`, `ℝ` are multibyte. Measure line width in codepoints (Python)
 before rewrapping anything (r704: 3 of 14 reported overflows were not).
 **A PR that deletes a file** is screened since r704 (`deleted:` in the header; `--deleted` for stalequal and
