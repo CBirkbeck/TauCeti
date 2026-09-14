@@ -37852,3 +37852,34 @@ checks (all three) stand. Nothing to fix, contest or drive; step 5 shut.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r761 — 2026-09-14T23:37Z — main moved (#6775, additive); both queued PRs re-simulated clean; #6854's fix still building
+
+**Board** (23:36:21Z; sweep and queuepos exited 0):
+
+* #6851 and #6855: 10/10 on head, `ready-to-merge`, QUEUED at 28 and 26 of 32.
+* **#6854** (kind 2): head `217fecb812`, label now `awaiting-CI`. Its board, on `f18fe6fedf`, is still BEHIND; the fix
+  is pushed, so there is nothing to re-fix. `sandboxed-build` in progress since 23:25:05Z (11 min).
+* #5950 is Chris's.
+
+Nothing to fix, contest or drive; step 5 shut.
+
+**Main moved:** #6775 (the nebentypus is determined by the good eigenvalues) merged at 23:29:54Z: `958b865a3` →
+**`85fb7a16d`**, +18 in `Data/ZMod/Units.lean` and +80 in `ModularForms/Newforms/RingEigenvalue.lean`. The firing
+control read 0 removed lines, 98 added and 5 added declaration headers; nothing was removed and no module renamed.
+
+**Merge-group simulation** against `85fb7a16d`:
+
+```
+#6851  11 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6855   9 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+#6854 (9 behind) merges clean (`git merge-tree`). Main touched none of the three PRs' files, and its new lines name
+nothing they remove.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
