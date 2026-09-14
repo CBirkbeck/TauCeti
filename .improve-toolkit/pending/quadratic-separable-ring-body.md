@@ -9,10 +9,7 @@ The proof is the one the field lemma already used, with the field inverse replac
 
 This direction needs no hypothesis on `a`. The converse does: over `ℚ[t]`, `1 + t X²` is separable, since `P - (X/2) P' = 1`, but its discriminant `-4t` is not a unit. At the pinned version, Mathlib has no criterion relating the separability of a quadratic polynomial to its discriminant. Its closest lemma, `Polynomial.separable_C_mul_X_pow_add_C_mul_X_add_C`, needs `(n : R) = 0` and `IsUnit b`.
 
-Also in this PR:
-
-* `discrim_eq_sq_of_two_eq_zero` inlines its single-use `have (4 : R) = 0`; the proof is now `linear_combination (-2 * a * c) * h2`.
-* The module docstring and the docstrings of `sq_derivative_quadratic_sub_mul_eq_C_discrim` and `separable_quadratic_iff_discrim_ne_zero` now point at the new lemma.
+The module docstring and the docstrings of `sq_derivative_quadratic_sub_mul_eq_C_discrim` and `separable_quadratic_iff_discrim_ne_zero` now point at the new lemma.
 
 No declaration is removed or renamed, and no existing statement changes. The file's only consumer, `EllipticCurve/NodePolynomial.lean`, is untouched.
 

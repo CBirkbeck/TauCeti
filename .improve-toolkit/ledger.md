@@ -37806,3 +37806,29 @@ not drive #6854 again while that log shows the run in progress.**
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+**Addendum 23:25Z: the drive's board blocked #6854 on `scope`; fixed and pushed.**
+
+The drive ran 23:19:25Z → 23:20:55Z (exit 0; cost: [correctness] codex/gpt-5.6-sol rc=0 verdict=approve cost=$0.0848 today=$26.01; [reuse] codex/gpt-5.6-sol rc=0 verdict=approve cost=$0.1440 today=$26.15; [scope] codex/gpt-5.6-sol rc=0 verdict=block cost=$0.1336 today=$26.29) and posted #6854's first board on head `f18fe6fedf`:
+✅ `correctness`, ✅ `reuse`, **⛔ `scope`** (`codex/gpt-5.6-sol`), and the other seven deferred behind the block. The
+finding: the PR "is not a single topic because it also includes an unrelated proof refactor", pointing at
+`QuadraticDiscriminant.lean:61`. That is the `discrim_eq_sq_of_two_eq_zero` golf (`have h4` inlined into
+`linear_combination (-2 * a * c) * h2`), which the finding calls "an opportunistic refactor unrelated to extracting and
+generalizing the separability direction".
+
+**The finding is right** (`.claude/CLAUDE.md`: one topic per PR), and its proposal has a direct implementation, so it
+was implemented, not contested.
+
+* `improve/quadratic-separable-ring` → **`217fecb81`**. The lemma's proof is restored exactly to main's; the block
+  extracted from both files is identical. The PR diff against main is now 1 file, +25/−13, with no hunk touching the
+  lemma. Gate `prepush.sh origin/main`: 12 ok / 0 failed / 0 UNRUN. Pushed to `fork`.
+* PR body: the golf bullet was removed and the docstring sentence kept. PATCHed through REST at 23:24:51Z and re-read:
+  0 golf mentions, one `Roadmap: none`, footer intact.
+
+The r705 kind-2 pass had bundled that golf as a `/cleanup` finding, and the scope rubric reads it as a second topic.
+**Lesson for kind-2 PRs: a `/cleanup` golf of an unrelated declaration is its own PR, not a rider on the file pass's main
+change.**
+
+Next: CI on `217fecb81`, then the automatic re-review (a pushed fix re-reviews on its own). Until then the board is
+BEHIND the head, so **do not re-fix**. The step-4 clock restarts at the new CI-green time; `ready_for_review` stays
+22:07:11Z.

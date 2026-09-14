@@ -1,4 +1,4 @@
-# Last round — r759 (2026-09-14T23:19Z)
+# Last round — r759 (2026-09-14T23:25Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -11,7 +11,7 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
 3. **What this role has been doing** — rooting, dedup, hypothesis weakening, docstrings, relocation.
 
 **All three kinds are open.** Kind 1 **#6851** and kind 3 **#6855** went 10/10 on their first boards and are
-QUEUED; kind 2 **#6854** awaits its first board. Nothing is staged; the next opening is kind 1 again (the deck group). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
+QUEUED; kind 2 **#6854** had its `scope` block fixed (r759) and awaits CI and the re-review. Nothing is staged; the next opening is kind 1 again (the deck group). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
 **Open question to Chris (asked after r732, unanswered at r759):** `/cleanup` has not run in full on any staged
@@ -32,7 +32,7 @@ through the local codex CLI that MCP wraps:
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
 | **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`, **QUEUED pos 29/32** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6854** | `f18fe6fedf` | **green** (`sandboxed-build` 21:45:37Z → 22:02:23Z) | kind 2; **ready 22:07:11Z**, no board at 23:18Z (71 min) → **DRIVEN ≈23:19Z** (r759) | **me** — read `$SP/drive-6854-r759.log` and the board; do not drive again while it runs |
+| **#6854** | `217fecb81` | **CI pending** (fix pushed ≈23:24Z) | kind 2; driven board on `f18fe6fedf` (r759): ⛔ `scope` for an unrelated golf, ✅ `correctness`, `reuse`, the rest deferred. **Fixed**: golf reverted, body PATCHed | **pipeline** — CI, then the automatic re-review; the board is BEHIND until then, so do NOT re-fix |
 | **#6855** | `352c92a114` | green | kind 3; **10/10 first board** (22:32:04Z), `ready-to-merge`, **QUEUED pos 27/32** | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
@@ -52,10 +52,12 @@ sit about 30 deep in the queue. Main is `958b865a3`.
 2. **#6851 (kind 1, Levi-Civita) went 10/10 on its first board** (22:35:00Z, `codex/gpt-6-astra`, head `fdeaff5cb7`)
    and is QUEUED. Act only on `EJECTED`. Re-simulate its merge group when main moves: it deletes 24 declarations and
    `LeviCivita/Existence.lean`, so pass `--deleted` to `stalequal` and the deleted path to `ghostref`.
-3. **#6854 (kind 2, quadratic separability) is ready and awaiting its first board.** CI went green at 22:02:23Z
+3. **#6854 (kind 2, quadratic separability) had its `scope` block fixed at r759.** CI went green at 22:02:23Z
    (17 min), and it was marked ready at 22:07:11Z. **Drive only if there is no board for `f18fe6fedf` after
-   23:07:11Z.** **Driven at r759** (about 23:19Z, 71 min in, no board by REST or GraphQL): `uvx … tauceti-review 6854
-   --reviewer codex --post`, log `$SP/drive-6854-r759.log`. Next round: read the log's exit code and cost, then the board.
+   23:07:11Z.** **Driven at r759** (23:19Z, 71 min in). The board blocked `scope` on the unrelated
+   `discrim_eq_sq_of_two_eq_zero` golf. **Fixed in `217fecb81`** (proof restored to main's, gate 12/0/0), and the body
+   was PATCHed. Next: CI on `217fecb81`, then the automatic re-review. While the board is BEHIND, do NOT re-fix. The
+   step-4 clock restarts at the new CI-green time.
 4. **#6855 (kind 3, the `contractable_of_exchangeable` dedup) went 10/10 on its first board** (22:32:04Z,
    `codex/gpt-5.6-sol`, head `352c92a114`) and is QUEUED. Act only on `EJECTED`; re-simulate when main moves.
 5. **At the next free slot:** kind 1 again (the deck group, mathlib4#40135 — large; research it while the cap is
@@ -157,7 +159,8 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r756: main moved (#6763); #6851 and #6855 re-simulated clean (queue 32/30); #6854 still awaits its board.
 * r757: main moved (#6765); #6851 and #6855 re-simulated clean (queue 31/29); #6854 still awaits its board (49 min).
 * r758: no merges; #6854 at its drive window with no board (59 min); held one round, and the 23:16 round drives if still none.
-* r759: quota at 23:16 again; main moved (#6769, #6636), all clean; #6854 driven at 71 min without a board.
+* r759: quota at 23:16 again; main moved (#6769, #6636), all clean; #6854 driven at 71 min, blocked `scope` (an
+  unrelated golf), fixed in `217fecb81`.
 
 ## Candidates for a later step 5
 
@@ -264,4 +267,6 @@ paths. When main renames or deletes a module, grep each branch's ADDED lines for
 cancel runs.
 **Give check-runs the full head SHA from the sweep** (r747): a mistyped abbreviation returns `422 No commit found`,
 which is not a CI state.
+**A kind-2 file pass must not bundle an unrelated golf** (r759): #6854 drew ⛔ `scope` for the
+`discrim_eq_sq_of_two_eq_zero` golf riding along with the separability lemma. Ship such a golf as its own PR.
 **HANDOVER.md §11–13 carry this watch's rules** — read them before re-deriving one.
