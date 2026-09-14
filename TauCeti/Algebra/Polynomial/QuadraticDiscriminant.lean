@@ -61,8 +61,9 @@ term. This is why `splits_quadratic_iff_isSquare` says nothing there: `discrim a
 automatically a square. -/
 theorem discrim_eq_sq_of_two_eq_zero {R : Type*} [CommRing R] (h2 : (2 : R) = 0) (a b c : R) :
     discrim a b c = b ^ 2 := by
+  have h4 : (4 : R) = 0 := by linear_combination (2 : R) * h2
   rw [discrim]
-  linear_combination (-2 * a * c) * h2
+  linear_combination -(a * c) * h4
 
 namespace Polynomial
 
