@@ -1,4 +1,4 @@
-# Last round — r714 (2026-09-14T15:56Z)
+# Last round — r715 (2026-09-14T16:07Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -24,20 +24,20 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 22/43** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 23** | nobody |
-| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 24** | nobody |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 20/42** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 21** | nobody |
+| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 22** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-21 ahead of #6093, unchanged from 15:36Z to 15:56Z; main is `6975caec1`).
+19 ahead of #6093 at 16:06Z; #6680 and #6634 merged, main is `4d0169229`).
 
 ## What to expect next
 
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only; r712: all three clean against `6975caec1`). Staged branches:
-   `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r712: all three
-   clean against `6975caec1`, none of their files touched on main).
+   merge-group simulation (cheap, read-only; r715: all three clean against `4d0169229`). Staged branches:
+   `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r715: all three
+   clean against `4d0169229`, none of their files touched on main).
 2. **When a slot opens, open kind 1: `improve/levi-civita-mathlib`** (`4d0dfadf1` on `fork`). At that moment:
    merge `origin/main`, re-gate (expect 15 ok / 2 failed / 0 UNRUN: `decldiff` and `nsjump`, both answered in
    the body), push, then
@@ -90,7 +90,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r714 did
+## What r703–r715 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -106,6 +106,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r712: main moved (#6641, #6692); queued merge groups and staged branches re-checked, all clean.
 * r713: no-op board.
 * r714: no-op board.
+* r715: main moved (#6680, #6634); queued merge groups and staged branches re-checked, all clean.
 
 ## Candidates for a later step 5
 

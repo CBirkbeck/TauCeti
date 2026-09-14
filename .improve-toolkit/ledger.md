@@ -36709,3 +36709,25 @@ simulation and staged-branch check stand. Nothing to fix, contest or drive; step
 Chris's. No merges. Queue **22/23/24 of 43** (depth up from 39; positions unchanged since 15:36Z). main still
 `6975caec1`, so r712's merge-group simulation and staged-branch check stand. Nothing to fix, contest or drive;
 step 5 shut. No toolkit edits.
+
+---
+
+## r715 — 2026-09-14T16:07Z — main moved (#6680, #6634); queued merge groups and staged branches still clean
+
+**Board** (16:06Z): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on head; #5950 is
+Chris's. None of mine merged. #6680 (F4 short-root representation) and #6634 (A-infinity cohomological units)
+merged: main `6975caec1` → **`4d0169229`**; mine moved to **20/21/22 of 42**. Nothing to fix, contest or drive;
+step 5 shut.
+
+**Merge-group simulation** against `4d0169229`:
+
+```
+#6093  17 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: exit 0
+#6796  15 behind  merges clean  ghostref: all short forms still resolve    stalequal: exit 0
+#6800  15 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: exit 0
+```
+
+**Staged branches** (`git merge-tree`): levi-civita 7 behind, quadratic 5, exchangeable-dedup 4; none of their files
+touched on main; all merge clean.
+
+No toolkit edits.
