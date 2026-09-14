@@ -39,11 +39,6 @@ The file also carries the rational forms of mathlib's two behaviour-at-`i∞` sl
 `UpperHalfPlane` namespace: they belong beside `rat_slash`, which is the bridge their proofs
 cross, rather than in any module about particular matrices.
 
-## Main definitions
-
-* `Matrix.GeneralLinearGroup.ratToRealGL`: the change of scalars `GL(2, ℚ) →* GL(2, ℝ)` that the
-  action below is transported along, with `Matrix.GeneralLinearGroup.ratToRealGL_injective`.
-
 ## Main results
 
 * `ModularForm.rat_slash`: the rational action is the real one at the mapped matrix.
@@ -73,10 +68,11 @@ Ported from the AINTLIB `LeanModularForms` project
 ([`LeanModularForms/HeckeRIngs/GL2/HeckeAction.lean`](https://github.com/CBirkbeck/AINTLIB),
 commit `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck): the
 `SlashAction ℤ (GL (Fin 2) ℚ) (ℍ → ℂ)` instance built by `monoidHomSlashAction`, and the
-scalar-pull-through step inside its `heckeSlash_smul`. AINTLIB names the embedding `glMap`; that
-is a one-use wrapper around Mathlib's `Matrix.GeneralLinearGroup.map`, so it is not ported and
-the map is spelled out instead. The scalar lemma is stated here at the `SMul`/`IsScalarTower`
-generality of Mathlib's `ModularForm.SL_smul_slash` rather than AINTLIB's `c : ℂ`.
+scalar-pull-through step inside its `heckeSlash_smul`. AINTLIB names the embedding `glMap`; the
+corresponding declaration here is `TauCeti.ratToRealGL`, in
+`TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Map.lean`, which the instance below is built
+from. The scalar lemma is stated here at the `SMul`/`IsScalarTower` generality of Mathlib's
+`ModularForm.SL_smul_slash` rather than AINTLIB's `c : ℂ`.
 
 The `SLnZ 2` / `𝒮ℒ` bridge corresponds to AINTLIB's `glMap_mem_SL` and `mem_SL_exists_H` (same
 file). AINTLIB's `glMap_mapGL_eq` has no counterpart: mathlib's
@@ -94,26 +90,12 @@ open Matrix Matrix.SpecialLinearGroup UpperHalfPlane HeckeRing.GLn
 
 open scoped MatrixGroups ModularForm
 
-namespace Matrix.GeneralLinearGroup
-
-/-- **The change of scalars the rational slash action factors through.** `GL(2, ℚ)` does not act
-on `ℍ`; this is the entrywise map to `GL(2, ℝ)`, which does. -/
-noncomputable abbrev ratToRealGL : GL (Fin 2) ℚ →* GL (Fin 2) ℝ :=
-  Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)
-
-/-- **The change of scalars is injective**, so a subgroup of `GL(2, ℚ)` is carried isomorphically
-onto its image. -/
-theorem ratToRealGL_injective : Function.Injective ratToRealGL :=
-  Matrix.GeneralLinearGroup.map_injective (algebraMap ℚ ℝ).injective
-
-end Matrix.GeneralLinearGroup
-
 namespace ModularForm
 
 /-- The weight-`k` slash action of `GL(2, ℚ)`, induced from `GL(2, ℝ)` along `ℚ ↪ ℝ`. Scoped,
 so it is opted into rather than imposed. -/
 noncomputable scoped instance ratSlashAction : SlashAction ℤ (GL (Fin 2) ℚ) (ℍ → ℂ) :=
-  monoidHomSlashAction Matrix.GeneralLinearGroup.ratToRealGL
+  monoidHomSlashAction TauCeti.ratToRealGL
 
 /-- The rational slash action is the real one at the mapped matrix. Definitional, but named:
 it is how every `GL(2, ℝ)` lemma is brought to bear on a rational slash.

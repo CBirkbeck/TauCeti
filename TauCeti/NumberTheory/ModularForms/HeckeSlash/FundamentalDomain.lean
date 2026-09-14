@@ -15,10 +15,15 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 `HeckeRing.GL2.heckeSlashSum` sums `f ∣[k] aᵥ` over `v : DecompQuotient Γ₂ Γ₁ δ⁻¹`, with
 `aᵥ = rightCosetRep D v = δ τᵥ⁻¹`. Everything there lives in `GL (Fin 2) ℚ`, which does **not**
 act on `ℍ`; the slash goes through the change of scalars
-`φ = Matrix.GeneralLinearGroup.ratToRealGL`.
+`φ = TauCeti.ratToRealGL`.
 
 This file shows that the real images `φ aᵥ` of those representatives translate a fundamental
 domain for `Γ₂` into one for `Γ₁ ∩ δ Γ₂ δ⁻¹`, both read in `GL (Fin 2) ℝ`.
+
+This is what turns a sum of slashes into a single integral: because the translates tile, an
+integral of `heckeSlashSum` over a fundamental domain for the smaller group may be read termwise
+over one for `Γ₂`, which is how the Petersson pairing of a Hecke operator against a form is
+computed and hence how its adjoint is identified.
 
 ## Main results
 
@@ -29,10 +34,7 @@ domain for `Γ₂` into one for `Γ₁ ∩ δ Γ₂ δ⁻¹`, both read in `GL (
 Adapted from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/HeckeRIngs/GL2/AdjointTheory/FDTransport.lean`,
 <https://github.com/CBirkbeck/AINTLIB>, commit `6d87d596a5372d5b122c47b7082d4c3afa9b7c3b`,
-Apache-2.0, Chris Birkbeck). That file runs the
-transport by hand at PSL level; here mathlib's `IsFundamentalDomain` API,
-`IsFundamentalDomain.iUnion_mul_smul_of_transversal` and `decompQuotientEquivMapOfInjective` carry
-it, so only the assembly remains.
+Apache-2.0, Chris Birkbeck), where the same transport is carried out at `PSL` level.
 
 ## References
 
@@ -42,7 +44,7 @@ it, so only the assembly remains.
 
 public section
 
-open MeasureTheory ConjAct Matrix Matrix.GeneralLinearGroup UpperHalfPlane DoubleCoset
+open MeasureTheory ConjAct Matrix TauCeti UpperHalfPlane DoubleCoset
 
 open scoped MatrixGroups ModularForm Pointwise
 
