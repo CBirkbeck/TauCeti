@@ -1,4 +1,4 @@
-# Last round — r710 (2026-09-14T15:17Z)
+# Last round — r711 (2026-09-14T15:27Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -30,7 +30,7 @@ through the local codex CLI that MCP wraps:
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-23 ahead of #6093, unchanged from 14:56Z to 15:16Z; the head #6641 was mid merge-group build).
+23 ahead of #6093, unchanged from 14:56Z to 15:26Z; main has not moved since ~14:44Z).
 
 ## What to expect next
 
@@ -90,7 +90,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r710 did
+## What r703–r711 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -102,6 +102,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r708: no-op board (queue 24/25/26); staged branches re-checked against main (ledger r708).
 * r709: no-op board; the fork has never run a workflow, so staged branches get no build before they open.
 * r710: no-op board; queue head #6641 mid `sandboxed-build` (slow, not stuck).
+* r711: no-op board; queue and main unmoved for 30+ minutes.
 
 ## Candidates for a later step 5
 

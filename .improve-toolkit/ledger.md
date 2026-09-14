@@ -36650,3 +36650,22 @@ which is how positions advanced in r708 while main did not. The queue is buildin
 touch either way.
 
 No toolkit edits.
+
+---
+
+## r711 — 2026-09-14T15:27Z — no-op board; main still unmoved
+
+**Board** (15:26Z): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on head; #5950 is
+Chris's. No merges. Queue **24/25/26 of 39**, unchanged since 14:56Z. Nothing to fix, contest or drive; step 5 shut.
+main still `d4312459a` (no merge since #6688, ~14:44Z), so r708's staged-branch check stands.
+
+Queue head (read-only):
+
+```
+pos=1 #6641 AWAITING_CHECKS enqueued=2026-09-14T08:14:38Z head=0a37545c5
+pos=2 #6692 AWAITING_CHECKS enqueued=2026-09-14T08:15:06Z head=6975caec1
+publish-merge-group-cache / publish: queued/null since 2026-09-14T15:18:23Z
+sandboxed-build: completed/success since 2026-09-14T14:58:04Z
+```
+
+No toolkit edits.
