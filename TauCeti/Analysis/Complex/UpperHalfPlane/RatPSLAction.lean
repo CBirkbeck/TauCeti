@@ -22,21 +22,22 @@ geometric statement about them has to be pushed along such a homomorphism before
 injective, so it keeps `-1`, which acts trivially on `ℍ`. Anything demanding a *faithful*
 action — `MeasureTheory.IsFundamentalDomain` in particular, whose a.e.-disjointness clause
 is `Pairwise` over group elements — is then unsatisfiable. Passing to `PSL(2, ℝ)` collapses
-exactly the scalars, and `eq_one_or_neg_one_of_mem_ker_of_det_eq_one` says that on the
+exactly the scalars, and `eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one` says that on the
 determinant-one locus nothing else is lost: the kernel there is `{±1}`.
 
 ## Main definitions
 
-* `Matrix.GeneralLinearGroup.map_mem_GLPos`: a strictly monotone ring hom carries `GLPos`
-  to `GLPos`, so a change of scalars restricts to the positive-determinant subgroups.
+* `TauCeti.ratPosToRealPos`: the change of scalars `GL(2, ℚ)⁺ →* GL(2, ℝ)⁺`.
 * `TauCeti.ratPosToPSL2R`: the composite `GL(2, ℚ)⁺ →* GL(2, ℝ)⁺ →* PSL(2, ℝ)`.
 
 ## Main results
 
+* `Matrix.GeneralLinearGroup.map_mem_glpos`: a strictly monotone ring hom carries `GLPos`
+  to `GLPos`, so a change of scalars restricts to the positive-determinant subgroups.
 * `TauCeti.ratPosToPSL2R_smul`: `ratPosToPSL2R g` acts on `ℍ` as the real matrix does.
-* `TauCeti.eq_one_or_neg_one_of_mem_ker_of_det_eq_one`: an element of `ker ratPosToPSL2R`
-  with determinant one is `±1`. Hence `ker ratPosToPSL2R ⊓ SL ≤ Γ` for any `Γ` containing
-  `{±1}` — every `Γ₀(N)`, in particular.
+* `TauCeti.eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one`: an element of
+  `ker ratPosToPSL2R` with determinant one is `±1`. Hence `ker ratPosToPSL2R ⊓ SL ≤ Γ` for any
+  `Γ` containing `{±1}` — every `Γ₀(N)`, in particular.
 
 ## References
 
@@ -55,76 +56,85 @@ variable {n : Type*} [DecidableEq n] [Fintype n] {R S : Type*}
   [CommRing R] [LinearOrder R] [IsStrictOrderedRing R]
   [CommRing S] [LinearOrder S] [IsStrictOrderedRing S]
 
-/-- A strictly monotone change of scalars restricts to the positive-determinant subgroups:
-the determinant commutes with the ring hom, and a strictly monotone ring hom is positive. -/
-theorem map_mem_GLPos {f : R →+* S} (hf : StrictMono f) {g : GL n R} (hg : g ∈ GLPos n R) :
+/-- A strictly monotone change of scalars restricts to the positive-determinant subgroups.
+
+This is the side condition for cutting `Matrix.GeneralLinearGroup.map f` down to a homomorphism
+`GLPos n R →* GLPos n S`; for `f = algebraMap ℚ ℝ` the hypothesis is `Rat.cast_strictMono`.
+Contrast `Matrix.SpecialLinearGroup.toGLPos`, which lands in `GLPos` because the determinant
+is `1`: here it is only positive, and monotonicity of `f` is what keeps it so. -/
+theorem map_mem_glpos {f : R →+* S} (hf : StrictMono f) {g : GL n R} (hg : g ∈ GLPos n R) :
     g.map f ∈ GLPos n S := by
-  have hdet : ((g.map f : GL n S) : Matrix n n S).det = f ((g : Matrix n n R).det) := by
-    rw [val_map_apply, ← RingHom.mapMatrix_apply, ← RingHom.map_det]
-  refine (mem_glpos _).mpr ?_
-  change 0 < ((g.map f : GL n S) : Matrix n n S).det
-  rw [hdet, ← map_zero f]
-  exact hf ((mem_glpos g).mp hg)
+  -- the determinant commutes with the ring hom, and a strictly monotone ring hom is positive
+  simpa [GeneralLinearGroup.map_det] using hf.lt_iff_lt.mpr hg
 
 end Matrix.GeneralLinearGroup
 
 namespace TauCeti
 
 /-- The change of scalars `GL(2, ℚ)⁺ →* GL(2, ℝ)⁺`, the restriction of
-`Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)` to the positive-determinant subgroups. -/
+`Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)` to the positive-determinant subgroups. Its
+underlying `GL (Fin 2) ℝ` matrix is that map applied to `g` definitionally, so a goal mixing
+the two spellings closes by `rfl`. -/
 noncomputable def ratPosToRealPos : GL(2, ℚ)⁺ →* GL(2, ℝ)⁺ :=
-  ((Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)).comp (GLPos (Fin 2) ℚ).subtype).codRestrict _
-    fun g ↦ Matrix.GeneralLinearGroup.map_mem_GLPos Rat.cast_strictMono g.2
+  (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)).restrict fun _ ↦
+    Matrix.GeneralLinearGroup.map_mem_glpos Rat.cast_strictMono
 
-/-- **The rational projective action.** `GL(2, ℚ)⁺` acts on `ℍ` through `PSL(2, ℝ)`. -/
-noncomputable def ratPosToPSL2R : GL(2, ℚ)⁺ →* PSL(2, ℝ) :=
-  glPosToPSL2R.comp ratPosToRealPos
+/-- The underlying `GL (Fin 2) ℝ` matrix of `ratPosToRealPos g` is the change of scalars applied
+to `g`. Definitionally true, but named so that goals mixing the two spellings close by
+`rw`/`simp` rather than by unfolding — `ratPosToPSL2R_smul` currently relies on the defeq alone.
+(`by rfl`, not `rfl`: `ratPosToRealPos` is not `@[expose]`, so a theorem exported from this
+module cannot unfold it in term mode.) -/
+theorem coe_ratPosToRealPos (g : GL(2, ℚ)⁺) :
+    (ratPosToRealPos g : GL (Fin 2) ℝ) =
+      Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (g : GL (Fin 2) ℚ) := by rfl
 
-/-- `ratPosToPSL2R g` acts on `ℍ` exactly as the real matrix `g` does. -/
+/-- **The rational projective action.** `GL(2, ℚ)⁺` acts on `ℍ` through `PSL(2, ℝ)`: the change
+of scalars `ratPosToRealPos` followed by the projectivization `glPosToPSL2R`. Compute the action
+with `ratPosToPSL2R_smul`; unlike `ratPosToRealPos` this map is deliberately *not* injective, as
+it collapses the scalar matrices, which act trivially on `ℍ`. -/
+noncomputable def ratPosToPSL2R : GL(2, ℚ)⁺ →* PSL(2, ℝ) := glPosToPSL2R.comp ratPosToRealPos
+
+/-- `ratPosToPSL2R g` acts on `ℍ` exactly as the real matrix `g` does. Rewriting with this
+turns a goal about the `PSL(2, ℝ)`-action into one about Mathlib's `GL(2, ℝ)`-action on `ℍ`;
+it is the `ℚ`-coefficient counterpart of `UpperHalfPlane.glPosToPSL2R_smul`. -/
 theorem ratPosToPSL2R_smul (g : GL(2, ℚ)⁺) (τ : ℍ) :
     ratPosToPSL2R g • τ = Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (g : GL (Fin 2) ℚ) • τ :=
   glPosToPSL2R_smul (ratPosToRealPos g) τ
 
-/-- An element of `ker ratPosToPSL2R` has central real image: it acts trivially on `ℍ`, and
-`UpperHalfPlane.forall_smul_eq_self_iff_mem_center` says only the center does. -/
-theorem map_mem_center_of_mem_ker {g : GL(2, ℚ)⁺} (hg : g ∈ ratPosToPSL2R.ker) :
-    Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (g : GL (Fin 2) ℚ) ∈
-      Subgroup.center (GL (Fin 2) ℝ) :=
-  UpperHalfPlane.forall_smul_eq_self_iff_mem_center.mp fun τ ↦ by
-    rw [← ratPosToPSL2R_smul g τ, MonoidHom.mem_ker.mp hg, one_smul]
+/-- An element of `ker ratPosToPSL2R` has central real image.
 
-/-- **The kernel meets the determinant-one locus in `{±1}`.** Central in `GL(2, ℝ)` means
-scalar, a scalar of determinant one has scalar `±1`, and the change of scalars is injective. -/
-theorem eq_one_or_neg_one_of_mem_ker_of_det_eq_one {g : GL(2, ℚ)⁺}
-    (hg : g ∈ ratPosToPSL2R.ker) (hdet : ((g : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det = 1) :
+Central in `GL (Fin 2) ℝ` means scalar (`Matrix.GeneralLinearGroup.center_eq_range_scalar`), so
+this alone pins the image down only up to a scalar; adding determinant one cuts it to `±1` —
+that stronger form is `eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one`. -/
+theorem map_mem_center_of_mem_ratPosToPSL2R_ker {g : GL(2, ℚ)⁺} (hg : g ∈ ratPosToPSL2R.ker) :
+    Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (g : GL (Fin 2) ℚ) ∈ Subgroup.center
+      (GL (Fin 2) ℝ) :=
+  -- the real matrix acts on `ℍ` exactly as its projective class does, and that class is `1`
+  UpperHalfPlane.forall_smul_eq_self_iff_mem_center.mp fun τ ↦ by
+    rw [← ratPosToPSL2R_smul, MonoidHom.mem_ker.mp hg, one_smul]
+
+/-- **The kernel meets the determinant-one locus in `{±1}`.**
+
+Use it to discharge `ratPosToPSL2R.ker ⊓ H ≤ Γ` whenever `H` lies in the determinant-one locus
+and `Γ` contains `{±1}` — every `Γ₀(N)`, in particular. Without `hdet` only
+`map_mem_center_of_mem_ratPosToPSL2R_ker` is available, and that pins the image down to a
+scalar, no further. -/
+theorem eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one {g : GL(2, ℚ)⁺}
+    (hg : g ∈ ratPosToPSL2R.ker)
+    (hdet : ((g : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det = 1) :
     (g : GL (Fin 2) ℚ) = 1 ∨ (g : GL (Fin 2) ℚ) = -1 := by
-  have hc := map_mem_center_of_mem_ker hg
-  rw [Matrix.GeneralLinearGroup.center_eq_range_scalar] at hc
-  obtain ⟨c, hcs⟩ := hc
-  have hdetR : ((Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (g : GL (Fin 2) ℚ) :
-      GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ).det = 1 := by
-    rw [Matrix.GeneralLinearGroup.val_map_apply, ← RingHom.mapMatrix_apply, ← RingHom.map_det,
-      hdet, map_one]
+  -- central in `GL(2, ℝ)` means scalar
+  obtain ⟨c, hcs⟩ :=
+    Matrix.GeneralLinearGroup.center_eq_range_scalar.le (map_mem_center_of_mem_ratPosToPSL2R_ker hg)
+  -- a scalar of determinant one has scalar `±1`
   have hc2 : c = 1 ∨ c = -1 := by
-    have := congrArg (fun u : GL (Fin 2) ℝ ↦ (u : Matrix (Fin 2) (Fin 2) ℝ).det) hcs
-    simp only [Matrix.GeneralLinearGroup.coe_scalar, Matrix.scalar_apply,
-      Matrix.det_diagonal] at this
-    rw [hdetR] at this
-    simpa [Fin.prod_univ_two] using this
-  have hinj : Function.Injective
-      (Matrix.GeneralLinearGroup.map (n := Fin 2) (algebraMap ℚ ℝ)) :=
-    Matrix.GeneralLinearGroup.map_injective (algebraMap ℚ ℝ).injective
-  rcases hc2 with h | h
-  · refine Or.inl (hinj ?_)
-    rw [← hcs, h]
-    ext i j
-    simp
-  · refine Or.inr (hinj ?_)
-    rw [← hcs, h]
-    ext i j
-    simp only [Matrix.GeneralLinearGroup.coe_scalar, Matrix.scalar_apply, Matrix.diagonal_apply,
-      Units.val_neg, Units.val_one, Matrix.GeneralLinearGroup.val_map_apply, Matrix.map_apply,
-      Matrix.neg_apply, Matrix.one_apply]
-    split_ifs <;> simp
+    have hsq : (c : ℝ) ^ 2 = 1 := by
+      simpa [Matrix.GeneralLinearGroup.map_det, hdet]
+        using congrArg Units.val (congrArg Matrix.GeneralLinearGroup.det hcs)
+    exact (sq_eq_one_iff.mp hsq).imp Units.ext Units.ext
+  -- and the change of scalars is injective
+  refine hc2.imp ?_ ?_ <;> rintro rfl <;>
+    exact Matrix.GeneralLinearGroup.map_injective (algebraMap ℚ ℝ).injective <| by
+      simpa [Units.ext_iff, ← RingHom.mapMatrix_apply, -Matrix.scalar_apply] using hcs.symm
 
 end TauCeti
