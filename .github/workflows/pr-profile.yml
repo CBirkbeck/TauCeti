@@ -57,14 +57,11 @@ jobs:
   # Deliberately not named `perf`: the authoritative required context is the
   # commit status posted at the end, not this workflow's automatic check-run.
   performance-gate:
-    # Namespace, because bubblewrap needs no AppArmor profile there: the restriction Ubuntu
-    # 24.04 applies is absent and unprivileged user namespaces already work. `container.privileged`
-    # is required and documented by Namespace for exactly this case. Without it the job container's
-    # seccomp profile denies `pivot_root` and bwrap cannot build its sandbox at all, for root as
-    # well as for the job user. The `-with-features` suffix is what makes the feature label apply.
-    runs-on:
-      - nscloud-ubuntu-24.04-amd64-8x16-with-features
-      - namespace-features:container.privileged=true
+    # Namespace runners are provisioned for the leanprover organisation; this repository is in
+    # TauCetiProject, where a job with those labels is never picked up and sits queued forever.
+    # The bubblewrap policy itself runs correctly on a privileged Namespace runner, so this is a
+    # question of provisioning rather than of the sandbox.
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     if: >-
       github.event_name == 'pull_request_target' ||
