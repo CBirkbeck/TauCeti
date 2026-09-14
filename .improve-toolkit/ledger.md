@@ -36583,3 +36583,22 @@ and `Contractability.lean`'s module doc. Whole-repo `git grep`: 0 leftovers, non
 moved into it instead.
 
 **Rotation state:** kinds 1, 2 and 3 staged; open them in that order, one per freed slot.
+
+---
+
+## r707 — 2026-09-14T14:52Z — no-op board; the three staged branches still merge clean
+
+**Board** (14:50Z, six minutes after r706): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. No merges. Queue 25/26/27 of 36, unchanged. Nothing to fix, contest or drive;
+step 5 shut. main moved by one commit (#6688's merge) since r706's merge-group simulation, so it was not re-run.
+
+**Staged-branch drift** (`git merge-tree --write-tree --name-only origin/main <branch>`, no checkout) against main
+`d4312459a`:
+
+```
+improve/levi-civita-mathlib              4d0dfadf1  3 behind  8 files  none touched on main  merges clean
+improve/quadratic-separable-ring         89205ce8d  1 behind  1 file   none touched on main  merges clean
+improve/exchangeable-contractable-dedup  73227e02e  0 behind  4 files  none touched on main  merges clean
+```
+
+No toolkit edits.

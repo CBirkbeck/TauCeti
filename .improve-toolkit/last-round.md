@@ -1,4 +1,4 @@
-# Last round — r706 (2026-09-14T14:50Z)
+# Last round — r707 (2026-09-14T14:52Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -24,18 +24,20 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 25/35** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 25/36** | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 26** | nobody |
 | **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 27** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-24 ahead of #6093 at 14:44Z; the head, #6688, sat `AWAITING_CHECKS` from 07:42Z before merging).
+24 ahead of #6093, unchanged from 14:44Z to 14:50Z).
 
 ## What to expect next
 
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only; r706: all three clean against `a6f0015c4`).
+   merge-group simulation (cheap, read-only; r706: all three clean against `a6f0015c4`). Staged branches:
+   `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r707: all three
+   clean against `d4312459a`, none of their files touched on main).
 2. **When a slot opens, open kind 1: `improve/levi-civita-mathlib`** (`4d0dfadf1` on `fork`). At that moment:
    merge `origin/main`, re-gate (expect 15 ok / 2 failed / 0 UNRUN: `decldiff` and `nsjump`, both answered in
    the body), push, then
@@ -86,7 +88,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r706 did
+## What r703–r707 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -94,6 +96,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r704: staged kind 1 (Levi-Civita); prepush/stalequal/decldiff learned deleted files — 158/0.
 * r705: staged kind 2 (`QuadraticDiscriminant.lean`: separable from a unit discriminant, over any `CommRing`).
 * r706: re-simulated the three merge groups (clean); staged kind 3 (the `Exchangeable.contractable` dedup).
+* r707: no-op board; the three staged branches still merge clean.
 
 ## Candidates for a later step 5
 
