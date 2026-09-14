@@ -5,7 +5,7 @@
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
 | **#6093** | `18e85bea2` | **green** | `roadmap/none,awaiting-author` | nobody — `api-design` answered by code **and** in-thread (reply 4004781516); board pending |
-| **#6796** | `06e8f7fdf` | success | draft=true | watch marks ready on green; if it is still a draft with green CI, `gh pr ready 6796` |
+| **#6796** | `06e8f7fdf` | **green** | ready since **11:45:14Z** | nobody — first board ~12:17–12:52Z; do not drive before 12:45Z |
 | **#6800** | `716cf35ee` | queued | draft | watch marks ready on green |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 

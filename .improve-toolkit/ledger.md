@@ -36179,3 +36179,7 @@ No open PR touches the three files. **PR #6800**, draft; a watch marks it ready 
 ```
 
 Three `improve/*` PRs of mine are open, so step 5 does not fire next round.
+
+**Addendum 11:45Z.** #6796's watch saw `sandboxed-build: success` and marked it ready at
+**11:45:14Z** — two seconds before a manual check went to do the same. Its review clock starts there:
+first board expected ~12:17–12:52Z, and step 4 may not drive it before 12:45Z.
