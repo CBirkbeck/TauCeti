@@ -37559,3 +37559,27 @@ the cap is shut.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r751 — 2026-09-14T21:57Z — main moved (#6746, additive); my three open PRs still merge clean; both drafts building
+
+**Board** (21:56Z; sweep and queuepos exited 0):
+
+* **#6851** (kind 1): ready since 21:37:58Z, `awaiting-review`, CI green, `NO BOARD` (18 min in; drive only after
+  22:37:58Z).
+* **#6854** (kind 2) and **#6855** (kind 3): drafts, now labelled `awaiting-CI`. `sandboxed-build` in progress since
+  21:45:37Z and 21:50:36Z.
+* #5950 is Chris's.
+
+Nothing to fix, contest or drive; step 5 shut (three open).
+
+**Main moved:** #6746 (certify the Q8 character table) merged at 21:53:41Z: `1a63e8248` → **`7c9ebde59`**, +42 in
+`Dixon/Rational/QuaternionEight.lean`. The firing control read 0 removed lines, 42 added and 3 added declaration
+headers, so nothing was removed and no module renamed. My open PRs against it: #6851 3 behind, #6854 1, #6855 1. All
+merge clean (`git merge-tree`), main touched none of their files, and main's new lines name nothing they remove. None
+is queued, so no merge-group simulation is owed.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
