@@ -24,6 +24,17 @@ For an `n`-th cyclotomic extension `L / K` whose cyclotomic polynomial `Φ_n` is
 
 `Nat.card` is used rather than `Fintype.card` so that no finiteness instance is demanded of the
 caller; the finiteness is supplied locally from `NeZero n`.
+
+## References
+
+The Birkbeck--Brasca Chebotarev development,
+[CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0),
+performs the `φ n` count inline over `ℚ` on branch `development` at commit
+`8575c9df1ae0a61120ab5c964c7911414254bec7`. In `CebotarevDensity/Main.lean` it sets
+`E := IsCyclotomicExtension.autEquivPow L hirr` and rewrites with `Nat.card_congr E.toEquiv`,
+`Nat.card_eq_fintype_card` and `ZMod.card_units_eq_totient`, as a step inside the consumer of
+`chebotarev_cyclotomic` rather than as a named result. `card_aut_eq_totient` is that step named and
+stated over an arbitrary base field. `isCyclic_aut` does not appear in the source.
 -/
 
 public section
