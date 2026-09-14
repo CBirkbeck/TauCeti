@@ -37770,3 +37770,39 @@ board for `f18fe6fedf`. By then it will be about 69 min, past the band.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r759 — 2026-09-14T23:19Z — REST quota ran out at 23:16 again; main moved (#6769, #6636), all clean; #6854 driven after 71 min without a board
+
+**The 23:16:24Z sweep** hit the REST limit (12 fields `API-ERROR`, exit 1), the seventh :16 round today. GraphQL still
+answered: #6851 and #6855 queued (29, 27) with one board each; **#6854 `awaiting-review` with 0 boards**; two new
+merges.
+
+**Main moved twice:** `babe56615` → `13e68cd4e` (#6769, the Hecke recurrence from multiplicativity and the prime powers)
+→ **`958b865a3`** (#6636, the Steinberg endomorphism and candidate group of E₇(q)). The files were
+`ArithmeticFunction/PrimeRecurrence.lean` and `CFSG/TypeE7/{Basic,Frobenius}.lean`. The firing control read 8 removed
+lines, 243 added, and 0 removed and 12 added declaration headers; nothing was removed and no module renamed. My three PRs
+(#6851 10 behind, #6854 8, #6855 8) merge clean, main touched none of their files, and its new lines name nothing they
+remove.
+
+**Merge-group simulation** against `958b865a3`:
+
+```
+#6851  10 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6855   8 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+**Rerun at 23:18:30Z** (fresh window; sweep and queuepos exit 0): #6851 and #6855 are 10/10 on head, QUEUED at 29 and 27.
+#6854 is `awaiting-review`, CI green (`sandboxed-build` success 22:02:23Z on `f18fe6fedf`), and **`NO BOARD` by REST too
+(0 scoreboard comments), 71 min after `ready_for_review` at 22:07:11Z**. #5950 is Chris's.
+
+**Step 4: #6854 driven.** Its window (`max(22:02:23Z, 22:07:11Z) + 1 h` = 23:07:11Z) had passed, r758's one-round hold
+was spent, and 71 min is past the 32–67 min band. Ran `uvx --from git+https://github.com/TauCetiProject/TauCetiReview
+tauceti-review 6854 --reviewer codex --post` from the scratchpad, in the background (log `$SP/drive-6854-r759.log`),
+started about 23:19Z. **The result is pending. The next round reads the log and the board before anything else, and does
+not drive #6854 again while that log shows the run in progress.**
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
