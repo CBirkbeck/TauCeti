@@ -1,4 +1,4 @@
-# Last round — r752 (2026-09-14T22:07Z)
+# Last round — r753 (2026-09-14T22:19Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -10,11 +10,11 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
    ChatGPT `gpt-6-astra` helping.
 3. **What this role has been doing** — rooting, dedup, hypothesis weakening, docstrings, relocation.
 
-**All three kinds are open:** kind 1 **#6851** and kind 2 **#6854** (both ready, awaiting boards), kind 3 **draft
-#6855** (r750). Nothing is staged; the next opening is kind 1 again (the deck group). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
+**All three kinds are open and ready:** kind 1 **#6851**, kind 2 **#6854** and kind 3 **#6855**, each awaiting its
+first board. Nothing is staged; the next opening is kind 1 again (the deck group). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r752):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r753):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -30,9 +30,9 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6851** | `fdeaff5cb7` | **green** (`sandboxed-build` 21:14:25Z → 21:32:12Z) | kind 1; **ready 21:37:58Z**, `awaiting-review`, no board at 22:06Z | **pipeline** — drive only if no board by **22:37:58Z** |
-| **#6854** | `f18fe6fedf` | **green** (`sandboxed-build` 21:45:37Z → 22:02:23Z) | kind 2; **ready 22:07:10Z**, no board yet | **pipeline** — drive only if no board by **23:07:10Z** |
-| **#6855** | `352c92a11` | **`sandboxed-build` running** (since 21:50:36Z) | kind 3; **DRAFT** (opened 21:50:19Z), `awaiting-CI` | **me** — iterate as a draft on CI; `gh pr ready` only when green |
+| **#6851** | `fdeaff5cb7` | **green** (`sandboxed-build` 21:14:25Z → 21:32:12Z) | kind 1; **ready 21:37:58Z**, `awaiting-review`, no board at 22:18Z | **pipeline** — drive only if no board by **22:37:58Z** |
+| **#6854** | `f18fe6fedf` | **green** (`sandboxed-build` 21:45:37Z → 22:02:23Z) | kind 2; **ready 22:07:11Z**, no board at 22:18Z | **pipeline** — drive only if no board by **23:07:11Z** |
+| **#6855** | `352c92a114` | **green** (`sandboxed-build` 21:50:36Z → 22:08:38Z) | kind 3; **ready 22:17:08Z**, no board yet | **pipeline** — drive only if no board by **23:17:08Z** |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open (#6851, #6854, #6855) → step 5 does not fire** until one merges. Main is
@@ -53,11 +53,11 @@ through the local codex CLI that MCP wraps:
    no board for `fdeaff5cb7` after 22:37:58Z.** Its `decldiff`/`nsjump` gate findings are answered in the body; a
    reviewer may still ask about them, and the body's review notes are the reply.
 3. **#6854 (kind 2, quadratic separability) is ready and awaiting its first board.** CI went green at 22:02:23Z
-   (17 min), and it was marked ready at 22:07:10Z. **Drive only if there is no board for `f18fe6fedf` after
-   23:07:10Z.**
-4. **#6855 (kind 3, the `contractable_of_exchangeable` dedup) is a DRAFT on its first CI run** (`352c92a11`, opened
-   21:50:19Z; gate 12/0/0; 0 callers of the removed name on the merged tree). Same rule as #6854: fix it as a draft
-   if red, and run `gh pr ready 6855 --repo TauCetiProject/TauCeti` only when green.
+   (17 min), and it was marked ready at 22:07:11Z. **Drive only if there is no board for `f18fe6fedf` after
+   23:07:11Z.**
+4. **#6855 (kind 3, the `contractable_of_exchangeable` dedup) is ready and awaiting its first board.** CI went green
+   at 22:08:38Z (18 min), and it was marked ready at 22:17:08Z. **Drive only if there is no board for `352c92a114` after
+   23:17:08Z.**
 5. **At the next free slot:** kind 1 again (the deck group, mathlib4#40135 — large; research it while the cap is
    shut), then kind 2 (a new file), then kind 3
    (next candidate: the `StronglyContinuousSemigroup.norm_resolvent_integrand_le` weakening; see ledger r706).
@@ -97,7 +97,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r752 did
+## What r703–r753 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -151,6 +151,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r750: step 5 opened kind 3 as draft **#6855**; #6851 awaits its board; #6854's first build running.
 * r751: main moved (#6746, additive); my three open PRs still merge clean; both drafts building; #6851 no board yet.
 * r752: #6854 green and marked ready; main moved (#6733, restated a lemma none of mine uses); #6855 still building.
+* r753: quota at 22:16 again; #6855 green and marked ready; all three kinds now ready and awaiting boards.
 
 ## Candidates for a later step 5
 

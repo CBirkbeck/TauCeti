@@ -37610,3 +37610,34 @@ main's new lines name nothing they remove.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r753 — 2026-09-14T22:19Z — REST quota ran out at 22:16 again; #6855 green and marked ready; all three kinds ready and awaiting boards
+
+**The 22:16:22Z sweep** hit the REST limit (12 fields `API-ERROR`, exit 1), the sixth :16 round today. GraphQL still
+answered: no new merges; #6851 and #6854 ready; #6855 still a draft but relabelled `awaiting-review`.
+
+**#6855's build was read before its label was trusted.** GraphQL `statusCheckRollup` (the check runs themselves, not
+the label) showed `sandboxed-build` COMPLETED SUCCESS, 21:50:36Z → 22:08:38Z (18 min). Main had not moved since r752's
+check that #6855 merges clean against `3ace2f60d`, so **#6855 was marked ready at 22:17:08Z** (timeline).
+
+**Rerun at 22:18:15Z** (fresh window, `X-RateLimit-Used: 1`; sweep and queuepos exit 0): #6851, #6854 and #6855 are all
+`awaiting-review`, not drafts, CI green, `NO BOARD`. REST check-runs on #6855's full head `352c92a11463` confirm
+`sandboxed-build` success and nothing red; every other run is bookkeeping, success or skipped. #5950 is Chris's. No
+merges since #6733, and main is still `3ace2f60d`. Nothing to fix or contest; step 5 shut (three open).
+
+**Board clocks (step 4)**, from `max(CI-green, ready_for_review)`:
+
+```
+#6851  green 21:32:12Z  ready 21:37:58Z  -> drive only after 22:37:58Z  (no board at 22:18Z, 40 min in)
+#6854  green 22:02:23Z  ready 22:07:11Z  -> drive only after 23:07:11Z
+#6855  green 22:08:38Z  ready 22:17:08Z  -> drive only after 23:17:08Z
+```
+
+The timeline's ready times are one second after my shell's clock readings, so r752's "22:07:10Z" is 22:07:11Z by the
+timeline.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
