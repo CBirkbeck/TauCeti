@@ -36385,3 +36385,28 @@ skips if the head has moved off `716cf35ee`, if `sandboxed-build` is no longer `
 the head exists, or if a label shows the review has already happened or started (`review-in-progress`,
 `ready-to-merge`, `awaiting-author`). The drive log goes to the scratchpad as `drive6800.log`. Outcome to
 follow.
+
+---
+
+## r702 — 2026-09-14T13:11Z — the queued PRs are safe against today's main
+
+"keep going": with nothing owed and #6800's drive not due until 13:12:15Z, the time went into r679's
+failure mode. #6093 and #6796 are hours back in a 31-deep queue, and main keeps moving; if main gains a
+caller of a name one of them removes, its **merge-group** build fails when its turn comes and the PR is
+ejected — exactly what cost #6093 in r679.
+
+So each PR's merge group was simulated: check out its head, `git merge --no-commit origin/main`
+(`787733ab7`), run `ghostref` and `stalequal` against the merged tree — which is what the merge-group
+build will see — then abort.
+
+```
+#6093  8 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: 0 stale
+#6796  6 behind  merges clean  ghostref: all short forms still resolve   stalequal: 0 stale
+#6800  6 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: 0 stale
+```
+
+No conflicts and no new callers of removed names. Nothing to do — and specifically **no refresh**: a
+push would re-trigger review and cost the queued PRs their 10/10 boards and positions. Worth
+re-running if either sits in the queue long enough for main to move a lot; it is cheap and read-only.
+
+Also started: teaching `decldiff` and `rootsurplus` about `open` (the r692 false positive on #6800).
