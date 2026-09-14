@@ -37483,3 +37483,40 @@ staged checks stand. Nothing to fix, contest or drive; step 5 shut.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r749 — 2026-09-14T21:41Z — #6796 and #6800 merged; #6851 green and marked ready; step 5: kind 2 opened as draft #6854
+
+**Board** (21:36Z; sweep and queuepos exited 0): **#6796 merged at 21:29:41Z and #6800 at 21:31:53Z.** Main
+`31e769e30` → `3188698be` → **`1a63e8248`**. #6851's first run finished: `sandboxed-build` **success**, 21:14:25Z →
+21:32:12Z (18 min), with the sweep reading `CI=GREEN`, still `draft=True`, `NO BOARD`. #5950 is Chris's. Nothing to fix
+or contest.
+
+**#6851 marked ready at 21:37:58Z**, after a merge simulation against `1a63e8248`: merges clean; `ghostref` exit 0 (24
+removed, 3 with a short form, 3 chased, 0 ghosts); `stalequal` exit 0 (7 files plus the deleted `Existence.lean` via
+`--deleted`); `deadpath` exit 0. Main's two merges are rootings, and #6851's added lines use neither. The board clock
+starts at `max(CI-green 21:32:12Z, ready 21:37:58Z)`, **so step 4 may drive only after 22:37:58Z with no board.**
+
+**Step 5 fired.** My open `improve/*` PRs were #6851 alone (#5950 excluded), and the rotation's due kind was 2.
+
+**Opened: #6854, kind 2, `refactor(Algebra/Polynomial): separability of a quadratic from a unit discriminant`**
+(draft, 21:41:12Z).
+
+* `improve/quadratic-separable-ring` (`89205ce8d`, local = fork) was 27 behind; the merge was clean and gave
+  `f18fe6fed`. The PR diff against main is 1 file, +26/−15.
+* Gate `prepush.sh origin/main`: **12 ok / 0 failed / 0 UNRUN**, identical to the r705 run.
+* The body was re-read before opening. It describes the change and makes no `/cleanup` claim; the pass report
+  (`pending/quadratic-discriminant-report.md`) says Phase 0 and the diagnostics gate did not run.
+* Verified after creation: draft; head `CBirkbeck:improve/quadratic-separable-ring@f18fe6fed`; base `main`; exactly
+  one standalone `Roadmap: none`.
+* Opened under the same no-build default as #6851. **CI is the first elaborator this branch meets.**
+
+**Staged branch left:** `improve/exchangeable-contractable-dedup` (`73227e02e`, local = fork), 26 behind, merges clean;
+main touched none of its files. The firing control on main's two merges read 21 removed lines and 2 removed
+declaration headers; the branch's added lines use neither rooted name. Kind 3 is due next, and with two of mine open,
+step 5 fires again next round (one target per round).
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
