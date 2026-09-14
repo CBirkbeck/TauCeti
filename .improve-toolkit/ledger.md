@@ -37158,3 +37158,31 @@ staged-branch check: every `D`/`R` module in main's diff is grepped against each
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r737 — 2026-09-14T19:47Z — main moved (#6681); queued merge groups and staged branches still clean
+
+**Board** (19:46Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. None of mine merged. #6681 (Wishart Gram parameter measurability; one new file,
++91/−0) merged: main `2f4794ca6` → **`f25750847`**; mine moved to **3/4/5 of 37**. Nothing to fix, contest or drive;
+step 5 shut.
+
+**Merge-group simulation** against `f25750847`:
+
+```
+#6093  34 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: exit 0
+#6796  32 behind  merges clean  ghostref: all short forms still resolve    stalequal: exit 0
+#6800  32 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: exit 0
+```
+
+**Staged branches** (`git merge-tree`): levi-civita 24 behind, quadratic 22, exchangeable-dedup 21; none of their
+files touched on main; all merge clean; no module renamed or deleted on main. #6681 lands in `Probability/`, near the
+kind-3 dedup, and a merge-tree check sees conflicts but not new callers. So main's new lines were also grepped for the
+names the staged branches remove (`contractable_of_exchangeable`, `IsLeviCivita`, `leviCivita`,
+`isLeviCivita_leviCivita`, `exists_isLeviCivita`, `LeviCivita.Existence`): 0 hits. `prepush.sh` would catch such a
+caller when a branch opens; the grep only sees it earlier.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

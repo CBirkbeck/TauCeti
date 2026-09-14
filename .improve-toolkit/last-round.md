@@ -1,4 +1,4 @@
-# Last round — r736 (2026-09-14T19:37Z)
+# Last round — r737 (2026-09-14T19:47Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -15,7 +15,7 @@ slot. Record each PR's kind in
 the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r736):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r737):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. **If he answers, apply it before opening.**
@@ -29,20 +29,21 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 4/37** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 5** | nobody |
-| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 6** | nobody |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 3/37** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 4** | nobody |
+| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 5** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-3 ahead of #6093 at 19:36Z; main is `2f4794ca6`).
+2 ahead of #6093 at 19:46Z; main is `f25750847`).
 
 ## What to expect next
 
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only; r736: all three clean against `2f4794ca6`). Staged branches:
-   `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r736: all three
-   clean against `2f4794ca6`, none of their files touched on main).
+   merge-group simulation (cheap, read-only; r737: all three clean against `f25750847`). Staged branches:
+   `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r737: all three
+   clean against `f25750847`, none of their files touched on main). A merge-tree check sees conflicts, not new
+   callers: also grep main's new lines for the names each staged branch removes (r737: 0 hits).
 2. **When a slot opens, open kind 1: `improve/levi-civita-mathlib`** (`4d0dfadf1` on `fork`). At that moment:
    merge `origin/main`, re-gate (expect 15 ok / 2 failed / 0 UNRUN: `decldiff` and `nsjump`, both answered in
    the body), push, then
@@ -95,7 +96,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r736 did
+## What r703–r737 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -133,6 +134,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r734: REST quota ran out at 19:16 (the third :16 round); rerun after the :17 reset clean; no-op board.
 * r735: main moved (#6514, renames a module); queued merge groups and staged branches re-checked, all clean.
 * r736: main moved (#6738); queued merge groups and staged branches re-checked, all clean.
+* r737: main moved (#6681); queued merge groups and staged branches re-checked, all clean.
 
 ## Candidates for a later step 5
 
