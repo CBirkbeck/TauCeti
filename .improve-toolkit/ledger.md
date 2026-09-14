@@ -36989,3 +36989,25 @@ No toolkit edits.
 boards on head; #5950 is Chris's. No merges. Queue **10/11/12 of 37**, unchanged since 18:17Z. main still
 `dc7090278`, so r728's merge-group simulation and staged-branch check stand. Nothing to fix, contest or drive;
 step 5 shut. No toolkit edits.
+
+---
+
+## r730 — 2026-09-14T18:37Z — main moved (#6689); queued merge groups and staged branches still clean
+
+**Board** (18:36Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. None of mine merged. #6689 (the Galois group of a product of polynomials is a fibre
+product) merged: main `dc7090278` → **`42b72797d`**; mine moved to **9/10/11 of 40**. Nothing to fix, contest or
+drive; step 5 shut.
+
+**Merge-group simulation** against `42b72797d`:
+
+```
+#6093  28 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: exit 0
+#6796  26 behind  merges clean  ghostref: all short forms still resolve    stalequal: exit 0
+#6800  26 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: exit 0
+```
+
+**Staged branches** (`git merge-tree`): levi-civita 18 behind, quadratic 16, exchangeable-dedup 15; none of their
+files touched on main; all merge clean.
+
+No toolkit edits.
