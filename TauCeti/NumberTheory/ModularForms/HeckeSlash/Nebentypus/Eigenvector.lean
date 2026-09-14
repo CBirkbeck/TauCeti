@@ -35,9 +35,9 @@ and the descent argument then places it in the old subspace.
 ## Main results
 
 * `heckeTCuspNat_eq_smul_iff_forall_qExpansion_coeff_prime_mul`: on `S_k(N, χ)` the recurrence
-  **characterises** the eigenvector equation — the converse holds too, because a cusp form is
-  determined by its `q`-expansion. This is the direction Diamond–Shurman's Proposition 5.8.5
-  needs.
+  **characterises** the eigen-relation `Tₚ F = c • F` — the converse holds too, because a cusp
+  form is determined by its `q`-expansion. This is the direction Diamond–Shurman's
+  Proposition 5.8.5 needs.
 * `qExpansion_coeff_prime_mul_of_heckeRingHomCharSpace_heckeTCompositeGamma0_eq_smul` and its
   cusp-form counterpart `…_of_heckeRingHomCuspCharSpace_…`: the coefficient recurrence of an
   eigenvector, on `M_k(N, χ)` and on `S_k(N, χ)`; the cusp-form one is the forward half of the
@@ -89,13 +89,16 @@ theorem heckeTCuspNat_eq_smul_of_heckeRingHomCuspCharSpace_heckeTCompositeGamma0
   simpa [heckeTCompositeGamma0_prime N hp,
     heckeRingHomCuspCharSpace_heckeTGeneratorGamma0 k χ hp] using congrArg Subtype.val hF
 
-/-! ### The recurrence characterises the eigenvector equation -/
+/-! ### The recurrence characterises the eigen-relation -/
 
-/-- **The coefficient recurrence characterises the `Tₚ`-eigenvector equation at a good prime**,
-on `S_k(N, χ)`. For `F ∈ S_k(N, χ)` and `p ∤ N`, the form `F` is a `Tₚ`-eigenvector with
-eigenvalue `c` exactly when its Fourier coefficients satisfy
+/-- **The coefficient recurrence characterises the eigen-relation `Tₚ F = c • F` at a good
+prime**, on `S_k(N, χ)`. For `F ∈ S_k(N, χ)` and `p ∤ N`, the relation `Tₚ F = c • F` holds
+exactly when the Fourier coefficients of `F` satisfy
 `a_{pm}(F) = c · a_m(F) − χ(p) p^{k−1} a_{m/p}(F)` at every `m`, the last term present only when
 `p ∣ m`.
+
+This is a statement about the equation, not about eigenvectors: `F = 0` satisfies both sides for
+every `c`, and a consumer wanting a genuine eigenvector supplies `F ≠ 0` itself.
 
 The forward direction is
 `qExpansion_coeff_prime_mul_of_heckeRingHomCuspCharSpace_heckeTCompositeGamma0_eq_smul` stated for
