@@ -22,8 +22,8 @@ from `Ideal.eq_of_smul_eq_of_liesOver_under_fixedField`.
 
 ## Main results
 
-* `Ideal.exists_isArithFrobAt_restrictScalars_eq`: a prime carrying `σ` has, over the fixed field,
-  a relative Frobenius restricting to `σ`.
+* `Ideal.exists_isArithFrobAt_and_restrictScalars_eq`: a prime carrying `σ` has, over the
+  fixed field, a relative Frobenius restricting to `σ`.
 
 ## References
 
@@ -46,7 +46,7 @@ variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L]
 /-- **A Frobenius fiber has a relative Frobenius over the fixed field.** If `σ` is an arithmetic
 Frobenius at an unramified prime `Q`, then over `L ^ ⟨σ⟩` there is an arithmetic Frobenius at `Q`
 whose restriction to `Gal(L/K)` is `σ` itself. -/
-theorem exists_isArithFrobAt_restrictScalars_eq (Q : Ideal (𝓞 L)) [Q.IsPrime]
+theorem exists_isArithFrobAt_and_restrictScalars_eq (Q : Ideal (𝓞 L)) [Q.IsPrime]
     [Algebra.IsUnramifiedAt (𝓞 K) Q] (σ : L ≃ₐ[K] L) (hσ : IsArithFrobAt (𝓞 K) σ Q) :
     ∃ τ : L ≃ₐ[↥(fixedField (Subgroup.zpowers σ))] L,
       IsArithFrobAt (𝓞 ↥(fixedField (Subgroup.zpowers σ))) τ Q
