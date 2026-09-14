@@ -36302,3 +36302,24 @@ enqueues on the `ready-to-merge` label transition — check that a self-posted 1
 produces that transition and a queue entry, rather than assuming it.
 
 #6093's drive (started 12:47:38Z) was still running at write-up.
+
+### #6093: 10/10 approved on `18e85bea2`
+
+The second drive posted at 12:53:03Z, round 1. **All ten rubrics green, zero LIVE threads** — including
+`api-design`, so the `@[expose]` removal with `fiberMap_monodromy`'s constructor-form rewrite was
+accepted. `replies_through` on this board is **4004781516**, the r691 reply's id: the explanation was read
+before the verdict.
+
+That closes #6093's long arc: open since 2026-09-08; ejected from the merge queue for staleness (r679); a
+ghost reference on main fixed (r679); two new `compFiberEquiv` laws removed for `scope` (r681); an
+overclaiming docstring narrowed for `documentation` (r687); a contest that `api-design` read and answered
+with a better finding (r687–r691); and the relocation's `@[expose]` removed (r691).
+
+**Second cost data point: $3.17** — ten codex rubrics on a 26-file diff, against $1.00 for #6796's 8
+files. Drive cost scales with the diff, and both are well under the prompt's ~$16. (Whether this run's
+archive push hit the same 403 is unknown: the output was cut to its last 40 lines, and no error line
+survived the cut.)
+
+**Open for the next sweep:** both #6093 and #6796 still read `awaiting-review` seconds after their 10/10
+boards. The bot enqueues on the `ready-to-merge` transition; confirm it happens for self-posted boards,
+and that `queuepos.py` then shows them `QUEUED` rather than `NEVER-QUEUED`.
