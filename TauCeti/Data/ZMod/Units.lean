@@ -125,19 +125,14 @@ theorem IsCoprime.exists_int_lifts {a c : ZMod d}
 /-- **Every unit of `ZMod d` is `ZMod.unitOfCoprime` of a natural number coprime to `d`.**
 A property of all units may therefore be checked on the units of this shape. -/
 theorem ZMod.exists_unitOfCoprime_eq [NeZero d] (u : (ZMod d)ˣ) :
-    ∃ (m : ℕ) (hm : Nat.Coprime m d), ZMod.unitOfCoprime m hm = u := by
-  have hcop : Nat.Coprime (u : ZMod d).val d := by
-    rw [← ZMod.isUnit_iff_coprime]
-    simp [ZMod.natCast_val, ZMod.cast_id]
-  exact ⟨(u : ZMod d).val, hcop, Units.ext (by
-    simp [ZMod.coe_unitOfCoprime, ZMod.natCast_val, ZMod.cast_id])⟩
+    ∃ (m : ℕ) (hm : Nat.Coprime m d), ZMod.unitOfCoprime m hm = u :=
+  ⟨(u : ZMod d).val, ZMod.val_coe_unit_coprime u, ZMod.unitsEquivCoprime.symm_apply_apply u⟩
 
-/-- **`ZMod.unitOfCoprime` is multiplicative in its numerator.**
-
-Not `@[simp]`: the right-hand side needs coprimality proofs for `m` and `n` separately, which
-`simp` cannot synthesise from the left-hand side, so Mathlib's `simpNF` linter reports that the
-lemma "will never apply". -/
-theorem ZMod.unitOfCoprime_mul {m n : ℕ} (hm : Nat.Coprime m d) (hn : Nat.Coprime n d)
-    (hmn : Nat.Coprime (m * n) d) :
-    ZMod.unitOfCoprime (m * n) hmn = ZMod.unitOfCoprime m hm * ZMod.unitOfCoprime n hn :=
+-- Deliberately not `@[simp]`: the right-hand side needs coprimality proofs for `m` and `n`
+-- separately, which `simp` cannot synthesise from the left-hand side, so Mathlib's `simpNF`
+-- linter reports that the lemma would never apply.
+/-- **`ZMod.unitOfCoprime` is multiplicative in its numerator.** -/
+theorem ZMod.unitOfCoprime_mul {m n : ℕ} (hm : Nat.Coprime m d) (hn : Nat.Coprime n d) :
+    ZMod.unitOfCoprime (m * n) (Nat.coprime_mul_iff_left.mpr ⟨hm, hn⟩)
+      = ZMod.unitOfCoprime m hm * ZMod.unitOfCoprime n hn :=
   Units.ext (by push_cast [ZMod.coe_unitOfCoprime]; ring)
