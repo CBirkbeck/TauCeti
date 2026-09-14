@@ -37011,3 +37011,25 @@ drive; step 5 shut.
 files touched on main; all merge clean.
 
 No toolkit edits.
+
+---
+
+## r731 — 2026-09-14T18:47Z — main moved (#6658, next to #6796's files); queued merge groups and staged branches still clean
+
+**Board** (18:46Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. None of mine merged. #6658 (the dimension form of Clifford's theorem) merged: main
+`42b72797d` → **`39593bfe7`**; mine moved to **8/9/10 of 39**. Nothing to fix, contest or drive; step 5 shut.
+
+**Merge-group simulation** against `39593bfe7`. #6658 lands in `RepresentationTheory/Clifford/`, where #6796
+repointed `Representation.IsIrreducible.nontrivial` call sites — the case this check exists for:
+
+```
+#6093  29 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: exit 0
+#6796  27 behind  merges clean  ghostref: all short forms still resolve    stalequal: exit 0
+#6800  27 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: exit 0
+```
+
+**Staged branches** (`git merge-tree`): levi-civita 19 behind, quadratic 17, exchangeable-dedup 16; none of their
+files touched on main; all merge clean.
+
+No toolkit edits.
