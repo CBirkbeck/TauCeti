@@ -37133,3 +37133,28 @@ files touched on main; all merge clean.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits; a standing trap added to `last-round.md`.
+
+---
+
+## r736 — 2026-09-14T19:37Z — main moved (#6738); queued merge groups and staged branches still clean
+
+**Board** (19:36Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. None of mine merged. #6738 (the geometric mean of two positive elements; two new
+files, +280/−0) merged: main `686d8bf2b` → **`2f4794ca6`**; mine moved to **4/5/6 of 37**. Nothing to fix, contest or
+drive; step 5 shut.
+
+**Merge-group simulation** against `2f4794ca6`:
+
+```
+#6093  33 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: exit 0
+#6796  31 behind  merges clean  ghostref: all short forms still resolve    stalequal: exit 0
+#6800  31 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: exit 0
+```
+
+**Staged branches** (`git merge-tree`): levi-civita 23 behind, quadratic 21, exchangeable-dedup 20; none of their
+files touched on main; all merge clean. No module was renamed or deleted on main (r735's trap, now part of the
+staged-branch check: every `D`/`R` module in main's diff is grepped against each branch's added lines).
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
