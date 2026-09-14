@@ -36503,3 +36503,41 @@ declared only in the deleted file were never screened by full path.
   fake Mathlib tree makes deadpath run at all. Mutations: prepush back to `$CHANGED` → 2 FAIL (including
   "deadpath actually runs", so the neg row is not vacuous); stalequal ignoring `--deleted` → 2 FAIL; decldiff
   ignoring it → 1 FAIL. **158 passed, 0 failed.**
+
+---
+
+## r705 — 2026-09-14T14:34Z — kind 2 staged: a quadratic is separable once its discriminant is a unit
+
+**Kind 2 (`/cleanup` + `/mathlibable` file pass), branch `improve/quadratic-separable-ring` @ `89205ce8d`, pushed to
+`fork`, NOT opened** — step 5 is shut, and the queue sat at 26/27/28 from 14:07Z to 14:32Z. Body:
+`pending/quadratic-separable-ring-body.md`; the pass itself: `pending/quadratic-discriminant-report.md`.
+
+**Both commands assume a working local Lean.** Phase 0 of each is `lake build`, and every golf or generalisation gate
+is `lean_diagnostic_messages`. This role's hard rule forbids `lake build` (the shared Mathlib cache is broken), and
+opening a file in the LSP would rebuild Mathlib. So the passes run their static phases — audit, literature, Mathlib
+search, generality, composition, verdict — and CI is the compiler. Edits are limited to ones whose correctness can be
+read off exact signatures.
+
+**File choice.** Not changed on main in 7 days (1516 of 5272 files were), in no open PR (240 PRs), not mine;
+foundational directory, Mathlib-only imports, 40–250 lines, 2–10 public declarations: 171 files. Eight small ones were
+screened against the pin, and most are thin but justified layers. `Subgroup/Pointwise.lean`'s three conjugation laws
+are two-step specialisations of `one_smul`/`mul_smul`/`inv_smul_smul`, but `Conjugate.lean` passes them as named
+`MulEquiv.subgroupCongr` equations 12 times, so they stay. Chosen: `Algebra/Polynomial/QuadraticDiscriminant.lean`
+(169 lines, 7 theorems, adapted from FLT, one consumer).
+
+**Evidence.** Loogle (`discrim`: equation-level API only), LeanSearch, LeanFinder, and a grep of the pin
+(`Polynomial.discr` and `discr_of_degree_eq_two` exist; no polynomial-level separability or splitting criterion).
+WebSearch ×3 (Conrad's separability and characteristic-2 notes). **gpt-6-astra** via `codex exec` (47k tokens): the
+field criteria are the standard forms (Milne FT §1.7; Conrad App. A). Over a commutative ring, `IsUnit disc →
+separable` needs no hypothesis on `a`; the converse needs `IsUnit a` (counterexample `1 + t X²` over `ℚ[t]`) and a
+maximal-ideal argument.
+
+**Change.** New `Polynomial.separable_quadratic_of_isUnit_discrim` (any `CommRing`, `IsUnit (discrim a b c)`), proved
+by the file's own Bézout combination with `h.unit⁻¹` for the field inverse (`IsUnit.val_inv_mul`, `C_mul`, `C_1`,
+all read at the pin). The field iff's reverse direction becomes
+`separable_quadratic_of_isUnit_discrim (isUnit_iff_ne_zero.mpr hdisc)`. Golf: `discrim_eq_sq_of_two_eq_zero` drops its
+single-use `have` (`linear_combination (-2 * a * c) * h2`, coefficient checked by hand). Docs updated. Gate: **12 ok,
+0 failed, 0 UNRUN** (not a rooting PR). Recorded, not implemented: the full `IsUnit a →` iff over rings, and the
+ring-level splitting criteria.
+
+**Rotation state:** kinds 1 and 2 staged; kind 1 opens at the first free slot, kind 2 at the second, then kind 3.

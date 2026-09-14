@@ -1,4 +1,4 @@
-# Last round — r704 (2026-09-14T14:09Z)
+# Last round — r705 (2026-09-14T14:34Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -10,7 +10,8 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
    ChatGPT `gpt-6-astra` helping.
 3. **What this role has been doing** — rooting, dedup, hypothesis weakening, docstrings, relocation.
 
-Every PR so far is kind 3. **Kind 1 is staged** (below) and opens at the first free slot; then kind 2, then 3. Record each PR's kind in
+Every PR so far is kind 3. **Kinds 1 and 2 are staged** (below): kind 1 opens at the first free slot, kind 2 at
+the second, then kind 3. Record each PR's kind in
 the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
@@ -29,7 +30,7 @@ through the local codex CLI that MCP wraps:
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-25 ahead of #6093 at 14:07Z; it moved 2 places in 11 minutes).
+25 ahead of #6093; it moved 2 places from 13:56Z to 14:07Z, then not at all to 14:32Z).
 
 ## What to expect next
 
@@ -40,7 +41,10 @@ through the local codex CLI that MCP wraps:
    the body), push, then
    `gh pr create --draft --repo TauCetiProject/TauCeti --base main --head CBirkbeck:improve/levi-civita-mathlib --title "refactor(Geometry/Manifold): use Mathlib's Levi-Civita connection" --body-file pending/levi-civita-mathlib-body.md`.
    **CI is the first elaborator this branch meets** — iterate as a draft; `gh pr ready` only when green.
-3. **Kind 2 is next after it:** pick a file, run `/cleanup` and `/mathlibable` on it with `gpt-6-astra`.
+3. **At the second free slot, open kind 2: `improve/quadratic-separable-ring`** (`89205ce8d` on `fork`). Same
+   recipe: merge `origin/main`, re-gate (expect 12 ok / 0 failed / 0 UNRUN), push, then
+   `gh pr create --draft --repo TauCetiProject/TauCeti --base main --head CBirkbeck:improve/quadratic-separable-ring --title "refactor(Algebra/Polynomial): separability of a quadratic from a unit discriminant" --body-file pending/quadratic-separable-ring-body.md`.
+4. **At the third, kind 3:** re-run `nscand.py` (see Candidates below).
 
 ## Kind-1 prospects (r703 first pass)
 
@@ -67,12 +71,23 @@ the pin. Outputs: `$SP/mlcatchup.out`, `$SP/idx-*.tsv`.
 * **Checked, nothing to do:** mathlib4#40303 (`xRep`) is consumed, not duplicated; the #38813 hit was
   #38909, whose lemmas `GradedRing.lean` already consumes.
 
-## What r703–r704 did
+## Kind-2 pass notes (r705)
+
+`/cleanup` and `/mathlibable` (in `~/.claude/plugins/marketplaces/mathlib-quality-plugins/commands/`) both start
+with `lake build` and gate every edit on `lean_diagnostic_messages` — **forbidden here**. Run their static phases only
+(audit, literature, Mathlib search, generality, composition, verdict); CI compiles. Mathlib search without a local
+build: the lean-lsp **remote** tools `lean_loogle`, `lean_leansearch` and `lean_leanfinder` (confirm every hit at the
+pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gpt-6-astra` (see the rotation section).
+Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
+`~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
+
+## What r703–r705 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
 * Recorded the user's PR rotation; first kind-1 prospecting pass (above).
 * r704: staged kind 1 (Levi-Civita); prepush/stalequal/decldiff learned deleted files — 158/0.
+* r705: staged kind 2 (`QuadraticDiscriminant.lean`: separable from a unit discriminant, over any `CommRing`).
 
 ## Candidates for a later step 5
 
