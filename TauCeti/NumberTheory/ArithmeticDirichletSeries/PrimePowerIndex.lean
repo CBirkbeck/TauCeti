@@ -115,12 +115,14 @@ theorem idealPrimePowerEquiv_symm_apply (A : IdealPrimePower K) :
 variable {α : Type*} [AddCommGroup α] [UniformSpace α] [IsUniformAddGroup α] [CompleteSpace α]
   [T0Space α] {f : (Ideal (𝓞 K))⁰ → α}
 
-/-- **Summing over prime-power ideals is summing over primes and exponents.** -/
-theorem tsum_idealPrimePower_eq (hf : Summable fun A : IdealPrimePower K ↦ f A.1) :
-    ∑' (P : HeightOneSpectrum (𝓞 K)) (k : ℕ), f (P.idealPrimePowerOf k : (Ideal (𝓞 K))⁰)
-      = ∑' A : IdealPrimePower K, f A.1 := calc
-  _ = ∑' Pk : HeightOneSpectrum (𝓞 K) × ℕ, f (idealPrimePowerEquiv Pk : (Ideal (𝓞 K))⁰) := by
-    simpa using (hf.comp_injective idealPrimePowerEquiv.injective).tsum_prod.symm
+/-- **Summing over prime-power ideals is summing over primes and exponents.**  Stated for an
+arbitrary family on the prime-power ideals, not only for one restricted from the nonzero
+ideals. -/
+theorem tsum_idealPrimePower_eq {g : IdealPrimePower K → α} (hg : Summable g) :
+    ∑' (P : HeightOneSpectrum (𝓞 K)) (k : ℕ), g (P.idealPrimePowerOf k)
+      = ∑' A : IdealPrimePower K, g A := calc
+  _ = ∑' Pk : HeightOneSpectrum (𝓞 K) × ℕ, g (idealPrimePowerEquiv Pk) := by
+    simpa using (hg.comp_injective idealPrimePowerEquiv.injective).tsum_prod.symm
   _ = _ := by rw [← Equiv.tsum_eq idealPrimePowerEquiv]
 
 /-- **A sum supported on prime powers is a sum over primes and exponents.** -/
@@ -129,7 +131,7 @@ theorem tsum_eq_tsum_idealPrimePower_of_support_subset (hfm : Summable f)
     ∑' A : (Ideal (𝓞 K))⁰, f A
       = ∑' (P : HeightOneSpectrum (𝓞 K)) (k : ℕ),
           f (P.idealPrimePowerOf k : (Ideal (𝓞 K))⁰) := by
-  rw [tsum_idealPrimePower_eq (hfm.subtype _)]
+  rw [tsum_idealPrimePower_eq (g := fun A : IdealPrimePower K ↦ f A.1) (hfm.subtype _)]
   exact (tsum_subtype_eq_of_support_subset hf).symm
 
 end TauCeti
