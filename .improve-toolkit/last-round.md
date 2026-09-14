@@ -1,4 +1,4 @@
-# Last round — r732 (2026-09-14T18:57Z)
+# Last round — r733 (2026-09-14T19:12Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -15,6 +15,11 @@ slot. Record each PR's kind in
 the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
+**Open question to Chris (asked after r732, unanswered at r733):** `/cleanup` has not run in full on any staged
+PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
+`lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
+kinds 1 and 3 get a pass scoped to the declarations they change. **If he answers, apply it before opening.**
+
 **ChatGPT access:** no `chatgpt-math` MCP server is configured (only `lean-lsp`). The model is reachable
 through the local codex CLI that MCP wraps:
 `codex exec -m gpt-6-astra -c model_reasoning_effort="high" -o <answer-file> "$(cat <question-file>)" < /dev/null`
@@ -24,20 +29,20 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 7/40** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 8** | nobody |
-| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 9** | nobody |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 6/39** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 7** | nobody |
+| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 8** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-6 ahead of #6093 at 18:56Z; one merge, main is `e5bbe2dec`).
+5 ahead of #6093 at 19:10Z; one merge, main is `a13882323`).
 
 ## What to expect next
 
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only; r732: all three clean against `e5bbe2dec`). Staged branches:
-   `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r732: all three
-   clean against `e5bbe2dec`, none of their files touched on main).
+   merge-group simulation (cheap, read-only; r733: all three clean against `a13882323`). Staged branches:
+   `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r733: all three
+   clean against `a13882323`, none of their files touched on main).
 2. **When a slot opens, open kind 1: `improve/levi-civita-mathlib`** (`4d0dfadf1` on `fork`). At that moment:
    merge `origin/main`, re-gate (expect 15 ok / 2 failed / 0 UNRUN: `decldiff` and `nsjump`, both answered in
    the body), push, then
@@ -90,7 +95,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r732 did
+## What r703–r733 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -124,6 +129,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r730: main moved (#6689); queued merge groups and staged branches re-checked, all clean.
 * r731: main moved (#6658, beside #6796's Clifford files); re-checked, all clean.
 * r732: main moved (Krull dimension merge); queued merge groups and staged branches re-checked, all clean.
+* r733: main moved (#6773, ModularForms); queued merge groups and staged branches re-checked, all clean.
 
 ## Candidates for a later step 5
 

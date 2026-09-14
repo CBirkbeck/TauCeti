@@ -37055,3 +37055,30 @@ Nothing to fix, contest or drive; step 5 shut.
 files touched on main; all merge clean.
 
 No toolkit edits.
+
+---
+
+## r733 — 2026-09-14T19:12Z — main moved (#6773); queued merge groups and staged branches still clean
+
+**Board** (19:10Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. None of mine merged. #6773 (eigen at the good primes is eigen at every good index;
+two new ModularForms files, +168/−0) merged: main `e5bbe2dec` → **`a13882323`**; mine moved to **6/7/8 of 39**.
+Nothing to fix, contest or drive; step 5 shut.
+
+**Merge-group simulation** against `a13882323`:
+
+```
+#6093  31 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: exit 0
+#6796  29 behind  merges clean  ghostref: all short forms still resolve    stalequal: exit 0
+#6800  29 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: exit 0
+```
+
+**Staged branches** (`git merge-tree`): levi-civita 21 behind, quadratic 19, exchangeable-dedup 18; none of their
+files touched on main; all merge clean.
+
+**Open question to Chris** (asked after r732, unanswered): `/cleanup` has not run in full on any staged PR. Kind 2 had
+a static partial pass, kinds 1 and 3 none, because its Phase 0 `lake build` and its diagnostics gate are forbidden
+here. Asked: is a local build allowed now, and should kinds 1 and 3 get a `/cleanup` pass scoped to the declarations
+they change? No staged branch opens before a slot frees, so nothing is blocked yet.
+
+No toolkit edits.
