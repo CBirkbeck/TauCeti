@@ -36635,3 +36635,18 @@ user's account, which this role has no mandate for. The Levi-Civita branch still
 draft PR.
 
 No toolkit edits.
+
+---
+
+## r710 — 2026-09-14T15:17Z — no-op board; the queue is slow, not stuck
+
+**Board** (15:16Z): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on head; #5950 is
+Chris's. No merges. Queue **24/25/26 of 39**, unchanged since 14:56Z. Nothing to fix, contest or drive; step 5 shut.
+main still `d4312459a` (no merge since #6688), so r708's staged-branch check stands.
+
+**Why nothing moved** (read-only GraphQL): the head is #6641 (enqueued 08:14Z, `AWAITING_CHECKS`), whose merge-group
+`sandboxed-build` has been `in_progress` since 14:58:04Z. #6652, second at 14:36Z, left the queue without merging —
+which is how positions advanced in r708 while main did not. The queue is building, not wedged; not this role's to
+touch either way.
+
+No toolkit edits.
