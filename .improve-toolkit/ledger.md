@@ -37433,3 +37433,33 @@ due kind was 1.
 
 The REST quota ran out again at 21:14:30Z; GraphQL still answered. #6796 is `MERGING` at pos 1, #6800 `MERGING` at
 pos 2, and #6851 `NOT-READY` (draft).
+
+---
+
+## r747 — 2026-09-14T21:18Z — REST quota ran out at 21:16 again; rerun clean; #6851's first build running; #6796 and #6800 building merge groups
+
+**The 21:16:51Z sweep** hit the REST limit (12 fields `API-ERROR`, exit 1), the fifth :16 round today. GraphQL still
+answered: #6796 `MERGING` pos 1, #6800 `MERGING` pos 2, #6851 `NOT-READY` (draft), main `31e769e30`.
+
+**Rerun at 21:18:00Z** (sweep and queuepos exit 0; a fresh window, `X-RateLimit-Used: 1`):
+
+* #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on head. Their merge groups: #6796 `3188698be`,
+  `sandboxed-build` in progress since 21:07:23Z; #6800 `1a63e8248`, in progress since 21:10:27Z.
+* **#6851** (kind 1, draft): `CI=PENDING:label,sandboxed-build,zulip-pr`, `NO BOARD` (a draft draws none).
+  `sandboxed-build` has been running since 21:14:25Z. Nothing to do until it finishes.
+* #5950 is Chris's.
+
+No merges since #6093. Nothing to fix, contest or drive; step 5 shut (#6796, #6800 and #6851 open).
+
+**Staged branches re-checked against #6093's merge** (`1f44a437f` → `31e769e30`, which r746 had not covered for them):
+quadratic is 25 behind and exchangeable-dedup 24; both merge clean, and main touched neither's files. The firing
+control on #6093's diff read 329 removed lines and 70 removed declaration headers (a rooting rewrites header spellings).
+Neither branch's added lines use any of the removed short names or mention `IsCoveringMap`.
+
+**A slip, caught.** My own check-runs read for #6851 used `fdeaff5cb3` for a head that is `fdeaff5cb7…`, and got
+`422 No commit found`. That is a typo, not a CI state; the sweep, which reads the full SHA, had the real answer
+(PENDING). Standing trap added.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

@@ -1,4 +1,4 @@
-# Last round — r746 (2026-09-14T21:16Z)
+# Last round — r747 (2026-09-14T21:19Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -14,7 +14,7 @@ Kind 1 is **open as draft #6851** (r746). **Kinds 2 and 3 are staged** (below): 
 freed slot. Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r746):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r747):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -29,9 +29,9 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6851** | `fdeaff5cb` | **`sandboxed-build` running** (since 21:14:25Z) | **DRAFT** (kind 1, opened 21:14:11Z) | **me** — iterate as a draft on CI; `gh pr ready` only when green |
+| **#6851** | `fdeaff5cb7` | **`sandboxed-build` running** (since 21:14:25Z; still running at 21:18Z) | **DRAFT** (kind 1, opened 21:14:11Z) | **me** — iterate as a draft on CI; `gh pr ready` only when green |
 | **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **MERGING, pos 1** (group `3188698be`, `sandboxed-build` since 21:07Z) | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **MERGING, pos 2** (21:14Z) | nobody |
+| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **MERGING, pos 2** (group `1a63e8248`, `sandboxed-build` since 21:10Z) | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open again (#6796, #6800, #6851) → step 5 does not fire** until one merges.
@@ -42,8 +42,8 @@ through the local codex CLI that MCP wraps:
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. A `MERGING` PR's group build is the check-runs of
    `git ls-remote origin 'refs/heads/gh-readonly-queue/main/pr-<n>-*'` (r739), the earliest sign of an ejection. If main moves a lot, re-run r702's
    merge-group simulation (cheap, read-only; r746: clean against `1f44a437f`; #6796 and #6800 are now in merge groups). Staged branches:
-   `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r746: clean
-   against `1f44a437f`, none of their files touched on main; two remain staged now that kind 1 is open). A merge-tree check sees conflicts, not new
+   `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r747: clean
+   against `31e769e30`, none of their files touched on main; two remain staged now that kind 1 is open). A merge-tree check sees conflicts, not new
    callers: also grep main's new lines for the names each staged branch removes, and when main DELETES declarations,
    grep every branch's added lines for them (r738: #6601 removed `sum_binomial_weight(_mul)`; 0 uses). Print a firing
    control: r738's first try was a crashed `sed` whose empty result read as "none".
@@ -98,7 +98,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r746 did
+## What r703–r747 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -146,6 +146,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r744: both top groups published; each waits on a queued finalize job (386 queued runs); no merges for 66 min.
 * r745: both finalize jobs still queued (20 and 15 min); backlog down to 331 runs; no merges for 76 min.
 * r746: #6744 then #6093 merged (21:07, 21:09); all re-checked clean; step 5 fired, and kind 1 opened as draft **#6851**.
+* r747: quota at 21:16 again; rerun clean; #6851's first build running; staged branches clean against #6093's merge.
 
 ## Candidates for a later step 5
 
@@ -249,4 +250,6 @@ paths. When main renames or deletes a module, grep each branch's ADDED lines for
 **A `queued` check with no runner is a capacity stall, not a failure** (r742). Read `actions/runs/<id>/jobs` for
 `labels` and `runner_name`, and `actions/runs?status=queued` for the backlog. It is human-owned: report it, never
 cancel runs.
+**Give check-runs the full head SHA from the sweep** (r747): a mistyped abbreviation returns `422 No commit found`,
+which is not a CI state.
 **HANDOVER.md §11–13 carry this watch's rules** — read them before re-deriving one.
