@@ -1,18 +1,20 @@
-# Last round — r695 (2026-09-14T12:07Z)
+# Last round — r696 (2026-09-14T12:17Z)
 
 ## Board
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | **green** | **`awaiting-review`** since ~11:56Z | nobody — board for the `@[expose]` fix + reply 4004781516 is in flight |
-| **#6796** | `06e8f7fdf` | **green** | **`awaiting-review`**, ready since 11:45:14Z | nobody — first board ~12:17–12:52Z; do not drive before 12:45Z |
-| **#6800** | `716cf35ee` | **green** | ready since **12:12:14Z** | nobody — first board ~12:44–13:19Z; do not drive before 13:12Z |
+| **#6093** | `18e85bea2` | **green** 11:41:09Z | `awaiting-review` | nobody — board for the `@[expose]` fix + reply 4004781516 in flight; **drive only if no board by 12:41:09Z** |
+| **#6796** | `06e8f7fdf` | **green** 11:44:43Z | `awaiting-review`, ready 11:45:14Z | nobody — **drive only if no board by 12:45:14Z** |
+| **#6800** | `716cf35ee` | **green** 12:11:36Z | `awaiting-review`, ready 12:12:14Z | nobody — **drive only if no board by 13:12:14Z** |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire.** (#5950 is excluded from the count
 since r686: it cannot advance, and counting it would stall prospecting indefinitely.)
 
 ## What to expect next
+
+**Step-4 drive times are exact** (from `sandboxed-build` `completed_at`, r696): #6093 12:41:09Z, #6796 12:45:14Z, #6800 13:12:14Z. Drive a PR only if, at or after its time, the sweep still shows NO board for its current head. Driving: `uvx --from git+https://github.com/TauCetiProject/TauCetiReview tauceti-review <PR> --reviewer codex --post`.
 
 1. **#6093's board.** 9 rubrics were green on the previous head, and `api-design` is the only one that
    was blocking. The new head merged 188 commits of main, so expect every rubric to re-run. If

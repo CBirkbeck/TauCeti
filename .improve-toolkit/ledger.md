@@ -36228,3 +36228,20 @@ success` on `716cf35ee`: the `Module.Basis` rooting compiles, including the four
 ~12:44–13:19Z, no drive before 13:12Z.
 
 All three of mine are now green and out of draft: #6093 and #6796 `awaiting-review`, #6800 just readied.
+
+---
+
+## r696 — 2026-09-14T12:17Z — all three in review; step-4 clocks now exact
+
+All three of mine are `awaiting-review`, green, and without a board for their current head. The
+step-4 clock is `max(CI-green, ready_for_review)`; CI-green is `sandboxed-build`'s `completed_at` from
+the check-runs API, not a recalled estimate:
+
+```
+PR     CI green (completed_at)  ready_for_review      earliest drive if still no board
+#6093  11:41:09Z                2026-09-08 (earlier)  12:41:09Z   (r695 said ~12:43Z)
+#6796  11:44:43Z                11:45:14Z             12:45:14Z
+#6800  12:11:36Z                12:12:14Z             13:12:14Z
+```
+
+At 12:16Z none may be driven. No merges, nothing queued; steps 3–5 no-ops.
