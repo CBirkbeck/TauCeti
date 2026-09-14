@@ -36183,3 +36183,13 @@ Three `improve/*` PRs of mine are open, so step 5 does not fire next round.
 **Addendum 11:45Z.** #6796's watch saw `sandboxed-build: success` and marked it ready at
 **11:45:14Z** — two seconds before a manual check went to do the same. Its review clock starts there:
 first board expected ~12:17–12:52Z, and step 4 may not drive it before 12:45Z.
+
+---
+
+## r693 — 2026-09-14T11:47Z — one minute after r692; nothing owed
+
+Board unchanged from r692's write-up: #6093 green on `18e85bea2` (board behind by construction, reply
+posted; its `awaiting-author` label has not caught up yet — **not** a reason to re-fix), #6796 ready
+since 11:45:14Z with no board, #6800 draft with CI pending under its watch, #5950 Chris's. No merges,
+nothing queued. Steps 3–5 all no-ops; three of mine open. Next events: #6800's CI (~12:00Z), then the
+boards for #6796 (~12:17–12:52Z) and #6093.
