@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.Analysis.Complex.UpperHalfPlane.PSLAction
+public import TauCeti.Analysis.Complex.UpperHalfPlane.MoebiusAction
 public import TauCeti.MeasureTheory.Group.FundamentalDomain
 
 /-!
@@ -53,11 +54,6 @@ theorem isFundamentalDomain_map_mapGL {Γ : Subgroup SL(2, ℤ)} {μ : Measure �
     (hΓ : Γ ⊓ Subgroup.center SL(2, ℤ) = ⊥) {S : Set ℍ}
     (hS : IsFundamentalDomain (Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ)))) S μ) :
     IsFundamentalDomain (Γ.map (SpecialLinearGroup.mapGL ℝ)) S μ := by
-  -- `SL(2, ℤ)` acts on `ℍ` as `MulAction.compHom ℍ (mapGL ℝ)`, so an `SL`-translate and the
-  -- `GL`-translate of its image are the same term; no lemma in this file's imports names that
-  -- equation, so it is written out once here and used on both sides.
-  have hmapGL : ∀ (γ : SL(2, ℤ)) (T : Set ℍ),
-      (γ : SL(2, ℤ)) • T = (SpecialLinearGroup.mapGL ℝ γ) • T := fun _ _ ↦ rfl
   refine ⟨hS.nullMeasurableSet, ?_, ?_⟩
   · filter_upwards [hS.ae_covers] with x hx
     obtain ⟨q, hq⟩ := hx
@@ -77,7 +73,12 @@ theorem isFundamentalDomain_map_mapGL {Γ : Subgroup SL(2, ℤ)} {μ : Measure �
         ⟨Γ.mul_mem (Γ.inv_mem h₁Γ) h₂Γ, QuotientGroup.eq.mp (congrArg Subtype.val h)⟩
       rw [hΓ, Subgroup.mem_bot] at hmem
       exact hγne (inv_mul_eq_one.mp hmem)
-    simpa only [Function.onFun, MulAction.subgroup_smul_def, ← h₁, ← h₂,
-      Matrix.SpecialLinearGroup.pslMk_smul_set, hmapGL] using hS.aedisjoint hqne
+    have hdisj := hS.aedisjoint hqne
+    simp only [Function.onFun, MulAction.subgroup_smul_def,
+      Matrix.SpecialLinearGroup.pslMk_smul_set, ModularGroup.sl_smul_set] at hdisj
+    simp only [Function.onFun, MulAction.subgroup_smul_def, ← h₁, ← h₂]
+    -- `sl_smul_set` leaves the `GL`-translate spelled with the coercion, the goal spells it
+    -- `mapGL ℝ γ`; `mapGL` is defined as that coercion, so the two terms are the same.
+    exact hdisj
 
 end TauCeti
