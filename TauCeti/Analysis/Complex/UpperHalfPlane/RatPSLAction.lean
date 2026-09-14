@@ -32,8 +32,6 @@ determinant-one locus nothing else is lost: the kernel there is `{±1}`.
 
 ## Main results
 
-* `Matrix.GeneralLinearGroup.map_mem_glpos`: a strictly monotone ring hom carries `GLPos`
-  to `GLPos`, so a change of scalars restricts to the positive-determinant subgroups.
 * `TauCeti.ratPosToPSL2R_smul`: `ratPosToPSL2R g` acts on `ℍ` as the real matrix does.
 * `TauCeti.eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one`: an element of
   `ker ratPosToPSL2R` with determinant one is `±1`. Hence `ker ratPosToPSL2R ⊓ SL ≤ Γ` for any
@@ -50,25 +48,6 @@ open Matrix UpperHalfPlane
 
 open scoped MatrixGroups
 
-namespace Matrix.GeneralLinearGroup
-
-variable {n : Type*} [DecidableEq n] [Fintype n] {R S : Type*}
-  [CommRing R] [LinearOrder R] [IsStrictOrderedRing R]
-  [CommRing S] [LinearOrder S] [IsStrictOrderedRing S]
-
-/-- A strictly monotone change of scalars restricts to the positive-determinant subgroups.
-
-This is the side condition for cutting `Matrix.GeneralLinearGroup.map f` down to a homomorphism
-`GLPos n R →* GLPos n S`; for `f = algebraMap ℚ ℝ` the hypothesis is `Rat.cast_strictMono`.
-Contrast `Matrix.SpecialLinearGroup.toGLPos`, which lands in `GLPos` because the determinant
-is `1`: here it is only positive, and monotonicity of `f` is what keeps it so. -/
-theorem map_mem_glpos {f : R →+* S} (hf : StrictMono f) {g : GL n R} (hg : g ∈ GLPos n R) :
-    g.map f ∈ GLPos n S := by
-  -- the determinant commutes with the ring hom, and a strictly monotone ring hom is positive
-  simpa [GeneralLinearGroup.map_det] using hf.lt_iff_lt.mpr hg
-
-end Matrix.GeneralLinearGroup
-
 namespace TauCeti
 
 /-- The change of scalars `GL(2, ℚ)⁺ →* GL(2, ℝ)⁺`, the restriction of
@@ -81,7 +60,7 @@ noncomputable def ratPosToRealPos : GL(2, ℚ)⁺ →* GL(2, ℝ)⁺ :=
 
 /-- The underlying `GL (Fin 2) ℝ` matrix of `ratPosToRealPos g` is the change of scalars applied
 to `g`. Definitionally true, but named so that goals mixing the two spellings close by
-`rw`/`simp` rather than by unfolding — `ratPosToPSL2R_smul` currently relies on the defeq alone.
+`rw`/`simp` rather than by unfolding; `ratPosToPSL2R_smul` is proved through it for that reason.
 (`by rfl`, not `rfl`: `ratPosToRealPos` is not `@[expose]`, so a theorem exported from this
 module cannot unfold it in term mode.) -/
 theorem coe_ratPosToRealPos (g : GL(2, ℚ)⁺) :
@@ -98,8 +77,12 @@ noncomputable def ratPosToPSL2R : GL(2, ℚ)⁺ →* PSL(2, ℝ) := glPosToPSL2R
 turns a goal about the `PSL(2, ℝ)`-action into one about Mathlib's `GL(2, ℝ)`-action on `ℍ`;
 it is the `ℚ`-coefficient counterpart of `UpperHalfPlane.glPosToPSL2R_smul`. -/
 theorem ratPosToPSL2R_smul (g : GL(2, ℚ)⁺) (τ : ℍ) :
-    ratPosToPSL2R g • τ = Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (g : GL (Fin 2) ℚ) • τ :=
-  glPosToPSL2R_smul (ratPosToRealPos g) τ
+    ratPosToPSL2R g • τ =
+      Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (g : GL (Fin 2) ℚ) • τ := by
+  unfold ratPosToPSL2R
+  rw [MonoidHom.comp_apply, glPosToPSL2R_smul]
+  -- the last step is `coe_ratPosToRealPos` under the action, not a definitional unfolding
+  exact congrArg (fun m : GL (Fin 2) ℝ ↦ m • τ) (coe_ratPosToRealPos g)
 
 /-- An element of `ker ratPosToPSL2R` has central real image.
 
