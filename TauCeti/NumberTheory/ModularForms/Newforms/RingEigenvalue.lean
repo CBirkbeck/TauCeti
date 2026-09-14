@@ -41,6 +41,9 @@ at composite good indices be read off the eigenvalues at good primes and the cha
 * `HeckeRing.GL2.EigenformAwayFromLevel.recWeight`: the weight `χ(p) p ^ (k - 1)` of that
   recurrence, which depends on the level, weight and character but **not on the form** — the
   sharing the independence theorem needs.
+* `HeckeRing.GL2.EigenformAwayFromLevel.linearIndependent_eigenArithmeticFunction`: the
+  consequence — eigenforms of one level, weight and character with distinct eigenvalue systems
+  have linearly independent eigenvalue systems.
 
 The statements build the coprimality proofs guarding `eigenvalue` from their hypotheses
 (`Nat.coprime_mul_iff_left`, `Nat.Coprime.pow_left`, cast along the coercion lemmas of `ℕ+`); by
@@ -214,24 +217,22 @@ theorem eigenArithmeticFunction_apply_of_not_coprime {n : ℕ} (h : ¬ Nat.Copri
 `eigenvalue_mul`; a product with a bad factor is bad, so both sides vanish there. -/
 theorem isMultiplicative_eigenArithmeticFunction :
     (f.eigenArithmeticFunction).IsMultiplicative := by
-  constructor
+  rw [ArithmeticFunction.IsMultiplicative.iff_ne_zero]
+  refine ⟨?_, fun {m n} hm0 hn0 hmn ↦ ?_⟩
   · rw [f.eigenArithmeticFunction_apply_of_coprime Nat.one_pos (Nat.coprime_one_left N)]
     exact (f.eigenvalue_congr (show (⟨1, Nat.one_pos⟩ : ℕ+) = 1 from rfl)).trans
       f.eigenvalue_one
-  · intro m n hmn
+  · have hm0' := Nat.pos_of_ne_zero hm0
+    have hn0' := Nat.pos_of_ne_zero hn0
     by_cases hm : Nat.Coprime m N
     · by_cases hn : Nat.Coprime n N
-      · rcases Nat.eq_zero_or_pos m with rfl | hm0
-        · simp
-        rcases Nat.eq_zero_or_pos n with rfl | hn0
-        · simp
-        rw [f.eigenArithmeticFunction_apply_of_coprime (Nat.mul_pos hm0 hn0)
+      · rw [f.eigenArithmeticFunction_apply_of_coprime (Nat.mul_pos hm0' hn0')
             (Nat.coprime_mul_iff_left.mpr ⟨hm, hn⟩),
-          f.eigenArithmeticFunction_apply_of_coprime hm0 hm,
-          f.eigenArithmeticFunction_apply_of_coprime hn0 hn]
+          f.eigenArithmeticFunction_apply_of_coprime hm0' hm,
+          f.eigenArithmeticFunction_apply_of_coprime hn0' hn]
         exact (f.eigenvalue_congr
-            (show (⟨m * n, Nat.mul_pos hm0 hn0⟩ : ℕ+) = ⟨m, hm0⟩ * ⟨n, hn0⟩ from rfl)).trans
-          (f.eigenvalue_mul (m := ⟨m, hm0⟩) (n := ⟨n, hn0⟩) hmn hm hn)
+            (show (⟨m * n, Nat.mul_pos hm0' hn0'⟩ : ℕ+) = ⟨m, hm0'⟩ * ⟨n, hn0'⟩ from rfl)).trans
+          (f.eigenvalue_mul (m := ⟨m, hm0'⟩) (n := ⟨n, hn0'⟩) hmn hm hn)
       · rw [f.eigenArithmeticFunction_apply_of_not_coprime hn,
           f.eigenArithmeticFunction_apply_of_not_coprime
             (fun h ↦ hn (Nat.coprime_mul_iff_left.mp h).2), mul_zero]
@@ -270,5 +271,25 @@ theorem hasPrimePowerRec_eigenArithmeticFunction :
       f.eigenArithmeticFunction_apply_of_not_coprime hpN]
     rw [recWeight_of_not_coprime hpN]
     ring
+
+/-- **Eigenforms of one level, weight and character with distinct eigenvalue systems have
+linearly independent eigenvalue systems.**
+
+This is what the bridge above is for. Both hypotheses of
+`ArithmeticFunction.IsMultiplicative.linearIndependent_of_rec` are supplied by the two theorems
+above, and the weight `recWeight N k χ` is shared across the family precisely because it does not
+mention the form.
+
+The hypothesis is that the *extended* systems are distinct, which is weaker than asking the forms
+to be distinct: two eigenforms agreeing at every index coprime to the level have the same
+`eigenArithmeticFunction` whatever they do at the bad indices, and no independence statement could
+separate them. -/
+theorem linearIndependent_eigenArithmeticFunction {ι : Type*} {χ : (ZMod N)ˣ →* ℂˣ}
+    (F : ι → EigenformAwayFromLevel N k) (hχ : ∀ i, (F i).χ = χ)
+    (hdist : Function.Injective fun i ↦ (F i).eigenArithmeticFunction) :
+    LinearIndependent ℂ fun i ↦ (F i).eigenArithmeticFunction :=
+  ArithmeticFunction.IsMultiplicative.linearIndependent_of_rec (w := recWeight N k χ)
+    (fun i ↦ (F i).isMultiplicative_eigenArithmeticFunction)
+    (fun i ↦ hχ i ▸ (F i).hasPrimePowerRec_eigenArithmeticFunction) hdist
 
 end HeckeRing.GL2.EigenformAwayFromLevel
