@@ -27,8 +27,8 @@ vanishes off the prime powers, so nothing else contributes.
 
 ## Main results
 
-* `TauCeti.MultiplicativeIdealWeight.summable_idealTerm_vonMangoldtTransform`: the von Mangoldt
-  weighted ideal terms are summable on the half-plane.
+* `TauCeti.IdealArithmeticFunction.summable_idealTerm_vonMangoldtTransform`: the von Mangoldt
+  weighted ideal terms are summable on the half-plane, for any ideal arithmetic function.
 * `TauCeti.MultiplicativeIdealWeight.logDeriv_LSeries_eq_neg_tsum_vonMangoldtTransform`: the
   coefficient identity itself.
 
@@ -51,6 +51,35 @@ open scoped nonZeroDivisors NumberField
 open IsDedekindDomain NumberField
 
 namespace TauCeti
+
+namespace IdealArithmeticFunction
+
+variable {K : Type*} [Field K] [NumberField K]
+
+/-- **The von Mangoldt weighted ideal terms converge absolutely.** Strictly to the right of the
+abscissa of absolute convergence of `χ`, the terms `χ(A) Λ(A) / N(A) ^ s` are summable.
+
+`Λ(A)` is bounded by `log N(A)`, and weighting the ideal terms by `log N(A)` preserves summability
+strictly to the right of a point of absolute convergence. -/
+theorem summable_idealTerm_vonMangoldtTransform {f : IdealArithmeticFunction K} {s : ℂ}
+    (hs : idealAbscissaOfAbsConv K f < s.re) :
+    Summable (idealTerm K f.vonMangoldtTransform s) := by
+  obtain ⟨y, hy, hys⟩ : ∃ y : ℝ, Summable (idealTerm K f y) ∧ y < s.re := by
+    simpa [idealAbscissaOfAbsConv_def, sInf_lt_iff] using hs
+  have hlog := summable_log_absNorm_mul_norm_idealTerm_of_re_lt_re
+    (f := f) (s := (y : ℂ)) (s' := s) (h := by simpa using hys) (hs := hy)
+  refine hlog.of_norm_bounded fun A ↦ ?_
+  have hfac : ‖idealTerm K f.vonMangoldtTransform s A‖
+      = ‖(IdealArithmeticFunction.vonMangoldt : IdealArithmeticFunction K) A‖
+        * ‖idealTerm K f s A‖ := by
+    rw [idealTerm_def, idealTerm_def, IdealArithmeticFunction.vonMangoldtTransform_apply,
+      norm_div, norm_div, norm_mul]
+    ring
+  rw [hfac]
+  exact mul_le_mul_of_nonneg_right
+    (IdealArithmeticFunction.norm_vonMangoldt_le_log A) (norm_nonneg _)
+
+end IdealArithmeticFunction
 
 namespace MultiplicativeIdealWeight
 
@@ -78,29 +107,6 @@ private theorem idealTerm_vonMangoldtTransform_prime_pow (s : ℂ)
     Complex.cpow_nat_mul, div_pow, hlog, Nat.succ_eq_add_one]
   ring
 
-/-- **The von Mangoldt weighted ideal terms converge absolutely.** Strictly to the right of the
-abscissa of absolute convergence of `χ`, the terms `χ(A) Λ(A) / N(A) ^ s` are summable.
-
-`Λ(A)` is bounded by `log N(A)`, and weighting the ideal terms by `log N(A)` preserves summability
-strictly to the right of a point of absolute convergence. -/
-theorem summable_idealTerm_vonMangoldtTransform {s : ℂ}
-    (hs : idealAbscissaOfAbsConv K χ.toIdealArithmeticFunction < s.re) :
-    Summable (idealTerm K χ.toIdealArithmeticFunction.vonMangoldtTransform s) := by
-  obtain ⟨y, hy, hys⟩ : ∃ y : ℝ, Summable (idealTerm K χ.toIdealArithmeticFunction y)
-      ∧ y < s.re := by simpa [idealAbscissaOfAbsConv_def, sInf_lt_iff] using hs
-  have hlog := summable_log_absNorm_mul_norm_idealTerm_of_re_lt_re
-    (f := χ.toIdealArithmeticFunction) (s := (y : ℂ)) (s' := s)
-    (h := by simpa using hys) (hs := hy)
-  refine hlog.of_norm_bounded fun A ↦ ?_
-  have hfac : ‖idealTerm K χ.toIdealArithmeticFunction.vonMangoldtTransform s A‖
-      = ‖(IdealArithmeticFunction.vonMangoldt : IdealArithmeticFunction K) A‖
-        * ‖idealTerm K χ.toIdealArithmeticFunction s A‖ := by
-    rw [idealTerm_def, idealTerm_def, IdealArithmeticFunction.vonMangoldtTransform_apply,
-      norm_div, norm_div, norm_mul]
-    ring
-  rw [hfac]
-  exact mul_le_mul_of_nonneg_right
-    (IdealArithmeticFunction.norm_vonMangoldt_le_log A) (norm_nonneg _)
 
 /-- **The coefficient identity for the logarithmic derivative.** Strictly to the right of the
 abscissa of absolute convergence,
@@ -114,7 +120,8 @@ theorem logDeriv_LSeries_eq_neg_tsum_vonMangoldtTransform {s : ℂ}
     logDeriv (LSeries (normCoeff K χ.toIdealArithmeticFunction)) s
       = -∑' A : (Ideal (𝓞 K))⁰,
           idealTerm K χ.toIdealArithmeticFunction.vonMangoldtTransform s A := by
-  have hsum := χ.summable_idealTerm_vonMangoldtTransform hs
+  have hsum := IdealArithmeticFunction.summable_idealTerm_vonMangoldtTransform
+    (f := χ.toIdealArithmeticFunction) hs
   have hsupp : Function.support (idealTerm K χ.toIdealArithmeticFunction.vonMangoldtTransform s)
       ⊆ {A : (Ideal (𝓞 K))⁰ | IsPrimePow (A : Ideal (𝓞 K))} := by
     intro A hA
