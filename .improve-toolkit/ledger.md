@@ -36862,3 +36862,25 @@ failed). A retry at 17:17Z worked.
   the shape checks already raise, so the message clause only named the cause. That cause is what diagnosed this
   round, so it got its own control instead of being deleted; re-run: FAIL  sweep: an API error names its cause, not just a shape complaint (r722) -- missing: ratelimit-msg: comments: API rate limit exceeded 165 passed, 1 failed 
 * **166 passed, 0 failed.** Live runs of both tools are unchanged (queue depth 41, positions 16/17/18, #5950's age back).
+
+---
+
+## r723 — 2026-09-14T17:27Z — main moved (#6675, #6730); queued merge groups and staged branches still clean
+
+**Board** (17:26Z; sweep and queuepos both exited 0, every field readable): #6093, #6796 and #6800 are
+`ready-to-merge`, not drafts, CI green, boards on head; #5950 is Chris's. None of mine merged. #6675 (norm form of a
+quaternion algebra) and #6730 (split quaternion symbols) merged: main `2c8bdc7e9` → **`d0bb20e80`**; mine moved to
+**14/15/16 of 39**. Nothing to fix, contest or drive; step 5 shut.
+
+**Merge-group simulation** against `d0bb20e80`:
+
+```
+#6093  23 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: exit 0
+#6796  21 behind  merges clean  ghostref: all short forms still resolve    stalequal: exit 0
+#6800  21 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: exit 0
+```
+
+**Staged branches** (`git merge-tree`): levi-civita 13 behind, quadratic 11, exchangeable-dedup 10; none of their
+files touched on main; all merge clean.
+
+No toolkit edits.
