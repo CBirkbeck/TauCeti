@@ -257,9 +257,8 @@ theorem zpowers_toFixedFieldAlgEquiv_eq_top (σ : M ≃ₐ[K] M) [Finite (Subgro
 /-- **`M` has degree `orderOf σ` over `M ^ ⟨σ⟩`.** The automorphisms of `M` fixing the field cut
 out by `⟨σ⟩` number exactly the order of `σ`.
 
-Immediate from `zpowers_toFixedFieldAlgEquiv_eq_top`, once the generator's order is read back over
-`K`: rebundling over a smaller base does not change an automorphism, so it does not change its
-order. Like the generation statement it asks only that `⟨σ⟩` be finite, not that `M / K` be. -/
+Only the generated subgroup `⟨σ⟩` need be finite: `M / K` is asked to be neither finite nor
+Galois, so this applies to an automorphism of finite order of an arbitrary extension. -/
 theorem card_algEquiv_fixedField_zpowers (σ : M ≃ₐ[K] M) [Finite (Subgroup.zpowers σ)] :
     Nat.card (M ≃ₐ[IntermediateField.fixedField (Subgroup.zpowers σ)] M) = orderOf σ := by
   have horder : orderOf (toFixedFieldAlgEquiv σ) = orderOf σ := by
