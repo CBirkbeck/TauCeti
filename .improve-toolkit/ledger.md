@@ -36893,3 +36893,24 @@ No toolkit edits.
 boards on head; #5950 is Chris's. No merges. Queue **14/15/16 of 40**, unchanged since 17:26Z. main still
 `d0bb20e80`, so r723's merge-group simulation and staged-branch check stand. Nothing to fix, contest or drive;
 step 5 shut. No toolkit edits.
+
+---
+
+## r725 — 2026-09-14T17:47Z — main moved (#6691); queued merge groups and staged branches still clean
+
+**Board** (17:46Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. None of mine merged. #6691 (graded Ext-Euler form) merged: main `d0bb20e80` →
+**`4c57667a3`**; mine moved to **13/14/15 of 39**. Nothing to fix, contest or drive; step 5 shut.
+
+**Merge-group simulation** against `4c57667a3`:
+
+```
+#6093  24 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: exit 0
+#6796  22 behind  merges clean  ghostref: all short forms still resolve    stalequal: exit 0
+#6800  22 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: exit 0
+```
+
+**Staged branches** (`git merge-tree`): levi-civita 14 behind, quadratic 12, exchangeable-dedup 11; none of their
+files touched on main; all merge clean.
+
+No toolkit edits.
