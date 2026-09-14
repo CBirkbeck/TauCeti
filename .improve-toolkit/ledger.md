@@ -37353,3 +37353,19 @@ does not mean a prompt merge. Queued Actions runs: 386 (427 at 20:36Z, 413 at 20
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r745 — 2026-09-14T21:07Z — both finalize jobs still queued (20 and 15 min); backlog down to 331 runs; no merges for 76 min
+
+**Board** (21:06Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. No merges since #6601 (19:50:37Z), and main is still `6bc3780dc`, so r738's checks
+stand. Nothing to fix, contest or drive; step 5 shut.
+
+**Queue** (depth 28; mine 2/3/4): #6744's `finalize-merge-group-build` has been queued since 20:46:58Z and #6093's
+since 20:51:21Z; both groups' build and publish passed. Queued Actions runs: 331 (427 → 413 → 386 → 331 across
+r742–r745), down 55 in the last ten minutes. Nothing has changed in kind since r744.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
