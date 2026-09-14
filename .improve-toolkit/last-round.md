@@ -1,4 +1,4 @@
-# Last round — r715 (2026-09-14T16:07Z)
+# Last round — r716 (2026-09-14T16:16Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -24,13 +24,13 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 20/42** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 20/43** | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 21** | nobody |
 | **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 22** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-19 ahead of #6093 at 16:06Z; #6680 and #6634 merged, main is `4d0169229`).
+19 ahead of #6093, unchanged from 16:06Z to 16:16Z; main is `4d0169229`).
 
 ## What to expect next
 
@@ -90,7 +90,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r715 did
+## What r703–r716 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -107,6 +107,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r713: no-op board.
 * r714: no-op board.
 * r715: main moved (#6680, #6634); queued merge groups and staged branches re-checked, all clean.
+* r716: no-op board.
 
 ## Candidates for a later step 5
 
