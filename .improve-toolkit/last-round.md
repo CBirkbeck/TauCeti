@@ -1,12 +1,12 @@
-# Last round — r693 (2026-09-14T11:47Z; board unchanged since r692 at 11:44Z)
+# Last round — r694 (2026-09-14T11:57Z)
 
 ## Board
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | **green** | `roadmap/none,awaiting-author` | nobody — `api-design` answered by code **and** in-thread (reply 4004781516); board pending |
+| **#6093** | `18e85bea2` | **green** | **`awaiting-review`** since ~11:56Z | nobody — board for the `@[expose]` fix + reply 4004781516 is in flight |
 | **#6796** | `06e8f7fdf` | **green** | ready since **11:45:14Z** | nobody — first board ~12:17–12:52Z; do not drive before 12:45Z |
-| **#6800** | `716cf35ee` | queued | draft | watch marks ready on green |
+| **#6800** | `716cf35ee` | building | draft | watch marks ready on green; if still a draft with green CI, `gh pr ready 6800` |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire.** (#5950 is excluded from the count

@@ -36193,3 +36193,15 @@ posted; its `awaiting-author` label has not caught up yet — **not** a reason t
 since 11:45:14Z with no board, #6800 draft with CI pending under its watch, #5950 Chris's. No merges,
 nothing queued. Steps 3–5 all no-ops; three of mine open. Next events: #6800's CI (~12:00Z), then the
 boards for #6796 (~12:17–12:52Z) and #6093.
+
+---
+
+## r694 — 2026-09-14T11:57Z — #6093 re-entered review; nothing owed
+
+**#6093: `awaiting-author` → `awaiting-review`.** The pipeline picked up the green build on
+`18e85bea2`, so the board for the `@[expose]` fix and the posted reply is in flight. Its sweep line reads
+`CI=PENDING:zulip-pr`: that is the Zulip notification job re-running on the label change, not the build —
+`sandboxed-build` stayed green. A pending notification job is not a pending build.
+
+#6796 ready 11 min with no board (no drive before 12:45Z). #6800's `sandboxed-build` still running
+under its watch. No merges, nothing queued, three of mine open — steps 3–5 no-ops.
