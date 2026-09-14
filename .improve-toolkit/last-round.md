@@ -1,4 +1,4 @@
-# Last round — r749 (2026-09-14T21:42Z)
+# Last round — r750 (2026-09-14T21:51Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -10,16 +10,16 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
    ChatGPT `gpt-6-astra` helping.
 3. **What this role has been doing** — rooting, dedup, hypothesis weakening, docstrings, relocation.
 
-Kind 1 is **#6851** (ready, awaiting its board) and kind 2 is **draft #6854** (r749). **Kind 3 is staged** (below):
-open it at the next round with a free slot. Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
+**All three kinds are open:** kind 1 **#6851** (ready, awaiting its board), kind 2 **draft #6854**, kind 3 **draft
+#6855** (r750). Nothing is staged; the next opening is kind 1 again (the deck group). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r749):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r750):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
-no-build default, and kind 2 (#6854) at r749 likewise. **If he answers, apply it to #6851 and #6854 as follow-up
-pushes, and to kind 3 before opening.**
+no-build default, and kinds 2 (#6854, r749) and 3 (#6855, r750) likewise. **If he answers, apply it to #6851, #6854
+and #6855 as follow-up pushes.**
 
 **ChatGPT access:** no `chatgpt-math` MCP server is configured (only `lean-lsp`). The model is reachable
 through the local codex CLI that MCP wraps:
@@ -31,19 +31,20 @@ through the local codex CLI that MCP wraps:
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
 | **#6851** | `fdeaff5cb7` | **green** (`sandboxed-build` 21:14:25Z → 21:32:12Z) | kind 1; **ready 21:37:58Z**, `awaiting-review`, no board yet | **pipeline** — drive only if no board by **22:37:58Z** |
-| **#6854** | `f18fe6fed` | **first run pending** (opened 21:41:12Z) | kind 2; **DRAFT** | **me** — iterate as a draft on CI; `gh pr ready` only when green |
+| **#6854** | `f18fe6fed` | **`sandboxed-build` running** (since 21:45:37Z) | kind 2; **DRAFT** (opened 21:41:12Z) | **me** — iterate as a draft on CI; `gh pr ready` only when green |
+| **#6855** | `352c92a11` | **first run pending** (opened 21:50:19Z) | kind 3; **DRAFT** | **me** — iterate as a draft on CI; `gh pr ready` only when green |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
-**Two `improve/*` PRs of mine are open (#6851, #6854) → step 5 fires next round for kind 3** (one target per
-round). #6796 and #6800 merged at 21:29:41Z and 21:31:53Z; main is `1a63e8248`.
+**Three `improve/*` PRs of mine are open (#6851, #6854, #6855) → step 5 does not fire** until one merges. Main is
+`1a63e8248` (no merges since #6800 at 21:31:53Z).
 
 ## What to expect next
 
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. A `MERGING` PR's group build is the check-runs of
    `git ls-remote origin 'refs/heads/gh-readonly-queue/main/pr-<n>-*'` (r739), the earliest sign of an ejection. If main moves a lot, re-run r702's
    merge-group simulation (cheap, read-only; r749: #6851 clean against `1a63e8248`; none of mine is queued now). Staged branches:
-   `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r749: the one
-   left, exchangeable-dedup, is clean against `1a63e8248`, none of its files touched on main). A merge-tree check sees conflicts, not new
+   `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r750: none
+   left; kind 3 opened as #6855). A merge-tree check sees conflicts, not new
    callers: also grep main's new lines for the names each staged branch removes, and when main DELETES declarations,
    grep every branch's added lines for them (r738: #6601 removed `sum_binomial_weight(_mul)`; 0 uses). Print a firing
    control: r738's first try was a crashed `sed` whose empty result read as "none".
@@ -55,12 +56,11 @@ round). #6796 and #6800 merged at 21:29:41Z and 21:31:53Z; main is `1a63e8248`.
    12/0/0). **CI is the first elaborator this branch meets.** If `sandboxed-build` fails, read the log, fix,
    re-gate and push, still as a draft. Run `gh pr ready 6854 --repo TauCetiProject/TauCeti` only when green. #6851's
    first run took 18 min.
-4. **Next round (step 5 fires, two open), open kind 3: `improve/exchangeable-contractable-dedup`** (`73227e02e` on
-   `fork`). Recipe as #6854's: checkout, merge `origin/main`, re-gate (expect 12 ok / 0 failed / 0 UNRUN), push, then
-   `gh pr create --draft --repo TauCetiProject/TauCeti --base main --head CBirkbeck:improve/exchangeable-contractable-dedup`, title
-   "refactor(Probability/Exchangeability): drop the duplicate `contractable_of_exchangeable`", body
-   `pending/exchangeable-contractable-dedup-body.md`.
-5. **After those:** kind 1 again (the deck group, mathlib4#40135 — large), then kind 2 (a new file), then kind 3
+4. **#6855 (kind 3, the `contractable_of_exchangeable` dedup) is a DRAFT on its first CI run** (`352c92a11`, opened
+   21:50:19Z; gate 12/0/0; 0 callers of the removed name on the merged tree). Same rule as #6854: fix it as a draft
+   if red, and run `gh pr ready 6855 --repo TauCetiProject/TauCeti` only when green.
+5. **At the next free slot:** kind 1 again (the deck group, mathlib4#40135 — large; research it while the cap is
+   shut), then kind 2 (a new file), then kind 3
    (next candidate: the `StronglyContinuousSemigroup.norm_resolvent_integrand_le` weakening; see ledger r706).
 
 ## Kind-1 prospects (r703 first pass)
@@ -98,7 +98,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r749 did
+## What r703–r750 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -149,6 +149,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r747: quota at 21:16 again; rerun clean; #6851's first build running; staged branches clean against #6093's merge.
 * r748: #6796's merge-group build passed; #6851's first build still running (12 min); no merges.
 * r749: #6796 and #6800 merged; #6851 green and marked ready; step 5 opened kind 2 as draft **#6854**.
+* r750: step 5 opened kind 3 as draft **#6855**; #6851 awaits its board; #6854's first build running.
 
 ## Candidates for a later step 5
 

@@ -37520,3 +37520,42 @@ step 5 fires again next round (one target per round).
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r750 — 2026-09-14T21:51Z — step 5: kind 3 opened as draft #6855; #6851 awaits its board; #6854's first build running
+
+**Board** (21:46Z; sweep and queuepos exited 0):
+
+* **#6851** (kind 1): ready since 21:37:58Z, `awaiting-review`, CI green, `NO BOARD` (8 min in; drive only after
+  22:37:58Z).
+* **#6854** (kind 2): draft, `CI=PENDING:label,sandboxed-build`; `sandboxed-build` in progress since 21:45:37Z.
+* #5950 is Chris's.
+
+No merges since #6800, and main is still `1a63e8248`. Nothing to fix, contest or drive.
+
+**Step 5 fired.** Two of mine were open (#5950 excluded), and the rotation's due kind was 3.
+
+**Opened: #6855, kind 3, "refactor(Probability/Exchangeability): drop the duplicate `contractable_of_exchangeable`"**
+(draft, 21:50:19Z).
+
+* `improve/exchangeable-contractable-dedup` (`73227e02e`, local = fork) was 26 behind; the merge was clean and gave
+  `352c92a11`. The PR diff against main is 4 files, +11/−18: exactly the four files the body lists.
+* On the merged tree, `git grep -w contractable_of_exchangeable` finds 0 callers.
+* Gate `prepush.sh origin/main`: **12 ok / 0 failed / 0 UNRUN**, identical to the r706 run.
+* The body's factual claims were re-checked on the merged tree before opening. `Stationary.lean` already names
+  `Exchangeable.contractable`. The neighbouring implications `MixedIID.exchangeable` (`MixedIID/Implications.lean:93`)
+  and `MixedIIDWith.contractable` (`:100`) are declared theorems, and `Exchangeable.contractable` is at
+  `Contractability.lean:174`. A first pass counted mentions, some of them in comments; the declaration-level check
+  replaced it.
+* Verified after creation: draft; head `CBirkbeck:improve/exchangeable-contractable-dedup@352c92a11`; base `main`;
+  exactly one standalone `Roadmap: none`; the title's backticks intact.
+* Opened under the same no-build default as #6851 and #6854.
+
+**All three rotation kinds are now open** (#6851 kind 1, #6854 kind 2, #6855 kind 3), and nothing is staged. Step 5 is
+shut until one merges. The next opening is kind 1 again (the deck group, mathlib4#40135), whose research can run while
+the cap is shut.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
