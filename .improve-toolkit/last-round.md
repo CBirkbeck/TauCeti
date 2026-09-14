@@ -1,4 +1,4 @@
-# Last round — r754 (2026-09-14T22:28Z)
+# Last round — r755 (2026-09-14T22:38Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -10,16 +10,17 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
    ChatGPT `gpt-6-astra` helping.
 3. **What this role has been doing** — rooting, dedup, hypothesis weakening, docstrings, relocation.
 
-**All three kinds are open and ready:** kind 1 **#6851**, kind 2 **#6854** and kind 3 **#6855**, each awaiting its
-first board. Nothing is staged; the next opening is kind 1 again (the deck group). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
+**All three kinds are open.** Kind 1 **#6851** and kind 3 **#6855** went 10/10 on their first boards and are
+QUEUED; kind 2 **#6854** awaits its first board. Nothing is staged; the next opening is kind 1 again (the deck group). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r754):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r755):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
-no-build default, and kinds 2 (#6854, r749) and 3 (#6855, r750) likewise. **If he answers, apply it to #6851, #6854
-and #6855 as follow-up pushes.**
+no-build default, and kinds 2 (#6854, r749) and 3 (#6855, r750) likewise. **If he answers:** #6851 and #6855 are 10/10
+and queued, so a push to either would cost the board and the queue slot. Give them a separate follow-up PR
+instead, and apply the pass to #6854 directly only while it has no board.
 
 **ChatGPT access:** no `chatgpt-math` MCP server is configured (only `lean-lsp`). The model is reachable
 through the local codex CLI that MCP wraps:
@@ -30,34 +31,32 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6851** | `fdeaff5cb7` | **green** (`sandboxed-build` 21:14:25Z → 21:32:12Z) | kind 1; **ready 21:37:58Z**, `awaiting-review`, no board at 22:26Z (48 min) | **pipeline** — drive only if no board by **22:37:58Z** |
-| **#6854** | `f18fe6fedf` | **green** (`sandboxed-build` 21:45:37Z → 22:02:23Z) | kind 2; **ready 22:07:11Z**, no board at 22:26Z | **pipeline** — drive only if no board by **23:07:11Z** |
-| **#6855** | `352c92a114` | **green** (`sandboxed-build` 21:50:36Z → 22:08:38Z) | kind 3; **ready 22:17:08Z**, no board at 22:26Z | **pipeline** — drive only if no board by **23:17:08Z** |
+| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`, **QUEUED pos 33/33** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6854** | `f18fe6fedf` | **green** (`sandboxed-build` 21:45:37Z → 22:02:23Z) | kind 2; **ready 22:07:11Z**, no board at 22:36Z (29 min) | **pipeline** — drive only if no board by **23:07:11Z** |
+| **#6855** | `352c92a114` | green | kind 3; **10/10 first board** (22:32:04Z), `ready-to-merge`, **QUEUED pos 31/33** | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
-**Three `improve/*` PRs of mine are open (#6851, #6854, #6855) → step 5 does not fire** until one merges. Main is
-`9ead798b2` (#6702 arc length and #6731 sesquilinear numerical quotients; all three of mine still merge clean).
+**Three `improve/*` PRs of mine are open (#6851, #6854, #6855) → step 5 does not fire** until one merges; #6851 and #6855
+sit about 30 deep in the queue. Main is `9ead798b2`.
 
 ## What to expect next
 
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. A `MERGING` PR's group build is the check-runs of
    `git ls-remote origin 'refs/heads/gh-readonly-queue/main/pr-<n>-*'` (r739), the earliest sign of an ejection. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only; r749: #6851 clean against `1a63e8248`; none of mine is queued now). Staged branches:
+   merge-group simulation (cheap, read-only; r755: #6851 (in r754) and #6855 clean against `9ead798b2`). Staged branches:
    `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r750: none
    left; kind 3 opened as #6855). A merge-tree check sees conflicts, not new
    callers: also grep main's new lines for the names each staged branch removes, and when main DELETES declarations,
    grep every branch's added lines for them (r738: #6601 removed `sum_binomial_weight(_mul)`; 0 uses). Print a firing
    control: r738's first try was a crashed `sed` whose empty result read as "none".
-2. **#6851 (kind 1, Levi-Civita) is ready and awaiting its first board.** CI went green at 21:32:12Z and it was
-   marked ready at 21:37:58Z, so the pipeline's board is due by about 22:24–22:42Z. **Drive (step 4) only if there is
-   no board for `fdeaff5cb7` after 22:37:58Z.** The 22:46 round is the first that may (no board at 22:26Z). Its `decldiff`/`nsjump` gate findings are answered in the body; a
-   reviewer may still ask about them, and the body's review notes are the reply.
+2. **#6851 (kind 1, Levi-Civita) went 10/10 on its first board** (22:35:00Z, `codex/gpt-6-astra`, head `fdeaff5cb7`)
+   and is QUEUED. Act only on `EJECTED`. Re-simulate its merge group when main moves: it deletes 24 declarations and
+   `LeviCivita/Existence.lean`, so pass `--deleted` to `stalequal` and the deleted path to `ghostref`.
 3. **#6854 (kind 2, quadratic separability) is ready and awaiting its first board.** CI went green at 22:02:23Z
    (17 min), and it was marked ready at 22:07:11Z. **Drive only if there is no board for `f18fe6fedf` after
    23:07:11Z.**
-4. **#6855 (kind 3, the `contractable_of_exchangeable` dedup) is ready and awaiting its first board.** CI went green
-   at 22:08:38Z (18 min), and it was marked ready at 22:17:08Z. **Drive only if there is no board for `352c92a114` after
-   23:17:08Z.**
+4. **#6855 (kind 3, the `contractable_of_exchangeable` dedup) went 10/10 on its first board** (22:32:04Z,
+   `codex/gpt-5.6-sol`, head `352c92a114`) and is QUEUED. Act only on `EJECTED`; re-simulate when main moves.
 5. **At the next free slot:** kind 1 again (the deck group, mathlib4#40135 — large; research it while the cap is
    shut), then kind 2 (a new file), then kind 3
    (next candidate: the `StronglyContinuousSemigroup.norm_resolvent_integrand_le` weakening; see ledger r706).
@@ -97,7 +96,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r754 did
+## What r703–r755 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -153,6 +152,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r752: #6854 green and marked ready; main moved (#6733, restated a lemma none of mine uses); #6855 still building.
 * r753: quota at 22:16 again; #6855 green and marked ready; all three kinds now ready and awaiting boards.
 * r754: main moved (#6702 beside #6851's geodesic files; #6731 renames a module); #6851 re-simulated clean; no boards yet.
+* r755: #6851 and #6855 went 10/10 on their first boards and queued; #6855's merge group simulated clean; #6854 awaits its board.
 
 ## Candidates for a later step 5
 

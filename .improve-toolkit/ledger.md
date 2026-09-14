@@ -37668,3 +37668,32 @@ sesquilinear numerical quotients). The firing control on the pair read 28 remove
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r755 — 2026-09-14T22:37Z — #6851 (kind 1) and #6855 (kind 3) went 10/10 on their first boards and queued; #6854 awaits its board
+
+**Board** (22:36Z; sweep and queuepos exited 0):
+
+* **#6851** (kind 1, Levi-Civita onto Mathlib): **10/10 on its first board**, posted 22:35:00Z on head `fdeaff5cb7`
+  (diff `31e769e30...fdeaff5cb`), every rubric ✅ by `codex/gpt-6-astra`. Labelled `ready-to-merge` and **QUEUED at pos
+  33/33**. No drive was needed: the board came 57 min after ready, 3 min before the drive window opened.
+* **#6855** (kind 3, the `contractable_of_exchangeable` dedup): **10/10 on its first board**, posted 22:32:04Z on head
+  `352c92a114` (diff `1a63e8248...352c92a11`), every rubric ✅ by `codex/gpt-5.6-sol`. `ready-to-merge`, **QUEUED at
+  pos 31**. It took 15 min from ready to board.
+* **#6854** (kind 2): `awaiting-review`, CI green, `NO BOARD` (29 min in; drive only after 23:07:11Z).
+* #5950 is Chris's.
+
+No merges since #6731, and main is still `9ead798b2`. Nothing to fix or contest; step 5 shut.
+
+**Merge-group simulation for the newly queued #6855** against `9ead798b2`: merges clean; `ghostref` exit 0 (1 removed,
+1 chased, 0 ghosts); `stalequal` exit 0; 0 callers of `contractable_of_exchangeable` on the merged tree. #6851's was run
+against the same main in r754 and was clean.
+
+**First boards for the new rotation kinds.** The first kind-1 (Mathlib catch-up) and kind-3 PRs both went 10/10
+without a fix round, and both were opened under the no-build default. Board latency from ready was 57 min (#6851) and
+15 min (#6855), against the 32–67 min band measured in the r650s.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
