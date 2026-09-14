@@ -36219,3 +36219,12 @@ under its watch. No merges, nothing queued, three of mine open — steps 3–5 n
 
 The bot has now labelled #6796 `awaiting-review` too. No merges, nothing queued, three of mine open —
 steps 3–5 no-ops. #6800 was still building at write-up; its watch marks it ready on green.
+
+**Addendum 12:12Z — #6800 green on its first build, ready for review at 12:12:14Z.** `sandboxed-build:
+success` on `716cf35ee`: the `Module.Basis` rooting compiles, including the four call sites moved to
+`b.span_range_extendOfIsLattice` and the renamed use inside the `rw` list. So the gate's `decldiff` and
+`rootsurplus` findings were false positives, as predicted — both checks model a rooting as stripping
+`TauCeti.` and cannot see `open Module`. Its step-4 clock starts at 12:12:14Z: first board expected
+~12:44–13:19Z, no drive before 13:12Z.
+
+All three of mine are now green and out of draft: #6093 and #6796 `awaiting-review`, #6800 just readied.

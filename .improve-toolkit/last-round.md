@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | **#6093** | `18e85bea2` | **green** | **`awaiting-review`** since ~11:56Z | nobody — board for the `@[expose]` fix + reply 4004781516 is in flight |
 | **#6796** | `06e8f7fdf` | **green** | **`awaiting-review`**, ready since 11:45:14Z | nobody — first board ~12:17–12:52Z; do not drive before 12:45Z |
-| **#6800** | `716cf35ee` | building (status=in_progress conclusion=- started=2026-09-14T11:52:16Z) | draft, `awaiting-CI` | watch marks ready on green; if still a draft with green CI, `gh pr ready 6800` |
+| **#6800** | `716cf35ee` | **green** | ready since **12:12:14Z** | nobody — first board ~12:44–13:19Z; do not drive before 13:12Z |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire.** (#5950 is excluded from the count
