@@ -19,7 +19,6 @@ counting argument consumes: the *order* of that group is `φ n`, and it is *cycl
 ## Main results
 
 * `IsCyclotomicExtension.card_aut_eq_totient`: `#Gal(L / K) = φ n`.
-* `IsCyclotomicExtension.dvd_card_aut_of_dvd_totient`: anything dividing `φ n` divides the order.
 * `IsCyclotomicExtension.isCyclic_aut`: the group is cyclic when `(ZMod n)ˣ` is.
 * `IsCyclotomicExtension.card_aut_eq_sub_one` and `IsCyclotomicExtension.isCyclic_aut_of_prime`:
   the prime case, where the order is `q - 1` and the group is always cyclic.
@@ -33,6 +32,14 @@ and `ZMod.isCyclic_units_prime` respectively — rather than the equivalence alo
 
 `Nat.card` is used rather than `Fintype.card` so that no finiteness instance is demanded of the
 caller; the finiteness needed in the proof is supplied locally from `NeZero n`.
+
+The two prime specialisations are kept even though each is two rewrites from the general form,
+because they are the shape the Chebotarev development asks for by name. Its roadmap states Layer
+7.2 as "`[K(ζ_q) : K] = q - 1` … in particular cyclic of order `q - 1`", and Layer 9 opens "By
+7.2, `H_q` is cyclic of order `q - 1`". Making every such caller re-derive `Nat.totient_prime` and
+re-instantiate `ZMod.isCyclic_units_prime` is the duplication these two avoid. `q - 1` is
+truncated subtraction, so the prime hypothesis has to be in scope for the statement to mean what
+it says; that is why the specialisation is a theorem rather than a `simp` lemma.
 -/
 
 public section
@@ -55,13 +62,6 @@ theorem card_aut_eq_totient (h : Irreducible (cyclotomic n K)) :
   rw [Nat.card_congr (autEquivPow L h).toEquiv, Nat.card_eq_fintype_card,
     ZMod.card_units_eq_totient]
 
-/-- **Divisors of `φ n` divide the order of the Galois group.** Stated separately because this is
-the form a counting argument needs: a level `m` with `m ∣ φ n` has an element of order divisible
-by `m` available in `Gal(L / K)`. -/
-theorem dvd_card_aut_of_dvd_totient {m : ℕ} (h : Irreducible (cyclotomic n K))
-    (hm : m ∣ n.totient) : m ∣ Nat.card (L ≃ₐ[K] L) :=
-  (card_aut_eq_totient K L h).symm ▸ hm
-
 /-- **A cyclotomic Galois group is cyclic when the unit group is.** Transported along
 `IsCyclotomicExtension.autEquivPow`. -/
 theorem isCyclic_aut [IsCyclic (ZMod n)ˣ] (h : Irreducible (cyclotomic n K)) :
@@ -76,16 +76,18 @@ variable {q : ℕ} (K : Type*) [Field K] (L : Type*) [CommRing L] [IsDomain L] [
 
 /-- **The prime case: the order is `q - 1`.** For a `q`-th cyclotomic extension with `q` prime and
 `Φ_q` irreducible over `K`, the Galois group has `q - 1` elements. -/
-theorem card_aut_eq_sub_one (hq : q.Prime) [NeZero q] [IsCyclotomicExtension {q} K L]
+theorem card_aut_eq_sub_one (hq : q.Prime) [IsCyclotomicExtension {q} K L]
     (h : Irreducible (cyclotomic q K)) : Nat.card (L ≃ₐ[K] L) = q - 1 := by
+  have : NeZero q := ⟨hq.ne_zero⟩
   rw [card_aut_eq_totient K L h, Nat.totient_prime hq]
 
 /-- **The prime case: the group is cyclic.** `(ZMod q)ˣ` is cyclic for `q` prime, so the Galois
 group of a `q`-th cyclotomic extension is too. -/
-theorem isCyclic_aut_of_prime (hq : q.Prime) [NeZero q] [IsCyclotomicExtension {q} K L]
-    (h : Irreducible (cyclotomic q K)) : IsCyclic (L ≃ₐ[K] L) :=
+theorem isCyclic_aut_of_prime (hq : q.Prime) [IsCyclotomicExtension {q} K L]
+    (h : Irreducible (cyclotomic q K)) : IsCyclic (L ≃ₐ[K] L) := by
+  have : NeZero q := ⟨hq.ne_zero⟩
   have : IsCyclic (ZMod q)ˣ := ZMod.isCyclic_units_prime hq
-  isCyclic_aut K L h
+  exact isCyclic_aut K L h
 
 end Prime
 
