@@ -1,4 +1,4 @@
-# Last round — r708 (2026-09-14T14:57Z)
+# Last round — r709 (2026-09-14T15:07Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -24,13 +24,13 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 24/35** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 24/36** | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 25** | nobody |
 | **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 26** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-23 ahead of #6093 at 14:56Z).
+23 ahead of #6093, unchanged from 14:56Z to 15:06Z).
 
 ## What to expect next
 
@@ -43,6 +43,8 @@ through the local codex CLI that MCP wraps:
    the body), push, then
    `gh pr create --draft --repo TauCetiProject/TauCeti --base main --head CBirkbeck:improve/levi-civita-mathlib --title "refactor(Geometry/Manifold): use Mathlib's Levi-Civita connection" --body-file pending/levi-civita-mathlib-body.md`.
    **CI is the first elaborator this branch meets** — iterate as a draft; `gh pr ready` only when green.
+   (r709: the fork `CBirkbeck/TauCeti` has Actions enabled but has never run a workflow, so pushing there gives
+   no early build.)
 3. **At the second free slot, open kind 2: `improve/quadratic-separable-ring`** (`89205ce8d` on `fork`). Same
    recipe: merge `origin/main`, re-gate (expect 12 ok / 0 failed / 0 UNRUN), push, then
    `gh pr create --draft --repo TauCetiProject/TauCeti --base main --head CBirkbeck:improve/quadratic-separable-ring --title "refactor(Algebra/Polynomial): separability of a quadratic from a unit discriminant" --body-file pending/quadratic-separable-ring-body.md`.
@@ -88,7 +90,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r708 did
+## What r703–r709 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -98,6 +100,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r706: re-simulated the three merge groups (clean); staged kind 3 (the `Exchangeable.contractable` dedup).
 * r707: no-op board; the three staged branches still merge clean.
 * r708: no-op board (queue 24/25/26); staged branches re-checked against main (ledger r708).
+* r709: no-op board; the fork has never run a workflow, so staged branches get no build before they open.
 
 ## Candidates for a later step 5
 

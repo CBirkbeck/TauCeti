@@ -36619,3 +36619,19 @@ improve/exchangeable-contractable-dedup  73227e02e   0 behind  0 of its files to
 ```
 
 No toolkit edits.
+
+---
+
+## r709 — 2026-09-14T15:07Z — no-op board; the fork gives no early CI
+
+**Board** (15:06Z): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on head; #5950 is
+Chris's. No merges. Queue **24/25/26 of 36**, unchanged since 14:56Z. Nothing to fix, contest or drive; step 5 shut.
+main is still `d4312459a`, so r708's staged-branch check (all three merge clean, none of their files touched) stands.
+
+**Checked: can the staged branches get a build before they open?** No. `CBirkbeck/TauCeti` has Actions enabled
+(`allowed=all`) but `total_count=0` — no workflow has ever run on the fork, including for the three staged
+branches' pushes; the project's CI triggers on upstream PR events. Enabling fork workflows would spend CI on the
+user's account, which this role has no mandate for. The Levi-Civita branch still meets its first elaborator as a
+draft PR.
+
+No toolkit edits.
