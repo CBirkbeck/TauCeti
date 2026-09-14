@@ -37314,3 +37314,19 @@ Chris** in the round summary, since the whole queue (35 PRs) is blocked, not onl
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r743 — 2026-09-14T20:47Z — the Actions backlog is draining: the queue head's publish started after 39 min; no merges for 56 min
+
+**Board** (20:46Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. No merges since #6601 (19:50:37Z), and main is still `6bc3780dc`, so r738's checks
+stand. Nothing to fix, contest or drive; step 5 shut.
+
+**Queue.** Pos 1 #6744's `publish-merge-group-cache / publish` went `in_progress` at 20:45:24Z, after 39 minutes
+`queued`. Pos 2 #6093's is still `queued` (since 20:14:21Z, 32 min). Queued Actions runs repo-wide: 413, down from 427
+at 20:36Z. So the stall is a capacity backlog that is clearing slowly, as r742 read it, not a dead job.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
