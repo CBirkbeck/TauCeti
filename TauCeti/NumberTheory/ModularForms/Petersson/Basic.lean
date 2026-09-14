@@ -51,8 +51,8 @@ Mathlib's invariant measure `volume : Measure ℍ` (`dx dy / y²`,
 * `UpperHalfPlane.norm_petersson_le_half_add_self`: the pairing is bounded in norm by the average
   of the two self-pairings — arithmetic–geometric mean, pointwise.
 * `UpperHalfPlane.integrableOn_petersson_of_measure_lt_top`: integrability over any set of finite
-  measure for two cusp forms of *unrelated* arithmetic groups. This is the shape a Hecke
-  operator's summands present, where no single bound covers the pair.
+  measure, for any measure, for two cusp forms of *unrelated* arithmetic groups. This is the shape
+  a Hecke operator's summands present, where no single bound covers the pair.
 * `UpperHalfPlane.integrableOn_petersson_slash_left_of_measure_lt_top` and
   `UpperHalfPlane.integrableOn_petersson_slash_right_of_measure_lt_top`: its specializations to
   one argument slashed by a `GL(2, ℝ)` element whose conjugate of the group is again arithmetic.
@@ -273,18 +273,18 @@ theorem norm_petersson_le_half_add_self (k : ℤ) (f g : ℍ → ℂ) (τ : ℍ)
 over any set of finite measure.**
 
 The lemmas above need a single group: they slash *both* arguments by the same `SL(2, ℤ)` element,
-which moves the integrand bodily along the action and leaves one cusp-form bound applicable. A
-Hecke operator does not do that — its summands pair forms cuspidal for different groups, and
-`CuspFormClass.petersson_bounded_left` applies to no such pair. Bounding each argument against
-*itself* does not need a common group, and `norm_petersson_le_half_add_self` combines the two
-bounds; finite measure does the rest. -/
+so one cusp-form bound covers the pair. A Hecke operator does not do that — its summands pair
+forms cuspidal for different groups, which is the situation this covers and
+`CuspFormClass.petersson_bounded_left` does not. -/
 theorem integrableOn_petersson_of_measure_lt_top {F F' : Type*} [FunLike F ℍ ℂ] [FunLike F' ℍ ℂ]
     (k : ℤ) (Γ Γ' : Subgroup (GL (Fin 2) ℝ)) [Γ.IsArithmetic] [Γ'.IsArithmetic]
-    [CuspFormClass F Γ k] [CuspFormClass F' Γ' k] (f : F) (g : F') {S : Set ℍ}
-    (hS : (volume : Measure ℍ) S < ⊤) :
-    IntegrableOn (fun τ ↦ petersson k ⇑f ⇑g τ) S (volume : Measure ℍ) := by
+    [CuspFormClass F Γ k] [CuspFormClass F' Γ' k] (f : F) (g : F') (μ : Measure ℍ) {S : Set ℍ}
+    (hS : μ S < ⊤) :
+    IntegrableOn (fun τ ↦ petersson k ⇑f ⇑g τ) S μ := by
   obtain ⟨Cf, hCf⟩ := CuspFormClass.petersson_bounded_left k Γ f f
   obtain ⟨Cg, hCg⟩ := CuspFormClass.petersson_bounded_left k Γ' g g
+  -- each argument is bounded against itself, and `norm_petersson_le_half_add_self` combines the
+  -- two bounds without needing a group common to both
   refine IntegrableOn.of_bound hS ((petersson_continuous k (ModularFormClass.continuous f)
     (ModularFormClass.continuous g)).aestronglyMeasurable.restrict)
     ((Cf + Cg) / 2) (ae_of_all _ fun τ ↦ ?_)
@@ -301,11 +301,10 @@ is not shut out. -/
 theorem integrableOn_petersson_slash_left_of_measure_lt_top {F F' : Type*} [FunLike F ℍ ℂ]
     [FunLike F' ℍ ℂ] (k : ℤ) (Γ Γ' : Subgroup (GL (Fin 2) ℝ)) [Γ'.IsArithmetic]
     [CuspFormClass F Γ k] [CuspFormClass F' Γ' k] (f : F) (g : F') (σ : GL (Fin 2) ℝ)
-    [((toConjAct σ)⁻¹ • Γ).IsArithmetic] {S : Set ℍ}
-    (hS : (volume : Measure ℍ) S < ⊤) :
-    IntegrableOn (fun τ ↦ petersson k (⇑f ∣[k] σ) ⇑g τ) S (volume : Measure ℍ) := by
+    [((toConjAct σ)⁻¹ • Γ).IsArithmetic] (μ : Measure ℍ) {S : Set ℍ} (hS : μ S < ⊤) :
+    IntegrableOn (fun τ ↦ petersson k (⇑f ∣[k] σ) ⇑g τ) S μ := by
   have := integrableOn_petersson_of_measure_lt_top k ((toConjAct σ)⁻¹ • Γ) Γ'
-    (CuspForm.translate f σ) g hS
+    (CuspForm.translate f σ) g μ hS
   rwa [CuspForm.coe_translate_gl] at this
 
 open ConjAct in
@@ -314,11 +313,10 @@ argument slashed. -/
 theorem integrableOn_petersson_slash_right_of_measure_lt_top {F F' : Type*} [FunLike F ℍ ℂ]
     [FunLike F' ℍ ℂ] (k : ℤ) (Γ Γ' : Subgroup (GL (Fin 2) ℝ)) [Γ.IsArithmetic]
     [CuspFormClass F Γ k] [CuspFormClass F' Γ' k] (f : F) (g : F') (σ : GL (Fin 2) ℝ)
-    [((toConjAct σ)⁻¹ • Γ').IsArithmetic] {S : Set ℍ}
-    (hS : (volume : Measure ℍ) S < ⊤) :
-    IntegrableOn (fun τ ↦ petersson k ⇑f (⇑g ∣[k] σ) τ) S (volume : Measure ℍ) := by
+    [((toConjAct σ)⁻¹ • Γ').IsArithmetic] (μ : Measure ℍ) {S : Set ℍ} (hS : μ S < ⊤) :
+    IntegrableOn (fun τ ↦ petersson k ⇑f (⇑g ∣[k] σ) τ) S μ := by
   have := integrableOn_petersson_of_measure_lt_top k Γ ((toConjAct σ)⁻¹ • Γ')
-    f (CuspForm.translate g σ) hS
+    f (CuspForm.translate g σ) μ hS
   rwa [CuspForm.coe_translate_gl] at this
 
 /-- The Petersson integrand of a slashed cusp form and modular form is integrable over `𝒟`:
