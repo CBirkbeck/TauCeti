@@ -20,7 +20,6 @@ conditions as conclusions rather than as obligations left to the caller.
 ## Main results
 
 * `NumberField.exists_auxiliaryPrime`
-* `NumberField.exists_auxiliaryPrime_coprime_discr`
 
 ## Implementation notes
 
@@ -67,24 +66,5 @@ theorem exists_auxiliaryPrime (K L : Type*) [Field K] [NumberField K] [Field L] 
   refine ⟨q, hq, hqN, hqmod, ?_, hurK, hurL,
     IsCyclotomicExtension.irreducible_cyclotomic_of_unramified K q hq hurK⟩
   exact (Nat.modEq_iff_dvd' hq.one_lt.le).mp hqmod.symm
-
-/-- **The auxiliary prime, with the coprimality the crossing lemmas ask for.** The same prime as
-`exists_auxiliaryPrime`, with each unramifiedness clause replaced by coprimality of `q` to the
-discriminant of the corresponding field.
-
-The two forms are equivalent conjunct by conjunct, via
-`NumberField.coprime_natAbs_discr_of_isUnramifiedIn`. This one is stated because coprimality is
-what the cyclotomic-crossing API consumes: `IsCyclotomicExtension.finrank_eq_totient`,
-`IsCyclotomicExtension.galEquivProd` and `TauCeti.fixedField_zpowers_isCyclotomicExtension` each
-take `((NumberField.discr _).natAbs).Coprime q` as a hypothesis, so a caller holding only
-unramifiedness has to convert at every use. -/
-theorem exists_auxiliaryPrime_coprime_discr (K L : Type*) [Field K] [NumberField K] [Field L]
-    [NumberField L] (n N : ℕ) (hn : n ≠ 0) :
-    ∃ q : ℕ, q.Prime ∧ N < q ∧ q ≡ 1 [MOD n] ∧ n ∣ q - 1 ∧
-      (NumberField.discr K).natAbs.Coprime q ∧ (NumberField.discr L).natAbs.Coprime q ∧
-      Irreducible (cyclotomic q K) := by
-  obtain ⟨q, hq, hqN, hqmod, hdvd, hurK, hurL, hirr⟩ := exists_auxiliaryPrime K L n N hn
-  exact ⟨q, hq, hqN, hqmod, hdvd, coprime_natAbs_discr_of_isUnramifiedIn hq hurK,
-    coprime_natAbs_discr_of_isUnramifiedIn hq hurL, hirr⟩
 
 end NumberField
