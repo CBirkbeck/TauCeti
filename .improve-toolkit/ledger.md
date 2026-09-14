@@ -36739,3 +36739,25 @@ No toolkit edits.
 **Board** (16:16Z): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on head; #5950 is
 Chris's. No merges. Queue **20/21/22 of 43**, unchanged since 16:06Z. main still `4d0169229`, so r715's merge-group
 simulation and staged-branch check stand. Nothing to fix, contest or drive; step 5 shut. No toolkit edits.
+
+---
+
+## r717 — 2026-09-14T16:27Z — main moved (#6655, #6710); queued merge groups and staged branches still clean
+
+**Board** (16:26Z): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on head; #5950 is
+Chris's. None of mine merged. #6655 (real quadratic genus field) and #6710 (strong maximum principle for the
+Laplacian) merged: main `4d0169229` → **`acaffaeb5`**; mine moved to **18/19/20 of 41**. Nothing to fix, contest
+or drive; step 5 shut.
+
+**Merge-group simulation** against `acaffaeb5`:
+
+```
+#6093  19 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: exit 0
+#6796  17 behind  merges clean  ghostref: all short forms still resolve    stalequal: exit 0
+#6800  17 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: exit 0
+```
+
+**Staged branches** (`git merge-tree`): levi-civita 9 behind, quadratic 7, exchangeable-dedup 6; none of their files
+touched on main; all merge clean.
+
+No toolkit edits.
