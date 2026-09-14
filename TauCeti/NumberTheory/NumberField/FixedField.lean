@@ -83,6 +83,13 @@ namespace Subgroup
 
 variable {K L : Type*} [Field K] [Field L] [Algebra K L] [FiniteDimensional K L]
 
+/-- **The Galois correspondence does not move points.**  For a subgroup `H` of `Gal(L/K)`, the
+automorphism of `L` over `L ^ H` attached to `τ ∈ H` is `τ` itself on elements. -/
+@[simp]
+theorem coe_subgroupEquivAlgEquiv (H : Subgroup (L ≃ₐ[K] L)) (τ : ↥H) (x : L) :
+    subgroupEquivAlgEquiv H τ x = (τ : L ≃ₐ[K] L) x :=
+  rfl
+
 /-- **The Galois correspondence does not move ideals.**  For a subgroup `H` of `Gal(L/K)`, the
 automorphism of `L` over `L ^ H` attached to `τ ∈ H` acts on the ideals of `𝓞 L` exactly as `τ`
 acts over `K`. -/
@@ -90,7 +97,8 @@ acts over `K`. -/
 theorem subgroupEquivAlgEquiv_smul_ideal (H : Subgroup (L ≃ₐ[K] L)) (τ : ↥H) (Q : Ideal (𝓞 L)) :
     subgroupEquivAlgEquiv H τ • Q = (τ : L ≃ₐ[K] L) • Q := by
   rw [Ideal.pointwise_smul_def, Ideal.pointwise_smul_def]
-  exact congrArg (Ideal.map · Q) (RingHom.ext fun y ↦ NumberField.RingOfIntegers.ext rfl)
+  refine congrArg (Ideal.map · Q) (RingHom.ext fun y ↦ NumberField.RingOfIntegers.ext ?_)
+  exact coe_subgroupEquivAlgEquiv H τ (y : L)
 
 end Subgroup
 
@@ -165,10 +173,10 @@ theorem comap_stabilizer_fixedField_eq_subgroupOf (Q : Ideal (𝓞 L)) (H : Subg
 
 /-- **The decomposition group over a fixed field has the size of the intersection.**  For a
 subgroup `H` of `Gal(L/K)` and `E = L ^ H`, the stabilizer of `Q` in `Gal(L/E)` has as many
-elements as the intersection of `H` with the stabilizer of `Q` in `Gal(L/K)`.
-
-Not a `simp` lemma: `MulAction.mem_stabilizer_iff` and `Nat.card_eq_fintype_card` rewrite this
-left-hand side further, so it is not in `simp`-normal form and would never fire. -/
+elements as the intersection of `H` with the stabilizer of `Q` in `Gal(L/K)`. -/
+-- Deliberately not `@[simp]`: `MulAction.mem_stabilizer_iff` and `Nat.card_eq_fintype_card`
+-- rewrite this left-hand side further, so it is not in `simp`-normal form and the rule would
+-- never fire. The simp-NF linter rejects the attribute.
 theorem card_stabilizer_fixedField_eq_card_inf (Q : Ideal (𝓞 L)) (H : Subgroup (L ≃ₐ[K] L)) :
     Nat.card (MulAction.stabilizer (L ≃ₐ[↥(fixedField H)] L) Q)
       = Nat.card ((MulAction.stabilizer (L ≃ₐ[K] L) Q ⊓ H : Subgroup (L ≃ₐ[K] L))) := by

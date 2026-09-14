@@ -119,10 +119,10 @@ theorem isLeast_pow_mem_inertiaDeg_under_fixedField (Q : Ideal (𝓞 L)) [Q.IsPr
   exact Subgroup.isLeast_pow_mem_relIndex_zpowers φ H
 
 /-- **Residue degree one is membership.**  The prime below `Q` in `L ^ H` has residue degree one
-over `𝓞 K` exactly when a Frobenius at `Q` lies in `H`.
-
-Not a `simp` lemma: `φ` occurs only in the hypothesis `hφ`, so `simp` cannot infer it from the
-left-hand side and the rewrite would never fire. -/
+over `𝓞 K` exactly when a Frobenius at `Q` lies in `H`. -/
+-- Deliberately not `@[simp]`: `φ` occurs only in the hypothesis `hφ`, never in the left-hand
+-- side, so `simp` cannot infer it and the rule would never fire. The simp-NF linter rejects
+-- the attribute.
 theorem inertiaDeg_under_fixedField_eq_one_iff (Q : Ideal (𝓞 L)) [Q.IsPrime] (hQ : Q ≠ ⊥)
     [Algebra.IsUnramifiedAt (𝓞 K) Q] (H : Subgroup (L ≃ₐ[K] L)) {φ : L ≃ₐ[K] L}
     (hφ : IsArithFrobAt (𝓞 K) φ Q) :
