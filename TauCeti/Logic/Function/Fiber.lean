@@ -50,10 +50,6 @@ theorem mapsTo_fiber (f : E → F) (hf : q ∘ f = p) (x : X) :
   simpa only [Function.comp_apply] using (congrFun hf e).trans hpe
 
 /-- The restriction of a map over `X` to the fibre over `x`. -/
--- `@[expose]`, like the sibling `TauCeti.Deck.fiberMap`: the whole content of this definition is
--- that the underlying point of `fiberMap f hf x e` is `f e`, and consumers in other modules rely on
--- that reduction to line up path-lifting statements, which a non-exposed body cannot supply.
-@[expose]
 def fiberMap (f : E → F) (hf : q ∘ f = p) (x : X) : p ⁻¹' {x} → q ⁻¹' {x} :=
   (mapsTo_fiber f hf x).restrict f (p ⁻¹' {x}) (q ⁻¹' {x})
 

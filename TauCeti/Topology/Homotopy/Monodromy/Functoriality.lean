@@ -64,6 +64,15 @@ theorem _root_.IsCoveringMap.fiberMap_monodromy (hp : _root_.IsCoveringMap p)
     Function.fiberMap f hf y (hp.monodromy a e) =
       hq.monodromy a (Function.fiberMap f hf x e) := by
   symm
+  -- `Function.fiberMap` is not exposed, so its values do not reduce here. Put both fibre points
+  -- in constructor form via `fiberMap_apply_coe` first, so the lifted path's endpoints match
+  -- `monodromy_eq_of_map_eq` by projection alone.
+  have h₁ : Function.fiberMap f hf x e = ⟨f e, Function.mapsTo_fiber f hf x e.2⟩ :=
+    Subtype.ext (Function.fiberMap_apply_coe f hf x e)
+  have h₂ : Function.fiberMap f hf y (hp.monodromy a e) =
+      ⟨f (hp.monodromy a e), Function.mapsTo_fiber f hf y (hp.monodromy a e).2⟩ :=
+    Subtype.ext (Function.fiberMap_apply_coe f hf y (hp.monodromy a e))
+  rw [h₁, h₂]
   let Γ := hp.liftPathQuotient a e
   let q' : C(F, X) := ⟨q, hq.continuous⟩
   let p' : C(E, X) := ⟨p, hp.continuous⟩
