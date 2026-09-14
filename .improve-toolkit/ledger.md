@@ -37641,3 +37641,30 @@ timeline.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r754 — 2026-09-14T22:28Z — main moved (#6702 beside #6851's geodesic files; #6731 renames a module); all three of mine still clean; no boards yet
+
+**Board** (22:26Z; sweep and queuepos exited 0): #6851, #6854 and #6855 are `awaiting-review`, not drafts, CI green,
+`NO BOARD` (48, 19 and 9 minutes since ready). #5950 is Chris's. Nothing to fix or contest. Nothing to drive yet:
+#6851's window opens at 22:37:58Z, so the 22:46 round is the first that may. Step 5 shut.
+
+**Main moved twice:** `3ace2f60d` → `30dcbe19f` (#6702, add arc-length reparametrization) → **`9ead798b2`** (#6731, add
+sesquilinear numerical quotients). The firing control on the pair read 28 removed lines, 439 added, and 2 removed and
+10 added declaration headers; nothing was removed under a spelling that was not re-added.
+
+* **#6702 is the one that could have hurt #6851.** It adds `Riemannian/ArcLength.lean` (+313) and extends
+  `MFDeriv/Curve.lean` (+76), next to the geodesic files #6851 repoints. None of its new lines names anything #6851
+  removes: `leviCivita`, `IsLeviCivita…`, `koszulHom…`, the `Regularity` lemmas or the `Existence` module. **Full merge
+  simulation of #6851 against `9ead798b2`:** merges clean; `ghostref` exit 0 (24 removed, 3 chased, 0 ghosts);
+  `stalequal` exit 0 (with `--deleted Existence.lean`). In the merged tree no file outside #6851's own names a removed
+  declaration, and nothing imports `LeviCivita.Existence`.
+* **#6731 renames two modules**, `LinearAlgebra/BilinearMap/NumericalQuotient/{Basic,Functoriality}` →
+  `LinearAlgebra/SesquilinearForm/NumericalQuotient/…` (r735's trap). None of my three branches adds a line naming the
+  old path, and main has no import of it left.
+* #6851 (6 behind), #6854 (4) and #6855 (4) all merge clean (`git merge-tree`), and main touched none of their files.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
