@@ -22,6 +22,7 @@ by the cyclic subgroup the tag generates has `M` as an `m`-th cyclotomic extensi
 
 * `TauCeti.fixedField_zpowers_isCyclotomicExtension`: for a tag `(σ, τ)` with
   `orderOf σ ∣ orderOf τ`, `M / fixedField ⟪(σ, τ)⟫` is an `m`-th cyclotomic extension.
+* `TauCeti.card_algEquiv_fixedField_zpowers_eq_orderOf`: that extension has degree `orderOf τ`.
 
 ## References
 
@@ -68,5 +69,23 @@ theorem fixedField_zpowers_isCyclotomicExtension
     Subgroup.map_comap_eq_self_of_surjective e.surjective, Subgroup.map_bot,
     MulEquiv.coe_toMonoidHom, MulEquiv.apply_symm_apply]
   exact Subgroup.zpowers_inf_top_prod_bot_eq_bot_of_orderOf_dvd σ τ hστ
+
+/-- **The tagged fixed field has degree `orderOf τ` below `M`.** Under the same divisibility, the
+cyclic group cut out by the tag has order `orderOf τ`, so that is the degree of the cyclotomic
+extension `fixedField_zpowers_isCyclotomicExtension` produces.
+
+The first component contributes nothing: the order of a pair is the least common multiple of the
+component orders, and `orderOf σ ∣ orderOf τ` makes that `orderOf τ`. -/
+theorem card_algEquiv_fixedField_zpowers_eq_orderOf
+    (hcop : ((NumberField.discr L).natAbs).Coprime m) {ζ : M} (hζ : IsPrimitiveRoot ζ m)
+    (σ : Gal(L/K)) (τ : (ZMod m)ˣ) (hστ : orderOf σ ∣ orderOf τ) :
+    Nat.card (M ≃ₐ[fixedField
+        (Subgroup.zpowers ((galEquivProd K L M m hcop hζ).symm (σ, τ)))] M) = orderOf τ := by
+  have : FiniteDimensional L M := finiteDimensional {m} L M
+  have : FiniteDimensional K M := FiniteDimensional.trans K L M
+  set e := galEquivProd K L M m hcop hζ
+  rw [AlgEquiv.card_algEquiv_fixedField_zpowers,
+    ← orderOf_injective e.toMonoidHom e.injective, MulEquiv.coe_toMonoidHom,
+    MulEquiv.apply_symm_apply, Prod.orderOf, Nat.lcm_comm, Nat.lcm_eq_left hστ]
 
 end TauCeti

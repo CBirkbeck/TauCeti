@@ -49,7 +49,8 @@ its fixing subgroup is the stabilizer of `x`; this too needs no hypothesis on `M
 * `IntermediateField.card_fixingSubgroup_le`
 * `IntermediateField.fixingSubgroup_adjoin_simple`
 * `FixedPoints.isCyclic_algEquiv`
-* `AlgEquiv.toFixedFieldAlgEquiv`, with `AlgEquiv.zpowers_toFixedFieldAlgEquiv_eq_top`
+* `AlgEquiv.toFixedFieldAlgEquiv`, with `AlgEquiv.zpowers_toFixedFieldAlgEquiv_eq_top` and
+  `AlgEquiv.card_algEquiv_fixedField_zpowers`
 -/
 
 public section
@@ -252,5 +253,20 @@ theorem zpowers_toFixedFieldAlgEquiv_eq_top (σ : M ≃ₐ[K] M) [Finite (Subgro
     rw [← MulEquiv.coe_toMonoidHom, ← MonoidHom.map_zpowers, Subgroup.zpowers_mk_self_eq_top]
     simp
   exact h
+
+/-- **`M` has degree `orderOf σ` over `M ^ ⟨σ⟩`.** The automorphisms of `M` fixing the field cut
+out by `⟨σ⟩` number exactly the order of `σ`.
+
+Immediate from `zpowers_toFixedFieldAlgEquiv_eq_top`, once the generator's order is read back over
+`K`: rebundling over a smaller base does not change an automorphism, so it does not change its
+order. Like the generation statement it asks only that `⟨σ⟩` be finite, not that `M / K` be. -/
+theorem card_algEquiv_fixedField_zpowers (σ : M ≃ₐ[K] M) [Finite (Subgroup.zpowers σ)] :
+    Nat.card (M ≃ₐ[IntermediateField.fixedField (Subgroup.zpowers σ)] M) = orderOf σ := by
+  have horder : orderOf (toFixedFieldAlgEquiv σ) = orderOf σ := by
+    rw [← orderOf_injective (AlgEquiv.restrictScalarsHom K)
+      (AlgEquiv.restrictScalarsHom_injective K) (toFixedFieldAlgEquiv σ),
+      AlgEquiv.restrictScalarsHom_apply, restrictScalars_toFixedFieldAlgEquiv]
+  rw [← Subgroup.card_top (G := M ≃ₐ[IntermediateField.fixedField (Subgroup.zpowers σ)] M),
+    ← zpowers_toFixedFieldAlgEquiv_eq_top σ, Nat.card_zpowers, horder]
 
 end AlgEquiv
