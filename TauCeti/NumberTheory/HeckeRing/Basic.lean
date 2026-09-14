@@ -46,7 +46,9 @@ merges. The degree section is instead ported from the AINTLIB `LeanModularForms`
   at an isomorphism.
 * `DoubleCoset.decompQuotientEquivMapOfKerInfLe`: the same transport **without** injectivity,
   under an ambient subgroup `H` containing both groups and stable under conjugation by `g`, and
-  `φ.ker ⊓ H ≤ Γ₂`. This is the version a fundamental-domain statement needs: the group that acts
+  `φ.ker ⊓ H ≤ Γ₂`. The target element is supplied by an equation `hd : φ g = d`, so a consumer
+  holding `(φ g)⁻¹` rather than `φ g⁻¹` needs no type transport of its own. This is the version a
+  fundamental-domain statement needs: the group that acts
   faithfully on `ℍ` is a *quotient*, so the homomorphism reaching it is deliberately non-injective,
   and the kernel is absorbed by the denominator instead.
 * `HeckeCosetModule.single`: the basis element `b • [D]` of the Hecke coset module, with
@@ -294,8 +296,7 @@ lemma map_subgroupOf_smul_of_ker_inf_le {G' : Type*} [Group G'] (φ : G →* G')
   constructor
   · rintro ⟨y, hy, rfl⟩
     refine ⟨g⁻¹ * (y : G) * g, hy, ?_⟩
-    change φ (g⁻¹ * (y : G) * g) = (φ g)⁻¹ * φ (y : G) * φ g
-    simp [mul_assoc]
+    simp [map_mul, map_inv, mul_assoc]
   · rintro ⟨z, hz, hzx⟩
     obtain ⟨y, hy, hyx⟩ := x.2
     refine ⟨⟨y, hy⟩, ?_, Subtype.ext hyx⟩
@@ -310,10 +311,10 @@ open scoped Pointwise in
 /-- **The decomposition quotient transports without injectivity**, under an ambient subgroup.
 The kernel is absorbed by the denominator, so the index is unchanged. -/
 noncomputable def decompQuotientEquivMapOfKerInfLe {G' : Type*} [Group G'] (φ : G →* G')
-    (Γ₁ Γ₂ H : Subgroup G) (g : G) (h₁ : Γ₁ ≤ H) (h₂ : Γ₂ ≤ H)
+    (Γ₁ Γ₂ H : Subgroup G) (g : G) {d : G'} (hd : φ g = d) (h₁ : Γ₁ ≤ H) (h₂ : Γ₂ ≤ H)
     (hconj : ∀ y ∈ H, g⁻¹ * y * g ∈ H) (hker : φ.ker ⊓ H ≤ Γ₂) :
-    DecompQuotient Γ₁ Γ₂ g ≃ DecompQuotient (Γ₁.map φ) (Γ₂.map φ) (φ g) :=
-  TauCeti.QuotientGroup.congrOfSurjectiveOfKerLe (φ.subgroupMap Γ₁)
+    DecompQuotient Γ₁ Γ₂ g ≃ DecompQuotient (Γ₁.map φ) (Γ₂.map φ) d :=
+  hd ▸ TauCeti.QuotientGroup.congrOfSurjectiveOfKerLe (φ.subgroupMap Γ₁)
     (MonoidHom.subgroupMap_surjective φ Γ₁)
     (by
       rw [Subgroup.ker_subgroupMap]
@@ -329,32 +330,13 @@ noncomputable def decompQuotientEquivMapOfKerInfLe {G' : Type*} [Group G'] (φ :
 open scoped Pointwise in
 @[simp]
 theorem decompQuotientEquivMapOfKerInfLe_mk {G' : Type*} [Group G'] (φ : G →* G')
-    (Γ₁ Γ₂ H : Subgroup G) (g : G) (h₁ : Γ₁ ≤ H) (h₂ : Γ₂ ≤ H)
+    (Γ₁ Γ₂ H : Subgroup G) (g : G) {d : G'} (hd : φ g = d) (h₁ : Γ₁ ≤ H) (h₂ : Γ₂ ≤ H)
     (hconj : ∀ y ∈ H, g⁻¹ * y * g ∈ H) (hker : φ.ker ⊓ H ≤ Γ₂) (y : Γ₁) :
-    decompQuotientEquivMapOfKerInfLe φ Γ₁ Γ₂ H g h₁ h₂ hconj hker (QuotientGroup.mk y) =
+    decompQuotientEquivMapOfKerInfLe φ Γ₁ Γ₂ H g hd h₁ h₂ hconj hker (QuotientGroup.mk y) =
       QuotientGroup.mk (φ.subgroupMap Γ₁ y) := by
+  subst hd
   unfold decompQuotientEquivMapOfKerInfLe
   exact TauCeti.QuotientGroup.congrOfSurjectiveOfKerLe_mk _ _ _ _ _
-
-open scoped Pointwise in
-/-- `decompQuotientEquivMapOfKerInfLe` with the target element supplied by an equation, so a
-consumer holding `(φ g)⁻¹` rather than `φ g⁻¹` needs no type transport. -/
-noncomputable def decompQuotientEquivMapOfKerInfLe' {G' : Type*} [Group G'] (φ : G →* G')
-    (Γ₁ Γ₂ H : Subgroup G) (g : G) (d : G') (hd : φ g = d) (h₁ : Γ₁ ≤ H) (h₂ : Γ₂ ≤ H)
-    (hconj : ∀ y ∈ H, g⁻¹ * y * g ∈ H) (hker : φ.ker ⊓ H ≤ Γ₂) :
-    DecompQuotient Γ₁ Γ₂ g ≃ DecompQuotient (Γ₁.map φ) (Γ₂.map φ) d := by
-  subst hd
-  exact decompQuotientEquivMapOfKerInfLe φ Γ₁ Γ₂ H g h₁ h₂ hconj hker
-
-open scoped Pointwise in
-@[simp]
-theorem decompQuotientEquivMapOfKerInfLe'_mk {G' : Type*} [Group G'] (φ : G →* G')
-    (Γ₁ Γ₂ H : Subgroup G) (g : G) (d : G') (hd : φ g = d) (h₁ : Γ₁ ≤ H) (h₂ : Γ₂ ≤ H)
-    (hconj : ∀ y ∈ H, g⁻¹ * y * g ∈ H) (hker : φ.ker ⊓ H ≤ Γ₂) (y : Γ₁) :
-    decompQuotientEquivMapOfKerInfLe' φ Γ₁ Γ₂ H g d hd h₁ h₂ hconj hker (QuotientGroup.mk y) =
-      QuotientGroup.mk (φ.subgroupMap Γ₁ y) := by
-  subst hd
-  exact decompQuotientEquivMapOfKerInfLe_mk φ Γ₁ Γ₂ H g h₁ h₂ hconj hker y
 
 /-- Equality of classes in `DecompQuotient H₁ H₂ g` gives the conjugation relation between their
 representatives: `u₁⁻¹ u₂` lies in the stabilizer indexing the decomposition, so conjugating it

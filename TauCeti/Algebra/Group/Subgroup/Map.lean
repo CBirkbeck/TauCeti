@@ -69,85 +69,101 @@ underlying homomorphism is. Companion to Mathlib's
 `MonoidHom.subgroupComap_surjective_of_surjective`. -/
 theorem MonoidHom.subgroupComap_injective_of_injective {f : H →* G} (hf : Function.Injective f)
     (K : Subgroup G) : Function.Injective (f.subgroupComap K) :=
-  fun _ _ hxy => Subtype.ext (hf (congrArg Subtype.val hxy))
+  fun _ _ hxy ↦ Subtype.ext (hf (congrArg Subtype.val hxy))
 
-/-- A surjective homomorphism carries central elements to central elements. -/
+/-- A surjective homomorphism carries central elements to central elements. This is Mathlib's
+`Subgroup.map_center_le_center` specialised to a bundled `G →* H`; `Subgroup.map_center_eq_center`
+below strengthens `≤` to `=` for an isomorphism. -/
 theorem Subgroup.map_center_le (f : G →* H) (hf : Function.Surjective f) :
-    (Subgroup.center G).map f ≤ Subgroup.center H := by
-  rintro _ ⟨x, hx, rfl⟩
-  rw [Subgroup.mem_center_iff]
-  intro y
-  obtain ⟨z, rfl⟩ := hf y
-  rw [← map_mul, ← map_mul, Subgroup.mem_center_iff.mp hx z]
+    (Subgroup.center G).map f ≤ Subgroup.center H :=
+  Subgroup.map_center_le_center hf
 
 /-- An isomorphism of groups carries the centre onto the centre. -/
 theorem Subgroup.map_center_eq_center (e : G ≃* H) :
-    (Subgroup.center G).map (e : G →* H) = Subgroup.center H := by
-  apply le_antisymm (Subgroup.map_center_le _ e.surjective)
-  intro y hy
-  refine ⟨e.symm y, ?_, e.apply_symm_apply y⟩
-  exact Subgroup.map_center_le (e.symm : H →* G) e.symm.surjective ⟨y, hy, rfl⟩
+    (Subgroup.center G).map (e : G →* H) = Subgroup.center H :=
+  Subgroup.map_center_eq e
 
-/-- The centre of a group lies in the kernel of every surjection onto a centreless group. -/
+/-- The centre of a group lies in the kernel of every surjection onto a centreless group.
+
+Mathlib's `Subgroup.map_center_le_center` bounds the image of the centre under any surjection by
+`Subgroup.center H`; this lemma is the special case where that bound is `⊥`. -/
 theorem _root_.MonoidHom.center_le_ker (f : G →* H) (hf : Function.Surjective f)
-    (hH : Subgroup.center H = ⊥) : Subgroup.center G ≤ f.ker := by
-  intro x hx
-  have hfx := Subgroup.map_center_le f hf ⟨x, hx, rfl⟩
-  rw [hH, Subgroup.mem_bot] at hfx
-  exact hfx
+    (hH : Subgroup.center H = ⊥) : Subgroup.center G ≤ f.ker :=
+  (Subgroup.map_eq_bot_iff _).mp <| le_bot_iff.mp <| hH ▸ Subgroup.map_center_le_center hf
 
 /-! ## Restricting an isomorphism to a subgroup -/
 
 variable {K : Type*} [Group K]
 
 /-- The isomorphism of subgroups restricted from an isomorphism of groups carrying the one onto the
-other. -/
+other. It acts as `e` on elements, and its inverse as `e.symm`.
+
+Use it rather than `MulEquiv.subgroupMap` whenever the target subgroup already has a name:
+`subgroupMap` lands in the literal image `A.map e`, so every call site would otherwise compose it
+with `MulEquiv.subgroupCongr` by hand. `QuotientGroup.congrOfMapEq` is the coset-space companion. -/
 def Subgroup.congrOfMapEq (e : G ≃* H) {A : Subgroup G} {B : Subgroup H}
     (h : A.map (e : G →* H) = B) : ↥A ≃* ↥B :=
   (e.subgroupMap A).trans (MulEquiv.subgroupCongr h)
 
+/-- The restriction `Subgroup.congrOfMapEq e h` agrees with `e` on underlying elements. Both
+subgroups are implicit and pinned by `h`, so neither has to be named at a use site;
+`Subgroup.coe_congrOfMapEq_symm_apply` is the companion statement for the inverse. -/
 @[simp]
 theorem Subgroup.coe_congrOfMapEq_apply (e : G ≃* H) {A : Subgroup G} {B : Subgroup H}
-    (h : A.map (e : G →* H) = B) (x : ↥A) : (Subgroup.congrOfMapEq e h x : H) = e (x : G) := by
-  simp only [Subgroup.congrOfMapEq, MulEquiv.trans_apply, MulEquiv.subgroupCongr_apply,
-    MulEquiv.coe_subgroupMap_apply]
+    (h : A.map (e : G →* H) = B) (x : ↥A) : (Subgroup.congrOfMapEq e h x : H) = e (x : G) := by rfl
 
+/-- The inverse of the restriction `Subgroup.congrOfMapEq e h` agrees with `e.symm` on underlying
+elements; the companion of `Subgroup.coe_congrOfMapEq_apply` for the inverse. It is the coerced
+form, where Mathlib's `MulEquiv.subgroupMap_symm_apply` for the literal image `A.map e` returns
+the subtype `⟨e.symm ↑y, _⟩`; `Subgroup.congrOfMapEq_symm` rewrites the whole inverse instead. -/
 @[simp]
 theorem Subgroup.coe_congrOfMapEq_symm_apply (e : G ≃* H) {A : Subgroup G} {B : Subgroup H}
     (h : A.map (e : G →* H) = B) (y : ↥B) :
-    ((Subgroup.congrOfMapEq e h).symm y : G) = e.symm (y : H) := by
-  simp only [Subgroup.congrOfMapEq, MulEquiv.symm_trans_apply, MulEquiv.subgroupCongr_symm_apply,
-    MulEquiv.subgroupMap_symm_apply]
+    ((Subgroup.congrOfMapEq e h).symm y : G) = e.symm (y : H) := by rfl
 
+/-- Restricting the identity isomorphism of `G` to a subgroup `A` it carries onto itself gives the
+identity of `↥A`.
+
+The map-equality hypothesis is explicit but pinned by unification with the left-hand side, so a use
+site spells this `Subgroup.congrOfMapEq_refl _`. `Subgroup.congrOfMapEq_trans` and
+`Subgroup.congrOfMapEq_symm` are the companion composition and inverse statements. -/
 @[simp]
-theorem Subgroup.congrOfMapEq_refl {A : Subgroup G}
-    (h : A.map (MulEquiv.refl G : G →* G) = A) :
-    Subgroup.congrOfMapEq (MulEquiv.refl G) h = MulEquiv.refl ↥A :=
-  MulEquiv.ext fun _ => Subtype.ext (by simp)
+theorem Subgroup.congrOfMapEq_refl {A : Subgroup G} (h : A.map (MulEquiv.refl G : G →* G) = A) :
+    Subgroup.congrOfMapEq (MulEquiv.refl G) h = MulEquiv.refl ↥A := by rfl
 
+/-- Restricting to subgroups is functorial: the restriction of `e.trans f` is the composite of the
+restrictions of `e` and of `f`.
+
+The composite's own map-equality hypothesis is derived from `h` and `h'`, so a use site supplies
+only the two individual ones. `Subgroup.congrOfMapEq_refl` and `Subgroup.congrOfMapEq_symm` are the
+companion identity and inverse statements. -/
 @[simp]
 theorem Subgroup.congrOfMapEq_trans (e : G ≃* H) {A : Subgroup G} {B : Subgroup H}
-    (h : A.map (e : G →* H) = B) (f : H ≃* K) {C : Subgroup K}
-    (h' : B.map (f : H →* K) = C) :
-    (Subgroup.congrOfMapEq e h).trans (Subgroup.congrOfMapEq f h') =
-      Subgroup.congrOfMapEq (e.trans f)
-        (by rw [MulEquiv.coe_monoidHom_trans, ← _root_.Subgroup.map_map, h, h']) :=
-  MulEquiv.ext fun _ => Subtype.ext (by simp)
+    (h : A.map (e : G →* H) = B) (f : H ≃* K) {C : Subgroup K} (h' : B.map (f : H →* K) = C) :
+    (Subgroup.congrOfMapEq e h).trans (Subgroup.congrOfMapEq f h') = Subgroup.congrOfMapEq
+      (e.trans f) (by rw [MulEquiv.coe_monoidHom_trans, ← _root_.Subgroup.map_map, h, h']) := by
+  rfl
 
--- Not `@[simp]`: with this in the simp set, `Subgroup.coe_congrOfMapEq_symm_apply` below is
+-- Not `@[simp]`: with this in the simp set, `Subgroup.coe_congrOfMapEq_symm_apply` above is
 -- provable by `simp`, which the `simpNF` linter rejects.
+/-- Inverting the restriction of `e` to `A ≃* B` gives the restriction of `e.symm` to `B ≃* A`.
+
+The equality `B.map e.symm = A` needed on the right is derived from `h`, so a use site supplies
+only `h`. This is the whole-isomorphism form; `Subgroup.coe_congrOfMapEq_symm_apply` is the
+pointwise one. -/
 theorem Subgroup.congrOfMapEq_symm (e : G ≃* H) {A : Subgroup G} {B : Subgroup H}
-    (h : A.map (e : G →* H) = B) :
-    (Subgroup.congrOfMapEq e h).symm =
-      Subgroup.congrOfMapEq e.symm ((_root_.Subgroup.map_symm_eq_iff_map_eq A).mpr h) :=
-  MulEquiv.ext fun _ => Subtype.ext (by simp)
+    (h : A.map (e : G →* H) = B) : (Subgroup.congrOfMapEq e h).symm =
+      Subgroup.congrOfMapEq e.symm ((_root_.Subgroup.map_symm_eq_iff_map_eq A).mpr h) := by rfl
 
 /-- The homomorphism of subgroups obtained from a homomorphism between two other subgroups by
-transporting along equalities of the domain and of the codomain. -/
-def _root_.MonoidHom.subgroupCongr {A A' : Subgroup G} {B B' : Subgroup H}
-    (hA : A' = A) (hB : B' = B) (f : A →* B) : A' →* B' :=
-  ((MulEquiv.subgroupCongr hB).symm.toMonoidHom).comp
-    (f.comp (MulEquiv.subgroupCongr hA).toMonoidHom)
+transporting along equalities of the domain and of the codomain.
+
+Mathlib's `MulEquiv.subgroupCongr` transports along a single equality of two subgroups of *one*
+group; here the domain and the codomain live in different groups, so there is one equality at each
+end. `MonoidHom.coe_subgroupCongr_apply` evaluates the result in the ambient group. -/
+def _root_.MonoidHom.subgroupCongr {A A' : Subgroup G} {B B' : Subgroup H} (hA : A' = A)
+    (hB : B' = B) (f : A →* B) : A' →* B' :=
+  (MulEquiv.subgroupCongr hB).symm.toMonoidHom.comp (f.comp (MulEquiv.subgroupCongr hA).toMonoidHom)
 
 /-- The transported homomorphism takes the same value in the ambient group as the original does
 at the corresponding element. -/
@@ -284,15 +300,11 @@ noncomputable def QuotientGroup.congrOfSurjectiveOfKerLe (ψ : G →* H)
     (hsurj : Function.Surjective ψ) {A : Subgroup G} {B : Subgroup H}
     (hker : ψ.ker ≤ A) (hmap : A.map ψ = B) : G ⧸ A ≃ H ⧸ B := by
   classical
-  have key : ∀ a b : G, (a⁻¹ * b ∈ A) ↔ ((ψ a)⁻¹ * ψ b ∈ B) := by
-    intro a b
-    refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
-    · rw [← hmap, ← map_inv, ← map_mul]
-      exact Subgroup.mem_map_of_mem _ h
-    · rw [← hmap] at h
-      obtain ⟨c, hc, hceq⟩ := h
-      have : c⁻¹ * (a⁻¹ * b) ∈ ψ.ker := by simp [MonoidHom.mem_ker, hceq]
-      simpa using A.mul_mem hc (hker this)
+  -- `ker ψ ≤ A` is exactly what makes `A` the full preimage of `B`, and membership in a preimage
+  -- is the whole content of the coset relation matching on both sides
+  have hcomap : B.comap ψ = A := hmap ▸ Subgroup.comap_map_eq_self hker
+  have key : ∀ a b : G, (a⁻¹ * b ∈ A) ↔ ((ψ a)⁻¹ * ψ b ∈ B) := fun a b ↦ by
+    rw [← hcomap, Subgroup.mem_comap, map_mul, map_inv]
   refine Equiv.ofBijective (Quotient.map' ψ ?_) ⟨?_, ?_⟩
   · intro a b hab
     exact QuotientGroup.leftRel_apply.mpr
@@ -300,12 +312,8 @@ noncomputable def QuotientGroup.congrOfSurjectiveOfKerLe (ψ : G →* H)
   · intro x y hxy
     induction x using QuotientGroup.induction_on with | _ a =>
     induction y using QuotientGroup.induction_on with | _ b =>
-    refine QuotientGroup.eq.mpr ((key a b).mpr ?_)
-    simpa [QuotientGroup.eq] using hxy
-  · intro y
-    induction y using QuotientGroup.induction_on with | _ b =>
-    obtain ⟨a, rfl⟩ := hsurj b
-    exact ⟨QuotientGroup.mk a, rfl⟩
+    exact QuotientGroup.eq.mpr ((key a b).mpr (QuotientGroup.eq.mp hxy))
+  · exact Quotient.map_surjective _ hsurj
 
 @[simp]
 theorem QuotientGroup.congrOfSurjectiveOfKerLe_mk (ψ : G →* H)

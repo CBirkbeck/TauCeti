@@ -68,10 +68,10 @@ Ported from the AINTLIB `LeanModularForms` project
 ([`LeanModularForms/HeckeRIngs/GL2/HeckeAction.lean`](https://github.com/CBirkbeck/AINTLIB),
 commit `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck): the
 `SlashAction ℤ (GL (Fin 2) ℚ) (ℍ → ℂ)` instance built by `monoidHomSlashAction`, and the
-scalar-pull-through step inside its `heckeSlash_smul`. AINTLIB names the embedding `glMap`; the
-corresponding declaration here is `TauCeti.ratToRealGL`, in
-`TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Map.lean`, which the instance below is built
-from. The scalar lemma is stated here at the `SMul`/`IsScalarTower` generality of Mathlib's
+scalar-pull-through step inside its `heckeSlash_smul`. AINTLIB names the embedding `glMap`; here
+it is spelled out as `Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)` at each use rather than
+abbreviated, so there is no corresponding declaration. The scalar lemma is stated here at the
+`SMul`/`IsScalarTower` generality of Mathlib's
 `ModularForm.SL_smul_slash` rather than AINTLIB's `c : ℂ`.
 
 The `SLnZ 2` / `𝒮ℒ` bridge corresponds to AINTLIB's `glMap_mem_SL` and `mem_SL_exists_H` (same
@@ -95,7 +95,7 @@ namespace ModularForm
 /-- The weight-`k` slash action of `GL(2, ℚ)`, induced from `GL(2, ℝ)` along `ℚ ↪ ℝ`. Scoped,
 so it is opted into rather than imposed. -/
 noncomputable scoped instance ratSlashAction : SlashAction ℤ (GL (Fin 2) ℚ) (ℍ → ℂ) :=
-  monoidHomSlashAction TauCeti.ratToRealGL
+  monoidHomSlashAction (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ))
 
 /-- The rational slash action is the real one at the mapped matrix. Definitional, but named:
 it is how every `GL(2, ℝ)` lemma is brought to bear on a rational slash.

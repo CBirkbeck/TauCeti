@@ -81,14 +81,16 @@ theorem isFundamentalDomain_iUnion_rightCosetRep_smul {P : Type*} [Group P] [Mul
       (⋃ v, φ (rightCosetRep D v) • S) μ := by
   -- `e` matches the index of Shimura's decomposition of `Γ₁δΓ₂` with that of its image, so the
   -- canonical transversal `τᵥ⁻¹` upstairs maps onto one downstairs
-  set e := decompQuotientEquivMapOfKerInfLe' φ Γ₂ Γ₁ H (D.out : GL (Fin 2) ℚ)⁻¹
-    (φ (D.out : GL (Fin 2) ℚ))⁻¹ (map_inv φ _) h₁ h₂ (by simpa using hconj) hker with he_def
+  set e := decompQuotientEquivMapOfKerInfLe φ Γ₂ Γ₁ H (D.out : GL (Fin 2) ℚ)⁻¹
+    (map_inv φ _) h₁ h₂ (by simpa using hconj) hker with he_def
   set r : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹ → (Γ₂.map φ : Subgroup P) :=
     fun v ↦ (φ.subgroupMap Γ₂ v.out)⁻¹
   have heq : ∀ v, QuotientGroup.mk (r v)⁻¹ = e v := fun v ↦ by
-    conv_rhs => rw [he_def, ← v.out_eq, decompQuotientEquivMapOfKerInfLe'_mk]
+    conv_rhs => rw [he_def, ← v.out_eq, decompQuotientEquivMapOfKerInfLe_mk]
     simp [r]
   simp only [rightCosetRep_def, map_mul, map_inv]
+  -- `e` was built with its target supplied as `(φ δ)⁻¹` rather than `φ δ⁻¹`, so it already has
+  -- the type asked for and only the underlying function needs transporting
   exact hS.iUnion_mul_smul_of_transversal (φ (D.out : GL (Fin 2) ℚ)) hδ hnull
     (funext heq ▸ e.bijective)
 
