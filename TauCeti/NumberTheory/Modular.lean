@@ -52,10 +52,6 @@ every level, which is what a Petersson product for a congruence subgroup is an i
   fundamental domain for any subgroup of `PSL(2, ℤ)`.
 * `ModularGroup.isFundamentalDomain_iUnion_out_inv_smul_fdo_withCenter`: the same tiling indexed
   by `SL(2, ℤ) ⧸ Γ.withCenter`, which is the indexing the Petersson product uses.
-* `ModularGroup.isFundamentalDomain_map_mapGL`: a fundamental domain for the image of `Γ` in
-  `PSL(2, ℤ)` is one for its image in `GL(2, ℝ)`, **provided `Γ ⊓ center = ⊥`** — a hypothesis
-  without which the statement is false, since `-I` would act trivially yet count as a
-  non-identity translation.
 
 Split out of the Petersson inner-product development ported from the AINTLIB
 `LeanModularForms` project
@@ -312,71 +308,5 @@ theorem isFundamentalDomain_iUnion_out_inv_smul_fdo_withCenter (Γ : Subgroup SL
   exact ((Subgroup.quotientEquivOfEq (Subgroup.withCenter_def Γ)).trans
     (QuotientGroup.quotientQuotientEquivQuotientSup Γ
       (Subgroup.center SL(2, ℤ))).symm).bijective
-
-/-! ### The tiling read in the acting group `GL(2, ℝ)` -/
-
-/-- **A fundamental domain for the image of `Γ` in `PSL(2, ℤ)` is one for its image in
-`GL(2, ℝ)`** — provided `Γ` misses the centre.
-
-There is no coercion `PSL(2, ℤ) → GL(2, ℝ)` to read this along: opposite lifts `γ` and `-γ` of one
-class have distinct images under `mapGL ℝ`. What is true, and all that is used, is that **for each
-`γ : SL(2, ℤ)` the class `QuotientGroup.mk γ` acts on `ℍ` exactly as `mapGL ℝ γ` does** —
-`UpperHalfPlane.pslMk_smul` followed by `ModularGroup.sl_moeb`, both definitional.
-
-**The hypothesis is not a convenience.** Without it the statement is false: if `-I ∈ Γ` then `-I`
-is a non-identity element of `Γ.map (mapGL ℝ)` acting trivially on `ℍ`, so `(-I) • S = S` and
-`MeasureTheory.IsFundamentalDomain` fails its a.e.-disjointness requirement for every `S` of
-positive measure. Passing to `PSL(2, ℤ)` is exactly what removes that element, which is why
-`isFundamentalDomain_iUnion_out_inv_smul_fdo_withCenter` above is stated there. `Γ ⊓ center = ⊥`
-holds for `Γ₁(N)` and `Γ(N)` with `N ≥ 3`, and fails for `SL(2, ℤ)`, `Γ₀(N)` and `N ≤ 2`.
-
-It is needed because a Hecke double coset lives in `GL (Fin 2) ℚ`, whose elements are not
-classes modulo the centre: a tiling by translates `δ σᵥ⁻¹` has to be stated in a group that
-contains `δ`, and `PSL(2, ℤ)` is not one. -/
-theorem isFundamentalDomain_map_mapGL {Γ : Subgroup SL(2, ℤ)} {μ : Measure ℍ}
-    (hΓ : Γ ⊓ Subgroup.center SL(2, ℤ) = ⊥) {S : Set ℍ}
-    (hS : MeasureTheory.IsFundamentalDomain
-      (Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ)))) S μ) :
-    MeasureTheory.IsFundamentalDomain (Γ.map (Matrix.SpecialLinearGroup.mapGL ℝ)) S μ := by
-  -- The subgroup acts through the ambient `GL(2, ℝ)`-action, so a translate by `g` and one by
-  -- `(g : GL (Fin 2) ℝ)` are the same set. That is definitional; naming it once is what lets the
-  -- two halves below rewrite with the `@[simp]` action lemmas instead of reshaping goals.
-  have hsub : ∀ (g : Γ.map (Matrix.SpecialLinearGroup.mapGL ℝ)) (T : Set ℍ),
-      g • T = (g : GL (Fin 2) ℝ) • T := fun _ _ ↦ rfl
-  have hsubP : ∀ (q : Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ)))) (y : ℍ),
-      q • y = (q : PSL(2, ℤ)) • y := fun _ _ ↦ rfl
-  refine ⟨hS.nullMeasurableSet, ?_, ?_⟩
-  · -- the covering half needs no hypothesis on `Γ`: lift the `PSL` witness to `Γ` and read its
-    -- action through `pslMk_smul` and `sl_moeb`
-    filter_upwards [hS.ae_covers] with x hx
-    obtain ⟨q, hq⟩ := hx
-    obtain ⟨γ, hγΓ, hγq⟩ := q.2
-    refine ⟨⟨Matrix.SpecialLinearGroup.mapGL ℝ γ, ⟨γ, hγΓ, rfl⟩⟩, ?_⟩
-    rw [show (⟨Matrix.SpecialLinearGroup.mapGL ℝ γ, ⟨γ, hγΓ, rfl⟩⟩ :
-        Γ.map (Matrix.SpecialLinearGroup.mapGL ℝ)) • x =
-        (Matrix.SpecialLinearGroup.mapGL ℝ γ) • x from rfl]
-    rw [hsubP q x] at hq
-    simpa only [← hγq, QuotientGroup.mk'_apply, pslMk_smul, sl_moeb,
-      Matrix.SpecialLinearGroup.mapGL, MonoidHom.coe_comp, Function.comp_apply,
-      algebraMap_int_eq] using hq
-  · intro g₁ g₂ hne
-    obtain ⟨γ₁, h₁Γ, h₁⟩ := g₁.2
-    obtain ⟨γ₂, h₂Γ, h₂⟩ := g₂.2
-    have hγne : γ₁ ≠ γ₂ := fun h ↦ hne (Subtype.ext (by rw [← h₁, ← h₂, h]))
-    -- this is the half that spends `hΓ`: distinct in `Γ` has to stay distinct in `PSL(2, ℤ)`,
-    -- and a collision would put `γ₁⁻¹γ₂` in both `Γ` and the centre
-    have hqne : (⟨QuotientGroup.mk γ₁, ⟨γ₁, h₁Γ, rfl⟩⟩ :
-          Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ)))) ≠
-        ⟨QuotientGroup.mk γ₂, ⟨γ₂, h₂Γ, rfl⟩⟩ := by
-      intro h
-      have hmem : γ₁⁻¹ * γ₂ ∈ Γ ⊓ Subgroup.center SL(2, ℤ) :=
-        ⟨Γ.mul_mem (Γ.inv_mem h₁Γ) h₂Γ, QuotientGroup.eq.mp (congrArg Subtype.val h)⟩
-      rw [hΓ, Subgroup.mem_bot] at hmem
-      exact hγne (inv_mul_eq_one.mp hmem)
-    simp only [Function.onFun, hsub, ← h₁, ← h₂]
-    simpa only [Function.onFun, MulAction.subgroup_smul_def,
-      Matrix.SpecialLinearGroup.pslMk_smul_set, sl_smul_set,
-      Matrix.SpecialLinearGroup.mapGL, MonoidHom.coe_comp, Function.comp_apply,
-      algebraMap_int_eq] using hS.aedisjoint hqne
 
 end ModularGroup
