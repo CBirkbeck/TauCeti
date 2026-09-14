@@ -34,9 +34,14 @@ and the descent argument then places it in the old subspace.
 
 ## Main results
 
+* `heckeTCuspNat_eq_smul_iff_forall_qExpansion_coeff_prime_mul`: on `S_k(N, χ)` the recurrence
+  **characterises** the eigenvector equation — the converse holds too, because a cusp form is
+  determined by its `q`-expansion. This is the direction Diamond–Shurman's Proposition 5.8.5
+  needs.
 * `qExpansion_coeff_prime_mul_of_heckeRingHomCharSpace_heckeTCompositeGamma0_eq_smul` and its
   cusp-form counterpart `…_of_heckeRingHomCuspCharSpace_…`: the coefficient recurrence of an
-  eigenvector, on `M_k(N, χ)` and on `S_k(N, χ)`.
+  eigenvector, on `M_k(N, χ)` and on `S_k(N, χ)`; the cusp-form one is the forward half of the
+  characterisation above.
 * `qExpansion_coeff_eq_zero_of_forall_prime_heckeRingHom_of_one_eq_zero_of_ne_zero_of_coprime` and
   `…_heckeRingHomCuspCharSpace_…`: a form eigen at every prime away from a multiple `L` of `N`,
   with `a₁ = 0`, has `a_n = 0` at every `n` coprime to `L` (and `n ≠ 0` in the modular-form
@@ -48,7 +53,8 @@ and the descent argument then places it in the old subspace.
 ## References
 
 * [F. Diamond and J. Shurman, *A first course in modular forms*][diamondshurman2005],
-  Proposition 5.3.1 and §5.8.
+  Proposition 5.3.1 and §5.8 — in particular Proposition 5.8.5, whose engine at a single prime
+  is the characterisation stated here.
 * [T. Miyake, *Modular forms*][miyake1989], §4.6.
 -/
 
@@ -83,6 +89,50 @@ theorem heckeTCuspNat_eq_smul_of_heckeRingHomCuspCharSpace_heckeTCompositeGamma0
   simpa [heckeTCompositeGamma0_prime N hp,
     heckeRingHomCuspCharSpace_heckeTGeneratorGamma0 k χ hp] using congrArg Subtype.val hF
 
+/-! ### The recurrence characterises the eigenvector equation -/
+
+/-- **The coefficient recurrence characterises the `Tₚ`-eigenvector equation at a good prime**,
+on `S_k(N, χ)`. For `F ∈ S_k(N, χ)` and `p ∤ N`, the form `F` is a `Tₚ`-eigenvector with
+eigenvalue `c` exactly when its Fourier coefficients satisfy
+`a_{pm}(F) = c · a_m(F) − χ(p) p^{k−1} a_{m/p}(F)` at every `m`, the last term present only when
+`p ∣ m`.
+
+The forward direction is
+`qExpansion_coeff_prime_mul_of_heckeRingHomCuspCharSpace_heckeTCompositeGamma0_eq_smul` stated for
+the classical operator; the converse is the half Diamond–Shurman's Proposition 5.8.5 needs, and
+holds because a cusp form is determined by its `q`-expansion. -/
+theorem heckeTCuspNat_eq_smul_iff_forall_qExpansion_coeff_prime_mul [NeZero p]
+    (hp : p.Prime) (hpN : Nat.Coprime p N) {F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
+    (hF : F ∈ cuspFormCharSpace k χ) (c : ℂ) :
+    heckeTCuspNat k p F = c • F ↔
+      ∀ m : ℕ, (qExpansion 1 F).coeff (p * m) =
+        c * (qExpansion 1 F).coeff m -
+          if p ∣ m then (χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1) *
+            (qExpansion 1 F).coeff (m / p) else 0 := by
+  have hrec : ∀ m : ℕ, (qExpansion 1 (heckeTCuspNat k p F)).coeff m =
+      (qExpansion 1 F).coeff (p * m) +
+        if p ∣ m then (χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1) *
+          (qExpansion 1 F).coeff (m / p) else 0 := fun m ↦ by
+    rw [heckeTCuspNat_def]
+    exact qExpansion_coeff_heckeSlashGamma1CuspFormEnd_diagCosetGamma1_of_mem_cuspFormCharSpace
+      k hp hpN χ hF m
+  have hsmul : ∀ m : ℕ, (qExpansion 1 ((c • F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k))).coeff m =
+      c * (qExpansion 1 F).coeff m := fun m ↦ by
+    rw [FunLike.coe_smul,
+      ModularForm.qExpansion_smul one_pos (TauCeti.one_mem_strictPeriods_Gamma1_map _),
+      map_smul, smul_eq_mul]
+  constructor
+  · intro hT m
+    have h := hrec m
+    rw [hT, hsmul m] at h
+    linear_combination -h
+  · intro h
+    refine CuspForm.toModularFormₗ_injective ((ModularForm.qExpansion_inj one_pos
+      (TauCeti.one_mem_strictPeriods_Gamma1_map _)).1 (PowerSeries.ext fun m ↦ ?_))
+    simp only [CuspForm.toModularFormₗ_eq_coe, ModularFormClass.coe_modularForm]
+    rw [hrec m, hsmul m, h m]
+    ring
+
 /-- **The coefficient recurrence of an eigenvector at a good prime, on `M_k(N, χ)`.** If the ring
 generator at `p ∤ N` acts on `F ∈ M_k(N, χ)` by the scalar `c`, then
 `a_{pm}(F) = c · a_m(F) − χ(p) p^{k−1} a_{m/p}(F)`, the last term present only when `p ∣ m`. -/
@@ -111,16 +161,10 @@ theorem qExpansion_coeff_prime_mul_of_heckeRingHomCuspCharSpace_heckeTCompositeG
     (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (p * m) =
       c * (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff m -
         if p ∣ m then (χ (ZMod.unitOfCoprime p hpN) : ℂ) * (p : ℂ) ^ (k - 1) *
-          (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (m / p) else 0 := by
+          (qExpansion 1 (F : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)).coeff (m / p) else 0 :=
   have : NeZero p := ⟨hp.ne_zero⟩
-  have hT :=
-    heckeTCuspNat_eq_smul_of_heckeRingHomCuspCharSpace_heckeTCompositeGamma0_eq_smul hp hF
-  have h := qExpansion_coeff_heckeSlashGamma1CuspFormEnd_diagCosetGamma1_of_mem_cuspFormCharSpace
-    k hp hpN χ F.2 m
-  rw [← heckeTCuspNat_def, hT, FunLike.coe_smul,
-    ModularForm.qExpansion_smul one_pos (TauCeti.one_mem_strictPeriods_Gamma1_map _), map_smul,
-    smul_eq_mul] at h
-  linear_combination -h
+  (heckeTCuspNat_eq_smul_iff_forall_qExpansion_coeff_prime_mul hp hpN F.2 c).1
+    (heckeTCuspNat_eq_smul_of_heckeRingHomCuspCharSpace_heckeTCompositeGamma0_eq_smul hp hF) m
 
 /-- **Coefficient vanishing from the prime eigenvalues, on `M_k(N, χ)`.** Let `L` be a multiple of
 `N`. A form `F ∈ M_k(N, χ)` that is an eigenvector of the ring generator at every prime `p ∤ L`
