@@ -32,6 +32,8 @@ relation at every `n ≥ 1`.
 
 ## Main results
 
+* `ArithmeticFunction.hasPrimePowerRec_iff`: the defining equation of `HasPrimePowerRec`, which a
+  downstream module needs because the definition is sealed.
 * `ArithmeticFunction.eq_on_prime_pow_of_eq_on_primes_of_rec`: the recurrence alone — no
   multiplicativity — propagates agreement from the primes to the prime powers.
 * `ArithmeticFunction.IsMultiplicative.eq_of_eq_on_primes_of_rec`: two multiplicative functions
@@ -72,6 +74,14 @@ at every prime `p`, with the weight `w` a function of the prime alone. For Hecke
 and weight — and that sharing is what the results here need. -/
 def HasPrimePowerRec (f : ArithmeticFunction R) (w : ℕ → R) : Prop :=
   ∀ p : ℕ, p.Prime → ∀ r : ℕ, f (p ^ (r + 2)) = f p * f (p ^ (r + 1)) - w p * f (p ^ r)
+
+/-- Defining equation for `HasPrimePowerRec`. The definition is not `@[expose]`, so a downstream
+module can neither establish nor use the predicate by unfolding it; this is the interface, in the
+style of `HeckeRing.GL2.rightCosetRep_def` and `UpperHalfPlane.peterssonInner_def`. -/
+theorem hasPrimePowerRec_iff {f : ArithmeticFunction R} {w : ℕ → R} :
+    HasPrimePowerRec f w ↔
+      ∀ p : ℕ, p.Prime → ∀ r : ℕ, f (p ^ (r + 2)) = f p * f (p ^ (r + 1)) - w p * f (p ^ r) :=
+  Iff.rfl
 
 /-- **Prime values determine prime-power values, given a shared recurrence.** Two functions
 obeying the same recurrence, agreeing at `1` and at every prime, agree at every prime power: the

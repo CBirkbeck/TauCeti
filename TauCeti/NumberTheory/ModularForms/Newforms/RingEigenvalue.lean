@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.NumberTheory.ArithmeticFunction.Independence
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime.Recurrence
 public import TauCeti.NumberTheory.ModularForms.Newforms.Newform
 
@@ -32,6 +33,14 @@ at composite good indices be read off the eigenvalues at good primes and the cha
 * `HeckeRing.GL2.EigenformAwayFromLevel.eigenvalue_prime_pow_add_two`: the recurrence along the
   powers of a good prime, and its first instance
   `HeckeRing.GL2.EigenformAwayFromLevel.eigenvalue_prime_sq`.
+* `HeckeRing.GL2.EigenformAwayFromLevel.eigenArithmeticFunction`: the eigenvalue system extended by
+  zero to a total `ArithmeticFunction ℂ`, with
+  `isMultiplicative_eigenArithmeticFunction` and `hasPrimePowerRec_eigenArithmeticFunction` —
+  together, exactly the hypotheses of
+  `ArithmeticFunction.IsMultiplicative.linearIndependent_of_rec`.
+* `HeckeRing.GL2.EigenformAwayFromLevel.recWeight`: the weight `χ(p) p ^ (k - 1)` of that
+  recurrence, which depends on the level, weight and character but **not on the form** — the
+  sharing the independence theorem needs.
 
 The statements build the coprimality proofs guarding `eigenvalue` from their hypotheses
 (`Nat.coprime_mul_iff_left`, `Nat.Coprime.pow_left`, cast along the coercion lemmas of `ℕ+`); by
@@ -145,5 +154,121 @@ theorem eigenvalue_prime_sq {p : ℕ+} (hp : (p : ℕ).Prime) (hpN : Nat.Coprime
   have e₁ : f.eigenvalue (p ^ (0 + 1)) (hc (0 + 1)) = f.eigenvalue p hpN :=
     f.eigenvalue_congr (by rw [zero_add, pow_one])
   rw [f.eigenvalue_prime_pow_add_two hp hpN 0, e₀, e₁, mul_one, sq]
+
+/-! ### The eigenvalue system as an arithmetic function -/
+
+/-- **The weight of the shared prime-power recurrence**, `w p = χ(p) p ^ (k - 1)` at a good prime
+and `0` at a bad one.
+
+It depends on the level, the weight and the nebentypus — **not on the eigenform** — which is
+exactly the sharing that `ArithmeticFunction.HasPrimePowerRec` and the independence theorem above
+it require. Two eigenforms of the same level, weight and character therefore satisfy the *same*
+recurrence, and that is what lets a relation between them be cut down one prime at a time. -/
+noncomputable def recWeight (N : ℕ) (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ) (p : ℕ) : ℂ :=
+  if hp : Nat.Coprime p N then (χ (ZMod.unitOfCoprime p hp) : ℂ) * (p : ℂ) ^ (k - 1) else 0
+
+/-- The weight at a good prime. -/
+theorem recWeight_of_coprime {N : ℕ} {k : ℤ} {χ : (ZMod N)ˣ →* ℂˣ} {p : ℕ}
+    (h : Nat.Coprime p N) :
+    recWeight N k χ p = (χ (ZMod.unitOfCoprime p h) : ℂ) * (p : ℂ) ^ (k - 1) := by
+  unfold recWeight
+  rw [dite_eq_left_of_eq_true (eq_true h)]
+
+/-- The weight at a bad prime is `0` — which is what makes the recurrence hold there, every other
+term vanishing too. -/
+theorem recWeight_of_not_coprime {N : ℕ} {k : ℤ} {χ : (ZMod N)ˣ →* ℂˣ} {p : ℕ}
+    (h : ¬ Nat.Coprime p N) : recWeight N k χ p = 0 := by
+  unfold recWeight
+  rw [dite_eq_right_of_eq_false (eq_false h)]
+
+/-- **The eigenvalue system, extended by zero to an `ArithmeticFunction`.**
+
+`EigenformAwayFromLevel.eigenvalue` is defined only at indices coprime to the level, and carries
+the coprimality proof as an argument. The independence theorem wants a total
+`ArithmeticFunction ℂ`, so the values at indices sharing a factor with `N` are set to `0` — which
+is the choice that keeps the function multiplicative, since a bad index stays bad under
+multiplication. -/
+noncomputable def eigenArithmeticFunction (f : EigenformAwayFromLevel N k) :
+    ArithmeticFunction ℂ where
+  toFun n := if h : 0 < n ∧ Nat.Coprime n N then f.eigenvalue ⟨n, h.1⟩ h.2 else 0
+  map_zero' := by simp
+
+theorem eigenArithmeticFunction_apply_of_coprime {n : ℕ} (hn : 0 < n) (h : Nat.Coprime n N) :
+    f.eigenArithmeticFunction n = f.eigenvalue ⟨n, hn⟩ h := by
+  unfold eigenArithmeticFunction
+  simp only [ArithmeticFunction.coe_mk]
+  split
+  next => rfl
+  next hc => exact absurd ⟨hn, h⟩ hc
+
+@[simp]
+theorem eigenArithmeticFunction_apply_of_not_coprime {n : ℕ} (h : ¬ Nat.Coprime n N) :
+    f.eigenArithmeticFunction n = 0 := by
+  unfold eigenArithmeticFunction
+  simp only [ArithmeticFunction.coe_mk]
+  split
+  next hc => exact absurd hc.2 h
+  next => rfl
+
+/-- **The extended eigenvalue system is multiplicative.** On coprime good indices this is
+`eigenvalue_mul`; a product with a bad factor is bad, so both sides vanish there. -/
+theorem isMultiplicative_eigenArithmeticFunction :
+    (f.eigenArithmeticFunction).IsMultiplicative := by
+  constructor
+  · rw [f.eigenArithmeticFunction_apply_of_coprime Nat.one_pos (Nat.coprime_one_left N)]
+    exact (f.eigenvalue_congr (show (⟨1, Nat.one_pos⟩ : ℕ+) = 1 from rfl)).trans
+      f.eigenvalue_one
+  · intro m n hmn
+    by_cases hm : Nat.Coprime m N
+    · by_cases hn : Nat.Coprime n N
+      · rcases Nat.eq_zero_or_pos m with rfl | hm0
+        · simp
+        rcases Nat.eq_zero_or_pos n with rfl | hn0
+        · simp
+        rw [f.eigenArithmeticFunction_apply_of_coprime (Nat.mul_pos hm0 hn0)
+            (Nat.coprime_mul_iff_left.mpr ⟨hm, hn⟩),
+          f.eigenArithmeticFunction_apply_of_coprime hm0 hm,
+          f.eigenArithmeticFunction_apply_of_coprime hn0 hn]
+        exact (f.eigenvalue_congr
+            (show (⟨m * n, Nat.mul_pos hm0 hn0⟩ : ℕ+) = ⟨m, hm0⟩ * ⟨n, hn0⟩ from rfl)).trans
+          (f.eigenvalue_mul (m := ⟨m, hm0⟩) (n := ⟨n, hn0⟩) hmn hm hn)
+      · rw [f.eigenArithmeticFunction_apply_of_not_coprime hn,
+          f.eigenArithmeticFunction_apply_of_not_coprime
+            (fun h ↦ hn (Nat.coprime_mul_iff_left.mp h).2), mul_zero]
+    · rw [f.eigenArithmeticFunction_apply_of_not_coprime hm,
+        f.eigenArithmeticFunction_apply_of_not_coprime
+          (fun h ↦ hm (Nat.coprime_mul_iff_left.mp h).1), zero_mul]
+
+/-- **The extended eigenvalue system obeys the shared prime-power recurrence.**
+
+At a good prime this is `eigenvalue_prime_pow_add_two`. At a bad prime every term vanishes: the
+positive powers of `p` are not coprime to `N`, so the extension is `0` there, and `recWeight` is
+`0` as well — which is what makes the single equation hold uniformly in `p`, as
+`ArithmeticFunction.HasPrimePowerRec` demands.
+
+Together with `isMultiplicative_eigenArithmeticFunction` this is the whole hypothesis of
+`ArithmeticFunction.IsMultiplicative.linearIndependent_of_rec`: eigenforms of one level, weight
+and character with distinct eigenvalue systems are linearly independent. -/
+theorem hasPrimePowerRec_eigenArithmeticFunction :
+    ArithmeticFunction.HasPrimePowerRec f.eigenArithmeticFunction (recWeight N k f.χ) := by
+  rw [ArithmeticFunction.hasPrimePowerRec_iff]
+  intro p hp r
+  by_cases hpN : Nat.Coprime p N
+  · have hcp : ∀ j : ℕ, Nat.Coprime (p ^ j) N := fun j ↦ hpN.pow_left j
+    have hpos : ∀ j : ℕ, 0 < p ^ j := fun j ↦ pow_pos hp.pos j
+    rw [f.eigenArithmeticFunction_apply_of_coprime (hpos (r + 2)) (hcp (r + 2)),
+      f.eigenArithmeticFunction_apply_of_coprime hp.pos hpN,
+      f.eigenArithmeticFunction_apply_of_coprime (hpos (r + 1)) (hcp (r + 1)),
+      f.eigenArithmeticFunction_apply_of_coprime (hpos r) (hcp r)]
+    rw [recWeight_of_coprime hpN]
+    -- `(⟨p, _⟩ : ℕ+) ^ j` and `⟨p ^ j, _⟩` are the same term up to the positivity proof, which
+    -- proof irrelevance identifies, so the ring identity applies as it stands
+    exact f.eigenvalue_prime_pow_add_two (p := ⟨p, hp.pos⟩) hp hpN r
+  · have hbad : ∀ j : ℕ, 0 < j → ¬ Nat.Coprime (p ^ j) N := fun j hj hc ↦
+      hpN ((Nat.coprime_pow_left_iff hj p N).mp hc)
+    rw [f.eigenArithmeticFunction_apply_of_not_coprime (hbad (r + 2) (by omega)),
+      f.eigenArithmeticFunction_apply_of_not_coprime hpN]
+    rw [recWeight_of_not_coprime hpN]
+    ring
 
 end HeckeRing.GL2.EigenformAwayFromLevel
