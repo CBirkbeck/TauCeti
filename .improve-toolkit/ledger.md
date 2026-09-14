@@ -37463,3 +37463,23 @@ Neither branch's added lines use any of the removed short names or mention `IsCo
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r748 — 2026-09-14T21:27Z — #6796's merge-group build passed; #6851's first build still running; no merges; no-op board
+
+**Board** (21:26Z; sweep and queuepos exited 0): #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on
+head; #5950 is Chris's. **#6851** (kind 1, draft) now carries `roadmap/HopfRinow`; it reads
+`CI=PENDING:sandboxed-build,zulip-pr` and `NO BOARD`. No merges since #6093, and main is still `31e769e30`, so r747's
+staged checks stand. Nothing to fix, contest or drive; step 5 shut.
+
+**#6851's first CI run** (head `fdeaff5cb79c`, read by its full SHA): `sandboxed-build` has been in progress since
+21:14:25Z (12 min). `label` and `zulip-pr` each have a completed success and a later queued duplicate; `sweep`,
+`resolve` and `label-resolved` were skipped.
+
+**Merge groups:** #6796 (`3188698be`): `sandboxed-build` **success**, 21:07:23Z → 21:26:18Z (19 min);
+`publish-merge-group-cache` queued since 21:26:19Z. #6800 (`1a63e8248`): `sandboxed-build` in progress since 21:10:27Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

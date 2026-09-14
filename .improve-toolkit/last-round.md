@@ -1,4 +1,4 @@
-# Last round — r747 (2026-09-14T21:19Z)
+# Last round — r748 (2026-09-14T21:27Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -14,7 +14,7 @@ Kind 1 is **open as draft #6851** (r746). **Kinds 2 and 3 are staged** (below): 
 freed slot. Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r747):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r748):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -29,8 +29,8 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6851** | `fdeaff5cb7` | **`sandboxed-build` running** (since 21:14:25Z; still running at 21:18Z) | **DRAFT** (kind 1, opened 21:14:11Z) | **me** — iterate as a draft on CI; `gh pr ready` only when green |
-| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **MERGING, pos 1** (group `3188698be`, `sandboxed-build` since 21:07Z) | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6851** | `fdeaff5cb7` | **`sandboxed-build` running** (since 21:14:25Z; still running at 21:26Z) | **DRAFT** (kind 1, opened 21:14:11Z; label `roadmap/HopfRinow`) | **me** — iterate as a draft on CI; `gh pr ready` only when green |
+| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **MERGING, pos 1** (group `3188698be`: `sandboxed-build` **passed** 21:26Z; publish queued) | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **MERGING, pos 2** (group `1a63e8248`, `sandboxed-build` since 21:10Z) | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
@@ -98,7 +98,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r747 did
+## What r703–r748 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -147,6 +147,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r745: both finalize jobs still queued (20 and 15 min); backlog down to 331 runs; no merges for 76 min.
 * r746: #6744 then #6093 merged (21:07, 21:09); all re-checked clean; step 5 fired, and kind 1 opened as draft **#6851**.
 * r747: quota at 21:16 again; rerun clean; #6851's first build running; staged branches clean against #6093's merge.
+* r748: #6796's merge-group build passed; #6851's first build still running (12 min); no merges.
 
 ## Candidates for a later step 5
 
