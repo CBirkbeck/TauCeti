@@ -36369,3 +36369,19 @@ against the broken one. **148 passed, 0 failed.**
 
 The rule this adds: **replace an exact block, never a range between two anchors** — a range silently
 takes whatever a later round added between them.
+
+---
+
+## r701 — 2026-09-14T13:07Z — queue steady; #6800's drive scheduled for its exact step-4 time
+
+#6093 and #6796: 10/10, `ready-to-merge`, **QUEUED at 30 and 31** — unchanged, no ejection (and the r700
+check now judges that against their current transition). #6800: green since 12:11:36Z, ready since
+12:12:14Z, **no board** at 13:06:25Z, six minutes short of its step-4 time. No merges; steps 3 and 5
+no-ops.
+
+Rather than let a whole round pass after 13:12:14Z, the drive was scheduled as a background task that
+waits until **13:12:15Z** and only then decides, behind a guard that re-reads everything first. It
+skips if the head has moved off `716cf35ee`, if `sandboxed-build` is no longer `success`, if a board for
+the head exists, or if a label shows the review has already happened or started (`review-in-progress`,
+`ready-to-merge`, `awaiting-author`). The drive log goes to the scratchpad as `drive6800.log`. Outcome to
+follow.

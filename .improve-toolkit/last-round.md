@@ -1,4 +1,4 @@
-# Last round — r700 (2026-09-14T13:02Z)
+# Last round — r701 (2026-09-14T13:07Z)
 
 ## Board
 
@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | **#6093** | `18e85bea2` | **green** | **10/10**, `ready-to-merge`, **QUEUED pos 30** | nobody — waiting its turn; act only if `queuepos.py` says `EJECTED` |
 | **#6796** | `06e8f7fdf` | **green** | **10/10**, `ready-to-merge`, **QUEUED pos 31** | nobody — waiting its turn |
-| **#6800** | `716cf35ee` | **green** 12:11:36Z | `awaiting-review`, ready 12:12:14Z | nobody — **drive only if no board by 13:12:14Z** |
+| **#6800** | `716cf35ee` | **green** 12:11:36Z | `awaiting-review`, ready 12:12:14Z | **drive scheduled for 13:12:15Z** (guarded background task; log `drive6800.log`) — read the resulting board with `threadread.py` |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire.** (#5950 is excluded from the count
