@@ -5,8 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Tactic.Linarith
 public import Mathlib.Topology.Algebra.Order.Field
+
+import Mathlib.Tactic.Linarith
 
 /-!
 # Ratios whose denominator diverges
