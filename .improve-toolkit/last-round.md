@@ -1,189 +1,59 @@
-# Last round — r689 (2026-09-12 21:48Z)
+# Last round — r691 (2026-09-14 11:40Z)
 
-## Both active PRs are GREEN and waiting on boards — nothing owed
+## ⚠️ FIRST: two CI results decide the next moves
 
-```
-#6482  green, ready_for_review 21:38:15Z  -> first board ~22:09-22:44Z
-#6093  green 21:47Z (documentation fix)   -> board ~22:19-22:54Z (round 3)
-#6188  green, QUEUED pos=5
-```
+1. **#6093 on `18e85bea2`** (merge of main + the `@[expose]` fix).
+   * **Green** → reply in the `api-design` thread (root comment **3997635757**): `@[expose]` removed; the
+     only consumer that needed `fiberMap`'s body, `fiberMap_monodromy`, now rewrites both fibre values
+     into constructor form via `fiberMap_apply_coe` before `monodromy_eq_of_map_eq`, so the path
+     endpoints match by projection; no new lemma was needed, and on main the original was never
+     exposed. Then wait for the board.
+   * **Red** → read the log. The two changes are the `h₁`/`h₂` rewrite in
+     `Monodromy/Functoriality.lean` (coercion of `f e`, the `mapsTo_fiber` application) and any other
+     cross-module consumer that silently needed the body — none was found by reading, but that was
+     reading, not elaboration.
+2. **#6796 on `06e8f7fdf`**. A background watch marks it ready when green. If it was not marked ready,
+   check it: **a draft draws no review.**
 
-Neither is drivable: step 4's hour has run on neither, and both sit inside the measured 32–67 min
-band where the pipeline posts its own board. Steps 3, 4 and 5 were all no-ops.
+## Board (11:40Z)
 
-## ⚠️ NEXT ROUND: the r687 contest is now a clean test, not a guess
+| PR | head | CI | label | whose move |
+|---|---|---|---|---|
+| **#6093** | `18e85bea2` | building | `awaiting-author` | me after CI — reply to `api-design`; 9/10 green, `scope` ✅ |
+| **#6796** | `06e8f7fdf` | building | draft | watch marks ready on green |
+| **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — human-owned file; do not refresh |
 
-`api-design` on #6093 was answered **in-thread** (r687), because its proposal re-creates exactly what
-`scope` ⛔'d one revision earlier. The reply threaded correctly:
+**Merged since r689:** #6188 (2026-09-12T22:35Z) and #6482 (2026-09-13T02:36Z). Seven `improve/*`
+merges this watch. `lint-dot-notation` on main: **731**.
 
-```
-id=3997687656  in_reply_to=3997635757 (the api-design comment)  created=21:30:27Z
-```
+## What r691 did
 
-**`replies_through` in the `tauceti-meta:v1` payload is a comment-ID WATERMARK, not a count** — I had
-this wrong in r688. It moved `0` (round 1, 20:14Z) → `3996688129` (round 2, 21:22Z), so the pipeline
-does consume replies and records how far it read. My contest is **3997687656 > 3996688129** and was
-posted *after* round 2's board, so on the next board:
+* **Sweep blind spot fixed.** `sweep.py` listed 100 PRs repo-wide; there are 213; both `improve/*`
+  PRs sat at index 197 and 202. It printed nothing for the whole gap. Now `--repo` + `--limit 1000` +
+  a warning + a firing control; control and mutation test; **147 controls, 0 failed**.
+* **#6093:** the r687 contest was read (`replies_through` = my reply's id) and `api-design` moved to a
+  new, correct finding — the relocation had introduced `@[expose]` on `fiberMap`. Implemented; refreshed
+  against main (188 behind → 0); body rewritten. Reply deferred until CI is green.
+* **Step 5 → #6796**, rooting `Representation.IsIrreducible.nontrivial`. Body answers `slice` and
+  `parallelns`.
 
-* `replies_through` ≥ **3997687656** → the contest **was read**; whatever `api-design` says next is a
-  considered answer to it, and should be treated as a real verdict.
-* still `3996688129` → the contest was **never seen**; repeating it is pointless and the
-  `scope`/`api-design` conflict needs raising another way.
+## Next prospecting targets (re-run `nscand.py` first)
 
-Those two cases have opposite correct responses, which is why the vaguer r688 note ("if `api-design`
-is still 🟡") was not good enough.
-
-**Do not add `compFiberEquiv_refl`/`_trans` back to #6093** in either case — `scope` is ✅ precisely
-because they went, and they are preserved on `handover/fiber-compfiberequiv-laws-deferred`.
-
-## r688 carried over: #6482 is GREEN and OUT OF DRAFT
-
-`sandboxed-build: success` on `d955354c5`, then **`gh pr ready 6482`** — the `to_additive` fix holds
-and the branch's first-ever CI run needed exactly one correction.
-
-**The review clock only starts now.** It is `max(CI-green, ready_for_review)` (r651), and until
-21:37Z the second term did not exist — a draft draws no review however its label reads. First board
-expected **~22:09–22:44Z**. Do not drive before then.
-
-#6093 is rebuilding on `862770ffa` (the `documentation` narrowing). Its board names `36f3a07b93` and
-is BEHIND **by construction** — do not re-fix.
-
-**Next round: confirm the r687 contest was read.** `api-design` on #6093 was answered in-thread, not
-by code, because its proposal re-creates what `scope` ⛔'d one revision earlier. The board payload
-carries `replies_through`, so the pipeline does track replies. If the next board still shows
-`api-design` 🟡 with no sign of the reply, the contest route does not work here and the disagreement
-needs escalating rather than repeating.
-
-## r687 carried over: #6093 was 8 green / 2 live · #6482 went red on a line it never changed
-
-### #6482 — the rooting broke an attribute it did not touch
-
-```
-ConstMulAction.lean:32:14: `to_additive` correctly autogenerated target name for
-Submonoid.continuousConstSMul.
-```
-
-Nested, the attribute needed its explicit target. **At root, `to_additive` derives it — and naming a
-target it can autogenerate is an ERROR.** Dropped the target, kept the additive docstring; pushed
-`a220f533d → d955354c5`, CI watch running. **Still a DRAFT: `gh pr ready 6482` the moment it is
-green.** The PR body's paragraph on this was written from reasoning, not a build, and said the
-opposite — rewritten.
-
-New **`tools/toaddname.py`** (gate check 3e3, **17 checks**) asks the question whenever a PR roots a
-declaration whose attribute names a `to_additive` target. It cannot answer it — that needs Mathlib's
-translation dictionary in the elaborator — but the failure cost a CI cycle and the answer is one
-line of thought. Fires on the red head, silent on the fix; one positive and three negatives.
-
-### #6093 — `scope` ✅ and `naming` ✅
-
-```
-✅ scope  ✅ naming  ✅ attribution  ✅ generality  ✅ placement  ✅ proof-quality
-♻️ correctness  ♻️ reuse   (stale: approved earlier, re-run pending -- NOT actionable)
-🟡 api-design   🟡 documentation
-```
-
-**`naming` came back ✅** — the 2026-09-09 thread r682 declined to act on was indeed dead. That
-classification earned its keep on its first outing.
-
-**`documentation` implemented.** The overview still promised *"fibre identifications compose in
-either setting"*; the clause survived r681's edit, which caught the bullet and the first sentence but
-not the trailing one. Now states what each construction carries. Pushed `36f3a07b9 → 862770ffa`.
-
-**`api-design` contested, in-thread, with evidence.** It asks for `compFiberEquiv_refl`/`_trans` —
-*exactly* what `scope` ⛔'d one revision earlier, same judge, and whose removal is why `scope` is now
-✅. Adding them back re-blocks `scope`: the #6188/#6432 oscillation rerun. Reply quotes `scope`'s
-block verbatim, names `handover/fiber-compfiberequiv-laws-deferred`, and cites `documentation`'s own
-route — *"add and document the equivalence composition result in a properly scoped change."* The half
-I could implement (*"despite the module claiming that fibre identifications compose"*) I did.
-
-**Do not add those lemmas back.** If the next board still has `api-design` 🟡 on this, it is a
-boundary disagreement between two rubrics, not something a code change here resolves.
-
-## r686 carried over: #6432 MERGED · step 5 fired · #6482 opened
-
-**#6432 merged at 21:06:37Z** — the fifth `improve/*` merge of this watch (#6406, #6426, #6412,
-#6418, #6432). `lint-dot-notation` on main: **739 → 736**.
-
-Step 5 fired (my open `improve/*` PRs dropped to two) and r685's corrected recipe ran in order:
-refresh **6 behind → 0**, gate **14 ok / 2** (`parallelns`, `slice` — exactly the two the body
-answers), push `595ce95af → a220f533d`, create.
-
-**PR #6482** — draft, base `main`, `TauCeti/Topology/Algebra/ConstMulAction.lean` only, **+5/−9**,
-standalone `Roadmap: none`. Bot labelled it `roadmap/none,awaiting-CI` within the minute.
-
-## ~~FIRST ACTION: mark #6482 ready~~ — DONE at 21:37Z
-
-```
-gh pr ready 6482
-```
-
-A draft draws **no review**, whatever its label says — r650 lost 64 minutes to exactly this on #6412.
-A CI watch on `a220f533d` was running when this round closed. If it went red, read the log: this
-branch has never had a CI run, only the gate.
-
-## Board (21:48Z)
-
-| PR | head | CI | label | queue | whose move |
-|---|---|---|---|---|---|
-| **#6482** | `d955354c5` | **green** | `awaiting-review` | — | nobody — ready since 21:38Z; first board ~22:09–22:44Z |
-| **#6093** | `862770ffa` | **green** | `awaiting-CI` | — | nobody — `documentation` fixed, `api-design` contested; board `36f3a07b93` BEHIND **by construction** |
-| **#6188** | `ec1a68d965` | green | `ready-to-merge` | **pos 5** | nobody — 10/10, waiting its turn |
-| **#5950** | `a64ba63667` | green | `ready-to-merge` | **NEVER-QUEUED** | **Chris** — human-owned file; the bot cannot enqueue it. **Do not refresh it.** |
-
-#6093's CI has been green since 20:38Z. Board band 46–64 min → ~21:24–21:42Z. **Do not drive**; step
-4's clock has not run an hour.
-
-## What r686 confirmed about staging work ahead
-
-r685's catch was real and load-bearing. The fork-qualified `--head CBirkbeck:…` with explicit
-`--repo`/`--base` is what opened #6482; the bare `--head improve/…` staged in r684 would have failed
-at the one moment in the watch when step 5 was live. **Verify a staged artefact against something
-real** — here, #6432's actual `head.repo`/`base.repo`.
-
-Equally, refreshing *at* the moment beat refreshing speculatively: the branch had drifted **6 behind**
-in the ~50 minutes since r681. Refreshing every intervening round would have been churn.
-
-## Next
-
-1. **`gh pr ready 6482`** once `sandboxed-build` is green. Then it draws a board in ~46–64 min.
-2. **#6093**: wait for the board. `scope` is answered and six rubrics get judged on this head for the
-   **first time** — a fresh 🟡 is a first verdict, not a regression. Run `threadread.py` and answer
-   **LIVE** only; `NOT-RUN` text is from an older head.
-3. **Do not touch #6188.** 10/10 and queued at pos 7; an edit costs a re-review and the position.
-4. **Do not re-diagnose the merge wait.** One serialised FIFO worker, ~25–30 min/merge; position is
-   the whole explanation. I got this wrong twice (r676, r679) by reasoning over run lists instead of
-   querying the queue.
-5. **Next prospecting target when step 5 fires again** — verified ROOT in Mathlib with `mathlibns.py`:
-   ```
-   ROOT     6  Representation.IsIrreducible   1/1 WHOLE  (1/5 of its file -> slice question)
-   ROOT    14  Basis                          1/1 WHOLE  (1/12 of its file)
-   ROOT    27  FDRep                          1/1 WHOLE  (1/12 of its file)
-   ```
-   **Five of the twelve WHOLE candidates are traps** — `Probability.Kernel`, `PDE.Continuous`,
-   `PDE.ContinuousOn`, `Probability.AEStronglyMeasurable`, `Probability.MeasurableSet`,
-   `BilinForm.IsAlt` name namespaces Mathlib does not have. **A WHOLE ratio does not settle a
-   target.** Re-run `nscand.py` first — main moved again with #6432.
-6. **Read the tools list before writing a script.** `tools/` has 49: `sweep.py`, `queuepos.py`,
-   `ghostref.py`, `threadread.py` (**use this, not jq**), `nscand.py` + `mathlibns.py`, `prepush.sh`
-   (the gate, **17 checks**), `toaddname.py`, `minecount.py`.
+* `TauCeti.Basis.span_range_extendOfIsLattice` → **`Module.Basis`** (not `Basis`: `Lattice.lean` has
+  `open Module`), 1/8 of its file — slice question.
+* Skip `TauCeti.LinearEquiv.toLinearEquiv_generalLinearEquiv_symm` and `TauCeti.FDRep.intCharacter_def`:
+  both **`private`**; the first is the #6188/#6432 bridge.
+* Trap namespaces from r681 still apply: `Probability.Kernel`, `PDE.Continuous(On)`,
+  `Probability.AEStronglyMeasurable`, `Probability.MeasurableSet`, `BilinForm.IsAlt` do not exist in
+  Mathlib.
 
 ## Settled
 
-* **#6432, #6418, #6412, #6426, #6406** — **MERGED.** main 759 → **736** across this watch.
-* **#6482** — new, draft, awaiting CI. Body answers `parallelns` (the `Subgroup` instance stays
-  nested: `TauCeti.Subgroup` is **39 flagged of 62** across a 6-file subtree, so rooting one here is
-  the arbitrary cut that blocked #5905 — **not** because Mathlib lacks `Subgroup`, which is root with
-  1186 declarations) and `slice` (1 of the file's 2 flagged, same boundary).
-* **#6093** — refreshed against main, a real break fixed (`FiberFunctor.lean:87`), `scope` answered by
-  removing the two `compFiberEquiv` laws. Deferred on
-  `handover/fiber-compfiberequiv-laws-deferred`.
-* **#6188** — the `Lattice.lean` rooting **only**. Do not re-add the conjugation API: `scope` ⛔'d
-  exactly that, and removing it is what made the PR green.
-
-## Still needs Chris
-
-* **No `lake build` / `cache get` / `lake update`.** Gate on CI. (No toolchain here anyway.)
-* `cft-fix-6093` holds 13 superseded files + a stray `lake-manifest.json` bump. #5950.
+* **Merged:** #6406, #6426, #6412, #6418, #6432, #6188, #6482.
+* **#6093** — `scope` ✅ after removing the two `compFiberEquiv` laws (preserved on
+  `handover/fiber-compfiberequiv-laws-deferred`); `naming` ✅; `documentation` ✅; `api-design` answered
+  by removing `@[expose]`.
+* **#6796** — open, draft, awaiting CI.
 
 ## Standing traps
 
@@ -199,6 +69,8 @@ Every PR body needs a standalone `Roadmap: none`.
 `gh pr create --repo TauCetiProject/TauCeti --base main --head CBirkbeck:<branch>`.
 `gh pr edit` silently no-ops here — use `gh api -X PATCH … -F body=@file`, then **re-read to verify**.
 **Pass an explicit `--limit` to every `gh` listing** — the defaults are 30 rows and truncate silently.
+`sweep.py` had it too (r691), at `--limit 100` repo-wide: 213 open PRs pushed both old `improve/*`
+rows past the cut and the sweep printed **nothing**, exit 0. **An empty sweep is not an empty board.**
 **A draft draws no review** however its label reads — `gh pr ready` the moment CI is green (r650).
 A fresh worktree needs `.lake` symlinked or `lint-dot-notation` errors on both sides.
 `uvx` is at `~/.local/bin/uvx`; measured board latency band is **32–67 min**.
@@ -227,6 +99,9 @@ any `variable` only it used.
 **A green PR is not a place to apply a lesson** — but an *ejected* one is not green, whatever its
 four sweep fields say. Act only on `queuepos.py` saying **`EJECTED`**; `NEVER-QUEUED` (#5950) is not
 this role's to fix.
+**A `private` declaration is not a rooting target** — no one outside can use the dot notation it
+would enable (r691 skipped two). **`open Module` makes `Basis` mean `Module.Basis`** — check the
+receiver's real head constant before trusting `mathlibns`'s count for the short name.
 Verify a rooting target with `mathlibns.py`, never a grep; then **gate it**. **A WHOLE ratio does not
 settle a target.**
 The gate is pure Python: it cannot see docstring attachment, elaboration, or simp normal form —
@@ -234,5 +109,5 @@ The gate is pure Python: it cannot see docstring attachment, elaboration, or sim
 **A rooting can break an attribute whose own text never changed** (#6482).
 **`stale` on a board means approved-earlier/re-run-pending, not a finding**; `absent` means not yet
 judged on this head. `threadread.py` classifies both as NOT ACTIONABLE — answer **LIVE** only.
-**146 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
+**147 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
 **HANDOVER.md §11–13 carry this watch's rules** — read them before re-deriving one.

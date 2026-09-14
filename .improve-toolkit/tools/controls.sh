@@ -838,6 +838,18 @@ sweepv | chk "sweep: a superseded cancelled run is not a red build (r653)" "supe
 sweepv | chk "sweep: a real failure, a pending run and a live cancel still read red/pending" \
               "realfail: RED:sandboxed-build" "pending: PENDING:sandboxed-build" \
               "lastcancelled: RED:cancelled:sandboxed-build" "noruns: NO-RUNS"
+# r691: the sweep listed open PRs repo-wide with --limit 100; the repo has more than that, gh
+# returns newest first, and the long-lived improve/* PRs were the rows dropped -- an EMPTY sweep,
+# exit 0, that reads exactly like an empty board.
+slim() { python3 -c "
+import importlib.util as u
+s=u.spec_from_file_location('s','$T/sweep.py'); m=u.module_from_spec(s); s.loader.exec_module(m)
+c=m.pr_list_cmd()
+print('repo:', '--repo' in c and c[c.index('--repo')+1] == m.REPO)
+print('big:', '--limit' in c and int(c[c.index('--limit')+1]) >= 500)
+"; }
+slim | chk "sweep: the open-PR listing names the repo and a limit that cannot drop old PRs (r691)" \
+            "repo: True" "big: True"
 
 # ---- r687: toaddname -- a rooting can make a `to_additive` target redundant ------------------
 # #6482 went red on a line whose text the PR never touched: rooting the instance let `to_additive`

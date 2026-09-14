@@ -511,6 +511,11 @@ listing ever reaches it.
 Two rounds running, a wrong answer came from a default never chosen — `gh run list` sampling in r676
 and r679, `gh pr list` paging in r680. **Query completely, not just correctly.**
 
+r691 found the same bug in `sweep.py` itself: `--limit 100` repo-wide against 213 open PRs, so the
+two oldest `improve/*` PRs fell past the cut and the sweep printed **nothing**, exit 0, for a whole
+37-hour gap. When a rule like this is written down, **audit every tool for it the same day** --
+writing it into the traps did not find the second instance.
+
 ### The fix for a stranded PR
 
 Refresh the branch so the bot re-reviews and re-labels; the new label transition re-enqueues it.

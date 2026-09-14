@@ -60,10 +60,31 @@ def ci_verdict(runs):
     return "GREEN"
 
 
+LIST_LIMIT = 1000
+
+
+def pr_list_cmd(limit=LIST_LIMIT):
+    """The open-PR listing, with the repo and a generous limit both EXPLICIT (r691).
+
+    The sweep printed NOTHING -- no rows, no error, exit 0 -- because it listed open PRs across the
+    whole repository with `--limit 100`.  The repo carries well over a hundred open PRs from other
+    lanes, and `gh pr list` returns newest first, so the long-lived `improve/*` PRs (#6093, #5950)
+    were exactly the rows cut off.  An empty sweep reads like an empty board, which is the most
+    misleading thing this tool can print.  Same failure as `queuepos.py` in r680, one tool over.
+    """
+    return ["pr", "list", "--repo", REPO, "--state", "open", "--limit", str(limit), "--json",
+            "number,headRefName,isDraft,labels,headRefOid,title"]
+
+
 def main():
-    prs = json.loads(gh("pr", "list", "--state", "open", "--limit", "100", "--json",
-                        "number,headRefName,isDraft,labels,headRefOid,title"))
-    prs = [p for p in prs if p["headRefName"].startswith("improve/")]
+    rows = json.loads(gh(*pr_list_cmd()))
+    if len(rows) >= LIST_LIMIT:
+        print(f"# WARNING: the open-PR listing hit its {LIST_LIMIT}-row limit; raise it.",
+              file=sys.stderr)
+    prs = [p for p in rows if p["headRefName"].startswith("improve/")]
+    if not prs:
+        print(f"# FIRING CONTROL: {len(rows)} open PRs listed, none on an improve/* branch.",
+              file=sys.stderr)
     prs.sort(key=lambda p: p["number"])
     now = datetime.datetime.now(datetime.timezone.utc)
     for p in prs:

@@ -36041,3 +36041,93 @@ are now green and waiting only on boards:
 
 Neither is drivable: step 4's hour has not run on either, and both are inside the measured 32–67 min
 band where the pipeline posts its own.
+
+---
+
+## r691 — 2026-09-14 11:40Z — back after a 37-hour gap: sweep blind, two merges, #6093 unblocked, step 5 fired
+
+### The gap
+
+r690 stopped mid-round at 2026-09-12 ~21:56Z, just after reading #6093's changed `api-design` finding,
+and nothing ran for ~37 hours. Everything below was re-derived from scratch rather than from memory.
+
+**Merged in the gap:** #6188 at 2026-09-12T22:35:30Z and #6482 at 2026-09-13T02:36:49Z. This watch's
+`improve/*` merges are now **#6406, #6426, #6412, #6418, #6432, #6188, #6482** — seven.
+`lint-dot-notation` on main: 739 (r681) → 736 (after #6432) → **731** (main `ea08ecc74`).
+
+### `sweep.py` printed nothing — and an empty sweep looks exactly like an empty board
+
+Exit 0, no rows, no error. `gh` was authenticated and the rate limit full. Root cause, measured, not
+guessed: the sweep listed open PRs **repo-wide with `--limit 100`**, the repo has **213** open PRs, and
+`gh pr list` returns newest first:
+
+```
+#6093 at index 197      #5950 at index 202      -- both past row 100
+```
+
+The same bug class as `queuepos.py` in r680, one tool over — and I had written "pass an explicit
+`--limit` to every `gh` listing" into the standing traps without auditing the other tools for it.
+Fixed with a pure `pr_list_cmd()` (explicit `--repo`, `--limit 1000`), a warning if the limit is hit,
+and a firing control when no `improve/*` row is found. Control added, mutation-tested by reverting to
+100. **147 passed, 0 failed.** The scratchpad copy the round prompt runs is replaced with the fix.
+
+### #6093 — the contest worked, and the new finding was right
+
+`replies_through` on the 21:55Z board was **3997687656**, exactly my r687 reply's id: the contest was
+read. `api-design` dropped the `compFiberEquiv_refl/_trans` demand that conflicted with `scope`, and
+raised something new — **`Function.fiberMap` is `@[expose]`; remove that and give
+`IsCoveringMap.fiberMap_monodromy` a characterization that does not unfold it.**
+
+Before deciding whether to implement or contest, I checked main: the original
+`TauCeti.IsCoveringMap.fiberMap` sat in a plain `public section` with **no `@[expose]`**, because its
+one reducing consumer, `fiberMap_monodromy`, lived in the same file. The exposure was introduced by
+this PR's relocation. So the reviewer was right, and it was implemented, not argued.
+
+**The fix.** Mathlib's `monodromy_eq_of_map_eq` takes `Γ : Path.Homotopic.Quotient ex.1 ey`, and the
+proof fed it `Γ.map f`, whose endpoints are `f ↑e` — which only matched `↑(fiberMap f hf x e)` by
+unfolding. Now, before the `apply`, both fibre values are rewritten into constructor form:
+
+```lean
+have h₁ : Function.fiberMap f hf x e = ⟨f e, Function.mapsTo_fiber f hf x e.2⟩ :=
+  Subtype.ext (Function.fiberMap_apply_coe f hf x e)
+```
+
+(and `h₂` likewise), after which the endpoints agree by projection and the rest of the proof is
+untouched. `@[expose]` and its justification comment are gone. **No new lemma** — the existing
+`fiberMap_apply_coe` is the characterization, which keeps `scope` (now ✅) out of it. Every other
+`Function.fiberMap` consumer was read first: they use `fiberMap_apply_coe` propositionally or unfold
+functors, not `fiberMap`'s body. That is a reading, not an elaboration — CI decides.
+
+Also refreshed: #6093 was **188 behind** again; merged `origin/main` clean, gate 13 ok / the 4
+documented, `ghostref`/`deadpath`/`stalequal` ok. Pushed `862770ffa → b0f50dd76 (merge) → 18e85bea2
+(fix)`. The PR body's two paragraphs defending the exposure were rewritten and re-read on GitHub.
+
+**The `api-design` reply is deliberately deferred until CI is green.** The pipeline reads replies at
+board time; a reply written now and read against a later, different head would mislead.
+
+### Step 5 fired — and two of the three "clean" candidates were not targets
+
+With #6188 and #6482 merged, #6093 was my only active PR. Re-ranked on main `ea08ecc74`:
+
+* `TauCeti.LinearEquiv.toLinearEquiv_generalLinearEquiv_symm` ranks 1/1 WHOLE and **1/1 of its file**
+  -- no slice question at all. It is a **`private` bridge** in `GeneralLinearGroup/Congr.lean`, the
+  exact lemma #6188 and #6432 spent five rounds settling. Rooting a private helper buys no dot
+  notation anyone outside can use, and reopens a litigated file. Skipped.
+* `TauCeti.FDRep.intCharacter_def` — also `private`, one use. Skipped.
+* `TauCeti.Basis.span_range_extendOfIsLattice` — `Lattice.lean` has `open Module`, so its `Basis` is
+  **`Module.Basis`**. Rooting to `_root_.Basis` would enable nothing: `mathlibns`'s `Basis ROOT 14` is
+  Mathlib's small legacy namespace. The real target is `Module.Basis`, at 1/8 of the file. Deferred.
+* **`TauCeti.Representation.IsIrreducible.nontrivial`** — chosen.
+
+Mathlib's `Representation.IsIrreducible` has no `nontrivial`. Its three siblings in the same file
+(`finrank_pos`, `natCast_finrank_ne_zero`, `finiteDimensional`) were already `_root_`, and
+`finrank_pos` is proved from it — it was the one nested outlier. Ten call sites spelled it short
+(`IsIrreducible.nontrivial …`, resolving only from inside `TauCeti.Representation`), and those now use
+the explicit root name the file already uses for its siblings; two already did. 8 files, +13/−13.
+
+Gate **15 ok / 2** — `slice` (1 of 5 flagged; the other four are `TauCeti.Representation`, **134/189
+across 17 files**, the #5905 arbitrary cut) and `parallelns` (the rooted/nested split by receiver
+predates the PR; this removes the last nested `IsIrreducible`-receiver lemma). Both answered in the
+body. No open PR touches any of the eight files.
+
+**PR #6796**, draft. A background watch marks it ready when `sandboxed-build` is green.
