@@ -25,10 +25,12 @@ eigenform with `a₁ = 0` at the good indices, where `c` is the eigenvalue at `p
 
 * `TauCeti.eq_zero_of_forall_prime_mul_eq_of_one_eq_zero_of_ne_zero_of_coprime`: the vanishing
   at the indices coprime to `L`.
-* `TauCeti.prime_mul_eq_of_forall_prime_pow_add_two_of_forall_mul`: conversely, a sequence that
-  is multiplicative at coprime indices and satisfies the recurrence **along the powers of `p`
-  alone** satisfies it at every index. This is the step from conditions (2) and (3) of
-  Diamond–Shurman's Proposition 5.8.5 to the eigenvector equation at `p`.
+* `TauCeti.prime_mul_eq_of_prime_pow_recurrence_of_coprime_mul_eq`: conversely, a sequence that
+  is multiplicative at coprime indices away from `L` and satisfies the recurrence **along the
+  powers of a single prime `p`** satisfies it at every index coprime to `L`. Its hypotheses are
+  the fixed-prime and `L`-restricted instances of conditions (2) and (3) of Diamond–Shurman's
+  Proposition 5.8.5, and its conclusion is the coefficient side of the eigenvector equation
+  at `p`.
 
 ## References
 
@@ -76,9 +78,9 @@ theorem eq_zero_of_forall_prime_mul_eq_of_one_eq_zero_of_ne_zero_of_coprime {a :
       (Nat.Coprime.coprime_div_left hmL hpm), mul_zero, neg_zero]
   · exact neg_zero
 
-section Ring
+section NonUnitalRing
 
-variable {R : Type*} [Ring R]
+variable {R : Type*} [NonUnitalRing R]
 
 /-- **The recurrence along the powers of `p`, plus multiplicativity, gives it at every index.**
 Let `a : ℕ → R` be multiplicative at coprime indices away from `L`, and suppose that along the
@@ -86,22 +88,20 @@ powers of a prime `p ∤ L` it satisfies `a_{p^{r+2}} = a_p · a_{p^{r+1}} − d
 satisfies the full Hecke recurrence `a_{pm} = a_p · a_m − d · a_{m/p}` at every `m ≠ 0` coprime
 to `L`, the last term present only when `p ∣ m`.
 
-These are exactly conditions (3) and (2) of Diamond–Shurman's Proposition 5.8.5, and the
-conclusion is the hypothesis of
-`eq_zero_of_forall_prime_mul_eq_of_one_eq_zero_of_ne_zero_of_coprime` above — and, on a nebentypus
-space, the coefficient side of the `Tₚ`-eigenvector equation.
-
-The proof splits off the `p`-part, `m = p^w · n` with `p ∤ n`. Multiplicativity moves each of the
-three terms to `a (p^j) · a n`, and what remains is the power recurrence at `r = w − 1`; when
-`w = 0` there is no `a_{m/p}` term and the statement is multiplicativity itself. -/
-theorem prime_mul_eq_of_forall_prime_pow_add_two_of_forall_mul {a : ℕ → R} {L p : ℕ} {d : R}
+The hypotheses are the fixed-prime and `L`-restricted instances of conditions (3) and (2) of
+Diamond–Shurman's Proposition 5.8.5, whose own statements are global; the conclusion is the
+hypothesis of `eq_zero_of_forall_prime_mul_eq_of_one_eq_zero_of_ne_zero_of_coprime` above — and,
+on a nebentypus space, the coefficient side of the `Tₚ`-eigen-relation. -/
+theorem prime_mul_eq_of_prime_pow_recurrence_of_coprime_mul_eq {a : ℕ → R} {L p : ℕ} {d : R}
     (hp : p.Prime) (hpL : Nat.Coprime p L)
     (hmul : ∀ u v : ℕ, Nat.Coprime u v → Nat.Coprime u L → Nat.Coprime v L →
       a (u * v) = a u * a v)
     (hrec : ∀ r : ℕ, a (p ^ (r + 2)) = a p * a (p ^ (r + 1)) - d * a (p ^ r))
     (m : ℕ) (hm0 : m ≠ 0) (hmL : Nat.Coprime m L) :
     a (p * m) = a p * a m - if p ∣ m then d * a (m / p) else 0 := by
-  -- Split off the `p`-part: `m = p ^ w * n` with `p ∤ n`.
+  -- Split off the `p`-part, `m = p ^ w * n` with `p ∤ n`. Multiplicativity then moves each of the
+  -- three terms to `a (p ^ j) * a n`, leaving the power recurrence at `r = w - 1`; at `w = 0`
+  -- there is no `a_{m/p}` term and the claim is multiplicativity itself.
   obtain ⟨w, n, hpn, rfl⟩ := Nat.exists_eq_pow_mul_and_not_dvd hm0 p hp.ne_one
   have hpn' : Nat.Coprime p n := (Nat.Prime.coprime_iff_not_dvd hp).2 hpn
   have hnL : Nat.Coprime n L := hmL.coprime_dvd_left ⟨p ^ w, mul_comm _ _⟩
@@ -126,6 +126,6 @@ theorem prime_mul_eq_of_forall_prime_pow_add_two_of_forall_mul {a : ℕ → R} {
     split_ifs
     rw [e1, e3, hpow (w + 1), hrec w, sub_mul, mul_assoc, mul_assoc]
 
-end Ring
+end NonUnitalRing
 
 end TauCeti
