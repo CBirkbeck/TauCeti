@@ -37263,3 +37263,27 @@ this time it passed.
 `last-round.md`, under the no-build default unless Chris has answered the `/cleanup` question.
 
 No toolkit edits.
+
+---
+
+## r741 — 2026-09-14T20:27Z — the queue waits on `publish-merge-group-cache` runners; no merges for 36 min; no-op board
+
+**Board** (20:26Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. No merges since #6601 (19:50:37Z), and main is still `6bc3780dc`, so r738's checks
+stand. Nothing to fix, contest or drive; step 5 shut (#6093 still `OPEN`).
+
+**Why nothing merged.** GraphQL `mergeQueue.entries` plus each group commit's check-runs:
+
+```
+pos 1  #6744 (Chebotarev)  AWAITING_CHECKS  group 1f44a437f  sandboxed-build success 20:06:09Z, publish queued since 20:06:10Z  eta 353 s
+pos 2  #6093               AWAITING_CHECKS  group 31e769e30  sandboxed-build success 20:14:21Z, publish queued since 20:14:21Z  eta 1086 s
+pos 3  #6796               QUEUED           no group yet                                                                      eta 1819 s
+```
+
+Both groups built green and are waiting on `publish-merge-group-cache / publish`, which is still `queued`: no runner
+has picked it up after 20 and 12 minutes. That job lives in `.github/`, which is human-owned, so there is nothing
+here for this role to do. If it stays queued for hours, tell Chris; do not try to fix it.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
