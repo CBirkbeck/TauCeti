@@ -37903,3 +37903,42 @@ Nothing to fix, contest or drive; step 5 shut.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r763 — 2026-09-14T23:57Z — main moved (#6709; #6741 generalizes a Polynomial lemma); all three of mine still clean; #6854's re-review pending
+
+**Board** (23:56:21Z; sweep and queuepos exited 0):
+
+* #6851 and #6855: 10/10 on head, `ready-to-merge`, QUEUED at 26 and 24 of 30.
+* **#6854** (kind 2): CI green on `217fecb812` since 23:39:06Z. Its board, on `f18fe6fedf`, is still BEHIND: no
+  re-review yet, 17 min after CI-green, so there is nothing to re-fix. The label still reads `awaiting-CI`. Drive only if
+  there is no board by 00:39:06Z.
+* #5950 is Chris's.
+
+Nothing to fix, contest or drive; step 5 shut.
+
+**Main moved twice:** `85fb7a16d` → `b90ec8e63` (#6709, localize diagonal quadratic forms: `QuadraticForm/BaseChange.lean`
+and `QuadraticForm/Global/Localization.lean`) → **`7f81cf09e`** (#6741, generalize common powers of X to arbitrary
+polynomial families: `Algebra/Polynomial/CommonXPower.lean`, with call sites in
+`FunctionField/Place/{Degree,OfValuationSubring,Zeros}.lean`). The firing control read 25 removed lines, 155 added,
+and 1 removed and 9 added declaration headers. The one removed header, `exists_common_X_pow_factor`, is restated under
+its own name (#6741's generalization). Nothing was removed under a new spelling, and no module was renamed.
+
+* **#6741 was the one worth a second look for #6854:** it is in Polynomial, and a generalization can change a statement.
+  It does not touch `QuadraticDiscriminant.lean`, and main's new lines name none of #6854's proof ingredients
+  (`discrim`, `separable_def`, `Separable`, `sq_derivative_quadratic…`, `isUnit_iff_ne_zero`). None of my three PRs uses
+  `exists_common_X_pow_factor`.
+* #6851 (13 behind), #6854 (11) and #6855 (11) all merge clean (`git merge-tree`). Main touched none of their files, and
+  its new lines name nothing they remove.
+
+**Merge-group simulation** against `7f81cf09e`:
+
+```
+#6851  13 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6855  11 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
