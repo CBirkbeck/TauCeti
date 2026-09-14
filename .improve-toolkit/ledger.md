@@ -37104,3 +37104,32 @@ staged-branch checks stand. Nothing to fix, contest or drive; step 5 shut.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits; one doc correction in `last-round.md`.
+
+---
+
+## r735 — 2026-09-14T19:27Z — main moved (#6514, which renames a module); queued merge groups and staged branches still clean
+
+**Board** (19:26Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. None of mine merged. #6514 (descend the Geck torus action to the Weyl group) merged:
+main `a13882323` → **`686d8bf2b`**; mine moved to **5/6/7 of 38**. Nothing to fix, contest or drive; step 5 shut.
+
+**Merge-group simulation** against `686d8bf2b`:
+
+```
+#6093  32 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: exit 0
+#6796  30 behind  merges clean  ghostref: all short forms still resolve    stalequal: exit 0
+#6800  30 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: exit 0
+```
+
+**A module rename.** #6514 moved `…/SimplyConnectedRootDatum/GeckLattice/Weyl.lean` to `…/GeckLattice/Weyl/Basic.lean`.
+`ghostref` and `stalequal` chase declaration names, not import paths, so this was checked by hand. No queued PR and no
+staged branch adds a line naming `GeckLattice.Weyl`, and main has no `import …GeckLattice.Weyl` left. A file a branch
+changed that imported the old path at base is covered by the clean merge: main's rename rewrote that line, and a branch
+edit to the same line would have conflicted.
+
+**Staged branches** (`git merge-tree`): levi-civita 22 behind, quadratic 20, exchangeable-dedup 19; none of their
+files touched on main; all merge clean.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits; a standing trap added to `last-round.md`.
