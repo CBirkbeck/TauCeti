@@ -23,7 +23,7 @@ lifts does** — `UpperHalfPlane.pslMk_smul` and `Matrix.SpecialLinearGroup.pslM
 
 ## Main results
 
-* `UpperHalfPlane.isFundamentalDomain_map_mapGL`: for `Γ ⊓ center = ⊥`, a fundamental domain for
+* `TauCeti.isFundamentalDomain_map_mapGL`: for `Γ ⊓ center = ⊥`, a fundamental domain for
   the image of `Γ` in `PSL(2, ℤ)` is one for its image in `GL(2, ℝ)`.
 
 The hypothesis is not a convenience. Without it the statement is false: if `-I ∈ Γ` then `-I` is a
@@ -35,19 +35,18 @@ holds for `Γ₁(N)` and `Γ(N)` with `N ≥ 3`, and fails for `SL(2, ℤ)`, `Γ
 
 public section
 
-open MeasureTheory Matrix ModularGroup
+open MeasureTheory Matrix ModularGroup UpperHalfPlane
 
 open scoped MatrixGroups Pointwise
 
-namespace UpperHalfPlane
+namespace TauCeti
 
 /-- **A fundamental domain for the image of `Γ` in `PSL(2, ℤ)` is one for its image in
-`GL(2, ℝ)`**, provided `Γ` misses the centre.
+`GL(2, ℝ)`**, provided `Γ` meets the centre of `SL(2, ℤ)` trivially.
 
-See the module docstring for why the hypothesis cannot be dropped, and for the sense in which the
-two actions agree. The covering half needs no hypothesis on `Γ` at all; `hΓ` is spent entirely on
-a.e.-disjointness, where distinct elements of the `GL`-image have to stay distinct in
-`PSL(2, ℤ)`. -/
+Without that hypothesis the statement is false: `-I ∈ Γ` would put a non-identity element of
+`Γ.map (mapGL ℝ)` acting trivially on `ℍ`, so `(-I) • S = S` and a.e.-disjointness fails for every
+`S` of positive measure. The module docstring says where each side of the statement is used. -/
 theorem isFundamentalDomain_map_mapGL {Γ : Subgroup SL(2, ℤ)} {μ : Measure ℍ}
     (hΓ : Γ ⊓ Subgroup.center SL(2, ℤ) = ⊥) {S : Set ℍ}
     (hS : IsFundamentalDomain (Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ)))) S μ) :
@@ -79,4 +78,4 @@ theorem isFundamentalDomain_map_mapGL {Γ : Subgroup SL(2, ℤ)} {μ : Measure �
     simpa only [Function.onFun, MulAction.subgroup_smul_def, ← h₁, ← h₂,
       Matrix.SpecialLinearGroup.pslMk_smul_set, hmapGL] using hS.aedisjoint hqne
 
-end UpperHalfPlane
+end TauCeti
