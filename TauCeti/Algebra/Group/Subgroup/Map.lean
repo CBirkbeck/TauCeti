@@ -129,7 +129,8 @@ site spells this `Subgroup.congrOfMapEq_refl _`. `Subgroup.congrOfMapEq_trans` a
 `Subgroup.congrOfMapEq_symm` are the companion composition and inverse statements. -/
 @[simp]
 theorem Subgroup.congrOfMapEq_refl {A : Subgroup G} (h : A.map (MulEquiv.refl G : G →* G) = A) :
-    Subgroup.congrOfMapEq (MulEquiv.refl G) h = MulEquiv.refl ↥A := by rfl
+    Subgroup.congrOfMapEq (MulEquiv.refl G) h = MulEquiv.refl ↥A :=
+  MulEquiv.ext fun x ↦ Subtype.ext <| by simp
 
 /-- Restricting to subgroups is functorial: the restriction of `e.trans f` is the composite of the
 restrictions of `e` and of `f`.
@@ -141,8 +142,8 @@ companion identity and inverse statements. -/
 theorem Subgroup.congrOfMapEq_trans (e : G ≃* H) {A : Subgroup G} {B : Subgroup H}
     (h : A.map (e : G →* H) = B) (f : H ≃* K) {C : Subgroup K} (h' : B.map (f : H →* K) = C) :
     (Subgroup.congrOfMapEq e h).trans (Subgroup.congrOfMapEq f h') = Subgroup.congrOfMapEq
-      (e.trans f) (by rw [MulEquiv.coe_monoidHom_trans, ← _root_.Subgroup.map_map, h, h']) := by
-  rfl
+      (e.trans f) (by rw [MulEquiv.coe_monoidHom_trans, ← _root_.Subgroup.map_map, h, h']) :=
+  MulEquiv.ext fun x ↦ Subtype.ext <| by simp
 
 -- Not `@[simp]`: with this in the simp set, `Subgroup.coe_congrOfMapEq_symm_apply` above is
 -- provable by `simp`, which the `simpNF` linter rejects.
@@ -153,7 +154,8 @@ only `h`. This is the whole-isomorphism form; `Subgroup.coe_congrOfMapEq_symm_ap
 pointwise one. -/
 theorem Subgroup.congrOfMapEq_symm (e : G ≃* H) {A : Subgroup G} {B : Subgroup H}
     (h : A.map (e : G →* H) = B) : (Subgroup.congrOfMapEq e h).symm =
-      Subgroup.congrOfMapEq e.symm ((_root_.Subgroup.map_symm_eq_iff_map_eq A).mpr h) := by rfl
+      Subgroup.congrOfMapEq e.symm ((_root_.Subgroup.map_symm_eq_iff_map_eq A).mpr h) :=
+  MulEquiv.ext fun y ↦ Subtype.ext <| by simp
 
 /-- The homomorphism of subgroups obtained from a homomorphism between two other subgroups by
 transporting along equalities of the domain and of the codomain.
