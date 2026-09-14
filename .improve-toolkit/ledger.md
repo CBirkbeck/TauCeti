@@ -37330,3 +37330,26 @@ at 20:36Z. So the stall is a capacity backlog that is clearing slowly, as r742 r
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r744 — 2026-09-14T20:57Z — both top groups published their caches and wait on a queued finalize job; no merges for 66 min
+
+**Board** (20:56Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. No merges since #6601 (19:50:37Z), and main is still `6bc3780dc`, so r738's checks
+stand. Nothing to fix, contest or drive; step 5 shut.
+
+**Queue** (depth 30, down from 35 with no merge on main, so five entries left some other way; mine stay 2/3/4):
+
+```
+pos 1  #6744  publish success 20:45:24Z -> 20:46:57Z;  finalize-merge-group-build queued since 20:46:58Z
+pos 2  #6093  publish success 20:49:29Z -> 20:51:21Z;  finalize-merge-group-build queued since 20:51:21Z
+```
+
+A merge group runs three jobs in turn (`sandboxed-build`, then `publish-merge-group-cache`, then
+`finalize-merge-group-build`), and each waits for a hosted runner separately. So while the backlog lasts, a green build
+does not mean a prompt merge. Queued Actions runs: 386 (427 at 20:36Z, 413 at 20:46Z).
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

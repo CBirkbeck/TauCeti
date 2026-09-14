@@ -1,4 +1,4 @@
-# Last round — r743 (2026-09-14T20:47Z)
+# Last round — r744 (2026-09-14T20:57Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -15,7 +15,7 @@ slot. Record each PR's kind in
 the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r743):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r744):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. **If he answers, apply it before opening.**
@@ -29,14 +29,14 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **MERGING, pos 2/35** (group `31e769e30`: `sandboxed-build` **passed** 20:14Z; publish job queued behind an Actions backlog) | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **MERGING, pos 2/30** (group `31e769e30`: build and cache publish **passed**; `finalize-merge-group-build` queued since 20:51Z) | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 3** | nobody |
 | **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 4** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-#6093's group build passed at 20:14Z; its publish job still waits for a runner at 20:46Z, but queue head #6744's
-started at 20:45Z and the Actions backlog is draining (427 → 413 queued runs); main is `6bc3780dc`).
+#6093's build and cache publish have passed; at 20:56Z it and queue head #6744 each wait on a queued
+`finalize-merge-group-build`, and the Actions backlog is draining (427 → 413 → 386 queued runs); main is `6bc3780dc`).
 
 ## What to expect next
 
@@ -100,7 +100,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r743 did
+## What r703–r744 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -145,6 +145,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r741: no merges for 36 min; the queue's top two groups built green and wait on a queued publish job.
 * r742: still no merges (46 min): 427 queued Actions runs saturate the hosted runners the publish job needs.
 * r743: backlog draining (413 queued runs); queue head #6744's publish started after 39 min; no merges yet.
+* r744: both top groups published; each waits on a queued finalize job (386 queued runs); no merges for 66 min.
 
 ## Candidates for a later step 5
 
