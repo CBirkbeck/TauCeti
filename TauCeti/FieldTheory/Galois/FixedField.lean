@@ -259,7 +259,9 @@ theorem zpowers_toFixedFieldAlgEquiv_eq_top (σ : M ≃ₐ[K] M) [Finite (Subgro
 
 Only the generated subgroup `⟨σ⟩` need be finite: `M / K` is asked to be neither finite nor
 Galois, so this applies to an automorphism of finite order of an arbitrary extension. -/
-@[simp]
+-- Not a `simp` lemma: `simpNF` rejects it. Normalising the left-hand side sends `simp` after
+-- `Fintype Gal(M/M ^ ⟨σ⟩)`, and with only `Finite (Subgroup.zpowers σ)` in scope that instance
+-- search exhausts its heartbeat budget instead of failing, so the lemma could never fire.
 theorem card_algEquiv_fixedField_zpowers (σ : M ≃ₐ[K] M) [Finite (Subgroup.zpowers σ)] :
     Nat.card (M ≃ₐ[IntermediateField.fixedField (Subgroup.zpowers σ)] M) = orderOf σ := by
   have horder : orderOf (toFixedFieldAlgEquiv σ) = orderOf σ := by

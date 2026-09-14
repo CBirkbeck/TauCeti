@@ -76,7 +76,9 @@ same divisibility, the cyclic group cut out by the tag has order `orderOf τ`.
 
 The count depends only on the tag's second component: the first contributes nothing once
 `orderOf σ ∣ orderOf τ`. -/
-@[simp]
+-- Not a `simp` lemma, for the reason recorded on `AlgEquiv.card_algEquiv_fixedField_zpowers`:
+-- `simpNF` cannot normalise the left-hand side, because synthesising `Fintype` for the
+-- automorphism group times out.
 theorem card_algEquiv_fixedField_zpowers_eq_orderOf
     (hcop : ((NumberField.discr L).natAbs).Coprime m) {ζ : M} (hζ : IsPrimitiveRoot ζ m)
     (σ : Gal(L/K)) (τ : (ZMod m)ˣ) (hστ : orderOf σ ∣ orderOf τ) :
