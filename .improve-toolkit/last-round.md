@@ -1,4 +1,4 @@
-# Last round — r741 (2026-09-14T20:27Z)
+# Last round — r742 (2026-09-14T20:37Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -15,7 +15,7 @@ slot. Record each PR's kind in
 the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r741):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r742):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. **If he answers, apply it before opening.**
@@ -29,14 +29,14 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **MERGING, pos 2/35** (group `31e769e30`: `sandboxed-build` **passed** 20:14Z; publish job waiting for a runner) | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **MERGING, pos 2/35** (group `31e769e30`: `sandboxed-build` **passed** 20:14Z; publish job queued behind an Actions backlog) | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 3** | nobody |
 | **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 4** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-#6093's group build passed at 20:14Z; at 20:26Z it and queue head #6744 both wait on a queued
-`publish-merge-group-cache` job (human-owned CI); main is `6bc3780dc`).
+#6093's group build passed at 20:14Z; at 20:36Z it and queue head #6744 still wait on a queued
+`publish-merge-group-cache` job: 427 queued Actions runs saturate the hosted runners (r742); main is `6bc3780dc`).
 
 ## What to expect next
 
@@ -100,7 +100,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r741 did
+## What r703–r742 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -143,6 +143,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r739: no merges; #6093's merge-group build in progress (read off the queue ref's check-runs); no-op board.
 * r740: REST quota ran out at 20:16 (the fourth :16 round); rerun clean; #6093's merge-group build passed.
 * r741: no merges for 36 min; the queue's top two groups built green and wait on a queued publish job.
+* r742: still no merges (46 min): 427 queued Actions runs saturate the hosted runners the publish job needs.
 
 ## Candidates for a later step 5
 
@@ -243,4 +244,7 @@ invisible to Tau Ceti.
 **A module rename on main is invisible to `ghostref` and `stalequal`** — they chase declaration names, not import
 paths. When main renames or deletes a module, grep each branch's ADDED lines for the old path (r735: #6514's
 `GeckLattice/Weyl.lean` → `Weyl/Basic.lean`, no hits).
+**A `queued` check with no runner is a capacity stall, not a failure** (r742). Read `actions/runs/<id>/jobs` for
+`labels` and `runner_name`, and `actions/runs?status=queued` for the backlog. It is human-owned: report it, never
+cancel runs.
 **HANDOVER.md §11–13 carry this watch's rules** — read them before re-deriving one.

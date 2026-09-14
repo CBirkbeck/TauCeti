@@ -37287,3 +37287,30 @@ here for this role to do. If it stays queued for hours, tell Chris; do not try t
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r742 — 2026-09-14T20:37Z — the merge queue is stalled behind an Actions backlog (427 queued runs); no merges for 46 min
+
+**Board** (20:36Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. No merges since #6601 (19:50:37Z), and main is still `6bc3780dc`, so r738's checks
+stand. Nothing to fix, contest or drive; step 5 shut.
+
+**The queue is unchanged since r741.** Pos 1 #6744 and pos 2 #6093 are `AWAITING_CHECKS`. Both groups' `sandboxed-build`
+passed, and both groups' `publish-merge-group-cache / publish` are still `queued`, since 20:06:10Z and 20:14:21Z (30 and
+22 min).
+
+**Why (read-only diagnosis).** The publish job is `publish` in `.github/workflows/publish-lake-cache.yml`, called from
+`pr-build.yml`. It `runs-on: ubuntu-latest` (GitHub-hosted, not self-hosted), and its job record has no runner
+(`runner_name` empty). `actions/runs?status=queued` shows **427 queued runs** repo-wide. The newest are a stream of
+small bookkeeping workflows (`Auto-merge` and `PR status labels` on `workflow_run`/`issue_comment`, and
+`Zulip PR status (lifecycle)`), created every few seconds. So the hosted-runner concurrency cap is saturated, and the
+publish jobs wait in the same pool. `sandboxed-build` (`ubuntu-24.04`) started at 19:44 and 19:52, before the backlog,
+and is not the bottleneck.
+
+Nothing for this role to do: `.github/` is human-owned, and cancelling runs is not this role's call. **Reported to
+Chris** in the round summary, since the whole queue (35 PRs) is blocked, not only mine.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
