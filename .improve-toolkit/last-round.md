@@ -1,4 +1,4 @@
-# Last round — r745 (2026-09-14T21:07Z)
+# Last round — r746 (2026-09-14T21:16Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -10,15 +10,15 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
    ChatGPT `gpt-6-astra` helping.
 3. **What this role has been doing** — rooting, dedup, hypothesis weakening, docstrings, relocation.
 
-Every PR so far is kind 3. **Kinds 1, 2 and 3 are all staged** (below): open them in that order, one per freed
-slot. Record each PR's kind in
-the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
+Kind 1 is **open as draft #6851** (r746). **Kinds 2 and 3 are staged** (below): open them in that order, one per
+freed slot. Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r745):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r746):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
-kinds 1 and 3 get a pass scoped to the declarations they change. **If he answers, apply it before opening.**
+kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
+no-build default. **If he answers, apply it to #6851 as a follow-up push, and to kinds 2 and 3 before opening.**
 
 **ChatGPT access:** no `chatgpt-math` MCP server is configured (only `lean-lsp`). The model is reachable
 through the local codex CLI that MCP wraps:
@@ -29,36 +29,34 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **MERGING, pos 2/28** (group `31e769e30`: build and cache publish **passed**; `finalize-merge-group-build` queued since 20:51Z) | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 3** | nobody |
-| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 4** | nobody |
+| **#6851** | `fdeaff5cb` | **`sandboxed-build` running** (since 21:14:25Z) | **DRAFT** (kind 1, opened 21:14:11Z) | **me** — iterate as a draft on CI; `gh pr ready` only when green |
+| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **MERGING, pos 1** (group `3188698be`, `sandboxed-build` since 21:07Z) | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **MERGING, pos 2** (21:14Z) | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
-**Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-#6093's build and cache publish have passed; at 21:06Z it and queue head #6744 still wait on a queued
-`finalize-merge-group-build`, and the Actions backlog is draining (427 → 413 → 386 → 331 queued runs); main is `6bc3780dc`).
+**Three `improve/*` PRs of mine are open again (#6796, #6800, #6851) → step 5 does not fire** until one merges.
+#6093 merged at 21:09:02Z (main `31e769e30`), freeing the slot #6851 took; #6796 and #6800 are MERGING at 1 and 2.
 
 ## What to expect next
 
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. A `MERGING` PR's group build is the check-runs of
    `git ls-remote origin 'refs/heads/gh-readonly-queue/main/pr-<n>-*'` (r739), the earliest sign of an ejection. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only; r738: all three clean against `6bc3780dc`). Staged branches:
-   `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r738: all three
-   clean against `6bc3780dc`, none of their files touched on main). A merge-tree check sees conflicts, not new
+   merge-group simulation (cheap, read-only; r746: clean against `1f44a437f`; #6796 and #6800 are now in merge groups). Staged branches:
+   `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r746: clean
+   against `1f44a437f`, none of their files touched on main; two remain staged now that kind 1 is open). A merge-tree check sees conflicts, not new
    callers: also grep main's new lines for the names each staged branch removes, and when main DELETES declarations,
    grep every branch's added lines for them (r738: #6601 removed `sum_binomial_weight(_mul)`; 0 uses). Print a firing
    control: r738's first try was a crashed `sed` whose empty result read as "none".
-2. **When a slot opens, open kind 1: `improve/levi-civita-mathlib`** (`4d0dfadf1` on `fork`). At that moment:
-   merge `origin/main`, re-gate (expect 15 ok / 2 failed / 0 UNRUN: `decldiff` and `nsjump`, both answered in
-   the body), push, then
-   `gh pr create --draft --repo TauCetiProject/TauCeti --base main --head CBirkbeck:improve/levi-civita-mathlib --title "refactor(Geometry/Manifold): use Mathlib's Levi-Civita connection" --body-file pending/levi-civita-mathlib-body.md`.
-   **CI is the first elaborator this branch meets** — iterate as a draft; `gh pr ready` only when green.
-   (r709: the fork `CBirkbeck/TauCeti` has Actions enabled but has never run a workflow, so pushing there gives
-   no early build.)
-3. **At the second free slot, open kind 2: `improve/quadratic-separable-ring`** (`89205ce8d` on `fork`). Same
+2. **#6851 (kind 1, Levi-Civita) is a DRAFT on its first CI run** (`fdeaff5cb`, opened 21:14:11Z). Main is merged
+   in; the gate read 15 ok / 2 failed / 0 UNRUN, and the `decldiff`/`nsjump` findings are byte-identical to r704's
+   and answered in the body. **CI is the first elaborator this branch meets.** If `sandboxed-build` fails, read
+   the log, fix, re-gate and push, still as a draft. Run `gh pr ready 6851 --repo TauCetiProject/TauCeti` only when
+   green; the board clock starts then. The Actions backlog (r742–r745) can hold a first run for a long time, and a
+   `queued` job is not a failure.
+3. **At the next free slot, open kind 2: `improve/quadratic-separable-ring`** (`89205ce8d` on `fork`). Same
    recipe: merge `origin/main`, re-gate (expect 12 ok / 0 failed / 0 UNRUN), push, then
    `gh pr create --draft --repo TauCetiProject/TauCeti --base main --head CBirkbeck:improve/quadratic-separable-ring --title "refactor(Algebra/Polynomial): separability of a quadratic from a unit discriminant" --body-file pending/quadratic-separable-ring-body.md`.
-4. **At the third free slot, open kind 3: `improve/exchangeable-contractable-dedup`** (`73227e02e` on `fork`).
+4. **At the slot after that, open kind 3: `improve/exchangeable-contractable-dedup`** (`73227e02e` on `fork`).
    Same recipe (expect 12 ok / 0 failed / 0 UNRUN), title
    "refactor(Probability/Exchangeability): drop the duplicate `contractable_of_exchangeable`", body
    `pending/exchangeable-contractable-dedup-body.md`.
@@ -100,7 +98,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r745 did
+## What r703–r746 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -147,6 +145,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r743: backlog draining (413 queued runs); queue head #6744's publish started after 39 min; no merges yet.
 * r744: both top groups published; each waits on a queued finalize job (386 queued runs); no merges for 66 min.
 * r745: both finalize jobs still queued (20 and 15 min); backlog down to 331 runs; no merges for 76 min.
+* r746: #6744 then #6093 merged (21:07, 21:09); all re-checked clean; step 5 fired, and kind 1 opened as draft **#6851**.
 
 ## Candidates for a later step 5
 
@@ -160,7 +159,7 @@ Re-run `nscand.py` first. Skip `TauCeti.LinearEquiv.toLinearEquiv_generalLinearE
 
 ## Settled
 
-* **Merged this watch:** #6406, #6426, #6412, #6418, #6432, #6188, #6482.
+* **Merged this watch:** #6406, #6426, #6412, #6418, #6432, #6188, #6482, **#6093** (2026-09-14T21:09:02Z).
 * **#6093** — `scope`, `naming`, `documentation` green; `api-design` answered. Deferred laws on
   `handover/fiber-compfiberequiv-laws-deferred`.
 

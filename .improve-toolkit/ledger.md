@@ -37369,3 +37369,67 @@ r742–r745), down 55 in the last ten minutes. Nothing has changed in kind since
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r746 — 2026-09-14T21:08Z — the queue moves: #6744 merged at 21:07:17Z; #6093 is first and #6796's group is building; all still clean
+
+**Board** (21:06Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. Nothing to fix, contest or drive; step 5 shut (#6093 still `OPEN` at 21:08Z).
+
+**The stall broke at 21:07:17Z.** #6744 (Chebotarev: an unramified prime is coprime to the discriminant) merged once
+its `finalize-merge-group-build` got a runner, 77 minutes after the previous merge. Main `6bc3780dc` →
+**`1f44a437f`** (+18 in `NumberField/RamifiedPrimes.lean`, one new declaration). Queue at 21:08:11Z:
+
+```
+pos 1  #6093  AWAITING_CHECKS  group 31e769e30: build and publish passed; finalize queued since 20:51:21Z
+pos 2  #6796  AWAITING_CHECKS  group 3188698be: sandboxed-build in_progress since 21:07:23Z
+pos 3  #6800  QUEUED
+```
+
+Queued Actions runs were 331 at 21:06Z.
+
+**Merge-group simulation** against `1f44a437f`:
+
+```
+#6093  36 behind  merges clean  ghostref: exit 0, 70 removed, 8 chased          stalequal: exit 0
+#6796  34 behind  merges clean  ghostref: all short forms still resolve        stalequal: exit 0
+#6800  34 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts        stalequal: exit 0
+```
+
+The queue builds each group on top of the entries ahead of it, so #6093's and #6796's group builds already include
+#6744. The simulation agrees with them.
+
+**Main's diff removed nothing.** Its firing control read 0 removed lines, 18 added and 1 added declaration header, so
+no branch can be using a removed name. No module was renamed, and there is no new caller of a name the staged branches
+remove. **Staged branches** (`git merge-tree`): levi-civita 26 behind, quadratic 24, exchangeable-dedup 23; none of
+their files touched; all merge clean.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
+
+**Addendum 21:15Z: #6093 merged, step 5 fired, and kind 1 opened as #6851.**
+
+At 21:09:10Z #6093 read `MERGED` (21:09:02Z); it was first marked ready on 2026-09-08. Main `1f44a437f` →
+**`31e769e30`**. My open `improve/*` PRs were #6796 and #6800 (#5950 excluded), so step 5 fired, and the rotation's
+due kind was 1.
+
+**Opened: #6851, kind 1, `refactor(Geometry/Manifold): use Mathlib's Levi-Civita connection`** (draft, 21:14:11Z).
+
+* `improve/levi-civita-mathlib` (`4d0dfadf1`) was 27 commits behind. `git merge --no-ff origin/main` was clean and
+  gave `fdeaff5cb`.
+* Gate `prepush.sh origin/main`: **15 ok / 2 failed / 0 UNRUN**, as staged. The two findings' 43 detail lines are
+  **byte-identical** to r704's log, so the 27-commit merge added nothing to them. `decldiff` lists the deletions,
+  renames and restatements the body tabulates; `nsjump` lists the four deliberate `IsLeviCivita.X` →
+  `IsLeviCivitaConnection.X` moves that the body's review notes explain.
+* The body calls `leviCivitaFun`, `two_inner_leviCivitaFun_eq_koszul`, `isCovariantDerivativeOn_leviCivitaFun` and
+  `leviCivita_apply` "private helpers". Checked on main: all four are `private`, and every public deleted name is in
+  the body.
+* Verified after creation: draft; head `CBirkbeck:improve/levi-civita-mathlib@fdeaff5cb`; base `main`; exactly one
+  standalone `Roadmap: HopfRinow`.
+* Opened under the no-build default announced to Chris in r738–r745, with no `/cleanup` pass; the question stands.
+* **CI is the first elaborator this branch meets.** It stays a draft until it is green.
+
+The REST quota ran out again at 21:14:30Z; GraphQL still answered. #6796 is `MERGING` at pos 1, #6800 `MERGING` at
+pos 2, and #6851 `NOT-READY` (draft).
