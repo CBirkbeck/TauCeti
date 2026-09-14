@@ -36323,3 +36323,49 @@ survived the cut.)
 **Open for the next sweep:** both #6093 and #6796 still read `awaiting-review` seconds after their 10/10
 boards. The bot enqueues on the `ready-to-merge` transition; confirm it happens for self-posted boards,
 and that `queuepos.py` then shows them `QUEUED` rather than `NEVER-QUEUED`.
+
+---
+
+## r700 — 2026-09-14T13:02Z — both 10/10 PRs queued; a false EJECTED fixed, and my own edit broke the fix
+
+### Self-posted 10/10 boards do enqueue
+
+`tauceti-review-bot` labelled both `ready-to-merge` — #6093 at 12:54:47Z, #6796 at 12:54:59Z — and both
+then entered the merge queue: **#6093 at position 30, #6796 at 31** (depth 31). So the r699 open
+question is answered: a board posted by a driven `tauceti-review --post` run is treated like the
+pipeline's own.
+
+It took longer than usual. Today's four most recent enqueues followed their label by **17 s, 53 s, 31 s
+and 22 s**. Ours were not in the queue ~100 s after labelling; both PRs then read `MERGEABLE` but
+`mergeStateStatus=UNSTABLE`, with every check complete except a `zulip-pr` re-triggered by the label
+change and still queued. That fits the delay, but it is inferred, not proven. Either way, enqueueing is
+the merge path, which this role never touches, so the only correct move was to observe.
+
+At ~25–30 min a merge, position 30 is many hours out. That is the queue's normal behaviour (r679): do
+not re-diagnose it.
+
+### `queuepos.py` called #6093 EJECTED — and advised a push that would have discarded its 10/10 board
+
+The r679 split asked whether a PR was **ever** enqueued. #6093 was enqueued on 2026-09-12 and ejected
+that evening; two days later, relabelled and not yet re-enqueued, it read `EJECTED`, and the tool printed
+*"Merge origin/main into each, re-gate, push (r679)."* Following that would have re-triggered review and
+thrown away the board it had just earned.
+
+**An ejection is an enqueue that followed the LATEST `ready-to-merge` label and then went away.** An
+enqueue from an earlier transition says nothing about this one. Fixed with a pure
+`enqueued_since_ready(events)` that only counts `added_to_merge_queue` at or after the latest
+`ready-to-merge` label. Also added a label-age display, so a stuck PR can be told from a pending one at a
+glance: #5950 now reads `NEVER-QUEUED (ready-to-merge 9301m ago)`. A new control encodes both the r679
+and r700 timelines, and a mutation test (reverting to "any enqueue ever") fails it.
+
+### And my own fix broke the tool
+
+I replaced the old `ever_enqueued` by slicing the file from `def ever_enqueued(` up to `def main(` —
+and r680's `pr_list_cmd` lived in that range. The suite dropped to **147 passed, 1 failed** (the r680
+limit control), and the live run died with `NameError: name 'pr_list_cmd' is not defined`. Both were
+visible in the same command that applied the fix, and nothing was pushed. Restored the function verbatim
+from the pre-edit backup, then re-ran the mutation test on the repaired file, since the first one had run
+against the broken one. **148 passed, 0 failed.**
+
+The rule this adds: **replace an exact block, never a range between two anchors** — a range silently
+takes whatever a later round added between them.

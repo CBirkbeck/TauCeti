@@ -902,6 +902,25 @@ qpos | chk "queuepos: enqueued-then-absent is EJECTED, never-enqueued is not (r6
 qpos | chk "queuepos: a deep queue position is not a fault, and an unready label is neither" \
             "queued: QUEUED:pos=18" "merging: MERGING:pos=1" "notready: NOT-READY" \
             "deep: QUEUED:pos=30"
+# r700: EJECTED must be judged against the CURRENT ready-to-merge transition. #6093 was enqueued and
+# ejected on 09-12; relabelled ready-to-merge on 09-14 and not yet re-enqueued, it read EJECTED and the
+# tool advised a push that would have discarded a fresh 10/10 board.
+qev() { python3 -c "
+import importlib.util as u
+s=u.spec_from_file_location('q','$T/queuepos.py'); m=u.module_from_spec(s); s.loader.exec_module(m)
+L=lambda t,n: {'event':'labeled','created_at':t,'label':{'name':n}}
+A=lambda t: {'event':'added_to_merge_queue','created_at':t,'label':None}
+D=lambda t: {'event':'removed_from_merge_queue','created_at':t,'label':None}
+r679=[L('2026-09-12T15:43:18Z','ready-to-merge'),A('2026-09-12T15:43:28Z'),D('2026-09-12T18:54:20Z')]
+r700=r679+[L('2026-09-14T12:54:47Z','ready-to-merge')]
+print('same-transition:', m.enqueued_since_ready(r679))
+print('relabelled-not-requeued:', m.enqueued_since_ready(r700))
+print('never:', m.enqueued_since_ready([L('2026-09-07T21:00:00Z','ready-to-merge')]))
+print('latest:', m.latest_ready_at(r700))
+"; }
+qev | chk "queuepos: an enqueue from an EARLIER ready-to-merge transition is not this one's (r700)" \
+           "same-transition: True" "relabelled-not-requeued: False" "never: False" \
+           "latest: 2026-09-14T12:54:47Z"
 # r679 again: `gh pr list` returns 30 rows by default and this repo has 30+ open PRs from other
 # lanes, so the bare call reported on 2 of 4 improve/* PRs -- #6093 and #5950 fell off the end. A
 # stranded PR is by definition an OLD one, i.e. exactly the row a default limit drops.

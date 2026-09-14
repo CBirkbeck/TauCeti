@@ -30,7 +30,7 @@ opposite causes, and refreshing the branch is the fix for exactly one of them:
 So the enqueue history, not queue membership alone, is what makes the verdict actionable.
 QUEUED at position 18 is not a problem, however long it has been there.
 """
-import json, subprocess, sys
+import datetime, json, subprocess, sys
 
 REPO = "TauCetiProject/TauCeti"
 
@@ -76,13 +76,53 @@ def fetch(owner_repo=REPO, branch="main"):
     return e.get("totalCount"), {n["pullRequest"]["number"]: n for n in e["nodes"]}
 
 
-def ever_enqueued(n, owner_repo=REPO):
-    """Did this PR ever reach the queue?  EJECTED vs NEVER-QUEUED turns on this."""
+def enqueued_since_ready(events):
+    """True iff an `added_to_merge_queue` event falls at or after the LATEST `ready-to-merge` label.
+
+    r700.  "Ever enqueued" was the wrong question.  #6093 was enqueued on 2026-09-12 and ejected that
+    evening; two days later a fresh 10/10 board relabelled it `ready-to-merge`, and 90 seconds after
+    that -- before any new enqueue -- this tool called it EJECTED and advised merging `main` and
+    pushing.  Doing so would have thrown away the board it had just earned.  The history that
+    matters is the history of the CURRENT transition: an ejection is an enqueue that followed the
+    latest `ready-to-merge` label and then went away.  An old enqueue from a previous transition
+    says nothing about this one.
+
+    `events` are timeline entries, either raw (`label: {name: ...}`) or flattened (`label: "..."`).
+    """
+    def lab(e):
+        l = e.get("label")
+        return l.get("name") if isinstance(l, dict) else l
+    ready = [e.get("created_at") or "" for e in events
+             if e.get("event") == "labeled" and lab(e) == "ready-to-merge"]
+    if not ready:
+        return False
+    last = max(ready)
+    return any(e.get("event") == "added_to_merge_queue" and (e.get("created_at") or "") >= last
+               for e in events)
+
+
+def latest_ready_at(events):
+    """Timestamp of the latest `ready-to-merge` label, or None."""
+    ts = [e.get("created_at") for e in events if e.get("event") == "labeled"
+          and ((e.get("label") or {}).get("name") if isinstance(e.get("label"), dict)
+               else e.get("label")) == "ready-to-merge"]
+    return max(ts) if ts else None
+
+
+def timeline_events(n, owner_repo=REPO):
     out = subprocess.run(
-        ["gh", "api", "repos/%s/issues/%d/timeline" % (owner_repo, n), "--paginate",
-         "-q", '.[]|select(.event=="added_to_merge_queue")|.created_at'],
+        ["gh", "api", "repos/%s/issues/%d/timeline" % (owner_repo, n), "--paginate", "--jq",
+         '.[]|{event, created_at, label: (.label.name // null)}'],
         capture_output=True, text=True).stdout
-    return bool(out.strip())
+    evs = []
+    for line in out.splitlines():
+        line = line.strip()
+        if line:
+            try:
+                evs.append(json.loads(line))
+            except json.JSONDecodeError:
+                pass
+    return evs
 
 
 def pr_list_cmd(author="CBirkbeck", limit=200):
@@ -116,12 +156,21 @@ def main(argv):
         labels = [l["name"] for l in json.loads(out or '{"labels":[]}')["labels"]]
         label = "ready-to-merge" if "ready-to-merge" in labels else ",".join(labels)
         e = entries.get(n)
+        age = ""
+        if e is None and label == "ready-to-merge":
+            evs = timeline_events(n)
+            enq, last = enqueued_since_ready(evs), latest_ready_at(evs)
+            if last:
+                t = datetime.datetime.fromisoformat(last.replace("Z", "+00:00"))
+                mins = (datetime.datetime.now(datetime.timezone.utc) - t).total_seconds() / 60
+                age = "  (ready-to-merge %.0fm ago)" % mins
+        else:
+            enq = e is not None
         v = queue_verdict(label, e is not None,
-                          e["position"] if e else None, e["state"] if e else None,
-                          ever_enqueued(n) if e is None else True)
+                          e["position"] if e else None, e["state"] if e else None, enq)
         if v == "EJECTED":
             ejected.append(n)
-        print("  #%-6s %-22s %s" % (n, label, v))
+        print("  #%-6s %-22s %s%s" % (n, label, v, age))
     if ejected:
         print("\nEJECTED: %s" % ", ".join("#%d" % n for n in ejected))
         print("  The bot enqueues on the label transition, so these will NOT return on their own.")

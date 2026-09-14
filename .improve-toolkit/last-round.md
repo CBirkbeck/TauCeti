@@ -1,11 +1,11 @@
-# Last round — r699 (2026-09-14T12:54Z; both drives done)
+# Last round — r700 (2026-09-14T13:02Z)
 
 ## Board
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | **green** | **10/10 approved** (driven board 12:53:03Z, $3.17) | nobody — **confirm the bot moves it to `ready-to-merge` and enqueues it** (`queuepos.py`) |
-| **#6796** | `06e8f7fdf` | **green** | **10/10 approved** (driven board 12:51:20Z) | nobody — **confirm the bot moves it to `ready-to-merge` and enqueues it** (`queuepos.py`) |
+| **#6093** | `18e85bea2` | **green** | **10/10**, `ready-to-merge`, **QUEUED pos 30** | nobody — waiting its turn; act only if `queuepos.py` says `EJECTED` |
+| **#6796** | `06e8f7fdf` | **green** | **10/10**, `ready-to-merge`, **QUEUED pos 31** | nobody — waiting its turn |
 | **#6800** | `716cf35ee` | **green** 12:11:36Z | `awaiting-review`, ready 12:12:14Z | nobody — **drive only if no board by 13:12:14Z** |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
@@ -94,6 +94,10 @@ any `variable` only it used.
 **A green PR is not a place to apply a lesson** — but an *ejected* one is not green, whatever its
 four sweep fields say. Act only on `queuepos.py` saying **`EJECTED`**; `NEVER-QUEUED` (#5950) is not
 this role's to fix.
+**`queuepos.py` judges EJECTED against the LATEST `ready-to-merge` transition** (r700) — an enqueue from an
+earlier transition is not this one's; before r700 it told a freshly 10/10 #6093 to merge main and push.
+**Replace an exact block, never a range between two anchors** — r700's range deleted `pr_list_cmd`.
+**Self-posted 10/10 boards enqueue like the pipeline's own** (r700); today's label→enqueue gap is 17–53 s.
 **A `private` declaration is not a rooting target** — no one outside can use the dot notation it
 would enable (r691 skipped two). **`open Module` makes `Basis` mean `Module.Basis`** — check the
 receiver's real head constant before trusting `mathlibns`'s count for the short name.
@@ -110,5 +114,5 @@ The gate is pure Python: it cannot see docstring attachment, elaboration, or sim
 **A rooting can break an attribute whose own text never changed** (#6482).
 **`stale` on a board means approved-earlier/re-run-pending, not a finding**; `absent` means not yet
 judged on this head. `threadread.py` classifies both as NOT ACTIONABLE — answer **LIVE** only.
-**147 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
+**148 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
 **HANDOVER.md §11–13 carry this watch's rules** — read them before re-deriving one.
