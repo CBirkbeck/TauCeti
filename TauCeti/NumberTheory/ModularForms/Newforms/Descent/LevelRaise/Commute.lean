@@ -239,7 +239,7 @@ private theorem slash_map_upperTriRep_zero_mul_mapGL_conjScale_eq {N : ℕ} (hp 
   rw [hδγ, map_mul, ← mul_assoc, hfacR, mul_assoc, SlashAction.slash_mul, hfβ]
 
 /-- **Multiplication by `l` on the descent's index set.** On the `p` upper-triangular members it
-is the permutation `ZMod.mulModEquiv` of the residues modulo `p`; the extra member, when there is
+is the permutation `mulModEquiv` of the residues modulo `p`; the extra member, when there is
 one, is fixed — read through `descendIndexEquiv`, it is the permutation of `OnePoint (ZMod p)`
 fixing `∞`, which for the prime `p` here is the projective line over `ZMod p`. -/
 private noncomputable def descendIndexMulPerm (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ) :
@@ -247,9 +247,9 @@ private noncomputable def descendIndexMulPerm (hp : p.Prime) (hpl : Nat.Coprime 
   haveI : NeZero p := ⟨hp.ne_zero⟩
   if h : p ^ 2 ∣ N then
     (finCongr (descendMatrixCount_of_sq_dvd h)).trans
-      ((ZMod.mulModEquiv p hpl.symm).trans (finCongr (descendMatrixCount_of_sq_dvd h).symm))
+      ((mulModEquiv p hpl.symm).trans (finCongr (descendMatrixCount_of_sq_dvd h).symm))
   else
-    (descendIndexEquiv p N h).symm.permCongr (ZMod.onePointMulPerm p hpl.symm)
+    (descendIndexEquiv p N h).symm.permCongr (onePointMulPerm p hpl.symm)
 
 /-- **The index map between the two descent families**: the two families have the same size
 (`descendMatrixCount_mul_left_of_coprime`), and the level-`l N` member at an index is the
@@ -273,7 +273,7 @@ private theorem val_descendIndexMulPerm_of_lt (hp : p.Prime) (hpl : Nat.Coprime 
   · simp
   · rename_i h
     rw [Equiv.permCongr_apply, Equiv.symm_symm, descendIndexEquiv_apply_of_lt h hw,
-      ZMod.onePointMulPerm_coe, descendIndexEquiv_symm_coe_val]
+      onePointMulPerm_coe, descendIndexEquiv_symm_coe_val]
     rw [← Nat.cast_mul, ZMod.val_natCast]
 
 private theorem val_descendIndexMulPerm_of_le (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
@@ -292,7 +292,7 @@ private theorem val_descendIndexMulPerm_of_le (hp : p.Prime) (hpl : Nat.Coprime 
   · rename_i hsq
     exact absurd hsq h
   · rw [Equiv.permCongr_apply, Equiv.symm_symm, descendIndexEquiv_apply_of_le h hw,
-      ZMod.onePointMulPerm_infty, descendIndexEquiv_symm_infty_val, hwp]
+      onePointMulPerm_infty, descendIndexEquiv_symm_infty_val, hwp]
 
 private theorem val_descendIndexMulEquiv_of_lt (hp : p.Prime) (hpl : Nat.Coprime p l) (N : ℕ)
     {v : Fin (descendMatrixCount p (l * N))} (hv : v.val < p) :
