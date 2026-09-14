@@ -124,11 +124,13 @@ for the eigenvalue system `a`: the forms of nebentypus `χ` lying in `S_k(Γ₁(
 acts by the scalar `a n hn`, at every index `n` coprime to `N`.
 
 The eigenvalue system is a *dependent* function of the good index and its coprimality proof — the
-spelling `EigenformAwayFromLevel.eigenvalue` uses — rather than a total `ℕ → ℂ`, so that every
-value of `a` is used and distinct systems name distinct submodules. -/
+spelling `EigenformAwayFromLevel.eigenvalue` uses — rather than a total function, so that every
+value of `a` is used and distinct systems name distinct submodules. The index runs over `ℕ+`, also
+as there: at `N = 1` the natural number `0` is coprime to `N`, and `T₀` is the identity, so a
+`ℕ`-indexed system would impose a spurious constraint at that index. -/
 noncomputable def cuspFormsNewEigenspace (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
-    (a : ∀ n : ℕ, Nat.Coprime n N → ℂ) : Submodule ℂ (cuspFormCharSpace k χ) :=
-  (⨅ (n : ℕ) (hn : Nat.Coprime n N),
+    (a : ∀ n : ℕ+, Nat.Coprime (n : ℕ) N → ℂ) : Submodule ℂ (cuspFormCharSpace k χ) :=
+  (⨅ (n : ℕ+) (hn : Nat.Coprime (n : ℕ) N),
       Module.End.eigenspace (heckeRingHomCuspCharSpace k χ (heckeTCompositeGamma0 N n))
         (a n hn)) ⊓
     (cuspFormsNew N k).comap (cuspFormCharSpace k χ).subtype
@@ -136,9 +138,9 @@ noncomputable def cuspFormsNewEigenspace (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
 /-- Defining equation for the sealed `cuspFormsNewEigenspace`: it is the joint eigenspace of the
 good Hecke operators, met with the new subspace. -/
 lemma cuspFormsNewEigenspace_def (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
-    (a : ∀ n : ℕ, Nat.Coprime n N → ℂ) :
+    (a : ∀ n : ℕ+, Nat.Coprime (n : ℕ) N → ℂ) :
     cuspFormsNewEigenspace k χ a =
-      (⨅ (n : ℕ) (hn : Nat.Coprime n N),
+      (⨅ (n : ℕ+) (hn : Nat.Coprime (n : ℕ) N),
         Module.End.eigenspace (heckeRingHomCuspCharSpace k χ (heckeTCompositeGamma0 N n))
           (a n hn)) ⊓
       (cuspFormsNew N k).comap (cuspFormCharSpace k χ).subtype := (rfl)
@@ -146,10 +148,10 @@ lemma cuspFormsNewEigenspace_def (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
 /-- Membership in the simultaneous eigenspace: the good eigenvector equations together with
 newness. -/
 @[simp]
-lemma mem_cuspFormsNewEigenspace_iff {a : ∀ n : ℕ, Nat.Coprime n N → ℂ}
+lemma mem_cuspFormsNewEigenspace_iff {a : ∀ n : ℕ+, Nat.Coprime (n : ℕ) N → ℂ}
     {f : cuspFormCharSpace k χ} :
     f ∈ cuspFormsNewEigenspace k χ a ↔
-      (∀ (n : ℕ) (hn : Nat.Coprime n N),
+      (∀ (n : ℕ+) (hn : Nat.Coprime (n : ℕ) N),
           heckeRingHomCuspCharSpace k χ (heckeTCompositeGamma0 N n) f = a n hn • f) ∧
         (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) ∈ cuspFormsNew N k := by
   simp [cuspFormsNewEigenspace, Submodule.mem_iInf]
@@ -157,7 +159,7 @@ lemma mem_cuspFormsNewEigenspace_iff {a : ∀ n : ℕ, Nat.Coprime n N → ℂ}
 /-- **The simultaneous eigenspace is spanned by any one of its nonzero forms.** This is
 `exists_eq_smul_of_forall_prime_heckeRingHomCusp_of_mem_cuspFormsNew` read as a statement about
 the eigenspace rather than about a pair of forms. -/
-theorem cuspFormsNewEigenspace_le_span_singleton {a : ∀ n : ℕ, Nat.Coprime n N → ℂ}
+theorem cuspFormsNewEigenspace_le_span_singleton {a : ∀ n : ℕ+, Nat.Coprime (n : ℕ) N → ℂ}
     {f : cuspFormCharSpace k χ}
     (hf : f ∈ cuspFormsNewEigenspace k χ a) (hf0 : f ≠ 0) :
     cuspFormsNewEigenspace k χ a ≤ Submodule.span ℂ {f} := by
@@ -165,13 +167,13 @@ theorem cuspFormsNewEigenspace_le_span_singleton {a : ∀ n : ℕ, Nat.Coprime n
   intro g hg
   rw [mem_cuspFormsNewEigenspace_iff] at hg
   obtain ⟨c, hc⟩ := exists_eq_smul_of_forall_prime_heckeRingHomCusp_of_mem_cuspFormsNew
-    (fun p _ hpN ↦ ⟨a p hpN, hf.1 p hpN, hg.1 p hpN⟩) hf.2 hg.2
+    (fun p hp hpN ↦ ⟨a ⟨p, hp.pos⟩ hpN, hf.1 ⟨p, hp.pos⟩ hpN, hg.1 ⟨p, hp.pos⟩ hpN⟩) hf.2 hg.2
     (Submodule.coe_eq_zero.not.2 hf0)
   exact Submodule.mem_span_singleton.2 ⟨c, Subtype.ext hc.symm⟩
 
 /-- **Multiplicity one, in dimensional form** (Miyake, Theorem 4.6.13(1)): a simultaneous
 eigenspace of the good Hecke operators inside `S_k(N, χ)ⁿᵉʷ` has dimension at most one. -/
-theorem finrank_cuspFormsNewEigenspace_le_one (a : ∀ n : ℕ, Nat.Coprime n N → ℂ) :
+theorem finrank_cuspFormsNewEigenspace_le_one (a : ∀ n : ℕ+, Nat.Coprime (n : ℕ) N → ℂ) :
     Module.finrank ℂ (cuspFormsNewEigenspace k χ a) ≤ 1 := by
   rcases eq_or_ne (cuspFormsNewEigenspace k χ a) ⊥ with h | h
   · rw [h, finrank_bot]
@@ -184,7 +186,7 @@ theorem finrank_cuspFormsNewEigenspace_le_one (a : ∀ n : ℕ, Nat.Coprime n N 
 
 /-- **Multiplicity one, in dimensional form**: once a simultaneous eigenspace of the good Hecke
 operators inside `S_k(N, χ)ⁿᵉʷ` contains a nonzero form, it is a line. -/
-theorem finrank_cuspFormsNewEigenspace_eq_one {a : ∀ n : ℕ, Nat.Coprime n N → ℂ}
+theorem finrank_cuspFormsNewEigenspace_eq_one {a : ∀ n : ℕ+, Nat.Coprime (n : ℕ) N → ℂ}
     {f : cuspFormCharSpace k χ}
     (hf : f ∈ cuspFormsNewEigenspace k χ a) (hf0 : f ≠ 0) :
     Module.finrank ℂ (cuspFormsNewEigenspace k χ a) = 1 := by
