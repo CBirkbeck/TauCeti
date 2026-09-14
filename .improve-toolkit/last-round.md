@@ -1,4 +1,4 @@
-# Last round — r733 (2026-09-14T19:12Z)
+# Last round — r734 (2026-09-14T19:18Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -15,7 +15,7 @@ slot. Record each PR's kind in
 the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r733):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r734):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. **If he answers, apply it before opening.**
@@ -35,7 +35,7 @@ through the local codex CLI that MCP wraps:
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-5 ahead of #6093 at 19:10Z; one merge, main is `a13882323`).
+5 ahead of #6093 at 19:17Z; main is `a13882323`).
 
 ## What to expect next
 
@@ -95,7 +95,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r733 did
+## What r703–r734 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -130,6 +130,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r731: main moved (#6658, beside #6796's Clifford files); re-checked, all clean.
 * r732: main moved (Krull dimension merge); queued merge groups and staged branches re-checked, all clean.
 * r733: main moved (#6773, ModularForms); queued merge groups and staged branches re-checked, all clean.
+* r734: REST quota ran out at 19:16 (the third :16 round); rerun after the :17 reset clean; no-op board.
 
 ## Candidates for a later step 5
 
@@ -215,8 +216,10 @@ judged on this head. `threadread.py` classifies both as NOT ACTIONABLE — answe
 **An API error is not an empty answer** (r722). The `gh` login is shared with other sessions, so the hourly quota
 can run out mid-round. `sweep.py` now prints `API-ERROR` and exits 1, and `queuepos.py` prints `UNRUN` (exit 2) or
 `UNKNOWN` — **rerun; never act on those rows**. Before r722 an unreadable merge queue could print `EJECTED`.
-`gh api rate_limit` shows the remaining quota and the reset time. **The hourly window rolls over at about :17**
-(r722, r728): both exhaustions hit the :16 round, so rerun that sweep after :17.
+**Do not trust `gh api rate_limit`** (r734: at 19:16Z it said core 4999 left, reset 19:36Z, while every REST read
+failed). Read the quota off a real call: `gh api -i <endpoint>` prints `X-RateLimit-Remaining` and `-Reset`.
+**The hourly window rolls over at about :17** (r722, r728, r734 at 19:17:29Z): all three exhaustions hit the :16
+round, so rerun that sweep after :17.
 **`gh pr list --state merged --limit 200` is ordered by creation, not merge time** (r728): an old PR such as
 #6093 can merge without appearing in it. A merge also shows as the PR vanishing from the sweep's open-PR list.
 **`awk length` counts BYTES** — `≤`, `σ`, `γ`, `ℝ` are multibyte. Measure line width in codepoints (Python)

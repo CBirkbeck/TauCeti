@@ -37082,3 +37082,25 @@ here. Asked: is a local build allowed now, and should kinds 1 and 3 get a `/clea
 they change? No staged branch opens before a slot frees, so nothing is blocked yet.
 
 No toolkit edits.
+
+---
+
+## r734 — 2026-09-14T19:18Z — REST quota ran out at 19:16 again; the rerun after :17 was clean; no-op board
+
+**The 19:16:26Z sweep** came back all `API-ERROR` (12 fields, exit 1): `API rate limit exceeded for user ID 56166236`.
+Nothing was acted on. `queuepos.py` reads the queue over GraphQL and still worked (6/7/8 of 39; #5950
+`UNKNOWN (timeline unreadable)`).
+
+**`gh api rate_limit` misreports this login's quota.** At 19:16Z it said core 4999 left, reset 19:36:39Z, while every
+REST read was failing; it gave the same numbers at 19:10Z, right after a sweep that had made a dozen REST calls. A real
+call at 19:17:30Z (`gh api -i …/issues/6800/comments`) showed the truth: `X-RateLimit-Used: 5`, reset 20:17:29Z, so a
+fresh core window had opened at 19:17:29Z. That is the :17 rollover for the third time (r722, r728, r734). The standing
+trap in `last-round.md` said `rate_limit` shows the quota; it now says to read the `X-RateLimit-*` headers instead.
+
+**Rerun at 19:17:42Z** (exit 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on head;
+#5950 is Chris's. No merges since #6773, and main is still `a13882323`, so r733's merge-group simulation and
+staged-branch checks stand. Nothing to fix, contest or drive; step 5 shut.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits; one doc correction in `last-round.md`.
