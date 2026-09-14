@@ -59,60 +59,37 @@ namespace HeckeRing.GL2
 variable {Δ : Submonoid (GL (Fin 2) ℚ)} {Γ₁ Γ₂ : Subgroup (GL (Fin 2) ℚ)}
   (D : HeckeCoset Δ Γ₁ Γ₂)
 
-open scoped Classical in
-/-- **The images of the Hecke coset representatives tile a fundamental domain.**
+/-- **The images of the Hecke coset representatives tile a fundamental domain.** If `S` is a
+fundamental domain for `φ(Γ₂)`, the translates of `S` by the images of the representatives
+`aᵥ = rightCosetRep D v = δ τᵥ⁻¹` tile one for `φ(Γ₁) ⊓ φ(δ) φ(Γ₂) φ(δ)⁻¹`.
 
-`heckeSlashSum` sums over `v : DecompQuotient Γ₂ Γ₁ δ⁻¹` with `aᵥ = rightCosetRep D v = δ τᵥ⁻¹`,
-all in `GL (Fin 2) ℚ`. Their images under a homomorphism `φ` into a group acting on `ℍ` translate
-a fundamental domain `S` for `φ(Γ₂)` into one for `φ(Γ₁) ⊓ φ(δ) φ(Γ₂) φ(δ)⁻¹`.
-
-`φ` is a parameter rather than a fixed map, and it is **not** assumed injective: the group that
-acts faithfully on `ℍ` is a quotient of a matrix group by its scalars, so a faithful `φ`
-necessarily collapses `±1`. What replaces injectivity is the ambient subgroup `H` — containing
-`Γ₁` and `Γ₂`, stable under conjugation by `δ`, and meeting `ker φ` inside `Γ₁`. Taking `H` to be
-the determinant-one subgroup makes `ker φ ⊓ H = {±1}`, which lies in every `Γ₀(N)`.
-
-Injectivity would not do instead: for `-I ∈ Γ₂` the hypothesis `hS` is unsatisfiable, since `-I`
-is then a non-identity element of `φ(Γ₂)` acting trivially and
-`MeasureTheory.IsFundamentalDomain` demands a.e.-disjointness over distinct *group elements*. -/
-theorem isFundamentalDomain_iUnion_rightCosetRep_smul
-    {P : Type*} [Group P] [MulAction P ℍ] (φ : GL (Fin 2) ℚ →* P)
-    {H : Subgroup (GL (Fin 2) ℚ)}
-    [Countable (DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹)]
-    {S : Set ℍ} {μ : Measure ℍ}
+Supply `H` rather than injectivity of `φ`: any subgroup containing `Γ₁` and `Γ₂`, stable under
+conjugation by `δ`, and meeting `ker φ` inside `Γ₁`. The determinant-one subgroup does whenever
+`{±1} ≤ Γ₁`, hence for every `Γ₀(N)`. Injectivity is no alternative: for `-I ∈ Γ₂` it makes
+`φ (-I)` a non-identity element of `φ(Γ₂)` acting trivially on `ℍ`, which `hS` cannot tolerate —
+`MeasureTheory.IsFundamentalDomain` demands a.e.-disjointness over distinct group elements. -/
+theorem isFundamentalDomain_iUnion_rightCosetRep_smul {P : Type*} [Group P] [MulAction P ℍ]
+    (φ : GL (Fin 2) ℚ →* P) {H : Subgroup (GL (Fin 2) ℚ)}
+    [Countable (DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹)] {S : Set ℍ} {μ : Measure ℍ}
     (h₁ : Γ₂ ≤ H) (h₂ : Γ₁ ≤ H)
     (hconj : ∀ y ∈ H, (D.out : GL (Fin 2) ℚ) * y * (D.out : GL (Fin 2) ℚ)⁻¹ ∈ H)
-    (hker : φ.ker ⊓ H ≤ Γ₁)
-    (hS : IsFundamentalDomain (Γ₂.map φ : Subgroup P) S μ)
-    (hδ : Measure.QuasiMeasurePreserving
-      (fun x : ℍ ↦ (φ (D.out : GL (Fin 2) ℚ))⁻¹ • x) μ μ)
+    (hker : φ.ker ⊓ H ≤ Γ₁) (hS : IsFundamentalDomain (Γ₂.map φ : Subgroup P) S μ)
+    (hδ : Measure.QuasiMeasurePreserving (fun x : ℍ ↦ (φ (D.out : GL (Fin 2) ℚ))⁻¹ • x) μ μ)
     (hnull : ∀ v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹,
-      NullMeasurableSet ((φ (((v.out : Γ₂) : GL (Fin 2) ℚ)))⁻¹ • S) μ) :
-    IsFundamentalDomain
-      ((Γ₁.map φ ⊓ toConjAct (φ (D.out : GL (Fin 2) ℚ)) • Γ₂.map φ : Subgroup P))
+      NullMeasurableSet ((φ (v.out : GL (Fin 2) ℚ))⁻¹ • S) μ) :
+    IsFundamentalDomain (Γ₁.map φ ⊓ toConjAct (φ (D.out : GL (Fin 2) ℚ)) • Γ₂.map φ : Subgroup P)
       (⋃ v, φ (rightCosetRep D v) • S) μ := by
-  have hconj' : ∀ y ∈ H, ((D.out : GL (Fin 2) ℚ)⁻¹)⁻¹ * y * (D.out : GL (Fin 2) ℚ)⁻¹ ∈ H := by
-    simpa [mul_assoc] using hconj
+  -- `e` matches the index of Shimura's decomposition of `Γ₁δΓ₂` with that of its image, so the
+  -- canonical transversal `τᵥ⁻¹` upstairs maps onto one downstairs
   set e := decompQuotientEquivMapOfKerInfLe' φ Γ₂ Γ₁ H (D.out : GL (Fin 2) ℚ)⁻¹
-    (φ (D.out : GL (Fin 2) ℚ))⁻¹ (map_inv φ _) h₁ h₂ hconj' hker with he_def
-  set r : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹ → (Γ₂.map φ : Subgroup P) := fun v ↦
-    (φ.subgroupMap Γ₂ v.out)⁻¹ with hr_def
-  have hset : ∀ v, (φ (D.out : GL (Fin 2) ℚ)) * ((r v : P)) = φ (rightCosetRep D v) := fun v ↦ by
-    rw [rightCosetRep_def, map_mul, map_inv]
-    rfl
-  have hbij : Function.Bijective fun v ↦
-      (QuotientGroup.mk (r v)⁻¹ :
-        (Γ₂.map φ : Subgroup P) ⧸
-          (toConjAct (φ (D.out : GL (Fin 2) ℚ))⁻¹ • (Γ₁.map φ : Subgroup P)).subgroupOf
-            (Γ₂.map φ : Subgroup P)) := by
-    have heq : ∀ v, (QuotientGroup.mk (r v)⁻¹ : _) = e v := by
-      intro v
-      conv_rhs => rw [← v.out_eq]
-      rw [he_def, decompQuotientEquivMapOfKerInfLe'_mk]
-      simp [hr_def]
-    exact funext heq ▸ e.bijective
-  have := hS.iUnion_mul_smul_of_transversal (φ (D.out : GL (Fin 2) ℚ)) hδ
-    (fun v ↦ hnull v) hbij
-  simpa only [hset] using this
+    (φ (D.out : GL (Fin 2) ℚ))⁻¹ (map_inv φ _) h₁ h₂ (by simpa using hconj) hker with he_def
+  set r : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹ → (Γ₂.map φ : Subgroup P) :=
+    fun v ↦ (φ.subgroupMap Γ₂ v.out)⁻¹
+  have heq : ∀ v, QuotientGroup.mk (r v)⁻¹ = e v := fun v ↦ by
+    conv_rhs => rw [he_def, ← v.out_eq, decompQuotientEquivMapOfKerInfLe'_mk]
+    simp [r]
+  simp only [rightCosetRep_def, map_mul, map_inv]
+  exact hS.iUnion_mul_smul_of_transversal (φ (D.out : GL (Fin 2) ℚ)) hδ hnull
+    (funext heq ▸ e.bijective)
 
 end HeckeRing.GL2
