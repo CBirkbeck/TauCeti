@@ -33,7 +33,7 @@ So the pass now pairs both directions and labels the second `DE-ROOTED`.  It sti
 a namespace level is a real change to the declaration set and belongs in the PR body -- but the
 operator is told what happened instead of being handed twelve rows of mystery.
 """
-import sys, os, subprocess, tempfile, importlib.util
+import sys, os, re, subprocess, tempfile, importlib.util
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 _spec = importlib.util.spec_from_file_location("nss", os.path.join(HERE, "nsslice.py"))
@@ -53,6 +53,32 @@ def base_names(base, path):
     finally:
         os.unlink(tmp)
 
+def opened_namespaces(path):
+    """Namespaces a file `open`s for name resolution (r703).
+
+    #6800 rooted `TauCeti.Basis.span_range_extendOfIsLattice` to `Module.Basis.…`, not `Basis.…`:
+    the file says `open Module`, so its `Basis` IS `Module.Basis`, and dot notation follows the
+    receiver's real head.  A check that models a rooting only as stripping `TauCeti.` reports that
+    correct move as unexplained.  `open scoped` is skipped -- it activates notation and instances,
+    not names.
+    """
+    out = set()
+    try:
+        lines = open(path, encoding='utf-8').read().split('\n')
+    except Exception:
+        return out
+    for L in lines:
+        m = re.match(r'^open\s+(?!scoped\b)(.*)$', L)
+        if not m:
+            continue
+        for tok in m.group(1).split():
+            if tok == 'in' or tok.startswith('(') or tok.startswith('--'):
+                break
+            if re.fullmatch(r"[A-Za-z_][\w.'!?]*", tok):
+                out.add(tok)
+    return out
+
+
 def main():
     base, targets = sys.argv[1], sys.argv[2:]
     missing = [t for t in targets if not os.path.isfile(t)]
@@ -62,11 +88,14 @@ def main():
         return 2
 
     removed, added, nnew = set(), set(), 0
+    where = {}                                         # name -> the file it moved in (r703)
     for t in targets:
         b = base_names(base, t)
         if b is None:
             nnew += 1; continue
         h = names(t)
+        for n in (b - h) | (h - b):
+            where[n] = t
         removed |= b - h
         added |= h - b
 
@@ -95,11 +124,28 @@ def main():
             explained.add(r)
             derooted.append((r, cand))
 
+    # A ROOTING UNDER AN `open` (r703): `TauCeti.X.y` out, `M.X.y` in, in a file that opens `M`.
+    viaopen = []
+    for r in sorted(removed - explained):
+        if not r.startswith('TauCeti.'):
+            continue
+        rest = r[len('TauCeti.'):]
+        for m in sorted(opened_namespaces(where.get(r, ''))):
+            cand = f"{m}.{rest}"
+            if cand in added and where.get(cand) == where.get(r):
+                added.discard(cand)
+                explained.add(r)
+                viaopen.append((r, cand, m))
+                break
+
     residue_removed = sorted(removed - explained)
     residue_added = sorted(added)
 
     for old_n, new_n in derooted:
         print(f"DE-ROOTED `{old_n}` -> `{new_n}`: a namespace level was dropped, not added")
+    for old_n, new_n, m in viaopen:
+        print(f"ROOTED-VIA-OPEN `{old_n}` -> `{new_n}`: the file opens `{m}`, so the receiver resolves "
+              f"under `{m}` -- right when that is the receiver's real head; say so in the body")
     for n in residue_removed:
         print(f"VANISHED  `{n}` was declared here and is not any more, and no rooting explains it")
     for n in residue_added:
@@ -107,11 +153,11 @@ def main():
     print(f"# FIRING CONTROL: {len(targets)} file(s), {nnew} new; {paired} declaration(s) rooted "
           f"`TauCeti.X.y` -> `X.y` as intended; {len(derooted)} DE-ROOTED the other way "
           f"(`TauCeti.NS.y` -> `TauCeti.y`, r606 -- legitimate when review asks a PR to root less, "
-          f"but state it in the body); {len(residue_removed)} VANISHED and "
+          f"but state it in the body); {len(viaopen)} ROOTED-VIA-OPEN (r703); {len(residue_removed)} VANISHED and "
           f"{len(residue_added)} APPEARED unexplained. A clean rooting leaves NO residue -- r563's "
           f"would have shown one of each (`HomotopyGroup.map_injective` gone, "
           f"`HomotopyGroup.IsCoveringMap.map_injective` arrived).", file=sys.stderr)
-    return 1 if (residue_removed or residue_added or derooted) else 0
+    return 1 if (residue_removed or residue_added or derooted or viaopen) else 0
 
 if __name__ == '__main__':
     sys.exit(main())

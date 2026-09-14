@@ -1,0 +1,3 @@
+TauCeti/L.lean:5: TauCeti.Basis.span_x
+TauCeti/L.lean:7: TauCeti.Other.plain_y
+TauCeti/L.lean:9: TauCeti.Stray.z

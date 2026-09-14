@@ -1,40 +1,72 @@
-# Last round — r701 (2026-09-14T13:07Z)
+# Last round — r703 (2026-09-14T13:36Z)
+
+## PR rotation (user directive, 2026-09-14) — read this first
+
+The PRs this role opens now **alternate between three kinds, in order 1 → 2 → 3 → 1**:
+
+1. **Mathlib catch-up** — work that has landed in pinned Mathlib and duplicates TauCeti: refactor TauCeti
+   onto the Mathlib version and delete the local copy (no aliases, per `.claude/CLAUDE.md`).
+2. **File pass** — pick one file, run `/cleanup` and `/mathlibable` (mathlib-quality plugin) on it, with
+   ChatGPT `gpt-6-astra` helping.
+3. **What this role has been doing** — rooting, dedup, hypothesis weakening, docstrings, relocation.
+
+Every PR so far is kind 3, so **the next PR opened is kind 1**, then 2, then 3. Record each PR's kind in
+the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
+the due kind runs while it is shut.
+
+**ChatGPT access:** no `chatgpt-math` MCP server is configured (only `lean-lsp`). The model is reachable
+through the local codex CLI that MCP wraps:
+`codex exec -m gpt-6-astra -c model_reasoning_effort="high" -o <answer-file> "$(cat <question-file>)" < /dev/null`
+(the form the plugin's voyager skill uses).
 
 ## Board
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | **green** | **10/10**, `ready-to-merge`, **QUEUED pos 30** | nobody — waiting its turn; act only if `queuepos.py` says `EJECTED` |
-| **#6796** | `06e8f7fdf` | **green** | **10/10**, `ready-to-merge`, **QUEUED pos 31** | nobody — waiting its turn |
-| **#6800** | `716cf35ee` | **green** 12:11:36Z | `awaiting-review`, ready 12:12:14Z | **drive scheduled for 13:12:15Z** (guarded background task; log `drive6800.log`) — read the resulting board with `threadread.py` |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 29/32** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 30** | nobody |
+| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 31** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
-**Three `improve/*` PRs of mine are open → step 5 does not fire.** (#5950 is excluded from the count
-since r686: it cannot advance, and counting it would stall prospecting indefinitely.)
+**Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
+28 ahead of #6093: roughly 14 h).
 
 ## What to expect next
 
-**Drive path (r698): drive path verified: uvx resolves tauceti-review and its --help lists --reviewer and --post.** Put `~/.local/bin` on `PATH` first.
-**Measured drive cost (r699): $1.00** (8-file diff) and **$3.17** (26-file diff) for 10 codex rubrics — scales with the diff, well under ~$16.
-**Step-4 drive times are exact** (from `sandboxed-build` `completed_at`, r696): #6093 12:41:09Z, #6796 12:45:14Z, #6800 13:12:14Z. Drive a PR only if, at or after its time, the sweep still shows NO board for its current head. Driving: `uvx --from git+https://github.com/TauCetiProject/TauCetiReview tauceti-review <PR> --reviewer codex --post`.
+1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. If main moves a lot, re-run r702's
+   merge-group simulation (cheap, read-only).
+2. **When a slot opens, open kind 1** from the prospects below; refresh the branch at that moment.
 
-1. **#6093's board.** 9 rubrics were green on the previous head, and `api-design` is the only one that
-   was blocking. The new head merged 188 commits of main, so expect every rubric to re-run. If
-   `api-design` comes back green, the PR is done; if a rubric raises something new, read it fresh with
-   `threadread.py` and answer **LIVE** only.
-2. **#6796 and #6800** each draw a first board ~32–67 min after `ready_for_review`. Their bodies already
-   answer `slice`/`parallelns` (#6796) and `decldiff`/`rootsurplus`/`slice` (#6800).
-3. **Do not drive** any of them before `max(CI-green, ready_for_review)` + 1 h with no board.
+## Kind-1 prospects (r703 first pass)
 
-## What r691–r692 did
+Method: `$SP/mlcatchup.py` indexes pinned Mathlib `30a58f7` (243230 names) and TauCeti main (58119):
+same-name collisions, stale "Mathlib has no `X`" notes, and cited Mathlib PRs whose squash commit is in
+the pin. Outputs: `$SP/mlcatchup.out`, `$SP/idx-*.tsv`.
 
-* **`sweep.py` blind spot** (r691): listed 100 PRs repo-wide against 213 open; fixed, controlled, 147/0.
-* **#6093** (r691–r692): the r687 contest was read; `api-design` moved to a correct new finding (the
-  relocation had made `fiberMap` `@[expose]`); fixed without a new lemma; main merged (188 → 0); body
-  rewritten; **green first try**; reply posted after green.
-* **Step 5, twice:** #6796 (`Representation.IsIrreducible.nontrivial`, joining its already-rooted
-  siblings) and #6800 (`Module.Basis.span_range_extendOfIsLattice`, beside Mathlib's own
-  `Module.Basis.extendOfIsLattice`).
+* **Not duplicates:** all 13 same-name collisions are deliberate generalisations (ContMDiff
+  `subtypeVal_comp_iff` at every `n`; Dedekind/Noetherian integral closure without separability;
+  `descPochhammer` over any ring; `exp` in noncommutative Banach algebras). No stale "Mathlib has no" note.
+* **Levi-Civita — mathlib4#36845 (landed 2026-08-22, in the pin).** Mathlib has
+  `CovariantDerivative.IsLeviCivitaConnection`, `.apply_eq` (Koszul), `.apply_eq_extend`, `.uniqueness`,
+  `leviCivitaConnection I M`, `leviCivitaConnection_apply_inner(_right)`,
+  `isLeviCivitaConnection_leviCivitaConnection` — the instance set of TauCeti's `Existence.lean`.
+  TauCeti duplicates: `IsLeviCivita`, `.unique`, `leviCivita`, `isLeviCivita_leviCivita`,
+  `exists_isLeviCivita`. Outside the LeviCivita directory only Geodesic files use them (`leviCivita` 39
+  lines in 4 files; `isLeviCivita_leviCivita` 1). `Regularity.lean` (smoothness) has no Mathlib
+  counterpart and sits on TauCeti's Koszul API.
+* **Deck group — mathlib4#40135 (landed 2026-08-27).** Mathlib `deck p : Subgroup (E ≃ₜ E)`, carrier
+  `p ∘ h = p`; TauCeti `TauCeti.Deck p`, carrier `∀ e, p (φ e) = p e` — equal, **not defeq**. 36 files /
+  837 lines name `Deck`, but few sites depend on the carrier (`.2 e` ≤ 14, `∈ Deck` 3, `mem_iff` 3).
+  TauCeti's extras (`fiberHomeomorph`, `mapsTo_fiber`, `smul_eq_apply`, `deck_comp_of_injective`) have
+  no Mathlib counterpart.
+* **Checked, nothing to do:** mathlib4#40303 (`xRep`) is consumed, not duplicated; the #38813 hit was
+  #38909, whose lemmas `GradedRing.lean` already consumes.
+
+## What r703 did
+
+* `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
+* #6800's scheduled drive: 10/10, $0.98, queued.
+* Recorded the user's PR rotation; first kind-1 prospecting pass (above).
 
 ## Candidates for a later step 5
 
@@ -101,9 +133,9 @@ earlier transition is not this one's; before r700 it told a freshly 10/10 #6093 
 **A `private` declaration is not a rooting target** — no one outside can use the dot notation it
 would enable (r691 skipped two). **`open Module` makes `Basis` mean `Module.Basis`** — check the
 receiver's real head constant before trusting `mathlibns`'s count for the short name.
-**`decldiff` and `rootsurplus` are blind to `open`** (r692): re-namespacing to the receiver's real
-head, e.g. `TauCeti.Basis` → `Module.Basis` under `open Module`, reads as a non-rooting plus a
-surplus. Correct anyway -- answer it in the body.
+**`decldiff` and `rootsurplus` see `open` since r703**: re-namespacing to the receiver's real head,
+e.g. `TauCeti.Basis` → `Module.Basis` under `open Module`, prints `ROOTED-VIA-OPEN` (still blocking --
+say in the body that `M.X` is the receiver's real head) and `FLAGGED-VIA-OPEN` instead of `SURPLUS`.
 **A proof can be changed without an elaborator when the design is read off exact signatures** -- #6093's
 `@[expose]` removal went green first try because `monodromy_eq_of_map_eq`'s `Γ : Quotient ex.1 ey`
 was read, not guessed, and every cross-module consumer was read before the push.
@@ -114,5 +146,5 @@ The gate is pure Python: it cannot see docstring attachment, elaboration, or sim
 **A rooting can break an attribute whose own text never changed** (#6482).
 **`stale` on a board means approved-earlier/re-run-pending, not a finding**; `absent` means not yet
 judged on this head. `threadread.py` classifies both as NOT ACTIONABLE — answer **LIVE** only.
-**148 controls, 0 failed** — the round prompt still says 129; the prompt is stale, not the suite.
+**152 controls, 0 failed** (r703) — the round prompt still says 129; the prompt is stale, not the suite.
 **HANDOVER.md §11–13 carry this watch's rules** — read them before re-deriving one.

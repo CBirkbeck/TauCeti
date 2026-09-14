@@ -36410,3 +36410,43 @@ push would re-trigger review and cost the queued PRs their 10/10 boards and posi
 re-running if either sits in the queue long enough for main to move a lot; it is cheap and read-only.
 
 Also started: teaching `decldiff` and `rootsurplus` about `open` (the r692 false positive on #6800).
+
+---
+
+## r703 — 2026-09-14T13:36Z — `decldiff`/`rootsurplus` see `open`; #6800 10/10; a PR rotation from the user
+
+**#6800's guarded drive** fired at 13:12:15Z and posted a 10/10 board on `716cf35ee` at 13:16:34Z
+(codex `gpt-5.6-sol`, **$0.98**). The bot labelled it; `queuepos.py`: #6093 29, #6796 30, #6800 31 of 32.
+All three open PRs of this role are 10/10 and queued, so step 5 stays shut until one merges.
+
+**Toolkit (the r692 false positive on #6800).** Both tools modelled a rooting only as "strip `TauCeti.`".
+Under `open Module`, `TauCeti.Basis.x` → `Module.Basis.x` *is* the rooting — the receiver's `Basis` is
+`Module.Basis` — and #6800's `naming` and `api-design` rubrics approved exactly that. New
+`opened_namespaces(path)` (skips `open scoped`; stops at `in`, `(`, `--`):
+
+* `decldiff` pairs a removed `TauCeti.X` with an added `M.X` **in the same file** when that file opens
+  `M`, and prints `ROOTED-VIA-OPEN`. It still **blocks**, like r606's `DE-ROOTED`: the gate cannot see
+  whether `M.X` is the receiver's real head, so the body has to say it.
+* `rootsurplus` prints `FLAGGED-VIA-OPEN` instead of `SURPLUS` when `TauCeti.rest` was flagged and the
+  file opens `M`.
+* Fixture `r703-open-reroot-ctl`: an opened rooting, a plain rooting, and a **Stray** rooted under a
+  namespace the file does *not* open — which must stay `VANISHED`/`SURPLUS`, or open-awareness becomes a
+  blanket excuse. 4 controls. Mutations: decldiff ignoring opens → 2 FAIL; rootsurplus ignoring opens →
+  2 FAIL; rootsurplus treating any first component as opened → 1 FAIL. Restored: **152 passed, 0 failed**.
+  The fixture-integrity guard also gained the r679/r681/r687 fixtures, which it had not been listing.
+* Live on #6800's branch: `decldiff` now names the move `ROOTED-VIA-OPEN`; `rootsurplus` ok. The other
+  FAIL is `slice` (1 of 8 flagged in `Lattice.lean`), the known partial-namespace case.
+
+**User directive (verbatim):** "as part of your work, I want you to periodically do the following: 1)
+check new additions to mathlib that have landed that contains work that tauceti has and then refactor
+tau ceti to use the mathlib versions. 2) pick a file and run /cleanup and /mathlibable (using the chatgpt
+mcp to use chatgpt 6 astra to help you) which is looking for ways to improve existing files. 3) keep
+doing what you are doing now. i want you to alternate between 1,2,3 in the PRs you make."
+
+* Every PR to date is kind 3 → **the next PR opened is kind 1**, then 2, then 3.
+* `/cleanup`, `/mathlibable`: mathlib-quality plugin commands (installed). The `chatgpt-math` MCP server
+  they mention is **not configured** (only `lean-lsp`, in both `~/.claude3/.claude.json` and
+  `~/.claude.json`); `gpt-6-astra` is available to the local codex CLI, which that MCP wraps.
+
+**Kind-1 prospecting, first pass** — `last-round.md` § Kind-1 prospects has the two candidates
+(Levi-Civita, mathlib4#36845; deck group, mathlib4#40135) and what was ruled out.

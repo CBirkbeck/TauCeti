@@ -38,6 +38,32 @@ def rooted_full_names(path):
             out.add(f"{ns}.{short}")
     return out
 
+def opened_namespaces(path):
+    """Namespaces a file `open`s for name resolution (r703).
+
+    #6800 rooted `TauCeti.Basis.span_range_extendOfIsLattice` to `Module.Basis.…`, not `Basis.…`:
+    the file says `open Module`, so its `Basis` IS `Module.Basis`, and dot notation follows the
+    receiver's real head.  A check that models a rooting only as stripping `TauCeti.` reports that
+    correct move as unexplained.  `open scoped` is skipped -- it activates notation and instances,
+    not names.
+    """
+    out = set()
+    try:
+        lines = open(path, encoding='utf-8').read().split('\n')
+    except Exception:
+        return out
+    for L in lines:
+        m = re.match(r'^open\s+(?!scoped\b)(.*)$', L)
+        if not m:
+            continue
+        for tok in m.group(1).split():
+            if tok == 'in' or tok.startswith('(') or tok.startswith('--'):
+                break
+            if re.fullmatch(r"[A-Za-z_][\w.'!?]*", tok):
+                out.add(tok)
+    return out
+
+
 def main():
     argv = sys.argv[1:]
     base = None
@@ -68,7 +94,7 @@ def main():
               file=sys.stderr)
         return 2
 
-    newly = set()
+    newly, where = set(), {}
     for t in targets:
         head = rooted_full_names(t)
         if base:
@@ -79,12 +105,26 @@ def main():
                 head -= rooted_full_names(tmp)
                 os.unlink(tmp)
         newly |= head
+        for n in head:
+            where[n] = t
 
-    surplus = sorted(n for n in newly if f"TauCeti.{n}" not in flagged)
+    viaopen, surplus = [], []
+    for n in sorted(newly):
+        if f"TauCeti.{n}" in flagged:
+            continue
+        m = next((m for m in sorted(opened_namespaces(where[n]))
+                  if n.startswith(m + '.') and f"TauCeti.{n[len(m) + 1:]}" in flagged), None)
+        if m:
+            viaopen.append((n, m))
+        else:
+            surplus.append(n)
+    for n, m in viaopen:
+        print(f"FLAGGED-VIA-OPEN  `{n}` was flagged as `TauCeti.{n[len(m) + 1:]}`; the file opens "
+              f"`{m}`, so it roots under `{m}` (r703)")
     for n in surplus:
         print(f"SURPLUS  `{n}` is rooted by this PR but `TauCeti.{n}` is not flagged by the linter")
     print(f"# FIRING CONTROL: {len(flagged)} flagged declaration(s) in the base, {len(newly)} newly "
-          f"rooted by this PR, {len(surplus)} of them NOT flagged. A surplus is a claim the PR makes "
+          f"rooted by this PR, {len(viaopen)} flagged under an opened namespace (r703), {len(surplus)} of them NOT flagged. A surplus is a claim the PR makes "
           f"on its own authority -- #6148 rooted 17 where 11 were flagged and `api-design` blocked "
           f"the six (r605). Zero here means the PR moves exactly what was asked.", file=sys.stderr)
     return 1 if surplus else 0

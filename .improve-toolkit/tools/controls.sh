@@ -19,7 +19,7 @@ SP="${1:-$(cd "$(dirname "$0")/../fixtures" && pwd)}"
 # Assert every fixture is present BEFORE running anything.  r320: deleting one fixture made its
 # POSITIVE check fail but its NEGATIVE check pass -- vacuously, because `neg` sees empty output and
 # finds nothing wrongly reported.  A missing fixture must abort, not quietly halve a check's value.
-for d in r207-ctl r209-ctl r211-ctl r216-ctl r218-ctl r224-ctl r227-ctl r355-importnarrow-ctl r437-vacuousns-ctl r438-dupinproof-ctl r440-lintcand-ctl r442-strictscan-ctl r445-impliedscan-ctl r446-declinedguard-ctl r448-blockprof-ctl r451-threadread-ctl r453-docghost-ctl r491-stalequal-ctl r498-movedopens-ctl r499-parallelns-ctl r514-mathlibns-ctl r515-nscand-subtree-ctl r519-bodylint-ctl r527-nsslice-ctl r550-xsibling-ctl r551-nsbalance-ctl r552-deadpath-ctl r555-wrap100-ctl r555-rootns-ctl r564-stalequal-base-ctl r592-nsslice-base-ctl r593-parallelns-base-ctl r594-deadpath-base-ctl r600-rootns-nested-ctl r605-rootsurplus-ctl r606-decldiff-deroot-ctl r622-nsjump-ctl r625-rootedin-ctl r643-rootedin-suffix-ctl r646-nsjump-prose-ctl r637-dupsig-varctx-ctl; do
+for d in r207-ctl r209-ctl r211-ctl r216-ctl r218-ctl r224-ctl r227-ctl r355-importnarrow-ctl r437-vacuousns-ctl r438-dupinproof-ctl r440-lintcand-ctl r442-strictscan-ctl r445-impliedscan-ctl r446-declinedguard-ctl r448-blockprof-ctl r451-threadread-ctl r453-docghost-ctl r491-stalequal-ctl r498-movedopens-ctl r499-parallelns-ctl r514-mathlibns-ctl r515-nscand-subtree-ctl r519-bodylint-ctl r527-nsslice-ctl r550-xsibling-ctl r551-nsbalance-ctl r552-deadpath-ctl r555-wrap100-ctl r555-rootns-ctl r564-stalequal-base-ctl r592-nsslice-base-ctl r593-parallelns-base-ctl r594-deadpath-base-ctl r600-rootns-nested-ctl r605-rootsurplus-ctl r606-decldiff-deroot-ctl r622-nsjump-ctl r625-rootedin-ctl r643-rootedin-suffix-ctl r646-nsjump-prose-ctl r637-dupsig-varctx-ctl r679-ghostref r681-threadread-deferred-ctl r687-toaddname-ctl r687-threadread-stale-ctl r703-open-reroot-ctl; do
   [ -d "$SP/$d" ] || { echo "controls.sh: missing fixture $SP/$d -- refusing to run a partial suite" >&2; exit 2; }
 done
 # Results go to a FILE, not shell variables: every chk/neg below is invoked through a PIPE,
@@ -850,6 +850,26 @@ print('big:', '--limit' in c and int(c[c.index('--limit')+1]) >= 500)
 "; }
 slim | chk "sweep: the open-PR listing names the repo and a limit that cannot drop old PRs (r691)" \
             "repo: True" "big: True"
+
+# ---- r703: decldiff / rootsurplus see `open` ---------------------------------------------------
+# #6800 rooted `TauCeti.Basis.x` to `Module.Basis.x` in a file with `open Module` -- correct, because
+# the receiver's `Basis` IS `Module.Basis`. decldiff called it VANISHED+APPEARED "no rooting explains
+# it" and rootsurplus called a FLAGGED declaration surplus. The Stray case moves under a namespace the
+# file does NOT open, and must stay unexplained and surplus, or open-awareness is a blanket excuse.
+DOR="$(mktemp -d)"; cp -R "$SP/r703-open-reroot-ctl/." "$DOR/"
+( cd "$DOR" && git init -q . && git add -A && git -c user.email=c@x -c user.name=c commit -qm base )
+DOREV="$(cd "$DOR" && git rev-parse HEAD)"
+sed -i 's/^theorem Basis\.span_x/theorem _root_.Module.Basis.span_x/; s/^theorem Other\.plain_y/theorem _root_.Other.plain_y/; s/^theorem Stray\.z/theorem _root_.Elsewhere.Stray.z/' "$DOR/TauCeti/L.lean"
+dor() { ( cd "$DOR" && python3 "$T/decldiff.py" "$DOREV" TauCeti/L.lean 2>/dev/null ); }
+dor | chk "decldiff: rooting into a namespace the file opens is named ROOTED-VIA-OPEN (r703)" \
+          "ROOTED-VIA-OPEN" "TauCeti.Basis.span_x" "Module.Basis.span_x" "VANISHED  .TauCeti.Stray.z"
+dor | neg "decldiff: the opened-namespace rooting is not residue, and the plain rooting is silent" \
+          "VANISHED  .TauCeti.Basis.span_x" "APPEARED  .Module.Basis.span_x" "Other.plain_y"
+rsr() { ( cd "$DOR" && python3 "$T/rootsurplus.py" --base "$DOREV" "$DOR/flagged.txt" TauCeti/L.lean 2>/dev/null ); }
+rsr | chk "rootsurplus: an unopened re-rooting is still surplus; the opened one is FLAGGED-VIA-OPEN (r703)" \
+          "SURPLUS  .Elsewhere.Stray.z" "FLAGGED-VIA-OPEN  .Module.Basis.span_x"
+rsr | neg "rootsurplus: a flagged declaration rooted under an opened namespace is not surplus" \
+          "SURPLUS  .Module.Basis.span_x" "SURPLUS  .Other.plain_y"
 
 # ---- r687: toaddname -- a rooting can make a `to_additive` target redundant ------------------
 # #6482 went red on a line whose text the PR never touched: rooting the instance let `to_additive`
