@@ -123,11 +123,10 @@ theorem exists_eq_smul_of_forall_prime_heckeRingHomCusp_of_mem_cuspFormsNew
 for the eigenvalue system `a`: the forms of nebentypus `χ` lying in `S_k(Γ₁(N))ⁿᵉʷ` on which `Tₙ`
 acts by the scalar `a n hn`, at every index `n` coprime to `N`.
 
-The eigenvalue system is a *dependent* function of the good index and its coprimality proof — the
-spelling `EigenformAwayFromLevel.eigenvalue` uses — rather than a total function, so that every
-value of `a` is used and distinct systems name distinct submodules. The index runs over `ℕ+`, also
-as there: at `N = 1` the natural number `0` is coprime to `N`, and `T₀` is the identity, so a
-`ℕ`-indexed system would impose a spurious constraint at that index. -/
+The eigenvalue system is a *dependent* function of the good index and its coprimality proof, the
+spelling `EigenformAwayFromLevel.eigenvalue` uses, so that every value of `a` is used. The index
+runs over `ℕ+`, also as there: at `N = 1` the natural number `0` is coprime to `N`, and `T₀` is the
+identity, so a `ℕ`-indexed system would impose a spurious constraint at that index. -/
 noncomputable def cuspFormsNewEigenspace (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
     (a : ∀ n : ℕ+, Nat.Coprime (n : ℕ) N → ℂ) : Submodule ℂ (cuspFormCharSpace k χ) :=
   (⨅ (n : ℕ+) (hn : Nat.Coprime (n : ℕ) N),
