@@ -36265,3 +36265,40 @@ The step-4 drive command has never been exercised on this machine, and the next 
 which two PRs could qualify. Checked it now, with `--help` only (nothing posted, no review run) — the
 r685 lesson, *verify a staged command against something real before the moment it is needed*:
 **drive path verified: uvx resolves tauceti-review and its --help lists --reviewer and --post.**
+
+---
+
+## r699 — 2026-09-14T12:52Z — step 4 fired twice; #6796 is 10/10
+
+At the 12:46:28Z sweep, #6093 (green since 11:41:09Z, 65 min) and #6796 (ready since 11:45:14Z, 61 min)
+both had **no board for their heads** and neither carried `review-in-progress`, so both met step 4. Each
+was driven in the background behind a guard that re-read the board and labels immediately before running
+and would have skipped if either had changed. Neither had; both ran. `--repo` was passed explicitly.
+
+### #6796: 10/10 approved on `06e8f7fdf`
+
+Board posted 12:51:20Z, round 1. All ten rubrics green, zero LIVE threads. `naming` endorsed the target in
+so many words — *"correctly rooted in Mathlib's `Representation.IsIrreducible` namespace for
+receiver-based dot notation"* — and `placement` the sibling argument from the body — *"rooting it
+alongside the existing `Representation.IsIrreducible` extensions is appropriate"*.
+
+**Measured drive cost: $1.00**, not the ~$16 the round prompt budgets. Ten codex rubrics on an 8-file,
++13/−13 diff, 15–23 s each. The estimate may hold for larger diffs or other reviewers; #6093's 26-file
+drive will give a second data point.
+
+**Non-fatal side error — needs Chris, not me.** After posting, the tool's archive step failed:
+
+```
+RuntimeError: push to TauCetiProject/TauCetiData failed after 5 attempts; outbox kept for a later sync.
+last push error: remote: Permission to TauCetiProject/TauCetiData.git denied to CBirkbeck.
+```
+
+The board posted regardless; the run records stay in the local outbox under
+`~/.cache/tauceti-review/store/TauCetiProject__TauCeti` and will retry on later runs. Whether this
+account should have push access to `TauCetiData` is not this role's decision.
+
+**Open question for the next sweep:** the label still read `awaiting-review` right after posting. The bot
+enqueues on the `ready-to-merge` label transition — check that a self-posted 10/10 board actually
+produces that transition and a queue entry, rather than assuming it.
+
+#6093's drive (started 12:47:38Z) was still running at write-up.

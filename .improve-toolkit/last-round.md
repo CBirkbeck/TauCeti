@@ -1,11 +1,11 @@
-# Last round — r698 (2026-09-14T12:37Z)
+# Last round — r699 (2026-09-14T12:52Z)
 
 ## Board
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | **green** 11:41:09Z | `awaiting-review` | nobody — board for the `@[expose]` fix + reply 4004781516 in flight; **drive only if no board by 12:41:09Z** |
-| **#6796** | `06e8f7fdf` | **green** 11:44:43Z | `awaiting-review`, ready 11:45:14Z | nobody — **drive only if no board by 12:45:14Z** |
+| **#6093** | `18e85bea2` | **green** 11:41:09Z | `awaiting-review` | **driven 12:47:38Z (r699)** — drive still running at write-up; read its board with `threadread.py` |
+| **#6796** | `06e8f7fdf` | **green** | **10/10 approved** (driven board 12:51:20Z) | nobody — **confirm the bot moves it to `ready-to-merge` and enqueues it** (`queuepos.py`) |
 | **#6800** | `716cf35ee` | **green** 12:11:36Z | `awaiting-review`, ready 12:12:14Z | nobody — **drive only if no board by 13:12:14Z** |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
@@ -15,6 +15,7 @@ since r686: it cannot advance, and counting it would stall prospecting indefinit
 ## What to expect next
 
 **Drive path (r698): drive path verified: uvx resolves tauceti-review and its --help lists --reviewer and --post.** Put `~/.local/bin` on `PATH` first.
+**Measured drive cost (r699): $1.00** for a 10-rubric codex review of an 8-file diff — not ~$16.
 **Step-4 drive times are exact** (from `sandboxed-build` `completed_at`, r696): #6093 12:41:09Z, #6796 12:45:14Z, #6800 13:12:14Z. Drive a PR only if, at or after its time, the sweep still shows NO board for its current head. Driving: `uvx --from git+https://github.com/TauCetiProject/TauCetiReview tauceti-review <PR> --reviewer codex --post`.
 
 1. **#6093's board.** 9 rubrics were green on the previous head, and `api-design` is the only one that
