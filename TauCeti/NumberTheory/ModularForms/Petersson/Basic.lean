@@ -8,7 +8,8 @@ module
 public import Mathlib.Analysis.InnerProductSpace.Defs
 public import Mathlib.NumberTheory.ModularForms.Bounds
 public import TauCeti.NumberTheory.Modular
-public import TauCeti.NumberTheory.ModularForms.Basic
+-- proof-only: `CuspForm.coe_translate_gl`
+import TauCeti.NumberTheory.ModularForms.Basic
 
 /-!
 # The Petersson inner product
@@ -48,8 +49,6 @@ Mathlib's invariant measure `volume : Measure ℍ` (`dx dy / y²`,
 * `UpperHalfPlane.integrableOn_petersson_sl_smul_fd_left` and
   `UpperHalfPlane.integrableOn_petersson_sl_smul_fd_right`: integrability over every
   `SL(2, ℤ)`-translate of the standard fundamental domain when either argument is cuspidal.
-* `UpperHalfPlane.norm_petersson_le_half_add_self`: the pairing is bounded in norm by the average
-  of the two self-pairings — arithmetic–geometric mean, pointwise.
 * `UpperHalfPlane.integrableOn_petersson_of_measure_lt_top`: integrability over any set of finite
   measure, for any measure, for two cusp forms of *unrelated* arithmetic groups. This is the shape
   a Hecke operator's summands present, where no single bound covers the pair.
@@ -82,7 +81,10 @@ consume Mathlib's `MeasureSpace ℍ` instance instead of constructing the hyperb
 * AINTLIB again, at commit `6d87d596a5372d5b122c47b7082d4c3afa9b7c3b`, Apache-2.0, for
   `peterssonInner_sum_left` and `peterssonInner_sum_right`:
   `HeckeRIngs/GL2/AdjointTheory/SummandAdjoint.lean` (`peterssonInner_add_left`, :222;
-  `peterssonInner_T_p_family_sum_slashes_eq_aggregate_of_integrable`, :620).
+  `peterssonInner_T_p_family_sum_slashes_eq_aggregate_of_integrable`, :620); and for the
+  finite-measure integrability results `integrableOn_petersson_of_measure_lt_top` and its two
+  slash specializations: `HeckeRIngs/GL2/AdjointTheory/DeltaBSystem.lean`
+  (`integrableOn_petersson_cuspform_slash_glMap_of_finiteMeasure`, :397).
 -/
 
 public section
@@ -255,20 +257,6 @@ theorem peterssonInner_self_re_nonneg (k : ℤ) (D : Set ℍ)
 
 /-! ### Integrability of a one-sided slash, over any set of finite measure -/
 
-/-- **Arithmetic–geometric mean for the Petersson integrand**: the pairing of two functions is
-bounded by the average of their self-pairings, pointwise in norm.
-
-It bounds the mixed integrand of two functions by data about each one separately, so neither has
-to be modular for the other's group. -/
-theorem norm_petersson_le_half_add_self (k : ℤ) (f g : ℍ → ℂ) (τ : ℍ) :
-    ‖petersson k f g τ‖ ≤ (‖petersson k f f τ‖ + ‖petersson k g g τ‖) / 2 := by
-  have him : (0 : ℝ) < τ.im ^ k := zpow_pos (UpperHalfPlane.im_pos τ) k
-  have hnorm : ∀ a b : ℍ → ℂ, ‖petersson k a b τ‖ = ‖a τ‖ * ‖b τ‖ * τ.im ^ k := fun a b ↦ by
-    simp [petersson, abs_of_pos (UpperHalfPlane.im_pos τ)]
-  -- `2ab ≤ a² + b²`, scaled by the positive factor `(Im τ) ^ k`
-  rw [hnorm, hnorm, hnorm, le_div_iff₀ two_pos]
-  nlinarith [mul_le_mul_of_nonneg_right (two_mul_le_add_sq ‖f τ‖ ‖g τ‖) him.le]
-
 /-- **The Petersson integrand of two cusp forms for *unrelated* arithmetic groups is integrable
 over any set of finite measure.**
 
@@ -283,12 +271,19 @@ theorem integrableOn_petersson_of_measure_lt_top {F F' : Type*} [FunLike F ℍ �
     IntegrableOn (fun τ ↦ petersson k ⇑f ⇑g τ) S μ := by
   obtain ⟨Cf, hCf⟩ := CuspFormClass.petersson_bounded_left k Γ f f
   obtain ⟨Cg, hCg⟩ := CuspFormClass.petersson_bounded_left k Γ' g g
-  -- each argument is bounded against itself, and `norm_petersson_le_half_add_self` combines the
-  -- two bounds without needing a group common to both
   refine IntegrableOn.of_bound hS ((petersson_continuous k (ModularFormClass.continuous f)
     (ModularFormClass.continuous g)).aestronglyMeasurable.restrict)
     ((Cf + Cg) / 2) (ae_of_all _ fun τ ↦ ?_)
-  exact (norm_petersson_le_half_add_self k _ _ τ).trans (by linarith [hCf τ, hCg τ])
+  -- each argument is bounded against *itself*, which needs no group common to both; `2ab ≤ a²+b²`
+  -- scaled by the positive `(Im τ) ^ k` combines the two bounds
+  have him : (0 : ℝ) < τ.im ^ k := zpow_pos (UpperHalfPlane.im_pos τ) k
+  have hnorm : ∀ a b : ℍ → ℂ, ‖petersson k a b τ‖ = ‖a τ‖ * ‖b τ‖ * τ.im ^ k := fun a b ↦ by
+    simp [petersson, abs_of_pos (UpperHalfPlane.im_pos τ)]
+  rw [hnorm]
+  have hf := hCf τ
+  have hg := hCg τ
+  rw [hnorm] at hf hg
+  nlinarith [mul_le_mul_of_nonneg_right (two_mul_le_add_sq ‖f τ‖ ‖g τ‖) him.le]
 
 open ConjAct in
 /-- **The Petersson integrand of a *singly* slashed cusp form against a cusp form is integrable
