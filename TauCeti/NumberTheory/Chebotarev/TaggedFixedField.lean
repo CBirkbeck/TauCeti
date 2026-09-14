@@ -22,7 +22,8 @@ by the cyclic subgroup the tag generates has `M` as an `m`-th cyclotomic extensi
 
 * `TauCeti.fixedField_zpowers_isCyclotomicExtension`: for a tag `(σ, τ)` with
   `orderOf σ ∣ orderOf τ`, `M / fixedField ⟪(σ, τ)⟫` is an `m`-th cyclotomic extension.
-* `TauCeti.card_algEquiv_fixedField_zpowers_eq_orderOf`: that extension has degree `orderOf τ`.
+* `TauCeti.card_algEquiv_fixedField_zpowers_eq_orderOf`: `M` has `orderOf τ` automorphisms over
+  that fixed field.
 
 ## References
 
@@ -70,12 +71,12 @@ theorem fixedField_zpowers_isCyclotomicExtension
     MulEquiv.coe_toMonoidHom, MulEquiv.apply_symm_apply]
   exact Subgroup.zpowers_inf_top_prod_bot_eq_bot_of_orderOf_dvd σ τ hστ
 
-/-- **The tagged fixed field has degree `orderOf τ` below `M`.** Under the same divisibility, the
-cyclic group cut out by the tag has order `orderOf τ`, so that is the degree of the cyclotomic
-extension `fixedField_zpowers_isCyclotomicExtension` produces.
+/-- **The automorphism group of `M` over the tagged fixed field has order `orderOf τ`.** Under the
+same divisibility, the cyclic group cut out by the tag has order `orderOf τ`.
 
-The first component contributes nothing: the order of a pair is the least common multiple of the
-component orders, and `orderOf σ ∣ orderOf τ` makes that `orderOf τ`. -/
+The count depends only on the tag's second component: the first contributes nothing once
+`orderOf σ ∣ orderOf τ`. -/
+@[simp]
 theorem card_algEquiv_fixedField_zpowers_eq_orderOf
     (hcop : ((NumberField.discr L).natAbs).Coprime m) {ζ : M} (hζ : IsPrimitiveRoot ζ m)
     (σ : Gal(L/K)) (τ : (ZMod m)ˣ) (hστ : orderOf σ ∣ orderOf τ) :
