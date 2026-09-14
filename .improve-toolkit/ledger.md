@@ -37583,3 +37583,30 @@ is queued, so no merge-group simulation is owed.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r752 — 2026-09-14T22:07Z — #6854 green and marked ready; main moved (#6733); #6855 still building; #6851 has no board yet
+
+**Board** (22:06Z; sweep and queuepos exited 0):
+
+* **#6851** (kind 1): ready since 21:37:58Z, `awaiting-review`, CI green, `NO BOARD` (28 min in; drive only after
+  22:37:58Z).
+* **#6854** (kind 2): first run **green**, `sandboxed-build` success 21:45:37Z → 22:02:23Z (17 min). **Marked ready at
+  22:07:10Z** after the check below; right after, its label still read `roadmap/none,awaiting-CI`. The board clock
+  starts at `max(22:02:23Z, 22:07:10Z)`: **drive only after 23:07:10Z.**
+* **#6855** (kind 3): draft; `sandboxed-build` in progress since 21:50:36Z.
+* #5950 is Chris's.
+
+Nothing to fix or contest; step 5 shut.
+
+**Main moved:** #6733 (generalize the perfect dot-product pairing to commutative semirings) merged at 22:02:56Z:
+`7c9ebde59` → **`3ace2f60d`**, three lines changed in `LinearAlgebra/Matrix/Dual.lean`. The firing control read 3
+removed lines, 3 added, and 1 removed and 1 added declaration header: `dotProductBilin_isPerfPair` restated under its
+own name. Nothing was removed and no module renamed. Checked before marking #6854 ready: #6851 (4 behind), #6854 (2)
+and #6855 (2) all merge clean. Main touched none of their files, none of their added lines uses the restated lemma, and
+main's new lines name nothing they remove.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
