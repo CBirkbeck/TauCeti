@@ -36450,3 +36450,56 @@ doing what you are doing now. i want you to alternate between 1,2,3 in the PRs y
 
 **Kind-1 prospecting, first pass** — `last-round.md` § Kind-1 prospects has the two candidates
 (Levi-Civita, mathlib4#36845; deck group, mathlib4#40135) and what was ruled out.
+
+---
+
+## r704 — 2026-09-14T14:09Z — kind 1 staged: Tau Ceti onto Mathlib's Levi-Civita connection; the gate learns deleted files
+
+**Kind 1 (Mathlib catch-up), branch `improve/levi-civita-mathlib` @ `4d0dfadf1`, pushed to `fork`, NOT opened** —
+step 5 is shut (three open, all 10/10, queued 26/27/28 of 31 at 14:07Z). Body: `pending/levi-civita-mathlib-body.md`.
+
+mathlib4#36845 (landed 2026-08-22, in the pin) gave Mathlib `CovariantDerivative.IsLeviCivitaConnection`,
+`leviCivitaConnection`, `isLeviCivitaConnection_leviCivitaConnection`, `IsLeviCivitaConnection.uniqueness` and
+`.apply_eq`; Tau Ceti's parallel development had followed that PR against an older pin. The branch (8 files, +163/−372):
+
+* deletes `IsLeviCivita`, `.unique`, `leviCivita`, `isLeviCivita_leviCivita`, `exists_isLeviCivita`, and
+  `LeviCivita/Existence.lean` with its construction (`leviCivitaFun`, `koszulHom` ×3, `two_inner_leviCivita_apply`);
+* restates `sub_eq_mlieBracket`, `mvfderiv_inner_eq`, `two_inner_eq_koszul`, `difference_eq_zero` on
+  `IsLeviCivitaConnection`, plus `isLeviCivitaConnection_iff` and `two_inner_leviCivitaConnection_eq_koszul`;
+* renames Regularity's five results to `…leviCivitaConnection` and repoints five Geodesic files.
+
+Written with no elaborator, from exact signatures read in Mathlib's source:
+
+* `IsLeviCivitaConnection`'s fields are `isMetricCompatible` then `torsion` — the reverse of Tau Ceti's — so
+  `isLeviCivitaConnection_iff` builds the metric bullet first.
+* `I` is EXPLICIT in `apply_eq`, `apply_eq_extend`, `uniqueness` and `isLeviCivitaConnection_leviCivitaConnection`
+  (Mathlib's own call is `hcov.apply_eq_extend I X₀ hY hZ`). The branch passes such arguments BY NAME
+  (`(hcov' := h') (hY := hv)`, `(I := I) (M := M)`), which is right whichever way a binder falls.
+* Most helpers in Mathlib's LeviCivita.lean are module-PRIVATE (`injective_inner_*_vectorField`,
+  `MDifferentiableAt.inner_bundle'`, `leviCivitaAux*`); only `public` declarations exist for Tau Ceti, so
+  `eq_of_forall_inner_section_eq` and `mdifferentiableAt_inner` are not duplicates.
+* **Import closure.** `Existence` publicly imported `Riemannian.Riesz`. Dropping it from `Geodesic/Basic` would
+  have removed **277 modules** from four files' closures; none names a Riesz declaration, but a transitive
+  instance cannot be ruled out without an elaborator. `Geodesic/Basic` and `Regularity` import
+  `LeviCivita.Basic` and `Riesz` directly, so no closure shrinks.
+* **`awk` measures width in BYTES**: `≤`, `σ`, `γ` are multibyte, so three of 14 "overflows" were not. Widths
+  were re-measured in codepoints and only true overflows rewrapped.
+
+Gate (with the fix below): **15 ok, 2 failed, 0 UNRUN** — `decldiff` (the replacement itself) and `nsjump` (the
+four deliberate `IsLeviCivita.X` → `IsLeviCivitaConnection.X` moves); the body answers both. `deadpath` only
+resolves names inside `_root_.` declarations, so it vouched for none of this PR's Mathlib names; those were
+checked by reading Mathlib.
+
+**Toolkit (r704): the gate on a PR that deletes a file.** The first run said `12 ok, 1 failed, 4 UNRUN`:
+nsbalance, xsibling, decldiff and deadpath each refuse a path that is not a file — deliberately — and prepush
+handed them `$CHANGED`, deleted paths included. Silent and worse: stalequal got `$EXISTING`, so names
+declared only in the deleted file were never screened by full path.
+
+* prepush computes `DELETED`/`PRESENT` once, prints the deleted files, gives the HEAD-side screens `$PRESENT`,
+  and passes `--deleted <path>` to stalequal and decldiff.
+* stalequal/decldiff: a `--deleted` path must exist at `--base` (else UNRUN), and all its base declarations
+  count as gone. stalequal's firing line no longer reads a loop variable an all-deleted PR would leave unset.
+* 6 controls on a throwaway repo — A.lean still uses `Foo.tp_gone` from the deleted B.lean, and an untracked
+  fake Mathlib tree makes deadpath run at all. Mutations: prepush back to `$CHANGED` → 2 FAIL (including
+  "deadpath actually runs", so the neg row is not vacuous); stalequal ignoring `--deleted` → 2 FAIL; decldiff
+  ignoring it → 1 FAIL. **158 passed, 0 failed.**

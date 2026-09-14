@@ -809,6 +809,38 @@ printf 'theorem tp_b : True := trivial\n' >> "$PPD/TauCeti/A.lean"
   | chk "prepush: refuses to gate an uncommitted .lean change (r664)" "UNCOMMITTED"
 rm -rf "$PPD"
 
+# prepush on a PR that DELETES a module -- r704, from the Levi-Civita catch-up.  nsbalance,
+# xsibling, decldiff and deadpath each refuse a missing path on purpose, and prepush handed them
+# every changed path, deleted ones included: all four went UNRUN.  stalequal saw only surviving
+# files, so a name declared ONLY in the deleted one -- `Foo.tp_gone`, still used from A.lean -- was
+# screened by nothing matching full paths.  The fake Mathlib tree is untracked (the r664 dirty
+# check ignores `??`) and exists so that deadpath runs at all; without it the neg row is vacuous.
+PDD=$(mktemp -d)
+( cd "$PDD" && git init -q . && git config user.email c@e.invalid && git config user.name ctl \
+    && mkdir -p TauCeti \
+    && printf 'theorem tp_a : True := trivial\n' > TauCeti/A.lean \
+    && printf 'theorem Foo.tp_gone : True := trivial\n' > TauCeti/B.lean \
+    && git add -A && git commit -qm base \
+    && printf 'theorem tp_a : True := trivial\n\ntheorem _root_.Bar.tp_r : True := Foo.tp_gone\n' > TauCeti/A.lean \
+    && git rm -q TauCeti/B.lean && git add -A && git commit -qm head \
+    && mkdir -p .lake/packages/mathlib/Mathlib \
+    && printf 'theorem Mathlib.tp_m : True := trivial\n' > .lake/packages/mathlib/Mathlib/M.lean ) >/dev/null 2>&1
+PDB=$(cd "$PDD" && git rev-parse HEAD~1)
+PDOUT=$( cd "$PDD" && timeout 300 bash "$T/prepush.sh" "$PDB" 2>&1 )
+echo "$PDOUT" | chk "prepush: a deleted module is named, and deadpath actually runs (r704)" \
+      "deleted: TauCeti/B.lean" "deadpath:"
+echo "$PDOUT" | neg "prepush: a deleted module sends no HEAD-side screen UNRUN (r704)" \
+      "UNRUN nsbalance on" "UNRUN xsibling on" "UNRUN decldiff on" "UNRUN deadpath on"
+echo "$PDOUT" | chk "prepush: stalequal screens the names only a deleted file declared (r704)" \
+      "stalequal: a dead path survives"
+( cd "$PDD" && python3 "$T/stalequal.py" --base "$PDB" --deleted TauCeti/B.lean . TauCeti/A.lean 2>&1 ) \
+  | chk "stalequal: --deleted counts every declaration of the deleted file as gone (r704)" "STALE  Foo.tp_gone"
+( cd "$PDD" && python3 "$T/stalequal.py" --base "$PDB" --deleted TauCeti/Nope.lean . TauCeti/A.lean 2>&1 ) \
+  | chk "stalequal: --deleted refuses a path absent at the base (r704)" "UNRUN"
+( cd "$PDD" && python3 "$T/decldiff.py" --deleted TauCeti/B.lean "$PDB" TauCeti/A.lean 2>&1 ) \
+  | chk "decldiff: --deleted reports the deleted file's declarations as VANISHED (r704)" "VANISHED  .Foo.tp_gone"
+rm -rf "$PDD"
+
 # sweep's CI verdict -- r653, from a sweep that called a green PR red.  A commit's check-runs list
 # carries EVERY run created for that SHA, so a re-dispatch leaves cancelled duplicates behind.
 # #6188 read `RED:label` on a superseded `label` job while `sandboxed-build` was green and nothing

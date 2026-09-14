@@ -80,12 +80,24 @@ def opened_namespaces(path):
 
 
 def main():
-    base, targets = sys.argv[1], sys.argv[2:]
+    argv = sys.argv[1:]
+    deleted = []                                       # r704: see stalequal's `--deleted`
+    while '--deleted' in argv:
+        i = argv.index('--deleted'); deleted.append(argv[i + 1]); del argv[i:i + 2]
+    base, targets = argv[0], argv[1:]
     missing = [t for t in targets if not os.path.isfile(t)]
     if missing:
         print(f"# UNRUN: {len(missing)} target(s) are not files, e.g. {missing[0][:100]!r}.",
               file=sys.stderr)
         return 2
+    gone_files = {}
+    for d in deleted:
+        b = base_names(base, d)
+        if b is None:
+            print(f"# UNRUN: --deleted {d!r} does not exist at {base}; refusing to guess.",
+                  file=sys.stderr)
+            return 2
+        gone_files[d] = b
 
     removed, added, nnew = set(), set(), 0
     where = {}                                         # name -> the file it moved in (r703)
@@ -98,6 +110,10 @@ def main():
             where[n] = t
         removed |= b - h
         added |= h - b
+    for t, b in gone_files.items():                    # r704: the head side is empty
+        for n in b:
+            where[n] = t
+        removed |= b
 
     # Pair each rooting: `TauCeti.X.y` removed <-> `X.y` added. What is left is the residue.
     paired, explained = 0, set()
@@ -150,7 +166,7 @@ def main():
         print(f"VANISHED  `{n}` was declared here and is not any more, and no rooting explains it")
     for n in residue_added:
         print(f"APPEARED  `{n}` is declared here and was not, and no rooting explains it")
-    print(f"# FIRING CONTROL: {len(targets)} file(s), {nnew} new; {paired} declaration(s) rooted "
+    print(f"# FIRING CONTROL: {len(targets)} file(s), {nnew} new, {len(deleted)} deleted (r704); {paired} declaration(s) rooted "
           f"`TauCeti.X.y` -> `X.y` as intended; {len(derooted)} DE-ROOTED the other way "
           f"(`TauCeti.NS.y` -> `TauCeti.y`, r606 -- legitimate when review asks a PR to root less, "
           f"but state it in the body); {len(viaopen)} ROOTED-VIA-OPEN (r703); {len(residue_removed)} VANISHED and "

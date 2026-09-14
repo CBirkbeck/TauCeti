@@ -58,8 +58,18 @@ na()   { printf '  n/a   %s\n' "$1"; }
 
 CHANGED=$(git diff --name-only "$BASE"...HEAD -- '*.lean' 2>/dev/null)
 ADDED=$(git diff --name-only --diff-filter=A "$BASE"...HEAD -- '*.lean' 2>/dev/null)
+DELETED=$(git diff --name-only --diff-filter=D "$BASE"...HEAD -- '*.lean' 2>/dev/null)
+PRESENT=$(git diff --name-only --diff-filter=d "$BASE"...HEAD -- '*.lean' 2>/dev/null)
 [ -z "$CHANGED" ] && { echo "prepush: no .lean files changed against $BASE -- nothing to screen."; exit 0; }
 echo "prepush: $BASE...HEAD  ($(echo "$CHANGED" | wc -l | tr -d ' ') .lean file(s) changed)"
+# A DELETED FILE (r704, from the Levi-Civita catch-up).  nsbalance, xsibling, decldiff and deadpath
+# each refuse a path that is not a file -- on purpose, since a silently shortened list once made a
+# screen vacuous -- and they were handed every changed path, so all four went UNRUN on the first PR
+# that deleted a module.  Screens of the HEAD side now get $PRESENT; the two that compare base with
+# head (stalequal, decldiff) also get `--deleted <path>`, which counts its base declarations as gone.
+DELARGS=""
+for f in $DELETED; do DELARGS="$DELARGS --deleted $f"; done
+[ -n "$DELETED" ] && echo "        deleted: $(echo $DELETED) -- HEAD-side screens skip it; stalequal and decldiff read its base"
 
 # Is this a ROOTING PR at all?  Conservative: yes if the diff ADDS a `_root_.`-anchored declaration
 # or REMOVES a `namespace` line.  Anything else is treated as another lane, and the five
@@ -75,12 +85,12 @@ if [ "${_RA:-0}" -gt 0 ] || [ "${_NR:-0}" -gt 0 ]; then IS_ROOTING=1; else IS_RO
 # parameters, unused section variables) look like real findings and are not. Reported as a delta:
 # green `main` produces 4600 "anonymous section never closed" rows, because `public section` is
 # normally never closed at all.
-nsb=$(python3 "$T/nsbalance.py" "$(git merge-base "$BASE" HEAD)" $CHANGED 2>/dev/null)
+nsb=$(python3 "$T/nsbalance.py" "$(git merge-base "$BASE" HEAD)" $PRESENT 2>/dev/null)
 case "$?" in
   0) ok "nsbalance: every \`end\` still matches its \`namespace\`/\`section\`" ;;
   1) bad "nsbalance: this PR leaves a scope closed by the wrong \`end\`"
      echo "$nsb" | sed 's/^/        /' ;;
-  *) unrun "nsbalance on $CHANGED" ;;
+  *) unrun "nsbalance on $PRESENT" ;;
 esac
 
 # 1. Dead `TauCeti.` paths left by a rooting or a move -- PROSE included, whole repository.
@@ -92,10 +102,10 @@ esac
 # `_root_.` filter answered a narrower question and would have skipped exactly that case.
 EXISTING=""
 for f in $CHANGED; do [ -f "$f" ] && EXISTING="$EXISTING $f"; done
-if [ -z "$EXISTING" ]; then
+if [ -z "$EXISTING$DELETED" ]; then
   ok "stalequal: no changed .lean file to check"
 else
-  out=$(python3 "$T/stalequal.py" --base "$(git merge-base "$BASE" HEAD)" . $EXISTING 2>&1)
+  out=$(python3 "$T/stalequal.py" --base "$(git merge-base "$BASE" HEAD)" $DELARGS . $EXISTING 2>&1)
   case $? in
     0) ok   "stalequal: every name these files stopped declaring is unreferenced" ;;
     1) bad  "stalequal: a dead path survives"; echo "$out" | grep -A2 '^STALE' | sed 's/^/        /' ;;
@@ -230,13 +240,13 @@ fi
 # This screen pairs every rooted name in the TREE with bare uses in the changed files, and searches
 # every component-boundary suffix (`Equiv.indexHom` as well as `indexHom`), which is the second
 # half of the same red build.
-xs=$(python3 "$T/xsibling.py" TauCeti "$(git merge-base "$BASE" HEAD)" $CHANGED 2>/dev/null)
+xs=$(python3 "$T/xsibling.py" TauCeti "$(git merge-base "$BASE" HEAD)" $PRESENT 2>/dev/null)
 xsrc=$?
 case "$xsrc" in
   0) ok "xsibling: no short reference breaks when these wrappers go" ;;
   1) bad "xsibling: removing a wrapper breaks a short reference in ANOTHER file"
      echo "$xs" | grep '^BREAKS' | sed 's/^/        /' ;;
-  *) unrun "xsibling on $CHANGED" ;;
+  *) unrun "xsibling on $PRESENT" ;;
 esac
 echo "$xs" | grep -E '^(ATTRIBUTE|TACTIC)' | sed 's/^/        note: /'
 
@@ -245,12 +255,12 @@ echo "$xs" | grep -E '^(ATTRIBUTE|TACTIC)' | sed 's/^/        note: /'
 # rename that nothing happens to reference. Pair every removed `TauCeti.X.y` with the added `X.y`;
 # a clean rooting leaves no residue. r563 would have shown one of each.
 if [ "$IS_ROOTING" -eq 0 ]; then na "decldiff: n/a -- not a rooting PR"; else
-dd=$(python3 "$T/decldiff.py" "$(git merge-base "$BASE" HEAD)" $CHANGED 2>/dev/null)
+dd=$(python3 "$T/decldiff.py" $DELARGS "$(git merge-base "$BASE" HEAD)" $PRESENT 2>/dev/null)
 case "$?" in
   0) ok "decldiff: every declaration change is a rooting" ;;
   1) bad "decldiff: the declaration set changed by more than a rooting"
      echo "$dd" | sed 's/^/        /' ;;
-  *) unrun "decldiff on $CHANGED" ;;
+  *) unrun "decldiff on $PRESENT" ;;
 esac
 fi
 
@@ -266,12 +276,12 @@ for c in "$(dirname "$(cd "$(git rev-parse --git-common-dir)" && pwd)")/.lake/pa
   [ -d "$c" ] && { ML="$c"; break; }
 done
 if [ -z "$ML" ]; then unrun "deadpath (no Mathlib checkout found)"; else
-  dp=$(python3 "$T/deadpath.py" --base "$(git merge-base "$BASE" HEAD)" TauCeti "$ML" $CHANGED 2>/dev/null)
+  dp=$(python3 "$T/deadpath.py" --base "$(git merge-base "$BASE" HEAD)" TauCeti "$ML" $PRESENT 2>/dev/null)
   case "$?" in
     0) ok "deadpath: every qualified name this PR writes resolves" ;;
     1) bad "deadpath: this PR writes a name that does not exist"
        echo "$dp" | sed 's/^/        /' ;;
-    *) unrun "deadpath on $CHANGED" ;;
+    *) unrun "deadpath on $PRESENT" ;;
   esac
 fi
 

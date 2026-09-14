@@ -1,4 +1,4 @@
-# Last round — r703 (2026-09-14T13:36Z)
+# Last round — r704 (2026-09-14T14:09Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -10,7 +10,7 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
    ChatGPT `gpt-6-astra` helping.
 3. **What this role has been doing** — rooting, dedup, hypothesis weakening, docstrings, relocation.
 
-Every PR so far is kind 3, so **the next PR opened is kind 1**, then 2, then 3. Record each PR's kind in
+Every PR so far is kind 3. **Kind 1 is staged** (below) and opens at the first free slot; then kind 2, then 3. Record each PR's kind in
 the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
@@ -23,19 +23,24 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 29/32** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 30** | nobody |
-| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 31** | nobody |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 26/31** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 27** | nobody |
+| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 28** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-28 ahead of #6093: roughly 14 h).
+25 ahead of #6093 at 14:07Z; it moved 2 places in 11 minutes).
 
 ## What to expect next
 
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. If main moves a lot, re-run r702's
    merge-group simulation (cheap, read-only).
-2. **When a slot opens, open kind 1** from the prospects below; refresh the branch at that moment.
+2. **When a slot opens, open kind 1: `improve/levi-civita-mathlib`** (`4d0dfadf1` on `fork`). At that moment:
+   merge `origin/main`, re-gate (expect 15 ok / 2 failed / 0 UNRUN: `decldiff` and `nsjump`, both answered in
+   the body), push, then
+   `gh pr create --draft --repo TauCetiProject/TauCeti --base main --head CBirkbeck:improve/levi-civita-mathlib --title "refactor(Geometry/Manifold): use Mathlib's Levi-Civita connection" --body-file pending/levi-civita-mathlib-body.md`.
+   **CI is the first elaborator this branch meets** — iterate as a draft; `gh pr ready` only when green.
+3. **Kind 2 is next after it:** pick a file, run `/cleanup` and `/mathlibable` on it with `gpt-6-astra`.
 
 ## Kind-1 prospects (r703 first pass)
 
@@ -46,7 +51,7 @@ the pin. Outputs: `$SP/mlcatchup.out`, `$SP/idx-*.tsv`.
 * **Not duplicates:** all 13 same-name collisions are deliberate generalisations (ContMDiff
   `subtypeVal_comp_iff` at every `n`; Dedekind/Noetherian integral closure without separability;
   `descPochhammer` over any ring; `exp` in noncommutative Banach algebras). No stale "Mathlib has no" note.
-* **Levi-Civita — mathlib4#36845 (landed 2026-08-22, in the pin).** Mathlib has
+* **STAGED in r704 — Levi-Civita — mathlib4#36845 (landed 2026-08-22, in the pin).** Mathlib has
   `CovariantDerivative.IsLeviCivitaConnection`, `.apply_eq` (Koszul), `.apply_eq_extend`, `.uniqueness`,
   `leviCivitaConnection I M`, `leviCivitaConnection_apply_inner(_right)`,
   `isLeviCivitaConnection_leviCivitaConnection` — the instance set of TauCeti's `Existence.lean`.
@@ -54,7 +59,7 @@ the pin. Outputs: `$SP/mlcatchup.out`, `$SP/idx-*.tsv`.
   `exists_isLeviCivita`. Outside the LeviCivita directory only Geodesic files use them (`leviCivita` 39
   lines in 4 files; `isLeviCivita_leviCivita` 1). `Regularity.lean` (smoothness) has no Mathlib
   counterpart and sits on TauCeti's Koszul API.
-* **Deck group — mathlib4#40135 (landed 2026-08-27).** Mathlib `deck p : Subgroup (E ≃ₜ E)`, carrier
+* **Next kind-1 candidate — deck group — mathlib4#40135 (landed 2026-08-27).** Mathlib `deck p : Subgroup (E ≃ₜ E)`, carrier
   `p ∘ h = p`; TauCeti `TauCeti.Deck p`, carrier `∀ e, p (φ e) = p e` — equal, **not defeq**. 36 files /
   837 lines name `Deck`, but few sites depend on the carrier (`.2 e` ≤ 14, `∈ Deck` 3, `mem_iff` 3).
   TauCeti's extras (`fiberHomeomorph`, `mapsTo_fiber`, `smul_eq_apply`, `deck_comp_of_injective`) have
@@ -62,11 +67,12 @@ the pin. Outputs: `$SP/mlcatchup.out`, `$SP/idx-*.tsv`.
 * **Checked, nothing to do:** mathlib4#40303 (`xRep`) is consumed, not duplicated; the #38813 hit was
   #38909, whose lemmas `GradedRing.lean` already consumes.
 
-## What r703 did
+## What r703–r704 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
 * Recorded the user's PR rotation; first kind-1 prospecting pass (above).
+* r704: staged kind 1 (Levi-Civita); prepush/stalequal/decldiff learned deleted files — 158/0.
 
 ## Candidates for a later step 5
 
@@ -146,5 +152,11 @@ The gate is pure Python: it cannot see docstring attachment, elaboration, or sim
 **A rooting can break an attribute whose own text never changed** (#6482).
 **`stale` on a board means approved-earlier/re-run-pending, not a finding**; `absent` means not yet
 judged on this head. `threadread.py` classifies both as NOT ACTIONABLE — answer **LIVE** only.
-**152 controls, 0 failed** (r703) — the round prompt still says 129; the prompt is stale, not the suite.
+**158 controls, 0 failed** (r704) — the round prompt still says 129; the prompt is stale, not the suite.
+**`awk length` counts BYTES** — `≤`, `σ`, `γ`, `ℝ` are multibyte. Measure line width in codepoints (Python)
+before rewrapping anything (r704: 3 of 14 reported overflows were not).
+**A PR that deletes a file** is screened since r704 (`deleted:` in the header; `--deleted` for stalequal and
+decldiff). **`deadpath` only resolves names inside `_root_.` declarations** — a catch-up PR's Mathlib names
+need a read of Mathlib's source, and a `public` check: a non-`public` declaration in a `module` file is
+invisible to Tau Ceti.
 **HANDOVER.md §11–13 carry this watch's rules** — read them before re-deriving one.

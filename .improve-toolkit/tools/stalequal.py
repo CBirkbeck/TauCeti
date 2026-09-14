@@ -75,6 +75,13 @@ def main():
     argv, base = sys.argv[1:], None
     if '--base' in argv:
         i = argv.index('--base'); base = argv[i + 1]; del argv[i:i + 2]
+    # A DELETED FILE has a base side and no head side (r704).  It cannot be a target -- the `isfile`
+    # refusal below is deliberate -- so prepush names it with `--deleted`, and every declaration its
+    # base side made counts as gone.  The Levi-Civita catch-up deleted a module, and until then the
+    # names declared only there were screened by nothing that matched full paths.
+    deleted = []
+    while '--deleted' in argv:
+        i = argv.index('--deleted'); deleted.append(argv[i + 1]); del argv[i:i + 2]
     snap, targets = argv[0], argv[1:]
     missing = [t for t in targets if not os.path.isfile(t)]
     if missing:
@@ -85,6 +92,15 @@ def main():
         print(f"# UNRUN: {len(missing)} target(s) are not files, e.g. {missing[0][:100]!r}. "
               f"Refusing to report on a partial target list.", file=sys.stderr)
         return 2
+    if deleted and not base:
+        print("# UNRUN: --deleted needs --base (a deleted file is known only by its base side).",
+              file=sys.stderr)
+        return 2
+    for d in deleted:
+        if subprocess.run(['git', 'cat-file', '-e', f'{base}:{d}'], capture_output=True).returncode:
+            print(f"# UNRUN: --deleted {d!r} does not exist at {base}; refusing to guess.",
+                  file=sys.stderr)
+            return 2
     moved = []
     for target in targets:
         for L in open(target, encoding='utf-8').read().split('\n'):
@@ -110,6 +126,12 @@ def main():
             with tempfile.NamedTemporaryFile('w', suffix='.lean', delete=False) as tf:
                 tf.write(r.stdout); tmp = tf.name
             gone |= full_names(tmp) - head
+            os.unlink(tmp)
+        for t in deleted:                                 # r704: the head side is empty
+            r = subprocess.run(['git', 'show', f'{base}:{t}'], capture_output=True, text=True)
+            with tempfile.NamedTemporaryFile('w', suffix='.lean', delete=False) as tf:
+                tf.write(r.stdout); tmp = tf.name
+            gone |= full_names(tmp)
             os.unlink(tmp)
         stale = {n: [] for n in gone}
     else:
@@ -161,8 +183,8 @@ def main():
         for p, i, txt in stale[k]:
             nhit += 1
             print(f"STALE  {k}\n       {p}:{i}\n       | {txt}")
-    print(f"# FIRING CONTROL: {len(moved)} rooted declaration(s) in {os.path.basename(target)} "
-          f"({', '.join(moved[:4])}{'...' if len(moved) > 4 else ''}) across {len(targets)} "
+    print(f"# FIRING CONTROL: {len(moved)} rooted declaration(s) in {os.path.basename(targets[-1]) if targets else 'no surviving file'} "
+          f"({', '.join(moved[:4])}{'...' if len(moved) > 4 else ''}) across {len(targets)} (+{len(deleted)} deleted, r704) "
           f"target file(s) in ONE walk; {nfiles} files scanned, "
           f"{noutside} of them OUTSIDE TauCeti/ (where r491's miss lived); "
           f"{nhit} reference(s) still spell the dead `TauCeti.` path. Prose counts: #5953 was green "
