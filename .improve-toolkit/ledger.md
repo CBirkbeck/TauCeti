@@ -37033,3 +37033,25 @@ repointed `Representation.IsIrreducible.nontrivial` call sites — the case this
 files touched on main; all merge clean.
 
 No toolkit edits.
+
+---
+
+## r732 — 2026-09-14T18:57Z — main moved (Krull dimension); queued merge groups and staged branches still clean
+
+**Board** (18:56Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. None of mine merged. One merge (Krull dimension of integral extensions and of
+finite-type algebras under base field extension): main `39593bfe7` → **`e5bbe2dec`**; mine moved to **7/8/9 of 40**.
+Nothing to fix, contest or drive; step 5 shut.
+
+**Merge-group simulation** against `e5bbe2dec`:
+
+```
+#6093  30 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: exit 0
+#6796  28 behind  merges clean  ghostref: all short forms still resolve    stalequal: exit 0
+#6800  28 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: exit 0
+```
+
+**Staged branches** (`git merge-tree`): levi-civita 20 behind, quadratic 18, exchangeable-dedup 17; none of their
+files touched on main; all merge clean.
+
+No toolkit edits.
