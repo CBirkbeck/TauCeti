@@ -37832,3 +37832,23 @@ change.**
 Next: CI on `217fecb81`, then the automatic re-review (a pushed fix re-reviews on its own). Until then the board is
 BEHIND the head, so **do not re-fix**. The step-4 clock restarts at the new CI-green time; `ready_for_review` stays
 22:07:11Z.
+
+---
+
+## r760 — 2026-09-14T23:27Z — no merges; #6854's fix is building with its board BEHIND; queued PRs unchanged; no-op round
+
+**Board** (23:26:34Z; sweep and queuepos exited 0):
+
+* **#6854** (kind 2): head **`217fecb812`** (r759's scope fix), label back to `awaiting-review`. Its board, on
+  `f18fe6fedf`, is **BEHIND** (updated 23:20:45Z: the driven board with the scope block). CI: `sandboxed-build` in
+  progress since 23:25:05Z. **The fix is already pushed, so there is nothing to re-fix**; the automatic re-review
+  follows CI. Step 4's clock restarts at the new CI-green time (`ready_for_review` stays 22:07:11Z).
+* #6851 and #6855: 10/10 on head, `ready-to-merge`, QUEUED at 29 and 27 of 32.
+* #5950 is Chris's.
+
+No merges since #6636, and main is still `958b865a3`, so r759's merge-group simulations (#6851, #6855) and merge-tree
+checks (all three) stand. Nothing to fix, contest or drive; step 5 shut.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
