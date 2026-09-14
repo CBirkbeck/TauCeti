@@ -1,4 +1,4 @@
-# Last round — r705 (2026-09-14T14:34Z)
+# Last round — r706 (2026-09-14T14:50Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -10,8 +10,8 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
    ChatGPT `gpt-6-astra` helping.
 3. **What this role has been doing** — rooting, dedup, hypothesis weakening, docstrings, relocation.
 
-Every PR so far is kind 3. **Kinds 1 and 2 are staged** (below): kind 1 opens at the first free slot, kind 2 at
-the second, then kind 3. Record each PR's kind in
+Every PR so far is kind 3. **Kinds 1, 2 and 3 are all staged** (below): open them in that order, one per freed
+slot. Record each PR's kind in
 the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
@@ -24,18 +24,18 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 26/31** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 27** | nobody |
-| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 28** | nobody |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 25/35** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 26** | nobody |
+| **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 27** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-25 ahead of #6093; it moved 2 places from 13:56Z to 14:07Z, then not at all to 14:32Z).
+24 ahead of #6093 at 14:44Z; the head, #6688, sat `AWAITING_CHECKS` from 07:42Z before merging).
 
 ## What to expect next
 
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only).
+   merge-group simulation (cheap, read-only; r706: all three clean against `a6f0015c4`).
 2. **When a slot opens, open kind 1: `improve/levi-civita-mathlib`** (`4d0dfadf1` on `fork`). At that moment:
    merge `origin/main`, re-gate (expect 15 ok / 2 failed / 0 UNRUN: `decldiff` and `nsjump`, both answered in
    the body), push, then
@@ -44,7 +44,12 @@ through the local codex CLI that MCP wraps:
 3. **At the second free slot, open kind 2: `improve/quadratic-separable-ring`** (`89205ce8d` on `fork`). Same
    recipe: merge `origin/main`, re-gate (expect 12 ok / 0 failed / 0 UNRUN), push, then
    `gh pr create --draft --repo TauCetiProject/TauCeti --base main --head CBirkbeck:improve/quadratic-separable-ring --title "refactor(Algebra/Polynomial): separability of a quadratic from a unit discriminant" --body-file pending/quadratic-separable-ring-body.md`.
-4. **At the third, kind 3:** re-run `nscand.py` (see Candidates below).
+4. **At the third free slot, open kind 3: `improve/exchangeable-contractable-dedup`** (`73227e02e` on `fork`).
+   Same recipe (expect 12 ok / 0 failed / 0 UNRUN), title
+   "refactor(Probability/Exchangeability): drop the duplicate `contractable_of_exchangeable`", body
+   `pending/exchangeable-contractable-dedup-body.md`.
+5. **After those:** kind 1 again (the deck group, mathlib4#40135 — large), then kind 2 (a new file), then kind 3
+   (next candidate: the `StronglyContinuousSemigroup.norm_resolvent_integrand_le` weakening; see ledger r706).
 
 ## Kind-1 prospects (r703 first pass)
 
@@ -81,15 +86,18 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r705 did
+## What r703–r706 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
 * Recorded the user's PR rotation; first kind-1 prospecting pass (above).
 * r704: staged kind 1 (Levi-Civita); prepush/stalequal/decldiff learned deleted files — 158/0.
 * r705: staged kind 2 (`QuadraticDiscriminant.lean`: separable from a unit discriminant, over any `CommRing`).
+* r706: re-simulated the three merge groups (clean); staged kind 3 (the `Exchangeable.contractable` dedup).
 
 ## Candidates for a later step 5
+
+**r706:** every WHOLE `nscand` target is taken or a trap, and `ClassGroup` is partial (ledger r706). `dupsig` has no public duplicate left once kind 3 lands.
 
 Re-run `nscand.py` first. Skip `TauCeti.LinearEquiv.toLinearEquiv_generalLinearEquiv_symm` and
 `TauCeti.FDRep.intCharacter_def` (both `private`). The r681 trap namespaces still apply

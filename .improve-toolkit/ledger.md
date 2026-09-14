@@ -36541,3 +36541,45 @@ single-use `have` (`linear_combination (-2 * a * c) * h2`, coefficient checked b
 ring-level splitting criteria.
 
 **Rotation state:** kinds 1 and 2 staged; kind 1 opens at the first free slot, kind 2 at the second, then kind 3.
+
+---
+
+## r706 — 2026-09-14T14:50Z — quiet board; all three rotation kinds now staged (kind 3: a duplicate-name dedup)
+
+**Board.** #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on head; #5950 is Chris's.
+No new merges. Queue 26/27/28 at 14:35Z, **25/26/27 at 14:44Z**, after the head #6688 (enqueued 07:42Z,
+`AWAITING_CHECKS` at 14:36Z) merged. Nothing to fix, contest or drive; step 5 shut (three open).
+
+**Merge-group simulation** (r702's recipe, with r704's `--deleted`). main `a6f0015c4`, 4 commits past r702's
+`787733ab7`: #6093 12 behind, #6796 10, #6800 10 — all merge clean. ghostref: 0 ghosts (#6093 70 removed / 8
+chased; #6800 1 / 1). stalequal: exit 0. No refresh.
+
+**Kind-3 prospecting (third slot).**
+
+* `nscand` on main (731 flagged, 51 namespaces, 11 WHOLE): every WHOLE target is taken or a trap — `BialgHom`
+  (#5950), `Basis` (#6800), `Representation.IsIrreducible` (#6796), the privates `LinearEquiv`/`FDRep`, and the
+  r681 traps. Near-whole `IsCoveringMap` is #6093's; `Deck.IsQuotientCoveringMap` 31/32 collides with the future
+  deck catch-up.
+* `mathlibns`: `ClassGroup` 56, `QuadraticMap` 153, `Module.Dual` 34, `TopCat.Presheaf.EtaleSpace` 5,
+  `PreAbstractSimplicialComplex` 3 are ROOT; `ModularForm.NormReduction` and `End` are ABSENT. `ClassGroup` (9 of 27
+  in `ElementaryTwoQuotient.lean`) is rejected: rooting only the receiver-shaped nine would strand `_one`,
+  `_prod` and `_surjective` in `TauCeti.ClassGroup` — the partial-namespace shape.
+* `strictscan` (12 findings): one clean public weakening, `StronglyContinuousSemigroup.norm_resolvent_integrand_le`
+  (`0 < t` used only as `.le`; its one caller binds `(ht : 0 < t)` and would pass `ht.le`). Kept as a later
+  kind-3 candidate — two lines.
+* **`dupsig` (252 groups): exactly one public-public duplicate on main.** The rest are marked NOT-a-finding or are
+  the module-system pattern of a private `…_aux` beside its public restatement. The duplicate:
+  `TauCeti.Probability.contractable_of_exchangeable` and `Exchangeable.contractable`, the latter's proof being
+  the former.
+
+**Kind 3 staged: `improve/exchangeable-contractable-dedup` @ `73227e02e`, pushed to `fork`, NOT opened.** Kept the
+receiver form `Exchangeable.contractable` with the proof moved in: it matches `MixedIID.exchangeable` and
+`MixedIIDWith.contractable`, and `Exchangeable` is Tau Ceti's own `def` — Mathlib declares no `Exchangeable` or
+`Contractable`, so `hX.contractable` cannot resolve elsewhere. Deleted `contractable_of_exchangeable`; repointed
+`BlockFactorization.lean` (proof term and docstring), `FullyExchangeable.lean`, `Examples/Probability/DeFinetti.lean`
+and `Contractability.lean`'s module doc. Whole-repo `git grep`: 0 leftovers, none outside `TauCeti/`. 4 files,
++11/−18. Gate **12 ok, 0 failed, 0 UNRUN**. Body: `pending/exchangeable-contractable-dedup-body.md`. Precedent: #6412
+(same neighbourhood) kept the proof-bearing name; here the wrapper is the idiomatic receiver form, so the proof
+moved into it instead.
+
+**Rotation state:** kinds 1, 2 and 3 staged; open them in that order, one per freed slot.
