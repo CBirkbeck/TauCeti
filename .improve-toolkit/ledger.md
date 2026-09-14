@@ -37186,3 +37186,39 @@ caller when a branch opens; the grep only sees it earlier.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r738 — 2026-09-14T19:58Z — #6093 is MERGING; main moved (#6601, which deletes two lemmas); all still clean
+
+**Board** (19:56Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. **#6093 reached the front: `MERGING` at pos 2**; #6796 is 3rd and #6800 4th of 35.
+#6601 (derive binomial variance from independent Bernoulli sums) merged: main `f25750847` → **`6bc3780dc`**. None of
+mine merged yet. Nothing to fix, contest or drive; step 5 shut.
+
+**Merge-group simulation** against `6bc3780dc`:
+
+```
+#6093  35 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: exit 0
+#6796  33 behind  merges clean  ghostref: all short forms still resolve    stalequal: exit 0
+#6800  33 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: exit 0
+```
+
+**Main deleted declarations this time.** #6601 is +32/−115 in `Probability/Distributions/Binomial/Basic.lean` and
+removes `sum_binomial_weight` and `sum_binomial_weight_mul`. `ghostref` and `stalequal` chase names a PR removes. A
+name MAIN removes that a branch newly uses is the other direction, and a clean merge-tree does not see it either. So
+each branch's added lines were checked for both names: 0 uses in all six (#6093 429 added lines, #6796 13, #6800 8,
+levi-civita 163, quadratic 26, exchangeable-dedup 11). Unchanged lines need no check: main is green, so no file it
+left alone still calls them.
+
+**The first version of that check was vacuous.** Its `sed` used back-reference `\6` in a five-group pattern and
+crashed, leaving an empty list that printed "none" above six rows of "0". The rerun, in Python, prints a firing
+control (115 removed lines, 4 removed declaration headers, 2 re-added) and found the two names. **An empty removed
+set means nothing until its firing control has printed.**
+
+**Staged branches** (`git merge-tree`): levi-civita 25 behind, quadratic 23, exchangeable-dedup 22; none of their
+files touched on main; all merge clean; no module renamed or deleted; no new caller on main of a name they remove.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
