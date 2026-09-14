@@ -1,59 +1,50 @@
-# Last round — r691 (2026-09-14 11:40Z)
+# Last round — r692 (2026-09-14T11:44Z)
 
-## ⚠️ FIRST: two CI results decide the next moves
+## Board
 
-1. **#6093 on `18e85bea2`** (merge of main + the `@[expose]` fix).
-   * **Green** → reply in the `api-design` thread (root comment **3997635757**): `@[expose]` removed; the
-     only consumer that needed `fiberMap`'s body, `fiberMap_monodromy`, now rewrites both fibre values
-     into constructor form via `fiberMap_apply_coe` before `monodromy_eq_of_map_eq`, so the path
-     endpoints match by projection; no new lemma was needed, and on main the original was never
-     exposed. Then wait for the board.
-   * **Red** → read the log. The two changes are the `h₁`/`h₂` rewrite in
-     `Monodromy/Functoriality.lean` (coercion of `f e`, the `mapsTo_fiber` application) and any other
-     cross-module consumer that silently needed the body — none was found by reading, but that was
-     reading, not elaboration.
-2. **#6796 on `06e8f7fdf`**. A background watch marks it ready when green. If it was not marked ready,
-   check it: **a draft draws no review.**
-
-## Board (11:40Z)
-
-| PR | head | CI | label | whose move |
+| PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | building | `awaiting-author` | me after CI — reply to `api-design`; 9/10 green, `scope` ✅ |
-| **#6796** | `06e8f7fdf` | building | draft | watch marks ready on green |
-| **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — human-owned file; do not refresh |
+| **#6093** | `18e85bea2` | **green** | `roadmap/none,awaiting-author` | nobody — `api-design` answered by code **and** in-thread (reply 4004781516); board pending |
+| **#6796** | `06e8f7fdf` | success | draft=true | watch marks ready on green; if it is still a draft with green CI, `gh pr ready 6796` |
+| **#6800** | `716cf35ee` | queued | draft | watch marks ready on green |
+| **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
-**Merged since r689:** #6188 (2026-09-12T22:35Z) and #6482 (2026-09-13T02:36Z). Seven `improve/*`
-merges this watch. `lint-dot-notation` on main: **731**.
+**Three `improve/*` PRs of mine are open → step 5 does not fire.** (#5950 is excluded from the count
+since r686: it cannot advance, and counting it would stall prospecting indefinitely.)
 
-## What r691 did
+## What to expect next
 
-* **Sweep blind spot fixed.** `sweep.py` listed 100 PRs repo-wide; there are 213; both `improve/*`
-  PRs sat at index 197 and 202. It printed nothing for the whole gap. Now `--repo` + `--limit 1000` +
-  a warning + a firing control; control and mutation test; **147 controls, 0 failed**.
-* **#6093:** the r687 contest was read (`replies_through` = my reply's id) and `api-design` moved to a
-  new, correct finding — the relocation had introduced `@[expose]` on `fiberMap`. Implemented; refreshed
-  against main (188 behind → 0); body rewritten. Reply deferred until CI is green.
-* **Step 5 → #6796**, rooting `Representation.IsIrreducible.nontrivial`. Body answers `slice` and
-  `parallelns`.
+1. **#6093's board.** 9 rubrics were green on the previous head, and `api-design` is the only one that
+   was blocking. The new head merged 188 commits of main, so expect every rubric to re-run. If
+   `api-design` comes back green, the PR is done; if a rubric raises something new, read it fresh with
+   `threadread.py` and answer **LIVE** only.
+2. **#6796 and #6800** each draw a first board ~32–67 min after `ready_for_review`. Their bodies already
+   answer `slice`/`parallelns` (#6796) and `decldiff`/`rootsurplus`/`slice` (#6800).
+3. **Do not drive** any of them before `max(CI-green, ready_for_review)` + 1 h with no board.
 
-## Next prospecting targets (re-run `nscand.py` first)
+## What r691–r692 did
 
-* `TauCeti.Basis.span_range_extendOfIsLattice` → **`Module.Basis`** (not `Basis`: `Lattice.lean` has
-  `open Module`), 1/8 of its file — slice question.
-* Skip `TauCeti.LinearEquiv.toLinearEquiv_generalLinearEquiv_symm` and `TauCeti.FDRep.intCharacter_def`:
-  both **`private`**; the first is the #6188/#6432 bridge.
-* Trap namespaces from r681 still apply: `Probability.Kernel`, `PDE.Continuous(On)`,
-  `Probability.AEStronglyMeasurable`, `Probability.MeasurableSet`, `BilinForm.IsAlt` do not exist in
-  Mathlib.
+* **`sweep.py` blind spot** (r691): listed 100 PRs repo-wide against 213 open; fixed, controlled, 147/0.
+* **#6093** (r691–r692): the r687 contest was read; `api-design` moved to a correct new finding (the
+  relocation had made `fiberMap` `@[expose]`); fixed without a new lemma; main merged (188 → 0); body
+  rewritten; **green first try**; reply posted after green.
+* **Step 5, twice:** #6796 (`Representation.IsIrreducible.nontrivial`, joining its already-rooted
+  siblings) and #6800 (`Module.Basis.span_range_extendOfIsLattice`, beside Mathlib's own
+  `Module.Basis.extendOfIsLattice`).
+
+## Candidates for a later step 5
+
+Re-run `nscand.py` first. Skip `TauCeti.LinearEquiv.toLinearEquiv_generalLinearEquiv_symm` and
+`TauCeti.FDRep.intCharacter_def` (both `private`). The r681 trap namespaces still apply
+(`Probability.Kernel`, `PDE.Continuous(On)`, `Probability.AEStronglyMeasurable`,
+`Probability.MeasurableSet`, `BilinForm.IsAlt` do not exist in Mathlib). The partial namespaces in
+`Lattice.lean` (`TauCeti.Submodule.IsLattice` 3/4, `TauCeti.Submodule` 5/20) are not whole — do not cut.
 
 ## Settled
 
-* **Merged:** #6406, #6426, #6412, #6418, #6432, #6188, #6482.
-* **#6093** — `scope` ✅ after removing the two `compFiberEquiv` laws (preserved on
-  `handover/fiber-compfiberequiv-laws-deferred`); `naming` ✅; `documentation` ✅; `api-design` answered
-  by removing `@[expose]`.
-* **#6796** — open, draft, awaiting CI.
+* **Merged this watch:** #6406, #6426, #6412, #6418, #6432, #6188, #6482.
+* **#6093** — `scope`, `naming`, `documentation` green; `api-design` answered. Deferred laws on
+  `handover/fiber-compfiberequiv-laws-deferred`.
 
 ## Standing traps
 
@@ -102,6 +93,12 @@ this role's to fix.
 **A `private` declaration is not a rooting target** — no one outside can use the dot notation it
 would enable (r691 skipped two). **`open Module` makes `Basis` mean `Module.Basis`** — check the
 receiver's real head constant before trusting `mathlibns`'s count for the short name.
+**`decldiff` and `rootsurplus` are blind to `open`** (r692): re-namespacing to the receiver's real
+head, e.g. `TauCeti.Basis` → `Module.Basis` under `open Module`, reads as a non-rooting plus a
+surplus. Correct anyway -- answer it in the body.
+**A proof can be changed without an elaborator when the design is read off exact signatures** -- #6093's
+`@[expose]` removal went green first try because `monodromy_eq_of_map_eq`'s `Γ : Quotient ex.1 ey`
+was read, not guessed, and every cross-module consumer was read before the push.
 Verify a rooting target with `mathlibns.py`, never a grep; then **gate it**. **A WHOLE ratio does not
 settle a target.**
 The gate is pure Python: it cannot see docstring attachment, elaboration, or simp normal form —

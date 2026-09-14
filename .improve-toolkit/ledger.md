@@ -36131,3 +36131,51 @@ predates the PR; this removes the last nested `IsIrreducible`-receiver lemma). B
 body. No open PR touches any of the eight files.
 
 **PR #6796**, draft. A background watch marks it ready when `sandboxed-build` is green.
+
+---
+
+## r692 — 2026-09-14T11:44Z — #6093's `@[expose]` fix is green; step 5 opened #6800
+
+### #6093: green on the first try, reply posted
+
+`sandboxed-build: success` on `18e85bea2` — main merged in, `@[expose]` dropped, and
+`fiberMap_monodromy` rewriting both fibre values into constructor form before
+`monodromy_eq_of_map_eq`. Nothing was elaborated locally. The design was read off Mathlib's exact
+signature (`Γ : Path.Homotopic.Quotient ex.1 ey`) and a read of every cross-module
+`Function.fiberMap` consumer, and it compiled first time.
+
+The `api-design` reply went up only after green **and** after confirming the head was still
+`18e85bea2`: id **4004781516**, in reply to 3997635757. Labels at write-up: `roadmap/none,awaiting-author`; the board
+follows once the pipeline picks up the green build.
+
+### Step 5 fired again with two of mine open — #6800
+
+Target `TauCeti.Basis.span_range_extendOfIsLattice` → **`_root_.Module.Basis.span_range_extendOfIsLattice`**.
+The file's `open Module` makes its `Basis` mean `Module.Basis`; Mathlib declares the siblings
+`Module.Basis.extendOfIsLattice` and `_apply` there; and the same file already writes
+`b.extendOfIsLattice K`. That last fact is what settled where dot notation on `b` resolves. My grep
+for a root `Basis` constant was **inconclusive** — it matched `structure Basis` lines without seeing
+their enclosing `namespace Module` — so the file's own compiled usage is the evidence, not the grep.
+
+Four callers moved to `b.span_range_extendOfIsLattice`, and the one bare use in a `rw` list to the
+explicit name. 3 files, +8/−8. Gate **14 ok / 3**:
+
+* `decldiff` + `rootsurplus` fire because both model a rooting as stripping `TauCeti.`, which would
+  give `_root_.Basis` — the wrong target. **Both checks are blind to `open`**: a correct re-namespacing
+  to the receiver's real head reads as a non-rooting plus a surplus. Answered in the body. Teaching
+  them `open` is a possible later improvement, not done now.
+* `slice` 1 of 8 — the other seven are `TauCeti.Submodule.IsLattice` (3/4), `TauCeti.Submodule`
+  (5/20) and `TauCeti.TensorProduct`.
+
+No open PR touches the three files. **PR #6800**, draft; a watch marks it ready on green.
+
+### Board at write-up
+
+```
+#6093  green 18e85bea2   roadmap/none,awaiting-author   reply posted; board pending
+#6796  CI=success  draft=true
+#6800  CI=queued  draft   watch marks ready on green
+#5950  ready-to-merge  NEVER-QUEUED  Chris's
+```
+
+Three `improve/*` PRs of mine are open, so step 5 does not fire next round.
