@@ -37723,3 +37723,30 @@ nothing they remove.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r757 — 2026-09-14T22:57Z — main moved (#6765); both queued PRs re-simulated clean; #6854 still awaits its board
+
+**Board** (22:56Z; sweep and queuepos exited 0): #6851 and #6855 are 10/10 on head, `ready-to-merge`, QUEUED at 31 and
+29 of 33. **#6854** is `awaiting-review`, CI green, `NO BOARD` (49 min since ready). It may be driven only after
+23:07:11Z, so the 23:16 round is the first that may. #5950 is Chris's. Nothing to fix, contest or drive; step 5 shut.
+
+**Main moved:** #6765 (the coefficient recurrence characterises a good-prime eigenvector) merged at 22:50:34Z:
+`e2773303e` → **`babe56615`**, +88/−11 in `ModularForms/HeckeSlash/Nebentypus/Eigenvector.lean`. The firing control
+read 11 removed lines, 88 added, and 0 removed and 2 added declaration headers; nothing was removed and no module
+renamed.
+
+**Merge-group simulation** against `babe56615`:
+
+```
+#6851  8 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6855  6 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+#6854 (6 behind) merges clean (`git merge-tree`). Main touched none of the three PRs' files, and its new lines name
+nothing they remove.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
