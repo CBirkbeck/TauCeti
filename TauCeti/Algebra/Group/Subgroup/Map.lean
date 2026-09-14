@@ -35,6 +35,11 @@ uses it rather than repeating the composition of `MulEquiv.subgroupMap` with
 * `TauCeti.QuotientGroup.congrOfMapEq`: its coset-space companion — an isomorphism carrying `A`
   onto `B` gives a bijection `G ⧸ A ≃ H ⧸ B`. Neither subgroup need be normal, which is what
   distinguishes it from Mathlib's `QuotientGroup.congr`.
+* `TauCeti.QuotientGroup.congrOfSurjectiveOfKerLe`: the same for a *surjection* rather than an
+  isomorphism, provided its kernel is already inside `A`. The kernel is then absorbed by the
+  denominator and the index is unchanged, so a homomorphism that deliberately collapses part of
+  the group — a projection onto a group that acts faithfully, say — still transports coset
+  spaces.
 
 ## Main results
 
@@ -265,6 +270,50 @@ theorem QuotientGroup.congrOfMapEq_mk (e : G ≃* H) {A : Subgroup G} {B : Subgr
     (h : A.map (e : G →* H) = B) (a : G) :
     QuotientGroup.congrOfMapEq e h (QuotientGroup.mk a) = QuotientGroup.mk (e a) := by
   unfold QuotientGroup.congrOfMapEq
+  rfl
+
+/-- **Coset spaces transport along a surjection whose kernel lies in the subgroup.** For `ψ`
+surjective with `ker ψ ≤ A` and `A.map ψ = B`, the map `G ⧸ A → H ⧸ B` induced by `ψ` on
+representatives is a bijection.
+
+Injectivity of `ψ` is not needed: `ker ψ ≤ A` makes the denominator absorb the kernel, so the
+index is unchanged. That is what lets a Hecke decomposition be carried into a group acting
+faithfully on the upper half-plane, where the collapsing of `±1` is the point rather than a
+defect. As with `QuotientGroup.congrOfMapEq`, neither subgroup need be normal. -/
+noncomputable def QuotientGroup.congrOfSurjectiveOfKerLe (ψ : G →* H)
+    (hsurj : Function.Surjective ψ) {A : Subgroup G} {B : Subgroup H}
+    (hker : ψ.ker ≤ A) (hmap : A.map ψ = B) : G ⧸ A ≃ H ⧸ B := by
+  classical
+  have key : ∀ a b : G, (a⁻¹ * b ∈ A) ↔ ((ψ a)⁻¹ * ψ b ∈ B) := by
+    intro a b
+    refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+    · rw [← hmap, ← map_inv, ← map_mul]
+      exact Subgroup.mem_map_of_mem _ h
+    · rw [← hmap] at h
+      obtain ⟨c, hc, hceq⟩ := h
+      have : c⁻¹ * (a⁻¹ * b) ∈ ψ.ker := by simp [MonoidHom.mem_ker, hceq]
+      simpa using A.mul_mem hc (hker this)
+  refine Equiv.ofBijective (Quotient.map' ψ ?_) ⟨?_, ?_⟩
+  · intro a b hab
+    exact QuotientGroup.leftRel_apply.mpr
+      ((key a b).mp (QuotientGroup.leftRel_apply.mp hab))
+  · intro x y hxy
+    induction x using QuotientGroup.induction_on with | _ a =>
+    induction y using QuotientGroup.induction_on with | _ b =>
+    refine QuotientGroup.eq.mpr ((key a b).mpr ?_)
+    simpa [QuotientGroup.eq] using hxy
+  · intro y
+    induction y using QuotientGroup.induction_on with | _ b =>
+    obtain ⟨a, rfl⟩ := hsurj b
+    exact ⟨QuotientGroup.mk a, rfl⟩
+
+@[simp]
+theorem QuotientGroup.congrOfSurjectiveOfKerLe_mk (ψ : G →* H)
+    (hsurj : Function.Surjective ψ) {A : Subgroup G} {B : Subgroup H}
+    (hker : ψ.ker ≤ A) (hmap : A.map ψ = B) (a : G) :
+    QuotientGroup.congrOfSurjectiveOfKerLe ψ hsurj hker hmap (QuotientGroup.mk a) =
+      QuotientGroup.mk (ψ a) := by
+  unfold QuotientGroup.congrOfSurjectiveOfKerLe
   rfl
 
 end TauCeti

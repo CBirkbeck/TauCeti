@@ -14,11 +14,17 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 
 `HeckeRing.GL2.heckeSlashSum` sums `f ∣[k] aᵥ` over `v : DecompQuotient Γ₂ Γ₁ δ⁻¹`, with
 `aᵥ = rightCosetRep D v = δ τᵥ⁻¹`. Everything there lives in `GL (Fin 2) ℚ`, which does **not**
-act on `ℍ`; the slash goes through the change of scalars
-`φ = TauCeti.ratToRealGL`.
+act on `ℍ`, so the statement is made along a homomorphism `φ` into a group that does.
 
-This file shows that the real images `φ aᵥ` of those representatives translate a fundamental
-domain for `Γ₂` into one for `Γ₁ ∩ δ Γ₂ δ⁻¹`, both read in `GL (Fin 2) ℝ`.
+This file shows that the images `φ aᵥ` of those representatives translate a fundamental domain
+for `φ(Γ₂)` into one for `φ(Γ₁) ⊓ φ(δ) φ(Γ₂) φ(δ)⁻¹`.
+
+**`φ` is a parameter, and is not assumed injective.** The group acting faithfully on `ℍ` is a
+quotient of a matrix group by its scalars, so any faithful `φ` collapses `±1` — and it must, since
+a non-identity element acting trivially makes `MeasureTheory.IsFundamentalDomain` unsatisfiable for
+every set of positive measure. Injectivity is replaced by an ambient subgroup `H` containing both
+groups, stable under conjugation by `δ`, with `ker φ ⊓ H ≤ Γ₁`; at `H` the determinant-one subgroup
+this reads `{±1} ≤ Γ₁`, true of every `Γ₀(N)`.
 
 This is what turns a sum of slashes into a single integral: because the translates tile, an
 integral of `heckeSlashSum` over a fundamental domain for the smaller group may be read termwise
@@ -54,58 +60,59 @@ variable {Δ : Submonoid (GL (Fin 2) ℚ)} {Γ₁ Γ₂ : Subgroup (GL (Fin 2) �
   (D : HeckeCoset Δ Γ₁ Γ₂)
 
 open scoped Classical in
-/-- **The real images of the Hecke coset representatives tile a fundamental domain.**
+/-- **The images of the Hecke coset representatives tile a fundamental domain.**
 
-`heckeSlashSum` sums over `v : DecompQuotient Γ₂ Γ₁ δ⁻¹` with `aᵥ = δ τᵥ⁻¹`, all in
-`GL (Fin 2) ℚ`. Their images under `φ` translate a fundamental domain `S` for `φ(Γ₂)` into one
-for `φ(Γ₁) ⊓ φ(δ) φ(Γ₂) φ(δ)⁻¹`. -/
+`heckeSlashSum` sums over `v : DecompQuotient Γ₂ Γ₁ δ⁻¹` with `aᵥ = rightCosetRep D v = δ τᵥ⁻¹`,
+all in `GL (Fin 2) ℚ`. Their images under a homomorphism `φ` into a group acting on `ℍ` translate
+a fundamental domain `S` for `φ(Γ₂)` into one for `φ(Γ₁) ⊓ φ(δ) φ(Γ₂) φ(δ)⁻¹`.
+
+`φ` is a parameter rather than a fixed map, and it is **not** assumed injective: the group that
+acts faithfully on `ℍ` is a quotient of a matrix group by its scalars, so a faithful `φ`
+necessarily collapses `±1`. What replaces injectivity is the ambient subgroup `H` — containing
+`Γ₁` and `Γ₂`, stable under conjugation by `δ`, and meeting `ker φ` inside `Γ₁`. Taking `H` to be
+the determinant-one subgroup makes `ker φ ⊓ H = {±1}`, which lies in every `Γ₀(N)`.
+
+Injectivity would not do instead: for `-I ∈ Γ₂` the hypothesis `hS` is unsatisfiable, since `-I`
+is then a non-identity element of `φ(Γ₂)` acting trivially and
+`MeasureTheory.IsFundamentalDomain` demands a.e.-disjointness over distinct *group elements*. -/
 theorem isFundamentalDomain_iUnion_rightCosetRep_smul
+    {P : Type*} [Group P] [MulAction P ℍ] (φ : GL (Fin 2) ℚ →* P)
+    {H : Subgroup (GL (Fin 2) ℚ)}
     [Countable (DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹)]
     {S : Set ℍ} {μ : Measure ℍ}
-    (hS : IsFundamentalDomain (Γ₂.map ratToRealGL : Subgroup (GL (Fin 2) ℝ)) S μ)
+    (h₁ : Γ₂ ≤ H) (h₂ : Γ₁ ≤ H)
+    (hconj : ∀ y ∈ H, (D.out : GL (Fin 2) ℚ) * y * (D.out : GL (Fin 2) ℚ)⁻¹ ∈ H)
+    (hker : φ.ker ⊓ H ≤ Γ₁)
+    (hS : IsFundamentalDomain (Γ₂.map φ : Subgroup P) S μ)
     (hδ : Measure.QuasiMeasurePreserving
-      (fun x : ℍ ↦ (ratToRealGL (D.out : GL (Fin 2) ℚ))⁻¹ • x) μ μ)
+      (fun x : ℍ ↦ (φ (D.out : GL (Fin 2) ℚ))⁻¹ • x) μ μ)
     (hnull : ∀ v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹,
-      NullMeasurableSet (ratToRealGL (((v.out : Γ₂) : GL (Fin 2) ℚ))⁻¹ • S) μ) :
+      NullMeasurableSet ((φ (((v.out : Γ₂) : GL (Fin 2) ℚ)))⁻¹ • S) μ) :
     IsFundamentalDomain
-      ((Γ₁.map ratToRealGL ⊓
-        toConjAct (ratToRealGL (D.out : GL (Fin 2) ℚ)) • Γ₂.map ratToRealGL :
-          Subgroup (GL (Fin 2) ℝ)))
-      (⋃ v, ratToRealGL (rightCosetRep D v) • S) μ := by
-  have hinj := ratToRealGL_injective
-  set r : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹ →
-      (Γ₂.map ratToRealGL : Subgroup (GL (Fin 2) ℝ)) := fun v ↦
-    ⟨ratToRealGL (((v.out : Γ₂) : GL (Fin 2) ℚ))⁻¹,
-      ⟨(((v.out : Γ₂) : GL (Fin 2) ℚ))⁻¹, Γ₂.inv_mem v.out.2, rfl⟩⟩ with hr_def
-  have hset : ∀ v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹,
-      ratToRealGL (D.out : GL (Fin 2) ℚ) * ((r v : GL (Fin 2) ℝ)) =
-        ratToRealGL (rightCosetRep D v) := fun v ↦ by
-    simp only [r]
+      ((Γ₁.map φ ⊓ toConjAct (φ (D.out : GL (Fin 2) ℚ)) • Γ₂.map φ : Subgroup P))
+      (⋃ v, φ (rightCosetRep D v) • S) μ := by
+  have hconj' : ∀ y ∈ H, ((D.out : GL (Fin 2) ℚ)⁻¹)⁻¹ * y * (D.out : GL (Fin 2) ℚ)⁻¹ ∈ H := by
+    simpa [mul_assoc] using hconj
+  set e := decompQuotientEquivMapOfKerInfLe' φ Γ₂ Γ₁ H (D.out : GL (Fin 2) ℚ)⁻¹
+    (φ (D.out : GL (Fin 2) ℚ))⁻¹ (map_inv φ _) h₁ h₂ hconj' hker with he_def
+  set r : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹ → (Γ₂.map φ : Subgroup P) := fun v ↦
+    (φ.subgroupMap Γ₂ v.out)⁻¹ with hr_def
+  have hset : ∀ v, (φ (D.out : GL (Fin 2) ℚ)) * ((r v : P)) = φ (rightCosetRep D v) := fun v ↦ by
     rw [rightCosetRep_def, map_mul, map_inv]
-  have hrinv : ∀ v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹,
-      (r v)⁻¹ = Subgroup.equivMapOfInjective Γ₂ ratToRealGL hinj v.out := by
-    intro v
-    apply Subtype.ext
-    simp [r, Subgroup.coe_equivMapOfInjective_apply]
-  have hbij : Function.Bijective fun v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹ ↦
+    rfl
+  have hbij : Function.Bijective fun v ↦
       (QuotientGroup.mk (r v)⁻¹ :
-        (Γ₂.map ratToRealGL : Subgroup (GL (Fin 2) ℝ)) ⧸
-          (toConjAct (ratToRealGL (D.out : GL (Fin 2) ℚ))⁻¹ •
-            (Γ₁.map ratToRealGL : Subgroup (GL (Fin 2) ℝ))).subgroupOf
-              (Γ₂.map ratToRealGL : Subgroup (GL (Fin 2) ℝ))) := by
-    have heq : ∀ v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹,
-        (QuotientGroup.mk (r v)⁻¹ : _) =
-          decompQuotientEquivMapOfInjective ratToRealGL hinj Γ₂ Γ₁
-            (D.out : GL (Fin 2) ℚ)⁻¹ v := by
+        (Γ₂.map φ : Subgroup P) ⧸
+          (toConjAct (φ (D.out : GL (Fin 2) ℚ))⁻¹ • (Γ₁.map φ : Subgroup P)).subgroupOf
+            (Γ₂.map φ : Subgroup P)) := by
+    have heq : ∀ v, (QuotientGroup.mk (r v)⁻¹ : _) = e v := by
       intro v
-      rw [hrinv, ← decompQuotientEquivMapOfInjective_mk]
-      exact congrArg _ v.out_eq
-    -- `map_inv` is definitional for `Units.map`, so the equiv's target type is already the one
-    -- `iUnion_mul_smul_of_transversal` asks for; only the function needs transporting.
-    exact funext heq ▸ (decompQuotientEquivMapOfInjective ratToRealGL hinj Γ₂ Γ₁
-      (D.out : GL (Fin 2) ℚ)⁻¹).bijective
-  have := hS.iUnion_mul_smul_of_transversal (ratToRealGL (D.out : GL (Fin 2) ℚ)) hδ
-    (r := r) (fun v ↦ hnull v) hbij
+      conv_rhs => rw [← v.out_eq]
+      rw [he_def, decompQuotientEquivMapOfKerInfLe'_mk]
+      simp [hr_def]
+    exact funext heq ▸ e.bijective
+  have := hS.iUnion_mul_smul_of_transversal (φ (D.out : GL (Fin 2) ℚ)) hδ
+    (fun v ↦ hnull v) hbij
   simpa only [hset] using this
 
 end HeckeRing.GL2
