@@ -110,7 +110,11 @@ subgroups are implicit and pinned by `h`, so neither has to be named at a use si
 `Subgroup.coe_congrOfMapEq_symm_apply` is the companion statement for the inverse. -/
 @[simp]
 theorem Subgroup.coe_congrOfMapEq_apply (e : G ≃* H) {A : Subgroup G} {B : Subgroup H}
-    (h : A.map (e : G →* H) = B) (x : ↥A) : (Subgroup.congrOfMapEq e h x : H) = e (x : G) := by rfl
+    (h : A.map (e : G →* H) = B) (x : ↥A) : (Subgroup.congrOfMapEq e h x : H) = e (x : G) := by
+  -- `congrOfMapEq` is `(e.subgroupMap A).trans (MulEquiv.subgroupCongr h)`, and both halves act on
+  -- the underlying element by `e` and by the identity; the invariant this proof rests on is that
+  -- `MulEquiv.subgroupCongr` is a `Subtype`-transport, so it does not touch the carrier.
+  rfl
 
 /-- The inverse of the restriction `Subgroup.congrOfMapEq e h` agrees with `e.symm` on underlying
 elements; the companion of `Subgroup.coe_congrOfMapEq_apply` for the inverse. It is the coerced
@@ -119,7 +123,10 @@ the subtype `⟨e.symm ↑y, _⟩`; `Subgroup.congrOfMapEq_symm` rewrites the wh
 @[simp]
 theorem Subgroup.coe_congrOfMapEq_symm_apply (e : G ≃* H) {A : Subgroup G} {B : Subgroup H}
     (h : A.map (e : G →* H) = B) (y : ↥B) :
-    ((Subgroup.congrOfMapEq e h).symm y : G) = e.symm (y : H) := by rfl
+    ((Subgroup.congrOfMapEq e h).symm y : G) = e.symm (y : H) := by
+  -- the same invariant as `coe_congrOfMapEq_apply`, read through `.symm`: inverting a `trans` of a
+  -- `subgroupMap` and a carrier-preserving `subgroupCongr` leaves `e.symm` acting on the carrier.
+  rfl
 
 /-- Restricting the identity isomorphism of `G` to a subgroup `A` it carries onto itself gives the
 identity of `↥A`.
@@ -323,6 +330,12 @@ theorem QuotientGroup.congrOfSurjectiveOfKerLe_mk (ψ : G →* H)
     (hker : ψ.ker ≤ A) (hmap : A.map ψ = B) (a : G) :
     QuotientGroup.congrOfSurjectiveOfKerLe ψ hsurj hker hmap (QuotientGroup.mk a) =
       QuotientGroup.mk (ψ a) := by
+  -- This lemma IS the abstraction barrier: `congrOfSurjectiveOfKerLe` is an `Equiv.ofBijective`
+  -- around `Quotient.map' ψ`, whose `toFun` is that map, so on a class `⟦a⟧` it reduces to
+  -- `⟦ψ a⟧` — the content of Mathlib's `Quotient.map'_mk''`, which cannot be cited directly here
+  -- because `Equiv.ofBijective` has no `_apply` lemma in Mathlib to strip the wrapper first
+  -- (checked: only `Equiv.ofBijective_apply_symm_apply` exists). Downstream code rewrites with
+  -- this lemma and never sees either wrapper, which is what keeps the implementation free to move.
   unfold QuotientGroup.congrOfSurjectiveOfKerLe
   rfl
 
