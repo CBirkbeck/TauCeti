@@ -69,10 +69,7 @@ theorem isArithFrobAt_of_restrictScalars_eq (Q : Ideal (𝓞 L)) [Q.IsPrime]
     (hτ : IsArithFrobAt (𝓞 ↥(fixedField (Subgroup.zpowers σ))) τ Q)
     (hf : (Q.under (𝓞 ↥(fixedField (Subgroup.zpowers σ)))).inertiaDeg (𝓞 K) = 1)
     (hres : AlgEquiv.restrictScalars K τ = σ) :
-    IsArithFrobAt (𝓞 K) σ Q := by
-  obtain ⟨φ, hφ⟩ := NumberField.exists_isArithFrobAt (K := K) Q hτ.ne_bot
-  have hrestr : AlgEquiv.restrictScalars K τ = φ :=
-    NumberField.restrictScalars_eq_of_inertiaDeg_eq_one hφ hτ hf
-  rwa [← hres, hrestr]
+    IsArithFrobAt (𝓞 K) σ Q :=
+  hres ▸ NumberField.isArithFrobAt_restrictScalars_of_inertiaDeg_eq_one hτ hf
 
 end Ideal
