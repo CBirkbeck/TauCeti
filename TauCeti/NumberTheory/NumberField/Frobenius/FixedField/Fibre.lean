@@ -35,6 +35,8 @@ neither unramifiedness, nor a base prime of `𝓞 K`, nor `L / K` Galois plays a
 ## References
 
 * [J. Neukirch, *Algebraic Number Theory*][Neukirch1992], Chapter I, §9.
+* `TauCetiRoadmap/Chebotarev/README.md`, §8.2, which asks for exactly this reduction: the primes
+  of `L` carrying `σ` are matched with the primes of `L ^ ⟨σ⟩` of residue degree one over `𝓞 K`.
 -/
 
 public section
