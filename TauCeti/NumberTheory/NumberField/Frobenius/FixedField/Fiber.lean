@@ -32,10 +32,7 @@ supplied by `Ideal.eq_of_smul_eq_of_liesOver_under_fixedField`.
 * [J. Neukirch, *Algebraic Number Theory*][Neukirch1992], Chapter I, §9.
 -/
 
--- Source. The reduction proved here is the one asked for by `TauCetiRoadmap/Chebotarev/README.md`,
--- §8.2. Kept as a source comment rather than a References bullet: the `attribution` rubric asks
--- that the roadmap section be credited in the code, and the `documentation` rubric asks that
--- roadmap attribution stay out of the module docstring.
+-- Source: `TauCetiRoadmap/Chebotarev/README.md`, §8.2.
 
 public section
 
