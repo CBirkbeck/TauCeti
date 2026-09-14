@@ -36669,3 +36669,26 @@ sandboxed-build: completed/success since 2026-09-14T14:58:04Z
 ```
 
 No toolkit edits.
+
+---
+
+## r712 — 2026-09-14T15:37Z — main moved (#6641, #6692); queued merge groups and staged branches still clean
+
+**Board** (15:36Z): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on head; #5950 is
+Chris's. None of mine merged. The queue head finished: #6641 (affine Dynkin stars) and #6692 (S3 character table)
+merged, main `d4312459a` → **`6975caec1`**, and mine moved to **22/23/24 of 39**. Nothing to fix, contest or drive;
+step 5 shut.
+
+**Merge-group simulation** (r702's recipe with r704's `--deleted`) against `6975caec1` — worth re-running because
+#6692 added files under `RepresentationTheory/`, next to #6796's rename:
+
+```
+#6093  15 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: exit 0
+#6796  13 behind  merges clean  ghostref: all short forms still resolve    stalequal: exit 0
+#6800  13 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: exit 0
+```
+
+**Staged branches** (`git merge-tree`, no checkout): levi-civita 5 behind, quadratic 3, exchangeable-dedup 2; none
+of their files touched on main; all merge clean.
+
+No toolkit edits.
