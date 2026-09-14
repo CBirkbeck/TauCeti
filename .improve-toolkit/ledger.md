@@ -36245,3 +36245,11 @@ PR     CI green (completed_at)  ready_for_review      earliest drive if still no
 ```
 
 At 12:16Z none may be driven. No merges, nothing queued; steps 3–5 no-ops.
+
+---
+
+## r697 — 2026-09-14T12:27Z — unchanged; no drive time reached
+
+All three still green, `awaiting-review`, no board for their current heads (#6093 ready-clock 45 min, #6796
+41 min, #6800 14 min). First drive times remain 12:41:09Z / 12:45:14Z / 13:12:14Z. No merges, nothing
+queued; steps 3–5 no-ops.
