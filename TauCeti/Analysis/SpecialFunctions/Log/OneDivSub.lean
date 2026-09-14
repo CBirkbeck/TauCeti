@@ -22,7 +22,7 @@ Nothing here is specific to that application, and the file contains no number th
 
 ## Main results
 
-* `TauCeti.tendsto_log_one_div_sub_atTop` — `log (1 / (s - a))` tends to `atTop` along `𝓝[>] a`.
+* `Real.tendsto_log_one_div_sub_atTop` — `log (1 / (s - a))` tends to `atTop` along `𝓝[>] a`.
 
 ## References
 
@@ -35,7 +35,7 @@ Birkbeck--Brasca) at commit `8575c9df1ae0a61120ab5c964c7911414254bec7`. The sour
 
 public section
 
-namespace TauCeti
+namespace Real
 
 open Filter Topology
 
@@ -52,4 +52,4 @@ theorem tendsto_log_one_div_sub_atTop (a : ℝ) :
         linarith)
   simpa only [one_div, Pi.inv_def] using h1.inv_tendsto_nhdsGT_zero
 
-end TauCeti
+end Real
