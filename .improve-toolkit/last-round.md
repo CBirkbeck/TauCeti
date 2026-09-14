@@ -1,4 +1,4 @@
-# Last round — r728 (2026-09-14T18:18Z)
+# Last round — r729 (2026-09-14T18:26Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -30,7 +30,7 @@ through the local codex CLI that MCP wraps:
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-9 ahead of #6093 at 18:17Z; #6739 and #6701 merged, main is `dc7090278`).
+9 ahead of #6093, unchanged from 18:17Z to 18:26Z; main is `dc7090278`).
 
 ## What to expect next
 
@@ -90,7 +90,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r728 did
+## What r703–r729 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -120,6 +120,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r726: main moved (#6742); queued merge groups and staged branches re-checked, all clean.
 * r727: no-op board.
 * r728: quota exhausted again at :16 (API-ERROR rows, nothing acted on); rerun clean; main moved, all still clean.
+* r729: no-op board.
 
 ## Candidates for a later step 5
 

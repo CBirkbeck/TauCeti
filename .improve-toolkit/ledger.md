@@ -36980,3 +36980,12 @@ merge without appearing there; its merge also shows as the PR vanishing from the
 files touched on main; all merge clean.
 
 No toolkit edits.
+
+---
+
+## r729 — 2026-09-14T18:26Z — no-op board
+
+**Board** (18:26Z; sweep and queuepos exited 0): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green,
+boards on head; #5950 is Chris's. No merges. Queue **10/11/12 of 37**, unchanged since 18:17Z. main still
+`dc7090278`, so r728's merge-group simulation and staged-branch check stand. Nothing to fix, contest or drive;
+step 5 shut. No toolkit edits.
