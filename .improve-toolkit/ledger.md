@@ -36797,3 +36797,25 @@ sandboxed-build: completed/success since 2026-09-14T16:20:23Z
 ```
 
 No toolkit edits.
+
+---
+
+## r721 — 2026-09-14T17:07Z — main moved (#6736, #6734); queued merge groups and staged branches still clean
+
+**Board** (17:06Z): #6093, #6796 and #6800 are `ready-to-merge`, not drafts, CI green, boards on head; #5950 is
+Chris's. None of mine merged. The r720 head finished: #6736 (Euclidean fibre sums over `RCLike` scalars) and #6734
+(diagonal matrix-unit identity for rectangular matrices) merged: main `acaffaeb5` → **`2c8bdc7e9`**; mine moved to
+**16/17/18 of 39**. Nothing to fix, contest or drive; step 5 shut.
+
+**Merge-group simulation** against `2c8bdc7e9`:
+
+```
+#6093  21 behind  merges clean  ghostref: 70 removed, 8 chased, 0 ghosts   stalequal: exit 0
+#6796  19 behind  merges clean  ghostref: all short forms still resolve    stalequal: exit 0
+#6800  19 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts    stalequal: exit 0
+```
+
+**Staged branches** (`git merge-tree`): levi-civita 11 behind, quadratic 9, exchangeable-dedup 8; none of their files
+touched on main; all merge clean.
+
+No toolkit edits.
