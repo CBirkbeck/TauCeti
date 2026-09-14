@@ -5,7 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Map
 public import TauCeti.Analysis.Complex.UpperHalfPlane.Measure
 public import TauCeti.MeasureTheory.Group.FundamentalDomain
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
@@ -24,6 +23,20 @@ domain for `Γ₂` into one for `Γ₁ ∩ δ Γ₂ δ⁻¹`, both read in `GL (
 
 * `HeckeRing.GL2.isFundamentalDomain_iUnion_rightCosetRep_smul`: the tiling.
 
+## Provenance
+
+Adapted from the AINTLIB `LeanModularForms` project
+(`LeanModularForms/HeckeRIngs/GL2/AdjointTheory/FDTransport.lean`,
+<https://github.com/CBirkbeck/AINTLIB>, commit `6d87d596a5372d5b122c47b7082d4c3afa9b7c3b`,
+Apache-2.0, Chris Birkbeck). That file runs the
+transport by hand at PSL level; here mathlib's `IsFundamentalDomain` API,
+`IsFundamentalDomain.iUnion_mul_smul_of_transversal` and `decompQuotientEquivMapOfInjective` carry
+it, so only the assembly remains.
+
+## References
+
+* [F. Diamond and J. Shurman, *A first course in modular forms*][diamondshurman2005], §5.5.
+* [T. Miyake, *Modular forms*][miyake1989], §4.5.
 -/
 
 public section
@@ -36,14 +49,6 @@ namespace HeckeRing.GL2
 
 variable {Δ : Submonoid (GL (Fin 2) ℚ)} {Γ₁ Γ₂ : Subgroup (GL (Fin 2) ℚ)}
   (D : HeckeCoset Δ Γ₁ Γ₂)
-
-/-- The change of scalars `GL (Fin 2) ℚ →* GL (Fin 2) ℝ` the rational slash action factors
-through. -/
-noncomputable abbrev ratToRealGL : GL (Fin 2) ℚ →* GL (Fin 2) ℝ :=
-  Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)
-
-theorem ratToRealGL_injective : Function.Injective (ratToRealGL) :=
-  Matrix.GeneralLinearGroup.map_injective (algebraMap ℚ ℝ).injective
 
 open scoped Classical in
 /-- **The real images of the Hecke coset representatives tile a fundamental domain.**

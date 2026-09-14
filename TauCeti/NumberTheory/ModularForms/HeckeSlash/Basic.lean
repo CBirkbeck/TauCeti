@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Map
 public import TauCeti.NumberTheory.HeckeRing.Basic
 public import TauCeti.NumberTheory.ModularForms.SlashActionRat
 
@@ -80,6 +81,9 @@ why this file does not use it: `!![1, 1; 0, 1] ∈ Γ₁(N)` for every `N` while
 
 ## Main definitions
 
+* `HeckeRing.GL2.ratToRealGL`: the change of scalars `GL (Fin 2) ℚ →* GL (Fin 2) ℝ` the slash
+  action factors through, with `HeckeRing.GL2.ratToRealGL_injective`. The Hecke data lives over
+  `ℚ`, which does not act on `ℍ`, so every statement relating the two sides passes along it.
 * `HeckeRing.GL2.rightCosetRep`: the representative `δ τᵥ⁻¹` of the `v`-th right coset.
 * `HeckeRing.GL2.heckeSlashSum`: the choice-dependent sum `∑ᵥ f ∣[k] (δ τᵥ⁻¹)`.
 
@@ -127,6 +131,17 @@ namespace HeckeRing.GL2
 
 variable (k : ℤ) {Δ : Submonoid (GL (Fin 2) ℚ)} {Γ₁ Γ₂ : Subgroup (GL (Fin 2) ℚ)}
   (D : HeckeCoset Δ Γ₁ Γ₂)
+
+/-- **The change of scalars the rational slash action factors through.** The Hecke data lives in
+`GL (Fin 2) ℚ`, which does not act on `ℍ`; this is the entrywise map to `GL (Fin 2) ℝ`, which
+does. -/
+noncomputable abbrev ratToRealGL : GL (Fin 2) ℚ →* GL (Fin 2) ℝ :=
+  Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)
+
+/-- **The change of scalars is injective**, so a subgroup of `GL (Fin 2) ℚ` is carried
+isomorphically onto its image. -/
+theorem ratToRealGL_injective : Function.Injective (ratToRealGL) :=
+  Matrix.GeneralLinearGroup.map_injective (algebraMap ℚ ℝ).injective
 
 /-- The representative `δ τᵥ⁻¹` of the `v`-th right coset `Γ₁ aᵥ` in the decomposition
 `Γ₁ δ Γ₂ = ⊔ᵥ Γ₁ aᵥ`, where `δ` is the chosen representative of the double coset `D` and `τᵥ`
