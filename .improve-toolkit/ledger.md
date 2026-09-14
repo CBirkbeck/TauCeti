@@ -36205,3 +36205,17 @@ boards for #6796 (~12:17–12:52Z) and #6093.
 
 #6796 ready 11 min with no board (no drive before 12:45Z). #6800's `sandboxed-build` still running
 under its watch. No merges, nothing queued, three of mine open — steps 3–5 no-ops.
+
+---
+
+## r695 — 2026-09-14T12:07Z — both older PRs in review; #6800 still building
+
+```
+#6093  awaiting-review  green 18e85bea2   board for the @[expose] fix + reply in flight
+#6796  awaiting-review  green 06e8f7fdf   ready 11:45:14Z, no board yet; no drive before 12:45Z
+#6800  awaiting-CI      draft 716cf35ee   sandboxed-build: status=in_progress conclusion=- started=2026-09-14T11:52:16Z
+#5950  ready-to-merge   NEVER-QUEUED      Chris's
+```
+
+The bot has now labelled #6796 `awaiting-review` too. No merges, nothing queued, three of mine open —
+steps 3–5 no-ops. #6800 was still building at write-up; its watch marks it ready on green.
