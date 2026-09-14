@@ -1,4 +1,4 @@
-# Last round — r723 (2026-09-14T17:27Z)
+# Last round — r724 (2026-09-14T17:36Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -24,13 +24,13 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 14/39** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6093** | `18e85bea2` | green | 10/10, `ready-to-merge`, **QUEUED pos 14/40** | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#6796** | `06e8f7fdf` | green | 10/10, `ready-to-merge`, **QUEUED pos 15** | nobody |
 | **#6800** | `716cf35ee` | green | **10/10** (driven, board 13:16:34Z, $0.98), `ready-to-merge`, **QUEUED pos 16** | nobody |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open → step 5 does not fire** until one merges (~30 min per merge,
-13 ahead of #6093 at 17:26Z; #6675 and #6730 merged, main is `d0bb20e80`).
+13 ahead of #6093, unchanged from 17:26Z to 17:36Z; main is `d0bb20e80`).
 
 ## What to expect next
 
@@ -90,7 +90,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r723 did
+## What r703–r724 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -115,6 +115,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r721: main moved (#6736, #6734); queued merge groups and staged branches re-checked, all clean.
 * r722: sweep crashed on a rate-limited API; sweep/queuepos now refuse error payloads — 166/0.
 * r723: main moved (#6675, #6730); queued merge groups and staged branches re-checked, all clean.
+* r724: no-op board.
 
 ## Candidates for a later step 5
 
