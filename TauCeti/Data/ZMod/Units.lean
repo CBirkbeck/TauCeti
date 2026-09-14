@@ -132,7 +132,11 @@ theorem ZMod.exists_unitOfCoprime_eq [NeZero d] (u : (ZMod d)ˣ) :
   exact ⟨(u : ZMod d).val, hcop, Units.ext (by
     simp [ZMod.coe_unitOfCoprime, ZMod.natCast_val, ZMod.cast_id])⟩
 
-/-- **`ZMod.unitOfCoprime` is multiplicative in its numerator.** -/
+/-- **`ZMod.unitOfCoprime` is multiplicative in its numerator.**
+
+Not `@[simp]`: the right-hand side needs coprimality proofs for `m` and `n` separately, which
+`simp` cannot synthesise from the left-hand side, so Mathlib's `simpNF` linter reports that the
+lemma "will never apply". -/
 theorem ZMod.unitOfCoprime_mul {m n : ℕ} (hm : Nat.Coprime m d) (hn : Nat.Coprime n d)
     (hmn : Nat.Coprime (m * n) d) :
     ZMod.unitOfCoprime (m * n) hmn = ZMod.unitOfCoprime m hm * ZMod.unitOfCoprime n hn :=
