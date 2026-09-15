@@ -38599,3 +38599,27 @@ CI green, boards on head; QUEUED at 8, 20 and 6 of 43, unchanged since r790. #59
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r793 — 2026-09-15T04:57Z — no merges for 39 min: the top two groups have built and wait on finalize runners; board unchanged
+
+**Board** (04:56:21Z; sweep and queuepos exited 0; `/tmp` at 58%): #6851, #6854 and #6855 are `ready-to-merge`, CI green,
+boards on head; QUEUED at 8, 20 and 6 of 44 (unchanged since r790). #5950 is Chris's. No merges since #6640 (04:17:44Z),
+and main is still `3f1ee32fe`, so r790's simulations stand. Nothing to fix, contest or drive; step 5 shut.
+
+**Why the queue has not moved (read-only).**
+
+```
+pos 1  #6847  sandboxed-build 04:16:23→04:38:02Z ok; publish 04:53:32→04:54:34Z ok; finalize queued since 04:54:34Z
+pos 2  #6637  sandboxed-build 04:18:14→04:39:21Z ok; publish 04:53:22→04:54:22Z ok; finalize queued since 04:54:23Z
+pos 3  #6643  QUEUED
+```
+
+Both groups built green. Each publish job waited about 15 min for a runner, and each finalize job is waiting now, with
+204 queued Actions runs: r742's backlog again. The queue is slow, not stuck, and CI is human-owned, so there is nothing to
+do. #6855 is 6th.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
