@@ -160,15 +160,28 @@ lemma toSet_eq_doubleCoset_rep (D : HeckeCoset Δ H₁ H₂) :
 This is `eq_iff` read at the level of double cosets rather than of representatives; the `Iff` form
 `D₁.toSet = D₂.toSet ↔ D₁ = D₂` is `toSet_injective.eq_iff`. -/
 lemma toSet_injective : Function.Injective (toSet : HeckeCoset Δ H₁ H₂ → Set G) :=
-  Quotient.ind₂ fun _ _ ↦ eq_iff.mpr
+  Quotient.ind₂ fun a b h ↦ eq_iff.mpr (by rwa [← toSet_mk a, ← toSet_mk b])
 
 /-- The chosen representative of a double coset lies in its underlying set.
 
 This is the membership form of `toSet_eq_doubleCoset_rep`, stated for an abstract `D`. At an
 explicit `mk H₁ H₂ w` the `toSet` still has to be evaluated by `toSet_mk`, so call sites there
-read `simpa using rep_mem (mk H₁ H₂ w)`; `rep_mk_mem_doubleCoset` records that evaluated form. -/
+read `simpa only [toSet_mk] using rep_mem (mk H₁ H₂ w)`; `rep_mk_mem_doubleCoset` is that
+evaluated form, and the two lemmas below are derived from it. -/
 lemma rep_mem (D : HeckeCoset Δ H₁ H₂) : (D.rep : G) ∈ D.toSet :=
   D.toSet_eq_doubleCoset_rep ▸ mem_doubleCoset_self H₁ H₂ _
+
+/-- The chosen representative of `mk H₁ H₂ w` lies in the double coset of `w`.
+
+This is the `toSet`-evaluated form of `rep_mem` at an explicit `mk H₁ H₂ w`, and the root of this
+group of three: `doubleCoset_rep_mk` and `mem_doubleCoset_rep_mk` are both derived from it. Its
+mirror `mem_doubleCoset_rep_mk` carries the same name components in the opposite order, matching
+the statements: that one puts `w` left of the `∈` and the representative inside the `doubleCoset`.
+Only this one survives `simp`, since the `@[simp]` lemma `doubleCoset_rep_mk` matches on the
+double coset *of* the representative, which does not occur here. -/
+lemma rep_mk_mem_doubleCoset (w : Δ) :
+    (((mk H₁ H₂ w).rep : Δ) : G) ∈ doubleCoset (w : G) H₁ H₂ := by
+  simpa only [toSet_mk] using rep_mem (mk H₁ H₂ w)
 
 /-- **`mk` and `rep` name the same double coset**: the chosen representative of `mk H₁ H₂ w`
 spans the double coset `w` was taken from.
@@ -181,7 +194,7 @@ a chosen representative back to the double coset of the element it came from.
 `mem_doubleCoset_rep_mk` and `rep_mk_mem_doubleCoset` are its membership forms. -/
 @[simp] lemma doubleCoset_rep_mk (w : Δ) :
     doubleCoset (((mk H₁ H₂ w).rep : Δ) : G) H₁ H₂ = doubleCoset (w : G) H₁ H₂ :=
-  doubleCoset_eq_of_mem (by simpa only [toSet_mk] using rep_mem (mk H₁ H₂ w))
+  doubleCoset_eq_of_mem (rep_mk_mem_doubleCoset w)
 
 /-- `w` lies in the double coset of the chosen representative of `mk H₁ H₂ w`.
 
@@ -191,16 +204,6 @@ the two sets. Use this one in term position: the conclusion is deliberately not 
 form, since `doubleCoset_rep_mk` is `@[simp]` and rewrites it back to `mem_doubleCoset_self`. -/
 lemma mem_doubleCoset_rep_mk (w : Δ) : (w : G) ∈ doubleCoset (((mk H₁ H₂ w).rep : Δ) : G) H₁ H₂ :=
   (doubleCoset_rep_mk w).symm ▸ mem_doubleCoset_self H₁ H₂ _
-
-/-- The chosen representative of `mk H₁ H₂ w` lies in the double coset of `w`.
-
-This is the `toSet`-evaluated form of `rep_mem` at an explicit `mk H₁ H₂ w`. Its mirror
-`mem_doubleCoset_rep_mk` carries the same name components in the opposite order, matching the
-statements: that one puts `w` left of the `∈` and the representative inside the `doubleCoset`.
-Only this one survives `simp`, since the `@[simp]` lemma `doubleCoset_rep_mk` matches on the
-double coset *of* the representative, which does not occur here. -/
-lemma rep_mk_mem_doubleCoset (w : Δ) : (((mk H₁ H₂ w).rep : Δ) : G) ∈ doubleCoset (w : G) H₁ H₂ :=
-  doubleCoset_rep_mk w ▸ mem_doubleCoset_self H₁ H₂ _
 
 /-- `mk H₁ H₂ g₁ = mk H₁ H₂ g₂` when `g₁` lies in the double coset of `g₂`.
 
@@ -225,7 +228,7 @@ Compute with `map_mk`: the underlying element of `G` is unchanged, only retyped 
 `Submonoid.inclusion`. The functor laws are `map_id` and `map_map`; all three are `@[simp]`.
 This widens subgroups inside one fixed ambient group — transporting a double coset along a
 homomorphism `G →* G'` is a different operation, carried out for the decomposition quotient by
-`DoubleCoset.decompQuotientEquivMapOfInjective` and `decompQuotientEquivMapOfKerInfLe`. -/
+`DoubleCoset.decompQuotientEquivMapOfInjective`. -/
 def map (hΔ : Δ ≤ Δ') (h₁ : H₁ ≤ H₁') (h₂ : H₂ ≤ H₂') :
     HeckeCoset Δ H₁ H₂ → HeckeCoset Δ' H₁' H₂' :=
   Quotient.map (Submonoid.inclusion hΔ) fun a b hab ↦ by
