@@ -40294,3 +40294,52 @@ Nothing to fix, contest or drive. The cap is full (#6902, #6910, #6911).
 **Queue** (17:36:50Z): depth 61; #6726 and #6677 are AWAITING_CHECKS at the head.
 
 No toolkit edits.
+
+---
+
+## r851 — 2026-09-15T17:46Z — main moved (#6726); all eight re-simulated clean; #6911 green and marked ready
+
+**Board** (17:46:25Z; a real call read 4915 REST calls left; sweep and `queuepos.py` exited 0; `/tmp` at 56%):
+
+* #6911 (`4a8439956`): its first `sandboxed-build` succeeded at 17:43:41Z, and every latest check is green. After the
+  re-simulation below came back clean against `a30a47ee7`, it was **marked ready at 17:47:47Z**, so step 4 may drive
+  only after 18:48Z.
+* #6902 (ready 17:08:56Z) and #6910 (ready 17:37:07Z): `awaiting-review`, CI green, no board yet. Step 4 may drive them
+  only after 18:09Z and 18:37Z respectively.
+* #6896 and #6899: `ready-to-merge`, NEVER-QUEUED. The merge sweep has not run since 15:15:27Z.
+* #6851 and #6854: QUEUED at 26 and 23 of 60. #6875 needs a human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6902, #6910, #6911).
+
+**Main moved** `c0295f4a9` → **`a30a47ee7`** at 17:44:35Z with #6726 ("add the subgroup scheme preserving a constant
+multiplication"). 5 files, +911/−15:
+
+* `ConstantMultiplication/Basic.lean` (+584);
+* `ToralClosure/ConstantMultiplication.lean` (+250);
+* `LinearAlgebra/Matrix/IdealEntries.lean` (+60);
+* small edits to `ConstantForm/Basic.lean` and `GeneralLinear/FunctorOfPoints.lean`.
+
+The firing control read 15 removed lines, 911 added, and 1 removed and 53 added declaration headers. The one removed
+declaration is the private `entry_mul_mul_mem`.
+
+* No import was dropped, and no module moved.
+* Main touched none of the eight PRs' files, and their added lines use nothing main changed.
+* The names that #6896, #6899 and #6910 depend on are unchanged on main (`git log -S`).
+* None of their added declarations shares a last name component with main's 53 new ones.
+
+**Merge-group simulation** against `a30a47ee7`:
+
+```
+#6851  78 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  76 behind  merges clean  ghostref: 0 removed                         stalequal: exit 0
+#6875  43 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+#6896  12 behind  merges clean  ghostref: 4 removed, 4 chased, 0 ghosts    stalequal: exit 0
+#6899  12 behind  merges clean  ghostref: 1 removed (not TauCeti.-pathed)  stalequal: exit 0
+#6902  10 behind  merges clean  ghostref: 0 removed                         stalequal: exit 0
+#6910   3 behind  merges clean  ghostref: 2 removed (private copies)        stalequal: exit 0
+#6911   1 behind  merges clean  ghostref: 0 removed                         stalequal: exit 0
+```
+
+**Queue** (17:46:48Z): depth 60; #6677 and #5594 are AWAITING_CHECKS at the head.
+
+No toolkit edits.
