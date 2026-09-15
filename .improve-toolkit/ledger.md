@@ -38349,3 +38349,32 @@ module was renamed. All three PRs merge clean, and main touched none of their fi
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r781 — 2026-09-15T02:57Z — main moved (#6834, additive); all three re-simulated clean; queue 10/12/24
+
+**Board** (02:56:21Z; sweep and queuepos exited 0; `/tmp` at 45%): #6851, #6854 and #6855 are `ready-to-merge`, CI green,
+boards on head; QUEUED at 12, 24 and 10 of 37. #5950 is Chris's. Nothing to fix, contest or drive; step 5 shut.
+
+**Main moved:** #6834 (complexify strongly continuous semigroups; base `main`) merged at 02:54:04Z: `87a939e4c` →
+**`947f6432b`**, the new `Analysis/Semigroups/Complexification.lean` (+231). The firing control read 0 removed lines, 231
+added and 18 added declaration headers; nothing was removed or restated, and no module renamed. Per r780's trap, the
+declarations in the changed file were checked directly, and none is used by my three branches' added lines. All three
+PRs merge clean, and main touched none of their files.
+
+**The kind-3 candidate is unaffected.** #6834 is in the semigroup area of r706's next kind-3 candidate (the
+`StronglyContinuousSemigroup.norm_resolvent_integrand_le` weakening), but the lemma does not appear in its diff and is
+still declared on main.
+
+**Merge-group simulation** against `947f6432b`:
+
+```
+#6851  24 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6854  22 behind  merges clean  ghostref: 0 removed (removes nothing)     stalequal: exit 0
+#6855  22 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
