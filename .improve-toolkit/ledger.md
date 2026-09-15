@@ -40543,3 +40543,63 @@ Nothing to fix or contest. The cap is full (#6902, #6910, #6915).
 **Queue** (18:36:54Z): depth 56; #6623 and #6707 are AWAITING_CHECKS at the head.
 
 No toolkit edits.
+
+---
+
+## r857 — 2026-09-15T18:46Z — #6910 approved and queued; main moved twice (#6623, #6707; #6714); kind 2 opened as draft #6923
+
+**Board** (18:46Z; a real call read 4941 REST calls left; sweep and `queuepos.py` exited 0; re-read at 19:02:13Z with 4566
+left):
+
+* **#6910** (`3548cebb7`): the review driven at r856 approved all 10 rubrics. The log reads `ROUND 1 (commit) approved (ran
+  10 … cost $0.87)` and `post.py: scoreboard id=5686029501; 0 thread action(s)`, and the board is on head (18:41:05Z). It is
+  `ready-to-merge` and QUEUED: 55 of 55 at 18:46Z, 54 at 19:02Z.
+* #6902 (`3282c9611`): `awaiting-review` and green. Its board (on `f8294ed14`) is behind the fix, so there is nothing to
+  re-fix. Step 4 may drive only after 19:32Z.
+* #6915 (`efbb6423d`): `awaiting-review`, no board. It went ready at 18:37:17Z, so step 4 may drive only after 19:37Z.
+* #6896, #6899 and #6911: `ready-to-merge`, NEVER-QUEUED. The merge sweep has not run since 15:15:27Z.
+* #6851 and #6854: QUEUED at 20 and 17 of 55 (18:46Z), then 19 and 16 (19:02Z). #6875 needs a human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive.
+
+**Main moved** `b3e8ec19b` → **`871fb6d9f`** with #6623 (PSL(2,ℝ) point stabilizers, 18:40:25Z) and #6707 (affine complex
+points pulled back along semigroup homomorphisms, 18:46:01Z): 4 files, +376. The firing control read 0 removed lines, 376
+added, and 0 removed and 31 added declaration headers.
+
+* Nothing was removed, no import was dropped, and no module moved.
+* Main touched none of the nine PRs' files, and the names they rename, delete, weaken or rely on have unchanged counts on main.
+* None of their added declarations shares a last name component with main's 31 new ones.
+* **Merge-group simulation** against `871fb6d9f`: all nine merge clean, with `ghostref` and `stalequal` exit 0.
+
+**Main moved again**, to **`6f93392bd`**, with #6714 ("certify the A4 cyclotomic character table"): 2 files under `Dixon/`,
++478. The firing control read 0 removed lines and 44 added declaration headers. Nothing was removed or dropped and no module
+moved. All ten heads (the nine plus #6923) merge clean, `ghostref` and `stalequal` exit 0, and there are no name hits.
+
+**Step 5.** #6910 left the in-progress count, so one slot was free. Kind 1 is still dry: the pin is unchanged at
+`30a58f795a`, where r845 found no target. So kind 2 went again.
+
+* **Target:** `TauCeti/Analysis/Contour/Winding/Number/Segment/Jump.lean`, 343 lines with 28 `;` chains and 38 `=>` lambdas.
+  A scan of main's 5385 files, skipping the 545 that open PRs touch, ranked it the highest-scoring file under 400 lines.
+  #4638 (2026-08-28) last touched it, and it has one importer (`Winding/Separation.lean`).
+* **Edits** (one file, +86/−71, no statement changes):
+  * every `fun … =>` → `↦` (38), and top-level `;` chains split, keeping the 7 parenthesised one-liners;
+  * `hIcc_ab` and `hIcc_bc` as `(Icc_subset_Icc …).trans Icc_subset_uIcc` (name read in the pinned Mathlib source);
+  * `rw …; exact h` → `rwa` in six places, and `hDsub` closed by `hw2.ne' (by rw [h0, mul_zero])`;
+  * `IsLinearMap` field binders, `(r s σ : ℝ)`, and two redundant parentheses.
+
+  The firing control counted 38 arrows plus 18 exact replacements (19 sites), with no line over 100 codepoints.
+* **gpt-6-astra** reviewed all seven edit classes and flagged no risk (`astra-jump-answer.txt`). Its first launch, from the
+  scratchpad, exited at once with `Not inside a trusted directory`, because `codex exec` outside a git repository needs
+  `--skip-git-repo-check`.
+* `/mathlibable`: not a candidate. The public theorems are about Tau Ceti's `windingNumber` and `IsPiecewiseC1On`, and pinned
+  Mathlib has no winding number.
+* **Gate** `prepush.sh origin/main`: **12 ok / 0 failed / 0 UNRUN**.
+* **Opened #6923** (draft, 19:04:01Z). Head `CBirkbeck:improve/winding-segment-jump-cleanup@8f846c57b`, base `main`,
+  branched from `871fb6d9f`: 1 file, +86/−71. The body carries `Roadmap: ConformalMapping`, as #4638 (which added the file)
+  did. The live body matches the file up to the trailing newline.
+
+**In progress now:** #6902, #6915 and #6923 (draft). The cap is full. The next opening is kind 3.
+
+**Queue** (19:02Z): depth 55.
+
+No toolkit edits.
