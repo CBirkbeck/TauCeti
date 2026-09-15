@@ -38935,3 +38935,21 @@ sweep last ran at 05:18:46Z.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r806 — 2026-09-15T07:46Z — no merges; #6875's fix head at 15 min of CI; #6852's group build at 91 min, the top of its 83–95 window
+
+**Board** (07:46:25Z; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 59%): #6851 and #6854
+are `ready-to-merge`, with CI green and boards on head, and out of the queue. #6875 is `awaiting-CI` on `462ed9705b`,
+with `sandboxed-build` running since 07:31:14Z (15 minutes). Its board is behind the head, so there is nothing to
+re-fix. #5950 is Chris's. No merges since #6855 (05:43:53Z); main is still `d7ac608e0`. Nothing to fix, contest or
+drive; step 5 is shut.
+
+**Queue:** depth 1. #6852's group `400ca6f7e1` has been in `sandboxed-build` since 06:15:40Z, 91 minutes, at the top of
+the expected 83–95. If it runs much longer, TauCetiReview's `queue_reservation.py` treats a holder queued past
+`max_hold` as lapsed. The merge sweep last ran at 05:18:46Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
