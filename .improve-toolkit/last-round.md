@@ -1,4 +1,4 @@
-# Last round — r825 (2026-09-15T12:07Z)
+# Last round — r826 (2026-09-15T12:16Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -16,7 +16,7 @@ Mathlib's deck group (r798), which needs a **human merge** because it updates `w
 opening is kind 2** (a new file). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r825):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r826):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -114,7 +114,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r825 did
+## What r703–r826 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -252,6 +252,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r823: the sweep failure was transient (it could not read queue entry #6751's files, and it fails closed; the call reads cleanly now); REST came back before its stated reset; no change on my PRs; no merges.
 * r824: eight queued round prompts coalesced; main moved 8 commits to `62cfc4d65` (2 module renames, 2 deletions); all three PRs re-simulated clean; three grep hits read and false; no merge sweep since the 10:24Z failure.
 * r825: no change, 3 minutes after r824; no merges.
+* r826: no change; no merges since #6727; backlog up to 66 queued runs.
 
 ## Candidates for a later step 5
 
