@@ -45,8 +45,6 @@ uses it rather than repeating the composition of `MulEquiv.subgroupMap` with
 
 * `TauCeti.MonoidHom.subgroupComap_injective_of_injective`: `f.subgroupComap K` is injective when
   `f` is.
-* `TauCeti.Subgroup.map_center_le`: a surjective homomorphism carries central elements to central
-  elements.
 * `MonoidHom.center_le_ker`: the centre lies in the kernel of a surjection onto a
   centreless group.
 * `TauCeti.Subgroup.map_commutator_eq_commutator`: a surjective homomorphism carries the derived
@@ -70,18 +68,6 @@ underlying homomorphism is. Companion to Mathlib's
 theorem MonoidHom.subgroupComap_injective_of_injective {f : H →* G} (hf : Function.Injective f)
     (K : Subgroup G) : Function.Injective (f.subgroupComap K) :=
   fun _ _ hxy ↦ Subtype.ext (hf (congrArg Subtype.val hxy))
-
-/-- A surjective homomorphism carries central elements to central elements. This is Mathlib's
-`Subgroup.map_center_le_center` specialised to a bundled `G →* H`; `Subgroup.map_center_eq_center`
-below strengthens `≤` to `=` for an isomorphism. -/
-theorem Subgroup.map_center_le (f : G →* H) (hf : Function.Surjective f) :
-    (Subgroup.center G).map f ≤ Subgroup.center H :=
-  Subgroup.map_center_le_center hf
-
-/-- An isomorphism of groups carries the centre onto the centre. -/
-theorem Subgroup.map_center_eq_center (e : G ≃* H) :
-    (Subgroup.center G).map (e : G →* H) = Subgroup.center H :=
-  Subgroup.map_center_eq e
 
 /-- The centre of a group lies in the kernel of every surjection onto a centreless group.
 
