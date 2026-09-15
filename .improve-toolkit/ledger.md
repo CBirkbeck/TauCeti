@@ -38623,3 +38623,34 @@ do. #6855 is 6th.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r794 — 2026-09-15T05:07Z — the queue moved (#6847 and #6637 merged); all three re-simulated clean; queue 4/6/18
+
+**Board** (05:06:21Z; sweep and queuepos exited 0; `/tmp` at 58%): #6851, #6854 and #6855 are `ready-to-merge`, CI green,
+boards on head; QUEUED at 6, 18 and 4 of 45. #5950 is Chris's. Nothing to fix, contest or drive; step 5 shut.
+
+**Main moved twice** (both with base `main`), once r793's two queue-head groups got their finalize runners:
+
+* `3f1ee32fe` → `276a44526` at 04:57:13Z: #6847 (refactor: reuse rank-one root-subgroup coercion lemma),
+  `Lie/Sl2/Kostant/GroupScheme.lean` ±6.
+* → **`6f7de9441`** at 04:57:47Z: #6637 (count the open subgroups of each index), `Topology/Algebra/Group/Generation.lean`
+  +47 and the new `OpenSubgroup.lean` +151.
+
+The firing control read 5 removed lines, 199 added, and 0 removed and 7 added declaration headers; nothing was removed,
+restated or renamed. The removed lines could change a signature, but none of the changed files' declarations appears in
+my branches' added lines. All three PRs merge clean; main touched none of their files, and its new lines name nothing
+they remove.
+
+**Merge-group simulation** against `6f7de9441`:
+
+```
+#6851  31 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6854  29 behind  merges clean  ghostref: 0 removed (removes nothing)     stalequal: exit 0
+#6855  29 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
