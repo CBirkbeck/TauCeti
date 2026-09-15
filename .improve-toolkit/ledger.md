@@ -40343,3 +40343,51 @@ declaration is the private `entry_mul_mul_mem`.
 **Queue** (17:46:48Z): depth 60; #6677 and #5594 are AWAITING_CHECKS at the head.
 
 No toolkit edits.
+
+---
+
+## r852 — 2026-09-15T17:56Z — main moved (#6677, additive); all eight re-simulated clean; three boards pending
+
+**Board** (17:56:26Z; a real call read 4541 REST calls left; sweep and `queuepos.py` exited 0; `/tmp` at 56%):
+
+* #6902 (ready 17:08:56Z), #6910 (ready 17:37:07Z) and #6911 (ready 17:47:46Z): `awaiting-review`, CI green, no boards
+  yet. Step 4 may drive them only after 18:09Z, 18:37Z and 18:48Z respectively.
+* #6896 and #6899: `ready-to-merge`, NEVER-QUEUED. The merge sweep has not run since 15:15:27Z.
+* #6851 and #6854: QUEUED at 25 and 22 of 59. #6875 needs a human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full.
+
+**Main moved** `a30a47ee7` → **`102eadf1e`** at 17:49:53Z with #6677 ("the Teichmüller lift of a nonarchimedean local
+field"). 7 files, +591/−0:
+
+* `LocalField/Teichmuller.lean` (+214);
+* `RootsOfUnity/Henselian.lean` (+92);
+* `RootsOfUnity/ValuativeRel.lean` (+70);
+* `RootsOfUnity/LocalRing.lean` (+68);
+* `FieldTheory/Finite/RootsOfUnity.lean` (+59);
+* `RootsOfUnity/Basic.lean` (+48);
+* `LocalField/Henselian.lean` (+40).
+
+The firing control read 0 removed lines, 591 added, and 0 removed and 34 added declaration headers.
+
+* Nothing was removed, no import was dropped, and no module moved.
+* Main touched none of the eight PRs' files.
+* The names that #6896, #6899 and #6910 depend on are unchanged.
+* None of their added declarations shares a last name component with main's 34 new ones.
+
+**Merge-group simulation** against `102eadf1e`:
+
+```
+#6851  79 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  77 behind  merges clean  ghostref: 0 removed                         stalequal: exit 0
+#6875  44 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+#6896  13 behind  merges clean  ghostref: 4 removed, 4 chased, 0 ghosts    stalequal: exit 0
+#6899  13 behind  merges clean  ghostref: 1 removed (not TauCeti.-pathed)  stalequal: exit 0
+#6902  11 behind  merges clean  ghostref: 0 removed                         stalequal: exit 0
+#6910   4 behind  merges clean  ghostref: 2 removed (private copies)        stalequal: exit 0
+#6911   2 behind  merges clean  ghostref: 0 removed                         stalequal: exit 0
+```
+
+**Queue** (17:56:47Z): depth 59; #5594 and #6877 are AWAITING_CHECKS at the head.
+
+No toolkit edits.
