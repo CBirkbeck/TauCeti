@@ -1,4 +1,4 @@
-# Last round — r788 (2026-09-15T04:06Z)
+# Last round — r789 (2026-09-15T04:17Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -14,7 +14,7 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
 **#6854** on the driven re-review (r768), queued at r770. Nothing is staged; the next opening is kind 1 again (the deck group). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r788):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r789):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -31,19 +31,19 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`, **QUEUED pos 10/45** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`, **QUEUED pos 22/45** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6855** | `352c92a114` | green | kind 3; **10/10 first board** (22:32:04Z), `ready-to-merge`, **QUEUED pos 8/45** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`, **QUEUED pos 9/44** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`, **QUEUED pos 21/44** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6855** | `352c92a114` | green | kind 3; **10/10 first board** (22:32:04Z), `ready-to-merge`, **QUEUED pos 7/44** | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open (#6851, #6854, #6855) → step 5 does not fire** until one merges; all three are
-queued (#6855 8th, #6851 10th, #6854 22nd). Main is `bd11a0a35`.
+queued (#6855 7th, #6851 9th, #6854 21st). Main is `451dc7a21`.
 
 ## What to expect next
 
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. A `MERGING` PR's group build is the check-runs of
    `git ls-remote origin 'refs/heads/gh-readonly-queue/main/pr-<n>-*'` (r739), the earliest sign of an ejection. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only; r786 against `8a6ed17ba`, still valid at `bd11a0a35`, which changes no Lean file). Staged branches:
+   merge-group simulation (cheap, read-only; r789: #6851, #6854 and #6855 clean against `451dc7a21`). Staged branches:
    `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r750: none
    left; kind 3 opened as #6855). A merge-tree check sees conflicts, not new
    callers: also grep main's new lines for the names each staged branch removes, and when main DELETES declarations,
@@ -97,7 +97,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r788 did
+## What r703–r789 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -196,6 +196,8 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r787: main moved (#6868, CI only: review pins now carry approvals across an unchanged patch); no Lean change, so r786's
   simulations stand.
 * r788: no merges; board and queue unchanged (8/10/22 of 45).
+* r789: quota at 04:16 again; main moved (#6621, additive); all three re-simulated clean (7/9/21 of 44); `/tmp` at 58%
+  (the other session is at 35G, with a new `wt-countable`).
 
 ## Candidates for a later step 5
 
@@ -312,7 +314,8 @@ Filter `gh pr list --state merged` by `baseRefName`, or confirm against `git log
 **A pushed fix did not re-review itself within the hour** (r768: #6854's two boards were both drives). Keep the
 step-4 clock running after a fix.
 **A full `/tmp` stops every tool call** (r771–r772: ENOSPC even for `df`, since the harness writes command output
-there). Diagnose with `du -sh /tmp/claude-1001/*/*`; at r773 one other session held 24G of the 25G, 27G at r775 and 32G at r783 (new Lean worktrees), still growing. Never delete
+there). Diagnose with `du -sh /tmp/claude-1001/*/*`; at r773 one other session held 24G of the 25G, 27G at r775, 32G at r783 and 35G at r789 (a new Lean worktree every hour
+or so), still growing. Never delete
 another session's files; tell Chris.
 **A generalization can change a signature without touching its header line** (r780: #6735's firing control read 0
 removed or added headers). When main generalizes, list the declarations in the changed files and grep the branches'

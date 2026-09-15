@@ -38520,3 +38520,34 @@ Lean file). Nothing to fix, contest or drive; step 5 shut.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r789 — 2026-09-15T04:17Z — REST quota ran out at 04:16 again; main moved (#6621, additive); all three re-simulated clean; `/tmp` at 58%
+
+**The 04:16:22Z sweep** hit the REST limit (12 fields `API-ERROR`, exit 1). GraphQL still answered: #6851, #6854 and #6855
+are `OPEN`, `ready-to-merge`, QUEUED at 9, 21 and 7 of 44. The sweep was not rerun, since queued PRs cannot change without
+a push. #5950 is Chris's. Nothing to fix, contest or drive; step 5 shut.
+
+**Main moved:** #6621 (add augmented A-infinity algebras; base `main`) merged at 04:16:16Z: `bd11a0a35` → **`451dc7a21`**,
+the new `Homology/AInfinity/Algebra/Augmentation.lean` (+377). The firing control read 0 removed lines, 377 added and 37
+added declaration headers. With no removed line no existing signature can have changed, and nothing was renamed. All
+three PRs merge clean; main touched none of their files, and its new lines name nothing they remove.
+
+**Merge-group simulation** against `451dc7a21`:
+
+```
+#6851  28 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6854  26 behind  merges clean  ghostref: 0 removed (removes nothing)     stalequal: exit 0
+#6855  26 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+**`/tmp` is at 58% (36G used, 27G free).** The same other session, `dc73b8c3-9a87-44c1-9968-bf494f5ab8c8`, is at **35G**
+(32G at r783), with **another new Lean worktree, `wt-countable` (3.4G)**, beside `wt-6794` (18G), `wt-hecke` (5.6G),
+`wt-center` (4.4G) and `wt-refactor2` (3.3G). It adds a 3–4G worktree every hour or so, and 27G free leaves room for six
+or seven more. Two review workspaces from other sessions also sit in `/tmp` (`tauceti-review-6660-*` and
+`tauceti-review-6858-*`, about 220M each). Flagged to Chris again.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
