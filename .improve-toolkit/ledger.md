@@ -39770,3 +39770,39 @@ are queued. The last merge-sweep run is still the 10:24:54Z failure.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r839 — 2026-09-15T14:26Z — main moved (#6840, induction on representation-ring modules; one module moved); all three PRs re-simulated clean; no change on my PRs
+
+**Board** (14:26:26Z; a real call read 4164 REST calls left, 836 used; sweep exited 0, and `queuepos.py` exited 1 on
+its EJECTED hint; `/tmp` at 56%): #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still not
+queued. #6875 is `ready-to-merge` with CI green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. Nothing
+to fix, contest or drive; step 5 is shut.
+
+**Main moved** `6550e8186` → **`46c3b38ac`** at 14:21:13Z with #6840 ("induction as a homomorphism of
+representation-ring modules"), across 8 files (+360/−6). It moves `RepresentationTheory/Induction/FiniteDimensional.lean`
+to `Induction/FiniteDimensional/Basic.lean` (R094, +25), and each of the three files that imported it swaps that import
+line. It also adds `FiniteDimensional/Projection.lean` (+84) and `RepresentationRing/Induction.lean` (+168). The firing
+control read 6 removed lines, 360 added, and 0 removed and 16 added declaration headers. The removed lines are the three
+old import lines and three lines of `FDRep.lean`'s docstring. No declaration was removed or restated. None of the three
+PRs' added lines name the moved module, and main touched none of their files, so none of them imports it. All three PRs
+merge clean, main's new lines name nothing they remove, and none of their added declarations shares a last name
+component with main's new ones. The declaration-level grep had one hit, `function`, and it was prose on both sides: the
+header regex read the docstring phrase "class function" in `FrobeniusReciprocity.lean` as a declaration, and #6851
+uses the word in a docstring ("function `TauCeti.Manifold.koszul`").
+
+**Merge-group simulation** against `46c3b38ac`:
+
+```
+#6851  62 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  60 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875  27 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue and Actions** (14:26:41Z): depth 31, none of them mine; #6874 and #6842 are AWAITING_CHECKS. 40 Actions runs
+are queued. The last merge-sweep run is still the 10:24:54Z failure.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
