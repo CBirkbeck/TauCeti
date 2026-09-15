@@ -38973,3 +38973,24 @@ reservation lapses at 09:12:38Z; `MAX_RESERVATIONS` is 3. The merge sweep last r
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r808 — 2026-09-15T08:06Z — #6852's group build failed after 102 min and the queue evicted it (`failed_checks`); three other PRs queued; #6851/#6854 still wait for the merge sweep; no merges
+
+**Board** (08:06:26Z; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 59%): #6851 and #6854
+are `ready-to-merge`, with CI green and boards on head, and still out of the queue. #6875 is `awaiting-review`, with CI
+green on `462ed9705b` and its board still on `e70f761ba4`; the step-4 clock runs to 08:49Z. #5950 is Chris's. No merges
+since #6855 (05:43:53Z); main is still `d7ac608e0`. Nothing to fix, contest or drive; step 5 is shut.
+
+**The Mathlib bump failed its merge-group build.** #6852's group `400ca6f7e1` ran `sandboxed-build` 06:15:40–07:57:16Z
+and concluded `failure`, then `finalize-merge-group-build` failed at 07:57:21Z. `github-merge-queue` removed #6852 at
+07:57:43Z with reason `failed_checks`. It is still open and `ready-to-merge`. With the holder out of the queue, the
+reservation no longer blocks: the queue now holds #6826 (enqueued 07:59:27Z), #6808 (08:06:16Z) and #6871 (08:06:24Z),
+none of them mine. The reservation flushed #6851 and #6854, and `runner/sweep.py` does not count its own removals as
+evictions, so the merge sweep re-enqueues them on its next run; it last ran at 05:18:46Z. A failed bump can take the
+queue again, but `MAX_RESERVATIONS` caps each bump at 3 holds.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

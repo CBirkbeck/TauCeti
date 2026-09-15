@@ -1,4 +1,4 @@
-# Last round — r807 (2026-09-15T07:56Z)
+# Last round — r808 (2026-09-15T08:06Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -16,7 +16,7 @@ Mathlib's deck group (r798), which needs a **human merge** because it updates `w
 opening is kind 2** (a new file). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r807):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r808):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -33,8 +33,8 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`; **flushed** from MERGING 2/43 by the bot for #6852 (06:11:46Z, `manual`) | nobody — `merge-sweep` re-enqueues it after #6852 merges; do not refresh |
-| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`; **flushed** from 14/43 for #6852 (06:12:02Z, `manual`) | nobody — `merge-sweep` re-enqueues it after #6852 merges; do not refresh |
+| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`; **flushed** from MERGING 2/43 by the bot for #6852 (06:11:46Z, `manual`) | nobody — `merge-sweep` re-enqueues it (the bump's reservation released at 07:57:43Z); do not refresh |
+| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`; **flushed** from 14/43 for #6852 (06:12:02Z, `manual`) | nobody — `merge-sweep` re-enqueues it (the bump's reservation released at 07:57:43Z); do not refresh |
 | **#6875** | `462ed9705b` | green (07:49:13Z) | kind 1 (Mathlib's deck group); first board (e70f761, 07:06:23Z) **7/10, changes requested**: naming, placement, documentation. All three fixed in `462ed9705` (r803), body updated; needs a human merge (`web/examples`) | pipeline — re-drive only if no board for this head by 08:49Z |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
@@ -55,8 +55,8 @@ at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enq
    control: r738's first try was a crashed `sed` whose empty result read as "none".
 2. **#6851 (kind 1, Levi-Civita) is 10/10 on its first board** (22:35:00Z, head `fdeaff5cb7`). It was MERGING at 2 of
    43 when the bot flushed the queue for #6852 (r798). Do not refresh: `merge-sweep` re-enqueues it (green,
-   TauCeti/-only) on its first run after #6852 merges. If it is still unqueued after a sweep run that post-dates the merge,
-   read that run's log before acting. Re-simulate its merge group when main moves: it deletes
+   TauCeti/-only) on its next run. #6852 failed its group build and left the queue at 07:57:43Z (r808), so the reservation
+   no longer blocks. If it is still unqueued after a sweep run that post-dates 07:57:43Z, read that run's log before acting. Re-simulate its merge group when main moves: it deletes
    24 declarations and `LeviCivita/Existence.lean`, so pass `--deleted` to `stalequal` and the deleted path to `ghostref`.
 3. **#6854 (kind 2, quadratic separability) is 10/10** on the r768 driven board (00:49:59Z, head `217fecb812`). It was
    flushed from 14th the same way (r798); handle it like #6851. It removes nothing, so only merge-tree and ghostref's
@@ -111,7 +111,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r807 did
+## What r703–r808 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -231,6 +231,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r805: no change 3.5 min after r804; #6852's group build at 81 min.
 * r806: no merges; #6875's fix head at 15 min of CI; #6852's group build at 91 min.
 * r807: #6875's fix head went green (07:49:13Z) and awaits re-review (clock to 08:49Z); #6852's group build at 101 min, its hold lapsing at 09:12:38Z; no merges.
+* r808: #6852's group build failed after 102 min and the queue evicted it (`failed_checks`, 07:57:43Z); #6826, #6808 and #6871 queued; #6851/#6854 still wait for the merge sweep; no merges.
 
 ## Candidates for a later step 5
 
