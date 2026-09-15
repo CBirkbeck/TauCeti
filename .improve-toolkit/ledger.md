@@ -41224,3 +41224,27 @@ Nothing to fix, contest or drive. The cap is full (#6945, #6947, #6950).
 **Merges and main.** No merges since #6853 and #6851 (22:11:28Z). Main is still `14754a1d1`.
 
 No toolkit edits.
+
+---
+
+## r877 — 2026-09-15T22:36Z — #6950 green and marked ready; main moved (#6850, #6846); all thirteen re-simulated clean
+
+**Board** (22:36:23Z; a real call read 4996 REST calls left; sweep and `queuepos.py` exited 0):
+
+* **#6950** (`049193f7a`): every latest check is green. `sandboxed-build` succeeded at 22:32:19Z and `zulip-pr` at 22:34:08Z,
+  and the merge-group jobs are `skipped`. It merges clean against the new main (below). **Marked ready at 22:37:55Z**, so step 4
+  may drive only after 23:38Z.
+* #6945 (`c7129d24c`): `awaiting-review`, no board. Step 4 may drive only after 22:47Z.
+* #6947 (`3687b12b1`): `awaiting-review`, no board. Step 4 may drive only after 23:27Z.
+* Queue depth 74, each two places up: #6910 33, #6911 36, #6899 37, #6896 38, #6902 53, #6923 57, #6933 64, #6941 69, #6915 70.
+  #6875 needs a human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6945, #6947, #6950).
+
+**Main moved** `14754a1d1` → **`72f21ba26`** with #6850 ("credit the source for the discriminant hypothesis", 22:32:41Z, docs)
+and #6846 ("stacking Brauer diagrams is associative", 22:34:57Z): 3 files, +422/−0, with 29 added declaration headers. It is
+purely additive: nothing was removed, no import was dropped, no module moved, and there were no name hits or clashes.
+
+**Merge-group simulation** against `72f21ba26`: all thirteen open heads merge clean, with `ghostref` and `stalequal` exit 0.
+
+No toolkit edits.
