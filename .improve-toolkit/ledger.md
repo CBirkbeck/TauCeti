@@ -41090,3 +41090,52 @@ Nothing to fix, contest or drive. The cap is full (#6915, #6941, #6945).
 **Merges and main.** No merges since #6857 (21:27:40Z). Main is still `dc381d667`.
 
 No toolkit edits.
+
+---
+
+## r873 — 2026-09-15T21:56Z — **#6854 merged**; #6941 driven, 10/10 and queued; kind 2 opened as draft #6947; main moved (#6860, #6854)
+
+**Board** (21:56:24Z; a real call read 4195 REST calls left; sweep and `queuepos.py` exited 0):
+
+* **#6854 merged at 21:52:04Z** (merge commit `689c8bf27`), in one group behind #6860, the first of this watch's second-cycle
+  kinds to land. It left the open list, and `queuepos.py` reads it `NOT-READY` (closed).
+* **#6851 is MERGING at 2.** Its live group ref is `pr-6851-ca4e3d5e…` at `14754a1d1`, with `sandboxed-build` in progress since
+  21:52:11Z. `mergeQueue.entries` shows #6853 at 1 (ETA 473 s), #6851 at 2 (ETA 1197 s) and #6850 at 3.
+* #6941 (`8c4c5fa79`): no board, with its hour ending at 21:58:05Z. #6915 (`4f9c8d7cd`) may be driven only after 22:36Z, and #6945
+  (`c7129d24c`) only after 22:47Z.
+* Queue depth 72: #6910 37, #6911 40, #6899 41, #6896 42, #6902 57, #6923 61, #6933 68. #6875 needs a human merge. #5950 is Chris's.
+
+**Step 4: #6941 driven.** At 21:57:18Z it had no comments, no threads and no local review process. The guarded launch waited out the
+clock and started at 21:58:10Z (log `review-6941-r873.log`). **`ROUND 1 (commit) approved`**, all 10 rubrics, $1.22.
+`post.py: scoreboard id=5688687687`, board "approved" on `8c4c5fa79` (22:01:03Z). The label moved to `ready-to-merge`, and it
+queued at 73 of 73 (22:03Z).
+
+**Step 5: kind 2 opened as draft #6947.** With #6941 `ready-to-merge`, two PRs were in progress. The pin is still `30a58f795a`,
+so kind 1 stays dry, and kind 2 took its slot.
+
+* **Target:** six files profiled, none touched by an open PR (207 read). `TauCeti/Probability/Exchangeability/Arrays/ZeroOne.lean`
+  (342 lines, 54 `fun … =>`, 10 `;` lines, no roadmap narrative, one importer) was chosen over files whose docstrings would need
+  roadmap edits. Roadmap line `Exchangeability`, as in #5841 and #4693.
+* **Edits** (+61/−53, no statement changes): every `fun … =>` → `↦` (54, the file's only `=>`), and 6 top-level `;` chains
+  split. The 4 parenthesised one-liners stay. The firing control asserted 54 arrows, no `=>` left and 6 splits, with no line
+  over 100 codepoints.
+* **gpt-6-astra** (`astra-zeroone-answer.txt`): all edits safe, including the nested `by` split.
+* `/mathlibable`: pinned Mathlib has no dissociated or exchangeable arrays. Its `Combinatorics/Additive/Dissociation.lean` is the
+  additive-combinatorics notion of a dissociated set. The file is stated for Tau Ceti's `JointlyDissociated`,
+  `JointlyExchangeable` and `arrayTail`, so it is not a direct candidate.
+* **Gate** (on `689c8bf27`): **12 ok / 0 failed / 0 UNRUN**.
+* **Opened #6947** (draft, 22:06:20Z): head `CBirkbeck:improve/zeroone-arrays-style@3687b12b1`, `Roadmap: Exchangeability`. Main
+  was still `689c8bf27`, and the live body matches the file.
+
+**Main moved** `dc381d667` → **`689c8bf27`** with #6860 ("prove Gauss norm multiplicativity for restricted series", +145 in
+`PowerSeries/GaussNorm.lean`) and #6854 (+25/−13 in `QuadraticDiscriminant.lean`). The firing control read 13 removed lines, 170
+added, and 0 removed and 4 added declaration headers. No module moved, no import was dropped, and there were no name hits or
+clashes.
+
+**Merge-group simulation** against `689c8bf27`: all twelve open heads merge clean, with `ghostref` and `stalequal` exit 0. The
+twelve are #6851, #6875, #6896, #6899, #6902, #6910, #6911, #6915 at `4f9c8d7cd`, #6923, #6933, #6941 and #6945.
+
+**In progress now:** #6915 (drive not before 22:36Z), #6945 (drive not before 22:47Z) and #6947 (draft, first build). The cap is
+full. The next opening is kind 3.
+
+No toolkit edits.
