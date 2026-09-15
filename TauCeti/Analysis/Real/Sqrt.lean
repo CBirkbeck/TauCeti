@@ -24,6 +24,7 @@ public section
 namespace Real
 
 /-- Multiplying by `(√a)⁻¹` and squaring divides the square by `a`. -/
+@[simp]
 theorem inv_sqrt_mul_sq {a : ℝ} (ha : 0 ≤ a) (x : ℝ) : ((√a)⁻¹ * x) ^ 2 = x ^ 2 / a := by
   rw [mul_pow, inv_pow, Real.sq_sqrt ha, inv_mul_eq_div]
 
