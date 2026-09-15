@@ -38654,3 +38654,16 @@ they remove.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r795 — 2026-09-15T05:16Z — no merges; board and queue unchanged; no-op round
+
+**Board** (05:16:21Z; sweep and queuepos exited 0, and this time the REST quota held through the :16 round; `/tmp` steady
+at 58%): #6851, #6854 and #6855 are `ready-to-merge`, CI green, boards on head; QUEUED at 6, 18 and 4 of 46 (positions
+unchanged; queue depth up from 45). #5950 is Chris's. No merges since #6637 (04:57:47Z), and main is still `6f7de9441`,
+so r794's simulations stand. Nothing to fix, contest or drive; step 5 shut.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
