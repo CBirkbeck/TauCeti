@@ -40894,3 +40894,23 @@ lines (3 lines of a Hodge proof, a re-pointed import, one docstring line) and 0 
 full. The next opening is kind 3.
 
 No toolkit edits.
+
+---
+
+## r866 — 2026-09-15T20:39Z — no change; #6941 building; no drive due; no merges
+
+**Board** (20:39:03Z; a real call read 4984 REST calls left; sweep and `queuepos.py` exited 0):
+
+* #6941 (`8c4c5fa79`, draft): `awaiting-CI`; its first `sandboxed-build` is in progress.
+* #6933 (`311f6a427`): `awaiting-review`, no board. Step 4 may drive only after 21:07Z.
+* #6915 (`08b8138bc`): `awaiting-review`, with its board behind the fix. Step 4 may drive only after 21:13Z.
+* #6923: board on head (20:31:04Z), QUEUED at 69 of 71.
+* Queue depth 71, each two places up: #6854 8, #6851 10, #6910 45, #6911 48, #6899 49, #6896 50, #6902 65. #6875 needs a human
+  merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6915, #6933, #6941).
+
+**Merges and main.** No merges since #6706 and #6782 (20:32:08Z). Main is still `f7443c964`, against which r865 simulated all
+twelve heads clean.
+
+No toolkit edits.
