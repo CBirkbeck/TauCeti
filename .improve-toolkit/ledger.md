@@ -41014,3 +41014,24 @@ are #6851, #6854, #6875, #6896, #6899, #6902, #6910, #6911, #6915 at `4f9c8d7cd`
 opening is kind 1 if a target exists, otherwise kind 2.
 
 No toolkit edits.
+
+---
+
+## r870 — 2026-09-15T21:25Z — no change; two builds running; #6933 queued; no drive due; no merges
+
+**Board** (21:25:30Z; a real call read 4286 REST calls left; sweep and `queuepos.py` exited 0):
+
+* #6915 (`4f9c8d7cd`): `awaiting-CI`, with `sandboxed-build` in progress. Its board (on `08b8138bc`) is behind the `@[simp]`
+  fix, so there is nothing to re-fix.
+* #6945 (`c7129d24c`, draft): `awaiting-CI`; its first `sandboxed-build` is in progress.
+* #6941 (`8c4c5fa79`): `awaiting-review`, no board. Step 4 may drive only after 21:58Z.
+* **#6933** is QUEUED at 73 of 74, its first queue read since the r869 approval.
+* Queue: #6854 5, #6851 7, #6910 42, #6911 45, #6899 46, #6896 47, #6902 62, #6923 66. #6875 needs a human merge. #5950 is
+  Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6915, #6941, #6945).
+
+**Merges and main.** No merges since #6848 (21:18:02Z). Main is still `c743c210c`, against which r869 simulated all thirteen
+heads clean.
+
+No toolkit edits.
