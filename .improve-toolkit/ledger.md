@@ -38122,3 +38122,41 @@ files, and its new lines name nothing they remove.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r770 — 2026-09-15T01:07Z — #6854 relabelled and QUEUED: all three rotation kinds are 10/10 in the merge queue; main moved (#6718); all clean
+
+**Board** (01:06:21Z; sweep and queuepos exited 0):
+
+* **#6854** (kind 2): **`ready-to-merge` and QUEUED at pos 32/33.** The relabel went through once the backlog eased (82
+  queued Actions runs, down from 104 at 00:57Z). Its board is ON-HEAD (`217fecb812`, 00:49:59Z).
+* #6851 (kind 1) QUEUED at 20 and #6855 (kind 3) at 18, both 10/10 on head.
+* #5950 is Chris's.
+
+Nothing to fix, contest or drive; step 5 shut (three open, all queued).
+
+**All three PRs of the rotation's first cycle are 10/10 and queued.** Kind 1 (Mathlib catch-up, #6851) and kind 3
+(dedup, #6855) passed on their first boards; kind 2 (file pass, #6854) passed after one scope fix. The one finding in the
+cycle was the kind-2 PR bundling a `/cleanup` golf with its main change.
+
+**Main moved:** #6718 (share the integral-cast utilities of the admissible lattices; base `main`) merged at 01:04:06Z:
+`ea41df940` → **`f8e8a3e62`**. It touches `Algebra/Lie/Basic.lean`, the E6 and E7 `AdmissibleLattice.lean` files, the new
+`Algebra/Lie/Matrix/IntegralCast.lean` and `LinearAlgebra/Matrix/MulVec.lean`; +214/−220. The firing control read 220
+removed lines, 214 added, and 24 removed and 6 added declaration headers. **14 declarations were removed under spellings
+not re-added** (`castMatrixLieHom…`, `cast_lie_eq…`, `ad_int_apply_eq_rat`, `ad_pow_int_eq_rat`,
+`castMatrix_mulVec_mem_lattice`, `cast_ad_pow_lie_eq_zero`, `mulVec_pow_two_eq_zero`, `mulVec_sq_eq_zero`). None of them
+is used by any of my three PRs' added lines, and no module was renamed. All three PRs merge clean, and main touched none
+of their files.
+
+**Merge-group simulation** against `f8e8a3e62`:
+
+```
+#6851  18 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6854  16 behind  merges clean  ghostref: 0 removed (removes nothing)     stalequal: exit 0
+#6855  16 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
