@@ -40517,3 +40517,29 @@ firing control read 0 removed lines, 321 added, and 0 removed and 31 added decla
 **Queue** (18:26:52Z): depth 56; #6623 and #6707 are AWAITING_CHECKS at the head.
 
 No toolkit edits.
+
+---
+
+## r856 — 2026-09-15T18:36Z — #6902's fix green; #6915 green and marked ready; #6910 review driven; no merges
+
+**Board** (18:36:27Z; the REST window rolled over, 4997 calls left; sweep and `queuepos.py` exited 0; `/tmp` at 56%):
+
+* **#6902** (`3282c9611`): `sandboxed-build` succeeded at 18:32:05Z. The label is `awaiting-review`, and the board on
+  `f8294ed14` is behind. For the new head the board clock runs from `max(18:32:05Z, 17:08:56Z)`, so step 4 may drive a
+  re-review only after 19:32Z.
+* **#6915** (`efbb6423d`): `sandboxed-build` succeeded at 18:27:54Z, and every latest check is green. Main is still
+  `b3e8ec19b`, against which r855 simulated it clean, and merge-tree is still clean. **Marked ready at 18:37:18Z**, so
+  step 4 may drive only after 19:37Z.
+* **#6910** (`3548cebb7`): green since 17:32:21Z and ready since 17:37:07Z. At 18:37:40Z it had no board and no
+  in-progress marker, which is past its hour. **Review driven** with `tauceti-review 6910 --reviewer codex --post`,
+  detached, at 18:37:56Z (log `review-6910-r856.log`). It was cloning at 18:38Z; next round reads the result.
+* #6896, #6899 and #6911: `ready-to-merge`, NEVER-QUEUED. The merge sweep has not run since 15:15:27Z.
+* #6851 and #6854: QUEUED at 22 and 19 of 56. #6875 needs a human merge. #5950 is Chris's.
+
+Nothing to fix or contest. The cap is full (#6902, #6910, #6915).
+
+**Merges and main.** No merges since #6678 (18:23:41Z). Main is still `b3e8ec19b`, so r855's simulations stand.
+
+**Queue** (18:36:54Z): depth 56; #6623 and #6707 are AWAITING_CHECKS at the head.
+
+No toolkit edits.
