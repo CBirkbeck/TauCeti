@@ -78,7 +78,7 @@ def fundamentalGroupMulEquiv (hn : 2 ≤ n)
     {x : RealProjectiveSpace n} (e : (mk n) ⁻¹' {x}) :
     FundamentalGroup (RealProjectiveSpace n) x ≃* ℤˣ :=
   haveI := simplyConnectedSpace_sphere_euclideanSpace hn
-  have hcomm : ∀ a b : Deck (mk n), a * b = b * a := by
+  have hcomm : ∀ a b : deck (mk n), a * b = b * a := by
     intro a b
     obtain rfl | rfl := eq_one_or_eq_antipode n (by omega) a
     · simp

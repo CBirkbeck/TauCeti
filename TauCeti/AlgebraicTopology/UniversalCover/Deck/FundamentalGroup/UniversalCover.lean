@@ -19,7 +19,7 @@ transitive on each fibre.
 Combining this regularity with the simple connectedness of the universal cover and the generic
 regular-cover comparison gives the convention-correct form of the classical calculation
 
-`Deck (UniversalCover.proj : UniversalCover x₀ → X) ≃* (FundamentalGroup X x₀)ᵐᵒᵖ`.
+`deck (UniversalCover.proj : UniversalCover x₀ → X) ≃* (FundamentalGroup X x₀)ᵐᵒᵖ`.
 
 The opposite is genuine: the fundamental group acts on the universal cover by prepending the
 inverse loop, while deck transformations are composed as homeomorphisms. This is the convention
@@ -51,8 +51,8 @@ variable {X : Type*} [TopologicalSpace X] (x₀ : X)
 /-- A loop class acts on the universal cover by a deck transformation of the endpoint
 projection. -/
 def loopDeck (g : FundamentalGroup X x₀) :
-    Deck (proj : UniversalCover x₀ → X) :=
-  ⟨Homeomorph.smul g, fun p => proj_smul g p⟩
+    deck (proj : UniversalCover x₀ → X) :=
+  ⟨Homeomorph.smul g, (Deck.mem_iff _).2 fun p => proj_smul g p⟩
 
 /-- The deck transformation induced by a loop class acts by the fundamental-group action. -/
 @[simp]
@@ -83,7 +83,7 @@ lemma loopDeck_mul (g h : FundamentalGroup X x₀) :
 /-- The fundamental-group action, bundled as a homomorphism into the deck group of the
 universal-cover projection. -/
 def loopDeckHom :
-    FundamentalGroup X x₀ →* Deck (proj : UniversalCover x₀ → X) where
+    FundamentalGroup X x₀ →* deck (proj : UniversalCover x₀ → X) where
   toFun := loopDeck x₀
   map_one' := loopDeck_one x₀
   map_mul' := loopDeck_mul x₀
@@ -108,7 +108,7 @@ fundamental group of the base. -/
 noncomputable def deckFundamentalGroupEquiv
     [LocallyPathConnectedSpace X] [PathConnectedSpace X]
     [SemilocallySimplyConnectedSpace X] :
-    Deck (proj : UniversalCover x₀ → X) ≃* (FundamentalGroup X x₀)ᵐᵒᵖ :=
+    deck (proj : UniversalCover x₀ → X) ≃* (FundamentalGroup X x₀)ᵐᵒᵖ :=
   (isRegular_proj x₀).deckFundamentalGroupEquiv (isCoveringMap x₀)
     (basepointLift x₀)
 

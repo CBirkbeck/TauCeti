@@ -37,7 +37,7 @@ homeomorphism gives `FundamentalGroup Circle x ≃* Multiplicative ℤ` at every
 The regularity input is elementary and holds for an arbitrary topological additive group:
 two points of `𝕜` with the same image under `(↑) : 𝕜 → AddCircle p` differ by an element of
 the period subgroup `zmultiples p`, and translation by that element is a deck
-transformation, so `Deck ((↑) : 𝕜 → AddCircle p)` acts transitively on every fibre.
+transformation, so `deck ((↑) : 𝕜 → AddCircle p)` acts transitively on every fibre.
 
 ## Main declarations
 

@@ -18,10 +18,10 @@ Let `p : E → X` be a quotient covering map for a group `Γ` acting on `E`, let
 covering map `r : F → X`. This file computes the deck transformation group of the intermediate
 covering `r`:
 
-  `Deck r ≃* N(H) ⧸ H`,
+  `deck r ≃* N(H) ⧸ H`,
 
 where `N(H)` is the normalizer of `H` in `Γ`. Taking `H = ⊥` recovers
-`TauCeti.Deck.IsQuotientCoveringMap.deckMulEquiv`, which identifies `Deck p` with `Γ` itself.
+`TauCeti.Deck.IsQuotientCoveringMap.deckMulEquiv`, which identifies `deck p` with `Γ` itself.
 
 Only a normalizer element descends to the quotient as a deck transformation: translation by
 `γ` respects the `H`-orbit relation, so descends as a map, exactly when `γ H γ⁻¹ ⊆ H`, while
@@ -39,14 +39,14 @@ normalize `H`.
 * `TauCeti.Deck.IsQuotientCoveringMap.normalizerMap`: translation by a normalizer element,
   descended to the orbit quotient.
 * `TauCeti.Deck.IsQuotientCoveringMap.normalizerDeckHom`: the resulting homomorphism from the
-  normalizer to `Deck r`.
+  normalizer to `deck r`.
 * `TauCeti.Deck.IsQuotientCoveringMap.ker_normalizerDeckHom`: its kernel is `H`.
 * `TauCeti.Deck.IsQuotientCoveringMap.normalizerDeckHom_surjective`: it is surjective when `E`
   is preconnected and `r` is a covering map.
 * `TauCeti.Deck.IsQuotientCoveringMap.normalizerQuotientDeckMulEquiv`: **the deck group of `r`
   is `N(H) ⧸ H`.**
 * `TauCeti.Deck.IsQuotientCoveringMap.quotientDeckMulEquivOfNormal`: for normal `H` this reads
-  `Deck r ≃* Γ ⧸ H`.
+  `deck r ≃* Γ ⧸ H`.
 
 ## References
 
@@ -151,9 +151,10 @@ include hp hq hr
 
 /-- Translation by an element normalizing `H`, as a homomorphism from the normalizer to the
 deck transformation group of the intermediate covering `r`. -/
-def normalizerDeckHom : _root_.Subgroup.normalizer (H : Set Γ) →* Deck r :=
+def normalizerDeckHom : _root_.Subgroup.normalizer (H : Set Γ) →* deck r :=
   letI := hp.toContinuousConstSMul
   { toFun := fun γ => ⟨normalizerHomeomorph hq γ, by
+      rw [Deck.mem_iff]
       intro y
       obtain ⟨e, rfl⟩ := hq.surjective y
       have hrq : ∀ e' : E, r (q e') = p e' := fun e' => congrFun hr e'
@@ -260,10 +261,10 @@ theorem normalizerDeckHom_surjective [PreconnectedSpace E] (hrc : IsCoveringMap 
 /-- **The deck group of an intermediate covering is the normalizer quotient.** For a quotient
 covering map `p : E → X` with preconnected nonempty total space, a subgroup `H` of the acting
 group, and the induced covering `r : E / H → X`, translation identifies `N(H) ⧸ H` with
-`Deck r`. -/
+`deck r`. -/
 def normalizerQuotientDeckMulEquiv [PreconnectedSpace E] [Nonempty E] (hrc : IsCoveringMap r) :
     (_root_.Subgroup.normalizer (H : Set Γ)) ⧸
-        H.subgroupOf (_root_.Subgroup.normalizer (H : Set Γ)) ≃* Deck r :=
+        H.subgroupOf (_root_.Subgroup.normalizer (H : Set Γ)) ≃* deck r :=
   (QuotientGroup.quotientMulEquivOfEq (ker_normalizerDeckHom hp hq hr).symm).trans
     (QuotientGroup.quotientKerEquivOfSurjective (normalizerDeckHom hp hq hr)
       (normalizerDeckHom_surjective hp hq hr hrc))
@@ -294,7 +295,7 @@ private def toNormalizerOfNormal : Γ →* _root_.Subgroup.normalizer (H : Set �
 
 /-- For a normal subgroup every group element descends, giving a homomorphism from the whole
 acting group to the deck group of the intermediate covering. -/
-def deckHomOfNormal : Γ →* Deck r :=
+def deckHomOfNormal : Γ →* deck r :=
   (normalizerDeckHom hp hq hr).comp (toNormalizerOfNormal (H := H))
 
 @[simp]
@@ -313,11 +314,11 @@ theorem deckHomOfNormal_symm_apply (γ : Γ) (e : E) :
 the general normalizer-quotient identification, read through the algebraic comparison
 `TauCeti.Subgroup.normalizerQuotientEquivQuotientOfNormal` between `N(H) ⧸ H` and `Γ ⧸ H`. -/
 def quotientDeckMulEquivOfNormal [PreconnectedSpace E] [Nonempty E] (hrc : IsCoveringMap r) :
-    Γ ⧸ H ≃* Deck r :=
+    Γ ⧸ H ≃* deck r :=
   (Subgroup.normalizerQuotientEquivQuotientOfNormal H).symm.trans
     (normalizerQuotientDeckMulEquiv hp hq hr hrc)
 
-/-- The isomorphism `Γ ⧸ H ≃* Deck r` sends the class of `γ` to the descent of translation
+/-- The isomorphism `Γ ⧸ H ≃* deck r` sends the class of `γ` to the descent of translation
 by `γ`. -/
 @[simp]
 theorem quotientDeckMulEquivOfNormal_mk [PreconnectedSpace E] [Nonempty E]

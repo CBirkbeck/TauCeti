@@ -25,7 +25,7 @@ For `1 ≤ n` the sphere is connected, so a deck transformation is determined by
 single point, and `TauCeti.Deck.IsQuotientCoveringMap.deckMulEquiv` identifies the whole deck
 group with the two-element acting group:
 
-  `Deck (mk n) ≃* ℤˣ`.
+  `deck (mk n) ≃* ℤˣ`.
 
 The regularity of the antipodal cover needs no connectedness hypothesis.
 
@@ -64,7 +64,7 @@ variable (n : ℕ)
 
 /-- The antipodal map, as a deck transformation of the cover `Sⁿ → RPⁿ`. It is translation by
 the nontrivial integer unit. -/
-def antipode : Deck (mk n) :=
+def antipode : deck (mk n) :=
   IsQuotientCoveringMap.toDeckHom (isQuotientCoveringMap_mk n) (-1)
 
 /-- On points, the antipodal deck transformation negates. -/
@@ -101,7 +101,7 @@ theorem antipode_ne_one : antipode n ≠ 1 := by
 
 /-- **The deck group of the antipodal cover `Sⁿ → RPⁿ` is the two-element group `ℤˣ`**, for
 `1 ≤ n`. The isomorphism sends an integer unit to the corresponding antipodal translation. -/
-def deckMulEquiv (hn : 1 ≤ n) : ℤˣ ≃* Deck (mk n) :=
+def deckMulEquiv (hn : 1 ≤ n) : ℤˣ ≃* deck (mk n) :=
   letI := connectedSpace_sphere n hn
   IsQuotientCoveringMap.deckMulEquiv (isQuotientCoveringMap_mk n)
 
@@ -116,7 +116,7 @@ theorem deckMulEquiv_apply (hn : 1 ≤ n) (u : ℤˣ)
 /-- On points, the inverse of the deck-group isomorphism recovers the given deck
 transformation. -/
 @[simp]
-theorem deckMulEquiv_symm_apply (hn : 1 ≤ n) (φ : Deck (mk n))
+theorem deckMulEquiv_symm_apply (hn : 1 ≤ n) (φ : deck (mk n))
     (x : sphere (0 : EuclideanSpace ℝ (Fin (n + 1))) 1) :
     (deckMulEquiv n hn).symm φ • x = φ.1 x := by
   let := connectedSpace_sphere n hn
@@ -129,7 +129,7 @@ theorem deckMulEquiv_neg_one (hn : 1 ≤ n) : deckMulEquiv n hn (-1) = antipode 
 
 /-- For `1 ≤ n`, a deck transformation of the antipodal cover is either the identity or the
 antipodal map. -/
-theorem eq_one_or_eq_antipode (hn : 1 ≤ n) (φ : Deck (mk n)) :
+theorem eq_one_or_eq_antipode (hn : 1 ≤ n) (φ : deck (mk n)) :
     φ = 1 ∨ φ = antipode n := by
   obtain ⟨u, rfl⟩ := (deckMulEquiv n hn).surjective φ
   obtain rfl | rfl := Int.units_eq_one_or u
@@ -137,7 +137,7 @@ theorem eq_one_or_eq_antipode (hn : 1 ≤ n) (φ : Deck (mk n)) :
   · exact Or.inr (deckMulEquiv_neg_one n hn)
 
 /-- For `1 ≤ n`, the deck group of the antipodal cover has exactly two elements. -/
-theorem card_deck (hn : 1 ≤ n) : Nat.card (Deck (mk n)) = 2 := by
+theorem card_deck (hn : 1 ≤ n) : Nat.card (deck (mk n)) = 2 := by
   rw [← Nat.card_congr (deckMulEquiv n hn).toEquiv, Nat.card_eq_fintype_card,
     Fintype.card_units_int]
 

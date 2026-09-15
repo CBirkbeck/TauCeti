@@ -57,7 +57,7 @@ theorem _root_.IsCoveringMap.isRegular_iff_normal_range
   constructor
   · intro htrans e'
     let := htrans
-    obtain ⟨φ, hφ⟩ := MulAction.exists_smul_eq (Deck p) e e'
+    obtain ⟨φ, hφ⟩ := MulAction.exists_smul_eq (deck p) e e'
     have hhome : ∃ h : E ≃ₜ E, h e = e' ∧ p ∘ h = p := by
       refine ⟨φ.1, ?_, ?_⟩
       · simpa only [Deck.fiber_smul_coe] using congrArg Subtype.val hφ
@@ -77,7 +77,7 @@ theorem _root_.IsCoveringMap.isRegular_iff_normal_range
     obtain ⟨h, he, hcomp⟩ :=
       IsCoveringMap.exists_homeomorph_comp_eq_of_range_eq
         hp hp e₀.2 e₁.2 h₀₁
-    let φ : Deck p := ⟨h, fun z ↦ congrFun hcomp z⟩
+    let φ : deck p := ⟨h, hcomp⟩
     refine ⟨φ, ?_⟩
     apply Subtype.ext
     simpa only [Deck.fiber_smul_coe] using he

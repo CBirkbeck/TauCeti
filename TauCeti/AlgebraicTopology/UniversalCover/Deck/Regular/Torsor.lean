@@ -45,7 +45,7 @@ variable {E B : Type*} [TopologicalSpace E] [TopologicalSpace B] {p : E → B} {
 @[reducible]
 noncomputable def fiberTorsor [PreconnectedSpace E]
     (hp : IsCoveringMap p) (hreg : IsRegular p) (b : B) :
-    Torsor (Deck p) (p ⁻¹' {b}) := by
+    Torsor (deck p) (p ⁻¹' {b}) := by
   letI := hreg.nonempty_fiber b
   letI := hreg.fiber_isPretransitive b
   exact fiberTorsorOfPretransitive hp b

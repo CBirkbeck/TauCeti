@@ -237,14 +237,14 @@ theorem _root_.IsCoveringMap.comp_totalSpaceHomeomorphOfRangeEq_symm_apply (f : 
 
 /-- Pointed covers recovering the same subgroup of `π₁(X, x)` have isomorphic deck transformation
 groups, by conjugation along the comparison homeomorphism. -/
-noncomputable def _root_.IsCoveringMap.deckMulEquivOfRangeEq : Deck p ≃* Deck q :=
+noncomputable def _root_.IsCoveringMap.deckMulEquivOfRangeEq : deck p ≃* deck q :=
   Deck.conjMulEquiv (IsCoveringMap.totalSpaceHomeomorphOfRangeEq hp hq hpe hqf hrange)
     (IsCoveringMap.comp_totalSpaceHomeomorphOfRangeEq_apply hp hq hpe hqf hrange)
 
 /-- The deck-group isomorphism attached to two pointed covers with the same recovered subgroup is
 conjugation by the comparison homeomorphism. -/
 @[simp]
-theorem _root_.IsCoveringMap.deckMulEquivOfRangeEq_apply_coe (φ : Deck p) (f : F) :
+theorem _root_.IsCoveringMap.deckMulEquivOfRangeEq_apply_coe (φ : deck p) (f : F) :
     ((IsCoveringMap.deckMulEquivOfRangeEq hp hq hpe hqf hrange φ).1 f) =
       IsCoveringMap.totalSpaceHomeomorphOfRangeEq hp hq hpe hqf hrange
         (φ.1 ((IsCoveringMap.totalSpaceHomeomorphOfRangeEq hp hq hpe hqf hrange).symm f)) :=
@@ -253,7 +253,7 @@ theorem _root_.IsCoveringMap.deckMulEquivOfRangeEq_apply_coe (φ : Deck p) (f : 
 /-- The inverse of that deck-group isomorphism is conjugation by the inverse comparison
 homeomorphism. -/
 @[simp]
-theorem _root_.IsCoveringMap.deckMulEquivOfRangeEq_symm_apply_coe (ψ : Deck q) (e : E) :
+theorem _root_.IsCoveringMap.deckMulEquivOfRangeEq_symm_apply_coe (ψ : deck q) (e : E) :
     (((IsCoveringMap.deckMulEquivOfRangeEq hp hq hpe hqf hrange).symm ψ).1 e) =
       (IsCoveringMap.totalSpaceHomeomorphOfRangeEq hp hq hpe hqf hrange).symm
         (ψ.1 (IsCoveringMap.totalSpaceHomeomorphOfRangeEq hp hq hpe hqf hrange e)) :=
