@@ -230,7 +230,8 @@ which `simp` cannot apply on its own because it cannot see through `commutatorCo
 `MulEquiv.coe_subgroupMap_apply` says the same for the literal image `(commutator G).map e`. -/
 @[simp]
 theorem coe_commutatorCongr_apply (e : G ≃* H) (x : ↥(commutator G)) :
-    (commutatorCongr e x : H) = e (x : G) := by rfl
+    (commutatorCongr e x : H) = e (x : G) :=
+  Subgroup.coe_congrOfMapEq_apply e _ x
 
 /-- The inverse of the restriction `commutatorCongr e` to the derived subgroups agrees with
 `e.symm` on underlying elements.
@@ -244,7 +245,8 @@ through `commutatorCongr`; `coe_commutatorCongr_apply` is the companion for the 
 returns the subtype `⟨e.symm ↑y, _⟩` rather than its coercion. -/
 @[simp]
 theorem coe_commutatorCongr_symm_apply (e : G ≃* H) (y : ↥(commutator H)) :
-    ((commutatorCongr e).symm y : G) = e.symm (y : H) := by rfl
+    ((commutatorCongr e).symm y : G) = e.symm (y : H) :=
+  Subgroup.coe_congrOfMapEq_symm_apply e _ y
 
 /-- Restricting the identity isomorphism of `G` to the derived subgroup gives the identity of
 `↥(commutator G)`.
@@ -267,7 +269,8 @@ Both map equalities are supplied internally, so a use site names only `e` and `f
 statements; Mathlib's `abelianizationCongr_trans` is the same coherence for the abelianization. -/
 @[simp]
 theorem commutatorCongr_trans (e : G ≃* H) (f : H ≃* K) :
-    (commutatorCongr e).trans (commutatorCongr f) = commutatorCongr (e.trans f) := by rfl
+    (commutatorCongr e).trans (commutatorCongr f) = commutatorCongr (e.trans f) :=
+  Subgroup.congrOfMapEq_trans e _ f _
 
 -- Not `@[simp]`, for the reason given at `Subgroup.congrOfMapEq_symm`.
 /-- Inverting the restriction of `e` to the derived subgroups gives the restriction of `e.symm`.
@@ -277,8 +280,8 @@ supplied internally, so a use site names only `e`. This is the whole-isomorphism
 inverse occurs as a map rather than applied to a point; `coe_commutatorCongr_symm_apply` is the
 pointwise companion, and `commutatorCongr_refl` and `commutatorCongr_trans` are the identity and
 composition ones. Mathlib's `abelianizationCongr_symm` says the same for the abelianization. -/
-theorem commutatorCongr_symm (e : G ≃* H) : (commutatorCongr e).symm = commutatorCongr e.symm := by
-  rfl
+theorem commutatorCongr_symm (e : G ≃* H) : (commutatorCongr e).symm = commutatorCongr e.symm :=
+  Subgroup.congrOfMapEq_symm e _
 
 /-- The image of a conjugate subgroup `gRg⁻¹` under a homomorphism `f` is the conjugate of `f(R)`
 by `f g`.
