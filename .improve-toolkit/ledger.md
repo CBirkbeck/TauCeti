@@ -39472,3 +39472,33 @@ drive; step 5 is shut.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r829 — 2026-09-15T12:46Z — main moved (#6626, quantile functions); all three PRs re-simulated clean; no change on my PRs
+
+**Board** (12:46:28Z; REST had 3230 calls left; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp`
+at 55%): #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still not queued. #6875 is
+`ready-to-merge` with CI green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. Nothing to fix, contest
+or drive; step 5 is shut.
+
+**Main moved** `f7a8984cb` → **`7cae20a91`** at 12:39:34Z with #6626 (the quantile function and the monotone coupling of
+two real laws): `Probability/Quantile.lean` +220, `OptimalTransport/Wasserstein/Quantile.lean` +113 and
+`Probability/Distributions/Dirac.lean` +27/−4. The firing control read 4 removed lines, 356 added, and 0 removed and
+22 added declaration headers. Nothing was removed or restated, and no module moved. All three PRs merge clean, main
+touched none of their files, its new lines name nothing they remove, and the declaration-level grep had no hits.
+
+**Merge-group simulation** against `7cae20a91`:
+
+```
+#6851  52 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  50 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875  17 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue and Actions** (12:46:38Z): depth 34, none of them mine; #6809 and #6747 are AWAITING_CHECKS. 44 Actions runs
+are queued. The last merge-sweep run is still the 10:24:54Z failure.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
