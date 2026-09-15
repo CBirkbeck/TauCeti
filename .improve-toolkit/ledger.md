@@ -39135,3 +39135,21 @@ mine. The merge sweep last ran at 05:18:46Z.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r815 — 2026-09-15T09:16Z — no merges; #6875 10/10 and waiting on a human merge, label still `awaiting-review`; queue depth 5, none mine
+
+**Board** (09:16:24Z; sweep exited 0, the REST quota holding through the :16 round, and `queuepos.py` exited 1 on its
+EJECTED hint; `/tmp` at 60%): #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still out of
+the queue. #6875 is 10/10 on `462ed97`, but its label still read `awaiting-review` 22 minutes after the 08:54:23Z
+board. The label is cosmetic for this PR, which cannot auto-merge because of its `web/examples` path. #5950 is
+Chris's. No merges since #6808 (08:58:32Z); main is still `4ea08bc2f`, so r814's simulations stand. Nothing to fix,
+contest or drive; step 5 is shut.
+
+**Queue** (09:16:34Z, GraphQL): depth 5. #6871 and #6849 are AWAITING_CHECKS and #6659, #6842 and #6717 QUEUED, none of
+them mine. The merge sweep last ran at 05:18:46Z, almost four hours ago.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

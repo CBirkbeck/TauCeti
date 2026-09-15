@@ -1,4 +1,4 @@
-# Last round — r814 (2026-09-15T09:06Z)
+# Last round — r815 (2026-09-15T09:16Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -16,7 +16,7 @@ Mathlib's deck group (r798), which needs a **human merge** because it updates `w
 opening is kind 2** (a new file). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r814):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r815):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -111,7 +111,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r814 did
+## What r703–r815 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -238,6 +238,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r812: no change; #6875 still has no board or live marker for its fix head, 2.5 min short of the clock; no merges.
 * r813: #6875 went 10/10 on its re-review (08:54:23Z), so no drive; it waits for Chris's merge. Main moved to `43d510787` (#6826, which renames `CandidateGenusField/Real.lean`); all three PRs re-simulated clean, and no branch names the renamed module.
 * r814: main moved to `4ea08bc2f` (#6808, one new file); all three PRs re-simulated clean; #6875's label still lags its 10/10 board.
+* r815: no merges; #6875's label still `awaiting-review` 22 min after its 10/10 board; queue depth 5, none mine.
 
 ## Candidates for a later step 5
 
