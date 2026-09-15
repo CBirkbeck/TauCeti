@@ -38085,3 +38085,40 @@ against `git log origin/main`) before treating an entry as main moving.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r769 — 2026-09-15T00:58Z — #6854's 10/10 board is on head but its relabel waits in the Actions backlog; main moved (#6597); queued PRs clean
+
+**Board** (00:56:21Z; sweep and queuepos exited 0):
+
+* **#6854** (kind 2): board **ON-HEAD** (`217fecb812`, updated 00:49:59Z: r768's 10/10), CI green, **but its label still
+  reads `awaiting-review` and it is not queued** (00:57Z, 7 min after the board).
+* #6851 and #6855: 10/10 on head, `ready-to-merge`, QUEUED at 21 and 19 of 31.
+* #5950 is Chris's.
+
+Nothing to fix or contest. Nothing to drive: #6854's board is on head.
+
+**Why #6854 has not relabelled (read-only diagnosis).** Its head's check-runs show only the `pull_request_target` jobs of
+23:24–23:33Z (label, resolve, zulip-pr, merge), all completed. A board comment triggers `PR status labels` on
+`issue_comment`, which runs against `main`. The newest such runs (00:52:58Z, 00:53:46Z, 00:54:14Z, 00:54:24Z, 00:55:58Z,
+00:57:00Z) are all `queued` or `pending`, with 104 queued runs repo-wide. So the relabel is waiting on runners: the
+backlog of r742–r745 again, at a smaller scale. The label and the enqueue are the pipeline's, so **never add
+`ready-to-merge` by hand**. Re-check each round.
+
+**Main moved:** #6597 (the Cholesky change of variables for symmetric Lebesgue measure; base `main`) merged at 00:51:00Z:
+`61f659393` → **`ea41df940`**, `MeasureTheory/Measure/SymmetricMatrix.lean` +5/−1 and the new `SymmetricMatrix/Cholesky.lean`
++351. The firing control read 1 removed line, 355 added, and 0 removed and 32 added declaration headers; nothing was
+removed and no module renamed. #6851 (17 behind), #6854 (15) and #6855 (15) merge clean. Main touched none of their
+files, and its new lines name nothing they remove.
+
+**Merge-group simulation** against `ea41df940`:
+
+```
+#6851  17 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6855  15 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
