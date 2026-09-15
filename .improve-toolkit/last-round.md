@@ -1,4 +1,4 @@
-# Last round — r854 (2026-09-15T18:20Z)
+# Last round — r855 (2026-09-15T18:26Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -20,7 +20,7 @@ opening is kind 1** if a Mathlib bump has opened a catch-up window, otherwise ki
 `awaiting-review`, `awaiting-author` or `ci-failed` PRs count. `ready-to-merge` and queued PRs do not, and neither
 does #5950. Do not idle waiting for merges: open the next kind whenever fewer than 3 are in progress.
 
-**Open question to Chris (asked after r732, unanswered at r854):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r855):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -37,8 +37,8 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`; re-queued by the 15:15:27Z merge sweep: **QUEUED 23/57** (18:21Z, r854) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`; re-queued by the 15:15:27Z merge sweep: **QUEUED 20/57** (18:21Z, r854) | nobody — the queue builds its group; on an eject, read the removal reason first |
+| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`; re-queued by the 15:15:27Z merge sweep: **QUEUED 22/56** (18:26Z, r855) | nobody — the queue builds its group; on an eject, read the removal reason first |
+| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`; re-queued by the 15:15:27Z merge sweep: **QUEUED 19/56** (18:26Z, r855) | nobody — the queue builds its group; on an eject, read the removal reason first |
 | **#6875** | `462ed9705b` | green (07:49:13Z) | kind 1 (Mathlib's deck group); **10/10 on the re-review** (08:54:23Z, head `462ed97`), `ready-to-merge` since ~09:28Z and NEVER-QUEUED after r803 fixed the first board's naming, placement and documentation findings; cannot auto-merge (`web/examples`) | **Chris** — merge it; until then it holds one of the three step-5 slots |
 | **#6896** | `8a6278e95` | green (15:34:55Z) | kind 2 (convex-subgroup exclusion lemmas take `≤`, renamed to `notMem`); **10/10 on the driven board** (codex, posted 17:14:21Z, r847–r848), `ready-to-merge`; NEVER-QUEUED until the merge sweep runs | nobody — `merge-sweep` enqueues it (TauCeti/-only) |
 | **#6899** | `f450e0dcc` | green (15:42:54Z) | kind 3 (`chafaiRescaling_coe_of_nonneg`); ready 15:47:13Z; **board on head at 16:40:36Z (eohjelle), `ready-to-merge`**; NEVER-QUEUED until the merge sweep runs | nobody — `merge-sweep` enqueues it (TauCeti/-only) |
@@ -49,7 +49,7 @@ through the local codex CLI that MCP wraps:
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **In progress: #6902 (fix pushed, rebuilding), #6910 (`awaiting-review`) and #6915 (draft).** The cap is full, so step 5
-is shut until one of them turns `ready-to-merge`. #6851, #6854, #6875, #6896, #6899 and #6911 are `ready-to-merge` and do not count. #6855 merged at 05:43:53Z. #6851 and #6854 were re-queued by the 15:15:27Z merge sweep (r846), and #6875 is 10/10 and waits for a human merge (r813). Main is `3cbd4f4ca`.
+is shut until one of them turns `ready-to-merge`. #6851, #6854, #6875, #6896, #6899 and #6911 are `ready-to-merge` and do not count. #6855 merged at 05:43:53Z. #6851 and #6854 were re-queued by the 15:15:27Z merge sweep (r846), and #6875 is 10/10 and waits for a human merge (r813). Main is `b3e8ec19b`.
 
 ## What to expect next
 
@@ -61,7 +61,7 @@ is shut until one of them turns `ready-to-merge`. #6851, #6854, #6875, #6896, #6
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
    `merge-sweep` re-enqueues a green TauCeti/-only PR afterwards (r798–r799). A `MERGING` PR's group build is the check-runs of
    `git ls-remote origin 'refs/heads/gh-readonly-queue/main/pr-<n>-*'` (r739), the earliest sign of an ejection. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only; r854: all nine of #6851, #6854, #6875, #6896, #6899, #6902, #6910, #6911 and #6915 clean against `3cbd4f4ca`). Staged branches:
+   merge-group simulation (cheap, read-only; r855: all nine of #6851, #6854, #6875, #6896, #6899, #6902, #6910, #6911 and #6915 clean against `b3e8ec19b`). Staged branches:
    `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r750: none
    left; kind 3 opened as #6855). A merge-tree check sees conflicts, not new
    callers: also grep main's new lines for the names each staged branch removes, and when main DELETES declarations,
@@ -128,7 +128,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r854 did
+## What r703–r855 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -295,6 +295,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r852: main moved to `102eadf1e` (#6677, additive), and all eight re-simulated clean. There are no boards yet for #6902, #6910 and #6911, and #6896 and #6899 still await the merge sweep.
 * r853: #6911 approved (`ready-to-merge`). #6902's review, driven after its hour, approved 9/10, but `attribution` asked to keep the upstream credit, so `3282c9611` adds a `## References` entry (gate 12/0/0). Kind 3 opened as draft **#6915** (three private strict hypotheses). Main moved to `c3c47a5d8` (#5594, additive), and all eight re-simulated clean.
 * r854: main moved to `3cbd4f4ca` (#6877, additive), and all nine re-simulated clean. #6902's fix and #6915 are building. #6896, #6899 and #6911 await the merge sweep, which has not run since 15:15:27Z.
+* r855: main moved to `b3e8ec19b` (#6678, additive), and all nine re-simulated clean. #6902's fix and #6915 are still building; #6910 cannot be driven before 18:37Z.
 
 ## Candidates for a later step 5
 

@@ -40489,3 +40489,31 @@ are #6851, #6854, #6875, #6896, #6899, #6902 (at `3282c9611`), #6910, #6911 and 
 **Queue** (18:21:17Z): depth 57; #6678 and #6623 are AWAITING_CHECKS at the head.
 
 No toolkit edits.
+
+---
+
+## r855 — 2026-09-15T18:26Z — main moved (#6678, additive); all nine re-simulated clean; two builds still running
+
+**Board** (18:26:26Z; a real call read 3729 REST calls left; sweep and `queuepos.py` exited 0; `/tmp` at 56%):
+
+* #6902 (`3282c9611`) and #6915 (`efbb6423d`, draft): `awaiting-CI`, with `sandboxed-build` still in progress. #6902's
+  board (on `f8294ed14`) is behind the fix.
+* #6910: `awaiting-review`, no board. It went ready at 17:37:07Z, so step 4 may drive only after 18:37Z.
+* #6896, #6899 and #6911: `ready-to-merge`, NEVER-QUEUED. The merge sweep has not run since 15:15:27Z.
+* #6851 and #6854: QUEUED at 22 and 19 of 56. #6875 needs a human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6902, #6910, #6915).
+
+**Main moved** `3cbd4f4ca` → **`b3e8ec19b`** at 18:23:41Z with #6678 ("add the integral seven-dimensional
+representation of type G2"): 2 files, `Lie/G2/ShortRoot/Basic.lean` (+211) and `G2/ShortRootWeight.lean` (+110). The
+firing control read 0 removed lines, 321 added, and 0 removed and 31 added declaration headers.
+
+* Nothing was removed, no import was dropped, and no module moved.
+* Main touched none of the nine PRs' files, and the names they rename, delete or weaken have unchanged counts on main.
+* None of their added declarations shares a last name component with main's 31 new ones.
+
+**Merge-group simulation** against `b3e8ec19b`: all nine merge clean, with `ghostref` and `stalequal` exit 0.
+
+**Queue** (18:26:52Z): depth 56; #6623 and #6707 are AWAITING_CHECKS at the head.
+
+No toolkit edits.
