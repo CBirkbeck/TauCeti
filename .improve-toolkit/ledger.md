@@ -38291,3 +38291,21 @@ can be read without spending quota. The ":17" rule of thumb held only while the 
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r778 — 2026-09-15T02:27Z — no merges for 20 min; the queue head's group has built and waits on runners; board unchanged
+
+**Board** (02:26:21Z; sweep and queuepos exited 0; `/tmp` at 45%): #6851, #6854 and #6855 are `ready-to-merge`, CI
+green, boards on head; QUEUED at 14, 26 and 12 of 37, unchanged since r776. #5950 is Chris's. No merges since #6843 and
+#6686 (02:05:59Z), and main is still `cddbf10e6`, so r776's simulations stand. Nothing to fix, contest or drive; step 5
+shut.
+
+**Why the queue has not moved (read-only).** Pos 1, #6735's group (`87a939e4c`): `sandboxed-build` success 02:03:48Z →
+02:25:06Z (21 min); `publish-merge-group-cache` queued since 02:25:07Z. Pos 2, #6834's group (`947f6432b`):
+`sandboxed-build` in progress since 02:09:22Z. There are 166 queued Actions runs. So the queue is slow, not stuck: a
+21-min build, then two more jobs waiting for runners.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
