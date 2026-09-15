@@ -24,7 +24,7 @@ first run flagged #5950 alongside #6093.  But #5950 has **no `merge_queue` timel
 #6093 had `added_to_merge_queue` and then `removed_from_merge_queue`.  Same "labelled but absent",
 opposite causes, and refreshing the branch is the fix for exactly one of them:
 
-    EJECTED       enqueued, then dropped   -> mine: refresh against main and re-gate
+    EJECTED       enqueued, then dropped   -> read it; merge-sweep re-enqueues a green TauCeti/-only PR (r799)
     NEVER-QUEUED  no queue events ever     -> NOT mine: the bot could not enqueue it at all
 
 So the enqueue history, not queue membership alone, is what makes the verdict actionable.
@@ -43,10 +43,12 @@ def queue_verdict(label, in_queue, position=None, state=None, ever_enqueued=Fals
 
     Pure so the controls can exercise it on fixture data without touching the network.
 
-    EJECTED is the ONLY verdict this role acts on: the bot enqueues on the label transition, so a
-    PR that WAS enqueued and is now out will never be re-enqueued on its own.  The fix is to
-    refresh the branch against `main` and re-gate (r679) -- the bot re-reviews, re-labels, and the
-    new transition re-enqueues it.
+    EJECTED is a verdict to READ, not to refresh on (r799).  auto-merge enqueues once per triggering
+    event, but TauCetiReview's merge sweep (`runner/sweep.py`, run by `merge-sweep.yml`) re-enqueues a
+    green, TauCeti/-only, mergeable PR that is out of the queue and reuses its head-pinned board, so a
+    refresh (r679's old advice) only throws that board away.  A removal BY tauceti-review-bot (reason
+    `manual`) is a Mathlib bump's queue reservation, not an eviction.  Act only where the sweep cannot:
+    on a PR that is not TauCeti/-only, or one it flagged after two evictions at the same head.
 
     NEVER-QUEUED is the other shape and is NOT actionable here: the bot never got it into the
     queue, so the branch is not what is wrong.  #5950 is the standing example -- it needs a human
@@ -199,8 +201,10 @@ def main(argv):
         print("  #%-6s %-22s %s%s" % (n, label, v, age))
     if ejected:
         print("\nEJECTED: %s" % ", ".join("#%d" % n for n in ejected))
-        print("  The bot enqueues on the label transition, so these will NOT return on their own.")
-        print("  Merge origin/main into each, re-gate, push (r679).")
+        print("  merge-sweep (TauCetiReview runner/sweep.py; hourly at :40, throttled) re-enqueues a green,")
+        print("  TauCeti/-only PR that is out of the queue, reusing its head-pinned board. A removal by")
+        print("  tauceti-review-bot (reason `manual`) is a bump's queue reservation. Do NOT refresh: act only on")
+        print("  a PR the sweep skips (not TauCeti/-only) or flags (evicted twice at one head) (r799).")
         return 1
     return 0
 

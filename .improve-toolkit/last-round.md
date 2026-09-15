@@ -1,4 +1,4 @@
-# Last round — r797 (2026-09-15T05:36Z)
+# Last round — r799 (2026-09-15T06:23Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -10,17 +10,19 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
    ChatGPT `gpt-6-astra` helping.
 3. **What this role has been doing** — rooting, dedup, hypothesis weakening, docstrings, relocation.
 
-**All three kinds are open, 10/10 and QUEUED:** kind 1 **#6851** and kind 3 **#6855** on their first boards, and kind 2
-**#6854** on the driven re-review (r768), queued at r770. Nothing is staged; the next opening is kind 1 again (the deck group). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
+**Second cycle, kind 1 open:** kind 3 **#6855 merged** (05:43:53Z, r798). Kind 1 **#6851** and kind 2 **#6854** are 10/10
+but were flushed from the queue for the bot's Mathlib bump (r798). The freed slot went to kind 1 again: draft **#6875**,
+Mathlib's deck group (r798), which needs a **human merge** because it updates `web/examples/Examples.lean`. **The next
+opening is kind 2** (a new file). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r797):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r799):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
-no-build default, and kinds 2 (#6854, r749) and 3 (#6855, r750) likewise. **If he answers:** #6851 and #6855 are 10/10
-and queued, so a push to either would cost the board and the queue slot. Give them a separate follow-up PR
-instead, and apply the pass to #6854 directly only while it has no board.
+no-build default, and so did kinds 2 (#6854, r749) and 3 (#6855, r750) and kind 1 again (#6875, r798). **If he
+answers:** #6851 and #6854 are 10/10, so a push to either would cost the board. Give them a separate follow-up PR
+instead. #6875 is a draft with no board yet, so a scoped pass can go into it directly.
 
 **ChatGPT access:** no `chatgpt-math` MCP server is configured (only `lean-lsp`). The model is reachable
 through the local codex CLI that MCP wraps:
@@ -31,38 +33,45 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`, **QUEUED pos 4/44** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`, **QUEUED pos 16/44** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6855** | `352c92a114` | green | kind 3; **10/10 first board** (22:32:04Z), `ready-to-merge`, **MERGING pos 2/44** (group `d7ac608e0c`, `sandboxed-build` from 05:21:38Z) | nobody — act only if `queuepos.py` says `EJECTED`; once it merges, step 5 opens for kind 1 |
+| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`; **flushed** from MERGING 2/43 by the bot for #6852 (06:11:46Z, `manual`) | nobody — `merge-sweep` re-enqueues it after #6852 merges; do not refresh |
+| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`; **flushed** from 14/43 for #6852 (06:12:02Z, `manual`) | nobody — `merge-sweep` re-enqueues it after #6852 merges; do not refresh |
+| **#6875** | `e70f761ba4` | pending | kind 1 (Mathlib's deck group); **DRAFT**, opened r798; needs a human merge (`web/examples`) | **me** — mark ready when CI is green |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
-**Three `improve/*` PRs of mine are open (#6851, #6854, #6855) → step 5 does not fire** until one merges; all three are
-queued (#6855 2nd and MERGING, #6851 4th, #6854 16th). Main is `91fe5bc2e`.
+**Three `improve/*` PRs of mine are open (#6851, #6854, #6875) → step 5 does not fire** until one merges. #6855 merged
+at 05:43:53Z. #6851 and #6854 stay out of the queue until the bot re-enqueues them, and #6875 is a draft. Main is `d7ac608e0`.
 
 ## What to expect next
 
-1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. A `MERGING` PR's group build is the check-runs of
+1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
+   `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
+   `merge-sweep` re-enqueues a green TauCeti/-only PR afterwards (r798–r799). A `MERGING` PR's group build is the check-runs of
    `git ls-remote origin 'refs/heads/gh-readonly-queue/main/pr-<n>-*'` (r739), the earliest sign of an ejection. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only; r796: #6851, #6854 and #6855 clean against `91fe5bc2e`). Staged branches:
+   merge-group simulation (cheap, read-only; r798: #6851 and #6854 clean against `d7ac608e0`). Staged branches:
    `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r750: none
    left; kind 3 opened as #6855). A merge-tree check sees conflicts, not new
    callers: also grep main's new lines for the names each staged branch removes, and when main DELETES declarations,
    grep every branch's added lines for them (r738: #6601 removed `sum_binomial_weight(_mul)`; 0 uses). Print a firing
    control: r738's first try was a crashed `sed` whose empty result read as "none".
-2. **#6851 (kind 1, Levi-Civita) went 10/10 on its first board** (22:35:00Z, `codex/gpt-6-astra`, head `fdeaff5cb7`)
-   and is QUEUED. Act only on `EJECTED`. Re-simulate its merge group when main moves: it deletes 24 declarations and
-   `LeviCivita/Existence.lean`, so pass `--deleted` to `stalequal` and the deleted path to `ghostref`.
-3. **#6854 (kind 2, quadratic separability) went 10/10** on the r768 driven board (00:49:59Z, head `217fecb812`, $0.91)
-   after r759's `scope` fix. Its relabel waited out the Actions backlog, and it was QUEUED at pos 32 by 01:06Z (r770).
-   Act only on `EJECTED`, and re-simulate when main moves. It removes nothing, so only merge-tree and ghostref's firing
-   control matter.
-4. **#6855 (kind 3, the `contractable_of_exchangeable` dedup) went 10/10 on its first board** (22:32:04Z,
-   `codex/gpt-5.6-sol`, head `352c92a114`) and is QUEUED. Act only on `EJECTED`; re-simulate when main moves.
-5. **At the next free slot:** kind 1 again (the deck group, mathlib4#40135 — large; research it while the cap is
-   shut), then kind 2 (a new file), then kind 3
-   (next candidate: the `StronglyContinuousSemigroup.norm_resolvent_integrand_le` weakening; see ledger r706).
+2. **#6851 (kind 1, Levi-Civita) is 10/10 on its first board** (22:35:00Z, head `fdeaff5cb7`). It was MERGING at 2 of
+   43 when the bot flushed the queue for #6852 (r798). Do not refresh: `merge-sweep` re-enqueues it (green,
+   TauCeti/-only) on its first run after #6852 merges. If it is still unqueued after a sweep run that post-dates the merge,
+   read that run's log before acting. Re-simulate its merge group when main moves: it deletes
+   24 declarations and `LeviCivita/Existence.lean`, so pass `--deleted` to `stalequal` and the deleted path to `ghostref`.
+3. **#6854 (kind 2, quadratic separability) is 10/10** on the r768 driven board (00:49:59Z, head `217fecb812`). It was
+   flushed from 14th the same way (r798); handle it like #6851. It removes nothing, so only merge-tree and ghostref's
+   firing control matter.
+4. **#6875 (kind 1 again, Mathlib's deck group) is a DRAFT** (r798, head `e70f761ba`). Run `gh pr ready` once its CI is
+   green. It changes 35 files with no local build, so a red first build is plausible: read the CI log, fix, re-gate with
+   `prepush.sh` and push. Expect `prepush.sh`'s `decldiff` FAIL (`VANISHED TauCeti.Deck`), since the deletion is the
+   point of the PR. It touches `web/examples/Examples.lean`, so it cannot auto-merge; once it is 10/10, the merge is
+   Chris's call, as with #5950.
+5. **At the next free slot:** kind 2 (a new file; research it while the cap is shut), then kind 3 (next candidate:
+   the `StronglyContinuousSemigroup.norm_resolvent_integrand_le` weakening; see ledger r706), then kind 1. No kind-1
+   target is left after #6875. #39722 (`Nat.Partition` → `YoungDiagram`, merged 2026-09-14) needs a pin from that date or later,
+   and #6852's `8842b50` is from 2026-09-04.
 
-## Kind-1 prospects (r703 first pass)
+## Kind-1 prospects (r703 first pass, r798 re-run)
 
 Method: `$SP/mlcatchup.py` indexes pinned Mathlib `30a58f7` (243230 names) and TauCeti main (58119):
 same-name collisions, stale "Mathlib has no `X`" notes, and cited Mathlib PRs whose squash commit is in
@@ -79,13 +88,15 @@ the pin. Outputs: `$SP/mlcatchup.out`, `$SP/idx-*.tsv`.
   `exists_isLeviCivita`. Outside the LeviCivita directory only Geodesic files use them (`leviCivita` 39
   lines in 4 files; `isLeviCivita_leviCivita` 1). `Regularity.lean` (smoothness) has no Mathlib
   counterpart and sits on TauCeti's Koszul API.
-* **Next kind-1 candidate — deck group — mathlib4#40135 (landed 2026-08-27).** Mathlib `deck p : Subgroup (E ≃ₜ E)`, carrier
+* **OPENED in r798 as draft #6875 — deck group — mathlib4#40135 (landed 2026-08-27).** Mathlib `deck p : Subgroup (E ≃ₜ E)`, carrier
   `p ∘ h = p`; TauCeti `TauCeti.Deck p`, carrier `∀ e, p (φ e) = p e` — equal, **not defeq**. 36 files /
   837 lines name `Deck`, but few sites depend on the carrier (`.2 e` ≤ 14, `∈ Deck` 3, `mem_iff` 3).
   TauCeti's extras (`fiberHomeomorph`, `mapsTo_fiber`, `smul_eq_apply`, `deck_comp_of_injective`) have
   no Mathlib counterpart.
 * **Checked, nothing to do:** mathlib4#40303 (`xRep`) is consumed, not duplicated; the #38813 hit was
   #38909, whose lemmas `GradedRing.lean` already consumes.
+* **r798 re-run on `d7ac608e0`:** the same 13 collisions. Of the 36 cited Mathlib PRs only #36845, #40135 and #39722 have
+  merged (bors: read `closedAt`), and #39722 landed after the pin.
 
 ## Kind-2 pass notes (r705)
 
@@ -97,7 +108,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r797 did
+## What r703–r799 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -207,6 +218,8 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r795: no merges; board and queue unchanged (4/6/18 of 46); the REST quota held through the :16 round.
 * r796: main moved twice (#6643, #6611; nothing removed; the one grep hit was a docstring word); all re-simulated clean; #6855 MERGING at 2 of 44.
 * r797: no merges; queue unchanged (2/4/16 of 44); both top groups still in `sandboxed-build` at 05:37Z.
+* r798: #6855 merged (05:43:53Z), so step 5 fired and kind 1 opened as draft #6875 (Mathlib's deck group; human merge for `web/examples`). The bot flushed the queue for its bump #6852, so #6851 and #6854 read `EJECTED`.
+* r799: REST out until 06:24:59Z; corrected `queuepos.py`'s stale EJECTED advice (the merge sweep re-enqueues flushed green PRs; controls 166/0); #6875's first build running; #6852 still alone in the queue.
 
 ## Candidates for a later step 5
 
@@ -306,6 +319,14 @@ before rewrapping anything (r704: 3 of 14 reported overflows were not).
 decldiff). **`deadpath` only resolves names inside `_root_.` declarations** — a catch-up PR's Mathlib names
 need a read of Mathlib's source, and a `public` check: a non-`public` declaration in a `module` file is
 invisible to Tau Ceti.
+**Auto-merge needs every changed path under `TauCeti/`** (`auto-merge.yml`). A rename that must also update
+`web/examples/Examples.lean`, a separate Lake project that `pages.yml` builds from main, routes the PR to a human
+(#5950, #6875). Keep the `web/` edit, because leaving it out breaks the site, and say so in the body (r798).
+**A Mathlib bump flushes the merge queue** (r798): `tauceti-review-bot` removes every entry with reason `manual` and
+enqueues the bump alone, so `queuepos.py` says `EJECTED` for PRs whose boards are fine. Read the reason first.
+Such removals are reservation cleanup, and TauCetiReview's `runner/sweep.py` (`merge-sweep.yml`) re-enqueues green
+TauCeti/-only PRs after the bump, with no push and no re-review (r799).
+**Bors-merged Mathlib PRs are CLOSED with `mergedAt: null`**: date them by `closedAt` (r798).
 **A module rename on main is invisible to `ghostref` and `stalequal`** — they chase declaration names, not import
 paths. When main renames or deletes a module, grep each branch's ADDED lines for the old path (r735: #6514's
 `GeckLattice/Weyl.lean` → `Weyl/Basic.lean`, no hits).

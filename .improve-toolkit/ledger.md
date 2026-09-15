@@ -38719,3 +38719,88 @@ finalize jobs still need runners after the build.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r798 — 2026-09-15T05:46Z — #6855 merged; kind 1 opened as draft #6875 (Mathlib's deck group); the bot flushed the queue for its Mathlib bump #6852
+
+**Board** (05:46:24Z; sweep and queuepos exited 0; `/tmp` at 59%): **#6855 merged at 05:43:53Z**, in one group with
+#6748. #6851 and #6854 were `ready-to-merge`, with CI green and boards on head. #6851 was MERGING at 2 of 43 (group `f41f33c5a8`,
+`sandboxed-build` from 05:44:44Z) and #6854 QUEUED at 14. #5950 is Chris's. Nothing to fix, contest or drive. With two
+`improve/*` PRs open, **step 5 fired, for kind 1**.
+
+**Main moved** `91fe5bc2e` → `5f65dc53a` (#6748, `NumberTheory/Cyclotomic/Aut.lean` +64) → **`d7ac608e0`** (#6855). The
+firing control read 18 removed lines, 75 added, and 1 removed and 2 added declaration headers. The one removal is #6855's
+own `contractable_of_exchangeable`; nothing was renamed and no module moved. Both PRs merge clean, main touched none of
+their files, and the declaration-level grep had no hits.
+
+```
+#6851  35 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6854  33 behind  merges clean  ghostref: 0 removed (removes nothing)     stalequal: exit 0
+```
+
+**Step 5, kind 1: draft #6875, Mathlib's deck transformation group** (branch `improve/mathlib-deck-group`, head
+`e70f761ba`, 35 files, +609/−618).
+
+* **Prospecting.** TauCeti cites 36 Mathlib PRs. Only three were merged, all by bors, which GitHub shows as CLOSED with a
+  null `mergedAt`, so they are dated by `closedAt`. They are #36845 Levi-Civita (#6851), #40135 the deck group (2026-08-27,
+  in the pin), and #39722 `Nat.Partition` → `YoungDiagram` (2026-09-14, after the 2026-09-03 pin). `mlcatchup.py`, re-run
+  on `d7ac608e0`, found the same 13 deliberate same-name collisions as r703 and no real stale "Mathlib has no" note.
+* **Design.** 36 files name `Deck`, and 336 public declarations live under `TauCeti.Deck.*`, so moving them into Mathlib's
+  `deck` namespace is a separate rename. The PR swaps only the subgroup. A code/comment-aware rename changed 685 code
+  and 74 backticked `Deck` tokens to `deck`, skipping `namespace`/`end`/`open` lines and prose. `TauCeti.Deck` is
+  deleted. `Deck.mem_iff` (`@[simp]`, pointwise) and `Deck.map_proj` stay, re-proved as `deck.mem_iff.trans funext_iff`
+  and `deck.proj_smul φ e`. The carriers are equal but not defeq, so five proofs changed. `loopDeck` and
+  `toDeckHom` wrap their pointwise proof in `(Deck.mem_iff _).2`. `normalizerDeckHom` and `conjHomeomorph_mem_deck` add
+  a `rw` with `mem_iff`. `isRegular_iff_normal_range` passes `hcomp : p ∘ h = p` directly.
+* **Outside `TauCeti/`.** `web/examples/Examples.lean` (the site's `deck_rigidity`) names `Deck p`, so it is updated too.
+  `auto-merge.yml` requires every changed path to be under `TauCeti/`, and `pages.yml` builds that project from main.
+  The PR therefore needs a human merge, as #5950 does, and its body says so.
+* **Gate.** `prepush.sh` gave 16 ok, 1 FAIL and 0 UNRUN. The FAIL is `decldiff` (`VANISHED TauCeti.Deck ... no rooting
+  explains it`), a check that assumes a rooting PR; the deletion is the point of this PR. `width` was ok and
+  `lint-dot-notation` found 0 new.
+* Opened as a draft at 06:16Z with `Roadmap: UniversalCovers` (as #4621 used) and the session trailer; the body is verified.
+
+**The queue was flushed at 06:11:45–06:12:02Z.** `tauceti-review-bot` removed the entries with reason `manual`: depth
+went from 43 to 1, the one entry left being its own bump. The removals included #6851 (06:11:46Z) and #6854 (06:12:02Z). At 06:12:38Z the bot enqueued its Mathlib bump
+**#6852** alone (`30a58f7` → `8842b50`, 2026-09-04; `lake-manifest.json` plus three TauCeti fixes). `queuepos.py` now
+says `EJECTED` for both PRs, but their boards are unchanged and on head. The ejection is not their failure, so do not
+refresh. TauCetiReview's `runner/sweep.py` (`merge-sweep.yml`, hourly at `:40` but throttled; last run 05:18Z)
+re-enqueues a green, TauCeti/-only, mergeable PR that is not in the queue, reusing its head-pinned board. It skips
+such PRs while a bump holds the queue, and removals made by the bot itself count as reservation cleanup, not
+evictions (`is_reservation_removal`). Between the pins, 92 Mathlib files changed. None is under
+`Topology/Covering`, `Geometry/Manifold` or `Algebra/Polynomial`, and none was renamed or deleted (checked with a
+blobless fetch into `$SP/ml-pins`). The new pin still predates #39722.
+
+**REST quota** ran out at 06:16:57Z and reset at 06:24:41Z. After the reset: the sweep exited 0 at 06:24:59Z. #6851 and #6854 are `ready-to-merge`, with CI green by the latest run per name (#6854's GraphQL rollup read FAILURE only because of a cancelled duplicate `label` run) and boards on head. Both are still out of the queue, whose only entry is #6852 (group `400ca6f7e1`, AWAITING_CHECKS). #6875 is a draft with `sandboxed-build` in progress (from 06:20:33Z) and no board. It carries `roadmap/none` although its body says `Roadmap: UniversalCovers`, because `scripts/roadmap_label.py` treats any path outside `TauCeti/`, `TauCeti.lean` and the two Lake pins as infrastructure, which overrides a declared area.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
+
+---
+
+## r799 — 2026-09-15T06:23Z — REST out until 06:24:59Z; `queuepos.py`'s EJECTED hint corrected (the merge sweep re-enqueues flushed PRs); #6875's first build running
+
+**Board** (06:24:59Z post-reset sweep, exit 0; the round's own 06:23:53Z sweep hit the exhausted quota): the same as
+r798's post-reset line. #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and have been out of
+the queue since the 06:11–06:12 reservation flush. #6875 is a draft with `sandboxed-build` in progress (labels
+`roadmap/none`, `awaiting-CI`). No merges since #6855 (05:43:53Z); main is still `d7ac608e0`, so r798's simulations
+stand. At 06:30:54Z #6852 was still alone in the queue (AWAITING_CHECKS). Nothing to fix, contest or drive. Step 5 is
+shut, with #6851, #6854 and #6875 open.
+
+**Why no refresh.** After the reset, `queuepos.py` printed `EJECTED: #6854, #6851` with r679's advice ("will NOT
+return on their own ... Merge origin/main into each, re-gate, push"). That advice is stale. TauCetiReview's
+`runner/sweep.py` is run by TauCeti's `merge-sweep.yml`, pinned at `603b28011`, and its copy there is identical to
+the local `afb424e` one. It re-enqueues a green, TauCeti/-only, mergeable PR that is out of the queue, reusing its
+head-pinned board. `decide_action` enqueues while the current head has fewer than two evictions, and only then escalates
+to `update_branch` or a flag. `queue_reservation.py` gives a pin-moving PR the queue to itself, and
+`is_reservation_removal` does not count the bot's own removals as evictions. A refresh would only have thrown away
+both boards. The sweep last ran at 05:18:46Z (the `:40` schedule is throttled), so #6851 and #6854 should return on
+its first run after #6852 merges.
+
+**Toolkit edit.** In `tools/queuepos.py`, the `EJECTED` docstring, the verdict-table row and the printed hint now
+describe the merge sweep and say not to refresh: act only on a PR the sweep skips (not TauCeti/-only) or flags. No
+logic changed. `controls.sh`: 166 passed, 0 failed.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
