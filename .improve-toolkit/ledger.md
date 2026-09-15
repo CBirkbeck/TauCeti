@@ -41139,3 +41139,51 @@ twelve are #6851, #6875, #6896, #6899, #6902, #6910, #6911, #6915 at `4f9c8d7cd`
 full. The next opening is kind 3.
 
 No toolkit edits.
+
+---
+
+## r874 — 2026-09-15T22:08Z — **#6851 merged**; #6915 approved 10/10 and queued; kind 3 opened as draft #6950; main moved (#6853, #6851)
+
+**Board** (22:08:14Z; a real call read 3555 REST calls left; sweep and `queuepos.py` exited 0):
+
+* **#6915** (`4f9c8d7cd`): **approved 10/10 on its head.** The local `tauceti_worker` edited board `5687066480` at 22:06:19Z, and
+  every rubric reads approved. `tauceti-review-bot` enqueued it at 22:07:10Z, and it sat at 74 of 74. No drive was needed.
+* #6851: MERGING at 2, then **merged at 22:11:28Z** (merge commit `14754a1d1`) in one group behind #6853.
+* #6945 (`c7129d24c`): `awaiting-review`, no board. Step 4 may drive only after 22:47Z.
+* #6947 (`3687b12b1`, draft): first `sandboxed-build` in progress.
+* Queue depth 74: #6910 37, #6911 40, #6899 41, #6896 42, #6902 57, #6923 61, #6933 68, #6941 73, #6915 74. #6875 needs a human
+  merge. #5950 is Chris's. A local review process was running for someone else's #6913.
+
+**Step 5: kind 3 opened as draft #6950.** With #6915 `ready-to-merge`, in progress was #6945 and #6947.
+
+* **Fresh scans** on `689c8bf27` (5406 files), skipping the 543 files that 210 open PRs touch. `unusedscan` 0, `impliedscan` 0,
+  and `dupsig` has no actionable group. `strictscan`'s hits all sit in files open PRs touch, or are taken. `deadprivate` gives the
+  same 10 as r858, and `deadhave` 4.
+* **Candidates weighed.**
+  * `Recut/Pairing.lean`'s two dead `have`s: both proofs checked; there is no `‹_›` and no context-searching tactic after them.
+  * `Derivation.lean`'s `h3`: set aside, because the tool flags only `h3` while `h2` looks equally unused.
+  * `jetField_add_ae`: set aside, because its `zero`/`smul` siblings are used.
+  * The SymmetricPower `rfl` lemmas: set aside, as the r869 `api-design` risk.
+* **Edits** (−5 lines): `isRecut_symm_of_left_eq_right`'s `have hDtop₂ : D.second.top = x D.first.right` and
+  `isRecut_symm_of_right_eq_left`'s `have hDbot₂ : D.second.bottom = x D.first.left` are deleted. A per-proof control confirmed that
+  every row equation still declared in the four `isRecut_symm_of_*` proofs is used (2–5 uses each). The module docstring has no
+  roadmap narrative.
+* **Gate** (on `14754a1d1`): **12 ok / 0 failed / 0 UNRUN**.
+* **Opened #6950** (draft, 22:15:32Z): head `CBirkbeck:improve/recut-pairing-dead-haves@049193f7a`,
+  `Roadmap: CombinatorialHeegaardFloer`, as #6211. The live body matches the file.
+
+**Main moved** `689c8bf27` → **`14754a1d1`** with #6853 ("the structure map A → A⟨T/s⟩ of a rational localisation is flat") and
+#6851 itself: 12 files, +712/−377. The firing control read 24 removed and 32 added declaration headers.
+
+* #6851 deletes `LeviCivita/Existence.lean` and 24 declarations, among them `IsLeviCivita`, `leviCivita` and the Koszul API, and
+  drops three imports.
+* **One grep hit, read and false:** #6875's added lines say "unique coset of `deck p ⧸ ⊤`" in prose (last component of the removed
+  `IsLeviCivita.unique`), and they never mention the Levi-Civita API.
+* Main touched none of the open heads' files.
+* **Merge-group simulation** against `14754a1d1`: all thirteen open heads merge clean, with `ghostref` and `stalequal` exit 0. The
+  thirteen are #6875, #6896, #6899, #6902, #6910, #6911, #6915, #6923, #6933, #6941, #6945, #6947 and #6950.
+
+**In progress now:** #6945 (drive not before 22:47Z), #6947 (draft, first build) and #6950 (draft). The cap is full. The next
+opening is kind 1 if a target exists, otherwise kind 2.
+
+No toolkit edits.
