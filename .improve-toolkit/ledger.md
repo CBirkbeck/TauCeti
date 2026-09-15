@@ -39806,3 +39806,34 @@ are queued. The last merge-sweep run is still the 10:24:54Z failure.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r840 — 2026-09-15T14:36Z — main moved (#6874, rational refinements of covers of the adic spectrum); all three PRs re-simulated clean; no change on my PRs
+
+**Board** (14:36:27Z; a real call read 4653 REST calls left, 347 used, in a window that resets at 15:29:38Z; sweep
+exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 56%): #6851 and #6854 are `ready-to-merge`, with CI
+green and boards on head, and still not queued. #6875 is `ready-to-merge` with CI green and NEVER-QUEUED, waiting for a
+human merge. #5950 is Chris's. Nothing to fix, contest or drive; step 5 is shut.
+
+**Main moved** `46c3b38ac` → **`40c612666`** at 14:35:42Z with #6874 ("standard rational refinements of covers of the
+adic spectrum"): `AdicSpace/Spa/RationalSubset/Refinement.lean` (+185) and `Valuation/ValuativeRel/BigOperators.lean`
+(+82). The firing control read 0 removed lines, 267 added, and 0 removed and 12 added declaration headers. Nothing was
+removed or restated, no import was dropped, and no module moved. All three PRs merge clean, main touched none of their
+files, its new lines name nothing they remove, and none of their added declarations shares a last name component with
+main's 12 new ones.
+
+**Merge-group simulation** against `40c612666`:
+
+```
+#6851  63 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  61 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875  28 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue and Actions** (14:36:43Z): depth 31, none of them mine; #6842 and #6803 are AWAITING_CHECKS. 42 Actions runs
+are queued. The last merge-sweep run is still the 10:24:54Z failure.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
