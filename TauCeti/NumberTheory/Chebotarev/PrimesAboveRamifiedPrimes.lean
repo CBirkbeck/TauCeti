@@ -28,17 +28,21 @@ how the prime behaves in `L / E`.
 * `NumberField.Chebotarev.mem_primesAboveRamifiedPrimes_iff`: the defining condition for
   membership.
 
-## Ramification below is not ramification in `L / E`
+## Comparison with ramification in `L / E`
 
-The two conditions differ, and not only in edge cases: a prime `𝔓` of `E` can be unramified in
-`L / E` while the prime `𝔭` of `K` below it ramifies in `L / K`. So this set is strictly larger
-than the set of primes of `E` ramifying in `L`, and neither is determined by the other.
+Nothing here assumes `E` embeds in `L`, so in general there is no ramification in `L / E` to
+compare against: membership is a condition on the prime of `K` below `𝔓`, and nothing else.
+
+When a compatible tower `K → E → L` does exist, the two conditions are still not the same one.
+Ramification indices multiply along a tower, `e(Q/𝔭) = e(Q/𝔓) · e(𝔓/𝔭)`, so a prime of `E`
+ramifying in `L / E` always lies in this set. The inclusion can be strict, and that is why the
+condition is imposed below rather than on `L / E`.
 
 For example, take `K = ℚ` and `L = ℚ(∛2, ζ₃)`, so that `Gal(L/K) ≅ S₃`; let `E = ℚ(∛2)`, the field
 fixed by a transposition, and let `p = 2`. The inertia group at a prime `Q` of `L` above `2` is the
 cyclic group of order three, so `e(Q/2) = 3` while `e(Q/𝔓) = 1`: all of the ramification,
-`e(𝔓/2) = 3`, happens below `E`. Hence `𝔓` is unramified in `L / E` and yet lies above a prime
-ramifying in `L / K`.
+`e(𝔓/2) = 3`, happens below `E`. So `𝔓` is unramified in `L / E` and yet lies above a prime
+ramifying in `L / K` — a witness that the inclusion is strict here.
 
 ## References
 
@@ -63,8 +67,8 @@ variable (K L E : Type*) [Field K] [NumberField K] [Field L] [NumberField L] [Al
 /-- **The primes of `E` above those of `K` ramifying in `L`.** The height-one primes of `𝓞 E`
 whose contraction to `𝓞 K` lies in `ramifiedPrimes K L`.
 
-The condition is on the prime of `K` below; it is not ramification in `L / E`, which is a
-different and strictly weaker condition. See the module docstring. -/
+The condition is on the prime of `K` below. It is not ramification in `L / E`, which need not
+even be defined here; the module docstring compares the two when a tower exists. -/
 noncomputable def primesAboveRamifiedPrimes : Finset (HeightOneSpectrum (𝓞 E)) :=
   (HeightOneSpectrum.primesAbove_finite (𝓞 K) (𝓞 E)
     (ramifiedPrimes K L).finite_toSet).toFinset
