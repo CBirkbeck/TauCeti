@@ -38575,3 +38575,15 @@ files, and its new lines name nothing they remove.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r791 — 2026-09-15T04:36Z — no merges; board and queue unchanged; no-op round
+
+**Board** (04:36:22Z; sweep and queuepos exited 0; `/tmp` steady at 58%): #6851, #6854 and #6855 are `ready-to-merge`, CI
+green, boards on head; QUEUED at 8, 20 and 6 of 43, unchanged since r790. #5950 is Chris's. No merges since #6640
+(04:17:44Z), and main is still `3f1ee32fe`, so r790's simulations stand. Nothing to fix, contest or drive; step 5 shut.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
