@@ -1,4 +1,4 @@
-# Last round — r875 (2026-09-15T22:18Z)
+# Last round — r876 (2026-09-15T22:28Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -52,17 +52,17 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | **#6933** | `311f6a427` | green (20:05:45Z) | kind 3 (drops the duplicate private `comap_coact_mem` in `Subcomodule/Comap.lean` and rephrases the module docstring's roadmap sentence; gate 12/0/0). No board within its hour, so **a review was driven at r869 (21:07:21Z) and approved 10/10** (codex, posted 21:10:20Z, $0.81); `ready-to-merge`, **QUEUED 68/72** (21:56Z, r873) | nobody — the queue builds its group; on an eject, read the removal reason first |
 | **#6941** | `8c4c5fa79` | green (20:49:35Z) | kind 2, in kind 1's slot (`Contour/Residue/Theorem.lean` style pass: 14 `;` chains split, 45 `↦`, `.le`/`.ne`, roadmap narrative out of the module docstring; gpt-6-astra reviewed, no risk; gate 12/0/0). No board within its hour, so **a review was driven at r873 (21:58:10Z) and approved 10/10** (codex, posted 22:01:03Z, $1.22); `ready-to-merge`, **QUEUED 73/74** (22:08Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
 | **#6945** | `c7129d24c` | green (21:37:02Z) | kind 3 (drops the public, unused `ExchangeableAt.of_lt`, which was `h.of_le hmn.le hX`, and the "Layer 0" labels from the module docstring, keeping the `cameronfreer/exchangeability` credit; gate 12/0/0; `Roadmap: none`, as #6855 and #6412); opened as a draft 21:23:03Z from `c743c210c`, **marked ready 21:47:11Z**, `awaiting-review`, no board at 21:56Z | **pipeline** — board due; step 4 may drive only after 22:47Z |
-| **#6947** | `3687b12b1` | first build | kind 2, in kind 1's slot (`Probability/Exchangeability/Arrays/ZeroOne.lean` style pass: 54 `↦`, 6 top-level `;` chains split; gpt-6-astra reviewed, no risk; gate 12/0/0; `Roadmap: Exchangeability`, as #5841 and #4693); **draft**, opened 22:06:20Z from `689c8bf27` | **CI** — mark ready when `sandboxed-build` is green |
+| **#6947** | `3687b12b1` | green (22:20:35Z) | kind 2, in kind 1's slot (`Probability/Exchangeability/Arrays/ZeroOne.lean` style pass: 54 `↦`, 6 top-level `;` chains split; gpt-6-astra reviewed, no risk; gate 12/0/0; `Roadmap: Exchangeability`, as #5841 and #4693); opened as a draft 22:06:20Z from `689c8bf27`, **marked ready 22:27:09Z**, `awaiting-review`, no board | **pipeline** — board due; step 4 may drive only after 23:27Z |
 | **#6950** | `049193f7a` | first build | kind 3 (drops two unused `have`s, `hDtop₂` and `hDbot₂`, in `KnotTheory/Grid/Differential/Square/Recut/Pairing.lean`; found by `deadhave`, and every remaining row equation in the four `isRecut_symm_of_*` proofs is used; gate 12/0/0; `Roadmap: CombinatorialHeegaardFloer`, as #6211); **draft**, opened 22:15:32Z from `14754a1d1` | **CI** — mark ready when `sandboxed-build` is green |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
-**In progress: #6945 (`awaiting-review`, ready 21:47:11Z), #6947 (draft, first build) and #6950 (draft, first build).** The cap is full, so
+**In progress: #6945 (`awaiting-review`, ready 21:47:11Z), #6947 (`awaiting-review`, ready 22:27:09Z) and #6950 (draft, first build).** The cap is full, so
 step 5 is shut until one of them turns `ready-to-merge`. #6875, #6896, #6899, #6902, #6910, #6911, #6915, #6923, #6933 and #6941 are `ready-to-merge` and do not count. #6855 merged at 05:43:53Z, **#6854 at 21:52:04Z and #6851 at 22:11:28Z**. #6910 queued on its 10/10 board (r857), the 19:11:04Z merge sweep queued #6896, #6899 and #6911 (r858), #6902 (r861), #6923 (r865), #6933 (r869), #6941 (r873) and #6915 (r874) queued on their 10/10 boards, and #6875 is 10/10 and waits for a human merge (r813). Main is `14754a1d1`.
 
 ## What to expect next
 
-0. **r843–r874:** the cap rule changed (rotation paragraph above). In progress: #6945 (green 21:37:02Z, ready 21:47:11Z; drive not
-   before 22:47Z), #6947 (draft; mark it ready once its first build is green) and #6950 (draft; mark it ready once its first build
+0. **r843–r876:** the cap rule changed (rotation paragraph above). In progress: #6945 (green 21:37:02Z, ready 21:47:11Z; drive not
+   before 22:47Z), #6947 (green 22:20:35Z, ready 22:27:09Z; drive not before 23:27Z) and #6950 (draft; mark it ready once its first build
    is green). Pass #6950, #6947, #6945, #6941, #6933, #6923, #6915, #6911, #6910, #6902, #6899, #6896 and #6875 to `queuepos.py`.
    When a slot frees: kind 1 if a target exists, otherwise kind 2.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
@@ -136,7 +136,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r875 did
+## What r703–r876 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -324,6 +324,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r873: **#6854 merged** (21:52:04Z, with #6860), and #6851 is MERGING at 2. #6941's review, driven after its hour (21:58:10Z), approved 10/10 ($1.22), and it queued. That freed a slot, and with kind 1 still dry at `30a58f795a`, kind 2 opened as draft **#6947**, a style pass on `Arrays/ZeroOne.lean` (gpt-6-astra: no risk; gate 12/0/0). Main moved to `689c8bf27` (#6860, #6854, additive), and all twelve open heads re-simulated clean.
 * r874: **#6851 merged** (22:11:28Z, with #6853). The local worker approved #6915's `@[simp]` fix 10/10 (22:06:19Z), and it queued, freeing a slot. Fresh scans on `689c8bf27` found no new strict, implied, unused-binder or duplicate-signature target, so kind 3 opened as draft **#6950**, dropping two `deadhave`-flagged unused `have`s in `Recut/Pairing.lean` (gate 12/0/0). Main moved to `14754a1d1` (#6853, and #6851, which deletes 24 Levi-Civita declarations and `Existence.lean`). #6875's `unique` hit was prose, and all thirteen open heads re-simulated clean.
 * r875: no change 6 minutes after r874. #6947 and #6950 were still on their first builds, #6945 was not yet due for a drive (22:47Z), and there were no merges.
+* r876: #6947 went green (22:20:35Z) and was marked ready (22:27:09Z; drive not before 23:27Z). #6950 was still building, #6945 was not yet due for a drive, and there were no merges.
 
 ## Candidates for a later step 5
 

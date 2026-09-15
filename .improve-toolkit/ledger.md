@@ -41205,3 +41205,22 @@ Nothing to fix, contest or drive. The cap is full (#6945, #6947, #6950).
 thirteen open heads clean. The merged #6851 row is dropped from the board.
 
 No toolkit edits.
+
+---
+
+## r876 — 2026-09-15T22:26Z — #6947 green and marked ready; #6950 building; no drive due; no merges
+
+**Board** (22:26:24Z; a real call read 2666 REST calls left; sweep and `queuepos.py` exited 0):
+
+* **#6947** (`3687b12b1`): every latest check is green. `sandboxed-build` succeeded at 22:20:35Z and `zulip-pr` at 22:07:09Z,
+  and the merge-group jobs are `skipped`. Main is still `14754a1d1`, against which r874 simulated it clean. **Marked ready at
+  22:27:09Z**, so step 4 may drive only after 23:27Z.
+* #6950 (`049193f7a`, draft): its first `sandboxed-build` is still in progress.
+* #6945 (`c7129d24c`): `awaiting-review`, no board. Step 4 may drive only after 22:47Z.
+* Queue depth 74, positions unchanged since r875. #6875 needs a human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6945, #6947, #6950).
+
+**Merges and main.** No merges since #6853 and #6851 (22:11:28Z). Main is still `14754a1d1`.
+
+No toolkit edits.
