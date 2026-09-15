@@ -38309,3 +38309,17 @@ shut.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r779 — 2026-09-15T02:36Z — no merges for 30 min; board and queue unchanged; no-op round
+
+**Board** (02:36:21Z; sweep and queuepos exited 0; `/tmp` at 44%): #6851, #6854 and #6855 are `ready-to-merge`, CI
+green, boards on head; QUEUED at 14, 26 and 12 of 37, unchanged since r776. #5950 is Chris's. No merges since #6843 and
+#6686 (02:05:59Z), and main is still `cddbf10e6`, so r776's simulations stand. Nothing to fix, contest or drive; step 5
+shut. r778 found the queue slow rather than stuck: the head's group had built and its publish job was waiting on
+runners.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
