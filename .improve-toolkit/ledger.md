@@ -38390,3 +38390,22 @@ boards on head; QUEUED at 12, 24 and 10 of 37, unchanged since r781. #5950 is Ch
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r783 — 2026-09-15T03:17Z — REST quota ran out at 03:16 again; no merges; queue unchanged; `/tmp` at 52% and climbing
+
+**The 03:16:22Z sweep** hit the REST limit (12 fields `API-ERROR`, exit 1). GraphQL still answered: #6851, #6854 and
+#6855 are `OPEN`, `ready-to-merge`, QUEUED at 12, 24 and 10 of 38 (unchanged). No merges since #6834 (02:54:04Z), and
+main is still `947f6432b`, so r781's simulations stand. The sweep was not rerun: a queued PR's CI and board cannot change
+without a push, so nothing needed the missing fields. #5950 is Chris's. Nothing to fix, contest or drive; step 5 shut.
+
+**`/tmp` is at 52% (33G used, 31G free)**, up from 29G at r782 ten minutes earlier. The same other session,
+`dc73b8c3-9a87-44c1-9968-bf494f5ab8c8`, is now at **32G** (27G at r775). Its scratchpad has a **new Lean worktree,
+`wt-center` (4.4G)**, beside `wt-6794` (18G), `wt-hecke` (5.6G) and `wt-refactor2` (3.3G, up from 3.0G). Also in `/tmp`:
+`tauceti-review-6858-7kc41s7g` (223M), a review workspace for #6858, which is not one of mine. At this pace `/tmp` fills in
+roughly 80 minutes, and a full `/tmp` stops every round (r771–r772). **Flagged to Chris again.**
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
