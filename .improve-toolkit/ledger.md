@@ -38378,3 +38378,15 @@ still declared on main.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r782 — 2026-09-15T03:06Z — no merges; board and queue unchanged; no-op round
+
+**Board** (03:06:22Z; sweep and queuepos exited 0; `/tmp` 45%): #6851, #6854 and #6855 `ready-to-merge`, CI green,
+boards on head; QUEUED at 12, 24 and 10 of 37, unchanged since r781. #5950 is Chris's. No merges since #6834
+(02:54:04Z); main still `947f6432b`, so r781's simulations stand. Nothing to fix, contest or drive; step 5 shut.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
