@@ -41035,3 +41035,38 @@ Nothing to fix, contest or drive. The cap is full (#6915, #6941, #6945).
 heads clean.
 
 No toolkit edits.
+
+---
+
+## r871 — 2026-09-15T21:36Z — #6915's `@[simp]` fix green; #6854 MERGING; main moved (#6857, a /cleanup that re-roots names); all thirteen clean
+
+**Board** (21:36:23Z; a real call read 4655 REST calls left; sweep and `queuepos.py` exited 0):
+
+* **#6915** (`4f9c8d7cd`): `sandboxed-build` succeeded at 21:36:18Z, and `merge / merge`, `resolve` and `label` are green;
+  `zulip-pr` is still running (not a build check). The board (21:14:08Z, on `08b8138bc`) is behind the fix. The clock runs from
+  `max(21:36:18Z, 18:37:17Z)`, so step 4 may drive only after 22:36Z.
+* #6945 (`c7129d24c`, draft): first `sandboxed-build` still in progress.
+* #6941 (`8c4c5fa79`): `awaiting-review`, no board. Step 4 may drive only after 21:58Z.
+* **#6854 is MERGING at 2 of 72.** `mergeQueue.entries` shows #6860 at 1 (AWAITING_CHECKS, ETA 456 s), #6854 at 2
+  (AWAITING_CHECKS, head `689c8bf27`, ETA 1182 s) and #6853 at 3. The live group ref is `pr-6854-b40126a7…`, with `sandboxed-build`
+  in progress since 21:31:44Z. A second ref, `pr-6854-1d6c77a5…` (`cedf82346`, check-runs from 06:14Z), is a leftover of the
+  06:12Z bot flush, and `ls-remote | head -1` picked it first.
+* Queue: #6851 4, #6910 39, #6911 42, #6899 43, #6896 44, #6902 59, #6923 63, #6933 70. #6875 needs a human merge. #5950 is
+  Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6915, #6941, #6945).
+
+**Main moved** `c743c210c` → **`dc381d667`** with #6857 ("the /cleanup pass on Subgroup/Map.lean", 21:27:40Z): 4 files, +151/−57.
+The firing control read 57 removed lines, 151 added, and 9 removed and 9 added declaration headers.
+
+* **Eight names removed under a spelling not re-added:** `commutatorCongr` and its `coe_…_apply`, `coe_…_symm_apply`, `_refl`,
+  `_trans` and `_symm` lemmas, `_root_.Subgroup.map_conj_map` and `_root_.Subgroup.map_mk'_map_quotientGroupMap`.
+  `commutatorCongr` is re-rooted as `_root_.MulEquiv.commutatorCongr` (its one caller in `DerivedCentralQuotient.lean` is
+  re-pointed). No head's added lines use any of the eight.
+* **Two grep hits, read and false:** #6875's `lift` is prose ("changing a chosen lift of the basepoint"), and #6911's `congr` is
+  the `congr 1` tactic. Main's `DerivedCentralQuotient.lift` and the `congr` defs in `DerivedCentralQuotient.lean` and
+  `FixedPointCandidate.lean` were not among its changed lines.
+* No module moved and no import was dropped. Main touched none of the thirteen heads' files, and no name clashes.
+* **Merge-group simulation** against `dc381d667`: all thirteen merge clean, with `ghostref` and `stalequal` exit 0.
+
+No toolkit edits.
