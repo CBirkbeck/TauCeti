@@ -39282,3 +39282,42 @@ have no pending run of that kind, so they still depend on the merge sweep, which
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r822 — 2026-09-15T10:26Z — the merge sweep ran at 10:24:54Z and failed after 14 s; #6851/#6854 still unqueued; main moved (#6659, #6717); all three PRs re-simulated clean
+
+**Board** (10:26:25Z; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 60%): #6851 and #6854
+are `ready-to-merge`, with CI green and boards on head, and still out of the queue. #6875 is `ready-to-merge` with CI
+green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. Nothing to fix, contest or drive; step 5 is shut.
+
+**The merge sweep failed.** Run `34957824245` (schedule, created 10:24:54Z) is the first since 05:18:46Z. Its
+`sweep / sweep` job ran 10:25:04–10:25:18Z and failed with "Process completed with exit code 1"; the only other
+annotation is a Node.js 20 deprecation warning. Neither #6851 nor #6854 was re-enqueued. The job's log would say why,
+but REST ran out at 10:27:06Z, just as I asked for it, and resets at 11:27:41Z. The annotations came over GraphQL, from
+the run's check suite on `31fc2e21e`. Fourteen seconds suggests an early abort rather than a full pass, but that is
+unconfirmed. Next step: read `gh run view 34957824245 --log-failed` after the reset. A failing sweep is not mine to
+fix; if it keeps failing, tell Chris rather than refreshing, since a push throws away both boards.
+
+**Main moved** `8c4c13530` → `96d981362` → **`31fc2e21e`** at 10:23:40Z with #6659 (the candidate group of the
+untwisted unimodular exceptional families, `CFSG/Unimodular.lean` +43/−5) and #6717 (the strong maximum principle for
+subharmonic functions, `Laplacian/StrongMaximumPrinciple.lean` +42). The firing control read 5 removed lines, 80
+added, and 3 removed and 9 added declaration headers. Nothing was removed under a spelling not re-added; `steinberg`,
+`coe_steinberg_apply` and `mem_fixedSubgroup_steinberg_iff` were restated, and no module moved. All three PRs merge
+clean, main touched none of their files, its new lines name nothing they remove, and the declaration-level grep had no
+hits.
+
+**Merge-group simulation** against `31fc2e21e`:
+
+```
+#6851  41 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  39 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875   6 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue and Actions** (10:26:35Z): depth 25, none of them mine; #6751 and #6624 are AWAITING_CHECKS. 41 Actions runs
+are queued.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
