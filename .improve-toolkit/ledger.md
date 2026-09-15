@@ -40930,3 +40930,32 @@ Nothing to fix, contest or drive. The cap is full (#6915, #6933, #6941).
 twelve heads clean.
 
 No toolkit edits.
+
+---
+
+## r868 — 2026-09-15T20:56Z — #6941 green and marked ready; main moved (#6720, #6612); all twelve re-simulated clean
+
+**Board** (20:56:23Z; a real call read 4896 REST calls left; sweep and `queuepos.py` exited 0):
+
+* **#6941** (`8c4c5fa79`): every latest check is green. `sandboxed-build` succeeded at 20:49:35Z and `zulip-pr` at 20:50:25Z,
+  and the merge-group jobs are `skipped`. It merges clean against the new main (below). **Marked ready at 20:58:05Z**, so step 4
+  may drive only after 21:58Z.
+* #6933 (`311f6a427`): `awaiting-review`, no board. Step 4 may drive only after 21:07Z.
+* #6915 (`08b8138bc`): `awaiting-review`, with its board behind the fix. Step 4 may drive only after 21:13Z.
+* Queue depth 72, each two places up: #6854 6, #6851 8, #6910 43, #6911 46, #6899 47, #6896 48, #6902 63, #6923 67. #6875
+  needs a human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6915, #6933, #6941).
+
+**Main moved** `f7443c964` → **`be6dbc1cb`** with #6720 ("covers generate the fundamental groupoid", 20:53:31Z) and #6612
+("add the composite Hecke coefficient formula", 20:56:16Z): 8 files, +489/−42. The firing control read 42 removed lines, 489
+added, and 0 removed and 13 added declaration headers.
+
+* The removed lines are proof and docstring bodies, among them a file-local adapter in
+  `UniversalCover/PathHomotopyDiscreteness.lean`, which sits beside #6875's deck-group files but is not one of them. No
+  declaration header was removed, no import was dropped, and no module moved.
+* Main's added lines name no `Deck` (#6875) and none of #6851's deleted Levi-Civita API. Main touched none of the twelve heads'
+  files, and there were no name hits or clashes.
+* **Merge-group simulation** against `be6dbc1cb`: all twelve merge clean, with `ghostref` and `stalequal` exit 0.
+
+No toolkit edits.
