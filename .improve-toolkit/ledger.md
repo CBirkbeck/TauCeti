@@ -39174,3 +39174,22 @@ reset was killed by the low-memory watchdog seconds after it started; its log st
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r817 — 2026-09-15T09:36Z — #6875's label moved to `ready-to-merge` and it reads NEVER-QUEUED, as expected for a PR auto-merge refuses; no merges
+
+**Board** (09:36:24Z; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 59%): #6851 and #6854
+are `ready-to-merge`, with CI green and boards on head, and still out of the queue. #6875's label moved to
+`ready-to-merge` at about 09:28Z, 34 minutes after its 10/10 board, and `queuepos.py` now reads it NEVER-QUEUED, like
+#5950. The bot cannot enqueue a PR with a changed path outside `TauCeti/`, so #6875 waits for a human merge. The sweep's
+`CI=PENDING` for #6875 is only the `zulip-pr` notification job re-running on the label change: `sandboxed-build` has
+been green since 07:49:13Z and the head has not moved. #5950 is Chris's. No merges since #6808 (08:58:32Z); main is
+still `4ea08bc2f`, so r814's simulations stand. Nothing to fix, contest or drive; step 5 is shut.
+
+**Queue** (09:36:35Z, GraphQL): depth 9. #6871 and #6849 are AWAITING_CHECKS and #6659, #6717, #6751, #6624, #6277,
+#6724 and #6817 QUEUED, none of them mine. The merge sweep last ran at 05:18:46Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
