@@ -23,7 +23,9 @@ injective, so it keeps `-1`, which acts trivially on `ℍ`. Anything demanding a
 action — `MeasureTheory.IsFundamentalDomain` in particular, whose a.e.-disjointness clause
 is `Pairwise` over group elements — is then unsatisfiable. Passing to `PSL(2, ℝ)` collapses
 exactly the scalars, and `eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one` says that on the
-determinant-one locus nothing else is lost: the kernel there is `{±1}`.
+determinant-one locus nothing else is lost: an element of the kernel with determinant one is
+`±1`. (Only that containment is proved here; the converse, that `±1` do lie in the kernel, is not
+needed by any consumer and is not claimed.)
 
 ## Main definitions
 
@@ -34,8 +36,9 @@ determinant-one locus nothing else is lost: the kernel there is `{±1}`.
 
 * `TauCeti.ratPosToPSL2R_smul`: `ratPosToPSL2R g` acts on `ℍ` as the real matrix does.
 * `TauCeti.eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one`: an element of
-  `ker ratPosToPSL2R` with determinant one is `±1`. Hence `ker ratPosToPSL2R ⊓ SL ≤ Γ` for any
-  `Γ` containing `{±1}` — every `Γ₀(N)`, in particular.
+  `ker ratPosToPSL2R` with determinant one is `±1` — a containment, not an identification.
+  Hence `ker ratPosToPSL2R ⊓ SL ≤ Γ` for any `Γ` containing `±1` — every `Γ₀(N)`, in particular,
+  which is the direction every consumer needs.
 
 ## References
 
@@ -96,10 +99,11 @@ theorem map_mem_center_of_mem_ratPosToPSL2R_ker {g : GL(2, ℚ)⁺} (hg : g ∈ 
   UpperHalfPlane.forall_smul_eq_self_iff_mem_center.mp fun τ ↦ by
     rw [← ratPosToPSL2R_smul, MonoidHom.mem_ker.mp hg, one_smul]
 
-/-- **The kernel meets the determinant-one locus in `{±1}`.**
+/-- **On the determinant-one locus, a kernel element is `±1`.**
 
-Use it to discharge `ratPosToPSL2R.ker ⊓ H ≤ Γ` whenever `H` lies in the determinant-one locus
-and `Γ` contains `{±1}` — every `Γ₀(N)`, in particular. Without `hdet` only
+This is one containment only; nothing here says `±1` lie in the kernel, and no consumer needs
+that. Use it to discharge `ratPosToPSL2R.ker ⊓ H ≤ Γ` whenever `H` lies in the determinant-one
+locus and `Γ` contains `±1` — every `Γ₀(N)`, in particular. Without `hdet` only
 `map_mem_center_of_mem_ratPosToPSL2R_ker` is available, and that pins the image down to a
 scalar, no further. -/
 theorem eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one {g : GL(2, ℚ)⁺}
