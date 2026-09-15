@@ -40673,3 +40673,33 @@ Nothing to fix, contest or drive. The cap is full (#6902, #6915, #6923), and the
 heads clean.
 
 No toolkit edits.
+
+---
+
+## r860 — 2026-09-15T19:26Z — #6923 green and marked ready; main moved (#6794); all eleven re-simulated clean
+
+**Board** (19:26:25Z; a real call read 3410 REST calls left; sweep and `queuepos.py` exited 0):
+
+* **#6923** (`8f846c57b`): every latest check is green. `sandboxed-build` succeeded at 19:21:52Z and `zulip-pr` at 19:23:02Z,
+  and the merge-group jobs are `skipped`. It still merges clean against the new main (below). **Marked ready at 19:28:01Z**,
+  so step 4 may drive only after 20:28Z.
+* #6902 (`3282c9611`): `awaiting-review` and green, with its board behind the fix. Step 4 may drive only after 19:32Z.
+* #6915 (`efbb6423d`): `awaiting-review`, no board. Step 4 may drive only after 19:37Z.
+* Queue depth 68, each one place up: #6854 14, #6851 16, #6910 51, #6911 54, #6899 55, #6896 56. #6875 needs a human merge.
+  #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6902, #6915, #6923).
+
+**Main moved** `906b08e84` → **`a67007d22`** with #6794 ("the Hecke coset representatives tile a fundamental domain",
+19:25:05Z): 5 files, +252/−13. The firing control read 13 removed lines, 252 added, and 0 removed and 6 added declaration
+headers.
+
+* The removed lines are docstring prose plus one `open Matrix UpperHalfPlane DoubleCoset HeckeRing.GLn` line. No declaration
+  was removed, no import was dropped, and no module moved.
+* Main touched none of the eleven heads' files.
+* One grep hit, read and false: #6851's added lines say "On a single differentiable section" in prose. Main's diff did not
+  touch `HeckeRing.single` (`HeckeRing/Basic.lean:591`) and mentions "single" only in prose.
+* **Merge-group simulation** against `a67007d22`: all eleven (the ten PRs and the staged branch) merge clean, with `ghostref`
+  and `stalequal` exit 0.
+
+No toolkit edits.

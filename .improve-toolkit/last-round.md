@@ -1,4 +1,4 @@
-# Last round — r859 (2026-09-15T19:19Z)
+# Last round — r860 (2026-09-15T19:29Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -39,26 +39,26 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`; re-queued by the 15:15:27Z merge sweep: **QUEUED 17/66** (19:14Z, r858) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`; re-queued by the 15:15:27Z merge sweep: **QUEUED 15/66** (19:14Z, r858) | nobody — the queue builds its group; on an eject, read the removal reason first |
+| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`; re-queued by the 15:15:27Z merge sweep: **QUEUED 16/68** (19:26Z, r860) | nobody — the queue builds its group; on an eject, read the removal reason first |
+| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`; re-queued by the 15:15:27Z merge sweep: **QUEUED 14/68** (19:26Z, r860) | nobody — the queue builds its group; on an eject, read the removal reason first |
 | **#6875** | `462ed9705b` | green (07:49:13Z) | kind 1 (Mathlib's deck group); **10/10 on the re-review** (08:54:23Z, head `462ed97`), `ready-to-merge` since ~09:28Z and NEVER-QUEUED after r803 fixed the first board's naming, placement and documentation findings; cannot auto-merge (`web/examples`) | **Chris** — merge it; until then it holds one of the three step-5 slots |
-| **#6896** | `8a6278e95` | green (15:34:55Z) | kind 2 (convex-subgroup exclusion lemmas take `≤`, renamed to `notMem`); **10/10 on the driven board** (codex, posted 17:14:21Z, r847–r848), `ready-to-merge`; **QUEUED 57/66** (enqueued 19:12:32Z by the 19:11:04Z merge sweep, r858) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6899** | `f450e0dcc` | green (15:42:54Z) | kind 3 (`chafaiRescaling_coe_of_nonneg`); ready 15:47:13Z; **board on head at 16:40:36Z (eohjelle), `ready-to-merge`**; **QUEUED 56/66** (enqueued 19:12:24Z by the merge sweep, r858) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6902** | `3282c9611` | green (18:32:05Z) | kind 2 (PseudoHyperbolic cleanup). The driven review (board 18:13:33Z, head `f8294ed14`) approved 9/10; `attribution` requested changes, and `3282c9611` answers them with a `## References` entry. Still `awaiting-review` at 19:14Z, with the board behind the fix | **pipeline** — a board for `3282c9611` is due; step 4 may drive only after 19:32Z |
-| **#6910** | `3548cebb7` | green (17:32:21Z) | kind 3 (`Vandermonde.lean` uses `TauCeti.monic_descPochhammer` and `TauCeti.descPochhammer_natDegree`; private copies deleted); **10/10 on the driven board** (codex, posted 18:41:05Z, $0.87, r856–r857), `ready-to-merge`, **QUEUED 52/66** (19:14Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6911** | `4a8439956` | green (17:43:41Z) | kind 2 (Resolvent/Basic.lean style pass); **board on head at 18:03:15Z, `ready-to-merge`**; **QUEUED 55/66** (enqueued 19:12:01Z by the merge sweep, r858) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6915** | `efbb6423d` | green (18:27:54Z) | kind 3 (three private strict hypotheses weakened); `awaiting-review`, ready 18:37:18Z; no board at 19:14Z | **pipeline** — board due; step 4 may drive only after 19:37Z |
-| **#6923** | `8f846c57b` | first build (`sandboxed-build` running since 19:04:07Z) | kind 2 (`Winding/Number/Segment/Jump.lean` style pass: `;` chains split, 38 `↦`, `Icc_subset_uIcc`/`rwa`/`ne'` golfs; gpt-6-astra reviewed; gate 12/0/0); **draft**, opened 19:04:01Z from `871fb6d9f` | **CI** — mark ready when `sandboxed-build` is green |
+| **#6896** | `8a6278e95` | green (15:34:55Z) | kind 2 (convex-subgroup exclusion lemmas take `≤`, renamed to `notMem`); **10/10 on the driven board** (codex, posted 17:14:21Z, r847–r848), `ready-to-merge`; **QUEUED 56/68** (enqueued 19:12:32Z by the 19:11:04Z merge sweep; 19:26Z, r860) | nobody — the queue builds its group; on an eject, read the removal reason first |
+| **#6899** | `f450e0dcc` | green (15:42:54Z) | kind 3 (`chafaiRescaling_coe_of_nonneg`); ready 15:47:13Z; **board on head at 16:40:36Z (eohjelle), `ready-to-merge`**; **QUEUED 55/68** (enqueued 19:12:24Z by the merge sweep; 19:26Z, r860) | nobody — the queue builds its group; on an eject, read the removal reason first |
+| **#6902** | `3282c9611` | green (18:32:05Z) | kind 2 (PseudoHyperbolic cleanup). The driven review (board 18:13:33Z, head `f8294ed14`) approved 9/10; `attribution` requested changes, and `3282c9611` answers them with a `## References` entry. Still `awaiting-review` at 19:26Z, with the board behind the fix | **pipeline** — a board for `3282c9611` is due; step 4 may drive only after 19:32Z |
+| **#6910** | `3548cebb7` | green (17:32:21Z) | kind 3 (`Vandermonde.lean` uses `TauCeti.monic_descPochhammer` and `TauCeti.descPochhammer_natDegree`; private copies deleted); **10/10 on the driven board** (codex, posted 18:41:05Z, $0.87, r856–r857), `ready-to-merge`, **QUEUED 51/68** (19:26Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
+| **#6911** | `4a8439956` | green (17:43:41Z) | kind 2 (Resolvent/Basic.lean style pass); **board on head at 18:03:15Z, `ready-to-merge`**; **QUEUED 54/68** (enqueued 19:12:01Z by the merge sweep; 19:26Z, r860) | nobody — the queue builds its group; on an eject, read the removal reason first |
+| **#6915** | `efbb6423d` | green (18:27:54Z) | kind 3 (three private strict hypotheses weakened); `awaiting-review`, ready 18:37:18Z; no board at 19:26Z | **pipeline** — board due; step 4 may drive only after 19:37Z |
+| **#6923** | `8f846c57b` | green (19:21:52Z) | kind 2 (`Winding/Number/Segment/Jump.lean` style pass: `;` chains split, 38 `↦`, `Icc_subset_uIcc`/`rwa`/`ne'` golfs; gpt-6-astra reviewed; gate 12/0/0); opened as a draft 19:04:01Z from `871fb6d9f`, **marked ready 19:28:01Z**, `awaiting-review`, no board | **pipeline** — board due; step 4 may drive only after 20:28Z |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
-**In progress: #6902 (`awaiting-review` on the fix), #6915 (`awaiting-review`) and #6923 (draft, first build).** The cap is full, so
-step 5 is shut until one of them turns `ready-to-merge`; then open the staged kind-3 branch (item 0). #6851, #6854, #6875, #6896, #6899, #6910 and #6911 are `ready-to-merge` and do not count. #6855 merged at 05:43:53Z. #6851 and #6854 were re-queued by the 15:15:27Z merge sweep (r846), #6910 queued on its 10/10 board (r857), the 19:11:04Z merge sweep queued #6896, #6899 and #6911 (r858), and #6875 is 10/10 and waits for a human merge (r813). Main is `906b08e84`.
+**In progress: #6902 (`awaiting-review` on the fix), #6915 (`awaiting-review`) and #6923 (`awaiting-review`, ready 19:28:01Z).** The cap is full, so
+step 5 is shut until one of them turns `ready-to-merge`; then open the staged kind-3 branch (item 0). #6851, #6854, #6875, #6896, #6899, #6910 and #6911 are `ready-to-merge` and do not count. #6855 merged at 05:43:53Z. #6851 and #6854 were re-queued by the 15:15:27Z merge sweep (r846), #6910 queued on its 10/10 board (r857), the 19:11:04Z merge sweep queued #6896, #6899 and #6911 (r858), and #6875 is 10/10 and waits for a human merge (r813). Main is `a67007d22`.
 
 ## What to expect next
 
-0. **r843–r858:** the cap rule changed (rotation paragraph above). In progress: #6902 (fix `3282c9611` green at 18:32:05Z; drive
-   not before 19:32Z), #6915 (ready at 18:37:18Z; drive not before 19:37Z) and #6923 (draft; mark it ready once its first build is
-   green). Pass #6923, #6915, #6911, #6910, #6902, #6899, #6896, #6875, #6854 and #6851 to `queuepos.py`. **When a slot frees, open
+0. **r843–r860:** the cap rule changed (rotation paragraph above). In progress: #6902 (fix `3282c9611` green at 18:32:05Z; drive
+   not before 19:32Z), #6915 (ready at 18:37:18Z; drive not before 19:37Z) and #6923 (green 19:21:52Z, ready 19:28:01Z; drive
+   not before 20:28Z). Pass #6923, #6915, #6911, #6910, #6902, #6899, #6896, #6875, #6854 and #6851 to `queuepos.py`. **When a slot frees, open
    the staged kind-3 branch** `improve/subcomodule-comap-dedup` (`4d33cc423`, local only; ledger r858). Rebase it onto freshly
    fetched `origin/main`, gate it, push it to `fork`, and open it as a draft with `Roadmap: ReductiveGroups`. After that comes kind 1
    if a target exists, otherwise kind 2.
@@ -66,7 +66,7 @@ step 5 is shut until one of them turns `ready-to-merge`; then open the staged ki
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
    `merge-sweep` re-enqueues a green TauCeti/-only PR afterwards (r798–r799). A `MERGING` PR's group build is the check-runs of
    `git ls-remote origin 'refs/heads/gh-readonly-queue/main/pr-<n>-*'` (r739), the earliest sign of an ejection. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only; r858: all eleven (#6851, #6854, #6875, #6896, #6899, #6902, #6910, #6911, #6915, #6923 and the staged `improve/subcomodule-comap-dedup`) clean against `906b08e84`). Staged branches:
+   merge-group simulation (cheap, read-only; r860: all eleven (#6851, #6854, #6875, #6896, #6899, #6902, #6910, #6911, #6915, #6923 and the staged `improve/subcomodule-comap-dedup`) clean against `a67007d22`). Staged branches:
    `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r750: none
    left; kind 3 opened as #6855). A merge-tree check sees conflicts, not new
    callers: also grep main's new lines for the names each staged branch removes, and when main DELETES declarations,
@@ -133,7 +133,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r859 did
+## What r703–r860 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -305,6 +305,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r857: #6910's driven review approved all 10 rubrics (18:41:05Z, $0.87), and it queued (54/55). Main moved twice, to `871fb6d9f` (#6623, #6707) and `6f93392bd` (#6714), both times additively, and every PR re-simulated clean. The freed slot went to kind 2 again (kind 1 still dry): draft **#6923**, a style pass on `Winding/Number/Segment/Jump.lean` (gpt-6-astra reviewed; gate 12/0/0).
 * r858: the merge sweep fired again (19:11:04Z, the first run since 15:15:27Z) and queued #6896, #6899 and #6911. Main moved to `906b08e84` (#6673, additive), and all ten PRs plus the staged branch simulated clean. With the cap full, kind-3 research staged `improve/subcomodule-comap-dedup` (`4d33cc423`, local only), which drops Comap.lean's duplicate private `comap_coact_mem`.
 * r859: no change 3 minutes after r858. #6902 and #6915 were not yet due for a drive, #6923 was still building, and there were no merges.
+* r860: #6923 went green (19:21:52Z) and was marked ready (19:28:01Z). Main moved to `a67007d22` (#6794, the Hecke tiling, which removed only prose), and all eleven heads re-simulated clean. No drive was due yet: #6902's window opens at 19:32Z and #6915's at 19:37Z.
 
 ## Candidates for a later step 5
 
