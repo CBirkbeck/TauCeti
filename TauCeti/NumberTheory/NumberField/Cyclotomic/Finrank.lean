@@ -9,7 +9,7 @@ public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import TauCeti.FieldTheory.IntermediateField.Adjoin.EqTop
 
 /-!
-# The degree and the ramified primes of a cyclotomic extension of a number field
+# The degree of a cyclotomic extension of a number field
 
 Mathlib computes the degree of an `m`-th cyclotomic extension either over `ℚ`
 (`IsCyclotomicExtension.Rat.finrank`) or over a base for which the `m`-th cyclotomic polynomial
@@ -21,18 +21,12 @@ This file supplies the arithmetic criterion: if `m` is coprime to the discrimina
 
 `[M : K] = φ m`   for `M / K` an `m`-th cyclotomic extension with `K` a number field.
 
-The degree comes from linear disjointness rather than a direct irreducibility argument. Inside
-`M`, the two subfields `ℚ(ζ)` and (the image of) `K` have coprime discriminants, so Mathlib's
+The mechanism is linear disjointness rather than a direct irreducibility argument. Inside `M`,
+the two subfields `ℚ(ζ)` and (the image of) `K` have coprime discriminants, so Mathlib's
 `NumberField.linearDisjoint_of_isGalois_isCoprime_discr` makes them linearly disjoint; their
 compositum is `M`, so the degree of `M` over `K` equals the degree of `ℚ(ζ)` over `ℚ`, which is
 `φ m`. Coprimality of the discriminants is where the hypothesis is spent, via the divisibility
 input below.
-
-The ramified primes need no hypothesis at all, and go by another route entirely: the different
-ideal of the tower `ℤ → 𝓞 K → 𝓞 M`. Transitivity of the different factors `𝔡(𝓞 M / ℤ)` as
-`𝔡(𝓞 M / 𝓞 K)` times the extension of `𝔡(𝓞 K / ℤ)` to `𝓞 M`. Since `M = K(ζ)` with `ζ` a root of
-`X ^ m - 1`, the first factor contains `m`; so a prime of `𝓞 M` over a rational prime dividing
-neither `m` nor `discr K` divides neither factor, and is therefore unramified.
 
 ## Main results
 
@@ -40,26 +34,18 @@ neither `m` nor `discr K` divides neither factor, and is therefore unramified.
   of an `m`-th cyclotomic field divides `m`. This is the divisibility input that turns
   coprimality to `m` into coprimality of discriminants.
 * `IsCyclotomicExtension.finrank_eq_totient`: the degree identity `[M : K] = φ m`.
-* `IsCyclotomicExtension.natCast_mem_differentIdeal`: the level `m` lies in the different ideal
-  of `𝓞 M` over `𝓞 K`.
-* `IsCyclotomicExtension.prime_dvd_natAbs_discr`: a prime dividing `discr M` divides `discr K`
-  or divides `m` — the extension ramifies only below or at the level.
 
 ## Implementation notes
 
-The hypothesis `((NumberField.discr K).natAbs).Coprime m` of `finrank_eq_totient` is a statement
-about the *base* field. It is the condition an arithmetic caller can actually arrange — e.g. by
-choosing `m` to be a prime unramified in `K` — whereas the resulting intersection or
-irreducibility conditions would have to be re-derived from it at each use. Some hypothesis of the
-kind is unavoidable there: `[M : K] = φ m` fails outright when `K` already contains a primitive
-`m`-th root of unity. The ramification statement needs none, and carries none.
+The hypothesis is `((NumberField.discr K).natAbs).Coprime m`, a statement about the *base*
+field. It is the condition an arithmetic caller can actually arrange — e.g. by choosing `m` to
+be a prime unramified in `K` — whereas the resulting intersection or irreducibility conditions
+would have to be re-derived from it at each use.
 
-`finrank_eq_totient` asks only the base `K` to be a number field: `M` is finite over `K` by
+Only the base `K` carries a `NumberField` hypothesis. `M` is finite over `K` by
 `IsCyclotomicExtension.finiteDimensional`, hence a number field on its own, so demanding
-`[NumberField M]` there would be an avoidable hypothesis. `prime_dvd_natAbs_discr` cannot make
-that economy, because its statement names `discr M`, which does not elaborate without the
-instance; it therefore takes `[NumberField M]`, which a caller holding only `[NumberField K]`
-supplies from `IsCyclotomicExtension.numberField {m} K M`.
+`[NumberField M]` of the caller would be an avoidable hypothesis. The degree itself comes from
+linear disjointness of `ℚ(ζ)` and the image of `K` inside `M`, whose compositum is `M`.
 
 Adapted from the Birkbeck–Brasca Chebotarev density project.
 -/
@@ -131,85 +117,5 @@ theorem finrank_eq_totient (K M : Type*) [Field K] [NumberField K] [Field M]
     -- that embedding: `RingHom.rangeRestrictFieldEquiv_apply_coe`.
     exact RingHom.rangeRestrictFieldEquiv_apply_coe _ x
   rw [hrelabel, hfr, hfinK₁]
-
-open NumberField Polynomial in
-/-- **The level lies in the different ideal.** For `M / K` an `m`-th cyclotomic extension of
-number fields, `m` belongs to the different ideal of `𝓞 M` over `𝓞 K`; equivalently that different
-divides `(m)`, so only primes dividing `m` can ramify in `M / K`.
-
-Stated as a membership rather than as a divisibility of `Ideal.span {(m : 𝓞 M)}`: that is the
-form Mathlib's `aeval_derivative_mem_differentIdeal` produces, and the form a consumer feeds to
-an `Ideal.dvd_iff_le` bound on the different; `Ideal.span_singleton_le_iff_mem` recovers the
-divisibility reading where that is the one wanted. -/
-theorem natCast_mem_differentIdeal (K M : Type*) [Field K] [NumberField K] [Field M] [NumberField M]
-    [Algebra K M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} K M] :
-    (m : 𝓞 M) ∈ differentIdeal (𝓞 K) (𝓞 M) := by
-  obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot (S := {m}) K M
-    (Set.mem_singleton m) (NeZero.ne m)
-  set z : 𝓞 M := hζ.toInteger
-  -- `M = K(ζ)` is generated over `K` by a primitive `m`-th root of unity, so the different
-  -- contains the element `aeval ζ (derivative (minpoly (𝓞 K) ζ))`.
-  have hmem := aeval_derivative_mem_differentIdeal (𝓞 K) K M z
-    (IsCyclotomicExtension.adjoin_primitive_root_eq_top (n := m) hζ)
-  have hzpow : z ^ m = 1 := hζ.toInteger_isPrimitiveRoot.pow_eq_one
-  -- `ζ` is a root of `X ^ m - 1`, so its minimal polynomial divides that.
-  obtain ⟨q, hq⟩ : minpoly (𝓞 K) z ∣ (X ^ m - 1 : (𝓞 K)[X]) :=
-    minpoly.isIntegrallyClosed_dvd (Algebra.IsIntegral.isIntegral z) (by simp [hzpow])
-  -- Differentiating that factorisation at `ζ` makes `m * ζ ^ (m - 1)` a multiple of `hmem`.
-  have hder : aeval z (derivative (X ^ m - 1 : (𝓞 K)[X])) =
-      aeval z (derivative (minpoly (𝓞 K) z)) * aeval z q := by
-    rw [hq, derivative_mul, map_add, map_mul, map_mul, minpoly.aeval, zero_mul, add_zero]
-  rw [derivative_sub, derivative_X_pow, derivative_one, sub_zero, map_mul, map_pow, aeval_C,
-    aeval_X] at hder
-  -- Multiplying by `ζ` and using `ζ ^ m = 1` turns `m * ζ ^ (m - 1)` into `m` itself.
-  have hm : (m : 𝓞 M) = aeval z (derivative (minpoly (𝓞 K) z)) * aeval z q * z := by
-    rw [← hder, mul_assoc, ← pow_succ, Nat.sub_add_cancel (NeZero.pos m), hzpow, mul_one,
-      map_natCast]
-  rw [hm]
-  exact Ideal.mul_mem_right _ _ (Ideal.mul_mem_right _ _ hmem)
-
-open NumberField in
-/-- **A prime ramifying in a cyclotomic extension either ramifies below or divides the level.**
-For `M / K` an `m`-th cyclotomic extension of a number field, a prime dividing `discr M` divides
-`discr K` or divides `m`.
-
-Unlike `finrank_eq_totient`, this does carry `[NumberField M]`: the statement names `discr M`,
-which is not defined without it. It is not a real restriction — a cyclotomic extension of a
-number field is one — but it cannot be left to the proof. A caller holding only `[NumberField K]`
-gets the instance from `IsCyclotomicExtension.numberField {m} K M`. -/
-theorem prime_dvd_natAbs_discr (K M : Type*) [Field K] [NumberField K] [Field M] [NumberField M]
-    [Algebra K M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} K M] {p : ℕ} (hp : p.Prime)
-    (hpM : p ∣ (NumberField.discr M).natAbs) : p ∣ (NumberField.discr K).natAbs ∨ p ∣ m := by
-  by_cases hdm : p ∣ m
-  · exact Or.inr hdm
-  refine Or.inl ?_
-  by_contra hdK
-  have hpZ : Prime (p : ℤ) := Nat.prime_iff_prime_int.mp hp
-  have hKZ : ¬ (p : ℤ) ∣ NumberField.discr K := fun h ↦
-    hdK (Int.natCast_dvd_natCast.mp (Int.dvd_natAbs.mpr h))
-  -- It suffices to show every prime of `𝓞 M` above `p` is unramified over `ℤ`.
-  refine (NumberField.not_dvd_discr_iff_forall_mem M (𝓞 M) hpZ).mpr ?_
-    (Int.dvd_natAbs.mp (Int.natCast_dvd_natCast.mpr hpM))
-  intro P hP hpP
-  rw [← not_dvd_differentIdeal_iff]
-  intro hdvd
-  -- Transitivity splits `𝔡(𝓞 M / ℤ)` into `𝔡(𝓞 M / 𝓞 K)` times the extension of `𝔡(𝓞 K / ℤ)`,
-  -- so the prime `P` must divide one of the two factors.
-  rw [differentIdeal_eq_differentIdeal_mul_differentIdeal ℤ (𝓞 K) (𝓞 M),
-    Ideal.dvd_iff_le] at hdvd
-  rcases hP.mul_le.mp hdvd with h | h
-  · -- `P` contains both `m`, via the different of `𝓞 M / 𝓞 K`, and `p`; they are coprime.
-    obtain ⟨a, b, hab⟩ : IsCoprime ((p : ℤ) : 𝓞 M) ((m : ℕ) : 𝓞 M) := by
-      simpa using (Nat.isCoprime_iff_coprime.mpr
-        (hp.coprime_iff_not_dvd.mpr hdm)).map (algebraMap ℤ (𝓞 M))
-    exact hP.ne_top ((Ideal.eq_top_iff_one P).mpr (hab ▸ P.add_mem (P.mul_mem_left a hpP)
-      (P.mul_mem_left b (h (natCast_mem_differentIdeal K M m)))))
-  · -- `P ∩ 𝓞 K` lies above `p`, hence is unramified over `ℤ`, hence misses `𝔡(𝓞 K / ℤ)`.
-    have hpQ : ((p : ℤ) : 𝓞 K) ∈ P.comap (algebraMap (𝓞 K) (𝓞 M)) := by
-      simpa [Ideal.mem_comap] using hpP
-    exact not_dvd_differentIdeal_iff.mpr
-        ((NumberField.not_dvd_discr_iff_forall_mem K (𝓞 K) hpZ).mp hKZ _
-          (Ideal.IsPrime.comap _) hpQ)
-      (Ideal.dvd_iff_le.mpr (Ideal.map_le_iff_le_comap.mp h))
 
 end IsCyclotomicExtension
