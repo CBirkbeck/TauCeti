@@ -38702,3 +38702,20 @@ touched none of their files, and its new lines name nothing they remove.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r797 — 2026-09-15T05:36Z — no merges; #6855 still MERGING at 2 of 44 with its group mid-build; board unchanged
+
+**Board** (05:36:52Z; sweep and queuepos exited 0; `/tmp` at 59%): #6851, #6854 and #6855 are `ready-to-merge`, CI green,
+boards on head. #6855 is MERGING at 2 of 44; #6851 is QUEUED at 4 and #6854 at 16 (positions and depth unchanged). #5950
+is Chris's. No merges since #6611 (05:21:33Z), and main is still `91fe5bc2e`, so r796's simulations stand. Nothing to
+fix, contest or drive; step 5 shut.
+
+**Queue head** (05:37Z): both top groups are still in `sandboxed-build`: #6748's `5f65dc53ab` since 05:20:17Z and
+#6855's `d7ac608e0c` since 05:21:38Z. Neither has failed. 41 Actions runs are queued, and each group's publish and
+finalize jobs still need runners after the build.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
