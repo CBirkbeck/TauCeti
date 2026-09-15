@@ -38188,3 +38188,30 @@ there is nothing to do.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r774 — 2026-09-15T01:47Z — the queue moves again (14/16/28); main moved (#6665, #6822); all three re-simulated clean
+
+**Board** (01:46:22Z; sweep and queuepos exited 0; `/tmp` at 40%): #6851, #6854 and #6855 are `ready-to-merge`, CI green,
+boards on head; QUEUED at 16, 28 and 14 of 31 (they were 20, 32 and 18 of 35 at r773). #5950 is Chris's. Nothing to fix,
+contest or drive; step 5 shut.
+
+**Main moved twice** (both base `main`): `f8e8a3e62` → `698fde982` (#6665, the Steinberg endomorphism and candidate group
+of Bₙ(q) on the spin carrier: the new `CFSG/TypeB/Basic.lean`, +338) → **`3fdb62326`** (#6822, the tagged fixed field has
+orderOf τ automorphisms below M: `Chebotarev/TaggedFixedField.lean` +22 and `FieldTheory/Galois/FixedField.lean` +20/−1).
+The firing control read 1 removed line, 379 added, and 0 removed and 22 added declaration headers; nothing was removed
+and no module renamed. All three of mine merge clean; main touched none of their files, and its new lines name nothing
+they remove.
+
+**Merge-group simulation** against `3fdb62326`:
+
+```
+#6851  20 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6854  18 behind  merges clean  ghostref: 0 removed (removes nothing)     stalequal: exit 0
+#6855  18 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

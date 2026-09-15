@@ -1,4 +1,4 @@
-# Last round — r773 (2026-09-15T01:38Z)
+# Last round — r774 (2026-09-15T01:47Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -14,7 +14,7 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
 **#6854** on the driven re-review (r768), queued at r770. Nothing is staged; the next opening is kind 1 again (the deck group). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r773):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r774):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -31,19 +31,19 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`, **QUEUED pos 20/35** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`, **QUEUED pos 32/35** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6855** | `352c92a114` | green | kind 3; **10/10 first board** (22:32:04Z), `ready-to-merge`, **QUEUED pos 18/35** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`, **QUEUED pos 16/31** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`, **QUEUED pos 28/31** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6855** | `352c92a114` | green | kind 3; **10/10 first board** (22:32:04Z), `ready-to-merge`, **QUEUED pos 14/31** | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open (#6851, #6854, #6855) → step 5 does not fire** until one merges; all three are
-queued (#6855 18th, #6851 20th, #6854 32nd). Main is `f8e8a3e62`.
+queued (#6855 14th, #6851 16th, #6854 28th). Main is `3fdb62326`.
 
 ## What to expect next
 
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. A `MERGING` PR's group build is the check-runs of
    `git ls-remote origin 'refs/heads/gh-readonly-queue/main/pr-<n>-*'` (r739), the earliest sign of an ejection. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only; r770: #6851, #6854 and #6855 clean against `f8e8a3e62`). Staged branches:
+   merge-group simulation (cheap, read-only; r774: #6851, #6854 and #6855 clean against `3fdb62326`). Staged branches:
    `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r750: none
    left; kind 3 opened as #6855). A merge-tree check sees conflicts, not new
    callers: also grep main's new lines for the names each staged branch removes, and when main DELETES declarations,
@@ -97,7 +97,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r773 did
+## What r703–r774 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -176,6 +176,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
   declarations, none used by mine); all re-simulated clean.
 * r771–r772: lost to a full `/tmp` (ENOSPC; every command failed, and nothing was read, recorded or changed).
 * r773: space back (another session held 24G of `/tmp/claude-1001`); board unchanged; queue slow again (195 queued runs).
+* r774: queue moving (14/16/28); main moved (#6665, #6822, additive); all three re-simulated clean.
 
 ## Candidates for a later step 5
 
