@@ -8,16 +8,12 @@ module
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 
 /-!
-# Change of scalars on general linear groups
+# Injectivity of `Matrix.GeneralLinearGroup.map`
 
 `Matrix.GeneralLinearGroup.map f : GL n R →* GL n S` applies a ring hom `f : R →+* S` entrywise.
 Mathlib gives its functoriality (`map_id`, `map_comp`, `map_comp_apply`) but says nothing about
 injectivity, which is what a construction transporting a group of matrices along a change of
 scalars needs.
-
-The instance used throughout the modular-forms development is `ℚ → ℝ` at `n = 2`: rational matrix
-data does not act on the upper half-plane and real matrix data does. It is spelled
-`Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)` at each use rather than abbreviated.
 
 ## Main results
 
@@ -26,10 +22,6 @@ data does not act on the upper half-plane and real matrix data does. It is spell
 -/
 
 public section
-
-open Matrix
-
-open scoped MatrixGroups
 
 namespace Matrix.GeneralLinearGroup
 
@@ -42,4 +34,3 @@ theorem map_injective {f : R →+* S} (hf : Function.Injective f) :
   Units.map_injective (Matrix.map_injective hf)
 
 end Matrix.GeneralLinearGroup
-
