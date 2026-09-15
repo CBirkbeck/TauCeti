@@ -38821,3 +38821,24 @@ at 05:18:46Z.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r801 — 2026-09-15T06:46Z — #6875's first build green; marked ready for review; no merges
+
+**Board** (06:46:22Z; sweep exited 0, and `queuepos.py` exited 1 on its corrected EJECTED hint; `/tmp` at 59%): #6851
+and #6854 are `ready-to-merge`, with CI green and boards on head, and still out of the queue. **#6875's first build is
+green:** `sandboxed-build` ran 06:20:33–06:38:24Z, so all 35 files compiled against the pin, and every check's latest
+run is success or skipped. #5950 is Chris's. No merges since #6855 (05:43:53Z); main is still `d7ac608e0`.
+
+**Step 5, last action:** I marked #6875 ready for review at 06:46:57Z (`gh pr ready`), and it now reads `isDraft=false`
+on head `e70f761ba4`. The step-4 clock runs from 06:46:57Z, which is later than CI-green, so a re-drive is due only if
+no board lands for this head by 07:47Z. The PR carries `awaiting-review` and `roadmap/none` (because of the
+`web/examples` path), and even at 10/10 it needs a human merge.
+
+**Queue:** depth 1. #6852's group `400ca6f7e1` has been in `sandboxed-build` since 06:15:40Z (31 minutes). The merge
+sweep last ran at 05:18:46Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

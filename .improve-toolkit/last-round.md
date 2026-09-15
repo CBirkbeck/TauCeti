@@ -1,4 +1,4 @@
-# Last round — r800 (2026-09-15T06:36Z)
+# Last round — r801 (2026-09-15T06:46Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -11,18 +11,18 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
 3. **What this role has been doing** — rooting, dedup, hypothesis weakening, docstrings, relocation.
 
 **Second cycle, kind 1 open:** kind 3 **#6855 merged** (05:43:53Z, r798). Kind 1 **#6851** and kind 2 **#6854** are 10/10
-but were flushed from the queue for the bot's Mathlib bump (r798). The freed slot went to kind 1 again: draft **#6875**,
+but were flushed from the queue for the bot's Mathlib bump (r798). The freed slot went to kind 1 again: **#6875** (ready since r801),
 Mathlib's deck group (r798), which needs a **human merge** because it updates `web/examples/Examples.lean`. **The next
 opening is kind 2** (a new file). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r800):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r801):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
 no-build default, and so did kinds 2 (#6854, r749) and 3 (#6855, r750) and kind 1 again (#6875, r798). **If he
 answers:** #6851 and #6854 are 10/10, so a push to either would cost the board. Give them a separate follow-up PR
-instead. #6875 is a draft with no board yet, so a scoped pass can go into it directly.
+instead. #6875 has no board yet, so a scoped pass can still go into it directly.
 
 **ChatGPT access:** no `chatgpt-math` MCP server is configured (only `lean-lsp`). The model is reachable
 through the local codex CLI that MCP wraps:
@@ -35,11 +35,11 @@ through the local codex CLI that MCP wraps:
 |---|---|---|---|---|
 | **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`; **flushed** from MERGING 2/43 by the bot for #6852 (06:11:46Z, `manual`) | nobody — `merge-sweep` re-enqueues it after #6852 merges; do not refresh |
 | **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`; **flushed** from 14/43 for #6852 (06:12:02Z, `manual`) | nobody — `merge-sweep` re-enqueues it after #6852 merges; do not refresh |
-| **#6875** | `e70f761ba4` | building (from 06:20:33Z) | kind 1 (Mathlib's deck group); **DRAFT**, opened r798; needs a human merge (`web/examples`) | **me** — mark ready when CI is green |
+| **#6875** | `e70f761ba4` | green (06:38:24Z) | kind 1 (Mathlib's deck group); **READY** 06:46:57Z (r801), `awaiting-review`, no board yet; needs a human merge (`web/examples`) | pipeline — re-drive only if no board for this head by 07:47Z |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open (#6851, #6854, #6875) → step 5 does not fire** until one merges. #6855 merged
-at 05:43:53Z. #6851 and #6854 stay out of the queue until the bot re-enqueues them, and #6875 is a draft. Main is `d7ac608e0`.
+at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enqueues them, and #6875 awaits its first board. Main is `d7ac608e0`.
 
 ## What to expect next
 
@@ -61,9 +61,9 @@ at 05:43:53Z. #6851 and #6854 stay out of the queue until the bot re-enqueues th
 3. **#6854 (kind 2, quadratic separability) is 10/10** on the r768 driven board (00:49:59Z, head `217fecb812`). It was
    flushed from 14th the same way (r798); handle it like #6851. It removes nothing, so only merge-tree and ghostref's
    firing control matter.
-4. **#6875 (kind 1 again, Mathlib's deck group) is a DRAFT** (r798, head `e70f761ba`). Run `gh pr ready` once its CI is
-   green. It changes 35 files with no local build, so a red first build is plausible: read the CI log, fix, re-gate with
-   `prepush.sh` and push. Expect `prepush.sh`'s `decldiff` FAIL (`VANISHED TauCeti.Deck`), since the deletion is the
+4. **#6875 (kind 1 again, Mathlib's deck group) is READY** (r801, 06:46:57Z; head `e70f761ba`). Its first build was
+   green (`sandboxed-build` 06:20:33–06:38:24Z), so all 35 files compiled. No board yet: re-drive (step 4) only if none
+   lands for this head by 07:47Z. Any later push re-gates with `prepush.sh` first. Expect `prepush.sh`'s `decldiff` FAIL (`VANISHED TauCeti.Deck`), since the deletion is the
    point of the PR. It touches `web/examples/Examples.lean`, so it cannot auto-merge; once it is 10/10, the merge is
    Chris's call, as with #5950.
 5. **At the next free slot:** kind 2 (a new file; research it while the cap is shut), then kind 3 (next candidate:
@@ -108,7 +108,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r800 did
+## What r703–r801 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -221,6 +221,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r798: #6855 merged (05:43:53Z), so step 5 fired and kind 1 opened as draft #6875 (Mathlib's deck group; human merge for `web/examples`). The bot flushed the queue for its bump #6852, so #6851 and #6854 read `EJECTED`.
 * r799: REST out until 06:24:59Z; corrected `queuepos.py`'s stale EJECTED advice (the merge sweep re-enqueues flushed green PRs; controls 166/0); #6875's first build running; #6852 still alone in the queue.
 * r800: no merges; #6875's first build and #6852's group build still running; the merge sweep has not re-run (last 05:18:46Z).
+* r801: #6875's first build went green (06:38:24Z), so I marked it ready at 06:46:57Z; no merges; #6852's group build still running (31 min).
 
 ## Candidates for a later step 5
 
