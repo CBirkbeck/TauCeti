@@ -1,4 +1,4 @@
-# Last round — r832 (2026-09-15T13:16Z)
+# Last round — r833 (2026-09-15T13:26Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -16,7 +16,7 @@ Mathlib's deck group (r798), which needs a **human merge** because it updates `w
 opening is kind 2** (a new file). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r832):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r833):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -114,7 +114,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r832 did
+## What r703–r833 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -259,6 +259,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r830: main moved to `a9313057f` (#6809, one new quaternion file); nothing removed; all three PRs re-simulated clean.
 * r831: main moved to `c38794df8` (#6747, Schwarz–Christoffel polygon boundary; one module moved, nothing removed); all three PRs re-simulated clean.
 * r832: main moved to `82f5e9ac2` (#6770 DG right modules, #6795 circle Peter–Weyl; nothing removed); all three PRs re-simulated clean.
+* r833: REST out at 13:26Z (back by 13:28:48Z); a GraphQL read (new `sweep-gql.py`) and the rerun agree: no change, no merges. The quota probe had used `rate_limit`'s own headers; probe a real call.
 
 ## Candidates for a later step 5
 
@@ -346,7 +347,8 @@ judged on this head. `threadread.py` classifies both as NOT ACTIONABLE — answe
 can run out mid-round. `sweep.py` now prints `API-ERROR` and exits 1, and `queuepos.py` prints `UNRUN` (exit 2) or
 `UNKNOWN` — **rerun; never act on those rows**. Before r722 an unreadable merge queue could print `EJECTED`.
 **Do not trust `gh api rate_limit`** (r734: at 19:16Z it said core 4999 left, reset 19:36Z, while every REST read
-failed). Read the quota off a real call: `gh api -i <endpoint>` prints `X-RateLimit-Remaining` and `-Reset`.
+failed). Read the quota off a real call: `gh api -i <endpoint>` prints `X-RateLimit-Remaining` and `-Reset`. The
+headers of `gh api -i rate_limit` are no better (r833: `used 0` there while `pulls/6851` read `used 18`).
 **The hourly window rolls over at about :17–:19** (r722, r728, r734 at 19:17:29Z, r740; r777 at 02:19:08Z), and the :16
 round keeps hitting it. Read the exact reset from a failing `gh api -i` call (`X-RateLimit-Reset`, free even on the
 403), then rerun in a background until-loop (foreground `sleep` is blocked).
@@ -395,6 +397,8 @@ which is not a CI state.
 `discrim_eq_sq_of_two_eq_zero` golf riding along with the separability lemma. Ship such a golf as its own PR.
 **During a REST outage, read a board's `head_sha` from GraphQL** (`pullRequest.comments { updatedAt body }`). A
 comment count alone cannot tell a re-review from the old board, because an edited board keeps its id (r765).
+`sweep-gql.py [PR ...]`, next to `sweep.py` in the session scratchpad, reads the whole board that way (r833): drafts,
+labels, the latest check run per name, boards by `updatedAt`, and merge-queue membership.
 **A merged-list entry is not a main merge** (r768: #6757 and #6831 were stacked PRs into CFSG feature branches).
 Filter `gh pr list --state merged` by `baseRefName`, or confirm against `git log origin/main`.
 **A pushed fix did not re-review itself within the hour** (r768: #6854's two boards were both drives). Keep the

@@ -39596,3 +39596,31 @@ are queued. The last merge-sweep run is still the 10:24:54Z failure.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r833 — 2026-09-15T13:26Z — no change; REST quota ran out during the sweep and was back within two minutes; no merges since #6795
+
+**Board.** The first sweep (13:26:26Z) was unreadable. Every check-runs, comments and timeline read returned `API rate
+limit exceeded for user ID 56166236`, so the sweep exited 1 and `queuepos.py` reported UNKNOWN for all four PRs. The
+header probe just before it had read 5000 calls left. A GraphQL read at 13:27:59Z showed the board unchanged; it is
+now saved as `sweep-gql.py` in the session scratchpad. REST was back for a rerun at 13:28:48Z, and the sweep exited 0.
+`queuepos.py` exited 1 on its EJECTED hint, and `/tmp` is at 55%. #6851 and #6854 are `ready-to-merge`, with CI green
+and boards on head, and still not queued. #6875 is `ready-to-merge` with CI green and NEVER-QUEUED, waiting for a
+human merge. #5950 is Chris's. Nothing to fix, contest or drive; step 5 is shut.
+
+**The quota probe used the wrong endpoint.** Since r831 the round has read the quota from the headers of
+`gh api -i rate_limit` itself, which the r734 trap already says not to trust. Here it read `remaining 5000`, `used 0`
+and a reset one hour after the call at 13:26:26Z, 13:27:45Z and 13:28:56Z, even straight after the rerun's successful
+calls. At 13:30:12Z a real call (`gh api -i repos/TauCetiProject/TauCeti/pulls/6851`) read `used 18`, 4982 left, while
+`rate_limit` still read `used 0`. Probe with a real call. Treat a sweep with API ERROR lines as unread: rerun it a
+minute or two later, or read the board with `sweep-gql.py`.
+
+**Merges and main.** No merges since #6795 (13:15:07Z). Main is still `82f5e9ac2`, so r832's simulations stand.
+
+**Queue and Actions** (13:26:35Z): depth 36, none of them mine; #6781 and #6698 are AWAITING_CHECKS. 40 Actions runs
+were queued at 13:28:48Z. The last merge-sweep run is still the 10:24:54Z failure.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits: `sweep-gql.py` sits next to `sweep.py` in the session scratchpad, not in `tools/`.
