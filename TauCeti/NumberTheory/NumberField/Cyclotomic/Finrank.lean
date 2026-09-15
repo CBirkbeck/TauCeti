@@ -21,8 +21,8 @@ This file supplies the arithmetic criterion: if `m` is coprime to the discrimina
 
 `[M : K] = φ m`   for `M / K` an `m`-th cyclotomic extension with `K` a number field.
 
-The mechanism is linear disjointness rather than a direct irreducibility argument. Inside `M`,
-the two subfields `ℚ(ζ)` and (the image of) `K` have coprime discriminants, so Mathlib's
+The degree comes from linear disjointness rather than a direct irreducibility argument. Inside
+`M`, the two subfields `ℚ(ζ)` and (the image of) `K` have coprime discriminants, so Mathlib's
 `NumberField.linearDisjoint_of_isGalois_isCoprime_discr` makes them linearly disjoint; their
 compositum is `M`, so the degree of `M` over `K` equals the degree of `ℚ(ζ)` over `ℚ`, which is
 `φ m`. Coprimality of the discriminants is where the hypothesis is spent, via the divisibility
@@ -54,12 +54,12 @@ irreducibility conditions would have to be re-derived from it at each use. Some 
 kind is unavoidable there: `[M : K] = φ m` fails outright when `K` already contains a primitive
 `m`-th root of unity. The ramification statement needs none, and carries none.
 
-`finrank_eq_totient` asks only the base `K` to be a number field: `M` is finite over `K` by
-`IsCyclotomicExtension.finiteDimensional`, hence a number field on its own, so demanding
-`[NumberField M]` there would be an avoidable hypothesis. `prime_dvd_natAbs_discr` cannot make
-that economy, because its statement names `discr M`, which does not elaborate without the
-instance; it therefore takes `[NumberField M]`, and a caller holding only `[NumberField K]`
-supplies it exactly as `finrank_eq_totient` does internally.
+`finrank_eq_totient` asks only the base `K` to be a number field: a cyclotomic extension of a
+number field is again one, by `IsCyclotomicExtension.numberField`, so demanding `[NumberField M]`
+there would be an avoidable hypothesis. `prime_dvd_natAbs_discr` cannot make that economy, because
+its statement names `discr M`, which does not elaborate without the instance; it therefore takes
+`[NumberField M]`, and a caller holding only `[NumberField K]` supplies it exactly as
+`finrank_eq_totient` does internally.
 
 Adapted from the Birkbeck–Brasca Chebotarev density project.
 -/
@@ -83,13 +83,13 @@ theorem prime_dvd_of_dvd_natAbs_discr (E : Type*) [Field E] [NumberField E] (m :
 
 end Rat
 
-/-- **The linear-disjointness setup** behind the degree identity. Inside `M` sit `K₁ = ℚ(ζ)` and
-`K₂`, the image of `K`; they have coprime discriminants, so they are linearly disjoint, and they
-generate `M`.
-
-Private, and stated as an existential rather than as a definition, because its only role is to be
-destructured by `finrank_eq_totient`: nothing downstream needs to name `K₁` or `K₂`, and packaging
-them as data would expose a choice of primitive root that the consumer does not make. -/
+-- **The linear-disjointness setup** behind the degree identity. Inside `M` sit `K₁ = ℚ(ζ)` and
+-- `K₂`, the image of `K`; they have coprime discriminants, so they are linearly disjoint, and
+-- they generate `M`.
+--
+-- Stated as an existential rather than as a definition because its only role is to be
+-- destructured by `finrank_eq_totient`: nothing downstream needs to name `K₁` or `K₂`, and
+-- packaging them as data would expose a choice of primitive root that the consumer does not make.
 private theorem exists_adjoin_linearDisjoint (K M : Type*) [Field K] [NumberField K] [Field M]
     [NumberField M] [Algebra K M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} K M]
     (hcop : ((NumberField.discr K).natAbs).Coprime m) :
@@ -99,7 +99,7 @@ private theorem exists_adjoin_linearDisjoint (K M : Type*) [Field K] [NumberFiel
     (Set.mem_singleton m) (NeZero.ne m)
   set K₁ : IntermediateField ℚ M := IntermediateField.adjoin ℚ {ζ}
   set K₂ : IntermediateField ℚ M := (IsScalarTower.toAlgHom ℚ K M).fieldRange
-  have : IsCyclotomicExtension {m} ℚ K₁ :=
+  have hcyc : IsCyclotomicExtension {m} ℚ K₁ :=
     hζ.intermediateField_adjoin_isCyclotomicExtension (K := ℚ)
   have : IsGalois ℚ K₁ := IsCyclotomicExtension.isGalois (S := {m}) (K := ℚ) (L := K₁)
   have hsup : K₁ ⊔ K₂ = ⊤ :=
@@ -126,7 +126,7 @@ private theorem exists_adjoin_linearDisjoint (K M : Type*) [Field K] [NumberFiel
     -- `eK₂` is the embedding `K → M` with its range restricted, so coercing back to `M` returns
     -- that embedding: `RingHom.rangeRestrictFieldEquiv_apply_coe`.
     exact RingHom.rangeRestrictFieldEquiv_apply_coe _ x
-  exact ⟨K₁, K₂, ‹IsCyclotomicExtension {m} ℚ K₁›, hsup, hld, hrelabel⟩
+  exact ⟨K₁, K₂, hcyc, hsup, hld, hrelabel⟩
 
 /-- **The cyclotomic degree over a number field base.** If `M / K` is an `m`-th cyclotomic
 extension with `K` a number field and `m` coprime to `discr K`, then `[M : K] = φ m`.
@@ -150,26 +150,31 @@ open NumberField Polynomial in
 number fields, `m` belongs to the different ideal of `𝓞 M` over `𝓞 K`; equivalently that different
 divides `(m)`, so only primes dividing `m` can ramify in `M / K`.
 
-`M = K(ζ)` is generated over `K` by a primitive `m`-th root of unity, so `minpoly (𝓞 K) ζ` divides
-`X ^ m - 1`; differentiating that factorisation and evaluating at `ζ` exhibits `m * ζ ^ (m - 1)` as
-a multiple of the element `aeval ζ (derivative (minpoly (𝓞 K) ζ))` of the different. Multiplying
-by `ζ` and using `ζ ^ m = 1` turns it into `m` itself. -/
-theorem natCast_mem_differentIdeal (K M : Type*) [Field K] [NumberField K] [Field M]
-    [NumberField M] [Algebra K M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} K M] :
+Stated as a membership rather than as a divisibility of `Ideal.span {(m : 𝓞 M)}`: that is the
+form Mathlib's `aeval_derivative_mem_differentIdeal` produces, and the form a consumer feeds to
+an `Ideal.dvd_iff_le` bound on the different; `Ideal.span_singleton_le_iff_mem` recovers the
+divisibility reading where that is the one wanted. -/
+theorem natCast_mem_differentIdeal (K M : Type*) [Field K] [NumberField K] [Field M] [NumberField M]
+    [Algebra K M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} K M] :
     (m : 𝓞 M) ∈ differentIdeal (𝓞 K) (𝓞 M) := by
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot (S := {m}) K M
     (Set.mem_singleton m) (NeZero.ne m)
   set z : 𝓞 M := hζ.toInteger
+  -- `M = K(ζ)` is generated over `K` by a primitive `m`-th root of unity, so the different
+  -- contains the element `aeval ζ (derivative (minpoly (𝓞 K) ζ))`.
   have hmem := aeval_derivative_mem_differentIdeal (𝓞 K) K M z
     (IsCyclotomicExtension.adjoin_primitive_root_eq_top (n := m) hζ)
   have hzpow : z ^ m = 1 := hζ.toInteger_isPrimitiveRoot.pow_eq_one
+  -- `ζ` is a root of `X ^ m - 1`, so its minimal polynomial divides that.
   obtain ⟨q, hq⟩ : minpoly (𝓞 K) z ∣ (X ^ m - 1 : (𝓞 K)[X]) :=
     minpoly.isIntegrallyClosed_dvd (Algebra.IsIntegral.isIntegral z) (by simp [hzpow])
+  -- Differentiating that factorisation at `ζ` makes `m * ζ ^ (m - 1)` a multiple of `hmem`.
   have hder : aeval z (derivative (X ^ m - 1 : (𝓞 K)[X])) =
       aeval z (derivative (minpoly (𝓞 K) z)) * aeval z q := by
     rw [hq, derivative_mul, map_add, map_mul, map_mul, minpoly.aeval, zero_mul, add_zero]
   rw [derivative_sub, derivative_X_pow, derivative_one, sub_zero, map_mul, map_pow, aeval_C,
     aeval_X] at hder
+  -- Multiplying by `ζ` and using `ζ ^ m = 1` turns `m * ζ ^ (m - 1)` into `m` itself.
   have hm : (m : 𝓞 M) = aeval z (derivative (minpoly (𝓞 K) z)) * aeval z q * z := by
     rw [← hder, mul_assoc, ← pow_succ, Nat.sub_add_cancel (NeZero.pos m), hzpow, mul_one,
       map_natCast]
@@ -180,12 +185,6 @@ open NumberField in
 /-- **A prime ramifying in a cyclotomic extension either ramifies below or divides the level.**
 For `M / K` an `m`-th cyclotomic extension of a number field, a prime dividing `discr M` divides
 `discr K` or divides `m`.
-
-The argument is local at a prime `P` of `𝓞 M` above `p`. By transitivity, `𝔡(𝓞 M / ℤ)` is
-`𝔡(𝓞 M / 𝓞 K)` times the extension of `𝔡(𝓞 K / ℤ)`, so `P` divides one of the two factors. It
-does not divide the first, which contains `m` by `natCast_mem_differentIdeal` while `p` is prime
-to `m`; and it does not divide the second, because `p ∤ discr K` leaves `P ∩ 𝓞 K` unramified over
-`ℤ`. So `P` does not divide `𝔡(𝓞 M / ℤ)`, and `p ∤ discr M`.
 
 Unlike `finrank_eq_totient`, this does carry `[NumberField M]`: the statement names `discr M`,
 which is not defined without it. It is not a real restriction — a cyclotomic extension of a
@@ -200,15 +199,16 @@ theorem prime_dvd_natAbs_discr (K M : Type*) [Field K] [NumberField K] [Field M]
   refine Or.inl ?_
   by_contra hdK
   have hpZ : Prime (p : ℤ) := Nat.prime_iff_prime_int.mp hp
-  have hMZ : (p : ℤ) ∣ NumberField.discr M :=
-    Int.dvd_natAbs.mp (Int.natCast_dvd_natCast.mpr hpM)
   have hKZ : ¬ (p : ℤ) ∣ NumberField.discr K := fun h ↦
     hdK (Int.natCast_dvd_natCast.mp (Int.dvd_natAbs.mpr h))
   -- It suffices to show every prime of `𝓞 M` above `p` is unramified over `ℤ`.
-  refine (NumberField.not_dvd_discr_iff_forall_mem M (𝓞 M) hpZ).mpr ?_ hMZ
+  refine (NumberField.not_dvd_discr_iff_forall_mem M (𝓞 M) hpZ).mpr ?_
+    (Int.dvd_natAbs.mp (Int.natCast_dvd_natCast.mpr hpM))
   intro P hP hpP
   rw [← not_dvd_differentIdeal_iff]
   intro hdvd
+  -- Transitivity splits `𝔡(𝓞 M / ℤ)` into `𝔡(𝓞 M / 𝓞 K)` times the extension of `𝔡(𝓞 K / ℤ)`,
+  -- so the prime `P` must divide one of the two factors.
   rw [differentIdeal_eq_differentIdeal_mul_differentIdeal ℤ (𝓞 K) (𝓞 M),
     Ideal.dvd_iff_le] at hdvd
   rcases hP.mul_le.mp hdvd with h | h
