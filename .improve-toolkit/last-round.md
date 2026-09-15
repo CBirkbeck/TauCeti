@@ -1,4 +1,4 @@
-# Last round — r874 (2026-09-15T22:17Z)
+# Last round — r875 (2026-09-15T22:18Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -41,7 +41,6 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6851** | `fdeaff5cb7` | merged | kind 1 (Mathlib's Levi-Civita connection); **MERGED 22:11:28Z** (merge commit `14754a1d1`, grouped behind #6853) | nobody — drop this row next round |
 | **#6875** | `462ed9705b` | green (07:49:13Z) | kind 1 (Mathlib's deck group); **10/10 on the re-review** (08:54:23Z, head `462ed97`), `ready-to-merge` since ~09:28Z and NEVER-QUEUED after r803 fixed the first board's naming, placement and documentation findings; cannot auto-merge (`web/examples`) | **Chris** — merge it; until then it holds one of the three step-5 slots |
 | **#6896** | `8a6278e95` | green (15:34:55Z) | kind 2 (convex-subgroup exclusion lemmas take `≤`, renamed to `notMem`); **10/10 on the driven board** (codex, posted 17:14:21Z, r847–r848), `ready-to-merge`; **QUEUED 42/72** (enqueued 19:12:32Z by the 19:11:04Z merge sweep; 21:56Z, r873) | nobody — the queue builds its group; on an eject, read the removal reason first |
 | **#6899** | `f450e0dcc` | green (15:42:54Z) | kind 3 (`chafaiRescaling_coe_of_nonneg`); ready 15:47:13Z; **board on head at 16:40:36Z (eohjelle), `ready-to-merge`**; **QUEUED 41/72** (enqueued 19:12:24Z by the merge sweep; 21:56Z, r873) | nobody — the queue builds its group; on an eject, read the removal reason first |
@@ -137,7 +136,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r874 did
+## What r703–r875 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -324,6 +323,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r872: #6945 went green (21:37:02Z) and was marked ready (21:47:11Z; drive not before 22:47Z). #6854 was still MERGING at 2, #6941 was not yet due for a drive (21:58Z), and there were no merges.
 * r873: **#6854 merged** (21:52:04Z, with #6860), and #6851 is MERGING at 2. #6941's review, driven after its hour (21:58:10Z), approved 10/10 ($1.22), and it queued. That freed a slot, and with kind 1 still dry at `30a58f795a`, kind 2 opened as draft **#6947**, a style pass on `Arrays/ZeroOne.lean` (gpt-6-astra: no risk; gate 12/0/0). Main moved to `689c8bf27` (#6860, #6854, additive), and all twelve open heads re-simulated clean.
 * r874: **#6851 merged** (22:11:28Z, with #6853). The local worker approved #6915's `@[simp]` fix 10/10 (22:06:19Z), and it queued, freeing a slot. Fresh scans on `689c8bf27` found no new strict, implied, unused-binder or duplicate-signature target, so kind 3 opened as draft **#6950**, dropping two `deadhave`-flagged unused `have`s in `Recut/Pairing.lean` (gate 12/0/0). Main moved to `14754a1d1` (#6853, and #6851, which deletes 24 Levi-Civita declarations and `Existence.lean`). #6875's `unique` hit was prose, and all thirteen open heads re-simulated clean.
+* r875: no change 6 minutes after r874. #6947 and #6950 were still on their first builds, #6945 was not yet due for a drive (22:47Z), and there were no merges.
 
 ## Candidates for a later step 5
 

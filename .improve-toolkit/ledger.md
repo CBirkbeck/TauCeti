@@ -41187,3 +41187,21 @@ No toolkit edits.
 opening is kind 1 if a target exists, otherwise kind 2.
 
 No toolkit edits.
+
+---
+
+## r875 — 2026-09-15T22:17Z — no change; two first builds running; no drive due; no merges
+
+**Board** (22:17:40Z; a real call read 3284 REST calls left; sweep and `queuepos.py` exited 0):
+
+* #6947 (`3687b12b1`, draft) and #6950 (`049193f7a`, draft): `awaiting-CI`, first `sandboxed-build` in progress.
+* #6945 (`c7129d24c`): `awaiting-review`, no board. Step 4 may drive only after 22:47Z.
+* Queue depth 72, each two places up: #6910 35, #6911 38, #6899 39, #6896 40, #6902 55, #6923 59, #6933 66, #6941 71, #6915 72.
+  #6875 needs a human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6945, #6947, #6950).
+
+**Merges and main.** No merges since #6853 and #6851 (22:11:28Z). Main is still `14754a1d1`, against which r874 simulated all
+thirteen open heads clean. The merged #6851 row is dropped from the board.
+
+No toolkit edits.
