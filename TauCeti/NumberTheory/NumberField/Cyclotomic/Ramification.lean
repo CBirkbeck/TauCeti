@@ -50,8 +50,12 @@ open NumberField Polynomial in
 number fields, `m` belongs to the different ideal of `𝓞 M` over `𝓞 K`; equivalently that different
 divides `(m)`, so only primes dividing `m` can ramify in `M / K`. -/
 theorem natCast_mem_differentIdeal (K M : Type*) [Field K] [NumberField K] [Field M] [NumberField M]
-    [Algebra K M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} K M] :
+    [Algebra K M] (m : ℕ) [IsCyclotomicExtension {m} K M] :
     (m : 𝓞 M) ∈ differentIdeal (𝓞 K) (𝓞 M) := by
+  obtain rfl | hm := Nat.eq_zero_or_pos m
+  · -- At level `0` the claim reads `0 ∈ differentIdeal`, and every ideal contains `0`.
+    simp
+  have : NeZero m := ⟨hm.ne'⟩
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot (S := {m}) K M
     (Set.mem_singleton m) (NeZero.ne m)
   set z : 𝓞 M := hζ.toInteger
@@ -81,7 +85,7 @@ open NumberField in
 For `M / K` an `m`-th cyclotomic extension of number fields, a prime dividing `discr M` divides
 `discr K` or divides `m`. -/
 theorem prime_dvd_natAbs_discr_or_dvd_of_dvd_natAbs_discr (K M : Type*) [Field K] [NumberField K]
-    [Field M] [NumberField M] [Algebra K M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} K M]
+    [Field M] [NumberField M] [Algebra K M] (m : ℕ) [IsCyclotomicExtension {m} K M]
     {p : ℕ} (hp : p.Prime) (hpM : p ∣ (NumberField.discr M).natAbs) :
     p ∣ (NumberField.discr K).natAbs ∨ p ∣ m := by
   -- `|discr M|` factors as the norm of `𝔡(𝓞 M / 𝓞 K)` times `|discr K| ^ [M : K]`, so `p`
