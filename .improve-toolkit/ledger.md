@@ -40809,3 +40809,31 @@ Nothing to fix, contest or drive. The cap is full (#6915, #6923, #6933).
 **Merges and main.** No merges since #6619 (19:47:02Z). Main is still `d791db95c`.
 
 No toolkit edits.
+
+---
+
+## r864 — 2026-09-15T20:16Z — #6915's fix green; main moved (#6883, #6881; one module rename); all eleven re-simulated clean
+
+**Board** (20:16:23Z; a real call read 4488 REST calls left; sweep and `queuepos.py` exited 0):
+
+* **#6915** (`08b8138bc`): every latest check is green. `sandboxed-build` succeeded at 20:13:06Z, `zulip-pr` at 20:13:49Z,
+  and the new `merge / merge` check at 19:56:44Z. The label is `awaiting-review`, and the board (19:41:46Z, on `efbb6423d`) is
+  behind the fix. The clock runs from `max(20:13:06Z, 18:37:17Z)`, so step 4 may drive only after 21:13Z.
+* #6923 (`8f846c57b`): `awaiting-review`, no board. Step 4 may drive only after 20:28Z.
+* #6933 (`311f6a427`): `awaiting-review`, no board. Step 4 may drive only after 21:07Z.
+* Queue depth 70, each two places up: #6854 10, #6851 12, #6910 47, #6911 50, #6899 51, #6896 52, #6902 67. #6875 needs a
+  human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6915, #6923, #6933).
+
+**Main moved** `d791db95c` → **`9cd85f80e`** with #6883 ("make the double-coset splitting law natural", 20:07:48Z) and #6881
+("expose negative Tate corestriction naturality", 20:10:04Z): 4 files, +245/−1. The firing control read 1 removed line (prose),
+245 added, and 0 removed and 15 added declaration headers.
+
+* **One module moved:** `NumberTheory/RamificationInertia/DoubleCoset.lean` → `DoubleCoset/Basic.lean` (R100). No head's added
+  lines name the old module.
+* No declaration was removed and no import was dropped. Main touched none of the eleven heads' files, and there were no name hits
+  or clashes.
+* **Merge-group simulation** against `9cd85f80e`: all eleven merge clean, with `ghostref` and `stalequal` exit 0.
+
+No toolkit edits.
