@@ -1,4 +1,4 @@
-# Last round — r852 (2026-09-15T17:56Z)
+# Last round — r853 (2026-09-15T18:06Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -14,13 +14,13 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
 but were flushed from the queue for the bot's Mathlib bump (r798). The freed slot went to kind 1 again: **#6875** (ready since r801),
 Mathlib's deck group (r798), which needs a **human merge** because it updates `web/examples/Examples.lean`. Kind 2 opened as **#6896** (r843) and kind 3 as **#6899** (r844); both are now `ready-to-merge`. Kind 1 had no target at
 pin `30a58f795a` (r845), so kind 2 went again as **#6902** (PseudoHyperbolic cleanup). Then came kind 3 as **#6910** (r847,
-Vandermonde dedup) and kind 2 as draft **#6911** (r848, Resolvent/Basic.lean style pass). **The next
-opening is kind 3** (candidate: weaken `norm_resolvent_integrand_le` to `0 ≤ t`), then kind 1 if a Mathlib bump has opened
-a catch-up window. Record each PR's kind in the ledger. **Step 5's cap counts only PRs still in progress** (user directive, 2026-09-15 ~15:00Z): drafts and
+Vandermonde dedup), kind 2 as **#6911** (r848, Resolvent/Basic.lean style pass, now `ready-to-merge`), and kind 3 as draft
+**#6915** (r853, three private strict hypotheses). **The next
+opening is kind 1** if a Mathlib bump has opened a catch-up window, otherwise kind 2. Record each PR's kind in the ledger. **Step 5's cap counts only PRs still in progress** (user directive, 2026-09-15 ~15:00Z): drafts and
 `awaiting-review`, `awaiting-author` or `ci-failed` PRs count. `ready-to-merge` and queued PRs do not, and neither
 does #5950. Do not idle waiting for merges: open the next kind whenever fewer than 3 are in progress.
 
-**Open question to Chris (asked after r732, unanswered at r852):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r853):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -37,30 +37,31 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`; re-queued by the 15:15:27Z merge sweep: **QUEUED 25/59** (17:56Z, r852) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`; re-queued by the 15:15:27Z merge sweep: **QUEUED 22/59** (17:56Z, r852) | nobody — the queue builds its group; on an eject, read the removal reason first |
+| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`; re-queued by the 15:15:27Z merge sweep: **QUEUED 24/58** (18:06Z, r853) | nobody — the queue builds its group; on an eject, read the removal reason first |
+| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`; re-queued by the 15:15:27Z merge sweep: **QUEUED 21/58** (18:06Z, r853) | nobody — the queue builds its group; on an eject, read the removal reason first |
 | **#6875** | `462ed9705b` | green (07:49:13Z) | kind 1 (Mathlib's deck group); **10/10 on the re-review** (08:54:23Z, head `462ed97`), `ready-to-merge` since ~09:28Z and NEVER-QUEUED after r803 fixed the first board's naming, placement and documentation findings; cannot auto-merge (`web/examples`) | **Chris** — merge it; until then it holds one of the three step-5 slots |
 | **#6896** | `8a6278e95` | green (15:34:55Z) | kind 2 (convex-subgroup exclusion lemmas take `≤`, renamed to `notMem`); **10/10 on the driven board** (codex, posted 17:14:21Z, r847–r848), `ready-to-merge`; NEVER-QUEUED until the merge sweep runs | nobody — `merge-sweep` enqueues it (TauCeti/-only) |
 | **#6899** | `f450e0dcc` | green (15:42:54Z) | kind 3 (`chafaiRescaling_coe_of_nonneg`); ready 15:47:13Z; **board on head at 16:40:36Z (eohjelle), `ready-to-merge`**; NEVER-QUEUED until the merge sweep runs | nobody — `merge-sweep` enqueues it (TauCeti/-only) |
-| **#6902** | `f8294ed14` | green (16:07:16Z) | kind 2 (PseudoHyperbolic cleanup). The first build went **red** on `91e7bc1a2` (a term `rfl` in a module file); **`f8294ed14` (Chris's account, 15:50:06Z) fixed it**, and the body was patched; ready 17:08:59Z | **pipeline** — board due; step 4 may drive only after 18:09Z |
+| **#6902** | `3282c9611` | rebuilding (fix pushed 18:18:29Z) | kind 2 (PseudoHyperbolic cleanup). The driven review (codex, board 18:13:33Z) approved 9/10; **`attribution` requested changes** (restore a code-level credit for mathlib4#33505 and Mathlib's RiemannMapping/BranchLogRoot). `3282c9611` does that as a `## References` entry, and the body was patched | **me** — once CI is green the board clock restarts; drive a re-review only an hour after `max(CI-green, 18:18Z)` |
 | **#6910** | `3548cebb7` | green (17:32:21Z) | kind 3 (`Vandermonde.lean` uses `TauCeti.monic_descPochhammer` and `TauCeti.descPochhammer_natDegree`; private copies deleted); `awaiting-review`, ready 17:37Z | **pipeline** — board due; step 4 may drive only after 18:37Z |
-| **#6911** | `4a8439956` | green (17:43:41Z) | kind 2 (Resolvent/Basic.lean style pass: `;` chains split, `hh.le`, one `hRlx`, duplicate `open` dropped, `↦`); `awaiting-review`, ready 17:47:47Z | **pipeline** — board due; step 4 may drive only after 18:48Z |
+| **#6911** | `4a8439956` | green (17:43:41Z) | kind 2 (Resolvent/Basic.lean style pass); **board on head at 18:03:15Z, `ready-to-merge`**; NEVER-QUEUED until the merge sweep runs | nobody — `merge-sweep` enqueues it (TauCeti/-only) |
+| **#6915** | `efbb6423d` | first build (r853) | kind 3 (three private strict hypotheses weakened: `one_add_sq_div_eq`, `analyticAt_and_ne_zero_of_not_excised`, `eqOn_tail_exciseCrossings_cons`); **draft**, opened 18:13:40Z | **me** — mark ready when CI is green |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
-**In progress: #6902, #6910 and #6911, all `awaiting-review`.** The cap is full, so step 5 is shut until one
-of them turns `ready-to-merge`. #6851, #6854, #6875, #6896 and #6899 are `ready-to-merge` and do not count. #6855 merged at 05:43:53Z. #6851 and #6854 were re-queued by the 15:15:27Z merge sweep (r846), and #6875 is 10/10 and waits for a human merge (r813). Main is `102eadf1e`.
+**In progress: #6902 (fix pushed, rebuilding), #6910 (`awaiting-review`) and #6915 (draft).** The cap is full, so step 5
+is shut until one of them turns `ready-to-merge`. #6851, #6854, #6875, #6896, #6899 and #6911 are `ready-to-merge` and do not count. #6855 merged at 05:43:53Z. #6851 and #6854 were re-queued by the 15:15:27Z merge sweep (r846), and #6875 is 10/10 and waits for a human merge (r813). Main is `c3c47a5d8`.
 
 ## What to expect next
 
-0. **r843–r851:** the cap rule changed (rotation paragraph above). In progress, all `awaiting-review`: #6902 (ready 17:08:59Z;
-   step 4 not before 18:09Z), #6910 (ready 17:37Z; not before 18:37Z) and #6911 (ready 17:47:47Z; not before 18:48Z).
-   Drive a board only an hour after `max(CI-green, ready)`, and pass #6911, #6910, #6902, #6899, #6896, #6875, #6854
-   and #6851 to `queuepos.py`. When a slot frees: kind 3, then kind 1 if a target exists.
+0. **r843–r853:** the cap rule changed (rotation paragraph above). In progress: #6902 (attribution fix `3282c9611` pushed at
+   18:18:29Z; wait for green CI, then its board, and drive only an hour after `max(CI-green, 18:18Z)`), #6910 (ready 17:37:07Z;
+   drive not before 18:37Z) and #6915 (draft; mark it ready when green). Pass #6915, #6911, #6910, #6902, #6899, #6896, #6875,
+   #6854 and #6851 to `queuepos.py`. When a slot frees: kind 1 if a target exists, otherwise kind 2.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
    `merge-sweep` re-enqueues a green TauCeti/-only PR afterwards (r798–r799). A `MERGING` PR's group build is the check-runs of
    `git ls-remote origin 'refs/heads/gh-readonly-queue/main/pr-<n>-*'` (r739), the earliest sign of an ejection. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only; r852: all eight of #6851, #6854, #6875, #6896, #6899, #6902, #6910 and #6911 clean against `102eadf1e`). Staged branches:
+   merge-group simulation (cheap, read-only; r853: all eight of #6851, #6854, #6875, #6896, #6899, #6902, #6910 and #6911 clean against `c3c47a5d8`). Staged branches:
    `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r750: none
    left; kind 3 opened as #6855). A merge-tree check sees conflicts, not new
    callers: also grep main's new lines for the names each staged branch removes, and when main DELETES declarations,
@@ -127,7 +128,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r852 did
+## What r703–r853 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -292,12 +293,14 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r850: #6910 went green (17:32:21Z) and was marked ready. No merges; #6911 is still building; #6896 and #6899 still await the merge sweep.
 * r851: main moved to `a30a47ee7` (#6726; one private declaration removed), and all eight re-simulated clean. #6911 went green (17:43:41Z) and was marked ready, so all three in-progress PRs await boards.
 * r852: main moved to `102eadf1e` (#6677, additive), and all eight re-simulated clean. There are no boards yet for #6902, #6910 and #6911, and #6896 and #6899 still await the merge sweep.
+* r853: #6911 approved (`ready-to-merge`). #6902's review, driven after its hour, approved 9/10, but `attribution` asked to keep the upstream credit, so `3282c9611` adds a `## References` entry (gate 12/0/0). Kind 3 opened as draft **#6915** (three private strict hypotheses). Main moved to `c3c47a5d8` (#5594, additive), and all eight re-simulated clean.
 
 ## Candidates for a later step 5
 
 **Kind 3, ready (r848):** `StronglyContinuousSemigroup.norm_resolvent_integrand_le` (`Analysis/Semigroups/Resolvent/Basic.lean`)
 takes `ht : 0 < t` but passes only `ht.le` on. Weaken it to `0 ≤ t`: no rename is needed, and its one caller, in the same
-file, gains `.le`. Wait for #6911 (same file) to merge first.
+file, gains `.le`. Wait for #6911 (same file) to merge first. Also blocked (r853): `gammaPDFReal_of_pos` in `Distributions/Gamma/Basic.lean`,
+because open PR #6580 touches that file, and the weakening would need an `_of_nonneg` rename.
 
 **Kind 3 (r845), taken by #6910 (r847):** `LinearAlgebra/Vandermonde.lean` kept private `monic_descPochhammer'` and
 `descPochhammer_natDegree'` (over a `CommRing`). They duplicate the public, more general `TauCeti.monic_descPochhammer`
@@ -453,6 +456,9 @@ with a lease on the observed head. If the lease is rejected, compare trees befor
 **A driven review ends in a `TauCetiData` 403 after posting** (r848, #6896). `post.py` posts the scoreboard and threads, and
 then its ledger sync to `TauCetiProject/TauCetiData` is denied to CBirkbeck and raises. The board is already live: read the
 log's `ROUND … approved` line and the PR comment, not the exit code.
+**Keep credit when trimming module docstrings** (r853, #6902). Removing status narrative is right for `documentation`, but
+if that narrative carried the file's only credit to upstream work, `attribution` requests changes. Turn the credit into a
+`## References` entry instead of deleting it.
 **A kind-2 file pass must not bundle an unrelated golf** (r759): #6854 drew ⛔ `scope` for the
 `discrim_eq_sq_of_two_eq_zero` golf riding along with the separability lemma. Ship such a golf as its own PR.
 **During a REST outage, read a board's `head_sha` from GraphQL** (`pullRequest.comments { updatedAt body }`). A

@@ -40391,3 +40391,69 @@ The firing control read 0 removed lines, 591 added, and 0 removed and 34 added d
 **Queue** (17:56:47Z): depth 59; #5594 and #6877 are AWAITING_CHECKS at the head.
 
 No toolkit edits.
+
+---
+
+## r853 — 2026-09-15T18:06Z — #6911 approved; #6902's driven review asks to keep an upstream credit (fixed); kind 3 opened as draft #6915; main +1, all re-simulated clean
+
+**Board** (18:06:27Z; a real call read 4161 REST calls left; sweep and `queuepos.py` exited 0; `/tmp` at 56%):
+
+* **#6911 approved.** Its board on head `4a8439956` posted at 18:03:15Z, and it is `ready-to-merge`, NEVER-QUEUED. It
+  now waits for the merge sweep along with #6896 and #6899; the last sweep ran at 15:15:27Z.
+* #6851 and #6854: QUEUED at 24 and 21 of 58. #6875 needs a human merge. #5950 is Chris's.
+* #6910: `awaiting-review`, ready 17:37:07Z, so step 4 may drive only after 18:37Z.
+* #6902: `awaiting-review`, with no board and no comments at 18:08:58Z. That is past its hour:
+  `max(16:07:16Z, 17:08:56Z)` + 1h = 18:08:56Z.
+
+**#6902: review driven, then fixed.**
+
+* **The review.** `tauceti-review 6902 --reviewer codex --post`, started detached at 18:09:14Z, posted its board at
+  18:13:33Z (scoreboard 5685571752, one thread). 9 of 10 rubrics approved: correctness, reuse, scope, api-design,
+  generality, placement, naming, documentation and proof-quality.
+* **The finding.** `attribution` requested changes: "The cleanup removes the module's only code-level credit for the
+  upstream work with which this formalization was coordinated." Its proposed fix: "Restore a concise code-level source
+  note citing leanprover-community/mathlib4#33505 and the relevant upstream RiemannMapping/BranchLogRoot material." As
+  before, the run ended in the harmless `TauCetiData` 403.
+* **Why the rubrics don't conflict.** `documentation` approved removing the roadmap-layer and coordination narrative, and
+  its own text keeps mathematical references in the file. So the credit comes back as a reference, not as the old
+  paragraph.
+* **Checks.** Both cited Mathlib files exist at the pin: `Analysis/Complex/RiemannMapping.lean` (which itself points at
+  mathlib4#33505) and `Analysis/Complex/BranchLogRoot.lean`. The fork head was still `f8294ed14`, so nobody else had
+  pushed.
+* **Fix `3282c9611`** (18:18:29Z, pushed with a lease on `f8294ed14`). The module docstring gains a `## References` entry
+  citing mathlib4#33505 and those two Mathlib files. Gate 12/0/0. The PR body was patched (REST PATCH, read back) to say
+  so. There is no reply in the thread, because the fix is a push, not a contest.
+* **Next.** The new head needs its own green build and then a board. Step 4's hour restarts from
+  `max(CI-green, 18:18:29Z)`.
+
+**Step 5: kind 3, three private strict hypotheses.** A slot freed when #6911 turned `ready-to-merge`. The candidates come
+from r843's `strictscan`, re-checked on current main:
+
+| lemma | file | hypothesis | only use | callers |
+|---|---|---|---|---|
+| `one_add_sq_div_eq` | `SpecialFunctions/Beta.lean` | `hν : 0 < ν` | `Real.sq_sqrt hν.le` | 2, each with `hν : 0 < ν` |
+| `analyticAt_and_ne_zero_of_not_excised` | `…/FundamentalDomainBoundary/ValencePV.lean` | `hε : 0 < ε` | `exact hε.le` | 4, with `hε` from `self_mem_nhdsWithin` |
+| `eqOn_tail_exciseCrossings_cons` | `Contour/Crossing/Decomposition.lean` | `hWb : W.upper < b` | `uIoo_of_le hWb.le` | 1, passing `hW.2.2` |
+
+* **Soundness.** Each statement still holds at the boundary: at `ν = 0` both sides are `1`; at `ε = 0` the point is still
+  outside the excision set; at `W.upper = b` the interval is empty. No name mentions strictness, so nothing is renamed.
+* **Call sites.** At the `ValencePV` sites `hε` may be typed as `ε ∈ Ioi 0`, where dot notation might not resolve, so
+  they pass `le_of_lt hε`. The other sites pass `.le`.
+* **Skipped.** `gammaPDFReal_of_pos`: open PR #6580 touches `Gamma/Basic.lean`, and the weakening would need a rename.
+  `norm_resolvent_integrand_le`: my own #6911 touches that file.
+* No open PR touches the three files.
+* **Gate** `prepush.sh origin/main`: **12 ok / 0 failed / 0 UNRUN**.
+* **Opened #6915** (draft, 18:13:40Z). Head `CBirkbeck:improve/private-strict-hypotheses@efbb6423d`, base `main`,
+  branched from `c3c47a5d8`: 3 files, +13/−13. The body carries `Roadmap: none`, as #5784 (the same class) did.
+
+**Main moved** `102eadf1e` → **`c3c47a5d8`** with #5594 ("count the cyclic-group elements of order divisible by f"):
+1 file, +75, with 0 removed lines and 2 added declaration headers.
+
+* No import was dropped, and no module moved.
+* Main touched none of the eight PRs' files, and the names they depend on are unchanged.
+* None of their added declarations shares a last name component with main's.
+* **Merge-group simulation** against `c3c47a5d8`: all eight merge clean, with `ghostref` and `stalequal` exit 0.
+
+**In progress now:** #6902 (fix pushed, rebuilding), #6910 (`awaiting-review`) and #6915 (draft). The cap is full.
+
+No toolkit edits.
