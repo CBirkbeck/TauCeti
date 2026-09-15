@@ -89,8 +89,8 @@ group elements. Nothing in the statement itself forces this: `MulAction P ℍ` i
 theorem isFundamentalDomain_iUnion_rightCosetRep_smul {P : Type*} [Group P] [MulAction P ℍ]
     (φ : GL (Fin 2) ℚ →* P) {H : Subgroup (GL (Fin 2) ℚ)}
     [Countable (DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹)] {S : Set ℍ} {μ : Measure ℍ}
-    (h₁ : Γ₂ ≤ H) (h₂ : Γ₁ ≤ H)
-    (hconj : ∀ y ∈ H, (D.out : GL (Fin 2) ℚ) * y * (D.out : GL (Fin 2) ℚ)⁻¹ ∈ H)
+    (h₂ : Γ₁ ≤ H)
+    (hconj : ∀ y ∈ Γ₂, (D.out : GL (Fin 2) ℚ) * y * (D.out : GL (Fin 2) ℚ)⁻¹ ∈ H)
     (hker : φ.ker ⊓ H ≤ Γ₁) (hS : IsFundamentalDomain (Γ₂.map φ : Subgroup P) S μ)
     (hδ : Measure.QuasiMeasurePreserving (fun x : ℍ ↦ (φ (D.out : GL (Fin 2) ℚ))⁻¹ • x) μ μ)
     (hnull : ∀ v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹,
@@ -100,7 +100,7 @@ theorem isFundamentalDomain_iUnion_rightCosetRep_smul {P : Type*} [Group P] [Mul
   -- `e` matches the index of Shimura's decomposition of `Γ₁δΓ₂` with that of its image, so the
   -- canonical transversal `τᵥ⁻¹` upstairs maps onto one downstairs
   set e := decompQuotientEquivMapOfKerInfLe φ Γ₂ Γ₁ H (D.out : GL (Fin 2) ℚ)⁻¹
-    (map_inv φ _) h₁ h₂ (by simpa using hconj) hker with he_def
+    (map_inv φ _) h₂ (by simpa using hconj) hker with he_def
   set r : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹ → (Γ₂.map φ : Subgroup P) :=
     fun v ↦ (φ.subgroupMap Γ₂ v.out)⁻¹
   have heq : ∀ v, QuotientGroup.mk (r v)⁻¹ = e v := fun v ↦ by

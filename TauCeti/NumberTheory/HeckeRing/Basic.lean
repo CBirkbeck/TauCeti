@@ -45,7 +45,7 @@ merges. The degree section is instead ported from the AINTLIB `LeanModularForms`
   `DoubleCoset.decompQuotientEquivMap` (`HeckeRing/Multiplicity/Equiv.lean`) is its special case
   at an isomorphism.
 * `DoubleCoset.decompQuotientEquivMapOfKerInfLe`: the same transport **without** injectivity,
-  under an ambient subgroup `H` containing both groups and stable under conjugation by `g`, and
+  under an ambient subgroup `H` containing `Γ₂` and receiving `g⁻¹ Γ₁ g`, and
   `φ.ker ⊓ H ≤ Γ₂`. The target element is supplied by an equation `hd : φ g = d`, so a consumer
   holding `(φ g)⁻¹` rather than `φ g⁻¹` needs no type transport of its own. This is the version a
   fundamental-domain statement needs: the group that acts
@@ -291,13 +291,13 @@ open scoped Pointwise in
 /-- **The stabilizer of the decomposition transports along `φ`.** The image under `φ` of
 `(gΓ₂g⁻¹ ∩ Γ₁)`, viewed inside `Γ₁`, is `(φ(g)φ(Γ₂)φ(g)⁻¹ ∩ φ(Γ₁))` viewed inside `φ(Γ₁)`.
 
-Injectivity of `φ` is not required. In its place: an ambient subgroup `H` containing `Γ₁` and `Γ₂`
-and stable under conjugation by `g`, together with `φ.ker ⊓ H ≤ Γ₂`. The kernel may therefore be
+Injectivity of `φ` is not required. In its place: an ambient subgroup `H` containing `Γ₂` and
+receiving `g⁻¹ Γ₁ g`, together with `φ.ker ⊓ H ≤ Γ₂`. The kernel may therefore be
 nontrivial, which is what lets the decomposition reach a group acting faithfully on `ℍ`; the
 injective version is `map_subgroupOf_smul`. -/
 lemma map_subgroupOf_smul_of_ker_inf_le {G' : Type*} [Group G'] (φ : G →* G')
-    (Γ₁ Γ₂ H : Subgroup G) (g : G) (h₁ : Γ₁ ≤ H) (h₂ : Γ₂ ≤ H)
-    (hconj : ∀ y ∈ H, g⁻¹ * y * g ∈ H) (hker : φ.ker ⊓ H ≤ Γ₂) :
+    (Γ₁ Γ₂ H : Subgroup G) (g : G) (h₂ : Γ₂ ≤ H)
+    (hconj : ∀ y ∈ Γ₁, g⁻¹ * y * g ∈ H) (hker : φ.ker ⊓ H ≤ Γ₂) :
     ((ConjAct.toConjAct g • Γ₂).subgroupOf Γ₁).map (φ.subgroupMap Γ₁) =
       (ConjAct.toConjAct (φ g) • (Γ₂.map φ)).subgroupOf (Γ₁.map φ) := by
   ext x
@@ -314,7 +314,7 @@ lemma map_subgroupOf_smul_of_ker_inf_le {G' : Type*} [Group G'] (φ : G →* G')
     have hφ : φ (g⁻¹ * y * g) = φ z := by rw [hzx, ← hyx]; simp [mul_assoc]
     have hmemker : z⁻¹ * (g⁻¹ * y * g) ∈ φ.ker := by simp [MonoidHom.mem_ker, hφ]
     have hmemH : z⁻¹ * (g⁻¹ * y * g) ∈ H :=
-      H.mul_mem (H.inv_mem (h₂ hz)) (hconj y (h₁ hy))
+      H.mul_mem (H.inv_mem (h₂ hz)) (hconj y hy)
     rw [← mul_inv_cancel_left z (g⁻¹ * y * g)]
     exact Γ₂.mul_mem hz (hker ⟨hmemker, hmemH⟩)
 
@@ -322,8 +322,8 @@ open scoped Pointwise in
 /-- **The decomposition quotient transports without injectivity**, under an ambient subgroup.
 The kernel is absorbed by the denominator, so the index is unchanged. -/
 noncomputable def decompQuotientEquivMapOfKerInfLe {G' : Type*} [Group G'] (φ : G →* G')
-    (Γ₁ Γ₂ H : Subgroup G) (g : G) {d : G'} (hd : φ g = d) (h₁ : Γ₁ ≤ H) (h₂ : Γ₂ ≤ H)
-    (hconj : ∀ y ∈ H, g⁻¹ * y * g ∈ H) (hker : φ.ker ⊓ H ≤ Γ₂) :
+    (Γ₁ Γ₂ H : Subgroup G) (g : G) {d : G'} (hd : φ g = d) (h₂ : Γ₂ ≤ H)
+    (hconj : ∀ y ∈ Γ₁, g⁻¹ * y * g ∈ H) (hker : φ.ker ⊓ H ≤ Γ₂) :
     DecompQuotient Γ₁ Γ₂ g ≃ DecompQuotient (Γ₁.map φ) (Γ₂.map φ) d :=
   hd ▸ TauCeti.QuotientGroup.congrOfSurjectiveOfKerLe (φ.subgroupMap Γ₁)
     (MonoidHom.subgroupMap_surjective φ Γ₁)
@@ -334,16 +334,16 @@ noncomputable def decompQuotientEquivMapOfKerInfLe {G' : Type*} [Group G'] (φ :
       refine (Subgroup.mem_subgroupOf).mpr ?_
       rw [Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def,
         ConjAct.ofConjAct_inv, ConjAct.ofConjAct_toConjAct, inv_inv]
-      refine hker ⟨?_, hconj (y : G) (h₁ y.2)⟩
+      refine hker ⟨?_, hconj (y : G) y.2⟩
       simpa [mul_assoc] using (MonoidHom.normal_ker φ).conj_mem (y : G) hyker g⁻¹)
-    (map_subgroupOf_smul_of_ker_inf_le φ Γ₁ Γ₂ H g h₁ h₂ hconj hker)
+    (map_subgroupOf_smul_of_ker_inf_le φ Γ₁ Γ₂ H g h₂ hconj hker)
 
 open scoped Pointwise in
 @[simp]
 theorem decompQuotientEquivMapOfKerInfLe_mk {G' : Type*} [Group G'] (φ : G →* G')
-    (Γ₁ Γ₂ H : Subgroup G) (g : G) {d : G'} (hd : φ g = d) (h₁ : Γ₁ ≤ H) (h₂ : Γ₂ ≤ H)
-    (hconj : ∀ y ∈ H, g⁻¹ * y * g ∈ H) (hker : φ.ker ⊓ H ≤ Γ₂) (y : Γ₁) :
-    decompQuotientEquivMapOfKerInfLe φ Γ₁ Γ₂ H g hd h₁ h₂ hconj hker (QuotientGroup.mk y) =
+    (Γ₁ Γ₂ H : Subgroup G) (g : G) {d : G'} (hd : φ g = d) (h₂ : Γ₂ ≤ H)
+    (hconj : ∀ y ∈ Γ₁, g⁻¹ * y * g ∈ H) (hker : φ.ker ⊓ H ≤ Γ₂) (y : Γ₁) :
+    decompQuotientEquivMapOfKerInfLe φ Γ₁ Γ₂ H g hd h₂ hconj hker (QuotientGroup.mk y) =
       QuotientGroup.mk (φ.subgroupMap Γ₁ y) := by
   subst hd
   unfold decompQuotientEquivMapOfKerInfLe
