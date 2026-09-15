@@ -38842,3 +38842,21 @@ sweep last ran at 05:18:46Z.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r802 — 2026-09-15T06:56Z — no merges; #6875 awaits its first board (clock to 07:47Z); the bump's group build at 41 min
+
+**Board** (06:56:23Z; sweep exited 0, and `queuepos.py` exited 1 on its corrected EJECTED hint; `/tmp` at 59%): #6851
+and #6854 are `ready-to-merge`, with CI green and boards on head, and still out of the queue. #6875 is
+`awaiting-review` with CI green and no board 9 minutes after ready-for-review; the step-4 clock runs to 07:47Z. #5950
+is Chris's. No merges since #6855 (05:43:53Z); main is still `d7ac608e0`. Nothing to fix, contest or drive; step 5 is
+shut.
+
+**Queue:** depth 1. #6852's group `400ca6f7e1` has been in `sandboxed-build` since 06:15:40Z (41 minutes). That is not
+a stall: TauCetiReview's `queue_reservation.py` puts a bump's build at 83–95 minutes, so it should finish around
+07:40–07:50Z. The merge sweep last ran at 05:18:46Z, and 37 Actions runs are queued.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

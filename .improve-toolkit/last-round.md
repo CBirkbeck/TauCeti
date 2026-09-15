@@ -1,4 +1,4 @@
-# Last round — r801 (2026-09-15T06:46Z)
+# Last round — r802 (2026-09-15T06:56Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -16,7 +16,7 @@ Mathlib's deck group (r798), which needs a **human merge** because it updates `w
 opening is kind 2** (a new file). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r801):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r802):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -108,7 +108,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r801 did
+## What r703–r802 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -222,6 +222,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r799: REST out until 06:24:59Z; corrected `queuepos.py`'s stale EJECTED advice (the merge sweep re-enqueues flushed green PRs; controls 166/0); #6875's first build running; #6852 still alone in the queue.
 * r800: no merges; #6875's first build and #6852's group build still running; the merge sweep has not re-run (last 05:18:46Z).
 * r801: #6875's first build went green (06:38:24Z), so I marked it ready at 06:46:57Z; no merges; #6852's group build still running (31 min).
+* r802: no merges; #6875 has no board yet (clock to 07:47Z); #6852's group build at 41 min of an expected 83–95.
 
 ## Candidates for a later step 5
 
