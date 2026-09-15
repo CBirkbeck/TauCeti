@@ -113,12 +113,11 @@ in `D.toSet` (`rep_mem`), and `mk_rep` recovers `D` from it. The choice is arbit
 `(mk H₁ H₂ w).rep` need not be `w`; it only spans the same double coset (`doubleCoset_rep_mk`). -/
 noncomputable def rep (D : HeckeCoset Δ H₁ H₂) : Δ := Quotient.out D
 
-/-- The chosen representative of a double coset unfolds to `Quotient.out`.
-
-`rep` is not `@[expose]`d, so importing modules cannot reach this by `rfl`; rewriting along it, in
-either direction, is how they move between `rep` and the `Quotient.out` form Mathlib's quotient
-API is stated in. It is deliberately not `@[simp]`: `mk_rep` is the `simp` normal form eliminating
-`rep`, and its left-hand side matches on `rep` itself. -/
+/-- The chosen representative of a double coset `D` is `Quotient.out D`. -/
+-- Deliberately not `@[simp]`: `mk_rep` is the `simp` normal form eliminating `rep`, and its
+-- left-hand side matches on `rep` itself. `rep` is not `@[expose]`d, so importing modules cannot
+-- reach this by `rfl`; rewriting along it, in either direction, is how they move between `rep`
+-- and the `Quotient.out` form Mathlib's quotient API is stated in.
 theorem rep_def (D : HeckeCoset Δ H₁ H₂) : D.rep = Quotient.out D := (rfl)
 
 /-- The double coset of a chosen representative is the double coset it was chosen from.
