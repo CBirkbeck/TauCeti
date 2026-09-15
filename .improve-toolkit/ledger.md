@@ -39624,3 +39624,35 @@ were queued at 13:28:48Z. The last merge-sweep run is still the 10:24:54Z failur
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits: `sweep-gql.py` sits next to `sweep.py` in the session scratchpad, not in `tools/`.
+
+---
+
+## r834 — 2026-09-15T13:36Z — main moved (#6781 smooth link isotopy, #6698 natural density of prime ideals); all three PRs re-simulated clean; no change on my PRs
+
+**Board** (13:36:27Z; a real call read 4981 REST calls left, 19 used; sweep exited 0, and `queuepos.py` exited 1 on its
+EJECTED hint; `/tmp` at 55%): #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still not
+queued. #6875 is `ready-to-merge` with CI green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. Nothing
+to fix, contest or drive; step 5 is shut.
+
+**Main moved** `82f5e9ac2` → **`581339e13`** with two merges. #6781 (13:30:32Z, smooth ambient isotopy of links) moves
+`KnotTheory/SmoothLink.lean` to `SmoothLink/Basic.lean` unchanged (R100) and adds `SmoothLink/Isotopy.lean` (+98).
+#6698 (13:34:38Z, natural density of prime ideals) adds 47 lines to `ArithmeticDirichletSeries/Counting.lean` and 180
+to `NaturalDensity.lean`. The firing control read 0 removed lines, 325 added, and 0 removed and 24 added declaration
+headers. Nothing was removed or restated, and none of the three PRs' added lines name the moved module. All three PRs
+merge clean, main touched none of their files, its new lines name nothing they remove, and none of their added
+declarations shares a last name component with main's 24 new ones.
+
+**Merge-group simulation** against `581339e13`:
+
+```
+#6851  58 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  56 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875  23 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue and Actions** (13:36:42Z): depth 34, none of them mine; #6732 and #6704 are AWAITING_CHECKS. 40 Actions runs
+are queued. The last merge-sweep run is still the 10:24:54Z failure.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
