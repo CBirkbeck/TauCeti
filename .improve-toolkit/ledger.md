@@ -38953,3 +38953,23 @@ the expected 83–95. If it runs much longer, TauCetiReview's `queue_reservation
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r807 — 2026-09-15T07:56Z — #6875's fix head green (07:49:13Z), awaiting re-review; #6852's group build at 101 min, its hold lapsing at 09:12:38Z; no merges
+
+**Board** (07:56:25Z; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 59%): #6851 and #6854
+are `ready-to-merge`, with CI green and boards on head, and still out of the queue. **#6875's CI on `462ed9705b` is
+green:** `sandboxed-build` ran 07:31:14–07:49:13Z, so all the r803 fixes compiled, including the dropped
+`ConstMulAction` import. It is `awaiting-review`, and its board is still on `e70f761ba4`, behind the head, so there is
+nothing to re-fix. The step-4 clock for this head runs from 07:49:13Z, which is later than ready-for-review, so a
+re-drive is due only if no board lands by 08:49Z. #5950 is Chris's. No merges since #6855 (05:43:53Z); main is still
+`d7ac608e0`. Nothing to fix, contest or drive; step 5 is shut.
+
+**Queue:** depth 1. #6852's group `400ca6f7e1` has been in `sandboxed-build` since 06:15:40Z, 101 minutes, past the
+83–95 estimate. TauCetiReview's `runner/sweep.py` sets `MAX_HOLD` to 3 hours from enqueue (06:12:38Z), so the
+reservation lapses at 09:12:38Z; `MAX_RESERVATIONS` is 3. The merge sweep last ran at 05:18:46Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

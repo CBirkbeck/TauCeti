@@ -1,4 +1,4 @@
-# Last round — r806 (2026-09-15T07:46Z)
+# Last round — r807 (2026-09-15T07:56Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -16,7 +16,7 @@ Mathlib's deck group (r798), which needs a **human merge** because it updates `w
 opening is kind 2** (a new file). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r806):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r807):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -35,11 +35,11 @@ through the local codex CLI that MCP wraps:
 |---|---|---|---|---|
 | **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`; **flushed** from MERGING 2/43 by the bot for #6852 (06:11:46Z, `manual`) | nobody — `merge-sweep` re-enqueues it after #6852 merges; do not refresh |
 | **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`; **flushed** from 14/43 for #6852 (06:12:02Z, `manual`) | nobody — `merge-sweep` re-enqueues it after #6852 merges; do not refresh |
-| **#6875** | `462ed9705b` | building (from 07:31:14Z) | kind 1 (Mathlib's deck group); first board (e70f761, 07:06:23Z) **7/10, changes requested**: naming, placement, documentation. All three fixed in `462ed9705` (r803), body updated; needs a human merge (`web/examples`) | pipeline — CI, then re-review; step-4 clock from this head's CI-green |
+| **#6875** | `462ed9705b` | green (07:49:13Z) | kind 1 (Mathlib's deck group); first board (e70f761, 07:06:23Z) **7/10, changes requested**: naming, placement, documentation. All three fixed in `462ed9705` (r803), body updated; needs a human merge (`web/examples`) | pipeline — re-drive only if no board for this head by 08:49Z |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open (#6851, #6854, #6875) → step 5 does not fire** until one merges. #6855 merged
-at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enqueues them, and #6875 awaits CI and a re-review of `462ed9705`. Main is `d7ac608e0`.
+at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enqueues them, and #6875 awaits a re-review of `462ed9705` (CI green 07:49:13Z). Main is `d7ac608e0`.
 
 ## What to expect next
 
@@ -64,8 +64,8 @@ at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enq
 4. **#6875 (kind 1 again, Mathlib's deck group) is under review** (r803). Its first board went 7/10 at head `e70f761ba`, and commit
    `462ed9705` answers the three findings. Naming: 24 declarations with a deck-transformation first argument became
    `_root_.deck.<name>`. Placement: the `ConstMulAction` import is gone. Documentation: roadmap narrative is out of 33
-   module docstrings. If CI goes red, the likeliest cause is a downstream module that needed the dropped import's
-   instances; add `public import TauCeti.Topology.Algebra.ConstMulAction` where the error names it. `prepush.sh`'s
+   module docstrings. Its CI went green at 07:49:13Z (r807), so the dropped import broke nothing;
+   re-drive only if no board lands for this head by 08:49Z. `prepush.sh`'s
    `decldiff`/`rootsurplus` FAILs on this move are the rooting-premise mismatch (r803). Expect `prepush.sh`'s `decldiff` FAIL (`VANISHED TauCeti.Deck`), since the deletion is the
    point of the PR. It touches `web/examples/Examples.lean`, so it cannot auto-merge; once it is 10/10, the merge is
    Chris's call, as with #5950.
@@ -111,7 +111,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r806 did
+## What r703–r807 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -230,6 +230,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r804: #6875's fix head is building (its board is behind, so nothing to re-fix); #6852's group build at 77 min; no merges.
 * r805: no change 3.5 min after r804; #6852's group build at 81 min.
 * r806: no merges; #6875's fix head at 15 min of CI; #6852's group build at 91 min.
+* r807: #6875's fix head went green (07:49:13Z) and awaits re-review (clock to 08:49Z); #6852's group build at 101 min, its hold lapsing at 09:12:38Z; no merges.
 
 ## Candidates for a later step 5
 
