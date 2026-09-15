@@ -40789,3 +40789,23 @@ Nothing to fix, contest or drive. The cap is full (#6915, #6923, #6933).
 clean.
 
 No toolkit edits.
+
+---
+
+## r863 — 2026-09-15T20:06Z — #6933 green and marked ready; no drive due; no merges
+
+**Board** (20:06:23Z; a real call read 4531 REST calls left; sweep and `queuepos.py` exited 0):
+
+* **#6933** (`311f6a427`): every latest check is green. `sandboxed-build` succeeded at 20:05:45Z and `zulip-pr` at 20:06:36Z,
+  and the merge-group jobs are `skipped`. Main is still `d791db95c`, against which r861 simulated it clean. **Marked ready at
+  20:07:08Z**, so step 4 may drive only after 21:07Z.
+* #6915 (`08b8138bc`): `awaiting-CI`, with `sandboxed-build` still in progress (since 19:56:27Z). Its board is behind the fix.
+* #6923 (`8f846c57b`): `awaiting-review`, no board. Step 4 may drive only after 20:28Z.
+* Queue depth 72, positions unchanged: #6854 12, #6851 14, #6910 49, #6911 52, #6899 53, #6896 54, #6902 69. #6875 needs a
+  human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6915, #6923, #6933).
+
+**Merges and main.** No merges since #6619 (19:47:02Z). Main is still `d791db95c`.
+
+No toolkit edits.
