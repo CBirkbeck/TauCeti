@@ -39348,3 +39348,45 @@ on main's head is still the 10:24:54Z failure.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r824 — 2026-09-15T12:04Z — eight queued round prompts coalesced into one round; main moved 8 commits (2 module renames, 2 deletions); all three PRs re-simulated clean; no merge sweep since the 10:24Z failure
+
+**Board** (12:04:26Z; REST had 2425 calls left; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp`
+at 61%): about eight identical round prompts and two "keep going" messages queued between 10:36Z and 12:04Z, and this
+single round answers them. #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still not
+queued. #6875 is `ready-to-merge` with CI green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. Nothing
+to fix, contest or drive; step 5 is shut.
+
+**Main moved** `31fc2e21e` → **`62cfc4d65`**: 8 commits, 26 files, +2193/−266. They are #6751 (10:43:30Z), #6624
+(10:47:09Z), #6277 (Frobenius fiber contraction), #6724 (11:06:46Z), #6817 (11:20:59Z), #6649 (11:30:00Z), #6789
+(11:44:34Z) and #6727 (12:03:26Z, generalize tensor injectivity and Hopf ideals under flatness). #6277 is missing from
+`gh pr list --state merged --limit 200`, which orders by creation, because it is an old number; git log is
+authoritative. Main renamed two modules (`Geometry/Toric/Algebraic/Fan.lean` → `Fan/Basic.lean`, and
+`Frobenius/FixedFieldInertia.lean` → `Frobenius/FixedField/Inertia.lean`) and deleted two
+(`Algebra/TensorProduct/Injective.lean`, `GroupTheory/ExponentTwo.lean`); no branch's added lines name any of them. The
+firing control read 266 removed lines, 2193 added, and 18 removed and 134 added declaration headers. Two names were
+removed without being re-added (`map_injective_of_injective`, `zpow_eq_one_or_eq_self_of_sq_eq_one`), and 16 were
+restated (the Hopf-ideal `comap`/`ker` API moving). All three PRs merge clean, main touched none of their files, and
+its new lines name nothing they remove. The declaration-level grep had three hits, all read and all false. `extend` in
+#6851 is the manifold vector-field extension `extend E v` in a Levi-Civita proof, not main's new
+`IsIntegralLattice.extend`. `IsRegular` in #6875 is `TauCeti.Deck.IsRegular`, not the Toric-fan `IsRegular` in
+`Geometry/Toric/Algebraic/Regular.lean`. `rather` is docstring prose on #6875's side, matched on main's side by a
+docstring line that begins "structure rather than".
+
+**Merge-group simulation** against `62cfc4d65`:
+
+```
+#6851  49 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  47 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875  14 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue and Actions** (12:04:37Z): depth 32, none of them mine; #6693 and #6876 are AWAITING_CHECKS. 40 Actions runs
+are queued. No merge sweep has run since the 10:24:54Z failure (the last success was at 05:18:46Z), so #6851 and #6854
+have now been out of the queue for almost six hours.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
