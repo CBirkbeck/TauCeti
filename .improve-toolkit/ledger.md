@@ -40703,3 +40703,69 @@ headers.
   and `stalequal` exit 0.
 
 No toolkit edits.
+
+---
+
+## r861 — 2026-09-15T19:36Z — #6902 10/10 and queued; #6915 9/10, `api-design` fixed; kind 3 opened as draft #6933; main moved twice
+
+**Board** (19:36:25Z; a real call read 4656 REST calls left; sweep and `queuepos.py` exited 0):
+
+* #6902 (`3282c9611`): green since 18:32:05Z. Its board is behind the fix, there is no in-progress marker, and no local review
+  process was running for it. It was past its hour (19:32:05Z), so a **re-review was driven** at 19:37:57Z (log
+  `review-6902-r861.log`).
+* #6915 (`efbb6423d`): no board and no comments. Its hour ended at 19:37:17Z (ready 18:37:17Z, green 18:27:54Z), so a **review
+  was driven** at 19:38:04Z, behind a guard on that clock (log `review-6915-r861.log`).
+* #6923 (`8f846c57b`): `awaiting-review`, ready 19:28:01Z. Step 4 may drive only after 20:28Z.
+* Queue depth 68: #6854 14, #6851 16, #6910 51, #6911 54, #6899 55, #6896 56. #6875 needs a human merge. #5950 is Chris's.
+* The local `tauceti_worker` service was reviewing someone else's #6713 at the time.
+
+**The drives.**
+
+* **#6902: `ROUND 2 (commit) approved`**, all 10 rubrics, $0.91. `post.py: scoreboard id=5685571752`. The board reads "approved" on
+  `3282c96116` (19:41:02Z), and the label moved to `ready-to-merge`. It queued at 69 of 71 (19:57Z). The `TauCetiData` 403
+  afterwards is the known harmless one.
+* **#6915: `ROUND 1 (commit) changes requested`**, $0.95; board 19:41:46Z, 9/10. The one blocker is `api-design`:
+  `one_add_sq_div_eq` "is `private`, but its statement and proof use only general Mathlib real-number operations … _Fix:_ Move
+  it to the appropriate earlier general real-algebra/analysis module and export it under a descriptive public name, then import
+  and use it here."
+
+**Step 3 on #6915: implemented the proposal.**
+
+* **Search.** Pinned Mathlib has no lemma for `((√a)⁻¹ * x) ^ 2 = x ^ 2 / a`. The pattern occurs only inside a proof in
+  `Probability/CentralLimitTheorem.lean`, whose lemma names spell `(√n)⁻¹ * …` as `inv_sqrt_mul`. TauCeti has no other copy of
+  the identity and no `TauCeti/Analysis/Real/` directory, and its root `TauCeti.lean` is intentionally empty. Four TauCeti files
+  already open `namespace Real`.
+* **New file `TauCeti/Analysis/Real/Sqrt.lean`**, mirroring Mathlib's `Mathlib/Analysis/Real/Sqrt.lean`:
+  `theorem Real.inv_sqrt_mul_sq {a : ℝ} (ha : 0 ≤ a) (x : ℝ) : ((√a)⁻¹ * x) ^ 2 = x ^ 2 / a`. It is proved by the old lemma's own
+  `rw [mul_pow, inv_pow, Real.sq_sqrt ha, inv_mul_eq_div]`; none of those three root lemmas has a `Real.` variant at the pin, so
+  nothing shadows them inside `namespace Real`.
+* **`Beta.lean`** imports the new file, deletes the private lemma, and its two proofs rewrite with `Real.inv_sqrt_mul_sq hν.le`.
+* **Gate** `prepush.sh origin/main`: 12 ok, 0 failed, 1 UNRUN (`movedopens` for the new file). Run by hand on `Beta.lean` at
+  `efbb6423d`, lines 395–398: 0 names resolve only through the source's opens (`Filter MeasureTheory ProbabilityTheory Set`).
+* **Pushed** `08b8138bc` with a lease on `efbb6423d` (19:56:20Z); CI started at 19:56:27Z. Body v2 and the title ("refactor:
+  weaken three strict hypotheses used only through `.le`") were patched through REST and re-read.
+
+**Step 5.** With #6902 `ready-to-merge`, in progress fell to two, so the staged kind-3 branch opened.
+
+* The first attempt refused because main had moved since the gate. The branch was rebased onto `2e0c1a0b2` (#6660) as `311f6a427`
+  and re-gated: **12 ok / 0 failed / 0 UNRUN**. Main moved again during that gate, to `d791db95c` (#6619). The merge-tree was
+  clean and `Comap.lean` untouched, so it opened.
+* **Opened #6933** (draft, 19:48:30Z): head `CBirkbeck:improve/subcomodule-comap-dedup@311f6a427`, `Roadmap: ReductiveGroups`.
+  The live body matches the file. Its first `sandboxed-build` started at 19:48:40Z.
+
+**Main moved twice.**
+
+* `a67007d22` → `2e0c1a0b2`: #6660 ("make the different transitive in towers"), 5 files, +536/−1.
+* → **`d791db95c`**: #6619 ("classify real quadratic forms by their signature"), 4 files, +286/−1.
+
+Each removed line was prose. Neither merge removed a declaration, dropped an import or moved a module, and neither touched any
+head's files. There were no name hits or clashes.
+
+**Merge-group simulation** against `d791db95c`: all eleven merge clean, with `ghostref` and `stalequal` exit 0. The eleven are
+#6851, #6854, #6875, #6896, #6899, #6902, #6910, #6911, #6915 at `08b8138bc`, #6923 and #6933.
+
+**In progress now:** #6915 (fix building), #6923 and #6933 (draft). The cap is full.
+
+**Queue** (19:57Z): depth 71; #6854 12, #6851 14, #6910 49, #6911 52, #6899 53, #6896 54, #6902 69.
+
+No toolkit edits.
