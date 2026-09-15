@@ -36,10 +36,13 @@ scalars, so `φ` must collapse `±1`: were `-I` to survive and act trivially,
 `MeasureTheory.IsFundamentalDomain` would be unsatisfiable for any set of positive measure, since
 its disjointness is `Pairwise` over group elements.
 
-This is what turns a sum of slashes into a single integral: because the translates tile, an
-integral of `heckeSlashSum` over a fundamental domain for the smaller group may be read termwise
-over one for `Γ₂`, which is how the Petersson pairing of a Hecke operator against a form is
-computed and hence how its adjoint is identified.
+This is what turns a sum of slashes into a single integral, and the direction matters. Start from
+`S`, a fundamental domain for `φ(Γ₂)`: integrating `heckeSlashSum` over `S` gives a sum of terms
+`∫_S f ∣ aᵥ`, and moving each `aᵥ` onto the domain turns the sum into one integral over
+`⋃ᵥ φ aᵥ • S` — which this theorem shows is a fundamental domain for the intersection
+`φ(Γ₁) ⊓ φ(δ) φ(Γ₂) φ(δ)⁻¹`, a smaller group and hence a larger domain. That single integral is how
+the Petersson pairing of a Hecke operator against a form is computed, and hence how its adjoint is
+identified.
 
 ## Main results
 
