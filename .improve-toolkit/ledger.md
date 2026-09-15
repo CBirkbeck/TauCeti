@@ -38667,3 +38667,38 @@ so r794's simulations stand. Nothing to fix, contest or drive; step 5 shut.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r796 — 2026-09-15T05:26Z — main moved twice (#6643, #6611); all three re-simulated clean; #6855 MERGING at 2 of 44
+
+**Board** (05:26:21Z; sweep and queuepos exited 0; `/tmp` at 58%): #6851, #6854 and #6855 are `ready-to-merge`, CI green,
+boards on head. **#6855 is MERGING at position 2 of 44**: its group `d7ac608e0c` has run `sandboxed-build` since
+05:21:38Z, behind #6748's group at position 1. #6851 is QUEUED at 4 and #6854 at 16. #5950 is Chris's. Nothing to fix,
+contest or drive; step 5 shut.
+
+**Main moved twice** (both with base `main`):
+
+* `6f7de9441` → `0bb708300` at 05:20:08Z: #6643 (the sheaf of a sum of Weil divisors is the tensor product of their
+  sheaves), `WeilDivisor/Scheme/TensorProduct.lean` +439 and `Modules/RationalFunctions.lean` +73, with smaller edits to
+  `Sheaf.lean`, `LineBundle.lean` and `LinearEquivalence.lean` in `WeilDivisor/Scheme/`.
+* → **`91fe5bc2e`** at 05:21:33Z: #6611 (add disjoint tagged Frobenius fibres), `Chebotarev/Crossing/TaggedFibres.lean`
+  +146.
+
+The firing control read 5 removed lines, 709 added, and 0 removed and 45 added declaration headers; nothing was removed,
+restated or renamed, and no module was deleted or renamed. The removed lines could change a signature, so the
+declaration-level grep ran. It had one hit, `sections` in #6851's added lines. Read, it is the docstring phrase "unique on
+differentiable sections", not the `sections` def in `WeilDivisor/Scheme/Sheaf.lean`. All three PRs merge clean; main
+touched none of their files, and its new lines name nothing they remove.
+
+**Merge-group simulation** against `91fe5bc2e`:
+
+```
+#6851  33 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6854  31 behind  merges clean  ghostref: 0 removed (removes nothing)     stalequal: exit 0
+#6855  31 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

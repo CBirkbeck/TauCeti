@@ -1,4 +1,4 @@
-# Last round — r795 (2026-09-15T05:16Z)
+# Last round — r796 (2026-09-15T05:26Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -14,7 +14,7 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
 **#6854** on the driven re-review (r768), queued at r770. Nothing is staged; the next opening is kind 1 again (the deck group). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r795):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r796):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -31,19 +31,19 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`, **QUEUED pos 6/46** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`, **QUEUED pos 18/46** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6855** | `352c92a114` | green | kind 3; **10/10 first board** (22:32:04Z), `ready-to-merge`, **QUEUED pos 4/46** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`, **QUEUED pos 4/44** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`, **QUEUED pos 16/44** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6855** | `352c92a114` | green | kind 3; **10/10 first board** (22:32:04Z), `ready-to-merge`, **MERGING pos 2/44** (group `d7ac608e0c`, `sandboxed-build` from 05:21:38Z) | nobody — act only if `queuepos.py` says `EJECTED`; once it merges, step 5 opens for kind 1 |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open (#6851, #6854, #6855) → step 5 does not fire** until one merges; all three are
-queued (#6855 4th, #6851 6th, #6854 18th). Main is `6f7de9441`.
+queued (#6855 2nd and MERGING, #6851 4th, #6854 16th). Main is `91fe5bc2e`.
 
 ## What to expect next
 
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`. A `MERGING` PR's group build is the check-runs of
    `git ls-remote origin 'refs/heads/gh-readonly-queue/main/pr-<n>-*'` (r739), the earliest sign of an ejection. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only; r794: #6851, #6854 and #6855 clean against `6f7de9441`). Staged branches:
+   merge-group simulation (cheap, read-only; r796: #6851, #6854 and #6855 clean against `91fe5bc2e`). Staged branches:
    `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r750: none
    left; kind 3 opened as #6855). A merge-tree check sees conflicts, not new
    callers: also grep main's new lines for the names each staged branch removes, and when main DELETES declarations,
@@ -97,7 +97,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r795 did
+## What r703–r796 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -205,6 +205,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
   runners (204 queued); board unchanged.
 * r794: the queue moved (#6847 and #6637 merged); all three re-simulated clean (4/6/18 of 45).
 * r795: no merges; board and queue unchanged (4/6/18 of 46); the REST quota held through the :16 round.
+* r796: main moved twice (#6643, #6611; nothing removed; the one grep hit was a docstring word); all re-simulated clean; #6855 MERGING at 2 of 44.
 
 ## Candidates for a later step 5
 
