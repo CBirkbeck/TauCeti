@@ -393,9 +393,9 @@ theorem integral_one_add_sq_rpow (hs : 1 / 2 < s) :
   ring
 
 /-- Rescaling by `√ν` turns `(1 + x ^ 2 / ν) ^ (-s)` into the Cauchy-type kernel. -/
-private lemma one_add_sq_div_eq {ν : ℝ} (hν : 0 < ν) (s x : ℝ) :
+private lemma one_add_sq_div_eq {ν : ℝ} (hν : 0 ≤ ν) (s x : ℝ) :
     (1 + ((√ν)⁻¹ * x) ^ 2) ^ (-s) = (1 + x ^ 2 / ν) ^ (-s) := by
-  rw [mul_pow, inv_pow, Real.sq_sqrt hν.le, inv_mul_eq_div]
+  rw [mul_pow, inv_pow, Real.sq_sqrt hν, inv_mul_eq_div]
 
 /-- The rescaled Cauchy-type kernel is integrable on the line. -/
 theorem integrable_one_add_sq_div_rpow {ν s : ℝ} (hν : 0 < ν) (hs : 1 / 2 < s) :
@@ -403,14 +403,14 @@ theorem integrable_one_add_sq_div_rpow {ν s : ℝ} (hν : 0 < ν) (hs : 1 / 2 <
   have hsν : (√ν)⁻¹ ≠ 0 := inv_ne_zero (Real.sqrt_pos.mpr hν).ne'
   have h := (integrable_comp_mul_left_iff
     (fun y : ℝ => (1 + y ^ 2) ^ (-s)) hsν).mpr (integrable_one_add_sq_rpow hs)
-  simpa only [one_add_sq_div_eq hν] using h
+  simpa only [one_add_sq_div_eq hν.le] using h
 
 /-- **The total mass of a rescaled Cauchy-type kernel.** Rescaling by `√ν` reduces it to
 Euler's second beta integral. -/
 theorem integral_one_add_sq_div_rpow {ν s : ℝ} (hν : 0 < ν) (hs : 1 / 2 < s) :
     ∫ x : ℝ, (1 + x ^ 2 / ν) ^ (-s) = √ν * beta (1 / 2) (s - 1 / 2) := by
   have h := Measure.integral_comp_inv_mul_left (fun y : ℝ => (1 + y ^ 2) ^ (-s)) √ν
-  simp only [one_add_sq_div_eq hν, abs_of_nonneg (Real.sqrt_nonneg ν), smul_eq_mul] at h
+  simp only [one_add_sq_div_eq hν.le, abs_of_nonneg (Real.sqrt_nonneg ν), smul_eq_mul] at h
   rw [h, integral_one_add_sq_rpow hs]
 
 end SecondIntegral
