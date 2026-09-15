@@ -39193,3 +39193,23 @@ still `4ea08bc2f`, so r814's simulations stand. Nothing to fix, contest or drive
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r818 — 2026-09-15T09:46Z — Actions backlog at 361 queued runs; #6875's pending check is a queued `zulip-pr` with no runner, its build green; no merges for 48 min
+
+**Board** (09:46:24Z; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 60%): #6851 and #6854
+are `ready-to-merge`, with CI green and boards on head, and still out of the queue. #6875 is `ready-to-merge` and
+NEVER-QUEUED, waiting for a human merge. Per the check-runs API at 09:46:56Z, the sweep's `CI=PENDING` for #6875 is
+only `zulip-pr`, queued since 09:28:24Z without a runner. Every other check's latest run is success or skipped,
+`sandboxed-build` included. #5950 is Chris's. No merges since #6808 (08:58:32Z); main is still `4ea08bc2f`, so r814's
+simulations stand. Nothing to fix, contest or drive; step 5 is shut.
+
+**Queue and Actions** (09:46:34–09:46:56Z): depth 10. #6871 and #6849 are AWAITING_CHECKS (both since at least
+09:06Z), and #6659, #6717, #6751, #6624, #6277, #6724, #6817 and #6649 QUEUED, none of them mine. 361 Actions runs are
+queued, which explains both the runnerless `zulip-pr` job and the 48 minutes without a merge. The merge sweep last ran
+at 05:18:46Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
