@@ -38323,3 +38323,29 @@ runners.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r780 — 2026-09-15T02:47Z — main moved (#6735 generalizes a lemma); all three re-simulated clean; queue 11/13/25
+
+**Board** (02:46:21Z; sweep and queuepos exited 0; `/tmp` at 45%): #6851, #6854 and #6855 are `ready-to-merge`, CI green,
+boards on head; QUEUED at 13, 25 and 11 of 38. #5950 is Chris's. Nothing to fix, contest or drive; step 5 shut.
+
+**Main moved:** #6735 (generalize rescaled derivative limits beyond real scalars; base `main`) merged at 02:40:45Z:
+`cddbf10e6` → **`87a939e4c`**, `Analysis/Calculus/RescaledDerivative.lean` +17/−29. The firing control read 29 removed
+lines, 17 added, and **0** removed and 0 added declaration headers: a generalization rewrites the binders after the
+header line, so the header-based check cannot see it. Checked directly instead: that file declares one name,
+`tendsto_nsmul_apply_div_of_hasDerivAt`, and none of my three branches' added lines uses it or imports the module. No
+module was renamed. All three PRs merge clean, and main touched none of their files.
+
+**Merge-group simulation** against `87a939e4c`:
+
+```
+#6851  23 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6854  21 behind  merges clean  ghostref: 0 removed (removes nothing)     stalequal: exit 0
+#6855  21 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
