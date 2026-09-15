@@ -40837,3 +40837,60 @@ Nothing to fix, contest or drive. The cap is full (#6915, #6923, #6933).
 * **Merge-group simulation** against `9cd85f80e`: all eleven merge clean, with `ghostref` and `stalequal` exit 0.
 
 No toolkit edits.
+
+---
+
+## r865 — 2026-09-15T20:26Z — #6923 driven, 10/10 and queued; kind 2 opened as draft #6941; main moved (#6706, #6782)
+
+**Board** (20:26:24Z; a real call read 4443 REST calls left; sweep and `queuepos.py` exited 0): no change from r864. #6923
+(`8f846c57b`) had no board, and its hour ended at 20:28:01Z (green 19:21:52Z, ready 19:28:01Z). #6933 may be driven only after
+21:07Z and #6915 only after 21:13Z. Queue depth 70: #6854 10, #6851 12, #6910 47, #6911 50, #6899 51, #6896 52, #6902 67.
+
+**Step 4: #6923 driven.** At 20:27:20Z it had no comments, no threads and no local review process. A guarded launch waited out
+the clock in 5-second steps, re-checked the head and the absence of a board, and started the review at 20:28:06Z (log
+`review-6923-r865.log`). **`ROUND 1 (commit) approved`**, all 10 rubrics, $1.21. `post.py: scoreboard id=5687664750`, board
+"approved" on `8f846c57b` (20:31:04Z). The label moved to `ready-to-merge`, and it queued at 69 of 69 (20:35Z).
+
+**Step 5: kind 2 opened as draft #6941.** With #6923 `ready-to-merge`, two PRs were in progress. The Mathlib pin is still
+`30a58f795a`, so kind 1 stays dry, and kind 2 took its slot.
+
+* **Target:** `TauCeti/Analysis/Contour/Residue/Theorem.lean`, 339 lines, the classical residue theorem on a circle. No open PR
+  touched it (207 open PRs read), it has no importers, and its last change was #5733 (2026-09-05). Roadmap line
+  `ContourIntegration`, as in #1507.
+* **Edits** (+79/−61, no statement changes):
+  * every `fun … =>` → `↦` (45; the two `induction … with | _ d ih =>` arms are untouched);
+  * 14 `;` tactic chains split, including in `have … := by`, `fun z _ ↦ by` and focused bullets;
+  * `le_of_lt hdepth_s₀` → `hdepth_s₀.le`, and `ne_of_lt h` → `h.ne`;
+  * roadmap narrative out of the module docstring ("a Layer 2 target of the contour-integration roadmap … feeding the valence
+    formula", "the raw-function design of the contour-integration roadmap", and "the roadmap form" twice), keeping the AINTLIB
+    provenance and the Hungerbühler–Wasem reference.
+
+  The firing control counted 45 arrows plus 19 exact replacements, with no line over 100 codepoints and no roadmap or "Layer"
+  mention left.
+* **gpt-6-astra** (`astra-residue-answer.txt`): all edits safe, including the docstring rewording; it would reject none.
+* `/mathlibable`: pinned Mathlib's `Analysis` has no residue declarations, so it has no residue theorem. The file is built on
+  Tau Ceti's `TauCeti.Contour.residue` API, though, so it is not a direct candidate.
+* **Gate** `prepush.sh origin/main` (on `9cd85f80e`): **12 ok / 0 failed / 0 UNRUN**.
+* **Opened #6941** (draft, 20:36:04Z): head `CBirkbeck:improve/residue-theorem-circle-style@8c4c5fa79`,
+  `Roadmap: ContourIntegration`. The live body matches the file. Main had moved to `f7443c964` by then, with a clean merge-tree
+  and the file untouched.
+
+**Main moved** `9cd85f80e` → **`f7443c964`** with #6706 ("sub-mixed Hodge structures and the subobjects of a morphism") and
+#6782 ("the along-curve covariant derivative in an arbitrary chart"): 10 files, +638/−5. The firing control read 5 removed
+lines (3 lines of a Hodge proof, a re-pointed import, one docstring line) and 0 removed and 26 added declaration headers.
+
+* **One module moved:** `Geometry/Manifold/VectorBundle/SectionAlongCurve.lean` → `SectionAlongCurve/Basic.lean` (R100). Its
+  importer was re-pointed, and no head's added lines name the old module.
+* **Grep hits for #6851, read and false:** `alongCurve`, `alongCurveWithin`, `alongCurveWithin_comp`, `_congr`, `_const_smul`,
+  `_curveVelocityWithin_of_isOpen` and `carries`. The declarations sit in `VectorBundle/CovariantDerivative/AlongCurve/Basic.lean`,
+  which main touched only at the re-pointed import and a docstring line. Every changed line naming them is an addition (new uses in
+  `AlongCurve/Chart.lean`, prose), and `carries` is prose on both sides.
+* Main's added lines name none of #6851's deleted Levi-Civita API and no `Deck`. No head's files were touched, and there were no
+  clashes.
+* **Merge-group simulation** against `f7443c964`: all twelve merge clean, with `ghostref` and `stalequal` exit 0. The twelve are
+  #6851, #6854, #6875, #6896, #6899, #6902, #6910, #6911, #6915 at `08b8138bc`, #6923, #6933 and #6941.
+
+**In progress now:** #6915 (drive not before 21:13Z), #6933 (drive not before 21:07Z) and #6941 (draft, first build). The cap is
+full. The next opening is kind 3.
+
+No toolkit edits.
