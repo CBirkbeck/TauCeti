@@ -21,14 +21,17 @@ for `φ(Γ₂)` into one for `φ(Γ₁) ⊓ φ(δ) φ(Γ₂) φ(δ)⁻¹`.
 
 **`φ` is a parameter, and is not assumed injective.** The theorem itself assumes only
 `MulAction P ℍ`, so nothing here forces any particular element to act trivially; the hypotheses
-below are what it actually rests on. Injectivity is replaced by an ambient subgroup `H` containing
-both groups, stable under conjugation by `δ`, with `ker φ ⊓ H ≤ Γ₁`.
+below are what it actually rests on. Injectivity is replaced by an ambient subgroup `H` that
+contains `Γ₁` and receives the conjugate `δ Γ₂ δ⁻¹`, with `ker φ ⊓ H ≤ Γ₁`. Neither `Γ₂ ≤ H` nor
+stability of `H` under conjugation by `δ` is required.
 
 Taking `H` to be the determinant-one subgroup does not by itself discharge `hker`: it reduces it to
 `ker φ ⊓ H ≤ Γ₁`, which needs **both** that `φ` collapses no more of `H` than `{±1}` and that
 `{±1} ≤ Γ₁`. The first is a condition on `φ` — for `ratPosToPSL2R` it is
 `eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one` — and the second holds of every `Γ₀(N)`.
-`Γ₁` and `Γ₂` must also lie in `H`, which they do, having determinant one.
+The other two hypotheses ask that `Γ₁ ≤ H` and that `δ Γ₂ δ⁻¹ ≤ H`. At the determinant-one
+subgroup both hold as soon as `Γ₁` and `Γ₂` have determinant one, since conjugation preserves
+determinants — `δ` itself need not have determinant one.
 
 The motivation for allowing a non-injective `φ` comes from the intended instantiation rather than
 from the statement. There `P` acts faithfully on `ℍ` and is a quotient of a matrix group by its
@@ -76,8 +79,9 @@ variable {Δ : Submonoid (GL (Fin 2) ℚ)} {Γ₁ Γ₂ : Subgroup (GL (Fin 2) �
 fundamental domain for `φ(Γ₂)`, the translates of `S` by the images of the representatives
 `aᵥ = rightCosetRep D v = δ τᵥ⁻¹` tile one for `φ(Γ₁) ⊓ φ(δ) φ(Γ₂) φ(δ)⁻¹`.
 
-Supply `H` rather than injectivity of `φ`: any subgroup containing `Γ₁` and `Γ₂`, stable under
-conjugation by `δ`, and meeting `ker φ` inside `Γ₁`. The determinant-one subgroup serves when `φ`
+Supply `H` rather than injectivity of `φ`: any subgroup containing `Γ₁`, receiving the conjugate
+`δ Γ₂ δ⁻¹`, and meeting `ker φ` inside `Γ₁` — neither `Γ₂ ≤ H` nor conjugation-stability of `H` is
+needed. The determinant-one subgroup serves when `φ`
 collapses no more of it than `{±1}` and `{±1} ≤ Γ₁` — both hold for `ratPosToPSL2R` over any
 `Γ₀(N)`, but neither follows from the statement, which constrains `φ` only through `hker`.
 
