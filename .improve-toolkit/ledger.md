@@ -39104,3 +39104,34 @@ them mine. The merge sweep last ran at 05:18:46Z.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r814 — 2026-09-15T09:06Z — main moved (#6808, one new file); all three PRs re-simulated clean; #6875 10/10 but its label still lags; no fixes
+
+**Board** (09:06:24Z; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 59%): #6851 and #6854
+are `ready-to-merge`, with CI green and boards on head, and still out of the queue. #6875 is 10/10 on `462ed97` (board
+08:54:23Z), but its label still read `awaiting-review` 12 minutes later. That is cosmetic, since its `web/examples` path
+keeps it off auto-merge anyway; it waits for a human merge. #5950 is Chris's. Nothing to fix, contest or drive; step 5
+is shut.
+
+**Main moved** `43d510787` → **`4ea08bc2f`** at 08:58:32Z with #6808 (the double coset law for splitting in a
+non-Galois subfield): `RamificationInertia/DoubleCoset.lean` +172, and nothing else. The firing control read 0 removed
+lines, 172 added, and 0 removed and 7 added declaration headers. With no removed lines no signature could change, and
+no module was renamed or deleted. All three PRs merge clean, main touched none of their files, and its new lines name
+nothing they remove.
+
+**Merge-group simulation** against `4ea08bc2f`:
+
+```
+#6851  37 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  35 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875   2 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue** (09:06:35Z, GraphQL): depth 4. #6871 and #6849 are AWAITING_CHECKS and #6659 and #6842 QUEUED, none of them
+mine. The merge sweep last ran at 05:18:46Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
