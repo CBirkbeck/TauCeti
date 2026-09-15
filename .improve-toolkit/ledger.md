@@ -41248,3 +41248,46 @@ purely additive: nothing was removed, no import was dropped, no module moved, an
 **Merge-group simulation** against `72f21ba26`: all thirteen open heads merge clean, with `ghostref` and `stalequal` exit 0.
 
 No toolkit edits.
+
+---
+
+## r878 — 2026-09-15T22:46Z — #6945 driven 10/10, #6947 approved 10/10, both queued; kind 2 opened as draft #6952; main moved twice
+
+**Board** (22:46:23Z; a real call read 4612 REST calls left; sweep and `queuepos.py` exited 0): #6945 (`c7129d24c`) had no board,
+with its hour ending at 22:47:11Z. #6947 and #6950 could not be driven before 23:27Z and 23:38Z. No merges since #6846.
+
+**Step 4: #6945 driven.** At 22:47:10Z it had no comments, no threads and no local review process. The guarded launch waited out
+the clock and started at 22:47:13Z (log `review-6945-r878.log`): **`ROUND 1 (commit) approved`**, all 10 rubrics, $0.84.
+`post.py: scoreboard id=5689140589`, board "approved" on `c7129d24c` (22:50:18Z), `ready-to-merge`, enqueued 22:51:05Z by
+`tauceti-review-bot`, QUEUED 75.
+
+**#6947 approved without a drive.** The local worker edited board `5689194846` at 22:56:19Z: approved on `3687b12b1`, no rubric
+outstanding. It was enqueued at 22:57:08Z and sat at 76. That left **two free slots**.
+
+**Step 5: kind 2 opened as draft #6952.** The pin is still `30a58f795a`, so kind 1 stays dry.
+
+* **Target:** `TauCeti/Analysis/Contour/Winding/Number/Segment/Formula.lean` (190 lines, 32 `fun … =>`, 7 `;` lines), the sibling
+  of #6923's `Jump.lean`. No open PR touches it (208 read). Roadmap line `ContourIntegration`, as in #4109.
+* **Edits** (+47/−40, no statement changes): every `fun … =>` → `↦`; seven `;` chains split (`ext t; rw [one_div]`, four
+  `have … := by push_cast; ring`, and `apply mem_slitPlane_iff.mpr; left`); `h_avoid` becomes the term
+  `fun t ht h ↦ hne t ht (by rw [h, sub_self])`; `h_deriv` ends with `simpa only [mul_one] using h2.comp t h1`; and the module
+  docstring drops "(ContourIntegration roadmap, Layer 1)", keeping HW Proposition 2.2 and the Ahlfors reference.
+* **gpt-6-astra** (`astra-formula-answer.txt`): all five classes safe, including the `simpa only` golf, where composition is
+  defeq to the lambda. The seventh `;` split was made after that answer; it is the same class as the ones reviewed.
+* `/mathlibable`: not a candidate. Pinned Mathlib has no winding number, and the file is stated for Tau Ceti's `windingNumber`.
+* **Gate** (twice, before and after the amend): **12 ok / 0 failed / 0 UNRUN**.
+* **Opened #6952** (draft, 22:58:45Z): head `CBirkbeck:improve/segment-formula-style@ab16f0543`, `Roadmap: ContourIntegration`.
+  Main had moved to `e0103897b` by then, with a clean merge-tree and the file untouched. The live body matches the file.
+
+**Main moved twice.**
+
+* `14754a1d1` → `72f21ba26` (#6850 docs, #6846 Brauer associativity), recorded at r877.
+* → **`e0103897b`** with #6845 ("the multivariate Gamma integral in Cholesky coordinates") and #6841 ("keep proper ideals proper
+  on rational charts"): 7 files, +667/−4, with 0 removed and 18 added declaration headers. The four removed lines are a
+  re-indented proof step and one docstring line. No module moved, no import was dropped, and no head's files were touched.
+
+**Merge-group simulation** against `e0103897b`: all fourteen open heads merge clean, with `ghostref` and `stalequal` exit 0.
+
+**In progress now:** #6950 and #6952 — **one slot is free, and kind 3 is due.**
+
+No toolkit edits.
