@@ -41,8 +41,7 @@ the previous statement for the acting group `deck f` itself.
 
 ## References
 
-This supplies a prerequisite for the Tau Ceti universal-covers roadmap, Stage 1 and Stage 4:
-a cover presented as a quotient by a group action has that group as its deck group, which is
+A cover presented as a quotient by a group action has that group as its deck group, which is
 how the deck group of a concrete cover such as `Sⁿ → RPⁿ` is computed. The quotient covering
 map API it consumes (`Mathlib/Topology/Covering/Quotient.lean`) is due to Junyan Xu.
 Surjectivity rests on uniqueness of lifts through a covering map,
@@ -106,7 +105,7 @@ lemma toDeckHom_surjective [PreconnectedSpace E] : Function.Surjective (toDeckHo
   rcases isEmpty_or_nonempty E with hE | hne
   · exact ⟨1, Subtype.ext (Homeomorph.ext fun e => (hE.false e).elim)⟩
   · obtain ⟨e₀⟩ := hne
-    obtain ⟨g, hg⟩ := hf.apply_eq_iff_mem_orbit.mp (Deck.map_proj φ e₀)
+    obtain ⟨g, hg⟩ := hf.apply_eq_iff_mem_orbit.mp (deck.map_proj φ e₀)
     exact ⟨g, Deck.eq_of_apply_eq hf.isCoveringMap _ _
       (by rw [toDeckHom_apply]; exact hg)⟩
 

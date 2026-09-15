@@ -12,14 +12,13 @@ public import TauCeti.Algebra.GroupAction.OrbitRelQuotient
 # Fibre orbits for subgroups of the deck group
 
 This file packages the orbit quotient of a single fibre by a chosen subgroup
-`H ≤ deck p`. It is the fibre-level bookkeeping needed for the universal-covers roadmap when
-the cover attached to a subgroup is compared with a pointed cover: changing the chosen lift in
-one fibre is controlled by subgroup orbits, and later regular-cover statements compare these
-orbits with normalizers and deck groups.
+`H ≤ deck p`. When the cover attached to a subgroup is compared with a pointed cover, changing
+the chosen lift in one fibre is controlled by subgroup orbits, and regular-cover statements
+compare these orbits with normalizers and deck groups.
 
 Mathlib already supplies the generic orbit quotient `MulAction.orbitRel.Quotient`; the
 declarations here only specialize it to the deck action on a fibre and record the maps that
-will be reused by the classification bookkeeping.
+the classification of covers reuses.
 
 ## Main declarations
 
@@ -38,10 +37,7 @@ will be reused by the classification bookkeeping.
 
 ## References
 
-This supplies a small prerequisite for `TauCetiRoadmap/UniversalCovers/README.md`, Stage 2,
-items 7 and 8: covers associated to subgroups and the pointed/unpointed Galois
-correspondence, where fibre orbits by subgroups and their transports are part of the
-basepoint bookkeeping. It is the subgroup-level analogue of
+It is the subgroup-level analogue of
 `TauCeti.AlgebraicTopology.UniversalCover.Deck.Fiber.Orbit`, adapting that file's
 `fiberOrbitClass`, `fiberOrbitQuotientEquiv`, and fibre transport/conjugation lemmas from the
 full deck group to arbitrary subgroups.

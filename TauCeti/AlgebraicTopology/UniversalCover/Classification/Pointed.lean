@@ -63,11 +63,8 @@ locally path-connected space.)
 
 ## References
 
-This advances `TauCetiRoadmap/UniversalCovers/README.md`, Stage 2, item 8, first bullet: the
-correspondence between *pointed* connected covers of `(X, x₀)` and subgroups of `π₁(X, x₀)`. It
-consumes the lifting criterion recorded in Stage 2, item 6
-(`TauCeti.Topology.Homotopy.Covering`), and the recovered-subgroup API of
-`TauCeti.Topology.Homotopy.Monodromy.Basic`. No Mathlib infrastructure is vendored: the lifting
+It consumes the lifting criterion in `TauCeti.Topology.Homotopy.Covering` and the
+recovered-subgroup API of `TauCeti.Topology.Homotopy.Monodromy.Basic`. The lifting
 criterion `IsCoveringMap.existsUnique_continuousMap_lifts_of_range_le` is Junyan Xu's, in
 `Mathlib.Topology.Homotopy.Lifting`, while the uniqueness of lifts
 `IsCoveringMap.eq_of_comp_eq` is Thomas Browning's, in `Mathlib.Topology.Covering.Basic`, where

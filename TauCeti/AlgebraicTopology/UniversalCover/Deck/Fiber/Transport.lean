@@ -15,9 +15,9 @@ An isomorphism of maps over a common base identifies corresponding fibres. This 
 that fibre identification and records that it intertwines the restricted deck actions with
 conjugation of deck transformations.
 
-This is bookkeeping for the universal-covers roadmap: pointed cover isomorphisms carry chosen
-lifts of the basepoint between fibres, and the pointed/unpointed cover correspondences need the
-deck action on those fibres to be compatible with conjugating the deck group.
+Pointed cover isomorphisms carry chosen lifts of the basepoint between fibres, and the
+pointed/unpointed cover correspondences need the deck action on those fibres to be compatible
+with conjugating the deck group.
 
 ## Main definitions
 
@@ -30,12 +30,6 @@ deck action on those fibres to be compatible with conjugating the deck group.
 * `TauCeti.Deck.map_fiber_stabilizer_conjMulEquiv`: conjugation maps the source fibre
   stabilizer onto the transported target fibre stabilizer.
 * `TauCeti.Deck.mem_orbit_fiberMap_iff`: fibre transport preserves deck-orbit membership.
-
-## References
-
-This supplies a prerequisite for the Tau Ceti universal-covers roadmap, Stage 2
-(`pointed` and `unpointed` connected cover correspondences), building on Stage 0.4's
-deck-transformation group.
 -/
 
 public section
@@ -100,22 +94,22 @@ transformations. -/
 lemma fiberMap_smul (h : E ≃ₜ F) (hpq : ∀ e, q (h e) = p e) (φ : deck p) (e : p ⁻¹' {b}) :
     fiberMap h hpq b (φ • e) = conjMulEquiv h hpq φ • fiberMap h hpq b e := by
   ext
-  simp [fiber_smul_eq_fiberHomeomorph]
+  simp [deck.fiber_smul_eq_fiberHomeomorph]
 
 /-- The inverse fibre transport intertwines the restricted deck action with inverse
 conjugation of deck transformations. -/
 lemma fiberMap_symm_smul (h : E ≃ₜ F) (hpq : ∀ e, q (h e) = p e) (ψ : deck q) (f : q ⁻¹' {b}) :
     (fiberMap h hpq b).symm (ψ • f) = (conjMulEquiv h hpq).symm ψ • (fiberMap h hpq b).symm f := by
   ext
-  simp [fiber_smul_eq_fiberHomeomorph]
+  simp [deck.fiber_smul_eq_fiberHomeomorph]
 
 /-- Transporting a deck transformation to the target cover and then restricting it to a fibre
 is the same as restricting first and conjugating the resulting fibre homeomorphism by the fibre
 transport map. -/
 @[simp]
 lemma fiberMap_trans_fiberHomeomorph (h : E ≃ₜ F) (hpq : ∀ e, q (h e) = p e) (φ : deck p) :
-    (fiberMap h hpq b).trans (fiberHomeomorph (conjMulEquiv h hpq φ) b) =
-      (fiberHomeomorph φ b).trans (fiberMap h hpq b) := by
+    (fiberMap h hpq b).trans (deck.fiberHomeomorph (conjMulEquiv h hpq φ) b) =
+      (deck.fiberHomeomorph φ b).trans (fiberMap h hpq b) := by
   ext e
   simp
 

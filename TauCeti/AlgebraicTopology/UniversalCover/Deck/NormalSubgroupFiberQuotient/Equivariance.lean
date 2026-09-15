@@ -31,9 +31,8 @@ multiplication by `a⁻¹`.
 
 ## References
 
-This supplies a small bookkeeping prerequisite for
-`TauCetiRoadmap/UniversalCovers/README.md`, Stage 2, item 8: the deck group of the cover
-attached to `H` is `N(H) / H`, with the normal case specializing to a quotient by `H`.
+These results feed the identification of the deck group of the cover attached to `H` with
+`N(H) / H`, whose normal case is a quotient by `H`.
 -/
 
 public section

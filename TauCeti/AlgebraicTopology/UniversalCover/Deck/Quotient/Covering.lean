@@ -15,9 +15,8 @@ public import TauCeti.Topology.Covering.Quotient
 For a covering map `p : E → B` with preconnected total space whose deck action is regular
 (surjective, with `deck p` acting transitively on every fibre), `p` exhibits `B` as the
 quotient of `E` by the deck transformation group: `p` is a `IsQuotientCoveringMap` for
-`deck p`. This is the deck-side formulation of the universal-covers roadmap statement that
-`UniversalCover x₀ / π₁(X, x₀) ≃ X`, packaged so that it consumes Mathlib's quotient
-covering map theory rather than re-deriving it.
+`deck p`. This is the deck-side formulation of `UniversalCover x₀ / π₁(X, x₀) ≃ X`, packaged so
+that it consumes Mathlib's quotient covering map theory rather than re-deriving it.
 
 Conversely, a quotient covering map has regular deck action, for any acting group: its
 fibres are the orbits, and translation by a group element is a deck transformation. For a
@@ -36,9 +35,8 @@ for the deck group and regularity of the deck action.
 
 ## References
 
-This supplies a prerequisite for the Tau Ceti universal-covers roadmap, Stages 0.3 and 1,
-where the quotient of the cover by the deck group is identified with the base via Mathlib's
-`IsQuotientCoveringMap` (`Mathlib/Topology/Covering/Quotient.lean`).
+Mathlib's quotient covering map theory is `IsQuotientCoveringMap`
+(`Mathlib/Topology/Covering/Quotient.lean`).
 -/
 
 public section

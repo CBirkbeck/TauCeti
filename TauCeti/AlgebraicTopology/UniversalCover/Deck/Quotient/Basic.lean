@@ -14,9 +14,8 @@ For any map `p : E → B`, deck transformations preserve the value of `p`, so `p
 through the quotient of `E` by the orbit relation for the deck action. If the deck action is
 regular, the induced map from the orbit quotient to the base is an equivalence.
 
-This is algebraic bookkeeping for the universal-covers roadmap. Later quotient-cover and
-regular-cover statements need to compare the base with the orbit space of the deck action,
-but the basic equivalence only uses `Deck.IsRegular p`: surjectivity of `p` and transitivity
+Quotient-cover and regular-cover statements compare the base with the orbit space of the deck
+action, and the basic equivalence only uses `Deck.IsRegular p`: surjectivity of `p` and transitivity
 of the deck action on each fibre.
 
 ## Main declarations
@@ -24,12 +23,6 @@ of the deck action on each fibre.
 * `TauCeti.Deck.orbitQuotientToBase`: the map `E / deck p → B` induced by `p`.
 * `TauCeti.Deck.IsRegular.orbitQuotientEquivBase`: for a regular deck action,
   `E / deck p` is equivalent to the base.
-
-## References
-
-This supplies a prerequisite for the Tau Ceti universal-covers roadmap, Stage 2, especially
-the regular-cover milestones where fibres are deck orbits and quotient covers are compared
-with the original base.
 -/
 
 public section
@@ -47,7 +40,7 @@ lemma eq_proj_of_orbitRel {e e' : E} (h : MulAction.orbitRel (deck p) E e e') :
   rw [MulAction.orbitRel_apply] at h
   rcases h with ⟨φ, hφ⟩
   rw [← hφ]
-  simpa [smul_eq_apply] using map_proj φ e'
+  simpa [deck.smul_eq_apply] using deck.map_proj φ e'
 
 /-- The projection map factors through the quotient of `E` by deck orbits. -/
 @[expose] def orbitQuotientToBase (p : E → B) : MulAction.orbitRel.Quotient (deck p) E → B :=
@@ -73,7 +66,7 @@ private lemma orbitRel_eq_ker_of_exists_apply_eq
     exact ⟨φ⁻¹, by
       have hinv : φ.1.symm e' = e := by
         rw [← hφ, Homeomorph.symm_apply_apply]
-      simpa [smul_eq_apply] using hinv⟩
+      simpa [deck.smul_eq_apply] using hinv⟩
 
 /-- If every pair of points with the same projection is connected by a deck transformation,
 then two points of the total space have the same projection exactly when they lie in a common
@@ -94,10 +87,10 @@ lemma orbitRel_homeomorph_iff (h : E ≃ₜ F) (hpq : ∀ e, q (h e) = p e) (e e
     rcases hee' with ⟨φ, hφ⟩
     refine ⟨conjMulEquiv h hpq φ, ?_⟩
     have hφ_apply : φ.1 e' = e := by
-      simpa only [smul_eq_apply] using hφ
+      simpa only [deck.smul_eq_apply] using hφ
     calc
       (conjMulEquiv h hpq φ) • h e' = (conjMulEquiv h hpq φ).1 (h e') :=
-        smul_eq_apply _ _
+        deck.smul_eq_apply _ _
       _ = h (φ.1 e') := by rw [conjMulEquiv_apply_coe, h.symm_apply_apply]
       _ = h e := by rw [hφ_apply]
   · intro hff'
@@ -105,10 +98,10 @@ lemma orbitRel_homeomorph_iff (h : E ≃ₜ F) (hpq : ∀ e, q (h e) = p e) (e e
     rcases hff' with ⟨ψ, hψ⟩
     refine ⟨(conjMulEquiv h hpq).symm ψ, ?_⟩
     have hψ_apply : ψ.1 (h e') = h e := by
-      simpa only [smul_eq_apply] using hψ
+      simpa only [deck.smul_eq_apply] using hψ
     calc
       ((conjMulEquiv h hpq).symm ψ) • e' =
-          ((conjMulEquiv h hpq).symm ψ).1 e' := smul_eq_apply _ _
+          ((conjMulEquiv h hpq).symm ψ).1 e' := deck.smul_eq_apply _ _
       _ = h.symm (ψ.1 (h e')) := conjMulEquiv_symm_apply_coe h hpq ψ e'
       _ = e := by rw [hψ_apply, h.symm_apply_apply]
 

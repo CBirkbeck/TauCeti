@@ -15,9 +15,9 @@ For a preconnected covering map with regular deck action, evaluation at any poin
 identifies the deck group with that fibre. This file packages the same fact in the standard
 Mathlib language of torsors: the fibre is a principal homogeneous space for the deck group.
 
-The torsor structure is bookkeeping needed by the universal-covers roadmap Stage 2, where
-pointed covers and unpointed covers differ by changing a chosen lift of the basepoint, and
-regular covers are characterized by transitivity of the deck action on fibres.
+Pointed covers and unpointed covers differ by changing a chosen lift of the basepoint, and
+regular covers are characterized by transitivity of the deck action on fibres; the torsor
+structure keeps track of both.
 
 ## Main declarations
 
@@ -27,10 +27,9 @@ regular covers are characterized by transitivity of the deck action on fibres.
 
 ## References
 
-This supplies a small prerequisite for the regular-cover and pointed/unpointed-cover
-bookkeeping in `TauCetiRoadmap/UniversalCovers/README.md`, Stage 2. It specializes the local
-torsor API in `TauCeti.AlgebraicTopology.UniversalCover.Deck.Connected.Torsor` using the
-regular deck-action API in `TauCeti.AlgebraicTopology.UniversalCover.Deck.Regular.Basic`.
+It specializes the local torsor API in
+`TauCeti.AlgebraicTopology.UniversalCover.Deck.Connected.Torsor` using the regular deck-action
+API in `TauCeti.AlgebraicTopology.UniversalCover.Deck.Regular.Basic`.
 -/
 
 public section

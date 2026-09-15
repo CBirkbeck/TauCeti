@@ -14,8 +14,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Deck.Regular.Basic
 
 This file packages the quotient of a single fibre by the restricted deck action. Mathlib
 already provides the generic orbit quotient `MulAction.orbitRel.Quotient`; the declarations
-here are the deck-specific spelling and transport API needed by the universal-covers roadmap
-when pointed covers are compared with unpointed covers.
+here are the deck-specific spelling and transport API used when pointed covers are compared
+with unpointed covers.
 
 For a map `p : E → B` and a base point `b : B`, `Deck.FiberOrbitQuotient p b` is the set of
 orbits of the action of `deck p` on the fibre `p ⁻¹' {b}`. An over-base homeomorphism
@@ -36,8 +36,7 @@ with each of these fibre-orbit quotients being a subsingleton.
 
 ## References
 
-This supplies a bookkeeping prerequisite for the Tau Ceti universal-covers roadmap, Stage 2:
-the pointed/unpointed connected-cover correspondence records how chosen lifts vary up to the
+The pointed/unpointed connected-cover correspondence records how chosen lifts vary up to the
 deck action, and regular covers are exactly those whose deck action is transitive on fibres.
 -/
 

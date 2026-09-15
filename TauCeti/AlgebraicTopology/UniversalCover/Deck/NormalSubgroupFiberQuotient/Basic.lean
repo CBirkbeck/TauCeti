@@ -13,10 +13,9 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Deck.SubgroupFiberOrbit.Q
 
 For a regular preconnected covering map, the quotient of one fibre by a subgroup
 `H ≤ deck p` is already identified with the coset quotient `deck p ⧸ H`. When `H` is normal,
-the universal-covers roadmap uses this quotient as the regular-cover specialization of the
-normalizer quotient `N(H) / H`. This file records that specialization directly, so later
-deck-group computations for quotient covers can move between fibre quotients and
-normalizer quotients without redoing the algebraic comparison.
+this quotient is the regular-cover specialization of the normalizer quotient `N(H) / H`. This
+file records that specialization directly, so deck-group computations for quotient covers can
+move between fibre quotients and normalizer quotients without redoing the algebraic comparison.
 
 ## Main declarations
 
@@ -30,10 +29,9 @@ normalizer quotients without redoing the algebraic comparison.
 
 ## References
 
-This is a small prerequisite for `TauCetiRoadmap/UniversalCovers/README.md`, Stage 2, item 8:
-in the regular case `H ◁ π₁(X, x₀)`, the deck group of the cover attached to `H` is
-`π₁(X, x₀) / H`. The file combines the existing Tau Ceti regular fibre-quotient equivalence
-with the algebraic normalizer-quotient comparison; no Mathlib infrastructure is vendored.
+In the regular case `H ◁ π₁(X, x₀)`, the deck group of the cover attached to `H` is
+`π₁(X, x₀) / H`. The file combines Tau Ceti's regular fibre-quotient equivalence with the
+algebraic normalizer-quotient comparison.
 -/
 
 public section

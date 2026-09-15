@@ -14,8 +14,7 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Deck.Fiber.Transport
 
 For a map `p : E → B`, regularity of the deck action is the statement that `p` is
 surjective and the deck transformation group acts transitively on every fibre. This is the
-deck-action formulation of regular covers used by the universal-covers roadmap before the
-later theorem identifying the deck group of the cover associated to `H ≤ π₁(X, x₀)`.
+deck-action formulation of regular covers.
 
 The definition in this file is deliberately phrased only in terms of the existing
 `deck p` group and Mathlib's `MulAction.IsPretransitive`. It does not assert that `p` is a
@@ -37,8 +36,7 @@ chosen fibre.
 
 ## References
 
-This supplies a prerequisite for the Tau Ceti universal-covers roadmap, Stage 2, where
-regular covers are characterized by transitivity of the deck action on fibres and the deck
+Regular covers are characterized by transitivity of the deck action on fibres, and the deck
 group of the cover associated to a subgroup is computed as a normalizer quotient.
 -/
 
@@ -81,7 +79,7 @@ lemma isRegular_iff_exists_apply_eq :
     let := hreg.2 b
     rcases MulAction.exists_smul_eq (deck p) x y with ⟨φ, hφ⟩
     exact ⟨φ, by
-      simpa [fiber_smul_eq_fiberHomeomorph] using congrArg Subtype.val hφ⟩
+      simpa [deck.fiber_smul_eq_fiberHomeomorph] using congrArg Subtype.val hφ⟩
   · rintro ⟨hsurj, hpoint⟩
     refine ⟨hsurj, fun b => ?_⟩
     refine MulAction.IsPretransitive.mk ?_
@@ -91,7 +89,7 @@ lemma isRegular_iff_exists_apply_eq :
       have hy : p y.1 = b := Set.mem_singleton_iff.mp y.2
       rw [hx, hy]
     rcases hpoint hxy with ⟨φ, hφ⟩
-    exact ⟨φ, by ext; simpa [fiber_smul_eq_fiberHomeomorph] using hφ⟩
+    exact ⟨φ, by ext; simpa [deck.fiber_smul_eq_fiberHomeomorph] using hφ⟩
 
 namespace IsRegular
 
@@ -168,7 +166,7 @@ lemma deckEquivFiber_apply_coe [PreconnectedSpace E] (hp : IsCoveringMap p)
     (hreg : IsRegular p) (e : p ⁻¹' {b}) (φ : deck p) :
     (deckEquivFiber hp hreg e φ : E) = φ.1 e.1 := by
   rw [deckEquivFiber_apply]
-  exact fiber_smul_coe φ e
+  exact deck.fiber_smul_coe φ e
 
 /-- The equivalence from deck transformations to a fibre sends the identity to the chosen
 base point. -/
@@ -197,7 +195,7 @@ requested point. -/
 lemma deckEquivFiber_symm_apply_coe [PreconnectedSpace E] (hp : IsCoveringMap p)
     (hreg : IsRegular p) (e e' : p ⁻¹' {b}) :
     (((deckEquivFiber hp hreg e).symm e').1 e.1 : E) = e'.1 := by
-  simpa only [fiber_smul_eq_fiberHomeomorph, fiberHomeomorph_apply] using
+  simpa only [deck.fiber_smul_eq_fiberHomeomorph, deck.fiberHomeomorph_apply] using
     congrArg Subtype.val (deckEquivFiber_symm_smul hp hreg e e')
 
 /-- Translating a fibre point before applying the inverse `deckEquivFiber` multiplies the

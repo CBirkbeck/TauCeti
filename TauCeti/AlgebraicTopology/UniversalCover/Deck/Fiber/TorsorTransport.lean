@@ -16,8 +16,8 @@ identifications are compatible with the torsor structures on fibres.
 
 The main statement is first proved for the local situation of a preconnected covering whose
 chosen fibre has a free transitive deck action. The regular-cover wrappers then specialize
-it using `Deck.IsRegular`, which is the form used in the universal-covers roadmap when
-pointed covers are compared up to changing representatives over the same base.
+it using `Deck.IsRegular`, the form used when pointed covers are compared up to changing
+representatives over the same base.
 
 ## Main declarations
 
@@ -29,9 +29,8 @@ pointed covers are compared up to changing representatives over the same base.
 
 ## References
 
-This supplies a bookkeeping prerequisite for `TauCetiRoadmap/UniversalCovers/README.md`,
-Stage 2: the pointed and unpointed cover correspondences require changing the chosen lift in
-a fibre while transporting deck actions along isomorphisms of covers.
+The pointed and unpointed cover correspondences require changing the chosen lift in a fibre
+while transporting deck actions along isomorphisms of covers.
 -/
 
 public section

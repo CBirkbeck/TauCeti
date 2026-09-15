@@ -15,8 +15,8 @@ For a subgroup `H ≤ deck p`, the normalizer of `H` acts on the quotient of a f
 translate. Elements of `H` act trivially on this quotient, so the action descends to the
 normalizer quotient `N(H) / H`.
 
-This is the fibre-level action bookkeeping needed before the universal-covers roadmap can
-identify the deck group of the cover attached to `H` with `N(H) / H`.
+This is the fibre-level action used to identify the deck group of the cover attached to `H`
+with `N(H) / H`.
 
 ## Main declarations
 
@@ -37,9 +37,7 @@ identify the deck group of the cover attached to `H` with `N(H) / H`.
 
 ## References
 
-This supplies a small prerequisite for `TauCetiRoadmap/UniversalCovers/README.md`, Stage 2,
-item 8: for the cover attached to `H`, the deck group is `N(H)/H`, with the regular case
-specializing to `π₁(X, x₀)/H`.
+In the regular case that deck group specializes to `π₁(X, x₀)/H`.
 -/
 
 public section

@@ -34,8 +34,7 @@ pinned by `TauCeti.Deck.IsRegular.deckFundamentalGroupEquiv`.
 
 ## References
 
-This completes Stage 1, item 5 of `TauCetiRoadmap/UniversalCovers/README.md`. The construction
-uses the universal-cover action adapted from Kim Morrison's mathlib4 PR
+The construction uses the universal-cover action adapted from Kim Morrison's mathlib4 PR
 [mathlib4#38292](https://github.com/leanprover-community/mathlib4/pull/38292), and the generic
 comparison ultimately uses Junyan Xu's `IsQuotientCoveringMap.fundamentalGroupEquiv` from
 `Mathlib.Topology.Homotopy.Lifting`.
@@ -129,6 +128,6 @@ lemma deckFundamentalGroupEquiv_symm_op
   -- wrapper.
   change ((isCoveringMap x₀).monodromy g.toPath (basepointLift x₀) :
     UniversalCover x₀) = (loopDeck x₀ g⁻¹).1 (basepointLift x₀)
-  simpa only [Deck.smul_eq_apply, loopDeck_apply] using monodromy_basepointLift x₀ g
+  simpa only [deck.smul_eq_apply, loopDeck_apply] using monodromy_basepointLift x₀ g
 
 end TauCeti.UniversalCover

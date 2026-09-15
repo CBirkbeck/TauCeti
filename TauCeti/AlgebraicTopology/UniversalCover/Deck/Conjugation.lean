@@ -11,10 +11,9 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Deck.Basic
 # Conjugating deck transformations
 
 An isomorphism of maps over the same base transports deck transformations by conjugation.
-This file packages that transport as a multiplicative equivalence of deck groups. It is
-basic bookkeeping for the universal-covers roadmap: once covers are organized up to
-isomorphism over the base, their deck groups must be identified by conjugating along the
-chosen total-space homeomorphism.
+This file packages that transport as a multiplicative equivalence of deck groups, so that
+covers identified up to isomorphism over the base have their deck groups identified by
+conjugating along the chosen total-space homeomorphism.
 
 ## Main definitions
 
@@ -24,12 +23,6 @@ chosen total-space homeomorphism.
   identity deck-group equivalence.
 * `TauCeti.Deck.conjMulEquivTrans`: conjugating along a composite over-base
   homeomorphism is the composite of the conjugation equivalences.
-
-## References
-
-This file supplies a prerequisite for the Tau Ceti universal-covers roadmap, Stage 0.4
-(`deck p` as the deck transformation group), and the later cover-isomorphism bookkeeping in
-Stage 2.
 -/
 
 public section
@@ -115,7 +108,7 @@ private lemma conjHomeomorph_mem_deck (h : E ≃ₜ F) (hpq : ∀ e, q (h e) = p
   calc
     q (conjHomeomorph h φ.1 f) = q (h (φ.1 (h.symm f))) := rfl
     _ = p (φ.1 (h.symm f)) := hpq _
-    _ = p (h.symm f) := map_proj φ _
+    _ = p (h.symm f) := deck.map_proj φ _
     _ = q f := map_symm_eq_of_map_eq h hpq f
 
 /-- The image of a deck group under over-base conjugation is the deck group over the target. -/

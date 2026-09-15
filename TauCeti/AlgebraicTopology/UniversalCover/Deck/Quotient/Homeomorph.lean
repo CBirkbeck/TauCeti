@@ -31,7 +31,6 @@ preconnected.
 
 ## References
 
-This supplies a prerequisite for the Tau Ceti universal-covers roadmap, Stage 1, where
 `UniversalCover x₀ / π₁(X, x₀) ≃ X` follows from the deck-group identification via Mathlib's
 `IsQuotientCoveringMap`; the present statement is its base-independent regular-cover form.
 -/

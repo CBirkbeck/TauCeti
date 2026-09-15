@@ -16,16 +16,13 @@ comparison
 
   `Deck.IsRegular.fundamentalGroupEquiv : FundamentalGroup X x ≃* (deck p)ᵐᵒᵖ`
 
-pins the convention required by the universal-covers roadmap: monodromy acts on the right,
-whereas deck transformations act on the left. This file packages the equivalent
-deck-to-fundamental-group form
+pins the convention: monodromy acts on the right, whereas deck transformations act on the
+left. This file packages the equivalent deck-to-fundamental-group form
 
   `deck p ≃* (FundamentalGroup X x)ᵐᵒᵖ`
 
-and records its pointwise characterizations. This is a small API layer for the Stage 1
-comparison `deck(proj) ≃* π₁(X, x₀)` (up to the opposite dictated by the convention), and
-for later cover-classification arguments that pass between deck transformations, loop
-classes, and fibre points.
+and records its pointwise characterizations, for cover-classification arguments that pass
+between deck transformations, loop classes, and fibre points.
 
 ## Main declarations
 
@@ -39,10 +36,9 @@ classes, and fibre points.
 
 ## References
 
-This advances `TauCetiRoadmap/UniversalCovers/README.md`, Stage 1
-(`deck(proj) ≃* π₁(X, x₀)`, possibly up to `ᵐᵒᵖ`). It is a formal consequence of
-`TauCeti.Deck.IsRegular.fundamentalGroupEquiv`, which in turn uses Junyan Xu's
-`IsQuotientCoveringMap.fundamentalGroupEquiv` from `Mathlib.Topology.Homotopy.Lifting`.
+This is a formal consequence of `TauCeti.Deck.IsRegular.fundamentalGroupEquiv`, which in turn
+uses Junyan Xu's `IsQuotientCoveringMap.fundamentalGroupEquiv` from
+`Mathlib.Topology.Homotopy.Lifting`.
 -/
 
 public section
@@ -157,7 +153,7 @@ lemma deckEquivFiber_eq_fundamentalGroupEquivFiber [SimplyConnectedSpace E]
   ext
   rw [deckEquivFiber_apply_coe, IsCoveringMap.fundamentalGroupEquivFiber_apply_coe,
     deckFundamentalGroupEquiv_unop_monodromy]
-  exact (smul_eq_apply φ (e : E)).symm
+  exact (deck.smul_eq_apply φ (e : E)).symm
 
 end IsRegular
 

@@ -18,11 +18,10 @@ deck group with that fibre. This file records the corresponding quotient-level s
 orbits of a subgroup `H ≤ deck p` on the fibre are equivalent to the coset quotient
 `deck p ⧸ H`.
 
-This is bookkeeping for the universal-covers roadmap. The classification of connected covers
-uses fibre quotients by subgroups, while the regular-cover computation of the deck group of
-the cover attached to `H` is expressed algebraically as a normalizer quotient. The bridge here
-lets later arguments move between those fibre-orbit quotients and subgroup quotients without
-unfolding either construction.
+The classification of connected covers uses fibre quotients by subgroups, while the regular-cover
+computation of the deck group of the cover attached to `H` is expressed algebraically as a
+normalizer quotient. The bridge here lets arguments move between those fibre-orbit quotients and
+subgroup quotients without unfolding either construction.
 
 ## Main declarations
 
@@ -38,9 +37,7 @@ unfolding either construction.
 
 ## References
 
-This supplies a prerequisite for `TauCetiRoadmap/UniversalCovers/README.md`, Stage 2, items
-7 and 8, especially the regular-cover milestones comparing fibre quotients with the
-normalizer quotient `N(H)/H`. It is a deck-specific specialization of Mathlib's
+It is a deck-specific specialization of Mathlib's
 `MulAction.equivSubgroupOrbitsQuotientGroup`, the orbit-quotient form of the
 orbit-stabilizer theorem for free transitive actions.
 -/
@@ -110,11 +107,11 @@ lemma subgroupFiberOrbitQuotientEquivQuotientGroup_symm_mk_coe
       subgroupFiberOrbitClass H
         ⟨φ.1.symm e.1, by
           rw [Set.mem_preimage, Set.mem_singleton_iff]
-          exact (map_proj φ⁻¹ e.1).trans (Set.mem_singleton_iff.mp e.2)⟩ := by
+          exact (deck.map_proj φ⁻¹ e.1).trans (Set.mem_singleton_iff.mp e.2)⟩ := by
   rw [subgroupFiberOrbitQuotientEquivQuotientGroup_symm_mk]
   apply congrArg (subgroupFiberOrbitClass H)
   ext
-  exact fiber_smul_coe φ⁻¹ e
+  exact deck.fiber_smul_coe φ⁻¹ e
 
 /-- The inverse quotient equivalence sends the identity coset to the orbit class of the chosen
 fibre point. -/

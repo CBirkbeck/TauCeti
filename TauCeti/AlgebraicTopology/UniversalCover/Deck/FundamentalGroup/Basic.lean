@@ -18,15 +18,11 @@ fundamental group of the base is anti-isomorphic to the deck transformation grou
 
   `FundamentalGroup X x ≃* (deck p)ᵐᵒᵖ`.
 
-This is the regular-cover comparison needed for the Stage 1 universal-covers roadmap target
-(`deck (UniversalCover.proj x₀) ≃* FundamentalGroup X x₀`, "possibly up to `ᵐᵒᵖ`; pin the
-action/composition convention first"). The theorem here is stated for an arbitrary regular
-cover with simply connected total space, not as the specialized `UniversalCover.proj`
-statement itself. That specialization is a later instantiation with `E = UniversalCover x₀`
-once the corresponding regularity and simple-connectivity hypotheses are in scope.
+The theorem is stated for an arbitrary regular cover with simply connected total space rather
+than only for the universal cover `UniversalCover.proj x₀`.
 
-The `ᵐᵒᵖ` is genuine and pins the convention noted in the roadmap. The deck group acts on
-the total space on the *left* (`Deck.smul_eq_apply : φ • e = φ.1 e`), while the monodromy of
+The `ᵐᵒᵖ` is genuine. The deck group acts on the total space on the *left*
+(`deck.smul_eq_apply : φ • e = φ.1 e`), while the monodromy of
 `π₁(X, x)` acts on each fibre on the *right* (`monodromy (γ.trans γ') = monodromy γ' ∘
 monodromy γ`); choosing a basepoint lift `e` in the fibre and matching the deck element that
 realises a monodromy therefore reverses multiplication, so the natural isomorphism lands in
@@ -90,7 +86,7 @@ lemma IsRegular.fundamentalGroupEquiv_unop_apply [SimplyConnectedSpace E]
 lemma IsRegular.fundamentalGroupEquiv_unop_smul [SimplyConnectedSpace E]
     (hreg : IsRegular p) (hp : IsCoveringMap p) (e : p ⁻¹' {x}) (γ : FundamentalGroup X x) :
     (hreg.fundamentalGroupEquiv hp e γ).unop • (e : E) = hp.monodromy γ e := by
-  simpa only [smul_eq_apply] using IsRegular.fundamentalGroupEquiv_unop_apply hreg hp e γ
+  simpa only [deck.smul_eq_apply] using IsRegular.fundamentalGroupEquiv_unop_apply hreg hp e γ
 
 /-- The fundamental group element `γ` corresponds to a deck transformation `g` exactly when
 `g.unop` moves the chosen lift `e` to the monodromy translate of `e` along `γ`. -/

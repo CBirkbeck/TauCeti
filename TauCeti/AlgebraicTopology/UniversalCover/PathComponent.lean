@@ -14,8 +14,7 @@ public import TauCeti.Topology.Covering.Clopen
 
 The universal-cover development assumes that the base is path connected, so that the endpoint
 projection is surjective. Dropping that assumption, based paths out of `x₀` still only see the
-path component of `x₀`, and the roadmap's standing hypotheses accordingly allow building the
-cover of `pathComponent x₀` instead. This file does that.
+path component of `x₀`, so this file builds the cover of `pathComponent x₀` instead.
 
 For `X` locally path connected and semilocally simply connected — but *not* assumed path
 connected — the path component of `x₀` is path connected, is open and therefore locally path
@@ -46,9 +45,7 @@ component with that of `X` at the same point. Thus the deck group of the path-co
 
 ## References
 
-This is the "or one builds the cover of `pathComponent x₀`" clause of the standing hypotheses of
-`TauCetiRoadmap/UniversalCovers/README.md`, the one case its Stage 0 hypotheses exclude rather
-than handle. It consumes the based-path universal cover adapted from Kim Morrison's
+It consumes the based-path universal cover adapted from Kim Morrison's
 [mathlib4#38292](https://github.com/leanprover-community/mathlib4/pull/38292) and Mathlib's deck
 group `deck`, from Kim Morrison's
 [mathlib4#40135](https://github.com/leanprover-community/mathlib4/pull/40135).

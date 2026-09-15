@@ -38,9 +38,7 @@ Taking `H = ⊥` recovers the deck group of the universal cover itself; taking `
 
 ## References
 
-This completes the deck-group half of Stage 2, item 8 of
-`TauCetiRoadmap/UniversalCovers/README.md`. It consumes the based-path universal cover
-adapted from Kim Morrison's
+It consumes the based-path universal cover adapted from Kim Morrison's
 [mathlib4#38292](https://github.com/leanprover-community/mathlib4/pull/38292), Mathlib's
 quotient-covering-map interface due to Junyan Xu, and the covering-map property of
 `subgroupQuotientProj` proved in

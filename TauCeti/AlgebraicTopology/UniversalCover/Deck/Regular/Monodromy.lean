@@ -24,8 +24,8 @@ regularity to a condition at a single chosen fibre.
 ## References
 
 The proof uses Junyan Xu's path-lifting and monodromy API in
-`Mathlib.Topology.Homotopy.Lifting`. It supplies the fibre-transport step needed for the regular
-cover criterion in `TauCetiRoadmap/UniversalCovers/README.md`, Stage 2, item 8.
+`Mathlib.Topology.Homotopy.Lifting`. It supplies the fibre-transport step of the regular cover
+criterion.
 -/
 
 public section

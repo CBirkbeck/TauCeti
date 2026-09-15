@@ -26,8 +26,7 @@ When the period subgroup is totally disconnected and `p` is not a torsion elemen
 (`¬ IsOfFinAddOrder p`), the translation subgroup is infinite cyclic, giving
 `deck ((↑) : 𝕜 → AddCircle p) ≃* Multiplicative ℤ`. In the standard real case, where
 `AddCircle.isCoveringMap_coe` supplies the covering hypothesis, this is the deck group of the
-universal cover `ℝ → S¹` and the algebraic input to the universal-covers roadmap target
-`π₁(S¹) ≅ ℤ` (Stage 4).
+universal cover `ℝ → S¹`, the algebraic input to the computation `π₁(S¹) ≅ ℤ`.
 
 ## Main declarations
 
@@ -42,9 +41,8 @@ universal cover `ℝ → S¹` and the algebraic input to the universal-covers ro
 
 ## References
 
-This advances the Tau Ceti universal-covers roadmap, Stage 4 (`π₁(S¹) ≅ ℤ`, "built from
-`AddCircle.isCoveringMap_coe` (`ℝ → S¹`) and deck transformations"), consuming Mathlib's
-`AddCircle` covering and the deck-transformation group of Stage 0.4.
+This consumes Mathlib's covering map `AddCircle.isCoveringMap_coe` and Mathlib's deck
+transformation group `deck`.
 -/
 
 public section
@@ -112,7 +110,7 @@ theorem isRegular_addCircleCoe : IsRegular ((↑) : 𝕜 → AddCircle p) := by
 
 /-- On a preconnected domain with totally disconnected period subgroup, a deck transformation of
 `(↑) : 𝕜 → AddCircle p` is right translation by `φ 0`. -/
-theorem addCircleCoe_eq_add_apply_zero [PreconnectedSpace 𝕜]
+theorem _root_.deck.addCircleCoe_eq_add_apply_zero [PreconnectedSpace 𝕜]
     [TotallyDisconnectedSpace (zmultiples p)] (φ : deck ((↑) : 𝕜 → AddCircle p)) (e : 𝕜) :
     φ.1 e = e + φ.1 0 := by
   have hmem : ∀ x, φ.1 x - x ∈ zmultiples p := mem_addCircleCoe.1 φ.2
@@ -149,7 +147,7 @@ totally disconnected period subgroup is the group of translations by the period 
       apply Subtype.ext
       ext e
       rw [addRightZMultiplesHom_apply]
-      simpa using (addCircleCoe_eq_add_apply_zero φ e).symm
+      simpa using (deck.addCircleCoe_eq_add_apply_zero φ e).symm
 
 @[simp]
 theorem addCircleMulEquiv_apply [PreconnectedSpace 𝕜] [TotallyDisconnectedSpace (zmultiples p)]
@@ -158,7 +156,7 @@ theorem addCircleMulEquiv_apply [PreconnectedSpace 𝕜] [TotallyDisconnectedSpa
   rfl
 
 @[simp]
-theorem addCircleMulEquiv_symm_apply_coe [PreconnectedSpace 𝕜]
+theorem _root_.deck.addCircleMulEquiv_symm_apply_coe [PreconnectedSpace 𝕜]
     [TotallyDisconnectedSpace (zmultiples p)] (φ : deck ((↑) : 𝕜 → AddCircle p)) :
     ((addCircleMulEquiv.symm φ).toAdd : 𝕜) = φ.1 0 := by
   calc

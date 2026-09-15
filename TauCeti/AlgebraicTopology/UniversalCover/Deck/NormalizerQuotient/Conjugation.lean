@@ -13,8 +13,7 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Deck.Conjugation
 
 An isomorphism of covers over a common base identifies deck groups by conjugation. This file
 records the induced identification on the normalizer quotients `N(H) / H` of deck subgroups.
-Those quotients are the algebraic groups appearing in the universal-covers roadmap as deck
-groups of covers attached to subgroups.
+Those quotients are the deck groups of covers attached to subgroups.
 
 ## Main declarations
 
@@ -25,10 +24,9 @@ groups of covers attached to subgroups.
 
 ## References
 
-This supplies a basepoint-change and cover-isomorphism bookkeeping prerequisite for
-`TauCetiRoadmap/UniversalCovers/README.md`, Stage 2, item 8: pointed connected covers
-correspond to subgroups, unpointed connected covers correspond to conjugacy classes of
-subgroups, and the deck group attached to `H` is `N(H) / H`.
+Pointed connected covers correspond to subgroups, unpointed connected covers correspond to
+conjugacy classes of subgroups, and the deck group attached to `H` is `N(H) / H`; this file
+handles the change of basepoint and the isomorphisms of covers.
 -/
 
 public section

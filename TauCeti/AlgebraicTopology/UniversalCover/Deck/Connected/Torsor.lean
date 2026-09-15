@@ -16,8 +16,8 @@ pretransitively is a principal homogeneous space for the deck group. This packag
 form of the simply transitive fibre action; regular covers specialize it by supplying
 pretransitivity on every fibre.
 
-The torsor structure is bookkeeping needed by the universal-covers roadmap Stage 2, where
-pointed covers and unpointed covers differ by changing a chosen lift of the basepoint.
+Pointed covers and unpointed covers differ by changing a chosen lift of the basepoint, which
+the torsor structure keeps track of.
 
 ## Main declarations
 
@@ -30,10 +30,9 @@ pointed covers and unpointed covers differ by changing a chosen lift of the base
 
 ## References
 
-This supplies a small prerequisite for the regular-cover and pointed/unpointed-cover
-bookkeeping in `TauCetiRoadmap/UniversalCovers/README.md`, Stage 2. It builds on the connected
-deck-action API in `TauCeti.AlgebraicTopology.UniversalCover.Deck.Connected.Basic` and Mathlib's
-generic torsor API (`Mathlib.Algebra.Torsor.Basic`).
+It builds on the connected deck-action API in
+`TauCeti.AlgebraicTopology.UniversalCover.Deck.Connected.Basic` and Mathlib's generic torsor API
+(`Mathlib.Algebra.Torsor.Basic`).
 -/
 
 public section

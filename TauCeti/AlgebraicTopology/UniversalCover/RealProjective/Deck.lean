@@ -32,10 +32,9 @@ The regularity of the antipodal cover needs no connectedness hypothesis.
 For `n = 0` the sphere is the two-point space `S⁰`, which is disconnected, so the argument
 does not apply; the statements that need it carry the hypothesis `1 ≤ n` explicitly.
 
-This advances `TauCetiRoadmap/UniversalCovers/README.md`, Stage 4, item 13, the computation
-of `π₁(RPⁿ)`: for a regular cover the deck group is a quotient of the fundamental group of
-the base, so knowing that the antipodal cover is regular with deck group of order two is the
-covering-space input to that computation.
+For a regular cover the deck group is a quotient of the fundamental group of the base, so
+knowing that the antipodal cover is regular with deck group of order two is the covering-space
+input to the computation of `π₁(RPⁿ)`.
 
 ## Main declarations
 

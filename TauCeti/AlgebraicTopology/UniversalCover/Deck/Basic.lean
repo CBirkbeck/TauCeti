@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Topology.Covering.Deck
 public import Mathlib.Topology.Homeomorph.Lemmas
-public import TauCeti.Topology.Algebra.ConstMulAction
 
 /-!
 # Deck transformations of a map
@@ -17,9 +16,9 @@ collects them as the subgroup `deck p` of the homeomorphism group `E ≃ₜ E`; 
 projection `p` this subgroup is the classical deck transformation group.
 
 This file adds the pointwise API that the rest of the deck-transformation development uses.
-`TauCeti.Deck.mem_iff` and `TauCeti.Deck.map_proj` restate Mathlib's `deck.mem_iff` and
+`TauCeti.Deck.mem_iff` and `deck.map_proj` restate Mathlib's `deck.mem_iff` and
 `deck.proj_smul` point by point on the underlying homeomorphism, and
-`TauCeti.Deck.fiberHomeomorph` restricts a deck transformation to each fibre of `p`.
+`deck.fiberHomeomorph` restricts a deck transformation to each fibre of `p`.
 
 The action of `deck p` on the total space is inherited, by subgroup transfer, from the
 tautological action of the ambient homeomorphism group `E ≃ₜ E` on `E`
@@ -46,51 +45,51 @@ lemma mem_iff (φ : E ≃ₜ E) : φ ∈ deck p ↔ ∀ e, p (φ e) = p e :=
 
 /-- A deck transformation preserves the projection map pointwise: `deck.proj_smul`, stated on
 the underlying homeomorphism. -/
-lemma map_proj (φ : deck p) (e : E) : p (φ.1 e) = p e :=
+lemma _root_.deck.map_proj (φ : deck p) (e : E) : p (φ.1 e) = p e :=
   deck.proj_smul φ e
 
 /-- A deck transformation preserves each fibre of the projection. -/
-lemma mapsTo_fiber (φ : deck p) (b : B) : Set.MapsTo φ.1 (p ⁻¹' {b}) (p ⁻¹' {b}) := by
+lemma _root_.deck.mapsTo_fiber (φ : deck p) (b : B) : Set.MapsTo φ.1 (p ⁻¹' {b}) (p ⁻¹' {b}) := by
   intro e he
-  simpa only [Set.mem_preimage, Set.mem_singleton_iff, map_proj] using he
+  simpa only [Set.mem_preimage, Set.mem_singleton_iff, deck.map_proj] using he
 
 /-- The inverse of a deck transformation also preserves each fibre of the projection. -/
-lemma mapsTo_fiber_symm (φ : deck p) (b : B) :
+lemma _root_.deck.mapsTo_fiber_symm (φ : deck p) (b : B) :
     Set.MapsTo φ.1.symm (p ⁻¹' {b}) (p ⁻¹' {b}) := by
   intro e he
   simp only [Set.mem_preimage, Set.mem_singleton_iff] at he ⊢
-  rw [← map_proj φ (φ.1.symm e), Homeomorph.apply_symm_apply]
+  rw [← deck.map_proj φ (φ.1.symm e), Homeomorph.apply_symm_apply]
   exact he
 
 /-- A deck transformation restricts to a homeomorphism of every fibre of the projection,
 the restriction of its underlying homeomorphism along `Homeomorph.subtype`. -/
-@[expose] def fiberHomeomorph (φ : deck p) (b : B) : p ⁻¹' {b} ≃ₜ p ⁻¹' {b} :=
-  φ.1.subtype fun e => by simp [Set.mem_preimage, eq_comm, map_proj]
+@[expose] def _root_.deck.fiberHomeomorph (φ : deck p) (b : B) : p ⁻¹' {b} ≃ₜ p ⁻¹' {b} :=
+  φ.1.subtype fun e => by simp [Set.mem_preimage, eq_comm, deck.map_proj]
 
 /-- On points, the fibre homeomorphism induced by a deck transformation is just evaluation
 of that transformation. -/
 @[simp]
-lemma fiberHomeomorph_apply (φ : deck p) (b : B) (e : p ⁻¹' {b}) :
-    (fiberHomeomorph φ b e : E) = φ.1 e.1 :=
+lemma _root_.deck.fiberHomeomorph_apply (φ : deck p) (b : B) (e : p ⁻¹' {b}) :
+    (deck.fiberHomeomorph φ b e : E) = φ.1 e.1 :=
   rfl
 
 /-- On points, the inverse fibre homeomorphism induced by a deck transformation is
 evaluation of the inverse homeomorphism. -/
 @[simp]
-lemma fiberHomeomorph_symm_apply (φ : deck p) (b : B) (e : p ⁻¹' {b}) :
-    ((fiberHomeomorph φ b).symm e : E) = φ.1.symm e.1 :=
+lemma _root_.deck.fiberHomeomorph_symm_apply (φ : deck p) (b : B) (e : p ⁻¹' {b}) :
+    ((deck.fiberHomeomorph φ b).symm e : E) = φ.1.symm e.1 :=
   rfl
 
 /-- On points, the action of a deck transformation is evaluation of its underlying
 homeomorphism. The action itself is inherited, by subgroup transfer, from the tautological
 action of `E ≃ₜ E` on `E`. -/
 @[simp]
-lemma smul_eq_apply (φ : deck p) (e : E) : φ • e = φ.1 e :=
+lemma _root_.deck.smul_eq_apply (φ : deck p) (e : E) : φ • e = φ.1 e :=
   rfl
 
 /-- Applying the inverse deck transformation is evaluation of the inverse homeomorphism. -/
 @[simp]
-lemma inv_smul_eq_symm_apply (φ : deck p) (e : E) : (φ⁻¹ : deck p) • e = φ.1.symm e :=
+lemma _root_.deck.inv_smul_eq_symm_apply (φ : deck p) (e : E) : (φ⁻¹ : deck p) • e = φ.1.symm e :=
   rfl
 
 -- `FaithfulSMul (deck p) E` is inherited from Mathlib's generic subgroup action, and
