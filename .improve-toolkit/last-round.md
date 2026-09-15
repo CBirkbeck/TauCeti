@@ -1,4 +1,4 @@
-# Last round — r842 (2026-09-15T14:56Z)
+# Last round — r843 (2026-09-15T15:17Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -12,11 +12,12 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
 
 **Second cycle, kind 1 open:** kind 3 **#6855 merged** (05:43:53Z, r798). Kind 1 **#6851** and kind 2 **#6854** are 10/10
 but were flushed from the queue for the bot's Mathlib bump (r798). The freed slot went to kind 1 again: **#6875** (ready since r801),
-Mathlib's deck group (r798), which needs a **human merge** because it updates `web/examples/Examples.lean`. **The next
-opening is kind 2** (a new file). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
-the due kind runs while it is shut.
+Mathlib's deck group (r798), which needs a **human merge** because it updates `web/examples/Examples.lean`. Kind 2 opened as draft **#6896** (r843: non-strict convex-subgroup exclusion lemmas). **The next
+opening is kind 3**, then kind 1. Record each PR's kind in the ledger. **Step 5's cap counts only PRs still in progress** (user directive, 2026-09-15 ~15:00Z): drafts and
+`awaiting-review`, `awaiting-author` or `ci-failed` PRs count. `ready-to-merge` and queued PRs do not, and neither
+does #5950. Do not idle waiting for merges: open the next kind whenever fewer than 3 are in progress.
 
-**Open question to Chris (asked after r732, unanswered at r842):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r843):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -36,13 +37,16 @@ through the local codex CLI that MCP wraps:
 | **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`; **flushed** from MERGING 2/43 by the bot for #6852 (06:11:46Z, `manual`) | nobody — `merge-sweep` re-enqueues it (the bump's reservation released at 07:57:43Z); do not refresh |
 | **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`; **flushed** from 14/43 for #6852 (06:12:02Z, `manual`) | nobody — `merge-sweep` re-enqueues it (the bump's reservation released at 07:57:43Z); do not refresh |
 | **#6875** | `462ed9705b` | green (07:49:13Z) | kind 1 (Mathlib's deck group); **10/10 on the re-review** (08:54:23Z, head `462ed97`), `ready-to-merge` since ~09:28Z and NEVER-QUEUED after r803 fixed the first board's naming, placement and documentation findings; cannot auto-merge (`web/examples`) | **Chris** — merge it; until then it holds one of the three step-5 slots |
+| **#6896** | `8a6278e95` | first build (r843) | kind 2 (convex-subgroup exclusion lemmas take `≤`, renamed to `notMem`); **draft**, opened 15:17:05Z | **me** — mark ready when CI is green, then wait for its board |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
-**Three `improve/*` PRs of mine are open (#6851, #6854, #6875) → step 5 does not fire** until one merges. #6855 merged
-at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enqueues them, and #6875 is 10/10 and waits for a human merge (r813). Main is `fc7a5c329`.
+**In progress: #6896 only** (draft, kind 2). #6851, #6854 and #6875 are `ready-to-merge` and do not count toward the
+cap (r843), so step 5 fires for kind 3 and then kind 1. #6855 merged at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enqueues them, and #6875 is 10/10 and waits for a human merge (r813). Main is `fc7a5c329`.
 
 ## What to expect next
 
+0. **r843:** the cap rule changed (rotation paragraph above). #6896 is the kind-2 opening; open kind 3, then kind 1,
+   while fewer than 3 PRs are in progress, and mark each draft ready once its CI is green.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
    `merge-sweep` re-enqueues a green TauCeti/-only PR afterwards (r798–r799). A `MERGING` PR's group build is the check-runs of
@@ -114,7 +118,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r842 did
+## What r703–r843 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -269,8 +273,16 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r840: main moved to `40c612666` (#6874, rational refinements of covers of the adic spectrum; nothing removed); all three PRs re-simulated clean.
 * r841: main moved to `fc7a5c329` (#6842, Chevalley generators from a minuscule weight table; an E6/E7 refactor that removes 19 declarations, none used by my PRs); all three PRs re-simulated clean.
 * r842: no change; no merges since #6842 (main still `fc7a5c329`); queue depth 35, none mine.
+* r843: user directive — `ready-to-merge` and queued PRs no longer count toward the cap. Kind 2 pass on `ConvexSubgroup.lean` opened as draft **#6896** (non-strict exclusion lemmas; gate 12/0/0).
 
 ## Candidates for a later step 5
+
+**r843 leftovers from the `ConvexSubgroup.lean` pass** (not bundled into #6896, one topic per PR; wait for #6896 to
+merge before touching the file again): `mem_of_mabs_le_mabs` and `mem_closure_singleton` rebuild `|h|ₘ ∈ H` by cases
+where Mathlib's `mabs_mem_iff` gives it; the private declarations carry docstrings; `not_mem_maxAvoid` keeps the old
+spelling. **Scanner hits on `f29016218` outside open PRs:** `strictscan` PUBLIC `one_sub_conj_mul_ne_zero_of_norm_lt_one`
+(PseudoHyperbolic, 16 sites in 7 files), `StronglyContinuousSemigroup.norm_resolvent_integrand_le` (0 sites),
+`chafaiRescaling_coe_of_pos` (5 sites); `unusedscan` `descendIndexGL_smul_infty_of_eq_zero` (unused `hc`).
 
 **r706:** every WHOLE `nscand` target is taken or a trap, and `ClassGroup` is partial (ledger r706). `dupsig` has no public duplicate left once kind 3 lands.
 

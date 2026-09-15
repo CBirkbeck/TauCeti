@@ -39888,3 +39888,51 @@ step 5 is shut.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r843 — 2026-09-15T15:17Z — user directive: ready PRs don't count toward the cap; kind 2 opened as draft #6896
+
+**Directive** (user, ~15:00Z): "PRs that are in the merge queu or ready to merge shouldnt count towards your PR floor.
+dont sit idle waiting for them to merge, keep making new PRs and cleaning them etc." Step 5 now counts only PRs still in
+progress: drafts, and PRs labelled `awaiting-review`, `awaiting-author` or `ci-failed`. #6851, #6854 and #6875 are
+`ready-to-merge`, so none of them counts, and step 5 fired straight away. The rule is saved as the memory
+`tauceti-improver-pr-cap`, linked to the `/taupr` lane's copy of the same directive.
+
+**Kind 2 (file pass): `TauCeti/Algebra/Order/Group/ConvexSubgroup.lean`.**
+
+* **Selection.** A snapshot of `f29016218` (5352 files) went through `unusedscan`, `strictscan`, `impliedscan`,
+  `deadhave` (also `--set`) and `dupinproof`. Files touched by any of the 191 open PRs (558 files) were excluded.
+  `ConvexSubgroup.lean` ranked first, with four PUBLIC lemmas whose strict bound is used only through `.le`.
+* **`/cleanup` and `/mathlibable`, build-free phases.** The file was read in full (812 lines, module dialect). Style audit
+  A.1–A.7 is clean: copyright, module docstring, sorted `public import`s, no `set_option`, no `λ`, `$` or `push_neg`.
+  Mathlib search: pinned `30a58f795a` has no convex-subgroup API, only `MulArchimedeanClass.subgroup` over upper sets.
+  **gpt-6-astra** (via `codex exec`, high effort) found all four weakened statements true, including at γ = 1. It judged
+  the non-strict form the right basic API: the `γ < h < γ⁻¹` form needs compatibility of order and multiplication, and
+  fails without it. It also found the `notMem` names idiomatic, and saw no reason to keep the strict hypotheses.
+* **One topic** (the r759 `scope` trap). The four lemmas take `≤` and are renamed to the `notMem` spelling.
+  `ConvexSubgroup.le_total` and `lt_closure_singleton` split on `le_total _ 1` and drop their `≠ 1` side proofs. The
+  callers in `Cofinal.lean` and `RestrictToConvex.lean` pass non-strict bounds. Found but **not** bundled, and listed
+  under Candidates: `mem_of_mabs_le_mabs` and `mem_closure_singleton` rebuild `|h|ₘ ∈ H` by cases where Mathlib's
+  `mabs_mem_iff` gives it; the private declarations carry docstrings; `not_mem_maxAvoid` keeps the old spelling.
+* **Checks.**
+  * `le_total` inside `protected theorem le_total` resolves to the root lemma: Lean's `mkDeclName` names a protected
+    declaration's recursive alias `ConvexSubgroup.le_total`.
+  * `one_le_inv'` is a live alias of `Left.one_le_inv_iff`.
+  * The pinned (`603b28011`) documentation rubric judges documentation *added*, so the untouched module docstrings stay.
+  * Nothing in `scripts/` names the four lemmas.
+  * None of the four open PRs touching valuation or adic-space files (#6799, #6811, #6837, #6841) adds a use of an old
+    name.
+* **Gate** `prepush.sh origin/main`: **12 ok / 0 failed / 0 UNRUN**; `lint-dot-notation` 0 new.
+
+**Opened: #6896, kind 2, `refactor(Algebra/Order/Group): non-strict bounds in the convex-subgroup exclusion lemmas`**
+(draft, 15:17:05Z). Head `CBirkbeck:improve/convex-subgroup-nonstrict@8a6278e95`, base `main`, branched from
+`2115c5e9b`: 3 files, +31/−34. The body carries one standalone `Roadmap: AdicSpaces`, as #5590 (the file's last refactor)
+did. CI is the first elaborator this branch meets.
+
+**Main** moved `fc7a5c329` → `2115c5e9b` in the meantime. #6851, #6854 and #6875 are not yet re-simulated against it;
+that is next round's check.
+
+**Next:** kind 3, then kind 1, while fewer than 3 PRs are in progress.
+
+No toolkit edits.
