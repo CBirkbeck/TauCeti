@@ -39321,3 +39321,30 @@ are queued.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r823 — 2026-09-15T10:36Z — why the merge sweep failed: a transient error reading queue entry #6751 made it abort before evaluating any PR; no change on my PRs; no merges
+
+**Board** (10:36:34Z; sweep exited 0; `/tmp` at 61%): REST was usable again, with 4180 calls remaining, although the
+reset header still read 11:27:41Z. #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still
+not queued. #6875 is `ready-to-merge` with CI green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. No
+merges since 10:23:40Z; main is still `31fc2e21e`, so r822's simulations stand. Nothing to fix, contest or drive; step
+5 is shut.
+
+**Why run `34957824245` failed.** Job `104344035269` (`sweep / sweep`) failed in step 4, "Re-drive evicted green PRs",
+and its log ends: `merge-sweep: cannot read the merge queue (gh api --paginate
+/repos/TauCetiProject/TauCeti/pulls/6751/files?per_page=100 --jq .[] | {filename} failed: unexpected end of JSON input);
+aborting`. `queue_entries()` reads every queue entry's changed paths to spot a Mathlib bump and fails closed on any
+error, so the run stopped before it evaluated a single PR, #6851 and #6854 included. `gh run view --log-failed` on the
+run returned nothing for this reusable-workflow job; the job's `actions/jobs/<id>/logs` endpoint returned the log. At
+10:37:48Z the same call with my token read #6751's one file cleanly (#6751: 1 file, +168/−0), so the failure was
+transient, not a property of #6751. The next scheduled sweep should read the queue and re-enqueue #6851 and #6854, but
+any single unreadable entry aborts it again.
+
+**Queue** (10:36Z, GraphQL): depth 26, none of them mine; #6751 and #6624 are AWAITING_CHECKS. The only merge-sweep run
+on main's head is still the 10:24:54Z failure.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

@@ -1,4 +1,4 @@
-# Last round — r822 (2026-09-15T10:26Z)
+# Last round — r823 (2026-09-15T10:36Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -16,7 +16,7 @@ Mathlib's deck group (r798), which needs a **human merge** because it updates `w
 opening is kind 2** (a new file). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r822):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r823):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -56,9 +56,10 @@ at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enq
 2. **#6851 (kind 1, Levi-Civita) is 10/10 on its first board** (22:35:00Z, head `fdeaff5cb7`). It was MERGING at 2 of
    43 when the bot flushed the queue for #6852 (r798). Do not refresh: `merge-sweep` re-enqueues it (green,
    TauCeti/-only) on its next run. #6852 failed its group build and left the queue at 07:57:43Z (r808), so the reservation
-   no longer blocks. The first such run, at 10:24:54Z (r822), failed after 14 s with exit code 1 and left it unqueued.
-   Read that run's log (`gh run view 34957824245 --log-failed`) once REST is back; if the sweep keeps failing, tell Chris
-   rather than refreshing. Re-simulate its merge group when main moves: it deletes
+   no longer blocks. The first such run, at 10:24:54Z (r822), aborted after 14 s: it could not read queue entry #6751's
+   files ("unexpected end of JSON input"), and it fails closed. The same call read cleanly at 10:37:48Z (r823), so the
+   failure was transient and the next scheduled sweep should re-enqueue it. If a later run still aborts, tell Chris rather
+   than refreshing. Re-simulate its merge group when main moves: it deletes
    24 declarations and `LeviCivita/Existence.lean`, so pass `--deleted` to `stalequal` and the deleted path to `ghostref`.
 3. **#6854 (kind 2, quadratic separability) is 10/10** on the r768 driven board (00:49:59Z, head `217fecb812`). It was
    flushed from 14th the same way (r798); handle it like #6851. It removes nothing, so only merge-tree and ghostref's
@@ -113,7 +114,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r822 did
+## What r703–r823 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -248,6 +249,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r820: main moved to `8c4c13530` (#6871, #6849, which deletes 27 points-functor names); all three PRs re-simulated clean; #6875 fully green; backlog down to 217.
 * r821: no change on my PRs; the backlog cleared to 40 queued runs and the queue refilled to 25; no merges.
 * r822: the merge sweep finally ran (10:24:54Z) and failed after 14 s (exit 1; log unread, REST out until 11:27:41Z); main moved to `31fc2e21e` (#6659, #6717); all three PRs re-simulated clean.
+* r823: the sweep failure was transient (it could not read queue entry #6751's files, and it fails closed; the call reads cleanly now); REST came back before its stated reset; no change on my PRs; no merges.
 
 ## Candidates for a later step 5
 
@@ -347,6 +349,12 @@ before rewrapping anything (r704: 3 of 14 reported overflows were not).
 decldiff). **`deadpath` only resolves names inside `_root_.` declarations** — a catch-up PR's Mathlib names
 need a read of Mathlib's source, and a `public` check: a non-`public` declaration in a `module` file is
 invisible to Tau Ceti.
+**The merge sweep fails closed on any unreadable queue entry** (r823). `queue_entries()` reads every entry's changed
+paths, and one failed call (`unexpected end of JSON input` on #6751) aborted the whole run before it evaluated any PR.
+Read a failed run's log by job id (`actions/jobs/<id>/logs`), since `gh run view --log-failed` came back empty for this
+reusable-workflow job, and re-run the failing call to tell a transient error from a persistent one.
+**REST can come back before `X-RateLimit-Reset`** (r823): at 10:36Z, `X-RateLimit-Remaining` read 4180 while the reset
+header still said 11:27:41Z. Probe `X-RateLimit-Remaining` before skipping a REST sweep, not the reset time.
 **The low-memory watchdog kills even a trivial background task** (r816). A background loop that only probed `gh api`
 every 20 seconds, waiting for the REST reset, died seconds after it started, with 10 GiB free and 62 GiB available
 (tmpfs and page cache hold the rest). Once `X-RateLimit-Reset` has passed, rerun the sweep in the foreground; a
