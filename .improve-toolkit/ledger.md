@@ -40769,3 +40769,23 @@ head's files. There were no name hits or clashes.
 **Queue** (19:57Z): depth 71; #6854 12, #6851 14, #6910 49, #6911 52, #6899 53, #6896 54, #6902 69.
 
 No toolkit edits.
+
+---
+
+## r862 — 2026-09-15T20:00Z — no change; two builds running; no drive due; no merges
+
+**Board** (20:00:21Z; a real call read 4571 REST calls left; sweep and `queuepos.py` exited 0):
+
+* #6915 (`08b8138bc`): `awaiting-CI`, with `sandboxed-build` in progress. Its board (on `efbb6423d`) is behind the `api-design`
+  fix, so there is nothing to re-fix.
+* #6933 (`311f6a427`, draft): `awaiting-CI`; its first `sandboxed-build` has been in progress since 19:48:40Z.
+* #6923 (`8f846c57b`): `awaiting-review`, no board. Step 4 may drive only after 20:28Z.
+* #6902's board is on head (19:41:02Z), and it is QUEUED at 69 of 72. Other queue positions are unchanged: #6854 12, #6851 14,
+  #6910 49, #6911 52, #6899 53, #6896 54. #6875 needs a human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6915, #6923, #6933).
+
+**Merges and main.** No merges since #6619 (19:47:02Z). Main is still `d791db95c`, against which r861 simulated all eleven heads
+clean.
+
+No toolkit edits.

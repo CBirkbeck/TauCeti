@@ -1,4 +1,4 @@
-# Last round — r861 (2026-09-15T20:00Z)
+# Last round — r862 (2026-09-15T20:01Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -133,7 +133,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r861 did
+## What r703–r862 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -307,6 +307,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r859: no change 3 minutes after r858. #6902 and #6915 were not yet due for a drive, #6923 was still building, and there were no merges.
 * r860: #6923 went green (19:21:52Z) and was marked ready (19:28:01Z). Main moved to `a67007d22` (#6794, the Hecke tiling, which removed only prose), and all eleven heads re-simulated clean. No drive was due yet: #6902's window opens at 19:32Z and #6915's at 19:37Z.
 * r861: both drives ran. #6902's re-review approved 10/10 (19:41:02Z, $0.91), and it queued. #6915's first board went 9/10 (19:41:46Z, $0.95): `api-design` asked for `one_add_sq_div_eq` to become a public lemma in a general module, and `08b8138bc` does that as `Real.inv_sqrt_mul_sq` in the new `TauCeti/Analysis/Real/Sqrt.lean`. The freed slot opened the staged kind-3 branch as draft **#6933** (gate 12/0/0). Main moved twice, to `2e0c1a0b2` (#6660) and `d791db95c` (#6619), and every head re-simulated clean.
+* r862: no change 4 minutes after r861. #6915's fix and #6933 were still building, #6923 was not yet due for a drive, and there were no merges.
 
 ## Candidates for a later step 5
 
