@@ -68,15 +68,14 @@ theorem natCast_mem_differentIdeal (K M : Type*) [Field K] [NumberField K] [Fiel
   obtain ⟨q, hq⟩ : minpoly (𝓞 K) z ∣ (X ^ m - 1 : (𝓞 K)[X]) :=
     minpoly.isIntegrallyClosed_dvd (Algebra.IsIntegral.isIntegral z) (by simp [hzpow])
   -- Differentiating that factorisation at `ζ` makes `m * ζ ^ (m - 1)` a multiple of `hmem`.
-  have hder : aeval z (derivative (X ^ m - 1 : (𝓞 K)[X])) =
+  have hder : (m : 𝓞 M) * z ^ (m - 1) =
       aeval z (derivative (minpoly (𝓞 K) z)) * aeval z q := by
-    rw [hq, derivative_mul, map_add, map_mul, map_mul, minpoly.aeval, zero_mul, add_zero]
-  rw [derivative_sub, derivative_X_pow, derivative_one, sub_zero, map_mul, map_pow, aeval_C,
-    aeval_X] at hder
+    have h : aeval z (derivative (X ^ m - 1 : (𝓞 K)[X])) =
+        aeval z (derivative (minpoly (𝓞 K) z * q)) := by rw [hq]
+    simpa [derivative_mul, derivative_X_pow, minpoly.aeval] using h
   -- Multiplying by `ζ` and using `ζ ^ m = 1` turns `m * ζ ^ (m - 1)` into `m` itself.
   have hm : (m : 𝓞 M) = aeval z (derivative (minpoly (𝓞 K) z)) * aeval z q * z := by
-    rw [← hder, mul_assoc, ← pow_succ, Nat.sub_add_cancel (NeZero.pos m), hzpow, mul_one,
-      map_natCast]
+    rw [← hder, mul_assoc, pow_sub_one_mul (NeZero.ne m) z, hzpow, mul_one]
   rw [hm]
   exact Ideal.mul_mem_right _ _ (Ideal.mul_mem_right _ _ hmem)
 
