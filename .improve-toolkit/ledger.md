@@ -40457,3 +40457,35 @@ from r843's `strictscan`, re-checked on current main:
 **In progress now:** #6902 (fix pushed, rebuilding), #6910 (`awaiting-review`) and #6915 (draft). The cap is full.
 
 No toolkit edits.
+
+---
+
+## r854 — 2026-09-15T18:20Z — main moved (#6877, additive); all nine re-simulated clean; #6902's fix and #6915 building
+
+**Board** (18:20:53Z; a real call read 3769 REST calls left; sweep and `queuepos.py` exited 0; `/tmp` at 56%):
+
+* #6902 (`3282c9611`): `awaiting-CI`. Its board (18:13:33Z, on head `f8294ed14`) is **behind** the attribution fix, so
+  there is nothing to re-fix. `sandboxed-build` is in progress.
+* #6915 (`efbb6423d`, draft): `awaiting-CI`, with its first `sandboxed-build` in progress.
+* #6910: `awaiting-review`, no board. It went ready at 17:37:07Z, so step 4 may drive only after 18:37Z.
+* #6896, #6899 and #6911: `ready-to-merge`, NEVER-QUEUED. The merge sweep has not run since 15:15:27Z, over three hours
+  ago.
+* #6851 and #6854: QUEUED at 23 and 20 of 57. #6875 needs a human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6902, #6910, #6915).
+
+**Main moved** `c3c47a5d8` → **`3cbd4f4ca`** at 18:14:47Z with #6877 ("Chebotarev: the primes above those ramifying in a
+Galois extension"): 1 file, `Chebotarev/PrimesAboveRamifiedPrimes.lean` (+85). The firing control read 0 removed
+lines, 85 added, and 0 removed and 2 added declaration headers.
+
+* Nothing was removed, no import was dropped, and no module moved.
+* Main touched none of the nine PRs' files.
+* The names that #6896, #6899, #6910 and #6915 rename, delete or weaken have unchanged counts on main (`git log -S`).
+* No added declaration shares a last name component with main's two new ones.
+
+**Merge-group simulation** against `3cbd4f4ca`: all nine merge clean, with `ghostref` and `stalequal` exit 0. The nine
+are #6851, #6854, #6875, #6896, #6899, #6902 (at `3282c9611`), #6910, #6911 and #6915.
+
+**Queue** (18:21:17Z): depth 57; #6678 and #6623 are AWAITING_CHECKS at the head.
+
+No toolkit edits.
