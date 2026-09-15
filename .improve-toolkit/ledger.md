@@ -39423,3 +39423,35 @@ at 61%): #6851 and #6854 are `ready-to-merge`, with CI green and boards on head,
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r827 — 2026-09-15T12:26Z — main moved twice (#6693 Riemannian path length, #6876); all three PRs re-simulated clean; no change on my PRs
+
+**Board** (12:26:28Z; REST had 1044 calls left; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp`
+at 56%): #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still not queued. #6875 is
+`ready-to-merge` with CI green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. Nothing to fix, contest
+or drive; step 5 is shut.
+
+**Main moved** `62cfc4d65` → `a256ea0d1` at 12:19:10Z with #6693 (lower semicontinuity of Riemannian path length:
+`Geometry/Manifold/Riemannian/EVariationComparison.lean` +210 and `Riemannian/MetricBridge.lean` +131), then →
+**`f7a8984cb`** at 12:24:04Z with #6876 (automate special isogeny square certificates, `Symplectic/SpecialIsogeny.lean`
+−58 net). The firing control read 76 removed lines, 323 added, and 0 removed and 8 added declaration headers. Nothing
+was removed or restated, and no module moved. #6693 sits next to #6851's Riemannian area, but its new lines name none
+of the Levi-Civita declarations #6851 removes, and main touched none of #6851's files. All three PRs merge clean, main's
+new lines name nothing they remove, and the declaration-level grep had no hits.
+
+**Merge-group simulation** against `f7a8984cb`:
+
+```
+#6851  51 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  49 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875  16 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue and Actions** (12:26:38Z): depth 33, none of them mine; #6626 and #6809 are AWAITING_CHECKS. 40 Actions runs
+are queued. The last merge-sweep run is still the 10:24:54Z failure.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
