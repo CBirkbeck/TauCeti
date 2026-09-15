@@ -23,8 +23,10 @@ direction as the value of that factor.
 * `TauCeti.ValuativeRel.zero_vlt_prod_iff` : `0 <ᵥ ∏ i ∈ s, f i` exactly when `0 <ᵥ f i` for every
   `i ∈ s`.
 * `TauCeti.ValuativeRel.prod_vle_prod` : finite products are monotone for `≤ᵥ`.
-* `TauCeti.ValuativeRel.prod_update_vle_prod_iff` : if the factors other than `f j` have positive
-  value, replacing `f j` by `x` does not increase the value of the product exactly when `x ≤ᵥ f j`.
+* `TauCeti.ValuativeRel.prod_update_vle_prod_iff` and
+  `TauCeti.ValuativeRel.prod_vle_prod_update_iff` : if the factors other than `f j` have positive
+  value, replacing `f j` by `x` compares with the original product exactly as `x` compares with
+  `f j`.
 * `TauCeti.ValuativeRel.prod_vle_prod_update` : replacing a factor by an element of at least its
   value does not decrease the value of the product.
 -/
@@ -51,8 +53,9 @@ theorem prod_vle_prod (h : ∀ i ∈ s, f i ≤ᵥ g i) : ∏ i ∈ s, f i ≤�
 variable [DecidableEq ι] {j : ι} {x : R}
 
 /-- If the factors of a finite product other than `f j` have positive value, replacing `f j` by `x`
-does not increase the value of the product exactly when `x ≤ᵥ f j`. Without the positivity
-hypothesis only the reverse implication holds; see `prod_vle_prod_update`. -/
+does not increase the value of the product exactly when `x ≤ᵥ f j`. For the opposite comparison
+see `prod_vle_prod_update_iff`. -/
+@[simp]
 theorem prod_update_vle_prod_iff (hf : ∀ i ∈ s, i ≠ j → 0 <ᵥ f i) (hj : j ∈ s) :
     ∏ i ∈ s, Function.update f j x i ≤ᵥ ∏ i ∈ s, f i ↔ x ≤ᵥ f j := by
   rw [Finset.prod_update_of_mem hj, Finset.sdiff_singleton_eq_erase,
@@ -60,8 +63,19 @@ theorem prod_update_vle_prod_iff (hf : ∀ i ∈ s, i ≠ j → 0 <ᵥ f i) (hj 
   exact ValuativeRel.mul_vle_mul_iff_left <| zero_vlt_prod_iff.mpr fun i hi ↦
     hf i (Finset.mem_of_mem_erase hi) (Finset.ne_of_mem_erase hi)
 
+/-- If the factors of a finite product other than `f j` have positive value, replacing `f j` by `x`
+does not decrease the value of the product exactly when `f j ≤ᵥ x`. Without the positivity
+hypothesis only the reverse implication holds; see `prod_vle_prod_update`. For the opposite
+comparison see `prod_update_vle_prod_iff`. -/
+@[simp]
+theorem prod_vle_prod_update_iff (hf : ∀ i ∈ s, i ≠ j → 0 <ᵥ f i) (hj : j ∈ s) :
+    ∏ i ∈ s, f i ≤ᵥ ∏ i ∈ s, Function.update f j x i ↔ f j ≤ᵥ x := by
+  -- `f` is `Function.update f j x` with its `j`-th factor replaced by `f j`
+  simpa using prod_update_vle_prod_iff (f := Function.update f j x) (x := f j)
+    (fun i hi hij ↦ Function.update_of_ne hij x f ▸ hf i hi hij) hj
+
 /-- Replacing a factor of a finite product by an element of at least its value does not decrease
-the value of the product. Unlike `prod_update_vle_prod_iff`, no positivity hypothesis is needed. -/
+the value of the product. Unlike `prod_vle_prod_update_iff`, no positivity hypothesis is needed. -/
 theorem prod_vle_prod_update (h : f j ≤ᵥ x) : ∏ i ∈ s, f i ≤ᵥ ∏ i ∈ s, Function.update f j x i :=
   prod_vle_prod fun i _ ↦ by rcases eq_or_ne i j with rfl | hi <;> simp [*]
 
