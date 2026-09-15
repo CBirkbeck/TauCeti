@@ -34,7 +34,7 @@ needed by any consumer and is not claimed.)
 
 ## Main results
 
-* `TauCeti.ratPosToPSL2R_smul`: `ratPosToPSL2R g` acts on `ℍ` as the real matrix does.
+* `UpperHalfPlane.ratPosToPSL2R_smul`: `ratPosToPSL2R g` acts on `ℍ` as the real matrix does.
 * `TauCeti.eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one`: an element of
   `ker ratPosToPSL2R` with determinant one is `±1` — a containment, not an identification.
   Hence `ker ratPosToPSL2R ⊓ SL ≤ Γ` for any `Γ` containing `±1` — every `Γ₀(N)`, in particular,
@@ -61,25 +61,26 @@ noncomputable def ratPosToRealPos : GL(2, ℚ)⁺ →* GL(2, ℝ)⁺ :=
   (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)).restrict fun _ ↦
     Matrix.GeneralLinearGroup.map_mem_glpos Rat.cast_strictMono
 
-/-- The underlying `GL (Fin 2) ℝ` matrix of `ratPosToRealPos g` is the change of scalars applied
-to `g`. Definitionally true, but named so that goals mixing the two spellings close by
-`rw`/`simp` rather than by unfolding; `ratPosToPSL2R_smul` is proved through it for that reason.
-(`by rfl`, not `rfl`: `ratPosToRealPos` is not `@[expose]`, so a theorem exported from this
-module cannot unfold it in term mode.) -/
+/-- The underlying `GL (Fin 2) ℝ` matrix of `ratPosToRealPos g` is the entrywise change of
+scalars `ℚ → ℝ` applied to `g`. -/
+-- `by rfl`, not `rfl`: `ratPosToRealPos` is not `@[expose]`, so a theorem exported from this
+-- module cannot unfold it in term mode.
+@[simp]
 theorem coe_ratPosToRealPos (g : GL(2, ℚ)⁺) :
     (ratPosToRealPos g : GL (Fin 2) ℝ) =
       Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (g : GL (Fin 2) ℚ) := by rfl
 
 /-- **The rational projective action.** `GL(2, ℚ)⁺` acts on `ℍ` through `PSL(2, ℝ)`: the change
-of scalars `ratPosToRealPos` followed by the projectivization `glPosToPSL2R`. Compute the action
-with `ratPosToPSL2R_smul`; unlike `ratPosToRealPos` this map is deliberately *not* injective, as
-it collapses the scalar matrices, which act trivially on `ℍ`. -/
+of scalars `ratPosToRealPos` followed by the projectivization `glPosToPSL2R`. Compute the
+action with `UpperHalfPlane.ratPosToPSL2R_smul`; unlike `ratPosToRealPos` this map is
+deliberately *not* injective, as it collapses the scalar matrices, which act trivially on `ℍ`. -/
 noncomputable def ratPosToPSL2R : GL(2, ℚ)⁺ →* PSL(2, ℝ) := glPosToPSL2R.comp ratPosToRealPos
 
 /-- `ratPosToPSL2R g` acts on `ℍ` exactly as the real matrix `g` does. Rewriting with this
 turns a goal about the `PSL(2, ℝ)`-action into one about Mathlib's `GL(2, ℝ)`-action on `ℍ`;
 it is the `ℚ`-coefficient counterpart of `UpperHalfPlane.glPosToPSL2R_smul`. -/
-theorem ratPosToPSL2R_smul (g : GL(2, ℚ)⁺) (τ : ℍ) :
+@[simp]
+theorem _root_.UpperHalfPlane.ratPosToPSL2R_smul (g : GL(2, ℚ)⁺) (τ : ℍ) :
     ratPosToPSL2R g • τ =
       Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (g : GL (Fin 2) ℚ) • τ := by
   unfold ratPosToPSL2R
