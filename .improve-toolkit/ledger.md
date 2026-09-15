@@ -37942,3 +37942,23 @@ its own name (#6741's generalization). Nothing was removed under a new spelling,
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r764 — 2026-09-15T00:06Z — no merges; #6854 relabelled `awaiting-review` with no new board yet; no-op round
+
+**Board** (00:06:22Z; sweep and queuepos exited 0):
+
+* **#6854** (kind 2): CI green on `217fecb812` since 23:39:06Z. The label now reads `awaiting-review` (it read
+  `awaiting-CI` through r763). Its board, on `f18fe6fedf`, is still BEHIND: no re-review posted 27 min after CI-green, so
+  there is nothing to re-fix. Step 4: drive only after 00:39:06Z, and only if there is still no board for `217fecb81`; the
+  00:46 round is the first that may.
+* #6851 and #6855: 10/10 on head, `ready-to-merge`, QUEUED at 26 and 24 of 31.
+* #5950 is Chris's.
+
+No merges since #6741 (23:54:56Z), and main is still `7f81cf09e`, so r763's merge-group simulations and merge-tree
+checks stand. Nothing to fix, contest or drive; step 5 shut.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
