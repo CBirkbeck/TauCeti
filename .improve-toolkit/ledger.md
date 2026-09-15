@@ -38160,3 +38160,31 @@ of their files.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r773 — 2026-09-15T01:38Z — r771 and r772 lost to a full `/tmp`; space back at 01:36; board unchanged; the queue is slow again
+
+**r771 (01:16) and r772 (01:26) did not run.** Every Bash call failed with `ENOSPC: no space left on device`, even
+`date; df -h`, because the harness writes each command's output under `/tmp`, a 63G tmpfs. Nothing was read, written,
+pushed or recorded in those two rounds. The 01:36:22Z probe found space back: `/tmp` at 40% (25G used, 39G free).
+
+**Where the space went (read-only).** `/tmp/claude-1001` (Claude Code session scratch) held 25G, and **one other
+session, `dc73b8c3-9a87-44c1-9968-bf494f5ab8c8`, held 24G of it**. This session's directory is 405M: the scratchpad's
+`hoclone` (115M), three `tcmain-*` snapshots (68M each) and the Mathlib/TauCeti indexes (25M). The review workspaces from
+r759 and r768 (`/tmp/tauceti-review-6854-*`) are gone. The other session's files are not this role's to delete.
+**Reported to Chris.**
+
+**Board** (01:36:22Z; sweep and queuepos exited 0; the scratchpad and `sweep.py` survived, identical to the toolkit
+copy): #6851, #6854 and #6855 are `ready-to-merge`, CI green, boards on head; QUEUED at 20, 32 and 18 of 35. #5950 is
+Chris's. No merges since #6718 (01:04:06Z), and main is still `f8e8a3e62`, so r770's simulations stand. Nothing to fix,
+contest or drive; step 5 shut.
+
+**The queue is slow again (read-only).** Pos 1 #6665's group (`698fde982`): `sandboxed-build` success 00:51:37Z →
+01:20:21Z, `publish` success at 01:33:21Z, `finalize-merge-group-build` **queued since 01:33:21Z**. Pos 2 #6543 is
+`UNMERGEABLE`. Queued Actions runs: **195**, up from 82 at 01:06Z. It is r742's runner backlog again; human-owned, so
+there is nothing to do.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
