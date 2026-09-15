@@ -25,6 +25,12 @@ The Poincaré defect identity `TauCeti.norm_sq_one_sub_conj_mul_sub_norm_sq_sub`
 numerator and the denominator, and yields
 `TauCeti.norm_sub_eq_of_pseudoHyperbolicExpr_eq`: between points of prescribed norms, the
 pseudo-hyperbolic expression determines the Euclidean distance.
+
+## References
+
+* The Riemann mapping theorem development of leanprover-community/mathlib4#33505, and the parts
+  of it already in Mathlib: `Mathlib/Analysis/Complex/RiemannMapping.lean` and
+  `Mathlib/Analysis/Complex/BranchLogRoot.lean`.
 -/
 
 public section
