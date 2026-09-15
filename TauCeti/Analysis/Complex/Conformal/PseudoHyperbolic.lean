@@ -43,9 +43,11 @@ noncomputable def pseudoHyperbolicExpr (z w : ℂ) : ℝ :=
   ‖(z - w) / (1 - (starRingEnd ℂ) w * z)‖
 
 /-- The defining formula for the pseudo-hyperbolic expression. -/
+-- `by rfl`, not a term-mode `rfl`: this theorem is exported, so a term proof would require
+-- `pseudoHyperbolicExpr` to be `@[expose]`d for importing modules to unfold it.
 lemma pseudoHyperbolicExpr_def (z w : ℂ) :
     pseudoHyperbolicExpr z w = ‖(z - w) / (1 - (starRingEnd ℂ) w * z)‖ :=
-  rfl
+  by rfl
 
 /-- The pseudo-hyperbolic expression as a quotient of two real norms, the form in which it is
 compared with the Euclidean distance `‖z - w‖`. -/
