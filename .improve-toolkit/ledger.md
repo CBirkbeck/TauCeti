@@ -38454,3 +38454,33 @@ changed. Short names false-match, so read a hit before trusting it.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r786 — 2026-09-15T03:47Z — main moved (#6685, which edits `Probability/HasLaw.lean`); all three re-simulated clean; queue 8/10/22
+
+**Board** (03:46:21Z; sweep and queuepos exited 0; `/tmp` at 53%): #6851, #6854 and #6855 are `ready-to-merge`, CI green,
+boards on head; QUEUED at 10, 22 and 8 of 41. #5950 is Chris's. Nothing to fix, contest or drive; step 5 shut.
+
+**Main moved:** #6685 (the Monge problem and its relaxation to the Kantorovich problem; base `main`) merged at 03:45:38Z:
+`f06b70926` → **`8a6ed17ba`**. It adds `MeasureTheory/OptimalTransport/Monge.lean` (+377) and edits
+`Probability/HasLaw.lean` (+37/−6). The firing control read 6 removed lines, 408 added, and 0 removed and 35 added
+declaration headers. Nothing was removed, restated or renamed, and main's new lines name nothing my PRs remove.
+
+* `HasLaw.lean` is in Probability, next to #6855, and its 6 removed lines could change a signature. The declaration-level
+  check (r780) found none of the changed files' declarations in any of my branches' added lines; it now skips names of
+  three characters or fewer, the source of r785's false positives. #6855's own files are untouched, and main compiles
+  with them, so their unchanged lines are covered too.
+* All three PRs merge clean, and main touched none of their files.
+
+**Merge-group simulation** against `8a6ed17ba`:
+
+```
+#6851  26 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6854  24 behind  merges clean  ghostref: 0 removed (removes nothing)     stalequal: exit 0
+#6855  24 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
