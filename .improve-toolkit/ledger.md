@@ -40272,3 +40272,25 @@ read 555 removed lines, 299 added, and 48 removed and 17 added declaration heade
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r850 — 2026-09-15T17:36Z — #6910 green and marked ready; no merges since #6880
+
+**Board** (17:36:26Z; a real call read 4994 REST calls left; sweep and `queuepos.py` exited 0; `/tmp` at 56%):
+
+* #6910 (`3548cebb7`): its first `sandboxed-build` succeeded at 17:32:21Z, and every latest check completed green. Main
+  is still `c0295f4a9`, against which r849 simulated it clean, and merge-tree is still clean. **Marked ready at
+  17:37Z**, so step 4 may drive only after 18:37Z.
+* #6911 (`4a8439956`, draft): its first `sandboxed-build` is still in progress.
+* #6902: `awaiting-review`, CI green, no board. It went ready at 17:08:56Z, so step 4 may drive only after 18:09Z.
+* #6896 and #6899: `ready-to-merge`, NEVER-QUEUED. The merge sweep has not run since 15:15:27Z.
+* #6851 and #6854: QUEUED at 27 and 24 of 61. #6875 needs a human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6902, #6910, #6911).
+
+**Merges and main.** No merges since #6880 (17:17:59Z). Main is still `c0295f4a9`, so r849's simulations stand.
+
+**Queue** (17:36:50Z): depth 61; #6726 and #6677 are AWAITING_CHECKS at the head.
+
+No toolkit edits.
