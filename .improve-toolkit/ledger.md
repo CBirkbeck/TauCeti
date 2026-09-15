@@ -39455,3 +39455,20 @@ are queued. The last merge-sweep run is still the 10:24:54Z failure.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r828 — 2026-09-15T12:36Z — no change; no merges since #6876; queue depth 35, none mine
+
+**Board** (12:36:28Z; the REST window rolled over, 4291 calls left; sweep exited 0, and `queuepos.py` exited 1 on its
+EJECTED hint; `/tmp` at 56%): #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still not
+queued. #6875 is `ready-to-merge` with CI green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. No
+merges since #6876 (12:24:04Z); main is still `f7a8984cb`, so r827's simulations stand. Nothing to fix, contest or
+drive; step 5 is shut.
+
+**Queue and Actions** (12:36:38Z): depth 35, none of them mine; #6626 and #6809 are still AWAITING_CHECKS, as at r827.
+41 Actions runs are queued. The last merge-sweep run is still the 10:24:54Z failure.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
