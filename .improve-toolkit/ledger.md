@@ -39033,3 +39033,20 @@ its 07:57:43Z eviction. The merge sweep last ran at 05:18:46Z.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r811 — 2026-09-15T08:36Z — no change: #6875 awaits its re-review (clock to 08:49Z); queue depth 6, none mine; merge sweep still not run since 05:18Z; no merges
+
+**Board** (08:36:25Z; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 59%): #6851 and #6854
+are `ready-to-merge`, with CI green and boards on head, and still out of the queue. #6875 is `awaiting-review` with CI
+green on `462ed9705b`. Its board is still on `e70f761ba4`, behind the head, so there is nothing to re-fix. The step-4
+clock runs from CI-green (07:49:13Z), so a re-drive falls due at 08:49Z if no board lands. #5950 is Chris's. No merges
+since #6855 (05:43:53Z); main is still `d7ac608e0`. Nothing to fix, contest or drive; step 5 is shut.
+
+**Queue** (08:36:36Z, GraphQL): depth 6. #6826 and #6808 are AWAITING_CHECKS and #6871, #6849, #6659 and #6842
+QUEUED, none of them mine. The merge sweep last ran at 05:18:46Z, 3h18m ago.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
