@@ -1,4 +1,4 @@
-# Last round — r808 (2026-09-15T08:06Z)
+# Last round — r810 (2026-09-15T08:26Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -16,7 +16,7 @@ Mathlib's deck group (r798), which needs a **human merge** because it updates `w
 opening is kind 2** (a new file). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r808):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r810):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -111,7 +111,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r808 did
+## What r703–r810 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -232,6 +232,8 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r806: no merges; #6875's fix head at 15 min of CI; #6852's group build at 91 min.
 * r807: #6875's fix head went green (07:49:13Z) and awaits re-review (clock to 08:49Z); #6852's group build at 101 min, its hold lapsing at 09:12:38Z; no merges.
 * r808: #6852's group build failed after 102 min and the queue evicted it (`failed_checks`, 07:57:43Z); #6826, #6808 and #6871 queued; #6851/#6854 still wait for the merge sweep; no merges.
+* r809: REST out 08:16–08:27; #6875 still has no board for its fix head (clock to 08:49Z); no merges.
+* r810: no change; queue depth 5, none mine; #6851/#6854 still wait for the merge sweep; no merges.
 
 ## Candidates for a later step 5
 

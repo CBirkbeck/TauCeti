@@ -38994,3 +38994,42 @@ queue again, but `MAX_RESERVATIONS` caps each bump at 3 holds.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r809 — 2026-09-15T08:16Z — REST out 08:16–08:27; no merges; #6875 still has no board for its fix head (clock to 08:49Z); queue depth 4, none mine
+
+**Board:** the round's 08:16:26Z sweep hit the exhausted REST quota (12 fields unreadable), so the board comes from the
+post-reset rerun at 08:27:33Z (sweep exit 0). #6851 and #6854 are `ready-to-merge`, with CI green and boards on head,
+and still out of the queue. #6875 is `awaiting-review` with CI green on `462ed9705b`. A GraphQL read of its comments at
+08:17Z found only the 07:06:23Z board for `e70f761ba42e`, so the fix head has no board yet; the step-4 clock runs from
+CI-green (07:49:13Z) to 08:49Z. #5950 is Chris's. No merges since #6855 (05:43:53Z); main is still `d7ac608e0`.
+Nothing to fix, contest or drive; step 5 is shut.
+
+**Queue** (08:16:36Z, GraphQL): depth 4. #6826 and #6808 are AWAITING_CHECKS and #6871 and #6849 QUEUED, none of them
+mine. #6852 has not re-entered since its `failed_checks` eviction (07:57:43Z). The merge sweep last ran at 05:18:46Z.
+
+**REST** ran out at 08:16:26Z and reset at 08:27:26Z, read from `X-RateLimit-Reset` on a failing call. A background job
+reran the sweep and `queuepos.py` at 08:27:33Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
+
+---
+
+## r810 — 2026-09-15T08:26Z — no change: #6875 awaits its re-review; #6851/#6854 still wait for the merge sweep; queue depth 5, none mine; no merges
+
+**Board** (the 08:27:33Z post-reset sweep, exit 0, one minute into this round; `queuepos.py` exited 1 on its EJECTED
+hint; `/tmp` at 59%): the same as r809's. #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and
+out of the queue. #6875 is `awaiting-review` with CI green on `462ed9705b` and its board still on `e70f761ba4`; the
+step-4 clock runs to 08:49Z. #5950 is Chris's. No merges; main is still `d7ac608e0`. Nothing to fix, contest or drive;
+step 5 is shut.
+
+**Queue** (08:26:41Z, GraphQL): depth 5. #6826 and #6808 are AWAITING_CHECKS and #6871, #6849 and #6659 QUEUED, none
+of them mine. The last queue events for #6851 and #6854 are still the 06:11–06:12 reservation removals, and #6852's is
+its 07:57:43Z eviction. The merge sweep last ran at 05:18:46Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
