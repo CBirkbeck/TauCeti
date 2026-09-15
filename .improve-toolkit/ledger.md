@@ -38237,3 +38237,35 @@ What is in that scratchpad (sizes only; no contents read): Lean worktrees, **`wt
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r776 — 2026-09-15T02:07Z — main moved (#6843, which renames a module, and #6686); all three still clean; `/tmp` steady
+
+**Board** (02:06:21Z; sweep and queuepos exited 0): #6851, #6854 and #6855 are `ready-to-merge`, CI green, boards on head;
+QUEUED at 14, 26 and 12 of 36. #5950 is Chris's. Nothing to fix, contest or drive; step 5 shut. `/tmp` is steady at 45%
+(28G), so the other session's growth has paused since r775.
+
+**Main moved twice**, in one batch at 02:05:59Z, both with base `main`: `3fdb62326` → `465b5a664` (#6843, characterize
+isomorphisms of DVR models) → **`cddbf10e6`** (#6686, grade the dual numbers in degree two). #6843 renames
+`AlgebraicGeometry/Curves/StableReduction/Model.lean` → `Model/Basic.lean`, adds `Model/Isomorphism.lean` (+106) and
+updates `Fibers.lean`. #6686 adds `Algebra/DualNumber/Grading.lean` (+222). The firing control read 14 removed lines, 345
+added, and 1 removed and 30 added declaration headers. `baseChangeHom_comp` is restated under its own name, nothing was
+removed under a new spelling, and no branch of mine uses it.
+
+* **Module rename (r735's trap):** none of my three branches adds a line naming `StableReduction.Model`. Main has no bare
+  `import …StableReduction.Model` left and has 2 imports of `Model.Basic`, so the grep matches real imports.
+* #6851 (22 behind), #6854 (20) and #6855 (20) all merge clean. Main touched none of their files, and its new lines name
+  nothing they remove.
+
+**Merge-group simulation** against `cddbf10e6`:
+
+```
+#6851  22 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6854  20 behind  merges clean  ghostref: 0 removed (removes nothing)     stalequal: exit 0
+#6855  20 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
