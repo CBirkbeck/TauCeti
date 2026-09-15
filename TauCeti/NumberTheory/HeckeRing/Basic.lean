@@ -263,11 +263,16 @@ lemma map_subgroupOf_smul {G' : Type*} [Group G'] (φ : G →* G') (hφ : Functi
 representatives.
 
 This is index transport along an injective map, and nothing more: it identifies the two
-decomposition quotients, leaving the acting group unchanged. It does **not** supply a
-fundamental-domain tiling — an injective `φ` keeps `-I`, which acts trivially on `ℍ`, so
-`MeasureTheory.IsFundamentalDomain` is unsatisfiable for its image on any set of positive measure.
-`decompQuotientEquivMapOfKerInfLe` is the version for that application: it drops injectivity in
-favour of a kernel condition, which is what permits a faithful action downstream. -/
+decomposition quotients, leaving the acting group unchanged. `G` and `G'` are arbitrary groups
+here, with no action in sight.
+
+It does **not** supply a fundamental-domain tiling, and the reason is specific to the modular
+setting rather than general: there the target acts on `ℍ` through a matrix group modulo scalars, so
+an injective `φ` retains `-I ∈ Γ₂`, whose image is a non-identity element acting trivially — and
+`MeasureTheory.IsFundamentalDomain` then holds for no set of positive measure, its disjointness
+being `Pairwise` over distinct group elements. `decompQuotientEquivMapOfKerInfLe` is the version for
+that application: it drops injectivity for a kernel condition, which is what leaves room for a
+faithful action downstream. -/
 noncomputable def decompQuotientEquivMapOfInjective {G' : Type*} [Group G'] (φ : G →* G')
     (hφ : Function.Injective φ) (Γ₁ Γ₂ : Subgroup G) (g : G) :
     DecompQuotient Γ₁ Γ₂ g ≃ DecompQuotient (Γ₁.map φ) (Γ₂.map φ) (φ g) :=

@@ -22,8 +22,13 @@ for `φ(Γ₂)` into one for `φ(Γ₁) ⊓ φ(δ) φ(Γ₂) φ(δ)⁻¹`.
 **`φ` is a parameter, and is not assumed injective.** The theorem itself assumes only
 `MulAction P ℍ`, so nothing here forces any particular element to act trivially; the hypotheses
 below are what it actually rests on. Injectivity is replaced by an ambient subgroup `H` containing
-both groups, stable under conjugation by `δ`, with `ker φ ⊓ H ≤ Γ₁`; at `H` the determinant-one
-subgroup this reads `{±1} ≤ Γ₁`, true of every `Γ₀(N)`.
+both groups, stable under conjugation by `δ`, with `ker φ ⊓ H ≤ Γ₁`.
+
+Taking `H` to be the determinant-one subgroup does not by itself discharge `hker`: it reduces it to
+`ker φ ⊓ H ≤ Γ₁`, which needs **both** that `φ` collapses no more of `H` than `{±1}` and that
+`{±1} ≤ Γ₁`. The first is a condition on `φ` — for `ratPosToPSL2R` it is
+`eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one` — and the second holds of every `Γ₀(N)`.
+`Γ₁` and `Γ₂` must also lie in `H`, which they do, having determinant one.
 
 The motivation for allowing a non-injective `φ` comes from the intended instantiation rather than
 from the statement. There `P` acts faithfully on `ℍ` and is a quotient of a matrix group by its
@@ -69,10 +74,15 @@ fundamental domain for `φ(Γ₂)`, the translates of `S` by the images of the r
 `aᵥ = rightCosetRep D v = δ τᵥ⁻¹` tile one for `φ(Γ₁) ⊓ φ(δ) φ(Γ₂) φ(δ)⁻¹`.
 
 Supply `H` rather than injectivity of `φ`: any subgroup containing `Γ₁` and `Γ₂`, stable under
-conjugation by `δ`, and meeting `ker φ` inside `Γ₁`. The determinant-one subgroup does whenever
-`{±1} ≤ Γ₁`, hence for every `Γ₀(N)`. Injectivity is no alternative: for `-I ∈ Γ₂` it makes
-`φ (-I)` a non-identity element of `φ(Γ₂)` acting trivially on `ℍ`, which `hS` cannot tolerate —
-`MeasureTheory.IsFundamentalDomain` demands a.e.-disjointness over distinct group elements. -/
+conjugation by `δ`, and meeting `ker φ` inside `Γ₁`. The determinant-one subgroup serves when `φ`
+collapses no more of it than `{±1}` and `{±1} ≤ Γ₁` — both hold for `ratPosToPSL2R` over any
+`Γ₀(N)`, but neither follows from the statement, which constrains `φ` only through `hker`.
+
+Why injectivity is not the alternative, for that intended instantiation: `P` there acts faithfully
+and is a matrix group modulo scalars, so with `-I ∈ Γ₂` an injective `φ` would make `φ (-I)` a
+non-identity element of `φ(Γ₂)` acting trivially on `ℍ`, and `hS` could then hold for no set of
+positive measure — `MeasureTheory.IsFundamentalDomain` demands a.e.-disjointness over distinct
+group elements. Nothing in the statement itself forces this: `MulAction P ℍ` is arbitrary here. -/
 theorem isFundamentalDomain_iUnion_rightCosetRep_smul {P : Type*} [Group P] [MulAction P ℍ]
     (φ : GL (Fin 2) ℚ →* P) {H : Subgroup (GL (Fin 2) ℚ)}
     [Countable (DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹)] {S : Set ℍ} {μ : Measure ℍ}
