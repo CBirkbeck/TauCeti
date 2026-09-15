@@ -39736,3 +39736,37 @@ are queued. The last merge-sweep run is still the 10:24:54Z failure.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r838 — 2026-09-15T14:16Z — main moved (#6776, the universal resolvent specialized at a polynomial); all three PRs re-simulated clean; no change on my PRs
+
+**Board** (14:16:27Z; a real call read 4856 REST calls left, 144 used; sweep exited 0, and `queuepos.py` exited 1 on
+its EJECTED hint; `/tmp` at 55%): #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still not
+queued. #6875 is `ready-to-merge` with CI green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. Nothing
+to fix, contest or drive; step 5 is shut.
+
+**Main moved** `a62443626` → **`6550e8186`** at 14:16:02Z with #6776 ("specialize the universal resolvent at a
+polynomial"): `GaloisGroups/Resolvent/Specialization.lean` (+204), `Resolvent/Symmetric.lean` (+46/−1) and
+`RingTheory/Polynomial/Vieta.lean` (+68). The firing control read 1 removed line, 317 added, and 0 removed and 22 added
+declaration headers. The removed line is `public import Mathlib.RingTheory.MvPolynomial.Symmetric.FundamentalTheorem`,
+and the diff re-adds it after two new imports, so no import was dropped. None of the three PRs' changed files reaches
+`Resolvent/Symmetric` through its imports either (437 modules walked). No declaration was removed or restated, and no
+module moved. All three PRs merge clean, main touched none of their files, its new lines name nothing they remove, the
+declaration-level grep had no hits, and none of their added declarations shares a last name component with main's 22
+new ones.
+
+**Merge-group simulation** against `6550e8186`:
+
+```
+#6851  61 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  59 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875  26 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue and Actions** (14:16:42Z): depth 31, none of them mine; #6840 and #6874 are AWAITING_CHECKS. 40 Actions runs
+are queued. The last merge-sweep run is still the 10:24:54Z failure.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
