@@ -5,7 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Map
 public import TauCeti.NumberTheory.HeckeRing.GLn.Basic
 public import TauCeti.NumberTheory.ModularForms.Basic
 

@@ -19,12 +19,17 @@ act on `ℍ`, so the statement is made along a homomorphism `φ` into a group th
 This file shows that the images `φ aᵥ` of those representatives translate a fundamental domain
 for `φ(Γ₂)` into one for `φ(Γ₁) ⊓ φ(δ) φ(Γ₂) φ(δ)⁻¹`.
 
-**`φ` is a parameter, and is not assumed injective.** The group acting faithfully on `ℍ` is a
-quotient of a matrix group by its scalars, so any faithful `φ` collapses `±1` — and it must, since
-a non-identity element acting trivially makes `MeasureTheory.IsFundamentalDomain` unsatisfiable for
-every set of positive measure. Injectivity is replaced by an ambient subgroup `H` containing both
-groups, stable under conjugation by `δ`, with `ker φ ⊓ H ≤ Γ₁`; at `H` the determinant-one subgroup
-this reads `{±1} ≤ Γ₁`, true of every `Γ₀(N)`.
+**`φ` is a parameter, and is not assumed injective.** The theorem itself assumes only
+`MulAction P ℍ`, so nothing here forces any particular element to act trivially; the hypotheses
+below are what it actually rests on. Injectivity is replaced by an ambient subgroup `H` containing
+both groups, stable under conjugation by `δ`, with `ker φ ⊓ H ≤ Γ₁`; at `H` the determinant-one
+subgroup this reads `{±1} ≤ Γ₁`, true of every `Γ₀(N)`.
+
+The motivation for allowing a non-injective `φ` comes from the intended instantiation rather than
+from the statement. There `P` acts faithfully on `ℍ` and is a quotient of a matrix group by its
+scalars, so `φ` must collapse `±1`: were `-I` to survive and act trivially,
+`MeasureTheory.IsFundamentalDomain` would be unsatisfiable for any set of positive measure, since
+its disjointness is `Pairwise` over group elements.
 
 This is what turns a sum of slashes into a single integral: because the translates tile, an
 integral of `heckeSlashSum` over a fundamental domain for the smaller group may be read termwise

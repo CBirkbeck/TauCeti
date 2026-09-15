@@ -262,10 +262,12 @@ lemma map_subgroupOf_smul {G' : Type*} [Group G'] (φ : G →* G') (hφ : Functi
 `Γ₁ ⧸ (Γ₁ ∩ gΓ₂g⁻¹)` and `φ(Γ₁) ⧸ (φ(Γ₁) ∩ φ(g)φ(Γ₂)φ(g)⁻¹)` are in bijection, by `φ` on
 representatives.
 
-This is what carries a Hecke decomposition into a group that acts. `HeckeRing.GL2.heckeSlashSum`
-is indexed by `DecompQuotient Γ₂ Γ₁ δ⁻¹` over `GL (Fin 2) ℚ`, which does not act on `ℍ`; the slash
-goes through `Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)`, and that map is injective, so the
-index transports to the real side where a fundamental-domain tiling can be stated. -/
+This is index transport along an injective map, and nothing more: it identifies the two
+decomposition quotients, leaving the acting group unchanged. It does **not** supply a
+fundamental-domain tiling — an injective `φ` keeps `-I`, which acts trivially on `ℍ`, so
+`MeasureTheory.IsFundamentalDomain` is unsatisfiable for its image on any set of positive measure.
+`decompQuotientEquivMapOfKerInfLe` is the version for that application: it drops injectivity in
+favour of a kernel condition, which is what permits a faithful action downstream. -/
 noncomputable def decompQuotientEquivMapOfInjective {G' : Type*} [Group G'] (φ : G →* G')
     (hφ : Function.Injective φ) (Γ₁ Γ₂ : Subgroup G) (g : G) :
     DecompQuotient Γ₁ Γ₂ g ≃ DecompQuotient (Γ₁.map φ) (Γ₂.map φ) (φ g) :=
@@ -281,9 +283,13 @@ theorem decompQuotientEquivMapOfInjective_mk {G' : Type*} [Group G'] (φ : G →
   exact TauCeti.QuotientGroup.congrOfMapEq_mk _ _ _
 
 open scoped Pointwise in
-/-- **The stabilizer transports along `φ` under an ambient subgroup.** Injectivity is not needed:
-where the injective argument concludes `z = g⁻¹ y g`, here `z⁻¹ * (g⁻¹ y g)` lies in `ker φ`, and
-it also lies in `H`, so `φ.ker ⊓ H ≤ Γ₂` still puts `g⁻¹ y g` in `Γ₂`. -/
+/-- **The stabilizer of the decomposition transports along `φ`.** The image under `φ` of
+`(gΓ₂g⁻¹ ∩ Γ₁)`, viewed inside `Γ₁`, is `(φ(g)φ(Γ₂)φ(g)⁻¹ ∩ φ(Γ₁))` viewed inside `φ(Γ₁)`.
+
+Injectivity of `φ` is not required. In its place: an ambient subgroup `H` containing `Γ₁` and `Γ₂`
+and stable under conjugation by `g`, together with `φ.ker ⊓ H ≤ Γ₂`. The kernel may therefore be
+nontrivial, which is what lets the decomposition reach a group acting faithfully on `ℍ`; the
+injective version is `map_subgroupOf_smul`. -/
 lemma map_subgroupOf_smul_of_ker_inf_le {G' : Type*} [Group G'] (φ : G →* G')
     (Γ₁ Γ₂ H : Subgroup G) (g : G) (h₁ : Γ₁ ≤ H) (h₂ : Γ₂ ≤ H)
     (hconj : ∀ y ∈ H, g⁻¹ * y * g ∈ H) (hker : φ.ker ⊓ H ≤ Γ₂) :
