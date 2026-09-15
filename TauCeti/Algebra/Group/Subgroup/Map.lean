@@ -28,7 +28,7 @@ uses it rather than repeating the composition of `MulEquiv.subgroupMap` with
 
 * `TauCeti.Subgroup.congrOfMapEq`: the isomorphism of subgroups restricted from an isomorphism of
   groups carrying the one onto the other.
-* `TauCeti.commutatorCongr`: its instance for the derived subgroup.
+* `MulEquiv.commutatorCongr`: its instance for the derived subgroup.
 * `MonoidHom.subgroupCongr`: a homomorphism of subgroups transported along equalities of its
   domain and codomain, for reading a construction through two presentations of the subgroups it
   connects.
@@ -46,8 +46,8 @@ uses it rather than repeating the composition of `MulEquiv.subgroupMap` with
   centreless group.
 * `TauCeti.Subgroup.map_commutator_eq_commutator`: a surjective homomorphism carries the derived
   subgroup onto the derived subgroup.
-* `Subgroup.map_conj_map`: the image of a conjugate subgroup is the conjugate of the image.
-* `Subgroup.map_mk'_map_quotientGroupMap`: taking images in quotients commutes with the maps
+* `Subgroup.map_map_conj`: the image of a conjugate subgroup is the conjugate of the image.
+* `Subgroup.map_quotientGroupMap_map_mk'`: taking images in quotients commutes with the maps
   induced on quotients.
 * `MonoidHom.subgroupCongr_injective`, `MonoidHom.subgroupCongr_surjective`: transport along
   equalities of the domain and codomain preserves injectivity and surjectivity.
@@ -154,7 +154,10 @@ homomorphism itself instead. -/
 @[simp]
 theorem _root_.MonoidHom.coe_subgroupCongr_apply {A A' : Subgroup G} {B B' : Subgroup H}
     (hA : A' = A) (hB : B' = B) (f : A →* B) (x : A') :
-    (f.subgroupCongr hA hB x : H) = f ⟨x, hA ▸ x.2⟩ := by rfl
+    (f.subgroupCongr hA hB x : H) = f ⟨x, hA ▸ x.2⟩ := by
+  simp only [MonoidHom.subgroupCongr, MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom,
+    MulEquiv.subgroupCongr_symm_apply]
+  exact congrArg (fun y ↦ (f y : H)) (Subtype.ext (MulEquiv.subgroupCongr_apply hA x))
 
 /-- Transporting the identity homomorphism along one equality of subgroups, on both sides, gives the
 identity.
@@ -205,7 +208,8 @@ theorem _root_.MonoidHom.subgroupCongr_surjective {A A' : Subgroup G} {B B' : Su
 Without surjectivity only `≤` survives (Mathlib's `map_derivedSeries_le_derivedSeries`); Mathlib's
 `Subgroup.map_commutator_eq` keeps an equality for an arbitrary `f`, at the cost of describing the
 image as `⁅f.range, f.range⁆`. Reach for this lemma rather than `map_derivedSeries_eq` whenever the
-derived subgroup is spelled `commutator`; `commutatorCongr` below is the isomorphism it unlocks. -/
+derived subgroup is spelled `commutator`; `MulEquiv.commutatorCongr` below is the isomorphism it
+unlocks. -/
 theorem Subgroup.map_commutator_eq_commutator {f : G →* H} (hf : Function.Surjective f) :
     (commutator G).map f = commutator H :=
   -- `commutator G` is by definition `derivedSeries G 1`, so no rewriting is needed here.
@@ -217,59 +221,67 @@ This is `Subgroup.congrOfMapEq` for the derived subgroup: the map equality is su
 so a use site names only `e`, and the target is `commutator H` itself rather than the image
 `(commutator G).map e` that `MulEquiv.subgroupMap` would land in. It acts as `e` on elements, and
 its inverse as `e.symm`. -/
-def commutatorCongr (e : G ≃* H) : ↥(commutator G) ≃* ↥(commutator H) :=
+def _root_.MulEquiv.commutatorCongr (e : G ≃* H) : ↥(commutator G) ≃* ↥(commutator H) :=
   Subgroup.congrOfMapEq e <| Subgroup.map_commutator_eq_commutator e.surjective
 
-/-- The restriction `commutatorCongr e` to the derived subgroups agrees with `e` on underlying
+/-- The restriction `MulEquiv.commutatorCongr e` to the derived subgroups agrees with `e` on
+underlying
 elements.
 
 The equation is stated in the ambient group `H` because its two sides have the different types
 `↥(commutator H)` and `H`. It is the derived-subgroup instance of `Subgroup.coe_congrOfMapEq_apply`,
-which `simp` cannot apply on its own because it cannot see through `commutatorCongr`;
-`coe_commutatorCongr_symm_apply` is the companion for the inverse, and Mathlib's
+which `simp` cannot apply on its own because it cannot see through `MulEquiv.commutatorCongr`;
+`MulEquiv.coe_commutatorCongr_symm_apply` is the companion for the inverse, and Mathlib's
 `MulEquiv.coe_subgroupMap_apply` says the same for the literal image `(commutator G).map e`. -/
 @[simp]
-theorem coe_commutatorCongr_apply (e : G ≃* H) (x : ↥(commutator G)) :
-    (commutatorCongr e x : H) = e (x : G) :=
+theorem _root_.MulEquiv.coe_commutatorCongr_apply (e : G ≃* H) (x : ↥(commutator G)) :
+    (MulEquiv.commutatorCongr e x : H) = e (x : G) :=
   Subgroup.coe_congrOfMapEq_apply e _ x
 
-/-- The inverse of the restriction `commutatorCongr e` to the derived subgroups agrees with
+/-- The inverse of the restriction `MulEquiv.commutatorCongr e` to the derived subgroups agrees with
 `e.symm` on underlying elements.
 
 The equation is stated in the ambient group `G` because its two sides have the different types
 `↥(commutator G)` and `G`. It is the derived-subgroup instance of
 `Subgroup.coe_congrOfMapEq_symm_apply`, which `simp` cannot apply on its own because it cannot see
-through `commutatorCongr`; `coe_commutatorCongr_apply` is the companion for the forward direction,
-`commutatorCongr_symm` rewrites the whole inverse rather than a single value, and Mathlib's
+through `MulEquiv.commutatorCongr`; `MulEquiv.coe_commutatorCongr_apply` is the companion for the
+forward direction,
+`MulEquiv.commutatorCongr_symm` rewrites the whole inverse rather than a single value, and Mathlib's
 `MulEquiv.subgroupMap_symm_apply` says the same for the literal image `(commutator G).map e` but
 returns the subtype `⟨e.symm ↑y, _⟩` rather than its coercion. -/
 @[simp]
-theorem coe_commutatorCongr_symm_apply (e : G ≃* H) (y : ↥(commutator H)) :
-    ((commutatorCongr e).symm y : G) = e.symm (y : H) :=
+theorem _root_.MulEquiv.coe_commutatorCongr_symm_apply (e : G ≃* H) (y : ↥(commutator H)) :
+    ((MulEquiv.commutatorCongr e).symm y : G) = e.symm (y : H) :=
   Subgroup.coe_congrOfMapEq_symm_apply e _ y
 
 /-- Restricting the identity isomorphism of `G` to the derived subgroup gives the identity of
 `↥(commutator G)`.
 
 The derived-subgroup instance of `Subgroup.congrOfMapEq_refl`, and a `simp` lemma in its own
-right: `commutatorCongr` does not unfold, so that general lemma never fires on this left-hand side.
-`commutatorCongr_trans` and `commutatorCongr_symm` are the companion composition and inverse
+right: `MulEquiv.commutatorCongr` does not unfold, so that general lemma never fires on this
+left-hand side.
+`MulEquiv.commutatorCongr_trans` and `MulEquiv.commutatorCongr_symm` are the companion composition
+and inverse
 statements; Mathlib's `abelianizationCongr_refl` is the same coherence for the abelianization. -/
 @[simp]
-theorem commutatorCongr_refl : commutatorCongr (MulEquiv.refl G) = MulEquiv.refl ↥(commutator G) :=
+theorem _root_.MulEquiv.commutatorCongr_refl :
+    MulEquiv.commutatorCongr (MulEquiv.refl G) = MulEquiv.refl ↥(commutator G) :=
   Subgroup.congrOfMapEq_refl _
 
 /-- Restricting to derived subgroups is functorial: the restriction of `e.trans f` is the composite
 of the restrictions of `e` and of `f`.
 
 The derived-subgroup instance of `Subgroup.congrOfMapEq_trans`, and a `simp` lemma in its own
-right: `commutatorCongr` does not unfold, so that general lemma never fires on this left-hand side.
+right: `MulEquiv.commutatorCongr` does not unfold, so that general lemma never fires on this
+left-hand side.
 Both map equalities are supplied internally, so a use site names only `e` and `f`.
-`commutatorCongr_refl` and `commutatorCongr_symm` are the companion identity and inverse
+`MulEquiv.commutatorCongr_refl` and `MulEquiv.commutatorCongr_symm` are the companion identity
+and inverse
 statements; Mathlib's `abelianizationCongr_trans` is the same coherence for the abelianization. -/
 @[simp]
-theorem commutatorCongr_trans (e : G ≃* H) (f : H ≃* K) :
-    (commutatorCongr e).trans (commutatorCongr f) = commutatorCongr (e.trans f) :=
+theorem _root_.MulEquiv.commutatorCongr_trans (e : G ≃* H) (f : H ≃* K) :
+    (MulEquiv.commutatorCongr e).trans (MulEquiv.commutatorCongr f) =
+      MulEquiv.commutatorCongr (e.trans f) :=
   Subgroup.congrOfMapEq_trans e _ f _
 
 -- Not `@[simp]`, for the reason given at `Subgroup.congrOfMapEq_symm`.
@@ -277,10 +289,13 @@ theorem commutatorCongr_trans (e : G ≃* H) (f : H ≃* K) :
 
 The derived-subgroup instance of `Subgroup.congrOfMapEq_symm`, whose map-equality hypothesis is
 supplied internally, so a use site names only `e`. This is the whole-isomorphism form, for when the
-inverse occurs as a map rather than applied to a point; `coe_commutatorCongr_symm_apply` is the
-pointwise companion, and `commutatorCongr_refl` and `commutatorCongr_trans` are the identity and
+inverse occurs as a map rather than applied to a point;
+`MulEquiv.coe_commutatorCongr_symm_apply` is the
+pointwise companion, and `MulEquiv.commutatorCongr_refl` and `MulEquiv.commutatorCongr_trans` are
+the identity and
 composition ones. Mathlib's `abelianizationCongr_symm` says the same for the abelianization. -/
-theorem commutatorCongr_symm (e : G ≃* H) : (commutatorCongr e).symm = commutatorCongr e.symm :=
+theorem _root_.MulEquiv.commutatorCongr_symm (e : G ≃* H) :
+    (MulEquiv.commutatorCongr e).symm = MulEquiv.commutatorCongr e.symm :=
   Subgroup.congrOfMapEq_symm e _
 
 /-- The image of a conjugate subgroup `gRg⁻¹` under a homomorphism `f` is the conjugate of `f(R)`
@@ -291,7 +306,7 @@ the two are definitionally equal (`Subgroup.pointwise_smul_def` is `rfl`) and Ma
 rewrite between them, so a use site in either spelling can apply this. It is `Subgroup.map_map`
 specialized to an inner conjugation, while `Subgroup.Normal.map_conj_eq` is the degenerate case
 in which conjugation fixes the subgroup instead of moving it. -/
-theorem _root_.Subgroup.map_conj_map (R : Subgroup G) (f : G →* H) (g : G) :
+theorem _root_.Subgroup.map_map_conj (R : Subgroup G) (f : G →* H) (g : G) :
     (R.map (MulAut.conj g).toMonoidHom).map f = (R.map f).map (MulAut.conj (f g)).toMonoidHom := by
   rw [Subgroup.map_map, Subgroup.map_map]
   -- conjugation is natural: `f ∘ conj g` and `conj (f g) ∘ f` agree pointwise
@@ -303,15 +318,16 @@ theorem _root_.Subgroup.map_conj_map (R : Subgroup G) (f : G →* H) (g : G) :
 The subgroup-image form of Mathlib's pointwise `QuotientGroup.map_mk'`. `R` need not be related to
 `N` or `M`. As a `simp` lemma it fires left to right, so the normal form of an image taken in a
 quotient is "push down along `f` first, project afterwards", and `QuotientGroup.map` disappears.
-`Subgroup.map_conj_map` above is the same commuting square for conjugation. -/
+`Subgroup.map_map_conj` above is the same commuting square for conjugation. -/
 @[simp]
-theorem _root_.Subgroup.map_mk'_map_quotientGroupMap (R : Subgroup G) {N : Subgroup G}
+theorem _root_.Subgroup.map_quotientGroupMap_map_mk' (R : Subgroup G) {N : Subgroup G}
     {M : Subgroup H} [N.Normal] [M.Normal] (f : G →* H) (h : N ≤ M.comap f) :
     (R.map (QuotientGroup.mk' N)).map (QuotientGroup.map N M f h) =
       (R.map f).map (QuotientGroup.mk' M) := by
-  rw [Subgroup.map_map, Subgroup.map_map]
-  -- both composites send `x : G` to `f x` in `H ⧸ M`, definitionally (`QuotientGroup.map_mk'`)
-  rfl
+  have hf : (QuotientGroup.map N M f h).comp (QuotientGroup.mk' N) =
+      (QuotientGroup.mk' M).comp f :=
+    MonoidHom.ext fun x ↦ QuotientGroup.map_mk' N M f h x
+  rw [Subgroup.map_map, Subgroup.map_map, hf]
 
 /-! ## Transporting a coset space along an isomorphism -/
 
