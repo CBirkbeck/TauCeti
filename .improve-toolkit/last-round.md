@@ -1,4 +1,4 @@
-# Last round — r866 (2026-09-15T20:40Z)
+# Last round — r867 (2026-09-15T20:47Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -134,7 +134,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r866 did
+## What r703–r867 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -313,6 +313,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r864: #6915's fix went green (20:13:06Z) and awaits its board (drive not before 21:13Z). Main moved to `9cd85f80e` (#6883, #6881), which renamed one module, `RamificationInertia/DoubleCoset.lean` → `DoubleCoset/Basic.lean`; no branch names it. All eleven heads re-simulated clean.
 * r865: #6923 had no board after its hour, so its review was driven (20:28:06Z) and approved 10/10 ($1.21); it queued. That freed a slot, and with kind 1 still dry at `30a58f795a`, kind 2 opened as draft **#6941**, a style pass on `Contour/Residue/Theorem.lean` (gpt-6-astra: no risk; gate 12/0/0). Main moved to `f7443c964` (#6706, #6782), which moved `VectorBundle/SectionAlongCurve.lean` to `SectionAlongCurve/Basic.lean`. The grep hits on #6851's along-curve API were read and false (main only added uses), and all twelve heads re-simulated clean.
 * r866: no change 3 minutes after r865. #6941 was still building, no drive was due (#6933 at 21:07Z, #6915 at 21:13Z), and there were no merges.
+* r867: no change 7 minutes after r866. #6941 was still building, no drive was due, and there were no merges.
 
 ## Candidates for a later step 5
 

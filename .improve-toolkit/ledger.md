@@ -40914,3 +40914,19 @@ Nothing to fix, contest or drive. The cap is full (#6915, #6933, #6941).
 twelve heads clean.
 
 No toolkit edits.
+
+---
+
+## r867 — 2026-09-15T20:46Z — no change; #6941 building; no drive due; no merges
+
+**Board** (20:46:24Z; a real call read 4941 REST calls left; sweep and `queuepos.py` exited 0): identical to r866. #6941
+(`8c4c5fa79`, draft) is still on its first `sandboxed-build`; #6933 has no board (drive not before 21:07Z); #6915's board is
+behind its fix (drive not before 21:13Z); #6923 is QUEUED at 69 of 72. Other queue positions are unchanged: #6854 8, #6851 10,
+#6910 45, #6911 48, #6899 49, #6896 50, #6902 65. #6875 needs a human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6915, #6933, #6941).
+
+**Merges and main.** No merges since #6706 and #6782 (20:32:08Z). Main is still `f7443c964`, against which r865 simulated all
+twelve heads clean.
+
+No toolkit edits.
