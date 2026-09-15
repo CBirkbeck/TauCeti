@@ -40077,3 +40077,95 @@ queued.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r847 — 2026-09-15T17:15Z — #6902 red on a term `rfl` and fixed (from Chris's account); #6899 approved; #6896 review driven; main +7, all re-simulated clean; kind 3 opened as draft #6910
+
+**Prompts.** Nine round prompts queued while this round's work ran. This entry covers them as one round (15:46Z–17:15Z).
+
+**#6902 went red, and a fix beat mine to the branch.**
+
+* **The failure.** The first `sandboxed-build` (on `91e7bc1a2`) failed at 15:44:44Z with a single error, at
+  `PseudoHyperbolic.lean:45:0`: "Not a definitional equality: the left-hand side `pseudoHyperbolicExpr z w` is not
+  definitionally equal to the right-hand side … This theorem is exported from the current module. This requires that
+  all definitions that need to be unfolded to prove this theorem must be exposed." The log has only that one ✖.
+* **The cause.** r845 golfed `pseudoHyperbolicExpr_def` from `by rfl` to `rfl`. A bare term `rfl` in a public lemma is an
+  exported definitional equality, and `pseudoHyperbolicExpr` is not `@[expose]`d. gpt-6-astra had reviewed that golf as
+  safe.
+* **The race.** I restored `by rfl` (local `7a9c710d6`, gate 12/0/0), but the lease push was **rejected as stale**:
+  `f8294ed14` had landed at 15:50:06Z from Chris Birkbeck's `CDBirbeck` account. It makes the same restoration and adds a
+  comment explaining it, and that comment is the only difference between the two trees. So I dropped mine, reset the
+  local branch to the fork head, and patched the PR body (REST PATCH, read back) to remove the `rfl` bullet.
+* **Now.** `f8294ed14` built green (`sandboxed-build` success at 16:07:16Z), and merge-tree against `edcf25b9a` is clean.
+  **Marked ready at 17:08:59Z**, so step 4 may drive only after 18:09Z.
+
+**#6899 approved.** A board on head `f450e0dcc` was posted at 16:40:36Z by `eohjelle`, and the PR is `ready-to-merge`.
+It is NEVER-QUEUED so far; the merge sweep will enqueue it.
+
+**#6896 review driven (step 4).** It went green at 15:34:55Z and ready at 15:38:06Z, and at 17:10Z (92 minutes later) it
+had no board and no comments. The `Review` workflow is `disabled_manually`, so no Actions review run was queued for it
+either. Driven with `uvx … tauceti-review 6896 --reviewer codex --post`, detached with `setsid nohup` at 17:10:17Z (log
+`review-6896-r847.log`). At 17:11Z `review.py` was running the rubrics.
+
+**Rest of the board.** #6851 and #6854 are QUEUED at 29 and 26 of 63 (17:07Z). #6875 is NEVER-QUEUED and waits for a
+human merge. #5950 is Chris's. REST had 4981 calls left at 17:06:59Z.
+
+**Main moved** `591746fa6` → **`edcf25b9a`** with seven merges:
+
+* #6750, the disc quotient by the `m`-th roots of unity;
+* #6694, discriminants of regular quadratic forms;
+* #6827, refinements of finite normal layers;
+* #6788, the potential estimate for the Poincaré–Wirtinger inequality;
+* #6780, the ordinary genus sign quotient;
+* #6828, cyclically monotone sets as contact sets;
+* #6818, pro-`p` groups closed under subgroups.
+
+21 files, +2210/−94. The firing control read 94 removed lines, and 7 removed and 133 added declaration headers. All 7
+removed names are restated: `IsCyclicallyMonotone`, `equivalent_weightedSumSquares_comp`, `formClass_hyperbolicPlane`,
+`hyperbolicClass`, `isCyclicallyMonotone_empty`, `presentedForm_one_neg_one` and `rank_hyperbolicClass`.
+
+* No module moved, and no import was dropped.
+* Main touched none of the six PRs' files, and its new lines name nothing they remove.
+* The names renamed by #6896 and #6899 gained no uses.
+* No declaration those PRs add shares a last name component with main's new ones.
+* The declaration-level grep had one hit, `subgroup` against #6875. It is prose in #6875's docstrings, and main's new
+  `IsProP.subgroup` is unrelated.
+
+**Merge-group simulation** against `edcf25b9a`:
+
+```
+#6851  75 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  73 behind  merges clean  ghostref: 0 removed                         stalequal: exit 0
+#6875  40 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+#6896   9 behind  merges clean  ghostref: 4 removed, 4 chased, 0 ghosts    stalequal: exit 0
+#6899   9 behind  merges clean  ghostref: 1 removed (not TauCeti.-pathed)  stalequal: exit 0
+#6902   7 behind  merges clean  ghostref: 0 removed                         stalequal: exit 0
+```
+
+**Step 5, kind 3: `LinearAlgebra/Vandermonde.lean`.** A slot freed when #6899 turned `ready-to-merge`.
+
+* **The target.** r845's side finding: the private `monic_descPochhammer'` (over a `CommRing`) and
+  `descPochhammer_natDegree'` (over a nontrivial `CommRing`) re-prove what `TauCeti.monic_descPochhammer` (any `Ring`)
+  and `TauCeti.descPochhammer_natDegree` (any nontrivial `Ring`) in `RingTheory/Polynomial/Pochhammer.lean` already
+  state, by the same transport from `ℤ`.
+* **Checks.**
+  * The root names `monic_descPochhammer ℤ` and `descPochhammer_natDegree ℤ` occur in `Vandermonde.lean` only inside the
+    two deleted proofs. After the import, the unqualified names resolve to TauCeti's inside `namespace TauCeti` (as they
+    already do in `Pochhammer.lean`), so no other reference changes.
+  * Mathlib has no root `descPochhammer_degree`.
+  * `Pochhammer.lean` imports only Mathlib, so the import cannot create a cycle.
+  * No open PR touches either file.
+* **The change.** A plain `import TauCeti.RingTheory.Polynomial.Pochhammer`. The two private copies are deleted, their
+  one call site (`det_vandermonde_eq_det_descPochhammer`) uses the general lemmas, and the module docstring names them.
+  1 file, +7/−22.
+* **Gate** `prepush.sh origin/main`: **12 ok / 0 failed / 0 UNRUN**.
+* **Opened #6910** (draft, 17:15:21Z). Head `CBirkbeck:improve/vandermonde-descpochhammer-dedup@3548cebb7`, base
+  `main`, branched from `edcf25b9a`. The body carries `Roadmap: RepresentationTheory`, as #5177 and #5126, which built
+  this file, did.
+
+**In progress now:** #6896 (review driven), #6902 (ready) and #6910 (draft). The cap is full.
+
+**Memory:** the new memory `lean-module-system-term-rfl` records the export check that broke #6902.
+
+No toolkit edits.
