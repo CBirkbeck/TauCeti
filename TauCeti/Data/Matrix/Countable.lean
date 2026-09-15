@@ -28,7 +28,7 @@ variable {m n α : Type*}
 /-- Matrices indexed by finite types, with entries in a countable type, form a countable type.
 
 Stated because `Matrix` does not unfold during instance synthesis; the proof is just the
-corresponding fact for the function type it abbreviates. -/
+corresponding fact for its underlying function type. -/
 instance Matrix.instCountable [Finite m] [Finite n] [Countable α] :
     Countable (Matrix m n α) :=
   inferInstanceAs (Countable (m → n → α))
