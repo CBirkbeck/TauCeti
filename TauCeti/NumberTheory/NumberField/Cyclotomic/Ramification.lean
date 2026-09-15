@@ -37,6 +37,10 @@ that is the one wanted.
 Both results ask `M` to be a number field alongside `K`. That is no restriction, since a
 cyclotomic extension of a number field is one: `IsCyclotomicExtension.numberField {m} K M`.
 
+## References
+
+These are the ramification bound asked for by Layer 7.4 of `TauCetiRoadmap/Chebotarev/README.md`,
+stated over the cyclotomic base and in terms of discriminants.
 -/
 
 public section
