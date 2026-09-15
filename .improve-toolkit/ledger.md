@@ -39050,3 +39050,22 @@ QUEUED, none of them mine. The merge sweep last ran at 05:18:46Z, 3h18m ago.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r812 — 2026-09-15T08:46Z — no change: #6875 has no board or live review marker for its fix head, 2.5 min short of its 08:49Z clock; queue depth 6, none mine; no merges
+
+**Board** (08:46:26Z; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 59%): #6851 and #6854
+are `ready-to-merge`, with CI green and boards on head, and still out of the queue. #6875 is `awaiting-review` with CI
+green on `462ed9705b`. A GraphQL read of its comments found only the 07:06:23Z board for `e70f761ba42e` and no
+`tauceti-review-in-progress` marker for the new head. Its step-4 clock, counted from CI-green (07:49:13Z), falls due at
+08:49:13Z, 2.5 minutes after this read, so the drive decision falls to r813, which re-reads the board first. #5950 is
+Chris's. No merges since #6855 (05:43:53Z); main is still `d7ac608e0`. Nothing to fix, contest or drive; step 5 is
+shut.
+
+**Queue** (08:46:37Z, GraphQL): depth 6, unchanged since r811. #6826 and #6808 are AWAITING_CHECKS and #6871, #6849,
+#6659 and #6842 QUEUED, none of them mine. The merge sweep last ran at 05:18:46Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
