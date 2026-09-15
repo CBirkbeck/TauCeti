@@ -123,11 +123,11 @@ theorem rep_def (D : HeckeCoset Δ H₁ H₂) : D.rep = Quotient.out D := (rfl)
 
 /-- The double coset of a chosen representative is the double coset it was chosen from.
 
-This is the `@[simp]` normal form eliminating `rep`, and the only form `rw` and `simp` can apply:
-`Quotient.out_eq'` holds here *definitionally* — so it closes the goal in term mode — but matches
-syntactically on `Quotient.mk''` and `Quotient.out`, so it never fires through the `mk` and `rep`
-wrappers (`simp only [Quotient.out_eq']` reports no progress). Contrast `rep_def`, which unfolds
-`rep` to `Quotient.out` and leaves `mk` in place. -/
+This is the `@[simp]` normal form eliminating `rep`: with it available, `simp` rewrites any
+`mk H₁ H₂ D.rep` back to `D`. Mathlib's `Quotient.out_eq'` is the same fact one level down, but it
+matches syntactically on `Quotient.mk''` and `Quotient.out` rather than on the `mk` and `rep`
+wrappers, so it is not a substitute here. Contrast `rep_def`, which unfolds `rep` to `Quotient.out`
+and leaves `mk` in place. -/
 @[simp] lemma mk_rep (D : HeckeCoset Δ H₁ H₂) : mk H₁ H₂ D.rep = D := Quotient.out_eq' D
 
 /-- Two elements of `Δ` define the same `HeckeCoset` iff their double cosets coincide.
@@ -175,12 +175,13 @@ spans the double coset `w` was taken from.
 
 This is the second `@[simp]` rule eliminating `rep`, and it does not compete with `mk_rep`: that
 one cancels `mk` applied to a `rep`, this one cancels `rep` applied to a `mk` — a cancellation
-available only inside `doubleCoset`, since `(mk H₁ H₂ w).rep = w` is false in general. The tag is
-load-bearing: nothing else rewrites `(mk H₁ H₂ w).rep`, so `simp` alone reports no progress here.
+available only inside `doubleCoset`, since `(mk H₁ H₂ w).rep = w` is false in general. It is the
+only rule rewriting `(mk H₁ H₂ w).rep`, so with it available `simp` normalises the double coset of
+a chosen representative back to the double coset of the element it came from.
 `mem_doubleCoset_rep_mk` and `rep_mk_mem_doubleCoset` are its membership forms. -/
 @[simp] lemma doubleCoset_rep_mk (w : Δ) :
     doubleCoset (((mk H₁ H₂ w).rep : Δ) : G) H₁ H₂ = doubleCoset (w : G) H₁ H₂ :=
-  doubleCoset_eq_of_mem (rep_mem (mk H₁ H₂ w))
+  doubleCoset_eq_of_mem (by simpa only [toSet_mk] using rep_mem (mk H₁ H₂ w))
 
 /-- `w` lies in the double coset of the chosen representative of `mk H₁ H₂ w`.
 
