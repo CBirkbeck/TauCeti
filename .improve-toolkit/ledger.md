@@ -39231,3 +39231,36 @@ r818. The merge sweep last ran at 05:18:46Z.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r820 — 2026-09-15T10:06Z — main moved twice (#6871, #6849, which deletes 27 points-functor names); all three PRs re-simulated clean; #6875 fully green
+
+**Board** (10:06:25Z; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 61%): #6851 and #6854
+are `ready-to-merge`, with CI green and boards on head, and still out of the queue. #6875 is `ready-to-merge` with CI
+now fully green (its `zulip-pr` job finally ran) and still NEVER-QUEUED; it waits for a human merge. #5950 is Chris's.
+Nothing to fix, contest or drive; step 5 is shut.
+
+**Main moved** `4ea08bc2f` → `f2880ee91` at 10:00:22Z with #6871 (the countability instances `GL n R` needs,
+`Data/Matrix/Countable.lean` +34), then → **`8c4c13530`** at 10:01:38Z with #6849 (consolidate seven carrier points
+functors), 28 files in all, +602/−1639. The firing control read 1639 removed lines, 602 added, and 150 removed and 58
+added declaration headers. 27 names were removed under a spelling not re-added, all of them points-functor API
+(`pointsFunctor`, `pointsMap`, `pointsMulEquiv`, `coe_pointsMap` and their lemmas); nothing was restated, and no module
+was renamed or deleted. All three PRs merge clean and main touched none of their files. Main's new lines name nothing
+they remove. The declaration-level grep found none of the changed files' declarations, and none of the 27 removed
+names, in any branch's added lines.
+
+**Merge-group simulation** against `8c4c13530`:
+
+```
+#6851  39 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  37 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875   4 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue and Actions** (10:06:35Z): depth 17, none of them mine; #6659 and #6717 are AWAITING_CHECKS. 217 Actions runs
+are queued, down from 336 at r819. The merge sweep last ran at 05:18:46Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
