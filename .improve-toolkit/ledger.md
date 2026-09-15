@@ -41070,3 +41070,23 @@ The firing control read 57 removed lines, 151 added, and 9 removed and 9 added d
 * **Merge-group simulation** against `dc381d667`: all thirteen merge clean, with `ghostref` and `stalequal` exit 0.
 
 No toolkit edits.
+
+---
+
+## r872 — 2026-09-15T21:46Z — #6945 green and marked ready; #6854 still MERGING; no drive due; no merges
+
+**Board** (21:46:24Z; a real call read 4589 REST calls left; sweep and `queuepos.py` exited 0):
+
+* **#6945** (`c7129d24c`): every latest check is green. `sandboxed-build` succeeded at 21:37:02Z and `zulip-pr` at 21:38:07Z,
+  and the merge-group jobs are `skipped`. Main is still `dc381d667`, against which r871 simulated it clean. **Marked ready at
+  21:47:11Z**, so step 4 may drive only after 22:47Z.
+* #6915 (`4f9c8d7cd`): `awaiting-review` and green, with its board behind the fix. Step 4 may drive only after 22:36Z.
+* #6941 (`8c4c5fa79`): `awaiting-review`, no board. Step 4 may drive only after 21:58Z.
+* #6854: MERGING at 2 of 72 (its group build started at 21:31:44Z). #6851 is QUEUED at 4. Other positions are unchanged: #6910
+  39, #6911 42, #6899 43, #6896 44, #6902 59, #6923 63, #6933 70. #6875 needs a human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6915, #6941, #6945).
+
+**Merges and main.** No merges since #6857 (21:27:40Z). Main is still `dc381d667`.
+
+No toolkit edits.

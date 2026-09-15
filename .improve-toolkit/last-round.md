@@ -1,4 +1,4 @@
-# Last round — r871 (2026-09-15T21:41Z)
+# Last round — r872 (2026-09-15T21:48Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -48,21 +48,21 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | **#6902** | `3282c9611` | green (18:32:05Z) | kind 2 (PseudoHyperbolic cleanup). The first driven review (on `f8294ed14`) went 9/10 on `attribution`, and `3282c9611` answered it with a `## References` entry. **The re-review driven at r861 approved 10/10** (codex, posted 19:41:02Z, $0.91), so it is `ready-to-merge`, **QUEUED 59/72** (21:36Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
 | **#6910** | `3548cebb7` | green (17:32:21Z) | kind 3 (`Vandermonde.lean` uses `TauCeti.monic_descPochhammer` and `TauCeti.descPochhammer_natDegree`; private copies deleted); **10/10 on the driven board** (codex, posted 18:41:05Z, $0.87, r856–r857), `ready-to-merge`, **QUEUED 39/72** (21:36Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
 | **#6911** | `4a8439956` | green (17:43:41Z) | kind 2 (Resolvent/Basic.lean style pass); **board on head at 18:03:15Z, `ready-to-merge`**; **QUEUED 42/72** (enqueued 19:12:01Z by the merge sweep; 21:36Z, r871) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6915** | `4f9c8d7cd` | green (21:36:18Z; `zulip-pr` still running) | kind 3 (three strict hypotheses weakened). The r861 review went 9/10 on `api-design` (make `one_add_sq_div_eq` public), answered by `08b8138bc` (`Real.inv_sqrt_mul_sq` in the new `TauCeti/Analysis/Real/Sqrt.lean`). The r869 re-review ran only `api-design` (board 21:14:08Z on `08b8138bc`, $0.11) and asked for `@[simp]`; `4f9c8d7cd` adds it. Body v3 patched. Board behind the fix | **pipeline** — a board for `4f9c8d7cd` is due; step 4 may drive only after 22:36Z |
+| **#6915** | `4f9c8d7cd` | green (21:36:18Z) | kind 3 (three strict hypotheses weakened). The r861 review went 9/10 on `api-design` (make `one_add_sq_div_eq` public), answered by `08b8138bc` (`Real.inv_sqrt_mul_sq` in the new `TauCeti/Analysis/Real/Sqrt.lean`). The r869 re-review ran only `api-design` (board 21:14:08Z on `08b8138bc`, $0.11) and asked for `@[simp]`; `4f9c8d7cd` adds it. Body v3 patched. `awaiting-review`, board behind the fix | **pipeline** — a board for `4f9c8d7cd` is due; step 4 may drive only after 22:36Z |
 | **#6923** | `8f846c57b` | green (19:21:52Z) | kind 2 (`Winding/Number/Segment/Jump.lean` style pass: `;` chains split, 38 `↦`, `Icc_subset_uIcc`/`rwa`/`ne'` golfs; gpt-6-astra reviewed; gate 12/0/0). No board came within its hour, so **a review was driven at r865 (20:28:06Z) and approved 10/10** (codex, posted 20:31:04Z, $1.21); `ready-to-merge`, **QUEUED 63/72** (21:36Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
 | **#6933** | `311f6a427` | green (20:05:45Z) | kind 3 (drops the duplicate private `comap_coact_mem` in `Subcomodule/Comap.lean` and rephrases the module docstring's roadmap sentence; gate 12/0/0). No board within its hour, so **a review was driven at r869 (21:07:21Z) and approved 10/10** (codex, posted 21:10:20Z, $0.81); `ready-to-merge`, **QUEUED 70/72** (21:36Z, r871) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6941** | `8c4c5fa79` | green (20:49:35Z) | kind 2, in kind 1's slot (`Contour/Residue/Theorem.lean` style pass: 14 `;` chains split, 45 `↦`, `.le`/`.ne`, roadmap narrative out of the module docstring; gpt-6-astra reviewed, no risk; gate 12/0/0); opened as a draft 20:36:04Z from `9cd85f80e`, **marked ready 20:58:05Z**, `awaiting-review`, no board at 21:06Z | **pipeline** — board due; step 4 may drive only after 21:58Z |
-| **#6945** | `c7129d24c` | first build | kind 3 (drops the public, unused `ExchangeableAt.of_lt`, which was `h.of_le hmn.le hX`, and the "Layer 0" labels from the module docstring, keeping the `cameronfreer/exchangeability` credit; gate 12/0/0; `Roadmap: none`, as #6855 and #6412); **draft**, opened 21:23:03Z from `c743c210c` | **CI** — mark ready when `sandboxed-build` is green |
+| **#6941** | `8c4c5fa79` | green (20:49:35Z) | kind 2, in kind 1's slot (`Contour/Residue/Theorem.lean` style pass: 14 `;` chains split, 45 `↦`, `.le`/`.ne`, roadmap narrative out of the module docstring; gpt-6-astra reviewed, no risk; gate 12/0/0); opened as a draft 20:36:04Z from `9cd85f80e`, **marked ready 20:58:05Z**, `awaiting-review`, no board at 21:46Z | **pipeline** — board due; step 4 may drive only after 21:58Z |
+| **#6945** | `c7129d24c` | green (21:37:02Z) | kind 3 (drops the public, unused `ExchangeableAt.of_lt`, which was `h.of_le hmn.le hX`, and the "Layer 0" labels from the module docstring, keeping the `cameronfreer/exchangeability` credit; gate 12/0/0; `Roadmap: none`, as #6855 and #6412); opened as a draft 21:23:03Z from `c743c210c`, **marked ready 21:47:11Z**, `awaiting-review`, no board | **pipeline** — board due; step 4 may drive only after 22:47Z |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
-**In progress: #6915 (the `@[simp]` fix `4f9c8d7cd` green 21:36:18Z, awaiting its board), #6941 (`awaiting-review`, ready 20:58:05Z) and #6945 (draft, first build).** The cap is full, so
+**In progress: #6915 (the `@[simp]` fix `4f9c8d7cd` green 21:36:18Z, awaiting its board), #6941 (`awaiting-review`, ready 20:58:05Z) and #6945 (`awaiting-review`, ready 21:47:11Z).** The cap is full, so
 step 5 is shut until one of them turns `ready-to-merge`. #6851, #6854, #6875, #6896, #6899, #6902, #6910, #6911, #6923 and #6933 are `ready-to-merge` and do not count. #6855 merged at 05:43:53Z. #6851 and #6854 were re-queued by the 15:15:27Z merge sweep (r846), #6910 queued on its 10/10 board (r857), the 19:11:04Z merge sweep queued #6896, #6899 and #6911 (r858), #6902 queued on its 10/10 re-review (r861), #6923 queued on its 10/10 driven board (r865), #6933 turned `ready-to-merge` on its 10/10 driven board (r869), and #6875 is 10/10 and waits for a human merge (r813). Main is `dc381d667`.
 
 ## What to expect next
 
-0. **r843–r871:** the cap rule changed (rotation paragraph above). In progress: #6915 (the `@[simp]` fix `4f9c8d7cd`, green at
+0. **r843–r872:** the cap rule changed (rotation paragraph above). In progress: #6915 (the `@[simp]` fix `4f9c8d7cd`, green at
    21:36:18Z; drive not before 22:36Z), #6941 (green 20:49:35Z, ready 20:58:05Z; drive not
-   before 21:58Z) and #6945 (draft; mark it ready once its first build is green). Pass #6945, #6941, #6933, #6923, #6915, #6911,
+   before 21:58Z) and #6945 (green 21:37:02Z, ready 21:47:11Z; drive not before 22:47Z). Pass #6945, #6941, #6933, #6923, #6915, #6911,
    #6910, #6902, #6899, #6896, #6875, #6854 and #6851 to `queuepos.py`. When a slot frees: kind 1 if a target exists, otherwise
    kind 2.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
@@ -136,7 +136,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r871 did
+## What r703–r872 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -320,6 +320,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r869: both due drives ran. #6933's approved 10/10 (21:10:20Z, $0.81), and it turned `ready-to-merge`. #6915's round-2 re-review ran only `api-design`, which asked for `Real.inv_sqrt_mul_sq` to be `@[simp]`; `4f9c8d7cd` does it (pushed 21:18:40Z). The freed slot opened kind 3 as draft **#6945** (`ExchangeableAt.of_lt`, gate 12/0/0). Main moved to `c743c210c` (#6848, additive), and all thirteen heads re-simulated clean.
 * r870: no change 2 minutes after r869. #6915's fix and #6945 were still building, #6941 was not yet due for a drive (21:58Z), #6933 queued at 73, and there were no merges.
 * r871: #6915's `@[simp]` fix went green (21:36:18Z; drive not before 22:36Z). #6854 is MERGING at 2, its group build running since 21:31:44Z behind #6860. Main moved to `dc381d667` (#6857, a `/cleanup` pass that re-roots `commutatorCongr` as `MulEquiv.commutatorCongr` and removes 8 names no branch uses). The `lift` and `congr` grep hits were prose and a tactic, and all thirteen heads re-simulated clean.
+* r872: #6945 went green (21:37:02Z) and was marked ready (21:47:11Z; drive not before 22:47Z). #6854 was still MERGING at 2, #6941 was not yet due for a drive (21:58Z), and there were no merges.
 
 ## Candidates for a later step 5
 
