@@ -38269,3 +38269,25 @@ removed under a new spelling, and no branch of mine uses it.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r777 — 2026-09-15T02:20Z — REST quota ran out at 02:16 again (reset 02:19:08Z); rerun clean; no merges; queue unchanged
+
+**The 02:16:22Z sweep** hit the REST limit (12 fields `API-ERROR`, exit 1). A failing call's headers showed
+`X-RateLimit-Used: 5000` and a reset at **02:19:08Z**. This window rolled over at :19, not :17, because the window starts
+at the first call after the previous reset, so it drifts. GraphQL answered in the meantime: all three of mine `OPEN`,
+`ready-to-merge`, queue positions unchanged. Nothing needed the missing fields, since a queued PR's CI and board cannot
+change without a push.
+
+**Rerun at 02:19:24Z** (fresh window, already at `X-RateLimit-Used: 48` seconds after the reset; sweep and queuepos exit 0):
+#6851, #6854 and #6855 are `ready-to-merge`, CI green, boards on head; QUEUED at 14, 26 and 12 of 37. #5950 is Chris's. No
+merges since #6843 and #6686 (02:05:59Z), and main is still `cddbf10e6`, so r776's simulations and checks stand. `/tmp` is
+steady at 44% (28G). Nothing to fix, contest or drive; step 5 shut.
+
+**Reading the reset time.** `gh api -i` on any endpoint returns `X-RateLimit-Reset` even on the 403, so the exact reset
+can be read without spending quota. The ":17" rule of thumb held only while the window happened to start there.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

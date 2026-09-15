@@ -1,4 +1,4 @@
-# Last round — r776 (2026-09-15T02:07Z)
+# Last round — r777 (2026-09-15T02:20Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -14,7 +14,7 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
 **#6854** on the driven re-review (r768), queued at r770. Nothing is staged; the next opening is kind 1 again (the deck group). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r776):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r777):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -31,9 +31,9 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`, **QUEUED pos 14/36** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`, **QUEUED pos 26/36** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6855** | `352c92a114` | green | kind 3; **10/10 first board** (22:32:04Z), `ready-to-merge`, **QUEUED pos 12/36** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`, **QUEUED pos 14/37** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`, **QUEUED pos 26/37** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6855** | `352c92a114` | green | kind 3; **10/10 first board** (22:32:04Z), `ready-to-merge`, **QUEUED pos 12/37** | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open (#6851, #6854, #6855) → step 5 does not fire** until one merges; all three are
@@ -97,7 +97,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r776 did
+## What r703–r777 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -180,6 +180,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r775: no merges; board unchanged; `/tmp` at 28G and climbing (the other session's scratchpad is 27G); flagged again.
 * r776: main moved (#6843 renames a module; #6686); module-rename grep and all three simulations clean; queue 12/14/26;
   `/tmp` steady at 45%.
+* r777: quota at 02:16 again (reset 02:19:08Z); rerun clean; no merges; queue unchanged (12/14/26).
 
 ## Candidates for a later step 5
 
@@ -268,8 +269,9 @@ can run out mid-round. `sweep.py` now prints `API-ERROR` and exits 1, and `queue
 `UNKNOWN` — **rerun; never act on those rows**. Before r722 an unreadable merge queue could print `EJECTED`.
 **Do not trust `gh api rate_limit`** (r734: at 19:16Z it said core 4999 left, reset 19:36Z, while every REST read
 failed). Read the quota off a real call: `gh api -i <endpoint>` prints `X-RateLimit-Remaining` and `-Reset`.
-**The hourly window rolls over at about :17** (r722, r728, r734 at 19:17:29Z, r740): all four exhaustions hit the
-:16 round, so rerun that sweep after :17 (a background until-loop to :17:45 works; foreground `sleep` is blocked).
+**The hourly window rolls over at about :17–:19** (r722, r728, r734 at 19:17:29Z, r740; r777 at 02:19:08Z), and the :16
+round keeps hitting it. Read the exact reset from a failing `gh api -i` call (`X-RateLimit-Reset`, free even on the
+403), then rerun in a background until-loop (foreground `sleep` is blocked).
 **`gh pr list --state merged --limit 200` is ordered by creation, not merge time** (r728): an old PR such as
 #6093 can merge without appearing in it. A merge also shows as the PR vanishing from the sweep's open-PR list.
 **`awk length` counts BYTES** — `≤`, `σ`, `γ`, `ℝ` are multibyte. Measure line width in codepoints (Python)
