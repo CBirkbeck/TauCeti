@@ -39264,3 +39264,21 @@ are queued, down from 336 at r819. The merge sweep last ran at 05:18:46Z.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r821 — 2026-09-15T10:16Z — no change on my PRs; the Actions backlog cleared (40 queued) and the queue refilled to 25; no merges
+
+**Board** (10:16:25Z; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 60%): #6851 and #6854
+are `ready-to-merge`, with CI green and boards on head, and still out of the queue. #6875 is `ready-to-merge` with CI
+green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. No merges since #6849 (10:01:38Z); main is still
+`8c4c13530`, so r820's simulations stand. Nothing to fix, contest or drive; step 5 is shut.
+
+**Queue and Actions** (10:16:35Z): depth 25, up from 17 at r820, none of them mine. #6659 and #6717 are AWAITING_CHECKS,
+and #6842, which left the queue before r816, is back at position 25. The Actions backlog fell to 40 queued runs from
+217, and the refill fits `auto-merge.yml` enqueueing each PR as its long-queued run finally executes. #6851 and #6854
+have no pending run of that kind, so they still depend on the merge sweep, which last ran at 05:18:46Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
