@@ -39069,3 +39069,38 @@ shut.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r813 — 2026-09-15T08:56Z — #6875 10/10 on its re-review (no drive needed); main moved (#6826, with a module rename); all three PRs re-simulated clean
+
+**Board** (08:56:27Z; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 59%): #6851 and #6854
+are `ready-to-merge`, with CI green and boards on head, and still out of the queue. **#6875 is 10/10 on its re-review.**
+The scoreboard comment was edited at 08:54:23Z for head `462ed97`, 5 minutes after its step-4 clock and before this
+round's read. Every rubric approved, including the naming, placement and documentation findings that r803 fixed, and
+no review thread is unresolved, so no drive was needed. The label still read `awaiting-review` at 08:56:27Z (label
+lag). #6875 touches `web/examples/Examples.lean`, so auto-merge will not take it. It waits for a human merge and holds
+one of step 5's three slots until then. #5950 is Chris's. Nothing to fix, contest or drive; step 5 is shut.
+
+**Main moved** `d7ac608e0` → **`43d510787`** at 08:47:14Z with #6826 (identify the real candidate genus field as a fixed
+field): `CandidateGenusField/Real/FixedField.lean` +204, smaller edits in `Multiquadratic/`, and a module rename,
+`CandidateGenusField/Real.lean` → `CandidateGenusField/Real/Basic.lean`. The firing control read 14 removed lines, 227
+added, and 1 removed and 12 added declaration headers. Nothing was removed under a spelling that was not re-added, and
+`candidateGenusFieldGen_ne_zero` was restated. All three PRs merge clean and main touched none of their files. Main's
+new lines name nothing they remove: 0 for #6851's Levi-Civita names, and 0 for `TauCeti.Deck` or a moved
+`Deck.<name>`. The declaration-level grep had no hits, and no branch's added lines name the renamed module.
+
+**Merge-group simulation** against `43d510787`:
+
+```
+#6851  36 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  34 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875   1 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue** (08:56:39Z, GraphQL): depth 5. #6808 and #6871 are AWAITING_CHECKS and #6849, #6659 and #6842 QUEUED, none of
+them mine. The merge sweep last ran at 05:18:46Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
