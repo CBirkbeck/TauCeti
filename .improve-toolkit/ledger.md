@@ -40959,3 +40959,58 @@ added, and 0 removed and 13 added declaration headers.
 * **Merge-group simulation** against `be6dbc1cb`: all twelve merge clean, with `ghostref` and `stalequal` exit 0.
 
 No toolkit edits.
+
+---
+
+## r869 — 2026-09-15T21:06Z — #6933 driven, 10/10; #6915 round-2 `api-design` fixed (`@[simp]`); kind 3 opened as draft #6945; main moved (#6848)
+
+**Board** (21:06:24Z; a real call read 4845 REST calls left; sweep and `queuepos.py` exited 0): #6933 (`311f6a427`) had no
+board, with its hour ending at 21:07:08Z. #6915 (`08b8138bc`) had its board behind the fix, with its hour ending at 21:13:06Z.
+#6941 cannot be driven before 21:58Z. Queue depth 72 (#6854 6, #6851 8, #6910 43, #6911 46, #6899 47, #6896 48, #6902 63, #6923 67).
+No merges since #6612 (20:56:16Z).
+
+**Step 4: two drives, each behind guards.** Each guard waited out the clock in 5-second steps and re-checked the head, the
+absence of a board for that head, the `review-in-progress` label and any local review process before launching.
+
+* **#6933** launched at 21:07:21Z (log `review-6933-r869.log`): **`ROUND 1 (commit) approved`**, all 10 rubrics, $0.81.
+  `post.py: scoreboard id=5688136345`, board "approved" on `311f6a427` (21:10:20Z), `ready-to-merge` by 21:14Z.
+* **#6915** launched at 21:13:11Z (log `review-6915-r869.log`): **`ROUND 2 (commit) changes requested`**. It ran only
+  `api-design` ($0.11); the other nine are ♻️ stale, re-run pending, because the patch changed. Board 21:14:08Z on `08b8138bc`.
+  The finding reads: "`Real.inv_sqrt_mul_sq` is the public normal-form lemma reducing a squared inverse-square-root rescaling to
+  division, but it is not marked `@[simp]` … _Fix:_ Mark the theorem `@[simp]`; its orientation strictly simplifies the rescaling
+  expression and does not introduce a rewrite loop."
+
+**Step 3 on #6915: implemented.**
+
+* `@[simp]` added above `theorem inv_sqrt_mul_sq` (commit `4f9c8d7cd`). The attribute cannot change the two uses in
+  `Beta.lean`, which call it by name through `simp only`/`simpa only`. `Beta.lean` imports the new file without `public`, so no
+  downstream simp set changes either.
+* **Gate:** 12 ok, 0 failed, 1 UNRUN (`movedopens` for the new file; the moved block is unchanged since the by-hand run at r861).
+* **Pushed** with a lease on `08b8138bc` at 21:18:40Z. Body v3 (the lemma block shows `@[simp]`, plus one sentence on the second
+  review) patched and re-read.
+
+**Step 5: kind 3 opened as draft #6945.** With #6933 `ready-to-merge`, in progress was #6915 and #6941.
+
+* **Candidate choice.** The two unused private `rfl` lemmas in `Polynomial/SymmetricPower.lean` were dropped as a target: they are
+  component lemmas for Mathlib's `degreeLTEquiv` and `monicEquivDegreeLT`, and `api-design` had just asked #6915 to export such
+  lemmas. `ExchangeableAt.of_lt` was taken instead. It is public, a strict special case of `of_le`, proved as
+  `h.of_le hmn.le hX`, with no match for `of_lt` under `Probability/Exchangeability/` or in `web/`, and no open PR touching its
+  file (208 read).
+* **Edits** (+2/−9): the declaration is deleted, and the module docstring's "Layer 0" labels are dropped in both places, keeping
+  the `cameronfreer/exchangeability` credit. The firing control asserted that `of_lt` and "Layer" are both absent.
+* **Gate** (on `c743c210c`): **12 ok / 0 failed / 0 UNRUN**.
+* **Opened #6945** (draft, 21:23:03Z): head `CBirkbeck:improve/exchangeableat-of-lt-dedup@c7129d24c`, `Roadmap: none` (as #6855 and
+  #6412). The live body matches the file.
+
+**Main moved** `be6dbc1cb` → **`c743c210c`** with #6848 ("the rational projective action on the upper half-plane"): 2 files,
++150/−3. The three removed lines are docstring prose in `GeneralLinearGroup/Map.lean`, with 0 removed and 7 added declaration
+headers. No module moved and no import was dropped. Main's added lines name no `of_lt`, `Deck`, Levi-Civita API or other name a
+branch removes, and there were no hits or clashes.
+
+**Merge-group simulation** against `c743c210c`: all thirteen merge clean, with `ghostref` and `stalequal` exit 0. The thirteen
+are #6851, #6854, #6875, #6896, #6899, #6902, #6910, #6911, #6915 at `4f9c8d7cd`, #6923, #6933, #6941 and #6945.
+
+**In progress now:** #6915 (fix building), #6941 (drive not before 21:58Z) and #6945 (draft). The cap is full. The next
+opening is kind 1 if a target exists, otherwise kind 2.
+
+No toolkit edits.
