@@ -38026,3 +38026,20 @@ their files, and its new lines name nothing they remove.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r767 — 2026-09-15T00:36Z — no merges; #6854 still has no re-review, 57 min after CI-green; no-op round
+
+**Board** (00:36:22Z; sweep and queuepos exited 0): #6851 and #6855 10/10 on head, `ready-to-merge`, QUEUED at 24 and
+22 of 32. **#6854** `awaiting-review`, CI green on `217fecb812` since 23:39:06Z, board `f18fe6fedf` still BEHIND (last
+updated 23:20:45Z) — nothing to re-fix. 57 min since CI-green; its window opens at 00:39:06Z, after this sweep, so **the
+00:46 round drives** (`uvx … tauceti-review 6854 --reviewer codex --post`) if there is still no board for `217fecb81`.
+#5950 is Chris's.
+
+No merges since #6652; main still `799d1fef6`, so r766's merge-group simulations and merge-tree checks stand. Nothing
+to fix, contest or drive; step 5 shut.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

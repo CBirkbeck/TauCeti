@@ -1,4 +1,4 @@
-# Last round — r766 (2026-09-15T00:27Z)
+# Last round — r767 (2026-09-15T00:36Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -14,7 +14,7 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
 QUEUED; kind 2 **#6854** had its `scope` block fixed (r759); CI is green on the fix, and the re-review is pending. Nothing is staged; the next opening is kind 1 again (the deck group). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r766):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r767):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -32,7 +32,7 @@ through the local codex CLI that MCP wraps:
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
 | **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`, **QUEUED pos 24/30** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6854** | `217fecb81` | **green** on the fix (`sandboxed-build` 23:25:05Z → 23:39:06Z); `awaiting-review`, no new board at 00:26Z (47 min after CI-green) | kind 2; driven board on `f18fe6fedf` (r759): ⛔ `scope` for an unrelated golf, ✅ `correctness`, `reuse`, the rest deferred. **Fixed**: golf reverted, body PATCHed | **pipeline** — automatic re-review of `217fecb81`; the board is BEHIND until it lands, so do NOT re-fix. Drive only if no board by **00:39:06Z** |
+| **#6854** | `217fecb81` | **green** on the fix (`sandboxed-build` 23:25:05Z → 23:39:06Z); `awaiting-review`, no new board at 00:36Z (57 min after CI-green) | kind 2; driven board on `f18fe6fedf` (r759): ⛔ `scope` for an unrelated golf, ✅ `correctness`, `reuse`, the rest deferred. **Fixed**: golf reverted, body PATCHed | **pipeline** — automatic re-review of `217fecb81`; the board is BEHIND until it lands, so do NOT re-fix. Drive only if no board by **00:39:06Z** |
 | **#6855** | `352c92a114` | green | kind 3; **10/10 first board** (22:32:04Z), `ready-to-merge`, **QUEUED pos 22/30** | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
@@ -100,7 +100,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r766 did
+## What r703–r767 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -171,6 +171,8 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r765: quota at 00:16 again; main moved (#6829, additive); queued PRs re-simulated clean (24/22); #6854 still not re-reviewed.
 * r766: main moved (#6652 removes `polarBilin_isSymm`, which none of mine uses); queued PRs re-simulated clean (24/22);
   #6854 still not re-reviewed.
+* r767: no merges; #6854 at 57 min after CI-green with no re-review (window opens 00:39:06Z; the 00:46 round drives
+  if still none).
 
 ## Candidates for a later step 5
 
