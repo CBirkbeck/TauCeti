@@ -39564,3 +39564,35 @@ about five hours apart; at that spacing the next scheduled run would come around
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r832 — 2026-09-15T13:16Z — main moved (#6770 DG right modules, #6795 circle Peter–Weyl); all three PRs re-simulated clean; no change on my PRs
+
+**Board** (13:16:28Z; REST had 5000 calls left; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp`
+at 55%): #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still not queued. #6875 is
+`ready-to-merge` with CI green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. Nothing to fix, contest
+or drive; step 5 is shut.
+
+**Main moved** `c38794df8` → **`82f5e9ac2`** with two merges. #6770 (13:09:06Z, differential graded right modules) adds
+`Algebra/Homology/DG/Module/Right/Defs.lean` (+167) and `Hom.lean` (+172). #6795 (13:15:07Z, "identify circle
+Peter-Weyl with Fourier basis") adds `RepresentationTheory/Compact/FourierPeterWeyl.lean` (+218) and extends
+`Circle.lean` (+10) and `PeterWeyl.lean` (+8). The firing control read 0 removed lines, 575 added, and 0 removed and 39
+added declaration headers. Nothing was removed or restated, and no module moved. All three PRs merge clean, main
+touched none of their files, its new lines name nothing they remove, and none of their added declarations shares a
+last name component with main's 39 new ones.
+
+**Merge-group simulation** against `82f5e9ac2`:
+
+```
+#6851  56 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  54 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875  21 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue and Actions** (13:16:41Z): depth 36, none of them mine; #6781 and #6698 are AWAITING_CHECKS. 40 Actions runs
+are queued. The last merge-sweep run is still the 10:24:54Z failure.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
