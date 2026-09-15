@@ -39502,3 +39502,33 @@ are queued. The last merge-sweep run is still the 10:24:54Z failure.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r830 — 2026-09-15T12:56Z — main moved (#6809, one new quaternion file); all three PRs re-simulated clean; no change on my PRs
+
+**Board** (12:56:24Z; REST had 2242 calls left; sweep exited 0, and `queuepos.py` printed its EJECTED hint for #6854
+and #6851; `/tmp` at 55%): #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still not
+queued. #6875 is `ready-to-merge` with CI green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. Nothing
+to fix, contest or drive; step 5 is shut.
+
+**Main moved** `7cae20a91` → **`a9313057f`** at 12:47:13Z with #6809 ("split quaternion symbols with square second
+parameter"), which adds one file, `Algebra/Quaternion/SquareSplit.lean` (+220). The firing control read 0 removed
+lines, 220 added, and 0 removed and 9 added declaration headers. Nothing was removed or restated, so no signature
+changed, and no module moved. All three PRs merge clean, main touched none of their files, its new lines name nothing
+they remove, and the declaration-level grep had no hits.
+
+**Merge-group simulation** against `a9313057f`:
+
+```
+#6851  53 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  51 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875  18 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue and Actions** (12:56:38Z): depth 36, none of them mine; #6747 and #6770 are AWAITING_CHECKS. 41 Actions runs
+are queued. The last merge-sweep run is still the 10:24:54Z failure.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
