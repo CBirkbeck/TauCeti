@@ -1,4 +1,4 @@
-# Last round — r840 (2026-09-15T14:36Z)
+# Last round — r841 (2026-09-15T14:46Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -16,7 +16,7 @@ Mathlib's deck group (r798), which needs a **human merge** because it updates `w
 opening is kind 2** (a new file). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r840):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r841):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -39,7 +39,7 @@ through the local codex CLI that MCP wraps:
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open (#6851, #6854, #6875) → step 5 does not fire** until one merges. #6855 merged
-at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enqueues them, and #6875 is 10/10 and waits for a human merge (r813). Main is `40c612666`.
+at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enqueues them, and #6875 is 10/10 and waits for a human merge (r813). Main is `fc7a5c329`.
 
 ## What to expect next
 
@@ -47,7 +47,7 @@ at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enq
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
    `merge-sweep` re-enqueues a green TauCeti/-only PR afterwards (r798–r799). A `MERGING` PR's group build is the check-runs of
    `git ls-remote origin 'refs/heads/gh-readonly-queue/main/pr-<n>-*'` (r739), the earliest sign of an ejection. If main moves a lot, re-run r702's
-   merge-group simulation (cheap, read-only; r840: #6851, #6854 and #6875 clean against `40c612666`). Staged branches:
+   merge-group simulation (cheap, read-only; r841: #6851, #6854 and #6875 clean against `fc7a5c329`). Staged branches:
    `git merge-tree --write-tree --name-only origin/main <branch>` checks them without a checkout (r750: none
    left; kind 3 opened as #6855). A merge-tree check sees conflicts, not new
    callers: also grep main's new lines for the names each staged branch removes, and when main DELETES declarations,
@@ -114,7 +114,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r840 did
+## What r703–r841 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -267,6 +267,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r838: main moved to `6550e8186` (#6776, the universal resolvent at a polynomial; its one removed line is an import re-added in re-sorted order); all three PRs re-simulated clean.
 * r839: main moved to `46c3b38ac` (#6840, induction on representation-ring modules; `Induction/FiniteDimensional.lean` moved to `FiniteDimensional/Basic.lean`, no declaration removed); all three PRs re-simulated clean; the grep's one hit (`function`) was prose on both sides.
 * r840: main moved to `40c612666` (#6874, rational refinements of covers of the adic spectrum; nothing removed); all three PRs re-simulated clean.
+* r841: main moved to `fc7a5c329` (#6842, Chevalley generators from a minuscule weight table; an E6/E7 refactor that removes 19 declarations, none used by my PRs); all three PRs re-simulated clean.
 
 ## Candidates for a later step 5
 

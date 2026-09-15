@@ -39837,3 +39837,37 @@ are queued. The last merge-sweep run is still the 10:24:54Z failure.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r841 — 2026-09-15T14:46Z — main moved (#6842, Chevalley generators from a minuscule weight table; 19 declarations removed); all three PRs re-simulated clean; no change on my PRs
+
+**Board** (14:46:26Z; a real call read 4635 REST calls left, 365 used; sweep exited 0, and `queuepos.py` exited 1 on its
+EJECTED hint; `/tmp` at 55%): #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still not
+queued. #6875 is `ready-to-merge` with CI green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. Nothing
+to fix, contest or drive; step 5 is shut.
+
+**Main moved** `40c612666` → **`fc7a5c329`** at 14:45:19Z with #6842 ("build Chevalley generators from a minuscule
+weight table"). It refactors the E6 and E7 minuscule Lie algebra files onto a new
+`Lie/Presentation/MinusculeWeightTable.lean` (+461), across 6 files (+629/−487). The firing control read 487 removed
+lines, 629 added, and 36 removed and 50 added declaration headers. 17 declarations are restated, and 19 are removed
+under a spelling that is not re-added, among them `stepMatrix`, `cartanMatrix_lie_E`, `raisingMatrix_lie_F_self`,
+`e7Cartan_apply_of_ne` and `pEquivMatrix_apply`. No import was dropped and no module moved. The declaration-level grep
+checked every declaration name over three characters in the six changed files, plus the 19 removed names, against the
+three PRs' added lines, and had no hits. Main touched none of their files. All three PRs merge clean, main's new lines
+name nothing they remove, and none of their added declarations shares a last name component with main's 42 new ones.
+
+**Merge-group simulation** against `fc7a5c329`:
+
+```
+#6851  64 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  62 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875  29 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue and Actions** (14:46:42Z): depth 32, none of them mine; #6803 and #6792 are AWAITING_CHECKS. 44 Actions runs
+are queued. The last merge-sweep run is still the 10:24:54Z failure.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
