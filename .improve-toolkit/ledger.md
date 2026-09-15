@@ -38860,3 +38860,45 @@ a stall: TauCetiReview's `queue_reservation.py` puts a bump's build at 83–95 m
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r803 — 2026-09-15T07:06Z — #6875's first board 7/10 (changes requested: naming, placement, documentation); all three fixed and pushed; no merges
+
+**Board** (07:06:22Z; sweep exited 0, `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 59%): #6851 and #6854 are
+`ready-to-merge`, with CI green and boards on head, and still out of the queue (the merge sweep last ran at 05:18:46Z).
+#6875 was `review-in-progress` with CI green. No merges since #6855; main is still `d7ac608e0`. #6852 was still alone in
+the queue at 07:30:28Z, its group build running since 06:15:40Z.
+
+**#6875's first board** (07:06:23Z, head `e70f761ba`, review spend $7.21): **changes requested**, 7 of 10 approved
+(correctness, reuse, scope, attribution, api-design, generality, proof-quality). The label moved to `awaiting-author`.
+All three findings name an implementation, so step 3 implemented them in commit **`462ed9705`** (34 files, +186/−262):
+
+* **naming** (`Deck/Basic.lean:49`): methods taking Mathlib's `deck p` stayed under `TauCeti.Deck`, against the rule
+  that a declaration whose first explicit argument has a Mathlib type belongs in that type's namespace. The 24
+  declarations whose first explicit argument (section variables included) is a deck transformation are now declared
+  in place as `_root_.deck.<name>`: 8 in `Deck/Basic.lean`, 14 in `Deck/Fiber/Basic.lean` and 2 in `AddCircle.lean`.
+  That took 12 qualified and 59 short reference renames. Every reference outside the defining files was either
+  `Deck.`-qualified or a short name inside a `TauCeti.Deck*` namespace; the same short names in the Galois-group and
+  `Function.mapsTo_fiber` files were left alone. Kept where they were: `TauCeti.Deck.mem_iff` (first argument
+  `E ≃ₜ E`), `fiberHomeomorphHom`, `fiberHomeomorphHom_one`, `fiberHomeomorph_one` and `instFiberMulAction` (no deck
+  first argument), `IsCoveringMap.deckMulEquivOfRangeEq_apply_coe`/`_symm_apply_coe` (explicit `hp` variables come
+  first), and `IsQuotientCoveringMap.deckMulEquiv_symm_apply` (`include hf`).
+* **placement** (`Deck/Basic.lean:10`): the `TauCeti.Topology.Algebra.ConstMulAction` import is removed. All 42
+  modules that see `Deck.Basic` reached that file only through it, but its own comment says it existed to supply
+  `ContinuousConstSMul (Deck p) E`, which Mathlib's `deck` now provides, and Mathlib has no generic sub-object
+  instance at the pin. No downstream import was added; CI will show whether one is needed.
+* **documentation** (`Deck/FundamentalGroup/Basic.lean:22`): roadmap stages, item numbers and status narrative are
+  out of 33 touched module docstrings, and References sections left empty were dropped. The mathematics, applications
+  and references stay.
+
+**Gate:** `prepush.sh` gave 15 ok, 2 FAIL, 0 UNRUN. Both FAILs are rooting-premise mismatches. `decldiff` lists 24
+vanished `TauCeti.Deck.*` names paired one-to-one with 24 appeared `deck.*` names, plus `TauCeti.Deck` itself.
+`rootsurplus` looks the moved names up as `TauCeti.deck.<name>`, which never existed, and asks for an answer in the
+body. Pushed to the fork; the PR head is `462ed9705` (`awaiting-CI`). The body, PATCHed at 07:31:23Z and re-read, now
+lists the 24 moved declarations, says the move answers the naming finding, and notes the import removal and the
+docstring cleanup. The step-4 clock for this head starts at its CI-green.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

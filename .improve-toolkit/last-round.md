@@ -1,4 +1,4 @@
-# Last round — r802 (2026-09-15T06:56Z)
+# Last round — r803 (2026-09-15T07:06Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -16,13 +16,13 @@ Mathlib's deck group (r798), which needs a **human merge** because it updates `w
 opening is kind 2** (a new file). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r802):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r803):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
 no-build default, and so did kinds 2 (#6854, r749) and 3 (#6855, r750) and kind 1 again (#6875, r798). **If he
 answers:** #6851 and #6854 are 10/10, so a push to either would cost the board. Give them a separate follow-up PR
-instead. #6875 has no board yet, so a scoped pass can still go into it directly.
+instead. #6875 is mid-review (fixes pushed at r803), so a scoped pass can still go into it directly.
 
 **ChatGPT access:** no `chatgpt-math` MCP server is configured (only `lean-lsp`). The model is reachable
 through the local codex CLI that MCP wraps:
@@ -35,11 +35,11 @@ through the local codex CLI that MCP wraps:
 |---|---|---|---|---|
 | **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`; **flushed** from MERGING 2/43 by the bot for #6852 (06:11:46Z, `manual`) | nobody — `merge-sweep` re-enqueues it after #6852 merges; do not refresh |
 | **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`; **flushed** from 14/43 for #6852 (06:12:02Z, `manual`) | nobody — `merge-sweep` re-enqueues it after #6852 merges; do not refresh |
-| **#6875** | `e70f761ba4` | green (06:38:24Z) | kind 1 (Mathlib's deck group); **READY** 06:46:57Z (r801), `awaiting-review`, no board yet; needs a human merge (`web/examples`) | pipeline — re-drive only if no board for this head by 07:47Z |
+| **#6875** | `462ed9705b` | pending | kind 1 (Mathlib's deck group); first board (e70f761, 07:06:23Z) **7/10, changes requested**: naming, placement, documentation. All three fixed in `462ed9705` (r803), body updated; needs a human merge (`web/examples`) | pipeline — CI, then re-review; step-4 clock from this head's CI-green |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open (#6851, #6854, #6875) → step 5 does not fire** until one merges. #6855 merged
-at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enqueues them, and #6875 awaits its first board. Main is `d7ac608e0`.
+at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enqueues them, and #6875 awaits CI and a re-review of `462ed9705`. Main is `d7ac608e0`.
 
 ## What to expect next
 
@@ -61,9 +61,12 @@ at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enq
 3. **#6854 (kind 2, quadratic separability) is 10/10** on the r768 driven board (00:49:59Z, head `217fecb812`). It was
    flushed from 14th the same way (r798); handle it like #6851. It removes nothing, so only merge-tree and ghostref's
    firing control matter.
-4. **#6875 (kind 1 again, Mathlib's deck group) is READY** (r801, 06:46:57Z; head `e70f761ba`). Its first build was
-   green (`sandboxed-build` 06:20:33–06:38:24Z), so all 35 files compiled. No board yet: re-drive (step 4) only if none
-   lands for this head by 07:47Z. Any later push re-gates with `prepush.sh` first. Expect `prepush.sh`'s `decldiff` FAIL (`VANISHED TauCeti.Deck`), since the deletion is the
+4. **#6875 (kind 1 again, Mathlib's deck group) is under review** (r803). Its first board went 7/10 at head `e70f761ba`, and commit
+   `462ed9705` answers the three findings. Naming: 24 declarations with a deck-transformation first argument became
+   `_root_.deck.<name>`. Placement: the `ConstMulAction` import is gone. Documentation: roadmap narrative is out of 33
+   module docstrings. If CI goes red, the likeliest cause is a downstream module that needed the dropped import's
+   instances; add `public import TauCeti.Topology.Algebra.ConstMulAction` where the error names it. `prepush.sh`'s
+   `decldiff`/`rootsurplus` FAILs on this move are the rooting-premise mismatch (r803). Expect `prepush.sh`'s `decldiff` FAIL (`VANISHED TauCeti.Deck`), since the deletion is the
    point of the PR. It touches `web/examples/Examples.lean`, so it cannot auto-merge; once it is 10/10, the merge is
    Chris's call, as with #5950.
 5. **At the next free slot:** kind 2 (a new file; research it while the cap is shut), then kind 3 (next candidate:
@@ -108,7 +111,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r802 did
+## What r703–r803 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -223,6 +226,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r800: no merges; #6875's first build and #6852's group build still running; the merge sweep has not re-run (last 05:18:46Z).
 * r801: #6875's first build went green (06:38:24Z), so I marked it ready at 06:46:57Z; no merges; #6852's group build still running (31 min).
 * r802: no merges; #6875 has no board yet (clock to 07:47Z); #6852's group build at 41 min of an expected 83–95.
+* r803: #6875's first board went 7/10 (changes requested: naming, placement, documentation). I fixed all three in `462ed9705` (24 declarations into `deck`, one import dropped, 33 docstrings trimmed), pushed it, and updated the body; no merges.
 
 ## Candidates for a later step 5
 
@@ -322,6 +326,13 @@ before rewrapping anything (r704: 3 of 14 reported overflows were not).
 decldiff). **`deadpath` only resolves names inside `_root_.` declarations** — a catch-up PR's Mathlib names
 need a read of Mathlib's source, and a `public` check: a non-`public` declaration in a `module` file is
 invisible to Tau Ceti.
+**The naming rubric puts a declaration whose first explicit argument has a Mathlib type in that type's namespace**,
+section variables included (r803). Declare it in place as `_root_.<ns>.<name>`: the enclosing namespace still resolves
+short names in the body, as `_root_.IsCoveringMap.isRegular_iff_normal_range` shows. `prepush.sh`'s `decldiff` and
+`rootsurplus` model a rooting as dropping `TauCeti.`, so a move into a differently cased Mathlib namespace reads as
+VANISHED/APPEARED/SURPLUS: pair the rows, and answer `rootsurplus` in the body.
+**The documentation rubric (`afb424e`) flags roadmap stages, item numbers and status narrative** in the module
+docstring of any file a PR touches, so a wide rename inherits that cleanup (r803).
 **Auto-merge needs every changed path under `TauCeti/`** (`auto-merge.yml`). A rename that must also update
 `web/examples/Examples.lean`, a separate Lake project that `pages.yml` builds from main, routes the PR to a human
 (#5950, #6875). Keep the `web/` edit, because leaving it out breaks the site, and say so in the body (r798).
