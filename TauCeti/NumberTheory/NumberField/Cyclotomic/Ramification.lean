@@ -37,16 +37,6 @@ that is the one wanted.
 Both results ask `M` to be a number field alongside `K`. That is no restriction, since a
 cyclotomic extension of a number field is one: `IsCyclotomicExtension.numberField {m} K M`.
 
-## References
-
-* Roadmap: `TauCetiRoadmap/Chebotarev/README.md`, Layer 7.4, "The compositum" — "prove that a
-  prime unramified in `M` is unramified in both factors, and that the primes ramified in `M` but
-  not in `L` all lie above `q`, hence form a finite set". The results here are that ramification
-  bound, stated over the cyclotomic base and in terms of discriminants.
-
-The Birkbeck--Brasca `chebotarev-density` development carries no corresponding statement. It uses
-`differentIdeal` only to recognise an individual ramified prime, and never bounds the different of
-a cyclotomic extension, nor the primes dividing its discriminant. Nothing here is adapted from it.
 -/
 
 public section
