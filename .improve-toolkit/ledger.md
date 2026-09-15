@@ -39706,3 +39706,33 @@ are queued. The last merge-sweep run is still the 10:24:54Z failure.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r837 — 2026-09-15T14:06Z — main moved (#6704, factor degrees are Frobenius orbit sizes); all three PRs re-simulated clean; no change on my PRs
+
+**Board** (14:06:26Z; a real call read 4916 REST calls left, 84 used; sweep exited 0, and `queuepos.py` exited 1 on its
+EJECTED hint; `/tmp` at 55%): #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still not
+queued. #6875 is `ready-to-merge` with CI green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. Nothing
+to fix, contest or drive; step 5 is shut.
+
+**Main moved** `6f51dd839` → **`a62443626`** at 13:56:59Z with #6704 ("factor degrees over a finite field are Frobenius
+orbit sizes"): `FieldTheory/Finite/MinpolyOrbit.lean` (+260) and `FieldTheory/GaloisGroups/FrobeniusOrbits.lean` (+82).
+The firing control read 0 removed lines, 342 added, and 0 removed and 13 added declaration headers. Nothing was removed
+or restated, and no module moved. All three PRs merge clean, main touched none of their files, its new lines name
+nothing they remove, and none of their added declarations shares a last name component with main's 13 new ones.
+
+**Merge-group simulation** against `a62443626`:
+
+```
+#6851  60 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  58 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875  25 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue and Actions** (14:06:40Z): depth 32, none of them mine; #6776 and #6840 are AWAITING_CHECKS. 47 Actions runs
+are queued. The last merge-sweep run is still the 10:24:54Z failure.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
