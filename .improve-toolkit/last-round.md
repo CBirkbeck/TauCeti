@@ -1,4 +1,4 @@
-# Last round — r879 (2026-09-15T23:07Z)
+# Last round — r880 (2026-09-15T23:14Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -55,7 +55,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | **#6945** | `c7129d24c` | green (21:37:02Z) | kind 3 (drops the public, unused `ExchangeableAt.of_lt`); **10/10 on the r878 driven board** (22:50:18Z, $0.84), `ready-to-merge`, **QUEUED 75/76** (23:01Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
 | **#6947** | `3687b12b1` | green (22:20:35Z) | kind 2 (`Arrays/ZeroOne.lean` style pass); **10/10 on its head** (the local worker, 22:56:19Z), `ready-to-merge`, **QUEUED 76/76** (23:01Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
 | **#6950** | `049193f7a` | green (22:32:19Z) | kind 3 (drops two unused `have`s, `hDtop₂` and `hDbot₂`, in `KnotTheory/Grid/Differential/Square/Recut/Pairing.lean`; found by `deadhave`; gate 12/0/0; `Roadmap: CombinatorialHeegaardFloer`, as #6211); opened as a draft 22:15:32Z, **marked ready 22:37:55Z**, `awaiting-review`, no board | **pipeline** — board due; step 4 may drive only after 23:38Z |
-| **#6952** | `ab16f0543` | first build | kind 2, in kind 1's slot (`Winding/Number/Segment/Formula.lean` style pass: 32 `↦`, 7 `;` chains split, `h_avoid` as a term, `h_deriv` by `simpa only`, roadmap parenthetical out of the docstring; gpt-6-astra reviewed; gate 12/0/0); **draft**, opened 22:58:45Z from `72f21ba26` | **CI** — mark ready when `sandboxed-build` is green |
+| **#6952** | `f2f4f9666` | **first build FAILED** (23:04:28Z); fix pushed 23:13:09Z, rebuilding | kind 2, in kind 1's slot (`Winding/Number/Segment/Formula.lean` style pass: 32 `↦`, 7 `;` chains split, `h_avoid` as a term, roadmap parenthetical out of the docstring). CI rejected one golf at line 159: `simpa only [mul_one] using h2.comp t h1` — "Type mismatch: After simplification", the composed term carrying `(NormedAlgebra.toNormedSpace ℝ).toModule` where the goal has `Semiring.toModule`. `f2f4f9666` restores `have h3 := …`, `simp only [mul_one] at h3`, `exact h3`; every other edit stands. Gate 12/0/0, body v2 patched. Still a **draft** | **CI** — mark ready when `sandboxed-build` is green |
 | **#6953** | `e36314bd2` | first build | kind 3 (drops the unused `h2` and `h3` in `Equation.evalEval_polynomialX_smul_add_evalEval_polynomialY_smul_eq_zero`; its `simp only` set lists neither and `linear_combination (norm := module) h0` reads only `h0`; the chain-rule lemmas keep their used copies; gate 12/0/0; `Roadmap: EllipticCurves`, as #6301); **draft**, opened 23:06:25Z from `e0103897b` | **CI** — mark ready when `sandboxed-build` is green |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
@@ -64,8 +64,8 @@ step 5 is shut until one of them turns `ready-to-merge`. #6875, #6896, #6899, #6
 
 ## What to expect next
 
-0. **r843–r879:** the cap rule changed (rotation paragraph above). In progress: #6950 (green 22:32:19Z, ready 22:37:55Z; drive not
-   before 23:38Z), #6952 and #6953 (drafts; mark each ready once its first build is green). Pass #6953, #6952, #6950, #6947, #6945,
+0. **r843–r880:** the cap rule changed (rotation paragraph above). In progress: #6950 (green 22:32:19Z, ready 22:37:55Z; drive not
+   before 23:38Z), #6952 (the revert `f2f4f9666` is rebuilding; mark it ready when green) and #6953 (draft; mark it ready once its first build is green). Pass #6953, #6952, #6950, #6947, #6945,
    #6941, #6933, #6923, #6915, #6911, #6910, #6902, #6899, #6896 and #6875 to `queuepos.py`. When a slot frees: kind 1 if a target
    exists, otherwise kind 2.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
@@ -140,7 +140,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r879 did
+## What r703–r880 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -332,6 +332,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r877: #6950 went green (22:32:19Z) and was marked ready (22:37:55Z; drive not before 23:38Z). Main moved to `72f21ba26` (#6850, #6846, additive), and all thirteen open heads re-simulated clean. #6945 was not yet due for a drive (22:47Z).
 * r878: #6945's review, driven after its hour (22:47:13Z), approved 10/10 ($0.84), and the local worker approved #6947 10/10 (22:56:19Z); both queued (75, 76). Two slots freed, and with kind 1 still dry, kind 2 opened as draft **#6952**, a style pass on `Winding/Number/Segment/Formula.lean` (gpt-6-astra: no risk; gate 12/0/0). Main moved to `e0103897b` (#6845, #6841, additive), and all fourteen heads re-simulated clean. One slot is still free, and the next opening is kind 3.
 * r879: kind 3 opened as draft **#6953**, dropping the unused `h2` and `h3` in the Weierstrass equation differential (gate 12/0/0; `deadhave` flagged `h3`, and `h2` is dead the same way). No merges since #6845 and #6841, main still `e0103897b`, and #6950 was not yet due for a drive (23:38Z).
+* r880: **#6952's first build failed** on the `simpa only [mul_one]` golf (instance paths). The job log gave the exact mismatch, `f2f4f9666` restores the explicit `have`/`simp only`/`exact`, and the body was corrected. #6953 was still building, #6950 still had no board, and there were no merges.
 
 ## Candidates for a later step 5
 
@@ -562,3 +563,9 @@ reviewer's request, decide its simp attribute in the same push.
 check-runs, beside the live `pr-6854-b40126a7…`. `git ls-remote … | head -1` picked the stale one. List every
 `gh-readonly-queue/main/pr-<n>-*` ref, and judge the group by the ref whose check-runs started after the latest enqueue (or by the
 `mergeQueue.entries` `headCommit`).
+**A golf gpt-6-astra approves can still fail CI on instance paths** (r880, #6952). `simpa only [mul_one] using h2.comp t h1`
+was rejected with "Type mismatch: After simplification": the composed term carries `(NormedAlgebra.toNormedSpace ℝ).toModule`
+where the goal has `Semiring.toModule`, and only the original `exact` bridges that. `simp only … at h` then `exact h` is not
+interchangeable with `simpa … using h` when the two sides differ by instance paths. astra reviews source, never a build: it also
+passed the term `rfl` that broke #6902 (r847). Read the failing job's log by check-run id
+(`gh api repos/<repo>/actions/jobs/<id>/logs`): the summary and text fields of the check run are empty for this workflow.

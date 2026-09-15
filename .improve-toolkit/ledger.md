@@ -41323,3 +41323,46 @@ fourteen open heads clean.
 **In progress now:** #6950, #6952 and #6953. The cap is full. The next opening is kind 1 if a target exists, otherwise kind 2.
 
 No toolkit edits.
+
+---
+
+## r880 — 2026-09-15T23:07Z — #6952's first build FAILED on the `simpa only` golf; reverted and pushed; no merges
+
+**Board** (23:07:59Z; a real call read 3478 REST calls left; sweep and `queuepos.py` exited 0):
+
+* **#6952** (`ab16f0543`, draft): `ci-failed`. `sandboxed-build` completed/failure at 23:04:28Z.
+* #6953 (`e36314bd2`, draft): `sandboxed-build` still in progress.
+* #6950 (`049193f7a`): `awaiting-review`, still no scoreboard comment. Step 4 may drive only after 23:38Z.
+* #6945 and #6947 are QUEUED at 75 and 76 of 76; #6910 31, #6911 34, #6899 35, #6896 36, #6902 51, #6923 55, #6933 62, #6941 67,
+  #6915 68. #6875 needs a human merge. #5950 is Chris's. A local review process was running for someone else's #6835.
+
+**Step 3: read the failure and fixed it.** The check run's `output.summary` and `output.text` are empty for this workflow, so the
+log came from `gh api repos/TauCetiProject/TauCeti/actions/jobs/104597372315/logs` (2.8 MB). One error, one file:
+
+```
+✖ [10667/10715] Building TauCeti.Analysis.Contour.Winding.Number.Segment.Formula (3.9s)
+error: …/Segment/Formula.lean:159:4: Type mismatch: After simplification, term
+  HasDerivAt.comp t h2 h1
+ has type
+  @HasDerivAt ℝ … DenselyNormedField.toNontriviallyNormedField.toDivisionRing.toAddCommGroup
+    (NormedAlgebra.toNormedSpace ℝ).toModule … (Real.log ∘ fun s => s - r) (t - r)⁻¹ t
+but is expected to have type
+  @HasDerivAt ℝ … Real.instAddCommGroup Semiring.toModule … (fun s => Real.log (s - r)) (t - r)⁻¹ t
+```
+
+* The culprit is the r878 golf `simpa only [mul_one] using h2.comp t h1`. The mismatch is not the `∘`-versus-lambda shape but the
+  instance paths: `simpa`'s closing step will not bridge `(NormedAlgebra.toNormedSpace ℝ).toModule` against `Semiring.toModule`,
+  while the original `exact` does.
+* **`f2f4f9666`** restores `have h3 := h2.comp t h1`, `simp only [mul_one] at h3`, `exact h3`. Every other edit of the pass stands.
+* **Gate** `prepush.sh origin/main`: **12 ok / 0 failed / 0 UNRUN**.
+* **Pushed** with a lease on `ab16f0543` at 23:13:09Z. Body v2 drops the `simpa only` bullet and records the revert and its
+  reason; the re-read confirms both.
+* gpt-6-astra had judged that golf safe (r878). It reviews source, never a build — the same way it passed the term `rfl` that
+  broke #6902 at r847.
+
+**Merges and main.** No merges since #6845 and #6841 (22:55:12Z). Main is still `e0103897b`, against which r878 simulated every
+open head clean; #6953 was branched from it at r879.
+
+**In progress now:** #6950, #6952 (rebuilding) and #6953. The cap is full.
+
+No toolkit edits.
