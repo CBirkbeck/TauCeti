@@ -37998,3 +37998,31 @@ board keeps its id, so the count cannot tell a re-review from the old board.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r766 — 2026-09-15T00:27Z — main moved (#6652 removes `polarBilin_isSymm`, unused by mine); queued PRs re-simulated clean; #6854 still not re-reviewed
+
+**Board** (00:26:21Z; sweep and queuepos exited 0): #6851 and #6855 are 10/10 on head, `ready-to-merge`, QUEUED at 24
+and 22 of 30. **#6854** is `awaiting-review`, CI green on `217fecb812`, and its board (on `f18fe6fedf`, 23:20:45Z) is still
+BEHIND, so there is nothing to re-fix. It is 47 min since CI-green. Drive only after 00:39:06Z, and only if there is no
+board for `217fecb81`; the 00:46 round is the first that may. #5950 is Chris's. Nothing to fix, contest or drive; step 5
+shut.
+
+**Main moved:** #6652 (prove Witt's extension theorem) merged at 00:18:53Z: `343ea93ab` → **`799d1fef6`**. It touches
+`CliffordAlgebra/Quadratic/Realization.lean` and `QuadraticForm/{Hyperbolic,Isometry,Radical}.lean`, and adds the new
+`QuadraticForm/Witt/Extension.lean`. The firing control read 40 removed lines, 215 added, and 1 removed and 9 added
+declaration headers. **One declaration was removed, `polarBilin_isSymm`**; no module was renamed. None of my three PRs'
+added lines uses it. #6851 (15 behind), #6854 (13) and #6855 (13) merge clean (`git merge-tree`). Main touched none of
+their files, and its new lines name nothing they remove.
+
+**Merge-group simulation** against `799d1fef6`:
+
+```
+#6851  15 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6855  13 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
