@@ -40603,3 +40603,53 @@ moved. All ten heads (the nine plus #6923) merge clean, `ghostref` and `stalequa
 **Queue** (19:02Z): depth 55.
 
 No toolkit edits.
+
+---
+
+## r858 — 2026-09-15T19:07Z — the merge sweep queued #6896, #6899 and #6911; main moved (#6673); kind-3 branch staged
+
+**Board** (19:07:23Z, re-read at 19:14:01Z; a real call read 4205 REST calls left; sweep and `queuepos.py` exited 0):
+
+* #6902 (`3282c9611`): `awaiting-review` and green. Its board (on `f8294ed14`) is behind the fix. Step 4 may drive only after
+  19:32Z.
+* #6915 (`efbb6423d`): `awaiting-review`, no board. Step 4 may drive only after 19:37Z.
+* #6923 (`8f846c57b`, draft): `awaiting-CI`, with `sandboxed-build` in progress since 19:04:07Z.
+* **#6896, #6899 and #6911 are queued.** The merge sweep fired again (run 35012084184, created 19:11:04Z), and
+  `tauceti-review-bot` enqueued #6911 at 19:12:01Z, #6899 at 19:12:24Z and #6896 at 19:12:32Z. At 19:14Z they sat at 55, 56
+  and 57 of 66.
+* #6910 is QUEUED at 52, #6851 at 17 and #6854 at 15. #6875 needs a human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6902, #6915, #6923).
+
+**The merge sweep's hourly cron fires every 4–6 hours.** `merge-sweep.yml` is scheduled `40 * * * *`, but today's runs were
+created at 05:18:46Z, 10:24:54Z, 15:15:27Z and 19:11:04Z. The Actions backlog read 41 queued and 14 in progress at 19:08Z.
+
+**Main moved** `6f93392bd` → **`906b08e84`** with #6673 ("add strict A-infinity morphisms"): 5 files, +495/−2. The two
+removed lines are `universe uR uM` declarations. The firing control read 0 removed and 49 added declaration headers.
+
+* Nothing was removed, no import was dropped, and no module moved.
+* Main touched none of the eleven heads' files (the ten PRs plus the staged branch).
+* One grep hit, read and false: #6875's added lines say "path component of `x₀`" in prose, and main's diff touched no line
+  of `TensorCoalgebra.component`.
+* **Merge-group simulation** against `906b08e84`: all eleven merge clean, with `ghostref` and `stalequal` exit 0.
+
+**Kind-3 research while the cap is shut** (snapshot `871fb6d9f`; lines naming a file an open PR touches were dropped):
+
+* `strictscan`: 12 hits, 11 of them in files open PRs touch. The twelfth, `ExchangeableAt.of_lt`
+  (`ExchangeableAtMonotone.lean`), is proved as `h.of_le hmn.le hX` and has no callers. It is a dedup candidate, not a
+  weakening one.
+* `unusedscan`: 0 hits. `impliedscan`: 0. `deadhave`: 4 outside open PRs, all small and proof-internal.
+* `dupsig`: 248 groups. 182 are tagged not-a-finding, and 53 are `private …_aux` + public pairs (the module-system `rfl`
+  idiom, left alone). 12 more have every member in files open PRs touch. The one all-private same-file pair is
+  `Subcomodule/Comap.lean`'s `comap_coact_mem`, which restates `coact_mem_range_comap_toLinearMap` and is proved by it.
+* `deadprivate`: 12 dead, 10 outside open PRs. Seven exist to be elaborated: documented regressions, counterexamples and
+  worked examples (`UnitIntervalMap.lean` ×3, `Disintegration/Countable.lean` ×2, `MapRestrictDensity.lean`,
+  `SquareClass/Rational.lean`). Three look genuinely unused: two `rfl` lemmas in `Polynomial/SymmetricPower.lean` and
+  `jetField_add_ae` in `PDE/EnergyForm/Sobolev.lean`.
+* **STAGED** (local only, not gated or pushed): `improve/subcomodule-comap-dedup` @ `4d33cc423`, from `906b08e84`, +4/−13.
+  * It deletes `comap_coact_mem`, and `comap` calls `coact_mem_range_comap_toLinearMap` directly.
+  * The module docstring's "Layer 1 infrastructure for the reductive-groups roadmap target" sentence becomes the motivation it
+    carried, because the documentation rubric flags roadmap narrative in any file a PR touches.
+  * Roadmap line: `ReductiveGroups`, as in #6598, #4470, #4396 and #4359. No open PR touches the file.
+
+No toolkit edits.
