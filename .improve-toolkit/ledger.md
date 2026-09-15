@@ -39153,3 +39153,24 @@ them mine. The merge sweep last ran at 05:18:46Z, almost four hours ago.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r816 — 2026-09-15T09:26Z — REST out 09:26–09:27; the low-memory watchdog killed the background wait for the reset, so the sweep reran in the foreground; no change, no merges
+
+**Board:** the round's 09:26:24Z sweep hit the exhausted REST quota (12 fields unreadable). A GraphQL read at 09:27Z
+showed all three heads unchanged: #6851 and #6854 `ready-to-merge` with approved boards, #6875 `awaiting-review` with
+its 08:54:23Z approved board, and no `awaiting-author` or `ci-failed` label. The background job waiting for the 09:27:27Z
+reset was killed by the low-memory watchdog seconds after it started; its log stops at "waiting for REST from
+09:27:00", and `free` showed 10 GiB free and 62 GiB available. The sweep reran in the foreground at 09:27:38Z and exited
+0. #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still out of the queue. #6875 is 10/10 on
+`462ed97`, its label still `awaiting-review`. #5950 is Chris's. No merges since #6808 (08:58:32Z); main is still
+`4ea08bc2f`, so r814's simulations stand. Nothing to fix, contest or drive; step 5 is shut.
+
+**Queue:** depth 8 at 09:27:46Z, none of them mine. At 09:26:33Z it listed #6871 and #6849 AWAITING_CHECKS and #6659,
+#6717, #6751, #6624 and #6277 QUEUED; #6842 left between r815 and r816 without merging. The merge sweep last ran at
+05:18:46Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
