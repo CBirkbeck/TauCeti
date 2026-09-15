@@ -39532,3 +39532,35 @@ are queued. The last merge-sweep run is still the 10:24:54Z failure.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r831 — 2026-09-15T13:06Z — main moved (#6747, Schwarz–Christoffel polygon boundary); all three PRs re-simulated clean; no change on my PRs
+
+**Board** (13:06:47Z; the REST window rolled over, 5000 calls left; sweep exited 0, and `queuepos.py` exited 1 on its
+EJECTED hint; `/tmp` at 56%): #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still not
+queued. #6875 is `ready-to-merge` with CI green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. Nothing
+to fix, contest or drive; step 5 is shut.
+
+**Main moved** `a9313057f` → **`c38794df8`** at 12:59:54Z with #6747 (the Schwarz–Christoffel polygon boundary). It
+moves `SchwarzChristoffel/Polygon.lean` to `Polygon/Basic.lean` unchanged (R100) and adds `Polygon/Boundary.lean`
+(+152), whose one theorem is `range_schwarzChristoffelCompactifiedBoundary`. The firing control read 0 removed lines,
+152 added, and 0 removed and 1 added declaration headers. Nothing was removed or restated, and none of the three PRs'
+added lines name the moved module. All three PRs merge clean, main touched none of their files, its new lines name
+nothing they remove, and none of their added declarations shares a name with main's new theorem.
+
+**Merge-group simulation** against `c38794df8`:
+
+```
+#6851  54 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  52 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875  19 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue and Actions** (13:07:25Z): depth 37, none of them mine; #6770 and #6795 are AWAITING_CHECKS. 44 Actions runs
+are queued. The last merge-sweep run is still the 10:24:54Z failure. The two before it ran at 23:58:15Z and 05:18:46Z,
+about five hours apart; at that spacing the next scheduled run would come around 15:30Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
