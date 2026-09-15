@@ -38902,3 +38902,20 @@ docstring cleanup. The step-4 clock for this head starts at its CI-green.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r804 — 2026-09-15T07:32Z — #6875's fix head building (its board is behind: the fix is already pushed); #6852's group build at 77 min; no merges
+
+**Board** (07:32:55Z; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 59%): #6851 and #6854
+are `ready-to-merge`, with CI green and boards on head, and still out of the queue (the merge sweep last ran at
+05:18:46Z). #6875 is `awaiting-CI` on head `462ed9705b`, with `sandboxed-build` running since 07:31:14Z. Its board
+(`e70f761ba4`) is behind the head, so the fixes are already pushed and there is nothing to re-fix. #5950 is Chris's. No
+merges since #6855 (05:43:53Z); main is still `d7ac608e0`. Nothing to contest or drive; step 5 is shut.
+
+**Queue:** depth 1. #6852's group `400ca6f7e1` has been in `sandboxed-build` since 06:15:40Z, 77 minutes of the
+expected 83–95.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
