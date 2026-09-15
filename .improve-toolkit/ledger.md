@@ -40169,3 +40169,54 @@ removed names are restated: `IsCyclicallyMonotone`, `equivalent_weightedSumSquar
 **Memory:** the new memory `lean-module-system-term-rfl` records the export check that broke #6902.
 
 No toolkit edits.
+
+---
+
+## r848 — 2026-09-15T17:26Z — #6896 approved on its driven board; kind 2 again as draft #6911 (Resolvent/Basic.lean style pass)
+
+**#6896's driven review finished.**
+
+* `tauceti-review 6896 --reviewer codex --post`, started at 17:10:17Z, ran all 10 rubrics and **approved** round 1 at
+  head `8a6278e95` (`codex/gpt-5.6-sol`, cost $1.20). The rubrics: correctness, reuse, scope, attribution, api-design,
+  generality, placement, naming, documentation and proof-quality.
+* `post.py` posted scoreboard 5684693976 at 17:14:21Z, with 0 thread actions, and the label is now `ready-to-merge`.
+* The run then raised on its ledger sync to `TauCetiProject/TauCetiData`, which is denied to CBirkbeck (403, "outbox kept
+  for a later sync"). The board was already live by then, so this is harmless.
+* #6896 no longer counts toward the cap, which freed a slot.
+
+**Kind 2 again: `Analysis/Semigroups/Resolvent/Basic.lean`.** Kind 1 is still dry at pin `30a58f795a`.
+
+* **Selection.** It comes from r843's scan, where it carries a PUBLIC `strictscan` hit. No open PR touches it: #6713 and
+  #6836 touch only `Semigroups/Complexification.lean`.
+* **`/cleanup` build-free phases.** The file was read in full (437 lines, module dialect). A.1–A.6 are clean; the import
+  reorder is n/a for a module file. Findings:
+  * five `;` tactic chains: in `resolvent`'s norm bound, in `integral_comp_add_right_Ioi`, and three in
+    `resolvent_shift_identity`;
+  * `le_of_lt hh`, three times;
+  * `hRlx`, stated twice inside `resolvent_shift_identity`;
+  * `open MeasureTheory`, twice;
+  * 18 `=>` lambdas.
+* **`/mathlibable`.** Pinned Mathlib has no C₀-semigroup API (no `StronglyContinuousSemigroup`), so there is nothing to
+  catch up on.
+* **Kept out**, one topic per PR:
+  * the `strictscan` hit, `norm_resolvent_integrand_le`, takes `ht : 0 < t` but uses only `ht.le`; that is a statement
+    change, filed as the next kind-3 candidate;
+  * `resolvent_apply` and `ContractionSemigroup.resolvent_apply` keep `by rfl` (r847's trap).
+* **gpt-6-astra** reviewed the five kinds of edit and found each safe: the `;` splits (inside a `(by …)` term, and before
+  `<;> [...]`), `hh.le`, hoisting `hRlx` past the two `set`s, the dropped `open`, and `=>` → `↦`.
+* **Two attempts stopped safely before the push.**
+  * The first edit script halted on its own firing control: it expected 16 lambdas and found 18. The two in
+    `resolvent_generator_tendsto`'s `hexp_cont` and `hcont` had been missed in the hand count.
+  * The second attempt's commit failed on a missing message file, and the gate then refused the uncommitted tree.
+  * Nothing was pushed until both were fixed.
+* **Gate** `prepush.sh origin/main`: **12 ok / 0 failed / 0 UNRUN**.
+* **Opened #6911** (draft, 17:26:15Z). Head `CBirkbeck:improve/semigroup-resolvent-style@4a8439956`, base `main`,
+  branched from `c0295f4a9`: 1 file, +34/−30. The body carries `Roadmap: OneParameterSemigroups`, taken from the file's
+  earlier PRs.
+
+**#6910.** Its first `sandboxed-build` has been running since ~17:15Z.
+
+**In progress now:** #6902 (ready 17:08:59Z), and #6910 and #6911 (drafts). The cap is full. Main is at `c0295f4a9`,
+past r847's simulations, so next round re-checks.
+
+No toolkit edits.
