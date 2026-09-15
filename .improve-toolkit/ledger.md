@@ -40021,3 +40021,59 @@ appears on main outside #6896's three files. **Marked ready at ~15:38Z.** The bo
 (draft). Step 5 is shut until one of them turns `ready-to-merge`.
 
 No toolkit edits.
+
+---
+
+## r846 — 2026-09-15T15:40Z — merge sweep ran clean and re-queued #6851 and #6854; main moved 4 merges; all five re-simulated clean
+
+**Board** (15:40:34Z; a real call read 4874 REST calls left, 126 used; sweep and `queuepos.py` both exited 0; `/tmp` at
+56%, 56G of memory available):
+
+* #6851 (`fdeaff5cb7`) and #6854 (`217fecb812`): `ready-to-merge`, CI green, boards on head, **QUEUED at 38 and 35 of
+  72**.
+* #6875: `ready-to-merge`, CI green, board on head, NEVER-QUEUED; it waits for a human merge.
+* #6896 (`8a6278e95`): `awaiting-review`, CI green, no board yet. It went ready at 15:38:06Z, so step 4 may drive only
+  after 16:38Z.
+* #6899 (`f450e0dcc`) and #6902 (`91e7bc1a2`), both drafts: `awaiting-CI`, with `sandboxed-build` in progress since
+  15:25:46Z and ~15:38:25Z. `label` and `zulip-pr` succeeded on both. Neither can be marked ready yet.
+* #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6896, #6899, #6902), so step 5 is shut.
+
+**The merge sweep ran.** Scheduled run 34987209408 (15:15:27Z) succeeded, the first successful sweep since 05:18:46Z
+and the first run since the 10:24:54Z failure. It re-enqueued the flushed PRs: queue depth went from 35 (r842) to 72,
+with #6854 at 35 and #6851 at 38.
+
+**Main moved** `fc7a5c329` → **`591746fa6`** with four merges: #6803 (15:00:03Z, the quaternion Steinberg relation),
+#6792 (15:08:41Z, Gaussian-Gram Wishart moments), #6771 (15:24:21Z, minimal numerical types and their genus
+contributions) and #6629 (15:33:16Z, invariance of the grid differentials under cyclic permutation). 15 files,
++1852/−9. The firing control read 9 removed lines, 1852 added, and 0 removed and 113 added declaration headers.
+
+* `StableReduction/NumericalType.lean` moved to `NumericalType/Basic.lean` (R086); none of the five PRs' added lines
+  names it.
+* The removed lines are docstring prose and two imports: the moved module's old path in its importer, and
+  `KnotTheory.Grid.Chain.Basic` in a KnotTheory file.
+* Main touched none of the five PRs' files, and its new lines name nothing they remove.
+* Since `2115c5e9b`, no main commit changes the count of `chafaiRescaling_coe_of_pos` or of the four names #6896
+  renames (`git log -S`).
+* None of their added declarations shares a last name component with main's 112 new ones.
+* The declaration-level grep had one hit, `Equiv` against #6875. Main's new `structure Equiv` is `NumericalType.Equiv`
+  in the stable-reduction development: a new declaration, in a namespace #6875 never opens. Main changed no existing
+  declaration.
+
+**Merge-group simulation** against `591746fa6`:
+
+```
+#6851  68 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  66 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875  33 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+#6896   2 behind  merges clean  ghostref: 4 removed, 4 chased, 0 ghosts    stalequal: exit 0
+#6899   2 behind  merges clean  ghostref: 1 removed (not TauCeti.-pathed)  stalequal: exit 0
+```
+
+**Queue and Actions** (15:40:52Z): depth 72; #6750 and #6694 are AWAITING_CHECKS at the head. 42 Actions runs are
+queued.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
