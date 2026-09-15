@@ -40220,3 +40220,55 @@ No toolkit edits.
 past r847's simulations, so next round re-checks.
 
 No toolkit edits.
+
+---
+
+## r849 — 2026-09-15T17:28Z — main moved (#6700, #6880: 48 declarations removed); all seven re-simulated clean; drafts still building
+
+**Board** (17:28:15Z; a real call read 4921 REST calls left; sweep and `queuepos.py` exited 0; `/tmp` at 56%):
+
+* #6851 and #6854: `ready-to-merge`, QUEUED at 27 and 24 of 61.
+* #6896 (board 17:14:21Z) and #6899 (board 16:40:36Z): `ready-to-merge`, NEVER-QUEUED. Both wait for the merge sweep,
+  whose last run is still 15:15:27Z.
+* #6875: `ready-to-merge`, NEVER-QUEUED; it needs a human merge. #5950 is Chris's.
+* #6902: `awaiting-review`, CI green, no board. It went ready at 17:08:56Z, so step 4 may drive only after 18:09Z.
+* #6910 (`3548cebb7`) and #6911 (`4a8439956`), both drafts: the first `sandboxed-build` was still in progress at
+  17:29:53Z, with no failing check. Neither can be marked ready yet.
+
+Nothing to fix, contest or drive. The cap is full (#6902, #6910, #6911).
+
+**Main moved** `edcf25b9a` → **`c0295f4a9`** with #6700 (17:13:04Z, descending two-cocycles to finite quotients) and
+#6880 (17:17:59Z, "migrate remaining integral carrier point presentations"). 12 files, +299/−555. The firing control
+read 555 removed lines, 299 added, and 48 removed and 17 added declaration headers.
+
+* **#6880 removes 48 declarations** with no replacement under the same spelling: the points maps and functors of the
+  Geck-lattice, rank-one-carrier and upper-triangular presentations (`geckPointsMap`, `geckPointsFunctor`,
+  `rankOneCarrierPointsMap`, `upperTriangularPointsFunctor`, …).
+* In the files it rewrites, it also drops two imports: `TauCeti.Algebra.Algebra.Hom` and
+  `…GeneralLinear.HopfIdealPoints.Functor`.
+* No module moved.
+* None of the seven PRs' added lines uses a declaration from the changed files or any removed name.
+* Main touched none of their files.
+* None of their added declarations shares a last name component with main's 17 new ones.
+* `git log -S` shows no change on main in the counts of the names #6896 and #6899 rename, of #6910's two deleted private
+  copies, or of the `TauCeti.RingTheory.Polynomial.Pochhammer` module that #6910 imports.
+
+**Merge-group simulation** against `c0295f4a9`:
+
+```
+#6851  77 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts     stalequal: exit 0
+#6854  75 behind  merges clean  ghostref: 0 removed                           stalequal: exit 0
+#6875  42 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts    stalequal: exit 0
+#6896  11 behind  merges clean  ghostref: 4 removed, 4 chased, 0 ghosts      stalequal: exit 0
+#6899  11 behind  merges clean  ghostref: 1 removed (not TauCeti.-pathed)    stalequal: exit 0
+#6902   9 behind  merges clean  ghostref: 0 removed                           stalequal: exit 0
+#6910   2 behind  merges clean  ghostref: 2 removed (private copies)          stalequal: exit 0
+```
+
+#6911 is branched from `c0295f4a9` itself.
+
+**Queue** (17:28:37Z): depth 61; #6726 and #6677 are AWAITING_CHECKS at the head.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
