@@ -38043,3 +38043,45 @@ to fix, contest or drive; step 5 shut.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r768 — 2026-09-15T00:51Z — #6854 driven at 67 min without a re-review → 10/10; main moved (#6635); queued PRs clean
+
+**Board** (00:46:22Z; sweep and queuepos exited 0): #6851 and #6855 10/10 on head, `ready-to-merge`, QUEUED at 23 and 21
+of 31. **#6854** `awaiting-review`, CI green on `217fecb812` since 23:39:06Z, board `f18fe6fedf` still BEHIND (last
+updated 23:20:45Z): the pipeline had not re-reviewed the r759 fix in 67 min. #5950 is Chris's. Nothing to fix or contest.
+
+**Step 4: #6854 driven again** — the window (`max(23:39:06Z, 22:07:11Z) + 1 h` = 00:39:06Z) had passed, no drive was in
+progress, and there was no board for the head. `uvx --from git+https://github.com/TauCetiProject/TauCetiReview
+tauceti-review 6854 --reviewer codex --post` from the scratchpad (log `$SP/drive-6854-r768.log`), 00:46:59Z →
+00:50:12Z, exit 0. **Result: "AI review — approved", all ten rubrics ✅ on `217fecb81`** (`codex/gpt-5.6-sol`; the scope
+thread reads "now passing on `217fecb`"). Cost $0.91 (ten rubrics × $0.08–0.12). At 00:50:31Z the label still read
+`awaiting-review` and the PR was not queued — 19 s after the board; the label job lags (r742–r745's runner backlog). The
+next round confirms `ready-to-merge` and the enqueue; act only if it has not queued by then.
+
+**The pipeline never re-reviewed a pushed fix on its own here.** r759's fix went green at 23:39:06Z and the board stayed
+on `f18fe6fedf` for 67 min; both of #6854's boards were drives. The prompt's "a pushed fix re-reviews on its own" did not
+happen within the hour — the step-4 clock after a fix is not idle time.
+
+**Main moved:** #6635 (the Steinberg endomorphism and candidate group of the Suzuki family) merged at 00:37:14Z:
+`799d1fef6` → **`61f659393`**, `CFSG/{Closure,Suzuki/Basic,TypeB/Two}.lean` and `RootSystem/RootLength.lean`, +409/−19.
+Firing control: 19 removed lines, 409 added, 0 removed and 23 added declaration headers; nothing removed, no module
+renamed. #6851 (16 behind), #6854 (14) and #6855 (14) merge clean; main touched none of their files; its new lines name
+nothing they remove.
+
+**Merge-group simulation** against `61f659393`:
+
+```
+#6851  16 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6855  14 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+**A merged-list entry is not a main merge.** `gh pr list --state merged` also listed #6757 (00:39:36Z) and #6831
+(00:39:51Z), which are not on `origin/main`: their bases are `cfsg/f4-derivation-splitting` and
+`cfsg/f4-prime-field-isogeny` — stacked PRs merged into CFSG feature branches. Filter by `baseRefName` (or confirm
+against `git log origin/main`) before treating an entry as main moving.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
