@@ -37962,3 +37962,39 @@ checks stand. Nothing to fix, contest or drive; step 5 shut.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r765 — 2026-09-15T00:19Z — REST quota ran out at 00:16 again; main moved (#6829); queued PRs re-simulated clean; #6854 still not re-reviewed
+
+**The 00:16:23Z sweep** hit the REST limit (12 fields `API-ERROR`, exit 1), the eighth :16 round. GraphQL still
+answered: #6851 and #6855 queued (25, 23); #6854 `awaiting-review`. **#6854's only scoreboard is still the r759 driven
+board on `f18fe6fedf`**, read over GraphQL from the comment body's `head_sha`. It was created and last updated at
+23:20:45Z and reads "AI review — blocked": correctness and reuse approved, scope blocked, seven not yet run. The pipeline
+had not re-reviewed `217fecb81`.
+
+**Rerun at 00:18:45Z** (fresh window; sweep and queuepos exit 0): #6851 and #6855 are 10/10 on head, `ready-to-merge`,
+QUEUED at 24 and 22 of 30. **#6854** is `awaiting-review`, CI green, board BEHIND, so there is nothing to re-fix. It is
+40 min since CI-green (23:39:06Z). Drive only after 00:39:06Z, and only if there is still no board for `217fecb81`; the
+00:46 round is the first that may. #5950 is Chris's. Nothing to fix, contest or drive; step 5 shut.
+
+**Main moved:** #6829 (prove the fixed-field local degree formula) merged at 00:08:44Z: `7f81cf09e` → **`343ea93ab`**,
++76/−7 in `NumberField/Frobenius/FixedFieldInertia.lean`. The firing control read 7 removed lines, 76 added, and 0
+removed and 2 added declaration headers; nothing was removed or restated, and no module was renamed. #6851 (14 behind),
+#6854 (12) and #6855 (12) merge clean (`git merge-tree`). Main touched none of their files, and its new lines name nothing
+they remove.
+
+**Merge-group simulation** against `343ea93ab`:
+
+```
+#6851  14 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6855  12 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+**Reading a board without REST.** GraphQL `pullRequest.comments { updatedAt body }` carries the `tauceti-meta:v1`
+payload, so a board's `head_sha` can be checked during a REST outage. A GraphQL comment count is not enough: an edited
+board keeps its id, so the count cannot tell a re-review from the old board.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
