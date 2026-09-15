@@ -38551,3 +38551,27 @@ or seven more. Two review workspaces from other sessions also sit in `/tmp` (`ta
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r790 — 2026-09-15T04:27Z — main moved (#6640, additive); all three re-simulated clean; queue 6/8/20
+
+**Board** (04:26:22Z; sweep and queuepos exited 0; `/tmp` at 58%): #6851, #6854 and #6855 are `ready-to-merge`, CI green,
+boards on head; QUEUED at 8, 20 and 6 of 43. #5950 is Chris's. Nothing to fix, contest or drive; step 5 shut.
+
+**Main moved:** #6640 (add A-infinity cohomology algebra; base `main`) merged at 04:17:44Z: `451dc7a21` → **`3f1ee32fe`**,
+`Homology/AInfinity/Algebra/Cohomology.lean` +27. The firing control read 0 removed lines, 27 added and 2 added
+declaration headers; nothing was removed, restated or renamed. All three PRs merge clean, main touched none of their
+files, and its new lines name nothing they remove.
+
+**Merge-group simulation** against `3f1ee32fe`:
+
+```
+#6851  29 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6854  27 behind  merges clean  ghostref: 0 removed (removes nothing)     stalequal: exit 0
+#6855  27 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
