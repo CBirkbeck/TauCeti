@@ -38507,3 +38507,16 @@ queued PR is ever ejected and needs a refresh. Verify it on the first board afte
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r788 — 2026-09-15T04:06Z — no merges; board and queue unchanged; no-op round
+
+**Board** (04:06:21Z; sweep and queuepos exited 0; `/tmp` at 53%): #6851, #6854 and #6855 are `ready-to-merge`, CI green,
+boards on head; QUEUED at 10, 22 and 8 of 45 (positions unchanged; queue depth up from 42). #5950 is Chris's. No merges
+since #6868 (03:51:26Z), and main is still `bd11a0a35`, so r786's merge-group simulations stand (r787's merge touched no
+Lean file). Nothing to fix, contest or drive; step 5 shut.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
