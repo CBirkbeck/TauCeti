@@ -1,4 +1,4 @@
-# Last round — r783 (2026-09-15T03:17Z)
+# Last round — r784 (2026-09-15T03:26Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -14,7 +14,7 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
 **#6854** on the driven re-review (r768), queued at r770. Nothing is staged; the next opening is kind 1 again (the deck group). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r783):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r784):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -31,9 +31,9 @@ through the local codex CLI that MCP wraps:
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`, **QUEUED pos 12/38** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`, **QUEUED pos 24/38** | nobody — act only if `queuepos.py` says `EJECTED` |
-| **#6855** | `352c92a114` | green | kind 3; **10/10 first board** (22:32:04Z), `ready-to-merge`, **QUEUED pos 10/38** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`, **QUEUED pos 12/41** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`, **QUEUED pos 24/41** | nobody — act only if `queuepos.py` says `EJECTED` |
+| **#6855** | `352c92a114` | green | kind 3; **10/10 first board** (22:32:04Z), `ready-to-merge`, **QUEUED pos 10/41** | nobody — act only if `queuepos.py` says `EJECTED` |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open (#6851, #6854, #6855) → step 5 does not fire** until one merges; all three are
@@ -97,7 +97,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r783 did
+## What r703–r784 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -189,6 +189,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r782: no merges; board and queue unchanged (10/12/24).
 * r783: quota at 03:16 again; no merges; queue unchanged; `/tmp` at 52% (the other session is at 32G, with a new 4.4G
   `wt-center`); flagged again.
+* r784: no merges for 32 min; board and queue unchanged (10/12/24 of 41); `/tmp` steady at 52%.
 
 ## Candidates for a later step 5
 

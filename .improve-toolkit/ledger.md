@@ -38409,3 +38409,18 @@ roughly 80 minutes, and a full `/tmp` stops every round (r771–r772). **Flagged
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r784 — 2026-09-15T03:26Z — no merges for 32 min; board and queue unchanged; `/tmp` steady at 52%
+
+**Board** (03:26:21Z; sweep and queuepos exited 0): #6851, #6854 and #6855 are `ready-to-merge`, CI green, boards on
+head; QUEUED at 12, 24 and 10 of 41 (positions unchanged since r781; queue depth up from 38). #5950 is Chris's. No
+merges since #6834 (02:54:04Z), and main is still `947f6432b`, so r781's simulations stand. Nothing to fix, contest or
+drive; step 5 shut.
+
+**`/tmp` is steady at 52% (33G)**, the same as at r783, so the other session's growth has paused for now.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
