@@ -53,6 +53,8 @@ of Wedhorn's chain of rational subsets (Remark 7.55) and the way flatness reache
   `TauCeti.Huber.PairOfDefinition.laurentInvQuotientRingEquiv_quotientMk_weightedX` and
   `TauCeti.Huber.PairOfDefinition.laurentInvQuotientRingEquiv_symm_toCompletionLoc`: the
   identification on constants and on `X`, and its inverse on `A`.
+* `TauCeti.Huber.PairOfDefinition.laurentInvQuotientRingEquiv_algebraMap`: the identification is
+  compatible with the structure maps from `A`.
 * `TauCeti.Huber.PairOfDefinition.continuous_laurentInvQuotientRingEquiv` and its `symm` form: the
   identification is one of topological rings.
 
@@ -236,8 +238,10 @@ when `A` is a separated strongly noetherian Tate ring, by `TauCeti.Huber.isClose
 
 Compute with it through `laurentInvQuotientRingEquiv_quotientMk_weightedC`,
 `laurentInvQuotientRingEquiv_quotientMk_weightedX` and
-`laurentInvQuotientRingEquiv_symm_toCompletionLoc`; `continuous_laurentInvQuotientRingEquiv` and
-`continuous_laurentInvQuotientRingEquiv_symm` make it an isomorphism of topological rings.
+`laurentInvQuotientRingEquiv_symm_toCompletionLoc`, or through
+`laurentInvQuotientRingEquiv_algebraMap` for the `A`-algebra structure of the quotient;
+`continuous_laurentInvQuotientRingEquiv` and `continuous_laurentInvQuotientRingEquiv_symm` make it
+an isomorphism of topological rings.
 
 Compare `TauCeti.Huber.PairOfDefinition.laurentQuotientRingEquiv`, the identification of the
 quotient by `(t/s - X)`, which adjoins a numerator at a fixed denominator; this one inverts `f`. -/
@@ -261,6 +265,18 @@ theorem laurentInvQuotientRingEquiv_quotientMk_weightedC (a : A) :
         (Ideal.Quotient.mk _ (weightedC _ isWeightFamily_one_weight a)) =
       toCompletionLoc P {1} f S h1 a :=
   (exists_ringEquiv_laurentInvQuotient P f S h1 hcl).choose_spec.1 a
+
+/-- **The identification is compatible with the structure maps from `A`**: it sends the image of
+`a` under `algebraMap A (A⟨X⟩ ⧸ (1 - f X))` to the image of `a` in `A⟨{1}/f⟩`. This is
+`laurentInvQuotientRingEquiv_quotientMk_weightedC` stated through the `A`-algebra structure of the
+quotient, which is the form that composes with `algebraMap`, for instance under `RingHom.ext`. -/
+@[simp]
+theorem laurentInvQuotientRingEquiv_algebraMap (a : A) :
+    letI := locUniformSpace P {1} f S h1
+    letI := isUniformAddGroup_locUniformSpace P {1} f S h1
+    letI := isTopologicalRing_locUniformSpace P {1} f S h1
+    laurentInvQuotientRingEquiv P f S h1 hcl (algebraMap A _ a) = toCompletionLoc P {1} f S h1 a :=
+  laurentInvQuotientRingEquiv_quotientMk_weightedC P f S h1 hcl a
 
 /-- **The identification sends `X` to `1/f`**: the class of the variable (its index `i : Fin 1` is
 necessarily `0`) goes to the image in `A⟨{1}/f⟩` of `IsLocalization.Away.invSelf f`, which is the

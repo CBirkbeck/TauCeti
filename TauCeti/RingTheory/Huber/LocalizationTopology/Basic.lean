@@ -77,7 +77,12 @@ no AINTLIB analogue at all** — commit `37bbdaeb9` carries no transfer of `D`-m
 neighbourhood filtration along a comparison map, no combination of the denominator hypothesis for
 a product denominator, and no π-adic characterisation of the filtration: its `locNhd` API states
 no principal-ideal-of-definition hypothesis at all. They are new work for the
-nested-presentation comparison of Wedhorn §8.2. The main changes
+nested-presentation comparison of Wedhorn §8.2. `locSubring_insert_eq_of_divBy_mem` and
+`HasDenominatorPower.exists_unit_divBy_mem_locSubring` are later additions with no AINTLIB
+analogue either: commit `37bbdaeb9` has no lemma adjoining a numerator whose fraction already lies
+in `D`, and none producing a unit `u` with `u/s` in `D` over a Tate ring. They are new work for the
+structure-map case of Wedhorn's Proposition 8.30,
+`TauCeti.Huber.PairOfDefinition.flat_toCompletionLoc`. The main changes
 are: adapted `PairOfDefinition` field names to TauCeti conventions (`A₀`→`ringOfDefinition`,
 `I`→`ideal`, etc.); uses characteristic lemmas instead of destructuring definitions; removed
 unused hypotheses to satisfy `#lint` checks; stated over an arbitrary localisation `S` away from

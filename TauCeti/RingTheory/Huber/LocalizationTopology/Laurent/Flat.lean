@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.Inverse
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.Presentation
 public import TauCeti.RingTheory.Huber.Restricted.Laurent
 public import TauCeti.RingTheory.Huber.StronglyNoetherian
@@ -12,7 +13,6 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.Completion.RingHom
 
 import TauCeti.RingTheory.Huber.ClosedSubmodule
 import TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.StronglyNoetherian
-import TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.Inverse
 import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.PairOfDefinition
 
 /-!
@@ -51,6 +51,8 @@ in: `s` topologically nilpotent over a strongly noetherian base.
 * `TauCeti.Huber.PairOfDefinition.flat_quotient_laurentRelationIdeal_of_isStronglyNoetherian` :
   flatness for a topologically nilpotent denominator over a strongly noetherian base, the form in
   which the hypotheses are met in practice.
+* `TauCeti.Huber.flat_quotient_laurentInvRelationIdeal` : **Lemma 8.31(2) in the weighted
+  presentation** — `A⟨X⟩ ⧸ (1 - f X)` is a flat `A`-module over a complete noetherian Tate ring.
 * `TauCeti.Huber.PairOfDefinition.flat_restrictionRingHomOfSubset` : **Proposition 8.30's
   elementary case** — the restriction map `A⟨T/s⟩ → A⟨T'/s⟩` is flat when `T'` adds the single
   numerator `t`, its analytic hypotheses being asked only for `t ∉ T`; the
@@ -642,21 +644,25 @@ theorem flat_restrictionRingHomOfSubset_of_span_eq_top [IsHuberRing A]
 
 end PairOfDefinition
 
-namespace PairOfDefinition
+section LaurentInv
 
-section StructureMap
+variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [CompleteSpace A]
+  [(𝓤 A).IsCountablyGenerated] [T0Space A] [NonarchimedeanRing A] [IsTateRing A]
+  [IsNoetherianRing A]
 
-variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [IsTopologicalRing A]
-  [CompleteSpace A] [T0Space A] [IsTateRing A] [IsStronglyNoetherian A]
+/-- **Lemma 8.31(2) in the weighted presentation**: over a complete noetherian Tate ring `A`, the
+quotient `A⟨X⟩ ⧸ (1 - f X)` by `TauCeti.Huber.laurentInvRelationIdeal f` is a flat `A`-module.
+Here `A⟨X⟩` is the weighted restricted series ring with weight `{1}`, the presentation in which
+`TauCeti.Huber.PairOfDefinition.laurentInvQuotientRingEquiv` identifies the quotient with
+`A⟨{1}/f⟩`. The hypotheses are those of
+`TauCeti.Huber.flat_quotient_one_sub_algebraMap_mul_restrictedX`, the same statement for the
+restricted power series ring.
 
--- Lemma 8.31(2) for `1 - f X`, carried to `A⟨X⟩` presented as the weighted restricted series ring.
-private theorem flat_quotient_laurentInvRelationIdeal (f : A) : Module.Flat A
+Compare `TauCeti.Huber.PairOfDefinition.flat_quotient_laurentRelationIdeal`, the flatness over
+`A⟨T/s⟩` of the quotient by `(t/s - X)`. -/
+theorem flat_quotient_laurentInvRelationIdeal (f : A) : Module.Flat A
     (weightedRestrictedSubring (fun _ : Fin 1 ↦ ({1} : Set A)) isWeightFamily_one_weight ⧸
       laurentInvRelationIdeal f) := by
-  have _ : (𝓤 A).IsCountablyGenerated := IsUniformAddGroup.uniformity_countably_generated
-  -- `A` is noetherian: completeness is asked for the right uniformity, which is the ambient one
-  have _ : IsNoetherianRing A :=
-    isNoetherianRing_of_isStronglyNoetherian <| by rwa [IsUniformAddGroup.rightUniformSpace_eq]
   -- the comparison of the two rings, as an equivalence of `A`-algebras
   let e := AlgEquiv.ofRingEquiv (f := RingEquiv.subringCongr
     (weightedRestrictedSubring_one_weight (k := 1) (A := A))) subringCongr_one_weight_weightedC
@@ -666,6 +672,15 @@ private theorem flat_quotient_laurentInvRelationIdeal (f : A) : Module.Flat A
     simp [e, laurentInvRelationIdeal_def, Ideal.map_span]
   exact (Module.Flat.equiv_iff (Ideal.quotientEquivAlg _ _ e hmap).toLinearEquiv).2
     (flat_quotient_one_sub_algebraMap_mul_restrictedX A f)
+
+end LaurentInv
+
+namespace PairOfDefinition
+
+section StructureMap
+
+variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [IsTopologicalRing A]
+  [CompleteSpace A] [T0Space A] [IsTateRing A] [IsStronglyNoetherian A]
 
 -- `A → A⟨{1}/f⟩` is flat: it is the structure map of `A⟨X⟩ ⧸ (1 - f X)` followed by the
 -- identification of that quotient with `A⟨{1}/f⟩`.
@@ -685,9 +700,13 @@ private theorem flat_toCompletionLoc_singleton_one (P : PairOfDefinition A) (f :
     IsUniformAddGroup.uniformity_countably_generated
   have hcl := isClosed_of_isNoetherian (laurentInvRelationIdeal f)
   have hcomp : (laurentInvQuotientRingEquiv P f S h1 hcl).toRingHom.comp (algebraMap A _) =
-      toCompletionLoc P {1} f S h1 := by
-    ext a
-    simp [← Ideal.Quotient.mk_algebraMap, RingHom.algebraMap_toAlgebra]
+      toCompletionLoc P {1} f S h1 :=
+    RingHom.ext <| laurentInvQuotientRingEquiv_algebraMap P f S h1 hcl
+  -- `A` is a complete noetherian Tate ring, as Lemma 8.31(2) asks; it is noetherian because
+  -- completeness is asked for the right uniformity, which is the ambient one
+  have _ : (𝓤 A).IsCountablyGenerated := IsUniformAddGroup.uniformity_countably_generated
+  have _ : IsNoetherianRing A :=
+    isNoetherianRing_of_isStronglyNoetherian <| by rwa [IsUniformAddGroup.rightUniformSpace_eq]
   exact hcomp ▸ (RingHom.flat_algebraMap_iff.mpr (flat_quotient_laurentInvRelationIdeal f)).comp
     (.of_bijective (laurentInvQuotientRingEquiv P f S h1 hcl).bijective)
 
@@ -722,11 +741,15 @@ private theorem flat_toCompletionLoc_of_locSubring_eq_of_one_mem (P : PairOfDefi
     letI := isUniformAddGroup_locUniformSpace P T s S hden
     letI := isTopologicalRing_locUniformSpace P T s S hden
     (toCompletionLoc P T s S hden).Flat := by
-  -- the two uniformities and the two structure maps agree, which is what `convert` needs to match
-  -- the flatness statement for `(U, f)` against the one for `(T, s)`
-  have := (locUniformSpace_congr P T U s f S hden hdenU h).symm
-  have := (toCompletionLoc_heq P T U s f S hden hdenU h).symm
-  convert flat_toCompletionLoc_of_one_mem P hU f S hdenU using 2
+  -- the two presentations have the same uniformity, and their structure maps agree across it, so
+  -- flatness carries over from `(U, f)` to `(T, s)`
+  exact ringHom_flat_of_heq_of_uniformSpace_eq (locUniformSpace_congr P T U s f S hden hdenU h)
+    (isUniformAddGroup_locUniformSpace P T s S hden)
+    (isUniformAddGroup_locUniformSpace P U f S hdenU)
+    (isTopologicalRing_locUniformSpace P T s S hden)
+    (isTopologicalRing_locUniformSpace P U f S hdenU) _ _
+    (toCompletionLoc_heq P T U s f S hden hdenU h)
+    (flat_toCompletionLoc_of_one_mem P hU f S hdenU)
 
 /-- **The structure map `A → A⟨T/s⟩` is flat** for every presentation `(T, s)` of a complete
 separated strongly noetherian Tate ring: Wedhorn's Proposition 8.30 for the restriction from all of
