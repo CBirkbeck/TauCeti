@@ -38424,3 +38424,33 @@ drive; step 5 shut.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r785 — 2026-09-15T03:37Z — main moved (#6821, additive); all three re-simulated clean; queue 9/11/23
+
+**Board** (03:36:21Z; sweep and queuepos exited 0; `/tmp` steady at 52%): #6851, #6854 and #6855 are `ready-to-merge`,
+CI green, boards on head; QUEUED at 11, 23 and 9 of 40. #5950 is Chris's. Nothing to fix, contest or drive; step 5 shut.
+
+**Main moved:** #6821 (the mixture bound for the Wasserstein distance; base `main`) merged at 03:36:16Z: `947f6432b` →
+**`f06b70926`**. It adds `MeasureTheory/OptimalTransport/Cost/Mixture.lean` (+115), `Coupling.lean` (+22) and
+`Wasserstein/Mixture.lean` (+82). The firing control read 0 removed lines, 219 added and 10 added declaration headers.
+Nothing was removed, restated or renamed, and main's new lines name nothing my PRs remove, `contractable_of_exchangeable`
+included. All three PRs merge clean, and main touched none of their files.
+
+**A false positive, checked.** The declaration-level grep (r780's trap) flagged #6851 for `ext` and `map`, short names
+that `Coupling.lean` also declares. Reading the lines: #6851's hits are `ContinuousLinearMap.ext` and the word "map" in a
+docstring ("Christoffel map"). #6821 adds no `…ext` or `…map` declaration and removed no lines, so no existing signature
+changed. Short names false-match, so read a hit before trusting it.
+
+**Merge-group simulation** against `f06b70926`:
+
+```
+#6851  25 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts  stalequal: exit 0 (--deleted Existence.lean)
+#6854  23 behind  merges clean  ghostref: 0 removed (removes nothing)     stalequal: exit 0
+#6855  23 behind  merges clean  ghostref: 1 removed, 1 chased, 0 ghosts   stalequal: exit 0
+```
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
