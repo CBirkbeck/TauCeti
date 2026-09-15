@@ -72,6 +72,10 @@ CTX = ["assumption", "simp_all", "omega", "tauto", "aesop", "linarith", "nlinari
        # : P = Q := by cases P; cases Q; congr` compiles ONLY because `congr` consumes `h`.
        # `convert` runs `congr!` and does the same.
        "congr", "convert",
+       # `split_ifs` closes the branch whose condition contradicts a context hypothesis:
+       # `descendIndexGL_smul_infty_of_eq_zero (hc : ... = 0) := by rw [...]; split_ifs; rfl`
+       # compiles only because `split_ifs` uses `hc` to kill the `≠ 0` branch (r843 false positive).
+       "split_ifs",
        "polyrith", "decide", "field_simp", "fun_prop", "measurability", "continuity",
        "solve_by_elim", "exact?", "apply?", "hint", "trivial", "order", "bound",
        "gcongr", "positivity", "norm_num", "cfc_tac", "finiteness", "contextual",

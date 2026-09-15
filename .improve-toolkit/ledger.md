@@ -39936,3 +39936,34 @@ that is next round's check.
 **Next:** kind 3, then kind 1, while fewer than 3 PRs are in progress.
 
 No toolkit edits.
+
+---
+
+## r844 — 2026-09-15T15:26Z — kind 3 opened as draft #6899 (chafaiRescaling_coe_of_nonneg); unusedscan learns split_ifs
+
+**Kind 3 (hypothesis weakening): `chafaiRescaling_coe_of_pos` → `chafaiRescaling_coe_of_nonneg`.**
+
+* **Source.** r843's `strictscan` over `f29016218` flagged it: PUBLIC, `ht : 0 < t` used once, as `ht.le`. The identity
+  also holds at `t = 0` (`Real.toNNReal 0 = 0` and `x / 0 = 0`), and it fails for `t < 0` once `n ≥ 2`. So `0 ≤ t` is
+  the right hypothesis, and the name, which advertises the hypothesis, becomes `_of_nonneg`. #5784 weakened four
+  private lemmas of this class, one of them in this file, but not this public one.
+* **Call sites.** All five are in `Bernstein/Measures.lean`, and each now passes `.le`: two `rw [… ht.le]`, one term
+  (`htpos.le`) and two `rw [← …]` (`ht.1.le`, `ht_pos.le`). No simp set names the lemma, and it stays `@[simp]`.
+* **Open PRs.** Neither open PR touching the `CompletelyMonotone` or `Semigroups` files (#6713, #6836) adds a use of the
+  old name.
+* **Gate** `prepush.sh origin/main`: **12 ok / 0 failed / 0 UNRUN**.
+* **Opened #6899** (draft, 15:25:26Z). Head `CBirkbeck:improve/chafai-rescaling-nonneg@f450e0dcc`, base `main`,
+  branched from `2115c5e9b`: 1 file, +8/−8. The body carries `Roadmap: none`, as #3054 and #5784 did for this file.
+
+**Candidates rejected or deferred.** `unusedscan`'s only hit, `descendIndexGL_smul_infty_of_eq_zero (hc : … = 0)`, is a
+false positive. Its proof, `rw [descendIndexGL_smul_infty]; split_ifs; rfl`, needs `hc` for `split_ifs` to discharge
+the `≠ 0` branch, and the statement is false without it. `StronglyContinuousSemigroup.norm_resolvent_integrand_le`
+(1 caller) and `one_sub_conj_mul_ne_zero_of_norm_lt_one` (16 sites in 7 files) stay as later candidates.
+
+**Toolkit edit.** `tools/unusedscan.py` now lists `split_ifs` among its context-consuming tactics, with the r843 case as
+the comment. The rescan on `f29016218` disqualified 15771 theorems (was 15617) and found **0 hits** (was 1).
+`tools/controls.sh`: **166 passed, 0 failed**.
+
+**#6896.** Its first `sandboxed-build` has been running since 15:17:12Z; `label` and `zulip-pr` succeeded.
+
+**Next:** kind 1 (Mathlib catch-up), as the third PR in progress.
