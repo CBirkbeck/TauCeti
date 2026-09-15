@@ -54,12 +54,12 @@ irreducibility conditions would have to be re-derived from it at each use. Some 
 kind is unavoidable there: `[M : K] = φ m` fails outright when `K` already contains a primitive
 `m`-th root of unity. The ramification statement needs none, and carries none.
 
-`finrank_eq_totient` asks only the base `K` to be a number field: a cyclotomic extension of a
-number field is again one, by `IsCyclotomicExtension.numberField`, so demanding `[NumberField M]`
-there would be an avoidable hypothesis. `prime_dvd_natAbs_discr` cannot make that economy, because
-its statement names `discr M`, which does not elaborate without the instance; it therefore takes
-`[NumberField M]`, and a caller holding only `[NumberField K]` supplies it exactly as
-`finrank_eq_totient` does internally.
+`finrank_eq_totient` asks only the base `K` to be a number field: `M` is finite over `K` by
+`IsCyclotomicExtension.finiteDimensional`, hence a number field on its own, so demanding
+`[NumberField M]` there would be an avoidable hypothesis. `prime_dvd_natAbs_discr` cannot make
+that economy, because its statement names `discr M`, which does not elaborate without the
+instance; it therefore takes `[NumberField M]`, which a caller holding only `[NumberField K]`
+supplies from `IsCyclotomicExtension.numberField {m} K M`.
 
 Adapted from the Birkbeck–Brasca Chebotarev density project.
 -/
@@ -83,25 +83,28 @@ theorem prime_dvd_of_dvd_natAbs_discr (E : Type*) [Field E] [NumberField E] (m :
 
 end Rat
 
--- **The linear-disjointness setup** behind the degree identity. Inside `M` sit `K₁ = ℚ(ζ)` and
--- `K₂`, the image of `K`; they have coprime discriminants, so they are linearly disjoint, and
--- they generate `M`.
---
--- Stated as an existential rather than as a definition because its only role is to be
--- destructured by `finrank_eq_totient`: nothing downstream needs to name `K₁` or `K₂`, and
--- packaging them as data would expose a choice of primitive root that the consumer does not make.
-private theorem exists_adjoin_linearDisjoint (K M : Type*) [Field K] [NumberField K] [Field M]
-    [NumberField M] [Algebra K M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} K M]
+/-- **The cyclotomic degree over a number field base.** If `M / K` is an `m`-th cyclotomic
+extension with `K` a number field and `m` coprime to `discr K`, then `[M : K] = φ m`.
+
+Coprimality to `discr K` stands in for irreducibility of `Φ_m` over `K`, and is the hypothesis
+an arithmetic caller can arrange directly. Only the base `K` need be a number field. -/
+theorem finrank_eq_totient (K M : Type*) [Field K] [NumberField K] [Field M]
+    [Algebra K M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} K M]
     (hcop : ((NumberField.discr K).natAbs).Coprime m) :
-    ∃ K₁ K₂ : IntermediateField ℚ M, IsCyclotomicExtension {m} ℚ K₁ ∧ K₁ ⊔ K₂ = ⊤ ∧
-      K₁.LinearDisjoint K₂ ∧ Module.finrank K M = Module.finrank K₂ M := by
+    Module.finrank K M = m.totient := by
+  -- `M` is a number field rather than assumed one: a cyclotomic extension of a number field is
+  -- finite over it, and a finite extension of a number field is again a number field.
+  have : FiniteDimensional K M := IsCyclotomicExtension.finiteDimensional (S := {m}) (K := K) M
+  have : NumberField M := NumberField.of_module_finite (K := K) (L := M)
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot (S := {m}) K M
     (Set.mem_singleton m) (NeZero.ne m)
   set K₁ : IntermediateField ℚ M := IntermediateField.adjoin ℚ {ζ}
   set K₂ : IntermediateField ℚ M := (IsScalarTower.toAlgHom ℚ K M).fieldRange
-  have hcyc : IsCyclotomicExtension {m} ℚ K₁ :=
+  have : IsCyclotomicExtension {m} ℚ K₁ :=
     hζ.intermediateField_adjoin_isCyclotomicExtension (K := ℚ)
   have : IsGalois ℚ K₁ := IsCyclotomicExtension.isGalois (S := {m}) (K := ℚ) (L := K₁)
+  have hfinK₁ : Module.finrank ℚ K₁ = m.totient :=
+    IsCyclotomicExtension.finrank K₁ (Polynomial.cyclotomic.irreducible_rat (NeZero.pos m))
   have hsup : K₁ ⊔ K₂ = ⊤ :=
     TauCeti.IntermediateField.adjoin_sup_fieldRange_eq_top ℚ K M
       (IsCyclotomicExtension.adjoin_primitive_root_eq_top (n := m) hζ)
@@ -120,30 +123,14 @@ private theorem exists_adjoin_linearDisjoint (K M : Type*) [Field K] [NumberFiel
     exact hp.one_lt.ne' (Nat.dvd_one.mp hpgcd)
   have hld : K₁.LinearDisjoint K₂ :=
     NumberField.linearDisjoint_of_isGalois_isCoprime_discr (L := M) K₁ K₂ hcoprime
+  have hfr : Module.finrank K₂ M = Module.finrank ℚ K₁ := hld.finrank_right_eq_finrank hsup
   have hrelabel : Module.finrank K M = Module.finrank K₂ M := by
     refine Algebra.finrank_eq_of_equiv_equiv eK₂ (RingEquiv.refl M) ?_
     ext x
     -- `eK₂` is the embedding `K → M` with its range restricted, so coercing back to `M` returns
     -- that embedding: `RingHom.rangeRestrictFieldEquiv_apply_coe`.
     exact RingHom.rangeRestrictFieldEquiv_apply_coe _ x
-  exact ⟨K₁, K₂, hcyc, hsup, hld, hrelabel⟩
-
-/-- **The cyclotomic degree over a number field base.** If `M / K` is an `m`-th cyclotomic
-extension with `K` a number field and `m` coprime to `discr K`, then `[M : K] = φ m`.
-
-Coprimality to `discr K` stands in for irreducibility of `Φ_m` over `K`, and is the hypothesis
-an arithmetic caller can arrange directly. Only the base `K` need be a number field. -/
-theorem finrank_eq_totient (K M : Type*) [Field K] [NumberField K] [Field M]
-    [Algebra K M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} K M]
-    (hcop : ((NumberField.discr K).natAbs).Coprime m) :
-    Module.finrank K M = m.totient := by
-  -- `M` is a number field rather than assumed one: a cyclotomic extension of a number field is
-  -- again a number field.
-  have : NumberField M := IsCyclotomicExtension.numberField {m} K M
-  obtain ⟨K₁, K₂, hcyc, hsup, hld, hrelabel⟩ := exists_adjoin_linearDisjoint K M m hcop
-  have hfinK₁ : Module.finrank ℚ K₁ = m.totient :=
-    IsCyclotomicExtension.finrank K₁ (Polynomial.cyclotomic.irreducible_rat (NeZero.pos m))
-  rw [hrelabel, hld.finrank_right_eq_finrank hsup, hfinK₁]
+  rw [hrelabel, hfr, hfinK₁]
 
 open NumberField Polynomial in
 /-- **The level lies in the different ideal.** For `M / K` an `m`-th cyclotomic extension of
@@ -189,8 +176,7 @@ For `M / K` an `m`-th cyclotomic extension of a number field, a prime dividing `
 Unlike `finrank_eq_totient`, this does carry `[NumberField M]`: the statement names `discr M`,
 which is not defined without it. It is not a real restriction — a cyclotomic extension of a
 number field is one — but it cannot be left to the proof. A caller holding only `[NumberField K]`
-gets the instance from `IsCyclotomicExtension.numberField {m} K M`, which is how
-`finrank_eq_totient` obtains it internally. -/
+gets the instance from `IsCyclotomicExtension.numberField {m} K M`. -/
 theorem prime_dvd_natAbs_discr (K M : Type*) [Field K] [NumberField K] [Field M] [NumberField M]
     [Algebra K M] (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} K M] {p : ℕ} (hp : p.Prime)
     (hpM : p ∣ (NumberField.discr M).natAbs) : p ∣ (NumberField.discr K).natAbs ∨ p ∣ m := by
