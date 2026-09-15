@@ -38919,3 +38919,19 @@ expected 83–95.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r805 — 2026-09-15T07:36Z — no change since r804: #6875's fix head and #6852's group still building; no merges
+
+**Board** (07:36:23Z; sweep exited 0, and `queuepos.py` exited 1 on its EJECTED hint; `/tmp` at 59%): the same as
+r804, 3.5 minutes earlier. #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and out of the
+queue. #6875 is `awaiting-CI` on `462ed9705b` (`sandboxed-build` since 07:31:14Z), with its board behind the head. No
+merges; main is still `d7ac608e0`. Nothing to fix, contest or drive; step 5 is shut.
+
+**Queue:** depth 1. #6852's group `400ca6f7e1` has been in `sandboxed-build` since 06:15:40Z (81 minutes). The merge
+sweep last ran at 05:18:46Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.

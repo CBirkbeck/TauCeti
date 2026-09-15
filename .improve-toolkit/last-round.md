@@ -1,4 +1,4 @@
-# Last round — r804 (2026-09-15T07:32Z)
+# Last round — r805 (2026-09-15T07:36Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -16,7 +16,7 @@ Mathlib's deck group (r798), which needs a **human merge** because it updates `w
 opening is kind 2** (a new file). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r804):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r805):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -111,7 +111,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r804 did
+## What r703–r805 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -228,6 +228,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r802: no merges; #6875 has no board yet (clock to 07:47Z); #6852's group build at 41 min of an expected 83–95.
 * r803: #6875's first board went 7/10 (changes requested: naming, placement, documentation). I fixed all three in `462ed9705` (24 declarations into `deck`, one import dropped, 33 docstrings trimmed), pushed it, and updated the body; no merges.
 * r804: #6875's fix head is building (its board is behind, so nothing to re-fix); #6852's group build at 77 min; no merges.
+* r805: no change 3.5 min after r804; #6852's group build at 81 min.
 
 ## Candidates for a later step 5
 
