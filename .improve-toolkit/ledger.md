@@ -39674,3 +39674,35 @@ step 5 is shut.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r836 — 2026-09-15T13:56Z — main moved (#6732, the quaternion symbol (a, -a)); all three PRs re-simulated clean; no change on my PRs
+
+**Board** (13:56:25Z; a real call read 4938 REST calls left, 62 used; sweep exited 0, and `queuepos.py` exited 1 on its
+EJECTED hint; `/tmp` at 55%): #6851 and #6854 are `ready-to-merge`, with CI green and boards on head, and still not
+queued. #6875 is `ready-to-merge` with CI green and NEVER-QUEUED, waiting for a human merge. #5950 is Chris's. Nothing
+to fix, contest or drive; step 5 is shut.
+
+**Main moved** `581339e13` → **`6f51dd839`** at 13:53:48Z with #6732 ("split the quaternion symbol (a, -a)"), which
+edits one file, `Algebra/Quaternion/Split.lean` (+156/−6). The firing control read 6 removed lines, 156 added, and 0
+removed and 12 added declaration headers. The removed lines are module-docstring prose and the section line
+`variable {R : Type*} [CommRing R] [Invertible (2 : R)]`, so the file's existing signatures could have changed. The
+declaration-level grep found none of the file's declarations in the three PRs' added lines. No declaration was removed
+or restated, and no module moved. All three PRs merge clean, main touched none of their files, its new lines name
+nothing they remove, and none of their added declarations shares a last name component with main's 12 new ones.
+
+**Merge-group simulation** against `6f51dd839`:
+
+```
+#6851  59 behind  merges clean  ghostref: 24 removed, 3 chased, 0 ghosts   stalequal: exit 0
+#6854  57 behind  merges clean  ghostref: 0 removed (removes nothing)      stalequal: exit 0
+#6875  24 behind  merges clean  ghostref: 25 removed, 24 chased, 0 ghosts  stalequal: exit 0
+```
+
+**Queue and Actions** (13:56:40Z): depth 33, none of them mine; #6704 and #6776 are AWAITING_CHECKS. 41 Actions runs
+are queued. The last merge-sweep run is still the 10:24:54Z failure.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
