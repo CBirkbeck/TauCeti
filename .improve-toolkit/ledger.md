@@ -39967,3 +39967,57 @@ the comment. The rescan on `f29016218` disqualified 15771 theorems (was 15617) a
 **#6896.** Its first `sandboxed-build` has been running since 15:17:12Z; `label` and `zulip-pr` succeeded.
 
 **Next:** kind 1 (Mathlib catch-up), as the third PR in progress.
+
+---
+
+## r845 — 2026-09-15T15:38Z — kind 1 has no target at the current pin; #6896 green and ready; kind 2 again as draft #6902
+
+**Kind 1 prospecting (Mathlib catch-up): no target.**
+
+* `mlcatchup.py` on `f29016218`, with the pin still `30a58f795a`, finds the same 13 `TauCeti.R` / Mathlib `R` name
+  collisions as at 05:52. Each one is a TauCeti **generalisation**, not a duplicate:
+  * `ContMDiff{,At,WithinAt}.subtypeVal_comp_iff` hold at every regularity `n`; Mathlib's are for `∞` only.
+  * `monic_descPochhammer` drops `[Nontrivial R] [NoZeroDivisors R]`, and `descPochhammer_natDegree` drops
+    `[NoZeroDivisors R]`.
+  * `hasFDerivAt_exp`, `hasStrictFDerivAt_exp` and `fderiv_exp` hold in noncommutative Banach algebras; Mathlib's are
+    for commutative ones.
+  * `IsIntegralClosure.isDedekindDomain`, `integralClosure.isDedekindDomain(_fractionRing)` and the two
+    `isNoetherianRing` lemmas drop separability, via Krull–Akizuki.
+* The "Mathlib has no X" notes still hold against pinned Mathlib. All of these are still absent there:
+  `Submodule.mem_submoduleOf`, `Bialgebra.unitBialgHom_apply`, `CommBialgCat.of_comul` / `of_counit`,
+  `CommHopfAlgCat.of_comul`, a Kronecker symbol, a dihedral rotation subgroup, and finiteness of Weierstrass points.
+* A wider match found only one pair, and it is unrelated (`IsCoupling.isProbabilityMeasure` against
+  `Measure.dirac.isProbabilityMeasure`). It compared TauCeti declarations with the 8523 Mathlib declarations added since
+  TauCeti's 2026-08-15 pin, requiring a last name component of at least 14 characters and a shared namespace.
+* So kind 1 stays due until the next Mathlib bump. Side finding for kind 3: `Vandermonde.lean`'s private
+  `monic_descPochhammer'` and `descPochhammer_natDegree'` duplicate TauCeti's own more general versions.
+
+**#6896.** `sandboxed-build` succeeded at 15:34:55Z. Before it was marked ready: merge-tree against `591746fa6` is clean;
+main's two commits since `2115c5e9b` change the count of none of the four old names (`git log -S`); and none of them
+appears on main outside #6896's three files. **Marked ready at ~15:38Z.** The board clock runs from
+`max(15:34:55Z, 15:38Z)`, so step 4 may drive only after 16:38Z if no board has appeared.
+
+**Kind 2 again: `Analysis/Complex/Conformal/PseudoHyperbolic.lean`**, since the rotation's kind 1 has no target.
+
+* **Selection.** It comes from r843's scan, where it carries a PUBLIC `strictscan` hit. No open PR touches it, including
+  those opened since 15:00.
+* **`/cleanup` build-free phases.** The file was read in full (326 lines, module dialect). A.1–A.6 are clean; A.7 found
+  five `=>` lambdas. The module docstring carries roadmap-layer narrative ("L2", "Schwarz--Pick layer") and
+  upstream-coordination narrative (mathlib4#33505, "temporary shim"), which the pinned documentation rubric names as out
+  of place. The golf findings are `by rfl`, `by exact`, `rw …; exact` on one line, and a positivity fact re-derived
+  twice although the file already proves it as `one_sub_sq_norm_pos_of_norm_lt_one`.
+* **`/mathlibable`.** Pinned Mathlib has no pseudo-hyperbolic API, so there is nothing to catch up on. The `strictscan`
+  hit is **not** taken: `one_sub_conj_mul_ne_zero_of_norm_lt_one` uses `hw` only through `.le`, but weakening it would
+  rename a lemma with 16 call sites in 7 files and introduce an asymmetric hypothesis no caller needs. It stays under
+  Candidates.
+* **gpt-6-astra** reviewed all six edits as source and found each safe: term `rfl` through a same-module `noncomputable
+  def`; `by exact` → term; `rwa`; the double `rw [Complex.normSq_eq_norm_sq, …]`, which leaves `hpos`'s declared type
+  unchanged for the later `nlinarith`; `=>` → `↦`; and the docstring wording.
+* **Gate** `prepush.sh origin/main`: **12 ok / 0 failed / 0 UNRUN**.
+* **Opened #6902** (draft, 15:38:20Z). Head `CBirkbeck:improve/pseudohyperbolic-cleanup@91e7bc1a2`, base `main`, branched
+  from `591746fa6`: 1 file, +18/−30. The body carries `Roadmap: ConformalMapping`, as #4576 and #1835 on this file did.
+
+**The cap is now full:** #6896 (`awaiting-review`), #6899 (draft, first build running since 15:25:46Z) and #6902
+(draft). Step 5 is shut until one of them turns `ready-to-merge`.
+
+No toolkit edits.

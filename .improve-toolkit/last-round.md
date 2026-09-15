@@ -1,4 +1,4 @@
-# Last round — r844 (2026-09-15T15:26Z)
+# Last round — r845 (2026-09-15T15:38Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -12,13 +12,14 @@ The PRs this role opens now **alternate between three kinds, in order 1 → 2 �
 
 **Second cycle, kind 1 open:** kind 3 **#6855 merged** (05:43:53Z, r798). Kind 1 **#6851** and kind 2 **#6854** are 10/10
 but were flushed from the queue for the bot's Mathlib bump (r798). The freed slot went to kind 1 again: **#6875** (ready since r801),
-Mathlib's deck group (r798), which needs a **human merge** because it updates `web/examples/Examples.lean`. Kind 2 opened as draft **#6896** (r843: non-strict convex-subgroup exclusion lemmas) and kind 3 as draft **#6899**
-(r844: `chafaiRescaling_coe_of_nonneg`). **The next
-opening is kind 1**, then kind 2. Record each PR's kind in the ledger. **Step 5's cap counts only PRs still in progress** (user directive, 2026-09-15 ~15:00Z): drafts and
+Mathlib's deck group (r798), which needs a **human merge** because it updates `web/examples/Examples.lean`. Kind 2 opened as **#6896** (r843: non-strict convex-subgroup exclusion lemmas) and kind 3 as draft **#6899**
+(r844: `chafaiRescaling_coe_of_nonneg`). Kind 1 was due at r845 but has **no target at pin `30a58f795a`**, so kind 2
+went again: draft **#6902** (PseudoHyperbolic cleanup). **The next
+opening is kind 1** once a Mathlib bump opens a catch-up window; until then, kind 3 (the `Vandermonde.lean` dedup). Record each PR's kind in the ledger. **Step 5's cap counts only PRs still in progress** (user directive, 2026-09-15 ~15:00Z): drafts and
 `awaiting-review`, `awaiting-author` or `ci-failed` PRs count. `ready-to-merge` and queued PRs do not, and neither
 does #5950. Do not idle waiting for merges: open the next kind whenever fewer than 3 are in progress.
 
-**Open question to Chris (asked after r732, unanswered at r844):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r845):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -38,18 +39,20 @@ through the local codex CLI that MCP wraps:
 | **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`; **flushed** from MERGING 2/43 by the bot for #6852 (06:11:46Z, `manual`) | nobody — `merge-sweep` re-enqueues it (the bump's reservation released at 07:57:43Z); do not refresh |
 | **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`; **flushed** from 14/43 for #6852 (06:12:02Z, `manual`) | nobody — `merge-sweep` re-enqueues it (the bump's reservation released at 07:57:43Z); do not refresh |
 | **#6875** | `462ed9705b` | green (07:49:13Z) | kind 1 (Mathlib's deck group); **10/10 on the re-review** (08:54:23Z, head `462ed97`), `ready-to-merge` since ~09:28Z and NEVER-QUEUED after r803 fixed the first board's naming, placement and documentation findings; cannot auto-merge (`web/examples`) | **Chris** — merge it; until then it holds one of the three step-5 slots |
-| **#6896** | `8a6278e95` | first build (r843) | kind 2 (convex-subgroup exclusion lemmas take `≤`, renamed to `notMem`); **draft**, opened 15:17:05Z | **me** — mark ready when CI is green, then wait for its board |
+| **#6896** | `8a6278e95` | green (15:34:55Z) | kind 2 (convex-subgroup exclusion lemmas take `≤`, renamed to `notMem`); `awaiting-review`, ready ~15:38Z | **pipeline** — its board is due; step 4 may drive only after 16:38Z with no board |
 | **#6899** | `f450e0dcc` | first build (r844) | kind 3 (`chafaiRescaling_coe_of_pos` → `chafaiRescaling_coe_of_nonneg`, `0 ≤ t`); **draft**, opened 15:25:26Z | **me** — mark ready when CI is green, then wait for its board |
+| **#6902** | `91e7bc1a2` | first build (r845) | kind 2 (PseudoHyperbolic.lean cleanup: module-docstring narrative, `rfl`/term/`rwa` golfs, positivity from the file's own lemma, `↦`); **draft**, opened 15:38:20Z | **me** — mark ready when CI is green, then wait for its board |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
-**In progress: #6896 (draft, kind 2) and #6899 (draft, kind 3).** #6851, #6854 and #6875 are `ready-to-merge` and do
-not count toward the cap (r843), so step 5 fires once more, for kind 1. #6855 merged at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enqueues them, and #6875 is 10/10 and waits for a human merge (r813). Main is `fc7a5c329`.
+**In progress: #6896 (`awaiting-review`, kind 2), #6899 (draft, kind 3) and #6902 (draft, kind 2).** The cap is full,
+so step 5 is shut until one of them turns `ready-to-merge`. #6851, #6854 and #6875 are `ready-to-merge` and do not count. #6855 merged at 05:43:53Z. #6851 and #6854 stay out of the queue until the merge sweep re-enqueues them, and #6875 is 10/10 and waits for a human merge (r813). Main is `fc7a5c329`.
 
 ## What to expect next
 
-0. **r843–r844:** the cap rule changed (rotation paragraph above). #6896 (kind 2) and #6899 (kind 3) are open as drafts.
-   Open kind 1 next while fewer than 3 PRs are in progress, mark each draft ready once its CI is green, and pass
-   #6896 and #6899 to `queuepos.py` along with the others.
+0. **r843–r845:** the cap rule changed (rotation paragraph above). In progress: #6896 (ready ~15:38Z), #6899 and #6902
+   (drafts). Mark each draft ready once its CI is green, drive a board only an hour after `max(CI-green, ready)`, and
+   pass #6896, #6899 and #6902 to `queuepos.py` along with the others. When a slot frees: kind 1 if a target exists,
+   else kind 3.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
    `merge-sweep` re-enqueues a green TauCeti/-only PR afterwards (r798–r799). A `MERGING` PR's group build is the check-runs of
@@ -121,7 +124,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r844 did
+## What r703–r845 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -278,8 +281,15 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r842: no change; no merges since #6842 (main still `fc7a5c329`); queue depth 35, none mine.
 * r843: user directive — `ready-to-merge` and queued PRs no longer count toward the cap. Kind 2 pass on `ConvexSubgroup.lean` opened as draft **#6896** (non-strict exclusion lemmas; gate 12/0/0).
 * r844: kind 3 opened as draft **#6899** (`chafaiRescaling_coe_of_pos` → `chafaiRescaling_coe_of_nonneg`; gate 12/0/0). `unusedscan.py` now treats `split_ifs` as context-consuming (controls 166/0).
+* r845: kind 1 found no target at pin `30a58f795a` (the 13 name collisions are TauCeti generalisations; the checked "Mathlib has no X" notes hold). #6896 green and marked ready. Kind 2 again as draft **#6902** (PseudoHyperbolic cleanup; gate 12/0/0; gpt-6-astra reviewed the edits).
 
 ## Candidates for a later step 5
+
+**Kind 3, ready (r845):** `LinearAlgebra/Vandermonde.lean` keeps private `monic_descPochhammer'` and
+`descPochhammer_natDegree'` (over a `CommRing`). They duplicate the public, more general `TauCeti.monic_descPochhammer`
+and `TauCeti.descPochhammer_natDegree` in `RingTheory/Polynomial/Pochhammer.lean`, which `Vandermonde.lean` does not
+import yet. **Kind 1 is dry at pin `30a58f795a`** (r845): re-run `mlcatchup.py` (session scratchpad) after the next
+Mathlib bump.
 
 **r843 leftovers from the `ConvexSubgroup.lean` pass** (not bundled into #6896, one topic per PR; wait for #6896 to
 merge before touching the file again): `mem_of_mabs_le_mabs` and `mem_closure_singleton` rebuild `|h|ₘ ∈ H` by cases
