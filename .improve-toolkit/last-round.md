@@ -1,4 +1,4 @@
-# Last round — r858 (2026-09-15T19:18Z)
+# Last round — r859 (2026-09-15T19:19Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -133,7 +133,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r858 did
+## What r703–r859 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -304,6 +304,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r856: #6902's fix went green (18:32:05Z). #6915 went green and was marked ready (18:37:18Z). #6910 had no board after its hour, so its review was driven (18:37:56Z). No merges.
 * r857: #6910's driven review approved all 10 rubrics (18:41:05Z, $0.87), and it queued (54/55). Main moved twice, to `871fb6d9f` (#6623, #6707) and `6f93392bd` (#6714), both times additively, and every PR re-simulated clean. The freed slot went to kind 2 again (kind 1 still dry): draft **#6923**, a style pass on `Winding/Number/Segment/Jump.lean` (gpt-6-astra reviewed; gate 12/0/0).
 * r858: the merge sweep fired again (19:11:04Z, the first run since 15:15:27Z) and queued #6896, #6899 and #6911. Main moved to `906b08e84` (#6673, additive), and all ten PRs plus the staged branch simulated clean. With the cap full, kind-3 research staged `improve/subcomodule-comap-dedup` (`4d33cc423`, local only), which drops Comap.lean's duplicate private `comap_coact_mem`.
+* r859: no change 3 minutes after r858. #6902 and #6915 were not yet due for a drive, #6923 was still building, and there were no merges.
 
 ## Candidates for a later step 5
 

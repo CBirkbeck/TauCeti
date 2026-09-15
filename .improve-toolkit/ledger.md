@@ -40653,3 +40653,23 @@ removed lines are `universe uR uM` declarations. The firing control read 0 remov
   * Roadmap line: `ReductiveGroups`, as in #6598, #4470, #4396 and #4359. No open PR touches the file.
 
 No toolkit edits.
+
+---
+
+## r859 — 2026-09-15T19:17Z — no change; no drive due; no merges
+
+**Board** (19:17:33Z; a real call read 3591 REST calls left; sweep and `queuepos.py` exited 0):
+
+* #6902 (`3282c9611`): `awaiting-review` and green, with its board behind the fix. Step 4 may drive only after 19:32Z.
+* #6915 (`efbb6423d`): `awaiting-review`, no board. Step 4 may drive only after 19:37Z.
+* #6923 (`8f846c57b`, draft): `sandboxed-build` still in progress (since 19:04:07Z).
+* Queue depth 68, positions unchanged since 19:14Z: #6851 17, #6854 15, #6910 52, #6911 55, #6899 56, #6896 57. #6875 needs
+  a human merge. #5950 is Chris's.
+
+Nothing to fix, contest or drive. The cap is full (#6902, #6915, #6923), and the staged kind-3 branch
+`improve/subcomodule-comap-dedup` (`4d33cc423`) waits for a slot.
+
+**Merges and main.** No merges since #6673 (19:10:29Z). Main is still `906b08e84`, against which r858 simulated all eleven
+heads clean.
+
+No toolkit edits.
