@@ -41291,3 +41291,35 @@ outstanding. It was enqueued at 22:57:08Z and sat at 76. That left **two free sl
 **In progress now:** #6950 and #6952 — **one slot is free, and kind 3 is due.**
 
 No toolkit edits.
+
+---
+
+## r879 — 2026-09-15T23:01Z — kind 3 opened as draft #6953; #6945 and #6947 queued; no drive due; no merges
+
+**Board** (23:01:38Z; a real call read 3865 REST calls left; sweep and `queuepos.py` exited 0):
+
+* #6945 and #6947 are `ready-to-merge` and QUEUED at 75 and 76 of 76, both on the 10/10 boards of r878.
+* #6950 (`049193f7a`): `awaiting-review`, no board. Step 4 may drive only after 23:38Z.
+* #6952 (`ab16f0543`, draft): first `sandboxed-build` in progress.
+* Queue: #6910 31, #6911 34, #6899 35, #6896 36, #6902 51, #6923 55, #6933 62, #6941 67, #6915 68. #6875 needs a human merge.
+  #5950 is Chris's.
+
+**Merges and main.** No merges since #6845 and #6841 (22:55:12Z). Main is still `e0103897b`, against which r878 simulated all
+fourteen open heads clean.
+
+**Step 5: kind 3 opened as draft #6953.** One slot was free, and kind 3 was due.
+
+* **Target:** `Equation.evalEval_polynomialX_smul_add_evalEval_polynomialY_smul_eq_zero` in
+  `AlgebraicGeometry/EllipticCurve/Affine/Formula/Derivation.lean`. `deadhave` flagged its `have h3`; reading the proof showed
+  `h2` is dead for the same reason, since the one `simp only` set lists neither and `linear_combination (norm := module) h0`
+  reads only `h0`. No open PR touches the file (207 read), and its module docstring carries no roadmap narrative.
+* **Control.** A per-theorem count over the whole file after the edit: `derivation_evalEval_polynomialX` declares and uses `h2`
+  and `h3` once each, and `derivation_evalEval_polynomialY` declares and uses `h2` once. The deletion anchor included the
+  surrounding `h0` and `rw` lines, because the two `have` lines are textually identical to the chain-rule lemmas' copies.
+* **Gate** (on `e0103897b`): **12 ok / 0 failed / 0 UNRUN**.
+* **Opened #6953** (draft, 23:06:25Z): head `CBirkbeck:improve/weierstrass-derivation-dead-haves@e36314bd2`, −2 lines,
+  `Roadmap: EllipticCurves`, as #6301. Main was still `e0103897b`, and the live body matches the file.
+
+**In progress now:** #6950, #6952 and #6953. The cap is full. The next opening is kind 1 if a target exists, otherwise kind 2.
+
+No toolkit edits.
