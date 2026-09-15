@@ -1,4 +1,4 @@
-# Last round — r799 (2026-09-15T06:23Z)
+# Last round — r800 (2026-09-15T06:36Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -16,7 +16,7 @@ Mathlib's deck group (r798), which needs a **human merge** because it updates `w
 opening is kind 2** (a new file). Record each PR's kind in the ledger. Step 5's cap still holds (fewer than 3 open `improve/*` PRs, #5950 excluded); research for
 the due kind runs while it is shut.
 
-**Open question to Chris (asked after r732, unanswered at r799):** `/cleanup` has not run in full on any staged
+**Open question to Chris (asked after r732, unanswered at r800):** `/cleanup` has not run in full on any staged
 PR. Kind 2 had a static partial pass (report in `pending/`), kinds 1 and 3 none, because `/cleanup`'s Phase 0
 `lake build` and its diagnostics gate are forbidden here. Asked whether a local build is now allowed, and whether
 kinds 1 and 3 get a pass scoped to the declarations they change. Kind 1 (#6851) opened at r746 under the announced
@@ -35,7 +35,7 @@ through the local codex CLI that MCP wraps:
 |---|---|---|---|---|
 | **#6851** | `fdeaff5cb7` | green | kind 1; **10/10 first board** (22:35:00Z), `ready-to-merge`; **flushed** from MERGING 2/43 by the bot for #6852 (06:11:46Z, `manual`) | nobody — `merge-sweep` re-enqueues it after #6852 merges; do not refresh |
 | **#6854** | `217fecb812` | green | kind 2; **10/10** (r768 driven board, 00:49:59Z), `ready-to-merge`; **flushed** from 14/43 for #6852 (06:12:02Z, `manual`) | nobody — `merge-sweep` re-enqueues it after #6852 merges; do not refresh |
-| **#6875** | `e70f761ba4` | pending | kind 1 (Mathlib's deck group); **DRAFT**, opened r798; needs a human merge (`web/examples`) | **me** — mark ready when CI is green |
+| **#6875** | `e70f761ba4` | building (from 06:20:33Z) | kind 1 (Mathlib's deck group); **DRAFT**, opened r798; needs a human merge (`web/examples`) | **me** — mark ready when CI is green |
 | **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
 
 **Three `improve/*` PRs of mine are open (#6851, #6854, #6875) → step 5 does not fire** until one merges. #6855 merged
@@ -108,7 +108,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r799 did
+## What r703–r800 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -220,6 +220,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r797: no merges; queue unchanged (2/4/16 of 44); both top groups still in `sandboxed-build` at 05:37Z.
 * r798: #6855 merged (05:43:53Z), so step 5 fired and kind 1 opened as draft #6875 (Mathlib's deck group; human merge for `web/examples`). The bot flushed the queue for its bump #6852, so #6851 and #6854 read `EJECTED`.
 * r799: REST out until 06:24:59Z; corrected `queuepos.py`'s stale EJECTED advice (the merge sweep re-enqueues flushed green PRs; controls 166/0); #6875's first build running; #6852 still alone in the queue.
+* r800: no merges; #6875's first build and #6852's group build still running; the merge sweep has not re-run (last 05:18:46Z).
 
 ## Candidates for a later step 5
 

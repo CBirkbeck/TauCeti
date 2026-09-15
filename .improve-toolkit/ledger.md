@@ -38804,3 +38804,20 @@ describe the merge sweep and say not to refresh: act only on a PR the sweep skip
 logic changed. `controls.sh`: 166 passed, 0 failed.
 
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+---
+
+## r800 — 2026-09-15T06:36Z — no merges; #6875's first build and #6852's group build still running; #6851 and #6854 wait for the merge sweep
+
+**Board** (06:36:24Z; sweep exited 0, and `queuepos.py` printed its corrected hint; `/tmp` at 58%): #6851 and #6854 are
+`ready-to-merge`, with CI green and boards on head, and are out of the queue since the reservation flush. #6875 is a
+draft labelled `awaiting-CI`, with `sandboxed-build` running since 06:20:33Z and no board yet. #5950 is Chris's. No
+merges since #6855 (05:43:53Z); main is still `d7ac608e0`, so r798's simulations stand. Nothing to fix, contest or
+drive; step 5 is shut.
+
+**Queue:** depth 1. #6852's group `400ca6f7e1` has been in `sandboxed-build` since 06:15:40Z. The merge sweep last ran
+at 05:18:46Z.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
