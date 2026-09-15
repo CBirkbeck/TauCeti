@@ -38215,3 +38215,25 @@ they remove.
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r775 — 2026-09-15T01:57Z — no merges; board unchanged; `/tmp` filling again from the same other session (+3G in 10 min)
+
+**Board** (01:56:21Z; sweep and queuepos exited 0): #6851, #6854 and #6855 are `ready-to-merge`, CI green, boards on head;
+QUEUED at 16, 28 and 14 of 38 (positions unchanged since r774; queue depth up from 31). #5950 is Chris's. No merges
+since #6822 (01:41:21Z), and main is still `3fdb62326`, so r774's simulations stand. Nothing to fix, contest or drive;
+step 5 shut.
+
+**`/tmp` is filling again.** It was 25G used at r773 and r774 and is **28G (45%) at 01:56Z**. The growth is the same
+other session, `dc73b8c3-9a87-44c1-9968-bf494f5ab8c8`, whose scratchpad went from 24G at 01:36Z to **27G**. This session
+is still 405M. At about 3G per 10 min, the 35G left would last roughly two hours. Stopping it is not this role's job.
+**Flagged to Chris again**, since a full `/tmp` stops these rounds entirely (r771–r772).
+
+What is in that scratchpad (sizes only; no contents read): Lean worktrees, **`wt-6794` 18G**, `wt-hecke` 5.6G and
+`wt-refactor2` 3.0G, plus two 126M `aintlib` copies. Builds inside worktrees kept on the 63G tmpfs are what fill
+`/tmp`; moving them to `/` (732G free) is Chris's or that session's call.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
