@@ -156,7 +156,9 @@ private theorem windingNumber_segment_of_max_lt (hv : v ≠ 0) {r : ℝ} (hgt : 
     have h1 : HasDerivAt (fun s ↦ s - r) 1 t := (hasDerivAt_id t).sub_const r
     have h2 : HasDerivAt Real.log (t - r)⁻¹ (t - r) :=
       Real.hasDerivAt_log (hne_real' t ht)
-    simpa only [mul_one] using h2.comp t h1
+    have h3 := h2.comp t h1
+    simp only [mul_one] at h3
+    exact h3
   have h_intble_real : IntervalIntegrable (fun t ↦ (t - r)⁻¹) volume a b := by
     refine ContinuousOn.intervalIntegrable ?_
     exact ContinuousOn.inv₀ (continuousOn_id.sub continuousOn_const) hne_real'
