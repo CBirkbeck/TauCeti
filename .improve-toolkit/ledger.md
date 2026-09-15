@@ -38484,3 +38484,26 @@ declaration headers. Nothing was removed, restated or renamed, and main's new li
 The `/cleanup` question to Chris (asked after r732) is still unanswered.
 
 No toolkit edits.
+
+---
+
+## r787 — 2026-09-15T03:57Z — main moved (#6868, CI only: review approvals now carry across an unchanged patch); board unchanged
+
+**Board** (03:56:21Z; sweep and queuepos exited 0; `/tmp` at 52%): #6851, #6854 and #6855 are `ready-to-merge`, CI green,
+boards on head; QUEUED at 10, 22 and 8 of 42 (unchanged). #5950 is Chris's. Nothing to fix, contest or drive; step 5
+shut.
+
+**Main moved:** #6868 (ci: pin the review engine that carries approvals across an unchanged patch; base `main`) merged
+at 03:51:26Z: `8a6ed17ba` → **`bd11a0a35`**. It changes 3 human-owned workflow files (`auto-merge.yml`, `merge-sweep.yml`,
+`review.yml`), +6/−6, and **no Lean file**. All three of mine merge clean, and main touched none of their files. The
+merged trees differ from r786's only outside `TauCeti/`, so r786's merge-group simulations stand without a rerun.
+
+**What #6868 changes for this role.** It moves the TauCetiReview workflow pins to `603b28011`, which "carries a rubric's
+approval to a new head when the PR's own change and the rubric text are unchanged". Until now a refresh push (merging
+`main` into a PR) cost the PR its board, which is why the standing traps say never to refresh a queued PR speculatively.
+With this pin, a `main` merge that leaves the PR's own change unchanged should keep its approvals. That matters if a
+queued PR is ever ejected and needs a refresh. Verify it on the first board after such a push rather than assuming it.
+
+The `/cleanup` question to Chris (asked after r732) is still unanswered.
+
+No toolkit edits.
