@@ -46,7 +46,7 @@ variable {M S E E' F R : Type*} [Monoid M] [DecidableEq M]
 
 /-- **The convolution of two single-point families is a single-point family**, at the product of
 the points and with the bilinear map applied to the values. -/
-@[to_additive (dont_translate := S E E' F) single_addConvolution_single]
+@[to_additive (dont_translate := S E E' F) (attr := simp) single_addConvolution_single]
 theorem single_convolution_single [CommSemiring S] [AddCommMonoid E] [AddCommMonoid E']
     [AddCommMonoid F] [Module S E] [Module S E'] [Module S F] [TopologicalSpace F]
     (L : E →ₗ[S] E' →ₗ[S] F) (m n : M) (a : E) (b : E') :
@@ -61,7 +61,7 @@ theorem single_convolution_single [CommSemiring S] [AddCommMonoid E] [AddCommMon
 
 /-- **The ring convolution of two single-point families is a single-point family**, at the product
 of the points and with the product of the values. -/
-@[to_additive (dont_translate := R) single_addRingConvolution_single]
+@[to_additive (dont_translate := R) (attr := simp) single_addRingConvolution_single]
 theorem single_ringConvolution_single [NonUnitalNonAssocSemiring R] [TopologicalSpace R]
     (m n : M) (a b : R) :
     Pi.single m a ⋆ᵣ Pi.single n b = Pi.single (m * n) (a * b) := by
