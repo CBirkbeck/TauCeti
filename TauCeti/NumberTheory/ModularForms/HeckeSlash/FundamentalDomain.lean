@@ -13,8 +13,14 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 # The Hecke coset representatives tile a fundamental domain
 
 `HeckeRing.GL2.heckeSlashSum` sums `f ∣[k] aᵥ` over `v : DecompQuotient Γ₂ Γ₁ δ⁻¹`, with
-`aᵥ = rightCosetRep D v = δ τᵥ⁻¹`. Everything there lives in `GL (Fin 2) ℚ`, which does **not**
-act on `ℍ`, so the statement is made along a homomorphism `φ` into a group that does.
+`aᵥ = rightCosetRep D v = δ τᵥ⁻¹`. The double cosets live in a group that does **not** act on `ℍ`,
+so the statement is made along a homomorphism `φ` into a group that does.
+
+**The ambient group is arbitrary, and that generality is what makes the theorem applicable.** The
+intended `φ` is `TauCeti.ratPosToPSL2R`, and it is defined on the positive-determinant subgroup
+`GL(2, ℚ)⁺` rather than on all of `GL (Fin 2) ℚ` — necessarily so, since a negative-determinant
+matrix carries `ℍ` to the lower half-plane and so acts on no `MulAction _ ℍ`. Stated for
+`GL (Fin 2) ℚ` the theorem would have no `φ` to be applied to.
 
 This file shows that the images `φ aᵥ` of those representatives translate a fundamental domain
 for `φ(Γ₂)` into one for `φ(Γ₁) ⊓ φ(δ) φ(Γ₂) φ(δ)⁻¹`.
@@ -72,7 +78,7 @@ open scoped MatrixGroups ModularForm Pointwise
 
 namespace HeckeRing.GL2
 
-variable {Δ : Submonoid (GL (Fin 2) ℚ)} {Γ₁ Γ₂ : Subgroup (GL (Fin 2) ℚ)}
+variable {G : Type*} [Group G] {Δ : Submonoid G} {Γ₁ Γ₂ : Subgroup G}
   (D : HeckeCoset Δ Γ₁ Γ₂)
 
 /-- **The images of the Hecke coset representatives tile a fundamental domain.** If `S` is a
@@ -91,21 +97,21 @@ non-identity element of `φ(Γ₂)` acting trivially on `ℍ`, and `hS` could th
 positive measure — `MeasureTheory.IsFundamentalDomain` demands a.e.-disjointness over distinct
 group elements. Nothing in the statement itself forces this: `MulAction P ℍ` is arbitrary here. -/
 theorem isFundamentalDomain_iUnion_rightCosetRep_smul {P : Type*} [Group P] [MulAction P ℍ]
-    (φ : GL (Fin 2) ℚ →* P) {H : Subgroup (GL (Fin 2) ℚ)}
-    [Countable (DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹)] {S : Set ℍ} {μ : Measure ℍ}
+    (φ : G →* P) {H : Subgroup G}
+    [Countable (DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹)] {S : Set ℍ} {μ : Measure ℍ}
     (h₂ : Γ₁ ≤ H)
-    (hconj : ∀ y ∈ Γ₂, (D.out : GL (Fin 2) ℚ) * y * (D.out : GL (Fin 2) ℚ)⁻¹ ∈ H)
+    (hconj : ∀ y ∈ Γ₂, (D.out : G) * y * (D.out : G)⁻¹ ∈ H)
     (hker : φ.ker ⊓ H ≤ Γ₁) (hS : IsFundamentalDomain (Γ₂.map φ : Subgroup P) S μ)
-    (hδ : Measure.QuasiMeasurePreserving (fun x : ℍ ↦ (φ (D.out : GL (Fin 2) ℚ))⁻¹ • x) μ μ)
-    (hnull : ∀ v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹,
-      NullMeasurableSet ((φ (v.out : GL (Fin 2) ℚ))⁻¹ • S) μ) :
-    IsFundamentalDomain (Γ₁.map φ ⊓ toConjAct (φ (D.out : GL (Fin 2) ℚ)) • Γ₂.map φ : Subgroup P)
+    (hδ : Measure.QuasiMeasurePreserving (fun x : ℍ ↦ (φ (D.out : G))⁻¹ • x) μ μ)
+    (hnull : ∀ v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹,
+      NullMeasurableSet ((φ (v.out : G))⁻¹ • S) μ) :
+    IsFundamentalDomain (Γ₁.map φ ⊓ toConjAct (φ (D.out : G)) • Γ₂.map φ : Subgroup P)
       (⋃ v, φ (rightCosetRep D v) • S) μ := by
   -- `e` matches the index of Shimura's decomposition of `Γ₁δΓ₂` with that of its image, so the
   -- canonical transversal `τᵥ⁻¹` upstairs maps onto one downstairs
-  set e := decompQuotientEquivMapOfKerInfLe φ Γ₂ Γ₁ H (D.out : GL (Fin 2) ℚ)⁻¹
+  set e := decompQuotientEquivMapOfKerInfLe φ Γ₂ Γ₁ H (D.out : G)⁻¹
     (map_inv φ _) h₂ (by simpa using hconj) hker with he_def
-  set r : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹ → (Γ₂.map φ : Subgroup P) :=
+  set r : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹ → (Γ₂.map φ : Subgroup P) :=
     fun v ↦ (φ.subgroupMap Γ₂ v.out)⁻¹
   have heq : ∀ v, QuotientGroup.mk (r v)⁻¹ = e v := fun v ↦ by
     conv_rhs => rw [he_def, ← v.out_eq, decompQuotientEquivMapOfKerInfLe_mk]
@@ -113,7 +119,7 @@ theorem isFundamentalDomain_iUnion_rightCosetRep_smul {P : Type*} [Group P] [Mul
   simp only [rightCosetRep_def, map_mul, map_inv]
   -- `e` was built with its target supplied as `(φ δ)⁻¹` rather than `φ δ⁻¹`, so it already has
   -- the type asked for and only the underlying function needs transporting
-  exact hS.iUnion_mul_smul_of_transversal (φ (D.out : GL (Fin 2) ℚ)) hδ hnull
+  exact hS.iUnion_mul_smul_of_transversal (φ (D.out : G)) hδ hnull
     (funext heq ▸ e.bijective)
 
 end HeckeRing.GL2

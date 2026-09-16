@@ -125,8 +125,17 @@ open scoped MatrixGroups ModularForm Pointwise
 
 namespace HeckeRing.GL2
 
-variable (k : ℤ) {Δ : Submonoid (GL (Fin 2) ℚ)} {Γ₁ Γ₂ : Subgroup (GL (Fin 2) ℚ)}
-  (D : HeckeCoset Δ Γ₁ Γ₂)
+section CosetRep
+
+/-! ### The coset representatives
+
+`rightCosetRep` is pure group theory — it is `δ τᵥ⁻¹` in any group — so it is stated for an
+arbitrary `G` rather than for `GL (Fin 2) ℚ`. The generality is load-bearing downstream: the
+fundamental-domain tiling is applied along a homomorphism into `PSL(2, ℝ)`, and the only such
+homomorphism is defined on the positive-determinant subgroup `GL(2, ℚ)⁺`, not on all of
+`GL (Fin 2) ℚ`. -/
+
+variable {G : Type*} [Group G] {Δ : Submonoid G} {Γ₁ Γ₂ : Subgroup G} (D : HeckeCoset Δ Γ₁ Γ₂)
 
 /-- The representative `δ τᵥ⁻¹` of the `v`-th right coset `Γ₁ aᵥ` in the decomposition
 `Γ₁ δ Γ₂ = ⊔ᵥ Γ₁ aᵥ`, where `δ` is the chosen representative of the double coset `D` and `τᵥ`
@@ -135,9 +144,8 @@ runs over the chosen representatives of `Γ₂ ⧸ (Γ₂ ∩ δ⁻¹Γ₁δ)`.
 The inverse is what converts the *left*-coset quotient Mathlib supplies into the right-coset
 index the decomposition needs; see "Which cosets the representatives run over" in the module
 docstring. -/
-noncomputable def rightCosetRep (v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹) :
-    GL (Fin 2) ℚ :=
-  (D.out : GL (Fin 2) ℚ) * ((v.out : GL (Fin 2) ℚ))⁻¹
+noncomputable def rightCosetRep (v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹) : G :=
+  (D.out : G) * ((v.out : G))⁻¹
 
 -- `rightCosetRep` and `heckeSlashSum` are not `@[expose]`, so a module downstream of this one
 -- cannot unfold either body. Their characteristic equations below are therefore the interface,
@@ -146,8 +154,13 @@ noncomputable def rightCosetRep (v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin
 
 /-- Defining equation for `rightCosetRep`. Since `rightCosetRep` is not `@[expose]`, a
 downstream module rewrites with this instead of unfolding the body. -/
-lemma rightCosetRep_def (v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹) :
-    rightCosetRep D v = (D.out : GL (Fin 2) ℚ) * ((v.out : GL (Fin 2) ℚ))⁻¹ := (rfl)
+lemma rightCosetRep_def (v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹) :
+    rightCosetRep D v = (D.out : G) * ((v.out : G))⁻¹ := (rfl)
+
+end CosetRep
+
+variable (k : ℤ) {Δ : Submonoid (GL (Fin 2) ℚ)} {Γ₁ Γ₂ : Subgroup (GL (Fin 2) ℚ)}
+  (D : HeckeCoset Δ Γ₁ Γ₂)
 
 /-- **Shimura's decomposition of the double coset**, in the `rightCosetRep` spelling:
 `Γ₁ δ Γ₂ = ⋃ᵥ Γ₁ (δ τᵥ⁻¹)`. Since `rightCosetRep` is not `@[expose]`, this is how a downstream
@@ -205,7 +218,7 @@ and this lemma is the convenient way to supply it. -/
 lemma det_rightCosetRep_pos (hΓ₂ : Γ₂ ≤ Matrix.GLPos (Fin 2) ℚ)
     (hD : (D.out : GL (Fin 2) ℚ) ∈ Matrix.GLPos (Fin 2) ℚ)
     (v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹) :
-    0 < (rightCosetRep D v : Matrix (Fin 2) (Fin 2) ℚ).det := by
+    0 < ((rightCosetRep D v : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det := by
   have hv : ((v.out : GL (Fin 2) ℚ))⁻¹ ∈ Γ₂ := inv_mem v.out.2
   have h := mul_mem hD (hΓ₂ hv)
   rw [rightCosetRep_def]
@@ -281,7 +294,8 @@ factor positive, so hypotheses on `Γ₂` and `δ` separately would exclude case
 `det_rightCosetRep_pos` is the convenient sufficient condition. -/
 @[simp]
 lemma heckeSlashSum_smul
-    (hpos : ∀ v, 0 < (rightCosetRep D v : Matrix (Fin 2) (Fin 2) ℚ).det)
+    (hpos : ∀ v : DecompQuotient Γ₂ Γ₁ (D.out : GL (Fin 2) ℚ)⁻¹,
+      0 < ((rightCosetRep D v : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det)
     {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ] (c : α) (f : ℍ → ℂ) :
     heckeSlashSum k D (c • f) = c • heckeSlashSum k D f := by
   rw [heckeSlashSum, heckeSlashSum]
