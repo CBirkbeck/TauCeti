@@ -103,25 +103,24 @@ private theorem rationalPrimeBelow_le_absNorm (𝔭 : HeightOneSpectrum (𝓞 K)
   rw [absNorm_eq_rationalPrimeBelow_pow 𝔭]
   exact Nat.le_self_pow (Ideal.inertiaDeg_pos 𝔭.asIdeal ℤ).ne' _
 
--- Fibre a finite sum over the rational primes below, exactly as
--- `sum_absNorm_rpow_higherDegreePrimes_le_finrank_mul_tsum` does, but with the exponent
--- unchanged: without a residue-degree hypothesis only `p ≤ N(𝔭)` is available.
+-- Fibre a finite sum over the rational primes below by the three steps of
+-- `sum_absNorm_rpow_higherDegreePrimes_le_finrank_mul_tsum`.  Only `p ≤ N(𝔭)` is available
+-- without a residue-degree hypothesis, so the exponent stays `-s`, which forces `1 < s` here.
 private theorem sum_absNorm_rpow_le_finrank_mul_tsum {s : ℝ} (hs : 1 < s)
     (F : Finset (HeightOneSpectrum (𝓞 K))) :
     ∑ 𝔭 ∈ F, (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s) ≤
-      Module.finrank ℚ K * ∑' m : ℕ, (m : ℝ) ^ (-s) := by
-  classical
-  have hterm : ∀ 𝔭 ∈ F, (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s) ≤
-      ((rationalPrimeBelow 𝔭 : ℝ)) ^ (-s) := fun 𝔭 _ ↦
-    Real.rpow_le_rpow_of_nonpos (mod_cast (prime_rationalPrimeBelow 𝔭).pos)
-      (mod_cast rationalPrimeBelow_le_absNorm 𝔭) (by linarith)
-  refine (Finset.sum_le_sum hterm).trans ?_
-  refine (sum_comp_rationalPrimeBelow_le (g := fun m ↦ (m : ℝ) ^ (-s))
-    (fun m _ ↦ Real.rpow_nonneg (Nat.cast_nonneg m) _) (T := F.image rationalPrimeBelow)
-    (fun 𝔭 h𝔭 ↦ Finset.mem_image_of_mem rationalPrimeBelow h𝔭)).trans ?_
-  exact mul_le_mul_of_nonneg_left (Summable.sum_le_tsum _
-    (fun m _ ↦ Real.rpow_nonneg (Nat.cast_nonneg m) _)
-    (Real.summable_nat_rpow.mpr (by linarith))) (Nat.cast_nonneg _)
+      Module.finrank ℚ K * ∑' m : ℕ, (m : ℝ) ^ (-s) :=
+  calc ∑ 𝔭 ∈ F, (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)
+      ≤ ∑ 𝔭 ∈ F, (rationalPrimeBelow 𝔭 : ℝ) ^ (-s) :=
+        Finset.sum_le_sum fun 𝔭 _ ↦ Real.rpow_le_rpow_of_nonpos
+          (mod_cast (prime_rationalPrimeBelow 𝔭).pos) (mod_cast rationalPrimeBelow_le_absNorm 𝔭)
+          (by linarith)
+    _ ≤ Module.finrank ℚ K * ∑ m ∈ F.image rationalPrimeBelow, (m : ℝ) ^ (-s) :=
+        sum_comp_rationalPrimeBelow_le (fun m _ ↦ Real.rpow_nonneg (Nat.cast_nonneg m) _)
+          fun 𝔭 h𝔭 ↦ Finset.mem_image_of_mem rationalPrimeBelow h𝔭
+    _ ≤ Module.finrank ℚ K * ∑' m : ℕ, (m : ℝ) ^ (-s) :=
+        mul_le_mul_of_nonneg_left ((Real.summable_nat_rpow.mpr (by linarith)).sum_le_tsum _
+          fun m _ ↦ Real.rpow_nonneg (Nat.cast_nonneg m) _) (Nat.cast_nonneg _)
 
 private theorem summable_absNorm_rpow {s : ℝ} (hs : 1 < s) :
     Summable fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦ (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s) :=
