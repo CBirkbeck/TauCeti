@@ -50,8 +50,8 @@ infrastructure independent of the diamond operators.
 * `CongruenceSubgroup.Gamma_le_Gamma1`, `CongruenceSubgroup.Gamma_le_Gamma0`: at a fixed level
   the three families are nested, `Γ(N) ≤ Γ₁(N) ≤ Γ₀(N)`.
 * `CongruenceSubgroup.mem_Gamma0_iff_dvd`: `Γ₀(N)` membership read as the integer divisibility
-  `(N : ℤ) ∣ A 1 0` rather than as a `ZMod N` congruence — the form both producers and consumers
-  of the hypothesis actually use, and valid at `N = 0` as well.
+  `(N : ℤ) ∣ A 1 0` rather than as a `ZMod N` congruence, for a proof that wants to name the
+  quotient; valid at `N = 0` as well, with no `NeZero` hypothesis.
 * `CongruenceSubgroup.mem_Gamma1_iff`: `Γ₁(N)` is cut out inside `Γ₀(N)` by the
   single congruence `d ≡ 1`.
 * `CongruenceSubgroup.isUnit_intCast_apply_zero_zero_of_mem_Gamma0`: a `Γ₀(N)` matrix has
@@ -150,10 +150,12 @@ theorem Gamma_le_Gamma0 (N : ℕ) : Gamma N ≤ Gamma0 N :=
   (Gamma_le_Gamma1 N).trans (Gamma1_in_Gamma0 N)
 
 /-- **`Γ₀(N)` membership as an integer divisibility.** `CongruenceSubgroup.Gamma0_mem` states it
-as a congruence in `ZMod N`, but essentially every proof that consumes it immediately converts to
-`(N : ℤ) ∣ A 1 0` so that the quotient can be named, and every proof that establishes it starts
-from such a divisibility. This is that form, and it needs no `NeZero N`: at `N = 0` the congruence
-lives in `ZMod 0 = ℤ` and both sides say `A 1 0 = 0`. -/
+as a congruence in `ZMod N`; this is the same fact with the congruence already discharged into
+`(N : ℤ) ∣ A 1 0`, which is the form a proof needs whenever it wants to name the quotient.
+
+It needs no `NeZero N`, unlike the `ZMod.intCast_zmod_eq_zero_iff_dvd` step it packages: at
+`N = 0` the congruence lives in `ZMod 0 = ℤ` and both sides say `A 1 0 = 0`, so the one-line case
+split buys a statement that holds at every level. -/
 theorem mem_Gamma0_iff_dvd {N : ℕ} {A : SL(2, ℤ)} : A ∈ Gamma0 N ↔ (N : ℤ) ∣ A 1 0 := by
   rcases eq_or_ne N 0 with rfl | hN
   · rw [Gamma0_mem]
@@ -496,9 +498,9 @@ private lemma Gamma0_prime_index_surj :
       exact IsUnit.of_mul_eq_one _ (by rwa [mul_comm] at hj)
     obtain ⟨j₀, hj₀⟩ := ZMod.exists_dvd_sub_val_mul p (σ.1 0 0) (σ.1 1 0) hunit
     refine ⟨⟨j₀.val, Nat.lt_succ_of_lt (ZMod.val_lt j₀)⟩, ?_⟩
-    rw [QuotientGroup.eq, Gamma0_mem]
+    rw [QuotientGroup.eq, mem_Gamma0_iff_dvd]
     simp only [Gamma0Rep, ZMod.val_lt j₀, ite_true]
-    rwa [TjS_inv_mul_10, ZMod.intCast_zmod_eq_zero_iff_dvd, dvd_sub_comm]
+    rwa [TjS_inv_mul_10, dvd_sub_comm]
 
 /-- `[SL₂(ℤ) : Γ₀(p)] = p + 1` for prime `p`. -/
 theorem Gamma0_prime_index : (Gamma0 p).index = p + 1 :=
@@ -545,9 +547,9 @@ private lemma Gamma0_relindex_step_inj (k : ℕ) :
       (QuotientGroup.mk (relindexRep p k c) :
         ↥(Gamma0 (p ^ k)) ⧸ (Gamma0 (p ^ (k + 1))).subgroupOf (Gamma0 (p ^ k)))) := by
   intro ⟨c₁, hc₁⟩ ⟨c₂, hc₂⟩ hf
-  rw [QuotientGroup.eq, Subgroup.mem_subgroupOf, Gamma0_mem] at hf
+  rw [QuotientGroup.eq, Subgroup.mem_subgroupOf, mem_Gamma0_iff_dvd] at hf
   simp only [relindexRep, InvMemClass.coe_inv, MulMemClass.coe_mul] at hf
-  rw [lowerTriRep_diff_entry p, ZMod.intCast_zmod_eq_zero_iff_dvd, Nat.cast_pow, pow_succ,
+  rw [lowerTriRep_diff_entry p, Nat.cast_pow, pow_succ,
     mul_comm ((↑c₂ : ℤ) - ↑c₁) ((p : ℤ) ^ k),
     mul_dvd_mul_iff_left (pow_ne_zero k (Int.natCast_ne_zero.mpr hp.ne'))] at hf
   have := Int.eq_zero_of_dvd_of_natAbs_lt_natAbs hf (by omega)
