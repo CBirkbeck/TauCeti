@@ -37,8 +37,8 @@ elements of `A` does.
 ## Main definitions
 
 * `TauCeti.ValuationSpectrum.ringHomOfRationalSubsetSubset` : the comparison map of
-  Proposition 8.2(1), characterised by `continuous_ringHomOfRationalSubsetSubset` and
-  `ringHomOfRationalSubsetSubset_comp_toCompletionLoc`.
+  Proposition 8.2(1), characterised by `continuous_ringHomOfRationalSubsetSubset`,
+  `ringHomOfRationalSubsetSubset_comp_toCompletionLoc` and `eq_ringHomOfRationalSubsetSubset`.
 * `TauCeti.ValuationSpectrum.presentationRingEquivOfEq` : **presentation independence** — two
   presentations of the same rational subset have canonically isomorphic coordinate rings, by the
   comparison maps in both directions.
@@ -158,6 +158,7 @@ theorem continuous_ringHomOfRationalSubsetSubset (P : PairOfDefinition A) (Aplus
 
 /-- The comparison map of Wedhorn's Proposition 8.2(1) is compatible with the structure maps
 from `A`. -/
+@[simp]
 theorem ringHomOfRationalSubsetSubset_comp_toCompletionLoc (P : PairOfDefinition A)
     (Aplus : Subring A) (hAplus : ∀ ⦃a⦄, a ∈ Aplus → IsPowerBounded a) (T : Finset A) (s : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
@@ -174,6 +175,26 @@ theorem ringHomOfRationalSubsetSubset_comp_toCompletionLoc (P : PairOfDefinition
       (toCompletionLoc P T s S hden) = toCompletionLoc P T' s' S' hden' :=
   (existsUnique_continuous_ringHom_of_rationalSubset_subset P Aplus hAplus T s S hden T' s' S' hden'
     hsub).choose_spec.1.2
+
+/-- **Uniqueness of the comparison map**: `ringHomOfRationalSubsetSubset` is the only continuous
+ring homomorphism `A⟨T/s⟩ → A⟨T'/s'⟩` compatible with the structure maps from `A`. -/
+theorem eq_ringHomOfRationalSubsetSubset (P : PairOfDefinition A) (Aplus : Subring A)
+    (hAplus : ∀ ⦃a⦄, a ∈ Aplus → IsPowerBounded a) (T : Finset A) (s : A) (S : Type*) [CommRing S]
+    [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S) (T' : Finset A)
+    (s' : A) (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s' S']
+    (hden' : HasDenominatorPower P T' s' S')
+    (hsub : rationalSubset Aplus T' s' ⊆ rationalSubset Aplus T s) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s' S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
+    ∀ g : UniformSpace.Completion S →+* UniformSpace.Completion S',
+      Continuous g → g.comp (toCompletionLoc P T s S hden) = toCompletionLoc P T' s' S' hden' →
+      g = ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T' s' S' hden' hsub :=
+  fun g hgc hge ↦ (existsUnique_continuous_ringHom_of_rationalSubset_subset P Aplus hAplus
+    T s S hden T' s' S' hden' hsub).choose_spec.2 g ⟨hgc, hge⟩
 
 /-- **Presentation independence**: two presentations of the *same* rational subset have
 canonically isomorphic coordinate rings.
