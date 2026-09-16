@@ -175,14 +175,12 @@ private theorem neg_log_one_sub_rpow_sub_nonneg {y s : ℝ} (hy : 2 ≤ y) (hs :
 private theorem neg_log_one_sub_rpow_sub_le {y s : ℝ} (hy : 2 ≤ y) (hs : 1 ≤ s) :
     -Real.log (1 - y ^ (-s)) - y ^ (-s) ≤ y ^ (-(2 : ℝ)) := by
   have hy0 : (0 : ℝ) < y := by linarith
-  have hx0 : 0 ≤ y ^ (-s) := Real.rpow_nonneg hy0.le _
   have hxhalf : y ^ (-s) ≤ 1 / 2 := rpow_neg_le_half hy hs
-  have hhigh := neg_log_one_sub_sub_le hx0 (by linarith)
-  have hsq : (y ^ (-s)) ^ 2 ≤ y ^ (-(2 : ℝ)) := by
-    rw [← Real.rpow_natCast (y ^ (-s)) 2, ← Real.rpow_mul hy0.le]
-    exact Real.rpow_le_rpow_of_exponent_le (by linarith) (by push_cast; linarith)
-  refine hhigh.trans ((div_le_iff₀ (by linarith)).mpr ?_)
-  nlinarith [sq_nonneg (y ^ (-s))]
+  calc -Real.log (1 - y ^ (-s)) - y ^ (-s) ≤ (y ^ (-s)) ^ 2 / (2 * (1 - y ^ (-s))) :=
+        neg_log_one_sub_sub_le (Real.rpow_nonneg hy0.le _) (by linarith)
+    _ ≤ (y ^ (-s)) ^ 2 := div_le_self (sq_nonneg _) (by linarith)
+    _ = y ^ (-(2 * s)) := by rw [pow_two, ← Real.rpow_add hy0, ← two_mul, mul_neg]
+    _ ≤ y ^ (-(2 : ℝ)) := Real.rpow_le_rpow_of_exponent_le (by linarith) (by linarith)
 
 /-! ### The prime-power tail -/
 
