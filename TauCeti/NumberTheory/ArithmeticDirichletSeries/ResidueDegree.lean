@@ -6,10 +6,9 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Analysis.PSeries
-public import Mathlib.Analysis.Real.Pi.Bounds
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 public import Mathlib.NumberTheory.NumberField.DirichletDensity
-public import Mathlib.NumberTheory.ZetaValues
+public import TauCeti.Analysis.PSeries
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Counting
 public import TauCeti.NumberTheory.NumberField.ResidueDegree
 
@@ -180,25 +179,6 @@ theorem primeTheta_higherDegreePrimes_isLittleO (K : Type*) [Field K] [NumberFie
 
 /-! ### Convergence of the prime Dirichlet series over the degree-above-one primes -/
 
-/-- **The `p`-series over `ℕ` is at most `2` beyond exponent two.** For `2 ≤ t`,
-`∑' m : ℕ, m ^ (-t) ≤ 2`, the case `t = 2` being `ζ(2) = π ^ 2 / 6 < 2`.  The `m = 0` term is
-`0`, by the junk value of `0 ^ (-t)`. -/
-theorem tsum_nat_rpow_neg_le_two {t : ℝ} (ht : 2 ≤ t) : ∑' m : ℕ, (m : ℝ) ^ (-t) ≤ 2 := by
-  have hsum : ∀ u : ℝ, 1 < u → Summable fun m : ℕ ↦ (m : ℝ) ^ (-u) := fun u hu ↦
-    Real.summable_nat_rpow.mpr (by linarith)
-  have hfun : (fun m : ℕ ↦ (m : ℝ) ^ (-(2 : ℝ))) = fun m : ℕ ↦ (1 : ℝ) / (m : ℝ) ^ 2 := by
-    funext m
-    rw [Real.rpow_neg (Nat.cast_nonneg m), Real.rpow_two, one_div]
-  have hzeta : ∑' m : ℕ, (m : ℝ) ^ (-(2 : ℝ)) = Real.pi ^ 2 / 6 := by
-    rw [hfun]
-    exact hasSum_zeta_two.tsum_eq
-  refine le_trans (Summable.tsum_le_tsum (fun m ↦ ?_) (hsum t (by linarith))
-    (hsum 2 one_lt_two)) ?_
-  · rcases Nat.eq_zero_or_pos m with rfl | hm
-    · rw [Nat.cast_zero, Real.zero_rpow (by linarith), Real.zero_rpow (by norm_num)]
-    · exact Real.rpow_le_rpow_of_exponent_le (by exact_mod_cast hm) (by linarith)
-  · rw [hzeta]
-    nlinarith [Real.pi_lt_d2, Real.pi_pos]
 
 /-- The key comparison: a finite sum of `N(𝔭) ^ (-s)` over primes of residue degree above one is
 bounded by `[K : ℚ]` times the full sum of `m ^ (-2s)` over the natural numbers. -/
