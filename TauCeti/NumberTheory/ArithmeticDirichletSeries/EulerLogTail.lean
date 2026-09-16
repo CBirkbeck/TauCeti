@@ -42,9 +42,10 @@ Two elementary inputs carry the argument.
 
 * `TauCeti.summable_neg_log_one_sub_sub_absNorm_rpow`: the termwise difference between the
   Euler-factor logarithm and the prime Dirichlet term is summable for every `s ≥ 1`.
-* `TauCeti.tsum_neg_log_one_sub_sub_absNorm_rpow_nonneg` and
-  `TauCeti.tsum_neg_log_one_sub_sub_absNorm_rpow_le`: that sum lies in `[0, 2 [K : ℚ]]` for
-  every `s ≥ 1`.
+* `TauCeti.tsum_neg_log_one_sub_sub_absNorm_rpow_nonneg`: that sum is nonnegative for every
+  `s > 0`, the whole range on which the termwise difference is defined and nonnegative.
+* `TauCeti.tsum_neg_log_one_sub_sub_absNorm_rpow_le`: it is at most `2 [K : ℚ]` for every
+  `s ≥ 1`; together the two bound the sum in `[0, 2 [K : ℚ]]` on `s ≥ 1`.
 * `NumberField.Set.abs_tsum_neg_log_one_sub_sub_primeIdealZetaSum_le`: for `s > 1`, where the
   two sums converge separately, the sum of the Euler-factor logarithms differs from
   `NumberField.Set.primeIdealZetaSum Set.univ s` by at most `2 [K : ℚ]`.
@@ -152,10 +153,12 @@ private theorem rpow_neg_le_half {y s : ℝ} (hy : 2 ≤ y) (hs : 1 ≤ s) : y ^
     _ ≤ (2 : ℝ) ^ (-(1 : ℝ)) := Real.rpow_le_rpow_of_exponent_le one_le_two (by linarith)
     _ = 1 / 2 := by rw [Real.rpow_neg_one]; norm_num
 
-private theorem neg_log_one_sub_rpow_sub_nonneg {y s : ℝ} (hy : 2 ≤ y) (hs : 1 ≤ s) :
+-- Nonnegativity needs only `y ^ (-s) ∈ [0, 1)`, so `0 < s` suffices here; the upper bound below
+-- is the half that genuinely needs `1 ≤ s`.
+private theorem neg_log_one_sub_rpow_sub_nonneg {y s : ℝ} (hy : 2 ≤ y) (hs : 0 < s) :
     0 ≤ -Real.log (1 - y ^ (-s)) - y ^ (-s) :=
   (neg_log_one_sub_sub_le (Real.rpow_nonneg (by linarith) _)
-    (by linarith [rpow_neg_le_half hy hs])).1
+    (Real.rpow_lt_one_of_one_lt_of_neg (by linarith) (by linarith))).1
 
 -- For `2 ≤ y` and `1 ≤ s` the ratio `x ^ 2 / (2 (1 - x))` at `x = y ^ (-s)` is at most `x ^ 2`,
 -- because `x ≤ 1 / 2`, and `x ^ 2 = y ^ (-2 s) ≤ y ^ (-2)`.
@@ -181,13 +184,14 @@ theorem summable_neg_log_one_sub_sub_absNorm_rpow {s : ℝ} (hs : 1 ≤ s) :
     Summable fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦
       -Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s) :=
   (summable_absNorm_rpow one_lt_two).of_nonneg_of_le
-    (fun 𝔭 ↦ neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔭) hs)
+    (fun 𝔓 ↦ neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔓)
+      (zero_lt_one.trans_le hs))
     (fun 𝔭 ↦ neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs)
 
 /-- **The prime-power tail is nonnegative.** The termwise difference between the Euler-factor
 logarithm `-log (1 - N(𝔭) ^ (-s))` and the prime Dirichlet term `N(𝔭) ^ (-s)` sums to a nonnegative
-number for every `s ≥ 1`. -/
-theorem tsum_neg_log_one_sub_sub_absNorm_rpow_nonneg {s : ℝ} (hs : 1 ≤ s) :
+number for every `s > 0`. -/
+theorem tsum_neg_log_one_sub_sub_absNorm_rpow_nonneg {s : ℝ} (hs : 0 < s) :
     0 ≤ ∑' 𝔭 : HeightOneSpectrum (𝓞 K), (-Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) -
       (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) :=
   tsum_nonneg fun 𝔭 ↦ neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔭) hs
@@ -229,7 +233,7 @@ theorem abs_tsum_neg_log_one_sub_sub_primeIdealZetaSum_le {s : ℝ} (hs : 1 < s)
       -Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) := by
     simpa using (TauCeti.summable_neg_log_one_sub_sub_absNorm_rpow (K := K) hs.le).add hsumP
   rw [hzeta, ← hsumL.tsum_sub hsumP,
-    abs_of_nonneg (TauCeti.tsum_neg_log_one_sub_sub_absNorm_rpow_nonneg hs.le)]
+    abs_of_nonneg (TauCeti.tsum_neg_log_one_sub_sub_absNorm_rpow_nonneg (zero_lt_one.trans hs))]
   exact TauCeti.tsum_neg_log_one_sub_sub_absNorm_rpow_le hs.le
 
 end NumberField.Set
