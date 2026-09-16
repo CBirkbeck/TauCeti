@@ -138,17 +138,24 @@ private theorem tsum_absNorm_rpow_neg_two_le :
 
 /-! ### The termwise bound -/
 
+-- `log t ≤ t - 1` at `t = 1 - x`.  Unlike the upper bound below this needs no sign condition on
+-- `x`: it holds throughout `x < 1`.
+private theorem neg_log_one_sub_sub_nonneg {x : ℝ} (hx1 : x < 1) :
+    0 ≤ -Real.log (1 - x) - x := by
+  linarith [Real.log_le_sub_one_of_pos (sub_pos.mpr hx1)]
+
 -- Mathlib's `Complex.norm_log_one_sub_inv_sub_self_le` read along the reals, where
--- `log (1 - x)⁻¹ = -log (1 - x)`; the lower bound is `log t ≤ t - 1` at `t = 1 - x`.
+-- `log (1 - x)⁻¹ = -log (1 - x)`.  The real-variable `Real.abs_log_sub_add_sum_range_le` proves
+-- the same shape with `1` in place of `2` in the denominator, which would double the constant in
+-- `tsum_neg_log_one_sub_sub_absNorm_rpow_le`.
 private theorem neg_log_one_sub_sub_le {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x < 1) :
-    0 ≤ -Real.log (1 - x) - x ∧ -Real.log (1 - x) - x ≤ x ^ 2 / (2 * (1 - x)) := by
+    -Real.log (1 - x) - x ≤ x ^ 2 / (2 * (1 - x)) := by
   have hz : ‖(x : ℂ)‖ < 1 := by rwa [Complex.norm_real, Real.norm_of_nonneg hx0]
   have key := Complex.norm_log_one_sub_inv_sub_self_le hz
   rw [← Complex.ofReal_one, ← Complex.ofReal_sub, ← Complex.ofReal_inv,
     ← Complex.ofReal_log (by positivity), ← Complex.ofReal_sub, Complex.norm_real,
     Complex.norm_real, Real.norm_of_nonneg hx0, Real.log_inv] at key
-  exact ⟨by linarith [Real.log_le_sub_one_of_pos (sub_pos.mpr hx1)],
-    ((Real.le_norm_self _).trans key).trans_eq (by field_simp)⟩
+  exact ((Real.le_norm_self _).trans key).trans_eq (by field_simp)
 
 -- At `x = y ^ (-s)` with `2 ≤ y` and `1 ≤ s`, the base is at least `2` and the exponent at most
 -- `-1`, so `x ≤ 1 / 2`.  Both halves of the termwise estimate need this, so it is proved once.
@@ -161,8 +168,7 @@ private theorem rpow_neg_le_half {y s : ℝ} (hy : 2 ≤ y) (hs : 1 ≤ s) : y ^
 -- is the half that genuinely needs `1 ≤ s`.
 private theorem neg_log_one_sub_rpow_sub_nonneg {y s : ℝ} (hy : 2 ≤ y) (hs : 0 < s) :
     0 ≤ -Real.log (1 - y ^ (-s)) - y ^ (-s) :=
-  (neg_log_one_sub_sub_le (Real.rpow_nonneg (by linarith) _)
-    (Real.rpow_lt_one_of_one_lt_of_neg (by linarith) (by linarith))).1
+  neg_log_one_sub_sub_nonneg (Real.rpow_lt_one_of_one_lt_of_neg (by linarith) (by linarith))
 
 -- For `2 ≤ y` and `1 ≤ s` the ratio `x ^ 2 / (2 (1 - x))` at `x = y ^ (-s)` is at most `x ^ 2`,
 -- because `x ≤ 1 / 2`, and `x ^ 2 = y ^ (-2 s) ≤ y ^ (-2)`.
@@ -171,7 +177,7 @@ private theorem neg_log_one_sub_rpow_sub_le {y s : ℝ} (hy : 2 ≤ y) (hs : 1 �
   have hy0 : (0 : ℝ) < y := by linarith
   have hx0 : 0 ≤ y ^ (-s) := Real.rpow_nonneg hy0.le _
   have hxhalf : y ^ (-s) ≤ 1 / 2 := rpow_neg_le_half hy hs
-  have hhigh := (neg_log_one_sub_sub_le hx0 (by linarith)).2
+  have hhigh := neg_log_one_sub_sub_le hx0 (by linarith)
   have hsq : (y ^ (-s)) ^ 2 ≤ y ^ (-(2 : ℝ)) := by
     rw [← Real.rpow_natCast (y ^ (-s)) 2, ← Real.rpow_mul hy0.le]
     exact Real.rpow_le_rpow_of_exponent_le (by linarith) (by push_cast; linarith)
