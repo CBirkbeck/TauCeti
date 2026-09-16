@@ -7,7 +7,6 @@ module
 
 public import Mathlib.NumberTheory.NumberField.DirichletDensity
 import TauCeti.NumberTheory.ArithmeticDirichletSeries.Estimates
-import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Basic
 
 /-!
 # Convergence of the ideal- and prime-indexed Dirichlet series
@@ -91,12 +90,15 @@ theorem summable_absNorm_rpow_ideal_iff {s : ℝ} :
 /-- **The prime-indexed Dirichlet series converges for `s > 1`.** The height-one-prime analogue of
 `TauCeti.summable_absNorm_rpow_ideal_iff`. -/
 theorem summable_absNorm_rpow_primes_of_one_lt {s : ℝ} (hs : 1 < s) :
-    Summable fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦ (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s) :=
+    Summable fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦ (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s) := by
   -- Every height-one prime is a nonzero integral ideal and is determined by that ideal, so the
   -- prime-indexed family is an injective reindexing of a subfamily of the ideal-indexed one.
-  -- `congr` matches the composite to the goal pointwise, undoing the `^ 1` in `primeIdealPow`.
-  ((summable_absNorm_rpow_ideal_iff.mpr hs).comp_injective
-    HeightOneSpectrum.primeIdealPow_one_injective).congr fun _ ↦ by simp
+  -- The injectivity is Mathlib's `HeightOneSpectrum.asIdeal_injective` factored through the
+  -- `nonZeroDivisors` coercion; nothing about it is proved here.
+  have hinj : Function.Injective fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦
+      (⟨𝔭.asIdeal, mem_nonZeroDivisors_of_ne_zero 𝔭.ne_bot⟩ : (Ideal (𝓞 K))⁰) :=
+    Function.Injective.of_comp (f := Subtype.val) HeightOneSpectrum.asIdeal_injective
+  exact ((summable_absNorm_rpow_ideal_iff.mpr hs).comp_injective hinj).congr fun _ ↦ rfl
 
 /-- **Restricted to any set of height-one primes**, the prime-indexed Dirichlet series still
 converges for `s > 1`: a subfamily of a summable family is summable.
