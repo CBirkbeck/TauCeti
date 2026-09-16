@@ -188,15 +188,13 @@ theorem tsum_neg_log_one_sub_sub_absNorm_rpow_nonneg {s : ℝ} (hs : 1 ≤ s) :
 
 /-- **The prime-power tail is bounded uniformly on `s ≥ 1`.** The constant `2 [K : ℚ]` does not
 depend on `s`, so this survives the passage to the limit `s → 1⁺` that the Dirichlet-density
-normalization needs; it is not an asymptotic statement and does not degrade as `s` approaches
-`1`. -/
+normalization needs. -/
 theorem tsum_neg_log_one_sub_sub_absNorm_rpow_le {s : ℝ} (hs : 1 ≤ s) :
-    ∑' 𝔭 : HeightOneSpectrum (𝓞 K),
-      (-Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) -
-        (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) ≤ 2 * Module.finrank ℚ K :=
-  ((summable_neg_log_one_sub_sub_absNorm_rpow (K := K) hs).tsum_le_tsum
+    ∑' 𝔭 : HeightOneSpectrum (𝓞 K), (-Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) -
+      (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) ≤ 2 * Module.finrank ℚ K :=
+  ((summable_neg_log_one_sub_sub_absNorm_rpow hs).tsum_le_tsum
     (fun 𝔭 ↦ (neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs).2)
-    (summable_absNorm_rpow (K := K) one_lt_two)).trans tsum_absNorm_rpow_neg_two_le
+    (summable_absNorm_rpow one_lt_two)).trans tsum_absNorm_rpow_neg_two_le
 
 end TauCeti
 
