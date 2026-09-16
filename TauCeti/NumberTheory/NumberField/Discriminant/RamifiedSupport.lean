@@ -72,9 +72,7 @@ theorem mem_ramifiedSupport_iff_exists {v : HeightOneSpectrum (𝓞 K)} :
   exact dvd_relDiscr_iff_exists_one_lt_ramificationIdx v.ne_bot
 
 variable (K) in
-/-- **Nothing ramifies in the identity extension**: the ramified support of `K / K` is empty.
-
-The relative discriminant of `K / K` is the unit ideal, which no height-one prime divides. -/
+/-- **Nothing ramifies in the identity extension**: the ramified support of `K / K` is empty. -/
 @[simp]
 theorem ramifiedSupport_self : ramifiedSupport K K = ∅ := by
   refine Finset.eq_empty_iff_forall_notMem.mpr fun v hv => ?_
