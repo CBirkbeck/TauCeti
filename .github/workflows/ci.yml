@@ -69,6 +69,7 @@ jobs:
           python3 scripts/pr_status/test_conflicts.py
           python3 scripts/test_structure_nudge.py
           python3 scripts/test_workflow_pins.py
+          python3 scripts/test_queue_release.py
           python3 scripts/test_bwrap_pin.py
           python3 scripts/test_elan_pin.py
           python3 scripts/test_web_pins.py
