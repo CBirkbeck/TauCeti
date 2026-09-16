@@ -100,7 +100,6 @@ private theorem tsum_nat_rpow_neg_two_le_two : ∑' m : ℕ, (m : ℝ) ^ (-(2 : 
 -- The norm is `p ^ f` with `f ≥ 1`, for `p` the rational prime below.
 private theorem rationalPrimeBelow_le_absNorm (𝔭 : HeightOneSpectrum (𝓞 K)) :
     rationalPrimeBelow 𝔭 ≤ Ideal.absNorm 𝔭.asIdeal := by
-  have := 𝔭.isPrime
   rw [absNorm_eq_rationalPrimeBelow_pow 𝔭]
   exact Nat.le_self_pow (Ideal.inertiaDeg_pos 𝔭.asIdeal ℤ).ne' _
 
