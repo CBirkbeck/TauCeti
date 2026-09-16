@@ -14,7 +14,7 @@ import Mathlib.Topology.Algebra.InfiniteSum.Nonarchimedean
 
 In a nonarchimedean ring, additive convolution preserves families that tend to zero along the
 cofinite filter. When the ring is also complete, every coefficient sum in the convolution is
-summable.
+summable, and when it is moreover `T0`, convolution of such families is associative.
 
 ## Main results
 
@@ -22,6 +22,8 @@ summable.
   additive convolution coefficients in a complete nonarchimedean ring.
 * `TauCeti.ZeroAtFilter.addRingConvolution`: additive ring convolution preserves convergence to
   zero along the cofinite filter.
+* `TauCeti.addRingConvolution_assoc_of_zeroAtFilter_cofinite`: additive ring convolution of
+  cofinite-zero families is associative in a complete `T0` nonarchimedean ring.
 -/
 
 public section
@@ -68,6 +70,46 @@ theorem ZeroAtFilter.addRingConvolution
   intro p
   by_contra hp
   exact hnim ⟨(p.1.1, p.1.2), hp, DiscreteConvolution.mem_addFiber.mp p.2⟩
+
+-- The two bracketings of the triples summing to `n`, as nested addition fibres: `((a, b), c)`
+-- with `a + b = m` and `m + c = n` corresponds to `(a, (b, c))` with `b + c = k` and `a + k = n`.
+open DiscreteConvolution in
+private def addFiberSigmaAssoc (n : ι) :
+    (Σ p : addFiber n, addFiber p.1.1) ≃ Σ p : addFiber n, addFiber p.1.2 where
+  toFun σ := ⟨⟨(σ.2.1.1, σ.2.1.2 + σ.1.1.2), by grind⟩, ⟨(σ.2.1.2, σ.1.1.2), by grind⟩⟩
+  invFun τ := ⟨⟨(τ.1.1.1 + τ.2.1.1, τ.2.1.2), by grind⟩, ⟨(τ.1.1.1, τ.2.1.1), by grind⟩⟩
+  left_inv _ := by grind
+  right_inv _ := by grind
+
+open DiscreteConvolution in
+private theorem summable_sigma_addFiber_mul_mul [Ring A] [UniformSpace A] [IsUniformAddGroup A]
+    [NonarchimedeanRing A] [CompleteSpace A] {f g h : ι → A} (hf : ZeroAtFilter cofinite f)
+    (hg : ZeroAtFilter cofinite g) (hh : ZeroAtFilter cofinite h) (n : ι) :
+    Summable fun σ : Σ p : addFiber n, addFiber p.1.1 ↦ f σ.2.1.1 * g σ.2.1.2 * h σ.1.1.2 := by
+  -- `((a, b), c) ↦ f a * g b * h c` tends to zero cofinitely, and `σ ↦ ((a, b), c)` is injective
+  have hj : Function.Injective fun σ : Σ p : addFiber n, addFiber p.1.1 ↦ (σ.2.1, σ.1.1.2) :=
+    fun _ _ _ ↦ by grind
+  have ht := (tendsto_mul_cofinite_nhds_zero (tendsto_mul_cofinite_nhds_zero hf hg) hh).comp
+    hj.tendsto_cofinite
+  exact NonarchimedeanAddGroup.summable_of_tendsto_cofinite_zero ht
+
+open DiscreteConvolution in
+/-- In a complete `T0` nonarchimedean ring, additive ring convolution of families that tend to
+zero cofinitely is associative. The index monoid `ι` need not be commutative; to rebracket longer
+products, `ZeroAtFilter.addRingConvolution` supplies the hypotheses for the partial products. -/
+theorem addRingConvolution_assoc_of_zeroAtFilter_cofinite [Ring A] [UniformSpace A]
+    [IsUniformAddGroup A] [NonarchimedeanRing A] [CompleteSpace A] [T0Space A] {f g h : ι → A}
+    (hf : ZeroAtFilter cofinite f) (hg : ZeroAtFilter cofinite g) (hh : ZeroAtFilter cofinite h) :
+    (f ⋆ᵣ₊ g) ⋆ᵣ₊ h = f ⋆ᵣ₊ g ⋆ᵣ₊ h := by
+  ext n
+  -- both sides are sums of `f a * g b * h c` over the triples with `a + b + c = n`
+  have hs := summable_sigma_addFiber_mul_mul hf hg hh n
+  have hs' : HasSum (fun τ : Σ p : addFiber n, addFiber p.1.2 ↦ f τ.1.1.1 * (g τ.2.1.1 * h τ.2.1.2))
+      (∑' σ : Σ p : addFiber n, addFiber p.1.1, f σ.2.1.1 * g σ.2.1.2 * h σ.1.1.2) :=
+    (addFiberSigmaAssoc n).hasSum_iff.mp <| hs.hasSum.congr_fun fun _ ↦ (mul_assoc _ _ _).symm
+  refine (hs.hasSum.sigma fun p ↦ ?_).tsum_eq.trans (hs'.sigma fun p ↦ ?_).tsum_eq.symm
+  exacts [(addConvolutionExists_of_zeroAtFilter_cofinite hf hg p.1.1).hasSum.mul_right (h p.1.2),
+    (addConvolutionExists_of_zeroAtFilter_cofinite hg hh p.1.2).hasSum.mul_left (f p.1.1)]
 
 end TauCeti
 
