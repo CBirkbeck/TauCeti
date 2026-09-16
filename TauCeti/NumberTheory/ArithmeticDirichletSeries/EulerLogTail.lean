@@ -158,7 +158,7 @@ private theorem rpow_neg_le_half {y s : ℝ} (hy : 2 ≤ y) (hs : 1 ≤ s) : y ^
     _ ≤ (2 : ℝ) ^ (-(1 : ℝ)) := Real.rpow_le_rpow_of_exponent_le one_le_two (by linarith)
     _ = 1 / 2 := by norm_num
 
--- Nonnegativity needs only `y ^ (-s) ∈ [0, 1)`, so `0 < s` suffices here; the upper bound below
+-- Nonnegativity needs only `y ^ (-s) < 1`, so `0 < s` suffices here; the upper bound below
 -- is the half that genuinely needs `1 ≤ s`.
 private theorem neg_log_one_sub_rpow_sub_nonneg {y s : ℝ} (hy : 2 ≤ y) (hs : 0 < s) :
     0 ≤ -Real.log (1 - y ^ (-s)) - y ^ (-s) :=
