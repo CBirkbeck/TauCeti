@@ -13,9 +13,9 @@ public import Mathlib.NumberTheory.NumberField.DirichletDensity
 Let `K` be a number field. Mathlib's partial Dirichlet series `NumberField.Set.primeIdealZetaSum`
 sums `𝔑𝔭 ^ (-s)` over a set of nonzero prime ideals of `𝓞 K`, and this file cuts that sum along a
 partition of the primes. The sum is additive along a finite pairwise disjoint union, given
-summability on each piece. For a finite set `S` of primes it also compares the sum over the complement `Sᶜ`
-with the sum over all primes: deleting `S` never increases the sum, and for `s ≥ 0` it lowers it
-by at most the number of primes deleted.
+summability on each piece. For a finite set `S` of primes it also compares the sum over the
+complement `Sᶜ` with the sum over all primes: deleting `S` never increases the sum, and for
+`s ≥ 0` it lowers it by at most the number of primes deleted.
 
 ## Main results
 
