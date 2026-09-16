@@ -49,7 +49,7 @@ For `Γ₁(N) ⊴ Γ₀(N)` it is the diamond direction of the `Γ₁(N)` Hecke 
   normalizing element times the basis element of an arbitrary one is the basis element of their
   product, with the normalizing factor on either side.
 * `HeckeCosetModule.commute_single_of_mem_normalizer`: consequently a commutation question in
-  the Hecke ring reduces to the single coset identity `Γ(xy)Γ = Γ(yx)Γ`.
+  the Hecke ring is discharged by the single coset identity `Γ(xy)Γ = Γ(yx)Γ`.
 
 ## References
 
@@ -250,14 +250,14 @@ theorem single_mul_single_of_mem_normalizer_right [IsHeckeTriple Δ Γ Γ] (R : 
     (DoubleCoset.subsingleton_decompQuotient_of_mem_normalizer
       (HeckeCoset.rep_mk_mem_normalizer_of_mem_normalizer hy))
 
-/-- **A normalizing basis element commutes with another exactly when their double cosets do.**
+/-- **A normalizing basis element commutes with another whenever their double cosets agree.**
 
 This is what having both handednesses buys: the left-handed lemma computes `[ΓxΓ] · [ΓyΓ]` and
 the right-handed one computes `[ΓyΓ] · [ΓxΓ]`, both as basis elements, so a commutation
-question in the Hecke ring reduces to the single coset identity `Γ(xy)Γ = Γ(yx)Γ`. Neither
+question in the Hecke ring is discharged by the single coset identity `Γ(xy)Γ = Γ(yx)Γ`. Neither
 lemma alone suffices, since each constrains a different side.
 
-Only `x` need normalize `Γ`; `y` is arbitrary. -/
+Only this direction is claimed, and only `x` need normalize `Γ`; `y` is arbitrary. -/
 theorem commute_single_of_mem_normalizer [IsHeckeTriple Δ Γ Γ] (R : Type*) [Semiring R]
     (hx : (x : G) ∈ Subgroup.normalizer (Γ : Set G))
     (hxy : HeckeCoset.mk Γ Γ (x * y) = HeckeCoset.mk Γ Γ (y * x)) :
