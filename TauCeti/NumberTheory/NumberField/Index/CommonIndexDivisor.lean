@@ -66,6 +66,14 @@ condition holds vacuously, so the predicate carries content only when such a `θ
 def IsCommonIndexDivisor (p : ℕ) (K : Type*) [Field K] [NumberField K] : Prop :=
   ∀ θ : IntegralPrimitiveElement K, p ∣ θ.index
 
+/-- **Being a common index divisor is exactly divisibility of every index.** The body of
+`IsCommonIndexDivisor` is not exposed across module boundaries, so this is the characterisation
+downstream code uses to prove the predicate or to extract a divisibility from it. -/
+@[simp]
+theorem isCommonIndexDivisor_iff {p : ℕ} :
+    IsCommonIndexDivisor p K ↔ ∀ θ : IntegralPrimitiveElement K, p ∣ θ.index :=
+  Iff.rfl
+
 namespace IsCommonIndexDivisor
 
 variable {p : ℕ}

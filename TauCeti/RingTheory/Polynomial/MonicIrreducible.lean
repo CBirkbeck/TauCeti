@@ -5,14 +5,13 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.RingTheory.Polynomial.Basic
 public import Mathlib.RingTheory.Polynomial.DegreeLT
 
 /-!
 # Monic irreducible polynomials of a fixed degree
 
-Over a field, the monic irreducible polynomials of a given degree form a set depending only on
-the field and the degree. Over a *finite* field that set is finite, because a monic polynomial of
+The monic irreducible polynomials of a given degree over a semiring `R` form a set depending
+only on `R` and the degree. When `R` is finite that set is finite, because a monic polynomial of
 degree `d` is determined by its lower coefficients: `Polynomial.monicEquivDegreeLT` matches such
 polynomials with `Polynomial.degreeLT`, which `Polynomial.degreeLTEquiv` identifies with the
 finite function space `Fin d → R`.
@@ -24,14 +23,15 @@ finite function space `Fin d → R`.
 ## Main results
 
 * `Polynomial.mem_monicIrreduciblesOfDegree_iff`: the defining membership condition.
-* `Polynomial.finite_monicIrreduciblesOfDegree`: over a finite field there are finitely many.
+* `Polynomial.finite_monicIrreduciblesOfDegree`: over a finite coefficient ring there are
+  finitely many.
 -/
 
 public section
 
 namespace Polynomial
 
-variable (R : Type*) [Field R]
+variable (R : Type*) [Semiring R]
 
 /-- The monic irreducible polynomials of degree `d` over `R`.
 
@@ -46,10 +46,10 @@ theorem mem_monicIrreduciblesOfDegree_iff {d : ℕ} {g : R[X]} :
     g ∈ monicIrreduciblesOfDegree R d ↔ g.Monic ∧ Irreducible g ∧ g.natDegree = d :=
   Iff.rfl
 
-/-- **Over a finite field there are finitely many monic irreducibles of each degree.** They sit
-inside the monic polynomials of that degree, which are parametrised by their lower
-coefficients. -/
-theorem finite_monicIrreduciblesOfDegree [Finite R] (d : ℕ) :
+/-- **Over a finite coefficient ring there are finitely many monic irreducibles of each
+degree.** They sit inside the monic polynomials of that degree, which are parametrised by their
+lower coefficients. -/
+theorem finite_monicIrreduciblesOfDegree [Nontrivial R] [Finite R] (d : ℕ) :
     (monicIrreduciblesOfDegree R d).Finite := by
   have hdeg : Finite (Polynomial.degreeLT R d) :=
     Finite.of_equiv _ (Polynomial.degreeLTEquiv R d).toEquiv.symm
@@ -59,3 +59,5 @@ theorem finite_monicIrreduciblesOfDegree [Finite R] (d : ℕ) :
   exact hmon.subset fun g hg => ⟨hg.1, hg.2.2⟩
 
 end Polynomial
+
+end
