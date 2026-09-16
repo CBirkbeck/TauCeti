@@ -10,9 +10,11 @@ public import TauCeti.NumberTheory.HeckeRing.Basic
 /-!
 # Restricting a Hecke coset to a smaller ambient group
 
-`HeckeCoset Δ Γ₁ Γ₂` records a double coset `Γ₁ δ Γ₂` inside an ambient group `G`. Mathlib's
-`HeckeCoset.map` moves along inclusions `Δ ≤ Δ'`, `Γ₁ ≤ Γ₁'`, `Γ₂ ≤ Γ₂'` *within a fixed* `G`;
-nothing moves a Hecke coset between ambient groups. This file supplies the one direction that is
+`HeckeCoset Δ Γ₁ Γ₂` records a double coset `Γ₁ δ Γ₂` inside an ambient group `G`. `HeckeCoset.map`
+(`HeckeRing/Basic.lean`) moves along inclusions `Δ ≤ Δ'`, `Γ₁ ≤ Γ₁'`, `Γ₂ ≤ Γ₂'` *within a fixed*
+`G`; nothing moves a Hecke coset between ambient groups, here or upstream — Mathlib's
+`NumberTheory/HeckeRing/` holds only `Defs.lean`, which defines `HeckeCoset` and `mk` but no
+transport. This file supplies the one direction that is
 unobstructed: if the coefficient monoid already lies inside a subgroup `H`, the whole double coset
 does, and `restrict` re-reads it as a Hecke coset over `↥H`.
 
@@ -36,6 +38,8 @@ cannot be instantiated at `ratPosToPSL2R` at all.
 
 * `HeckeCoset.restrict_def`: the characteristic equation. `restrict` is not `@[expose]`, so a
   downstream module rewrites with this rather than unfolding the body.
+* `HeckeCoset.restrict_injective`: `restrict` is injective — but not bijective, and the docstring
+  there gives the counterexample.
 * `HeckeCoset.mk_rep_restrict`: the representative chosen by the restricted coset is still a
   representative of `D`. Both `restrict D` and `D` pick their representatives through `Quotient.out`
   and there is no reason for the two choices to agree, so this — not an equation between
@@ -52,7 +56,8 @@ is not rediscovered. `Γᵢ.comap H.subtype` is definitionally `Subgroup.subgrou
 better, but substituting it makes `restrict_def`'s `rfl` fail: `subgroupOf` is not `@[expose]`d, so
 the equation cannot be proved definitionally in a module that exports it. The parentheses in
 `:= (rfl)` are load-bearing for the same reason rather than stylistic; removing them produces the
-identical export-transparency error.
+identical export-transparency error. The same mismatch also defeats `simp`-family tactics here,
+which normalise `comap H.subtype` to `subgroupOf` and then fail against a `comap`-shaped goal.
 -/
 
 public section
@@ -70,31 +75,35 @@ one for the comapped triple inside `↥H`.
 Only `Δ ≤ H` is needed; see the implementation notes in the module docstring. -/
 noncomputable def restrict (hΔ : Δ ≤ H.toSubmonoid) (D : HeckeCoset Δ Γ₁ Γ₂) :
     HeckeCoset (Δ.comap H.subtype) (Γ₁.comap H.subtype) (Γ₂.comap H.subtype) :=
-  mk _ _ ⟨⟨(D.rep : G), hΔ D.rep.2⟩, D.rep.2⟩
+  mk _ _ ⟨⟨D.rep, hΔ D.rep.2⟩, D.rep.2⟩
 
 /-- Defining equation for `restrict`. Since `restrict` is not `@[expose]`, a downstream module
 rewrites with this instead of unfolding the body. -/
 theorem restrict_def (hΔ : Δ ≤ H.toSubmonoid) (D : HeckeCoset Δ Γ₁ Γ₂) :
     restrict hΔ D = mk (Γ₁.comap H.subtype) (Γ₂.comap H.subtype)
-      (⟨⟨(D.rep : G), hΔ D.rep.2⟩, D.rep.2⟩ : ↥(Δ.comap H.subtype)) := (rfl)
+      (⟨⟨D.rep, hΔ D.rep.2⟩, D.rep.2⟩ : ↥(Δ.comap H.subtype)) := (rfl)
 
 /-- **The restricted coset's representative still represents `D`.** `restrict hΔ D` chooses its
 representative through `Quotient.out`, independently of `D`'s own choice, so the two need not agree
 as elements of `G`; what does hold — and what a consumer needs — is that the restricted choice is
 again a representative of the original double coset. -/
 theorem mk_rep_restrict (hΔ : Δ ≤ H.toSubmonoid) (D : HeckeCoset Δ Γ₁ Γ₂) :
-    mk Γ₁ Γ₂ ⟨((((restrict hΔ D).rep : ↥(Δ.comap H.subtype)) : ↥H) : G),
-      (restrict hΔ D).rep.2⟩ = D := by
-  have hmk : mk (Γ₁.comap H.subtype) (Γ₂.comap H.subtype) (restrict hΔ D).rep =
-      mk (Γ₁.comap H.subtype) (Γ₂.comap H.subtype)
-        (⟨⟨(D.rep : G), hΔ D.rep.2⟩, D.rep.2⟩ : ↥(Δ.comap H.subtype)) :=
-    (mk_rep _).trans (restrict_def hΔ D)
-  -- the two representatives differ by comapped subgroup elements, which are genuine
-  -- `Γᵢ`-elements downstairs
+    mk Γ₁ Γ₂ ⟨(restrict hΔ D).rep, (restrict hΔ D).rep.2⟩ = D := by
+  -- the restricted representative lies in the double coset of the element `restrict` was built
+  -- from, and the witnesses are comapped subgroup elements, hence genuine `Γᵢ`-elements downstairs
   obtain ⟨a, ha, b, hb, hab⟩ :=
-    mem_doubleCoset.mp ((eq_iff.mp hmk) ▸ mem_doubleCoset_self (Γ₁.comap H.subtype)
-      (Γ₂.comap H.subtype) (((restrict hΔ D).rep : ↥(Δ.comap H.subtype)) : ↥H))
+    mem_doubleCoset.mp (restrict_def hΔ D ▸ rep_mk_mem_doubleCoset
+      (⟨⟨D.rep, hΔ D.rep.2⟩, D.rep.2⟩ : ↥(Δ.comap H.subtype)))
   conv_rhs => rw [← mk_rep D]
   exact mk_eq_mk_of_mem (mem_doubleCoset.mpr ⟨(a : G), ha, (b : G), hb, congrArg Subtype.val hab⟩)
+
+/-- **`restrict` is injective.** Immediate from `mk_rep_restrict`, which exhibits a left inverse.
+
+It is *not* bijective at this generality, and no `Equiv` is available: taking `G = S₃`, `H = A₃`,
+`Δ = H` and `Γ₁ = Γ₂ = {e, (1 2)}` gives a two-element `HeckeCoset Δ Γ₁ Γ₂` and a three-element
+codomain. Surjectivity would need `Γ₁, Γ₂ ≤ H`, which nothing else here requires. -/
+theorem restrict_injective (hΔ : Δ ≤ H.toSubmonoid) :
+    Function.Injective (restrict hΔ : HeckeCoset Δ Γ₁ Γ₂ → _) :=
+  fun D₁ D₂ h ↦ by rw [← mk_rep_restrict hΔ D₁, ← mk_rep_restrict hΔ D₂, h]
 
 end HeckeCoset
