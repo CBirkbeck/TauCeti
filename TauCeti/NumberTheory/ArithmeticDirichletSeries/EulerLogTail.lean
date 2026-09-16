@@ -221,23 +221,18 @@ variable {K : Type*} [Field K] [NumberField K]
 where both series converge, `∑_𝔭 -log (1 - N(𝔭) ^ (-s))` differs from
 `NumberField.Set.primeIdealZetaSum Set.univ s` by at most the constant `2 [K : ℚ]`.
 
-The difference is in fact nonnegative, by
-`TauCeti.tsum_neg_log_one_sub_sub_absNorm_rpow_nonneg`; the absolute value is here so that the
-statement can be used directly as an `O(1)` estimate. -/
+The absolute value is here so that the statement can be used directly as an `O(1)` estimate; the
+difference is in fact nonnegative — see `TauCeti.tsum_neg_log_one_sub_sub_absNorm_rpow_nonneg`. -/
 theorem abs_tsum_neg_log_one_sub_sub_primeIdealZetaSum_le {s : ℝ} (hs : 1 < s) :
-    |(∑' 𝔭 : HeightOneSpectrum (𝓞 K),
-        -Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s))) -
-      primeIdealZetaSum (Set.univ : Set (HeightOneSpectrum (𝓞 K))) s| ≤
-        2 * Module.finrank ℚ K := by
-  have hzeta : primeIdealZetaSum (Set.univ : Set (HeightOneSpectrum (𝓞 K))) s =
-      ∑' 𝔭 : HeightOneSpectrum (𝓞 K), (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s) := by
-    rw [primeIdealZetaSum_def]
-    exact tsum_univ fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦ (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)
+    |(∑' 𝔭 : HeightOneSpectrum (𝓞 K), -Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s))) -
+      primeIdealZetaSum (Set.univ : Set (HeightOneSpectrum (𝓞 K))) s| ≤ 2 * Module.finrank ℚ K := by
   have hsumP := TauCeti.summable_absNorm_rpow (K := K) hs
   have hsumL : Summable fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦
       -Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) := by
-    simpa using (TauCeti.summable_neg_log_one_sub_sub_absNorm_rpow (K := K) hs.le).add hsumP
-  rw [hzeta, ← hsumL.tsum_sub hsumP,
+    simpa using (TauCeti.summable_neg_log_one_sub_sub_absNorm_rpow hs.le).add hsumP
+  -- Both series converge separately, so their difference is the sum of the prime-power tail.
+  rw [primeIdealZetaSum_def, tsum_univ fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦
+      (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s), ← hsumL.tsum_sub hsumP,
     abs_of_nonneg (TauCeti.tsum_neg_log_one_sub_sub_absNorm_rpow_nonneg (zero_lt_one.trans hs))]
   exact TauCeti.tsum_neg_log_one_sub_sub_absNorm_rpow_le hs.le
 
