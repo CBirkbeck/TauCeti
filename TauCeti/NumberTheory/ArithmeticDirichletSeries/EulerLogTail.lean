@@ -142,14 +142,13 @@ private theorem tsum_absNorm_rpow_neg_two_le :
 -- `log (1 - x)⁻¹ = -log (1 - x)`; the lower bound is `log t ≤ t - 1` at `t = 1 - x`.
 private theorem neg_log_one_sub_sub_le {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x < 1) :
     0 ≤ -Real.log (1 - x) - x ∧ -Real.log (1 - x) - x ≤ x ^ 2 / (2 * (1 - x)) := by
-  have hden : (0 : ℝ) < 1 - x := by linarith
   have hz : ‖(x : ℂ)‖ < 1 := by rwa [Complex.norm_real, Real.norm_of_nonneg hx0]
   have key := Complex.norm_log_one_sub_inv_sub_self_le hz
-  rw [show (1 : ℂ) - (x : ℂ) = ((1 - x : ℝ) : ℂ) by push_cast; ring, ← Complex.ofReal_inv,
+  rw [← Complex.ofReal_one, ← Complex.ofReal_sub, ← Complex.ofReal_inv,
     ← Complex.ofReal_log (by positivity), ← Complex.ofReal_sub, Complex.norm_real,
-    Complex.norm_real, Real.norm_of_nonneg hx0, Real.log_inv, Real.norm_eq_abs] at key
-  exact ⟨by have := Real.log_le_sub_one_of_pos hden; linarith,
-    (abs_le.mp key).2.trans_eq (by field_simp)⟩
+    Complex.norm_real, Real.norm_of_nonneg hx0, Real.log_inv] at key
+  exact ⟨by linarith [Real.log_le_sub_one_of_pos (sub_pos.mpr hx1)],
+    ((Real.le_norm_self _).trans key).trans_eq (by field_simp)⟩
 
 -- At `x = y ^ (-s)` with `2 ≤ y` and `1 ≤ s`, the base is at least `2` and the exponent at most
 -- `-1`, so `x ≤ 1 / 2`.  Both halves of the termwise estimate need this, so it is proved once.
