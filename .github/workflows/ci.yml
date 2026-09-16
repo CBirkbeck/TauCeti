@@ -290,6 +290,9 @@ jobs:
       # generates an import-all module under .lake/ for lint-style's text-based checks. This is
       # deliberately narrower than the command header linter's unrelated import and module-doc
       # checks; the empty root makes that command linter skip every library module at this pin.
+      - name: Header audit equivalence tests
+        run: lake env python3 scripts/test_header_style.py
+
       - name: Source style lint (copyright headers + text linters)
         run: bash scripts/lint-style.sh
 
