@@ -166,6 +166,20 @@ theorem completedPlusSubring_le_iff (P : PairOfDefinition A) (Aplus : Subring A)
     Set.image_subset_iff]
   rfl
 
+/-- **`A_U⁺` is closed** in `A⟨T/s⟩`, with no hypothesis on `Aplus`. -/
+theorem isClosed_completedPlusSubring (P : PairOfDefinition A) (Aplus : Subring A) (T : Finset A)
+    (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    IsClosed (completedPlusSubring P Aplus T s S hden : Set (UniformSpace.Completion S)) := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  rw [coe_completedPlusSubring]
+  exact isClosed_closure
+
 /-- **The structure map `A → A⟨T/s⟩` carries `A⁺` into `A_U⁺`**, with no hypothesis on `Aplus`.
 Together with `continuous_toCompletionLoc`, this makes the structure map a morphism of pairs
 `(A, A⁺) → (A⟨T/s⟩, A_U⁺)`. The companion `divBy_mem_completedPlusSubring` puts each fraction `t/s`
