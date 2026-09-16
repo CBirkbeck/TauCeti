@@ -37,9 +37,8 @@ ground level `A^U` (`LayerRefinement.groundLevelEquiv_cohomologyInfl_zero_apply`
 
 Refinements compose (`LayerRefinement.trans`): along a tower `F ⊆ K ⊆ L ⊆ M` of top fields the
 relative degree is multiplicative, the Galois-group quotients compose, and inflation is
-functorial, as is the induced map `LayerRefinement.quotientHom : (U/V')^ab → (U/V)^ab` of
-abelianized Galois groups. In positive degree the Tate groups are the ordinary cohomology groups,
-and inflation of Tate cohomology, `LayerRefinement.tateInfl`, is `cohomologyInfl` read through that
+functorial. In positive degree the Tate groups are the ordinary cohomology groups, and inflation
+of Tate cohomology, `LayerRefinement.tateInfl`, is `cohomologyInfl` read through that
 identification. Any two layers over the same ground, in particular any two refinements of one
 layer, have a common refinement, the compositum of the two top fields, whose top subgroup is the
 intersection of the two top subgroups (`LayerRefinement.exists_commonRefinement`). This is what
@@ -55,8 +54,6 @@ refinements.
 * `TauCeti.ClassFieldTheory.LayerRefinement.repHom`: the inclusion `A^V ⊆ A^{V'}` of coefficient
   modules, equivariant along `galHom`.
 * `TauCeti.ClassFieldTheory.LayerRefinement.groundEquiv`: the identity of the common ground level.
-* `TauCeti.ClassFieldTheory.LayerRefinement.quotientHom`: the map `(U/V')^ab → (U/V)^ab` of
-  abelianized Galois groups.
 * `TauCeti.ClassFieldTheory.LayerRefinement.cohomologyInfl`: inflation of layer cohomology.
 * `TauCeti.ClassFieldTheory.LayerRefinement.tateInfl`: inflation of layer Tate cohomology, in
   positive degrees.
@@ -70,7 +67,6 @@ refinements.
   `[U : V] * [V : V'] = [U : V']`.
 * `TauCeti.ClassFieldTheory.LayerRefinement.relativeDegree_trans`,
   `TauCeti.ClassFieldTheory.LayerRefinement.galHom_trans`,
-  `TauCeti.ClassFieldTheory.LayerRefinement.quotientHom_trans`,
   `TauCeti.ClassFieldTheory.LayerRefinement.cohomologyInfl_trans` and
   `TauCeti.ClassFieldTheory.LayerRefinement.tateInfl_trans`: towers of refinements.
 * `TauCeti.ClassFieldTheory.LayerRefinement.groundLevelEquiv_cohomologyInfl_zero_apply`: in degree
@@ -93,10 +89,10 @@ than a quotient map on one fixed group.
 * J.-P. Serre, *Local Fields*, Chapter VII, §5, and Chapter XI, §1.
 -/
 
--- The signatures of `LayerRefinement`, `relativeDegree`, `quotientHom`, `cohomologyInfl`,
--- `tateInfl`, `groundEquiv`, the tower lemmas and `exists_commonRefinement` below follow the
--- Tau Ceti `ClassFieldTheory` blueprint, `README.md` and `Suggested.lean`, which write down the
--- refinement relation between two normal layers formalised here.
+-- The signatures of `LayerRefinement`, `relativeDegree`, `cohomologyInfl`, `tateInfl`,
+-- `groundEquiv`, the tower lemmas and `exists_commonRefinement` below follow the Tau Ceti
+-- `ClassFieldTheory` blueprint, `README.md` and `Suggested.lean`, which write down the refinement
+-- relation between two normal layers formalised here.
 
 public noncomputable section
 
@@ -185,19 +181,6 @@ theorem galHom_mk_eq_one_iff (T : LayerRefinement old new) (w : new.ground) :
   rw [galHom_mk, QuotientGroup.eq_one_iff (N := old.relativeTop), Subgroup.mem_subgroupOf,
     Subgroup.coe_inclusion, OpenSubgroup.mem_toSubgroup]
 
-/-- The map `(U/V')^ab → (U/V)^ab` of abelianized Galois groups induced by a refinement, written
-additively: the quotient map `galHom` passed to abelianizations. -/
-def quotientHom (T : LayerRefinement old new) :
-    Additive (Abelianization new.Gal) →+ Additive (Abelianization old.Gal) :=
-  MonoidHom.toAdditive (Abelianization.map T.galHom)
-
-/-- The map of abelianized Galois groups sends the class of `γ` to the class of `galHom γ`. -/
-@[simp]
-theorem quotientHom_ofMul_of (T : LayerRefinement old new) (γ : new.Gal) :
-    T.quotientHom (Additive.ofMul (Abelianization.of γ)) =
-      Additive.ofMul (Abelianization.of (T.galHom γ)) := by
-  rw [quotientHom, MonoidHom.toAdditive_apply_apply, toMul_ofMul, Abelianization.map_of]
-
 /-- The old top level sits inside the new one: a smaller subgroup fixes more elements. -/
 theorem level_top_le (T : LayerRefinement old new) (F : Formation G) :
     F.level old.top ≤ F.level new.top :=
@@ -266,12 +249,6 @@ theorem galHom_self {L : NormalLayer G} (T : LayerRefinement L L) :
     induction γ using QuotientGroup.induction_on with
     | H w => exact congrArg QuotientGroup.mk (Subtype.ext rfl)
 
-/-- The map of abelianized Galois groups attached to the trivial refinement is the identity. -/
-@[simp]
-theorem quotientHom_self {L : NormalLayer G} (T : LayerRefinement L L) :
-    T.quotientHom = AddMonoidHom.id (Additive (Abelianization L.Gal)) := by
-  rw [quotientHom, galHom_self, Abelianization.map_id, MonoidHom.toAdditive_id]
-
 /-- The coefficient map attached to the trivial refinement is the identity on underlying linear
 maps. -/
 theorem repHom_self_toLinearMap {L : NormalLayer G} (T : LayerRefinement L L)
@@ -301,14 +278,6 @@ theorem galHom_trans (T : LayerRefinement a b) (T' : LayerRefinement b c) :
   MonoidHom.ext fun γ ↦ by
     induction γ using QuotientGroup.induction_on with
     | H w => exact congrArg QuotientGroup.mk (Subtype.ext rfl)
-
-/-- **The maps of abelianized Galois groups compose along a tower of refinements.** -/
-theorem quotientHom_trans (T : LayerRefinement a b) (T' : LayerRefinement b c) :
-    (T.trans T').quotientHom = T.quotientHom.comp T'.quotientHom := by
-  rw [quotientHom, quotientHom, quotientHom, galHom_trans T T', ← Abelianization.map_comp]
-  -- `MonoidHom.toAdditive` sends a composite to the composite of the reinterpreted maps by its
-  -- definition; Mathlib states no lemma for it.
-  rfl
 
 /-- The coefficient inclusions compose along a tower of refinements, on underlying linear maps. -/
 theorem repHom_trans_toLinearMap (T : LayerRefinement a b) (T' : LayerRefinement b c)
