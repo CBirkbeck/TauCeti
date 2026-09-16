@@ -11,7 +11,6 @@ import unittest
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 WORKFLOWS = (
     ROOT / ".github/workflows/auto-merge.yml",
-    ROOT / ".github/workflows/queue-release.yml",
     ROOT / ".github/workflows/merge-sweep.yml",
     ROOT / ".github/workflows/review.yml",
 )

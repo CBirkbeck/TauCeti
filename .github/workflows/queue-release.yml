@@ -16,43 +16,39 @@ on:
 permissions:
   contents: read
   pull-requests: read
+  actions: write
 
 concurrency:
   group: queue-release-${{ github.event.pull_request.number || inputs.released_pr }}
   cancel-in-progress: false
 
 jobs:
-  candidates:
+  release:
     runs-on: ubuntu-latest
-    outputs:
-      prs: ${{ steps.select.outputs.prs }}
+    if: >-
+      github.event_name == 'workflow_dispatch'
+      || github.event.action == 'dequeued'
+      || github.event.pull_request.merged == true
     steps:
-      # Only trusted main code runs here; no PR checkout, diff execution, or provider keys.
+      # Only trusted main code runs here; no PR checkout or App credentials.
       - uses: actions/checkout@v4
         with:
           ref: main
+          sparse-checkout: scripts
           persist-credentials: false
-      - id: select
+      - id: release
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           RELEASED_PR: ${{ github.event.pull_request.number || inputs.released_pr }}
+          RELEASE_ACTION: ${{ github.event.action || 'manual' }}
         run: python3 scripts/queue_release.py
-
-  reconsider:
-    needs: candidates
-    if: ${{ needs.candidates.outputs.prs != '[]' }}
-    strategy:
-      fail-fast: false
-      max-parallel: 2
-      matrix:
-        pr: ${{ fromJSON(needs.candidates.outputs.prs) }}
-    # The label is only a candidate filter. This existing gate checks all real
-    # evidence and expectedHeadOid, and respects any newly acquired reservation.
-    uses: TauCetiProject/TauCetiReview/.github/workflows/merge-only.yml@603b28011f779bd341d0a08e788498b81542bd7d
-    with:
-      pr: ${{ matrix.pr }}
-      review_ref: 603b28011f779bd341d0a08e788498b81542bd7d
-    secrets:
-      APP_ID: ${{ secrets.APP_ID }}
-      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+      - name: Wake the existing queue reconciler
+        if: steps.release.outputs.sweep == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        # workflow_dispatch may trigger another workflow using GITHUB_TOKEN.
+        # The sweep's existing concurrency group serializes scheduled and release runs.
+        # It owns head-pinned review/CI checks, reservations, and eviction recovery.
+        run: gh workflow run merge-sweep.yml --repo "$REPO" --ref main -f dry-run=false
