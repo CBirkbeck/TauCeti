@@ -15,9 +15,9 @@ Let `L / K` be a finite Galois extension of number fields. The Artin class parti
 of `𝓞 K` outside the finite set `ramifiedPrimes K L` into the fibres `frobeniusPrimeSet K L C`,
 one for each conjugacy class `C` of `Gal(L/K)`. This file transports that partition through
 Mathlib's partial Dirichlet series `NumberField.Set.primeIdealZetaSum`, whose ratios define
-`NumberField.Set.HasDirichletDensity`: the fibre sums add up to the sum over the primes unramified
-in `L`, so the Frobenius fibres account for the all-prime sum up to an error which is bounded
-uniformly in `s ≥ 0`.
+`NumberField.Set.HasDirichletDensity`: whenever each fibre series is summable, the fibre sums add
+up to the sum over the primes unramified in `L`, so the Frobenius fibres account for the all-prime
+sum up to an error which is bounded by `#(ramifiedPrimes K L)`, uniformly in `s ≥ 0`.
 
 Both ingredients are generic. Additivity along a finite pairwise disjoint union is
 `NumberField.Set.primeIdealZetaSum_biUnion_of_pairwiseDisjoint`, and the error bound is
@@ -27,16 +27,17 @@ specializations to the Artin fibres and to `ramifiedPrimes K L` are Chebotarev-s
 
 ## Main results
 
-* `NumberField.Chebotarev.sum_primeIdealZetaSum_frobeniusPrimeSet`: the fibre sums add up to the
-  sum over the complement of `ramifiedPrimes K L`.
+* `NumberField.Chebotarev.sum_primeIdealZetaSum_frobeniusPrimeSet`: for `s` at which every fibre
+  series is summable, the fibre sums add up to the sum over the complement of `ramifiedPrimes K L`.
 * `NumberField.Chebotarev.abs_primeIdealZetaSum_sub_sum_primeIdealZetaSum_frobeniusPrimeSet_le`:
-  the all-prime sum and the total fibre sum differ by at most `#(ramifiedPrimes K L)`.
+  for such `s` with `0 ≤ s`, the all-prime sum and the total fibre sum differ by at most
+  `#(ramifiedPrimes K L)`.
 
 ## Implementation notes
 
 `primeIdealZetaSum S s` is a `tsum`, so it takes the value `0` on a family that is not summable,
 and `0` is not additive along a partition. The fibre identity therefore carries a summability
-hypothesis.
+hypothesis, and only a per-fibre one: nothing here needs the series over all primes to converge.
 
 ## References
 
@@ -66,11 +67,13 @@ open scoped Classical in
 variable (K L) in
 /-- **The Frobenius fibres reassemble the unramified sum.** Summing `primeIdealZetaSum` over the
 Artin fibres of all conjugacy classes of `Gal(L/K)` gives the sum over the complement of
-`ramifiedPrimes K L`.
+`ramifiedPrimes K L`, provided each fibre series converges.
 
-The summability hypothesis is what makes the fibre sums add; see the module docstring. -/
+Summability is what makes the fibre sums add; see the module docstring. It is needed only on each
+fibre, which `Summable.subtype` supplies from summability over all primes. -/
 theorem sum_primeIdealZetaSum_frobeniusPrimeSet
-    (hsum : Summable fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦ (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) :
+    (hsum : ∀ C : ConjClasses (L ≃ₐ[K] L),
+      Summable fun 𝔭 : frobeniusPrimeSet K L C ↦ (Ideal.absNorm 𝔭.1.asIdeal : ℝ) ^ (-s)) :
     ∑ C : ConjClasses (L ≃ₐ[K] L), (frobeniusPrimeSet K L C).primeIdealZetaSum s =
       (↑(ramifiedPrimes K L) : Set (HeightOneSpectrum (𝓞 K)))ᶜ.primeIdealZetaSum s := by
   have hcov : (↑(ramifiedPrimes K L) : Set (HeightOneSpectrum (𝓞 K)))ᶜ =
@@ -78,15 +81,16 @@ theorem sum_primeIdealZetaSum_frobeniusPrimeSet
   rw [hcov]
   exact (Set.primeIdealZetaSum_biUnion_of_pairwiseDisjoint _ _
     ((pairwise_disjoint_frobeniusPrimeSet K L).set_pairwise _)
-    fun _ _ ↦ hsum.subtype _).symm
+    fun C _ ↦ hsum C).symm
 
 open scoped Classical in
 variable (K L) in
-/-- **The Frobenius fibres account for the all-prime sum up to the ramified primes.** The
-all-prime sum and the total over the Artin fibres differ by at most `#(ramifiedPrimes K L)`,
-uniformly in `s ≥ 0`. -/
+/-- **The Frobenius fibres account for the all-prime sum up to the ramified primes.** At an
+`s ≥ 0` where every fibre series is summable, the all-prime sum and the total over the Artin
+fibres differ by at most `#(ramifiedPrimes K L)` — a bound uniform in `s`. -/
 theorem abs_primeIdealZetaSum_sub_sum_primeIdealZetaSum_frobeniusPrimeSet_le (hs : 0 ≤ s)
-    (hsum : Summable fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦ (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) :
+    (hsum : ∀ C : ConjClasses (L ≃ₐ[K] L),
+      Summable fun 𝔭 : frobeniusPrimeSet K L C ↦ (Ideal.absNorm 𝔭.1.asIdeal : ℝ) ^ (-s)) :
     |(Set.univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum s -
         ∑ C : ConjClasses (L ≃ₐ[K] L), (frobeniusPrimeSet K L C).primeIdealZetaSum s| ≤
       (ramifiedPrimes K L).card := by
