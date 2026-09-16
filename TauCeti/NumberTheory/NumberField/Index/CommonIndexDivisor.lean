@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.NumberField.Index.Exponent
-public import TauCeti.RingTheory.Polynomial.MonicIrreducible
+public import TauCeti.RingTheory.Polynomial.Monic.Irreducible
 
 /-!
 # Common index divisors

@@ -10,7 +10,7 @@ public import Mathlib.RingTheory.Polynomial.Vieta
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import TauCeti.Data.Sym.Basic
 public import TauCeti.RingTheory.MvPolynomial.Symmetric.Substitution
-public import TauCeti.RingTheory.Polynomial.MonicOfCoeff
+public import TauCeti.RingTheory.Polynomial.Monic.OfCoeff
 import Mathlib.Data.Fin.VecNotation
 
 /-!
