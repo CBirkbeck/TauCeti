@@ -90,7 +90,30 @@ theorem coe_twoSidedMonomial (n : ℤ) (a : A) : (twoSidedMonomial n a : ℤ →
 
 /-- The degree-`0` monomial with coefficient `1` is the unit: `1 · X⁰ = 1`. -/
 @[simp]
-theorem twoSidedMonomial_zero_one : twoSidedMonomial 0 (1 : A) = 1 := (rfl)
+theorem twoSidedMonomial_zero_one : twoSidedMonomial 0 (1 : A) = 1 :=
+  Subtype.ext <| (coe_twoSidedMonomial 0 1).trans coe_one_twoSidedRestrictedSubmodule.symm
+
+/-- The monomial with coefficient `0` is `0`. -/
+@[simp]
+theorem twoSidedMonomial_zero_right (n : ℤ) : twoSidedMonomial n (0 : A) = 0 :=
+  Subtype.ext <| by simp
+
+/-- The monomial `a Xⁿ` is additive in its coefficient. -/
+@[simp]
+theorem twoSidedMonomial_add (n : ℤ) (a b : A) :
+    twoSidedMonomial n (a + b) = twoSidedMonomial n a + twoSidedMonomial n b :=
+  Subtype.ext <| by simp [Pi.single_add]
+
+/-- The monomial `a Xⁿ` commutes with negating its coefficient. -/
+@[simp]
+theorem twoSidedMonomial_neg (n : ℤ) (a : A) : twoSidedMonomial n (-a) = -twoSidedMonomial n a :=
+  Subtype.ext <| by simp [Pi.single_neg]
+
+/-- The monomial `a Xⁿ` commutes with subtracting coefficients. -/
+@[simp]
+theorem twoSidedMonomial_sub (n : ℤ) (a b : A) :
+    twoSidedMonomial n (a - b) = twoSidedMonomial n a - twoSidedMonomial n b :=
+  Subtype.ext <| by simp [Pi.single_sub]
 
 /-- **Monomials multiply by adding degrees**: `(a Xᵐ)(b Xⁿ) = ab X^{m+n}`. -/
 @[simp]
@@ -109,7 +132,7 @@ variable {A : Type*} [Ring A] [UniformSpace A] [IsUniformAddGroup A] [Nonarchime
 the convolution product `instMul` and the unit `instOne`. -/
 noncomputable instance twoSidedRestrictedSubmodule.instRing :
     Ring (twoSidedRestrictedSubmodule A A) where
-  mul_assoc f g h := Subtype.ext <| addRingConvolution_assoc_of_zeroAtFilter_cofinite
+  mul_assoc f g h := Subtype.ext <| ZeroAtFilter.addRingConvolution_assoc
     (mem_twoSidedRestrictedSubmodule.mp f.2) (mem_twoSidedRestrictedSubmodule.mp g.2)
     (mem_twoSidedRestrictedSubmodule.mp h.2)
   one_mul _ := Subtype.ext <| by simp
@@ -159,6 +182,13 @@ noncomputable instance twoSidedRestrictedSubmodule.instAlgebra :
 theorem coe_algebraMap_twoSidedRestrictedSubmodule (a : A) :
     (algebraMap A (twoSidedRestrictedSubmodule A A) a : ℤ → A) = Pi.single 0 a := by
   simp [Algebra.algebraMap_eq_smul_one, ← Pi.single_smul]
+
+/-- The degree-`0` monomial `a X⁰` is the constant series `a`, the image of `a` under the structure
+map. -/
+@[simp]
+theorem twoSidedMonomial_zero_left (a : A) :
+    twoSidedMonomial 0 a = algebraMap A (twoSidedRestrictedSubmodule A A) a :=
+  Subtype.ext <| by simp
 
 end CommRing
 
