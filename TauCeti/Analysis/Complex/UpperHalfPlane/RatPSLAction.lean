@@ -139,6 +139,10 @@ Only `-1 ∈ Γ` is asked for; the `1` branch is discharged internally by `Γ.on
 therefore cannot use this lemma at `N ≥ 3`, and indeed `ker ratPosToPSL2R ⊓ H ≤ Γ₁(N)` is false
 there, since `-1` lies in the kernel.
 
+The form a consumer actually wants is `Γ.withCenter`, which adjoins the centre and so contains
+`-1` for every `Γ`. That is the shape the Petersson layer works in — `peterssonInnerCosets` sums
+over `SL(2, ℤ) ⧸ Γ.withCenter` — so the hypothesis is satisfiable exactly where it is needed.
+
 `hH` is stated on the underlying matrix because that is the form in which the determinant
 condition defining the locus arrives. -/
 theorem ratPosToPSL2R_ker_inf_le {H Γ : Subgroup GL(2, ℚ)⁺}
