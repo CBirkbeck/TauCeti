@@ -94,8 +94,9 @@ merges. The degree section is instead ported from the AINTLIB `LeanModularForms`
   `Γ₁δ₁Γ₂ · Γ₂δ₂Γ₃`, though not without repetition.
 * `IsHeckeTriple.commensurable_conjAct_inv_left`, and the `Finite` instance beside it: that
   right-coset index is finite, the mirror of the `Fintype` instance on `DecompQuotient H₁ H₂ g`.
-* `HeckeCoset.restrict_bijective` and `HeckeCoset.restrict_injective`: restriction loses nothing —
-  the double cosets of `Δ` and those of `Δ.comap H.subtype` are the same objects described twice.
+* `HeckeCoset.restrict_bijective`, with `HeckeCoset.restrict_injective` and
+  `HeckeCoset.restrict_surjective`: restriction loses nothing — the double cosets of `Δ` and those
+  of `Δ.comap H.subtype` are the same objects described twice.
 
 ## References
 
@@ -370,6 +371,21 @@ representative lies in `H`. -/
     (restrictEquiv hΔ h₁ h₂).symm (mk (H₁.subgroupOf H) (H₂.subgroupOf H) g) =
       mk H₁ H₂ (⟨((g : ↥H) : G), g.2⟩ : Δ) := (rfl)
 
+/-- **The round trip through `restrictEquiv` is the identity**, in the direction that starts in
+the ambient group. -/
+@[simp] lemma restrictEquiv_symm_apply_restrict (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H)
+    (h₂ : H₂ ≤ H) (D : HeckeCoset Δ H₁ H₂) :
+    (restrictEquiv hΔ h₁ h₂).symm (D.restrict hΔ h₁ h₂) = D :=
+  (restrictEquiv hΔ h₁ h₂).left_inv D
+
+/-- **The round trip through `restrictEquiv` is the identity**, in the direction that starts in
+the subgroup. -/
+@[simp] lemma restrict_restrictEquiv_symm_apply (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H)
+    (h₂ : H₂ ≤ H)
+    (D : HeckeCoset (Δ.comap H.subtype) (H₁.subgroupOf H) (H₂.subgroupOf H)) :
+    ((restrictEquiv hΔ h₁ h₂).symm D).restrict hΔ h₁ h₂ = D :=
+  (restrictEquiv hΔ h₁ h₂).right_inv D
+
 /-- **`restrict` is bijective.** -/
 theorem restrict_bijective (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H) :
     Function.Bijective (fun D : HeckeCoset Δ H₁ H₂ ↦ D.restrict hΔ h₁ h₂) :=
@@ -379,6 +395,11 @@ theorem restrict_bijective (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h�
 theorem restrict_injective (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H) :
     Function.Injective (fun D : HeckeCoset Δ H₁ H₂ ↦ D.restrict hΔ h₁ h₂) :=
   (restrict_bijective hΔ h₁ h₂).1
+
+/-- **`restrict` is surjective.** -/
+theorem restrict_surjective (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H) :
+    Function.Surjective (fun D : HeckeCoset Δ H₁ H₂ ↦ D.restrict hΔ h₁ h₂) :=
+  (restrict_bijective hΔ h₁ h₂).2
 
 end HeckeCoset
 
