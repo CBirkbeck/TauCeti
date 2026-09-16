@@ -51,7 +51,7 @@ infrastructure independent of the diamond operators.
   the three families are nested, `Γ(N) ≤ Γ₁(N) ≤ Γ₀(N)`.
 * `CongruenceSubgroup.mem_Gamma0_iff_dvd`: `Γ₀(N)` membership read as the integer divisibility
   `(N : ℤ) ∣ A 1 0` rather than as a `ZMod N` congruence, for a proof that wants to name the
-  quotient; valid at `N = 0` as well, with no `NeZero` hypothesis.
+  quotient. Valid at every level, `N = 0` included.
 * `CongruenceSubgroup.mem_Gamma1_iff`: `Γ₁(N)` is cut out inside `Γ₀(N)` by the
   single congruence `d ≡ 1`.
 * `CongruenceSubgroup.isUnit_intCast_apply_zero_zero_of_mem_Gamma0`: a `Γ₀(N)` matrix has
@@ -153,15 +153,9 @@ theorem Gamma_le_Gamma0 (N : ℕ) : Gamma N ≤ Gamma0 N :=
 as a congruence in `ZMod N`; this is the same fact with the congruence already discharged into
 `(N : ℤ) ∣ A 1 0`, which is the form a proof needs whenever it wants to name the quotient.
 
-It needs no `NeZero N`, unlike the `ZMod.intCast_zmod_eq_zero_iff_dvd` step it packages: at
-`N = 0` the congruence lives in `ZMod 0 = ℤ` and both sides say `A 1 0 = 0`, so the one-line case
-split buys a statement that holds at every level. -/
-theorem mem_Gamma0_iff_dvd {N : ℕ} {A : SL(2, ℤ)} : A ∈ Gamma0 N ↔ (N : ℤ) ∣ A 1 0 := by
-  rcases eq_or_ne N 0 with rfl | hN
-  · rw [Gamma0_mem]
-    simp [zero_dvd_iff]
-  · have : NeZero N := ⟨hN⟩
-    rw [Gamma0_mem, ZMod.intCast_zmod_eq_zero_iff_dvd]
+It holds at every level, `N = 0` included, where both sides say `A 1 0 = 0`. -/
+theorem mem_Gamma0_iff_dvd {N : ℕ} {A : SL(2, ℤ)} : A ∈ Gamma0 N ↔ (N : ℤ) ∣ A 1 0 :=
+  Gamma0_mem.trans (ZMod.intCast_zmod_eq_zero_iff_dvd _ N)
 
 /-- `Γ₀` is antitone in the level: if `M ∣ N` then `Γ₀(N) ≤ Γ₀(M)`. -/
 theorem Gamma0_le_Gamma0_of_dvd {M N : ℕ} (h : M ∣ N) : Gamma0 N ≤ Gamma0 M := by
