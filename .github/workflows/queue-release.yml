@@ -1,0 +1,58 @@
+name: Merge queue release
+
+# A Lake-pin bump clears the queue and defers other enqueues. Its departure must
+# wake those PRs even if their heads, builds, and review comments never change.
+on:
+  pull_request_target:
+    branches: [main]
+    types: [closed, dequeued]
+  workflow_dispatch:
+    inputs:
+      released_pr:
+        description: "Pin-changing PR that has left the queue"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: queue-release-${{ github.event.pull_request.number || inputs.released_pr }}
+  cancel-in-progress: false
+
+jobs:
+  candidates:
+    runs-on: ubuntu-latest
+    outputs:
+      prs: ${{ steps.select.outputs.prs }}
+    steps:
+      # Only trusted main code runs here; no PR checkout, diff execution, or provider keys.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - id: select
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RELEASED_PR: ${{ github.event.pull_request.number || inputs.released_pr }}
+        run: python3 scripts/queue_release.py
+
+  reconsider:
+    needs: candidates
+    if: ${{ needs.candidates.outputs.prs != '[]' }}
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        pr: ${{ fromJSON(needs.candidates.outputs.prs) }}
+    # The label is only a candidate filter. This existing gate checks all real
+    # evidence and expectedHeadOid, and respects any newly acquired reservation.
+    uses: TauCetiProject/TauCetiReview/.github/workflows/merge-only.yml@603b28011f779bd341d0a08e788498b81542bd7d
+    with:
+      pr: ${{ matrix.pr }}
+      review_ref: 603b28011f779bd341d0a08e788498b81542bd7d
+    secrets:
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
