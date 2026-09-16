@@ -87,11 +87,11 @@ variable {K : Type*} [Field K] [NumberField K]
 
 /-! ### The prime zeta sum at exponent two -/
 
--- The norm is `p ^ f` with `f ≥ 1`, for `p` the rational prime below.
+-- The `n = 1` case of `TauCeti.rationalPrimeBelow_pow_le_absNorm`, named because the fibring
+-- step below wants it without the exponent.
 private theorem rationalPrimeBelow_le_absNorm (𝔭 : HeightOneSpectrum (𝓞 K)) :
     rationalPrimeBelow 𝔭 ≤ Ideal.absNorm 𝔭.asIdeal := by
-  rw [absNorm_eq_rationalPrimeBelow_pow 𝔭]
-  exact Nat.le_self_pow (Ideal.inertiaDeg_pos 𝔭.asIdeal ℤ).ne' _
+  simpa using rationalPrimeBelow_pow_le_absNorm (𝔭 := 𝔭) (Ideal.inertiaDeg_pos 𝔭.asIdeal ℤ)
 
 -- Fibre a finite sum over the rational primes below by the three steps of
 -- `sum_absNorm_rpow_higherDegreePrimes_le_finrank_mul_tsum`.  Only `p ≤ N(𝔭)` is available
