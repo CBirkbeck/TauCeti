@@ -41,9 +41,8 @@ there is no residue field, and no congruence `σ x ≡ x ^ q`.
   `TauCeti.NumberField.orderOf_complexConjugationAt`: it is nontrivial, of order two.
 * `TauCeti.NumberField.coe_stabilizer_eq_pair`: the stabilizer of `w` is exactly the pair
   `{1, c}`, with `TauCeti.NumberField.complexConjugationAt_mem_stabilizer` recording the
-  membership and `TauCeti.NumberField.eq_complexConjugationAt_of_mem_stabilizer` the resulting
-  uniqueness among nonidentity elements.
-* `TauCeti.NumberField.isRamified_smul_iff`: ramification is invariant under the Galois action.
+  membership and `TauCeti.NumberField.eq_complexConjugationAt_of_mem_stabilizer_of_ne_one` the
+  resulting uniqueness among nonidentity elements.
 * `TauCeti.NumberField.complexConjugationAt_smul`: the conjugation transforms by conjugacy,
   `c (σ • w) = σ * c w * σ⁻¹`.
 
@@ -111,8 +110,9 @@ theorem complexConjugationAt_mem_stabilizer (w : InfinitePlace L) (hw : w.IsRami
 
 /-- **Uniqueness among nonidentity stabilizer elements.** An automorphism fixing a ramified place
 is either the identity or the conjugation at that place. -/
-theorem eq_complexConjugationAt_of_mem_stabilizer (w : InfinitePlace L) (hw : w.IsRamified K)
-    {σ : L ≃ₐ[K] L} (hmem : σ ∈ MulAction.stabilizer (L ≃ₐ[K] L) w) (hne : σ ≠ 1) :
+theorem eq_complexConjugationAt_of_mem_stabilizer_of_ne_one (w : InfinitePlace L)
+    (hw : w.IsRamified K) {σ : L ≃ₐ[K] L}
+    (hmem : σ ∈ MulAction.stabilizer (L ≃ₐ[K] L) w) (hne : σ ≠ 1) :
     σ = complexConjugationAt K w hw := by
   have hin : σ ∈ ({1, complexConjugationAt K w hw} : Set (L ≃ₐ[K] L)) := by
     rw [← coe_stabilizer_eq_pair K w hw]; exact hmem
@@ -120,22 +120,15 @@ theorem eq_complexConjugationAt_of_mem_stabilizer (w : InfinitePlace L) (hw : w.
   · exact absurd h1 hne
   · exact h2
 
-omit [IsGalois K L] in
-/-- **Ramification is invariant under the Galois action.** -/
-theorem isRamified_smul_iff (w : InfinitePlace L) (σ : L ≃ₐ[K] L) :
-    (σ • w).IsRamified K ↔ w.IsRamified K :=
-  not_congr isUnramified_smul_iff
-
-/-- **Conjugacy covariance.** Moving the place by `σ` conjugates the element by `σ`.
-
-The proof avoids comparing `(σ • w).embedding` with `w.embedding`, which agree only up to the
-choice of representative: the conjugate lies in the stabilizer of `σ • w` and is nontrivial, so
-uniqueness among nonidentity stabilizer elements identifies it. -/
+/-- **Conjugacy covariance.** Moving the place by `σ` conjugates the element by `σ`. -/
 theorem complexConjugationAt_smul (w : InfinitePlace L) (hw : w.IsRamified K)
     (σ : L ≃ₐ[K] L) :
-    complexConjugationAt K (σ • w) ((isRamified_smul_iff K w σ).mpr hw)
+    complexConjugationAt K (σ • w) ((not_congr isUnramified_smul_iff).mpr hw)
       = σ * complexConjugationAt K w hw * σ⁻¹ := by
-  refine (eq_complexConjugationAt_of_mem_stabilizer K (σ • w) _ ?_ ?_).symm
+  -- Avoid comparing `(σ • w).embedding` with `w.embedding`, which agree only up to the choice of
+  -- representative: the conjugate lies in the stabilizer of `σ • w` and is nontrivial, so
+  -- uniqueness among nonidentity stabilizer elements identifies it.
+  refine (eq_complexConjugationAt_of_mem_stabilizer_of_ne_one K (σ • w) _ ?_ ?_).symm
   · have hc := complexConjugationAt_mem_stabilizer K w hw
     simp only [MulAction.mem_stabilizer_iff] at hc ⊢
     rw [mul_smul, mul_smul, inv_smul_smul, hc]
