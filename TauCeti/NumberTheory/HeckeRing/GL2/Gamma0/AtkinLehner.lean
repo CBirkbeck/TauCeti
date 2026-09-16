@@ -6,6 +6,7 @@ Authors: Chris Birkbeck, Claude
 module
 
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Basic
+public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
 public import TauCeti.NumberTheory.HeckeRing.GLn.TransposeAntiInvolution
 -- `mem_doubleCoset_natDiagGL_of_intWitness` (Shimura 3.33), used only inside the proof of
 -- `atkinLehnerAntiInvolution_bar_mem_doubleCoset_of_coprime_upperLeft` below, so private.
@@ -242,7 +243,7 @@ private lemma atkinLehnerHom_mem_Gamma0Image [NeZero N] (g : GL (Fin 2) ℚ)
     (hg : g ∈ Gamma0Image N) : (atkinLehnerHom N g).unop ∈ Gamma0Image N := by
   rw [mem_Gamma0Image_iff] at hg ⊢
   obtain ⟨σ, hσ_mem, rfl⟩ := hg
-  rw [Gamma0_mem, ZMod.intCast_zmod_eq_zero_iff_dvd] at hσ_mem
+  rw [mem_Gamma0_iff_dvd] at hσ_mem
   obtain ⟨c, hc⟩ := hσ_mem
   set A := (σ : Matrix (Fin 2) (Fin 2) ℤ) with hA_def
   set B : Matrix (Fin 2) (Fin 2) ℤ := atkinLehnerEntries N A c with hB
