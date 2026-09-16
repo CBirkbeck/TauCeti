@@ -40,12 +40,6 @@ over `{𝔭₀}` is `1`: the first bound reads `1 ≤ 0`. At `s = 2` both sums c
 is read as `0`, so the second bound reads `(∑' 𝔭, 𝔑𝔭 ^ (-2)) - 𝔑𝔭₀ ^ (-2) ≤ 0`, whose left-hand
 side is the positive sum over the primes other than `𝔭₀`.
 
-Finiteness reaches those two proofs by different routes. The first goes through Mathlib's
-`Set.Finite.summable_compl_iff`: deleting finitely many primes cannot restore convergence, so the
-restricted and the unrestricted sum are junk together and the bound reads `0 ≤ 0`. The second goes
-through Mathlib's `NumberField.Set.primeIdealZetaSum_le_card_of_finite`, the divergent case being
-absorbed by nonnegativity of the two partial sums.
-
 ## References
 
 The corresponding statements for a source-local `primeIdealZetaSum` over `Set (Ideal (𝓞 K))` are
