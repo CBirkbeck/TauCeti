@@ -19,10 +19,10 @@ a Galois extension `M / ℚ` whose embedded images generate `M`.
 The action on those embeddings, and the facts the dictionary rests on — transitivity over a
 normal extension, faithfulness when the images generate, and the count of embeddings for a finite
 separable extension — are general field theory and live in
-`TauCeti/FieldTheory/Normal/Closure.lean`, with the underlying postcomposition action in
+`TauCeti/FieldTheory/Normal/Embeddings.lean`, with the underlying postcomposition action in
 `TauCeti/Algebra/GroupAction/AlgHom.lean`. This file supplies only the number-field packaging, so
-that a consumer with a `NormalClosureData` can feed `d.normalClosure_eq_top` and
-`d.embedding` to those general results.
+that a consumer with a `NormalClosureData` can feed the generation half of `isNormalClosure`, and
+`d.embedding`, to those general results.
 
 ## Main definitions
 
@@ -41,31 +41,30 @@ open scoped NumberField
 namespace TauCeti.NumberField
 
 /-- Data exhibiting `M` as a **normal closure** of a number field `K` over `ℚ`: a chosen
-embedding of `K` into a Galois extension `M / ℚ` whose embedded images generate `M`.
+embedding of `K` into `M`, together with Mathlib's `IsNormalClosure ℚ K M`.
 
-The generation condition is what gives the permutation representation on `K →ₐ[ℚ] M` a trivial
-kernel; without it `M` could be strictly larger than the compositum of the conjugates of `K`.
+`IsNormalClosure` carries both halves that the dictionary needs — the minimal polynomials of `K`
+split in `M`, and the embedded images generate `M`. The generation half is what gives the
+permutation representation on `K →ₐ[ℚ] M` a trivial kernel; without it `M` could be strictly
+larger than the compositum of the conjugates of `K`. No separate Galois assumption on `M / ℚ` is
+required: `NumberField M` supplies finiteness and separability, and the splitting half of
+`isNormalClosure` supplies normality.
 
-The general consequences are stated in `TauCeti/FieldTheory/Normal/Closure.lean` and are used
-directly: `d.normalClosure_eq_top` feeds `TauCeti.FieldTheory.eq_one_of_forall_smul_eq` and
+The general consequences are stated in `TauCeti/FieldTheory/Normal/Embeddings.lean` and are used
+directly: `(Algebra.IsAlgebraic.isNormalClosure_iff.mp d.isNormalClosure).2` feeds
+`TauCeti.FieldTheory.eq_one_of_forall_smul_eq` and
 `TauCeti.FieldTheory.faithfulSMul_of_normalClosure_eq_top`, after which `smul_left_injective'`
 gives injectivity of the permutation representation; `d.embedding` feeds
 `MulAction.orbit_eq_univ` and `AlgHom.card_of_normal`. -/
 @[ext]
-structure NormalClosureData (K M : Type*) [Field K] [NumberField K] [Field M] [NumberField M]
-    [IsGalois ℚ M] where
+structure NormalClosureData (K M : Type*) [Field K] [NumberField K] [Field M]
+    [NumberField M] where
   /-- The chosen embedding of `K` into the closure. -/
   embedding : K →ₐ[ℚ] M
   /-- `M` is a normal closure of `K` over `ℚ`, in Mathlib's sense. -/
   isNormalClosure : IsNormalClosure ℚ K M
 
-variable {K M : Type*} [Field K] [NumberField K] [Field M] [NumberField M] [IsGalois ℚ M]
-
-/-- **The images of `K` under all embeddings generate `M`.** This is the generation half of
-`IsNormalClosure`. -/
-theorem NormalClosureData.normalClosure_eq_top (d : NormalClosureData K M) :
-    IntermediateField.normalClosure ℚ K M = ⊤ :=
-  (Algebra.IsAlgebraic.isNormalClosure_iff.mp d.isNormalClosure).2
+variable {K M : Type*} [Field K] [NumberField K] [Field M] [NumberField M]
 
 end TauCeti.NumberField
 

@@ -20,7 +20,7 @@ of algebra maps `L →ₐ[K] M` by postcomposition, `σ • φ = σ ∘ φ`.
 Only semiring structure is involved, so the action is defined here rather than alongside the
 field-theoretic facts about it. The orbits and the kernel of this action are what turn a set of
 embeddings into a group-theoretic object; those statements need fields and live in
-`TauCeti/FieldTheory/Normal/Closure.lean`.
+`TauCeti/FieldTheory/Normal/Embeddings.lean`.
 
 ## Main results
 
