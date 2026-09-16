@@ -158,11 +158,11 @@ private theorem neg_log_one_sub_sub_le {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x < 1) :
   exact ((Real.le_norm_self _).trans key).trans_eq (by field_simp)
 
 -- At `x = y ^ (-s)` with `2 ≤ y` and `1 ≤ s`, the base is at least `2` and the exponent at most
--- `-1`, so `x ≤ 1 / 2`.  Both halves of the termwise estimate need this, so it is proved once.
+-- `-1`, so `x ≤ 1 / 2`.  Only the upper bound below needs this; nonnegativity needs just `x < 1`.
 private theorem rpow_neg_le_half {y s : ℝ} (hy : 2 ≤ y) (hs : 1 ≤ s) : y ^ (-s) ≤ 1 / 2 :=
   calc y ^ (-s) ≤ (2 : ℝ) ^ (-s) := Real.rpow_le_rpow_of_nonpos two_pos hy (by linarith)
     _ ≤ (2 : ℝ) ^ (-(1 : ℝ)) := Real.rpow_le_rpow_of_exponent_le one_le_two (by linarith)
-    _ = 1 / 2 := by rw [Real.rpow_neg_one]; norm_num
+    _ = 1 / 2 := by norm_num
 
 -- Nonnegativity needs only `y ^ (-s) ∈ [0, 1)`, so `0 < s` suffices here; the upper bound below
 -- is the half that genuinely needs `1 ≤ s`.
