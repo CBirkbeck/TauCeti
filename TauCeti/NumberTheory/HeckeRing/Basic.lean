@@ -151,6 +151,27 @@ yields. -/
 lemma toSet_eq_doubleCoset_rep (D : HeckeCoset Δ H₁ H₂) :
     D.toSet = doubleCoset (D.rep : G) H₁ H₂ := by rw [← toSet_mk, mk_rep]
 
+/-- **Membership in the underlying set characterises the double coset**: for `g : Δ`, the element
+`g` lies in `D.toSet` exactly when `D` is the double coset of `g`.
+
+This is the elimination rule for `toSet`: it turns a membership into an equation between double
+cosets, so a consumer need not unfold the quotient. It is the `Δ`-indexed analogue of Mathlib's
+`DoubleCoset.mem_quotToDoubleCoset_iff`, which characterises membership for the double cosets of
+the whole group `G`. -/
+-- Not `@[simp]`, matching Mathlib's `mem_quotToDoubleCoset_iff`: at an explicit `mk H₁ H₂ w` the
+-- `@[simp]` lemma `toSet_mk` already evaluates the `toSet` away, so the only goals this would fire
+-- on are those stated at an abstract `D`, where turning a membership into an equation of cosets is
+-- a choice the caller should make.
+lemma mem_toSet_iff {D : HeckeCoset Δ H₁ H₂} {g : Δ} : (g : G) ∈ D.toSet ↔ mk H₁ H₂ g = D := by
+  constructor
+  · intro hg
+    rw [toSet_eq_doubleCoset_rep] at hg
+    rw [← mk_rep D]
+    exact eq_iff.mpr (doubleCoset_eq_of_mem hg)
+  · rintro rfl
+    rw [toSet_mk]
+    exact mem_doubleCoset_self H₁ H₂ _
+
 /-- A double coset is determined by its underlying set.
 
 This is `eq_iff` read at the level of double cosets rather than of representatives; the `Iff` form
