@@ -39,7 +39,7 @@ needed by any consumer and is not claimed.)
   `ker ratPosToPSL2R` with determinant one is `±1` — a containment, not an identification.
 * `TauCeti.ratPosToPSL2R_ker_inf_le`: the consequence consumers apply —
   `ker ratPosToPSL2R ⊓ H ≤ Γ` whenever `H` lies in the determinant-one locus and `-1 ∈ Γ`, which
-  holds of every `Γ₀(N)` and `Γ₁(N)`.
+  holds of every `Γ₀(N)`.
 
 ## References
 
@@ -133,9 +133,14 @@ consumers actually apply: it is the `hker` hypothesis of the Hecke-coset tiling
 `HeckeRing.GL2.isFundamentalDomain_iUnion_rightCosetRep_smul`, and without it every call site
 repeats the same two-case split.
 
-Only `-1 ∈ Γ` is asked for; the `1` branch is discharged internally by `Γ.one_mem`. Both
-`Γ₀(N)` and `Γ₁(N)` contain `-1`. `hH` is stated on the underlying matrix because that is the
-form in which the determinant condition defining the locus arrives. -/
+Only `-1 ∈ Γ` is asked for; the `1` branch is discharged internally by `Γ.one_mem`. Every
+`Γ₀(N)` contains `-1`, whose lower-left entry is zero. **`Γ₁(N)` does not**, except at `N ∣ 2`:
+`-1` has diagonal `(-1, -1)` and `Γ₁(N)` asks for `≡ (1, 1)`. A consumer whose `Γ` is a `Γ₁(N)`
+therefore cannot use this lemma at `N ≥ 3`, and indeed `ker ratPosToPSL2R ⊓ H ≤ Γ₁(N)` is false
+there, since `-1` lies in the kernel.
+
+`hH` is stated on the underlying matrix because that is the form in which the determinant
+condition defining the locus arrives. -/
 theorem ratPosToPSL2R_ker_inf_le {H Γ : Subgroup GL(2, ℚ)⁺}
     (hH : ∀ g ∈ H, ((g : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det = 1)
     (hneg : (-1 : GL(2, ℚ)⁺) ∈ Γ) :
