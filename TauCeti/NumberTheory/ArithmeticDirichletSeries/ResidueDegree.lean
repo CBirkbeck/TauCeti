@@ -180,8 +180,10 @@ theorem primeTheta_higherDegreePrimes_isLittleO (K : Type*) [Field K] [NumberFie
 
 /-! ### Convergence of the prime Dirichlet series over the degree-above-one primes -/
 
-private theorem tsum_nat_rpow_neg_le_two {t : ℝ} (ht : 2 ≤ t) :
-    ∑' m : ℕ, (m : ℝ) ^ (-t) ≤ 2 := by
+/-- **The `p`-series over `ℕ` is at most `2` beyond exponent two.** For `2 ≤ t`,
+`∑' m : ℕ, m ^ (-t) ≤ 2`, the case `t = 2` being `ζ(2) = π ^ 2 / 6 < 2`.  The `m = 0` term is
+`0`, by the junk value of `0 ^ (-t)`. -/
+theorem tsum_nat_rpow_neg_le_two {t : ℝ} (ht : 2 ≤ t) : ∑' m : ℕ, (m : ℝ) ^ (-t) ≤ 2 := by
   have hsum : ∀ u : ℝ, 1 < u → Summable fun m : ℕ ↦ (m : ℝ) ^ (-u) := fun u hu ↦
     Real.summable_nat_rpow.mpr (by linarith)
   have hfun : (fun m : ℕ ↦ (m : ℝ) ^ (-(2 : ℝ))) = fun m : ℕ ↦ (1 : ℝ) / (m : ℝ) ^ 2 := by
