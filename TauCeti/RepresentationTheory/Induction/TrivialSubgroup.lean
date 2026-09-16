@@ -80,8 +80,9 @@ functions `G → X`, with `G` acting by right translation, `(g • f) h = f (h *
 abbrev coindBot (X : Type u) [AddCommGroup X] [Module k X] : Rep k G :=
   coind (⊥ : Subgroup G).subtype (trivial k (⊥ : Subgroup G) X)
 
+-- Not `@[simp]`: simp first unfolds the action `(coindBot k G X).ρ g` through
+-- `Representation.coind_apply`, so the left-hand side is not in simp-normal form (`simpNF`).
 /-- `G` acts on the representation coinduced from the trivial subgroup by right translation. -/
-@[simp]
 theorem coindBot_ρ_apply_coe (X : Type u) [AddCommGroup X] [Module k X] (g : G)
     (f : coindBot k G X) (h : G) :
     (((coindBot k G X).ρ g) f).1 h = f.1 (h * g) :=
@@ -233,7 +234,8 @@ theorem indBotEquivFinsupp_mk (X : Type u) [AddCommGroup X] [Module k X] (g : G)
 
 /-- `G` acts on the finitely supported functions underlying the representation induced from the
 trivial subgroup by right translation: `(g • v) h = v (h * g)`. -/
-@[simp]
+-- Not `@[simp]`: simp first unfolds the action `(indBot k G X).ρ g` through
+-- `Representation.ind_apply`, so the left-hand side is not in simp-normal form (`simpNF`).
 theorem indBotEquivFinsupp_ρ_apply (X : Type u) [AddCommGroup X] [Module k X] (g : G)
     (v : indBot k G X) (h : G) :
     indBotEquivFinsupp k G X ((indBot k G X).ρ g v) h = indBotEquivFinsupp k G X v (h * g) := by
