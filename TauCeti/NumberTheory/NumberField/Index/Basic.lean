@@ -63,10 +63,7 @@ variable {K : Type*} [Field K] [NumberField K]
 def IntegralPrimitiveElement (K : Type*) [Field K] [NumberField K] : Type _ :=
   {θ : 𝓞 K // Algebra.adjoin ℚ {(θ : K)} = ⊤}
 
-/-- An element whose order `ℤ[θ]` is all of `𝓞 K` generates `K` over `ℚ`.
-
-Every element of `K` is a quotient of two elements of `𝓞 K = ℤ[θ]`, and the intermediate field
-`ℚ(θ)` is closed under division, so it exhausts `K`. -/
+/-- An element whose order `ℤ[θ]` is all of `𝓞 K` generates `K` over `ℚ`. -/
 theorem adjoin_rat_eq_top_of_adjoin_int_eq_top {θ : 𝓞 K}
     (h : Algebra.adjoin ℤ {θ} = (⊤ : Subalgebra ℤ (𝓞 K))) :
     Algebra.adjoin ℚ {(θ : K)} = ⊤ := by
