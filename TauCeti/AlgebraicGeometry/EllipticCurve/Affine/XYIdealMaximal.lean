@@ -18,10 +18,9 @@ records the consequences: that ideal is maximal, it is nonzero, and it determine
 it was built from. Conversely, every ideal whose quotient has rank one over the base field is the
 ideal of a point.
 
-The identification of `XYIdeal` with the kernel of evaluation needs none of that, and is stated
-over a commutative base ring: it is the bivariate `⟨X - x, Y - y⟩` read through the quotient, which
-`Polynomial.ker_evalRingHom` gives one variable at a time. Only the maximality results below want a
-field.
+The identification of `XYIdeal` with the kernel of evaluation needs none of that: evaluation
+kernels identify point ideals over any commutative base ring. Only the maximality results below
+want a field.
 
 ## Main results
 
@@ -42,6 +41,8 @@ field.
   Weierstrass equation.
 * `WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal`: the kernel of evaluation
   at a point is the ideal of that point.
+* `WeierstrassCurve.Affine.CoordinateRing.mem_XYIdeal_iff_evalAlgHom_eq_zero`: its elementwise
+  form, a function lying in the ideal exactly when it vanishes at the point.
 
 Mathlib has the quotient isomorphism but records nothing about the ideal itself; the many `XYIdeal`
 lemmas it does state (`XYIdeal_eq₁`, `XYIdeal_eq₂`, `XYIdeal_mul_XYIdeal`, `XYIdeal_neg_mul`) are
@@ -52,9 +53,10 @@ rests on.
 Only the curve equation is needed, not nonsingularity: the quotient is the base field either way.
 
 Evaluation at a point of the curve is an `F`-algebra map out of the coordinate ring whose kernel
-is that point's ideal, so a function lies in the ideal exactly when it vanishes at the point. That
-membership test is how a valuation of the function field is read off at a point, and it is what
-identifies the residue-degree-one ideals with points below.
+is that point's ideal, so a function lies in the ideal exactly when it vanishes at the point. The
+membership test detects that vanishing and nothing finer — the order of vanishing is a fact about
+the valuation, not about the ideal — and it is what identifies the residue-degree-one ideals with
+points below.
 
 This supports `TauCetiRoadmap/EllipticCurves/README.md`, Layer 0, whose point–place dictionary
 identifies the affine places of `W` with the maximal ideals of its coordinate ring — "the affine
@@ -151,6 +153,17 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.ker_evalAlgHom_eq_XYIdeal 
     rintro _ (rfl | rfl) <;>
       simp [RingHom.mem_ker, CoordinateRing.XClass, CoordinateRing.YClass, hconst,
         AlgHom.commutes]
+
+/-- **A function lies in the ideal of a point exactly when it vanishes there**, the elementwise
+form of `ker_evalAlgHom_eq_XYIdeal`.
+
+Not `@[simp]`: `AlgHom.toRingHom_eq_coe` rewrites the left-hand side of the kernel equality this
+rests on, and `simpNF` rejects the pair. -/
+theorem _root_.WeierstrassCurve.Affine.CoordinateRing.mem_XYIdeal_iff_evalAlgHom_eq_zero {y : R}
+    (h : (W⁄R).toAffine.Equation x y) {f : W.CoordinateRing} :
+    f ∈ CoordinateRing.XYIdeal W x (C y) ↔ CoordinateRing.evalAlgHom h f = 0 := by
+  rw [← CoordinateRing.ker_evalAlgHom_eq_XYIdeal h, RingHom.mem_ker, RingHom.coe_coe]
+
 
 end EvalKernel
 
