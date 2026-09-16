@@ -177,12 +177,21 @@ private lemma conjTau_mul (a b c e p j t : ℤ) (hdet : a * e - b * c = 1)
   · linear_combination (-j) * hdet + a * ht
   · linear_combination c * ht
 
+/-- **A left factor of determinant one**, read off a product identity in which the other factor
+and the product have the same nonzero determinant. Both branches produce their `Γ₁(N)` factor
+this way, differing only in how they supply `det X = p`. -/
+private lemma det_eq_one_of_mul_eq_of_dets_eq {q : ℤ} (hq : q ≠ 0)
+    {τ X C : Matrix (Fin 2) (Fin 2) ℤ} (h : τ * X = C) (hX : X.det = q) (hC : C.det = q) :
+    τ.det = 1 := by
+  have h' := congrArg Matrix.det h
+  rw [Matrix.det_mul, hX, hC] at h'
+  exact mul_right_cancel₀ hq (by rw [h', one_mul])
+
 /-- **`det τ = 1`**, structurally from the product identity and `det C = p`. -/
 private lemma conjTau_det (a b c e p j t : ℤ) (hp : p ≠ 0) (hdet : a * e - b * c = 1)
-    (ht : b + j * e = p * t) : (conjTau a b c e p j t).det = 1 := by
-  have h := congrArg Matrix.det (conjTau_mul a b c e p j t hdet ht)
-  rw [Matrix.det_mul, conjDiag_det a b c e p hdet, Matrix.det_fin_two_of] at h
-  exact mul_right_cancel₀ hp (by linarith [h] : (conjTau a b c e p j t).det * p = 1 * p)
+    (ht : b + j * e = p * t) : (conjTau a b c e p j t).det = 1 :=
+  det_eq_one_of_mul_eq_of_dets_eq hp (conjTau_mul a b c e p j t hdet ht)
+    (by rw [Matrix.det_fin_two_of]; ring) (conjDiag_det a b c e p hdet)
 
 /-- **`τ` satisfies the `Γ₁(N)` congruences on its lower row**, both because that row carries a
 factor of `c`, which `Γ₀(N)` membership makes divisible by `N`. -/
@@ -251,11 +260,9 @@ private lemma twistTau_mul (p α β γ δ m n N : ℤ) (hσ : m * p - n * N = 1)
 /-- **`det τ′ = 1`**, structurally from the product identity and `det C = p`. -/
 private lemma twistTau_det (p α β γ δ m n N : ℤ) (hp : p ≠ 0) (hσ : m * p - n * N = 1)
     (hC : (!![p * α, β; p * γ, δ] : Matrix (Fin 2) (Fin 2) ℤ).det = p) :
-    (twistTau p α β γ δ m n N).det = 1 := by
-  have h := congrArg Matrix.det (twistTau_mul p α β γ δ m n N hσ)
-  rw [Matrix.det_mul, hC, Matrix.det_fin_two_of,
-    show m * p * p - n * (N * p) = p from by linear_combination p * hσ] at h
-  exact mul_right_cancel₀ hp (h.trans (one_mul p).symm)
+    (twistTau p α β γ δ m n N).det = 1 :=
+  det_eq_one_of_mul_eq_of_dets_eq hp (twistTau_mul p α β γ δ m n N hσ)
+    (by rw [Matrix.det_fin_two_of]; linear_combination p * hσ) hC
 
 /-- **`τ′` satisfies the `Γ₁(N)` congruences on its lower row.** The two hypotheses are what the
 concrete conjugate supplies — `N ∣ γ` and `δ ≡ p`, both because the conjugate's lower row carries
@@ -300,8 +307,8 @@ private lemma exists_mem_Gamma1_mul_diag_mul_eq_conjDiag_twisted_of_bezout (hp :
         = conjDiag a b ((N : ℤ) * c') ((p : ℤ) * f) (p : ℤ) := by
   set c := (N : ℤ) * c' with hc
   -- the conjugate's entries, in the form `!![p α, β; p γ, δ]`
-  set α := a * f - b * c with hα
-  set β := a * b * ((p : ℤ) - 1) with hβ
+  set α := a * f - b * c
+  set β := a * b * ((p : ℤ) - 1)
   set γ := c * f * (1 - (p : ℤ)) with hγ
   set δ := (p : ℤ) + b * c * ((p : ℤ) - 1) with hδ
   have hconj : conjDiag a b c ((p : ℤ) * f) (p : ℤ) = !![(p : ℤ) * α, β; (p : ℤ) * γ, δ] :=
