@@ -47,7 +47,7 @@ are separate later steps.
   distinct roots is the monic polynomial of the unordered tuple of those roots.
 * `TauCeti.Sym.toMonic_coeffEquiv_symm`: the inverse chart, read as a polynomial rather than as a
   root multiset, is `TauCeti.Polynomial.monicOfCoeff`, the monic polynomial with prescribed lower
-  coefficients of `TauCeti/RingTheory/Polynomial/MonicOfCoeff.lean`.
+  coefficients of `TauCeti/RingTheory/Polynomial/Monic/OfCoeff.lean`.
 * `TauCeti.Sym.monicEquiv`: over an algebraically closed field, taking roots with multiplicity
   inverts `toMonic`, so `Sym K n` is equivalent to the monic polynomials of degree `n`.
 * `TauCeti.Sym.coeffEquiv`: the resulting chart `Sym K n ≃ (Fin n → K)`, with

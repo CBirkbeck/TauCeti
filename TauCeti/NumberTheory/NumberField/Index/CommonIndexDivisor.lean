@@ -30,6 +30,8 @@ and then `p` divides `exponent θ`, hence `index θ`.
 
 ## Main results
 
+* `TauCeti.NumberField.IsCommonIndexDivisor.dvd_index`: the elimination form, extracting the
+  divisibility at a given integral primitive element.
 * `TauCeti.NumberField.IsCommonIndexDivisor.not_exists_index_eq_one`: a common index divisor
   rules out an element of index `1`, so it obstructs monogenicity.
 * `TauCeti.NumberField.IsCommonIndexDivisor.adjoin_ne_top`: equivalently, no order `ℤ[θ]` is all
@@ -69,7 +71,6 @@ def IsCommonIndexDivisor (p : ℕ) (K : Type*) [Field K] [NumberField K] : Prop 
 /-- **Being a common index divisor is exactly divisibility of every index.** The body of
 `IsCommonIndexDivisor` is not exposed across module boundaries, so this is the characterisation
 downstream code uses to prove the predicate or to extract a divisibility from it. -/
-@[simp]
 theorem isCommonIndexDivisor_iff {p : ℕ} :
     IsCommonIndexDivisor p K ↔ ∀ θ : IntegralPrimitiveElement K, p ∣ θ.index :=
   Iff.rfl
@@ -77,6 +78,13 @@ theorem isCommonIndexDivisor_iff {p : ℕ} :
 namespace IsCommonIndexDivisor
 
 variable {p : ℕ}
+
+/-- **A common index divisor divides every index.** The elimination form of the predicate: it
+extracts the divisibility at a given integral primitive element, so a consumer never has to
+unfold a definition whose body is not exposed across module boundaries. -/
+theorem dvd_index (h : IsCommonIndexDivisor p K) (θ : IntegralPrimitiveElement K) :
+    p ∣ θ.index :=
+  isCommonIndexDivisor_iff.mp h θ
 
 /-- **A common index divisor obstructs monogenicity.** No integral primitive element has index
 `1`, since `p` divides every index and `p ≠ 1`.
