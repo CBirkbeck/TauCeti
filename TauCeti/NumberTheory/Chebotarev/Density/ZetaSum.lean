@@ -77,7 +77,8 @@ theorem sum_primeIdealZetaSum_frobeniusPrimeSet
       ⋃ C ∈ (Finset.univ : Finset (ConjClasses (L ≃ₐ[K] L))), frobeniusPrimeSet K L C := by simp
   rw [hcov]
   exact (Set.primeIdealZetaSum_biUnion_of_pairwiseDisjoint _ _
-    ((pairwise_disjoint_frobeniusPrimeSet K L).set_pairwise _) hsum).symm
+    ((pairwise_disjoint_frobeniusPrimeSet K L).set_pairwise _)
+    fun _ _ ↦ hsum.subtype _).symm
 
 open scoped Classical in
 variable (K L) in

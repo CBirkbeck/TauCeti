@@ -63,14 +63,21 @@ open NumberField
 
 variable {K : Type*} [Field K] [NumberField K] {S : Set (HeightOneSpectrum (𝓞 K))}
 
-/-- **The sum is additive along a finite disjoint union.** For a summable family, the sum over a
-finite pairwise disjoint union of sets of primes is the sum of the sums over the pieces. -/
+/-- **The sum is additive along a finite disjoint union.** The sum over a finite pairwise
+disjoint union of sets of primes is the sum of the sums over the pieces.
+
+Summability is asked for on each participating piece rather than on all primes at once: a
+finite union of summable pieces is summable even at an `s` where the full prime series
+diverges, and the identity holds there too. -/
 theorem primeIdealZetaSum_biUnion_of_pairwiseDisjoint {ι : Type*} (t : Finset ι)
     (g : ι → Set (HeightOneSpectrum (𝓞 K))) (hg : (t : Set ι).PairwiseDisjoint g) {s : ℝ}
-    (hsum : Summable fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦ (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) :
+    (hsum : ∀ i ∈ t, Summable fun 𝔭 : g i ↦ (Ideal.absNorm 𝔭.1.asIdeal : ℝ) ^ (-s)) :
     (⋃ i ∈ t, g i).primeIdealZetaSum s = ∑ i ∈ t, (g i).primeIdealZetaSum s := by
   simp only [primeIdealZetaSum_def]
-  exact (hasSum_sum_disjoint t hg fun i _ ↦ (hsum.subtype _).hasSum).tsum_eq
+  -- `f` is pinned because `hasSum_sum_disjoint` states each piece as `f ∘ Subtype.val`, and
+  -- recovering `f` from `fun 𝔭 : g i ↦ f 𝔭.1` would be a higher-order unification.
+  exact (hasSum_sum_disjoint (f := fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦
+    (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) t hg fun i hi ↦ (hsum i hi).hasSum).tsum_eq
 
 /-- **Deleting a finite set of primes does not increase the sum.** -/
 theorem primeIdealZetaSum_compl_le_univ_of_finite (hS : S.Finite) (s : ℝ) :
