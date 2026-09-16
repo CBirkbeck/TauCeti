@@ -17,20 +17,20 @@ For a finite group `G`, every Tate cohomology group of the representation `Coind
 from the trivial subgroup vanishes (Milne, *Class Field Theory*, II 3.1): in positive degrees this
 is Shapiro's lemma for cohomology, in degrees below `-1` Shapiro's lemma for homology (induction and
 coinduction from the trivial subgroup agree for a finite group), and degrees `0` and `-1` are
-checked by hand. The same holds for `Ind_⊥^G X` and, for a finite subgroup `S` of an arbitrary
-group `G`, for the restrictions of `Coind_⊥^G X`, `Ind_⊥^G X` and `k[G]` to `S`, since each of
-these restrictions is again coinduced from the trivial subgroup of `S`.
+checked by hand. The same holds for `Ind_⊥^G X`. For a finite subgroup `S` of an arbitrary
+group `G`, the Tate cohomology of `S` with coefficients in the restrictions of `Coind_⊥^G X`,
+`Ind_⊥^G X` and `k[G]` vanishes as well.
 
 The statements follow `ClassFieldTheory/Cohomology/IndCoind/TrivialCohomology.lean` in
 `kbuzzard/ClassFieldTheory`, commit `ccc3323c6750abca25b49b35106f54eb3a398509`.
 
 ## Main statements
 
-* `TauCeti.TateCohomology.isZero_coindBot`, `TauCeti.TateCohomology.isZero_res_coindBot`:
-  `Ĥⁿ(S, Coind_⊥^G X) = 0` for all `n : ℤ` (Milne II 3.1).
-* `TauCeti.TateCohomology.isZero_indBot`, `TauCeti.TateCohomology.isZero_res_indBot`: the same
-  for `Ind_⊥^G X`.
-* `TauCeti.TateCohomology.isZero_res_leftRegular`: `Ĥⁿ(S, k[G]) = 0`.
+* `TauCeti.TateCohomology.isZero_coindBot`, `TauCeti.TateCohomology.isZero_indBot`: for a finite
+  group `G`, `Ĥⁿ(G, Coind_⊥^G X) = 0` and `Ĥⁿ(G, Ind_⊥^G X) = 0` for all `n : ℤ` (Milne II 3.1).
+* `TauCeti.TateCohomology.isZero_res_coindBot`, `TauCeti.TateCohomology.isZero_res_indBot`,
+  `TauCeti.TateCohomology.isZero_res_leftRegular`: for a finite subgroup `S` of any group `G`,
+  `Ĥⁿ(S, Coind_⊥^G X) = Ĥⁿ(S, Ind_⊥^G X) = Ĥⁿ(S, k[G]) = 0` for all `n : ℤ`.
 
 ## References
 
@@ -51,8 +51,7 @@ section Fintype
 
 variable [Fintype G] (X : Type u) [AddCommGroup X] [Module k X]
 
-/-- Degree-zero Tate cohomology of a representation coinduced from the trivial subgroup vanishes:
-every invariant function `G → X` is constant, hence the norm of the function supported at `1`
+/-- Degree-zero Tate cohomology of a representation coinduced from the trivial subgroup vanishes
 (Milne II 3.1, case `r = 0`). -/
 theorem isZero_coindBot_zero : IsZero (tateCohomology (coindBot k G X) 0) := by
   classical
@@ -83,8 +82,7 @@ theorem isZero_coindBot_zero : IsZero (tateCohomology (coindBot k G X) 0) := by
       simp
   exact ModuleCat.isZero_of_subsingleton _
 
-/-- Degree `-1` Tate cohomology of a representation coinduced from the trivial subgroup vanishes:
-a function `G → X` with vanishing norm, i.e. `∑ g, f g = 0`, lies in the augmentation submodule
+/-- Degree `-1` Tate cohomology of a representation coinduced from the trivial subgroup vanishes
 (Milne II 3.1, case `r = -1`). -/
 theorem isZero_coindBot_negOne : IsZero (tateCohomology (coindBot k G X) (-1)) := by
   classical
@@ -161,16 +159,14 @@ theorem isZero_res_coindBot : IsZero (tateCohomology (res S.subtype (coindBot k 
     ((tateCohomologyFunctor n).mapIso (resCoindBotIso S X))
 
 /-- For a finite subgroup `S` of a group `G`, all Tate cohomology of the restriction to `S` of a
-representation induced from the trivial subgroup of `G` vanishes: that restriction is coinduced
-from the trivial subgroup of `S` (`Rep.resIndBotIso`). -/
+representation induced from the trivial subgroup of `G` vanishes. -/
 theorem isZero_res_indBot : IsZero (tateCohomology (res S.subtype (indBot k G X)) n) :=
-  (isZero_coindBot (G := S) (G ⧸ S →₀ X) n).of_iso
+  (isZero_indBot (G := S) (G ⧸ S →₀ X) n).of_iso
     ((tateCohomologyFunctor n).mapIso (resIndBotIso S X))
 
 omit X in
 /-- For a finite subgroup `S` of a group `G`, all Tate cohomology of the restriction to `S` of the
-left regular representation `k[G]` vanishes: `k[G]` is induced from the trivial subgroup
-(`Rep.indBotIsoLeftRegular`). -/
+left regular representation `k[G]` vanishes. -/
 theorem isZero_res_leftRegular : IsZero (tateCohomology (res S.subtype (leftRegular k G)) n) :=
   (isZero_res_indBot S k n).of_iso
     ((tateCohomologyFunctor n).mapIso ((resFunctor S.subtype).mapIso indBotIsoLeftRegular.symm))

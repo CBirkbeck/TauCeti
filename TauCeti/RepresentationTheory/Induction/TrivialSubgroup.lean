@@ -26,9 +26,8 @@ these are the two maps used for dimension shifting. For a finite group the two c
 
 Both constructions are stable under restriction to a subgroup `S`: writing `G` as `S × G ⧸ S`
 through `(s, y) ↦ y.out * s` (Mathlib's `Subgroup.groupEquivQuotientProdSubgroup`), the restriction
-of `Coind_⊥^G X` to `S` is `Coind_⊥^S (G ⧸ S → X)` (`Rep.resCoindBotIso`), and for a finite
-subgroup `S` the restriction of `Ind_⊥^G X` to `S` is `Coind_⊥^S (G ⧸ S →₀ X)`
-(`Rep.resIndBotIso`), with no finiteness assumption on `G`.
+of `Coind_⊥^G X` to `S` is `Coind_⊥^S (G ⧸ S → X)` (`Rep.resCoindBotIso`), and
+the restriction of `Ind_⊥^G X` to `S` is `Ind_⊥^S (G ⧸ S →₀ X)` (`Rep.resIndBotIso`).
 
 The constructions follow `ClassFieldTheory/Cohomology/IndCoind/Finite.lean` and
 `IndCoind/TrivialCohomology.lean` in `kbuzzard/ClassFieldTheory`, commit
@@ -45,7 +44,8 @@ The constructions follow `ClassFieldTheory/Cohomology/IndCoind/Finite.lean` and
 * `Rep.indBotIsoCoindBot`: for a finite group, `indBot k G X ≅ coindBot k G X`.
 * `Rep.indBotIsoLeftRegular`: `indBot k G k ≅ k[G]`.
 * `Rep.leftRegularIsoCoindBot`: for a finite group, `k[G] ≅ coindBot k G k`.
-* `Rep.resCoindBotIso`, `Rep.resIndBotIso`: restrictions to a subgroup.
+* `Rep.resCoindBotIso`, `Rep.resIndBotIso`: restrictions to a subgroup, again coinduced,
+  respectively induced, from the trivial subgroup.
 
 ## References
 
@@ -81,6 +81,7 @@ abbrev coindBot (X : Type u) [AddCommGroup X] [Module k X] : Rep k G :=
   coind (⊥ : Subgroup G).subtype (trivial k (⊥ : Subgroup G) X)
 
 /-- `G` acts on the representation coinduced from the trivial subgroup by right translation. -/
+@[simp]
 theorem coindBot_ρ_apply_coe (X : Type u) [AddCommGroup X] [Module k X] (g : G)
     (f : coindBot k G X) (h : G) :
     (((coindBot k G X).ρ g) f).1 h = f.1 (h * g) :=
@@ -206,14 +207,6 @@ instance indBotCounit_epi (A : Rep k G) : Epi (indBotCounit A) :=
   (epi_iff_surjective _).2 fun a ↦ ⟨IndV.mk _ _ 1 a, by rw [indBotCounit_hom_mk, inv_one, map_one,
     Module.End.one_apply]⟩
 
-omit [Group G] in
-/-- `(G →₀ k) ⊗ X ≃ (G →₀ X)` sends `single g 1 ⊗ₜ x` to `single g x`. -/
-private theorem finsuppScalarLeft_single_one_tmul (X : Type u) [AddCommGroup X] [Module k X]
-    (g : G) (x : X) :
-    TensorProduct.finsuppScalarLeft k X G (Finsupp.single g 1 ⊗ₜ x) = Finsupp.single g x := by
-  ext h
-  simp [Finsupp.single_apply, ite_smul]
-
 variable (k G) in
 /-- The underlying module of the representation induced from the trivial subgroup is the module
 of finitely supported functions `G →₀ X`, `⟦g ⊗ₜ x⟧ ↦ single g x`: the coinvariants of the trivial
@@ -227,18 +220,20 @@ def indBotEquivFinsupp (X : Type u) [AddCommGroup X] [Module k X] :
       rw [map_one, Module.End.one_eq_id, LinearMap.comp_id])
     (Coinvariants.mk _ ∘ₗ (MonoidAlgebra.coeffLinearEquiv k).symm.toLinearMap.rTensor X ∘ₗ
       (TensorProduct.finsuppScalarLeft k X G).symm.toLinearMap)
-    (Finsupp.lhom_ext fun g x ↦ by simp [finsuppScalarLeft_single_one_tmul])
-    (IndV.hom_ext _ _ fun g ↦ LinearMap.ext fun x ↦ by simp [finsuppScalarLeft_single_one_tmul])
+    (Finsupp.lhom_ext fun g x ↦ by simp [TensorProduct.finsuppScalarLeft_apply_tmul])
+    (IndV.hom_ext _ _ fun g ↦ LinearMap.ext fun x ↦ by
+      simp [TensorProduct.finsuppScalarLeft_apply_tmul])
 
 /-- The underlying module of the induced representation on generators: `⟦g ⊗ₜ x⟧ ↦ single g x`. -/
 theorem indBotEquivFinsupp_mk (X : Type u) [AddCommGroup X] [Module k X] (g : G) (x : X) :
     indBotEquivFinsupp k G X
         (IndV.mk (⊥ : Subgroup G).subtype (Representation.trivial k (⊥ : Subgroup G) X) g x) =
       Finsupp.single g x := by
-  simp [indBotEquivFinsupp, finsuppScalarLeft_single_one_tmul]
+  simp [indBotEquivFinsupp, TensorProduct.finsuppScalarLeft_apply_tmul]
 
 /-- `G` acts on the finitely supported functions underlying the representation induced from the
 trivial subgroup by right translation: `(g • v) h = v (h * g)`. -/
+@[simp]
 theorem indBotEquivFinsupp_ρ_apply (X : Type u) [AddCommGroup X] [Module k X] (g : G)
     (v : indBot k G X) (h : G) :
     indBotEquivFinsupp k G X ((indBot k G X).ρ g v) h = indBotEquivFinsupp k G X v (h * g) := by
@@ -273,8 +268,7 @@ def indBotIsoCoindBot (X : Type u) [AddCommGroup X] [Module k X] : indBot k G X 
   indCoindIso (trivial k (⊥ : Subgroup G) X)
 
 /-- For a finite group, the left regular representation `k[G]` is coinduced from the trivial
-subgroup: it is induced from the trivial subgroup (`indBotIsoLeftRegular`), and for a finite group
-induction and coinduction from the trivial subgroup agree (`indBotIsoCoindBot`). -/
+subgroup. -/
 def leftRegularIsoCoindBot : leftRegular k G ≅ coindBot k G k :=
   indBotIsoLeftRegular.symm ≪≫ indBotIsoCoindBot k
 
@@ -309,7 +303,7 @@ theorem resCoindBotIso_hom_hom_apply_coe (X : Type u) [AddCommGroup X] [Module k
   congrArg f.1 (Subgroup.groupEquivQuotientProdSubgroup_symm_apply y s)
 
 /-- The inverse of the restriction of a coinduced representation to `S`: a function
-`F : S → (G ⧸ S → X)` goes to `g ↦ F ⟦g⟧.out⁻¹g ⟦g⟧`, read through Mathlib's decomposition
+`F : S → (G ⧸ S → X)` goes to `g ↦ F (⟦g⟧.out⁻¹ * g) ⟦g⟧`, read through Mathlib's decomposition
 `Subgroup.groupEquivQuotientProdSubgroup` of `g`. -/
 @[simp]
 theorem resCoindBotIso_inv_hom_apply_coe (X : Type u) [AddCommGroup X] [Module k X]
@@ -319,31 +313,43 @@ theorem resCoindBotIso_inv_hom_apply_coe (X : Type u) [AddCommGroup X] [Module k
         (Subgroup.groupEquivQuotientProdSubgroup g).1 :=
   (rfl)
 
-/-- For a finite subgroup `S` of any group `G`, the restriction to `S` of a representation induced
-from the trivial subgroup of `G` is coinduced from the trivial subgroup of `S`, on the finitely
-supported functions `G ⧸ S →₀ X`: a finitely supported function on `G = S × G ⧸ S` is a function
-on the finite group `S` with values finitely supported on `G ⧸ S`. -/
-def resIndBotIso [Finite S] (X : Type u) [AddCommGroup X] [Module k X] :
-    res S.subtype (indBot k G X) ≅ coindBot k S (G ⧸ S →₀ X) :=
+/-- The restriction to a subgroup `S` of a representation induced from the trivial subgroup of `G`
+is induced from the trivial subgroup of `S`, on the finitely supported functions `G ⧸ S →₀ X`: a
+finitely supported function on `G = S × G ⧸ S` is a finitely supported function on `S` with values
+finitely supported on `G ⧸ S` (`indBotEquivFinsupp_resIndBotIso_hom_hom_apply`). -/
+def resIndBotIso (X : Type u) [AddCommGroup X] [Module k X] :
+    res S.subtype (indBot k G X) ≅ indBot k S (G ⧸ S →₀ X) :=
   mkIso <| .mk (indBotEquivFinsupp k G X ≪≫ₗ
     Finsupp.domLCongr (Subgroup.groupEquivQuotientProdSubgroup.trans (Equiv.prodComm (G ⧸ S) S)) ≪≫ₗ
-    Finsupp.curryLinearEquiv k ≪≫ₗ Finsupp.linearEquivFunOnFinite k (G ⧸ S →₀ X) S ≪≫ₗ
-    (coindBotEquivPi k S (G ⧸ S →₀ X)).symm) fun s ↦
-    LinearMap.ext fun v ↦ Subtype.ext <| funext fun t ↦ Finsupp.ext fun y ↦ by
-      -- Both sides evaluate the finitely supported function of `v` at a point of `G`, written
-      -- through the coset decomposition of `G`; the action of `s` is right translation.
-      change indBotEquivFinsupp k G X ((indBot k G X).ρ s v)
-          (Subgroup.groupEquivQuotientProdSubgroup.symm (y, t)) =
-        indBotEquivFinsupp k G X v (Subgroup.groupEquivQuotientProdSubgroup.symm (y, t * s))
-      rw [indBotEquivFinsupp_ρ_apply, Subgroup.groupEquivQuotientProdSubgroup_symm_apply,
-        Subgroup.groupEquivQuotientProdSubgroup_symm_apply, Subgroup.coe_mul, mul_assoc]
+    Finsupp.curryLinearEquiv k ≪≫ₗ (indBotEquivFinsupp k S (G ⧸ S →₀ X)).symm) fun s ↦
+    LinearMap.ext fun v ↦ (indBotEquivFinsupp k S (G ⧸ S →₀ X)).injective <|
+      Finsupp.ext fun t ↦ Finsupp.ext fun y ↦ by
+        -- Both sides evaluate the finitely supported function of `v` at a point of `G`, written
+        -- through the coset decomposition of `G`; the action of `s` is right translation.
+        rw [LinearMap.comp_apply, LinearMap.comp_apply, MonoidHom.comp_apply, Subgroup.coe_subtype,
+          indBotEquivFinsupp_ρ_apply]
+        simp only [LinearEquiv.coe_coe, LinearEquiv.trans_apply, LinearEquiv.apply_symm_apply,
+          Finsupp.domLCongr_apply, Finsupp.domCongr_apply, Finsupp.curryLinearEquiv_apply,
+          Finsupp.curry_apply, Finsupp.equivMapDomain_apply, Equiv.symm_trans_apply,
+          Equiv.prodComm_symm, Equiv.prodComm_apply, Prod.swap_prod_mk,
+          Subgroup.groupEquivQuotientProdSubgroup_symm_apply]
+        rw [indBotEquivFinsupp_ρ_apply, Subgroup.coe_mul, mul_assoc]
 
-/-- The restriction of an induced representation to a finite subgroup `S`: the function attached
+/-- The restriction of an induced representation to `S`: the finitely supported function attached
 to `v` sends `s` to the finitely supported function `y ↦ v (y.out * s)`. -/
-theorem resIndBotIso_hom_hom_apply_coe_apply [Finite S] (X : Type u) [AddCommGroup X]
-    [Module k X] (v : indBot k G X) (s : S) (y : G ⧸ S) :
-    ((resIndBotIso S X).hom.hom v).1 s y = indBotEquivFinsupp k G X v (y.out * s) :=
-  congrArg (indBotEquivFinsupp k G X v) (Subgroup.groupEquivQuotientProdSubgroup_symm_apply y s)
+@[simp]
+theorem indBotEquivFinsupp_resIndBotIso_hom_hom_apply (X : Type u) [AddCommGroup X] [Module k X]
+    (v : indBot k G X) (s : S) (y : G ⧸ S) :
+    indBotEquivFinsupp k S (G ⧸ S →₀ X) ((resIndBotIso S X).hom.hom v) s y =
+      indBotEquivFinsupp k G X v (y.out * s) := by
+  -- The forward map is the composite of linear equivalences the isomorphism is built from.
+  change indBotEquivFinsupp k S (G ⧸ S →₀ X) ((indBotEquivFinsupp k G X ≪≫ₗ
+    Finsupp.domLCongr (Subgroup.groupEquivQuotientProdSubgroup.trans (Equiv.prodComm (G ⧸ S) S)) ≪≫ₗ
+    Finsupp.curryLinearEquiv k ≪≫ₗ (indBotEquivFinsupp k S (G ⧸ S →₀ X)).symm) v) s y = _
+  simp only [LinearEquiv.trans_apply, LinearEquiv.apply_symm_apply, Finsupp.domLCongr_apply,
+    Finsupp.domCongr_apply, Finsupp.curryLinearEquiv_apply, Finsupp.curry_apply,
+    Finsupp.equivMapDomain_apply, Equiv.symm_trans_apply, Equiv.prodComm_symm,
+    Equiv.prodComm_apply, Prod.swap_prod_mk, Subgroup.groupEquivQuotientProdSubgroup_symm_apply]
 
 end Restriction
 

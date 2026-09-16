@@ -22,8 +22,9 @@ The statements follow `ClassFieldTheory/Cohomology/IndCoind/TrivialCohomology.le
 
 ## Main statements
 
-* `groupCohomology.isZero_coindBot_succ`, `groupCohomology.isZero_res_coindBot_succ`:
-  `Hⁿ⁺¹(S, Coind_⊥^G X) = 0` for every subgroup `S ≤ G`.
+* `groupCohomology.isZero_coindBot_succ`: `Hⁿ⁺¹(G, Coind_⊥^G X) = 0`.
+* `groupCohomology.isZero_res_coindBot_succ`: `Hⁿ⁺¹(S, Coind_⊥^G X) = 0` for every subgroup
+  `S ≤ G`.
 
 ## References
 

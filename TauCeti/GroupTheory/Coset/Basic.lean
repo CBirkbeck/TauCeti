@@ -18,7 +18,10 @@ unfolding. This file records them:
 
 * `Subgroup.groupEquivQuotientProdSubgroup_symm_apply`: the pair `(q, x)` goes to `q.out * x`;
 * `Subgroup.groupEquivQuotientProdSubgroup_apply`: an element `g` goes to its coset `⟦g⟧` and the
-  element `⟦g⟧.out⁻¹ * g` of `s`.
+  element `⟦g⟧.out⁻¹ * g` of `s`, with the projections `groupEquivQuotientProdSubgroup_apply_fst`
+  and `groupEquivQuotientProdSubgroup_apply_snd_coe`.
+
+The additive versions are generated for `AddSubgroup.addGroupEquivQuotientProdAddSubgroup`.
 -/
 
 public section
@@ -38,7 +41,7 @@ variable {α : Type*} [Group α] {s : Subgroup α}
 
 /-- **The decomposition of a group into cosets and a subgroup, read backwards:** the pair of a
 left coset `q` and an element `x` of the subgroup is the element `q.out * x`. -/
-@[simp]
+@[to_additive (attr := simp)]
 theorem groupEquivQuotientProdSubgroup_symm_apply (q : α ⧸ s) (x : s) :
     groupEquivQuotientProdSubgroup.symm (q, x) = q.out * x := by
   simp only [groupEquivQuotientProdSubgroup, Equiv.trans_def, Equiv.symm_trans_apply,
@@ -50,11 +53,24 @@ theorem groupEquivQuotientProdSubgroup_symm_apply (q : α ⧸ s) (x : s) :
 
 /-- **The decomposition of a group into cosets and a subgroup:** an element `g` goes to its left
 coset `⟦g⟧` and the element `⟦g⟧.out⁻¹ * g` of the subgroup. -/
+@[to_additive]
 theorem groupEquivQuotientProdSubgroup_apply (g : α) :
     groupEquivQuotientProdSubgroup g =
       ((g : α ⧸ s), ⟨(g : α ⧸ s).out⁻¹ * g, QuotientGroup.leftRel_apply.1
         (Quotient.exact' (QuotientGroup.out_eq' (g : α ⧸ s)))⟩) := by
   refine groupEquivQuotientProdSubgroup.symm.injective ?_
   rw [Equiv.symm_apply_apply, groupEquivQuotientProdSubgroup_symm_apply, mul_inv_cancel_left]
+
+/-- The coset component of the decomposition of `g` is the coset of `g`. -/
+@[to_additive (attr := simp)]
+theorem groupEquivQuotientProdSubgroup_apply_fst (g : α) :
+    (groupEquivQuotientProdSubgroup (s := s) g).1 = (g : α ⧸ s) := by
+  rw [groupEquivQuotientProdSubgroup_apply]
+
+/-- The subgroup component of the decomposition of `g` is `⟦g⟧.out⁻¹ * g`. -/
+@[to_additive (attr := simp)]
+theorem groupEquivQuotientProdSubgroup_apply_snd_coe (g : α) :
+    ((groupEquivQuotientProdSubgroup (s := s) g).2 : α) = (g : α ⧸ s).out⁻¹ * g := by
+  rw [groupEquivQuotientProdSubgroup_apply]
 
 end Subgroup
