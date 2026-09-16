@@ -8,6 +8,8 @@ module
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.CoordinateRing
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.XYIdealMaximal
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+-- Proof-only: membership in the ideal of a point, as a span of two polynomials.
+import Mathlib.RingTheory.Polynomial.Ideal
 
 /-!
 # Solutions of a Weierstrass equation are its degree-one affine places
@@ -44,6 +46,8 @@ When `W` is elliptic, Mathlib's `Affine.equation_iff_nonsingular` identifies the
 
 * `WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal`: a `@[simp]` lemma
   identifying the ideal underlying `pointPlace` as `XYIdeal W x (C y)`.
+* `WeierstrassCurve.Affine.CoordinateRing.mk_mem_pointPlace_iff`: a class lies in the place of
+  a point exactly when a representative of it vanishes there.
 * `WeierstrassCurve.Affine.CoordinateRing.pointPlace_eq_iff`: `pointPlace` is injective —
   two points have the same place exactly when they have the same coordinates.
 * `WeierstrassCurve.Affine.CoordinateRing.pointPlace.finrank_residueField_eq_one`: the
@@ -102,6 +106,8 @@ public section
 
 open Polynomial WeierstrassCurve WeierstrassCurve.Affine IsDedekindDomain
 
+open scoped Polynomial.Bivariate
+
 namespace TauCeti
 
 section
@@ -130,6 +136,31 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal
     (WeierstrassCurve.Affine.CoordinateRing.pointPlace h).asIdeal = CoordinateRing.XYIdeal W x (C
         y) := by
   simp [WeierstrassCurve.Affine.CoordinateRing.pointPlace]
+
+/-- **A class lies in the place of a point exactly when it vanishes there.** The ideal of
+`(x, y)` collects the classes whose representatives evaluate to zero at `(x, y)`; the statement is
+about a representative because that is the form a caller holds. -/
+theorem _root_.WeierstrassCurve.Affine.CoordinateRing.mk_mem_pointPlace_iff
+    {y : F} (h : W.Equation x y) (p : F[X][Y]) :
+    CoordinateRing.mk W p ∈ (WeierstrassCurve.Affine.CoordinateRing.pointPlace h).asIdeal ↔
+      p.evalEval x y = 0 := by
+  -- `XYIdeal` is the image of the polynomial span, whose membership Mathlib already characterises
+  have hmap : CoordinateRing.XYIdeal W x (C y) =
+      Ideal.map (CoordinateRing.mk W) (Ideal.span {C (X - C x), (Y : F[X][Y]) - C (C y)}) := by
+    simp only [CoordinateRing.XYIdeal, CoordinateRing.XClass, CoordinateRing.YClass,
+      ← Set.image_pair, ← Ideal.map_span]
+  have hker : RingHom.ker (CoordinateRing.mk W) = Ideal.span {W.polynomial} := by
+    ext q
+    rw [RingHom.mem_ker, Ideal.mem_span_singleton]
+    exact AdjoinRoot.mk_eq_zero
+  -- the Weierstrass polynomial itself vanishes at the point, so it is already in the span
+  have hpoly : W.polynomial ∈ Ideal.span {C (X - C x), (Y : F[X][Y]) - C (C y)} :=
+    mem_span_C_X_sub_C_X_sub_C_iff_eval_eval_eq_zero.mpr h
+  rw [WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal, hmap, ← Ideal.mem_comap,
+    Ideal.comap_map_of_surjective _ AdjoinRoot.mk_surjective,
+    ← RingHom.ker_eq_comap_bot, hker,
+    sup_eq_left.mpr ((Ideal.span_singleton_le_iff_mem _).mpr hpoly),
+    mem_span_C_X_sub_C_X_sub_C_iff_eval_eval_eq_zero]
 
 /-- **`pointPlace` is injective**: two points of the curve have the same place exactly when they
 have the same coordinates. -/
