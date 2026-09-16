@@ -470,7 +470,8 @@ lemma doubleCoset_mul_doubleCoset_eq_iUnion_rightCosets {Γ₁ Γ₂ Γ₃ : Sub
 
 /-! ### Representatives of the right cosets in a double-coset decomposition -/
 
-variable {Δ : Submonoid G} in
+variable {Δ : Submonoid G}
+
 /-- The representative `δ τᵥ⁻¹` of the `v`-th right coset `Γ₁ aᵥ` in the decomposition
 `Γ₁ δ Γ₂ = ⊔ᵥ Γ₁ aᵥ`, where `δ` is the chosen representative of the double coset `D` and `τᵥ`
 runs over the chosen representatives of `Γ₂ ⧸ (Γ₂ ∩ δ⁻¹Γ₁δ)`.
@@ -485,12 +486,46 @@ noncomputable def rightCosetRep {Γ₁ Γ₂ : Subgroup G} (D : HeckeCoset Δ Γ
     (v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹) : G :=
   (D.out : G) * (v.out : G)⁻¹
 
-variable {Δ : Submonoid G} in
 /-- Defining equation for `rightCosetRep`. Since `rightCosetRep` is not `@[expose]`, a
 downstream module rewrites with this instead of unfolding the body. -/
 lemma rightCosetRep_def {Γ₁ Γ₂ : Subgroup G} (D : HeckeCoset Δ Γ₁ Γ₂)
     (v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹) :
     rightCosetRep D v = (D.out : G) * (v.out : G)⁻¹ := (rfl)
+
+/-- **Shimura's decomposition of the double coset**, in the `rightCosetRep` spelling:
+`Γ₁ δ Γ₂ = ⋃ᵥ Γ₁ (δ τᵥ⁻¹)`. Since `rightCosetRep` is not `@[expose]`, this is how a downstream
+module reads `DoubleCoset.doubleCoset_eq_iUnion_rightCosets` at the representatives the slash sum
+is defined with. -/
+lemma doubleCoset_eq_iUnion_rightCosetRep {Γ₁ Γ₂ : Subgroup G} (D : HeckeCoset Δ Γ₁ Γ₂) :
+    doubleCoset (D.out : G) Γ₁ Γ₂ =
+      ⋃ v, MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set G) := by
+  simpa only [rightCosetRep_def] using
+    doubleCoset_eq_iUnion_rightCosets Γ₁ Γ₂ (D.out : G)
+
+/-- **The pieces of that decomposition are pairwise distinct**, in the same spelling:
+`DoubleCoset.op_mul_out_inv_smul_injective` read at `rightCosetRep`. -/
+lemma op_rightCosetRep_smul_injective {Γ₁ Γ₂ : Subgroup G} (D : HeckeCoset Δ Γ₁ Γ₂) :
+    Function.Injective fun v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹ ↦
+      MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set G) := by
+  simpa only [rightCosetRep_def] using op_mul_out_inv_smul_injective Γ₁ Γ₂ (D.out : G)
+
+/-- Each representative lies in the double coset, being a member of its own piece. -/
+lemma rightCosetRep_mem_doubleCoset {Γ₁ Γ₂ : Subgroup G} (D : HeckeCoset Δ Γ₁ Γ₂)
+    (v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹) :
+    rightCosetRep D v ∈ doubleCoset (D.out : G) Γ₁ Γ₂ := by
+  rw [doubleCoset_eq_iUnion_rightCosetRep D]
+  exact Set.mem_iUnion_of_mem v (mem_own_rightCoset Γ₁.toSubmonoid _)
+
+/-- Every member of the double coset shares its right coset with a chosen representative: it
+lies in one of the pieces, and two right cosets of `Γ₁` that meet are equal. -/
+lemma exists_rightCosetRep_smul_eq {Γ₁ Γ₂ : Subgroup G} (D : HeckeCoset Δ Γ₁ Γ₂) {x : G}
+    (hx : x ∈ doubleCoset (D.out : G) Γ₁ Γ₂) :
+    ∃ v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹,
+      MulOpposite.op x • (Γ₁ : Set G) =
+        MulOpposite.op (rightCosetRep D v) • (Γ₁ : Set G) := by
+  rw [doubleCoset_eq_iUnion_rightCosetRep D] at hx
+  obtain ⟨v, hv⟩ := Set.mem_iUnion.mp hx
+  exact ⟨v, (rightCoset_eq_iff Γ₁).mpr (by simpa using inv_mem ((mem_rightCoset_iff _).mp hv))⟩
 
 end DoubleCoset
 
