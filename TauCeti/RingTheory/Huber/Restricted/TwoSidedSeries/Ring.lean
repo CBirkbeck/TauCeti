@@ -39,10 +39,11 @@ commutative, in which the Laurent variable `X = twoSidedMonomial 1 1` is a unit.
 The product is not the pointwise product of `ℤ → A`, so `A⟨X, X⁻¹⟩` is not a subring of `ℤ → A`;
 the multiplication is installed directly on the submodule's coercion to a type.
 
-The product, the unit and the monomial rule need only a nonarchimedean ring topology; each
-coefficient of a product is a `tsum`, which is `0` if the sum diverges. The ring axioms assume `A`
-complete and `T0`, so that these sums converge; this is Wedhorn's convention, his "complete"
-including Hausdorff (Definition 5.31).
+The unit and the monomials, with their additive and scalar laws, need only continuous addition
+and scalar multiplication. The product and the monomial rule need a nonarchimedean ring
+topology; each coefficient of a product is a `tsum`, which is `0` if the sum diverges. The ring
+axioms assume `A` complete and `T0`, so that these sums converge; this is Wedhorn's convention, his
+"complete" including Hausdorff (Definition 5.31).
 
 ## References
 
@@ -55,23 +56,13 @@ open scoped DiscreteConvolution
 
 namespace TauCeti.Huber
 
-section Mul
+section Monomial
 
-variable {A : Type*} [Ring A] [TopologicalSpace A] [NonarchimedeanRing A]
-
-/-- **The product on `A⟨X, X⁻¹⟩`**: the coefficient convolution `(fg)ₙ = ∑_{i + j = n} aᵢ bⱼ`. -/
-noncomputable instance twoSidedRestrictedSubmodule.instMul :
-    Mul (twoSidedRestrictedSubmodule A A) where
-  mul f g := ⟨f ⋆ᵣ₊ g, addRingConvolution_mem_twoSidedRestrictedSubmodule f.2 g.2⟩
+variable {A : Type*} [Semiring A] [TopologicalSpace A] [ContinuousAdd A] [ContinuousConstSMul A A]
 
 /-- **The unit of `A⟨X, X⁻¹⟩`**: the constant series `1 = 1 · X⁰`. -/
 instance twoSidedRestrictedSubmodule.instOne : One (twoSidedRestrictedSubmodule A A) where
   one := ⟨Pi.single 0 1, single_mem_twoSidedRestrictedSubmodule 0 1⟩
-
-/-- The coefficient family of a product is the convolution of the coefficient families. -/
-@[simp, norm_cast]
-theorem coe_mul_twoSidedRestrictedSubmodule (f g : twoSidedRestrictedSubmodule A A) :
-    (↑(f * g) : ℤ → A) = ↑f ⋆ᵣ₊ ↑g := rfl
 
 /-- The coefficient family of the unit is supported at degree `0` with value `1`. -/
 @[simp, norm_cast]
@@ -104,16 +95,38 @@ theorem twoSidedMonomial_add (n : ℤ) (a b : A) :
     twoSidedMonomial n (a + b) = twoSidedMonomial n a + twoSidedMonomial n b :=
   Subtype.ext <| by simp [Pi.single_add]
 
+/-- Scaling a monomial scales its coefficient: `a • b Xⁿ = (ab) Xⁿ`. -/
+@[simp]
+theorem smul_twoSidedMonomial (a : A) (n : ℤ) (b : A) :
+    a • twoSidedMonomial n b = twoSidedMonomial n (a * b) :=
+  Subtype.ext <| by simp [← smul_eq_mul, Pi.single_smul']
+
+end Monomial
+
+section Neg
+
+variable {A : Type*} [Ring A] [TopologicalSpace A] [ContinuousAdd A] [ContinuousConstSMul A A]
+
 /-- The monomial `a Xⁿ` commutes with negating its coefficient. -/
 @[simp]
 theorem twoSidedMonomial_neg (n : ℤ) (a : A) : twoSidedMonomial n (-a) = -twoSidedMonomial n a :=
   Subtype.ext <| by simp [Pi.single_neg]
 
-/-- The monomial `a Xⁿ` commutes with subtracting coefficients. -/
-@[simp]
-theorem twoSidedMonomial_sub (n : ℤ) (a b : A) :
-    twoSidedMonomial n (a - b) = twoSidedMonomial n a - twoSidedMonomial n b :=
-  Subtype.ext <| by simp [Pi.single_sub]
+end Neg
+
+section Mul
+
+variable {A : Type*} [Ring A] [TopologicalSpace A] [NonarchimedeanRing A]
+
+/-- **The product on `A⟨X, X⁻¹⟩`**: the coefficient convolution `(fg)ₙ = ∑_{i + j = n} aᵢ bⱼ`. -/
+noncomputable instance twoSidedRestrictedSubmodule.instMul :
+    Mul (twoSidedRestrictedSubmodule A A) where
+  mul f g := ⟨f ⋆ᵣ₊ g, addRingConvolution_mem_twoSidedRestrictedSubmodule f.2 g.2⟩
+
+/-- The coefficient family of a product is the convolution of the coefficient families. -/
+@[simp, norm_cast]
+theorem coe_mul_twoSidedRestrictedSubmodule (f g : twoSidedRestrictedSubmodule A A) :
+    (↑(f * g) : ℤ → A) = ↑f ⋆ᵣ₊ ↑g := rfl
 
 /-- **Monomials multiply by adding degrees**: `(a Xᵐ)(b Xⁿ) = ab X^{m+n}`. -/
 @[simp]

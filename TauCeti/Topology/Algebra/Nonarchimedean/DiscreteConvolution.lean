@@ -23,6 +23,8 @@ summable, and when it is moreover `T0`, convolution of such families is associat
   additive convolution coefficients in a complete nonarchimedean ring.
 * `TauCeti.ZeroAtFilter.addRingConvolution`: additive ring convolution preserves convergence to
   zero along the cofinite filter.
+* `TauCeti.ZeroAtFilter.summable_sigma_addFiber_mul_mul`: the triple products of cofinite-zero
+  families are summable over each fibre of `a + b + c = n`.
 * `TauCeti.ZeroAtFilter.addRingConvolution_assoc`: additive ring convolution of cofinite-zero
   families is associative in a complete `T0` nonarchimedean ring.
 -/
@@ -73,7 +75,10 @@ theorem ZeroAtFilter.addRingConvolution
   exact hnim ⟨(p.1.1, p.1.2), hp, DiscreteConvolution.mem_addFiber.mp p.2⟩
 
 open DiscreteConvolution in
-private theorem summable_sigma_addFiber_mul_mul [Ring A] [UniformSpace A] [IsUniformAddGroup A]
+/-- In a complete nonarchimedean ring, the family `f a * g b * h c` over the triples with
+`a + b + c = n`, indexed as pairs `((a, b), c)` with `a + b = m` and `m + c = n`, is summable
+when `f`, `g` and `h` tend to zero cofinitely. -/
+theorem ZeroAtFilter.summable_sigma_addFiber_mul_mul [Ring A] [UniformSpace A] [IsUniformAddGroup A]
     [NonarchimedeanRing A] [CompleteSpace A] {f g h : ι → A} (hf : ZeroAtFilter cofinite f)
     (hg : ZeroAtFilter cofinite g) (hh : ZeroAtFilter cofinite h) (n : ι) :
     Summable fun σ : Σ p : addFiber n, addFiber p.1.1 ↦ f σ.2.1.1 * g σ.2.1.2 * h σ.1.1.2 := by
@@ -93,7 +98,8 @@ theorem ZeroAtFilter.addRingConvolution_assoc [Ring A] [UniformSpace A] [IsUnifo
     (hf : ZeroAtFilter cofinite f) (hg : ZeroAtFilter cofinite g) (hh : ZeroAtFilter cofinite h) :
     (f ⋆ᵣ₊ g) ⋆ᵣ₊ h = f ⋆ᵣ₊ g ⋆ᵣ₊ h :=
   DiscreteConvolution.addRingConvolution_assoc (addConvolutionExists_of_zeroAtFilter_cofinite hf hg)
-    (addConvolutionExists_of_zeroAtFilter_cofinite hg hh) (summable_sigma_addFiber_mul_mul hf hg hh)
+    (addConvolutionExists_of_zeroAtFilter_cofinite hg hh)
+    (ZeroAtFilter.summable_sigma_addFiber_mul_mul hf hg hh)
 
 end TauCeti
 
