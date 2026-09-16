@@ -19,8 +19,14 @@ import Mathlib.RingTheory.Adjoin.Field
 Over an algebraically closed `F`, a torsion point of `W` with coordinates in an extension `Ω` has
 its coordinates in `F`: the extension buys no new torsion.
 
+Integrality of the `x`-coordinate holds over any base, so closedness is used for one thing only —
+splitting the coordinate's minimal polynomial. That step is stated separately, from a splitting
+hypothesis, with the algebraically closed case as its corollary.
+
 ## Main results
 
+* `WeierstrassCurve.mem_range_x_of_zsmul_eq_zero_of_splits`: it lies in the image of `F` as soon
+  as its minimal polynomial splits there — the only thing a hypothesis on the field has to supply.
 * `WeierstrassCurve.mem_range_x_of_zsmul_eq_zero`: hence, over an algebraically closed one, it
   lies in the image of `F`.
 * `WeierstrassCurve.mem_range_baseChange_of_zsmul_eq_zero`: hence an `n`-torsion point of `W` over
@@ -37,16 +43,29 @@ open Polynomial
 
 namespace WeierstrassCurve
 
-variable {F : Type*} [Field F] [IsAlgClosed F] (W : WeierstrassCurve F) [W.IsElliptic]
+variable {F : Type*} [Field F] (W : WeierstrassCurve F) [W.IsElliptic]
   {Ω : Type*} [Field Ω] [Algebra F Ω]
 
+/-- **The `x`-coordinate of a torsion point is rational as soon as its minimal polynomial splits.**
+Integrality of the coordinate holds over any base; splitting is the only thing a hypothesis on the
+field has to supply, and it is what puts the coordinate in the image of `F`. -/
+theorem mem_range_x_of_zsmul_eq_zero_of_splits {n : ℤ} (hn : n ≠ 0) {x y : Ω}
+    (hns : (W.baseChange Ω).toAffine.Nonsingular x y)
+    (htors : n • Jacobian.Point.fromAffine (Affine.Point.some _ _ hns) = 0)
+    (hsplits : ((minpoly F x).map (algebraMap F F)).Splits) :
+    x ∈ Set.range (algebraMap F Ω) :=
+  (isIntegral_x_of_zsmul_eq_zero W hn hns htors).mem_range_algebraMap_of_minpoly_splits hsplits
+
+variable [IsAlgClosed F]
+
 /-- **The `x`-coordinate of a torsion point is rational** when the base field is algebraically
-closed: integrality then puts it in the image of `F`. -/
+closed: every minimal polynomial splits there, so `mem_range_x_of_zsmul_eq_zero_of_splits`
+applies. -/
 theorem mem_range_x_of_zsmul_eq_zero {n : ℤ} (hn : n ≠ 0) {x y : Ω}
     (hns : (W.baseChange Ω).toAffine.Nonsingular x y)
     (htors : n • Jacobian.Point.fromAffine (Affine.Point.some _ _ hns) = 0) :
     x ∈ Set.range (algebraMap F Ω) :=
-  (isIntegral_x_of_zsmul_eq_zero W hn hns htors).mem_range_algebraMap_of_minpoly_splits
+  mem_range_x_of_zsmul_eq_zero_of_splits W hn hns htors
     (by simpa using IsAlgClosed.splits (minpoly F x))
 
 /-- **A torsion point over an extension of an algebraically closed field is already rational.**
