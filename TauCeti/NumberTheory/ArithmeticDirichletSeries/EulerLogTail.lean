@@ -9,9 +9,8 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.NumberField.DirichletDensity
 
 import Mathlib.Analysis.PSeries
-import Mathlib.Analysis.Real.Pi.Bounds
 import Mathlib.Analysis.SpecialFunctions.Complex.LogBounds
-import Mathlib.NumberTheory.ZetaValues
+import TauCeti.Analysis.PSeries
 import TauCeti.NumberTheory.ArithmeticDirichletSeries.Convergence
 import TauCeti.NumberTheory.ArithmeticDirichletSeries.ResidueDegree
 
@@ -88,14 +87,6 @@ variable {K : Type*} [Field K] [NumberField K]
 
 /-! ### The prime zeta sum at exponent two -/
 
--- `∑' m : ℕ, m ^ (-2)` is `ζ (2) = π ^ 2 / 6`, and `π ^ 2 < 12`.
-private theorem tsum_nat_rpow_neg_two_le_two : ∑' m : ℕ, (m : ℝ) ^ (-(2 : ℝ)) ≤ 2 := by
-  have hfun : (fun m : ℕ ↦ (m : ℝ) ^ (-(2 : ℝ))) = fun m : ℕ ↦ (1 : ℝ) / (m : ℝ) ^ 2 := by
-    funext m
-    rw [Real.rpow_neg (Nat.cast_nonneg m), Real.rpow_two, one_div]
-  rw [hfun, hasSum_zeta_two.tsum_eq]
-  nlinarith [Real.pi_lt_d2, Real.pi_pos]
-
 -- The norm is `p ^ f` with `f ≥ 1`, for `p` the rational prime below.
 private theorem rationalPrimeBelow_le_absNorm (𝔭 : HeightOneSpectrum (𝓞 K)) :
     rationalPrimeBelow 𝔭 ≤ Ideal.absNorm 𝔭.asIdeal := by
@@ -128,7 +119,7 @@ private theorem tsum_absNorm_rpow_neg_two_le :
   refine Real.tsum_le_of_sum_le (fun _ ↦ Real.rpow_nonneg (Nat.cast_nonneg _) _) fun F ↦ ?_
   refine (sum_absNorm_rpow_le_finrank_mul_tsum one_lt_two F).trans ?_
   rw [mul_comm (2 : ℝ) (Module.finrank ℚ K : ℝ)]
-  exact mul_le_mul_of_nonneg_left tsum_nat_rpow_neg_two_le_two (Nat.cast_nonneg _)
+  exact mul_le_mul_of_nonneg_left (tsum_nat_rpow_neg_le_two le_rfl) (Nat.cast_nonneg _)
 
 /-! ### The termwise bound -/
 
