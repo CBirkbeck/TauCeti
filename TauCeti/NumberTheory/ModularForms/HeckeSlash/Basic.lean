@@ -131,8 +131,8 @@ section CosetRep
 
 `rightCosetRep` is pure group theory — it is `δ τᵥ⁻¹` in any group — so it is stated for an
 arbitrary `G` rather than for `GL (Fin 2) ℚ`. The generality is load-bearing downstream: the
-fundamental-domain tiling is applied along a homomorphism into `PSL(2, ℝ)`, and the only such
-homomorphism is defined on the positive-determinant subgroup `GL(2, ℚ)⁺`, not on all of
+fundamental-domain tiling is applied along `TauCeti.ratPosToPSL2R`, the fractional-linear map into
+`PSL(2, ℝ)`, whose source is the positive-determinant subgroup `GL(2, ℚ)⁺` rather than all of
 `GL (Fin 2) ℚ`. -/
 
 variable {G : Type*} [Group G] {Δ : Submonoid G} {Γ₁ Γ₂ : Subgroup G} (D : HeckeCoset Δ Γ₁ Γ₂)

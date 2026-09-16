@@ -5,7 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.Analysis.Complex.UpperHalfPlane.Measure
 public import TauCeti.MeasureTheory.Group.FundamentalDomain
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 
@@ -17,17 +16,23 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 so the statement is made along a homomorphism `φ` into a group that does.
 
 **The ambient group is arbitrary, and that generality is what makes the theorem applicable.** The
-intended `φ` is `TauCeti.ratPosToPSL2R`, and it is defined on the positive-determinant subgroup
-`GL(2, ℚ)⁺` rather than on all of `GL (Fin 2) ℚ` — necessarily so, since a negative-determinant
-matrix carries `ℍ` to the lower half-plane and so acts on no `MulAction _ ℍ`. Stated for
-`GL (Fin 2) ℚ` the theorem would have no `φ` to be applied to.
+intended `φ` is `TauCeti.ratPosToPSL2R`, whose source is the positive-determinant subgroup
+`GL(2, ℚ)⁺` rather than all of `GL (Fin 2) ℚ`. That restriction is forced for the
+*fractional-linear* action specifically: a negative-determinant matrix carries `ℍ` to the lower
+half-plane, so it acts by no fractional-linear `MulAction _ ℍ`. (Homomorphisms out of
+`GL (Fin 2) ℚ` certainly exist — the trivial one, for instance — but none of them is the map this
+theorem is for.) Stated for `GL (Fin 2) ℚ`, the theorem would have no *useful* `φ` to be applied
+to.
 
 This file shows that the images `φ aᵥ` of those representatives translate a fundamental domain
-for `φ(Γ₂)` into one for `φ(Γ₁) ⊓ φ(δ) φ(Γ₂) φ(δ)⁻¹`.
+for `φ(Γ₂)` into one for `φ(Γ₁) ⊓ φ(δ) φ(Γ₂) φ(δ)⁻¹`. The space acted on is an arbitrary measurable
+`α`; the modular-forms consumers instantiate it at `ℍ`, but nothing in the statement or proof needs
+that, so the file no longer depends on the upper half-plane at all.
 
-**`φ` is a parameter, and is not assumed injective.** The theorem itself assumes only
-`MulAction P ℍ`, so nothing here forces any particular element to act trivially; the hypotheses
-below are what it actually rests on. Injectivity is replaced by an ambient subgroup `H` that
+**`φ` is a parameter, and is not assumed injective.** The theorem itself assumes only a
+`MulAction P α` on an arbitrary measurable `α`, so nothing here forces any particular element to
+`α`; the modular-forms consumers instantiate it at `ℍ`, but nothing in the statement or proof
+needs that, so the file no longer depends on the upper half-plane at all.
 contains `Γ₁` and receives the conjugate `δ Γ₂ δ⁻¹`, with `ker φ ⊓ H ≤ Γ₁`. Neither `Γ₂ ≤ H` nor
 stability of `H` under conjugation by `δ` is required.
 
@@ -91,16 +96,22 @@ needed. The determinant-one subgroup serves when `φ` collapses no more of it th
 `{±1} ≤ Γ₁` — both hold for `ratPosToPSL2R` over any `Γ₀(N)`, but neither follows from the
 statement, which constrains `φ` only through `hker`.
 
-Why injectivity is not the alternative, for that intended instantiation: `P` there acts faithfully
+Why injectivity is not the alternative, for the intended instantiation: `P` there acts faithfully
 and is a matrix group modulo scalars, so with `-I ∈ Γ₂` an injective `φ` would make `φ (-I)` a
-non-identity element of `φ(Γ₂)` acting trivially on `ℍ`, and `hS` could then hold for no set of
-positive measure — `MeasureTheory.IsFundamentalDomain` demands a.e.-disjointness over distinct
-group elements. Nothing in the statement itself forces this: `MulAction P ℍ` is arbitrary here. -/
-theorem isFundamentalDomain_iUnion_rightCosetRep_smul {P : Type*} [Group P] [MulAction P ℍ]
-    (φ : G →* P) {H : Subgroup G} [Countable (DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹)] {S : Set ℍ}
-    {μ : Measure ℍ} (h₂ : Γ₁ ≤ H) (hconj : ∀ y ∈ Γ₂, (D.out : G) * y * (D.out : G)⁻¹ ∈ H)
+non-identity element of `φ(Γ₂)` acting trivially, and `hS` could then hold for no set of positive
+measure — `MeasureTheory.IsFundamentalDomain` demands a.e.-disjointness over distinct group
+elements. Nothing in the statement itself forces this: the action is arbitrary here.
+
+The acted-on space is an arbitrary measurable `α`, not `ℍ`: no hypothesis and no step of the proof
+uses upper-half-plane structure, and the tiling lemma underneath
+(`MeasureTheory.IsFundamentalDomain.iUnion_mul_smul_of_transversal`) is already stated at that
+generality. `ℍ` is simply what the modular-forms consumers instantiate it at. -/
+theorem isFundamentalDomain_iUnion_rightCosetRep_smul {P α : Type*} [Group P]
+    [MeasurableSpace α] [MulAction P α]
+    (φ : G →* P) {H : Subgroup G} [Countable (DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹)] {S : Set α}
+    {μ : Measure α} (h₂ : Γ₁ ≤ H) (hconj : ∀ y ∈ Γ₂, (D.out : G) * y * (D.out : G)⁻¹ ∈ H)
     (hker : φ.ker ⊓ H ≤ Γ₁) (hS : IsFundamentalDomain (Γ₂.map φ : Subgroup P) S μ)
-    (hδ : Measure.QuasiMeasurePreserving (fun x : ℍ ↦ (φ (D.out : G))⁻¹ • x) μ μ)
+    (hδ : Measure.QuasiMeasurePreserving (fun x : α ↦ (φ (D.out : G))⁻¹ • x) μ μ)
     (hnull : ∀ v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹,
       NullMeasurableSet ((φ (v.out : G))⁻¹ • S) μ) :
     IsFundamentalDomain (Γ₁.map φ ⊓ toConjAct (φ (D.out : G)) • Γ₂.map φ : Subgroup P)
