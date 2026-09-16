@@ -132,28 +132,12 @@ private lemma coe_conj_natDiagGL (hp : 0 < p) (g : SL(2, ℤ)) :
       = (conjDiag (g 0 0) (g 0 1) (g 1 0) (g 1 1) (p : ℤ)).map (Int.cast : ℤ → ℚ) := by
   have hginv : ((g⁻¹ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)
       = !![g 1 1, -(g 0 1); -(g 1 0), g 0 0] := by
-    ext i k
-    fin_cases i <;> fin_cases k <;> simp
+    rw [Matrix.SpecialLinearGroup.SL2_inv_expl]
+    rfl
   rw [mapGL_mul_coe_eq_intMatrix 2 g g⁻¹ _ _ (coe_natDiagGL_one_eq_map hp),
     Matrix.eta_fin_two ((g : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ), hginv,
     conjDiag_eq _ _ _ _ _ (Matrix.SpecialLinearGroup.fin_two_mul_sub_mul_eq_one g)]
   simp
-
-/-- **A factorization `τ · diag(1, p) · γ` of the conjugate in `GL₂(ℚ)`, with `τ, γ ∈ Γ₁(N)`,
-puts it in the double coset.** This is the twisted branch's final step.
-
-The coprime branch does not need it: its factorization is exhibited over `ℤ`, so it calls
-`HeckeRing.GLn.mem_doubleCoset_of_intMatrix_eq_of_mem` directly. Only the twisted branch has to
-state its identity in `GL₂(ℚ)`, because the right factor it uses comes from `CoprimeCosets`'
-`exists_mem_Gamma1_natDiagGL_mul_eq_primeRep_none`, whose conclusion already lives there. -/
-private lemma mem_doubleCoset_of_mapGL_factorization {g τ γ : SL(2, ℤ)}
-    (hτ : τ ∈ Gamma1 N) (hγ : γ ∈ Gamma1 N)
-    (h : mapGL ℚ g * natDiagGL 2 ![1, p] * mapGL ℚ g⁻¹
-      = mapGL ℚ τ * natDiagGL 2 ![1, p] * mapGL ℚ γ) :
-    mapGL ℚ g * natDiagGL 2 ![1, p] * mapGL ℚ g⁻¹ ∈
-      doubleCoset (natDiagGL 2 ![1, p] : GL (Fin 2) ℚ)
-        ((Gamma1 N).map (mapGL ℚ)) ((Gamma1 N).map (mapGL ℚ)) :=
-  mem_doubleCoset.mpr ⟨_, Subgroup.mem_map_of_mem _ hτ, _, Subgroup.mem_map_of_mem _ hγ, h⟩
 
 /-- The `Γ₁` factor of the coprime branch: `conjDiag · (diag(1, p) · Tʲ)⁻¹`, at an offset with
 `b + j e = p t`. -/
@@ -356,7 +340,8 @@ theorem conj_natDiagGL_mem_doubleCoset_of_dvd (hp : 0 < p) {g : SL(2, ℤ)} (hg 
   obtain ⟨γ, hγ, hγeq⟩ := exists_mem_Gamma1_natDiagGL_mul_eq_primeRep_none (N := N) (σ := σ) hp
     (by simp [hσdef]) (by simp [hσdef])
   obtain ⟨τ, hτ, hτeq⟩ := exists_mem_Gamma1_mul_twistedRep_eq_conjDiag_of_bezout hp hσ
-  refine mem_doubleCoset_of_mapGL_factorization hτ hγ ?_
+  refine mem_doubleCoset.mpr
+    ⟨_, Subgroup.mem_map_of_mem _ hτ, _, Subgroup.mem_map_of_mem _ hγ, ?_⟩
   rw [mul_assoc (mapGL ℚ τ), hγeq]
   refine (eq_mapGL_mul_mul_mapGL_of_intMatrix_eq 2 τ 1 _ _ _ _ (coe_primeRep_none_eq_map hp σ)
     (coe_conj_natDiagGL hp g) ?_).trans ?_
