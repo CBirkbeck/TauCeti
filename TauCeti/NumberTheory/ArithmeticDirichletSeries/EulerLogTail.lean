@@ -184,12 +184,12 @@ theorem summable_neg_log_one_sub_sub_absNorm_rpow {s : ℝ} (hs : 1 ≤ s) :
     (fun 𝔭 ↦ neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔭) hs)
     (fun 𝔭 ↦ neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs)
 
-/-- The prime-power tail is nonnegative: the sum of the Euler-factor logarithms dominates the
-prime Dirichlet series term by term. -/
+/-- **The prime-power tail is nonnegative.** The termwise difference between the Euler-factor
+logarithm `-log (1 - N(𝔭) ^ (-s))` and the prime Dirichlet term `N(𝔭) ^ (-s)` sums to a nonnegative
+number for every `s ≥ 1`. -/
 theorem tsum_neg_log_one_sub_sub_absNorm_rpow_nonneg {s : ℝ} (hs : 1 ≤ s) :
-    0 ≤ ∑' 𝔭 : HeightOneSpectrum (𝓞 K),
-      (-Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) -
-        (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) :=
+    0 ≤ ∑' 𝔭 : HeightOneSpectrum (𝓞 K), (-Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) -
+      (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) :=
   tsum_nonneg fun 𝔭 ↦ neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔭) hs
 
 /-- **The prime-power tail is bounded uniformly on `s ≥ 1`.** The constant `2 [K : ℚ]` does not
