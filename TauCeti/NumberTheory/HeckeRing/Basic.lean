@@ -351,10 +351,15 @@ noncomputable def restrictEquiv (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H)
   left_inv D := by induction D using HeckeCoset.induction with | h g => rfl
   right_inv D := by induction D using HeckeCoset.induction with | h g => rfl
 
-@[simp] lemma restrictEquiv_apply (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H)
+-- Neither of the next two is `@[simp]`: their left-hand sides carry `Hᵢ.comap H.subtype` in the
+-- implicit type arguments of the `Equiv` coercion, and `Subgroup.comap_subtype` rewrites that to
+-- `Hᵢ.subgroupOf H`, so the left-hand sides are not in simp normal form. This is the same
+-- `comap`/`subgroupOf` mismatch recorded above `restrict_mk`. `restrict_mk` itself is unaffected,
+-- since there the comap appears only in the result type, not in the head term.
+lemma restrictEquiv_apply (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H)
     (D : HeckeCoset Δ H₁ H₂) : restrictEquiv hΔ h₁ h₂ D = D.restrict hΔ h₁ h₂ := (rfl)
 
-@[simp] lemma restrictEquiv_symm_mk (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H)
+lemma restrictEquiv_symm_mk (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H)
     (g : ↥(Δ.comap H.subtype)) :
     (restrictEquiv hΔ h₁ h₂).symm
         (mk (H₁.comap H.subtype) (H₂.comap H.subtype) g) =
