@@ -145,7 +145,7 @@ The inverse is what converts the *left*-coset quotient Mathlib supplies into the
 index the decomposition needs; see "Which cosets the representatives run over" in the module
 docstring. -/
 noncomputable def rightCosetRep (v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹) : G :=
-  (D.out : G) * ((v.out : G))⁻¹
+  (D.out : G) * (v.out : G)⁻¹
 
 -- `rightCosetRep` and `heckeSlashSum` are not `@[expose]`, so a module downstream of this one
 -- cannot unfold either body. Their characteristic equations below are therefore the interface,
@@ -155,7 +155,7 @@ noncomputable def rightCosetRep (v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹
 /-- Defining equation for `rightCosetRep`. Since `rightCosetRep` is not `@[expose]`, a
 downstream module rewrites with this instead of unfolding the body. -/
 lemma rightCosetRep_def (v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹) :
-    rightCosetRep D v = (D.out : G) * ((v.out : G))⁻¹ := (rfl)
+    rightCosetRep D v = (D.out : G) * (v.out : G)⁻¹ := (rfl)
 
 end CosetRep
 

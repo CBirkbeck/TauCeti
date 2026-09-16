@@ -87,9 +87,9 @@ fundamental domain for `φ(Γ₂)`, the translates of `S` by the images of the r
 
 Supply `H` rather than injectivity of `φ`: any subgroup containing `Γ₁`, receiving the conjugate
 `δ Γ₂ δ⁻¹`, and meeting `ker φ` inside `Γ₁` — neither `Γ₂ ≤ H` nor conjugation-stability of `H` is
-needed. The determinant-one subgroup serves when `φ`
-collapses no more of it than `{±1}` and `{±1} ≤ Γ₁` — both hold for `ratPosToPSL2R` over any
-`Γ₀(N)`, but neither follows from the statement, which constrains `φ` only through `hker`.
+needed. The determinant-one subgroup serves when `φ` collapses no more of it than `{±1}` and
+`{±1} ≤ Γ₁` — both hold for `ratPosToPSL2R` over any `Γ₀(N)`, but neither follows from the
+statement, which constrains `φ` only through `hker`.
 
 Why injectivity is not the alternative, for that intended instantiation: `P` there acts faithfully
 and is a matrix group modulo scalars, so with `-I ∈ Γ₂` an injective `φ` would make `φ (-I)` a
@@ -97,10 +97,8 @@ non-identity element of `φ(Γ₂)` acting trivially on `ℍ`, and `hS` could th
 positive measure — `MeasureTheory.IsFundamentalDomain` demands a.e.-disjointness over distinct
 group elements. Nothing in the statement itself forces this: `MulAction P ℍ` is arbitrary here. -/
 theorem isFundamentalDomain_iUnion_rightCosetRep_smul {P : Type*} [Group P] [MulAction P ℍ]
-    (φ : G →* P) {H : Subgroup G}
-    [Countable (DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹)] {S : Set ℍ} {μ : Measure ℍ}
-    (h₂ : Γ₁ ≤ H)
-    (hconj : ∀ y ∈ Γ₂, (D.out : G) * y * (D.out : G)⁻¹ ∈ H)
+    (φ : G →* P) {H : Subgroup G} [Countable (DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹)] {S : Set ℍ}
+    {μ : Measure ℍ} (h₂ : Γ₁ ≤ H) (hconj : ∀ y ∈ Γ₂, (D.out : G) * y * (D.out : G)⁻¹ ∈ H)
     (hker : φ.ker ⊓ H ≤ Γ₁) (hS : IsFundamentalDomain (Γ₂.map φ : Subgroup P) S μ)
     (hδ : Measure.QuasiMeasurePreserving (fun x : ℍ ↦ (φ (D.out : G))⁻¹ • x) μ μ)
     (hnull : ∀ v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹,
@@ -109,17 +107,15 @@ theorem isFundamentalDomain_iUnion_rightCosetRep_smul {P : Type*} [Group P] [Mul
       (⋃ v, φ (rightCosetRep D v) • S) μ := by
   -- `e` matches the index of Shimura's decomposition of `Γ₁δΓ₂` with that of its image, so the
   -- canonical transversal `τᵥ⁻¹` upstairs maps onto one downstairs
-  set e := decompQuotientEquivMapOfKerInfLe φ Γ₂ Γ₁ H (D.out : G)⁻¹
-    (map_inv φ _) h₂ (by simpa using hconj) hker with he_def
-  set r : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹ → (Γ₂.map φ : Subgroup P) :=
-    fun v ↦ (φ.subgroupMap Γ₂ v.out)⁻¹
+  set e := decompQuotientEquivMapOfKerInfLe φ Γ₂ Γ₁ H (D.out : G)⁻¹ (map_inv φ _) h₂
+    (by simpa using hconj) hker with he_def
+  set r := fun v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹ ↦ (φ.subgroupMap Γ₂ v.out)⁻¹
   have heq : ∀ v, QuotientGroup.mk (r v)⁻¹ = e v := fun v ↦ by
     conv_rhs => rw [he_def, ← v.out_eq, decompQuotientEquivMapOfKerInfLe_mk]
     simp [r]
   simp only [rightCosetRep_def, map_mul, map_inv]
   -- `e` was built with its target supplied as `(φ δ)⁻¹` rather than `φ δ⁻¹`, so it already has
   -- the type asked for and only the underlying function needs transporting
-  exact hS.iUnion_mul_smul_of_transversal (φ (D.out : G)) hδ hnull
-    (funext heq ▸ e.bijective)
+  exact hS.iUnion_mul_smul_of_transversal (φ (D.out : G)) hδ hnull (funext heq ▸ e.bijective)
 
 end HeckeRing.GL2
