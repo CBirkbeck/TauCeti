@@ -39,6 +39,8 @@ survives because the enlarged group still has finite index in `SL₂(ℤ)`, cont
 * `HeckeRing.GL2.map_Gamma1_withCenter_le_Delta0` and
   `HeckeRing.GL2.Delta0_le_commensurator_map_Gamma1_withCenter`: the two halves of the triple.
 * the `IsHeckeTriple (Delta0 N) ((Gamma1 N).withCenter.map (mapGL ℚ))` instance they found.
+  The `FiniteIndex` instance it needs is supplied generically by
+  `Subgroup.instFiniteIndexWithCenter`.
 
 ## References
 
@@ -67,16 +69,11 @@ lemma Gamma1_withCenter_le_Gamma0 : (Gamma1 N).withCenter ≤ Gamma0 N := by
 
 /-- **`Γ₁(N)·{±I} ≤ Δ₀(N)`**, transported to the images in `GL₂(ℚ)`. -/
 lemma map_Gamma1_withCenter_le_Delta0 :
-    (((Gamma1 N).withCenter).map (mapGL ℚ)).toSubmonoid ≤ Delta0 N := by
-  rintro _ ⟨σ, hσ, rfl⟩
-  exact Gamma0Image_le_Delta0 N
-    ((mem_Gamma0Image_iff N).mpr ⟨σ, Gamma1_withCenter_le_Gamma0 N hσ, rfl⟩)
+    (((Gamma1 N).withCenter).map (mapGL ℚ)).toSubmonoid ≤ Delta0 N :=
+  fun _ hg ↦ Gamma0Image_le_Delta0 N ((mem_Gamma0Image_iff N).mpr
+    (Subgroup.mem_map.mp (Subgroup.map_mono (Gamma1_withCenter_le_Gamma0 N) hg)))
 
 variable [NeZero N]
-
-/-- `Γ₁(N)·{±I}` still has finite index in `SL₂(ℤ)`: it contains `Γ₁(N)`, which does. -/
-instance : ((Gamma1 N).withCenter).FiniteIndex :=
-  Subgroup.finiteIndex_of_le (Subgroup.le_withCenter (Gamma1 N))
 
 /-- **`Δ₀(N)` lies in the commensurator of `Γ₁(N)·{±I}`**: it lies in that of `SL₂(ℤ)`, and the
 two groups are commensurable, the enlarged group still having finite index. -/
