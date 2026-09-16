@@ -22,13 +22,12 @@ above `𝔭`; and the identity of `Gal(L/K)` is an arithmetic Frobenius at some 
 
 The unramifiedness hypothesis is not needed in the set-level form: a full complement of primes
 above `𝔭` already forces the ramification index at every prime above `𝔭` to be `1`, hence forces
-`𝔭` to be unramified. So `frobeniusPrimeSet K L 1` is the set of completely split primes on the
-nose, with no finite exceptional set to discard.
+`𝔭` to be unramified — that is `NumberField.isUnramifiedAt_of_ncard_primesOver_eq_finrank`, in
+`TauCeti.NumberTheory.NumberField.SplitsCompletely`. So `frobeniusPrimeSet K L 1` is the set of
+completely split primes on the nose, with no finite exceptional set to discard.
 
 ## Main results
 
-* `NumberField.isUnramifiedAt_of_ncard_primesOver_eq_finrank`: a full complement of `[L : K]`
-  primes above `𝔭` makes every prime of `𝓞 L` above `𝔭` unramified.
 * `NumberField.Chebotarev.mem_frobeniusPrimeSet_one_iff_inertiaDeg_eq_one`: for `𝔭` unramified
   in `L`, membership in the identity fibre is residue degree one at a prime above `𝔭`.
 * `NumberField.Chebotarev.mem_frobeniusPrimeSet_one_iff_ncard_primesOver_eq_finrank`: the same
@@ -39,8 +38,6 @@ nose, with no finite exceptional set to discard.
   identity fibre has residue degree one at *every* prime above it.
 * `NumberField.Chebotarev.frobeniusPrimeSet_one_eq_setOf_ncard_primesOver_eq_finrank`: as a set,
   the identity fibre is the primes of `𝓞 K` with `[L : K]` primes of `𝓞 L` above them.
-* `NumberField.Chebotarev.frobeniusPrimeSet_one_subset_frobeniusPrimeSet_one`: a prime splitting
-  completely in `L` splits completely in every Galois subextension `M` of `L / K`.
 
 ## References
 
@@ -77,11 +74,10 @@ theorem mem_frobeniusPrimeSet_one_iff_inertiaDeg_eq_one {𝔭 : HeightOneSpectru
   (mem_frobeniusPrimeSet_iff_artinSymbol_eq hur 1).trans
     (artinSymbol_eq_one_iff_inertiaDeg_eq_one 𝔭.asIdeal hur Q)
 
-/-- **The identity fibre is complete splitting**, for a caller that already holds the
-unramifiedness witness. `mem_frobeniusPrimeSet_one_iff_ncard_primesOver_eq_finrank` is the
-unconditional statement, and is the one to reach for; this form exists because the general
-fibre description it specialises is itself conditional. -/
-theorem mem_frobeniusPrimeSet_one_iff_ncard_primesOver_eq_finrank_of_isUnramified
+-- The conditional form, kept private: it is the direct specialisation of the general fibre
+-- description, which carries an unramifiedness hypothesis, and the unconditional statement
+-- below is derived from it by supplying that witness from each side of the iff.
+private theorem mem_frobeniusPrimeSet_one_iff_ncard_primesOver_eq_finrank_of_isUnramified
     {𝔭 : HeightOneSpectrum (𝓞 K)}
     (hur : ∀ (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver 𝔭.asIdeal],
       Algebra.IsUnramifiedAt (𝓞 K) Q) :
@@ -93,11 +89,10 @@ theorem mem_frobeniusPrimeSet_one_iff_ncard_primesOver_eq_finrank_of_isUnramifie
 identity Artin class in `L` exactly when `𝓞 L` has `[L : K]` primes above it.
 
 No unramifiedness hypothesis is needed in either direction: membership carries its own witness,
-and in the other direction a full complement of primes manufactures one.
-
-Not a `simp` lemma: `mem_frobeniusPrimeSet_iff` is already `@[simp]` and rewrites this
-left-hand side to the existential over an unramifiedness witness first, so tagging this would
-leave it out of simp-normal form. -/
+and in the other direction a full complement of primes manufactures one. -/
+-- Deliberately not `@[simp]`: `mem_frobeniusPrimeSet_iff` is already `@[simp]` and rewrites this
+-- left-hand side to the existential over an unramifiedness witness first, so the tag would leave
+-- this out of simp-normal form and fail `simpNF`.
 theorem mem_frobeniusPrimeSet_one_iff_ncard_primesOver_eq_finrank
     {𝔭 : HeightOneSpectrum (𝓞 K)} :
     𝔭 ∈ frobeniusPrimeSet K L 1 ↔ (𝔭.asIdeal.primesOver (𝓞 L)).ncard = Module.finrank K L :=
