@@ -171,12 +171,10 @@ every `s ≥ 1`, endpoint included — unlike either of the two families it is b
 summable only for `s > 1`. -/
 theorem summable_neg_log_one_sub_sub_absNorm_rpow {s : ℝ} (hs : 1 ≤ s) :
     Summable fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦
-      -Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) -
-        (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s) :=
-  Summable.of_nonneg_of_le
+      -Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s) :=
+  (summable_absNorm_rpow one_lt_two).of_nonneg_of_le
     (fun 𝔭 ↦ (neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs).1)
     (fun 𝔭 ↦ (neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs).2)
-    (summable_absNorm_rpow (K := K) one_lt_two)
 
 /-- The prime-power tail is nonnegative: the sum of the Euler-factor logarithms dominates the
 prime Dirichlet series term by term. -/
