@@ -298,6 +298,68 @@ variable {H : Subgroup G}
 lemma rep_one_mem : (rep (1 : HeckeCoset Δ H H) : G) ∈ H := by
   simpa using rep_mem (1 : HeckeCoset Δ H H)
 
+/-! ### Restriction to a smaller ambient group
+
+`map` above moves a Hecke coset along inclusions *within a fixed* `G`. Nothing moves one between
+ambient groups, and the direction that is unobstructed is this one: if the coefficient monoid
+already lies inside a subgroup `H`, so does the whole double coset.
+
+Why it is wanted: a theorem quantified over the ambient group is applied along a homomorphism out
+of that group, and the available homomorphisms are frequently defined only on a subgroup — the
+motivating case being `TauCeti.ratPosToPSL2R`, whose source is `GL(2, ℚ)⁺`, while the Hecke cosets
+of interest live in `GL (Fin 2) ℚ`.
+
+Only `Δ ≤ H` is required. One might expect `H₁ ≤ H` and `H₂ ≤ H` too, but `Subgroup.comap` never
+asks the subgroup to sit inside `H`, and `mk_rep_restrict` needs only the definitional direction
+`a ∈ H₁.comap H.subtype → (a : G) ∈ H₁`.
+
+Two spellings below look improvable and are not. `Hᵢ.comap H.subtype` is definitionally
+`Subgroup.subgroupOf`, which reads better, but substituting it makes `restrict_def`'s `rfl` fail:
+`subgroupOf` is not `@[expose]`d, so the equation cannot be proved definitionally in a module that
+exports it. The parentheses in `:= (rfl)` are load-bearing for the same reason. The mismatch also
+defeats `simp`-family tactics here, which normalise `comap H.subtype` to `subgroupOf` and then fail
+against a `comap`-shaped goal. -/
+
+/-- **Re-read a Hecke coset over a subgroup containing its coefficient monoid.** If `Δ ≤ H` then
+every representative of `D` already lies in `H`, so the double coset `H₁ δ H₂` can be regarded as
+one for the comapped triple inside `↥H`. -/
+noncomputable def restrict (hΔ : Δ ≤ H.toSubmonoid) (D : HeckeCoset Δ H₁ H₂) :
+    HeckeCoset (Δ.comap H.subtype) (H₁.comap H.subtype) (H₂.comap H.subtype) :=
+  mk _ _ ⟨⟨D.rep, hΔ D.rep.2⟩, D.rep.2⟩
+
+/-- Defining equation for `restrict`. Since `restrict` is not `@[expose]`, a downstream module
+rewrites with this instead of unfolding the body. -/
+theorem restrict_def (hΔ : Δ ≤ H.toSubmonoid) (D : HeckeCoset Δ H₁ H₂) :
+    restrict hΔ D = mk (H₁.comap H.subtype) (H₂.comap H.subtype)
+      (⟨⟨D.rep, hΔ D.rep.2⟩, D.rep.2⟩ : ↥(Δ.comap H.subtype)) := (rfl)
+
+/-- **The restricted coset's representative still represents `D`.** `restrict hΔ D` chooses its
+representative through `Quotient.out`, independently of `D`'s own choice, so the two need not agree
+as elements of `G`; what does hold — and what a consumer needs — is that the restricted choice is
+again a representative of the original double coset. -/
+theorem mk_rep_restrict (hΔ : Δ ≤ H.toSubmonoid) (D : HeckeCoset Δ H₁ H₂) :
+    mk H₁ H₂ ⟨(restrict hΔ D).rep, (restrict hΔ D).rep.2⟩ = D := by
+  have hmk : mk (H₁.comap H.subtype) (H₂.comap H.subtype) (restrict hΔ D).rep =
+      mk (H₁.comap H.subtype) (H₂.comap H.subtype)
+        (⟨⟨D.rep, hΔ D.rep.2⟩, D.rep.2⟩ : ↥(Δ.comap H.subtype)) :=
+    (mk_rep _).trans (restrict_def hΔ D)
+  -- the restricted representative lies in the double coset of the element `restrict` was built
+  -- from, and the witnesses are comapped subgroup elements, hence genuine `Hᵢ`-elements downstairs
+  obtain ⟨a, ha, b, hb, hab⟩ :=
+    mem_doubleCoset.mp (restrict_def hΔ D ▸ rep_mk_mem_doubleCoset
+      (⟨⟨D.rep, hΔ D.rep.2⟩, D.rep.2⟩ : ↥(Δ.comap H.subtype)))
+  conv_rhs => rw [← mk_rep D]
+  exact mk_eq_mk_of_mem (mem_doubleCoset.mpr ⟨(a : G), ha, (b : G), hb, congrArg Subtype.val hab⟩)
+
+/-- **`restrict` is injective.** Immediate from `mk_rep_restrict`, which exhibits a left inverse.
+
+It is *not* bijective at this generality, and no `Equiv` is available: taking `G = S₃`, `H = A₃`,
+`Δ = H` and `H₁ = H₂ = {e, (1 2)}` gives a two-element `HeckeCoset Δ H₁ H₂` and a three-element
+codomain. Surjectivity would need `H₁, H₂ ≤ H`, which nothing else here requires. -/
+theorem restrict_injective (hΔ : Δ ≤ H.toSubmonoid) :
+    Function.Injective (restrict hΔ : HeckeCoset Δ H₁ H₂ → _) :=
+  fun D₁ D₂ h ↦ by rw [← mk_rep_restrict hΔ D₁, ← mk_rep_restrict hΔ D₂, h]
+
 end HeckeCoset
 
 namespace DoubleCoset
