@@ -5,8 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.GroupTheory.Index.Basic
+public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma1.Basic
-public import TauCeti.NumberTheory.ModularForms.WithCenter
 
 /-!
 # The Hecke triple of `Γ₁(N)·{±I}`
@@ -24,7 +25,7 @@ for almost every level, and a fundamental-domain or Petersson argument that need
 over a group that does contain it.
 
 `Γ.withCenter = Γ ⊔ Z(G)` contains `-I` for **every** `Γ`, and it is the group TauCeti's Petersson
-layer already works with: `ModularForms.peterssonInnerCosets` sums over `SL(2, ℤ) ⧸ Γ.withCenter`.
+layer already works with: `CuspForm.peterssonInnerCosets` sums over `SL(2, ℤ) ⧸ Γ.withCenter`.
 What was missing is that this enlarged group is itself a Hecke triple with the same `Δ₀(N)`, which
 is what lets a Hecke coset be formed over it at all.
 
@@ -33,12 +34,17 @@ on either side of the triple. Containment in `Δ₀(N)` survives because `Γ₀(
 `-I`, so it absorbs the central factor and `Γ₁(N)·{±I} ≤ Γ₀(N)` still holds; commensurability
 survives because the enlarged group still has finite index in `SL₂(ℤ)`, containing `Γ₁(N)`.
 
+Nothing below mentions `Γ₁(N)` except the instance: the three supporting lemmas use only
+`H ≤ Γ₀(N)` or `[H.FiniteIndex]`, so they are stated for an arbitrary `H ≤ SL₂(ℤ)` and the
+`Γ₁(N)·{±I}` triple is the case `H := Γ₁(N)`.
+
 ## Main results
 
-* `HeckeRing.GL2.Gamma1_withCenter_le_Gamma0`: `Γ₁(N)·{±I} ≤ Γ₀(N)`.
-* `HeckeRing.GL2.map_Gamma1_withCenter_le_Delta0` and
-  `HeckeRing.GL2.Delta0_le_commensurator_map_Gamma1_withCenter`: the two halves of the triple.
-* the `IsHeckeTriple (Delta0 N) ((Gamma1 N).withCenter.map (mapGL ℚ))` instance they found.
+* `HeckeRing.GL2.withCenter_le_Gamma0`: adjoining the centre keeps a subgroup of `Γ₀(N)` inside
+  `Γ₀(N)`.
+* `HeckeRing.GL2.map_withCenter_le_Delta0` and
+  `HeckeRing.GL2.Delta0_le_commensurator_map_withCenter`: the two halves of the triple.
+* the `IsHeckeTriple (Delta0 N) ((Gamma1 N).withCenter.map (mapGL ℚ))` instance they give.
   The `FiniteIndex` instance it needs is supplied generically by
   `Subgroup.instFiniteIndexWithCenter`.
 
@@ -58,39 +64,36 @@ namespace HeckeRing.GL2
 
 variable (N : ℕ)
 
-/-- **`Γ₁(N)·{±I} ≤ Γ₀(N)`.** The central factor is absorbed: `Γ₀(N)` contains `-I`, so it is
-closed under negation, and `Γ₁(N) ≤ Γ₀(N)` already. -/
-lemma Gamma1_withCenter_le_Gamma0 : (Gamma1 N).withCenter ≤ Gamma0 N := by
-  intro γ hγ
-  obtain ⟨δ, hδ, h | h⟩ := Subgroup.mem_withCenter_iff_exists_eq_or_eq_neg.mp hγ
-  · exact h ▸ Gamma1_in_Gamma0 N hδ
-  · have hn : (-δ : SL(2, ℤ)) = (-1 : SL(2, ℤ)) * δ := by simp
-    exact h ▸ hn ▸ (Gamma0 N).mul_mem (by simp) (Gamma1_in_Gamma0 N hδ)
+/-- **Adjoining the centre keeps a subgroup of `Γ₀(N)` inside `Γ₀(N)`.** The central factor is
+absorbed: the centre of `SL₂(ℤ)` is `{±I}`, and `Γ₀(N)` contains `-I`. -/
+lemma withCenter_le_Gamma0 {H : Subgroup SL(2, ℤ)} (hH : H ≤ Gamma0 N) :
+    H.withCenter ≤ Gamma0 N :=
+  withCenter_le_iff.mpr ⟨hH, fun _ hγ ↦ by
+    rcases mem_center_iff_eq_one_or_eq_neg_one.mp hγ with rfl | rfl
+    · exact one_mem _
+    · simp⟩
 
-/-- **`Γ₁(N)·{±I} ≤ Δ₀(N)`**, transported to the images in `GL₂(ℚ)`. -/
-lemma map_Gamma1_withCenter_le_Delta0 :
-    (((Gamma1 N).withCenter).map (mapGL ℚ)).toSubmonoid ≤ Delta0 N :=
+/-- **`H·{±I} ≤ Δ₀(N)`** for `H ≤ Γ₀(N)`, transported to the images in `GL₂(ℚ)`. -/
+lemma map_withCenter_le_Delta0 {H : Subgroup SL(2, ℤ)} (hH : H ≤ Gamma0 N) :
+    ((H.withCenter).map (mapGL ℚ)).toSubmonoid ≤ Delta0 N :=
   fun _ hg ↦ Gamma0Image_le_Delta0 N ((mem_Gamma0Image_iff N).mpr
-    (Subgroup.mem_map.mp (Subgroup.map_mono (Gamma1_withCenter_le_Gamma0 N) hg)))
+    (Subgroup.mem_map.mp (Subgroup.map_mono (withCenter_le_Gamma0 N hH) hg)))
+
+/-- **`Δ₀(N)` lies in the commensurator of `H·{±I}`**: it lies in that of `SL₂(ℤ)`, and the two
+groups are commensurable, the enlarged group still having finite index. -/
+lemma Delta0_le_commensurator_map_withCenter (H : Subgroup SL(2, ℤ)) [H.FiniteIndex] :
+    Delta0 N ≤
+      (Commensurable.commensurator ((H.withCenter).map (mapGL ℚ))).toSubmonoid := by
+  rw [Commensurable.eq (commensurable_map_SLnZ 2 H.withCenter)]
+  exact (Delta0_le_posDetInt N).trans (posDetInt_le_commensurator 2)
 
 variable [NeZero N]
 
-/-- **`Δ₀(N)` lies in the commensurator of `Γ₁(N)·{±I}`**: it lies in that of `SL₂(ℤ)`, and the
-two groups are commensurable, the enlarged group still having finite index. -/
-lemma Delta0_le_commensurator_map_Gamma1_withCenter :
-    Delta0 N ≤
-      (Commensurable.commensurator (((Gamma1 N).withCenter).map (mapGL ℚ))).toSubmonoid := by
-  rw [Commensurable.eq (commensurable_map_SLnZ 2 ((Gamma1 N).withCenter))]
-  exact (Delta0_le_posDetInt N).trans (posDetInt_le_commensurator 2)
-
 /-- **The Hecke triple of `Γ₁(N)·{±I}`**: `Γ₁(N)·{±I} ≤ Δ₀(N) ≤ commensurator(Γ₁(N)·{±I})` inside
-`GL₂(ℚ)`, with the same monoid `Δ₀(N)` as the triple of `Γ₁(N)` itself.
-
-Stated at the unfolded `((Gamma1 N).withCenter).map (mapGL ℚ)` for the same reason the `Γ₁(N)`
-instance is: instance search unfolds no abbreviation, and this is the spelling a consumer meets. -/
+`GL₂(ℚ)`, with the same monoid `Δ₀(N)` as the triple of `Γ₁(N)` itself. -/
 instance : IsHeckeTriple (Delta0 N) (((Gamma1 N).withCenter).map (mapGL ℚ))
     (((Gamma1 N).withCenter).map (mapGL ℚ)) :=
-  IsHeckeTriple.of_diagonal (map_Gamma1_withCenter_le_Delta0 N)
-    (Delta0_le_commensurator_map_Gamma1_withCenter N)
+  IsHeckeTriple.of_diagonal (map_withCenter_le_Delta0 N (Gamma1_in_Gamma0 N))
+    (Delta0_le_commensurator_map_withCenter N (Gamma1 N))
 
 end HeckeRing.GL2
