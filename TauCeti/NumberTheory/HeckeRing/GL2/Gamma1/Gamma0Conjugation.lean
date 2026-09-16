@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma1.UpperTriCosets
+public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma1.CoprimeCosets
 import Mathlib.Data.Nat.Prime.Int
 
 /-!
@@ -139,9 +139,21 @@ private lemma coe_conj_natDiagGL (hp : 0 < p) (g : SL(2, ℤ)) :
     conjDiag_eq _ _ _ _ _ (Matrix.SpecialLinearGroup.fin_two_mul_sub_mul_eq_one g)]
   simp
 
-/-- **An integral factorization `τ · diag(1, p) · γ = conjDiag …` with `τ, γ ∈ Γ₁(N)` puts the
-conjugate in the double coset.** This is the whole of both branches' final step: each supplies
-its own `τ` and `γ`, and nothing else about them is used. -/
+/-- **A factorization `τ · diag(1, p) · γ` of the conjugate in `GL₂(ℚ)`, with `τ, γ ∈ Γ₁(N)`,
+puts it in the double coset.** This is the whole of both branches' final step: each supplies its
+own `τ` and `γ`, and nothing else about them is used. The two branches differ only in how they
+reach the identity — over `ℤ`, through `mem_doubleCoset_of_factorization`, in the coprime case;
+through `CoprimeCosets`' rational representative in the twisted one. -/
+private lemma mem_doubleCoset_of_mapGL_factorization {g τ γ : SL(2, ℤ)}
+    (hτ : τ ∈ Gamma1 N) (hγ : γ ∈ Gamma1 N)
+    (h : mapGL ℚ g * natDiagGL 2 ![1, p] * mapGL ℚ g⁻¹
+      = mapGL ℚ τ * natDiagGL 2 ![1, p] * mapGL ℚ γ) :
+    mapGL ℚ g * natDiagGL 2 ![1, p] * mapGL ℚ g⁻¹ ∈
+      doubleCoset (natDiagGL 2 ![1, p] : GL (Fin 2) ℚ)
+        ((Gamma1 N).map (mapGL ℚ)) ((Gamma1 N).map (mapGL ℚ)) :=
+  mem_doubleCoset.mpr ⟨_, Subgroup.mem_map_of_mem _ hτ, _, Subgroup.mem_map_of_mem _ hγ, h⟩
+
+/-- **The integral form of the same step**, for a factorization exhibited over `ℤ`. -/
 private lemma mem_doubleCoset_of_factorization (hp : 0 < p) {g τ γ : SL(2, ℤ)}
     (hτ : τ ∈ Gamma1 N) (hγ : γ ∈ Gamma1 N)
     (h : (τ : Matrix (Fin 2) (Fin 2) ℤ) * !![1, 0; 0, (p : ℤ)] * (γ : Matrix (Fin 2) (Fin 2) ℤ)
@@ -149,9 +161,9 @@ private lemma mem_doubleCoset_of_factorization (hp : 0 < p) {g τ γ : SL(2, ℤ
     mapGL ℚ g * natDiagGL 2 ![1, p] * mapGL ℚ g⁻¹ ∈
       doubleCoset (natDiagGL 2 ![1, p] : GL (Fin 2) ℚ)
         ((Gamma1 N).map (mapGL ℚ)) ((Gamma1 N).map (mapGL ℚ)) :=
-  mem_doubleCoset.mpr ⟨_, Subgroup.mem_map_of_mem _ hτ, _, Subgroup.mem_map_of_mem _ hγ,
-    eq_mapGL_mul_mul_mapGL_of_intMatrix_eq 2 _ _ _ _ _ _ (coe_natDiagGL_one_eq_map hp)
-      (coe_conj_natDiagGL hp g) h⟩
+  mem_doubleCoset_of_mapGL_factorization hτ hγ
+    (eq_mapGL_mul_mul_mapGL_of_intMatrix_eq 2 _ _ _ _ _ _ (coe_natDiagGL_one_eq_map hp)
+      (coe_conj_natDiagGL hp g) h)
 
 /-- The `Γ₁` factor of the coprime branch: `conjDiag · (diag(1, p) · Tʲ)⁻¹`, at an offset with
 `b + j e = p t`. -/
@@ -281,16 +293,33 @@ private lemma conjDiag_eq_twisted (a b c f p : ℤ) (hdet : a * (p * f) - b * c 
   · linear_combination -hdet
   · ring
 
+/-- **The twisted representative is an integer matrix**, cast into `ℚ` — the shape
+`eq_mapGL_mul_mul_mapGL_of_intMatrix_eq` consumes. Only a change of shape on top of
+`CoprimeCosets`' `coe_primeRep_none`. -/
+private lemma coe_primeRep_none_eq_map (hp : 0 < p) (σ : SL(2, ℤ)) :
+    ((primeRep σ p none : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ)
+      = (!![σ 0 0 * (p : ℤ), σ 0 1; σ 1 0 * (p : ℤ), σ 1 1] :
+          Matrix (Fin 2) (Fin 2) ℤ).map (Int.cast : ℤ → ℚ) := by
+  rw [coe_primeRep_none hp]
+  ext i k
+  fin_cases i <;> fin_cases k <;> simp
+
 /-- **The twisted branch, at the level of integer matrices.** A Bézout relation
-`a f p − b c′ N = 1` factors `conjDiag a b (N c′) (p f) p` as `τ′ · diag(1, p) · γ` with both
-outer factors in `Γ₁(N)`.
+`a f p − b c′ N = 1` supplies a `τ′ ∈ Γ₁(N)` carrying the matrix of the last right coset's
+twisted representative — `σ · diag(p, 1)` for `σ` with bottom row `(N, p)` — onto
+`conjDiag a b (N c′) (p f) p`.
+
+Only the left factor is built here. The right one is `CoprimeCosets`' own: at that bottom row
+`exists_mem_Gamma1_natDiagGL_mul_eq_primeRep_none` already produces a `γ ∈ Γ₁(N)` with
+`diag(1, p) · γ = primeRep σ p none`, so there is nothing to re-derive.
 
 The relation comes for free at the call site: reducing `a (p f) − b c = 1` along `N ∣ c` leaves
 `(a f) p ≡ 1 (mod N)`, so `p` is invertible modulo the level with no coprimality hypothesis. -/
-private lemma exists_mem_Gamma1_mul_diag_mul_eq_conjDiag_twisted_of_bezout (hp : 0 < p)
+private lemma exists_mem_Gamma1_mul_twistedRep_eq_conjDiag_of_bezout (hp : 0 < p)
     {a b c' f : ℤ} (hσ : a * f * (p : ℤ) - b * c' * (N : ℤ) = 1) :
-    ∃ τ γ : SL(2, ℤ), τ ∈ Gamma1 N ∧ γ ∈ Gamma1 N ∧
-      (τ : Matrix (Fin 2) (Fin 2) ℤ) * !![1, 0; 0, (p : ℤ)] * (γ : Matrix (Fin 2) (Fin 2) ℤ)
+    ∃ τ : SL(2, ℤ), τ ∈ Gamma1 N ∧
+      (τ : Matrix (Fin 2) (Fin 2) ℤ)
+            * !![a * f * (p : ℤ), b * c'; (N : ℤ) * (p : ℤ), (p : ℤ)]
         = conjDiag a b ((N : ℤ) * c') ((p : ℤ) * f) (p : ℤ) := by
   set c := (N : ℤ) * c' with hc
   -- the conjugate's entries, in the form `!![p α, β; p γ, δ]`
@@ -308,15 +337,8 @@ private lemma exists_mem_Gamma1_mul_diag_mul_eq_conjDiag_twisted_of_bezout (hp :
     twistTau_gamma1 (N := N) (p : ℤ) α β γ δ (a * f) (b * c')
       ⟨c' * f * (1 - (p : ℤ)), by rw [hγ, hc]; ring⟩
       ⟨b * c' * ((p : ℤ) - 1), by rw [hδ, hc]; ring⟩ hσ
-  -- the right factor, built explicitly rather than extracted from an existential
-  have hγdet : (!![a * f * (p : ℤ), b * c'; (N : ℤ), 1] : Matrix (Fin 2) (Fin 2) ℤ).det = 1 := by
-    rw [Matrix.det_fin_two_of]; linear_combination hσ
-  refine ⟨⟨_, hτdet⟩, ⟨_, hγdet⟩, mem_Gamma1_of_dvd_lowerRow h10 h11,
-    mem_Gamma1_of_dvd_lowerRow (by simp) (by simp), ?_⟩
-  rw [hconj, mul_assoc,
-    show (!![1, 0; 0, (p : ℤ)] * !![a * f * (p : ℤ), b * c'; (N : ℤ), 1] :
-        Matrix (Fin 2) (Fin 2) ℤ) = !![a * f * (p : ℤ), b * c'; (N : ℤ) * (p : ℤ), (p : ℤ)] from
-      by ext i k; fin_cases i <;> fin_cases k <;> simp [mul_comm]]
+  refine ⟨⟨_, hτdet⟩, mem_Gamma1_of_dvd_lowerRow h10 h11, ?_⟩
+  rw [hconj]
   exact twistTau_mul (p : ℤ) α β γ δ (a * f) (b * c') (N : ℤ) hσ
 
 /-- **Conjugation by `Γ₀(N)` fixes the double coset of `diag(1, p)`**, in the case where `p`
@@ -333,8 +355,22 @@ theorem conj_natDiagGL_mem_doubleCoset_of_dvd (hp : 0 < p) {g : SL(2, ℤ)} (hg 
     have hdet := Matrix.SpecialLinearGroup.fin_two_mul_sub_mul_eq_one g
     rw [hf, hc'] at hdet
     linear_combination hdet
-  obtain ⟨τ, γ, hτ, hγ, h⟩ := exists_mem_Gamma1_mul_diag_mul_eq_conjDiag_twisted_of_bezout hp hσ
-  exact mem_doubleCoset_of_factorization hp hτ hγ (by rw [h, ← hf, ← hc'])
+  -- the last right coset's twisted representative, with bottom row `(N, p)`
+  have hσdet : (!![g 0 0 * f, g 0 1 * c'; (N : ℤ), (p : ℤ)] :
+      Matrix (Fin 2) (Fin 2) ℤ).det = 1 := by
+    rw [Matrix.det_fin_two_of]
+    linear_combination hσ
+  set σ : SL(2, ℤ) := ⟨_, hσdet⟩ with hσdef
+  obtain ⟨γ, hγ, hγeq⟩ := exists_mem_Gamma1_natDiagGL_mul_eq_primeRep_none (N := N) (σ := σ) hp
+    (by simp [hσdef]) (by simp [hσdef])
+  obtain ⟨τ, hτ, hτeq⟩ := exists_mem_Gamma1_mul_twistedRep_eq_conjDiag_of_bezout hp hσ
+  refine mem_doubleCoset_of_mapGL_factorization hτ hγ ?_
+  rw [mul_assoc (mapGL ℚ τ), hγeq]
+  refine (eq_mapGL_mul_mul_mapGL_of_intMatrix_eq 2 τ 1 _ _ _ _ (coe_primeRep_none_eq_map hp σ)
+    (coe_conj_natDiagGL hp g) ?_).trans ?_
+  · rw [hc', hf]
+    simpa [hσdef] using hτeq
+  · simp
 
 /-- **The `Γ₁(N)` double coset of `diag(1, p)` is stable under conjugation by `Γ₀(N)`**, for `p`
 prime.
