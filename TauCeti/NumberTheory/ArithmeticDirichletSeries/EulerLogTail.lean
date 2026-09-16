@@ -145,22 +145,30 @@ private theorem neg_log_one_sub_sub_le {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x < 1) :
   exact ⟨by have := Real.log_le_sub_one_of_pos hden; linarith,
     (abs_le.mp key).2.trans_eq (by field_simp)⟩
 
+-- At `x = y ^ (-s)` with `2 ≤ y` and `1 ≤ s`, the base is at least `2` and the exponent at most
+-- `-1`, so `x ≤ 1 / 2`.  Both halves of the termwise estimate need this, so it is proved once.
+private theorem rpow_neg_le_half {y s : ℝ} (hy : 2 ≤ y) (hs : 1 ≤ s) : y ^ (-s) ≤ 1 / 2 :=
+  calc y ^ (-s) ≤ (2 : ℝ) ^ (-s) := Real.rpow_le_rpow_of_nonpos two_pos hy (by linarith)
+    _ ≤ (2 : ℝ) ^ (-(1 : ℝ)) := Real.rpow_le_rpow_of_exponent_le one_le_two (by linarith)
+    _ = 1 / 2 := by rw [Real.rpow_neg_one]; norm_num
+
+private theorem neg_log_one_sub_rpow_sub_nonneg {y s : ℝ} (hy : 2 ≤ y) (hs : 1 ≤ s) :
+    0 ≤ -Real.log (1 - y ^ (-s)) - y ^ (-s) :=
+  (neg_log_one_sub_sub_le (Real.rpow_nonneg (by linarith) _)
+    (by linarith [rpow_neg_le_half hy hs])).1
+
 -- For `2 ≤ y` and `1 ≤ s` the ratio `x ^ 2 / (2 (1 - x))` at `x = y ^ (-s)` is at most `x ^ 2`,
 -- because `x ≤ 1 / 2`, and `x ^ 2 = y ^ (-2 s) ≤ y ^ (-2)`.
 private theorem neg_log_one_sub_rpow_sub_le {y s : ℝ} (hy : 2 ≤ y) (hs : 1 ≤ s) :
-    0 ≤ -Real.log (1 - y ^ (-s)) - y ^ (-s) ∧
-      -Real.log (1 - y ^ (-s)) - y ^ (-s) ≤ y ^ (-(2 : ℝ)) := by
+    -Real.log (1 - y ^ (-s)) - y ^ (-s) ≤ y ^ (-(2 : ℝ)) := by
   have hy0 : (0 : ℝ) < y := by linarith
   have hx0 : 0 ≤ y ^ (-s) := Real.rpow_nonneg hy0.le _
-  have hxhalf : y ^ (-s) ≤ 1 / 2 :=
-    calc y ^ (-s) ≤ (2 : ℝ) ^ (-s) := Real.rpow_le_rpow_of_nonpos two_pos hy (by linarith)
-      _ ≤ (2 : ℝ) ^ (-(1 : ℝ)) := Real.rpow_le_rpow_of_exponent_le one_le_two (by linarith)
-      _ = 1 / 2 := by rw [Real.rpow_neg_one]; norm_num
-  obtain ⟨hlow, hhigh⟩ := neg_log_one_sub_sub_le hx0 (by linarith)
+  have hxhalf : y ^ (-s) ≤ 1 / 2 := rpow_neg_le_half hy hs
+  have hhigh := (neg_log_one_sub_sub_le hx0 (by linarith)).2
   have hsq : (y ^ (-s)) ^ 2 ≤ y ^ (-(2 : ℝ)) := by
     rw [← Real.rpow_natCast (y ^ (-s)) 2, ← Real.rpow_mul hy0.le]
     exact Real.rpow_le_rpow_of_exponent_le (by linarith) (by push_cast; linarith)
-  refine ⟨hlow, hhigh.trans ((div_le_iff₀ (by linarith)).mpr ?_)⟩
+  refine hhigh.trans ((div_le_iff₀ (by linarith)).mpr ?_)
   nlinarith [sq_nonneg (y ^ (-s))]
 
 /-! ### The prime-power tail -/
@@ -173,8 +181,8 @@ theorem summable_neg_log_one_sub_sub_absNorm_rpow {s : ℝ} (hs : 1 ≤ s) :
     Summable fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦
       -Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s) :=
   (summable_absNorm_rpow one_lt_two).of_nonneg_of_le
-    (fun 𝔭 ↦ (neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs).1)
-    (fun 𝔭 ↦ (neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs).2)
+    (fun 𝔭 ↦ neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔭) hs)
+    (fun 𝔭 ↦ neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs)
 
 /-- The prime-power tail is nonnegative: the sum of the Euler-factor logarithms dominates the
 prime Dirichlet series term by term. -/
@@ -182,7 +190,7 @@ theorem tsum_neg_log_one_sub_sub_absNorm_rpow_nonneg {s : ℝ} (hs : 1 ≤ s) :
     0 ≤ ∑' 𝔭 : HeightOneSpectrum (𝓞 K),
       (-Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) -
         (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) :=
-  tsum_nonneg fun 𝔭 ↦ (neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs).1
+  tsum_nonneg fun 𝔭 ↦ neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔭) hs
 
 /-- **The prime-power tail is bounded uniformly on `s ≥ 1`.** The constant `2 [K : ℚ]` does not
 depend on `s`, so this survives the passage to the limit `s → 1⁺` that the Dirichlet-density
@@ -191,7 +199,7 @@ theorem tsum_neg_log_one_sub_sub_absNorm_rpow_le {s : ℝ} (hs : 1 ≤ s) :
     ∑' 𝔭 : HeightOneSpectrum (𝓞 K), (-Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) -
       (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) ≤ 2 * Module.finrank ℚ K :=
   ((summable_neg_log_one_sub_sub_absNorm_rpow hs).tsum_le_tsum
-    (fun 𝔭 ↦ (neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs).2)
+    (fun 𝔭 ↦ neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs)
     (summable_absNorm_rpow one_lt_two)).trans tsum_absNorm_rpow_neg_two_le
 
 end TauCeti
