@@ -122,6 +122,7 @@ private theorem sum_absNorm_rpow_le_finrank_mul_tsum {s : ℝ} (hs : 1 < s)
         mul_le_mul_of_nonneg_left ((Real.summable_nat_rpow.mpr (by linarith)).sum_le_tsum _
           fun m _ ↦ Real.rpow_nonneg (Nat.cast_nonneg m) _) (Nat.cast_nonneg _)
 
+-- At most `[K : ℚ]` primes lie over each rational prime, and `ζ (2) < 2`.
 private theorem tsum_absNorm_rpow_neg_two_le :
     ∑' 𝔭 : HeightOneSpectrum (𝓞 K), (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-(2 : ℝ)) ≤
       2 * Module.finrank ℚ K := by
