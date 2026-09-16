@@ -51,7 +51,7 @@ private theorem _root_.AlgHom.IsArithFrobAt.sub_pow_mem {φ : S →ₐ[ℤ] S}
     (H : φ.IsArithFrobAt Q)
     [Q.LiesOver (span {(p : ℤ)})] (y : S) : φ y - y ^ p ∈ Q := by
   have h := H y
-  rwa [TauCeti.natCard_quotient_under_of_liesOver (p := p) Q] at h
+  rwa [Ideal.natCard_quotient_under_of_liesOver (p := p) Q] at h
 
 variable [IsDomain S] {Q : Ideal S} {x : S}
 

@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.NumberField.Frobenius.DecompositionGroup
-import Mathlib.RingTheory.Ideal.Int
 import TauCeti.RingTheory.Ideal.LiesOver
 
 /-!
@@ -107,7 +106,7 @@ theorem isArithFrobAt_int_of_absNorm_eq {p : ℕ}
   -- Restricting scalars preserves the action on the top ring; expose that action so only the
   -- two residue-cardinality expressions remain to compare.
   change σ • x - x ^ Nat.card (ℤ ⧸ Q.under ℤ) ∈ Q
-  rw [TauCeti.natCard_quotient_under_of_liesOver (p := p) Q]
+  rw [Ideal.natCard_quotient_under_of_liesOver (p := p) Q]
   exact hx
 
 /-- **Raising the base field raises the Frobenius to the residue degree.** For number fields
@@ -284,7 +283,7 @@ theorem isArithFrobAt_one_of_pow_eq_one {p n : ℕ} {ρ : L ≃ₐ[ℚ] L}
     IsArithFrobAt (𝓞 M) (1 : L ≃ₐ[M] L) Q := by
   intro x
   have h := hρ.mk_pow_smul n x
-  rw [TauCeti.natCard_quotient_under_of_liesOver (p := p) Q, hρn, one_smul] at h
+  rw [Ideal.natCard_quotient_under_of_liesOver (p := p) Q, hρn, one_smul] at h
   rw [← Ideal.Quotient.eq, map_pow, hcard]
   simpa using h
 

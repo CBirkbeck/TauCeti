@@ -23,15 +23,15 @@ the translation at each use site.
 
 ## Main results
 
-* `TauCeti.algebraMap_int_mem_iff_dvd_of_liesOver`: `algebraMap ℤ S m ∈ Q ↔ a ∣ m`.
-* `TauCeti.natCard_quotient_under_of_liesOver`: `Nat.card (ℤ ⧸ Q ∩ ℤ) = p` for `Q` over `(p)`.
+* `Ideal.algebraMap_int_mem_iff_dvd_of_liesOver`: `algebraMap ℤ S m ∈ Q ↔ a ∣ m`.
+* `Ideal.natCard_quotient_under_of_liesOver`: `Nat.card (ℤ ⧸ Q ∩ ℤ) = p` for `Q` over `(p)`.
 -/
 
 public section
 
 open Ideal
 
-namespace TauCeti
+namespace Ideal
 
 /-- An ideal of a `ℤ`-algebra lying over the integer ideal `(a)` meets `ℤ` exactly in the
 multiples of `a`: `algebraMap ℤ S m ∈ Q ↔ a ∣ m`. -/
@@ -51,6 +51,6 @@ theorem natCard_quotient_under_of_liesOver {S : Type*} [CommRing S] {p : ℕ}
   rw [← Ideal.LiesOver.over (P := Q) (p := span {(p : ℤ)})]
   exact Int.card_ideal_quot p
 
-end TauCeti
+end Ideal
 
 end
