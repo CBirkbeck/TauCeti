@@ -12,6 +12,7 @@ import Mathlib.Analysis.PSeries
 import Mathlib.Analysis.Real.Pi.Bounds
 import Mathlib.Analysis.SpecialFunctions.Complex.LogBounds
 import Mathlib.NumberTheory.ZetaValues
+import TauCeti.NumberTheory.ArithmeticDirichletSeries.Convergence
 import TauCeti.NumberTheory.ArithmeticDirichletSeries.ResidueDegree
 
 /-!
@@ -122,11 +123,6 @@ private theorem sum_absNorm_rpow_le_finrank_mul_tsum {s : ℝ} (hs : 1 < s)
         mul_le_mul_of_nonneg_left ((Real.summable_nat_rpow.mpr (by linarith)).sum_le_tsum _
           fun m _ ↦ Real.rpow_nonneg (Nat.cast_nonneg m) _) (Nat.cast_nonneg _)
 
-private theorem summable_absNorm_rpow {s : ℝ} (hs : 1 < s) :
-    Summable fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦ (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s) :=
-  summable_of_sum_le (fun _ ↦ Real.rpow_nonneg (Nat.cast_nonneg _) _)
-    fun F ↦ sum_absNorm_rpow_le_finrank_mul_tsum hs F
-
 private theorem tsum_absNorm_rpow_neg_two_le :
     ∑' 𝔭 : HeightOneSpectrum (𝓞 K), (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-(2 : ℝ)) ≤
       2 * Module.finrank ℚ K := by
@@ -190,7 +186,7 @@ summable only for `s > 1`. -/
 theorem summable_neg_log_one_sub_sub_absNorm_rpow {s : ℝ} (hs : 1 ≤ s) :
     Summable fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦
       -Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s) :=
-  (summable_absNorm_rpow one_lt_two).of_nonneg_of_le
+  (summable_absNorm_rpow_primes_of_one_lt one_lt_two).of_nonneg_of_le
     (fun 𝔓 ↦ neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔓)
       (zero_lt_one.trans_le hs))
     (fun 𝔭 ↦ neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs)
@@ -211,7 +207,7 @@ theorem tsum_neg_log_one_sub_sub_absNorm_rpow_le {s : ℝ} (hs : 1 ≤ s) :
       (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) ≤ 2 * Module.finrank ℚ K :=
   ((summable_neg_log_one_sub_sub_absNorm_rpow hs).tsum_le_tsum
     (fun 𝔭 ↦ neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs)
-    (summable_absNorm_rpow one_lt_two)).trans tsum_absNorm_rpow_neg_two_le
+    (summable_absNorm_rpow_primes_of_one_lt one_lt_two)).trans tsum_absNorm_rpow_neg_two_le
 
 end TauCeti
 
@@ -228,7 +224,7 @@ difference is in fact nonnegative — see `TauCeti.tsum_neg_log_one_sub_sub_absN
 theorem abs_tsum_neg_log_one_sub_sub_primeIdealZetaSum_le {s : ℝ} (hs : 1 < s) :
     |(∑' 𝔭 : HeightOneSpectrum (𝓞 K), -Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s))) -
       primeIdealZetaSum (Set.univ : Set (HeightOneSpectrum (𝓞 K))) s| ≤ 2 * Module.finrank ℚ K := by
-  have hsumP := TauCeti.summable_absNorm_rpow (K := K) hs
+  have hsumP := TauCeti.summable_absNorm_rpow_primes_of_one_lt (K := K) hs
   have hsumL : Summable fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦
       -Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) := by
     simpa using (TauCeti.summable_neg_log_one_sub_sub_absNorm_rpow hs.le).add hsumP
