@@ -72,6 +72,20 @@ def resBotIsoTrivial (A : Rep k G) :
     ext
     simp
 
+/-- The identification of the restriction to the trivial subgroup with the trivial representation
+does not move elements. -/
+@[simp]
+theorem resBotIsoTrivial_hom_hom_apply (A : Rep k G) (x : A.V) :
+    (resBotIsoTrivial A).hom.hom x = x :=
+  (rfl)
+
+/-- The inverse identification of the trivial representation with the restriction to the trivial
+subgroup does not move elements. -/
+@[simp]
+theorem resBotIsoTrivial_inv_hom_apply (A : Rep k G) (x : A.V) :
+    (resBotIsoTrivial A).inv.hom x = x :=
+  (rfl)
+
 section Coinduction
 
 variable (k G) in
@@ -242,7 +256,11 @@ theorem indBotEquivFinsupp_ρ_apply (X : Type u) [AddCommGroup X] [Module k X] (
   refine LinearMap.congr_fun (f := Finsupp.lapply h ∘ₗ (indBotEquivFinsupp k G X).toLinearMap ∘ₗ
       (indBot k G X).ρ g) (g := Finsupp.lapply (h * g) ∘ₗ (indBotEquivFinsupp k G X).toLinearMap)
     (IndV.hom_ext _ _ fun h' ↦ LinearMap.ext fun x ↦ ?_) v
-  -- On the generator `⟦h' ⊗ₜ x⟧` both sides are values of single functions.
+  -- On the generator `⟦h' ⊗ₜ x⟧` both sides are values of single functions. The goal is restated
+  -- with the generator folded: `IndV.mk` is a reducible abbreviation for a composite of linear
+  -- maps, so `simp`/`rw [LinearMap.comp_apply]` unfold it into
+  -- `Coinvariants.mk (single h' 1 ⊗ₜ x)`, where `Representation.ind_mk` and
+  -- `indBotEquivFinsupp_mk` (stated on `IndV.mk`) no longer match.
   change indBotEquivFinsupp k G X (Representation.ind _ _ g
       (IndV.mk (⊥ : Subgroup G).subtype (Representation.trivial k (⊥ : Subgroup G) X) h' x)) h =
     indBotEquivFinsupp k G X
@@ -291,6 +309,11 @@ def resCoindBotIso (X : Type u) [AddCommGroup X] [Module k X] :
     LinearEquiv.curry k X S (G ⧸ S) ≪≫ₗ (coindBotEquivPi k S (G ⧸ S → X)).symm) fun s ↦ by
     ext f h y
     -- Both sides evaluate `f` at a point of `G`, written through the coset decomposition of `G`.
+    -- The goal is restated because the action of `s` on `res S.subtype (coindBot k G X)` is the
+    -- `Representation.coind` operator applied through `LinearMap.funLeft`/`restrict`, and the
+    -- forward map is a composite of `LinearEquiv.funCongrLeft` and `LinearEquiv.curry`: `simp`
+    -- normalizes these into `Function.curry`/`funLeft` forms in which the argument
+    -- `groupEquivQuotientProdSubgroup.symm (y, h)` is no longer exposed for its evaluation lemma.
     change f.1 (Subgroup.groupEquivQuotientProdSubgroup.symm (y, h) * s) =
       f.1 (Subgroup.groupEquivQuotientProdSubgroup.symm (y, h * s))
     rw [Subgroup.groupEquivQuotientProdSubgroup_symm_apply,
@@ -344,14 +367,28 @@ theorem indBotEquivFinsupp_resIndBotIso_hom_hom_apply (X : Type u) [AddCommGroup
     (v : indBot k G X) (s : S) (y : G ⧸ S) :
     indBotEquivFinsupp k S (G ⧸ S →₀ X) ((resIndBotIso S X).hom.hom v) s y =
       indBotEquivFinsupp k G X v (y.out * s) := by
-  -- The forward map is the composite of linear equivalences the isomorphism is built from.
-  change indBotEquivFinsupp k S (G ⧸ S →₀ X) ((indBotEquivFinsupp k G X ≪≫ₗ
-    Finsupp.domLCongr (Subgroup.groupEquivQuotientProdSubgroup.trans (Equiv.prodComm (G ⧸ S) S)) ≪≫ₗ
-    Finsupp.curryLinearEquiv k ≪≫ₗ (indBotEquivFinsupp k S (G ⧸ S →₀ X)).symm) v) s y = _
+  rw [resIndBotIso, Rep.mkIso_hom_hom_apply, Representation.Equiv.coe_toLinearMap,
+    Representation.Equiv.mk_apply]
   simp only [LinearEquiv.trans_apply, LinearEquiv.apply_symm_apply, Finsupp.domLCongr_apply,
     Finsupp.domCongr_apply, Finsupp.curryLinearEquiv_apply, Finsupp.curry_apply,
     Finsupp.equivMapDomain_apply, Equiv.symm_trans_apply, Equiv.prodComm_symm,
     Equiv.prodComm_apply, Prod.swap_prod_mk, Subgroup.groupEquivQuotientProdSubgroup_symm_apply]
+
+/-- The inverse of the restriction of an induced representation to `S`: the finitely supported
+function on `G` attached to `W` evaluates `W` at the decomposition `g = ⟦g⟧.out * (⟦g⟧.out⁻¹ * g)`
+of `g` into a coset and an element of `S`. -/
+@[simp]
+theorem indBotEquivFinsupp_resIndBotIso_inv_hom_apply (X : Type u) [AddCommGroup X] [Module k X]
+    (W : indBot k S (G ⧸ S →₀ X)) (g : G) :
+    indBotEquivFinsupp k G X ((resIndBotIso S X).inv.hom W) g =
+      indBotEquivFinsupp k S (G ⧸ S →₀ X) W (Subgroup.groupEquivQuotientProdSubgroup g).2
+        (Subgroup.groupEquivQuotientProdSubgroup g).1 := by
+  rw [resIndBotIso, Rep.mkIso_inv_hom_apply, Representation.Equiv.mk_symm,
+    Representation.Equiv.mk_apply]
+  simp only [LinearEquiv.symm_trans_apply, LinearEquiv.apply_symm_apply, Finsupp.domLCongr_symm,
+    Finsupp.domLCongr_apply, Finsupp.domCongr_apply, Finsupp.curryLinearEquiv_symm_apply,
+    Finsupp.equivMapDomain_apply, Equiv.symm_symm, Equiv.trans_apply, Equiv.prodComm_apply,
+    LinearEquiv.symm_symm, Finsupp.uncurry_apply, Prod.fst_swap, Prod.snd_swap]
 
 end Restriction
 

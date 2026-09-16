@@ -28,6 +28,7 @@ The statements follow `ClassFieldTheory/Cohomology/IndCoind/TrivialCohomology.le
 
 * `TauCeti.TateCohomology.isZero_coindBot`, `TauCeti.TateCohomology.isZero_indBot`: for a finite
   group `G`, `Ĥⁿ(G, Coind_⊥^G X) = 0` and `Ĥⁿ(G, Ind_⊥^G X) = 0` for all `n : ℤ` (Milne II 3.1).
+* `TauCeti.TateCohomology.isZero_leftRegular`: for a finite group `G`, `Ĥⁿ(G, k[G]) = 0`.
 * `TauCeti.TateCohomology.isZero_res_coindBot`, `TauCeti.TateCohomology.isZero_res_indBot`,
   `TauCeti.TateCohomology.isZero_res_leftRegular`: for a finite subgroup `S` of any group `G`,
   `Ĥⁿ(S, Coind_⊥^G X) = Ĥⁿ(S, Ind_⊥^G X) = Ĥⁿ(S, k[G]) = 0` for all `n : ℤ`.
@@ -145,6 +146,11 @@ theorem isZero_coindBot (n : ℤ) : IsZero (tateCohomology (coindBot k G X) n) :
 subgroup vanishes (Milne II 3.1). -/
 theorem isZero_indBot (n : ℤ) : IsZero (tateCohomology (indBot k G X) n) :=
   (isZero_coindBot X n).of_iso ((tateCohomologyFunctor n).mapIso (indBotIsoCoindBot X))
+
+omit X in
+/-- For a finite group, all Tate cohomology of the left regular representation `k[G]` vanishes. -/
+theorem isZero_leftRegular (n : ℤ) : IsZero (tateCohomology (leftRegular k G) n) :=
+  (isZero_indBot k n).of_iso ((tateCohomologyFunctor n).mapIso indBotIsoLeftRegular.symm)
 
 end Fintype
 
