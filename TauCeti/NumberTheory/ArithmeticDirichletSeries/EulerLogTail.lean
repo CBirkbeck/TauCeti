@@ -52,9 +52,14 @@ Two elementary inputs carry the argument.
 
 ## Implementation notes
 
-The constant is explicit rather than existentially quantified, and the hypothesis is the closed
-condition `1 ≤ s` rather than a neighbourhood of `1`: both are free here, and a consumer that
-wants an eventual statement near `s = 1` gets it by weakening, whereas the converse costs work.
+The constant is explicit rather than existentially quantified, and the upper bound's hypothesis
+is the closed condition `1 ≤ s` rather than a neighbourhood of `1`: both are free here, and a
+consumer that wants an eventual statement near `s = 1` gets it by weakening, whereas the
+converse costs work.
+
+The two halves carry different hypotheses on purpose. Nonnegativity holds as soon as
+`N(𝔭) ^ (-s) < 1`, so it is stated on `0 < s`; the upper bound needs `N(𝔭) ^ (-s) ≤ 1 / 2` to
+control the denominator, and is false for `s` near `1 / 2`, where the tail already diverges.
 
 The one-variable estimate behind the termwise bound is not proved again: it is Mathlib's
 `Complex.norm_log_one_sub_inv_sub_self_le` read along the reals, which is where the factor `2`
