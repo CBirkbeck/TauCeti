@@ -30,7 +30,7 @@ value.  The results below supply it for every `s > 1` and every set of primes.
   `TauCeti.summable_idealTerm_one_iff`.
 * `TauCeti.summable_absNorm_rpow_primes_of_one_lt`: over the height-one primes of `𝓞 K`, the
   series `∑ N(𝔭) ^ (-s)` converges for every `1 < s`.
-* `TauCeti.summable_absNorm_rpow_primeSet_of_one_lt`: the same over an arbitrary set of
+* `TauCeti.summable_absNorm_rpow_subtype_of_one_lt`: the same over an arbitrary set of
   height-one primes.  This is the family `NumberField.Set.primeIdealZetaSum` sums, so it is the
   form its consumers need.
 * `NumberField.Set.primeIdealZetaSum_mono_set`: the prime ideal zeta sum is monotone under
@@ -54,7 +54,7 @@ of residue degree above one it yields the strictly wider half-line `s > 1/2`, an
   <https://github.com/CBirkbeck/chebotarev-density> (Apache-2.0), commit
   `8575c9df1ae0a61120ab5c964c7911414254bec7`, file `CebotarevDensity/Density.lean`:
   `summable_absNorm_rpow_ideal_iff` from `summable_nonzeroIdeal_absNorm_rpow`,
-  `summable_absNorm_rpow_primeSet_of_one_lt` from `summable_prime_absNorm_rpow`, and
+  `summable_absNorm_rpow_subtype_of_one_lt` from `summable_prime_absNorm_rpow`, and
   `NumberField.Set.primeIdealZetaSum_mono_set` from `primeIdealZetaSum_le_of_subset`.
 -/
 
@@ -105,7 +105,7 @@ converges for `s > 1`: a subfamily of a summable family is summable.
 
 This is the family `NumberField.Set.primeIdealZetaSum` sums, so it is the summability its
 consumers need in order to denote a genuine sum rather than the `tsum` junk value. -/
-theorem summable_absNorm_rpow_primeSet_of_one_lt (S : Set (HeightOneSpectrum (𝓞 K))) {s : ℝ}
+theorem summable_absNorm_rpow_subtype_of_one_lt (S : Set (HeightOneSpectrum (𝓞 K))) {s : ℝ}
     (hs : 1 < s) : Summable fun 𝔭 : S ↦ (Ideal.absNorm 𝔭.1.asIdeal : ℝ) ^ (-s) :=
   (summable_absNorm_rpow_primes_of_one_lt hs).subtype S
 
@@ -136,6 +136,6 @@ theorem primeIdealZetaSum_mono_set {S T : Set (HeightOneSpectrum (𝓞 K))} (hST
 set is automatic. -/
 theorem primeIdealZetaSum_mono_set_of_one_lt {S T : Set (HeightOneSpectrum (𝓞 K))} (hST : S ⊆ T)
     {s : ℝ} (hs : 1 < s) : S.primeIdealZetaSum s ≤ T.primeIdealZetaSum s :=
-  primeIdealZetaSum_mono_set hST (summable_absNorm_rpow_primeSet_of_one_lt T hs)
+  primeIdealZetaSum_mono_set hST (summable_absNorm_rpow_subtype_of_one_lt T hs)
 
 end NumberField.Set
