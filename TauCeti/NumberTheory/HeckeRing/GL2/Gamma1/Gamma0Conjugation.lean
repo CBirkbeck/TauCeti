@@ -43,8 +43,13 @@ and membership in the double coset means writing it as `τ · diag(1, p) · γ` 
   `p ∣ b + j e` reduces to `p ∣ b`. What happens instead is that the conjugate's first *column*
   becomes
   divisible by `p` — writing `e = p f`, the `(0, 0)` entry is `a e − b c p = p (a f − b c)` — so
-  it factors through the *twisted* representative `!![a f p, b c′; N, 1]` of the last right coset
-  rather than through an upper-triangular one.
+  the conjugate factors as `τ′ · diag(1, p) · γ` with `γ = !![a f p, b c′; N, 1] ∈ Γ₁(N)`, writing
+  `c = N c′`. The product `diag(1, p) · γ` is then the *twisted* representative `σ · diag(p, 1)`
+  rather than an upper-triangular one.
+
+The coprime branch reads its offset straight off a Bézout pair for `e` and `p`, and both outer
+factors land in `Γ₁(N)` — the left one because `N ∣ c` makes the whole lower row divisible by `N`,
+the right one because every power of `T` lies in `Γ₁(N)`.
 
 At a prime the two branches are exhaustive, which is `conj_natDiagGL_mem_doubleCoset_of_prime`.
 Neither needs `p` to be prime on its own, and neither needs a coprimality hypothesis relating
@@ -87,28 +92,16 @@ namespace HeckeRing.GL2
 
 variable {N p : ℕ}
 
-/-- **`Γ₁(N)` membership from two divisibilities on the lower row.** The congruence
-`a ≡ 1 (mod N)` that `CongruenceSubgroup.Gamma1_mem` also asks for is forced by the
-determinant, so `mem_Gamma1_iff` leaves only these two to check. -/
-private lemma mem_Gamma1_of_dvd_lowerRow {M : SL(2, ℤ)} (h10 : (N : ℤ) ∣ M 1 0)
-    (h11 : (N : ℤ) ∣ M 1 1 - 1) : M ∈ Gamma1 N := by
-  refine mem_Gamma1_iff.mpr ⟨Gamma0_mem.mpr ?_, ?_⟩
-  · exact_mod_cast (ZMod.intCast_zmod_eq_zero_iff_dvd _ N).mpr h10
-  · have := (ZMod.intCast_zmod_eq_zero_iff_dvd _ N).mpr h11
-    push_cast at this ⊢
-    linear_combination this
-
-/-- The matrix of `diag(1, p)` as the image of an integer matrix, in `!![…]` rather than
-`Matrix.diagonal` form. `HeckeRing.GLn.natDiagGL_coe_eq_map_intCast` is the general statement and
-exists for exactly this purpose; only the change of shape is done here, because the factorizations
-below multiply by `!![1, 0; 0, p]` explicitly. -/
+/-- The matrix of `diag(1, p)` as the image of an integer matrix, the shape the integral-witness
+API consumes. Derived from `coe_natDiagGL_one`, which is where this matrix is stated, rather than
+from the rank-`n` `HeckeRing.GLn.natDiagGL_coe_eq_map_intCast`: either route works, and this one
+keeps a single source for the matrix of `diag(1, p)`. -/
 private lemma coe_natDiagGL_one_eq_map (hp : 0 < p) :
     ((natDiagGL 2 ![1, p] : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ)
       = (!![1, 0; 0, (p : ℤ)] : Matrix (Fin 2) (Fin 2) ℤ).map (Int.cast : ℤ → ℚ) := by
-  rw [natDiagGL_coe_eq_map_intCast 2 ![1, p] fun i ↦ by fin_cases i <;> simp [hp]]
-  congr 1
+  rw [coe_natDiagGL_one hp]
   ext i k
-  fin_cases i <;> fin_cases k <;> simp [Matrix.diagonal]
+  fin_cases i <;> fin_cases k <;> simp
 
 /-- The conjugate `g · diag(1, p) · g⁻¹` of the diagonal matrix by `g = !![a, b; c, e]`, for
 `g` of determinant one, written out. -/
@@ -223,9 +216,7 @@ private lemma exists_mem_Gamma1_mul_diag_mul_eq_conjDiag_of_bezout (hp : 0 < p) 
 /-- **Conjugation by `Γ₀(N)` fixes the double coset of `diag(1, p)`**, when the lower-right
 entry of the conjugating matrix is coprime to `p`.
 
-This is the coprime branch: the offset `j ≡ -b e⁻¹ (mod p)` is read straight off a Bézout pair
-for `e` and `p`, and the conjugate factors as `τ · diag(1, p) · Tʲ` with both outer factors in
-`Γ₁(N)` — `τ` by `conjTau_gamma1` and `Tʲ` by `T_zpow_mem_Gamma1`. -/
+The module docstring explains why this branch and the `p ∣ e` one are different constructions. -/
 theorem conj_natDiagGL_mem_doubleCoset_of_isCoprime (hp : 0 < p) {g : SL(2, ℤ)}
     (hg : g ∈ Gamma0 N) (hco : IsCoprime (g 1 1) (p : ℤ)) :
     mapGL ℚ g * natDiagGL 2 ![1, p] * mapGL ℚ g⁻¹ ∈
@@ -290,16 +281,12 @@ private lemma conjDiag_eq_twisted (a b c f p : ℤ) (hdet : a * (p * f) - b * c 
   · linear_combination -hdet
   · ring
 
-/-- **Conjugation by `Γ₀(N)` fixes the double coset of `diag(1, p)`**, in the case where `p`
-divides the conjugating matrix's lower-right entry.
+/-- **The twisted branch, at the level of integer matrices.** A Bézout relation
+`a f p − b c′ N = 1` factors `conjDiag a b (N c′) (p f) p` as `τ′ · diag(1, p) · γ` with both
+outer factors in `Γ₁(N)`.
 
-This is the twisted branch. No power of `T` works here (for `1 < p`): `a e - b c = 1` with
-`p ∣ e` forces `b c ≡ -1 (mod p)`, so the offset condition `p ∣ b + j e` of the coprime branch
-has no solution. Instead the conjugate's *first column* is divisible by `p`, and it factors as
-`τ′ · diag(1, p) · γ` with `γ = !![a f p, b c′; N, 1]`.
-
-`p` is automatically invertible mod `N`: reducing `a (p f) - b c = 1` along `N ∣ c` leaves
-`(a f) p ≡ 1`, so no coprimality hypothesis is needed. -/
+The relation comes for free at the call site: reducing `a (p f) − b c = 1` along `N ∣ c` leaves
+`(a f) p ≡ 1 (mod N)`, so `p` is invertible modulo the level with no coprimality hypothesis. -/
 private lemma exists_mem_Gamma1_mul_diag_mul_eq_conjDiag_twisted_of_bezout (hp : 0 < p)
     {a b c' f : ℤ} (hσ : a * f * (p : ℤ) - b * c' * (N : ℤ) = 1) :
     ∃ τ γ : SL(2, ℤ), τ ∈ Gamma1 N ∧ γ ∈ Gamma1 N ∧
@@ -352,11 +339,8 @@ theorem conj_natDiagGL_mem_doubleCoset_of_dvd (hp : 0 < p) {g : SL(2, ℤ)} (hg 
 /-- **The `Γ₁(N)` double coset of `diag(1, p)` is stable under conjugation by `Γ₀(N)`**, for `p`
 prime.
 
-The two branches above are exhaustive at a prime: either `p` divides the conjugating matrix's
-lower-right entry or it is coprime to it. They are genuinely different constructions — the
-coprime branch translates by a power of `T`, the divisible branch by the twist
-`!![a f p, b c′; N, 1]` — and neither covers the other, so the case split is not an artefact of
-the proof. -/
+Combines `conj_natDiagGL_mem_doubleCoset_of_dvd` and
+`conj_natDiagGL_mem_doubleCoset_of_isCoprime`, which between them cover every case at a prime. -/
 theorem conj_natDiagGL_mem_doubleCoset_of_prime (hp : p.Prime) {g : SL(2, ℤ)}
     (hg : g ∈ Gamma0 N) :
     mapGL ℚ g * natDiagGL 2 ![1, p] * mapGL ℚ g⁻¹ ∈
