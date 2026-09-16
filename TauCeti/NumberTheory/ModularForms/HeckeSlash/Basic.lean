@@ -80,12 +80,13 @@ why this file does not use it: `!![1, 1; 0, 1] ∈ Γ₁(N)` for every `N` while
 
 ## Main definitions
 
-* `HeckeRing.GL2.rightCosetRep`: the representative `δ τᵥ⁻¹` of the `v`-th right coset.
+* `DoubleCoset.rightCosetRep` (in `NumberTheory/HeckeRing/Basic.lean`): the representative
+  `δ τᵥ⁻¹` of the `v`-th right coset. Pure group theory, so it lives with the decomposition API.
 * `HeckeRing.GL2.heckeSlashSum`: the choice-dependent sum `∑ᵥ f ∣[k] (δ τᵥ⁻¹)`.
 
 ## Main results
 
-* `HeckeRing.GL2.rightCosetRep_def`, `HeckeRing.GL2.heckeSlashSum_def` and
+* `DoubleCoset.rightCosetRep_def`, `HeckeRing.GL2.heckeSlashSum_def` and
   `HeckeRing.GL2.heckeSlashSum_apply`: the characteristic equations, which are the interface
   since neither definition is `@[expose]`. The last two are the function-level and pointwise
   forms of the same equation.
@@ -124,40 +125,6 @@ open Matrix TauCeti UpperHalfPlane DoubleCoset HeckeRing.GLn
 open scoped MatrixGroups ModularForm Pointwise
 
 namespace HeckeRing.GL2
-
-section CosetRep
-
-/-! ### The coset representatives
-
-`rightCosetRep` is pure group theory — it is `δ τᵥ⁻¹` in any group — so it is stated for an
-arbitrary `G` rather than for `GL (Fin 2) ℚ`. The generality is load-bearing downstream: the
-fundamental-domain tiling is applied along `TauCeti.ratPosToPSL2R`, the fractional-linear map into
-`PSL(2, ℝ)`, whose source is the positive-determinant subgroup `GL(2, ℚ)⁺` rather than all of
-`GL (Fin 2) ℚ`. -/
-
-variable {G : Type*} [Group G] {Δ : Submonoid G} {Γ₁ Γ₂ : Subgroup G} (D : HeckeCoset Δ Γ₁ Γ₂)
-
-/-- The representative `δ τᵥ⁻¹` of the `v`-th right coset `Γ₁ aᵥ` in the decomposition
-`Γ₁ δ Γ₂ = ⊔ᵥ Γ₁ aᵥ`, where `δ` is the chosen representative of the double coset `D` and `τᵥ`
-runs over the chosen representatives of `Γ₂ ⧸ (Γ₂ ∩ δ⁻¹Γ₁δ)`.
-
-The inverse is what converts the *left*-coset quotient Mathlib supplies into the right-coset
-index the decomposition needs; see "Which cosets the representatives run over" in the module
-docstring. -/
-noncomputable def rightCosetRep (v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹) : G :=
-  (D.out : G) * (v.out : G)⁻¹
-
--- `rightCosetRep` and `heckeSlashSum` are not `@[expose]`, so a module downstream of this one
--- cannot unfold either body. Their characteristic equations below are therefore the interface,
--- not a restatement of something already visible; `rightCosetRep_def` is written `(rfl)` in the
--- style of `ModularForms/Basic.lean`, which opts out of exporting the definitional equality.
-
-/-- Defining equation for `rightCosetRep`. Since `rightCosetRep` is not `@[expose]`, a
-downstream module rewrites with this instead of unfolding the body. -/
-lemma rightCosetRep_def (v : DecompQuotient Γ₂ Γ₁ (D.out : G)⁻¹) :
-    rightCosetRep D v = (D.out : G) * (v.out : G)⁻¹ := (rfl)
-
-end CosetRep
 
 variable (k : ℤ) {Δ : Submonoid (GL (Fin 2) ℚ)} {Γ₁ Γ₂ : Subgroup (GL (Fin 2) ℚ)}
   (D : HeckeCoset Δ Γ₁ Γ₂)
