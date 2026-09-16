@@ -37,6 +37,10 @@ merges. The degree section is instead ported from the AINTLIB `LeanModularForms`
 
 * `HeckeCoset.toSet`: the underlying set `H₁gH₂` of a double coset.
 * `HeckeCoset.rep`: a chosen representative in `Δ`.
+* `HeckeCoset.map`: functoriality in the triple `(Δ, H₁, H₂)` along inclusions — widening the
+  coefficient subgroups can only merge double cosets, never split them. Its computation rule is
+  `map_mk` and its functor laws are `map_id` and `map_map`; `HeckeRing.GL2.toLevelOneCoset`
+  (`HeckeRing/GL2/Gamma0/CosetMap.lean`) is its `Γ₀`-specialisation.
 * `DoubleCoset.DecompQuotient`: the quotient `Γ₁ ⧸ (Γ₁ ∩ gΓ₂g⁻¹)` indexing the left cosets
   in `Γ₁gΓ₂`; finite for a Hecke triple. Its mirror `DecompQuotient Γ₂ Γ₁ g⁻¹` indexes the
   right cosets `Γ₁a`, and is finite too.
@@ -102,51 +106,131 @@ namespace HeckeCoset
 
 variable {Δ : Submonoid G} {H₁ H₂ : Subgroup G}
 
-/-- The underlying set `H₁gH₂` of a double coset, well-defined on the quotient. -/
+/-- The underlying set `H₁gH₂` of a double coset, well-defined on the quotient.
+
+The `@[simp]` lemma `toSet_mk` evaluates it at a representative and `toSet_eq_doubleCoset_rep` at
+the chosen `rep`. Mathlib's `DoubleCoset.quotToDoubleCoset` is the analogue for the double cosets
+of the whole group `G` rather than of the submonoid `Δ`. -/
 def toSet (D : HeckeCoset Δ H₁ H₂) : Set G :=
   Quotient.lift (fun g : Δ ↦ doubleCoset (g : G) H₁ H₂) (fun _ _ h ↦ h) D
 
-/-- A representative `g : Δ` of a double coset (via `Quotient.out`). -/
+/-- The chosen representative in `Δ` of a double coset `D`, picked by `Quotient.out`: it lies
+in `D.toSet` (`rep_mem`), and `mk_rep` recovers `D` from it. The choice is arbitrary —
+`(mk H₁ H₂ w).rep` need not be `w`; it only spans the same double coset (`doubleCoset_rep_mk`). -/
 noncomputable def rep (D : HeckeCoset Δ H₁ H₂) : Δ := Quotient.out D
 
-/-- The chosen representative of a double coset is its `Quotient.out` representative. -/
+/-- The chosen representative of a double coset `D` is `Quotient.out D`. -/
+-- Deliberately not `@[simp]`: `mk_rep` is the `simp` normal form eliminating `rep`, and its
+-- left-hand side matches on `rep` itself. `rep` is not `@[expose]`d, so importing modules cannot
+-- reach this by `rfl`; rewriting along it, in either direction, is how they move between `rep`
+-- and the `Quotient.out` form Mathlib's quotient API is stated in.
 theorem rep_def (D : HeckeCoset Δ H₁ H₂) : D.rep = Quotient.out D := (rfl)
 
+/-- The double coset of a chosen representative is the double coset it was chosen from. -/
+-- The `simp` normal form eliminating `rep`. Mathlib's `Quotient.out_eq'` is the same fact one
+-- level down, but matches on `Quotient.mk''` and `Quotient.out` rather than the `mk` and `rep`
+-- wrappers, so it is not a substitute here.
 @[simp] lemma mk_rep (D : HeckeCoset Δ H₁ H₂) : mk H₁ H₂ D.rep = D := Quotient.out_eq' D
 
-/-- Two elements of `Δ` define the same `HeckeCoset` iff their double cosets coincide. -/
-lemma eq_iff {g h : Δ} : mk H₁ H₂ g = mk H₁ H₂ h ↔
-    doubleCoset (g : G) H₁ H₂ = doubleCoset (h : G) H₁ H₂ := Quotient.eq''
+/-- Two elements of `Δ` define the same `HeckeCoset` iff their double cosets coincide.
 
+The right-hand side is an equality of subsets of the ambient group `G`, so `g` and `h` are
+identified through elements of `H₁` and `H₂` that need not lie in `Δ`. Use
+`HeckeCoset.mk_eq_mk_of_mem` for the one-directional form starting from a membership. -/
+lemma eq_iff {g h : Δ} : mk H₁ H₂ g = mk H₁ H₂ h ↔ doubleCoset (g : G) H₁ H₂ =
+    doubleCoset (h : G) H₁ H₂ := Quotient.eq
+
+/-- The underlying set of the double coset of `g` is `H₁gH₂`.
+
+For an arbitrary double coset, rather than an explicit `mk H₁ H₂ g`, use
+`toSet_eq_doubleCoset_rep`. -/
+-- Evaluates `toSet` at an explicit representative, which is how concrete coset calculations
+-- present a double coset.
 @[simp] lemma toSet_mk (g : Δ) : toSet (mk H₁ H₂ g) = doubleCoset (g : G) H₁ H₂ := (rfl)
 
+/-- The underlying set of a double coset is the double coset of its chosen representative.
+
+For an explicit `mk H₁ H₂ g` use `toSet_mk` instead; `rep_mem` is the membership fact this
+yields. -/
+-- Deliberately not `@[simp]`: the `rep` its right-hand side introduces is matched by neither
+-- `mk_rep` nor `doubleCoset_rep_mk`.
 lemma toSet_eq_doubleCoset_rep (D : HeckeCoset Δ H₁ H₂) :
     D.toSet = doubleCoset (D.rep : G) H₁ H₂ := by rw [← toSet_mk, mk_rep]
 
-/-- A double coset is determined by its underlying set. -/
-lemma toSet_injective : Function.Injective (toSet : HeckeCoset Δ H₁ H₂ → Set G) := fun D₁ D₂ ↦
-  Quotient.inductionOn₂' D₁ D₂ fun _ _ h ↦ Quotient.sound' h
+/-- **Membership in the underlying set characterises the double coset**: for `g : Δ`, the element
+`g` lies in `D.toSet` exactly when `D` is the double coset of `g`.
 
+This is the elimination rule for `toSet`: it turns a membership into an equation between double
+cosets, so a consumer need not unfold the quotient. It is the `Δ`-indexed analogue of Mathlib's
+`DoubleCoset.mem_quotToDoubleCoset_iff`, which characterises membership for the double cosets of
+the whole group `G`. -/
+-- Not `@[simp]`, matching Mathlib's `mem_quotToDoubleCoset_iff`: at an explicit `mk H₁ H₂ w` the
+-- `@[simp]` lemma `toSet_mk` already evaluates the `toSet` away, so the only goals this would fire
+-- on are those stated at an abstract `D`, where turning a membership into an equation of cosets is
+-- a choice the caller should make.
+lemma mem_toSet_iff {D : HeckeCoset Δ H₁ H₂} {g : Δ} : (g : G) ∈ D.toSet ↔ mk H₁ H₂ g = D := by
+  constructor
+  · intro hg
+    rw [toSet_eq_doubleCoset_rep] at hg
+    rw [← mk_rep D]
+    exact eq_iff.mpr (doubleCoset_eq_of_mem hg)
+  · rintro rfl
+    rw [toSet_mk]
+    exact mem_doubleCoset_self H₁ H₂ _
+
+/-- A double coset is determined by its underlying set.
+
+This is `eq_iff` read at the level of double cosets rather than of representatives; the `Iff` form
+`D₁.toSet = D₂.toSet ↔ D₁ = D₂` is `toSet_injective.eq_iff`. -/
+lemma toSet_injective : Function.Injective (toSet : HeckeCoset Δ H₁ H₂ → Set G) :=
+  Quotient.ind₂ fun a b h ↦ eq_iff.mpr (by rwa [← toSet_mk a, ← toSet_mk b])
+
+/-- The chosen representative of a double coset lies in its underlying set.
+
+The membership form of `toSet_eq_doubleCoset_rep`, for an arbitrary double coset. At an explicit
+`mk H₁ H₂ w`, use `rep_mk_mem_doubleCoset` instead. -/
 lemma rep_mem (D : HeckeCoset Δ H₁ H₂) : (D.rep : G) ∈ D.toSet :=
   D.toSet_eq_doubleCoset_rep ▸ mem_doubleCoset_self H₁ H₂ _
 
+/-- The chosen representative of `mk H₁ H₂ w` lies in the double coset of `w`.
+
+The `toSet`-evaluated form of `rep_mem` at an explicit `mk H₁ H₂ w`. Its mirror
+`mem_doubleCoset_rep_mk` states the same relation with the two elements exchanged: `w` left of
+the `∈` and the representative inside the `doubleCoset`. -/
+-- Only this one survives `simp`: the `@[simp]` lemma `doubleCoset_rep_mk` matches on the double
+-- coset *of* the representative, which does not occur here.
+lemma rep_mk_mem_doubleCoset (w : Δ) :
+    (((mk H₁ H₂ w).rep : Δ) : G) ∈ doubleCoset (w : G) H₁ H₂ := by
+  simpa only [toSet_mk] using rep_mem (mk H₁ H₂ w)
+
 /-- **`mk` and `rep` name the same double coset**: the chosen representative of `mk H₁ H₂ w`
-spans the double coset `w` was taken from. -/
+spans the double coset `w` was taken from.
+
+The cancellation holds only inside `doubleCoset`: `(mk H₁ H₂ w).rep = w` is false in general, as
+the representative is chosen arbitrarily from the coset. `mem_doubleCoset_rep_mk` and
+`rep_mk_mem_doubleCoset` are its membership forms. -/
+-- The second `@[simp]` rule eliminating `rep`, and no competition with `mk_rep`: that one cancels
+-- `mk` applied to a `rep`, this one `rep` applied to a `mk`.
 @[simp] lemma doubleCoset_rep_mk (w : Δ) :
     doubleCoset (((mk H₁ H₂ w).rep : Δ) : G) H₁ H₂ = doubleCoset (w : G) H₁ H₂ :=
-  doubleCoset_eq_of_mem (by simpa using rep_mem (mk H₁ H₂ w))
+  doubleCoset_eq_of_mem (rep_mk_mem_doubleCoset w)
 
-/-- `w` lies in the double coset of the chosen representative of `mk H₁ H₂ w`. -/
-lemma mem_doubleCoset_rep_mk (w : Δ) :
-    (w : G) ∈ doubleCoset (((mk H₁ H₂ w).rep : Δ) : G) H₁ H₂ :=
+/-- `w` lies in the double coset of the chosen representative of `mk H₁ H₂ w`.
+
+The mirror of `rep_mk_mem_doubleCoset`, which places the representative left of the membership and
+`w` inside the double coset; both hold because `doubleCoset_rep_mk` identifies the two sets. -/
+-- Use in term position: the conclusion is deliberately not in `simp` normal form, since the
+-- `@[simp]` lemma `doubleCoset_rep_mk` rewrites it back to `mem_doubleCoset_self`.
+lemma mem_doubleCoset_rep_mk (w : Δ) : (w : G) ∈ doubleCoset (((mk H₁ H₂ w).rep : Δ) : G) H₁ H₂ :=
   (doubleCoset_rep_mk w).symm ▸ mem_doubleCoset_self H₁ H₂ _
 
-/-- The chosen representative of `mk H₁ H₂ w` lies in the double coset of `w`. -/
-lemma rep_mk_mem_doubleCoset (w : Δ) :
-    (((mk H₁ H₂ w).rep : Δ) : G) ∈ doubleCoset (w : G) H₁ H₂ :=
-  doubleCoset_rep_mk w ▸ mem_doubleCoset_self H₁ H₂ _
+/-- `mk H₁ H₂ g₁ = mk H₁ H₂ g₂` when `g₁` lies in the double coset of `g₂`.
 
-/-- `mk H₁ H₂ g₁ = mk H₁ H₂ g₂` when `g₁` lies in the double coset of `g₂`. -/
+The one-directional form of `eq_iff`, starting from a membership rather than an equality of sets.
+The membership is between the images in `G`, so call sites typically supply it as
+`DoubleCoset.mem_doubleCoset.mpr ⟨l, hl, r, hr, _⟩` after unfolding any `Δ`-side coercion.
+Mathlib's `DoubleCoset.mk_eq_of_doubleCoset_eq` does not cover this: its conclusion lands in the
+double coset quotient of all of `G`, not in `HeckeCoset Δ H₁ H₂`. -/
 lemma mk_eq_mk_of_mem {g₁ g₂ : Δ} (h : (g₁ : G) ∈ doubleCoset (g₂ : G) H₁ H₂) :
     mk H₁ H₂ g₁ = mk H₁ H₂ g₂ :=
   eq_iff.mpr (doubleCoset_eq_of_mem h)
@@ -157,13 +241,25 @@ variable {Δ' : Submonoid G} {H₁' H₂' : Subgroup G}
 
 /-- **Functoriality of `HeckeCoset` in its triple.** Inclusions `Δ ≤ Δ'`, `H₁ ≤ H₁'` and
 `H₂ ≤ H₂'` send `H₁ g H₂` to `H₁' g H₂'`: widening the coefficient subgroups can only merge
-double cosets, never split them. -/
-noncomputable def map (hΔ : Δ ≤ Δ') (h₁ : H₁ ≤ H₁') (h₂ : H₂ ≤ H₂') :
+double cosets, never split them.
+
+Compute with `map_mk`: the underlying element of `G` is unchanged, only retyped into `Δ'` by
+`Submonoid.inclusion`. The functor laws are `map_id` and `map_map`; all three are `@[simp]`.
+This widens subgroups inside one fixed ambient group — transporting a double coset along a
+homomorphism `G →* G'` is a different operation, carried out for the decomposition quotient by
+`DoubleCoset.decompQuotientEquivMapOfInjective`. -/
+def map (hΔ : Δ ≤ Δ') (h₁ : H₁ ≤ H₁') (h₂ : H₂ ≤ H₂') :
     HeckeCoset Δ H₁ H₂ → HeckeCoset Δ' H₁' H₂' :=
   Quotient.map (Submonoid.inclusion hΔ) fun a b hab ↦ by
     obtain ⟨γ₁, hγ₁, γ₂, hγ₂, hb⟩ := DoubleCoset.rel_iff.mp hab
     exact DoubleCoset.rel_iff.mpr ⟨γ₁, h₁ hγ₁, γ₂, h₂ hγ₂, hb⟩
 
+/-- The computation rule for `map`: it keeps the representative, re-typed by the inclusion `hΔ`.
+
+The representative lands in `Δ'`, not in `G`, so a call site holding `g : Δ` needs no coercion of
+its own. Its neighbours `map_id` and `map_map` are instead stated for an arbitrary coset. -/
+-- Mathlib's `Quotient.map_mk` cannot match through the `map` and `mk` wrappers, so this
+-- restatement is the form `simp` applies.
 @[simp] lemma map_mk (hΔ : Δ ≤ Δ') (h₁ : H₁ ≤ H₁') (h₂ : H₂ ≤ H₂') (g : Δ) :
     map hΔ h₁ h₂ (mk H₁ H₂ g) = mk H₁' H₂' (Submonoid.inclusion hΔ g) := (rfl)
 
