@@ -104,7 +104,6 @@ omit [NumberField K] in
 /-- The rational prime below a height-one prime really is a prime number. -/
 theorem prime_rationalPrimeBelow (𝔭 : HeightOneSpectrum (𝓞 K)) :
     (rationalPrimeBelow 𝔭).Prime := by
-  have := 𝔭.isPrime
   have : NeZero 𝔭.asIdeal := ⟨𝔭.ne_bot⟩
   exact Nat.absNorm_under_prime 𝔭.asIdeal
 
@@ -112,15 +111,13 @@ theorem prime_rationalPrimeBelow (𝔭 : HeightOneSpectrum (𝓞 K)) :
 degree. -/
 theorem absNorm_eq_rationalPrimeBelow_pow (𝔭 : HeightOneSpectrum (𝓞 K)) :
     Ideal.absNorm 𝔭.asIdeal =
-      rationalPrimeBelow 𝔭 ^ Ideal.inertiaDeg 𝔭.asIdeal ℤ := by
-  have := 𝔭.isPrime
-  exact (Ideal.absNorm_pow_inertiaDeg (Ideal.under ℤ 𝔭.asIdeal) 𝔭.asIdeal).symm
+      rationalPrimeBelow 𝔭 ^ Ideal.inertiaDeg 𝔭.asIdeal ℤ :=
+  (Ideal.absNorm_pow_inertiaDeg (Ideal.under ℤ 𝔭.asIdeal) 𝔭.asIdeal).symm
 
 /-- A height-one prime has residue degree above one exactly when its absolute norm is not a prime
 number: the norm is `p ^ f`, which is prime precisely for `f = 1`. -/
 theorem mem_higherDegreePrimes_iff_not_prime_absNorm {𝔭 : HeightOneSpectrum (𝓞 K)} :
     𝔭 ∈ higherDegreePrimes K ↔ ¬ (Ideal.absNorm 𝔭.asIdeal).Prime := by
-  have := 𝔭.isPrime
   have hpos := Ideal.inertiaDeg_pos 𝔭.asIdeal ℤ
   rw [mem_higherDegreePrimes, absNorm_eq_rationalPrimeBelow_pow 𝔭, Nat.prime_iff, prime_pow_iff,
     ← Nat.prime_iff, not_and_or, or_iff_right (not_not_intro (prime_rationalPrimeBelow 𝔭))]
@@ -150,7 +147,6 @@ theorem card_filter_rationalPrimeBelow_le_finrank (F : Finset (HeightOneSpectrum
       Ideal.under ℤ 𝔮.asIdeal = Ideal.span {(m : ℤ)} := by
     intro 𝔮 h𝔮
     rw [← (Finset.mem_filter.mp h𝔮).2, under_eq_span_rationalPrimeBelow]
-  have h𝔭' := 𝔭.isPrime
   have hspan : (Ideal.span {(m : ℤ)}).IsPrime := key 𝔭 h𝔭 ▸ Ideal.IsPrime.under ℤ 𝔭.asIdeal
   have hne : (Ideal.span {(m : ℤ)} : Ideal ℤ) ≠ ⊥ :=
     key 𝔭 h𝔭 ▸ Ideal.under_ne_bot (A := ℤ) 𝔭.ne_bot
