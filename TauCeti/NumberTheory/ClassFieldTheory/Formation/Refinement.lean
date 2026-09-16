@@ -71,6 +71,8 @@ refinements.
   `TauCeti.ClassFieldTheory.LayerRefinement.tateInfl_trans`: towers of refinements.
 * `TauCeti.ClassFieldTheory.LayerRefinement.groundLevelEquiv_cohomologyInfl_zero_apply`: in degree
   zero, inflation is the identity of the ground level.
+* `TauCeti.ClassFieldTheory.LayerRefinement.tateInfl_comp_tateHIsoH_hom`: in positive degree, Tate
+  inflation is ordinary inflation.
 * `TauCeti.ClassFieldTheory.LayerRefinement.exists_commonRefinement`: two layers over the same
   ground have a common refinement.
 
@@ -340,34 +342,39 @@ theorem groundLevelEquiv_cohomologyInfl_zero_apply (T : LayerRefinement old new)
   exact (congrArg Subtype.val h).trans (T.repHom_hom_apply_coe F _)
 
 /-- **Inflation of Tate cohomology along a refinement of layers**, in positive degrees only:
-`Ĥ^r(U/V, A^V) ⟶ Ĥ^r(U/V', A^{V'})` for `0 < r`. In positive degree the Tate groups of a
+`Ĥ^r(U/V, A^V) ⟶ Ĥ^r(U/V', A^{V'})` for `r ≠ 0`. In positive degree the Tate groups of a
 layer are its ordinary cohomology groups (`NormalLayer.tateHIsoH`), and Tate inflation is
 `cohomologyInfl` read through that identification at both layers. -/
-def tateInfl (T : LayerRefinement old new) (F : Formation G) (r : ℕ) (hr : 0 < r) :
+def tateInfl (T : LayerRefinement old new) (F : Formation G) (r : ℕ) [NeZero r] :
     old.TateH F r ⟶ new.TateH F r :=
-  haveI : NeZero r := ⟨hr.ne'⟩
   (old.tateHIsoH F r).hom ≫ T.cohomologyInfl F r ≫ (new.tateHIsoH F r).inv
 
 /-- **Tate inflation is ordinary inflation read through the identifications** `tateHIsoH` of
 positive-degree Tate cohomology with ordinary cohomology at the two layers. -/
 theorem tateInfl_def (T : LayerRefinement old new) (F : Formation G) (r : ℕ) [NeZero r] :
-    T.tateInfl F r (NeZero.pos r) =
-      (old.tateHIsoH F r).hom ≫ T.cohomologyInfl F r ≫ (new.tateHIsoH F r).inv :=
+    T.tateInfl F r = (old.tateHIsoH F r).hom ≫ T.cohomologyInfl F r ≫ (new.tateHIsoH F r).inv :=
   (rfl)
+
+/-- **Tate inflation commutes with the identifications of positive-degree Tate cohomology with
+ordinary cohomology:** inflating a Tate class and reading it as an ordinary class is inflating the
+ordinary class. -/
+@[reassoc]
+theorem tateInfl_comp_tateHIsoH_hom (T : LayerRefinement old new) (F : Formation G) (r : ℕ)
+    [NeZero r] :
+    T.tateInfl F r ≫ (new.tateHIsoH F r).hom = (old.tateHIsoH F r).hom ≫ T.cohomologyInfl F r := by
+  rw [tateInfl_def, Category.assoc, Category.assoc, Iso.inv_hom_id, Category.comp_id]
 
 /-- **Inflating Tate cohomology along the trivial refinement does nothing.** -/
 @[simp]
 theorem tateInfl_self {L : NormalLayer G} (T : LayerRefinement L L) (F : Formation G) (r : ℕ)
-    (hr : 0 < r) : T.tateInfl F r hr = 𝟙 (L.TateH F r) := by
-  have : NeZero r := ⟨hr.ne'⟩
+    [NeZero r] : T.tateInfl F r = 𝟙 (L.TateH F r) := by
   rw [tateInfl_def, cohomologyInfl_self, Category.id_comp, Iso.hom_inv_id]
 
 /-- **Inflation of Tate cohomology is functorial along a tower of refinements**, in every positive
 degree. -/
 theorem tateInfl_trans (T : LayerRefinement a b) (T' : LayerRefinement b c) (F : Formation G)
-    (r : ℕ) (hr : 0 < r) :
-    (T.trans T').tateInfl F r hr = T.tateInfl F r hr ≫ T'.tateInfl F r hr := by
-  have : NeZero r := ⟨hr.ne'⟩
+    (r : ℕ) [NeZero r] :
+    (T.trans T').tateInfl F r = T.tateInfl F r ≫ T'.tateInfl F r := by
   rw [tateInfl_def, tateInfl_def, tateInfl_def, cohomologyInfl_trans T T']
   simp only [Category.assoc, Iso.inv_hom_id_assoc]
 
