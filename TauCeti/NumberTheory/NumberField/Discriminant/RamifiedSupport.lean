@@ -15,7 +15,7 @@ The primes of `𝓞 K` that ramify in `L` are exactly those dividing the relativ
 `Finset` of height-one primes, the **ramified support** of `L / K`.
 
 Finiteness is not an extra hypothesis: the relative discriminant of a separable extension is
-nonzero (`TauCeti.relDiscr_ne_bot`, Layer 4.2), and a nonzero ideal of a Dedekind domain has
+nonzero (`TauCeti.relDiscr_ne_bot`), and a nonzero ideal of a Dedekind domain has
 finitely many prime divisors (`Ideal.finite_factors`). For number fields the separability is
 automatic.
 
@@ -29,19 +29,6 @@ automatic.
   discriminant.
 * `TauCeti.NumberField.mem_ramifiedSupport_iff_exists`: equivalently, some prime of `𝓞 L` above
   `v` has ramification index greater than one — so the name is honest.
-
-Two further items are deferred to follow-ups rather than bundled here.
-
-The example `ramifiedSupport K K = ∅` is true, and `TauCeti.relDiscr_self` supplies
-`relDiscr A A = ⊤`, but that lemma has a single implicit domain `A` whereas the two arguments of
-`relDiscr (𝓞 K) (𝓞 K)` carry different instance paths — the second arrives through
-`Algebra K K`, `Module.Finite` and `Module.IsTorsionFree`. The two terms print identically and
-are not syntactically equal, so `rw` and `simp` do not fire; `relDiscr_self` applies only with
-its instances supplied explicitly. Closing that gap is a self-contained follow-up.
-
-Monotonicity along a tower `K ⊆ L ⊆ M` is also left out: `TauCeti.relDiscr_tower` expresses the
-tower discriminant as a product involving `Ideal.relNorm`, which does not hand over the
-containment of supports directly.
 
 ## References
 
