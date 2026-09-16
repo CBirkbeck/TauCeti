@@ -335,20 +335,40 @@ noncomputable def restrict (D : HeckeCoset Δ H₁ H₂) (hΔ : Δ ≤ H.toSubmo
       mk (H₁.comap H.subtype) (H₂.comap H.subtype)
         (⟨⟨(g : G), hΔ g.2⟩, g.2⟩ : ↥(Δ.comap H.subtype)) := (rfl)
 
+/-- **Restriction is an equivalence.** With the whole triple inside `H`, the double cosets of
+`Δ` and those of `Δ.comap H.subtype` are the same objects described twice, so the two quotients
+are canonically equivalent — `restrict` is the forward direction, and the inverse simply forgets
+that a representative lies in `H`. -/
+noncomputable def restrictEquiv (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H) :
+    HeckeCoset Δ H₁ H₂ ≃
+      HeckeCoset (Δ.comap H.subtype) (H₁.comap H.subtype) (H₂.comap H.subtype) where
+  toFun D := D.restrict hΔ h₁ h₂
+  invFun := Quotient.map (fun g : ↥(Δ.comap H.subtype) ↦ (⟨((g : ↥H) : G), g.2⟩ : Δ))
+    fun a b hab ↦ by
+      obtain ⟨γ₁, hγ₁, γ₂, hγ₂, hb⟩ := DoubleCoset.rel_iff.mp hab
+      exact DoubleCoset.rel_iff.mpr
+        ⟨(γ₁ : G), hγ₁, (γ₂ : G), hγ₂, by simpa using congrArg Subtype.val hb⟩
+  left_inv D := by induction D using HeckeCoset.induction with | h g => rfl
+  right_inv D := by induction D using HeckeCoset.induction with | h g => rfl
+
+@[simp] lemma restrictEquiv_apply (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H)
+    (D : HeckeCoset Δ H₁ H₂) : restrictEquiv hΔ h₁ h₂ D = D.restrict hΔ h₁ h₂ := (rfl)
+
+@[simp] lemma restrictEquiv_symm_mk (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H)
+    (g : ↥(Δ.comap H.subtype)) :
+    (restrictEquiv hΔ h₁ h₂).symm
+        (mk (H₁.comap H.subtype) (H₂.comap H.subtype) g) =
+      mk H₁ H₂ (⟨((g : ↥H) : G), g.2⟩ : Δ) := (rfl)
+
+/-- **`restrict` is bijective.** -/
+theorem restrict_bijective (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H) :
+    Function.Bijective (fun D : HeckeCoset Δ H₁ H₂ ↦ D.restrict hΔ h₁ h₂) :=
+  (restrictEquiv hΔ h₁ h₂).bijective
+
 /-- **`restrict` is injective.** -/
 theorem restrict_injective (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H) :
-    Function.Injective (fun D : HeckeCoset Δ H₁ H₂ ↦ D.restrict hΔ h₁ h₂) := by
-  intro D₁ D₂ hD
-  induction D₁ using HeckeCoset.induction with
-  | h a =>
-    induction D₂ using HeckeCoset.induction with
-    | h b =>
-      simp only [restrict_mk] at hD
-      have hmem := eq_iff.mp hD ▸ mem_doubleCoset_self (H₁.comap H.subtype)
-        (H₂.comap H.subtype) ((⟨⟨(a : G), hΔ a.2⟩, a.2⟩ : ↥(Δ.comap H.subtype)) : ↥H)
-      obtain ⟨γ₁, hγ₁, γ₂, hγ₂, hb⟩ := mem_doubleCoset.mp hmem
-      exact mk_eq_mk_of_mem (mem_doubleCoset.mpr
-        ⟨(γ₁ : G), hγ₁, (γ₂ : G), hγ₂, by simpa using congrArg Subtype.val hb⟩)
+    Function.Injective (fun D : HeckeCoset Δ H₁ H₂ ↦ D.restrict hΔ h₁ h₂) :=
+  (restrict_bijective hΔ h₁ h₂).1
 
 end HeckeCoset
 
