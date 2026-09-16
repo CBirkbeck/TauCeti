@@ -15,15 +15,17 @@ Let `L / K` be a finite Galois extension of number fields. Among the fibres of t
 studied in `TauCeti.NumberTheory.Chebotarev.FrobeniusPrimeSet`, the fibre of the identity class
 `1` is distinguished: it consists exactly of the primes of `𝓞 K` that split completely in `L`.
 
-Three readings of membership in `frobeniusPrimeSet K L 1` are recorded for a prime `𝔭` that is
-unramified in `L`. The residue degree `f(Q/𝔭)` is `1` at one — hence, since `L / K` is Galois, at
-every — prime `Q` of `𝓞 L` above `𝔭`; the ring `𝓞 L` has the full complement of `[L : K]` primes
-above `𝔭`; and the identity of `Gal(L/K)` is an arithmetic Frobenius at some prime above `𝔭`.
+Two readings of membership in `frobeniusPrimeSet K L 1` are recorded. The residue-degree reading
+asks for a prime `𝔭` unramified in `L`, and says that `f(Q/𝔭)` is `1` at one — hence, since
+`L / K` is Galois, at every — prime `Q` of `𝓞 L` above `𝔭`. The counting reading needs no
+hypothesis at all: `𝔭` carries the identity Artin class exactly when `𝓞 L` has the full
+complement of `[L : K]` primes above `𝔭`.
 
-The unramifiedness hypothesis is not needed in the set-level form: a full complement of primes
-above `𝔭` already forces the ramification index at every prime above `𝔭` to be `1`, hence forces
-`𝔭` to be unramified — that is `NumberField.isUnramifiedAt_of_ncard_primesOver_eq_finrank`, in
-`TauCeti.NumberTheory.NumberField.SplitsCompletely`. So `frobeniusPrimeSet K L 1` is the set of
+That asymmetry is the point of the file. A full complement of primes above `𝔭` already forces
+the ramification index at every prime above `𝔭` to be `1`, hence forces `𝔭` to be unramified —
+that is `NumberField.isUnramifiedAt_of_ncard_primesOver_eq_finrank`, in
+`TauCeti.NumberTheory.NumberField.SplitsCompletely`. So the counting characterization and its
+set-level corollary both stand unconditionally, and `frobeniusPrimeSet K L 1` is the set of
 completely split primes on the nose, with no finite exceptional set to discard.
 
 ## Main results
@@ -32,8 +34,6 @@ completely split primes on the nose, with no finite exceptional set to discard.
   in `L`, membership in the identity fibre is residue degree one at a prime above `𝔭`.
 * `NumberField.Chebotarev.mem_frobeniusPrimeSet_one_iff_ncard_primesOver_eq_finrank`: the same
   membership, read as a count of the primes above `𝔭`.
-* `NumberField.Chebotarev.mem_frobeniusPrimeSet_one_iff_exists_isArithFrobAt_one`: the same
-  membership, read as the identity of `Gal(L/K)` being an arithmetic Frobenius above `𝔭`.
 * `NumberField.Chebotarev.inertiaDeg_eq_one_of_mem_frobeniusPrimeSet_one`: a member of the
   identity fibre has residue degree one at *every* prime above it.
 * `NumberField.Chebotarev.frobeniusPrimeSet_one_eq_setOf_ncard_primesOver_eq_finrank`: as a set,
@@ -88,8 +88,8 @@ private theorem mem_frobeniusPrimeSet_one_iff_ncard_primesOver_eq_finrank_of_isU
 /-- **The identity fibre is complete splitting.** A height-one prime of `𝓞 K` carries the
 identity Artin class in `L` exactly when `𝓞 L` has `[L : K]` primes above it.
 
-No unramifiedness hypothesis is needed in either direction: membership carries its own witness,
-and in the other direction a full complement of primes manufactures one. -/
+No unramifiedness hypothesis is needed: complete splitting already implies it, so requiring it
+separately would be redundant. -/
 -- Deliberately not `@[simp]`: `mem_frobeniusPrimeSet_iff` is already `@[simp]` and rewrites this
 -- left-hand side to the existential over an unramifiedness witness first, so the tag would leave
 -- this out of simp-normal form and fail `simpNF`.
@@ -100,18 +100,6 @@ theorem mem_frobeniusPrimeSet_one_iff_ncard_primesOver_eq_finrank
       (isUnramifiedAt_of_mem_frobeniusPrimeSet h)).mp h,
     fun hcard ↦ (mem_frobeniusPrimeSet_one_iff_ncard_primesOver_eq_finrank_of_isUnramified
       (isUnramifiedAt_of_ncard_primesOver_eq_finrank 𝔭.asIdeal hcard)).mpr hcard⟩
-
-/-- **The identity fibre is a trivial Frobenius.** For `𝔭` unramified in `L`, the prime `𝔭`
-carries the identity Artin class exactly when the identity of `Gal(L/K)` is an arithmetic
-Frobenius at some prime of `𝓞 L` above `𝔭`. -/
-theorem mem_frobeniusPrimeSet_one_iff_exists_isArithFrobAt_one {𝔭 : HeightOneSpectrum (𝓞 K)}
-    (hur : ∀ (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver 𝔭.asIdeal],
-      Algebra.IsUnramifiedAt (𝓞 K) Q) :
-    𝔭 ∈ frobeniusPrimeSet K L 1 ↔
-      ∃ Q : 𝔭.asIdeal.primesOver (𝓞 L), IsArithFrobAt (𝓞 K) (1 : L ≃ₐ[K] L) Q.1 := by
-  -- The identity class is the class of the identity element, so this is the general
-  -- representative-wise description of a fibre, instantiated at `σ = 1`.
-  rw [ConjClasses.one_eq_mk_one, mem_frobeniusPrimeSet_mk_iff_exists_isArithFrobAt hur]
 
 /-- **Residue degree one at every prime above.** A member of the identity fibre has residue
 degree `1` at each prime of `𝓞 L` lying over it, not merely at one of them. -/
