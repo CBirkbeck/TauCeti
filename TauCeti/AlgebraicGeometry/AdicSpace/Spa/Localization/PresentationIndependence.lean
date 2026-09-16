@@ -34,13 +34,20 @@ rational subsets.
 Both results assume only that `A⁺` consists of power-bounded elements, as every ring of integral
 elements of `A` does.
 
+## Main definitions
+
+* `TauCeti.ValuationSpectrum.ringHomOfRationalSubsetSubset` : the comparison map of
+  Proposition 8.2(1), characterised by `continuous_ringHomOfRationalSubsetSubset` and
+  `ringHomOfRationalSubsetSubset_comp_toCompletionLoc`.
+* `TauCeti.ValuationSpectrum.presentationRingEquivOfEq` : **presentation independence** — two
+  presentations of the same rational subset have canonically isomorphic coordinate rings, by the
+  comparison maps in both directions.
+
 ## Main results
 
 * `TauCeti.ValuationSpectrum.existsUnique_continuous_ringHom_of_rationalSubset_subset` :
   **Wedhorn's Proposition 8.2(1)** — a containment of rational subsets induces a unique continuous
   comparison map compatible with the structure maps.
-* `TauCeti.ValuationSpectrum.presentationRingEquivOfEq` : **presentation independence** — two
-  presentations of the same rational subset have canonically isomorphic coordinate rings.
 
 `presentationRingEquivOfEq` is a `def`, so it comes with the lemmas that pin down what it is
 without unfolding the proof term: `continuous_presentationRingEquivOfEq` and
@@ -107,6 +114,67 @@ theorem existsUnique_continuous_ringHom_of_rationalSubset_subset (P : PairOfDefi
   simpa only [spaComapLoc_val] using
     spaComapLoc_mem_rationalSubset P Aplus T' s' S' hden' ⟨w, spa_antitone hle hw⟩
 
+/-- **The comparison map of Wedhorn's Proposition 8.2(1)**: for a containment `R(T'/s') ⊆ R(T/s)`
+of rational subsets, the continuous ring homomorphism `A⟨T/s⟩ → A⟨T'/s'⟩` compatible with the
+structure maps from `A`, which is unique by
+`existsUnique_continuous_ringHom_of_rationalSubset_subset`.
+
+The body is not exported: consumers use `continuous_ringHomOfRationalSubsetSubset` and
+`ringHomOfRationalSubsetSubset_comp_toCompletionLoc`. -/
+noncomputable def ringHomOfRationalSubsetSubset (P : PairOfDefinition A) (Aplus : Subring A)
+    (hAplus : ∀ ⦃a⦄, a ∈ Aplus → IsPowerBounded a) (T : Finset A) (s : A) (S : Type*) [CommRing S]
+    [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S) (T' : Finset A)
+    (s' : A) (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s' S']
+    (hden' : HasDenominatorPower P T' s' S')
+    (hsub : rationalSubset Aplus T' s' ⊆ rationalSubset Aplus T s) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s' S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
+    UniformSpace.Completion S →+* UniformSpace.Completion S' :=
+  -- the map is data, so it is extracted with `Exists.choose`; `obtain` would be eliminating an
+  -- `ExistsUnique` (a `Prop`) into `Type`
+  (existsUnique_continuous_ringHom_of_rationalSubset_subset P Aplus hAplus T s S hden T' s' S' hden'
+    hsub).choose
+
+/-- The comparison map of Wedhorn's Proposition 8.2(1) is continuous. -/
+theorem continuous_ringHomOfRationalSubsetSubset (P : PairOfDefinition A) (Aplus : Subring A)
+    (hAplus : ∀ ⦃a⦄, a ∈ Aplus → IsPowerBounded a) (T : Finset A) (s : A) (S : Type*) [CommRing S]
+    [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S) (T' : Finset A)
+    (s' : A) (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s' S']
+    (hden' : HasDenominatorPower P T' s' S')
+    (hsub : rationalSubset Aplus T' s' ⊆ rationalSubset Aplus T s) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s' S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
+    Continuous (ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T' s' S' hden' hsub) :=
+  (existsUnique_continuous_ringHom_of_rationalSubset_subset P Aplus hAplus T s S hden T' s' S' hden'
+    hsub).choose_spec.1.1
+
+/-- The comparison map of Wedhorn's Proposition 8.2(1) is compatible with the structure maps
+from `A`. -/
+theorem ringHomOfRationalSubsetSubset_comp_toCompletionLoc (P : PairOfDefinition A)
+    (Aplus : Subring A) (hAplus : ∀ ⦃a⦄, a ∈ Aplus → IsPowerBounded a) (T : Finset A) (s : A)
+    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) (T' : Finset A) (s' : A) (S' : Type*) [CommRing S']
+    [Algebra A S'] [IsLocalization.Away s' S'] (hden' : HasDenominatorPower P T' s' S')
+    (hsub : rationalSubset Aplus T' s' ⊆ rationalSubset Aplus T s) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s' S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
+    (ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T' s' S' hden' hsub).comp
+      (toCompletionLoc P T s S hden) = toCompletionLoc P T' s' S' hden' :=
+  (existsUnique_continuous_ringHom_of_rationalSubset_subset P Aplus hAplus T s S hden T' s' S' hden'
+    hsub).choose_spec.1.2
+
 /-- **Presentation independence**: two presentations of the *same* rational subset have
 canonically isomorphic coordinate rings.
 
@@ -128,17 +196,18 @@ noncomputable def presentationRingEquivOfEq (P : PairOfDefinition A) (Aplus : Su
     letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
     letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
     UniformSpace.Completion S ≃+* UniformSpace.Completion S' :=
-  -- Wedhorn's Proposition 8.2(1) applies in both directions:
-  -- the comparison maps are *data*, so they are extracted with `Exists.choose`; `obtain` would
-  -- be eliminating an `ExistsUnique` (a `Prop`) into `Type`
-  have hg := existsUnique_continuous_ringHom_of_rationalSubset_subset P Aplus hAplus
-    T s S hden T' s' S' hden' heq.ge
-  have hh := existsUnique_continuous_ringHom_of_rationalSubset_subset P Aplus hAplus
-    T' s' S' hden' T s S hden heq.le
-  -- `presentationRingEquiv` turns the two comparison maps into an isomorphism — each composite is
-  -- compatible with the structure map from `A`, hence is the identity
-  presentationRingEquiv P T s S hden T' s' S' hden' hg.choose hh.choose
-    hg.choose_spec.1.1 hh.choose_spec.1.1 hg.choose_spec.1.2 hh.choose_spec.1.2
+  -- Wedhorn's Proposition 8.2(1) in both directions gives the comparison maps, and
+  -- `presentationRingEquiv` turns them into an isomorphism: each composite is compatible with the
+  -- structure map from `A`, hence is the identity
+  presentationRingEquiv P T s S hden T' s' S' hden'
+    (ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T' s' S' hden' heq.ge)
+    (ringHomOfRationalSubsetSubset P Aplus hAplus T' s' S' hden' T s S hden heq.le)
+    (continuous_ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T' s' S' hden' heq.ge)
+    (continuous_ringHomOfRationalSubsetSubset P Aplus hAplus T' s' S' hden' T s S hden heq.le)
+    (ringHomOfRationalSubsetSubset_comp_toCompletionLoc P Aplus hAplus T s S hden T' s' S' hden'
+      heq.ge)
+    (ringHomOfRationalSubsetSubset_comp_toCompletionLoc P Aplus hAplus T' s' S' hden' T s S hden
+      heq.le)
 
 /-- The presentation-independence isomorphism is continuous. -/
 theorem continuous_presentationRingEquivOfEq (P : PairOfDefinition A) (Aplus : Subring A)
@@ -154,9 +223,15 @@ theorem continuous_presentationRingEquivOfEq (P : PairOfDefinition A) (Aplus : S
     letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
     letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
     Continuous (presentationRingEquivOfEq P Aplus hAplus T s S hden T' s' S' hden' heq) :=
-  -- the six `_` are the two comparison maps, their continuity and their compatibility, read off
-  -- the body of `presentationRingEquivOfEq`, which unfolds in this module although not exported
-  continuous_presentationRingEquiv P T s S hden T' s' S' hden' _ _ _ _ _ _
+  continuous_presentationRingEquiv P T s S hden T' s' S' hden'
+    (ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T' s' S' hden' heq.ge)
+    (ringHomOfRationalSubsetSubset P Aplus hAplus T' s' S' hden' T s S hden heq.le)
+    (continuous_ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T' s' S' hden' heq.ge)
+    (continuous_ringHomOfRationalSubsetSubset P Aplus hAplus T' s' S' hden' T s S hden heq.le)
+    (ringHomOfRationalSubsetSubset_comp_toCompletionLoc P Aplus hAplus T s S hden T' s' S' hden'
+      heq.ge)
+    (ringHomOfRationalSubsetSubset_comp_toCompletionLoc P Aplus hAplus T' s' S' hden' T s S hden
+      heq.le)
 
 /-- The presentation-independence isomorphism is compatible with the structure maps from `A`;
 among continuous ring homomorphisms `A⟨T/s⟩ → A⟨T'/s'⟩` this compatibility characterises it
@@ -175,8 +250,15 @@ theorem presentationRingEquivOfEq_coe_comp_toCompletionLoc (P : PairOfDefinition
     letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
     (presentationRingEquivOfEq P Aplus hAplus T s S hden T' s' S' hden' heq : _ →+* _).comp
       (toCompletionLoc P T s S hden) = toCompletionLoc P T' s' S' hden' :=
-  -- the six `_` as in `continuous_presentationRingEquivOfEq`
-  presentationRingEquiv_coe_comp_toCompletionLoc P T s S hden T' s' S' hden' _ _ _ _ _ _
+  presentationRingEquiv_coe_comp_toCompletionLoc P T s S hden T' s' S' hden'
+    (ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T' s' S' hden' heq.ge)
+    (ringHomOfRationalSubsetSubset P Aplus hAplus T' s' S' hden' T s S hden heq.le)
+    (continuous_ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T' s' S' hden' heq.ge)
+    (continuous_ringHomOfRationalSubsetSubset P Aplus hAplus T' s' S' hden' T s S hden heq.le)
+    (ringHomOfRationalSubsetSubset_comp_toCompletionLoc P Aplus hAplus T s S hden T' s' S' hden'
+      heq.ge)
+    (ringHomOfRationalSubsetSubset_comp_toCompletionLoc P Aplus hAplus T' s' S' hden' T s S hden
+      heq.le)
 
 /-- The inverse of the presentation-independence isomorphism is compatible with the structure maps
 from `A`: the `symm` counterpart of `presentationRingEquivOfEq_coe_comp_toCompletionLoc`. -/
@@ -214,7 +296,14 @@ theorem continuous_presentationRingEquivOfEq_symm (P : PairOfDefinition A) (Aplu
     letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
     letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
     Continuous (presentationRingEquivOfEq P Aplus hAplus T s S hden T' s' S' hden' heq).symm :=
-  -- the six `_` as in `continuous_presentationRingEquivOfEq`
-  continuous_presentationRingEquiv_symm P T s S hden T' s' S' hden' _ _ _ _ _ _
+  continuous_presentationRingEquiv_symm P T s S hden T' s' S' hden'
+    (ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T' s' S' hden' heq.ge)
+    (ringHomOfRationalSubsetSubset P Aplus hAplus T' s' S' hden' T s S hden heq.le)
+    (continuous_ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T' s' S' hden' heq.ge)
+    (continuous_ringHomOfRationalSubsetSubset P Aplus hAplus T' s' S' hden' T s S hden heq.le)
+    (ringHomOfRationalSubsetSubset_comp_toCompletionLoc P Aplus hAplus T s S hden T' s' S' hden'
+      heq.ge)
+    (ringHomOfRationalSubsetSubset_comp_toCompletionLoc P Aplus hAplus T' s' S' hden' T s S hden
+      heq.le)
 
 end TauCeti.ValuationSpectrum

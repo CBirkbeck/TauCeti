@@ -27,8 +27,8 @@ completedPlusSubring        the closure of the image of C               ⊆ A⟨
 
 ## Why not the integral closure of the image
 
-Roadmap Layer 3.1 describes `A_U⁺` as the integral closure in `A_U` of the image of `A⁺[T/s]`.
-Read literally, that subring need not be open, so `(A_U, A_U⁺)` would not be a Huber pair: for
+An alternative definition of `A_U⁺` is the integral closure in `A_U` of the image of `A⁺[T/s]`.
+That subring need not be open, so `(A_U, A_U⁺)` would not be a Huber pair: for
 `A = ℚ` with the `p`-adic topology, `A⁺ = ℤ_(p)`, `T = {1}` and `s = 1`, the completion is `ℚ_p`,
 and the integral closure of `ℤ_(p)` in `ℚ_p` consists of elements algebraic over `ℚ`, a countable
 set, whereas every nonempty open subset of `ℚ_p` is uncountable. The closure of the image of `C`
@@ -131,6 +131,23 @@ theorem coe_completedPlusSubring (P : PairOfDefinition A) (Aplus : Subring A) (T
         (integralClosure ↥(Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S)))
           S : Set S)) := (rfl)
 
+/-- **Membership in `A_U⁺`**: an element of `A⟨T/s⟩` lies in `A_U⁺` exactly when it lies in the
+closure of the image of `C`, the integral closure of `A⁺[T/s]` in `Aₛ`. This is the membership
+form of `coe_completedPlusSubring`. -/
+@[simp]
+theorem mem_completedPlusSubring_iff (P : PairOfDefinition A) (Aplus : Subring A) (T : Finset A)
+    (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    ∀ x : UniformSpace.Completion S, x ∈ completedPlusSubring P Aplus T s S hden ↔
+      x ∈ closure (((↑) : S → UniformSpace.Completion S) ''
+        (integralClosure ↥(Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S)))
+          S : Set S)) := by
+  intro x
+  rw [← SetLike.mem_coe, coe_completedPlusSubring]
+
 /-- **The structure map `A → A⟨T/s⟩` carries `A⁺` into `A_U⁺`**, with no hypothesis on `Aplus`.
 Together with `continuous_toCompletionLoc`, this makes the structure map a morphism of pairs
 `(A, A⁺) → (A⟨T/s⟩, A_U⁺)`. The companion `divBy_mem_completedPlusSubring` puts each fraction `t/s`
@@ -143,7 +160,7 @@ theorem toCompletionLoc_mem_completedPlusSubring (P : PairOfDefinition A) (Aplus
     letI := isTopologicalRing_locUniformSpace P T s S hden
     toCompletionLoc P T s S hden a ∈ completedPlusSubring P Aplus T s S hden := by
   -- `a` already lies in `A⁺[T/s] ⊆ C`, and the image of `C` lies in its closure
-  rw [← SetLike.mem_coe, coe_completedPlusSubring, toCompletionLoc_apply]
+  rw [mem_completedPlusSubring_iff, toCompletionLoc_apply]
   exact subset_closure ⟨_, Subalgebra.algebraMap_mem _ (algebraMap Aplus _ ⟨a, ha⟩), rfl⟩
 
 /-- **Each fraction `t/s` with `t ∈ T` lies in `A_U⁺`**, with no hypothesis on `Aplus`. Here
@@ -160,7 +177,7 @@ theorem divBy_mem_completedPlusSubring (P : PairOfDefinition A) (Aplus : Subring
     letI := isTopologicalRing_locUniformSpace P T s S hden
     ((divBy t s : S) : UniformSpace.Completion S) ∈ completedPlusSubring P Aplus T s S hden := by
   -- `t/s` already lies in `A⁺[T/s] ⊆ C`, and the image of `C` lies in its closure
-  rw [← SetLike.mem_coe, coe_completedPlusSubring]
+  rw [mem_completedPlusSubring_iff]
   exact subset_closure ⟨_, algebraMap_mem _ ⟨_, Algebra.subset_adjoin ⟨⟨t, ht⟩, rfl⟩⟩, rfl⟩
 
 /-- **When every element of `A⁺` is power-bounded, so is every element of `A⁺[T/s]`**, inside `Aₛ`
