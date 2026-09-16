@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.HeckeRing.GL2.WithCenter
+public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Basic
 
 /-!
 # The Hecke triple of `Γ₁(N)·{±I}`
@@ -24,8 +24,8 @@ over a group that does contain it.
 
 `Γ.withCenter = Γ ⊔ Z(G)` contains `-I` for **every** `Γ`, and it is the group TauCeti's Petersson
 layer already works with: `CuspForm.peterssonInnerCosets` sums over `SL(2, ℤ) ⧸ Γ.withCenter`.
-What was missing is that this enlarged group is itself a Hecke triple with the same `Δ₀(N)`, which
-is what lets a Hecke coset be formed over it at all.
+That this enlarged group is itself a Hecke triple with the same `Δ₀(N)` is what lets a Hecke
+coset be formed over it at all.
 
 Nothing here is deep — the point is that the passage from `Γ₁(N)` to `Γ₁(N)·{±I}` costs nothing
 on either side of the triple. Containment in `Δ₀(N)` survives because `Γ₀(N)` already contains
@@ -33,17 +33,15 @@ on either side of the triple. Containment in `Δ₀(N)` survives because `Γ₀(
 survives because the enlarged group still has finite index in `SL₂(ℤ)`, containing `Γ₁(N)`.
 
 **This file declares only the instance.** Neither half of the triple mentions `Γ₁(N)`: the
-`Δ₀(N)` containment needs only `H ≤ Γ₀(N)` and lives in `GL2/WithCenter.lean` as
-`map_withCenter_le_Delta0`, while the commensurator half needs only finite index — nothing about
-`withCenter` at all — so it is inlined at the instance rather than named here. `#7087` states
-that half once and for all as `Delta0_le_commensurator_map`, for every finite-index subgroup;
-this file's call site becomes that lemma once it lands.
+`Δ₀(N)` containment needs only `H ≤ Γ₀(N)` and is `map_withCenter_le_Delta0` in
+`Gamma0/Basic.lean`, while the commensurator half needs only finite index — nothing about
+`withCenter` at all — so it is inlined at the instance rather than named here.
 
 ## Main results
 
-* the `IsHeckeTriple (Delta0 N) ((Gamma1 N).withCenter.map (mapGL ℚ))` instance, the case
-  `H := Γ₁(N)` of `GL2/WithCenter.lean`. The `FiniteIndex` instance it needs is supplied
-  generically by `Subgroup.instFiniteIndexWithCenter`.
+* the `IsHeckeTriple (Delta0 N) H H` instance for `H := (Gamma1 N).withCenter.map (mapGL ℚ)`,
+  which is `map_withCenter_le_Delta0` applied at `Γ₁(N)`. The `FiniteIndex` instance it needs is
+  supplied generically by `Subgroup.instFiniteIndexWithCenter`.
 
 ## References
 
@@ -69,8 +67,7 @@ instance : IsHeckeTriple (Delta0 N) (((Gamma1 N).withCenter).map (mapGL ℚ))
     (((Gamma1 N).withCenter).map (mapGL ℚ)) :=
   IsHeckeTriple.of_diagonal (map_withCenter_le_Delta0 N (Gamma1_in_Gamma0 N)) (by
     -- the commensurator half uses nothing about `withCenter`, only finite index, so it is
-    -- inlined rather than named here; #7087 states it once for every finite-index subgroup as
-    -- `Delta0_le_commensurator_map`, and this call site becomes that lemma when it lands
+    -- inlined rather than named here
     rw [Commensurable.eq (commensurable_map_SLnZ 2 ((Gamma1 N).withCenter))]
     exact (Delta0_le_posDetInt N).trans (posDetInt_le_commensurator 2))
 
