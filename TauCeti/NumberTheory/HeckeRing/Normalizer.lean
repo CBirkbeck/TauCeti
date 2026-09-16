@@ -41,9 +41,10 @@ For `Γ₁(N) ⊴ Γ₀(N)` it is the diamond direction of the `Γ₁(N)` Hecke 
   `HeckeCoset.doubleCoset_out_mk_eq_rightCoset_of_mem_normalizer`: the double coset of a
   normalizing element is the single right coset `Γx`, at `x` itself and at the chosen
   representative.
-* `DoubleCoset.multiplicity_le_one_of_subsingleton_right`: the mirror of
-  `multiplicity_le_one_of_subsingleton`, bounding via the *second* decomposition quotient — it
-  needs the second element to normalize `Γ`, which is what lets the trailing factor be stripped.
+* `DoubleCoset.multiplicity_le_one_of_mem_normalizer_right`: the mirror of
+  `multiplicity_le_one_of_subsingleton`, bounding via the *second* decomposition quotient. It
+  asks only that the second element normalize `Γ`; the subsingleton hypothesis its counterpart
+  takes is implied here.
 * `HeckeCosetModule.single_mul_single_of_mem_normalizer` and
   `HeckeCosetModule.single_mul_single_of_mem_normalizer_right`: the basis element of a
   normalizing element times the basis element of an arbitrary one is the basis element of their
@@ -74,18 +75,18 @@ lemma subsingleton_decompQuotient_of_mem_normalizer
     (hg : g ∈ Subgroup.normalizer (Γ : Set G)) : Subsingleton (DecompQuotient Γ Γ g) :=
   subsingleton_decompQuotient (Subgroup.conjAct_pointwise_smul_eq_self hg).ge
 
-/-- **A second factor that normalizes and does not split also forces multiplicity at most one.**
+/-- **A second factor that normalizes `Γ` forces multiplicity at most one.**
 
 The mirror of `multiplicity_le_one_of_subsingleton`, which bounds via the *first* decomposition
 quotient. `multiplicity` is not symmetric — it quotients by `Γ₃` on the right only — so this is
-a separate statement rather than that one applied backwards, and it needs the extra hypothesis
-that `h` normalizes `Γ`: that is what lets the trailing `h` be stripped from both sides, after
-which the `Γ`-valued middle factor cancels and the two first indices agree by
-`mk_out_mul_injective`. -/
-lemma multiplicity_le_one_of_subsingleton_right {Γ : Subgroup G} {g h d : G}
-    (hh : h ∈ Subgroup.normalizer (Γ : Set G))
-    (hs : Subsingleton (DecompQuotient Γ Γ h)) :
+a separate statement rather than that one applied backwards, and normalisation is what replaces
+the subsingleton hypothesis the first-quotient version takes: here it is implied, by
+`subsingleton_decompQuotient_of_mem_normalizer`. -/
+lemma multiplicity_le_one_of_mem_normalizer_right {Γ : Subgroup G} {g h d : G}
+    (hh : h ∈ Subgroup.normalizer (Γ : Set G)) :
     multiplicity Γ Γ Γ g h d ≤ 1 := by
+  have hs : Subsingleton (DecompQuotient Γ Γ h) :=
+    subsingleton_decompQuotient_of_mem_normalizer hh
   rw [multiplicity_def]
   have hfib : Subsingleton {p : DecompQuotient Γ Γ g × DecompQuotient Γ Γ h |
       ((p.1.out : G) * g * ((p.2.out : G) * h) : G ⧸ Γ) = (d : G ⧸ Γ)} := by
@@ -97,20 +98,18 @@ lemma multiplicity_le_one_of_subsingleton_right {Γ : Subgroup G} {g h d : G}
       refine mk_out_mul_injective Γ Γ g ?_
       have hq := hp₁.trans hp₂.symm
       rw [QuotientGroup.eq] at hq ⊢
-      -- `hq` is `(τh)⁻¹ X (τh) ∈ Γ` for `X` the goal's element and `τ = j₁.out`; rewrite it as
-      -- `h⁻¹ (τ⁻¹ X τ) h`, strip `h` by normalisation, then cancel the `Γ`-valued `τ`
-      set X := ((i₁.out : G) * g)⁻¹ * ((i₂.out : G) * g) with hX
-      have hconj : h⁻¹ * ((j₁.out : G)⁻¹ * X * (j₁.out : G)) * h ∈ Γ := by
-        have hrw : h⁻¹ * ((j₁.out : G)⁻¹ * X * (j₁.out : G)) * h =
-            ((i₁.out : G) * g * ((j₁.out : G) * h))⁻¹ *
-              ((i₂.out : G) * g * ((j₁.out : G) * h)) := by rw [hX]; group
-        rw [hrw]; exact hq
-      have hstrip : (j₁.out : G)⁻¹ * X * (j₁.out : G) ∈ Γ :=
-        (Subgroup.mem_normalizer_iff''.mp hh _).mpr hconj
-      have hback : X = (j₁.out : G) * ((j₁.out : G)⁻¹ * X * (j₁.out : G)) * (j₁.out : G)⁻¹ := by
-        group
-      rw [hback]
-      exact Subgroup.mul_mem _ (Subgroup.mul_mem _ j₁.out.2 hstrip) (Subgroup.inv_mem _ j₁.out.2)
+      -- `hq` says the goal's element is `Γ`-conjugate by the whole trailing word `τ h`, with
+      -- `τ = j₁.out ∈ Γ`. That word normalizes `Γ` — `τ` does because `Γ ≤ normalizer Γ`, and
+      -- `h` by hypothesis — so conjugation by it may simply be undone.
+      have hw : (j₁.out : G) * h ∈ Subgroup.normalizer (Γ : Set G) :=
+        Subgroup.mul_mem _ (Subgroup.le_normalizer j₁.out.2) hh
+      refine (Subgroup.mem_normalizer_iff''.mp hw _).mpr ?_
+      have hrw : ((j₁.out : G) * h)⁻¹ * (((i₁.out : G) * g)⁻¹ * ((i₂.out : G) * g)) *
+            ((j₁.out : G) * h) =
+          ((i₁.out : G) * g * ((j₁.out : G) * h))⁻¹ *
+            ((i₂.out : G) * g * ((j₁.out : G) * h)) := by group
+      rw [hrw]
+      exact hq
     rfl
   exact Finite.card_le_one_iff_subsingleton.mpr hfib
 
@@ -148,9 +147,7 @@ lemma rep_mk_mem_normalizer_of_mem_normalizer
   DoubleCoset.mem_normalizer_of_mem_doubleCoset hx (toSet_mk x ▸ (mk Γ Γ x).rep_mem)
 
 /-- **Every value of `HeckeCoset.mulMap` at a normalizing left factor is the double coset of
-the product**: the left representative is `a · x` with `a ∈ Γ`, the right one is `c · y · d`
-with `c, d ∈ Γ`, and pushing the intervening `Γ` factors across `x` — legitimate because `x`
-normalizes `Γ` — leaves `Γ · xy · Γ`.
+the product**, `Γ · xy · Γ` — so there is no structure constant to compute.
 
 Only the **left** factor need normalize `Γ`. The right one is an arbitrary element of `Δ`,
 which is what lets this compute a product against an arbitrary basis element rather than only
@@ -160,8 +157,9 @@ lemma mulMap_rep_mk_eq_of_mem_normalizer [IsHeckeTriple Δ Γ Γ]
     (p : DecompQuotient Γ Γ (((mk Γ Γ x).rep : Δ) : G) ×
       DecompQuotient Γ Γ (((mk Γ Γ y).rep : Δ) : G)) :
     mulMap Γ Γ Γ (mk Γ Γ x).rep (mk Γ Γ y).rep p = mk Γ Γ (x * y) := by
-  -- name the representatives as `a x` and `c y d`, so the identity below is between short
-  -- words in eight atoms
+  -- Name the representatives as `a x` (with `a ∈ Γ`) and `c y d` (with `c, d ∈ Γ`), so the
+  -- identity below is between short words in eight atoms. The intervening `Γ` factors are then
+  -- pushed across `x`, which is legitimate exactly because `x` normalizes `Γ`, leaving `Γ xy Γ`.
   obtain ⟨a, ha, hA⟩ : ∃ a ∈ Γ, (((mk Γ Γ x).rep : Δ) : G) = a * (x : G) :=
     ⟨_, (mem_rightCoset_iff _).mp (rep_mk_mem_rightCoset_of_mem_normalizer hx),
       (inv_mul_cancel_right _ _).symm⟩
@@ -181,9 +179,8 @@ lemma mulMap_rep_mk_eq_of_mem_normalizer [IsHeckeTriple Δ Γ Γ]
     (Subgroup.mul_mem _ (Subgroup.mul_mem _ p.1.out.2 ha) hc) hd' key
 
 /-- **Every value of `HeckeCoset.mulMap` at a normalizing right factor is the double coset of
-the product** — the mirror of `mulMap_rep_mk_eq_of_mem_normalizer`. Here the left
-representative is the arbitrary `a · x · b` and the right one is `c · y`, and the intervening
-`Γ` factors are pushed across `y` instead of across `x`. -/
+the product** — the mirror of `mulMap_rep_mk_eq_of_mem_normalizer`, with the normalisation
+hypothesis on the right factor instead of the left. -/
 lemma mulMap_rep_mk_eq_of_mem_normalizer_right [IsHeckeTriple Δ Γ Γ]
     (hy : (y : G) ∈ Subgroup.normalizer (Γ : Set G))
     (p : DecompQuotient Γ Γ (((mk Γ Γ x).rep : Δ) : G) ×
@@ -195,7 +192,8 @@ lemma mulMap_rep_mk_eq_of_mem_normalizer_right [IsHeckeTriple Δ Γ Γ]
   obtain ⟨c, hc, hB⟩ : ∃ c ∈ Γ, (((mk Γ Γ y).rep : Δ) : G) = c * (y : G) :=
     ⟨_, (mem_rightCoset_iff _).mp (rep_mk_mem_rightCoset_of_mem_normalizer hy),
       (inv_mul_cancel_right _ _).symm⟩
-  -- the intervening `Γ` factor, conjugated across `y` the other way
+  -- Here the left representative is the arbitrary `a x b` and the right one is `c y`, so the
+  -- intervening `Γ` factor is conjugated across `y` rather than across `x`.
   have hd : (y : G)⁻¹ * (b * ((p.2.out : G) * c)) * (y : G) ∈ Γ :=
     (Subgroup.mem_normalizer_iff''.mp hy _).mp
       (Subgroup.mul_mem _ hb (Subgroup.mul_mem _ p.2.out.2 hc))
@@ -236,7 +234,7 @@ theorem single_mul_single_of_mem_normalizer [IsHeckeTriple Δ Γ Γ] (R : Type*)
 The mirror of `single_mul_single_of_mem_normalizer`. It is a separate proof rather than that
 one applied backwards: `multiplicity Γ₁ Γ₂ Γ₃ g h d` quotients by `Γ₃` on the right only, so
 the two sides are not interchangeable, and the bound used here is
-`multiplicity_le_one_of_subsingleton_right`. -/
+`multiplicity_le_one_of_mem_normalizer_right`. -/
 theorem single_mul_single_of_mem_normalizer_right [IsHeckeTriple Δ Γ Γ] (R : Type*) [Semiring R]
     (hy : (y : G) ∈ Subgroup.normalizer (Γ : Set G)) :
     single R (HeckeCoset.mk Γ Γ x) 1 * single R (HeckeCoset.mk Γ Γ y) 1 =
@@ -245,12 +243,11 @@ theorem single_mul_single_of_mem_normalizer_right [IsHeckeTriple Δ Γ Γ] (R : 
   rw [mul_def]
   refine mul_single_single_of_mulMap_eq R _ _ _
     (HeckeCoset.mulMap_rep_mk_eq_of_mem_normalizer_right hy) ?_
-  exact DoubleCoset.multiplicity_le_one_of_subsingleton_right
+  exact DoubleCoset.multiplicity_le_one_of_mem_normalizer_right
     (HeckeCoset.rep_mk_mem_normalizer_of_mem_normalizer hy)
-    (DoubleCoset.subsingleton_decompQuotient_of_mem_normalizer
-      (HeckeCoset.rep_mk_mem_normalizer_of_mem_normalizer hy))
 
-/-- **A normalizing basis element commutes with another whenever their double cosets agree.**
+/-- **A normalizing basis element commutes with another whenever the double cosets of their two
+products agree**, `Γ(xy)Γ = Γ(yx)Γ`.
 
 This is what having both handednesses buys: the left-handed lemma computes `[ΓxΓ] · [ΓyΓ]` and
 the right-handed one computes `[ΓyΓ] · [ΓxΓ]`, both as basis elements, so a commutation
