@@ -35,8 +35,10 @@ list — and nothing here defines or approximates it.
 * `TauCeti.NumberField.exists_hasLMFDBIntrinsicLabel`: every number field has such a triple, so
   the predicate is not vacuous.
 * `TauCeti.NumberField.HasLMFDBIntrinsicLabel.unique`: and the triple is the only one.
-* `TauCeti.NumberField.HasLMFDBIntrinsicLabel.nrComplexPlaces_eq`: `(d - r) / 2` counts the
-  complex places.
+* `TauCeti.NumberField.finrank_sub_nrRealPlaces_div_two_eq_nrComplexPlaces`: halving the degree
+  less the real places counts the complex places, for any number field.
+* `TauCeti.NumberField.HasLMFDBIntrinsicLabel.nrComplexPlaces_eq`: the same read off the label,
+  `(d - r) / 2` counts the complex places.
 * `TauCeti.NumberField.HasLMFDBIntrinsicLabel.discr_eq`: **sign recovery**,
   `discr K = (-1) ^ ((d - r) / 2) * D`.
 
@@ -44,8 +46,6 @@ list — and nothing here defines or approximates it.
 
 * The sign of the discriminant is Mathlib's `NumberField.sign_discr`; this file combines it with
   the label data and does not reprove it.
-* `TauCetiRoadmap/NumberFieldArithmetic/README.md`, Layer 8.1 (the intrinsic prefix predicate),
-  which specifies the predicate and the sign-recovery statement.
 -/
 
 public section
@@ -79,6 +79,15 @@ variable (K) in
 theorem exists_hasLMFDBIntrinsicLabel : ∃ d r D, HasLMFDBIntrinsicLabel K d r D :=
   ⟨_, _, _, rfl, rfl, rfl⟩
 
+variable (K) in
+/-- **Halving the degree less the real places counts the complex places.** The degree is
+`r₁ + 2 r₂`, so subtracting the real places and halving leaves the complex ones. No label is
+involved: this is a fact about `K` alone. -/
+theorem finrank_sub_nrRealPlaces_div_two_eq_nrComplexPlaces :
+    (Module.finrank ℚ K - nrRealPlaces K) / 2 = nrComplexPlaces K := by
+  have key := card_add_two_mul_card_eq_rank K
+  omega
+
 namespace HasLMFDBIntrinsicLabel
 
 variable {d r D d' r' D' : ℕ}
@@ -88,15 +97,13 @@ theorem unique (h : HasLMFDBIntrinsicLabel K d r D) (h' : HasLMFDBIntrinsicLabel
     d = d' ∧ r = r' ∧ D = D' :=
   ⟨h.1.symm.trans h'.1, h.2.1.symm.trans h'.2.1, h.2.2.symm.trans h'.2.2⟩
 
-/-- **`(d - r) / 2` counts the complex places.** The degree is `r₁ + 2 r₂`, so subtracting the
-real places and halving leaves the complex ones. -/
+/-- **`(d - r) / 2` counts the complex places**, read off the label. The discriminant component
+plays no part; this is the general fact
+`finrank_sub_nrRealPlaces_div_two_eq_nrComplexPlaces` rewritten along the label. -/
 theorem nrComplexPlaces_eq (h : HasLMFDBIntrinsicLabel K d r D) :
     (d - r) / 2 = nrComplexPlaces K := by
-  obtain ⟨hd, hr, -⟩ := h
-  subst hd
-  subst hr
-  have key := card_add_two_mul_card_eq_rank K
-  omega
+  rw [← h.1, ← h.2.1]
+  exact finrank_sub_nrRealPlaces_div_two_eq_nrComplexPlaces K
 
 /-- **Sign recovery: the intrinsic prefix determines the signed discriminant.** The absolute
 value is `D` by definition, and the sign is `(-1) ^ ((d - r) / 2)` because that exponent counts
