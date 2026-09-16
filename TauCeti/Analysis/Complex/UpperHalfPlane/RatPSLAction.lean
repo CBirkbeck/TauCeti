@@ -38,8 +38,8 @@ needed by any consumer and is not claimed.)
 * `TauCeti.eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one`: an element of
   `ker ratPosToPSL2R` with determinant one is `±1` — a containment, not an identification.
 * `TauCeti.ratPosToPSL2R_ker_inf_le`: the consequence consumers apply —
-  `ker ratPosToPSL2R ⊓ H ≤ Γ` whenever `H` lies in the determinant-one locus and `Γ` contains
-  `±1`, which every `Γ₀(N)` does.
+  `ker ratPosToPSL2R ⊓ H ≤ Γ` whenever `H` lies in the determinant-one locus and `-1 ∈ Γ`, which
+  holds of every `Γ₀(N)` and `Γ₁(N)`.
 
 ## References
 
@@ -126,22 +126,24 @@ theorem eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one {g : GL(2, ℚ)
     exact Matrix.GeneralLinearGroup.map_injective (algebraMap ℚ ℝ).injective <| by
       simpa [Units.ext_iff, ← RingHom.mapMatrix_apply, -Matrix.scalar_apply] using hcs.symm
 
-/-- **The kernel meets the determinant-one locus inside any `Γ` containing `±1`.**
+/-- **The kernel meets the determinant-one locus inside any `Γ` containing `-1`.**
 
 This is the consequence of `eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one` that
 consumers actually apply: it is the `hker` hypothesis of the Hecke-coset tiling
-`DoubleCoset.isFundamentalDomain_iUnion_rightCosetRep_smul`, and without it every call site
+`HeckeRing.GL2.isFundamentalDomain_iUnion_rightCosetRep_smul`, and without it every call site
 repeats the same two-case split.
 
-Both hypotheses are about the underlying matrix rather than about `H` and `Γ` as subgroups,
-because that is the form in which they arrive: `hH` from the determinant condition defining the
-locus, and `hpm` from `Γ` containing the scalars — true of every `Γ₀(N)`, since `±1` are
-integral of determinant one and congruent to `±I` at every level. -/
+Only `-1 ∈ Γ` is asked for; the `1` branch is discharged internally by `Γ.one_mem`. Both
+`Γ₀(N)` and `Γ₁(N)` contain `-1`. `hH` is stated on the underlying matrix because that is the
+form in which the determinant condition defining the locus arrives. -/
 theorem ratPosToPSL2R_ker_inf_le {H Γ : Subgroup GL(2, ℚ)⁺}
     (hH : ∀ g ∈ H, ((g : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det = 1)
-    (hpm : ∀ g : GL(2, ℚ)⁺,
-      (g : GL (Fin 2) ℚ) = 1 ∨ (g : GL (Fin 2) ℚ) = -1 → g ∈ Γ) :
-    ratPosToPSL2R.ker ⊓ H ≤ Γ := fun g ⟨hk, hm⟩ ↦
-  hpm g (eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one hk (hH g hm))
+    (hneg : (-1 : GL(2, ℚ)⁺) ∈ Γ) :
+    ratPosToPSL2R.ker ⊓ H ≤ Γ := by
+  rintro g ⟨hk, hm⟩
+  rcases eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one hk (hH g hm) with h | h
+  · exact (Subtype.ext h : g = 1) ▸ Γ.one_mem
+  · exact (Subtype.ext h : g = -1) ▸ hneg
+
 
 end TauCeti
