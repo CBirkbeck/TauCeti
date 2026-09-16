@@ -43,12 +43,10 @@ list — and nothing here defines or approximates it.
 * `TauCeti.NumberField.exists_hasLMFDBIntrinsicLabel`: every number field has such a triple, so
   the predicate is not vacuous.
 * `TauCeti.NumberField.HasLMFDBIntrinsicLabel.unique`: and the triple is the only one.
-* `TauCeti.NumberField.sub_div_two_eq_nrComplexPlaces`: `(d - r) / 2` counts the complex places,
-  given only the degree and real-place equalities. The general statement about `K` alone is
-  `NumberField.finrank_sub_nrRealPlaces_div_two_eq_nrComplexPlaces`, in
+* `TauCeti.NumberField.HasLMFDBIntrinsicLabel.sub_div_two_eq_nrComplexPlaces`: `(d - r) / 2`
+  counts the complex places, read off a full label. The general statement about `K` alone is
+  `NumberField.InfinitePlace.finrank_sub_nrRealPlaces_div_two_eq_nrComplexPlaces`, in
   `TauCeti/NumberTheory/NumberField/InfinitePlace.lean`.
-* `TauCeti.NumberField.HasLMFDBIntrinsicLabel.sub_div_two_eq_nrComplexPlaces`: the same read off
-  a full label.
 * `TauCeti.NumberField.HasLMFDBIntrinsicLabel.discr_eq`: **sign recovery**,
   `discr K = (-1) ^ ((d - r) / 2) * D`.
 
@@ -89,15 +87,6 @@ variable (K) in
 theorem exists_hasLMFDBIntrinsicLabel : ∃ d r D, HasLMFDBIntrinsicLabel K d r D :=
   ⟨_, _, _, rfl, rfl, rfl⟩
 
-/-- **`(d - r) / 2` counts the complex places.** Only the degree and the real-place count are
-involved; the discriminant component of a label plays no part. This is
-`NumberField.finrank_sub_nrRealPlaces_div_two_eq_nrComplexPlaces` read along the two equalities. -/
-theorem sub_div_two_eq_nrComplexPlaces {d r : ℕ} (hd : Module.finrank ℚ K = d)
-    (hr : nrRealPlaces K = r) : (d - r) / 2 = nrComplexPlaces K := by
-  subst hd
-  subst hr
-  exact _root_.NumberField.finrank_sub_nrRealPlaces_div_two_eq_nrComplexPlaces K
-
 namespace HasLMFDBIntrinsicLabel
 
 variable {d r D d' r' D' : ℕ}
@@ -107,12 +96,12 @@ theorem unique (h : HasLMFDBIntrinsicLabel K d r D) (h' : HasLMFDBIntrinsicLabel
     d = d' ∧ r = r' ∧ D = D' :=
   ⟨h.1.symm.trans h'.1, h.2.1.symm.trans h'.2.1, h.2.2.symm.trans h'.2.2⟩
 
-/-- **`(d - r) / 2` counts the complex places**, read off a full label. A one-line corollary of
-`TauCeti.NumberField.sub_div_two_eq_nrComplexPlaces`, which needs only the degree and
-real-place components. -/
+/-- **`(d - r) / 2` counts the complex places**, read off a full label. The discriminant
+component plays no part: only the degree and real-place components are used. -/
 theorem sub_div_two_eq_nrComplexPlaces (h : HasLMFDBIntrinsicLabel K d r D) :
-    (d - r) / 2 = nrComplexPlaces K :=
-  _root_.TauCeti.NumberField.sub_div_two_eq_nrComplexPlaces h.1 h.2.1
+    (d - r) / 2 = nrComplexPlaces K := by
+  rw [← h.1, ← h.2.1]
+  exact _root_.NumberField.InfinitePlace.finrank_sub_nrRealPlaces_div_two_eq_nrComplexPlaces K
 
 /-- **Sign recovery: the intrinsic prefix determines the signed discriminant.** The absolute
 value is `D` by definition, and the sign is `(-1) ^ ((d - r) / 2)` because that exponent counts
