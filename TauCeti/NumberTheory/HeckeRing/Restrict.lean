@@ -36,7 +36,7 @@ cannot be instantiated at `ratPosToPSL2R` at all.
 
 * `HeckeCoset.restrict_def`: the characteristic equation. `restrict` is not `@[expose]`, so a
   downstream module rewrites with this rather than unfolding the body.
-* `HeckeCoset.restrict_rep_mk`: the representative chosen by the restricted coset is still a
+* `HeckeCoset.mk_rep_restrict`: the representative chosen by the restricted coset is still a
   representative of `D`. Both `restrict D` and `D` pick their representatives through `Quotient.out`
   and there is no reason for the two choices to agree, so this — not an equation between
   representatives — is what a consumer needs.
@@ -44,8 +44,15 @@ cannot be instantiated at `ratPosToPSL2R` at all.
 ## Implementation notes
 
 Only `Δ ≤ H` is required. One might expect `Γ₁ ≤ H` and `Γ₂ ≤ H` as well, but `Subgroup.comap`
-never asks the subgroup to sit inside `H`, and the proof of `restrict_rep_mk` needs only the easy
+never asks the subgroup to sit inside `H`, and the proof of `mk_rep_restrict` needs only the easy
 direction `a ∈ Γ₁.comap H.subtype → (a : G) ∈ Γ₁`, which is definitional.
+
+Two spellings below look improvable and are not, both for the same reason — recording it here so it
+is not rediscovered. `Γᵢ.comap H.subtype` is definitionally `Subgroup.subgroupOf`, which reads
+better, but substituting it makes `restrict_def`'s `rfl` fail: `subgroupOf` is not `@[expose]`d, so
+the equation cannot be proved definitionally in a module that exports it. The parentheses in
+`:= (rfl)` are load-bearing for the same reason rather than stylistic; removing them produces the
+identical export-transparency error.
 -/
 
 public section
@@ -75,7 +82,7 @@ theorem restrict_def (hΔ : Δ ≤ H.toSubmonoid) (D : HeckeCoset Δ Γ₁ Γ₂
 representative through `Quotient.out`, independently of `D`'s own choice, so the two need not agree
 as elements of `G`; what does hold — and what a consumer needs — is that the restricted choice is
 again a representative of the original double coset. -/
-theorem restrict_rep_mk (hΔ : Δ ≤ H.toSubmonoid) (D : HeckeCoset Δ Γ₁ Γ₂) :
+theorem mk_rep_restrict (hΔ : Δ ≤ H.toSubmonoid) (D : HeckeCoset Δ Γ₁ Γ₂) :
     mk Γ₁ Γ₂ ⟨((((restrict hΔ D).rep : ↥(Δ.comap H.subtype)) : ↥H) : G),
       (restrict hΔ D).rep.2⟩ = D := by
   have hmk : mk (Γ₁.comap H.subtype) (Γ₂.comap H.subtype) (restrict hΔ D).rep =
@@ -88,7 +95,6 @@ theorem restrict_rep_mk (hΔ : Δ ≤ H.toSubmonoid) (D : HeckeCoset Δ Γ₁ Γ
     mem_doubleCoset.mp ((eq_iff.mp hmk) ▸ mem_doubleCoset_self (Γ₁.comap H.subtype)
       (Γ₂.comap H.subtype) (((restrict hΔ D).rep : ↥(Δ.comap H.subtype)) : ↥H))
   conv_rhs => rw [← mk_rep D]
-  exact eq_iff.mpr (doubleCoset_eq_of_mem
-    (mem_doubleCoset.mpr ⟨(a : G), ha, (b : G), hb, congrArg Subtype.val hab⟩))
+  exact mk_eq_mk_of_mem (mem_doubleCoset.mpr ⟨(a : G), ha, (b : G), hb, congrArg Subtype.val hab⟩)
 
 end HeckeCoset
