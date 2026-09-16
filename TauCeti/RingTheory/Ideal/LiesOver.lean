@@ -35,7 +35,7 @@ namespace Ideal
 
 /-- An ideal of a `ℤ`-algebra lying over the integer ideal `(a)` meets `ℤ` exactly in the
 multiples of `a`: `algebraMap ℤ S m ∈ Q ↔ a ∣ m`. -/
-theorem algebraMap_int_mem_iff_dvd_of_liesOver {S : Type*} [CommRing S] {a : ℤ}
+theorem algebraMap_int_mem_iff_dvd_of_liesOver {S : Type*} [Ring S] {a : ℤ}
     (Q : Ideal S) [Q.LiesOver (span {a})] (m : ℤ) :
     algebraMap ℤ S m ∈ Q ↔ a ∣ m :=
   (Ideal.mem_of_liesOver Q (span {a}) m).symm.trans Ideal.mem_span_singleton
@@ -45,7 +45,7 @@ theorem algebraMap_int_mem_iff_dvd_of_liesOver {S : Type*} [CommRing S] {a : ℤ
 
 This is the cardinality that `AlgHom.IsArithFrobAt` raises to over the base `ℤ`, so it is what
 turns an abstract Frobenius congruence into the congruence `φ y ≡ y ^ p`. -/
-theorem natCard_quotient_under_of_liesOver {S : Type*} [CommRing S] {p : ℕ}
+theorem natCard_quotient_under_of_liesOver {S : Type*} [Ring S] {p : ℕ}
     (Q : Ideal S) [Q.LiesOver (span {(p : ℤ)})] :
     Nat.card (ℤ ⧸ Q.under ℤ) = p := by
   rw [← Ideal.LiesOver.over (P := Q) (p := span {(p : ℤ)})]
