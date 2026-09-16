@@ -41,6 +41,11 @@ merges. The degree section is instead ported from the AINTLIB `LeanModularForms`
   coefficient subgroups can only merge double cosets, never split them. Its computation rule is
   `map_mk` and its functor laws are `map_id` and `map_map`; `HeckeRing.GL2.toLevelOneCoset`
   (`HeckeRing/GL2/Gamma0/CosetMap.lean`) is its `Γ₀`-specialisation.
+* `HeckeCoset.restrict` and `HeckeCoset.restrictEquiv`: a Hecke coset re-read over a subgroup
+  `H` containing its whole triple, and the resulting equivalence of quotients. Where
+  `HeckeCoset.map` moves a coset along inclusions *within* a fixed ambient group, these move it
+  *between* ambient groups — the case a theorem needs when it is applied along a homomorphism
+  defined only on a subgroup.
 * `DoubleCoset.DecompQuotient`: the quotient `Γ₁ ⧸ (Γ₁ ∩ gΓ₂g⁻¹)` indexing the left cosets
   in `Γ₁gΓ₂`; finite for a Hecke triple. Its mirror `DecompQuotient Γ₂ Γ₁ g⁻¹` indexes the
   right cosets `Γ₁a`, and is finite too.
@@ -89,6 +94,8 @@ merges. The degree section is instead ported from the AINTLIB `LeanModularForms`
   `Γ₁δ₁Γ₂ · Γ₂δ₂Γ₃`, though not without repetition.
 * `IsHeckeTriple.commensurable_conjAct_inv_left`, and the `Finite` instance beside it: that
   right-coset index is finite, the mirror of the `Fintype` instance on `DecompQuotient H₁ H₂ g`.
+* `HeckeCoset.restrict_bijective` and `HeckeCoset.restrict_injective`: restriction loses nothing —
+  the double cosets of `Δ` and those of `Δ.comap H.subtype` are the same objects described twice.
 
 ## References
 
@@ -317,22 +324,23 @@ Like `map`, this is induced on the quotient rather than defined through a chosen
 so `restrict_mk` is its defining equation. -/
 noncomputable def restrict (D : HeckeCoset Δ H₁ H₂) (hΔ : Δ ≤ H.toSubmonoid)
     (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H) :
-    HeckeCoset (Δ.comap H.subtype) (H₁.comap H.subtype) (H₂.comap H.subtype) :=
+    HeckeCoset (Δ.comap H.subtype) (H₁.subgroupOf H) (H₂.subgroupOf H) :=
   Quotient.map (fun g : Δ ↦ (⟨⟨(g : G), hΔ g.2⟩, g.2⟩ : ↥(Δ.comap H.subtype)))
     (fun a b hab ↦ by
       obtain ⟨γ₁, hγ₁, γ₂, hγ₂, hb⟩ := DoubleCoset.rel_iff.mp hab
       exact DoubleCoset.rel_iff.mpr
         ⟨(⟨γ₁, h₁ hγ₁⟩ : ↥H), hγ₁, (⟨γ₂, h₂ hγ₂⟩ : ↥H), hγ₂, Subtype.ext hb⟩) D
 
--- `Hᵢ.comap H.subtype` is definitionally `Subgroup.subgroupOf`, which reads better, but
--- substituting it makes the `rfl` below fail: `subgroupOf` is not `@[expose]`d, so the equation
--- cannot be proved definitionally in a module that exports it. The parentheses in `:= (rfl)` are
--- load-bearing for the same reason. That mismatch also defeats `simp`-family tactics here, which
--- normalise `comap H.subtype` to `subgroupOf` and then fail against a `comap`-shaped goal.
+-- The two subgroups are written `Hᵢ.subgroupOf H` rather than `Hᵢ.comap H.subtype` because
+-- `Subgroup.comap_subtype` is a `simp` lemma rewriting the latter to the former: only the
+-- `subgroupOf` spelling is in simp normal form, which is what lets the computation rules below
+-- carry `@[simp]`. The two are definitionally equal, so every proof here is still `rfl`; the
+-- parentheses in `:= (rfl)` remain load-bearing, since `restrict` itself is not `@[expose]`d.
+-- `Δ` keeps `comap`: it is a `Submonoid`, and `Submonoid` has no `subgroupOf`.
 /-- Restriction of an explicitly constructed coset. -/
 @[simp] theorem restrict_mk (g : Δ) (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H) :
     (mk H₁ H₂ g).restrict hΔ h₁ h₂ =
-      mk (H₁.comap H.subtype) (H₂.comap H.subtype)
+      mk (H₁.subgroupOf H) (H₂.subgroupOf H)
         (⟨⟨(g : G), hΔ g.2⟩, g.2⟩ : ↥(Δ.comap H.subtype)) := (rfl)
 
 /-- **Restriction is an equivalence.** With the whole triple inside `H`, the double cosets of
@@ -341,7 +349,7 @@ are canonically equivalent — `restrict` is the forward direction, and the inve
 that a representative lies in `H`. -/
 noncomputable def restrictEquiv (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H) :
     HeckeCoset Δ H₁ H₂ ≃
-      HeckeCoset (Δ.comap H.subtype) (H₁.comap H.subtype) (H₂.comap H.subtype) where
+      HeckeCoset (Δ.comap H.subtype) (H₁.subgroupOf H) (H₂.subgroupOf H) where
   toFun D := D.restrict hΔ h₁ h₂
   invFun := Quotient.map (fun g : ↥(Δ.comap H.subtype) ↦ (⟨((g : ↥H) : G), g.2⟩ : Δ))
     fun a b hab ↦ by
@@ -351,18 +359,15 @@ noncomputable def restrictEquiv (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H)
   left_inv D := by induction D using HeckeCoset.induction with | h g => rfl
   right_inv D := by induction D using HeckeCoset.induction with | h g => rfl
 
--- Neither of the next two is `@[simp]`: their left-hand sides carry `Hᵢ.comap H.subtype` in the
--- implicit type arguments of the `Equiv` coercion, and `Subgroup.comap_subtype` rewrites that to
--- `Hᵢ.subgroupOf H`, so the left-hand sides are not in simp normal form. This is the same
--- `comap`/`subgroupOf` mismatch recorded above `restrict_mk`. `restrict_mk` itself is unaffected,
--- since there the comap appears only in the result type, not in the head term.
-lemma restrictEquiv_apply (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H)
+/-- `restrictEquiv` computes as `restrict` in the forward direction. -/
+@[simp] lemma restrictEquiv_apply (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H)
     (D : HeckeCoset Δ H₁ H₂) : restrictEquiv hΔ h₁ h₂ D = D.restrict hΔ h₁ h₂ := (rfl)
 
-lemma restrictEquiv_symm_mk (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H)
+/-- The inverse of `restrictEquiv` on an explicitly constructed coset: it simply forgets that the
+representative lies in `H`. -/
+@[simp] lemma restrictEquiv_symm_mk (hΔ : Δ ≤ H.toSubmonoid) (h₁ : H₁ ≤ H) (h₂ : H₂ ≤ H)
     (g : ↥(Δ.comap H.subtype)) :
-    (restrictEquiv hΔ h₁ h₂).symm
-        (mk (H₁.comap H.subtype) (H₂.comap H.subtype) g) =
+    (restrictEquiv hΔ h₁ h₂).symm (mk (H₁.subgroupOf H) (H₂.subgroupOf H) g) =
       mk H₁ H₂ (⟨((g : ↥H) : G), g.2⟩ : Δ) := (rfl)
 
 /-- **`restrict` is bijective.** -/
