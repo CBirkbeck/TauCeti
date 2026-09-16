@@ -29,6 +29,8 @@ automatic.
   discriminant.
 * `TauCeti.NumberField.mem_ramifiedSupport_iff_exists`: equivalently, some prime of `𝓞 L` above
   `v` has ramification index greater than one — so the name is honest.
+* `TauCeti.NumberField.ramifiedSupport_self`: nothing ramifies in the identity extension, so the
+  support of `K / K` is empty.
 
 ## References
 
@@ -68,5 +70,20 @@ theorem mem_ramifiedSupport_iff_exists {v : HeightOneSpectrum (𝓞 K)} :
   have _ := v.isPrime
   rw [mem_ramifiedSupport]
   exact dvd_relDiscr_iff_exists_one_lt_ramificationIdx v.ne_bot
+
+variable (K) in
+/-- **Nothing ramifies in the identity extension**: the ramified support of `K / K` is empty.
+
+The relative discriminant of `K / K` is the unit ideal, which no height-one prime divides. -/
+@[simp]
+theorem ramifiedSupport_self : ramifiedSupport K K = ∅ := by
+  refine Finset.eq_empty_iff_forall_notMem.mpr fun v hv => ?_
+  rw [mem_ramifiedSupport] at hv
+  -- BRITTLE: the two `𝓞 K` arguments reach `relDiscr` by different instance paths — the second
+  -- through `Algebra K K` — so the terms print alike but are not syntactically equal and `rw`
+  -- will not fire. Restating the hypothesis crosses that defeq and gives the canonical form.
+  have hv' : v.asIdeal ∣ TauCeti.relDiscr (𝓞 K) (𝓞 K) := hv
+  rw [TauCeti.relDiscr_self] at hv'
+  exact v.isPrime.ne_top (top_le_iff.mp (Ideal.dvd_iff_le.mp hv'))
 
 end TauCeti.NumberField
