@@ -74,6 +74,7 @@ part of the API.
 
 Mathlib's `AlgEquiv.restrictNormalHom_apply` covers only the case where the subextension is an
 `IntermediateField`; this is the abstract scalar-tower form. -/
+@[simp]
 theorem _root_.AlgEquiv.restrictNormalHom_eq_restrictNormal [Algebra M K] [IsScalarTower F M K]
     [Normal F M] (σ : Gal(K/F)) : AlgEquiv.restrictNormalHom M σ = σ.restrictNormal M :=
   rfl
