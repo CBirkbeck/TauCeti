@@ -37,8 +37,9 @@ needed by any consumer and is not claimed.)
 * `UpperHalfPlane.ratPosToPSL2R_smul`: `ratPosToPSL2R g` acts on `ℍ` as the real matrix does.
 * `TauCeti.eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one`: an element of
   `ker ratPosToPSL2R` with determinant one is `±1` — a containment, not an identification.
-  Hence `ker ratPosToPSL2R ⊓ SL ≤ Γ` for any `Γ` containing `±1` — every `Γ₀(N)`, in particular,
-  which is the direction every consumer needs.
+* `TauCeti.ratPosToPSL2R_ker_inf_le`: the consequence consumers apply —
+  `ker ratPosToPSL2R ⊓ H ≤ Γ` whenever `H` lies in the determinant-one locus and `Γ` contains
+  `±1`, which every `Γ₀(N)` does.
 
 ## References
 
@@ -124,5 +125,23 @@ theorem eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one {g : GL(2, ℚ)
   refine hc2.imp ?_ ?_ <;> rintro rfl <;>
     exact Matrix.GeneralLinearGroup.map_injective (algebraMap ℚ ℝ).injective <| by
       simpa [Units.ext_iff, ← RingHom.mapMatrix_apply, -Matrix.scalar_apply] using hcs.symm
+
+/-- **The kernel meets the determinant-one locus inside any `Γ` containing `±1`.**
+
+This is the consequence of `eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one` that
+consumers actually apply: it is the `hker` hypothesis of the Hecke-coset tiling
+`DoubleCoset.isFundamentalDomain_iUnion_rightCosetRep_smul`, and without it every call site
+repeats the same two-case split.
+
+Both hypotheses are about the underlying matrix rather than about `H` and `Γ` as subgroups,
+because that is the form in which they arrive: `hH` from the determinant condition defining the
+locus, and `hpm` from `Γ` containing the scalars — true of every `Γ₀(N)`, since `±1` are
+integral of determinant one and congruent to `±I` at every level. -/
+theorem ratPosToPSL2R_ker_inf_le {H Γ : Subgroup GL(2, ℚ)⁺}
+    (hH : ∀ g ∈ H, ((g : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det = 1)
+    (hpm : ∀ g : GL(2, ℚ)⁺,
+      (g : GL (Fin 2) ℚ) = 1 ∨ (g : GL (Fin 2) ℚ) = -1 → g ∈ Γ) :
+    ratPosToPSL2R.ker ⊓ H ≤ Γ := fun g ⟨hk, hm⟩ ↦
+  hpm g (eq_one_or_neg_one_of_mem_ratPosToPSL2R_ker_of_det_eq_one hk (hH g hm))
 
 end TauCeti
