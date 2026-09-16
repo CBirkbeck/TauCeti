@@ -6,6 +6,12 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.NumberTheory.NumberField.InfinitePlace.Ramification
+public import TauCeti.NumberTheory.NumberField.InfinitePlace.Tower
+
+-- Roadmap source: `TauCetiRoadmap/NumberFieldArithmetic/README.md` @ `fa4d0309ae1d`, Layer 2.7,
+-- the canonical element at a ramified real place, including the normal-tower restriction below.
+-- The credit sits outside the module docstring deliberately: the docstring documents the
+-- mathematics.
 
 /-!
 # The canonical element at a ramified real place
@@ -46,14 +52,14 @@ there is no residue field, and no congruence `σ x ≡ x ^ q`.
   resulting uniqueness among nonidentity elements.
 * `TauCeti.NumberField.complexConjugationAt_smul`: the conjugation transforms by conjugacy,
   `c (σ • w) = σ * c w * σ⁻¹`.
-* `TauCeti.NumberField.restrictNormalHom_smul_comap`: the Galois action on infinite places is
-  equivariant along a normal tower `K ⊆ F ⊆ L`.
 * `TauCeti.NumberField.restrictNormalHom_complexConjugationAt_of_isComplex` and
   `TauCeti.NumberField.restrictNormalHom_complexConjugationAt_eq_one_of_isReal`: restriction to an
   intermediate field, in both branches. The restriction is the conjugation at the induced place
   when that place stays complex, and is trivial when the induced place is real.
-* `TauCeti.NumberField.isRamified_comap_of_isComplex`: a complex induced place is itself ramified,
-  which is what names the element in the first branch.
+
+The general tower facts these rest on — equivariance of the action along the tower, and the
+ramification of a complex induced place — are in
+`TauCeti/NumberTheory/NumberField/InfinitePlace/Tower.lean`.
 
 ## References
 
@@ -157,57 +163,6 @@ theorem complexConjugationAt_smul (w : InfinitePlace L) (hw : w.IsRamified K)
 section Tower
 
 variable {F : Type*} [Field F] [Algebra K F] [Algebra F L] [IsScalarTower K F L]
-
-omit [IsGalois K L] in
-/-- **The Galois action on infinite places is equivariant along a normal tower.** Restricting `σ`
-to `F` and then moving the place `w` induces on `F` gives the same place as moving `w` by `σ` and
-inducing afterwards. -/
-theorem restrictNormalHom_smul_comap [Normal K F] (σ : L ≃ₐ[K] L) (w : InfinitePlace L) :
-    AlgEquiv.restrictNormalHom F σ • w.comap (algebraMap F L)
-      = (σ • w).comap (algebraMap F L) := by
-  have bridge : ∀ x : F, algebraMap F L ((AlgEquiv.restrictNormalHom F σ).symm x)
-      = σ.symm (algebraMap F L x) := fun x => by
-    -- BRITTLE: `AlgEquiv.restrictNormal_commutes` is stated about `restrictNormal σ.symm`, while
-    -- the goal carries `(restrictNormalHom F σ).symm` — the same element, spelled symm-of-image
-    -- rather than image-of-symm. `aut_inv` and `map_inv` cross that gap. Do not reach for
-    -- `simpa using AlgEquiv.restrictNormal_commutes ..`: that lemma is itself `@[simp]`, so
-    -- `simpa` simplifies the supplied term to `True` instead of closing the goal.
-    rw [← AlgEquiv.aut_inv, ← map_inv, AlgEquiv.aut_inv]
-    exact AlgEquiv.restrictNormal_commutes σ.symm F x
-  ext x
-  simp only [smul_eq_comap, comap_apply, RingHom.coe_coe]
-  exact congrArg w (bridge x)
-
-omit [IsGalois K L] in
-/-- **A complex induced place is itself ramified.** The place `w` induces on `F` lies over the
-same place of `K` that `w` does, and that place is real because `w` is ramified; so once the
-induced place is complex it is ramified over `K`. -/
-theorem isRamified_comap_of_isComplex {w : InfinitePlace L} (hw : w.IsRamified K)
-    (hv : (w.comap (algebraMap F L)).IsComplex) :
-    (w.comap (algebraMap F L)).IsRamified K := by
-  rw [isRamified_iff]
-  refine ⟨hv, ?_⟩
-  rw [← comap_comp, ← IsScalarTower.algebraMap_eq]
-  exact (isRamified_iff.mp hw).2
-
-omit [IsGalois K L] in
-/-- An automorphism fixing a place unramified over `F`, whose restriction to `F` is trivial, is
-itself trivial: it is an `F`-automorphism lying in a trivial stabilizer. -/
-private theorem eq_one_of_restrictNormalHom_eq_one [Normal K F] {w : InfinitePlace L}
-    (hu : w.IsUnramified F) {σ : L ≃ₐ[K] L} (hσ : σ • w = w)
-    (h1 : AlgEquiv.restrictNormalHom F σ = 1) : σ = 1 := by
-  have hfix : ∀ x : F, σ (algebraMap F L x) = algebraMap F L x := fun x => by
-    rw [← AlgEquiv.restrictNormal_commutes σ F x,
-      show σ.restrictNormal F = AlgEquiv.restrictNormalHom F σ from rfl, h1]
-    simp
-  set τ : L ≃ₐ[F] L := { σ with commutes' := hfix }
-  have hmem : τ ∈ MulAction.stabilizer (L ≃ₐ[F] L) w := by
-    rw [MulAction.mem_stabilizer_iff, smul_eq_comap]
-    rw [smul_eq_comap] at hσ
-    exact hσ
-  rw [hu.stabilizer_eq_bot, Subgroup.mem_bot] at hmem
-  ext x
-  exact congrFun (congrArg (fun e : L ≃ₐ[F] L => (e : L → L)) hmem) x
 
 /-- **Restriction at a real induced place is trivial.** If the place `w` induces on `F` is real
 then it is unramified over `K`, so its stabilizer is trivial and the restricted conjugation has
