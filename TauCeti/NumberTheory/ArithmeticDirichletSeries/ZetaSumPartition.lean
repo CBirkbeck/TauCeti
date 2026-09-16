@@ -12,15 +12,15 @@ public import Mathlib.NumberTheory.NumberField.DirichletDensity
 
 Let `K` be a number field. Mathlib's partial Dirichlet series `NumberField.Set.primeIdealZetaSum`
 sums `𝔑𝔭 ^ (-s)` over a set of nonzero prime ideals of `𝓞 K`, and this file cuts that sum along a
-partition of the primes. Over a summable family the sum is additive along a finite pairwise
-disjoint union. For a finite set `S` of primes it also compares the sum over the complement `Sᶜ`
+partition of the primes. The sum is additive along a finite pairwise disjoint union, given
+summability on each piece. For a finite set `S` of primes it also compares the sum over the complement `Sᶜ`
 with the sum over all primes: deleting `S` never increases the sum, and for `s ≥ 0` it lowers it
 by at most the number of primes deleted.
 
 ## Main results
 
-* `NumberField.Set.primeIdealZetaSum_biUnion_of_pairwiseDisjoint`: over a summable family the sum
-  over a finite pairwise disjoint union is the sum of the sums over the pieces.
+* `NumberField.Set.primeIdealZetaSum_biUnion_of_pairwiseDisjoint`: given summability on each
+  piece, the sum over a finite pairwise disjoint union is the sum of the sums over the pieces.
 * `NumberField.Set.primeIdealZetaSum_compl_le_univ_of_finite`: deleting a finite set of primes
   does not increase the sum.
 * `NumberField.Set.primeIdealZetaSum_univ_sub_compl_le_ncard_of_finite`: for `s ≥ 0`, deleting a
@@ -47,8 +47,8 @@ The corresponding statements for a source-local `primeIdealZetaSum` over `Set (I
 `primeIdealZetaSum_le_of_subset` in `CebotarevDensity/Density.lean` of
 [CBirkbeck/chebotarev-density](https://github.com/CBirkbeck/chebotarev-density) (Apache-2.0,
 Birkbeck--Brasca) at commit `8575c9df1ae0a61120ab5c964c7911414254bec7`. Those are gated on `1 < s`;
-the statements here take the weaker hypotheses that each proof actually uses — summability for the
-disjoint-union identity, finiteness for the two complement bounds.
+the statements here take the weaker hypotheses that each proof actually uses — summability on the
+participating pieces for the disjoint-union identity, finiteness for the two complement bounds.
 -/
 
 public section
