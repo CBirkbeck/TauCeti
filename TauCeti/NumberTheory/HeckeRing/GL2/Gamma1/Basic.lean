@@ -86,8 +86,7 @@ lemma Gamma1Image_le_Delta0 : (Gamma1Image N).toSubmonoid ≤ Delta0 N :=
 
 variable [NeZero N]
 
-/-- `Δ₀(N)` lies in the commensurator of `Γ₁(N)`, by `Delta0_le_commensurator_map` at
-`Γ = Γ₁(N)`. -/
+/-- `Δ₀(N)` lies in the commensurator of `Γ₁(N)`, the right-hand half of its Hecke triple. -/
 lemma Delta0_le_commensurator_Gamma1Image :
     Delta0 N ≤ (commensurator (Gamma1Image N)).toSubmonoid :=
   Delta0_le_commensurator_map N (Gamma1 N)

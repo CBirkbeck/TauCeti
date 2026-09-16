@@ -118,8 +118,7 @@ lemma out_mem_glpos_of_delta0 {Γ₁ Γ₂ : Subgroup (GL (Fin 2) ℚ)}
 
 variable [NeZero N]
 
-/-- `Δ₀(N)` lies in the commensurator of `Γ₀(N)`, by `Delta0_le_commensurator_map` at
-`Γ = Γ₀(N)`. -/
+/-- `Δ₀(N)` lies in the commensurator of `Γ₀(N)`, the right-hand half of its Hecke triple. -/
 lemma Delta0_le_commensurator_Gamma0Image :
     Delta0 N ≤ (commensurator (Gamma0Image N)).toSubmonoid :=
   Delta0_le_commensurator_map N (Gamma0 N)
