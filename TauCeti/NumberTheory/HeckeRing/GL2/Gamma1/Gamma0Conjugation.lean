@@ -140,10 +140,12 @@ private lemma coe_conj_natDiagGL (hp : 0 < p) (g : SL(2, ℤ)) :
   simp
 
 /-- **A factorization `τ · diag(1, p) · γ` of the conjugate in `GL₂(ℚ)`, with `τ, γ ∈ Γ₁(N)`,
-puts it in the double coset.** This is the whole of both branches' final step: each supplies its
-own `τ` and `γ`, and nothing else about them is used. The two branches differ only in how they
-reach the identity — over `ℤ`, through `mem_doubleCoset_of_factorization`, in the coprime case;
-through `CoprimeCosets`' rational representative in the twisted one. -/
+puts it in the double coset.** This is the twisted branch's final step.
+
+The coprime branch does not need it: its factorization is exhibited over `ℤ`, so it calls
+`HeckeRing.GLn.mem_doubleCoset_of_intMatrix_eq_of_mem` directly. Only the twisted branch has to
+state its identity in `GL₂(ℚ)`, because the right factor it uses comes from `CoprimeCosets`'
+`exists_mem_Gamma1_natDiagGL_mul_eq_primeRep_none`, whose conclusion already lives there. -/
 private lemma mem_doubleCoset_of_mapGL_factorization {g τ γ : SL(2, ℤ)}
     (hτ : τ ∈ Gamma1 N) (hγ : γ ∈ Gamma1 N)
     (h : mapGL ℚ g * natDiagGL 2 ![1, p] * mapGL ℚ g⁻¹
@@ -152,18 +154,6 @@ private lemma mem_doubleCoset_of_mapGL_factorization {g τ γ : SL(2, ℤ)}
       doubleCoset (natDiagGL 2 ![1, p] : GL (Fin 2) ℚ)
         ((Gamma1 N).map (mapGL ℚ)) ((Gamma1 N).map (mapGL ℚ)) :=
   mem_doubleCoset.mpr ⟨_, Subgroup.mem_map_of_mem _ hτ, _, Subgroup.mem_map_of_mem _ hγ, h⟩
-
-/-- **The integral form of the same step**, for a factorization exhibited over `ℤ`. -/
-private lemma mem_doubleCoset_of_factorization (hp : 0 < p) {g τ γ : SL(2, ℤ)}
-    (hτ : τ ∈ Gamma1 N) (hγ : γ ∈ Gamma1 N)
-    (h : (τ : Matrix (Fin 2) (Fin 2) ℤ) * !![1, 0; 0, (p : ℤ)] * (γ : Matrix (Fin 2) (Fin 2) ℤ)
-      = conjDiag (g 0 0) (g 0 1) (g 1 0) (g 1 1) (p : ℤ)) :
-    mapGL ℚ g * natDiagGL 2 ![1, p] * mapGL ℚ g⁻¹ ∈
-      doubleCoset (natDiagGL 2 ![1, p] : GL (Fin 2) ℚ)
-        ((Gamma1 N).map (mapGL ℚ)) ((Gamma1 N).map (mapGL ℚ)) :=
-  mem_doubleCoset_of_mapGL_factorization hτ hγ
-    (eq_mapGL_mul_mul_mapGL_of_intMatrix_eq 2 _ _ _ _ _ _ (coe_natDiagGL_one_eq_map hp)
-      (coe_conj_natDiagGL hp g) h)
 
 /-- The `Γ₁` factor of the coprime branch: `conjDiag · (diag(1, p) · Tʲ)⁻¹`, at an offset with
 `b + j e = p t`. -/
@@ -238,7 +228,9 @@ theorem conj_natDiagGL_mem_doubleCoset_of_isCoprime (hp : 0 < p) {g : SL(2, ℤ)
   obtain ⟨τ, γ, hτ, hγ, h⟩ := exists_mem_Gamma1_mul_diag_mul_eq_conjDiag_of_bezout (N := N) hp
     (Matrix.SpecialLinearGroup.fin_two_mul_sub_mul_eq_one g)
     (by simpa [ZMod.intCast_zmod_eq_zero_iff_dvd] using Gamma0_mem.mp hg) huv
-  exact mem_doubleCoset_of_factorization hp hτ hγ h
+  exact mem_doubleCoset_of_intMatrix_eq_of_mem 2 τ γ (Subgroup.mem_map_of_mem _ hτ)
+    (Subgroup.mem_map_of_mem _ hγ) _ _ _ _ (coe_natDiagGL_one_eq_map hp)
+    (coe_conj_natDiagGL hp g) h
 
 /-- **The twisted `Γ₁` factor, parametrized by the conjugate's entries.** If the conjugate is
 `!![p α, β; p γ, δ]` — i.e. its first column is divisible by `p`, which is what `p ∣ e` gives —
