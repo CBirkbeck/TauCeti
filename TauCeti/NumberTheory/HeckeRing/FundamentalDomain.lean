@@ -28,6 +28,21 @@ negative-determinant matrix carries `ℍ` to the lower half-plane.
 ## Main results
 
 * `DoubleCoset.isFundamentalDomain_iUnion_rightCosetRep_smul`: the tiling.
+
+## Provenance
+
+Adapted from the AINTLIB `LeanModularForms` project
+(`LeanModularForms/HeckeRIngs/GL2/AdjointTheory/FDTransport.lean`,
+<https://github.com/CBirkbeck/AINTLIB>, commit `6d87d596a5372d5b122c47b7082d4c3afa9b7c3b`,
+Apache-2.0, Chris Birkbeck). There the transport is carried out at `PSL` level with the source
+group fixed at `SL(2, ℤ)`: `Gamma_p_α_FD_finite_index_decomp` (`FDTransport.lean:128`) takes
+`φ : SL(2, ℤ) →* G_outer`, so it is generic in the acting group but not in the source. The
+statement here is generic in the source group, the acting group and the space acted on alike.
+
+## References
+
+* [F. Diamond and J. Shurman, *A first course in modular forms*][diamondshurman2005], §5.5.
+* [T. Miyake, *Modular forms*][miyake1989], §4.5.
 -/
 
 public section
