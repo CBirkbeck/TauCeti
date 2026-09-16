@@ -57,6 +57,14 @@ The construction follows `TauCeti.Isogeny.isEquiv_comap_infinityPlace`
 (`TauCeti/AlgebraicGeometry/EllipticCurve/Isogeny/InfinityPlace.lean`), the same statement for the
 place at infinity; the ordering of the argument, and the choice to work at the `Valuation.comap`
 level rather than through `Place.restrict`, are taken from there.
+
+## Prior art
+
+The same statement for `[ℓ]` is proved in AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0),
+`projects/HasseWeil/HasseWeil/Foundation/EC/MulByIntSamePlace.lean`, which also covers the case of
+a point that `[ℓ]` sends to infinity. Nothing here is adapted from it: that proof identifies the
+two valuation rings directly, via `Valuation.isEquiv_of_val_le_one` and the division-polynomial
+group law, where this one takes the centre of the normalized restriction on the coordinate ring.
 -/
 
 public section
