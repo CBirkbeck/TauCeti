@@ -66,9 +66,8 @@ The one-variable estimate behind the termwise bound is not proved again: it is M
 `Complex.norm_log_one_sub_inv_sub_self_le` read along the reals, which is where the factor `2`
 in the denominator below comes from.
 
-Convergence of `∑_𝔭 N(𝔭) ^ (-s)` over all height-one primes for `1 < s` is proved here as a
-private helper.  It is not part of the interface of this file, which is about the difference of
-the two sums and not about either of them separately.
+Convergence of `∑_𝔭 N(𝔭) ^ (-s)` over all height-one primes for `1 < s` is not proved again
+either: it is `TauCeti.summable_absNorm_rpow_primes_of_one_lt`.
 
 ## References
 
@@ -187,7 +186,7 @@ theorem summable_neg_log_one_sub_sub_absNorm_rpow {s : ℝ} (hs : 1 ≤ s) :
     Summable fun 𝔭 : HeightOneSpectrum (𝓞 K) ↦
       -Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s) :=
   (summable_absNorm_rpow_primes_of_one_lt one_lt_two).of_nonneg_of_le
-    (fun 𝔓 ↦ neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔓)
+    (fun 𝔭 ↦ neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔭)
       (zero_lt_one.trans_le hs))
     (fun 𝔭 ↦ neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs)
 
