@@ -43,7 +43,8 @@ modular forms); the AINTLIB `HeckePair` bundle is replaced by Mathlib's `IsHecke
 * `mem_doubleCoset_of_intMatrix_eq_of_mem`: double-coset membership from an integral identity
   `τ * A * δ = B` between the witnesses, for any two subgroups containing the images of `τ` and
   `δ`. `mem_doubleCoset_SLnZ_of_intMatrix_eq` is its `SL_n(ℤ)` case, and
-  `det_eq_of_mem_doubleCoset_of_le_SLnZ` the converse direction.
+  `det_eq_of_mem_doubleCoset_of_le_SLnZ` extracts the determinant invariant in the other
+  direction.
 * the `IsHeckeTriple (posDetInt n) (SLnZ n) (SLnZ n)` instance, and the
   Hecke ring `IntegralHeckeRing n` it founds.
 
@@ -143,12 +144,11 @@ two subgroups containing the images of those matrices.
 
 This is the shape every "same double coset" argument ends in: the work is done over `ℤ`, by
 exhibiting the two determinant-one factors, and this converts that into the membership
-statement. The two subgroups are arbitrary because the factors are what has to lie in them, and
-that is a hypothesis rather than a consequence — the congruence subgroups need this at
-`Γ₁(N)`-images, strictly smaller than `SL_n(ℤ)`, where `mem_doubleCoset_SLnZ_of_intMatrix_eq`
-below does not apply.
+statement. Nothing forces the subgroups to be `SL_n(ℤ)` — all that is used is that each factor
+lies in its own subgroup, which is a hypothesis here, so the lemma applies equally to images of
+congruence subgroups.
 `det_eq_of_mem_doubleCoset_of_le_SLnZ` is the companion in the other direction, extracting the
-determinant invariant from such a membership, and is already stated for two subgroups. -/
+determinant invariant from such a membership. -/
 lemma mem_doubleCoset_of_intMatrix_eq_of_mem {H₁ H₂ : Subgroup (GL (Fin n) ℚ)}
     (τ δ : SpecialLinearGroup (Fin n) ℤ) (hτ : mapGL ℚ τ ∈ H₁) (hδ : mapGL ℚ δ ∈ H₂)
     (g h : GL (Fin n) ℚ) (A B : Matrix (Fin n) (Fin n) ℤ)
