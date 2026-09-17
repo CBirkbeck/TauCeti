@@ -40,11 +40,17 @@ the letterwise tuple operation that applies it on a half-open index interval.
 ## Main results
 
 * `TauCeti.InternalGrading.ext`: internal gradings are determined by their homogeneous pieces.
+* `TauCeti.InternalGrading.linearMap_ext`: linear maps agree when they agree on homogeneous
+  elements.
 * `TauCeti.InternalGrading.finite_piece_ne_bot`: a finitely generated internally graded module has
   only finitely many nonzero homogeneous pieces.
 * `TauCeti.InternalGrading.koszulTwist_apply_of_mem`: the twist acts by the Koszul scalar on
   each homogeneous piece.
 * `TauCeti.InternalGrading.koszulTwist_comp`: twists compose by adding the twist parameters.
+* `TauCeti.LinearMap.IsHomogeneous.koszulTwist_comp`: a homogeneous linear map commutes with
+  Koszul twists up to the sign determined by its degree.
+* `TauCeti.LinearMap.IsHomogeneous.twistedTuple_map`: a degree-zero homogeneous map commutes with
+  twisting a block of a tuple.
 
 This is the first graded-module target in Layer 0 of the `DGAInfinity` roadmap.  Later files use
 Mathlib's decomposition API to define maps of nonzero degree, shifts, tensor-product gradings, and
@@ -97,6 +103,17 @@ noncomputable def ofDecomposition (ℳ : ℤ → Submodule R M) [DirectSum.Decom
 @[simp]
 theorem ofDecomposition_piece (ℳ : ℤ → Submodule R M) [DirectSum.Decomposition ℳ] :
     (ofDecomposition ℳ).piece = ℳ := (rfl)
+
+/-- Two linear maps on an internally graded module agree if they agree on homogeneous elements. -/
+theorem linearMap_ext {N : Type w} [AddCommMonoid N] [Module R N]
+    (G : InternalGrading R M) {f g : M →ₗ[R] N}
+    (h : ∀ (p : ℤ) (x : M), x ∈ G.piece p → f x = g x) : f = g := by
+  apply (Submodule.linearMap_eq_iff_of_span_eq_top f g ?_).2
+  · rintro ⟨x, hx⟩
+    obtain ⟨p, hp⟩ := Set.mem_iUnion.mp hx
+    exact h p x hp
+  · rw [← Submodule.iSup_eq_span]
+    exact G.isInternal.submodule_iSup_eq_top
 
 section Map
 
@@ -358,6 +375,33 @@ theorem InternalGrading.koszulTwist_comp_self (G : InternalGrading R M) (q : ℤ
     simp
   simpa [LinearMap.comp_apply] using this
 
+namespace LinearMap.IsHomogeneous
+
+variable {N : Type w} [AddCommMonoid N] [Module R N]
+
+/-- A homogeneous linear map of degree `r` commutes with the Koszul twist of parameter `q` up to
+the scalar `(-1)^(q * r)`. This is the operator form of the sign acquired by moving a degree-`r`
+map past a homogeneous input. -/
+theorem koszulTwist_comp {G : InternalGrading R M} {H : InternalGrading R N}
+    {f : M →ₗ[R] N} {r : ℤ} (hf : LinearMap.IsHomogeneous f G.piece H.piece r) (q : ℤ) :
+    H.koszulTwist q ∘ₗ f =
+      ((((q * r).negOnePow : ℤ) : R) • (f ∘ₗ G.koszulTwist q)) := by
+  refine DirectSum.decompose_lhom_ext (ℳ := G.piece) fun p ↦ ?_
+  ext x
+  have hx : (x : M) ∈ G.piece p := Submodule.coe_mem x
+  have hfx : f (x : M) ∈ H.piece (p + r) := hf.map_mem hx
+  have hcalc : H.koszulTwist q (f (x : M)) =
+      (((q * r).negOnePow : ℤ) : R) • f (G.koszulTwist q (x : M)) := by
+    rw [H.koszulTwist_apply_of_mem hfx q, G.koszulTwist_apply_of_mem hx q, map_smul,
+      smul_smul]
+    congr 1
+    rw [← Int.cast_mul, ← Units.val_mul, ← Int.negOnePow_add]
+    congr 2
+    ring_nf
+  simpa only [LinearMap.comp_apply, LinearMap.smul_apply, Submodule.coe_subtype] using hcalc
+
+end LinearMap.IsHomogeneous
+
 /-- Evaluation of `twistedTuple` on an index inside the twisted interval `[a, a + p)`. -/
 @[simp]
 theorem InternalGrading.twistedTuple_apply_of_mem_Ico (G : InternalGrading R M) (q : ℤ)
@@ -381,6 +425,20 @@ theorem InternalGrading.twistedTuple_apply (G : InternalGrading R M) (q : ℤ) {
   split_ifs with h
   · exact twistedTuple_apply_of_mem_Ico G q x a p i h
   · exact twistedTuple_apply_of_not_mem_Ico G q x a p i h
+
+/-- A degree-zero homogeneous linear map commutes with twisting a consecutive block of a tuple. -/
+theorem LinearMap.IsHomogeneous.twistedTuple_map {N : Type w} [AddCommMonoid N] [Module R N]
+    {G : InternalGrading R M} {H : InternalGrading R N} {f : M →ₗ[R] N}
+    (hf : LinearMap.IsHomogeneous f G.piece H.piece 0) (q : ℤ) {n : ℕ}
+    (x : Fin n → M) (a p : ℕ) :
+    H.twistedTuple q (fun i ↦ f (x i)) a p = fun i ↦ f (G.twistedTuple q x a p i) := by
+  have hcomm := hf.koszulTwist_comp q
+  funext i
+  simp only [InternalGrading.twistedTuple_apply]
+  split_ifs with h
+  · have hi := LinearMap.congr_fun hcomm (x i)
+    simpa [LinearMap.comp_apply] using hi
+  · rfl
 
 /-- Twisting an empty interval leaves the tuple unchanged. -/
 @[simp]

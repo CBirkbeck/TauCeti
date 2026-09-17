@@ -192,6 +192,10 @@ theorem apply_columnOfRow (x : GridState n) (r : Fin n) : x (x.columnOfRow r) = 
 theorem columnOfRow_apply (x : GridState n) (c : Fin n) : x.columnOfRow (x c) = c := by
   simp [columnOfRow]
 
+/-- Distinct rows are occupied in distinct columns. -/
+theorem columnOfRow_injective (x : GridState n) : Function.Injective x.columnOfRow :=
+  x.toPerm.symm.injective
+
 /-- A grid state occupies a square in every column, so it meets every nonempty vertical band of
 squares. -/
 theorem not_disjoint_product_univ_pointSet (M : GridState n) {s : Finset (Fin n)}
@@ -356,6 +360,20 @@ theorem swapColumns_comm (a b : Fin n) (x : GridState n) :
     x.swapColumns a b = x.swapColumns b a := by
   ext c
   simp [swapColumns_apply, Equiv.swap_comm]
+
+/-- Swapping two columns of a grid state is the same as swapping the two rows they occupy: the
+state is a bijection between columns and rows, and either operation exchanges exactly the two
+grid points in those columns. -/
+theorem swapColumns_eq_swapRows (a b : Fin n) (x : GridState n) :
+    x.swapColumns a b = x.swapRows (x a) (x b) := by
+  ext c
+  rw [swapColumns_apply, swapRows_apply]
+  rcases eq_or_ne c a with rfl | hca
+  · simp
+  rcases eq_or_ne c b with rfl | hcb
+  · simp
+  rw [Equiv.swap_apply_of_ne_of_ne hca hcb,
+    Equiv.swap_apply_of_ne_of_ne (x.toPerm.injective.ne hca) (x.toPerm.injective.ne hcb)]
 
 /-- Swapping the same pair of columns twice is the identity on grid states. -/
 @[simp]

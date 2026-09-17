@@ -77,7 +77,7 @@ namespace TauCeti
 
 open Matrix
 
-local instance fact_prime_seven : Fact (Nat.Prime 7) := ⟨by decide⟩
+local instance fact_prime_seven_cyclicThree : Fact (Nat.Prime 7) := ⟨by decide⟩
 
 private theorem exponent_cyclicGroup_three :
     Monoid.exponent (Multiplicative (ZMod 3)) = 3 := by
@@ -230,8 +230,7 @@ theorem cyclicGroupThreeExactCharacterTable_natAbs_coeff_le_sqrt
     (i j : CyclicGroupThreeClassIndex) (k : Fin (3 : ℕ).totient) :
     ((cyclicGroupThreeExactCharacterTable i j).coeff k).natAbs ≤
       Nat.sqrt (Nat.card (Multiplicative (ZMod 3))) := by
-  rw [natCard_cyclicGroup_three]
-  rw [sqrt_three]
+  rw [natCard_cyclicGroup_three, sqrt_three]
   fin_cases i <;> fin_cases j <;> fin_cases k <;> decide
 
 /-- **The structured cyclotomic lift recovers every exact table entry from its residues at the
