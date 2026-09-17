@@ -9,6 +9,7 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.LinearSystem.Basic
 public import TauCeti.FieldTheory.IntermediateField.Adjoin.Inv
 public import TauCeti.FieldTheory.IntermediateField.Adjoin.Transcendental
 public import TauCeti.FieldTheory.FunctionField.AffineModel.Place
+public import TauCeti.AlgebraicGeometry.WeilDivisor.PicZeroQuotient
 public import TauCeti.FieldTheory.FunctionField.Divisor.Principal
 public import TauCeti.FieldTheory.FunctionField.RiemannRoch.Principal
 
@@ -282,6 +283,38 @@ residue-degree weights. -/
 theorem ker_degreeClass_eq_picZero (hF : IsFunctionField k F) :
     (degreeClass hF).ker = (Place.orderSystem hF).picZero (fun P ↦ (P.degree : ℤ))
       (Place.isWeightedDegreeZero_orderSystem hF) := (rfl)
+
+/-- The degree-zero divisors are the weighted-degree-zero divisors for the residue-degree
+weights, which is the bridge to the weight-generic `Pic⁰` API. -/
+theorem ker_degree_eq_weightedDegreeZeroSubgroup :
+    (degree (k := k) (F := F)).ker =
+      WeilDivisor.weightedDegreeZeroSubgroup (fun P : Place k F ↦ (P.degree : ℤ)) := by
+  ext D
+  rw [AddMonoidHom.mem_ker, WeilDivisor.mem_weightedDegreeZeroSubgroup, ← degree_eq_weightedDegree]
+
+/-- **The degree-zero divisors map onto `Cl⁰(F)`**, a divisor going to its class. This is the
+order system's `weightedDegreeZeroClassHom` at the residue-degree weights, precomposed with the
+identification of the two degree-zero subgroups; no divisor-class reasoning is redone here. -/
+noncomputable def degreeZeroClassHom (hF : IsFunctionField k F) :
+    (degree (k := k) (F := F)).ker →+ (degreeClass hF).ker :=
+  ((Place.orderSystem hF).weightedDegreeZeroClassHom (fun P ↦ (P.degree : ℤ))
+      (Place.isWeightedDegreeZero_orderSystem hF)).comp
+    (AddSubgroup.inclusion ker_degree_eq_weightedDegreeZeroSubgroup.le)
+
+/-- The class of a degree-zero divisor is its divisor class, read in the full class group. -/
+@[simp]
+theorem coe_degreeZeroClassHom (hF : IsFunctionField k F)
+    (D : (degree (k := k) (F := F)).ker) :
+    (degreeZeroClassHom hF D : (Place.orderSystem hF).ClassGroup) =
+      (Place.orderSystem hF).divisorClass (D : Divisor k F) := (rfl)
+
+/-- **A degree-zero divisor has trivial class exactly when it is principal.** -/
+@[simp]
+theorem degreeZeroClassHom_eq_zero_iff (hF : IsFunctionField k F)
+    {D : (degree (k := k) (F := F)).ker} :
+    degreeZeroClassHom hF D = 0 ↔ ∃ z : Fˣ, principal hF z = (D : Divisor k F) := by
+  rw [← divisorClass_eq_zero_iff hF]
+  exact ⟨fun h ↦ congrArg Subtype.val h, fun h ↦ Subtype.ext h⟩
 
 /-- Linearly equivalent divisors have the same degree (Stichtenoth, Corollary 1.4.12(a)). -/
 theorem degree_eq_of_linearlyEquivalent (hF : IsFunctionField k F) {A B : Divisor k F}

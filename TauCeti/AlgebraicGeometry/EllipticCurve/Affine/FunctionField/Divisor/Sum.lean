@@ -5,12 +5,12 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.DivisorClass
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Divisor.Class
 
 /-!
 # The sum of a degree-zero divisor as a point
 
-A degree-zero divisor of `F(W)` has a divisor class, and `DivisorClass.lean` identifies the
+A degree-zero divisor of `F(W)` has a divisor class, and `Divisor/Class.lean` identifies the
 degree-zero classes with the points of `W`. Composing the two gives the sum map `σ`, which reads a
 degree-zero divisor as a point, and the principal divisors are exactly those it sends to `O`.
 
@@ -22,6 +22,8 @@ produce its functions.
 ## Main definitions
 
 * `WeierstrassCurve.Affine.divisorSum`: **the sum of a degree-zero divisor**, as a point of `W`.
+  It is `TauCeti.Divisor.degreeZeroClassHom` followed by the identification of the degree-zero
+  classes with the points.
 
 ## Main results
 
@@ -46,21 +48,12 @@ open TauCeti AlgebraicGeometry IsDedekindDomain
 variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
   [IsDedekindDomain W.CoordinateRing] [DecidableEq F]
 
-/-- The divisor class of a degree-zero divisor, as a degree-zero class. -/
-private noncomputable def divisorClassDegreeZero :
-    (Divisor.degree (k := F) (F := W.FunctionField)).ker →+
-      (Divisor.degreeClass W.isFunctionField).ker :=
-  AddMonoidHom.codRestrict
-    (((Place.orderSystem W.isFunctionField).divisorClass).comp (AddSubgroup.subtype _)) _
-    fun D ↦ by
-      simpa only [AddMonoidHom.mem_ker, AddMonoidHom.coe_comp, Function.comp_apply,
-        AddSubgroup.coe_subtype, Divisor.degreeClass_divisorClass] using D.2
-
 /-- **The sum of a degree-zero divisor**, as a point of `W`: the point whose class is the class of
 the divisor. On `(P) - (O)` it is `P`, and it is additive, so on `Σ nᵢ (Pᵢ)` it is `Σ [nᵢ] Pᵢ`. -/
 noncomputable def divisorSum :
     (Divisor.degree (k := F) (F := W.FunctionField)).ker →+ W.Point :=
-  (W.pointEquivDegreeZeroDivisorClass.symm.toAddMonoidHom).comp W.divisorClassDegreeZero
+  (W.pointEquivDegreeZeroDivisorClass.symm.toAddMonoidHom).comp
+    (Divisor.degreeZeroClassHom W.isFunctionField)
 
 omit [DecidableEq F] in
 /-- **`(P) - (O)` has degree zero**: both places are rational. -/
@@ -77,15 +70,16 @@ theorem divisorSum_pointPlace_sub_infinity {x y : F} (h : W.Nonsingular x y) :
     W.divisorSum ⟨_, W.mem_ker_degree_pointPlace_sub_infinity h.left⟩ = Point.some x y h := by
   rw [divisorSum, AddMonoidHom.coe_comp, Function.comp_apply,
     AddEquiv.coe_toAddMonoidHom, AddEquiv.symm_apply_eq]
-  exact Subtype.ext (W.val_pointEquivDegreeZeroDivisorClass_some h).symm
+  exact Subtype.ext (by
+    rw [Divisor.coe_degreeZeroClassHom]
+    exact (W.val_pointEquivDegreeZeroDivisorClass_some h).symm)
 
 /-- **A degree-zero divisor is principal exactly when its sum is `O`** (Silverman III.3.5). -/
 theorem divisorSum_eq_zero_iff {D : (Divisor.degree (k := F) (F := W.FunctionField)).ker} :
     W.divisorSum D = 0 ↔ ∃ z : W.FunctionFieldˣ,
       Divisor.principal W.isFunctionField z = (D : Divisor F W.FunctionField) := by
-  rw [← Divisor.divisorClass_eq_zero_iff, divisorSum, AddMonoidHom.coe_comp, Function.comp_apply,
-    AddEquiv.coe_toAddMonoidHom, AddEquiv.symm_apply_eq, map_zero]
-  exact ⟨fun h ↦ congrArg Subtype.val h, fun h ↦ Subtype.ext h⟩
+  rw [← Divisor.degreeZeroClassHom_eq_zero_iff W.isFunctionField]
+  exact (W.pointEquivDegreeZeroDivisorClass.symm.map_eq_zero_iff)
 
 end WeierstrassCurve.Affine
 
