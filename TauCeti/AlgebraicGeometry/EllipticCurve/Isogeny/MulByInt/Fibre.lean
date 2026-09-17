@@ -48,12 +48,12 @@ variable {G : Type*} [AddCommGroup G]
 /-- **A nonempty fibre of `n • ·` has as many points as its kernel.** -/
 theorem card_zsmul_preimage_eq_card_zsmul_eq_zero {n : ℤ} {T P₀ : G} (hP₀ : n • P₀ = T) :
     Nat.card {P : G // n • P = T} = Nat.card {P : G // n • P = 0} :=
-  -- translation by a chosen preimage is the bijection
-  Nat.card_congr
-    { toFun := fun P ↦ ⟨P.1 - P₀, by rw [smul_sub, P.2, hP₀, sub_self]⟩
-      invFun := fun Q ↦ ⟨Q.1 + P₀, by rw [smul_add, Q.2, hP₀, zero_add]⟩
-      left_inv := fun P ↦ Subtype.ext (sub_add_cancel P.1 P₀)
-      right_inv := fun Q ↦ Subtype.ext (add_sub_cancel_right Q.1 P₀) }
+  -- `n • ·` is an `AddMonoidHom`, so this is Mathlib's fibre-kernel equivalence read through
+  -- the two subtype descriptions.
+  Nat.card_congr <|
+    (Equiv.subtypeEquivRight fun P ↦ by simp [hP₀]).trans <|
+      ((smulAddHom ℤ G n).fiberEquivKer P₀).trans <|
+        Equiv.subtypeEquivRight fun P ↦ by simp
 
 end Group
 
