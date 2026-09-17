@@ -39,7 +39,6 @@ jobs:
           repositories: TauCeti
           permission-issues: read
           permission-pull-requests: read
-          permission-statuses: read
       - uses: actions/checkout@v4
         with:
           sparse-checkout: scripts/pr_status

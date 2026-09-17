@@ -42,7 +42,6 @@ jobs:
           repositories: TauCeti
           permission-issues: read
           permission-pull-requests: read
-          permission-statuses: read
       - name: Resolve PR number
         id: pr
         env:
