@@ -20,7 +20,7 @@ Three things it deliberately does not do.
 
 **Depth is not evidence.** A stage can be very deep and perfectly healthy if it
 drains as fast as it fills. The bottleneck is chosen on arrivals outrunning
-departures, and on occupants waiting longer than that stage normally takes.
+departures, and on a spell in the stage taking longer than it used to.
 
 **Waiting and dwell are different questions, and not a ratio.**
 `median_waiting_hours` and `p90_waiting_hours` describe the pull requests
@@ -54,13 +54,45 @@ whether it is trusted. Not `baseline_left_count`, which counts departures: a
 spell can leave a period it never began in, so a handful of those would vouch
 for a median resting on one observation.
 
-**One known exception, in `anomalies` rather than the report.** Its `stalled`
-test still divides `oldest_waiting_hours` by the baseline dwell, which is the
-census-against-dwell comparison the paragraph above says not to make, and on a
-heavy-tailed stage it will fire on a healthy queue. It predates the figures
-described here and wants the anomaly detector reworked rather than patched: the
-honest form compares occupant ages against a baseline survival curve, asking
-what share of them have already outlasted the historical p90.
+**A stall is asked as survival, not as a ratio.** `anomalies` calls a stage
+stalled when at least half of the spells that began in it are still running at
+`stall_horizon_hours`, which is `SLOWDOWN_FACTOR` times the dwell the stage used
+to have. That is the same claim as "the median has at least doubled", and the
+reason to phrase it this way is that it can be answered. A median needs
+follow-up until half the cohort has finished; a stage slower than the window is
+long never supplies that, so a ratio of medians goes null exactly as the stall
+becomes serious. Survival at a horizon needs follow-up only as far as the
+horizon. `slowdown_factor` is still published when both medians exist, for
+reading rather than for deciding, and is `null` — never zero — when they do not.
+
+No occupant age enters this. Two that look reasonable were tried and both fire
+on a queue with nothing wrong: on a simulated stable stage whose dwell is 1h for
+nine spells in ten and 100h for the tenth, the median occupant is 33 times the
+median dwell, and 91% of occupants have already outlasted the baseline p90.
+Length bias is why, and it is a property of censuses rather than of any
+particular summary of one.
+
+A stage is only judged on dwell once both cohorts reach `MIN_STALL_COHORT`.
+Asking whether over half a cohort is still running is a coin tossed as many
+times as the cohort is large, and simulated on a stage with nothing wrong, three
+spells called it stalled 15.5% of the time, ten 7.7%, twenty 1.5%, fifty never.
+A low-traffic stage is therefore not judged on dwell at all, which is the right
+way round: it has not supplied the evidence to be judged on.
+
+`filling` is not the fallback for an unmeasurable stall, and was never a safe
+one: arrivals and departures count different cohorts, so old spells can leave
+while new ones sit, balancing the flow of a stage in which nothing recent has
+finished at all. `stall_horizon_surviving` is `null` only when follow-up ran out
+before the horizon on a spell still running, which is reported as not knowing
+rather than as health.
+
+**What this still does not separate.** Dwell and the flow rates are per atomic
+label, while the waiting clock groups `awaiting-review` with `review-in-progress`
+and the three author-action labels with each other. A pull request can alternate
+between two labels of one group for a long time with every atomic spell short
+and the per-label flows balanced, so a stalled *episode* can hide behind healthy
+*labels*. Measuring the bottleneck over grouped episodes would want the depths
+and flows grouped too, which is a larger change than this.
 
 **A thin intake is an answer, not a shrug.** Fewer merges can mean the queue is
 stuck or simply that less went into it, and those want opposite responses:

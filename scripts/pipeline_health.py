@@ -162,6 +162,42 @@ def median_dwell(completed: list[float], censored: list[float]) -> float | None:
     return None
 
 
+def survival_at(completed: list[float], censored: list[float],
+                horizon: float) -> tuple[float | None, int]:
+    """Kaplan-Meier survival at `horizon`, and how many were still at risk there.
+
+    The point of asking this rather than for a median: a median needs follow-up
+    until half the cohort has finished, which a short window cannot supply for a
+    badly stalled stage, and the estimate goes null exactly when it matters
+    most. Survival at a fixed horizon needs follow-up only as far as that
+    horizon. "Is the median at least twice the usual" and "is at least half of
+    the cohort still running at twice the usual median" are the same claim, and
+    only the second is answerable in a day.
+
+    None when follow-up ran out before the horizon on a censoring, which is not
+    the same as nothing having lasted that long.
+    """
+    observations = sorted([(hours, 1) for hours in completed]
+                          + [(hours, 0) for hours in censored])
+    if not observations:
+        return None, 0
+    last_duration, last_was_event = observations[-1]
+    if last_duration < horizon and not last_was_event:
+        return None, 0
+    total = len(observations)
+    survival, index = 1.0, 0
+    while index < total and observations[index][0] < horizon:
+        duration = observations[index][0]
+        after, events = index, 0
+        while after < total and observations[after][0] == duration:
+            events += observations[after][1]
+            after += 1
+        if events:
+            survival *= 1 - events / (total - index)
+        index = after
+    return survival, sum(1 for hours, _ in observations if hours >= horizon)
+
+
 def observable_hours(start: datetime, end: datetime) -> float:
     """Hours of the interval in which lifecycle labels could exist at all.
 
@@ -280,6 +316,16 @@ def analyse(
     merge_readiness = readiness_summary(snapshot)
     stages = []
     for label in STAGE_ORDER:
+        # The horizon a stall is judged at: SLOWDOWN_FACTOR times the dwell this
+        # stage used to have. Asking what share of the recent cohort is still
+        # running there is the same question as asking whether its median has
+        # multiplied by that much, but needs follow-up only this far rather than
+        # until half of a stalled cohort finishes -- which a day cannot supply.
+        was = median_dwell(dwell[label]["baseline"], censored[label]["baseline"])
+        horizon = SLOWDOWN_FACTOR * was if was else None
+        surviving, at_risk = (survival_at(dwell[label]["window"],
+                                          censored[label]["window"], horizon)
+                              if horizon else (None, 0))
         stages.append({
             "stage": label,
             "owned_by_project": label in OWNED_BY_PROJECT,
@@ -309,14 +355,27 @@ def analyse(
             # amount and only this one says whether the median is supported.
             "dwell_completions": len(dwell[label]["window"]),
             "baseline_dwell_completions": len(dwell[label]["baseline"]),
+            # And how many joined the cohort at all. A stage that has stalled
+            # has few completions and many unfinished spells, so gating its
+            # recent evidence on completions would switch the detector off in
+            # exactly the case it exists for; the survival test below is
+            # supported by the whole cohort rather than by the part that ended.
+            "dwell_cohort": len(dwell[label]["window"]) + len(censored[label]["window"]),
+            "baseline_dwell_cohort": (len(dwell[label]["baseline"])
+                                      + len(censored[label]["baseline"])),
             "median_dwell_hours": median_dwell(dwell[label]["window"],
                                                censored[label]["window"]),
-            "baseline_median_dwell_hours": median_dwell(dwell[label]["baseline"],
-                                                        censored[label]["baseline"]),
+            "baseline_median_dwell_hours": was,
+            "stall_horizon_hours": horizon,
+            # `null` where follow-up ran out before the horizon on a spell that
+            # was still running, which is not the same as nothing having lasted
+            # that long, and is the honest answer rather than a quiet zero.
+            "stall_horizon_surviving": surviving,
+            "stall_horizon_at_risk": at_risk,
         })
 
     result = {
-        "schema_version": 3,
+        "schema_version": 4,
         "repo": snapshot.get("repo"),
         "generated_at": iso_z(now),
         "snapshot_fetched_at": snapshot.get("fetched_at"),
@@ -367,8 +426,16 @@ def rounded(result: dict) -> dict:
 # always returns something, and a heuristic that always finds a culprit is not a
 # diagnosis.
 MIN_COMPLETIONS = 3          # below this a median dwell is noise
+# The stall test needs far more than that. It asks whether over half of a cohort
+# is still running at the horizon, and half of three is a coin tossed three
+# times: simulated on a stage with nothing wrong, a cohort of three called it
+# stalled 15.5% of the time, ten 7.7%, twenty 1.5%, fifty never. Twenty is where
+# the noise stops being the loudest thing in the answer. The cost is that a
+# genuinely low-traffic stage is not judged on dwell at all, which is the right
+# way round: it has not supplied the evidence to be judged on.
+MIN_STALL_COHORT = 20
 GROWTH_PER_HOUR = 0.05       # arrivals must outpace departures by a real margin
-SLOWDOWN_FACTOR = 2.0        # the oldest occupant, against normal dwell
+SLOWDOWN_FACTOR = 2.0        # multiple of normal dwell that counts as a stall
 THROUGHPUT_FRACTION = 0.75   # of baseline, below which something is wrong
 
 
@@ -388,27 +455,44 @@ def anomalies(result: dict) -> list[dict]:
             continue
         growth = stage["entered_per_hour"] - stage["left_per_hour"]
         normal = stage["baseline_median_dwell_hours"]
-        # Gate the dwell comparison on the cohort the dwell was estimated from.
-        # `baseline_left_count` counts departures, which is a different set: a
-        # handful of spells that began before the baseline and ended inside it
-        # would vouch for a median resting on one observation.
-        enough = stage["baseline_dwell_completions"] >= MIN_COMPLETIONS
-        # Deliberately not `median_waiting_hours`, tempting though it is: the
-        # occupants of a stage are a length-biased sample, since a long spell is
-        # likelier to be caught by a census than a short one. Their median age
-        # sits well above the median dwell in a perfectly healthy stage -- 33x
-        # on a simulated stable queue whose dwell is 1h for nine spells in ten
-        # and 100h for the tenth -- so that ratio is not a slowdown.
-        slowdown = (
-            stage["oldest_waiting_hours"] / normal
-            if enough and normal and stage["oldest_waiting_hours"] else 0.0
-        )
+        # The baseline median needs completions behind it. The recent side is
+        # gated on its cohort instead: a stalled stage has few completions by
+        # definition, so gating that on completions would switch the detector
+        # off in exactly the case it exists for.
+        enough = (stage["baseline_dwell_completions"] >= MIN_STALL_COHORT
+                  and stage["dwell_cohort"] >= MIN_STALL_COHORT)
+        # A stall is how long a spell in this stage takes now against how long
+        # it took, asked as survival at the horizon rather than as a ratio of
+        # medians. The two say the same thing, but a recent median goes null
+        # once a stage is slower than the window is long, which is to say it
+        # disappears just as the stall becomes serious.
+        #
+        # No occupant age belongs here. The occupants are a length-biased
+        # sample -- a long spell is likelier to be caught by a census than a
+        # short one -- so on a simulated stable queue whose dwell is 1h for
+        # nine spells in ten and 100h for the tenth, the median occupant reads
+        # 33x the median dwell and 91% of occupants have outlasted the baseline
+        # p90. Both were the stall test here once; both fire on a healthy queue.
+        surviving = stage["stall_horizon_surviving"]
+        # A ratio when one can be had, for reading rather than for deciding.
+        # None, never zero: a stage too slow to estimate has not been measured
+        # to be fast.
+        recent = stage["median_dwell_hours"]
+        slowdown = (recent / normal if enough and normal and recent else None)
         # A newly introduced label has no historical baseline; a backfill into
         # it is not evidence of a new performance failure.
         established = (stage["baseline_left_count"] >= MIN_COMPLETIONS
                        or stage["baseline_entered_per_hour"] > 0)
         filling = growth > GROWTH_PER_HOUR and established
-        stalled = slowdown >= SLOWDOWN_FACTOR
+        # Strictly above a half, which is what makes this exactly the claim that
+        # the median has reached the horizon: `median_dwell` declares the median
+        # at the first duration where survival falls to a half or below, so a
+        # survival of exactly a half means the median has already been reached
+        # rather than not yet. One spell finishing at 1h and one still running
+        # at 5h leaves survival at exactly 0.5 at a 2h horizon, with a median of
+        # 1h -- half the horizon, and no stall at all.
+        stalled = (enough and surviving is not None
+                   and surviving > 0.5 + SURVIVAL_TOLERANCE)
         if not (filling or stalled):
             continue
         reasons = []
@@ -419,7 +503,8 @@ def anomalies(result: dict) -> list[dict]:
             )
         if stalled:
             reasons.append(
-                f"its oldest has waited {stage['oldest_waiting_hours']:.0f}h against a "
+                f"{surviving:.0%} of the spells that began in it are still running at "
+                f"{stage['stall_horizon_hours']:.1f}h, {SLOWDOWN_FACTOR:g}x its "
                 f"{normal:.1f}h normal dwell"
             )
         found.append({
@@ -427,11 +512,16 @@ def anomalies(result: dict) -> list[dict]:
             "depth": stage["depth"],
             "growth_per_hour": growth,
             "slowdown_factor": slowdown,
+            "surviving_at_stall_horizon": surviving,
             "why": "; ".join(reasons),
         })
-    # Filling beats merely stalled, then by how fast, then by how far past normal.
+    # Filling beats merely stalled, then by how fast, then by how stuck. Ordered
+    # on the survival, since that is what `stalled` was decided on and it is
+    # available whenever the decision was; the ratio is null for the stages too
+    # slow to estimate, which are the worst rather than the least of them.
     found.sort(key=lambda item: (item["growth_per_hour"] > GROWTH_PER_HOUR,
-                                 item["growth_per_hour"], item["slowdown_factor"]),
+                                 item["growth_per_hour"],
+                                 item["surviving_at_stall_horizon"] or 0.0),
                reverse=True)
     return found
 
@@ -473,7 +563,8 @@ def find_cause(result: dict) -> dict | None:
             "kind": "intake", "stage": None,
             "why": (
                 f"fewer pull requests are arriving: {opened:.2f}/h against "
-                f"{opened_baseline:.2f}/h. Nothing is stuck; there is less to merge"
+                f"{opened_baseline:.2f}/h, and no stage was measured to be stuck; "
+                "there is less to merge"
             ),
         }
     if found:
@@ -487,8 +578,8 @@ def find_cause(result: dict) -> dict | None:
     return {
         "kind": "unexplained", "stage": None,
         "why": (
-            f"arrivals are steady at {opened:.2f}/h and no stage is backing up, "
-            "so the fall is not explained by the queue"
+            f"arrivals are steady at {opened:.2f}/h and no stage was measured to "
+            "be backing up, so the fall is not explained by the queue"
         ),
     }
 

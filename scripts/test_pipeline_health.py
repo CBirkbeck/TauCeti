@@ -108,6 +108,24 @@ class DwellEstimatorTests(unittest.TestCase):
         completed = [8.0, 2.0, 13.0, 2.0, 3.0, 2.0, 1.0, 8.0]
         self.assertEqual(health.median_dwell(completed, [13.0, 5.0]), 3.0)
 
+    def test_survival_at_a_horizon_answers_where_a_median_cannot(self):
+        """Four spells sitting unfinished at 6h, none of them finished. There is
+        no median to find, but whether half are still running at 2h is not in
+        doubt, and that is the same claim as the median being at least 2h."""
+        self.assertIsNone(health.median_dwell([], [6.0] * 4))
+        self.assertEqual(health.survival_at([], [6.0] * 4, 2.0), (1.0, 4))
+
+    def test_survival_falls_as_spells_complete_before_the_horizon(self):
+        self.assertEqual(health.survival_at([1.0, 1.0, 1.0], [4.0], 2.0), (0.25, 1))
+
+    def test_survival_is_none_when_follow_up_ran_out_before_the_horizon(self):
+        """A cohort last seen still running at 1h says nothing about 5h. That is
+        not the same as nothing having lasted that long, and must not read as
+        zero survival, which would be evidence of a fast stage."""
+        self.assertEqual(health.survival_at([], [1.0], 5.0), (None, 0))
+        # Whereas a cohort that all finished by 1h genuinely has none left.
+        self.assertEqual(health.survival_at([1.0], [], 5.0), (0.0, 0))
+
     def test_it_matches_the_estimator_worked_by_hand(self):
         """Events at 1, 3, 5 with censorings at 2 and 4, which is the textbook
         shape. Survival steps 1 -> 4/5, then 4/5 * 2/3 = 0.533 at t=3, then 0 at
@@ -206,6 +224,42 @@ class AnalysisTests(unittest.TestCase):
         self.assertEqual(stage["baseline_left_count"], 4)
         self.assertEqual(stage["baseline_dwell_completions"], 1)
 
+    def test_a_stage_stalled_but_not_filling_is_still_caught(self):
+        """The case a median cannot reach. Old spells leave while new ones sit,
+        so arrivals and departures balance and nothing is piling up, yet no
+        spell that began in the window has finished. A recent median is null
+        here -- there is no half to find -- so a ratio of medians would have to
+        stay silent. Survival at the horizon is answerable, and says it."""
+        old_departing = [                                   # entered before the
+            pr(n, [(NOW - timedelta(hours=72), "awaiting-review")],    # window,
+               state="MERGED", merged=NOW - timedelta(hours=12))      # left in it
+            for n in range(1, 26)
+        ]
+        used_to_be_quick = [                                # baseline: 1h each
+            pr(100 + n, [(NOW - timedelta(hours=240), "awaiting-review")],
+               state="MERGED", merged=NOW - timedelta(hours=239))
+            for n in range(25)
+        ]
+        stuck_now = [                                       # began in the window
+            pr(200 + n, [(NOW - timedelta(hours=6), "awaiting-review")])
+            for n in range(25)
+        ]
+        result = health.analyse(snapshot(old_departing + used_to_be_quick + stuck_now),
+                                24, 24 * 14, NOW)
+        stage = next(s for s in result["stages"] if s["stage"] == "awaiting-review")
+
+        self.assertEqual(stage["baseline_median_dwell_hours"], 1.0)
+        self.assertEqual(stage["stall_horizon_hours"], 2.0)
+        self.assertIsNone(stage["median_dwell_hours"])       # no ratio to be had
+        self.assertEqual(stage["stall_horizon_surviving"], 1.0)
+        # Flow is balanced, so `filling` cannot be what catches this.
+        self.assertAlmostEqual(stage["entered_per_hour"], stage["left_per_hour"])
+
+        found = next(a for a in result["anomalies"] if a["stage"] == "awaiting-review")
+        self.assertIsNone(found["slowdown_factor"])          # unmeasurable, not zero
+        self.assertIn("still running at 2.0h", found["why"])
+        self.assertNotIn("filling faster", found["why"])
+
     def test_the_occupants_of_a_stage_are_described_not_just_the_oldest(self):
         """Dwell times describe spells that ended, and a filling stage holds
         exactly the spells that have not. `oldest_waiting_hours` is one PR, so
@@ -270,6 +324,9 @@ class CauseTests(unittest.TestCase):
                 "p90_waiting_hours": None, "entered_per_hour": 0.0,
                 "left_per_hour": 0.0, "baseline_median_dwell_hours": None,
                 "baseline_left_count": 20, "baseline_dwell_completions": 20,
+                "dwell_completions": 20, "dwell_cohort": 20,
+                "median_dwell_hours": None, "stall_horizon_hours": None,
+                "stall_horizon_surviving": None, "stall_horizon_at_risk": 0,
                 "baseline_entered_per_hour": 0.0}
         item.update(kw)
         return item
@@ -341,14 +398,64 @@ class CauseTests(unittest.TestCase):
         ])
         self.assertIsNone(health.find_cause(result)["stage"])
 
+    def test_a_length_biased_census_is_not_read_as_a_slowdown(self):
+        """A census catches long spells in proportion to their length, so on a
+        healthy heavy-tailed stage its occupants read far older than a typical
+        spell: 33x the median dwell, and 91% already past the baseline p90, on a
+        simulated stable queue. Both were once the stall test here and both fire
+        on a queue with nothing wrong, so no occupant age may enter it."""
+        result = self.base(stages=[
+            self.stage("awaiting-CI", depth=60, entered_per_hour=2.0, left_per_hour=2.1,
+                       oldest_waiting_hours=100.0, median_waiting_hours=33.0,
+                       p90_waiting_hours=90.0, baseline_median_dwell_hours=1.0,
+                       stall_horizon_hours=2.0, stall_horizon_surviving=0.2,
+                       stall_horizon_at_risk=12),
+        ])
+        self.assertEqual(health.anomalies(result), [])
+
+    def test_survival_of_exactly_a_half_is_the_median_reached_not_missed(self):
+        """The boundary has to match `median_dwell`, which calls the median
+        reached at the first duration where survival falls to a half. One spell
+        finishing at 1h and one still running at 5h leaves survival at exactly
+        0.5 at a 2h horizon -- and a median of 1h, half the horizon. Firing here
+        would assert a doubling on a stage that has not slowed at all."""
+        self.assertEqual(health.median_dwell([1.0], [5.0]), 1.0)
+        self.assertEqual(health.survival_at([1.0], [5.0], 2.0), (0.5, 1))
+        # And the same half arrived at by a route that rounds above it, which
+        # a strict comparison would read as a stall: 0.9 * 6/9 * 5/6.
+        surviving, _ = health.survival_at(
+            [1.0, 2.0, 2.0, 2.0, 3.0], [5.0, 13.0, 13.0, 8.0, 8.0], 4.0)
+        self.assertGreater(surviving, 0.5)          # 0.5000000000000001
+        self.assertAlmostEqual(surviving, 0.5)
+        for value in (0.5, surviving):              # exact, and rounded above
+            result = self.base(stages=[
+                self.stage("awaiting-CI", depth=2, entered_per_hour=1.0,
+                           left_per_hour=1.0, baseline_median_dwell_hours=1.0,
+                           stall_horizon_hours=2.0, stall_horizon_surviving=value,
+                           stall_horizon_at_risk=1),
+            ])
+            self.assertEqual(health.anomalies(result), [], f"fired on {value!r}")
+
+    def test_a_stage_whose_survival_cannot_be_read_is_not_called_healthy(self):
+        """Follow-up that ran out before the horizon is an absence of evidence.
+        Firing on it would invent a stall; calling it fine would invent health,
+        so it does neither and the stage is simply not judged on dwell."""
+        result = self.base(stages=[
+            self.stage("awaiting-CI", depth=5, entered_per_hour=2.0, left_per_hour=2.0,
+                       baseline_median_dwell_hours=1.0, stall_horizon_hours=2.0,
+                       stall_horizon_surviving=None, stall_horizon_at_risk=0),
+        ])
+        self.assertEqual(health.anomalies(result), [])
+
     def test_a_stalled_stage_is_named_even_without_growth(self):
         result = self.base(stages=[
             self.stage("ready-to-merge", depth=4, entered_per_hour=0.1, left_per_hour=0.1,
-                       oldest_waiting_hours=100.0, baseline_median_dwell_hours=2.0),
+                       baseline_median_dwell_hours=2.0, stall_horizon_hours=4.0,
+                       stall_horizon_surviving=0.9, stall_horizon_at_risk=5),
         ])
         found = health.find_cause(result)
         self.assertEqual(found["stage"], "ready-to-merge")
-        self.assertIn("normal dwell", found["why"])
+        self.assertIn("still running at 4.0h", found["why"])
 
     def test_a_thin_baseline_reports_insufficient_data_not_health(self):
         """Zero merges over the baseline made the old gate read 0 >= 0 and call
@@ -515,8 +622,11 @@ class BuildingQueueTests(unittest.TestCase):
                 "left_per_hour": 20.9, "baseline_entered_per_hour": 20.0,
                 "baseline_left_per_hour": 20.0, "left_count": 500,
                 "baseline_left_count": 5000, "baseline_dwell_completions": 5000,
-                "dwell_completions": 500, "median_dwell_hours": 2.0,
+                "dwell_completions": 500, "dwell_cohort": 560,
+                "median_dwell_hours": 2.0,
                 "baseline_median_dwell_hours": 1.0,
+                "stall_horizon_hours": 2.0, "stall_horizon_surviving": 0.2,
+                "stall_horizon_at_risk": 60,
             }],
         }
 
