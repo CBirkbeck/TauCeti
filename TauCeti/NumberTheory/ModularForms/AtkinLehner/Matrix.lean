@@ -7,7 +7,9 @@ module
 
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import TauCeti.Data.Nat.ExactDivisor
-public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
+
+-- `mem_Gamma0_iff_dvd`, used only inside proofs.
+import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
 
 /-!
 # Atkin–Lehner matrices
