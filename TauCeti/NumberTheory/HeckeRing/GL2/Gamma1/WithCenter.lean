@@ -35,7 +35,7 @@ survives because the enlarged group still has finite index in `SL₂(ℤ)`, cont
 **This file declares only the instance.** Neither half of the triple mentions `Γ₁(N)`: the
 `Δ₀(N)` containment needs only `H ≤ Γ₀(N)` and is `map_withCenter_le_Delta0` in
 `Gamma0/Basic.lean`, while the commensurator half needs only finite index — nothing about
-`withCenter` at all — so it is inlined at the instance rather than named here.
+`withCenter` at all — and is `Delta0_le_commensurator_map` in `Delta0.lean`.
 
 ## Main results
 
@@ -65,10 +65,7 @@ variable [NeZero N]
 `GL₂(ℚ)`, with the same monoid `Δ₀(N)` as the triple of `Γ₁(N)` itself. -/
 instance : IsHeckeTriple (Delta0 N) (((Gamma1 N).withCenter).map (mapGL ℚ))
     (((Gamma1 N).withCenter).map (mapGL ℚ)) :=
-  IsHeckeTriple.of_diagonal (map_withCenter_le_Delta0 N (Gamma1_in_Gamma0 N)) (by
-    -- the commensurator half uses nothing about `withCenter`, only finite index, so it is
-    -- inlined rather than named here
-    rw [Commensurable.eq (commensurable_map_SLnZ 2 ((Gamma1 N).withCenter))]
-    exact (Delta0_le_posDetInt N).trans (posDetInt_le_commensurator 2))
+  IsHeckeTriple.of_diagonal (map_withCenter_le_Delta0 N (Gamma1_in_Gamma0 N))
+    (Delta0_le_commensurator_map N ((Gamma1 N).withCenter))
 
 end HeckeRing.GL2
