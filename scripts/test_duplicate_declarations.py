@@ -98,8 +98,8 @@ class DuplicateDeclarationsTest(unittest.TestCase):
 
     def test_local_instance_is_not_a_private_declaration(self):
         self.assert_collision(self.fixture({
-            "TauCeti.A": "module\npublic section\nlocal instance Collision : Fact True := ⟨.intro⟩\n",
-            "TauCeti.B": "module\npublic section\nlocal instance Collision : Fact True := ⟨.intro⟩\n",
+            "TauCeti.A": "module\npublic section\nlocal instance Collision : Nonempty Nat := ⟨0⟩\n",
+            "TauCeti.B": "module\npublic section\nlocal instance Collision : Nonempty Nat := ⟨0⟩\n",
         }))
 
     def test_private_helpers_and_namespaces_and_quoted_identifiers(self):
