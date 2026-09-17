@@ -75,8 +75,9 @@ jobs:
         # Fixtures compile in temporary directories without a lean-toolchain file.
         # Pin both the compiler and findSysroot's library path before leaving the checkout.
         run: |
-          export LEAN="$(elan which lean)"
-          export LEAN_SYSROOT="$("$LEAN" --print-prefix)"
+          LEAN="$(elan which lean)"
+          LEAN_SYSROOT="$("$LEAN" --print-prefix)"
+          export LEAN LEAN_SYSROOT
           python3 scripts/test_duplicate_declarations.py
 
   build:

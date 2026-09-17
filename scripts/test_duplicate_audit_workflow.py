@@ -21,8 +21,9 @@ class DuplicateAuditWorkflowTest(unittest.TestCase):
             self.assertNotIn("continue-on-error", step)
         commands = [step.get("run", "") for step in job["steps"]]
         fixture_command = next(c for c in commands if "test_duplicate_declarations.py" in c)
-        self.assertIn('export LEAN="$(elan which lean)"', fixture_command)
-        self.assertIn('export LEAN_SYSROOT="$("$LEAN" --print-prefix)"', fixture_command)
+        self.assertIn('LEAN="$(elan which lean)"', fixture_command)
+        self.assertIn('LEAN_SYSROOT="$("$LEAN" --print-prefix)"', fixture_command)
+        self.assertIn("export LEAN LEAN_SYSROOT", fixture_command)
         self.assertTrue(any('elan toolchain install "$(cat lean-toolchain)"' in c
                             for c in commands))
         # ElanPin tests separately verify every install's release and checksum.
