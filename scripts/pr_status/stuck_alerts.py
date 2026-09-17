@@ -27,7 +27,7 @@ Detectors (each names the infra failure it implies):
                      the grace window. auto-merge / the queue / merge-sweep broke.
   4. review-stuck    A worker exhausted its review-command failure budget. An
                      open tracking issue remains active until the PR finishes or
-                     a later completed review covers its current head. The issue
+                     a later completed review proves recovery. The issue
                      alone does not establish a rubric or engine defect.
   5. dead-scheduler  A scheduled workflow is missing, disabled, or its last
                      SCHEDULED run is older than its cadence + slack. GitHub
@@ -530,7 +530,7 @@ REVIEW_STUCK_TITLE_RE = re.compile(r"Review stuck: PR #([0-9]+)")
 
 
 def flagged_pr_has_recovered(number, issue):
-    """A finished PR or a completed current-head review after the reported failures.
+    """A finished PR or a completed review after the reported failures.
 
     Any doubt (an API error, a number that is not a PR, an unexpected state) is
     False, so the caller keeps alerting. Fail closed: a live wedge must never be
@@ -547,8 +547,10 @@ def flagged_pr_has_recovered(number, issue):
             return False
         if meta.get("repo") != REPO or str(meta.get("pr")) != str(number):
             return False
-        if meta.get("head_sha") != pr["head"]:
+        if not meta.get("head_sha"):
             return False
+        # A later push is ordinary review backlog, not a recurrence of the old
+        # command failure. Recovery is dated against the failure, not today's head.
         states = meta.get("states")
         if not isinstance(states, dict) or not states:
             return False
@@ -595,7 +597,8 @@ def detect_review_stuck():
                 f"and review-engine defects. A generic exit code does not establish a "
                 f"rubric contradiction. If private logs are unavailable, reproduce once "
                 f"in an isolated workspace and retain a classified diagnostic. Keep the "
-                f"retry cap; do not repeatedly reset it without fixing the cause."),
+                f"retry cap; do not repeatedly reset it without fixing the cause. Close the "
+                f"tracking issue once the cause is repaired and reviewing succeeds."),
         })
     return out
 

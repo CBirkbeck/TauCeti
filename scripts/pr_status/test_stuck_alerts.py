@@ -269,9 +269,9 @@ class ReviewStuckTest(unittest.TestCase):
         self.fake_gh("open", {**self.META, "states": {"reuse": "blocking_request"}})
         self.assertEqual(sa.detect_review_stuck(), [])
 
-    def test_old_head_is_not_evidence_of_recovery(self):
+    def test_new_push_does_not_revive_a_recovered_command_failure(self):
         self.fake_gh("open", {**self.META, "head_sha": "b" * 40})
-        self.assertEqual(len(sa.detect_review_stuck()), 1)
+        self.assertEqual(sa.detect_review_stuck(), [])
 
     def test_old_verdict_does_not_mask_new_failure(self):
         self.fake_gh("open", {**self.META, "ts": "2026-09-16T07:00:00Z"})
@@ -282,6 +282,11 @@ class ReviewStuckTest(unittest.TestCase):
         self.fake_gh("open", self.META, issue)
         self.assertEqual(len(sa.detect_review_stuck()), 1)
 
+    def test_review_after_latest_failure_clears(self):
+        issue = {**self.ISSUE, "body": "- 2026-09-16T10:00:00Z: `review-engine` via `codex` (exit 1): review engine failed"}
+        self.fake_gh("open", {**self.META, "ts": "2026-09-16T11:00:00Z"}, issue)
+        self.assertEqual(sa.detect_review_stuck(), [])
+
     def test_incomplete_or_malformed_review_keeps_alert(self):
         for state in ("stale", "error", "not_run", None, {}, []):
             with self.subTest(state=state):
@@ -290,7 +295,7 @@ class ReviewStuckTest(unittest.TestCase):
 
     def test_missing_wrong_or_unreadable_evidence_keeps_alert(self):
         for meta in ({}, [], {**self.META, "states": {}}, {**self.META, "repo": "other/repo"},
-                     {**self.META, "pr": 99}, {**self.META, "mode": "init"},
+                     {**self.META, "pr": 99}, {**self.META, "mode": "init"}, {**self.META, "head_sha": ""},
                      {**self.META, "ts": "bad"}, RuntimeError("GitHub unavailable")):
             with self.subTest(meta=meta):
                 self.fake_gh("open", meta)
