@@ -56,30 +56,41 @@ variable {k G : Type u} [CommRing k] [Group G]
 /-! ### The cokernel `up` -/
 
 /-- The cokernel of the embedding `A ⟶ Coind_⊥^G A`, so that `Hⁿ⁺¹(G, up A) ≅ Hⁿ⁺²(G, A)`. -/
-@[expose] def up (A : Rep k G) : Rep k G := cokernel (coindBotUnit A)
+def up (A : Rep k G) : Rep k G := cokernel (coindBotUnit A)
 
 /-- The projection from the coinduced module onto `up A`. -/
-@[expose] def upπ (A : Rep k G) : coindBot k G A.V ⟶ up A := cokernel.π (coindBotUnit A)
+def upπ (A : Rep k G) : coindBot k G A.V ⟶ up A := cokernel.π (coindBotUnit A)
 
 /-- The projection onto `up A` is an epimorphism. -/
 instance upπ_epi (A : Rep k G) : Epi (upπ A) :=
   inferInstanceAs (Epi (cokernel.π (coindBotUnit A)))
 
+/-- The embedding into the coinduced module followed by the projection onto `up A` is zero. -/
+@[reassoc (attr := simp)]
+theorem coindBotUnit_comp_upπ (A : Rep k G) : coindBotUnit A ≫ upπ A = 0 :=
+  cokernel.condition (coindBotUnit A)
+
 /-- The short complex `A ⟶ Coind_⊥^G A ⟶ up A` defining `up A`. -/
-@[expose] def upSES (A : Rep k G) : ShortComplex (Rep k G) :=
+def upSES (A : Rep k G) : ShortComplex (Rep k G) :=
   ShortComplex.cokernelSequence (coindBotUnit A)
+
+/-- The short complex defining `up A` has maps the embedding into the coinduced module and the
+projection onto `up A`. -/
+theorem upSES_def (A : Rep k G) :
+    upSES A = ShortComplex.mk (coindBotUnit A) (upπ A) (coindBotUnit_comp_upπ A) :=
+  (rfl)
 
 /-- The first term of the short complex defining `up A` is `A`. -/
 @[simp]
-theorem upSES_X₁ (A : Rep k G) : (upSES A).X₁ = A := rfl
+theorem upSES_X₁ (A : Rep k G) : (upSES A).X₁ = A := (rfl)
 
 /-- The middle term of the short complex defining `up A` is the coinduced module. -/
 @[simp]
-theorem upSES_X₂ (A : Rep k G) : (upSES A).X₂ = coindBot k G A.V := rfl
+theorem upSES_X₂ (A : Rep k G) : (upSES A).X₂ = coindBot k G A.V := (rfl)
 
 /-- The last term of the short complex defining `up A` is `up A`. -/
 @[simp]
-theorem upSES_X₃ (A : Rep k G) : (upSES A).X₃ = up A := rfl
+theorem upSES_X₃ (A : Rep k G) : (upSES A).X₃ = up A := (rfl)
 
 /-- The short complex `A ⟶ Coind_⊥^G A ⟶ up A` is short exact. -/
 theorem upSES_shortExact (A : Rep k G) : (upSES A).ShortExact where
@@ -89,37 +100,48 @@ theorem upSES_shortExact (A : Rep k G) : (upSES A).ShortExact where
 
 /-- The short complex `A ⟶ Coind_⊥^G A ⟶ up A` stays short exact after restriction along any
 monoid homomorphism `f : H →* G`. -/
-theorem upSES_res_shortExact {H : Type*} [Monoid H] (f : H →* G) (A : Rep k G) :
+theorem upSES_res_shortExact (A : Rep k G) {H : Type*} [Monoid H] (f : H →* G) :
     ((upSES A).map (resFunctor f)).ShortExact :=
   (upSES_shortExact A).map_of_exact (resFunctor f)
 
 /-! ### The kernel `down` -/
 
 /-- The kernel of the projection `Ind_⊥^G A ⟶ A`, so that `Ĥⁿ(G, A) ≅ Ĥⁿ⁺¹(G, down A)`. -/
-@[expose] def down (A : Rep k G) : Rep k G := kernel (indBotCounit A)
+def down (A : Rep k G) : Rep k G := kernel (indBotCounit A)
 
 /-- The inclusion of `down A` into the induced module. -/
-@[expose] def downι (A : Rep k G) : down A ⟶ indBot k G A.V := kernel.ι (indBotCounit A)
+def downι (A : Rep k G) : down A ⟶ indBot k G A.V := kernel.ι (indBotCounit A)
 
 /-- The inclusion of `down A` is a monomorphism. -/
 instance downι_mono (A : Rep k G) : Mono (downι A) :=
   inferInstanceAs (Mono (kernel.ι (indBotCounit A)))
 
+/-- The inclusion of `down A` followed by the projection onto `A` is zero. -/
+@[reassoc (attr := simp)]
+theorem downι_comp_indBotCounit (A : Rep k G) : downι A ≫ indBotCounit A = 0 :=
+  kernel.condition (indBotCounit A)
+
 /-- The short complex `down A ⟶ Ind_⊥^G A ⟶ A` defining `down A`. -/
-@[expose] def downSES (A : Rep k G) : ShortComplex (Rep k G) :=
+def downSES (A : Rep k G) : ShortComplex (Rep k G) :=
   ShortComplex.kernelSequence (indBotCounit A)
+
+/-- The short complex defining `down A` has maps the inclusion of `down A` and the projection onto
+`A`. -/
+theorem downSES_def (A : Rep k G) :
+    downSES A = ShortComplex.mk (downι A) (indBotCounit A) (downι_comp_indBotCounit A) :=
+  (rfl)
 
 /-- The first term of the short complex defining `down A` is `down A`. -/
 @[simp]
-theorem downSES_X₁ (A : Rep k G) : (downSES A).X₁ = down A := rfl
+theorem downSES_X₁ (A : Rep k G) : (downSES A).X₁ = down A := (rfl)
 
 /-- The middle term of the short complex defining `down A` is the induced module. -/
 @[simp]
-theorem downSES_X₂ (A : Rep k G) : (downSES A).X₂ = indBot k G A.V := rfl
+theorem downSES_X₂ (A : Rep k G) : (downSES A).X₂ = indBot k G A.V := (rfl)
 
 /-- The last term of the short complex defining `down A` is `A`. -/
 @[simp]
-theorem downSES_X₃ (A : Rep k G) : (downSES A).X₃ = A := rfl
+theorem downSES_X₃ (A : Rep k G) : (downSES A).X₃ = A := (rfl)
 
 /-- The short complex `down A ⟶ Ind_⊥^G A ⟶ A` is short exact. -/
 theorem downSES_shortExact (A : Rep k G) : (downSES A).ShortExact where
@@ -129,7 +151,7 @@ theorem downSES_shortExact (A : Rep k G) : (downSES A).ShortExact where
 
 /-- The short complex `down A ⟶ Ind_⊥^G A ⟶ A` stays short exact after restriction along any
 monoid homomorphism `f : H →* G`. -/
-theorem downSES_res_shortExact {H : Type*} [Monoid H] (f : H →* G) (A : Rep k G) :
+theorem downSES_res_shortExact (A : Rep k G) {H : Type*} [Monoid H] (f : H →* G) :
     ((downSES A).map (resFunctor f)).ShortExact :=
   (downSES_shortExact A).map_of_exact (resFunctor f)
 
