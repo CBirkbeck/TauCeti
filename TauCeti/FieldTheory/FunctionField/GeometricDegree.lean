@@ -47,9 +47,7 @@ Mathlib's predicate `IntermediateField.LinearDisjoint` also supplies the degree 
   `[F' : F] = n(F'/F) · [k' : k]` when adjoining the constants to `F` costs `[k' : k]`, and
   `TauCeti.finrank_dvd_finrank_of_finrank_constantCompositum_eq` for the divisibility it contains.
 * `TauCeti.geometricDegree_eq_finrank`: the geometric degree is the whole degree when the
-  constants of `F'` already lie in `F`, and
-  `TauCeti.finrank_constantCompositum_eq_finrank_of_constants_mem` is the degree equality in that
-  case.
+  constants of `F'` already lie in `F`.
 * `TauCeti.finrank_constantCompositum_eq_finrank_of_isSeparable`: that degree equality holds for a
   finite separable constant field extension over an exact constant field.
 * `TauCeti.finrank_constantCompositum_eq_finrank_of_linearDisjoint`: it also follows from
@@ -209,17 +207,6 @@ theorem finrank_eq_geometricDegree_mul_finrank_of_finrank_constantCompositum_eq
     (h : Module.finrank F (constantCompositum F k' F') = Module.finrank k k') :
     Module.finrank F F' = geometricDegree F k' F' * Module.finrank k k' := by
   rw [← finrank_constantCompositum_mul_geometricDegree F k' F', h, mul_comm]
-
-/-- **The degree equality holds when the constants of `F'` already lie in `F` and `k'` is no
-bigger than `k`.** This is the degenerate case of the linear-disjointness condition: `F` and `k'`
-are linearly disjoint over `k` for want of anything to be disjoint from. It is the case a curve
-over its own base field presents, where `k' = k` is that base field and the constants of both
-function fields are already in it. -/
-theorem finrank_constantCompositum_eq_finrank_of_constants_mem [Algebra k' F]
-    [IsScalarTower k' F F']
-    (h : Module.finrank k k' = 1) :
-    Module.finrank F (constantCompositum F k' F') = Module.finrank k k' := by
-  rw [constantCompositum_eq_bot, IntermediateField.finrank_bot, h]
 
 /-- **The degree of the constant field extension divides the degree of the function field
 extension**, under the same hypothesis as
