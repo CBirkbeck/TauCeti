@@ -136,6 +136,25 @@ class DuplicateDeclarationsTest(unittest.TestCase):
         })
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_compatible_dependency_collisions_in_both_import_orders(self):
+        # These equal theorems survive Lean's importer. Only the ownership audit catches
+        # the local collision, including when two dependencies already share the name.
+        dependencies = {
+            "DependencyA": "module\npublic theorem Collision : True := True.intro\n",
+            "DependencyB": "module\npublic theorem Collision : True := True.intro\n",
+        }
+        own = {"TauCeti.Own": "module\npublic theorem Collision : True := True.intro\n"}
+        imports = {
+            "TauCeti.A": "module\npublic import DependencyA\n",
+            "TauCeti.B": "module\npublic import DependencyB\n",
+        }
+        for local_first in (True, False):
+            with self.subTest(local_first=local_first):
+                modules = {**dependencies, **(own if local_first else imports),
+                           **(imports if local_first else own)}
+                self.assert_collision(self.fixture(modules), first="Dependency",
+                                      second="TauCeti.Own")
+
     def test_missing_artifacts_fail_closed(self):
         for options in ({"missing": "TauCeti.A"}, {"missing_part": "TauCeti.A"}):
             with self.subTest(options=options):
