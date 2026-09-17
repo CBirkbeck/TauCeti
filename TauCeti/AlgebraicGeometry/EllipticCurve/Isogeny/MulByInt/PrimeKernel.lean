@@ -29,6 +29,10 @@ computed, which is why they are not imposed at this layer.
 
 ## Main results
 
+* `TauCeti.Isogeny.mem_ker_mulByPrimeIsogeny_iff`: a point lies in `ker [ℓ]` exactly when `ℓ`
+  kills it.
+* `TauCeti.Isogeny.ker_mulByPrimeIsogeny_eq_torsionBy`: that kernel is the `ℓ`-torsion subgroup
+  `E[ℓ]` in Mathlib's intrinsic form.
 * `TauCeti.Isogeny.nsmul_eq_zero_of_mem_ker_mulByPrimeIsogeny`: the kernel is killed by `ℓ`.
 
 ## References
@@ -50,6 +54,20 @@ variable (l) in
 division-polynomial construction asks for, so no such hypothesis is exposed here. -/
 noncomputable abbrev mulByPrimeIsogeny : Isogeny W W :=
   mulByIntIsogenyOfNeZero W (Int.natCast_ne_zero.mpr hl.out.ne_zero)
+
+-- Not `@[simp]`: `mulByPrimeIsogeny` is an `abbrev`, so `simp` sees through it to
+-- `mem_ker_mulByIntIsogeny_iff` and `simpNF` rejects the pair as duplicates. The prime form is
+-- stated anyway so a consumer holding `ℓ • P = 0` need not produce a non-vanishing hypothesis.
+/-- **A point lies in `ker [ℓ]` exactly when `ℓ` kills it.** -/
+theorem mem_ker_mulByPrimeIsogeny_iff {P : (W⁄F).toAffine.Point} :
+    P ∈ (mulByPrimeIsogeny W l).ker ↔ l • P = 0 := by
+  rw [mem_ker_mulByIntIsogeny_iff, natCast_zsmul]
+
+/-- **`ker [ℓ] = E[ℓ]`**: the kernel of multiplication by a prime is the `ℓ`-torsion subgroup, in
+Mathlib's intrinsic form. -/
+theorem ker_mulByPrimeIsogeny_eq_torsionBy :
+    (mulByPrimeIsogeny W l).ker = AddSubgroup.torsionBy (W⁄F).toAffine.Point (l : ℤ) :=
+  ker_mulByIntIsogeny_eq_torsionBy W _
 
 /-- Every point of `ker [ℓ]` is killed by `ℓ`. -/
 @[simp]
