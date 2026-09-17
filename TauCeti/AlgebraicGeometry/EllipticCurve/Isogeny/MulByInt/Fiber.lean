@@ -6,7 +6,8 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.KernelCard
-public import TauCeti.GroupTheory.Coset.FiberCard
+-- Proof-only: the coset count the fiber cardinality is read off.
+import TauCeti.GroupTheory.Coset.FiberCard
 
 /-!
 # How many points `[n]` sends to a given one

@@ -7,7 +7,8 @@ module
 
 public import Mathlib.GroupTheory.Coset.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
-public import Mathlib.Algebra.Module.End
+-- Proof-only: `smulAddHom`, the `n • ·` homomorphism the zsmul case is read through.
+import Mathlib.Algebra.Module.End
 
 /-!
 # A nonempty fiber of a group homomorphism has as many elements as the kernel
@@ -24,7 +25,7 @@ for isogenies use: its fibers all have as many elements as the `n`-torsion.
 
 * `AddMonoidHom.card_fiber_eq_card_ker` (and `MonoidHom.card_fiber_eq_card_ker`): a nonempty
   fiber has as many elements as the kernel.
-* `card_zsmul_fiber_eq_card_zsmul_eq_zero`: the same for `n • ·` on an additive commutative
+* `TauCeti.card_zsmul_fiber_eq_card_zsmul_eq_zero`: the same for `n • ·` on an additive commutative
   group, with the kernel written as the `n`-torsion.
 -/
 
@@ -39,11 +40,15 @@ theorem MonoidHom.card_fiber_eq_card_ker {G H : Type*} [Group G] [Group H] (f : 
   Nat.card_congr <|
     (Equiv.subtypeEquivRight fun _ ↦ by simp [← ha]).trans (f.fiberEquivKer a)
 
+namespace TauCeti
+
 /-- **A nonempty fiber of `n • ·` has as many elements as the `n`-torsion.** -/
 theorem card_zsmul_fiber_eq_card_zsmul_eq_zero {G : Type*} [AddCommGroup G] {n : ℤ} {T P₀ : G}
     (hP₀ : n • P₀ = T) :
     Nat.card {P : G // n • P = T} = Nat.card {P : G // n • P = 0} :=
   ((smulAddHom ℤ G n).card_fiber_eq_card_ker hP₀).trans <|
     Nat.card_congr <| Equiv.subtypeEquivRight fun _ ↦ by simp
+
+end TauCeti
 
 end
