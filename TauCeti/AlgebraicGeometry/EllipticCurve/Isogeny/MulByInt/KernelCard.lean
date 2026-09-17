@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Kernel
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.PrimeKernel
 -- Proof-only: rationality of torsion over an algebraically closed base.
 import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.AlgClosed
 -- Proof-only: `sepDeg [n] = n ²` for `n` invertible in the base field.
@@ -30,6 +30,8 @@ and the separable degree is the number of embeddings.
 ## Main results
 
 * `TauCeti.Isogeny.card_ker_mulByIntIsogeny`: **`#ker [n] = n ²`**.
+* `TauCeti.Isogeny.card_ker_mulByPrimeIsogeny`: the same at a prime, as `ℓ ²` rather than
+  `(ℓ : ℤ).natAbs ^ 2`.
 
 The three steps of the argument sketched above — the torsion difference, its rationality, and the
 resulting bound on embeddings — are `private`; nothing outside this module uses them.
@@ -123,6 +125,14 @@ theorem card_ker_mulByIntIsogeny [IsAlgClosed F] {n : ℤ} {hn : psiFunctionFiel
   have hle := card_ker_le_separableDegree (mulByIntIsogeny W hn)
   have := le_antisymm hle hge
   rw [this, separableDegree_mulByIntIsogeny W hchar]
+
+-- Not `@[simp]`: `mulByPrimeIsogeny` is an `abbrev`, so `simp` sees through it to
+-- `card_ker_mulByIntIsogeny` and `simpNF` rejects the pair as duplicates.
+/-- **`#E[ℓ] = ℓ ²`**, for a prime `ℓ` invertible in an algebraically closed base field. -/
+theorem card_ker_mulByPrimeIsogeny [IsAlgClosed F] {l : ℕ} [hl : Fact l.Prime]
+    (hchar : (l : F) ≠ 0) :
+    Nat.card (mulByPrimeIsogeny W l).ker = l ^ 2 := by
+  rw [card_ker_mulByIntIsogeny W (by simpa using hchar), Int.natAbs_natCast]
 
 end TauCeti.Isogeny
 

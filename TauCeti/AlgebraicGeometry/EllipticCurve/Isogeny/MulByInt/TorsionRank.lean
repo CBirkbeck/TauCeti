@@ -24,7 +24,6 @@ is the form the degree and the trace are read off in.
 
 ## Main results
 
-* `TauCeti.Isogeny.card_ker_mulByPrimeIsogeny`: it has `ℓ ²` points.
 * `TauCeti.Isogeny.finrank_ker_mulByPrimeIsogeny`: it has dimension two.
 * `TauCeti.Isogeny.nonempty_linearEquiv_ker_mulByPrimeIsogeny`: hence `E[ℓ] ≅ (ZMod ℓ) ²`.
 
@@ -41,13 +40,6 @@ open WeierstrassCurve.Affine
 
 variable {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve.Affine F) [W.IsElliptic]
   [IsAlgClosed F] {l : ℕ} [hl : Fact l.Prime]
-
--- Not `@[simp]`: `mulByPrimeIsogeny` is an `abbrev`, so `simp` sees through it to
--- `card_ker_mulByIntIsogeny` and `simpNF` rejects the pair as duplicates.
-/-- **`#E[ℓ] = ℓ ²`**, for a prime `ℓ` invertible in an algebraically closed base field. -/
-theorem card_ker_mulByPrimeIsogeny (hchar : (l : F) ≠ 0) :
-    Nat.card (mulByPrimeIsogeny W l).ker = l ^ 2 := by
-  rw [card_ker_mulByIntIsogeny W (by simpa using hchar), Int.natAbs_natCast]
 
 /-- **`E[ℓ]` is two-dimensional over `ZMod ℓ`.** -/
 @[simp]
