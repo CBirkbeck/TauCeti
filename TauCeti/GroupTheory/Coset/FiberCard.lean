@@ -19,7 +19,9 @@ Counting both sides turns that into an equality of cardinalities, in the subtype
 stated in.
 
 The multiplication map `n • ·` of an additive commutative group is the case the counting arguments
-for isogenies use: its fibers all have as many elements as the `n`-torsion.
+for isogenies use: each of its nonempty fibers has as many elements as the `n`-torsion. Emptiness
+is not excluded by fiat — `n • ·` need not be surjective — so a preimage is an argument, and it is
+the only thing either statement asks for.
 
 ## Main results
 
