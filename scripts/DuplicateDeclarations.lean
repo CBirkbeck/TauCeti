@@ -31,26 +31,40 @@ partial def sourceModules (dir : System.FilePath) : IO (Array Name) := do
 All mmap-backed names stay inside `withImportModules`' callback. -/
 def check (env : Environment) (localModules : NameSet) : IO UInt32 := do
   let modules := env.allImportedModuleNames
-  -- A reserved auxiliary can legitimately be realized in several modules. Exempt it only
-  -- when Lean recognizes the reserved name and no occurrence has a source declaration range.
-  -- In particular, a user-written theorem ending in `.eq_1` is not a blanket exemption.
-  let mut explicitNames : NameSet := {}
+  -- Every violation involves a TauCeti-owned name. Index those names first, then compare
+  -- them against ALL modules, including dependencies; unrelated dependency names need no owner.
+  let mut localNames : NameSet := {}
   for i in [:modules.size] do
-    for (name, _) in declRangeExt.getModuleEntries env i do
-      explicitNames := explicitNames.insert name
+    if localModules.contains modules[i]! then
+      for name in env.header.moduleData[i]!.constNames do
+        localNames := localNames.insert name
   let mut owners : NameMap Name := {}
-  let mut bad := 0
+  let mut collisions : Array (Name × Name × Name) := #[]
+  let mut collisionNames : NameSet := {}
   for i in [:modules.size] do
     let mod := modules[i]!
     for name in env.header.moduleData[i]!.constNames do
-      if !explicitNames.contains name && isReservedName env name then continue
+      if !localNames.contains name then continue
       match owners.find? name with
       | none => owners := owners.insert name mod
       | some previous =>
         if previous != mod && (localModules.contains mod || localModules.contains previous) then
-          IO.eprintln s!"duplicate-declarations: {name} is declared in both {previous} and {mod}"
-          bad := bad + 1
+          collisions := collisions.push (name, previous, mod)
+          collisionNames := collisionNames.insert name
         if localModules.contains mod then owners := owners.insert name mod
+  -- Declaration ranges matter only for collisions. Keep the same exemption: a reserved
+  -- auxiliary is allowed only when NO module supplies a source declaration range for it.
+  -- In particular, user-written `.eq_1` theorems are still checked.
+  let mut explicitNames : NameSet := {}
+  for i in [:modules.size] do
+    for (name, _) in declRangeExt.getModuleEntries env i do
+      if collisionNames.contains name then
+        explicitNames := explicitNames.insert name
+  let mut bad := 0
+  for (name, previous, mod) in collisions do
+    if !explicitNames.contains name && isReservedName env name then continue
+    IO.eprintln s!"duplicate-declarations: {name} is declared in both {previous} and {mod}"
+    bad := bad + 1
   if bad != 0 then
     IO.eprintln "Keep one canonical declaration and import its module from the other files."
     return 1
