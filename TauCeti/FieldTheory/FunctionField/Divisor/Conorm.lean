@@ -60,6 +60,8 @@ linearly disjoint over `k`; under that hypothesis the divided form is `degree_co
   `k'` linearly disjoint over `k`: `deg (Con D) = n(F'/F) · deg D` (Stichtenoth,
   Corollary 3.6.4, here under the separability hypothesis on `F' / F` that the cross-multiplied
   form already carries).
+* `TauCeti.Divisor.degree_conorm_of_constants_mem`: that identity with the geometric degree read
+  as `[F' : F]`, when the constants of `F'` already lie in `F`.
 
 ## Implementation notes
 
@@ -270,6 +272,17 @@ theorem degree_conorm
     finrank_eq_geometricDegree_mul_finrank_of_finrank_constantCompositum_eq F k' F' h]
   push_cast
   ring
+
+/-- **The conorm multiplies degrees by `[F' : F]` when the constants of `F'` already lie in `F`
+and `k'` is no bigger than `k`.** This is the shape a curve over its own base field presents, where
+`k' = k` is that base field: the geometric degree is then the whole degree, and the hypothesis of
+`TauCeti.Divisor.degree_conorm` holds for want of content. -/
+theorem degree_conorm_of_constants_mem [Algebra k' F] [IsScalarTower k' F F']
+    (h : Module.finrank k k' = 1) (D : Divisor k F) :
+    degree (conorm k' F' D) = Module.finrank F F' * degree D := by
+  rw [degree_conorm k' F'
+      (finrank_constantCompositum_eq_finrank_of_constants_mem F k' F' h) D,
+    geometricDegree_eq_finrank F k' F']
 
 end Degree
 
