@@ -48,7 +48,6 @@ namespace groupCohomology
 
 /-- Positive-degree cohomology of a finite group is killed by the order of the group (Milne II
 1.31). -/
-@[simp]
 theorem natCard_nsmul_eq_zero {A : Rep k G} {n : ℕ} (x : groupCohomology A (n + 1)) :
     Nat.card G • x = 0 := by
   -- Restriction to the trivial subgroup lands in the vanishing cohomology of the trivial group.
