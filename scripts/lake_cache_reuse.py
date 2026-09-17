@@ -3,8 +3,10 @@
 
 Snapshot immediately after a successful cache download, before candidate code runs.
 Keep the snapshot outside the writable checkout (read-only in the build sandbox).
-Reconnect after the audits, then run stock Lake with --no-build --rehash -o so Lake
-validates the current inputs and generates the complete map, packing cache misses.
+Reconnect after the audits, then let stock Lake validate the current inputs and
+generate the complete map with --no-build --rehash -o, packing cache misses.
+--rehash is essential: hash archive bytes rather than trusting potentially stale
+or candidate-written .ltar.hash sidecars beside the new links.
 
 Temporary workaround for https://github.com/leanprover/lean4/pull/15189: remove this
 once the pinned Lake retains downloaded archives itself. Unknown formats and failed
@@ -133,12 +135,10 @@ def reconnect(root: Path, saved: dict) -> int:
                     # versions with the upstream fix). No copy fallback on EXDEV.
                     if os.path.lexists(root / target):
                         continue
-                    if digest(artifacts, archive) != expected:
-                        continue
                     os.link(archive, target.name, src_dir_fd=artifacts, dst_dir_fd=dest,
                             follow_symlinks=False)
-                    # Check the actual linked inode too, in case the source name
-                    # changed between checking it and linking it.
+                    # Verify the inode actually linked, not a source path that
+                    # could have been replaced before the link was created.
                     try:
                         if digest(dest, target.name) != expected:
                             raise ValueError("archive changed while linking")

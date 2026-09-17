@@ -382,6 +382,7 @@ jobs:
           # stage` reads no credential and contacts no network.
           lake build >/dev/null
           python3 scripts/lake_cache_reuse.py reconnect . "$RUNNER_TEMP/lake-cache-reuse.json"
+          # Hash the linked archives themselves, ignoring any old .ltar.hash sidecars.
           lake build --no-build --rehash -o .lake/outputs.jsonl
           echo "root-package mapping entries: $(wc -l < .lake/outputs.jsonl)"
           lake cache stage .lake/outputs.jsonl "$RUNNER_TEMP/lake-cache-staging"

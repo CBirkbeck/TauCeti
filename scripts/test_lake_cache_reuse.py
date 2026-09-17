@@ -55,11 +55,11 @@ class ReuseTests(unittest.TestCase):
         self.assertEqual(reuse.reconnect(self.root, self.saved), 0)
         self.assertFalse(self.target.exists())
 
-    def test_linked_bytes_are_checked_again(self):
+    def test_linked_bytes_are_checked(self):
         real_link = os.link
 
         def replace_and_link(*args, **kwargs):
-            self.archive.write_bytes(b"changed after initial verification")
+            self.archive.write_bytes(b"changed while linking")
             return real_link(*args, **kwargs)
 
         with patch.object(reuse.os, "link", side_effect=replace_and_link):
@@ -131,6 +131,17 @@ class ReuseTests(unittest.TestCase):
         self.assertLess(build.index('bash "$TRUSTED_SCRIPTS/lint-style.sh"'), build.index("lake_cache_reuse.py"))
         self.assertLess(build.index("lake_cache_reuse.py"), build.index("lake build --no-build --rehash -o"))
 
+    def test_toolchain_bumps_test_the_validated_candidate_pin_before_building(self):
+        workflow = (ROOT / ".github/workflows/pr-build.yml").read_text()
+        block = workflow.split("- name: Validate Lake archive reuse against a changed toolchain", 1)[1].split("- name:", 1)[0]
+        self.assertIn("env.INFRA != '1' && env.TOOLCHAIN_CHANGED == '1'", block)
+        self.assertIn('ELAN_TOOLCHAIN="$(cat pr/lean-toolchain)"', block)
+        self.assertIn("python3 gate/scripts/test_lake_cache_reuse.py --integration", block)
+        position = workflow.index(block)
+        self.assertLess(workflow.index("- name: Validate the Lake-pin bump before building"), position)
+        self.assertLess(workflow.index("- name: Fetch Mathlib with the (bump-validated) config"), position)
+        self.assertLess(position, workflow.index("- name: Build exact candidate under bwrap"))
+
 
 @unittest.skipUnless(INTEGRATION, "pass --integration with Lake installed")
 class StockLakeTests(unittest.TestCase):
@@ -143,7 +154,10 @@ class StockLakeTests(unittest.TestCase):
             def project(name):
                 directory = root / name
                 directory.mkdir()
-                (directory / "lean-toolchain").write_text((ROOT / "lean-toolchain").read_text())
+                # pr-build sets ELAN_TOOLCHAIN to the validated candidate pin;
+                # the trusted script checkout may still carry the older pin.
+                toolchain = os.environ.get("ELAN_TOOLCHAIN") or (ROOT / "lean-toolchain").read_text().strip()
+                (directory / "lean-toolchain").write_text(toolchain + "\n")
                 (directory / "lakefile.toml").write_text(
                     'name = "TauCeti"\nplatformIndependent = true\ndefaultTargets = ["TauCeti"]\n'
                     '[[lean_lib]]\nname = "TauCeti"\nglobs = ["TauCeti.*"]\n')
@@ -179,7 +193,16 @@ class StockLakeTests(unittest.TestCase):
                 (consumer / "TauCeti/D.lean").write_text("module\npublic def d : Nat := 8\n")
                 run(consumer, "build", "--iofail")
                 if variant == "reuse":
-                    self.assertEqual(reuse.reconnect(consumer, saved), 2)  # root and B
+                    # A future Lake with the upstream fix may already retain these.
+                    unchanged = [consumer / ".lake/build/ir/TauCeti.ltar",
+                                 consumer / ".lake/build/ir/TauCeti/B.ltar"]
+                    retained = sum(path.exists() for path in unchanged)
+                    self.assertEqual(reuse.reconnect(consumer, saved), 2 - retained)
+                    self.assertTrue(all(path.exists() for path in unchanged))
+                    # --rehash must ignore writable hash sidecars when Lake
+                    # describes the linked archives for the final output map.
+                    for archive in unchanged:
+                        archive.with_suffix(".ltar.hash").write_text("0000000000000000")
                     self.assertFalse((consumer / ".lake/build/ir/TauCeti/A.ltar").exists())
                     self.assertFalse((consumer / ".lake/build/ir/TauCeti/D.ltar").exists())
                 run(consumer, "build", "--no-build", "--rehash", "-o", ".lake/outputs.jsonl")
