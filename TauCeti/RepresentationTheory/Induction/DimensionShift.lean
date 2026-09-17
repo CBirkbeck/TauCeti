@@ -70,6 +70,11 @@ instance upπ_epi (A : Rep k G) : Epi (upπ A) :=
 theorem coindBotUnit_comp_upπ (A : Rep k G) : coindBotUnit A ≫ upπ A = 0 :=
   cokernel.condition (coindBotUnit A)
 
+/-- The projection onto `up A` is a cokernel of the embedding into the coinduced module. -/
+def upπIsCokernel (A : Rep k G) :
+    IsColimit (CokernelCofork.ofπ (upπ A) (coindBotUnit_comp_upπ A)) :=
+  cokernelIsCokernel (coindBotUnit A)
+
 /-- The short complex `A ⟶ Coind_⊥^G A ⟶ up A` defining `up A`. -/
 def upSES (A : Rep k G) : ShortComplex (Rep k G) :=
   ShortComplex.cokernelSequence (coindBotUnit A)
@@ -102,11 +107,12 @@ theorem upSES_shortExact (A : Rep k G) : (upSES A).ShortExact where
 monoid homomorphism `f : H →* G`. -/
 theorem upSES_res_shortExact (A : Rep k G) {H : Type*} [Monoid H] (f : H →* G) :
     ((upSES A).map (resFunctor f)).ShortExact :=
-  (upSES_shortExact A).map_of_exact (resFunctor f)
+  (shortExact_res f).mpr (upSES_shortExact A)
 
 /-! ### The kernel `down` -/
 
-/-- The kernel of the projection `Ind_⊥^G A ⟶ A`, so that `Ĥⁿ(G, A) ≅ Ĥⁿ⁺¹(G, down A)`. -/
+/-- The kernel of the projection `Ind_⊥^G A ⟶ A`, so that `Ĥⁿ(G, A) ≅ Ĥⁿ⁺¹(G, down A)` when `G` is
+finite. -/
 def down (A : Rep k G) : Rep k G := kernel (indBotCounit A)
 
 /-- The inclusion of `down A` into the induced module. -/
@@ -120,6 +126,11 @@ instance downι_mono (A : Rep k G) : Mono (downι A) :=
 @[reassoc (attr := simp)]
 theorem downι_comp_indBotCounit (A : Rep k G) : downι A ≫ indBotCounit A = 0 :=
   kernel.condition (indBotCounit A)
+
+/-- The inclusion of `down A` is a kernel of the projection onto `A`. -/
+def downιIsKernel (A : Rep k G) :
+    IsLimit (KernelFork.ofι (downι A) (downι_comp_indBotCounit A)) :=
+  kernelIsKernel (indBotCounit A)
 
 /-- The short complex `down A ⟶ Ind_⊥^G A ⟶ A` defining `down A`. -/
 def downSES (A : Rep k G) : ShortComplex (Rep k G) :=
@@ -153,6 +164,6 @@ theorem downSES_shortExact (A : Rep k G) : (downSES A).ShortExact where
 monoid homomorphism `f : H →* G`. -/
 theorem downSES_res_shortExact (A : Rep k G) {H : Type*} [Monoid H] (f : H →* G) :
     ((downSES A).map (resFunctor f)).ShortExact :=
-  (downSES_shortExact A).map_of_exact (resFunctor f)
+  (shortExact_res f).mpr (downSES_shortExact A)
 
 end Rep
