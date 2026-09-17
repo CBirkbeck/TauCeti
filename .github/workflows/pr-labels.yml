@@ -88,7 +88,7 @@ jobs:
           owner: TauCetiProject
           repositories: TauCeti
           permission-issues: write
-          permission-pull-requests: read
+          permission-pull-requests: write
           permission-contents: read
       # The trusted base checkout: the labels script that runs is the one on the target branch, never
       # the version proposed by the PR.
@@ -189,7 +189,7 @@ jobs:
           owner: TauCetiProject
           repositories: TauCeti
           permission-issues: write
-          permission-pull-requests: read
+          permission-pull-requests: write
           permission-contents: read
       # The trusted base checkout: the labels script that runs is the one on the target branch, never
       # the version proposed by the PR.
@@ -233,7 +233,7 @@ jobs:
           owner: TauCetiProject
           repositories: TauCeti
           permission-issues: write
-          permission-pull-requests: read
+          permission-pull-requests: write
           permission-contents: read
       - uses: actions/checkout@v4
         with:
