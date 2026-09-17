@@ -5,10 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Kernel
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.MapsInfinity
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Place
--- Proof-only: membership in the ideal of a point, as a span of two polynomials.
-import Mathlib.RingTheory.Polynomial.Ideal
 -- Proof-only: the non-vanishing of the division polynomial off the kernel.
 import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Coprimality
 -- Proof-only: the two coordinate identities relating `P` and `n • P`.
@@ -19,8 +17,6 @@ import TauCeti.FieldTheory.FunctionField.AffineModel.Prime
 import TauCeti.RingTheory.Valuation.IsTrivialOn
 -- Proof-only: a valuation with no pole at `x` is bounded on the coordinate ring.
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.CoordinateRingIntegral
--- Proof-only: `[n]*x` is nonconstant, and the coordinate-ring form of the pullback on `x`.
-import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Degree
 -- Proof-only: normalization, which turns the restricted valuation into a surjective one.
 import TauCeti.RingTheory.Valuation.Discrete.Normalize
 -- Proof-only: the centre of a bounded valuation on a Dedekind domain.
@@ -110,11 +106,9 @@ private theorem valuation_pointPlace_mulByIntY_sub_lt_one {x y : F} (h : W.toAff
     congr 1
   have hden : (CoordinateRing.pointPlace h.left).intValuation
       (CoordinateRing.mk W.toAffine ((W.ψ n) ^ 3)) = 1 := by
-    rcases eq_or_lt_of_le (HeightOneSpectrum.intValuation_le_one _
-      (CoordinateRing.mk W.toAffine ((W.ψ n) ^ 3))) with heq | hlt
-    · exact heq
-    · exact absurd ((HeightOneSpectrum.intValuation_lt_one_iff_mem _ _).1 hlt)
-        (by rw [CoordinateRing.mk_mem_pointPlace_iff]; simpa [evalEval] using pow_ne_zero 3 hψ)
+    refine HeightOneSpectrum.intValuation_eq_one_iff.mpr ?_
+    rw [CoordinateRing.mk_mem_pointPlace_iff]
+    simpa [evalEval] using pow_ne_zero 3 hψ
   rw [hrw, map_div₀]
   simp only [HeightOneSpectrum.valuation_of_algebraMap, hden, div_one]
   refine (HeightOneSpectrum.intValuation_lt_one_iff_mem _ _).2 ?_
@@ -150,11 +144,9 @@ private theorem valuation_pointPlace_mulByIntX_sub_lt_one {x y : F} (h : W.toAff
     congr 2
   have hden : (CoordinateRing.pointPlace h.left).intValuation
       (CoordinateRing.mk W.toAffine (C (W.ΨSq n))) = 1 := by
-    rcases eq_or_lt_of_le (HeightOneSpectrum.intValuation_le_one _
-      (CoordinateRing.mk W.toAffine (C (W.ΨSq n)))) with heq | hlt
-    · exact heq
-    · exact absurd ((HeightOneSpectrum.intValuation_lt_one_iff_mem _ _).1 hlt)
-        (by rw [CoordinateRing.mk_mem_pointPlace_iff]; simpa only [evalEval_C] using hΨ)
+    refine HeightOneSpectrum.intValuation_eq_one_iff.mpr ?_
+    rw [CoordinateRing.mk_mem_pointPlace_iff]
+    simpa only [evalEval_C] using hΨ
   rw [hrw, map_div₀]
   simp only [HeightOneSpectrum.valuation_of_algebraMap, hden, div_one]
   refine (HeightOneSpectrum.intValuation_lt_one_iff_mem _ _).2 ?_
@@ -172,10 +164,7 @@ private theorem valuation_pointPlace_mulByIntX_le_one {x y : F}
     (CoordinateRing.pointPlace h).valuation W.toAffine.FunctionField (mulByIntX W n) ≤ 1 := by
   have hone : (CoordinateRing.pointPlace h).intValuation
       (CoordinateRing.mk W.toAffine (C (W.ΨSq n))) = 1 := by
-    rcases eq_or_lt_of_le (HeightOneSpectrum.intValuation_le_one _
-      (CoordinateRing.mk W.toAffine (C (W.ΨSq n)))) with heq | hlt
-    · exact heq
-    · exact absurd ((HeightOneSpectrum.intValuation_lt_one_iff_mem _ _).1 hlt) hΨ
+    exact HeightOneSpectrum.intValuation_eq_one_iff.mpr hΨ
   rw [mulByIntX_def, phiFunctionField_def, psiFunctionField_sq, map_div₀]
   simp only [HeightOneSpectrum.valuation_of_algebraMap]
   rw [hone, div_one]
@@ -195,7 +184,7 @@ private theorem comap_algebraMap_coordinateRing_le_one {x y : F}
         (CoordinateRing.pointPlace h.left)).isTrivialOn
   refine Valuation.algebraMap_coordinateRing_le_one _ ?_ r
   rw [Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
-    fieldPullback_mulByIntIsogeny_genericX]
+    ← WeierstrassCurve.Affine.genericX_eq_algebraMap, fieldPullback_mulByIntIsogeny_genericX]
   refine valuation_pointPlace_mulByIntX_le_one W h.left ?_
   rw [CoordinateRing.mk_mem_pointPlace_iff]
   simpa only [evalEval_C] using eval_ΨSq_ne_zero_of_zsmul_ne_zero W h hP
@@ -247,11 +236,8 @@ theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n :
     comap_algebraMap_coordinateRing_le_one W h hn hP0
   set w := Valuation.normalization u with hwdef
   have hEq : w.IsEquiv u := Valuation.isEquiv_normalization u
-  have hord : Valuation.ord u z ≠ 0 := fun h0 ↦ hz1 (by
-    have hexp := (Valuation.ord_eq_iff_valuation_eq_exp_neg u ((u.ne_zero_iff).mp hz0)).mp h0
-    simpa using hexp)
   have hsurj : Function.Surjective w :=
-    Valuation.normalization_surjective u (Valuation.ordIndex_pos u hord).ne'
+    Valuation.normalization_surjective u (Valuation.ordIndex_ne_zero_of_isNontrivial u)
   have hRw : ∀ r : W.toAffine.CoordinateRing,
       w (algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField r) ≤ 1 :=
     fun r ↦ hEq.le_one_iff_le_one.mpr (hR r)

@@ -8,6 +8,9 @@ module
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Eval
 public import Mathlib.LinearAlgebra.Dimension.FreeAndStrongRankCondition
 
+-- Proof-only: membership in the ideal of a point, as a span of two polynomials.
+import Mathlib.RingTheory.Polynomial.Ideal
+
 /-!
 # Ideals of points of a Weierstrass curve
 
@@ -22,6 +25,8 @@ ideal of a point.
 
 * `WeierstrassCurve.Affine.CoordinateRing.XYIdeal_ne_bot`: `XYIdeal W x y` is nonzero, over
   any nontrivial commutative base.
+* `WeierstrassCurve.Affine.CoordinateRing.mk_mem_XYIdeal_iff`: a class lies in the ideal of a
+  point exactly when its representative vanishes there.
 * `WeierstrassCurve.Affine.CoordinateRing.XYIdeal_isMaximal`: `XYIdeal W x y` is maximal
   for any `y : F[X]` solving the Weierstrass equation at `x`, matching the generality of
   `XYIdeal` and `quotientXYIdealEquiv` themselves.
@@ -101,6 +106,35 @@ lemma _root_.WeierstrassCurve.Affine.CoordinateRing.XYIdeal_ne_bot
   exact CoordinateRing.XClass_ne_zero x hmem
 
 end CommRing
+
+section Membership
+
+variable {R : Type*} [CommRing R] {W : _root_.WeierstrassCurve.Affine R} {x : R}
+
+/-- **A class lies in the ideal of a point exactly when its representative vanishes there.**
+The ideal `⟨X - x, Y - y⟩` collects the classes of the polynomials that vanish at `(x, y)`. -/
+@[simp]
+theorem _root_.WeierstrassCurve.Affine.CoordinateRing.mk_mem_XYIdeal_iff {y : R}
+    (h : W.Equation x y) (p : R[X][Y]) :
+    CoordinateRing.mk W p ∈ CoordinateRing.XYIdeal W x (C y) ↔ p.evalEval x y = 0 := by
+  -- `XYIdeal` is the image of the polynomial span, whose membership Mathlib characterises
+  have hmap : CoordinateRing.XYIdeal W x (C y) =
+      Ideal.map (CoordinateRing.mk W) (Ideal.span {C (X - C x), (Y : R[X][Y]) - C (C y)}) := by
+    simp only [CoordinateRing.XYIdeal, CoordinateRing.XClass, CoordinateRing.YClass,
+      ← Set.image_pair, ← Ideal.map_span]
+  have hker : RingHom.ker (CoordinateRing.mk W) = Ideal.span {W.polynomial} := by
+    ext q
+    rw [RingHom.mem_ker, Ideal.mem_span_singleton]
+    exact AdjoinRoot.mk_eq_zero
+  -- the Weierstrass polynomial vanishes at the point, so it is already inside the span
+  have hpoly : W.polynomial ∈ Ideal.span {C (X - C x), (Y : R[X][Y]) - C (C y)} :=
+    mem_span_C_X_sub_C_X_sub_C_iff_eval_eval_eq_zero.mpr h
+  rw [hmap, ← Ideal.mem_comap, Ideal.comap_map_of_surjective _ AdjoinRoot.mk_surjective,
+    ← RingHom.ker_eq_comap_bot, hker,
+    sup_eq_left.mpr ((Ideal.span_singleton_le_iff_mem _).mpr hpoly),
+    mem_span_C_X_sub_C_X_sub_C_iff_eval_eval_eq_zero]
+
+end Membership
 
 variable {F : Type*} [Field F] {W : _root_.WeierstrassCurve.Affine F} {x : F}
 

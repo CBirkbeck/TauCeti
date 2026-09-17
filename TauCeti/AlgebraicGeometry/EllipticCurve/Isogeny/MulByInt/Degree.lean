@@ -22,10 +22,6 @@ its index as `n²` by way of the intermediate tower `F(Φₙ/ΨSqₙ) ⊆ F(x) �
 
 * `TauCeti.Isogeny.fieldPullback_mulByIntIsogeny_X`: the function-field pullback of `[n]` sends
   the affine coordinate to `Φₙ / ΨSqₙ`, read in `F(x)` rather than in the coordinate ring.
-* `TauCeti.Isogeny.fieldPullback_mulByIntIsogeny_genericX`: the same, read in the coordinate ring
-  as `mulByIntX` rather than in `F(x)`.
-* `TauCeti.Isogeny.mulByIntX_sub_algebraMap_ne_zero`: `[n]*x` is not a constant, the pullback
-  being injective and the affine coordinate transcendental.
 * `TauCeti.Isogeny.degree_mulByIntIsogeny`: `deg [n] = n²`, for an `n` whose division polynomial
   does not vanish at the generic point, and
   `TauCeti.Isogeny.degree_mulByIntIsogenyOfNeZero` for every `n ≠ 0`, that hypothesis being
@@ -63,35 +59,6 @@ theorem fieldPullback_mulByIntIsogeny_X [W.IsElliptic] {n : ℤ}
     phiFunctionField_eq_algebraMap, psiFunctionField_sq,
     WeierstrassCurve.Affine.CoordinateRing.mk_C_eq_algebraMap,
     ← IsScalarTower.algebraMap_apply, map_div₀]
-
-/-- **The pullback of `[n]` sends the affine coordinate to `mulByIntX`**, the coordinate-ring
-form of `fieldPullback_mulByIntIsogeny_X`. This is the shape the valuation-theoretic arguments
-want, the other being the one the degree tower wants. -/
-theorem fieldPullback_mulByIntIsogeny_genericX [W.IsElliptic] {n : ℤ}
-    (hn : psiFunctionField W n ≠ 0) :
-    (mulByIntIsogeny W hn).fieldPullback
-        (algebraMap F[X] W.toAffine.FunctionField Polynomial.X) = mulByIntX W n := by
-  rw [IsScalarTower.algebraMap_apply F[X] W.toAffine.CoordinateRing W.toAffine.FunctionField,
-    fieldPullback_algebraMap, mulByIntIsogeny_pullback, AdjoinRoot.algebraMap_eq,
-    mulByIntPullback_X]
-
-/-- **`[n]*x` is not a constant.** The function-field pullback is injective and the affine
-coordinate is transcendental over the base, so the image of the coordinate differs from every
-element of the base field. -/
-theorem mulByIntX_sub_algebraMap_ne_zero [W.IsElliptic] {n : ℤ}
-    (hn : psiFunctionField W n ≠ 0) (x : F) :
-    mulByIntX W n - algebraMap F W.toAffine.FunctionField x ≠ 0 := by
-  rw [sub_ne_zero]
-  intro heq
-  have hinj : Function.Injective (mulByIntIsogeny W hn).fieldPullback :=
-    (mulByIntIsogeny W hn).fieldPullback.toRingHom.injective
-  have hX : (mulByIntIsogeny W hn).fieldPullback
-      (algebraMap F[X] W.toAffine.FunctionField Polynomial.X) =
-      (mulByIntIsogeny W hn).fieldPullback (algebraMap F W.toAffine.FunctionField x) := by
-    rw [fieldPullback_mulByIntIsogeny_genericX, heq, AlgHom.commutes]
-  have hgen := hinj hX
-  rw [← WeierstrassCurve.Affine.genericX_eq_algebraMap] at hgen
-  exact W.toAffine.transcendental_genericX (hgen ▸ isAlgebraic_algebraMap x)
 
 /-- **`deg [n] = n²`** (Silverman III.6.4(a)). The pullback of `[n]` sends the affine coordinate
 to `Φₙ / ΨSqₙ`, so its image is the field the tower
