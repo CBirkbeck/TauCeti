@@ -15,8 +15,10 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Separability
 # The kernel of `[n]` has `n ²` points over an algebraically closed field
 
 `Isogeny.ker` counts only the base field's points, so its order equals the degree exactly when the
-geometric kernel is rational. Over an algebraically closed field it is, and `[n]` is separable as
-soon as `n` is invertible there, so the two obstructions both vanish and `#ker [n] = n ²`.
+geometric kernel is rational **and** the isogeny is separable: an inseparable isogeny has strictly
+fewer geometric kernel points than its degree even over an algebraically closed field. Over an
+algebraically closed field the first holds, and `[n]` is separable as soon as `n` is invertible
+there, so both obstructions vanish and `#ker [n] = n ²`.
 
 The count is made on embeddings, as for `1 − π_q`: an isogeny here has no map on points. Two
 embeddings of `K(W)` over the pulled-back field move the tautological point of `[n]`, which is
@@ -61,9 +63,7 @@ private theorem zsmul_map_sub_map_genericPoint_eq_zero {Ω : Type*} [Field Ω] [
   have key := CoordinatePullback.map_tautologicalPoint_eq_of_apply_eq
     (mulByIntIsogeny W hn).pullback σ τ (h _ (hmem _)) (h _ (hmem _))
   rw [mulByIntIsogeny_pullback, tautologicalPoint_mulByIntPullback, map_zsmul, map_zsmul] at key
-  have hd : n • (Point.map σ (genericPoint W) - Point.map τ (genericPoint W)) =
-      n • Point.map σ (genericPoint W) - n • Point.map τ (genericPoint W) := by module
-  rw [hd, key, sub_self]
+  rw [zsmul_sub, key, sub_self]
 
 omit [DecidableEq F] [W.IsElliptic] in
 /-- A division polynomial that does not vanish forces a nonzero index: `ψ₀ = 0`. -/
