@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.KnotTheory.PDCode.Basic
-public import TauCeti.GroupTheory.Perm.OrbitCount
+public import TauCeti.GroupTheory.Perm.OrbitCount.Basic
 import TauCeti.GroupTheory.Perm.SumCongr
 
 /-! # Components of PD-codes
@@ -92,6 +92,10 @@ half-edges. -/
 noncomputable def crossingComponentCount (D : PDCode n) : ℕ :=
   orbitCount D.componentPerm / 2
 
+/-- The number of crossing-bearing components is half the number of directed traversal orbits. -/
+theorem crossingComponentCount_def (D : PDCode n) :
+    D.crossingComponentCount = orbitCount D.componentPerm / 2 := (rfl)
+
 /-- A code with no crossing visits has no crossing-bearing components. -/
 @[simp] theorem crossingComponentCount_eq_zero (D : PDCode 0) :
     D.crossingComponentCount = 0 := by
@@ -109,6 +113,25 @@ noncomputable def crossingComponentCount (D : PDCode n) : ℕ :=
     (half : Equiv.Perm (Fin (4 * n))) (cross : Equiv.Perm (Fin n)) :
     (D.relabel half cross).crossingComponentCount = D.crossingComponentCount := by
   simp [crossingComponentCount]
+
+/-- The total number of components, including crossing-free circles. -/
+noncomputable abbrev componentCount (D : PDCode n) : ℕ :=
+  D.crossingComponentCount + D.crossinglessComponentCount
+
+/-- The total component count is the sum of crossing-bearing and crossing-free components. -/
+theorem componentCount_eq (D : PDCode n) :
+    D.componentCount = D.crossingComponentCount + D.crossinglessComponentCount := rfl
+
+/-- Mirroring preserves the total number of components. -/
+@[simp] theorem componentCount_mirror (D : PDCode n) :
+    D.mirror.componentCount = D.componentCount := by
+  simp [componentCount]
+
+/-- Relabelling preserves the total number of components. -/
+@[simp] theorem componentCount_relabel (D : PDCode n)
+    (half : Equiv.Perm (Fin (4 * n))) (cross : Equiv.Perm (Fin n)) :
+    (D.relabel half cross).componentCount = D.componentCount := by
+  simp [componentCount]
 
 end PDCode
 
