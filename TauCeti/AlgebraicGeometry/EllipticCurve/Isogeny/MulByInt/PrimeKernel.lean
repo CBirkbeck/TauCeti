@@ -11,10 +11,11 @@ public import Mathlib.Algebra.Module.ZMod
 /-!
 # The kernel of `[n]` is a `ZMod n`-module
 
-Every point of `ker [n]` is killed by `n`, which is exactly what makes the kernel a module over
-`ZMod n`. Nothing about `n` beyond its not vanishing enters, so that is where the structure is
-built; for a prime `ℓ` the non-vanishing hypothesis is supplied by primality rather than assumed,
-and the module structure is the general one read at `n = ℓ`.
+`ker [n]` is the `n`-torsion subgroup, and Mathlib makes the `n`-torsion of an additive group a
+`ZMod n`-module; transporting that along the equality is all there is to it. Nothing about `n`
+beyond its not vanishing enters, so that is where the structure is built; for a prime `ℓ` the
+non-vanishing hypothesis is supplied by primality rather than assumed, and the module structure is
+the general one read at `n = ℓ`.
 
 Nothing here assumes anything about the base field beyond its being a field — no algebraic
 closure, and no condition on the characteristic. Those enter only when the kernel's cardinality is
@@ -27,10 +28,6 @@ computed, which is why they are not imposed at this layer.
   `Module.finrank (ZMod n) (mulByIntIsogenyOfNeZero W hn).ker` never names it.
 * `TauCeti.Isogeny.mulByPrimeIsogeny`: multiplication by a prime `ℓ`, with the division
   polynomial's non-vanishing supplied by primality rather than assumed.
-
-## Main results
-
-* `TauCeti.Isogeny.nsmul_eq_zero_of_mem_ker_mulByIntIsogenyOfNeZero`: the kernel is killed by `n`.
 
 ## References
 
@@ -47,21 +44,13 @@ variable {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve.Affine F) [
 
 variable {n : ℕ}
 
-/-- **Every point of `ker [n]` is killed by `n`.** -/
-@[simp]
-theorem nsmul_eq_zero_of_mem_ker_mulByIntIsogenyOfNeZero (hn : (n : ℤ) ≠ 0)
-    (x : (mulByIntIsogenyOfNeZero W hn).ker) : n • x = 0 := by
-  have hx : ((n : ℤ)) • (x : (W⁄F).toAffine.Point) = 0 :=
-    (mem_ker_mulByIntIsogenyOfNeZero_iff W hn).1 x.2
-  have : ((n : ℤ)) • x = 0 := Subtype.ext (by simpa using hx)
-  simpa using this
-
-/-- **The `ZMod n`-module structure on `ker [n]`**, from every point being killed by `n`. It is a
-global instance, so typeclass synthesis supplies it and a consumer writing
+/-- **The `ZMod n`-module structure on `ker [n]`**, transported from Mathlib's `n`-torsion
+module structure along `ker_mulByIntIsogeny_eq_torsionBy`. It is a global instance, so typeclass
+synthesis supplies it and a consumer writing
 `Module.finrank (ZMod n) (mulByIntIsogenyOfNeZero W hn).ker` never names it. -/
 noncomputable instance kerZModModule (hn : (n : ℤ) ≠ 0) :
     Module (ZMod n) (mulByIntIsogenyOfNeZero W hn).ker :=
-  AddCommGroup.zmodModule (nsmul_eq_zero_of_mem_ker_mulByIntIsogenyOfNeZero W hn)
+  ker_mulByIntIsogeny_eq_torsionBy W _ ▸ AddSubgroup.torsionBy.zmodModule
 
 variable {l : ℕ} [hl : Fact l.Prime]
 
