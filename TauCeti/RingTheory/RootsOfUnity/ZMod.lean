@@ -21,10 +21,10 @@ generator needs.
 ## Main results
 
 * `IsPrimitiveRoot.zmodEquivRootsOfUnity`: `ℤ/k ≃+ Additive (μ_k)`, given a primitive `k`-th root.
-* `IsPrimitiveRoot.coe_zmodEquivRootsOfUnity_intCast` and
-  `IsPrimitiveRoot.coe_zmodEquivRootsOfUnity_natCast`: it sends `i` to `ζ ^ i`.
-* `IsPrimitiveRoot.zmodEquivRootsOfUnity_symm_zpow` and
-  `IsPrimitiveRoot.zmodEquivRootsOfUnity_symm_pow`: its inverse sends `ζ ^ i` back to `i`.
+* `IsPrimitiveRoot.coe_zmodEquivRootsOfUnity_apply_intCast` and
+  `IsPrimitiveRoot.coe_zmodEquivRootsOfUnity_apply_natCast`: it sends `i` to `ζ ^ i`.
+* `IsPrimitiveRoot.zmodEquivRootsOfUnity_symm_apply_zpow` and
+  `IsPrimitiveRoot.zmodEquivRootsOfUnity_symm_apply_pow`: its inverse sends `ζ ^ i` back to `i`.
 
 ## Provenance
 
@@ -54,32 +54,32 @@ noncomputable def zmodEquivRootsOfUnity (h : IsPrimitiveRoot ζ k) :
 /-- **The equivalence sends the class of an integer `i` to `ζ ^ i`**, which determines it on all
 of `ZMod k` since every class is the class of an integer. -/
 @[simp]
-theorem coe_zmodEquivRootsOfUnity_intCast (h : IsPrimitiveRoot ζ k) (i : ℤ) :
+theorem coe_zmodEquivRootsOfUnity_apply_intCast (h : IsPrimitiveRoot ζ k) (i : ℤ) :
     ((h.zmodEquivRootsOfUnity (i : ZMod k)).toMul : Rˣ) = ζ ^ i := by
   simp [zmodEquivRootsOfUnity]
 
 /-- **The equivalence sends the class of a natural number `i` to `ζ ^ i`**, the natural-exponent
-reading of `coe_zmodEquivRootsOfUnity_intCast`. -/
+reading of `coe_zmodEquivRootsOfUnity_apply_intCast`. -/
 @[simp]
-theorem coe_zmodEquivRootsOfUnity_natCast (h : IsPrimitiveRoot ζ k) (i : ℕ) :
+theorem coe_zmodEquivRootsOfUnity_apply_natCast (h : IsPrimitiveRoot ζ k) (i : ℕ) :
     ((h.zmodEquivRootsOfUnity (i : ZMod k)).toMul : Rˣ) = ζ ^ i := by
-  simpa using coe_zmodEquivRootsOfUnity_intCast h i
+  simpa using coe_zmodEquivRootsOfUnity_apply_intCast h i
 
 /-- **The inverse sends `ζ ^ i` back to the class of `i`**, for an integer exponent. -/
 @[simp]
-theorem zmodEquivRootsOfUnity_symm_zpow (h : IsPrimitiveRoot ζ k) (i : ℤ)
+theorem zmodEquivRootsOfUnity_symm_apply_zpow (h : IsPrimitiveRoot ζ k) (i : ℤ)
     (hi : ζ ^ i ∈ rootsOfUnity k R) :
     h.zmodEquivRootsOfUnity.symm (Additive.ofMul ⟨ζ ^ i, hi⟩) = (i : ZMod k) :=
   (AddEquiv.symm_apply_eq _).2 (Additive.toMul.injective (Subtype.ext
-    (coe_zmodEquivRootsOfUnity_intCast h i).symm))
+    (coe_zmodEquivRootsOfUnity_apply_intCast h i).symm))
 
 /-- **The inverse sends `ζ ^ i` back to the class of `i`**, for a natural exponent. -/
 @[simp]
-theorem zmodEquivRootsOfUnity_symm_pow (h : IsPrimitiveRoot ζ k) (i : ℕ)
+theorem zmodEquivRootsOfUnity_symm_apply_pow (h : IsPrimitiveRoot ζ k) (i : ℕ)
     (hi : ζ ^ i ∈ rootsOfUnity k R) :
     h.zmodEquivRootsOfUnity.symm (Additive.ofMul ⟨ζ ^ i, hi⟩) = (i : ZMod k) :=
   (AddEquiv.symm_apply_eq _).2 (Additive.toMul.injective (Subtype.ext
-    (coe_zmodEquivRootsOfUnity_natCast h i).symm))
+    (coe_zmodEquivRootsOfUnity_apply_natCast h i).symm))
 
 end IsPrimitiveRoot
 
