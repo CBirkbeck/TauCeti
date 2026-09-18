@@ -43,6 +43,16 @@ already use. A caller supplies it with `let _ := φ.fieldPullback.toRingHom.toAl
 * `TauCeti.Isogeny.divisorPullback_principal`: **it carries `div z` to the divisor of the
   pulled-back function**, and `TauCeti.Isogeny.linearlyEquivalent_divisorPullback` that it
   respects linear equivalence.
+* `TauCeti.Isogeny.divisorPullback_comp`: **it is contravariantly functorial** — pulling back
+  along a composite is pulling back twice, in the reverse order.
+* `TauCeti.Isogeny.divisorPullbackClassGroup` and
+  `TauCeti.Isogeny.divisorPullbackClassGroup_divisorClass`: the induced map on divisor classes,
+  and its value on the class of a divisor.
+
+There is no identity law here: `Divisor.conorm` has no identity lemma, and supplying one needs
+`Place.restrict_self` and `Place.ramificationIdx_self`, which in turn need that the normalization
+of a surjective valuation is itself and that its order index is `1` — none of which exist. That is
+a chain of general `Valuation`/`Place` lemmas, so it belongs in its own PR rather than here.
 
 Each is the corresponding `TauCeti.Divisor.conorm` result read through the isogeny; the definition
 is opaque outside this module, so the wrappers are what a consumer has.
@@ -167,6 +177,59 @@ theorem linearlyEquivalent_divisorPullback {A B : Divisor F W₂.FunctionField}
   haveI := isScalarTower_of_algebraMap_eq_fieldPullback φ h
   haveI := φ.finiteDimensional_functionField h
   Divisor.linearlyEquivalent_conorm F W₁.FunctionField W₂.isFunctionField W₁.isFunctionField hAB
+
+/-! ### Functoriality and divisor classes -/
+
+section Comp
+
+variable {W₃ : WeierstrassCurve.Affine F} (ψ : Isogeny W₂ W₃)
+  [Algebra W₃.FunctionField W₂.FunctionField] [Algebra W₃.FunctionField W₁.FunctionField]
+  (hψ : ∀ z, algebraMap W₃.FunctionField W₂.FunctionField z = ψ.fieldPullback z)
+  (hc : ∀ z, algebraMap W₃.FunctionField W₁.FunctionField z = (ψ.comp φ).fieldPullback z)
+
+include h hψ hc in
+/-- The three pullbacks of a composite form a scalar tower, `F(W₃) ⊆ F(W₂) ⊆ F(W₁)`. -/
+private theorem isScalarTower_of_comp :
+    IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
+  IsScalarTower.of_algebraMap_eq fun z ↦ by
+    rw [hc z, comp_fieldPullback, AlgHom.comp_apply, ← hψ z, ← h (algebraMap _ _ z)]
+
+/-- **Pulling back along a composite is pulling back twice**, in the reverse order (Stichtenoth,
+Definition 3.1.8): the conorm is transitive in a tower, and the three function-field embeddings
+form one. -/
+@[simp]
+theorem divisorPullback_comp (D : Divisor F W₃.FunctionField) :
+    φ.divisorPullback h (ψ.divisorPullback hψ D) = (ψ.comp φ).divisorPullback hc D :=
+  haveI := isScalarTower_of_algebraMap_eq_fieldPullback φ h
+  haveI := isScalarTower_of_algebraMap_eq_fieldPullback ψ hψ
+  haveI := isScalarTower_of_algebraMap_eq_fieldPullback (ψ.comp φ) hc
+  haveI := isScalarTower_of_comp φ h ψ hψ hc
+  haveI := φ.finiteDimensional_functionField h
+  haveI := ψ.finiteDimensional_functionField hψ
+  Divisor.conorm_conorm (k₀ := F) (F₀ := W₃.FunctionField) (k₁ := F) (F₁ := W₂.FunctionField)
+    (k₂ := F) (F₂ := W₁.FunctionField) D
+
+end Comp
+
+/-- **The pullback on divisor classes**: the pullback carries principal divisors to principal
+divisors, so it descends to a homomorphism `Cl(F(W₂)) →+ Cl(F(W₁))`. -/
+noncomputable def divisorPullbackClassGroup :
+    (Place.orderSystem W₂.isFunctionField).ClassGroup →+
+      (Place.orderSystem W₁.isFunctionField).ClassGroup :=
+  haveI := isScalarTower_of_algebraMap_eq_fieldPullback φ h
+  haveI := φ.finiteDimensional_functionField h
+  Divisor.conormClassGroup F W₁.FunctionField W₂.isFunctionField W₁.isFunctionField
+
+/-- **The pullback on classes is the pullback on divisors**, which is what makes the descent
+usable: a class given by a divisor is carried to the class of its pullback. -/
+@[simp]
+theorem divisorPullbackClassGroup_divisorClass (D : Divisor F W₂.FunctionField) :
+    φ.divisorPullbackClassGroup h ((Place.orderSystem W₂.isFunctionField).divisorClass D) =
+      (Place.orderSystem W₁.isFunctionField).divisorClass (φ.divisorPullback h D) :=
+  haveI := isScalarTower_of_algebraMap_eq_fieldPullback φ h
+  haveI := φ.finiteDimensional_functionField h
+  Divisor.conormClassGroup_divisorClass F W₁.FunctionField W₂.isFunctionField
+    W₁.isFunctionField D
 
 end TauCeti.Isogeny
 
