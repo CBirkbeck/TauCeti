@@ -262,7 +262,11 @@ theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n :
 /-- **The fibre of `[n]` over a place is exactly the `[n]`-preimage of its point.** For `P` off
 the kernel of `[n]`, the place of `P` restricts along `[n]` to the place of `T` precisely when
 `n • P = T`. -/
-@[simp]
+-- Not `@[simp]`: the left-hand side is not in simp normal form, because
+-- `AlgHom.toRingHom_eq_coe` rewrites `fieldPullback.toRingHom` to the coercion, and `simpNF`
+-- rejects an attribute whose left-hand side simp would itself rewrite. The same obstruction is
+-- recorded on `CoordinateRing.mem_XYIdeal_iff_evalAlgHom_eq_zero`, which rests on the same
+-- `toRingHom` spelling.
 theorem isEquiv_comap_pointPlace_iff {x y : F} (h : W.toAffine.Nonsingular x y) {n : ℤ}
     {x' y' : F} (h' : W.toAffine.Nonsingular x' y')
     (hP0 : n • Affine.Point.some x y h ≠ 0) :
