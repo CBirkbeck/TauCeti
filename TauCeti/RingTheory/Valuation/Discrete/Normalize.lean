@@ -226,6 +226,7 @@ theorem valuationSubring_normalization :
 
 /-- **A surjective valuation has index `1`**: it already attains the order `1`, and the index
 divides every order attained. -/
+@[simp]
 theorem ordIndex_eq_one_of_surjective (hv : Function.Surjective v) : ordIndex v = 1 := by
   obtain ⟨f, hf⟩ := ord_surjective v hv 1
   have hdvd := ordIndex_dvd_ord v f
