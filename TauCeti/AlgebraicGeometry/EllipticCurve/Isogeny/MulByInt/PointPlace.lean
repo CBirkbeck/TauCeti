@@ -66,14 +66,42 @@ group law, where this one takes the centre of the normalized restriction on the 
 public section
 
 open Polynomial WeierstrassCurve WeierstrassCurve.Affine IsDedekindDomain
-open scoped Polynomial.Bivariate
+open scoped Polynomial.Bivariate WithZero
 
 namespace TauCeti.Isogeny
 
 variable {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F) [W.IsElliptic]
-  [IsDedekindDomain W.toAffine.CoordinateRing]
 
-omit [W.IsElliptic] in
+/-- Ellipticity already makes the coordinate ring integrally closed, hence a Dedekind domain.
+Deriving it here as a `local instance` — the pattern `Affine/FunctionField/PointPlace.lean` uses —
+keeps the assumption out of the exported signatures instead of making every caller supply it. -/
+local instance : IsDedekindDomain W.toAffine.CoordinateRing :=
+  have := WeierstrassCurve.Affine.isIntegrallyClosed_coordinateRing W.toAffine
+  W.toAffine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed
+
+omit [DecidableEq F] [W.IsElliptic] in
+/-- **Clearing the denominator of a coordinate difference.** A pulled-back coordinate is a quotient
+of coordinate-ring classes; subtracting a constant keeps the denominator and shifts the numerator by
+that constant times it. Both coordinate valuations below are this one identity, read off at the
+`x`- and the `y`-coordinate. -/
+private theorem sub_algebraMap_eq_div {a : W.toAffine.FunctionField} {p q : F[X][Y]}
+    (hq : algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField
+      (CoordinateRing.mk W.toAffine q) ≠ 0)
+    (ha : a = algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField
+        (CoordinateRing.mk W.toAffine p) /
+      algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField
+        (CoordinateRing.mk W.toAffine q))
+    (c : F) :
+    a - algebraMap F W.toAffine.FunctionField c =
+      algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField
+          (CoordinateRing.mk W.toAffine (p - C (C c) * q)) /
+        algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField
+          (CoordinateRing.mk W.toAffine q) := by
+  rw [ha, eq_div_iff hq, sub_mul, div_mul_cancel₀ _ hq,
+    IsScalarTower.algebraMap_apply F W.toAffine.CoordinateRing W.toAffine.FunctionField,
+    ← map_mul, ← map_sub]
+  congr 1
+
 /-- `[n]*y − y'` vanishes at `P` when `n • P = (x', y')`. -/
 private theorem valuation_pointPlace_mulByIntY_sub_lt_one {x y : F} (h : W.toAffine.Nonsingular x y)
     {n : ℤ} (hn : psiFunctionField W n ≠ 0) {x' y' : F} (h' : W.toAffine.Nonsingular x' y')
@@ -90,20 +118,12 @@ private theorem valuation_pointPlace_mulByIntY_sub_lt_one {x y : F} (h : W.toAff
   have hbne : algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField
       (CoordinateRing.mk W.toAffine ((W.ψ n) ^ 3)) ≠ 0 := by
     rw [map_pow, map_pow, ← psiFunctionField_def]; exact pow_ne_zero 3 hn
-  have hrw : mulByIntY W n - algebraMap F W.toAffine.FunctionField y' =
+  have hpsi3 : psiFunctionField W n ^ 3 =
       algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField
-          (CoordinateRing.mk W.toAffine (W.ω n - C (C y') * (W.ψ n) ^ 3)) /
-        algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField
-          (CoordinateRing.mk W.toAffine ((W.ψ n) ^ 3)) := by
-    have hpsi3 : psiFunctionField W n ^ 3 =
-        algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField
-          (CoordinateRing.mk W.toAffine ((W.ψ n) ^ 3)) := by
-      rw [map_pow, map_pow, ← psiFunctionField_def]
-    rw [mulByIntY_def, omegaFunctionField_def, hpsi3, eq_div_iff hbne, sub_mul,
-      div_mul_cancel₀ _ hbne,
-      IsScalarTower.algebraMap_apply F W.toAffine.CoordinateRing W.toAffine.FunctionField,
-      ← map_mul, ← map_sub]
-    congr 1
+        (CoordinateRing.mk W.toAffine ((W.ψ n) ^ 3)) := by
+    rw [map_pow, map_pow, ← psiFunctionField_def]
+  have hrw := sub_algebraMap_eq_div W (a := mulByIntY W n) (p := W.ω n) hbne
+    (by rw [mulByIntY_def, omegaFunctionField_def, hpsi3]) y'
   have hden : (CoordinateRing.pointPlace h.left).intValuation
       (CoordinateRing.mk W.toAffine ((W.ψ n) ^ 3)) = 1 := by
     refine HeightOneSpectrum.intValuation_eq_one_iff.mpr ?_
@@ -118,7 +138,6 @@ private theorem valuation_pointPlace_mulByIntY_sub_lt_one {x y : F} (h : W.toAff
   rw [← hid]; ring
 
 
-omit [W.IsElliptic] in
 /-- `[n]*x` takes the value `x'` at `P` when `n • P = (x', y')`. -/
 private theorem valuation_pointPlace_mulByIntX_sub_lt_one {x y : F} (h : W.toAffine.Nonsingular x y)
     {n : ℤ} (hn : psiFunctionField W n ≠ 0) {x' y' : F} (h' : W.toAffine.Nonsingular x' y')
@@ -130,18 +149,8 @@ private theorem valuation_pointPlace_mulByIntX_sub_lt_one {x y : F} (h : W.toAff
   have hbne : algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField
       (CoordinateRing.mk W.toAffine (C (W.ΨSq n))) ≠ 0 := by
     rw [← psiFunctionField_sq]; exact pow_ne_zero 2 hn
-  have hrw : mulByIntX W n - algebraMap F W.toAffine.FunctionField x' =
-      algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField
-          (CoordinateRing.mk W.toAffine (C (W.Φ n - C x' * W.ΨSq n))) /
-        algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField
-          (CoordinateRing.mk W.toAffine (C (W.ΨSq n))) := by
-    rw [mulByIntX_def, phiFunctionField_def, CoordinateRing.mk_φ, psiFunctionField_sq,
-      eq_div_iff hbne, sub_mul, div_mul_cancel₀ _ hbne,
-      IsScalarTower.algebraMap_apply F W.toAffine.CoordinateRing W.toAffine.FunctionField,
-      ← map_mul, ← map_sub]
-    congr 1
-    rw [C_sub, C_mul, map_sub, map_mul]
-    congr 2
+  have hrw := sub_algebraMap_eq_div W (a := mulByIntX W n) (p := C (W.Φ n)) hbne
+    (by rw [mulByIntX_def, phiFunctionField_def, CoordinateRing.mk_φ, psiFunctionField_sq]) x'
   have hden : (CoordinateRing.pointPlace h.left).intValuation
       (CoordinateRing.mk W.toAffine (C (W.ΨSq n))) = 1 := by
     refine HeightOneSpectrum.intValuation_eq_one_iff.mpr ?_
@@ -157,7 +166,7 @@ private theorem valuation_pointPlace_mulByIntX_sub_lt_one {x y : F} (h : W.toAff
 
 
 
-omit [W.IsElliptic] [DecidableEq F] in
+omit [DecidableEq F] in
 private theorem valuation_pointPlace_mulByIntX_le_one {x y : F}
     (h : W.toAffine.Equation x y) {n : ℤ}
     (hΨ : CoordinateRing.mk W.toAffine (C (W.ΨSq n)) ∉ (CoordinateRing.pointPlace h).asIdeal) :
@@ -190,6 +199,49 @@ private theorem comap_algebraMap_coordinateRing_le_one {x y : F}
   rw [CoordinateRing.mk_mem_pointPlace_iff h.left]
   simpa only [evalEval_C] using eval_ΨSq_ne_zero_of_zsmul_ne_zero W h hP
 
+omit [DecidableEq F] in
+/-- **A nontrivial valuation of the function field bounded by `1` on the coordinate ring is adic up
+to equivalence**: it is the adic valuation of the centre of its normalization, and that centre
+collects exactly the functions whose value drops below `1`. Normalizing is what makes the centre's
+adic valuation the valuation itself rather than merely equivalent to it. -/
+private theorem exists_heightOneSpectrum_isEquiv_of_le_one
+    {u : Valuation W.toAffine.FunctionField ℤᵐ⁰} [u.IsNontrivial]
+    (hR : ∀ r : W.toAffine.CoordinateRing,
+      u (algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField r) ≤ 1) :
+    ∃ Q : HeightOneSpectrum W.toAffine.CoordinateRing,
+      (Q.valuation W.toAffine.FunctionField).IsEquiv u ∧
+        ∀ r : W.toAffine.CoordinateRing, r ∈ Q.asIdeal ↔
+          u (algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField r) < 1 := by
+  have hEq : (Valuation.normalization u).IsEquiv u := Valuation.isEquiv_normalization u
+  have hsurj : Function.Surjective (Valuation.normalization u) :=
+    Valuation.normalization_surjective u (Valuation.ordIndex_ne_zero_of_isNontrivial u)
+  have hRw : ∀ r : W.toAffine.CoordinateRing,
+      Valuation.normalization u
+        (algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField r) ≤ 1 :=
+    fun r ↦ hEq.le_one_iff_le_one.mpr (hR r)
+  have : (Valuation.normalization u).IsNontrivial := Valuation.isNontrivial_of_surjective hsurj
+  refine ⟨Valuation.heightOneSpectrum W.toAffine.CoordinateRing (Valuation.normalization u) hRw,
+    ?_, fun r ↦ ?_⟩
+  · rw [Valuation.valuation_heightOneSpectrum hsurj hRw]
+    exact hEq
+  · rw [Valuation.asIdeal_heightOneSpectrum, Valuation.mem_centerIdeal]
+    simpa using hEq.lt_iff_lt (x := algebraMap _ _ r) (y := 1)
+
+omit [DecidableEq F] in
+/-- **A height-one prime containing both generators of the ideal of a point is that point's
+place**: the ideal of a point is maximal, so the containment cannot be strict. -/
+private theorem eq_pointPlace_of_mem_asIdeal {x' y' : F} (h' : W.toAffine.Nonsingular x' y')
+    (Q : HeightOneSpectrum W.toAffine.CoordinateRing)
+    (hmemX : CoordinateRing.XClass W.toAffine x' ∈ Q.asIdeal)
+    (hmemY : CoordinateRing.YClass W.toAffine (C y') ∈ Q.asIdeal) :
+    Q = CoordinateRing.pointPlace h'.left := by
+  have hle : CoordinateRing.XYIdeal W.toAffine x' (C y') ≤ Q.asIdeal := by
+    rw [CoordinateRing.XYIdeal, Ideal.span_le, Set.insert_subset_iff, Set.singleton_subset_iff]
+    exact ⟨hmemX, hmemY⟩
+  refine HeightOneSpectrum.ext ?_
+  rw [CoordinateRing.pointPlace_asIdeal,
+    (CoordinateRing.XYIdeal_isMaximal_of_equation h'.left).eq_of_le Q.isPrime.ne_top hle]
+
 /-- **The place of `P` restricts along `[n]` to the place of `n • P`.** -/
 theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n : ℤ}
     {x' y' : F} (h' : W.toAffine.Nonsingular x' y')
@@ -218,24 +270,10 @@ theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n :
   have hz0 : u z ≠ 0 := by
     rw [huz]; exact (Valuation.ne_zero_iff v).mpr (mulByIntX_sub_algebraMap_ne_zero W hn x')
   have : u.IsNontrivial := ⟨z, hz0, hz1⟩
-  have hR : ∀ r : W.toAffine.CoordinateRing,
-      u (algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField r) ≤ 1 :=
-    comap_algebraMap_coordinateRing_le_one W h hn hP0
-  set w := Valuation.normalization u with hwdef
-  have hEq : w.IsEquiv u := Valuation.isEquiv_normalization u
-  have hsurj : Function.Surjective w :=
-    Valuation.normalization_surjective u (Valuation.ordIndex_ne_zero_of_isNontrivial u)
-  have hRw : ∀ r : W.toAffine.CoordinateRing,
-      w (algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField r) ≤ 1 :=
-    fun r ↦ hEq.le_one_iff_le_one.mpr (hR r)
-  have hlt : ∀ z : W.toAffine.FunctionField, w z < 1 ↔ u z < 1 := fun z ↦ by
-    simpa using hEq.lt_iff_lt (x := z) (y := 1)
-  have : w.IsNontrivial := Valuation.isNontrivial_of_surjective hsurj
-  set Q := Valuation.heightOneSpectrum W.toAffine.CoordinateRing w hRw with hQdef
-  have hval : Q.valuation W.toAffine.FunctionField = w :=
-    Valuation.valuation_heightOneSpectrum hsurj hRw
+  obtain ⟨Q, hQu, hQmem⟩ := exists_heightOneSpectrum_isEquiv_of_le_one W
+    (comap_algebraMap_coordinateRing_le_one W h hn hP0)
   have hmemX : CoordinateRing.XClass W.toAffine x' ∈ Q.asIdeal := by
-    rw [hQdef, Valuation.asIdeal_heightOneSpectrum, Valuation.mem_centerIdeal, hlt, ← hzdef, huz]
+    rw [hQmem, ← hzdef, huz]
     exact valuation_pointPlace_mulByIntX_sub_lt_one W h hn h' hnP
   have hmemY : CoordinateRing.YClass W.toAffine (C y') ∈ Q.asIdeal := by
     have hY : (mulByIntIsogeny W hn).fieldPullback (algebraMap W.toAffine.CoordinateRing
@@ -244,18 +282,10 @@ theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n :
       rw [fieldPullback_algebraMap, mulByIntIsogeny_pullback, CoordinateRing.YClass,
         mulByIntPullback_mk]
       simp [evalEval]
-    rw [hQdef, Valuation.asIdeal_heightOneSpectrum, Valuation.mem_centerIdeal, hlt, hudef,
-      Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, hY]
+    rw [hQmem, Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, hY]
     exact valuation_pointPlace_mulByIntY_sub_lt_one W h hn h' hnP
-  have hle : CoordinateRing.XYIdeal W.toAffine x' (C y') ≤ Q.asIdeal := by
-    rw [CoordinateRing.XYIdeal, Ideal.span_le, Set.insert_subset_iff, Set.singleton_subset_iff]
-    exact ⟨hmemX, hmemY⟩
-  have hideal : CoordinateRing.XYIdeal W.toAffine x' (C y') = Q.asIdeal :=
-    (CoordinateRing.XYIdeal_isMaximal_of_equation h'.left).eq_of_le Q.isPrime.ne_top hle
-  have hQ : Q = CoordinateRing.pointPlace h'.left :=
-    HeightOneSpectrum.ext (by rw [CoordinateRing.pointPlace_asIdeal, ← hideal])
-  rw [← hQ, hval]
-  exact hEq.symm
+  rw [← eq_pointPlace_of_mem_asIdeal W h' Q hmemX hmemY]
+  exact hQu.symm
 
 /-- **The fibre of `[n]` over a place is exactly the `[n]`-preimage of its point.** For `P` off
 the kernel of `[n]`, the place of `P` restricts along `[n]` to the place of `T` precisely when

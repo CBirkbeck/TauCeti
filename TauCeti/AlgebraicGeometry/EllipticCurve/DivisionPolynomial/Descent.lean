@@ -87,6 +87,23 @@ open WeierstrassCurve
 
 variable {F : Type*} [Field F] [DecidableEq F] (E : WeierstrassCurve F)
 
+-- `≈` on `Fin 3 → F` is the Jacobian equivalence, so its `HasEquiv` instance must be in scope.
+open Jacobian in
+/-- **The division-polynomial triple at `P` represents `n • P`**, so it agrees with the affine
+representative of that value up to a unit scalar. Both coordinate identities below are one
+coordinate of this single equivalence. -/
+private theorem smulEval_equiv_of_zsmul {x y : F} (hns : E.toAffine.Nonsingular x y)
+    {x' y' : F} (hns' : E.toAffine.Nonsingular x' y') {n : ℤ}
+    (hnP : n • (Affine.Point.some _ _ hns) = Affine.Point.some _ _ hns') :
+    smulEval E x y n ≈ ![x', y', 1] := by
+  have hJac : n • Jacobian.Point.fromAffine (Affine.Point.some _ _ hns) =
+      Jacobian.Point.fromAffine (Affine.Point.some _ _ hns') := by
+    have h := congrArg (Jacobian.Point.toAffineAddEquiv E).symm hnP
+    rw [map_zsmul] at h
+    simpa using h
+  rw [Jacobian.Point.ext_iff, zsmul_point_eq_smulEval E hns n] at hJac
+  exact Quotient.exact hJac
+
 /-- **The `x`-coordinates of `P` and `n • P` satisfy `x' · ΨSqₙ(x) = Φₙ(x)`.**
 
 The division-polynomial formula for the `x`-coordinate of a multiple, cleared of its denominator,
@@ -98,17 +115,7 @@ theorem mul_eval_ΨSq_eq_eval_Φ_of_zsmul {x y : F} (hns : E.toAffine.Nonsingula
     {x' y' : F} (hns' : E.toAffine.Nonsingular x' y') {n : ℤ}
     (hnP : n • (Affine.Point.some _ _ hns) = Affine.Point.some _ _ hns') :
     x' * (E.ΨSq n).eval x = (E.Φ n).eval x := by
-  have hJac : n • Jacobian.Point.fromAffine (Affine.Point.some _ _ hns) =
-      Jacobian.Point.fromAffine (Affine.Point.some _ _ hns') := by
-    have h := congrArg (Jacobian.Point.toAffineAddEquiv E).symm hnP
-    rw [map_zsmul] at h
-    simpa using h
-  have hsmul := zsmul_point_eq_smulEval E hns n
-  -- `≈` on `Fin 3 → F` is the Jacobian equivalence, so its `HasEquiv` instance must be in scope.
-  -- The two triples represent the same Jacobian point, so they differ by a unit scalar.
-  open Jacobian in
-  have hequiv : smulEval E x y n ≈ ![x', y', 1] := by
-    rw [Jacobian.Point.ext_iff, hsmul] at hJac; exact Quotient.exact hJac
+  have hequiv := smulEval_equiv_of_zsmul E hns hns' hnP
   have hX := Jacobian.X_eq_of_equiv hequiv
   simp only [smulEval, Function.comp, Matrix.cons_val_two] at hX
   norm_num at hX
@@ -133,16 +140,7 @@ theorem mul_evalEval_ψ_cube_eq_evalEval_ω_of_zsmul {x y : F} (hns : E.toAffine
     {x' y' : F} (hns' : E.toAffine.Nonsingular x' y') {n : ℤ}
     (hnP : n • (Affine.Point.some _ _ hns) = Affine.Point.some _ _ hns') :
     y' * ((E.ψ n).evalEval x y) ^ 3 = (E.ω n).evalEval x y := by
-  have hJac : n • Jacobian.Point.fromAffine (Affine.Point.some _ _ hns) =
-      Jacobian.Point.fromAffine (Affine.Point.some _ _ hns') := by
-    have h := congrArg (Jacobian.Point.toAffineAddEquiv E).symm hnP
-    rw [map_zsmul] at h
-    simpa using h
-  have hsmul := zsmul_point_eq_smulEval E hns n
-  -- `≈` on `Fin 3 → F` is the Jacobian equivalence, so its `HasEquiv` instance must be in scope.
-  open Jacobian in
-  have hequiv : smulEval E x y n ≈ ![x', y', 1] := by
-    rw [Jacobian.Point.ext_iff, hsmul] at hJac; exact Quotient.exact hJac
+  have hequiv := smulEval_equiv_of_zsmul E hns hns' hnP
   have hY := Jacobian.Y_eq_of_equiv hequiv
   simp only [smulEval, Function.comp, Matrix.cons_val_two] at hY
   norm_num at hY

@@ -184,22 +184,13 @@ The ideal `⟨X - x, Y - y⟩` collects the classes of the polynomials that vani
 theorem _root_.WeierstrassCurve.Affine.CoordinateRing.mk_mem_XYIdeal_iff {y : R}
     (h : W.Equation x y) (p : R[X][Y]) :
     CoordinateRing.mk W p ∈ CoordinateRing.XYIdeal W x (C y) ↔ p.evalEval x y = 0 := by
-  -- `XYIdeal` is the image of the polynomial span, whose membership Mathlib characterises
-  have hmap : CoordinateRing.XYIdeal W x (C y) =
-      Ideal.map (CoordinateRing.mk W) (Ideal.span {C (X - C x), (Y : R[X][Y]) - C (C y)}) := by
-    simp only [CoordinateRing.XYIdeal, CoordinateRing.XClass, CoordinateRing.YClass,
-      ← Set.image_pair, ← Ideal.map_span]
-  have hker : RingHom.ker (CoordinateRing.mk W) = Ideal.span {W.polynomial} := by
-    ext q
-    rw [RingHom.mem_ker, Ideal.mem_span_singleton]
-    exact AdjoinRoot.mk_eq_zero
-  -- the Weierstrass polynomial vanishes at the point, so it is already inside the span
-  have hpoly : W.polynomial ∈ Ideal.span {C (X - C x), (Y : R[X][Y]) - C (C y)} :=
-    mem_span_C_X_sub_C_X_sub_C_iff_eval_eval_eq_zero.mpr h
-  rw [hmap, ← Ideal.mem_comap, Ideal.comap_map_of_surjective _ AdjoinRoot.mk_surjective,
-    ← RingHom.ker_eq_comap_bot, hker,
-    sup_eq_left.mpr ((Ideal.span_singleton_le_iff_mem _).mpr hpoly),
-    mem_span_C_X_sub_C_X_sub_C_iff_eval_eval_eq_zero]
+  -- `mem_XYIdeal_iff_evalAlgHom_eq_zero` and `evalAlgHom_mk` are stated over a base change; at the
+  -- trivial one they apply to `W` itself, but only through an equation rather than by unification,
+  -- which would have to unfold `baseChange` and does not terminate.
+  have hself : (W⁄R) = W := WeierstrassCurve.map_id W
+  have h' : (W⁄R).toAffine.Equation x y := by rw [hself]; exact h
+  rw [CoordinateRing.mem_XYIdeal_iff_evalAlgHom_eq_zero h', CoordinateRing.evalAlgHom_mk h' p]
+  simp only [Algebra.algebraMap_self, Polynomial.mapRingHom_id, Polynomial.map_id]
 
 end Membership
 
