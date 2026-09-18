@@ -9,7 +9,7 @@ public import Mathlib.Algebra.Homology.HomologySequenceLemmas
 public import Mathlib.AlgebraicTopology.SimplicialSet.Homology.Relative
 
 /-!
-# Naturality of the long exact sequence of a pair of simplicial sets
+# Naturality in relative simplicial homology
 
 For a pair of simplicial sets `P`, given by a monomorphism `X ⟶ Y`, Mathlib constructs the short
 exact sequence of chain complexes `0 ⟶ C(X) ⟶ C(Y) ⟶ C(Y, X) ⟶ 0` and the connecting morphism
@@ -17,10 +17,15 @@ exact sequence of chain complexes `0 ⟶ C(X) ⟶ C(Y) ⟶ C(Y, X) ⟶ 0` and th
 of these short exact sequences, and deduces that the connecting morphism is natural, so that it
 forms a natural transformation `SSetPair.homologyδNatTrans`.
 
+This file records that the maps from ambient to relative simplicial homology of a pair of
+simplicial sets are natural in the pair: the ambient-to-relative homology maps commute with
+morphisms of simplicial-set pairs.  This is the homological form of the naturality that Mathlib's
+`SSetPair.chainComplexFunctorπ` expresses on chains.
+
 The source is Eilenberg--Steenrod, *Foundations of Algebraic Topology*, Chapters I--III.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 
@@ -34,7 +39,6 @@ variable {C : Type*} [Category* C] [HasCoproducts.{w} C] [Preadditive C]
 
 /-- The morphism of chain complex sequences `C(X) ⟶ C(Y) ⟶ C(Y, X)` induced by a morphism of
 pairs of simplicial sets. -/
-@[no_expose]
 noncomputable def chainComplexShortComplexMap {P P' : SSetPair.{w}} (f : P ⟶ P') (R : C) :
     P.chainComplexShortComplex R ⟶ P'.chainComplexShortComplex R where
   τ₁ := SSet.chainComplexMap f.left R
@@ -75,7 +79,6 @@ lemma homologyδ_naturality {P P' : SSetPair.{w}} (f : P ⟶ P') (R : A) (n m : 
 /-- The connecting morphism `Hₙ(Y, X) ⟶ Hₘ(X)` of the long exact sequence of a pair of simplicial
 sets `X ⟶ Y`, for `m + 1 = n`, as a natural transformation from relative homology to the homology
 of the subobject. -/
-@[no_expose]
 noncomputable def homologyδNatTrans (R : A) (n m : ℕ) (h : m + 1 = n := by lia) :
     SSetPair.homologyFunctor.{w} R n ⟶
       (SSetPair.forget ⋙ Arrow.leftFunc) ⋙ SSet.homologyFunctor R m where
@@ -86,5 +89,18 @@ noncomputable def homologyδNatTrans (R : A) (n m : ℕ) (h : m + 1 = n := by li
 lemma homologyδNatTrans_app (R : A) (n m : ℕ) (h : m + 1 = n) (P : SSetPair.{w}) :
     (homologyδNatTrans R n m h).app P = P.homologyδ R n m h := by
   rw [homologyδNatTrans.eq_def]
+
+variable {D : Type*} [Category* D] [HasCoproducts.{w} D] [Preadditive D]
+  [CategoryWithHomology D]
+
+/-- The quotient maps from ambient to relative simplicial homology are natural in the pair. -/
+@[reassoc (attr := simp)]
+lemma homologyπ_naturality {P P' : SSetPair.{w}} (f : P ⟶ P') (R : D) (n : ℕ) :
+    SSet.homologyMap f.right R n ≫ P'.homologyπ R n =
+      P.homologyπ R n ≫ SSetPair.homologyMap f R n := by
+  have h : SSet.chainComplexMap f.right R ≫ P'.chainComplexπ R =
+      P.chainComplexπ R ≫ SSetPair.chainComplexMap f R :=
+    ((SSetPair.chainComplexFunctorπ D).app R).naturality f
+  rw [← HomologicalComplex.homologyMap_comp, ← HomologicalComplex.homologyMap_comp, h]
 
 end SSetPair

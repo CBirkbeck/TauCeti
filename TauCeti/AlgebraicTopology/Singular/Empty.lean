@@ -16,11 +16,14 @@ This file identifies the relative singular chains of `(X, ∅)` with the ordinar
 chains of `X`.  The quotient map supplies the comparison, naturally in `X`, and applying homology
 gives the corresponding natural isomorphism between ordinary and relative singular homology.
 
-The construction follows the normalization axiom for relative homology in Eilenberg--Steenrod,
-*Foundations of Algebraic Topology*, Chapters I--III.
+This is the quotient-chain comparison for the empty subspace, following the relative singular
+chain construction in Eilenberg--Steenrod, *Foundations of Algebraic Topology*, Chapters I--III.
+The formal infrastructure is Mathlib's relative simplicial chains: the comparison is the
+quotient natural transformation `SSetPair.chainComplexFunctorπ`, and its invertibility for a
+pair whose subcomplex is empty is Mathlib's `SSetPair.isIso_chainComplexπ`.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 
@@ -57,7 +60,6 @@ lemma incl_comp_singularChainComplexFunctor_eq :
 
 /-- The quotient map from ordinary singular chains to the relative singular chains of `(X, ∅)`,
 as a natural transformation in `X`. -/
-@[no_expose]
 noncomputable def singularChainComplexInclComparison :
     (AlgebraicTopology.singularChainComplexFunctor C).obj R ⟶
       incl ⋙ (singularChainComplexFunctor C).obj R :=
@@ -81,7 +83,6 @@ lemma singularChainComplexInclComparison_app (X : TopCat.{w}) :
 
 /-- Ordinary singular chains are naturally isomorphic to relative singular chains modulo the
 empty subspace. -/
-@[no_expose]
 noncomputable def singularChainComplexInclIso :
     (AlgebraicTopology.singularChainComplexFunctor C).obj R ≅
       incl ⋙ (singularChainComplexFunctor C).obj R :=
@@ -118,7 +119,6 @@ lemma incl_comp_singularHomologyFunctor_eq (n : ℕ) :
 
 /-- Ordinary singular homology is naturally isomorphic to relative singular homology modulo the
 empty subspace.  Its forward map is induced by the quotient map on singular chains. -/
-@[no_expose]
 noncomputable def singularHomologyInclIso (n : ℕ) :
     (AlgebraicTopology.singularHomologyFunctor C n).obj R ≅
       incl ⋙ singularHomologyFunctor R n :=
