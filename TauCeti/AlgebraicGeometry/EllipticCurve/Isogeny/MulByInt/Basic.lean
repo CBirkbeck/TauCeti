@@ -227,10 +227,12 @@ theorem psiFunctionField_sq (n : ℤ) : psiFunctionField W n ^ 2 =
 
 /-- **`Φₙ` at the generic point is `φₙ`**: the univariate division polynomial evaluated at the
 generic coordinate is its image in the function field. -/
+@[simp]
 theorem aeval_genericX_Φ (n : ℤ) : aeval W.genericX (W.Φ n) = phiFunctionField W n := by
   rw [phiFunctionField_eq_algebraMap, W.algebraMap_eq_aeval_genericX]
 
 /-- **`ΨSqₙ` at the generic point is `ψₙ²`.** -/
+@[simp]
 theorem aeval_genericX_ΨSq (n : ℤ) : aeval W.genericX (W.ΨSq n) = psiFunctionField W n ^ 2 := by
   rw [psiFunctionField_sq, WeierstrassCurve.Affine.CoordinateRing.mk_C_eq_algebraMap,
     ← IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField,

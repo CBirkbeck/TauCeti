@@ -25,16 +25,20 @@ identities `ψc` is defined by, and the two together give the classical polynomi
 
 by cancelling `u` and descending along the injective `algebraMap F[X] → F(W)`.
 
-That identity is what supplies the multiplicity-one step in the unramifiedness of `[n]`
-(Silverman III.4.10(c)): the fibre polynomial `Φₙ - x_Q · ΨSqₙ` has a simple root at the
-`x`-coordinate of each preimage, because its derivative there is `n · preΨ_{2n} / ΨSqₙ ≠ 0`.
-Unramifiedness is in turn what counts `E[N]` as the fibre of `[N]` over `O` once the fundamental
-identity is applied, so this is a prerequisite of the separable-implies-unramified milestone
-rather than a self-contained curiosity.
+The identity is an *input* to the multiplicity-one step in the unramifiedness of `[n]`
+(Silverman III.4.10(c)), not that step itself. There the fibre polynomial `Φₙ - x_Q · ΨSqₙ` is
+differentiated at the `x`-coordinate of a preimage `P`, and the identity evaluates that derivative
+as `n · preΨ_{2n}(x_P) / ΨSqₙ(x_P)`. Concluding a *simple* root needs that quantity to be nonzero,
+which the identity alone does not give: it requires `(n : F) ≠ 0` — so the characteristic must not
+divide `n` — together with `preΨ_{2n}(x_P) ≠ 0` and `ΨSqₙ(x_P) ≠ 0`, the last two saying that `P`
+lies outside `ker [2n]`.
 
 ## Main results
 
 * `TauCeti.Isogeny.wronskian_Φ_ΨSq_mul_invariantDifferentialDenom`: the identity above.
+* `TauCeti.Isogeny.two_mul_omega_add_eq_psic` and `TauCeti.Isogeny.psi_mul_psic`: the two
+  identities characterising `psicFunctionField` — `2 ωₙ + a₁ φₙ ψₙ + a₃ ψₙ³ = ψcₙ` and
+  `ψₙ ψcₙ = ψ_{2n}` — at the generic point.
 * `TauCeti.Isogeny.psiFunctionField_cube_mul_fieldPullback_invariantDifferentialDenom`:
   `ψₙ³ ([n]*u) = ψcₙ`, the first half of the `preΨ` bridge, and
   `TauCeti.Isogeny.aeval_ΨSq_sq_mul_fieldPullback_invariantDifferentialDenom`:
@@ -78,9 +82,11 @@ private theorem fieldPullback_mulByIntIsogeny_genericX [W.IsElliptic] {n : ℤ}
 
 `(Φₙ' ΨSqₙ - Φₙ ΨSqₙ') u = n ΨSqₙ² ([n]*u)`,
 
-where `u = 2y + a₁x + a₃` is the denominator of the invariant differential. It is `[n]*ω = n ω`
-with `ω = dx/u` unfolded on both sides, the quotient rule applied to `[n]*x = Φₙ/ΨSqₙ`, and the
-common factor `dx` cancelled. -/
+where `u = 2y + a₁x + a₃` is the denominator of the invariant differential. This is the
+function-field form of the Wronskian; the polynomial identity `wronskian_Φ_ΨSq` follows from it
+and the `preΨ` bridge below. -/
+-- Proof: `[n]*ω = n ω` with `ω = dx/u` unfolded on both sides, the quotient rule applied to
+-- `[n]*x = Φₙ/ΨSqₙ`, and the common factor `dx` cancelled.
 theorem wronskian_Φ_ΨSq_mul_invariantDifferentialDenom [W.IsElliptic] {n : ℤ}
     (hn : psiFunctionField W n ≠ 0) :
     (aeval (genericX W) (derivative (W.Φ n)) * aeval (genericX W) (W.ΨSq n) -
@@ -123,7 +129,7 @@ private theorem fieldPullback_mulByIntIsogeny_genericY [W.IsElliptic] {n : ℤ}
   exact mulByIntPullback_Y W hn
 
 /-- **The defining identity for `ψc` at the generic point**: `2 ωₙ + a₁ φₙ ψₙ + a₃ ψₙ³ = ψcₙ`. -/
-private theorem two_mul_omega_add_eq_psic (n : ℤ) :
+theorem two_mul_omega_add_eq_psic (n : ℤ) :
     2 * omegaFunctionField W n +
         algebraMap F W.FunctionField W.a₁ * phiFunctionField W n * psiFunctionField W n +
         algebraMap F W.FunctionField W.a₃ * psiFunctionField W n ^ 3 =
@@ -137,14 +143,12 @@ private theorem two_mul_omega_add_eq_psic (n : ℤ) :
     omegaFunctionField_def, phiFunctionField_def, psiFunctionField_def,
     psicFunctionField_def] using h
 
-/-- **`ψₙ³ · ([n]*u) = ψcₙ`.** The pullback of `u = 2y + a₁x + a₃` along `[n]` is `u` read at the
-image point `(Φₙ/ΨSqₙ, ωₙ/ψₙ³)`, so clearing `ψₙ³` turns it into `2 ωₙ + a₁ φₙ ψₙ + a₃ ψₙ³`, which
-is the left-hand side of `ω_spec` — the identity `ψc` is defined by.
+/-- **`ψₙ³ · ([n]*u) = ψcₙ`**, where `u = 2y + a₁x + a₃`.
 
-This is the first half of the bridge from `[n]*u` to the division polynomials: combined with the
-complement identity `ψₙ ψcₙ = ψ_{2n}` it rewrites `ΨSqₙ² ([n]*u)` as `preΨ_{2n} u`, which is what
-turns the Wronskian above into the polynomial identity
-`Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`. -/
+The first half of the bridge from `[n]*u` to the division polynomials; with `psi_mul_psic` it
+gives `aeval_ΨSq_sq_mul_fieldPullback_invariantDifferentialDenom`. -/
+-- Proof: the pullback of `u` along `[n]` is `u` read at `(Φₙ/ΨSqₙ, ωₙ/ψₙ³)`, so clearing `ψₙ³`
+-- turns it into `2 ωₙ + a₁ φₙ ψₙ + a₃ ψₙ³`, the left-hand side of `ω_spec`.
 theorem psiFunctionField_cube_mul_fieldPullback_invariantDifferentialDenom [W.IsElliptic] {n : ℤ}
     (hn : psiFunctionField W n ≠ 0) :
     psiFunctionField W n ^ 3 *
@@ -156,7 +160,7 @@ theorem psiFunctionField_cube_mul_fieldPullback_invariantDifferentialDenom [W.Is
   field_simp
 
 /-- **`ψₙ ψcₙ = ψ_{2n}` at the generic point**, the complement identity `ψc` is named for. -/
-private theorem psi_mul_psic (n : ℤ) :
+theorem psi_mul_psic (n : ℤ) :
     psiFunctionField W n * psicFunctionField W n = psiFunctionField W (2 * n) := by
   have h := congrArg (fun p ↦ algebraMap W.CoordinateRing W.FunctionField
     (CoordinateRing.mk W p)) (W.ψ_mul_ψc n)
@@ -186,9 +190,9 @@ private theorem psiFunctionField_two_mul (n : ℤ) :
 
 /-- **The `preΨ` bridge**: `ΨSqₙ² ([n]*u) = preΨ_{2n} u`.
 
-This is what turns the Wronskian above into the polynomial identity
-`Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`: `ΨSqₙ² = ψₙ⁴`, so the left-hand side is
-`ψₙ · (ψₙ³ ([n]*u)) = ψₙ ψcₙ = ψ_{2n}`, and `ψ_{2n}` is `preΨ_{2n} · ψ₂ = preΨ_{2n} · u`. -/
+With the Wronskian at the generic point this gives the polynomial identity `wronskian_Φ_ΨSq`. -/
+-- Proof: `ΨSqₙ² = ψₙ⁴`, so the left-hand side is `ψₙ · (ψₙ³ ([n]*u)) = ψₙ ψcₙ = ψ_{2n}`, and
+-- `ψ_{2n} = preΨ_{2n} · ψ₂ = preΨ_{2n} · u`.
 theorem aeval_ΨSq_sq_mul_fieldPullback_invariantDifferentialDenom [W.IsElliptic] {n : ℤ}
     (hn : psiFunctionField W n ≠ 0) :
     aeval (genericX W) (W.ΨSq n) ^ 2 *
@@ -203,13 +207,12 @@ theorem aeval_ΨSq_sq_mul_fieldPullback_invariantDifferentialDenom [W.IsElliptic
 
 `Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`  in  `F[X]`,
 
-for **every** integer `n`. The function-field route below needs `ψₙ` to be invertible there, but
-that is no restriction on the statement: on an elliptic curve `ψₙ` vanishes at the generic point
-only for `n = 0` (`psiFunctionField_ne_zero_of_Δ_ne_zero`), and at `n = 0` both sides are `0`
-because `ΨSq₀ = 0` and `preΨ₀ = 0`.
-
-Away from `0` the two halves above give it over `F(W)` after cancelling `u`, and
-`algebraMap F[X] → F(W)` is injective because the generic coordinate is transcendental. -/
+for **every** integer `n`, with no hypothesis on `n`. -/
+-- Proof: on an elliptic curve `ψₙ` vanishes at the generic point only for `n = 0`
+-- (`psiFunctionField_ne_zero_of_Δ_ne_zero`), and at `n = 0` both sides are `0` because
+-- `ΨSq₀ = 0` and `preΨ₀ = 0`. Away from `0` the two halves above give the identity over `F(W)`
+-- after cancelling `u`, and `algebraMap F[X] → F(W)` is injective because the generic coordinate
+-- is transcendental.
 theorem wronskian_Φ_ΨSq [W.IsElliptic] (n : ℤ) :
     derivative (W.Φ n) * W.ΨSq n - W.Φ n * derivative (W.ΨSq n) =
       C ((n : ℤ) : F) * W.preΨ (2 * n) := by
