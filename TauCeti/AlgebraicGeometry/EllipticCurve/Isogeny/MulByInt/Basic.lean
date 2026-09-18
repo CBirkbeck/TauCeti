@@ -216,16 +216,21 @@ theorem psiFunctionField_sq (n : ℤ) : psiFunctionField W n ^ 2 =
       algebraMap W.CoordinateRing W.FunctionField (Affine.CoordinateRing.mk W (C (W.ΨSq n))) := by
   rw [psiFunctionField, ← map_pow, Affine.CoordinateRing.mk_ψ, Affine.CoordinateRing.mk_Ψ_sq]
 
+/-- **`Φₙ` at the generic point is `φₙ`**: the univariate division polynomial evaluated at the
+generic coordinate is its image in the function field. -/
+theorem aeval_genericX_Φ (n : ℤ) : aeval W.genericX (W.Φ n) = phiFunctionField W n := by
+  rw [phiFunctionField_eq_algebraMap, W.algebraMap_eq_aeval_genericX]
+
+/-- **`ΨSqₙ` at the generic point is `ψₙ²`.** -/
+theorem aeval_genericX_ΨSq (n : ℤ) : aeval W.genericX (W.ΨSq n) = psiFunctionField W n ^ 2 := by
+  rw [psiFunctionField_sq, WeierstrassCurve.Affine.CoordinateRing.mk_C_eq_algebraMap,
+    ← IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField,
+    W.algebraMap_eq_aeval_genericX]
+
 /-- **The coordinate identity at the generic point**: `[n]*x · ΨSqₙ(x) = Φₙ(x)`. -/
 theorem mulByIntX_mul_aeval_ΨSq (n : ℤ) (hn : psiFunctionField W n ≠ 0) :
     mulByIntX W n * aeval W.genericX (W.ΨSq n) = aeval W.genericX (W.Φ n) := by
-  have hphi : phiFunctionField W n = aeval W.genericX (W.Φ n) := by
-    rw [phiFunctionField_eq_algebraMap, W.algebraMap_eq_aeval_genericX]
-  have hpsi : psiFunctionField W n ^ 2 = aeval W.genericX (W.ΨSq n) := by
-    rw [psiFunctionField_sq, WeierstrassCurve.Affine.CoordinateRing.mk_C_eq_algebraMap,
-      ← IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField,
-      W.algebraMap_eq_aeval_genericX]
-  rw [← hphi, ← hpsi, mulByIntX_def]
+  rw [aeval_genericX_Φ, aeval_genericX_ΨSq, mulByIntX_def]
   exact div_mul_cancel₀ _ (pow_ne_zero 2 hn)
 
 /-- **The coordinates of `[n]` satisfy the equation of `W` over its function field.**
