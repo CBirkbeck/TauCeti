@@ -43,16 +43,17 @@ already use. A caller supplies it with `let _ := φ.fieldPullback.toRingHom.toAl
 * `TauCeti.Isogeny.divisorPullback_principal`: **it carries `div z` to the divisor of the
   pulled-back function**, and `TauCeti.Isogeny.linearlyEquivalent_divisorPullback` that it
   respects linear equivalence.
+* `TauCeti.Isogeny.divisorPullback_id`: **the identity law** — `id* D = D`.
 * `TauCeti.Isogeny.divisorPullback_comp`: **it is contravariantly functorial** — pulling back
   along a composite is pulling back twice, in the reverse order.
 * `TauCeti.Isogeny.divisorPullbackClassGroup` and
   `TauCeti.Isogeny.divisorPullbackClassGroup_divisorClass`: the induced map on divisor classes,
   and its value on the class of a divisor.
 
-There is no identity law here: `Divisor.conorm` has no identity lemma, and supplying one needs
-`Place.restrict_self` and `Place.ramificationIdx_self`, which in turn need that the normalization
-of a surjective valuation is itself and that its order index is `1` — none of which exist. That is
-a chain of general `Valuation`/`Place` lemmas, so it belongs in its own PR rather than here.
+The identity law does **not** go through `Divisor.conorm`, which has no identity lemma of its own:
+that would need `Place.restrict_self` and `Place.ramificationIdx_self`, a chain of general
+`Valuation`/`Place` lemmas belonging in their own PR. It is instead derived here by cancellation
+from functoriality and injectivity, which this module already has.
 
 Each is the corresponding `TauCeti.Divisor.conorm` result read through the isogeny; the definition
 is opaque outside this module, so the wrappers are what a consumer has.
@@ -116,6 +117,7 @@ theorem coeff_divisorPullback (D : Divisor F W₂.FunctionField)
 
 /-- A place of `F(W₁)` lies in the support of `φ* D` exactly when the place below it lies in the
 support of `D`: the ramification indices are positive, so nothing cancels. -/
+@[grind =]
 theorem mem_support_divisorPullback_iff {D : Divisor F W₂.FunctionField}
     {P' : Place F W₁.FunctionField} :
     P' ∈ (φ.divisorPullback h D).support ↔ P'.restrict F W₂.FunctionField ∈ D.support :=
@@ -210,6 +212,28 @@ theorem divisorPullback_comp (D : Divisor F W₃.FunctionField) :
     (k₂ := F) (F₂ := W₁.FunctionField) D
 
 end Comp
+
+section Id
+
+/-- **The identity law**: pulling back along `Isogeny.id` changes nothing.
+
+Derived by cancellation rather than directly: `divisorPullback_comp` at `φ = ψ = id` says that
+pulling back twice along the identity is pulling back once along `id.comp id = id`, and
+`divisorPullback_injective` cancels the outer one. -/
+@[simp]
+theorem divisorPullback_id {W : WeierstrassCurve.Affine F}
+    [Algebra W.FunctionField W.FunctionField]
+    (hid : ∀ z, algebraMap W.FunctionField W.FunctionField z = (Isogeny.id W).fieldPullback z)
+    (D : Divisor F W.FunctionField) :
+    (Isogeny.id W).divisorPullback hid D = D := by
+  have hc : ∀ z, algebraMap W.FunctionField W.FunctionField z =
+      ((Isogeny.id W).comp (Isogeny.id W)).fieldPullback z := by
+    simpa only [Isogeny.id_comp] using hid
+  refine divisorPullback_injective (Isogeny.id W) hid ?_
+  rw [divisorPullback_comp (Isogeny.id W) hid (Isogeny.id W) hid hc D]
+  simp only [Isogeny.id_comp]
+
+end Id
 
 /-- **The pullback on divisor classes**: the pullback carries principal divisors to principal
 divisors, so it descends to a homomorphism `Cl(F(W₂)) →+ Cl(F(W₁))`. -/
