@@ -15,8 +15,9 @@ distinct ones. If it has at least that many *distinct* roots then both bounds ar
 splits, and none of its roots repeats — which is separability.
 
 No closure assumption is needed. The root count already forces `p` to split, by
-`Polynomial.splits_iff_card_roots`; assuming an algebraically closed field would only be a way of
-guaranteeing the hypothesis, not of using it.
+`Polynomial.roots_eq_of_natDegree_le_card_of_ne_zero` and `Polynomial.splits_iff_card_roots`;
+assuming an algebraically closed field would only be a way of guaranteeing the hypothesis, not of
+using it.
 
 Mathlib has the corresponding equivalence as `Polynomial.card_rootSet_eq_natDegree_iff_of_splits`,
 phrased with `rootSet` over an extension and with splitting and equality as hypotheses. A counting
@@ -39,12 +40,15 @@ hypothesis is a lower bound because that is what a counting argument gives; the 
 always holds, and the two together force `p` to split with distinct roots. -/
 theorem separable_of_natDegree_le_card_roots {F : Type*} [Field F] [DecidableEq F]
     {p : F[X]} (hp : p ≠ 0) (h : p.natDegree ≤ #p.roots.toFinset) : p.Separable := by
-  have hdistinct : #p.roots.toFinset ≤ p.roots.card := Multiset.toFinset_card_le p.roots
+  -- The distinct roots already exhaust the degree, so they are *all* the roots with multiplicity:
+  -- `p.roots` is its own deduplication. Splitting and `Nodup` both read off that one equality.
+  have hroots : p.roots = p.roots.toFinset.val :=
+    roots_eq_of_natDegree_le_card_of_ne_zero
+      (fun _ hx ↦ (mem_roots hp).mp (Multiset.mem_toFinset.mp hx)) h hp
   have hcard : p.roots.card = p.natDegree :=
-    le_antisymm (card_roots' p) (h.trans hdistinct)
-  rw [← nodup_roots_iff_of_splits hp (splits_iff_card_roots.mpr hcard),
-    ← Multiset.toFinset_card_eq_card_iff_nodup, hcard]
-  exact le_antisymm (hcard ▸ hdistinct) h
+    le_antisymm (card_roots' p) (by rw [hroots]; exact h)
+  exact (nodup_roots_iff_of_splits hp (splits_iff_card_roots.mpr hcard)).mp
+    (by rw [hroots]; exact p.roots.toFinset.nodup)
 
 end Polynomial
 
