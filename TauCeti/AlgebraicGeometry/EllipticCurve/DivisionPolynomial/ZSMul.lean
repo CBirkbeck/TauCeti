@@ -1117,18 +1117,27 @@ while the theorems above take their torsion hypothesis on `Jacobian.Point.fromAf
 vanishing statement travels forwards and a non-vanishing one backwards. The proof is the additive
 equivalence alone, so `P` ranges over every affine point, the point at infinity included.
 
+The integer-scalar form `zsmul_fromAffine_eq_zero_iff_zsmul_eq_zero` is the one this rests on;
+the `ℕ`-cast reading below is its specialisation, and is what a consumer holding an `ℕ`-torsion
+hypothesis wants.
+
 **Not a `simp` lemma.** Its left-hand side is not in simp normal form: `natCast_zsmul` rewrites
 `(n : ℤ) • Q` to `n • Q`, so tagging it `@[simp]` fails `simpNF`. The `ℤ`-cast orientation is
 nevertheless the useful one, because every consumer's torsion hypothesis is a `ℤ`-scalar
 multiple; stating it in `ℕ`-normal form would only move the cast to each call site. -/
-lemma zsmul_fromAffine_eq_zero_iff [DecidableEq F] {E : WeierstrassCurve F}
-    {P : Affine.Point E.toAffine} {n : ℕ} :
-    (n : ℤ) • Jacobian.Point.fromAffine P = 0 ↔ n • P = 0 := by
+lemma zsmul_fromAffine_eq_zero_iff_zsmul_eq_zero [DecidableEq F] {E : WeierstrassCurve F}
+    {P : Affine.Point E.toAffine} {n : ℤ} :
+    n • Jacobian.Point.fromAffine P = 0 ↔ n • P = 0 := by
   -- `fromAffine` is the `invFun` field of `toAffineAddEquiv`, so the two agree definitionally —
   -- but `toAffineAddEquiv` is a plain `noncomputable def`, so `simp` cannot unfold it at
   -- reducible transparency. Rewrite into equiv form first.
-  rw [natCast_zsmul, ← Jacobian.Point.toAffineAddEquiv_symm_apply,
-    ← map_nsmul (Jacobian.Point.toAffineAddEquiv E).symm, AddEquiv.map_eq_zero_iff]
+  rw [← Jacobian.Point.toAffineAddEquiv_symm_apply,
+    ← map_zsmul (Jacobian.Point.toAffineAddEquiv E).symm, AddEquiv.map_eq_zero_iff]
+
+lemma zsmul_fromAffine_eq_zero_iff [DecidableEq F] {E : WeierstrassCurve F}
+    {P : Affine.Point E.toAffine} {n : ℕ} :
+    (n : ℤ) • Jacobian.Point.fromAffine P = 0 ↔ n • P = 0 := by
+  rw [zsmul_fromAffine_eq_zero_iff_zsmul_eq_zero, natCast_zsmul]
 
 /-- **Two-torsion is exactly the vanishing of `ψ₂`.** For a nonsingular affine point, having order
 two and `ψ₂` vanishing there are the same condition. Forwards, order two gives `2 • P = 0` and

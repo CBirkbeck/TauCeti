@@ -63,21 +63,13 @@ section Torsion
 variable [DecidableEq F] (W : WeierstrassCurve.Affine F) [W.IsElliptic]
 
 omit [W.IsElliptic] in
-/-- **A point killed by `n` is killed by `n` in the Jacobian model too.** The torsion hypotheses
-come from the affine model, while the division-polynomial dictionary is stated on the Jacobian
-one. -/
-private theorem zsmul_fromAffine_eq_zero {n : ℤ} {x y : F}
-    {hns : (W⁄F).toAffine.Nonsingular x y} (h : n • (Affine.Point.some x y hns) = 0) :
-    n • Jacobian.Point.fromAffine (Affine.Point.some x y hns) = 0 := by
-  rw [← Jacobian.Point.toAffineAddEquiv_symm_apply, ← map_zsmul, h, map_zero]
-
-omit [W.IsElliptic] in
 /-- A nonzero point killed by an odd `n` has `preΨₙ` vanishing at its abscissa: at odd `n` the
 factor `Ψ₂Sq` is absent from `ΨSqₙ`, so `preΨₙ` carries the whole vanishing. -/
 private theorem eval_preΨ_eq_zero_of_odd {n : ℤ} (hodd : ¬ Even n) {x y : F}
     (hns : (W⁄F).toAffine.Nonsingular x y) (h : n • (Affine.Point.some x y hns) = 0) :
     ((W⁄F).preΨ n).eval x = 0 := by
-  have hsq := (eval_ΨSq_eq_zero_iff_zsmul_eq_zero (W⁄F) hns n).mpr (zsmul_fromAffine_eq_zero W h)
+  have hsq := (eval_ΨSq_eq_zero_iff_zsmul_eq_zero (W⁄F) hns n).mpr
+    (zsmul_fromAffine_eq_zero_iff_zsmul_eq_zero.mpr h)
   simp only [WeierstrassCurve.ΨSq, hodd, ite_false, mul_one, eval_pow] at hsq
   exact pow_eq_zero_iff two_ne_zero |>.mp hsq
 
@@ -88,7 +80,8 @@ private theorem eval_preΨ_eq_zero_of_even {n : ℤ} (heven : Even n) {x y : F}
     (hns : (W⁄F).toAffine.Nonsingular x y) (h : n • (Affine.Point.some x y hns) = 0)
     (h2 : (2 : ℤ) • (Affine.Point.some x y hns) ≠ 0) :
     ((W⁄F).preΨ n).eval x = 0 := by
-  have hsq := (eval_ΨSq_eq_zero_iff_zsmul_eq_zero (W⁄F) hns n).mpr (zsmul_fromAffine_eq_zero W h)
+  have hsq := (eval_ΨSq_eq_zero_iff_zsmul_eq_zero (W⁄F) hns n).mpr
+    (zsmul_fromAffine_eq_zero_iff_zsmul_eq_zero.mpr h)
   simp only [WeierstrassCurve.ΨSq, heven, ite_true, eval_mul, eval_pow, mul_eq_zero,
     pow_eq_zero_iff (two_ne_zero)] at hsq
   exact hsq.resolve_right fun hΨ₂ ↦ eval_ΨSq_ne_zero_of_zsmul_ne_zero (W⁄F) hns h2
@@ -228,7 +221,7 @@ private theorem separable_ΨSq_two_of_isAlgClosed (hchar : ((2 : ℤ) : F) ≠ 0
     rcases hQ : P with _ | ⟨x, y, hns⟩
     · exact absurd hQ hP0
     · exact ⟨x, y, hns, rfl, (eval_ΨSq_eq_zero_iff_zsmul_eq_zero (W⁄F) hns 2).mpr
-        (zsmul_fromAffine_eq_zero W (hQ ▸ (hTmem P).mp hPT))⟩
+        (zsmul_fromAffine_eq_zero_iff_zsmul_eq_zero.mpr (hQ ▸ (hTmem P).mp hPT))⟩
   -- a `2`-torsion point is its own negative, so distinct ones have distinct abscissae
   have hinj : Set.InjOn (fun P : (W⁄F).toAffine.Point ↦ P.xRep) (T.erase 0) := by
     intro P hP Q hQ hPQ

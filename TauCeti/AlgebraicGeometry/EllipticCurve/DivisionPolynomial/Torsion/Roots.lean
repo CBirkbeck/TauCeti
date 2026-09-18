@@ -27,10 +27,10 @@ of `ΨSqₙ` two-to-one away from the `2`-torsion, which is what matches `#ker [
 
 ## Main results
 
-* `WeierstrassCurve.exists_zsmul_eq_zero_of_eval_ΨSq_eq_zero`: over an algebraically closed field,
-  every root of `ΨSqₙ` is the abscissa of an `n`-torsion point. The pointwise converse, for a
-  supplied `y`, is `eval_ΨSq_eq_zero_iff_zsmul_eq_zero` in `DivisionPolynomial/ZSMul.lean`; only
-  the existence of `y` needs the closure assumption.
+* `WeierstrassCurve.eval_ΨSq_eq_zero_iff_exists_zsmul_eq_zero`: over an algebraically closed
+  field, the roots of `ΨSqₙ` are exactly the abscissae of the `n`-torsion points. The pointwise
+  form, for a supplied `y`, is `eval_ΨSq_eq_zero_iff_zsmul_eq_zero` in
+  `DivisionPolynomial/ZSMul.lean`; only the existence of `y` needs the closure assumption.
 
 ## References
 
@@ -45,13 +45,14 @@ namespace WeierstrassCurve
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 
-/-- **Over an algebraically closed field every root of `ΨSqₙ` is the abscissa of an `n`-torsion
-point.** Solving the Weierstrass equation for `y` gives a point, and `ΨSqₙ(x) = 0` makes `ψₙ`
-vanish there, which annihilates it. -/
-theorem exists_zsmul_eq_zero_of_eval_ΨSq_eq_zero [IsAlgClosed F] [W.IsElliptic] {n : ℤ} {x : F}
-    (hx : (W.ΨSq n).eval x = 0) :
-    ∃ y, ∃ hns : W.toAffine.Nonsingular x y,
+/-- **Over an algebraically closed field the roots of `ΨSqₙ` are exactly the abscissae of the
+`n`-torsion points.** Solving the Weierstrass equation for `y` gives a point over a root, and
+`ΨSqₙ(x) = 0` makes `ψₙ` vanish there, which annihilates it; the converse needs no closure, since
+the `y` is supplied. -/
+theorem eval_ΨSq_eq_zero_iff_exists_zsmul_eq_zero [IsAlgClosed F] [W.IsElliptic] {n : ℤ} {x : F} :
+    (W.ΨSq n).eval x = 0 ↔ ∃ y, ∃ hns : W.toAffine.Nonsingular x y,
       n • Jacobian.Point.fromAffine (Affine.Point.some _ _ hns) = 0 := by
+  refine ⟨fun hx ↦ ?_, fun ⟨_, hns, h⟩ ↦ (eval_ΨSq_eq_zero_iff_zsmul_eq_zero W hns n).mpr h⟩
   obtain ⟨y, hy⟩ := W.toAffine.exists_point_on_curve x
   have hns : W.toAffine.Nonsingular x y := Affine.equation_iff_nonsingular.mp hy
   exact ⟨y, hns, (eval_ΨSq_eq_zero_iff_zsmul_eq_zero W hns n).mp hx⟩
