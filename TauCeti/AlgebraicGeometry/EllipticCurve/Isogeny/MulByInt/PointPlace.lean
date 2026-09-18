@@ -187,10 +187,7 @@ private theorem comap_algebraMap_coordinateRing_le_one {x y : F}
   refine Valuation.algebraMap_coordinateRing_le_one _ ?_ r
   rw [Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
     ← WeierstrassCurve.Affine.genericX_eq_algebraMap,
-    show (mulByIntIsogeny W hn).fieldPullback W.toAffine.genericX = mulByIntX W n by
-      rw [WeierstrassCurve.Affine.genericX_def, fieldPullback_algebraMap,
-        mulByIntIsogeny_pullback]
-      exact mulByIntPullback_X W hn]
+    fieldPullback_mulByIntIsogeny_genericX]
   refine valuation_pointPlace_mulByIntX_le_one W h.left ?_
   rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
   simpa only [evalEval_C] using eval_ΨSq_ne_zero_of_zsmul_ne_zero W h hP

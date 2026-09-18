@@ -100,10 +100,7 @@ theorem mulByIntX_sub_algebraMap_ne_zero [W.IsElliptic] {n : ℤ}
   intro heq
   refine W.genericX_ne_algebraMap x ((mulByIntIsogeny W hn).fieldPullback.toRingHom.injective ?_)
   calc (mulByIntIsogeny W hn).fieldPullback.toRingHom W.genericX
-      = mulByIntX W n := by
-        rw [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, WeierstrassCurve.Affine.genericX_def,
-          fieldPullback_algebraMap, mulByIntIsogeny_pullback]
-        exact mulByIntPullback_X W hn
+      = mulByIntX W n := fieldPullback_mulByIntIsogeny_genericX W hn
     _ = algebraMap F W.FunctionField x := heq
     _ = (mulByIntIsogeny W hn).fieldPullback.toRingHom (algebraMap F W.FunctionField x) :=
         ((mulByIntIsogeny W hn).fieldPullback.commutes x).symm

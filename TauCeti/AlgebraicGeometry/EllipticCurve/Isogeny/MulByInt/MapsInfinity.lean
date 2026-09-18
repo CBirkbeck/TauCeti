@@ -119,6 +119,18 @@ noncomputable abbrev mulByIntIsogenyOfNeZero [W.IsElliptic] {n : ℤ} (hn : n �
     _root_.TauCeti.Isogeny W W :=
   mulByIntIsogeny W (psiFunctionField_ne_zero_of_Δ_ne_zero W W.isUnit_Δ.ne_zero hn)
 
+/-- **The pullback of `[n]` sends the generic `x` to `[n]*x`.**
+
+Not the same statement as `fieldPullback_mulByIntIsogeny_X`, which the degree tower needs and
+which lands in `F(x)` as a quotient of `RatFunc F`; this is the `mulByIntX` form, which is what
+a computation in `F(W)` wants. Both `mulByIntX_sub_algebraMap_ne_zero` and
+`comap_algebraMap_coordinateRing_le_one` consume it. -/
+theorem fieldPullback_mulByIntIsogeny_genericX [W.IsElliptic] {n : ℤ}
+    (hn : psiFunctionField W n ≠ 0) :
+    (mulByIntIsogeny W hn).fieldPullback W.genericX = mulByIntX W n := by
+  rw [WeierstrassCurve.Affine.genericX_def, fieldPullback_algebraMap, mulByIntIsogeny_pullback]
+  exact mulByIntPullback_X W hn
+
 end Isogeny
 
 end TauCeti
