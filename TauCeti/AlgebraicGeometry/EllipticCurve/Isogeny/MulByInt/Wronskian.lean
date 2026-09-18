@@ -29,9 +29,11 @@ The identity is an *input* to the multiplicity-one step in the unramifiedness of
 (Silverman III.4.10(c)), not that step itself. There the fibre polynomial `Φₙ - x_Q · ΨSqₙ` is
 differentiated at the `x`-coordinate of a preimage `P`, and the identity evaluates that derivative
 as `n · preΨ_{2n}(x_P) / ΨSqₙ(x_P)`. Concluding a *simple* root needs that quantity to be nonzero,
-which the identity alone does not give: it requires `(n : F) ≠ 0` — so the characteristic must not
-divide `n` — together with `preΨ_{2n}(x_P) ≠ 0` and `ΨSqₙ(x_P) ≠ 0`, the last two saying that `P`
-lies outside `ker [2n]`.
+which the identity alone does not give. It requires `(n : F) ≠ 0` — so the characteristic must not
+divide `n` — together with the numerator condition `preΨ_{2n}(x_P) ≠ 0` and the denominator
+condition `ΨSqₙ(x_P) ≠ 0`. Those two are **not** the same as `P ∉ ker [2n]`: since
+`ψ_{2n} = preΨ_{2n} ψ₂`, a `2`-torsion `P`, where `ψ₂(P) = 0`, can lie in `ker [2n]` with both
+of the factors above nonzero.
 
 ## Main results
 
@@ -179,14 +181,13 @@ private theorem algebraMap_mk_psi_two :
     ← IsScalarTower.algebraMap_apply, hC]
   ring
 
-/-- **`ψ_{2n}` at the generic point is `preΨ_{2n} · u`**: `Ψ` at an even argument is
-`C (preΨ) * ψ₂`, and `ψ` and `Ψ` agree in the coordinate ring. -/
-private theorem psiFunctionField_two_mul (n : ℤ) :
+/-- **`ψ_{2n}` at the generic point is `preΨ_{2n} · u`**, the `u`-shaped reading of
+`psiFunctionField_two_mul` that the bridge below consumes. -/
+private theorem psiFunctionField_two_mul_invariantDifferentialDenom (n : ℤ) :
     psiFunctionField W (2 * n) =
       algebraMap F[X] W.FunctionField (W.preΨ (2 * n)) * invariantDifferentialDenom W := by
-  rw [psiFunctionField_def, CoordinateRing.mk_ψ, WeierstrassCurve.Ψ]
-  simp only [even_two_mul, ite_true, map_mul, CoordinateRing.mk_C_eq_algebraMap,
-    ← IsScalarTower.algebraMap_apply, algebraMap_mk_psi_two]
+  rw [psiFunctionField_two_mul, psiFunctionField_def, WeierstrassCurve.ψ_two,
+    algebraMap_mk_psi_two]
 
 /-- **The `preΨ` bridge**: `ΨSqₙ² ([n]*u) = preΨ_{2n} u`.
 
@@ -198,7 +199,7 @@ theorem aeval_ΨSq_sq_mul_fieldPullback_invariantDifferentialDenom [W.IsElliptic
     aeval (genericX W) (W.ΨSq n) ^ 2 *
         (mulByIntIsogeny W hn).fieldPullback (invariantDifferentialDenom W) =
       algebraMap F[X] W.FunctionField (W.preΨ (2 * n)) * invariantDifferentialDenom W := by
-  rw [← psiFunctionField_two_mul, ← psi_mul_psic,
+  rw [← psiFunctionField_two_mul_invariantDifferentialDenom, ← psi_mul_psic,
     ← psiFunctionField_cube_mul_fieldPullback_invariantDifferentialDenom W hn,
     aeval_genericX_ΨSq]
   ring

@@ -76,6 +76,7 @@ is `WeierstrassCurve.Affine`'s, in `Affine/FunctionField/GenericPoint.lean`.
 
 * `TauCeti.Isogeny.equation_mulByInt`: the coordinates of `[n]` satisfy the equation of `W` over
   its function field.
+* `TauCeti.Isogeny.psiFunctionField_two_mul`: `ψ_{2n} = preΨ_{2n} · ψ₂` at the generic point.
 * `TauCeti.Isogeny.psiFunctionField_ne_zero`: `ψₙ` does not vanish at the generic point when
   `(n : F) ≠ 0`, needing no nonsingularity.
 * `TauCeti.Isogeny.psiFunctionField_ne_zero_of_Δ_ne_zero`: the same conclusion from `W.Δ ≠ 0`
@@ -224,6 +225,19 @@ private theorem smulEval_genericPoint_Y (n : ℤ) :
 theorem psiFunctionField_sq (n : ℤ) : psiFunctionField W n ^ 2 =
       algebraMap W.CoordinateRing W.FunctionField (Affine.CoordinateRing.mk W (C (W.ΨSq n))) := by
   rw [psiFunctionField, ← map_pow, Affine.CoordinateRing.mk_ψ, Affine.CoordinateRing.mk_Ψ_sq]
+
+/-- **`ψ_{2n} = preΨ_{2n} · ψ₂` at the generic point.** `Ψ` at an even argument is
+`C (preΨ) * ψ₂`, and `ψ` and `Ψ` agree in the coordinate ring, so an even-indexed
+`psiFunctionField` splits off its `preΨ` factor. -/
+theorem psiFunctionField_two_mul (n : ℤ) :
+    psiFunctionField W (2 * n) =
+      algebraMap F[X] W.FunctionField (W.preΨ (2 * n)) * psiFunctionField W 2 := by
+  have h2 : psiFunctionField W 2 =
+      algebraMap W.CoordinateRing W.FunctionField (Affine.CoordinateRing.mk W W.ψ₂) := by
+    rw [psiFunctionField_def, WeierstrassCurve.ψ_two]
+  rw [psiFunctionField_def, Affine.CoordinateRing.mk_ψ, WeierstrassCurve.Ψ, h2]
+  simp only [even_two_mul, ite_true, map_mul, Affine.CoordinateRing.mk_C_eq_algebraMap,
+    ← IsScalarTower.algebraMap_apply]
 
 /-- **`Φₙ` at the generic point is `φₙ`**: the univariate division polynomial evaluated at the
 generic coordinate is its image in the function field. -/
