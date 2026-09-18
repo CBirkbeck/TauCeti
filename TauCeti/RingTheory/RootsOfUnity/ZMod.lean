@@ -16,33 +16,22 @@ root, identifies it with the whole of `μ_k`.
 
 Both halves are in Mathlib — `IsPrimitiveRoot.zmodEquivZPowers` and `IsPrimitiveRoot.zpowers_eq` —
 but not the composite, which is what a consumer phrased in terms of `μ_k` rather than a chosen
-generator needs. Composing them through `MulEquiv.subgroupCongr` rather than rewriting along
-`zpowers_eq` keeps the underlying function reducible, which is what makes the characterisation
-below hold by `simp` rather than by transport.
+generator needs.
 
 ## Main results
 
 * `IsPrimitiveRoot.zmodEquivRootsOfUnity`: `ℤ/k ≃+ Additive (μ_k)`, given a primitive `k`-th root.
 * `IsPrimitiveRoot.coe_zmodEquivRootsOfUnity_intCast`: it sends `i` to `ζ ^ i`.
 
-## Roadmap
-
-`TauCetiRoadmap/EllipticCurves/README.md:614` pins the Weil pairing as an additive bilinear map
-into `Additive (rootsOfUnity N K)`, while the determinant–degree congruence that closes the Hasse
-bound works with the symplectic form on the `ℓ`-torsion valued in `ℤ/ℓ`. This equivalence is the
-bridge between those two codomains, and is a prerequisite of that Layer 2 target rather than the
-target itself.
-
 ## Provenance
 
 Ported from AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0) @
 `a302aeacd86053f9d5f991fbbf664e1cc1051d08`, source file
 `projects/HasseWeil/HasseWeil/HasseBound/WeilPairing/RootsOfUnity.lean`, declaration
-`rootsOfUnity_addEquiv_zmod`. Four changes: the direction is reversed to start from `ZMod k`, so
+`rootsOfUnity_addEquiv_zmod`. Three changes: the direction is reversed to start from `ZMod k`, so
 that it reads like `IsPrimitiveRoot.zmodEquivZPowers` which it extends; the base is a domain rather
-than a field, which is all `zpowers_eq` asks for; the composite is formed with
-`MulEquiv.subgroupCongr` in place of the source's `▸`; and the characterising `simp` lemma, which
-the source does not have, is added.
+than a field, which is all `zpowers_eq` asks for; and the characterising lemma below, which the
+source does not have, is added.
 -/
 
 public section
@@ -58,6 +47,8 @@ noncomputable def zmodEquivRootsOfUnity (h : IsPrimitiveRoot ζ k) :
     ZMod k ≃+ Additive (rootsOfUnity k R) :=
   h.zmodEquivZPowers.trans (MulEquiv.toAdditive (MulEquiv.subgroupCongr h.zpowers_eq))
 
+/-- **The equivalence sends the class of an integer `i` to `ζ ^ i`**, which determines it on all
+of `ZMod k` since every class is the class of an integer. -/
 @[simp]
 theorem coe_zmodEquivRootsOfUnity_intCast (h : IsPrimitiveRoot ζ k) (i : ℤ) :
     ((h.zmodEquivRootsOfUnity (i : ZMod k)).toMul : Rˣ) = ζ ^ i := by
