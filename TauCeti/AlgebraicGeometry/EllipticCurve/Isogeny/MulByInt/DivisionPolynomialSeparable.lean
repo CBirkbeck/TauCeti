@@ -7,12 +7,12 @@ module
 
 public import Mathlib.FieldTheory.Separable
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.Roots
--- Proof-only: `#ker [n] = n ²` over an algebraically closed field, the input to the count.
-import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.KernelCard
+-- Proof-only: `[n]` is `n ²`-to-one over an algebraically closed field, the input to the count.
+import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Fiber
 -- Proof-only: a polynomial with as many distinct roots as its degree is separable, which is what
 -- each of the three counts below ends in.
 import TauCeti.FieldTheory.Separable.OfRootCount
--- Proof-only: integer casts that stay nonzero along an algebra and at an even index.
+-- Proof-only: an even index with nonzero cast keeps `2` nonzero.
 import TauCeti.Data.Int.CastNeZero
 -- Proof-only: `ΨSqₙ` is nonzero on a nonsingular curve, and vanishes only at torsion. This also
 -- carries the degree, evaluation-bridge and algebraic-closure material the count uses.
@@ -115,27 +115,25 @@ private theorem card_filter_xRep_le_two [DecidableEq F] {V : WeierstrassCurve.Af
 
 variable (W : WeierstrassCurve.Affine F) [W.IsElliptic]
 
-/-- **`ker [n]` as a `Finset` of `n ²` points.** The kernel is a subgroup of the points, and over an
-algebraically closed field in which `n` is invertible it has `n ²` elements; the counting arguments
-want it as a `Finset` with membership spelled out. -/
+/-- **The `n`-torsion as a `Finset` of `n ²` points.** Over an algebraically closed field in which
+`n` is invertible `[n]` is `n ²`-to-one wherever it hits, and the torsion is its fiber above `0`;
+the counting arguments want that fiber as a `Finset` with membership spelled out. -/
 private theorem exists_finset_zsmul_eq_zero [DecidableEq F] {n : ℤ} (hchar : (n : F) ≠ 0) :
     ∃ T : Finset (W⁄F).toAffine.Point,
       #T = n.natAbs ^ 2 ∧ ∀ P, P ∈ T ↔ n • P = 0 := by
   classical
-  have hn : psiFunctionField W n ≠ 0 := psiFunctionField_ne_zero W hchar
-  have hcard := card_ker_mulByIntIsogeny W (hn := hn) hchar
-  have hfin : Finite ((mulByIntIsogeny W hn).ker) := by
+  have hcard : Nat.card {P : (W⁄F).toAffine.Point // n • P = 0} = n.natAbs ^ 2 :=
+    card_zsmul_fiber W hchar (P₀ := 0) (smul_zero n)
+  have hfin : Finite {P : (W⁄F).toAffine.Point // n • P = 0} := by
     refine (Nat.card_ne_zero.mp ?_).2
     rw [hcard]
     exact pow_ne_zero 2 (Int.natAbs_ne_zero.mpr (by rintro rfl; exact hchar (by simp)))
-  let _ : Fintype ((mulByIntIsogeny W hn).ker) := Fintype.ofFinite _
-  refine ⟨(Finset.univ : Finset ((mulByIntIsogeny W hn).ker)).image Subtype.val, ?_, fun P ↦ ?_⟩
+  let _ : Fintype {P : (W⁄F).toAffine.Point // n • P = 0} := Fintype.ofFinite _
+  refine ⟨Finset.univ.image (Subtype.val : {P : (W⁄F).toAffine.Point // n • P = 0} → _), ?_,
+    fun P ↦ ?_⟩
   · rw [Finset.card_image_of_injective _ Subtype.val_injective, Finset.card_univ,
       ← Nat.card_eq_fintype_card, hcard]
-  · refine ⟨fun hP ↦ ?_, fun hP ↦ Finset.mem_image.mpr
-      ⟨⟨P, (mem_ker_mulByIntIsogeny_iff W hn).mpr hP⟩, Finset.mem_univ _, rfl⟩⟩
-    obtain ⟨Q, -, rfl⟩ := Finset.mem_image.mp hP
-    exact (mem_ker_mulByIntIsogeny_iff W hn).mp Q.2
+  · simp
 
 omit [IsAlgClosed F] [W.IsElliptic] in
 /-- The abscissae of a set of points, as a `Finset` of the roots of `p`. -/
@@ -259,7 +257,9 @@ variable (W : WeierstrassCurve F) [W.IsElliptic]
 to base change, so it descends from the algebraic closure, where the roots can be counted against
 the points of `ker [n]`. -/
 theorem separable_preΨ {n : ℤ} (hchar : (n : F) ≠ 0) : (W.preΨ n).Separable := by
-  have hchar' := Int.cast_ne_zero_of_algebraMap (A := AlgebraicClosure F) hchar
+  have hchar' : ((n : ℤ) : AlgebraicClosure F) ≠ 0 := by
+    simpa only [map_intCast, map_zero] using
+      (FaithfulSMul.algebraMap_injective F (AlgebraicClosure F)).ne hchar
   rw [← Polynomial.separable_map (algebraMap F (AlgebraicClosure F)), ← map_preΨ]
   by_cases heven : Even n
   · exact separable_preΨ_of_even_of_isAlgClosed (W⁄(AlgebraicClosure F)).toAffine heven hchar'
@@ -268,7 +268,9 @@ theorem separable_preΨ {n : ℤ} (hchar : (n : F) ≠ 0) : (W.preΨ n).Separabl
 /-- **`Ψ₂Sq` is separable** over any field in which `2` is invertible: its roots are the abscissae
 of the three nonzero `2`-torsion points, which are distinct. -/
 theorem separable_Ψ₂Sq (hchar : ((2 : ℤ) : F) ≠ 0) : W.Ψ₂Sq.Separable := by
-  have hchar' := Int.cast_ne_zero_of_algebraMap (A := AlgebraicClosure F) hchar
+  have hchar' : ((2 : ℤ) : AlgebraicClosure F) ≠ 0 := by
+    simpa only [map_intCast, map_zero] using
+      (FaithfulSMul.algebraMap_injective F (AlgebraicClosure F)).ne hchar
   rw [← Polynomial.separable_map (algebraMap F (AlgebraicClosure F)), ← ΨSq_two, ← map_ΨSq]
   exact separable_ΨSq_two_of_isAlgClosed (W⁄(AlgebraicClosure F)).toAffine hchar'
 
