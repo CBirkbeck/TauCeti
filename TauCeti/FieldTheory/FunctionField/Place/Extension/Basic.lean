@@ -797,8 +797,7 @@ already surjective, hence already normalized. -/
 @[simp]
 theorem restrict_self : restrict k F P = P := by
   refine Place.ext ?_
-  change (P.valuation.comap (algebraMap F F)).normalization = P.valuation
-  rw [Algebra.algebraMap_self, Valuation.comap_id,
+  rw [valuation_restrict, Algebra.algebraMap_self, Valuation.comap_id,
     Valuation.normalization_eq_self_of_surjective _ P.valuation_surjective]
 
 /-- **The identity extension is unramified**: `e(P ∣ P) = 1`. -/
