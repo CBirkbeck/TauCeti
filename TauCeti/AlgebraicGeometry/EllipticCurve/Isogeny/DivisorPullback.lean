@@ -7,8 +7,6 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Degree
 public import TauCeti.FieldTheory.FunctionField.Divisor.Conorm
--- Proof-only: `W.isFunctionField`, which `conorm_principal` consumes on both sides.
-import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finrank
 
 /-!
 # Pulling a divisor back along an isogeny
