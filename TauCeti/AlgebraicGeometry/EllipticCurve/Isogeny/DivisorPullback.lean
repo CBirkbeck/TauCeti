@@ -48,12 +48,9 @@ already use. A caller supplies it with `let _ := φ.fieldPullback.toRingHom.toAl
   along a composite is pulling back twice, in the reverse order.
 * `TauCeti.Isogeny.divisorPullbackClassGroup` and
   `TauCeti.Isogeny.divisorPullbackClassGroup_divisorClass`: the induced map on divisor classes,
-  and its value on the class of a divisor.
-
-The identity law does **not** go through `Divisor.conorm`, which has no identity lemma of its own:
-that would need `Place.restrict_self` and `Place.ramificationIdx_self`, a chain of general
-`Valuation`/`Place` lemmas belonging in their own PR. It is instead derived here by cancellation
-from functoriality and injectivity, which this module already has.
+  and its value on the class of a divisor, with the identity and composition laws
+  `TauCeti.Isogeny.divisorPullbackClassGroup_id` and
+  `TauCeti.Isogeny.divisorPullbackClassGroup_comp`.
 
 Each is the corresponding `TauCeti.Divisor.conorm` result read through the isogeny; the definition
 is opaque outside this module, so the wrappers are what a consumer has.
@@ -184,7 +181,7 @@ include h hψ hc in
 private theorem isScalarTower_of_comp :
     IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
   IsScalarTower.of_algebraMap_eq fun z ↦ by
-    rw [hc z, comp_fieldPullback, AlgHom.comp_apply, ← hψ z, ← h (algebraMap _ _ z)]
+    simp [hc, hψ, h, comp_fieldPullback]
 
 /-- **Pulling back along a composite is pulling back twice**, in the reverse order (Stichtenoth,
 Definition 3.1.8): the conorm is transitive in a tower, and the three function-field embeddings
@@ -205,11 +202,9 @@ end Comp
 
 section Id
 
-/-- **The identity law**: pulling back along `Isogeny.id` changes nothing.
-
-Derived by cancellation rather than directly: `divisorPullback_comp` at `φ = ψ = id` says that
-pulling back twice along the identity is pulling back once along `id.comp id = id`, and
-`divisorPullback_injective` cancels the outer one. -/
+/-- **The identity law**: pulling back along `Isogeny.id` changes nothing. -/
+-- Proof: `divisorPullback_comp` at `φ = ψ = id` is pulling back once along `id.comp id = id`,
+-- and `divisorPullback_injective` cancels the outer pullback.
 @[simp]
 theorem divisorPullback_id {W : WeierstrassCurve.Affine F}
     [Algebra W.FunctionField W.FunctionField]
@@ -244,6 +239,30 @@ theorem divisorPullbackClassGroup_divisorClass (D : Divisor F W₂.FunctionField
   haveI := φ.finiteDimensional_functionField h
   Divisor.conormClassGroup_divisorClass F W₁.FunctionField W₂.isFunctionField
     W₁.isFunctionField D
+
+/-- **The identity law on classes.** -/
+@[simp]
+theorem divisorPullbackClassGroup_id {W : WeierstrassCurve.Affine F}
+    [Algebra W.FunctionField W.FunctionField]
+    (hid : ∀ z, algebraMap W.FunctionField W.FunctionField z = (Isogeny.id W).fieldPullback z) :
+    (Isogeny.id W).divisorPullbackClassGroup hid = AddMonoidHom.id _ := by
+  refine AddMonoidHom.ext fun c ↦ ?_
+  obtain ⟨D, rfl⟩ := (Place.orderSystem W.isFunctionField).divisorClass_surjective c
+  rw [divisorPullbackClassGroup_divisorClass, divisorPullback_id, AddMonoidHom.id_apply]
+
+/-- **Contravariant functoriality on classes**, the quotient of `divisorPullback_comp`. -/
+@[simp]
+theorem divisorPullbackClassGroup_comp {W₃ : WeierstrassCurve.Affine F} (ψ : Isogeny W₂ W₃)
+    [Algebra W₃.FunctionField W₂.FunctionField] [Algebra W₃.FunctionField W₁.FunctionField]
+    (hψ : ∀ z, algebraMap W₃.FunctionField W₂.FunctionField z = ψ.fieldPullback z)
+    (hc : ∀ z, algebraMap W₃.FunctionField W₁.FunctionField z = (ψ.comp φ).fieldPullback z) :
+    (φ.divisorPullbackClassGroup h).comp (ψ.divisorPullbackClassGroup hψ) =
+      (ψ.comp φ).divisorPullbackClassGroup hc := by
+  refine AddMonoidHom.ext fun c ↦ ?_
+  obtain ⟨D, rfl⟩ := (Place.orderSystem W₃.isFunctionField).divisorClass_surjective c
+  rw [AddMonoidHom.comp_apply, divisorPullbackClassGroup_divisorClass,
+    divisorPullbackClassGroup_divisorClass, divisorPullbackClassGroup_divisorClass,
+    divisorPullback_comp]
 
 end TauCeti.Isogeny
 
