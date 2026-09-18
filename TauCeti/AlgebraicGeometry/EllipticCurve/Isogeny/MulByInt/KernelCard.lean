@@ -12,22 +12,36 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.AlgClo
 import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Separability
 
 /-!
-# The kernel of `[n]` has `n ²` points over an algebraically closed field
+# The kernel of `[n]` has `n ²` points
 
 `Isogeny.ker` counts only the base field's points, so its order equals the degree exactly when the
-geometric kernel is rational. Over an algebraically closed field it is, and `[n]` is separable as
-soon as `n` is invertible there, so the two obstructions both vanish and `#ker [n] = n ²`.
+geometric kernel is **rational** and the isogeny is **separable**: an inseparable isogeny has
+strictly fewer geometric kernel points than its degree even over an algebraically closed field.
+Separability of `[n]` is `n` being invertible in the base. Rationality is the other hypothesis, and
+it is the one that decides how general the statement is.
+
+So the count is proved once with rationality as a hypothesis, and a closure assumption enters only
+in a corollary. An algebraically closed base gives rationality outright — no extension of it
+carries new torsion — which is `card_ker_mulByIntIsogeny` below. Keeping the hypothesis explicit is
+what lets the count be read at a base where the torsion is rational for some other reason, without
+the argument being repeated.
 
 The count is made on embeddings, as for `1 − π_q`: an isogeny here has no map on points. Two
 embeddings of `K(W)` over the pulled-back field move the tautological point of `[n]`, which is
 `n` times the generic point, to the same place, so the two images of the generic point differ by an
-`n`-torsion point — and over an algebraically closed base a torsion point is rational. An embedding
+`n`-torsion point — and rationality is exactly what puts that difference in the kernel. An embedding
 is determined by where it sends the generic point, so that assignment is injective into the kernel,
 and the separable degree is the number of embeddings.
 
+The extension rationality is needed over is `AlgebraicClosure W.FunctionField`, because
+`Field.Emb K L` is `L →ₐ[K] AlgebraicClosure K`: the embeddings being counted land in the algebraic
+closure of the pulled-back field, so that is where the torsion difference lives.
+
 ## Main results
 
-* `TauCeti.Isogeny.card_ker_mulByIntIsogeny`: **`#ker [n] = n ²`**.
+* `TauCeti.Isogeny.card_ker_mulByIntIsogeny_of_torsion_rational`: **`#ker [n] = n ²`** whenever the
+  geometric `n`-torsion is rational and `n` is invertible.
+* `TauCeti.Isogeny.card_ker_mulByIntIsogeny`: the same over an algebraically closed field.
 
 The three steps of the argument sketched above — the torsion difference, its rationality, and the
 resulting bound on embeddings — are `private`; nothing outside this module uses them.
@@ -72,21 +86,28 @@ private theorem ne_zero_of_psiFunctionField_ne_zero {n : ℤ} (hn : psiFunctionF
   rintro rfl
   exact hn (by simp [psiFunctionField_def, WeierstrassCurve.ψ_zero])
 
-/-- **That difference is the image of a rational point**, the base field being algebraically
-closed and the difference `n`-torsion. -/
-private theorem mem_range_baseChange_sub_map_genericPoint_mulByInt [IsAlgClosed F]
+/-- **That difference is the image of a rational point** as soon as the `n`-torsion over `Ω` is
+rational, the difference being `n`-torsion. Rationality is the only thing the count needs of the
+base field, so it is taken as a hypothesis rather than inferred from a closure assumption: see
+`card_ker_mulByIntIsogeny_of_torsion_rational`. -/
+private theorem mem_range_baseChange_sub_map_genericPoint_mulByInt
     {Ω : Type*} [Field Ω] [DecidableEq Ω] [Algebra F Ω] {n : ℤ}
-    (hn : psiFunctionField W n ≠ 0) (σ τ : W.FunctionField →ₐ[F] Ω)
+    (hn : psiFunctionField W n ≠ 0)
+    (hrat : ∀ P : (W.baseChange Ω).toAffine.Point, n • P = 0 →
+      P ∈ Set.range (Point.baseChange (W' := W) F Ω))
+    (σ τ : W.FunctionField →ₐ[F] Ω)
     (h : ∀ z ∈ (mulByIntIsogeny W hn).fieldPullback.fieldRange, σ z = τ z) :
     Point.map σ (genericPoint W) - Point.map τ (genericPoint W) ∈
       Set.range (Point.baseChange (W' := W) F Ω) :=
-  W.mem_range_baseChange_of_zsmul_eq_zero (ne_zero_of_psiFunctionField_ne_zero W hn)
-    (zsmul_map_sub_map_genericPoint_eq_zero W hn σ τ h)
+  hrat _ (zsmul_map_sub_map_genericPoint_eq_zero W hn σ τ h)
 
+open scoped Classical in
 /-- **There are at most as many embeddings of `K(W)` over the pulled-back field as kernel
 points**, each embedding being determined by the rational point it moves the generic point by. -/
-private theorem card_emb_mulByIntIsogeny_le_card_ker [IsAlgClosed F] {n : ℤ}
-    (hn : psiFunctionField W n ≠ 0) :
+private theorem card_emb_mulByIntIsogeny_le_card_ker {n : ℤ}
+    (hn : psiFunctionField W n ≠ 0)
+    (hrat : ∀ P : (W.baseChange (AlgebraicClosure W.FunctionField)).toAffine.Point, n • P = 0 →
+      P ∈ Set.range (Point.baseChange (W' := W) F (AlgebraicClosure W.FunctionField))) :
     Nat.card (Field.Emb (mulByIntIsogeny W hn).fieldPullback.fieldRange W.FunctionField) ≤
       Nat.card (mulByIntIsogeny W hn).ker := by
   classical
@@ -97,7 +118,7 @@ private theorem card_emb_mulByIntIsogeny_le_card_ker [IsAlgClosed F] {n : ℤ}
     simpa using (σ.commutes ⟨z, hz⟩).trans (τ.commutes ⟨z, hz⟩).symm
   obtain ⟨σ₀⟩ : Nonempty (Field.Emb L W.FunctionField) := inferInstance
   choose f hf using fun σ : Field.Emb L W.FunctionField ↦
-    mem_range_baseChange_sub_map_genericPoint_mulByInt W hn (σ.restrictScalars F)
+    mem_range_baseChange_sub_map_genericPoint_mulByInt W hn hrat (σ.restrictScalars F)
       (σ₀.restrictScalars F) (hagree σ σ₀)
   have hker : ∀ σ : Field.Emb L W.FunctionField, f σ ∈ (mulByIntIsogeny W hn).ker := by
     intro σ
@@ -113,16 +134,34 @@ private theorem card_emb_mulByIntIsogeny_le_card_ker [IsAlgClosed F] {n : ℤ}
     (eq_of_baseChange_eq_sub_map_genericPoint W (fun σ : Field.Emb L W.FunctionField ↦
       σ.restrictScalars F) (σ₀.restrictScalars F) hf (congrArg Subtype.val hst))
 
-/-- **`#ker [n] = n ²`** over an algebraically closed field, for `n` invertible there. -/
-theorem card_ker_mulByIntIsogeny [IsAlgClosed F] {n : ℤ} {hn : psiFunctionField W n ≠ 0}
+open scoped Classical in
+/-- **`#ker [n] = n ²` whenever the geometric `n`-torsion is rational**, for `n` invertible.
+
+`Isogeny.ker` counts the base field's points, so the count is the degree exactly when the kernel is
+rational and the isogeny separable. Both obstructions are hypotheses here: rationality is `hrat`,
+separability is `hchar`. An algebraically closed base supplies the first for free, which is
+`card_ker_mulByIntIsogeny`. -/
+theorem card_ker_mulByIntIsogeny_of_torsion_rational {n : ℤ} {hn : psiFunctionField W n ≠ 0}
+    (hrat : ∀ P : (W.baseChange (AlgebraicClosure W.FunctionField)).toAffine.Point, n • P = 0 →
+      P ∈ Set.range (Point.baseChange (W' := W) F (AlgebraicClosure W.FunctionField)))
     (hchar : (n : F) ≠ 0) :
     Nat.card (mulByIntIsogeny W hn).ker = n.natAbs ^ 2 := by
   have hge : (mulByIntIsogeny W hn).separableDegree ≤ Nat.card (mulByIntIsogeny W hn).ker := by
     rw [separableDegree_def, Field.finSepDegree]
-    exact card_emb_mulByIntIsogeny_le_card_ker W hn
+    exact card_emb_mulByIntIsogeny_le_card_ker W hn hrat
   have hle := card_ker_le_separableDegree (mulByIntIsogeny W hn)
   have := le_antisymm hle hge
   rw [this, separableDegree_mulByIntIsogeny W hchar]
+
+open scoped Classical in
+/-- **`#ker [n] = n ²`** over an algebraically closed field, for `n` invertible there: no extension
+of an algebraically closed field carries new torsion, which is the rationality the count needs. -/
+theorem card_ker_mulByIntIsogeny [IsAlgClosed F] {n : ℤ} {hn : psiFunctionField W n ≠ 0}
+    (hchar : (n : F) ≠ 0) :
+    Nat.card (mulByIntIsogeny W hn).ker = n.natAbs ^ 2 :=
+  card_ker_mulByIntIsogeny_of_torsion_rational W
+    (fun _ hP ↦ W.mem_range_baseChange_of_zsmul_eq_zero
+      (ne_zero_of_psiFunctionField_ne_zero W hn) hP) hchar
 
 end TauCeti.Isogeny
 
