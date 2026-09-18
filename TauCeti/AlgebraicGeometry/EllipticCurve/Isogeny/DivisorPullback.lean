@@ -82,19 +82,20 @@ noncomputable def divisorPullback :
 
 /-! ### The coefficients and the support
 
-These three read the place below `P'`, so their statements need the base-field tower and the
-finiteness that `h` supplies; the results after them do not. -/
+These three read the place below `P'`, so the base-field tower and the finiteness of the extension
+have to be in scope for their statements to elaborate, not just for their proofs. Both follow from
+`h`, so they are installed while the statement elaborates rather than quantified: a caller that can
+supply `h` should not have to supply them a second time. -/
 
 section Coefficients
-
-variable [IsScalarTower F W₂.FunctionField W₁.FunctionField]
-  [FiniteDimensional W₂.FunctionField W₁.FunctionField]
 
 /-- **The defining coefficient formula**: the coefficient of `φ* D` at a place `P'` of `F(W₁)` is
 `e(P' ∣ P)` times the coefficient of `D` at the place `P` below it. -/
 @[simp]
 theorem coeff_divisorPullback (D : Divisor F W₂.FunctionField)
     (P' : Place F W₁.FunctionField) :
+    haveI := isScalarTower_of_algebraMap_eq_fieldPullback φ h
+    haveI := φ.finiteDimensional_functionField h
     (φ.divisorPullback h D).coeff P' =
       Place.ramificationIdx W₂.FunctionField P' *
         D.coeff (P'.restrict F W₂.FunctionField) :=
@@ -107,6 +108,8 @@ support of `D`: the ramification indices are positive, so nothing cancels. -/
 @[grind =]
 theorem mem_support_divisorPullback_iff {D : Divisor F W₂.FunctionField}
     {P' : Place F W₁.FunctionField} :
+    haveI := isScalarTower_of_algebraMap_eq_fieldPullback φ h
+    haveI := φ.finiteDimensional_functionField h
     P' ∈ (φ.divisorPullback h D).support ↔ P'.restrict F W₂.FunctionField ∈ D.support :=
   haveI := isScalarTower_of_algebraMap_eq_fieldPullback φ h
   haveI := φ.finiteDimensional_functionField h
@@ -115,6 +118,8 @@ theorem mem_support_divisorPullback_iff {D : Divisor F W₂.FunctionField}
 /-- **The pullback of a point divisor is its fibre**, the places above `P` weighted by their
 ramification indices — geometrically `φ⁻¹(P)` with multiplicity. -/
 theorem divisorPullback_ofPoint (P : Place F W₂.FunctionField) :
+    haveI := isScalarTower_of_algebraMap_eq_fieldPullback φ h
+    haveI := φ.finiteDimensional_functionField h
     φ.divisorPullback h (WeilDivisor.ofPoint P) =
       WeilDivisor.ofFinsetWithMultiplicity
         (Place.finite_setOf_restrict_eq (k' := F) (F' := W₁.FunctionField) F
