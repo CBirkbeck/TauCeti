@@ -268,6 +268,10 @@ theorem equivalent_iff_exists_smul_eq {t t' : PermutationTriple n} :
   rw [Equivalent, MulAction.orbitRel_apply, MulAction.mem_orbit_symm,
     MulAction.mem_orbit_iff]
 
+/-- Every relabeling of a permutation triple is isomorphic to it. -/
+theorem equivalent_smul (τ : Perm (Fin n)) (t : PermutationTriple n) : Equivalent (τ • t) t :=
+  equivalent_iff_exists_smul_eq.mpr ⟨τ⁻¹, inv_smul_smul τ t⟩
+
 /-- Isomorphism of triples — relabeling the sheets — is decidable, by searching the finitely many
 relabelings. -/
 instance : DecidableRel (@Equivalent n) :=
@@ -289,6 +293,19 @@ def IsoClass.mk (t : PermutationTriple n) : IsoClass n :=
 @[simp] theorem IsoClass.mk_eq_mk_iff {t t' : PermutationTriple n} :
     IsoClass.mk t = IsoClass.mk t' ↔ Equivalent t t' := by
   exact Quotient.eq''
+
+/-- Every isomorphism class is the class of some triple. -/
+theorem IsoClass.mk_surjective : Function.Surjective (IsoClass.mk : PermutationTriple n → _) :=
+  Quotient.mk''_surjective
+
+/-- A function on triples that is constant on isomorphism classes, as a function on classes. -/
+def IsoClass.lift {α : Sort*} (f : PermutationTriple n → α)
+    (hf : ∀ t t', Equivalent t t' → f t = f t') : IsoClass n → α :=
+  Quotient.lift f hf
+
+@[simp] theorem IsoClass.lift_mk {α : Sort*} (f : PermutationTriple n → α)
+    (hf : ∀ t t', Equivalent t t' → f t = f t') (t : PermutationTriple n) :
+    IsoClass.lift f hf (IsoClass.mk t) = f t := (rfl)
 
 /-! ### The monodromy group -/
 
@@ -367,6 +384,26 @@ theorem IsConnected.isPretransitive (ht : t.IsConnected) :
     · simpa [Subgroup.smul_def, Perm.smul_def] using congrArg υ hg
   refine ⟨fun h => ?_, key τ t⟩
   simpa using key τ⁻¹ _ h
+
+/-- The trivial triple has trivial monodromy. -/
+@[simp] theorem monodromyGroup_one : (1 : PermutationTriple n).monodromyGroup = ⊥ := by
+  simp [monodromyGroup]
+
+/-- The trivial triple is the disjoint union of `n` unbranched sheets, so it is connected exactly
+in degree one. -/
+@[simp] theorem isConnected_one_iff : (1 : PermutationTriple n).IsConnected ↔ n = 1 := by
+  rw [isConnected_iff, monodromyGroup_one]
+  refine ⟨fun ⟨hn, h⟩ => ?_, fun hn => ⟨by omega, ⟨fun i j => ⟨1, ?_⟩⟩⟩⟩
+  · by_contra hn'
+    obtain ⟨g, hg⟩ := h.exists_smul_eq (⟨0, by omega⟩ : Fin n) ⟨1, by omega⟩
+    rw [Subsingleton.elim g 1, one_smul] at hg
+    simp [Fin.ext_iff] at hg
+  · subst hn
+    exact Subsingleton.elim _ _
+
+/-- A triple of degree one is connected. -/
+theorem isConnected_of_degree_one (t : PermutationTriple 1) : t.IsConnected := by
+  rw [Subsingleton.elim t 1, isConnected_one_iff]
 
 /-- Translating to the opposite convention preserves connectedness. -/
 theorem isConnected_equivOppositeConvention_iff (t : PermutationTriple n) :
