@@ -19,8 +19,9 @@ as the geometric `ℓ`-torsion is rational. Every point of the kernel is killed 
 it a `ZMod ℓ`-module, and `ZMod ℓ` is a field, so the kernel is a vector space whose cardinality
 `ℓ ²` reads off its dimension.
 
-Rationality is the only thing the base field is asked for, so it is what the statements take;
-an algebraically closed base supplies it outright and gives the corollaries below.
+Beyond `ℓ` being invertible, rationality is the only thing the base field is asked for, so the
+statements take the two together; an algebraically closed base supplies the rationality outright
+and gives the corollaries below.
 
 Rank two is what lets an endomorphism act on the torsion as a `2 × 2` matrix over `ZMod ℓ`, which
 is the form the degree and the trace are read off in.
@@ -66,7 +67,8 @@ private theorem nonempty_linearEquiv_of_finrank_eq
   exact FiniteDimensional.nonempty_linearEquiv_of_finrank_eq (by simpa using h)
 
 open scoped Classical in
-/-- **`E[ℓ]` is two-dimensional over `ZMod ℓ`** whenever the geometric `ℓ`-torsion is rational. -/
+/-- **`E[ℓ]` is two-dimensional over `ZMod ℓ`** for `ℓ` invertible in the base field whenever the
+geometric `ℓ`-torsion is rational. -/
 theorem finrank_ker_mulByPrimeIsogeny_of_torsion_rational
     (hrat : ∀ P : (W.baseChange (AlgebraicClosure W.FunctionField)).toAffine.Point,
       (l : ℤ) • P = 0 →
@@ -76,8 +78,8 @@ theorem finrank_ker_mulByPrimeIsogeny_of_torsion_rational
   finrank_ker_of_card_eq W (card_ker_mulByPrimeIsogeny_of_torsion_rational W hrat hchar)
 
 open scoped Classical in
-/-- **`E[ℓ] ≅ (ZMod ℓ)²`** whenever the geometric `ℓ`-torsion is rational: the `ℓ`-torsion is free
-of rank two. -/
+/-- **`E[ℓ] ≅ (ZMod ℓ)²`** for `ℓ` invertible in the base field whenever the geometric `ℓ`-torsion
+is rational: the `ℓ`-torsion is free of rank two. -/
 theorem nonempty_linearEquiv_ker_mulByPrimeIsogeny_of_torsion_rational
     (hrat : ∀ P : (W.baseChange (AlgebraicClosure W.FunctionField)).toAffine.Point,
       (l : ℤ) • P = 0 →
