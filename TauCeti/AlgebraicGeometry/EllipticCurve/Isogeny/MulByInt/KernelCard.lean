@@ -20,12 +20,11 @@ strictly fewer geometric kernel points than its degree even over an algebraicall
 Separability of `[n]` is `n` being invertible in the base. Rationality is the other hypothesis, and
 it is the one that decides how general the statement is.
 
-So the count is proved once, with rationality as a hypothesis, and the closure assumptions are
-corollaries. An algebraically closed base gives rationality outright — no extension of it carries
-new torsion — which is `card_ker_mulByIntIsogeny` below. A separably closed base gives it too once
-`n` is invertible, since the coordinates of an `n`-torsion point are then separable over the base;
-that is the generality the torsion layer of the roadmap is stated at, and it is a corollary of the
-same engine.
+So the count is proved once with rationality as a hypothesis, and a closure assumption enters only
+in a corollary. An algebraically closed base gives rationality outright — no extension of it
+carries new torsion — which is `card_ker_mulByIntIsogeny` below. Keeping the hypothesis explicit is
+what lets the count be read at a base where the torsion is rational for some other reason, without
+the argument being repeated.
 
 The count is made on embeddings, as for `1 − π_q`: an isogeny here has no map on points. Two
 embeddings of `K(W)` over the pulled-back field move the tautological point of `[n]`, which is
@@ -140,9 +139,8 @@ open scoped Classical in
 
 `Isogeny.ker` counts the base field's points, so the count is the degree exactly when the kernel is
 rational and the isogeny separable. Both obstructions are hypotheses here: rationality is `hrat`,
-separability is `hchar`. An algebraically closed base supplies the first for free
-(`card_ker_mulByIntIsogeny`), and so does a separably closed one once `n` is invertible, which is
-the generality the torsion layer is stated at. -/
+separability is `hchar`. An algebraically closed base supplies the first for free, which is
+`card_ker_mulByIntIsogeny`. -/
 theorem card_ker_mulByIntIsogeny_of_torsion_rational {n : ℤ} {hn : psiFunctionField W n ≠ 0}
     (hrat : ∀ P : (W.baseChange (AlgebraicClosure W.FunctionField)).toAffine.Point, n • P = 0 →
       P ∈ Set.range (Point.baseChange (W' := W) F (AlgebraicClosure W.FunctionField)))
