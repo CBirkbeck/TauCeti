@@ -15,9 +15,9 @@ import Mathlib.Algebra.Module.End
 # A nonempty fiber of a group homomorphism is a copy of the kernel
 
 Mathlib's `AddMonoidHom.fiberEquivKer` exhibits a nonempty fiber of `f` as a coset of `ker f`, in
-the set-preimage form `f ⁻¹' {f a}`. Restated in the subtype form `{a // f a = b}` a caller
-usually meets, it counts the fiber, makes it finite, and reindexes a sum over it as a sum over the
-kernel.
+the set-preimage form `f ⁻¹' {f a}`. Substituting the attained value puts the subtype form
+`{a // f a = b}` a caller usually meets into that shape, and three consequences follow: the fiber
+is counted, made finite, and a sum over it is reindexed as a sum over the kernel.
 
 Finiteness is the one of the three that needs no preimage: an empty fiber is finite as well, so the
 statement is available before any point of the fiber is known, which is what a caller quantifying
@@ -30,8 +30,6 @@ the only thing either statement asks for.
 
 ## Main results
 
-* `AddMonoidHom.subtypeFiberEquivKer` (and `MonoidHom.subtypeFiberEquivKer`): a fiber over an
-  attained value is equivalent to the kernel.
 * `AddMonoidHom.card_fiber_eq_card_ker` (and `MonoidHom.card_fiber_eq_card_ker`): a nonempty
   fiber has as many elements as the kernel.
 * `AddMonoidHom.finite_fiber` (and `MonoidHom.finite_fiber`): every fiber is finite when the
@@ -44,24 +42,14 @@ the only thing either statement asks for.
 
 public section
 
-/-- **A fiber over an attained value is a copy of the kernel**, in subtype form: Mathlib's
-`fiberEquivKer` is stated for the preimage `f ⁻¹' {f a}`, and this is the same equivalence for
-`{x // f x = b}`. -/
-@[to_additive
-/-- **A fiber over an attained value is a copy of the kernel**, in subtype form: Mathlib's
-`fiberEquivKer` is stated for the preimage `f ⁻¹' {f a}`, and this is the same equivalence for
-`{x // f x = b}`. -/]
-def MonoidHom.subtypeFiberEquivKer {G H : Type*} [Group G] [Group H] (f : G →* H)
-    {b : H} {a : G} (ha : f a = b) : {x : G // f x = b} ≃ f.ker :=
-  (Equiv.subtypeEquivRight fun _ ↦ by simp [← ha]).trans (f.fiberEquivKer a)
-
 /-- **A nonempty fiber has as many elements as the kernel.** -/
 @[to_additive
 /-- **A nonempty fiber has as many elements as the kernel.** -/]
 theorem MonoidHom.card_fiber_eq_card_ker {G H : Type*} [Group G] [Group H] (f : G →* H)
     {b : H} {a : G} (ha : f a = b) :
-    Nat.card {x : G // f x = b} = Nat.card f.ker :=
-  Nat.card_congr (f.subtypeFiberEquivKer ha)
+    Nat.card {x : G // f x = b} = Nat.card f.ker := by
+  subst ha
+  exact Nat.card_congr (f.fiberEquivKer a)
 
 /-- **Every fiber is finite when the kernel is.** The empty fiber is covered too, so no preimage
 has to be produced first. -/
@@ -72,7 +60,8 @@ theorem MonoidHom.finite_fiber {G H : Type*} [Group G] [Group H] (f : G →* H) 
     (b : H) : Finite {x : G // f x = b} := by
   rcases isEmpty_or_nonempty {x : G // f x = b} with _ | ⟨⟨a, ha⟩⟩
   · infer_instance
-  · exact Finite.of_equiv _ (f.subtypeFiberEquivKer ha).symm
+  · subst ha
+    exact Finite.of_equiv _ (f.fiberEquivKer a).symm
 
 /-- **A product over a nonempty fiber is a product over the kernel**, translated by any point of
 the fiber. -/
@@ -81,9 +70,13 @@ the fiber. -/
 fiber. -/]
 theorem MonoidHom.prod_fiber_eq_prod_ker {G H : Type*} [CommGroup G] [Group H] (f : G →* H)
     {b : H} {a : G} (ha : f a = b) [Fintype {x : G // f x = b}] [Fintype f.ker] :
-    (∏ x : {x : G // f x = b}, (x : G)) = ∏ t : f.ker, a * (t : G) :=
-  Fintype.prod_equiv (f.subtypeFiberEquivKer ha) _ _ fun x ↦ by
-    simp [subtypeFiberEquivKer]
+    (∏ x : {x : G // f x = b}, (x : G)) = ∏ t : f.ker, a * (t : G) := by
+  subst ha
+  -- `f ⁻¹' {f a}` and `{x // f x = f a}` are the same type, but only the latter carries the
+  -- `Fintype` instance the statement supplies, so name it for the former.
+  let _ : Fintype ↥(⇑f ⁻¹' {f a}) := inferInstanceAs (Fintype {x : G // f x = f a})
+  exact Fintype.prod_equiv (f.fiberEquivKer a) _ _ fun x ↦ by
+    simp
 
 namespace TauCeti
 
