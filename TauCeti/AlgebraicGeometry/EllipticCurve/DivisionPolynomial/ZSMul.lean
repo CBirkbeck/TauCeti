@@ -1100,7 +1100,8 @@ theorem evalEval_ψ_eq_zero_of_zsmul_eq_zero {x y : F}
 through the two evaluation bridges. Both directions hold pointwise, for a supplied `y` completing
 `x` to a point: no closure assumption is needed, because the point is given rather than produced,
 and no ellipticity, because neither bridge uses it. -/
-@[simp]
+-- Not `@[simp]`: the left-hand side determines `x` but not `y`, which the right-hand side needs
+-- to name the point, so `simpNF` rejects the attribute as one `simp` could never apply.
 theorem eval_ΨSq_eq_zero_iff_zsmul_eq_zero {x y : F} (hns : W.toAffine.Nonsingular x y) (n : ℤ) :
     (W.ΨSq n).eval x = 0 ↔ n • (Jacobian.Point.fromAffine (Affine.Point.some _ _ hns)) = 0 := by
   rw [← evalEval_Ψ_sq_eq_eval_ΨSq W hns.left n, ← evalEval_ψ_eq_evalEval_Ψ W hns.left n,
