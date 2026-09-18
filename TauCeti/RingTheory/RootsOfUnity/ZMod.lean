@@ -33,8 +33,9 @@ Ported from AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0) @
 `projects/HasseWeil/HasseWeil/HasseBound/WeilPairing/RootsOfUnity.lean`, declaration
 `rootsOfUnity_addEquiv_zmod`. Three changes: the direction is reversed to start from `ZMod k`, so
 that it reads like `IsPrimitiveRoot.zmodEquivZPowers` which it extends; the base is a domain rather
-than a field, which is all `zpowers_eq` asks for; and the characterising lemma below, which the
-source does not have, is added.
+than a field, which is all `zpowers_eq` asks for; and the four characterising lemmas below — the
+equivalence and its inverse, each at an integer and at a natural exponent — are added, none of
+which the source has.
 -/
 
 public section
