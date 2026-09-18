@@ -134,6 +134,11 @@ noncomputable def omegaFunctionField (n : ℤ) : W.FunctionField :=
 noncomputable def phiFunctionField (n : ℤ) : W.FunctionField :=
   algebraMap W.CoordinateRing W.FunctionField (Affine.CoordinateRing.mk W (W.φ n))
 
+/-- The image of the complementary division polynomial `ψcₙ` in the function field. It is the
+numerator of the pullback of `2y + a₁x + a₃` along `[n]`, by the defining identity `ω_spec`. -/
+noncomputable def psicFunctionField (n : ℤ) : W.FunctionField :=
+  algebraMap W.CoordinateRing W.FunctionField (Affine.CoordinateRing.mk W (W.ψc n))
+
 /-- The rational division-polynomial expression `φₙ / ψₙ²`.
 
 This is the `x`-coordinate of `[n]` at the generic point exactly when `ψₙ` does not vanish
@@ -158,6 +163,10 @@ theorem omegaFunctionField_def (n : ℤ) : omegaFunctionField W n =
 /-- **The defining equation of `phiFunctionField`.** -/
 theorem phiFunctionField_def (n : ℤ) : phiFunctionField W n =
     algebraMap W.CoordinateRing W.FunctionField (Affine.CoordinateRing.mk W (W.φ n)) := (rfl)
+
+/-- **The defining equation of `psicFunctionField`.** -/
+theorem psicFunctionField_def (n : ℤ) : psicFunctionField W n =
+    algebraMap W.CoordinateRing W.FunctionField (Affine.CoordinateRing.mk W (W.ψc n)) := (rfl)
 
 /-- **`Φₙ` at the generic point is the image of the univariate `Φₙ`.** -/
 theorem phiFunctionField_eq_algebraMap (n : ℤ) :

@@ -32,6 +32,9 @@ rather than a self-contained curiosity.
 ## Main results
 
 * `TauCeti.Isogeny.wronskian_Φ_ΨSq_mul_invariantDifferentialDenom`: the identity above.
+* `TauCeti.Isogeny.psiFunctionField_cube_mul_fieldPullback_invariantDifferentialDenom`:
+  `ψₙ³ ([n]*u) = ψcₙ`, the first half of the bridge that rewrites `ΨSqₙ² ([n]*u)` as
+  `preΨ_{2n} u`.
 
 ## References
 
@@ -100,6 +103,51 @@ theorem wronskian_Φ_ΨSq_mul_invariantDifferentialDenom [W.IsElliptic] {n : ℤ
   have hscal := smul_left_injective W.FunctionField hDx hω
   field_simp at hscal
   linear_combination hscal
+
+/-! ### The `ψc` bridge
+
+`[n]*u` is `u` read at the image point `(Φₙ/ΨSqₙ, ωₙ/ψₙ³)`, so clearing `ψₙ³` turns it into the
+left-hand side of `ω_spec`, the identity `ψc` is defined by. -/
+
+/-- The pullback of `[n]` sends the generic `y` to `[n]*y = ωₙ/ψₙ³`. -/
+private theorem fieldPullback_mulByIntIsogeny_genericY [W.IsElliptic] {n : ℤ}
+    (hn : psiFunctionField W n ≠ 0) :
+    (mulByIntIsogeny W hn).fieldPullback (genericY W) = mulByIntY W n := by
+  rw [genericY_def, fieldPullback_algebraMap, mulByIntIsogeny_pullback]
+  exact mulByIntPullback_Y W hn
+
+/-- **The defining identity for `ψc` at the generic point**: `2 ωₙ + a₁ φₙ ψₙ + a₃ ψₙ³ = ψcₙ`. -/
+private theorem two_mul_omega_add_eq_psic (n : ℤ) :
+    2 * omegaFunctionField W n +
+        algebraMap F W.FunctionField W.a₁ * phiFunctionField W n * psiFunctionField W n +
+        algebraMap F W.FunctionField W.a₃ * psiFunctionField W n ^ 3 =
+      psicFunctionField W n := by
+  have hC : ∀ a : F, algebraMap F[X] W.FunctionField (C a) = algebraMap F W.FunctionField a :=
+    fun a ↦ by rw [Polynomial.C_eq_algebraMap, ← IsScalarTower.algebraMap_apply]
+  have h := congrArg (fun p ↦ algebraMap W.CoordinateRing W.FunctionField
+    (CoordinateRing.mk W p)) (W.ω_spec n)
+  simpa only [map_add, map_mul, map_pow, map_ofNat,
+    CoordinateRing.mk_C_eq_algebraMap, ← IsScalarTower.algebraMap_apply, hC,
+    omegaFunctionField_def, phiFunctionField_def, psiFunctionField_def,
+    psicFunctionField_def] using h
+
+/-- **`ψₙ³ · ([n]*u) = ψcₙ`.** The pullback of `u = 2y + a₁x + a₃` along `[n]` is `u` read at the
+image point `(Φₙ/ΨSqₙ, ωₙ/ψₙ³)`, so clearing `ψₙ³` turns it into `2 ωₙ + a₁ φₙ ψₙ + a₃ ψₙ³`, which
+is the left-hand side of `ω_spec` — the identity `ψc` is defined by.
+
+This is the first half of the bridge from `[n]*u` to the division polynomials: combined with the
+complement identity `ψₙ ψcₙ = ψ_{2n}` it rewrites `ΨSqₙ² ([n]*u)` as `preΨ_{2n} u`, which is what
+turns the Wronskian above into the polynomial identity
+`Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`. -/
+theorem psiFunctionField_cube_mul_fieldPullback_invariantDifferentialDenom [W.IsElliptic] {n : ℤ}
+    (hn : psiFunctionField W n ≠ 0) :
+    psiFunctionField W n ^ 3 *
+        (mulByIntIsogeny W hn).fieldPullback (invariantDifferentialDenom W) =
+      psicFunctionField W n := by
+  simp only [invariantDifferentialDenom_def, map_add, map_mul, map_ofNat, AlgHom.commutes]
+  rw [fieldPullback_mulByIntIsogeny_genericX W hn, fieldPullback_mulByIntIsogeny_genericY W hn,
+    mulByIntX_def, mulByIntY_def, ← two_mul_omega_add_eq_psic]
+  field_simp
 
 end TauCeti.Isogeny
 
