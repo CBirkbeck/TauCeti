@@ -19,7 +19,15 @@ of `dx` gives
 `(Φₙ' ΨSqₙ - Φₙ ΨSqₙ') u = n ΨSqₙ² ([n]*u)`
 
 at the generic point. This is the function-field half of the classical Wronskian formula; the
-other half rewrites `ΨSqₙ² ([n]*u)` as `preΨ_{2n} u`, which is not proved here.
+other half rewrites `ΨSqₙ² ([n]*u)` as `preΨ_{2n} u`, which is not proved here. The two together
+give the polynomial identity `Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`.
+
+That identity is what supplies the multiplicity-one step in the unramifiedness of `[n]`
+(Silverman III.4.10(c)): the fibre polynomial `Φₙ - x_Q · ΨSqₙ` has a simple root at the
+`x`-coordinate of each preimage, because its derivative there is `n · preΨ_{2n} / ΨSqₙ ≠ 0`.
+Unramifiedness is in turn what counts `E[N]` as the fibre of `[N]` over `O` once the fundamental
+identity is applied, so this is a prerequisite of the separable-implies-unramified milestone
+rather than a self-contained curiosity.
 
 ## Main results
 
