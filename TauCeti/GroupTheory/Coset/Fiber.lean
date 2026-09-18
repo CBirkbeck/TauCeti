@@ -33,7 +33,8 @@ the only thing either statement asks for.
 ## Main results
 
 * `AddMonoidHom.subtypeFiberEquivKer` (and `MonoidHom.subtypeFiberEquivKer`): the fiber over an
-  attained value, as a subtype, is equivalent to the kernel.
+  attained value, as a subtype, is equivalent to the kernel, translating by `-a` and its inverse
+  by `a`.
 * `AddMonoidHom.card_fiber_eq_card_ker` (and `MonoidHom.card_fiber_eq_card_ker`): a nonempty
   fiber has as many elements as the kernel.
 * `AddMonoidHom.finite_fiber` (and `MonoidHom.finite_fiber`): every fiber is finite when the
@@ -70,6 +71,22 @@ def MonoidHom.subtypeFiberEquivKer {G H : Type*} [Group G] [Group H] (f : G →*
     (ha : f a = b) : {x : G // f x = b} ≃ f.ker :=
   (Equiv.subtypeEquivRight fun _ ↦ by simp [← ha]).trans (f.fiberEquivKer a)
 
+/-- **The equivalence translates by `a⁻¹`.** -/
+@[to_additive (attr := simp)
+/-- **The equivalence translates by `-a`.** -/]
+theorem MonoidHom.coe_subtypeFiberEquivKer_apply {G H : Type*} [Group G] [Group H] (f : G →* H)
+    {b : H} {a : G} (ha : f a = b) (x : {x : G // f x = b}) :
+    ((f.subtypeFiberEquivKer ha x : f.ker) : G) = a⁻¹ * (x : G) := by
+  simp [MonoidHom.subtypeFiberEquivKer]
+
+/-- **Its inverse translates by `a`.** -/
+@[to_additive (attr := simp)
+/-- **Its inverse translates by `a`.** -/]
+theorem MonoidHom.coe_subtypeFiberEquivKer_symm_apply {G H : Type*} [Group G] [Group H]
+    (f : G →* H) {b : H} {a : G} (ha : f a = b) (t : f.ker) :
+    (((f.subtypeFiberEquivKer ha).symm t : {x : G // f x = b}) : G) = a * (t : G) := by
+  simp [MonoidHom.subtypeFiberEquivKer]
+
 /-- **A nonempty fiber has as many elements as the kernel.** -/
 @[to_additive
 /-- **A nonempty fiber has as many elements as the kernel.** -/]
@@ -90,15 +107,18 @@ theorem MonoidHom.finite_fiber {G H : Type*} [Group G] [Group H] (f : G →* H) 
   · exact Finite.of_equiv _ (f.subtypeFiberEquivKer ha).symm
 
 /-- **A product over a nonempty fiber is a product over the kernel**, translated by any point of
-the fiber. -/
+the fiber. Only the kernel is assumed finite: the equivalence carries that to the fiber, and the
+`Fintype` the product needs there is the transported one. -/
 @[to_additive
 /-- **A sum over a nonempty fiber is a sum over the kernel**, translated by any point of the
-fiber. -/]
+fiber. Only the kernel is assumed finite: the equivalence carries that to the fiber, and the
+`Fintype` the sum needs there is the transported one. -/]
 theorem MonoidHom.prod_fiber_eq_prod_ker {G H : Type*} [CommGroup G] [Group H] (f : G →* H)
-    {b : H} {a : G} (ha : f a = b) [Fintype {x : G // f x = b}] [Fintype f.ker] :
+    {b : H} {a : G} (ha : f a = b) [Fintype f.ker] :
+    letI : Fintype {x : G // f x = b} := Fintype.ofEquiv f.ker (f.subtypeFiberEquivKer ha).symm
     (∏ x : {x : G // f x = b}, (x : G)) = ∏ t : f.ker, a * (t : G) :=
-  Fintype.prod_equiv (f.subtypeFiberEquivKer ha) _ _ fun _ ↦ by
-    simp [MonoidHom.subtypeFiberEquivKer]
+  letI : Fintype {x : G // f x = b} := Fintype.ofEquiv f.ker (f.subtypeFiberEquivKer ha).symm
+  Fintype.prod_equiv (f.subtypeFiberEquivKer ha) _ _ fun _ ↦ by simp
 
 namespace TauCeti
 
