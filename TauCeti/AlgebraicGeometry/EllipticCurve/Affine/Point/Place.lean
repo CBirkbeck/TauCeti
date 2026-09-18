@@ -44,7 +44,6 @@ When `W` is elliptic, Mathlib's `Affine.equation_iff_nonsingular` identifies the
 
 * `WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal`: a `@[simp]` lemma
   identifying the ideal underlying `pointPlace` as `XYIdeal W x (C y)`.
-* `WeierstrassCurve.Affine.CoordinateRing.mk_mem_pointPlace_iff`: a class lies in that ideal
   exactly when its representative vanishes at the point.
 * `WeierstrassCurve.Affine.CoordinateRing.pointPlace_eq_iff`: `pointPlace` is injective —
   two points have the same place exactly when they have the same coordinates.
@@ -134,19 +133,6 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal
     (WeierstrassCurve.Affine.CoordinateRing.pointPlace h).asIdeal = CoordinateRing.XYIdeal W x (C
         y) := by
   simp [WeierstrassCurve.Affine.CoordinateRing.pointPlace]
-
-/-- **A class lies in the place of a point exactly when its representative vanishes there.**
-The membership characterisation of `pointPlace` itself, saving its consumers the composition of
-`pointPlace_asIdeal` with `mk_mem_XYIdeal_iff`. -/
--- Not `@[simp]`: `pointPlace_asIdeal` and `mk_mem_XYIdeal_iff` both carry it, so `simp` already
--- rewrites the left-hand side to evaluation — via `XYIdeal` membership — in two steps, and
--- `simpNF` rejects the attribute on a statement `simp` can prove.
-theorem _root_.WeierstrassCurve.Affine.CoordinateRing.mk_mem_pointPlace_iff
-    {y : F} (h : W.Equation x y) (p : F[X][Y]) :
-    CoordinateRing.mk W p ∈ (WeierstrassCurve.Affine.CoordinateRing.pointPlace h).asIdeal ↔
-      p.evalEval x y = 0 := by
-  rw [WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal,
-    WeierstrassCurve.Affine.CoordinateRing.mk_mem_XYIdeal_iff h]
 
 /-- **`pointPlace` is injective**: two points of the curve have the same place exactly when they
 have the same coordinates. -/

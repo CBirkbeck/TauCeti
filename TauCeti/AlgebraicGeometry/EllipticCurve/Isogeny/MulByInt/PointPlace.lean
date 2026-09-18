@@ -30,7 +30,7 @@ first back along the function-field map of `[n]` gives a valuation of `F(W)` aga
 shows it is equivalent to the place of `n • P`: the points above a place, for the covering `[n]`,
 are the points that `[n]` sends there.
 
-The restricted valuation is not itself normalized, which is why the statement is an equivalence
+The restricted valuation need not be normalized, which is why the statement is an equivalence
 rather than an equality. Normalizing it and taking its centre on the coordinate ring names a
 height one prime, and the two division-polynomial coordinate identities put the ideal of `n • P`
 inside that centre; maximality of the point ideal then forces the two to agree.
@@ -127,12 +127,12 @@ private theorem valuation_pointPlace_mulByIntY_sub_lt_one {x y : F} (h : W.toAff
   have hden : (CoordinateRing.pointPlace h.left).intValuation
       (CoordinateRing.mk W.toAffine ((W.ψ n) ^ 3)) = 1 := by
     refine HeightOneSpectrum.intValuation_eq_one_iff.mpr ?_
-    rw [CoordinateRing.mk_mem_pointPlace_iff h.left]
+    rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
     simpa [evalEval] using pow_ne_zero 3 hψ
   rw [hrw, map_div₀]
   simp only [HeightOneSpectrum.valuation_of_algebraMap, hden, div_one]
   refine (HeightOneSpectrum.intValuation_lt_one_iff_mem _ _).2 ?_
-  rw [CoordinateRing.mk_mem_pointPlace_iff h.left]
+  rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
   have hid := W.mul_evalEval_ψ_cube_eq_evalEval_ω_of_zsmul h h' hnP
   simp only [evalEval, eval_C, eval_sub, eval_mul, eval_pow] at hid ⊢
   rw [← hid]; ring
@@ -154,12 +154,12 @@ private theorem valuation_pointPlace_mulByIntX_sub_lt_one {x y : F} (h : W.toAff
   have hden : (CoordinateRing.pointPlace h.left).intValuation
       (CoordinateRing.mk W.toAffine (C (W.ΨSq n))) = 1 := by
     refine HeightOneSpectrum.intValuation_eq_one_iff.mpr ?_
-    rw [CoordinateRing.mk_mem_pointPlace_iff h.left]
+    rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
     simpa only [evalEval_C] using hΨ
   rw [hrw, map_div₀]
   simp only [HeightOneSpectrum.valuation_of_algebraMap, hden, div_one]
   refine (HeightOneSpectrum.intValuation_lt_one_iff_mem _ _).2 ?_
-  rw [CoordinateRing.mk_mem_pointPlace_iff h.left]
+  rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
   have hid := mul_eval_ΨSq_eq_eval_Φ_of_zsmul W h h' hnP
   simp only [evalEval, eval_C, eval_sub, eval_mul]
   rw [← hid]; ring
@@ -196,36 +196,8 @@ private theorem comap_algebraMap_coordinateRing_le_one {x y : F}
     ← WeierstrassCurve.Affine.genericX_eq_algebraMap,
     fieldPullback_mulByIntIsogeny_genericX]
   refine valuation_pointPlace_mulByIntX_le_one W h.left ?_
-  rw [CoordinateRing.mk_mem_pointPlace_iff h.left]
+  rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
   simpa only [evalEval_C] using eval_ΨSq_ne_zero_of_zsmul_ne_zero W h hP
-
-omit [DecidableEq F] in
-/-- **A nontrivial valuation of the function field bounded by `1` on the coordinate ring is adic up
-to equivalence**: it is the adic valuation of the centre of its normalization, and that centre
-collects exactly the functions whose value drops below `1`. Normalizing is what makes the centre's
-adic valuation the valuation itself rather than merely equivalent to it. -/
-private theorem exists_heightOneSpectrum_isEquiv_of_le_one
-    {u : Valuation W.toAffine.FunctionField ℤᵐ⁰} [u.IsNontrivial]
-    (hR : ∀ r : W.toAffine.CoordinateRing,
-      u (algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField r) ≤ 1) :
-    ∃ Q : HeightOneSpectrum W.toAffine.CoordinateRing,
-      (Q.valuation W.toAffine.FunctionField).IsEquiv u ∧
-        ∀ r : W.toAffine.CoordinateRing, r ∈ Q.asIdeal ↔
-          u (algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField r) < 1 := by
-  have hEq : (Valuation.normalization u).IsEquiv u := Valuation.isEquiv_normalization u
-  have hsurj : Function.Surjective (Valuation.normalization u) :=
-    Valuation.normalization_surjective u (Valuation.ordIndex_ne_zero_of_isNontrivial u)
-  have hRw : ∀ r : W.toAffine.CoordinateRing,
-      Valuation.normalization u
-        (algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField r) ≤ 1 :=
-    fun r ↦ hEq.le_one_iff_le_one.mpr (hR r)
-  have : (Valuation.normalization u).IsNontrivial := Valuation.isNontrivial_of_surjective hsurj
-  refine ⟨Valuation.heightOneSpectrum W.toAffine.CoordinateRing (Valuation.normalization u) hRw,
-    ?_, fun r ↦ ?_⟩
-  · rw [Valuation.valuation_heightOneSpectrum hsurj hRw]
-    exact hEq
-  · rw [Valuation.asIdeal_heightOneSpectrum, Valuation.mem_centerIdeal]
-    simpa using hEq.lt_iff_lt (x := algebraMap _ _ r) (y := 1)
 
 omit [DecidableEq F] in
 /-- **A height-one prime containing both generators of the ideal of a point is that point's
@@ -270,8 +242,8 @@ theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n :
   have hz0 : u z ≠ 0 := by
     rw [huz]; exact (Valuation.ne_zero_iff v).mpr (mulByIntX_sub_algebraMap_ne_zero W hn x')
   have : u.IsNontrivial := ⟨z, hz0, hz1⟩
-  obtain ⟨Q, hQu, hQmem⟩ := exists_heightOneSpectrum_isEquiv_of_le_one W
-    (comap_algebraMap_coordinateRing_le_one W h hn hP0)
+  obtain ⟨Q, hQu, hQmem⟩ := Valuation.exists_heightOneSpectrum_isEquiv_of_le_one
+    W.toAffine.CoordinateRing u (comap_algebraMap_coordinateRing_le_one W h hn hP0)
   have hmemX : CoordinateRing.XClass W.toAffine x' ∈ Q.asIdeal := by
     rw [hQmem, ← hzdef, huz]
     exact valuation_pointPlace_mulByIntX_sub_lt_one W h hn h' hnP
@@ -290,6 +262,7 @@ theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n :
 /-- **The fibre of `[n]` over a place is exactly the `[n]`-preimage of its point.** For `P` off
 the kernel of `[n]`, the place of `P` restricts along `[n]` to the place of `T` precisely when
 `n • P = T`. -/
+@[simp]
 theorem isEquiv_comap_pointPlace_iff {x y : F} (h : W.toAffine.Nonsingular x y) {n : ℤ}
     {x' y' : F} (h' : W.toAffine.Nonsingular x' y')
     (hP0 : n • Affine.Point.some x y h ≠ 0) :
