@@ -75,16 +75,6 @@ variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F} (φ : Iso
   [Algebra W₂.FunctionField W₁.FunctionField]
   (h : ∀ z, algebraMap W₂.FunctionField W₁.FunctionField z = φ.fieldPullback z)
 
-include h in
-/-- The pullback is a tower map over the base field: `fieldPullback` is an `F`-algebra map, so
-`F(W₁)` is an `F(W₂)`-algebra over `F`. This is not an instance — like the algebra structure it
-refines, it depends on `φ` — so a consumer of the characteristic lemmas below supplies it with
-`haveI := φ.isScalarTower_of_algebraMap_eq_fieldPullback h`. -/
-theorem isScalarTower_of_algebraMap_eq_fieldPullback :
-    IsScalarTower F W₂.FunctionField W₁.FunctionField :=
-  IsScalarTower.of_algebraMap_eq fun c ↦
-    ((h _).trans (φ.fieldPullback.commutes c)).symm
-
 /-- **The pullback of a divisor along an isogeny**: the conorm of the finite extension of function
 fields that the isogeny induces. -/
 noncomputable def divisorPullback :
