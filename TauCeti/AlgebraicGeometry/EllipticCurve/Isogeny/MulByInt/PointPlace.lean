@@ -109,12 +109,12 @@ private theorem valuation_pointPlace_mulByIntY_sub_lt_one {x y : F} (h : W.toAff
   have hden : (CoordinateRing.pointPlace h.left).intValuation
       (CoordinateRing.mk W.toAffine ((W.ψ n) ^ 3)) = 1 := by
     refine HeightOneSpectrum.intValuation_eq_one_iff.mpr ?_
-    rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
+    rw [CoordinateRing.mk_mem_pointPlace_iff h.left]
     simpa [evalEval] using pow_ne_zero 3 hψ
   rw [hrw, map_div₀]
   simp only [HeightOneSpectrum.valuation_of_algebraMap, hden, div_one]
   refine (HeightOneSpectrum.intValuation_lt_one_iff_mem _ _).2 ?_
-  rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
+  rw [CoordinateRing.mk_mem_pointPlace_iff h.left]
   have hid := W.mul_evalEval_ψ_cube_eq_evalEval_ω_of_zsmul h h' hnP
   simp only [evalEval, eval_C, eval_sub, eval_mul, eval_pow] at hid ⊢
   rw [← hid]; ring
@@ -147,12 +147,12 @@ private theorem valuation_pointPlace_mulByIntX_sub_lt_one {x y : F} (h : W.toAff
   have hden : (CoordinateRing.pointPlace h.left).intValuation
       (CoordinateRing.mk W.toAffine (C (W.ΨSq n))) = 1 := by
     refine HeightOneSpectrum.intValuation_eq_one_iff.mpr ?_
-    rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
+    rw [CoordinateRing.mk_mem_pointPlace_iff h.left]
     simpa only [evalEval_C] using hΨ
   rw [hrw, map_div₀]
   simp only [HeightOneSpectrum.valuation_of_algebraMap, hden, div_one]
   refine (HeightOneSpectrum.intValuation_lt_one_iff_mem _ _).2 ?_
-  rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
+  rw [CoordinateRing.mk_mem_pointPlace_iff h.left]
   have hid := mul_eval_ΨSq_eq_eval_Φ_of_zsmul W h h' hnP
   simp only [evalEval, eval_C, eval_sub, eval_mul]
   rw [← hid]; ring
@@ -189,7 +189,7 @@ private theorem comap_algebraMap_coordinateRing_le_one {x y : F}
     ← WeierstrassCurve.Affine.genericX_eq_algebraMap,
     fieldPullback_mulByIntIsogeny_genericX]
   refine valuation_pointPlace_mulByIntX_le_one W h.left ?_
-  rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
+  rw [CoordinateRing.mk_mem_pointPlace_iff h.left]
   simpa only [evalEval_C] using eval_ΨSq_ne_zero_of_zsmul_ne_zero W h hP
 
 /-- **The place of `P` restricts along `[n]` to the place of `n • P`.** -/
