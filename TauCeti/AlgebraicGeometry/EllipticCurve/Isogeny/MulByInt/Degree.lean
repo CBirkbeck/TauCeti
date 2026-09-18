@@ -22,8 +22,6 @@ its index as `n²` by way of the intermediate tower `F(Φₙ/ΨSqₙ) ⊆ F(x) �
 
 * `TauCeti.Isogeny.fieldPullback_mulByIntIsogeny_X`: the function-field pullback of `[n]` sends
   the affine coordinate to `Φₙ / ΨSqₙ`, read in `F(x)` rather than in the coordinate ring.
-* `TauCeti.Isogeny.mulByIntX_sub_algebraMap_ne_zero`: `[n]*x` is not a constant — the
-  transcendence of the generic coordinate, carried across the pullback.
 * `TauCeti.Isogeny.degree_mulByIntIsogeny`: `deg [n] = n²`, for an `n` whose division polynomial
   does not vanish at the generic point, and
   `TauCeti.Isogeny.degree_mulByIntIsogenyOfNeZero` for every `n ≠ 0`, that hypothesis being
@@ -81,31 +79,6 @@ nonsingularity as in `mulByIntIsogenyOfNeZero`. -/
 theorem degree_mulByIntIsogenyOfNeZero [W.IsElliptic] {n : ℤ} (hn : n ≠ 0) :
     (mulByIntIsogenyOfNeZero W hn).degree = n.natAbs ^ 2 :=
   degree_mulByIntIsogeny W _
-
-/-! ### The pulled-back coordinate is transcendental
-
-Stated for the affine curve, which is the form `mulByIntX` and the generic coordinate are given in;
-the degree results above take the Weierstrass curve itself. -/
-
-section Affine
-
-variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
-
-/-- **`[n]*x` is not a constant**: it is the image of the generic coordinate under an injective
-map, and the generic coordinate is not a constant. -/
-theorem mulByIntX_sub_algebraMap_ne_zero [W.IsElliptic] {n : ℤ}
-    (hn : psiFunctionField W n ≠ 0) (x : F) :
-    mulByIntX W n - algebraMap F W.FunctionField x ≠ 0 := by
-  rw [sub_ne_zero]
-  intro heq
-  refine W.genericX_ne_algebraMap x ((mulByIntIsogeny W hn).fieldPullback.toRingHom.injective ?_)
-  calc (mulByIntIsogeny W hn).fieldPullback.toRingHom W.genericX
-      = mulByIntX W n := fieldPullback_mulByIntIsogeny_genericX W hn
-    _ = algebraMap F W.FunctionField x := heq
-    _ = (mulByIntIsogeny W hn).fieldPullback.toRingHom (algebraMap F W.FunctionField x) :=
-        ((mulByIntIsogeny W hn).fieldPullback.commutes x).symm
-
-end Affine
 
 end TauCeti.Isogeny
 

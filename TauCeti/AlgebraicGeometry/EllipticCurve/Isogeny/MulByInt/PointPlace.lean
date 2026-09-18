@@ -8,8 +8,6 @@ module
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.MapsInfinity
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Place
 -- Proof-only: the non-vanishing of the division polynomial off the kernel.
--- Proof-only: `mulByIntX_sub_algebraMap_ne_zero`.
-import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Degree
 import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Coprimality
 -- Proof-only: the two coordinate identities relating `P` and `n • P`.
 import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Descent
