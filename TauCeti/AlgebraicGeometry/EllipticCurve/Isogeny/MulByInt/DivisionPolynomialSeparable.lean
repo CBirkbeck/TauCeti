@@ -96,7 +96,7 @@ factor `Ψ₂Sq` is absent from `ΨSqₙ`, so `preΨₙ` carries the whole vanis
 private theorem eval_preΨ_eq_zero_of_odd {n : ℤ} (hodd : ¬ Even n) {x y : F}
     (hns : (W⁄F).toAffine.Nonsingular x y) (h : n • (Affine.Point.some x y hns) = 0) :
     ((W⁄F).preΨ n).eval x = 0 := by
-  have hsq := eval_ΨSq_eq_zero_of_zsmul_eq_zero (W⁄F) hns (zsmul_fromAffine_eq_zero W h)
+  have hsq := (eval_ΨSq_eq_zero_iff_zsmul_eq_zero (W⁄F) hns n).mpr (zsmul_fromAffine_eq_zero W h)
   simp only [WeierstrassCurve.ΨSq, hodd, ite_false, mul_one, eval_pow] at hsq
   exact pow_eq_zero_iff two_ne_zero |>.mp hsq
 
@@ -107,7 +107,7 @@ private theorem eval_preΨ_eq_zero_of_even {n : ℤ} (heven : Even n) {x y : F}
     (hns : (W⁄F).toAffine.Nonsingular x y) (h : n • (Affine.Point.some x y hns) = 0)
     (h2 : (2 : ℤ) • (Affine.Point.some x y hns) ≠ 0) :
     ((W⁄F).preΨ n).eval x = 0 := by
-  have hsq := eval_ΨSq_eq_zero_of_zsmul_eq_zero (W⁄F) hns (zsmul_fromAffine_eq_zero W h)
+  have hsq := (eval_ΨSq_eq_zero_iff_zsmul_eq_zero (W⁄F) hns n).mpr (zsmul_fromAffine_eq_zero W h)
   simp only [WeierstrassCurve.ΨSq, heven, ite_true, eval_mul, eval_pow, mul_eq_zero,
     pow_eq_zero_iff (two_ne_zero)] at hsq
   exact hsq.resolve_right fun hΨ₂ ↦ eval_ΨSq_ne_zero_of_zsmul_ne_zero (W⁄F) hns h2
@@ -246,7 +246,7 @@ private theorem separable_ΨSq_two_of_isAlgClosed (hchar : ((2 : ℤ) : F) ≠ 0
     obtain ⟨hP0, hPT⟩ := Finset.mem_erase.mp hP
     rcases hQ : P with _ | ⟨x, y, hns⟩
     · exact absurd hQ hP0
-    · exact ⟨x, y, hns, rfl, eval_ΨSq_eq_zero_of_zsmul_eq_zero (W⁄F) hns
+    · exact ⟨x, y, hns, rfl, (eval_ΨSq_eq_zero_iff_zsmul_eq_zero (W⁄F) hns 2).mpr
         (zsmul_fromAffine_eq_zero W (hQ ▸ (hTmem P).mp hPT))⟩
   -- a `2`-torsion point is its own negative, so distinct ones have distinct abscissae
   have hinj : Set.InjOn (fun P : (W⁄F).toAffine.Point ↦ P.xRep) (T.erase 0) := by
@@ -317,7 +317,7 @@ theorem separable_minpoly_of_zsmul_eq_zero {Ω : Type*} [Field Ω] [Algebra F Ω
     (htors : n • Jacobian.Point.fromAffine (Affine.Point.some _ _ hns) = 0) :
     (minpoly F x).Separable :=
   separable_minpoly_of_aeval_ΨSq_eq_zero W hchar <| by
-    have hΨSq := eval_ΨSq_eq_zero_of_zsmul_eq_zero (W.baseChange Ω) hns htors
+    have hΨSq := (eval_ΨSq_eq_zero_iff_zsmul_eq_zero (W.baseChange Ω) hns n).mpr htors
     rwa [baseChange, map_ΨSq, eval_map, ← aeval_def] at hΨSq
 
 end WeierstrassCurve

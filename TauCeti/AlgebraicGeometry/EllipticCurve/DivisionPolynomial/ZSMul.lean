@@ -6,6 +6,9 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Universal
+-- Proof-only: the two evaluation bridges `ψₙ = Ψₙ` and `Ψₙ ² = ΨSqₙ` on the curve, which turn the
+-- `ψ`-vanishing criterion below into one on `ΨSqₙ`.
+import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Eval
 
 /-!
 # Coordinates of scalar multiplication through the division polynomials
@@ -1090,6 +1093,19 @@ theorem evalEval_ψ_eq_zero_of_zsmul_eq_zero {x y : F}
   rw [Jacobian.Point.ext_iff] at htors
   rw [heval, hzero] at htors
   exact (Jacobian.Z_eq_zero_of_equiv (Quotient.exact htors)).mpr rfl
+
+/-- **A point is `n`-torsion exactly when `ΨSqₙ` vanishes at its abscissa.**
+
+`ΨSqₙ` is the square of `Ψₙ`, which on the curve is `ψₙ`, so this is the `ψ`-criterion above read
+through the two evaluation bridges. Both directions hold pointwise, for a supplied `y` completing
+`x` to a point: no closure assumption is needed, because the point is given rather than produced,
+and no ellipticity, because neither bridge uses it. -/
+theorem eval_ΨSq_eq_zero_iff_zsmul_eq_zero {x y : F} (hns : W.toAffine.Nonsingular x y) (n : ℤ) :
+    (W.ΨSq n).eval x = 0 ↔ n • (Jacobian.Point.fromAffine (Affine.Point.some _ _ hns)) = 0 := by
+  rw [← evalEval_Ψ_sq_eq_eval_ΨSq W hns.left n, ← evalEval_ψ_eq_evalEval_Ψ W hns.left n,
+    pow_eq_zero_iff two_ne_zero]
+  exact ⟨zsmul_eq_zero_of_evalEval_ψ_eq_zero W hns n,
+    evalEval_ψ_eq_zero_of_zsmul_eq_zero W hns n⟩
 
 /-- **Torsion transports between the affine and Jacobian point groups.** `n • P = 0` affinely,
 with `n : ℕ`, is the same statement as `(n : ℤ) • P = 0` on the Jacobian side.
