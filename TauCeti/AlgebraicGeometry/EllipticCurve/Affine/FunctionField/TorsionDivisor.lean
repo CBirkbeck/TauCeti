@@ -45,7 +45,11 @@ theorem exists_principal_zsmul_pointPlace_sub_infinity {x y : F} (h : W.Nonsingu
       n • (WeilDivisor.ofPoint (Place.ofPrime F W.FunctionField
             (CoordinateRing.pointPlace h.left)) -
           WeilDivisor.ofPoint (Place.infinity W)) :=
-  W.divisorSum_eq_zero_iff (D := n • ⟨_, W.mem_ker_degree_pointPlace_sub_infinity h.left⟩) |>.1
+  W.divisorSum_eq_zero_iff (D := n • ⟨WeilDivisor.ofPoint
+        (Place.ofPrime F W.FunctionField (CoordinateRing.pointPlace h.left)) -
+      WeilDivisor.ofPoint (Place.infinity W), by
+    simpa only [AddMonoidHom.mem_ker, Divisor.degreeClass_divisorClass] using
+      W.degreeClass_divisorClass_pointPlace_sub_infinity h.left⟩) |>.1
     (by rw [map_zsmul, W.divisorSum_pointPlace_sub_infinity h, hT])
 
 end WeierstrassCurve.Affine

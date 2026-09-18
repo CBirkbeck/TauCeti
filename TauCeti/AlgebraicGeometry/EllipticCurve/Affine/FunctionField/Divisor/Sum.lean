@@ -27,7 +27,6 @@ produce its functions.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.mem_ker_degree_pointPlace_sub_infinity`: `(P) - (O)` has degree zero.
 * `WeierstrassCurve.Affine.divisorSum_pointPlace_sub_infinity`: `σ((P) - (O)) = P`, the computation
   rule that fixes `divisorSum` on the divisors it is read off from.
 * `WeierstrassCurve.Affine.divisorSum_eq_zero_iff`: **a degree-zero divisor is principal exactly
@@ -37,6 +36,17 @@ produce its functions.
 
 * [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], III.3.4 and III.3.5.
 * [H. Stichtenoth, *Algebraic Function Fields and Codes*][stichtenoth2009], I.4.
+
+## Provenance
+
+The principality criterion was previously formalized in the AINTLIB `HasseWeil` project
+(Chris Birkbeck), Apache-2.0, at commit `a302aeacd86053f9d5f991fbbf664e1cc1051d08`, as
+`projIsPrincipal_of_degZero_of_sigma_eq_zero` and its torsion specialization
+`weilFunction_exists`, both in
+`projects/HasseWeil/HasseWeil/HasseBound/WeilPairing/WeilFunction.lean`. Those are stated for the
+projective divisors of a smooth plane curve and are derived from a linear-equivalence reduction
+`D ∼ (σD) - (O)`; `divisorSum_eq_zero_iff` below is the function-field statement, obtained from
+the degree-zero class group instead.
 -/
 
 public section
@@ -55,31 +65,35 @@ noncomputable def divisorSum :
   (W.pointEquivDegreeZeroDivisorClass.symm.toAddMonoidHom).comp
     (Divisor.degreeZeroClassHom W.isFunctionField)
 
-omit [DecidableEq F] in
-/-- **`(P) - (O)` has degree zero**: both places are rational. -/
-theorem mem_ker_degree_pointPlace_sub_infinity {x y : F} (h : W.Equation x y) :
-    WeilDivisor.ofPoint (Place.ofPrime F W.FunctionField (CoordinateRing.pointPlace h)) -
-        WeilDivisor.ofPoint (Place.infinity W) ∈
-      (Divisor.degree (k := F) (F := W.FunctionField)).ker := by
-  simp [AddMonoidHom.mem_ker, Place.degree_ofPrime,
-    CoordinateRing.pointPlace.finrank_residueField_eq_one]
+/-- The defining formula for `divisorSum`: the degree-zero class map, read back as a point.
+
+Not `@[simp]`: the characterisation `divisorSum_eq_zero_iff` below is the `simp` form, and
+unfolding the composite first would keep it from firing. -/
+theorem divisorSum_apply (D : (Divisor.degree (k := F) (F := W.FunctionField)).ker) :
+    W.divisorSum D =
+      W.pointEquivDegreeZeroDivisorClass.symm (Divisor.degreeZeroClassHom W.isFunctionField D) :=
+  (rfl)
 
 /-- **`σ((P) - (O)) = P`.** -/
 @[simp]
 theorem divisorSum_pointPlace_sub_infinity {x y : F} (h : W.Nonsingular x y) :
-    W.divisorSum ⟨_, W.mem_ker_degree_pointPlace_sub_infinity h.left⟩ = Point.some x y h := by
-  rw [divisorSum, AddMonoidHom.coe_comp, Function.comp_apply,
-    AddEquiv.coe_toAddMonoidHom, AddEquiv.symm_apply_eq]
+    W.divisorSum ⟨WeilDivisor.ofPoint
+          (Place.ofPrime F W.FunctionField (CoordinateRing.pointPlace h.left)) -
+        WeilDivisor.ofPoint (Place.infinity W), by
+      simpa only [AddMonoidHom.mem_ker, Divisor.degreeClass_divisorClass] using
+        W.degreeClass_divisorClass_pointPlace_sub_infinity h.left⟩ = Point.some x y h := by
+  rw [divisorSum_apply, AddEquiv.symm_apply_eq]
   exact Subtype.ext (by
-    rw [Divisor.coe_degreeZeroClassHom]
+    rw [Divisor.coe_degreeZeroClassHom_apply]
     exact (W.val_pointEquivDegreeZeroDivisorClass_some h).symm)
 
 /-- **A degree-zero divisor is principal exactly when its sum is `O`** (Silverman III.3.5). -/
+@[simp]
 theorem divisorSum_eq_zero_iff {D : (Divisor.degree (k := F) (F := W.FunctionField)).ker} :
     W.divisorSum D = 0 ↔ ∃ z : W.FunctionFieldˣ,
       Divisor.principal W.isFunctionField z = (D : Divisor F W.FunctionField) := by
-  rw [← Divisor.degreeZeroClassHom_eq_zero_iff W.isFunctionField]
-  exact (W.pointEquivDegreeZeroDivisorClass.symm.map_eq_zero_iff)
+  rw [divisorSum_apply, AddEquiv.map_eq_zero_iff]
+  exact Divisor.degreeZeroClassHom_eq_zero_iff W.isFunctionField
 
 end WeierstrassCurve.Affine
 
