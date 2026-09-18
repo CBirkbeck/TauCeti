@@ -42,8 +42,9 @@ closure of the pulled-back field, so that is where the torsion difference lives.
 * `TauCeti.Isogeny.card_ker_mulByIntIsogeny_of_torsion_rational`: **`#ker [n] = n ²`** whenever the
   geometric `n`-torsion is rational and `n` is invertible.
 * `TauCeti.Isogeny.card_ker_mulByIntIsogeny`: the same over an algebraically closed field.
-* `TauCeti.Isogeny.card_ker_mulByPrimeIsogeny`: the same at a prime, as `ℓ ²` rather than
-  `(ℓ : ℤ).natAbs ^ 2`.
+* `TauCeti.Isogeny.card_ker_mulByPrimeIsogeny_of_torsion_rational`: the same at a prime, as `ℓ ²`
+  rather than `(ℓ : ℤ).natAbs ^ 2`.
+* `TauCeti.Isogeny.card_ker_mulByPrimeIsogeny`: its algebraically closed corollary.
 
 The three steps of the argument sketched above — the torsion difference, its rationality, and the
 resulting bound on embeddings — are `private`; nothing outside this module uses them.
@@ -162,6 +163,18 @@ theorem card_ker_mulByIntIsogeny [IsAlgClosed F] {n : ℤ} {hn : psiFunctionFiel
   card_ker_mulByIntIsogeny_of_torsion_rational W
     (fun _ hP ↦ W.mem_range_baseChange_of_zsmul_eq_zero
       (ne_zero_of_psiFunctionField_ne_zero W hn) hP) hchar
+
+open scoped Classical in
+/-- **`#E[ℓ] = ℓ ²` whenever the geometric `ℓ`-torsion is rational**, for a prime `ℓ` invertible in
+the base: the integer count read at `n = ℓ`, where `natAbs` is the identity. -/
+theorem card_ker_mulByPrimeIsogeny_of_torsion_rational {l : ℕ} [hl : Fact l.Prime]
+    (hrat : ∀ P : (W.baseChange (AlgebraicClosure W.FunctionField)).toAffine.Point,
+      (l : ℤ) • P = 0 →
+        P ∈ Set.range (Point.baseChange (W' := W) F (AlgebraicClosure W.FunctionField)))
+    (hchar : (l : F) ≠ 0) :
+    Nat.card (mulByPrimeIsogeny W l).ker = l ^ 2 := by
+  rw [card_ker_mulByIntIsogeny_of_torsion_rational W hrat (by simpa using hchar),
+    Int.natAbs_natCast]
 
 -- Not `@[simp]`: `mulByPrimeIsogeny` is an `abbrev`, so `simp` sees through it to
 -- `card_ker_mulByIntIsogeny` and `simpNF` rejects the pair as duplicates.
