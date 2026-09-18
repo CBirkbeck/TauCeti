@@ -9,15 +9,11 @@ public import Mathlib.FieldTheory.Separable
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.Roots
 -- Proof-only: `#ker [n] = n ²` over an algebraically closed field, the input to the count.
 import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.KernelCard
--- Proof-only: the degrees of `preΨₙ` and `ΨSqₙ`, which the root count is matched against.
-import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
--- Proof-only: the algebraic closure the count is run over.
-import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
--- Proof-only: the evaluation bridges `ψₙ = Ψₙ` and `Ψₙ ² = ΨSqₙ` on the curve.
-import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Eval
--- Proof-only: a vanishing `ψ₂` annihilates the point.
-import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.ZSMul
--- Proof-only: `ΨSqₙ` is nonzero on a nonsingular curve.
+-- Proof-only: a polynomial with as many distinct roots as its degree is separable, which is what
+-- each of the three counts below ends in.
+import TauCeti.FieldTheory.SeparableOfRootCount
+-- Proof-only: `ΨSqₙ` is nonzero on a nonsingular curve, and vanishes only at torsion. This also
+-- carries the degree, evaluation-bridge and algebraic-closure material the count uses.
 import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Coprimality
 
 /-!
@@ -34,16 +30,18 @@ Separability is insensitive to base change, so both statements descend from the 
 an arbitrary field in which `n` is invertible.
 
 The consequence the torsion theory wants is the last one: the minimal polynomial of the abscissa of
-an `n`-torsion point is separable. `ΨSqₙ` itself is not — it is `preΨₙ ²` up to the `2`-torsion
-factor — but a minimal polynomial is irreducible, so it divides one of the two factors and inherits
-that factor's separability.
+an `n`-torsion point is separable. `ΨSqₙ` itself need not be — it carries `preΨₙ ²`, which is a
+square as soon as `preΨₙ` is not a unit — but a minimal polynomial is irreducible, so it divides
+one of the two factors and inherits that factor's separability.
 
 ## Main results
 
 * `WeierstrassCurve.separable_preΨ`: `preΨₙ` is separable when `n` is invertible.
 * `WeierstrassCurve.separable_Ψ₂Sq`: `Ψ₂Sq` is separable when `2` is invertible.
-* `WeierstrassCurve.separable_minpoly_of_zsmul_eq_zero`: the minimal polynomial of the
-  `x`-coordinate of an `n`-torsion point is separable when `n` is invertible.
+* `WeierstrassCurve.separable_minpoly_of_aeval_ΨSq_eq_zero`: the minimal polynomial of a root of
+  `ΨSqₙ` is separable when `n` is invertible.
+* `WeierstrassCurve.separable_minpoly_of_zsmul_eq_zero`: hence so is that of the `x`-coordinate of
+  an `n`-torsion point.
 
 ## References
 
@@ -58,36 +56,22 @@ namespace WeierstrassCurve
 
 variable {F : Type*} [Field F]
 
-private theorem ne_zero_of_intCast_ne_zero {n : ℤ} (hchar : (n : F) ≠ 0) : n ≠ 0 := by
-  rintro rfl; exact hchar (by simp)
-
 private theorem two_ne_zero_of_even {n : ℤ} (heven : Even n) (hchar : (n : F) ≠ 0) :
     ((2 : ℤ) : F) ≠ 0 := by
   obtain ⟨m, rfl⟩ := heven
   intro h
   refine hchar ?_
   push_cast at h ⊢
-  rw [show (m : F) + m = 2 * m by ring, h, zero_mul]
+  rw [← two_mul, h, zero_mul]
 
 /-- `n ² - 4` is even at even `n`, so the degree of `preΨₙ` is exactly half the number of points of
 `ker [n]` that are not `2`-torsion. -/
 private theorem two_dvd_natAbs_sq_sub_four {n : ℤ} (heven : Even n) : 2 ∣ n.natAbs ^ 2 - 4 := by
   obtain ⟨m, rfl⟩ := heven
   have : (m + m).natAbs ^ 2 = 4 * m.natAbs ^ 2 := by
-    rw [show m + m = 2 * m by ring, Int.natAbs_mul]
+    rw [← two_mul, Int.natAbs_mul]
     ring
   omega
-
-/-- **A polynomial with as many distinct roots as its degree is separable**, over an algebraically
-closed field: it has exactly `natDegree` roots with multiplicity, so as many *distinct* ones only
-if none is repeated. -/
-private theorem separable_of_natDegree_le_card_roots [IsAlgClosed F] [DecidableEq F]
-    {p : F[X]} (hp : p ≠ 0)
-    (h : p.natDegree ≤ #p.roots.toFinset) : p.Separable := by
-  have hroots : p.roots.card = p.natDegree := IsAlgClosed.card_roots_eq_natDegree
-  rw [← nodup_roots_iff_of_splits hp (IsAlgClosed.splits _),
-    ← Multiset.toFinset_card_eq_card_iff_nodup, hroots]
-  exact le_antisymm (by rw [← hroots]; exact Multiset.toFinset_card_le _) h
 
 section Torsion
 
@@ -102,7 +86,9 @@ private theorem zsmul_fromAffine_eq_zero {n : ℤ} {x y : F}
     n • Jacobian.Point.fromAffine (Affine.Point.some x y hns) = 0 := by
   have h' := congrArg (Jacobian.Point.toAffineAddEquiv (W⁄F)).symm h
   rw [map_zsmul, map_zero] at h'
-  simpa using h'
+  -- `(toAffineAddEquiv _).symm` *is* `fromAffine`, by definition and with no lemma naming it, so
+  -- `h'` is already the goal; the two differ only by unfolding that.
+  exact h'
 
 omit [W.IsElliptic] in
 /-- A nonzero point killed by an odd `n` has `preΨₙ` vanishing at its abscissa: at odd `n` the
@@ -124,17 +110,8 @@ private theorem eval_preΨ_eq_zero_of_even {n : ℤ} (heven : Even n) {x y : F}
   have hsq := eval_ΨSq_eq_zero_of_zsmul_eq_zero (W⁄F) hns (zsmul_fromAffine_eq_zero W h)
   simp only [WeierstrassCurve.ΨSq, heven, ite_true, eval_mul, eval_pow, mul_eq_zero,
     pow_eq_zero_iff (two_ne_zero)] at hsq
-  refine hsq.resolve_right fun hsq ↦ h2 ?_
-  have hJac2 : (2 : ℤ) • Jacobian.Point.fromAffine (Affine.Point.some x y hns) = 0 := by
-    refine zsmul_eq_zero_of_evalEval_ψ_eq_zero (W⁄F) hns 2 ?_
-    have hbridge := evalEval_Ψ_sq_eq_eval_ΨSq (W⁄F) hns.left 2
-    rw [← evalEval_ψ_eq_evalEval_Ψ (W⁄F) hns.left 2, WeierstrassCurve.ΨSq_two, hsq] at hbridge
-    exact pow_eq_zero_iff two_ne_zero |>.mp hbridge
-  have hinv : (Jacobian.Point.toAffineAddEquiv (W⁄F))
-      (Jacobian.Point.fromAffine (Affine.Point.some x y hns)) = Affine.Point.some x y hns :=
-    (Jacobian.Point.toAffineAddEquiv (W⁄F)).right_inv _
-  have h' := congrArg (Jacobian.Point.toAffineAddEquiv (W⁄F)) hJac2
-  rwa [map_zsmul, map_zero, hinv] at h'
+  exact hsq.resolve_right fun hΨ₂ ↦ eval_ΨSq_ne_zero_of_zsmul_ne_zero (W⁄F) hns h2
+    (by simpa [WeierstrassCurve.ΨSq_two] using hΨ₂)
 
 end Torsion
 
@@ -169,7 +146,7 @@ private theorem exists_finset_zsmul_eq_zero [DecidableEq F] {n : ℤ} (hchar : (
   have hfin : Finite ((mulByIntIsogeny W hn).ker) := by
     refine (Nat.card_ne_zero.mp ?_).2
     rw [hcard]
-    exact pow_ne_zero 2 (Int.natAbs_ne_zero.mpr (ne_zero_of_intCast_ne_zero hchar))
+    exact pow_ne_zero 2 (Int.natAbs_ne_zero.mpr (by rintro rfl; exact hchar (by simp)))
   let _ : Fintype ((mulByIntIsogeny W hn).ker) := Fintype.ofFinite _
   refine ⟨(Finset.univ : Finset ((mulByIntIsogeny W hn).ker)).image Subtype.val, ?_, fun P ↦ ?_⟩
   · rw [Finset.card_image_of_injective _ Subtype.val_injective, Finset.card_univ,
@@ -314,20 +291,17 @@ theorem separable_Ψ₂Sq (hchar : ((2 : ℤ) : F) ≠ 0) : W.Ψ₂Sq.Separable 
   rw [← Polynomial.separable_map (algebraMap F (AlgebraicClosure F)), ← ΨSq_two, ← map_ΨSq]
   exact separable_ΨSq_two_of_isAlgClosed (W⁄(AlgebraicClosure F)).toAffine hchar'
 
-/-- **The minimal polynomial of the abscissa of an `n`-torsion point is separable** when `n` is
-invertible. `ΨSqₙ`, which the abscissa is a root of, is not itself separable — it is `preΨₙ ²` times
-`Ψ₂Sq` at even `n` — but a minimal polynomial is irreducible, so it divides one of those two
-factors and inherits its separability. -/
-theorem separable_minpoly_of_zsmul_eq_zero {Ω : Type*} [Field Ω] [Algebra F Ω] {n : ℤ}
-    (hchar : (n : F) ≠ 0) {x y : Ω} (hns : (W.baseChange Ω).toAffine.Nonsingular x y)
-    (htors : n • Jacobian.Point.fromAffine (Affine.Point.some _ _ hns) = 0) :
+/-- **The minimal polynomial of a root of `ΨSqₙ` is separable** when `n` is invertible. `ΨSqₙ`
+itself need not be separable — it is
+`preΨₙ ²` times `Ψ₂Sq` at even `n`, so it is a square once `preΨₙ` is not a unit — but a minimal
+polynomial is irreducible, so it divides one of those two factors and inherits its separability. -/
+theorem separable_minpoly_of_aeval_ΨSq_eq_zero {Ω : Type*} [Field Ω] [Algebra F Ω] {n : ℤ}
+    (hchar : (n : F) ≠ 0) {x : Ω} (hroot : aeval x (W.ΨSq n) = 0) :
     (minpoly F x).Separable := by
-  have hroot : aeval x (W.ΨSq n) = 0 := by
-    have hΨSq := eval_ΨSq_eq_zero_of_zsmul_eq_zero (W.baseChange Ω) hns htors
-    rwa [baseChange, map_ΨSq, eval_map, ← aeval_def] at hΨSq
-  have hprime : Prime (minpoly F x) :=
-    (minpoly.irreducible
-      (isIntegral_x_of_zsmul_eq_zero W (ne_zero_of_intCast_ne_zero hchar) hns htors)).prime
+  have hn : n ≠ 0 := by rintro rfl; exact hchar (by simp)
+  have hne : W.ΨSq n ≠ 0 := ΨSq_ne_zero_of_Δ_ne_zero W W.isUnit_Δ.ne_zero hn
+  have halg : IsAlgebraic F x := ⟨W.ΨSq n, hne, hroot⟩
+  have hprime : Prime (minpoly F x) := (minpoly.irreducible halg.isIntegral).prime
   have hdvd : minpoly F x ∣ W.ΨSq n := minpoly.dvd F x hroot
   rw [WeierstrassCurve.ΨSq] at hdvd
   rcases hprime.dvd_mul.mp hdvd with hd | hd
@@ -335,6 +309,16 @@ theorem separable_minpoly_of_zsmul_eq_zero {Ω : Type*} [Field Ω] [Algebra F Ω
   · by_cases he : Even n
     · exact (separable_Ψ₂Sq W (two_ne_zero_of_even he hchar)).of_dvd (by simpa [he] using hd)
     · exact Polynomial.separable_one.of_dvd (by simpa [he] using hd)
+
+/-- **The minimal polynomial of the abscissa of an `n`-torsion point is separable** when `n` is
+invertible: such an abscissa is a root of `ΨSqₙ`. -/
+theorem separable_minpoly_of_zsmul_eq_zero {Ω : Type*} [Field Ω] [Algebra F Ω] {n : ℤ}
+    (hchar : (n : F) ≠ 0) {x y : Ω} (hns : (W.baseChange Ω).toAffine.Nonsingular x y)
+    (htors : n • Jacobian.Point.fromAffine (Affine.Point.some _ _ hns) = 0) :
+    (minpoly F x).Separable :=
+  separable_minpoly_of_aeval_ΨSq_eq_zero W hchar <| by
+    have hΨSq := eval_ΨSq_eq_zero_of_zsmul_eq_zero (W.baseChange Ω) hns htors
+    rwa [baseChange, map_ΨSq, eval_map, ← aeval_def] at hΨSq
 
 end WeierstrassCurve
 
