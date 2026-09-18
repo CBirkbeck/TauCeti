@@ -119,20 +119,6 @@ noncomputable abbrev mulByIntIsogenyOfNeZero [W.IsElliptic] {n : ℤ} (hn : n �
     _root_.TauCeti.Isogeny W W :=
   mulByIntIsogeny W (psiFunctionField_ne_zero_of_Δ_ne_zero W W.isUnit_Δ.ne_zero hn)
 
-/-- **The pullback of `[n]` sends the generic `x` to `[n]*x`.** -/
-theorem fieldPullback_mulByIntIsogeny_genericX [W.IsElliptic] {n : ℤ}
-    (hn : psiFunctionField W n ≠ 0) :
-    (mulByIntIsogeny W hn).fieldPullback W.genericX = mulByIntX W n := by
-  rw [WeierstrassCurve.Affine.genericX_def, fieldPullback_algebraMap, mulByIntIsogeny_pullback]
-  exact mulByIntPullback_X W hn
-
-/-- **The pullback of `[n]` sends the generic `y` to `[n]*y`.** -/
-theorem fieldPullback_mulByIntIsogeny_genericY [W.IsElliptic] {n : ℤ}
-    (hn : psiFunctionField W n ≠ 0) :
-    (mulByIntIsogeny W hn).fieldPullback W.genericY = mulByIntY W n := by
-  rw [WeierstrassCurve.Affine.genericY_def, fieldPullback_algebraMap, mulByIntIsogeny_pullback]
-  exact mulByIntPullback_Y W hn
-
 end Isogeny
 
 end TauCeti

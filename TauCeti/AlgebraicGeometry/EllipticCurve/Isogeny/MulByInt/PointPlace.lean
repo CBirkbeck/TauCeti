@@ -186,7 +186,11 @@ private theorem comap_algebraMap_coordinateRing_le_one {x y : F}
         (CoordinateRing.pointPlace h.left)).isTrivialOn
   refine Valuation.algebraMap_coordinateRing_le_one _ ?_ r
   rw [Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
-    ← WeierstrassCurve.Affine.genericX_eq_algebraMap, fieldPullback_mulByIntIsogeny_genericX]
+    ← WeierstrassCurve.Affine.genericX_eq_algebraMap,
+    show (mulByIntIsogeny W hn).fieldPullback W.toAffine.genericX = mulByIntX W n by
+      rw [WeierstrassCurve.Affine.genericX_def, fieldPullback_algebraMap,
+        mulByIntIsogeny_pullback]
+      exact mulByIntPullback_X W hn]
   refine valuation_pointPlace_mulByIntX_le_one W h.left ?_
   rw [CoordinateRing.mk_mem_pointPlace_iff]
   simpa only [evalEval_C] using eval_ΨSq_ne_zero_of_zsmul_ne_zero W h hP
@@ -213,12 +217,16 @@ private theorem pullback_mulByIntIsogeny_YClass {n : ℤ} (hn : psiFunctionField
 
 /-- **The place of `P` restricts along `[n]` to the place of `n • P`.** -/
 theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n : ℤ}
-    (hn : psiFunctionField W n ≠ 0) {x' y' : F} (h' : W.toAffine.Nonsingular x' y')
+    {x' y' : F} (h' : W.toAffine.Nonsingular x' y')
     (hnP : n • Affine.Point.some x y h = Affine.Point.some x' y' h') :
     (((CoordinateRing.pointPlace h.left).valuation W.toAffine.FunctionField).comap
-        (mulByIntIsogeny W hn).fieldPullback.toRingHom).IsEquiv
+        (mulByIntIsogenyOfNeZero W
+            (left_ne_zero_of_smul (hnP.trans_ne (Affine.Point.some_ne_zero h')))
+          ).fieldPullback.toRingHom).IsEquiv
       ((CoordinateRing.pointPlace h'.left).valuation W.toAffine.FunctionField) := by
-  have hP0 : n • Affine.Point.some x y h ≠ 0 := by rw [hnP]; simp
+  have hP0 : n • Affine.Point.some x y h ≠ 0 := hnP.trans_ne (Affine.Point.some_ne_zero h')
+  have hn : psiFunctionField W n ≠ 0 :=
+    psiFunctionField_ne_zero_of_Δ_ne_zero W W.isUnit_Δ.ne_zero (left_ne_zero_of_smul hP0)
   set v := (CoordinateRing.pointPlace h.left).valuation W.toAffine.FunctionField with hvdef
   set u := v.comap (mulByIntIsogeny W hn).fieldPullback.toRingHom with hudef
   -- an explicit element of value strictly between `0` and `1`: `[n]*x - x'` vanishes at `P`
@@ -273,13 +281,13 @@ theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n :
 the kernel of `[n]`, the place of `P` restricts along `[n]` to the place of `T` precisely when
 `n • P = T`. -/
 theorem isEquiv_comap_pointPlace_iff {x y : F} (h : W.toAffine.Nonsingular x y) {n : ℤ}
-    (hn : psiFunctionField W n ≠ 0) {x' y' : F} (h' : W.toAffine.Nonsingular x' y')
+    {x' y' : F} (h' : W.toAffine.Nonsingular x' y')
     (hP0 : n • Affine.Point.some x y h ≠ 0) :
     (((CoordinateRing.pointPlace h.left).valuation W.toAffine.FunctionField).comap
-        (mulByIntIsogeny W hn).fieldPullback.toRingHom).IsEquiv
+        (mulByIntIsogenyOfNeZero W (left_ne_zero_of_smul hP0)).fieldPullback.toRingHom).IsEquiv
       ((CoordinateRing.pointPlace h'.left).valuation W.toAffine.FunctionField) ↔
       n • Affine.Point.some x y h = Affine.Point.some x' y' h' := by
-  refine ⟨fun hab ↦ ?_, isEquiv_comap_pointPlace W h hn h'⟩
+  refine ⟨fun hab ↦ ?_, isEquiv_comap_pointPlace W h h'⟩
   -- `n • P` is not the point at infinity, so it has affine coordinates to compare against
   obtain ⟨x'', y'', h'', hnP⟩ : ∃ (x'' y'' : F) (h'' : W.toAffine.Nonsingular x'' y''),
       n • Affine.Point.some x y h = Affine.Point.some x'' y'' h'' := by
@@ -287,7 +295,7 @@ theorem isEquiv_comap_pointPlace_iff {x y : F} (h : W.toAffine.Nonsingular x y) 
     · exact absurd hc hP0
     · exact ⟨x'', y'', h'', rfl⟩
   -- both places restrict to the same one, and a height one prime is determined by its valuation
-  have hb := isEquiv_comap_pointPlace W h hn h'' hnP
+  have hb := isEquiv_comap_pointPlace W h h'' hnP
   have hpq : CoordinateRing.pointPlace h''.left = CoordinateRing.pointPlace h'.left :=
     HeightOneSpectrum.eq_of_valuation_isEquiv_valuation (hb.symm.trans hab)
   obtain ⟨rfl, rfl⟩ := (CoordinateRing.pointPlace_eq_iff h''.left h'.left).mp hpq

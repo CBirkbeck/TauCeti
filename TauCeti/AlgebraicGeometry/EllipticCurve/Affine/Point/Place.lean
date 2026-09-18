@@ -137,7 +137,8 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal
   simp [WeierstrassCurve.Affine.CoordinateRing.pointPlace]
 
 /-- **A class lies in the place of a point exactly when it vanishes there**, the place-level form
-of `mk_mem_XYIdeal_iff`. -/
+of `mk_mem_XYIdeal_iff`, and `@[simp]` for the same reason that one is. -/
+@[simp]
 theorem _root_.WeierstrassCurve.Affine.CoordinateRing.mk_mem_pointPlace_iff
     {y : F} (h : W.Equation x y) (p : F[X][Y]) :
     CoordinateRing.mk W p ∈ (WeierstrassCurve.Affine.CoordinateRing.pointPlace h).asIdeal ↔
