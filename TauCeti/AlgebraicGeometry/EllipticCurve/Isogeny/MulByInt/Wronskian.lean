@@ -40,7 +40,7 @@ rather than a self-contained curiosity.
   `TauCeti.Isogeny.aeval_ΨSq_sq_mul_fieldPullback_invariantDifferentialDenom`:
   `ΨSqₙ² ([n]*u) = preΨ_{2n} u`, the bridge itself.
 * `TauCeti.Isogeny.wronskian_Φ_ΨSq`: **the classical polynomial identity**
-  `Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`.
+  `Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`, for every integer `n`.
 
 ## References
 
@@ -201,13 +201,22 @@ theorem aeval_ΨSq_sq_mul_fieldPullback_invariantDifferentialDenom [W.IsElliptic
 
 /-- **The division-polynomial Wronskian**, in its classical polynomial form:
 
-`Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`  in  `F[X]`.
+`Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`  in  `F[X]`,
 
-The two halves above give it over `F(W)` after cancelling `u`, and `algebraMap F[X] → F(W)` is
-injective because the generic coordinate is transcendental. -/
-theorem wronskian_Φ_ΨSq [W.IsElliptic] {n : ℤ} (hn : psiFunctionField W n ≠ 0) :
+for **every** integer `n`. The function-field route below needs `ψₙ` to be invertible there, but
+that is no restriction on the statement: on an elliptic curve `ψₙ` vanishes at the generic point
+only for `n = 0` (`psiFunctionField_ne_zero_of_Δ_ne_zero`), and at `n = 0` both sides are `0`
+because `ΨSq₀ = 0` and `preΨ₀ = 0`.
+
+Away from `0` the two halves above give it over `F(W)` after cancelling `u`, and
+`algebraMap F[X] → F(W)` is injective because the generic coordinate is transcendental. -/
+theorem wronskian_Φ_ΨSq [W.IsElliptic] (n : ℤ) :
     derivative (W.Φ n) * W.ΨSq n - W.Φ n * derivative (W.ΨSq n) =
       C ((n : ℤ) : F) * W.preΨ (2 * n) := by
+  rcases eq_or_ne n 0 with rfl | hn0
+  · simp
+  have hn : psiFunctionField W n ≠ 0 :=
+    psiFunctionField_ne_zero_of_Δ_ne_zero W W.isUnit_Δ.ne_zero hn0
   refine FaithfulSMul.algebraMap_injective F[X] W.FunctionField ?_
   have hu : invariantDifferentialDenom W ≠ 0 := invariantDifferentialDenom_ne_zero W
   have hA := wronskian_Φ_ΨSq_mul_invariantDifferentialDenom W hn
