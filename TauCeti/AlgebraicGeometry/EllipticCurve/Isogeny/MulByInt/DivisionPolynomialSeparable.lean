@@ -121,19 +121,15 @@ the counting arguments want that fiber as a `Finset` with membership spelled out
 private theorem exists_finset_zsmul_eq_zero [DecidableEq F] {n : ℤ} (hchar : (n : F) ≠ 0) :
     ∃ T : Finset (W⁄F).toAffine.Point,
       #T = n.natAbs ^ 2 ∧ ∀ P, P ∈ T ↔ n • P = 0 := by
-  classical
-  have hcard : Nat.card {P : (W⁄F).toAffine.Point // n • P = 0} = n.natAbs ^ 2 :=
+  have hcard : Nat.card ↥{P : (W⁄F).toAffine.Point | n • P = 0} = n.natAbs ^ 2 :=
     card_zsmul_fiber W hchar (P₀ := 0) (smul_zero n)
-  have hfin : Finite {P : (W⁄F).toAffine.Point // n • P = 0} := by
-    refine (Nat.card_ne_zero.mp ?_).2
+  have hfin : {P : (W⁄F).toAffine.Point | n • P = 0}.Finite := by
+    refine Set.finite_coe_iff.mp (Nat.card_ne_zero.mp ?_).2
     rw [hcard]
     exact pow_ne_zero 2 (Int.natAbs_ne_zero.mpr (by rintro rfl; exact hchar (by simp)))
-  let _ : Fintype {P : (W⁄F).toAffine.Point // n • P = 0} := Fintype.ofFinite _
-  refine ⟨Finset.univ.image (Subtype.val : {P : (W⁄F).toAffine.Point // n • P = 0} → _), ?_,
-    fun P ↦ ?_⟩
-  · rw [Finset.card_image_of_injective _ Subtype.val_injective, Finset.card_univ,
-      ← Nat.card_eq_fintype_card, hcard]
-  · simp
+  exact ⟨hfin.toFinset,
+    by rw [← Set.ncard_eq_toFinset_card _ hfin, ← Nat.card_coe_set_eq, hcard],
+    fun _ ↦ hfin.mem_toFinset⟩
 
 omit [IsAlgClosed F] [W.IsElliptic] in
 /-- The abscissae of a set of points, as a `Finset` of the roots of `p`. -/
