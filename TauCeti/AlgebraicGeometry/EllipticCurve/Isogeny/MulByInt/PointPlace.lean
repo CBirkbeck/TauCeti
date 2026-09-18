@@ -109,12 +109,12 @@ private theorem valuation_pointPlace_mulByIntY_sub_lt_one {x y : F} (h : W.toAff
   have hden : (CoordinateRing.pointPlace h.left).intValuation
       (CoordinateRing.mk W.toAffine ((W.ψ n) ^ 3)) = 1 := by
     refine HeightOneSpectrum.intValuation_eq_one_iff.mpr ?_
-    rw [CoordinateRing.mk_mem_pointPlace_iff]
+    rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
     simpa [evalEval] using pow_ne_zero 3 hψ
   rw [hrw, map_div₀]
   simp only [HeightOneSpectrum.valuation_of_algebraMap, hden, div_one]
   refine (HeightOneSpectrum.intValuation_lt_one_iff_mem _ _).2 ?_
-  rw [CoordinateRing.mk_mem_pointPlace_iff]
+  rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
   have hid := W.mul_evalEval_ψ_cube_eq_evalEval_ω_of_zsmul h h' hnP
   simp only [evalEval, eval_C, eval_sub, eval_mul, eval_pow] at hid ⊢
   rw [← hid]; ring
@@ -147,12 +147,12 @@ private theorem valuation_pointPlace_mulByIntX_sub_lt_one {x y : F} (h : W.toAff
   have hden : (CoordinateRing.pointPlace h.left).intValuation
       (CoordinateRing.mk W.toAffine (C (W.ΨSq n))) = 1 := by
     refine HeightOneSpectrum.intValuation_eq_one_iff.mpr ?_
-    rw [CoordinateRing.mk_mem_pointPlace_iff]
+    rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
     simpa only [evalEval_C] using hΨ
   rw [hrw, map_div₀]
   simp only [HeightOneSpectrum.valuation_of_algebraMap, hden, div_one]
   refine (HeightOneSpectrum.intValuation_lt_one_iff_mem _ _).2 ?_
-  rw [CoordinateRing.mk_mem_pointPlace_iff]
+  rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
   have hid := mul_eval_ΨSq_eq_eval_Φ_of_zsmul W h h' hnP
   simp only [evalEval, eval_C, eval_sub, eval_mul]
   rw [← hid]; ring
@@ -192,28 +192,8 @@ private theorem comap_algebraMap_coordinateRing_le_one {x y : F}
         mulByIntIsogeny_pullback]
       exact mulByIntPullback_X W hn]
   refine valuation_pointPlace_mulByIntX_le_one W h.left ?_
-  rw [CoordinateRing.mk_mem_pointPlace_iff]
+  rw [CoordinateRing.pointPlace_asIdeal, CoordinateRing.mk_mem_XYIdeal_iff h.left]
   simpa only [evalEval_C] using eval_ΨSq_ne_zero_of_zsmul_ne_zero W h hP
-
-omit [DecidableEq F] [IsDedekindDomain W.toAffine.CoordinateRing] in
-/-- The pullback of `[n]` sends the class of `X - x'` to `[n]*x - x'`. -/
-private theorem pullback_mulByIntIsogeny_XClass {n : ℤ} (hn : psiFunctionField W n ≠ 0) (x' : F) :
-    (mulByIntIsogeny W hn).fieldPullback (algebraMap W.toAffine.CoordinateRing
-        W.toAffine.FunctionField (CoordinateRing.XClass W.toAffine x')) =
-      mulByIntX W n - algebraMap F W.toAffine.FunctionField x' := by
-  rw [fieldPullback_algebraMap, mulByIntIsogeny_pullback, CoordinateRing.XClass,
-    mulByIntPullback_mk]
-  simp [evalEval]
-
-omit [DecidableEq F] [IsDedekindDomain W.toAffine.CoordinateRing] in
-/-- The pullback of `[n]` sends the class of `Y - y'` to `[n]*y - y'`. -/
-private theorem pullback_mulByIntIsogeny_YClass {n : ℤ} (hn : psiFunctionField W n ≠ 0) (y' : F) :
-    (mulByIntIsogeny W hn).fieldPullback (algebraMap W.toAffine.CoordinateRing
-        W.toAffine.FunctionField (CoordinateRing.YClass W.toAffine (C y'))) =
-      mulByIntY W n - algebraMap F W.toAffine.FunctionField y' := by
-  rw [fieldPullback_algebraMap, mulByIntIsogeny_pullback, CoordinateRing.YClass,
-    mulByIntPullback_mk]
-  simp [evalEval]
 
 /-- **The place of `P` restricts along `[n]` to the place of `n • P`.** -/
 theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n : ℤ}
@@ -235,7 +215,9 @@ theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n :
     (CoordinateRing.XClass W.toAffine x') with hzdef
   have huz : u z = v (mulByIntX W n - algebraMap F W.toAffine.FunctionField x') := by
     rw [hzdef, hudef, Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
-      pullback_mulByIntIsogeny_XClass]
+      fieldPullback_algebraMap, mulByIntIsogeny_pullback, CoordinateRing.XClass,
+      mulByIntPullback_mk]
+    simp [evalEval]
   have hz1 : u z ≠ 1 := by
     rw [huz]; exact (valuation_pointPlace_mulByIntX_sub_lt_one W h hn h' hnP).ne
   have hz0 : u z ≠ 0 := by
@@ -258,14 +240,17 @@ theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n :
   have hval : Q.valuation W.toAffine.FunctionField = w :=
     Valuation.valuation_heightOneSpectrum hsurj hRw
   have hmemX : CoordinateRing.XClass W.toAffine x' ∈ Q.asIdeal := by
-    rw [hQdef, Valuation.asIdeal_heightOneSpectrum, Valuation.mem_centerIdeal, hlt, hudef,
-      Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
-      pullback_mulByIntIsogeny_XClass]
+    rw [hQdef, Valuation.asIdeal_heightOneSpectrum, Valuation.mem_centerIdeal, hlt, ← hzdef, huz]
     exact valuation_pointPlace_mulByIntX_sub_lt_one W h hn h' hnP
   have hmemY : CoordinateRing.YClass W.toAffine (C y') ∈ Q.asIdeal := by
+    have hY : (mulByIntIsogeny W hn).fieldPullback (algebraMap W.toAffine.CoordinateRing
+        W.toAffine.FunctionField (CoordinateRing.YClass W.toAffine (C y'))) =
+        mulByIntY W n - algebraMap F W.toAffine.FunctionField y' := by
+      rw [fieldPullback_algebraMap, mulByIntIsogeny_pullback, CoordinateRing.YClass,
+        mulByIntPullback_mk]
+      simp [evalEval]
     rw [hQdef, Valuation.asIdeal_heightOneSpectrum, Valuation.mem_centerIdeal, hlt, hudef,
-      Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
-      pullback_mulByIntIsogeny_YClass]
+      Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, hY]
     exact valuation_pointPlace_mulByIntY_sub_lt_one W h hn h' hnP
   have hle : CoordinateRing.XYIdeal W.toAffine x' (C y') ≤ Q.asIdeal := by
     rw [CoordinateRing.XYIdeal, Ideal.span_le, Set.insert_subset_iff, Set.singleton_subset_iff]

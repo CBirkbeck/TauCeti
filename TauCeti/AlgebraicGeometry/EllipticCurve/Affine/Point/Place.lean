@@ -44,9 +44,6 @@ When `W` is elliptic, Mathlib's `Affine.equation_iff_nonsingular` identifies the
 
 * `WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal`: a `@[simp]` lemma
   identifying the ideal underlying `pointPlace` as `XYIdeal W x (C y)`.
-* `WeierstrassCurve.Affine.CoordinateRing.mk_mem_pointPlace_iff`: a class lies in the place of
-  a point exactly when a representative of it vanishes there, the place-level form of
-  `mk_mem_XYIdeal_iff`.
 * `WeierstrassCurve.Affine.CoordinateRing.pointPlace_eq_iff`: `pointPlace` is injective —
   two points have the same place exactly when they have the same coordinates.
 * `WeierstrassCurve.Affine.CoordinateRing.pointPlace.finrank_residueField_eq_one`: the
@@ -135,18 +132,6 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal
     (WeierstrassCurve.Affine.CoordinateRing.pointPlace h).asIdeal = CoordinateRing.XYIdeal W x (C
         y) := by
   simp [WeierstrassCurve.Affine.CoordinateRing.pointPlace]
-
-/-- **A class lies in the place of a point exactly when it vanishes there**, the place-level form
-of `mk_mem_XYIdeal_iff`. -/
--- Not `@[simp]`, although `mk_mem_XYIdeal_iff` is: `pointPlace_asIdeal` is itself `@[simp]` and
--- rewrites this left-hand side to membership in `XYIdeal`, where that rule then fires, so `simp`
--- proves this statement outright and `simpNF` rejects the attribute as redundant.
-theorem _root_.WeierstrassCurve.Affine.CoordinateRing.mk_mem_pointPlace_iff
-    {y : F} (h : W.Equation x y) (p : F[X][Y]) :
-    CoordinateRing.mk W p ∈ (WeierstrassCurve.Affine.CoordinateRing.pointPlace h).asIdeal ↔
-      p.evalEval x y = 0 := by
-  rw [WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal,
-    WeierstrassCurve.Affine.CoordinateRing.mk_mem_XYIdeal_iff h]
 
 /-- **`pointPlace` is injective**: two points of the curve have the same place exactly when they
 have the same coordinates. -/
