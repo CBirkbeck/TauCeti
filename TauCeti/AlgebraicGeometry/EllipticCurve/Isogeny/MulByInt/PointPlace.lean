@@ -262,16 +262,15 @@ theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n :
 /-- **The fibre of `[n]` over a place is exactly the `[n]`-preimage of its point.** For `P` off
 the kernel of `[n]`, the place of `P` restricts along `[n]` to the place of `T` precisely when
 `n • P = T`. -/
--- Not `@[simp]`: the left-hand side is not in simp normal form, because
--- `AlgHom.toRingHom_eq_coe` rewrites `fieldPullback.toRingHom` to the coercion, and `simpNF`
--- rejects an attribute whose left-hand side simp would itself rewrite. The same obstruction is
--- recorded on `CoordinateRing.mem_XYIdeal_iff_evalAlgHom_eq_zero`, which rests on the same
--- `toRingHom` spelling.
+-- The left-hand side is stated with the coercion rather than `fieldPullback.toRingHom`, which is
+-- what `AlgHom.toRingHom_eq_coe` normalises it to; in the `toRingHom` spelling `simpNF` rejects
+-- the attribute, since simp would rewrite the term the lemma keys on.
+@[simp]
 theorem isEquiv_comap_pointPlace_iff {x y : F} (h : W.toAffine.Nonsingular x y) {n : ℤ}
     {x' y' : F} (h' : W.toAffine.Nonsingular x' y')
     (hP0 : n • Affine.Point.some x y h ≠ 0) :
     (((CoordinateRing.pointPlace h.left).valuation W.toAffine.FunctionField).comap
-        (mulByIntIsogenyOfNeZero W (left_ne_zero_of_smul hP0)).fieldPullback.toRingHom).IsEquiv
+        (mulByIntIsogenyOfNeZero W (left_ne_zero_of_smul hP0)).fieldPullback).IsEquiv
       ((CoordinateRing.pointPlace h'.left).valuation W.toAffine.FunctionField) ↔
       n • Affine.Point.some x y h = Affine.Point.some x' y' h' := by
   refine ⟨fun hab ↦ ?_, isEquiv_comap_pointPlace W h h'⟩
