@@ -18,9 +18,12 @@ of `dx` gives
 
 `(Φₙ' ΨSqₙ - Φₙ ΨSqₙ') u = n ΨSqₙ² ([n]*u)`
 
-at the generic point. This is the function-field half of the classical Wronskian formula; the
-other half rewrites `ΨSqₙ² ([n]*u)` as `preΨ_{2n} u`, which is not proved here. The two together
-give the polynomial identity `Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`.
+at the generic point. The other half rewrites `ΨSqₙ² ([n]*u)` as `preΨ_{2n} u`, through the two
+identities `ψc` is defined by, and the two together give the classical polynomial identity
+
+`Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`  in  `F[X]`,
+
+by cancelling `u` and descending along the injective `algebraMap F[X] → F(W)`.
 
 That identity is what supplies the multiplicity-one step in the unramifiedness of `[n]`
 (Silverman III.4.10(c)): the fibre polynomial `Φₙ - x_Q · ΨSqₙ` has a simple root at the
@@ -33,8 +36,11 @@ rather than a self-contained curiosity.
 
 * `TauCeti.Isogeny.wronskian_Φ_ΨSq_mul_invariantDifferentialDenom`: the identity above.
 * `TauCeti.Isogeny.psiFunctionField_cube_mul_fieldPullback_invariantDifferentialDenom`:
-  `ψₙ³ ([n]*u) = ψcₙ`, the first half of the bridge that rewrites `ΨSqₙ² ([n]*u)` as
-  `preΨ_{2n} u`.
+  `ψₙ³ ([n]*u) = ψcₙ`, the first half of the `preΨ` bridge, and
+  `TauCeti.Isogeny.aeval_ΨSq_sq_mul_fieldPullback_invariantDifferentialDenom`:
+  `ΨSqₙ² ([n]*u) = preΨ_{2n} u`, the bridge itself.
+* `TauCeti.Isogeny.wronskian_Φ_ΨSq`: **the classical polynomial identity**
+  `Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`.
 
 ## References
 
@@ -148,6 +154,68 @@ theorem psiFunctionField_cube_mul_fieldPullback_invariantDifferentialDenom [W.Is
   rw [fieldPullback_mulByIntIsogeny_genericX W hn, fieldPullback_mulByIntIsogeny_genericY W hn,
     mulByIntX_def, mulByIntY_def, ← two_mul_omega_add_eq_psic]
   field_simp
+
+/-- **`ψₙ ψcₙ = ψ_{2n}` at the generic point**, the complement identity `ψc` is named for. -/
+private theorem psi_mul_psic (n : ℤ) :
+    psiFunctionField W n * psicFunctionField W n = psiFunctionField W (2 * n) := by
+  have h := congrArg (fun p ↦ algebraMap W.CoordinateRing W.FunctionField
+    (CoordinateRing.mk W p)) (W.ψ_mul_ψc n)
+  simpa only [map_mul, psiFunctionField_def, psicFunctionField_def] using h
+
+/-- **`ψ₂` at the generic point is `u`.** Mathlib defines `ψ₂` as `polynomialY`, whose value at
+the generic point is `2y + a₁x + a₃`. -/
+private theorem algebraMap_mk_psi_two :
+    algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W W.ψ₂) =
+      invariantDifferentialDenom W := by
+  have hC : ∀ a : F, algebraMap F[X] W.FunctionField (C a) = algebraMap F W.FunctionField a :=
+    fun a ↦ by rw [Polynomial.C_eq_algebraMap, ← IsScalarTower.algebraMap_apply]
+  rw [invariantDifferentialDenom_def, WeierstrassCurve.ψ₂, WeierstrassCurve.Affine.polynomialY,
+    genericX_def, genericY_def]
+  simp only [map_add, map_mul, map_ofNat, CoordinateRing.mk_C_eq_algebraMap,
+    ← IsScalarTower.algebraMap_apply, hC]
+  ring
+
+/-- **`ψ_{2n}` at the generic point is `preΨ_{2n} · u`**: `Ψ` at an even argument is
+`C (preΨ) * ψ₂`, and `ψ` and `Ψ` agree in the coordinate ring. -/
+private theorem psiFunctionField_two_mul (n : ℤ) :
+    psiFunctionField W (2 * n) =
+      algebraMap F[X] W.FunctionField (W.preΨ (2 * n)) * invariantDifferentialDenom W := by
+  rw [psiFunctionField_def, CoordinateRing.mk_ψ, WeierstrassCurve.Ψ]
+  simp only [even_two_mul, ite_true, map_mul, CoordinateRing.mk_C_eq_algebraMap,
+    ← IsScalarTower.algebraMap_apply, algebraMap_mk_psi_two]
+
+/-- **The `preΨ` bridge**: `ΨSqₙ² ([n]*u) = preΨ_{2n} u`.
+
+This is what turns the Wronskian above into the polynomial identity
+`Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`: `ΨSqₙ² = ψₙ⁴`, so the left-hand side is
+`ψₙ · (ψₙ³ ([n]*u)) = ψₙ ψcₙ = ψ_{2n}`, and `ψ_{2n}` is `preΨ_{2n} · ψ₂ = preΨ_{2n} · u`. -/
+theorem aeval_ΨSq_sq_mul_fieldPullback_invariantDifferentialDenom [W.IsElliptic] {n : ℤ}
+    (hn : psiFunctionField W n ≠ 0) :
+    aeval (genericX W) (W.ΨSq n) ^ 2 *
+        (mulByIntIsogeny W hn).fieldPullback (invariantDifferentialDenom W) =
+      algebraMap F[X] W.FunctionField (W.preΨ (2 * n)) * invariantDifferentialDenom W := by
+  rw [← psiFunctionField_two_mul, ← psi_mul_psic,
+    ← psiFunctionField_cube_mul_fieldPullback_invariantDifferentialDenom W hn,
+    aeval_genericX_ΨSq]
+  ring
+
+/-- **The division-polynomial Wronskian**, in its classical polynomial form:
+
+`Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`  in  `F[X]`.
+
+The two halves above give it over `F(W)` after cancelling `u`, and `algebraMap F[X] → F(W)` is
+injective because the generic coordinate is transcendental. -/
+theorem wronskian_Φ_ΨSq [W.IsElliptic] {n : ℤ} (hn : psiFunctionField W n ≠ 0) :
+    derivative (W.Φ n) * W.ΨSq n - W.Φ n * derivative (W.ΨSq n) =
+      C ((n : ℤ) : F) * W.preΨ (2 * n) := by
+  refine FaithfulSMul.algebraMap_injective F[X] W.FunctionField ?_
+  have hu : invariantDifferentialDenom W ≠ 0 := invariantDifferentialDenom_ne_zero W
+  have hA := wronskian_Φ_ΨSq_mul_invariantDifferentialDenom W hn
+  rw [mul_assoc, aeval_ΨSq_sq_mul_fieldPullback_invariantDifferentialDenom W hn,
+    ← mul_assoc] at hA
+  have hcancel := mul_right_cancel₀ hu hA
+  simpa only [map_sub, map_mul, W.algebraMap_eq_aeval_genericX, Polynomial.aeval_C,
+    map_intCast] using hcancel
 
 end TauCeti.Isogeny
 
