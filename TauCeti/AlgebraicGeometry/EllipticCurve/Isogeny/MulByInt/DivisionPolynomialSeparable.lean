@@ -58,14 +58,6 @@ namespace WeierstrassCurve
 
 variable {F : Type*} [Field F]
 
-private theorem two_ne_zero_of_even {n : ℤ} (heven : Even n) (hchar : (n : F) ≠ 0) :
-    ((2 : ℤ) : F) ≠ 0 := by
-  obtain ⟨m, rfl⟩ := heven
-  intro h
-  refine hchar ?_
-  push_cast at h ⊢
-  rw [← two_mul, h, zero_mul]
-
 section Torsion
 
 variable [DecidableEq F] (W : WeierstrassCurve.Affine F) [W.IsElliptic]
@@ -285,7 +277,8 @@ itself need not be separable — it is
 `preΨₙ ²` times `Ψ₂Sq` at even `n`, so it carries a repeated factor once `preΨₙ` is not a unit —
 but a minimal polynomial is irreducible, so it divides one of those two factors and inherits
 that factor's separability. -/
-theorem separable_minpoly_of_aeval_ΨSq_eq_zero {Ω : Type*} [Field Ω] [Algebra F Ω] {n : ℤ}
+theorem separable_minpoly_of_aeval_ΨSq_eq_zero {Ω : Type*} [Ring Ω] [IsDomain Ω] [Algebra F Ω]
+    {n : ℤ}
     (hchar : (n : F) ≠ 0) {x : Ω} (hroot : aeval x (W.ΨSq n) = 0) :
     (minpoly F x).Separable := by
   have hn : n ≠ 0 := by rintro rfl; exact hchar (by simp)

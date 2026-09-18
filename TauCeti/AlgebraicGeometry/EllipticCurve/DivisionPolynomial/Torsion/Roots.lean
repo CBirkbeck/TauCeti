@@ -8,8 +8,6 @@ module
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Jacobian.Point
--- Proof-only: the two evaluation bridges `ψₙ = Ψₙ` and `Ψₙ ² = ΨSqₙ` on the curve.
-import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Eval
 -- Proof-only: a vanishing `ψₙ` annihilates the point, and conversely.
 import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.ZSMul
 -- Proof-only: over an algebraically closed field every `x` is the abscissa of a point.

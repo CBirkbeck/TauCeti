@@ -8,8 +8,6 @@ module
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Jacobian.Point
 -- Proof-only: `ΨSqₙ` is a nonzero polynomial when the curve is nonsingular and `n ≠ 0`.
 import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Coprimality
--- Proof-only: the coordinate identity turning a vanishing `ψₙ` into a vanishing `ΨSqₙ`.
-import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Eval
 -- Proof-only: a torsion point is a root of `ψₙ`.
 import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.ZSMul
 
