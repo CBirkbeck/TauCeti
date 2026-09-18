@@ -7,7 +7,7 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
-public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.Integral
+public import Mathlib.AlgebraicGeometry.EllipticCurve.Jacobian.Point
 -- Proof-only: the two evaluation bridges `ψₙ = Ψₙ` and `Ψₙ ² = ΨSqₙ` on the curve.
 import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Eval
 -- Proof-only: a vanishing `ψₙ` annihilates the point, and conversely.

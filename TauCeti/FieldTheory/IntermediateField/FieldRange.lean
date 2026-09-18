@@ -7,7 +7,7 @@ module
 
 public import Mathlib.FieldTheory.IntermediateField.Basic
 public import Mathlib.LinearAlgebra.Dimension.Finrank
-public import TauCeti.FieldTheory.SeparableDegree
+public import TauCeti.FieldTheory.Separable.Degree
 
 /-!
 # The degree above the range of a field embedding
@@ -32,7 +32,7 @@ different embeddings `f` induce different structures, so none can be registered 
   source — the same identification read for the property rather than the number.
 * `TauCeti.AlgHom.finSepDegree_fieldRange` and `TauCeti.AlgHom.finInsepDegree_fieldRange`: the
   same for the separable and inseparable degrees. These are the `f.fieldRange` cases of the
-  general transports in `TauCeti.FieldTheory.SeparableDegree`, which is where a caller holding
+  general transports in `TauCeti.FieldTheory.Separable.Degree`, which is where a caller holding
   some other surjectively-presented intermediate field should look.
 -/
 
