@@ -6,6 +6,9 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Separability
+-- Proof-only: the universal curve, which carries the elliptic hypothesis so the final statement
+-- need not.
+import TauCeti.AlgebraicGeometry.EllipticCurve.Universal
 
 /-!
 # The division-polynomial Wronskian at the generic point
@@ -46,7 +49,9 @@ of the factors above nonzero.
   `TauCeti.Isogeny.aeval_ΨSq_sq_mul_fieldPullback_invariantDifferentialDenom`:
   `ΨSqₙ² ([n]*u) = preΨ_{2n} u`, the bridge itself.
 * `TauCeti.Isogeny.wronskian_Φ_ΨSq`: **the classical polynomial identity**
-  `Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`, for every integer `n`.
+  `Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`, for every Weierstrass curve over every commutative ring
+  and every integer `n` — the function-field proof needs a field and an elliptic curve, but the
+  statement does not, and the universal curve discharges both once and for all.
 
 ## References
 
@@ -204,17 +209,14 @@ theorem aeval_ΨSq_sq_mul_fieldPullback_invariantDifferentialDenom [W.IsElliptic
     aeval_genericX_ΨSq]
   ring
 
-/-- **The division-polynomial Wronskian**, in its classical polynomial form:
-
-`Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`  in  `F[X]`,
-
-for **every** integer `n`, with no hypothesis on `n`. -/
+/-- The Wronskian over an elliptic curve, the case the function-field argument proves directly.
+Private: `wronskian_Φ_ΨSq` below has no hypotheses at all and subsumes it. -/
 -- Proof: on an elliptic curve `ψₙ` vanishes at the generic point only for `n = 0`
 -- (`psiFunctionField_ne_zero_of_Δ_ne_zero`), and at `n = 0` both sides are `0` because
 -- `ΨSq₀ = 0` and `preΨ₀ = 0`. Away from `0` the two halves above give the identity over `F(W)`
 -- after cancelling `u`, and `algebraMap F[X] → F(W)` is injective because the generic coordinate
 -- is transcendental.
-theorem wronskian_Φ_ΨSq [W.IsElliptic] (n : ℤ) :
+private theorem wronskian_Φ_ΨSq_of_isElliptic [W.IsElliptic] (n : ℤ) :
     derivative (W.Φ n) * W.ΨSq n - W.Φ n * derivative (W.ΨSq n) =
       C ((n : ℤ) : F) * W.preΨ (2 * n) := by
   rcases eq_or_ne n 0 with rfl | hn0
@@ -229,6 +231,43 @@ theorem wronskian_Φ_ΨSq [W.IsElliptic] (n : ℤ) :
   have hcancel := mul_right_cancel₀ hu hA
   simpa only [map_sub, map_mul, W.algebraMap_eq_aeval_genericX, Polynomial.aeval_C,
     map_intCast] using hcancel
+
+/-! ### Off the elliptic hypothesis, by the universal curve -/
+
+section Universal
+
+open WeierstrassCurve WeierstrassCurve.Universal
+
+/-- The Wronskian for the universal curve over `ℤ[A₁,⋯,A₆]`. The universal curve becomes elliptic
+over `Universal.Field`, where the function-field argument applies, and `ℤ[A₁,⋯,A₆]` embeds there. -/
+private theorem universal_wronskian_Φ_ΨSq (n : ℤ) :
+    derivative (curve.Φ n) * curve.ΨSq n - curve.Φ n * derivative (curve.ΨSq n) =
+      C ((n : ℤ) : MvPolynomial Coeff ℤ) * curve.preΨ (2 * n) := by
+  have h := wronskian_Φ_ΨSq_of_isElliptic pointedCurve.toAffine n
+  simp only [pointedCurve, WeierstrassCurve.baseChange, WeierstrassCurve.map_Φ,
+    WeierstrassCurve.map_ΨSq, WeierstrassCurve.map_preΨ] at h
+  refine Polynomial.map_injective (algebraMap (MvPolynomial Coeff ℤ) Universal.Field)
+    algebraMap_field_injective ?_
+  simpa only [Polynomial.map_sub, Polynomial.map_mul, Polynomial.derivative_map, Polynomial.map_C,
+    map_intCast, Polynomial.map_intCast] using h
+
+/-- **The division-polynomial Wronskian**, in its classical polynomial form:
+
+`Φₙ' ΨSqₙ - Φₙ ΨSqₙ' = n · preΨ_{2n}`  in  `R[X]`,
+
+for **every** Weierstrass curve over **every** commutative ring and every integer `n`. It is a
+polynomial identity in the coefficients, so neither a field nor nonsingularity is needed: those
+are hypotheses of the *proof*, discharged once over the universal curve. -/
+theorem wronskian_Φ_ΨSq {R : Type*} [CommRing R] (W : WeierstrassCurve R) (n : ℤ) :
+    derivative (W.Φ n) * W.ΨSq n - W.Φ n * derivative (W.ΨSq n) =
+      C ((n : ℤ) : R) * W.preΨ (2 * n) := by
+  have h := congrArg (Polynomial.map W.specialize) (universal_wronskian_Φ_ΨSq n)
+  rw [← W.map_specialize]
+  simpa only [Polynomial.map_sub, Polynomial.map_mul, Polynomial.derivative_map,
+    Polynomial.map_C, map_intCast, Polynomial.map_intCast, WeierstrassCurve.map_Φ,
+    WeierstrassCurve.map_ΨSq, WeierstrassCurve.map_preΨ] using h
+
+end Universal
 
 end TauCeti.Isogeny
 
