@@ -89,14 +89,14 @@ theorem nonempty_linearEquiv_ker_mulByPrimeIsogeny_of_torsion_rational
   nonempty_linearEquiv_of_finrank_eq W
     (finrank_ker_mulByPrimeIsogeny_of_torsion_rational W hrat hchar)
 
-/-- **`E[ℓ]` is two-dimensional over `ZMod ℓ`** over an algebraically closed field, where no
-extension carries new torsion and the rationality is automatic. -/
+/-- **`E[ℓ]` is two-dimensional over `ZMod ℓ`** for `ℓ` invertible in an algebraically closed base
+field, where no extension carries new torsion and the rationality is automatic. -/
 @[simp]
 theorem finrank_ker_mulByPrimeIsogeny [IsAlgClosed F] (hchar : (l : F) ≠ 0) :
     Module.finrank (ZMod l) (mulByPrimeIsogeny W l).ker = 2 :=
   finrank_ker_of_card_eq W (card_ker_mulByPrimeIsogeny W hchar)
 
-/-- **`E[ℓ] ≅ (ZMod ℓ)²`** over an algebraically closed field. -/
+/-- **`E[ℓ] ≅ (ZMod ℓ)²`** for `ℓ` invertible in an algebraically closed base field. -/
 theorem nonempty_linearEquiv_ker_mulByPrimeIsogeny [IsAlgClosed F] (hchar : (l : F) ≠ 0) :
     Nonempty ((mulByPrimeIsogeny W l).ker ≃ₗ[ZMod l] (Fin 2 → ZMod l)) :=
   nonempty_linearEquiv_of_finrank_eq W (finrank_ker_mulByPrimeIsogeny W hchar)
