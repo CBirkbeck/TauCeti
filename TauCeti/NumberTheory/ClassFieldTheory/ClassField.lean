@@ -162,7 +162,7 @@ the class field. -/
 theorem galClassFieldEquiv_symm_mk (V : OpenNormalSubgroup (AbsoluteGaloisGroup F))
     (σ : (NormalLayer.ofOpenNormal V).ground) :
     (galClassFieldEquiv V).symm (QuotientGroup.mk σ) =
-      AlgEquiv.restrictNormalHom (classField F V) (σ : AbsoluteGaloisGroup F) := by
+      AlgEquiv.restrictNormal (σ : AbsoluteGaloisGroup F) (classField F V) := by
   -- `galClassFieldEquiv` is defined as the inverse of this composite; unfolding it by `rw` would
   -- expose the fixed field, which is not syntactically `classField F V`.
   have : (galClassFieldEquiv V).symm (QuotientGroup.mk σ) =
@@ -174,10 +174,10 @@ theorem galClassFieldEquiv_symm_mk (V : OpenNormalSubgroup (AbsoluteGaloisGroup 
 /-- Read in `G_F ⧸ V`, `galClassFieldEquiv` sends the restriction of `σ ∈ G_F` to the class field
 to the class of `σ`. -/
 @[simp]
-theorem galOfOpenNormalEquiv_galClassFieldEquiv_restrictNormalHom
+theorem galOfOpenNormalEquiv_galClassFieldEquiv_restrictNormal
     (V : OpenNormalSubgroup (AbsoluteGaloisGroup F)) (σ : AbsoluteGaloisGroup F) :
     NormalLayer.galOfOpenNormalEquiv V
-        (galClassFieldEquiv V (AlgEquiv.restrictNormalHom (classField F V) σ)) =
+        (galClassFieldEquiv V (AlgEquiv.restrictNormal σ (classField F V))) =
       (σ : AbsoluteGaloisGroup F ⧸ V.toSubgroup) := by
   rw [← galClassFieldEquiv_symm_mk V ⟨σ, by simp⟩, MulEquiv.apply_symm_apply,
     NormalLayer.galOfOpenNormalEquiv_mk]
