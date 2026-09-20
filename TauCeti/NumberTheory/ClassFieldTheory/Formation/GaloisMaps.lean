@@ -178,17 +178,6 @@ theorem quotientHom_trans (T : LayerRefinement a b) (T' : LayerRefinement b c) :
 
 end LayerRefinement
 
-private theorem toAdditive_trans {A B C : Type*} [Group A] [Group B] [Group C]
-    (e₁ : A ≃* B) (e₂ : B ≃* C) :
-    e₁.toAdditive.trans e₂.toAdditive = (e₁.trans e₂).toAdditive := by
-  ext
-  rfl
-
-private theorem toAdditive_refl {A : Type*} [Group A] :
-    (MulEquiv.refl A).toAdditive = AddEquiv.refl (Additive A) := by
-  ext
-  rfl
-
 namespace NormalLayer
 
 variable (L : NormalLayer G) (g h : G)
@@ -226,7 +215,21 @@ theorem conjugateAbelianizationEquiv_one :
         ((MulEquiv.abelianizationCongr
           (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal) L.conjugate_one)).toAdditive) =
       AddEquiv.refl (Additive (Abelianization L.Gal)) := by
-  rw [conjugateAbelianizationEquiv, toAdditive_trans, ← toAdditive_refl,
+  rw [conjugateAbelianizationEquiv,
+    show
+      ((L.conjugateGalEquiv 1).abelianizationCongr.toAdditive.trans
+        (MulEquiv.abelianizationCongr
+          (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal) L.conjugate_one)).toAdditive) =
+        ((L.conjugateGalEquiv 1).abelianizationCongr.trans
+          (MulEquiv.abelianizationCongr
+            (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal) L.conjugate_one))).toAdditive by
+      ext
+      rfl,
+    ← show
+      (MulEquiv.refl (Abelianization L.Gal)).toAdditive =
+        AddEquiv.refl (Additive (Abelianization L.Gal)) by
+      ext
+      rfl,
     abelianizationCongr_trans, L.conjugateGalEquiv_one, abelianizationCongr_refl]
 
 /-- Conjugation on abelianized Galois groups composes: conjugating by `h` and then by `g` is
@@ -238,9 +241,27 @@ theorem conjugateAbelianizationEquiv_trans_conjugateAbelianizationEquiv :
         ((MulEquiv.abelianizationCongr
           (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal)
             (L.conjugate_conjugate g h).symm)).toAdditive) := by
-  rw [conjugateAbelianizationEquiv, conjugateAbelianizationEquiv, toAdditive_trans,
-    conjugateAbelianizationEquiv, toAdditive_trans, abelianizationCongr_trans,
-    abelianizationCongr_trans,
+  rw [conjugateAbelianizationEquiv, conjugateAbelianizationEquiv,
+    show
+      ((L.conjugateGalEquiv h).abelianizationCongr.toAdditive.trans
+        ((L.conjugate h).conjugateGalEquiv g).abelianizationCongr.toAdditive) =
+        ((L.conjugateGalEquiv h).abelianizationCongr.trans
+          ((L.conjugate h).conjugateGalEquiv g).abelianizationCongr).toAdditive by
+      ext
+      rfl,
+    conjugateAbelianizationEquiv,
+    show
+      ((L.conjugateGalEquiv (g * h)).abelianizationCongr.toAdditive.trans
+        (MulEquiv.abelianizationCongr
+          (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal)
+            (L.conjugate_conjugate g h).symm)).toAdditive) =
+        ((L.conjugateGalEquiv (g * h)).abelianizationCongr.trans
+          (MulEquiv.abelianizationCongr
+            (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal)
+              (L.conjugate_conjugate g h).symm))).toAdditive by
+      ext
+      rfl,
+    abelianizationCongr_trans, abelianizationCongr_trans,
     L.conjugateGalEquiv_trans_conjugateGalEquiv]
 
 end NormalLayer

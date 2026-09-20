@@ -415,10 +415,30 @@ theorem norm_conjugateCoefficientEquiv (x : F.level L.top) :
     (L.conjugate g).norm F (L.conjugateCoefficientEquiv F g x) =
       L.conjugateGroundLevelEquiv F g (L.norm F x) := by
   refine Subtype.ext ?_
-  rw [norm_apply_coe, conjugateGroundLevelEquiv_apply_coe, norm_apply_coe, map_sum]
-  exact (Fintype.sum_equiv (L.conjugateGalEquiv g).toEquiv _ _ fun γ ↦ by
-    rw [← conjugateCoefficientEquiv_apply_coe, conjugateCoefficientEquiv_rep_apply]
-    rfl).symm
+  have hsource : ((L.norm F x : F.level L.ground) : F.toRep.V) =
+      (((L.rep F).ρ.norm x : F.level L.top) : F.toRep.V) := by
+    rw [L.norm_apply_coe]
+    simp [Representation.norm]
+  have htarget : (((L.conjugate g).norm F (L.conjugateCoefficientEquiv F g x) :
+      F.level (L.conjugate g).ground) : F.toRep.V) =
+      ((((L.conjugate g).rep F).ρ.norm (L.conjugateCoefficientEquiv F g x) :
+        F.level (L.conjugate g).top) : F.toRep.V) := by
+    rw [(L.conjugate g).norm_apply_coe]
+    simp [Representation.norm]
+  calc
+    _ = ((((L.conjugate g).rep F).ρ.norm (L.conjugateCoefficientEquiv F g x) :
+        F.level (L.conjugate g).top) : F.toRep.V) := htarget
+    _ = ((L.conjugateCoefficientEquiv F g ((L.rep F).ρ.norm x) :
+        F.level (L.conjugate g).top) : F.toRep.V) := congrArg Subtype.val
+      (LinearMap.congr_fun (Representation.IsIntertwiningMap.comp_norm
+        (L.isIntertwiningMap_conjugateCoefficientEquiv F g)) x).symm
+    _ = F.toRep.ρ g (((L.rep F).ρ.norm x : F.level L.top) : F.toRep.V) :=
+      L.conjugateCoefficientEquiv_apply_coe F g _
+    _ = F.toRep.ρ g ((L.norm F x : F.level L.ground) : F.toRep.V) :=
+      congrArg (F.toRep.ρ g) hsource.symm
+    _ = ((L.conjugateGroundLevelEquiv F g (L.norm F x) :
+        F.level (L.conjugate g).ground) : F.toRep.V) :=
+      (L.conjugateGroundLevelEquiv_apply_coe F g _).symm
 
 /-- **Conjugation carries the norm subgroup of a layer onto the norm subgroup of the conjugate
 layer**, so it descends to an isomorphism of the norm quotients the Artin map of a class
