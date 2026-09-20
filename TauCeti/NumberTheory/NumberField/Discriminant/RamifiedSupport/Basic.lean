@@ -29,8 +29,6 @@ automatic.
   discriminant.
 * `TauCeti.NumberField.mem_ramifiedSupport_iff_exists`: equivalently, some prime of `𝓞 L` above
   `v` has ramification index greater than one — so the name is honest.
-* `TauCeti.NumberField.relDiscr_ringOfIntegers_self`: the relative discriminant of `K / K` is the
-  unit ideal, for the algebra instance `𝓞 K` carries as the ring of integers of that extension.
 * `TauCeti.NumberField.ramifiedSupport_self`: nothing ramifies in the identity extension, so the
   support of `K / K` is empty.
 * `TauCeti.NumberField.isUnramifiedAway_ramifiedSupport`: primes outside the ramified support are
@@ -75,17 +73,8 @@ theorem mem_ramifiedSupport_iff_exists {v : HeightOneSpectrum (𝓞 K)} :
   exact dvd_relDiscr_iff_exists_one_lt_ramificationIdx v.ne_bot
 
 variable (K) in
-/-- **The relative discriminant of the identity extension is the unit ideal**, stated for the
-algebra instance that `𝓞 K` carries as the ring of integers of `K / K`.
-
-`TauCeti.relDiscr_self` proves the same equation, but its `Algebra (𝓞 K) (𝓞 K)` argument is
-`Algebra.id`, whereas a use site reached through `ramifiedSupport K K` carries
-`NumberField.inst_ringOfIntegersAlgebra K K`. Mathlib checks that those two instances agree
-(`Mathlib/NumberTheory/NumberField/Basic.lean`, `Algebra.id (𝓞 K) = inst_ringOfIntegersAlgebra K K`
-by `rfl`), but they are not syntactically equal, so `relDiscr_self` does not rewrite there. This
-lemma pins the instance and crosses the identification once, by name, instead of leaving a bare
-conversion inside a proof. -/
-theorem relDiscr_ringOfIntegers_self :
+-- Isolate the definitional conversion from the ring-of-integers algebra instance to `Algebra.id`.
+private theorem relDiscr_ringOfIntegers_self :
     @TauCeti.relDiscr (𝓞 K) (𝓞 K) inferInstance inferInstance inferInstance inferInstance
       (NumberField.inst_ringOfIntegersAlgebra K K) inferInstance inferInstance = ⊤ :=
   TauCeti.relDiscr_self
