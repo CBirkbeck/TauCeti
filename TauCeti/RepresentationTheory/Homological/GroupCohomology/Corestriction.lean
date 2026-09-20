@@ -55,6 +55,8 @@ restrictions.
   multiplication by `[G : S]`.
 * `TauCeti.groupCohomology.index_nsmul_eq_zero_of_map_eq_zero`: a class whose restriction to `S`
   vanishes is killed by `[G : S]`.
+* `groupCohomology.natCard_nsmul_eq_zero`: positive-degree cohomology of a finite group is killed
+  by the order of the group.
 * `TauCeti.groupCohomology.corestriction_trans`: corestriction from `A` to `B` followed by
   corestriction from `B` to `C` is corestriction from `A` to `C`.
 
@@ -389,3 +391,20 @@ theorem corestriction_trans {φ₁ : A →* B} {φ₂ : B →* C} {φ₃ : A →
 end Transitivity
 
 end TauCeti.groupCohomology
+
+namespace groupCohomology
+
+variable {k G : Type u} [CommRing k] [Group G] [Finite G]
+
+open Limits
+
+/-- Positive-degree cohomology of a finite group is killed by the order of the group (Milne II
+1.31). -/
+theorem natCard_nsmul_eq_zero {A : Rep k G} {n : ℕ} (x : groupCohomology A (n + 1)) :
+    Nat.card G • x = 0 := by
+  -- Restriction to the trivial subgroup lands in the vanishing cohomology of the trivial group.
+  simpa using TauCeti.groupCohomology.index_nsmul_eq_zero_of_map_eq_zero ⊥ <|
+    (ModuleCat.subsingleton_of_isZero
+      (isZero_groupCohomology_succ_of_subsingleton (res (⊥ : Subgroup G).subtype A) n)).allEq _ _
+
+end groupCohomology
