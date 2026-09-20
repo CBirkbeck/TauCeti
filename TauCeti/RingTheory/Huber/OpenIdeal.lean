@@ -236,8 +236,8 @@ open scoped Classical in
 Along a continuous `φ : A → B` with dense image out of a Huber ring `A`, a finite set `T ∋ 0` of
 `B` is approximated within a neighbourhood `V` of zero, in both directions, by the image of a
 finite set of `A` that generates an open ideal, and an element `s` of `B` by the image of an
-element of `A`. The open-ideal condition comes from `exists_finset_subset_isOpen_span`, which is
-what forces the approximating set to be enlarged by a spanning set of its own. -/
+element of `A`. The open-ideal condition is what makes the approximating data a presentation of a
+rational subset of `Spa(A, A⁺)`, rather than merely a finite set and a denominator. -/
 theorem exists_isOpen_span_forall_sub_mem_of_denseRange {B : Type*} [CommRing B]
     [TopologicalSpace B] [IsTopologicalRing B] [IsHuberRing A] {φ : A →+* B}
     (hφc : Continuous φ) (hφ : DenseRange φ) {V : Set B} (hV : V ∈ 𝓝 0) {T : Finset B}
