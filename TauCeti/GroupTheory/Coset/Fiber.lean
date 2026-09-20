@@ -111,13 +111,12 @@ theorem MonoidHom.finite_fiber {G H : Type*} [Group G] [MulOneClass H] (f : G �
   · infer_instance
   · exact Finite.of_equiv _ (f.subtypeFiberEquivKer ha).symm
 
-/-- **A product over a nonempty fiber is a product over the kernel**, translated by any point of
-the fiber. Only the kernel is assumed finite: the equivalence carries that to the fiber, and the
-`Fintype` the product needs there is the transported one. -/
+/-- **A product over a nonempty fiber is a product over the kernel.** For a finite kernel and a
+chosen point `a` in the fiber over `b`, the fiber product equals the product of `a * t` over the
+kernel. -/
 @[to_additive
-/-- **A sum over a nonempty fiber is a sum over the kernel**, translated by any point of the
-fiber. Only the kernel is assumed finite: the equivalence carries that to the fiber, and the
-`Fintype` the sum needs there is the transported one. -/]
+/-- **A sum over a nonempty fiber is a sum over the kernel.** For a finite kernel and a chosen
+point `a` in the fiber over `b`, the fiber sum equals the sum of `a + t` over the kernel. -/]
 theorem MonoidHom.prod_fiber_eq_prod_ker {G H : Type*} [CommGroup G] [MulOneClass H] (f : G →* H)
     {b : H} {a : G} (ha : f a = b) [Fintype f.ker] :
     letI : Fintype {x : G // f x = b} := Fintype.ofEquiv f.ker (f.subtypeFiberEquivKer ha).symm
