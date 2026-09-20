@@ -5,11 +5,10 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.AlgebraicGeometry.AdicSpace.ResidueField
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Comap
 public import Mathlib.Topology.Algebra.UniformRing
-import TauCeti.AlgebraicGeometry.AdicSpace.ResidueField
 import TauCeti.RingTheory.Valuation.Continuous.Valued
-import Mathlib.Topology.Algebra.Valued.WithVal
 
 /-!
 # Continuous valuations extend to the completion
@@ -23,8 +22,10 @@ This is the surjectivity half of Wedhorn's Proposition 7.48, for an arbitrary su
 arbitrary commutative topological ring `A` with a compatible uniform structure: no Huber,
 Hausdorff or completeness hypothesis is needed, and `A⁺` need not be a ring of integral elements.
 For an affinoid ring, `closure (ι A⁺)` is Wedhorn's `Â⁺` (Lemma 7.47). Together with the
-corresponding statement for rational subsets, it identifies the adic spectrum of a completed
-rational localisation with the rational subset it comes from.
+corresponding statement for rational subsets, this surjectivity feeds the identification of the
+adic spectrum of a completed rational localisation with the rational subset it comes from; that
+identification is a homeomorphism only once the map is also shown to be inducing and injective,
+the latter through the T0 separation of the adic spectrum.
 
 ## Main results
 
@@ -55,33 +56,11 @@ the closure of the image of `A⁺`.
 
 public section
 
-open Valuation
-
 namespace TauCeti.ValuationSpectrum
 
 open UniformSpace
 
-variable {A : Type*} [CommRing A]
-
-private theorem valued_algebraMap (v : Spv A) (a : A) :
-    Valued.v (algebraMap A (WithVal (residueFieldValuation v)) a) = v.valuation a := by
-  rw [WithVal.algebraMap_right_apply, WithVal.valued_toVal]
-  exact (residueFieldValuation_algebraMap v (Ideal.Quotient.mk _ a)).trans <|
-    DFunLike.congr_fun (quotientValuation_comap_quotientMk v) a
-
-private theorem continuous_algebraMap [TopologicalSpace A] [IsTopologicalRing A] {v : Spv A}
-    (hv : v.IsContinuous) : Continuous (algebraMap A (WithVal (residueFieldValuation v))) := by
-  refine continuous_of_continuousAt_zero _ ?_
-  rw [ContinuousAt, map_zero, (Valued.hasBasis_nhds_zero _ _).tendsto_right_iff]
-  intro γ _
-  -- the radius `γ` is a ratio `v b / v c` of values, so continuity makes `{a | v a < γ}` open
-  obtain ⟨b, c, hc, hbc⟩ :=
-    exists_valuation_div_valuation_eq v (MonoidWithZeroHom.ValueGroup₀.embedding γ.1)
-  filter_upwards [(((isContinuous_def v).mp hv).isOpen_lt_div b hc).mem_nhds
-    (by simp [hbc, zero_lt_iff])] with a ha
-  rwa [restrict_lt_iff_lt_embedding, valued_algebraMap, ← hbc]
-
-variable [UniformSpace A] [IsUniformAddGroup A] [IsTopologicalRing A]
+variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [IsTopologicalRing A]
 
 /-- **Continuous valuations extend to the completion.** Every continuous point of `Spv A` is the
 pullback along `A → Â` of a continuous point of `Spv Â`, where `Â` is the Hausdorff completion
@@ -92,15 +71,14 @@ theorem exists_isContinuous_comap_coeRingHom_eq {v : Spv A} (hv : v.IsContinuous
   -- `A → κ(v)` is continuous, so it completes to `Â → κ(v)^`; the valuation of `κ(v)^` pulls back
   -- along it to a continuous point of `Spv Â` lying over `v`
   let F : Completion A →+* (residueFieldValuation v).Completion :=
-    Completion.mapRingHom (algebraMap A _) (continuous_algebraMap hv)
+    Completion.mapRingHom (algebraMap A _) (continuous_algebraMap_residueFieldValuation hv)
   refine ⟨ofValuation (Valued.v.comap F), ?_, ?_⟩
   · rw [isContinuous_ofValuation_iff]
     exact Valued.isContinuous_v.comap Completion.continuous_map
   · rw [comap_ofValuation]
     convert ofValuation_valuation v using 2
     ext a
-    simp [F, Completion.coeRingHom, Completion.mapRingHom_coe, valued_algebraMap,
-      -Completion.mapRingHom_apply]
+    simp [F, Completion.coeRingHom, Completion.mapRingHom_coe, -Completion.mapRingHom_apply]
 
 /-- **The surjectivity half of Wedhorn Proposition 7.48, for any subring `A⁺`.** Pullback along
 `A → Â` maps `Spa (Â, Â⁺)` onto `Spa (A, A⁺)`, where `Â⁺` is the closure of the image of `A⁺`.

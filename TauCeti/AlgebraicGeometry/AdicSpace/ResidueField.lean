@@ -5,8 +5,10 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import TauCeti.AlgebraicGeometry.AdicSpace.Cont.Basic
 public import TauCeti.AlgebraicGeometry.AdicSpace.ValuationSpectrum
 public import Mathlib.RingTheory.LocalRing.ResidueField.Ideal
+public import Mathlib.Topology.Algebra.Valued.WithVal
 
 /-!
 # The residue field of a point of the valuation spectrum
@@ -25,6 +27,10 @@ Note that `v` itself is not a function: `Spv A` is a structure, and each of the 
 here has to be named. This is the factorisation the structure presheaf is read through — a section
 is evaluated at `v` by its image in the residue field, and the condition cutting out `𝒪_X⁺` is
 `residueFieldValuation v` of that image being `≤ 1`.
+
+`residueFieldValuation v` also topologises `κ(v)`, through Mathlib's type synonym
+`WithVal`, and the last two results describe the canonical map `A → κ(v)` for that topology: its
+valuation, and its continuity when `A` is a topological ring and `v` a continuous point.
 
 ## Main definitions
 
@@ -49,6 +55,10 @@ is evaluated at `v` by its image in the residue field, and the condition cutting
   every element,
   since every element of a fraction field is a fraction, and neither needs the
   definition unfolded.
+* `TauCeti.ValuationSpectrum.valued_algebraMap_residueFieldValuation`: the valuation
+  topologising `κ(v)` takes the image of `a : A` to `v.valuation a`.
+* `TauCeti.ValuationSpectrum.continuous_algebraMap_residueFieldValuation`: for a continuous
+  point of a topological ring, `A → κ(v)` is continuous.
 
 ## References
 
@@ -136,6 +146,51 @@ theorem residueFieldValuation_mk' (v : Spv A) (x : residueRing v)
     Valuation.extendToLocalization_mk' (quotientValuation v)
       (fun _ hs ↦ quotientValuation_ne_zero v (nonZeroDivisors.ne_zero hs))
       (v.supp.ResidueField) x s
+
+/-- **The valuation topologising `κ(v)` takes the image of `a : A` to `v.valuation a`.** The
+residue field carries the topology of `residueFieldValuation v` through Mathlib's type synonym
+`WithVal`, and `Valued.v` is that valuation.
+
+This is the characteristic equation of `residueFieldValuation` at the level of `A` itself,
+rather than of the residue ring `A ⧸ supp v`. -/
+@[simp]
+theorem valued_algebraMap_residueFieldValuation (v : Spv A) (a : A) :
+    Valued.v (algebraMap A (WithVal (residueFieldValuation v)) a) = v.valuation a := by
+  rw [WithVal.algebraMap_right_apply, WithVal.valued_toVal]
+  exact (residueFieldValuation_algebraMap v (Ideal.Quotient.mk _ a)).trans <|
+    DFunLike.congr_fun (quotientValuation_comap_quotientMk v) a
+
+/-- **A continuous point maps continuously to its residue field.** If `v : Spv A` is continuous
+then the canonical map `A → WithVal (residueFieldValuation v)` is continuous, `κ(v)` carrying
+the topology of `residueFieldValuation v`.
+
+Continuity is what lets the map be extended along a completion of `A`. -/
+theorem continuous_algebraMap_residueFieldValuation [TopologicalSpace A] [IsTopologicalRing A]
+    {v : Spv A} (hv : v.IsContinuous) :
+    Continuous (algebraMap A (WithVal (residueFieldValuation v))) := by
+  refine continuous_of_continuousAt_zero _ ?_
+  rw [ContinuousAt, map_zero, (Valued.hasBasis_nhds_zero _ _).tendsto_right_iff]
+  intro γ _
+  -- write the radius as a ratio of values of `residueFieldValuation v`, then that ratio as the
+  -- value of a single fraction of `κ(v)`, then the fraction over images of `a b : A`
+  obtain ⟨r, s, -, -, hrs⟩ := Valued.v.exists_div_eq_of_unit γ
+  obtain ⟨x, y, hy, hxy⟩ := IsFractionRing.div_surjective (residueRing v) (WithVal.ofVal (r / s))
+  obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective x
+  obtain ⟨b, rfl⟩ := Ideal.Quotient.mk_surjective y
+  -- `Valued.v` of `WithVal (residueFieldValuation v)` is `residueFieldValuation v` itself, so the
+  -- characteristic equation above reads off the values of the numerator and the denominator
+  have hval (c : A) : residueFieldValuation v
+      (algebraMap (residueRing v) v.supp.ResidueField (Ideal.Quotient.mk v.supp c)) =
+      v.valuation c := valued_algebraMap_residueFieldValuation v c
+  have hb : v.valuation b ≠ 0 := by
+    rw [← hval b, residueFieldValuation_algebraMap]
+    exact quotientValuation_ne_zero v (nonZeroDivisors.ne_zero hy)
+  have hemb : MonoidWithZeroHom.ValueGroup₀.embedding γ.1 = v.valuation a / v.valuation b := by
+    rw [← hval a, ← hval b, ← map_div₀, hxy, WithVal.apply_ofVal, map_div₀, ← hrs, map_div₀,
+      Valuation.embedding_restrict, Valuation.embedding_restrict]
+  filter_upwards [(((isContinuous_def v).mp hv).isOpen_lt_div a hb).mem_nhds
+    (by simp [← hemb, zero_lt_iff])] with z hz
+  rwa [Valuation.restrict_lt_iff_lt_embedding, valued_algebraMap_residueFieldValuation, hemb]
 
 end ValuationSpectrum
 
