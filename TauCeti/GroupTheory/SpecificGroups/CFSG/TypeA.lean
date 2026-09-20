@@ -65,11 +65,11 @@ for the composite Steinberg map. The fixed-point identification
 `TauCeti.SlStd.map_subtype_fixedSubgroup_twistedFrobenius_le` are available in the same way. The
 lemma `simpleRootSubgroup_def` plays this role for the root subgroups.
 
-This closes the type-A branch of milestones L0, L1 and L3 of
-`TauCetiRoadmap/CFSGStatement/README.md`. This file does not define the uniform
-`ValidLieTypeIndex.AmbientGroup`, `ValidLieTypeIndex.frobenius` or `GraphTwistedIndex.graphAut`:
-the other Dynkin types still need their full-weight carriers. Nothing here asserts that a
-constructed group is finite or simple.
+The definitions in this file are specific to `TypeALieIndex`. Their uniform
+`ValidLieTypeIndex.AmbientGroup` and `ValidLieTypeIndex.frobenius` counterparts are assembled from
+the family constructions in `TauCeti.GroupTheory.SpecificGroups.CFSG.Assembly.AmbientGroup`. This
+file does not define `GraphTwistedIndex.graphAut`, and nothing here asserts that a constructed
+group is finite or simple.
 
 ## Main declarations
 

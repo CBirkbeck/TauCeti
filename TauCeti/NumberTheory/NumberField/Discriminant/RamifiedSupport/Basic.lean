@@ -33,6 +33,8 @@ automatic.
   unit ideal, for the algebra instance `𝓞 K` carries as the ring of integers of that extension.
 * `TauCeti.NumberField.ramifiedSupport_self`: nothing ramifies in the identity extension, so the
   support of `K / K` is empty.
+* `TauCeti.NumberField.isUnramifiedAway_ramifiedSupport`: primes outside the ramified support are
+  unramified throughout the extension.
 
 ## References
 
@@ -95,5 +97,18 @@ theorem ramifiedSupport_self : ramifiedSupport K K = ∅ := by
   refine Finset.eq_empty_iff_forall_notMem.mpr fun v hv => ?_
   rw [mem_ramifiedSupport, relDiscr_ringOfIntegers_self K, ← Ideal.one_eq_top] at hv
   exact v.prime.not_dvd_one hv
+
+/-- **Every prime outside the ramified support is unramified.** If a finite place `v` does not
+divide the relative discriminant of `L/K`, then every prime of `L` above `v` is unramified over
+`K`. This is the unramified-away hypothesis that specializations of the Artin map consume. -/
+theorem isUnramifiedAway_ramifiedSupport :
+    ∀ v : HeightOneSpectrum (𝓞 K), v ∉ ramifiedSupport K L →
+      ∀ (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver v.asIdeal],
+        Algebra.IsUnramifiedAt (𝓞 K) Q := by
+  intro v hv Q _ _
+  by_contra hQ
+  apply hv
+  rw [mem_ramifiedSupport, TauCeti.dvd_relDiscr_iff_exists_not_isUnramifiedAt v.ne_bot]
+  exact ⟨⟨Q, inferInstance, inferInstance⟩, hQ⟩
 
 end TauCeti.NumberField
