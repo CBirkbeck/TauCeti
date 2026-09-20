@@ -16,9 +16,8 @@ For a map `p : E → B`, its deck transformations are the homeomorphisms of `E` 
 collects them as the subgroup `deck p` of the homeomorphism group `E ≃ₜ E`; for a covering
 projection `p` this subgroup is the classical deck transformation group.
 
-This file adds the pointwise API that the rest of the deck-transformation development uses.
-`TauCeti.Deck.mem_iff` restates Mathlib's `deck.mem_iff` point by point on the underlying
-homeomorphism, and `deck.fiberHomeomorph` restricts a deck transformation to each fibre of `p`.
+This file adds the fibre API that the rest of the deck-transformation development uses.
+In particular, `deck.fiberHomeomorph` restricts a deck transformation to each fibre of `p`.
 
 The action of `deck p` on the total space is inherited, by subgroup transfer, from the
 tautological action of the ambient homeomorphism group `E ≃ₜ E` on `E`
@@ -36,12 +35,6 @@ namespace TauCeti
 variable {E B : Type*} [TopologicalSpace E] {p : E → B}
 
 namespace Deck
-
-/-- A homeomorphism lies in `deck p` exactly when it preserves `p` pointwise: `deck.mem_iff`
-with the equality of maps read point by point. -/
-@[simp]
-lemma mem_iff (φ : E ≃ₜ E) : φ ∈ deck p ↔ ∀ e, p (φ e) = p e :=
-  deck.mem_iff.trans funext_iff
 
 /-- A deck transformation restricts to a homeomorphism of every fibre of the projection,
 the restriction of its underlying homeomorphism along `Homeomorph.subtype`. -/
@@ -90,7 +83,7 @@ variable {E B B' : Type*} [TopologicalSpace E]
 theorem deck_comp_of_injective {f : B → B'} (hf : Function.Injective f) (p : E → B) :
     deck (f ∘ p) = deck p := by
   ext φ
-  simp only [Deck.mem_iff, Function.comp_apply, hf.eq_iff]
+  simp only [deck.mem_iff, funext_iff, Function.comp_apply, hf.eq_iff]
 
 end Injective
 

@@ -70,7 +70,8 @@ because the action is continuous, and it lies over the base because the fibres o
 the orbits. -/
 def toDeckHom : G →* deck f :=
   letI := hf.toContinuousConstSMul
-  { toFun := fun g => ⟨Homeomorph.smul g, (Deck.mem_iff _).2 fun _ => hf.map_smul g⟩
+  { toFun := fun g =>
+      ⟨Homeomorph.smul g, deck.mem_iff.mpr (funext fun _ => hf.map_smul g)⟩
     map_one' := Subtype.ext (Homeomorph.ext fun e => one_smul G e)
     map_mul' := fun g g' => Subtype.ext (Homeomorph.ext fun e => mul_smul g g' e) }
 

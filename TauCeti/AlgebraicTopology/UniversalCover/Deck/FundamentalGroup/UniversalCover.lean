@@ -51,7 +51,7 @@ variable {X : Type*} [TopologicalSpace X] (x₀ : X)
 projection. -/
 def loopDeck (g : FundamentalGroup X x₀) :
     deck (proj : UniversalCover x₀ → X) :=
-  ⟨Homeomorph.smul g, (Deck.mem_iff _).2 fun p => proj_smul g p⟩
+  ⟨Homeomorph.smul g, deck.mem_iff.mpr (funext fun p => proj_smul g p)⟩
 
 /-- The deck transformation induced by a loop class acts by the fundamental-group action. -/
 @[simp]

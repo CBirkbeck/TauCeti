@@ -44,10 +44,7 @@ theorem eq_of_apply_eq [PreconnectedSpace E] (hp : IsCoveringMap p) (φ ψ : dec
   apply Homeomorph.ext
   exact congr_fun
     (hp.eq_of_comp_eq φ.1.continuous ψ.1.continuous
-      (by
-        ext x
-        rw [Function.comp_apply, Function.comp_apply, ← deck.smul_eq_apply φ x,
-          ← deck.smul_eq_apply ψ x, deck.proj_smul φ x, deck.proj_smul ψ x])
+      ((deck.comp_eq φ).trans (deck.comp_eq ψ).symm)
       e h)
 
 /-- On a covering map with preconnected total space, equality of the ambient deck action at one

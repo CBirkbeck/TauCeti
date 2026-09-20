@@ -62,7 +62,7 @@ moves every point within the period subgroup `zmultiples p`. -/
 theorem mem_addCircleCoe {φ : 𝕜 ≃ₜ 𝕜} :
     φ ∈ deck ((↑) : 𝕜 → AddCircle p) ↔ ∀ e, φ e - e ∈ zmultiples p :=
   by
-    rw [mem_iff]
+    rw [deck.mem_iff, funext_iff]
     exact forall_congr' fun e => QuotientAddGroup.eq_iff_sub_mem
 
 /-- Right translation by an element of `zmultiples p`, as a deck transformation of
@@ -156,7 +156,7 @@ theorem addCircleMulEquiv_apply [PreconnectedSpace 𝕜] [TotallyDisconnectedSpa
   rfl
 
 @[simp]
-theorem _root_.deck.addCircleMulEquiv_symm_apply_coe [PreconnectedSpace 𝕜]
+theorem addCircleMulEquiv_symm_apply_coe [PreconnectedSpace 𝕜]
     [TotallyDisconnectedSpace (zmultiples p)] (φ : deck ((↑) : 𝕜 → AddCircle p)) :
     ((addCircleMulEquiv.symm φ).toAdd : 𝕜) = φ.1 0 := by
   calc

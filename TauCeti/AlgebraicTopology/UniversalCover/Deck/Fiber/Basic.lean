@@ -51,14 +51,14 @@ It sends a deck transformation to its restriction to the subtype `p ⁻¹' {b}`.
 /-- The fibre homomorphism evaluates by applying the deck transformation to the underlying
 point of the fibre. -/
 @[simp]
-lemma _root_.deck.fiberHomeomorphHom_apply (φ : deck p) (e : p ⁻¹' {b}) :
+lemma fiberHomeomorphHom_apply (φ : deck p) (e : p ⁻¹' {b}) :
     fiberHomeomorphHom p b φ e = deck.fiberHomeomorph φ b e :=
   rfl
 
 /-- On underlying points, the fibre homomorphism is evaluation of the underlying
 homeomorphism. -/
 @[simp]
-lemma _root_.deck.fiberHomeomorphHom_apply_coe (φ : deck p) (e : p ⁻¹' {b}) :
+lemma fiberHomeomorphHom_apply_coe (φ : deck p) (e : p ⁻¹' {b}) :
     (fiberHomeomorphHom p b φ e : E) = φ.1 e.1 :=
   rfl
 
@@ -72,14 +72,14 @@ lemma fiberHomeomorphHom_one :
 /-- The fibre homomorphism sends products of deck transformations to products of fibre
 homeomorphisms. -/
 @[simp]
-lemma _root_.deck.fiberHomeomorphHom_mul (φ ψ : deck p) :
+lemma fiberHomeomorphHom_mul (φ ψ : deck p) :
     fiberHomeomorphHom p b (φ * ψ) = fiberHomeomorphHom p b φ * fiberHomeomorphHom p b ψ := by
   exact (fiberHomeomorphHom p b).map_mul φ ψ
 
 /-- The fibre homomorphism sends inverses of deck transformations to inverses of fibre
 homeomorphisms. -/
 @[simp]
-lemma _root_.deck.fiberHomeomorphHom_inv (φ : deck p) :
+lemma fiberHomeomorphHom_inv (φ : deck p) :
     fiberHomeomorphHom p b φ⁻¹ = (fiberHomeomorphHom p b φ)⁻¹ := by
   exact (fiberHomeomorphHom p b).map_inv φ
 
@@ -94,14 +94,14 @@ homeomorphisms. -/
 @[simp]
 lemma _root_.deck.fiberHomeomorph_mul (φ ψ : deck p) :
     deck.fiberHomeomorph (φ * ψ) b = deck.fiberHomeomorph φ b * deck.fiberHomeomorph ψ b := by
-  exact deck.fiberHomeomorphHom_mul φ ψ
+  exact fiberHomeomorphHom_mul φ ψ
 
 /-- The fibre homeomorphism associated to an inverse is the inverse of the associated fibre
 homeomorphism. -/
 @[simp]
 lemma _root_.deck.fiberHomeomorph_inv (φ : deck p) :
     deck.fiberHomeomorph φ⁻¹ b = (deck.fiberHomeomorph φ b)⁻¹ := by
-  exact deck.fiberHomeomorphHom_inv φ
+  exact fiberHomeomorphHom_inv φ
 
 /-- The fibre homeomorphism associated to a natural-number power is the corresponding power
 of the associated fibre homeomorphism. -/

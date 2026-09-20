@@ -103,7 +103,7 @@ private def conjHomeomorphMulEquiv (h : E ≃ₜ F) : (E ≃ₜ E) ≃* (F ≃�
 transformations. -/
 private lemma conjHomeomorph_mem_deck (h : E ≃ₜ F) (hpq : ∀ e, q (h e) = p e) (φ : deck p) :
     conjHomeomorph h φ.1 ∈ deck q := by
-  rw [mem_iff]
+  rw [deck.mem_iff, funext_iff]
   intro f
   calc
     q (conjHomeomorph h φ.1 f) = q (h (φ.1 (h.symm f))) := rfl

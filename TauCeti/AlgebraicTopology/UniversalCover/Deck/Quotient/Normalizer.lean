@@ -153,10 +153,11 @@ deck transformation group of the intermediate covering `r`. -/
 def normalizerDeckHom : _root_.Subgroup.normalizer (H : Set Γ) →* deck r :=
   letI := hp.toContinuousConstSMul
   { toFun := fun γ => ⟨normalizerHomeomorph hq γ, by
-      rw [Deck.mem_iff]
+      rw [deck.mem_iff, funext_iff]
       intro y
       obtain ⟨e, rfl⟩ := hq.surjective y
       have hrq : ∀ e' : E, r (q e') = p e' := fun e' => congrFun hr e'
+      change r (normalizerHomeomorph hq γ (q e)) = r (q e)
       rw [normalizerHomeomorph_apply, hrq, hrq, hp.map_smul]⟩
     map_one' := Subtype.ext (Homeomorph.ext (normalizerMap_one hq))
     map_mul' := fun γ γ' => Subtype.ext (Homeomorph.ext (normalizerMap_mul hq γ γ')) }
@@ -228,15 +229,19 @@ theorem normalizerDeckHom_surjective [PreconnectedSpace E] (hrc : IsCoveringMap 
   obtain ⟨e₁, he₁⟩ := hq.surjective (φ.1 (q e₀))
   have hrq : ∀ e : E, r (q e) = p e := fun e => congrFun hr e
   have hpe : p e₁ = p e₀ := by
-    rw [← hrq e₁, ← hrq e₀, he₁, ← deck.smul_eq_apply φ (q e₀), deck.proj_smul φ (q e₀)]
+    rw [← hrq e₁, ← hrq e₀, he₁]
+    exact congrFun (deck.comp_eq φ) (q e₀)
   obtain ⟨γ, hγ⟩ := hp.apply_eq_iff_mem_orbit.mp hpe
   -- `φ ∘ q` and `q ∘ (γ • ·)` are two lifts of `p` through `r`, agreeing at `e₀`.
   have hkey : ∀ e, φ.1 (q e) = q (γ • e) := by
     refine congrFun (hrc.eq_of_comp_eq (g₁ := fun e => φ.1 (q e)) (g₂ := fun e => q (γ • e))
       (φ.1.continuous.comp hq.isCoveringMap.continuous)
       (hq.isCoveringMap.continuous.comp (continuous_const_smul _)) (funext fun e => ?_) e₀ ?_)
-    · rw [Function.comp_apply, Function.comp_apply, ← deck.smul_eq_apply φ (q e),
-        deck.proj_smul φ (q e), hrq e, hrq (γ • e), hp.map_smul]
+    · calc
+        r (φ.1 (q e)) = r (q e) := congrFun (deck.comp_eq φ) (q e)
+        _ = p e := hrq e
+        _ = p (γ • e) := (hp.map_smul γ).symm
+        _ = r (q (γ • e)) := (hrq (γ • e)).symm
     · have hγ' : (γ • e₀ : E) = e₁ := hγ
       rw [hγ', he₁]
   have hkey' : ∀ e, φ.1.symm (q e) = q (γ⁻¹ • e) := fun e => by
