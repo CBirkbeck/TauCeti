@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Comap
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.HuberPair
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basis
 import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Perturbation
@@ -133,7 +132,7 @@ family of `Spa(S)`. -/
 theorem exists_mem_spaRationalFamily_spaComap_preimage_eq_of_denseRange (f : Hom S T)
     (hf : DenseRange f.toRingHom) {U : Set (spa T.plus)} (hU : U ∈ spaRationalFamily T.plus) :
     ∃ W ∈ spaRationalFamily S.plus, f.spaComap ⁻¹' W = U := by
-  rw [spaComap_eq]
+  rw [spaComap_def]
   exact ValuationSpectrum.exists_mem_spaRationalFamily_spaComap_preimage_eq_of_denseRange
     f.continuous_toRingHom hf S.plus T.plus f.map_mem_plus hU
 
@@ -141,7 +140,7 @@ theorem exists_mem_spaRationalFamily_spaComap_preimage_eq_of_denseRange (f : Hom
 For the completion morphism this is the inducing part of Wedhorn Proposition 7.48. -/
 theorem isInducing_spaComap_of_denseRange (f : Hom S T) (hf : DenseRange f.toRingHom) :
     IsInducing f.spaComap := by
-  rw [spaComap_eq]
+  rw [spaComap_def]
   exact ValuationSpectrum.isInducing_spaComap_of_denseRange f.continuous_toRingHom hf S.plus
     T.plus f.map_mem_plus
 

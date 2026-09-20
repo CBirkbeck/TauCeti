@@ -22,7 +22,7 @@ quotient-pair form of **Wedhorn, *Adic Spaces*, Proposition 7.38**.
 
 ## Main results
 
-* `TauCeti.Huber.Pair.Hom.spaComap_eq`: the bridge from the bundled map to the unbundled one.
+* `TauCeti.Huber.Pair.Hom.spaComap_def`: the bridge from the bundled map to the unbundled one.
 * `TauCeti.Huber.Pair.Hom.continuous_spaComap`: the induced map is continuous.
 * `TauCeti.Huber.Pair.Hom.spaComap_id`, `spaComap_comp`: contravariant functoriality.
 * `TauCeti.Huber.Pair.Hom.spaComap_preimage_rationalSubset`: preimages of rational subsets.
@@ -71,7 +71,7 @@ theorem spaComap_val (f : Hom S T) (v : spa T.plus) :
 /-- `f.spaComap` is the subring-level pullback of the underlying ring homomorphism of `f`. This is
 the bridge to the unbundled API of `TauCeti.AlgebraicGeometry.AdicSpace.Spa.Comap`, whose
 definition is not exposed outside this module. -/
-theorem spaComap_eq (f : Hom S T) :
+theorem spaComap_def (f : Hom S T) :
     f.spaComap =
       ValuationSpectrum.spaComap f.toRingHom f.continuous_toRingHom S.plus T.plus f.map_mem_plus :=
   (rfl)
