@@ -50,7 +50,7 @@ Wedhorn 8.2(2) comparison. The correspondence is:
   `exists_mem_spaRationalFamily_spaComap_preimage_eq_of_denseRange`;
 * `SpaParameterPerturbation.lean`, `exists_uniform_spanning_bound` and
   `indexedRationalSet_perturb_eq` — its padding and perturbation steps, which correspond to
-  `TauCeti.Huber.exists_isOpen_span_forall_sub_mem_of_denseRange`, added by this PR alongside
+  `TauCeti.Huber.exists_isOpen_span_forall_sub_mem_of_denseRange` and
   `exists_finset_subset_isOpen_span` in `TauCeti/RingTheory/Huber/OpenIdeal.lean`;
 * `SpaRationalOpenHomeomorph.lean`, `exists_A_level_open_presentation` and
   `spaPresheafValueEquivRationalOpen_isOpenMap` — its open-presentation and open-map steps.
@@ -61,7 +61,7 @@ rational localisation; the plus rings are arbitrary subrings where AINTLIB requi
 integral elements; numerator ideals are only open where AINTLIB asks for the unit ideal; the
 descended numerators are enlarged by a finite set generating an open ideal of `A` where AINTLIB
 pads by a power of a topologically nilpotent unit; and the perturbation step is TauCeti's
-Huber-ring form of Proposition 7.34, already on `main`. No code is copied.
+Huber-ring form of Proposition 7.34. No code is copied.
 -/
 
 public section

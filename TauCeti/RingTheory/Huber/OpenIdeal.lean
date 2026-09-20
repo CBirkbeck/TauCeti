@@ -231,6 +231,7 @@ theorem exists_finset_subset_isOpen_span [IsHuberRing A] {V : Set A} (hV : V ∈
   exact ⟨G, hG.trans hn, (P.isOpen_iff_exists_pow_le _).mpr
     ⟨n, (P.extendedIdealOfDefinition_pow n).trans_le hspan.le⟩⟩
 
+open scoped Classical in
 /-- **A finite set and a denominator descend along a dense map, up to a neighbourhood of zero.**
 Along a continuous `φ : A → B` with dense image out of a Huber ring `A`, a finite set `T ∋ 0` of
 `B` is approximated within a neighbourhood `V` of zero, in both directions, by the image of a
@@ -238,13 +239,12 @@ finite set of `A` that generates an open ideal, and an element `s` of `B` by the
 element of `A`. The open-ideal condition comes from `exists_finset_subset_isOpen_span`, which is
 what forces the approximating set to be enlarged by a spanning set of its own. -/
 theorem exists_isOpen_span_forall_sub_mem_of_denseRange {B : Type*} [CommRing B]
-    [TopologicalSpace B] [IsTopologicalRing B] [IsHuberRing A] [DecidableEq B] {φ : A →+* B}
+    [TopologicalSpace B] [IsTopologicalRing B] [IsHuberRing A] {φ : A →+* B}
     (hφc : Continuous φ) (hφ : DenseRange φ) {V : Set B} (hV : V ∈ 𝓝 0) {T : Finset B}
     (hT : 0 ∈ T) (s : B) :
     ∃ (T' : Finset A) (s' : A), IsOpen (Ideal.span (T' : Set A) : Set A) ∧
       (∀ t ∈ T, ∃ u ∈ T'.image φ, t - u ∈ V) ∧ (∀ u ∈ T'.image φ, ∃ t ∈ T, u - t ∈ V) ∧
       s - φ s' ∈ V := by
-  classical
   -- `G ⊆ φ⁻¹(V)` generates an open ideal, and `φ (a b)` lies within `V ∩ -V` of each `b : B`
   obtain ⟨G, hGV, hGopen⟩ := exists_finset_subset_isOpen_span (V := φ ⁻¹' V)
     (hφc.continuousAt.preimage_mem_nhds (by rwa [map_zero]))
