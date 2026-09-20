@@ -28,6 +28,11 @@ sections, so that its `H¹` has dimension exactly `g - 1 - deg D`: a nonzero glo
 `𝒪_X(D)` is a rational function `f` with `div f + D ≥ 0`, and the degree of that effective divisor
 is `deg D`, because degree is a linear-equivalence invariant.
 
+Riemann's inequality also makes the Riemann–Roch space of a divisor of degree at least the genus
+nonzero, so such a divisor is linearly equivalent to an effective divisor: nonemptiness of a
+complete linear system is the existence of a nonzero global section, by
+`SchemeWeilDivisor.nonempty_completeLinearSystem_iff_nontrivial_globalSections_sheaf`.
+
 ## Main declarations
 
 * `SchemeWeilDivisor.eulerCharBelow_sheaf_eq_relativeDegree_add_one_sub_genus` and
@@ -37,6 +42,8 @@ is `deg D`, because degree is a linear-equivalence invariant.
   bundle presented as `𝒪_X(D)`;
 * `SchemeWeilDivisor.relativeDegree_add_one_sub_genus_le_finrank_cohomology_zero_sheaf`:
   Riemann's inequality;
+* `SchemeWeilDivisor.nonempty_completeLinearSystem_of_genus_le_relativeDegree`: a divisor of
+  degree at least the genus is linearly equivalent to an effective divisor;
 * `SchemeWeilDivisor.sections_top_eq_bot_of_relativeDegree_neg`,
   `SchemeWeilDivisor.finrank_cohomology_zero_sheaf_eq_zero_of_relativeDegree_neg` and
   `SchemeWeilDivisor.finrank_cohomology_one_sheaf_eq_of_relativeDegree_neg`: a divisor of
@@ -63,7 +70,7 @@ namespace SchemeWeilDivisor
 
 section Curve
 
-variable {X : Scheme.{u}} [IsIntegral X] [IsLocallyNoetherian X]
+variable {X : Scheme.{u}} [IsIntegral X]
   [∀ y : CodimensionOnePoint X, IsDiscreteValuationRing (X.presheaf.stalk (y : X))]
   (k : Type u) [Field k] [X.Over (Spec (.of k))] [IsProper (X ↘ Spec (.of k))]
   [FiniteDimensional k (Scheme.Modules.Cohomology (InvertibleSheaf.trivial X).obj 1)]
@@ -78,7 +85,11 @@ over a field `k` whose codimension-one local rings are discrete valuation rings,
 degree is zero. -/
 theorem sections_top_eq_bot_of_relativeDegree_neg {D : SchemeWeilDivisor X}
     (hD : relativeDegree (X ↘ Spec (.of k)) D < 0) :
+    letI : IsLocallyNoetherian X :=
+      LocallyOfFiniteType.isLocallyNoetherian (X ↘ Spec (.of k))
     sections D ⊤ = ⊥ := by
+  let _ : IsLocallyNoetherian X :=
+    LocallyOfFiniteType.isLocallyNoetherian (X ↘ Spec (.of k))
   have : CompactSpace X := (quasiCompact_iff_compactSpace (X ↘ Spec (.of k))).mp inferInstance
   have : IsNoetherian X := {}
   obtain ⟨x⟩ : Nonempty X := inferInstance
@@ -115,8 +126,12 @@ codimension-one local rings are discrete valuation rings, with a `k`-rational po
 where `χ(M) = dim H⁰(X, M) - dim H¹(X, M)`, `deg D = Σ_y D(y) [κ(y) : k]` and `g` is the
 genus. -/
 theorem eulerCharBelow_sheaf_eq_relativeDegree_add_one_sub_genus (D : SchemeWeilDivisor X) :
+    letI : IsLocallyNoetherian X :=
+      LocallyOfFiniteType.isLocallyNoetherian (X ↘ Spec (.of k))
     Scheme.Modules.eulerCharBelow k X (sheaf D) 2 =
       relativeDegree (X ↘ Spec (.of k)) D + 1 - X.genus k := by
+  let _ : IsLocallyNoetherian X :=
+    LocallyOfFiniteType.isLocallyNoetherian (X ↘ Spec (.of k))
   rw [eulerCharBelow_sheaf_eq_relativeDegree_add k hX D,
     eulerCharBelow_trivial_eq_one_sub_genus k hs]
   ring
@@ -127,9 +142,13 @@ curve over a field `k` whose codimension-one local rings are discrete valuation 
 
 `dim_k H⁰(X, 𝒪_X(D)) - dim_k H¹(X, 𝒪_X(D)) = deg D + 1 - g`. -/
 theorem finrank_cohomology_zero_sheaf_sub_finrank_cohomology_one_sheaf (D : SchemeWeilDivisor X) :
+    letI : IsLocallyNoetherian X :=
+      LocallyOfFiniteType.isLocallyNoetherian (X ↘ Spec (.of k))
     (finrank k (Scheme.Modules.Cohomology (sheaf D) 0) : ℤ) -
         (finrank k (Scheme.Modules.Cohomology (sheaf D) 1) : ℤ) =
       relativeDegree (X ↘ Spec (.of k)) D + 1 - X.genus k := by
+  let _ : IsLocallyNoetherian X :=
+    LocallyOfFiniteType.isLocallyNoetherian (X ↘ Spec (.of k))
   rw [← Scheme.Modules.eulerCharBelow_two,
     eulerCharBelow_sheaf_eq_relativeDegree_add_one_sub_genus k hX hs D]
 
@@ -138,8 +157,12 @@ local rings are discrete valuation rings, with a `k`-rational point and with `H�
 finite-dimensional, `dim_k H⁰(X, 𝒪_X(D)) ≥ deg D + 1 - g`. -/
 theorem relativeDegree_add_one_sub_genus_le_finrank_cohomology_zero_sheaf
     (D : SchemeWeilDivisor X) :
+    letI : IsLocallyNoetherian X :=
+      LocallyOfFiniteType.isLocallyNoetherian (X ↘ Spec (.of k))
     relativeDegree (X ↘ Spec (.of k)) D + 1 - X.genus k ≤
       (finrank k (Scheme.Modules.Cohomology (sheaf D) 0) : ℤ) := by
+  let _ : IsLocallyNoetherian X :=
+    LocallyOfFiniteType.isLocallyNoetherian (X ↘ Spec (.of k))
   have h := finrank_cohomology_zero_sheaf_sub_finrank_cohomology_one_sheaf k hX hs D
   have := Int.natCast_nonneg (finrank k (Scheme.Modules.Cohomology (sheaf D) 1))
   omega
@@ -150,7 +173,11 @@ valuation rings, with `H¹(X, 𝒪_X)` finite-dimensional, `H⁰(X, 𝒪_X(D))` 
 `D` of negative degree. -/
 theorem finrank_cohomology_zero_sheaf_eq_zero_of_relativeDegree_neg {D : SchemeWeilDivisor X}
     (hD : relativeDegree (X ↘ Spec (.of k)) D < 0) :
+    letI : IsLocallyNoetherian X :=
+      LocallyOfFiniteType.isLocallyNoetherian (X ↘ Spec (.of k))
     finrank k (Scheme.Modules.Cohomology (sheaf D) 0) = 0 := by
+  let _ : IsLocallyNoetherian X :=
+    LocallyOfFiniteType.isLocallyNoetherian (X ↘ Spec (.of k))
   have hbot := sections_top_eq_bot_of_relativeDegree_neg k hX hD
   -- `Γ(X, 𝒪_X(D))` injects into `𝒦_X` with image `sections D ⊤`, so it too is zero.
   have : Subsingleton Γ(sheaf D, ⊤) := by
@@ -167,13 +194,52 @@ valuation rings, with a `k`-rational point and with `H¹(X, 𝒪_X)` finite-dime
 negative degree has `dim_k H¹(X, 𝒪_X(D)) = g - 1 - deg D`. -/
 theorem finrank_cohomology_one_sheaf_eq_of_relativeDegree_neg {D : SchemeWeilDivisor X}
     (hD : relativeDegree (X ↘ Spec (.of k)) D < 0) :
+    letI : IsLocallyNoetherian X :=
+      LocallyOfFiniteType.isLocallyNoetherian (X ↘ Spec (.of k))
     (finrank k (Scheme.Modules.Cohomology (sheaf D) 1) : ℤ) =
       X.genus k - 1 - relativeDegree (X ↘ Spec (.of k)) D := by
+  let _ : IsLocallyNoetherian X :=
+    LocallyOfFiniteType.isLocallyNoetherian (X ↘ Spec (.of k))
   have h := finrank_cohomology_zero_sheaf_sub_finrank_cohomology_one_sheaf k hX hs D
   rw [finrank_cohomology_zero_sheaf_eq_zero_of_relativeDegree_neg k hX hD] at h
   omega
 
 end Curve
+
+section CompleteLinearSystem
+
+variable {X : Scheme.{u}} [IsIntegral X]
+  [∀ y : CodimensionOnePoint X, IsDiscreteValuationRing (X.presheaf.stalk (y : X))]
+  (k : Type u) [Field k] [X.Over (Spec (.of k))] [IsProper (X ↘ Spec (.of k))]
+  (hX : ∀ y : X, coheight y ≤ 1)
+  [FiniteDimensional k (Scheme.Modules.Cohomology (InvertibleSheaf.trivial X).obj 1)]
+  {s : Spec (.of k) ⟶ X} (hs : s ≫ X ↘ Spec (.of k) = 𝟙 (Spec (.of k)))
+
+include hX hs
+
+/-- **A divisor of degree at least the genus is linearly equivalent to an effective divisor.**
+Riemann's inequality makes the Riemann–Roch space of such a divisor nonzero, and a nonzero global
+section of `𝒪_X(D)` names an effective divisor in the class of `D`. Properness over the field
+makes `X` Noetherian, which supplies the order system used by the complete linear system. -/
+theorem nonempty_completeLinearSystem_of_genus_le_relativeDegree {D : SchemeWeilDivisor X}
+    (hD : (X.genus k : ℤ) ≤ relativeDegree (X ↘ Spec (.of k)) D) :
+    letI : IsNoetherian X :=
+      { toIsLocallyNoetherian :=
+          LocallyOfFiniteType.isLocallyNoetherian (X ↘ Spec (.of k))
+        toCompactSpace := compactSpace_of_universallyClosed (X ↘ Spec (.of k)) }
+    ((WeilDivisor.OrderSystem.ofScheme X).completeLinearSystem D).Nonempty := by
+  let _ : IsNoetherian X :=
+    { toIsLocallyNoetherian :=
+        LocallyOfFiniteType.isLocallyNoetherian (X ↘ Spec (.of k))
+      toCompactSpace := compactSpace_of_universallyClosed (X ↘ Spec (.of k)) }
+  have := finiteDimensional_globalSections_sheaf k hX D
+  rw [nonempty_completeLinearSystem_iff_nontrivial_globalSections_sheaf,
+    ← Module.finrank_pos_iff_of_free (R := k),
+    ← Scheme.Modules.finrank_cohomology_zero_eq_finrank_globalSections]
+  have h := relativeDegree_add_one_sub_genus_le_finrank_cohomology_zero_sheaf k hX hs D
+  omega
+
+end CompleteLinearSystem
 
 end SchemeWeilDivisor
 
