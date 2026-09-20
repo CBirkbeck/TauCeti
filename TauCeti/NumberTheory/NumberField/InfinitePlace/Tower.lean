@@ -6,12 +6,8 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.NumberTheory.NumberField.InfinitePlace.Ramification
+public import TauCeti.FieldTheory.Galois.Basic
 public import TauCeti.FieldTheory.Galois.Restriction
-
--- Roadmap source: `TauCetiRoadmap/NumberFieldArithmetic/README.md` @ `fa4d0309ae1d`, Layer 2.7,
--- the canonical element at a ramified real place, whose normal-tower restriction these general
--- facts serve. The credit sits outside the module docstring deliberately: the docstring
--- documents the mathematics.
 
 /-!
 # Infinite places in a normal tower
@@ -54,6 +50,7 @@ variable (K : Type*) [Field K] {L : Type*} [Field L] [Algebra K L]
 /-- **The Galois action on infinite places is equivariant along a normal tower.** Restricting `σ`
 to `F` and then moving the place `w` induces on `F` gives the same place as moving `w` by `σ` and
 inducing afterwards. -/
+@[simp]
 theorem restrictNormalHom_smul_comap [Normal K F] (σ : L ≃ₐ[K] L) (w : InfinitePlace L) :
     AlgEquiv.restrictNormalHom F σ • w.comap (algebraMap F L)
       = (σ • w).comap (algebraMap F L) := by
@@ -81,16 +78,14 @@ theorem isRamified_comap_of_isComplex {w : InfinitePlace L} (hw : w.IsRamified K
   rw [← comap_comp, ← IsScalarTower.algebraMap_eq]
   exact (isRamified_iff.mp hw).2
 
-/-- **An automorphism restricting trivially to `F`, and fixing a place unramified over `F`, is the
-identity.** A trivial restriction makes it fix `F` pointwise, hence an `F`-automorphism; a place
-unramified over `F` has trivial stabilizer in `Gal(L/F)`, leaving only the identity. -/
+/-- An automorphism restricting trivially to `F` and fixing a place unramified over `F` is the
+identity. -/
 theorem eq_one_of_restrictNormalHom_eq_one [Normal K F] {w : InfinitePlace L}
     (hu : w.IsUnramified F) {σ : L ≃ₐ[K] L} (hσ : σ • w = w)
     (h1 : AlgEquiv.restrictNormalHom F σ = 1) : σ = 1 := by
-  have hfix : ∀ x : F, σ (algebraMap F L x) = algebraMap F L x := fun x => by
-    rw [← AlgEquiv.restrictNormal_commutes σ F x,
-      ← AlgEquiv.restrictNormalHom_eq_restrictNormal, h1]
-    simp
+  have hfix : ∀ x : F, σ (algebraMap F L x) = algebraMap F L x :=
+    (AlgEquiv.restrictNormal_eq_one_iff_algebraMap K F L σ).1 (by
+      simpa only [AlgEquiv.restrictNormalHom_eq_restrictNormal] using h1)
   set τ : L ≃ₐ[F] L := { σ with commutes' := hfix }
   have hmem : τ ∈ MulAction.stabilizer (L ≃ₐ[F] L) w := by
     rw [MulAction.mem_stabilizer_iff, smul_eq_comap]

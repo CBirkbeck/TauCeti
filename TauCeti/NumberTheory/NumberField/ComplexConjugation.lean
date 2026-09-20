@@ -8,11 +8,6 @@ module
 public import Mathlib.NumberTheory.NumberField.InfinitePlace.Ramification
 public import TauCeti.NumberTheory.NumberField.InfinitePlace.Tower
 
--- Roadmap source: `TauCetiRoadmap/NumberFieldArithmetic/README.md` @ `fa4d0309ae1d`, Layer 2.7,
--- the canonical element at a ramified real place, including the normal-tower restriction below.
--- The credit sits outside the module docstring deliberately: the docstring documents the
--- mathematics.
-
 /-!
 # The canonical element at a ramified real place
 
@@ -164,9 +159,8 @@ section Tower
 
 variable {F : Type*} [Field F] [Algebra K F] [Algebra F L] [IsScalarTower K F L]
 
-/-- **Restriction at a real induced place is trivial.** If the place `w` induces on `F` is real
-then it is unramified over `K`, so its stabilizer is trivial and the restricted conjugation has
-nowhere to go. -/
+/-- The conjugation at `w` restricts trivially when the induced place on `F` is real. -/
+@[simp]
 theorem restrictNormalHom_complexConjugationAt_eq_one_of_isReal [Normal K F] (w : InfinitePlace L)
     (hw : w.IsRamified K) (hv : (w.comap (algebraMap F L)).IsReal) :
     AlgEquiv.restrictNormalHom F (complexConjugationAt K w hw) = 1 := by
@@ -176,10 +170,8 @@ theorem restrictNormalHom_complexConjugationAt_eq_one_of_isReal [Normal K F] (w 
       complexConjugationAt_smul_self]
   rwa [(hv.isUnramified (k := K)).stabilizer_eq_bot, Subgroup.mem_bot] at hmem
 
-/-- **Restriction at a complex induced place is the conjugation there.** The restriction fixes the
-induced place, so it is either trivial or the conjugation at it. It is not trivial: a trivial
-restriction would make the conjugation an `F`-automorphism, and `w` is unramified over `F`
-precisely because the induced place stayed complex, so the conjugation would be the identity. -/
+/-- The conjugation at `w` restricts to the conjugation at the induced complex place on `F`. -/
+@[simp]
 theorem restrictNormalHom_complexConjugationAt_of_isComplex [IsGalois K F] (w : InfinitePlace L)
     (hw : w.IsRamified K) (hv : (w.comap (algebraMap F L)).IsComplex) :
     AlgEquiv.restrictNormalHom F (complexConjugationAt K w hw)
