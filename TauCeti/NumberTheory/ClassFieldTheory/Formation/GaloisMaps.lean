@@ -6,13 +6,14 @@ Authors: Codex
 module
 
 public import Mathlib.GroupTheory.Transfer
+public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Conjugation
 public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Refinement
 public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Restriction
 
 /-!
 # Maps between abelianized Galois groups of finite normal layers
 
-The functoriality of the Artin map compares operations on formation levels with three canonical
+The functoriality of the Artin map compares operations on formation levels with four canonical
 maps between the abelianizations of finite-layer Galois groups. This file constructs those maps
 from the group homomorphisms attached to restrictions and refinements.
 
@@ -36,6 +37,7 @@ Gal(L/F) → Gal(K/F)
 
 induces `LayerRefinement.quotientHom`. The inclusion and quotient maps inherit identity and tower
 laws from `Abelianization.map`; these laws make the maps usable without unfolding their bodies.
+Conjugation of a layer similarly induces `NormalLayer.conjugateAbelianizationEquiv`.
 
 ## Main definitions
 
@@ -45,6 +47,8 @@ laws from `Abelianization.map`; these laws make the maps usable without unfoldin
   same abelianizations, in the opposite direction.
 * `TauCeti.ClassFieldTheory.LayerRefinement.quotientHom`: the map on abelianizations induced by a
   quotient of Galois groups.
+* `TauCeti.ClassFieldTheory.NormalLayer.conjugateAbelianizationEquiv`: the map on abelianizations
+  induced by conjugating a layer.
 
 ## References
 
@@ -173,5 +177,62 @@ theorem quotientHom_trans (T : LayerRefinement a b) (T' : LayerRefinement b c) :
   rfl
 
 end LayerRefinement
+
+namespace NormalLayer
+
+variable (L : NormalLayer G) (g h : G)
+
+/-- **Conjugation on abelianized Galois groups**, induced by the Galois-group equivalence between
+a layer and its conjugate. The additive type tags match the additive convention of Tate
+cohomology. -/
+def conjugateAbelianizationEquiv :
+    Additive (Abelianization L.Gal) ≃+ Additive (Abelianization (L.conjugate g).Gal) :=
+  (L.conjugateGalEquiv g).abelianizationCongr.toAdditive
+
+/-- Conjugation on abelianized Galois groups sends the class of a Galois element to the class of
+its conjugate. -/
+@[simp]
+theorem conjugateAbelianizationEquiv_of (x : L.Gal) :
+    L.conjugateAbelianizationEquiv g (Additive.ofMul (Abelianization.of x)) =
+      Additive.ofMul (Abelianization.of (L.conjugateGalEquiv g x)) :=
+  (rfl)
+
+/-- Conjugation by `1` is the identity on abelianized Galois groups, after transporting along
+`conjugate_one`. -/
+@[simp]
+theorem conjugateAbelianizationEquiv_one :
+    (L.conjugateAbelianizationEquiv 1).trans
+        ((MulEquiv.abelianizationCongr
+          (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal) L.conjugate_one)).toAdditive) =
+      AddEquiv.refl (Additive (Abelianization L.Gal)) := by
+  change MulEquiv.toAdditive
+      ((L.conjugateGalEquiv 1).abelianizationCongr.trans
+        (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal)
+          L.conjugate_one).abelianizationCongr) =
+    MulEquiv.toAdditive (MulEquiv.refl (Abelianization L.Gal))
+  congr 1
+  rw [abelianizationCongr_trans, L.conjugateGalEquiv_one, abelianizationCongr_refl]
+
+/-- Conjugation on abelianized Galois groups composes: conjugating by `h` and then by `g` is
+conjugating by `g * h`, up to transport along `conjugate_conjugate`. -/
+theorem conjugateAbelianizationEquiv_trans_conjugateAbelianizationEquiv :
+    (L.conjugateAbelianizationEquiv h).trans
+        ((L.conjugate h).conjugateAbelianizationEquiv g) =
+      (L.conjugateAbelianizationEquiv (g * h)).trans
+        ((MulEquiv.abelianizationCongr
+          (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal)
+            (L.conjugate_conjugate g h).symm)).toAdditive) := by
+  change MulEquiv.toAdditive
+      ((L.conjugateGalEquiv h).abelianizationCongr.trans
+        ((L.conjugate h).conjugateGalEquiv g).abelianizationCongr) =
+    MulEquiv.toAdditive
+      ((L.conjugateGalEquiv (g * h)).abelianizationCongr.trans
+        (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal)
+          (L.conjugate_conjugate g h).symm).abelianizationCongr)
+  congr 1
+  rw [abelianizationCongr_trans, abelianizationCongr_trans,
+    L.conjugateGalEquiv_trans_conjugateGalEquiv]
+
+end NormalLayer
 
 end TauCeti.ClassFieldTheory
