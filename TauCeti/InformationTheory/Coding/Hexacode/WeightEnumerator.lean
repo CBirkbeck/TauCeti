@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.InformationTheory.Coding.Hexacode.Basic
-public import TauCeti.InformationTheory.Coding.WeightEnumerator
+public import TauCeti.InformationTheory.Coding.Weight.Enumerator
 
 import Mathlib.Tactic.FinCases
 

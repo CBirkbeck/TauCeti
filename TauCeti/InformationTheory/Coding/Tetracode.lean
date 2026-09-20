@@ -6,7 +6,7 @@ Authors: Codex
 module
 
 public import TauCeti.InformationTheory.Coding.GeneratorParityCheck
-public import TauCeti.InformationTheory.Coding.WeightEnumerator
+public import TauCeti.InformationTheory.Coding.Weight.Enumerator
 public import Mathlib.Algebra.Field.ZMod
 
 import Mathlib.LinearAlgebra.Matrix.Notation
