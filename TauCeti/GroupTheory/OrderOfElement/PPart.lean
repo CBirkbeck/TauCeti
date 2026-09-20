@@ -36,6 +36,7 @@ its `p`-free factor.
 * `TauCeti.orderOf_pFreePart`, `TauCeti.orderOf_pPart`: when `p` is prime and `x` has finite
   order, their orders are `ordCompl[p] (orderOf x)` and `ordProj[p] (orderOf x)`.
 * `TauCeti.eq_pFreePart`, `TauCeti.eq_pPart`: the factorisation is the only one of its kind.
+* `TauCeti.pFreePart_conj`, `TauCeti.pPart_conj`: conjugation transports both factors.
 
 ## References
 
@@ -101,6 +102,20 @@ theorem pFreePart_one (p : ℕ) : pFreePart p (1 : G) = 1 := one_pow _
 
 @[simp]
 theorem pPart_one (p : ℕ) : pPart p (1 : G) = 1 := by rw [pPart, pFreePart_one, inv_one, mul_one]
+
+/-- **Conjugation transports the `p`-free part.**  Both factors are powers of `x` cut out by an
+exponent that only depends on the order of `x`, and conjugation preserves orders. -/
+@[simp]
+theorem pFreePart_conj (p : ℕ) (g x : G) : pFreePart p (g * x * g⁻¹) = g * pFreePart p x * g⁻¹ := by
+  have h : orderOf (g * x * g⁻¹) = orderOf x :=
+    (SemiconjBy.orderOf_eq g (by simp [SemiconjBy])).symm
+  rw [pFreePart, pFreePart, pFreeExponent, pFreeExponent, h, conj_pow]
+
+/-- **Conjugation transports the `p`-part.** -/
+@[simp]
+theorem pPart_conj (p : ℕ) (g x : G) : pPart p (g * x * g⁻¹) = g * pPart p x * g⁻¹ := by
+  rw [pPart, pPart, pFreePart_conj]
+  group
 
 section Order
 
