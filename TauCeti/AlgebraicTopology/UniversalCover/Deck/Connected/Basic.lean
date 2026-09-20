@@ -46,7 +46,8 @@ theorem eq_of_apply_eq [PreconnectedSpace E] (hp : IsCoveringMap p) (φ ψ : dec
     (hp.eq_of_comp_eq φ.1.continuous ψ.1.continuous
       (by
         ext x
-        rw [Function.comp_apply, Function.comp_apply, deck.map_proj φ x, deck.map_proj ψ x])
+        rw [Function.comp_apply, Function.comp_apply, ← deck.smul_eq_apply φ x,
+          ← deck.smul_eq_apply ψ x, deck.proj_smul φ x, deck.proj_smul ψ x])
       e h)
 
 /-- On a covering map with preconnected total space, equality of the ambient deck action at one

@@ -108,7 +108,7 @@ private lemma conjHomeomorph_mem_deck (h : E ≃ₜ F) (hpq : ∀ e, q (h e) = p
   calc
     q (conjHomeomorph h φ.1 f) = q (h (φ.1 (h.symm f))) := rfl
     _ = p (φ.1 (h.symm f)) := hpq _
-    _ = p (h.symm f) := deck.map_proj φ _
+    _ = p (h.symm f) := deck.proj_smul φ _
     _ = q f := map_symm_eq_of_map_eq h hpq f
 
 /-- The image of a deck group under over-base conjugation is the deck group over the target. -/

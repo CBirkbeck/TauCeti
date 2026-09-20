@@ -105,7 +105,7 @@ lemma toDeckHom_surjective [PreconnectedSpace E] : Function.Surjective (toDeckHo
   rcases isEmpty_or_nonempty E with hE | hne
   · exact ⟨1, Subtype.ext (Homeomorph.ext fun e => (hE.false e).elim)⟩
   · obtain ⟨e₀⟩ := hne
-    obtain ⟨g, hg⟩ := hf.apply_eq_iff_mem_orbit.mp (deck.map_proj φ e₀)
+    obtain ⟨g, hg⟩ := hf.apply_eq_iff_mem_orbit.mp (deck.proj_smul φ e₀)
     exact ⟨g, Deck.eq_of_apply_eq hf.isCoveringMap _ _
       (by rw [toDeckHom_apply]; exact hg)⟩
 

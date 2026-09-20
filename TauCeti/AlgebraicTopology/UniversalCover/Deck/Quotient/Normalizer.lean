@@ -227,15 +227,16 @@ theorem normalizerDeckHom_surjective [PreconnectedSpace E] (hrc : IsCoveringMap 
   obtain ⟨e₀⟩ := hne
   obtain ⟨e₁, he₁⟩ := hq.surjective (φ.1 (q e₀))
   have hrq : ∀ e : E, r (q e) = p e := fun e => congrFun hr e
-  have hpe : p e₁ = p e₀ := by rw [← hrq e₁, ← hrq e₀, he₁, deck.map_proj φ (q e₀)]
+  have hpe : p e₁ = p e₀ := by
+    rw [← hrq e₁, ← hrq e₀, he₁, ← deck.smul_eq_apply φ (q e₀), deck.proj_smul φ (q e₀)]
   obtain ⟨γ, hγ⟩ := hp.apply_eq_iff_mem_orbit.mp hpe
   -- `φ ∘ q` and `q ∘ (γ • ·)` are two lifts of `p` through `r`, agreeing at `e₀`.
   have hkey : ∀ e, φ.1 (q e) = q (γ • e) := by
     refine congrFun (hrc.eq_of_comp_eq (g₁ := fun e => φ.1 (q e)) (g₂ := fun e => q (γ • e))
       (φ.1.continuous.comp hq.isCoveringMap.continuous)
       (hq.isCoveringMap.continuous.comp (continuous_const_smul _)) (funext fun e => ?_) e₀ ?_)
-    · rw [Function.comp_apply, Function.comp_apply, deck.map_proj φ (q e), hrq e, hrq (γ • e),
-        hp.map_smul]
+    · rw [Function.comp_apply, Function.comp_apply, ← deck.smul_eq_apply φ (q e),
+        deck.proj_smul φ (q e), hrq e, hrq (γ • e), hp.map_smul]
     · have hγ' : (γ • e₀ : E) = e₁ := hγ
       rw [hγ', he₁]
   have hkey' : ∀ e, φ.1.symm (q e) = q (γ⁻¹ • e) := fun e => by

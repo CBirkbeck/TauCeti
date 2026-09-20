@@ -42,7 +42,7 @@ theorem monodromy_smul (hp : IsCoveringMap p)
     (γ : Path.Homotopic.Quotient x y) (φ : deck p) (e : p ⁻¹' {x}) :
     hp.monodromy γ (φ • e) = φ • hp.monodromy γ e := by
   let g : C(E, E) := ⟨φ.1, φ.1.continuous⟩
-  have hgp : p ∘ g = p := funext (deck.map_proj φ)
+  have hgp : p ∘ g = p := funext (deck.proj_smul φ)
   have hfiber (z : X) (u : p ⁻¹' {z}) : Function.fiberMap g hgp z u = φ • u := by
     apply Subtype.ext
     simp only [Function.fiberMap_apply_coe, deck.fiber_smul_coe]

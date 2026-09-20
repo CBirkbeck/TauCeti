@@ -40,7 +40,7 @@ lemma eq_proj_of_orbitRel {e e' : E} (h : MulAction.orbitRel (deck p) E e e') :
   rw [MulAction.orbitRel_apply] at h
   rcases h with ⟨φ, hφ⟩
   rw [← hφ]
-  simpa [deck.smul_eq_apply] using deck.map_proj φ e'
+  simpa [deck.smul_eq_apply] using deck.proj_smul φ e'
 
 /-- The projection map factors through the quotient of `E` by deck orbits. -/
 @[expose] def orbitQuotientToBase (p : E → B) : MulAction.orbitRel.Quotient (deck p) E → B :=

@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Topology.Covering.Deck
 public import Mathlib.Topology.Homeomorph.Lemmas
+public import TauCeti.Logic.Function.Fiber
 
 /-!
 # Deck transformations of a map
@@ -16,9 +17,8 @@ collects them as the subgroup `deck p` of the homeomorphism group `E ≃ₜ E`; 
 projection `p` this subgroup is the classical deck transformation group.
 
 This file adds the pointwise API that the rest of the deck-transformation development uses.
-`TauCeti.Deck.mem_iff` and `deck.map_proj` restate Mathlib's `deck.mem_iff` and
-`deck.proj_smul` point by point on the underlying homeomorphism, and
-`deck.fiberHomeomorph` restricts a deck transformation to each fibre of `p`.
+`TauCeti.Deck.mem_iff` restates Mathlib's `deck.mem_iff` point by point on the underlying
+homeomorphism, and `deck.fiberHomeomorph` restricts a deck transformation to each fibre of `p`.
 
 The action of `deck p` on the total space is inherited, by subgroup transfer, from the
 tautological action of the ambient homeomorphism group `E ≃ₜ E` on `E`
@@ -43,28 +43,13 @@ with the equality of maps read point by point. -/
 lemma mem_iff (φ : E ≃ₜ E) : φ ∈ deck p ↔ ∀ e, p (φ e) = p e :=
   deck.mem_iff.trans funext_iff
 
-/-- A deck transformation preserves the projection map pointwise: `deck.proj_smul`, stated on
-the underlying homeomorphism. -/
-lemma _root_.deck.map_proj (φ : deck p) (e : E) : p (φ.1 e) = p e :=
-  deck.proj_smul φ e
-
-/-- A deck transformation preserves each fibre of the projection. -/
-lemma _root_.deck.mapsTo_fiber (φ : deck p) (b : B) : Set.MapsTo φ.1 (p ⁻¹' {b}) (p ⁻¹' {b}) := by
-  intro e he
-  simpa only [Set.mem_preimage, Set.mem_singleton_iff, deck.map_proj] using he
-
-/-- The inverse of a deck transformation also preserves each fibre of the projection. -/
-lemma _root_.deck.mapsTo_fiber_symm (φ : deck p) (b : B) :
-    Set.MapsTo φ.1.symm (p ⁻¹' {b}) (p ⁻¹' {b}) := by
-  intro e he
-  simp only [Set.mem_preimage, Set.mem_singleton_iff] at he ⊢
-  rw [← deck.map_proj φ (φ.1.symm e), Homeomorph.apply_symm_apply]
-  exact he
-
 /-- A deck transformation restricts to a homeomorphism of every fibre of the projection,
 the restriction of its underlying homeomorphism along `Homeomorph.subtype`. -/
 @[expose] def _root_.deck.fiberHomeomorph (φ : deck p) (b : B) : p ⁻¹' {b} ≃ₜ p ⁻¹' {b} :=
-  φ.1.subtype fun e => by simp [Set.mem_preimage, eq_comm, deck.map_proj]
+  φ.1.subtype fun e => ⟨
+    fun he ↦ Function.mapsTo_fiber φ.1 (deck.comp_eq φ) b he,
+    fun he ↦ by
+      simpa using Function.mapsTo_fiber (φ⁻¹ : deck p).1 (deck.comp_eq φ⁻¹) b he⟩
 
 /-- On points, the fibre homeomorphism induced by a deck transformation is just evaluation
 of that transformation. -/

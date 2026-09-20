@@ -107,7 +107,7 @@ lemma subgroupFiberOrbitQuotientEquivQuotientGroup_symm_mk_coe
       subgroupFiberOrbitClass H
         ⟨φ.1.symm e.1, by
           rw [Set.mem_preimage, Set.mem_singleton_iff]
-          exact (deck.map_proj φ⁻¹ e.1).trans (Set.mem_singleton_iff.mp e.2)⟩ := by
+          exact (deck.proj_smul φ⁻¹ e.1).trans (Set.mem_singleton_iff.mp e.2)⟩ := by
   rw [subgroupFiberOrbitQuotientEquivQuotientGroup_symm_mk]
   apply congrArg (subgroupFiberOrbitClass H)
   ext

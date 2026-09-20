@@ -61,7 +61,7 @@ theorem _root_.IsCoveringMap.isRegular_iff_normal_range
       refine ⟨φ.1, ?_, ?_⟩
       · simpa only [deck.fiber_smul_coe] using congrArg Subtype.val hφ
       · funext z
-        exact deck.map_proj φ z
+        exact deck.proj_smul φ z
     have hrange :=
       (IsCoveringMap.exists_homeomorph_comp_eq_iff_range_eq
         hp hp e.2 e'.2).mp hhome
