@@ -7,10 +7,6 @@ module
 
 public import Mathlib.Algebra.Algebra.Equiv
 
--- Roadmap source: `TauCetiRoadmap/NumberFieldArithmetic/README.md` @ `ce02686a0c05`, Layer 7.1,
--- the subfield dictionary, whose permutation action on embeddings this file supplies. The credit
--- sits outside the module docstring deliberately: the docstring documents the mathematics.
-
 /-!
 # The postcomposition action of algebra equivalences on algebra maps
 

@@ -8,10 +8,6 @@ module
 public import Mathlib.FieldTheory.Galois.Basic
 public import TauCeti.Algebra.GroupAction.AlgHom
 
--- Roadmap source: `TauCetiRoadmap/NumberFieldArithmetic/README.md` @ `ce02686a0c05`, Layer 7.1,
--- the subfield dictionary, which these general field-theory facts serve. The credit sits outside
--- the module docstring deliberately: the docstring documents the mathematics.
-
 /-!
 # Embeddings into a normal extension, and the action on them
 
@@ -65,10 +61,9 @@ the result back to `M`. Keeping it separate lets `isPretransitiveAlgHom` state o
 mathematical step. -/
 theorem liftNormal_equivFieldRange_apply [Normal F M] (φ ψ : L →ₐ[F] M) (x : L) :
     ((φ.equivFieldRange.symm.trans ψ.equivFieldRange).liftNormal M) (φ x) = ψ x := by
-  have hl : φ x = (algebraMap (↥φ.fieldRange) M) (φ.equivFieldRange x) := by simp
-  rw [hl, AlgEquiv.liftNormal_commutes _ M (φ.equivFieldRange x), AlgEquiv.trans_apply,
-    AlgEquiv.symm_apply_apply, IntermediateField.algebraMap_apply,
-    AlgHom.equivFieldRange_apply_coe]
+  simpa using
+    (AlgEquiv.liftNormal_commutes (φ.equivFieldRange.symm.trans ψ.equivFieldRange) M
+      (φ.equivFieldRange x))
 
 end AlgHom
 
@@ -99,10 +94,13 @@ theorem eq_one_of_forall_smul_eq (hgen : IntermediateField.normalClosure F L M =
   set H := Subgroup.closure ({σ} : Set (M ≃ₐ[F] M)) with hH
   have hfix : ∀ f : L →ₐ[F] M, f.fieldRange ≤ IntermediateField.fixedField H := by
     intro f
-    rw [IntermediateField.le_iff_le, hH, Subgroup.closure_le, Set.singleton_subset_iff,
-      SetLike.mem_coe, IntermediateField.mem_fixingSubgroup_iff]
-    rintro _ ⟨x, rfl⟩
-    exact AlgEquiv.apply_of_smul_eq (h f) x
+    have hσ : σ ∈ IntermediateField.fixingSubgroup f.fieldRange := by
+      rw [IntermediateField.mem_fixingSubgroup_iff]
+      rintro _ ⟨x, rfl⟩
+      exact AlgEquiv.apply_of_smul_eq (h f) x
+    apply (IntermediateField.le_iff_le H f.fieldRange).2
+    rw [hH, Subgroup.closure_le, Set.singleton_subset_iff]
+    exact hσ
   have htop : (⊤ : IntermediateField F M) ≤ IntermediateField.fixedField H := by
     -- Unfold the normal closure to the supremum of the field ranges explicitly, rather than
     -- letting `iSup_le` match through the definition.
