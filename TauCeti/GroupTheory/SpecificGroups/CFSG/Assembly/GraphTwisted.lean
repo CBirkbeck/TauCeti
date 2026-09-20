@@ -38,22 +38,30 @@ Steinberg endomorphism and candidate group, built family by family on the carrie
 
 This file joins them into one construction on `TauCeti.GraphTwistedIndex`, by cases on the
 constructor: the ambient group `TauCeti.GraphTwistedIndex.AmbientGroup`, its numbered simple root
-subgroups, the Steinberg endomorphism, its fixed points, and the candidate group
-`TauCeti.GraphTwistedIndex.Group`, the derived subgroup of the fixed points modulo its centre. Each
-branch is the family construction, with no new carrier or map; the branch equations
+subgroups, its `q`-power Frobenius, the Steinberg endomorphism, its fixed points, and the candidate
+group `TauCeti.GraphTwistedIndex.Group`, the derived subgroup of the fixed points modulo its centre.
+Each branch is the family construction, with no new carrier or map; the branch equations
 `TauCeti.GraphTwistedIndex.steinberg_A` and its twelve siblings, and likewise for the simple root
-subgroups, say which one. The four Suzuki--Ree and Tits constructors are not indices of the subtype,
-and their branches are closed by that hypothesis rather than by a chosen value.
+subgroups and the Frobenius, say which one. The four Suzuki--Ree and Tits constructors are not
+indices of the subtype, and their branches are closed by that hypothesis rather than by a chosen
+value.
 
-What the assembly buys is a single statement of the pinned equation for all thirteen families,
+What the assembly buys is a single statement of the pinned equations for all thirteen families,
+`TauCeti.GraphTwistedIndex.frobenius_simpleRootSubgroup` and
 `TauCeti.GraphTwistedIndex.steinberg_simpleRootSubgroup`:
 
 ```text
-F (x_i(u)) = x_{σ i}(u ^ q),
+Frob_q (x_i(u)) = x_i(u ^ q),        F (x_i(u)) = x_{σ i}(u ^ q),
 ```
 
 where `σ` is `TauCeti.GraphTwistedIndex.diagramPerm`, the identity on the nine untwisted families,
-and `q` is the field order the index records.
+and `q` is the field order the index records. On those nine families the Steinberg endomorphism is
+the Frobenius itself, `TauCeti.GraphTwistedIndex.steinberg_eq_frobenius`: the `A`, `B`, `C` and
+`D` family APIs name their Frobenius separately and the assembly takes it, while the `E₆`, `E₇`,
+`E₈`, `F₄` and `G₂` family APIs name only the Steinberg endomorphism, which is the Frobenius, and
+the assembly takes that. On the four graph-twisted families the Steinberg endomorphism is the graph
+automorphism composed with the Frobenius, and the Frobenius is the right-hand factor of that
+composite.
 
 Every carrier used here is an explicit one, and none is identified with the pinned simply connected
 group scheme of its diagram; the constructions transfer to that pinned group only along such an
@@ -66,18 +74,24 @@ or simple.
   index, with its group structure `TauCeti.GraphTwistedIndex.instGroupAmbientGroup`.
 * `TauCeti.GraphTwistedIndex.simpleRootSubgroup`: its Bourbaki-numbered positive simple root
   subgroups.
+* `TauCeti.GraphTwistedIndex.frobenius`: its `q`-power Frobenius endomorphism.
 * `TauCeti.GraphTwistedIndex.steinberg`: its Steinberg endomorphism.
 * `TauCeti.GraphTwistedIndex.FixedPoints` and `TauCeti.GraphTwistedIndex.Group`: the fixed points of
   the Steinberg endomorphism and the candidate group.
 
 ## Main results
 
-* `TauCeti.GraphTwistedIndex.steinberg_simpleRootSubgroup`: the pinned equation of the Steinberg
-  endomorphism on every simple root subgroup, uniformly in the thirteen families.
-* `TauCeti.GraphTwistedIndex.steinberg_A`, ..., `TauCeti.GraphTwistedIndex.steinberg_trialityD4`
+* `TauCeti.GraphTwistedIndex.frobenius_simpleRootSubgroup` and
+  `TauCeti.GraphTwistedIndex.steinberg_simpleRootSubgroup`: the pinned equations of the Frobenius
+  and of the Steinberg endomorphism on every simple root subgroup, uniformly in the thirteen
+  families.
+* `TauCeti.GraphTwistedIndex.steinberg_eq_frobenius`: on an untwisted index the Steinberg
+  endomorphism is the Frobenius.
+* `TauCeti.GraphTwistedIndex.steinberg_A`, ..., `TauCeti.GraphTwistedIndex.steinberg_trialityD4`,
+  `TauCeti.GraphTwistedIndex.frobenius_A`, ..., `TauCeti.GraphTwistedIndex.frobenius_trialityD4`
   and `TauCeti.GraphTwistedIndex.simpleRootSubgroup_A`, ...,
   `TauCeti.GraphTwistedIndex.simpleRootSubgroup_trialityD4`: on each constructor the Steinberg
-  endomorphism and the simple root subgroups are those of the family.
+  endomorphism, the Frobenius and the simple root subgroups are those of the family.
 
 ## References
 
@@ -161,6 +175,30 @@ def simpleRootSubgroup :
   | ⟨⟨.suzuki _, _⟩, hh⟩ | ⟨⟨.reeG2 _, _⟩, hh⟩ | ⟨⟨.reeF4 _, _⟩, hh⟩ | ⟨⟨.tits, _⟩, hh⟩ =>
       absurd ((usesHalfFrobenius_iff _).mpr trivial) hh
 
+/-- **The `q`-power Frobenius endomorphism of an ordinary or graph-twisted index**, for `q` the
+field order the index records. On each constructor it is the Frobenius of the family, by
+`frobenius_A` and its siblings: the family's own `frobenius` where the family API names one
+(`A`, `twistedA`, `B`, `C`, `D`, `twistedD`, `twistedE6`, `trialityD4`), and the family's
+Steinberg endomorphism on `E6`, `E7`, `E8`, `F4` and `G2`, where that endomorphism is the
+Frobenius itself. On the nine untwisted families it agrees with `steinberg`, by
+`steinberg_eq_frobenius`; on the four graph-twisted ones it is the Frobenius factor of the
+family's Steinberg composite. Its action on the simple root subgroups is
+`frobenius_simpleRootSubgroup`. -/
+def frobenius : (d : GraphTwistedIndex) → d.AmbientGroup →* d.AmbientGroup
+  | ⟨⟨.A _ _, hv⟩, _⟩ | ⟨⟨.twistedA _ _, hv⟩, _⟩ => TypeALieIndex.frobenius ⟨⟨_, hv⟩, by simp⟩
+  | ⟨⟨.B _ _, hv⟩, _⟩ => TypeBLieIndex.frobenius ⟨⟨_, hv⟩, trivial⟩
+  | ⟨⟨.C _ _, hv⟩, _⟩ => TypeCLieIndex.frobenius ⟨⟨_, hv⟩, trivial⟩
+  | ⟨⟨.D _ _, hv⟩, _⟩ | ⟨⟨.twistedD _ _, hv⟩, _⟩ =>
+      TypeDDiagramLieIndex.frobenius ⟨⟨_, hv⟩, by simp⟩
+  | ⟨⟨.E6 _, hv⟩, _⟩ => TypeE6LieIndex.steinberg ⟨⟨_, hv⟩, by simp⟩
+  | ⟨⟨.E7 _, hv⟩, _⟩ => TypeE7LieIndex.steinberg ⟨⟨_, hv⟩, by simp⟩
+  | ⟨⟨.E8 _, hv⟩, h⟩ | ⟨⟨.F4 _, hv⟩, h⟩ | ⟨⟨.G2 _, hv⟩, h⟩ =>
+      UnimodularExceptionalIndex.steinberg ⟨⟨⟨_, hv⟩, by simp⟩, h⟩
+  | ⟨⟨.twistedE6 _, hv⟩, _⟩ => TypeTwistedE6LieIndex.frobenius ⟨⟨_, hv⟩, by simp⟩
+  | ⟨⟨.trialityD4 _, hv⟩, _⟩ => TypeTrialityD4LieIndex.frobenius ⟨⟨_, hv⟩, by simp⟩
+  | ⟨⟨.suzuki _, _⟩, hh⟩ | ⟨⟨.reeG2 _, _⟩, hh⟩ | ⟨⟨.reeF4 _, _⟩, hh⟩ | ⟨⟨.tits, _⟩, hh⟩ =>
+      absurd ((usesHalfFrobenius_iff _).mpr trivial) hh
+
 /-- **The Steinberg endomorphism of an ordinary or graph-twisted index**: the `q`-power Frobenius
 on the nine untwisted families, and the graph automorphism of the family composed with it on
 `²Aₙ(q)`, `²Dₙ(q)`, `²E₆(q)` and `³D₄(q)`. On each constructor it is the Steinberg endomorphism of
@@ -183,8 +221,8 @@ def steinberg : (d : GraphTwistedIndex) → d.AmbientGroup →* d.AmbientGroup
 
 /-! ### The branch equations
 
-On each of the thirteen constructors the Steinberg endomorphism and the simple root subgroups are
-those of the family API the constructor belongs to. -/
+On each of the thirteen constructors the Steinberg endomorphism, the simple root subgroups and the
+Frobenius are those of the family API the constructor belongs to. -/
 
 section Branches
 
@@ -202,6 +240,12 @@ theorem simpleRootSubgroup_A (hv : (LieTypeIndex.A n q).Valid) :
       TypeALieIndex.simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ :=
   (rfl)
 
+/-- On `Aₙ(q)` the Frobenius is that of the family. -/
+theorem frobenius_A (hv : (LieTypeIndex.A n q).Valid) :
+    frobenius ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
+      TypeALieIndex.frobenius ⟨⟨_, hv⟩, by simp⟩ :=
+  (rfl)
+
 /-- On `²Aₙ(q)` the Steinberg endomorphism is that of the family. -/
 theorem steinberg_twistedA (hv : (LieTypeIndex.twistedA n q).Valid) :
     steinberg ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
@@ -212,6 +256,12 @@ theorem steinberg_twistedA (hv : (LieTypeIndex.twistedA n q).Valid) :
 theorem simpleRootSubgroup_twistedA (hv : (LieTypeIndex.twistedA n q).Valid) :
     simpleRootSubgroup ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
       TypeALieIndex.simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ :=
+  (rfl)
+
+/-- On `²Aₙ(q)` the Frobenius is that of the family. -/
+theorem frobenius_twistedA (hv : (LieTypeIndex.twistedA n q).Valid) :
+    frobenius ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
+      TypeALieIndex.frobenius ⟨⟨_, hv⟩, by simp⟩ :=
   (rfl)
 
 /-- On `Bₙ(q)` the Steinberg endomorphism is that of the family. -/
@@ -226,6 +276,12 @@ theorem simpleRootSubgroup_B (hv : (LieTypeIndex.B n q).Valid) :
       TypeBLieIndex.simpleRootSubgroup ⟨⟨_, hv⟩, trivial⟩ :=
   (rfl)
 
+/-- On `Bₙ(q)` the Frobenius is that of the family. -/
+theorem frobenius_B (hv : (LieTypeIndex.B n q).Valid) :
+    frobenius ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
+      TypeBLieIndex.frobenius ⟨⟨_, hv⟩, trivial⟩ :=
+  (rfl)
+
 /-- On `Cₙ(q)` the Steinberg endomorphism is that of the family. -/
 theorem steinberg_C (hv : (LieTypeIndex.C n q).Valid) :
     steinberg ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
@@ -236,6 +292,12 @@ theorem steinberg_C (hv : (LieTypeIndex.C n q).Valid) :
 theorem simpleRootSubgroup_C (hv : (LieTypeIndex.C n q).Valid) :
     simpleRootSubgroup ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
       TypeCLieIndex.simpleRootSubgroup ⟨⟨_, hv⟩, trivial⟩ :=
+  (rfl)
+
+/-- On `Cₙ(q)` the Frobenius is that of the family. -/
+theorem frobenius_C (hv : (LieTypeIndex.C n q).Valid) :
+    frobenius ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
+      TypeCLieIndex.frobenius ⟨⟨_, hv⟩, trivial⟩ :=
   (rfl)
 
 /-- On `Dₙ(q)` the Steinberg endomorphism is that of the family. -/
@@ -250,6 +312,12 @@ theorem simpleRootSubgroup_D (hv : (LieTypeIndex.D n q).Valid) :
       TypeDDiagramLieIndex.simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ :=
   (rfl)
 
+/-- On `Dₙ(q)` the Frobenius is that of the family. -/
+theorem frobenius_D (hv : (LieTypeIndex.D n q).Valid) :
+    frobenius ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
+      TypeDDiagramLieIndex.frobenius ⟨⟨_, hv⟩, by simp⟩ :=
+  (rfl)
+
 /-- On `²Dₙ(q)` the Steinberg endomorphism is that of the family. -/
 theorem steinberg_twistedD (hv : (LieTypeIndex.twistedD n q).Valid) :
     steinberg ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
@@ -260,6 +328,12 @@ theorem steinberg_twistedD (hv : (LieTypeIndex.twistedD n q).Valid) :
 theorem simpleRootSubgroup_twistedD (hv : (LieTypeIndex.twistedD n q).Valid) :
     simpleRootSubgroup ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
       TypeDDiagramLieIndex.simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ :=
+  (rfl)
+
+/-- On `²Dₙ(q)` the Frobenius is that of the family. -/
+theorem frobenius_twistedD (hv : (LieTypeIndex.twistedD n q).Valid) :
+    frobenius ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
+      TypeDDiagramLieIndex.frobenius ⟨⟨_, hv⟩, by simp⟩ :=
   (rfl)
 
 /-- On `E₆(q)` the Steinberg endomorphism is that of the family. -/
@@ -274,6 +348,13 @@ theorem simpleRootSubgroup_E6 (hv : (LieTypeIndex.E6 q).Valid) :
       TypeE6LieIndex.simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ :=
   (rfl)
 
+/-- On `E₆(q)` the Frobenius is the Steinberg endomorphism of the family, that family being
+untwisted. -/
+theorem frobenius_E6 (hv : (LieTypeIndex.E6 q).Valid) :
+    frobenius ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
+      TypeE6LieIndex.steinberg ⟨⟨_, hv⟩, by simp⟩ :=
+  (rfl)
+
 /-- On `E₇(q)` the Steinberg endomorphism is that of the family. -/
 theorem steinberg_E7 (hv : (LieTypeIndex.E7 q).Valid) :
     steinberg ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
@@ -284,6 +365,13 @@ theorem steinberg_E7 (hv : (LieTypeIndex.E7 q).Valid) :
 theorem simpleRootSubgroup_E7 (hv : (LieTypeIndex.E7 q).Valid) :
     simpleRootSubgroup ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
       TypeE7LieIndex.simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ :=
+  (rfl)
+
+/-- On `E₇(q)` the Frobenius is the Steinberg endomorphism of the family, that family being
+untwisted. -/
+theorem frobenius_E7 (hv : (LieTypeIndex.E7 q).Valid) :
+    frobenius ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
+      TypeE7LieIndex.steinberg ⟨⟨_, hv⟩, by simp⟩ :=
   (rfl)
 
 /-- On `E₈(q)` the Steinberg endomorphism is that of the family. -/
@@ -298,6 +386,13 @@ theorem simpleRootSubgroup_E8 (hv : (LieTypeIndex.E8 q).Valid) :
       UnimodularExceptionalIndex.simpleRootSubgroup ⟨⟨⟨_, hv⟩, by simp⟩, by simp⟩ :=
   (rfl)
 
+/-- On `E₈(q)` the Frobenius is the Steinberg endomorphism of the family, that family being
+untwisted. -/
+theorem frobenius_E8 (hv : (LieTypeIndex.E8 q).Valid) :
+    frobenius ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
+      UnimodularExceptionalIndex.steinberg ⟨⟨⟨_, hv⟩, by simp⟩, by simp⟩ :=
+  (rfl)
+
 /-- On `F₄(q)` the Steinberg endomorphism is that of the family. -/
 theorem steinberg_F4 (hv : (LieTypeIndex.F4 q).Valid) :
     steinberg ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
@@ -308,6 +403,13 @@ theorem steinberg_F4 (hv : (LieTypeIndex.F4 q).Valid) :
 theorem simpleRootSubgroup_F4 (hv : (LieTypeIndex.F4 q).Valid) :
     simpleRootSubgroup ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
       UnimodularExceptionalIndex.simpleRootSubgroup ⟨⟨⟨_, hv⟩, by simp⟩, by simp⟩ :=
+  (rfl)
+
+/-- On `F₄(q)` the Frobenius is the Steinberg endomorphism of the family, that family being
+untwisted. -/
+theorem frobenius_F4 (hv : (LieTypeIndex.F4 q).Valid) :
+    frobenius ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
+      UnimodularExceptionalIndex.steinberg ⟨⟨⟨_, hv⟩, by simp⟩, by simp⟩ :=
   (rfl)
 
 /-- On `G₂(q)` the Steinberg endomorphism is that of the family. -/
@@ -322,6 +424,13 @@ theorem simpleRootSubgroup_G2 (hv : (LieTypeIndex.G2 q).Valid) :
       UnimodularExceptionalIndex.simpleRootSubgroup ⟨⟨⟨_, hv⟩, by simp⟩, by simp⟩ :=
   (rfl)
 
+/-- On `G₂(q)` the Frobenius is the Steinberg endomorphism of the family, that family being
+untwisted. -/
+theorem frobenius_G2 (hv : (LieTypeIndex.G2 q).Valid) :
+    frobenius ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
+      UnimodularExceptionalIndex.steinberg ⟨⟨⟨_, hv⟩, by simp⟩, by simp⟩ :=
+  (rfl)
+
 /-- On `²E₆(q)` the Steinberg endomorphism is that of the family. -/
 theorem steinberg_twistedE6 (hv : (LieTypeIndex.twistedE6 q).Valid) :
     steinberg ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
@@ -332,6 +441,12 @@ theorem steinberg_twistedE6 (hv : (LieTypeIndex.twistedE6 q).Valid) :
 theorem simpleRootSubgroup_twistedE6 (hv : (LieTypeIndex.twistedE6 q).Valid) :
     simpleRootSubgroup ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
       TypeTwistedE6LieIndex.simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ :=
+  (rfl)
+
+/-- On `²E₆(q)` the Frobenius is that of the family. -/
+theorem frobenius_twistedE6 (hv : (LieTypeIndex.twistedE6 q).Valid) :
+    frobenius ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
+      TypeTwistedE6LieIndex.frobenius ⟨⟨_, hv⟩, by simp⟩ :=
   (rfl)
 
 /-- On `³D₄(q)` the Steinberg endomorphism is that of the family. -/
@@ -346,9 +461,54 @@ theorem simpleRootSubgroup_trialityD4 (hv : (LieTypeIndex.trialityD4 q).Valid) :
       TypeTrialityD4LieIndex.simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ :=
   (rfl)
 
+/-- On `³D₄(q)` the Frobenius is that of the family. -/
+theorem frobenius_trialityD4 (hv : (LieTypeIndex.trialityD4 q).Valid) :
+    frobenius ⟨⟨_, hv⟩, by simp [usesHalfFrobenius_iff]⟩ =
+      TypeTrialityD4LieIndex.frobenius ⟨⟨_, hv⟩, by simp⟩ :=
+  (rfl)
+
 end Branches
 
-/-! ### The pinned equation -/
+/-! ### The pinned equations -/
+
+/-- **The Frobenius has the pinned action on every simple root subgroup.** It sends `x_i(u)` to
+`x_i(u ^ q)`, where `q` is the field order the index records. This is the defining equation of the
+`q`-power Frobenius, now stated once for all thirteen families. -/
+@[simp]
+theorem frobenius_simpleRootSubgroup (d : GraphTwistedIndex) (i : Fin d.1.rank)
+    (u : Multiplicative d.1.Closure) :
+    d.frobenius (d.simpleRootSubgroup i u) =
+      d.simpleRootSubgroup i (Multiplicative.ofAdd (Multiplicative.toAdd u ^ d.1.fieldOrder)) := by
+  -- As for `steinberg_simpleRootSubgroup`: the branch equations turn the uniform maps into the
+  -- family ones, whose pinned Frobenius equation closes the goal.
+  obtain ⟨⟨_ | _ | _ | _ | _ | _ | _ | _ | _ | _ | _ | _ | _ | _ | _ | _ | _, hv⟩, h⟩ := d
+  · rw [frobenius_A, simpleRootSubgroup_A]
+    exact TypeALieIndex.frobenius_simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ i u
+  · rw [frobenius_twistedA, simpleRootSubgroup_twistedA]
+    exact TypeALieIndex.frobenius_simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ i u
+  · rw [frobenius_B, simpleRootSubgroup_B]
+    exact TypeBLieIndex.frobenius_simpleRootSubgroup ⟨⟨_, hv⟩, trivial⟩ i u
+  · rw [frobenius_C, simpleRootSubgroup_C]
+    exact TypeCLieIndex.frobenius_simpleRootSubgroup ⟨⟨_, hv⟩, trivial⟩ i u
+  · rw [frobenius_D, simpleRootSubgroup_D]
+    exact TypeDDiagramLieIndex.frobenius_simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ i u
+  · rw [frobenius_twistedD, simpleRootSubgroup_twistedD]
+    exact TypeDDiagramLieIndex.frobenius_simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ i u
+  · rw [frobenius_E6, simpleRootSubgroup_E6]
+    exact TypeE6LieIndex.steinberg_simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ i u
+  · rw [frobenius_E7, simpleRootSubgroup_E7]
+    exact TypeE7LieIndex.steinberg_simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ i u
+  · rw [frobenius_E8, simpleRootSubgroup_E8]
+    exact UnimodularExceptionalIndex.steinberg_geckRootSubgroup ⟨⟨⟨_, hv⟩, by simp⟩, h⟩ (.inl i) u
+  · rw [frobenius_F4, simpleRootSubgroup_F4]
+    exact UnimodularExceptionalIndex.steinberg_geckRootSubgroup ⟨⟨⟨_, hv⟩, by simp⟩, h⟩ (.inl i) u
+  · rw [frobenius_G2, simpleRootSubgroup_G2]
+    exact UnimodularExceptionalIndex.steinberg_geckRootSubgroup ⟨⟨⟨_, hv⟩, by simp⟩, h⟩ (.inl i) u
+  · rw [frobenius_twistedE6, simpleRootSubgroup_twistedE6]
+    exact TypeTwistedE6LieIndex.frobenius_simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ i u
+  · rw [frobenius_trialityD4, simpleRootSubgroup_trialityD4]
+    exact TypeTrialityD4LieIndex.frobenius_simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ i u
+  all_goals exact absurd ((usesHalfFrobenius_iff _).mpr trivial) h
 
 /-- **The Steinberg endomorphism has the pinned action on every simple root subgroup.** It sends
 `x_i(u)` to `x_{σ i}(u ^ q)`, where `σ` is the diagram permutation of the index, the identity on
@@ -391,6 +551,36 @@ theorem steinberg_simpleRootSubgroup (d : GraphTwistedIndex) (i : Fin d.1.rank)
     exact TypeTwistedE6LieIndex.steinberg_simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ i u
   · rw [steinberg_trialityD4, simpleRootSubgroup_trialityD4]
     exact TypeTrialityD4LieIndex.steinberg_simpleRootSubgroup ⟨⟨_, hv⟩, by simp⟩ i u
+  all_goals exact absurd ((usesHalfFrobenius_iff _).mpr trivial) h
+
+/-- **On an untwisted index the Steinberg endomorphism is the Frobenius.** The hypothesis
+`d.twistOrder = 1` picks out the nine untwisted families, on which the diagram permutation is
+trivial; on the four graph-twisted families the two maps differ by the graph automorphism, the
+family relations `TauCeti.TypeALieIndex.steinberg_eq_graphAut_comp_frobenius`,
+`TauCeti.TypeTwistedDLieIndex.steinberg_def`, `TauCeti.TypeTwistedE6LieIndex.steinberg_def` and
+`TauCeti.TypeTrialityD4LieIndex.steinberg_def`. -/
+theorem steinberg_eq_frobenius (d : GraphTwistedIndex) (hd : d.twistOrder = 1) :
+    d.steinberg = d.frobenius := by
+  -- On `E6`, `E7`, `E8`, `F4` and `G2` the two branches are the same family map; on `A`, `B`, `C`
+  -- and `D` the family's own unfolding of its Steinberg endomorphism closes the goal; on the four
+  -- graph-twisted constructors the twist order is `2` or `3`, against the hypothesis.
+  obtain ⟨⟨_ | _ | _ | _ | _ | _ | _ | _ | _ | _ | _ | _ | _ | _ | _ | _ | _, hv⟩, h⟩ := d
+  · rw [steinberg_A, frobenius_A, TypeALieIndex.steinberg_eq_graphAut_comp_frobenius,
+      TypeALieIndex.graphAut_ofA]
+    exact MonoidHom.ext fun g => by
+      rw [MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom, MulAut.one_apply]
+  · exact absurd hd (by rw [twistOrder_twistedA]; decide)
+  · rw [steinberg_B, frobenius_B, TypeBLieIndex.steinberg_def]
+  · rw [steinberg_C, frobenius_C, TypeCLieIndex.steinberg_def]
+  · rw [steinberg_D, frobenius_D, TypeDLieIndex.steinberg_def]
+  · exact absurd hd (by rw [twistOrder_twistedD]; decide)
+  · rw [steinberg_E6, frobenius_E6]
+  · rw [steinberg_E7, frobenius_E7]
+  · rw [steinberg_E8, frobenius_E8]
+  · rw [steinberg_F4, frobenius_F4]
+  · rw [steinberg_G2, frobenius_G2]
+  · exact absurd hd (by rw [twistOrder_twistedE6]; decide)
+  · exact absurd hd (by rw [twistOrder_trialityD4]; decide)
   all_goals exact absurd ((usesHalfFrobenius_iff _).mpr trivial) h
 
 /-- The fixed subgroup of the Steinberg endomorphism of an ordinary or graph-twisted index. -/
