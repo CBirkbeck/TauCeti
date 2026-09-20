@@ -34,6 +34,9 @@ ordered-monomial stage of PBW.
   `TauCeti.UniversalEnvelopingAlgebra.map_pbwFiltration_le`: induced maps preserve PBW degree.
 * `TauCeti.UniversalEnvelopingAlgebra.mapFiltration`: the induced linear map between filtration
   steps, functorial in the Lie homomorphism.
+* `TauCeti.UniversalEnvelopingAlgebra.map_pbwFiltration_eq_of_surjective` and
+  `TauCeti.UniversalEnvelopingAlgebra.mapFiltration_surjective_of_surjective`: surjective Lie maps
+  induce exact images and surjections between corresponding filtration steps.
 * `TauCeti.UniversalEnvelopingAlgebra.map_pbwFiltration_eq_of_rightInverse`: split epimorphisms map
   each filtration step onto the corresponding target step.
 * `TauCeti.UniversalEnvelopingAlgebra.map_pbwFiltration_eq_inf_range_of_leftInverse`: for a split
@@ -133,15 +136,54 @@ theorem mapFiltration_comp (f : LieHom R L M) (g : LieHom R M N) (k : ℕ) :
   apply Subtype.ext
   simp only [mapFiltration_apply, LinearMap.comp_apply, map_comp, AlgHom.comp_apply]
 
+/-- A surjective Lie homomorphism maps each PBW filtration step onto the corresponding target
+step. -/
+theorem map_pbwFiltration_eq_of_surjective (f : LieHom R L M) (hf : Function.Surjective f)
+    (k : ℕ) :
+    (pbwFiltration R L k).map (map R f).toLinearMap = pbwFiltration R M k := by
+  rw [pbwFiltration_def, pbwFiltration_def]
+  apply TauCeti.Algebra.map_wordFiltration_eq_of_surjective
+    (_root_.UniversalEnvelopingAlgebra.ι R : LieHom R L _).toLinearMap
+    f.toLinearMap hf (map R f)
+    (_root_.UniversalEnvelopingAlgebra.ι R : LieHom R M _).toLinearMap _ k
+  ext x
+  exact map_ι R f x
+
+/-- A surjective Lie homomorphism also maps the step immediately preceding each PBW degree onto
+the corresponding preceding step. -/
+theorem map_pbwFiltrationPrevious_eq_of_surjective (f : LieHom R L M)
+    (hf : Function.Surjective f) (k : ℕ) :
+    (pbwFiltrationPrevious R L k).map (map R f).toLinearMap =
+      pbwFiltrationPrevious R M k := by
+  cases k with
+  | zero => simp
+  | succ k => simpa using map_pbwFiltration_eq_of_surjective R f hf k
+
+/-- The map between corresponding PBW filtration steps induced by a surjective Lie homomorphism
+is surjective. -/
+theorem mapFiltration_surjective_of_surjective (f : LieHom R L M)
+    (hf : Function.Surjective f) (k : ℕ) :
+    Function.Surjective (mapFiltration R f k) := by
+  let hmaps : Set.MapsTo (map R f) (pbwFiltration R L k) (pbwFiltration R M k) :=
+    fun _ hx ↦ map_mem_pbwFiltration R f hx
+  have hrestrict : (mapFiltration R f k : pbwFiltration R L k → pbwFiltration R M k) =
+      hmaps.restrict (map R f) (pbwFiltration R L k) (pbwFiltration R M k) := by
+    funext x
+    apply Subtype.ext
+    exact mapFiltration_apply R f k x
+  rw [hrestrict, hmaps.restrict_surjective_iff]
+  exact Submodule.surjOn_iff_le_map.mpr
+    (map_pbwFiltration_eq_of_surjective R f hf k).ge
+
 /-- A split epimorphism of Lie algebras maps every PBW filtration step onto the corresponding
 target step. -/
 theorem map_pbwFiltration_eq_of_rightInverse (f : LieHom R L M) (g : LieHom R M L)
     (h : f.comp g = LieHom.id) (k : ℕ) :
-    (pbwFiltration R L k).map (map R f).toLinearMap = pbwFiltration R M k := by
-  apply le_antisymm (map_pbwFiltration_le R f k)
-  intro y hy
-  refine ⟨map R g y, map_mem_pbwFiltration R g hy, ?_⟩
-  exact map_rightInverse R h y
+    (pbwFiltration R L k).map (map R f).toLinearMap = pbwFiltration R M k :=
+  map_pbwFiltration_eq_of_surjective R f (fun y ↦
+    ⟨g y, by
+      simpa only [LieHom.comp_apply, LieHom.id_apply] using
+        DFunLike.congr_fun h y⟩) k
 
 /-- For a split monomorphism of Lie algebras, the image of the `k`-th PBW filtration step is the
 intersection of the target step with the range of the induced enveloping-algebra map. -/
