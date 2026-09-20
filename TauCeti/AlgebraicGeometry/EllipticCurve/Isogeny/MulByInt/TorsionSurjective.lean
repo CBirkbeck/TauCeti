@@ -26,8 +26,6 @@ kernel is that small is surjective.
 
 ## Main results
 
-* `TauCeti.Isogeny.natCard_torsionBy`: `#E[n] = n ²`, the kernel count read on the intrinsic
-  torsion subgroup.
 * `TauCeti.Isogeny.zsmulTorsionSqHom_surjective`: `[n] : E[n ²] → E[n]` is onto.
 * `TauCeti.Isogeny.exists_zsmul_eq_of_zsmul_eq_zero`: hence every `n`-torsion point is `n • P` for
   some `P` killed by `n ²`.
@@ -56,43 +54,6 @@ open WeierstrassCurve.Affine
 
 variable {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve.Affine F) [W.IsElliptic]
 
-open scoped Classical in
-/-- **`#E[n] = n ²`** when the geometric `n`-torsion is rational and `n` is invertible: the
-count of `ker [n]` read on Mathlib's intrinsic torsion subgroup. -/
-theorem natCard_torsionBy_of_torsion_rational {n : ℤ}
-    (hrat : ∀ P : (W.baseChange (AlgebraicClosure W.FunctionField)).toAffine.Point,
-      n • P = 0 →
-        P ∈ Set.range (Point.baseChange (W' := W) F (AlgebraicClosure W.FunctionField)))
-    (hchar : (n : F) ≠ 0) :
-    Nat.card (AddSubgroup.torsionBy ((W⁄F).toAffine.Point) n) = n.natAbs ^ 2 := by
-  rw [← ker_mulByIntIsogeny_eq_torsionBy W (psiFunctionField_ne_zero W hchar),
-    card_ker_mulByIntIsogeny_of_torsion_rational W hrat hchar]
-
-/-- **`#E[n] = n ²`** over an algebraically closed field in which `n` is invertible. -/
-theorem natCard_torsionBy [IsAlgClosed F] {n : ℤ} (hchar : (n : F) ≠ 0) :
-    Nat.card (AddSubgroup.torsionBy ((W⁄F).toAffine.Point) n) = n.natAbs ^ 2 := by
-  rw [← ker_mulByIntIsogeny_eq_torsionBy W (psiFunctionField_ne_zero W hchar),
-    card_ker_mulByIntIsogeny W hchar]
-
-open scoped Classical in
-/-- The `n`-torsion is finite when the geometric `n`-torsion is rational and `n` is invertible. -/
-theorem finite_torsionBy_of_torsion_rational {n : ℤ}
-    (hrat : ∀ P : (W.baseChange (AlgebraicClosure W.FunctionField)).toAffine.Point,
-      n • P = 0 →
-        P ∈ Set.range (Point.baseChange (W' := W) F (AlgebraicClosure W.FunctionField)))
-    (hchar : (n : F) ≠ 0) :
-    Finite (AddSubgroup.torsionBy ((W⁄F).toAffine.Point) n) := by
-  refine Nat.finite_of_card_ne_zero ?_
-  rw [natCard_torsionBy_of_torsion_rational W hrat hchar]
-  exact pow_ne_zero 2 (Int.natAbs_ne_zero.mpr (by rintro rfl; exact hchar (by simp)))
-
-/-- The `n`-torsion is finite over an algebraically closed field in which `n` is invertible. -/
-theorem finite_torsionBy [IsAlgClosed F] {n : ℤ} (hchar : (n : F) ≠ 0) :
-    Finite (AddSubgroup.torsionBy ((W⁄F).toAffine.Point) n) := by
-  refine Nat.finite_of_card_ne_zero ?_
-  rw [natCard_torsionBy W hchar]
-  exact pow_ne_zero 2 (Int.natAbs_ne_zero.mpr (by rintro rfl; exact hchar (by simp)))
-
 /-- **`[n]` as a map `E[n ²] → E[n]`**: an `n ²`-torsion point is carried to an `n`-torsion one,
 since `n • (n • P) = n ² • P`. -/
 def zsmulTorsionSqHom (n : ℤ) :
@@ -102,9 +63,11 @@ def zsmulTorsionSqHom (n : ℤ) :
     (AddSubgroup.torsionBy ((W⁄F).toAffine.Point) (n ^ 2))).codRestrict
       (AddSubgroup.torsionBy ((W⁄F).toAffine.Point) n) fun P ↦
     (Submodule.mem_torsionBy_iff _ _).mpr <| by
-    change n • (n • (P : (W⁄F).toAffine.Point)) = 0
-    rw [smul_smul, ← sq]
-    exact (Submodule.mem_torsionBy_iff _ _).mp P.2
+    have hP : (n ^ 2 : ℤ) • (P : (W⁄F).toAffine.Point) = 0 :=
+      (Submodule.mem_torsionBy_iff _ _).mp P.2
+    have hnn : n • (n • (P : (W⁄F).toAffine.Point)) = 0 := by
+      simpa only [smul_smul, sq] using hP
+    exact hnn
 
 omit [W.IsElliptic] in
 /-- The restricted multiplication homomorphism sends `P` to `n • P`. -/
@@ -181,7 +144,7 @@ theorem zsmulTorsionSqHom_surjective [IsAlgClosed F] {n : ℤ} (hchar : (n : F) 
 open scoped Classical in
 /-- **Every `n`-torsion point is `n` times an `n ²`-torsion point** when the geometric `n ²`-torsion
 is rational and `n` is invertible: the consumer-facing reading of
-`zsmulTorsionSqHom_surjective`. -/
+`zsmulTorsionSqHom_surjective_of_torsion_rational`. -/
 theorem exists_zsmul_eq_of_zsmul_eq_zero_of_torsion_rational {n : ℤ}
     (hrat : ∀ P : (W.baseChange (AlgebraicClosure W.FunctionField)).toAffine.Point,
       (n ^ 2 : ℤ) • P = 0 →
@@ -192,14 +155,16 @@ theorem exists_zsmul_eq_of_zsmul_eq_zero_of_torsion_rational {n : ℤ}
     ⟨T, (Submodule.mem_torsionBy_iff _ _).mpr hT⟩
   exact ⟨P.val, congrArg Subtype.val hP, (Submodule.mem_torsionBy_iff _ _).mp P.2⟩
 
+open scoped Classical in
 /-- **Every `n`-torsion point is `n` times an `n ²`-torsion point**, over an algebraically closed
 field in which `n` is invertible. -/
 theorem exists_zsmul_eq_of_zsmul_eq_zero [IsAlgClosed F] {n : ℤ} (hchar : (n : F) ≠ 0)
     {T : (W⁄F).toAffine.Point} (hT : n • T = 0) :
     ∃ P : (W⁄F).toAffine.Point, n • P = T ∧ (n ^ 2 : ℤ) • P = 0 := by
-  obtain ⟨P, hP⟩ := zsmulTorsionSqHom_surjective W hchar
-    ⟨T, (Submodule.mem_torsionBy_iff _ _).mpr hT⟩
-  exact ⟨P.val, congrArg Subtype.val hP, (Submodule.mem_torsionBy_iff _ _).mp P.2⟩
+  apply exists_zsmul_eq_of_zsmul_eq_zero_of_torsion_rational W _ hchar hT
+  intro P hP
+  exact W.mem_range_baseChange_of_zsmul_eq_zero
+    (pow_ne_zero 2 (by rintro rfl; exact hchar (by simp))) hP
 
 end TauCeti.Isogeny
 
