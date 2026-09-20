@@ -8,7 +8,7 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.NumberField.DirichletDensity
 
-import TauCeti.Analysis.SpecialFunctions.Log.Bounds
+import TauCeti.Analysis.SpecialFunctions.Log.NegLogOneSub
 import TauCeti.NumberTheory.ArithmeticDirichletSeries.Convergence
 import TauCeti.NumberTheory.ArithmeticDirichletSeries.ResidueDegree
 
@@ -56,8 +56,9 @@ consumer that wants an eventual statement near `s = 1` gets it by weakening, whe
 converse costs work.
 
 The two halves carry different hypotheses on purpose. Nonnegativity holds as soon as
-`N(𝔭) ^ (-s) < 1`, so it is stated on `0 < s`; the upper bound needs `N(𝔭) ^ (-s) ≤ 1 / 2` to
-control the denominator, and is false for `s` near `1 / 2`, where the tail already diverges.
+`N(𝔭) ^ (-s) < 1`, so it is stated on `0 < s`; the uniform upper bound uses
+`N(𝔭) ^ (-s) ≤ 1 / 2`. No uniform bound can persist as `s ↓ 1 / 2`, where the dominating
+prime series approaches its convergence endpoint.
 
 The one-variable estimate behind the termwise bound is not proved again: it is Mathlib's
 `Complex.norm_log_one_sub_inv_sub_self_le` read along the reals, which is where the factor `2`
@@ -83,8 +84,6 @@ open scoped NumberField
 
 namespace TauCeti
 
--- Source: Layer 7.2 of `TauCetiRoadmap/ArithmeticDirichletSeries/README.md`.
-
 variable {K : Type*} [Field K] [NumberField K]
 
 /-! ### The prime zeta sum at exponent two -/
@@ -98,12 +97,12 @@ private theorem sum_absNorm_rpow_le_finrank_mul_tsum {s : ℝ} (hs : 1 < s)
       Module.finrank ℚ K * ∑' m : ℕ, (m : ℝ) ^ (-s) :=
   calc ∑ 𝔭 ∈ F, (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)
       ≤ ∑ 𝔭 ∈ F, (rationalPrimeBelow 𝔭 : ℝ) ^ (-s) :=
-        Finset.sum_le_sum fun 𝔭 _ ↦ Real.rpow_le_rpow_of_nonpos
-          (mod_cast (prime_rationalPrimeBelow 𝔭).pos)
-          (mod_cast (show rationalPrimeBelow 𝔭 ≤ Ideal.absNorm 𝔭.asIdeal by
+        Finset.sum_le_sum fun 𝔭 _ ↦ by
+          have hpN : rationalPrimeBelow 𝔭 ≤ Ideal.absNorm 𝔭.asIdeal := by
             simpa only [pow_one] using rationalPrimeBelow_pow_le_absNorm (𝔭 := 𝔭)
-              (Ideal.inertiaDeg_pos 𝔭.asIdeal ℤ)))
-          (by linarith)
+              (Ideal.inertiaDeg_pos 𝔭.asIdeal ℤ)
+          exact Real.rpow_le_rpow_of_nonpos
+            (mod_cast (prime_rationalPrimeBelow 𝔭).pos) (mod_cast hpN) (by linarith)
     _ ≤ Module.finrank ℚ K * ∑ m ∈ F.image rationalPrimeBelow, (m : ℝ) ^ (-s) :=
         sum_comp_rationalPrimeBelow_le (fun m _ ↦ Real.rpow_nonneg (Nat.cast_nonneg m) _)
           fun 𝔭 h𝔭 ↦ Finset.mem_image_of_mem rationalPrimeBelow h𝔭
@@ -131,13 +130,14 @@ theorem summable_neg_log_one_sub_sub_absNorm_rpow {s : ℝ} (hs : 1 / 2 < s) :
       -Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) -
         (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s) := by
   have hs0 : 0 < s := by linarith
-  have hsum := (summable_absNorm_rpow_primes_of_one_lt (K := K)
-    (show 1 < 2 * s by linarith)).mul_left ((2 * (1 - (2 : ℝ) ^ (-s)))⁻¹)
+  have hs2 : 1 < 2 * s := by linarith
+  have hsum := (summable_absNorm_rpow_primes_of_one_lt (K := K) hs2).mul_left
+    ((2 * (1 - (2 : ℝ) ^ (-s)))⁻¹)
   refine hsum.of_nonneg_of_le
-    (fun 𝔭 ↦ neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔭) hs0) ?_
+    (fun 𝔭 ↦ Real.neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔭) hs0) ?_
   intro 𝔭
   simpa only [div_eq_mul_inv, mul_comm] using
-    neg_log_one_sub_rpow_sub_le_div (two_le_absNorm_asIdeal_real 𝔭) hs0
+    Real.neg_log_one_sub_rpow_sub_le_div (two_le_absNorm_asIdeal_real 𝔭) hs0
 
 /-- **The prime-power tail is termwise nonnegative.** For every `s > 0`, termwise nonnegativity
 yields a nonnegative `tsum`. This statement does not assert summability; that is supplied by
@@ -145,7 +145,7 @@ yields a nonnegative `tsum`. This statement does not assert summability; that is
 theorem tsum_neg_log_one_sub_sub_absNorm_rpow_nonneg {s : ℝ} (hs : 0 < s) :
     0 ≤ ∑' 𝔭 : HeightOneSpectrum (𝓞 K), (-Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) -
       (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) :=
-  tsum_nonneg fun 𝔭 ↦ neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔭) hs
+  tsum_nonneg fun 𝔭 ↦ Real.neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔭) hs
 
 /-- **The prime-power tail is bounded uniformly on `s ≥ 1`.** The constant `2 [K : ℚ]` does not
 depend on `s`, so this survives the passage to the limit `s → 1⁺` that the Dirichlet-density
@@ -155,7 +155,7 @@ theorem tsum_neg_log_one_sub_sub_absNorm_rpow_le {s : ℝ} (hs : 1 ≤ s) :
       (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) ≤ 2 * Module.finrank ℚ K :=
   ((summable_neg_log_one_sub_sub_absNorm_rpow (K := K)
       ((by norm_num : (1 / 2 : ℝ) < 1).trans_le hs)).tsum_le_tsum
-    (fun 𝔭 ↦ neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs)
+    (fun 𝔭 ↦ Real.neg_log_one_sub_rpow_sub_le (two_le_absNorm_asIdeal_real 𝔭) hs)
     (summable_absNorm_rpow_primes_of_one_lt one_lt_two)).trans tsum_absNorm_rpow_neg_two_le
 
 /-- **The Euler-factor logarithms sum to the prime Dirichlet series up to `O(1)`.** For `s > 1`,
