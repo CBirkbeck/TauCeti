@@ -76,6 +76,8 @@ variable (K) in
 /-- **Nothing ramifies in the identity extension**: the ramified support of `K / K` is empty. -/
 @[simp]
 theorem ramifiedSupport_self : ramifiedSupport K K = ∅ := by
+  -- Mathlib checks by `rfl` that this ring-of-integers algebra instance is `Algebra.id`;
+  -- specializing `relDiscr_self` here relies on that definitional equality.
   have hrel :
       @TauCeti.relDiscr (𝓞 K) (𝓞 K) inferInstance inferInstance inferInstance inferInstance
         (NumberField.inst_ringOfIntegersAlgebra K K) inferInstance inferInstance = ⊤ :=
