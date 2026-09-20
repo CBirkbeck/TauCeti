@@ -9,6 +9,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Analysis.SpecialFunctions.Complex.LogBounds
+import TauCeti.Analysis.SpecialFunctions.Pow.Bounds
 
 /-!
 # Elementary bounds on `-log (1 - x)`
@@ -50,28 +51,24 @@ theorem neg_log_one_sub_sub_nonneg {x : ℝ} (hx1 : x < 1) :
 `0 ≤ x < 1`. This is Mathlib's complex logarithm bound read along the reals. -/
 theorem neg_log_one_sub_sub_le {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x < 1) :
     -log (1 - x) - x ≤ x ^ 2 / (2 * (1 - x)) := by
-  have hz : ‖(x : ℂ)‖ < 1 := by rwa [Complex.norm_real, norm_of_nonneg hx0]
-  have hlog : Complex.log (1 - (x : ℂ))⁻¹ = ((-log (1 - x) : ℝ) : ℂ) := by
-    rw [← Complex.ofReal_one, ← Complex.ofReal_sub, ← Complex.ofReal_inv,
-      ← Complex.ofReal_log (by positivity), log_inv, Complex.ofReal_neg]
-  have hcast : ((-log (1 - x) - x : ℝ) : ℂ) =
-      Complex.log (1 - (x : ℂ))⁻¹ - x := by
-    rw [hlog, Complex.ofReal_sub, Complex.ofReal_neg]
+  have hpos : (0 : ℝ) < 1 - x := by linarith
+  have hnx : ‖(x : ℂ)‖ = x := by rw [Complex.norm_real, norm_of_nonneg hx0]
+  have hz : ‖(x : ℂ)‖ < 1 := by rw [hnx]; exact hx1
+  -- `1 - x` is a positive real, so the whole real-to-complex passage is the single conditional
+  -- rewrite `Complex.ofReal_log`; `push_cast` and `ring` absorb the remaining coercions, so the
+  -- step does not depend on the order in which the casts are unfolded.
+  have hcast : Complex.log (1 - (x : ℂ))⁻¹ - (x : ℂ) = ((-log (1 - x) - x : ℝ) : ℂ) := by
+    rw [show (1 : ℂ) - (x : ℂ) = ((1 - x : ℝ) : ℂ) by push_cast; ring, ← Complex.ofReal_inv,
+      ← Complex.ofReal_log (inv_pos.mpr hpos).le]
+    push_cast [log_inv]
+    ring
   calc
-    -log (1 - x) - x ≤ ‖-log (1 - x) - x‖ := le_norm_self _
-    _ = ‖((-log (1 - x) - x : ℝ) : ℂ)‖ := by rw [Complex.norm_real]
-    _ = ‖Complex.log (1 - (x : ℂ))⁻¹ - x‖ := congrArg (fun z : ℂ ↦ ‖z‖) hcast
+    -log (1 - x) - x ≤ |(-log (1 - x) - x)| := le_abs_self _
+    _ = ‖Complex.log (1 - (x : ℂ))⁻¹ - (x : ℂ)‖ := by
+      rw [hcast, Complex.norm_real, norm_eq_abs]
     _ ≤ ‖(x : ℂ)‖ ^ 2 * (1 - ‖(x : ℂ)‖)⁻¹ / 2 :=
       Complex.norm_log_one_sub_inv_sub_self_le hz
-    _ = x ^ 2 / (2 * (1 - x)) := by
-      rw [Complex.norm_real, norm_of_nonneg hx0]
-      field_simp
-
-/-- If `2 ≤ y` and `1 ≤ s`, then `y ^ (-s) ≤ 1 / 2`. -/
-theorem rpow_neg_le_half {y s : ℝ} (hy : 2 ≤ y) (hs : 1 ≤ s) : y ^ (-s) ≤ 1 / 2 :=
-  calc y ^ (-s) ≤ (2 : ℝ) ^ (-s) := rpow_le_rpow_of_nonpos two_pos hy (by linarith)
-    _ ≤ (2 : ℝ) ^ (-(1 : ℝ)) := rpow_le_rpow_of_exponent_le one_le_two (by linarith)
-    _ = 1 / 2 := by norm_num
+    _ = x ^ 2 / (2 * (1 - x)) := by rw [hnx]; field_simp
 
 /-- For `2 ≤ y` and `0 < s`, the quadratic remainder of `-log (1 - y ^ (-s))` is
 nonnegative. -/

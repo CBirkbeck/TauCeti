@@ -7,6 +7,7 @@ module
 
 public import Mathlib.NumberTheory.NumberField.DedekindZeta
 import TauCeti.Analysis.SpecialFunctions.Log.NegLogOneSub
+import TauCeti.Analysis.SpecialFunctions.Pow.Bounds
 import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.Basic
 import TauCeti.NumberTheory.ArithmeticDirichletSeries.Convergence
 import TauCeti.NumberTheory.ArithmeticDirichletSeries.Counting
