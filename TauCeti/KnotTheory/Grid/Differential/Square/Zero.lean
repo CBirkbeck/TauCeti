@@ -31,7 +31,8 @@ in characteristic two the two terms of a pair cancel.
 Specializing carries the square-zero identity to the two blocked theories as well. Setting one
 `V_i` to zero gives the simply blocked map, and specialization intertwines the two differentials.
 Setting every `V_i` to zero — that is, taking constant terms — gives the fully blocked
-differential of `Complex.lean`, whose rectangles must avoid the `O`-markings as well:
+differential `TauCeti.GridDiagram.fullyBlockedDifferential`, whose rectangles must avoid the
+`O`-markings as well:
 `GridDiagram.fullyBlockedRectangleCount_eq_constantCoeff` identifies its matrix coefficients with
 the constant terms of `∂⁻` over `ZMod 2`.
 
@@ -84,32 +85,41 @@ theorem sum_unblockedCoefficient_mul_unblockedCoefficient_eq_zero (x z : GridSta
   have hone : ∀ D ∈ (G.unblockedDecompositions x z).filter
       (fun D => ¬D.HasDisjointSides), D.HasOneCommonSide := fun D hD =>
     (D.hasDisjointSides_or_hasOneCommonSide_of_ne hzx).resolve_left (Finset.mem_filter.mp hD).2
+  have hmem : ∀ D ∈ (G.unblockedDecompositions x z).filter (fun D => ¬D.HasDisjointSides),
+      D.first ∈ G.unblockedRectangles x D.middle ∧ D.second ∈ G.unblockedRectangles D.middle z :=
+    fun D hD => (G.mem_unblockedDecompositions x z D).mp (Finset.mem_filter.mp hD).1
   have hfirst : ∀ D ∈ (G.unblockedDecompositions x z).filter
-      (fun D => ¬D.HasDisjointSides), D.first ∈ G.unblockedRectangles x D.middle := fun D hD =>
-    ((G.mem_unblockedDecompositions x z D).mp (Finset.mem_filter.mp hD).1).1
+      (fun D => ¬D.HasDisjointSides), D.first.IsEmpty := fun D hD =>
+    G.isEmpty_of_mem_unblockedRectangles (hmem D hD).1
   have hsecond : ∀ D ∈ (G.unblockedDecompositions x z).filter
-      (fun D => ¬D.HasDisjointSides), D.second ∈ G.unblockedRectangles D.middle z := fun D hD =>
-    ((G.mem_unblockedDecompositions x z D).mp (Finset.mem_filter.mp hD).1).2
+      (fun D => ¬D.HasDisjointSides), D.second.IsEmpty := fun D hD =>
+    G.isEmpty_of_mem_unblockedRectangles (hmem D hD).2
   have hcommon : ∑ D ∈ (G.unblockedDecompositions x z).filter
       (fun D => ¬D.HasDisjointSides), G.unblockedDecompositionWeight R D = 0 := by
     refine Finset.sum_involution
-      (fun D hD => D.recut G (hone D hD) (hfirst D hD) (hsecond D hD)) (fun D hD => ?_)
+      (fun D hD => D.recut (hone D hD) (hfirst D hD) (hsecond D hD)) (fun D hD => ?_)
       (fun D hD _ => ?_) (fun D hD => ?_) (fun D hD => ?_)
     · have hweight : G.unblockedDecompositionWeight R
-          (D.recut G (hone D hD) (hfirst D hD) (hsecond D hD)) =
+          (D.recut (hone D hD) (hfirst D hD) (hsecond D hD)) =
             G.unblockedDecompositionWeight R D := by
         rw [G.unblockedDecompositionWeight_def R, G.unblockedDecompositionWeight_def R]
-        exact (D.isRecut_recut G (hone D hD) (hfirst D hD)
+        exact (D.isRecut_recut (hone D hD) (hfirst D hD)
           (hsecond D hD)).isRepartition.OMonomial_mul_OMonomial G R
       rw [hweight]
       exact CharTwo.add_self_eq_zero _
-    · exact D.recut_ne G _ _ _
-    · refine Finset.mem_filter.mpr ⟨(G.mem_unblockedDecompositions x z _).mpr ⟨?_, ?_⟩, ?_⟩
-      · exact (D.isRecut_recut G _ _ _).mem_unblockedRectangles_first
-      · exact (D.isRecut_recut G _ _ _).mem_unblockedRectangles_second
+    · exact D.recut_ne _ _ _
+    · -- The recut covers the same squares, so it again avoids the `X`-markings.
+      have hrecut := D.isRecut_recut (hone D hD) (hfirst D hD) (hsecond D hD)
+      have hX₁ := G.disjoint_XSet_of_mem_unblockedRectangles (hmem D hD).1
+      have hX₂ := G.disjoint_XSet_of_mem_unblockedRectangles (hmem D hD).2
+      refine Finset.mem_filter.mpr ⟨(G.mem_unblockedDecompositions x z _).mpr ⟨?_, ?_⟩, ?_⟩
+      · exact (G.mem_unblockedRectangles _).mpr
+          ⟨hrecut.isEmpty_first, hrecut.isRepartition.disjoint_coveredSquares_first hX₁ hX₂⟩
+      · exact (G.mem_unblockedRectangles _).mpr
+          ⟨hrecut.isEmpty_second, hrecut.isRepartition.disjoint_coveredSquares_second hX₁ hX₂⟩
       · exact GridRectangleDecomposition.not_hasDisjointSides_of_hasOneCommonSide _
-          (D.hasOneCommonSide_recut G _ _ _)
-    · exact D.recut_recut G _ _ _
+          (D.hasOneCommonSide_recut _ _ _)
+    · exact D.recut_recut _ _ _
   rw [hdisjoint, hcommon, add_zero]
 
 /-- In characteristic two the square of the unblocked grid differential vanishes on a
@@ -168,7 +178,8 @@ theorem fullyBlockedDecompositionCount_eq_zero (x z : GridState n) :
   rw [G.fullyBlockedDecompositionCount_eq_sum x z, Finset.sum_congr rfl fun y _ => hterm y,
     ← map_sum, G.sum_unblockedCoefficient_mul_unblockedCoefficient_eq_zero (ZMod 2) x z, map_zero]
 
-/-- The fully blocked grid differential of `Complex.lean` squares to zero. -/
+/-- The fully blocked grid differential `TauCeti.GridDiagram.fullyBlockedDifferential` squares to
+zero. -/
 theorem fullyBlockedDifferential_comp_self_eq_zero :
     G.fullyBlockedDifferential.comp G.fullyBlockedDifferential = 0 :=
   G.fullyBlockedDifferential_comp_self_eq_zero_iff_decompositionCount.mpr

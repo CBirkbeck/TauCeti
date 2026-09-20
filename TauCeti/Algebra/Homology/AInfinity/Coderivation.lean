@@ -5,9 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-import Mathlib.LinearAlgebra.PiTensorProduct.Generators
 public import TauCeti.Algebra.Homology.AInfinity.Stasheff
 public import TauCeti.Algebra.Module.GradedModule.Shift
+public import TauCeti.Algebra.Module.GradedModule.TensorProduct
 public import TauCeti.LinearAlgebra.TensorCoalgebra.OddSquare
 public import TauCeti.LinearAlgebra.TensorCoalgebra.TaylorComponent
 
@@ -30,6 +30,8 @@ ordinary associativity when the higher operations vanish, and arity four is then
 
 * `TauCeti.AInfinity.IsSuspension`: compatibility between a Taylor map and unsuspended operations
   on homogeneous tensors.
+* `TauCeti.AInfinity.suspensionTaylor`: the Taylor map suspending a family of operations, which
+  realizes `IsSuspension` for every family (`TauCeti.AInfinity.isSuspension_suspensionTaylor`).
 * `TauCeti.AInfinity.IsSuspension.taylorComponent_comp_self_apply`: the arity component of the
   coderivation square is the suspended Stasheff sum.
 * `TauCeti.AInfinity.IsSuspension.comp_self_eq_zero_iff_forall_stasheffSum_eq_zero`:
@@ -86,6 +88,60 @@ theorem isSuspension_def (G : InternalGrading R A) (F : ReducedTensorWords R A �
               (PiTensorProduct.tprod R fun i : Fin n ↦ x i)) =
             evalNat (MultilinearMap.suspend d (m n)) x :=
   Iff.rfl
+
+/-- The Taylor map suspending a family of operations.  On a word of length `n` it evaluates `m n`
+after twisting the `i`-th letter by the Koszul twist of parameter `n - 1 - i`; on homogeneous
+letters these twists multiply to the suspension sign `(-1) ^ suspExp n d`. -/
+noncomputable def suspensionTaylor (G : InternalGrading R A)
+    (m : ∀ n : ℕ, MultilinearMap R (fun _ : Fin n ↦ A) A) : ReducedTensorWords R A →ₗ[R] A :=
+  DirectSum.toModule R {n : ℕ // 0 < n} A fun n ↦
+    PiTensorProduct.lift ((m n.1).compLinearMap fun i ↦ G.koszulTwist ((n.1 : ℤ) - 1 - i))
+
+/-- The suspension Taylor map on a pure tensor word. -/
+@[simp]
+theorem suspensionTaylor_of_tprod (G : InternalGrading R A)
+    (m : ∀ n : ℕ, MultilinearMap R (fun _ : Fin n ↦ A) A) (n : {n : ℕ // 0 < n})
+    (x : Fin n.1 → A) :
+    suspensionTaylor G m (ReducedTensorWords.of R A n (PiTensorProduct.tprod R x)) =
+      m n.1 fun i ↦ G.koszulTwist ((n.1 : ℤ) - 1 - i) (x i) := by
+  rw [suspensionTaylor, ReducedTensorWords.toModule_of, PiTensorProduct.lift.tprod,
+    MultilinearMap.compLinearMap_apply]
+
+/-- `suspensionTaylor G m` is a Taylor map suspending `m`, so every family of operations has one. -/
+theorem isSuspension_suspensionTaylor (G : InternalGrading R A)
+    (m : ∀ n : ℕ, MultilinearMap R (fun _ : Fin n ↦ A) A) :
+    IsSuspension G (suspensionTaylor G m) m := by
+  intro n hn d x hx
+  rw [suspensionTaylor_of_tprod]
+  have htwist : (fun i : Fin n ↦ G.koszulTwist ((n : ℤ) - 1 - i) (x i)) =
+      fun i : Fin n ↦ negOnePowCast R (((n : ℤ) - 1 - i) * d i) • x i := by
+    funext i
+    rw [G.koszulTwist_apply_of_mem (hx i i.isLt), negOnePowCast_eq_intCast]
+  rw [htwist, MultilinearMap.map_smul_univ, evalNat_suspend, evalNat_def, suspExp_def,
+    negOnePowCast_sum, ← Fin.prod_univ_eq_prod_range (fun i ↦ negOnePowCast R _) n]
+
+/-- Two Taylor maps which suspend the same operations are equal.  Thus retaining both the
+suspended Taylor map and the unsuspended operations does not add unconstrained data. -/
+theorem IsSuspension.taylor_eq {G : InternalGrading R A}
+    {F F' : ReducedTensorWords R A →ₗ[R] A}
+    {m : ∀ n : ℕ, MultilinearMap R (fun _ : Fin n ↦ A) A}
+    (hF : IsSuspension G F m) (hF' : IsSuspension G F' m) : F = F' := by
+  apply ReducedTensorWords.linearMap_ext
+  intro n z
+  have hn : F ∘ₗ ReducedTensorWords.of R A n =
+      F' ∘ₗ ReducedTensorWords.of R A n := by
+    apply G.piTensorProduct_ext
+    intro q
+    let d : ℕ → ℤ := fun i ↦ if h : i < n.1 then (q ⟨i, h⟩).1 else 0
+    let x : ℕ → A := fun i ↦ if h : i < n.1 then (q ⟨i, h⟩).2 else 0
+    have hx : ∀ i < n.1, x i ∈ G.piece (d i) := by
+      intro i hi
+      simp only [x, d, hi, dite_true]
+      exact (q ⟨i, hi⟩).2.property
+    have hleft := (isSuspension_def G F m).1 hF n.1 n.2 d x hx
+    have hright := (isSuspension_def G F' m).1 hF' n.1 n.2 d x hx
+    simpa only [LinearMap.comp_apply, x, Fin.isLt, dite_true] using hleft.trans hright.symm
+  exact LinearMap.congr_fun hn (PiTensorProduct.tprod R z)
 
 /-- A Taylor map related by suspension to operations of degree `2 - n` has degree one from tensor
 words in the suspended grading to suspended letters.  This is the homogeneity input that makes the
@@ -367,27 +423,20 @@ theorem IsSuspension.comp_self_eq_zero_iff_forall_stasheffSum_eq_zero {G : Inter
     change b ∘ₗ b = 0
     rw [hbSquare.eq_zero_iff_taylorComponent_eq_zero]
     intro n
-    apply PiTensorProduct.ext_of_span_eq_top
-      (g := fun _ (q : Σ d : ℤ, G.piece d) ↦ (q.2 : A))
-    · intro i
-      apply top_unique
-      rw [← G.isInternal.submodule_iSup_eq_top]
-      refine iSup_le fun d ↦ ?_
-      intro a ha
-      exact Submodule.subset_span ⟨⟨d, ⟨a, ha⟩⟩, rfl⟩
-    · intro q
-      let d : ℕ → ℤ := fun i ↦ if h : i < n.1 then (q ⟨i, h⟩).1 else 0
-      let x : ℕ → A := fun i ↦ if h : i < n.1 then (q ⟨i, h⟩).2 else 0
-      have hx : ∀ i < n.1, x i ∈ G.piece (d i) := by
-        intro i hi
-        simp only [x, d, hi, dite_true]
-        exact (q ⟨i, hi⟩).2.property
-      have hcomponent := hFm.taylorComponent_comp_self_apply (fun s hs _ ↦ hm s hs) n.2 d x hx
-      have hsuspended : suspendedStasheffSum m d x n.1 = 0 :=
-        (suspendedStasheffSum_eq_zero_iff m d x n.1).2
-          (hstasheff n.1 n.2 d x hx)
-      rw [hsuspended] at hcomponent
-      simpa only [b, LinearMap.zero_apply, x, Fin.isLt, dite_true] using hcomponent
+    apply G.piTensorProduct_ext
+    intro q
+    let d : ℕ → ℤ := fun i ↦ if h : i < n.1 then (q ⟨i, h⟩).1 else 0
+    let x : ℕ → A := fun i ↦ if h : i < n.1 then (q ⟨i, h⟩).2 else 0
+    have hx : ∀ i < n.1, x i ∈ G.piece (d i) := by
+      intro i hi
+      simp only [x, d, hi, dite_true]
+      exact (q ⟨i, hi⟩).2.property
+    have hcomponent := hFm.taylorComponent_comp_self_apply (fun s hs _ ↦ hm s hs) n.2 d x hx
+    have hsuspended : suspendedStasheffSum m d x n.1 = 0 :=
+      (suspendedStasheffSum_eq_zero_iff m d x n.1).2
+        (hstasheff n.1 n.2 d x hx)
+    rw [hsuspended] at hcomponent
+    simpa only [b, LinearMap.zero_apply, x, Fin.isLt, dite_true] using hcomponent
 
 end AInfinity
 

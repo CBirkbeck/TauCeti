@@ -5,8 +5,10 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.AlgebraicGeometry.EllipticCurve.Reduction
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Point.Hom
 public import TauCeti.RingTheory.DedekindDomain.AdicValuation.Completion
+import TauCeti.AlgebraicGeometry.EllipticCurve.Weierstrass
 
 /-!
 # Formal points over a Dedekind adic completion
@@ -65,6 +67,14 @@ local instance : Fact (IsAdic m_v) :=
   ⟨v.isAdic_maximalIdeal_adicCompletionIntegers (K := K)⟩
 
 variable (W : WeierstrassCurve (v.adicCompletionIntegers K))
+
+/-- A curve over the completed valuation ring is an integral model of its base change to the
+completion. -/
+instance isIntegral_baseChange_adicCompletion :
+    WeierstrassCurve.IsIntegral
+      (Valued.v : Valuation K_v (WithZero (Multiplicative ℤ))).valuationSubring
+        (W.baseChange K_v) :=
+  ⟨W, rfl⟩
 
 private theorem valued_coe_isUnit {a : O_v} (ha : IsUnit a) :
     Valued.v (a : K_v) = 1 :=
@@ -135,22 +145,16 @@ private theorem exists_aux_param [(W.baseChange K_v).IsElliptic] {t : O_v}
   by_cases htwo : (2 : K_v) = 0
   -- In characteristic two, ellipticity forces at least one of `a₁` and `a₃` to be nonzero.
   -- A sufficiently small parameter then cannot satisfy the formal-inverse fixed-point equation.
-  · let _ : CharP K_v 2 :=
-      (CharP.charP_iff_prime_eq_zero Nat.prime_two).2 htwo
-    have htwo' : ((2 : O_v) : K_v) = 0 := by
-      calc
-        ((2 : O_v) : K_v) = algebraMap O_v K_v (2 : O_v) :=
-          (Algebra.algebraMap_ofSubsemiring_apply
-            (Valued.v : Valuation K_v (WithZero (Multiplicative ℤ))).valuationSubring _).symm
-        _ = (2 : K_v) := map_ofNat (algebraMap O_v K_v) 2
-        _ = 0 := htwo
+  · -- `O_v → K_v` is a `SubringClass` coercion, so it fixes numerals definitionally:
+    -- Mathlib records this as `SubringClass.coe_natCast`, itself proved by `rfl`
+    have htwo' : ((2 : O_v) : K_v) = 0 := htwo
     have ha₁a₃ : (W.a₁ : K_v) ≠ 0 ∨ (W.a₃ : K_v) ≠ 0 := by
-      by_contra h
-      push Not at h
-      have hΔ : (W.baseChange K_v).Δ = 0 := by
-        rw [(W.baseChange K_v).Δ_of_char_two]
-        simp [h.1, h.2]
-      exact (W.baseChange K_v).isUnit_Δ.ne_zero hΔ
+      -- `baseChange` is a plain definition, so its coefficients need unfolding to the algebra
+      -- map, which on the valuation subring is the coercion
+      simpa only [WeierstrassCurve.baseChange, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₃,
+        Algebra.algebraMap_ofSubsemiring_apply]
+        using (W.baseChange K_v).a₁_ne_zero_or_a₃_ne_zero_of_Δ_ne_zero_of_two_eq_zero
+          (W.baseChange K_v).isUnit_Δ.ne_zero htwo
     by_cases ha₁ : (W.a₁ : K_v) = 0
     · have ha₃ := ha₁a₃.resolve_left (fun h ↦ h ha₁)
       have ha₃O : W.a₃ ≠ 0 := fun h ↦ ha₃ (by simp [h])
@@ -200,13 +204,8 @@ private theorem exists_aux_param [(W.baseChange K_v).IsElliptic] {t : O_v}
       have heq : (W.a₁ * s : K_v) = -(W.a₃ * W.formalWEval s : K_v) :=
         eq_neg_of_add_eq_zero_left hcoe.symm
       exact hval.ne (by rw [heq, Valuation.map_neg])
-  · have htwoO : (2 : O_v) ≠ 0 := fun h ↦ htwo (by
-      calc
-        (2 : K_v) = algebraMap O_v K_v (2 : O_v) :=
-          (map_ofNat (algebraMap O_v K_v) 2).symm
-        _ = ((2 : O_v) : K_v) := Algebra.algebraMap_ofSubsemiring_apply
-          (Valued.v : Valuation K_v (WithZero (Multiplicative ℤ))).valuationSubring _
-        _ = 0 := congrArg (fun a : O_v ↦ (a : K_v)) h)
+  · -- the same `SubringClass` coercion, read in the other direction
+    have htwoO : (2 : O_v) ≠ 0 := fun h ↦ htwo (congrArg (fun a : O_v ↦ (a : K_v)) h)
     obtain ⟨s, hsm, hs0, hst, hs2, _⟩ :=
       v.exists_ne_zero_mem_maximalIdeal_valued_lt ht0 htwoO
     refine ⟨s, hsm, hs0, ne_of_valued_lt v hst,

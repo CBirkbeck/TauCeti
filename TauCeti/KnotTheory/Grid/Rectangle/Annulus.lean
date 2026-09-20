@@ -38,14 +38,18 @@ for any grid differential whose marking-free test is that disjointness — in pa
 `X`-test of the unblocked differential `∂⁻`. The marking-avoidance predicate
 `GridRectangle.AvoidsMarkings` tests that same region under its other name `GridRectangle.squares`,
 which `GridRectangle.squares_eq_coveredSquares` identifies with `coveredSquares`, so the lemma
-serves the fully blocked differential of `Complex.lean` unchanged.
+serves `TauCeti.GridDiagram.fullyBlockedDifferential` unchanged.
 
 ## Main results
 
 * `TauCeti.GridRectangleBetween.sideColumns_eq_sideColumns`: a returning pair of rectangles uses
   the same two side columns.
+* `TauCeti.GridRectangleBetween.left_right_eq_cases`: the returning rectangle either has the
+  same ordered side columns or the reversed ones.
 * `TauCeti.GridRectangleBetween.coveredSquares_union_coveredSquares`: the squares covered by a
   returning pair are a full vertical band or a full horizontal band.
+* `TauCeti.GridRectangleBetween.disjoint_coveredSquares`: the two rectangles of a returning pair
+  cover disjoint squares.
 * `TauCeti.GridRectangleBetween.not_disjoint_coveredSquares_or_not_disjoint_coveredSquares`: at
   least one rectangle of a returning pair covers a square occupied by any given grid state.
 
@@ -103,6 +107,15 @@ private theorem right_eq_left_of_left_eq_right (h : S.left = R.right) : S.right 
   rcases R.right_eq_left_or_right_eq_right S with h' | h'
   · exact h'
   · exact absurd (h.trans h'.symm) S.left_ne_right
+
+/-- The returning rectangle has either the same ordered side columns as the outgoing rectangle or
+the reversed ordered side columns. -/
+theorem left_right_eq_cases :
+    (S.left = R.left ∧ S.right = R.right) ∨
+      (S.left = R.right ∧ S.right = R.left) := by
+  rcases R.left_eq_left_or_left_eq_right S with h | h
+  · exact Or.inl ⟨h, R.right_eq_right_of_left_eq_left S h⟩
+  · exact Or.inr ⟨h, R.right_eq_left_of_left_eq_right S h⟩
 
 /-- A returning pair of rectangles uses the same unordered pair of side columns. -/
 theorem sideColumns_eq_sideColumns : S.sideColumns = R.sideColumns := by
@@ -178,6 +191,21 @@ theorem coveredSquares_union_coveredSquares :
   · exact Or.inl (R.coveredSquares_union_coveredSquares_of_left_eq_left S h)
   · exact Or.inr (R.coveredSquares_union_coveredSquares_of_left_eq_right S h)
 
+/-- The two rectangles of a returning pair cover disjoint sets of squares: they have the same
+columns and complementary rows, or the same rows and complementary columns. -/
+theorem disjoint_coveredSquares :
+    Disjoint R.toGridRectangle.coveredSquares S.toGridRectangle.coveredSquares := by
+  rw [GridRectangle.disjoint_coveredSquares_iff]
+  rcases R.left_eq_left_or_left_eq_right S with h | h
+  · right
+    simp only [GridRectangle.coveredRows_def, toGridRectangle_bottom, toGridRectangle_top,
+      R.bottom_eq_top_of_left_eq_left S h, R.top_eq_bottom_of_left_eq_left S h]
+    exact Grid.disjoint_cIco_swap _ _
+  · left
+    simp only [GridRectangle.coveredColumns_def, toGridRectangle_left, toGridRectangle_right, h,
+      R.right_eq_left_of_left_eq_right S h]
+    exact Grid.disjoint_cIco_swap _ _
+
 /-- A grid state meets the squares covered by a returning pair of rectangles. -/
 theorem not_disjoint_union_coveredSquares_pointSet (M : GridState n) :
     ¬Disjoint (R.toGridRectangle.coveredSquares ∪ S.toGridRectangle.coveredSquares)
@@ -197,8 +225,9 @@ theorem not_disjoint_union_coveredSquares_pointSet (M : GridState n) :
 Applied to the `O`- or `X`-markings of a grid diagram, this is the vanishing of the annular terms
 in the square of a grid differential that tests markings by disjointness from
 `GridRectangle.coveredSquares`, such as the unblocked differential `∂⁻`: two rectangles that return
-to their source can never both avoid the markings in that sense. The fully blocked differential of
-`Complex.lean` is such a differential too: its `GridRectangle.AvoidsMarkings` predicate tests
+to their source can never both avoid the markings in that sense.
+`TauCeti.GridDiagram.fullyBlockedDifferential` is such a differential too: its
+`GridRectangle.AvoidsMarkings` predicate tests
 `GridRectangle.squares`, which `GridRectangle.squares_eq_coveredSquares` identifies with
 `coveredSquares`. -/
 theorem not_disjoint_coveredSquares_or_not_disjoint_coveredSquares (M : GridState n) :
