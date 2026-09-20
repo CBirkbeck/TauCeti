@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Comap
+public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.HuberPair
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basis
 import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Perturbation
 import TauCeti.RingTheory.Huber.OpenIdeal
@@ -29,6 +30,9 @@ with `φ(A⁺) ⊆ B⁺`.
   member of the rational family of `Spa(B, B⁺)` is the preimage under `spaComap φ` of a member of
   the rational family of `Spa(A, A⁺)`.
 * `TauCeti.ValuationSpectrum.isInducing_spaComap_of_denseRange`: `spaComap φ` is inducing.
+* `TauCeti.Huber.Pair.Hom.exists_mem_spaRationalFamily_spaComap_preimage_eq_of_denseRange` and
+  `TauCeti.Huber.Pair.Hom.isInducing_spaComap_of_denseRange`: the same two results for a morphism
+  of Huber pairs whose underlying ring homomorphism has dense range.
 
 ## References
 
@@ -115,5 +119,32 @@ theorem isInducing_spaComap_of_denseRange [IsHuberRing A] [IsHuberRing B] {φ : 
   exact isOpen_induced ((isTopologicalBasis_spaRationalFamily Aplus).isOpen hW)
 
 end TauCeti.ValuationSpectrum
+
+namespace TauCeti.Huber.Pair.Hom
+
+open Topology TauCeti.ValuationSpectrum
+
+variable {A B : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] [IsHuberRing A]
+  [CommRing B] [TopologicalSpace B] [IsTopologicalRing B] [IsHuberRing B] {S : Pair A} {T : Pair B}
+
+/-- **Rational subsets descend along a morphism of Huber pairs with dense image.** Every member of
+the rational family of `Spa(T)` is the preimage under `f.spaComap` of a member of the rational
+family of `Spa(S)`. -/
+theorem exists_mem_spaRationalFamily_spaComap_preimage_eq_of_denseRange (f : Hom S T)
+    (hf : DenseRange f.toRingHom) {U : Set (spa T.plus)} (hU : U ∈ spaRationalFamily T.plus) :
+    ∃ W ∈ spaRationalFamily S.plus, f.spaComap ⁻¹' W = U := by
+  rw [spaComap_eq]
+  exact ValuationSpectrum.exists_mem_spaRationalFamily_spaComap_preimage_eq_of_denseRange
+    f.continuous_toRingHom hf S.plus T.plus f.map_mem_plus hU
+
+/-- **The map of adic spectra induced by a morphism of Huber pairs with dense image is inducing.**
+For the completion morphism this is the inducing part of Wedhorn Proposition 7.48. -/
+theorem isInducing_spaComap_of_denseRange (f : Hom S T) (hf : DenseRange f.toRingHom) :
+    IsInducing f.spaComap := by
+  rw [spaComap_eq]
+  exact ValuationSpectrum.isInducing_spaComap_of_denseRange f.continuous_toRingHom hf S.plus
+    T.plus f.map_mem_plus
+
+end TauCeti.Huber.Pair.Hom
 
 end
