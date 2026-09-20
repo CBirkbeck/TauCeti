@@ -33,8 +33,8 @@ Two elementary inputs carry the argument.
   denominator `1 - N(𝔭) ^ (-s)` is bounded below by `1 / 2`; the termwise difference is
   therefore at most `N(𝔭) ^ (-2)`.
 * `N(𝔭)` is at least the rational prime below `𝔭` and at most `[K : ℚ]` primes lie over one
-  rational prime, so `∑_𝔭 N(𝔭) ^ (-2) ≤ [K : ℚ] ∑_m m ^ (-2) ≤ 2 [K : ℚ]`; the fibring step is
-  the already available `TauCeti.sum_comp_rationalPrimeBelow_le`.
+  rational prime, so `∑_𝔭 N(𝔭) ^ (-2) ≤ 2 [K : ℚ]`.  That bound is not proved again here: it is
+  the imported `TauCeti.tsum_absNorm_rpow_neg_two_le`.
 
 ## Main results
 
@@ -85,39 +85,6 @@ open scoped NumberField
 namespace TauCeti
 
 variable {K : Type*} [Field K] [NumberField K]
-
-/-! ### The prime zeta sum at exponent two -/
-
--- Fibre a finite sum over the rational primes below by the three steps of
--- `sum_absNorm_rpow_higherDegreePrimes_le_finrank_mul_tsum`.  Only `p ≤ N(𝔭)` is available
--- without a residue-degree hypothesis, so the exponent stays `-s`, which forces `1 < s` here.
-private theorem sum_absNorm_rpow_le_finrank_mul_tsum {s : ℝ} (hs : 1 < s)
-    (F : Finset (HeightOneSpectrum (𝓞 K))) :
-    ∑ 𝔭 ∈ F, (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s) ≤
-      Module.finrank ℚ K * ∑' m : ℕ, (m : ℝ) ^ (-s) :=
-  calc ∑ 𝔭 ∈ F, (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)
-      ≤ ∑ 𝔭 ∈ F, (rationalPrimeBelow 𝔭 : ℝ) ^ (-s) :=
-        Finset.sum_le_sum fun 𝔭 _ ↦ by
-          have hpN : rationalPrimeBelow 𝔭 ≤ Ideal.absNorm 𝔭.asIdeal := by
-            simpa only [pow_one] using rationalPrimeBelow_pow_le_absNorm (𝔭 := 𝔭)
-              (Ideal.inertiaDeg_pos 𝔭.asIdeal ℤ)
-          exact Real.rpow_le_rpow_of_nonpos
-            (mod_cast (prime_rationalPrimeBelow 𝔭).pos) (mod_cast hpN) (by linarith)
-    _ ≤ Module.finrank ℚ K * ∑ m ∈ F.image rationalPrimeBelow, (m : ℝ) ^ (-s) :=
-        sum_comp_rationalPrimeBelow_le (fun m _ ↦ Real.rpow_nonneg (Nat.cast_nonneg m) _)
-          fun 𝔭 h𝔭 ↦ Finset.mem_image_of_mem rationalPrimeBelow h𝔭
-    _ ≤ Module.finrank ℚ K * ∑' m : ℕ, (m : ℝ) ^ (-s) :=
-        mul_le_mul_of_nonneg_left ((Real.summable_nat_rpow.mpr (by linarith)).sum_le_tsum _
-          fun m _ ↦ Real.rpow_nonneg (Nat.cast_nonneg m) _) (Nat.cast_nonneg _)
-
--- At most `[K : ℚ]` primes lie over each rational prime, and `ζ (2) < 2`.
-private theorem tsum_absNorm_rpow_neg_two_le :
-    ∑' 𝔭 : HeightOneSpectrum (𝓞 K), (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-(2 : ℝ)) ≤
-      2 * Module.finrank ℚ K := by
-  refine Real.tsum_le_of_sum_le (fun _ ↦ Real.rpow_nonneg (Nat.cast_nonneg _) _) fun F ↦ ?_
-  refine (sum_absNorm_rpow_le_finrank_mul_tsum one_lt_two F).trans ?_
-  rw [mul_comm (2 : ℝ) (Module.finrank ℚ K : ℝ)]
-  exact mul_le_mul_of_nonneg_left (tsum_nat_rpow_neg_le_two le_rfl) (Nat.cast_nonneg _)
 
 /-! ### The prime-power tail -/
 

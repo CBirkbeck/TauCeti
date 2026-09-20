@@ -12,8 +12,8 @@ public import Mathlib.NumberTheory.NumberField.DirichletDensity
 import all Mathlib.NumberTheory.NumberField.DirichletDensity
 import TauCeti.Analysis.SpecialFunctions.Log.OneDivSub
 import TauCeti.NumberTheory.ArithmeticDirichletSeries.Convergence
-import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.DedekindZeta
-import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.DedekindZetaTail
+import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.DedekindZeta.Basic
+import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.DedekindZeta.Tail
 import TauCeti.Topology.Algebra.Order.Field
 
 /-!
