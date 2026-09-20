@@ -160,26 +160,6 @@ theorem valued_algebraMap_residueFieldValuation (v : Spv A) (a : A) :
   exact (residueFieldValuation_algebraMap v (Ideal.Quotient.mk _ a)).trans <|
     DFunLike.congr_fun (quotientValuation_comap_quotientMk v) a
 
--- Every value of `residueFieldValuation v` is a ratio `v a / v b` of values of `v` with
--- `v b ≠ 0`. Kept private: it is the fraction bookkeeping behind the continuity proof below,
--- not API. An element of `κ(v)` is a fraction over the residue ring, and
--- `valued_algebraMap_residueFieldValuation` reads off the value of each lift to `A`.
-private theorem exists_valuation_div_eq_residueFieldValuation (v : Spv A)
-    (t : v.supp.ResidueField) : ∃ a b : A,
-    v.valuation b ≠ 0 ∧ v.valuation a / v.valuation b = residueFieldValuation v t := by
-  obtain ⟨x, y, hy, rfl⟩ := IsFractionRing.div_surjective (residueRing v) t
-  obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective x
-  obtain ⟨b, rfl⟩ := Ideal.Quotient.mk_surjective y
-  -- `Valued.v` of `WithVal (residueFieldValuation v)` is `residueFieldValuation v` itself, so the
-  -- characteristic equation applies to the two lifts
-  have hval (c : A) : residueFieldValuation v
-      (algebraMap (residueRing v) v.supp.ResidueField (Ideal.Quotient.mk v.supp c)) =
-      v.valuation c := valued_algebraMap_residueFieldValuation v c
-  refine ⟨a, b, ?_, ?_⟩
-  · rw [← hval b, residueFieldValuation_algebraMap]
-    exact quotientValuation_ne_zero v (nonZeroDivisors.ne_zero hy)
-  · rw [map_div₀, hval, hval]
-
 /-- **A continuous point maps continuously to its residue field.** If `v : Spv A` is continuous
 then the canonical map `A → WithVal (residueFieldValuation v)` is continuous, `κ(v)` carrying
 the topology of `residueFieldValuation v`.
@@ -191,20 +171,20 @@ theorem continuous_algebraMap_residueFieldValuation [TopologicalSpace A] [IsTopo
   refine continuous_of_continuousAt_zero _ ?_
   rw [ContinuousAt, map_zero, (Valued.hasBasis_nhds_zero _ _).tendsto_right_iff]
   intro γ _
-  -- the radius `γ` is a ratio of two values of `residueFieldValuation v`, hence the value of a
-  -- single element of `κ(v)`, which is in turn a ratio `v a / v b` of values of `v`
-  obtain ⟨r, s, -, -, hrs⟩ := Valued.v.exists_div_eq_of_unit γ
-  obtain ⟨a, b, hb, hab⟩ :=
-    exists_valuation_div_eq_residueFieldValuation v (WithVal.ofVal (r / s))
-  have hemb : MonoidWithZeroHom.ValueGroup₀.embedding γ.1 = v.valuation a / v.valuation b :=
-    calc MonoidWithZeroHom.ValueGroup₀.embedding γ.1
-        = Valued.v r / Valued.v s := by
-          rw [← hrs, map_div₀, Valuation.embedding_restrict, Valuation.embedding_restrict]
-      _ = Valued.v (r / s) := by rw [map_div₀]
-      _ = residueFieldValuation v (WithVal.ofVal (r / s)) :=
-          (WithVal.apply_ofVal _ (r / s)).symm
-      _ = v.valuation a / v.valuation b := hab.symm
-  filter_upwards [(((isContinuous_def v).mp hv).isOpen_lt_div a hb).mem_nhds
+  let _ : ValuativeRel A := v.toValuativeRel
+  -- the radius embeds to a nonzero element of the value group of `v`, so it is a ratio
+  -- `v a / v b` of values of `v` itself, and continuity opens the ball of that radius
+  have hγ : MonoidWithZeroHom.ValueGroup₀.embedding γ.1 ≠ 0 := by simp [γ.ne_zero]
+  obtain ⟨a, b, -, hb, hab⟩ := (ValuativeRel.valuation A).exists_div_eq_of_unit
+    (Units.mk0 (ValuativeRel.ValueGroupWithZero.orderMonoidIso (ValuativeRel.valuation A)
+      (MonoidWithZeroHom.ValueGroup₀.embedding γ.1)) (by simp [hγ]))
+  simp only [Units.val_mk0] at hab
+  have hb' : v.valuation b ≠ 0 := by rw [valuation_def]; exact hb.ne'
+  have hemb : MonoidWithZeroHom.ValueGroup₀.embedding γ.1 = v.valuation a / v.valuation b := by
+    rw [valuation_def, ← ValuativeRel.ValueGroupWithZero.embedding_orderMonoidIso_valuation_eq
+      (MonoidWithZeroHom.ValueGroup₀.embedding γ.1), ← hab, map_div₀,
+      Valuation.embedding_restrict, Valuation.embedding_restrict]
+  filter_upwards [(((isContinuous_def v).mp hv).isOpen_lt_div a hb').mem_nhds
     (by simp [← hemb, zero_lt_iff])] with z hz
   rwa [Valuation.restrict_lt_iff_lt_embedding, valued_algebraMap_residueFieldValuation, hemb]
 
