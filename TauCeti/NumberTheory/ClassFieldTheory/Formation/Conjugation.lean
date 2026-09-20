@@ -252,14 +252,7 @@ theorem conj_mem_top_conjugate {x : G} :
 conjugate. -/
 def conjugateGroundEquiv : L.ground ≃* (L.conjugate g).ground :=
   Subgroup.congrOfMapEq (MulAut.conj g) <| by
-    ext x
-    constructor
-    · rintro ⟨y, hy, rfl⟩
-      simpa [mul_assoc]
-    · intro hx
-      refine ⟨g⁻¹ * x * g, hx, ?_⟩
-      change g * (g⁻¹ * x * g) * g⁻¹ = x
-      group
+    exact Subgroup.map_equiv_eq_comap_symm (MulAut.conj g) _
 
 @[simp]
 theorem conjugateGroundEquiv_apply_coe (u : L.ground) :

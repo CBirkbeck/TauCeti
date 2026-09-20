@@ -178,6 +178,17 @@ theorem quotientHom_trans (T : LayerRefinement a b) (T' : LayerRefinement b c) :
 
 end LayerRefinement
 
+private theorem toAdditive_trans {A B C : Type*} [Group A] [Group B] [Group C]
+    (e₁ : A ≃* B) (e₂ : B ≃* C) :
+    e₁.toAdditive.trans e₂.toAdditive = (e₁.trans e₂).toAdditive := by
+  ext
+  rfl
+
+private theorem toAdditive_refl {A : Type*} [Group A] :
+    (MulEquiv.refl A).toAdditive = AddEquiv.refl (Additive A) := by
+  ext
+  rfl
+
 namespace NormalLayer
 
 variable (L : NormalLayer G) (g h : G)
@@ -197,6 +208,16 @@ theorem conjugateAbelianizationEquiv_of (x : L.Gal) :
       Additive.ofMul (Abelianization.of (L.conjugateGalEquiv g x)) :=
   (rfl)
 
+/-- Inverse conjugation on abelianized Galois groups sends the class of a Galois element to the
+class of its inverse conjugate. -/
+@[simp]
+theorem conjugateAbelianizationEquiv_symm_of (y : (L.conjugate g).Gal) :
+    (L.conjugateAbelianizationEquiv g).symm (Additive.ofMul (Abelianization.of y)) =
+      Additive.ofMul (Abelianization.of ((L.conjugateGalEquiv g).symm y)) := by
+  apply (L.conjugateAbelianizationEquiv g).injective
+  rw [AddEquiv.apply_symm_apply, conjugateAbelianizationEquiv_of,
+    MulEquiv.apply_symm_apply]
+
 /-- Conjugation by `1` is the identity on abelianized Galois groups, after transporting along
 `conjugate_one`. -/
 @[simp]
@@ -205,13 +226,8 @@ theorem conjugateAbelianizationEquiv_one :
         ((MulEquiv.abelianizationCongr
           (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal) L.conjugate_one)).toAdditive) =
       AddEquiv.refl (Additive (Abelianization L.Gal)) := by
-  change MulEquiv.toAdditive
-      ((L.conjugateGalEquiv 1).abelianizationCongr.trans
-        (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal)
-          L.conjugate_one).abelianizationCongr) =
-    MulEquiv.toAdditive (MulEquiv.refl (Abelianization L.Gal))
-  congr 1
-  rw [abelianizationCongr_trans, L.conjugateGalEquiv_one, abelianizationCongr_refl]
+  rw [conjugateAbelianizationEquiv, toAdditive_trans, ← toAdditive_refl,
+    abelianizationCongr_trans, L.conjugateGalEquiv_one, abelianizationCongr_refl]
 
 /-- Conjugation on abelianized Galois groups composes: conjugating by `h` and then by `g` is
 conjugating by `g * h`, up to transport along `conjugate_conjugate`. -/
@@ -222,15 +238,9 @@ theorem conjugateAbelianizationEquiv_trans_conjugateAbelianizationEquiv :
         ((MulEquiv.abelianizationCongr
           (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal)
             (L.conjugate_conjugate g h).symm)).toAdditive) := by
-  change MulEquiv.toAdditive
-      ((L.conjugateGalEquiv h).abelianizationCongr.trans
-        ((L.conjugate h).conjugateGalEquiv g).abelianizationCongr) =
-    MulEquiv.toAdditive
-      ((L.conjugateGalEquiv (g * h)).abelianizationCongr.trans
-        (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal)
-          (L.conjugate_conjugate g h).symm).abelianizationCongr)
-  congr 1
-  rw [abelianizationCongr_trans, abelianizationCongr_trans,
+  rw [conjugateAbelianizationEquiv, conjugateAbelianizationEquiv, toAdditive_trans,
+    conjugateAbelianizationEquiv, toAdditive_trans, abelianizationCongr_trans,
+    abelianizationCongr_trans,
     L.conjugateGalEquiv_trans_conjugateGalEquiv]
 
 end NormalLayer
