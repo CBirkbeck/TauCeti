@@ -63,10 +63,9 @@ standard nonnegative logarithmic prime-power weight, use Layer 5 to prove
 `primeTheta_asymptotic_of_primePsi` consume that named estimate."  It also supplies the arithmetic
 half of Layer **10.1**, "Define `primePsi` with all prime powers present": the exact nonnegative
 von Mangoldt coefficient system and the identity presenting `ψ` as its partial sum, which is the
-shape in which a Tauberian theorem delivers its conclusion.  What remains of 10.1 — the analytic
-package `PrimeBoundaryRemainder`, carrying the `LSeriesHasSum` and boundary-continuity hypotheses,
-and the asymptotic `primePsi_asymptotic_of_boundary` it yields — waits on the Wiener–Ikehara
-theorem of Layer 9.
+shape in which a Tauberian theorem delivers its conclusion.  The analytic boundary package and
+the resulting prime-number-theorem transfer are in
+`TauCeti/NumberTheory/ArithmeticDirichletSeries/Prime/Boundary.lean`.
 
 ## References
 
@@ -106,6 +105,15 @@ theorem primePowerWeight_eq_vonMangoldt_re (A : IdealPrimePower K) :
   rw [primePowerWeight, IdealArithmeticFunction.vonMangoldt_apply_of_eq_prime_pow
     (prime_primePowerBase A) (primePowerExponent_pos A)
     (primePowerBase_pow_primePowerExponent A), Complex.ofReal_re]
+
+/-- On a prime-power ideal the ideal von Mangoldt function is the standard logarithmic weight,
+as a complex number. -/
+@[simp]
+theorem vonMangoldt_eq_primePowerWeight (A : IdealPrimePower K) :
+    (IdealArithmeticFunction.vonMangoldt : IdealArithmeticFunction K) A =
+      (primePowerWeight A : ℂ) :=
+  Complex.ext (by rw [primePowerWeight_eq_vonMangoldt_re, Complex.ofReal_re])
+    (by rw [IdealArithmeticFunction.vonMangoldt_im, Complex.ofReal_im])
 
 /-- The standard logarithmic prime-power weight is positive. -/
 theorem primePowerWeight_pos (A : IdealPrimePower K) : 0 < primePowerWeight A :=

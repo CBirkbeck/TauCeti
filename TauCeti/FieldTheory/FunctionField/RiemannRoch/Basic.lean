@@ -42,6 +42,8 @@ Fields and Codes*, 2nd ed., Definition 1.4.4 through Definition 1.4.10.
   an exact constant field, `L(0) = k` (`TauCeti.riemannRochSpace_zero_of_isIntegrallyClosedIn`,
   Lemma 1.4.7(a)).
 * `TauCeti.riemannRochSpace_eq_bot_of_lt_zero`: `L(D) = 0` for `D < 0` (Lemma 1.4.7(b)).
+* `TauCeti.riemannRochSpace_sub_ofFinset_eq`: if removing any single place of a finite set `T`
+  leaves `L(D)` unchanged, so does removing all of `T` at once.
 * `TauCeti.finrank_riemannRochSpace_add_ofPoint_le`: adding one place to a divisor raises `ℓ`
   by at most the degree of that place (Lemma 1.4.8, the one-place-at-a-time estimate).
 * `TauCeti.finrank_quotient_riemannRochSpace_le_degree_sub`: for `D ≤ E` the quotient
@@ -128,6 +130,20 @@ theorem riemannRochSpace_mono {D E : Divisor k F} (h : D ≤ E) :
 theorem riemannRochSpace_monotone :
     Monotone (riemannRochSpace : Divisor k F → Submodule k F) :=
   fun _ _ ↦ riemannRochSpace_mono
+
+/-- If removing any single place of a finite set `T` leaves `L(D)` unchanged, then so does
+removing all of `T` at once: `L(D - ∑_{P ∈ T} P) = L(D)`. -/
+theorem riemannRochSpace_sub_ofFinset_eq {D : Divisor k F} {T : Finset (Place k F)}
+    (hT : ∀ P ∈ T, riemannRochSpace (D - WeilDivisor.ofPoint P) = riemannRochSpace D) :
+    riemannRochSpace (D - WeilDivisor.ofFinset T) = riemannRochSpace D := by
+  classical
+  refine le_antisymm (riemannRochSpace_mono (sub_le_self _ (WeilDivisor.isEffective_iff_zero_le.mp
+    (WeilDivisor.isEffective_ofFinset T)))) fun f hf ↦ ?_
+  refine mem_riemannRochSpace_iff.mpr fun Q ↦ ?_
+  by_cases hQ : Q ∈ T
+  · rw [← hT Q hQ, mem_riemannRochSpace_iff] at hf
+    simpa [hQ] using hf Q
+  · simpa [hQ] using mem_riemannRochSpace_iff.mp hf Q
 
 /-- The constant function `1` belongs to `L(D)` exactly when `D` is effective.
 
@@ -226,11 +242,6 @@ section OnePlace
 
 variable {D : Divisor k F} {P : Place k F} {t : F}
 
-private lemma le_add_ofPoint (D : Divisor k F) (P : Place k F) :
-    D ≤ D + WeilDivisor.ofPoint P :=
-  le_add_of_nonneg_right
-    (WeilDivisor.isEffective_iff_zero_le.mp (WeilDivisor.isEffective_ofPoint P))
-
 /-- `L(D)` bounds the pole at any single place: it sits inside the step `𝔪_P^(-D P)` of the
 order filtration at `P`. -/
 private lemma riemannRochSpace_le_filtration (D : Divisor k F) (P : Place k F) :
@@ -294,7 +305,7 @@ private lemma finiteDimensional_and_finrank_add_ofPoint_le (hF : IsFunctionField
   have : FiniteDimensional k P.ResidueField := Place.finiteDimensional_residueField P hF
   obtain ⟨t, ht0, ht⟩ := P.exists_ne_zero_ord_eq (D.coeff P + 1)
   have hle : riemannRochSpace D ≤ riemannRochSpace (D + WeilDivisor.ofPoint P) :=
-    riemannRochSpace_mono (le_add_ofPoint D P)
+    riemannRochSpace_mono (WeilDivisor.le_add_ofPoint D P)
   have hkerfin : FiniteDimensional k (LinearMap.ker (residueEval D P ht)) := by
     rw [ker_residueEval ht ht0]
     exact Module.Finite.equiv (Submodule.comapSubtypeEquivOfLe hle).symm
