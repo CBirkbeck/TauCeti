@@ -7,7 +7,7 @@ module
 
 public import TauCeti.Algebra.Lie.Presentation.Serre
 import TauCeti.LinearAlgebra.Matrix.Step
-public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.F4.ShortRootWeight
+public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.F4.ShortRootWeight.Basic
 
 /-!
 # The integral short-root representation of type F4

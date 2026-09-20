@@ -122,4 +122,15 @@ theorem exists_f4_short_midpoint_of_long_add_two_short (α β γ : Fin 48)
   f4SimplyConnectedRootDatum.exists_short_midpoint_of_long_add_two_short f4Length
     f4Length_mul_pairing_comm α β γ hα hβ (f4Length_eq_one_or_eq_two γ) h
 
+/-- A root edge whose source and target are both short has descending chain coefficient zero,
+regardless of the length of the root direction. -/
+theorem f4_chainBotCoeff_eq_zero_of_add_eq_short (α β γ : Fin 48)
+    (hβ : f4Length β = 1) (hγ : f4Length γ = 1)
+    (h : f4SimplyConnectedRootDatum.root γ =
+      f4SimplyConnectedRootDatum.root β + f4SimplyConnectedRootDatum.root α) :
+    f4SimplyConnectedRootDatum.chainBotCoeff α β = 0 :=
+  f4SimplyConnectedRootDatum.chainBotCoeff_eq_zero_of_add_eq_short f4Length
+    f4Length_mul_pairing_comm α β γ (f4Length_pos α)
+    (fun δ _ => by rcases f4Length_eq_one_or_eq_two δ with hδ | hδ <;> omega) hβ hγ h
+
 end TauCeti.DynkinType
