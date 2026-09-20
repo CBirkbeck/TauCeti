@@ -220,7 +220,7 @@ theorem conjugate_one : L.conjugate 1 = L := by
   ext x <;> simp
 
 /-- **Conjugation of layers composes**, so it is an action of the ambient group on the layers of
-a formation. -/
+a formation. The later conjugating element `g` occurs on the left in the product `g * h`. -/
 @[simp]
 theorem conjugate_conjugate : (L.conjugate h).conjugate g = L.conjugate (g * h) := by
   ext x <;> simp [mul_assoc]
