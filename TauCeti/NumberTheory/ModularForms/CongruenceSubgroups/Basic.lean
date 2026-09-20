@@ -7,6 +7,7 @@ module
 
 public import Mathlib.GroupTheory.Index
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
+public import TauCeti.GroupTheory.Index.Basic
 public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 
 import Mathlib.Algebra.Field.ZMod
@@ -69,9 +70,11 @@ infrastructure independent of the diamond operators.
 * `CongruenceSubgroup.Gamma1_map_le_Gamma1_map_of_dvd`: the antitonicity `Γ₁(N) ≤ Γ₁(M)` for
   `M ∣ N`, after mapping to `GL₂(ℝ)`.
 * `CongruenceSubgroup.mapGL_mem_normalizer_Gamma1_map` and
-  `CongruenceSubgroup.Gamma1_map_inv_conjAct_eq`: `(Gamma1 N).map (mapGL S)` is invariant
-  under conjugation by `Γ₀(N)` elements in `GL₂(S)`, over any commutative ring `S`, stated as
-  normalizer membership and — over `ℝ` — as a pointwise conjugation.
+  `CongruenceSubgroup.Gamma1_map_inv_conjAct_eq`:
+  `(Gamma1 N).map (mapGL S)` is invariant under conjugation by `Γ₀(N)` elements in `GL₂(S)`,
+  over any commutative ring `S`, stated as normalizer membership and — over `ℝ` — as a
+  pointwise conjugation. `CongruenceSubgroup.conjAct_mapGL_mul_smul_Gamma1` is the corresponding
+  level-transfer rule after multiplying an arbitrary real matrix on the left.
 * `CongruenceSubgroup.Gamma0Map_toHomUnits_surjective`: every unit of `ZMod N` is the
   lower-right entry of a matrix in `Γ₀(N)` (via strong approximation for `SL₂`).
 * `CongruenceSubgroup.exists_mem_Gamma_map_intCast_zmod_eq`: **strong approximation along a
@@ -88,6 +91,8 @@ infrastructure independent of the diamond operators.
 * `CongruenceSubgroup.neg_one_mem_Gamma0` and
   `CongruenceSubgroup.Gamma0Map_toHomUnits_negOne`: `-I ∈ Γ₀(N)`, with lower-right entry the
   unit `-1`; `CongruenceSubgroup.neg_one_mem_Gamma1_iff`: `-I ∈ Γ₁(N) ↔ N ∣ 2`.
+* `CongruenceSubgroup.withCenter_le_Gamma0`: adjoining the centre of `SL₂(ℤ)` to a subgroup of
+  `Γ₀(N)` keeps it inside `Γ₀(N)`, since `Γ₀(N)` already contains `-I`.
 * `CongruenceSubgroup.Gamma0_prime_index`: `[SL₂(ℤ) : Γ₀(p)] = p + 1` for prime `p`.
 * `CongruenceSubgroup.Gamma0_relIndex_pow_succ`: `[Γ₀(pᵏ) : Γ₀(p^(k+1))] = p` for `0 < p`
   and `0 < k`.
@@ -277,6 +282,14 @@ theorem Gamma1_map_inv_conjAct_eq (g : ↥(Gamma0 N)) :
   Subgroup.conjAct_pointwise_smul_eq_self
     (Subgroup.inv_mem _ (mapGL_mem_normalizer_Gamma1_map ℝ g))
 
+/-- Left multiplication by an element of `Γ₀(N)` does not change the conjugated real
+`Γ₁(N)`-level. -/
+theorem conjAct_mapGL_mul_smul_Gamma1 {A : SL(2, ℤ)} (hA : A ∈ Gamma0 N)
+    (x : GL (Fin 2) ℝ) :
+    ConjAct.toConjAct (mapGL ℝ A * x)⁻¹ • (Gamma1 N).map (mapGL ℝ) =
+      ConjAct.toConjAct x⁻¹ • (Gamma1 N).map (mapGL ℝ) := by
+  rw [_root_.mul_inv_rev, map_mul, mul_smul, Gamma1_map_inv_conjAct_eq ⟨A, hA⟩]
+
 /-- If two `Γ₀(N)` elements have equal image under `Gamma0Map`, their ratio
 `g₁ · g₂⁻¹` lies in `Γ₁(N)` (as an `SL₂(ℤ)` element). -/
 lemma mul_inv_mem_Gamma1_of_Gamma0Map_eq (g₁ g₂ : ↥(Gamma0 N))
@@ -394,6 +407,19 @@ is what an argument comparing the entries of two lifts needs. -/
 /-- `-I` lies in `Γ₀(N)`: its lower-left entry is `0`. -/
 theorem neg_one_mem_Gamma0 : (-1 : SL(2, ℤ)) ∈ Gamma0 N := by
   simp
+
+/-- **Adjoining the centre keeps a subgroup of `Γ₀(N)` inside `Γ₀(N)`.** The central factor is
+absorbed: the centre of `SL₂(ℤ)` is `{±I}`, and `-I` already lies in `Γ₀(N)`.
+
+`Γ.withCenter` is the enlargement that makes "this subgroup contains `-I`" true, which matters
+because `Γ₁(N)` does not contain `-I` once `N ∤ 2`; this lemma says the enlargement is free as
+far as `Γ₀(N)` is concerned. -/
+theorem withCenter_le_Gamma0 {H : Subgroup SL(2, ℤ)} (hH : H ≤ Gamma0 N) :
+    H.withCenter ≤ Gamma0 N :=
+  Subgroup.withCenter_le_iff.mpr ⟨hH, fun _ hγ ↦ by
+    rcases mem_center_iff_eq_one_or_eq_neg_one.mp hγ with rfl | rfl
+    · exact one_mem _
+    · exact neg_one_mem_Gamma0⟩
 
 /-- `-I ∈ Γ₀(N)`, packaged as an element of the subgroup. It is the representative through
 which the diamond operator at `-1` is computed. -/
