@@ -48,6 +48,10 @@ the chain is nonzero: five `(-2)`-indices never form a pentagon. Likewise, a com
 three other `(-2)`-indices cannot meet a fourth one
 ([Stacks, Lemma 55.5.6](https://stacks.math.columbia.edu/tag/0C86)).
 
+The remaining five-component tree has a chain of length three ending in a fork. All five weights
+and all four displayed intersections are equal, and every other intersection vanishes
+([Stacks, Lemma 55.5.7](https://stacks.math.columbia.edu/tag/0C87)).
+
 These arguments use only the self-intersections `aᵢᵢ = -2wᵢ`, not the genera. For a pair, negative
 definiteness of the principal `2 × 2` submatrix gives `aᵢⱼ² < 4wᵢwⱼ`, and `lcm(wᵢ, wⱼ) ∣ aᵢⱼ`
 leaves only the three solutions above. For a triple, negative definiteness of the principal
@@ -87,6 +91,8 @@ intersection form on the vectors supported on a proper subset of the components 
   not close up into a pentagon.
 * `TauCeti.NumericalType.intersection_eq_zero_of_star_five`: a `(-2)`-index meeting three others
   meets no fourth one.
+* `TauCeti.NumericalType.exists_weight_intersection_fork_five_eq`: the five-component fork is
+  simply laced, with equal weights and no additional edges.
 -/
 
 public section
@@ -620,6 +626,28 @@ private lemma chain_five_form_neg (hcard : 5 < Fintype.card T.Component)
   ring_nf at hneg ⊢
   exact hneg
 
+/-- The intersection form of a numerical type at an integral vector supported on five distinct
+components forming the fork with edges `h - i - j - k` and `j - l` is negative when its first
+entry is nonzero and the fork is a proper subgraph. -/
+private lemma fork_five_form_neg (hcard : 5 < Fintype.card T.Component)
+    {h i j k l : T.Component}
+    (hhi : h ≠ i) (hhj : h ≠ j) (hhk : h ≠ k) (hhl : h ≠ l) (hij : i ≠ j) (hik : i ≠ k)
+    (hil : i ≠ l) (hjk : j ≠ k) (hjl : j ≠ l) (hkl : k ≠ l)
+    (hhj0 : T.intersection h j = 0) (hhk0 : T.intersection h k = 0)
+    (hhl0 : T.intersection h l = 0) (hik0 : T.intersection i k = 0)
+    (hil0 : T.intersection i l = 0) (hkl0 : T.intersection k l = 0)
+    (y₁ y₂ y₃ y₄ y₅ : ℤ) (hy₁ : y₁ ≠ 0) :
+    T.intersection h h * y₁ ^ 2 + T.intersection i i * y₂ ^ 2 + T.intersection j j * y₃ ^ 2 +
+        T.intersection k k * y₄ ^ 2 + T.intersection l l * y₅ ^ 2 +
+      2 * (T.intersection h i * y₁ * y₂ + T.intersection i j * y₂ * y₃ +
+        T.intersection j k * y₃ * y₄ + T.intersection j l * y₃ * y₅) < 0 := by
+  have hneg := T.intersection_five_neg hcard hhi hhj hhk hhl hij hik hil hjk hjl hkl
+    (y₁ := y₁) (y₂ := y₂) (y₃ := y₃) (y₄ := y₄) (y₅ := y₅)
+    (fun hy ↦ hy₁ hy.1)
+  rw [hhj0, hhk0, hhl0, hik0, hil0, hkl0] at hneg
+  ring_nf at hneg ⊢
+  exact hneg
+
 /-- The factor data used to classify a chain of five components. The four-component analysis of
 the two overlapping windows of the chain shows that every intersection number of two
 nonconsecutive components other than that of the two ends vanishes, bounds each of the eight
@@ -850,6 +878,100 @@ theorem intersection_eq_zero_of_star_five (hcard : 5 < Fintype.card T.Component)
   simp only [one_pow, mul_one] at hneg
   rw [hw, hw₂, hw₃, hw₄, hw₅] at hneg
   linarith
+
+/-- Five components of self-intersection `-2w` in a numerical type with more than five components
+forming the fork
+
+`h - i - j - k`, with a second leaf `l` at `j`,
+
+all have the same weight, every displayed intersection equals that weight, and every other
+intersection vanishes. This is the classification of
+[Stacks, Lemma 55.5.7](https://stacks.math.columbia.edu/tag/0C87). The corresponding inequalities
+on the multiplicities follow from `TauCeti.NumericalType.multiplicity_mul_intersection_le`. -/
+theorem exists_weight_intersection_fork_five_eq (hcard : 5 < Fintype.card T.Component)
+    {h i j k l : T.Component}
+    (hh : T.intersection h h = -(2 * (T.weight h : ℤ)))
+    (hi : T.intersection i i = -(2 * (T.weight i : ℤ)))
+    (hj : T.intersection j j = -(2 * (T.weight j : ℤ)))
+    (hk : T.intersection k k = -(2 * (T.weight k : ℤ)))
+    (hl : T.intersection l l = -(2 * (T.weight l : ℤ)))
+    (hhj : h ≠ j) (hhk : h ≠ k) (hhl : h ≠ l) (hik : i ≠ k) (hil : i ≠ l)
+    (hkl : k ≠ l) (hhi : 0 < T.intersection h i) (hij : 0 < T.intersection i j)
+    (hjk : 0 < T.intersection j k) (hjl : 0 < T.intersection j l) :
+    ∃ w : ℕ+, (T.weight h : ℤ) = w ∧ (T.weight i : ℤ) = w ∧
+      (T.weight j : ℤ) = w ∧ (T.weight k : ℤ) = w ∧ (T.weight l : ℤ) = w ∧
+      T.intersection h i = w ∧ T.intersection i j = w ∧ T.intersection j k = w ∧
+      T.intersection j l = w ∧ T.intersection h j = 0 ∧ T.intersection h k = 0 ∧
+      T.intersection h l = 0 ∧ T.intersection i k = 0 ∧ T.intersection i l = 0 ∧
+      T.intersection k l = 0 := by
+  have hhi' : h ≠ i := by rintro rfl; linarith
+  have hij' : i ≠ j := by rintro rfl; linarith
+  have hjk' : j ≠ k := by rintro rfl; linarith
+  have hjl' : j ≠ l := by rintro rfl; linarith
+  -- The three-legged star at `j` fixes four weights and its three edges. The chain from `h` to `k`
+  -- shows that no additional edge can meet `h` and bounds the divisibility factors of `h - i`.
+  obtain ⟨w, hwj, hwi, hwk, hwl, aji, ajk, ajl, zik, zil, zkl⟩ :=
+    T.exists_weight_intersection_star_four_eq (by omega) hj hi hk hl hik hil hkl
+      (T.intersection_comm i j ▸ hij) hjk hjl
+  have aij : T.intersection i j = w := T.intersection_comm j i ▸ aji
+  obtain ⟨zhj, -, zhk, p₁, q₁, p₂, q₂, p₃, q₃, hp₁1, hp₁2, hq₁1, hq₁2, -, -, -, -, -, -, -, -,
+      ap₁, aq₁, ap₂, aq₂, ap₃, aq₃, hdet⟩ :=
+    T.chain_four_factors (by omega) hh hi hj hk hhj hhk hik hhi hij hjk
+  obtain ⟨-, -, zhl⟩ := T.intersection_eq_zero_of_chain_four (by omega) hh hi hj hl
+    hhj hhl hil hhi hij hjl
+  have hw0 : (w : ℤ) ≠ 0 := by positivity
+  have factor_eq_one (a : ℤ) (ha : (w : ℤ) = w * a) : a = 1 := by
+    exact (mul_left_cancel₀ hw0 (by rw [mul_one]; exact ha)).symm
+  have hp₂1 : p₂ = 1 := by
+    rw [hwi, aij] at ap₂
+    exact factor_eq_one p₂ ap₂
+  have hq₂1 : q₂ = 1 := by
+    rw [hwj, aij] at aq₂
+    exact factor_eq_one q₂ aq₂
+  have hp₃1 : p₃ = 1 := by
+    rw [hwj, ajk] at ap₃
+    exact factor_eq_one p₃ ap₃
+  have hq₃1 : q₃ = 1 := by
+    rw [hwk, ajk] at aq₃
+    exact factor_eq_one q₃ aq₃
+  have hpqle : p₁ * q₁ ≤ 2 := by
+    rw [hp₂1, hq₂1, hp₃1, hq₃1] at hdet
+    norm_num at hdet
+    omega
+  have hpq1 : p₁ * q₁ = 1 := by
+    rcases eq_or_lt_of_le hpqle with hpq | hpq
+    · have hp₁_cases : p₁ = 1 ∨ p₁ = 2 := by omega
+      have hpq_cases : (p₁ = 1 ∧ q₁ = 2) ∨ (p₁ = 2 ∧ q₁ = 1) := by
+        rcases hp₁_cases with rfl | rfl <;> simp_all
+      -- The two orientations of ratio two are affine. Their displayed vectors span the kernels
+      -- of the corresponding intersection matrices, contradicting negative definiteness.
+      rcases hpq_cases with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+      · have hwh : (T.weight h : ℤ) = 2 * w := by
+          rw [hwi] at aq₁
+          omega
+        have ahi : T.intersection h i = 2 * w := by
+          rw [hwi] at aq₁
+          rw [mul_comm]
+          exact aq₁
+        linarith [T.fork_five_form_neg hcard hhi' hhj hhk hhl hij' hik hil hjk' hjl' hkl
+          zhj zhk zhl zik zil zkl 1 2 2 1 1 one_ne_zero]
+      · have hwh : 2 * (T.weight h : ℤ) = w := by
+          rw [hwi] at aq₁
+          omega
+        have ahi : T.intersection h i = w := by
+          rw [hwi, mul_one] at aq₁
+          exact aq₁
+        linarith [T.fork_five_form_neg hcard hhi' hhj hhk hhl hij' hik hil hjk' hjl' hkl
+          zhj zhk zhl zik zil zkl 2 2 2 1 1 (by omega)]
+    · have hpqpos : 0 < p₁ * q₁ := mul_pos (by omega) (by omega)
+      omega
+  have hp₁le : p₁ ≤ p₁ * q₁ := le_mul_of_one_le_right (by omega) hq₁1
+  have hq₁le : q₁ ≤ p₁ * q₁ := le_mul_of_one_le_left (by omega) hp₁1
+  have hp₁1 : p₁ = 1 := by omega
+  have hq₁1 : q₁ = 1 := by omega
+  have ahi : T.intersection h i = w := by rw [hwi, hq₁1, mul_one] at aq₁; exact aq₁
+  have hwh : (T.weight h : ℤ) = w := by rw [hp₁1, mul_one, ahi] at ap₁; exact ap₁.symm
+  exact ⟨w, hwh, hwi, hwj, hwk, hwl, ahi, aij, ajk, ajl, zhj, zhk, zhl, zik, zil, zkl⟩
 
 end NumericalType
 
