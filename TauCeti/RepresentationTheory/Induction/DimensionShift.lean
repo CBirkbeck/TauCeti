@@ -15,27 +15,35 @@ For a representation `A` of a group `G`, the embedding `A ⟶ Coind_⊥^G A` int
 coinduced from the trivial subgroup and the projection `Ind_⊥^G A ⟶ A` from the induced
 representation give short exact sequences
 
-`0 ⟶ A ⟶ Coind_⊥^G A ⟶ up A ⟶ 0` and `0 ⟶ down A ⟶ Ind_⊥^G A ⟶ A ⟶ 0`,
+`0 ⟶ A ⟶ Coind_⊥^G A ⟶ dimensionShiftUp A ⟶ 0` and
+`0 ⟶ dimensionShiftDown A ⟶ Ind_⊥^G A ⟶ A ⟶ 0`,
 
-which stay short exact after restriction along any group homomorphism. The middle terms have
-vanishing positive-degree cohomology, respectively homology, and for a finite group vanishing Tate
-cohomology in every degree, so the connecting homomorphisms of these sequences shift degrees. This
-is the *dimension shifting* of Milne, *Class Field Theory*, II 1.13 and 1.28; this file provides
-the sequences themselves.
+which stay short exact after restriction along any monoid homomorphism `H →* G`. The middle terms
+have vanishing positive-degree cohomology, respectively homology, and for a finite group vanishing
+Tate cohomology in every degree, so the connecting homomorphisms of these sequences shift degrees.
+This is the *dimension shifting* of Milne, *Class Field Theory*, II 1.13 and 1.28; this file
+provides the sequences themselves.
 
 The constructions follow `ClassFieldTheory/Cohomology/Functors/UpDown.lean` in
 `kbuzzard/ClassFieldTheory`, commit `ccc3323c6750abca25b49b35106f54eb3a398509`.
 
 ## Main definitions
 
-* `Rep.up`, `Rep.upπ`, `Rep.upSES`: the cokernel of `A ⟶ Coind_⊥^G A` and its short complex.
-* `Rep.down`, `Rep.downι`, `Rep.downSES`: the kernel of `Ind_⊥^G A ⟶ A` and its short complex.
+* `Rep.dimensionShiftUp`, `Rep.dimensionShiftUpπ`, `Rep.dimensionShiftUpSES`: the cokernel of
+  `A ⟶ Coind_⊥^G A` and its short complex.
+* `Rep.dimensionShiftDown`, `Rep.dimensionShiftDownι`, `Rep.dimensionShiftDownSES`: the kernel of
+  `Ind_⊥^G A ⟶ A` and its short complex.
+* `Rep.dimensionShiftUpπIsCokernel`, `Rep.dimensionShiftDownιIsKernel`: their universal
+  properties. The definitions are opaque, so consumers construct maps through these properties.
 
 ## Main statements
 
-* `Rep.upSES_shortExact`, `Rep.upSES_res_shortExact`: the sequence for `up` is short exact, also
-  after restriction.
-* `Rep.downSES_shortExact`, `Rep.downSES_res_shortExact`: the same for `down`.
+* `Rep.dimensionShiftUpSES_def`, `Rep.dimensionShiftDownSES_def`: the maps in the two short
+  complexes.
+* `Rep.dimensionShiftUpSES_shortExact`, `Rep.dimensionShiftUpSES_res_shortExact`: the upward
+  sequence is short exact, also after restriction.
+* `Rep.dimensionShiftDownSES_shortExact`, `Rep.dimensionShiftDownSES_res_shortExact`: the same for
+  the downward sequence.
 
 ## References
 
@@ -53,117 +61,107 @@ namespace Rep
 
 variable {k G : Type u} [CommRing k] [Group G]
 
-/-! ### The cokernel `up` -/
+/-! ### The upward dimension shift -/
 
-/-- The cokernel of the embedding `A ⟶ Coind_⊥^G A`, so that `Hⁿ⁺¹(G, up A) ≅ Hⁿ⁺²(G, A)`. -/
-def up (A : Rep k G) : Rep k G := cokernel (coindBotUnit A)
+/-- The cokernel of the embedding `A ⟶ Coind_⊥^G A`, so that
+`Hⁿ⁺¹(G, dimensionShiftUp A) ≅ Hⁿ⁺²(G, A)`. -/
+def dimensionShiftUp (A : Rep k G) : Rep k G := cokernel (coindBotUnit A)
 
-/-- The projection from the coinduced module onto `up A`. -/
-def upπ (A : Rep k G) : coindBot k G A.V ⟶ up A := cokernel.π (coindBotUnit A)
+/-- The projection from the coinduced module onto `dimensionShiftUp A`. -/
+def dimensionShiftUpπ (A : Rep k G) : coindBot k G A.V ⟶ dimensionShiftUp A :=
+  cokernel.π (coindBotUnit A)
 
-/-- The projection onto `up A` is an epimorphism. -/
-instance upπ_epi (A : Rep k G) : Epi (upπ A) :=
+/-- The projection onto `dimensionShiftUp A` is an epimorphism. -/
+instance dimensionShiftUpπ_epi (A : Rep k G) : Epi (dimensionShiftUpπ A) :=
   inferInstanceAs (Epi (cokernel.π (coindBotUnit A)))
 
-/-- The embedding into the coinduced module followed by the projection onto `up A` is zero. -/
+/-- The embedding into the coinduced module followed by the dimension-shift projection is zero. -/
 @[reassoc (attr := simp)]
-theorem coindBotUnit_comp_upπ (A : Rep k G) : coindBotUnit A ≫ upπ A = 0 :=
+theorem coindBotUnit_comp_dimensionShiftUpπ (A : Rep k G) :
+    coindBotUnit A ≫ dimensionShiftUpπ A = 0 :=
   cokernel.condition (coindBotUnit A)
 
-/-- The projection onto `up A` is a cokernel of the embedding into the coinduced module. -/
-def upπIsCokernel (A : Rep k G) :
-    IsColimit (CokernelCofork.ofπ (upπ A) (coindBotUnit_comp_upπ A)) :=
+/-- The dimension-shift projection is a cokernel of the embedding into the coinduced module. -/
+def dimensionShiftUpπIsCokernel (A : Rep k G) :
+    IsColimit (CokernelCofork.ofπ (dimensionShiftUpπ A)
+      (coindBotUnit_comp_dimensionShiftUpπ A)) :=
   cokernelIsCokernel (coindBotUnit A)
 
-/-- The short complex `A ⟶ Coind_⊥^G A ⟶ up A` defining `up A`. -/
-def upSES (A : Rep k G) : ShortComplex (Rep k G) :=
+/-- The short complex `A ⟶ Coind_⊥^G A ⟶ dimensionShiftUp A`. -/
+def dimensionShiftUpSES (A : Rep k G) : ShortComplex (Rep k G) :=
   ShortComplex.cokernelSequence (coindBotUnit A)
 
-/-- The short complex defining `up A` has maps the embedding into the coinduced module and the
-projection onto `up A`. -/
-theorem upSES_def (A : Rep k G) :
-    upSES A = ShortComplex.mk (coindBotUnit A) (upπ A) (coindBotUnit_comp_upπ A) :=
+/-- The upward dimension-shifting short complex has maps the embedding into the coinduced module
+and the dimension-shift projection. -/
+@[simp]
+theorem dimensionShiftUpSES_def (A : Rep k G) :
+    dimensionShiftUpSES A = ShortComplex.mk (coindBotUnit A) (dimensionShiftUpπ A)
+      (coindBotUnit_comp_dimensionShiftUpπ A) :=
   (rfl)
 
-/-- The first term of the short complex defining `up A` is `A`. -/
-@[simp]
-theorem upSES_X₁ (A : Rep k G) : (upSES A).X₁ = A := (rfl)
-
-/-- The middle term of the short complex defining `up A` is the coinduced module. -/
-@[simp]
-theorem upSES_X₂ (A : Rep k G) : (upSES A).X₂ = coindBot k G A.V := (rfl)
-
-/-- The last term of the short complex defining `up A` is `up A`. -/
-@[simp]
-theorem upSES_X₃ (A : Rep k G) : (upSES A).X₃ = up A := (rfl)
-
-/-- The short complex `A ⟶ Coind_⊥^G A ⟶ up A` is short exact. -/
-theorem upSES_shortExact (A : Rep k G) : (upSES A).ShortExact where
+/-- The short complex `A ⟶ Coind_⊥^G A ⟶ dimensionShiftUp A` is short exact. -/
+theorem dimensionShiftUpSES_shortExact (A : Rep k G) : (dimensionShiftUpSES A).ShortExact where
+  -- Instances do not fire through the named complex; its maps reduce to the two maps below.
   exact := ShortComplex.cokernelSequence_exact (coindBotUnit A)
   mono_f := inferInstanceAs (Mono (coindBotUnit A))
-  epi_g := inferInstanceAs (Epi (upπ A))
+  epi_g := inferInstanceAs (Epi (dimensionShiftUpπ A))
 
-/-- The short complex `A ⟶ Coind_⊥^G A ⟶ up A` stays short exact after restriction along any
+/-- The upward dimension-shifting short complex stays short exact after restriction along any
 monoid homomorphism `f : H →* G`. -/
-theorem upSES_res_shortExact (A : Rep k G) {H : Type*} [Monoid H] (f : H →* G) :
-    ((upSES A).map (resFunctor f)).ShortExact :=
-  (shortExact_res f).mpr (upSES_shortExact A)
+theorem dimensionShiftUpSES_res_shortExact (A : Rep k G) {H : Type*} [Monoid H] (f : H →* G) :
+    ((dimensionShiftUpSES A).map (resFunctor f)).ShortExact :=
+  (shortExact_res f).mpr (dimensionShiftUpSES_shortExact A)
 
-/-! ### The kernel `down` -/
+/-! ### The downward dimension shift -/
 
-/-- The kernel of the projection `Ind_⊥^G A ⟶ A`, so that `Ĥⁿ(G, A) ≅ Ĥⁿ⁺¹(G, down A)` when `G` is
-finite. -/
-def down (A : Rep k G) : Rep k G := kernel (indBotCounit A)
+/-- The kernel of the projection `Ind_⊥^G A ⟶ A`, so that
+`Ĥⁿ(G, A) ≅ Ĥⁿ⁺¹(G, dimensionShiftDown A)` when `G` is finite. -/
+def dimensionShiftDown (A : Rep k G) : Rep k G := kernel (indBotCounit A)
 
-/-- The inclusion of `down A` into the induced module. -/
-def downι (A : Rep k G) : down A ⟶ indBot k G A.V := kernel.ι (indBotCounit A)
+/-- The inclusion of `dimensionShiftDown A` into the induced module. -/
+def dimensionShiftDownι (A : Rep k G) : dimensionShiftDown A ⟶ indBot k G A.V :=
+  kernel.ι (indBotCounit A)
 
-/-- The inclusion of `down A` is a monomorphism. -/
-instance downι_mono (A : Rep k G) : Mono (downι A) :=
+/-- The inclusion of `dimensionShiftDown A` is a monomorphism. -/
+instance dimensionShiftDownι_mono (A : Rep k G) : Mono (dimensionShiftDownι A) :=
   inferInstanceAs (Mono (kernel.ι (indBotCounit A)))
 
-/-- The inclusion of `down A` followed by the projection onto `A` is zero. -/
+/-- The dimension-shift inclusion followed by the projection onto `A` is zero. -/
 @[reassoc (attr := simp)]
-theorem downι_comp_indBotCounit (A : Rep k G) : downι A ≫ indBotCounit A = 0 :=
+theorem dimensionShiftDownι_comp_indBotCounit (A : Rep k G) :
+    dimensionShiftDownι A ≫ indBotCounit A = 0 :=
   kernel.condition (indBotCounit A)
 
-/-- The inclusion of `down A` is a kernel of the projection onto `A`. -/
-def downιIsKernel (A : Rep k G) :
-    IsLimit (KernelFork.ofι (downι A) (downι_comp_indBotCounit A)) :=
+/-- The dimension-shift inclusion is a kernel of the projection onto `A`. -/
+def dimensionShiftDownιIsKernel (A : Rep k G) :
+    IsLimit (KernelFork.ofι (dimensionShiftDownι A)
+      (dimensionShiftDownι_comp_indBotCounit A)) :=
   kernelIsKernel (indBotCounit A)
 
-/-- The short complex `down A ⟶ Ind_⊥^G A ⟶ A` defining `down A`. -/
-def downSES (A : Rep k G) : ShortComplex (Rep k G) :=
+/-- The short complex `dimensionShiftDown A ⟶ Ind_⊥^G A ⟶ A`. -/
+def dimensionShiftDownSES (A : Rep k G) : ShortComplex (Rep k G) :=
   ShortComplex.kernelSequence (indBotCounit A)
 
-/-- The short complex defining `down A` has maps the inclusion of `down A` and the projection onto
-`A`. -/
-theorem downSES_def (A : Rep k G) :
-    downSES A = ShortComplex.mk (downι A) (indBotCounit A) (downι_comp_indBotCounit A) :=
+/-- The downward dimension-shifting short complex has maps the dimension-shift inclusion and the
+projection onto `A`. -/
+@[simp]
+theorem dimensionShiftDownSES_def (A : Rep k G) :
+    dimensionShiftDownSES A = ShortComplex.mk (dimensionShiftDownι A) (indBotCounit A)
+      (dimensionShiftDownι_comp_indBotCounit A) :=
   (rfl)
 
-/-- The first term of the short complex defining `down A` is `down A`. -/
-@[simp]
-theorem downSES_X₁ (A : Rep k G) : (downSES A).X₁ = down A := (rfl)
-
-/-- The middle term of the short complex defining `down A` is the induced module. -/
-@[simp]
-theorem downSES_X₂ (A : Rep k G) : (downSES A).X₂ = indBot k G A.V := (rfl)
-
-/-- The last term of the short complex defining `down A` is `A`. -/
-@[simp]
-theorem downSES_X₃ (A : Rep k G) : (downSES A).X₃ = A := (rfl)
-
-/-- The short complex `down A ⟶ Ind_⊥^G A ⟶ A` is short exact. -/
-theorem downSES_shortExact (A : Rep k G) : (downSES A).ShortExact where
+/-- The short complex `dimensionShiftDown A ⟶ Ind_⊥^G A ⟶ A` is short exact. -/
+theorem dimensionShiftDownSES_shortExact (A : Rep k G) :
+    (dimensionShiftDownSES A).ShortExact where
+  -- Instances do not fire through the named complex; its maps reduce to the two maps below.
   exact := ShortComplex.kernelSequence_exact (indBotCounit A)
-  mono_f := inferInstanceAs (Mono (downι A))
+  mono_f := inferInstanceAs (Mono (dimensionShiftDownι A))
   epi_g := inferInstanceAs (Epi (indBotCounit A))
 
-/-- The short complex `down A ⟶ Ind_⊥^G A ⟶ A` stays short exact after restriction along any
+/-- The downward dimension-shifting short complex stays short exact after restriction along any
 monoid homomorphism `f : H →* G`. -/
-theorem downSES_res_shortExact (A : Rep k G) {H : Type*} [Monoid H] (f : H →* G) :
-    ((downSES A).map (resFunctor f)).ShortExact :=
-  (shortExact_res f).mpr (downSES_shortExact A)
+theorem dimensionShiftDownSES_res_shortExact (A : Rep k G) {H : Type*} [Monoid H] (f : H →* G) :
+    ((dimensionShiftDownSES A).map (resFunctor f)).ShortExact :=
+  (shortExact_res f).mpr (dimensionShiftDownSES_shortExact A)
 
 end Rep
