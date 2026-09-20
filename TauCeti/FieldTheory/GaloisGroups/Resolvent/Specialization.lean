@@ -51,8 +51,11 @@ it is not the substitution above.
   base change.
 * `MvPolynomial.monic_galResolvent` and `MvPolynomial.natDegree_galResolvent`: the orbit product
   is monic of degree the size of the orbit, whatever the values of the orbit at `x` are.
+* `MvPolynomial.roots_galResolvent`: over a domain its roots are, with multiplicity, the values
+  of the orbit at `x`.
 * `MvPolynomial.galResolvent_comp_perm` and `MvPolynomial.galResolvent_map`: it does not depend
   on the numbering of the roots, and it commutes with a ring morphism applied to them.
+* `MvPolynomial.galResolvent_rename`: renaming the invariant does not change the orbit resolvent.
 * `TauCeti.monic_map_vietaHom` and `TauCeti.natDegree_map_vietaHom`: the specialization is monic
   of degree the size of the orbit, over every nonzero coefficient ring.
 -/
@@ -78,6 +81,13 @@ theorem galResolvent_def (Φ : MvPolynomial (Fin n) ℤ) (x : Fin n → L) :
       ∏ Ψ ∈ renameOrbit Φ,
         (Polynomial.X - Polynomial.C (MvPolynomial.eval₂ (Int.castRingHom L) x Ψ)) := (rfl)
 
+/-- A renamed invariant has the same orbit resolvent at every root family. -/
+@[simp]
+theorem galResolvent_rename (e : Equiv.Perm (Fin n)) (Φ : MvPolynomial (Fin n) ℤ)
+    (x : Fin n → L) :
+    galResolvent (rename (⇑e) Φ) x = galResolvent Φ x := by
+  rw [galResolvent_def, galResolvent_def, renameOrbit_rename]
+
 /-- The orbit resolvent at `x` is the image of the universal resolvent under evaluation at `x`. -/
 theorem map_universalResolvent_eq_galResolvent (Φ : MvPolynomial (Fin n) ℤ) (x : Fin n → L) :
     (universalResolvent Φ).map (MvPolynomial.eval₂Hom (Int.castRingHom L) x) =
@@ -96,6 +106,19 @@ theorem natDegree_galResolvent [Nontrivial L] (Φ : MvPolynomial (Fin n) ℤ) (x
     (galResolvent Φ x).natDegree = (renameOrbit Φ).card := by
   rw [galResolvent, natDegree_prod_of_monic _ _ fun _ _ => monic_X_sub_C _]
   simp
+
+/-- **The roots of the orbit resolvent are the values of the orbit.** Over a domain the orbit
+resolvent has, with multiplicity, one root for each element of the rename-orbit of `Φ`, namely its
+value at `x`; distinct orbit elements may take the same value there. -/
+@[simp]
+theorem roots_galResolvent [IsDomain L] (Φ : MvPolynomial (Fin n) ℤ) (x : Fin n → L) :
+    (galResolvent Φ x).roots =
+      (renameOrbit Φ).val.map fun Ψ => MvPolynomial.eval₂ (Int.castRingHom L) x Ψ := by
+  have hprod : galResolvent Φ x =
+      (((renameOrbit Φ).val.map fun Ψ => MvPolynomial.eval₂ (Int.castRingHom L) x Ψ).map
+        fun a => Polynomial.X - Polynomial.C a).prod := by
+    rw [galResolvent_def, Finset.prod_eq_multiset_prod, Multiset.map_map, Function.comp_def]
+  rw [hprod, Polynomial.roots_multiset_prod_X_sub_C]
 
 /-- Renumbering the roots leaves the orbit resolvent unchanged, since the product runs over the
 whole permutation orbit of `Φ`. -/
