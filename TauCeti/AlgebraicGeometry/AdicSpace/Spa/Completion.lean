@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.AdicSpace.ResidueField
+public import TauCeti.AlgebraicGeometry.AdicSpace.ResidueField.Valued
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Comap
 public import Mathlib.Topology.Algebra.UniformRing
 import TauCeti.RingTheory.Valuation.Continuous.Valued
