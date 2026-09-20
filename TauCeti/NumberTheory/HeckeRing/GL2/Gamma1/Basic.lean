@@ -37,15 +37,7 @@ Chris Birkbeck).
 ## Main results
 
 * the `IsHeckeTriple (Delta0 N) ((Gamma1 N).map (mapGL ℚ)) ((Gamma1 N).map (mapGL ℚ))`
-  instance — the only thing this file exports, and the reason it exists.
-
-The image of `Γ₁(N)` in `GL₂(ℚ)` is written `(Gamma1 N).map (mapGL ℚ)` throughout, with no
-abbreviation. A `Gamma1Image` definition once stood here with membership, `≤ Γ₀(N)` and
-`≤ Δ₀(N)` satellites, but every use of it was inside this file: instance search does not unfold
-a `def`, so the triple below had to be stated at the unfolded spelling anyway, and consumers —
-who meet the level of a modular form as `(Gamma1 N).map (mapGL ℝ)` — never had a reason to
-write the abbreviated form. `Gamma0Image` is a different case and stays: it is used across
-seven files.
+  instance.
 
 ## References
 
@@ -73,8 +65,8 @@ companion arrives in the same shape. Instance search does not unfold a `def`, so
 for this subgroup would not be found here anyway. -/
 instance : IsHeckeTriple (Delta0 N) ((Gamma1 N).map (mapGL ℚ)) ((Gamma1 N).map (mapGL ℚ)) :=
   IsHeckeTriple.of_diagonal
-    (fun _ hg ↦ Gamma0Image_le_Delta0 N ((mem_Gamma0Image_iff N).mpr
-      (Subgroup.mem_map.mp (Subgroup.map_mono (Gamma1_in_Gamma0 N) hg))))
+    (fun _ hg ↦ Gamma0Image_le_Delta0 N
+      ((Gamma0Image_def N).symm ▸ Subgroup.map_mono (Gamma1_in_Gamma0 N) hg))
     (Delta0_le_commensurator_map N (Gamma1 N))
 
 end HeckeRing.GL2
