@@ -5,6 +5,8 @@ Authors: Claude
 -/
 module
 
+import TauCeti.Algebra.Homology.Ext.Basic
+
 public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 public import TauCeti.RepresentationTheory.Induction.TrivialSubgroup
 
@@ -93,18 +95,31 @@ def dimensionShiftUpSES (A : Rep k G) : ShortComplex (Rep k G) :=
 
 /-- The upward dimension-shifting short complex has maps the embedding into the coinduced module
 and the dimension-shift projection. -/
-@[simp]
 theorem dimensionShiftUpSES_def (A : Rep k G) :
     dimensionShiftUpSES A = ShortComplex.mk (coindBotUnit A) (dimensionShiftUpπ A)
       (coindBotUnit_comp_dimensionShiftUpπ A) :=
   (rfl)
 
+/-- The first object in the upward dimension-shifting short complex is `A`. -/
+@[simp]
+theorem dimensionShiftUpSES_X₁ (A : Rep k G) : (dimensionShiftUpSES A).X₁ = A :=
+  (rfl)
+
+/-- The middle object in the upward dimension-shifting short complex is coinduced from `⊥`. -/
+@[simp]
+theorem dimensionShiftUpSES_X₂ (A : Rep k G) :
+    (dimensionShiftUpSES A).X₂ = coindBot k G A.V :=
+  (rfl)
+
+/-- The last object in the upward dimension-shifting short complex is `dimensionShiftUp A`. -/
+@[simp]
+theorem dimensionShiftUpSES_X₃ (A : Rep k G) :
+    (dimensionShiftUpSES A).X₃ = dimensionShiftUp A :=
+  (rfl)
+
 /-- The short complex `A ⟶ Coind_⊥^G A ⟶ dimensionShiftUp A` is short exact. -/
-theorem dimensionShiftUpSES_shortExact (A : Rep k G) : (dimensionShiftUpSES A).ShortExact where
-  -- Instances do not fire through the named complex; its maps reduce to the two maps below.
-  exact := ShortComplex.cokernelSequence_exact (coindBotUnit A)
-  mono_f := inferInstanceAs (Mono (coindBotUnit A))
-  epi_g := inferInstanceAs (Epi (dimensionShiftUpπ A))
+theorem dimensionShiftUpSES_shortExact (A : Rep k G) : (dimensionShiftUpSES A).ShortExact :=
+  TauCeti.cokernelSequence_shortExact (coindBotUnit A)
 
 /-- The upward dimension-shifting short complex stays short exact after restriction along any
 monoid homomorphism `f : H →* G`. -/
@@ -144,10 +159,26 @@ def dimensionShiftDownSES (A : Rep k G) : ShortComplex (Rep k G) :=
 
 /-- The downward dimension-shifting short complex has maps the dimension-shift inclusion and the
 projection onto `A`. -/
-@[simp]
 theorem dimensionShiftDownSES_def (A : Rep k G) :
     dimensionShiftDownSES A = ShortComplex.mk (dimensionShiftDownι A) (indBotCounit A)
       (dimensionShiftDownι_comp_indBotCounit A) :=
+  (rfl)
+
+/-- The first object in the downward dimension-shifting short complex is `dimensionShiftDown A`. -/
+@[simp]
+theorem dimensionShiftDownSES_X₁ (A : Rep k G) :
+    (dimensionShiftDownSES A).X₁ = dimensionShiftDown A :=
+  (rfl)
+
+/-- The middle object in the downward dimension-shifting short complex is induced from `⊥`. -/
+@[simp]
+theorem dimensionShiftDownSES_X₂ (A : Rep k G) :
+    (dimensionShiftDownSES A).X₂ = indBot k G A.V :=
+  (rfl)
+
+/-- The last object in the downward dimension-shifting short complex is `A`. -/
+@[simp]
+theorem dimensionShiftDownSES_X₃ (A : Rep k G) : (dimensionShiftDownSES A).X₃ = A :=
   (rfl)
 
 /-- The short complex `dimensionShiftDown A ⟶ Ind_⊥^G A ⟶ A` is short exact. -/
