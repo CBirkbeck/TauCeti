@@ -33,11 +33,9 @@ separability the count drops, and without normality the minimal polynomials need
 
 ## Main results
 
-* `AlgEquiv.liftNormal_equivFieldRange_apply`: lifting the isomorphism between two embedded
+* `AlgHom.liftNormal_equivFieldRange_apply`: lifting the isomorphism between two embedded
   images carries one embedding to the other. This isolates the field-range bookkeeping.
 * `AlgEquiv.isPretransitiveAlgHom`: over a normal `M / F`, any two embeddings lie in one orbit.
-* `TauCeti.FieldTheory.apply_of_smul_eq`: an automorphism fixing an embedding fixes its values;
-  this isolates the coercion the postcomposition action introduces.
 * `TauCeti.FieldTheory.eq_one_of_forall_smul_eq`: if the embedded images generate `M`, an
   automorphism fixing every embedding is the identity.
 * `TauCeti.FieldTheory.faithfulSMul_of_normalClosure_eq_top`: equivalently, the action is
@@ -55,7 +53,7 @@ public section
 
 open Polynomial IntermediateField
 
-namespace AlgEquiv
+namespace AlgHom
 
 variable {F L M : Type*} [Field F] [Field L] [Field M] [Algebra F L] [Algebra F M]
 
@@ -72,6 +70,12 @@ theorem liftNormal_equivFieldRange_apply [Normal F M] (φ ψ : L →ₐ[F] M) (x
     AlgEquiv.symm_apply_apply, IntermediateField.algebraMap_apply,
     AlgHom.equivFieldRange_apply_coe]
 
+end AlgHom
+
+namespace AlgEquiv
+
+variable {F L M : Type*} [Field F] [Field L] [Field M] [Algebra F L] [Algebra F M]
+
 /-- **Any two embeddings into a normal extension are conjugate**, so they lie in the same orbit.
 No embedding is asserted to exist: when `L →ₐ[F] M` is empty this holds vacuously. -/
 instance isPretransitiveAlgHom [Normal F M] :
@@ -80,20 +84,13 @@ instance isPretransitiveAlgHom [Normal F M] :
   exists_smul_eq φ ψ :=
     ⟨(φ.equivFieldRange.symm.trans ψ.equivFieldRange).liftNormal M, AlgHom.ext fun x => by
       rw [smul_algHom_apply]
-      exact liftNormal_equivFieldRange_apply φ ψ x⟩
+      exact AlgHom.liftNormal_equivFieldRange_apply φ ψ x⟩
 
 end AlgEquiv
 
 namespace TauCeti.FieldTheory
 
 variable {F L M : Type*} [Field F] [Field L] [Field M] [Algebra F L] [Algebra F M]
-
-/-- **An automorphism fixing an embedding fixes its values.** The postcomposition action phrases
-the image through `f.toRingHom`, so this normalises that coercion once, instead of at each use. -/
-theorem apply_of_smul_eq {σ : M ≃ₐ[F] M} {f : L →ₐ[F] M} (h : σ • f = f) (x : L) :
-    σ (f x) = f x := by
-  simpa only [AlgEquiv.smul_algHom_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe] using
-    congrArg (fun ρ : L →ₐ[F] M => ρ x) h
 
 /-- **An automorphism fixing every embedding is the identity**, provided the embedded images of
 `L` generate `M`. -/
@@ -105,7 +102,7 @@ theorem eq_one_of_forall_smul_eq (hgen : IntermediateField.normalClosure F L M =
     rw [IntermediateField.le_iff_le, hH, Subgroup.closure_le, Set.singleton_subset_iff,
       SetLike.mem_coe, IntermediateField.mem_fixingSubgroup_iff]
     rintro _ ⟨x, rfl⟩
-    exact apply_of_smul_eq (h f) x
+    exact AlgEquiv.apply_of_smul_eq (h f) x
   have htop : (⊤ : IntermediateField F M) ≤ IntermediateField.fixedField H := by
     -- Unfold the normal closure to the supremum of the field ranges explicitly, rather than
     -- letting `iSup_le` match through the definition.

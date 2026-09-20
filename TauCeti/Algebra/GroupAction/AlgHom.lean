@@ -26,6 +26,7 @@ embeddings into a group-theoretic object; those statements need fields and live 
 
 * `AlgEquiv.smul_algHom_def`: the action is postcomposition, `σ • φ = σ.toAlgHom.comp φ`.
 * `AlgEquiv.smul_algHom_apply`: it evaluates as `σ` after `φ`.
+* `AlgEquiv.apply_of_smul_eq`: an equivalence fixing an algebra map fixes its values.
 -/
 
 public section
@@ -51,6 +52,11 @@ instance mulActionAlgHom : MulAction (M ≃ₐ[K] M) (L →ₐ[K] M) where
 @[simp]
 theorem smul_algHom_apply (σ : M ≃ₐ[K] M) (φ : L →ₐ[K] M) (x : L) : (σ • φ) x = σ (φ x) :=
   rfl
+
+/-- **An algebra equivalence fixing an algebra map fixes its values.** -/
+theorem apply_of_smul_eq {σ : M ≃ₐ[K] M} {φ : L →ₐ[K] M} (h : σ • φ = φ) (x : L) :
+    σ (φ x) = φ x := by
+  simpa only [smul_algHom_apply] using congrArg (fun ψ : L →ₐ[K] M => ψ x) h
 
 end AlgEquiv
 
