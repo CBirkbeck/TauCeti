@@ -172,38 +172,6 @@ private theorem lintegral_rpow_le_of_mul_meas_ofReal_lt_le_of_measurable_of_sFin
         rw [hconst, ENNReal.ofReal_mul hp0.le]
         ring
 
-/-- A function with a finite `L^p` norm is carried by a σ-finite part of the measure: the level
-sets `{f ≥ 1 / (n + 1)}` have finite measure by Chebyshev's inequality applied to `f ^ p`, and they
-exhaust `{f > 0}`. -/
-private theorem sigmaFinite_restrict_pos_of_lintegral_rpow_ne_top (hf : Measurable f)
-    (hp : 0 < p) (htop : ∫⁻ x, f x ^ p ∂μ ≠ ∞) : SigmaFinite (μ.restrict {x | 0 < f x}) := by
-  have hsmeas : MeasurableSet {x | 0 < f x} := measurableSet_lt measurable_const hf
-  have hlevel : ∀ n : ℕ, μ {x | ((n : ℝ≥0∞) + 1)⁻¹ ≤ f x} ≠ ∞ := by
-    intro n
-    have hne : ((n : ℝ≥0∞) + 1)⁻¹ ≠ ∞ := ENNReal.inv_ne_top.2 (by simp)
-    have hpos : (0 : ℝ≥0∞) < ((n : ℝ≥0∞) + 1)⁻¹ :=
-      ENNReal.inv_pos.2 (by simp [ENNReal.natCast_ne_top])
-    have hεpos : (0 : ℝ≥0∞) < ((n : ℝ≥0∞) + 1)⁻¹ ^ p := ENNReal.rpow_pos hpos hne
-    have hset : {x | ((n : ℝ≥0∞) + 1)⁻¹ ≤ f x} = {x | ((n : ℝ≥0∞) + 1)⁻¹ ^ p ≤ f x ^ p} :=
-      Set.ext fun x => (ENNReal.rpow_le_rpow_iff hp).symm
-    rw [hset]
-    refine ne_top_of_le_ne_top (ENNReal.div_lt_top htop hεpos.ne').ne
-      (meas_ge_le_lintegral_div (hf.pow_const p).aemeasurable hεpos.ne'
-        (ENNReal.rpow_ne_top_of_nonneg hp.le hne))
-  refine ⟨⟨⟨fun n => {x | ((n : ℝ≥0∞) + 1)⁻¹ ≤ f x} ∪ {x | 0 < f x}ᶜ, fun _ => trivial, ?_, ?_⟩⟩⟩
-  · intro n
-    have hcompl : μ.restrict {x | 0 < f x} {x | 0 < f x}ᶜ = 0 := by
-      rw [Measure.restrict_apply hsmeas.compl, Set.compl_inter_self, measure_empty]
-    refine lt_of_le_of_lt (measure_union_le _ _) ?_
-    rw [hcompl, add_zero]
-    exact lt_of_le_of_lt (Measure.restrict_apply_le _ _) (lt_top_iff_ne_top.2 (hlevel n))
-  · refine Set.eq_univ_of_forall fun x => ?_
-    rcases eq_or_ne (f x) 0 with hx | hx
-    · exact Set.mem_iUnion.2 ⟨0, Set.mem_union_right _ (by simp [hx])⟩
-    · obtain ⟨n, hn⟩ := ENNReal.exists_inv_nat_lt hx
-      exact Set.mem_iUnion.2
-        ⟨n, Set.mem_union_left _ ((ENNReal.inv_le_inv' le_self_add).trans hn.le)⟩
-
 /-- The interpolation estimate for a measurable `f` and an arbitrary measure `μ`.
 
 Only the part of `μ` carried by `{f > 0}` enters either side, and once `f` has finite `L^p` norm
@@ -231,7 +199,7 @@ private theorem lintegral_rpow_le_of_mul_meas_ofReal_lt_le_of_measurable
     exact le_top
   -- `μ` restricted to `{f > 0}` is σ-finite, so in particular s-finite.
   have hσ : SigmaFinite (μ.restrict {x | 0 < f x}) :=
-    sigmaFinite_restrict_pos_of_lintegral_rpow_ne_top hf hp0 htop
+    sigmaFinite_restrict_pos_of_lintegral_rpow_ne_top hf.aemeasurable hp0 htop
   -- The truncated integrals of the hypothesis do not see the complement of `{f > 0}`.
   have hsub : ∀ t : ℝ, 0 < t → {x | ENNReal.ofReal (c * t) < f x} ⊆ {x | 0 < f x} := by
     intro t _ x hx
