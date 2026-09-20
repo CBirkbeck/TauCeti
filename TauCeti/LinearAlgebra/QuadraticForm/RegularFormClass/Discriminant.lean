@@ -41,6 +41,8 @@ is killed by two.
 
 * `TauCeti.squareClass_prod_eq_of_equivalent`: isometric diagonal presentations have weight
   products in the same square class.
+* `TauCeti.equivalent_presentedForm_hyperbolicPlane_of_squareClass_prod_eq_neg_one`: a binary
+  presentation whose weight product has square class `[-1]` presents a hyperbolic plane.
 * `TauCeti.RegularFormClass.discr_add` and `TauCeti.RegularFormClass.discr_mul`: the discriminant
   of an orthogonal sum is the sum of the discriminants, and the discriminant of a tensor product
   of classes of ranks `m` and `n` is `d(q)^n d(r)^m`.
@@ -56,6 +58,8 @@ is killed by two.
   is the class of `-1`, and its signed discriminant is trivial.
 * `TauCeti.RegularFormClass.signedDiscr_add_hyperbolicClass`: adding a hyperbolic plane leaves the
   signed discriminant unchanged.
+* `TauCeti.RegularFormClass.eq_hyperbolicClass_of_rank_eq_two_of_discr_eq_neg_one`: a binary
+  class of discriminant `[-1]` is the hyperbolic class.
 
 ## References
 
@@ -85,6 +89,21 @@ theorem squareClass_prod_eq_of_equivalent {p q : RegularFormPresentation K}
   obtain rfl : n = m := fst_eq_of_presentedForm_equivalent h
   rw [presentedForm_eq_weightedSumSquares, presentedForm_eq_weightedSumSquares] at h
   exact (squareClass_eq_iff_isSquare_mul _ _).mpr (isSquare_prod_mul_prod_of_equivalent h)
+
+/-- A binary regular-form presentation whose weight product has square class `[-1]` presents a
+hyperbolic plane. -/
+theorem equivalent_presentedForm_hyperbolicPlane_of_squareClass_prod_eq_neg_one
+    (w : Fin 2 → Kˣ) (h : squareClass (w 0 * w 1) = squareClass (-1 : Kˣ)) :
+    (presentedForm ⟨2, w⟩).Equivalent (hyperbolicPlane K) := by
+  have hdisc : IsSquare (w 0 * w 1 * ((1 : Kˣ) * (-1))) := by
+    rw [← squareClass_eq_iff_isSquare_mul]
+    simpa only [one_mul] using h
+  rw [presentedForm_eq_weightedSumSquares_coe]
+  have hweights : (fun i ↦ (w i : K)) = ![(w 0 : K), (w 1 : K)] := by
+    ext i
+    fin_cases i <;> rfl
+  rw [hweights]
+  exact equivalent_weightedSumSquares_hyperbolicPlane_of_isSquare hdisc
 
 namespace RegularFormClass
 
@@ -250,6 +269,23 @@ theorem RegularFormClass.discr_hyperbolicClass :
     discr_formClass _ _ (⟨2, ![1, -1]⟩ : RegularFormPresentation K)
       (by rw [presentedForm_one_neg_one]; exact QuadraticMap.Equivalent.refl _)]
   simp [Fin.prod_univ_two]
+
+/-- A class of rank two whose discriminant is the class of `-1` is the hyperbolic class: in rank
+two the discriminant is a complete invariant of hyperbolicity. -/
+theorem RegularFormClass.eq_hyperbolicClass_of_rank_eq_two_of_discr_eq_neg_one
+    {x : RegularFormClass K}
+    (hrank : RegularFormClass.rank x = 2)
+    (hdiscr : RegularFormClass.discr x = squareClass (-1 : Kˣ)) : x = hyperbolicClass K := by
+  induction x using Quotient.inductionOn with
+  | h p =>
+    obtain ⟨n, w⟩ := p
+    rw [RegularFormClass.rank_mk] at hrank
+    subst hrank
+    rw [RegularFormClass.discr_mk, Fin.prod_univ_two] at hdiscr
+    rw [hyperbolicClass_def, RegularFormClass.mk_eq_mk_iff]
+    refine (equivalent_presentedForm_hyperbolicPlane_of_squareClass_prod_eq_neg_one w hdiscr).trans
+      (equivalent_presentedForm_hyperbolicPlane_of_squareClass_prod_eq_neg_one
+        ![1, -1] (by simp)).symm
 
 /-- **The signed discriminant of the hyperbolic class is trivial.** The unsigned discriminant is
 the class of `-1`, which is nontrivial precisely when `-1` is not a square. -/

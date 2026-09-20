@@ -70,9 +70,12 @@ theorem _root_.Module.Basis.span_range_extendOfIsLattice {κ : Type*} {N : Submo
     Submodule.map_top, Submodule.range_subtype]
 
 /-- The `R`-finrank of a free full lattice in `V` equals the `K`-finrank of the ambient space. -/
-theorem Submodule.IsLattice.finrank_eq_finrank [IsDomain R]
+theorem Submodule.IsLattice.finrank_eq_finrank
     (N : Submodule R V) [N.IsLattice K] [Module.Free R N] :
     Module.finrank R N = Module.finrank K V := by
+  -- `R` embeds in the field `K`, so it is nontrivial, and a nontrivial commutative ring satisfies
+  -- the strong rank condition that comparing the two bases needs.
+  have : Nontrivial R := (algebraMap R K).domain_nontrivial
   let b := Module.Free.chooseBasis R N
   exact congr_arg Cardinal.toNat
     (b.mk_eq_rank''.symm.trans (b.extendOfIsLattice K).mk_eq_rank'')
@@ -249,7 +252,13 @@ theorem range_mk_one_eq_span {ι : Type*} (b : Basis ι R M) :
   exact congrArg (Submodule.span R)
     (congrArg Set.range (funext fun i ↦ (Basis.baseChange_apply K b i).symm))
 
-/-- The unit pure tensors form a full lattice in the scalar extension of a finite free module. -/
+section UnitTensorLattice
+
+variable {R : Type u} {K : Type v} {M : Type w}
+variable [CommRing R] [CommRing K] [Algebra R K]
+variable [AddCommMonoid M] [Module R M] [Module.Finite R M]
+
+/-- The unit pure tensors form a full lattice in the scalar extension of a finite module. -/
 instance isLattice_range_mk_one :
     (LinearMap.range (TensorProduct.mk R K M 1)).IsLattice K where
   fg := by
@@ -264,6 +273,8 @@ instance isLattice_range_mk_one :
     | tmul k m =>
       rw [tmul_eq_smul_one_tmul]
       exact Submodule.smul_mem _ k (Submodule.subset_span ⟨m, rfl⟩)
+
+end UnitTensorLattice
 
 variable (R K M) in
 /-- A finite free module is canonically isomorphic to the lattice of unit pure tensors in its

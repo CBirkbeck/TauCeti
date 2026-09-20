@@ -27,7 +27,7 @@ coordinates are discarded.
 * `shorten`: restriction after imposing zero outside the retained coordinate set.
 * `punctureAt` and `shortenAt`: the corresponding operations deleting one coordinate.
 * `mem_puncture` and `mem_shorten`: membership characterizations.
-* `finrank_puncture_le` and `finrank_shorten_eq`: dimension control.
+* `finrank_puncture_le`, `finrank_puncture_eq`, and `finrank_shorten_eq`: dimension control.
 
 ## References
 
@@ -81,6 +81,22 @@ theorem mem_shorten {C : LinearCode F ι} {s : Set ι} {y : s → F} :
     refine ⟨x, ⟨hxC, Submodule.mem_pi.mpr hxs⟩, ?_⟩
     ext j
     simpa [LinearMap.funLeft_apply] using hxy j
+
+/-- A word on the retained coordinates belongs to the shortened code exactly when its extension
+by zero belongs to the original code. -/
+theorem mem_shorten_iff_extend_mem {C : LinearCode F ι} {s : Set ι} {y : s → F} :
+    y ∈ shorten C s ↔ Subtype.val.extend y 0 ∈ C := by
+  rw [mem_shorten]
+  constructor
+  · rintro ⟨x, hxC, hx0, hxy⟩
+    convert hxC using 1
+    funext i
+    by_cases hi : i ∈ s
+    · exact (Subtype.val_injective.extend_apply y 0 ⟨i, hi⟩).trans (hxy ⟨i, hi⟩).symm
+    · rw [hx0 i hi, Function.extend_apply' _ _ _ fun ⟨j, hj⟩ ↦ hi (hj ▸ j.2), Pi.zero_apply]
+  · intro h
+    refine ⟨_, h, fun i hi ↦ ?_, fun j ↦ Subtype.val_injective.extend_apply y 0 j⟩
+    rw [Function.extend_apply' _ _ _ fun ⟨j, hj⟩ ↦ hi (hj ▸ j.2), Pi.zero_apply]
 
 /-- Membership in a puncture retaining one coordinate is determined by that coordinate. -/
 theorem mem_puncture_singleton {C : LinearCode F ι} {i : ι} {y : ({i} : Set ι) → F} :
@@ -329,6 +345,17 @@ theorem finrank_puncture_le (C : LinearCode F ι) [FiniteDimensional F C] (s : S
     Module.finrank F (puncture C s) ≤ Module.finrank F C := by
   rw [puncture]
   exact Submodule.finrank_map_le _ _
+
+/-- Puncturing preserves dimension when the only codeword vanishing at every retained
+coordinate is zero. -/
+theorem finrank_puncture_eq (C : LinearCode F ι) (s : Set ι)
+    (h : ∀ x ∈ C, (∀ j : s, x j = 0) → x = 0) :
+    Module.finrank F (puncture C s) = Module.finrank F C := by
+  rw [puncture, ← LinearMap.range_domRestrict]
+  apply LinearMap.finrank_range_of_inj
+  intro x y hxy
+  refine Subtype.ext (sub_eq_zero.mp (h _ (sub_mem x.2 y.2) fun j ↦ ?_))
+  simpa [sub_eq_zero] using congrFun hxy j
 
 /-- Shortening preserves the dimension of the subcode of words supported on the retained
 coordinates. -/
