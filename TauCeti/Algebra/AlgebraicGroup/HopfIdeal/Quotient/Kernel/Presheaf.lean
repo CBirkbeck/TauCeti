@@ -130,12 +130,14 @@ map. -/
 @[simp]
 theorem kernelPointwiseQuotientNatTrans_app_apply (f : H ⟶ K) (A : CommAlgCat.{w} R)
     (q : pointwiseQuotientGroup K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A) :
-    (kernelPointwiseQuotientNatTrans f).app A
-        (eqToHom (pointwiseQuotientFunctor_obj K (kernelHopfIdeal f)
-          (isNormal_kernelHopfIdeal f) A).symm q) =
+    eqToHom (HopfAlgebra.pointsFunctor_obj (H := H) A).symm
+        (kernelPointwiseQuotientMap f A
+          (eqToHom (pointwiseQuotientFunctor_obj K (kernelHopfIdeal f)
+            (isNormal_kernelHopfIdeal f) A)
+              (eqToHom (pointwiseQuotientFunctor_obj K (kernelHopfIdeal f)
+                (isNormal_kernelHopfIdeal f) A).symm q))) =
       eqToHom (HopfAlgebra.pointsFunctor_obj (H := H) A).symm
         (kernelPointwiseQuotientMap f A q) := by
-  rw [kernelPointwiseQuotientNatTrans_app]
   exact ConcreteCategory.congr_hom (show
     eqToHom (pointwiseQuotientFunctor_obj K (kernelHopfIdeal f)
         (isNormal_kernelHopfIdeal f) A).symm ≫
@@ -158,8 +160,16 @@ theorem pointwiseQuotientProjection_comp_kernelPointwiseQuotientNatTrans (f : H 
   change ((pointwiseQuotientProjection K (kernelHopfIdeal f)
       (isNormal_kernelHopfIdeal f) ≫ kernelPointwiseQuotientNatTrans f).app A)
       (show (HopfAlgebra.pointsFunctor (R := R) (H := K)).obj A from g) = _
-  rw [NatTrans.comp_app_apply, pointwiseQuotientProjection_app_apply,
-    kernelPointwiseQuotientNatTrans_app_apply, kernelPointwiseQuotientMap_mk]
+  rw [NatTrans.comp_app_apply]
+  rw [pointwiseQuotientProjection_app]
+  change (kernelPointwiseQuotientNatTrans f).app A
+      ((pointwiseQuotientMk K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A ≫
+        eqToHom (pointwiseQuotientFunctor_obj K (kernelHopfIdeal f)
+          (isNormal_kernelHopfIdeal f) A).symm)
+            (show HopfAlgebra.points (R := R) (H := K) A from g)) = _
+  rw [pointwiseQuotientProjection_app_apply, kernelPointwiseQuotientNatTrans_app]
+  simp only [ConcreteCategory.comp_apply]
+  rw [kernelPointwiseQuotientNatTrans_app_apply, kernelPointwiseQuotientMap_mk]
   exact ConcreteCategory.congr_hom (show
     eqToHom (HopfAlgebra.pointsFunctor_obj (H := H) A).symm = 𝟙 _ from
       eqToHom_refl _ _) ((mapPointsFunctor f).app A g)

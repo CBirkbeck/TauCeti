@@ -225,7 +225,8 @@ theorem pointwiseQuotientProjection_app (H : _root_.CommHopfAlgCat.{v} R)
 theorem pointwiseQuotientProjection_app_apply (H : _root_.CommHopfAlgCat.{v} R)
     (I : HopfIdeal R H) (hI : I.IsNormal) (A : CommAlgCat.{w} R)
     (g : HopfAlgebra.points (R := R) (H := H) A) :
-    (pointwiseQuotientProjection H I hI).app A g =
+    (pointwiseQuotientMk H I hI A ≫
+        eqToHom (pointwiseQuotientFunctor_obj H I hI A).symm) g =
       eqToHom (pointwiseQuotientFunctor_obj H I hI A).symm
         (pointwiseQuotientMk H I hI A g) := by
   rfl
