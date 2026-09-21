@@ -231,18 +231,6 @@ noncomputable def pointwiseQuotientLift (H : _root_.CommHopfAlgCat.{v} R)
     quotientPointsSubgroup_normal H I hI A
   exact GrpCat.ofHom (QuotientGroup.lift (quotientPointsSubgroup H I A) f.hom hf)
 
-/-- The underlying homomorphism of a pointwise quotient lift is the corresponding
-`QuotientGroup.lift`. -/
-theorem pointwiseQuotientLift_hom (H : _root_.CommHopfAlgCat.{v} R)
-    (I : HopfIdeal R H) (hI : I.IsNormal) (A : CommAlgCat.{w} R) (K : GrpCat.{max v w})
-    (f : HopfAlgebra.points (R := R) (H := H) A ⟶ K)
-    (hf : quotientPointsSubgroup H I A ≤ f.hom.ker) :
-    let _ : (quotientPointsSubgroup H I A).Normal :=
-      quotientPointsSubgroup_normal H I hI A
-    (pointwiseQuotientLift H I hI A K f hf).hom =
-      QuotientGroup.lift (quotientPointsSubgroup H I A) f.hom hf := by
-  rfl
-
 /-- The lift from a pointwise quotient agrees with the original homomorphism on every ambient
 representative. -/
 @[simp]
