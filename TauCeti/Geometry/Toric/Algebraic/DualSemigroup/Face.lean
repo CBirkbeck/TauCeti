@@ -39,6 +39,8 @@ Toric Varieties*, and §1.3 of D. Cox, J. Little and H. Schenck, *Toric Varietie
 
 public section
 
+open Multiplicative
+
 namespace TauCeti.Toric
 
 variable {N V : Type*} [AddCommGroup N] [AddCommGroup V] [Module ℝ V]
@@ -53,6 +55,18 @@ theorem neg_mem_dualSemigroup_inf_ker (hi : IsIntegralLattice i) (σ : PointedCo
   intro x hx
   have hmx : hi.realCharacter m x = 0 := hx.2
   simp [hmx]
+
+/-- In the dual semigroup of the face where `m` vanishes, the images of `m` and `-m` are
+multiplicative inverses. -/
+theorem ofAdd_mul_ofAdd_neg_inf_ker (hi : IsIntegralLattice i) (σ : PointedCone ℝ V)
+    (m : dualSemigroup hi σ) :
+    (ofAdd ⟨m, dualSemigroup_anti hi inf_le_left m.2⟩ :
+        Multiplicative (dualSemigroup hi
+          (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m))))) *
+      ofAdd ⟨-(m : N →+ ℤ), neg_mem_dualSemigroup_inf_ker hi σ m⟩ = 1 := by
+  apply toAdd.injective
+  apply Subtype.ext
+  simp
 
 /-- Let `m` lie in the dual semigroup of a finitely generated cone `σ`. A character in the dual
 semigroup of the face `σ ⊓ ker m` lies in the dual semigroup of `σ` after adding a multiple

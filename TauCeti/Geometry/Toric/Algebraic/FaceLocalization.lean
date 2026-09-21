@@ -202,6 +202,7 @@ theorem isLocalization_away_affineCoordinateRingMap_inf_ker (hi : IsIntegralLatt
     rw [← hf, ← hf, huv]
   · -- The image of `m` is invertible because `-m` lies in the dual semigroup of the face.
     refine IsUnit.of_mul_eq_one (ofAdd ⟨-(m : N →+ ℤ), neg_mem_dualSemigroup_inf_ker hi σ m⟩) ?_
+    convert ofAdd_mul_ofAdd_neg_inf_ker hi σ m using 1
     apply toAdd.injective
     apply Subtype.ext
     simp [hf]

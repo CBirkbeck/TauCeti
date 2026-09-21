@@ -77,7 +77,6 @@ theorem faceAffineComplexPointMap_id (hi : IsIntegralLattice i) :
 
 /-- Successive face restrictions compose contravariantly on coordinate rings and covariantly on
 complex points. -/
-@[simp]
 theorem faceAffineComplexPointMap_comp (hi : IsIntegralLattice i)
     (hυτ : υ.IsFaceOf τ) (hτσ : τ.IsFaceOf σ) :
     faceAffineComplexPointMap hi hτσ ∘ faceAffineComplexPointMap hi hυτ =
@@ -90,6 +89,16 @@ theorem faceAffineComplexPointMap_comp (hi : IsIntegralLattice i)
   change x ((faceAffineCoordinateRingMap hi hυτ).comp
     (faceAffineCoordinateRingMap hi hτσ) a) = _
   rw [faceAffineCoordinateRingMap_comp]
+
+/-- Applying two successive face restrictions is the same as applying their composite. -/
+@[simp]
+theorem faceAffineComplexPointMap_comp_apply (hi : IsIntegralLattice i)
+    (hυτ : υ.IsFaceOf τ) (hτσ : τ.IsFaceOf σ)
+    (x : AffineSemigroupComplexPoint (dualSemigroup hi υ)) :
+    faceAffineComplexPointMap hi hτσ (faceAffineComplexPointMap hi hυτ x) =
+      faceAffineComplexPointMap hi (hυτ.trans hτσ) x := by
+  change (faceAffineComplexPointMap hi hτσ ∘ faceAffineComplexPointMap hi hυτ) x = _
+  rw [faceAffineComplexPointMap_comp]
 
 /-- The complex-point face map is the general pullback of affine semigroup points along the
 inclusion of dual semigroups. -/
@@ -137,12 +146,8 @@ theorem faceAffineComplexPointMap_character_ne_zero
   refine IsUnit.of_mul_eq_one
     (MonoidAlgebra.single
       (ofAdd ⟨-(m : N →+ ℤ), neg_mem_dualSemigroup_inf_ker hi σ m⟩) 1) ?_
-  rw [MonoidAlgebra.single_mul_single]
-  congr 2
-  · apply toAdd.injective
-    apply Subtype.ext
-    simp
-  · simp
+  rw [MonoidAlgebra.single_mul_single, ofAdd_mul_ofAdd_neg_inf_ker, one_mul,
+    ← MonoidAlgebra.one_def]
 
 end CharacterNonzero
 
@@ -223,12 +228,8 @@ theorem faceAffineComplexPointLift_single_neg
     (MonoidAlgebra.single (ofAdd m) 1), faceAffineComplexPointMap_apply]
   rw [← map_mul]
   convert map_one (faceAffineComplexPointLift hi hσ m x) using 1
-  rw [faceAffineCoordinateRingMap_single, MonoidAlgebra.single_mul_single]
-  congr 2
-  · apply toAdd.injective
-    apply Subtype.ext
-    simp
-  · simp
+  rw [faceAffineCoordinateRingMap_single, MonoidAlgebra.single_mul_single,
+    ofAdd_mul_ofAdd_neg_inf_ker, one_mul, ← MonoidAlgebra.one_def]
 
 /-- The complex points of the face cut out by `m` are in bijection with the locus of the ambient
 chart where the monomial of `m` does not vanish. -/
