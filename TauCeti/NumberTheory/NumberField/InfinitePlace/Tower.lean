@@ -53,6 +53,8 @@ inducing afterwards. -/
 theorem restrictNormal_smul_comap [Normal K F] (σ : L ≃ₐ[K] L) (w : InfinitePlace L) :
     σ.restrictNormal F • w.comap (algebraMap F L)
       = (σ • w).comap (algebraMap F L) := by
+  -- Expose `restrictNormal` as the application of the bundled restriction homomorphism,
+  -- which is the form used by the action below.
   change AlgEquiv.restrictNormalHom F σ • w.comap (algebraMap F L)
     = (σ • w).comap (algebraMap F L)
   have bridge : ∀ x : F, algebraMap F L ((AlgEquiv.restrictNormalHom F σ).symm x)
