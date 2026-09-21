@@ -171,7 +171,9 @@ theorem levelConjEquiv_symm_apply_coe (g : G) {U U' : OpenSubgroup G}
     (((F.levelConjEquiv g h).symm b : F.level U) : F.toRep.V) = F.toRep.ρ g⁻¹ b :=
   (rfl)
 
-private theorem levelConjEquiv_comp_apply_coe (g h : G)
+/-- Conjugating a level by `h` and then by `g` agrees on underlying elements with conjugating by
+`g * h`. -/
+theorem levelConjEquiv_comp_apply_coe (g h : G)
     {U₁ U₂ U₃ U₄ : OpenSubgroup G}
     (hh : ∀ x : G, h * x * h⁻¹ ∈ U₂ ↔ x ∈ U₁)
     (hg : ∀ x : G, g * x * g⁻¹ ∈ U₃ ↔ x ∈ U₂)

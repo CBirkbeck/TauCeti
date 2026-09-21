@@ -199,6 +199,15 @@ theorem conjugateAbelianizationEquiv_of (x : L.Gal) :
       Additive.ofMul (Abelianization.of (L.conjugateGalEquiv g x)) :=
   (rfl)
 
+/-- The inverse conjugation equivalence sends the class of an element to the class of its inverse
+conjugate. -/
+@[simp]
+theorem conjugateAbelianizationEquiv_symm_of (x : (L.conjugate g).Gal) :
+    (L.conjugateAbelianizationEquiv g).symm (Additive.ofMul (Abelianization.of x)) =
+      Additive.ofMul (Abelianization.of ((L.conjugateGalEquiv g).symm x)) := by
+  apply (L.conjugateAbelianizationEquiv g).injective
+  rw [AddEquiv.apply_symm_apply, conjugateAbelianizationEquiv_of, MulEquiv.apply_symm_apply]
+
 /-- Conjugation by `1` is the identity on abelianized Galois groups, after transporting along
 `conjugate_one`. -/
 @[simp]
