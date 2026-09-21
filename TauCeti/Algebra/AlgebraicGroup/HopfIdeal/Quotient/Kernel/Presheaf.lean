@@ -181,9 +181,14 @@ theorem kernelPointwiseQuotientMap_injective (f : H ⟶ K) (A : CommAlgCat.{w} R
     obtain ⟨g, rfl⟩ := pointwiseQuotientMk_surjective K (kernelHopfIdeal f)
       (isNormal_kernelHopfIdeal f) A q
     rw [kernelPointwiseQuotientMap_mk, pointwiseQuotientMk_apply]
+    -- `lift_mk'` uses the functor-object presentation of the source points, whereas `g` has
+    -- the concrete `HopfAlgebra.points` type; no rewriting lemma connects these definitionally
+    -- equal types, so expose that coercion at the argument of the lift.
     exact (QuotientGroup.lift_mk' (quotientPointsSubgroup K (kernelHopfIdeal f) A)
       (quotientPointsSubgroup_le_mapPointsFunctor_ker f A)
         (show (HopfAlgebra.pointsFunctor (R := R) (H := K)).obj A from g)).symm
+  -- A `GrpCat` morphism and its underlying `QuotientGroup.lift` coerce to definitionally equal
+  -- functions; there is no propositional equality to rewrite, so expose that common function.
   change Function.Injective (fun q ↦ kernelPointwiseQuotientMap f A q)
   rw [hlift]
   exact (QuotientGroup.injective_lift_iff
@@ -211,37 +216,22 @@ theorem kernelPointwiseQuotientMap_surjective_iff (f : H ⟶ K) (A : CommAlgCat.
       Function.Surjective ((mapPointsFunctor f).app A) := by
   let _ : (quotientPointsSubgroup K (kernelHopfIdeal f) A).Normal :=
     quotientPointsSubgroup_normal K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A
-  -- State the descended function on the concrete point types, avoiding the definitionally equal
-  -- functor-object presentations used by the categorical morphisms.
-  let ψ : HopfAlgebra.points (R := R) (H := K) A →
-      HopfAlgebra.points (R := R) (H := H) A := fun g ↦
-    (mapPointsFunctor f).app A
-      (show (HopfAlgebra.pointsFunctor (R := R) (H := K)).obj A from g)
-  have hrel : ∀ a b,
-      QuotientGroup.con (quotientPointsSubgroup K (kernelHopfIdeal f) A) a b →
-        ψ a = ψ b := by
-    intro a b hab
-    have hab_mk :
-        pointwiseQuotientMk K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A a =
-          pointwiseQuotientMk K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A b := by
-      rw [pointwiseQuotientMk_apply, pointwiseQuotientMk_apply]
-      exact Quotient.sound hab
-    dsimp only [ψ]
-    rw [← kernelPointwiseQuotientMap_mk f A a, ← kernelPointwiseQuotientMap_mk f A b]
-    exact congrArg (kernelPointwiseQuotientMap f A) hab_mk
-  -- The representative formula identifies the comparison abstractly with the quotient lift, so
-  -- Mathlib's generic surjectivity equivalence applies without exposing its implementation.
-  have hlift : (fun q ↦ kernelPointwiseQuotientMap f A q) =
-      Quotient.lift ψ hrel := by
-    funext q
+  constructor
+  · intro hsurjective y
+    obtain ⟨q, hq⟩ := hsurjective y
     obtain ⟨g, rfl⟩ := pointwiseQuotientMk_surjective K (kernelHopfIdeal f)
       (isNormal_kernelHopfIdeal f) A q
-    rw [kernelPointwiseQuotientMap_mk, pointwiseQuotientMk_apply]
-    exact (Quotient.lift_mk ψ hrel g).symm
-  change Function.Surjective (fun q ↦ kernelPointwiseQuotientMap f A q) ↔
-    Function.Surjective ψ
-  rw [hlift]
-  exact Quotient.lift_surjective_iff ψ hrel
+    exact ⟨g, (kernelPointwiseQuotientMap_mk f A g).symm.trans hq⟩
+  · intro hsurjective y
+    obtain ⟨q, hq⟩ := QuotientGroup.lift_surjective_of_surjective
+        (quotientPointsSubgroup K (kernelHopfIdeal f) A) ((mapPointsFunctor f).app A).hom
+          hsurjective (quotientPointsSubgroup_le_mapPointsFunctor_ker f A) y
+    obtain ⟨g, rfl⟩ := pointwiseQuotientMk_surjective K (kernelHopfIdeal f)
+      (isNormal_kernelHopfIdeal f) A q
+    refine ⟨pointwiseQuotientMk K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A g, ?_⟩
+    rw [kernelPointwiseQuotientMap_mk]
+    rw [pointwiseQuotientMk_apply] at hq
+    exact hq
 
 /-- The kernel-quotient comparison is an isomorphism exactly when `f` is surjective on points
 over the chosen value algebra. -/
