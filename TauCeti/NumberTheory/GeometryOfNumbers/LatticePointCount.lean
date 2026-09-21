@@ -7,8 +7,9 @@ module
 
 public import Mathlib.Algebra.Module.ZLattice.Covolume
 public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
-public import TauCeti.Algebra.Module.ZLattice.Basic
+public import TauCeti.Algebra.Module.ZLattice.Covolume
 public import TauCeti.MeasureTheory.Group.Measure
+public import TauCeti.MeasureTheory.Measure.Haar.NormedSpace
 public import TauCeti.NumberTheory.GeometryOfNumbers.BoundaryCount
 public import TauCeti.Topology.MetricSpace.DiscreteAddSubgroup
 import TauCeti.Topology.Frontier
@@ -69,6 +70,12 @@ Lipschitz hypothesis is used, and the only source of the error term.
 ## References
 
 * S. Lang, *Algebraic Number Theory*, Chapter VI, Section 2.
+* The coset-uniform count follows C. Birkbeck and R. Brasca,
+  [*AINTLIB*](https://github.com/CBirkbeck/AINTLIB) at commit
+  `db14b34cc5e3d79603e67c205dfa86b7b989000c` (Apache-2.0),
+  `projects/Chebotarev/CebotarevDensity/ForMathlib/IdealCongruenceCount.lean`, theorem
+  `exists_card_coset_inter_smul_sub_volume_mul_rpow_le`: the same statement, and the same
+  reduction of the translate into a fundamental domain.
 -/
 
 public section
@@ -178,25 +185,6 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimension
   [MeasurableSpace E] [BorelSpace E] {L : Submodule ℤ E} [DiscreteTopology L] [IsZLattice ℝ L]
   {μ : Measure E} [μ.IsAddHaarMeasure]
 
-private theorem exists_fundamentalDomain_aux :
-    ∃ F : Set E, (0 : E) ∈ F ∧ IsPreconnected F ∧ IsBounded F ∧ MeasurableSet F ∧
-      (∀ x : E, ∀ w₁ ∈ (L : Set E), ∀ w₂ ∈ (L : Set E), x - w₁ ∈ F → x - w₂ ∈ F → w₁ = w₂) ∧
-      (∀ x : E, ∃ w ∈ (L : Set E), x - w ∈ F) ∧ ZLattice.covolume L μ = μ.real F := by
-  classical
-  set b := Module.Free.chooseBasis ℤ L
-  set β := b.ofZLatticeBasis ℝ L
-  have hmem : ∀ w : E, w ∈ (L : Set E) ↔ w ∈ span ℤ (Set.range β) := fun w ↦ by
-    rw [b.ofZLatticeBasis_span ℝ]
-    exact Iff.rfl
-  exact ⟨ZSpan.fundamentalDomain β, by simp [ZSpan.mem_fundamentalDomain],
-    (ZSpan.convex_fundamentalDomain β).isPreconnected, ZSpan.fundamentalDomain_isBounded β,
-    ZSpan.fundamentalDomain_measurableSet β,
-    fun _ w₁ h₁ w₂ h₂ k₁ k₂ ↦ ZSpan.eq_of_sub_mem_fundamentalDomain β ((hmem w₁).mp h₁)
-      ((hmem w₂).mp h₂) k₁ k₂,
-    fun x ↦ ⟨(ZSpan.floor β x : E), (hmem _).mpr (ZSpan.floor β x).2,
-      ZSpan.fract_mem_fundamentalDomain β x⟩,
-    ZLattice.covolume_eq_measure_fundamentalDomain L μ (ZLattice.isAddFundamentalDomain b μ)⟩
-
 private theorem abs_ncard_smul_inter_vadd_sub_le_aux {D F : Set E} {ξ : E} {c : ℝ}
     (hDb : IsBounded D) (hc : 1 ≤ c) (hF₀ : (0 : E) ∈ F) (hFpc : IsPreconnected F)
     (hFb : IsBounded F) (hFm : MeasurableSet F) (hcov : ZLattice.covolume L μ = μ.real F)
@@ -215,10 +203,8 @@ private theorem abs_ncard_smul_inter_vadd_sub_le_aux {D F : Set E} {ξ : E} {c :
   -- translating by `v` carries the coset onto `L`, turning the count into a lattice-point count
   rw [hcov, ← Set.ncard_vadd_set v ((c • D) ∩ (ξ +ᵥ (L : Set E))), vadd_set_inter, vadd_vadd,
     hvξ, vadd_coe_set (L.neg_mem hwL)]
-  have hvol : μ.real (v +ᵥ c • D) = c ^ finrank ℝ E * μ.real D := by
-    rw [measureReal_def, measure_vadd, ← measureReal_def, measureReal_def,
-      Measure.addHaar_smul, ENNReal.toReal_mul, ENNReal.toReal_ofReal (abs_nonneg _),
-      abs_of_nonneg (by positivity), measureReal_def]
+  have hvol : μ.real (v +ᵥ c • D) = c ^ finrank ℝ E * μ.real D :=
+    measureReal_vadd_smul μ v hc0.le D
   have hkey := abs_ncard_inter_mul_sub_measureReal_le (μ := μ) (L := L) hF₀ hFpc hFb hFm hFu hFe
     ((hDb.smul₀ c).vadd v)
   rw [hvol] at hkey
@@ -264,7 +250,7 @@ theorem exists_abs_ncard_smul_inter_vadd_sub_le {D : Set E} (hDb : IsBounded D)
     ∃ A ≥ (0 : ℝ), ∀ (ξ : E) (c : ℝ), 1 ≤ c →
       |(((c • D) ∩ (ξ +ᵥ (L : Set E))).ncard : ℝ) -
           μ.real D / ZLattice.covolume L μ * c ^ finrank ℝ E| ≤ A * c ^ (finrank ℝ E - 1) := by
-  obtain ⟨F, hF₀, hFpc, hFb, hFm, hFu, hFe, hcov⟩ := exists_fundamentalDomain_aux (L := L) (μ := μ)
+  obtain ⟨F, hF₀, hFpc, hFb, hFm, hFu, hFe, hcov⟩ := exists_fundamentalDomain L μ
   -- The slack `F + -F` is one fixed bounded set, and is what makes `A` independent of `ξ`.
   obtain ⟨A, hA0, hA⟩ := hDfr.exists_ncard_smul_add_inter_le L.toAddSubgroup
     (isBounded_add hFb hFb.neg)

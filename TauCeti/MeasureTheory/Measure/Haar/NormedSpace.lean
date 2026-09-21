@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.MeasureTheory.Measure.Haar.Unique
+public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 public import Mathlib.Analysis.Normed.Module.FiniteDimension
 
 /-!
@@ -21,6 +22,8 @@ which is again an additive Haar measure.
 
 * `ContinuousLinearEquiv.quasiMeasurePreserving_addHaar`: a continuous linear equivalence
   is quasi measure preserving for additive Haar measures on its source and target.
+* `TauCeti.measureReal_vadd_smul`: a translate of a dilate has real measure `c ^ finrank ℝ E`
+  times the original.
 -/
 
 public section
@@ -38,6 +41,17 @@ theorem _root_.ContinuousLinearEquiv.quasiMeasurePreserving_addHaar {E F : Type*
     (e : E ≃L[ℝ] F) (μ : Measure E) (ν : Measure F)
     [IsAddHaarMeasure μ] [IsAddHaarMeasure ν] : QuasiMeasurePreserving e μ ν :=
   ⟨e.continuous.measurable, absolutelyContinuous_isAddHaarMeasure (μ.map e) ν⟩
+
+open scoped Pointwise in
+/-- **A dilated translate, in real measure.** For an additive Haar measure on a finite-dimensional
+real normed space, translating leaves the measure unchanged and scaling by `c ≥ 0` multiplies it
+by `c ^ finrank ℝ E`. -/
+theorem measureReal_vadd_smul {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E] (μ : Measure E)
+    [μ.IsAddHaarMeasure] (v : E) {c : ℝ} (hc : 0 ≤ c) (s : Set E) :
+    μ.real (v +ᵥ c • s) = c ^ Module.finrank ℝ E * μ.real s := by
+  rw [measureReal_def, measure_vadd, addHaar_smul, ENNReal.toReal_mul,
+    ENNReal.toReal_ofReal (abs_nonneg _), abs_of_nonneg (by positivity), measureReal_def]
 
 end TauCeti
 
