@@ -86,13 +86,11 @@ theorem _root_.AlgEquiv.mem_range_restrictNormalHom_prod_restrictNormalHom_iff
       _ = algebraMap K₁ E x₁ := by rw [hb, AlgEquiv.aut_inv, AlgEquiv.symm_apply_apply]
   obtain ⟨y, hy, z, hz, hyz⟩ := Subgroup.mem_sup_of_normal_right.1 hab
   refine ⟨a * y, Prod.ext ?_ ?_⟩
-  · simp only [map_mul, Prod.fst_mul, MonoidHom.prod_apply, (MonoidHom.mem_ker).1 hy,
-      mul_one]
+  · simp [(MonoidHom.mem_ker).1 hy]
   · have hyz' : a * y = b * z⁻¹ := by
       rw [eq_mul_inv_iff_mul_eq, mul_assoc, hyz, mul_inv_cancel_left]
     rw [hyz']
-    simp only [map_mul, map_inv, Prod.snd_mul, Prod.snd_inv, MonoidHom.prod_apply,
-      (MonoidHom.mem_ker).1 hz, inv_one, mul_one]
+    simp [(MonoidHom.mem_ker).1 hz]
 
 /-- The joint restriction map to two normal subextensions of a finite Galois extension is surjective
 if and only if the two subextensions meet only in the base field. -/
