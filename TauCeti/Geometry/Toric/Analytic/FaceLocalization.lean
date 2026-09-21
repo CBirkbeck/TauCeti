@@ -156,6 +156,16 @@ theorem faceAffinePointMap_inf_ker_apply_single_ne_zero
 
 end CharacterNonzero
 
+private theorem faceAffinePoint_apply_mem_powers_ne_zero
+    (hi : IsIntegralLattice i) (m : dualSemigroup hi σ)
+    (x : {x : AffineSemigroupComplexPoint (dualSemigroup hi σ) //
+      x (MonoidAlgebra.single (ofAdd m) 1) ≠ 0})
+    (y : Submonoid.powers (MonoidAlgebra.single (ofAdd m) (1 : ℂ))) :
+    x.1 y.1 ≠ 0 := by
+  obtain ⟨n, hn⟩ := y.2
+  rw [← hn, map_pow]
+  exact pow_ne_zero n x.2
+
 variable (hi : IsIntegralLattice i) (hσ : σ.FG) (m : dualSemigroup hi σ)
 
 include hσ
@@ -255,12 +265,9 @@ theorem faceAffinePointInfKerLift_mk'
     (IsLocalization.mk' _ a y) = x.1 a * (x.1 y.1)⁻¹
   rw [IsLocalization.Away.lift]
   apply (IsLocalization.lift_mk'_spec _ a (x.1 a * (x.1 y.1)⁻¹) y).2
-  -- The active localization algebra map is definitionally the face coordinate-ring map.
-  change x.1 a = x.1 y.1 * (x.1 a * (x.1 y.1)⁻¹)
+  rw [AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
   rw [mul_left_comm, mul_inv_cancel₀, mul_one]
-  obtain ⟨n, hn⟩ := y.2
-  rw [← hn, map_pow]
-  exact pow_ne_zero n x.2
+  exact faceAffinePoint_apply_mem_powers_ne_zero hi m x y
 
 /-- The localization lift sends the inverse character on the face to the reciprocal of the
 cutting character. -/
@@ -285,11 +292,8 @@ theorem faceAffinePointInfKerLift_apply_single_neg
             (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m))))
           (1 : affineCoordinateRing hi σ) y := by
     apply IsLocalization.eq_mk'_iff_mul_eq.mpr
-    -- The active localization algebra map is definitionally `faceAffineCoordinateRingMap`.
-    change MonoidAlgebra.single
-        (ofAdd ⟨-(m : N →+ ℤ), neg_mem_dualSemigroup_inf_ker hi σ m⟩) 1 *
-      faceAffineCoordinateRingMap hi hface (MonoidAlgebra.single (ofAdd m) 1) =
-        faceAffineCoordinateRingMap hi hface 1
+    rw [RingHom.algebraMap_toAlgebra, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
+    simp only [y]
     rw [map_one, faceAffineCoordinateRingMap_single, mul_comm,
       single_ofAdd_mul_single_ofAdd_neg_inf_ker (R := ℂ) hi σ m]
   rw [hy, faceAffinePointInfKerLift_mk', map_one, one_mul]
@@ -342,10 +346,7 @@ theorem continuous_faceAffinePointInfKerLift
   rw [affinePointTopology_eq_iInf gF, continuous_iInf_rng]
   intro t
   rw [continuous_induced_rng]
-  -- The induced-topology criterion leaves this evaluation under `Function.comp`; expose it so
-  -- the localization representation below can rewrite the element being evaluated.
-  change Continuous (fun x ↦ faceAffinePointInfKerLift hi hσ m x
-    (MonoidAlgebra.single (ofAdd t) (1 : ℂ)))
+  simp only [Function.comp_def]
   let _ := faceAffinePointInfKerAlgebra hi m
   have := isLocalization_faceAffinePointInfKer hi hσ m
   obtain ⟨⟨a, y⟩, hy⟩ := IsLocalization.mk'_surjective
@@ -361,9 +362,7 @@ theorem continuous_faceAffinePointInfKerLift
   have hay0 : ∀ x : {x : AffineSemigroupComplexPoint (dualSemigroup hi σ) //
       x (MonoidAlgebra.single (ofAdd m) 1) ≠ 0}, x.1 y.1 ≠ 0 := by
     rintro x
-    obtain ⟨n, hn⟩ := y.2
-    rw [← hn, map_pow]
-    exact pow_ne_zero n x.2
+    exact faceAffinePoint_apply_mem_powers_ne_zero hi m x y
   convert ha.mul (hay.inv₀ hay0) using 1
   funext x
   exact faceAffinePointInfKerLift_mk' hi hσ m x a y
