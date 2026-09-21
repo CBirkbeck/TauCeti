@@ -257,7 +257,7 @@ theorem primePsi_le_ncard_mul_log (hS : S.Finite) (hx : 1 ≤ x) :
       ≤ x ∧ primePowerBase A ∈ S := by
     intro A hA
     rw [hTdef, Finset.mem_filter] at hA
-    exact ⟨absNorm_primePowerBase_pow_le_of_mem_primePowersLE hA.1, hA.2⟩
+    exact ⟨mem_primePowersLE_iff.mp hA.1, hA.2⟩
   have hsub : T ⊆ primePowersLE K x := Finset.filter_subset _ _
   have hzero : ∀ A ∈ primePowersLE K x, A ∉ T →
       {A : IdealPrimePower K | primePowerBase A ∈ S}.indicator primePowerWeight A = 0 := by

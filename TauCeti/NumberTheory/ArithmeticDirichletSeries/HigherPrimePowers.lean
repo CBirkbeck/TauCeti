@@ -264,7 +264,7 @@ theorem higherPrimePowerTheta_le_card_primesLE_mul_log
       ≤ x ∧ 2 ≤ primePowerExponent A := by
     intro A hA
     rw [hTdef, Finset.mem_filter] at hA
-    exact ⟨absNorm_primePowerBase_pow_le_of_mem_primePowersLE hA.1, hA.2⟩
+    exact ⟨mem_primePowersLE_iff.mp hA.1, hA.2⟩
   have hsub : T ⊆ primePowersLE K x := Finset.filter_subset _ _
   have hzero : ∀ A ∈ primePowersLE K x, A ∉ T → higherPrimePowerWeight A = 0 := by
     intro A hA hAT
