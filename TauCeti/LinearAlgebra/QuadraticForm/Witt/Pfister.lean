@@ -62,6 +62,11 @@ def pfisterForm : {n : ℕ} → (Fin n → Kˣ) → Fin (2 ^ n) → Kˣ
       let ij := finProdFinEquiv.symm (Fin.cast (pow_succ 2 n) k)
       pfisterForm (Fin.tail a) ij.1 * ![1, -(a 0)] ij.2
 
+/-- The zero-fold Pfister form has the single diagonal weight `1`. -/
+@[simp]
+theorem pfisterForm_zero (a : Fin 0 → Kˣ) : pfisterForm a = fun _ => 1 := by
+  rfl
+
 /-- `⟨⟨a⟩⟩ = ⟨1, -a⟩`. -/
 @[simp]
 theorem pfisterForm_one (a : Kˣ) : pfisterForm ![a] = ![1, -a] := by
@@ -158,6 +163,7 @@ theorem pfisterFormClass_zero (a : Fin 0 → Kˣ) : pfisterFormClass a = 1 := by
   simp [pfisterFormClass_def]
 
 /-- Reindexing the slots of a Pfister form class by an equivalence does not change it. -/
+@[simp]
 theorem pfisterFormClass_comp_equiv {m n : ℕ} (a : Fin n → Kˣ) (e : Fin m ≃ Fin n) :
     pfisterFormClass (a ∘ e) = pfisterFormClass a := by
   rw [pfisterFormClass_def, pfisterFormClass_def]
@@ -297,6 +303,7 @@ theorem pfisterClass_one (a : Fin 1 → Kˣ) :
   rw [Fin.prod_univ_one]
 
 /-- Reindexing the slots of a Pfister class by an equivalence does not change it. -/
+@[simp]
 theorem pfisterClass_comp_equiv {m n : ℕ} (a : Fin n → Kˣ) (e : Fin m ≃ Fin n) :
     pfisterClass (a ∘ e) = pfisterClass a := by
   rw [← wittClass_pfisterFormClass, pfisterFormClass_comp_equiv, wittClass_pfisterFormClass]
