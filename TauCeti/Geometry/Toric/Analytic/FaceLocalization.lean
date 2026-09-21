@@ -65,17 +65,6 @@ theorem faceAffineComplexPointMap_apply (hi : IsIntegralLattice i) (hτσ : τ.I
     faceAffineComplexPointMap hi hτσ x a = x (faceAffineCoordinateRingMap hi hτσ a) :=
   by rfl
 
-/-- On monomials, the complex-point face map evaluates the same integral character, regarded as
-an element of the larger dual semigroup of the face. -/
-@[simp]
-theorem faceAffineComplexPointMap_apply_single (hi : IsIntegralLattice i)
-    (hτσ : τ.IsFaceOf σ) (x : AffineSemigroupComplexPoint (dualSemigroup hi τ))
-    (m : dualSemigroup hi σ) :
-    faceAffineComplexPointMap hi hτσ x (MonoidAlgebra.single (ofAdd m) 1) =
-      x (MonoidAlgebra.single (ofAdd
-        ⟨m, dualSemigroup_anti hi hτσ.le m.2⟩) 1) := by
-  rw [faceAffineComplexPointMap_apply, faceAffineCoordinateRingMap_single]
-
 /-- The complex-point map of a cone viewed as its own face is the identity. -/
 @[simp]
 theorem faceAffineComplexPointMap_id (hi : IsIntegralLattice i) :
@@ -93,7 +82,8 @@ theorem faceAffineComplexPointMap_comp (hi : IsIntegralLattice i)
   funext x
   apply AffineSemigroupComplexPoint.ext
   intro m
-  simp only [Function.comp_apply, faceAffineComplexPointMap_apply_single]
+  simp only [Function.comp_apply, faceAffineComplexPointMap_apply,
+    faceAffineCoordinateRingMap_single]
 
 /-- The complex-point face map is the general pullback of affine semigroup points along the
 inclusion of dual semigroups. -/
@@ -105,7 +95,7 @@ theorem faceAffineComplexPointMap_eq_comap (hi : IsIntegralLattice i)
   funext x
   apply AffineSemigroupComplexPoint.ext
   intro m
-  rw [faceAffineComplexPointMap_apply_single,
+  rw [faceAffineComplexPointMap_apply, faceAffineCoordinateRingMap_single,
     AffineSemigroupComplexPoint.comap_apply_single]
   congr 2
   apply Subtype.ext
