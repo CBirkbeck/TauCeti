@@ -60,9 +60,11 @@ Lipschitz hypothesis is used, and the only source of the error term.
 * `TauCeti.abs_ncard_inter_mul_sub_measureReal_le`: for any bounded set `X`, the count of lattice
   points of `X` times the volume of a fundamental domain `F` differs from the volume of `X` by at
   most the volume of `F` times the number of lattice points of `frontier X + -F`.
+* `TauCeti.exists_abs_ncard_smul_inter_vadd_sub_le`: the same bound for an arbitrary coset
+  `ξ +ᵥ L`, with `A` independent of `c` **and** of `ξ`.
 * `TauCeti.exists_abs_ncard_smul_inter_sub_le`: the explicit bound
   `|#(c • D ∩ L) - μ D / covolume L μ * c ^ n| ≤ A * c ^ (n - 1)` for `c ≥ 1`, with `A`
-  independent of `c`.
+  independent of `c`; the coset statement at `ξ = 0`.
 * `TauCeti.isBigO_ncard_smul_inter_sub`: the same bound as an asymptotic statement.
 ## References
 
@@ -176,6 +178,99 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimension
   [MeasurableSpace E] [BorelSpace E] {L : Submodule ℤ E} [DiscreteTopology L] [IsZLattice ℝ L]
   {μ : Measure E} [μ.IsAddHaarMeasure]
 
+private theorem exists_fundamentalDomain_aux :
+    ∃ F : Set E, (0 : E) ∈ F ∧ IsPreconnected F ∧ IsBounded F ∧ MeasurableSet F ∧
+      (∀ x : E, ∀ w₁ ∈ (L : Set E), ∀ w₂ ∈ (L : Set E), x - w₁ ∈ F → x - w₂ ∈ F → w₁ = w₂) ∧
+      (∀ x : E, ∃ w ∈ (L : Set E), x - w ∈ F) ∧ ZLattice.covolume L μ = μ.real F := by
+  classical
+  set b := Module.Free.chooseBasis ℤ L
+  set β := b.ofZLatticeBasis ℝ L
+  have hmem : ∀ w : E, w ∈ (L : Set E) ↔ w ∈ span ℤ (Set.range β) := fun w ↦ by
+    rw [b.ofZLatticeBasis_span ℝ]
+    exact Iff.rfl
+  exact ⟨ZSpan.fundamentalDomain β, by simp [ZSpan.mem_fundamentalDomain],
+    (ZSpan.convex_fundamentalDomain β).isPreconnected, ZSpan.fundamentalDomain_isBounded β,
+    ZSpan.fundamentalDomain_measurableSet β,
+    fun _ w₁ h₁ w₂ h₂ k₁ k₂ ↦ ZSpan.eq_of_sub_mem_fundamentalDomain β ((hmem w₁).mp h₁)
+      ((hmem w₂).mp h₂) k₁ k₂,
+    fun x ↦ ⟨(ZSpan.floor β x : E), (hmem _).mpr (ZSpan.floor β x).2,
+      ZSpan.fract_mem_fundamentalDomain β x⟩,
+    ZLattice.covolume_eq_measure_fundamentalDomain L μ (ZLattice.isAddFundamentalDomain b μ)⟩
+
+private theorem abs_ncard_smul_inter_vadd_sub_le_aux {D F : Set E} {ξ : E} {c : ℝ}
+    (hDb : IsBounded D) (hc : 1 ≤ c) (hF₀ : (0 : E) ∈ F) (hFpc : IsPreconnected F)
+    (hFb : IsBounded F) (hFm : MeasurableSet F) (hcov : ZLattice.covolume L μ = μ.real F)
+    (hFu : ∀ x : E, ∀ w₁ ∈ (L : Set E), ∀ w₂ ∈ (L : Set E), x - w₁ ∈ F → x - w₂ ∈ F → w₁ = w₂)
+    (hFe : ∀ x : E, ∃ w ∈ (L : Set E), x - w ∈ F) :
+    |(((c • D) ∩ (ξ +ᵥ (L : Set E))).ncard : ℝ) -
+        μ.real D / ZLattice.covolume L μ * c ^ finrank ℝ E| ≤
+      (((c • frontier D + (F + -F)) ∩ (L : Set E)).ncard : ℝ) := by
+  have hκ : 0 < μ.real F := hcov ▸ ZLattice.covolume_pos L μ
+  have hc0 : (0 : ℝ) < c := lt_of_lt_of_le one_pos hc
+  -- The count only depends on `ξ` modulo `L`, so reduce the representative into `F`: the slack
+  -- the boundary estimate must absorb is then `F + -F`, not a set depending on `ξ`.
+  obtain ⟨w, hwL, hvF⟩ := hFe (-ξ)
+  have hvξ : -ξ - w + ξ = -w := by abel
+  set v : E := -ξ - w
+  -- translating by `v` carries the coset onto `L`, turning the count into a lattice-point count
+  rw [hcov, ← Set.ncard_vadd_set v ((c • D) ∩ (ξ +ᵥ (L : Set E))), vadd_set_inter, vadd_vadd,
+    hvξ, vadd_coe_set (L.neg_mem hwL)]
+  have hvol : μ.real (v +ᵥ c • D) = c ^ finrank ℝ E * μ.real D := by
+    rw [measureReal_def, measure_vadd, ← measureReal_def, measureReal_def,
+      Measure.addHaar_smul, ENNReal.toReal_mul, ENNReal.toReal_ofReal (abs_nonneg _),
+      abs_of_nonneg (by positivity), measureReal_def]
+  have hkey := abs_ncard_inter_mul_sub_measureReal_le (μ := μ) (L := L) hF₀ hFpc hFb hFm hFu hFe
+    ((hDb.smul₀ c).vadd v)
+  rw [hvol] at hkey
+  have hfr : frontier (c • D) = c • frontier D := by
+    have h := (isHomeomorph_smul₀ (α := E) hc0.ne').image_frontier D
+    simpa [Set.image_smul] using h.symm
+  have hfrv : frontier (v +ᵥ c • D) = v +ᵥ c • frontier D := by
+    rw [← hfr]
+    exact (IsHomeomorph.image_frontier (Homeomorph.addLeft v).isHomeomorph (c • D)).symm
+  -- a cell meeting the frontier of the translate is counted by the fixed thickened frontier
+  have hsub : frontier (v +ᵥ c • D) + -F ⊆ c • frontier D + (F + -F) := by
+    rw [hfrv]
+    rintro _ ⟨_, ⟨y, hy, rfl⟩, z, hz, rfl⟩
+    exact ⟨y, hy, v + z, ⟨v, hvF, z, hz, rfl⟩, by simp [vadd_eq_add, add_comm, add_left_comm]⟩
+  have hbadfin : ((c • frontier D + (F + -F)) ∩ (L : Set E)).Finite :=
+    L.toAddSubgroup.finite_inter
+      (isBounded_add ((hDb.closure.subset frontier_subset_closure).smul₀ c)
+        (isBounded_add hFb hFb.neg))
+  have hrw : (((v +ᵥ c • D) ∩ (L : Set E)).ncard : ℝ) -
+      μ.real D / μ.real F * c ^ finrank ℝ E =
+      ((((v +ᵥ c • D) ∩ (L : Set E)).ncard : ℝ) * μ.real F - c ^ finrank ℝ E * μ.real D) /
+        μ.real F := by
+    field_simp
+  refine le_of_mul_le_mul_right (le_trans (le_of_eq ?_) (hkey.trans ?_)) hκ
+  · rw [hrw, abs_div, abs_of_pos hκ, div_mul_cancel₀ _ hκ.ne']
+  · gcongr
+
+/-- **Lattice points of a coset in a dilated body, uniformly in the coset.** For a bounded set `D`
+whose frontier is Lipschitz parametrizable in dimension `n - 1`, the number of points of *any*
+coset `ξ +ᵥ L` lying in `c • D` is `μ D / covolume L μ * c ^ n` up to `A * c ^ (n - 1)`, with `A`
+independent of both `c ≥ 1` **and** the translate `ξ`.
+
+Uniformity in `ξ` is the point, and it is not formal: the error is governed by the lattice cells
+meeting the boundary of the translated body, and a translate ranges over all of `E`, which is
+unbounded. What rescues it is that the count only depends on `ξ` modulo `L`, so `ξ` may be
+reduced into the fundamental domain before the boundary estimate is applied; the slack that the
+estimate must absorb is then `F + -F`, one fixed bounded set, rather than one depending on `ξ`.
+
+This is what lets a count be run over each coset of a sublattice with a single implied constant,
+as a count of ideals in a fixed ray class requires. -/
+theorem exists_abs_ncard_smul_inter_vadd_sub_le {D : Set E} (hDb : IsBounded D)
+    (hDfr : IsLipschitzParametrizable (finrank ℝ E - 1) (frontier D)) :
+    ∃ A ≥ (0 : ℝ), ∀ (ξ : E) (c : ℝ), 1 ≤ c →
+      |(((c • D) ∩ (ξ +ᵥ (L : Set E))).ncard : ℝ) -
+          μ.real D / ZLattice.covolume L μ * c ^ finrank ℝ E| ≤ A * c ^ (finrank ℝ E - 1) := by
+  obtain ⟨F, hF₀, hFpc, hFb, hFm, hFu, hFe, hcov⟩ := exists_fundamentalDomain_aux (L := L) (μ := μ)
+  -- The slack `F + -F` is one fixed bounded set, and is what makes `A` independent of `ξ`.
+  obtain ⟨A, hA0, hA⟩ := hDfr.exists_ncard_smul_add_inter_le L.toAddSubgroup
+    (isBounded_add hFb hFb.neg)
+  exact ⟨A, hA0, fun ξ c hc ↦
+    (abs_ncard_smul_inter_vadd_sub_le_aux hDb hc hF₀ hFpc hFb hFm hcov hFu hFe).trans (hA c hc)⟩
+
 /-- **Lattice points in a dilated body, with a boundary-order error.**  For a bounded set `D` whose
 frontier is Lipschitz parametrizable in dimension `n - 1`, with `n = finrank ℝ E`, the number of
 lattice points of `c • D` is `μ D / covolume L μ * c ^ n` up to `A * c ^ (n - 1)`, with `A`
@@ -190,48 +285,8 @@ theorem exists_abs_ncard_smul_inter_sub_le {D : Set E} (hDb : IsBounded D)
     ∃ A ≥ (0 : ℝ), ∀ c : ℝ, 1 ≤ c →
       |(((c • D) ∩ (L : Set E)).ncard : ℝ) -
           μ.real D / ZLattice.covolume L μ * c ^ finrank ℝ E| ≤ A * c ^ (finrank ℝ E - 1) := by
-  classical
-  set b := Module.Free.chooseBasis ℤ L
-  set β := b.ofZLatticeBasis ℝ L
-  set F := ZSpan.fundamentalDomain β with hFdef
-  have hmem : ∀ w : E, w ∈ (L : Set E) ↔ w ∈ span ℤ (Set.range β) := fun w ↦ by
-    rw [b.ofZLatticeBasis_span ℝ]; exact Iff.rfl
-  have hFb : IsBounded F := ZSpan.fundamentalDomain_isBounded β
-  have hFm : MeasurableSet F := ZSpan.fundamentalDomain_measurableSet β
-  have hF₀ : (0 : E) ∈ F := by rw [hFdef]; simp [ZSpan.mem_fundamentalDomain]
-  have hFpc : IsPreconnected F := (ZSpan.convex_fundamentalDomain β).isPreconnected
-  have hcov : ZLattice.covolume L μ = μ.real F :=
-    ZLattice.covolume_eq_measure_fundamentalDomain L μ (ZLattice.isAddFundamentalDomain b μ)
-  have hκ : 0 < μ.real F := hcov ▸ ZLattice.covolume_pos L μ
-  have hFu : ∀ x : E, ∀ w₁ ∈ (L : Set E), ∀ w₂ ∈ (L : Set E),
-      x - w₁ ∈ F → x - w₂ ∈ F → w₁ = w₂ := fun x w₁ h₁ w₂ h₂ k₁ k₂ ↦
-    ZSpan.eq_of_sub_mem_fundamentalDomain β ((hmem w₁).mp h₁) ((hmem w₂).mp h₂)
-      (hFdef ▸ k₁) (hFdef ▸ k₂)
-  have hFe : ∀ x : E, ∃ w ∈ (L : Set E), x - w ∈ F := fun x ↦
-    ⟨(ZSpan.floor β x : E), (hmem _).mpr (ZSpan.floor β x).2,
-      ZSpan.fract_mem_fundamentalDomain β x⟩
-  obtain ⟨A, hA0, hA⟩ := hDfr.exists_ncard_smul_add_inter_le L.toAddSubgroup hFb.neg
-  refine ⟨A, hA0, fun c hc ↦ ?_⟩
-  have hc0 : (0 : ℝ) < c := lt_of_lt_of_le one_pos hc
-  have hfr : frontier (c • D) = c • frontier D := by
-    have h := (isHomeomorph_smul₀ (α := E) hc0.ne').image_frontier D
-    simpa [Set.image_smul] using h.symm
-  have hvol : μ.real (c • D) = c ^ finrank ℝ E * μ.real D := by
-    rw [measureReal_def, Measure.addHaar_smul, ENNReal.toReal_mul,
-      ENNReal.toReal_ofReal (abs_nonneg _), abs_of_nonneg (by positivity), measureReal_def]
-  have hkey := abs_ncard_inter_mul_sub_measureReal_le (μ := μ) (L := L) hF₀ hFpc hFb hFm hFu hFe
-    (hDb.smul₀ c)
-  rw [hfr, hvol] at hkey
-  have hbad : (((c • frontier D + -F) ∩ (L : Set E)).ncard : ℝ) ≤ A * c ^ (finrank ℝ E - 1) :=
-    hA c hc
-  rw [hcov]
-  refine le_trans (le_of_mul_le_mul_right ?_ hκ) hbad
-  refine le_trans (le_of_eq ?_) hkey
-  have hrw : (((c • D) ∩ (L : Set E)).ncard : ℝ) - μ.real D / μ.real F * c ^ finrank ℝ E =
-      ((((c • D) ∩ (L : Set E)).ncard : ℝ) * μ.real F - c ^ finrank ℝ E * μ.real D) /
-        μ.real F := by
-    field_simp
-  rw [hrw, abs_div, abs_of_pos hκ, div_mul_cancel₀ _ hκ.ne']
+  obtain ⟨A, hA0, hA⟩ := exists_abs_ncard_smul_inter_vadd_sub_le (μ := μ) (L := L) hDb hDfr
+  exact ⟨A, hA0, fun c hc ↦ by simpa using hA 0 c hc⟩
 
 /-- **Lattice points in a dilated body**, as an asymptotic statement: the count of the lattice
 points of `c • D` differs from `μ D / covolume L μ * c ^ n` by `O(c ^ (n - 1))` as `c → ∞`. -/
