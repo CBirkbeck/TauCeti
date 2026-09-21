@@ -37,9 +37,10 @@ Gal(L/F) → Gal(K/F)
 
 induces `LayerRefinement.quotientHom`. The inclusion and quotient maps inherit identity and tower
 laws from `Abelianization.map`; these laws make the maps usable without unfolding their bodies.
-Conjugation of a layer similarly induces `NormalLayer.conjugateAbelianizationEquiv`.
+Conjugation of a layer similarly acts through
+`NormalLayer.conjugateGalEquiv.abelianizationCongr.toAdditive`.
 
-## Main definitions
+## Main definitions and results
 
 * `TauCeti.ClassFieldTheory.LayerRestriction.inclusionHom`: the map on abelianizations induced by
   inclusion of Galois groups.
@@ -47,8 +48,10 @@ Conjugation of a layer similarly induces `NormalLayer.conjugateAbelianizationEqu
   same abelianizations, in the opposite direction.
 * `TauCeti.ClassFieldTheory.LayerRefinement.quotientHom`: the map on abelianizations induced by a
   quotient of Galois groups.
-* `TauCeti.ClassFieldTheory.NormalLayer.conjugateAbelianizationEquiv`: the map on abelianizations
-  induced by conjugating a layer.
+* `NormalLayer.conjugateAbelianizationEquiv_one`: conjugation by one is the identity on
+  abelianized Galois groups.
+* `NormalLayer.conjugateAbelianizationEquiv_trans_conjugateAbelianizationEquiv`: conjugation on
+  abelianized Galois groups composes.
 
 ## References
 
@@ -182,41 +185,15 @@ namespace NormalLayer
 
 variable (L : NormalLayer G) (g h : G)
 
-/-- **Conjugation on abelianized Galois groups**, induced by the Galois-group equivalence between
-a layer and its conjugate. The additive type tags match the additive convention of Tate
-cohomology. -/
-def conjugateAbelianizationEquiv :
-    Additive (Abelianization L.Gal) ≃+ Additive (Abelianization (L.conjugate g).Gal) :=
-  (L.conjugateGalEquiv g).abelianizationCongr.toAdditive
-
-/-- Conjugation on abelianized Galois groups sends the class of a Galois element to the class of
-its conjugate. -/
-@[simp]
-theorem conjugateAbelianizationEquiv_of (x : L.Gal) :
-    L.conjugateAbelianizationEquiv g (Additive.ofMul (Abelianization.of x)) =
-      Additive.ofMul (Abelianization.of (L.conjugateGalEquiv g x)) :=
-  (rfl)
-
-/-- Inverse conjugation on abelianized Galois groups sends the class of a Galois element to the
-class of its inverse conjugate. -/
-@[simp]
-theorem conjugateAbelianizationEquiv_symm_of (y : (L.conjugate g).Gal) :
-    (L.conjugateAbelianizationEquiv g).symm (Additive.ofMul (Abelianization.of y)) =
-      Additive.ofMul (Abelianization.of ((L.conjugateGalEquiv g).symm y)) := by
-  apply (L.conjugateAbelianizationEquiv g).injective
-  rw [AddEquiv.apply_symm_apply, conjugateAbelianizationEquiv_of,
-    MulEquiv.apply_symm_apply]
-
 /-- Conjugation by `1` is the identity on abelianized Galois groups, after transporting along
 `conjugate_one`. -/
 @[simp]
 theorem conjugateAbelianizationEquiv_one :
-    (L.conjugateAbelianizationEquiv 1).trans
+    (L.conjugateGalEquiv 1).abelianizationCongr.toAdditive.trans
         ((MulEquiv.abelianizationCongr
           (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal) L.conjugate_one)).toAdditive) =
       AddEquiv.refl (Additive (Abelianization L.Gal)) := by
-  rw [conjugateAbelianizationEquiv,
-    show
+  rw [show
       ((L.conjugateGalEquiv 1).abelianizationCongr.toAdditive.trans
         (MulEquiv.abelianizationCongr
           (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal) L.conjugate_one)).toAdditive) =
@@ -235,21 +212,19 @@ theorem conjugateAbelianizationEquiv_one :
 /-- Conjugation on abelianized Galois groups composes: conjugating by `h` and then by `g` is
 conjugating by `g * h`, up to transport along `conjugate_conjugate`. -/
 theorem conjugateAbelianizationEquiv_trans_conjugateAbelianizationEquiv :
-    (L.conjugateAbelianizationEquiv h).trans
-        ((L.conjugate h).conjugateAbelianizationEquiv g) =
-      (L.conjugateAbelianizationEquiv (g * h)).trans
+    (L.conjugateGalEquiv h).abelianizationCongr.toAdditive.trans
+        ((L.conjugate h).conjugateGalEquiv g).abelianizationCongr.toAdditive =
+      (L.conjugateGalEquiv (g * h)).abelianizationCongr.toAdditive.trans
         ((MulEquiv.abelianizationCongr
           (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal)
             (L.conjugate_conjugate g h).symm)).toAdditive) := by
-  rw [conjugateAbelianizationEquiv, conjugateAbelianizationEquiv,
-    show
+  rw [show
       ((L.conjugateGalEquiv h).abelianizationCongr.toAdditive.trans
         ((L.conjugate h).conjugateGalEquiv g).abelianizationCongr.toAdditive) =
         ((L.conjugateGalEquiv h).abelianizationCongr.trans
           ((L.conjugate h).conjugateGalEquiv g).abelianizationCongr).toAdditive by
       ext
       rfl,
-    conjugateAbelianizationEquiv,
     show
       ((L.conjugateGalEquiv (g * h)).abelianizationCongr.toAdditive.trans
         (MulEquiv.abelianizationCongr
