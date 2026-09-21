@@ -351,6 +351,16 @@ theorem locIdealImage_one_le_adjoin_plus (P : PairOfDefinition A) (Aplus : Subri
   obtain ⟨d, hd, rfl⟩ := (mem_locIdealImage_iff P T s S 1).mp hx
   exact Subring.mem_toAddSubgroup.mpr (Subalgebra.mem_toSubring.mpr (one_mul d ▸ hJ d hd 1))
 
+omit [TopologicalSpace A] [IsTopologicalRing A] in
+/-- **`A⁺` maps into `C`**, the integral closure of `A⁺[T/s]` in `Aₛ`: an element of `A⁺` lands in
+the adjoined subring already, hence in its integral closure. No topology is involved. -/
+lemma algebraMap_mem_integralClosure_adjoin_plus (Aplus : Subring A) (T : Finset A) (s : A)
+    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S] (a : A) (ha : a ∈ Aplus) :
+    algebraMap A S a ∈ (integralClosure ↥(Algebra.adjoin Aplus (Set.range fun t : T ↦
+      (divBy (t : A) s : S))) S).toSubring :=
+  Subalgebra.algebraMap_mem _ (⟨_, Subalgebra.algebraMap_mem _ (⟨a, ha⟩ : Aplus)⟩ :
+    ↥(Algebra.adjoin Aplus _))
+
 /-- **When `A⁺` consists of power-bounded elements and contains the image of the ideal of
 definition, the integral closure of `A⁺[T/s]` in `Aₛ` is a ring of integral elements** of the
 localised topology: it is open, integrally closed in `Aₛ`, and contained in `(Aₛ)°`. Those are the

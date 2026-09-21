@@ -58,15 +58,6 @@ open TauCeti.Huber TauCeti.Huber.PairOfDefinition TauCeti.Localization
 
 variable {A S : Type*} [CommRing A] [CommRing S] [Algebra A S]
 
-/-- The algebra map from `A⁺` to `A(T/s)` takes values in the integral closure of
-`A⁺[T/s]`. -/
-lemma algebraMap_mem_integralClosure_adjoin_divBy (Aplus : Subring A) (T : Finset A)
-    (s : A) [IsLocalization.Away s S] (a : A) (ha : a ∈ Aplus) :
-    algebraMap A S a ∈ (integralClosure ↥(Algebra.adjoin Aplus (Set.range fun t : T ↦
-      (divBy (t : A) s : S))) S).toSubring :=
-  Subalgebra.algebraMap_mem _ (⟨_, Subalgebra.algebraMap_mem _ (⟨a, ha⟩ : Aplus)⟩ :
-    ↥(Algebra.adjoin Aplus _))
-
 variable [TopologicalSpace A] [IsTopologicalRing A]
 
 open scoped Classical in
@@ -84,7 +75,7 @@ noncomputable def spaLocalizationToRationalSubset (P : PairOfDefinition A) (Aplu
   let Bplus := (integralClosure ↥(Algebra.adjoin Aplus
     (Set.range fun t : T ↦ (divBy (t : A) s : S))) S).toSubring
   have hplus : ∀ a ∈ Aplus, algebraMap A S a ∈ Bplus :=
-    algebraMap_mem_integralClosure_adjoin_divBy Aplus T s
+    algebraMap_mem_integralClosure_adjoin_plus Aplus T s S
   let f : spa Bplus → spa Aplus :=
     spaComap (algebraMap A S) (continuous_algebraMap_locTopology P T s S hden)
       Aplus Bplus hplus
@@ -183,7 +174,7 @@ lemma val_comp_spaLocalizationHomeomorph (P : PairOfDefinition A) (Aplus : Subri
     letI := locTopology P T s S hden
     Subtype.val ∘ ⇑(spaLocalizationHomeomorph P Aplus hP T s S hden) =
       spaComap (algebraMap A S) (continuous_algebraMap_locTopology P T s S hden) Aplus _
-        (algebraMap_mem_integralClosure_adjoin_divBy Aplus T s) := by
+        (algebraMap_mem_integralClosure_adjoin_plus Aplus T s S) := by
   let _ := locTopology P T s S hden
   funext v
   apply Subtype.ext

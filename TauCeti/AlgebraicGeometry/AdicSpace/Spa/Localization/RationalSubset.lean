@@ -141,7 +141,7 @@ theorem exists_mem_spaRationalFamily_spaLocalizationHomeomorph_preimage_eq [Topo
   intro U hU
   obtain ⟨W, hW, hWU⟩ := exists_mem_spaRationalFamily_spaComap_preimage_eq_of_isLocalization
     (Submonoid.powers s) Aplus _ (continuous_algebraMap_locTopology P T s S hden)
-    (algebraMap_mem_integralClosure_adjoin_divBy Aplus T s) hU
+    (algebraMap_mem_integralClosure_adjoin_plus Aplus T s S) hU
   refine ⟨W, hW, ?_⟩
   rw [← Set.preimage_comp, val_comp_spaLocalizationHomeomorph]
   exact hWU
