@@ -156,7 +156,7 @@ theorem addCircleMulEquiv_apply [PreconnectedSpace 𝕜] [TotallyDisconnectedSpa
   rfl
 
 @[simp]
-theorem addCircleMulEquiv_symm_apply_coe [PreconnectedSpace 𝕜]
+theorem _root_.deck.addCircleMulEquiv_symm_apply_coe [PreconnectedSpace 𝕜]
     [TotallyDisconnectedSpace (zmultiples p)] (φ : deck ((↑) : 𝕜 → AddCircle p)) :
     ((addCircleMulEquiv.symm φ).toAdd : 𝕜) = φ.1 0 := by
   calc
