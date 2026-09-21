@@ -167,26 +167,28 @@ theorem pointwiseQuotientProjection_comp_kernelPointwiseQuotientNatTrans (f : H 
 injective over every value algebra. -/
 theorem kernelPointwiseQuotientMap_injective (f : H ⟶ K) (A : CommAlgCat.{w} R) :
     Function.Injective (kernelPointwiseQuotientMap f A) := by
-  let _ : Group ↑(pointwiseQuotientGroup K (kernelHopfIdeal f)
-      (isNormal_kernelHopfIdeal f) A) :=
-    (pointwiseQuotientGroup K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A).str
-  -- Choose representatives of both quotient classes. Equality of their images says that their
-  -- quotient lies in the scheme-theoretic kernel, hence is trivial in the pointwise quotient.
-  intro q₁ q₂ hq
-  obtain ⟨g₁, rfl⟩ := pointwiseQuotientMk_surjective K (kernelHopfIdeal f)
-    (isNormal_kernelHopfIdeal f) A q₁
-  obtain ⟨g₂, rfl⟩ := pointwiseQuotientMk_surjective K (kernelHopfIdeal f)
-    (isNormal_kernelHopfIdeal f) A q₂
-  rw [kernelPointwiseQuotientMap_mk, kernelPointwiseQuotientMap_mk] at hq
-  rw [← div_eq_one,
-    ← (pointwiseQuotientMk K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A).hom.map_div]
-  apply (pointwiseQuotientMk_eq_one_iff K (kernelHopfIdeal f)
-    (isNormal_kernelHopfIdeal f) A (g₁ / g₂)).2
-  apply (mapPointsFunctor_app_eq_one_iff f A (g₁ / g₂)).1
-  exact (((mapPointsFunctor f).app A).hom.map_div
-    (show (HopfAlgebra.pointsFunctor (R := R) (H := K)).obj A from g₁)
-    (show (HopfAlgebra.pointsFunctor (R := R) (H := K)).obj A from g₂)).trans
-      (div_eq_one.mpr hq)
+  let _ : (quotientPointsSubgroup K (kernelHopfIdeal f) A).Normal :=
+    quotientPointsSubgroup_normal K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A
+  have hker : quotientPointsSubgroup K (kernelHopfIdeal f) A =
+      ((mapPointsFunctor f).app A).hom.ker := by
+    ext g
+    exact (mapPointsFunctor_app_eq_one_iff f A g).symm
+  have hlift : (fun q ↦ kernelPointwiseQuotientMap f A q) =
+      QuotientGroup.lift (quotientPointsSubgroup K (kernelHopfIdeal f) A)
+        ((mapPointsFunctor f).app A).hom
+          (quotientPointsSubgroup_le_mapPointsFunctor_ker f A) := by
+    funext q
+    obtain ⟨g, rfl⟩ := pointwiseQuotientMk_surjective K (kernelHopfIdeal f)
+      (isNormal_kernelHopfIdeal f) A q
+    rw [kernelPointwiseQuotientMap_mk, pointwiseQuotientMk_apply]
+    exact (QuotientGroup.lift_mk' (quotientPointsSubgroup K (kernelHopfIdeal f) A)
+      (quotientPointsSubgroup_le_mapPointsFunctor_ker f A)
+        (show (HopfAlgebra.pointsFunctor (R := R) (H := K)).obj A from g)).symm
+  change Function.Injective (fun q ↦ kernelPointwiseQuotientMap f A q)
+  rw [hlift]
+  exact (QuotientGroup.injective_lift_iff
+    (quotientPointsSubgroup K (kernelHopfIdeal f) A) ((mapPointsFunctor f).app A).hom
+      (quotientPointsSubgroup_le_mapPointsFunctor_ker f A)).2 hker
 
 /-- Every component of the natural kernel-quotient comparison is a monomorphism of groups. -/
 instance kernelPointwiseQuotientMap_mono (f : H ⟶ K) (A : CommAlgCat.{w} R) :
