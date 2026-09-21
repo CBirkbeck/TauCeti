@@ -43,6 +43,7 @@ conjugation action.
   point.
 * `ConjClasses.card_carrier_mul_orderOf_dvd`: the class size times the order of a member
   divides the order of the group, so the quotient below is an exact ratio.
+* `ConjClasses.card_div_card_carrier_mul_orderOf_pos`: for a finite group that ratio is positive.
 * `ConjClasses.card_div_card_carrier_mul_orderOf_eq_card_centralizer_div_orderOf`: that
   quotient equals the order of the centralizer divided by the order of the member.
 * `TauCeti.ConjClasses.card_carrier_mk_eq_card_filter`: the size of a conjugacy class as the
@@ -262,6 +263,19 @@ theorem card_carrier_mul_orderOf_dvd {G : Type*} [Group G] (C : ConjClasses G) (
   obtain ⟨k, hk⟩ := (Subgroup.centralizer {σ}).orderOf_dvd_natCard
     (Subgroup.mem_centralizer_singleton_iff.mpr rfl)
   exact ⟨k, by rw [TauCeti.ConjClasses.card_carrier_mk, mul_assoc, ← hk, Subgroup.index_mul_card]⟩
+
+/-- **That quotient is positive.** For a finite group the class size times the order of a member
+divides the group order and both are positive, so the ratio `Nat.card G / (#C.carrier * orderOf σ)`
+is a positive natural number rather than a truncation to zero.
+
+Finiteness is needed, and not only for convenience: for an infinite `G` every one of
+`Nat.card G`, `Nat.card C.carrier` and `orderOf σ` may be `0`, and the quotient is then `0 / 0`. -/
+theorem card_div_card_carrier_mul_orderOf_pos {G : Type*} [Group G] [Finite G]
+    (C : ConjClasses G) (σ : G) (hσ : σ ∈ C.carrier) :
+    0 < Nat.card G / (Nat.card C.carrier * orderOf σ) :=
+  have : Nonempty C.carrier := ⟨⟨σ, hσ⟩⟩
+  Nat.div_pos (Nat.le_of_dvd Nat.card_pos (C.card_carrier_mul_orderOf_dvd σ hσ))
+    (Nat.mul_pos Nat.card_pos (orderOf_pos σ))
 
 /-- **That quotient in closed form.** Dividing the order of the group by the class size times the
 order of a member leaves the order of the centralizer divided by that same order.

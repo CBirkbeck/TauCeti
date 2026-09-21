@@ -42,6 +42,11 @@ here — the transfer is exact, and only the cyclic density it consumes is analy
 
 * R. Sharifi, *Algebraic Number Theory*, Theorem 7.2.2, Step 1.
 * J. Neukirch, *Algebraic Number Theory*, Chapter VII, Section 13.
+* C. Birkbeck and R. Brasca,
+  [*Chebotarev density*](https://github.com/CBirkbeck/chebotarev-density),
+  `CebotarevDensity/FixedFieldDensity.lean`, theorem `density_lift_through_fixedField`, at commit
+  `8575c9df1ae0a61120ab5c964c7911414254bec7` (Apache-2.0).  The statement follows that theorem;
+  the proof here assembles results this repository already had.
 -/
 
 public section
@@ -57,18 +62,6 @@ namespace NumberField.Chebotarev
 
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L]
   [Algebra K L] [IsGalois K L]
-
-omit [IsGalois K L] in
-/-- **The fixed-field multiplicity is nonzero.** The class size times the order of a member
-divides the group order, and the group is finite and nonempty, so the quotient is positive. -/
-private theorem fixedField_multiplicity_ne_zero (C : ConjClasses (L ≃ₐ[K] L))
-    (sigma : L ≃ₐ[K] L) (hsigma : sigma ∈ C.carrier) :
-    Nat.card (L ≃ₐ[K] L) / (Nat.card C.carrier * orderOf sigma) ≠ 0 := by
-  have : Nonempty C.carrier := ⟨⟨sigma, hsigma⟩⟩
-  have hpos : 0 < Nat.card C.carrier * orderOf sigma :=
-    Nat.mul_pos Nat.card_pos (orderOf_pos sigma)
-  have hdvd := C.card_carrier_mul_orderOf_dvd sigma hsigma
-  exact (Nat.div_pos (Nat.le_of_dvd Nat.card_pos hdvd) hpos).ne'
 
 /-- **Dirichlet density across the cyclic fixed field.** Let `sigma` represent the conjugacy class
 `C` and put `E = L ^ <sigma>`.  The relative Frobenius fibre of `sigma.toFixedFieldAlgEquiv` over
@@ -86,7 +79,7 @@ theorem hasDirichletDensity_frobeniusPrimeSet_fixedField_iff (C : ConjClasses (L
   refine Set.hasDirichletDensity_contraction
     (Set.hasDirichletDensity_of_finite (ramifiedPrimes K L).finite_toSet)
     (fun P hP hdeg hram ↦ (inertiaDeg_eq_one_iff_under_mem_frobeniusPrimeSet sigma hP hram).mp hdeg)
-    (fixedField_multiplicity_ne_zero _ sigma hsigma) fun p hp ↦ ?_
+    (ConjClasses.card_div_card_carrier_mul_orderOf_pos _ sigma hsigma).ne' fun p hp ↦ ?_
   -- Over an unramified prime of the class, residue degree one is automatic on the fibre, so the
   -- counted subtype is the one `fixedField_frobenius_fiber_card` counts.
   rw [← fixedField_frobenius_fiber_card _ sigma hsigma p hp.1]
@@ -113,7 +106,7 @@ theorem hasDirichletDensity_frobeniusPrimeSet_of_fixedField (C : ConjClasses (L 
       ((Nat.card C.carrier * orderOf sigma : ℕ) : ℝ) = Nat.card (L ≃ₐ[K] L) := by
     rw [← Nat.cast_mul, Nat.div_mul_cancel (C.card_carrier_mul_orderOf_dvd sigma hsigma)]
   have hc : ((Nat.card (L ≃ₐ[K] L) / (Nat.card C.carrier * orderOf sigma) : ℕ) : ℝ) ≠ 0 :=
-    Nat.cast_ne_zero.mpr (fixedField_multiplicity_ne_zero C sigma hsigma)
+    Nat.cast_ne_zero.mpr (C.card_div_card_carrier_mul_orderOf_pos sigma hsigma).ne'
   have hval : (1 / orderOf sigma : ℝ) /
       ((Nat.card (L ≃ₐ[K] L) / (Nat.card C.carrier * orderOf sigma) : ℕ) : ℝ) =
       (Nat.card C.carrier : ℝ) / Nat.card (L ≃ₐ[K] L) := by
