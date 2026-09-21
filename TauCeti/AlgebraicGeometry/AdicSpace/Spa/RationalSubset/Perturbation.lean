@@ -210,19 +210,29 @@ theorem exists_isOpen_span_rationalSubset_union_image_eq [IsHuberRing A] {B : Ty
     (Bplus : Subring B) (T : Finset B) (hT : IsOpen (Ideal.span (T : Set B) : Set B)) (s : B) :
     ∃ D : Finset A, IsOpen (Ideal.span (D : Set A) : Set A) ∧
       rationalSubset Bplus (T ∪ D.image φ) s = rationalSubset Bplus T s := by
-  obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := B)
-  obtain ⟨n, hn⟩ := P.exists_forall_mem_idealImage_exists_sum_eq T hT
-  -- continuity turns the open neighbourhood `Iⁿ` of `0 : B` into one of `0 : A`
-  obtain ⟨D, hD, hDopen⟩ := exists_finset_subset_isOpen_span <| hφ.continuousAt.preimage_mem_nhds <|
-    map_zero φ ▸ (P.isOpen_idealImage n).mem_nhds (P.idealImage n).zero_mem
-  refine ⟨D, hDopen, rationalSubset_union_of_forall_vle Bplus T _ s ?_⟩
-  -- the adjoined numerators lie in `Iⁿ`, so they are strictly dominated by `v s`; the bound
-  -- `valuation_lt_of_mem_idealImage` gives is uniform in `v`, which is what removes the need
-  -- for the quasi-compactness argument Wedhorn runs at this point
-  refine Finset.forall_mem_image.mpr fun d hd v hv ↦ ?_
-  obtain ⟨hspa, hle, hs⟩ := (mem_rationalSubset_iff_valuation Bplus T s v).mp hv
-  exact (valuation_le_iff v _ s).mp
-    (valuation_lt_of_mem_idealImage P hn ((mem_spa_iff _ _).mp hspa).1 hs hle (hD hd)).le
+  obtain ⟨V, hV, hpert⟩ :=
+    exists_mem_nhds_forall_rationalSubset_eq_of_sub_mem Bplus (insert 0 T) (by simpa using hT) s
+  obtain ⟨D, hD, hDopen⟩ :=
+    exists_finset_subset_isOpen_span <| hφ.continuousAt.preimage_mem_nhds <| map_zero φ ▸ hV
+  refine ⟨D, hDopen, ?_⟩
+  have h0 : (0 : B) ∈ V := mem_of_mem_nhds hV
+  have h := hpert (insert 0 (T ∪ D.image φ)) s (by
+    intro t ht
+    rcases Finset.mem_insert.mp ht with rfl | ht
+    · exact ⟨(0 : B), Finset.mem_insert_self 0 _, by simpa using h0⟩
+    · exact ⟨t, Finset.mem_insert_of_mem (Finset.mem_union_left _ ht), by simpa using h0⟩) (by
+    intro u hu
+    rcases Finset.mem_insert.mp hu with rfl | hu
+    · exact ⟨(0 : B), Finset.mem_insert_self 0 T, by simpa using h0⟩
+    rcases Finset.mem_union.mp hu with hu | hu
+    · exact ⟨u, Finset.mem_insert_of_mem hu, by simpa using h0⟩
+    · obtain ⟨d, hd, rfl⟩ := Finset.mem_image.mp hu
+      exact ⟨(0 : B), Finset.mem_insert_self 0 T, by simpa using hD hd⟩) (by simpa using h0)
+  rw [rationalSubset_insert_of_forall_vle Bplus (T ∪ D.image φ) s 0
+      (fun v _ ↦ v.toValuativeRel.zero_vle s),
+    rationalSubset_insert_of_forall_vle Bplus T s 0
+      (fun v _ ↦ v.toValuativeRel.zero_vle s)] at h
+  exact h
 
 end TauCeti.ValuationSpectrum
 
