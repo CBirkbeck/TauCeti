@@ -7,7 +7,7 @@ module
 
 public import TauCeti.RingTheory.Localization.Away
 public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
-public import TauCeti.RingTheory.Huber.Basic
+public import TauCeti.RingTheory.Huber.OpenIdeal
 
 /-!
 # The localisation topology: construction
@@ -88,7 +88,8 @@ structure-map case of Wedhorn's Proposition 8.30,
 `TauCeti.Huber.PairOfDefinition.flat_toCompletionLoc`. `locIdealImage_le_of_image_subset` and
 `isOpen_map_algebraMap_locTopology` are later additions with no AINTLIB analogue either: commit
 `37bbdaeb9` proves no openness statement about an ideal of `Aₛ`. They record that admissibility of
-a numerator ideal survives the structure map `A → Aₛ`. The main changes
+a numerator ideal survives the structure map `A → Aₛ`, as required by the forward direction of
+Wedhorn Proposition 8.2(2). The main changes
 are: adapted `PairOfDefinition` field names to TauCeti conventions (`A₀`→`ringOfDefinition`,
 `I`→`ideal`, etc.); uses characteristic lemmas instead of destructuring definitions; removed
 unused hypotheses to satisfy `#lint` checks; stated over an arbitrary localisation `S` away from
@@ -96,7 +97,8 @@ unused hypotheses to satisfy `#lint` checks; stated over an arbitrary localisati
 
 ## References
 
-* [T. Wedhorn, *Adic Spaces*][wedhorn_adic], Proposition and Definition 5.51, §5.6
+* [T. Wedhorn, *Adic Spaces*][wedhorn_adic], Proposition and Definition 5.51, §5.6, and
+  Proposition 8.2(2).
 * [C. Birkbeck, *AINTLIB*](https://github.com/CBirkbeck/AINTLIB), branch `dev/adic-spaces`,
   commit `d9f2fbbb`, `projects/AdicSpaces/Adic spaces/LocalizationTopology.lean`
 -/
@@ -1065,27 +1067,6 @@ theorem locIdealImage_le_of_image_subset (P : PairOfDefinition A) (T : Finset A)
   obtain ⟨d, hd, rfl⟩ := (mem_locIdealImage_iff P T s S n).mp hx
   exact hspan hd
 
-/-- **The image of an open ideal of `A` generates an open ideal of `Aₛ`.** An open ideal `a`
-contains some basic neighbourhood `image(Iⁿ)` of `A`, whose image therefore lies in
-`Ideal.map (algebraMap A S) a`; so that ideal contains the `n`-th basic neighbourhood of `Aₛ`,
-which is open.
-
-This is the companion of continuity of the structure map
-(`TauCeti.Huber.PairOfDefinition.continuous_algebraMap_locTopology`): continuity pulls an open
-set back to `A`, while this pushes an open *ideal* forward. -/
-theorem isOpen_map_algebraMap_locTopology [IsTopologicalRing A] (P : PairOfDefinition A)
-    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
-    (hden : HasDenominatorPower P T s S) {a : Ideal A} (ha : IsOpen (a : Set A)) :
-    letI := locTopology P T s S hden
-    IsOpen ((Ideal.map (algebraMap A S) a : Ideal S) : Set S) := by
-  let _ := locTopology P T s S hden
-  have _ := isTopologicalRing_locTopology P T s S hden
-  obtain ⟨n, -, hn⟩ := P.hasBasis_nhds_zero.mem_iff.mp (ha.mem_nhds a.zero_mem)
-  exact AddSubgroup.isOpen_mono
-    (locIdealImage_le_of_image_subset P T s S
-      (Set.image_subset_iff.mpr fun x hx ↦ Ideal.mem_map_of_mem _ (hn hx)))
-    (isOpen_locIdealImage P T s S hden n)
-
 /-- **The powers of `J` are a neighbourhood basis of zero in `D`.** The images `image(Jⁿ)` are one
 in `Aₛ` by `TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero_locTopology`, and `D` carries the
 subspace topology, so it suffices that pulling those images back along the inclusion returns the
@@ -1148,6 +1129,30 @@ noncomputable def localization [IsTopologicalRing A] (P : PairOfDefinition A) (T
     idealOfDefinition := locIdeal P T s S
     fg_idealOfDefinition := fg_locIdeal P T s S
     isAdic_idealOfDefinition := isAdic_locIdeal P T s S hden }
+
+/-- **The image of an open ideal of `A` generates an open ideal of `Aₛ`.** This is the openness
+assertion needed in the forward direction of Wedhorn Proposition 8.2(2). The mapped ideal of
+definition contains the first basic neighbourhood of `Aₛ`, hence is open; the general map theorem
+then applies to every open ideal.
+
+This is the companion of continuity of the structure map
+(`TauCeti.Huber.PairOfDefinition.continuous_algebraMap_locTopology`): continuity pulls an open
+set back to `A`, while this pushes an open *ideal* forward. -/
+theorem isOpen_map_algebraMap_locTopology [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) {a : Ideal A} (ha : IsOpen (a : Set A)) :
+    letI := locTopology P T s S hden
+    IsOpen ((Ideal.map (algebraMap A S) a : Ideal S) : Set S) := by
+  let _ := locTopology P T s S hden
+  have _ := isTopologicalRing_locTopology P T s S hden
+  apply P.isOpen_map_of_isOpen_map_extendedIdealOfDefinition
+    (localization P T s S hden) (algebraMap A S) ?_ ha
+  exact AddSubgroup.isOpen_mono
+    (locIdealImage_le_of_image_subset P T s S
+      (Set.image_subset_iff.mpr fun x hx ↦ Ideal.mem_map_of_mem _ (by
+        rw [← pow_one P.extendedIdealOfDefinition, P.extendedIdealOfDefinition_pow]
+        exact Ideal.subset_span hx)))
+    (isOpen_locIdealImage P T s S hden 1)
 
 /-- The ring of definition of `localization` is `D`. The body of `localization` is not exposed, so
 this is how a consumer recovers it — the same contract `completion_ringOfDefinition` provides for
