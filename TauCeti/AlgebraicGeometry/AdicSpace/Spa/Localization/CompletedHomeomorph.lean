@@ -8,7 +8,7 @@ module
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Completion.Homeomorph
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.Basic
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.Homeomorph
-public import TauCeti.Topology.Homeomorph.SetCongr
+import TauCeti.Topology.Homeomorph.SetCongr
 
 /-!
 # The adic spectrum of `A⟨T/s⟩` is the rational subset
@@ -20,30 +20,13 @@ For a rational subset `R(T/s)` of `Spa (A, A⁺)`, pullback along the structure 
 Spa (A⟨T/s⟩, A_U⁺) ≃ₜ R(T/s).
 ```
 
-`Spa.Localization.Homeomorph` identifies the adic spectrum of the *uncompleted* topological
-localization `A(T/s)` with `R(T/s)` and leaves the completed coordinate ring aside; this file
-supplies the remaining step, which is the completion homeomorphism of `Spa.Completion.Homeomorph`
-applied to `A(T/s)`.
+Here `A_U⁺` is the plus ring `completedPlusSubring` puts on `A⟨T/s⟩`: the closure of the image of
+`C`, the integral closure of `A⁺[T/s]` in `A(T/s)`. It agrees with the plus ring Proposition 7.48
+puts on a completion, which is what `completedPlusSubring_eq_completionPlus` records.
 
-That is also Wedhorn's own argument. He factors `ρ` as
-
-```text
-A → A(T/s) → A⟨T/s⟩,
-```
-
-observes that the second map induces a homeomorphism by **Proposition 7.48**, and is left with
-the first, which is `spaLocalizationHomeomorph`. Nothing further is needed here: the plus ring
-`A_U⁺` of `A⟨T/s⟩` is by construction the closure of the image of `C`, the integral closure of
-`A⁺[T/s]` in `A(T/s)`, and that is exactly the plus ring Proposition 7.48 puts on a completion.
-`completedPlusSubring_eq_completionPlus` records that agreement.
-
-The two homeomorphisms being composed do not meet on the nose, and the mismatches are pure
-bookkeeping: the middle adic spectrum is presented with two different but equal plus rings, and
-`spaLocalizationHomeomorph` is stated at `locTopology` while the completion presents `A(T/s)` at
-the topology `locUniformSpace` induces. Both equations are equations of *subsets* of the
-valuation spectrum — which is topologized by the ring structure alone — so both are crossed by
-`Homeomorph.setCongr`, whose forward map is the identity on underlying valuations. That is what
-keeps `spaCompletedLocalizationHomeomorph_apply` a computation rather than a transport.
+`Spa.Localization.Homeomorph` treats the *uncompleted* topological localization `A(T/s)`; this
+file supplies the completed coordinate ring, and with it the first assertion of Proposition
+8.2 (2).
 
 No completeness, Tate or Noetherian hypothesis is needed, and `A⁺` is an arbitrary subring
 subject only to the hypothesis `A₀ ≤ A⁺` that `spaLocalizationHomeomorph` already carries.
@@ -78,8 +61,7 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 /-- **`A_U⁺` is the completion plus ring of `C`.** Both are the closure, in `A⟨T/s⟩`, of the image
 of the integral closure `C` of `A⁺[T/s]` in `A(T/s)`, so the plus ring that `completedPlusSubring`
 puts on the completed localization is the one `completionPlus` builds from `C` — the plus ring of
-Wedhorn's Proposition 7.48. Neither definition is exposed outside the module that introduces it,
-so neither side unfolds here and the agreement has to be stated rather than left to `rfl`. -/
+Wedhorn's Proposition 7.48. -/
 theorem completedPlusSubring_eq_completionPlus (P : PairOfDefinition A) (Aplus : Subring A)
     (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     (hden : HasDenominatorPower P T s S) :
@@ -91,19 +73,15 @@ theorem completedPlusSubring_eq_completionPlus (P : PairOfDefinition A) (Aplus :
   let _ := locUniformSpace P T s S hden
   have _ := isUniformAddGroup_locUniformSpace P T s S hden
   have _ := isTopologicalRing_locUniformSpace P T s S hden
+  -- neither `completedPlusSubring` nor `completionPlus` is exposed outside the module that
+  -- introduces it, so neither side unfolds here and the two are compared on their carriers
   exact SetLike.coe_injective <| by
     rw [coe_completedPlusSubring, completionPlus_def,
       Completion.coe_topologicalClosure_map_coeRingHom, Subalgebra.coe_toSubring]
 
 /-- **The adic spectrum of `A⟨T/s⟩` is the rational subset `R(T/s)`** — Wedhorn Proposition
 8.2 (2), first assertion. Pullback along the structure map `A → A⟨T/s⟩` is a homeomorphism onto
-`R(T/s)`.
-
-It is the composite of the completion homeomorphism of Proposition 7.48, applied to the
-topological localization `A(T/s)`, with `spaLocalizationHomeomorph`. The two `Homeomorph.setCongr`
-steps cross `completedPlusSubring_eq_completionPlus`, which renames the plus ring, and
-`locUniformSpace_toTopologicalSpace`, which moves the middle adic spectrum from the topology
-`locUniformSpace` induces to `locTopology`; neither moves a point. -/
+`R(T/s)`. -/
 noncomputable def spaCompletedLocalizationHomeomorph (P : PairOfDefinition A) (Aplus : Subring A)
     (hP : P.ringOfDefinition ≤ Aplus) (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S]
     [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S) :
@@ -116,6 +94,11 @@ noncomputable def spaCompletedLocalizationHomeomorph (P : PairOfDefinition A) (A
   have _ := isUniformAddGroup_locUniformSpace P T s S hden
   have _ := isTopologicalRing_locUniformSpace P T s S hden
   have _ := isHuberRing_locUniformSpace P T s S hden
+  -- `ρ` factors as `A → A(T/s) → A⟨T/s⟩`: the second map is a homeomorphism on adic spectra by
+  -- Proposition 7.48, the first is `spaLocalizationHomeomorph`. The two `setCongr` steps only
+  -- rename the plus ring and move the middle adic spectrum between the topology
+  -- `locUniformSpace` induces and `locTopology`. Both are equations of subsets of the valuation
+  -- spectrum, which the ring structure alone topologizes, so neither moves a point.
   (Homeomorph.setCongr (by rw [completedPlusSubring_eq_completionPlus])).trans <|
     (spaCompletionHomeomorph (integralClosure ↥(Algebra.adjoin Aplus
         (Set.range fun t : T ↦ (divBy (t : A) s : S))) S).toSubring).trans <|
