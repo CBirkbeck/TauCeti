@@ -21,7 +21,7 @@ of an ideal on a module, complementing `Mathlib/RingTheory/Ideal/Operations.lean
 * `Ideal.eq_one_of_mul_eq_one`: the only factorization of the unit ideal is the trivial one, so a
   factor of `1` is `1`. This is the ideal-theoretic cancellation step behind the fact that the
   divisor antidiagonal of the unit ideal is a singleton.
-* `TauCeti.Submodule.mul_toAddSubgroup`: multiplication of submodules commutes with passage to
+* `Submodule.mul_toAddSubgroup`: multiplication of submodules commutes with passage to
   their underlying additive subgroups.
 * `TauCeti.Ideal.toAddSubgroup_mul_eq_closure_mul`: additive generators of a product of ideals.
 * `Ideal.smul_top_eq_top_of_pi`: an ideal that expands the whole of a product of modules expands
@@ -35,8 +35,6 @@ public section
 
 open scoped Pointwise
 
-namespace TauCeti
-
 namespace Submodule
 
 variable {R : Type*} [Ring R]
@@ -49,6 +47,8 @@ theorem mul_toAddSubgroup (M N : Submodule R R) :
   exact _root_.Submodule.mul_toAddSubmonoid M N
 
 end Submodule
+
+namespace TauCeti
 
 namespace Ideal
 
