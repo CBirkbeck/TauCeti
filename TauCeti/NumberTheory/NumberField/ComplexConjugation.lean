@@ -182,9 +182,8 @@ theorem restrictNormal_complexConjugationAt_of_isComplex [IsGalois K F] (w : Inf
       complexConjugationAt_smul_self]
   · intro h1
     exact complexConjugationAt_ne_one K w hw
-      (eq_one_of_restrictNormalHom_eq_one K (isUnramified_iff.mpr (Or.inr hv))
-        (complexConjugationAt_smul_self K w hw) (by
-          simpa only [AlgEquiv.restrictNormalHom_eq_restrictNormal] using h1))
+      (eq_one_of_restrictNormal_eq_one K (isUnramified_iff.mpr (Or.inr hv))
+        (complexConjugationAt_smul_self K w hw) h1)
 
 end Tower
 

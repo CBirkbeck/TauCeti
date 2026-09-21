@@ -6,8 +6,8 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.NumberTheory.NumberField.InfinitePlace.Ramification
-public import TauCeti.FieldTheory.Galois.Basic
-public import TauCeti.FieldTheory.Galois.Restriction
+import TauCeti.FieldTheory.Galois.Basic
+import TauCeti.FieldTheory.Galois.Restriction
 
 /-!
 # Infinite places in a normal tower
@@ -30,7 +30,7 @@ used by `TauCeti/NumberTheory/NumberField/ComplexConjugation.lean`.
 
 * `TauCeti.NumberField.restrictNormal_smul_comap`: the action is equivariant along the tower.
 * `TauCeti.NumberField.isRamified_comap_of_isComplex`: a complex induced place is itself ramified.
-* `TauCeti.NumberField.eq_one_of_restrictNormalHom_eq_one`: an automorphism restricting trivially
+* `TauCeti.NumberField.eq_one_of_restrictNormal_eq_one`: an automorphism restricting trivially
   to `F` and fixing a place unramified over `F` is the identity.
 
 ## References
@@ -81,12 +81,11 @@ theorem isRamified_comap_of_isComplex {w : InfinitePlace L} (hw : w.IsRamified K
 
 /-- An automorphism restricting trivially to `F` and fixing a place unramified over `F` is the
 identity. -/
-theorem eq_one_of_restrictNormalHom_eq_one [Normal K F] {w : InfinitePlace L}
+theorem eq_one_of_restrictNormal_eq_one [Normal K F] {w : InfinitePlace L}
     (hu : w.IsUnramified F) {σ : L ≃ₐ[K] L} (hσ : σ • w = w)
-    (h1 : AlgEquiv.restrictNormalHom F σ = 1) : σ = 1 := by
+    (h1 : σ.restrictNormal F = 1) : σ = 1 := by
   have hfix : ∀ x : F, σ (algebraMap F L x) = algebraMap F L x :=
-    (AlgEquiv.restrictNormal_eq_one_iff_algebraMap K F L σ).1 (by
-      simpa only [AlgEquiv.restrictNormalHom_eq_restrictNormal] using h1)
+    (AlgEquiv.restrictNormal_eq_one_iff_algebraMap K F L σ).1 h1
   set τ : L ≃ₐ[F] L := { σ with commutes' := hfix }
   have hmem : τ ∈ MulAction.stabilizer (L ≃ₐ[F] L) w := by
     rw [MulAction.mem_stabilizer_iff, smul_eq_comap]
