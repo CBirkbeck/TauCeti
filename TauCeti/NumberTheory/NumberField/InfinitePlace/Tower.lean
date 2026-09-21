@@ -88,9 +88,16 @@ theorem eq_one_of_restrictNormal_eq_one [Normal K F] {w : InfinitePlace L}
   have hmem : τ ∈ MulAction.stabilizer (L ≃ₐ[F] L) w := by
     rw [MulAction.mem_stabilizer_iff, smul_eq_comap]
     rw [smul_eq_comap] at hσ
+    -- `τ` and `σ` have the same underlying ring equivalence; only the scalar field in
+    -- their `AlgEquiv` bundles differs. Expose that conversion rather than asking `exact` to
+    -- use the structure-update definitional equality silently.
+    change σ • w = w
     exact hσ
   rw [hu.stabilizer_eq_bot, Subgroup.mem_bot] at hmem
   ext x
+  -- The same underlying-map conversion identifies the `K`-algebra goal with the equality of
+  -- `F`-algebra equivalences established above.
+  change τ x = (1 : L ≃ₐ[F] L) x
   exact congrFun (congrArg (fun e : L ≃ₐ[F] L => (e : L → L)) hmem) x
 
 end TauCeti.NumberField
