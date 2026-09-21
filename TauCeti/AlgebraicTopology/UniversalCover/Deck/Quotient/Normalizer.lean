@@ -157,8 +157,7 @@ def normalizerDeckHom : _root_.Subgroup.normalizer (H : Set Γ) →* deck r :=
       intro y
       obtain ⟨e, rfl⟩ := hq.surjective y
       have hrq : ∀ e' : E, r (q e') = p e' := fun e' => congrFun hr e'
-      change r (normalizerHomeomorph hq γ (q e)) = r (q e)
-      rw [normalizerHomeomorph_apply, hrq, hrq, hp.map_smul]⟩
+      rw [Function.comp_apply, normalizerHomeomorph_apply, hrq, hrq, hp.map_smul]⟩
     map_one' := Subtype.ext (Homeomorph.ext (normalizerMap_one hq))
     map_mul' := fun γ γ' => Subtype.ext (Homeomorph.ext (normalizerMap_mul hq γ γ')) }
 

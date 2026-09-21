@@ -26,6 +26,11 @@ preserves every fibre of `p`.
 
 The deck group only sees `p` through the equalities `p (φ e) = p e`, so postcomposition by an
 injective map leaves it unchanged (`TauCeti.deck_comp_of_injective`).
+
+## References
+
+The `deck` construction is due to Kim Morrison in
+[mathlib4#40135](https://github.com/leanprover-community/mathlib4/pull/40135).
 -/
 
 public section
