@@ -8,8 +8,8 @@ module
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.Dedekind
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.Finite
 public import TauCeti.RingTheory.ClassGroup.ExtendedRelNorm
--- Public: `isDedekindDomain_coordinateRing_of_isIntegrallyClosed` turns the normality hypotheses
--- into the Dedekind instances, and `pushClassMonoidHom_mk0` needs them inside its statement.
+-- Public: `isDedekindDomain_coordinateRing_of_isIntegrallyClosed` turns target normality into the
+-- Dedekind instance, and `pushClassMonoidHom_mk0` also uses it for the source inside its statement.
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.CoordinateRing
 
 /-!
@@ -28,8 +28,8 @@ of class groups.
 
 ## Main results
 
-* `TauCeti.Isogeny.pushClassMonoidHom_mk0`: the map on the class of an integral ideal is the
-  relative norm of its extension, so a consumer can compute with it rather than unfold it.
+* `TauCeti.Isogeny.pushClassMonoidHom_mk0`: when the source coordinate ring is normal, the map on
+  the class of an integral ideal is the relative norm of its extension.
 * `TauCeti.Isogeny.pushClass_apply`: the additive form is the multiplicative one transported
   along `Additive`.
 
@@ -57,23 +57,22 @@ that hypothesis `rfl` and removes it from the signature.
 **Every other hypothesis is discharged internally**, from suppliers that live with the object they
 describe, in the one-property-per-file `IntermediateRing/` series:
 
-* both coordinate rings' Dedekind property —
+* the target coordinate ring's Dedekind property —
   `WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed`, which is why
-  normality is what the maps ask of the curves and the Dedekind property is not assumed;
+  target normality is what the maps ask for and the Dedekind property is not assumed;
 * `IsDedekindDomain φ.intermediateRing` — `Isogeny.isDedekindDomain_intermediateRing`, which asks
   nothing of the function-field extension and so covers inseparable isogenies;
 * `Module.Finite W₂.CoordinateRing φ.intermediateRing` —
-  `Isogeny.moduleFinite_intermediateRing_of_isDedekindDomain`, which asks nothing of the extension
-  either. Its sibling `Isogeny.moduleFinite_intermediateRing` would need
-  `[Algebra.IsSeparable W₂.FunctionField W₁.FunctionField]`, and that is the hypothesis that
-  would exclude Frobenius from everything below;
+  `Isogeny.moduleFinite_intermediateRing`, whose finite-normalization proof asks neither
+  separability nor normality of the source;
 * both `Module.IsTorsionFree` instances — Mathlib's `Module.isTorsionFree_iff_algebraMap_injective`
   applied to `Isogeny.toIntermediateRing_injective` and
   `Isogeny.pullbackToIntermediateRing_injective`. These are what make
   `ClassGroup.extendedRelNormHom` applicable at all: its variable block requires them.
 
-What remains in the signature is normality of the two coordinate rings, which is a fact about the
-curves and cannot come from `φ`.
+What remains in the maps' signature is normality of the target coordinate ring. Source normality
+is needed only by `pushClassMonoidHom_mk0`, because Mathlib's computation rule for
+`ClassGroup.mk0` assumes its source is Dedekind.
 
 `ClassGroup.extendedRelNormHom` orders its rings `A M R` — source, middle, target — so the
 instantiation is `A := W₁.CoordinateRing`, `M := φ.intermediateRing`, `R := W₂.CoordinateRing`.
@@ -108,8 +107,7 @@ variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F}
 
 section PushClass
 
-variable (φ : Isogeny W₁ W₂)
-  [IsIntegrallyClosed W₁.CoordinateRing] [IsIntegrallyClosed W₂.CoordinateRing]
+variable (φ : Isogeny W₁ W₂) [IsIntegrallyClosed W₂.CoordinateRing]
 
 /-- **The class-group map induced by an isogeny**, multiplicatively: extend a class of
 `W₁.CoordinateRing` into the intermediate ring, then norm it down to `W₂.CoordinateRing`.
@@ -119,7 +117,6 @@ them, receiving `W₁.CoordinateRing` by inclusion and lying module-finite over
 `W₂.CoordinateRing`. -/
 noncomputable def pushClassMonoidHom :
     ClassGroup W₁.CoordinateRing →* ClassGroup W₂.CoordinateRing :=
-  haveI := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₁
   haveI := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₂
   letI : Algebra W₂.CoordinateRing W₁.FunctionField := φ.pullback.toRingHom.toAlgebra
   letI : Algebra W₂.FunctionField W₁.FunctionField := φ.fieldPullback.toRingHom.toAlgebra
@@ -131,7 +128,7 @@ noncomputable def pushClassMonoidHom :
     φ.isScalarTower_intermediateRing rfl fun _ ↦ rfl
   haveI := φ.isDedekindDomain_intermediateRing fun _ ↦ rfl
   have : Module.Finite W₂.CoordinateRing φ.intermediateRing :=
-    φ.moduleFinite_intermediateRing_of_isDedekindDomain fun _ ↦ rfl
+    φ.moduleFinite_intermediateRing fun _ ↦ rfl
   haveI : Module.IsTorsionFree W₁.CoordinateRing φ.intermediateRing :=
     Module.isTorsionFree_iff_algebraMap_injective.mpr φ.toIntermediateRing_injective
   haveI : Module.IsTorsionFree W₂.CoordinateRing φ.intermediateRing :=
@@ -143,7 +140,8 @@ noncomputable def pushClassMonoidHom :
 -- The algebra structures are built by the definition rather than taken from the caller, so the
 -- statement restates them — verbatim, so that the two elaborate to the same terms.
 @[simp]
-theorem pushClassMonoidHom_mk0 (I : (Ideal W₁.CoordinateRing)⁰) :
+theorem pushClassMonoidHom_mk0 [IsIntegrallyClosed W₁.CoordinateRing]
+    (I : (Ideal W₁.CoordinateRing)⁰) :
     haveI := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₁
     haveI := _root_.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed W₂
     letI : Algebra W₂.CoordinateRing W₁.FunctionField := φ.pullback.toRingHom.toAlgebra
@@ -156,7 +154,7 @@ theorem pushClassMonoidHom_mk0 (I : (Ideal W₁.CoordinateRing)⁰) :
       φ.isScalarTower_intermediateRing rfl fun _ ↦ rfl
     haveI := φ.isDedekindDomain_intermediateRing fun _ ↦ rfl
     haveI : Module.Finite W₂.CoordinateRing φ.intermediateRing :=
-      φ.moduleFinite_intermediateRing_of_isDedekindDomain fun _ ↦ rfl
+      φ.moduleFinite_intermediateRing fun _ ↦ rfl
     haveI : Module.IsTorsionFree W₁.CoordinateRing φ.intermediateRing :=
       Module.isTorsionFree_iff_algebraMap_injective.mpr φ.toIntermediateRing_injective
     haveI : Module.IsTorsionFree W₂.CoordinateRing φ.intermediateRing :=
@@ -178,7 +176,7 @@ theorem pushClassMonoidHom_mk0 (I : (Ideal W₁.CoordinateRing)⁰) :
     φ.isScalarTower_intermediateRing rfl fun _ ↦ rfl
   have := φ.isDedekindDomain_intermediateRing fun _ ↦ rfl
   have : Module.Finite W₂.CoordinateRing φ.intermediateRing :=
-    φ.moduleFinite_intermediateRing_of_isDedekindDomain fun _ ↦ rfl
+    φ.moduleFinite_intermediateRing fun _ ↦ rfl
   have : Module.IsTorsionFree W₁.CoordinateRing φ.intermediateRing :=
     Module.isTorsionFree_iff_algebraMap_injective.mpr φ.toIntermediateRing_injective
   have : Module.IsTorsionFree W₂.CoordinateRing φ.intermediateRing :=
