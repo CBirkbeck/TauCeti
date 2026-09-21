@@ -275,7 +275,7 @@ theorem fixedField_frobenius_fiber_card
   have hC : ConjClasses.mk sigma = C := ConjClasses.mem_carrier_iff_mk_eq.mp hsigma
   have hp' : p ∈ frobeniusPrimeSet K L (ConjClasses.mk sigma) := hC ▸ hp
   obtain ⟨Q, hQ⟩ := exists_isArithFrobAt_of_mem_frobeniusPrimeSet_mk hp'
-  let _ : Algebra.IsUnramifiedAt (𝓞 K) Q.1 := isUnramifiedAt_of_mem_frobeniusPrimeSet hp Q.1
+  have : Algebra.IsUnramifiedAt (𝓞 K) Q.1 := isUnramifiedAt_of_mem_frobeniusPrimeSet hp' Q.1
   let lowerFiber : Set (HeightOneSpectrum (𝓞 ↥(fixedField (Subgroup.zpowers sigma)))) :=
     {P | P.under (𝓞 K) = p ∧
       P ∈ frobeniusPrimeSet ↥(fixedField (Subgroup.zpowers sigma)) L
@@ -287,16 +287,6 @@ theorem fixedField_frobenius_fiber_card
         R.under (𝓞 ↥(fixedField (Subgroup.zpowers sigma)))) '' upperFiber :=
     fixedField_frobenius_fiber_eq_image sigma p hp'
   have hinj := under_fixedField_injOn_frobenius sigma p
-  have hupper : Nat.card upperFiber = Nat.card
-      {R : Ideal (𝓞 L) // ∃ (_ : R.IsPrime) (_ : R.LiesOver p.asIdeal) (_ : R ≠ ⊥),
-        IsArithFrobAt (𝓞 K) sigma R} :=
-    Nat.card_congr (p.frobeniusFiberEquiv sigma)
-  have hcount := Ideal.frobenius_fiber_card_mul_orderOf_eq_card_centralizer
-    p.asIdeal Q.1 hQ
-  have hupper_count : Nat.card upperFiber =
-      Nat.card (Subgroup.centralizer {sigma}) / orderOf sigma := by
-    rw [hupper]
-    exact Nat.eq_div_of_mul_eq_left (orderOf_pos sigma).ne' hcount
   calc
     Nat.card {P : HeightOneSpectrum (𝓞 ↥(fixedField (Subgroup.zpowers sigma))) //
         P.under (𝓞 K) = p ∧
@@ -307,7 +297,8 @@ theorem fixedField_frobenius_fiber_card
           R.under (𝓞 ↥(fixedField (Subgroup.zpowers sigma)))) '' upperFiber) := by rw [himage]
     _ = Nat.card upperFiber :=
       Nat.card_congr hinj.bijOn_image.equiv.symm
-    _ = Nat.card (Subgroup.centralizer {sigma}) / orderOf sigma := hupper_count
+    _ = Nat.card (Subgroup.centralizer {sigma}) / orderOf sigma :=
+      p.frobenius_fiber_card_eq_card_centralizer_div_orderOf Q.1 hQ
     _ = Nat.card (L ≃ₐ[K] L) / (Nat.card C.carrier * orderOf sigma) := by
       rw [← C.card_div_card_carrier_mul_orderOf_eq_card_centralizer_div_orderOf sigma hsigma]
       exact Subgroup.index_ne_zero_of_finite
