@@ -246,42 +246,6 @@ theorem pointwiseQuotientLift_mk (H : _root_.CommHopfAlgCat.{v} R)
     QuotientGroup.mk'_apply] using
     QuotientGroup.lift_mk' (quotientPointsSubgroup H I A) hf g
 
-/-- A lift from a pointwise quotient is injective exactly when the subgroup being quotiented is
-the kernel of the original homomorphism. -/
-theorem pointwiseQuotientLift_injective_iff (H : _root_.CommHopfAlgCat.{v} R)
-    (I : HopfIdeal R H) (hI : I.IsNormal) (A : CommAlgCat.{w} R) (K : GrpCat.{max v w})
-    (f : HopfAlgebra.points (R := R) (H := H) A ⟶ K)
-    (hf : quotientPointsSubgroup H I A ≤ f.hom.ker) :
-    Function.Injective (pointwiseQuotientLift H I hI A K f hf) ↔
-      quotientPointsSubgroup H I A = f.hom.ker := by
-  let _ : (quotientPointsSubgroup H I A).Normal :=
-    quotientPointsSubgroup_normal H I hI A
-  simpa only [pointwiseQuotientLift, GrpCat.hom_ofHom] using
-    QuotientGroup.injective_lift_iff (quotientPointsSubgroup H I A) f.hom hf
-
-/-- A lift from a pointwise quotient is surjective exactly when the original homomorphism is
-surjective. -/
-theorem pointwiseQuotientLift_surjective_iff (H : _root_.CommHopfAlgCat.{v} R)
-    (I : HopfIdeal R H) (hI : I.IsNormal) (A : CommAlgCat.{w} R) (K : GrpCat.{max v w})
-    (f : HopfAlgebra.points (R := R) (H := H) A ⟶ K)
-    (hf : quotientPointsSubgroup H I A ≤ f.hom.ker) :
-    Function.Surjective (pointwiseQuotientLift H I hI A K f hf) ↔
-      Function.Surjective f := by
-  let _ : (quotientPointsSubgroup H I A).Normal :=
-    quotientPointsSubgroup_normal H I hI A
-  constructor
-  · intro hlift
-    have hlift' : Function.Surjective
-        (QuotientGroup.lift (quotientPointsSubgroup H I A) f.hom hf) := by
-      simpa only [pointwiseQuotientLift, GrpCat.hom_ofHom] using hlift
-    have hf' : Function.Surjective f.hom := by
-      rw [← QuotientGroup.lift_comp_mk' (quotientPointsSubgroup H I A) f.hom hf]
-      exact hlift'.comp (QuotientGroup.mk'_surjective (quotientPointsSubgroup H I A))
-    exact hf'
-  · intro hf_surjective
-    exact QuotientGroup.lift_surjective_of_surjective
-      (quotientPointsSubgroup H I A) f.hom hf_surjective hf
-
 /-- A homomorphism out of the pointwise quotient is uniquely determined by its composite with the
 quotient projection. -/
 theorem pointwiseQuotientLift_unique (H : _root_.CommHopfAlgCat.{v} R)
