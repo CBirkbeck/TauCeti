@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Topology.Covering.Basic
 public import Mathlib.Topology.Homotopy.Lifting
+import TauCeti.Topology.Homeomorph.SetCongr
 
 /-!
 # Covering maps of a disjoint union
@@ -66,8 +67,12 @@ theorem isCoveringMap_sigmaMap (hf : ∀ i, IsCoveringMap (f i)) :
     refine funext fun p ↦ Subtype.ext ?_
     obtain ⟨⟨j, e⟩, hje⟩ := p
     obtain rfl : j = i := by simpa [Sigma.map, eq_comm] using hje
-    simp [Set.restrictPreimage, Sigma.map, hE, hX, Homeomorph.setCongr, Set.equivOfEq,
-      Equiv.subtypeEquivProp]
+    -- Evaluate each link of the two chains through its application lemma instead of unfolding
+    -- the equivalence it is built from: the application lemmas are stable under changes to
+    -- those definitions, which definitional unfolding is not.
+    simp only [Set.restrictPreimage, Set.MapsTo.val_restrict_apply, Sigma.map, id_eq,
+      Function.comp_apply, Homeomorph.trans_apply, Homeomorph.setCongr_apply,
+      IsEmbedding.toHomeomorph_symm_apply, IsEmbedding.toHomeomorph_apply_coe, hX, hE]
   rw [heq]
   exact ((hf i).comp_homeomorph hE).homeomorph_comp hX
 
