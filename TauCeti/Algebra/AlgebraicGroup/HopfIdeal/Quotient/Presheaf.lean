@@ -220,6 +220,16 @@ theorem pointwiseQuotientProjection_app (H : _root_.CommHopfAlgCat.{v} R)
         eqToHom (pointwiseQuotientFunctor_obj H I hI A).symm :=
   (rfl)
 
+/-- A component of the natural quotient projection sends a point to its quotient class. -/
+@[simp]
+theorem pointwiseQuotientProjection_app_apply (H : _root_.CommHopfAlgCat.{v} R)
+    (I : HopfIdeal R H) (hI : I.IsNormal) (A : CommAlgCat.{w} R)
+    (g : HopfAlgebra.points (R := R) (H := H) A) :
+    (pointwiseQuotientProjection H I hI).app A g =
+      eqToHom (pointwiseQuotientFunctor_obj H I hI A).symm
+        (pointwiseQuotientMk H I hI A g) := by
+  rfl
+
 /-- A homomorphism from ambient points which kills the normal subgroup descends to the pointwise
 quotient group. -/
 noncomputable def pointwiseQuotientLift (H : _root_.CommHopfAlgCat.{v} R)
@@ -245,6 +255,40 @@ theorem pointwiseQuotientLift_mk (H : _root_.CommHopfAlgCat.{v} R)
   simpa only [pointwiseQuotientLift, pointwiseQuotientMk, GrpCat.hom_ofHom,
     QuotientGroup.mk'_apply] using
     QuotientGroup.lift_mk' (quotientPointsSubgroup H I A) hf g
+
+/-- A lift from a pointwise quotient is injective exactly when the subgroup being quotiented is
+the kernel of the original homomorphism. -/
+theorem pointwiseQuotientLift_injective_iff (H : _root_.CommHopfAlgCat.{v} R)
+    (I : HopfIdeal R H) (hI : I.IsNormal) (A : CommAlgCat.{w} R) (K : GrpCat.{max v w})
+    (f : HopfAlgebra.points (R := R) (H := H) A ⟶ K)
+    (hf : quotientPointsSubgroup H I A ≤ f.hom.ker) :
+    Function.Injective (pointwiseQuotientLift H I hI A K f hf) ↔
+      quotientPointsSubgroup H I A = f.hom.ker := by
+  let _ : (quotientPointsSubgroup H I A).Normal :=
+    quotientPointsSubgroup_normal H I hI A
+  simpa only [pointwiseQuotientLift, GrpCat.hom_ofHom] using
+    QuotientGroup.injective_lift_iff (quotientPointsSubgroup H I A) f.hom hf
+
+/-- A lift from a pointwise quotient is surjective exactly when the original homomorphism is
+surjective. -/
+theorem pointwiseQuotientLift_surjective_iff (H : _root_.CommHopfAlgCat.{v} R)
+    (I : HopfIdeal R H) (hI : I.IsNormal) (A : CommAlgCat.{w} R) (K : GrpCat.{max v w})
+    (f : HopfAlgebra.points (R := R) (H := H) A ⟶ K)
+    (hf : quotientPointsSubgroup H I A ≤ f.hom.ker) :
+    Function.Surjective (pointwiseQuotientLift H I hI A K f hf) ↔
+      Function.Surjective f := by
+  let _ : (quotientPointsSubgroup H I A).Normal :=
+    quotientPointsSubgroup_normal H I hI A
+  constructor
+  · intro hlift
+    change Function.Surjective
+      (QuotientGroup.lift (quotientPointsSubgroup H I A) f.hom hf) at hlift
+    change Function.Surjective f.hom
+    rw [← QuotientGroup.lift_comp_mk' (quotientPointsSubgroup H I A) f.hom hf]
+    exact hlift.comp (QuotientGroup.mk'_surjective (quotientPointsSubgroup H I A))
+  · intro hf_surjective
+    exact QuotientGroup.lift_surjective_of_surjective
+      (quotientPointsSubgroup H I A) f.hom hf_surjective hf
 
 /-- A homomorphism out of the pointwise quotient is uniquely determined by its composite with the
 quotient projection. -/

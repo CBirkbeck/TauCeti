@@ -6,7 +6,6 @@ Authors: Codex
 module
 
 public import Mathlib.Algebra.Category.Grp.EpiMono
-public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Central
 public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Kernel
 public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Presheaf
 
@@ -48,8 +47,6 @@ flatness hypotheses.
 * J. S. Milne, *Algebraic Groups* (2017), Section 5.
 * W. C. Waterhouse, *Introduction to Affine Group Schemes*, Sections 14--15.
 
-This is the kernel-quotient comparison required by Layer 3, "Normality and quotients", of the
-ReductiveGroups roadmap.
 -/
 
 public section
@@ -62,15 +59,6 @@ universe u v w
 
 variable {R : Type u} [CommRing R]
 variable {H K : _root_.CommHopfAlgCat.{v} R}
-
-/-- The scheme-theoretic kernel of a morphism of affine groups is normal.
-
-Indeed, `kernelHopfIdeal f` is the image under `f` of the augmentation ideal, which cuts out the
-trivial (hence central and normal) subgroup; images of normal Hopf ideals are normal. -/
-theorem isNormal_kernelHopfIdeal (f : H ⟶ K) :
-    (kernelHopfIdeal f).IsNormal := by
-  rw [kernelHopfIdeal_def]
-  exact ((isCentral_augmentation H).isNormal).map f.hom
 
 /-- At a value algebra `A`, precomposition with `f` descends from source points to the quotient
 by the scheme-theoretic kernel. -/
@@ -137,24 +125,57 @@ theorem kernelPointwiseQuotientNatTrans_app (f : H ⟶ K) (A : CommAlgCat.{w} R)
           eqToHom (HopfAlgebra.pointsFunctor_obj (H := H) A).symm := by
   rfl
 
+/-- A component of the natural kernel-quotient comparison acts by the corresponding pointwise
+map. -/
+@[simp]
+theorem kernelPointwiseQuotientNatTrans_app_apply (f : H ⟶ K) (A : CommAlgCat.{w} R)
+    (q : pointwiseQuotientGroup K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A) :
+    (kernelPointwiseQuotientNatTrans f).app A
+        (eqToHom (pointwiseQuotientFunctor_obj K (kernelHopfIdeal f)
+          (isNormal_kernelHopfIdeal f) A).symm q) =
+      eqToHom (HopfAlgebra.pointsFunctor_obj (H := H) A).symm
+        (kernelPointwiseQuotientMap f A q) := by
+  rw [kernelPointwiseQuotientNatTrans_app]
+  exact ConcreteCategory.congr_hom (show
+    eqToHom (pointwiseQuotientFunctor_obj K (kernelHopfIdeal f)
+        (isNormal_kernelHopfIdeal f) A).symm ≫
+        (eqToHom (pointwiseQuotientFunctor_obj K (kernelHopfIdeal f)
+            (isNormal_kernelHopfIdeal f) A) ≫ kernelPointwiseQuotientMap f A ≫
+          eqToHom (HopfAlgebra.pointsFunctor_obj (H := H) A).symm) =
+      kernelPointwiseQuotientMap f A ≫
+        eqToHom (HopfAlgebra.pointsFunctor_obj (H := H) A).symm by
+      rw [← Category.assoc, eqToHom_trans, eqToHom_refl, Category.id_comp]) q
+
+/-- The natural kernel-quotient comparison factors the map on points through the pointwise
+quotient projection. -/
+@[reassoc]
+theorem pointwiseQuotientProjection_comp_kernelPointwiseQuotientNatTrans (f : H ⟶ K) :
+    pointwiseQuotientProjection K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) ≫
+        kernelPointwiseQuotientNatTrans f =
+      mapPointsFunctor f := by
+  apply HopfAlgebra.pointsFunctor_hom_ext
+  intro A g
+  change ((pointwiseQuotientProjection K (kernelHopfIdeal f)
+      (isNormal_kernelHopfIdeal f) ≫ kernelPointwiseQuotientNatTrans f).app A)
+      (show (HopfAlgebra.pointsFunctor (R := R) (H := K)).obj A from g) = _
+  rw [NatTrans.comp_app_apply, pointwiseQuotientProjection_app_apply,
+    kernelPointwiseQuotientNatTrans_app_apply, kernelPointwiseQuotientMap_mk]
+  exact ConcreteCategory.congr_hom (show
+    eqToHom (HopfAlgebra.pointsFunctor_obj (H := H) A).symm = 𝟙 _ from
+      eqToHom_refl _ _) ((mapPointsFunctor f).app A g)
+
 /-- The comparison from the quotient by the scheme-theoretic kernel to target points is
 injective over every value algebra. -/
 theorem kernelPointwiseQuotientMap_injective (f : H ⟶ K) (A : CommAlgCat.{w} R) :
     Function.Injective (kernelPointwiseQuotientMap f A) := by
-  let _ : (quotientPointsSubgroup K (kernelHopfIdeal f) A).Normal :=
-    quotientPointsSubgroup_normal K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A
-  rw [← (kernelPointwiseQuotientMap f A).hom.ker_eq_bot_iff]
-  apply le_antisymm
-  · intro q hq
-    obtain ⟨g, rfl⟩ := pointwiseQuotientMk_surjective K (kernelHopfIdeal f)
-      (isNormal_kernelHopfIdeal f) A q
-    rw [MonoidHom.mem_ker, kernelPointwiseQuotientMap_mk,
-      mapPointsFunctor_app_apply] at hq
-    have hmem := (mapPointsFunctor_app_eq_one_iff f A g).1 hq
-    rw [Subgroup.mem_bot]
-    exact (pointwiseQuotientMk_eq_one_iff K (kernelHopfIdeal f)
-      (isNormal_kernelHopfIdeal f) A g).2 hmem
-  · exact bot_le
+  apply (pointwiseQuotientLift_injective_iff K (kernelHopfIdeal f)
+    (isNormal_kernelHopfIdeal f) A (HopfAlgebra.points (R := R) (H := H) A)
+      ((mapPointsFunctor f).app A) _).2
+  ext g
+  rw [MonoidHom.mem_ker]
+  change g ∈ quotientPointsSubgroup K (kernelHopfIdeal f) A ↔
+    toConv (g.ofConv.comp (f.hom : ↑H →ₐ[R] ↑K)) = 1
+  exact (mapPointsFunctor_app_eq_one_iff f A g).symm
 
 /-- Every component of the natural kernel-quotient comparison is a monomorphism of groups. -/
 instance kernelPointwiseQuotientMap_mono (f : H ⟶ K) (A : CommAlgCat.{w} R) :
@@ -166,16 +187,9 @@ surjective. -/
 theorem kernelPointwiseQuotientMap_surjective_iff (f : H ⟶ K) (A : CommAlgCat.{w} R) :
     Function.Surjective (kernelPointwiseQuotientMap f A) ↔
       Function.Surjective ((mapPointsFunctor f).app A) := by
-  constructor
-  · intro h y
-    obtain ⟨q, hq⟩ := h y
-    obtain ⟨g, rfl⟩ := pointwiseQuotientMk_surjective K (kernelHopfIdeal f)
-      (isNormal_kernelHopfIdeal f) A q
-    exact ⟨g, kernelPointwiseQuotientMap_mk f A g ▸ hq⟩
-  · intro h y
-    obtain ⟨g, rfl⟩ := h y
-    exact ⟨pointwiseQuotientMk K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A g,
-      kernelPointwiseQuotientMap_mk f A g⟩
+  exact pointwiseQuotientLift_surjective_iff K (kernelHopfIdeal f)
+    (isNormal_kernelHopfIdeal f) A (HopfAlgebra.points (R := R) (H := H) A)
+      ((mapPointsFunctor f).app A) _
 
 /-- The kernel-quotient comparison is an isomorphism exactly when `f` is surjective on points
 over the chosen value algebra. -/
@@ -183,10 +197,12 @@ theorem kernelPointwiseQuotientMap_isIso_iff (f : H ⟶ K) (A : CommAlgCat.{w} R
     IsIso (kernelPointwiseQuotientMap f A) ↔
       Function.Surjective ((mapPointsFunctor f).app A) := by
   rw [ConcreteCategory.isIso_iff_bijective]
-  change (Function.Injective (kernelPointwiseQuotientMap f A) ∧
-      Function.Surjective (kernelPointwiseQuotientMap f A)) ↔ _
-  rw [and_iff_right (kernelPointwiseQuotientMap_injective f A),
-    kernelPointwiseQuotientMap_surjective_iff]
+  constructor
+  · intro hbijective
+    exact (kernelPointwiseQuotientMap_surjective_iff f A).1 hbijective.2
+  · intro hsurjective
+    exact ⟨kernelPointwiseQuotientMap_injective f A,
+      (kernelPointwiseQuotientMap_surjective_iff f A).2 hsurjective⟩
 
 /-- A surjective map on `A`-points induces an isomorphism from the pointwise kernel quotient to
 the target group of `A`-points. -/
