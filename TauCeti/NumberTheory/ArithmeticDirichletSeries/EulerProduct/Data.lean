@@ -180,9 +180,6 @@ noncomputable instance : CommMonoid (EulerProductData K) where
   one_mul D := by ext I; simp
   mul_one D := by ext I; simp
   mul_comm D E := by ext I; simp [mul_comm]
-  npow := npowRec
-  npow_zero := by intros; rfl
-  npow_succ := by intros; rfl
 
 /-- Complex conjugation makes Euler-product data a star monoid. -/
 noncomputable instance : StarMul (EulerProductData K) where
