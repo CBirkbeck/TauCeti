@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Algebra.Exact.Basic
+public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basic
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Restriction
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Trivial
 public import TauCeti.RingTheory.Huber.StronglyNoetherian
@@ -49,6 +50,8 @@ built from those two by `TauCeti.Huber.PairOfDefinition.hasDenominatorPower_mul`
   `A⟨U₁⟩ × A⟨U₂⟩ → A⟨U₁ ∩ U₂⟩` is the image of `A`.
 * `TauCeti.ValuationSpectrum.laurentCover_surjective`: the difference of restrictions is
   surjective.
+* `TauCeti.ValuationSpectrum.spa_subset_iUnion_laurentCover`: the geometric half — the two
+  pieces really do cover `Spa(A, A⁺)`.
 
 ## Implementation notes
 
@@ -69,8 +72,8 @@ quotients, which is what the relation hypotheses say; no isomorphism between the
 Injectivity is Corollary 8.32 for the pair `(A, A°)`.
 
 The numerator sets are `Finset` literals, so writing them down needs decidable equality on `A`.
-That is an artefact of the notation rather than a hypothesis of the mathematics, so the three
-main results take their instance from `Classical.decEq` instead of assuming `DecidableEq A`; the
+That is an artefact of the notation rather than a hypothesis of the mathematics, so the public
+results take their instance from `Classical.decEq` instead of assuming `DecidableEq A`; the
 private helpers below stay polymorphic in the instance.
 
 ## References
@@ -179,21 +182,24 @@ private theorem exists_eq_weightedC_of_apply_eq (f : A) (hπ₁ : Function.Surje
     obtain ⟨u, v, huv⟩ := Ideal.mem_span_pair.1 (hker _ hzero)
     refine ⟨Ideal.Quotient.mk (laurentIdeal A) u, ?_⟩
     rw [laurentDiff_apply, ← huv, map_add, map_mul, map_mul]
-    rw [show Ideal.Quotient.mk (laurentIdeal A)
-      (1 - weightedX _ isWeightFamily_one_weight 0 *
-        weightedX _ isWeightFamily_one_weight 1) = 0 by
-      simp only [map_sub, map_one, map_mul, mk_weightedX_zero_mul_mk_weightedX_one, sub_self]]
+    have hxy_zero : Ideal.Quotient.mk (laurentIdeal A)
+        (1 - weightedX _ isWeightFamily_one_weight 0 *
+          weightedX _ isWeightFamily_one_weight 1) = 0 := by
+      simp only [map_sub, map_one, map_mul, mk_weightedX_zero_mul_mk_weightedX_one, sub_self]
+    rw [hxy_zero]
     simp only [mul_zero, add_zero, map_sub, ← algebraMap_weightedRestrictedSubring,
       Ideal.Quotient.mk_algebraMap]
   obtain ⟨c, hc⟩ := (exact_algebraMap_laurentCoverDiff A f _).1 hcover
-  have hc₁ := congrArg Prod.fst hc
-  change Ideal.Quotient.mk (laurentCoverLeIdeal A f)
-    (weightedC _ isWeightFamily_one_weight c) =
-      Ideal.Quotient.mk (laurentCoverLeIdeal A f) G at hc₁
-  have hc₂ := congrArg Prod.snd hc
-  change Ideal.Quotient.mk (laurentCoverGeIdeal A f)
-    (weightedC _ isWeightFamily_one_weight c) =
-      Ideal.Quotient.mk (laurentCoverGeIdeal A f) H at hc₂
+  have hc₁ : Ideal.Quotient.mk (laurentCoverLeIdeal A f)
+      (weightedC _ isWeightFamily_one_weight c) =
+        Ideal.Quotient.mk (laurentCoverLeIdeal A f) G := by
+    simpa only [Prod.algebraMap_apply, ← algebraMap_weightedRestrictedSubring,
+      Ideal.Quotient.mk_algebraMap] using congrArg Prod.fst hc
+  have hc₂ : Ideal.Quotient.mk (laurentCoverGeIdeal A f)
+      (weightedC _ isWeightFamily_one_weight c) =
+        Ideal.Quotient.mk (laurentCoverGeIdeal A f) H := by
+    simpa only [Prod.algebraMap_apply, ← algebraMap_weightedRestrictedSubring,
+      Ideal.Quotient.mk_algebraMap] using congrArg Prod.snd hc
   rw [Ideal.Quotient.eq, laurentCoverLeIdeal_def, Ideal.mem_span_singleton'] at hc₁
   rw [Ideal.Quotient.eq, laurentCoverGeIdeal_def, Ideal.mem_span_singleton'] at hc₂
   obtain ⟨u, hu⟩ := hc₁
@@ -259,7 +265,8 @@ private noncomputable def laurentHom₂ :
     weightedRestrictedSubring (fun _ : Fin 1 ↦ ({1} : Set A)) isWeightFamily_one_weight →+*
       UniformSpace.Completion S₂ :=
   rationalQuotientHom P {1} f S₂ hden₂ _ mem_numerators_inv (eq_denom_or_mem_range_inv f)
-    (Ideal.span_eq_top_of_one_mem (by simp)) (isClosed_ideal_weightedRestrictedSubring_one_weight _)
+    (Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span (by simp)) isUnit_one)
+    (Ideal.isClosed_weightedRestrictedSubring_one_weight _)
 
 private theorem laurentHom₂_surjective :
     letI := locUniformSpace P {1} f S₂ hden₂
@@ -293,8 +300,9 @@ private theorem laurentHom₂_weightedC_mul_weightedX_eq_one :
   have _ := isUniformAddGroup_locUniformSpace P {1} f S₂ hden₂
   have _ := isTopologicalRing_locUniformSpace P {1} f S₂ hden₂
   have h := rationalQuotientHom_weightedC_mul_weightedX P {1} f S₂ hden₂ _ mem_numerators_inv
-    (eq_denom_or_mem_range_inv f) (Ideal.span_eq_top_of_one_mem (by simp))
-    (isClosed_ideal_weightedRestrictedSubring_one_weight _) 0
+    (eq_denom_or_mem_range_inv f)
+    (Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span (by simp)) isUnit_one)
+    (Ideal.isClosed_weightedRestrictedSubring_one_weight _) 0
   rwa [map_one, map_one] at h
 
 end Inverse
@@ -314,7 +322,8 @@ private noncomputable def laurentHom₁ :
     weightedRestrictedSubring (fun _ : Fin 1 ↦ ({1} : Set A)) isWeightFamily_one_weight →+*
       UniformSpace.Completion S₁ :=
   rationalQuotientHom P {f, 1} 1 S₁ hden₁ _ (mem_numerators_plus f) (eq_denom_or_mem_range_plus f)
-    (Ideal.span_eq_top_of_one_mem (by simp)) (isClosed_ideal_weightedRestrictedSubring_one_weight _)
+    (Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span (by simp)) isUnit_one)
+    (Ideal.isClosed_weightedRestrictedSubring_one_weight _)
 
 private theorem laurentHom₁_surjective :
     letI := locUniformSpace P {f, 1} 1 S₁ hden₁
@@ -348,8 +357,9 @@ private theorem laurentHom₁_weightedX :
   have _ := isUniformAddGroup_locUniformSpace P {f, 1} 1 S₁ hden₁
   have _ := isTopologicalRing_locUniformSpace P {f, 1} 1 S₁ hden₁
   have h := rationalQuotientHom_weightedC_mul_weightedX P {f, 1} 1 S₁ hden₁ _
-    (mem_numerators_plus f) (eq_denom_or_mem_range_plus f) (Ideal.span_eq_top_of_one_mem (by simp))
-    (isClosed_ideal_weightedRestrictedSubring_one_weight _) 0
+    (mem_numerators_plus f) (eq_denom_or_mem_range_plus f)
+    (Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span (by simp)) isUnit_one)
+    (Ideal.isClosed_weightedRestrictedSubring_one_weight _) 0
   rwa [map_one, map_one, one_mul] at h
 
 end Plus
@@ -367,8 +377,9 @@ private noncomputable def laurentHom₁₂ :
     weightedRestrictedSubring (fun _ : Fin 2 ↦ ({1} : Set A)) isWeightFamily_one_weight →+*
       UniformSpace.Completion S₁₂ :=
   rationalQuotientHom P {f * f, f, 1} (1 * f) S₁₂ hden₁₂ _ (mem_numerators_inter f)
-    (eq_denom_or_mem_range_inter f) (Ideal.span_eq_top_of_one_mem (by simp))
-    (isClosed_ideal_weightedRestrictedSubring_one_weight _)
+    (eq_denom_or_mem_range_inter f)
+    (Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span (by simp)) isUnit_one)
+    (Ideal.isClosed_weightedRestrictedSubring_one_weight _)
 
 private theorem laurentHom₁₂_surjective :
     letI := locUniformSpace P {f * f, f, 1} (1 * f) S₁₂ hden₁₂
@@ -404,8 +415,8 @@ private theorem laurentHom₁₂_weightedC_mul_weightedX_eq_one :
   have _ := isTopologicalRing_locUniformSpace P {f * f, f, 1} (1 * f) S₁₂ hden₁₂
   have h := rationalQuotientHom_weightedC_mul_weightedX P {f * f, f, 1} (1 * f) S₁₂ hden₁₂ _
     (mem_numerators_inter f) (eq_denom_or_mem_range_inter f)
-    (Ideal.span_eq_top_of_one_mem (by simp))
-    (isClosed_ideal_weightedRestrictedSubring_one_weight _) 1
+    (Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span (by simp)) isUnit_one)
+    (Ideal.isClosed_weightedRestrictedSubring_one_weight _) 1
   simp only [one_mul, Matrix.cons_val_one, Matrix.cons_val_fin_one, map_one] at h
   exact h
 
@@ -421,8 +432,8 @@ private theorem laurentHom₁₂_weightedX_zero :
   have _ := isTopologicalRing_locUniformSpace P {f * f, f, 1} (1 * f) S₁₂ hden₁₂
   have h := rationalQuotientHom_weightedC_mul_weightedX P {f * f, f, 1} (1 * f) S₁₂ hden₁₂ _
     (mem_numerators_inter f) (eq_denom_or_mem_range_inter f)
-    (Ideal.span_eq_top_of_one_mem (by simp))
-    (isClosed_ideal_weightedRestrictedSubring_one_weight _) 0
+    (Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span (by simp)) isUnit_one)
+    (Ideal.isClosed_weightedRestrictedSubring_one_weight _) 0
   simp only [one_mul, Matrix.cons_val_zero, map_mul] at h
   exact (IsUnit.of_mul_eq_one _
     (laurentHom₁₂_weightedC_mul_weightedX_eq_one P f S₁₂ hden₁₂)).mul_left_cancel h
@@ -649,15 +660,24 @@ end LaurentCover
 
 section Cover
 
-variable {A : Type*} [CommRing A] [TopologicalSpace A] [DecidableEq A]
+-- As in `laurentCover_exact`, decidable equality is only needed for the numerator sets `{f, 1}`
+-- and `{1}`, so it is supplied classically instead of being assumed of `A`.
+attribute [local instance] Classical.decEq
 
--- `R({f, 1}/1)` and `R({1}/f)` cover `Spa(A, A⁺)`: every point lies in `R({f, 1}/f)` or in
--- `R({f, 1}/1)`, and the first of these lies in `R({1}/f)`.
-private theorem spa_subset_iUnion_laurent (Aplus : Subring A) (f : A) :
+variable {A : Type*} [CommRing A] [TopologicalSpace A]
+
+/-- **The two Laurent pieces cover the adic spectrum.** For `f ∈ A`, every point of
+`Spa(A, A⁺)` lies in `U₁ = R({f, 1}/1)` or in `U₂ = R({1}/f)`, indexed here by `Bool` so that
+the two pieces form a single family. Every point lies in `R({f, 1}/f)` or in `R({f, 1}/1)`, and
+the first of these lies in `R({1}/f)`.
+
+This is the geometric half of the two-piece Laurent cover; `laurentCover_exact`,
+`laurentCover_surjective` and `laurentCover_injective` are the algebraic half. -/
+theorem spa_subset_iUnion_laurentCover (Aplus : Subring A) (f : A) :
     spa Aplus ⊆ ⋃ b : Bool, rationalSubset Aplus (cond b {f, 1} {1}) (cond b 1 f) := by
   intro v hv
   have hspan : Ideal.span (({f, 1} : Finset A) : Set A) = ⊤ :=
-    Ideal.span_eq_top_of_one_mem (by simp)
+    Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span (by simp)) isUnit_one
   obtain ⟨s, hs, hvs⟩ := mem_rationalSubset_of_span_eq_top_of_mem_spa Aplus hspan hv
   rcases Finset.mem_insert.1 hs with rfl | hs
   · refine Set.mem_iUnion.2 ⟨false, ?_⟩
@@ -706,7 +726,7 @@ theorem laurentCover_injective (P : PairOfDefinition A) (f : A) (S₁ S₂ : Typ
   have _ : ∀ b, IsLocalization.Away (cond b 1 f) (S b) := fun b ↦ b.casesOn ‹_› ‹_›
   have hinj := pi_toCompletionLoc_injective P _ (Pair.powerBounded A).isRingOfIntegralElements
     (Pair.powerBounded_plus (A := A) ▸ P.le_powerBoundedSubring) _ _ S
-    (fun b ↦ b.casesOn hden₂ hden₁) (spa_subset_iUnion_laurent _ f)
+    (fun b ↦ b.casesOn hden₂ hden₁) (spa_subset_iUnion_laurentCover _ f)
   exact fun a b hab ↦ hinj (funext (Bool.rec (congrArg Prod.snd hab) (congrArg Prod.fst hab)))
 
 end Injective

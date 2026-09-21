@@ -63,7 +63,7 @@ discrete case below is proved through it.
   since then the separated completion does nothing. Completeness is an explicit hypothesis
   rather than an instance because it must be stated against the group uniformity introduced
   below, not against whichever `UniformSpace A` a consumer has in scope.
-* `TauCeti.Huber.isClosed_ideal_weightedRestrictedSubring_one_weight`: every ideal in an
+* `Ideal.isClosed_weightedRestrictedSubring_one_weight`: every ideal in an
   uncompleted restricted-series ring over a complete Hausdorff strongly noetherian Tate ring is
   closed.
 
@@ -149,12 +149,13 @@ variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [IsTopo
   [CompleteSpace A] [T0Space A] [IsTateRing A] [IsStronglyNoetherian A]
 
 /-- **Every ideal of `A⟨X₁, …, Xₖ⟩` is closed**, for a complete Hausdorff strongly noetherian Tate
-ring `A`.
-
-The restricted-series ring is noetherian because it agrees with its completed version, and its
-uniformity is countably generated because that of `A` is. These are exactly the hypotheses of
-`TauCeti.Huber.isClosed_of_isNoetherian`. -/
-theorem isClosed_ideal_weightedRestrictedSubring_one_weight {k : ℕ}
+ring `A`. No finite generation of the ideal is required, and the statement holds for every `k` at
+once, so a caller with a relation ideal in any number of variables may close it without further
+hypotheses. -/
+-- Noetherian because the restricted-series ring agrees with its completed version, and metrisable
+-- because `A`'s uniformity is countably generated: the two hypotheses of
+-- `isClosed_of_isNoetherian`.
+theorem _root_.Ideal.isClosed_weightedRestrictedSubring_one_weight {k : ℕ}
     (I : Ideal (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))
       isWeightFamily_one_weight)) :
     IsClosed (I : Set (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))

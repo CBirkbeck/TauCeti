@@ -466,8 +466,8 @@ noncomputable def rationalQuotientHom :
     (Ideal.Quotient.mk _)
 
 /-- **The presentation map is surjective**: every element of `A⟨T/s⟩` is the image of a restricted
-power series. Both factors are, the quotient map by definition and the identification because it
-is an isomorphism. -/
+power series. This is what lets a statement about `A⟨T/s⟩` be checked on restricted power series,
+as the Laurent-cover chase does. -/
 theorem rationalQuotientHom_surjective :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
