@@ -46,11 +46,6 @@ namespace TauCeti.NumberField
 variable (K : Type*) [Field K] {L : Type*} [Field L] [Algebra K L]
   {F : Type*} [Field F] [Algebra K F] [Algebra F L] [IsScalarTower K F L]
 
-/-- Local bridge isolating the definitional equality between Mathlib's bundled restriction
-homomorphism and its pointwise restriction operation. -/
-private theorem restrictNormalHom_eq_restrictNormal [Normal K F] (σ : L ≃ₐ[K] L) :
-    AlgEquiv.restrictNormalHom F σ = σ.restrictNormal F := rfl
-
 /-- **The Galois action on infinite places is equivariant along a normal tower.** Restricting `σ`
 to `F` and then moving the place `w` induces on `F` gives the same place as moving `w` by `σ` and
 inducing afterwards. -/
@@ -59,7 +54,10 @@ theorem _root_.AlgEquiv.restrictNormal_smul_comap [Normal K F] (σ : L ≃ₐ[K]
     (w : InfinitePlace L) :
     σ.restrictNormal F • w.comap (algebraMap F L)
       = (σ • w).comap (algebraMap F L) := by
-  rw [← restrictNormalHom_eq_restrictNormal K σ]
+  -- Expose `restrictNormal` as the application of the bundled restriction homomorphism,
+  -- which is the form used by the action below.
+  change AlgEquiv.restrictNormalHom F σ • w.comap (algebraMap F L)
+    = (σ • w).comap (algebraMap F L)
   have bridge : ∀ x : F, algebraMap F L ((AlgEquiv.restrictNormalHom F σ).symm x)
       = σ.symm (algebraMap F L x) := fun x => by
     -- The goal carries `(restrictNormalHom F σ).symm` — symm-of-image — whereas
