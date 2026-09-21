@@ -28,6 +28,8 @@ the total is pinned.
   the complementary upper bound.
 * `hasDirichletDensity_frobeniusPrimeSet_of_forall_isLowerDirichletDensityBound`: matching
   bounds, hence the density.
+* `hasDirichletDensity_abelianFrobenius`: for an abelian Galois group, per-fibre lower bounds
+  `1 / #G` are therefore exact.
 
 ## References
 
@@ -140,5 +142,31 @@ theorem hasDirichletDensity_frobeniusPrimeSet_of_forall_isLowerDirichletDensityB
     (isUpperDirichletDensityBound_frobeniusPrimeSet_of_forall_isLowerDirichletDensityBound
       K L hlow hsum C₀)
     (hlow C₀)
+
+open scoped Classical IsMulCommutative in
+variable (K L) in
+/-- **Abelian Chebotarev, granted the lower bounds.** For an abelian Galois group every
+conjugacy class is a singleton and there are `#G` of them, so the uniform lower bound `1 / #G`
+on every Frobenius fibre already accounts for all of the density: each fibre has Dirichlet
+density exactly `1 / #G`.
+
+The hypothesis is the whole analytic content, and it is what a cyclotomic crossing argument
+produces — it exhibits enough primes in each fibre and cannot bound one from above. That there
+is no room left over is the part supplied here. -/
+theorem hasDirichletDensity_abelianFrobenius [IsMulCommutative (L ≃ₐ[K] L)]
+    (hlow : ∀ σ : L ≃ₐ[K] L,
+      (frobeniusPrimeSet K L (ConjClasses.mk σ)).IsLowerDirichletDensityBound
+        (1 / Nat.card (L ≃ₐ[K] L)))
+    (σ : L ≃ₐ[K] L) :
+    (frobeniusPrimeSet K L (ConjClasses.mk σ)).HasDirichletDensity
+      (1 / Nat.card (L ≃ₐ[K] L)) := by
+  have hpos : (0 : ℝ) < Nat.card (L ≃ₐ[K] L) := by exact_mod_cast Nat.card_pos
+  -- Abelian: `mk` is a bijection, so there are exactly `#G` classes and the bounds fill the total.
+  have hsum : ∑ _C : ConjClasses (L ≃ₐ[K] L), (1 / Nat.card (L ≃ₐ[K] L) : ℝ) = 1 := by
+    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, ← Nat.card_eq_fintype_card,
+      Nat.card_congr ConjClasses.mkEquiv.symm]
+    field_simp
+  exact hasDirichletDensity_frobeniusPrimeSet_of_forall_isLowerDirichletDensityBound K L
+    (fun C ↦ by obtain ⟨τ, rfl⟩ := ConjClasses.mk_surjective C; exact hlow τ) hsum _
 
 end NumberField.Chebotarev
