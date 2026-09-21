@@ -8,8 +8,6 @@ module
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.ZetaSumPartition
 public import TauCeti.NumberTheory.Chebotarev.FrobeniusPrimeSet
 
-import TauCeti.NumberTheory.ArithmeticDirichletSeries.Convergence
-
 /-!
 # The prime zeta sum over the Frobenius fibres
 
