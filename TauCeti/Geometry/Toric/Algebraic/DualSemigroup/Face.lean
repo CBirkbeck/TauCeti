@@ -68,6 +68,21 @@ theorem ofAdd_mul_ofAdd_neg_inf_ker (hi : IsIntegralLattice i) (σ : PointedCone
   apply Subtype.ext
   simp
 
+/-- The monomials of `m` and `-m` multiply to one in the coordinate ring of the face where `m`
+vanishes. -/
+theorem single_ofAdd_mul_single_ofAdd_neg_inf_ker {R : Type*} [Semiring R]
+    (hi : IsIntegralLattice i) (σ : PointedCone ℝ V) (m : dualSemigroup hi σ) :
+    MonoidAlgebra.single
+        (ofAdd ⟨m, dualSemigroup_anti hi inf_le_left m.2⟩ :
+          Multiplicative (dualSemigroup hi
+            (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m))))) (1 : R) *
+      MonoidAlgebra.single
+        (ofAdd ⟨-(m : N →+ ℤ), neg_mem_dualSemigroup_inf_ker hi σ m⟩ :
+          Multiplicative (dualSemigroup hi
+            (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m))))) (1 : R) = 1 := by
+  rw [MonoidAlgebra.single_mul_single, ofAdd_mul_ofAdd_neg_inf_ker, one_mul,
+    ← MonoidAlgebra.one_def]
+
 /-- Let `m` lie in the dual semigroup of a finitely generated cone `σ`. A character in the dual
 semigroup of the face `σ ⊓ ker m` lies in the dual semigroup of `σ` after adding a multiple
 of `m`. -/

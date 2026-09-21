@@ -13,8 +13,9 @@ public import TauCeti.Geometry.Toric.Analytic.AffinePoint
 
 A face inclusion `τ ≼ σ` restricts integral characters from the dual semigroup of `σ` to that
 of `τ`.  Precomposition with the resulting coordinate-ring map sends a complex point of the
-affine chart of `τ` to one of the affine chart of `σ`.  This is exactly the map on functor-of-points
-carriers induced by the algebraic face morphism.
+affine chart of `τ` to one of the affine chart of `σ`.  This is the same coordinate-ring map whose
+spectrum defines the algebraic face morphism.  The comparison with morphisms from `Spec ℂ` is not
+formalized here.
 
 When `σ` is regular, every face is cut out by one character `m`.  The coordinate ring of the face
 is the localization of the coordinate ring of `σ` away from the monomial of `m`; consequently its
@@ -24,13 +25,19 @@ is the open-subspace input for gluing regular affine toric charts.
 
 ## Main declarations
 
-* `TauCeti.Toric.faceAffineComplexPointMap`: the complex-point map of a face inclusion.
-* `TauCeti.Toric.faceAffineComplexPointMap_apply`: its coordinate-ring characterization.
-* `TauCeti.Toric.faceAffineComplexPointMap_id` and
-  `TauCeti.Toric.faceAffineComplexPointMap_comp`: identity and composition laws.
-* `TauCeti.Toric.IsRegularCone.exists_range_faceAffineComplexPointMap`: its image is the
-  nonvanishing locus of a character cutting out the face.
-* `TauCeti.Toric.IsRegularCone.isOpenEmbedding_faceAffineComplexPointMap`: a regular face chart
+* `TauCeti.Toric.faceAffinePointMap`: the complex-point map of a face inclusion, with
+  `TauCeti.Toric.faceAffinePointMap_apply` giving its coordinate-ring characterization.
+* `TauCeti.Toric.faceAffinePointMap_id` and
+  `TauCeti.Toric.faceAffinePointMap_comp`: identity and composition laws.
+* `TauCeti.Toric.faceAffinePointInfKerLift`, `TauCeti.Toric.faceAffinePointInfKerEquiv`, and
+  `TauCeti.Toric.faceAffinePointInfKerHomeomorph`: the inverse map, equivalence, and
+  homeomorphism for a character face of a finitely generated cone.
+* `TauCeti.Toric.range_faceAffinePointMap_inf_ker` and
+  `TauCeti.Toric.isOpenEmbedding_faceAffinePointMap_inf_ker`: the exact range and open-embedding
+  theorem for a character face of a finitely generated cone.
+* `TauCeti.Toric.IsRegularCone.exists_range_faceAffinePointMap`: its image is the
+  nonvanishing locus of a character cutting out an arbitrary face of a regular cone.
+* `TauCeti.Toric.IsRegularCone.isOpenEmbedding_faceAffinePointMap`: a regular face chart
   is an open subspace of its ambient affine complex-point chart.
 
 ## References
@@ -50,67 +57,66 @@ variable {N V : Type*} [AddCommGroup N] [AddCommGroup V] [Module ℝ V] {i : N �
 
 /-- The map on affine complex points induced by a face inclusion.  It is precomposition with the
 same coordinate-ring restriction whose spectrum is `faceAffineToricSchemeMap`. -/
-noncomputable def faceAffineComplexPointMap (hi : IsIntegralLattice i)
+noncomputable def faceAffinePointMap (hi : IsIntegralLattice i)
     (hτσ : τ.IsFaceOf σ) :
     AffineSemigroupComplexPoint (dualSemigroup hi τ) →
       AffineSemigroupComplexPoint (dualSemigroup hi σ) :=
   fun x ↦ x.comp (faceAffineCoordinateRingMap hi hτσ)
 
-/-- Applying the complex-point face map is precomposition with the algebraic coordinate-ring map.
-This is the carrier-level compatibility with `faceAffineToricSchemeMap`. -/
+/-- Applying the complex-point face map is precomposition with `faceAffineCoordinateRingMap`,
+whose spectrum is `faceAffineToricSchemeMap` by `faceAffineToricSchemeMap_def`.  The comparison
+with morphisms from `Spec ℂ` is not formalized here. -/
 @[simp]
-theorem faceAffineComplexPointMap_apply (hi : IsIntegralLattice i) (hτσ : τ.IsFaceOf σ)
+theorem faceAffinePointMap_apply (hi : IsIntegralLattice i) (hτσ : τ.IsFaceOf σ)
     (x : AffineSemigroupComplexPoint (dualSemigroup hi τ))
     (a : affineCoordinateRing hi σ) :
-    faceAffineComplexPointMap hi hτσ x a = x (faceAffineCoordinateRingMap hi hτσ a) :=
-  by rw [faceAffineComplexPointMap]; rfl
+    faceAffinePointMap hi hτσ x a = x (faceAffineCoordinateRingMap hi hτσ a) :=
+  by rw [faceAffinePointMap]; rfl
 
 /-- The complex-point map of a cone viewed as its own face is the identity. -/
 @[simp]
-theorem faceAffineComplexPointMap_id (hi : IsIntegralLattice i) :
-    faceAffineComplexPointMap hi (PointedCone.IsFaceOf.refl σ) = id := by
+theorem faceAffinePointMap_id (hi : IsIntegralLattice i) :
+    faceAffinePointMap hi (PointedCone.IsFaceOf.refl σ) = id := by
   funext x
   apply AlgHom.ext
   intro a
-  rw [faceAffineComplexPointMap_apply, faceAffineCoordinateRingMap_id]
+  rw [faceAffinePointMap_apply, faceAffineCoordinateRingMap_id]
   rfl
 
 /-- Successive face restrictions compose contravariantly on coordinate rings and covariantly on
 complex points. -/
-theorem faceAffineComplexPointMap_comp (hi : IsIntegralLattice i)
+theorem faceAffinePointMap_comp (hi : IsIntegralLattice i)
     (hυτ : υ.IsFaceOf τ) (hτσ : τ.IsFaceOf σ) :
-    faceAffineComplexPointMap hi hτσ ∘ faceAffineComplexPointMap hi hυτ =
-      faceAffineComplexPointMap hi (hυτ.trans hτσ) := by
+    faceAffinePointMap hi hτσ ∘ faceAffinePointMap hi hυτ =
+      faceAffinePointMap hi (hυτ.trans hτσ) := by
   funext x
   apply AlgHom.ext
   intro a
-  rw [Function.comp_apply, faceAffineComplexPointMap_apply,
-    faceAffineComplexPointMap_apply, faceAffineComplexPointMap_apply]
-  change x ((faceAffineCoordinateRingMap hi hυτ).comp
-    (faceAffineCoordinateRingMap hi hτσ) a) = _
-  rw [faceAffineCoordinateRingMap_comp]
+  rw [Function.comp_apply, faceAffinePointMap_apply,
+    faceAffinePointMap_apply, faceAffinePointMap_apply]
+  apply congrArg x
+  exact DFunLike.congr_fun (faceAffineCoordinateRingMap_comp hi hυτ hτσ) a
 
 /-- Applying two successive face restrictions is the same as applying their composite. -/
 @[simp]
-theorem faceAffineComplexPointMap_comp_apply (hi : IsIntegralLattice i)
+theorem faceAffinePointMap_comp_apply (hi : IsIntegralLattice i)
     (hυτ : υ.IsFaceOf τ) (hτσ : τ.IsFaceOf σ)
     (x : AffineSemigroupComplexPoint (dualSemigroup hi υ)) :
-    faceAffineComplexPointMap hi hτσ (faceAffineComplexPointMap hi hυτ x) =
-      faceAffineComplexPointMap hi (hυτ.trans hτσ) x := by
-  change (faceAffineComplexPointMap hi hτσ ∘ faceAffineComplexPointMap hi hυτ) x = _
-  rw [faceAffineComplexPointMap_comp]
+    faceAffinePointMap hi hτσ (faceAffinePointMap hi hυτ x) =
+      faceAffinePointMap hi (hυτ.trans hτσ) x :=
+  congrFun (faceAffinePointMap_comp hi hυτ hτσ) x
 
 /-- The complex-point face map is the general pullback of affine semigroup points along the
 inclusion of dual semigroups. -/
-theorem faceAffineComplexPointMap_eq_comap (hi : IsIntegralLattice i)
+theorem faceAffinePointMap_eq_comap (hi : IsIntegralLattice i)
     (hτσ : τ.IsFaceOf σ) :
-    faceAffineComplexPointMap hi hτσ = AffineSemigroupComplexPoint.comap
+    faceAffinePointMap hi hτσ = AffineSemigroupComplexPoint.comap
       (dualSemigroupMap hi hi (AddMonoidHom.id N) LinearMap.id (fun _ ↦ rfl)
         fun _ hx ↦ hτσ.le hx) := by
   funext x
   apply AffineSemigroupComplexPoint.ext
   intro m
-  rw [faceAffineComplexPointMap_apply, faceAffineCoordinateRingMap_single,
+  rw [faceAffinePointMap_apply, faceAffineCoordinateRingMap_single,
     AffineSemigroupComplexPoint.comap_apply_single]
   congr 2
   apply Subtype.ext
@@ -118,12 +124,12 @@ theorem faceAffineComplexPointMap_eq_comap (hi : IsIntegralLattice i)
 
 /-- The complex-point map of a face inclusion is continuous for arbitrary finite generating
 families on the two dual semigroups. -/
-theorem continuous_faceAffineComplexPointMap (hi : IsIntegralLattice i)
+theorem continuous_faceAffinePointMap (hi : IsIntegralLattice i)
     (hτσ : τ.IsFaceOf σ) (gσ : AddGeneratingFamily (dualSemigroup hi σ) r)
     (gτ : AddGeneratingFamily (dualSemigroup hi τ) r') :
     Continuous[affinePointTopology gτ, affinePointTopology gσ]
-      (faceAffineComplexPointMap hi hτσ) := by
-  rw [faceAffineComplexPointMap_eq_comap]
+      (faceAffinePointMap hi hτσ) := by
+  rw [faceAffinePointMap_eq_comap]
   exact AffineSemigroupComplexPoint.continuous_comap gσ gτ _
 
 /-! ### A face cut out by one character -/
@@ -134,20 +140,19 @@ variable (hi : IsIntegralLattice i) (m : dualSemigroup hi σ)
 
 /-- The image of a point of the character face lies in the locus where the cutting character
 does not vanish. -/
-theorem faceAffineComplexPointMap_character_ne_zero
+theorem faceAffinePointMap_inf_ker_apply_single_ne_zero
     (x : AffineSemigroupComplexPoint (dualSemigroup hi
       (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m))))) :
-    faceAffineComplexPointMap hi
+    faceAffinePointMap hi
         (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)) x
         (MonoidAlgebra.single (ofAdd m) 1) ≠ 0 := by
-  rw [faceAffineComplexPointMap_apply, faceAffineCoordinateRingMap_single]
+  rw [faceAffinePointMap_apply, faceAffineCoordinateRingMap_single]
   apply IsUnit.ne_zero
   apply IsUnit.map x
   refine IsUnit.of_mul_eq_one
     (MonoidAlgebra.single
       (ofAdd ⟨-(m : N →+ ℤ), neg_mem_dualSemigroup_inf_ker hi σ m⟩) 1) ?_
-  rw [MonoidAlgebra.single_mul_single, ofAdd_mul_ofAdd_neg_inf_ker, one_mul,
-    ← MonoidAlgebra.one_def]
+  exact single_ofAdd_mul_single_ofAdd_neg_inf_ker hi σ m
 
 end CharacterNonzero
 
@@ -155,116 +160,171 @@ variable (hi : IsIntegralLattice i) (hσ : σ.FG) (m : dualSemigroup hi σ)
 
 include hσ
 
+private noncomputable abbrev faceAffinePointInfKerAlgebra :
+    Algebra (affineCoordinateRing hi σ)
+      (affineCoordinateRing hi
+        (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) :=
+  (faceAffineCoordinateRingMap hi
+    (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2))).toRingHom.toAlgebra
+
+private theorem isLocalization_faceAffinePointInfKer :
+    letI := faceAffinePointInfKerAlgebra hi m
+    IsLocalization.Away (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
+      (affineCoordinateRing hi
+        (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) := by
+  exact isLocalization_away_affineCoordinateRingMap_inf_ker hi hσ m
+
 /-- A complex point on the nonvanishing locus of a character extends uniquely across the
 localization defining the corresponding face. -/
-noncomputable def faceAffineComplexPointLift
+noncomputable def faceAffinePointInfKerLift
     (hi : IsIntegralLattice i) (hσ : σ.FG) (m : dualSemigroup hi σ)
     (x : {x : AffineSemigroupComplexPoint (dualSemigroup hi σ) //
       x (MonoidAlgebra.single (ofAdd m) 1) ≠ 0}) :
     AffineSemigroupComplexPoint (dualSemigroup hi
       (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) := by
-  let hface := PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)
-  let _ := (faceAffineCoordinateRingMap hi hface).toRingHom.toAlgebra
-  have : IsLocalization.Away (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
-      (affineCoordinateRing hi
-        (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) :=
-    isLocalization_away_affineCoordinateRingMap_inf_ker hi hσ m
+  let _ := faceAffinePointInfKerAlgebra hi m
+  have := isLocalization_faceAffinePointInfKer hi hσ m
   exact IsLocalization.Away.liftAlgHom (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
     (isUnit_iff_ne_zero.mpr x.2)
 
 /-- Pulling a lifted point back to the ambient chart recovers the original point. -/
 @[simp]
-theorem faceAffineComplexPointMap_lift
+theorem faceAffinePointMap_inf_ker_lift
     (x : {x : AffineSemigroupComplexPoint (dualSemigroup hi σ) //
       x (MonoidAlgebra.single (ofAdd m) 1) ≠ 0}) :
-    faceAffineComplexPointMap hi
+    faceAffinePointMap hi
       (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2))
-      (faceAffineComplexPointLift hi hσ m x) = x := by
+      (faceAffinePointInfKerLift hi hσ m x) = x := by
   apply AlgHom.ext
   intro a
-  rw [faceAffineComplexPointMap_apply, faceAffineComplexPointLift]
-  let hface := PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)
-  let _ := (faceAffineCoordinateRingMap hi hface).toRingHom.toAlgebra
-  have : IsLocalization.Away (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
-      (affineCoordinateRing hi
-        (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) :=
-    isLocalization_away_affineCoordinateRingMap_inf_ker hi hσ m
+  rw [faceAffinePointMap_apply, faceAffinePointInfKerLift]
+  let _ := faceAffinePointInfKerAlgebra hi m
+  have := isLocalization_faceAffinePointInfKer hi hσ m
   exact IsLocalization.Away.lift_eq (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
     (isUnit_iff_ne_zero.mpr x.2) a
 
+/-- The localization lift agrees with the original point on monomials coming from the ambient
+cone. -/
+@[simp]
+theorem faceAffinePointInfKerLift_apply_single
+    (x : {x : AffineSemigroupComplexPoint (dualSemigroup hi σ) //
+      x (MonoidAlgebra.single (ofAdd m) 1) ≠ 0}) (u : dualSemigroup hi σ) :
+    faceAffinePointInfKerLift hi hσ m x
+        (MonoidAlgebra.single
+          (ofAdd ⟨u, dualSemigroup_anti hi inf_le_left u.2⟩) 1) =
+      x.1 (MonoidAlgebra.single (ofAdd u) 1) := by
+  have hu := DFunLike.congr_fun (faceAffinePointMap_inf_ker_lift hi hσ m x)
+    (MonoidAlgebra.single (ofAdd u) 1)
+  simpa only [faceAffinePointMap_apply, faceAffineCoordinateRingMap_single] using hu
+
 /-- Extending the restriction of a point of the face recovers that point. -/
 @[simp]
-theorem faceAffineComplexPointLift_map
+theorem faceAffinePointInfKerLift_map
     (x : AffineSemigroupComplexPoint (dualSemigroup hi
       (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m))))) :
-    faceAffineComplexPointLift hi hσ m
-      ⟨faceAffineComplexPointMap hi
+    faceAffinePointInfKerLift hi hσ m
+      ⟨faceAffinePointMap hi
           (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)) x,
-        faceAffineComplexPointMap_character_ne_zero hi m x
+        faceAffinePointMap_inf_ker_apply_single_ne_zero hi m x
       ⟩ = x := by
-  let hface := PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)
-  let _ := (faceAffineCoordinateRingMap hi hface).toRingHom.toAlgebra
-  have : IsLocalization.Away (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
-      (affineCoordinateRing hi
-        (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) :=
-    isLocalization_away_affineCoordinateRingMap_inf_ker hi hσ m
+  let _ := faceAffinePointInfKerAlgebra hi m
+  have := isLocalization_faceAffinePointInfKer hi hσ m
   apply AlgHom.coe_ringHom_injective
-  rw [faceAffineComplexPointLift]
+  rw [faceAffinePointInfKerLift]
   exact IsLocalization.lift_of_comp
     (M := Submonoid.powers (MonoidAlgebra.single (ofAdd m) (1 : ℂ))) x.toRingHom
+
+/-- The localization lift evaluates a fraction as the numerator times the reciprocal of its
+denominator. -/
+theorem faceAffinePointInfKerLift_mk'
+    (x : {x : AffineSemigroupComplexPoint (dualSemigroup hi σ) //
+      x (MonoidAlgebra.single (ofAdd m) 1) ≠ 0})
+    (a : affineCoordinateRing hi σ)
+    (y : Submonoid.powers (MonoidAlgebra.single (ofAdd m) (1 : ℂ))) :
+    letI := (faceAffineCoordinateRingMap hi
+      (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2))).toRingHom.toAlgebra
+    letI := isLocalization_away_affineCoordinateRingMap_inf_ker hi hσ m
+    faceAffinePointInfKerLift hi hσ m x (IsLocalization.mk' _ a y) =
+      x.1 a * (x.1 y.1)⁻¹ := by
+  let _ := faceAffinePointInfKerAlgebra hi m
+  have := isLocalization_faceAffinePointInfKer hi hσ m
+  rw [faceAffinePointInfKerLift]
+  change (IsLocalization.Away.lift (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
+      (isUnit_iff_ne_zero.mpr x.2))
+    (IsLocalization.mk' _ a y) = x.1 a * (x.1 y.1)⁻¹
+  rw [IsLocalization.Away.lift]
+  apply (IsLocalization.lift_mk'_spec _ a (x.1 a * (x.1 y.1)⁻¹) y).2
+  change x.1 a = x.1 y.1 * (x.1 a * (x.1 y.1)⁻¹)
+  rw [mul_left_comm, mul_inv_cancel₀, mul_one]
+  obtain ⟨n, hn⟩ := y.2
+  rw [← hn, map_pow]
+  exact pow_ne_zero n x.2
 
 /-- The localization lift sends the inverse character on the face to the reciprocal of the
 cutting character. -/
 @[simp]
-theorem faceAffineComplexPointLift_single_neg
+theorem faceAffinePointInfKerLift_apply_single_neg
     (x : {x : AffineSemigroupComplexPoint (dualSemigroup hi σ) //
       x (MonoidAlgebra.single (ofAdd m) 1) ≠ 0}) :
-    faceAffineComplexPointLift hi hσ m x
+    faceAffinePointInfKerLift hi hσ m x
         (MonoidAlgebra.single
           (ofAdd ⟨-(m : N →+ ℤ), neg_mem_dualSemigroup_inf_ker hi σ m⟩) 1) =
       (x.1 (MonoidAlgebra.single (ofAdd m) 1))⁻¹ := by
-  apply eq_inv_of_mul_eq_one_right
-  rw [← DFunLike.congr_fun (faceAffineComplexPointMap_lift hi hσ m x)
-    (MonoidAlgebra.single (ofAdd m) 1), faceAffineComplexPointMap_apply]
-  rw [← map_mul]
-  convert map_one (faceAffineComplexPointLift hi hσ m x) using 1
-  rw [faceAffineCoordinateRingMap_single, MonoidAlgebra.single_mul_single,
-    ofAdd_mul_ofAdd_neg_inf_ker, one_mul, ← MonoidAlgebra.one_def]
+  let hface := PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)
+  let _ := faceAffinePointInfKerAlgebra hi m
+  have := isLocalization_faceAffinePointInfKer hi hσ m
+  let y : Submonoid.powers (MonoidAlgebra.single (ofAdd m) (1 : ℂ)) :=
+    ⟨MonoidAlgebra.single (ofAdd m) 1, Submonoid.mem_powers _⟩
+  have hy :
+      MonoidAlgebra.single
+          (ofAdd ⟨-(m : N →+ ℤ), neg_mem_dualSemigroup_inf_ker hi σ m⟩) (1 : ℂ) =
+        IsLocalization.mk'
+          (affineCoordinateRing hi
+            (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m))))
+          (1 : affineCoordinateRing hi σ) y := by
+    apply IsLocalization.eq_mk'_iff_mul_eq.mpr
+    change MonoidAlgebra.single
+        (ofAdd ⟨-(m : N →+ ℤ), neg_mem_dualSemigroup_inf_ker hi σ m⟩) 1 *
+      faceAffineCoordinateRingMap hi hface (MonoidAlgebra.single (ofAdd m) 1) =
+        faceAffineCoordinateRingMap hi hface 1
+    rw [map_one, faceAffineCoordinateRingMap_single, mul_comm,
+      single_ofAdd_mul_single_ofAdd_neg_inf_ker (R := ℂ) hi σ m]
+  rw [hy, faceAffinePointInfKerLift_mk', map_one, one_mul]
 
 /-- The complex points of the face cut out by `m` are in bijection with the locus of the ambient
 chart where the monomial of `m` does not vanish. -/
-noncomputable def faceAffineComplexPointEquiv
+noncomputable def faceAffinePointInfKerEquiv
     (hi : IsIntegralLattice i) (hσ : σ.FG) (m : dualSemigroup hi σ) :
     AffineSemigroupComplexPoint (dualSemigroup hi
       (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) ≃
       {x : AffineSemigroupComplexPoint (dualSemigroup hi σ) //
         x (MonoidAlgebra.single (ofAdd m) 1) ≠ 0} where
-  toFun x := ⟨faceAffineComplexPointMap hi
+  toFun x := ⟨faceAffinePointMap hi
     (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)) x,
-      faceAffineComplexPointMap_character_ne_zero hi m x⟩
-  invFun := faceAffineComplexPointLift hi hσ m
-  left_inv := faceAffineComplexPointLift_map hi hσ m
-  right_inv x := Subtype.ext (faceAffineComplexPointMap_lift hi hσ m x)
+      faceAffinePointMap_inf_ker_apply_single_ne_zero hi m x⟩
+  invFun := faceAffinePointInfKerLift hi hσ m
+  left_inv := faceAffinePointInfKerLift_map hi hσ m
+  right_inv x := Subtype.ext (faceAffinePointMap_inf_ker_lift hi hσ m x)
 
 @[simp]
-theorem coe_faceAffineComplexPointEquiv :
-    ⇑(faceAffineComplexPointEquiv hi hσ m) = fun x ↦
-      ⟨faceAffineComplexPointMap hi
+theorem coe_faceAffinePointInfKerEquiv :
+    ⇑(faceAffinePointInfKerEquiv hi hσ m) = fun x ↦
+      ⟨faceAffinePointMap hi
         (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)) x,
-        faceAffineComplexPointMap_character_ne_zero hi m x⟩ :=
-  by rw [faceAffineComplexPointEquiv]; rfl
+        faceAffinePointMap_inf_ker_apply_single_ne_zero hi m x⟩ :=
+  by rw [faceAffinePointInfKerEquiv]; rfl
 
 @[simp]
-theorem faceAffineComplexPointEquiv_symm_apply
+theorem faceAffinePointInfKerEquiv_symm_apply
     (x : {x : AffineSemigroupComplexPoint (dualSemigroup hi σ) //
       x (MonoidAlgebra.single (ofAdd m) 1) ≠ 0}) :
-    (faceAffineComplexPointEquiv hi hσ m).symm x =
-      faceAffineComplexPointLift hi hσ m x :=
-  by rw [faceAffineComplexPointEquiv]; rfl
+    (faceAffinePointInfKerEquiv hi hσ m).symm x =
+      faceAffinePointInfKerLift hi hσ m x :=
+  by rw [faceAffinePointInfKerEquiv]; rfl
 
 /-- Extending a complex point across a localization varies continuously on the nonvanishing
 locus, for arbitrary finite generating families on the ambient cone and its face. -/
-theorem continuous_faceAffineComplexPointLift
+theorem continuous_faceAffinePointInfKerLift
     (gσ : AddGeneratingFamily (dualSemigroup hi σ) r)
     (gF : AddGeneratingFamily (dualSemigroup hi
       (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) r') :
@@ -274,21 +334,17 @@ theorem continuous_faceAffineComplexPointLift
       (AffineSemigroupComplexPoint (dualSemigroup hi
         (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))))
       (@instTopologicalSpaceSubtype _ _ (affinePointTopology gσ))
-      (affinePointTopology gF) (faceAffineComplexPointLift hi hσ m) := by
+      (affinePointTopology gF) (faceAffinePointInfKerLift hi hσ m) := by
   let _ := affinePointTopology gσ
   rw [affinePointTopology_eq_iInf gF, continuous_iInf_rng]
   intro t
   rw [continuous_induced_rng]
   -- The induced-topology criterion leaves this evaluation under `Function.comp`; expose it so
   -- the localization representation below can rewrite the element being evaluated.
-  change Continuous (fun x ↦ faceAffineComplexPointLift hi hσ m x
+  change Continuous (fun x ↦ faceAffinePointInfKerLift hi hσ m x
     (MonoidAlgebra.single (ofAdd t) (1 : ℂ)))
-  let hface := PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)
-  let _ := (faceAffineCoordinateRingMap hi hface).toRingHom.toAlgebra
-  have : IsLocalization.Away (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
-      (affineCoordinateRing hi
-        (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) :=
-    isLocalization_away_affineCoordinateRingMap_inf_ker hi hσ m
+  let _ := faceAffinePointInfKerAlgebra hi m
+  have := isLocalization_faceAffinePointInfKer hi hσ m
   obtain ⟨⟨a, y⟩, hy⟩ := IsLocalization.mk'_surjective
     (Submonoid.powers (MonoidAlgebra.single (ofAdd m) (1 : ℂ)))
     (MonoidAlgebra.single (ofAdd t) (1 : ℂ))
@@ -307,21 +363,11 @@ theorem continuous_faceAffineComplexPointLift
     exact pow_ne_zero n x.2
   convert ha.mul (hay.inv₀ hay0) using 1
   funext x
-  rw [faceAffineComplexPointLift]
-  -- The lift is packaged as an algebra homomorphism; expose its underlying localization lift in
-  -- order to apply the fraction characterization `IsLocalization.lift_mk'_spec`.
-  change (IsLocalization.Away.lift (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
-      (isUnit_iff_ne_zero.mpr x.2))
-    (IsLocalization.mk' _ a y) = x.1 a * (x.1 y.1)⁻¹
-  rw [IsLocalization.Away.lift]
-  apply (IsLocalization.lift_mk'_spec _ a (x.1 a * (x.1 y.1)⁻¹) y).2
-  -- The ring-hom and algebra-hom coercions obscure the elementary cancellation identity.
-  change x.1 a = x.1 y.1 * (x.1 a * (x.1 y.1)⁻¹)
-  rw [mul_left_comm, mul_inv_cancel₀ (hay0 x), mul_one]
+  exact faceAffinePointInfKerLift_mk' hi hσ m x a y
 
 /-- The algebraic bijection between the complex points of a character face and its nonvanishing
 locus is a homeomorphism for arbitrary finite generating families. -/
-noncomputable def faceAffineComplexPointHomeomorph
+noncomputable def faceAffinePointInfKerHomeomorph
     (hi : IsIntegralLattice i) (hσ : σ.FG) (m : dualSemigroup hi σ)
     (gσ : AddGeneratingFamily (dualSemigroup hi σ) r)
     (gF : AddGeneratingFamily (dualSemigroup hi
@@ -336,51 +382,51 @@ noncomputable def faceAffineComplexPointHomeomorph
   let _ := affinePointTopology gσ
   let _ := affinePointTopology gF
   exact
-    { toEquiv := faceAffineComplexPointEquiv hi hσ m
+    { toEquiv := faceAffinePointInfKerEquiv hi hσ m
       continuous_toFun := Continuous.subtype_mk
-        (continuous_faceAffineComplexPointMap hi
+        (continuous_faceAffinePointMap hi
           (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)) gσ gF) _
-      continuous_invFun := continuous_faceAffineComplexPointLift hi hσ m gσ gF }
+      continuous_invFun := continuous_faceAffinePointInfKerLift hi hσ m gσ gF }
 
 @[simp]
-theorem coe_faceAffineComplexPointHomeomorph
+theorem coe_faceAffinePointInfKerHomeomorph
     (gσ : AddGeneratingFamily (dualSemigroup hi σ) r)
     (gF : AddGeneratingFamily (dualSemigroup hi
       (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) r') :
-    ⇑(faceAffineComplexPointHomeomorph (hσ := hσ) hi m gσ gF) =
-      ⇑(faceAffineComplexPointEquiv hi hσ m) :=
-  by rw [faceAffineComplexPointHomeomorph]; rfl
+    ⇑(faceAffinePointInfKerHomeomorph (hσ := hσ) hi m gσ gF) =
+      ⇑(faceAffinePointInfKerEquiv hi hσ m) :=
+  by rw [faceAffinePointInfKerHomeomorph]; rfl
 
 /-- The inverse of the localization homeomorphism is the inverse of its underlying equivalence. -/
 @[simp]
-theorem coe_faceAffineComplexPointHomeomorph_symm
+theorem coe_faceAffinePointInfKerHomeomorph_symm
     (gσ : AddGeneratingFamily (dualSemigroup hi σ) r)
     (gF : AddGeneratingFamily (dualSemigroup hi
       (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) r') :
     ⇑(@Homeomorph.symm _ _ (affinePointTopology gF)
       (@instTopologicalSpaceSubtype _ _ (affinePointTopology gσ))
-      (faceAffineComplexPointHomeomorph (hσ := hσ) hi m gσ gF)) =
-      ⇑(faceAffineComplexPointEquiv hi hσ m).symm :=
-  by rw [faceAffineComplexPointHomeomorph]; rfl
+      (faceAffinePointInfKerHomeomorph (hσ := hσ) hi m gσ gF)) =
+      ⇑(faceAffinePointInfKerEquiv hi hσ m).symm :=
+  by rw [faceAffinePointInfKerHomeomorph]; rfl
 
 /-- The image of the complex-point map for the face cut out by `m` is exactly the locus where the
 monomial of `m` does not vanish. -/
-theorem range_faceAffineComplexPointMap_inf_ker :
-    Set.range (faceAffineComplexPointMap hi
+theorem range_faceAffinePointMap_inf_ker :
+    Set.range (faceAffinePointMap hi
       (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2))) =
       {x : AffineSemigroupComplexPoint (dualSemigroup hi σ) |
         x (MonoidAlgebra.single (ofAdd m) 1) ≠ 0} := by
   ext x
   constructor
   · rintro ⟨y, rfl⟩
-    exact faceAffineComplexPointMap_character_ne_zero hi m y
+    exact faceAffinePointMap_inf_ker_apply_single_ne_zero hi m y
   · intro hx
-    exact ⟨faceAffineComplexPointLift hi hσ m ⟨x, hx⟩,
-      faceAffineComplexPointMap_lift hi hσ m ⟨x, hx⟩⟩
+    exact ⟨faceAffinePointInfKerLift hi hσ m ⟨x, hx⟩,
+      faceAffinePointMap_inf_ker_lift hi hσ m ⟨x, hx⟩⟩
 
 /-- The complex-point map for a face cut out by one character is an open embedding for arbitrary
 finite generating families. -/
-theorem isOpenEmbedding_faceAffineComplexPointMap_inf_ker
+theorem isOpenEmbedding_faceAffinePointMap_inf_ker
     (gσ : AddGeneratingFamily (dualSemigroup hi σ) r)
     (gF : AddGeneratingFamily (dualSemigroup hi
       (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) r') :
@@ -389,7 +435,7 @@ theorem isOpenEmbedding_faceAffineComplexPointMap_inf_ker
         (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))))
       (AffineSemigroupComplexPoint (dualSemigroup hi σ))
       (affinePointTopology gF) (affinePointTopology gσ)
-      (faceAffineComplexPointMap hi
+      (faceAffinePointMap hi
         (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2))) := by
   let _ := affinePointTopology gσ
   let _ := affinePointTopology gF
@@ -407,10 +453,10 @@ theorem isOpenEmbedding_faceAffineComplexPointMap_inf_ker
           AffineSemigroupComplexPoint (dualSemigroup hi σ)) :=
     hopen.isOpenEmbedding_subtypeVal
   have hcomp := hsub.comp
-    (faceAffineComplexPointHomeomorph (hσ := hσ) hi m gσ gF).isOpenEmbedding
+    (faceAffinePointInfKerHomeomorph (hσ := hσ) hi m gσ gF).isOpenEmbedding
   convert hcomp using 1
-  funext x
-  rfl
+  simp [Function.comp_def, coe_faceAffinePointInfKerHomeomorph,
+    coe_faceAffinePointInfKerEquiv]
 
 omit hσ
 
@@ -420,11 +466,11 @@ variable {τ : PointedCone ℝ V}
 
 /-- For a face of a regular cone, some character cutting out that face identifies the range of the
 complex-point map with its nonvanishing locus. -/
-theorem exists_range_faceAffineComplexPointMap (hreg : IsRegularCone i σ)
+theorem exists_range_faceAffinePointMap (hreg : IsRegularCone i σ)
     (hτ : τ.IsFaceOf σ) :
     ∃ m : dualSemigroup hi σ,
       σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)) = τ ∧
-      Set.range (faceAffineComplexPointMap hi hτ) =
+      Set.range (faceAffinePointMap hi hτ) =
         {x : AffineSemigroupComplexPoint (dualSemigroup hi σ) |
           x (MonoidAlgebra.single (ofAdd m) 1) ≠ 0} := by
   obtain ⟨m, hm, hface⟩ := hreg.exists_mem_dualSemigroup_inf_ker_eq hi hτ
@@ -433,25 +479,25 @@ theorem exists_range_faceAffineComplexPointMap (hreg : IsRegularCone i σ)
   have heq : hτ = PointedCone.isFaceOf_inf_ker
       ((mem_dualSemigroup hi (⟨m, hm⟩ : dualSemigroup hi σ)).1 hm) := Subsingleton.elim _ _
   subst hτ
-  exact range_faceAffineComplexPointMap_inf_ker hi hreg.fg ⟨m, hm⟩
+  exact range_faceAffinePointMap_inf_ker hi hreg.fg ⟨m, hm⟩
 
 /-- The complex-point map of every face inclusion into a regular cone is an open embedding for
 arbitrary finite generating families.  Thus face localization is an open subspace at the
 topological level. -/
-theorem isOpenEmbedding_faceAffineComplexPointMap (hreg : IsRegularCone i σ)
+theorem isOpenEmbedding_faceAffinePointMap (hreg : IsRegularCone i σ)
     (hτ : τ.IsFaceOf σ) (gσ : AddGeneratingFamily (dualSemigroup hi σ) r)
     (gτ : AddGeneratingFamily (dualSemigroup hi τ) r') :
     @IsOpenEmbedding
       (AffineSemigroupComplexPoint (dualSemigroup hi τ))
       (AffineSemigroupComplexPoint (dualSemigroup hi σ))
       (affinePointTopology gτ) (affinePointTopology gσ)
-      (faceAffineComplexPointMap hi hτ) := by
+      (faceAffinePointMap hi hτ) := by
   obtain ⟨m, hm, hface⟩ := hreg.exists_mem_dualSemigroup_inf_ker_eq hi hτ
   subst τ
   have heq : hτ = PointedCone.isFaceOf_inf_ker
       ((mem_dualSemigroup hi (⟨m, hm⟩ : dualSemigroup hi σ)).1 hm) := Subsingleton.elim _ _
   subst hτ
-  exact isOpenEmbedding_faceAffineComplexPointMap_inf_ker hi hreg.fg ⟨m, hm⟩ gσ gτ
+  exact isOpenEmbedding_faceAffinePointMap_inf_ker hi hreg.fg ⟨m, hm⟩ gσ gτ
 
 end IsRegularCone
 
