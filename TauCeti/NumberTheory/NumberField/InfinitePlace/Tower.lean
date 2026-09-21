@@ -13,7 +13,7 @@ public import TauCeti.FieldTheory.Galois.Restriction
 # Infinite places in a normal tower
 
 For a tower `K ⊆ F ⊆ L` with `F / K` normal, restriction of automorphisms along
-`AlgEquiv.restrictNormalHom` is compatible with the Galois action on infinite places: moving a
+`AlgEquiv.restrictNormal` is compatible with the Galois action on infinite places: moving a
 place of `L` by `σ` and then inducing a place of `F` gives the same place as inducing first and
 then moving by the restricted automorphism.
 
@@ -28,7 +28,7 @@ used by `TauCeti/NumberTheory/NumberField/ComplexConjugation.lean`.
 
 ## Main results
 
-* `TauCeti.NumberField.restrictNormalHom_smul_comap`: the action is equivariant along the tower.
+* `TauCeti.NumberField.restrictNormal_smul_comap`: the action is equivariant along the tower.
 * `TauCeti.NumberField.isRamified_comap_of_isComplex`: a complex induced place is itself ramified.
 * `TauCeti.NumberField.eq_one_of_restrictNormalHom_eq_one`: an automorphism restricting trivially
   to `F` and fixing a place unramified over `F` is the identity.
@@ -51,7 +51,7 @@ variable (K : Type*) [Field K] {L : Type*} [Field L] [Algebra K L]
 to `F` and then moving the place `w` induces on `F` gives the same place as moving `w` by `σ` and
 inducing afterwards. -/
 @[simp]
-theorem restrictNormalHom_smul_comap [Normal K F] (σ : L ≃ₐ[K] L) (w : InfinitePlace L) :
+theorem restrictNormal_smul_comap [Normal K F] (σ : L ≃ₐ[K] L) (w : InfinitePlace L) :
     σ.restrictNormal F • w.comap (algebraMap F L)
       = (σ • w).comap (algebraMap F L) := by
   rw [← AlgEquiv.restrictNormalHom_eq_restrictNormal]
