@@ -63,6 +63,7 @@ def pfisterForm : {n : ℕ} → (Fin n → Kˣ) → Fin (2 ^ n) → Kˣ
       pfisterForm (Fin.tail a) ij.1 * ![1, -(a 0)] ij.2
 
 /-- `⟨⟨a⟩⟩ = ⟨1, -a⟩`. -/
+@[simp]
 theorem pfisterForm_one (a : Kˣ) : pfisterForm ![a] = ![1, -a] := by
   funext i
   let ij := finProdFinEquiv.symm (Fin.cast (pow_succ 2 0) i)
@@ -75,6 +76,7 @@ theorem pfisterForm_one (a : Kˣ) : pfisterForm ![a] = ![1, -a] := by
   simp
 
 /-- `⟨⟨a, b⟩⟩ = ⟨1, -a, -b, ab⟩`. -/
+@[simp]
 theorem pfisterForm_two (a b : Kˣ) : pfisterForm ![a, b] = ![1, -a, -b, a * b] := by
   funext i
   let ij := finProdFinEquiv.symm (Fin.cast (pow_succ 2 1) i)
@@ -144,6 +146,7 @@ theorem pfisterFormClass_def {n : ℕ} (a : Fin n → Kˣ) :
   pfisterFormClass.eq_def a
 
 /-- Splitting off the first slot splits a Pfister form as a tensor product. -/
+@[simp]
 theorem pfisterFormClass_cons {n : ℕ} (a : Kˣ) (b : Fin n → Kˣ) :
     pfisterFormClass (Fin.cons a b) =
       (1 + Quotient.mk (regularFormSetoid K) ⟨1, fun _ => -a⟩) * pfisterFormClass b := by
@@ -153,6 +156,12 @@ theorem pfisterFormClass_cons {n : ℕ} (a : Kˣ) (b : Fin n → Kˣ) :
 @[simp]
 theorem pfisterFormClass_zero (a : Fin 0 → Kˣ) : pfisterFormClass a = 1 := by
   simp [pfisterFormClass_def]
+
+/-- Reindexing the slots of a Pfister form class by an equivalence does not change it. -/
+theorem pfisterFormClass_comp_equiv {m n : ℕ} (a : Fin n → Kˣ) (e : Fin m ≃ Fin n) :
+    pfisterFormClass (a ∘ e) = pfisterFormClass a := by
+  rw [pfisterFormClass_def, pfisterFormClass_def]
+  exact e.prod_comp fun i ↦ 1 + Quotient.mk (regularFormSetoid K) ⟨1, fun _ ↦ -(a i)⟩
 
 omit [Invertible (2 : K)] in
 private theorem pfisterFactor_eq (a : Kˣ) :
@@ -184,12 +193,14 @@ private theorem pfisterFactor_eq (a : Kˣ) :
     simpa [p, q] using RegularFormPresentation.append_apply_natAdd p q (0 : Fin 1)
 
 /-- A one-fold Pfister form has diagonal weights `<1, -a>`. -/
+@[simp]
 theorem pfisterFormClass_one (a : Fin 1 → Kˣ) :
     pfisterFormClass a =
       Quotient.mk (regularFormSetoid K) ⟨2, ![1, -(a 0)]⟩ := by
   rw [pfisterFormClass_def, Fin.prod_univ_one, pfisterFactor_eq]
 
 /-- A two-fold Pfister form has diagonal weights `<1, -a, -b, ab>`. -/
+@[simp]
 theorem pfisterFormClass_two (a b : Kˣ) :
     pfisterFormClass ![a, b] =
       Quotient.mk (regularFormSetoid K) ⟨4, ![1, -a, -b, a * b]⟩ := by
@@ -272,6 +283,7 @@ theorem pfisterClass_zero (a : Fin 0 → Kˣ) : pfisterClass a = 1 := by
   simp [pfisterClass]
 
 /-- Splitting off the first slot splits a Pfister class as a product. -/
+@[simp]
 theorem pfisterClass_cons {n : ℕ} (a : Kˣ) (b : Fin n → Kˣ) :
     pfisterClass (Fin.cons a b) = oneFoldPfisterClass a * pfisterClass b := by
   rw [pfisterClass, pfisterFormClass_cons, map_mul]
@@ -284,7 +296,13 @@ theorem pfisterClass_one (a : Fin 1 → Kˣ) :
   rw [pfisterClass_eq_prod]
   rw [Fin.prod_univ_one]
 
+/-- Reindexing the slots of a Pfister class by an equivalence does not change it. -/
+theorem pfisterClass_comp_equiv {m n : ℕ} (a : Fin n → Kˣ) (e : Fin m ≃ Fin n) :
+    pfisterClass (a ∘ e) = pfisterClass a := by
+  rw [← wittClass_pfisterFormClass, pfisterFormClass_comp_equiv, wittClass_pfisterFormClass]
+
 /-- The two-fold Pfister class is the product `<<a>> * <<b>>`. -/
+@[simp]
 theorem pfisterClass_two (a b : Kˣ) :
     pfisterClass ![a, b] = oneFoldPfisterClass a * oneFoldPfisterClass b := by
   simp [pfisterClass_eq_prod, Fin.prod_univ_two]
