@@ -71,7 +71,6 @@ theorem ofAdd_mul_ofAdd_neg_inf_ker (hi : IsIntegralLattice i) (σ : PointedCone
 
 /-- The monomials of `m` and `-m` multiply to one in the coordinate ring of the face where `m`
 vanishes. -/
-@[simp]
 theorem single_ofAdd_mul_single_ofAdd_neg_inf_ker {R : Type*} [Semiring R]
     (hi : IsIntegralLattice i) (σ : PointedCone ℝ V) (m : dualSemigroup hi σ) :
     MonoidAlgebra.single
