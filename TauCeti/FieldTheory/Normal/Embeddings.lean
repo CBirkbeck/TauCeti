@@ -59,6 +59,7 @@ This isolates the field-range and coercion bookkeeping: `φ x` is transported in
 the isomorphism `φ.fieldRange ≃ ψ.fieldRange` is applied there, and `liftNormal_commutes` brings
 the result back to `M`. Keeping it separate lets `isPretransitiveAlgHom` state only the
 mathematical step. -/
+@[simp]
 theorem liftNormal_equivFieldRange_apply [Normal F M] (φ ψ : L →ₐ[F] M) (x : L) :
     ((φ.equivFieldRange.symm.trans ψ.equivFieldRange).liftNormal M) (φ x) = ψ x := by
   simpa using
@@ -126,10 +127,12 @@ namespace AlgHom
 variable {F L M : Type*} [Field F] [Field L] [Field M] [Algebra F L] [Algebra F M]
 
 /-- **The number of embeddings is the degree.** For `L / F` finite and separable and `M / F`
-normal, the existence of one embedding `φ : L →ₐ[F] M` forces there to be exactly `[L : F]` of
-them: every minimal polynomial over `F` of an element of `L` splits in `M`. -/
+normal, the existence of an embedding `L →ₐ[F] M` forces there to be exactly `[L : F]` of them:
+every minimal polynomial over `F` of an element of `L` splits in `M`. -/
+@[simp]
 theorem card_of_normal [FiniteDimensional F L] [Algebra.IsSeparable F L] [Normal F M]
-    (φ : L →ₐ[F] M) : Fintype.card (L →ₐ[F] M) = Module.finrank F L := by
+    [Nonempty (L →ₐ[F] M)] : Fintype.card (L →ₐ[F] M) = Module.finrank F L := by
+  let φ := Classical.choice (inferInstance : Nonempty (L →ₐ[F] M))
   refine AlgHom.card_of_splits F L M ?_
   intro x
   -- An embedding preserves minimal polynomials, and `M / F` is normal.

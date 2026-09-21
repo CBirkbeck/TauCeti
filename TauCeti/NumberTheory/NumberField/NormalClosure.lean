@@ -55,7 +55,7 @@ directly: `(Algebra.IsAlgebraic.isNormalClosure_iff.mp d.isNormalClosure).2` fee
 `TauCeti.FieldTheory.eq_one_of_forall_smul_eq` and
 `TauCeti.FieldTheory.faithfulSMul_of_normalClosure_eq_top`, after which `smul_left_injective'`
 gives injectivity of the permutation representation; `d.embedding` feeds
-`MulAction.orbit_eq_univ` and `AlgHom.card_of_normal`. -/
+`MulAction.orbit_eq_univ` and supplies the `Nonempty` hypothesis of `AlgHom.card_of_normal`. -/
 @[ext]
 structure NormalClosureData (K M : Type*) [Field K] [NumberField K] [Field M]
     [NumberField M] where
