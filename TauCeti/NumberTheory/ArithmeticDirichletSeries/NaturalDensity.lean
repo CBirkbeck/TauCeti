@@ -97,15 +97,20 @@ theorem hasNaturalDensity_empty :
     HasNaturalDensity (∅ : Set (HeightOneSpectrum (𝓞 K))) 0 := by
   simp [hasNaturalDensity_def]
 
+/-- The all-prime count is eventually nonzero, so the quotient defining natural density is
+eventually well formed.  This is the side condition every density computation below needs
+before it may divide by `primeCount K Set.univ`. -/
+private theorem eventually_primeCount_univ_ne_zero :
+    ∀ᶠ x : ℝ in atTop,
+      TauCeti.primeCount K (Set.univ : Set (HeightOneSpectrum (𝓞 K))) x ≠ 0 :=
+  ((TauCeti.tendsto_primeCount_univ_atTop K).eventually_gt_atTop 0).mono fun _ hx => hx.ne'
+
 /-- The set of all prime ideals has natural density one. -/
 @[simp]
 theorem hasNaturalDensity_univ :
     HasNaturalDensity (Set.univ : Set (HeightOneSpectrum (𝓞 K))) 1 := by
   rw [hasNaturalDensity_def]
-  have hne : ∀ᶠ x : ℝ in atTop,
-      TauCeti.primeCount K (Set.univ : Set (HeightOneSpectrum (𝓞 K))) x ≠ 0 :=
-    ((TauCeti.tendsto_primeCount_univ_atTop K).eventually_gt_atTop 0).mono
-      fun _ hx => hx.ne'
+  have hne := eventually_primeCount_univ_ne_zero (K := K)
   exact tendsto_const_nhds.congr' (hne.mono fun _ hx => (div_self hx).symm)
 
 /-- A natural density is nonnegative. -/
@@ -154,10 +159,7 @@ theorem hasNaturalDensity_biUnion_finset {ι : Type*} {s : Finset ι}
 theorem HasNaturalDensity.compl (hS : HasNaturalDensity S δ) :
     HasNaturalDensity Sᶜ (1 - δ) := by
   rw [hasNaturalDensity_def] at hS ⊢
-  have hne : ∀ᶠ x : ℝ in atTop,
-      TauCeti.primeCount K (Set.univ : Set (HeightOneSpectrum (𝓞 K))) x ≠ 0 :=
-    ((TauCeti.tendsto_primeCount_univ_atTop K).eventually_gt_atTop 0).mono
-      fun _ hx => hx.ne'
+  have hne := eventually_primeCount_univ_ne_zero (K := K)
   refine (tendsto_const_nhds.sub hS).congr' (hne.mono fun x hx => ?_)
   simp only
   rw [← div_self hx, ← sub_div]
