@@ -23,8 +23,8 @@ be an equality, which is how the density of a single fibre is finally extracted.
 
 * `NumberField.Chebotarev.hasDirichletDensity_compl_ramifiedPrimes`: the primes outside the finite
   ramified set have Dirichlet density `1`.
-* `NumberField.Chebotarev.sum_dirichletDensity_frobeniusPrimeSet_eq_one`: densities assigned to the
-  Frobenius fibres sum to `1`.
+* `NumberField.Chebotarev.sum_eq_one_of_forall_hasDirichletDensity_frobeniusPrimeSet`: densities
+  assigned to the Frobenius fibres sum to `1`.
 
 ## References
 
@@ -60,7 +60,7 @@ variable (K L) in
 
 That each fibre *has* a density is not automatic; supplying it is the analytic content of a
 Chebotarev theorem, and what this records is the constraint linking the fibres to each other. -/
-theorem sum_dirichletDensity_frobeniusPrimeSet_eq_one {d : ConjClasses (L ≃ₐ[K] L) → ℝ}
+theorem sum_eq_one_of_forall_hasDirichletDensity_frobeniusPrimeSet {d : ConjClasses (L ≃ₐ[K] L) → ℝ}
     (hd : ∀ C, (frobeniusPrimeSet K L C).HasDirichletDensity (d C)) :
     ∑ C : ConjClasses (L ≃ₐ[K] L), d C = 1 :=
   -- the fibres are pairwise disjoint, and they cover exactly the complement of the finite set

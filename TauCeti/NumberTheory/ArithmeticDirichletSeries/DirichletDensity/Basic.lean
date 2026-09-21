@@ -183,4 +183,87 @@ theorem hasDirichletDensity_of_subset_of_subset (hST : S ⊆ T) (hTU : T ⊆ U)
     (hU.isUpperDirichletDensityBound.mono_set hTU)
     (hS.isLowerDirichletDensityBound.mono_set hST)
 
+/-- **What a term-by-term lower bound leaves.** If `d` sums to `δ` over `s` and every `a i` away
+from `i₀` is within `η'` below `d i`, the erased sum falls short of `δ - d i₀` by at most
+`#s * η'`.
+
+Pure arithmetic on a finite index type: no primes, no densities. It is what turns the other
+members' lower bounds into an upper bound on the remaining one. -/
+private theorem sub_sub_le_sum_erase_of_forall_sub_le {ι : Type*} [DecidableEq ι] {s : Finset ι}
+    {d a : ι → ℝ} {η η' : ℝ} {i₀ : ι} (hi₀ : i₀ ∈ s) (hd : ∑ i ∈ s, d i = δ)
+    (ha : ∀ i ∈ s.erase i₀, d i - η' ≤ a i) (hη' : 0 ≤ η') (hη : (s.card : ℝ) * η' ≤ η) :
+    δ - d i₀ - η ≤ ∑ i ∈ s.erase i₀, a i := by
+  have hlb := Finset.sum_le_sum ha
+  rw [Finset.sum_sub_distrib, Finset.sum_const, nsmul_eq_mul, Finset.sum_erase_eq_sub hi₀,
+    hd] at hlb
+  have hcard : ((s.erase i₀).card : ℝ) ≤ (s.card : ℝ) := by exact_mod_cast Finset.card_erase_le
+  linarith [(mul_le_mul_of_nonneg_right hcard hη').trans hη]
+
+/-- **One member's ratio, read off from the others.** For `t > 1` every member's series converges,
+so a pairwise disjoint family splits the union sum exactly; dividing by the all-prime sum
+expresses one member's ratio as the union's ratio minus the ratios of the rest. -/
+private theorem primeIdealZetaSum_div_univ_eq_sub_sum_erase {ι : Type*} [DecidableEq ι]
+    {s : Finset ι} {f : ι → Set (HeightOneSpectrum (𝓞 K))} (hdisj : (s : Set ι).PairwiseDisjoint f)
+    {t : ℝ} (ht : 1 < t) {i₀ : ι} (hi₀ : i₀ ∈ s) :
+    (f i₀).primeIdealZetaSum t / (Set.univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum t =
+      (⋃ i ∈ s, f i).primeIdealZetaSum t /
+          (Set.univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum t -
+        ∑ i ∈ s.erase i₀, (f i).primeIdealZetaSum t /
+          (Set.univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum t := by
+  rw [← Finset.sum_div, ← sub_div, primeIdealZetaSum_biUnion_of_pairwiseDisjoint s f hdisj
+    fun i _ ↦ summable_absNorm_rpow_subtype_of_one_lt (f i) ht,
+    ← Finset.add_sum_erase _ _ hi₀, add_sub_cancel_right]
+
+/-- **Every other member is eventually above its bound.** A finite conjunction of eventual
+statements is eventually true, so all members but `i₀` clear `d i - η` simultaneously. -/
+private theorem eventually_forall_mem_erase_sub_lt {ι : Type*} [DecidableEq ι] {s : Finset ι}
+    {f : ι → Set (HeightOneSpectrum (𝓞 K))} {d : ι → ℝ}
+    (hlow : ∀ i ∈ s, IsLowerDirichletDensityBound (f i) (d i)) (i₀ : ι) {η : ℝ} (hη : 0 < η) :
+    ∀ᶠ t : ℝ in 𝓝[>] 1, ∀ i ∈ s.erase i₀, d i - η <
+      (f i).primeIdealZetaSum t /
+        (Set.univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum t :=
+  eventually_all_finset _ |>.2 fun i hi ↦
+    isLowerDirichletDensityBound_iff.mp (hlow i (Finset.mem_of_mem_erase hi)) η hη
+
+/-- **Lower bounds on the other members bound this one from above.** A finite pairwise disjoint
+family exhausts a union of known density `δ`, so one member's ratio is what the others leave
+behind; if the lower bounds `d` already sum to `δ`, what they leave behind is `d i₀`. -/
+theorem isUpperDirichletDensityBound_of_forall_isLowerDirichletDensityBound {ι : Type*}
+    {s : Finset ι} {f : ι → Set (HeightOneSpectrum (𝓞 K))} {d : ι → ℝ}
+    (hdisj : (s : Set ι).PairwiseDisjoint f) (hU : HasDirichletDensity (⋃ i ∈ s, f i) δ)
+    (hlow : ∀ i ∈ s, IsLowerDirichletDensityBound (f i) (d i)) (hsum : ∑ i ∈ s, d i = δ)
+    {i₀ : ι} (hi₀ : i₀ ∈ s) : IsUpperDirichletDensityBound (f i₀) (d i₀) := by
+  classical
+  -- `IsUpperDirichletDensityBound` is a non-exposed `def`, so unfold it through its `Iff.rfl`
+  -- restatement rather than by `intro`.
+  refine isUpperDirichletDensityBound_iff.mpr fun ε hε ↦ ?_
+  have hcard : (0 : ℝ) < s.card := by exact_mod_cast Finset.card_pos.mpr ⟨i₀, hi₀⟩
+  obtain ⟨η, hη, hhalf⟩ : ∃ η : ℝ, 0 < η ∧ (s.card : ℝ) * η = ε / 2 :=
+    ⟨ε / (2 * s.card), by positivity, by field_simp⟩
+  have hUb := isUpperDirichletDensityBound_iff.mp hU.isUpperDirichletDensityBound (ε / 2)
+    (by positivity)
+  filter_upwards [eventually_forall_mem_erase_sub_lt hlow i₀ hη, hUb, self_mem_nhdsWithin]
+    with t ht_oth ht_union (ht1 : 1 < t)
+  rw [primeIdealZetaSum_div_univ_eq_sub_sum_erase hdisj ht1 hi₀]
+  -- The union's ratio costs `ε / 2`; the other members' lower bounds cost the other half.
+  linarith [sub_sub_le_sum_erase_of_forall_sub_le hi₀ hsum (fun i hi ↦ (ht_oth i hi).le) hη.le
+    hhalf.le]
+
+/-- **The finite-partition squeeze.** A lower bound on every member of a finite pairwise disjoint
+family is exact once those bounds already sum to the density of the union.
+
+Distinct from `hasDirichletDensity_of_subset_of_subset`, which squeezes a single set between two
+sets of the same density. Here nothing is sandwiched: the upper bound on one member is
+*manufactured* from the other members' lower bounds, because the total is pinned. This is how a
+one-sided estimate becomes a density — an argument that exhibits enough primes in each class, and
+cannot see that there are no more, still determines every class exactly. -/
+theorem hasDirichletDensity_of_squeeze {ι : Type*} {s : Finset ι}
+    {f : ι → Set (HeightOneSpectrum (𝓞 K))} {d : ι → ℝ} (hdisj : (s : Set ι).PairwiseDisjoint f)
+    (hU : HasDirichletDensity (⋃ i ∈ s, f i) δ)
+    (hlow : ∀ i ∈ s, IsLowerDirichletDensityBound (f i) (d i)) (hsum : ∑ i ∈ s, d i = δ)
+    {i₀ : ι} (hi₀ : i₀ ∈ s) : HasDirichletDensity (f i₀) (d i₀) :=
+  hasDirichletDensity_of_upperBound_of_lowerBound
+    (isUpperDirichletDensityBound_of_forall_isLowerDirichletDensityBound hdisj hU hlow hsum hi₀)
+    (hlow i₀ hi₀)
+
 end NumberField.Set
