@@ -253,21 +253,6 @@ private theorem under_fixedField_injOn_frobenius
   exact (Ideal.eq_of_smul_eq_of_liesOver_under_fixedField
     hQ.2.mem_stabilizer R.asIdeal).symm
 
-/-- **The absolute Frobenius fiber, counted.** There are `#Centralizer(sigma) / orderOf sigma`
-primes of `L` over `p` at which `sigma` is an arithmetic Frobenius. -/
-private theorem frobenius_fiber_card_eq_card_centralizer_div_orderOf (sigma : L ≃ₐ[K] L)
-    {p : HeightOneSpectrum (𝓞 K)} (hp : p ∈ frobeniusPrimeSet K L (ConjClasses.mk sigma)) :
-    Nat.card {R : HeightOneSpectrum (𝓞 L) // R.under (𝓞 K) = p ∧ IsArithFrobAt (𝓞 K) sigma
-        R.asIdeal} = Nat.card (Subgroup.centralizer {sigma}) / orderOf sigma := by
-  obtain ⟨Q, hQ⟩ := exists_isArithFrobAt_of_mem_frobeniusPrimeSet_mk hp
-  have : Algebra.IsUnramifiedAt (𝓞 K) Q.1 := isUnramifiedAt_of_mem_frobeniusPrimeSet hp Q.1
-  -- The fiber is one orbit of the centralizer, with stabilizer `<sigma>`; that count is stated as
-  -- a product, indexed by ideals over `p.asIdeal`, so re-index and divide.  The division is exact
-  -- because `orderOf sigma` is the size of a stabilizer inside the acting group.
-  exact (Nat.card_congr (p.frobeniusFiberEquiv sigma)).trans <|
-    Nat.eq_div_of_mul_eq_left (orderOf_pos sigma).ne'
-      (Ideal.frobenius_fiber_card_mul_orderOf_eq_card_centralizer p.asIdeal Q.1 hQ)
-
 -- The counting argument follows Birkbeck--Brasca, `CebotarevDensity/FixedFieldDensity.lean`.
 /-- **The fixed-field Frobenius fiber count.** Let `sigma` represent the conjugacy class `C`, and
 let `p` be an unramified prime with Artin class `C`.  The number of primes of
@@ -289,6 +274,8 @@ theorem fixedField_frobenius_fiber_card
       Nat.card (L ≃ₐ[K] L) / (Nat.card C.carrier * orderOf sigma) := by
   have hC : ConjClasses.mk sigma = C := ConjClasses.mem_carrier_iff_mk_eq.mp hsigma
   have hp' : p ∈ frobeniusPrimeSet K L (ConjClasses.mk sigma) := hC ▸ hp
+  obtain ⟨Q, hQ⟩ := exists_isArithFrobAt_of_mem_frobeniusPrimeSet_mk hp'
+  have : Algebra.IsUnramifiedAt (𝓞 K) Q.1 := isUnramifiedAt_of_mem_frobeniusPrimeSet hp' Q.1
   let lowerFiber : Set (HeightOneSpectrum (𝓞 ↥(fixedField (Subgroup.zpowers sigma)))) :=
     {P | P.under (𝓞 K) = p ∧
       P ∈ frobeniusPrimeSet ↥(fixedField (Subgroup.zpowers sigma)) L
@@ -311,7 +298,7 @@ theorem fixedField_frobenius_fiber_card
     _ = Nat.card upperFiber :=
       Nat.card_congr hinj.bijOn_image.equiv.symm
     _ = Nat.card (Subgroup.centralizer {sigma}) / orderOf sigma :=
-      frobenius_fiber_card_eq_card_centralizer_div_orderOf sigma hp'
+      p.frobenius_fiber_card_eq_card_centralizer_div_orderOf Q.1 hQ
     _ = Nat.card (L ≃ₐ[K] L) / (Nat.card C.carrier * orderOf sigma) := by
       rw [← C.card_div_card_carrier_mul_orderOf_eq_card_centralizer_div_orderOf sigma hsigma]
       exact Subgroup.index_ne_zero_of_finite
