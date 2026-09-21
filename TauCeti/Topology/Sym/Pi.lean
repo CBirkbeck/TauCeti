@@ -8,6 +8,7 @@ module
 public import Mathlib.Topology.Homeomorph.Lemmas
 public import TauCeti.Data.Sym.Pi
 public import TauCeti.Topology.Sym.Basic
+import TauCeti.Topology.Homeomorph.SetCongr
 
 /-!
 # The subspace of unordered tuples with one point in each member of a family
@@ -94,9 +95,10 @@ tuples. -/
 theorem coe_piHomeomorph_apply (hA : ∀ i, IsCompact (A i))
     (h : Pairwise (Function.onFun Disjoint A)) (x : ∀ i, ↥(A i)) :
     (piHomeomorph hA h x : Sym α n) = ofFn fun i => (x i : α) := by
-  -- unfold the chain of Mathlib equivalences out of which the homeomorphism is assembled
-  simp [piHomeomorph, Topology.IsEmbedding.toHomeomorph, Homeomorph.setCongr, Set.equivOfEq,
-    Equiv.subtypeEquivProp]
+  -- Evaluate each link of the chain through its application lemma instead of unfolding the
+  -- equivalence it is built from, so that the proof depends only on `rfl` equations.
+  simp only [piHomeomorph, Homeomorph.trans_apply, Homeomorph.setCongr_apply,
+    IsEmbedding.toHomeomorph_apply_coe]
 
 end Sym
 
