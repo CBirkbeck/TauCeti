@@ -178,7 +178,7 @@ theorem complexConjugationAt_restrictNormal_of_isComplex [Normal K F] (w : Infin
     letI : IsGalois K F := ⟨⟩
     (complexConjugationAt K w hw).restrictNormal F
       = complexConjugationAt K (w.comap (algebraMap F L))
-          (isRamified_comap_of_isComplex K hw hv) := by
+          (isRamified_comap_of_isComplex K hw.isReal hv) := by
   let hsep : Algebra.IsSeparable K F :=
     Algebra.isSeparable_tower_bot_of_isSeparable K F L
   let hgalois : IsGalois K F := { to_isSeparable := hsep }
