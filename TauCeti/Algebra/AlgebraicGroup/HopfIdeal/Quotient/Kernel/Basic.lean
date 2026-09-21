@@ -67,10 +67,7 @@ theorem kernelHopfIdeal_def (f : H ⟶ K) :
   change (HopfIdeal.augmentation R H).map f.hom = _
   rfl
 
-/-- The scheme-theoretic kernel of a morphism of affine groups is normal.
-
-Indeed, `kernelHopfIdeal f` is the image under `f` of the augmentation ideal, which cuts out the
-trivial (hence central and normal) subgroup; images of normal Hopf ideals are normal. -/
+/-- The scheme-theoretic kernel of a morphism of affine groups is normal. -/
 theorem isNormal_kernelHopfIdeal (f : H ⟶ K) :
     (kernelHopfIdeal f).IsNormal := by
   rw [kernelHopfIdeal_def]

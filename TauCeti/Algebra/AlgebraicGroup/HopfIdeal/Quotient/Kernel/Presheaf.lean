@@ -125,29 +125,6 @@ theorem kernelPointwiseQuotientNatTrans_app (f : H ⟶ K) (A : CommAlgCat.{w} R)
           eqToHom (HopfAlgebra.pointsFunctor_obj (H := H) A).symm := by
   rfl
 
-/-- A component of the natural kernel-quotient comparison acts by the corresponding pointwise
-map. -/
-@[simp]
-theorem kernelPointwiseQuotientNatTrans_app_apply (f : H ⟶ K) (A : CommAlgCat.{w} R)
-    (q : pointwiseQuotientGroup K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A) :
-    eqToHom (HopfAlgebra.pointsFunctor_obj (H := H) A).symm
-        (kernelPointwiseQuotientMap f A
-          (eqToHom (pointwiseQuotientFunctor_obj K (kernelHopfIdeal f)
-            (isNormal_kernelHopfIdeal f) A)
-              (eqToHom (pointwiseQuotientFunctor_obj K (kernelHopfIdeal f)
-                (isNormal_kernelHopfIdeal f) A).symm q))) =
-      eqToHom (HopfAlgebra.pointsFunctor_obj (H := H) A).symm
-        (kernelPointwiseQuotientMap f A q) := by
-  exact ConcreteCategory.congr_hom (show
-    eqToHom (pointwiseQuotientFunctor_obj K (kernelHopfIdeal f)
-        (isNormal_kernelHopfIdeal f) A).symm ≫
-        (eqToHom (pointwiseQuotientFunctor_obj K (kernelHopfIdeal f)
-            (isNormal_kernelHopfIdeal f) A) ≫ kernelPointwiseQuotientMap f A ≫
-          eqToHom (HopfAlgebra.pointsFunctor_obj (H := H) A).symm) =
-      kernelPointwiseQuotientMap f A ≫
-        eqToHom (HopfAlgebra.pointsFunctor_obj (H := H) A).symm by
-      rw [← Category.assoc, eqToHom_trans, eqToHom_refl, Category.id_comp]) q
-
 /-- The natural kernel-quotient comparison factors the map on points through the pointwise
 quotient projection. -/
 @[reassoc]
@@ -157,22 +134,25 @@ theorem pointwiseQuotientProjection_comp_kernelPointwiseQuotientNatTrans (f : H 
       mapPointsFunctor f := by
   apply HopfAlgebra.pointsFunctor_hom_ext
   intro A g
+  -- The source of the composite is presented by `pointsFunctor_obj`; expose its underlying
+  -- point so that the component lemmas can rewrite the categorical wrappers explicitly.
   change ((pointwiseQuotientProjection K (kernelHopfIdeal f)
       (isNormal_kernelHopfIdeal f) ≫ kernelPointwiseQuotientNatTrans f).app A)
       (show (HopfAlgebra.pointsFunctor (R := R) (H := K)).obj A from g) = _
-  rw [NatTrans.comp_app_apply]
-  rw [pointwiseQuotientProjection_app]
+  rw [NatTrans.comp_app_apply, pointwiseQuotientProjection_app]
+  -- `pointwiseQuotientFunctor_obj` presents the intermediate functor object as the concrete
+  -- quotient group; this conversion exposes the two inverse `eqToHom` transports.
   change (kernelPointwiseQuotientNatTrans f).app A
       ((pointwiseQuotientMk K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A ≫
         eqToHom (pointwiseQuotientFunctor_obj K (kernelHopfIdeal f)
           (isNormal_kernelHopfIdeal f) A).symm)
             (show HopfAlgebra.points (R := R) (H := K) A from g)) = _
-  rw [pointwiseQuotientProjection_app_apply, kernelPointwiseQuotientNatTrans_app]
+  rw [kernelPointwiseQuotientNatTrans_app]
+  simp only [← ConcreteCategory.comp_apply]
+  simp only [Category.assoc, eqToHom_trans_assoc, eqToHom_refl, Category.id_comp]
   simp only [ConcreteCategory.comp_apply]
-  rw [kernelPointwiseQuotientNatTrans_app_apply, kernelPointwiseQuotientMap_mk]
-  exact ConcreteCategory.congr_hom (show
-    eqToHom (HopfAlgebra.pointsFunctor_obj (H := H) A).symm = 𝟙 _ from
-      eqToHom_refl _ _) ((mapPointsFunctor f).app A g)
+  rw [kernelPointwiseQuotientMap_mk]
+  exact ConcreteCategory.congr_hom (eqToHom_refl _ _) ((mapPointsFunctor f).app A g)
 
 /-- The comparison from the quotient by the scheme-theoretic kernel to target points is
 injective over every value algebra. -/
@@ -183,14 +163,29 @@ theorem kernelPointwiseQuotientMap_injective (f : H ⟶ K) (A : CommAlgCat.{w} R
       ((mapPointsFunctor f).app A) _).2
   ext g
   rw [MonoidHom.mem_ker]
-  change g ∈ quotientPointsSubgroup K (kernelHopfIdeal f) A ↔
-    toConv (g.ofConv.comp (f.hom : ↑H →ₐ[R] ↑K)) = 1
-  exact (mapPointsFunctor_app_eq_one_iff f A g).symm
+  rw [← mapPointsFunctor_app_eq_one_iff f A g]
+  have happ : ((mapPointsFunctor f).app A).hom g =
+      toConv (g.ofConv.comp (f.hom : ↑H →ₐ[R] ↑K)) :=
+    mapPointsFunctor_app_apply f A g
+  constructor
+  · intro hg
+    exact happ.trans hg
+  · intro hg
+    exact happ.symm.trans hg
 
 /-- Every component of the natural kernel-quotient comparison is a monomorphism of groups. -/
 instance kernelPointwiseQuotientMap_mono (f : H ⟶ K) (A : CommAlgCat.{w} R) :
     Mono (kernelPointwiseQuotientMap f A) :=
   ConcreteCategory.mono_of_injective _ (kernelPointwiseQuotientMap_injective f A)
+
+/-- The natural kernel-quotient comparison is a monomorphism. -/
+instance kernelPointwiseQuotientNatTrans_mono (f : H ⟶ K) :
+    Mono (kernelPointwiseQuotientNatTrans f) := by
+  have : ∀ A, Mono ((kernelPointwiseQuotientNatTrans f).app A) := by
+    intro A
+    rw [kernelPointwiseQuotientNatTrans_app]
+    infer_instance
+  exact NatTrans.mono_of_mono_app _
 
 /-- The kernel-quotient comparison is surjective exactly when the original map on points is
 surjective. -/

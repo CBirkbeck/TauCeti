@@ -220,17 +220,6 @@ theorem pointwiseQuotientProjection_app (H : _root_.CommHopfAlgCat.{v} R)
         eqToHom (pointwiseQuotientFunctor_obj H I hI A).symm :=
   (rfl)
 
-/-- A component of the natural quotient projection sends a point to its quotient class. -/
-@[simp]
-theorem pointwiseQuotientProjection_app_apply (H : _root_.CommHopfAlgCat.{v} R)
-    (I : HopfIdeal R H) (hI : I.IsNormal) (A : CommAlgCat.{w} R)
-    (g : HopfAlgebra.points (R := R) (H := H) A) :
-    (pointwiseQuotientMk H I hI A ≫
-        eqToHom (pointwiseQuotientFunctor_obj H I hI A).symm) g =
-      eqToHom (pointwiseQuotientFunctor_obj H I hI A).symm
-        (pointwiseQuotientMk H I hI A g) := by
-  rfl
-
 /-- A homomorphism from ambient points which kills the normal subgroup descends to the pointwise
 quotient group. -/
 noncomputable def pointwiseQuotientLift (H : _root_.CommHopfAlgCat.{v} R)
@@ -282,11 +271,13 @@ theorem pointwiseQuotientLift_surjective_iff (H : _root_.CommHopfAlgCat.{v} R)
     quotientPointsSubgroup_normal H I hI A
   constructor
   · intro hlift
-    change Function.Surjective
-      (QuotientGroup.lift (quotientPointsSubgroup H I A) f.hom hf) at hlift
-    change Function.Surjective f.hom
-    rw [← QuotientGroup.lift_comp_mk' (quotientPointsSubgroup H I A) f.hom hf]
-    exact hlift.comp (QuotientGroup.mk'_surjective (quotientPointsSubgroup H I A))
+    have hlift' : Function.Surjective
+        (QuotientGroup.lift (quotientPointsSubgroup H I A) f.hom hf) := by
+      simpa only [pointwiseQuotientLift, GrpCat.hom_ofHom] using hlift
+    have hf' : Function.Surjective f.hom := by
+      rw [← QuotientGroup.lift_comp_mk' (quotientPointsSubgroup H I A) f.hom hf]
+      exact hlift'.comp (QuotientGroup.mk'_surjective (quotientPointsSubgroup H I A))
+    exact hf'
   · intro hf_surjective
     exact QuotientGroup.lift_surjective_of_surjective
       (quotientPointsSubgroup H I A) f.hom hf_surjective hf
