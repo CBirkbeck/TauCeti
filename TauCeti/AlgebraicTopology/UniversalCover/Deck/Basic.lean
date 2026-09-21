@@ -43,7 +43,7 @@ namespace Deck
 
 /-- A deck transformation restricts to a homeomorphism of every fibre of the projection,
 the restriction of its underlying homeomorphism along `Homeomorph.subtype`. -/
-@[expose] def _root_.deck.fiberHomeomorph (φ : deck p) (b : B) : p ⁻¹' {b} ≃ₜ p ⁻¹' {b} :=
+def _root_.deck.fiberHomeomorph (φ : deck p) (b : B) : p ⁻¹' {b} ≃ₜ p ⁻¹' {b} :=
   φ.1.subtype fun e => ⟨
     fun he ↦ Function.mapsTo_fiber φ.1 (deck.comp_eq φ) b he,
     fun he ↦ by
@@ -54,14 +54,14 @@ of that transformation. -/
 @[simp]
 lemma _root_.deck.fiberHomeomorph_apply (φ : deck p) (b : B) (e : p ⁻¹' {b}) :
     (deck.fiberHomeomorph φ b e : E) = φ.1 e.1 :=
-  rfl
+  (rfl)
 
 /-- On points, the inverse fibre homeomorphism induced by a deck transformation is
 evaluation of the inverse homeomorphism. -/
 @[simp]
 lemma _root_.deck.fiberHomeomorph_symm_apply (φ : deck p) (b : B) (e : p ⁻¹' {b}) :
     ((deck.fiberHomeomorph φ b).symm e : E) = φ.1.symm e.1 :=
-  rfl
+  (rfl)
 
 /-- On points, the action of a deck transformation is evaluation of its underlying
 homeomorphism. The action itself is inherited, by subgroup transfer, from the tautological

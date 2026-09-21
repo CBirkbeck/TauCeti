@@ -72,8 +72,8 @@ variable {b : B}
 a chosen fibre. -/
 theorem eq_of_fiber_smul_eq_fiber_smul [PreconnectedSpace E] (hp : IsCoveringMap p)
     (φ ψ : deck p) {e : p ⁻¹' {b}} (h : φ • e = ψ • e) : φ = ψ := by
-  have hcoe : (φ • e : E) = (ψ • e : E) := congrArg Subtype.val h
-  rw [deck.smul_eq_apply, deck.smul_eq_apply] at hcoe
+  have hcoe := congrArg Subtype.val h
+  rw [deck.fiber_smul_coe, deck.fiber_smul_coe] at hcoe
   exact eq_of_apply_eq hp φ ψ hcoe
 
 /-- A deck transformation of a preconnected covering is determined by the value of its
@@ -102,8 +102,9 @@ theorem fiberHomeomorphHom_injective [PreconnectedSpace E] (hp : IsCoveringMap p
     [Nonempty (p ⁻¹' {b})] : Function.Injective (fiberHomeomorphHom p b) := by
   classical
   intro φ ψ hφψ
-  exact eq_of_fiberHomeomorph_apply_eq hp φ ψ (congr_fun (congr_arg DFunLike.coe hφψ)
-    (Classical.arbitrary (p ⁻¹' {b})))
+  apply eq_of_fiberHomeomorph_apply_eq hp φ ψ
+  simpa only [deck.fiberHomeomorphHom_apply] using
+    congr_fun (congr_arg DFunLike.coe hφψ) (Classical.arbitrary (p ⁻¹' {b}))
 
 /-- For a nonempty fibre of a preconnected covering, the homomorphism restricting deck
 transformations to that fibre has trivial kernel. -/

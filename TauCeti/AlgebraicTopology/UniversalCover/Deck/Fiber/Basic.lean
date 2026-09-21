@@ -39,28 +39,28 @@ variable {E B : Type*} [TopologicalSpace E] {p : E → B} {b : B}
 /-- The homomorphism from deck transformations to homeomorphisms of the fibre over `b`.
 
 It sends a deck transformation to its restriction to the subtype `p ⁻¹' {b}`. -/
-@[expose] def fiberHomeomorphHom (p : E → B) (b : B) : deck p →* (p ⁻¹' {b} ≃ₜ p ⁻¹' {b}) where
+def fiberHomeomorphHom (p : E → B) (b : B) : deck p →* (p ⁻¹' {b} ≃ₜ p ⁻¹' {b}) where
   toFun φ := deck.fiberHomeomorph φ b
   map_one' := by
     ext e
-    rfl
+    simp
   map_mul' φ ψ := by
     ext e
-    rfl
+    simp
 
 /-- The fibre homomorphism evaluates by applying the deck transformation to the underlying
 point of the fibre. -/
 @[simp]
 lemma _root_.deck.fiberHomeomorphHom_apply (φ : deck p) (e : p ⁻¹' {b}) :
     fiberHomeomorphHom p b φ e = deck.fiberHomeomorph φ b e :=
-  rfl
+  (rfl)
 
 /-- On underlying points, the fibre homomorphism is evaluation of the underlying
 homeomorphism. -/
 @[simp]
 lemma _root_.deck.fiberHomeomorphHom_apply_coe (φ : deck p) (e : p ⁻¹' {b}) :
     (fiberHomeomorphHom p b φ e : E) = φ.1 e.1 :=
-  rfl
+  deck.fiberHomeomorph_apply φ b e
 
 /-- The fibre homomorphism sends the identity deck transformation to the identity
 homeomorphism of the fibre. -/
@@ -124,20 +124,22 @@ instance instFiberMulAction : MulAction (deck p) (p ⁻¹' {b}) :=
 /-- The fibre action is evaluation of the fibre homeomorphism. -/
 lemma _root_.deck.fiber_smul_eq_fiberHomeomorph (φ : deck p) (e : p ⁻¹' {b}) :
     φ • e = deck.fiberHomeomorph φ b e :=
-  rfl
+  (rfl)
 
 /-- On underlying points, the fibre action is evaluation of the underlying deck
 transformation. -/
 @[simp]
 lemma _root_.deck.fiber_smul_coe (φ : deck p) (e : p ⁻¹' {b}) :
     ((φ • e : p ⁻¹' {b}) : E) = φ.1 e.1 :=
-  rfl
+  deck.fiberHomeomorphHom_apply_coe φ e
 
 /-- The projection value of a point in the fibre is unchanged after the restricted deck
 action. -/
 lemma _root_.deck.map_fiber_smul (φ : deck p) (e : p ⁻¹' {b}) :
     p (φ • e : E) = b := by
-  exact (φ • e).2
+  calc
+    p (φ • e : E) = p e.1 := deck.proj_smul φ e.1
+    _ = b := e.2
 
 /-- The restricted deck action keeps points in the fibre over `b`. -/
 lemma _root_.deck.fiber_smul_mem (φ : deck p) (e : p ⁻¹' {b}) : (φ • e : E) ∈ p ⁻¹' {b} := by
