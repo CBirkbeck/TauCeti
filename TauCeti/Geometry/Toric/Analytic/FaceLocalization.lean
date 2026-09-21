@@ -177,13 +177,6 @@ private noncomputable abbrev faceAffinePointInfKerAlgebra :
   (faceAffineCoordinateRingMap hi
     (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2))).toRingHom.toAlgebra
 
-private theorem isLocalization_faceAffinePointInfKer :
-    letI := faceAffinePointInfKerAlgebra hi m
-    IsLocalization.Away (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
-      (affineCoordinateRing hi
-        (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) := by
-  exact isLocalization_away_affineCoordinateRingMap_inf_ker hi hσ m
-
 /-- A complex point on the nonvanishing locus of a character extends uniquely across the
 localization defining the corresponding face. -/
 noncomputable def faceAffinePointInfKerLift
@@ -193,7 +186,7 @@ noncomputable def faceAffinePointInfKerLift
     AffineSemigroupComplexPoint (dualSemigroup hi
       (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) := by
   let _ := faceAffinePointInfKerAlgebra hi m
-  have := isLocalization_faceAffinePointInfKer hi hσ m
+  have := isLocalization_away_faceAffineCoordinateRingMap_inf_ker hi hσ m
   exact IsLocalization.Away.liftAlgHom (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
     (isUnit_iff_ne_zero.mpr x.2)
 
@@ -209,7 +202,7 @@ theorem faceAffinePointMap_inf_ker_lift
   intro a
   rw [faceAffinePointMap_apply, faceAffinePointInfKerLift]
   let _ := faceAffinePointInfKerAlgebra hi m
-  have := isLocalization_faceAffinePointInfKer hi hσ m
+  have := isLocalization_away_faceAffineCoordinateRingMap_inf_ker hi hσ m
   exact IsLocalization.Away.lift_eq (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
     (isUnit_iff_ne_zero.mpr x.2) a
 
@@ -238,7 +231,7 @@ theorem faceAffinePointInfKerLift_map
         faceAffinePointMap_inf_ker_apply_single_ne_zero hi m x
       ⟩ = x := by
   let _ := faceAffinePointInfKerAlgebra hi m
-  have := isLocalization_faceAffinePointInfKer hi hσ m
+  have := isLocalization_away_faceAffineCoordinateRingMap_inf_ker hi hσ m
   apply AlgHom.coe_ringHom_injective
   rw [faceAffinePointInfKerLift]
   exact IsLocalization.lift_of_comp
@@ -253,11 +246,11 @@ theorem faceAffinePointInfKerLift_mk'
     (y : Submonoid.powers (MonoidAlgebra.single (ofAdd m) (1 : ℂ))) :
     letI := (faceAffineCoordinateRingMap hi
       (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2))).toRingHom.toAlgebra
-    letI := isLocalization_away_affineCoordinateRingMap_inf_ker hi hσ m
+    letI := isLocalization_away_faceAffineCoordinateRingMap_inf_ker hi hσ m
     faceAffinePointInfKerLift hi hσ m x (IsLocalization.mk' _ a y) =
       x.1 a * (x.1 y.1)⁻¹ := by
   let _ := faceAffinePointInfKerAlgebra hi m
-  have := isLocalization_faceAffinePointInfKer hi hσ m
+  have := isLocalization_away_faceAffineCoordinateRingMap_inf_ker hi hσ m
   rw [faceAffinePointInfKerLift]
   -- `Away.liftAlgHom` exposes its underlying `Away.lift` only by definitional reduction.
   change (IsLocalization.Away.lift (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
@@ -281,7 +274,7 @@ theorem faceAffinePointInfKerLift_apply_single_neg
       (x.1 (MonoidAlgebra.single (ofAdd m) 1))⁻¹ := by
   let hface := PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)
   let _ := faceAffinePointInfKerAlgebra hi m
-  have := isLocalization_faceAffinePointInfKer hi hσ m
+  have := isLocalization_away_faceAffineCoordinateRingMap_inf_ker hi hσ m
   let y : Submonoid.powers (MonoidAlgebra.single (ofAdd m) (1 : ℂ)) :=
     ⟨MonoidAlgebra.single (ofAdd m) 1, Submonoid.mem_powers _⟩
   have hy :
@@ -348,7 +341,7 @@ theorem continuous_faceAffinePointInfKerLift
   rw [continuous_induced_rng]
   simp only [Function.comp_def]
   let _ := faceAffinePointInfKerAlgebra hi m
-  have := isLocalization_faceAffinePointInfKer hi hσ m
+  have := isLocalization_away_faceAffineCoordinateRingMap_inf_ker hi hσ m
   obtain ⟨⟨a, y⟩, hy⟩ := IsLocalization.mk'_surjective
     (Submonoid.powers (MonoidAlgebra.single (ofAdd m) (1 : ℂ)))
     (MonoidAlgebra.single (ofAdd t) (1 : ℂ))
