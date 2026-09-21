@@ -28,8 +28,8 @@ the total is pinned.
   the complementary upper bound.
 * `hasDirichletDensity_frobeniusPrimeSet_of_forall_isLowerDirichletDensityBound`: matching
   bounds, hence the density.
-* `hasDirichletDensity_abelianFrobenius`: for an abelian Galois group, per-fibre lower bounds
-  `1 / #G` are therefore exact.
+* `hasDirichletDensity_abelianFrobenius_of_forall_isLowerDirichletDensityBound`: for an abelian
+  Galois group, per-fibre lower bounds `1 / #G` are therefore exact.
 
 ## References
 
@@ -152,9 +152,13 @@ density exactly `1 / #G`.
 
 The hypothesis is the whole analytic content, and it is what a cyclotomic crossing argument
 produces — it exhibits enough primes in each fibre and cannot bound one from above. That there
-is no room left over is the part supplied here. -/
-theorem hasDirichletDensity_abelianFrobenius [IsMulCommutative (L ≃ₐ[K] L)]
-    (hlow : ∀ σ : L ≃ₐ[K] L,
+is no room left over is the part supplied here.
+
+The roadmap's `hasDirichletDensity_abelianFrobenius` is the *unconditional* statement and is
+deliberately not claimed by this declaration: the lower bounds are not proved anywhere yet, so
+that name is left free for whoever supplies them. -/
+theorem hasDirichletDensity_abelianFrobenius_of_forall_isLowerDirichletDensityBound
+    [IsMulCommutative (L ≃ₐ[K] L)] (hlow : ∀ σ : L ≃ₐ[K] L,
       (frobeniusPrimeSet K L (ConjClasses.mk σ)).IsLowerDirichletDensityBound
         (1 / Nat.card (L ≃ₐ[K] L)))
     (σ : L ≃ₐ[K] L) :
