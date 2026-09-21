@@ -152,25 +152,18 @@ density exactly `1 / #G`.
 
 The hypothesis is the whole analytic content, and it is what a cyclotomic crossing argument
 produces — it exhibits enough primes in each fibre and cannot bound one from above. That there
-is no room left over is the part supplied here.
-
-The roadmap's `hasDirichletDensity_abelianFrobenius` is the *unconditional* statement and is
-deliberately not claimed by this declaration: the lower bounds are not proved anywhere yet, so
-that name is left free for whoever supplies them. -/
+is no room left over is the part supplied here; the unconditional statement, with those bounds
+proved rather than assumed, is a different theorem. -/
 theorem hasDirichletDensity_abelianFrobenius_of_forall_isLowerDirichletDensityBound
     [IsMulCommutative (L ≃ₐ[K] L)] (hlow : ∀ σ : L ≃ₐ[K] L,
       (frobeniusPrimeSet K L (ConjClasses.mk σ)).IsLowerDirichletDensityBound
         (1 / Nat.card (L ≃ₐ[K] L)))
     (σ : L ≃ₐ[K] L) :
-    (frobeniusPrimeSet K L (ConjClasses.mk σ)).HasDirichletDensity
-      (1 / Nat.card (L ≃ₐ[K] L)) := by
-  have hpos : (0 : ℝ) < Nat.card (L ≃ₐ[K] L) := by exact_mod_cast Nat.card_pos
+    (frobeniusPrimeSet K L (ConjClasses.mk σ)).HasDirichletDensity (1 / Nat.card (L ≃ₐ[K] L)) := by
   -- Abelian: `mk` is a bijection, so there are exactly `#G` classes and the bounds fill the total.
   have hsum : ∑ _C : ConjClasses (L ≃ₐ[K] L), (1 / Nat.card (L ≃ₐ[K] L) : ℝ) = 1 := by
-    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, ← Nat.card_eq_fintype_card,
-      Nat.card_congr ConjClasses.mkEquiv.symm]
-    field_simp
+    simp [Finset.card_univ, ← Nat.card_eq_fintype_card, Nat.card_congr ConjClasses.mkEquiv.symm]
   exact hasDirichletDensity_frobeniusPrimeSet_of_forall_isLowerDirichletDensityBound K L
-    (fun C ↦ by obtain ⟨τ, rfl⟩ := ConjClasses.mk_surjective C; exact hlow τ) hsum _
+    (ConjClasses.mk_surjective.forall.2 hlow) hsum _
 
 end NumberField.Chebotarev
