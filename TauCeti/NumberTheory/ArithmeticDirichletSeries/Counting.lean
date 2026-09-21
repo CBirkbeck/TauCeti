@@ -218,6 +218,16 @@ theorem absNorm_eq_absNorm_primePowerBase_pow (A : IdealPrimePower K) :
       Ideal.absNorm (primePowerBase A).asIdeal ^ primePowerExponent A := by
   rw [← primePowerBase_pow_primePowerExponent A, map_pow]
 
+/-- **The base norm raised to the exponent is bounded by the cutoff.** Membership of a
+prime power in `primePowersLE K x` is a bound on its own absolute norm; rewriting that norm as
+`N(𝔭) ^ k` turns it into the bound the counting arguments use. -/
+theorem absNorm_primePowerBase_pow_le_of_mem_primePowersLE {x : ℝ} {A : IdealPrimePower K}
+    (hA : A ∈ primePowersLE K x) :
+    ((Ideal.absNorm (primePowerBase A).asIdeal : ℝ)) ^ primePowerExponent A ≤ x := by
+  rw [mem_normLE] at hA
+  rw [← Nat.cast_pow, ← absNorm_eq_absNorm_primePowerBase_pow]
+  exact hA
+
 /-- The absolute norm of a prime-power ideal is a prime power: `N(𝔭 ^ k) = p ^ (f k)` for the
 rational prime `p` below `𝔭` and the residue degree `f`. -/
 theorem isPrimePow_absNorm (A : IdealPrimePower K) :
