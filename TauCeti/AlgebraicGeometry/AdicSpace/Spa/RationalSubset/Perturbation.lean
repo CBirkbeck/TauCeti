@@ -200,16 +200,18 @@ image may be adjoined to the numerators for free:
 R((T ∪ φ(D))/s) = R(T/s).
 ```
 
-Wedhorn carries out this enlargement inside the proof of Proposition 8.2(2), deducing it from
-Lemma 7.31. Neither ring is assumed Tate, complete or Noetherian here, where that deduction
-would cost a Tate ring: `exists_mem_nhds_zero_forall_vlt`, this library's Lemma 7.31, assumes
-one. Nothing is assumed relating the ideals of definition of `A` and `B`, and `D · A` is open
-for reasons internal to `A`. -/
+Wedhorn carries out this enlargement inside the proof of Proposition 8.2(2). Neither ring is
+assumed Tate, complete or Noetherian, and nothing is assumed relating the ideals of definition
+of `A` and `B`: the ideal `D · A` is open for reasons internal to `A`. -/
 theorem exists_isOpen_span_rationalSubset_union_image_eq [IsHuberRing A] {B : Type*} [CommRing B]
     [TopologicalSpace B] [IsTopologicalRing B] [IsHuberRing B] {φ : A →+* B} (hφ : Continuous φ)
     (Bplus : Subring B) (T : Finset B) (hT : IsOpen (Ideal.span (T : Set B) : Set B)) (s : B) :
     ∃ D : Finset A, IsOpen (Ideal.span (D : Set A) : Set A) ∧
       rationalSubset Bplus (T ∪ D.image φ) s = rationalSubset Bplus T s := by
+  -- `0` is adjoined to the numerators before the perturbation theorem is applied and removed
+  -- again afterwards. It is there because that theorem compares two presentations elementwise
+  -- in both directions, and `0` is the element each adjoined `φ d` is close to; removing it
+  -- costs nothing, since `v 0 ≤ v s` holds at every point.
   obtain ⟨V, hV, hpert⟩ :=
     exists_mem_nhds_forall_rationalSubset_eq_of_sub_mem Bplus (insert 0 T) (by simpa using hT) s
   obtain ⟨D, hD, hDopen⟩ :=
