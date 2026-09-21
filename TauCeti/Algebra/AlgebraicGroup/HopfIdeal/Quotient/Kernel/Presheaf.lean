@@ -216,22 +216,20 @@ theorem kernelPointwiseQuotientMap_surjective_iff (f : H ⟶ K) (A : CommAlgCat.
       Function.Surjective ((mapPointsFunctor f).app A) := by
   let _ : (quotientPointsSubgroup K (kernelHopfIdeal f) A).Normal :=
     quotientPointsSubgroup_normal K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A
-  constructor
-  · intro hsurjective y
-    obtain ⟨q, hq⟩ := hsurjective y
-    obtain ⟨g, rfl⟩ := pointwiseQuotientMk_surjective K (kernelHopfIdeal f)
-      (isNormal_kernelHopfIdeal f) A q
-    exact ⟨g, (kernelPointwiseQuotientMap_mk f A g).symm.trans hq⟩
-  · intro hsurjective y
-    obtain ⟨q, hq⟩ := QuotientGroup.lift_surjective_of_surjective
-        (quotientPointsSubgroup K (kernelHopfIdeal f) A) ((mapPointsFunctor f).app A).hom
-          hsurjective (quotientPointsSubgroup_le_mapPointsFunctor_ker f A) y
-    obtain ⟨g, rfl⟩ := pointwiseQuotientMk_surjective K (kernelHopfIdeal f)
-      (isNormal_kernelHopfIdeal f) A q
-    refine ⟨pointwiseQuotientMk K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A g, ?_⟩
-    rw [kernelPointwiseQuotientMap_mk]
-    rw [pointwiseQuotientMk_apply] at hq
-    exact hq
+  have hcomp : kernelPointwiseQuotientMap f A ∘
+      pointwiseQuotientMk K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A =
+        (mapPointsFunctor f).app A := by
+    funext g
+    exact kernelPointwiseQuotientMap_mk f A g
+  calc
+    Function.Surjective (kernelPointwiseQuotientMap f A) ↔
+        Function.Surjective (kernelPointwiseQuotientMap f A ∘
+          pointwiseQuotientMk K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A) :=
+      (Function.Surjective.of_comp_iff _ (pointwiseQuotientMk_surjective K
+        (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A)).symm
+    _ ↔ Function.Surjective ((mapPointsFunctor f).app A) := by
+      rw [hcomp]
+      rfl
 
 /-- The kernel-quotient comparison is an isomorphism exactly when `f` is surjective on points
 over the chosen value algebra. -/
