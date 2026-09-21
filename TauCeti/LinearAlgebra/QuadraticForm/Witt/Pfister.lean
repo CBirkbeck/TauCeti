@@ -55,24 +55,23 @@ variable {K : Type u} [Field K] [Invertible (2 : K)]
 /-- The isometry class of the `n`-fold Pfister form, using the convention
 `<<a>> = <1, -a>`. Orthogonal sum is addition and tensor product is multiplication on
 `RegularFormClass`; the empty product is therefore the zero-fold form `<1>`. -/
-@[expose]
 noncomputable def pfisterFormClass {n : ℕ} (a : Fin n → Kˣ) : RegularFormClass K :=
   ∏ i, (1 + Quotient.mk (regularFormSetoid K) ⟨1, fun _ => -(a i)⟩)
 
 /-- The defining product for the isometry class of an `n`-fold Pfister form. -/
 theorem pfisterFormClass_def {n : ℕ} (a : Fin n → Kˣ) :
     pfisterFormClass a =
-      ∏ i, (1 + Quotient.mk (regularFormSetoid K) ⟨1, fun _ => -(a i)⟩) := rfl
+      ∏ i, (1 + Quotient.mk (regularFormSetoid K) ⟨1, fun _ => -(a i)⟩) :=
+  pfisterFormClass.eq_def a
 
 /-- The Witt class of an `n`-fold Pfister form. -/
-@[expose]
 noncomputable def pfisterClass {n : ℕ} (a : Fin n → Kˣ) : WittRing K :=
   wittClass (pfisterFormClass a)
 
 /-- Taking the Witt class of a Pfister form class gives its Pfister class. -/
 @[simp]
 theorem wittClass_pfisterFormClass {n : ℕ} (a : Fin n → Kˣ) :
-    wittClass (pfisterFormClass a) = pfisterClass a := rfl
+    wittClass (pfisterFormClass a) = pfisterClass a := (pfisterClass.eq_def a).symm
 
 /-- The Witt class of a Pfister form is the product of its one-fold factors. -/
 theorem pfisterClass_eq_prod {n : ℕ} (a : Fin n → Kˣ) :
@@ -101,6 +100,8 @@ private theorem pfisterFactor_eq (a : Kˣ) :
   congr 1
   let p : RegularFormPresentation K := ⟨1, fun _ => 1⟩
   let q : RegularFormPresentation K := ⟨1, fun _ => -a⟩
+  -- `mk_add_mk` exposes the appended presentation only definitionally; there is no
+  -- interface lemma that restates this equality using the local presentations `p` and `q`.
   change p.append q = ⟨2, ![1, -a]⟩
   have h : (p.append q).1 = 2 := by simp [p, q]
   refine RegularFormPresentation.ext h ?_
@@ -135,6 +136,8 @@ theorem pfisterFormClass_two (a b : Kˣ) :
   congr 1
   let p : RegularFormPresentation K := ⟨2, ![1, -b]⟩
   let q : RegularFormPresentation K := ⟨2, ![1, -a]⟩
+  -- `mk_mul_mk` exposes the tensor-product presentation only definitionally; there is no
+  -- interface lemma that restates this equality using the local presentations `p` and `q`.
   change p.tmul q = ⟨4, ![1, -a, -b, a * b]⟩
   have h : (p.tmul q).1 = 4 := by simp [p, q]
   have hweight (j : Fin 4) (x y : Fin 2) (hxy : finProdFinEquiv (x, y) = j) :
@@ -160,7 +163,7 @@ theorem pfisterFormClass_two (a b : Kˣ) :
 
 /-- An `n`-fold Pfister form has rank `2 ^ n`. -/
 @[simp]
-theorem RegularFormClass.rank_pfisterFormClass {n : ℕ} (a : Fin n → Kˣ) :
+theorem rank_pfisterFormClass {n : ℕ} (a : Fin n → Kˣ) :
     RegularFormClass.rank (pfisterFormClass a) = 2 ^ n := by
   rw [pfisterFormClass_def, ← RegularFormClass.rankHom_apply, map_prod]
   simp [RegularFormClass.rankHom_apply, RegularFormClass.rank_mk]
