@@ -47,7 +47,7 @@ Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
   splits as `(a · r)/s · (b · u)/s`, each half carrying one factor of the denominator.
 * `TauCeti.Localization.awayLift_divBy`: the comparison map to a localisation at a multiple
   `w = u * r` rescales fractions by the cofactor, sending `a/u` to `(a · r)/w`.
-* `TauCeti.Localization.awayMap_divBy`: the map induced on localisations by a ring homomorphism
+* `RingHom.awayMap_divBy`: the map induced on localisations by a ring homomorphism
   `f` pushes fractions along `f`, sending `a/u` to `f(a)/f(u)`.
 
 ## Provenance
@@ -256,7 +256,8 @@ companion of `awayLift_divBy` for a moving base ring: there the base ring is fix
 denominator is replaced by a multiple, here the denominator is carried along and the base ring
 changes. -/
 @[simp]
-theorem awayMap_divBy {B : Type*} [CommSemiring B] {V W : Type*} [CommSemiring V] [CommSemiring W]
+theorem _root_.RingHom.awayMap_divBy {B : Type*} [CommSemiring B]
+    {V W : Type*} [CommSemiring V] [CommSemiring W]
     [Algebra A V] [Algebra B W] (f : A →+* B) (u : A) [IsLocalization.Away u V]
     [IsLocalization.Away (f u) W] (a : A) :
     IsLocalization.Away.map V W f u (divBy a u : V) = (divBy (f a) (f u) : W) :=
