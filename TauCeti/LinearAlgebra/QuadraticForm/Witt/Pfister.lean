@@ -28,7 +28,7 @@ The positivity condition is necessary: `I(K)^0 = W(K)`, while the sole zero-fold
 
 * `TauCeti.pfisterFormClass`: the isometry class of an iterated Pfister tensor product.
 * `TauCeti.pfisterClass`: its Witt class.
-* `TauCeti.pfisterWeights`: its diagonal tuple of weights.
+* `TauCeti.pfisterForm`: its diagonal tuple of weights.
 
 ## Main results
 
@@ -56,23 +56,23 @@ variable {K : Type u} [Field K]
 
 /-- The diagonal weights of the `n`-fold Pfister form, ordered by the binary subsets of its
 slots. -/
-def pfisterWeights : {n : ℕ} → (Fin n → Kˣ) → Fin (2 ^ n) → Kˣ
+def pfisterForm : {n : ℕ} → (Fin n → Kˣ) → Fin (2 ^ n) → Kˣ
   | 0, _ => fun _ => 1
   | n + 1, a => fun k =>
       let ij := finProdFinEquiv.symm (Fin.cast (pow_succ 2 n) k)
-      pfisterWeights (Fin.tail a) ij.1 * ![1, -(a 0)] ij.2
+      pfisterForm (Fin.tail a) ij.1 * ![1, -(a 0)] ij.2
 
 /-- The zero-fold Pfister form has the single diagonal weight `1`. -/
 @[simp]
-theorem pfisterWeights_zero (a : Fin 0 → Kˣ) : pfisterWeights a = fun _ => 1 := by
+theorem pfisterForm_zero (a : Fin 0 → Kˣ) : pfisterForm a = fun _ => 1 := by
   rfl
 
 /-- `⟨⟨a⟩⟩ = ⟨1, -a⟩`. -/
 @[simp]
-theorem pfisterWeights_one (a : Kˣ) : pfisterWeights ![a] = ![1, -a] := by
+theorem pfisterForm_one (a : Kˣ) : pfisterForm ![a] = ![1, -a] := by
   funext i
   let ij := finProdFinEquiv.symm (Fin.cast (pow_succ 2 0) i)
-  -- The recursive definition of `pfisterWeights` has no interface lemma for its successor branch;
+  -- The recursive definition of `pfisterForm` has no interface lemma for its successor branch;
   -- this exposes that branch after naming the product index `ij`.
   change 1 * ![1, -a] ij.2 = ![1, -a] i
   have hij : ij.2 = i := by
@@ -84,18 +84,18 @@ theorem pfisterWeights_one (a : Kˣ) : pfisterWeights ![a] = ![1, -a] := by
 
 /-- `⟨⟨a, b⟩⟩ = ⟨1, -a, -b, ab⟩`. -/
 @[simp]
-theorem pfisterWeights_two (a b : Kˣ) : pfisterWeights ![a, b] = ![1, -a, -b, a * b] := by
+theorem pfisterForm_two (a b : Kˣ) : pfisterForm ![a, b] = ![1, -a, -b, a * b] := by
   funext i
   let ij := finProdFinEquiv.symm (Fin.cast (pow_succ 2 1) i)
-  -- The recursive definition of `pfisterWeights` has no interface lemma for its successor branch;
+  -- The recursive definition of `pfisterForm` has no interface lemma for its successor branch;
   -- this exposes that branch after naming the product index `ij`.
-  change pfisterWeights (Fin.tail ![a, b]) ij.1 * ![1, -a] ij.2 =
+  change pfisterForm (Fin.tail ![a, b]) ij.1 * ![1, -a] ij.2 =
     ![1, -a, -b, a * b] i
   have htail : Fin.tail ![a, b] = ![b] := by
     funext j
     fin_cases j
     rfl
-  rw [htail, pfisterWeights_one]
+  rw [htail, pfisterForm_one]
   fin_cases i
   · have hij : ij = ((0 : Fin 2), (0 : Fin 2)) := by
       apply Prod.ext <;> apply Fin.ext <;> simp [ij]
@@ -117,24 +117,24 @@ theorem pfisterWeights_two (a b : Kˣ) : pfisterWeights ![a, b] = ![1, -a, -b, a
 /-- Splitting off the first slot identifies the diagonal Pfister presentation with the tensor
 product of the remaining presentation and the corresponding one-fold presentation. -/
 theorem pfisterPresentation_cons {n : ℕ} (a : Fin (n + 1) → Kˣ) :
-    (⟨2 ^ (n + 1), pfisterWeights a⟩ : RegularFormPresentation K) =
+    (⟨2 ^ (n + 1), pfisterForm a⟩ : RegularFormPresentation K) =
       RegularFormPresentation.tmul
-        (⟨2 ^ n, pfisterWeights (Fin.tail a)⟩ : RegularFormPresentation K) ⟨2, ![1, -(a 0)]⟩ := by
+        (⟨2 ^ n, pfisterForm (Fin.tail a)⟩ : RegularFormPresentation K) ⟨2, ![1, -(a 0)]⟩ := by
   have hfst :
-      (⟨2 ^ (n + 1), pfisterWeights a⟩ : RegularFormPresentation K).1 =
+      (⟨2 ^ (n + 1), pfisterForm a⟩ : RegularFormPresentation K).1 =
         (RegularFormPresentation.tmul
-          (⟨2 ^ n, pfisterWeights (Fin.tail a)⟩ : RegularFormPresentation K)
+          (⟨2 ^ n, pfisterForm (Fin.tail a)⟩ : RegularFormPresentation K)
           ⟨2, ![1, -(a 0)]⟩).1 := by
     rw [RegularFormPresentation.fst_tmul]
     exact pow_succ 2 n
   apply RegularFormPresentation.ext hfst
   intro i
-  let p : RegularFormPresentation K := ⟨2 ^ n, pfisterWeights (Fin.tail a)⟩
+  let p : RegularFormPresentation K := ⟨2 ^ n, pfisterForm (Fin.tail a)⟩
   let q : RegularFormPresentation K := ⟨2, ![1, -(a 0)]⟩
   let ij := finProdFinEquiv.symm (Fin.cast (pow_succ 2 n) i)
   -- No interface theorem relates the recursive Pfister weights directly to `tmul`; this exposes
   -- the two coordinate functions so that `RegularFormPresentation.tmul_apply` applies below.
-  change pfisterWeights (Fin.tail a) ij.1 * ![1, -(a 0)] ij.2 =
+  change pfisterForm (Fin.tail a) ij.1 * ![1, -(a 0)] ij.2 =
     (p.tmul q).2 (Fin.cast hfst i)
   have hk : Fin.cast hfst i =
       Fin.cast (RegularFormPresentation.fst_tmul p q).symm (finProdFinEquiv ij) := by
@@ -209,7 +209,7 @@ private theorem pfisterFactor_eq (a : Kˣ) :
 /-- The isometry class of a Pfister form is represented by its explicit diagonal tuple. -/
 theorem pfisterFormClass_eq_mk {n : ℕ} (a : Fin n → Kˣ) :
     pfisterFormClass a =
-      Quotient.mk (regularFormSetoid K) ⟨2 ^ n, pfisterWeights a⟩ := by
+      Quotient.mk (regularFormSetoid K) ⟨2 ^ n, pfisterForm a⟩ := by
   induction n with
   | zero =>
       rw [pfisterFormClass_zero]
@@ -234,7 +234,7 @@ theorem pfisterFormClass_one (a : Fin 1 → Kˣ) :
     funext i
     fin_cases i
     rfl
-  rw [ha, pfisterFormClass_eq_mk, pfisterWeights_one]
+  rw [ha, pfisterFormClass_eq_mk, pfisterForm_one]
   rfl
 
 /-- A two-fold Pfister form has diagonal weights `<1, -a, -b, ab>`. -/
@@ -242,7 +242,7 @@ theorem pfisterFormClass_one (a : Fin 1 → Kˣ) :
 theorem pfisterFormClass_two (a b : Kˣ) :
     pfisterFormClass ![a, b] =
       Quotient.mk (regularFormSetoid K) ⟨4, ![1, -a, -b, a * b]⟩ := by
-  rw [pfisterFormClass_eq_mk, pfisterWeights_two]
+  rw [pfisterFormClass_eq_mk, pfisterForm_two]
   rfl
 
 /-- An `n`-fold Pfister form has rank `2 ^ n`. -/
