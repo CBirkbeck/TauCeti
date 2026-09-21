@@ -78,7 +78,7 @@ lemma _root_.deck.fiberHomeomorphHom_inv (φ : deck p) :
 
 /-- The fibre homeomorphism associated to the identity deck transformation is the identity. -/
 @[simp]
-lemma _root_.deck.fiberHomeomorph_one :
+lemma fiberHomeomorph_one :
     deck.fiberHomeomorph (1 : deck p) b = 1 := by
   exact fiberHomeomorphHom_one
 
