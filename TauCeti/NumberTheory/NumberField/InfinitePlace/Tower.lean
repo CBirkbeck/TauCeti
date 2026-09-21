@@ -54,10 +54,8 @@ theorem _root_.AlgEquiv.restrictNormal_smul_comap [Normal K F] (σ : L ≃ₐ[K]
     (w : InfinitePlace L) :
     σ.restrictNormal F • w.comap (algebraMap F L)
       = (σ • w).comap (algebraMap F L) := by
-  -- Expose `restrictNormal` as the application of the bundled restriction homomorphism,
-  -- which is the form used by the action below.
-  change AlgEquiv.restrictNormalHom F σ • w.comap (algebraMap F L)
-    = (σ • w).comap (algebraMap F L)
+  have hrestrict : AlgEquiv.restrictNormalHom F σ = σ.restrictNormal F := rfl
+  rw [← hrestrict]
   have bridge : ∀ x : F, algebraMap F L ((AlgEquiv.restrictNormalHom F σ).symm x)
       = σ.symm (algebraMap F L x) := fun x => by
     -- The goal carries `(restrictNormalHom F σ).symm` — symm-of-image — whereas
@@ -89,19 +87,16 @@ theorem eq_one_of_restrictNormal_eq_one [Normal K F] {w : InfinitePlace L}
   have hfix : ∀ x : F, σ (algebraMap F L x) = algebraMap F L x :=
     (AlgEquiv.restrictNormal_eq_one_iff_algebraMap K F L σ).1 h1
   set τ : L ≃ₐ[F] L := { σ with commutes' := hfix }
+  have hsmul : τ • w = σ • w := rfl
+  have happly (x : L) : τ x = σ x := rfl
   have hmem : τ ∈ MulAction.stabilizer (L ≃ₐ[F] L) w := by
-    rw [MulAction.mem_stabilizer_iff, smul_eq_comap]
-    rw [smul_eq_comap] at hσ
-    -- `τ` and `σ` have the same underlying ring equivalence; only the scalar field in
-    -- their `AlgEquiv` bundles differs. Expose that conversion rather than asking `exact` to
-    -- use the structure-update definitional equality silently.
-    change σ • w = w
+    rw [MulAction.mem_stabilizer_iff, hsmul]
     exact hσ
   rw [hu.stabilizer_eq_bot, Subgroup.mem_bot] at hmem
   ext x
-  -- The same underlying-map conversion identifies the `K`-algebra goal with the equality of
-  -- `F`-algebra equivalences established above.
-  change τ x = (1 : L ≃ₐ[F] L) x
-  exact congrFun (congrArg (fun e : L ≃ₐ[F] L => (e : L → L)) hmem) x
+  calc
+    σ x = τ x := (happly x).symm
+    _ = (1 : L ≃ₐ[F] L) x := DFunLike.congr_fun hmem x
+    _ = (1 : L ≃ₐ[K] L) x := rfl
 
 end TauCeti.NumberField
