@@ -34,7 +34,7 @@ namespace TauCeti
 
 namespace AddSubgroup
 
-variable {R : Type*} [NonUnitalNonAssocRing R] {S T : Set R} {x y : R}
+variable {R : Type*} [NonUnitalNonAssocRing R]
 
 /-- The product of two additive closures is the additive closure of the pairwise products. -/
 theorem closure_mul_closure (S T : Set R) :
@@ -57,13 +57,6 @@ theorem closure_mul_closure (S T : Set R) :
     rintro _ ⟨x, hx, y, hy, rfl⟩
     exact AddSubmonoid.mul_mem_mul (AddSubgroup.subset_closure hx)
       (AddSubgroup.subset_closure hy)
-
-/-- A product of elements from two additive closures belongs to the additive closure of the
-pairwise products. -/
-theorem mul_mem_closure_mul (hx : x ∈ AddSubgroup.closure S) (hy : y ∈ AddSubgroup.closure T) :
-    x * y ∈ AddSubgroup.closure (S * T) := by
-  rw [← closure_mul_closure S T]
-  exact AddSubmonoid.mul_mem_mul hx hy
 
 end AddSubgroup
 
