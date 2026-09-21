@@ -361,6 +361,18 @@ theorem supportedPart_empty (hf : f 1 = 1) : supportedPart f ∅ = delta := by
   · rw [supportedPart_apply_of_isPrimeTo_compl (hiff.mpr rfl), delta_one, hf]
   · rw [supportedPart_apply_of_not_isPrimeTo_compl fun h ↦ hA (hiff.mp h), delta_of_ne_one hA]
 
+/-- **What a nonvanishing product says about the two factors.**  If the `S`-part of `p.1` times
+the `{P}`-part of `p.2` is nonzero, then neither factor was killed by its restriction: `p.1` is
+prime to `Sᶜ`, and `p.2` is a power of `P`. -/
+private theorem isPrimeTo_and_exists_pow_of_supportedPart_mul_ne_zero
+    {P : HeightOneSpectrum (𝓞 K)} {p : (Ideal (𝓞 K))⁰ × (Ideal (𝓞 K))⁰}
+    (hp0 : supportedPart f S p.1 * supportedPart f {P} p.2 ≠ 0) :
+    Ideal.IsPrimeTo (p.1 : Ideal (𝓞 K)) Sᶜ ∧
+      ∃ m : ℕ, (p.2 : Ideal (𝓞 K)) = P.asIdeal ^ m :=
+  ⟨isPrimeTo_compl_of_supportedPart_apply_ne_zero (left_ne_zero_of_mul hp0),
+    Ideal.isPrimeTo_compl_singleton_iff.mp
+      (isPrimeTo_compl_of_supportedPart_apply_ne_zero (right_ne_zero_of_mul hp0))⟩
+
 /-- **Only the `S`-part/`P`-part pair survives.**  Where `A` is `P ^ n` times an ideal `B` prime to
 `Sᶜ`, and `C` is that power of `P`, every pair of the antidiagonal of `A` other than `(B, C)`
 contributes zero to the convolution. -/
@@ -372,9 +384,7 @@ private theorem supportedPart_mul_eq_zero_of_ne {P : HeightOneSpectrum (𝓞 K)}
       supportedPart f S p.1 * supportedPart f {P} p.2 = 0 := by
   intro p hp hne
   by_contra hp0
-  have h1 := isPrimeTo_compl_of_supportedPart_apply_ne_zero (left_ne_zero_of_mul hp0)
-  obtain ⟨m, h2⟩ := Ideal.isPrimeTo_compl_singleton_iff.mp
-    (isPrimeTo_compl_of_supportedPart_apply_ne_zero (right_ne_zero_of_mul hp0))
+  obtain ⟨h1, m, h2⟩ := isPrimeTo_and_exists_pow_of_supportedPart_mul_ne_zero hp0
   have hmul : (p.1 : Ideal (𝓞 K)) * (p.2 : Ideal (𝓞 K)) = (A : Ideal (𝓞 K)) := by
     rw [← Submonoid.coe_mul, Ideal.mem_divisorsAntidiagonal.mp hp]
   have heq : P.asIdeal ^ m * (p.1 : Ideal (𝓞 K)) = P.asIdeal ^ n * (B : Ideal (𝓞 K)) := by
@@ -391,9 +401,7 @@ private theorem isPrimeTo_compl_insert_of_supportedPart_mul_ne_zero
     (hp : p ∈ Ideal.divisorsAntidiagonal A)
     (hp0 : supportedPart f S p.1 * supportedPart f {P} p.2 ≠ 0) :
     Ideal.IsPrimeTo (A : Ideal (𝓞 K)) (insert P S)ᶜ := by
-  have h1 := isPrimeTo_compl_of_supportedPart_apply_ne_zero (left_ne_zero_of_mul hp0)
-  obtain ⟨m, h2⟩ := Ideal.isPrimeTo_compl_singleton_iff.mp
-    (isPrimeTo_compl_of_supportedPart_apply_ne_zero (right_ne_zero_of_mul hp0))
+  obtain ⟨h1, m, h2⟩ := isPrimeTo_and_exists_pow_of_supportedPart_mul_ne_zero hp0
   rw [← congrArg Subtype.val (Ideal.mem_divisorsAntidiagonal.mp hp), Submonoid.coe_mul]
   refine Ideal.isPrimeTo_mul_iff.mpr
     ⟨h1.mono (Set.compl_subset_compl.mpr (Set.subset_insert P S)), ?_⟩
