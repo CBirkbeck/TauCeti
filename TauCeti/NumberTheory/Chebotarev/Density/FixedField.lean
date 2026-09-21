@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Prime.Contraction
-public import TauCeti.NumberTheory.Chebotarev.Density.Ramification
 public import TauCeti.NumberTheory.Chebotarev.FixedField.FiberCount
 
 /-!
@@ -34,7 +33,8 @@ here — the transfer is exact, and only the cyclic density it consumes is analy
 
 ## Main results
 
-* `NumberField.Chebotarev.hasDirichletDensity_fixedField_iff`: the transfer, as an `iff`.
+* `NumberField.Chebotarev.hasDirichletDensity_frobeniusPrimeSet_fixedField_iff`: the transfer,
+  as an `iff`.
 * `NumberField.Chebotarev.hasDirichletDensity_frobeniusPrimeSet_of_fixedField`: its
   specialisation at `1 / orderOf sigma`, landing the value `#C / #G`.
 
@@ -74,8 +74,8 @@ private theorem fixedField_multiplicity_ne_zero (C : ConjClasses (L ≃ₐ[K] L)
 `C` and put `E = L ^ <sigma>`.  The relative Frobenius fibre of `sigma.toFixedFieldAlgEquiv` over
 `E` has Dirichlet density `δ` exactly when the Frobenius fibre of `C` over `K` has density
 `δ / (#G / (#C * orderOf sigma))`. -/
-theorem hasDirichletDensity_fixedField_iff (C : ConjClasses (L ≃ₐ[K] L)) (sigma : L ≃ₐ[K] L)
-    (hsigma : sigma ∈ C.carrier) {δ : ℝ} :
+theorem hasDirichletDensity_frobeniusPrimeSet_fixedField_iff (C : ConjClasses (L ≃ₐ[K] L))
+    (sigma : L ≃ₐ[K] L) (hsigma : sigma ∈ C.carrier) {δ : ℝ} :
     (frobeniusPrimeSet ↥(fixedField (Subgroup.zpowers sigma)) L
         (ConjClasses.mk sigma.toFixedFieldAlgEquiv)).HasDirichletDensity δ ↔
       (frobeniusPrimeSet K L C).HasDirichletDensity
@@ -103,9 +103,9 @@ about the **cyclic** extension `L / E` down to the general conjugacy class over 
 only step of that reduction. -/
 theorem hasDirichletDensity_frobeniusPrimeSet_of_fixedField (C : ConjClasses (L ≃ₐ[K] L))
     (sigma : L ≃ₐ[K] L) (hsigma : sigma ∈ C.carrier)
-    (h : Set.HasDirichletDensity (frobeniusPrimeSet ↥(fixedField (Subgroup.zpowers sigma)) L
-      (ConjClasses.mk sigma.toFixedFieldAlgEquiv)) (1 / orderOf sigma)) :
-    Set.HasDirichletDensity (frobeniusPrimeSet K L C)
+    (h : (frobeniusPrimeSet ↥(fixedField (Subgroup.zpowers sigma)) L
+      (ConjClasses.mk sigma.toFixedFieldAlgEquiv)).HasDirichletDensity (1 / orderOf sigma)) :
+    (frobeniusPrimeSet K L C).HasDirichletDensity
       (Nat.card C.carrier / Nat.card (L ≃ₐ[K] L)) := by
   have hord : (orderOf sigma : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (orderOf_pos sigma).ne'
   have hcard : (Nat.card (L ≃ₐ[K] L) : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Nat.card_pos.ne'
@@ -120,6 +120,6 @@ theorem hasDirichletDensity_frobeniusPrimeSet_of_fixedField (C : ConjClasses (L 
     rw [div_div, div_eq_div_iff (mul_ne_zero hord hc) hcard, one_mul, ← hmul]
     push_cast
     ring
-  exact hval ▸ (hasDirichletDensity_fixedField_iff C sigma hsigma).mp h
+  exact hval ▸ (hasDirichletDensity_frobeniusPrimeSet_fixedField_iff C sigma hsigma).mp h
 
 end NumberField.Chebotarev
