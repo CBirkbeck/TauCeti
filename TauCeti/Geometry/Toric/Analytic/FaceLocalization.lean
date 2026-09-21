@@ -203,6 +203,18 @@ private theorem faceAffinePointInfKerLift_toRingHom
   rw [faceAffinePointInfKerLift]
   rfl
 
+private theorem faceAffinePointInfKerLift_apply
+    (x : {x : AffineSemigroupComplexPoint (dualSemigroup hi σ) //
+      x (MonoidAlgebra.single (ofAdd m) 1) ≠ 0})
+    (a : affineCoordinateRing hi
+      (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) :
+    letI := faceAffinePointInfKerAlgebra hi m
+    letI := isLocalization_away_faceAffineCoordinateRingMap_inf_ker hi hσ m
+    faceAffinePointInfKerLift hi hσ m x a =
+      IsLocalization.Away.lift (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
+        (isUnit_iff_ne_zero.mpr x.2) a := by
+  exact DFunLike.congr_fun (faceAffinePointInfKerLift_toRingHom hi hσ m x) a
+
 /-- Pulling a lifted point back to the ambient chart recovers the original point. -/
 @[simp]
 theorem faceAffinePointMap_inf_ker_lift
@@ -216,13 +228,12 @@ theorem faceAffinePointMap_inf_ker_lift
   rw [faceAffinePointMap_apply]
   let _ := faceAffinePointInfKerAlgebra hi m
   have := isLocalization_away_faceAffineCoordinateRingMap_inf_ker hi hσ m
-  change (faceAffinePointInfKerLift hi hσ m x).toRingHom
-    (faceAffineCoordinateRingMap hi
-      (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)) a) = x.1 a
-  rw [faceAffinePointInfKerLift_toRingHom]
-  -- The installed algebra map is the canonical face coordinate-ring map.
-  change (IsLocalization.Away.lift (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
-    (isUnit_iff_ne_zero.mpr x.2)) (algebraMap _ _ a) = x.1 a
+  rw [faceAffinePointInfKerLift_apply]
+  have hmap : algebraMap _ _ a = faceAffineCoordinateRingMap hi
+      (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)) a :=
+    DFunLike.congr_fun (RingHom.algebraMap_toAlgebra (faceAffineCoordinateRingMap hi
+      (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2))).toRingHom) a
+  rw [← hmap]
   exact IsLocalization.Away.lift_eq (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
     (isUnit_iff_ne_zero.mpr x.2) a
 
@@ -253,13 +264,9 @@ theorem faceAffinePointInfKerLift_map
   let _ := faceAffinePointInfKerAlgebra hi m
   have := isLocalization_away_faceAffineCoordinateRingMap_inf_ker hi hσ m
   apply AlgHom.coe_ringHom_injective
-  change (faceAffinePointInfKerLift hi hσ m
-    ⟨faceAffinePointMap hi
-      (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)) x,
-      faceAffinePointMap_inf_ker_apply_single_ne_zero hi m x⟩).toRingHom = x.toRingHom
-  rw [faceAffinePointInfKerLift_toRingHom]
-  exact IsLocalization.lift_of_comp
-    (M := Submonoid.powers (MonoidAlgebra.single (ofAdd m) (1 : ℂ))) x.toRingHom
+  exact (faceAffinePointInfKerLift_toRingHom hi hσ m _).trans
+    (IsLocalization.lift_of_comp
+      (M := Submonoid.powers (MonoidAlgebra.single (ofAdd m) (1 : ℂ))) x.toRingHom)
 
 /-- The localization lift evaluates a fraction as the numerator times the reciprocal of its
 denominator. -/
@@ -275,9 +282,7 @@ theorem faceAffinePointInfKerLift_mk'
       x.1 a * (x.1 y.1)⁻¹ := by
   let _ := faceAffinePointInfKerAlgebra hi m
   have := isLocalization_away_faceAffineCoordinateRingMap_inf_ker hi hσ m
-  change (faceAffinePointInfKerLift hi hσ m x).toRingHom (IsLocalization.mk' _ a y) =
-    x.1 a * (x.1 y.1)⁻¹
-  rw [faceAffinePointInfKerLift_toRingHom]
+  rw [faceAffinePointInfKerLift_apply]
   rw [IsLocalization.Away.lift]
   apply (IsLocalization.lift_mk'_spec _ a (x.1 a * (x.1 y.1)⁻¹) y).2
   rw [AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
