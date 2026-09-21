@@ -51,7 +51,7 @@ finite set of primes have density zero; the finite-error statements that use it 
 * `NumberField.Set.isUpperDirichletDensityBound_of_forall_isLowerDirichletDensityBound`: in a
   finite disjoint family whose union has density `δ`, lower bounds summing to `δ` bound each
   member from above as well.
-* `NumberField.Set.hasDirichletDensity_of_forall_isLowerDirichletDensityBound`: hence each such
+* `NumberField.Set.hasDirichletDensity_of_squeeze`: hence each such
   member has density exactly its lower bound.
 
 ## References
@@ -256,10 +256,8 @@ Distinct from `hasDirichletDensity_of_subset_of_subset`, which squeezes a single
 sets of the same density. Here nothing is sandwiched: the upper bound on one member is
 *manufactured* from the other members' lower bounds, because the total is pinned. This is how a
 one-sided estimate becomes a density — an argument that exhibits enough primes in each class, and
-cannot see that there are no more, still determines every class exactly.
-
-This is the declaration the Chebotarev roadmap refers to as `hasDirichletDensity_of_squeeze`. -/
-theorem hasDirichletDensity_of_forall_isLowerDirichletDensityBound {ι : Type*} {s : Finset ι}
+cannot see that there are no more, still determines every class exactly. -/
+theorem hasDirichletDensity_of_squeeze {ι : Type*} {s : Finset ι}
     {f : ι → Set (HeightOneSpectrum (𝓞 K))} {d : ι → ℝ} {i₀ : ι} (hi₀ : i₀ ∈ s)
     (hdisj : (s : Set ι).PairwiseDisjoint f) (hU : HasDirichletDensity (⋃ i ∈ s, f i) δ)
     (hlow : ∀ i ∈ s, IsLowerDirichletDensityBound (f i) (d i)) (hsum : ∑ i ∈ s, d i = δ) :

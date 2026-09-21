@@ -22,7 +22,7 @@ nothing from above; the upper bound comes for free from the *other* fibres' lowe
 the total is pinned.
 
 Both results here are specialisations of the generic finite-partition squeeze
-`NumberField.Set.hasDirichletDensity_of_forall_isLowerDirichletDensityBound`, which holds for any
+`NumberField.Set.hasDirichletDensity_of_squeeze`, which holds for any
 finite pairwise disjoint family of prime sets whose union has a known density. The only inputs
 particular to this setting are the partition facts `pairwise_disjoint_frobeniusPrimeSet` and
 `hasDirichletDensity_compl_ramifiedPrimes`.
@@ -72,13 +72,14 @@ variable (K L) in
 unramified primes, whose density is `1`, so a fibre's ratio is what the others leave behind. If
 the lower bounds `d` sum to `1`, what they leave behind is `d C₀`. -/
 theorem isUpperDirichletDensityBound_frobeniusPrimeSet_of_forall_isLowerDirichletDensityBound
-    {d : ConjClasses (L ≃ₐ[K] L) → ℝ}
-    (hlow : ∀ C, (frobeniusPrimeSet K L C).IsLowerDirichletDensityBound (d C))
-    (hsum : ∑ C : ConjClasses (L ≃ₐ[K] L), d C = 1) (C₀ : ConjClasses (L ≃ₐ[K] L)) :
+    {d : ConjClasses (L ≃ₐ[K] L) → ℝ} (C₀ : ConjClasses (L ≃ₐ[K] L))
+    (hlow : ∀ C, C ≠ C₀ → (frobeniusPrimeSet K L C).IsLowerDirichletDensityBound (d C))
+    (hsum : ∑ C : ConjClasses (L ≃ₐ[K] L), d C = 1) :
     (frobeniusPrimeSet K L C₀).IsUpperDirichletDensityBound (d C₀) :=
   Set.isUpperDirichletDensityBound_of_forall_isLowerDirichletDensityBound (Finset.mem_univ C₀)
     ((pairwise_disjoint_frobeniusPrimeSet K L).set_pairwise _)
-    (hasDirichletDensity_iUnion_frobeniusPrimeSet K L) (fun C _ ↦ hlow C) hsum
+    (hasDirichletDensity_iUnion_frobeniusPrimeSet K L)
+    (fun C hC ↦ hlow C (Finset.ne_of_mem_erase hC)) hsum
 
 open scoped Classical in
 variable (K L) in
@@ -93,7 +94,7 @@ theorem hasDirichletDensity_frobeniusPrimeSet_of_forall_isLowerDirichletDensityB
     (hlow : ∀ C, (frobeniusPrimeSet K L C).IsLowerDirichletDensityBound (d C))
     (hsum : ∑ C : ConjClasses (L ≃ₐ[K] L), d C = 1) (C₀ : ConjClasses (L ≃ₐ[K] L)) :
     (frobeniusPrimeSet K L C₀).HasDirichletDensity (d C₀) :=
-  Set.hasDirichletDensity_of_forall_isLowerDirichletDensityBound (Finset.mem_univ C₀)
+  Set.hasDirichletDensity_of_squeeze (Finset.mem_univ C₀)
     ((pairwise_disjoint_frobeniusPrimeSet K L).set_pairwise _)
     (hasDirichletDensity_iUnion_frobeniusPrimeSet K L) (fun C _ ↦ hlow C) hsum
 
