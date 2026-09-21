@@ -46,8 +46,8 @@ there is no residue field, and no congruence `σ x ≡ x ^ q`.
   resulting uniqueness among nonidentity elements.
 * `TauCeti.NumberField.complexConjugationAt_smul`: the conjugation transforms by conjugacy,
   `c (σ • w) = σ * c w * σ⁻¹`.
-* `TauCeti.NumberField.restrictNormal_complexConjugationAt_of_isComplex` and
-  `TauCeti.NumberField.restrictNormal_complexConjugationAt_eq_one_of_isReal`: restriction to an
+* `TauCeti.NumberField.complexConjugationAt_restrictNormal_of_isComplex` and
+  `TauCeti.NumberField.complexConjugationAt_restrictNormal_eq_one_of_isReal`: restriction to an
   intermediate field, in both branches. The restriction is the conjugation at the induced place
   when that place stays complex, and is trivial when the induced place is real.
 
@@ -160,7 +160,7 @@ variable {F : Type*} [Field F] [Algebra K F] [Algebra F L] [IsScalarTower K F L]
 
 /-- The conjugation at `w` restricts trivially when the induced place on `F` is real. -/
 @[simp]
-theorem restrictNormal_complexConjugationAt_eq_one_of_isReal [Normal K F] (w : InfinitePlace L)
+theorem complexConjugationAt_restrictNormal_eq_one_of_isReal [Normal K F] (w : InfinitePlace L)
     (hw : w.IsRamified K) (hv : (w.comap (algebraMap F L)).IsReal) :
     (complexConjugationAt K w hw).restrictNormal F = 1 := by
   have hmem : (complexConjugationAt K w hw).restrictNormal F
@@ -171,7 +171,7 @@ theorem restrictNormal_complexConjugationAt_eq_one_of_isReal [Normal K F] (w : I
 
 /-- The conjugation at `w` restricts to the conjugation at the induced complex place on `F`. -/
 @[simp]
-theorem restrictNormal_complexConjugationAt_of_isComplex [Normal K F] (w : InfinitePlace L)
+theorem complexConjugationAt_restrictNormal_of_isComplex [Normal K F] (w : InfinitePlace L)
     (hw : w.IsRamified K) (hv : (w.comap (algebraMap F L)).IsComplex) :
     letI : Algebra.IsSeparable K F :=
       Algebra.isSeparable_tower_bot_of_isSeparable K F L
