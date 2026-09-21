@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Analysis.Calculus.ContDiff.Operations
 public import Mathlib.NumberTheory.NumberField.CanonicalEmbedding.NormLeOne
+public import TauCeti.Topology.Frontier
 public import TauCeti.Topology.MetricSpace.LipschitzParametrizable
 
 /-!
@@ -29,22 +30,17 @@ The `w₀` face is where the unbounded `Iic 0` direction is pinned at its endpoi
 pin one of the bounded `Ico 0 1` directions, and there the substitution `t = exp (x w₀)` turns the
 unbounded direction into the freed cube coordinate.
 
-## Main definitions
-
-* `faceMapZero`: the face where the unbounded `w₀` coordinate sits at its endpoint.
-* `faceMapSide`: the face pinning one bounded coordinate at `0` or `1`.
-
 ## Main results
 
 * `isLipschitzParametrizable_frontier_image_paramSet`: the frontier of the box image is Lipschitz
   parametrizable in dimension `rank K`, one less than that of `realSpace K`.
-* `contDiff_expMapBasis`: the parametrization is smooth.
-* `contDiff_faceMapZero`, `contDiff_faceMapSide`: so is each face map.
-* `frontier_image_subset_of_closure_subset`: the frontier of an image sits inside the image of
-  the source's boundary, for an open injective map.
-* `frontier_image_paramSet_subset`: its instance for the box whose image is the norm-≤-one
-  region, where the extra point is the origin.
-* `image_boundary_paramSet_subset`: the image of the box boundary is covered by the faces.
+* `contDiff_expMapBasis`: the box parametrization is smooth.
+* `closure_image_paramSet_subset`: the closure of the box image adds only the origin.
+* `frontier_image_paramSet_subset`: the frontier of the box image lies in the image of the box's
+  frontier, together with the origin.
+
+The face maps that decompose the box's frontier, and the lemmas supporting them, are `private`:
+they implement the parametrization and are not independently reusable.
 
 ## References
 
@@ -62,66 +58,43 @@ open Finset Module NumberField NumberField.InfinitePlace NumberField.mixedEmbedd
   NumberField.Units dirichletUnitTheorem
 open scoped NumberField
 
-/-- **The frontier of an image, from the boundary of the source.** For an open injective `f`, if
-the closure of `f '' s` is contained in `f '' closure s` together with one extra point `p`, then
-the frontier of `f '' s` lies in the image of the boundary `closure s \ interior s`, together
-with `p`.
-
-This is general topology, stated here because the number-field instance below is its only
-consumer: openness shrinks the interior side (`IsOpenMap.image_interior_subset`), the hypothesis
-shrinks the closure side, and injectivity lets the difference of images become the image of the
-difference. -/
-theorem frontier_image_subset_of_closure_subset {X Y : Type*} [TopologicalSpace X]
-    [TopologicalSpace Y] {f : X → Y} (hf : IsOpenMap f) (hfi : Function.Injective f) {s : Set X}
-    {p : Y} (hcl : closure (f '' s) ⊆ f '' closure s ∪ {p}) :
-    frontier (f '' s) ⊆ f '' (closure s \ interior s) ∪ {p} := by
-  refine (Set.sdiff_subset_sdiff hcl (hf.image_interior_subset s)).trans ?_
-  rw [Set.union_sdiff_distrib, ← Set.image_sdiff hfi]
-  exact Set.union_subset_union_right _ Set.sdiff_subset
-
 namespace NumberField.mixedEmbedding.fundamentalCone
 
 variable (K : Type*) [Field K] [NumberField K]
 
-/-- **The box parametrization is smooth.** `expMapBasis` is an exponential in the `w₀`
-coordinate times a product of real powers in the others, so it is `C^n` for every `n`. The
-side condition discharged here is that each `w (fundSystem ...)` is nonzero, which holds because
-an infinite place is positive on a unit. -/
+/-- `expMapBasis` is `C^n` for every `n`: it is an exponential in the `w₀` coordinate times a
+product of real powers of the positive reals `w (fundSystem ...)` in the others. -/
 theorem contDiff_expMapBasis {n : WithTop ℕ∞} : ContDiff ℝ n (⇑(expMapBasis (K := K))) := by
   classical
-  rw [show ⇑(expMapBasis (K := K)) = fun x : realSpace K ↦
-      Real.exp (x w₀) • fun w : InfinitePlace K ↦
-        ∏ i : {w : InfinitePlace K // w ≠ w₀},
-          w (fundSystem K (equivFinRank.symm i)) ^ x i from funext expMapBasis_apply']
+  simp_rw [funext expMapBasis_apply']
   fun_prop (disch := exact fun x ↦ (InfinitePlace.pos_iff.mpr (by simp)).ne')
 
 open scoped Classical in
-/-- **The `w₀` face.** `paramSet K` is unbounded only in the `w₀` direction, where it is `Iic 0`;
-its finite endpoint is `0`. This plugs `0` into that slot and the cube coordinates into the rest. -/
-noncomputable def faceMapZero (c : {w : InfinitePlace K // w ≠ w₀} → ℝ) : realSpace K :=
+/-- The face of `paramSet K` on which the unbounded `w₀` coordinate sits at its finite endpoint
+`0`, parametrized by the remaining coordinates. -/
+private noncomputable def faceMapZero (c : {w : InfinitePlace K // w ≠ w₀} → ℝ) : realSpace K :=
   expMapBasis fun w ↦ if hw : w = w₀ then 0 else c ⟨w, hw⟩
 
 open scoped Classical in
-/-- **A side face.** Pinning a bounded coordinate `i ≠ w₀` at an endpoint `a ∈ {0, 1}` frees one
-cube coordinate, and `expMapBasis_apply''` lets the unbounded `w₀` direction take its place: the
-substitution `t = exp (x w₀) ∈ (0, 1]` turns `Iic 0` into the freed coordinate `c i`. -/
-noncomputable def faceMapSide (i : {w : InfinitePlace K // w ≠ w₀}) (a : ℝ)
+/-- The face of `paramSet K` on which the bounded coordinate `i` sits at the endpoint `a`,
+parametrized by the remaining coordinates together with `t = exp (x w₀) ∈ (0, 1]` in the slot
+that pinning `i` frees. -/
+private noncomputable def faceMapSide (i : {w : InfinitePlace K // w ≠ w₀}) (a : ℝ)
     (c : {w : InfinitePlace K // w ≠ w₀} → ℝ) : realSpace K :=
   c i • expMapBasis fun w ↦ if hw : w = w₀ then 0 else
     if (⟨w, hw⟩ : {w : InfinitePlace K // w ≠ w₀}) = i then a else c ⟨w, hw⟩
 
 open scoped Classical in
-/-- The `w₀` face map is `C¹`: it is `expMapBasis` after a map that is coordinatewise either
-constant or a projection. -/
-theorem contDiff_faceMapZero : ContDiff ℝ 1 (faceMapZero K) := by
+/-- The `w₀` face map is `C¹`. -/
+private theorem contDiff_faceMapZero : ContDiff ℝ 1 (faceMapZero K) := by
   refine (contDiff_expMapBasis K).comp (contDiff_pi.mpr fun w ↦ ?_)
   by_cases hw : w = w₀
   · simpa [hw] using contDiff_const
   · simpa [hw] using contDiff_apply ℝ ℝ _
 
 open scoped Classical in
-/-- A side face map is `C¹`: the freed coordinate scales a composition of the same shape. -/
-theorem contDiff_faceMapSide (i : {w : InfinitePlace K // w ≠ w₀}) (a : ℝ) :
+/-- A side face map is `C¹`. -/
+private theorem contDiff_faceMapSide (i : {w : InfinitePlace K // w ≠ w₀}) (a : ℝ) :
     ContDiff ℝ 1 (faceMapSide K i a) := by
   refine (contDiff_apply ℝ ℝ i).smul ((contDiff_expMapBasis K).comp (contDiff_pi.mpr fun w ↦ ?_))
   by_cases hw : w = w₀
@@ -131,10 +104,9 @@ theorem contDiff_faceMapSide (i : {w : InfinitePlace K // w ≠ w₀}) (a : ℝ)
     · simpa [hi] using contDiff_const
     · simpa [hi] using contDiff_apply ℝ ℝ _
 
-/-- **The closure of the box image adds only the origin.** `compactSet K` is closed and contains
-the image of the closed box, so it contains the closure of the image; Mathlib identifies it as
-that image together with `0`. The origin is what the `w₀` coordinate escapes to as it runs to
-`-∞`, and it is the sole reason the closure of the image is not the image of the closure. -/
+/-- **The closure of the box image adds only the origin.** The origin is what the `w₀` coordinate
+escapes to as it runs to `-∞`, and it is the sole reason the closure of the image is not the image
+of the closure. -/
 theorem closure_image_paramSet_subset :
     closure (expMapBasis '' paramSet K) ⊆ expMapBasis '' closure (paramSet K) ∪ {0} := by
   rw [← compactSet_eq_union]
@@ -146,8 +118,8 @@ This is the reduction the Lipschitz cover runs on: the boundary of a product of 
 finite union of faces, so parametrizing it reduces to parametrizing each face. -/
 theorem frontier_image_paramSet_subset :
     frontier (expMapBasis '' paramSet K) ⊆
-      expMapBasis '' (closure (paramSet K) \ interior (paramSet K)) ∪ {0} :=
-  frontier_image_subset_of_closure_subset
+      expMapBasis '' frontier (paramSet K) ∪ {0} :=
+  TauCeti.frontier_image_subset_of_closure_subset
     (fun _ hs ↦ expMapBasis.isOpen_image_of_subset_source hs (by simp [expMapBasis_source]))
     (injective_expMapBasis K) (closure_image_paramSet_subset K)
 
@@ -157,7 +129,7 @@ open scoped Classical in
 /-- **A point of the `w₀` face is hit by `faceMapZero`.** Its cube coordinates are the point's own
 coordinates away from `w₀`, which lie in `Icc 0 1` because the point is in the closed box; the
 pinned coordinate agrees because the point sits at the face's endpoint `x w₀ = 0`. -/
-theorem expMapBasis_mem_image_faceMapZero {x : realSpace K} (hx : x ∈ closure (paramSet K))
+private theorem expMapBasis_mem_image_faceMapZero {x : realSpace K} (hx : x ∈ closure (paramSet K))
     (hx₀ : x w₀ = 0) :
     expMapBasis x ∈ faceMapZero K '' Set.Icc (0 : {w : InfinitePlace K // w ≠ w₀} → ℝ) 1 := by
   rw [closure_paramSet, Set.mem_univ_pi] at hx
@@ -170,7 +142,7 @@ open scoped Classical in
 /-- **A point of the side face pinning `i` is hit by `faceMapSide`.** The substitution
 `t = exp (x w₀) ∈ (0, 1]` moves the unbounded `w₀` direction into the cube coordinate freed by
 pinning `i`, so the cube point is the original coordinates with `i` replaced by `t`. -/
-theorem expMapBasis_mem_image_faceMapSide {x : realSpace K} (hx : x ∈ closure (paramSet K))
+private theorem expMapBasis_mem_image_faceMapSide {x : realSpace K} (hx : x ∈ closure (paramSet K))
     (i : {w : InfinitePlace K // w ≠ w₀}) :
     expMapBasis x ∈
       faceMapSide K i (x i) '' Set.Icc (0 : {w : InfinitePlace K // w ≠ w₀} → ℝ) 1 := by
@@ -200,8 +172,8 @@ open scoped Classical in
 /-- **The boundary of the box is covered by the faces.** A point of the closed box that misses the
 open box has some coordinate at an endpoint: the `w₀` coordinate at `0`, or a bounded coordinate at
 `0` or `1`. Those are exactly the faces parametrized by `faceMapZero` and `faceMapSide`. -/
-theorem image_boundary_paramSet_subset :
-    expMapBasis '' (closure (paramSet K) \ interior (paramSet K)) ⊆
+private theorem image_frontier_paramSet_subset :
+    expMapBasis '' frontier (paramSet K) ⊆
       faceMapZero K '' Set.Icc (0 : {w : InfinitePlace K // w ≠ w₀} → ℝ) 1 ∪
         ⋃ p : {w : InfinitePlace K // w ≠ w₀} × Bool,
           faceMapSide K p.1 (if p.2 then 1 else 0) ''
@@ -231,15 +203,17 @@ theorem image_boundary_paramSet_subset :
     · exact Set.mem_iUnion.2 ⟨(⟨w, hw₀⟩, true), by
         simpa [le_antisymm hmem.2 h] using expMapBasis_mem_image_faceMapSide hxc ⟨w, hw₀⟩⟩
 
-private theorem isLipschitzParametrizable_image_boundary_paramSet :
+private theorem isLipschitzParametrizable_image_frontier_paramSet :
     TauCeti.IsLipschitzParametrizable (rank K)
-      (expMapBasis '' (closure (paramSet K) \ interior (paramSet K))) := by
+      (expMapBasis '' frontier (paramSet K)) := by
   classical
   have hcard : Fintype.card {w : InfinitePlace K // w ≠ w₀} = rank K :=
     (Fintype.card_congr equivFinRank).symm.trans (Fintype.card_fin _)
-  refine .mono ?_ (image_boundary_paramSet_subset K)
-  refine .union (.image_unitCube_of_contDiff hcard (contDiff_faceMapZero K)) ?_
-  exact .iUnion fun p ↦ .image_unitCube_of_contDiff hcard (contDiff_faceMapSide K p.1 _)
+  refine .mono ?_ (image_frontier_paramSet_subset K)
+  refine .union
+    (.image_unitCube_of_contDiffOn hcard (ContDiff.contDiffOn (contDiff_faceMapZero K))) ?_
+  exact .iUnion fun p ↦ .image_unitCube_of_contDiffOn hcard
+    (ContDiff.contDiffOn (contDiff_faceMapSide K p.1 _))
 
 /-- **The frontier of the box image is Lipschitz parametrizable in codimension one.** This is the
 hypothesis `TauCeti.IsLipschitzParametrizable.exists_ncard_smul_add_inter_le` needs to turn a
@@ -249,7 +223,7 @@ lattice-point count into a count with a power-saving error term; Mathlib's
 The dimension is `rank K = #(InfinitePlace K) - 1`, one less than that of `realSpace K`. -/
 theorem isLipschitzParametrizable_frontier_image_paramSet :
     TauCeti.IsLipschitzParametrizable (rank K) (frontier (expMapBasis '' paramSet K)) :=
-  .mono ((isLipschitzParametrizable_image_boundary_paramSet K).union (.singleton 0)) <|
+  .mono ((isLipschitzParametrizable_image_frontier_paramSet K).union (.singleton 0)) <|
     frontier_image_paramSet_subset K
 
 end NumberField.mixedEmbedding.fundamentalCone

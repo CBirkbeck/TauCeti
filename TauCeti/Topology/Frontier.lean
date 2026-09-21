@@ -191,4 +191,30 @@ theorem frontier_inter_closure_eq_frontier_inter_frontier (hAV : A ⊆ V) :
 
 end Inside
 
+section OpenInjectiveImage
+
+variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y] {f : X → Y} {s : Set X} {p : Y}
+
+/-- **The frontier of an image lies on the image of the frontier, plus whatever the closure adds.**
+For an open injective `f` whose image closure satisfies `closure (f '' s) ⊆ f '' closure s ∪ {p}`,
+
+> `frontier (f '' s) ⊆ f '' frontier s ∪ {p}`.
+
+The extra point `p` is what an unbounded direction of `s` can escape to: without it the inclusion
+would say that the frontier of an image is the image of a frontier, which fails as soon as `f`
+sends a divergent sequence somewhere convergent. A consumer supplies `p` together with the closure
+hypothesis, typically from a compactness statement about the image.
+
+Openness and injectivity are both used, and neither can be dropped: openness keeps the image of
+the interior inside the interior of the image, and injectivity is what turns a difference of
+images into the image of a difference. -/
+theorem frontier_image_subset_of_closure_subset (hf : IsOpenMap f) (hfi : Function.Injective f)
+    (hcl : closure (f '' s) ⊆ f '' closure s ∪ {p}) :
+    frontier (f '' s) ⊆ f '' frontier s ∪ {p} := by
+  refine (Set.sdiff_subset_sdiff hcl (hf.image_interior_subset s)).trans ?_
+  rw [Set.union_sdiff_distrib, ← Set.image_sdiff hfi]
+  exact Set.union_subset_union_right _ Set.sdiff_subset
+
+end OpenInjectiveImage
+
 end TauCeti

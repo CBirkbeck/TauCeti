@@ -21,8 +21,8 @@ boundary.
 
 This file supplies the elementary API needed to assemble parametrizations: the property is
 monotone in the set, is preserved by Lipschitz images and finite unions, and holds for finite sets.
-It also supplies the way in from smoothness: a `C¹` map is Lipschitz on the compact cube, so a
-smooth image of a cube of the right dimension is a single chart.
+It also supplies the way in from smoothness: a map that is `C¹` on the compact cube is Lipschitz
+there, so the image of a cube of the right dimension is a single chart.
 It also records the basic dimension consequence.  A Lipschitz-parametrizable subset of a
 finite-dimensional real normed space has additive Haar measure zero whenever the parameter
 dimension is strictly smaller than the ambient dimension.  The proof compares additive Haar
@@ -41,8 +41,8 @@ That is what turns a parametrization in a given dimension into a count.
 * `TauCeti.IsLipschitzParametrizable.union`: closure under binary unions;
 * `TauCeti.IsLipschitzParametrizable.image`: closure under Lipschitz images;
 * `TauCeti.IsLipschitzParametrizable.iUnion`: closure under unions over a finite index type;
-* `TauCeti.IsLipschitzParametrizable.image_unitCube_of_contDiff`: a `C¹` image of a unit cube is
-  parametrized by that cube;
+* `TauCeti.IsLipschitzParametrizable.image_unitCube_of_contDiffOn`: a unit cube's image under a
+  map that is `C¹` on it is parametrized by that cube;
 * `TauCeti.IsLipschitzParametrizable.measure_zero`: a parametrized set has
   additive Haar measure zero below the ambient dimension;
 * `LipschitzOnWith.exists_cover_image_unitCube`: a Lipschitz image of the unit `d`-cube is
@@ -136,9 +136,8 @@ theorem biUnion_finset {I : Type*} (s : Finset I) {A : I → Set E}
       exact (hA i (Finset.mem_insert_self i s)).union
         (ih fun j hj ↦ hA j (Finset.mem_insert_of_mem hj))
 
-/-- **A union over a finite index type.** The `Finset`-indexed form above is the induction; this
-is the shape consumers actually meet, and without it every caller has to convert `⋃ i, A i` into
-`⋃ i ∈ Finset.univ, A i` by hand. -/
+/-- A union over a finite index type of sets parametrized in dimension `d` is Lipschitz
+parametrizable in dimension `d`. -/
 theorem iUnion {I : Type*} [Finite I] {A : I → Set E}
     (hA : ∀ i, IsLipschitzParametrizable d (A i)) :
     IsLipschitzParametrizable d (⋃ i, A i) := by
@@ -166,19 +165,23 @@ theorem image {g : E → F} {K : NNReal} (hg : LipschitzWith K g)
   obtain ⟨i, z, hz, rfl⟩ := Set.mem_iUnion.1 (hSf hx)
   exact Set.mem_iUnion.2 ⟨i, z, hz, rfl⟩
 
-/-- **A `C¹` image of a unit cube is Lipschitz parametrizable.** The cube is indexed by an
-arbitrary finite type `ι` of cardinality `d`, not by `Fin d` itself.
-
-This is the standard way to produce a parametrization — exhibit the set as a smooth image of a
-cube of the right dimension — and it is the only route from smoothness into the predicate. -/
-theorem image_unitCube_of_contDiff {ι G : Type*} [Fintype ι] [NormedAddCommGroup G]
-    [NormedSpace ℝ G] {d : ℕ} (hd : Fintype.card ι = d) {f : (ι → ℝ) → G} (hf : ContDiff ℝ 1 f) :
+/-- The image of the unit cube of `ι → ℝ` under a map that is `C¹` on that cube is Lipschitz
+parametrizable in dimension `#ι`. The cube is indexed by an arbitrary finite type `ι` of
+cardinality `d`, not by `Fin d` itself. -/
+theorem image_unitCube_of_contDiffOn {ι G : Type*} [Fintype ι] [NormedAddCommGroup G]
+    [NormedSpace ℝ G] {d : ℕ} (hd : Fintype.card ι = d) {f : (ι → ℝ) → G}
+    (hf : ContDiffOn ℝ 1 f (Icc 0 1)) :
     IsLipschitzParametrizable d (f '' Icc (0 : ι → ℝ) 1) := by
   set e := Fintype.equivFinOfCardEq hd
   set T : (Fin d → ℝ) → (ι → ℝ) := fun x i ↦ x (e i)
+  have hmaps : Set.MapsTo T (Icc (0 : Fin d → ℝ) 1) (Icc (0 : ι → ℝ) 1) :=
+    fun y hy ↦ ⟨fun i ↦ hy.1 _, fun i ↦ hy.2 _⟩
+  have hdiff : ContDiffOn ℝ 1 (f ∘ T) (Icc (0 : Fin d → ℝ) 1) :=
+    ContDiffOn.comp hf (ContDiff.contDiffOn (contDiff_pi.mpr fun i ↦ contDiff_apply ℝ ℝ (e i)))
+      hmaps
   -- A `C¹` map is Lipschitz on the compact convex cube, so `f ∘ T` is a single chart.
-  obtain ⟨C, hC⟩ := ContDiffOn.exists_lipschitzOnWith (show ContDiffOn ℝ 1 (f ∘ T) (Icc 0 1) by
-    fun_prop) one_ne_zero (convex_Icc _ _) isCompact_Icc
+  obtain ⟨C, hC⟩ :=
+    ContDiffOn.exists_lipschitzOnWith hdiff one_ne_zero (convex_Icc _ _) isCompact_Icc
   refine isLipschitzParametrizable_iff.2 ⟨1, C, fun _ ↦ f ∘ T, fun _ ↦ hC,
     Set.subset_iUnion_of_subset 0 ?_⟩
   -- Reindexing by `e` maps the `Fin d`-cube onto the `ι`-cube, so that chart covers the image.
