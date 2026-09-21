@@ -5,7 +5,7 @@ Authors: Claude
 -/
 module
 
-import TauCeti.Algebra.Homology.Ext.Basic
+import TauCeti.Algebra.Homology.ShortComplex.ShortExact
 
 public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 public import TauCeti.RepresentationTheory.Induction.TrivialSubgroup
@@ -183,11 +183,8 @@ theorem dimensionShiftDownSES_X₃ (A : Rep k G) : (dimensionShiftDownSES A).X�
 
 /-- The short complex `dimensionShiftDown A ⟶ Ind_⊥^G A ⟶ A` is short exact. -/
 theorem dimensionShiftDownSES_shortExact (A : Rep k G) :
-    (dimensionShiftDownSES A).ShortExact where
-  -- Instances do not fire through the named complex; its maps reduce to the two maps below.
-  exact := ShortComplex.kernelSequence_exact (indBotCounit A)
-  mono_f := inferInstanceAs (Mono (dimensionShiftDownι A))
-  epi_g := inferInstanceAs (Epi (indBotCounit A))
+    (dimensionShiftDownSES A).ShortExact :=
+  TauCeti.kernelSequence_shortExact (indBotCounit A)
 
 /-- The downward dimension-shifting short complex stays short exact after restriction along any
 monoid homomorphism `f : H →* G`. -/
