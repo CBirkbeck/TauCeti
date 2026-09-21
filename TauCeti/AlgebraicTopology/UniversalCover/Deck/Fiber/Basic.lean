@@ -55,13 +55,6 @@ lemma _root_.deck.fiberHomeomorphHom_apply (φ : deck p) (e : p ⁻¹' {b}) :
     fiberHomeomorphHom p b φ e = deck.fiberHomeomorph φ b e :=
   (rfl)
 
-/-- On underlying points, the fibre homomorphism is evaluation of the underlying
-homeomorphism. -/
-@[simp]
-lemma _root_.deck.fiberHomeomorphHom_apply_coe (φ : deck p) (e : p ⁻¹' {b}) :
-    (fiberHomeomorphHom p b φ e : E) = φ.1 e.1 :=
-  deck.fiberHomeomorph_apply φ b e
-
 /-- The fibre homomorphism sends the identity deck transformation to the identity
 homeomorphism of the fibre. -/
 @[simp]
@@ -131,7 +124,7 @@ transformation. -/
 @[simp]
 lemma _root_.deck.fiber_smul_coe (φ : deck p) (e : p ⁻¹' {b}) :
     ((φ • e : p ⁻¹' {b}) : E) = φ.1 e.1 :=
-  deck.fiberHomeomorphHom_apply_coe φ e
+  by simpa only [deck.fiber_smul_eq_fiberHomeomorph] using deck.fiberHomeomorph_apply φ b e
 
 /-- The projection value of a point in the fibre is unchanged after the restricted deck
 action. -/
