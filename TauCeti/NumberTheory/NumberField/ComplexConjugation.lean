@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.NumberTheory.NumberField.InfinitePlace.Ramification
 public import TauCeti.NumberTheory.NumberField.InfinitePlace.Tower
 
 /-!
