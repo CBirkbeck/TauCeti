@@ -9,15 +9,12 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Restriction
 public import TauCeti.RingTheory.Huber.StronglyNoetherian
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Evaluation
 
-import TauCeti.RingTheory.Huber.ClosedSubmodule
 import TauCeti.RingTheory.Huber.LocalizationTopology.Presentation
-import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.PairOfDefinition
 
 /-!
 # Strong noetherianness of a completed rational localisation
 
-Three results: one about the carrier of a presentation, one about the ring it presents, and one
-about the restricted power series that present it.
+Two results, one about the carrier of a presentation and one about the ring it presents.
 
 **Carrier-independence.** A presentation `(T, s)` of a rational localisation is carried by *some*
 localisation `S` of `A` at `s`, and the choice is immaterial: two carriers of the same
@@ -32,12 +29,6 @@ noetherianity travels along such a presentation. This is what a caller needs in 
 the construction, and hence what the sheaf condition for a strongly noetherian Huber pair rests
 on.
 
-**Closed ideals.** Over a complete Hausdorff strongly noetherian Tate ring every ideal of
-`A⟨X₁, …, Xₖ⟩` is closed. This is the hypothesis a caller must discharge to present a rational
-localisation as a quotient of restricted power series, by
-`TauCeti.Huber.PairOfDefinition.rationalQuotientRingEquiv`; strong noetherianness of the base is
-all it takes.
-
 Nothing here is specific to Laurent presentations or to enlarging the numerator set; those live
 in `TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.StronglyNoetherian`, which consumes
 this.
@@ -48,48 +39,13 @@ this.
   matter.
 * `TauCeti.Huber.PairOfDefinition.isStronglyNoetherian_completion`: a rational localisation of a
   strongly noetherian Tate ring is strongly noetherian.
-* `TauCeti.Huber.isClosed_ideal_weightedRestrictedSubring_one_weight`: every ideal of
-  `A⟨X₁, …, Xₖ⟩` is closed.
 -/
-
-open scoped Uniformity
 
 public section
 
 namespace TauCeti.Huber
 
 open TauCeti.Localization
-
-section ClosedIdeal
-
-variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [IsTopologicalRing A]
-  [CompleteSpace A] [T0Space A] [IsTateRing A] [IsStronglyNoetherian A]
-
-/-- **Every ideal of `A⟨X₁, …, Xₖ⟩` is closed**, for a complete Hausdorff strongly noetherian Tate
-ring `A`.
-
-Two properties of `A⟨X₁, …, Xₖ⟩` are in play. It is noetherian: over a complete Hausdorff `A` the
-ring of restricted power series is already complete and Hausdorff, so it agrees with the
-completion that `TauCeti.Huber.IsStronglyNoetherian` quantifies over, and
-`TauCeti.Huber.restrictedMvPowerSeriesCompletionEquiv` is that agreement. And it is metrisable:
-its uniformity is countably generated because that of `A` is. Those are exactly what
-`TauCeti.Huber.isClosed_of_isNoetherian` asks for, and it needs no finite generation of the
-ideal.
-
-Strong noetherianness is used only through its `k`-variable component, so the statement is for
-every `k` at once rather than for a fixed number of variables. -/
-theorem isClosed_ideal_weightedRestrictedSubring_one_weight {k : ℕ}
-    (I : Ideal (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))
-      isWeightFamily_one_weight)) :
-    IsClosed (I : Set (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))
-      isWeightFamily_one_weight)) := by
-  have _ := isNoetherianRing_of_ringEquiv _ (restrictedMvPowerSeriesCompletionEquiv k A)
-  have _ : (𝓤 (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))
-      isWeightFamily_one_weight)).IsCountablyGenerated :=
-    IsUniformAddGroup.uniformity_countably_generated
-  exact isClosed_of_isNoetherian I
-
-end ClosedIdeal
 
 namespace PairOfDefinition
 

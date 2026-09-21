@@ -22,6 +22,7 @@ of an ideal on a module, complementing `Mathlib/RingTheory/Ideal/Operations.lean
   divisor antidiagonal of the unit ideal is a singleton.
 * `Ideal.smul_top_eq_top_of_pi`: an ideal that expands the whole of a product of modules expands
   the whole of every factor.
+* `Ideal.span_eq_top_of_one_mem`: a generating set containing `1` generates the unit ideal.
 * `Ideal.span_insert_eq_top_of_subset`: a generating set `S` may be replaced by a set `S'`, both
   taken together with a common element `a`, as soon as every element of `S` is `a` itself or
   belongs to `S'`.
@@ -64,6 +65,11 @@ end Pi
 section Span
 
 variable {R : Type*} [CommSemiring R] {a : R} {S S' : Set R}
+
+/-- **A generating set containing `1` generates the unit ideal.** The span contains the unit `1`,
+and an ideal containing a unit is everything. -/
+theorem span_eq_top_of_one_mem (h : (1 : R) ∈ S) : Ideal.span S = ⊤ :=
+  Ideal.eq_top_of_isUnit_mem _ (Ideal.subset_span h) isUnit_one
 
 /-- **Replacing one generating set by another**: if every element of `S` is either `a` itself or an
 element of `S'`, then `S'` together with `a` generates the unit ideal as soon as `S` together with

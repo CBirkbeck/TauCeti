@@ -58,14 +58,13 @@ The denominator need not be listed even when it is a numerator: `({f, 1}, 1)` wi
   identification is one of topological rings.
 * `TauCeti.Huber.PairOfDefinition.rationalQuotientHom_surjective`,
   `TauCeti.Huber.PairOfDefinition.continuous_rationalQuotientHom`,
-  `TauCeti.Huber.PairOfDefinition.rationalQuotientHom_weightedC` and
+  `TauCeti.Huber.PairOfDefinition.rationalQuotientHom_weightedC`,
+  `TauCeti.Huber.PairOfDefinition.rationalQuotientHom_weightedX` and
   `TauCeti.Huber.PairOfDefinition.rationalQuotientHom_weightedC_mul_weightedX`: the presentation
   map is a continuous surjection, and its values on constants and on the relations.
 * `TauCeti.Huber.PairOfDefinition.rationalQuotientHom_eq_zero_iff_mem`: the kernel of the
-  presentation map is the relation ideal, as an iff usable in both directions;
-  `TauCeti.Huber.PairOfDefinition.mem_rationalRelationIdeal_of_rationalQuotientHom_eq_zero` is its
-  forward direction in the form that applies to a hypothesis. Together with the bullet above these
-  characterise a map out of `A⟨T/s⟩` without mentioning the quotient.
+  presentation map is the relation ideal, as an iff usable in both directions. Together with the
+  bullet above these characterise a map out of `A⟨T/s⟩` without mentioning the quotient.
 
 ## References
 
@@ -502,6 +501,17 @@ theorem rationalQuotientHom_weightedC (a : A) :
       toCompletionLoc P T s S hden a :=
   rationalQuotientRingEquiv_quotientMk_weightedC P T s S hden t ht hsplit hspan hcl a
 
+/-- **The presentation map sends `Xᵢ` to `tᵢ/s`.** -/
+@[simp]
+theorem rationalQuotientHom_weightedX (i : Fin k) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    rationalQuotientHom P T s S hden t ht hsplit hspan hcl
+        (weightedX _ isWeightFamily_one_weight i) =
+      ((divBy (t i) s : S) : UniformSpace.Completion S) :=
+  rationalQuotientRingEquiv_quotientMk_weightedX P T s S hden t ht hsplit hspan hcl i
+
 /-- **The presentation map takes the relations to zero**: the images of the constant `s` and of
 the variable `Xᵢ` multiply to the image of the constant `tᵢ`. This is the relation `tᵢ - s Xᵢ`
 read in `A⟨T/s⟩`, and it is stated this way rather than as `Xᵢ ↦ tᵢ/s` so that it can be used
@@ -544,17 +554,6 @@ theorem rationalQuotientHom_eq_zero_iff_mem
   have _ := isTopologicalRing_locUniformSpace P T s S hden
   rw [rationalQuotientHom, RingEquiv.toRingHom_eq_coe, RingHom.comp_apply, RingEquiv.coe_toRingHom,
     map_eq_zero_iff _ (RingEquiv.injective _), Ideal.Quotient.eq_zero_iff_mem]
-
-/-- **A vanishing value of the presentation map is a relation.** This is the forward direction of
-`rationalQuotientHom_eq_zero_iff_mem`, in the form that applies directly to a hypothesis. -/
-theorem mem_rationalRelationIdeal_of_rationalQuotientHom_eq_zero
-    {u : weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight}
-    (hu : letI := locUniformSpace P T s S hden
-      letI := isUniformAddGroup_locUniformSpace P T s S hden
-      letI := isTopologicalRing_locUniformSpace P T s S hden
-      rationalQuotientHom P T s S hden t ht hsplit hspan hcl u = 0) :
-    u ∈ rationalRelationIdeal t s :=
-  (rationalQuotientHom_eq_zero_iff_mem P T s S hden t ht hsplit hspan hcl).1 hu
 
 end Identification
 
