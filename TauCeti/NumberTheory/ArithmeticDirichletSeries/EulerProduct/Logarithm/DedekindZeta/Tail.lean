@@ -101,7 +101,8 @@ theorem summable_neg_log_one_sub_sub_absNorm_rpow {s : ℝ} (hs : 1 / 2 < s) :
   have hsum := (summable_absNorm_rpow_primes_of_one_lt (K := K) hs2).mul_left
     ((2 * (1 - (2 : ℝ) ^ (-s)))⁻¹)
   refine hsum.of_nonneg_of_le
-    (fun 𝔭 ↦ Real.neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔭) hs0) ?_
+    (fun 𝔭 ↦ Real.neg_log_one_sub_rpow_sub_nonneg
+      (one_lt_two.trans_le (two_le_absNorm_asIdeal_real 𝔭)) hs0) ?_
   intro 𝔭
   simpa only [div_eq_mul_inv, mul_comm] using
     Real.neg_log_one_sub_rpow_sub_le_div (two_le_absNorm_asIdeal_real 𝔭) hs0
@@ -112,7 +113,8 @@ yields a nonnegative `tsum`. This statement does not assert summability; that is
 theorem tsum_neg_log_one_sub_sub_absNorm_rpow_nonneg {s : ℝ} (hs : 0 < s) :
     0 ≤ ∑' 𝔭 : HeightOneSpectrum (𝓞 K), (-Real.log (1 - (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) -
       (Ideal.absNorm 𝔭.asIdeal : ℝ) ^ (-s)) :=
-  tsum_nonneg fun 𝔭 ↦ Real.neg_log_one_sub_rpow_sub_nonneg (two_le_absNorm_asIdeal_real 𝔭) hs
+  tsum_nonneg fun 𝔭 ↦ Real.neg_log_one_sub_rpow_sub_nonneg
+    (one_lt_two.trans_le (two_le_absNorm_asIdeal_real 𝔭)) hs
 
 /-- **The prime-power tail is bounded uniformly on `s ≥ 1`.** The constant `2 [K : ℚ]` does not
 depend on `s`, so this survives the passage to the limit `s → 1⁺` that the Dirichlet-density

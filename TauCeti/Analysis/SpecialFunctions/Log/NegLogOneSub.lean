@@ -70,11 +70,11 @@ theorem neg_log_one_sub_sub_le {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x < 1) :
       Complex.norm_log_one_sub_inv_sub_self_le hz
     _ = x ^ 2 / (2 * (1 - x)) := by rw [hnx]; field_simp
 
-/-- For `2 ≤ y` and `0 < s`, the quadratic remainder of `-log (1 - y ^ (-s))` is
+/-- For `1 < y` and `0 < s`, the quadratic remainder of `-log (1 - y ^ (-s))` is
 nonnegative. -/
-theorem neg_log_one_sub_rpow_sub_nonneg {y s : ℝ} (hy : 2 ≤ y) (hs : 0 < s) :
+theorem neg_log_one_sub_rpow_sub_nonneg {y s : ℝ} (hy : 1 < y) (hs : 0 < s) :
     0 ≤ -log (1 - y ^ (-s)) - y ^ (-s) :=
-  neg_log_one_sub_sub_nonneg (rpow_lt_one_of_one_lt_of_neg (by linarith) (by linarith))
+  neg_log_one_sub_sub_nonneg (rpow_lt_one_of_one_lt_of_neg hy (by linarith))
 
 /-- For `2 ≤ y` and `0 < s`, the quadratic remainder of `-log (1 - y ^ (-s))` is bounded by
 `y ^ (-2s) / (2 (1 - 2 ^ (-s)))`. -/
