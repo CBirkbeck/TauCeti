@@ -201,15 +201,10 @@ R((T ∪ φ(D))/s) = R(T/s).
 ```
 
 Wedhorn carries out this enlargement inside the proof of Proposition 8.2(2), deducing it from
-Lemma 7.31 after a quasi-compactness argument. That route is avoided here, and with it every
-hypothesis it would cost: `valuation_lt_of_mem_idealImage` bounds a whole basic neighbourhood of
-zero uniformly in the point, so no quasi-compactness is needed and neither ring has to be Tate,
-complete or Noetherian. (`exists_mem_nhds_zero_forall_vlt`, this library's Lemma 7.31, does
-assume a Tate ring.)
-
-Continuity of `φ` is used only to pull a neighbourhood of zero back to one; nothing is assumed
-relating the ideals of definition of `A` and `B`, and `D · A` is open for reasons internal to
-`A`. -/
+Lemma 7.31. Neither ring is assumed Tate, complete or Noetherian here, where that deduction
+would cost a Tate ring: `exists_mem_nhds_zero_forall_vlt`, this library's Lemma 7.31, assumes
+one. Nothing is assumed relating the ideals of definition of `A` and `B`, and `D · A` is open
+for reasons internal to `A`. -/
 theorem exists_isOpen_span_rationalSubset_union_image_eq [IsHuberRing A] {B : Type*} [CommRing B]
     [TopologicalSpace B] [IsTopologicalRing B] [IsHuberRing B] {φ : A →+* B} (hφ : Continuous φ)
     (Bplus : Subring B) (T : Finset B) (hT : IsOpen (Ideal.span (T : Set B) : Set B)) (s : B) :
@@ -221,7 +216,9 @@ theorem exists_isOpen_span_rationalSubset_union_image_eq [IsHuberRing A] {B : Ty
   obtain ⟨D, hD, hDopen⟩ := exists_finset_subset_isOpen_span <| hφ.continuousAt.preimage_mem_nhds <|
     map_zero φ ▸ (P.isOpen_idealImage n).mem_nhds (P.idealImage n).zero_mem
   refine ⟨D, hDopen, rationalSubset_union_of_forall_vle Bplus T _ s ?_⟩
-  -- the adjoined numerators lie in `Iⁿ`, so they are strictly dominated by `v s`
+  -- the adjoined numerators lie in `Iⁿ`, so they are strictly dominated by `v s`; the bound
+  -- `valuation_lt_of_mem_idealImage` gives is uniform in `v`, which is what removes the need
+  -- for the quasi-compactness argument Wedhorn runs at this point
   refine Finset.forall_mem_image.mpr fun d hd v hv ↦ ?_
   obtain ⟨hspa, hle, hs⟩ := (mem_rationalSubset_iff_valuation Bplus T s v).mp hv
   exact (valuation_le_iff v _ s).mp
