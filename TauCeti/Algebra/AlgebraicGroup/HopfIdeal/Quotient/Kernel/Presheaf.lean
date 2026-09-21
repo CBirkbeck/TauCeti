@@ -64,6 +64,8 @@ private theorem quotientPointsSubgroup_le_mapPointsFunctor_ker (f : H ⟶ K)
     (A : CommAlgCat.{w} R) :
     quotientPointsSubgroup K (kernelHopfIdeal f) A ≤ ((mapPointsFunctor f).app A).hom.ker := by
   intro g hg
+  -- Membership in the kernel uses the underlying monoid hom, while `g` is a point in the
+  -- subgroup carrier; expose the definitionally equal functor-of-points types for rewriting.
   exact show (mapPointsFunctor f).app A
       (show (HopfAlgebra.pointsFunctor (R := R) (H := K)).obj A from g) = 1 from by
     rw [mapPointsFunctor_app_apply]
@@ -167,6 +169,8 @@ theorem kernelPointwiseQuotientMap_injective (f : H ⟶ K) (A : CommAlgCat.{w} R
     Function.Injective (kernelPointwiseQuotientMap f A) := by
   let _ : (quotientPointsSubgroup K (kernelHopfIdeal f) A).Normal :=
     quotientPointsSubgroup_normal K (kernelHopfIdeal f) (isNormal_kernelHopfIdeal f) A
+  -- Mathlib's quotient-group criterion is stated for the underlying monoid hom; expose the
+  -- definitional coercion from the `GrpCat` morphism before applying it.
   exact show Function.Injective (kernelPointwiseQuotientMap f A).hom from by
     unfold kernelPointwiseQuotientMap
     erw [pointwiseQuotientLift_hom]
@@ -208,6 +212,8 @@ theorem kernelPointwiseQuotientMap_surjective_iff (f : H ⟶ K) (A : CommAlgCat.
     have hlift' : Function.Surjective (kernelPointwiseQuotientMap f A).hom := hlift
     unfold kernelPointwiseQuotientMap at hlift'
     erw [pointwiseQuotientLift_hom] at hlift'
+    -- The composite below is a monoid hom, so expose the definitional coercion from the target
+    -- `GrpCat` morphism before using the quotient-group factorization.
     exact show Function.Surjective ((mapPointsFunctor f).app A).hom from by
       rw [← QuotientGroup.lift_comp_mk' (quotientPointsSubgroup K (kernelHopfIdeal f) A)
         ((mapPointsFunctor f).app A).hom
@@ -215,6 +221,8 @@ theorem kernelPointwiseQuotientMap_surjective_iff (f : H ⟶ K) (A : CommAlgCat.
       exact hlift'.comp
         (QuotientGroup.mk'_surjective (quotientPointsSubgroup K (kernelHopfIdeal f) A))
   · intro hsurjective
+    -- Mathlib's quotient-group surjectivity lemma returns a fact about the underlying monoid
+    -- hom; expose its definitional equality with surjectivity of the `GrpCat` comparison.
     exact show Function.Surjective (kernelPointwiseQuotientMap f A).hom from by
       unfold kernelPointwiseQuotientMap
       erw [pointwiseQuotientLift_hom]
