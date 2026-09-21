@@ -171,12 +171,18 @@ theorem restrictNormal_complexConjugationAt_eq_one_of_isReal [Normal K F] (w : I
 
 /-- The conjugation at `w` restricts to the conjugation at the induced complex place on `F`. -/
 @[simp]
-theorem restrictNormal_complexConjugationAt_of_isComplex [IsGalois K F] (w : InfinitePlace L)
+theorem restrictNormal_complexConjugationAt_of_isComplex [Normal K F] (w : InfinitePlace L)
     (hw : w.IsRamified K) (hv : (w.comap (algebraMap F L)).IsComplex) :
+    letI : Algebra.IsSeparable K F :=
+      Algebra.isSeparable_tower_bot_of_isSeparable K F L
+    letI : IsGalois K F := ⟨⟩
     (complexConjugationAt K w hw).restrictNormal F
       = complexConjugationAt K (w.comap (algebraMap F L))
           (isRamified_comap_of_isComplex K hw hv) := by
-  refine eq_complexConjugationAt_of_mem_stabilizer_of_ne_one K _ _ ?_ ?_
+  let hsep : Algebra.IsSeparable K F :=
+    Algebra.isSeparable_tower_bot_of_isSeparable K F L
+  let hgalois : IsGalois K F := { to_isSeparable := hsep }
+  refine @eq_complexConjugationAt_of_mem_stabilizer_of_ne_one K _ F _ _ hgalois _ _ _ ?_ ?_
   · rw [MulAction.mem_stabilizer_iff, restrictNormal_smul_comap,
       complexConjugationAt_smul_self]
   · intro h1
