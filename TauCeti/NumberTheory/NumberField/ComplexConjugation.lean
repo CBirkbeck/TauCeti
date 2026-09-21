@@ -165,7 +165,7 @@ theorem complexConjugationAt_restrictNormal_eq_one_of_isReal [Normal K F] (w : I
     (complexConjugationAt K w hw).restrictNormal F = 1 := by
   have hmem : (complexConjugationAt K w hw).restrictNormal F
       ∈ MulAction.stabilizer (F ≃ₐ[K] F) (w.comap (algebraMap F L)) := by
-    rw [MulAction.mem_stabilizer_iff, restrictNormal_smul_comap,
+    rw [MulAction.mem_stabilizer_iff, AlgEquiv.restrictNormal_smul_comap,
       complexConjugationAt_smul_self]
   rwa [(hv.isUnramified (k := K)).stabilizer_eq_bot, Subgroup.mem_bot] at hmem
 
@@ -183,7 +183,7 @@ theorem complexConjugationAt_restrictNormal_of_isComplex [Normal K F] (w : Infin
     Algebra.isSeparable_tower_bot_of_isSeparable K F L
   let hgalois : IsGalois K F := { to_isSeparable := hsep }
   refine @eq_complexConjugationAt_of_mem_stabilizer_of_ne_one K _ F _ _ hgalois _ _ _ ?_ ?_
-  · rw [MulAction.mem_stabilizer_iff, restrictNormal_smul_comap,
+  · rw [MulAction.mem_stabilizer_iff, AlgEquiv.restrictNormal_smul_comap,
       complexConjugationAt_smul_self]
   · intro h1
     exact complexConjugationAt_ne_one K w hw
