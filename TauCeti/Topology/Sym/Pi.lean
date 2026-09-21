@@ -96,7 +96,8 @@ theorem coe_piHomeomorph_apply (hA : ∀ i, IsCompact (A i))
     (h : Pairwise (Function.onFun Disjoint A)) (x : ∀ i, ↥(A i)) :
     (piHomeomorph hA h x : Sym α n) = ofFn fun i => (x i : α) := by
   -- Evaluate each link of the chain through its application lemma instead of unfolding the
-  -- equivalence it is built from, so that the proof depends only on `rfl` equations.
+  -- equivalence it is built from: the application lemmas are stable under changes to those
+  -- definitions, which definitional unfolding is not.
   simp only [piHomeomorph, Homeomorph.trans_apply, Homeomorph.setCongr_apply,
     IsEmbedding.toHomeomorph_apply_coe]
 

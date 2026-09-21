@@ -68,7 +68,8 @@ theorem isCoveringMap_sigmaMap (hf : ∀ i, IsCoveringMap (f i)) :
     obtain ⟨⟨j, e⟩, hje⟩ := p
     obtain rfl : j = i := by simpa [Sigma.map, eq_comm] using hje
     -- Evaluate each link of the two chains through its application lemma instead of unfolding
-    -- the equivalence it is built from, so that the proof depends only on `rfl` equations.
+    -- the equivalence it is built from: the application lemmas are stable under changes to
+    -- those definitions, which definitional unfolding is not.
     simp only [Set.restrictPreimage, Set.MapsTo.val_restrict_apply, Sigma.map, id_eq,
       Function.comp_apply, Homeomorph.trans_apply, Homeomorph.setCongr_apply,
       IsEmbedding.toHomeomorph_symm_apply, IsEmbedding.toHomeomorph_apply_coe, hX, hE]
