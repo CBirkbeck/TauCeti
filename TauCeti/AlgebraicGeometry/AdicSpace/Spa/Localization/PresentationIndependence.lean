@@ -31,7 +31,14 @@ so the two coordinate rings are canonically isomorphic. That is the shape
 isomorphism *given* comparison maps both ways, and this file supplies them from an equality of
 rational subsets.
 
-Both results assume only that `A⁺` consists of power-bounded elements, as every ring of integral
+In `CompleteSeparatedTopCommRingCat` the same argument is cheaper: the comparison morphisms of
+the two containments compose to the comparison morphism of a containment of a rational subset in
+itself, which is the identity, so no further uniqueness argument is needed. Since every
+restriction morphism of a refinement is a comparison morphism, it follows that a refinement
+between two presentations of the *same* rational subset is an isomorphism — the assignment
+`p ↦ A⟨p.num / p.den⟩` sees only the rational subset `R(p)`.
+
+All of this assumes only that `A⁺` consists of power-bounded elements, as every ring of integral
 elements of `A` does.
 
 ## Main definitions
@@ -40,6 +47,9 @@ elements of `A` does.
   `TauCeti.ValuationSpectrum.homOfRationalSubsetSubset` : the comparison map of Proposition
   8.2(1), respectively as a ring homomorphism and as a morphism of complete separated topological
   rings.
+* `TauCeti.ValuationSpectrum.completionLocObjIsoOfRationalSubsetEq` : **presentation
+  independence**, as an isomorphism `A⟨p⟩ ≅ A⟨q⟩` in `CompleteSeparatedTopCommRingCat`, built
+  from the comparison morphisms of the two containments an equality of rational subsets gives.
 * `TauCeti.ValuationSpectrum.presentationRingEquivOfEq` : **presentation independence** — two
   presentations of the same rational subset have canonically isomorphic coordinate rings, by the
   comparison maps in both directions.
@@ -49,8 +59,12 @@ elements of `A` does.
 * `TauCeti.ValuationSpectrum.existsUnique_continuous_ringHom_of_rationalSubset_subset` :
   **Wedhorn's Proposition 8.2(1)** — a containment of rational subsets induces a unique continuous
   comparison map compatible with the structure maps.
+* `TauCeti.ValuationSpectrum.isIso_homOfRationalSubsetSubset` : a comparison morphism between
+  *equal* rational subsets is an isomorphism.
 * `TauCeti.ValuationSpectrum.restrictionHom_eq_homOfRationalSubsetSubset` : the restriction
   morphism of a refinement is the comparison morphism of the induced containment.
+* `TauCeti.ValuationSpectrum.isIso_restrictionHom_of_rationalSubset_eq` : **a refinement map
+  between two presentations of the same rational subset is an isomorphism**.
 
 `presentationRingEquivOfEq` is a `def`, so it comes with the lemmas that pin down what it is
 without unfolding the proof term: `continuous_presentationRingEquivOfEq` and
@@ -59,6 +73,9 @@ rings, and `presentationRingEquivOfEq_coe_comp_toCompletionLoc` together with it
 counterpart, which say the isomorphism and its inverse commute with the structure maps from `A`.
 By the uniqueness in Proposition 8.2(1), that compatibility characterises the isomorphism among
 continuous ring homomorphisms, so a consumer needs nothing else.
+`completionLocObjIsoOfRationalSubsetEq` is a `def` for the same reason, and is pinned down the
+same way, by `completionLocObjIsoOfRationalSubsetEq_hom` and
+`completionLocObjIsoOfRationalSubsetEq_inv`.
 
 ## References
 
@@ -242,6 +259,63 @@ theorem homOfRationalSubsetSubset_comp (Aplus : Subring A)
     (ringHomOfRationalSubsetSubset_comp_toCompletionLoc P Aplus hAplus _ _ _ _ _ _ _ _
       (h₂.trans h₁))).symm
 
+/-! ### Presentation independence in `CompleteSeparatedTopCommRingCat` -/
+
+/-- **Presentation independence**: two presentations of the *same* rational subset have
+canonically isomorphic objects `A⟨p⟩ ≅ A⟨q⟩`.
+
+The equality of rational subsets gives a containment each way, so Wedhorn's Proposition 8.2(1)
+gives a comparison morphism each way; the two are mutually inverse because either composite is
+the comparison morphism of a containment of a rational subset in itself, hence the identity.
+
+This is the categorical counterpart of `presentationRingEquivOfEq`: it says the assignment
+`p ↦ A⟨p.num / p.den⟩` depends on the rational subset `R(p)` alone. The body is not exported:
+consumers use `completionLocObjIsoOfRationalSubsetEq_hom` and
+`completionLocObjIsoOfRationalSubsetEq_inv`. -/
+noncomputable def completionLocObjIsoOfRationalSubsetEq (Aplus : Subring A)
+    (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) {P : PairOfDefinition A}
+    {p q : Presentation P}
+    (heq : rationalSubset Aplus p.num p.den = rationalSubset Aplus q.num q.den) :
+    p.completionLocObj ≅ q.completionLocObj where
+  hom := homOfRationalSubsetSubset Aplus hAplus heq.ge
+  inv := homOfRationalSubsetSubset Aplus hAplus heq.le
+  -- `homOfRationalSubsetSubset_comp` contracts either composite to the comparison morphism of a
+  -- containment of a rational subset in itself, which `homOfRationalSubsetSubset_self` kills
+  hom_inv_id := by rw [homOfRationalSubsetSubset_comp, homOfRationalSubsetSubset_self]
+  inv_hom_id := by rw [homOfRationalSubsetSubset_comp, homOfRationalSubsetSubset_self]
+
+/-- The forward morphism of the presentation-independence isomorphism is the comparison morphism
+of the containment `R(q) ⊆ R(p)`. -/
+@[simp]
+theorem completionLocObjIsoOfRationalSubsetEq_hom (Aplus : Subring A)
+    (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) {P : PairOfDefinition A}
+    {p q : Presentation P}
+    (heq : rationalSubset Aplus p.num p.den = rationalSubset Aplus q.num q.den) :
+    (completionLocObjIsoOfRationalSubsetEq Aplus hAplus heq).hom =
+      homOfRationalSubsetSubset Aplus hAplus heq.ge := (rfl)
+
+/-- The inverse morphism of the presentation-independence isomorphism is the comparison morphism
+of the containment `R(p) ⊆ R(q)`. -/
+@[simp]
+theorem completionLocObjIsoOfRationalSubsetEq_inv (Aplus : Subring A)
+    (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) {P : PairOfDefinition A}
+    {p q : Presentation P}
+    (heq : rationalSubset Aplus p.num p.den = rationalSubset Aplus q.num q.den) :
+    (completionLocObjIsoOfRationalSubsetEq Aplus hAplus heq).inv =
+      homOfRationalSubsetSubset Aplus hAplus heq.le := (rfl)
+
+/-- **A comparison morphism between equal rational subsets is an isomorphism**, by
+`completionLocObjIsoOfRationalSubsetEq`. -/
+theorem isIso_homOfRationalSubsetSubset (Aplus : Subring A)
+    (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) {P : PairOfDefinition A}
+    {p q : Presentation P}
+    (heq : rationalSubset Aplus p.num p.den = rationalSubset Aplus q.num q.den) :
+    IsIso (homOfRationalSubsetSubset Aplus hAplus heq.ge) := by
+  -- the comparison morphism is the forward morphism of that isomorphism; the body of the `def`
+  -- is sealed, so the identification is the `simp` lemma rather than definitional
+  rw [← completionLocObjIsoOfRationalSubsetEq_hom Aplus hAplus heq]
+  infer_instance
+
 /-- **The restriction morphism of a refinement is a comparison morphism**: both are continuous
 and compatible with the structure maps from `A`, which determines the map. -/
 theorem restrictionHom_eq_homOfRationalSubsetSubset (Aplus : Subring A)
@@ -259,6 +333,23 @@ theorem restrictionHom_eq_homOfRationalSubsetSubset (Aplus : Subring A)
   exact eq_ringHomOfRationalSubsetSubset P Aplus hAplus _ _ _ _ _ _ _ _ _ _
     (continuous_restrictionRingHom P _ _ _ _ _ _ _ _ r hr hT)
     (restrictionRingHom_comp_toCompletionLoc P _ _ _ _ _ _ _ _ r hr hT)
+
+/-- **A refinement map between two presentations of the same rational subset is an
+isomorphism**: the restriction morphism `A⟨p⟩ ⟶ A⟨q⟩` of a refinement `p ≤ q` is invertible as
+soon as `R(p) = R(q)`.
+
+A refinement can only shrink the rational subset; this says that when it shrinks it by nothing,
+nothing is lost on coordinate rings either. So `p ↦ A⟨p.num / p.den⟩` descends, up to canonical
+isomorphism, to a function of the rational subset alone. -/
+theorem isIso_restrictionHom_of_rationalSubset_eq (Aplus : Subring A)
+    (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) {P : PairOfDefinition A}
+    {p q : Presentation P} (h : p ≤ q)
+    (heq : rationalSubset Aplus p.num p.den = rationalSubset Aplus q.num q.den) :
+    IsIso (Presentation.restrictionHom h) := by
+  -- the restriction morphism is the comparison morphism of the containment `R(q) ⊆ R(p)` that
+  -- the refinement induces, and the equality makes that comparison morphism invertible
+  rw [restrictionHom_eq_homOfRationalSubsetSubset Aplus hAplus h]
+  exact isIso_homOfRationalSubsetSubset Aplus hAplus heq
 
 /-- **Presentation independence**: two presentations of the *same* rational subset have
 canonically isomorphic coordinate rings.
