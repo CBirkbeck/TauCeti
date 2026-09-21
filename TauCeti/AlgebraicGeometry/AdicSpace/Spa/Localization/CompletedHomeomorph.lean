@@ -144,10 +144,7 @@ theorem spaCompletedLocalizationHomeomorph_apply (P : PairOfDefinition A) (Aplus
   have hrho : toCompletionLoc P T s S hden = Completion.coeRingHom.comp (algebraMap A S) :=
     RingHom.ext (toCompletionLoc_apply P T s S hden)
   refine fun v ↦ Subtype.ext <| Subtype.ext ?_
-  simp only [spaCompletedLocalizationHomeomorph, Homeomorph.trans_apply]
-  rw [spaLocalizationHomeomorph_apply_val, Homeomorph.setCongr_apply,
-    spaCompletionHomeomorph_apply, spaComap_val, Homeomorph.setCongr_apply,
-    spaLocToRationalSubset_val, spaComapLoc_val, hrho, comap_comp, Function.comp_apply]
+  simp [spaCompletedLocalizationHomeomorph, hrho]
 
 /-- The homeomorphism, as a function, is pullback along the structure map `ρ : A → A⟨T/s⟩`. This is
 the functional companion of the pointwise `spaCompletedLocalizationHomeomorph_apply`, in the form
