@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.Algebra.Ring.Subgroup
 public import Mathlib.Algebra.Algebra.Subalgebra.Basic
 public import Mathlib.RingTheory.Ideal.Operations
 
@@ -22,6 +23,7 @@ of an ideal on a module, complementing `Mathlib/RingTheory/Ideal/Operations.lean
 * `Ideal.eq_one_of_mul_eq_one`: the only factorization of the unit ideal is the trivial one, so a
   factor of `1` is `1`. This is the ideal-theoretic cancellation step behind the fact that the
   divisor antidiagonal of the unit ideal is a singleton.
+* `Ideal.toAddSubgroup_mul_eq_closure_mul`: additive generators of a product of ideals.
 * `Ideal.smul_top_eq_top_of_pi`: an ideal that expands the whole of a product of modules expands
   the whole of every factor.
 * `Ideal.span_insert_eq_top_of_subset`: a generating set `S` may be replaced by a set `S'`, both
@@ -34,7 +36,23 @@ of an ideal on a module, complementing `Mathlib/RingTheory/Ideal/Operations.lean
 
 public section
 
+open scoped Pointwise
+
 namespace Ideal
+
+variable {R : Type*} [Ring R] {I J : Ideal R} {S T : Set R}
+
+/-- If `S` and `T` additively generate the ideals `I` and `J`, then their pairwise products
+additively generate `I * J`. -/
+theorem toAddSubgroup_mul_eq_closure_mul
+    (hI : I.toAddSubgroup = AddSubgroup.closure S)
+    (hJ : J.toAddSubgroup = AddSubgroup.closure T) :
+    (I * J).toAddSubgroup = AddSubgroup.closure (S * T) := by
+  apply AddSubgroup.toAddSubmonoid_injective
+  rw [Submodule.toAddSubgroup_toAddSubmonoid, _root_.Submodule.mul_toAddSubmonoid,
+    ← Submodule.toAddSubgroup_toAddSubmonoid I, ← Submodule.toAddSubgroup_toAddSubmonoid J,
+    hI, hJ, ← _root_.AddSubgroup.mul_toAddSubmonoid,
+    AddSubgroup.closure_mul_closure]
 
 section Mul
 
