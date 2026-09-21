@@ -37,7 +37,7 @@ functoriality needed for the overlap and cocycle maps in fan gluing.
 * `TauCeti.Toric.isLocalization_away_faceAffineCoordinateRingMap_inf_ker`: the coordinate ring of
   the face `σ ⊓ ker m` is the localization of the coordinate ring of `σ` away from the monomial of
   `m`.
-* `TauCeti.Toric.isOpenImmersion_affineToricSchemeMap_inf_ker`: the affine toric scheme of the
+* `TauCeti.Toric.isOpenImmersion_faceAffineToricSchemeMap_inf_ker`: the affine toric scheme of the
   face is an open subscheme of the affine toric scheme of `σ`.
 * `TauCeti.Toric.faceAffineCoordinateRingMap` and
   `TauCeti.Toric.faceAffineToricSchemeMap`: the canonical restriction map and affine-scheme
@@ -214,7 +214,7 @@ theorem isLocalization_away_faceAffineCoordinateRingMap_inf_ker (hi : IsIntegral
 
 /-- For a character `m` in the dual semigroup of a finitely generated cone `σ`, the morphism from
 the affine toric scheme of the face `σ ⊓ ker m` to that of `σ` is an open immersion. -/
-theorem isOpenImmersion_affineToricSchemeMap_inf_ker {N : Type u} [AddCommGroup N]
+theorem isOpenImmersion_faceAffineToricSchemeMap_inf_ker {N : Type u} [AddCommGroup N]
     {i : N →+ V} (hi : IsIntegralLattice i) (hσ : σ.FG) (m : dualSemigroup hi σ) :
     IsOpenImmersion (faceAffineToricSchemeMap hi
       (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2))) := by
@@ -285,7 +285,7 @@ theorem isOpenImmersion_faceAffineToricSchemeMap {N : Type u} [AddCommGroup N] {
   have hh : hτ = PointedCone.isFaceOf_inf_ker
       ((mem_dualSemigroup hi m).1 hm) := Subsingleton.elim _ _
   subst hτ
-  exact isOpenImmersion_affineToricSchemeMap_inf_ker hi hσ.fg ⟨m, hm⟩
+  exact isOpenImmersion_faceAffineToricSchemeMap_inf_ker hi hσ.fg ⟨m, hm⟩
 
 /-- For two faces `τ` and `υ` of a regular cone `σ`, the image of the affine toric scheme of
 `τ ⊓ υ` in that of `σ` is the intersection of the images of the affine toric schemes of `τ` and

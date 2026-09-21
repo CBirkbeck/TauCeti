@@ -35,8 +35,9 @@ is the open-subspace input for gluing regular affine toric charts.
 * `TauCeti.Toric.range_faceAffinePointMap_inf_ker` and
   `TauCeti.Toric.isOpenEmbedding_faceAffinePointMap_inf_ker`: the exact range and open-embedding
   theorem for a character face of a finitely generated cone.
-* `TauCeti.Toric.IsRegularCone.exists_range_faceAffinePointMap`: its image is the
-  nonvanishing locus of a character cutting out an arbitrary face of a regular cone.
+* `TauCeti.Toric.range_faceAffinePointMap_of_eq` and
+  `TauCeti.Toric.IsRegularCone.exists_range_faceAffinePointMap`: its image is the nonvanishing
+  locus of a specified character cutting out an arbitrary face of a regular cone.
 * `TauCeti.Toric.IsRegularCone.isOpenEmbedding_faceAffinePointMap`: a regular face chart
   is an open subspace of its ambient affine complex-point chart.
 
@@ -190,6 +191,18 @@ noncomputable def faceAffinePointInfKerLift
   exact IsLocalization.Away.liftAlgHom (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
     (isUnit_iff_ne_zero.mpr x.2)
 
+private theorem faceAffinePointInfKerLift_toRingHom
+    (x : {x : AffineSemigroupComplexPoint (dualSemigroup hi σ) //
+      x (MonoidAlgebra.single (ofAdd m) 1) ≠ 0}) :
+    letI := faceAffinePointInfKerAlgebra hi m
+    letI := isLocalization_away_faceAffineCoordinateRingMap_inf_ker hi hσ m
+    (faceAffinePointInfKerLift hi hσ m x).toRingHom =
+      IsLocalization.Away.lift (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
+        (isUnit_iff_ne_zero.mpr x.2) := by
+  -- `liftAlgHom` exposes its underlying `Away.lift` only by definitional reduction.
+  rw [faceAffinePointInfKerLift]
+  rfl
+
 /-- Pulling a lifted point back to the ambient chart recovers the original point. -/
 @[simp]
 theorem faceAffinePointMap_inf_ker_lift
@@ -200,9 +213,16 @@ theorem faceAffinePointMap_inf_ker_lift
       (faceAffinePointInfKerLift hi hσ m x) = x := by
   apply AlgHom.ext
   intro a
-  rw [faceAffinePointMap_apply, faceAffinePointInfKerLift]
+  rw [faceAffinePointMap_apply]
   let _ := faceAffinePointInfKerAlgebra hi m
   have := isLocalization_away_faceAffineCoordinateRingMap_inf_ker hi hσ m
+  change (faceAffinePointInfKerLift hi hσ m x).toRingHom
+    (faceAffineCoordinateRingMap hi
+      (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)) a) = x.1 a
+  rw [faceAffinePointInfKerLift_toRingHom]
+  -- The installed algebra map is the canonical face coordinate-ring map.
+  change (IsLocalization.Away.lift (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
+    (isUnit_iff_ne_zero.mpr x.2)) (algebraMap _ _ a) = x.1 a
   exact IsLocalization.Away.lift_eq (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
     (isUnit_iff_ne_zero.mpr x.2) a
 
@@ -233,7 +253,11 @@ theorem faceAffinePointInfKerLift_map
   let _ := faceAffinePointInfKerAlgebra hi m
   have := isLocalization_away_faceAffineCoordinateRingMap_inf_ker hi hσ m
   apply AlgHom.coe_ringHom_injective
-  rw [faceAffinePointInfKerLift]
+  change (faceAffinePointInfKerLift hi hσ m
+    ⟨faceAffinePointMap hi
+      (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)) x,
+      faceAffinePointMap_inf_ker_apply_single_ne_zero hi m x⟩).toRingHom = x.toRingHom
+  rw [faceAffinePointInfKerLift_toRingHom]
   exact IsLocalization.lift_of_comp
     (M := Submonoid.powers (MonoidAlgebra.single (ofAdd m) (1 : ℂ))) x.toRingHom
 
@@ -251,11 +275,9 @@ theorem faceAffinePointInfKerLift_mk'
       x.1 a * (x.1 y.1)⁻¹ := by
   let _ := faceAffinePointInfKerAlgebra hi m
   have := isLocalization_away_faceAffineCoordinateRingMap_inf_ker hi hσ m
-  rw [faceAffinePointInfKerLift]
-  -- `Away.liftAlgHom` exposes its underlying `Away.lift` only by definitional reduction.
-  change (IsLocalization.Away.lift (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
-      (isUnit_iff_ne_zero.mpr x.2))
-    (IsLocalization.mk' _ a y) = x.1 a * (x.1 y.1)⁻¹
+  change (faceAffinePointInfKerLift hi hσ m x).toRingHom (IsLocalization.mk' _ a y) =
+    x.1 a * (x.1 y.1)⁻¹
+  rw [faceAffinePointInfKerLift_toRingHom]
   rw [IsLocalization.Away.lift]
   apply (IsLocalization.lift_mk'_spec _ a (x.1 a * (x.1 y.1)⁻¹) y).2
   rw [AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
@@ -419,6 +441,24 @@ theorem range_faceAffinePointMap_inf_ker :
     exact ⟨faceAffinePointInfKerLift hi hσ m ⟨x, hx⟩,
       faceAffinePointMap_inf_ker_lift hi hσ m ⟨x, hx⟩⟩
 
+omit hσ
+
+/-- If a specified character cuts out a face of a finitely generated cone, the image of the
+complex-point face map is its nonvanishing locus. -/
+theorem range_faceAffinePointMap_of_eq (hi : IsIntegralLattice i) (hσ : σ.FG)
+    (hτσ : τ.IsFaceOf σ) (m : dualSemigroup hi σ)
+    (hm : σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)) = τ) :
+    Set.range (faceAffinePointMap hi hτσ) =
+      {x : AffineSemigroupComplexPoint (dualSemigroup hi σ) |
+        x (MonoidAlgebra.single (ofAdd m) 1) ≠ 0} := by
+  subst τ
+  have heq : hτσ = PointedCone.isFaceOf_inf_ker
+      ((mem_dualSemigroup hi m).1 m.2) := Subsingleton.elim _ _
+  subst hτσ
+  exact range_faceAffinePointMap_inf_ker hi hσ m
+
+include hσ
+
 /-- The complex-point map for a face cut out by one character is an open embedding for arbitrary
 finite generating families. -/
 theorem isOpenEmbedding_faceAffinePointMap_inf_ker
@@ -469,12 +509,8 @@ theorem exists_range_faceAffinePointMap (hreg : IsRegularCone i σ)
         {x : AffineSemigroupComplexPoint (dualSemigroup hi σ) |
           x (MonoidAlgebra.single (ofAdd m) 1) ≠ 0} := by
   obtain ⟨m, hm, hface⟩ := hreg.exists_mem_dualSemigroup_inf_ker_eq hi hτ
-  refine ⟨⟨m, hm⟩, hface, ?_⟩
-  subst τ
-  have heq : hτ = PointedCone.isFaceOf_inf_ker
-      ((mem_dualSemigroup hi (⟨m, hm⟩ : dualSemigroup hi σ)).1 hm) := Subsingleton.elim _ _
-  subst hτ
-  exact range_faceAffinePointMap_inf_ker hi hreg.fg ⟨m, hm⟩
+  exact ⟨⟨m, hm⟩, hface,
+    range_faceAffinePointMap_of_eq hi hreg.fg hτ ⟨m, hm⟩ hface⟩
 
 /-- The complex-point map of every face inclusion into a regular cone is an open embedding for
 arbitrary finite generating families.  Thus face localization is an open subspace at the
