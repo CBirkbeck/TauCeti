@@ -8,6 +8,8 @@ module
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.ZetaSumPartition
 public import TauCeti.NumberTheory.Chebotarev.FrobeniusPrimeSet
 
+import TauCeti.NumberTheory.ArithmeticDirichletSeries.Convergence
+
 /-!
 # The prime zeta sum over the Frobenius fibres
 
@@ -32,12 +34,20 @@ specializations to the Artin fibres and to `ramifiedPrimes K L` are Chebotarev-s
 * `NumberField.Chebotarev.abs_primeIdealZetaSum_sub_sum_primeIdealZetaSum_frobeniusPrimeSet_le`:
   for such `s` with `0 ≤ s`, the all-prime sum and the total fibre sum differ by at most
   `#(ramifiedPrimes K L)`.
+* `NumberField.Chebotarev.sum_primeIdealZetaSum_frobeniusPrimeSet_of_one_lt` and
+  `NumberField.Chebotarev.abs_primeIdealZetaSum_sub_sum_frobeniusPrimeSet_le_of_one_lt`:
+  the same two statements on `1 < s`, where summability is automatic and need not be supplied.
 
 ## Implementation notes
 
 `primeIdealZetaSum S s` is a `tsum`, so it takes the value `0` on a family that is not summable,
 and `0` is not additive along a partition. The fibre identity therefore carries a summability
 hypothesis, and only a per-fibre one: nothing here needs the series over all primes to converge.
+
+That hypothesis is stated rather than assumed because the density argument approaches `s = 1`
+from the right, where it is exactly what has to be checked. On `1 < s` it is automatic, by
+restricting `TauCeti.summable_absNorm_rpow_primes_of_one_lt` to each fibre, so the `_of_one_lt`
+forms above discharge it; a consumer working below `1` still has the general statements.
 
 ## References
 
@@ -98,5 +108,37 @@ theorem abs_primeIdealZetaSum_sub_sum_primeIdealZetaSum_frobeniusPrimeSet_le (hs
     Set.primeIdealZetaSum_compl_le_univ_of_finite (ramifiedPrimes K L).finite_toSet s,
     ← Set.ncard_coe_finset (ramifiedPrimes K L)]
   exact Set.primeIdealZetaSum_univ_sub_compl_le_ncard_of_finite (ramifiedPrimes K L).finite_toSet hs
+
+/-! ### The range `1 < s`, where summability is automatic -/
+
+/-- Each Artin fibre inherits summability from the sum over all height-one primes, so on
+`1 < s` the hypothesis of the two results above holds for every conjugacy class. -/
+theorem summable_absNorm_rpow_frobeniusPrimeSet (hs : 1 < s) (C : ConjClasses (L ≃ₐ[K] L)) :
+    Summable fun 𝔭 : frobeniusPrimeSet K L C ↦ (Ideal.absNorm 𝔭.1.asIdeal : ℝ) ^ (-s) :=
+  (TauCeti.summable_absNorm_rpow_primes_of_one_lt hs).subtype _
+
+open scoped Classical in
+variable (K L) in
+/-- **The Frobenius fibres reassemble the unramified sum, for `1 < s`.** The specialization of
+`NumberField.Chebotarev.sum_primeIdealZetaSum_frobeniusPrimeSet` to the half-plane of absolute
+convergence, where summability need not be supplied. -/
+theorem sum_primeIdealZetaSum_frobeniusPrimeSet_of_one_lt (hs : 1 < s) :
+    ∑ C : ConjClasses (L ≃ₐ[K] L), (frobeniusPrimeSet K L C).primeIdealZetaSum s =
+      (↑(ramifiedPrimes K L) : Set (HeightOneSpectrum (𝓞 K)))ᶜ.primeIdealZetaSum s :=
+  sum_primeIdealZetaSum_frobeniusPrimeSet K L fun C ↦
+    summable_absNorm_rpow_frobeniusPrimeSet hs C
+
+open scoped Classical in
+variable (K L) in
+/-- **The Frobenius fibres account for the all-prime sum up to the ramified primes, for
+`1 < s`.** The error is at most `#(ramifiedPrimes K L)`, uniformly in `s`; this is the form the
+passage to the limit `s → 1⁺` consumes. -/
+theorem abs_primeIdealZetaSum_sub_sum_frobeniusPrimeSet_le_of_one_lt
+    (hs : 1 < s) :
+    |(Set.univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum s -
+        ∑ C : ConjClasses (L ≃ₐ[K] L), (frobeniusPrimeSet K L C).primeIdealZetaSum s| ≤
+      (ramifiedPrimes K L).card :=
+  abs_primeIdealZetaSum_sub_sum_primeIdealZetaSum_frobeniusPrimeSet_le K L (by linarith)
+    fun C ↦ summable_absNorm_rpow_frobeniusPrimeSet hs C
 
 end NumberField.Chebotarev
