@@ -52,7 +52,7 @@ theorem toAddSubgroup_mul_eq_closure_mul
   rw [Submodule.toAddSubgroup_toAddSubmonoid, _root_.Submodule.mul_toAddSubmonoid,
     ← Submodule.toAddSubgroup_toAddSubmonoid I, ← Submodule.toAddSubgroup_toAddSubmonoid J,
     hI, hJ, ← _root_.AddSubgroup.mul_toAddSubmonoid,
-    TauCeti.AddSubgroup.closure_mul_closure]
+    AddSubgroup.closure_mul_closure]
 
 section Mul
 
