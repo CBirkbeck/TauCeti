@@ -13,10 +13,10 @@ public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Restriction
 /-!
 # Maps between abelianized Galois groups of finite normal layers
 
-The functoriality of the Artin map compares operations on formation levels with four canonical
-maps between the abelianizations of finite-layer Galois groups. This file constructs those maps
-from the group homomorphisms and equivalences attached to restrictions, refinements, and
-conjugation.
+The functoriality of the Artin map compares operations on formation levels with three canonical
+homomorphisms between the abelianizations of finite-layer Galois groups, and with the equivalence
+induced directly by conjugation. This file constructs the homomorphisms and proves coherence laws
+for the conjugation equivalence obtained from Mathlib's `MulEquiv.abelianizationCongr`.
 
 For a restriction of layers `K/E` inside `K/F`, the inclusion
 
@@ -49,10 +49,10 @@ Conjugation of a layer similarly induces an equivalence on abelianizations from
   same abelianizations, in the opposite direction.
 * `TauCeti.ClassFieldTheory.LayerRefinement.quotientHom`: the map on abelianizations induced by a
   quotient of Galois groups.
-* `NormalLayer.conjugateAbelianizationEquiv_one`: conjugation by one is the identity on
+* `NormalLayer.conjugateGalEquiv_abelianizationCongr_one`: conjugation by one is the identity on
   abelianized Galois groups.
-* `NormalLayer.conjugateAbelianizationEquiv_trans_conjugateAbelianizationEquiv`: conjugation on
-  abelianized Galois groups composes.
+* `NormalLayer.conjugateGalEquiv_abelianizationCongr_trans`: conjugation on abelianized Galois
+  groups composes.
 
 ## References
 
@@ -189,7 +189,7 @@ variable (L : NormalLayer G) (g h : G)
 /-- Conjugation by `1` is the identity on abelianized Galois groups, after transporting along
 `conjugate_one`. -/
 @[simp]
-theorem conjugateAbelianizationEquiv_one :
+theorem conjugateGalEquiv_abelianizationCongr_one :
     ((L.conjugateGalEquiv 1).abelianizationCongr.toAdditive).trans
         ((MulEquiv.abelianizationCongr
           (MulEquiv.cast (M := fun K : NormalLayer G ↦ K.Gal) L.conjugate_one)).toAdditive) =
@@ -210,7 +210,7 @@ theorem conjugateAbelianizationEquiv_one :
 
 /-- Conjugation on abelianized Galois groups composes: conjugating by `h` and then by `g` is
 conjugating by `g * h`, up to transport along `conjugate_conjugate`. -/
-theorem conjugateAbelianizationEquiv_trans_conjugateAbelianizationEquiv :
+theorem conjugateGalEquiv_abelianizationCongr_trans :
     ((L.conjugateGalEquiv h).abelianizationCongr.toAdditive).trans
         (((L.conjugate h).conjugateGalEquiv g).abelianizationCongr.toAdditive) =
       ((L.conjugateGalEquiv (g * h)).abelianizationCongr.toAdditive).trans
