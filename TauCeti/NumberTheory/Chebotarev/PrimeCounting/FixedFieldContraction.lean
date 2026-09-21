@@ -145,6 +145,23 @@ theorem primeTheta_fixedField_eq_mul_frobeniusTheta (C : ConjClasses (L ≃ₐ[K
     frobeniusPrimeSet_subset_compl_ramifiedPrimes _ hp (Finset.mem_coe.mpr h)
   exact ⟨hP, hram, (inertiaDeg_eq_one_iff_under_mem_frobeniusPrimeSet sigma hP hram).mpr hp⟩
 
+omit [IsGalois K L] in
+/-- **What the exact contraction discards.** Removing from `S` the primes that avoid `T` and have
+residue degree one over `K` leaves only primes of higher degree together with primes of `T`: a
+prime not in `T` and not of degree one has degree at least two. -/
+private theorem sdiff_setOf_inertiaDeg_eq_one_subset (sigma : L ≃ₐ[K] L)
+    (S T : Set (HeightOneSpectrum (𝓞 ↥(fixedField (Subgroup.zpowers sigma))))) :
+    S \ {P | P ∈ S ∧ P ∉ T ∧ P.asIdeal.inertiaDeg (𝓞 K) = 1} ⊆
+      higherDegreePrimes ↥(fixedField (Subgroup.zpowers sigma)) ∪
+        (T \ higherDegreePrimes ↥(fixedField (Subgroup.zpowers sigma))) := by
+  rw [Set.union_sdiff_self]
+  intro P ⟨hPS, hPA⟩
+  by_cases hPT : P ∈ T
+  · exact Or.inr hPT
+  · exact Or.inl (mem_higherDegreePrimes_of_one_lt_inertiaDeg
+      (lt_of_le_of_ne (Ideal.inertiaDeg_pos P.asIdeal (𝓞 K))
+        fun h ↦ hPA ⟨hPS, hPT, h.symm⟩))
+
 /-- **The weighted contraction of Frobenius `ψ`.** Let `sigma` represent `C` and let
 `E = L ^ <sigma>`.  The relative Frobenius `ψ` of `sigma` in `L / E` is the fixed-field
 multiplicity `#Gal(L/K) / (#C * orderOf sigma)` times `frobeniusPsi K L C`, up to `o(x)`.
@@ -166,14 +183,8 @@ theorem frobeniusPsi_fixedField_sub_mul_frobeniusPsi_isLittleO (C : ConjClasses 
   set A : Set (HeightOneSpectrum (𝓞 E)) :=
     {P | P ∈ S ∧ P ∉ T ∧ P.asIdeal.inertiaDeg (𝓞 K) = 1}
   -- The relative primes outside the exact contraction have higher degree or lie in `T`.
-  have hsub : S \ A ⊆ higherDegreePrimes E ∪ (T \ higherDegreePrimes E) := by
-    rw [Set.union_sdiff_self]
-    intro P ⟨hPS, hPA⟩
-    by_cases hPT : P ∈ T
-    · exact Or.inr hPT
-    · exact Or.inl (mem_higherDegreePrimes_of_one_lt_inertiaDeg
-        (lt_of_le_of_ne (Ideal.inertiaDeg_pos P.asIdeal (𝓞 K))
-          fun h ↦ hPA ⟨hPS, hPT, h.symm⟩))
+  have hsub : S \ A ⊆ higherDegreePrimes E ∪ (T \ higherDegreePrimes E) :=
+    sdiff_setOf_inertiaDeg_eq_one_subset sigma S T
   -- `u` is everything discarded on the `E` side; it lies between `0` and the discard majorant.
   set u : ℝ → ℝ := fun x ↦ frobeniusPsi E L (ConjClasses.mk sigma.toFixedFieldAlgEquiv) x -
     frobeniusTheta E L (ConjClasses.mk sigma.toFixedFieldAlgEquiv) x + primeTheta E (S \ A) x
