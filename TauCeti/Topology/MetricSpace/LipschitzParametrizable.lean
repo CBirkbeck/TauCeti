@@ -5,6 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.Analysis.Calculus.ContDiff.Defs
+import Mathlib.Analysis.Calculus.ContDiff.Operations
+import Mathlib.Analysis.Calculus.ContDiff.RCLike
 public import Mathlib.Topology.MetricSpace.HausdorffDimension
 public import Mathlib.MeasureTheory.Measure.Haar.Unique
 
@@ -18,6 +21,8 @@ boundary.
 
 This file supplies the elementary API needed to assemble parametrizations: the property is
 monotone in the set, is preserved by Lipschitz images and finite unions, and holds for finite sets.
+It also supplies the way in from smoothness: a `C¹` map is Lipschitz on the compact cube, so a
+smooth image of a cube of the right dimension is a single chart.
 It also records the basic dimension consequence.  A Lipschitz-parametrizable subset of a
 finite-dimensional real normed space has additive Haar measure zero whenever the parameter
 dimension is strictly smaller than the ambient dimension.  The proof compares additive Haar
@@ -35,6 +40,9 @@ That is what turns a parametrization in a given dimension into a count.
 * `TauCeti.isLipschitzParametrizable_iff`: the finite-chart characterization of the predicate;
 * `TauCeti.IsLipschitzParametrizable.union`: closure under binary unions;
 * `TauCeti.IsLipschitzParametrizable.image`: closure under Lipschitz images;
+* `TauCeti.IsLipschitzParametrizable.iUnion`: closure under unions over a finite index type;
+* `TauCeti.IsLipschitzParametrizable.image_unitCube_of_contDiff`: a `C¹` image of a unit cube is
+  parametrized by that cube;
 * `TauCeti.IsLipschitzParametrizable.measure_zero`: a parametrized set has
   additive Haar measure zero below the ambient dimension;
 * `LipschitzOnWith.exists_cover_image_unitCube`: a Lipschitz image of the unit `d`-cube is
@@ -128,6 +136,17 @@ theorem biUnion_finset {I : Type*} (s : Finset I) {A : I → Set E}
       exact (hA i (Finset.mem_insert_self i s)).union
         (ih fun j hj ↦ hA j (Finset.mem_insert_of_mem hj))
 
+/-- **A union over a finite index type.** The `Finset`-indexed form above is the induction; this
+is the shape consumers actually meet, and without it every caller has to convert `⋃ i, A i` into
+`⋃ i ∈ Finset.univ, A i` by hand. -/
+theorem iUnion {I : Type*} [Finite I] {A : I → Set E}
+    (hA : ∀ i, IsLipschitzParametrizable d (A i)) :
+    IsLipschitzParametrizable d (⋃ i, A i) := by
+  classical
+  cases nonempty_fintype I
+  rw [← Set.biUnion_univ, ← Finset.coe_univ, Finset.set_biUnion_coe]
+  exact biUnion_finset Finset.univ fun i _ ↦ hA i
+
 /-- A finite set is Lipschitz parametrizable in every dimension. -/
 theorem finite (hS : S.Finite) : IsLipschitzParametrizable d S := by
   induction S, hS using Set.Finite.induction_on with
@@ -146,6 +165,26 @@ theorem image {g : E → F} {K : NNReal} (hg : LipschitzWith K g)
   rintro y ⟨x, hx, rfl⟩
   obtain ⟨i, z, hz, rfl⟩ := Set.mem_iUnion.1 (hSf hx)
   exact Set.mem_iUnion.2 ⟨i, z, hz, rfl⟩
+
+/-- **A `C¹` image of a unit cube is Lipschitz parametrizable.** The cube is indexed by an
+arbitrary finite type `ι` of cardinality `d`, not by `Fin d` itself.
+
+This is the standard way to produce a parametrization — exhibit the set as a smooth image of a
+cube of the right dimension — and it is the only route from smoothness into the predicate. -/
+theorem image_unitCube_of_contDiff {ι G : Type*} [Fintype ι] [NormedAddCommGroup G]
+    [NormedSpace ℝ G] {d : ℕ} (hd : Fintype.card ι = d) {f : (ι → ℝ) → G} (hf : ContDiff ℝ 1 f) :
+    IsLipschitzParametrizable d (f '' Icc (0 : ι → ℝ) 1) := by
+  set e := Fintype.equivFinOfCardEq hd
+  set T : (Fin d → ℝ) → (ι → ℝ) := fun x i ↦ x (e i)
+  -- A `C¹` map is Lipschitz on the compact convex cube, so `f ∘ T` is a single chart.
+  obtain ⟨C, hC⟩ := ContDiffOn.exists_lipschitzOnWith (show ContDiffOn ℝ 1 (f ∘ T) (Icc 0 1) by
+    fun_prop) one_ne_zero (convex_Icc _ _) isCompact_Icc
+  refine isLipschitzParametrizable_iff.2 ⟨1, C, fun _ ↦ f ∘ T, fun _ ↦ hC,
+    Set.subset_iUnion_of_subset 0 ?_⟩
+  -- Reindexing by `e` maps the `Fin d`-cube onto the `ι`-cube, so that chart covers the image.
+  rw [Set.image_comp]
+  exact Set.image_mono fun y hy ↦ ⟨fun j ↦ y (e.symm j),
+    ⟨fun j ↦ hy.1 _, fun j ↦ hy.2 _⟩, funext fun i ↦ congrArg y (e.symm_apply_apply i)⟩
 
 /-- A set Lipschitz parametrized in dimension `d` has zero additive Haar measure in a
 finite-dimensional real normed space of dimension strictly larger than `d`.
