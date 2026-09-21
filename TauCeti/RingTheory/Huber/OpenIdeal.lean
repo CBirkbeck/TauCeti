@@ -123,8 +123,8 @@ theorem isOpen_mul (P : PairOfDefinition A) {a b : Ideal A} (ha : IsOpen (a : Se
   exact Ideal.mul_mono hn hm
 
 /-- **A map taking an ideal of definition to an open ideal takes every open ideal to an open
-ideal.** Indeed, an open ideal contains a power of the ideal of definition, and mapping commutes
-with powers. The image of that power is open because products of open ideals are open. -/
+ideal.** This criterion transports openness of ideals along ring homomorphisms once it is known
+for one ideal of definition. -/
 theorem isOpen_map_of_isOpen_map_extendedIdealOfDefinition {B : Type*} [CommRing B]
     [TopologicalSpace B] [IsTopologicalRing B] (P : PairOfDefinition A) (Q : PairOfDefinition B)
     (f : A →+* B) (hP : IsOpen (Ideal.map f P.extendedIdealOfDefinition : Set B))

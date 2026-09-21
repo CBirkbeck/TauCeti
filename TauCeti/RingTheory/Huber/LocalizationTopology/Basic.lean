@@ -1047,13 +1047,8 @@ theorem continuous_algebraMap_locTopology [IsTopologicalRing A] (P : PairOfDefin
   exact algebraMap_mem_locIdealImage P T s S hb
 
 /-- **An ideal of `Aₛ` swallowing the image of `Iⁿ` swallows the whole `n`-th neighbourhood.**
-The neighbourhood `image(Jⁿ)` is the image of `Jⁿ ⊆ D`, and `Jⁿ` is *spanned* over `D` by the
-image of `Iⁿ` (`TauCeti.Huber.PairOfDefinition.locIdeal_pow_eq_span`); an ideal `K` of `Aₛ`
-absorbs multiplication by `D`, so it takes the span for free and only the generators need
-checking.
-
-Note that `image(Jⁿ)` is merely an additive subgroup of `Aₛ` — it absorbs `D` only, not all of
-`Aₛ` — so this cannot be read off from a comparison of ideals. -/
+This supplies the neighbourhood containment used to prove that mapping an open ideal along the
+rational-localisation structure map produces an open ideal. -/
 theorem locIdealImage_le_of_image_subset (P : PairOfDefinition A) (T : Finset A) (s : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S] {K : Ideal S} {n : ℕ}
     (hK : algebraMap A S '' (P.idealImage n : Set A) ⊆ K) :
@@ -1131,11 +1126,8 @@ noncomputable def localization [IsTopologicalRing A] (P : PairOfDefinition A) (T
     isAdic_idealOfDefinition := isAdic_locIdeal P T s S hden }
 
 /-- **The image of an open ideal of `A` generates an open ideal of `Aₛ`.** This is the openness
-assertion needed in the forward direction of Wedhorn Proposition 8.2(2). The mapped ideal of
-definition contains the first basic neighbourhood of `Aₛ`, hence is open; the general map theorem
-then applies to every open ideal.
-
-This is the companion of continuity of the structure map
+assertion needed in the forward direction of Wedhorn Proposition 8.2(2) and is the companion of
+continuity of the structure map
 (`TauCeti.Huber.PairOfDefinition.continuous_algebraMap_locTopology`): continuity pulls an open
 set back to `A`, while this pushes an open *ideal* forward. -/
 theorem isOpen_map_algebraMap_locTopology [IsTopologicalRing A] (P : PairOfDefinition A)
