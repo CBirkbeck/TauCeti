@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Completion.Homeomorph
-public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.Basic
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.Homeomorph
 import TauCeti.Topology.Homeomorph.SetCongr
 
