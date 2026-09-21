@@ -58,6 +58,7 @@ theorem neg_mem_dualSemigroup_inf_ker (hi : IsIntegralLattice i) (σ : PointedCo
 
 /-- In the dual semigroup of the face where `m` vanishes, the images of `m` and `-m` are
 multiplicative inverses. -/
+@[simp]
 theorem ofAdd_mul_ofAdd_neg_inf_ker (hi : IsIntegralLattice i) (σ : PointedCone ℝ V)
     (m : dualSemigroup hi σ) :
     (ofAdd ⟨m, dualSemigroup_anti hi inf_le_left m.2⟩ :
@@ -70,6 +71,7 @@ theorem ofAdd_mul_ofAdd_neg_inf_ker (hi : IsIntegralLattice i) (σ : PointedCone
 
 /-- The monomials of `m` and `-m` multiply to one in the coordinate ring of the face where `m`
 vanishes. -/
+@[simp]
 theorem single_ofAdd_mul_single_ofAdd_neg_inf_ker {R : Type*} [Semiring R]
     (hi : IsIntegralLattice i) (σ : PointedCone ℝ V) (m : dualSemigroup hi σ) :
     MonoidAlgebra.single

@@ -249,11 +249,13 @@ theorem faceAffinePointInfKerLift_mk'
   let _ := faceAffinePointInfKerAlgebra hi m
   have := isLocalization_faceAffinePointInfKer hi hσ m
   rw [faceAffinePointInfKerLift]
+  -- `Away.liftAlgHom` exposes its underlying `Away.lift` only by definitional reduction.
   change (IsLocalization.Away.lift (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
       (isUnit_iff_ne_zero.mpr x.2))
     (IsLocalization.mk' _ a y) = x.1 a * (x.1 y.1)⁻¹
   rw [IsLocalization.Away.lift]
   apply (IsLocalization.lift_mk'_spec _ a (x.1 a * (x.1 y.1)⁻¹) y).2
+  -- The active localization algebra map is definitionally the face coordinate-ring map.
   change x.1 a = x.1 y.1 * (x.1 a * (x.1 y.1)⁻¹)
   rw [mul_left_comm, mul_inv_cancel₀, mul_one]
   obtain ⟨n, hn⟩ := y.2
@@ -283,6 +285,7 @@ theorem faceAffinePointInfKerLift_apply_single_neg
             (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m))))
           (1 : affineCoordinateRing hi σ) y := by
     apply IsLocalization.eq_mk'_iff_mul_eq.mpr
+    -- The active localization algebra map is definitionally `faceAffineCoordinateRingMap`.
     change MonoidAlgebra.single
         (ofAdd ⟨-(m : N →+ ℤ), neg_mem_dualSemigroup_inf_ker hi σ m⟩) 1 *
       faceAffineCoordinateRingMap hi hface (MonoidAlgebra.single (ofAdd m) 1) =
