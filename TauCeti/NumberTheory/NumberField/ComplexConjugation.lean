@@ -163,8 +163,8 @@ variable {F : Type*} [Field F] [Algebra K F] [Algebra F L] [IsScalarTower K F L]
 @[simp]
 theorem restrictNormalHom_complexConjugationAt_eq_one_of_isReal [Normal K F] (w : InfinitePlace L)
     (hw : w.IsRamified K) (hv : (w.comap (algebraMap F L)).IsReal) :
-    AlgEquiv.restrictNormalHom F (complexConjugationAt K w hw) = 1 := by
-  have hmem : AlgEquiv.restrictNormalHom F (complexConjugationAt K w hw)
+    (complexConjugationAt K w hw).restrictNormal F = 1 := by
+  have hmem : (complexConjugationAt K w hw).restrictNormal F
       ∈ MulAction.stabilizer (F ≃ₐ[K] F) (w.comap (algebraMap F L)) := by
     rw [MulAction.mem_stabilizer_iff, restrictNormalHom_smul_comap,
       complexConjugationAt_smul_self]
@@ -174,7 +174,7 @@ theorem restrictNormalHom_complexConjugationAt_eq_one_of_isReal [Normal K F] (w 
 @[simp]
 theorem restrictNormalHom_complexConjugationAt_of_isComplex [IsGalois K F] (w : InfinitePlace L)
     (hw : w.IsRamified K) (hv : (w.comap (algebraMap F L)).IsComplex) :
-    AlgEquiv.restrictNormalHom F (complexConjugationAt K w hw)
+    (complexConjugationAt K w hw).restrictNormal F
       = complexConjugationAt K (w.comap (algebraMap F L))
           (isRamified_comap_of_isComplex K hw hv) := by
   refine eq_complexConjugationAt_of_mem_stabilizer_of_ne_one K _ _ ?_ ?_
@@ -183,7 +183,8 @@ theorem restrictNormalHom_complexConjugationAt_of_isComplex [IsGalois K F] (w : 
   · intro h1
     exact complexConjugationAt_ne_one K w hw
       (eq_one_of_restrictNormalHom_eq_one K (isUnramified_iff.mpr (Or.inr hv))
-        (complexConjugationAt_smul_self K w hw) h1)
+        (complexConjugationAt_smul_self K w hw) (by
+          simpa only [AlgEquiv.restrictNormalHom_eq_restrictNormal] using h1))
 
 end Tower
 

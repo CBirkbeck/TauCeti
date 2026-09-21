@@ -52,8 +52,9 @@ to `F` and then moving the place `w` induces on `F` gives the same place as movi
 inducing afterwards. -/
 @[simp]
 theorem restrictNormalHom_smul_comap [Normal K F] (σ : L ≃ₐ[K] L) (w : InfinitePlace L) :
-    AlgEquiv.restrictNormalHom F σ • w.comap (algebraMap F L)
+    σ.restrictNormal F • w.comap (algebraMap F L)
       = (σ • w).comap (algebraMap F L) := by
+  rw [← AlgEquiv.restrictNormalHom_eq_restrictNormal]
   have bridge : ∀ x : F, algebraMap F L ((AlgEquiv.restrictNormalHom F σ).symm x)
       = σ.symm (algebraMap F L x) := fun x => by
     -- The goal carries `(restrictNormalHom F σ).symm` — symm-of-image — whereas
