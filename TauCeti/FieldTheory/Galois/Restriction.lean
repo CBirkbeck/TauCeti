@@ -66,12 +66,6 @@ theorem _root_.AlgHom.restrictNormalHom_toAlgHom [Algebra M K] [IsScalarTower F 
   MonoidHom.ext fun σ ↦ (IsScalarTower.toAlgHom F M K).restrictNormalHom_eq_iff.2
     fun y ↦ (AlgEquiv.restrictNormal_commutes σ M y).symm
 
-/-- Mathlib's bundled restriction hom agrees with `AlgEquiv.restrictNormal` on elements. -/
-@[simp]
-theorem _root_.AlgEquiv.restrictNormalHom_eq_restrictNormal [Algebra M K] [IsScalarTower F M K]
-    [Normal F M] (σ : Gal(K/F)) : AlgEquiv.restrictNormalHom M σ = σ.restrictNormal M :=
-  rfl
-
 end RestrictAlong
 
 end TauCeti

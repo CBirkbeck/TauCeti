@@ -7,7 +7,6 @@ module
 
 public import Mathlib.NumberTheory.NumberField.InfinitePlace.Ramification
 import TauCeti.FieldTheory.Galois.Basic
-import TauCeti.FieldTheory.Galois.Restriction
 
 /-!
 # Infinite places in a normal tower
@@ -54,15 +53,14 @@ inducing afterwards. -/
 theorem restrictNormal_smul_comap [Normal K F] (σ : L ≃ₐ[K] L) (w : InfinitePlace L) :
     σ.restrictNormal F • w.comap (algebraMap F L)
       = (σ • w).comap (algebraMap F L) := by
-  rw [← AlgEquiv.restrictNormalHom_eq_restrictNormal]
+  change AlgEquiv.restrictNormalHom F σ • w.comap (algebraMap F L)
+    = (σ • w).comap (algebraMap F L)
   have bridge : ∀ x : F, algebraMap F L ((AlgEquiv.restrictNormalHom F σ).symm x)
       = σ.symm (algebraMap F L x) := fun x => by
     -- The goal carries `(restrictNormalHom F σ).symm` — symm-of-image — whereas
     -- `AlgEquiv.restrictNormal_commutes` is about image-of-symm. `aut_inv` and `map_inv` cross
-    -- that spelling, and `restrictNormalHom_eq_restrictNormal` then makes the two restriction
-    -- APIs agree *syntactically*, rather than leaving the step to the `MonoidHom.mk'` unfolding.
-    rw [← AlgEquiv.aut_inv, ← map_inv, AlgEquiv.aut_inv,
-      AlgEquiv.restrictNormalHom_eq_restrictNormal]
+    -- that spelling; unfolding the bundled hom then exposes `restrictNormal`.
+    rw [← AlgEquiv.aut_inv, ← map_inv, AlgEquiv.aut_inv]
     exact AlgEquiv.restrictNormal_commutes σ.symm F x
   ext x
   simp only [smul_eq_comap, comap_apply, RingHom.coe_coe]
