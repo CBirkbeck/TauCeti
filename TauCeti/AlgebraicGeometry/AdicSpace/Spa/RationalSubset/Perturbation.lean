@@ -29,6 +29,11 @@ The perturbed data are not indexed by `T`: `T'` is any finite set each of whose 
 what the statement actually needs, and it avoids carrying a bijection `T ≃ T'` — the same set may
 be presented with different cardinality after perturbation.
 
+The same estimate settles a second way of leaving a rational subset where it is: *enlarging* the
+numerator set by elements too small to matter. Along a continuous homomorphism `φ : A → B` of
+Huber rings, a rational subset `R(T/s)` of `Spa(B, B⁺)` with `T · B` open admits a finite `D ⊆ A`
+spanning an open ideal of `A` whose image may be adjoined to `T` for free.
+
 ## Main results
 
 * `TauCeti.ValuationSpectrum.valuation_lt_of_mem_idealImage` : elements of a sufficiently small
@@ -38,11 +43,15 @@ be presented with different cardinality after perturbation.
 * `TauCeti.ValuationSpectrum.exists_mem_nhds_forall_rationalSubset_eq_of_sub_mem` : the same
   statement over a Huber ring, with the perturbation measured by a neighbourhood of zero and no
   pair of definition in sight.
+* `TauCeti.ValuationSpectrum.exists_isOpen_span_rationalSubset_union_image_eq` : a rational subset
+  is unchanged by adjoining the image of a suitable finite set spanning an open ideal of the
+  source of a continuous homomorphism.
 
 ## References
 
-* [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), Definition 7.29 and
-  Proposition 7.34.
+* [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), Definition 7.29,
+  Proposition 7.34, and the enlargement of a numerator set carried out in the proof of
+  Proposition 8.2(2).
 -/
 
 public section
@@ -180,6 +189,43 @@ theorem exists_mem_nhds_forall_rationalSubset_eq_of_sub_mem [IsHuberRing A]
     exists_forall_rationalSubset_eq_of_sub_mem_idealImage P Aplus T hT s
   exact ⟨(P.idealImage n : Set A),
     (P.isOpen_idealImage n).mem_nhds (P.idealImage n).zero_mem, hn⟩
+
+open scoped Classical in
+/-- **A rational subset absorbs the image of a small enough open-spanning finite set.** Along a
+continuous homomorphism `φ : A → B` of Huber rings, a rational subset `R(T/s)` of `Spa(B, B⁺)`
+whose numerator ideal `T · B` is open admits a finite `D ⊆ A` spanning an open ideal of `A` whose
+image may be adjoined to the numerators for free:
+
+```text
+R((T ∪ φ(D))/s) = R(T/s).
+```
+
+Wedhorn carries out this enlargement inside the proof of Proposition 8.2(2), deducing it from
+Lemma 7.31 after a quasi-compactness argument. That route is avoided here, and with it every
+hypothesis it would cost: `valuation_lt_of_mem_idealImage` bounds a whole basic neighbourhood of
+zero uniformly in the point, so no quasi-compactness is needed and neither ring has to be Tate,
+complete or Noetherian. (`exists_mem_nhds_zero_forall_vlt`, this library's Lemma 7.31, does
+assume a Tate ring.)
+
+Continuity of `φ` is used only to pull a neighbourhood of zero back to one; nothing is assumed
+relating the ideals of definition of `A` and `B`, and `D · A` is open for reasons internal to
+`A`. -/
+theorem exists_isOpen_span_rationalSubset_union_image_eq [IsHuberRing A] {B : Type*} [CommRing B]
+    [TopologicalSpace B] [IsTopologicalRing B] [IsHuberRing B] {φ : A →+* B} (hφ : Continuous φ)
+    (Bplus : Subring B) (T : Finset B) (hT : IsOpen (Ideal.span (T : Set B) : Set B)) (s : B) :
+    ∃ D : Finset A, IsOpen (Ideal.span (D : Set A) : Set A) ∧
+      rationalSubset Bplus (T ∪ D.image φ) s = rationalSubset Bplus T s := by
+  obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := B)
+  obtain ⟨n, hn⟩ := P.exists_forall_mem_idealImage_exists_sum_eq T hT
+  -- continuity turns the open neighbourhood `Iⁿ` of `0 : B` into one of `0 : A`
+  obtain ⟨D, hD, hDopen⟩ := exists_finset_subset_isOpen_span <| hφ.continuousAt.preimage_mem_nhds <|
+    map_zero φ ▸ (P.isOpen_idealImage n).mem_nhds (P.idealImage n).zero_mem
+  refine ⟨D, hDopen, rationalSubset_union_of_forall_vle Bplus T _ s ?_⟩
+  -- the adjoined numerators lie in `Iⁿ`, so they are strictly dominated by `v s`
+  refine Finset.forall_mem_image.mpr fun d hd v hv ↦ ?_
+  obtain ⟨hspa, hle, hs⟩ := (mem_rationalSubset_iff_valuation Bplus T s v).mp hv
+  exact (valuation_le_iff v _ s).mp
+    (valuation_lt_of_mem_idealImage P hn ((mem_spa_iff _ _).mp hspa).1 hs hle (hD hd)).le
 
 end TauCeti.ValuationSpectrum
 
