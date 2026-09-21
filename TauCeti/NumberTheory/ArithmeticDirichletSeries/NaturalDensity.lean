@@ -263,9 +263,9 @@ private theorem primeSummatory_indicator_sub (S : Set (HeightOneSpectrum (𝓞 K
       TauCeti.primeCount K S x - c * TauCeti.primeCount K Set.univ x := by
   simp [TauCeti.primeSummatory_apply, TauCeti.primeCount_apply, Finset.sum_sub_distrib, mul_comm]
 
-/-- Near `1` from the right, the all-prime Dirichlet sum is positive and eventually exceeds any
-fixed multiple `C / ε` of itself, because it diverges.  Both density-bound transfers below open
-by fixing `ε` and passing to such an `s`. -/
+/-- Near `1` from the right, the all-prime Dirichlet sum is eventually positive and eventually
+exceeds `C / ε`, equivalently `C < ε` times the sum.  Both hold because the sum diverges as
+`s → 1⁺`. -/
 private theorem eventually_lt_mul_primeIdealZetaSum_univ {C ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ s in 𝓝[>] (1 : ℝ), 1 < s ∧
       0 < primeIdealZetaSum (Set.univ : Set (HeightOneSpectrum (𝓞 K))) s ∧
