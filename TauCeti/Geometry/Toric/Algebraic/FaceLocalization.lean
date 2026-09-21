@@ -173,12 +173,12 @@ map from the coordinate ring of `σ` to that of the face `σ ⊓ ker m` is the l
 the monomial of `m`. -/
 theorem isLocalization_away_affineCoordinateRingMap_inf_ker (hi : IsIntegralLattice i)
     (hσ : σ.FG) (m : dualSemigroup hi σ) :
-    letI := (affineCoordinateRingMap
-      (σ := σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m))) (τ := σ) hi hi
-      (AddMonoidHom.id N) LinearMap.id (fun _ ↦ rfl) (fun _ hx ↦ hx.1)).toRingHom.toAlgebra
+    letI := (faceAffineCoordinateRingMap hi
+      (PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2))).toRingHom.toAlgebra
     IsLocalization.Away (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
       (affineCoordinateRing hi
         (σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m)))) := by
+  rw [faceAffineCoordinateRingMap]
   set F := σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m))
   have hmaps : Set.MapsTo (LinearMap.id : V →ₗ[ℝ] V) F σ := fun _ hx ↦ hx.1
   set f := AddMonoidHom.toMultiplicative
@@ -219,9 +219,8 @@ theorem isOpenImmersion_affineToricSchemeMap_inf_ker {N : Type u} [AddCommGroup 
     IsOpenImmersion (affineToricSchemeMap
       (σ := σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m))) (τ := σ)
       hi hi (AddMonoidHom.id N) LinearMap.id (fun _ ↦ rfl) (fun _ hx ↦ hx.1)) := by
-  let := (affineCoordinateRingMap
-    (σ := σ ⊓ PointedCone.ofSubmodule (LinearMap.ker (hi.realCharacter m))) (τ := σ)
-    hi hi (AddMonoidHom.id N) LinearMap.id (fun _ ↦ rfl) (fun _ hx ↦ hx.1)).toRingHom.toAlgebra
+  let hface := PointedCone.isFaceOf_inf_ker ((mem_dualSemigroup hi m).1 m.2)
+  let _ := (faceAffineCoordinateRingMap hi hface).toRingHom.toAlgebra
   have := isLocalization_away_affineCoordinateRingMap_inf_ker hi hσ m
   have h := IsOpenImmersion.of_isLocalization
     (S := affineCoordinateRing hi
@@ -229,6 +228,7 @@ theorem isOpenImmersion_affineToricSchemeMap_inf_ker {N : Type u} [AddCommGroup 
     (MonoidAlgebra.single (ofAdd m) (1 : ℂ))
   rw [RingHom.algebraMap_toAlgebra] at h
   convert h using 1
+  rw [faceAffineCoordinateRingMap]
   exact affineToricSchemeMap_def ..
 
 private theorem range_faceAffineToricSchemeMap_of_eq (hi : IsIntegralLattice i) (hσ : σ.FG)
