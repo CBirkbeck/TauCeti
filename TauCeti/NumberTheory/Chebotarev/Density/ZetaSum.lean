@@ -42,7 +42,8 @@ hypothesis, and only a per-fibre one: nothing here needs the series over all pri
 For `1 < s`, discharge that hypothesis with
 `fun C ↦ TauCeti.summable_absNorm_rpow_subtype_of_one_lt (frobeniusPrimeSet K L C) hs`.
 The generic arbitrary-subtype theorem already has exactly the required type, so no
-Chebotarev-specific convergence specialization is needed.
+Chebotarev-specific convergence specialization is needed. Accordingly, this module deliberately
+exposes only the general, summability-parameterized results rather than thin `_of_one_lt` wrappers.
 
 ## References
 
