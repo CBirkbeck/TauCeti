@@ -34,10 +34,8 @@ at once, which is the form the class-by-class count consumes directly.
 * `TauCeti.GlobalNumberFields.exists_abs_ncard_smul_rayFundamentalDomain_inter_vadd_sub_le`: the
   points of any coset of `congruenceLattice 𝔪 I` in the dilate `c •` of the norm-≤-one section
   number `vol / covolume * c ^ [K:ℚ]` up to `O(c ^ ([K:ℚ] - 1))`, uniformly in the coset;
-* `TauCeti.GlobalNumberFields.smul_rayFundamentalDomain_inter_normLeOne`: the dilate by `c` of the
-  norm-≤-one section is the norm-≤-`c ^ [K:ℚ]` section;
-* `TauCeti.GlobalNumberFields.exists_abs_ncard_rayFundamentalDomain_inter_normLe_inter_vadd_sub_le`:
-  the same count graded by the norm, where the main term is linear in `t` and the error is
+* `TauCeti.GlobalNumberFields.exists_abs_ncard_rayFundamentalDomain_inter_norm_le_inter_vadd_sub_le`
+  — the same count graded by the norm: the main term is linear in `t` and the error is
   `O(t ^ (1 - 1 / [K:ℚ]))`.
 
 ## References
@@ -76,20 +74,6 @@ theorem exists_abs_ncard_smul_rayFundamentalDomain_inter_vadd_sub_le (𝔪 : Mod
     (isBounded_rayFundamentalDomain_inter_normLeOne 𝔪)
     (isLipschitzParametrizable_frontier_rayFundamentalDomain 𝔪).2.2
 
-/-- **The norm grading is a dilation.**  Scaling by `c > 0` preserves the ray fundamental domain
-and multiplies `mixedEmbedding.norm` by `c ^ [K:ℚ]`, so the dilate by `c` of the norm-≤-one
-section is the norm-≤-`c ^ [K:ℚ]` section.
-
-It converts between the two gradings: the lattice-point estimate is stated for dilates of a
-fixed region, while ideals are counted by their absolute norm. -/
-theorem smul_rayFundamentalDomain_inter_normLeOne (𝔪 : Modulus K) {c : ℝ} (hc : 0 < c) :
-    c • (rayFundamentalDomain 𝔪 ∩ {x : mixedSpace K | mixedEmbedding.norm x ≤ 1}) =
-      rayFundamentalDomain 𝔪 ∩ {x : mixedSpace K | mixedEmbedding.norm x ≤ c ^ finrank ℚ K} := by
-  ext y
-  simp [Set.mem_smul_set_iff_inv_smul_mem₀ hc.ne',
-    smul_mem_rayFundamentalDomain_iff (inv_pos.mpr hc), mixedEmbedding.norm_smul,
-    abs_of_pos (inv_pos.mpr hc), inv_mul_le_iff₀ (pow_pos hc _)]
-
 open scoped Classical in
 /-- **The congruence-lattice count graded by the norm, uniformly in the coset.**  For any coset
 `ξ +ᵥ congruenceLattice 𝔪 I`, the number of its points in the ray fundamental domain of norm at
@@ -100,7 +84,7 @@ This is the previous estimate regraded from dilations to norms: the main term is
 and the boundary exponent `[K:ℚ] - 1` becomes the power saving `1 / [K:ℚ]`.  Unlike
 `ZLattice.covolume.tendsto_card_le_div'`, which gives a limit, it provides an explicit error
 term, uniform in the coset. -/
-theorem exists_abs_ncard_rayFundamentalDomain_inter_normLe_inter_vadd_sub_le (𝔪 : Modulus K)
+theorem exists_abs_ncard_rayFundamentalDomain_inter_norm_le_inter_vadd_sub_le (𝔪 : Modulus K)
     (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) : ∃ A ≥ (0 : ℝ), ∀ (ξ : mixedSpace K) (t : ℝ), 1 ≤ t →
       |(((rayFundamentalDomain 𝔪 ∩ {x : mixedSpace K | mixedEmbedding.norm x ≤ t}) ∩
             (ξ +ᵥ (congruenceLattice 𝔪 I : Set (mixedSpace K)))).ncard : ℝ) -
