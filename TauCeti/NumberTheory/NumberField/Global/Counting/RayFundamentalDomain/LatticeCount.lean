@@ -24,10 +24,10 @@ shown to be a full `ℤ`-lattice in the mixed space.  This file is the instantia
 because the three inputs live in three different developments and the fit between them is the
 step that a count of ideals in a fixed ray class actually consumes.
 
-Uniformity in the coset is why the count is stated for an arbitrary translate `ξ` rather than for
-the lattice itself: a fixed ray class corresponds to one coset of the congruence lattice, and the
-ray class counts are summed afterwards, so a constant depending on the coset would not survive the
-sum.
+The count is stated for an arbitrary translate `ξ` rather than for the lattice itself because a
+fixed ray class corresponds to one coset of the congruence lattice, so every class needs its own
+instance of the estimate.  What the statement provides is a single `A` valid for *every* translate
+at once, which is the form the class-by-class count consumes directly.
 
 ## Main results
 
