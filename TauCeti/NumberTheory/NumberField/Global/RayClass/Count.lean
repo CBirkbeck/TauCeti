@@ -125,10 +125,9 @@ noncomputable def idealClassSigmaEquiv (𝔪 : Modulus K) (x : ℝ) :
 
 /-- The partition keeps the ideal: it only forgets which class the ideal was filed under.
 
-Not `@[simp]`, matching Mathlib's treatment of the same shape: `idealSetEquiv_apply` and
-`idealSetEquiv_symm_apply` (`CanonicalEmbedding/FundamentalCone.lean`) are plain lemmas, while the
-underlying map and first-projection versions there — `idealSetMap_apply`,
-`integerSetEquiv_apply_fst` — are the ones tagged. -/
+Tagged `@[simp]`: the left-hand side is in simp-normal form and nothing else rewrites it, verified
+with a scoped `#lint only simpNF in TauCeti` driver carrying a positive control. -/
+@[simp]
 theorem idealClassSigmaEquiv_apply_coe (𝔪 : Modulus K) (x : ℝ)
     (p : Σ c : RayClassGroup 𝔪, {I : integralIdealsPrimeTo 𝔪 //
       idealClass 𝔪 I = c ∧ (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x}) :
@@ -136,8 +135,8 @@ theorem idealClassSigmaEquiv_apply_coe (𝔪 : Modulus K) (x : ℝ)
   (rfl)
 
 /-- Filing an ideal under its own ray class is the inverse of forgetting it: the class component is
-`idealClass 𝔪 I` and the ideal component is `I` again.  Not `@[simp]`, for the reason given
-above. -/
+`idealClass 𝔪 I` and the ideal component is `I` again. -/
+@[simp]
 theorem idealClassSigmaEquiv_symm_apply_fst (𝔪 : Modulus K) (x : ℝ)
     (I : {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x}) :
     ((idealClassSigmaEquiv 𝔪 x).symm I).1 = idealClass 𝔪 I :=
