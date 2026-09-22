@@ -8,12 +8,6 @@ module
 public import Mathlib.RingTheory.Filtration
 public import Mathlib.RingTheory.Ideal.Pointwise
 
--- Roadmap source: `TauCetiRoadmap/NumberFieldArithmetic/README.md` @ `2172af4ad0d3`, Layer 6.2,
--- which names `ramificationGroup` as a new object and asks for this basic API. The comparison
--- with the local lower filtration is a separate milestone needing Layer 5, and is not proved
--- here. The credit sits outside the module docstring deliberately: the docstring documents the
--- mathematics.
-
 /-!
 # The ramification groups of an ideal, in lower numbering
 
@@ -45,8 +39,9 @@ family is what this file adds; every lemma below is the corresponding Mathlib fa
 
 ## Main results
 
-* `Ideal.ramificationGroup`: the `i`-th ramification group, in lower numbering.
-* `Ideal.mem_ramificationGroup_iff`: its membership criterion.
+* `Ideal.ramificationGroup`: the `i`-th ramification group, in lower numbering, with
+  `Ideal.ramificationGroup_def` restating the definition.
+* `Ideal.mem_ramificationGroup_iff`: its membership criterion, the simp normal form.
 * `Ideal.ramificationGroup_zero`: the `0`-th ramification group is the inertia group.
 * `Ideal.ramificationGroup_antitone`: vanishing to higher order is a stronger condition, so the
   family decreases.
@@ -76,12 +71,21 @@ variable (M : Type*) [Group M] {R : Type*} [CommRing R] [MulSemiringAction M R]
 
 /-- **The `i`-th ramification group of `P`, in lower numbering**: the automorphisms that move
 every element of `R` by something in `P ^ (i + 1)`. Equivalently, the inertia subgroup of
-`P ^ (i + 1)`, which is how it is defined. -/
+`P ^ (i + 1)`, which is how it is defined.
+
+`@[expose]`d so that `ramificationGroup_def`, an exported theorem, may unfold it. -/
+@[expose]
 def ramificationGroup (P : Ideal R) (i : ℕ) : Subgroup M := (P ^ (i + 1)).inertia M
 
 variable {M}
 
+/-- **The defining restatement**, so that consumers never have to unfold the definition. -/
+theorem ramificationGroup_def (P : Ideal R) (i : ℕ) :
+    P.ramificationGroup M i = (P ^ (i + 1)).inertia M :=
+  rfl
+
 /-- **Membership in the `i`-th ramification group.** -/
+@[simp]
 theorem mem_ramificationGroup_iff {P : Ideal R} {i : ℕ} {σ : M} :
     σ ∈ P.ramificationGroup M i ↔ ∀ x, σ • x - x ∈ P ^ (i + 1) :=
   Ideal.mem_inertia
