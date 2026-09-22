@@ -5,9 +5,9 @@ Authors: Claude
 -/
 module
 
+public import Mathlib.RepresentationTheory.Homological.TateCohomology.Basic
 public import TauCeti.RepresentationTheory.Homological.GroupCohomology.LowDegree
 public import TauCeti.RepresentationTheory.Homological.TateCohomology.Coinduced
-public import TauCeti.RepresentationTheory.Homological.TateCohomology.LongExactSequence
 
 /-!
 # The augmentation ideal and the augmentation sequence
@@ -141,15 +141,15 @@ def augmentationδIso (n : ℤ) :
     tateCohomology (res S.subtype (trivial k G k)) n ≅
       tateCohomology (res S.subtype (augmentationIdeal k G)) (n + 1) :=
   -- the restriction of `k[G]` to `S` is Tate-acyclic
-  δIso (augmentationSES_res_shortExact k G S.subtype) n (isZero_res_leftRegular S n)
-    (isZero_res_leftRegular S (n + 1))
+  (_root_.TateCohomology.map_tateComplexFunctor_shortExact
+    (augmentationSES_res_shortExact k G S.subtype)).δIso n (n + 1) rfl
+      (isZero_res_leftRegular S n) (isZero_res_leftRegular S (n + 1))
 
 /-- The augmentation dimension shift is the connecting homomorphism. -/
 @[simp]
 theorem augmentationδIso_hom (n : ℤ) :
     (augmentationδIso k S n).hom =
-      _root_.TateCohomology.δ (augmentationSES_res_shortExact k G S.subtype) n :=
-  δIso_hom _ n _ _
+      _root_.TateCohomology.δ (augmentationSES_res_shortExact k G S.subtype) n := (rfl)
 
 end TauCeti.TateCohomology
 
