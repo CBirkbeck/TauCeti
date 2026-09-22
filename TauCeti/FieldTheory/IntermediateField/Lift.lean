@@ -41,20 +41,22 @@ variable {F L : Type*} [Field F] [Field L] [Algebra F L] {E : IntermediateField 
 
 /-- **Restricting a lifted intermediate field recovers it.** This is the round trip complementary
 to Mathlib's `lift_restrict`. -/
+@[simp]
 theorem restrict_lift (E' : IntermediateField F E) : restrict (lift_le E') = E' := by
   ext x
   rw [mem_restrict, mem_lift]
 
 /-- **`lift` reflects the order.** Monotonicity alone would only give one direction; the converse
 is what makes `liftOrderIso` an order isomorphism rather than a monotone bijection. -/
+@[simp]
 theorem lift_le_lift_iff {a b : IntermediateField F E} : lift a ≤ lift b ↔ a ≤ b := by
   simp only [lift, ← SetLike.coe_subset_coe, coe_map, coe_val]
   exact Set.image_subset_image_iff Subtype.val_injective
 
 variable (E) in
 /-- **The intermediate fields of `E / F` are the intermediate fields of `L / F` below `E`**, as an
-order isomorphism. The body is exposed because consumers evaluate composites built from it, and
-the evaluation lemmas for those composites are provable only by unfolding it. -/
+order isomorphism. `liftOrderIso_apply` and `liftOrderIso_symm_apply` are the evaluation rules
+downstream files use; the body is definitional only inside this module. -/
 def liftOrderIso : IntermediateField F E ≃o Set.Iic E where
   toFun E' := ⟨lift E', lift_le E'⟩
   invFun E' := restrict E'.2
@@ -64,7 +66,7 @@ def liftOrderIso : IntermediateField F E ≃o Set.Iic E where
 
 @[simp]
 theorem liftOrderIso_apply (E' : IntermediateField F E) :
-    liftOrderIso E E' = ⟨lift E', lift_le E'⟩ :=
+    (liftOrderIso E E' : IntermediateField F L) = lift E' :=
   (rfl)
 
 @[simp]
