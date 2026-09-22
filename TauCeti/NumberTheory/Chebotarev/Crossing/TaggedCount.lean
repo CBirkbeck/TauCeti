@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Rat.Cast.Lemmas
+import Mathlib.Data.Rat.Cast.Lemmas
 public import TauCeti.GroupTheory.SpecificGroups.Cyclic.OrderCount
 
 /-!
