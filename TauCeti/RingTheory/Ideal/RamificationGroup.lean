@@ -26,16 +26,21 @@ The decomposition group is deliberately **not** a member of this family — it k
 
 Mathlib's `Ideal.inertia M I` is already `{σ | ∀ x, σ • x - x ∈ I}`, so the `i`-th ramification
 group *is* the inertia subgroup of `P ^ (i + 1)`, and that is how it is defined here. Naming the
-family is what this file adds; every lemma below is the corresponding Mathlib fact about
-`Ideal.inertia` transported along that definition, so the two APIs cannot drift apart:
+family is what this file adds.
 
-| here | Mathlib fact it rests on |
+Two of the results are direct restatements of a Mathlib fact along that definition:
+
+| here | restates |
 |---|---|
 | `ramificationGroup_zero` | `pow_one` |
-| `ramificationGroup_antitone` | `Ideal.pow_le_pow_right` |
-| `ramificationGroup_le_stabilizer` | `Ideal.inertia_le_stabilizer` |
 | `ramificationGroup_smul` | `Ideal.inertia_smul` |
-| `iInf_ramificationGroup_eq_bot` | `Ideal.iInf_pow_eq_bot_of_isDomain` |
+
+The rest are consequences, proved from Mathlib facts together with a further argument:
+`ramificationGroup_antitone` from `Ideal.pow_le_pow_right`, `ramificationGroup_le_inertia` from
+antitonicity at `i = 0`, `ramificationGroup_le_stabilizer` by composing that with
+`Ideal.inertia_le_stabilizer`, the normality instance from `Ideal.inertia_smul` and stability of
+`P ^ (i + 1)` under the stabilizer, and `iInf_ramificationGroup_eq_bot` from
+`Ideal.iInf_pow_eq_bot_of_isDomain` together with faithfulness of the action.
 
 ## Main results
 
@@ -71,10 +76,7 @@ variable (M : Type*) [Group M] {R : Type*} [CommRing R] [MulSemiringAction M R]
 
 /-- **The `i`-th ramification group of `P`, in lower numbering**: the automorphisms that move
 every element of `R` by something in `P ^ (i + 1)`. Equivalently, the inertia subgroup of
-`P ^ (i + 1)`, which is how it is defined.
-
-`@[expose]`d so that `ramificationGroup_def`, an exported theorem, may unfold it. -/
-@[expose]
+`P ^ (i + 1)`, which is how it is defined. -/
 def ramificationGroup (P : Ideal R) (i : ℕ) : Subgroup M := (P ^ (i + 1)).inertia M
 
 variable {M}
@@ -82,7 +84,7 @@ variable {M}
 /-- **The defining restatement**, so that consumers never have to unfold the definition. -/
 theorem ramificationGroup_def (P : Ideal R) (i : ℕ) :
     P.ramificationGroup M i = (P ^ (i + 1)).inertia M :=
-  rfl
+  (rfl)
 
 /-- **Membership in the `i`-th ramification group.** -/
 @[simp]
