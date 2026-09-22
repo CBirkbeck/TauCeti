@@ -77,6 +77,26 @@ theorem card_taggedElements_eq_sum_totient {H : Type*} [Group H] [Fintype H] [Is
   unfold taggedElements
   exact IsCyclic.card_filter_dvd_orderOf_eq_sum_totient f
 
+/-- **The exact tagged count in a cyclic group.**  When `f` divides the order of `H`, the number
+of elements whose order is divisible by `f` is `#H` times a product over the primes dividing `f`.
+
+This restates `IsCyclic.card_filter_dvd_orderOf_eq_mul_prod_primeFactors` for the
+`taggedElements` carrier and over `ℝ`.  No positivity hypothesis on `f` is needed: `f` divides
+`Nat.card H`, which is nonzero, so `f` is nonzero already. -/
+theorem card_taggedElements_cyclic {H : Type*} [Group H] [Fintype H] [IsCyclic H] (f : ℕ)
+    (hf : f ∣ Nat.card H) :
+    ((taggedElements (H := H) f).card : ℝ) =
+      (Nat.card H : ℝ) * ∏ p ∈ f.primeFactors,
+        (1 - (p : ℝ) ^ (-(((Nat.card H).factorization p - f.factorization p + 1 : ℕ) : ℤ))) := by
+  rw [Nat.card_eq_fintype_card] at hf ⊢
+  have hset : taggedElements f = ({τ : H | f ∣ orderOf τ} : Finset H) := Finset.ext fun τ ↦ by simp
+  have hQ := (Rat.cast_inj (α := ℝ)).mpr
+    (IsCyclic.card_filter_dvd_orderOf_eq_mul_prod_primeFactors hf)
+  push_cast at hQ
+  rw [hset, hQ]
+  refine congrArg _ (Finset.prod_congr rfl fun p _ ↦ ?_)
+  rw [← inv_zpow', zpow_natCast, inv_pow]
+
 /-- **The tagged elements of a cyclic group are a fixed proportion of it.**  When `f ^ r` divides
 the order of `H`, at least `(1 - 2 ^ (-r)) ^ #f.primeFactors` of the elements of `H` have order
 divisible by `f`.

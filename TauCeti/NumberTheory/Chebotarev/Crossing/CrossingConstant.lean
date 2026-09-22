@@ -40,7 +40,7 @@ namespace TauCeti.NumberField.Chebotarev
 
 open Finset
 
-variable (K L : Type*) [Field K] [Field L] [Algebra K L]
+variable (K L : Type*) [CommSemiring K] [Semiring L] [Algebra K L]
 variable {H : Type*} [Group H] [Fintype H]
 
 /-- **The crossing constant.**  The proportion of `Gal(L/K) × H` taken up by the tagged elements
