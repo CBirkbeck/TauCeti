@@ -5,7 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.RingTheory.Ideal.Quotient.HasFiniteQuotients.Norm
 public import TauCeti.NumberTheory.NumberField.Global.RayClass.Finite
+public import TauCeti.Order.Northcott
 
 /-!
 # Counting the integral ideals of a ray class
@@ -20,9 +22,12 @@ The carrier is `integralIdealsPrimeTo 𝔪`, the monoid on which `idealClass` is
 coprimality and nonvanishing are forced by the type rather than imposed as side conditions; the
 zero ideal and ideals sharing a prime with the finite part cannot enter the count.
 
-Finiteness comes from Mathlib's `Ideal.finite_setOfPred_absNorm_le` after replacing the real bound
-`x` by `⌊x⌋₊`, which loses nothing because the norm is a natural number.  The bound is taken in `ℝ`
-rather than `ℕ` because the asymptotics that consume this count are.
+Finiteness is not proved here.  `TauCeti.Order.Northcott` already fixes the project's convention
+for counting by an *inclusive real* cutoff, and supplies `finite_setOf_natCast_le` for any
+natural-valued Northcott function.  All this file adds is the `Northcott` instance for the absolute
+norm on `integralIdealsPrimeTo 𝔪`; the finiteness, and with it `normLE`, `summatory` and
+`Nat.card_coe_normLE`, then come from that shared layer.  The bound is taken in `ℝ` rather than `ℕ`
+because the asymptotics that consume this count are.
 
 The partition is stated first as an equivalence, `idealClassSigmaEquiv`, and only then in counting
 form.  The equivalence needs no finiteness at all, and it is what a consumer weighting the classes
@@ -43,7 +48,7 @@ by a character reaches for; the counting statement is its `Nat.card` shadow.
 ## References
 
 * J. Neukirch, *Algebraic Number Theory*, Chapter VI, §1.
-* `CBirkbeck/AINTLIB` @ `db14b34cc5e3d79603e67c205dfa86b7b989000c` (Apache-2.0, Chris Birkbeck),
+* `CBirkbeck/AINTLIB` @ `2622c61d2502159c62865a1b59fc1de473519113` (Apache-2.0, Chris Birkbeck),
   `projects/Chebotarev/CebotarevDensity/ForMathlib/IdealCongruenceCount.lean`:
   `card_norm_le_residue_eq_sum_class` is the corresponding partition step, stated there for the
   ordinary class group together with a norm-residue condition.
@@ -60,26 +65,29 @@ variable {K : Type*} [Field K] [NumberField K]
 
 /-! ### Finiteness of the sets being counted -/
 
-/-- The nonzero integral ideals prime to `𝔪` of norm at most a real bound form a finite type: the
-norm is a natural number, so the bound may be replaced by `⌊x⌋₊`. -/
-instance finite_absNorm_le (𝔪 : Modulus K) (x : ℝ) :
-    Finite {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} := by
-  have hfin : Finite {I : Ideal (𝓞 K) // Ideal.absNorm I ≤ ⌊x⌋₊} :=
-    (Ideal.finite_setOfPred_absNorm_le ⌊x⌋₊).to_subtype
-  refine Finite.of_injective (β := {I : Ideal (𝓞 K) // Ideal.absNorm I ≤ ⌊x⌋₊})
-    (fun I ↦ ⟨(I.1 : Ideal (𝓞 K)), Nat.le_floor I.2⟩) fun I J h ↦ ?_
-  simp only [Subtype.mk.injEq] at h
-  exact Subtype.ext (Subtype.ext h)
+/-- **The absolute norm is Northcott on the ideals prime to a modulus**: only finitely many have
+norm below any bound, because that is already true of all nonzero integral ideals and the carrier
+injects into them. This mirrors `TauCeti.instNorthcottAbsNormNonZeroDivisors`, which does the same
+for `(Ideal R)⁰`; registering the carrier here is what lets the real-cutoff layer of
+`TauCeti.Order.Northcott` — `normLE`, `summatory`, `Nat.card_coe_normLE` — apply to ray classes. -/
+instance (𝔪 : Modulus K) :
+    Northcott (fun I : integralIdealsPrimeTo 𝔪 ↦ Ideal.absNorm (I : Ideal (𝓞 K))) where
+  finite_le B :=
+    (Ring.HasFiniteQuotients.finite_absNorm_le (S := 𝓞 K) B).preimage Subtype.val_injective.injOn
+
+/-- The nonzero integral ideals prime to `𝔪` of norm at most a real bound form a finite type. The
+cutoff is real, and inclusive, per the convention `TauCeti.Order.Northcott` fixes. -/
+instance (𝔪 : Modulus K) (x : ℝ) :
+    Finite {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} :=
+  (TauCeti.finite_setOf_natCast_le _ x).to_subtype
 
 /-- Restricting to a single ray class keeps the set finite. -/
-instance finite_idealClass_eq_absNorm_le (𝔪 : Modulus K) (c : RayClassGroup 𝔪) (x : ℝ) :
+instance (𝔪 : Modulus K) (c : RayClassGroup 𝔪) (x : ℝ) :
     Finite {I : integralIdealsPrimeTo 𝔪 //
-      idealClass 𝔪 I = c ∧ (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} := by
-  refine Finite.of_injective
+      idealClass 𝔪 I = c ∧ (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} :=
+  Finite.of_injective
     (β := {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x})
-    (fun I ↦ ⟨I.1, I.2.2⟩) fun I J h ↦ ?_
-  simp only [Subtype.mk.injEq] at h
-  exact Subtype.ext h
+    (Subtype.map id fun _ ↦ And.right) (Subtype.map_injective _ Function.injective_id)
 
 /-! ### The counting function and the class partition -/
 
