@@ -21,12 +21,19 @@ vanishing norm (`norm_pos_of_mem_rayFundamentalDomain`).  The preimage is theref
 
 For the trivial modulus this is Mathlib's `NumberField.mixedEmbedding.fundamentalCone.integerSet`.
 
+The carrier also carries an action: a congruence unit sends a point of the domain back into the
+domain exactly when it is a root of unity, so the roots of unity congruent to one modulo `𝔪` act
+on `rayIntegerSet 𝔪`, and that action is free.  Counting a ray class will divide by the size of
+its orbits, which is what makes freeness the fact worth isolating here.
+
 ## Main definitions
 
 * `TauCeti.GlobalNumberFields.rayIntegerSet`: the points of the ray fundamental domain that are
   images of algebraic integers;
 * `TauCeti.GlobalNumberFields.preimageOfMemRayIntegerSet`: the nonzero algebraic integer a point
-  of `rayIntegerSet` is the image of.
+  of `rayIntegerSet` is the image of;
+* `TauCeti.GlobalNumberFields.unitsCongruenceTorsion`: the roots of unity congruent to one
+  modulo `𝔪`, which act on `rayIntegerSet 𝔪`.
 
 ## Main results
 
@@ -34,7 +41,8 @@ For the trivial modulus this is Mathlib's `NumberField.mixedEmbedding.fundamenta
 * `TauCeti.GlobalNumberFields.mixedEmbedding_preimageOfMemRayIntegerSet`: the preimage map is a
   section of `mixedEmbedding`;
 * `TauCeti.GlobalNumberFields.rayIntegerSet_one`: the trivial modulus recovers Mathlib's
-  `integerSet`.
+  `integerSet`;
+* `TauCeti.GlobalNumberFields.stabilizer_rayIntegerSet_eq_bot`: the action is free.
 
 ## References
 
@@ -102,5 +110,51 @@ fundamental cone. -/
 @[simp]
 theorem rayIntegerSet_one : rayIntegerSet (Modulus.one K) = integerSet K := by
   rw [rayIntegerSet, rayFundamentalDomain_one, integerSet]
+
+/-! ### The free action of the congruence roots of unity -/
+
+/-- The roots of unity congruent to one modulo `𝔪`.  By
+`unitsCongruenceSubgroup_smul_mem_rayFundamentalDomain_iff_mem_torsion` these are exactly the
+congruence units carrying a point of the ray fundamental domain back into it. -/
+def unitsCongruenceTorsion (𝔪 : Modulus K) : Subgroup (𝓞 K)ˣ :=
+  unitsCongruenceSubgroup 𝔪 ⊓ NumberField.Units.torsion K
+
+theorem mem_unitsCongruenceTorsion {𝔪 : Modulus K} {u : (𝓞 K)ˣ} :
+    u ∈ unitsCongruenceTorsion 𝔪 ↔
+      u ∈ unitsCongruenceSubgroup 𝔪 ∧ u ∈ NumberField.Units.torsion K :=
+  Iff.rfl
+
+/-- `rayIntegerSet 𝔪` is stable under the congruence roots of unity. -/
+theorem unitsCongruenceTorsion_smul_mem_rayIntegerSet {𝔪 : Modulus K} {ζ : (𝓞 K)ˣ}
+    (hζ : ζ ∈ unitsCongruenceTorsion 𝔪) {a : mixedSpace K} (ha : a ∈ rayIntegerSet 𝔪) :
+    ζ • a ∈ rayIntegerSet 𝔪 := by
+  obtain ⟨hdom, x, rfl⟩ := mem_rayIntegerSet.mp ha
+  exact mem_rayIntegerSet.mpr
+    ⟨(torsion_smul_mem_rayFundamentalDomain_iff hζ.2 hζ.1).mpr hdom, ζ * x, by simp⟩
+
+/-- The action of the congruence roots of unity on `rayIntegerSet 𝔪`. -/
+@[simps]
+noncomputable instance rayIntegerSetTorsionSMul (𝔪 : Modulus K) :
+    SMul (unitsCongruenceTorsion 𝔪) (rayIntegerSet 𝔪) where
+  smul := fun ⟨ζ, hζ⟩ ⟨a, ha⟩ ↦ ⟨ζ • a, unitsCongruenceTorsion_smul_mem_rayIntegerSet hζ ha⟩
+
+noncomputable instance (𝔪 : Modulus K) :
+    MulAction (unitsCongruenceTorsion 𝔪) (rayIntegerSet 𝔪) where
+  one_smul := fun _ ↦ by
+    rw [Subtype.mk_eq_mk, rayIntegerSetTorsionSMul_smul_coe, OneMemClass.coe_one, one_smul]
+  mul_smul := fun _ _ _ ↦ by
+    rw [Subtype.mk_eq_mk]
+    simp_rw [rayIntegerSetTorsionSMul_smul_coe, Subgroup.coe_mul, mul_smul]
+
+/-- **The action is free.**  A congruence root of unity fixing a point of `rayIntegerSet 𝔪` is
+the identity, because the point is the image of a nonzero algebraic integer. -/
+theorem stabilizer_rayIntegerSet_eq_bot {𝔪 : Modulus K} (a : rayIntegerSet 𝔪) :
+    MulAction.stabilizer (unitsCongruenceTorsion 𝔪) a = ⊥ := by
+  refine (Subgroup.eq_bot_iff_forall _).mpr fun ζ hζ ↦ ?_
+  rwa [MulAction.mem_stabilizer_iff, Subtype.ext_iff, rayIntegerSetTorsionSMul_smul_coe,
+    unitSMul_smul, ← mixedEmbedding_preimageOfMemRayIntegerSet, ← map_mul,
+    (mixedEmbedding_injective K).eq_iff, ← map_mul, ← RingOfIntegers.ext_iff, mul_eq_right₀,
+    Units.val_eq_one, OneMemClass.coe_eq_one] at hζ
+  exact nonZeroDivisors.coe_ne_zero _
 
 end TauCeti.GlobalNumberFields
