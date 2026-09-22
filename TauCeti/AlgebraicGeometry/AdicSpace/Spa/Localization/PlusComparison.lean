@@ -36,22 +36,24 @@ from a map of rings to a map of Huber pairs that makes `comap σ` a map of adic 
 
 ## Main definitions
 
-* `TauCeti.ValuationSpectrum.pairHomOfRationalSubsetSubset` : the comparison map as a morphism of
-  Huber pairs `(A⟨T/s⟩, A_U⁺) → (A⟨T'/s'⟩, A_U'⁺)`. The map of adic spectra is
+All names below are in the `TauCeti.ValuationSpectrum` namespace.
+
+* `pairHomOfRationalSubsetSubset` : the comparison map as a morphism of Huber pairs
+  `(A⟨T/s⟩, A_U⁺) → (A⟨T'/s'⟩, A_U'⁺)`. The map of adic spectra is
   `TauCeti.Huber.Pair.Hom.spaComap` of this morphism; that generic construction and its API are
   used directly, with no specialised wrapper.
 
 ## Main results
 
-* `TauCeti.ValuationSpectrum.comap_ringHomOfRationalSubsetSubset_mem_spa` : pullback along the
-  comparison map takes points of `Spa (A⟨T'/s'⟩, A_U'⁺)` to points of `Spa (A⟨T/s⟩, A_U⁺)`.
-* `TauCeti.ValuationSpectrum.ringHomOfRationalSubsetSubset_mem_completedPlusSubring` : the
-  comparison map carries `A_U⁺` into `A_U'⁺`, so it is a map of Huber pairs.
-* `TauCeti.ValuationSpectrum.toRingHom_pairHomOfRationalSubsetSubset` : the underlying ring
-  homomorphism of the morphism of Huber pairs is the comparison map.
-* `TauCeti.ValuationSpectrum.spaCompletedLocalizationHomeomorph_pairHomOfRationalSubsetSubset`
-  : across the homeomorphisms `Spa (A⟨T/s⟩, A_U⁺) ≃ₜ R(T/s)`, the induced map of adic spectra is
-  the inclusion `R(T'/s') ⊆ R(T/s)`.
+* `comap_ringHomOfRationalSubsetSubset_mem_spa` : pullback along the comparison map takes points
+  of `Spa (A⟨T'/s'⟩, A_U'⁺)` to points of `Spa (A⟨T/s⟩, A_U⁺)`.
+* `ringHomOfRationalSubsetSubset_mem_completedPlusSubring` : the comparison map carries `A_U⁺`
+  into `A_U'⁺`, so it is a map of Huber pairs.
+* `toRingHom_pairHomOfRationalSubsetSubset` : the underlying ring homomorphism of the morphism of
+  Huber pairs is the comparison map.
+* `spaCompletedLocalizationHomeomorph_spaComap_pairHomOfRationalSubsetSubset` : across the
+  homeomorphisms `Spa (A⟨T/s⟩, A_U⁺) ≃ₜ R(T/s)`, the induced map of adic spectra is the
+  inclusion `R(T'/s') ⊆ R(T/s)`.
 
 ## References
 
@@ -62,29 +64,9 @@ public section
 
 namespace TauCeti.ValuationSpectrum
 
-open TauCeti.Huber TauCeti.Huber.PairOfDefinition TauCeti.Localization UniformSpace
+open TauCeti.Huber TauCeti.Huber.PairOfDefinition UniformSpace
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
-
--- `TauCeti.Huber.le_one_of_mem_integralClosure_adjoin_plus` at the valuation `w.valuation.comap ψ`
--- on `S`; all that is local is the translation between `≤ 1` and `vle _ 1` and the value of `ψ`
--- on a distinguished fraction.
-omit [TopologicalSpace A] [IsTopologicalRing A] in
-private theorem vle_one_of_mem_integralClosure_adjoin_plus (Aplus : Subring A) (T : Finset A)
-    (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S] {B : Type*}
-    [CommRing B] {φ : A →+* B} {ψ : S →+* B} (hψ : ∀ a : A, ψ (algebraMap A S a) = φ a) {w : Spv B}
-    (hA : ∀ a ∈ Aplus, w.toValuativeRel.vle (φ a) 1) (hu : IsUnit (φ s))
-    (hT : ∀ t ∈ T, w.toValuativeRel.vle (φ t * ↑hu.unit⁻¹) 1) {x : S}
-    (hx : x ∈ integralClosure
-      ↥(Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))) S) :
-    w.toValuativeRel.vle (ψ x) 1 := by
-  have key (y : S) : w.valuation.comap ψ y ≤ 1 ↔ w.toValuativeRel.vle (ψ y) 1 := by
-    rw [Valuation.comap_apply, ← map_one w.valuation, valuation_le_iff]
-  have hdiv (t : A) : ψ (divBy t s) = φ t * ↑hu.unit⁻¹ := by
-    rw [Units.eq_mul_inv_iff_mul_eq, hu.unit_spec, ← hψ, ← hψ, ← map_mul, divBy_mul_algebraMap]
-  exact (key x).mp (le_one_of_mem_integralClosure_adjoin_plus S T s Aplus
-    (fun a ha ↦ (key _).mpr (hψ a ▸ hA a ha))
-    (fun t ht ↦ (key _).mpr ((hdiv t).symm ▸ hT t ht)) hx)
 
 /-- **Pullback along the comparison map lands in the adic spectrum of `A⟨T/s⟩`.** For a
 containment `R(T'/s') ⊆ R(T/s)` of rational subsets, every point of `Spa (A⟨T'/s'⟩, A_U'⁺)` pulls
@@ -232,7 +214,7 @@ theorem toRingHom_pairHomOfRationalSubsetSubset (P : PairOfDefinition A) (Aplus 
 homeomorphisms `Spa (A⟨T/s⟩, A_U⁺) ≃ₜ R(T/s)` of Wedhorn's Proposition 8.2(2), the map
 `TauCeti.Huber.Pair.Hom.spaComap` of `pairHomOfRationalSubsetSubset` is the inclusion
 `R(T'/s') ⊆ R(T/s)`. -/
-theorem spaCompletedLocalizationHomeomorph_pairHomOfRationalSubsetSubset
+theorem spaCompletedLocalizationHomeomorph_spaComap_pairHomOfRationalSubsetSubset
     (P : PairOfDefinition A)
     (Aplus : Subring A) (hP : P.ringOfDefinition ≤ Aplus)
     (hAplus : ∀ ⦃a⦄, a ∈ Aplus → IsPowerBounded a) (T : Finset A) (s : A) (S : Type*) [CommRing S]

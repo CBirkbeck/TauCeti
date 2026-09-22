@@ -8,6 +8,7 @@ module
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.Basic
 import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Support
 import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Integral
+import TauCeti.RingTheory.Huber.LocalizationTopology.Valuation
 
 /-!
 # The geometric universal property of a rational localisation
@@ -40,12 +41,17 @@ The other half of Lemma 8.1, that `Spa ρ : Spa A⟨T/s⟩ → Spa A` factors th
 
 ## Main results
 
-All four are in the `TauCeti.ValuationSpectrum` namespace.
+All five are in the `TauCeti.ValuationSpectrum` namespace.
 
 * `isUnit_of_forall_comap_mem_rationalSubset` : if every point of `Spa (B, B⁺)` pulls back into
   `R(T/s)`, the denominator becomes a unit in `B`.
 * `vle_one_of_comap_mem_rationalSubset` : at a point whose pullback lies in `R(T/s)`, the
   fraction `φ t / φ s` is sub-unit.
+* `vle_one_of_mem_integralClosure_adjoin_plus` : at a point that is sub-unit on the image of
+  `A⁺` and on the fractions `φ t / φ s`, every element of the plus ring of `Aₛ` is sub-unit
+  after any homomorphism out of `Aₛ` restricting to `φ`. Lemma 8.1 does not use this step; it
+  spends the same two bounds on the plus ring instead of on the fractions, which is what a
+  consumer placing a point of `Spa (Aₛ, Aₛ⁺)` needs.
 * `existsUnique_continuous_ringHom_of_isUnit_of_forall_comap_mem_rationalSubset` : the geometric
   universal property — a continuous `φ : A → B` whose `Spa(φ)` factors through `R(T/s)` and whose
   `φ s` is a unit extends across `A → A⟨T/s⟩` in exactly one continuous way.
@@ -150,6 +156,36 @@ theorem vle_one_of_comap_mem_rationalSubset {φ : A →+* B} {Aplus : Subring A}
     rwa [comap_vle] at h
   have h := w.toValuativeRel.mul_vle_mul_left hvle (↑hs.unit⁻¹ : B)
   rwa [hs.mul_val_inv] at h
+
+omit [TopologicalSpace A] in
+/-- **The plus ring of the localisation is sub-unit.** Let `w` be a point of `Spv B` that is
+sub-unit on the image of `A⁺` and on the fractions `φ t / φ s`, and let `ψ : Aₛ → B` restrict
+along `algebraMap A Aₛ` to `φ`. Then `w` is sub-unit on the image under `ψ` of the plus ring of
+`Aₛ` — the integral closure of `A⁺[t₁/s, …, tₙ/s]`.
+
+This is `TauCeti.Huber.le_one_of_mem_integralClosure_adjoin_plus` at the pulled-back valuation
+`w.valuation.comap ψ`. What is local to the adic spectrum is the translation between `≤ 1` and
+`vle _ 1`, and the value `TauCeti.Localization.map_divBy_eq_mul_inv` forces on a distinguished
+fraction; nothing else is needed, so `B` carries no topology and no `B⁺` appears.
+
+The two bounds are in the shape the steps above produce: `hA` is membership of `w` in
+`spa B⁺` read at the image of `A⁺`, and `hT` is `vle_one_of_comap_mem_rationalSubset`. As there,
+`w` enters as a single point rather than a quantifier over `spa B⁺`. Lemma 8.1 itself does not
+use this step — it spends the pullback condition on the fractions alone — but a consumer that
+has to place a point of `Spa (Aₛ, Aₛ⁺)` does. -/
+theorem vle_one_of_mem_integralClosure_adjoin_plus (Aplus : Subring A) (T : Finset A) (s : A)
+    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S] {φ : A →+* B} {ψ : S →+* B}
+    (hψ : ∀ a : A, ψ (algebraMap A S a) = φ a) {w : Spv B}
+    (hA : ∀ a ∈ Aplus, w.toValuativeRel.vle (φ a) 1) (hu : IsUnit (φ s))
+    (hT : ∀ t ∈ T, w.toValuativeRel.vle (φ t * ↑hu.unit⁻¹) 1) {x : S}
+    (hx : x ∈ integralClosure
+      ↥(Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))) S) :
+    w.toValuativeRel.vle (ψ x) 1 := by
+  have key (y : S) : w.valuation.comap ψ y ≤ 1 ↔ w.toValuativeRel.vle (ψ y) 1 := by
+    rw [Valuation.comap_apply, ← map_one w.valuation, valuation_le_iff]
+  exact (key x).mp (Huber.le_one_of_mem_integralClosure_adjoin_plus S T s Aplus
+    (fun a ha ↦ (key _).mpr (hψ a ▸ hA a ha))
+    (fun t ht ↦ (key _).mpr ((map_divBy_eq_mul_inv (S := S) t s hψ hu).symm ▸ hT t ht)) hx)
 
 end Steps
 

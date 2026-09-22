@@ -45,6 +45,9 @@ Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
   `A`.
 * `TauCeti.Localization.divBy_mul_divBy_of_eq_mul`: for `s = u * r`, the fraction `(a · b)/s`
   splits as `(a · r)/s · (b · u)/s`, each half carrying one factor of the denominator.
+* `TauCeti.Localization.map_divBy_eq_mul_inv`: a ring homomorphism out of the localisation whose
+  restriction along `algebraMap A S` is `φ` sends `t/s` to `φ t * (φ s)⁻¹`, as soon as `φ s` is a
+  unit.
 * `TauCeti.Localization.awayLift_divBy`: the comparison map to a localisation at a multiple
   `w = u * r` rescales fractions by the cofactor, sending `a/u` to `(a · r)/w`.
 * `RingHom.awayMap_divBy`: the map induced on localisations by a ring homomorphism
@@ -73,6 +76,14 @@ image of `MvPolynomial T A₀`; that surjectivity is true by construction, since
 defined as the adjoin, and it says nothing about the localisation `S` itself. Generating the whole
 of `S` over `A` is a strictly stronger statement and needs the hypothesis on `T` below, which the
 source never states.
+
+`map_divBy_eq_mul_inv` is a **generalisation of an AINTLIB statement**, checked against the same
+commit. There, `awayLift_divByS_one_eq_unit_inv` in
+`projects/AdicSpaces/Adic spaces/WedhornAwayMapSaturation.lean` records the numerator-`1` case
+for `IsLocalization.Away.lift` into `Localization.Away s`; the version here has an arbitrary
+numerator, an arbitrary localisation away from `s`, and an arbitrary homomorphism out of it,
+asking only that it restrict to `φ` along `algebraMap`. The proof is written here directly from
+`divBy_mul_algebraMap`.
 
 ## References
 
@@ -221,6 +232,26 @@ theorem divBy_mul_divBy_of_eq_mul {u r : A} (h : s = u * r) (a b : A) :
     show (a * r) * (b * u) = (a * b) * s by rw [h]; ring]
   exact (IsLocalization.mk'_cancel (S := S) (a * b)
     ⟨s, Submonoid.mem_powers s⟩ ⟨s, Submonoid.mem_powers s⟩).symm
+
+/-! ### Maps out of the localisation
+
+A ring homomorphism out of `S` is determined by its restriction along `algebraMap A S`, and what
+it does to a distinguished fraction is forced: `t/s` goes to the ratio of the images. Nothing is
+asked of the target beyond the image of the denominator being a unit, and nothing of the
+homomorphism beyond its restriction, so this covers every map out of `S` at once rather than the
+particular ones `IsLocalization.Away.lift` and `IsLocalization.Away.map` build below. -/
+
+/-- **A homomorphism out of the localisation sends `t/s` to `φ t / φ s`.** If `ψ : S →+* B`
+restricts along `algebraMap A S` to `φ`, and `φ s` is a unit, then `ψ (t/s) = φ t * (φ s)⁻¹`.
+
+Both sides become `φ t` after multiplying by the unit `φ s`, so they agree. Only the restriction
+hypothesis is used, which is why the statement holds for an arbitrary factoring `ψ`; the
+restriction determines `ψ` outright by `IsLocalization.ringHom_ext`, and this records the value
+that determination forces on the generators. -/
+theorem map_divBy_eq_mul_inv {B : Type*} [CommSemiring B] {φ : A →+* B} {ψ : S →+* B}
+    (hψ : ∀ a : A, ψ (algebraMap A S a) = φ a) (hs : IsUnit (φ s)) :
+    ψ (divBy t s : S) = φ t * ↑hs.unit⁻¹ := by
+  rw [Units.eq_mul_inv_iff_mul_eq, hs.unit_spec, ← hψ, ← hψ, ← map_mul, divBy_mul_algebraMap]
 
 /-! ### Passing to a localisation at a multiple
 

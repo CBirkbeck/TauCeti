@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.RingTheory.Valuation.Integral
+public import TauCeti.RingTheory.Valuation.Integral
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Plus
 public import TauCeti.RingTheory.Valuation.LtAddSubgroup
 public import TauCeti.RingTheory.Valuation.Continuous.Basic
@@ -230,12 +230,11 @@ theorem le_one_of_mem_integralClosure_adjoin_plus (Aplus : Subring A) {u : Valua
     (hplus : ∀ a ∈ Aplus, u (algebraMap A S a) ≤ 1) (hT : ∀ t ∈ T, u (divBy t s : S) ≤ 1) {x : S}
     (hx : x ∈ integralClosure
       ↥(Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))) S) :
-    u x ≤ 1 := by
-  -- the integral closure costs nothing: the valuation ring is integrally closed in `Aₛ`, so a
-  -- bound on the generating subalgebra is already a bound on its closure
-  have : IsIntegrallyClosedIn u.integer S :=
-    Subring.isIntegrallyClosedIn_iff.mpr fun _ ↦ (Valuation.integer.integers u).mem_of_integral
-  exact (Subring.integralClosure_le_iff (T := u.integer)).mpr
+    u x ≤ 1 :=
+  -- the integral closure costs nothing: `Valuation.integer.isIntegrallyClosedIn` makes the
+  -- valuation ring integrally closed in `Aₛ`, so a bound on the generating subalgebra is
+  -- already a bound on its closure
+  (Subring.integralClosure_le_iff (T := u.integer)).mpr
     (fun r ↦ le_one_of_mem_adjoin_plus S T s Aplus hplus hT r.2) hx
 
 omit [TopologicalSpace A] in
