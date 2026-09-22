@@ -55,6 +55,14 @@ noncomputable def crossingConstant (f : ℕ) : ℝ :=
   ((taggedElements (H := H) f).card : ℝ) /
     ((Nat.card (L ≃ₐ[K] L) : ℝ) * (Nat.card H : ℝ))
 
+/-- **The crossing constant, written out.**  The characteristic rewrite: a consumer uses this
+rather than unfolding the definition. -/
+@[simp]
+theorem crossingConstant_def (f : ℕ) : crossingConstant K L (H := H) f =
+    ((taggedElements (H := H) f).card : ℝ) /
+      ((Nat.card (L ≃ₐ[K] L) : ℝ) * (Nat.card H : ℝ)) :=
+  (rfl)
+
 /-- **The lower bound for the crossing constant.**  When `f ^ r` divides the order of the cyclic
 auxiliary group `H`, the crossing constant is at least `(1 - 2 ^ (-r)) ^ #f.primeFactors` divided
 by the order of `Aut_K(L)`.  The bound no longer mentions `#H`: the auxiliary group enters only
@@ -64,7 +72,7 @@ through the level `r`.
 theorem le_crossingConstant [IsCyclic H] (f r : ℕ) (hrpos : 0 < r) (hf : f ^ r ∣ Nat.card H) :
     (1 - (2 : ℝ) ^ (-(r : ℤ))) ^ f.primeFactors.card / (Nat.card (L ≃ₐ[K] L) : ℝ) ≤
       crossingConstant K L (H := H) f := by
-  rw [crossingConstant, div_mul_eq_div_div_swap]
+  rw [crossingConstant_def, div_mul_eq_div_div_swap]
   gcongr
   exact (le_div_iff₀ (mod_cast Nat.card_pos)).mpr <| le_card_taggedElements_cyclic f r hrpos hf
 
