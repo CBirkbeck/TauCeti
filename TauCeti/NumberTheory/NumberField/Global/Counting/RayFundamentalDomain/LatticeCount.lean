@@ -33,7 +33,12 @@ at once, which is the form the class-by-class count consumes directly.
 
 * `TauCeti.GlobalNumberFields.exists_abs_ncard_smul_rayFundamentalDomain_inter_vadd_sub_le`: the
   points of any coset of `congruenceLattice 𝔪 I` in the dilate `c •` of the norm-≤-one section
-  number `vol / covolume * c ^ [K:ℚ]` up to `O(c ^ ([K:ℚ] - 1))`, uniformly in the coset.
+  number `vol / covolume * c ^ [K:ℚ]` up to `O(c ^ ([K:ℚ] - 1))`, uniformly in the coset;
+* `TauCeti.GlobalNumberFields.smul_rayFundamentalDomain_inter_normLeOne`: the dilate by `c` of the
+  norm-≤-one section is the norm-≤-`c ^ [K:ℚ]` section;
+* `TauCeti.GlobalNumberFields.exists_abs_ncard_rayFundamentalDomain_inter_normLe_inter_vadd_sub_le`:
+  the same count graded by the norm, where the main term is linear in `t` and the error is
+  `O(t ^ (1 - 1 / [K:ℚ]))`.
 
 ## References
 
@@ -70,5 +75,59 @@ theorem exists_abs_ncard_smul_rayFundamentalDomain_inter_vadd_sub_le (𝔪 : Mod
   TauCeti.exists_abs_ncard_smul_inter_vadd_sub_le
     (isBounded_rayFundamentalDomain_inter_normLeOne 𝔪)
     (isLipschitzParametrizable_frontier_rayFundamentalDomain 𝔪).2.2
+
+/-- **The norm grading is a dilation.**  Scaling by `c > 0` preserves the ray fundamental domain
+and multiplies `mixedEmbedding.norm` by `c ^ [K:ℚ]`, so the dilate by `c` of the norm-≤-one
+section is the norm-≤-`c ^ [K:ℚ]` section.
+
+This is the adapter between the two gradings the count has to move between: the lattice-point
+estimate is stated for dilates of a fixed region, while ideals are counted by their absolute
+norm. -/
+theorem smul_rayFundamentalDomain_inter_normLeOne (𝔪 : Modulus K) {c : ℝ} (hc : 0 < c) :
+    c • (rayFundamentalDomain 𝔪 ∩ {x : mixedSpace K | mixedEmbedding.norm x ≤ 1}) =
+      rayFundamentalDomain 𝔪 ∩ {x : mixedSpace K | mixedEmbedding.norm x ≤ c ^ finrank ℚ K} := by
+  ext y
+  rw [Set.mem_smul_set_iff_inv_smul_mem₀ hc.ne']
+  simp only [Set.mem_inter_iff, Set.mem_ofPred_eq,
+    smul_mem_rayFundamentalDomain_iff (inv_pos.mpr hc)]
+  refine and_congr_right fun _ ↦ ?_
+  rw [mixedEmbedding.norm_smul, abs_of_pos (inv_pos.mpr hc), inv_pow,
+    inv_mul_le_iff₀ (pow_pos hc _), mul_one]
+
+open scoped Classical in
+/-- **The congruence-lattice count graded by the norm, uniformly in the coset.**  For any coset
+`ξ +ᵥ congruenceLattice 𝔪 I`, the number of its points in the ray fundamental domain of norm at
+most `t` is `vol / covolume * t`, with an error `O(t ^ (1 - 1 / [K:ℚ]))` whose implied constant is
+independent of both `t` and the coset.
+
+This is the previous estimate regraded from dilations to norms: the main term is linear in `t`,
+and the boundary exponent `[K:ℚ] - 1` becomes the power saving `1 / [K:ℚ]`.  Unlike
+`ZLattice.covolume.tendsto_card_le_div'`, which gives a limit, it provides an explicit error
+term, uniform in the coset. -/
+theorem exists_abs_ncard_rayFundamentalDomain_inter_normLe_inter_vadd_sub_le (𝔪 : Modulus K)
+    (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) : ∃ A ≥ (0 : ℝ), ∀ (ξ : mixedSpace K) (t : ℝ), 1 ≤ t →
+      |(((rayFundamentalDomain 𝔪 ∩ {x : mixedSpace K | mixedEmbedding.norm x ≤ t}) ∩
+            (ξ +ᵥ (congruenceLattice 𝔪 I : Set (mixedSpace K)))).ncard : ℝ) -
+          volume.real (rayFundamentalDomain 𝔪 ∩ {x : mixedSpace K | mixedEmbedding.norm x ≤ 1}) /
+            ZLattice.covolume (congruenceLattice 𝔪 I) volume * t| ≤
+        A * t ^ (1 - ((finrank ℚ K : ℝ))⁻¹) := by
+  obtain ⟨A, hA0, hA⟩ := exists_abs_ncard_smul_rayFundamentalDomain_inter_vadd_sub_le 𝔪 I
+  simp only [mixedEmbedding.finrank] at hA
+  refine ⟨A, hA0, fun ξ t ht ↦ ?_⟩
+  have ht0 : (0 : ℝ) < t := lt_of_lt_of_le one_pos ht
+  have hn : 0 < finrank ℚ K := finrank_pos
+  have hc1 : 1 ≤ t ^ ((finrank ℚ K : ℝ))⁻¹ := Real.one_le_rpow ht (by positivity)
+  have hc0 : (0 : ℝ) < t ^ ((finrank ℚ K : ℝ))⁻¹ := lt_of_lt_of_le one_pos hc1
+  have hcn : (t ^ ((finrank ℚ K : ℝ))⁻¹) ^ finrank ℚ K = t :=
+    Real.rpow_inv_natCast_pow ht0.le hn.ne'
+  have herr : (t ^ ((finrank ℚ K : ℝ))⁻¹) ^ (finrank ℚ K - 1) =
+      t ^ (1 - ((finrank ℚ K : ℝ))⁻¹) := by
+    rw [← Real.rpow_natCast (t ^ ((finrank ℚ K : ℝ))⁻¹) (finrank ℚ K - 1), ← Real.rpow_mul ht0.le,
+      Nat.cast_sub hn, Nat.cast_one, mul_sub, inv_mul_cancel₀ (Nat.cast_ne_zero.mpr hn.ne'),
+      mul_one]
+  -- dilating by `c` scales the norm by `c ^ [K:ℚ]`, so `c = t ^ (1 / [K:ℚ])` is the factor that
+  -- presents the norm-≤-`t` section as a dilate of the norm-≤-one section
+  have key := hA ξ (t ^ ((finrank ℚ K : ℝ))⁻¹) hc1
+  rwa [smul_rayFundamentalDomain_inter_normLeOne 𝔪 hc0, hcn, herr] at key
 
 end TauCeti.GlobalNumberFields
