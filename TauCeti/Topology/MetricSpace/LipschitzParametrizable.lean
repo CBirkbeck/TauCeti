@@ -20,7 +20,8 @@ a codimension-one parametrization gives quantitative control on how many lattice
 boundary.
 
 This file supplies the elementary API needed to assemble parametrizations: the property is
-monotone in the set, is preserved by Lipschitz images and finite unions, and holds for finite sets.
+monotone in the set, is preserved by Lipschitz images, by locally Lipschitz images, by products
+and by finite unions, and holds for finite sets.
 It also supplies the way in from smoothness: a map that is `C¹` on the compact cube is Lipschitz
 there, so the image of a cube of the right dimension is a single chart.
 It also records the basic dimension consequence.  A Lipschitz-parametrizable subset of a
@@ -40,7 +41,11 @@ That is what turns a parametrization in a given dimension into a count.
 * `TauCeti.isLipschitzParametrizable_iff`: the finite-chart characterization of the predicate;
 * `TauCeti.IsLipschitzParametrizable.union`: closure under binary unions;
 * `TauCeti.IsLipschitzParametrizable.image`: closure under Lipschitz images;
+* `TauCeti.IsLipschitzParametrizable.image_of_locallyLipschitz`: closure under locally Lipschitz
+  images, which is what a chart-by-chart compactness argument buys over `image`;
 * `TauCeti.IsLipschitzParametrizable.iUnion`: closure under unions over a finite index type;
+* `TauCeti.IsLipschitzParametrizable.prod`: a product is parametrized in the sum of the
+  dimensions;
 * `TauCeti.IsLipschitzParametrizable.image_unitCube_of_contDiffOn`: a unit cube's image under a
   map that is `C¹` on it is parametrized by that cube;
 * `TauCeti.IsLipschitzParametrizable.measure_zero`: a parametrized set has
@@ -146,6 +151,34 @@ theorem iUnion {I : Type*} [Finite I] {A : I → Set E}
   rw [← Set.biUnion_univ, ← Finset.coe_univ, Finset.set_biUnion_coe]
   exact biUnion_finset Finset.univ fun i _ ↦ hA i
 
+/-- A product of parametrized sets is Lipschitz parametrizable in the sum of the dimensions. -/
+theorem prod {G : Type*} [PseudoEMetricSpace G] {e : ℕ} {T : Set G}
+    (hS : IsLipschitzParametrizable d S) (hT : IsLipschitzParametrizable e T) :
+    IsLipschitzParametrizable (d + e) (S ×ˢ T) := by
+  obtain ⟨m, C, f, hf, hSf⟩ := isLipschitzParametrizable_iff.1 hS
+  obtain ⟨n, D, g, hg, hTg⟩ := isLipschitzParametrizable_iff.1 hT
+  -- Reading off a block of coordinates is `1`-Lipschitz and carries the cube into the cube.
+  have hlip : ∀ {a : ℕ} (σ : Fin a → Fin (d + e)),
+      LipschitzOnWith 1 (fun (x : Fin (d + e) → ℝ) k ↦ x (σ k)) (Icc 0 1) := fun _ ↦
+    (LipschitzWith.of_edist_le fun x y ↦
+      edist_pi_le_iff.2 fun k ↦ edist_le_pi_edist x y _).lipschitzOnWith
+  have hmaps : ∀ {a : ℕ} (σ : Fin a → Fin (d + e)),
+      Set.MapsTo (fun (x : Fin (d + e) → ℝ) k ↦ x (σ k)) (Icc 0 1) (Icc 0 1) :=
+    fun _ _ hz ↦ ⟨fun _ ↦ hz.1 _, fun _ ↦ hz.2 _⟩
+  refine isLipschitzParametrizable_iff.2 ⟨m * n, max C D, fun p x ↦
+    (f (finProdFinEquiv.symm p).1 fun k ↦ x (Fin.castAdd e k),
+      g (finProdFinEquiv.symm p).2 fun k ↦ x (Fin.natAdd d k)),
+    fun p ↦ LipschitzOnWith.prodMk ?_ ?_, ?_⟩
+  · simpa [Function.comp_def] using (hf _).comp (hlip _) (hmaps _)
+  · simpa [Function.comp_def] using (hg _).comp (hlip _) (hmaps _)
+  · rintro ⟨u, v⟩ ⟨hu, hv⟩
+    obtain ⟨i, a, ha, rfl⟩ := Set.mem_iUnion.1 (hSf hu)
+    obtain ⟨j, b, hb, rfl⟩ := Set.mem_iUnion.1 (hTg hv)
+    -- `Fin.append a b` is the cube point whose two blocks parametrize `u` and `v`.
+    refine Set.mem_iUnion.2 ⟨finProdFinEquiv (i, j), Fin.append a b, ⟨?_, ?_⟩, by simp⟩
+    · exact Fin.addCases (fun l ↦ by simpa using ha.1 l) fun l ↦ by simpa using hb.1 l
+    · exact Fin.addCases (fun l ↦ by simpa using ha.2 l) fun l ↦ by simpa using hb.2 l
+
 /-- A finite set is Lipschitz parametrizable in every dimension. -/
 theorem finite (hS : S.Finite) : IsLipschitzParametrizable d S := by
   induction S, hS using Set.Finite.induction_on with
@@ -188,6 +221,23 @@ theorem image_unitCube_of_contDiffOn {ι G : Type*} [Fintype ι] [NormedAddCommG
   rw [Set.image_comp]
   exact Set.image_mono fun y hy ↦ ⟨fun j ↦ y (e.symm j),
     ⟨fun j ↦ hy.1 _, fun j ↦ hy.2 _⟩, funext fun i ↦ congrArg y (e.symm_apply_apply i)⟩
+
+/-- The image of a Lipschitz-parametrizable set under a locally Lipschitz map is Lipschitz
+parametrizable. -/
+theorem image_of_locallyLipschitz {E F : Type*} [PseudoMetricSpace E] [PseudoMetricSpace F] {d : ℕ}
+    {S : Set E} {g : E → F} (hg : LocallyLipschitz g) (hS : IsLipschitzParametrizable d S) :
+    IsLipschitzParametrizable d (g '' S) := by
+  obtain ⟨n, C, f, hf, hSf⟩ := isLipschitzParametrizable_iff.1 hS
+  -- Each chart has compact image, so `g` is Lipschitz on it with some constant `D i`.
+  choose D hD using fun i ↦ hg.locallyLipschitzOn.exists_lipschitzOnWith_of_compact
+    (isCompact_Icc.image_of_continuousOn (hf i).continuousOn)
+  -- Finitely many charts, so the constants `D i * C` admit a common bound.
+  refine isLipschitzParametrizable_iff.2 ⟨n, Finset.univ.sup fun i ↦ D i * C, fun i ↦ g ∘ f i,
+    fun i ↦ ((hD i).comp (hf i) (Set.mapsTo_image _ _)).weaken
+      (Finset.le_sup (f := fun i ↦ D i * C) (Finset.mem_univ i)), ?_⟩
+  rintro _ ⟨x, hx, rfl⟩
+  obtain ⟨i, z, hz, rfl⟩ := Set.mem_iUnion.1 (hSf hx)
+  exact Set.mem_iUnion.2 ⟨i, z, hz, rfl⟩
 
 /-- A set Lipschitz parametrized in dimension `d` has zero additive Haar measure in a
 finite-dimensional real normed space of dimension strictly larger than `d`.

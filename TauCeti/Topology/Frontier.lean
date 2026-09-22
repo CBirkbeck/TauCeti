@@ -8,9 +8,10 @@ module
 public import Mathlib.Topology.Connected.Basic
 
 /-!
-# Three frontier lemmas: straddling, splitting a domain in two, and clinging to it from inside
+# Four frontier lemmas: straddling, splitting a domain in two, clinging to it from inside, and
+the frontier of an image
 
-Three elementary facts about `frontier`, each the topological core of a step that a boundary
+Four elementary facts about `frontier`, each the topological core of a step that a boundary
 argument would otherwise carry out inside a concrete space.
 
 ## A connected set that straddles a set meets its frontier
@@ -67,16 +68,19 @@ domain-splitting argument live.
 
 ## Consumers
 
-All three lemmas serve layer **L5** of `TauCetiRoadmap/ConformalMapping/README.md`, Carathéodory's
-boundary correspondence. The first does so through
+The first three lemmas serve layer **L5** of `TauCetiRoadmap/ConformalMapping/README.md`,
+Carathéodory's boundary correspondence. The first does so through
 `TauCeti/Analysis/Normed/Module/DiamFrontier.lean`: a ray leaving a bounded set crosses its
 frontier, which is what makes the frontier of such a set as wide as the set itself. The second is
 the splitting step of `TauCeti/Analysis/Complex/Conformal/CutDiameter.lean`, where `s` and `t` are
 the two sides of a circular crosscut of a domain and `u` is the crosscut arc. The third is what
 lets `TauCeti/Analysis/Complex/Conformal/ClusterSet.lean` identify the boundary piece that one
 side of such a crosscut cuts off, whose description as a union of cluster sets is naturally a
-statement about a closure. Nothing here is specific to those uses; no lemma mentions a metric, let
-alone a holomorphic map.
+statement about a closure. The fourth has an unrelated consumer,
+`TauCeti/NumberTheory/NumberField/CanonicalEmbedding/NormLeOneLipschitz.lean`, where the map is a
+partial homeomorphism of a real coordinate space and the extra point is the origin that an
+unbounded box direction escapes to. Nothing here is specific to any of those uses; no lemma
+mentions a metric, let alone a holomorphic map.
 
 ## Main results
 
@@ -87,6 +91,9 @@ alone a holomorphic map.
   lies on the image of the remainder and on the frontier of the image of the whole.
 * `TauCeti.frontier_inter_closure_eq_frontier_inter_frontier` — the frontier of a set meets the
   closure of a subset exactly where it meets that subset's frontier.
+* `TauCeti.frontier_image_subset_of_closure_subset` — for an open injective map whose image
+  closure adds at most one point, the frontier of an image lies on the image of the frontier,
+  together with that point.
 -/
 
 public section

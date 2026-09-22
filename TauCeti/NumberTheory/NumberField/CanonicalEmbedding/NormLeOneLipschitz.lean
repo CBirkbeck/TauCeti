@@ -20,8 +20,8 @@ parametrizable: `exists_abs_ncard_smul_inter_sub_le` takes
 `frontier (normLeOne K)` is *null* (`volume_frontier_normLeOne`), which is what a rate-free limit
 needs and is strictly weaker: a null frontier gives no error term at all.
 
-This file works towards discharging that hypothesis for `normLeOne K`. Mathlib presents the
-region through `expMapBasis`, a partial homeomorphism of `realSpace K` whose image of the box
+This file discharges that hypothesis for `normLeOne K`. Mathlib presents the region through
+`expMapBasis`, a partial homeomorphism of `realSpace K` whose image of the box
 `paramSet K = univ.pi fun w ↦ if w = w₀ then Iic 0 else Ico 0 1` is the norm-≤-one region up to
 `normAtAllPlaces`. The frontier of a box is the union of its faces, so a Lipschitz cover of the
 image reduces to parametrizing the image of each face — which is what the maps here do.
@@ -32,6 +32,11 @@ unbounded direction into the freed cube coordinate.
 
 ## Main results
 
+* `isLipschitzParametrizable_frontier_normLeOne`: the frontier of `normLeOne K` is Lipschitz
+  parametrizable in dimension `finrank ℝ (mixedSpace K) - 1`, one less than that of the mixed
+  space.
+* `frontier_normLeOne_subset_preimage`: that frontier lies over the frontier of the box image,
+  through `normAtAllPlaces`.
 * `isLipschitzParametrizable_frontier_image_paramSet`: the frontier of the box image is Lipschitz
   parametrizable in dimension `rank K`, one less than that of `realSpace K`.
 * `contDiff_expMapBasis`: the box parametrization is smooth.
@@ -39,17 +44,22 @@ unbounded direction into the freed cube coordinate.
 * `frontier_image_paramSet_subset`: the frontier of the box image lies in the image of the box's
   frontier, together with the origin.
 
-The face maps that decompose the box's frontier, and the lemmas supporting them, are `private`:
-they implement the parametrization and are not independently reusable.
+The face maps that decompose the box's frontier, the lifts that cover the fibres of
+`normAtAllPlaces`, and the lemmas supporting them, are `private`: they implement the
+parametrization and are not independently reusable.
 
 ## References
 
-* C. Birkbeck and R. Brasca, [*AINTLIB*](https://github.com/CBirkbeck/AINTLIB) at commit
+* C. Birkbeck, [*AINTLIB*](https://github.com/CBirkbeck/AINTLIB) at commit
   `db14b34cc5e3d79603e67c205dfa86b7b989000c` (Apache-2.0),
   `projects/Chebotarev/CebotarevDensity/ForMathlib/NormLeOneLipschitz.lean`, from which the face
   decomposition is adapted: `faceMapZero`, `faceMapSide`, `contDiff_faceMapZero`,
   `contDiff_faceMapSide`, `frontier_image_subset_of_closure_subset` and
   `frontier_image_paramSet_subset` follow that file's declarations of the same names.
+  `isLipschitzParametrizable_frontier_normLeOne` is that file's
+  `normLeOne_frontier_lipschitz_cover`, and the circle direction of `liftMap` follows its
+  `lipschitzWith_exp_ofReal_mul_I`; the sign and angle bookkeeping is arranged differently here,
+  through a single globally `C¹` lift rather than that file's `cubeRelabel` scaffolding.
 -/
 
 public section
@@ -225,5 +235,97 @@ theorem isLipschitzParametrizable_frontier_image_paramSet :
     TauCeti.IsLipschitzParametrizable (rank K) (frontier (expMapBasis '' paramSet K)) :=
   .mono ((isLipschitzParametrizable_image_frontier_paramSet K).union (.singleton 0)) <|
     frontier_image_paramSet_subset K
+
+/-- **The frontier of the norm-≤-one region sits over the frontier of the box image.**
+`normLeOne K` is the preimage of `expMapBasis '' paramSet K` under the continuous
+`normAtAllPlaces`, and the frontier of a preimage lies in the preimage of the frontier. -/
+theorem frontier_normLeOne_subset_preimage :
+    frontier (normLeOne K) ⊆ normAtAllPlaces ⁻¹' frontier (expMapBasis '' paramSet K) := by
+  rw [normLeOne_eq_preimage]
+  exact (continuous_normAtAllPlaces K).frontier_preimage_subset _
+
+/-- The lift of a point of `realSpace K` to the mixed space, given a choice of sign `s w` at each
+real place and of angle at each complex place. The angles range over the unit cube and are
+rescaled to `[-π, π]`, so that `liftMap` inverts `normAtAllPlaces` on the nose: every `x` is
+`liftMap K s (normAtAllPlaces x, θ)` for the sign vector recording the signs of `x` at the real
+places and the `θ` recording its arguments at the complex ones.
+
+This is not `(polarSpaceCoord K).symm`: that inverts a partial homeomorphism, so it is available
+only for positive radii and angles in the open interval `(-π, π)`, and it keeps the signed value
+at a real place instead of its norm. The cover below needs a map defined — and `C¹` — on the whole
+closed cube, and needs the real places to carry a separate choice of sign. -/
+private noncomputable def liftMap (s : {w : InfinitePlace K // IsReal w} → Bool)
+    (p : realSpace K × ({w : InfinitePlace K // IsComplex w} → ℝ)) : mixedSpace K :=
+  (fun w ↦ (if s w then 1 else -1) * p.1 w.1,
+    fun w ↦ p.1 w.1 • Complex.exp ((2 * Real.pi * p.2 w - Real.pi) • Complex.I))
+
+open scoped Classical in
+/-- Each lift is `C¹`: it is linear at the real places, and a product of a coordinate with a
+complex exponential at the complex ones. -/
+private theorem contDiff_liftMap (s : {w : InfinitePlace K // IsReal w} → Bool) :
+    ContDiff ℝ 1 (liftMap K s) := by
+  unfold liftMap
+  fun_prop
+
+omit [NumberField K] in
+/-- **The lifts cover every fibre of `normAtAllPlaces`.** A point of the mixed space is recovered
+from its vector of norms by choosing a sign at each real place and an argument at each complex
+place, so the preimage of any `S` is covered by the `2 ^ r₁` lifts of `S` times the cube of
+angles. -/
+private theorem preimage_subset_iUnion_image_liftMap (S : Set (realSpace K)) :
+    normAtAllPlaces ⁻¹' S ⊆ ⋃ s : {w : InfinitePlace K // IsReal w} → Bool,
+      liftMap K s '' (S ×ˢ Set.Icc (0 : {w : InfinitePlace K // IsComplex w} → ℝ) 1) := by
+  intro x hx
+  have hpi : (0 : ℝ) < 2 * Real.pi := by positivity
+  -- The sign bit at `w` records whether `x` is nonnegative there, and the cube coordinate at a
+  -- complex place is the argument of `x w`, rescaled from `[-π, π]` to `[0, 1]`.
+  refine Set.mem_iUnion.2 ⟨fun w ↦ decide (0 ≤ x.1 w), ⟨normAtAllPlaces x,
+    fun w ↦ (Complex.arg (x.2 w) + Real.pi) / (2 * Real.pi)⟩, ⟨hx, ⟨fun w ↦ ?_, fun w ↦ ?_⟩⟩, ?_⟩
+  · exact div_nonneg (by linarith [Complex.neg_pi_lt_arg (x.2 w)]) hpi.le
+  · exact (div_le_one hpi).2 (by linarith [Complex.arg_le_pi (x.2 w)])
+  refine Prod.ext (funext fun w ↦ ?_) (funext fun w ↦ ?_)
+  · have hnorm : normAtAllPlaces x w.1 = ‖x.1 w‖ := normAtPlace_apply_of_isReal w.2 x
+    by_cases h : 0 ≤ x.1 w
+    · simp [liftMap, hnorm, h, Real.norm_of_nonneg h]
+    · simp [liftMap, hnorm, h, Real.norm_of_nonpos (not_le.1 h).le]
+  · have hnorm : normAtAllPlaces x w.1 = ‖x.2 w‖ := normAtPlace_apply_of_isComplex w.2 x
+    have hang : 2 * Real.pi * ((Complex.arg (x.2 w) + Real.pi) / (2 * Real.pi)) - Real.pi
+        = Complex.arg (x.2 w) := by
+      field_simp
+      ring
+    simp only [liftMap, hnorm, hang, Complex.real_smul]
+    exact Complex.norm_mul_exp_arg_mul_I _
+
+/-- The dimension the lifts produce is the codimension-one dimension of the mixed space:
+`rank K + r₂ = (r₁ + r₂ - 1) + r₂ = r₁ + 2 * r₂ - 1 = finrank ℝ (mixedSpace K) - 1`. -/
+private theorem rank_add_nrComplexPlaces_eq :
+    rank K + nrComplexPlaces K = finrank ℝ (mixedSpace K) - 1 := by
+  have h₁ := card_eq_nrRealPlaces_add_nrComplexPlaces K
+  have h₂ := card_add_two_mul_card_eq_rank K
+  -- Both subtractions are truncated, so the count of places must be known to be positive.
+  have h₃ : 0 < Fintype.card (InfinitePlace K) := Fintype.card_pos
+  simp only [mixedEmbedding.finrank, Units.rank]
+  lia
+
+open scoped Classical in
+/-- **The frontier of the norm-≤-one region is Lipschitz parametrizable in codimension one.**
+This discharges the boundary hypothesis of `TauCeti.exists_abs_ncard_smul_inter_sub_le` for
+`normLeOne K`, whose frontier Mathlib knows only to be null (`volume_frontier_normLeOne`) — a
+null frontier supports a rate-free limit but carries no error term.
+
+The frontier lies over the frontier of the box image, which is parametrizable in dimension
+`rank K`; each fibre of `normAtAllPlaces` adds the `r₂` angles at the complex places and a choice
+of sign at each of the `r₁` real places, and `rank K + r₂ = finrank ℝ (mixedSpace K) - 1`. -/
+theorem isLipschitzParametrizable_frontier_normLeOne :
+    TauCeti.IsLipschitzParametrizable (finrank ℝ (mixedSpace K) - 1) (frontier (normLeOne K)) := by
+  have hcube : TauCeti.IsLipschitzParametrizable (nrComplexPlaces K)
+      (Set.Icc (0 : {w : InfinitePlace K // IsComplex w} → ℝ) 1) := by
+    simpa using TauCeti.IsLipschitzParametrizable.image_unitCube_of_contDiffOn
+      (d := nrComplexPlaces K) (f := id) rfl contDiffOn_id
+  rw [← rank_add_nrComplexPlaces_eq K]
+  refine .mono (.iUnion fun s ↦ .image_of_locallyLipschitz (contDiff_liftMap K s).locallyLipschitz
+    ((isLipschitzParametrizable_frontier_image_paramSet K).prod hcube)) ?_
+  exact (frontier_normLeOne_subset_preimage K).trans
+    (preimage_subset_iUnion_image_liftMap K _)
 
 end NumberField.mixedEmbedding.fundamentalCone
