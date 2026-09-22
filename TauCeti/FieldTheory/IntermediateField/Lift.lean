@@ -7,12 +7,6 @@ module
 
 public import Mathlib.FieldTheory.IntermediateField.Basic
 
--- Roadmap source: `TauCetiRoadmap/NumberFieldArithmetic/README.md` @ `2172af4ad0d3`, Layer 7.1,
--- which asks to "package the order-reversing equivalence between `IntermediateField ℚ K` and the
--- interval of subgroups of `Gal(M/ℚ)` containing `fixingSubgroup`". This file supplies the
--- field-theoretic half of that packaging, which involves no Galois theory; the dictionary itself
--- is in `TauCeti/FieldTheory/Galois/SubfieldDictionary.lean`.
-
 /-!
 # Intermediate fields of an intermediate field
 
