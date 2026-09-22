@@ -60,7 +60,7 @@ finite set of primes have density zero; the finite-error statements that use it 
   `TauCeti.NumberTheory.ArithmeticDirichletSeries.NaturalDensity`.
 * J.-P. Serre, *A Course in Arithmetic*, Chapter VI, §4.1.
 * J. Neukirch, *Algebraic Number Theory*, Chapter VII, §13.
-* The finite-partition squeeze is adapted from C. Birkbeck and R. Brasca,
+* The finite-partition squeeze is adapted from C. Birkbeck,
   [*AINTLIB*](https://github.com/CBirkbeck/AINTLIB) at commit
   `db14b34cc5e3d79603e67c205dfa86b7b989000c` (Apache-2.0),
   `projects/Chebotarev/CebotarevDensity/Abelian.lean`, whose
@@ -229,20 +229,22 @@ private theorem eventually_forall_mem_erase_sub_lt {ι : Type*} [DecidableEq ι]
 family exhausts a union of known density `δ`, so one member's ratio is what the others leave
 behind; if the lower bounds `d` already sum to `δ`, what they leave behind is `d i₀`. -/
 theorem isUpperDirichletDensityBound_of_forall_isLowerDirichletDensityBound {ι : Type*}
-    [DecidableEq ι] {s : Finset ι} {f : ι → Set (HeightOneSpectrum (𝓞 K))} {d : ι → ℝ} {i₀ : ι}
+    {s : Finset ι} {f : ι → Set (HeightOneSpectrum (𝓞 K))} {d : ι → ℝ} {i₀ : ι}
     (hi₀ : i₀ ∈ s) (hdisj : (s : Set ι).PairwiseDisjoint f)
-    (hU : HasDirichletDensity (⋃ i ∈ s, f i) δ)
-    (hlow : ∀ i ∈ s.erase i₀, IsLowerDirichletDensityBound (f i) (d i))
+    (hU : IsUpperDirichletDensityBound (⋃ i ∈ s, f i) δ)
+    (hlow : ∀ i ∈ s, i ≠ i₀ → IsLowerDirichletDensityBound (f i) (d i))
     (hsum : ∑ i ∈ s, d i = δ) : IsUpperDirichletDensityBound (f i₀) (d i₀) := by
+  classical
   -- `IsUpperDirichletDensityBound` is a non-exposed `def`, so unfold it through its `Iff.rfl`
   -- restatement rather than by `intro`.
   refine isUpperDirichletDensityBound_iff.mpr fun ε hε ↦ ?_
   have hcard : (0 : ℝ) < s.card := by exact_mod_cast Finset.card_pos.mpr ⟨i₀, hi₀⟩
   obtain ⟨η, hη, hhalf⟩ : ∃ η : ℝ, 0 < η ∧ (s.card : ℝ) * η = ε / 2 :=
     ⟨ε / (2 * s.card), by positivity, by field_simp⟩
-  have hUb := isUpperDirichletDensityBound_iff.mp hU.isUpperDirichletDensityBound (ε / 2)
-    (by positivity)
-  filter_upwards [eventually_forall_mem_erase_sub_lt hlow hη, hUb, self_mem_nhdsWithin]
+  have hUb := isUpperDirichletDensityBound_iff.mp hU (ε / 2) (by positivity)
+  filter_upwards [eventually_forall_mem_erase_sub_lt
+      (fun i hi ↦ hlow i (Finset.mem_of_mem_erase hi) (Finset.ne_of_mem_erase hi)) hη,
+    hUb, self_mem_nhdsWithin]
     with t ht_oth ht_union (ht1 : 1 < t)
   rw [primeIdealZetaSum_div_univ_eq_sub_sum_erase hdisj ht1 hi₀]
   -- The union's ratio costs `ε / 2`; the other members' lower bounds cost the other half.
@@ -259,12 +261,12 @@ one-sided estimate becomes a density — an argument that exhibits enough primes
 cannot see that there are no more, still determines every class exactly. -/
 theorem hasDirichletDensity_of_squeeze {ι : Type*} {s : Finset ι}
     {f : ι → Set (HeightOneSpectrum (𝓞 K))} {d : ι → ℝ} {i₀ : ι} (hi₀ : i₀ ∈ s)
-    (hdisj : (s : Set ι).PairwiseDisjoint f) (hU : HasDirichletDensity (⋃ i ∈ s, f i) δ)
+    (hdisj : (s : Set ι).PairwiseDisjoint f)
+    (hU : IsUpperDirichletDensityBound (⋃ i ∈ s, f i) δ)
     (hlow : ∀ i ∈ s, IsLowerDirichletDensityBound (f i) (d i)) (hsum : ∑ i ∈ s, d i = δ) :
-    HasDirichletDensity (f i₀) (d i₀) := by
-  classical
-  exact hasDirichletDensity_of_upperBound_of_lowerBound
+    HasDirichletDensity (f i₀) (d i₀) :=
+  hasDirichletDensity_of_upperBound_of_lowerBound
     (isUpperDirichletDensityBound_of_forall_isLowerDirichletDensityBound hi₀ hdisj hU
-      (fun i hi ↦ hlow i (Finset.mem_of_mem_erase hi)) hsum) (hlow i₀ hi₀)
+      (fun i hi _ ↦ hlow i hi) hsum) (hlow i₀ hi₀)
 
 end NumberField.Set

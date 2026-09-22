@@ -14,17 +14,10 @@ public import TauCeti.NumberTheory.Chebotarev.FrobeniusPrimeSet
 Let `L / K` be an extension of number fields. The primes of `𝓞 K` ramified in `L` form the finite
 set `ramifiedPrimes K L`, so their complement has Dirichlet density `1`.
 
-For a Galois extension the Frobenius fibres partition that complement, so once every fibre is
-known to have a density, those densities sum to `1`. That total is what pins the individual
-values down: a lower bound of `1 / #G` on each of the `#G` fibres of an abelian extension can only
-be an equality, which is how the density of a single fibre is finally extracted.
-
 ## Main results
 
 * `NumberField.Chebotarev.hasDirichletDensity_compl_ramifiedPrimes`: the primes outside the finite
   ramified set have Dirichlet density `1`.
-* `NumberField.Chebotarev.sum_eq_one_of_forall_hasDirichletDensity_frobeniusPrimeSet`: densities
-  assigned to the Frobenius fibres sum to `1`.
 
 ## References
 
@@ -52,21 +45,5 @@ theorem hasDirichletDensity_compl_ramifiedPrimes :
     ((↑(ramifiedPrimes K L) : Set (HeightOneSpectrum (𝓞 K)))ᶜ).HasDirichletDensity 1 := by
   simpa using (Set.hasDirichletDensity_of_finite
     (ramifiedPrimes K L).finite_toSet).compl
-
-open scoped Classical in
-variable (K L) in
-/-- **The Frobenius fibres carry all of the density.** If every Artin fibre
-`frobeniusPrimeSet K L C` has a Dirichlet density `d C`, then those densities sum to `1`.
-
-That each fibre *has* a density is not automatic; supplying it is the analytic content of a
-Chebotarev theorem, and what this records is the constraint linking the fibres to each other. -/
-theorem sum_eq_one_of_forall_hasDirichletDensity_frobeniusPrimeSet {d : ConjClasses (L ≃ₐ[K] L) → ℝ}
-    (hd : ∀ C, (frobeniusPrimeSet K L C).HasDirichletDensity (d C)) :
-    ∑ C : ConjClasses (L ≃ₐ[K] L), d C = 1 :=
-  -- the fibres are pairwise disjoint, and they cover exactly the complement of the finite set
-  -- `ramifiedPrimes K L`, which carries all of the density
-  (Set.hasDirichletDensity_biUnion_finset (fun C _ ↦ hd C)
-    ((pairwise_disjoint_frobeniusPrimeSet K L).set_pairwise _)).unique <| by
-    simpa using hasDirichletDensity_compl_ramifiedPrimes K L
 
 end NumberField.Chebotarev

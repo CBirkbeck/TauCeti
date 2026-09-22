@@ -29,18 +29,20 @@ namespace Finset
 from `i₀` is within `η'` below `d i`, the erased sum falls short of `t - d i₀` by at most
 `#s * η'`.
 
-Pure arithmetic on a finite index set in an ordered ring: the slack is charged once per index, so
-the whole error is `#s * η'`, and any `η` dominating that will do. Stating it with `η` rather than
-`#s * η'` lets a caller fix an error budget first and choose `η'` afterwards. -/
-theorem sub_sub_le_sum_erase_of_forall_sub_le {ι R : Type*} [Ring R] [LinearOrder R]
-    [IsStrictOrderedRing R] [DecidableEq ι] {s : Finset ι} {d a : ι → R} {t η η' : R} {i₀ : ι}
+Pure arithmetic on a finite index set in an ordered ring — neither linearity nor strict
+monotonicity is used: the slack is charged once per index, so the whole error is `#s * η'`, and
+any `η` dominating that will do. Stating it with `η` rather than `#s * η'` lets a caller fix an
+error budget first and choose `η'` afterwards. -/
+theorem sub_sub_le_sum_erase_of_forall_sub_le {ι R : Type*} [Ring R] [PartialOrder R]
+    [IsOrderedRing R] [DecidableEq ι] {s : Finset ι} {d a : ι → R} {t η η' : R} {i₀ : ι}
     (hi₀ : i₀ ∈ s) (hd : ∑ i ∈ s, d i = t) (ha : ∀ i ∈ s.erase i₀, d i - η' ≤ a i) (hη' : 0 ≤ η')
     (hη : (s.card : R) * η' ≤ η) :
     t - d i₀ - η ≤ ∑ i ∈ s.erase i₀, a i := by
   have hlb := Finset.sum_le_sum ha
   rw [Finset.sum_sub_distrib, Finset.sum_const, nsmul_eq_mul, Finset.sum_erase_eq_sub hi₀,
     hd] at hlb
-  have hcard : ((s.erase i₀).card : R) ≤ (s.card : R) := by exact_mod_cast Finset.card_erase_le
+  -- Only monotonicity of `Nat.cast` is available here; `Nat.cast_le` would need a linear order.
+  have hcard : ((s.erase i₀).card : R) ≤ (s.card : R) := Nat.mono_cast Finset.card_erase_le
   have hbound : ((s.erase i₀).card : R) * η' ≤ η :=
     (mul_le_mul_of_nonneg_right hcard hη').trans hη
   exact (sub_le_sub_left hbound _).trans hlb
