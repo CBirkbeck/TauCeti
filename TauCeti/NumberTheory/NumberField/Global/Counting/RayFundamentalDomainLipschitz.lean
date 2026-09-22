@@ -158,9 +158,9 @@ private theorem isLipschitzParametrizable_frontier_unitSMul_normLeOne (u : (𝓞
 open scoped Classical in
 /-- **The frontier of the norm-≤-one section of the ray fundamental domain is Lipschitz
 parametrizable in codimension one.** This discharges the boundary hypothesis of
-`TauCeti.exists_abs_ncard_smul_inter_sub_le` for the region counting the algebraic integers of a
-fixed ray class, exactly as `isLipschitzParametrizable_frontier_normLeOne` does for the trivial
-modulus, whose ray fundamental domain is Mathlib's fundamental cone.
+`TauCeti.exists_abs_ncard_smul_inter_vadd_sub_le` for the region counting the algebraic integers
+of a fixed ray class, exactly as `isLipschitzParametrizable_frontier_normLeOne` does for the
+trivial modulus, whose ray fundamental domain is Mathlib's fundamental cone.
 
 The section is `posRegion 𝔪` intersected with finitely many unit translates of `normLeOne K`.
 The translates are bounded and each has a frontier that is a Lipschitz image of
