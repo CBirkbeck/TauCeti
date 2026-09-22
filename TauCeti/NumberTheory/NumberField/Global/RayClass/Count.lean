@@ -1,0 +1,121 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
+-/
+module
+
+public import TauCeti.NumberTheory.NumberField.Global.RayClass.Finite
+
+/-!
+# Counting the integral ideals of a ray class
+
+Let `𝔪` be a modulus of a number field `K` and `c` a ray class of `𝔪`.  This file introduces
+`rayClassIdealCountingFunction 𝔪 c x`, the number of nonzero integral ideals prime to the finite
+part of `𝔪` that lie in the class `c` and have norm at most `x`, and proves the two facts that
+make it a counting function at all: the sets being counted are finite, and summing over the ray
+class group recovers the unrestricted count.
+
+The carrier is `integralIdealsPrimeTo 𝔪`, the monoid on which `idealClass` is defined, so
+coprimality and nonvanishing are forced by the type rather than imposed as side conditions; the
+zero ideal and ideals sharing a prime with the finite part cannot enter the count.
+
+Finiteness comes from Mathlib's `Ideal.finite_setOfPred_absNorm_le` after replacing the real bound
+`x` by `⌊x⌋₊`, which loses nothing because the norm is a natural number.  The bound is taken in `ℝ`
+rather than `ℕ` because the asymptotics that consume this count are.
+
+The partition is stated first as an equivalence, `idealClassSigmaEquiv`, and only then in counting
+form.  The equivalence needs no finiteness at all, and it is what a consumer weighting the classes
+by a character reaches for; the counting statement is its `Nat.card` shadow.
+
+## Main definitions
+
+* `TauCeti.GlobalNumberFields.rayClassIdealCountingFunction`: the number of nonzero integral ideals
+  prime to `𝔪` in a fixed ray class with norm at most `x`.
+* `TauCeti.GlobalNumberFields.idealClassSigmaEquiv`: the ideals prime to `𝔪` of norm at most `x`,
+  partitioned into their ray classes.
+
+## Main results
+
+* `TauCeti.GlobalNumberFields.sum_rayClassIdealCountingFunction`: the class counts sum to the
+  unrestricted count of nonzero integral ideals prime to `𝔪` of norm at most `x`.
+
+## References
+
+* J. Neukirch, *Algebraic Number Theory*, Chapter VI, §1.
+* `CBirkbeck/AINTLIB` @ `db14b34cc5e3d79603e67c205dfa86b7b989000c` (Apache-2.0, Chris Birkbeck),
+  `projects/Chebotarev/CebotarevDensity/ForMathlib/IdealCongruenceCount.lean`:
+  `card_norm_le_residue_eq_sum_class` is the corresponding partition step, stated there for the
+  ordinary class group together with a norm-residue condition.
+-/
+
+public section
+
+open IsDedekindDomain NumberField
+open scoped nonZeroDivisors NumberField
+
+namespace TauCeti.GlobalNumberFields
+
+variable {K : Type*} [Field K] [NumberField K]
+
+/-! ### Finiteness of the sets being counted -/
+
+/-- The nonzero integral ideals prime to `𝔪` of norm at most a real bound form a finite type: the
+norm is a natural number, so the bound may be replaced by `⌊x⌋₊`. -/
+instance finite_absNorm_le (𝔪 : Modulus K) (x : ℝ) :
+    Finite {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} := by
+  have hfin : Finite {I : Ideal (𝓞 K) // Ideal.absNorm I ≤ ⌊x⌋₊} :=
+    (Ideal.finite_setOfPred_absNorm_le ⌊x⌋₊).to_subtype
+  refine Finite.of_injective (β := {I : Ideal (𝓞 K) // Ideal.absNorm I ≤ ⌊x⌋₊})
+    (fun I ↦ ⟨(I.1 : Ideal (𝓞 K)), Nat.le_floor I.2⟩) fun I J h ↦ ?_
+  simp only [Subtype.mk.injEq] at h
+  exact Subtype.ext (Subtype.ext h)
+
+/-- Restricting to a single ray class keeps the set finite. -/
+instance finite_idealClass_eq_absNorm_le (𝔪 : Modulus K) (c : RayClassGroup 𝔪) (x : ℝ) :
+    Finite {I : integralIdealsPrimeTo 𝔪 //
+      idealClass 𝔪 I = c ∧ (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} := by
+  refine Finite.of_injective
+    (β := {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x})
+    (fun I ↦ ⟨I.1, I.2.2⟩) fun I J h ↦ ?_
+  simp only [Subtype.mk.injEq] at h
+  exact Subtype.ext h
+
+/-! ### The counting function and the class partition -/
+
+/-- **The ray class ideal counting function.**  The number of nonzero integral ideals in the ray
+class `c` of `𝔪`, prime to the finite part of `𝔪`, whose norm is at most `x`.  The carrier already
+forces coprimality and nonvanishing, so the zero ideal and other classes cannot enter. -/
+noncomputable def rayClassIdealCountingFunction
+    (𝔪 : Modulus K) (c : RayClassGroup 𝔪) (x : ℝ) : ℕ :=
+  Nat.card {I : integralIdealsPrimeTo 𝔪 //
+    idealClass 𝔪 I = c ∧ (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x}
+
+/-- **The ray classes partition the ideals of bounded norm.**  An ideal prime to `𝔪` of norm at
+most `x` is the same thing as a ray class together with an ideal of that class and that norm
+bound, because `idealClass 𝔪` is a function on the carrier and the summands are exactly its
+fibres. -/
+noncomputable def idealClassSigmaEquiv (𝔪 : Modulus K) (x : ℝ) :
+    (Σ c : RayClassGroup 𝔪, {I : integralIdealsPrimeTo 𝔪 //
+        idealClass 𝔪 I = c ∧ (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x}) ≃
+      {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} :=
+  (Equiv.sigmaCongrRight fun _ ↦
+      (Equiv.subtypeEquivRight fun _ ↦ and_comm).trans
+        (Equiv.subtypeSubtypeEquivSubtypeInter _ _).symm).trans
+    (Equiv.sigmaFiberEquiv fun I : {I : integralIdealsPrimeTo 𝔪 //
+      (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} ↦ idealClass 𝔪 I.1)
+
+/-- **The class counts sum to the total.**  Summing `rayClassIdealCountingFunction` over the ray
+class group recovers the number of nonzero integral ideals prime to `𝔪` of norm at most `x`.
+
+The ray class group is always finite (`finite_rayClassGroup`), but it carries no canonical
+`Fintype`, so the enumeration is taken as a hypothesis rather than fixed to `Fintype.ofFinite`
+here; that keeps the statement usable against whichever enumeration the caller holds. -/
+theorem sum_rayClassIdealCountingFunction (𝔪 : Modulus K) [Fintype (RayClassGroup 𝔪)] (x : ℝ) :
+    ∑ c : RayClassGroup 𝔪, rayClassIdealCountingFunction 𝔪 c x =
+      Nat.card {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} := by
+  simp only [rayClassIdealCountingFunction]
+  rw [← Nat.card_sigma]
+  exact Nat.card_congr (idealClassSigmaEquiv 𝔪 x)
+
+end TauCeti.GlobalNumberFields
