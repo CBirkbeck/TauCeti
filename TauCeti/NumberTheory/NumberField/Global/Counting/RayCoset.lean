@@ -11,10 +11,14 @@ public import TauCeti.RingTheory.Ideal.CoprimeCoset
 /-!
 # Elements of an ideal congruent to one, in the mixed space
 
-For a nonzero integral ideal `𝔞` and a modulus `𝔪` with finite part `𝔪₀`, the elements of `𝔞`
-that are congruent to one modulo `𝔪₀` form a coset of `𝔞 * 𝔪₀`.  This file records what their
-images look like in the mixed space: a single translate of
-`congruenceLattice 𝔪 (FractionalIdeal.mk0 K 𝔞)`.
+For a nonzero integral ideal `𝔞` and a modulus `𝔪` with finite part `𝔪₀`, consider the elements
+of `𝔞` that are congruent to one modulo `𝔪₀`.  **Provided there is at least one**, they form a
+coset of `𝔞 * 𝔪₀` — the set is empty unless such an element exists, which is why the theorem below
+takes a witness `ξ` rather than a hypothesis on `𝔞` alone.  A witness comes from coprimality of
+`𝔞` and `𝔪₀`, via `Ideal.isCoprime_iff_exists_mem_and_sub_one_mem`.
+
+This file records what the images of those elements look like in the mixed space: a single
+translate of `congruenceLattice 𝔪 (FractionalIdeal.mk0 K 𝔞)`.
 
 The lattice being translated depends only on `𝔪` and `𝔞`, not on the element chosen to name the
 translate, so those images are the points of one translate of a fixed lattice.
