@@ -6,8 +6,8 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.FieldTheory.Galois.Basic
-public import Mathlib.Order.Hom.Set
 public import TauCeti.FieldTheory.IntermediateField.Lift
+public import TauCeti.Order.Hom.Set
 
 /-!
 # The subfield dictionary for a field that need not be Galois
@@ -41,10 +41,9 @@ Both steps are existing order isomorphisms, composed:
 
 * `IntermediateField.intermediateFieldEquivSubgroup`: the dictionary,
   `IntermediateField F K ≃o (Set.Ici K.fixingSubgroup)ᵒᵈ`.
-* `OrderIso.Iic_apply_coe` and `OrderIso.Iic_symm_apply_coe`: the two directions of Mathlib's
-  interval restriction, so that the composition above can be evaluated through
-  `IntermediateField.liftOrderIso_apply` and the Galois correspondence without unfolding
-  anything.
+
+The evaluation rules for the second step are generic order theory, and live with the
+construction they describe, in `TauCeti/Order/Hom/Set.lean`.
 
 ## References
 
@@ -57,20 +56,6 @@ namespace IntermediateField
 
 variable {F L : Type*} [Field F] [Field L] [Algebra F L] [FiniteDimensional F L] [IsGalois F L]
 variable (K : IntermediateField F L)
-
-/-- **Applying a restricted order isomorphism is applying the original.** `OrderIso.Iic` is a
-structure instance, so its applications do not otherwise rewrite. -/
-@[simp]
-theorem _root_.OrderIso.Iic_apply_coe {α β : Type*} [Lattice α] [Lattice β] (e : α ≃o β) (x : α)
-    (y : Set.Iic x) : ((e.Iic x) y : β) = e y :=
-  rfl
-
-/-- **Applying the inverse of a restricted order isomorphism is applying the original inverse.**
--/
-@[simp]
-theorem _root_.OrderIso.Iic_symm_apply_coe {α β : Type*} [Lattice α] [Lattice β] (e : α ≃o β)
-    (x : α) (y : Set.Iic (e x)) : ((e.Iic x).symm y : α) = e.symm y :=
-  rfl
 
 /-- **The subfield dictionary.** For `L / F` finite Galois and `K` any intermediate field, the
 intermediate fields of `K / F` correspond order-reversingly to the subgroups of `Gal(L/F)`
