@@ -42,15 +42,16 @@ its orbits, which is what makes freeness the fact worth isolating here.
   section of `mixedEmbedding`;
 * `TauCeti.GlobalNumberFields.rayIntegerSet_one`: the trivial modulus recovers Mathlib's
   `integerSet`;
-* `TauCeti.GlobalNumberFields.stabilizer_rayIntegerSet_eq_bot`: the action is free.
+* `TauCeti.GlobalNumberFields.stabilizer_rayIntegerSet_eq_bot`: the action is free, also
+  available as an `IsCancelSMul` instance.
 
 ## References
 
 * S. Lang, *Algebraic Number Theory*, Chapter VI, §2.
-* `Mathlib/NumberTheory/NumberField/CanonicalEmbedding/FundamentalCone.lean`: `rayIntegerSet`, its
-  preimage API and the torsion action are structurally adapted from the `integerSet` layer there,
-  with the fundamental cone replaced by the ray fundamental domain and the full torsion group by
-  the congruence torsion.
+* `Mathlib/NumberTheory/NumberField/CanonicalEmbedding/FundamentalCone.lean`: the `integerSet`
+  layer there — that set, its preimage API and its torsion action — is the model for
+  `rayIntegerSet`, with the fundamental cone replaced by the ray fundamental domain and the full
+  torsion group by the congruence torsion.
 -/
 
 public section
@@ -135,7 +136,7 @@ theorem unitsCongruenceTorsion_smul_mem_rayIntegerSet {𝔪 : Modulus K} {ζ : (
 
 /-- The action of the congruence roots of unity on `rayIntegerSet 𝔪`. -/
 @[simps]
-noncomputable instance rayIntegerSetTorsionSMul (𝔪 : Modulus K) :
+noncomputable instance rayIntegerSetUnitsCongruenceTorsionSMul (𝔪 : Modulus K) :
     SMul (unitsCongruenceTorsion 𝔪) (rayIntegerSet 𝔪) where
   smul := fun ⟨ζ, hζ⟩ ⟨a, ha⟩ ↦ ⟨ζ • a, unitsCongruenceTorsion_smul_mem_rayIntegerSet hζ ha⟩
 
@@ -144,20 +145,28 @@ noncomputable instance rayIntegerSetTorsionSMul (𝔪 : Modulus K) :
 noncomputable instance (𝔪 : Modulus K) :
     MulAction (unitsCongruenceTorsion 𝔪) (rayIntegerSet 𝔪) where
   one_smul := fun _ ↦ by
-    rw [Subtype.mk_eq_mk, rayIntegerSetTorsionSMul_smul_coe, OneMemClass.coe_one, one_smul]
+    rw [Subtype.mk_eq_mk, rayIntegerSetUnitsCongruenceTorsionSMul_smul_coe, OneMemClass.coe_one,
+      one_smul]
   mul_smul := fun _ _ _ ↦ by
     rw [Subtype.mk_eq_mk]
-    simp_rw [rayIntegerSetTorsionSMul_smul_coe, Subgroup.coe_mul, mul_smul]
+    simp_rw [rayIntegerSetUnitsCongruenceTorsionSMul_smul_coe, Subgroup.coe_mul, mul_smul]
 
 /-- **The action is free.**  A congruence root of unity fixing a point of `rayIntegerSet 𝔪` is
 the identity, because the point is the image of a nonzero algebraic integer. -/
 theorem stabilizer_rayIntegerSet_eq_bot {𝔪 : Modulus K} (a : rayIntegerSet 𝔪) :
     MulAction.stabilizer (unitsCongruenceTorsion 𝔪) a = ⊥ := by
   refine (Subgroup.eq_bot_iff_forall _).mpr fun ζ hζ ↦ ?_
-  rw [MulAction.mem_stabilizer_iff, Subtype.ext_iff, rayIntegerSetTorsionSMul_smul_coe] at hζ
+  rw [MulAction.mem_stabilizer_iff, Subtype.ext_iff,
+    rayIntegerSetUnitsCongruenceTorsionSMul_smul_coe] at hζ
   rw [← mixedEmbedding_preimageOfMemRayIntegerSet a] at hζ
   exact OneMemClass.coe_eq_one.mp
     (eq_one_of_unitSMul_mixedEmbedding_eq
       (RingOfIntegers.coe_ne_zero_iff.mpr (nonZeroDivisors.coe_ne_zero _)) hζ)
+
+/-- **Freeness as a typeclass.**  Exposing `stabilizer_rayIntegerSet_eq_bot` as `IsCancelSMul`
+lets the generic free-action and orbit-cardinality results apply to this action by instance
+resolution, which is how the ray class count consumes it. -/
+instance (𝔪 : Modulus K) : IsCancelSMul (unitsCongruenceTorsion 𝔪) (rayIntegerSet 𝔪) :=
+  isCancelSMul_iff_stabilizer_eq_bot.mpr stabilizer_rayIntegerSet_eq_bot
 
 end TauCeti.GlobalNumberFields
