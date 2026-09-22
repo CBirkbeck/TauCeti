@@ -28,7 +28,7 @@ The `i`-th group is the inertia subgroup of `P ^ (i + 1)`: it records how deeply
 acts trivially near `P`. The family is decreasing, sits inside the inertia group, and is normal
 in the decomposition group, so it filters that group by depth of triviality — each step
 identifying the automorphisms that are indistinguishable from the identity to one order further.
-Over a Noetherian domain with a faithful action the filtration is exhaustive: only the identity
+Over a Noetherian domain with a faithful action the filtration is separated: only the identity
 survives every stage.
 
 That filtration is what the exponents of the different and the discriminant are computed from,
@@ -116,7 +116,7 @@ instance (P : Ideal R) (i : ℕ) : (P.ramificationGroup (stabilizer M P) i).Norm
   exact fun g ↦ congrArg (inertia _)
     ((smul_pow' (g : M) P (i + 1)).trans (congrArg (· ^ (i + 1)) g.2))
 
-/-- **The ramification groups meet in the trivial group**, so the filtration is exhaustive: no
+/-- **The ramification groups meet in the trivial group**, so the filtration is separated: no
 automorphism but the identity acts trivially to every order. -/
 theorem iInf_ramificationGroup_eq_bot [IsNoetherianRing R] [IsDomain R] [FaithfulSMul M R]
     (P : Ideal R) (hP : P ≠ ⊤) : ⨅ i, P.ramificationGroup M i = ⊥ := by
