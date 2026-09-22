@@ -66,10 +66,8 @@ variable {K : Type*} [Field K] [NumberField K]
 /-! ### Finiteness of the sets being counted -/
 
 /-- **The absolute norm is Northcott on the ideals prime to a modulus**: only finitely many have
-norm below any bound, because that is already true of all nonzero integral ideals and the carrier
-injects into them. This mirrors `TauCeti.instNorthcottAbsNormNonZeroDivisors`, which does the same
-for `(Ideal R)⁰`; registering the carrier here is what lets the real-cutoff layer of
-`TauCeti.Order.Northcott` — `normLE`, `summatory`, `Nat.card_coe_normLE` — apply to ray classes. -/
+norm below any bound. This mirrors `TauCeti.instNorthcottAbsNormNonZeroDivisors`, which does the
+same for `(Ideal R)⁰`. -/
 instance (𝔪 : Modulus K) :
     Northcott (fun I : integralIdealsPrimeTo 𝔪 ↦ Ideal.absNorm (I : Ideal (𝓞 K))) where
   finite_le B :=
@@ -107,11 +105,8 @@ noncomputable def idealClassSigmaEquiv (𝔪 : Modulus K) (x : ℝ) :
     (Σ c : RayClassGroup 𝔪, {I : integralIdealsPrimeTo 𝔪 //
         idealClass 𝔪 I = c ∧ (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x}) ≃
       {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} :=
-  (Equiv.sigmaCongrRight fun _ ↦
-      (Equiv.subtypeEquivRight fun _ ↦ and_comm).trans
-        (Equiv.subtypeSubtypeEquivSubtypeInter _ _).symm).trans
-    (Equiv.sigmaFiberEquiv fun I : {I : integralIdealsPrimeTo 𝔪 //
-      (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} ↦ idealClass 𝔪 I.1)
+  (Equiv.sigmaCongrRight fun _ ↦ (Equiv.subtypeEquivRight fun _ ↦ and_comm).trans
+      (Equiv.subtypeSubtypeEquivSubtypeInter _ _).symm).trans (Equiv.sigmaFiberEquiv _)
 
 /-- **The class counts sum to the total.**  Summing `rayClassIdealCountingFunction` over the ray
 class group recovers the number of nonzero integral ideals prime to `𝔪` of norm at most `x`.
@@ -121,9 +116,7 @@ The ray class group is always finite (`finite_rayClassGroup`), but it carries no
 here; that keeps the statement usable against whichever enumeration the caller holds. -/
 theorem sum_rayClassIdealCountingFunction (𝔪 : Modulus K) [Fintype (RayClassGroup 𝔪)] (x : ℝ) :
     ∑ c : RayClassGroup 𝔪, rayClassIdealCountingFunction 𝔪 c x =
-      Nat.card {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} := by
-  simp only [rayClassIdealCountingFunction]
-  rw [← Nat.card_sigma]
-  exact Nat.card_congr (idealClassSigmaEquiv 𝔪 x)
+      Nat.card {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} :=
+  Nat.card_sigma.symm.trans (Nat.card_congr (idealClassSigmaEquiv 𝔪 x))
 
 end TauCeti.GlobalNumberFields
