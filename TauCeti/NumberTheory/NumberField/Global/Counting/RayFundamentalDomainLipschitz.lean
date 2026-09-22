@@ -41,8 +41,13 @@ with the closure of the *other* factor, and that pairing is what makes the argum
 ## Main results
 
 * `TauCeti.GlobalNumberFields.isLipschitzParametrizable_frontier_rayFundamentalDomain`: the
-  frontier of the norm-≤-one section of the ray fundamental domain is Lipschitz parametrizable in
-  dimension `finrank ℝ (mixedSpace K) - 1`;
+  norm-≤-one section of the ray fundamental domain is bounded and measurable, and its frontier is
+  Lipschitz parametrizable in dimension `finrank ℝ (mixedSpace K) - 1`, which is `[K:ℚ] - 1` by
+  `mixedEmbedding.finrank`. These are exactly the three hypotheses the lattice-point count with a
+  power-saving error consumes, so they are stated together;
+* `TauCeti.GlobalNumberFields.isBounded_rayFundamentalDomain_inter_normLeOne` and
+  `TauCeti.GlobalNumberFields.measurableSet_rayFundamentalDomain_inter_normLeOne`: the first two
+  conclusions on their own, for callers that need only one of them;
 * `TauCeti.GlobalNumberFields.rayFundamentalDomain_inter_normLeOne_eq`: that section is the
   positivity region cut by a finite union of unit translates of `normLeOne K`;
 * `TauCeti.GlobalNumberFields.frontier_posRegion_subset`: the frontier of the positivity region
@@ -156,8 +161,27 @@ private theorem isLipschitzParametrizable_frontier_unitSMul_normLeOne (u : (𝓞
   exact (TauCeti.NumberField.Units.continuous_unitSMul _).frontier_preimage_subset _
 
 open scoped Classical in
-/-- **The frontier of the norm-≤-one section of the ray fundamental domain is Lipschitz
-parametrizable in codimension one.** This discharges the boundary hypothesis of
+/-- **The norm-≤-one section of the ray fundamental domain is bounded.** It is carved out of a
+finite union of unit translates of Mathlib's norm-≤-one region, and each translate is bounded
+because the unit acts by a Lipschitz map. -/
+theorem isBounded_rayFundamentalDomain_inter_normLeOne (𝔪 : Modulus K) :
+    Bornology.IsBounded
+      (rayFundamentalDomain 𝔪 ∩ {x : mixedSpace K | mixedEmbedding.norm x ≤ 1}) := by
+  rw [rayFundamentalDomain_inter_normLeOne_eq]
+  exact (Bornology.isBounded_iUnion.2 fun q ↦ isBounded_unitSMul_normLeOne _).subset
+    Set.inter_subset_right
+
+/-- **The norm-≤-one section of the ray fundamental domain is measurable**: the domain itself is
+measurable and the mixed norm is continuous. -/
+theorem measurableSet_rayFundamentalDomain_inter_normLeOne (𝔪 : Modulus K) :
+    MeasurableSet (rayFundamentalDomain 𝔪 ∩ {x : mixedSpace K | mixedEmbedding.norm x ≤ 1}) :=
+  (measurableSet_rayFundamentalDomain 𝔪).inter
+    (measurableSet_le (mixedEmbedding.continuous_norm K).measurable measurable_const)
+
+open scoped Classical in
+/-- **The norm-≤-one section of the ray fundamental domain is bounded and measurable, and its
+frontier is Lipschitz parametrizable in codimension one.** This discharges the boundary hypothesis
+of
 `TauCeti.exists_abs_ncard_smul_inter_vadd_sub_le` for the region counting the algebraic integers
 of a fixed ray class, exactly as `isLipschitzParametrizable_frontier_normLeOne` does for the
 trivial modulus, whose ray fundamental domain is Mathlib's fundamental cone.
@@ -168,8 +192,14 @@ The translates are bounded and each has a frontier that is a Lipschitz image of
 its frontier with the *closure of the translates*, so the piece it contributes is a bounded subset
 of the finitely many coordinate hyperplanes prescribed by the infinite part of `𝔪`. -/
 theorem isLipschitzParametrizable_frontier_rayFundamentalDomain (𝔪 : Modulus K) :
-    TauCeti.IsLipschitzParametrizable (finrank ℝ (mixedSpace K) - 1)
-      (frontier (rayFundamentalDomain 𝔪 ∩ {x : mixedSpace K | mixedEmbedding.norm x ≤ 1})) := by
+    Bornology.IsBounded
+        (rayFundamentalDomain 𝔪 ∩ {x : mixedSpace K | mixedEmbedding.norm x ≤ 1}) ∧
+      MeasurableSet (rayFundamentalDomain 𝔪 ∩ {x : mixedSpace K | mixedEmbedding.norm x ≤ 1}) ∧
+        TauCeti.IsLipschitzParametrizable (finrank ℝ (mixedSpace K) - 1)
+          (frontier (rayFundamentalDomain 𝔪 ∩
+            {x : mixedSpace K | mixedEmbedding.norm x ≤ 1})) := by
+  refine ⟨isBounded_rayFundamentalDomain_inter_normLeOne 𝔪,
+    measurableSet_rayFundamentalDomain_inter_normLeOne 𝔪, ?_⟩
   rw [rayFundamentalDomain_inter_normLeOne_eq, Set.inter_comm]
   set A : Set (mixedSpace K) := ⋃ q : (𝓞 K)ˣ ⧸ unitsCongruenceSubgroupSupTorsion 𝔪,
     rayUnitRepresentative 𝔪 q • normLeOne K
